@@ -141,7 +141,7 @@ int os_make_path_for(const char *filename)
     int res = 0;
     char *path;
     util_fname_split(filename, &path, NULL);
-    if (path != NULL) {
+    if ((path != NULL) && (path[0] != '.') && (path[1] != '\0')) {
         res = os_make_path(path);
         lib_free(path);
     }

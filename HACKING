@@ -24,6 +24,7 @@ Some facts:
  * game/ known nothing about hw/
  * ui/ is known via src/ui.h
  * hw/ is known via src/hw.h
+ * os/ is known via src/os.h
  * src/ knows game via the very narrow src/gameapi.h
    (the exception is saveconv.c)
  * ui/ knows all about game/
