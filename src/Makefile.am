@@ -31,7 +31,10 @@ DIST_SUBDIRS = hw os ui save game
 util_sources = \
     bits.h \
     boolvec.h \
+    cfg.c \
+    cfg.h \
     comp.h \
+    gameapi.h \
     hw.h \
     lbx.c \
     lbx.h \

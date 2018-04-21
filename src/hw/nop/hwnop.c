@@ -3,6 +3,7 @@
 #include <stdio.h>
 
 #include "hw.h"
+#include "cfg.h"
 #include "main.h"
 #include "options.h"
 #include "os.h"
@@ -18,6 +19,14 @@ const struct cmdline_options_s hw_cmdline_options[] = {
 
 const struct cmdline_options_s hw_cmdline_options_extra[] = {
     { NULL, 0, NULL, NULL, NULL, NULL }
+};
+
+const struct cfg_items_s hw_cfg_items[] = {
+    CFG_ITEM_END
+};
+
+const struct cfg_items_s hw_cfg_items_extra[] = {
+    CFG_ITEM_END
 };
 
 /* -------------------------------------------------------------------------- */

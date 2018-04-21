@@ -1,7 +1,10 @@
 #ifndef INC_1OOM_OPTIONS_H
 #define INC_1OOM_OPTIONS_H
 
+#include "cfg.h"
 #include "types.h"
+
+extern const struct cfg_items_s opt_cfg_items[];
 
 #ifdef FEATURE_MODEBUG
 extern int opt_modebug;
@@ -37,5 +40,8 @@ extern int options_set_str_var(char **argv, void *var);
 extern int options_parse_early(int argc, char **argv);
 extern int options_parse(int argc, char **argv);
 extern void options_show_usage(void);
+
+extern void options_finish(void);
+extern void options_shutdown(bool save_config);
 
 #endif

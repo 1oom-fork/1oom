@@ -4,7 +4,9 @@
 #include <string.h>
 
 #include "main.h"
+#include "cfg.h"
 #include "game.h"
+#include "gameapi.h"
 #include "game_aux.h"
 #include "game_misc.h"
 #include "game_new.h"
@@ -34,6 +36,8 @@ static bool game_opt_save_quit = false;
 static struct game_end_s game_opt_end = { GAME_END_NONE, 0, 0, 0, 0 };
 static struct game_new_options_s game_opt_new = GAME_NEW_OPTS_DEFAULT;
 
+static int game_opt_new_value = 200;
+
 static struct game_s game;
 static struct game_aux_s game_aux;
 
@@ -53,6 +57,23 @@ static void game_start(struct game_s *g)
     }
     game_update_within_range(g);
     game_update_visibility(g);
+}
+
+static void game_set_opts_from_value(struct game_new_options_s *go, int v)
+{
+    int v2;
+    v2 = v % 10;
+    v = v / 10;
+    go->difficulty = v2;
+    v2 = v % 10;
+    v = v / 10;
+    go->galaxy_size = v2;
+    go->players = v;
+}
+
+static int game_get_opts_value(const struct game_s *g)
+{
+    return g->difficulty + g->galaxy_size * 10 + g->players * 100;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -100,7 +121,7 @@ static int game_opt_do_new_seed(char **argv, void *var)
                 return -1;
             }
         } else {
-            v = 200;
+            v = game_opt_new_value;
         }
         vo = v;
         v2 = v % 10;
@@ -276,6 +297,7 @@ static int game_opt_do_continue(char **argv, void *var)
 const char *idstr_main = "game";
 
 bool main_use_lbx = true;
+bool main_use_cfg = true;
 
 void (*main_usage)(void) = 0;
 
@@ -319,6 +341,40 @@ const struct cmdline_options_s main_cmdline_options[] = {
       options_enable_bool_var, (void *)&game_opt_save_quit,
       NULL, "Save and quit" },
     { 0, 0, 0, 0, 0, 0 }
+};
+
+/* -------------------------------------------------------------------------- */
+
+static bool game_cfg_check_new_game_opts(void *val)
+{
+    int v2, v = (int)(intptr_t)val;
+    v2 = v % 10;
+    v = v / 10;
+    if (v2 >= DIFFICULTY_NUM) {
+        log_error("invalid difficulty num %i\n", v2);
+        return false;
+    }
+    v2 = v % 10;
+    v = v / 10;
+    if (v2 > GALAXY_SIZE_HUGE) {
+        log_error("invalid galaxy size num %i\n", v2);
+        return false;
+    }
+    v2 = v % 10;
+    if ((v2 < 2) || (v2 > PLAYER_NUM)) {
+        log_error("invalid players num %i\n", v2);
+        return false;
+    }
+    return true;
+}
+
+const struct cfg_items_s game_cfg_items[] = {
+    CFG_ITEM_BOOL("undo", &game_opt_undo_enabled),
+    CFG_ITEM_BOOL("initsaves", &game_opt_init_saves_enabled),
+    CFG_ITEM_COMMENT("PLAYERS*100+GALAXYSIZE*10+DIFFICULTY"),
+    CFG_ITEM_COMMENT(" 2..6, 0..3 = small..huge, 0..4 = simple..impossible"),
+    CFG_ITEM_INT("new_game_opts", &game_opt_new_value, game_cfg_check_new_game_opts),
+    CFG_ITEM_END
 };
 
 /* -------------------------------------------------------------------------- */
@@ -445,12 +501,14 @@ int main_do(void)
                 continue;
             }
         } else {
+            game_set_opts_from_value(&game_new_opts, game_opt_new_value);
             main_menu_action = ui_main_menu(&game_new_opts, &load_game_i);
         }
         switch (main_menu_action) {
             case MAIN_MENU_ACT_NEW_GAME:
                 main_menu_new_game:
                 game_new(&game, &game_aux, &game_new_opts);
+                game_opt_new_value = game_get_opts_value(&game);
                 break;
             case MAIN_MENU_ACT_TUTOR:
                 game_new_tutor(&game, &game_aux);

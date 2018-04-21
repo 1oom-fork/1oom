@@ -3,6 +3,7 @@
 #include <stdio.h>
 
 #include "hw.h"
+#include "cfg.h"
 #include "hwalleg_opt.h"
 #include "lib.h"
 #include "options.h"
@@ -11,6 +12,10 @@
 /* -------------------------------------------------------------------------- */
 
 /* -------------------------------------------------------------------------- */
+
+const struct cfg_items_s hw_cfg_items_extra[] = {
+    CFG_ITEM_END
+};
 
 #include "hwalleg_opt.c"
 
