@@ -31,10 +31,16 @@ static int num_data_paths = 0;
 
 static int os_make_path(const char *path)
 {
-    if (access(path, F_OK)) {
-        return mkdir(path, 0700);
+    if ((path == NULL) || (path[0] == '\0') || ((path[0] == '.') && (path[1] == '\0'))) {
+        return 0;
     }
-    return 0;
+    {
+        struct stat st;
+        if (stat(path, &st) == 0) {
+            return S_ISDIR(st.st_mode) ? 0 : -1;
+        }
+        return (mkdir(path, 0700) == 0) ? 0 : -1;
+    }
 }
 
 /* -------------------------------------------------------------------------- */
