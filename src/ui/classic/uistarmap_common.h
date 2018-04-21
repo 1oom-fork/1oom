@@ -6,8 +6,16 @@
 #include "uidraw.h"
 #include "uiobj.h"
 
+#if 0
+/* original */
 #define STARMAP_DELAY 3
+#define STARMAP_ANIM_DELAY 1
 #define STARMAP_SCROLLSTEP 10
+#else
+#define STARMAP_DELAY 1
+#define STARMAP_ANIM_DELAY 3
+#define STARMAP_SCROLLSTEP 3
+#endif
 
 struct shipnon0_s {
     shipcount_t ships[NUM_SHIPDESIGNS];
@@ -22,6 +30,7 @@ struct starmap_data_s {
     struct game_s *g;
     player_id_t api;
     int bottom_highlight;
+    int anim_delay;
     int16_t oi_gameopts;
     int16_t oi_design;
     int16_t oi_fleet;
