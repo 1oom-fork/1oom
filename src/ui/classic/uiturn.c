@@ -62,6 +62,7 @@ void ui_turn_msg(struct game_s *g, int pi, const char *str)
     d.sm.g = g;
     d.sm.api = pi;
     d.sm.bottom_highlight = -1;
+    d.sm.anim_delay = 0;
     uiobj_set_callback_and_delay(ui_turn_msg_draw_cb, &d, 3);
     uiobj_table_clear();
     uiobj_add_mousearea(0, 0, UI_SCREEN_W - 1, UI_SCREEN_H -1, MOO_KEY_UNKNOWN, -1);
