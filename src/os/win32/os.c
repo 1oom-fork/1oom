@@ -2,10 +2,12 @@
 
 #include <stdlib.h>
 #include <windows.h>
+#include <io.h>
 
 #include "os.h"
 #include "options.h"
 #include "lib.h"
+#include "util.h"
 
 /* -------------------------------------------------------------------------- */
 
@@ -17,6 +19,16 @@ const struct cmdline_options_s os_cmdline_options[] = {
 
 static char *data_path = NULL;
 static char *all_data_paths[] = { NULL, NULL, NULL };
+
+/* -------------------------------------------------------------------------- */
+
+static int os_make_path(const char *path)
+{
+    if ((path == NULL) || ((path[0] == '.') && (path[1] == '\0'))) {
+        return 0;
+    }
+    return mkdir(path);
+}
 
 /* -------------------------------------------------------------------------- */
 
@@ -71,7 +83,14 @@ int os_make_path_user(void)
 
 int os_make_path_for(const char *filename)
 {
-    return -1; /* FIXME */
+    int res = 0;
+    char *path;
+    util_fname_split(filename, &path, NULL);
+    if (path != NULL) {
+        res = os_make_path(path);
+        lib_free(path);
+    }
+    return res;
 }
 
 uint32_t os_get_time_us(void)
