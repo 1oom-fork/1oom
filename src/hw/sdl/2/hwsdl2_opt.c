@@ -3,6 +3,7 @@
 #include <stdio.h>
 
 #include "hw.h"
+#include "cfg.h"
 #include "hwsdl_opt.h"
 #include "hwsdl_audio.h"
 #include "lib.h"
@@ -24,6 +25,14 @@ bool hw_opt_vsync = true;
 #endif /* HAVE_SDL2MIXER */
 
 /* -------------------------------------------------------------------------- */
+
+const struct cfg_items_s hw_cfg_items_extra[] = {
+    CFG_ITEM_BOOL("borderless", &hw_opt_borderless),
+    CFG_ITEM_BOOL("int_scaling", &hw_opt_int_scaling),
+    CFG_ITEM_BOOL("two_step_scaling", &hw_opt_two_step_scaling),
+    CFG_ITEM_BOOL("vsync", &hw_opt_vsync),
+    CFG_ITEM_END
+};
 
 #include "hwsdl_opt.c"
 

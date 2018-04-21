@@ -23,14 +23,32 @@ int hw_opt_screen_fsh = 0;
 #ifdef HAVE_SDLX_ASPECT
 int hw_opt_aspect = HW_DEFAULT_ASPECT;
 #endif
-const char *hw_opt_sdlmixer_sf = NULL;
+char *hw_opt_sdlmixer_sf = NULL;
+
+/* -------------------------------------------------------------------------- */
+
+const struct cfg_items_s hw_cfg_items[] = {
+    CFG_ITEM_BOOL("fs", &hw_opt_fullscreen),
+    CFG_ITEM_BOOL("force_sw", &hw_opt_force_sw),
+    CFG_ITEM_INT("winw", &hw_opt_screen_winw, 0),
+    CFG_ITEM_INT("winh", &hw_opt_screen_winh, 0),
+    CFG_ITEM_INT("fsw", &hw_opt_screen_fsw, 0),
+    CFG_ITEM_INT("fsh", &hw_opt_screen_fsh, 0),
+#ifdef HAVE_SDLMIXER
+    CFG_ITEM_STR("sdlmixersf", &hw_opt_sdlmixer_sf, 0),
+#endif
+#ifdef HAVE_SDLX_ASPECT
+    CFG_ITEM_INT("aspect", &hw_opt_aspect, 0),
+#endif
+    CFG_ITEM_END
+};
 
 /* -------------------------------------------------------------------------- */
 
 #ifdef HAVE_SDLMIXER
-int hw_opt_set_sdlmixer_sf(char **argv, void *var)
+static int hw_opt_set_sdlmixer_sf(char **argv, void *var)
 {
-    hw_opt_sdlmixer_sf = argv[1];
+    hw_opt_sdlmixer_sf = lib_stralloc(argv[1]);
     return hw_audio_set_sdlmixer_sf(hw_opt_sdlmixer_sf);
 }
 #endif
