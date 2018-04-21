@@ -53,6 +53,8 @@ util_sources = \
     ui.h \
     util.c \
     util.h \
+    util_cstr.c \
+    util_cstr.h \
     util_math.c \
     util_math.h
 
