@@ -1,15 +1,15 @@
 #ifndef INC_1OOM_HWSDL_OPT_H
 #define INC_1OOM_HWSDL_OPT_H
 
-extern int hw_opt_fullscreen;
+extern bool hw_opt_fullscreen;
 extern int hw_opt_screen_winw;
 extern int hw_opt_screen_winh;
 extern int hw_opt_screen_fsw;
 extern int hw_opt_screen_fsh;
-extern const char *hw_opt_sdlmixer_sf;
+extern char *hw_opt_sdlmixer_sf;
 
 /* for SDL1 */
-extern int hw_opt_use_gl;
+extern bool hw_opt_use_gl;
 extern int hw_opt_aspect;
 extern int hw_opt_gl_filter;
 

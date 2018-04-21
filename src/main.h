@@ -5,6 +5,7 @@
 #include "types.h"
 
 extern bool main_use_lbx;
+extern bool main_use_cfg;
 extern const char *idstr_main;
 extern const struct cmdline_options_s main_cmdline_options[];
 extern const struct cmdline_options_s main_cmdline_options_early[];

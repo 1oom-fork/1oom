@@ -3,6 +3,7 @@
 
 /* API to hw/ */
 
+#include "cfg.h"
 #include "options.h"
 #include "types.h"
 
@@ -14,6 +15,9 @@ extern void hw_shutdown(void);
 
 extern const struct cmdline_options_s hw_cmdline_options[];
 extern const struct cmdline_options_s hw_cmdline_options_extra[];
+
+extern const struct cfg_items_s hw_cfg_items[];
+extern const struct cfg_items_s hw_cfg_items_extra[];
 
 extern void hw_log_message(const char *msg);
 extern void hw_log_warning(const char *msg);
