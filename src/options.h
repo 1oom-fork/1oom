@@ -1,12 +1,14 @@
 #ifndef INC_1OOM_OPTIONS_H
 #define INC_1OOM_OPTIONS_H
 
+#include "types.h"
+
 #ifdef FEATURE_MODEBUG
 extern int opt_modebug;
 #endif
-extern int opt_audio_enabled;
-extern int opt_music_enabled;
-extern int opt_sfx_enabled;
+extern bool opt_audio_enabled;
+extern bool opt_music_enabled;
+extern bool opt_sfx_enabled;
 extern int opt_music_volume;
 extern int opt_sfx_volume;
 extern int opt_audiorate;
@@ -14,7 +16,7 @@ extern int opt_audioslice_ms;
 extern int opt_xmid_ticksperq;
 extern int opt_xmid_banks;
 #ifdef HAVE_SAMPLERATE
-extern int opt_use_libsamplerate;
+extern bool opt_use_libsamplerate;
 extern int opt_libsamplerate_scale;
 extern int opt_libsamplerate_mode;
 #endif
@@ -28,8 +30,8 @@ struct cmdline_options_s {
     const char *str_help;
 };
 
-extern int options_enable_var(char **argv, void *var);
-extern int options_disable_var(char **argv, void *var);
+extern int options_enable_bool_var(char **argv, void *var);
+extern int options_disable_bool_var(char **argv, void *var);
 extern int options_set_int_var(char **argv, void *var);
 extern int options_set_str_var(char **argv, void *var);
 
