@@ -22,6 +22,8 @@ DIST_SUBDIRS = hw os ui game
 util_sources = \
     bits.h \
     boolvec.h \
+    cfg.c \
+    cfg.h \
     comp.h \
     gameapi.h \
     hw.h \
@@ -44,6 +46,8 @@ util_sources = \
     ui.h \
     util.c \
     util.h \
+    util_cstr.c \
+    util_cstr.h \
     util_math.c \
     util_math.h
 
