@@ -8,7 +8,7 @@ extern int hw_opt_screen_winw;
 extern int hw_opt_screen_winh;
 extern int hw_opt_screen_fsw;
 extern int hw_opt_screen_fsh;
-extern const char *hw_opt_sdlmixer_sf;
+extern char *hw_opt_sdlmixer_sf;
 extern bool hw_opt_force_sw;
 
 /* for SDL1 */

@@ -102,6 +102,12 @@ int hw_audio_init(void)
         mus_playing = -1;
         log_message("SDLA: init %i Hz slice %i\n", audio_rate, slice);
         log_message("SDLA: soundfonts '%s'\n", Mix_GetSoundFonts());
+        if (hw_opt_sdlmixer_sf) {
+            if (hw_audio_set_sdlmixer_sf(hw_opt_sdlmixer_sf) < 0) {
+                Mix_CloseAudio();
+                return -1;
+            }
+        }
         audio_initialized = true;
         {
             int volume;
@@ -129,6 +135,8 @@ void hw_audio_shutdown(void)
         sfxtbl = NULL;
         audio_initialized = false;
     }
+    lib_free(hw_opt_sdlmixer_sf);
+    hw_opt_sdlmixer_sf = NULL;
 }
 
 int hw_audio_set_sdlmixer_sf(const char *path)
