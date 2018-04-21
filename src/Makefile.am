@@ -13,7 +13,7 @@ endif
 endif
 
 if COMPILE_TOOLS
-bin_PROGRAMS += 1oom_saveconv
+bin_PROGRAMS += 1oom_pbxmake 1oom_saveconv
 if COMPILE_TOOLS_SDL1
 bin_PROGRAMS += 1oom_lbxview_sdl1
 endif
@@ -29,6 +29,7 @@ util_sources = \
     bits.h \
     boolvec.h \
     comp.h \
+    gameapi.h \
     hw.h \
     lbx.c \
     lbx.h \
@@ -41,6 +42,8 @@ util_sources = \
     options.c \
     options.h \
     os.h \
+    pbx.c \
+    pbx.h \
     rnd.c \
     rnd.h \
     types.h \
@@ -119,6 +122,11 @@ hwsdl2_lib = $(top_builddir)/src/hw/sdl/2/libhwsdl2.a
 1oom_lbxview_sdl2_SOURCES = lbxview.c $(audio_sources) $(gui_sources) $(util_sources) $(pic_sources)
 1oom_lbxview_sdl2_LDADD = $(1oom_lbxview_sdl2_libs) @HW_SDL2_LIBS@ @EXTRA_SDL2_LIBS@ @SAMPLERATE_LIBS@
 1oom_lbxview_sdl2_DEPENDENCIES = $(1oom_lbxview_sdl2_libs)
+
+1oom_pbxmake_libs = $(hwnop_lib)
+1oom_pbxmake_SOURCES = pbxmake.c util.c lib.c log.c
+1oom_pbxmake_LDADD = $(1oom_pbxmake_libs)
+1oom_pbxmake_DEPENDENCIES = $(1oom_pbxmake_libs)
 
 1oom_saveconv_libs = $(game_lib) $(hwnop_lib) $(uinop_lib) $(common_libs)
 1oom_saveconv_SOURCES = saveconv_main.c saveconv_main.h saveconv.c saveconv.h lib.c log.c options.c util.c
