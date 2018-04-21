@@ -138,6 +138,7 @@ void ui_starmap_transport(struct game_s *g, player_id_t active_player)
 
     d.g = g;
     d.api = active_player;
+    d.anim_delay = 0;
     ui_data.starmap.frame_ship = 0;
     ui_data.starmap.frame_scanner = 0;
     ui_data.starmap.scanner_delay = 0;
