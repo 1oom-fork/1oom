@@ -23,7 +23,23 @@
 const char *idstr_main = "saveconv";
 
 bool main_use_lbx = false;
+bool main_use_cfg = false;
 bool ui_use_audio = false;
+
+char *cfg_cfgname(void)
+{
+    return 0;
+}
+
+int cfg_load(const char *filename)
+{
+    return -1;  /* should never be called */
+}
+
+int cfg_save(const char *filename)
+{
+    return -1;  /* should never be called */
+}
 
 /* -------------------------------------------------------------------------- */
 
