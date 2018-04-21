@@ -23,6 +23,25 @@ bool ui_use_audio = false;
 
 /* -------------------------------------------------------------------------- */
 
+bool main_use_cfg = false;
+
+char *cfg_cfgname(void)
+{
+    return 0;
+}
+
+int cfg_load(const char *filename)
+{
+    return -1;  /* should never be called */
+}
+
+int cfg_save(const char *filename)
+{
+    return -1;  /* should never be called */
+}
+
+/* -------------------------------------------------------------------------- */
+
 typedef enum {
     SAVETYPE_SMART = 0,
     SAVETYPE_MOO13,

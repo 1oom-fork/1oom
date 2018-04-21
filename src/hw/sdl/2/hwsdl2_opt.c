@@ -5,6 +5,7 @@
 #include <SDL.h>
 
 #include "hw.h"
+#include "cfg.h"
 #include "hwsdl_opt.h"
 #include "hwsdl_audio.h"
 #include "lib.h"
@@ -28,6 +29,17 @@ bool hw_opt_vsync = true;
 #endif /* HAVE_SDL2MIXER */
 
 /* -------------------------------------------------------------------------- */
+
+const struct cfg_items_s hw_cfg_items_extra[] = {
+    CFG_ITEM_BOOL("aspect", &hw_opt_aspect_ratio_correct),
+    CFG_ITEM_BOOL("borderless", &hw_opt_borderless),
+    CFG_ITEM_BOOL("int_scaling", &hw_opt_int_scaling),
+    CFG_ITEM_BOOL("nograbmouse", &hw_opt_nograbmouse),
+    CFG_ITEM_BOOL("relmouse", &hw_opt_relmouse),
+    CFG_ITEM_BOOL("smooth_scaling", &hw_opt_smooth_pixel_scaling),
+    CFG_ITEM_BOOL("vsync", &hw_opt_vsync),
+    CFG_ITEM_END
+};
 
 #include "hwsdl_opt.c"
 

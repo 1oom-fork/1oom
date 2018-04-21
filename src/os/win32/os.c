@@ -113,6 +113,11 @@ const char *os_get_fname_save(char *buf, int savei/*1..9*/)
     return NULL;
 }
 
+const char *os_get_fname_cfg(char *buf, const char *gamestr, const char *uistr, const char *hwstr)
+{
+    return NULL;
+}
+
 uint32_t os_get_time_us(void)
 {
     return GetTickCount() * 1000;
