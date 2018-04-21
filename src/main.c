@@ -7,8 +7,13 @@
 #include "hw.h"
 #include "lbx.h"
 #include "log.h"
+#include "options.h"
 #include "os.h"
 #include "ui.h"
+
+/* -------------------------------------------------------------------------- */
+
+static bool main_startup_ok = false;
 
 /* -------------------------------------------------------------------------- */
 
@@ -39,6 +44,7 @@ static int main_init(void)
 
 static void main_shutdown(void)
 {
+    options_shutdown(main_startup_ok);
     main_do_shutdown();
     lbxfile_shutdown();
     ui_shutdown();
@@ -69,5 +75,7 @@ int main_1oom(int argc, char **argv)
         return 4;
     }
     log_message("USER: '%s'\n", os_get_path_user());
+    main_startup_ok = true;
+    options_finish();
     return main_do();
 }
