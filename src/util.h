@@ -2,10 +2,14 @@
 #define INC_1OOM_UTIL_H
 
 #include "config.h"
+
+#include <stdio.h>
+
 #include "types.h"
 
 extern char *util_concat(const char *s, ...);
 extern int util_concat_buf(char *buf, int buflen, ...);
+extern int util_get_line(char *buf, int bufsize, FILE *f);
 extern void util_fname_split(const char *path, char **directory_out, char **name_out);
 extern int util_file_save(const char *name, uint8_t *src, int size);
 extern void util_trim_whitespace(char *str);
