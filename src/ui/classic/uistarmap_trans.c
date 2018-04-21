@@ -132,7 +132,9 @@ static void ui_starmap_trans_draw_cb(void *vptr)
                 }
                 v += d->tr.num;
                 if (pt->max_pop3 < v) {
-                    d->tr.blink = !d->tr.blink;
+                    if (d->anim_delay == 0) {
+                        d->tr.blink = !d->tr.blink;
+                    }
                     if (d->tr.blink) {
                         lbxfont_select(0, 5, 0, 0);
                         sprintf(buf, "%s %i %s", game_str_sm_trwarnm1, pt->max_pop3, game_str_sm_trwarnm2);
@@ -175,6 +177,7 @@ void ui_starmap_trans(struct game_s *g, player_id_t active_player)
     int16_t trans_max;
     d.g = g;
     d.api = active_player;
+    d.anim_delay = 0;
     d.tr.blink = false;
     {
         uint8_t pi = g->planet_focus_i[active_player];
