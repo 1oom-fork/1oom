@@ -4,12 +4,14 @@
 #include "config.h"
 #include "types.h"
 
+#include <stdio.h>
 #ifdef HAVE_STRINGS_H
 #include <strings.h>
 #endif
 
 extern char *util_concat(const char *s, ...);
 extern int util_concat_buf(char *buf, int buflen, ...);
+extern int util_get_line(char *buf, int bufsize, FILE *f);
 extern void util_fname_split(const char *path, char **directory_out, char **name_out);
 extern int util_file_try_load_len(const char *name, uint8_t *buf, int wantlen);
 extern int util_file_save(const char *name, uint8_t *src, int size);
