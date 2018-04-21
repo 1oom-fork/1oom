@@ -659,7 +659,7 @@ static int game_save_encode(uint8_t *buf, int buflen, const struct game_s *g, ui
     SG_1OOM_EN_U16(g->galaxy_maxx);
     SG_1OOM_EN_U16(g->galaxy_maxy);
     SG_1OOM_EN_U32(g->galaxy_seed);
-    SG_1OOM_EN_DUMMY(4);
+    SG_1OOM_EN_U32(g->seed);
     SG_1OOM_EN_U16(g->year);
     SG_1OOM_EN_U16(g->enroute_num);
     SG_1OOM_EN_U16(g->transport_num);
@@ -755,7 +755,7 @@ static int game_save_decode(const uint8_t *buf, int buflen, struct game_s *g, ui
     SG_1OOM_DE_U16(g->galaxy_maxx);
     SG_1OOM_DE_U16(g->galaxy_maxy);
     SG_1OOM_DE_U32(g->galaxy_seed);
-    SG_1OOM_DE_DUMMY(4);
+    SG_1OOM_DE_U32(g->seed);
     SG_1OOM_DE_U16(g->year);
     SG_1OOM_DE_U16(g->enroute_num);
     if ((g->enroute_num > FLEET_ENROUTE_MAX)) {
