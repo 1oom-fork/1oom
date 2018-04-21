@@ -3,6 +3,7 @@
 
 /* API to hw/ */
 
+#include "cfg.h"
 #include "options.h"
 #include "types.h"
 
@@ -16,6 +17,9 @@ extern bool hw_use_mouse;
 
 extern const struct cmdline_options_s hw_cmdline_options[];
 extern const struct cmdline_options_s hw_cmdline_options_extra[];
+
+extern const struct cfg_items_s hw_cfg_items[];
+extern const struct cfg_items_s hw_cfg_items_extra[];
 
 extern int hw_event_handle(void);
 extern void hw_video_position_cursor(int mx, int my);

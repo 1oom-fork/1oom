@@ -27,6 +27,25 @@ bool ui_use_audio = false;
 
 /* -------------------------------------------------------------------------- */
 
+bool main_use_cfg = false;
+
+char *cfg_cfgname(void)
+{
+    return 0;
+}
+
+int cfg_load(const char *filename)
+{
+    return -1;  /* should never be called */
+}
+
+int cfg_save(const char *filename)
+{
+    return -1;  /* should never be called */
+}
+
+/* -------------------------------------------------------------------------- */
+
 static struct game_s *gameptr = 0;
 
 static uint8_t *save2buf = 0;
