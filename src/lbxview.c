@@ -5,6 +5,7 @@
 #include <string.h>
 
 #include "main.h"
+#include "cfg.h"
 #include "comp.h"
 #include "fmt_mus.h"
 #include "fmt_sfx.h"
@@ -27,6 +28,7 @@
 const char *idstr_main = "lbxview";
 
 bool main_use_lbx = true;
+bool main_use_cfg = true;
 bool ui_use_audio = true;
 
 void (*main_usage)(void) = 0;
@@ -37,6 +39,10 @@ const struct cmdline_options_s main_cmdline_options_early[] = {
 
 const struct cmdline_options_s main_cmdline_options[] = {
     { NULL, 0, NULL, NULL, NULL, NULL }
+};
+
+const struct cfg_items_s game_cfg_items[] = {
+    CFG_ITEM_END
 };
 
 bool game_str_patch(const char *strid, const char *patchstr, int i)
