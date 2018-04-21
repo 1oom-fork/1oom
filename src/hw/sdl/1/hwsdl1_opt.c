@@ -10,11 +10,11 @@
 
 /* -------------------------------------------------------------------------- */
 
-#define HW_DEFAULT_FULLSCREEN   0
+#define HW_DEFAULT_FULLSCREEN   false
 #define HW_DEFAULT_ASPECT   833333
 
 #ifdef HAVE_OPENGL
-int hw_opt_use_gl = 1;
+bool hw_opt_use_gl = true;
 int hw_opt_aspect = HW_DEFAULT_ASPECT;
 int hw_opt_gl_filter = 1;
 #endif
@@ -30,10 +30,10 @@ int hw_opt_gl_filter = 1;
 const struct cmdline_options_s hw_cmdline_options_extra[] = {
 #ifdef HAVE_OPENGL
     { "-gl", 0,
-      options_enable_var, (void *)&hw_opt_use_gl,
+      options_enable_bool_var, (void *)&hw_opt_use_gl,
       NULL, "Enable OpenGL" },
     { "-nogl", 0,
-      options_disable_var, (void *)&hw_opt_use_gl,
+      options_disable_bool_var, (void *)&hw_opt_use_gl,
       NULL, "Disable OpenGL" },
     { "-aspect", 1,
       options_set_int_var, (void *)&hw_opt_aspect,
