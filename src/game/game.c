@@ -27,7 +27,7 @@ static bool game_opt_new_game = false;
 static bool game_opt_continue = false;
 static int game_opt_load_game = 0;
 static const char *game_opt_load_fname = 0;
-static int game_opt_undo_enabled = 1;
+static bool game_opt_undo_enabled = true;
 
 static struct game_end_s game_opt_end = { GAME_END_NONE, 0, 0, 0, 0 };
 static struct game_new_options_s game_opt_new = GAME_NEW_OPTS_DEFAULT;
@@ -305,10 +305,10 @@ const struct cmdline_options_s main_cmdline_options[] = {
       game_opt_do_continue, 0,
       NULL, "Continue game" },
     { "-undo", 0,
-      options_enable_var, (void *)&game_opt_undo_enabled,
+      options_enable_bool_var, (void *)&game_opt_undo_enabled,
       NULL, "Enable undo saves" },
     { "-noundo", 0,
-      options_disable_var, (void *)&game_opt_undo_enabled,
+      options_disable_bool_var, (void *)&game_opt_undo_enabled,
       NULL, "Disable undo saves" },
     { 0, 0, 0, 0, 0, 0 }
 };

@@ -18,9 +18,9 @@
 #ifdef FEATURE_MODEBUG
 int opt_modebug = 0;
 #endif
-int opt_audio_enabled = 1;
-int opt_music_enabled = 1;
-int opt_sfx_enabled = 1;
+bool opt_audio_enabled = true;
+bool opt_music_enabled = true;
+bool opt_sfx_enabled = true;
 int opt_music_volume = 64;
 int opt_sfx_volume = 100;
 int opt_audiorate = 48000;
@@ -28,22 +28,22 @@ int opt_audioslice_ms = 50;
 int opt_xmid_ticksperq = 55;
 int opt_xmid_banks = 0;
 #ifdef HAVE_SAMPLERATE
-int opt_use_libsamplerate = 1;
+bool opt_use_libsamplerate = true;
 int opt_libsamplerate_scale = 65;
 int opt_libsamplerate_mode = 1;
 #endif
 
 /* -------------------------------------------------------------------------- */
 
-int options_enable_var(char **argv, void *var)
+int options_enable_bool_var(char **argv, void *var)
 {
-    *((int *)var) = 1;
+    *((bool *)var) = true;
     return 0;
 }
 
-int options_disable_var(char **argv, void *var)
+int options_disable_bool_var(char **argv, void *var)
 {
-    *((int *)var) = 0;
+    *((bool *)var) = false;
     return 0;
 }
 
@@ -104,26 +104,26 @@ static const struct cmdline_options_s cmdline_options_common[] = {
 
 static const struct cmdline_options_s cmdline_options_audio_early[] = {
     { "-audio", 0,
-      options_enable_var, (void *)&opt_audio_enabled,
+      options_enable_bool_var, (void *)&opt_audio_enabled,
       NULL, "Enable audio" },
     { "-noaudio", 0,
-      options_disable_var, (void *)&opt_audio_enabled,
+      options_disable_bool_var, (void *)&opt_audio_enabled,
       NULL, "Disable audio" },
     { NULL, 0, NULL, NULL, NULL, NULL }
 };
 
 static const struct cmdline_options_s cmdline_options_audio[] = {
     { "-music", 0,
-      options_enable_var, (void *)&opt_music_enabled,
+      options_enable_bool_var, (void *)&opt_music_enabled,
       NULL, "Enable music" },
     { "-nomusic", 0,
-      options_disable_var, (void *)&opt_music_enabled,
+      options_disable_bool_var, (void *)&opt_music_enabled,
       NULL, "Disable music" },
     { "-sfx", 0,
-      options_enable_var, (void *)&opt_sfx_enabled,
+      options_enable_bool_var, (void *)&opt_sfx_enabled,
       NULL, "Enable SFX" },
     { "-nosfx", 0,
-      options_disable_var, (void *)&opt_sfx_enabled,
+      options_disable_bool_var, (void *)&opt_sfx_enabled,
       NULL, "Disable SFX" },
     { "-musicvol", 1,
       options_set_int_var, (void *)&opt_music_volume,
@@ -139,10 +139,10 @@ static const struct cmdline_options_s cmdline_options_audio[] = {
       "MS", "Set max audio slice size (ms)" },
 #ifdef HAVE_SAMPLERATE
     { "-libsr", 0,
-      options_enable_var, (void *)&opt_use_libsamplerate,
+      options_enable_bool_var, (void *)&opt_use_libsamplerate,
       NULL, "Use libsamplerate" },
     { "-nolibsr", 0,
-      options_disable_var, (void *)&opt_use_libsamplerate,
+      options_disable_bool_var, (void *)&opt_use_libsamplerate,
       NULL, "Do not use libsamplerate" },
     { "-libsrscale", 1,
       options_set_int_var, (void *)&opt_libsamplerate_scale,
