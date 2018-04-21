@@ -6,6 +6,7 @@
 
 #ifdef IS_WINDOWS
 #include <windows.h>
+#include <io.h>
 #else
 #include <sys/stat.h>
 #include <sys/time.h>
@@ -24,7 +25,11 @@ const char *idstr_os = "unix";
 
 static int os_make_path(const char *path)
 {
+    if ((path == NULL) || ((path[0] == '.') && (path[1] == '\0'))) {
+        return 0;
+    }
 #ifdef IS_WINDOWS
+    return mkdir(path);
 #else
     if (access(path, F_OK)) {
         return mkdir(path, 0700);
