@@ -819,7 +819,10 @@ static void game_turn_move_ships(struct game_s *g)
             fleet_orbit_t *o;
             o = &(g->eto[r->owner].orbit[r->dest]);
             for (int j = 0; j < NUM_SHIPDESIGNS; ++j) {
-                o->ships[j] += r->ships[j];    /* BUG?: possible overflow */
+                uint32_t s;
+                s = o->ships[j] + r->ships[j];
+                SETMIN(s, game_num_limit_ships);
+                o->ships[j] = s;
             }
             util_table_remove_item_any_order(i, g->enroute, sizeof(fleet_enroute_t), g->enroute_num);
             --g->enroute_num;
