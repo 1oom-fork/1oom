@@ -13,6 +13,7 @@ extern int util_concat_buf(char *buf, int buflen, ...);
 extern int util_get_line(char *buf, int bufsize, FILE *f);
 extern void util_fname_split(const char *path, char **directory_out, char **name_out);
 extern int util_file_save(const char *name, const uint8_t *src, int size);
+extern uint8_t *util_file_load(const char *filename, uint32_t *len_out);
 extern void util_trim_whitespace(char *str);
 extern void util_str_tolower(char *str);
 extern bool util_parse_number(const char *str, uint32_t *val_ptr);
