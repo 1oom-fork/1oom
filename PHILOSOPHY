@@ -1,0 +1,90 @@
+(Much of this text is stolen/edited from Chocolate Doom.)
+
+1oom has been designed around a careful and deliberate philosophy that
+attempts to recreate the original (“Vanilla”) DOS executables for
+Master of Orion. This document describes some of that philosophy and
+the reasoning behind it.
+
+This document is descriptive, not proscriptive.
+
+# Vanilla behavior
+
+Ideally 1oom aims to recreate the behavior of the Vanilla binaries,
+but different aspects of Vanilla behavior are held to varying degrees
+of importance. It can be imagined as different “tiers”
+of compatibility:
+
+ * The game and gameplay itself is of central importance. Here, the
+   Vanilla behavior ought to be maintained as accurately as possible.
+   This includes the look, feel and sound.
+ * The surrounding aspects of the game that aren’t part of the central
+   gameplay experience can be extended as long as there’s a good
+   reason and Vanilla behavior is respected.
+
+“Vanilla” is defined as:
+
+ * Master of Orion v1.3.
+
+Compatibility with older versions of the DOS binaries or newer hacked
+binaries are out of scope.
+
+# Compatibility
+
+1oom aims to be compatible with Vanilla MOO1 in several different ways.
+Examples are:
+
+ * Data file compatibility: the original data files (LBX) are used.
+   No additional data files are required or provided.
+ * Bug compatibility: the aim is to emulate compatibility of the
+   original game down to bugs that were present in the DOS
+   executables. Most bugs are fixed, but the AI behaviour is
+   maintained as closely as possible.
+ * Savegame file compatibility: 1oom provides a tool to convert savegames
+   to/from Vanilla format.
+
+# Exceptions
+
+1oom differs from Vanilla MOO1 in a number of ways. Here are some
+examples of situations where changes are considered acceptable:
+
+ 1. Vanilla behavior can be broken that is harmful, eg. can damage the
+    player’s computer, or is just outright misleading. For example:
+
+    - Vanilla has crashes that force the user to reboot the machine.
+
+ 2. Supporting obsolete technology is not a goal: it’s considered
+    acceptable that 1oom does not support every type of hardware
+    from 1993. However, Chocolate Doom should aim to recreate
+    the functionality in a modern way. Examples of technologies that
+    aren’t supported are:
+
+    - No MS-DOS version.
+
+A good litmus test of when it’s acceptable to break from Vanilla
+behavior is to ask the question: “Although this is Vanilla behavior,
+is there anyone who would want this?”
+
+For example, emulating Vanilla bugs like the visplane overflow bug is
+something that is useful for people making Vanilla format maps. On the
+other hand, painstakingly emulating Vanilla Doom by starting with no
+sound or music by default is not helpful to anyone.
+
+# New features
+
+While 1oom recreates the Vanilla behaviour, it also extends it:
+
+ * The "classic" UI (1oom_classic_*) will always remain reasonably close to
+   the one in the DOS binaries, but alternative UIs are within the scope.
+ * The "classic" AI will always remain reasonably close to the one in the
+   DOS binaries, but alternative AIs are within the scope.
+ * Doom-like file patching is supported via PBX files.
+ * Multiplayer! (not yet)
+
+# Other philosophical aspects
+
+1oom aims for maximal portability. That includes running on many
+different CPUs, different operating systems and different devices
+(ie. not just a desktop machine with a keyboard and mouse).
+
+1oom is and will always remain Free Software. It will never
+include code that is not compatible with the GNU GPL.

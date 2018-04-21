@@ -1,0 +1,132 @@
+########
+# 1oom #
+########
+
+1oom is a clone of the classic DOS game "Master of Orion" (MicroProse, 1993).
+1oom is Free Software (GPLv2), see COPYING.
+
+This project is in a very early state and is missing the following:
+
+- help dialog
+- testing
+- documentation
+- polish
+
+
+1. Installation
+================
+
+1oom requires a copy of the Master of Orion (v1.3) LBX files.
+
+The LBX file can be in a different directory as the executable.
+You can also specify your own path by passing the command-line
+argument "-data <path>" when running 1oom.
+
+1.1. Windows
+-------------
+
+1oom will only check the directory of the executable.
+Simply copy the EXE and DLLs (if any) to your MOO1 directory.
+
+1.2 Linux
+----------
+
+1oom requires the following libraries:
+
+- SDL (libsdl1.2):
+http://www.libsdl.org
+- SDL_mixer (libsdl-mixer1.2):
+http://www.libsdl.org/projects/SDL_mixer/
+
+Also recommended:
+- libsamplerate
+http://www.mega-nerd.com/libsamplerate/
+
+Check your distribution's package manager or the library
+website on how to install them.
+
+The LBX files are first looked for in the directory specified with
+"-data <path>".
+
+According to the XDG standard, 1oom will also check the
+following directories:
+
+- $XDG_DATA_HOME/1oom
+- $XDG_DATA_DIRS/1oom
+
+Or if those variables aren't available:
+
+- ~/.local/share/1oom
+- /usr/share/1oom
+- .
+
+Choose whichever you prefer.
+
+
+2. Configuration
+=================
+
+1oom is configured via command-line arguments or editing the
+configuration file.
+
+2.1. User Directory
+--------------------
+
+1oom creates a User directory with all the user savegames and
+options in one of the following paths:
+
+- <game directory> (win32)
+- $XDG_CONFIG_HOME/1oom (Linux)
+- ~/.config/1oom (Linux)
+
+
+3. Development
+===============
+
+See INSTALL for more information.
+
+
+4. Executables
+===============
+
+1oom consists of a few executables:
+
+- 1oom_classic_sdl1 (the 1993 UI)
+- 1oom_cmdline      (proof of concept textual UI)
+- 1oom_lbxview_sdl1 (for viewing LBX files)
+- 1oom_pbxmake      (for creating PBX files)
+- 1oom_saveconv     (for converting save game files)
+
+See doc/ for more documentation.
+
+4.1. 1oom_classic_sdl1
+-----------------------
+
+Middle click or Ctrl-F10 to grab/ungrab input.
+Ctrl-Esc to quit (without saving).
+Ctrl-Plus/Minus to adjust sfx volume.
+Ctrl-Shift-Plus/Minus to adjust music volume.
+Otherwise it controls like the original.
+
+
+5. Acknowledgements
+====================
+
+Original game by Simtex Software, published 1993 by MicroProse.
+Thanks for the great game and fuckings for not releasing the source code.
+
+Thanks to Something Awful forum user Thotimx for the MOO1 LP which was a
+major inspiration in starting this project. Unfortunately the goon writes
+parenthesis without the leading space(such as here) like a retard, making the
+Le'ts Play [sic] a painful read.
+
+Thanks to
+http://www.shikadi.net/wiki/modding/index.php?title=XMI_Format&oldid=6874
+for the music format info.
+
+This README is based on the OpenXcom one, except s/folder/directory/g like a
+civilized person.
+
+Some code has been pilfered from Chocolate Doom and VICE.
+
+HACKING, PHILOSOPHY and CODE_OF_CONDUCT are based on Chocolate Doom.
