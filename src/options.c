@@ -5,12 +5,21 @@
 #include <string.h>
 
 #include "options.h"
+#include "cfg.h"
 #include "hw.h"
 #include "lib.h"
 #include "log.h"
 #include "main.h"
 #include "os.h"
 #include "ui.h"
+
+/* -------------------------------------------------------------------------- */
+/* local options */
+
+static const char *opt_configfilename_in = 0;   /* used only for the -c option */
+static char *opt_configfilename = 0;
+static bool opt_config_ro = false;
+static char *opt_datapath = 0;
 
 /* -------------------------------------------------------------------------- */
 /* global options */
@@ -30,6 +39,32 @@ bool opt_use_libsamplerate = true;
 int opt_libsamplerate_scale = 65;
 int opt_libsamplerate_mode = 1;
 #endif
+
+/* -------------------------------------------------------------------------- */
+
+static bool opt_cfg_set_datapath(void *var)
+{
+    LOG_DEBUG((1, "%s: '%s'\n", __func__, (const char *)var));
+    os_set_path_data((const char *)var);
+    return true;
+}
+
+const struct cfg_items_s opt_cfg_items[] = {
+    CFG_ITEM_STR("data_path", &opt_datapath, opt_cfg_set_datapath),
+    CFG_ITEM_BOOL("audio", &opt_audio_enabled),
+    CFG_ITEM_BOOL("music", &opt_music_enabled),
+    CFG_ITEM_BOOL("sfx", &opt_sfx_enabled),
+    CFG_ITEM_INT("music_volume", &opt_music_volume, 0),
+    CFG_ITEM_INT("sfx_volume", &opt_sfx_volume, 0),
+    CFG_ITEM_INT("audiorate", &opt_audiorate, 0),
+    CFG_ITEM_INT("audioslice_ms", &opt_audioslice_ms, 0),
+#ifdef HAVE_SAMPLERATE
+    CFG_ITEM_BOOL("use_libsamplerate", &opt_use_libsamplerate),
+    CFG_ITEM_INT("libsamplerate_scale", &opt_libsamplerate_scale, 0),
+    CFG_ITEM_INT("libsamplerate_mode", &opt_libsamplerate_mode, 0),
+#endif
+    CFG_ITEM_END
+};
 
 /* -------------------------------------------------------------------------- */
 
@@ -90,6 +125,16 @@ static const struct cmdline_options_s cmdline_options_early[] = {
       options_set_int_var, (void *)&opt_modebug,
       "LEVEL", "Set debug level" },
 #endif
+    { NULL, 0, NULL, NULL, NULL, NULL }
+};
+
+static const struct cmdline_options_s cmdline_options_cfg_early[] = {
+    { "-c", 1,
+      options_set_str_var, (void *)&opt_configfilename_in,
+      "FILE.TXT", "Set config filename" },
+    { "-cro", 0,
+      options_enable_bool_var, (void *)&opt_config_ro,
+      NULL, "Do not write a config file" },
     { NULL, 0, NULL, NULL, NULL, NULL }
 };
 
@@ -225,6 +270,7 @@ static const struct cmdline_options_s *find_option(const char *name, bool early,
 
     if (0
       || (o = find_option_do(name, cmdline_options_early))
+      || (main_use_cfg && (o = find_option_do(name, cmdline_options_cfg_early)))
       || (ui_use_audio && (o = find_option_do(name, cmdline_options_audio_early)))
       || (o = find_option_do(name, main_cmdline_options_early))
     ) {
@@ -302,7 +348,22 @@ static int options_parse_do(int argc, char **argv, bool early)
 
 int options_parse_early(int argc, char **argv)
 {
-    return options_parse_do(argc, argv, true);
+    int res;
+    /* parse options first to exit early on "-?" */
+    res = options_parse_do(argc, argv, true);
+    if ((!res) && main_use_cfg) {
+        if (opt_configfilename_in != 0) {
+            opt_configfilename = lib_stralloc(opt_configfilename_in);
+        } else {
+            opt_configfilename = cfg_cfgname();
+        }
+        if (cfg_load(opt_configfilename)) {
+            log_warning("Opt: problems loading config file '%s'\n", opt_configfilename);
+        }
+        /* parse options again to override configuration */
+        res = options_parse_do(argc, argv, true);
+    }
+    return res;
 }
 
 int options_parse(int argc, char **argv)
@@ -320,6 +381,9 @@ void options_show_usage(void)
     log_message_direct("Options:\n");
 
     lmax = get_options_w(cmdline_options_early, lmax);
+    if (main_use_cfg) {
+        lmax = get_options_w(cmdline_options_cfg_early, lmax);
+    }
     if (main_use_lbx) {
         lmax = get_options_w(cmdline_options_lbx, lmax);
     }
@@ -335,6 +399,9 @@ void options_show_usage(void)
     lmax = get_options_w(main_cmdline_options, lmax);
 
     show_options(cmdline_options_early, lmax);
+    if (main_use_cfg) {
+        show_options(cmdline_options_cfg_early, lmax);
+    }
     if (main_use_lbx) {
         show_options(cmdline_options_lbx, lmax);
     }
@@ -348,4 +415,25 @@ void options_show_usage(void)
     show_options(ui_cmdline_options, lmax);
     show_options(main_cmdline_options_early, lmax);
     show_options(main_cmdline_options, lmax);
+}
+
+void options_finish(void)
+{
+    if (opt_datapath) { /* from config file */
+        lib_free(opt_datapath);
+    }
+    opt_datapath = lib_stralloc(os_get_path_data());
+}
+
+void options_shutdown(bool save_config)
+{
+    if (main_use_cfg && save_config && opt_configfilename && (!opt_config_ro)) {
+        if (cfg_save(opt_configfilename) != 0) {
+            log_error("Opt: problems saving config file '%s'\n", opt_configfilename);
+        }
+    }
+    lib_free(opt_configfilename);
+    opt_configfilename = 0;
+    lib_free(opt_datapath);
+    opt_datapath = 0;
 }

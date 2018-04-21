@@ -18,6 +18,15 @@ bool hw_opt_fullscreen = false;
 
 /* -------------------------------------------------------------------------- */
 
+const struct cfg_items_s hw_cfg_items[] = {
+#ifndef IS_MSDOS
+    CFG_ITEM_BOOL("fs", &hw_opt_fullscreen),
+#endif
+    CFG_ITEM_END
+};
+
+/* -------------------------------------------------------------------------- */
+
 const struct cmdline_options_s hw_cmdline_options[] = {
 #ifndef IS_MSDOS
     { "-fs", 0,
