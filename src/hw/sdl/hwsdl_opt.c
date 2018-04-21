@@ -12,7 +12,7 @@
 
 /* -------------------------------------------------------------------------- */
 
-int hw_opt_fullscreen = HW_DEFAULT_FULLSCREEN;
+bool hw_opt_fullscreen = HW_DEFAULT_FULLSCREEN;
 int hw_opt_screen_winw = 0;
 int hw_opt_screen_winh = 0;
 int hw_opt_screen_fsw = 0;
@@ -33,10 +33,10 @@ int hw_opt_set_sdlmixer_sf(char **argv, void *var)
 
 const struct cmdline_options_s hw_cmdline_options[] = {
     { "-fs", 0,
-      options_enable_var, (void *)&hw_opt_fullscreen,
+      options_enable_bool_var, (void *)&hw_opt_fullscreen,
       NULL, "Enable fullscreen" },
     { "-window", 0,
-      options_disable_var, (void *)&hw_opt_fullscreen,
+      options_disable_bool_var, (void *)&hw_opt_fullscreen,
       NULL, "Use windowed mode" },
     { "-winw", 1,
       options_set_int_var, (void *)&hw_opt_screen_winw,
