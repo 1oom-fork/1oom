@@ -31,6 +31,9 @@ static int num_data_paths = 0;
 
 static int os_make_path(const char *path)
 {
+    if ((path == NULL) || ((path[0] == '.') && (path[1] == '\0'))) {
+        return 0;
+    }
     if (access(path, F_OK)) {
         return mkdir(path, 0700);
     }
