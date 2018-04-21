@@ -50,6 +50,8 @@ util_sources = \
     options.c \
     options.h \
     os.h \
+    pbx.c \
+    pbx.h \
     rnd.c \
     rnd.h \
     types.h \

@@ -48,6 +48,18 @@ const struct cfg_items_s game_cfg_items[] = {
     CFG_ITEM_END
 };
 
+bool game_str_patch(const char *strid, const char *patchstr, int i)
+{
+    /* ignore */
+    return true;
+}
+
+bool game_num_patch(const char *numid, int32_t *patchnums, int first, int num)
+{
+    /* ignore */
+    return true;
+}
+
 /* -------------------------------------------------------------------------- */
 
 #define UI_SCREEN_W 320

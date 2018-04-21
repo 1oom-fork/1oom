@@ -266,6 +266,11 @@ const struct cmdline_options_s main_cmdline_options[] = {
     { 0, 0, 0, 0, 0, 0 }
 };
 
+int pbx_add_file(const char *filename)
+{
+    return -1;
+}
+
 /* -------------------------------------------------------------------------- */
 
 static struct game_s game;
