@@ -89,6 +89,43 @@ int util_concat_buf(char *buf, int buflen, ...)
     return (len == tot_len) ? len : (len - tot_len);
 }
 
+/* Input one line from the file descriptor `f'.  FIXME: we need something
+   better, like GNU `getline()'.  */
+int util_get_line(char *buf, int bufsize, FILE *f)
+{
+    char *r;
+    size_t len;
+
+    r = fgets(buf, bufsize, f);
+
+    if (r == NULL) {
+        return -1;
+    }
+
+    len = strlen(buf);
+
+    if (len > 0) {
+        char *p;
+
+        /* Remove trailing newline characters.  */
+        /* Remove both 0x0a and 0x0d characters, this solution makes it */
+        /* work on all target platforms: Unixes, Win32, DOS, and even for MAC */
+        while ((len > 0) && ((*(buf + len - 1) == 0x0d) || (*(buf + len - 1) == 0x0a))) {
+            len--;
+        }
+
+        /* Remove useless spaces.  */
+        while ((len > 0) && (*(buf + len - 1) == ' ')) {
+            len--;
+        }
+        for (p = buf; *p == ' '; p++, len--);
+        memmove(buf, p, len + 1);
+        *(buf + len) = '\0';
+    }
+
+    return (int)len;
+}
+
 /* Split `path' into a file name and a directory component.  Unlike
    the MS-DOS `fnsplit', the directory does not have a trailing '/'.  */
 void util_fname_split(const char *path, char **dir_out, char **name_out)
