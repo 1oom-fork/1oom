@@ -1,0 +1,19 @@
+########
+# 1oom #
+########
+
+You'll need make, a C99 compiler and SDL 1.2 development libraries.
+    aptitude install libsdl1.2-dev libsdl-mixer1.2-dev
+
+For better audio quality, also get libsamplerate.
+    aptitude install libsamplerate-dev
+
+OpenGL libraries are highly recommended.
+
+If you checked this out with git, do this first:
+    autoreconf -fi
+
+Then the usual:
+    ./configure && make
+
+!!! You need the data files from the original Master of Orion to run 1oom. !!!
