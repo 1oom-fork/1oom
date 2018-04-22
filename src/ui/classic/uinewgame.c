@@ -45,7 +45,6 @@ struct new_game_data_s {
     uint8_t *gfx_custom;
     uint8_t *gfx_flag[BANNER_NUM];
     uint8_t *gfx_portrait[RACE_NUM];
-    struct gfx_aux_s aux_banner;
     char *str_tbl_2space_race[RACE_NUM + 2];
     char *str_tbl_2space_banner[BANNER_NUM + 2];
 };
@@ -66,7 +65,6 @@ static void new_game_load_data(struct new_game_data_s *d)
     for (int i = 0; i < RACE_NUM; ++i) {
         d->gfx_portrait[i] = lbxfile_item_get(LBXFILE_VORTEX, 0x10 + i, 0);
     }
-    d->aux_banner.data = 0;
     for (int i = 0; i < RACE_NUM + 1; ++i) {
         d->str_tbl_2space_race[i] = util_concat("  ", game_str_tbl_race[i], NULL);
     }
@@ -94,7 +92,6 @@ static void new_game_free_data(struct new_game_data_s *d)
         lib_free(d->str_tbl_2space_race[i]);
     }
     lib_free(d->str_tbl_2space_race[RACE_NUM + 1]);
-    gfx_aux_free(&d->aux_banner);
 }
 
 static void new_game_draw_cb1(void *vptr)
@@ -135,8 +132,8 @@ static void new_game_draw_banner_cb(void *vptr)
     ui_draw_box1(0x5a, 0x35, 0x83, 0x5a, 0x9b, 0x9b);
     if (d->selected < BANNER_NUM) {
         lbxgfx_set_new_frame(d->gfx_flag[d->selected], d->frame);
-        gfx_aux_draw_frame_to(d->gfx_flag[d->selected], &d->aux_banner);
-        gfx_aux_draw_frame_from(0x5b, 0x38, &d->aux_banner, UI_SCREEN_W);
+        gfx_aux_draw_frame_to(d->gfx_flag[d->selected], &ui_data.aux.screen);
+        gfx_aux_draw_frame_from(0x5b, 0x38, &ui_data.aux.screen, UI_SCREEN_W);
     }
     if (++d->frame == 0xa) {
         d->frame = 0;
