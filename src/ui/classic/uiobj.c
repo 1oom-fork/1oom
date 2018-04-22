@@ -16,6 +16,7 @@
 #include "uidefs.h"
 #include "uidelay.h"
 #include "uidraw.h"
+#include "uihelp.h"
 #include "uipal.h"
 
 /* -------------------------------------------------------------------------- */
@@ -1268,7 +1269,15 @@ static int16_t uiobj_handle_input_sub0(void)
         }
         /* checks for F11 and F12 debug keys omitted */
         if (KBD_GET_KEY(key) == MOO_KEY_F1) {
-            log_warning("%s: unimpl f1\n", __func__);
+            if (uiobj_help_id != -1) {
+                int id;
+                id = uiobj_help_id;
+                oi = uiobj_at_cursor();
+                if ((oi != 0) && (uiobj_tbl[oi].helpid != -1)) {
+                    id = uiobj_tbl[oi].helpid;
+                }
+                ui_help(id);
+            }
             return 0;
         }
         if (KBD_GET_KEYMOD(key) == MOO_KEY_ESCAPE) {
