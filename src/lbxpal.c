@@ -1,6 +1,7 @@
 #include "config.h"
 
 #include <string.h>
+#include <stdlib.h>
 
 #include "lbxpal.h"
 #include "hw.h"
@@ -196,6 +197,27 @@ void lbxpal_build_colortables(void)
         p = lbxpal_ctableparam + i * 4;
         lbxpal_build_colortable(i, p[0], p[1], p[2], p[3]);
     }
+}
+
+uint8_t lbxpal_find_closest(uint8_t r, uint8_t g, uint8_t b)
+{
+    uint8_t min_c = 0;
+    int min_dist = 10000;
+    uint8_t *p = lbxpal_palette;
+    for (int i = 0; i < 256; ++i) {
+        int dist;
+        dist = abs(r - *p++);
+        dist += abs(g - *p++);
+        dist += abs(b - *p++);
+        if (dist < min_dist) {
+            min_dist = dist;
+            min_c = i;
+            if (dist == 0) {
+                break;
+            }
+        }
+    }
+    return min_c;
 }
 
 int lbxpal_init(void)
