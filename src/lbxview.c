@@ -25,6 +25,10 @@
 
 /* -------------------------------------------------------------------------- */
 
+static const char *lbxview_font_filename = 0;
+
+/* -------------------------------------------------------------------------- */
+
 const char *idstr_main = "lbxview";
 
 bool main_use_lbx = true;
@@ -38,10 +42,14 @@ const struct cmdline_options_s main_cmdline_options_early[] = {
 };
 
 const struct cmdline_options_s main_cmdline_options[] = {
+    { "-font", 1,
+      options_set_str_var, (void *)&lbxview_font_filename,
+      "FONT.BIN", "Set 8x8 font filename" },
     { NULL, 0, NULL, NULL, NULL, NULL }
 };
 
 const struct cfg_items_s game_cfg_items[] = {
+    CFG_ITEM_STR("font", &lbxview_font_filename, 0),
     CFG_ITEM_END
 };
 
@@ -354,21 +362,41 @@ static void do_lbx_sound(uint32_t k)
 static int loadfont(void)
 {
     FILE *fd;
-    char *fname;
+    bool is_default;
+    const char *fname;
+    char *fnamealloc = 0;
     int res = -1;
-    fname = util_concat(os_get_path_data(), FSDEV_DIR_SEP_STR, "romfont.bin", NULL);
+    if (!lbxview_font_filename) {
+        fnamealloc = util_concat(os_get_path_data(), FSDEV_DIR_SEP_STR, "romfont.bin", NULL);
+        fname = fnamealloc;
+        is_default = true;
+    } else {
+        fname = lbxview_font_filename;
+        is_default = false;
+    }
     log_message("Load font '%s'\n", fname);
     fd = fopen(fname, "rb");
     if (fd && (fread(romfont_08, 256 * 8, 1, fd) == 1)) {
         res = 0;
     } else {
-        log_error("loading font '%s'. Put a 8x8 1bpp font (2048 bytes) there to use this program.\n", fname);
+        log_error("loading font '%s'!\n", fname);
+        if (is_default) {
+            log_message("!! You need a 8x8 1bpp font (2048 bytes) file to use this program.\n"
+                        "!! If you have one ready elsewhere, use -font <file> to use it.\n"
+                        "!! If you have DOSBox and base64;\n"
+                        "!! 1) Generate a font dumper:  (source in doc/fontdump.asm)\n"
+                        "!!  echo uDARtwPNEAa6MwExybQ8zSFyGonDuQAIieoftEDNIXIMOch1CLQ+zSGwAHMCsAG0TM0hci5iaW4A | base64 -d > fontdump.com\n"
+                        "!! 2) Run fontdump.com in DOSBox to generate the font file r.bin.\n"
+                        "!! 3) Run lbxview again with -font r.bin\n"
+                       );
+        }
     }
     if (fd) {
         fclose(fd);
         fd = NULL;
     }
-    lib_free(fname);
+    lib_free(fnamealloc);
+    fnamealloc = NULL;
     fname = NULL;
     return res;
 }
