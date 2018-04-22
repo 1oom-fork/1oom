@@ -112,6 +112,7 @@ typedef struct uiobj_s {
 /* -------------------------------------------------------------------------- */
 
 static uint16_t uiobj_table_num = 0;
+static uint16_t uiobj_table_num_old = 0;
 static int16_t uiobj_hmm1_oi = -1;
 static int16_t uiobj_hmm2_oi = 0;
 static int uiobj_hmm3_xoff = 1;
@@ -1530,6 +1531,21 @@ void uiobj_table_set_last(int16_t oi)
 {
     uiobj_table_num = oi + 1;
     uiobj_hmm1_oi = -1;
+}
+
+void uiobj_table_num_store(void)
+{
+    uiobj_table_num_old = uiobj_table_num;
+    uiobj_table_num = 0;
+    uiobj_flag_have_cb = false;
+}
+
+void uiobj_table_num_restore(void)
+{
+    uiobj_table_num = uiobj_table_num_old;
+    if (uiobj_callback) {
+        uiobj_flag_have_cb = true;
+    }
 }
 
 void uiobj_handle_hmm1(void)
