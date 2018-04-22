@@ -16,6 +16,7 @@
 #include "uidefs.h"
 #include "uidelay.h"
 #include "uidraw.h"
+#include "uihelp.h"
 #include "uipal.h"
 
 /* -------------------------------------------------------------------------- */
@@ -44,8 +45,8 @@ typedef struct uiobj_s {
         t7: mousearea or inputkey
         t8: altstr
     */
-    /*08*/ uint16_t type;
-    /*0a*/ int16_t z0a;
+    /*08*/ uint8_t type;
+    /*0a*/ int8_t helpid;
     /*1a*/ int16_t *vptr;
     /*24*/ uint32_t key;
     union {
@@ -108,7 +109,6 @@ typedef struct uiobj_s {
         } tb;
 #if 0
         struct {
-            /*0a*/ int16_t z0a;
             /*0c*/ uint16_t z0c;
             /*0e*/ uint16_t z0e;
             /*10*/ uint16_t z10;
@@ -129,6 +129,7 @@ typedef struct uiobj_s {
 /* -------------------------------------------------------------------------- */
 
 static uint16_t uiobj_table_num = 0;
+static uint16_t uiobj_table_num_old = 0;
 static int16_t uiobj_hmm1_oi = -1;
 static int16_t uiobj_hmm2_oi = 0;
 static int uiobj_hmm3_xoff = 1;
@@ -164,7 +165,7 @@ int uiobj_maxy = UI_SCREEN_H - 1;
 #define DEBUGLEVEL_UIOBJ    1
 static void dump_uiobj_p(uiobj_t *p)
 {
-    LOG_DEBUG((DEBUGLEVEL_UIOBJ, "i:%i xy:%i-%i,%i-%i t:%x key:%05x(%c) z0a:%i vptr:%i*:%i ", (p - uiobj_tbl), p->x0, p->x1, p->y0, p->y1, p->type, p->key, (p->key >= 0x20 && p->key < 0x7e) ? p->key : '.', p->z0a, p->vptr ? 0 : 1, p->vptr ? *p->vptr : 0));
+    LOG_DEBUG((DEBUGLEVEL_UIOBJ, "i:%i xy:%i-%i,%i-%i t:%x key:%05x(%c) helpid:%i vptr:%i*:%i ", (p - uiobj_tbl), p->x0, p->x1, p->y0, p->y1, p->type, p->key, (p->key >= 0x20 && p->key < 0x7e) ? p->key : '.', p->helpid, p->vptr ? 0 : 1, p->vptr ? *p->vptr : 0));
     switch (p->type) {
         case 0:
         case 1:
@@ -1402,7 +1403,15 @@ static int16_t uiobj_handle_input_sub0(void)
         /*loc_1364a;*/
         /* checks for F11 and F12 debug keys omitted */
         if (KBD_GET_KEY(key) == MOO_KEY_F1) {
-            log_warning("%s: unimpl f1\n", __func__);
+            if (uiobj_help_id != -1) {
+                int id;
+                id = uiobj_help_id;
+                oi = uiobj_at_cursor();
+                if ((oi != 0) && (uiobj_tbl[oi].helpid != -1)) {
+                    id = uiobj_tbl[oi].helpid;
+                }
+                ui_help(id);
+            }
             return 0;
         }
         if (KBD_GET_KEYMOD(key) == MOO_KEY_ESCAPE) {
@@ -1666,7 +1675,7 @@ static int16_t uiobj_handle_input_sub0(void)
     return 0;
 }
 
-static void uiobj_add_t03_do(uint16_t x, uint16_t y, const char *str, uint8_t *lbxdata, mookey_t key, int16_t aa)
+static void uiobj_add_t03_do(uint16_t x, uint16_t y, const char *str, uint8_t *lbxdata, mookey_t key, int8_t helpid)
 {
     uiobj_t *p = &uiobj_tbl[uiobj_table_num];
     p->x0 = x;
@@ -1676,7 +1685,7 @@ static void uiobj_add_t03_do(uint16_t x, uint16_t y, const char *str, uint8_t *l
     p->t0.str = str;
     p->t0.fontnum = lbxfont_get_current_fontnum();
     p->t0.fonta2 = lbxfont_get_current_fonta2();
-    p->z0a = aa;
+    p->helpid = helpid;
     p->t0.lbxdata = lbxdata;
     p->t0.indep = lbxgfx_get_indep(lbxdata);
     p->key = key;
@@ -1695,6 +1704,21 @@ void uiobj_table_set_last(int16_t oi)
 {
     uiobj_table_num = oi + 1;
     uiobj_hmm1_oi = -1;
+}
+
+void uiobj_table_num_store(void)
+{
+    uiobj_table_num_old = uiobj_table_num;
+    uiobj_table_num = 0;
+    uiobj_flag_have_cb = false;
+}
+
+void uiobj_table_num_restore(void)
+{
+    uiobj_table_num = uiobj_table_num_old;
+    if (uiobj_callback) {
+        uiobj_flag_have_cb = true;
+    }
 }
 
 void uiobj_handle_hmm1(void)
@@ -1877,44 +1901,44 @@ int16_t uiobj_at_cursor(void)
     return i;
 }
 
-int16_t uiobj_add_t0(uint16_t x, uint16_t y, const char *str, uint8_t *lbxdata, mookey_t key, int16_t aa)
+int16_t uiobj_add_t0(uint16_t x, uint16_t y, const char *str, uint8_t *lbxdata, mookey_t key, int8_t helpid)
 {
     uiobj_t *p = &uiobj_tbl[uiobj_table_num];
-    uiobj_add_t03_do(x, y, str, lbxdata, key, aa);
+    uiobj_add_t03_do(x, y, str, lbxdata, key, helpid);
     p->type = 0;
     p->vptr = 0;
     return UIOBJI_ALLOC();
 }
 
-int16_t uiobj_add_t1(uint16_t x, uint16_t y, const char *str, uint8_t *lbxdata, int16_t *vptr, mookey_t key, int16_t aa)
+int16_t uiobj_add_t1(uint16_t x, uint16_t y, const char *str, uint8_t *lbxdata, int16_t *vptr, mookey_t key, int8_t helpid)
 {
     uiobj_t *p = &uiobj_tbl[uiobj_table_num];
-    uiobj_add_t03_do(x, y, str, lbxdata, key, aa);
+    uiobj_add_t03_do(x, y, str, lbxdata, key, helpid);
     p->type = 1;
     p->vptr = vptr;
     return UIOBJI_ALLOC();
 }
 
-int16_t uiobj_add_t2(uint16_t x, uint16_t y, const char *str, uint8_t *lbxdata, int16_t *vptr, mookey_t key, int16_t aa)
+int16_t uiobj_add_t2(uint16_t x, uint16_t y, const char *str, uint8_t *lbxdata, int16_t *vptr, mookey_t key, int8_t helpid)
 {
     uiobj_t *p = &uiobj_tbl[uiobj_table_num];
-    uiobj_add_t03_do(x, y, str, lbxdata, key, aa);
+    uiobj_add_t03_do(x, y, str, lbxdata, key, helpid);
     p->type = 2;
     p->vptr = vptr;
     return UIOBJI_ALLOC();
 }
 
-int16_t uiobj_add_t3(uint16_t x, uint16_t y, const char *str, uint8_t *lbxdata, int16_t *vptr, int16_t z18, mookey_t key, int16_t aa)
+int16_t uiobj_add_t3(uint16_t x, uint16_t y, const char *str, uint8_t *lbxdata, int16_t *vptr, int16_t z18, mookey_t key, int8_t helpid)
 {
     uiobj_t *p = &uiobj_tbl[uiobj_table_num];
-    uiobj_add_t03_do(x, y, str, lbxdata, key, aa);
+    uiobj_add_t03_do(x, y, str, lbxdata, key, helpid);
     p->type = 3;
     p->vptr = vptr;
     p->t0.z18 = z18;
     return UIOBJI_ALLOC();
 }
 
-int16_t uiobj_add_t4(int x, int y, int w, char *buf, uint16_t buflen, uint8_t rcolor, bool alignr, uint16_t z1e, const uint8_t *colortbl, mookey_t key, int16_t z0a)
+int16_t uiobj_add_t4(int x, int y, int w, char *buf, uint16_t buflen, uint8_t rcolor, bool alignr, uint16_t z1e, const uint8_t *colortbl, mookey_t key, int8_t helpid)
 {
     uiobj_t *p = &uiobj_tbl[uiobj_table_num];
     p->x0 = x;
@@ -1931,13 +1955,13 @@ int16_t uiobj_add_t4(int x, int y, int w, char *buf, uint16_t buflen, uint8_t rc
     p->t4.z1e = z1e;
     p->t4.colortbl = colortbl;
     p->type = 4;
-    p->z0a = z0a;
+    p->helpid = helpid;
     p->vptr = 0;
     p->key = key;
     return UIOBJI_ALLOC();
 }
 
-int16_t uiobj_add_slider(uint16_t x0, uint16_t y0, uint16_t vmin, uint16_t vmax, uint16_t fmin, uint16_t fmax, uint16_t w, uint16_t h, int16_t *vptr, mookey_t key, int16_t aa)
+int16_t uiobj_add_slider(uint16_t x0, uint16_t y0, uint16_t vmin, uint16_t vmax, uint16_t fmin, uint16_t fmax, uint16_t w, uint16_t h, int16_t *vptr, mookey_t key, int8_t helpid)
 {
     uiobj_t *p = &uiobj_tbl[uiobj_table_num];
     p->x0 = x0;
@@ -1950,13 +1974,13 @@ int16_t uiobj_add_slider(uint16_t x0, uint16_t y0, uint16_t vmin, uint16_t vmax,
     p->t6.fmax = fmax;
     p->t6.vertical = (h > w);
     p->type = 6;
-    p->z0a = aa;
+    p->helpid = helpid;
     p->vptr = vptr;
     p->key = key;
     return UIOBJI_ALLOC();
 }
 
-int16_t uiobj_add_mousearea(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, mookey_t key, int16_t aa)
+int16_t uiobj_add_mousearea(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, mookey_t key, int8_t helpid)
 {
     uiobj_t *p = &uiobj_tbl[uiobj_table_num];
     p->x0 = x0;
@@ -1964,13 +1988,13 @@ int16_t uiobj_add_mousearea(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, 
     p->x1 = x1;
     p->y1 = y1;
     p->type = 7;
-    p->z0a = aa;
+    p->helpid = helpid;
     p->vptr = 0;
     p->key = key;
     return UIOBJI_ALLOC();
 }
 
-int16_t uiobj_add_mousearea_limited(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, mookey_t key, int16_t aa)
+int16_t uiobj_add_mousearea_limited(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, mookey_t key, int8_t helpid)
 {
     if ((x1 < uiobj_minx) || (x0 > uiobj_maxx) || (y1 < uiobj_miny) || (y0 > uiobj_maxy)) {
         return UIOBJI_OUTSIDE;
@@ -1979,7 +2003,7 @@ int16_t uiobj_add_mousearea_limited(uint16_t x0, uint16_t y0, uint16_t x1, uint1
     x1 = MIN(x1, uiobj_maxx);
     y0 = MAX(y0, uiobj_miny);
     y1 = MIN(y1, uiobj_maxy);
-    return uiobj_add_mousearea(x0, y0, x1, y1, key, aa);
+    return uiobj_add_mousearea(x0, y0, x1, y1, key, helpid);
 }
 
 int16_t uiobj_add_inputkey(mookey_t key)
@@ -1990,7 +2014,7 @@ int16_t uiobj_add_inputkey(mookey_t key)
     p->x1 = UIOBJ_OFFSCREEN;
     p->y1 = UIOBJ_OFFSCREEN;
     p->type = 7;
-    p->z0a = -1;
+    p->helpid = -1;
     p->vptr = 0;
     p->key = key;
     return UIOBJI_ALLOC();
@@ -2005,7 +2029,7 @@ int16_t uiobj_add_alt_str(const char *str)
     p->x1 = UIOBJ_OFFSCREEN;
     p->y1 = UIOBJ_OFFSCREEN;
     p->type = 8;
-    p->z0a = -1;
+    p->helpid = -1;
     p->vptr = 0;
     p->t8.str = str;
     p->t8.pos = 0;
@@ -2020,7 +2044,7 @@ int16_t uiobj_add_alt_str(const char *str)
     return UIOBJI_ALLOC();
 }
 
-int16_t uiobj_add_ta(uint16_t x, uint16_t y, uint16_t w, const char *str, bool z12, int16_t *vptr, int16_t z18, uint16_t subtype, uint8_t *sp0p, uint16_t sp0v, uint16_t sp1, uint16_t sp2, uint16_t sp3, mookey_t key, int16_t aa)
+int16_t uiobj_add_ta(uint16_t x, uint16_t y, uint16_t w, const char *str, bool z12, int16_t *vptr, int16_t z18, uint16_t subtype, uint8_t *sp0p, uint16_t sp0v, uint16_t sp1, uint16_t sp2, uint16_t sp3, mookey_t key, int8_t helpid)
 {
     uiobj_t *p = &uiobj_tbl[uiobj_table_num];
     p->x0 = x;
@@ -2040,13 +2064,13 @@ int16_t uiobj_add_ta(uint16_t x, uint16_t y, uint16_t w, const char *str, bool z
     p->ta.sp2 = sp2;
     p->ta.sp3 = sp3;
     p->type = 0xa;
-    p->z0a = aa;
+    p->helpid = helpid;
     p->vptr = vptr;
     p->key = key;
     return UIOBJI_ALLOC();
 }
 
-int16_t uiobj_add_tb(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t xscale, uint16_t yscale, uint16_t *xptr, uint16_t *yptr, int16_t aa)
+int16_t uiobj_add_tb(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t xscale, uint16_t yscale, uint16_t *xptr, uint16_t *yptr, int8_t helpid)
 {
     uiobj_t *p = &uiobj_tbl[uiobj_table_num];
     p->x0 = x;
@@ -2058,7 +2082,7 @@ int16_t uiobj_add_tb(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t xs
     p->tb.xptr = xptr;
     p->tb.yptr = yptr;
     p->type = 0xb;
-    p->z0a = aa;
+    p->helpid = helpid;
     p->vptr = 0;
     p->key = MOO_KEY_UNKNOWN;
     return UIOBJI_ALLOC();
@@ -2085,7 +2109,7 @@ void uiobj_ta_set_val_1(int16_t oi)
     }
 }
 
-int16_t uiobj_select_from_list1(int x, int y, int w, const char *title, char const * const *strtbl, int16_t *selptr, const bool *condtbl, uint16_t subtype, uint8_t *sp0p, uint16_t sp0v, uint16_t sp1, uint16_t sp2, uint16_t sp3, int16_t aa)
+int16_t uiobj_select_from_list1(int x, int y, int w, const char *title, char const * const *strtbl, int16_t *selptr, const bool *condtbl, uint16_t subtype, uint8_t *sp0p, uint16_t sp0v, uint16_t sp1, uint16_t sp2, uint16_t sp3, int8_t helpid)
 {
     int h, dy, ty = y, di = -1;
     bool flag_done = false, toz12, flag_copy_buf = false;
@@ -2117,7 +2141,7 @@ int16_t uiobj_select_from_list1(int x, int y, int w, const char *title, char con
         } else {
             toz12 = condtbl[itemi];
         }
-        uiobj_add_ta(x, ty, w, *s, toz12, selptr, itemi, subtype, sp0p, sp0v, sp1, sp2, sp3, MOO_KEY_UNKNOWN, aa);
+        uiobj_add_ta(x, ty, w, *s, toz12, selptr, itemi, subtype, sp0p, sp0v, sp1, sp2, sp3, MOO_KEY_UNKNOWN, helpid);
         ++itemi;
         ++s;
     }
@@ -2176,7 +2200,7 @@ int16_t uiobj_select_from_list1(int x, int y, int w, const char *title, char con
     return oi - 1;
 }
 
-int16_t uiobj_select_from_list2(int x, int y, int w, const char *title, char const * const *strtbl, int16_t *selptr, const bool *condtbl, int linenum, int upx, int upy, uint8_t *uplbx, int dnx, int dny, uint8_t *dnlbx, uint16_t subtype, uint8_t *sp0p, uint16_t sp0v, uint16_t sp1, uint16_t sp2, uint16_t sp3, int16_t aa)
+int16_t uiobj_select_from_list2(int x, int y, int w, const char *title, char const * const *strtbl, int16_t *selptr, const bool *condtbl, int linenum, int upx, int upy, uint8_t *uplbx, int dnx, int dny, uint8_t *dnlbx, uint16_t subtype, uint8_t *sp0p, uint16_t sp0v, uint16_t sp1, uint16_t sp2, uint16_t sp3, int8_t helpid)
 {
     int h, dy, ty, linei = 0, itemi = 0, itemnum, itemoffs, foundi = 0;
     bool flag_done = false, flag_copy_buf = false, flag_found = false;
@@ -2225,7 +2249,7 @@ int16_t uiobj_select_from_list2(int x, int y, int w, const char *title, char con
     }
     s = &strtbl[itemoffs];
     for (itemi = itemoffs; (itemi < itemnum) && (linei < linenum); ++itemi, ++linei, ++s, ty += dy) {
-        uiobj_add_ta(x, ty, w, *s, (!condtbl) || condtbl[itemi], selptr, itemi, subtype, sp0p, sp0v, sp1, sp2, sp3, MOO_KEY_UNKNOWN, aa);
+        uiobj_add_ta(x, ty, w, *s, (!condtbl) || condtbl[itemi], selptr, itemi, subtype, sp0p, sp0v, sp1, sp2, sp3, MOO_KEY_UNKNOWN, helpid);
     }
 
     if ((*selptr < 0) || (*selptr >= itemnum)) {
@@ -2322,7 +2346,7 @@ int16_t uiobj_select_from_list2(int x, int y, int w, const char *title, char con
             linei = 0;
             ty = y + dy;
             for (itemi = itemoffs; (itemi < itemnum) && (linei < linenum); ++itemi, ++linei, ++s, ty += dy) {
-                uiobj_add_ta(x, ty, w, *s, (!condtbl) || condtbl[itemi], selptr, itemi, subtype, sp0p, sp0v, sp1, sp2, sp3, MOO_KEY_UNKNOWN, aa);
+                uiobj_add_ta(x, ty, w, *s, (!condtbl) || condtbl[itemi], selptr, itemi, subtype, sp0p, sp0v, sp1, sp2, sp3, MOO_KEY_UNKNOWN, helpid);
             }
             lbxfont_select(lbxfont_get_current_fontnum(), lbxfont_get_current_fonta2(), fonta4, 0);
             oi_title = uiobj_add_ta(x, y, w, title, false, &v18, 1, 0, 0, 0, 0, 0, 0, MOO_KEY_UNKNOWN, uiobj_help_id);
@@ -2360,7 +2384,7 @@ int16_t uiobj_select_from_list2(int x, int y, int w, const char *title, char con
     return oi + itemoffs - 1;
 }
 
-bool uiobj_read_str(int x, int y, int w, char *buf, int buflen, uint8_t rcolor, bool alignr, uint16_t z1e, const uint8_t *ctbl, int16_t z0a)
+bool uiobj_read_str(int x, int y, int w, char *buf, int buflen, uint8_t rcolor, bool alignr, uint16_t z1e, const uint8_t *ctbl, int8_t helpid)
 {
     char strbuf[64];
     uint16_t fonth, v4 = 0, vc = 0, va;
@@ -2379,7 +2403,7 @@ bool uiobj_read_str(int x, int y, int w, char *buf, int buflen, uint8_t rcolor, 
     }
     uiobj_set_downcount(1);
     {
-        int16_t oi = uiobj_add_t4(x, y, w, buf, buflen, rcolor, alignr, z1e, ctbl, MOO_KEY_UNKNOWN, z0a);
+        int16_t oi = uiobj_add_t4(x, y, w, buf, buflen, rcolor, alignr, z1e, ctbl, MOO_KEY_UNKNOWN, helpid);
         uiobj_hmm1_oi = oi;
         p = &uiobj_tbl[oi];
     }
