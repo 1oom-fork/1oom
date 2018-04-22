@@ -11,10 +11,10 @@ offset  sz  description
             - 0: gfx
             - 1: sound (introsnd.lbx, music.lbx, snddrv.lbx)
             - 2: fonts, palette (fonts.lbx)
-            - 3: ? (help.lbx)
-            - 5: data table
+            - 3: data table (help.lbx)
+            - 5: data table (firing.lbx, research.lbx, ...)
 8+4*I   4   offset to item I data start (data ends at next I start)
-200+32*I 32 name/description of item I
+200+20*I 32 name/description of item I
 
 
 
@@ -200,6 +200,33 @@ offset  sz  description
 0       2   num entries (60)
 2       2   entry size (20)
 4       6*10*20 the names
+
+
+help.lbx entry 0: help
+
+offset  sz  description
+0       2   item num N = 0x28
+2       2   item size S = 0x5f8
+4       N*S help item
+
+help.lbx entry 0: help item (size 0x5f8)
+
+offset  sz  description
+0       16  filename ("MAINMOVE.FLI") ; unused
+10      2   ? if < 3 uses string table
+12      26  description ; unused
+2c      12*2    x
+44      12*2    y
+5c      12*2    width
+74      12*2    line x
+8c      12*2    line y
+a4      12*2    line type : 0=none,1=?,2=?
+bc      40  text string 0
+e4      314 text string 1
+21e     40  text string 2 ; used if offs 0x10 >= 3
+246     314 text string 3 ; used if offs 0x10 >= 3
+380     9*70    text string table  ; used if offs 0x10 < 3
+5f6     2   next help item to display (or 0 for none)
 
 
 sound data
