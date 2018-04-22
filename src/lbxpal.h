@@ -22,5 +22,6 @@ extern void lbxpal_set_palette(uint8_t *pal, int first, int num);
 extern void lbxpal_set_update_range(int from, int to);
 extern void lbxpal_update(void);
 extern void lbxpal_build_colortables(void);
+extern uint8_t lbxpal_find_closest(uint8_t r, uint8_t g, uint8_t b);
 
 #endif
