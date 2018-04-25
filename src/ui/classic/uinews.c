@@ -137,7 +137,7 @@ static void ui_news_draw_start_anim(void)
 
 void ui_news_won(bool flag_good)
 {
-    bool flag_skip = false, flag_hmm;
+    bool flag_skip = false, flag_fade;
     struct news_data_s d;
     struct news_s ns;
 
@@ -158,7 +158,7 @@ void ui_news_won(bool flag_good)
     uiobj_set_downcount(1);
     uiobj_set_callback_and_delay(ui_news_cb1, &d, 3);
 
-    flag_hmm = true;
+    flag_fade = true;
     d.frame = 0;
     for (int i = 0; (i < 0x46) && !flag_skip; ++i) {
         int16_t oi;
@@ -170,12 +170,12 @@ void ui_news_won(bool flag_good)
         }
         ui_news_cb1(&d);
         ui_delay_ticks_or_click(3);
-        if (flag_hmm) {
+        if (flag_fade) {
             /*ui_news_sub2(); FIXME TODO */
         } else {
             ui_draw_finish();
         }
-        flag_hmm = false;
+        flag_fade = false;
     }
 
     hw_audio_music_fadeout();
@@ -185,7 +185,7 @@ void ui_news_won(bool flag_good)
 
 void ui_news(struct game_s *g, struct news_s *ns)
 {
-    bool flag_skip = false, flag_hmm;
+    bool flag_skip = false, flag_fade;
     struct news_data_s d;
     d.ns = ns;
     if (!ui_data.news.flag_also) {
@@ -194,7 +194,7 @@ void ui_news(struct game_s *g, struct news_s *ns)
         }
         ui_draw_finish_mode = 2;
         ui_news_draw_start_anim();
-        flag_hmm = true;
+        flag_fade = true;
     } else {
         d.str = game_str_gnn_also;
         for (int i = 0; (i < 5) && !flag_skip; ++i) {
@@ -210,7 +210,7 @@ void ui_news(struct game_s *g, struct news_s *ns)
                 ui_draw_finish();
             }
         }
-        flag_hmm = false;
+        flag_fade = false;
     }
     game_news_get_msg(g, ns, ui_data.strbuf);
     d.str = ui_data.strbuf;
@@ -232,12 +232,12 @@ void ui_news(struct game_s *g, struct news_s *ns)
         }
         ui_news_cb1(&d);
         ui_delay_ticks_or_click(3);
-        if (flag_hmm) {
+        if (flag_fade) {
             /*ui_news_sub2(); FIXME TODO */
         } else {
             ui_draw_finish();
         }
-        flag_hmm = false;
+        flag_fade = false;
     }
     ui_data.news.flag_also = true;
     hw_audio_music_fadeout();
