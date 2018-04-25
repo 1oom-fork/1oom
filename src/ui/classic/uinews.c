@@ -135,6 +135,123 @@ static void ui_news_draw_start_anim(void)
 
 /* -------------------------------------------------------------------------- */
 
+static uint8_t ui_news_fade_tbl_xoff[] = {
+    2, 2, 2, 1, 1, 3, 0, 3, 3, 2, 0, 1, 3, 3, 1, 3,
+    3, 0, 3, 1, 2, 3, 0, 2, 1, 1, 2, 2, 1, 1, 3, 3,
+    2, 3, 3, 0, 2, 3, 0, 2, 0, 3, 2, 0, 2, 0, 0, 3,
+    1, 0, 1, 1, 1, 3, 3, 1, 1, 0, 0, 2, 1, 1, 2, 1,
+    0, 0, 0, 3, 3, 1, 1, 2, 2, 1, 2, 2, 0, 2, 3, 1,
+    2, 2, 2, 0, 0, 0, 1, 1, 0, 2, 0, 3, 2, 2, 1, 0,
+    3, 1, 2, 3, 0, 0, 1, 0, 2, 2, 3, 2, 1, 1, 2, 2,
+    0, 3, 0, 0, 2, 0, 0, 3, 3, 1, 2, 1, 0, 0, 1, 3,
+    1, 1, 1, 0, 0, 2, 3, 1, 0, 3, 3, 0, 1, 0, 0, 0,
+    1, 3, 1, 3, 3, 2, 2, 3, 2, 0, 1, 1, 0, 3, 0, 2,
+    0, 2, 1, 1, 3, 1, 2, 1, 3, 1, 0, 1, 3, 3, 1, 1,
+    3, 2, 3, 2, 3, 1, 1, 2, 0, 2, 3, 3, 2, 2, 0, 2,
+    3, 3, 3, 2, 2, 0, 2, 0, 1, 0, 1, 3, 2, 1, 2, 2,
+    0, 1, 0, 2, 1, 1, 3, 0, 3, 3, 3, 0, 3, 0, 2, 1,
+    1, 0, 0, 2, 1, 2, 3, 3, 1, 0, 1, 3, 0, 2, 3, 0,
+    2, 1, 2, 3, 0, 2, 2, 0, 2, 3, 1, 0, 3, 3, 3, 0
+};
+
+static uint8_t ui_news_fade_tbl_line[] = {
+    0, 3, 30, 18, 28, 22, 29, 12, 34, 47, 31, 32, 7, 49, 46, 14,
+    38, 43, 35, 40, 11, 9, 36, 4, 33, 26, 39, 15, 5, 21, 2, 16,
+    25, 10, 48, 13, 24, 37, 17, 19, 44, 6, 8, 20, 1, 23, 41, 27,
+    45, 42
+};
+
+static uint8_t ui_news_fade_tbl_col[] = {
+    2, 9, 30, 38, 13, 27, 31, 1, 19, 8, 24, 36, 37, 26, 0, 11,
+    23, 32, 22, 12, 16, 20, 29, 18, 28, 7, 10, 35, 14, 25, 5, 33,
+    15, 21, 4, 17, 6, 3, 39, 34
+};
+
+#define UI_NEWS_FADE_PIXELS_PER_FRAME  12000
+
+static void ui_news_fade(void)
+{
+    int pixelcount = UI_NEWS_FADE_PIXELS_PER_FRAME;
+    uint8_t *pb, *pf;
+    pb = hw_video_get_buf();
+    pf = hw_video_get_buf_front();
+    for (int loops = 4; loops > 0; --loops) {
+        int we0;
+        we0 = (loops - 1) << 6;
+        for (int wde = 39; wde >= 0; --wde) {
+            for (int we2 = 49; we2 >= 0; --we2) {
+                int dx, v;
+                uint8_t bl, ah;
+                uint16_t si;
+                v = dx = ui_news_fade_tbl_line[we2];
+                si = v * UI_SCREEN_W / 4;
+                v += wde;
+                if (v > 40) {
+                    v -= 40;
+                    if (v > 40) {
+                        v -= 40;
+                    }
+                }
+                v = ui_news_fade_tbl_col[v];
+                bl = v;
+                si += v * 2;
+                bl += dx + we0;
+                ah = ui_news_fade_tbl_xoff[bl++];
+                if (si < ((UI_SCREEN_W * UI_SCREEN_H) / 4)) {
+                    pf[si * 4 + ah] = pb[si * 4 + ah];
+                }
+                --pixelcount;
+                si += 8000;
+                if (si < ((UI_SCREEN_W * UI_SCREEN_H) / 4)) {
+                    pf[si * 4 + ah] = pb[si * 4 + ah];
+                }
+                --pixelcount;
+                si -= 4000;
+                if (si < ((UI_SCREEN_W * UI_SCREEN_H) / 4)) {
+                    pf[si * 4 + ah] = pb[si * 4 + ah];
+                }
+                --pixelcount;
+                si += 8000;
+                if (si < ((UI_SCREEN_W * UI_SCREEN_H) / 4)) {
+                    pf[si * 4 + ah] = pb[si * 4 + ah];
+                }
+                --pixelcount;
+                si -= 12000;
+                ah = ui_news_fade_tbl_xoff[bl++];
+                if (si < ((UI_SCREEN_W * UI_SCREEN_H) / 4)) {
+                    pf[si * 4 + ah] = pb[si * 4 + ah];
+                }
+                --pixelcount;
+                si += 8000;
+                if (si < ((UI_SCREEN_W * UI_SCREEN_H) / 4)) {
+                    pf[si * 4 + ah] = pb[si * 4 + ah];
+                }
+                --pixelcount;
+                si -= 4000;
+                if (si < ((UI_SCREEN_W * UI_SCREEN_H) / 4)) {
+                    pf[si * 4 + ah] = pb[si * 4 + ah];
+                }
+                --pixelcount;
+                si += 8000;
+                if (si < ((UI_SCREEN_W * UI_SCREEN_H) / 4)) {
+                    pf[si * 4 + ah] = pb[si * 4 + ah];
+                }
+                --pixelcount;
+                if (pixelcount <= 0) {
+                    pixelcount = UI_NEWS_FADE_PIXELS_PER_FRAME;
+                    hw_video_redraw_front();
+                    ui_delay_1();
+                }
+            }
+        }
+    }
+    memcpy(pf, pb, UI_SCREEN_W * UI_SCREEN_H);
+    hw_video_redraw_front();
+    ui_delay_1();
+}
+
+/* -------------------------------------------------------------------------- */
+
 void ui_news_won(bool flag_good)
 {
     bool flag_skip = false, flag_fade;
@@ -171,7 +288,7 @@ void ui_news_won(bool flag_good)
         ui_news_cb1(&d);
         ui_delay_ticks_or_click(3);
         if (flag_fade) {
-            /*ui_news_sub2(); FIXME TODO */
+            ui_news_fade();
         } else {
             ui_draw_finish();
         }
@@ -233,7 +350,7 @@ void ui_news(struct game_s *g, struct news_s *ns)
         ui_news_cb1(&d);
         ui_delay_ticks_or_click(3);
         if (flag_fade) {
-            /*ui_news_sub2(); FIXME TODO */
+            ui_news_fade();
         } else {
             ui_draw_finish();
         }
