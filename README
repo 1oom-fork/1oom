@@ -32,7 +32,8 @@ http://www.libsdl.org
 http://www.libsdl.org/projects/SDL_mixer/
 
 Also recommended:
-- libsamplerate
+
+- libsamplerate:
 http://www.mega-nerd.com/libsamplerate/
 
 Check your distribution's package manager or the library
@@ -88,6 +89,7 @@ See INSTALL for more information.
 - 1oom_cmdline      (proof of concept textual UI)
 - 1oom_lbxview_sdl1 (for viewing LBX files)
 - 1oom_pbxmake      (for creating PBX files)
+- 1oom_gfxconv      (for converting GFX for use in PBX files)
 - 1oom_saveconv     (for converting save game files)
 
 See doc/ for more documentation.
