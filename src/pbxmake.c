@@ -103,45 +103,6 @@ fail:
 #undef BUFSIZE
 }
 
-static uint8_t *load_file(const char *filename, uint32_t *len_out)
-{
-    FILE *fd = NULL;
-    uint8_t *data = NULL;
-    uint32_t len = 0;
-    if ((fd = fopen(filename, "rb")) == NULL) {
-        perror(filename);
-        goto fail;
-    }
-    if (fseek(fd, 0, SEEK_END) != 0) {
-        perror(filename);
-        goto fail;
-    }
-    len = ftell(fd);
-    rewind(fd);
-    data = lib_malloc(len + 1);
-    if (fread(data, len, 1, fd) < 1) {
-        log_error("%s: read error\n", filename);
-        goto fail;
-    }
-    data[len] = '\0';
-    *len_out = len;
-    fclose(fd);
-    fd = NULL;
-    return data;
-
-fail:
-    *len_out = 0;
-    if (fd) {
-        fclose(fd);
-        fd = NULL;
-    }
-    if (data) {
-        lib_free(data);
-        data = NULL;
-    }
-    return NULL;
-}
-
 static inline int parse_hex_char(char c)
 {
     int val;
@@ -271,7 +232,7 @@ static int make_pbx(const char *filename_in, const char *filename_out)
     int i, num_patches = 0;
     uint32_t len = 0;
     char *dir = NULL, *fullname = NULL;
-    char *listfiledata = (char *)load_file(filename_in, &len);
+    char *listfiledata = (char *)util_file_load(filename_in, &len);
     if (!listfiledata) {
         return 2;
     }
