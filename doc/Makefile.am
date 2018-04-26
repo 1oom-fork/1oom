@@ -12,6 +12,7 @@ doc_DATA = \
     usage_classic.txt \
     usage_cmdline.txt \
     usage_common.txt \
+    usage_gfxconv.txt \
     usage_lbxview.txt \
     usage_pbxmake.txt \
     usage_saveconv.txt

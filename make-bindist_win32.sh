@@ -8,7 +8,7 @@ STRIP=$1
 TOPSRCDIR=$2
 ZIPKIND=$3
 
-EXECUTABLES="1oom_classic_sdl1 1oom_classic_sdl2 1oom_cmdline 1oom_lbxview_sdl1 1oom_lbxview_sdl2 1oom_pbxmake 1oom_saveconv"
+EXECUTABLES="1oom_classic_sdl1 1oom_classic_sdl2 1oom_cmdline 1oom_gfxconv 1oom_lbxview_sdl1 1oom_lbxview_sdl2 1oom_pbxmake 1oom_saveconv"
 
 for i in $EXECUTABLES
 do
