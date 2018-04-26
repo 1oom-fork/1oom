@@ -98,7 +98,6 @@ static int cfg_parse_line(char *line, int lnum)
                 lib_free(*((char **)item->var));
                 *((char **)item->var) = 0;
             } else if (ival[0] == '"') {
-                char **strptr = ((char **)item->var);
                 ++ival;
                 if (util_cstr_parse_in_place(ival) < 0) {
                     log_warning("Cfg: invalid value on line %i\n", lnum);
