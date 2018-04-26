@@ -179,7 +179,7 @@ int util_file_save(const char *name, uint8_t *src, int size)
 {
     FILE *fd;
     size_t r;
-    fd = fopen(name, "w");
+    fd = fopen(name, "wb");
     if (fd == NULL) {
         return -1;
     }
