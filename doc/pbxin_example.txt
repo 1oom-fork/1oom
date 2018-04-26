@@ -31,7 +31,7 @@
 # Replace ship #4 graphics with newshipgfx.bin.
 2,ships.lbx,4,newshipgfx.bin
 # Only the native MOO1 LBX GFX format is supported.
-# (GFX converter for *.png -> foo.bin is in the TODO pile)
+# Use 1oom_gfxconv to convert pictures to the native format.
 
 # Replace the battle music with something fitting.
 2,music.lbx,8,D_RUNNIN.mid
