@@ -177,13 +177,51 @@ int util_file_save(const char *name, const uint8_t *src, int size)
 {
     FILE *fd;
     size_t r;
-    fd = fopen(name, "w");
+    fd = fopen(name, "wb");
     if (fd == NULL) {
         return -1;
     }
     r = fwrite((char *)src, size, 1, fd);
     fclose(fd);
     return (r < 1) ? -1 : 0;
+}
+
+uint8_t *util_file_load(const char *filename, uint32_t *len_out)
+{
+    FILE *fd = NULL;
+    uint8_t *data = NULL;
+    uint32_t len = 0;
+    if ((fd = fopen(filename, "rb")) == NULL) {
+        perror(filename);
+        goto fail;
+    }
+    if (fseek(fd, 0, SEEK_END) != 0) {
+        perror(filename);
+        goto fail;
+    }
+    len = ftell(fd);
+    rewind(fd);
+    data = lib_malloc(len + 1);
+    if (fread(data, len, 1, fd) < 1) {
+        goto fail;
+    }
+    data[len] = '\0';
+    *len_out = len;
+    fclose(fd);
+    fd = NULL;
+    return data;
+
+fail:
+    *len_out = 0;
+    if (fd) {
+        fclose(fd);
+        fd = NULL;
+    }
+    if (data) {
+        lib_free(data);
+        data = NULL;
+    }
+    return NULL;
 }
 
 void util_trim_whitespace(char *buf)
