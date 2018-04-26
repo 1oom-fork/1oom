@@ -8,6 +8,7 @@
 #include "cfg.h"
 #include "comp.h"
 #include "fmt_mus.h"
+#include "fmt_pic.h"
 #include "fmt_sfx.h"
 #include "gfxaux.h"
 #include "hw.h"
@@ -82,6 +83,7 @@ static bool advance_frame = false;
 static bool have_sfx = false;
 static bool have_mus = false;
 static bool flipx = false;
+static bool clearbeforedraw = false;
 static int test_rotate = 0;
 static uint8_t textcolor = 8;
 static uint32_t cur_key = 0;
@@ -260,7 +262,13 @@ static void drawscreen_inlbx(void)
             lbxgfx_set_frame_0(p);
             frame = 0;
         }
-        gfx_aux_draw_frame_to(p, &gfxaux);
+        if (clearbeforedraw) {
+            memset(hw_video_get_buf(), 0, 320 * 200);
+            gfx_aux_setup(&gfxaux, p, 0);
+            lbxgfx_draw_frame_do(gfxaux.data, p, gfxaux.w);
+        } else {
+            gfx_aux_draw_frame_to(p, &gfxaux);
+        }
         if (flipx) {
             gfx_aux_flipx(&gfxaux);
         }
@@ -359,6 +367,43 @@ static void do_lbx_sound(uint32_t k)
     }
 }
 
+static void do_lbx_gfx(uint32_t k)
+{
+    int w, h;
+    w = lbxgfx_get_w(cur_ptr);
+    h = lbxgfx_get_h(cur_ptr);
+    if ((w > 0) && (w <= 320) && (h > 0) && (h <= 200)) {
+        struct pic_s pic;
+        pic.type = PIC_TYPE_PCX;
+        pic.w = w;
+        pic.h = h;
+        pic.pitch = UI_SCREEN_W;
+        pic.pal = lbxpal_palette;
+        if (KBD_MOD_ONLY_SHIFT(k)) {
+            pic.pix = hw_video_get_buf_front();
+            fmt_pic_save("z0.pcx", &pic);
+        } else if (KBD_MOD_ONLY_CTRL(k)) {
+            char bufname[16];
+            int frames = lbxgfx_get_frames(cur_ptr);
+            strcpy(bufname, lbxfile_name(cur_lbx));
+            {
+                char *p;
+                p = strchr(bufname, '.');
+                if (p) { *p = 0; }
+            }
+            lbxgfx_set_frame_0(cur_ptr);
+            memset(hw_video_get_buf(), 0, 320 * 200);
+            pic.pix = hw_video_get_buf();
+            for (int f = 0; f < frames; ++f) {
+                char fname[32];
+                lbxgfx_draw_frame(0, 0, cur_ptr, UI_SCREEN_W);
+                sprintf(fname, "z_%s_%02x_%03i.pcx", bufname, cursor_i, f);
+                fmt_pic_save(fname, &pic);
+            }
+        }
+    }
+}
+
 static int loadfont(void)
 {
     FILE *fd;
@@ -452,6 +497,9 @@ int main_do(void)
     lbxfont_init();
     lbxpal_init();
     lbxpal_select(0, -1, 0);
+    if (cur_ptr && (lbxfile_type(cur_lbx) == LBX_TYPE_GFX)) {
+        lbxgfx_apply_palette(cur_ptr);
+    }
     lbxpal_update();
     drawscreen();
     hw_video_draw_buf();
@@ -512,6 +560,9 @@ int main_do(void)
                         if (lbxfile_type(cur_lbx) == LBX_TYPE_SOUND) {
                             do_lbx_sound(k);
                         }
+                        if (lbxfile_type(cur_lbx) == LBX_TYPE_GFX) {
+                            do_lbx_gfx(k);
+                        }
                     }
                     break;
                 case MOO_KEY_w:
@@ -531,6 +582,9 @@ int main_do(void)
                     break;
                 case MOO_KEY_q:
                     test_rotate = (test_rotate + 1) % 3;
+                    break;
+                case MOO_KEY_c:
+                    clearbeforedraw = !clearbeforedraw;
                     break;
                 case MOO_KEY_0:
                 case MOO_KEY_1:

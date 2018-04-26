@@ -10,7 +10,7 @@ endif
 endif
 
 if COMPILE_TOOLS
-bin_PROGRAMS += 1oom_pbxmake 1oom_saveconv
+bin_PROGRAMS += 1oom_pbxmake 1oom_gfxconv 1oom_saveconv
 if COMPILE_TOOLS_SDL1
 bin_PROGRAMS += 1oom_lbxview_sdl1
 endif
@@ -74,6 +74,10 @@ audio_sources = \
     fmt_sfx.c \
     fmt_sfx.h
 
+pic_sources = \
+    fmt_pic.c \
+    fmt_pic.h
+
 AM_CPPFLAGS = \
     @OS_INCLUDES@ \
     -I$(top_srcdir)/src
@@ -98,7 +102,7 @@ hwsdl1_lib = $(top_builddir)/src/hw/sdl/1/libhwsdl1.a
 
 uinop_lib = $(top_builddir)/src/ui/nop/libuinop.a
 1oom_lbxview_sdl1_libs = $(hwsdl1_lib) $(uinop_lib) $(common_libs)
-1oom_lbxview_sdl1_SOURCES = lbxview.c $(audio_sources) $(gui_sources) $(util_sources)
+1oom_lbxview_sdl1_SOURCES = lbxview.c $(audio_sources) $(gui_sources) $(util_sources) $(pic_sources)
 1oom_lbxview_sdl1_LDADD = $(1oom_lbxview_sdl1_libs) @HW_SDL1_LIBS@ @EXTRA_SDL1_LIBS@ @SAMPLERATE_LIBS@
 1oom_lbxview_sdl1_DEPENDENCIES = $(1oom_lbxview_sdl1_libs)
 
@@ -106,6 +110,11 @@ uinop_lib = $(top_builddir)/src/ui/nop/libuinop.a
 1oom_pbxmake_SOURCES = pbxmake.c util.c lib.c log.c
 1oom_pbxmake_LDADD = $(1oom_pbxmake_libs)
 1oom_pbxmake_DEPENDENCIES = $(1oom_pbxmake_libs)
+
+1oom_gfxconv_libs = $(hwnop_lib)
+1oom_gfxconv_SOURCES = gfxconv.c util.c lib.c log.c $(pic_sources)
+1oom_gfxconv_LDADD = $(1oom_gfxconv_libs)
+1oom_gfxconv_DEPENDENCIES = $(1oom_gfxconv_libs)
 
 1oom_saveconv_libs = $(game_lib) $(hwnop_lib) $(uinop_lib) $(common_libs)
 1oom_saveconv_SOURCES = saveconv.c lib.c log.c options.c util.c
