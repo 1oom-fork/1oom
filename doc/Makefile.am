@@ -7,6 +7,7 @@ doc_DATA = \
     format_save.txt \
     lbxmd5.txt \
     usage_classic.txt \
+    usage_cmdline.txt \
     usage_common.txt \
     usage_lbxview.txt \
     usage_saveconv.txt
