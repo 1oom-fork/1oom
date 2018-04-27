@@ -38,18 +38,7 @@ website on how to install them.
 2. Configuration
 =================
 
-1oom is configured via command-line arguments or editing the
-configuration file.
-
-2.1. User Directory
---------------------
-
-1oom creates a User directory with all the user savegames and
-options in one of the following paths:
-
-- <game directory> (win32)
-- $XDG_CONFIG_HOME/1oom (Linux)
-- ~/.config/1oom (Linux)
+See CONFIGURATION.
 
 
 3. Development
