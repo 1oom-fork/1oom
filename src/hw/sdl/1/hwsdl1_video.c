@@ -234,6 +234,12 @@ int hw_video_resize(int w, int h)
 #endif
 }
 
+int hw_video_toggle_fullscreen(void)
+{
+    /* Not implemented */
+    return 0;
+}
+
 int hw_video_init(int w, int h)
 {
     hw_mouse_set_limits(w, h);
