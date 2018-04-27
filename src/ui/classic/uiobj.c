@@ -2579,9 +2579,14 @@ void uiobj_input_wait(void)
             got_mb = true;
         }
         if (kbd_have_keypress()) {
-            kbd_get_keypress();
-            got_any = true;
-            mouse_getclear_hmm4();
+            uint32_t kp;
+            mookey_t k;
+            kp = kbd_get_keypress();
+            k = KBD_GET_KEY(kp);
+            if ((k != MOO_KEY_UNKNOWN) && ((k < MOO_KEY_NUMLOCK) || (k > MOO_KEY_COMPOSE))) {
+                got_any = true;
+                mouse_getclear_hmm4();
+            }
         }
         uiobj_finish_callback_delay_hmm5();
     }
