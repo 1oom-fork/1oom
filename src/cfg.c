@@ -86,7 +86,7 @@ static int cfg_parse_line(char *line, int lnum)
                     log_error("Cfg: invalid value on line %i\n", lnum);
                     return -1;
                 }
-                if (item->check && (!item->check((void *)(int)v))) {
+                if (item->check && (!item->check((void *)(intptr_t)(int)v))) {
                     log_warning("Cfg: item failed check on line %i\n", lnum);
                     return -1;
                 }
