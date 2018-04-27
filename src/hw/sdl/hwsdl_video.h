@@ -4,6 +4,7 @@
 extern bool hw_mouse_enabled;
 
 extern int hw_video_resize(int w, int h);
+extern int hw_video_toggle_fullscreen(void);
 
 extern void hw_mouse_grab(void);
 extern void hw_mouse_ungrab(void);
