@@ -216,7 +216,7 @@ int hw_video_resize(int w, int h)
     SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
     SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
 
-    log_message("SDL_SetVideoMode(%i, %i, %i, 0x%x)\n", w, h, 32, flags);
+    log_message("SDL_SetVideoMode(%i, %i, %i, 0x%x)\n", actual_w, actual_h, 32, flags);
     video.screen = SDL_SetVideoMode(actual_w, actual_h, 32, flags);
     if (!video.screen) {
         log_error("SDL_SetVideoMode failed!");
