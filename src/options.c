@@ -20,7 +20,7 @@
 static const char *opt_configfilename_in = 0;   /* used only for the -c option */
 static char *opt_configfilename = 0;
 static bool opt_config_ro = false;
-static const char *opt_datapath = 0;
+static char *opt_datapath = 0;
 
 /* -------------------------------------------------------------------------- */
 /* global options */
