@@ -1,0 +1,11 @@
+1oom is configured via command-line arguments.
+
+User Directory
+--------------
+
+1oom creates a User directory with all the user savegames and
+options in one of the following paths:
+
+- <game directory> (win32)
+- $XDG_CONFIG_HOME/1oom (Linux)
+- ~/.config/1oom (Linux)
