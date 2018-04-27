@@ -2,6 +2,30 @@
 # 1oom #
 ########
 
+1. Options
+===========
+
+The configuration options:
+    --enable-modebug        add debugging options
+    --without-readline      do not try to use the readline library
+                            (used by 1oom_cmdline)
+    --without-samplerate    do not try to use libsamplerate
+    --disable-tools         disables extra tools
+    --disable-uiclassic     disables classic UI
+                            (do not build 1oom_classic_*)
+    --disable-uicmdline     disables cmdline UI
+                            (do not build 1oom_cmdline)
+    --enable-hwsdl1         enables SDL1 HW
+                            (build 1oom_*_sdl1)
+    --disable-hwsdl2        disables SDL2 HW
+                            (do not build 1oom_*_sdl2)
+    --disable-hwalleg4      disables Allegro 4 HW
+                            (do not build 1oom_*_alleg4)
+
+
+2. Quick guide
+===============
+
 You'll need make, a C99 compiler and SDL2 development libraries.
     aptitude install libsdl2-dev libsdl2-mixer-dev
 
@@ -17,3 +41,7 @@ Then the usual:
     ./configure && make
 
 !!! You need the data files from the original Master of Orion to run 1oom. !!!
+
+Actual install step is not needed:
+    src/1oom_classic_sdl1 -data /path/to/moo
+    src/1oom_classic_sdl2 -data /path/to/moo
