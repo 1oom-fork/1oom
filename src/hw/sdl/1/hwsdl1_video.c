@@ -41,6 +41,9 @@ static int video_setmode_8bpp(int w, int h)
 {
     int flags;
     flags = SDL_SWSURFACE | SDL_DOUBLEBUF;
+    if (opt_fullscreen) {
+        flags |= SDL_FULLSCREEN;
+    }
     log_message("SDL_SetVideoMode(%i, %i, %i, 0x%x)\n", w, h, 8, flags);
     video.screen = SDL_SetVideoMode(w, h, 8, flags);
     if (!video.screen) {
@@ -250,6 +253,22 @@ int hw_video_resize(int w, int h)
 #else
     return 0;
 #endif
+}
+
+int hw_video_toggle_fullscreen(void)
+{
+    opt_fullscreen = !opt_fullscreen;
+    if (i_hw_video.setmode(opt_screen_winw, opt_screen_winh)) {
+        opt_fullscreen = !opt_fullscreen; /* restore the setting for the config file */
+        return -1;
+    }
+#ifdef HAVE_OPENGL
+    if (!opt_use_gl)
+#endif /* HAVE_OPENGL */
+    {
+        hw_video_refresh_palette();
+    }
+    return 0;
 }
 
 int hw_video_init(int w, int h)
