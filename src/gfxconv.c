@@ -96,7 +96,7 @@ static int gfx_convert(const char *filename_out, const char **filenames_in, int 
             gfx_pa_add_byte(pa, 0);
         }
         for (int x = 0; x < w; ++x) {
-            uint8_t colbufu[512];
+            uint8_t colbufu[256];
             uint8_t colbufc[512];
             uint8_t *pc, *pu;
             int y, lenc, lenu;
@@ -128,14 +128,18 @@ static int gfx_convert(const char *filename_out, const char **filenames_in, int 
                         ++rlen;
                     }
                     /* uncompressed */
-                    *pu++ = rlen;
-                    *pu++ = skiplen;
-                    for (int i = 0; i < rlen; ++i) {
-                        *pu++ = pa->pic.pix[(y + i) * w + x];
+                    if ((lenu + rlen + 2) < 256) {
+                        *pu++ = rlen;
+                        *pu++ = skiplen;
+                        for (int i = 0; i < rlen; ++i) {
+                            *pu++ = pa->pic.pix[(y + i) * w + x];
+                        }
+                        lenu += rlen + 2;
+                    } else {
+                        lenu = 512;
                     }
-                    lenu += rlen + 2;
                     /* compressed */
-                    {
+                    if (lenc < 255) {
                         uint8_t *p;
                         int clen;
                         pc[1] = skiplen;
@@ -159,9 +163,15 @@ static int gfx_convert(const char *filename_out, const char **filenames_in, int 
                         pc[0] = clen;
                         lenc += clen + 2;
                         pc += clen + 2;
+                    } else {
+                        lenc = 512;
                     }
                     y += rlen;
                 }
+            }
+            if ((lenc > 255) && (lenu > 255)) {
+                log_error("column %i in '%s' encoded is too long (h %i, un %i, compr %i)\n", x, pa->filename, h, lenu, lenc);
+                goto fail;
             }
             colbufu[1] = lenu;
             colbufc[1] = lenc;
