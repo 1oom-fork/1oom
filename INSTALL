@@ -9,10 +9,14 @@ The configuration options:
     --enable-static         enable static builds (experimental)
     --enable-modebug        add debugging options
     --enable-fault-finding  enables picky compiler mode
+    --without-readline      do not try to use the readline library
+                            (used by 1oom_cmdline)
     --without-samplerate    do not try to use libsamplerate
     --disable-tools         disables extra tools
     --disable-uiclassic     disables classic UI
                             (do not build 1oom_classic_*)
+    --disable-uicmdline     disables cmdline UI
+                            (do not build 1oom_cmdline)
     --enable-hwsdl1         enables SDL1 HW
                             (build 1oom_*_sdl1)
     --disable-hwsdl2        disables SDL2 HW
