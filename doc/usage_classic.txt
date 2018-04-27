@@ -1,0 +1,26 @@
+################
+# 1oom_classic #
+################
+
+1oom_classic_* replicate the 1993 UI.
+
+See doc/usage_common.txt for the data/user file locations and command-line
+arguments.
+
+The UI controls like the original. Consult the game manual and the readme.txt
+from v1.3. This document describes only the differences.
+
+New hotkeys:
+- Middle click or Ctrl-F10 to grab/ungrab input
+- Ctrl-Esc to quit (without saving)
+- Ctrl-[] to adjust sfx volume
+- Ctrl-Shift-[] to adjust music volume
+- Alt-Enter to toggle full screen mode
+
+Unlike the original, 1oom does not autosave the "continue game" (save slot 7)
+when starting a new game or every N turns. It only saves it when quitting the
+game or when F10 is pressed while in the "galaxy movement screen".
+1oom makes autosave (save slot 9) when starting a new game.
+
+The following new UI features are always enabled/available:
+- Random race / banner

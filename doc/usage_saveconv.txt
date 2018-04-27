@@ -1,0 +1,39 @@
+#################
+# 1oom_saveconv #
+#################
+
+1oom_saveconv is a tool for converting save game files.
+
+Usage:
+    1oom_saveconv [OPTIONS] INPUT [OUTPUT]
+Options:
+    -?             Show command line options
+    -i INTYPE      Input type:
+                     s   - smart: autodetect (default)
+                     m   - MOO1 v1.3
+                     1   - 1oom save version 0
+                     t   - text
+    -o OUTTYPE     Output type:
+                     s   - smart: in old/new -> out new/old (default)
+                     m   - MOO1 v1.3
+                     1   - 1oom save version 0
+                     t   - text
+                     d   - dummy (no output)
+    -cmoo          Enable CONFIG.MOO use
+    -n NAME        Set save name
+
+1oom save format 0 is described in doc/format_save.txt.
+MOO1 v1.3 save format is described in doc/format_gam.txt.
+Text save format is intentionally left undefined. It is for debugging.
+
+Examples:
+    1oom_saveconv SAVE2.GAM oldsave2.bin
+        - convert SAVE2.GAM to oldsave2.bin
+
+    1oom_saveconv 1oom_save5.bin SAVE6.GAM
+        - convert 1oom_save5.bin to SAVE6.GAM
+
+    1oom_saveconv -cmoo -n "foo bar" -o m SAVE1.GAM SAVE2.GAM
+        - copy SAVE1.GAM SAVE2.GAM
+        - set save name to "foo bar"
+        - update save name and availability in CONFIG.MOO (if found)

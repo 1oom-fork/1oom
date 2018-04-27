@@ -16,6 +16,7 @@ Master of Orion (1993) in a form that can be run on modern computers.
 --------------------
 
 Simply copy the EXE and DLLs (if any) to your MOO1 directory.
+See doc/usage_common.txt if you prefer to use a separate directory.
 
 1.2 Unix (Linux)
 -----------------
@@ -35,39 +36,11 @@ http://www.mega-nerd.com/libsamplerate/
 Check your distribution's package manager or the library
 website on how to install them.
 
-The LBX files are first looked for in the directory specified with
-"-data <path>".
-
-According to the XDG standard, 1oom will also check the
-following directories:
-
-- $XDG_DATA_HOME/1oom
-- $XDG_DATA_DIRS/1oom
-
-Or if those variables aren't available:
-
-- ~/.local/share/1oom
-- /usr/share/1oom
-- .
-
-Choose whichever you prefer.
-
 
 2. Configuration
 =================
 
-1oom is configured via command-line arguments or editing the
-configuration file.
-
-2.1. User Directory
---------------------
-
-1oom creates a User directory with all the user savegames and
-options in one of the following paths:
-
-- <game directory> (win32)
-- $XDG_CONFIG_HOME/1oom (Linux)
-- ~/.config/1oom (Linux)
+See doc/usage_common.txt.
 
 
 3. Development
@@ -90,16 +63,7 @@ See INSTALL and HACKING for more information.
 
 Some ports have shorter filenames due to filesystem limitations.
 
-See doc/ for more documentation.
-
-4.1. 1oom_classic_sdl1
------------------------
-
-Middle click or Ctrl-F10 to grab/ungrab input.
-Ctrl-Esc to quit (without saving).
-Ctrl-[] to adjust sfx volume.
-Ctrl-Shift-[] to adjust music volume.
-Otherwise it controls like the original.
+See doc/usage_* for more documentation.
 
 
 5. Abbreviations
