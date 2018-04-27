@@ -56,6 +56,12 @@ The resulting binaries follow a "1oom_$UI_$HW" naming convention.
         ...
     }
 
+- have the opening brace of a function in the next line:
+    int func(void)
+    {
+        ...
+    }
+
 - use C-style comments /* like here */
 
 - function and variable names are lowercase with '_' for space
@@ -124,3 +130,58 @@ integers properly, so it’s not a huge problem.
 
 All code submitted to the project must be licensed under the GNU GPLv2 or a
 compatible license.
+
+## No thanks
+
+An incomplete list of reasons for rejecting patches:
+
+- new build systems: CMake, Visual Studio, XCode, ...
+  * This project uses automake etc. Maintaining multiple build systems
+    is bound to fail, especially with binary or otherwise messy project file
+    format. While automake etc are far from perfect, they are not an obstacle
+    for portability.
+
+- new build dependencies
+  * There is no reason to require Turing-complete dependencies, for example
+    Python or Perl, to build this project.
+    (No, Debian libsdl1.2-dev depending on python is not an excuse.)
+    There is very little reason for tools (convert, ...) either.
+    Limiting build deps benefits portability.
+
+- new buildtime data files
+  * This help with the above item.
+
+- new runtime data files
+  * This projects aims to have 0 extra files required besides the executable
+    and the LBX files. The lbxview font is an unfortunate compromise.
+
+- new library dependencies
+  * Keeping the library dependencies at minimum helps portability.
+    These are considered on a case-by-case basis.
+    (Note that new hw/ are encouraged!)
+
+- new optional libraries
+  * Keeping the amount of libraries reasonable helps to avoid #ifdef hell.
+    These are considered on a case-by-case basis.
+    Libs with unstable/numerous APIs are discouraged. (libpng, ffmpeg, ...)
+
+- new picture formats
+  * There are plenty of tools for PCX file conversion.
+    Optional PNG support would likely require more lines of code than the
+    NIH PCX implementation. Don't even start with lossy formats.
+
+- movie recording
+  * No.
+
+- cosmetic OpenGL shaders
+  * No.
+
+- Scale2x, HQ3x, ...
+  * Nearest/linear via OpenGL should be enough.
+
+- software 2x, 3x, ... scaling
+  * Show a platform without OpenGL and with screen resolution exceeding 400x300
+    and port 1oom to it (configure.ac, os/FOO/, also hw/FOO/ if no SDL) then OK.
+    Otherwise nearest/linear via OpenGL should be enough.
+
+If you *must* have some of these then have fun with your fork.

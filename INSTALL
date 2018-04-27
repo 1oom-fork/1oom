@@ -17,3 +17,20 @@ Then the usual:
     ./configure && make
 
 !!! You need the data files from the original Master of Orion to run 1oom. !!!
+
+Actual install step is not needed:
+    src/1oom_classic_sdl1 -data /path/to/moo
+
+The configuration options:
+    --enable-modebug        add debugging options
+    --without-readline      do not try to use the readline library
+                            (used by 1oom_cmdline)
+    --without-samplerate    do not try to use libsamplerate
+    --disable-tools         disables extra tools
+                            (do not build 1oom_pbxmake, 1oom_gfxconv, ...)
+    --disable-uiclassic     disables classic UI
+                            (do not build 1oom_classic_*)
+    --disable-uicmdline     disables cmdline UI
+                            (do not build 1oom_cmdline)
+    --disable-sdl1hw        disables SDL1 HW
+                            (do not build 1oom_*_sdl1)
