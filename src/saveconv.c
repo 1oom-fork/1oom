@@ -1726,8 +1726,8 @@ int main_do(void)
         return 0;
     }
     fname = fnames[0];
-    if ((util_parse_number(fname, &v)) && (v >= 0) && (v < NUM_SAVES + 1/*continue*/)) {
-        game_save_get_slot_fname(gameptr->gaux->savenamebuf, gameptr->gaux->savenamebuflen, v);
+    if ((util_parse_number(fname, &v)) && (v >= 1) && (v <= NUM_ALL_SAVES)) {
+        game_save_get_slot_fname(gameptr->gaux->savenamebuf, gameptr->gaux->savenamebuflen, v - 1);
         fname = gameptr->gaux->savenamebuf;
     }
     LOG_DEBUG((1, "%s: decode type '%s' file '%s'\n", __func__, savetype[savetypei].name, fname));
