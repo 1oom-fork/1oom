@@ -93,7 +93,7 @@ static const struct cmdline_options_s cmdline_options_early[] = {
     { NULL, 0, NULL, NULL, NULL, NULL }
 };
 
-static const struct cmdline_options_s cmdline_options_common[] = {
+static const struct cmdline_options_s cmdline_options_lbx[] = {
     { "-data", 1,
       options_set_datadir, NULL,
       "PATH", "Set data directory" },
@@ -241,7 +241,7 @@ static const struct cmdline_options_s *find_option(const char *name, bool early,
         return o;
     }
     if (0
-      || (o = find_option_do(name, cmdline_options_common))
+      || (main_use_lbx && (o = find_option_do(name, cmdline_options_lbx)))
       || (ui_use_audio && (o = find_option_do(name, cmdline_options_audio)))
       || (o = find_option_do(name, os_cmdline_options))
       || (o = find_option_do(name, hw_cmdline_options))
@@ -328,8 +328,8 @@ void options_show_usage(void)
     log_message_direct("Options:\n");
 
     lmax = get_options_w(cmdline_options_early, lmax);
-    lmax = get_options_w(cmdline_options_common, lmax);
     if (main_use_lbx) {
+        lmax = get_options_w(cmdline_options_lbx, lmax);
     }
     if (ui_use_audio) {
         lmax = get_options_w(cmdline_options_audio_early, lmax);
@@ -343,8 +343,8 @@ void options_show_usage(void)
     lmax = get_options_w(main_cmdline_options, lmax);
 
     show_options(cmdline_options_early, lmax);
-    show_options(cmdline_options_common, lmax);
     if (main_use_lbx) {
+        show_options(cmdline_options_lbx, lmax);
     }
     if (ui_use_audio) {
         show_options(cmdline_options_audio_early, lmax);
