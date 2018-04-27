@@ -21,7 +21,7 @@ static struct {
 
 bool kbd_handle_hotkey(mookey_t key, uint32_t mod)
 {
-    if (mod & MOO_MOD_CTRL) {
+    if ((mod & MOO_MOD_CTRL) && !(mod & MOO_MOD_ALT)) {
         if (key == MOO_KEY_F10) {
             hw_mouse_toggle_grab();
             return true;
@@ -42,6 +42,14 @@ bool kbd_handle_hotkey(mookey_t key, uint32_t mod)
         } else if (key == MOO_KEY_ESCAPE) {
             log_message("Got Ctrl-ESC, quitting now\n");
             exit(EXIT_SUCCESS);
+        }
+    } else if ((mod & MOO_MOD_ALT) && !(mod & MOO_MOD_CTRL)) {
+        if (key == MOO_KEY_RETURN) {
+            if (hw_video_toggle_fullscreen() < 0) {
+                log_message("FS toggle failure, quitting now\n");
+                exit(EXIT_FAILURE);
+            }
+            return true;
         }
     }
 
