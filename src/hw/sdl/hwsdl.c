@@ -145,7 +145,7 @@ static void build_key_xlat(void)
 
 static bool hw_kbd_check_hotkey(SDLKey key, SDLMod smod, char c)
 {
-    if (smod & KMOD_CTRL) {
+    if ((smod & KMOD_CTRL) && !(smod & KMOD_ALT)) {
         if (key == SDLK_ESCAPE) {
             log_message("SDL: got Ctrl-ESC, quitting now\n");
             exit(EXIT_SUCCESS);
@@ -164,6 +164,14 @@ static bool hw_kbd_check_hotkey(SDLKey key, SDLMod smod, char c)
                 hw_audio_music_volume(opt_music_volume - 4);
             } else {
                 hw_audio_sfx_volume(opt_sfx_volume - 4);
+            }
+            return true;
+        }
+    } else if ((smod & KMOD_ALT) && !(smod & KMOD_CTRL)) {
+        if (key == SDLK_RETURN) {
+            if (hw_video_toggle_fullscreen() < 0) {
+                log_message("SDL: fs toggle failure, quitting now\n");
+                exit(EXIT_FAILURE);
             }
             return true;
         }
