@@ -80,5 +80,9 @@ While 1oom recreates the Vanilla behaviour, it also extends it:
 different CPUs, different operating systems and different devices
 (ie. not just a desktop machine with a keyboard and mouse).
 
+1oom does not need to be installed. The only required data files are the
+LBX files from the original game. The other data files are the savegame
+and configuration files.
+
 1oom is and will always remain Free Software. It will never
 include code that is not compatible with the GNU GPL.

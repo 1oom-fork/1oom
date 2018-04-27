@@ -1,0 +1,10 @@
+################
+# 1oom_pbxmake #
+################
+
+1oom_pbxmake is a tool for creating PBX files.
+
+Usage: 1oom_pbxmake PBXIN.TXT OUT.PBX
+
+See doc/example_pbxin.txt for the PBXIN.TXT format and example use.
+See doc/format_pbx.txt for the OUT.PBX format. (For devs. Users can ignore.)

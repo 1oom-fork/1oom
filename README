@@ -11,14 +11,9 @@
 
 1oom requires a copy of the Master of Orion (v1.3) LBX files.
 
-The LBX file can be in a different directory as the executable.
-You can also specify your own path by passing the command-line
-argument "-data <path>" when running 1oom.
-
 1.1. Windows
 -------------
 
-1oom will only check the directory of the executable.
 Simply copy the EXE and DLLs (if any) to your MOO1 directory.
 
 1.2 Linux
@@ -39,45 +34,17 @@ http://www.mega-nerd.com/libsamplerate/
 Check your distribution's package manager or the library
 website on how to install them.
 
-The LBX files are first looked for in the directory specified with
-"-data <path>".
-
-According to the XDG standard, 1oom will also check the
-following directories:
-
-- $XDG_DATA_HOME/1oom
-- $XDG_DATA_DIRS/1oom
-
-Or if those variables aren't available:
-
-- ~/.local/share/1oom
-- /usr/share/1oom
-- .
-
-Choose whichever you prefer.
-
 
 2. Configuration
 =================
 
-1oom is configured via command-line arguments or editing the
-configuration file.
-
-2.1. User Directory
---------------------
-
-1oom creates a User directory with all the user savegames and
-options in one of the following paths:
-
-- <game directory> (win32)
-- $XDG_CONFIG_HOME/1oom (Linux)
-- ~/.config/1oom (Linux)
+See doc/usage_common.txt.
 
 
 3. Development
 ===============
 
-See INSTALL for more information.
+See INSTALL and HACKING for more information.
 
 
 4. Executables
@@ -92,17 +59,7 @@ See INSTALL for more information.
 - 1oom_gfxconv      (for converting GFX for use in PBX files)
 - 1oom_saveconv     (for converting save game files)
 
-See doc/ for more documentation.
-
-4.1. 1oom_classic_sdl1
------------------------
-
-Middle click or Ctrl-F10 to grab/ungrab input.
-Ctrl-Esc to quit (without saving).
-Ctrl-Plus/Minus to adjust sfx volume.
-Ctrl-Shift-Plus/Minus to adjust music volume.
-Alt-Enter to toggle full screen mode.
-Otherwise it controls like the original.
+See doc/usage_* for more documentation.
 
 
 5. Abbreviations
