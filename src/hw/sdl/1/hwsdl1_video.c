@@ -26,6 +26,7 @@ static struct sdl_video_s {
 #ifdef HAVE_OPENGL
     SDL_Surface *hwrenderbuf;
 #endif
+    int (*setmode)(int w, int h);
     void (*render)(int bufi);
     void (*update)(void);
     void (*setpal)(uint8_t *pal, int first, int num);
@@ -49,6 +50,19 @@ static struct sdl_video_s {
 } video = { 0 };
 
 /* -------------------------------------------------------------------------- */
+
+static int video_setmode_8bpp(int w, int h)
+{
+    int flags;
+    flags = SDL_SWSURFACE | SDL_DOUBLEBUF;
+    log_message("SDL_SetVideoMode(%i, %i, %i, 0x%x)\n", w, h, 8, flags);
+    video.screen = SDL_SetVideoMode(w, h, 8, flags);
+    if (!video.screen) {
+        log_error("SDL_SetVideoMode failed: %s\n", SDL_GetError());
+        return -1;
+    }
+    return 0;
+}
 
 static void video_render_8bpp(int bufi)
 {
@@ -286,12 +300,7 @@ int hw_video_init(int w, int h)
     if (!hw_opt_use_gl)
 #endif
     {
-        log_message("SDL_SetVideoMode(%i, %i, ...)\n", w, h);
-        video.screen = SDL_SetVideoMode(w, h, 8, SDL_SWSURFACE | SDL_DOUBLEBUF);
-        if (!video.screen) {
-            log_error("SDL_SetVideoMode failed: %s\n", SDL_GetError());
-            return -1;
-        }
+        video.setmode = video_setmode_8bpp;
         video.render = video_render_8bpp;
         video.update = video_update_8bpp;
         video.setpal = video_setpal_8bpp;
@@ -313,6 +322,7 @@ int hw_video_init(int w, int h)
         if ((video.hwrenderbuf->pitch % sizeof(Uint32)) != 0) {
             log_warning("SDL renderbuf pitch mod %i == %i", sizeof(Uint32), video.hwrenderbuf->pitch);
         }
+        video.setmode = hw_video_resize;
         video.render = video_render_gl_32bpp;
         video.update = video_update_gl_32bpp;
         video.setpal = video_setpal_gl_32bpp;
@@ -320,11 +330,12 @@ int hw_video_init(int w, int h)
             w = hw_opt_screen_winw;
             h = hw_opt_screen_winh;
         }
-        if (hw_video_resize(w, h)) {
-            return -1;
-        }
     }
 #endif
+
+    if (video.setmode(w, h)) {
+        return -1;
+    }
 
     for (int i = 0; i < NUM_VIDEOBUF; ++i) {
         video.buf[i] = lib_malloc(w * h);
