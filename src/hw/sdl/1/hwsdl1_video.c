@@ -179,6 +179,24 @@ static void set_viewport(unsigned int src_w, unsigned int src_h, unsigned int de
 
 /* -------------------------------------------------------------------------- */
 
+static int video_sw_set(int w, int h)
+{
+    int flags;
+    flags = SDL_SWSURFACE | SDL_DOUBLEBUF;
+    if (hw_opt_fullscreen) {
+        flags |= SDL_FULLSCREEN;
+    }
+    log_message("SDL_SetVideoMode(%i, %i, %i, 0x%x)\n", w, h, 8, flags);
+    video.screen = SDL_SetVideoMode(w, h, 8, flags);
+    if (!video.screen) {
+        log_error("SDL_SetVideoMode failed: %s\n", SDL_GetError());
+        return -1;
+    }
+    return 0;
+}
+
+/* -------------------------------------------------------------------------- */
+
 int hw_video_resize(int w, int h)
 {
 #ifdef HAVE_OPENGL
@@ -236,7 +254,23 @@ int hw_video_resize(int w, int h)
 
 int hw_video_toggle_fullscreen(void)
 {
-    /* Not implemented */
+    int (*func)(int, int) = video_sw_set;
+#ifdef HAVE_OPENGL
+    if (hw_opt_use_gl) {
+        func = hw_video_resize;
+    }
+#endif /* HAVE_OPENGL */
+    hw_opt_fullscreen = !hw_opt_fullscreen;
+    if (func(hw_opt_screen_winw, hw_opt_screen_winh)) {
+        hw_opt_fullscreen = !hw_opt_fullscreen; /* restore the setting for the config file */
+        return -1;
+    }
+#ifdef HAVE_OPENGL
+    if (!hw_opt_use_gl)
+#endif /* HAVE_OPENGL */
+    {
+        hw_video_refresh_palette();
+    }
     return 0;
 }
 
@@ -257,15 +291,12 @@ int hw_video_init(int w, int h)
     if (!hw_opt_use_gl)
 #endif
     {
-        log_message("SDL_SetVideoMode(%i, %i, ...)\n", w, h);
-        video.screen = SDL_SetVideoMode(w, h, 8, SDL_SWSURFACE | SDL_DOUBLEBUF);
-        if (!video.screen) {
-            log_error("SDL_SetVideoMode failed: %s\n", SDL_GetError());
-            return -1;
-        }
         video.render = video_render_8bpp;
         video.update = video_update_8bpp;
         video.setpal = video_setpal_8bpp;
+        if (video_sw_set(w, h)) {
+            return -1;
+        }
     }
 #ifdef HAVE_OPENGL
     else {
