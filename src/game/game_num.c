@@ -4,6 +4,7 @@
 
 #include "game_num.h"
 #include "gameapi.h"
+#include "game_shipdesign.h"
 #include "game_shiptech.h"
 #include "lib.h"
 #include "log.h"
@@ -204,7 +205,30 @@ static const struct numtbl_s {
     DEFNUMITEMLTBL(trait2_meklar, game_num_tbl_trait2[RACE_MEKLAR], NUMTYPE_U8, 0, 5),
     DEFNUMITEMLTBL(trait2_darlok, game_num_tbl_trait2[RACE_DARLOK], NUMTYPE_U8, 0, 5),
     DEFNUMITEMLTBLL(tbl_tech_autoadj, NUMTYPE_U8, 0, 100),
-    /* TODO starting ships, monster ships, ... */
+    DEFNUMITEMLSTBL(startship_cost, tbl_startship, cost, NUMTYPE_U16, 0, 0xffff),
+    DEFNUMITEMLSTBL(startship_hull, tbl_startship, hull, NUMTYPE_GUESS(ship_hull_t), 0, SHIP_HULL_NUM - 1),
+    DEFNUMITEMLSTBL(startship_look, tbl_startship, look, NUMTYPE_U8, 0, 0xff/*FIXME*/),
+    DEFNUMITEMLSTBL(startship_wpnt1, tbl_startship, wpnt[0], NUMTYPE_GUESS(weapon_t), 0, WEAPON_NUM - 1),
+    DEFNUMITEMLSTBL(startship_wpnt2, tbl_startship, wpnt[1], NUMTYPE_GUESS(weapon_t), 0, WEAPON_NUM - 1),
+    DEFNUMITEMLSTBL(startship_wpnt3, tbl_startship, wpnt[2], NUMTYPE_GUESS(weapon_t), 0, WEAPON_NUM - 1),
+    DEFNUMITEMLSTBL(startship_wpnt4, tbl_startship, wpnt[3], NUMTYPE_GUESS(weapon_t), 0, WEAPON_NUM - 1),
+    DEFNUMITEMLSTBL(startship_wpnn1, tbl_startship, wpnt[0], NUMTYPE_U8, 0, 0xff),
+    DEFNUMITEMLSTBL(startship_wpnn2, tbl_startship, wpnt[1], NUMTYPE_U8, 0, 0xff),
+    DEFNUMITEMLSTBL(startship_wpnn3, tbl_startship, wpnt[2], NUMTYPE_U8, 0, 0xff),
+    DEFNUMITEMLSTBL(startship_wpnn4, tbl_startship, wpnt[3], NUMTYPE_U8, 0, 0xff),
+    DEFNUMITEMLSTBL(startship_engine, tbl_startship, engine, NUMTYPE_GUESS(ship_engine_t), 0, SHIP_ENGINE_NUM - 1),
+    DEFNUMITEMLSTBL(startship_engines, tbl_startship, engines, NUMTYPE_U32, 0, 0xffffffff),
+    DEFNUMITEMLSTBL(startship_special1, tbl_startship, special[0], NUMTYPE_GUESS(ship_special_t), 0, SHIP_SPECIAL_NUM - 1),
+    DEFNUMITEMLSTBL(startship_special2, tbl_startship, special[1], NUMTYPE_GUESS(ship_special_t), 0, SHIP_SPECIAL_NUM - 1),
+    DEFNUMITEMLSTBL(startship_special3, tbl_startship, special[2], NUMTYPE_GUESS(ship_special_t), 0, SHIP_SPECIAL_NUM - 1),
+    DEFNUMITEMLSTBL(startship_shield, tbl_startship, shield, NUMTYPE_GUESS(ship_shield_t), 0, SHIP_SHIELD_NUM - 1),
+    DEFNUMITEMLSTBL(startship_jammer, tbl_startship, jammer, NUMTYPE_GUESS(ship_jammer_t), 0, SHIP_JAMMER_NUM - 1),
+    DEFNUMITEMLSTBL(startship_comp, tbl_startship, comp, NUMTYPE_GUESS(ship_comp_t), 0, SHIP_COMP_NUM - 1),
+    DEFNUMITEMLSTBL(startship_armor, tbl_startship, armor, NUMTYPE_GUESS(ship_armor_t), 0, SHIP_ARMOR_NUM - 1),
+    DEFNUMITEMLSTBL(startship_man, tbl_startship, man, NUMTYPE_U8, 0, 0xff/*FIXME*/),
+    DEFNUMITEMLSTBL(startship_hp, tbl_startship, hp, NUMTYPE_U16, 0, 0xffff),
+    DEFNUMITEMLTBL(startship_num, startfleet_ships, NUMTYPE_U16, 0, 0xffff),
+    /* TODO monster ships, ... */
     DEFNUMEND
 };
 
