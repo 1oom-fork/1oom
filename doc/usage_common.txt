@@ -45,7 +45,7 @@ Choose whichever you prefer.
 =================
 
 1oom is configured via command-line arguments or editing the
-configuration file.
+configuration file. Each program has a it's own configuration file (if any).
 
 2.1. User Directory
 --------------------
@@ -56,6 +56,9 @@ options in one of the following paths:
 - <game directory> (win32)
 - $XDG_CONFIG_HOME/1oom (Linux)
 - ~/.config/1oom (Linux)
+
+You can also specify your own path by passing the command-line
+argument "-user <path>" when running 1oom.
 
 
 3. Command-line arguments
@@ -68,6 +71,7 @@ For all:
     -?                   Show command line options
     -c FILE.TXT          Set config filename
     -cro                 Set config file read-only
+    -user PATH           Set user directory
     -data PATH           Set data directory
     -file FILE           Add LBX patch file (.PBX)
 
