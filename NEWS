@@ -1,3 +1,11 @@
+2018-04-30: v0.2 released
+    - configuration files implemented
+    - add -user <path>
+    - documentation added
+    - full screen toggling with Alt-Enter
+    - 1oom_gfxconv for converting graphics to LBX format
+    - various bugs fixed
+
 2025-x-x: v0.1-x
     - Added most of the important fixes
 
