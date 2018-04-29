@@ -57,6 +57,10 @@ options in one of the following paths:
 - $XDG_CONFIG_HOME/1oom (Unix)
 - ~/.config/1oom (Unix)
 
+You can also specify your own path by passing the command-line
+argument "-user <path>" when running 1oom. Note that unlike "-data"
+the setting is not saved in the configuration file.
+
 
 3. Command-line arguments
 ==========================
@@ -68,6 +72,7 @@ For all:
     -?                   Show command line options
     -c FILE.TXT          Set config filename
     -cro                 Do not write a config file
+    -user PATH           Set user directory
     -data PATH           Set data directory
 
 For UIs with audio support:
