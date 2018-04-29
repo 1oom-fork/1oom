@@ -119,6 +119,15 @@ void os_set_path_data(const char *path)
     data_path = lib_stralloc(path);
 }
 
+void os_set_path_user(const char *path)
+{
+    if (user_path) {
+        lib_free(user_path);
+        user_path = NULL;
+    }
+    user_path = lib_stralloc(path);
+}
+
 const char *os_get_path_user(void)
 {
     if (user_path == NULL) {
