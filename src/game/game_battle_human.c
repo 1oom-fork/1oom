@@ -737,7 +737,7 @@ static void game_battle_extend_route_from_tbl(uint8_t *route, int *tblx, int *tb
     for (pos = 0; route[pos] != BATTLE_XY_INVALID; ++pos) {
         /*nop*/
     }
-    for (int i = pos; (i + len) > pos; ++i) {
+    for (int i = pos; i < (pos + len); ++i) {
         int j;
         j = i - pos;
         route[i] = BATTLE_XY_SET(tblx[j], tbly[j]);
