@@ -9,6 +9,6 @@ extern int util_math_dist_steps(int x0, int y0, int x1, int y1);
 extern int util_math_dist_fast(int x0, int y0, int x1, int y1);
 extern int util_math_dist_maxabs(int x0, int y0, int x1, int y1);
 extern int util_math_line_plot(int x0, int y0, int x1, int y1, int *tblx, int *tbly);
-extern int util_math_get_route_len(int x0, int y0, int *tblx, int *tbly, int len);
+extern int util_math_get_route_len(int x0, int y0, const int *tblx, const int *tbly, int len);
 
 #endif
