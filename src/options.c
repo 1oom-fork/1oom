@@ -109,6 +109,13 @@ int options_nop(char **argv, void *var)
 
 /* -------------------------------------------------------------------------- */
 
+static int options_set_userdir(char **argv, void *var)
+{
+    log_message("Setting user directory to '%s'\n", argv[1]);
+    os_set_path_user(argv[1]);
+    return 0;
+}
+
 static int options_set_datadir(char **argv, void *var)
 {
     log_message("Setting data directory to '%s'\n", argv[1]);
@@ -139,6 +146,9 @@ static const struct cmdline_options_s cmdline_options_cfg_early[] = {
     { "-cro", 0,
       options_enable_bool_var, (void *)&opt_config_ro,
       NULL, "Do not write a config file" },
+    { "-user", 1,
+      options_set_userdir, NULL,
+      "PATH", "Set user directory" },
     { NULL, 0, NULL, NULL, NULL, NULL }
 };
 
