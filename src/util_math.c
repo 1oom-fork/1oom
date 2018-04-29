@@ -331,7 +331,7 @@ int util_math_line_plot(int x0, int y0, int x1, int y1, int *tblx, int *tbly)
     return len;
 }
 
-int util_math_get_route_len(int x0, int y0, int *tblx, int *tbly, int len)
+int util_math_get_route_len(int x0, int y0, const int *tblx, const int *tbly, int len)
 {
     int l;
     l = util_math_route_step_len(abs(x0 - tblx[0]), abs(y0 - tbly[0]));
