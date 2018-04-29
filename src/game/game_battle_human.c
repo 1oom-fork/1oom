@@ -768,11 +768,11 @@ static void game_battle_item_move_find_route(struct battle_s *bt, uint8_t *route
                         int len3;
                         len3 = util_math_line_plot(sx2, sy2, sx, sy, tblx, tbly);
                         if ((game_battle_area_check_line_ok(bt, tblx, tbly, len3) == 1) && (b->man >= (dirlen + len3))) {
-                            int len4;
-                            len4 = util_math_get_route_len(tblx2[dirlen - 1], tbly2[dirlen - 1], tblx, tbly, len3);
-                            if (((len3 + dirlen) <= minlen2) && ((len4 + rlen1) < minrlen)) {
+                            int rlen2;
+                            rlen2 = util_math_get_route_len(tblx2[dirlen - 1], tbly2[dirlen - 1], tblx, tbly, len3);
+                            if (((len3 + dirlen) <= minlen2) && ((rlen2 + rlen1) < minrlen)) {
                                 minlen2 = len3 + dirlen;
-                                minrlen = len4 + rlen1;
+                                minrlen = rlen2 + rlen1;
                                 game_battle_set_route_from_tbl(route, tblx2, tbly2, dirlen);
                                 game_battle_extend_route_from_tbl(route, tblx, tbly, len3);
                             }
