@@ -1,3 +1,12 @@
+2018-04-30: v0.2 released
+    - help dialogs and news transition implemented; all done!?
+    - configuration files implemented
+    - add -user <path>
+    - documentation added
+    - full screen toggling with Alt-Enter
+    - 1oom_gfxconv for converting graphics to LBX format
+    - various bugs fixed
+
 2018-04-10: v0.1 released
     - first public alpha release
 
