@@ -760,19 +760,19 @@ static void game_battle_item_move_find_route(struct battle_s *bt, uint8_t *route
             for (int sx2 = 0; sx2 < BATTLE_AREA_W; ++sx2) {
                 len = util_math_line_plot(b->sx, b->sy, sx2, sy2, tblx, tbly);
                 if ((game_battle_area_check_line_ok(bt, tblx, tbly, len) == 1) && (b->man >= len)) {
-                    int tblx2[BATTLE_ROUTE_LEN], tbly2[BATTLE_ROUTE_LEN], len2;
+                    int tblx2[BATTLE_ROUTE_LEN], tbly2[BATTLE_ROUTE_LEN], rlen1;
                     memcpy(tblx2, tblx, len * sizeof(int));
                     memcpy(tbly2, tbly, len * sizeof(int));
-                    len2 = util_math_get_route_len(b->sx, b->sy, tblx, tbly, len);
-                    if (len2 <= minlen) {
+                    rlen1 = util_math_get_route_len(b->sx, b->sy, tblx, tbly, len);
+                    if (rlen1 <= minlen) {
                         int len3;
                         len3 = util_math_line_plot(sx2, sy2, sx, sy, tblx, tbly);
                         if ((game_battle_area_check_line_ok(bt, tblx, tbly, len3) == 1) && (b->man >= (dirlen + len3))) {
                             int len4;
                             len4 = util_math_get_route_len(tblx2[dirlen - 1], tbly2[dirlen - 1], tblx, tbly, len3);
-                            if (((len3 + dirlen) <= minlen2) && ((len4 + len2) < minlen)) {
+                            if (((len3 + dirlen) <= minlen2) && ((len4 + rlen1) < minlen)) {
                                 minlen2 = len3 + dirlen;
-                                minlen = len4 + len2;
+                                minlen = len4 + rlen1;
                                 game_battle_set_route_from_tbl(route, tblx2, tbly2, dirlen);
                                 game_battle_extend_route_from_tbl(route, tblx, tbly, len3);
                             }
@@ -787,14 +787,14 @@ static void game_battle_item_move_find_route(struct battle_s *bt, uint8_t *route
                                             memcpy(tblx3, tblx, len3 * sizeof(int));
                                             memcpy(tbly3, tbly, len3 * sizeof(int));
                                             len42 = util_math_get_route_len(tblx2[dirlen - 1], tbly2[dirlen - 1], tblx, tbly, len3);
-                                            if ((len42 + len2) < minlen) {
+                                            if ((len42 + rlen1) < minlen) {
                                                 int len5;
                                                 len5 = util_math_line_plot(sx3, sy3, sx, sy, tblx, tbly);
                                                 if ((game_battle_area_check_line_ok(bt, tblx, tbly, len5) == 1) && (b->man >= (dirlen + len3 + len5))) {
                                                     len4 = util_math_get_route_len(tblx3[dirlen - 1], tbly3[dirlen - 1], tblx, tbly, len5);
-                                                    if (((len5 + dirlen + len3) <= minlen2) && (len4 + len2 + len42) < minlen) {
+                                                    if (((len5 + dirlen + len3) <= minlen2) && (len4 + rlen1 + len42) < minlen) {
                                                         minlen2 = len5 + dirlen + len3;
-                                                        minlen = len4 + len2 + len42;
+                                                        minlen = len4 + rlen1 + len42;
                                                         game_battle_set_route_from_tbl(route, tblx2, tbly2, dirlen);
                                                         game_battle_extend_route_from_tbl(route, tblx3, tbly3, len3);
                                                         game_battle_extend_route_from_tbl(route, tblx, tbly, len5);
