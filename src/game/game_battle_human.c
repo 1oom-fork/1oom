@@ -778,6 +778,9 @@ static void game_battle_item_move_find_route(struct battle_s *bt, uint8_t *route
         int minrlen = 999, minlen = 999;
         for (int sx2 = 0; sx2 < BATTLE_AREA_W; ++sx2) {
             for (int sy2 = 0; sy2 < BATTLE_AREA_H; ++sy2) {
+                if ((b->sx == sx2) && (b->sy == sy2)) {
+                    continue;   /* WASBUG? MOO1 does not check, may use -1 as index below */
+                }
                 len = util_math_line_plot(b->sx, b->sy, sx2, sy2, tblx, tbly);
                 if ((game_battle_area_check_line_ok(bt, tblx, tbly, len) == 1) && (b->man >= len)) {
                     int tblx2[BATTLE_ROUTE_LEN], tbly2[BATTLE_ROUTE_LEN], rlen1;
