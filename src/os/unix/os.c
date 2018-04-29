@@ -98,3 +98,12 @@ const char *os_get_path_user(void)
     }
     return user_path;
 }
+
+void os_set_path_user(const char *path)
+{
+    if (user_path) {
+        lib_free(user_path);
+        user_path = NULL;
+    }
+    user_path = lib_stralloc(path);
+}

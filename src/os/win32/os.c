@@ -8,6 +8,7 @@
 /* -------------------------------------------------------------------------- */
 
 static char *data_path = NULL;
+static char *user_path = NULL;
 static char *all_data_paths[] = { NULL, NULL, NULL };
 
 /* -------------------------------------------------------------------------- */
@@ -16,6 +17,8 @@ void os_shutdown(void)
 {
     lib_free(data_path);
     data_path = NULL;
+    lib_free(user_path);
+    user_path = NULL;
 }
 
 const char **os_get_paths_data(void)
@@ -41,5 +44,17 @@ void os_set_path_data(const char *path)
 
 const char *os_get_path_user(void)
 {
-    return ".";
+    if (user_path == NULL) {
+        user_path = lib_stralloc(".");
+    }
+    return user_path;
+}
+
+void os_set_path_user(const char *path)
+{
+    if (user_path) {
+        lib_free(user_path);
+        user_path = NULL;
+    }
+    user_path = lib_stralloc(path);
 }
