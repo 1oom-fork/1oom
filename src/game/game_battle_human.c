@@ -788,16 +788,16 @@ static void game_battle_item_move_find_route(struct battle_s *bt, uint8_t *route
                                             memcpy(tbly3, tbly, len2);
                                             rlen2 = util_math_get_route_len(tblx2[dirlen - 1], tbly2[dirlen - 1], tblx, tbly, len2);
                                             if ((rlen2 + rlen1) < minrlen) {
-                                                int len5;
-                                                len5 = util_math_line_plot(sx3, sy3, sx, sy, tblx, tbly);
-                                                if ((game_battle_area_check_line_ok(bt, tblx, tbly, len5) == 1) && (b->man >= (dirlen + len2 + len5))) {
-                                                    len4 = util_math_get_route_len(tblx3[dirlen - 1], tbly3[dirlen - 1], tblx, tbly, len5);
-                                                    if (((len5 + dirlen + len2) <= minlen) && (len4 + rlen1 + rlen2) < minrlen) {
-                                                        minlen = len5 + dirlen + len2;
+                                                int len3;
+                                                len3 = util_math_line_plot(sx3, sy3, sx, sy, tblx, tbly);
+                                                if ((game_battle_area_check_line_ok(bt, tblx, tbly, len3) == 1) && (b->man >= (dirlen + len2 + len3))) {
+                                                    len4 = util_math_get_route_len(tblx3[dirlen - 1], tbly3[dirlen - 1], tblx, tbly, len3);
+                                                    if (((len3 + dirlen + len2) <= minlen) && (len4 + rlen1 + rlen2) < minrlen) {
+                                                        minlen = len3 + dirlen + len2;
                                                         minrlen = len4 + rlen1 + rlen2;
                                                         game_battle_set_route_from_tbl(route, tblx2, tbly2, dirlen);
                                                         game_battle_extend_route_from_tbl(route, tblx3, tbly3, len2);
-                                                        game_battle_extend_route_from_tbl(route, tblx, tbly, len5);
+                                                        game_battle_extend_route_from_tbl(route, tblx, tbly, len3);
                                                     }
                                                 }
                                             }
