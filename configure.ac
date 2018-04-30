@@ -10,7 +10,7 @@ AC_ARG_ENABLE(sdl1hw, AS_HELP_STRING([--disable-sdl1hw], [disables SDL1 HW]))
 
 AC_CONFIG_SRCDIR([src/main.c])
 AC_CONFIG_AUX_DIR([build-aux])
-AM_INIT_AUTOMAKE([-Wall])
+AM_INIT_AUTOMAKE([-Wall foreign])
 AM_SILENT_RULES
 
 AC_CANONICAL_HOST
