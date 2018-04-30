@@ -1,0 +1,49 @@
+This is the "to do" for 1oom.
+
+1. Roadmap
+===========
+
+* v0.3:
+  - Classic UI does everything what MOO1 v1.3 does except copy protection.
+  - Modding support via PBX files for all the numerical constants one could
+    expect to hexedit in the original EXE.
+
+* v0.8:
+  - All "hmm" variables and functions have been given proper names.
+  - OS implementations for Unix (Linux) and Windows work.
+  - SDL1 HW implementation works.
+
+* v0.9:
+  - The game is tested and debugged to have no glaringly obvious conversion
+    bugs such as crashes. Original MOO1 bugs can remain.
+  - A rudimentary cmdline UI exists.
+
+* v1.0:
+  - The game is reasonably bug-free. Original MOO1 bugs can remain.
+  - OS implementation for at least Unix (Linux) and Windows.
+  - HW implementation for at least SDL 1.x.
+  - Fully working classic and cmdline UIs.
+
+* v2.0:
+  - Multiplayer.
+  - Original MOO1 bugs fixed.
+  - Alternative AI with less bugs and more difficulty.
+
+2. Random assortment of future features
+========================================
+
+* Multiplayer:
+  - local
+  - network: client/server
+
+* Sound:
+  - Replace SDL_mixer with a sound/music thread(s) and libfluidsynth, libflac,
+    etc. Look at PrBoom+ for code to steal.
+  - OPL MIDI backend (+ FAT.AD support).
+  - OS MIDI backends.
+
+* UI classic:
+  - Add UI elements for sound/music volume, full screen, aspect ratio, ...
+
+* HW:
+  - SDL2.
