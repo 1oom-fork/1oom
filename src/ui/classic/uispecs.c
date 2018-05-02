@@ -197,6 +197,7 @@ void ui_specs_mustscrap(struct game_s *g, player_id_t active_player, int scrapi)
     int16_t oi_no = UIOBJI_INVALID, oi_yes = UIOBJI_INVALID;
 
     d.g = g;
+    d.api = active_player;
     d.frame = 0;
     d.scrapi = scrapi;
 
