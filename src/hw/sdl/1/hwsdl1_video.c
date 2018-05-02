@@ -310,6 +310,18 @@ static int hw_video_init_do(int w, int h)
         if ((hw_opt_screen_winw != 0) && (hw_opt_screen_winh != 0)) {
             w = hw_opt_screen_winw;
             h = hw_opt_screen_winh;
+        } else {
+            int scale = (video.bestmode.w - 50/*window borders*/) / video.hwrenderbuf->w + 1;
+            if (scale > 1) {
+                do {
+                    --scale;
+                    h = video.hwrenderbuf->h * scale;
+                    if (hw_opt_aspect != 0) {
+                        h = (int)(((double)(h) * 1000000.) / ((double)(hw_opt_aspect)));
+                    }
+                } while ((scale > 1) && ((h + 50/*space for window borders, taskbar etc*/) > video.bestmode.h));
+                w = video.hwrenderbuf->w * scale;
+            }
         }
         if (hw_video_resize(w, h)) {
             return -1;
