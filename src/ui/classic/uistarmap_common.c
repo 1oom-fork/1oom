@@ -122,16 +122,16 @@ static void ui_starmap_draw_sliders_and_prod(struct starmap_data_s *d)
 {
     struct game_s *g = d->g;
     planet_t *p = &g->planet[g->planet_focus_i[d->api]];
-    int hmmx = 311;
+    int x = 311;
     char buf[64];
 
     lbxgfx_draw_frame(224, 5, ui_data.gfx.starmap.yourplnt, UI_SCREEN_W);
     lbxfont_select(2, 0xd, 0xe, 0);
     sprintf(buf, "%i \x02(%i)\x01", p->prod_after_maint, p->total_prod);
-    lbxfont_print_str_right(hmmx, 72, buf, UI_SCREEN_W);
+    lbxfont_print_str_right(x, 72, buf, UI_SCREEN_W);
     lbxfont_select(2, 0xd, 0, 0);
     lbxfont_print_num_right(265, 61, p->pop, UI_SCREEN_W);
-    lbxfont_print_num_right(hmmx, 61, p->missile_bases, UI_SCREEN_W);
+    lbxfont_print_num_right(x, 61, p->missile_bases, UI_SCREEN_W);
 
     for (planet_slider_i_t i = PLANET_SLIDER_SHIP; i < PLANET_SLIDER_NUM; ++i) {
         ui_draw_filled_rect(253, 84 + 11 * i, 278, 84 + 11 * i + 3, 0x2f);
@@ -167,7 +167,7 @@ static void ui_starmap_draw_sliders_and_prod(struct starmap_data_s *d)
         }
         if ((vtotal < cost) || (p->buildship == BUILDSHIP_STARGATE)) {
             if (vthis < 1) {
-                lbxfont_print_str_right(hmmx, 83, game_str_sm_prodnone, UI_SCREEN_W);
+                lbxfont_print_str_right(x, 83, game_str_sm_prodnone, UI_SCREEN_W);
                 lbxfont_select(0, 0xd, 0, 0);
                 lbxfont_print_str_right(271, 160, "0", UI_SCREEN_W);
             } else {
@@ -179,7 +179,7 @@ static void ui_starmap_draw_sliders_and_prod(struct starmap_data_s *d)
                 }
                 SETMAX(num, 1);
                 sprintf(buf, "%i %s", num, game_str_sm_prod_y);
-                lbxfont_print_str_right(hmmx, 83, buf, UI_SCREEN_W);
+                lbxfont_print_str_right(x, 83, buf, UI_SCREEN_W);
                 lbxfont_select(0, 0xd, 0, 0);
                 if (p->buildship != BUILDSHIP_STARGATE) {
                     lbxfont_print_str_right(271, 160, "1", UI_SCREEN_W);
@@ -191,7 +191,7 @@ static void ui_starmap_draw_sliders_and_prod(struct starmap_data_s *d)
             SETMAX(cost, 1);
             num = vtotal / cost;
             sprintf(buf, "1 %s", game_str_sm_prod_y);
-            lbxfont_print_str_right(hmmx, 83, buf, UI_SCREEN_W);
+            lbxfont_print_str_right(x, 83, buf, UI_SCREEN_W);
             lbxfont_select(0, 0xd, 0, 0);
             lbxfont_print_num_right(271, 160, num, UI_SCREEN_W);
         }
@@ -204,9 +204,9 @@ static void ui_starmap_draw_sliders_and_prod(struct starmap_data_s *d)
         vtotal = vthis + p->bc_to_base;
         v8 = p->bc_upgrade_base;
         if (vthis == 0) {
-            lbxfont_print_str_right(hmmx, 94, game_str_sm_prodnone, UI_SCREEN_W);
+            lbxfont_print_str_right(x, 94, game_str_sm_prodnone, UI_SCREEN_W);
         } else if (vtotal <= v8) {
-            lbxfont_print_str_right(hmmx, 94, game_str_sm_defupg, UI_SCREEN_W);
+            lbxfont_print_str_right(x, 94, game_str_sm_defupg, UI_SCREEN_W);
         } else {
             vtotal -= v8;
             SETMAX(vtotal, 0);
@@ -216,7 +216,7 @@ static void ui_starmap_draw_sliders_and_prod(struct starmap_data_s *d)
             }
             SETMAX(va, 0);
             if (vtotal <= va) {
-                lbxfont_print_str_right(hmmx, 94, game_str_sm_defshld, UI_SCREEN_W);
+                lbxfont_print_str_right(x, 94, game_str_sm_defshld, UI_SCREEN_W);
             } else {
                 int num, over;
                 vtotal -= va;
@@ -233,7 +233,7 @@ static void ui_starmap_draw_sliders_and_prod(struct starmap_data_s *d)
                     num = vtotal / cost;
                     sprintf(buf, "%i/%s", num, game_str_sm_prod_y);
                 }
-                lbxfont_print_str_right(hmmx, 94, buf, UI_SCREEN_W);
+                lbxfont_print_str_right(x, 94, buf, UI_SCREEN_W);
             }
         }
     }
@@ -266,7 +266,7 @@ static void ui_starmap_draw_sliders_and_prod(struct starmap_data_s *d)
                 str = buf;
             }
         }
-        lbxfont_print_str_right(hmmx, 105, str, UI_SCREEN_W);
+        lbxfont_print_str_right(x, 105, str, UI_SCREEN_W);
     }
     {
         const char *str = NULL;
@@ -348,7 +348,7 @@ static void ui_starmap_draw_sliders_and_prod(struct starmap_data_s *d)
             }
         }
         if (str) {
-            lbxfont_print_str_right(hmmx, 116, str, UI_SCREEN_W);
+            lbxfont_print_str_right(x, 116, str, UI_SCREEN_W);
         }
     }
     {
@@ -357,9 +357,9 @@ static void ui_starmap_draw_sliders_and_prod(struct starmap_data_s *d)
         if (v > 9999) {
             ui_draw_filled_rect(288, 127, 312, 132, 7);
         } else {
-            hmmx -= 9;
+            x -= 9;
         }
-        lbxfont_print_str_right(hmmx, 127, buf, UI_SCREEN_W);
+        lbxfont_print_str_right(x, 127, buf, UI_SCREEN_W);
     }
 }
 
