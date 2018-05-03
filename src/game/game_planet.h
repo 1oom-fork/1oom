@@ -152,5 +152,6 @@ extern uint8_t game_planet_get_random(struct game_s *g, player_id_t owner);
 extern void game_planet_adjust_percent(struct game_s *g, player_id_t owner, int a0, uint8_t percent, int growth);
 extern int game_planet_get_w1(const struct game_s *g, uint8_t planet_i);
 extern void game_planet_update_home(struct game_s *g);
+extern int game_planet_get_slider_text(const struct game_s *g, uint8_t planet_i, player_id_t player, planet_slider_i_t si, char *buf);
 
 #endif
