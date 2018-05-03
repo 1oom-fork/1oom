@@ -85,7 +85,7 @@ static void init_lbx_space(void)
     ui_data.gfx.space.misl_off = lbxfile_item_get(LBXFILE_SPACE, 4, 0);
     ui_data.gfx.space.warpout = lbxfile_item_get(LBXFILE_SPACE, 0x21, 0);
     ui_data.gfx.space.envterm = lbxfile_item_get(LBXFILE_SPACE, 0x22, 0);
-    ui_data.gfx.space.environ = lbxfile_item_get(LBXFILE_SPACE, 0x13, 0);
+    ui_data.gfx.space.enviro = lbxfile_item_get(LBXFILE_SPACE, 0x13, 0);
     ui_data.gfx.space.base_btn = lbxfile_item_get(LBXFILE_SPACE, 0x23, 0);
     ui_data.gfx.space.dis_bem2 = lbxfile_item_get(LBXFILE_SPACE, 0x24, 0);
     ui_data.gfx.space.stasis2 = lbxfile_item_get(LBXFILE_SPACE, 0x25, 0);
