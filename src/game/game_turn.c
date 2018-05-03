@@ -303,7 +303,7 @@ static void game_turn_build_eco(struct game_s *g)
             SETMAX(ecoprod, 0);
             {
                 int v;
-                v = game_get_pop_growth_max(g, i, p->max_pop3) + game_get_pop_growth_for_eco(g, i, ecoprod) + p->pop_tenths;
+                v = game_get_pop_growth_max(g, p, p->max_pop3) + game_get_pop_growth_for_eco(g, p, ecoprod) + p->pop_tenths;
                 p->pop += v / 10;
                 p->pop_tenths = v % 10;
             }
@@ -1643,7 +1643,7 @@ static void game_turn_finished_slider(struct game_s *g)
                 SETRANGE(w, 0, 100);
                 SUBSAT0(v, waste);
                 if (0
-                  || ((game_get_pop_growth_for_eco(g, pli, v) / 10) > 0)
+                  || ((game_get_pop_growth_for_eco(g, p, v) / 10) > 0)
                   || ((p->slider[PLANET_SLIDER_ECO] != 0) && (e->race == RACE_SILICOID))
                 ) {
                     if ((p->pop > p->pop_prev) || (p->slider[PLANET_SLIDER_ECO] > (w + 7))) {
