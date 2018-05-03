@@ -155,6 +155,7 @@ extern int game_planet_get_w1(const struct game_s *g, uint8_t planet_i);
 extern int game_adjust_prod_by_special(int prod, planet_special_t special);
 extern int game_get_tech_prod(int prod, int slider, race_t race, planet_special_t special);
 extern void game_planet_update_home(struct game_s *g);
+extern int game_planet_get_slider_text(const struct game_s *g, uint8_t planet_i, player_id_t player, planet_slider_i_t si, char *buf);
 
 struct planet_prod_s {
     int vthis;
