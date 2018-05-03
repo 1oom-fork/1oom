@@ -240,8 +240,8 @@ if test x"$is_win32" = "xyes"; then
     OS_SRC_DIR="\$(top_srcdir)/src/os/win32"
     OS_LIBS="$OS_DIR/libos.a"
     OS_INCLUDES="-I$OS_SRC_DIR"
-    AM_CONDITIONAL(COMPILE_UNIX, true)
-    AM_CONDITIONAL(COMPILE_WIN32, false)
+    AM_CONDITIONAL(COMPILE_UNIX, false)
+    AM_CONDITIONAL(COMPILE_WIN32, true)
 else
     OS_DIR="\$(top_builddir)/src/os/unix"
     OS_SRC_DIR="\$(top_srcdir)/src/os/unix"
