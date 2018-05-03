@@ -109,16 +109,6 @@ static void ui_starmap_draw_range_parsec(struct starmap_data_s *d, int y)
     lbxfont_print_str_center(269, y, buf, UI_SCREEN_W);
 }
 
-static int tenths_2str(char *buf, int num)
-{
-    int pos;
-    pos = sprintf(buf, "%i", num / 10);
-    if ((num < 100) && ((num % 10) != 0)) {
-        pos += sprintf(&buf[pos], ".%i", num % 10);
-    }
-    return pos;
-}
-
 static void ui_starmap_draw_sliders_and_prod(struct starmap_data_s *d)
 {
     const struct game_s *g = d->g;
@@ -160,200 +150,26 @@ static void ui_starmap_draw_sliders_and_prod(struct starmap_data_s *d)
 
     lbxfont_select(2, 6, 0, 0);
     {
-        const shipdesign_t *sd;
-        int vthis, vtotal, cost;
-        vthis = game_adjust_prod_by_special((p->prod_after_maint * p->slider[PLANET_SLIDER_SHIP]) / 100, p->special);
-        vtotal = vthis + p->bc_to_ship;
-        if (p->buildship == BUILDSHIP_STARGATE) {
-            cost = game_num_stargate_cost;
-        } else {
-            sd = &g->srd[d->api].design[p->buildship];
-            cost = sd->cost;
-        }
-        if ((vtotal < cost) || (p->buildship == BUILDSHIP_STARGATE)) {
-            if (vthis < 1) {
-                lbxfont_print_str_right(x, 83, game_str_sm_prodnone, UI_SCREEN_W);
-                lbxfont_select(0, 0xd, 0, 0);
-                lbxfont_print_str_right(271, 160, "0", UI_SCREEN_W);
-            } else {
-                int num = 0, over;
-                over = cost - p->bc_to_ship;
-                while (over > 0) {
-                    over -= vthis;
-                    ++num;
-                }
-                SETMAX(num, 1);
-                sprintf(buf, "%i %s", num, game_str_sm_prod_y);
-                lbxfont_print_str_right(x, 83, buf, UI_SCREEN_W);
-                lbxfont_select(0, 0xd, 0, 0);
-                if (p->buildship != BUILDSHIP_STARGATE) {
-                    lbxfont_print_str_right(271, 160, "1", UI_SCREEN_W);
-                }
-            }
-        } else {
-            int num;
-            /* TODO this adjusted sd->cost directly! */
-            SETMAX(cost, 1);
-            num = vtotal / cost;
-            sprintf(buf, "1 %s", game_str_sm_prod_y);
-            lbxfont_print_str_right(x, 83, buf, UI_SCREEN_W);
-            lbxfont_select(0, 0xd, 0, 0);
-            lbxfont_print_num_right(271, 160, num, UI_SCREEN_W);
+        int v;
+        v = game_planet_get_slider_text(g, g->planet_focus_i[d->api], d->api, PLANET_SLIDER_SHIP, buf);
+        lbxfont_print_str_right(x, 83, buf, UI_SCREEN_W);
+        lbxfont_select(0, 0xd, 0, 0);
+        if (v >= 0) {
+            lbxfont_print_num_right(271, 160, v, UI_SCREEN_W);
         }
     }
     lbxfont_select(2, 6, 0, 0);
+    game_planet_get_slider_text(g, g->planet_focus_i[d->api], d->api, PLANET_SLIDER_DEF, buf);
+    lbxfont_print_str_right(x, 94, buf, UI_SCREEN_W);
+    game_planet_get_slider_text(g, g->planet_focus_i[d->api], d->api, PLANET_SLIDER_IND, buf);
+    lbxfont_print_str_right(x, 105, buf, UI_SCREEN_W);
     {
-        int vthis, vtotal, cost, v8, va;
-        cost = game_get_base_cost(g, d->api);
-        vthis = game_adjust_prod_by_special((p->prod_after_maint * p->slider[PLANET_SLIDER_DEF]) / 100, p->special);
-        vtotal = vthis + p->bc_to_base;
-        v8 = p->bc_upgrade_base;
-        if (vthis == 0) {
-            lbxfont_print_str_right(x, 94, game_str_sm_prodnone, UI_SCREEN_W);
-        } else if (vtotal <= v8) {
-            lbxfont_print_str_right(x, 94, game_str_sm_defupg, UI_SCREEN_W);
-        } else {
-            vtotal -= v8;
-            SETMAX(vtotal, 0);
-            va = g->eto[d->api].planet_shield_cost - p->bc_to_shield;
-            if (p->battlebg == 0) {
-                va = 0;
-            }
-            SETMAX(va, 0);
-            if (vtotal <= va) {
-                lbxfont_print_str_right(x, 94, game_str_sm_defshld, UI_SCREEN_W);
-            } else {
-                int num, over;
-                vtotal -= va;
-                SETMAX(vtotal, 0);
-                if ((cost * 2) > vtotal) {
-                    num = 1;
-                    over = cost - vtotal;
-                    while (over > 0) {
-                        over -= vthis;
-                        ++num;
-                    }
-                    sprintf(buf, "%i %s", num, game_str_sm_prod_y);
-                } else {
-                    num = vtotal / cost;
-                    sprintf(buf, "%i/%s", num, game_str_sm_prod_y);
-                }
-                lbxfont_print_str_right(x, 94, buf, UI_SCREEN_W);
-            }
-        }
-    }
-    {
-        const char *str = game_str_sm_prodnone;
-        int vthis, cost;
-        cost = g->eto[d->api].factory_adj_cost;
-        vthis = game_adjust_prod_by_special((p->prod_after_maint * p->slider[PLANET_SLIDER_IND]) / 100, p->special);
-        if (vthis != 0) {
-            int v20;
-            v20 = (vthis * 10) / cost;
-            if ((v20 / 10 + p->factories) > ((p->pop - p->trans_num) * p->pop_oper_fact)) {
-                if (p->pop_oper_fact < g->eto[d->api].colonist_oper_factories) {
-                    if (g->eto[d->api].race != RACE_MEKLAR) {
-                        str = game_str_sm_refit;
-                    } else {
-                        int pos = tenths_2str(buf, v20);
-                        sprintf(&buf[pos], "/%s", game_str_sm_prod_y);
-                        str = buf;
-                    }
-                } else {
-                    str = game_str_sm_indres;
-                    if (p->factories < (p->max_pop3 * g->eto[d->api].colonist_oper_factories)) {
-                        str = game_str_sm_indmax;
-                    }
-                }
-            } else {
-                int pos = tenths_2str(buf, v20);
-                sprintf(&buf[pos], "/%s", game_str_sm_prod_y);
-                str = buf;
-            }
-        }
-        lbxfont_print_str_right(x, 105, str, UI_SCREEN_W);
-    }
-    {
-        const char *str = NULL;
-        int vthis, factoper, waste, adjwaste;
-        bool flag_tform = false, flag_ecoproj = false;
-        vthis = (p->prod_after_maint * p->slider[PLANET_SLIDER_ECO]) / 100;
-        factoper = (p->pop - p->trans_num) * g->eto[d->api].colonist_oper_factories;
-        SETMIN(factoper, p->factories);
-        waste = (factoper * g->eto[d->api].ind_waste_scale) / 10;
-        if (g->eto[d->api].race == RACE_SILICOID) {
-            adjwaste = 0;
-        } else {
-            adjwaste = (waste + p->waste) / g->eto[d->api].have_eco_restoration_n;
-        }
-        if ((vthis < adjwaste) || (vthis == 0)) {
-            str = (vthis < adjwaste) ? game_str_sm_ecowaste : game_str_sm_prodnone;
-        } else {
-            if (g->eto[d->api].race != RACE_SILICOID) {
-                vthis -= adjwaste;
-                SETMAX(vthis, 0);
-                if ((vthis > 0) && (g->eto[d->api].have_atmos_terra) && (p->growth == PLANET_GROWTH_HOSTILE)) {
-                    vthis -= game_num_atmos_cost - p->bc_to_ecoproj;
-                    if (vthis < 0) {
-                        flag_ecoproj = true;
-                        str = game_str_sm_ecoatmos;
-                    }
-                }
-                if ((vthis > 0) && (g->eto[d->api].have_soil_enrich) && (p->growth == PLANET_GROWTH_NORMAL)) {
-                    vthis -= game_num_soil_cost - p->bc_to_ecoproj;
-                    if (vthis < 0) {
-                        flag_ecoproj = true;
-                        str = game_str_sm_ecosoil;
-                    }
-                }
-                if ((vthis > 0) && (g->eto[d->api].have_adv_soil_enrich) && ((p->growth == PLANET_GROWTH_NORMAL) || (p->growth == PLANET_GROWTH_FERTILE))) {
-                    vthis -= game_num_adv_soil_cost - p->bc_to_ecoproj;
-                    if (vthis < 0) {
-                        flag_ecoproj = true;
-                        str = game_str_sm_ecogaia;
-                    }
-                }
-            }
-            flag_tform = false;
-            if (vthis > 0) {
-                if (p->max_pop3 < game_num_max_pop) {
-                    adjwaste = (p->max_pop2 + (g->eto[d->api].have_terraform_n - p->max_pop3)) * g->eto[d->api].terraform_cost_per_inc;
-                } else {
-                    adjwaste = 0;
-                }
-                if (vthis < adjwaste) {
-                    str = game_str_sm_ecotform;
-                } else {
-                    int growth, growth2;
-                    if (adjwaste > 0) {
-                        flag_tform = true;
-                    }
-                    vthis -= adjwaste;
-                    growth = game_get_pop_growth_max(g, g->planet_focus_i[d->api], p->max_pop3) + p->pop_tenths;
-                    if (((p->pop - p->trans_num) + (growth / 10)) > p->max_pop3) {
-                        growth = (p->max_pop3 - (p->pop - p->trans_num)) * 10;
-                    }
-                    growth2 = game_get_pop_growth_for_eco(g, g->planet_focus_i[d->api], vthis) + growth;
-                    if (((p->pop - p->trans_num) + (growth2 / 10)) > p->max_pop3) {
-                        growth2 = (p->max_pop3 - (p->pop - p->trans_num)) * 10;
-                    }
-                    growth = growth2 / 10 - growth / 10;
-                    if (growth <= 0) {
-                        str = flag_tform ? game_str_sm_ecotform : game_str_sm_ecoclean;
-                    } else {
-                        sprintf(buf, "+%i", growth);
-                        lbxfont_print_str_right(297, 116, buf, UI_SCREEN_W);
-                        str = game_str_sm_ecopop;
-                    }
-                }
-            } else {
-                if ((flag_ecoproj == false) && (g->eto[d->api].race != RACE_SILICOID)) {
-                    str = game_str_sm_ecoclean;
-                }
-            }
-        }
-        if (str) {
-            lbxfont_print_str_right(x, 116, str, UI_SCREEN_W);
+        int v;
+        v = game_planet_get_slider_text(g, g->planet_focus_i[d->api], d->api, PLANET_SLIDER_ECO, buf);
+        lbxfont_print_str_right(x, 116, buf, UI_SCREEN_W);
+        if (v >= 0) {
+            sprintf(buf, "+%i", v);
+            lbxfont_print_str_right(297, 116, buf, UI_SCREEN_W);
         }
     }
     {
