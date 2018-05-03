@@ -176,7 +176,7 @@ struct ui_data_s {
             uint8_t *misl_off;
             uint8_t *warpout;
             uint8_t *envterm;
-            uint8_t *environ;
+            uint8_t *enviro;
             uint8_t *base_btn;
             uint8_t *dis_bem2;
             uint8_t *stasis2;
