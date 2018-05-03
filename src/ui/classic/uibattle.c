@@ -1535,7 +1535,7 @@ void ui_battle_draw_stream1(const struct battle_s *bt, int attacker_i, int targe
 void ui_battle_draw_stream2(const struct battle_s *bt, int attacker_i, int target_i)
 {
     const struct battle_item_s *b;
-    uint8_t *gfx = ui_data.gfx.space.environ;
+    uint8_t *gfx = ui_data.gfx.space.enviro;
     int x, y, x0, y0, x1, y1;
     lbxgfx_set_frame_0(gfx);
     {
