@@ -1255,7 +1255,6 @@ static int game_turn_transport_shoot(struct game_s *g, uint8_t planet_i, player_
 
 static void game_turn_transport(struct game_s *g)
 {
-    char buf[0x80];
     for (int pli = 0; pli < g->galaxy_stars; ++pli) {
         planet_t *p = &(g->planet[pli]);
         for (player_id_t i = PLAYER_0; i < g->players; ++i) {
@@ -1326,6 +1325,7 @@ static void game_turn_transport(struct game_s *g)
             /*e2a4*/
             if (pop3 <= 0) {
                 if (IS_HUMAN(g, owner) || IS_HUMAN(g, p->owner)) {
+                    char *buf = ui_get_strbuf();
                     const char *s;
                     if ((g->gaux->local_players == 1) && IS_HUMAN(g, owner)) {
                         s = game_str_sb_your;
@@ -1338,6 +1338,7 @@ static void game_turn_transport(struct game_s *g)
             } else if (p->owner == PLAYER_NONE) {
                 /*e36d*/
                 if (IS_HUMAN(g, owner)) {
+                    char *buf = ui_get_strbuf();
                     sprintf(buf, "%s %s %s", game_str_sm_trbdb1, g->planet[dest].name, game_str_sm_trbdb2);
                     ui_turn_msg(g, owner, buf);
                 }
