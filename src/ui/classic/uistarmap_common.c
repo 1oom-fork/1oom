@@ -214,7 +214,8 @@ static void ui_starmap_draw_textbox_finished(const struct game_s *g, player_id_t
             sprintf(buf, "%s %s %s %s.", p->name, game_str_sm_hasfshield, game_str_tbl_roman[p->shield], game_str_sm_planshield);
             break;
         default:
-            break;
+            LOG_DEBUG((1, "BUG: %s, num %i at planet %i type %i\n", __func__, g->evn.build_finished_num[api], pi, i));
+            return;
     }
     ui_draw_textbox_2str("", buf, 54);
     ui_draw_textbox_2str("", game_str_sm_planratio, 110);
