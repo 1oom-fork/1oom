@@ -21,6 +21,7 @@
 /* -------------------------------------------------------------------------- */
 
 #define PARTY_NUM   ((int)PLAYER_NUM + (int)MONSTER_NUM)
+#define PARTY_IS_HUMAN(_g_, _p_)    (((_p_) < PLAYER_NUM) && IS_HUMAN((_g_), (_p_)))
 #define COPY_PROP(bi_, sp_, xyz_) bi_->xyz_ = sp->xyz_
 #define COPY_BOOL_TO_INT(b_, i_, f_) b_->i_ = (b_->sbmask & (1 << SHIP_SPECIAL_BOOL_##f_)) ? 1 : 0
 
@@ -338,7 +339,7 @@ void game_battle_handle_all(struct game_s *g)
                    afterwards on the same turn could be fixed */
                 BOOLVEC_SET0(tbl_have_force, party_att);
             } else {
-                if (!(((party_def < PARTY_NUM) && IS_HUMAN(g, party_def)) || ((party_att < PARTY_NUM) && IS_HUMAN(g, party_att)))) {
+                if ((!PARTY_IS_HUMAN(g, party_def)) && (!PARTY_IS_HUMAN(g, party_att))) {
                     /* AI vs. AI (or monster) */
                     game_battle_prepare(bt, party_att, party_def, pli);
                     if (game_ai->battle_ai_ai_resolve(bt)) {
