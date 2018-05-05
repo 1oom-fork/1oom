@@ -893,7 +893,7 @@ static void audience_menu_tribute(struct audience_s *au)
             selected = ui_audience_ask4(au);
             if ((selected != -1) && (selected < s->tnum) && (selected < 4)) {
                 int v;
-                game_tech_get_new(g, pa, s->tbl_field[i], s->tbl_tech2[i], 4, ph, 0, false);
+                game_tech_get_new(g, pa, s->tbl_field[selected], s->tbl_tech2[selected], 4, ph, 0, false);
                 if (eh->relation1[pa] < 0) {
                     v = 20;
                 } else {
