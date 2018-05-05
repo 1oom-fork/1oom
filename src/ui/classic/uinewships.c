@@ -87,6 +87,9 @@ void ui_newships(struct game_s *g, int pi)
 {
     struct newships_data_s d;
     bool flag_done = false;
+    int tempnum;
+    tempnum = g->evn.build_finished_num[pi];
+    g->evn.build_finished_num[pi] = 0;
     d.g = g;
     d.api = pi;
     d.sm.g = g;
@@ -115,4 +118,5 @@ void ui_newships(struct game_s *g, int pi)
     uiobj_unset_callback();
     uiobj_table_clear();
     newships_free_data(&d);
+    g->evn.build_finished_num[pi] = tempnum;
 }
