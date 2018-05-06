@@ -157,7 +157,7 @@ c       2*6 empire within fuel range: 0/1
 3c      2*6 diplo value
 48      2*6 diplo param 1 (depends on type ; planet index or 0)
 54      2*6 diplo param 2 (depends on type)
-6c      2*6 ?
+6c      2*6 trust
 78      2*6 ?
 84      2*6 ?
 90      2*6 ?
