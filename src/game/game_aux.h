@@ -20,7 +20,9 @@
 #define RESEARCH_D0_PTR(ga_, f_, t_)   ((const uint8_t *)&((ga_)->research.d0[((f_) * 50 + (t_) - 1) * 6]))
 #define RESEARCH_D0_B1(p_)   (((p_)[0] == 0xff) ? 0 : ((p_)[1]))
 
-#define EVENTMSG_NUM  154
+#define EVENTMSG_TYPE_NUM   22
+#define EVENTMSG_SUB_NUM    7
+#define EVENTMSG_NUM  (EVENTMSG_TYPE_NUM * EVENTMSG_SUB_NUM)
 #define EVENTMSG_LEN  0xc8
 
 #define EVENTMSG_PTR(ga_, t_, s_)   (&((ga_)->eventmsg[((t_ - 1) * 7 + (s_)) * EVENTMSG_LEN]))
