@@ -407,7 +407,7 @@ static int game_audience_sub6(struct audience_s *au, int a0, int a2)
             v = eh->mood_peace[pa];
             break;
         case 3:
-            v = eh->hmm0c0[pa];
+            v = eh->mood_tech[pa];
             break;
     }
     v += eh->hmm06c[pa] + eh->relation1[pa] + ((eh->race == RACE_HUMAN) ? 50 : 0) + game_diplo_tbl_reldiff[ea->trait1];
@@ -429,7 +429,7 @@ static int game_audience_sub6(struct audience_s *au, int a0, int a2)
             eh->mood_peace[pa] -= rnd_1_n(50, &g->seed) + 50;
             break;
         case 3:
-            eh->hmm0c0[pa] -= rnd_1_n(50, &g->seed) + 20;
+            eh->mood_tech[pa] -= rnd_1_n(50, &g->seed) + 20;
             break;
     }
     if (v < -75) {
@@ -929,7 +929,7 @@ static void audience_menu_tech(struct audience_s *au)
     empiretechorbit_t *eh = &(g->eto[ph]);
     empiretechorbit_t *ea = &(g->eto[pa]);
     int v, di;
-    di = eh->hmm0c0[pa];
+    di = eh->mood_tech[pa];
     if (di > 0) {
         di /= 5;
     }
@@ -987,7 +987,7 @@ static void audience_menu_tech(struct audience_s *au)
                 int i;
                 char *cbuf = &(au->buf[AUDIENCE_CBUF_POS]);
                 game_diplo_hmm5(g, ph, pa);
-                eh->hmm0c0[pa] -= rnd_1_n(50, &g->seed) + 20;
+                eh->mood_tech[pa] -= rnd_1_n(50, &g->seed) + 20;
                 for (i = 0; (i < 5) && (i < total_thnum); ++i) {
                     int len;
                     au->strtbl[i] = cbuf;
@@ -1038,7 +1038,7 @@ static void audience_menu_tech(struct audience_s *au)
     game_diplo_hmm5(g, ph, pa);
     game_diplo_hmm5(g, ph, pa);
     game_diplo_hmm5(g, ph, pa);
-    SETMIN(eh->hmm0c0[pa], 50);
+    SETMIN(eh->mood_tech[pa], 50);
 }
 
 static void audience_menu_main(struct audience_s *au)
@@ -1189,7 +1189,7 @@ static void game_audience_do(struct audience_s *au)
                 eh->mood_peace[pa] -= rnd_1_n(50, &g->seed) + 50;
             }
             if (au->dtype == 29) {
-                eh->hmm0c0[pa] -= rnd_1_n(30, &g->seed) + 20;
+                eh->mood_tech[pa] -= rnd_1_n(30, &g->seed) + 20;
             }
             if (au->dtype == 76) {
                 au->dtype = (selected != 0) ? 77 : 78;
