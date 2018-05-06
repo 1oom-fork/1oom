@@ -398,7 +398,7 @@ static int game_audience_sub6(struct audience_s *au, int a0, int a2)
     switch (a2) {
         default:
         case 0:
-            v = eh->hmm0a8[pa];
+            v = eh->mood_treaty[pa];
             break;
         case 1:
             v = eh->mood_trade[pa];
@@ -420,7 +420,7 @@ static int game_audience_sub6(struct audience_s *au, int a0, int a2)
     switch (a2) {
         default:
         case 0:
-            eh->hmm0a8[pa] -= rnd_1_n(30, &g->seed) + 20;
+            eh->mood_treaty[pa] -= rnd_1_n(30, &g->seed) + 20;
             break;
         case 1:
             eh->mood_trade[pa] -= rnd_1_n(30, &g->seed) + 20;
@@ -742,7 +742,7 @@ static void audience_menu_threat(struct audience_s *au)
             {
                 int v;
                 selected = 0;
-                v = rnd_1_n(200, &g->seed) + eh->hmm0a8[pa] / 2;
+                v = rnd_1_n(200, &g->seed) + eh->mood_treaty[pa] / 2;
                 v += game_diplo_tbl_reldiff[ea->trait1] * 2;
                 if (ea->total_production_bc > 0) {
                     v += (eh->total_production_bc * 100) / ea->total_production_bc;
@@ -752,7 +752,7 @@ static void audience_menu_threat(struct audience_s *au)
                 /*6541d*/
                 SUBSATT(eh->relation1[pa], rnd_1_n(15, &g->seed), -100);
                 ea->relation1[ph] = eh->relation1[pa];
-                eh->hmm0a8[pa] = -120;
+                eh->mood_treaty[pa] = -120;
                 if (v < 170) {
                     if ((rnd_1_n(15, &g->seed) - game_diplo_tbl_reldiff[ea->trait1]) > rnd_1_n(100, &g->seed)) {
                         game_diplo_start_war(g, ph, pa);
@@ -1180,7 +1180,7 @@ static void game_audience_do(struct audience_s *au)
             /*607a9*/
             game_diplo_hmm5(g, ph, pa);
             if ((au->dtype == 24) || (au->dtype == 25)) {
-                eh->hmm0a8[pa] -= rnd_1_n(30, &g->seed) + 20;
+                eh->mood_treaty[pa] -= rnd_1_n(30, &g->seed) + 20;
             }
             if (au->dtype == 26) {
                 eh->mood_trade[pa] -= rnd_1_n(30, &g->seed) + 20;
