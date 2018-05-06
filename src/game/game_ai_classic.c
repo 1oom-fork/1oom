@@ -3194,9 +3194,9 @@ static void game_ai_classic_turn_diplo_p1(struct game_s *g)
                 if (e1->trade_bc[p2] != 0) {
                     v += 10;
                 }
-                if (((v + e1->hmm0a8[p2]) > 150) && (e1->treaty[p2] != TREATY_ALLIANCE)) {
+                if (((v + e1->mood_treaty[p2]) > 150) && (e1->treaty[p2] != TREATY_ALLIANCE)) {
                     game_diplo_set_treaty(g, p1, p2, TREATY_ALLIANCE);
-                } else if (((v + e1->hmm0a8[p2]) > 150) && (e1->treaty[p2] != TREATY_NONAGGRESSION)) {
+                } else if (((v + e1->mood_treaty[p2]) > 150) && (e1->treaty[p2] != TREATY_NONAGGRESSION)) {
                     game_diplo_set_treaty(g, p1, p2, TREATY_NONAGGRESSION);
                 } else {
                     if ((e1->mood_tech[p2] + 80) < v) {
@@ -3284,7 +3284,7 @@ static void game_ai_classic_turn_diplo_p2_sub1(struct game_s *g, player_id_t p1,
     v = e1->hmm06c[p2] + e1->relation1[p2] + ((e1->race == RACE_HUMAN) ? 50 : 0) + game_diplo_tbl_reldiff[e2->trait1];
     if ((e1->treaty[p2] == TREATY_NONE) && (e1->relation1[p2] > 15)) {
         int v8;
-        v8 = v + rnd_1_n(100, &g->seed) + e1->hmm0a8[p2];
+        v8 = v + rnd_1_n(100, &g->seed) + e1->mood_treaty[p2];
         if (v8 > 50) {
             v4 = 1;
             e1->diplo_type[p2] = 24;
@@ -3293,7 +3293,7 @@ static void game_ai_classic_turn_diplo_p2_sub1(struct game_s *g, player_id_t p1,
     /*41684*/
     if (((e1->treaty[p2] == TREATY_NONAGGRESSION) || (v4 == 1)) && (e1->relation1[p2] > 50)) {
         int v8;
-        v8 = v + rnd_1_n(100, &g->seed) + e1->hmm0a8[p2];
+        v8 = v + rnd_1_n(100, &g->seed) + e1->mood_treaty[p2];
         if (v8 > 100) {
             v4 = 2;
             e1->diplo_type[p2] = 25;
@@ -3479,7 +3479,7 @@ static void game_ai_classic_turn_diplo_p2_sub3(struct game_s *g, player_id_t p1,
         if (e1->relation1[p2] <= -95) {
             game_diplo_start_war(g, p2, p1);
             e1->diplo_type[p2] = 13;
-        } else if ((v - rnd_1_n(100, &g->seed) + e1->hmm0a8[p2]) <= -100) {
+        } else if ((v - rnd_1_n(100, &g->seed) + e1->mood_treaty[p2]) <= -100) {
             if (e1->hmm270[p2] > 0) {
                 ++e1->hmm270[p2];
                 if ((e1->hmm270[p2] > 2) || (e1->treaty[p2] == TREATY_NONE)) {
