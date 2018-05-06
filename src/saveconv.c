@@ -484,7 +484,7 @@ static int savetype_de_moo13(struct game_s *g, const char *fname)
         M13_GET_TBL_16(e->hmm0a8, eb + 0x0a8);
         M13_GET_TBL_16(e->hmm0b4, eb + 0x0b4);
         M13_GET_TBL_16(e->hmm0c0, eb + 0x0c0);
-        M13_GET_TBL_16(e->hmm0cc, eb + 0x0cc);
+        M13_GET_TBL_16(e->mood_peace, eb + 0x0cc);
         M13_GET_TBL_16(e->treaty, eb + 0x0d8);
         M13_GET_TBL_16(e->trade_bc, eb + 0x0e4);
         M13_GET_TBL_16(e->trade_percent, eb + 0x0f0);
@@ -930,7 +930,7 @@ static int savetype_en_moo13(struct game_s *g, const char *fname)
         M13_SET_TBL_16(e->hmm0a8, eb + 0x0a8);
         M13_SET_TBL_16(e->hmm0b4, eb + 0x0b4);
         M13_SET_TBL_16(e->hmm0c0, eb + 0x0c0);
-        M13_SET_TBL_16(e->hmm0cc, eb + 0x0cc);
+        M13_SET_TBL_16(e->mood_peace, eb + 0x0cc);
         M13_SET_TBL_16(e->treaty, eb + 0x0d8);
         M13_SET_TBL_16(e->trade_bc, eb + 0x0e4);
         M13_SET_TBL_16(e->trade_percent, eb + 0x0f0);
@@ -1389,7 +1389,7 @@ static int savetype_en_text(struct game_s *g, const char *fname)
         OUTLINETBL("hmm0a8", g->players, e->hmm0a8);
         OUTLINETBL("hmm0b4", g->players, e->hmm0b4);
         OUTLINETBL("hmm0c0", g->players, e->hmm0c0);
-        OUTLINETBL("hmm0cc", g->players, e->hmm0cc);
+        OUTLINETBL("mood_peace", g->players, e->mood_peace);
         OUTLINETBL("treaty", g->players, e->treaty);
         OUTLINETBL("trade_bc", g->players, e->trade_bc);
         OUTLINETBL("trade_percent", g->players, e->trade_percent);
