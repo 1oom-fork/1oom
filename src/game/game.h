@@ -82,7 +82,7 @@ typedef struct empiretechorbit_s {
     int16_t hmm0a8[PLAYER_NUM];
     int16_t hmm0b4[PLAYER_NUM];
     int16_t hmm0c0[PLAYER_NUM];
-    int16_t hmm0cc[PLAYER_NUM];
+    int16_t mood_peace[PLAYER_NUM];
     treaty_t treaty[PLAYER_NUM];
     uint16_t trade_bc[PLAYER_NUM];
     int16_t trade_percent[PLAYER_NUM];
