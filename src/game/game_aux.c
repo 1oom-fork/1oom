@@ -122,6 +122,18 @@ int game_aux_init(struct game_aux_s *gaux, struct game_s *g)
     check_lbx_t5(t, "eventmsg", EVENTMSG_NUM, EVENTMSG_LEN);
     gaux->eventmsg = (const char *)(t + 4);
 
+#ifdef FEATURE_MODEBUG
+    for (int etype = 0; etype < EVENTMSG_TYPE_NUM; ++etype) {
+        for (int stype = 0; stype < EVENTMSG_SUB_NUM; ++stype) {
+            const char *msg;
+            msg = EVENTMSG_PTR(gaux, etype,  stype);
+            if ((etype == 11) || (etype == 12)) {
+                LOG_DEBUG((5, "event msg t %i s %i '%s'\n", etype, stype, msg));
+            }
+        }
+    }
+#endif
+
     gaux->move_temp = 0;
     gaux->savenamebuflen = FSDEV_PATH_MAX;
     gaux->savenamebuf = lib_malloc(gaux->savenamebuflen);
