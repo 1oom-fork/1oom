@@ -105,14 +105,14 @@ static void game_turn_update_pp_hmm1(struct game_s *g)
                         v += rnd_1_n(5, &g->seed);
                     }
                     e->hmm0b4[j] = v;
-                    v = e->hmm0c0[j];
+                    v = e->mood_tech[j];
                     if (v < 0) {
                         v += rnd_1_n(5, &g->seed);
                     }
                     if (v < 50) {
                         v += rnd_1_n(5, &g->seed);
                     }
-                    e->hmm0c0[j] = v;
+                    e->mood_tech[j] = v;
                     v = e->mood_peace[j];
                     if (v < 0) {
                         v += rnd_1_n(5, &g->seed);
