@@ -1615,7 +1615,6 @@ static void game_turn_finished_slider(struct game_s *g)
             game_add_planet_to_build_finished(g, pli, pi, FINISHED_SOILATMOS);
         }
         if (1
-          && (p->owner == pi)
           && (p->pop >= p->max_pop3)
           && (p->unrest == PLANET_UNREST_NORMAL)
         ) {
@@ -1658,6 +1657,17 @@ static void game_turn_finished_slider(struct game_s *g)
                         p->slider[PLANET_SLIDER_ECO] = w;
                         game_add_planet_to_build_finished(g, pli, pi, FINISHED_POPMAX);
                     }
+                }
+                if (1
+                  && (p->slider[PLANET_SLIDER_ECO] > 0)
+                  && ((e->race == RACE_SILICOID) || ((e->ind_waste_scale == 0) && (p->waste == 0)))
+                ) {
+                    if (p->factories >= (p->pop * e->colonist_oper_factories)) {
+                        p->slider[PLANET_SLIDER_TECH] += p->slider[PLANET_SLIDER_ECO];
+                    } else {
+                        p->slider[PLANET_SLIDER_IND] += p->slider[PLANET_SLIDER_ECO];
+                    }
+                    p->slider[PLANET_SLIDER_ECO] = 0;
                 }
             }
         }
