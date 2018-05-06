@@ -17,7 +17,9 @@
 
 #define RESEARCH_DESCR_LEN  0xc3
 
-#define EVENTMSG_NUM  154
+#define EVENTMSG_TYPE_NUM   22
+#define EVENTMSG_SUB_NUM    7
+#define EVENTMSG_NUM  (EVENTMSG_TYPE_NUM * EVENTMSG_SUB_NUM)
 #define EVENTMSG_LEN  0xc8
 
 #define EVENTMSG_PTR(ga_, t_, s_)   (&((ga_)->eventmsg[((t_ - 1) * 7 + (s_)) * EVENTMSG_LEN]))
