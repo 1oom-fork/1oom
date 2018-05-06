@@ -113,7 +113,7 @@ static void game_turn_update_pp_hmm1(struct game_s *g)
                         v += rnd_1_n(5, &g->seed);
                     }
                     e->hmm0c0[j] = v;
-                    v = e->hmm0cc[j];
+                    v = e->mood_peace[j];
                     if (v < 0) {
                         v += rnd_1_n(5, &g->seed);
                     }
@@ -121,7 +121,7 @@ static void game_turn_update_pp_hmm1(struct game_s *g)
                         v += rnd_1_n(5, &g->seed);
                     }
                     SETRANGE(v, -200, 200);
-                    e->hmm0cc[j] = v;
+                    e->mood_peace[j] = v;
                 }
             }
         }
