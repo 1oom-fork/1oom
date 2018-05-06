@@ -3233,9 +3233,7 @@ static void game_ai_classic_turn_diplo_p1(struct game_s *g)
                 if ((e1->treaty[p2] == TREATY_WAR) && ((g->gaux->diplo_d0_rval + e1->mood_peace[p2]) > 100)) { /* BUG? use of a global, unsaved and possible unset diplo val seems wrong */
                     game_diplo_stop_war(g, p1, p2);
                 }
-                game_diplo_hmm5(g, p1, p2);
-                game_diplo_hmm5(g, p1, p2);
-                game_diplo_hmm5(g, p1, p2);
+                game_diplo_annoy(g, p1, p2, 3);
                 game_ai_classic_turn_diplo_p1_sub1(g);
                 game_diplo_hmm6(g, p1, p2);
             }
