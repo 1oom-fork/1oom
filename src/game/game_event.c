@@ -821,7 +821,13 @@ bool game_event_run(struct game_s *g, struct game_end_s *ge)
             if ((m->nuked > 4) || (m->killer != PLAYER_NONE)) {
                 m->exists = 3;
             }
-            ns.race = (m->killer != PLAYER_NONE) ? g->eto[m->killer].race : RACE_HUMAN; /* WASBUG MOO1 does not check for none, taking race from eto[-1] */
+            if (m->killer != PLAYER_NONE) { /* WASBUG MOO1 does not check for none, taking race from eto[-1] */
+                ns.race = g->eto[m->killer].race;
+            } else if (owner != PLAYER_NONE) {
+                ns.race = g->eto[owner].race;
+            } else {
+                ns.race = RACE_HUMAN;
+            }
             flag_new_dest = false;
             if ((m->x == p->x) && (m->y == p->y) && (m->killer == PLAYER_NONE) && (m->counter <= 0)) {
                 if ((p->pop > 0) && (owner != PLAYER_NONE)) {
