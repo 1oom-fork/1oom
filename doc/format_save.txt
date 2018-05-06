@@ -167,7 +167,7 @@ N*2     hmm06c
 N*1     broken treaty
 N*1     tribute tech field
 N*1     tribute tech
-N*2     hmm0a8
+N*2     mood for treaty (non-aggression or alliance)
 N*2     mood for trade
 N*2     mood for tech trade
 N*2     mood for peace treaty
