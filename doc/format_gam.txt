@@ -163,7 +163,7 @@ c       2*6 empire within fuel range: 0/1
 90      2*6 ?
 9c      2*6 ?
 a8      2*6 ?
-b4      2*6 ?
+b4      2*6 mood for trade
 c0      2*6 mood for tech trade
 cc      2*6 mood for peace treaty
 d8      2*6 treaty: 0=no, 1=non-aggression, 2=alliance, 3=war, 4=final war
