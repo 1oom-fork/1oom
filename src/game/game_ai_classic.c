@@ -3198,7 +3198,7 @@ static void game_ai_classic_turn_diplo_p1(struct game_s *g)
             }
             if ((!(rnd_0_nm1(15 - g->difficulty * 2, &g->seed))) && BOOLVEC_IS1(e1->within_frange, p2)) {
                 int v;
-                v = e1->hmm06c[p2] + e1->relation1[p2] + game_diplo_tbl_reldiff[e2->trait1] + rnd_1_n(100, &g->seed);
+                v = e1->trust[p2] + e1->relation1[p2] + game_diplo_tbl_reldiff[e2->trait1] + rnd_1_n(100, &g->seed);
                 if (e1->treaty[p2] == TREATY_NONAGGRESSION) {
                     v += 10;
                 }
@@ -3208,12 +3208,12 @@ static void game_ai_classic_turn_diplo_p1(struct game_s *g)
                 if (e1->trade_bc[p2] != 0) {
                     v += 10;
                 }
-                if (((v + e1->hmm0a8[p2]) > 150) && (e1->treaty[p2] != TREATY_ALLIANCE)) {
+                if (((v + e1->mood_treaty[p2]) > 150) && (e1->treaty[p2] != TREATY_ALLIANCE)) {
                     game_diplo_set_treaty(g, p1, p2, TREATY_ALLIANCE);
-                } else if (((v + e1->hmm0a8[p2]) > 150) && (e1->treaty[p2] != TREATY_NONAGGRESSION)) {
+                } else if (((v + e1->mood_treaty[p2]) > 150) && (e1->treaty[p2] != TREATY_NONAGGRESSION)) {
                     game_diplo_set_treaty(g, p1, p2, TREATY_NONAGGRESSION);
                 } else {
-                    if ((e1->hmm0c0[p2] + 80) < v) {
+                    if ((e1->mood_tech[p2] + 80) < v) {
                         struct spy_esp_s s;
                         tech_field_t field[2];
                         int num[2];
@@ -3245,12 +3245,10 @@ static void game_ai_classic_turn_diplo_p1(struct game_s *g)
                 if (!(rnd_0_nm1(20, &g->seed))) {
                     game_diplo_act(g, rnd_1_n(5, &g->seed), p1, p2, 1, 0, 0);
                 }
-                if ((e1->treaty[p2] == TREATY_WAR) && ((g->gaux->diplo_d0_rval + e1->hmm0cc[p2]) > 100)) { /* BUG? use of a global, unsaved and possible unset diplo val seems wrong */
+                if ((e1->treaty[p2] == TREATY_WAR) && ((g->gaux->diplo_d0_rval + e1->mood_peace[p2]) > 100)) { /* BUG? use of a global, unsaved and possible unset diplo val seems wrong */
                     game_diplo_stop_war(g, p1, p2);
                 }
-                game_diplo_hmm5(g, p1, p2);
-                game_diplo_hmm5(g, p1, p2);
-                game_diplo_hmm5(g, p1, p2);
+                game_diplo_annoy(g, p1, p2, 3);
                 game_ai_classic_turn_diplo_p1_sub1(g);
                 game_diplo_hmm6(g, p1, p2);
             }
@@ -3297,10 +3295,10 @@ static void game_ai_classic_turn_diplo_p2_sub1(struct game_s *g, player_id_t p1,
         return;
     }
     v4 = 0;
-    v = e1->hmm06c[p2] + e1->relation1[p2] + ((e1->race == RACE_HUMAN) ? 50 : 0) + game_diplo_tbl_reldiff[e2->trait1];
+    v = e1->trust[p2] + e1->relation1[p2] + ((e1->race == RACE_HUMAN) ? 50 : 0) + game_diplo_tbl_reldiff[e2->trait1];
     if ((e1->treaty[p2] == TREATY_NONE) && (e1->relation1[p2] > 15)) {
         int v8;
-        v8 = v + rnd_1_n(100, &g->seed) + e1->hmm0a8[p2];
+        v8 = v + rnd_1_n(100, &g->seed) + e1->mood_treaty[p2];
         if (v8 > 50) {
             v4 = 1;
             e1->diplo_type[p2] = 24;
@@ -3309,7 +3307,7 @@ static void game_ai_classic_turn_diplo_p2_sub1(struct game_s *g, player_id_t p1,
     /*41684*/
     if (((e1->treaty[p2] == TREATY_NONAGGRESSION) || (v4 == 1)) && (e1->relation1[p2] > 50)) {
         int v8;
-        v8 = v + rnd_1_n(100, &g->seed) + e1->hmm0a8[p2];
+        v8 = v + rnd_1_n(100, &g->seed) + e1->mood_treaty[p2];
         if (v8 > 100) {
             v4 = 2;
             e1->diplo_type[p2] = 25;
@@ -3318,7 +3316,7 @@ static void game_ai_classic_turn_diplo_p2_sub1(struct game_s *g, player_id_t p1,
     /*416e8*/
     if (v4 == 0) {
         int v8;
-        v8 = v + rnd_1_n(150, &g->seed) + e1->hmm0b4[p2];
+        v8 = v + rnd_1_n(150, &g->seed) + e1->mood_trade[p2];
         if (v8 > 50) {
             int prod, want_trade;
             prod = MIN(e1->total_production_bc, e2->total_production_bc) / 4;
@@ -3368,11 +3366,11 @@ static void game_ai_classic_turn_diplo_p2_sub1(struct game_s *g, player_id_t p1,
     /*418d2*/
     if (v4 == 0) {
         int v8;
-        v8 = v + rnd_1_n(100, &g->seed) + e1->hmm0b4[p2];
+        v8 = v + rnd_1_n(100, &g->seed) + e1->mood_trade[p2];
         if (v8 > 25) {
             struct spy_esp_s s[1];
             int v1c, v14, num;
-            v1c = e1->hmm0c0[p2];
+            v1c = e1->mood_tech[p2];
             if (v1c > 0) {
                 v1c /= 5;
             }
@@ -3380,7 +3378,7 @@ static void game_ai_classic_turn_diplo_p2_sub1(struct game_s *g, player_id_t p1,
             if (e1->treaty[p2] == TREATY_ALLIANCE) {
                 v1c += 25;
             }
-            v = e1->hmm06c[p2] + e1->relation1[p2] / 2 + ((e2->race == RACE_HUMAN) ? 50 : 0) + game_diplo_tbl_reldiff[e2->trait1] + v1c - 125;
+            v = e1->trust[p2] + e1->relation1[p2] / 2 + ((e2->race == RACE_HUMAN) ? 50 : 0) + game_diplo_tbl_reldiff[e2->trait1] + v1c - 125;
             v8 = v + rnd_1_n(100, &g->seed) + v1c - 125;
             if (v8 < 0) {
                 v14 = abs(v8) + 100;
@@ -3423,8 +3421,8 @@ static void game_ai_classic_turn_diplo_p2_sub1(struct game_s *g, player_id_t p1,
                         }
                     }
                     e1->au_tech_trade_num[p2] = n;
-                    e1->hmm0c0[p2] = 0;
-                    e2->hmm0c0[p1] = 0;
+                    e1->mood_tech[p2] = 0;
+                    e2->mood_tech[p1] = 0;
                 }
             }
         }
@@ -3490,12 +3488,12 @@ static void game_ai_classic_turn_diplo_p2_sub3(struct game_s *g, player_id_t p1,
         e1->diplo_type[p2] = 0;
         return;
     }
-    v = e1->hmm06c[p2] + e1->relation1[p2] + ((e1->race == RACE_HUMAN) ? 50 : 0) + game_diplo_tbl_reldiff[e2->trait1];
+    v = e1->trust[p2] + e1->relation1[p2] + ((e1->race == RACE_HUMAN) ? 50 : 0) + game_diplo_tbl_reldiff[e2->trait1];
     if (e1->treaty[p2] < TREATY_WAR) {
         if (e1->relation1[p2] <= -95) {
             game_diplo_start_war(g, p2, p1);
             e1->diplo_type[p2] = 13;
-        } else if ((v - rnd_1_n(100, &g->seed) + e1->hmm0a8[p2]) <= -100) {
+        } else if ((v - rnd_1_n(100, &g->seed) + e1->mood_treaty[p2]) <= -100) {
             if (e1->hmm270[p2] > 0) {
                 ++e1->hmm270[p2];
                 if ((e1->hmm270[p2] > 2) || (e1->treaty[p2] == TREATY_NONE)) {
@@ -3515,7 +3513,7 @@ static void game_ai_classic_turn_diplo_p2_sub3(struct game_s *g, player_id_t p1,
                 }
             }
         }
-    } else if (((v + rnd_1_n(100, &g->seed) + e1->hmm0cc[p2]) >= 50) && (!rnd_0_nm1(8, &g->seed))) {
+    } else if (((v + rnd_1_n(100, &g->seed) + e1->mood_peace[p2]) >= 50) && (!rnd_0_nm1(8, &g->seed))) {
         e1->diplo_type[p2] = 30;
         if (rnd_1_n(100, &g->seed) <= ((e2->total_production_bc * 30) / e1->total_production_bc)) {
             if (rnd_0_nm1(4, &g->seed)) {
@@ -3569,7 +3567,7 @@ static void game_ai_classic_turn_diplo_p2(struct game_s *g)
                 /*16441*/
                 int16_t v, v2, dv2;
                 v = game_diplo_get_relation_hmm1(g, p1, p2);
-                v2 = v + e2->hmm06c[p1] + game_diplo_tbl_reldiff[e2->trait1];
+                v2 = v + e2->trust[p1] + game_diplo_tbl_reldiff[e2->trait1];
                 dv2 = e1->diplo_val[p2] * 2;
                 if ((v2 <= -100) || (v <= -100)) {
                     e1->diplo_type[p2] = 0;
@@ -3579,7 +3577,7 @@ static void game_ai_classic_turn_diplo_p2(struct game_s *g)
                     } else {
                         e1->diplo_type[p2] = 0;
                     }
-                } else if ((e1->treaty[p2] == TREATY_WAR) && ((rnd_1_n(100, &g->seed) + 30) < e1->hmm0cc[p2])) {
+                } else if ((e1->treaty[p2] == TREATY_WAR) && ((rnd_1_n(100, &g->seed) + 30) < e1->mood_peace[p2])) {
                     game_ai_classic_turn_diplo_p2_sub3(g, p1, p2);
                 } else if ((rnd_1_n(100, &g->seed) < (dv2 + ((e1->hmm270[p2] == 0) ? 3 : 0))) && (!rnd_0_nm1(4, &g->seed))) {
                     if (e1->hmm270[p2] > 0) {
