@@ -97,14 +97,14 @@ static void game_turn_update_pp_hmm1(struct game_s *g)
                         v += rnd_1_n(5, &g->seed);
                     }
                     e->hmm0a8[j] = v;
-                    v = e->hmm0b4[j];
+                    v = e->mood_trade[j];
                     if (v < 0) {
                         v += rnd_1_n(5, &g->seed);
                     }
                     if (v < 50) {
                         v += rnd_1_n(5, &g->seed);
                     }
-                    e->hmm0b4[j] = v;
+                    e->mood_trade[j] = v;
                     v = e->mood_tech[j];
                     if (v < 0) {
                         v += rnd_1_n(5, &g->seed);
@@ -1530,11 +1530,11 @@ static void game_turn_contact_broken(struct game_s *g, player_id_t pi, const BOO
     for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         if ((i != pi) && (g->evn.home[i] != PLANET_NONE) && BOOLVEC_IS0(e->within_frange, i) && BOOLVEC_IS1(bv, i)) {
             empiretechorbit_t *e2 = &(g->eto[i]);
-            e->hmm0b4[i] = 0;
+            e->mood_trade[i] = 0;
             e->trade_bc[i] = 0;
             e->trade_percent[i] = 0;
             e->spymode[i] = SPYMODE_HIDE;
-            e2->hmm0b4[pi] = 0;
+            e2->mood_trade[pi] = 0;
             e2->trade_bc[pi] = 0;
             e2->trade_percent[pi] = 0;
             e2->spymode[pi] = SPYMODE_HIDE;
