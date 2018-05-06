@@ -161,8 +161,8 @@ void game_diplo_act(struct game_s *g, int dv, player_id_t pi, player_id_t pi2, i
     }
     if ((e2->treaty[pi] == TREATY_WAR) && (dtype >= 4) && (dtype <= 12) && (dv < 0)) {
         if (IS_HUMAN(g, pi)) {
-            e2->hmm0cc[pi] += dv / 4;
-            e->hmm0cc[pi2] -= dv / 4;
+            e2->mood_peace[pi] += dv / 4;
+            e->mood_peace[pi2] -= dv / 4;
         }
         dv = 0;
     }
@@ -179,17 +179,17 @@ void game_diplo_act(struct game_s *g, int dv, player_id_t pi, player_id_t pi2, i
         v += dv;
         SETRANGE(v, -100, 100);
         e2->relation1[pi] = v;
-        e2->hmm0a8[pi] += dv;
-        e->hmm0a8[pi2] = e2->hmm0a8[pi];
-        e2->hmm0b4[pi] += dv;
-        e->hmm0b4[pi2] = e2->hmm0b4[pi];
-        e2->hmm0c0[pi] += dv;
-        e->hmm0c0[pi2] = e2->hmm0c0[pi];
+        e2->mood_treaty[pi] += dv;
+        e->mood_treaty[pi2] = e2->mood_treaty[pi];
+        e2->mood_trade[pi] += dv;
+        e->mood_trade[pi2] = e2->mood_trade[pi];
+        e2->mood_tech[pi] += dv;
+        e->mood_tech[pi2] = e2->mood_tech[pi];
         if (v1 < 0) {
-            e->hmm0cc[pi2] -= v1 / 4;
-            e2->hmm0cc[pi] += v1 / 4;
+            e->mood_peace[pi2] -= v1 / 4;
+            e2->mood_peace[pi] += v1 / 4;
         } else {
-            e2->hmm0cc[pi] += v1;
+            e2->mood_peace[pi] += v1;
         }
         if (IS_HUMAN(g, pi) && (dtype != 0) && (abs(dv) > abs(e->diplo_val[pi2]))) {
             e->diplo_val[pi2] = dv;
@@ -229,7 +229,7 @@ void game_diplo_break_treaty(struct game_s *g, player_id_t pi, player_id_t pi2)
     if (e->trait1 == TRAIT1_HONORABLE) {
         v2 *= 2;
     }
-    e->hmm06c[pi2] -= v2;
+    e->trust[pi2] -= v2;
     if (e->treaty[pi2] == TREATY_ALLIANCE) {
         int v = e->relation2[pi2];
         v -= v2;
@@ -250,14 +250,14 @@ void game_diplo_break_treaty(struct game_s *g, player_id_t pi, player_id_t pi2)
     e2->treaty[pi] = TREATY_NONE;
     e->hated[pi2] = PLAYER_NONE;
     e2->hated[pi] = PLAYER_NONE;
-    e->hmm0a8[pi2] = -200;
-    e->hmm0b4[pi2] = -200;
-    e->hmm0c0[pi2] = -200;
-    e->hmm0cc[pi2] = -200;
-    e2->hmm0a8[pi] = -200;
-    e2->hmm0b4[pi] = -200;
-    e2->hmm0c0[pi] = -200;
-    e2->hmm0cc[pi] = -200;
+    e->mood_treaty[pi2] = -200;
+    e->mood_trade[pi2] = -200;
+    e->mood_tech[pi2] = -200;
+    e->mood_peace[pi2] = -200;
+    e2->mood_treaty[pi] = -200;
+    e2->mood_trade[pi] = -200;
+    e2->mood_tech[pi] = -200;
+    e2->mood_peace[pi] = -200;
 }
 
 void game_diplo_start_war(struct game_s *g, player_id_t pi, player_id_t pi2)
@@ -285,14 +285,14 @@ void game_diplo_start_war(struct game_s *g, player_id_t pi, player_id_t pi2)
     e2->relation1[pi] = e->relation1[pi2] = -75 - rnd_1_n(25, &g->seed);
     e->treaty[pi2] = TREATY_WAR;
     e2->treaty[pi] = TREATY_WAR;
-    e->hmm0a8[pi2] = -200;
-    e->hmm0b4[pi2] = -200;
-    e->hmm0c0[pi2] = -200;
-    e->hmm0cc[pi2] = -130;
-    e2->hmm0a8[pi] = -200;
-    e2->hmm0b4[pi] = -200;
-    e2->hmm0c0[pi] = -200;
-    e2->hmm0cc[pi] = -130;
+    e->mood_treaty[pi2] = -200;
+    e->mood_trade[pi2] = -200;
+    e->mood_tech[pi2] = -200;
+    e->mood_peace[pi2] = -130;
+    e2->mood_treaty[pi] = -200;
+    e2->mood_trade[pi] = -200;
+    e2->mood_tech[pi] = -200;
+    e2->mood_peace[pi] = -130;
 }
 
 void game_diplo_break_trade(struct game_s *g, player_id_t pi, player_id_t pi2)
@@ -323,13 +323,14 @@ void game_diplo_break_trade(struct game_s *g, player_id_t pi, player_id_t pi2)
 #endif
 }
 
-void game_diplo_hmm5(struct game_s *g, player_id_t p1, player_id_t p2)
+void game_diplo_annoy(struct game_s *g, player_id_t p1, player_id_t p2, int n)
 {
     empiretechorbit_t *e1 = &(g->eto[p1]);
-    e1->hmm0b4[p2] -= 10;
-    e1->hmm0a8[p2] -= 10;
-    e1->hmm0c0[p2] -= 10;
-    e1->hmm0cc[p2] -= 10;
+    n *= 10;
+    e1->mood_trade[p2] -= n;
+    e1->mood_treaty[p2] -= n;
+    e1->mood_tech[p2] -= n;
+    e1->mood_peace[p2] -= n;
 }
 
 void game_diplo_hmm6(struct game_s *g, player_id_t p1, player_id_t p2)
@@ -372,7 +373,7 @@ void game_diplo_hmm6(struct game_s *g, player_id_t p1, player_id_t p2)
             ) {
                 int v;
                 v = game_diplo_hmm6_sub1(g, p1, p2);
-                v = e1->relation1[p2] - v + game_diplo_tbl_reldiff[e2->trait1] + e1->hmm06c[p2];
+                v = e1->relation1[p2] - v + game_diplo_tbl_reldiff[e2->trait1] + e1->trust[p2];
                 if (v < -150) {
                     game_diplo_hmm6_sub2(g, p1, p2);
                 }
@@ -384,7 +385,7 @@ void game_diplo_hmm6(struct game_s *g, player_id_t p1, player_id_t p2)
             ) {
                 int v;
                 v = game_diplo_hmm6_sub3(g, p1, p2);
-                v = e1->relation1[p2] - v + game_diplo_tbl_reldiff[e2->trait1] + e1->hmm06c[p2];
+                v = e1->relation1[p2] - v + game_diplo_tbl_reldiff[e2->trait1] + e1->trust[p2];
                 if (v < -150) {
                     game_diplo_hmm6_sub2(g, p1, p2);
                 }
@@ -552,7 +553,7 @@ void game_diplo_limit_0a8(struct game_s *g)
         empiretechorbit_t *e = &(g->eto[p1]);
         for (player_id_t p2 = PLAYER_0; p2 < g->players; ++p2) {
             if (p1 != p2) {
-                SETRANGE(e->hmm0a8[p2], -200, 120);
+                SETRANGE(e->mood_treaty[p2], -200, 120);
             }
         }
     }
@@ -564,17 +565,17 @@ void game_diplo_hmm8(struct game_s *g)
         empiretechorbit_t *e = &(g->eto[p1]);
         for (player_id_t p2 = PLAYER_0; p2 < g->players; ++p2) {
             if (p1 != p2) {
-                if (e->hmm0a8[p2] < 100) {
-                    e->hmm0a8[p2] += 10;
+                if (e->mood_treaty[p2] < 100) {
+                    e->mood_treaty[p2] += 10;
                 }
-                if (e->hmm0b4[p2] < 100) {
-                    e->hmm0b4[p2] += 10;
+                if (e->mood_trade[p2] < 100) {
+                    e->mood_trade[p2] += 10;
                 }
-                if (e->hmm0c0[p2] < 100) {
-                    e->hmm0c0[p2] += 10;
+                if (e->mood_tech[p2] < 100) {
+                    e->mood_tech[p2] += 10;
                 }
-                if (e->hmm0cc[p2] < 100) {
-                    e->hmm0cc[p2] += 10;
+                if (e->mood_peace[p2] < 100) {
+                    e->mood_peace[p2] += 10;
                 }
             }
         }
@@ -588,13 +589,26 @@ int16_t game_diplo_get_relation_hmm1(struct game_s *g, player_id_t p1, player_id
     } else {
         empiretechorbit_t *e = &(g->eto[p1]);
         int16_t vmin, v;
-        vmin = e->hmm0a8[p2];
-        v = e->hmm0b4[p2];
+        vmin = e->mood_treaty[p2];
+        v = e->mood_trade[p2];
         SETMIN(vmin, v);
-        v = e->hmm0c0[p2];
+        v = e->mood_tech[p2];
         SETMIN(vmin, v);
-        v = e->hmm0cc[p2];
+        v = e->mood_peace[p2];
         SETMIN(vmin, v);
         return vmin;
     }
+}
+
+bool game_diplo_is_gone(struct game_s *g, player_id_t api, player_id_t pi)
+{
+    /* FIXME multiplayer */
+    const empiretechorbit_t *e = &(g->eto[api]);
+    int16_t v, vr;
+    vr = game_diplo_get_relation_hmm1(g, api, pi);
+    v = e->trust[pi] /*+ e->relation1[pi]*/ + vr + game_diplo_tbl_reldiff[g->eto[pi].trait1];
+    if (((v /*- e->relation1[pi]*/) <= -100) || (vr <= -100)) {
+        return true;
+    }
+    return false;
 }
