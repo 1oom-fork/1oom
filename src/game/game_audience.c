@@ -44,7 +44,7 @@ static void game_audience_start_human(struct audience_s *au)
     empiretechorbit_t *eh = &(g->eto[ph]);
     empiretechorbit_t *ea = &(g->eto[pa]);
     int v;
-    v = eh->hmm06c[pa] + game_diplo_get_relation_hmm1(g, ph, pa) + game_diplo_tbl_reldiff[ea->trait1];
+    v = eh->trust[pa] + game_diplo_get_relation_hmm1(g, ph, pa) + game_diplo_tbl_reldiff[ea->trait1];
     if (v < -100) {
         au->dtype = (eh->treaty[pa] >= TREATY_WAR) ? 20 : 21;
         au->mode = 1;
@@ -410,7 +410,7 @@ static int game_audience_sub6(struct audience_s *au, int a0, int a2)
             v = eh->mood_tech[pa];
             break;
     }
-    v += eh->hmm06c[pa] + eh->relation1[pa] + ((eh->race == RACE_HUMAN) ? 50 : 0) + game_diplo_tbl_reldiff[ea->trait1];
+    v += eh->trust[pa] + eh->relation1[pa] + ((eh->race == RACE_HUMAN) ? 50 : 0) + game_diplo_tbl_reldiff[ea->trait1];
     v += rnd_1_n(100, &g->seed);
     v -= a0;
     if (eh->treaty[pa] == TREATY_ALLIANCE) {
@@ -901,7 +901,7 @@ static void audience_menu_tribute(struct audience_s *au)
                 ADDSATT(eh->relation1[pa], v, 100);
                 ea->relation1[ph] = eh->relation1[pa];
                 ADDSATT(eh->mood_peace[pa], v, 200);
-                ADDSATT(eh->hmm06c[pa], rnd_1_n(8, &g->seed) + 2, 30);
+                ADDSATT(eh->trust[pa], rnd_1_n(8, &g->seed) + 2, 30);
                 eh->tribute_field[pa] = s->tbl_field[selected];
                 eh->tribute_tech[pa] = s->tbl_tech2[selected];
                 if (eh->treaty[pa] >= TREATY_WAR) {
@@ -934,7 +934,7 @@ static void audience_menu_tech(struct audience_s *au)
     if (eh->treaty[pa] == TREATY_ALLIANCE) {
         di += 25;
     }
-    v = eh->hmm06c[pa] + eh->relation1[pa] / 2 + ((eh->race == RACE_HUMAN) ? 50 : 0) + game_diplo_tbl_reldiff[ea->trait1] + rnd_1_n(100, &g->seed) - 125;
+    v = eh->trust[pa] + eh->relation1[pa] / 2 + ((eh->race == RACE_HUMAN) ? 50 : 0) + game_diplo_tbl_reldiff[ea->trait1] + rnd_1_n(100, &g->seed) - 125;
     if (v < 0) {
         v = abs(v) + 100;
     } else {
