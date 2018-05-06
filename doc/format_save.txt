@@ -163,7 +163,7 @@ N*1     diplo type: ...
 N*2     diplo value
 N*2     diplo param 1 (depends on type)
 N*2     diplo param 2 (depends on type)
-N*2     hmm06c
+N*2     trust
 N*1     broken treaty
 N*1     tribute tech field
 N*1     tribute tech
