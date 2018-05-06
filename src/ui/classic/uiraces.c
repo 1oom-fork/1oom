@@ -33,7 +33,7 @@ struct races_data_s {
     int num;
     player_id_t api;
     uint8_t tbl_ei[PLAYER_NUM - 1];
-    uint8_t tbl_hmm7[PLAYER_NUM - 1]; /* 0, 1, 2 */
+    uint8_t tbl_gone[PLAYER_NUM - 1]; /* 0, 1, 2 */
     uint8_t cursor_mode; /* 0, 4, 5 */
     int16_t tbl_spymode[PLAYER_NUM - 1];
 };
@@ -125,7 +125,7 @@ static void races_draw_cb(void *vptr)
         x = (i / 3) * 157;
         y = (i % 3) * 64;
         lbxgfx_draw_frame(x + 9, y + 10, ui_data.gfx.planets.race[g->eto[pi].race], UI_SCREEN_W);
-        if (d->tbl_hmm7[i] != 0) {
+        if (d->tbl_gone[i] != 0) {
             lbxfont_select_set_12_4(0, 0, 0, 0);
             lbxfont_print_str_center(x + 29, y + 23, game_str_ra_diplo, UI_SCREEN_W);
             lbxfont_print_str_center(x + 29, y + 31, game_str_ra_gone, UI_SCREEN_W);
@@ -274,12 +274,12 @@ int ui_races(struct game_s *g, player_id_t api)
         v = e->trust[pi] /*+ e->relation1[pi]*/ + vr + game_diplo_tbl_reldiff[g->eto[pi].trait1];
         if (((v /*- e->relation1[pi]*/) <= -100) || (vr <= -100)) {
             if (e->treaty[pi] >= TREATY_WAR) {
-                d.tbl_hmm7[i] = 2;
+                d.tbl_gone[i] = 2;
             } else {
-                d.tbl_hmm7[i] = 1;
+                d.tbl_gone[i] = 1;
             }
         } else {
-            d.tbl_hmm7[i] = 0;
+            d.tbl_gone[i] = 0;
         }
     }
 
@@ -363,7 +363,7 @@ int ui_races(struct game_s *g, player_id_t api)
                     ret = d.tbl_ei[i];
                     d.cursor_mode = 0;
                 } else if (d.cursor_mode == 5) {
-                    if (d.tbl_hmm7[i] == 0) {
+                    if (d.tbl_gone[i] == 0) {
                         flag_done = true;
                         ui_data.ui_main_loop_action = UI_MAIN_LOOP_AUDIENCE;
                         ret = d.tbl_ei[i];
