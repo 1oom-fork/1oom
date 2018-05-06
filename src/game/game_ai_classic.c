@@ -3199,7 +3199,7 @@ static void game_ai_classic_turn_diplo_p1(struct game_s *g)
                 } else if (((v + e1->hmm0a8[p2]) > 150) && (e1->treaty[p2] != TREATY_NONAGGRESSION)) {
                     game_diplo_set_treaty(g, p1, p2, TREATY_NONAGGRESSION);
                 } else {
-                    if ((e1->hmm0c0[p2] + 80) < v) {
+                    if ((e1->mood_tech[p2] + 80) < v) {
                         struct spy_esp_s s;
                         tech_field_t field[2];
                         int num[2];
@@ -3356,7 +3356,7 @@ static void game_ai_classic_turn_diplo_p2_sub1(struct game_s *g, player_id_t p1,
         if (v8 > 25) {
             struct spy_esp_s s[1];
             int v1c, v14, num;
-            v1c = e1->hmm0c0[p2];
+            v1c = e1->mood_tech[p2];
             if (v1c > 0) {
                 v1c /= 5;
             }
@@ -3407,8 +3407,8 @@ static void game_ai_classic_turn_diplo_p2_sub1(struct game_s *g, player_id_t p1,
                         }
                     }
                     e1->au_tech_trade_num[p2] = n;
-                    e1->hmm0c0[p2] = 0;
-                    e2->hmm0c0[p1] = 0;
+                    e1->mood_tech[p2] = 0;
+                    e2->mood_tech[p1] = 0;
                 }
             }
         }
