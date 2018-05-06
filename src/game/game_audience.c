@@ -401,7 +401,7 @@ static int game_audience_sub6(struct audience_s *au, int a0, int a2)
             v = eh->hmm0a8[pa];
             break;
         case 1:
-            v = eh->hmm0b4[pa];
+            v = eh->mood_trade[pa];
             break;
         case 2:
             v = eh->mood_peace[pa];
@@ -423,7 +423,7 @@ static int game_audience_sub6(struct audience_s *au, int a0, int a2)
             eh->hmm0a8[pa] -= rnd_1_n(30, &g->seed) + 20;
             break;
         case 1:
-            eh->hmm0b4[pa] -= rnd_1_n(30, &g->seed) + 20;
+            eh->mood_trade[pa] -= rnd_1_n(30, &g->seed) + 20;
             break;
         case 2:
             eh->mood_peace[pa] -= rnd_1_n(50, &g->seed) + 50;
@@ -686,7 +686,7 @@ static void audience_menu_trade(struct audience_s *au)
     au->condtbl = 0;
     selected = ui_audience_ask4(au);
     game_diplo_hmm5(g, ph, pa);
-    eh->hmm0b4[pa] -= rnd_1_n(30, &g->seed);
+    eh->mood_trade[pa] -= rnd_1_n(30, &g->seed);
     if ((selected != -1) && (selected != au->num_bc)) {
         int si = game_audience_sub6(au, 50, 1);
         if (si < 3) {
@@ -1183,7 +1183,7 @@ static void game_audience_do(struct audience_s *au)
                 eh->hmm0a8[pa] -= rnd_1_n(30, &g->seed) + 20;
             }
             if (au->dtype == 26) {
-                eh->hmm0b4[pa] -= rnd_1_n(30, &g->seed) + 20;
+                eh->mood_trade[pa] -= rnd_1_n(30, &g->seed) + 20;
             }
             if (au->dtype == 30) {
                 eh->mood_peace[pa] -= rnd_1_n(50, &g->seed) + 50;
