@@ -608,7 +608,7 @@ static void audience_menu_treaty(struct audience_s *au)
             dtype = 63;
             break;
         case 2:
-            si = game_audience_check_mood(au, 60, 0);
+            si = game_audience_check_mood(au, 60, 0); /* FIXME BUG? should be 2 for mood_peace? */
             if ((si == 1) || (si == 2)) {
                 si = game_audience_sweeten(au, si);
             }
