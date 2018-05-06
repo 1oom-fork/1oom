@@ -170,7 +170,7 @@ N*1     tribute tech
 N*2     hmm0a8
 N*2     hmm0b4
 N*2     hmm0c0
-N*2     hmm0cc
+N*2     mood for peace treaty
 N*1     treaty; 0=no, 1=non-aggression, 2=alliance, 3=war, 4=final war
 N*2     trade BC
 N*2     trade percent (..100)
