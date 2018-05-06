@@ -323,13 +323,14 @@ void game_diplo_break_trade(struct game_s *g, player_id_t pi, player_id_t pi2)
 #endif
 }
 
-void game_diplo_hmm5(struct game_s *g, player_id_t p1, player_id_t p2)
+void game_diplo_annoy(struct game_s *g, player_id_t p1, player_id_t p2, int n)
 {
     empiretechorbit_t *e1 = &(g->eto[p1]);
-    e1->mood_trade[p2] -= 10;
-    e1->mood_treaty[p2] -= 10;
-    e1->mood_tech[p2] -= 10;
-    e1->mood_peace[p2] -= 10;
+    n *= 10;
+    e1->mood_trade[p2] -= n;
+    e1->mood_treaty[p2] -= n;
+    e1->mood_tech[p2] -= n;
+    e1->mood_peace[p2] -= n;
 }
 
 void game_diplo_hmm6(struct game_s *g, player_id_t p1, player_id_t p2)
