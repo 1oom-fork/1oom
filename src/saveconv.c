@@ -448,7 +448,7 @@ static int savetype_de_moo13(struct game_s *g, const char *fname)
             M13_GET_16(e->hmm084[j], eb2 + 0x084);
             M13_GET_16(e->tribute_field[j], eb2 + 0x090);
             M13_GET_16(e->tribute_tech[j], eb2 + 0x09c);
-            M13_GET_16(e->hmm0a8[j], eb2 + 0x0a8);
+            M13_GET_16(e->mood_treaty[j], eb2 + 0x0a8);
             M13_GET_16(e->mood_trade[j], eb2 + 0x0b4);
             M13_GET_16(e->mood_tech[j], eb2 + 0x0c0);
             M13_GET_16(e->mood_peace[j], eb2 + 0x0cc);
@@ -893,7 +893,7 @@ static int savetype_en_moo13(struct game_s *g, const char *fname)
             M13_SET_16(e->hmm084[j], eb2 + 0x084);
             M13_SET_16(e->tribute_field[j], eb2 + 0x090);
             M13_SET_16(e->tribute_tech[j], eb2 + 0x09c);
-            M13_SET_16(e->hmm0a8[j], eb2 + 0x0a8);
+            M13_SET_16(e->mood_treaty[j], eb2 + 0x0a8);
             M13_SET_16(e->mood_trade[j], eb2 + 0x0b4);
             M13_SET_16(e->mood_tech[j], eb2 + 0x0c0);
             M13_SET_16(e->mood_peace[j], eb2 + 0x0cc);
@@ -1374,7 +1374,7 @@ static int savetype_en_text(struct game_s *g, const char *fname)
         OUTLINETBL("hmm084", g->players, e->hmm084);
         OUTLINETBL("tribute_field", g->players, e->tribute_field);
         OUTLINETBL("tribute_tech", g->players, e->tribute_tech);
-        OUTLINETBL("hmm0a8", g->players, e->hmm0a8);
+        OUTLINETBL("mood_treaty", g->players, e->mood_treaty);
         OUTLINETBL("mood_trade", g->players, e->mood_trade);
         OUTLINETBL("mood_tech", g->players, e->mood_tech);
         OUTLINETBL("mood_peace", g->players, e->mood_peace);
