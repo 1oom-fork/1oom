@@ -44,7 +44,7 @@ static void game_audience_start_human(struct audience_s *au)
     empiretechorbit_t *eh = &(g->eto[ph]);
     empiretechorbit_t *ea = &(g->eto[pa]);
     int v;
-    v = eh->hmm06c[pa] + game_diplo_get_relation_hmm1(g, ph, pa) + game_diplo_tbl_reldiff[ea->trait1];
+    v = eh->trust[pa] + game_diplo_get_relation_hmm1(g, ph, pa) + game_diplo_tbl_reldiff[ea->trait1];
     if (v < -100) {
         au->dtype = (eh->treaty[pa] >= TREATY_WAR) ? 20 : 21;
         au->mode = 1;
@@ -398,38 +398,38 @@ static int game_audience_sub6(struct audience_s *au, int a0, int a2)
     switch (a2) {
         default:
         case 0:
-            v = eh->hmm0a8[pa];
+            v = eh->mood_treaty[pa];
             break;
         case 1:
-            v = eh->hmm0b4[pa];
+            v = eh->mood_trade[pa];
             break;
         case 2:
-            v = eh->hmm0cc[pa];
+            v = eh->mood_peace[pa];
             break;
         case 3:
-            v = eh->hmm0c0[pa];
+            v = eh->mood_tech[pa];
             break;
     }
-    v += eh->hmm06c[pa] + eh->relation1[pa] + ((eh->race == RACE_HUMAN) ? 50 : 0) + game_diplo_tbl_reldiff[ea->trait1];
+    v += eh->trust[pa] + eh->relation1[pa] + ((eh->race == RACE_HUMAN) ? 50 : 0) + game_diplo_tbl_reldiff[ea->trait1];
     v += rnd_1_n(100, &g->seed);
     v -= a0;
     if (eh->treaty[pa] == TREATY_ALLIANCE) {
         v += 40;
     }
-    game_diplo_hmm5(g, ph, pa);
+    game_diplo_annoy(g, ph, pa, 1);
     switch (a2) {
         default:
         case 0:
-            eh->hmm0a8[pa] -= rnd_1_n(30, &g->seed) + 20;
+            eh->mood_treaty[pa] -= rnd_1_n(30, &g->seed) + 20;
             break;
         case 1:
-            eh->hmm0b4[pa] -= rnd_1_n(30, &g->seed) + 20;
+            eh->mood_trade[pa] -= rnd_1_n(30, &g->seed) + 20;
             break;
         case 2:
-            eh->hmm0cc[pa] -= rnd_1_n(50, &g->seed) + 50;
+            eh->mood_peace[pa] -= rnd_1_n(50, &g->seed) + 50;
             break;
         case 3:
-            eh->hmm0c0[pa] -= rnd_1_n(50, &g->seed) + 20;
+            eh->mood_tech[pa] -= rnd_1_n(50, &g->seed) + 20;
             break;
     }
     if (v < -75) {
@@ -607,15 +607,14 @@ static void audience_menu_treaty(struct audience_s *au)
             dtype = 63;
             break;
         case 2:
-            si = game_audience_sub6(au, 60, 0);
+            si = game_audience_sub6(au, 60, 0); /* FIXME BUG? should be 2 for mood_peace? */
             if ((si == 1) || (si == 2)) {
                 si = game_audience_sub7(au, si);
             }
             if (si == 3) {
                 game_diplo_stop_war(g, ph, pa);
             }
-            game_diplo_hmm5(g, ph, pa);
-            game_diplo_hmm5(g, ph, pa);
+            game_diplo_annoy(g, ph, pa, 2);
             dtype = 65;
             break;
         case 3:
@@ -685,8 +684,8 @@ static void audience_menu_trade(struct audience_s *au)
     au->strtbl[au->num_bc + 1] = 0;
     au->condtbl = 0;
     selected = ui_audience_ask4(au);
-    game_diplo_hmm5(g, ph, pa);
-    eh->hmm0b4[pa] -= rnd_1_n(30, &g->seed);
+    game_diplo_annoy(g, ph, pa, 1);
+    eh->mood_trade[pa] -= rnd_1_n(30, &g->seed);
     if ((selected != -1) && (selected != au->num_bc)) {
         int si = game_audience_sub6(au, 50, 1);
         if (si < 3) {
@@ -742,7 +741,7 @@ static void audience_menu_threat(struct audience_s *au)
             {
                 int v;
                 selected = 0;
-                v = rnd_1_n(200, &g->seed) + eh->hmm0a8[pa] / 2;
+                v = rnd_1_n(200, &g->seed) + eh->mood_treaty[pa] / 2;
                 v += game_diplo_tbl_reldiff[ea->trait1] * 2;
                 if (ea->total_production_bc > 0) {
                     v += (eh->total_production_bc * 100) / ea->total_production_bc;
@@ -752,7 +751,7 @@ static void audience_menu_threat(struct audience_s *au)
                 /*6541d*/
                 SUBSATT(eh->relation1[pa], rnd_1_n(15, &g->seed), -100);
                 ea->relation1[ph] = eh->relation1[pa];
-                eh->hmm0a8[pa] = -120;
+                eh->mood_treaty[pa] = -120;
                 if (v < 170) {
                     if ((rnd_1_n(15, &g->seed) - game_diplo_tbl_reldiff[ea->trait1]) > rnd_1_n(100, &g->seed)) {
                         game_diplo_start_war(g, ph, pa);
@@ -790,9 +789,7 @@ static void audience_menu_threat(struct audience_s *au)
         default:
             break;
     }
-    for (int i = 0; i < 10; ++i) {  /* FIXME BUG? MOO1 does this before the if */
-        game_diplo_hmm5(g, ph, pa);
-    }
+    game_diplo_annoy(g, ph, pa, 10);    /* FIXME BUG? MOO1 does this before the if, annoying by only entering the menu */
     if ((selected != -1) && (selected != 4)) {
         game_audience_sub4(au, dtype, 3);
     }
@@ -905,8 +902,8 @@ static void audience_menu_tribute(struct audience_s *au)
                 }
                 ADDSATT(eh->relation1[pa], v, 100);
                 ea->relation1[ph] = eh->relation1[pa];
-                ADDSATT(eh->hmm0cc[pa], v, 200);
-                ADDSATT(eh->hmm06c[pa], rnd_1_n(8, &g->seed) + 2, 30);
+                ADDSATT(eh->mood_peace[pa], v, 200);
+                ADDSATT(eh->trust[pa], rnd_1_n(8, &g->seed) + 2, 30);
                 eh->tribute_field[pa] = s->tbl_field[selected];
                 eh->tribute_tech[pa] = s->tbl_tech2[selected];
                 if (eh->treaty[pa] >= TREATY_WAR) {
@@ -931,7 +928,7 @@ static void audience_menu_tech(struct audience_s *au)
     empiretechorbit_t *eh = &(g->eto[ph]);
     empiretechorbit_t *ea = &(g->eto[pa]);
     int v, di;
-    di = eh->hmm0c0[pa];
+    di = eh->mood_tech[pa];
     if (di > 0) {
         di /= 5;
     }
@@ -939,7 +936,7 @@ static void audience_menu_tech(struct audience_s *au)
     if (eh->treaty[pa] == TREATY_ALLIANCE) {
         di += 25;
     }
-    v = eh->hmm06c[pa] + eh->relation1[pa] / 2 + ((eh->race == RACE_HUMAN) ? 50 : 0) + game_diplo_tbl_reldiff[ea->trait1] + rnd_1_n(100, &g->seed) - 125;
+    v = eh->trust[pa] + eh->relation1[pa] / 2 + ((eh->race == RACE_HUMAN) ? 50 : 0) + game_diplo_tbl_reldiff[ea->trait1] + rnd_1_n(100, &g->seed) - 125;
     if (v < 0) {
         v = abs(v) + 100;
     } else {
@@ -988,8 +985,8 @@ static void audience_menu_tech(struct audience_s *au)
                 int16_t selected = 0;
                 int i;
                 char *cbuf = &(au->buf[AUDIENCE_CBUF_POS]);
-                game_diplo_hmm5(g, ph, pa);
-                eh->hmm0c0[pa] -= rnd_1_n(50, &g->seed) + 20;
+                game_diplo_annoy(g, ph, pa, 1);
+                eh->mood_tech[pa] -= rnd_1_n(50, &g->seed) + 20;
                 for (i = 0; (i < 5) && (i < total_thnum); ++i) {
                     int len;
                     au->strtbl[i] = cbuf;
@@ -1038,10 +1035,8 @@ static void audience_menu_tech(struct audience_s *au)
         }
     }
     /*65a21*/
-    game_diplo_hmm5(g, ph, pa);
-    game_diplo_hmm5(g, ph, pa);
-    game_diplo_hmm5(g, ph, pa);
-    SETMIN(eh->hmm0c0[pa], 50);
+    game_diplo_annoy(g, ph, pa, 3);
+    SETMIN(eh->mood_tech[pa], 50);
 }
 
 static void audience_menu_main(struct audience_s *au)
@@ -1161,8 +1156,7 @@ static void game_audience_do(struct audience_s *au)
                             eh->relation1[pa] += 20;
                             ea->relation1[ph] = eh->relation1[pa];
                         }
-                        game_diplo_hmm5(g, ph, pa);
-                        game_diplo_hmm5(g, ph, pa);
+                        game_diplo_annoy(g, ph, pa, 2);
                     } else if (au->dtype == 76) {
                         game_diplo_start_war(g, ph, au->pwar);
                     }
@@ -1184,18 +1178,18 @@ static void game_audience_do(struct audience_s *au)
                 }
             }
             /*607a9*/
-            game_diplo_hmm5(g, ph, pa);
+            game_diplo_annoy(g, ph, pa, 1);
             if ((au->dtype == 24) || (au->dtype == 25)) {
-                eh->hmm0a8[pa] -= rnd_1_n(30, &g->seed) + 20;
+                eh->mood_treaty[pa] -= rnd_1_n(30, &g->seed) + 20;
             }
             if (au->dtype == 26) {
-                eh->hmm0b4[pa] -= rnd_1_n(30, &g->seed) + 20;
+                eh->mood_trade[pa] -= rnd_1_n(30, &g->seed) + 20;
             }
             if (au->dtype == 30) {
-                eh->hmm0cc[pa] -= rnd_1_n(50, &g->seed) + 50;
+                eh->mood_peace[pa] -= rnd_1_n(50, &g->seed) + 50;
             }
             if (au->dtype == 29) {
-                eh->hmm0c0[pa] -= rnd_1_n(30, &g->seed) + 20;
+                eh->mood_tech[pa] -= rnd_1_n(30, &g->seed) + 20;
             }
             if (au->dtype == 76) {
                 au->dtype = (selected != 0) ? 77 : 78;
