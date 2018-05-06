@@ -3302,7 +3302,7 @@ static void game_ai_classic_turn_diplo_p2_sub1(struct game_s *g, player_id_t p1,
     /*416e8*/
     if (v4 == 0) {
         int v8;
-        v8 = v + rnd_1_n(150, &g->seed) + e1->hmm0b4[p2];
+        v8 = v + rnd_1_n(150, &g->seed) + e1->mood_trade[p2];
         if (v8 > 50) {
             int prod, want_trade;
             prod = MIN(e1->total_production_bc, e2->total_production_bc) / 4;
@@ -3352,7 +3352,7 @@ static void game_ai_classic_turn_diplo_p2_sub1(struct game_s *g, player_id_t p1,
     /*418d2*/
     if (v4 == 0) {
         int v8;
-        v8 = v + rnd_1_n(100, &g->seed) + e1->hmm0b4[p2];
+        v8 = v + rnd_1_n(100, &g->seed) + e1->mood_trade[p2];
         if (v8 > 25) {
             struct spy_esp_s s[1];
             int v1c, v14, num;
