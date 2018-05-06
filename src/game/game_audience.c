@@ -404,7 +404,7 @@ static int game_audience_sub6(struct audience_s *au, int a0, int a2)
             v = eh->hmm0b4[pa];
             break;
         case 2:
-            v = eh->hmm0cc[pa];
+            v = eh->mood_peace[pa];
             break;
         case 3:
             v = eh->hmm0c0[pa];
@@ -426,7 +426,7 @@ static int game_audience_sub6(struct audience_s *au, int a0, int a2)
             eh->hmm0b4[pa] -= rnd_1_n(30, &g->seed) + 20;
             break;
         case 2:
-            eh->hmm0cc[pa] -= rnd_1_n(50, &g->seed) + 50;
+            eh->mood_peace[pa] -= rnd_1_n(50, &g->seed) + 50;
             break;
         case 3:
             eh->hmm0c0[pa] -= rnd_1_n(50, &g->seed) + 20;
@@ -903,7 +903,7 @@ static void audience_menu_tribute(struct audience_s *au)
                 }
                 ADDSATT(eh->relation1[pa], v, 100);
                 ea->relation1[ph] = eh->relation1[pa];
-                ADDSATT(eh->hmm0cc[pa], v, 200);
+                ADDSATT(eh->mood_peace[pa], v, 200);
                 ADDSATT(eh->hmm06c[pa], rnd_1_n(8, &g->seed) + 2, 30);
                 eh->tribute_field[pa] = s->tbl_field[selected];
                 eh->tribute_tech[pa] = s->tbl_tech2[selected];
@@ -1186,7 +1186,7 @@ static void game_audience_do(struct audience_s *au)
                 eh->hmm0b4[pa] -= rnd_1_n(30, &g->seed) + 20;
             }
             if (au->dtype == 30) {
-                eh->hmm0cc[pa] -= rnd_1_n(50, &g->seed) + 50;
+                eh->mood_peace[pa] -= rnd_1_n(50, &g->seed) + 50;
             }
             if (au->dtype == 29) {
                 eh->hmm0c0[pa] -= rnd_1_n(30, &g->seed) + 20;
