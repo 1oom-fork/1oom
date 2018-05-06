@@ -89,14 +89,14 @@ static void game_turn_update_pp_hmm1(struct game_s *g)
                     e->hmm084[j] = v - 46;
                 }
                 if (e->treaty[j] != TREATY_FINAL_WAR) {
-                    v = e->hmm0a8[j];
+                    v = e->mood_treaty[j];
                     if (v < 0) {
                         v += rnd_1_n(5, &g->seed);
                     }
                     if (v < 50) {
                         v += rnd_1_n(5, &g->seed);
                     }
-                    e->hmm0a8[j] = v;
+                    e->mood_treaty[j] = v;
                     v = e->mood_trade[j];
                     if (v < 0) {
                         v += rnd_1_n(5, &g->seed);
