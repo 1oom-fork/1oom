@@ -3184,7 +3184,7 @@ static void game_ai_classic_turn_diplo_p1(struct game_s *g)
             }
             if (!rnd_0_nm1(15 - g->difficulty * 2, &g->seed) && BOOLVEC_IS1(e1->within_frange, p2)) {
                 int v;
-                v = e1->hmm06c[p2] + e1->relation1[p2] + game_diplo_tbl_reldiff[e2->trait1] + rnd_1_n(100, &g->seed);
+                v = e1->trust[p2] + e1->relation1[p2] + game_diplo_tbl_reldiff[e2->trait1] + rnd_1_n(100, &g->seed);
                 if (e1->treaty[p2] == TREATY_NONAGGRESSION) {
                     v += 10;
                 }
@@ -3279,7 +3279,7 @@ static void game_ai_classic_turn_diplo_p2_sub1(struct game_s *g, player_id_t p1,
         return;
     }
     v4 = 0;
-    v = e1->hmm06c[p2] + e1->relation1[p2] + ((e1->race == RACE_HUMAN) ? 50 : 0) + game_diplo_tbl_reldiff[e2->trait1];
+    v = e1->trust[p2] + e1->relation1[p2] + ((e1->race == RACE_HUMAN) ? 50 : 0) + game_diplo_tbl_reldiff[e2->trait1];
     if ((e1->treaty[p2] == TREATY_NONE) && (e1->relation1[p2] > 15)) {
         int v8;
         v8 = v + rnd_1_n(100, &g->seed) + e1->mood_treaty[p2];
@@ -3362,7 +3362,7 @@ static void game_ai_classic_turn_diplo_p2_sub1(struct game_s *g, player_id_t p1,
             if (e1->treaty[p2] == TREATY_ALLIANCE) {
                 v1c += 25;
             }
-            v = e1->hmm06c[p2] + e1->relation1[p2] / 2 + ((e2->race == RACE_HUMAN) ? 50 : 0) + game_diplo_tbl_reldiff[e2->trait1] + v1c - 125;
+            v = e1->trust[p2] + e1->relation1[p2] / 2 + ((e2->race == RACE_HUMAN) ? 50 : 0) + game_diplo_tbl_reldiff[e2->trait1] + v1c - 125;
             v8 = v + rnd_1_n(100, &g->seed) + v1c - 125;
             if (v8 < 0) {
                 v14 = abs(v8) + 100;
@@ -3472,7 +3472,7 @@ static void game_ai_classic_turn_diplo_p2_sub3(struct game_s *g, player_id_t p1,
         e1->diplo_type[p2] = 0;
         return;
     }
-    v = e1->hmm06c[p2] + e1->relation1[p2] + ((e1->race == RACE_HUMAN) ? 50 : 0) + game_diplo_tbl_reldiff[e2->trait1];
+    v = e1->trust[p2] + e1->relation1[p2] + ((e1->race == RACE_HUMAN) ? 50 : 0) + game_diplo_tbl_reldiff[e2->trait1];
     if (e1->treaty[p2] < TREATY_WAR) {
         if (e1->relation1[p2] <= -95) {
             game_diplo_start_war(g, p2, p1);
@@ -3551,7 +3551,7 @@ static void game_ai_classic_turn_diplo_p2(struct game_s *g)
                 /*16441*/
                 int16_t v, v2, dv2;
                 v = game_diplo_get_relation_hmm1(g, p1, p2);
-                v2 = v + e2->hmm06c[p1] + game_diplo_tbl_reldiff[e2->trait1];
+                v2 = v + e2->trust[p1] + game_diplo_tbl_reldiff[e2->trait1];
                 dv2 = e1->diplo_val[p2] * 2;
                 if ((v2 <= -100) || (v <= -100)) {
                     e1->diplo_type[p2] = 0;
