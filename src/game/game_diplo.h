@@ -21,5 +21,6 @@ extern void game_diplo_stop_war(struct game_s *g, player_id_t pi1, player_id_t p
 extern void game_diplo_limit_0a8(struct game_s *g);
 extern void game_diplo_hmm8(struct game_s *g);
 extern int16_t game_diplo_get_relation_hmm1(struct game_s *g, player_id_t p1, player_id_t p2);
+extern uint8_t game_diplo_is_gone(struct game_s *g, player_id_t api, player_id_t pi);
 
 #endif
