@@ -1613,14 +1613,13 @@ static void game_turn_finished_slider(struct game_s *g)
             game_add_planet_to_build_finished(g, pli, pi, FINISHED_ECO2);
         }
         if (1
-          && (p->owner == pi)
           && (p->pop >= p->max_pop3)
           && (p->unrest == PLANET_UNREST_NORMAL)
         ) {
-            bool flag_hmm1;
+            bool flag_pending_ecoproj;
             int v;
             v = (p->prod_after_maint * p->slider[PLANET_SLIDER_ECO]) / 100;
-            flag_hmm1 = false;
+            flag_pending_ecoproj = false;
             if (v > 0) {
                 if (0
                   || (e->have_atmos_terra && (p->growth == PLANET_GROWTH_HOSTILE))
@@ -1628,10 +1627,10 @@ static void game_turn_finished_slider(struct game_s *g)
                   || (e->have_adv_soil_enrich && ((p->growth == PLANET_GROWTH_NORMAL) || (p->growth == PLANET_GROWTH_FERTILE)))
                   || ((p->max_pop3 - p->max_pop2) < e->have_terraform_n)
                 ) {
-                    flag_hmm1 = true;
+                    flag_pending_ecoproj = true;
                 }
             }
-            if (flag_hmm1) {
+            if (flag_pending_ecoproj) {
                 int w, fact, waste, prod;
                 fact = p->factories;
                 SETMIN(fact, p->pop * e->colonist_oper_factories);
@@ -1657,6 +1656,16 @@ static void game_turn_finished_slider(struct game_s *g)
                         game_add_planet_to_build_finished(g, pli, pi, FINISHED_ECO1);
                     }
                 }
+            } else if (1
+              && (p->slider[PLANET_SLIDER_ECO] > 0)
+              && ((e->race == RACE_SILICOID) || ((e->ind_waste_scale == 0) && (p->waste == 0)))
+            ) {
+                if (p->factories >= (p->pop * e->colonist_oper_factories)) {
+                    p->slider[PLANET_SLIDER_TECH] += p->slider[PLANET_SLIDER_ECO];
+                } else {
+                    p->slider[PLANET_SLIDER_IND] += p->slider[PLANET_SLIDER_ECO];
+                }
+                p->slider[PLANET_SLIDER_ECO] = 0;
             }
         }
         if (BOOLVEC_IS1(p->finished, FINISHED_SHIELD)) {
