@@ -190,6 +190,7 @@ main_menu_action_t ui_main_menu(struct game_new_options_s *newopts, int *load_ga
     struct main_menu_data_s d;
     bool flag_done = false;
     main_menu_action_t ret = MAIN_MENU_ACT_QUIT_GAME;
+    uiobj_set_help_id(-1);
     load_mainmenu_data(&d);
     ui_sound_play_music(1);
     ui_draw_finish_mode = 1;
