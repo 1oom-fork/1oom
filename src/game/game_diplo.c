@@ -229,7 +229,7 @@ void game_diplo_break_treaty(struct game_s *g, player_id_t pi, player_id_t pi2)
     if (e->trait1 == TRAIT1_HONORABLE) {
         v2 *= 2;
     }
-    e->hmm06c[pi2] -= v2;
+    e->trust[pi2] -= v2;
     if (e->treaty[pi2] == TREATY_ALLIANCE) {
         int v = e->relation2[pi2];
         v -= v2;
@@ -372,7 +372,7 @@ void game_diplo_hmm6(struct game_s *g, player_id_t p1, player_id_t p2)
             ) {
                 int v;
                 v = game_diplo_hmm6_sub1(g, p1, p2);
-                v = e1->relation1[p2] - v + game_diplo_tbl_reldiff[e2->trait1] + e1->hmm06c[p2];
+                v = e1->relation1[p2] - v + game_diplo_tbl_reldiff[e2->trait1] + e1->trust[p2];
                 if (v < -150) {
                     game_diplo_hmm6_sub2(g, p1, p2);
                 }
@@ -384,7 +384,7 @@ void game_diplo_hmm6(struct game_s *g, player_id_t p1, player_id_t p2)
             ) {
                 int v;
                 v = game_diplo_hmm6_sub3(g, p1, p2);
-                v = e1->relation1[p2] - v + game_diplo_tbl_reldiff[e2->trait1] + e1->hmm06c[p2];
+                v = e1->relation1[p2] - v + game_diplo_tbl_reldiff[e2->trait1] + e1->trust[p2];
                 if (v < -150) {
                     game_diplo_hmm6_sub2(g, p1, p2);
                 }
