@@ -74,7 +74,7 @@ typedef struct empiretechorbit_s {
     int16_t diplo_val[PLAYER_NUM];
     uint16_t diplo_p1[PLAYER_NUM];
     int16_t diplo_p2[PLAYER_NUM];
-    uint16_t hmm06c[PLAYER_NUM];
+    int16_t trust[PLAYER_NUM];
     treaty_t broken_treaty[PLAYER_NUM];
     int16_t hmm084[PLAYER_NUM];
     tech_field_t tribute_field[PLAYER_NUM];

@@ -476,7 +476,7 @@ static int savetype_de_moo13(struct game_s *g, const char *fname)
         M13_GET_TBL_16(e->diplo_val, eb + 0x03c);
         M13_GET_TBL_16(e->diplo_p1, eb + 0x048);
         M13_GET_TBL_16(e->diplo_p2, eb + 0x054);
-        M13_GET_TBL_16(e->hmm06c, eb + 0x06c);
+        M13_GET_TBL_16(e->trust, eb + 0x06c);
         M13_GET_TBL_16(e->broken_treaty, eb + 0x078);
         M13_GET_TBL_16(e->hmm084, eb + 0x084);
         M13_GET_TBL_16(e->tribute_field, eb + 0x090);
@@ -922,7 +922,7 @@ static int savetype_en_moo13(struct game_s *g, const char *fname)
         M13_SET_TBL_16(e->diplo_val, eb + 0x03c);
         M13_SET_TBL_16(e->diplo_p1, eb + 0x048);
         M13_SET_TBL_16(e->diplo_p2, eb + 0x054);
-        M13_SET_TBL_16(e->hmm06c, eb + 0x06c);
+        M13_SET_TBL_16(e->trust, eb + 0x06c);
         M13_SET_TBL_16(e->broken_treaty, eb + 0x078);
         M13_SET_TBL_16(e->hmm084, eb + 0x084);
         M13_SET_TBL_16(e->tribute_field, eb + 0x090);
@@ -1381,7 +1381,7 @@ static int savetype_en_text(struct game_s *g, const char *fname)
         OUTLINETBL("diplo_val", g->players, e->diplo_val);
         OUTLINETBL("diplo_p1", g->players, e->diplo_p1);
         OUTLINETBL("diplo_p2", g->players, e->diplo_p2);
-        OUTLINETBL("hmm06c", g->players, e->hmm06c);
+        OUTLINETBL("trust", g->players, e->trust);
         OUTLINETBL("broken_treaty", g->players, e->broken_treaty);
         OUTLINETBL("hmm084", g->players, e->hmm084);
         OUTLINETBL("tribute_field", g->players, e->tribute_field);
