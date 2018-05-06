@@ -597,3 +597,20 @@ int16_t game_diplo_get_mood(struct game_s *g, player_id_t p1, player_id_t p2)
         return vmin;
     }
 }
+
+uint8_t game_diplo_is_gone(struct game_s *g, player_id_t api, player_id_t pi)
+{
+    /* FIXME multiplayer */
+    const empiretechorbit_t *e = &(g->eto[api]);
+    int16_t v, vr;
+    vr = game_diplo_get_mood(g, api, pi);
+    v = e->trust[pi] /*+ e->relation1[pi]*/ + vr + game_diplo_tbl_reldiff[g->eto[pi].trait1];
+    if (((v /*- e->relation1[pi]*/) <= -100) || (vr <= -100)) {
+        if (e->treaty[pi] >= TREATY_WAR) {
+            return 2;
+        } else {
+            return 1;
+        }
+    }
+    return 0;
+}
