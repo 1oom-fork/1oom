@@ -3230,7 +3230,7 @@ static void game_ai_classic_turn_diplo_p1(struct game_s *g)
                 if (!(rnd_0_nm1(20, &g->seed))) {
                     game_diplo_act(g, rnd_1_n(5, &g->seed), p1, p2, 1, 0, 0);
                 }
-                if ((e1->treaty[p2] == TREATY_WAR) && ((g->gaux->diplo_d0_rval + e1->hmm0cc[p2]) > 100)) { /* BUG? use of a global, unsaved and possible unset diplo val seems wrong */
+                if ((e1->treaty[p2] == TREATY_WAR) && ((g->gaux->diplo_d0_rval + e1->mood_peace[p2]) > 100)) { /* BUG? use of a global, unsaved and possible unset diplo val seems wrong */
                     game_diplo_stop_war(g, p1, p2);
                 }
                 game_diplo_hmm5(g, p1, p2);
@@ -3499,7 +3499,7 @@ static void game_ai_classic_turn_diplo_p2_sub3(struct game_s *g, player_id_t p1,
                 }
             }
         }
-    } else if (((v + rnd_1_n(100, &g->seed) + e1->hmm0cc[p2]) >= 50) && (!rnd_0_nm1(8, &g->seed))) {
+    } else if (((v + rnd_1_n(100, &g->seed) + e1->mood_peace[p2]) >= 50) && (!rnd_0_nm1(8, &g->seed))) {
         e1->diplo_type[p2] = 30;
         if (rnd_1_n(100, &g->seed) <= ((e2->total_production_bc * 30) / e1->total_production_bc)) {
             if (rnd_0_nm1(4, &g->seed)) {
@@ -3563,7 +3563,7 @@ static void game_ai_classic_turn_diplo_p2(struct game_s *g)
                     } else {
                         e1->diplo_type[p2] = 0;
                     }
-                } else if ((e1->treaty[p2] == TREATY_WAR) && ((rnd_1_n(100, &g->seed) + 30) < e1->hmm0cc[p2])) {
+                } else if ((e1->treaty[p2] == TREATY_WAR) && ((rnd_1_n(100, &g->seed) + 30) < e1->mood_peace[p2])) {
                     game_ai_classic_turn_diplo_p2_sub3(g, p1, p2);
                 } else if ((rnd_1_n(100, &g->seed) < (dv2 + ((e1->hmm270[p2] == 0) ? 3 : 0))) && (!rnd_0_nm1(4, &g->seed))) {
                     if (e1->hmm270[p2] > 0) {
