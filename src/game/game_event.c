@@ -988,7 +988,7 @@ bool game_event_run(struct game_s *g, struct game_end_s *ge)
         any_news = true;
     }
     /*10ff3*/
-    ns.type = GAME_NEWS_21;
+    ns.type = GAME_NEWS_GENOCIDE;
     ns.subtype = 0;
     {
         uint8_t num_planets[PLAYER_NUM];
