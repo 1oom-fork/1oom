@@ -127,9 +127,17 @@ int game_aux_init(struct game_aux_s *gaux, struct game_s *g)
         for (int stype = 0; stype < EVENTMSG_SUB_NUM; ++stype) {
             const char *msg;
             msg = EVENTMSG_PTR(gaux, etype,  stype);
-            if ((etype == 11) || (etype == 12)) {
+#if 1
+            if (etype == 21) {
                 LOG_DEBUG((5, "event msg t %i s %i '%s'\n", etype, stype, msg));
             }
+#else
+            for (int i = 0; msg[i] != 0; ++i) {
+                if (msg[i] == (char)0x85) {
+                    LOG_DEBUG((5, "event msg t %i s %i '%s'\n", etype, stype, msg));
+                }
+            }
+#endif
         }
     }
 #endif
