@@ -172,6 +172,7 @@ static const struct numtbl_s {
     DEFNUMITEML(max_bio_dmg, NUMTYPE_S, 1, 0x7fffffff),
     DEFNUMITEML(max_trans_dmg, NUMTYPE_S, 1, 0x7fffffff),
     DEFNUMITEML(event_roll, NUMTYPE_S, 1, 0x7fffffff),
+    DEFNUMITEML(monster_rest_att, NUMTYPE_BOOL, 0, 1),
     DEFNUMITEMLTBLL(tbl_hull_w, NUMTYPE_U8, 0, 0xff),
     DEFNUMITEMLTBLL(tech_costmuld, NUMTYPE_U8, 0, 0xff),
     DEFNUMITEMLTBL(tcostm_human, game_num_tech_costmulr[RACE_HUMAN], NUMTYPE_U8, 0, 0xff),
@@ -230,7 +231,6 @@ static const struct numtbl_s {
     DEFNUMITEMLSTBL(startship_man, tbl_startship, man, NUMTYPE_U8, 0, 0xff),
     DEFNUMITEMLSTBL(startship_hp, tbl_startship, hp, NUMTYPE_U16, 0, 0xffff),
     DEFNUMITEMLTBL(startship_num, startfleet_ships, NUMTYPE_U16, 0, 0xffff),
-    /* TODO monster ships, ... */
     DEFNUMITEMLSTBL(crystal_hull, tbl_monster[MONSTER_CRYSTAL], hull, NUMTYPE_GUESS(ship_hull_t), 0, SHIP_HULL_NUM - 1),
     DEFNUMITEMLSTBL(crystal_comp, tbl_monster[MONSTER_CRYSTAL], comp, NUMTYPE_GUESS(ship_comp_t), 0, SHIP_COMP_NUM - 1),
     DEFNUMITEMLSTBL(crystal_jammer, tbl_monster[MONSTER_CRYSTAL], jammer, NUMTYPE_GUESS(ship_jammer_t), 0, SHIP_JAMMER_NUM - 1),
@@ -347,6 +347,7 @@ int game_num_max_bomb_dmg = 100000;
 int game_num_max_bio_dmg = 10000;
 int game_num_max_trans_dmg = 32000;
 int game_num_event_roll = 512;
+bool game_num_monster_rest_att = false;
 
 uint8_t game_num_tbl_hull_w[4] = { 1, 5, 25, 125 };
 
