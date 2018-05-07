@@ -156,6 +156,15 @@ static void ui_starmap_do_help(struct starmap_data_s *d)
         ui_help(0x1a);
         return;
     }
+    if (BOOLVEC_TBL_IS0(g->evn.help_shown, api, 9)) {
+        for (int i = 0; i < 8; ++i) {
+            if (game_tech_player_has_tech(g, TECH_FIELD_PROPULSION, TECH_PROP_NUCLEAR_ENGINES + i * 6, api)) {
+                BOOLVEC_TBL_SET1(g->evn.help_shown, api, 9);
+                ui_help(0x18);
+                return;
+            }
+        }
+    }
     if (BOOLVEC_TBL_IS0(g->evn.help_shown, api, 10)) {
         for (int i = 0; i < 4; ++i) {
             if (game_tech_player_has_tech(g, TECH_FIELD_FORCE_FIELD, TECH_FFLD_CLASS_V_PLANETARY_SHIELD + i * 10, api)) {
