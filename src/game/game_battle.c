@@ -11,6 +11,7 @@
 #include "game_battle_human.h"
 #include "game_diplo.h"
 #include "game_fleet.h"
+#include "game_num.h"
 #include "game_parsed.h"
 #include "game_str.h"
 #include "log.h"
@@ -110,11 +111,9 @@ static void game_battle_post(struct game_s *g, int loser, int winner, uint8_t fr
         mi = loser - PLAYER_NUM;
         switch (mi) {
             case MONSTER_CRYSTAL:
-                g->evn.crystal.exists = false;
                 g->evn.crystal.killer = winner;
                 break;
             case MONSTER_AMOEBA:
-                g->evn.amoeba.exists = false;
                 g->evn.amoeba.killer = winner;
                 break;
             case MONSTER_GUARDIAN:
@@ -266,7 +265,7 @@ void game_battle_handle_all(struct game_s *g)
         monster_planet[i] = PLANET_NONE;
     }
     for (monster_id_t i = MONSTER_CRYSTAL; i <= MONSTER_AMOEBA; ++i) {
-        monster_t *m;
+        const monster_t *m;
         m = (i == MONSTER_CRYSTAL) ? &(g->evn.crystal) : &(g->evn.amoeba);
         if (m->exists) {
             const planet_t *p;
@@ -303,6 +302,13 @@ void game_battle_handle_all(struct game_s *g)
         for (monster_id_t i = MONSTER_CRYSTAL; i < MONSTER_NUM; ++i) {
             if (pli == monster_planet[i]) {
                 BOOLVEC_SET1(tbl_have_force, (int)PLAYER_NUM + i);
+            } else if (game_num_monster_rest_att && (i != MONSTER_GUARDIAN)) {
+                /* 1oom option: allow fighting resting monsters */
+                const monster_t *m;
+                m = (i == MONSTER_CRYSTAL) ? &(g->evn.crystal) : &(g->evn.amoeba);
+                if ((m->counter >= 0) && (m->x == p->x) && (m->y == p->y)) {
+                    BOOLVEC_SET1(tbl_have_force, (int)PLAYER_NUM + i);
+                }
             }
         }
         sum_forces = 0;
