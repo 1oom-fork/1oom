@@ -1476,7 +1476,7 @@ static bool game_turn_check_end(struct game_s *g, struct game_end_s *ge)
             if (killer >= g->players) {
                 killer = (pi1 != PLAYER_NONE) ? pi1 : 1;
             }
-            ns.type = GAME_NEWS_21;
+            ns.type = GAME_NEWS_GENOCIDE;
             ns.race = g->eto[PLAYER_0].race;    /* FIXME multiplayer */
             ns.subtype = 3;
             ns.num1 = 0;

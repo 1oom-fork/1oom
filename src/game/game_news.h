@@ -27,7 +27,7 @@ typedef enum {
     GAME_NEWS_COUP, /*18*/
     GAME_NEWS_STARS, /*19*/
     GAME_NEWS_STATS, /*20*/
-    GAME_NEWS_21,
+    GAME_NEWS_GENOCIDE, /*21*/
     GAME_NEWS_GUARDIAN
 } news_type_t;
 
