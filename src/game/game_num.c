@@ -173,6 +173,7 @@ static const struct numtbl_s {
     DEFNUMITEML(max_trans_dmg, NUMTYPE_S, 1, 0x7fffffff),
     DEFNUMITEML(event_roll, NUMTYPE_S, 1, 0x7fffffff),
     DEFNUMITEML(council_years, NUMTYPE_S, 0, 0x7fff),
+    DEFNUMITEML(monster_rest_att, NUMTYPE_BOOL, 0, 1),
     DEFNUMITEMLTBLL(tbl_hull_w, NUMTYPE_U8, 0, 0xff),
     DEFNUMITEMLTBLL(tech_costmuld, NUMTYPE_U8, 0, 0xff),
     DEFNUMITEMLTBL(tcostm_human, game_num_tech_costmulr[RACE_HUMAN], NUMTYPE_U8, 0, 0xff),
@@ -348,6 +349,7 @@ int game_num_max_bio_dmg = 10000;
 int game_num_max_trans_dmg = 32000;
 int game_num_event_roll = 512;
 int game_num_council_years = 25;
+bool game_num_monster_rest_att = false;
 
 uint8_t game_num_tbl_hull_w[4] = { 1, 5, 25, 125 };
 
