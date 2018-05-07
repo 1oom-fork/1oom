@@ -237,7 +237,7 @@ void game_battle_prepare(struct battle_s *bt, int party_r, int party_l, uint8_t 
     {
         player_id_t owner;
         owner = p->owner;
-        if ((owner == party_l) || (owner == party_r)) {
+        if ((owner != PLAYER_NONE) && ((owner == party_l) || (owner == party_r))) {
             bt->planet_side = (owner == party_l) ? SIDE_L : SIDE_R;
             bt->bases = p->missile_bases;
             game_parsed_from_planet(sp, g, p);
