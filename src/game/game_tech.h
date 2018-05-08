@@ -16,7 +16,7 @@ extern const uint8_t tbl_tech_mul_hmm2[];
 extern uint8_t game_tech_player_has_tech(const struct game_s *g, int field_i, int tech_i, int player_i);
 extern uint8_t game_tech_player_best_tech(struct game_s *g, int field_i, int tech_i_base, int tech_i_step, int tech_i_max, int player_i);
 extern uint8_t game_tech_player_best_engine(struct game_s *g, int player_i);
-extern uint16_t game_get_base_cost(struct game_s *g, int player_i);
+extern uint16_t game_get_base_cost(const struct game_s *g, int player_i);
 extern uint8_t game_get_base_weapon(const struct game_s *g, player_id_t player_i, int tech_i);
 extern uint8_t game_get_base_weapon_2(const struct game_s *g, player_id_t player_i, int tech_i, uint8_t weap1);
 extern uint8_t game_get_best_shield(struct game_s *g, player_id_t player_i, int tech_i);

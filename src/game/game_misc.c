@@ -582,10 +582,10 @@ int game_adjust_prod_by_special(int prod, planet_special_t special)
     return prod;
 }
 
-int game_get_pop_growth_max(struct game_s *g, int planet_i, int max_pop3)
+int game_get_pop_growth_max(const struct game_s *g, int planet_i, int max_pop3)
 {
-    planet_t *p = &(g->planet[planet_i]);
-    empiretechorbit_t *e = &(g->eto[p->owner]);
+    const planet_t *p = &(g->planet[planet_i]);
+    const empiretechorbit_t *e = &(g->eto[p->owner]);
     int v, retval;
     if (e->race == RACE_SILICOID) {
         v = (100 - (p->pop * 100) / max_pop3) / 2;
@@ -631,10 +631,10 @@ int game_get_pop_growth_max(struct game_s *g, int planet_i, int max_pop3)
     return retval;
 }
 
-int game_get_pop_growth_for_eco(struct game_s *g, int planet_i, int eco)
+int game_get_pop_growth_for_eco(const struct game_s *g, int planet_i, int eco)
 {
-    planet_t *p = &(g->planet[planet_i]);
-    empiretechorbit_t *e = &(g->eto[p->owner]);
+    const planet_t *p = &(g->planet[planet_i]);
+    const empiretechorbit_t *e = &(g->eto[p->owner]);
     int v, vmax;
     v = (eco * 10) / e->inc_pop_cost;
     if (e->race == RACE_SAKKRA) {

@@ -99,7 +99,7 @@ static void empirestatus_draw_cb(void *vptr)
     for (int s = 0; s < 6; ++s) {
         for (int i = 0; i < d->num; ++i) {
             player_id_t pi;
-            empiretechorbit_t *e;
+            const empiretechorbit_t *e;
             int x, y;
             uint8_t v;
             x = (s / 3) * 156 + 11;
