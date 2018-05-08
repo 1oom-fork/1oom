@@ -265,7 +265,7 @@ void game_battle_handle_all(struct game_s *g)
         monster_planet[i] = PLANET_NONE;
     }
     for (monster_id_t i = MONSTER_CRYSTAL; i <= MONSTER_AMOEBA; ++i) {
-        monster_t *m;
+        const monster_t *m;
         m = (i == MONSTER_CRYSTAL) ? &(g->evn.crystal) : &(g->evn.amoeba);
         if (m->exists) {
             const planet_t *p;
