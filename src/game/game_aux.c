@@ -64,7 +64,7 @@ int game_aux_init(struct game_aux_s *gaux, struct game_s *g)
 
 #ifdef FEATURE_MODEBUG
     for (int f = 0; f < 6; ++f) {
-        for (int t = 0; t < 50; ++t) {
+        for (int t = 1; t <= 50; ++t) {
             const uint8_t *p;
             p = RESEARCH_D0_PTR(gaux, f, t);
             LOG_DEBUG((5, "%i %2i: %02x %02x %02x '%s'\n", f, t, p[0], p[1], p[2], (p[0] != 0xff) ? &gaux->research.names[GET_LE_16(&p[4])] : ""));
