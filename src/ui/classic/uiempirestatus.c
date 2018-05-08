@@ -92,14 +92,14 @@ static void empirestatus_draw_cb(void *vptr)
             SETMAX(maxstats, tbl_sum[i]);
         }
         for (int i = 0; i < d->num; ++i) {
-            tbl_stat[6][i] = maxstats ? ((tbl_sum[i] * 100) / maxstats) : 100;
+            tbl_stat[5][i] = maxstats ? ((tbl_sum[i] * 100) / maxstats) : 100;
         }
     }
     lbxfont_select(2, 6, 0, 0);
     for (int s = 0; s < 6; ++s) {
         for (int i = 0; i < d->num; ++i) {
             player_id_t pi;
-            empiretechorbit_t *e;
+            const empiretechorbit_t *e;
             int x, y;
             uint8_t v;
             x = (s / 3) * 156 + 11;
