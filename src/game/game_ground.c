@@ -41,16 +41,16 @@ static void game_ground_init(struct ground_s *gr)
         rc = &(srd->researchcompleted[TECH_FIELD_CONSTRUCTION][0]);
         for (int j = 0; j < e->tech.completed[TECH_FIELD_CONSTRUCTION]; ++j) {
             const uint8_t *r;
-            r = RESEARCH_D0_PTR(g->gaux, TECH_FIELD_CONSTRUCTION, rc[i]);
+            r = RESEARCH_D0_PTR(g->gaux, TECH_FIELD_CONSTRUCTION, rc[j]);
             if (r[0] == 7) {
                 bestarmor = r[1];
             } else if (r[0] == 0xf) {
                 bestsuit = r[1];
-                besti = rc[i];
+                besti = rc[j];
             }
         }
         gr->s[i].force += bestarmor * 5 + bestsuit * 10;
-        strcpy(buf, *tbl_shiptech_armor[bestarmor].nameptr);
+        strcpy(buf, *tbl_shiptech_armor[bestarmor * 2].nameptr);
         util_str_tolower(&buf[1]);
         sprintf(gr->s[i].str[0], "%s ", buf);
         if (bestsuit == 0) {
@@ -63,10 +63,10 @@ static void game_ground_init(struct ground_s *gr)
         rc = &(srd->researchcompleted[TECH_FIELD_FORCE_FIELD][0]);
         for (int j = 0; j < e->tech.completed[TECH_FIELD_FORCE_FIELD]; ++j) {
             const uint8_t *r;
-            r = RESEARCH_D0_PTR(g->gaux, TECH_FIELD_FORCE_FIELD, rc[i]);
+            r = RESEARCH_D0_PTR(g->gaux, TECH_FIELD_FORCE_FIELD, rc[j]);
             if (r[0] == 0x10) {
                 bestshield = r[1];
-                besti = rc[i] + 1; /* FIXME why is this + 1 needed? */
+                besti = rc[j];
             }
         }
         if (bestshield != 0) {
@@ -78,10 +78,10 @@ static void game_ground_init(struct ground_s *gr)
         rc = &(srd->researchcompleted[TECH_FIELD_WEAPON][0]);
         for (int j = 0; j < e->tech.completed[TECH_FIELD_WEAPON]; ++j) {
             const uint8_t *r;
-            r = RESEARCH_D0_PTR(g->gaux, TECH_FIELD_WEAPON, rc[i]);
+            r = RESEARCH_D0_PTR(g->gaux, TECH_FIELD_WEAPON, rc[j]);
             if (r[0] == 0x15) {
                 bestweap = r[1];
-                besti = rc[i] + 1; /* FIXME why is this + 1 needed? */
+                besti = rc[j];
             }
         }
         if (bestweap != 0) {
