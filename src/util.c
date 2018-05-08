@@ -175,7 +175,7 @@ void util_fname_split(const char *path, char **dir_out, char **name_out)
 /* Write the first `size' bytes of `src' into a newly created file `name'.
    If `name' already exists, it is replaced by the new one.  Returns 0 on
    success, -1 on failure.  */
-int util_file_save(const char *name, uint8_t *src, int size)
+int util_file_save(const char *name, const uint8_t *src, int size)
 {
     FILE *fd;
     size_t r;
