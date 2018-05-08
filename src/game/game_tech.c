@@ -465,7 +465,7 @@ void game_update_tech_util(struct game_s *g)
     }
 }
 
-void game_tech_get_name(const struct game_aux_s *gaux, tech_field_t field, int tech, char *buf)
+const char *game_tech_get_name(const struct game_aux_s *gaux, tech_field_t field, int tech, char *buf)
 {
     if (tech == 0) {
         sprintf(buf, "%s %s", game_str_tbl_te_field[field], game_str_te_techno);
@@ -484,9 +484,10 @@ void game_tech_get_name(const struct game_aux_s *gaux, tech_field_t field, int t
             buf[0] = '\0';
         }
     }
+    return buf;
 }
 
-void game_tech_get_descr(const struct game_aux_s *gaux, tech_field_t field, int tech, char *buf)
+const char *game_tech_get_descr(const struct game_aux_s *gaux, tech_field_t field, int tech, char *buf)
 {
     if (tech == 0) {
         buf[0] = '\0';
@@ -499,6 +500,7 @@ void game_tech_get_descr(const struct game_aux_s *gaux, tech_field_t field, int 
     } else {
         strcpy(buf, &(gaux->research.descr[(field * 50 + tech - 1) * RESEARCH_DESCR_LEN]));
     }
+    return buf;
 }
 
 int game_tech_current_research_percent1(struct empiretechorbit_s *e, tech_field_t field)
