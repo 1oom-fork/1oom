@@ -23,8 +23,8 @@ extern uint8_t game_get_best_shield(struct game_s *g, player_id_t player_i, int 
 extern uint8_t game_get_best_comp(struct game_s *g, player_id_t player_i, int tech_i);
 extern uint8_t game_get_best_jammer(const struct game_s *g, player_id_t player_i, int tech_i);
 extern void game_update_tech_util(struct game_s *g);
-extern void game_tech_get_name(const struct game_aux_s *gaux, tech_field_t field, int tech, char *buf);
-extern void game_tech_get_descr(const struct game_aux_s *gaux, tech_field_t field, int tech, char *buf);
+extern const char *game_tech_get_name(const struct game_aux_s *gaux, tech_field_t field, int tech, char *buf);
+extern const char *game_tech_get_descr(const struct game_aux_s *gaux, tech_field_t field, int tech, char *buf);
 extern int game_tech_current_research_percent1(struct empiretechorbit_s *e, tech_field_t field);
 extern int game_tech_current_research_percent2(struct empiretechorbit_s *e, tech_field_t field);
 extern void game_tech_get_new(struct game_s *g, player_id_t player, tech_field_t field, uint8_t tech, uint8_t source, int a8, int ac, bool flag_frame);
