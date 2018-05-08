@@ -554,7 +554,7 @@ int game_get_min_dist(struct game_s *g, int player_i, int planet_i)
 {
     int dist, mindist = 255;
     for (int i = 0; i < g->galaxy_stars; ++i) {
-        if (g->planet[i].owner == player_i) {
+        if ((i != planet_i) && (g->planet[i].owner == player_i)) {
             dist = g->gaux->star_dist[planet_i][i];
             SETMIN(mindist, dist);
         }
