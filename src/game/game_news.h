@@ -14,7 +14,7 @@ typedef enum {
     GAME_NEWS_05,
     GAME_NEWS_06,
     GAME_NEWS_COMET, /*7*/
-    GAME_NEWS_08,
+    GAME_NEWS_PIRATES, /*8*/
     GAME_NEWS_09,
     GAME_NEWS_REBELLION, /*10*/
     GAME_NEWS_CRYSTAL, /*11*/
