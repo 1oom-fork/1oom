@@ -159,9 +159,11 @@ int cfg_load(const char *filename)
             continue;
         }
         if (cfg_parse_line(buf, lnum) < 0) {
+            fclose(fd);
             return -1;
         }
     }
+    fclose(fd);
     return 0;
 #undef BUFSIZE
 }
