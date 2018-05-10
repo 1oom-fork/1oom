@@ -427,7 +427,7 @@ static int game_save_encode_srd(uint8_t *buf, int pos, const shipresearch_t *srd
     SG_1OOM_EN_TBL_TBL_U8(srd->researchcompleted, TECH_FIELD_NUM, TECH_PER_FIELD);
     SG_1OOM_EN_TBL_U8(srd->have_reserve_fuel, NUM_SHIPDESIGNS);
     SG_1OOM_EN_TBL_U16(srd->year, NUM_SHIPDESIGNS);
-    SG_1OOM_EN_TBL_U32(srd->shipcount, NUM_SHIPDESIGNS);
+    SG_1OOM_EN_DUMMY(NUM_SHIPDESIGNS * 4);
     return pos;
 }
 
@@ -442,7 +442,7 @@ static int game_save_decode_srd(const uint8_t *buf, int pos, shipresearch_t *srd
     SG_1OOM_DE_TBL_TBL_U8(srd->researchcompleted, TECH_FIELD_NUM, TECH_PER_FIELD);
     SG_1OOM_DE_TBL_U8(srd->have_reserve_fuel, NUM_SHIPDESIGNS);
     SG_1OOM_DE_TBL_U16(srd->year, NUM_SHIPDESIGNS);
-    SG_1OOM_DE_TBL_U32(srd->shipcount, NUM_SHIPDESIGNS);
+    SG_1OOM_DE_DUMMY(NUM_SHIPDESIGNS * 4);
     return pos;
 }
 
