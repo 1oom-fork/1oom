@@ -159,7 +159,7 @@ typedef struct empiretechorbit_s {
 
 #define NEWTECH_MAX 15
 
-typedef struct {
+typedef struct monster_s {
     uint8_t exists; /* 0..3 */
     int16_t x;
     int16_t y;
@@ -263,7 +263,7 @@ typedef struct gameevents_s {
     uint8_t best_terraform[PLAYER_NUM];
 } gameevents_t;
 
-typedef struct {
+typedef struct seen_s {
     player_id_t owner;
     uint16_t pop;
     uint16_t bases;
