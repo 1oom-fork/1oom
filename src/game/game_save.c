@@ -35,6 +35,8 @@ char game_save_tbl_name[NUM_ALL_SAVES][SAVE_NAME_LEN];
 
 /* -------------------------------------------------------------------------- */
 
+#define SG_1OOM_EN_DUMMY(_n_)  memset(&buf[pos], 0, (_n_)), pos += (_n_)
+#define SG_1OOM_DE_DUMMY(_n_)  pos += (_n_)
 #define SG_1OOM_EN_U8(_v_)  buf[pos++] = (_v_)
 #define SG_1OOM_DE_U8(_v_)  (_v_) = buf[pos++]
 #define SG_1OOM_EN_U16(_v_)  SET_LE_16(&buf[pos], (_v_)), pos += 2
