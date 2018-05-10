@@ -47,6 +47,7 @@ typedef enum {
 #define SAVETYPE_F_OPTOUT   (1 << 1)
 
 static int savetype_de_smart(struct game_s *g, const char *fname);
+static bool savetype_is_moo13(const char *fname);
 static int savetype_de_moo13(struct game_s *g, const char *fname);
 static int savetype_en_moo13(struct game_s *g, const char *fname);
 static int savetype_de_1oom0(struct game_s *g, const char *fname);
@@ -174,8 +175,9 @@ static int savetype_de_smart(struct game_s *g, const char *fname)
         fd = NULL;
         savetypei = SAVETYPE_NATIVE;
         res = savetype[SAVETYPE_NATIVE].decode(g, fname);
-    } else if ((res = savetype_de_moo13(g, fname)) == 0) {
+    } else if (savetype_is_moo13(fname)) {
         savetypei = SAVETYPE_MOO13;
+        res = savetype_de_moo13(g, fname);
     } else {
         log_error("file '%s' type autodetection failed\n", fname);
         return -1;
@@ -197,6 +199,23 @@ static int savetype_de_smart(struct game_s *g, const char *fname)
 
 #define SAVE_MOO13_LEN  59036
 #define SAVE_CMOO_LEN   154
+
+static bool savetype_is_moo13(const char *fname)
+{
+    bool res = true;
+    uint16_t w;
+    if (0
+      || (util_file_try_load_len(fname, save2buf, SAVE_MOO13_LEN) == 0)
+      || ((w = GET_LE_16(&save2buf[0xe2d2])) < 2) || (w > 6)
+      || (GET_LE_16(&save2buf[0xe2d4]) > 4)
+      || ((w = GET_LE_16(&save2buf[0xe2d6])) < 24) || (w > 108)
+      || (GET_LE_16(&save2buf[0xe2d8]) > 3)
+      || (GET_LE_16(&save2buf[0xe238]) > 4)
+    ) {
+        res = false;
+    }
+    return res;
+}
 
 #define M13_GET_8(item_, addr_)     item_ = save2buf[addr_]
 #define M13_GET_16(item_, addr_)    item_ = GET_LE_16(&save2buf[addr_])
