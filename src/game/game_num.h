@@ -21,6 +21,7 @@ extern int game_num_fact_hp;
 extern int game_num_max_bomb_dmg;
 extern int game_num_max_bio_dmg;
 extern int game_num_max_trans_dmg;
+extern unsigned int game_num_max_ship_maint;
 extern int game_num_event_roll;
 extern uint8_t game_num_tbl_hull_w[4];
 extern uint8_t game_num_tech_costmuld[DIFFICULTY_NUM];
