@@ -46,7 +46,7 @@ void game_update_have_reserve_fuel(struct game_s *g)
 void game_update_maint_costs(struct game_s *g)
 {
     for (player_id_t pi = PLAYER_0; pi < g->players; ++pi) {
-        uint16_t tbl_ships[NUM_SHIPDESIGNS];    /* FIXME BUG uint32_t would be better */
+        shipsum_t tbl_ships[NUM_SHIPDESIGNS];
         uint32_t totalcost; /* FIXME maybe uint64_t? */
         uint16_t bases;
         shipresearch_t *srd = &(g->srd[pi]);
@@ -74,9 +74,7 @@ void game_update_maint_costs(struct game_s *g)
             totalcost += tbl_ships[si] * sd->cost;
         }
         totalcost = totalcost / 50;
-        if (totalcost >= 32000) {
-            totalcost = 32000;
-        }
+        SETMIN(totalcost, game_num_max_ship_maint);
         bases = 0;
         for (int i = 0; i < g->galaxy_stars; ++i) {
             const planet_t *p = &(g->planet[i]);

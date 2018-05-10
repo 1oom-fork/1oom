@@ -85,8 +85,8 @@ typedef struct empiretechorbit_s {
     int16_t security; /* tenths */
     uint16_t spies[PLAYER_NUM];
     int32_t total_trade_bc;
-    uint16_t ship_maint_bc;
-    uint16_t bases_maint_bc;
+    uint32_t ship_maint_bc;
+    uint32_t bases_maint_bc;
     uint16_t spying_maint_bc;
     uint16_t percent_prod_total_to_actual;
     int32_t total_maint_bc;
