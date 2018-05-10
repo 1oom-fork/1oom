@@ -12,19 +12,24 @@ Usage:
 Options:
     -?             Show command line options
     -i INTYPE      Input type:
-                     m   - MOO1 v1.3
-                     1   - 1oom save version 0
                      s   - smart: autodetect (default)
-    -o OUTTYPE     Output type:
                      m   - MOO1 v1.3
                      1   - 1oom save version 0
+                     t   - text
+    -o OUTTYPE     Output type:
                      s   - smart: in old/new -> out new/old (default)
-                     t   - text (output only)
+                     m   - MOO1 v1.3
+                     1   - 1oom save version 0
+                     t   - text
                      d   - dummy (no output)
     -cmoo          Enable CONFIG.MOO use
     -n NAME        Set save name
 
 If a filename is a number from 1 to 8, it is interpreted as 1oom save number N.
+
+1oom save format 0 is described in doc/format_save.txt.
+MOO1 v1.3 save format is described in doc/format_gam.txt.
+Text save format is intentionally left undefined. It is for debugging.
 
 Examples:
     1oom_saveconv SAVE2.GAM oldsave2.bin
@@ -57,8 +62,11 @@ Examples:
         - set save name to "foo bar"
         - update save name and availability in CONFIG.MOO (if found)
 
-    1oom_saveconv -o t 7
-        - dump 1oom save 7 as text (for debugging)
+    1oom_saveconv -o t 7 foo.txt
+        - save 1oom save 7 as text (for debugging)
+
+    1oom_saveconv foo.txt 7
+        - convert foo.txt to 1oom save 7
 
     1oom_saveconv -o d 7
         - load 1oom save 7 and do nothing (for debugging)
