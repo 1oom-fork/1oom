@@ -48,10 +48,13 @@ typedef enum {
 #define SAVETYPE_F_OPTOUT   (1 << 1)
 
 static int savetype_de_smart(struct game_s *g, const char *fname);
+static bool savetype_is_moo13(struct game_s *g, const char *fname);
 static int savetype_de_moo13(struct game_s *g, const char *fname);
 static int savetype_en_moo13(struct game_s *g, const char *fname);
 static int savetype_de_1oom0(struct game_s *g, const char *fname);
 static int savetype_en_1oom0(struct game_s *g, const char *fname);
+static bool savetype_is_text(struct game_s *g, const char *fname);
+static int savetype_de_text(struct game_s *g, const char *fname);
 static int savetype_en_text(struct game_s *g, const char *fname);
 
 static const struct {
@@ -71,7 +74,7 @@ static const struct {
         "MOO v1.3",
         savetype_de_moo13,
         savetype_en_moo13,
-        0, SAVETYPE_1OOM0
+        0, SAVETYPE_NATIVE
     },
     { /* SAVETYPE_1OOM0 */
         "1oom save version 0",
@@ -81,9 +84,9 @@ static const struct {
     },
     { /* SAVETYPE_TEXT  */
         "text",
-        0,
+        savetype_de_text,
         savetype_en_text,
-        SAVETYPE_F_OPTOUT, SAVETYPE_NUM
+        SAVETYPE_F_OPTOUT, SAVETYPE_NATIVE
     },
     { /* SAVETYPE_DUMMY */
         "dummy",
@@ -175,8 +178,12 @@ static int savetype_de_smart(struct game_s *g, const char *fname)
         fd = NULL;
         savetypei = SAVETYPE_NATIVE;
         res = savetype[SAVETYPE_NATIVE].decode(g, fname);
-    } else if ((res = savetype_de_moo13(g, fname)) == 0) {
+    } else if (savetype_is_moo13(g, fname)) {
         savetypei = SAVETYPE_MOO13;
+        res = savetype_de_moo13(g, fname);
+    } else if (savetype_is_text(g, fname)) {
+        savetypei = SAVETYPE_TEXT;
+        res = savetype_de_text(g, fname);
     } else {
         log_error("file '%s' type autodetection failed\n", fname);
         return -1;
@@ -218,6 +225,25 @@ static int try_load_len(const char *fname, uint8_t *buf, int wantlen)
 
 #define SAVE_MOO13_LEN  59036
 #define SAVE_CMOO_LEN   154
+
+static bool savetype_is_moo13(struct game_s *g, const char *fname)
+{
+    uint16_t w;
+    int len;
+    if ((len = try_load_len(fname, save2buf, SAVE_MOO13_LEN)) <= 0) {
+        return false;
+    }
+    if (0
+      || ((w = GET_LE_16(&save2buf[0xe2d2])) < 2) || (w > 6)
+      || ((w = GET_LE_16(&save2buf[0xe2d4])) < 0) || (w > 4)
+      || ((w = GET_LE_16(&save2buf[0xe2d6])) < 24) || (w > 108)
+      || ((w = GET_LE_16(&save2buf[0xe2d8])) < 0) || (w > 3)
+      || ((w = GET_LE_16(&save2buf[0xe238])) < 0) || (w > 4)
+    ) {
+        return false;
+    }
+    return true;
+}
 
 #define M13_GET_8(item_, addr_)     item_ = save2buf[addr_]
 #define M13_GET_16(item_, addr_)    item_ = GET_LE_16(&save2buf[addr_])
@@ -1144,6 +1170,714 @@ static int savetype_en_moo13(struct game_s *g, const char *fname)
 
 /* -------------------------------------------------------------------------- */
 
+typedef enum {
+    GAME_INTROS_T_VALUE,
+    GAME_INTROS_T_STR,
+    GAME_INTROS_T_BV,
+    GAME_INTROS_T_SUB
+} game_intros_value_t;
+
+struct game_intros_s {
+    const char *str;
+    game_intros_value_t type;
+    int offs;
+    int size;
+    int len;
+    const struct game_intros_s *sub;
+};
+
+#define GAME_INTROS_OFF(_r_, _s_) (((const uint8_t *)&(((const struct _r_ *)1024)->_s_)) - ((const uint8_t *)1024))
+#define GAME_INTROS_VSIZE(_r_, _s_)  sizeof((&((struct _r_ *)1024)->_s_)[0])
+#define GAME_INTROS_VLEN(_r_, _s_)   (sizeof(((struct _r_ *)1024)->_s_) / GAME_INTROS_VSIZE(_r_, _s_))
+#define GAME_INTROS_TSIZE(_r_, _s_)  sizeof((((struct _r_ *)1024)->_s_)[0])
+#define GAME_INTROS_TLEN(_r_, _s_)   (sizeof(((struct _r_ *)1024)->_s_) / GAME_INTROS_TSIZE(_r_, _s_))
+#define GAME_INTROS_VAL(_r_, _s_)   { #_s_, GAME_INTROS_T_VALUE, GAME_INTROS_OFF(_r_, _s_), GAME_INTROS_VSIZE(_r_, _s_), GAME_INTROS_VLEN(_r_, _s_), 0 }
+#define GAME_INTROS_TBL(_r_, _s_)   { #_s_, GAME_INTROS_T_VALUE, GAME_INTROS_OFF(_r_, _s_), GAME_INTROS_TSIZE(_r_, _s_), GAME_INTROS_TLEN(_r_, _s_), 0 }
+#define GAME_INTROS_LTBL(_r_, _s_)  { "", GAME_INTROS_T_VALUE, 0, GAME_INTROS_TSIZE(_r_, _s_), GAME_INTROS_TLEN(_r_, _s_), 0 }
+#define GAME_INTROS_BV(_r_, _s_, _l_)    { #_s_, GAME_INTROS_T_BV, GAME_INTROS_OFF(_r_, _s_), _l_, 1, 0 }
+#define GAME_INTROS_BVT(_r_, _s_, _l_, _n_)    { #_s_, GAME_INTROS_T_BV, GAME_INTROS_OFF(_r_, _s_), _l_, _n_, 0 }
+#define GAME_INTROS_STR(_r_, _s_, _z_, _l_)    { #_s_, GAME_INTROS_T_STR, GAME_INTROS_OFF(_r_, _s_), _z_, _l_, 0 }
+#define GAME_INTROS_SUB(_r_, _s_, _p_)  { #_s_, GAME_INTROS_T_SUB, GAME_INTROS_OFF(_r_, _s_), GAME_INTROS_TSIZE(_r_, _s_), GAME_INTROS_TLEN(_r_, _s_), _p_ }
+#define GAME_INTROS_SUBV(_r_, _s_, _p_) { #_s_, GAME_INTROS_T_SUB, GAME_INTROS_OFF(_r_, _s_), GAME_INTROS_VSIZE(_r_, _s_), GAME_INTROS_VLEN(_r_, _s_), _p_ }
+#define GAME_INTROS_END     { 0, 0, 0, 0, 0, 0 }
+
+static const struct game_intros_s game_intros_planet[] = {
+    GAME_INTROS_STR(planet_s, name, PLANET_NAME_LEN, 1),
+    GAME_INTROS_VAL(planet_s, x),
+    GAME_INTROS_VAL(planet_s, y),
+    GAME_INTROS_VAL(planet_s, star_type),
+    GAME_INTROS_VAL(planet_s, look),
+    GAME_INTROS_VAL(planet_s, frame),
+    GAME_INTROS_VAL(planet_s, rocks),
+    GAME_INTROS_VAL(planet_s, max_pop1),
+    GAME_INTROS_VAL(planet_s, max_pop2),
+    GAME_INTROS_VAL(planet_s, max_pop3),
+    GAME_INTROS_VAL(planet_s, type),
+    GAME_INTROS_VAL(planet_s, battlebg),
+    GAME_INTROS_VAL(planet_s, infogfx),
+    GAME_INTROS_VAL(planet_s, growth),
+    GAME_INTROS_VAL(planet_s, special),
+    GAME_INTROS_VAL(planet_s, owner),
+    GAME_INTROS_VAL(planet_s, prev_owner),
+    GAME_INTROS_VAL(planet_s, claim),
+    GAME_INTROS_VAL(planet_s, waste),
+    GAME_INTROS_BV(planet_s, explored, PLAYER_NUM),
+    GAME_INTROS_VAL(planet_s, bc_to_ecoproj),
+    GAME_INTROS_VAL(planet_s, bc_to_ship),
+    GAME_INTROS_VAL(planet_s, bc_to_factory),
+    GAME_INTROS_VAL(planet_s, reserve),
+    GAME_INTROS_VAL(planet_s, pop),
+    GAME_INTROS_VAL(planet_s, pop_prev),
+    GAME_INTROS_VAL(planet_s, factories),
+    GAME_INTROS_TBL(planet_s, slider),
+    GAME_INTROS_TBL(planet_s, slider_lock),
+    GAME_INTROS_VAL(planet_s, buildship),
+    GAME_INTROS_VAL(planet_s, reloc),
+    GAME_INTROS_VAL(planet_s, missile_bases),
+    GAME_INTROS_VAL(planet_s, bc_to_base),
+    GAME_INTROS_VAL(planet_s, bc_upgrade_base),
+    GAME_INTROS_VAL(planet_s, have_stargate),
+    GAME_INTROS_VAL(planet_s, shield),
+    GAME_INTROS_VAL(planet_s, bc_to_shield),
+    GAME_INTROS_VAL(planet_s, trans_num),
+    GAME_INTROS_VAL(planet_s, trans_dest),
+    GAME_INTROS_VAL(planet_s, pop_tenths),
+    GAME_INTROS_VAL(planet_s, pop_oper_fact),
+    GAME_INTROS_VAL(planet_s, bc_to_refit),
+    GAME_INTROS_VAL(planet_s, rebels),
+    GAME_INTROS_VAL(planet_s, unrest),
+    GAME_INTROS_VAL(planet_s, unrest_reported),
+    GAME_INTROS_BV(planet_s, finished, FINISHED_NUM),
+    GAME_INTROS_END
+};
+
+static const struct game_intros_s game_intros_seen[] = {
+    GAME_INTROS_VAL(seen_s, owner),
+    GAME_INTROS_VAL(seen_s, pop),
+    GAME_INTROS_VAL(seen_s, bases),
+    GAME_INTROS_VAL(seen_s, factories),
+    GAME_INTROS_END
+};
+
+static const struct game_intros_s game_intros_seen0[] = {
+    { "", GAME_INTROS_T_SUB, 0, sizeof(struct seen_s), PLANETS_MAX, game_intros_seen },
+    GAME_INTROS_END
+};
+
+static const struct game_intros_s game_intros_enroute[] = {
+    GAME_INTROS_VAL(fleet_enroute_s, owner),
+    GAME_INTROS_VAL(fleet_enroute_s, x),
+    GAME_INTROS_VAL(fleet_enroute_s, y),
+    GAME_INTROS_VAL(fleet_enroute_s, dest),
+    GAME_INTROS_VAL(fleet_enroute_s, speed),
+    GAME_INTROS_TBL(fleet_enroute_s, ships),
+    GAME_INTROS_END
+};
+
+static const struct game_intros_s game_intros_transport[] = {
+    GAME_INTROS_VAL(transport_s, owner),
+    GAME_INTROS_VAL(transport_s, x),
+    GAME_INTROS_VAL(transport_s, y),
+    GAME_INTROS_VAL(transport_s, dest),
+    GAME_INTROS_VAL(transport_s, speed),
+    GAME_INTROS_VAL(transport_s, pop),
+    GAME_INTROS_END
+};
+
+static const struct game_intros_s game_intros_tech[] = {
+    GAME_INTROS_TBL(techdata_s, percent),
+    GAME_INTROS_TBL(techdata_s, slider),
+    GAME_INTROS_TBL(techdata_s, slider_lock),
+    GAME_INTROS_TBL(techdata_s, investment),
+    GAME_INTROS_TBL(techdata_s, project),
+    GAME_INTROS_TBL(techdata_s, cost),
+    GAME_INTROS_TBL(techdata_s, completed),
+    GAME_INTROS_END
+};
+
+static const struct game_intros_s game_intros_orbit[] = {
+    GAME_INTROS_TBL(fleet_orbit_s, ships),
+    GAME_INTROS_END
+};
+
+static const struct game_intros_s game_intros_spyreportfield[] = {
+    GAME_INTROS_LTBL(empiretechorbit_s, spyreportfield[0]),
+    GAME_INTROS_END
+};
+
+static const struct game_intros_s game_intros_eto[] = {
+    GAME_INTROS_VAL(empiretechorbit_s, race),
+    GAME_INTROS_VAL(empiretechorbit_s, banner),
+    GAME_INTROS_VAL(empiretechorbit_s, trait1),
+    GAME_INTROS_VAL(empiretechorbit_s, trait2),
+    GAME_INTROS_VAL(empiretechorbit_s, ai_p3_countdown),
+    GAME_INTROS_VAL(empiretechorbit_s, ai_p2_countdown),
+    GAME_INTROS_BV(empiretechorbit_s, within_frange, PLAYER_NUM),
+    GAME_INTROS_TBL(empiretechorbit_s, relation1),
+    GAME_INTROS_TBL(empiretechorbit_s, relation2),
+    GAME_INTROS_TBL(empiretechorbit_s, diplo_type),
+    GAME_INTROS_TBL(empiretechorbit_s, diplo_val),
+    GAME_INTROS_TBL(empiretechorbit_s, diplo_p1),
+    GAME_INTROS_TBL(empiretechorbit_s, diplo_p2),
+    GAME_INTROS_TBL(empiretechorbit_s, trust),
+    GAME_INTROS_TBL(empiretechorbit_s, broken_treaty),
+    GAME_INTROS_TBL(empiretechorbit_s, hmm084),
+    GAME_INTROS_TBL(empiretechorbit_s, tribute_field),
+    GAME_INTROS_TBL(empiretechorbit_s, tribute_tech),
+    GAME_INTROS_TBL(empiretechorbit_s, mood_treaty),
+    GAME_INTROS_TBL(empiretechorbit_s, mood_trade),
+    GAME_INTROS_TBL(empiretechorbit_s, mood_tech),
+    GAME_INTROS_TBL(empiretechorbit_s, mood_peace),
+    GAME_INTROS_TBL(empiretechorbit_s, treaty),
+    GAME_INTROS_TBL(empiretechorbit_s, trade_bc),
+    GAME_INTROS_TBL(empiretechorbit_s, trade_percent),
+    GAME_INTROS_TBL(empiretechorbit_s, spymode_next),
+    GAME_INTROS_TBL(empiretechorbit_s, offer_field),
+    GAME_INTROS_TBL(empiretechorbit_s, offer_tech),
+    GAME_INTROS_TBL(empiretechorbit_s, offer_bc),
+    GAME_INTROS_TBL(empiretechorbit_s, hated),
+    GAME_INTROS_TBL(empiretechorbit_s, mutual_enemy),
+    GAME_INTROS_TBL(empiretechorbit_s, hmm270),
+    GAME_INTROS_TBL(empiretechorbit_s, hmm27c),
+    GAME_INTROS_TBL(empiretechorbit_s, hmm288),
+    GAME_INTROS_TBL(empiretechorbit_s, spying),
+    GAME_INTROS_TBL(empiretechorbit_s, spyfund),
+    GAME_INTROS_TBL(empiretechorbit_s, spymode),
+    GAME_INTROS_VAL(empiretechorbit_s, security),
+    GAME_INTROS_TBL(empiretechorbit_s, spies),
+    GAME_INTROS_VAL(empiretechorbit_s, reserve_bc),
+    GAME_INTROS_VAL(empiretechorbit_s, tax),
+    GAME_INTROS_VAL(empiretechorbit_s, base_shield),
+    GAME_INTROS_VAL(empiretechorbit_s, base_comp),
+    GAME_INTROS_VAL(empiretechorbit_s, base_weapon),
+    GAME_INTROS_VAL(empiretechorbit_s, colonist_oper_factories),
+    GAME_INTROS_SUBV(empiretechorbit_s, tech, game_intros_tech),
+    GAME_INTROS_VAL(empiretechorbit_s, shipdesigns_num),
+    GAME_INTROS_SUB(empiretechorbit_s, orbit, game_intros_orbit),
+    GAME_INTROS_SUB(empiretechorbit_s, spyreportfield, game_intros_spyreportfield),
+    GAME_INTROS_TBL(empiretechorbit_s, spyreportyear),
+    GAME_INTROS_VAL(empiretechorbit_s, shipi_colony),
+    GAME_INTROS_VAL(empiretechorbit_s, shipi_bomber),
+    GAME_INTROS_END
+};
+
+static const struct game_intros_s game_intros_design[] = {
+    GAME_INTROS_STR(shipdesign_s, name, SHIP_NAME_LEN, 1),
+    GAME_INTROS_VAL(shipdesign_s, cost),
+    GAME_INTROS_VAL(shipdesign_s, space),
+    GAME_INTROS_VAL(shipdesign_s, hull),
+    GAME_INTROS_VAL(shipdesign_s, look),
+    GAME_INTROS_TBL(shipdesign_s, wpnt),
+    GAME_INTROS_TBL(shipdesign_s, wpnn),
+    GAME_INTROS_VAL(shipdesign_s, engine),
+    GAME_INTROS_VAL(shipdesign_s, engines),
+    GAME_INTROS_TBL(shipdesign_s, special),
+    GAME_INTROS_VAL(shipdesign_s, shield),
+    GAME_INTROS_VAL(shipdesign_s, jammer),
+    GAME_INTROS_VAL(shipdesign_s, comp),
+    GAME_INTROS_VAL(shipdesign_s, armor),
+    GAME_INTROS_VAL(shipdesign_s, man),
+    GAME_INTROS_VAL(shipdesign_s, hp),
+    GAME_INTROS_END
+};
+
+static const struct game_intros_s game_intros_researchlist[] = {
+    GAME_INTROS_LTBL(shipresearch_s, researchlist[0][0]),
+    GAME_INTROS_END
+};
+
+static const struct game_intros_s game_intros_researchlist0[] = {
+    { "", GAME_INTROS_T_SUB, 0, GAME_INTROS_TSIZE(shipresearch_s, researchlist[0]), TECH_TIER_NUM, game_intros_researchlist },
+    GAME_INTROS_END
+};
+
+static const struct game_intros_s game_intros_researchcompleted[] = {
+    GAME_INTROS_LTBL(shipresearch_s, researchcompleted[0]),
+    GAME_INTROS_END
+};
+
+static const struct game_intros_s game_intros_srd[] = {
+    GAME_INTROS_SUB(shipresearch_s, design, game_intros_design),
+    GAME_INTROS_SUB(shipresearch_s, researchlist, game_intros_researchlist0),
+    GAME_INTROS_SUB(shipresearch_s, researchcompleted, game_intros_researchcompleted),
+    GAME_INTROS_TBL(shipresearch_s, have_reserve_fuel),
+    GAME_INTROS_TBL(shipresearch_s, year),
+    GAME_INTROS_TBL(shipresearch_s, shipcount),
+    GAME_INTROS_END
+};
+
+static const struct game_intros_s game_intros_monster[] = {
+    GAME_INTROS_VAL(monster_s, exists),
+    GAME_INTROS_VAL(monster_s, x),
+    GAME_INTROS_VAL(monster_s, y),
+    GAME_INTROS_VAL(monster_s, killer),
+    GAME_INTROS_VAL(monster_s, dest),
+    GAME_INTROS_VAL(monster_s, counter),
+    GAME_INTROS_VAL(monster_s, nuked),
+    GAME_INTROS_END
+};
+
+static const struct game_intros_s game_intros_new_ships[] = {
+    GAME_INTROS_LTBL(gameevents_s, new_ships[0]),
+    GAME_INTROS_END
+};
+
+static const struct game_intros_s game_intros_spies_caught[] = {
+    GAME_INTROS_LTBL(gameevents_s, spies_caught[0]),
+    GAME_INTROS_END
+};
+
+static const struct game_intros_s game_intros_hmm28e[] = {
+    GAME_INTROS_LTBL(gameevents_s, hmm28e[0]),
+    GAME_INTROS_END
+};
+
+static const struct game_intros_s game_intros_help_shown[] = {
+    { "", GAME_INTROS_T_BV, 0, HELP_SHOWN_NUM, 1, 0 },
+    GAME_INTROS_END
+};
+
+static const struct game_intros_s game_intros_evn[] = {
+    GAME_INTROS_VAL(gameevents_s, year),
+    GAME_INTROS_BV(gameevents_s, done, GAME_EVENT_TBL_NUM),
+    GAME_INTROS_VAL(gameevents_s, have_plague),
+    GAME_INTROS_VAL(gameevents_s, plague_player),
+    GAME_INTROS_VAL(gameevents_s, plague_planet_i),
+    GAME_INTROS_VAL(gameevents_s, plague_val),
+    GAME_INTROS_VAL(gameevents_s, have_nova),
+    GAME_INTROS_VAL(gameevents_s, nova_player),
+    GAME_INTROS_VAL(gameevents_s, nova_planet_i),
+    GAME_INTROS_VAL(gameevents_s, nova_years),
+    GAME_INTROS_VAL(gameevents_s, nova_val),
+    GAME_INTROS_VAL(gameevents_s, have_accident),
+    GAME_INTROS_VAL(gameevents_s, accident_planet_i),
+    GAME_INTROS_VAL(gameevents_s, have_comet),
+    GAME_INTROS_VAL(gameevents_s, comet_player),
+    GAME_INTROS_VAL(gameevents_s, comet_planet_i),
+    GAME_INTROS_VAL(gameevents_s, comet_years),
+    GAME_INTROS_VAL(gameevents_s, comet_hp),
+    GAME_INTROS_VAL(gameevents_s, comet_dmg),
+    GAME_INTROS_VAL(gameevents_s, have_pirates),
+    GAME_INTROS_VAL(gameevents_s, pirates_planet_i),
+    GAME_INTROS_VAL(gameevents_s, pirates_hp),
+    GAME_INTROS_SUBV(gameevents_s, crystal, game_intros_monster),
+    GAME_INTROS_SUBV(gameevents_s, amoeba, game_intros_monster),
+    GAME_INTROS_VAL(gameevents_s, planet_orion_i),
+    GAME_INTROS_VAL(gameevents_s, have_guardian),
+    GAME_INTROS_TBL(gameevents_s, home),
+    GAME_INTROS_VAL(gameevents_s, report_stars),
+    GAME_INTROS_SUB(gameevents_s, new_ships, game_intros_new_ships),
+    GAME_INTROS_SUB(gameevents_s, spies_caught, game_intros_spies_caught),
+    GAME_INTROS_SUB(gameevents_s, hmm28e, game_intros_hmm28e),
+    GAME_INTROS_SUB(gameevents_s, help_shown, game_intros_help_shown),
+    GAME_INTROS_TBL(gameevents_s, build_finished_num),
+    GAME_INTROS_TBL(gameevents_s, voted),
+    GAME_INTROS_TBL(gameevents_s, best_ecorestore),
+    GAME_INTROS_TBL(gameevents_s, best_wastereduce),
+    GAME_INTROS_TBL(gameevents_s, best_roboctrl),
+    GAME_INTROS_TBL(gameevents_s, best_terraform),
+    GAME_INTROS_END
+};
+
+static const struct game_intros_s game_intros_nebula_coord[] = {
+    GAME_INTROS_LTBL(game_s, nebula_x0[0]),
+    GAME_INTROS_END
+};
+
+static const struct game_intros_s game_intros_root[] = {
+    GAME_INTROS_VAL(game_s, players),
+    GAME_INTROS_BV(game_s, is_ai, PLAYER_NUM),
+    GAME_INTROS_VAL(game_s, active_player),
+    GAME_INTROS_VAL(game_s, difficulty),
+    GAME_INTROS_VAL(game_s, galaxy_size),
+    GAME_INTROS_VAL(game_s, galaxy_w),
+    GAME_INTROS_VAL(game_s, galaxy_h),
+    GAME_INTROS_VAL(game_s, galaxy_stars),
+    GAME_INTROS_VAL(game_s, galaxy_maxx),
+    GAME_INTROS_VAL(game_s, galaxy_maxy),
+    GAME_INTROS_VAL(game_s, galaxy_seed),
+    GAME_INTROS_VAL(game_s, seed),
+    GAME_INTROS_VAL(game_s, year),
+    GAME_INTROS_VAL(game_s, enroute_num),
+    GAME_INTROS_VAL(game_s, transport_num),
+    GAME_INTROS_VAL(game_s, end),
+    GAME_INTROS_VAL(game_s, winner),
+    GAME_INTROS_VAL(game_s, election_held),
+    GAME_INTROS_VAL(game_s, nebula_num),
+    GAME_INTROS_TBL(game_s, nebula_type),
+    GAME_INTROS_TBL(game_s, nebula_x),
+    GAME_INTROS_TBL(game_s, nebula_y),
+    GAME_INTROS_SUB(game_s, nebula_x0, game_intros_nebula_coord),
+    GAME_INTROS_SUB(game_s, nebula_x1, game_intros_nebula_coord),
+    GAME_INTROS_SUB(game_s, nebula_y0, game_intros_nebula_coord),
+    GAME_INTROS_SUB(game_s, nebula_y1, game_intros_nebula_coord),
+    GAME_INTROS_STR(game_s, emperor_names, EMPEROR_NAME_LEN, PLAYER_NUM),
+    GAME_INTROS_TBL(game_s, planet_focus_i),
+    GAME_INTROS_SUB(game_s, planet, game_intros_planet),
+    GAME_INTROS_SUB(game_s, seen, game_intros_seen0),
+    GAME_INTROS_SUB(game_s, enroute, game_intros_enroute),
+    GAME_INTROS_SUB(game_s, transport, game_intros_transport),
+    GAME_INTROS_SUB(game_s, eto, game_intros_eto),
+    GAME_INTROS_SUB(game_s, srd, game_intros_srd),
+    GAME_INTROS_SUB(game_s, current_design, game_intros_design),
+    GAME_INTROS_SUBV(game_s, evn, game_intros_evn),
+    GAME_INTROS_END
+};
+
+static char *savetype_de_text_tok(char *p)
+{
+    char c;
+    while (((c = *p) != '\0') && (c != ',') && (c != ' ')) {
+        ++p;
+    }
+    *p = 0;
+    if (c == '\0') {
+        return p;
+    }
+    while (p[1] == ' ') {
+        ++p;
+    }
+    return p + 1;
+}
+
+static char *savetype_de_text_parse_right(struct game_s *g, const char *fname, char *buf, int lnum, int offs, const struct game_intros_s *gitbl, int braces)
+{
+    const struct game_intros_s *gi = gitbl;
+    char *p = buf;
+    char c;
+    int offs_base = offs;
+again:
+    while ((c = *p) == ' ') {
+        ++p;
+    }
+    buf = p;
+    if (c == '\0') {
+        return p;
+    } else if ((c == '/') && (p[1] == '/')) {
+handle_comment:
+        *p = '\0';
+        return p;
+    } else if (c == '"') {
+        char *q;
+        if (gi->type != GAME_INTROS_T_STR) {
+            log_error("'%s' type %i does not accept strings (line %i)\n", fname, gi->type, lnum);
+            return 0;
+        }
+        q = ((char *)(((uint8_t *)g) + offs));
+        ++p;
+        for (int i = 0; (i < (gi->size - 1)) && (*p != '"'); ++i) {
+            *q++ = *p++;
+        }
+        *q++ = '\0';
+        if (*p != '"') {
+            log_error("'%s' too long string on line %i\n", fname, lnum);
+            return 0;
+        }
+        return ++p;
+    } else if (c == '{') {
+        return savetype_de_text_parse_right(g, fname, p + 1, lnum, offs, gitbl, braces + 1);
+    } else if (c == '}') {
+handle_brace_close:
+        if (braces) {
+            return p + 1;
+        } else {
+            log_error("'%s' unexpected } on line %i\n", fname, lnum);
+            return 0;
+        }
+    } else if (c == '.') {
+handle_dot:
+        /*
+        if (gi->type != GAME_INTROS_T_SUB) {
+            log_error("'%s' type %i does not accept .vars (line %i)\n", fname, gi->type, lnum);
+            return 0;
+        }
+        */
+        buf = ++p;
+        while ((((c = *p) >= 'a') && (c <= 'z')) || (c == '_') || ((c >= '0') && (c <= '9'))) {
+            ++p;
+        }
+        *p++ = 0;
+        for (gi = gitbl; gi->str != NULL; ++gi) {
+            if (strcmp(gi->str, buf) == 0) {
+                break;
+            }
+        }
+        if (gi->str == NULL) {
+            log_error("'%s' could not find token '%s' on line %i\n", fname, buf, lnum);
+            return 0;
+        }
+        offs = offs_base + gi->offs;
+        if (((c = *p++) != '=') || ((c = *p++) != ' ')) {
+            log_error("'%s' invalid = on line %i\n", fname, lnum);
+            return 0;
+        }
+        buf = p;
+        goto again;
+    } else if (((c >= '0') && (c <= '9')) || (c == '-')) {
+        if ((c == '0') && (p[1] == 'b')) {
+            int n = 0;
+            if (gi->type != GAME_INTROS_T_BV) {
+                log_error("'%s' type %i does not accept bool vectors (line %i)\n", fname, gi->type, lnum);
+                return 0;
+            }
+            p += 2;
+            buf = p;
+            while ((p[0] == '0') || (p[0] == '1')) {
+                ++n;
+                ++p;
+            }
+            if ((p[0] == '\0') || (p[0] == ' ')) {
+                p[0] = '\0';
+            } else {
+                log_error("'%s' unexpected char 0x%02x on line %i\n", fname, p[0], lnum);
+                return 0;
+            }
+            if (n > gi->size) {
+                log_error("'%s' bool vector size %i > max %i\n", fname, n, gi->size);
+                return 0;
+            } else {
+                uint8_t *bv = ((uint8_t *)(((uint8_t *)g) + offs));
+                buf = p;
+                --p;
+                for (int i = 0; i < n; ++i) {
+                    if (*p-- == '1') {
+                        BOOLVEC_SET1(bv, i);
+                    }
+                }
+                return buf;
+            }
+        } else {
+            int n;
+            n = 0;
+            if (gi->type != GAME_INTROS_T_VALUE) {
+                log_error("'%s' type %i does not accept numbers (line %i)\n", fname, gi->type, lnum);
+                return 0;
+            }
+            do {
+                uint32_t v;
+                if ((*p == '/') && (p[1] == '/')) {
+                    goto handle_comment;
+                }
+                if (*p == '}') {
+                    goto handle_brace_close;
+                }
+                if (*p == '.') {
+                    goto handle_dot;
+                }
+                p = savetype_de_text_tok(p);
+                if (!util_parse_number(buf, &v)) {
+                    log_error("'%s' invalid number on line %i\n", fname, lnum);
+                    return 0;
+                }
+                if (n >= gi->len) {
+                    log_error("'%s' too many values (%i) on line %i\n", fname, n, lnum);
+                    return 0;
+                }
+                switch (gi->size) {
+                    case 1: *((uint8_t *)(((uint8_t *)g) + offs)) = v; break;
+                    case 2: *((uint16_t *)(((uint8_t *)g) + offs)) = v; break;
+                    case 4: *((uint32_t *)(((uint8_t *)g) + offs)) = v; break;
+                    case 8: *((uint64_t *)(((uint8_t *)g) + offs)) = v; break;
+                    default:
+                        log_error("'%s' invalid var size %i on line %i\n", fname, gi->size, lnum);
+                        return 0;
+                }
+                offs += gi->size;
+                ++n;
+                buf = p;
+            } while (*p != 0);
+        }
+    } else {
+        log_error("'%s' unexpected char 0x%02x on line %i\n", fname, c, lnum);
+        return 0;
+    }
+    return p;
+}
+
+static int savetype_de_text_parse_line(struct game_s *g, const char *fname, char *buf, int lnum)
+{
+    int offs = -1;
+    char *p = buf;
+    const struct game_intros_s *gitbl = game_intros_root;
+    while (1) {
+        const struct game_intros_s *gi;
+        char c, cend;
+        bool have_sub;
+        have_sub = false;
+        p = buf;
+        while ((((c = *p) >= 'a') && (c <= 'z')) || (c == '_') || ((c >= '0') && (c <= '9'))) {
+            ++p;
+        }
+        cend = c;
+        *p++ = 0;
+        if (c == '\0') {
+            log_error("'%s' unexpected 0 on line %i\n", fname, lnum);
+            return -1;
+        }
+        gi = NULL;
+        if ((buf[0] >= 'a') && (buf[0] <= 'z')) {
+            for (gi = gitbl; gi->str != NULL; ++gi) {
+                if (strcmp(gi->str, buf) == 0) {
+                    break;
+                }
+            }
+            if (gi->str == NULL) {
+                log_error("'%s' could not find token '%s' on line %i\n", fname, buf, lnum);
+                return -1;
+            }
+            if (offs < 0) {
+                offs = gi->offs;
+            } else {
+                offs += gi->offs;
+            }
+        }
+        while (c == '[') {
+            uint32_t v;
+            char *numstr;
+            numstr = p;
+            while (((c = *p) >= '0') && (c <= '9')) {
+                ++p;
+            }
+            if (c != ']') {
+                log_error("'%s' missing ']' on line %i\n", fname, lnum);
+                return -1;
+            }
+            *p++ = 0;
+            c = *p++;
+            if (*numstr == 0) {
+                break;
+            } else {
+                if (!util_parse_number(numstr, &v)) {
+                    log_error("'%s' parsing index on line %i\n", fname, lnum);
+                    return -1;
+                }
+                if ((offs < 0) || (gi == NULL)) {
+                    log_error("'%s' indexing without variable on line %i\n", fname, lnum);
+                    return -1;
+                }
+                if (v >= gi->len) {
+                    log_error("'%s' index %i >= len %i on line %i\n", fname, v, gi->len, lnum);
+                    return -1;
+                }
+                offs += gi->size * v;
+                if (gi->sub) {
+                    gitbl = gi = gi->sub;
+                    have_sub = true;
+                }
+            }
+        }
+        if (c == '.') {
+            if (gi == NULL) {
+                log_error("'%s' . without name on line %i\n", fname, lnum);
+                return -1;
+            }
+            if ((!have_sub) && gi->sub) {
+                gitbl = gi->sub;
+                have_sub = true;
+            }
+            if (!have_sub) {
+                log_error("'%s' . without name on line %i\n", fname, lnum);
+                return -1;
+            }
+            buf = p;
+            continue;
+        }
+        if (c == ' ') {
+            if (offs < 0) {
+                log_error("'%s' variable name missing on line %i\n", fname, lnum);
+                return -1;
+            }
+            if (((c = *p++) != '=') || ((c = *p++) != ' ')) {
+                log_error("'%s' invalid = on line %i\n", fname, lnum);
+                return -1;
+            }
+            p = savetype_de_text_parse_right(g, fname, p, lnum, offs, gi, 0);
+            return (p != NULL) ? 0 : -1;
+        } else {
+            log_error("'%s' unexpected char 0x%02x on line %i\n", fname, cend, lnum);
+            return -1;
+        }
+    }
+    return 0;
+}
+
+static bool savetype_is_text(struct game_s *g, const char *fname)
+{
+    FILE *fd = NULL;
+    int len;
+    bool is_text = true;
+    LOG_DEBUG((2, "%s: '%s'\n", __func__, fname));
+    fd = fopen(fname, "r");
+    if (!fd) {
+        log_error("failed to open file '%s'\n", fname);
+        return false;
+    }
+    while ((len = util_get_line((char *)save2buf, 1024, fd)) >= 0) {
+        if ((len == 0) || ((save2buf[0] == '/') && (save2buf[1] == '/'))) {
+            continue;
+        }
+        if (memcmp(save2buf, "savename = \"", 12) == 0) {
+            continue;
+        } else if ((memcmp(save2buf, "g->", 3) != 0) || (len > 1020)) {
+            is_text = false;
+            break;
+        }
+    }
+    if (fd) {
+        fclose(fd);
+    }
+    return is_text;
+}
+
+static int savetype_de_text(struct game_s *g, const char *fname)
+{
+    FILE *fd = NULL;
+    int len, lnum = 0;
+    LOG_DEBUG((2, "%s: '%s'\n", __func__, fname));
+    fd = fopen(fname, "r");
+    if (!fd) {
+        log_error("failed to open file '%s'\n", fname);
+        return -1;
+    }
+    {
+        void *t = g->gaux;
+        memset(g, 0, sizeof(*g));
+        g->gaux = t;
+    }
+    while ((len = util_get_line((char *)save2buf, 1024, fd)) >= 0) {
+        ++lnum;
+        if ((len == 0) || ((save2buf[0] == '/') && (save2buf[1] == '/'))) {
+            continue;
+        }
+        if (memcmp(save2buf, "savename = \"", 12) == 0) {
+            if (savename[0] == 0) {
+                char *p = savename;
+                const char *q = (const char *)&save2buf[12];
+                for (int i = 0; (i < (SAVE_NAME_LEN)) && (*q != '"'); ++i) {
+                    *p++ = *q++;
+                }
+                *p++ = 0;
+            }
+            continue;
+        } else if ((memcmp(save2buf, "g->", 3) != 0) || (len > 1020)) {
+            log_error("invalid line %i in '%s'\n", lnum, fname);
+            goto fail;
+        }
+        if (savetype_de_text_parse_line(g, fname, (char *)&save2buf[3], lnum) < 0) {
+            goto fail;
+        }
+    }
+    if (fd) {
+        fclose(fd);
+    }
+    return 0;
+fail:
+    if (fd) {
+        fclose(fd);
+    }
+    return -1;
+}
+
 #define OUTADD  save2len += sprintf((char *)&save2buf[save2len],
 #define OUTPRE()    OUTADD "%s", tp->buf)
 #define OUTLINE OUTPRE(); OUTADD
@@ -1256,7 +1990,7 @@ static int savetype_en_text(struct game_s *g, const char *fname)
         return -1;
     }
     text_dump_prefix_init(tp);
-    OUTLINE "// savename = \"%s\"\n", savename);
+    OUTLINE "savename = \"%s\"\n", savename);
     text_dump_prefix_add(tp, "g", "->");
     OUTLINE "players = %i\n", g->players);
     OUTLINE "is_ai = %s\n", savetype_en_bv(g->is_ai, g->players));
@@ -1278,12 +2012,24 @@ static int savetype_en_text(struct game_s *g, const char *fname)
     OUTLINE "election_held = %i\n", g->election_held);
     OUTFLUSH();
     OUTLINE "nebula_num = %i\n", g->nebula_num);
-    for (int i = 0; i < g->nebula_num; ++i) {
-        OUTLINE "nebula[%i] = { .x = %i, .y = %i", i, g->nebula_x[i], g->nebula_y[i]);
-        OUTADD ", .x0 = { %i, %i, %i, %i }", g->nebula_x0[i][0], g->nebula_x0[i][1], g->nebula_x0[i][2], g->nebula_x0[i][3]);
-        OUTADD ", .x1 = { %i, %i, %i, %i }", g->nebula_x1[i][0], g->nebula_x1[i][1], g->nebula_x1[i][2], g->nebula_x1[i][3]);
-        OUTADD ", .y0 = { %i, %i, %i, %i }", g->nebula_y0[i][0], g->nebula_y0[i][1], g->nebula_y0[i][2], g->nebula_y0[i][3]);
-        OUTADD ", .y1 = { %i, %i, %i, %i } }\n", g->nebula_y1[i][0], g->nebula_y1[i][1], g->nebula_y1[i][2], g->nebula_y1[i][3]);
+    if (g->nebula_num) {
+        OUTLINETBL("nebula_type", g->nebula_num, g->nebula_type);
+        OUTLINETBL("nebula_x", g->nebula_num, g->nebula_x);
+        OUTLINETBL("nebula_y", g->nebula_num, g->nebula_y);
+        for (int i = 0; i < g->nebula_num; ++i) {
+            text_dump_prefix_add_tbl(tp, "nebula_x0", "", i);
+            OUTLINETBL("", 4, g->nebula_x0[i]);
+            text_dump_prefix_del(tp);
+            text_dump_prefix_add_tbl(tp, "nebula_x1", "", i);
+            OUTLINETBL("", 4, g->nebula_x1[i]);
+            text_dump_prefix_del(tp);
+            text_dump_prefix_add_tbl(tp, "nebula_y0", "", i);
+            OUTLINETBL("", 4, g->nebula_y0[i]);
+            text_dump_prefix_del(tp);
+            text_dump_prefix_add_tbl(tp, "nebula_y1", "", i);
+            OUTLINETBL("", 4, g->nebula_y1[i]);
+            text_dump_prefix_del(tp);
+        }
     }
     for (int i = 0; i < g->players; ++i) {
         OUTLINE "emperor_names[%i] = \"%s\"\n", i, g->emperor_names[i]);
@@ -1646,17 +2392,18 @@ const struct cmdline_options_s main_cmdline_options_early[] = {
     { "-i", 1,
       saveconv_opt_typei, 0,
       "INTYPE", "Input type:\n"
+                 "  s   - smart: autodetect (default)\n"
                  "  m   - MOO1 v1.3\n"
                  "  1   - 1oom save version 0\n"
-                 "  s   - smart: autodetect (default)"
+                 "  t   - text"
     },
     { "-o", 1,
       saveconv_opt_typeo, 0,
       "OUTTYPE", "Output type:\n"
+                 "  s   - smart: in old/new -> out new/old (default)\n"
                  "  m   - MOO1 v1.3\n"
                  "  1   - 1oom save version 0\n"
-                 "  s   - smart: in old/new -> out new/old (default)\n"
-                 "  t   - text (output only)\n"
+                 "  t   - text\n"
                  "  d   - dummy (no output)"
     },
     { "-cmoo", 0,
