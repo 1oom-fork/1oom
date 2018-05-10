@@ -586,7 +586,7 @@ static int savetype_de_moo13(struct game_s *g, const char *fname)
         }
         M13_GET_TBL_16(srd->have_reserve_fuel, srdb + 0x444);
         M13_GET_TBL_16(srd->year, srdb + 0x450);
-        M13_GET_TBL_16(srd->shipcount, srdb + 0x45c);
+        /* M13_GET_TBL_16(srd->shipcount, srdb + 0x45c); */
     }
     if (savetype_de_moo13_sd(&(g->current_design[PLAYER_0]), 0xe642) != 0) {
         return -1;
@@ -1032,7 +1032,7 @@ static int savetype_en_moo13(struct game_s *g, const char *fname)
         }
         M13_SET_TBL_16(srd->have_reserve_fuel, srdb + 0x444);
         M13_SET_TBL_16(srd->year, srdb + 0x450);
-        M13_SET_TBL_16(srd->shipcount, srdb + 0x45c);
+        /* M13_SET_TBL_16(srd->shipcount, srdb + 0x45c); */
     }
     save2len = SAVE_MOO13_LEN;
     if (savetype_en_moo13_sd(&(g->current_design[PLAYER_0]), 0xe642) != 0) {
@@ -1408,7 +1408,6 @@ static const struct game_intros_s game_intros_srd[] = {
     GAME_INTROS_SUB(shipresearch_s, researchcompleted, game_intros_researchcompleted),
     GAME_INTROS_TBL(shipresearch_s, have_reserve_fuel),
     GAME_INTROS_TBL(shipresearch_s, year),
-    GAME_INTROS_TBL(shipresearch_s, shipcount),
     GAME_INTROS_END
 };
 
@@ -2221,7 +2220,6 @@ static int savetype_en_text(struct game_s *g, const char *fname)
         OUTFLUSH();
         OUTLINETBL("have_reserve_fuel", e->shipdesigns_num, srd->have_reserve_fuel);
         OUTLINETBL("year", e->shipdesigns_num, srd->year);
-        OUTLINETBL("shipcount", e->shipdesigns_num, srd->shipcount);
         text_dump_prefix_del(tp);
     }
     OUTFLUSH();
