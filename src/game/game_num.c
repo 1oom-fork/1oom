@@ -171,6 +171,7 @@ static const struct numtbl_s {
     DEFNUMITEML(max_bomb_dmg, NUMTYPE_S, 1, 0x7fffffff),
     DEFNUMITEML(max_bio_dmg, NUMTYPE_S, 1, 0x7fffffff),
     DEFNUMITEML(max_trans_dmg, NUMTYPE_S, 1, 0x7fffffff),
+    DEFNUMITEML(max_ship_maint, NUMTYPE_S, 1, 0x7fffffff),
     DEFNUMITEML(event_roll, NUMTYPE_S, 1, 0x7fffffff),
     DEFNUMITEML(monster_rest_att, NUMTYPE_BOOL, 0, 1),
     DEFNUMITEMLTBLL(tbl_hull_w, NUMTYPE_U8, 0, 0xff),
@@ -346,6 +347,7 @@ int game_num_fact_hp = 50;
 int game_num_max_bomb_dmg = 100000;
 int game_num_max_bio_dmg = 10000;
 int game_num_max_trans_dmg = 32000;
+int game_num_max_ship_maint = 32000;
 int game_num_event_roll = 512;
 bool game_num_monster_rest_att = false;
 
