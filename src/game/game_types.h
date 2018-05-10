@@ -144,7 +144,7 @@ typedef enum game_end_type_e {
 } game_end_type_t;
 
 typedef uint16_t shipcount_t;
-typedef uint16_t shipsum_t;
+typedef uint32_t shipsum_t;
 
 #define SHIP_NAME_NUM   12
 #define NUM_SHIPDESIGNS 6
