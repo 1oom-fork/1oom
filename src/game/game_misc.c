@@ -74,9 +74,7 @@ void game_update_maint_costs(struct game_s *g)
             totalcost += tbl_ships[si] * sd->cost;
         }
         totalcost = totalcost / 50;
-        if (totalcost >= 32000) {
-            totalcost = 32000;
-        }
+        SETMIN(totalcost, game_num_max_ship_maint);
         bases = 0;
         for (int i = 0; i < g->galaxy_stars; ++i) {
             planet_t *p = &(g->planet[i]);
