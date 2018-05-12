@@ -1,4 +1,4 @@
-static bool hw_kbd_check_hotkey(SDLKey key, SDLMod smod, char c)
+static bool hw_kbd_check_hotkey(SDL1or2Key key, SDL1or2Mod smod, char c)
 {
     if (smod & KMOD_CTRL) {
         if (key == SDLK_ESCAPE) {
