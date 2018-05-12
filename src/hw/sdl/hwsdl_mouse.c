@@ -2,6 +2,7 @@
 
 #include "hw.h"
 #include "hwsdl_mouse.h"
+#include "hwsdl_video.h"
 #include "mouse.h"
 #include "types.h"
 
@@ -21,7 +22,7 @@ void hw_mouse_grab(void)
     if (!hw_mouse_enabled) {
         hw_mouse_enabled = true;
         SDL_ShowCursor(SDL_DISABLE);
-        SDL_WM_GrabInput(SDL_GRAB_ON);
+        hw_video_input_grab(true);
     }
 }
 
@@ -30,7 +31,7 @@ void hw_mouse_ungrab(void)
     if (hw_mouse_enabled) {
         hw_mouse_enabled = false;
         SDL_ShowCursor(SDL_ENABLE);
-        SDL_WM_GrabInput(SDL_GRAB_OFF);
+        hw_video_input_grab(false);
     }
 }
 
