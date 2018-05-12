@@ -12,6 +12,7 @@ The code is divided into the following directories:
  *   hw/        - hardware abstraction
  *     sdl/     - libSDL
  *       1/     - libSDL 1.2.x
+ *       2/     - libSDL 2.x
  *     nop/     - dummy HW for tools
  *   os/        - Operating System; file paths
  *     unix/    - yay
