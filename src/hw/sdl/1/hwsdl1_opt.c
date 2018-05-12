@@ -20,9 +20,9 @@ int hw_opt_bpp = 0;
 int hw_opt_gl_filter = 1;
 #endif
 
-#ifdef HAVE_SDLMIXER1
+#ifdef HAVE_SDL1MIXER
 #define HAVE_SDLMIXER
-#endif /* HAVE_SDLMIXER1 */
+#endif /* HAVE_SDL1MIXER */
 
 /* -------------------------------------------------------------------------- */
 
