@@ -201,13 +201,13 @@ if test x"$enable_sdl1hw" != "xno"; then
         AC_TRY_LINK([#include <SDL_opengl.h>],
                     [glViewport(1,2,3,4)],
                     [AC_MSG_RESULT(yes);
-                     have_opengl_lib=yes],
+                     have_sdl1gl_lib=yes],
                     [AC_MSG_RESULT(no);
                      HW_SDL1_LIBS="$old_sdl_libs"])
 
         LIBS="$old_LIBS"
 
-        if test x"$have_opengl_lib" != "xyes"; then
+        if test x"$have_sdl1gl_lib" != "xyes"; then
             AC_MSG_CHECKING(whether we can use the opengl32 library)
             old_sdl_libs="$HW_SDL1_LIBS"
             HW_SDL1_LIBS="$HW_SDL1_LIBS -lopengl32"
@@ -215,16 +215,16 @@ if test x"$enable_sdl1hw" != "xno"; then
             AC_TRY_LINK([#include "SDL_opengl.h"],
                         [glViewport(1,2,3,4)],
                         [AC_MSG_RESULT(yes);
-                         have_opengl_lib=yes],
+                         have_sdl1gl_lib=yes],
                         [AC_MSG_RESULT(no);
                          HW_SDL1_LIBS="$old_sdl_libs"])
             LIBS="$old_LIBS"
         fi
 
-        if test x"$have_opengl_lib" = "xyes"; then
-            AC_DEFINE(HAVE_OPENGL,,[Enable OpenGL])
+        if test x"$have_sdl1gl_lib" = "xyes"; then
+            AC_DEFINE(HAVE_SDL1GL,,[Enable SDL1 OpenGL])
         else
-            AC_MSG_WARN([OpenGL not available, graphics resizing disabled!])
+            AC_MSG_WARN([SDL1 OpenGL not available, graphics resizing disabled!])
         fi
 
         AC_MSG_CHECKING(for the SDLmain library)
