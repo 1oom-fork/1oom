@@ -15,4 +15,10 @@ extern bool hw_opt_force_sw;
 extern int hw_opt_aspect;
 extern int hw_opt_gl_filter;
 
+/* for SDL2 */
+extern bool hw_opt_aspect_ratio_correct;
+extern bool hw_opt_borderless;
+extern bool hw_opt_int_scaling;
+extern bool hw_opt_vsync;
+
 #endif
