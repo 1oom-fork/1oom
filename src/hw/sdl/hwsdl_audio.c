@@ -10,7 +10,7 @@
 
 /* -------------------------------------------------------------------------- */
 
-#ifdef HAVE_SDLMIXER1
+#ifdef HAVE_SDL1MIXER
 
 #include "SDL/SDL.h"
 #include "SDL/SDL_mixer.h"
@@ -360,7 +360,7 @@ void hw_audio_sfx_volume(int volume)
     }
 }
 
-#else /* !HAVE_SDLMIXER1 */
+#else /* !HAVE_SDL1MIXER */
 
 int hw_audio_init(void)
 {
@@ -412,4 +412,4 @@ int hw_audio_set_soundfont(const char *path)
 {
     return 0;
 }
-#endif /* HAVE_SDLMIXER1 */
+#endif /* HAVE_SDL1MIXER */
