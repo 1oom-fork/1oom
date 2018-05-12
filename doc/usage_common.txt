@@ -106,15 +106,23 @@ For graphical UIs:
     -fsh HEIGHT          Set fullscreen height
                            if w & h are 0 then use desktop resolution
 
-For graphical UIs if OpenGL is available:
-    -gl                  Enable OpenGL
-    -nogl                Disable OpenGL
+For some graphical UIs:
     -aspect ASPECT       Set aspect ratio (*1000000, 0 = off)
                            default = 833333, or (1000000 * 5)/6
-    -filt FILTER         Set OpenGL filter (0 = nearest, 1 = linear)
+
+For SDL HWs:
+    -sdlmixersf FILE.SF2 Set SDL_mixer soundfont
 
 For SDL1 HW:
-    -sdlmixersf FILE.SF2 Set SDL_mixer soundfont
+    -gl                  Enable OpenGL
+    -nogl                Disable OpenGL
+    -filt FILTER         Set OpenGL filter (0 = nearest, 1 = linear)
+
+For SDL2 HW:
+    -forcesw             Force software rendering
+    -noforcesw           Do not force software rendering
+    -intscaling          Force integer scaling
+    -nointscaling        Do not force integer scaling
 
 For all game UIs:
     -dumpstr             Dump strings in PBXIN format

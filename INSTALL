@@ -2,24 +2,8 @@
 # 1oom #
 ########
 
-You'll need make, a C99 compiler and SDL 1.2 development libraries.
-    aptitude install libsdl1.2-dev libsdl-mixer1.2-dev
-
-For better audio quality, also get libsamplerate.
-    aptitude install libsamplerate-dev
-
-OpenGL libraries are highly recommended.
-
-If you checked this out with git, do this first:
-    autoreconf -fi
-
-Then the usual:
-    ./configure && make
-
-!!! You need the data files from the original Master of Orion to run 1oom. !!!
-
-Actual install step is not needed:
-    src/1oom_classic_sdl1 -data /path/to/moo
+1. Options
+===========
 
 The configuration options:
     --enable-modebug        add debugging options
@@ -34,3 +18,36 @@ The configuration options:
                             (do not build 1oom_cmdline)
     --disable-sdl1hw        disables SDL1 HW
                             (do not build 1oom_*_sdl1)
+    --disable-sdl2hw        disables SDL2 HW
+                            (do not build 1oom_*_sdl2)
+
+
+2. Quick guide
+===============
+
+You'll need make, a C99 compiler and SDL 1.2 development libraries.
+    aptitude install libsdl1.2-dev libsdl-mixer1.2-dev
+
+For better audio quality, also get libsamplerate.
+    aptitude install libsamplerate-dev
+
+OpenGL libraries are highly recommended.
+
+If you checked this out with git, do this first:
+    autoreconf -fi
+
+Then the usual:
+    ./configure && make
+
+If you encounter trouble with SDL2:
+    ./configure ---disable-sdl2hw && make
+
+!!! You need the data files from the original Master of Orion to run 1oom. !!!
+
+Actual install step is not needed:
+    src/1oom_classic_sdl1 -data /path/to/moo
+
+If you want to experiment with SDL2:
+    aptitude install libsdl2-dev libsdl2-mixer-dev
+    ./configure && make
+    src/1oom_classic_sdl2 -data /path/to/moo
