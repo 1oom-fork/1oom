@@ -2,8 +2,11 @@ SUBDIRS =
 if COMPILE_HW_SDL1
 SUBDIRS += 1
 endif
+if COMPILE_HW_SDL2
+SUBDIRS += 2
+endif
 
-DIST_SUBDIRS = 1
+DIST_SUBDIRS = 1 2
 
 noinst_HEADERS = \
     hwsdl_audio.h \
