@@ -21,8 +21,8 @@ Linux
 
 1oom requires the following libraries:
 
-- [SDL](https://www.libsdl.org) (libsdl1.2)
-- [SDL_mixer](https://www.libsdl.org/projects/SDL_mixer/) (libsdl-mixer1.2)
+- [SDL](https://www.libsdl.org) (libsdl1.2 or libsdl2)
+- [SDL_mixer](https://www.libsdl.org/projects/SDL_mixer/) (libsdl-mixer1.2 or libsdl2-mixer)
 
 Also recommended:
 
@@ -59,9 +59,11 @@ Executables
 
 1oom consists of a few executables:
 
-- 1oom_classic_sdl1 (the 1993 UI)
-- 1oom_lbxview_sdl1 (for viewing LBX files)
+- 1oom_classic_*    (the 1993 UI)
+- 1oom_lbxview_*    (for viewing LBX files)
 - 1oom_saveconv     (for converting save game files)
+- 1oom_*_sdl1       (using SDL 1.2.x)
+- 1oom_*_sdl2       (using SDL 2.x)
 
 See doc/ for more documentation.
 
