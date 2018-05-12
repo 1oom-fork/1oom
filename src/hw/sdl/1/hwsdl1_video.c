@@ -355,4 +355,9 @@ void hw_video_shutdown(void)
     }
 }
 
+void hw_video_input_grab(bool grab)
+{
+    SDL_WM_GrabInput(grab ? SDL_GRAB_ON : SDL_GRAB_OFF);
+}
+
 #include "hwsdl_video.c"
