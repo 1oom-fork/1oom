@@ -1,6 +1,6 @@
 #include "config.h"
 
-#ifdef HAVE_SDLMIXER1
+#ifdef HAVE_SDL1MIXER
 #include "SDL/SDL.h"
 #include "SDL/SDL_mixer.h"
 #include "SDL/SDL_rwops.h"
@@ -8,7 +8,7 @@
 #include "fmt_mus.h"
 #include "fmt_sfx.h"
 #include "lib.h"
-#endif /* HAVE_SDLMIXER1 */
+#endif /* HAVE_SDL1MIXER */
 
 #include <stdio.h>
 
@@ -21,7 +21,7 @@
 
 /* -------------------------------------------------------------------------- */
 
-#ifdef HAVE_SDLMIXER1
+#ifdef HAVE_SDL1MIXER
 
 static bool audio_initialized = false;
 static int audio_rate = 0;
@@ -361,7 +361,7 @@ void hw_audio_sfx_volume(int volume)
     }
 }
 
-#else /* !HAVE_SDLMIXER1 */
+#else /* !HAVE_SDL1MIXER */
 
 int hw_audio_init(void)
 {
@@ -409,5 +409,4 @@ void hw_audio_sfx_stop(void)
 void hw_audio_sfx_volume(int volume/*0..128*/)
 {
 }
-#endif /* HAVE_SDLMIXER1 */
-
+#endif /* HAVE_SDL1MIXER */
