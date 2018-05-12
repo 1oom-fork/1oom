@@ -179,14 +179,14 @@ if test x"$enable_sdl1hw" != "xno"; then
         AC_TRY_LINK([#include "SDL_mixer.h"],
                     [Mix_LoadMUS(0)],
                     [AC_MSG_RESULT(yes);
-                     have_sdlmixer1=yes],
+                     have_sdl1mixer=yes],
                     [AC_MSG_RESULT(no);
                      HW_SDL1_LIBS="$old_sdl_libs"])
 
         LIBS="$old_LIBS"
 
-        if test x"$have_sdlmixer1" = "xyes"; then
-            AC_DEFINE(HAVE_SDLMIXER1,,[Enable SDL_mixer])
+        if test x"$have_sdl1mixer" = "xyes"; then
+            AC_DEFINE(HAVE_SDL1MIXER,,[Enable SDL_mixer])
         else
             AC_MSG_WARN([SDL_mixer not found, audio disabled!])
         fi
