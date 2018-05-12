@@ -67,6 +67,13 @@ See INSTALL and HACKING for more information.
 
 See doc/usage_* for more documentation.
 
+There are also a few extra executables:
+
+- 1oom_classic_sdl2 (the 1993 UI)
+- 1oom_lbxview_sdl2 (for viewing LBX files)
+
+These are experimental and not recommended for use.
+
 
 5. Acknowledgements
 ====================

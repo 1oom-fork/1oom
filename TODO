@@ -46,4 +46,4 @@ This is the "to do" for 1oom.
   - Add UI elements for sound/music volume, full screen, aspect ratio, ...
 
 * HW:
-  - SDL2.
+  - Fix SDL2.
