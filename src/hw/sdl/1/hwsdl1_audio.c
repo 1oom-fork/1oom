@@ -1,10 +1,10 @@
 #include "config.h"
 
-#ifdef HAVE_SDLMIXER1
+#ifdef HAVE_SDL1MIXER
 #define HAVE_SDLMIXER
 #include "SDL.h"
 #include "SDL_mixer.h"
 #include "SDL_rwops.h"
-#endif /* HAVE_SDLMIXER1 */
+#endif /* HAVE_SDL1MIXER */
 
 #include "hwsdl_audio.c"
