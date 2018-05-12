@@ -405,4 +405,4 @@ void hw_audio_sfx_stop(void)
 void hw_audio_sfx_volume(int volume/*0..128*/)
 {
 }
-#endif /* HAVE_SDLMIXER1 */
+#endif /* HAVE_SDLMIXER */
