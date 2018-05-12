@@ -2,6 +2,29 @@
 # 1oom #
 ########
 
+1. Options
+===========
+
+The configuration options:
+    --enable-modebug        add debugging options
+    --without-readline      do not try to use the readline library
+                            (used by 1oom_cmdline)
+    --without-samplerate    do not try to use libsamplerate
+    --disable-tools         disables extra tools
+                            (do not build 1oom_pbxmake, 1oom_gfxconv, ...)
+    --disable-uiclassic     disables classic UI
+                            (do not build 1oom_classic_*)
+    --disable-uicmdline     disables cmdline UI
+                            (do not build 1oom_cmdline)
+    --disable-sdl1hw        disables SDL1 HW
+                            (do not build 1oom_*_sdl1)
+    --disable-sdl2hw        disables SDL2 HW
+                            (do not build 1oom_*_sdl2)
+
+
+2. Quick guide
+===============
+
 You'll need make, a C99 compiler and SDL 1.2 development libraries.
     aptitude install libsdl1.2-dev libsdl-mixer1.2-dev
 
@@ -20,17 +43,4 @@ Then the usual:
 
 Actual install step is not needed:
     src/1oom_classic_sdl1 -data /path/to/moo
-
-The configuration options:
-    --enable-modebug        add debugging options
-    --without-readline      do not try to use the readline library
-                            (used by 1oom_cmdline)
-    --without-samplerate    do not try to use libsamplerate
-    --disable-tools         disables extra tools
-                            (do not build 1oom_pbxmake, 1oom_gfxconv, ...)
-    --disable-uiclassic     disables classic UI
-                            (do not build 1oom_classic_*)
-    --disable-uicmdline     disables cmdline UI
-                            (do not build 1oom_cmdline)
-    --disable-sdl1hw        disables SDL1 HW
-                            (do not build 1oom_*_sdl1)
+    src/1oom_classic_sdl2 -data /path/to/moo
