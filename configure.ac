@@ -8,6 +8,7 @@ AC_ARG_ENABLE(tools, AS_HELP_STRING([--disable-tools], [disables extra tools]))
 AC_ARG_ENABLE(uiclassic, AS_HELP_STRING([--disable-uiclassic], [disables classic UI]))
 AC_ARG_ENABLE(uicmdline, AS_HELP_STRING([--disable-uicmdline], [disables cmdline UI]))
 AC_ARG_ENABLE(hwsdl1, AS_HELP_STRING([--disable-hwsdl1], [disables SDL1 HW]))
+AC_ARG_ENABLE(hwsdl2, AS_HELP_STRING([--disable-hwsdl2], [disables SDL2 HW]))
 
 AC_CONFIG_SRCDIR([src/main.c])
 AC_CONFIG_AUX_DIR([build-aux])
@@ -139,6 +140,7 @@ fi
 dnl - SDL1
 dnl Check and setup SDL 1.2 compilation.
 
+AM_CONDITIONAL(COMPILE_HW_SDL, false)
 AM_CONDITIONAL(COMPILE_HW_SDL1, false)
 HW_SDL1_CFLAGS=
 HW_SDL1_LIBS=
@@ -174,6 +176,7 @@ if test x"$enable_hwsdl1" != "xno"; then
     else
         AC_DEFINE(USE_HWSDL1,,[Enable SDL1 HW support.])
         AM_CONDITIONAL(COMPILE_HW_SDL1, true)
+        AM_CONDITIONAL(COMPILE_HW_SDL, true)
         have_sdl1=yes
 
         dnl check for SDL_mixer
@@ -279,6 +282,97 @@ AC_SUBST(HW_SDL1_CFLAGS)
 AC_SUBST(HW_SDL1_LIBS)
 
 
+dnl - SDL2
+dnl Check and setup SDL 2 compilation.
+
+AM_CONDITIONAL(COMPILE_HW_SDL2, false)
+HW_SDL2_CFLAGS=
+HW_SDL2_LIBS=
+if test x"$enable_hwsdl2" != "xno"; then
+    dnl check for sdl2-config
+    AC_CHECK_TOOLS(sdl2_config, sdl2-config, no)
+
+    old_cflags=$CFLAGS
+    old_LIBS="$LIBS"
+    old_sdl_libs=$HW_SDL2_LIBS
+
+    dnl if no sdl2-config was found we assume that there are no extra CFLAGS
+    dnl and that libSDL2 can be found in the default lib search path
+    if test x"$sdl2_config" = "xno"; then
+        HW_SDL2_LIBS="-lSDL2"
+    else
+        HW_SDL2_CFLAGS="$CFLAGS `$sdl2_config --cflags`"
+        HW_SDL2_LIBS="`$sdl2_config --libs`"
+    fi
+
+    CFLAGS="$HW_SDL2_CFLAGS"
+    LIBS="$HW_SDL2_LIBS"
+
+    dnl check for the SDL.h header
+    AS_UNSET(ac_cv_header_SDL_h)
+    AC_CHECK_HEADERS(SDL.h,[AC_CHECK_LIB(SDL2, SDL_CreateTexture,
+                     [],
+                     [CFLAGS=$old_cflags; break],$EXTRA_SDL2_LIBS)],
+                     [CFLAGS=$old_cflags; break],$EXTRA_SDL2_LIBS)
+    LIBS="$old_LIBS"
+
+    if test x"$ac_cv_lib_SDL2_SDL_CreateTexture" != "xyes"; then
+        AC_MSG_WARN([SDL2 headers and/or libraries missing!])
+    else
+        AC_DEFINE(USE_HWSDL2,,[Enable SDL2 HW support.])
+        AM_CONDITIONAL(COMPILE_HW_SDL2, true)
+        AM_CONDITIONAL(COMPILE_HW_SDL, true)
+        have_sdl2=yes
+
+        dnl check for SDL2_mixer
+        AC_MSG_CHECKING(for the SDL2_mixer library)
+
+        old_sdl_libs="$HW_SDL2_LIBS"
+        HW_SDL2_LIBS="$HW_SDL2_LIBS -lSDL2_mixer"
+        LIBS="$old_LIBS $HW_SDL2_LIBS"
+
+        AC_TRY_LINK([#include "SDL_mixer.h"],
+                    [Mix_LoadMUS(0)],
+                    [AC_MSG_RESULT(yes);
+                     have_sdl2mixer=yes],
+                    [AC_MSG_RESULT(no);
+                     HW_SDL2_LIBS="$old_sdl_libs"])
+
+        LIBS="$old_LIBS"
+
+        if test x"$have_sdl2mixer" = "xyes"; then
+            AC_DEFINE(HAVE_SDL2MIXER,,[Enable SDL2_mixer])
+        else
+            AC_MSG_WARN([SDL2_mixer not found, audio disabled!])
+        fi
+
+        AC_MSG_CHECKING(for the SDL2main library)
+        old_sdl_libs="$HW_SDL2_LIBS"
+        HW_SDL2_LIBS="$HW_SDL2_LIBS -lSDL2main -lSDL2"
+        LIBS="$LIBS $HW_SDL2_LIBS"
+        AC_TRY_LINK([#include "SDL_main.h"
+                     int main(int argc, char *argv[])
+                     { return 0; }
+                     #undef main
+                     #define main something_else],
+                    [return 0;],
+                    [AC_MSG_RESULT(yes);
+                     have_sdl2main=yes],
+                    [AC_MSG_RESULT(no);
+                     HW_SDL2_LIBS="$old_sdl_libs"])
+        LIBS="$old_LIBS"
+
+        if test x"$have_sdl2main" = "xyes"; then
+            AC_DEFINE(HAVE_SDL2MAIN,,[Enable SDL2main replacement])
+        fi
+    fi
+    CFLAGS="$old_cflags"
+    LIBS="$old_LIBS"
+fi
+AC_SUBST(HW_SDL2_CFLAGS)
+AC_SUBST(HW_SDL2_LIBS)
+
+
 dnl - setup the system-specific object files
 
 if test x"$is_win32" = "xyes"; then
@@ -314,9 +408,16 @@ if test x"$enable_uiclassic" != "xno"; then
     else
         AM_CONDITIONAL(COMPILE_UICLASSIC_SDL1, false)
     fi
+    if test x"$have_sdl2" = "xyes"; then
+        AM_CONDITIONAL(COMPILE_UICLASSIC_SDL2, true)
+        have_classic_hw=yes
+    else
+        AM_CONDITIONAL(COMPILE_UICLASSIC_SDL2, false)
+    fi
 else
     AM_CONDITIONAL(COMPILE_UICLASSIC, false)
     AM_CONDITIONAL(COMPILE_UICLASSIC_SDL1, false)
+    AM_CONDITIONAL(COMPILE_UICLASSIC_SDL2, false)
 fi
 
 if test x"$enable_tools" != "xno"; then
@@ -326,9 +427,15 @@ if test x"$enable_tools" != "xno"; then
     else
         AM_CONDITIONAL(COMPILE_TOOLS_SDL1, false)
     fi
+    if test x"$have_sdl2" = "xyes"; then
+        AM_CONDITIONAL(COMPILE_TOOLS_SDL2, true)
+    else
+        AM_CONDITIONAL(COMPILE_TOOLS_SDL2, false)
+    fi
 else
     AM_CONDITIONAL(COMPILE_TOOLS, false)
     AM_CONDITIONAL(COMPILE_TOOLS_SDL1, false)
+    AM_CONDITIONAL(COMPILE_TOOLS_SDL2, false)
 fi
 
 if test x"$enable_uiclassic" != "xno" -a x"$have_classic_hw" != "xyes"; then
@@ -339,6 +446,7 @@ dnl - finish up
 
 AC_SUBST(HAVE_READLINE)
 AC_SUBST(EXTRA_SDL1_LIBS)
+AC_SUBST(EXTRA_SDL2_LIBS)
 AC_SUBST(OS_INCLUDES)
 AC_SUBST(OS_LIBS)
 AC_SUBST(OS_DIR)
@@ -359,5 +467,6 @@ AC_CONFIG_FILES([Makefile
                  src/hw/nop/Makefile
                  src/hw/sdl/Makefile
                  src/hw/sdl/1/Makefile
+                 src/hw/sdl/2/Makefile
                 ])
 AC_OUTPUT
