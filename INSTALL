@@ -15,6 +15,8 @@ The configuration options:
                             (do not build 1oom_classic_*)
     --disable-hwsdl1        disables SDL1 HW
                             (do not build 1oom_*_sdl1)
+    --disable-hwsdl2        disables SDL2 HW
+                            (do not build 1oom_*_sdl2)
 
 Parameters for configure:
     CFLAGS
@@ -29,8 +31,8 @@ Parameters for configure:
 2. Quick guide
 ===============
 
-You'll need make, a C99 compiler and SDL 1.2 development libraries.
-    aptitude install libsdl1.2-dev libsdl-mixer1.2-dev
+You'll need make, a C99 compiler and SDL2 development libraries.
+    aptitude install libsdl2-dev libsdl2-mixer-dev
 
 For better audio quality, also get libsamplerate.
     aptitude install libsamplerate-dev
