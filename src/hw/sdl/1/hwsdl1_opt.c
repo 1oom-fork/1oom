@@ -13,11 +13,11 @@
 #define HW_DEFAULT_FULLSCREEN   0
 #define HW_DEFAULT_ASPECT   833333
 
-#ifdef HAVE_OPENGL
+#ifdef HAVE_SDL1GL
 int hw_opt_use_gl = 1;
 int hw_opt_aspect = HW_DEFAULT_ASPECT;
 int hw_opt_gl_filter = 1;
-#endif
+#endif /* HAVE_SDL1GL */
 
 #ifdef HAVE_SDL1MIXER
 #define HAVE_SDLMIXER
@@ -28,7 +28,7 @@ int hw_opt_gl_filter = 1;
 #include "hwsdl_opt.c"
 
 const struct cmdline_options_s hw_cmdline_options_extra[] = {
-#ifdef HAVE_OPENGL
+#ifdef HAVE_SDL1GL
     { "-gl", 0,
       options_enable_var, (void *)&hw_opt_use_gl,
       NULL, "Enable OpenGL" },
@@ -41,6 +41,6 @@ const struct cmdline_options_s hw_cmdline_options_extra[] = {
     { "-filt", 1,
       options_set_int_var, (void *)&hw_opt_gl_filter,
       "FILTER", "Set OpenGL filter (0 = nearest, 1 = linear)" },
-#endif
+#endif /* HAVE_SDL1GL */
     { NULL, 0, NULL, NULL, NULL, NULL }
 };
