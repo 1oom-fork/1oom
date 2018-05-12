@@ -9,10 +9,10 @@ extern int hw_opt_screen_winh;
 extern int hw_opt_screen_fsw;
 extern int hw_opt_screen_fsh;
 extern const char *hw_opt_sdlmixer_sf;
+extern int hw_opt_aspect;
 
 /* for SDL1 */
 extern bool hw_opt_use_gl;
-extern int hw_opt_aspect;
 extern int hw_opt_gl_filter;
 
 #endif
