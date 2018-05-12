@@ -4,7 +4,7 @@
 #include <string.h>
 
 #include "SDL.h"
-#ifdef HAVE_OPENGL
+#ifdef HAVE_SDL1GL
 #include "SDL_opengl.h"
 #endif
 
@@ -23,7 +23,7 @@
 
 static struct sdl_video_s {
     SDL_Surface *screen;
-#ifdef HAVE_OPENGL
+#ifdef HAVE_SDL1GL
     SDL_Surface *hwrenderbuf;
 #endif
     void (*render)(int bufi);
@@ -38,7 +38,7 @@ static struct sdl_video_s {
 
     /* palette as set by UI, 6bpp */
     uint8_t pal[256 * 3];
-#ifdef HAVE_OPENGL
+#ifdef HAVE_SDL1GL
     /* precalculated 32bit palette */
     uint32_t pal32[256];
 #endif
@@ -80,7 +80,7 @@ static void video_setpal_8bpp(uint8_t *pal, int first, int num)
     video_update_8bpp();
 }
 
-#ifdef HAVE_OPENGL
+#ifdef HAVE_SDL1GL
 
 static void video_render_gl_32bpp(int bufi)
 {
@@ -152,11 +152,11 @@ static void video_setpal_gl_32bpp(uint8_t *pal, int f, int num)
     }
     hw_video_refresh(1);
 }
-#endif /* HAVE_OPENGL */
+#endif /* HAVE_SDL1GL */
 
 /* -------------------------------------------------------------------------- */
 
-#ifdef HAVE_OPENGL
+#ifdef HAVE_SDL1GL
 static void set_viewport(unsigned int src_w, unsigned int src_h, unsigned int dest_w, unsigned int dest_h)
 {
     int dest_x = 0, dest_y = 0;
@@ -175,7 +175,7 @@ static void set_viewport(unsigned int src_w, unsigned int src_h, unsigned int de
     }
     glViewport(dest_x, dest_y, dest_w, dest_h);
 }
-#endif /* HAVE_OPENGL */
+#endif /* HAVE_SDL1GL */
 
 /* -------------------------------------------------------------------------- */
 
@@ -199,7 +199,7 @@ static int video_sw_set(int w, int h)
 
 int hw_video_resize(int w, int h)
 {
-#ifdef HAVE_OPENGL
+#ifdef HAVE_SDL1GL
     unsigned int actual_w, actual_h;
     int flags;
 
@@ -255,19 +255,19 @@ int hw_video_resize(int w, int h)
 int hw_video_toggle_fullscreen(void)
 {
     int (*func)(int, int) = video_sw_set;
-#ifdef HAVE_OPENGL
+#ifdef HAVE_SDL1GL
     if (hw_opt_use_gl) {
         func = hw_video_resize;
     }
-#endif /* HAVE_OPENGL */
+#endif /* HAVE_SDL1GL */
     hw_opt_fullscreen = !hw_opt_fullscreen;
     if (func(hw_opt_screen_winw, hw_opt_screen_winh)) {
         hw_opt_fullscreen = !hw_opt_fullscreen; /* restore the setting for the config file */
         return -1;
     }
-#ifdef HAVE_OPENGL
+#ifdef HAVE_SDL1GL
     if (!hw_opt_use_gl)
-#endif /* HAVE_OPENGL */
+#endif /* HAVE_SDL1GL */
     {
         hw_video_refresh_palette();
     }
@@ -287,7 +287,7 @@ int hw_video_init(int w, int h)
         log_message("SDL_GetVideoInfo -> %ix%i %ibpp\n", video.bestmode.w, video.bestmode.h, video.bestmode.bpp);
     }
 
-#ifdef HAVE_OPENGL
+#ifdef HAVE_SDL1GL
     if (!hw_opt_use_gl)
 #endif
     {
@@ -298,7 +298,7 @@ int hw_video_init(int w, int h)
             return -1;
         }
     }
-#ifdef HAVE_OPENGL
+#ifdef HAVE_SDL1GL
     else {
         const Uint32
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
@@ -343,7 +343,7 @@ void hw_video_shutdown(void)
         SDL_FreeSurface(video.screen);
         video.screen = NULL;
     }
-#ifdef HAVE_OPENGL
+#ifdef HAVE_SDL1GL
     if (video.hwrenderbuf) {
         SDL_FreeSurface(video.hwrenderbuf);
         video.hwrenderbuf = NULL;
