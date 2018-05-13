@@ -22,6 +22,9 @@ extern const struct cfg_items_s hw_cfg_items_extra[];
 extern int hw_event_handle(void);
 extern void hw_video_position_cursor(int mx, int my);
 
+extern void hw_textinput_start(void);
+extern void hw_textinput_stop(void);
+
 extern int hw_video_init(int w, int h);
 extern int hw_icon_set(const uint8_t *data, const uint8_t *pal, int w, int h);
 extern void hw_video_refresh_palette(void);
