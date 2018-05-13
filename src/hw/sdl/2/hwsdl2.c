@@ -224,6 +224,7 @@ int hw_init(void)
         return 12;
     }
     build_key_xlat();
+    SDL_EventState(SDL_MOUSEMOTION, SDL_IGNORE);
     return 0;
 }
 
@@ -296,13 +297,6 @@ int hw_event_handle(void)
                 break;
             case SDL_KEYUP:
                 break;
-            /* TODO SDL 2
-            case SDL_MOUSEMOTION:
-                if (hw_mouse_enabled) {
-                    hw_mouse_move((int)(e.motion.xrel), (int)(e.motion.yrel));
-                }
-                break;
-            */
             case SDL_MOUSEBUTTONDOWN:
             case SDL_MOUSEBUTTONUP:
                 hw_mouse_button((int)(e.button.button), (e.button.state == SDL_PRESSED));
@@ -318,15 +312,11 @@ int hw_event_handle(void)
                 break;
         }
     }
-
-    /* TODO SDL 2 */
-    {
+    if (hw_mouse_enabled) {
         int x, y;
         SDL_GetRelativeMouseState(&x, &y);
         if ((x != 0) || (y != 0)) {
-            if (hw_mouse_enabled) {
-                hw_mouse_move(x, y);
-            }
+            hw_mouse_move(x, y);
         }
     }
 
