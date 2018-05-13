@@ -252,6 +252,13 @@ bool util_parse_number(const char *str, uint32_t *val_ptr)
     return (*strend == '\0');
 }
 
+bool util_parse_signed_number(const char *str, int *val_ptr)
+{
+    char *strend = NULL;
+    int v = strtol(str, &strend, 0);
+    *val_ptr = v;
+    return (*strend == '\0');
+}
 void util_table_remove_item_keep_order(int itemi, void *tbl, int itemsz, int itemnum)
 {
     if ((itemi < 0) || (itemi >= (itemnum - 1))) {
