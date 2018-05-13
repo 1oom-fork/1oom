@@ -23,6 +23,8 @@
 
 /* -------------------------------------------------------------------------- */
 
+#define RESIZE_DELAY 500
+
 static struct sdl_video_s {
     /* These are (1) the window (or the full screen) that our game is rendered to
        and (2) the renderer that scales the texture (see below) into this window.
@@ -48,7 +50,10 @@ static struct sdl_video_s {
     int display;
 
     int w_upscale, h_upscale;
-    int actualheight;
+    int actualh;
+
+    bool need_resize;
+    int last_resize_time;
 
     void (*render)(const uint8_t *buf);
     void (*update)(void);
@@ -78,12 +83,12 @@ static void video_create_upscaled_texture(bool force)
        of the texture, the rendered area is scaled down to fit. Calculate
        the actual dimensions of the rendered area.
     */
-    if (w * video.actualheight < h * video.blit_rect.w) {
+    if (w * video.actualh < h * video.blit_rect.w) {
         /* Tall window. */
-        h = w * video.actualheight / video.blit_rect.w;
+        h = (w * video.actualh) / video.blit_rect.w;
     } else {
         /* Wide window. */
-        w = h * video.blit_rect.w / video.actualheight;
+        w = (h * video.blit_rect.w) / video.actualh;
     }
 
     /* Pick texture size the next integer multiple of the screen dimensions.
@@ -140,9 +145,47 @@ static void video_render(const uint8_t *buf)
     }
 }
 
+/* Adjust window_width / window_height variables to be an an aspect
+   ratio consistent with the aspect_ratio_correct variable.
+*/
+static void video_adjust_window_size(int *wptr, int *hptr)
+{
+    int w = *wptr, h = *hptr;
+    if ((w * video.actualh) <= (h * video.blit_rect.w)) {
+        /* We round up window_height if the ratio is not exact; this leaves the result stable. */
+        h = (w * video.actualh + video.blit_rect.w - 1) / video.blit_rect.w;
+    } else {
+        w = (h * video.blit_rect.w) / video.actualh;
+    }
+    *wptr = w;
+    *hptr = h;
+}
+
 static void video_update(void)
 {
-    /* TODO SDL2 need resize */
+    if (video.need_resize) {
+        if (SDL_GetTicks() > (video.last_resize_time + RESIZE_DELAY)) {
+            int flags, w, h;
+            /* When the window is resized (we're not in fullscreen mode and not maximized),
+               save the new window size.
+            */
+            flags = SDL_GetWindowFlags(video.window);
+            if ((flags & (SDL_WINDOW_FULLSCREEN_DESKTOP | SDL_WINDOW_FULLSCREEN | SDL_WINDOW_MAXIMIZED)) == 0) {
+                SDL_GetWindowSize(video.window, &w, &h);
+                /* Adjust the window by resizing again so that the window is the right aspect ratio. */
+                video_adjust_window_size(&w, &h);
+                SDL_SetWindowSize(video.window, w, h);
+                hw_opt_screen_winw = w;
+                hw_opt_screen_winh = h;
+            }
+            video_create_upscaled_texture(false);
+            video.need_resize = false;
+            video.palette_to_set = true;
+        } else {
+            return;
+        }
+    }
+
     if (video.palette_to_set) {
         SDL_SetPaletteColors(video.screen->format->palette, video.color, 0, 256);
         video.palette_to_set = false;
@@ -236,10 +279,10 @@ static int video_sw_set(int w, int h)
     SDL_DisplayMode mode;
 
     if (!hw_opt_aspect) {
-        video.actualheight = video.blit_rect.h;
+        video.actualh = video.blit_rect.h;
     } else {
-        video.actualheight = (uint32_t)(video.blit_rect.h * 1000000) / hw_opt_aspect;
-        SETMAX(h, video.actualheight);
+        video.actualh = (uint32_t)(video.blit_rect.h * 1000000) / hw_opt_aspect;
+        SETMAX(h, video.actualh);
     }
 
     /* In windowed mode, the window can be resized while the game is running. */
@@ -268,7 +311,7 @@ static int video_sw_set(int w, int h)
             return -1;
         }
         video.pixel_format = SDL_GetWindowPixelFormat(video.window);
-        SDL_SetWindowMinimumSize(video.window, video.blit_rect.w, video.actualheight);
+        SDL_SetWindowMinimumSize(video.window, video.blit_rect.w, video.actualh);
         SDL_SetWindowTitle(video.window, "1oom");
     }
     /* The SDL_RENDERER_TARGETTEXTURE flag is required to render the
@@ -299,7 +342,7 @@ static int video_sw_set(int w, int h)
        time this also defines the aspect ratio that is preserved while scaling
        and stretching the texture into the window.
     */
-    SDL_RenderSetLogicalSize(video.renderer, video.blit_rect.w, video.actualheight);
+    SDL_RenderSetLogicalSize(video.renderer, video.blit_rect.w, video.actualh);
 
     /* Force integer scales for resolution-independent rendering. */
 #if SDL_VERSION_ATLEAST(2, 0, 5)
@@ -359,7 +402,8 @@ int hw_video_get_window_id(void)
 
 int hw_video_resize(int w, int h)
 {
-    /* TODO SDL 2 */
+    video.need_resize = true;
+    video.last_resize_time = SDL_GetTicks();
     return 0;
 }
 
@@ -398,6 +442,8 @@ static int hw_video_init_do(int w, int h)
     video.display = 0;
     video.w_upscale = 0;
     video.h_upscale = 0;
+    video.need_resize = false;
+    video.last_resize_time = 0;
     video.render = video_render;
     video.update = video_update;
     video.setpal = video_setpal;
