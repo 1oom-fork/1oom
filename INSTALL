@@ -25,8 +25,14 @@ The configuration options:
 2. Quick guide
 ===============
 
-You'll need make, a C99 compiler and SDL 1.2 development libraries.
+You'll need make and a C99 compiler. You will most likely also want to have
+SDL development libraries. Both SDL 1.2.x and SDL2.x are supported.
+
+If you want to use SDL1:
     aptitude install libsdl1.2-dev libsdl-mixer1.2-dev
+
+If you prefer SDL2:
+    aptitude install libsdl2-dev libsdl2-mixer-dev
 
 For better audio quality, also get libsamplerate.
     aptitude install libsamplerate-dev
