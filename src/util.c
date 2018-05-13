@@ -226,6 +226,14 @@ bool util_parse_number(const char *str, uint32_t *val_ptr)
     return (*strend == '\0');
 }
 
+bool util_parse_signed_number(const char *str, int *val_ptr)
+{
+    char *strend = NULL;
+    int v = strtol(str, &strend, 10);
+    *val_ptr = v;
+    return (*strend == '\0');
+}
+
 int32_t *util_parse_numbers(const char *str, char sep, int *numptr)
 {
     char *strend = NULL;
