@@ -294,18 +294,25 @@ static void video_get_window_position(int *x, int *y, int w, int h)
     }
 }
 
+static void video_window_destroy(void)
+{
+    if (video.renderer) {
+        SDL_DestroyRenderer(video.renderer);
+        video.renderer = NULL;
+        video.texture = NULL;
+        video.texture_upscaled = NULL;
+    }
+    if (video.window) {
+        SDL_DestroyWindow(video.window);
+        video.window = NULL;
+    }
+}
+
 static int video_sw_set(int w, int h)
 {
     int x, y;
     int window_flags = 0, renderer_flags = 0;
     SDL_DisplayMode mode;
-
-    if (!hw_opt_aspect) {
-        video.actualh = video.bufh;
-    } else {
-        video.actualh = (uint32_t)(video.bufh * 1000000) / hw_opt_aspect;
-        SETMAX(h, video.actualh);
-    }
 
     /* In windowed mode, the window can be resized while the game is running. */
     window_flags = SDL_WINDOW_RESIZABLE;
@@ -324,10 +331,6 @@ static int video_sw_set(int w, int h)
             window_flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
         }
     }
-    video.blit_rect.x = 0;
-    video.blit_rect.y = 0;
-    video.blit_rect.w = video.bufw;
-    video.blit_rect.h = video.bufh;
     /* Create window and renderer contexts. We leave the window position "undefined".
        If "window_flags" contains the fullscreen flag (see above), then w and h are ignored.
     */
@@ -451,6 +454,17 @@ int hw_video_resize(int w, int h)
     return 0;
 }
 
+int hw_video_toggle_fullscreen(void)
+{
+    hw_opt_fullscreen = !hw_opt_fullscreen;
+    video_window_destroy();
+    if (video_sw_set(hw_opt_screen_winw, hw_opt_screen_winh) != 0) {
+        hw_opt_fullscreen = !hw_opt_fullscreen; /* restore the setting for the config file */
+        return -1;
+    }
+    return 0;
+}
+
 int hw_video_init(int w, int h)
 {
     mouse_set_limits(w, h);
@@ -471,6 +485,16 @@ int hw_video_init(int w, int h)
     video.render = video_render;
     video.update = video_update;
     video.setpal = video_setpal;
+    video.blit_rect.x = 0;
+    video.blit_rect.y = 0;
+    video.blit_rect.w = video.bufw;
+    video.blit_rect.h = video.bufh;
+    if (!hw_opt_aspect) {
+        video.actualh = video.bufh;
+    } else {
+        video.actualh = (uint32_t)(video.bufh * 1000000) / hw_opt_aspect;
+        SETMAX(h, video.actualh);
+    }
     if ((hw_opt_screen_winw != 0) && (hw_opt_screen_winh != 0)) {
         w = hw_opt_screen_winw;
         h = hw_opt_screen_winh;
@@ -483,16 +507,7 @@ int hw_video_init(int w, int h)
 
 void hw_video_shutdown(void)
 {
-    if (video.renderer) {
-        SDL_DestroyRenderer(video.renderer);
-        video.renderer = NULL;
-        video.texture = NULL;
-        video.texture_upscaled = NULL;
-    }
-    if (video.window) {
-        SDL_DestroyWindow(video.window);
-        video.window = NULL;
-    }
+    video_window_destroy();
     if (video.screen) {
         SDL_FreeSurface(video.screen);
         video.screen = NULL;
