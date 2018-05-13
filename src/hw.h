@@ -25,6 +25,9 @@ extern void hw_log_error(const char *msg);
 
 extern int hw_event_handle(void);
 
+extern void hw_textinput_start(void);
+extern void hw_textinput_stop(void);
+
 extern int hw_video_init(int w, int h);
 extern void hw_video_set_palette(uint8_t *palette, int first, int num);
 extern uint8_t hw_video_get_palette_byte(int i);
