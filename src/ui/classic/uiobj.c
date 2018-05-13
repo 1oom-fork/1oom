@@ -1038,7 +1038,7 @@ static uint32_t uiobj_handle_kbd(int16_t *oiptr)
     bool flag_reset_alt_str;
 #ifdef FEATURE_MODEBUG
     if (KBD_GET_KEY(key) == 0) {
-        LOG_DEBUG((0, "%s: got 0 key 0x%x\n", KBD_GET_KEY(key), key));
+        LOG_DEBUG((0, "%s: got 0 key 0x%x\n", __func__, KBD_GET_KEY(key), key));
     }
 #endif
     if (uiobj_kbd_alt_oi >= uiobj_table_num) {
@@ -2236,6 +2236,7 @@ bool uiobj_read_str(int x, int y, int w, char *buf, int buflen, uint8_t rcolor, 
     mookey_t key = 0;
     uiobj_t *p;
 
+    hw_textinput_start();
     uiobj_table_clear();
     if (1/*mouse_flag_initialized*/) {
         while (mouse_buttons) {
@@ -2387,6 +2388,7 @@ bool uiobj_read_str(int x, int y, int w, char *buf, int buflen, uint8_t rcolor, 
         }
         uiobj_handle_t4_sub2(p, di, vc, strbuf);
     }
+    hw_textinput_stop();
     strcpy(buf, strbuf);
     if (flag_done != 0) /*&& (mouse_flag_initialized)*/ {
         while (mouse_buttons) {

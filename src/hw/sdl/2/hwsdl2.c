@@ -175,6 +175,8 @@ static void build_key_xlat(void)
     key_xlat_scan[SDLK_TBLI_FROM_SCAN(SDLK_UNDO)] = MOO_KEY_UNDO;
 }
 
+static bool hw_textinput_active = false;
+
 /* -------------------------------------------------------------------------- */
 
 #define SDL1or2Key  SDL_Keycode
@@ -233,6 +235,18 @@ void hw_shutdown(void)
     SDL_Quit();
 }
 
+void hw_textinput_start(void)
+{
+    SDL_StartTextInput();
+    hw_textinput_active = true;
+}
+
+void hw_textinput_stop(void)
+{
+    SDL_StopTextInput();
+    hw_textinput_active = false;
+}
+
 int hw_event_handle(void)
 {
     SDL_Event e;
@@ -261,9 +275,23 @@ int hw_event_handle(void)
                         } else {
                             key = key_xlat_key[sym];
                             c = (char)sym; /* TODO SDL 2 */
+                            /* ignore ASCII range when expecting SDL_TEXTINPUT */
+                            if (hw_textinput_active && ((key >= MOO_KEY_SPACE) && (key <= MOO_KEY_z))) {
+                                key = MOO_KEY_UNKNOWN;
+                            }
                         }
-                        kbd_add_keypress(key, mod, c);
+                        if (key != MOO_KEY_UNKNOWN) {
+                            kbd_add_keypress(key, mod, c);
+                        }
                     }
+                }
+                break;
+            case SDL_TEXTINPUT:
+                if (e.text.text[0] != 0) {
+                    char c = e.text.text[0];
+                    SDL_StopTextInput();
+                    SDL_StartTextInput();
+                    kbd_add_keypress(MOO_KEY_UNKNOWN, 0, c);
                 }
                 break;
             case SDL_KEYUP:

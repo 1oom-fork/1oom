@@ -215,6 +215,14 @@ void hw_shutdown(void)
     SDL_Quit();
 }
 
+void hw_textinput_start(void)
+{
+}
+
+void hw_textinput_stop(void)
+{
+}
+
 int hw_event_handle(void)
 {
     SDL_Event e;
