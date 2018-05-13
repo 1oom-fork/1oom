@@ -44,6 +44,3 @@ This is the "to do" for 1oom.
 
 * UI classic:
   - Add UI elements for sound/music volume, full screen, aspect ratio, ...
-
-* HW:
-  - Fix SDL2.
