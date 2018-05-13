@@ -258,9 +258,9 @@ int hw_video_toggle_fullscreen(void)
         func = hw_video_resize;
     }
 #endif /* HAVE_SDL1GL */
-    hw_opt_fullscreen ^= 1;
+    hw_opt_fullscreen = !hw_opt_fullscreen;
     if (func(hw_opt_screen_winw, hw_opt_screen_winh)) {
-        hw_opt_fullscreen ^= 1; /* restore the setting for the config file */
+        hw_opt_fullscreen = !hw_opt_fullscreen; /* restore the setting for the config file */
         return -1;
     }
 #ifdef HAVE_SDL1GL
