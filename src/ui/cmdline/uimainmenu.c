@@ -57,6 +57,7 @@ static bool ui_new_game(struct game_new_options_s *newopts)
         { RACE_BULRATHI, "8", NULL, game_str_tbl_race[RACE_BULRATHI] },
         { RACE_MEKLAR, "9", NULL, game_str_tbl_race[RACE_MEKLAR] },
         { RACE_DARLOK, "0", NULL, game_str_tbl_race[RACE_DARLOK] },
+        { RACE_RANDOM, "R", NULL, game_str_tbl_race[RACE_RANDOM] },
         { -1, "Q", NULL, "(quit)" },
         { 0, NULL, NULL, NULL },
     };
@@ -68,6 +69,7 @@ static bool ui_new_game(struct game_new_options_s *newopts)
         { BANNER_RED, "4", NULL, game_str_tbl_banner[BANNER_RED] },
         { BANNER_WHITE, "5", NULL, game_str_tbl_banner[BANNER_WHITE] },
         { BANNER_YELLOW, "6", NULL, game_str_tbl_banner[BANNER_YELLOW] },
+        { BANNER_RANDOM, "7", NULL, game_str_tbl_banner[BANNER_RANDOM] },
         { -1, "Q", NULL, "(quit)" },
         { 0, NULL, NULL, NULL },
     };
@@ -93,12 +95,10 @@ static bool ui_new_game(struct game_new_options_s *newopts)
     }
     newopts->pdata[PLAYER_0].banner = v;
     fputs("Your name\n", stdout);
-    p = ui_input_line("> ");
-    p[EMPEROR_NAME_LEN - 1] = 0;
+    p = ui_input_line_len_trim("> ", EMPEROR_NAME_LEN);
     strcpy(newopts->pdata[PLAYER_0].playername, p);
     fputs("Home world\n", stdout);
-    p = ui_input_line("> ");
-    p[PLANET_NAME_LEN - 1] = 0;
+    p = ui_input_line_len_trim("> ", PLANET_NAME_LEN);
     strcpy(newopts->pdata[PLAYER_0].homename, p);
     return true;
 }
