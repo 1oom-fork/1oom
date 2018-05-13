@@ -222,6 +222,7 @@ static void video_setpal(const uint8_t *pal, int first, int num)
         video.color[i].r = palette_6bit_to_8bit(*pal++);
         video.color[i].g = palette_6bit_to_8bit(*pal++);
         video.color[i].b = palette_6bit_to_8bit(*pal++);
+        video.color[i].a = 255;
     }
     video.palette_to_set = true;
     video_update();
