@@ -30,6 +30,7 @@ static bool game_opt_continue = false;
 static int game_opt_load_game = 0;
 static const char *game_opt_load_fname = 0;
 static bool game_opt_undo_enabled = true;
+static bool game_opt_next_turn = false;
 
 static struct game_end_s game_opt_end = { GAME_END_NONE, 0, 0, 0, 0 };
 static struct game_new_options_s game_opt_new = GAME_NEW_OPTS_DEFAULT;
@@ -351,6 +352,9 @@ const struct cmdline_options_s main_cmdline_options[] = {
     { "-noundo", 0,
       options_disable_bool_var, (void *)&game_opt_undo_enabled,
       NULL, "Disable undo saves" },
+    { "-nextturn", 0,
+      options_enable_bool_var, (void *)&game_opt_next_turn,
+      NULL, "Go directly to next turn (for reproducing bugs)" },
     { 0, 0, 0, 0, 0, 0 }
 };
 
@@ -548,6 +552,10 @@ int main_do(void)
             for (; ((game_end.type == GAME_END_NONE) || (game_end.type == GAME_END_FINAL_WAR)) && (game.active_player < game.players); ++game.active_player) {
                 if (!IS_HUMAN(&game, game.active_player)) {
                     continue;
+                }
+                if (game_opt_next_turn) {
+                    game_opt_next_turn = false;
+                    break;
                 }
                 switch (ui_game_turn(&game, &load_game_i, game.active_player)) {
                     case UI_TURN_ACT_LOAD_GAME:
