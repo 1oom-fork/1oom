@@ -24,6 +24,9 @@ extern const struct cfg_items_s hw_cfg_items_extra[];
 extern int hw_event_handle(void);
 extern void hw_video_position_cursor(int mx, int my);
 
+extern void hw_textinput_start(void);
+extern void hw_textinput_stop(void);
+
 extern int hw_video_init(int w, int h);
 extern void hw_video_refresh_palette(void);
 /* Draw the current back buffer and return new back buffer. */
