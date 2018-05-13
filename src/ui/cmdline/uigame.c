@@ -1,40 +1,93 @@
 #include "config.h"
 
+#include <stdio.h>
+#include <stdlib.h>
+
 #include "ui.h"
 #include "game.h"
-#include "game_aux.h"
+#include "game_save.h"
+#include "game_shipdesign.h"
 #include "lib.h"
 #include "log.h"
 #include "types.h"
+#include "uidefs.h"
+#include "uifleet.h"
+#include "uihelp.h"
+#include "uiinput.h"
+#include "uiload.h"
+#include "uiplanet.h"
+#include "uiraces.h"
+#include "util.h"
 
 /* -------------------------------------------------------------------------- */
+
+static int cmd_next(struct game_s *g, int api, struct input_token_s *param, int num_param, void *var)
+{
+    return 0;
+}
+
+static int cmd_quit(struct game_s *g, int api, struct input_token_s *param, int num_param, void *var)
+{
+    if ((num_param == 1) && (param[0].str[0] == '!') && (param[0].str[1] == '\0')) {
+        exit(EXIT_SUCCESS);
+    }
+    return 0;
+}
+
+static const struct input_cmd_s cmds_turn[] = {
+    { "?", NULL, "Help", 0, 0, 0, ui_cmd_help, (void *)cmds_turn },
+    { "n", NULL, "Next turn", 0, 0, 0, cmd_next, 0 },
+    { "l", "[PLANET]", "Look", 0, 1, 0, ui_cmd_planet_look, 0 },
+    { "g", "PLANET", "Go to planet", 1, 1, 0, ui_cmd_planet_go, 0 },
+    { "s", "SLIDER VALUE", "Set slider to value\nSLIDER is s, d, i, e or t\nVALUE can be +N or -N for relative adjustment", 2, 2, 0, ui_cmd_planet_slider, 0 },
+    { "sl", "SLIDER", "Toggle slider lock", 1, 1, 0, ui_cmd_planet_slider_lock, 0 },
+    { "b", "[SHIP]", "Select ship to build", 0, 1, 0, ui_cmd_planet_build, 0 },
+    { "reloc", "[PLANET]", "Relocate built ships to", 0, 1, 0, ui_cmd_planet_reloc, 0 },
+    { "trans", "[PLANET NUM]", "Transport troops to", 0, 2, 0, ui_cmd_planet_trans, 0 },
+    { "fs", "PLANET [NUM]*", "Send fleet to\nAll ships are sent if no NUM given", 1, 7, 0, ui_cmd_fleet_send, 0 },
+    { "aud", NULL, "Audience", 0, 0, 0, ui_cmd_audience, 0 },
+    { "load", "[SAVENUM]", "Load game", 0, 1, 0, ui_cmd_load, 0 },
+    { "quit", "[!]", "Quit the game; add ! to quit without saving", 0, 1, 0, cmd_quit, 0 },
+    { NULL, NULL, NULL, 0, 0, 0, NULL, 0 }
+};
 
 /* -------------------------------------------------------------------------- */
 
 ui_turn_action_t ui_game_turn(struct game_s *g, int *load_game_i_ptr, int pi)
 {
-    return UI_TURN_ACT_QUIT_GAME;
+    while (1) {
+        char *input;
+        char prompt[80], buf_planet_name[PLANET_NAME_LEN];
+        sprintf(prompt, "%s | %i | %s > ", g->emperor_names[pi], g->year + YEAR_BASE, ui_planet_str(g, pi, g->planet_focus_i[pi], buf_planet_name));
+        input = ui_input_line(prompt);
+        if ((ui_input_tokenize(input, cmds_turn) == 0) && (ui_data.input.num > 0)) {
+            if (ui_data.input.tok[0].type == INPUT_TOKEN_COMMAND) {
+                const struct input_cmd_s *cmd;
+                int v;
+                cmd = ui_data.input.tok[0].data.cmd;
+                v = cmd->handle(g, pi, &ui_data.input.tok[1], ui_data.input.num - 1, cmd->var);
+                if (v >= 0) {
+                    if (cmd->handle == cmd_next) {
+                        return UI_TURN_ACT_NEXT_TURN;
+                    }
+                    if (cmd->handle == ui_cmd_load) {
+                        *load_game_i_ptr = v;
+                        return UI_TURN_ACT_LOAD_GAME;
+                    }
+                    if (cmd->handle == cmd_quit) {
+                        return UI_TURN_ACT_QUIT_GAME;
+                    }
+                }
+            }
+        }
+    }
 }
 
 void ui_game_start(struct game_s *g)
 {
+    fputs("Welcome! Type ? to get the list of commands.\n", stdout);
 }
 
 void ui_game_end(struct game_s *g)
 {
-}
-
-uint8_t *ui_gfx_get_ship(int look)
-{
-    return 0;
-}
-
-uint8_t *ui_gfx_get_planet(int look)
-{
-    return 0;
-}
-
-uint8_t *ui_gfx_get_rock(int look)
-{
-    return 0;
 }
