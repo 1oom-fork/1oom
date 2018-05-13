@@ -17,6 +17,7 @@ extern int util_file_save(const char *name, const uint8_t *src, int size);
 extern void util_trim_whitespace(char *str);
 extern void util_str_tolower(char *str);
 extern bool util_parse_number(const char *str, uint32_t *val_ptr);
+extern bool util_parse_signed_number(const char *str, int *val_ptr);
 extern int32_t *util_parse_numbers(const char *str, char sep, int *numptr);
 
 #if !defined HAVE_STRCASECMP
