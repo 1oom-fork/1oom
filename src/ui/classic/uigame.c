@@ -248,6 +248,7 @@ void ui_game_start(struct game_s *g)
             break;
         }
     }
+    ui_cursor_setup_area(1, &ui_cursor_area_tbl[0]);    /* HACK enable cursor for -nextturn */
 }
 
 void ui_game_end(struct game_s *g)
