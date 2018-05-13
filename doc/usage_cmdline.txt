@@ -7,4 +7,4 @@
 See doc/usage_common.txt for the data/user file locations and command-line
 arguments.
 
-The UI is currently unimplemented. The start menus and endings do exist.
+The UI is still missing many pieces. Type '?' for help.
