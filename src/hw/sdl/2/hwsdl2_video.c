@@ -232,6 +232,7 @@ static void video_setpal(uint8_t *pal, int first, int num)
         video.color[i].r = *pal++ << 2;
         video.color[i].g = *pal++ << 2;
         video.color[i].b = *pal++ << 2;
+        video.color[i].a = 255;
     }
     video.palette_to_set = true;
     video_update();
