@@ -1,0 +1,21 @@
+#ifndef INC_1OOM_UIPLANET_H
+#define INC_1OOM_UIPLANET_H
+
+#include "game_types.h"
+
+struct game_s;
+struct input_token_s;
+
+extern const char *ui_planet_str(struct game_s *g, player_id_t api, uint8_t planet_i, char *buf);
+extern uint8_t ui_planet_from_param(struct game_s *g, player_id_t api, struct input_token_s *param);
+extern void ui_planet_look(struct game_s *g, player_id_t api, uint8_t planet_i);
+
+extern int ui_cmd_planet_look(struct game_s *g, player_id_t api, struct input_token_s *param, int num_param, void *var);
+extern int ui_cmd_planet_go(struct game_s *g, player_id_t api, struct input_token_s *param, int num_param, void *var);
+extern int ui_cmd_planet_slider(struct game_s *g, player_id_t api, struct input_token_s *param, int num_param, void *var);
+extern int ui_cmd_planet_slider_lock(struct game_s *g, player_id_t api, struct input_token_s *param, int num_param, void *var);
+extern int ui_cmd_planet_build(struct game_s *g, player_id_t api, struct input_token_s *param, int num_param, void *var);
+extern int ui_cmd_planet_reloc(struct game_s *g, player_id_t api, struct input_token_s *param, int num_param, void *var);
+extern int ui_cmd_planet_trans(struct game_s *g, player_id_t api, struct input_token_s *param, int num_param, void *var);
+
+#endif
