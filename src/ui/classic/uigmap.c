@@ -348,17 +348,17 @@ bool ui_gmap(struct game_s *g, player_id_t active_player)
 
     uiobj_table_clear();
 
-    oi_ok = uiobj_add_t0(246, 181, "", d.gfx_but_ok, MOO_KEY_SPACE, -1);
-    /*oi_col =*/ uiobj_add_t3(246, 27, "", d.gfx_but_col, &(d.mode), 0, MOO_KEY_c, -1);
-    /*oi_env =*/ uiobj_add_t3(246, 47, "", d.gfx_but_env, &(d.mode), 1, MOO_KEY_e, -1);
-    /*oi_min =*/ uiobj_add_t3(246, 67, "", d.gfx_but_min, &(d.mode), 2, MOO_KEY_m, -1);
+    oi_ok = uiobj_add_t0(246, 181, "", d.gfx_but_ok, MOO_KEY_SPACE);
+    /*oi_col =*/ uiobj_add_t3(246, 27, "", d.gfx_but_col, &(d.mode), 0, MOO_KEY_c);
+    /*oi_env =*/ uiobj_add_t3(246, 47, "", d.gfx_but_env, &(d.mode), 1, MOO_KEY_e);
+    /*oi_min =*/ uiobj_add_t3(246, 67, "", d.gfx_but_min, &(d.mode), 2, MOO_KEY_m);
     for (int i = 0; i < g->galaxy_stars; ++i) {
         const planet_t *p = &(g->planet[i]);
         int x, y;
         x = (p->x * 224) / g->galaxy_maxx + 7;
         y = (p->y * 185) / g->galaxy_maxy + 7;
         /* FIXME limits not set! ... but no need to limit anyway */
-        oi_tbl_planet[i] = uiobj_add_mousearea/*_limited*/(x, y, x + 4, y + 4, MOO_KEY_UNKNOWN, -1);
+        oi_tbl_planet[i] = uiobj_add_mousearea/*_limited*/(x, y, x + 4, y + 4, MOO_KEY_UNKNOWN);
     }
 
     uiobj_set_help_id(9);
