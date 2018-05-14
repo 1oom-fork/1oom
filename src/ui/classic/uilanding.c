@@ -116,7 +116,7 @@ void ui_landing(struct game_s *g, int pi, uint8_t planet_i)
     ui_draw_finish_mode = 2;
     uiobj_set_callback_and_delay(landing_draw_cb1, &d, 2);
     uiobj_table_clear();
-    uiobj_add_mousearea(UI_SCREEN_LIMITS, MOO_KEY_UNKNOWN, -1);
+    uiobj_add_mousearea(UI_SCREEN_LIMITS, MOO_KEY_UNKNOWN);
     uiobj_set_downcount(3);
     while (d.frame < 0x41) {
         int16_t oi;
@@ -137,7 +137,7 @@ void ui_landing(struct game_s *g, int pi, uint8_t planet_i)
         char buf[PLANET_NAME_LEN];
         strcpy(buf, g->planet[planet_i].name);
         lbxfont_select(5, 0xf, 0xf, 0);
-        if (uiobj_read_str(125, 97, 65, buf, PLANET_NAME_LEN - 1, 0, false, 0, ctbl, -1)) {
+        if (uiobj_read_str(125, 97, 65, buf, PLANET_NAME_LEN - 1, 0, false, 0, ctbl)) {
             util_trim_whitespace(buf);
             if (buf[0] != 0) {
                 strcpy(g->planet[planet_i].name, buf);
