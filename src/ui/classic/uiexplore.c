@@ -158,13 +158,13 @@ bool ui_explore(struct game_s *g, int pi, uint8_t planet_i, bool by_scanner, boo
     uiobj_set_callback_and_delay(explore_draw_cb, &d, 4);
     uiobj_table_clear();
     if (!flag_colony_ship) {
-        oi_cont = uiobj_add_t0(227, 164, "", d.gfx_contbutt, MOO_KEY_c, -1);
+        oi_cont = uiobj_add_t0(227, 164, "", d.gfx_contbutt, MOO_KEY_c);
         oi_y = UIOBJI_INVALID;
         oi_n = UIOBJI_INVALID;
     } else {
         oi_cont = UIOBJI_INVALID;
-        oi_n = uiobj_add_t0(227, 163, "", ui_data.gfx.starmap.scrapbut_no, MOO_KEY_n, -1);
-        oi_y = uiobj_add_t0(271, 163, "", ui_data.gfx.starmap.scrapbut_yes, MOO_KEY_y, -1);
+        oi_n = uiobj_add_t0(227, 163, "", ui_data.gfx.starmap.scrapbut_no, MOO_KEY_n);
+        oi_y = uiobj_add_t0(271, 163, "", ui_data.gfx.starmap.scrapbut_yes, MOO_KEY_y);
     }
     while (!flag_done) {
         int16_t oi;

@@ -304,7 +304,7 @@ static void ui_battle_draw_bottom_add_ois(const struct battle_s *bt)
             cr->y0 = y0;
             cr->x1 = x1;
             cr->y1 = y1;
-            d->oi_area[sy][sx] = uiobj_add_mousearea(x0, y0, x1, y1, MOO_KEY_UNKNOWN, -1);
+            d->oi_area[sy][sx] = uiobj_add_mousearea(x0, y0, x1, y1, MOO_KEY_UNKNOWN);
         }
     }
     ui_draw_filled_rect(0, 193, UI_SCREEN_W - 1, UI_SCREEN_H - 1, 0xe9);
@@ -312,7 +312,7 @@ static void ui_battle_draw_bottom_add_ois(const struct battle_s *bt)
     ui_draw_line1(96, 192, 96, 199, 0xeb);
     ui_draw_line1(0, 192, UI_SCREEN_W - 1, 192, 0xeb);
     if (bt->item[0].side != SIDE_NONE) {
-        d->oi_planet = uiobj_add_t0(123, 193, "", ui_data.gfx.space.planet, MOO_KEY_p, -1);
+        d->oi_planet = uiobj_add_t0(123, 193, "", ui_data.gfx.space.planet, MOO_KEY_p);
     } else {
         lbxgfx_draw_frame(123, 193, ui_data.gfx.space.planet_off, UI_SCREEN_W);
         d->oi_planet = UIOBJI_INVALID;
@@ -326,20 +326,20 @@ static void ui_battle_draw_bottom_add_ois(const struct battle_s *bt)
         lbxgfx_draw_frame(241, 193, ui_data.gfx.space.retr_off, UI_SCREEN_W);
         d->oi_retreat = UIOBJI_INVALID;
     } else {
-        d->oi_retreat = uiobj_add_t0(241, 193, "", ui_data.gfx.space.retreat, MOO_KEY_r, -1);
+        d->oi_retreat = uiobj_add_t0(241, 193, "", ui_data.gfx.space.retreat, MOO_KEY_r);
     }
-    d->oi_done = uiobj_add_t0(297, 193, "", ui_data.gfx.space.done, MOO_KEY_d, -1);
-    d->oi_wait = uiobj_add_t0(274, 193, "", ui_data.gfx.space.wait, MOO_KEY_w, -1);
+    d->oi_done = uiobj_add_t0(297, 193, "", ui_data.gfx.space.done, MOO_KEY_d);
+    d->oi_wait = uiobj_add_t0(274, 193, "", ui_data.gfx.space.wait, MOO_KEY_w);
 #if 0
-    d->oi_auto = uiobj_add_t0(99, 193, "", ui_data.gfx.space.autob, MOO_KEY_a, -1);
+    d->oi_auto = uiobj_add_t0(99, 193, "", ui_data.gfx.space.autob, MOO_KEY_a);
 #else
     /* HACK MOO1 does this. Breaks const *bt and requires flag to be int16_t, but works while it is not the player's turn. */
-    d->oi_auto = uiobj_add_t1(99, 193, "", ui_data.gfx.space.autob, &(((struct battle_s *)bt)->s[b->side].flag_auto), MOO_KEY_a, -1);
+    d->oi_auto = uiobj_add_t1(99, 193, "", ui_data.gfx.space.autob, &(((struct battle_s *)bt)->s[b->side].flag_auto), MOO_KEY_a);
 #endif
     if ((b->missile == 0) || (b->missile == 1)) {
         if (bt->cur_item == 0) {
             if (b->wpn[0].t != b->wpn[1].t) {
-                d->oi_missile = uiobj_add_mousearea(175, 193, 208, 199, MOO_KEY_m, -1);
+                d->oi_missile = uiobj_add_mousearea(175, 193, 208, 199, MOO_KEY_m);
                 gfx = ui_data.gfx.space.base_btn;
                 if (bt->s[b->side].flag_base_missile) {
                     lbxgfx_set_frame_0(gfx);
@@ -351,7 +351,7 @@ static void ui_battle_draw_bottom_add_ois(const struct battle_s *bt)
                 d->oi_missile = UIOBJI_INVALID;
             }
         } else {
-            d->oi_missile = uiobj_add_mousearea(175, 193, 208, 199, MOO_KEY_m, -1);
+            d->oi_missile = uiobj_add_mousearea(175, 193, 208, 199, MOO_KEY_m);
             gfx = ui_data.gfx.space.misbutt;
             if (b->missile == 0) {
                 lbxgfx_set_frame_0(gfx);
@@ -365,7 +365,7 @@ static void ui_battle_draw_bottom_add_ois(const struct battle_s *bt)
     }
     lbxgfx_draw_frame(175, 193, gfx, UI_SCREEN_W);
     if (bt->s[b->side].flag_have_scan) {
-        d->oi_scan = uiobj_add_t0(153, 193, "", ui_data.gfx.space.scan, MOO_KEY_s, -1);
+        d->oi_scan = uiobj_add_t0(153, 193, "", ui_data.gfx.space.scan, MOO_KEY_s);
     } else {
         lbxgfx_draw_frame(153, 193, ui_data.gfx.space.scan_off, UI_SCREEN_W);
         d->oi_scan = UIOBJI_INVALID;
@@ -376,7 +376,7 @@ static void ui_battle_draw_bottom_add_ois(const struct battle_s *bt)
             lbxgfx_set_frame_0(gfx);
             d->oi_special = UIOBJI_INVALID;
         } else {
-            d->oi_special = uiobj_add_mousearea(210, 193, 239, 199, MOO_KEY_p, -1);
+            d->oi_special = uiobj_add_mousearea(210, 193, 239, 199, MOO_KEY_p);
             if (bt->special_button == 0) {
                 lbxgfx_set_frame_0(gfx);
             } else {

@@ -157,7 +157,7 @@ int ui_spy_steal(struct game_s *g, int spy, int target, uint8_t flags_field)
             int x, y;
             x = (i / 3) * 102 + 20;
             y = (i % 3) * 22 + 97;
-            oi_tbl_field[i] = uiobj_add_mousearea(x - 2, y - 2, x + 88, y + 13, MOO_KEY_UNKNOWN, -1);
+            oi_tbl_field[i] = uiobj_add_mousearea(x - 2, y - 2, x + 88, y + 13, MOO_KEY_UNKNOWN);
         } else {
             oi_tbl_field[i] = UIOBJI_INVALID;
         }

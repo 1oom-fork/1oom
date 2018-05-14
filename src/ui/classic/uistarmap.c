@@ -76,21 +76,21 @@ static void ui_starmap_fill_oi_slider(struct starmap_data_s *d)
             int y0;
             y0 = 81 + i * 11;
             if (!p->slider_lock[i]) {
-                d->sm.oi_tbl_slider[i] = uiobj_add_slider(253, y0 + 3, 0, 100, 0, 100, 25, 9, &p->slider[i], MOO_KEY_UNKNOWN, -1);
-                d->sm.oi_tbl_slider_minus[i] = uiobj_add_mousearea(247, y0 + 1, 251, y0 + 8, MOO_KEY_UNKNOWN, -1);
-                d->sm.oi_tbl_slider_plus[i] = uiobj_add_mousearea(280, y0 + 1, 283, y0 + 8, MOO_KEY_UNKNOWN, -1);
+                d->sm.oi_tbl_slider[i] = uiobj_add_slider(253, y0 + 3, 0, 100, 0, 100, 25, 9, &p->slider[i], MOO_KEY_UNKNOWN);
+                d->sm.oi_tbl_slider_minus[i] = uiobj_add_mousearea(247, y0 + 1, 251, y0 + 8, MOO_KEY_UNKNOWN);
+                d->sm.oi_tbl_slider_plus[i] = uiobj_add_mousearea(280, y0 + 1, 283, y0 + 8, MOO_KEY_UNKNOWN);
             }
-            d->sm.oi_tbl_slider_lock[i] = uiobj_add_mousearea(226, y0, 245, y0 + 9, MOO_KEY_UNKNOWN, -1);
+            d->sm.oi_tbl_slider_lock[i] = uiobj_add_mousearea(226, y0, 245, y0 + 9, MOO_KEY_UNKNOWN);
         }
-        d->sm.oi_ship = uiobj_add_t0(282, 140, "", ui_data.gfx.starmap.col_butt_ship, MOO_KEY_s, -1);
+        d->sm.oi_ship = uiobj_add_t0(282, 140, "", ui_data.gfx.starmap.col_butt_ship, MOO_KEY_s);
         if (p->buildship != BUILDSHIP_STARGATE) {
-            d->sm.oi_reloc = uiobj_add_t0(282, 152, "", ui_data.gfx.starmap.col_butt_reloc, MOO_KEY_l, -1);
+            d->sm.oi_reloc = uiobj_add_t0(282, 152, "", ui_data.gfx.starmap.col_butt_reloc, MOO_KEY_l);
         }
         if (g->evn.have_plague && (g->evn.plague_planet_i == g->planet_focus_i[d->api])) {
             lbxgfx_set_frame(ui_data.gfx.starmap.col_butt_trans, 1);
             lbxgfx_draw_frame(282, 164, ui_data.gfx.starmap.col_butt_trans, UI_SCREEN_W);
         } else {
-            d->sm.oi_trans = uiobj_add_t0(282, 164, "", ui_data.gfx.starmap.col_butt_trans, MOO_KEY_x, -1);
+            d->sm.oi_trans = uiobj_add_t0(282, 164, "", ui_data.gfx.starmap.col_butt_trans, MOO_KEY_x);
         }
     }
 }
@@ -654,22 +654,22 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             oi_c = uiobj_add_inputkey(MOO_KEY_c);
             ui_starmap_add_oi_bottom_buttons(&d);
             if (g->evn.build_finished_num[active_player]) {
-                oi_finished = uiobj_add_mousearea(6, 6, 225, 180, MOO_KEY_UNKNOWN, -1);
+                oi_finished = uiobj_add_mousearea(6, 6, 225, 180, MOO_KEY_UNKNOWN);
             }
             if (p->owner == active_player) {
-                oi_starview2 = uiobj_add_mousearea(227, 24, 310, 53, MOO_KEY_UNKNOWN, -1);
-                oi_shippic = uiobj_add_mousearea(228, 139, 275, 175, MOO_KEY_UNKNOWN, -1);
+                oi_starview2 = uiobj_add_mousearea(227, 24, 310, 53, MOO_KEY_UNKNOWN);
+                oi_shippic = uiobj_add_mousearea(228, 139, 275, 175, MOO_KEY_UNKNOWN);
             }
             ui_starmap_fill_oi_tbls(&d);
             {
                 int x0, y0;
                 x0 = (p->x - ui_data.starmap.x) * 2 + 6;
                 y0 = (p->y - ui_data.starmap.y) * 2 + 6;
-                oi_starview1 = uiobj_add_mousearea_limited(x0, y0, x0 + 16, y0 + 16, MOO_KEY_UNKNOWN, -1);
+                oi_starview1 = uiobj_add_mousearea_limited(x0, y0, x0 + 16, y0 + 16, MOO_KEY_UNKNOWN);
             }
             ui_starmap_fill_oi_tbl_stars(&d);
             ui_starmap_fill_oi_slider(&d);
-            oi_scroll = uiobj_add_tb(6, 6, 2, 2, 108, 86, &scrollx, &scrolly, -1);
+            oi_scroll = uiobj_add_tb(6, 6, 2, 2, 108, 86, &scrollx, &scrolly);
             ui_starmap_fill_oi_ctrl(&d);
             if (1) {
                 int x0, y0, x1, y1;
