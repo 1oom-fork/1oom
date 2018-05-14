@@ -26,6 +26,7 @@ extern int game_num_max_trans_dmg;
 extern int game_num_max_ship_maint;
 extern int game_num_event_roll;
 extern bool game_num_monster_rest_att;
+extern bool game_num_orbital_weap_any;
 extern uint8_t game_num_tbl_hull_w[4];
 extern uint8_t game_num_tech_costmuld[DIFFICULTY_NUM];
 extern uint8_t game_num_tech_costmulr[RACE_NUM][TECH_FIELD_NUM];

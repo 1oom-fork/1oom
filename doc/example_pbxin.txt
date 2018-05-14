@@ -63,8 +63,10 @@
 # Tweak the large (2) and huge (3) hull space:
 4,st_hull_space,2,1275,4850
 # Tip: hex numbers are supported. Unfortunately, so are octal; 012 == 10 == 0xa.
+# See doc/list_pbxnum.txt for more information.
 
 
 # Use "1oom_pbxmake example_pbxin.txt example.pbx" to make the PBX file.
 # (...although first you need to provide the missing files or comment the lines out.)
 # Then "1oom_classic_sdl1 -file example.pbx" to try it out.
+# "1oom_lbxview_sdl1 -file example.pbx" also works for viewing the LBX replacements.
