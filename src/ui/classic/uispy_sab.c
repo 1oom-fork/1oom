@@ -314,10 +314,10 @@ ui_sabotage_t ui_spy_sabotage_ask(struct game_s *g, int spy, int target, uint8_t
             }
         }
         uiobj_table_clear();
-        oi_bases = uiobj_add_t0(227, 147, "", d.gfx_butt_bases, MOO_KEY_b, -1);
-        oi_ind = uiobj_add_t0(267, 147, "", d.gfx_butt_ind, MOO_KEY_f, -1);
+        oi_bases = uiobj_add_t0(227, 147, "", d.gfx_butt_bases, MOO_KEY_b);
+        oi_ind = uiobj_add_t0(267, 147, "", d.gfx_butt_ind, MOO_KEY_f);
         if (g->planet[d.planet].unrest == PLANET_UNREST_NORMAL) {
-            oi_revolt = uiobj_add_t0(227, 163, "", d.gfx_butt_revolt, MOO_KEY_i, -1);
+            oi_revolt = uiobj_add_t0(227, 163, "", d.gfx_butt_revolt, MOO_KEY_i);
         } else {
             oi_revolt = UIOBJI_INVALID;
         }
@@ -327,7 +327,7 @@ ui_sabotage_t ui_spy_sabotage_ask(struct game_s *g, int spy, int target, uint8_t
                 int x, y;
                 x = (p->x * 215) / g->galaxy_maxx + 5;
                 y = (p->y * 171) / g->galaxy_maxy + 5;
-                oi_planet[i] = uiobj_add_mousearea(x - 1, y - 1, x + 7, y + 7, MOO_KEY_UNKNOWN, -1);
+                oi_planet[i] = uiobj_add_mousearea(x - 1, y - 1, x + 7, y + 7, MOO_KEY_UNKNOWN);
             } else {
                 oi_planet[i] = UIOBJI_INVALID;
             }
@@ -371,10 +371,10 @@ int ui_spy_sabotage_done(struct game_s *g, int pi, int spy, int target, ui_sabot
     oi_other1 = UIOBJI_INVALID;
     oi_other2 = UIOBJI_INVALID;
     if (other2 == PLAYER_NONE) {
-        oi_cont = uiobj_add_t0(227, 163, "", d.gfx_contbutt, MOO_KEY_c, -1);
+        oi_cont = uiobj_add_t0(227, 163, "", d.gfx_contbutt, MOO_KEY_c);
     } else {
-        oi_other1 = uiobj_add_mousearea(50, 106, 110, 120, MOO_KEY_UNKNOWN, -1);
-        oi_other2 = uiobj_add_mousearea(122, 106, 183, 120, MOO_KEY_UNKNOWN, -1);
+        oi_other1 = uiobj_add_mousearea(50, 106, 110, 120, MOO_KEY_UNKNOWN);
+        oi_other2 = uiobj_add_mousearea(122, 106, 183, 120, MOO_KEY_UNKNOWN);
     }
     uiobj_set_callback_and_delay(sabotage_done_draw_cb, &d, 4);
     while (!flag_done) {

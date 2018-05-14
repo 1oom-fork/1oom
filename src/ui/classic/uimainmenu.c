@@ -95,7 +95,7 @@ static main_menu_action_t main_menu_do(struct main_menu_data_s *d)
     oi_tutor = uiobj_add_alt_str("tutor");
     d->have_continue = game_save_tbl_have_save[GAME_SAVE_I_CONTINUE];
     if (d->have_continue) {
-        oi_continue = uiobj_add_mousearea(0x3c, 0x7f, 0x104, 0x8e, MOO_KEY_UNKNOWN, -1);
+        oi_continue = uiobj_add_mousearea(0x3c, 0x7f, 0x104, 0x8e, MOO_KEY_UNKNOWN);
     } else {
         oi_continue = UIOBJI_INVALID;
     }
@@ -103,13 +103,13 @@ static main_menu_action_t main_menu_do(struct main_menu_data_s *d)
     d->have_loadgame = false;
     for (int i = 0; i < NUM_SAVES; ++i) {
         if (game_save_tbl_have_save[i]) {
-            oi_loadgame = uiobj_add_mousearea(0x3c, 0x8f, 0x104, 0x9e, MOO_KEY_UNKNOWN, -1);
+            oi_loadgame = uiobj_add_mousearea(0x3c, 0x8f, 0x104, 0x9e, MOO_KEY_UNKNOWN);
             d->have_loadgame = true;
             break;
         }
     }
-    oi_newgame = uiobj_add_mousearea(0x3c, 0x9f, 0x104, 0xae, MOO_KEY_UNKNOWN, -1);
-    oi_quit = uiobj_add_mousearea(0x3c, 0xaf, 0x104, 0xbe, MOO_KEY_UNKNOWN, -1);
+    oi_newgame = uiobj_add_mousearea(0x3c, 0x9f, 0x104, 0xae, MOO_KEY_UNKNOWN);
+    oi_quit = uiobj_add_mousearea(0x3c, 0xaf, 0x104, 0xbe, MOO_KEY_UNKNOWN);
     if (d->have_continue) {
         oi_c = uiobj_add_inputkey(MOO_KEY_c);
     } else {
