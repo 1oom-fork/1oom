@@ -489,17 +489,17 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
             /* uiobj_set_limits(STARMAP_LIMITS); */
             ui_starmap_fill_oi_tbls(&d);
             ui_starmap_fill_oi_tbl_stars(&d);
-            oi_cancel = uiobj_add_t0(227, 180, "", ui_data.gfx.starmap.reloc_bu_cancel, MOO_KEY_ESCAPE, -1);
+            oi_cancel = uiobj_add_t0(227, 180, "", ui_data.gfx.starmap.reloc_bu_cancel, MOO_KEY_ESCAPE);
             if (ui_starmap_orbit_own_in_frange(&d) && d.ss.shiptypenon0numsel) {
-                oi_accept = uiobj_add_t0(271, 180, "", ui_data.gfx.starmap.reloc_bu_accept, MOO_KEY_SPACE, -1);
+                oi_accept = uiobj_add_t0(271, 180, "", ui_data.gfx.starmap.reloc_bu_accept, MOO_KEY_SPACE);
             }
-            oi_scroll = uiobj_add_tb(6, 6, 2, 2, 108, 86, &scrollx, &scrolly, -1);
+            oi_scroll = uiobj_add_tb(6, 6, 2, 2, 108, 86, &scrollx, &scrolly);
             ui_starmap_fill_oi_ctrl(&d);
             for (int i = 0; i < d.ss.sn0.num; ++i) {
-                oi_tbl_p[i] = uiobj_add_t0(288, 35 + i * 26, "", ui_data.gfx.starmap.move_but_p, MOO_KEY_UNKNOWN, -1);
-                oi_tbl_m[i] = uiobj_add_t0(277, 35 + i * 26, "", ui_data.gfx.starmap.move_but_m, MOO_KEY_UNKNOWN, -1);
-                oi_tbl_a[i] = uiobj_add_t0(299, 35 + i * 26, "", ui_data.gfx.starmap.move_but_a, MOO_KEY_UNKNOWN, -1);
-                oi_tbl_n[i] = uiobj_add_t0(265, 35 + i * 26, "", ui_data.gfx.starmap.move_but_n, MOO_KEY_UNKNOWN, -1);
+                oi_tbl_p[i] = uiobj_add_t0(288, 35 + i * 26, "", ui_data.gfx.starmap.move_but_p, MOO_KEY_UNKNOWN);
+                oi_tbl_m[i] = uiobj_add_t0(277, 35 + i * 26, "", ui_data.gfx.starmap.move_but_m, MOO_KEY_UNKNOWN);
+                oi_tbl_a[i] = uiobj_add_t0(299, 35 + i * 26, "", ui_data.gfx.starmap.move_but_a, MOO_KEY_UNKNOWN);
+                oi_tbl_n[i] = uiobj_add_t0(265, 35 + i * 26, "", ui_data.gfx.starmap.move_but_n, MOO_KEY_UNKNOWN);
             }
             ui_starmap_add_oi_bottom_buttons(&d);
             d.oi_tech = UIOBJI_INVALID;
