@@ -235,7 +235,7 @@ static int16_t ui_audience_ask_do(struct audience_s *au, int y, void (*draw_cb)(
     uiobj_set_callback_and_delay(draw_cb, au->uictx, 1);
     uiobj_set_downcount(1);
     lbxfont_select(0, 2, 3, 0);
-    selected = uiobj_select_from_list1(38, y, 245, "", au->strtbl, &selected, au->condtbl, 0xf, 0, 0xb, 0, 0, 0, -1);
+    selected = uiobj_select_from_list1(38, y, 245, "", au->strtbl, &selected, au->condtbl, 0xf, 0, 0xb, 0, 0, 0);
     return selected;
 }
 
@@ -284,7 +284,7 @@ void ui_audience_show1(struct audience_s *au)
         uiobj_table_clear();
         oi_ma = UIOBJI_INVALID;
         if ((au->mode == 0) || (au->mode == 1) || (au->mode == 2)) {
-            oi_ma = uiobj_add_mousearea(UI_SCREEN_LIMITS, MOO_KEY_UNKNOWN, -1);
+            oi_ma = uiobj_add_mousearea(UI_SCREEN_LIMITS, MOO_KEY_UNKNOWN);
         }
         if (!flag_done) {
             ui_audience_draw_cb1(d);
@@ -302,7 +302,7 @@ void ui_audience_show2(struct audience_s *au)
     uiobj_set_callback_and_delay(ui_audience_draw_cb2, au->uictx, 1);
     uiobj_set_downcount(1);
     uiobj_table_clear();
-    uiobj_add_mousearea(UI_SCREEN_LIMITS, MOO_KEY_UNKNOWN, -1);
+    uiobj_add_mousearea(UI_SCREEN_LIMITS, MOO_KEY_UNKNOWN);
     while (oi == 0) {
         ui_delay_prepare();
         oi = uiobj_handle_input_cond();
@@ -318,7 +318,7 @@ void ui_audience_show3(struct audience_s *au)
     uiobj_set_callback_and_delay(ui_audience_draw_cb3, d, 1);
     uiobj_set_downcount(1);
     uiobj_table_clear();
-    uiobj_add_mousearea(UI_SCREEN_LIMITS, MOO_KEY_UNKNOWN, -1);
+    uiobj_add_mousearea(UI_SCREEN_LIMITS, MOO_KEY_UNKNOWN);
     while (!flag_done) {
         int16_t oi;
         ui_delay_prepare();
