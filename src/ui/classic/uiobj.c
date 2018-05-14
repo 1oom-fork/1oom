@@ -74,7 +74,6 @@ typedef struct uiobj_s {
             /*18*/ uint16_t fmax;
             /*1c*/ uint16_t vmin;
             /*1e*/ uint16_t vmax;
-            /*20*/ bool vertical;
         } t6;
         struct {
             /*16*/ const char *str;
@@ -180,7 +179,7 @@ static void dump_uiobj_p(uiobj_t *p)
             LOG_DEBUG((DEBUGLEVEL_UIOBJ, "?\n"));
             break;
         case 6:
-            LOG_DEBUG((DEBUGLEVEL_UIOBJ, "f:%i-%i p:%p v:%i-%i e:%i\n", p->t6.fmin, p->t6.fmax, p->vptr, p->t6.vmin, p->t6.vmax, p->t6.vertical));
+            LOG_DEBUG((DEBUGLEVEL_UIOBJ, "f:%i-%i p:%p v:%i-%i\n", p->t6.fmin, p->t6.fmax, p->vptr, p->t6.vmin, p->t6.vmax));
             break;
         case 7:
             LOG_DEBUG((DEBUGLEVEL_UIOBJ, "%i\n"));
@@ -518,28 +517,15 @@ static void uiobj_handle_t6_slider_input(uiobj_t *p)
 {
     /* p->type == 6 */
     uint16_t sliderval, slideroff, di;
-    if (p->t6.vertical == false) {
-        di = mouse_x + uiobj_mouseoff;
-        slideroff = ((p->t6.vmax - p->t6.vmin) * (di - p->x0)) / (p->x1 - p->x0);
-        if (p->x1 <= di) {
-            sliderval = p->t6.vmax;
-        } else if (p->x0 >= di) {
-            sliderval = p->t6.vmin;
-        } else {
-            sliderval = p->t6.vmin + slideroff;
-        }
+    di = mouse_x + uiobj_mouseoff;
+    slideroff = ((p->t6.vmax - p->t6.vmin) * (di - p->x0)) / (p->x1 - p->x0);
+    if (p->x1 <= di) {
+        sliderval = p->t6.vmax;
+    } else if (p->x0 >= di) {
+        sliderval = p->t6.vmin;
     } else {
-        di = mouse_y + uiobj_mouseoff;
-        slideroff = ((p->t6.vmax - p->t6.vmin) * (p->y1 - di)) / (p->y1 - p->y0);
-        if (p->y1 <= di) {
-            sliderval = p->t6.vmin;
-        } else if (p->y0 >= di) {
-            sliderval = p->t6.vmax;
-        } else {
-            sliderval = slideroff; /* bug? */
-        }
+        sliderval = p->t6.vmin + slideroff;
     }
-    /*17be9*/
     if (p->t6.fmin > sliderval) {
         sliderval = p->t6.fmin;
     }
@@ -1972,7 +1958,6 @@ int16_t uiobj_add_slider(uint16_t x0, uint16_t y0, uint16_t vmin, uint16_t vmax,
     p->t6.vmax = vmax;
     p->t6.fmin = fmin;
     p->t6.fmax = fmax;
-    p->t6.vertical = (h > w);
     p->type = 6;
     p->helpid = helpid;
     p->vptr = vptr;
