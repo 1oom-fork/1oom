@@ -90,7 +90,6 @@ typedef struct uiobj_s {
             /*18*/ uint16_t fmax;
             /*1c*/ uint16_t vmin;
             /*1e*/ uint16_t vmax;
-            /*20*/ bool vertical;
         } t6;
         struct {
             /*16*/ const char *str;
@@ -434,26 +433,14 @@ static void uiobj_handle_t4_sub1(uiobj_t *p)
 static void uiobj_handle_t6_slider_input(uiobj_t *p)
 {
     uint16_t sliderval, slideroff, di;
-    if (p->t6.vertical == false) {
-        di = moo_mouse_x + uiobj_mouseoff;
-        slideroff = ((p->t6.vmax - p->t6.vmin) * (di - p->x0)) / (p->x1 - p->x0);
-        if (p->x1 <= di) {
-            sliderval = p->t6.vmax;
-        } else if (p->x0 >= di) {
-            sliderval = p->t6.vmin;
-        } else {
-            sliderval = p->t6.vmin + slideroff;
-        }
+    di = moo_mouse_x + uiobj_mouseoff;
+    slideroff = ((p->t6.vmax - p->t6.vmin) * (di - p->x0)) / (p->x1 - p->x0);
+    if (p->x1 <= di) {
+        sliderval = p->t6.vmax;
+    } else if (p->x0 >= di) {
+        sliderval = p->t6.vmin;
     } else {
-        di = moo_mouse_y + uiobj_mouseoff;
-        slideroff = ((p->t6.vmax - p->t6.vmin) * (p->y1 - di)) / (p->y1 - p->y0);
-        if (p->y1 <= di) {
-            sliderval = p->t6.vmin;
-        } else if (p->y0 >= di) {
-            sliderval = p->t6.vmax;
-        } else {
-            sliderval = slideroff; /* bug? */
-        }
+        sliderval = p->t6.vmin + slideroff;
     }
     if (p->t6.fmin > sliderval) {
         sliderval = p->t6.fmin;
@@ -1808,7 +1795,6 @@ int16_t uiobj_add_slider(uint16_t x0, uint16_t y0, uint16_t vmin, uint16_t vmax,
     p->t6.vmax = vmax;
     p->t6.fmin = fmin;
     p->t6.fmax = fmax;
-    p->t6.vertical = (h > w);
     p->type = UIOBJ_TYPE_SLIDER;
     p->vptr = vptr;
     p->key = key;
