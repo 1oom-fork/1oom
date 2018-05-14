@@ -16,6 +16,8 @@ AM_SILENT_RULES
 
 AC_CANONICAL_HOST
 
+user_cflags=$CFLAGS
+
 AC_PROG_CC_C99
 AC_PROG_CPP
 m4_ifdef([AM_PROG_AR], [AM_PROG_AR])
@@ -144,9 +146,14 @@ if test x"$enable_sdl1hw" != "xno"; then
     old_LIBS="$LIBS"
     old_sdl_libs=$HW_SDL1_LIBS
 
-    dnl if no sdl-config was found we assume that there are no extra CFLAGS
-    dnl and that libSDL can be found in the default lib search path
-    if test x"$sdl_config" = "xno"; then
+    dnl First check for user supplied libs/cflags.
+    dnl In none are given, try sdl-config.
+    dnl If no sdl-config was found we assume that there are no extra CFLAGS
+    dnl and that libSDL can be found in the default lib search path.
+    if test x"$SDL1_LIBS" != "x" -o x"$SDL1_CFLAGS" != "x"; then
+        HW_SDL1_CFLAGS="$CFLAGS $SDL1_CFLAGS"
+        HW_SDL1_LIBS="$SDL1_LIBS"
+    elif test x"$sdl_config" = "xno"; then
         HW_SDL1_LIBS="-lSDL"
     else
         HW_SDL1_CFLAGS="$CFLAGS `$sdl_config --cflags`"
@@ -174,7 +181,11 @@ if test x"$enable_sdl1hw" != "xno"; then
         AC_MSG_CHECKING(for the SDL_mixer library)
 
         old_sdl_libs="$HW_SDL1_LIBS"
-        HW_SDL1_LIBS="$HW_SDL1_LIBS -lSDL_mixer"
+        if test x"$SDL1MIXER_LIBS" != "x"; then
+            HW_SDL1_LIBS="$HW_SDL1_LIBS $SDL1MIXER_LIBS"
+        else
+            HW_SDL1_LIBS="$HW_SDL1_LIBS -lSDL_mixer"
+        fi
         LIBS="$old_LIBS $HW_SDL1_LIBS"
 
         AC_TRY_LINK([#include "SDL_mixer.h"],
@@ -287,9 +298,14 @@ if test x"$enable_sdl2hw" != "xno"; then
     old_LIBS="$LIBS"
     old_sdl_libs=$HW_SDL2_LIBS
 
-    dnl if no sdl2-config was found we assume that there are no extra CFLAGS
-    dnl and that libSDL2 can be found in the default lib search path
-    if test x"$sdl2_config" = "xno"; then
+    dnl First check for user supplied libs/cflags.
+    dnl In none are given, try sdl2-config.
+    dnl If no sdl2-config was found we assume that there are no extra CFLAGS
+    dnl and that libSDL2 can be found in the default lib search path.
+    if test x"$SDL2_LIBS" != "x" -o x"$SDL2_CFLAGS" != "x"; then
+        HW_SDL2_CFLAGS="$CFLAGS $SDL2_CFLAGS"
+        HW_SDL2_LIBS="$SDL2_LIBS"
+    elif test x"$sdl2_config" = "xno"; then
         HW_SDL2_LIBS="-lSDL2"
     else
         HW_SDL2_CFLAGS="$CFLAGS `$sdl2_config --cflags`"
@@ -317,7 +333,11 @@ if test x"$enable_sdl2hw" != "xno"; then
         AC_MSG_CHECKING(for the SDL2_mixer library)
 
         old_sdl_libs="$HW_SDL2_LIBS"
-        HW_SDL2_LIBS="$HW_SDL2_LIBS -lSDL2_mixer"
+        if test x"$SDL2MIXER_LIBS" != "x"; then
+            HW_SDL2_LIBS="$HW_SDL2_LIBS $SDL2MIXER_LIBS"
+        else
+            HW_SDL2_LIBS="$HW_SDL2_LIBS -lSDL2_mixer"
+        fi
         LIBS="$old_LIBS $HW_SDL2_LIBS"
 
         AC_TRY_LINK([#include "SDL_mixer.h"],
@@ -330,9 +350,9 @@ if test x"$enable_sdl2hw" != "xno"; then
         LIBS="$old_LIBS"
 
         if test x"$have_sdl2mixer" = "xyes"; then
-            AC_DEFINE(HAVE_SDL2MIXER,,[Enable SDL_mixer])
+            AC_DEFINE(HAVE_SDL2MIXER,,[Enable SDL2_mixer])
         else
-            AC_MSG_WARN([SDL_mixer not found, audio disabled!])
+            AC_MSG_WARN([SDL2_mixer not found, audio disabled!])
         fi
 
         AC_MSG_CHECKING(for the SDL2main library)
