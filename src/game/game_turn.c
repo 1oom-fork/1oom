@@ -975,7 +975,7 @@ static void game_turn_bomb_damage(struct game_s *g, uint8_t pli, player_id_t att
     }
     complevel = (maxcomp - 1) * 2 + 6;
     SETRANGE(complevel, 1, 20);
-    for (int i = 0; i < WEAPON_CRYSTAL_RAY; ++i) {  /* FIXME BUG? excludes death ray and amoeba stream too */
+    for (int i = 0; i < (game_num_orbital_weap_any ? WEAPON_NUM : WEAPON_CRYSTAL_RAY); ++i) {  /* WASBUG? excludes death ray and amoeba stream too */
         uint32_t vcur = tbl[i];
         if (vcur != 0) {
             const struct shiptech_weap_s *w = &(tbl_shiptech_weap[i]);
@@ -1201,7 +1201,7 @@ static int game_turn_transport_shoot(struct game_s *g, uint8_t planet_i, player_
     }
     complevel = (bestcomp - speed) * 2 + 12;
     SETRANGE(complevel, 1, 20);
-    for (int i = 0; i < WEAPON_CRYSTAL_RAY; ++i) {  /* FIXME BUG? excludes death ray and amoeba stream too */
+    for (int i = 0; i < (game_num_orbital_weap_any ? WEAPON_NUM : WEAPON_CRYSTAL_RAY); ++i) {  /* WASBUG? excludes death ray and amoeba stream too */
         uint32_t vcur = tbl[i];
         if (vcur != 0) {
             const struct shiptech_weap_s *w = &(tbl_shiptech_weap[i]);
