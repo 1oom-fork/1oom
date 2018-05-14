@@ -297,7 +297,7 @@ void ui_starview(struct game_s *g, player_id_t pi)
     starview_load_data(&d);
     uiobj_set_callback_and_delay(starview_draw_cb, &d, 4);
     uiobj_table_clear();
-    uiobj_add_mousearea(UI_SCREEN_LIMITS, MOO_KEY_UNKNOWN, -1);
+    uiobj_add_mousearea(UI_SCREEN_LIMITS, MOO_KEY_UNKNOWN);
     uiobj_set_help_id(34);
     uiobj_set_downcount(1);
     while (!flag_done) {

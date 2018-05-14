@@ -83,7 +83,7 @@ void ui_caught(struct game_s *g, player_id_t active_player)
     uiobj_finish_frame();
     ui_cursor_setup_area(1, &ui_cursor_area_tbl[0]);
     uiobj_table_clear();
-    oi_ma = uiobj_add_mousearea(UI_SCREEN_LIMITS, MOO_KEY_UNKNOWN, -1);
+    oi_ma = uiobj_add_mousearea(UI_SCREEN_LIMITS, MOO_KEY_UNKNOWN);
     uiobj_set_callback_and_delay(caught_draw_cb, &d, 1);
 
     while (!flag_done) {
