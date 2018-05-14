@@ -152,7 +152,7 @@ static bool ui_new_game_names(struct game_new_options_s *newopts, struct new_gam
     while (!flag_ok) {
         lbxfont_select(5, 0xf, 0xf, 0xf);
         game_new_generate_emperor_name(d->race, buf);
-        if (!uiobj_read_str(0xf, 0x16, 0x41, buf, 0xb/*len*/, 0, 0, 0, tbl_cursor_color, -1)) {
+        if (!uiobj_read_str(0xf, 0x16, 0x41, buf, 0xb/*len*/, 0, 0, 0, tbl_cursor_color)) {
             return false;
         }
         util_trim_whitespace(buf);
@@ -167,7 +167,7 @@ static bool ui_new_game_names(struct game_new_options_s *newopts, struct new_gam
     while (!flag_ok) {
         lbxfont_select(5, 0xf, 0xf, 0xf);
         game_new_generate_home_name(d->race, buf);
-        if (!uiobj_read_str(0xf, 0x16, 0x32, buf, PLANET_NAME_LEN, 0, 0, 0, tbl_cursor_color, -1)) {
+        if (!uiobj_read_str(0xf, 0x16, 0x32, buf, PLANET_NAME_LEN, 0, 0, 0, tbl_cursor_color)) {
             return false;
         }
         util_trim_whitespace(buf);
@@ -203,7 +203,7 @@ static bool ui_new_game_racebannernames(struct game_new_options_s *newopts, stru
     uiobj_set_callback_and_delay(new_game_draw_race_cb, d, 2);
     uiobj_table_clear();
     lbxfont_select(5, 0xf, 0, 0);
-    race = uiobj_select_from_list1(0xa, 0xa, 0x32, game_str_ng_choose_race, (char const * const *)d->str_tbl_2space_race, &d->selected, tbllistallow, 0xf, 0, 2, 0, 0, 0, -1);
+    race = uiobj_select_from_list1(0xa, 0xa, 0x32, game_str_ng_choose_race, (char const * const *)d->str_tbl_2space_race, &d->selected, tbllistallow, 0xf, 0, 2, 0, 0, 0);
     if (race == -1) {
         ui_sound_play_sfx_06();
         return false;
@@ -218,7 +218,7 @@ static bool ui_new_game_racebannernames(struct game_new_options_s *newopts, stru
     uiobj_table_clear();
     uiobj_set_callback_and_delay(new_game_draw_banner_cb, d, 2);
     lbxfont_select(5, 0xf, 0, 0);
-    banner = uiobj_select_from_list1(0xa, 0xa, 0x32, game_str_ng_choose_banner, (char const * const *)d->str_tbl_2space_banner, &d->selected, tbllistallow, 0xf, 0, 2, 0, 0, 0, -1);
+    banner = uiobj_select_from_list1(0xa, 0xa, 0x32, game_str_ng_choose_banner, (char const * const *)d->str_tbl_2space_banner, &d->selected, tbllistallow, 0xf, 0, 2, 0, 0, 0);
     if (banner == -1) {
         ui_sound_play_sfx_06();
         return false;
@@ -256,11 +256,11 @@ bool ui_new_game(struct game_new_options_s *newopts)
         lbxfont_select(0, 0, 0, 0); \
         uiobj_table_clear(); \
         oi_esc = uiobj_add_inputkey(MOO_KEY_ESCAPE); \
-        oi_gsize = uiobj_add_t0(0xaf, 0x1d, game_str_tbl_gsize[gsize], d.gfx_optb_ng, MOO_KEY_UNKNOWN, -1); \
-        oi_diffic = uiobj_add_t0(0xaf, 0x44, game_str_tbl_diffic[diffic], d.gfx_optb_ng, MOO_KEY_UNKNOWN, -1); \
-        oi_oppon = uiobj_add_t0(0xaf, 0x6b, game_str_tbl_oppon[oppon], d.gfx_optb_ng, MOO_KEY_UNKNOWN, -1); \
-        oi_cancel = uiobj_add_t0(0x5a, 0x93, "", d.gfx_optb_cancel, MOO_KEY_UNKNOWN, -1); \
-        oi_ok = uiobj_add_t0(0xa1, 0x93, "", d.gfx_optb_ok, MOO_KEY_UNKNOWN, -1); \
+        oi_gsize = uiobj_add_t0(0xaf, 0x1d, game_str_tbl_gsize[gsize], d.gfx_optb_ng, MOO_KEY_UNKNOWN); \
+        oi_diffic = uiobj_add_t0(0xaf, 0x44, game_str_tbl_diffic[diffic], d.gfx_optb_ng, MOO_KEY_UNKNOWN); \
+        oi_oppon = uiobj_add_t0(0xaf, 0x6b, game_str_tbl_oppon[oppon], d.gfx_optb_ng, MOO_KEY_UNKNOWN); \
+        oi_cancel = uiobj_add_t0(0x5a, 0x93, "", d.gfx_optb_cancel, MOO_KEY_UNKNOWN); \
+        oi_ok = uiobj_add_t0(0xa1, 0x93, "", d.gfx_optb_ok, MOO_KEY_UNKNOWN); \
         oi_d = uiobj_add_inputkey(MOO_KEY_d); \
         oi_g = uiobj_add_inputkey(MOO_KEY_g); \
         oi_o = uiobj_add_inputkey(MOO_KEY_o); \

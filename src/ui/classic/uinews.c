@@ -272,7 +272,7 @@ void ui_news_won(bool flag_good)
     ui_news_draw_start_anim();
 
     uiobj_table_clear();
-    uiobj_add_mousearea(UI_SCREEN_LIMITS, MOO_KEY_UNKNOWN, -1);
+    uiobj_add_mousearea(UI_SCREEN_LIMITS, MOO_KEY_UNKNOWN);
     uiobj_set_downcount(1);
     uiobj_set_callback_and_delay(ui_news_cb1, &d, 3);
 
@@ -335,7 +335,7 @@ void ui_news(struct game_s *g, struct news_s *ns)
 
     news_load_data(ns->type);
     uiobj_table_clear();
-    uiobj_add_mousearea(UI_SCREEN_LIMITS, MOO_KEY_UNKNOWN, -1);
+    uiobj_add_mousearea(UI_SCREEN_LIMITS, MOO_KEY_UNKNOWN);
     uiobj_set_downcount(1);
     uiobj_set_callback_and_delay(ui_news_cb1, &d, 3);
 
