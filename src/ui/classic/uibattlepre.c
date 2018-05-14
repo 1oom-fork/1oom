@@ -132,7 +132,7 @@ void ui_battle_pre(struct game_s *g, int party_u, int party_d, uint8_t planet_i,
     }
 #endif
     uiobj_table_clear();
-    oi_cont = uiobj_add_t0(227, 163, "", d->gfx_contbutt, MOO_KEY_c, -1);
+    oi_cont = uiobj_add_t0(227, 163, "", d->gfx_contbutt, MOO_KEY_c);
     uiobj_set_focus(oi_cont);
     uiobj_set_callback_and_delay(ui_battle_pre_draw_cb, &d, 4);
     while (!flag_done) {

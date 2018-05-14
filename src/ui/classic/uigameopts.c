@@ -80,13 +80,13 @@ gameopts_act_t ui_gameopts(struct game_s *g, int *load_game_i_ptr)
     ui_draw_finish_mode = 2;
 
     uiobj_table_clear();
-    oi_load = uiobj_add_t0(115, 81, "", d.gfx_load, MOO_KEY_l, -1);
-    oi_save = uiobj_add_t0(115, 56, "", d.gfx_save, MOO_KEY_s, -1);
-    oi_quit = uiobj_add_t0(115, 106, "", d.gfx_quit, MOO_KEY_q, -1);
-    oi_silent = uiobj_add_t3(210, 56, "", d.gfx_silent, &fxmusic, 0, MOO_KEY_i, -1);
-    oi_fx = uiobj_add_t3(210, 81, "", d.gfx_fx, &fxmusic, 1, MOO_KEY_f, -1);
-    oi_music = uiobj_add_t3(210, 106, "", d.gfx_music, &fxmusic, 2, MOO_KEY_m, -1);
-    oi_done = uiobj_add_mousearea(173, 134, 226, 150, MOO_KEY_SPACE, -1);
+    oi_load = uiobj_add_t0(115, 81, "", d.gfx_load, MOO_KEY_l);
+    oi_save = uiobj_add_t0(115, 56, "", d.gfx_save, MOO_KEY_s);
+    oi_quit = uiobj_add_t0(115, 106, "", d.gfx_quit, MOO_KEY_q);
+    oi_silent = uiobj_add_t3(210, 56, "", d.gfx_silent, &fxmusic, 0, MOO_KEY_i);
+    oi_fx = uiobj_add_t3(210, 81, "", d.gfx_fx, &fxmusic, 1, MOO_KEY_f);
+    oi_music = uiobj_add_t3(210, 106, "", d.gfx_music, &fxmusic, 2, MOO_KEY_m);
+    oi_done = uiobj_add_mousearea(173, 134, 226, 150, MOO_KEY_SPACE);
     uiobj_set_downcount(1);
     uiobj_set_callback_and_delay(gameopts_draw_cb, &d, 2);
 
