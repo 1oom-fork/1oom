@@ -234,7 +234,7 @@ static void ui_newtech_choose_next(struct newtech_data_s *d)
     ui_draw_finish();
     lbxfont_select(0, 0, 0, 0);
     lbxfont_set_gap_h(di - 6);
-    /*sel = */uiobj_select_from_list1(156, 41, 148, "", nptr, &d->selected, cond, 1, 0, 0x60, 0, 0, 0, -1);
+    /*sel = */uiobj_select_from_list1(156, 41, 148, "", nptr, &d->selected, cond, 1, 0, 0x60, 0, 0, 0);
     ui_sound_play_sfx_24();
     ui_delay_prepare();
     game_tech_start_next(d->g, d->api, d->nt.field, d->tbl_tech[d->selected]);
@@ -312,14 +312,14 @@ static void ui_newtech_adjust(struct newtech_data_s *d)
     oi_n = UIOBJI_INVALID;
     UIOBJI_SET_TBL_INVALID(oi_tbl);
     if (d->dialog_type == 0) {
-        oi_y = uiobj_add_t0(x + 83, y + 60, "", ui_data.gfx.starmap.scrapbut_yes, MOO_KEY_y, -1);
-        oi_n = uiobj_add_t0(x + 18, y + 60, "", ui_data.gfx.starmap.scrapbut_no, MOO_KEY_n, -1);
+        oi_y = uiobj_add_t0(x + 83, y + 60, "", ui_data.gfx.starmap.scrapbut_yes, MOO_KEY_y);
+        oi_n = uiobj_add_t0(x + 18, y + 60, "", ui_data.gfx.starmap.scrapbut_no, MOO_KEY_n);
     } else {
         lbxfont_select(2, 6, 0, 0);
-        oi_n = uiobj_add_t0(x + 10, y + 60, game_str_tbl_nt_adj[0], d->gfx_robo_but, MOO_KEY_n, -1);
-        oi_tbl[0] = uiobj_add_t0(x + 42, y + 60, game_str_tbl_nt_adj[1], d->gfx_robo_but, MOO_KEY_2, -1);
-        oi_tbl[1] = uiobj_add_t0(x + 74, y + 60, game_str_tbl_nt_adj[2], d->gfx_robo_but, MOO_KEY_5, -1);
-        oi_tbl[2] = uiobj_add_t0(x + 106, y + 60, game_str_tbl_nt_adj[3], d->gfx_robo_but, MOO_KEY_7, -1);
+        oi_n = uiobj_add_t0(x + 10, y + 60, game_str_tbl_nt_adj[0], d->gfx_robo_but, MOO_KEY_n);
+        oi_tbl[0] = uiobj_add_t0(x + 42, y + 60, game_str_tbl_nt_adj[1], d->gfx_robo_but, MOO_KEY_2);
+        oi_tbl[1] = uiobj_add_t0(x + 74, y + 60, game_str_tbl_nt_adj[2], d->gfx_robo_but, MOO_KEY_5);
+        oi_tbl[2] = uiobj_add_t0(x + 106, y + 60, game_str_tbl_nt_adj[3], d->gfx_robo_but, MOO_KEY_7);
 
     }
     while (!flag_done) {
@@ -444,10 +444,10 @@ again:
         uiobj_set_callback_and_delay(newtech_draw_cb1, d, 1);
         uiobj_table_clear();
         if (!d->nt.frame) {
-            oi_ok = uiobj_add_mousearea(UI_SCREEN_LIMITS, MOO_KEY_UNKNOWN, -1);
+            oi_ok = uiobj_add_mousearea(UI_SCREEN_LIMITS, MOO_KEY_UNKNOWN);
         } else {
-            oi_o1 = uiobj_add_mousearea(50, 106, 110, 120, MOO_KEY_UNKNOWN, -1);
-            oi_o2 = uiobj_add_mousearea(122, 106, 183, 120, MOO_KEY_UNKNOWN, -1);
+            oi_o1 = uiobj_add_mousearea(50, 106, 110, 120, MOO_KEY_UNKNOWN);
+            oi_o2 = uiobj_add_mousearea(122, 106, 183, 120, MOO_KEY_UNKNOWN);
         }
         while (!flag_done) {
             int16_t oi;
