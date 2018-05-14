@@ -2020,15 +2020,6 @@ void game_battle_area_setup(struct battle_s *bt)
     if (b->f85 != 0) {
         bt->hmm30 = false;
     }
-#if 0 //def FEATURE_MODEBUG
-    LOG_DEBUG((3, "area. actman %i (%i - %i)\n", b->actman, b->man, b->unman));
-    for (int zy = 0; zy < BATTLE_AREA_H; ++zy) {
-        for (int zx = 0; zx < BATTLE_AREA_W; ++zx) {
-            LOG_DEBUG((3, "%i\t", bt->area[zy][zx]));
-        }
-        LOG_DEBUG((3, "\n"));
-    }
-#endif
     ui_battle_area_setup(bt);
 }
 
