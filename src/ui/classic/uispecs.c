@@ -179,7 +179,7 @@ void ui_specs_before(struct game_s *g, player_id_t active_player)
         }
         specs_before_draw_cb(&d);
         uiobj_table_clear();
-        oi_ma = uiobj_add_mousearea(UI_SCREEN_LIMITS, MOO_KEY_UNKNOWN, -1);
+        oi_ma = uiobj_add_mousearea(UI_SCREEN_LIMITS, MOO_KEY_UNKNOWN);
         ui_draw_finish();
         ui_delay_ticks_or_click(3);
     }
@@ -223,8 +223,8 @@ void ui_specs_mustscrap(struct game_s *g, player_id_t active_player, int scrapi)
         if (!flag_done) {
             specs_mustscrap_draw_cb(&d);
             uiobj_table_clear();
-            oi_no = uiobj_add_t0(116, 132, "", ui_data.gfx.starmap.scrapbut_no, MOO_KEY_n, -1);
-            oi_yes = uiobj_add_t0(165, 132, "", ui_data.gfx.starmap.scrapbut_yes, MOO_KEY_y, -1);
+            oi_no = uiobj_add_t0(116, 132, "", ui_data.gfx.starmap.scrapbut_no, MOO_KEY_n);
+            oi_yes = uiobj_add_t0(165, 132, "", ui_data.gfx.starmap.scrapbut_yes, MOO_KEY_y);
             ui_draw_finish();
             ui_delay_ticks_or_click(2);
         }
@@ -290,10 +290,10 @@ int ui_specs(struct game_s *g, player_id_t active_player)
             uiobj_table_clear();
             if (sd_num > 1) {
                 for (int i = 0; i < sd_num; ++i) {
-                    oi_tbl_scrap[i] = uiobj_add_t0(106, (i << 5) + 6, "", ui_data.gfx.starmap.viewshbt, MOO_KEY_UNKNOWN, -1);
+                    oi_tbl_scrap[i] = uiobj_add_t0(106, (i << 5) + 6, "", ui_data.gfx.starmap.viewshbt, MOO_KEY_UNKNOWN);
                 }
             }
-            oi_ma = uiobj_add_mousearea(UI_SCREEN_LIMITS, MOO_KEY_o, -1);
+            oi_ma = uiobj_add_mousearea(UI_SCREEN_LIMITS, MOO_KEY_o);
             ui_draw_finish();
             ui_delay_ticks_or_click(3);
         }
