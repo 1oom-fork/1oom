@@ -1,0 +1,27 @@
+This is an incomplete list of PBX number replacements.
+
+(name : range, default)
+
+bt_turn_max : 1..65535, 50
+  - The number of battle turns before a forced retreat.
+
+weapon_list_max : 0..64, 30
+  - Max. number of weapons shown in the ship design weapon list.
+
+monster_rest_att : 0..1, 0
+  - Allow attacking resting space monsters.
+    In MOO1 it is impossible to attack a space crystal or amoeba after the
+    turn it has reached a planet.
+
+event_roll : 0..2147483647, 512
+  - Special event probability. Bigger number means events are less likely.
+    Zero means events are disabled.
+
+council_years : 0..32767, 25
+  - Number of years between Galactic Council meetings.
+    Zero means the Council never gathers.
+
+crystal_* : ?, ?
+amoeba_* : ?, ?
+guardian_* : ?, ?
+  - The index of these space monster tables is the difficulty level.
