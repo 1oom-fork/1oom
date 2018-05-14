@@ -291,16 +291,16 @@ int ui_fleet(struct game_s *g, player_id_t active_player)
             uiobj_table_clear();
             UIOBJ_CLEAR_LOCAL();
 
-            oi_ok = uiobj_add_t0(268, 181, "", ui_data.gfx.starmap.fleetbut_ok, MOO_KEY_SPACE, -1);
-            oi_view = uiobj_add_t0(180, 181, "", ui_data.gfx.starmap.fleetbut_view, MOO_KEY_v, -1);
+            oi_ok = uiobj_add_t0(268, 181, "", ui_data.gfx.starmap.fleetbut_ok, MOO_KEY_SPACE);
+            oi_view = uiobj_add_t0(180, 181, "", ui_data.gfx.starmap.fleetbut_view, MOO_KEY_v);
             if (d.pos > 0) {
-                oi_up = uiobj_add_t0(307, 24, "", ui_data.gfx.starmap.fleetbut_up, MOO_KEY_COMMA, -1);
+                oi_up = uiobj_add_t0(307, 24, "", ui_data.gfx.starmap.fleetbut_up, MOO_KEY_COMMA);
             }
             if ((d.num - 5) > d.pos) {
-                oi_down = uiobj_add_t0(307, 156, "", ui_data.gfx.starmap.fleetbut_down, MOO_KEY_PERIOD, -1);
+                oi_down = uiobj_add_t0(307, 156, "", ui_data.gfx.starmap.fleetbut_down, MOO_KEY_PERIOD);
             }
             if ((g->eto[active_player].shipdesigns_num > 1) && !flag_scrap) {
-                oi_scrap = uiobj_add_t0(224, 181, "", ui_data.gfx.starmap.fleetbut_scrap, MOO_KEY_s, -1);
+                oi_scrap = uiobj_add_t0(224, 181, "", ui_data.gfx.starmap.fleetbut_scrap, MOO_KEY_s);
             } else {
                 lbxgfx_set_new_frame(ui_data.gfx.starmap.fleetbut_scrap, 1);
                 lbxgfx_draw_frame(224, 181, ui_data.gfx.starmap.fleetbut_scrap, UI_SCREEN_W);
@@ -309,11 +309,11 @@ int ui_fleet(struct game_s *g, player_id_t active_player)
                 for (int i = 0; i < g->eto[active_player].shipdesigns_num; ++i) {
                     int x0;
                     x0 = 44 * i + 48;
-                    oi_tbl_ship[i] = uiobj_add_mousearea(x0, 0, x0 + 38, 180, MOO_KEY_UNKNOWN, -1);
+                    oi_tbl_ship[i] = uiobj_add_mousearea(x0, 0, x0 + 38, 180, MOO_KEY_UNKNOWN);
                 }
             }
             for (int i = 0; i < d.lines; ++i) {
-                oi_tbl_line[i] = uiobj_add_mousearea(5, 15 + i * 33, 288, 44 + i * 33, MOO_KEY_UNKNOWN, -1);
+                oi_tbl_line[i] = uiobj_add_mousearea(5, 15 + i * 33, 288, 44 + i * 33, MOO_KEY_UNKNOWN);
             }
 
             ui_draw_finish();
