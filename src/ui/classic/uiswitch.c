@@ -113,9 +113,9 @@ bool ui_switch(struct game_s *g, player_id_t *tbl_pi, int num_pi, bool allow_opt
             switch_draw_cb(&d);
             uiobj_table_clear();
             if (allow_opts) {
-                oi_gameopts = uiobj_add_mousearea(5, 181, 36, 194, MOO_KEY_g, -1);
+                oi_gameopts = uiobj_add_mousearea(5, 181, 36, 194, MOO_KEY_g);
             }
-            oi_ma = uiobj_add_mousearea(UI_SCREEN_LIMITS, MOO_KEY_SPACE, -1);
+            oi_ma = uiobj_add_mousearea(UI_SCREEN_LIMITS, MOO_KEY_SPACE);
             ui_draw_finish();
             ui_delay_ticks_or_click(1);
         }
