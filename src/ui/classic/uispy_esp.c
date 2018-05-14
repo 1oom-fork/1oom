@@ -157,7 +157,7 @@ int ui_spy_steal(struct game_s *g, int spy, int target, uint8_t flags_field)
             int x, y;
             x = (i / 3) * 102 + 20;
             y = (i % 3) * 22 + 97;
-            oi_tbl_field[i] = uiobj_add_mousearea(x - 2, y - 2, x + 88, y + 13, MOO_KEY_UNKNOWN, -1);
+            oi_tbl_field[i] = uiobj_add_mousearea(x - 2, y - 2, x + 88, y + 13, MOO_KEY_UNKNOWN);
         } else {
             oi_tbl_field[i] = UIOBJI_INVALID;
         }
@@ -208,7 +208,7 @@ void ui_spy_stolen(struct game_s *g, int pi, int spy, int field, uint8_t tech)
     d.gmap = ui_gmap_basic_init(g, true);
     stolen_load_data(&d);
     uiobj_table_clear();
-    uiobj_add_mousearea(0, 0, UI_SCREEN_W - 1, UI_SCREEN_H -1, MOO_KEY_UNKNOWN, -1);
+    uiobj_add_mousearea(0, 0, UI_SCREEN_W - 1, UI_SCREEN_H -1, MOO_KEY_UNKNOWN);
     while (!flag_done) {
         int16_t oi;
         ui_delay_prepare();
