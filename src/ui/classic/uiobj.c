@@ -64,7 +64,6 @@ typedef struct uiobj_s {
         tb: scroll area
     */
     /*08*/ uint16_t type;
-    /*0a*/ int16_t helpid;
     /*1a*/ int16_t *vptr;
     /*24*/ uint32_t key;
     union {
@@ -1268,13 +1267,7 @@ static int16_t uiobj_handle_input_sub0(void)
         /* checks for F11 and F12 debug keys omitted */
         if (KBD_GET_KEY(key) == MOO_KEY_F1) {
             if (uiobj_help_id != -1) {
-                int id;
-                id = uiobj_help_id;
-                oi = uiobj_at_cursor();
-                if ((oi != 0) && (uiobj_tbl[oi].helpid != -1)) {
-                    id = uiobj_tbl[oi].helpid;
-                }
-                ui_help(id);
+                ui_help(uiobj_help_id);
             }
             return 0;
         }
@@ -1511,7 +1504,7 @@ static int16_t uiobj_handle_input_sub0(void)
     return 0;
 }
 
-static void uiobj_add_t03_do(uint16_t x, uint16_t y, const char *str, uint8_t *lbxdata, mookey_t key, int16_t helpid)
+static void uiobj_add_t03_do(uint16_t x, uint16_t y, const char *str, uint8_t *lbxdata, mookey_t key)
 {
     uiobj_t *p = &uiobj_tbl[uiobj_table_num];
     p->x0 = x;
@@ -1521,7 +1514,6 @@ static void uiobj_add_t03_do(uint16_t x, uint16_t y, const char *str, uint8_t *l
     p->t0.str = str;
     p->t0.fontnum = lbxfont_get_current_fontnum();
     p->t0.fonta2 = lbxfont_get_current_fonta2();
-    p->helpid = helpid;
     p->t0.lbxdata = lbxdata;
     p->t0.indep = lbxgfx_get_indep(lbxdata);
     p->key = key;
@@ -1732,44 +1724,44 @@ int16_t uiobj_at_cursor(void)
     return i;
 }
 
-int16_t uiobj_add_t0(uint16_t x, uint16_t y, const char *str, uint8_t *lbxdata, mookey_t key, int16_t helpid)
+int16_t uiobj_add_t0(uint16_t x, uint16_t y, const char *str, uint8_t *lbxdata, mookey_t key)
 {
     uiobj_t *p = &uiobj_tbl[uiobj_table_num];
-    uiobj_add_t03_do(x, y, str, lbxdata, key, helpid);
+    uiobj_add_t03_do(x, y, str, lbxdata, key);
     p->type = UIOBJ_TYPE_BUTTON;
     p->vptr = 0;
     return UIOBJI_ALLOC();
 }
 
-int16_t uiobj_add_t1(uint16_t x, uint16_t y, const char *str, uint8_t *lbxdata, int16_t *vptr, mookey_t key, int16_t helpid)
+int16_t uiobj_add_t1(uint16_t x, uint16_t y, const char *str, uint8_t *lbxdata, int16_t *vptr, mookey_t key)
 {
     uiobj_t *p = &uiobj_tbl[uiobj_table_num];
-    uiobj_add_t03_do(x, y, str, lbxdata, key, helpid);
+    uiobj_add_t03_do(x, y, str, lbxdata, key);
     p->type = UIOBJ_TYPE_TOGGLE;
     p->vptr = vptr;
     return UIOBJI_ALLOC();
 }
 
-int16_t uiobj_add_t2(uint16_t x, uint16_t y, const char *str, uint8_t *lbxdata, int16_t *vptr, mookey_t key, int16_t helpid)
+int16_t uiobj_add_t2(uint16_t x, uint16_t y, const char *str, uint8_t *lbxdata, int16_t *vptr, mookey_t key)
 {
     uiobj_t *p = &uiobj_tbl[uiobj_table_num];
-    uiobj_add_t03_do(x, y, str, lbxdata, key, helpid);
+    uiobj_add_t03_do(x, y, str, lbxdata, key);
     p->type = UIOBJ_TYPE_SET;
     p->vptr = vptr;
     return UIOBJI_ALLOC();
 }
 
-int16_t uiobj_add_t3(uint16_t x, uint16_t y, const char *str, uint8_t *lbxdata, int16_t *vptr, int16_t z18, mookey_t key, int16_t helpid)
+int16_t uiobj_add_t3(uint16_t x, uint16_t y, const char *str, uint8_t *lbxdata, int16_t *vptr, int16_t z18, mookey_t key)
 {
     uiobj_t *p = &uiobj_tbl[uiobj_table_num];
-    uiobj_add_t03_do(x, y, str, lbxdata, key, helpid);
+    uiobj_add_t03_do(x, y, str, lbxdata, key);
     p->type = UIOBJ_TYPE_SETVAL;
     p->vptr = vptr;
     p->t0.z18 = z18;
     return UIOBJI_ALLOC();
 }
 
-int16_t uiobj_add_textinput(int x, int y, int w, char *buf, uint16_t buflen, uint8_t rcolor, bool alignr, uint16_t z1e, const uint8_t *colortbl, mookey_t key, int16_t helpid)
+int16_t uiobj_add_textinput(int x, int y, int w, char *buf, uint16_t buflen, uint8_t rcolor, bool alignr, uint16_t z1e, const uint8_t *colortbl, mookey_t key)
 {
     uiobj_t *p = &uiobj_tbl[uiobj_table_num];
     p->x0 = x;
@@ -1786,13 +1778,12 @@ int16_t uiobj_add_textinput(int x, int y, int w, char *buf, uint16_t buflen, uin
     p->t4.z1e = z1e;
     p->t4.colortbl = colortbl;
     p->type = UIOBJ_TYPE_TEXTINPUT;
-    p->helpid = helpid;
     p->vptr = 0;
     p->key = key;
     return UIOBJI_ALLOC();
 }
 
-int16_t uiobj_add_slider(uint16_t x0, uint16_t y0, uint16_t vmin, uint16_t vmax, uint16_t fmin, uint16_t fmax, uint16_t w, uint16_t h, int16_t *vptr, mookey_t key, int16_t helpid)
+int16_t uiobj_add_slider(uint16_t x0, uint16_t y0, uint16_t vmin, uint16_t vmax, uint16_t fmin, uint16_t fmax, uint16_t w, uint16_t h, int16_t *vptr, mookey_t key)
 {
     uiobj_t *p = &uiobj_tbl[uiobj_table_num];
     p->x0 = x0;
@@ -1805,13 +1796,12 @@ int16_t uiobj_add_slider(uint16_t x0, uint16_t y0, uint16_t vmin, uint16_t vmax,
     p->t6.fmax = fmax;
     p->t6.vertical = (h > w);
     p->type = UIOBJ_TYPE_SLIDER;
-    p->helpid = helpid;
     p->vptr = vptr;
     p->key = key;
     return UIOBJI_ALLOC();
 }
 
-int16_t uiobj_add_mousearea(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, mookey_t key, int16_t helpid)
+int16_t uiobj_add_mousearea(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, mookey_t key)
 {
     uiobj_t *p = &uiobj_tbl[uiobj_table_num];
     p->x0 = x0;
@@ -1819,13 +1809,12 @@ int16_t uiobj_add_mousearea(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, 
     p->x1 = x1;
     p->y1 = y1;
     p->type = UIOBJ_TYPE_MOUSEAREA;
-    p->helpid = helpid;
     p->vptr = 0;
     p->key = key;
     return UIOBJI_ALLOC();
 }
 
-int16_t uiobj_add_mousearea_limited(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, mookey_t key, int16_t helpid)
+int16_t uiobj_add_mousearea_limited(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, mookey_t key)
 {
     if ((x1 < gfxlim_minx) || (x0 > gfxlim_maxx) || (y1 < gfxlim_miny) || (y0 > gfxlim_maxy)) {
         return UIOBJI_OUTSIDE;
@@ -1834,7 +1823,7 @@ int16_t uiobj_add_mousearea_limited(uint16_t x0, uint16_t y0, uint16_t x1, uint1
     x1 = MIN(x1, gfxlim_maxx);
     y0 = MAX(y0, gfxlim_miny);
     y1 = MIN(y1, gfxlim_maxy);
-    return uiobj_add_mousearea(x0, y0, x1, y1, key, helpid);
+    return uiobj_add_mousearea(x0, y0, x1, y1, key);
 }
 
 int16_t uiobj_add_inputkey(uint32_t key)
@@ -1845,7 +1834,6 @@ int16_t uiobj_add_inputkey(uint32_t key)
     p->x1 = UIOBJ_OFFSCREEN;
     p->y1 = UIOBJ_OFFSCREEN;
     p->type = UIOBJ_TYPE_MOUSEAREA;
-    p->helpid = -1;
     p->vptr = 0;
     p->key = key;
     return UIOBJI_ALLOC();
@@ -1863,7 +1851,6 @@ int16_t uiobj_add_alt_str(const char *str)
     p->x1 = UIOBJ_OFFSCREEN;
     p->y1 = UIOBJ_OFFSCREEN;
     p->type = UIOBJ_TYPE_ALTSTR;
-    p->helpid = -1;
     p->vptr = 0;
     p->t8.str = str;
     p->t8.pos = 0;
@@ -1878,7 +1865,7 @@ int16_t uiobj_add_alt_str(const char *str)
     return UIOBJI_ALLOC();
 }
 
-int16_t uiobj_add_ta(uint16_t x, uint16_t y, uint16_t w, const char *str, bool z12, int16_t *vptr, int16_t z18, uint16_t subtype, uint8_t *sp0p, uint16_t sp0v, uint16_t sp1, uint16_t sp2, uint16_t sp3, mookey_t key, int16_t helpid)
+int16_t uiobj_add_ta(uint16_t x, uint16_t y, uint16_t w, const char *str, bool z12, int16_t *vptr, int16_t z18, uint16_t subtype, uint8_t *sp0p, uint16_t sp0v, uint16_t sp1, uint16_t sp2, uint16_t sp3, mookey_t key)
 {
     uiobj_t *p = &uiobj_tbl[uiobj_table_num];
     p->x0 = x;
@@ -1898,13 +1885,12 @@ int16_t uiobj_add_ta(uint16_t x, uint16_t y, uint16_t w, const char *str, bool z
     p->ta.sp2 = sp2;
     p->ta.sp3 = sp3;
     p->type = UIOBJ_TYPE_TEXTLINE;
-    p->helpid = helpid;
     p->vptr = vptr;
     p->key = key;
     return UIOBJI_ALLOC();
 }
 
-int16_t uiobj_add_tb(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t xscale, uint16_t yscale, int16_t *xptr, int16_t *yptr, int16_t helpid)
+int16_t uiobj_add_tb(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t xscale, uint16_t yscale, int16_t *xptr, int16_t *yptr)
 {
     uiobj_t *p = &uiobj_tbl[uiobj_table_num];
     p->x0 = x;
@@ -1916,7 +1902,6 @@ int16_t uiobj_add_tb(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t xs
     p->tb.xptr = xptr;
     p->tb.yptr = yptr;
     p->type = UIOBJ_TYPE_SCROLLAREA;
-    p->helpid = helpid;
     p->vptr = 0;
     p->key = MOO_KEY_UNKNOWN;
     return UIOBJI_ALLOC();
@@ -1943,7 +1928,7 @@ void uiobj_ta_set_val_1(int16_t oi)
     }
 }
 
-int16_t uiobj_select_from_list1(int x, int y, int w, const char *title, char const * const *strtbl, int16_t *selptr, const bool *condtbl, uint16_t subtype, uint8_t *sp0p, uint16_t sp0v, uint16_t sp1, uint16_t sp2, uint16_t sp3, int16_t helpid)
+int16_t uiobj_select_from_list1(int x, int y, int w, const char *title, char const * const *strtbl, int16_t *selptr, const bool *condtbl, uint16_t subtype, uint8_t *sp0p, uint16_t sp0v, uint16_t sp1, uint16_t sp2, uint16_t sp3)
 {
     int h, dy, ty = y, di = -1;
     bool flag_done = false, toz12, flag_copy_buf = false;
@@ -1975,14 +1960,14 @@ int16_t uiobj_select_from_list1(int x, int y, int w, const char *title, char con
         } else {
             toz12 = condtbl[itemi];
         }
-        uiobj_add_ta(x, ty, w, *s, toz12, selptr, itemi, subtype, sp0p, sp0v, sp1, sp2, sp3, MOO_KEY_UNKNOWN, helpid);
+        uiobj_add_ta(x, ty, w, *s, toz12, selptr, itemi, subtype, sp0p, sp0v, sp1, sp2, sp3, MOO_KEY_UNKNOWN);
         ++itemi;
         ++s;
     }
 
     v6 = itemi;
     lbxfont_select(lbxfont_get_current_fontnum(), lbxfont_get_current_fonta2(), lbxfont_get_current_fonta4(), 0);
-    oi_title = uiobj_add_ta(x, y, w, title, false, &v18, 1, 0, 0, 0, 0, 0, 0, MOO_KEY_UNKNOWN, uiobj_help_id);
+    oi_title = uiobj_add_ta(x, y, w, title, false, &v18, 1, 0, 0, 0, 0, 0, 0, MOO_KEY_UNKNOWN);
 
     if ((*selptr < 0) || (*selptr >= v6) || (*selptr < di)) {
         if ((di >= 0) && (di < v6)) {
@@ -2034,7 +2019,7 @@ int16_t uiobj_select_from_list1(int x, int y, int w, const char *title, char con
     return oi - 1;
 }
 
-int16_t uiobj_select_from_list2(int x, int y, int w, const char *title, char const * const *strtbl, int16_t *selptr, const bool *condtbl, int linenum, int upx, int upy, uint8_t *uplbx, int dnx, int dny, uint8_t *dnlbx, uint16_t subtype, uint8_t *sp0p, uint16_t sp0v, uint16_t sp1, uint16_t sp2, uint16_t sp3, int16_t helpid)
+int16_t uiobj_select_from_list2(int x, int y, int w, const char *title, char const * const *strtbl, int16_t *selptr, const bool *condtbl, int linenum, int upx, int upy, uint8_t *uplbx, int dnx, int dny, uint8_t *dnlbx, uint16_t subtype, uint8_t *sp0p, uint16_t sp0v, uint16_t sp1, uint16_t sp2, uint16_t sp3)
 {
     int h, dy, ty, linei = 0, itemi = 0, itemnum, itemoffs, foundi = 0;
     bool flag_done = false, flag_copy_buf = false, flag_found = false;
@@ -2083,7 +2068,7 @@ int16_t uiobj_select_from_list2(int x, int y, int w, const char *title, char con
     }
     s = &strtbl[itemoffs];
     for (itemi = itemoffs; (itemi < itemnum) && (linei < linenum); ++itemi, ++linei, ++s, ty += dy) {
-        uiobj_add_ta(x, ty, w, *s, (!condtbl) || condtbl[itemi], selptr, itemi, subtype, sp0p, sp0v, sp1, sp2, sp3, MOO_KEY_UNKNOWN, helpid);
+        uiobj_add_ta(x, ty, w, *s, (!condtbl) || condtbl[itemi], selptr, itemi, subtype, sp0p, sp0v, sp1, sp2, sp3, MOO_KEY_UNKNOWN);
     }
 
     if ((*selptr < 0) || (*selptr >= itemnum)) {
@@ -2095,12 +2080,12 @@ int16_t uiobj_select_from_list2(int x, int y, int w, const char *title, char con
     }
 
     lbxfont_select(lbxfont_get_current_fontnum(), lbxfont_get_current_fonta2(), fonta4, 0);
-    oi_title = uiobj_add_ta(x, y, w, title, false, &v18, 1, 0, 0, 0, 0, 0, 0, MOO_KEY_UNKNOWN, uiobj_help_id);
+    oi_title = uiobj_add_ta(x, y, w, title, false, &v18, 1, 0, 0, 0, 0, 0, 0, MOO_KEY_UNKNOWN);
 
     upvar = (itemoffs == 0) ? 1 : 0;
     dnvar = (itemi >= itemnum) ? 1 : 0;
-    oi_up = uiobj_add_t2(upx, upy, "", uplbx, &upvar, MOO_KEY_PAGEUP, -1);
-    oi_dn = uiobj_add_t2(dnx, dny, "", dnlbx, &dnvar, MOO_KEY_PAGEDOWN, -1);
+    oi_up = uiobj_add_t2(upx, upy, "", uplbx, &upvar, MOO_KEY_PAGEUP);
+    oi_dn = uiobj_add_t2(dnx, dny, "", dnlbx, &dnvar, MOO_KEY_PAGEDOWN);
 
     flag_done = false;
     curval = *selptr;
@@ -2180,14 +2165,14 @@ int16_t uiobj_select_from_list2(int x, int y, int w, const char *title, char con
             linei = 0;
             ty = y + dy;
             for (itemi = itemoffs; (itemi < itemnum) && (linei < linenum); ++itemi, ++linei, ++s, ty += dy) {
-                uiobj_add_ta(x, ty, w, *s, (!condtbl) || condtbl[itemi], selptr, itemi, subtype, sp0p, sp0v, sp1, sp2, sp3, MOO_KEY_UNKNOWN, helpid);
+                uiobj_add_ta(x, ty, w, *s, (!condtbl) || condtbl[itemi], selptr, itemi, subtype, sp0p, sp0v, sp1, sp2, sp3, MOO_KEY_UNKNOWN);
             }
             lbxfont_select(lbxfont_get_current_fontnum(), lbxfont_get_current_fonta2(), fonta4, 0);
-            oi_title = uiobj_add_ta(x, y, w, title, false, &v18, 1, 0, 0, 0, 0, 0, 0, MOO_KEY_UNKNOWN, uiobj_help_id);
+            oi_title = uiobj_add_ta(x, y, w, title, false, &v18, 1, 0, 0, 0, 0, 0, 0, MOO_KEY_UNKNOWN);
             upvar = (itemoffs == 0) ? 1 : 0;
             dnvar = (itemi >= itemnum) ? 1 : 0;
-            oi_up = uiobj_add_t2(upx, upy, "", uplbx, &upvar, MOO_KEY_PAGEUP, -1);
-            oi_dn = uiobj_add_t2(dnx, dny, "", dnlbx, &dnvar, MOO_KEY_PAGEDOWN, -1);
+            oi_up = uiobj_add_t2(upx, upy, "", uplbx, &upvar, MOO_KEY_PAGEUP);
+            oi_dn = uiobj_add_t2(dnx, dny, "", dnlbx, &dnvar, MOO_KEY_PAGEDOWN);
         }
         if (uiobj_hmm8 != 0) {
             int oi2;
@@ -2218,7 +2203,7 @@ int16_t uiobj_select_from_list2(int x, int y, int w, const char *title, char con
     return oi + itemoffs - 1;
 }
 
-bool uiobj_read_str(int x, int y, int w, char *buf, int buflen, uint8_t rcolor, bool alignr, uint16_t z1e, const uint8_t *ctbl, int16_t helpid)
+bool uiobj_read_str(int x, int y, int w, char *buf, int buflen, uint8_t rcolor, bool alignr, uint16_t z1e, const uint8_t *ctbl)
 {
     char strbuf[64];
     uint16_t fonth, v4 = 0, vc = 0, va;
@@ -2237,7 +2222,7 @@ bool uiobj_read_str(int x, int y, int w, char *buf, int buflen, uint8_t rcolor, 
     }
     uiobj_set_downcount(1);
     {
-        int16_t oi = uiobj_add_textinput(x, y, w, buf, buflen, rcolor, alignr, z1e, ctbl, MOO_KEY_UNKNOWN, helpid);
+        int16_t oi = uiobj_add_textinput(x, y, w, buf, buflen, rcolor, alignr, z1e, ctbl, MOO_KEY_UNKNOWN);
         uiobj_focus_oi = oi;
         p = &uiobj_tbl[oi];
     }

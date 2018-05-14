@@ -112,12 +112,12 @@ int ui_save_game(struct game_s *g)
             mookey_t key;
             lbxfont_select(0, (i == d.selected) ? 2 : 1, 0, 0);
             key = ui_qol_numeric_key_bindings ? (MOO_KEY_1 + i) : MOO_KEY_UNKNOWN;
-            oi_save[i] = uiobj_add_textinput(149, 35 + i * 18, 106, &(d.tbl_savename[i][0]), SAVE_NAME_LEN - 1, 1, false, 0, ctbl, key, -1);
+            oi_save[i] = uiobj_add_textinput(149, 35 + i * 18, 106, &(d.tbl_savename[i][0]), SAVE_NAME_LEN - 1, 1, false, 0, ctbl, key);
             uiobj_dec_y1(oi_save[i]);
         }
         oi_esc = uiobj_add_inputkey(MOO_KEY_ESCAPE);
-        oi_cancel = uiobj_add_mousearea(20 + xoff, 135 + yoff, 74 + xoff, 152 + yoff, MOO_KEY_ESCAPE, -1);
-        oi_ok = uiobj_add_mousearea(84 + xoff, 135 + yoff, 138 + xoff, 152 + yoff, MOO_KEY_SPACE, -1);
+        oi_cancel = uiobj_add_mousearea(20 + xoff, 135 + yoff, 74 + xoff, 152 + yoff, MOO_KEY_ESCAPE);
+        oi_ok = uiobj_add_mousearea(84 + xoff, 135 + yoff, 138 + xoff, 152 + yoff, MOO_KEY_SPACE);
         if (!flag_done) {
             save_game_draw_cb(&d);
             ui_draw_finish();

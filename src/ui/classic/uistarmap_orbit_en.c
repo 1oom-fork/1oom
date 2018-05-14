@@ -237,7 +237,7 @@ void ui_starmap_orbit_en(struct game_s *g, player_id_t active_player)
             /* uiobj_set_limits(STARMAP_LIMITS); */
             ui_starmap_fill_oi_tbls(&d);
             ui_starmap_fill_oi_tbl_stars(&d);
-            oi_scroll = uiobj_add_tb(6, 6, 2, 2, 108, 86, &scrollx, &scrolly, -1);
+            oi_scroll = uiobj_add_tb(6, 6, 2, 2, 108, 86, &scrollx, &scrolly);
             ui_starmap_fill_oi_ctrl(&d);
             ui_starmap_add_oi_bottom_buttons(&d);
             ui_draw_finish();

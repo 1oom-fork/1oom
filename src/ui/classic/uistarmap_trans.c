@@ -310,18 +310,18 @@ void ui_starmap_trans(struct game_s *g, player_id_t active_player)
             UIOBJ_CLEAR_LOCAL();
             /* uiobj_set_limits(STARMAP_LIMITS); */
             ui_starmap_fill_oi_tbl_stars(&d);
-            oi_cancel = uiobj_add_t0(227, 163, "", ui_data.gfx.starmap.reloc_bu_cancel, MOO_KEY_ESCAPE, -1);
+            oi_cancel = uiobj_add_t0(227, 163, "", ui_data.gfx.starmap.reloc_bu_cancel, MOO_KEY_ESCAPE);
             if ((d.tr.other) && (pt->owner != PLAYER_NONE)
               && (pt->within_frange[active_player] == 1)
               && BOOLVEC_IS1(pt->explored, active_player)
               && (pt->type >= g->eto[active_player].have_colony_for)
             ) {
-                oi_accept = uiobj_add_t0(271, 163, "", ui_data.gfx.starmap.reloc_bu_accept, MOO_KEY_SPACE, -1);
-                uiobj_add_slider(258, 124, 0, trans_max, 0, trans_max, 41, 8, &d.tr.num, MOO_KEY_UNKNOWN, -1);
-                oi_minus = uiobj_add_mousearea(252, 124, 256, 131, MOO_KEY_MINUS, -1);
-                oi_plus = uiobj_add_mousearea(301, 124, 305, 131, MOO_KEY_PLUS, -1);
+                oi_accept = uiobj_add_t0(271, 163, "", ui_data.gfx.starmap.reloc_bu_accept, MOO_KEY_SPACE);
+                uiobj_add_slider(258, 124, 0, trans_max, 0, trans_max, 41, 8, &d.tr.num, MOO_KEY_UNKNOWN);
+                oi_minus = uiobj_add_mousearea(252, 124, 256, 131, MOO_KEY_MINUS);
+                oi_plus = uiobj_add_mousearea(301, 124, 305, 131, MOO_KEY_PLUS);
             }
-            oi_scroll = uiobj_add_tb(6, 6, 2, 2, 108, 86, &scrollx, &scrolly, -1);
+            oi_scroll = uiobj_add_tb(6, 6, 2, 2, 108, 86, &scrollx, &scrolly);
             ui_starmap_fill_oi_ctrl(&d);
             ui_starmap_add_oi_bottom_buttons(&d);
             ui_draw_finish();

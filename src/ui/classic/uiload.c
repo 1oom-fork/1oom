@@ -90,8 +90,8 @@ int ui_load_game(void)
 
     uiobj_table_clear();
     oi_esc = uiobj_add_inputkey(MOO_KEY_ESCAPE);
-    oi_cancel = uiobj_add_mousearea(0x14 + xoff, 0x87 + yoff, 0x4a + xoff, 0x98 + yoff, MOO_KEY_LEFT, -1);
-    oi_ok =     uiobj_add_mousearea(0x54 + xoff, 0x87 + yoff, 0x8a + xoff, 0x98 + yoff, MOO_KEY_SPACE, -1);
+    oi_cancel = uiobj_add_mousearea(0x14 + xoff, 0x87 + yoff, 0x4a + xoff, 0x98 + yoff, MOO_KEY_LEFT);
+    oi_ok =     uiobj_add_mousearea(0x54 + xoff, 0x87 + yoff, 0x8a + xoff, 0x98 + yoff, MOO_KEY_SPACE);
     uiobj_set_focus(oi_ok);
 
     for (int i = 0; i < d.savenum; ++i) {
@@ -99,7 +99,7 @@ int ui_load_game(void)
         mookey_t key;
         y0 = 0x15 + yoff + d.tbl_savei[i] * 0x12;
         key = ui_qol_numeric_key_bindings ? (MOO_KEY_1 + i) : MOO_KEY_UNKNOWN;
-        oi_save[i] = uiobj_add_mousearea(0xc + xoff, y0, 0x92 + xoff, y0 + 0xe, key, -1);
+        oi_save[i] = uiobj_add_mousearea(0xc + xoff, y0, 0x92 + xoff, y0 + 0xe, key);
     }
 
     d.selected = 0;

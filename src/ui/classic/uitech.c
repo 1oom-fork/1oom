@@ -360,34 +360,34 @@ void ui_tech(struct game_s *g, player_id_t active_player)
             UIOBJ_CLEAR_LOCAL();
             if (d.num >= TECH_ON_SCREEN) {
                 if (d.pos > 0) {
-                    oi_up = uiobj_add_t0(157, 35, "", ui_data.gfx.screens.tech_but_up, MOO_KEY_COMMA, -1);
+                    oi_up = uiobj_add_t0(157, 35, "", ui_data.gfx.screens.tech_but_up, MOO_KEY_COMMA);
                 }
                 if ((d.pos + TECH_ON_SCREEN) < d.num) {
-                    oi_down = uiobj_add_t0(157, 141, "", ui_data.gfx.screens.tech_but_down, MOO_KEY_PERIOD, -1);
+                    oi_down = uiobj_add_t0(157, 141, "", ui_data.gfx.screens.tech_but_down, MOO_KEY_PERIOD);
                 }
             }
-            oi_ok = uiobj_add_t0(277, 181, "", ui_data.gfx.screens.tech_but_ok, MOO_KEY_SPACE, -1);
-            oi_tbl_field[0] = uiobj_add_mousearea(5, 4, 53, 15, (ui_qol_numeric_key_bindings ? MOO_KEY_1 : MOO_KEY_UNKNOWN), -1);
-            oi_tbl_field[1] = uiobj_add_mousearea(55, 4, 108, 15, (ui_qol_numeric_key_bindings ? MOO_KEY_2 : MOO_KEY_UNKNOWN), -1);
-            oi_tbl_field[2] = uiobj_add_mousearea(109, 4, 161, 16, (ui_qol_numeric_key_bindings ? MOO_KEY_3 : MOO_KEY_UNKNOWN), -1);
-            oi_tbl_field[3] = uiobj_add_mousearea(5, 19, 54, 31, (ui_qol_numeric_key_bindings ? MOO_KEY_4 : MOO_KEY_UNKNOWN), -1);
-            oi_tbl_field[4] = uiobj_add_mousearea(55, 19, 108, 31, (ui_qol_numeric_key_bindings ? MOO_KEY_5 : MOO_KEY_UNKNOWN), -1);
-            oi_tbl_field[5] = uiobj_add_mousearea(109, 19, 161, 31, (ui_qol_numeric_key_bindings ? MOO_KEY_6 : MOO_KEY_UNKNOWN), -1);
+            oi_ok = uiobj_add_t0(277, 181, "", ui_data.gfx.screens.tech_but_ok, MOO_KEY_SPACE);
+            oi_tbl_field[0] = uiobj_add_mousearea(5, 4, 53, 15, (ui_qol_numeric_key_bindings ? MOO_KEY_1 : MOO_KEY_UNKNOWN));
+            oi_tbl_field[1] = uiobj_add_mousearea(55, 4, 108, 15, (ui_qol_numeric_key_bindings ? MOO_KEY_2 : MOO_KEY_UNKNOWN));
+            oi_tbl_field[2] = uiobj_add_mousearea(109, 4, 161, 16, (ui_qol_numeric_key_bindings ? MOO_KEY_3 : MOO_KEY_UNKNOWN));
+            oi_tbl_field[3] = uiobj_add_mousearea(5, 19, 54, 31, (ui_qol_numeric_key_bindings ? MOO_KEY_4 : MOO_KEY_UNKNOWN));
+            oi_tbl_field[4] = uiobj_add_mousearea(55, 19, 108, 31, (ui_qol_numeric_key_bindings ? MOO_KEY_5 : MOO_KEY_UNKNOWN));
+            oi_tbl_field[5] = uiobj_add_mousearea(109, 19, 161, 31, (ui_qol_numeric_key_bindings ? MOO_KEY_6 : MOO_KEY_UNKNOWN));
             oi_equals = uiobj_add_inputkey(MOO_KEY_EQUALS);
             for (int i = 0; i < TECH_FIELD_NUM; ++i) {
                 int y;
                 y = i * 21 + 22;
-                oi_tbl_hmm15[i] = uiobj_add_mousearea(287, y - 1, 295, y + 7, MOO_KEY_UNKNOWN, -1);
-                oi_tbl_lock[i] = uiobj_add_mousearea(168, y, 218, y + 8, MOO_KEY_UNKNOWN, -1);
+                oi_tbl_hmm15[i] = uiobj_add_mousearea(287, y - 1, 295, y + 7, MOO_KEY_UNKNOWN);
+                oi_tbl_lock[i] = uiobj_add_mousearea(168, y, 218, y + 8, MOO_KEY_UNKNOWN);
                 if (!t->slider_lock[i]) {
-                    oi_tbl_minus[i] = uiobj_add_mousearea(223, y, 226, y + 8, MOO_KEY_UNKNOWN, -1);
-                    oi_tbl_plus[i] = uiobj_add_mousearea(279, y, 283, y + 8, MOO_KEY_UNKNOWN, -1);
-                    d.oi_tbl_slider[i] = uiobj_add_slider(227, y, 0, 100, 0, 100, 50, 9, &t->slider[i], MOO_KEY_UNKNOWN, -1);
+                    oi_tbl_minus[i] = uiobj_add_mousearea(223, y, 226, y + 8, MOO_KEY_UNKNOWN);
+                    oi_tbl_plus[i] = uiobj_add_mousearea(279, y, 283, y + 8, MOO_KEY_UNKNOWN);
+                    d.oi_tbl_slider[i] = uiobj_add_slider(227, y, 0, 100, 0, 100, 50, 9, &t->slider[i], MOO_KEY_UNKNOWN);
                 }
             }
             for (int i = 0; i < TECH_ON_SCREEN; ++i) {
                 if ((i + d.pos) < d.num) {
-                    oi_tbl_techname[i] = uiobj_add_mousearea(9, i * 7 + 37, 160, i * 7 + 43, MOO_KEY_UNKNOWN, -1);
+                    oi_tbl_techname[i] = uiobj_add_mousearea(9, i * 7 + 37, 160, i * 7 + 43, MOO_KEY_UNKNOWN);
                 }
             }
             ui_draw_finish();

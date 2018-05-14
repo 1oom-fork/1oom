@@ -197,8 +197,8 @@ bool ui_bomb_ask(struct game_s *g, int pi, uint8_t planet_i, int pop_inbound)
     bomb_load_data(&d);
     uiobj_set_callback_and_delay(bomb_ask_draw_cb, &d, 4);
     uiobj_table_clear();
-    oi_n = uiobj_add_t0(227, 164, "", d.gfx_bombbutc, MOO_KEY_ESCAPE, -1);
-    oi_y = uiobj_add_t0(271, 164, "", d.gfx_bombbutt, MOO_KEY_b, -1);
+    oi_n = uiobj_add_t0(227, 164, "", d.gfx_bombbutc, MOO_KEY_ESCAPE);
+    oi_y = uiobj_add_t0(271, 164, "", d.gfx_bombbutt, MOO_KEY_b);
     ui_sound_play_music(0xd);
     while (!flag_done) {
         int16_t oi;
@@ -239,7 +239,7 @@ void ui_bomb_show(struct game_s *g, int pi, int attacker_i, int owner_i, uint8_t
     bomb_load_data(&d);
     uiobj_set_callback_and_delay(bomb_show_draw_cb, &d, 4);
     uiobj_table_clear();
-    uiobj_add_t0(227, 164, "", d.gfx_contbutt, MOO_KEY_c, -1);
+    uiobj_add_t0(227, 164, "", d.gfx_contbutt, MOO_KEY_c);
     if (g->planet[planet_i].owner == PLAYER_NONE) {
         ui_sound_play_music(0xe);
     } else if (play_music) {

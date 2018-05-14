@@ -116,7 +116,7 @@ void ui_copyprotection_check(struct game_s *g)
             x = (si / 4) * 0x48 + 0x75;
             y = (si % 4) * 0x13 + 0x3e;
             lbxfont_select(0, 0, 0, 0);
-            oi_ship_name[si] = uiobj_add_t0(x, y, game_str_tbl_copyprotection_ship_names[d.ship_name_id[si]], d.gfx2, MOO_KEY_UNKNOWN, -1);
+            oi_ship_name[si] = uiobj_add_t0(x, y, game_str_tbl_copyprotection_ship_names[d.ship_name_id[si]], d.gfx2, MOO_KEY_UNKNOWN);
         }
         flag_done = false;
         while (!flag_done) {

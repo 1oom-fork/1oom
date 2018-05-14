@@ -68,7 +68,7 @@ void ui_play_intro(void)
     uiobj_table_clear();
     uiobj_set_skip_delay(true);
 
-    oi_skip = uiobj_add_mousearea(UI_SCREEN_LIMITS, MOO_KEY_UNKNOWN, -1);
+    oi_skip = uiobj_add_mousearea(UI_SCREEN_LIMITS, MOO_KEY_UNKNOWN);
     flag_skip = 0;
     uiobj_set_downcount(2);
 

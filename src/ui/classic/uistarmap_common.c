@@ -606,14 +606,14 @@ void ui_starmap_handle_oi_ctrl(struct starmap_data_s *d, int16_t oi)
 
 void ui_starmap_add_oi_bottom_buttons(struct starmap_data_s *d)
 {
-    d->oi_gameopts = uiobj_add_mousearea(5, 181, 36, 194, MOO_KEY_g, -1);
-    d->oi_design = uiobj_add_mousearea(40, 181, 75, 194, MOO_KEY_d, -1);
-    d->oi_fleet = uiobj_add_mousearea(79, 181, 111, 194, MOO_KEY_f, -1);
-    d->oi_map = uiobj_add_mousearea(115, 181, 139, 194, MOO_KEY_m, -1);
-    d->oi_races = uiobj_add_mousearea(143, 181, 176, 194, MOO_KEY_r, -1);
-    d->oi_planets = uiobj_add_mousearea(180, 181, 221, 194, MOO_KEY_p, -1);
-    d->oi_tech = uiobj_add_mousearea(225, 181, 254, 194, MOO_KEY_t, -1);
-    d->oi_next_turn = uiobj_add_mousearea(258, 181, 314, 194, MOO_KEY_n, -1);
+    d->oi_gameopts = uiobj_add_mousearea(5, 181, 36, 194, MOO_KEY_g);
+    d->oi_design = uiobj_add_mousearea(40, 181, 75, 194, MOO_KEY_d);
+    d->oi_fleet = uiobj_add_mousearea(79, 181, 111, 194, MOO_KEY_f);
+    d->oi_map = uiobj_add_mousearea(115, 181, 139, 194, MOO_KEY_m);
+    d->oi_races = uiobj_add_mousearea(143, 181, 176, 194, MOO_KEY_r);
+    d->oi_planets = uiobj_add_mousearea(180, 181, 221, 194, MOO_KEY_p);
+    d->oi_tech = uiobj_add_mousearea(225, 181, 254, 194, MOO_KEY_t);
+    d->oi_next_turn = uiobj_add_mousearea(258, 181, 314, 194, MOO_KEY_n);
 }
 
 void ui_starmap_fill_oi_tbls(struct starmap_data_s *d)
@@ -647,7 +647,7 @@ void ui_starmap_fill_oi_tbls(struct starmap_data_s *d)
             x0 = (p->x - x) * 2 + 26;
             y0 = (p->y - y) * 2 + 8;
             for (int j = 0; j < numorbits; ++j, y0 += 6) {
-                d->oi_tbl_pl_stars[tblpl[j]][i] = uiobj_add_mousearea_limited(x0, y0, x0 + 8, y0 + 4, MOO_KEY_UNKNOWN, -1);
+                d->oi_tbl_pl_stars[tblpl[j]][i] = uiobj_add_mousearea_limited(x0, y0, x0 + 8, y0 + 4, MOO_KEY_UNKNOWN);
             }
         }
     }
@@ -656,7 +656,7 @@ void ui_starmap_fill_oi_tbls(struct starmap_data_s *d)
         if (BOOLVEC_IS1(r->visible, d->api)) {
             int x0 = (r->x - x) * 2 + 8;
             int y0 = (r->y - y) * 2 + 8;
-            d->oi_tbl_enroute[i] = uiobj_add_mousearea_limited(x0, y0, x0 + 8, y0 + 4, MOO_KEY_UNKNOWN, -1);
+            d->oi_tbl_enroute[i] = uiobj_add_mousearea_limited(x0, y0, x0 + 8, y0 + 4, MOO_KEY_UNKNOWN);
         }
     }
     for (int i = 0; i < g->transport_num; ++i) {
@@ -664,7 +664,7 @@ void ui_starmap_fill_oi_tbls(struct starmap_data_s *d)
         if (BOOLVEC_IS1(r->visible, d->api)) {
             int x0 = (r->x - x) * 2 + 8;
             int y0 = (r->y - y) * 2 + 8;
-            d->oi_tbl_transport[i] = uiobj_add_mousearea_limited(x0, y0, x0 + 8, y0 + 4, MOO_KEY_UNKNOWN, -1);
+            d->oi_tbl_transport[i] = uiobj_add_mousearea_limited(x0, y0, x0 + 8, y0 + 4, MOO_KEY_UNKNOWN);
         }
     }
 }
@@ -680,7 +680,7 @@ void ui_starmap_fill_oi_tbl_stars(struct starmap_data_s *d)
         int x0, y0;
         x0 = (p->x - x) * 2 + 8;
         y0 = (p->y - y) * 2 + 8;
-        d->oi_tbl_stars[i] = uiobj_add_mousearea_limited(x0, y0, x0 + 13, y0 + 13, MOO_KEY_UNKNOWN, -1);
+        d->oi_tbl_stars[i] = uiobj_add_mousearea_limited(x0, y0, x0 + 13, y0 + 13, MOO_KEY_UNKNOWN);
     }
 }
 
@@ -696,7 +696,7 @@ void ui_starmap_fill_oi_tbl_stars_own(struct starmap_data_s *d, player_id_t owne
             int x0, y0;
             x0 = (p->x - x) * 2 + 8;
             y0 = (p->y - y) * 2 + 8;
-            d->oi_tbl_stars[i] = uiobj_add_mousearea_limited(x0, y0, x0 + 13, y0 + 13, MOO_KEY_UNKNOWN, -1);
+            d->oi_tbl_stars[i] = uiobj_add_mousearea_limited(x0, y0, x0 + 13, y0 + 13, MOO_KEY_UNKNOWN);
         }
     }
 }
