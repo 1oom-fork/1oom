@@ -114,7 +114,17 @@ char *ui_input_line(const char *prompt)
     line[sizeof(line) - 1] = 0;
     fputs(prompt, stdout);
     fflush(stdout);
-    return fgets(line, sizeof(line) - 1, stdin);
+    if (fgets(line, sizeof(line) - 1, stdin)) {
+        char *p = line;
+        char c;
+        while (((c = *p) != 0) && (c != '\n') && (c != '\r')) {
+            ++p;
+        }
+        *p = 0;
+        return line;
+    } else {
+        return NULL;
+    }
 }
 #endif
 
