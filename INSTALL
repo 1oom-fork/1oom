@@ -59,18 +59,16 @@ Actual install step is not needed:
 3. Cross-compiling
 ===================
 
-Currently pkg-config is not supported.
-
 Something like this may work:
-    ./configure --host=i686-unknown-mingw32
+    ./configure --host=i686-w64-mingw32.static
 
 If the libraries are not found, try something like:
-    ./configure --host=i686-unknown-mingw32 \
-        SDL1_CFLAGS="`mingw32-sdl-config --cflags`" \
-        SDL1_LIBS="`mingw32-sdl-config --libs`" \
-        SDL1MIXER_LIBS="`mingw32-pkg-config --libs SDL_mixer`" \
-        SDL2_CFLAGS="`mingw32-sdl2-config --cflags`" \
-        SDL2_LIBS="`mingw32-sdl2-config --libs`" \
-        SDL2MIXER_LIBS="`mingw32-pkg-config --libs SDL2_mixer`"
+    ./configure --host=i686-w64-mingw32.static
+        SDL1_CFLAGS="`i686-w64-mingw32.static-sdl-config --cflags`" \
+        SDL1_LIBS="`i686-w64-mingw32.static-sdl-config --libs`" \
+        SDL1MIXER_LIBS="`i686-w64-mingw32.static-pkg-config --libs SDL_mixer`" \
+        SDL2_CFLAGS="`i686-w64-mingw32.static-sdl2-config --cflags`" \
+        SDL2_LIBS="`i686-w64-mingw32.static-sdl2-config --libs`" \
+        SDL2MIXER_LIBS="`i686-w64-mingw32.static-pkg-config --libs SDL2_mixer`"
 
 Good luck!
