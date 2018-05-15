@@ -77,6 +77,10 @@ if test x"$enable_modebug" = "xyes"; then
     AC_DEFINE(FEATURE_MODEBUG,,[Add debugging options.])
 fi
 
+dnl - check for pkg-config
+dnl The failing result is "false" for $pkg_config --exists foo to fail.
+AC_CHECK_TOOLS(pkg_config, pkg-config, false)
+
 dnl - readline
 dnl Check whether we have GNU readline.
 dnl The user can force us to not use it with `--without-readline'.
@@ -148,16 +152,20 @@ if test x"$enable_sdl1hw" != "xno"; then
 
     dnl First check for user supplied libs/cflags.
     dnl In none are given, try sdl-config.
-    dnl If no sdl-config was found we assume that there are no extra CFLAGS
+    dnl If no sdl-config was found, try pkg-config.
+    dnl If this fails, we assume that there are no extra CFLAGS
     dnl and that libSDL can be found in the default lib search path.
     if test x"$SDL1_LIBS" != "x" -o x"$SDL1_CFLAGS" != "x"; then
         HW_SDL1_CFLAGS="$CFLAGS $SDL1_CFLAGS"
         HW_SDL1_LIBS="$SDL1_LIBS"
-    elif test x"$sdl_config" = "xno"; then
-        HW_SDL1_LIBS="-lSDL"
-    else
+    elif test x"$sdl_config" != "xno"; then
         HW_SDL1_CFLAGS="$CFLAGS `$sdl_config --cflags`"
         HW_SDL1_LIBS="`$sdl_config --libs`"
+    elif $pkg_config --exists sdl; then
+        HW_SDL1_CFLAGS="$CFLAGS `$pkg_config --cflags sdl`"
+        HW_SDL1_LIBS="`$pkg_config --libs sdl`"
+    else
+        HW_SDL1_LIBS="-lSDL"
     fi
 
     CFLAGS="$HW_SDL1_CFLAGS"
@@ -183,6 +191,8 @@ if test x"$enable_sdl1hw" != "xno"; then
         old_sdl_libs="$HW_SDL1_LIBS"
         if test x"$SDL1MIXER_LIBS" != "x"; then
             HW_SDL1_LIBS="$HW_SDL1_LIBS $SDL1MIXER_LIBS"
+        elif $pkg_config --exists SDL_mixer; then
+            HW_SDL1_LIBS="`$pkg_config --libs SDL_mixer`"
         else
             HW_SDL1_LIBS="$HW_SDL1_LIBS -lSDL_mixer"
         fi
@@ -300,16 +310,20 @@ if test x"$enable_sdl2hw" != "xno"; then
 
     dnl First check for user supplied libs/cflags.
     dnl In none are given, try sdl2-config.
-    dnl If no sdl2-config was found we assume that there are no extra CFLAGS
+    dnl If no sdl2-config was found, try pkg-config.
+    dnl If this fails, we assume that there are no extra CFLAGS
     dnl and that libSDL2 can be found in the default lib search path.
     if test x"$SDL2_LIBS" != "x" -o x"$SDL2_CFLAGS" != "x"; then
         HW_SDL2_CFLAGS="$CFLAGS $SDL2_CFLAGS"
         HW_SDL2_LIBS="$SDL2_LIBS"
-    elif test x"$sdl2_config" = "xno"; then
-        HW_SDL2_LIBS="-lSDL2"
-    else
+    elif test x"$sdl2_config" != "xno"; then
         HW_SDL2_CFLAGS="$CFLAGS `$sdl2_config --cflags`"
         HW_SDL2_LIBS="`$sdl2_config --libs`"
+    elif $pkg_config --exists sdl2; then
+        HW_SDL2_CFLAGS="$CFLAGS `$pkg_config --cflags sdl2`"
+        HW_SDL2_LIBS="`$pkg_config --libs sdl2`"
+    else
+        HW_SDL2_LIBS="-lSDL2"
     fi
 
     CFLAGS="$HW_SDL2_CFLAGS"
@@ -335,6 +349,8 @@ if test x"$enable_sdl2hw" != "xno"; then
         old_sdl_libs="$HW_SDL2_LIBS"
         if test x"$SDL2MIXER_LIBS" != "x"; then
             HW_SDL2_LIBS="$HW_SDL2_LIBS $SDL2MIXER_LIBS"
+        elif $pkg_config --exists SDL2_mixer; then
+            HW_SDL2_LIBS="`$pkg_config --libs SDL2_mixer`"
         else
             HW_SDL2_LIBS="$HW_SDL2_LIBS -lSDL2_mixer"
         fi
