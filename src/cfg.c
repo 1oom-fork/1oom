@@ -136,8 +136,12 @@ static int cfg_parse_line(char *line, int lnum)
 char *cfg_cfgname(void)
 {
     const char *path = os_get_path_user();
+    char namebuf[128];
     char *s;
-    s = util_concat(path, FSDEV_DIR_SEP_STR, "1oom_config_", idstr_main, "_", idstr_ui, "_", idstr_hw, ".txt", NULL);
+    if (!os_get_fname_cfg(namebuf, idstr_main, idstr_ui, idstr_hw)) {
+        sprintf(namebuf, "1oom_config_%s_%s_%s.txt", idstr_main, idstr_ui, idstr_hw);
+    }
+    s = util_concat(path, FSDEV_DIR_SEP_STR, namebuf, NULL);
     return s;
 }
 
