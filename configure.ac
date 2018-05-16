@@ -405,6 +405,7 @@ if test x"$is_win32" = "xyes"; then
     OS_SRC_DIR="\$(top_srcdir)/src/os/win32"
     OS_LIBS="$OS_DIR/libos.a"
     OS_INCLUDES="-I$OS_SRC_DIR"
+    BINDIST_SCRIPT="\$(top_srcdir)/make-bindist_win32.sh"
     AM_CONDITIONAL(COMPILE_UNIX, false)
     AM_CONDITIONAL(COMPILE_WIN32, true)
 else
@@ -412,6 +413,7 @@ else
     OS_SRC_DIR="\$(top_srcdir)/src/os/unix"
     OS_LIBS="$OS_DIR/libos.a"
     OS_INCLUDES="-I$OS_SRC_DIR"
+    BINDIST_SCRIPT="\$(top_srcdir)/make-bindist_install.sh"
     AM_CONDITIONAL(COMPILE_UNIX, true)
     AM_CONDITIONAL(COMPILE_WIN32, false)
 fi
@@ -474,6 +476,7 @@ AC_SUBST(OS_INCLUDES)
 AC_SUBST(OS_LIBS)
 AC_SUBST(OS_DIR)
 AC_SUBST(OS_SRC_DIR)
+AC_SUBST(BINDIST_SCRIPT)
 AC_CONFIG_HEADERS([src/config.h])
 AC_CONFIG_FILES([Makefile
                  doc/Makefile
