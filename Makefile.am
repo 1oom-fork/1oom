@@ -1,10 +1,8 @@
 SUBDIRS = doc src
 
-if COMPILE_WIN32
 bindist:
-	$(SHELL) $(top_srcdir)/make-bindist_win32.sh $(STRIP) $(top_srcdir) nozip
+	$(SHELL) @BINDIST_SCRIPT@ $(STRIP) $(top_srcdir) nozip
 bindistzip:
-	$(SHELL) $(top_srcdir)/make-bindist_win32.sh $(STRIP) $(top_srcdir) zip
-endif
+	$(SHELL) @BINDIST_SCRIPT@ $(STRIP) $(top_srcdir) zip
 
 EXTRA_DIST = AUTHORS COPYING HACKING INSTALL NEWS PHILOSOPHY README .gitignore

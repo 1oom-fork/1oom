@@ -10,8 +10,6 @@ ZIPKIND=$3
 
 EXECUTABLES="1oom_classic_sdl1 1oom_classic_sdl2 1oom_cmdline 1oom_gfxconv 1oom_lbxview_sdl1 1oom_lbxview_sdl2 1oom_pbxmake 1oom_saveconv"
 
-BINDISTDIR=bindisttemp
-
 for i in $EXECUTABLES
 do
     if [ ! -e src/$i.exe ]
@@ -29,23 +27,25 @@ else
 fi
 
 PACKAGESTR=1oom-$VERSIONSTR-win32
+BINDISTDIR=$PACKAGESTR
 ZIPNAME=$PACKAGESTR.zip
 
 mkdir $BINDISTDIR
+mkdir $BINDISTDIR/doc
 
-echo $PACKAGESTR > $BINDISTDIR/version.txt
+echo $PACKAGESTR > $BINDISTDIR/1version.txt
 
 for i in $EXECUTABLES
 do
-  $STRIP src/$i.exe
-  cp src/$i.exe $BINDISTDIR
+    $STRIP src/$i.exe
+    cp src/$i.exe $BINDISTDIR
 done
 
-cp $TOPSRCDIR/doc/*.txt $BINDISTDIR
-cp $TOPSRCDIR/README $BINDISTDIR/README.txt
-cp $TOPSRCDIR/COPYING $BINDISTDIR/COPYING.txt
+cp $TOPSRCDIR/doc/*.txt $BINDISTDIR/doc
+cp $TOPSRCDIR/README $BINDISTDIR/1README.txt
+cp $TOPSRCDIR/COPYING $BINDISTDIR/1COPYING.txt
 
-unix2dos -q $BINDISTDIR/*.txt
+unix2dos -q $BINDISTDIR/*.txt $BINDISTDIR/doc/*.txt
 
 if [ -e extrabindist_common ]
     then
@@ -57,7 +57,7 @@ if [ -e extrabindist_win32 ]; then
 fi
 
 if test x"$ZIPKIND" = "xzip"; then
-    zip -9 -j -q $ZIPNAME $BINDISTDIR/* || die
+    zip -r -9 -q $ZIPNAME $BINDISTDIR || die
     echo zip $ZIPNAME created
     rm -f -r $BINDISTDIR
 else
