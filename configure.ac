@@ -485,18 +485,21 @@ dnl - setup the system-specific object files
 if test x"$is_win32" = "xyes"; then
     OS_DIR="\$(top_builddir)/src/os/win32"
     OS_SRC_DIR="\$(top_srcdir)/src/os/win32"
+    BINDIST_SCRIPT="\$(top_srcdir)/make-bindist_win32.sh"
     AM_CONDITIONAL(COMPILE_UNIX, false)
     AM_CONDITIONAL(COMPILE_WIN32, true)
     AM_CONDITIONAL(COMPILE_MSDOS, false)
 elif test x"$is_msdos" = "xyes"; then
     OS_DIR="\$(top_builddir)/src/os/msdos"
     OS_SRC_DIR="\$(top_srcdir)/src/os/msdos"
+    BINDIST_SCRIPT="\$(top_srcdir)/make-bindist_msdos.sh"
     AM_CONDITIONAL(COMPILE_UNIX, false)
     AM_CONDITIONAL(COMPILE_WIN32, false)
     AM_CONDITIONAL(COMPILE_MSDOS, true)
 else
     OS_DIR="\$(top_builddir)/src/os/unix"
     OS_SRC_DIR="\$(top_srcdir)/src/os/unix"
+    BINDIST_SCRIPT="\$(top_srcdir)/make-bindist_install.sh"
     AM_CONDITIONAL(COMPILE_UNIX, true)
     AM_CONDITIONAL(COMPILE_WIN32, false)
     AM_CONDITIONAL(COMPILE_MSDOS, false)
@@ -579,6 +582,7 @@ AC_SUBST(OS_INCLUDES)
 AC_SUBST(OS_LIBS)
 AC_SUBST(OS_DIR)
 AC_SUBST(OS_SRC_DIR)
+AC_SUBST(BINDIST_SCRIPT)
 AC_CONFIG_HEADERS([src/config.h])
 AC_CONFIG_FILES([Makefile
                  doc/Makefile
