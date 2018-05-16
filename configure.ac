@@ -309,6 +309,7 @@ if test x"$enable_uiclassic" != "xno"; then
     fi
 else
     AM_CONDITIONAL(COMPILE_UICLASSIC, false)
+    AM_CONDITIONAL(COMPILE_UICLASSIC_SDL1, false)
 fi
 
 if test x"$enable_tools" != "xno"; then
@@ -320,6 +321,7 @@ if test x"$enable_tools" != "xno"; then
     fi
 else
     AM_CONDITIONAL(COMPILE_TOOLS, false)
+    AM_CONDITIONAL(COMPILE_TOOLS_SDL1, false)
 fi
 
 if test x"$enable_uiclassic" != "xno" -a x"$have_classic_hw" != "xyes"; then
