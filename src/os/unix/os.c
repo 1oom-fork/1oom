@@ -107,3 +107,8 @@ void os_set_path_user(const char *path)
     }
     user_path = lib_stralloc(path);
 }
+
+const char *os_get_fname_save(char *buf, int savei/*1..9*/)
+{
+    return NULL;
+}
