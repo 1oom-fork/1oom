@@ -139,6 +139,7 @@ fi
 dnl - SDL1
 dnl Check and setup SDL 1.2 compilation.
 
+AM_CONDITIONAL(COMPILE_HW_SDL, false)
 AM_CONDITIONAL(COMPILE_HW_SDL1, false)
 HW_SDL1_CFLAGS=
 HW_SDL1_LIBS=
@@ -183,6 +184,7 @@ if test x"$enable_sdl1hw" != "xno"; then
     else
         AC_DEFINE(USE_SDL1HW,,[Enable SDL1 HW support.])
         AM_CONDITIONAL(COMPILE_HW_SDL1, true)
+        AM_CONDITIONAL(COMPILE_HW_SDL, true)
         have_sdl1=yes
 
         dnl check for SDL_mixer
@@ -341,6 +343,7 @@ if test x"$enable_sdl2hw" != "xno"; then
     else
         AC_DEFINE(USE_SDL2HW,,[Enable SDL2 HW support.])
         AM_CONDITIONAL(COMPILE_HW_SDL2, true)
+        AM_CONDITIONAL(COMPILE_HW_SDL, true)
         have_sdl2=yes
 
         dnl check for SDL2_mixer
