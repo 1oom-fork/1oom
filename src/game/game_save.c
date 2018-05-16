@@ -858,7 +858,9 @@ int game_save_get_slot_fname(char *buf, int buflen, int i)
     const char *path = os_get_path_user();
     char namebuf[16];
     int res;
-    sprintf(namebuf, "1oom_save%i.bin", i + 1);
+    if (!os_get_fname_save(namebuf, i + 1)) {
+        sprintf(namebuf, "1oom_save%i.bin", i + 1);
+    }
     res = util_concat_buf(buf, buflen, path, FSDEV_DIR_SEP_STR, namebuf, NULL);
     if (res < 0) {
         log_error("Save: BUG: save name buffer too small by %i bytes\n", -res);
