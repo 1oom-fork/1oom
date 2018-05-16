@@ -31,6 +31,9 @@ static int num_data_paths = 0;
 
 static int os_make_path(const char *path)
 {
+    if ((path == NULL) || ((path[0] == '.') && (path[1] == '\0'))) {
+        return 0;
+    }
     if (access(path, F_OK)) {
         return mkdir(path, 0700);
     }
@@ -150,7 +153,7 @@ int os_make_path_for(const char *filename)
     int res = 0;
     char *path;
     util_fname_split(filename, &path, NULL);
-    if ((path != NULL) && (path[0] != '.') && (path[1] != '\0')) {
+    if (path != NULL) {
         res = os_make_path(path);
         lib_free(path);
     }
