@@ -108,6 +108,11 @@ int os_make_path_for(const char *filename)
     return res;
 }
 
+const char *os_get_fname_save(char *buf, int savei/*1..9*/)
+{
+    return NULL;
+}
+
 uint32_t os_get_time_us(void)
 {
     return GetTickCount() * 1000;
