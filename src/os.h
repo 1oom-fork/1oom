@@ -25,6 +25,9 @@ extern void os_set_path_user(const char *path);
 extern int os_make_path_user(void);
 extern int os_make_path_for(const char *filename);
 
+extern const char *os_get_fname_save(char *buf, int savei/*1..9*/);
+extern const char *os_get_fname_cfg(char *buf, const char *gamestr, const char *uistr, const char *hwstr);
+
 extern uint32_t os_get_time_us(void);
 
 #endif
