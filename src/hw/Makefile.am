@@ -1,5 +1,5 @@
 SUBDIRS = nop
-if COMPILE_HW_SDL1
+if COMPILE_HW_SDL
 SUBDIRS += sdl
 endif
 
