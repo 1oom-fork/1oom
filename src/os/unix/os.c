@@ -4,7 +4,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
-#include <sys/time.h>
 #include <sys/types.h>
 #include <unistd.h>
 
@@ -177,11 +176,4 @@ const char *os_get_fname_log(char *buf)
         return buf;
     }
     return "1oom_log.txt";
-}
-
-uint32_t os_get_time_us(void)
-{
-    struct timeval tv;
-    gettimeofday(&tv, NULL);
-    return (uint32_t)(tv.tv_usec + tv.tv_sec * 1000000);
 }
