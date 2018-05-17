@@ -516,7 +516,7 @@ static void uiobj_handle_t6_slider_input(uiobj_t *p)
 {
     /* p->type == 6 */
     uint16_t sliderval, slideroff, di;
-    di = mouse_x + uiobj_mouseoff;
+    di = moouse_x + uiobj_mouseoff;
     slideroff = ((p->t6.vmax - p->t6.vmin) * (di - p->x0)) / (p->x1 - p->x0);
     if (p->x1 <= di) {
         sliderval = p->t6.vmax;
@@ -677,8 +677,8 @@ static void uiobj_handle_hmm2(int i, uint16_t a2)
             break;
         case 0xb:
             if (a2 == 1) {
-                *p->tb.xptr = (mouse_x - p->x0) / p->tb.xdiv;
-                *p->tb.yptr = (mouse_y - p->y0) / p->tb.ydiv;
+                *p->tb.xptr = (moouse_x - p->x0) / p->tb.xdiv;
+                *p->tb.yptr = (moouse_y - p->y0) / p->tb.ydiv;
             }
             break;
         case 6:
@@ -848,7 +848,7 @@ static int16_t uiobj_kbd_dir_key_dy(int diry)
         p = &uiobj_tbl[oi];
         mouse_stored_x = smidx(p);
         mouse_stored_y = smidy(p);
-        if ((mouse_x != mouse_stored_x) || (mouse_y != mouse_stored_y)) {
+        if ((moouse_x != mouse_stored_x) || (moouse_y != mouse_stored_y)) {
             ui_cursor_update_gfx_i(mouse_stored_x, mouse_stored_y);
             uiobj_mouseoff = ui_cursor_mouseoff;
             mouse_stored_x -= uiobj_mouseoff;
@@ -1060,8 +1060,8 @@ static int16_t uiobj_kbd_dir_key(int dirx, int diry)
         int16_t oi, oi2;
         uiobj_t *p;
         if (1/*mouse_initialized*/) {
-            mx = mouse_x;
-            my = mouse_y;
+            mx = moouse_x;
+            my = moouse_y;
         }  else {
             mx = mouse_stored_x;
             my = mouse_stored_y;
@@ -1295,8 +1295,8 @@ static void uiobj_cursor_redraw_hmm2(int16_t oi, int mx, int my)
             uiobj_hmm1_oi = oi;
             uiobj_handle_hmm2(oi, 1);
             if (p->type == 4) {
-                mx = mouse_x;
-                my = mouse_y;
+                mx = moouse_x;
+                my = moouse_y;
             }
             ui_cursor_store_bg0(mx, my);
             ui_cursor_draw0(mx, my);
@@ -1375,7 +1375,7 @@ static int16_t uiobj_handle_input_sub0(void)
     /* FIXME this an unreadable goto mess */
     int16_t oi = 0;
     uiobj_t *p, *q;
-    int mx = mouse_x, my = mouse_y, mb;
+    int mx = moouse_x, my = moouse_y, mb;
     uiobj_hmm1_oi = -1;
     uiobj_hmm2_oi = 0;
     uiobj_mouseoff = ui_cursor_mouseoff;
@@ -1555,8 +1555,8 @@ static int16_t uiobj_handle_input_sub0(void)
         }
         /*loc_13bff*/
         while (mouse_buttons != 0) {
-            mx = mouse_x;
-            my = mouse_y;
+            mx = moouse_x;
+            my = moouse_y;
             uiobj_mouseoff = ui_cursor_mouseoff;
             oi = uiobj_find_obj_at_cursor();
             if (oi == 0) {
@@ -1730,8 +1730,8 @@ int16_t uiobj_handle_input_cond(void)
 void uiobj_finish_frame(void)
 {
     int mx, my;
-    mx = mouse_x;
-    my = mouse_y;
+    mx = moouse_x;
+    my = moouse_y;
     uiobj_handle_hmm1();
     ui_cursor_update_gfx_i(mx, my);
     ui_cursor_store_bg1(mx, my);
@@ -1848,7 +1848,7 @@ void uiobj_set_focus(int16_t uiobji)
 
 int16_t uiobj_find_obj_at_cursor(void)
 {
-    int x = mouse_x, y = mouse_y;
+    int x = moouse_x, y = moouse_y;
     ui_cursor_update_gfx_i(x, y);
     uiobj_mouseoff = ui_cursor_mouseoff;
     for (int i = 1; i < uiobj_table_num; ++i) {
@@ -1864,7 +1864,7 @@ int16_t uiobj_find_obj_at_cursor(void)
 int16_t uiobj_at_cursor(void)
 {
     uiobj_t *p;
-    int i, x = mouse_x, y = mouse_y;
+    int i, x = moouse_x, y = moouse_y;
     ui_cursor_update_gfx_i(x, y);
     uiobj_mouseoff = ui_cursor_mouseoff;
     i = uiobj_find_obj_at_cursor();
@@ -1979,7 +1979,7 @@ int16_t uiobj_add_mousearea_limited(uint16_t x0, uint16_t y0, uint16_t x1, uint1
     return uiobj_add_mousearea(x0, y0, x1, y1, key);
 }
 
-int16_t uiobj_add_inputkey(mookey_t key)
+int16_t uiobj_add_inputkey(uint32_t key)
 {
     uiobj_t *p = &uiobj_tbl[uiobj_table_num];
     p->x0 = UIOBJ_OFFSCREEN;

@@ -20,6 +20,8 @@ The configuration options:
                             (do not build 1oom_*_sdl1)
     --disable-sdl2hw        disables SDL2 HW
                             (do not build 1oom_*_sdl2)
+    --disable-alleg4hw      disables Allegro 4 HW
+                            (do not build 1oom_*_alleg4)
 
 Parameters for configure:
     CFLAGS

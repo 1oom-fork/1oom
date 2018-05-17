@@ -6,4 +6,8 @@ if COMPILE_WIN32
 SUBDIRS = win32
 endif
 
-DIST_SUBDIRS = unix win32
+if COMPILE_MSDOS
+SUBDIRS = msdos
+endif
+
+DIST_SUBDIRS = unix win32 msdos

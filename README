@@ -17,10 +17,11 @@ This project is in a very early state and is missing the following:
 1oom requires a copy of the Master of Orion (v1.3) LBX files.
 See doc/usage_common.txt for more info.
 
-1.1. Windows
--------------
+1.1. Windows, MSDOS
+--------------------
 
 Simply copy the EXE and DLLs (if any) to your MOO1 directory.
+Ssee doc/usage_common.txt if you prefer to use a separate directory.
 
 1.2 Linux
 ----------
@@ -66,6 +67,7 @@ See INSTALL and HACKING for more information.
 - 1oom_saveconv     (for converting save game files)
 - 1oom_*_sdl1       (using SDL 1.2.x)
 - 1oom_*_sdl2       (using SDL 2.x)
+- 1oom_*_alleg4     (using Allegro 4.x)
 
 See doc/usage_* for more documentation.
 
