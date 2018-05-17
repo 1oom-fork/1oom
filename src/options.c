@@ -13,10 +13,12 @@
 #include "os.h"
 #include "pbx.h"
 #include "ui.h"
+#include "util.h"
 
 /* -------------------------------------------------------------------------- */
 /* local options */
 
+static const char *opt_logfilename_in = 0;
 static const char *opt_configfilename_in = 0;   /* used only for the -c option */
 static char *opt_configfilename = 0;
 static bool opt_config_ro = false;
@@ -91,10 +93,21 @@ int options_set_int_var(char **argv, void *var)
     return 0;
 }
 
-
 int options_set_str_var(char **argv, void *var)
 {
     *(const char **)var = argv[1];
+    return 0;
+}
+
+int options_unset_str_var(char **argv, void *var)
+{
+    *(const char **)var = 0;
+    return 0;
+}
+
+int options_empty_str_var(char **argv, void *var)
+{
+    *(const char **)var = "";
     return 0;
 }
 
@@ -168,6 +181,12 @@ static const struct cmdline_options_s cmdline_options_cfg_early[] = {
     { "-user", 1,
       options_set_userdir, NULL,
       "PATH", "Set user directory" },
+    { "-log", 1,
+      options_set_str_var, (void *)&opt_logfilename_in,
+      "FILE.TXT", "Set log filename" },
+    { "-nolog", 0,
+      options_empty_str_var, (void *)&opt_logfilename_in,
+      NULL, "Do not create a log file" },
     { NULL, 0, NULL, NULL, NULL, NULL }
 };
 
@@ -181,7 +200,7 @@ static const struct cmdline_options_s cmdline_options_lbx[] = {
 static const struct cmdline_options_s cmdline_options_pbxfile[] = {
     { "-file", 1,
       options_add_patchfile, NULL,
-      "FILE", "Add LBX patch file (.PBX)" },
+      "FILE.PBX", "Add LBX patch file (.PBX)" },
     { NULL, 0, NULL, NULL, NULL, NULL }
 };
 
@@ -399,8 +418,29 @@ static int options_parse_do(int argc, char **argv, bool early)
 int options_parse_early(int argc, char **argv)
 {
     int res;
-    /* parse options first to exit early on "-?" */
+    /* parse options first to exit early on "-?" and open the log file */
     res = options_parse_do(argc, argv, true);
+    if (!res) {
+        const char *filename = 0;
+        char *filenamea = 0;
+        if (opt_logfilename_in) {
+            filename = opt_logfilename_in;
+        } else {
+            char namebuf[128];
+            if (os_get_fname_log(namebuf)) {
+                const char *path = os_get_path_user();
+                filename = filenamea = util_concat(path, FSDEV_DIR_SEP_STR, namebuf, NULL);
+            }
+        }
+        if (filename) {
+            log_file_open(filename);
+            if (filenamea) {
+                lib_free(filenamea);
+                filenamea = 0;
+            }
+            filename = 0;
+        }
+    }
     if ((!res) && main_use_cfg) {
         if (opt_configfilename_in != 0) {
             opt_configfilename = lib_stralloc(opt_configfilename_in);
@@ -424,7 +464,7 @@ int options_parse(int argc, char **argv)
 void options_show_usage(void)
 {
     int lmax = 0;
-    log_message_direct(PACKAGE_NAME " v." PACKAGE_VERSION "\n");
+    log_message_direct(PACKAGE_NAME " v" PACKAGE_VERSION "\n");
     if (main_usage) {
         main_usage();
     }
