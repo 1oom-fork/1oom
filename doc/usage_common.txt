@@ -85,6 +85,8 @@ For all:
     -cro                 Do not write a config file
     -user PATH           Set user directory
     -data PATH           Set data directory
+    -log FILE.TXT        Set log filename
+    -nolog               Do not create a log file
 
 For UIs with audio support:
     -audio               Enable audio

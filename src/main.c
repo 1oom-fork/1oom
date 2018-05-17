@@ -50,6 +50,7 @@ static void main_shutdown(void)
     ui_shutdown();
     hw_shutdown();
     os_shutdown();
+    log_file_close();
     log_message("Thanks for playing Master of Orion.\n");
 }
 
@@ -60,10 +61,10 @@ int main_1oom(int argc, char **argv)
     if (main_early_init()) {
         return 1;
     }
-    log_message("1oom: main:%s ui:%s hw:%s os:%s\n", idstr_main, idstr_ui, idstr_hw, idstr_os);
     if (options_parse_early(argc, argv)) {
         return 1;
     }
+    log_message("1oom: main:%s ui:%s hw:%s os:%s\n", idstr_main, idstr_ui, idstr_hw, idstr_os);
     atexit(main_shutdown);
     if (main_init()) {
         return 2;
