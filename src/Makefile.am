@@ -10,6 +10,9 @@ endif
 if COMPILE_UICLASSIC_SDL2
 bin_PROGRAMS += 1oom_classic_sdl2
 endif
+if COMPILE_UICLASSIC_ALLEG4
+bin_PROGRAMS += 1oom_classic_alleg4
+endif
 endif
 
 if COMPILE_TOOLS
@@ -19,6 +22,9 @@ bin_PROGRAMS += 1oom_lbxview_sdl1
 endif
 if COMPILE_TOOLS_SDL2
 bin_PROGRAMS += 1oom_lbxview_sdl2
+endif
+if COMPILE_TOOLS_ALLEG4
+bin_PROGRAMS += 1oom_lbxview_alleg4
 endif
 endif
 
@@ -122,6 +128,17 @@ hwsdl2_lib = $(top_builddir)/src/hw/sdl/2/libhwsdl2.a
 1oom_lbxview_sdl2_SOURCES = lbxview.c $(audio_sources) $(gui_sources) $(util_sources) $(pic_sources)
 1oom_lbxview_sdl2_LDADD = $(1oom_lbxview_sdl2_libs) @HW_SDL2_LIBS@ @EXTRA_SDL2_LIBS@ @SAMPLERATE_LIBS@
 1oom_lbxview_sdl2_DEPENDENCIES = $(1oom_lbxview_sdl2_libs)
+
+hwalleg4_lib = $(top_builddir)/src/hw/alleg/4/libhwalleg4.a
+1oom_classic_alleg4_libs = $(gamemain_lib) $(game_lib) $(uiclassic_lib) $(game_lib) $(hwalleg4_lib) $(common_libs)
+1oom_classic_alleg4_SOURCES = $(audio_sources) $(gui_sources) $(util_sources)
+1oom_classic_alleg4_LDADD = $(1oom_classic_alleg4_libs) @HW_ALLEG4_LIBS@ @EXTRA_ALLEG4_LIBS@ @SAMPLERATE_LIBS@
+1oom_classic_alleg4_DEPENDENCIES = $(1oom_classic_alleg4_libs)
+
+1oom_lbxview_alleg4_libs = $(hwalleg4_lib) $(uinop_lib) $(common_libs)
+1oom_lbxview_alleg4_SOURCES = lbxview.c $(audio_sources) $(gui_sources) $(util_sources) $(pic_sources)
+1oom_lbxview_alleg4_LDADD = $(1oom_lbxview_alleg4_libs) @HW_ALLEG4_LIBS@ @EXTRA_ALLEG4_LIBS@ @SAMPLERATE_LIBS@
+1oom_lbxview_alleg4_DEPENDENCIES = $(1oom_lbxview_alleg4_libs)
 
 1oom_pbxmake_libs = $(hwnop_lib)
 1oom_pbxmake_SOURCES = pbxmake.c util.c lib.c log.c

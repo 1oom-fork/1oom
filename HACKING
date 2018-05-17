@@ -13,10 +13,13 @@ The code is divided into the following directories:
  *     sdl/     - libSDL
  *       1/     - libSDL 1.2.x
  *       2/     - libSDL 2.x
+ *     alleg/   - Allegro
+ *       4/     - Allegro 4.x
  *     nop/     - dummy HW for tools
  *   os/        - Operating System; file paths
  *     unix/    - yay
  *     win32/   - boo
+ *     msdos/   - wtf
 
 Some facts:
  * main is in hw/ (due to SDL)

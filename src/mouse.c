@@ -9,8 +9,8 @@ static bool mouse_have_click_sw = false;
 
 /* ------------------------------------------------------------------------- */
 
-int mouse_x = 0;
-int mouse_y = 0;
+int moouse_x = 0;
+int moouse_y = 0;
 int mouse_buttons = 0;
 int mouse_stored_x = 0;
 int mouse_stored_y = 0;
@@ -22,8 +22,8 @@ int mouse_click_buttons = 0;
 
 void mouse_set_xy_from_hw(int mx, int my)
 {
-    mouse_x = mx;
-    mouse_y = my;
+    moouse_x = mx;
+    moouse_y = my;
 }
 
 void mouse_set_buttons_from_hw(int buttons)
@@ -32,8 +32,8 @@ void mouse_set_buttons_from_hw(int buttons)
     mouse_buttons = buttons;
     if (buttons) {
         mouse_click_buttons = buttons;
-        mouse_click_x = mouse_x;
-        mouse_click_y = mouse_y;
+        mouse_click_x = moouse_x;
+        mouse_click_y = moouse_y;
         mouse_have_click_hw = true;
         mouse_have_click_sw = true;
     }
@@ -41,8 +41,8 @@ void mouse_set_buttons_from_hw(int buttons)
 
 void mouse_set_xy(int mx, int my)
 {
-    mouse_x = mx;
-    mouse_y = my;
+    moouse_x = mx;
+    moouse_y = my;
 }
 
 void mouse_set_click_xy(int mx, int my)
