@@ -9,6 +9,7 @@ AC_ARG_ENABLE(uiclassic, AS_HELP_STRING([--disable-uiclassic], [disables classic
 AC_ARG_ENABLE(uicmdline, AS_HELP_STRING([--disable-uicmdline], [disables cmdline UI]))
 AC_ARG_ENABLE(hwsdl1, AS_HELP_STRING([--enable-hwsdl1], [enables SDL1 HW]))
 AC_ARG_ENABLE(hwsdl2, AS_HELP_STRING([--disable-hwsdl2], [disables SDL2 HW]))
+AC_ARG_ENABLE(hwalleg4, AS_HELP_STRING([--disable-hwalleg4], [disables Allegro 4 HW]))
 
 AC_CONFIG_SRCDIR([src/main.c])
 AC_CONFIG_AUX_DIR([build-aux])
@@ -64,6 +65,8 @@ AC_CHECK_HEADERS(inttypes.h stdbool.h)
 AC_CHECK_FUNCS(atexit strcasecmp)
 
 
+dnl - OS detection
+
 dnl - check for win32 headers
 
 AC_CHECK_HEADERS([wtypes.h winnt.h], [is_win32=yes; AC_DEFINE(IS_WINDOWS,, [Compiling for Windows])], [is_win32=no],
@@ -74,6 +77,15 @@ AC_CHECK_HEADERS([wtypes.h winnt.h], [is_win32=yes; AC_DEFINE(IS_WINDOWS,, [Comp
 #include <winnt.h>
 #endif
 ]])
+
+dnl - check for msdos
+
+if test x"$host_vendor" = "xgo32" -o x"$host_vendor" = "xmsdos" -o x"$host_os" = "xmsdosdjgpp"; then
+    AC_DEFINE(IS_MSDOS,, [Compiling for MSDOS])
+    is_msdos=yes
+else
+    is_msdos=false
+fi
 
 
 dnl - optional features
@@ -373,23 +385,74 @@ AC_SUBST(HW_SDL2_CFLAGS)
 AC_SUBST(HW_SDL2_LIBS)
 
 
+dnl - Allegro 4
+dnl Check and setup Allegro 4 compilation.
+
+AM_CONDITIONAL(COMPILE_HW_ALLEG4, false)
+HW_ALLEG4_LIBS=
+if test x"$enable_hwalleg4" != "xno"; then
+    old_LIBS="$LIBS"
+
+    dnl check for the allegro.h header
+    AC_CHECK_HEADERS(allegro.h,[AC_CHECK_LIB(alleg, allegro_exit,
+                     [],
+                     [break],$EXTRA_ALLEG4_LIBS)],
+                     [break],$EXTRA_ALLEG4_LIBS)
+
+    if test x"$ac_cv_lib_alleg_allegro_exit" != "xyes"; then
+        AC_MSG_WARN([Allegro 4 headers and/or libraries missing!])
+    else
+        AC_MSG_CHECKING(for Allegro version 4)
+        AC_TRY_LINK([#include "allegro.h"
+                    #if ALLEGRO_VERSION != 4
+                    #error "not version 4"
+                    #endif
+                    ],
+                [return 0;}
+                END_OF_MAIN()
+                int dummy(void){],
+                [AC_MSG_RESULT(yes);
+                 have_alleg4=yes],
+                [AC_MSG_RESULT(no);
+                 have_alleg4=no])
+
+        if test x"$have_alleg4" = "xyes"; then
+            AC_DEFINE(USE_HWALLEG4,,[Enable Allegro 4 HW support.])
+            AM_CONDITIONAL(COMPILE_HW_ALLEG4, true)
+            HW_ALLEG4_LIBS="-lalleg"
+        else
+            AC_MSG_WARN([Allegro is not version 4!])
+        fi
+    fi
+
+    LIBS="$old_LIBS"
+fi
+AC_SUBST(HW_ALLEG4_LIBS)
+
+
 dnl - setup the system-specific object files
 
 if test x"$is_win32" = "xyes"; then
     OS_DIR="\$(top_builddir)/src/os/win32"
     OS_SRC_DIR="\$(top_srcdir)/src/os/win32"
-    OS_LIBS="$OS_DIR/libos.a"
-    OS_INCLUDES="-I$OS_SRC_DIR"
     AM_CONDITIONAL(COMPILE_UNIX, false)
     AM_CONDITIONAL(COMPILE_WIN32, true)
+    AM_CONDITIONAL(COMPILE_MSDOS, false)
+elif test x"$is_msdos" = "xyes"; then
+    OS_DIR="\$(top_builddir)/src/os/msdos"
+    OS_SRC_DIR="\$(top_srcdir)/src/os/msdos"
+    AM_CONDITIONAL(COMPILE_UNIX, false)
+    AM_CONDITIONAL(COMPILE_WIN32, false)
+    AM_CONDITIONAL(COMPILE_MSDOS, true)
 else
     OS_DIR="\$(top_builddir)/src/os/unix"
     OS_SRC_DIR="\$(top_srcdir)/src/os/unix"
-    OS_LIBS="$OS_DIR/libos.a"
-    OS_INCLUDES="-I$OS_SRC_DIR"
     AM_CONDITIONAL(COMPILE_UNIX, true)
     AM_CONDITIONAL(COMPILE_WIN32, false)
+    AM_CONDITIONAL(COMPILE_MSDOS, false)
 fi
+OS_LIBS="$OS_DIR/libos.a"
+OS_INCLUDES="-I$OS_SRC_DIR"
 
 
 dnl - build exe opions
@@ -414,10 +477,17 @@ if test x"$enable_uiclassic" != "xno"; then
     else
         AM_CONDITIONAL(COMPILE_UICLASSIC_SDL2, false)
     fi
+    if test x"$have_alleg4" = "xyes"; then
+        AM_CONDITIONAL(COMPILE_UICLASSIC_ALLEG4, true)
+        have_classic_hw=yes
+    else
+        AM_CONDITIONAL(COMPILE_UICLASSIC_ALLEG4, false)
+    fi
 else
     AM_CONDITIONAL(COMPILE_UICLASSIC, false)
     AM_CONDITIONAL(COMPILE_UICLASSIC_SDL1, false)
     AM_CONDITIONAL(COMPILE_UICLASSIC_SDL2, false)
+    AM_CONDITIONAL(COMPILE_UICLASSIC_ALLEG4, false)
 fi
 
 if test x"$enable_tools" != "xno"; then
@@ -432,10 +502,16 @@ if test x"$enable_tools" != "xno"; then
     else
         AM_CONDITIONAL(COMPILE_TOOLS_SDL2, false)
     fi
+    if test x"$have_alleg4" = "xyes"; then
+        AM_CONDITIONAL(COMPILE_TOOLS_ALLEG4, true)
+    else
+        AM_CONDITIONAL(COMPILE_TOOLS_ALLEG4, false)
+    fi
 else
     AM_CONDITIONAL(COMPILE_TOOLS, false)
     AM_CONDITIONAL(COMPILE_TOOLS_SDL1, false)
     AM_CONDITIONAL(COMPILE_TOOLS_SDL2, false)
+    AM_CONDITIONAL(COMPILE_TOOLS_ALLEG4, false)
 fi
 
 if test x"$enable_uiclassic" != "xno" -a x"$have_classic_hw" != "xyes"; then
@@ -447,6 +523,7 @@ dnl - finish up
 AC_SUBST(HAVE_READLINE)
 AC_SUBST(EXTRA_SDL1_LIBS)
 AC_SUBST(EXTRA_SDL2_LIBS)
+AC_SUBST(EXTRA_ALLEG4_LIBS)
 AC_SUBST(OS_INCLUDES)
 AC_SUBST(OS_LIBS)
 AC_SUBST(OS_DIR)
@@ -460,6 +537,7 @@ AC_CONFIG_FILES([Makefile
                  src/os/Makefile
                  src/os/unix/Makefile
                  src/os/win32/Makefile
+                 src/os/msdos/Makefile
                  src/ui/Makefile
                  src/ui/cmdline/Makefile
                  src/ui/classic/Makefile
@@ -469,5 +547,7 @@ AC_CONFIG_FILES([Makefile
                  src/hw/sdl/Makefile
                  src/hw/sdl/1/Makefile
                  src/hw/sdl/2/Makefile
+                 src/hw/alleg/Makefile
+                 src/hw/alleg/4/Makefile
                 ])
 AC_OUTPUT
