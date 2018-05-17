@@ -56,7 +56,7 @@ examples of situations where changes are considered acceptable:
     from 1993. However, 1oom should aim to recreate the functionality
     in a modern way. Examples of technologies that aren’t supported are:
 
-    - No MS-DOS version.
+    - No 286 version.
 
 A good litmus test of when it’s acceptable to break from Vanilla
 behavior is to ask the question: “Although this is Vanilla behavior,

@@ -16,8 +16,8 @@ Windows
 
 Simply copy the EXE and DLLs (if any) to your MOO1 directory.
 
-Linux
------
+Unix (Linux)
+------------
 
 1oom requires the following libraries:
 
@@ -30,6 +30,17 @@ Also recommended:
 
 Check your distribution's package manager or the library
 website on how to install them.
+
+DOSBox (Android)
+----------------
+
+1oom for DOS requires the following:
+- DOSBox application, such as Magic DOSBox
+- CWSDPMI extension
+
+To compile 1oom for DOS you will need
+[i586 djgpp toolchain](https://github.com/andrewwutw/build-djgpp.git)
+and [Allegro4](https://github.com/1oom-fork/allegro4).
 
 
 Configuration
@@ -64,6 +75,9 @@ Executables
 - 1oom_saveconv     (for converting save game files)
 - 1oom_*_sdl1       (using SDL 1.2.x)
 - 1oom_*_sdl2       (using SDL 2.x)
+- 1oom_*_alleg4     (using Allegro 4.x)
+
+Some ports have shorter filenames due to filesystem limitations.
 
 See doc/ for more documentation.
 
