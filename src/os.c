@@ -7,6 +7,9 @@
 #ifdef IS_WINDOWS
 #include <windows.h>
 #include <io.h>
+#elif defined(IS_MSDOS)
+#include <sys/stat.h>
+#include <time.h>
 #else
 #include <sys/stat.h>
 #include <sys/time.h>
@@ -17,6 +20,8 @@
 
 #ifdef IS_WINDOWS
 const char *idstr_os = "win32";
+#elif defined(IS_MSDOS)
+const char *idstr_os = "msdos";
 #else
 const char *idstr_os = "unix";
 #endif
@@ -30,6 +35,8 @@ static int os_make_path(const char *path)
     }
 #ifdef IS_WINDOWS
     return mkdir(path);
+#elif defined(IS_MSDOS)
+    return mkdir(path, 0700);
 #else
     if (access(path, F_OK)) {
         return mkdir(path, 0700);
@@ -61,6 +68,11 @@ uint32_t os_get_time_us(void)
 {
 #ifdef IS_WINDOWS
     return GetTickCount() * 1000;
+#elif defined(IS_MSDOS)
+    uint64_t now = (uint64_t)clock();
+    uint64_t us = (now / CLOCKS_PER_SEC) * 1000000ULL
+                + ((now % CLOCKS_PER_SEC) * 1000000ULL) / CLOCKS_PER_SEC;
+    return (uint32_t)us;
 #else
     struct timeval tv;
     gettimeofday(&tv, NULL);
