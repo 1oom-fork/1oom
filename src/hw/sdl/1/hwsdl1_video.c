@@ -105,9 +105,9 @@ static void video_render_gl_32bpp(int bufi)
         for (int x = 0; x < 256; ++x) {
             *p++ = video.pal32[x];
         }
-        if ((mouse_x >= 1) && (mouse_x < video.bufw) && (mouse_y >= 1) && (mouse_y < video.bufh)) {
+        if ((moouse_x >= 1) && (moouse_x < video.bufw) && (moouse_y >= 1) && (moouse_y < video.bufh)) {
             uint8_t c;
-            int mx = mouse_x - 1, my = mouse_y - 1;
+            int mx = moouse_x - 1, my = moouse_y - 1;
             c = colorpaldebug;
             p = (Uint32 *)(((uint8_t *)video.hwrenderbuf->pixels) + video.hwrenderbuf->pitch * my + mx * sizeof(Uint32));
             *p = c;
