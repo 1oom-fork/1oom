@@ -11,8 +11,8 @@ static bool mouse_have_click_sw = false;
 
 /* ------------------------------------------------------------------------- */
 
-int mouse_x = 0;
-int mouse_y = 0;
+int moo_mouse_x = 0;
+int moo_mouse_y = 0;
 int moo_mouse_w;
 int moo_mouse_h;
 int mouse_buttons = 0;
@@ -34,8 +34,8 @@ void mouse_set_xy_from_hw(int mx, int my)
 {
     SETRANGE(mx, 0, moo_mouse_w - 1);
     SETRANGE(my, 0, moo_mouse_h - 1);
-    mouse_x = mx;
-    mouse_y = my;
+    moo_mouse_x = mx;
+    moo_mouse_y = my;
 }
 
 void mouse_set_buttons_from_hw(int buttons)
@@ -44,8 +44,8 @@ void mouse_set_buttons_from_hw(int buttons)
     mouse_buttons = buttons;
     if (buttons) {
         mouse_click_buttons = buttons;
-        mouse_click_x = mouse_x;
-        mouse_click_y = mouse_y;
+        mouse_click_x = moo_mouse_x;
+        mouse_click_y = moo_mouse_y;
         mouse_have_click_hw = true;
         mouse_have_click_sw = true;
     }
@@ -53,8 +53,8 @@ void mouse_set_buttons_from_hw(int buttons)
 
 void mouse_set_xy(int mx, int my)
 {
-    mouse_x = mx;
-    mouse_y = my;
+    moo_mouse_x = mx;
+    moo_mouse_y = my;
     hw_video_position_cursor(mx, my);
 }
 

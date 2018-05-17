@@ -32,7 +32,7 @@ bool ui_delay_ticks_or_click(int ticks)
 bool ui_delay_us_or_click(uint32_t delay)
 {
     bool pressed = false;
-    int mx = mouse_x, my = mouse_y;
+    int mx = moo_mouse_x, my = moo_mouse_y;
     uint32_t mouse_time = hw_get_time_us();
     hw_event_handle();
     if (!ui_delay_enabled) {
@@ -61,10 +61,10 @@ bool ui_delay_us_or_click(uint32_t delay)
                 return true;
             }
         }
-        if (((mx != mouse_x) || (my != mouse_y)) && ((now - mouse_time) > DELAY_MOUSE_UPDATE_LIMIT)) {
+        if (((mx != moo_mouse_x) || (my != moo_mouse_y)) && ((now - mouse_time) > DELAY_MOUSE_UPDATE_LIMIT)) {
             mouse_time = now;
-            mx = mouse_x;
-            my = mouse_y;
+            mx = moo_mouse_x;
+            my = moo_mouse_y;
             ui_cursor_refresh(mx, my);
         }
     }
