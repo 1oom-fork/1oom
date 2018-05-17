@@ -11,13 +11,13 @@ Installation
 
 1oom requires a copy of the Master of Orion (v1.3) LBX files.
 
-Windows
--------
+Windows, MSDOS
+--------------
 
 Simply copy the EXE and DLLs (if any) to your MOO1 directory.
 
-Linux
------
+Unix (Linux)
+------------
 
 1oom requires the following libraries:
 
@@ -67,6 +67,9 @@ Executables
 - 1oom_saveconv     (for converting save game files)
 - 1oom_*_sdl1       (using SDL 1.2.x)
 - 1oom_*_sdl2       (using SDL 2.x)
+- 1oom_*_alleg4     (using Allegro 4.x)
+
+Some ports have shorter filenames due to filesystem limitations.
 
 See doc/ for more documentation.
 
