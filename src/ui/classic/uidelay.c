@@ -5,7 +5,6 @@
 #include "uidelay.h"
 #include "hw.h"
 #include "mouse.h"
-#include "os.h"
 #include "types.h"
 #include "uicursor.h"
 
@@ -22,7 +21,7 @@ static uint16_t delay_hmm1 = 1;
 
 void ui_delay_prepare(void)
 {
-    delay_start = os_get_time_us();
+    delay_start = hw_get_time_us();
 }
 
 bool ui_delay_ticks_or_click(int ticks)
@@ -34,7 +33,7 @@ bool ui_delay_us_or_click(uint32_t delay)
 {
     bool pressed = false;
     int mx = mouse_x, my = mouse_y;
-    uint32_t mouse_time = os_get_time_us();
+    uint32_t mouse_time = hw_get_time_us();
     hw_event_handle();
     if (delay_hmm1 == 0) {
         return false;
@@ -42,7 +41,7 @@ bool ui_delay_us_or_click(uint32_t delay)
     while (1) {
         int32_t diff;
         uint32_t now;
-        now = os_get_time_us();
+        now = hw_get_time_us();
         diff = now - delay_start;
         if ((diff < 0) || (diff >= delay)) {
             return false;

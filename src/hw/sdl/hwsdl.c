@@ -50,3 +50,10 @@ void hw_log_error(const char *msg)
 {
     fputs(msg, stderr);
 }
+
+/* -------------------------------------------------------------------------- */
+
+uint32_t hw_get_time_us(void)
+{
+    return SDL_GetTicks() * 1000;
+}
