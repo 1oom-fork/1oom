@@ -40,4 +40,6 @@ extern void hw_audio_sfx_volume(int volume/*0..128*/);
 
 extern int hw_audio_set_soundfont(const char *path);
 
+extern uint32_t hw_get_time_us(void);
+
 #endif

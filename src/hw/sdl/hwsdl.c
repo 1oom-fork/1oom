@@ -179,3 +179,8 @@ static bool hw_kbd_check_hotkey(SDLKey key, SDLMod smod, char c)
 
     return false;
 }
+
+uint32_t hw_get_time_us(void)
+{
+    return SDL_GetTicks() * 1000;
+}
