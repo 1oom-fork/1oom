@@ -337,3 +337,8 @@ int hw_event_handle(void)
 
     return 0;
 }
+
+uint32_t hw_get_time_us(void)
+{
+    return SDL_GetTicks() * 1000;
+}
