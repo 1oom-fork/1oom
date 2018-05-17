@@ -38,4 +38,6 @@ extern void hw_audio_sfx_play(int sfx_index);
 extern void hw_audio_sfx_stop(void);
 extern void hw_audio_sfx_volume(int volume/*0..128*/);
 
+extern uint32_t hw_get_time_us(void);
+
 #endif
