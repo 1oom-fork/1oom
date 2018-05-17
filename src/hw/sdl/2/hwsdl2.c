@@ -249,6 +249,11 @@ static void hw_mouse_button(int i, int pressed)
     }
 }
 
+uint32_t hw_get_time_us(void)
+{
+    return SDL_GetTicks() * 1000;
+}
+
 /* -------------------------------------------------------------------------- */
 
 static void hw_event_handle_window(SDL_WindowEvent *e)
