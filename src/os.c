@@ -1,6 +1,6 @@
 #include "config.h"
 
-#if defined(IS_WINDOWS)
+#if defined(IS_WINDOWS) || defined(IS_MSDOS)
 #undef __STRICT_ANSI__
 #endif
 
@@ -63,9 +63,12 @@ static int os_make_path(const char *path)
 
 #ifdef IS_WINDOWS
 const char *idstr_os = "win32";
+#elif defined(IS_MSDOS)
+const char *idstr_os = "msdos";
 #else
 const char *idstr_os = "unix";
 #endif
+
 
 void os_shutdown(void)
 {
@@ -83,7 +86,7 @@ void os_shutdown(void)
 const char **os_get_paths_data(void)
 {
     if (num_data_paths == 0) {
-#if !defined(IS_WINDOWS)
+#if !defined(IS_WINDOWS) && !defined(IS_MSDOS)
         const char *p;
 #endif
         int i = 0;
@@ -91,7 +94,7 @@ const char **os_get_paths_data(void)
         if (data_path) {
             all_data_paths[i++] = lib_stralloc(data_path);
         }
-#if !defined(IS_WINDOWS)
+#if !defined(IS_WINDOWS) && !defined(IS_MSDOS)
         p = getenv("XDG_DATA_HOME");
         if (p && (p[0] != '\0')) {
             all_data_paths[i++] = util_concat(p, "/1oom", NULL);
@@ -168,7 +171,7 @@ void os_set_path_user(const char *path)
 const char *os_get_path_user(void)
 {
     if (user_path == NULL) {
-#ifdef IS_WINDOWS
+#if defined(IS_WINDOWS) || defined(IS_MSDOS)
         user_path = lib_stralloc(".");
 #else
         const char *xdg_config_home = getenv("XDG_CONFIG_HOME");
@@ -206,7 +209,17 @@ int os_make_path_for(const char *filename)
 
 const char *os_get_fname_save(char *buf, int buflen, int savei/*1..9*/)
 {
+#ifdef IS_MSDOS
+    if ((buf == NULL) || (buflen <= 0)) {
+        return NULL;
+    }
+    if (snprintf(buf, buflen, "1oomsav%i.bin", savei) >= buflen) {
+        return NULL;
+    }
+    return buf;
+#else
     return NULL;
+#endif
 }
 
 uint32_t os_get_time_us(void)
