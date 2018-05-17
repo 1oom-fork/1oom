@@ -318,7 +318,7 @@ int hw_event_handle(void)
                 break;
             case SDL_MOUSEMOTION:
                 if (hw_mouse_enabled) {
-                    mouse_set_xy_from_hw(mouse_x + (int)(e.motion.xrel), mouse_y + (int)(e.motion.yrel));
+                    mouse_set_xy_from_hw(moo_mouse_x + (int)(e.motion.xrel), moo_mouse_y + (int)(e.motion.yrel));
                 }
                 break;
             case SDL_MOUSEBUTTONDOWN:

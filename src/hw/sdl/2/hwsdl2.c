@@ -383,7 +383,7 @@ int hw_event_handle(void)
         SDL_GetRelativeMouseState(&x, &y);
         if ((x != 0) || (y != 0)) {
             if (hw_mouse_enabled) {
-                mouse_set_xy_from_hw(mouse_x + x, mouse_y + y);
+                mouse_set_xy_from_hw(moo_mouse_x + x, moo_mouse_y + y);
             }
         }
     }
