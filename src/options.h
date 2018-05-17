@@ -36,6 +36,8 @@ extern int options_enable_bool_var(char **argv, void *var);
 extern int options_disable_bool_var(char **argv, void *var);
 extern int options_set_int_var(char **argv, void *var);
 extern int options_set_str_var(char **argv, void *var);
+extern int options_unset_str_var(char **argv, void *var);
+extern int options_empty_str_var(char **argv, void *var);
 
 extern int options_parse_early(int argc, char **argv);
 extern int options_parse(int argc, char **argv);
