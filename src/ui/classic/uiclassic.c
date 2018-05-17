@@ -15,7 +15,6 @@
 #include "log.h"
 #include "mouse.h"
 #include "options.h"
-#include "os.h"
 #include "types.h"
 #include "uidefs.h"
 #include "uifix.h"
@@ -306,14 +305,14 @@ int ui_late_init(void)
     }
     if (opt_audio_enabled) {
         uint32_t t0, t1;
-        t0 = os_get_time_us();
+        t0 = hw_get_time_us();
         log_message("Preparing sounds, this may take a while...\n");
         for (int i = NUM_SOUNDS - 1; i >= 0; --i) {
             uint32_t len;
             ui_data.sfx[i] = lbxfile_item_get(LBXFILE_SOUNDFX, i, &len);
             hw_audio_sfx_init(i, ui_data.sfx[i], len);
         }
-        t1 = os_get_time_us();
+        t1 = hw_get_time_us();
         log_message("Preparing sounds took %i ms\n", (t1 - t0) / 1000);
     }
     ui_data.music_i = -1;
