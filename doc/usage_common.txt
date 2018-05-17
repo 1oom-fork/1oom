@@ -73,7 +73,9 @@ For all:
     -cro                 Set config file read-only
     -user PATH           Set user directory
     -data PATH           Set data directory
-    -file FILE           Add LBX patch file (.PBX)
+    -log FILE.TXT        Set log filename
+    -nolog               Do not create a log file
+    -file FILE.PBX       Add LBX patch file (.PBX)
 
 For UIs with audio support:
     -audio               Enable audio

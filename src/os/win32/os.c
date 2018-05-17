@@ -118,6 +118,15 @@ const char *os_get_fname_cfg(char *buf, const char *gamestr, const char *uistr, 
     return NULL;
 }
 
+const char *os_get_fname_log(char *buf)
+{
+    if (buf) {
+        strcpy(buf, "1oom_log.txt");
+        return buf;
+    }
+    return "1oom_log.txt";
+}
+
 uint32_t os_get_time_us(void)
 {
     return GetTickCount() * 1000;
