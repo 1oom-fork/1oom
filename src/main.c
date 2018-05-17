@@ -75,7 +75,7 @@ int main_1oom(int argc, char **argv)
     if (lbxfile_find_dir()) {
         return 4;
     }
-    printf("USER '%s'\n", os_get_path_user());
+    log_message("USER: '%s'\n", os_get_path_user());
     main_startup_ok = true;
     options_finish();
     return main_do();
