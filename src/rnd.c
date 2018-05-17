@@ -1,7 +1,7 @@
 #include "config.h"
 
 #include "rnd.h"
-#include "os.h"
+#include "hw.h"
 #include "types.h"
 
 /* -------------------------------------------------------------------------- */
@@ -60,7 +60,7 @@ uint16_t rnd_1_n(uint16_t n, uint32_t *seed)
 uint32_t rnd_get_new_seed(void)
 {
     uint32_t seed;
-    seed = os_get_time_us();
+    seed = hw_get_time_us();
     if (seed == 0) {
         seed = 123;
     }

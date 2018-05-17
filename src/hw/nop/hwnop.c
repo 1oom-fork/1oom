@@ -5,6 +5,7 @@
 #include "hw.h"
 #include "main.h"
 #include "options.h"
+#include "os.h"
 #include "types.h"
 
 /* -------------------------------------------------------------------------- */
@@ -36,4 +37,9 @@ int hw_init(void)
 
 void hw_shutdown(void)
 {
+}
+
+uint32_t hw_get_time_us(void)
+{
+    return os_get_time_us();
 }
