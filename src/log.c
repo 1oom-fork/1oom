@@ -17,10 +17,48 @@
 static char msgbuf[MAX_MSG_LEN] = "";
 bool log_direct_enabled = true;
 
+static FILE *log_fd = NULL;
+
 /* ------------------------------------------------------------------------- */
+
+static void log_file_write(const char *msg)
+{
+    if (fputs(msg, log_fd) < 0) {
+        log_file_close();
+        log_error("Log: writing failed!\n");
+    } else if (fflush(log_fd) != 0) {
+        log_file_close();
+        log_error("Log: flush failed!\n");
+    }
+}
+
+/* ------------------------------------------------------------------------- */
+
+int log_file_open(const char *filename)
+{
+    if (filename && (filename[0] != '\0')) {
+        log_fd = fopen(filename, "w");
+        if (!log_fd) {
+            log_error("Log: opening %s failed!\n", filename);
+            return -1;
+        }
+    }
+    return 0;
+}
+
+void log_file_close(void)
+{
+    if (log_fd) {
+        fclose(log_fd);
+        log_fd = NULL;
+    }
+}
 
 void log_message_direct(const char *msg)
 {
+    if (log_fd) {
+        log_file_write(msg);
+    }
     if (log_direct_enabled) {
         fputs(msg, stdout);
     }
@@ -28,6 +66,9 @@ void log_message_direct(const char *msg)
 
 void log_warning_direct(const char *msg)
 {
+    if (log_fd) {
+        log_file_write(msg);
+    }
     if (log_direct_enabled) {
         fputs(msg, stderr);
     }
@@ -35,6 +76,9 @@ void log_warning_direct(const char *msg)
 
 void log_error_direct(const char *msg)
 {
+    if (log_fd) {
+        log_file_write(msg);
+    }
     if (log_direct_enabled) {
         fputs(msg, stderr);
     }

@@ -5,6 +5,9 @@
 
 extern bool log_direct_enabled;
 
+extern int log_file_open(const char *filename);
+extern void log_file_close(void);
+
 extern void log_message_direct(const char *msg);
 extern void log_warning_direct(const char *msg);
 extern void log_error_direct(const char *msg);
