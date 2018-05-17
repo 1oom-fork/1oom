@@ -64,6 +64,11 @@ void hw_log_error(const char *msg)
     fputs(msg, stderr);
 }
 
+uint32_t hw_get_time_us(void)
+{
+    return 0;
+}
+
 void hw_video_set_palette(uint8_t *palette, int first, int num)
 {
 }
