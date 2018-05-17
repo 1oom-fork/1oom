@@ -6,8 +6,9 @@
 #define MOUSE_BUTTON_MASK_LEFT  1
 #define MOUSE_BUTTON_MASK_RIGHT 2
 
-extern int mouse_x;
-extern int mouse_y;
+/* Allegro uses mouse_x and mouse_y */
+extern int moouse_x;
+extern int moouse_y;
 extern int mouse_buttons;
 extern int mouse_stored_x;
 extern int mouse_stored_y;
