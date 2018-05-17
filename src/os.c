@@ -2,6 +2,9 @@
 
 #ifdef IS_WINDOWS
 #include <windows.h>
+#elif defined(IS_MSDOS)
+#include <sys/stat.h>
+#include <time.h>
 #else
 #include <sys/stat.h>
 #include <sys/time.h>
@@ -46,9 +49,12 @@ static int os_make_path(const char *path)
 
 #ifdef IS_WINDOWS
 const char *idstr_os = "win32";
+#elif defined(IS_MSDOS)
+const char *idstr_os = "msdos";
 #else
 const char *idstr_os = "unix";
 #endif
+
 
 void os_shutdown(void)
 {
@@ -73,7 +79,7 @@ const char **os_get_paths_data(void)
         if (data_path) {
             all_data_paths[i++] = lib_stralloc(data_path);
         }
-#ifdef IS_WINDOWS
+#if defined(IS_WINDOWS) || defined(IS_MSDOS)
         all_data_paths[i++] = lib_stralloc(".\\data");
 #else
         p = getenv("XDG_DATA_HOME");
@@ -129,7 +135,7 @@ void os_set_path_user(const char *path)
 const char *os_get_path_user(void)
 {
     if (user_path == NULL) {
-#ifdef IS_WINDOWS
+#if defined(IS_WINDOWS) || defined(IS_MSDOS)
         user_path = lib_stralloc(".");
 #else
         char *xdg_config_home = getenv("XDG_CONFIG_HOME");
@@ -167,13 +173,23 @@ int os_make_path_for(const char *filename)
 
 const char *os_get_fname_save(char *buf, int savei/*1..9*/)
 {
+#ifdef IS_MSDOS
+    sprintf(buf, "1oomsav%i.bin", savei);
+    return buf;
+#else
     return NULL;
+#endif
 }
 
 uint32_t os_get_time_us(void)
 {
 #ifdef IS_WINDOWS
     return GetTickCount() * 1000;
+#elif defined(IS_MSDOS)
+    uint64_t now = (uint64_t)clock();
+    uint64_t us = (now / CLOCKS_PER_SEC) * 1000000ULL
+                + ((now % CLOCKS_PER_SEC) * 1000000ULL) / CLOCKS_PER_SEC;
+    return (uint32_t)us;
 #else
     struct timeval tv;
     gettimeofday(&tv, NULL);

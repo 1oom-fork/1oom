@@ -15,6 +15,10 @@
 #define FSDEV_DIR_SEP_STR    "\\"
 #define FSDEV_DIR_SEP_CHR    '\\'
 #define FSDEV_DIR_SEP_ALT    '/'
+#elif defined(IS_MSDOS)
+#define FSDEV_PATH_MAX  1024
+#define FSDEV_DIR_SEP_STR    "\\"
+#define FSDEV_DIR_SEP_CHR    '\\'
 #else
 #define FSDEV_PATH_MAX  2048
 #define FSDEV_DIR_SEP_STR    "/"
