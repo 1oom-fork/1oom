@@ -126,8 +126,3 @@ const char *os_get_fname_log(char *buf)
     }
     return "1oom_log.txt";
 }
-
-uint32_t os_get_time_us(void)
-{
-    return GetTickCount() * 1000;
-}
