@@ -168,7 +168,7 @@ void ui_draw_copy_buf(void)
     hw_video_copy_buf();
 /*
     if (ui_cursor_gfx_i != 0) {
-        int mx = mouse_x, my = mouse_y;
+        int mx = moouse_x, my = moouse_y;
         ui_cursor_update_gfx_i(mx, my);
         ui_cursor_erase0();
         ui_cursor_store_bg0(mx, my);
@@ -594,7 +594,7 @@ static void ui_draw_finish_wipe_anim(void)
         hw_video_redraw_front();
         ui_delay_us_or_click(MOO_TICKS_TO_US(1) / 2);
     }
-    ui_cursor_store_bg0(mouse_x, mouse_y);
+    ui_cursor_store_bg0(moouse_x, moouse_y);
     hw_video_draw_buf();
 }
 
