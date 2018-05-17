@@ -39,6 +39,15 @@ Also recommended:
 Check your distribution's package manager or the library
 website on how to install them.
 
+DOSBox (Android)
+----------------
+
+1oom for DOS requires the following:
+- DOSBox application, such as Magic DOSBox
+- CWSDPMI extension
+
+To compile 1oom for DOS you will need [i586 djgpp toolchain](https://github.com/andrewwutw/build-djgpp.git) and [Allegro4](https://github.com/1oom-fork/allegro4).
+
 
 Configuration
 =============
