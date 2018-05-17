@@ -1847,7 +1847,7 @@ int16_t uiobj_add_mousearea_limited(uint16_t x0, uint16_t y0, uint16_t x1, uint1
     return uiobj_add_mousearea(x0, y0, x1, y1, key, helpid);
 }
 
-int16_t uiobj_add_inputkey(mookey_t key)
+int16_t uiobj_add_inputkey(uint32_t key)
 {
     uiobj_t *p = &uiobj_tbl[uiobj_table_num];
     p->x0 = UIOBJ_OFFSCREEN;
