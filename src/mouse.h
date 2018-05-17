@@ -6,8 +6,8 @@
 #define MOUSE_BUTTON_MASK_LEFT  1
 #define MOUSE_BUTTON_MASK_RIGHT 2
 
-extern int mouse_x;
-extern int mouse_y;
+extern int moo_mouse_x;
+extern int moo_mouse_y;
 extern int moo_mouse_w;
 extern int moo_mouse_h;
 extern int mouse_buttons;

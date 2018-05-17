@@ -424,7 +424,7 @@ static void uiobj_handle_t6_slider_input(uiobj_t *p)
 {
     uint16_t sliderval, slideroff, di;
     if (p->t6.vertical == false) {
-        di = mouse_x + uiobj_mouseoff;
+        di = moo_mouse_x + uiobj_mouseoff;
         slideroff = ((p->t6.vmax - p->t6.vmin) * (di - p->x0)) / (p->x1 - p->x0);
         if (p->x1 <= di) {
             sliderval = p->t6.vmax;
@@ -434,7 +434,7 @@ static void uiobj_handle_t6_slider_input(uiobj_t *p)
             sliderval = p->t6.vmin + slideroff;
         }
     } else {
-        di = mouse_y + uiobj_mouseoff;
+        di = moo_mouse_y + uiobj_mouseoff;
         slideroff = ((p->t6.vmax - p->t6.vmin) * (p->y1 - di)) / (p->y1 - p->y0);
         if (p->y1 <= di) {
             sliderval = p->t6.vmin;
@@ -595,8 +595,8 @@ static void uiobj_handle_click(uiobj_id_t oi, bool in_focus)
             break;
         case UIOBJ_TYPE_SCROLLAREA:
             if (in_focus) {
-                *p->tb.xptr = (mouse_x - p->x0) / p->tb.xdiv;
-                *p->tb.yptr = (mouse_y - p->y0) / p->tb.ydiv;
+                *p->tb.xptr = (moo_mouse_x - p->x0) / p->tb.xdiv;
+                *p->tb.yptr = (moo_mouse_y - p->y0) / p->tb.ydiv;
             }
             break;
         case UIOBJ_TYPE_SLIDER:
@@ -752,7 +752,7 @@ static uiobj_id_t uiobj_kbd_dir_key_dy_list(int diry)
         p = &uiobj_tbl[oi];
         mouse_stored_x = smidx(p);
         mouse_stored_y = smidy(p);
-        if ((mouse_x != mouse_stored_x) || (mouse_y != mouse_stored_y)) {
+        if ((moo_mouse_x != mouse_stored_x) || (moo_mouse_y != mouse_stored_y)) {
             ui_cursor_update_gfx_i(mouse_stored_x, mouse_stored_y);
             uiobj_mouseoff = ui_cursor_mouseoff;
             mouse_stored_x -= uiobj_mouseoff;
@@ -974,8 +974,8 @@ static uiobj_id_t uiobj_kbd_dir_key(int dirx, int diry)
         int mx, my;
         uiobj_id_t oi, oi2;
         if (1/*mouse_initialized*/) {
-            mx = mouse_x;
-            my = mouse_y;
+            mx = moo_mouse_x;
+            my = moo_mouse_y;
         }  else {
             mx = mouse_stored_x;
             my = mouse_stored_y;
@@ -1171,8 +1171,8 @@ static void uiobj_click_obj(uiobj_id_t oi, int mx, int my)
             uiobj_focus_oi = oi;
             uiobj_handle_click(oi, true);
             if (p->type == UIOBJ_TYPE_TEXTINPUT) {
-                mx = mouse_x;
-                my = mouse_y;
+                mx = moo_mouse_x;
+                my = moo_mouse_y;
             }
             ui_cursor_store_bg0(mx, my);
             ui_cursor_draw0(mx, my);
@@ -1248,7 +1248,7 @@ static uiobj_id_t uiobj_handle_input_sub0(void)
 {
     uiobj_id_t oi = UIOBJI_NONE;
     uiobj_t *p, *q;
-    int mx = mouse_x, my = mouse_y, mb;
+    int mx = moo_mouse_x, my = moo_mouse_y, mb;
     uiobj_focus_oi = UIOBJI_ESC;
     uiobj_clicked_oi = UIOBJI_NONE;
     uiobj_mouseoff = ui_cursor_mouseoff;
@@ -1420,8 +1420,8 @@ static uiobj_id_t uiobj_handle_input_sub0(void)
             return UIOBJI_ESC;
         }
         while (mouse_buttons != 0) {
-            mx = mouse_x;
-            my = mouse_y;
+            mx = moo_mouse_x;
+            my = moo_mouse_y;
             uiobj_mouseoff = ui_cursor_mouseoff;
             oi = uiobj_find_obj_at_cursor();
             if (oi == UIOBJI_NONE) {
@@ -1582,8 +1582,8 @@ void uiobj_finish_frame(void)
 {
     int mx, my;
     hw_event_handle();
-    mx = mouse_x;
-    my = mouse_y;
+    mx = moo_mouse_x;
+    my = moo_mouse_y;
     uiobj_handle_objects();
     ui_cursor_update_gfx_i(mx, my);
     ui_cursor_store_bg1(mx, my);
@@ -1694,7 +1694,7 @@ void uiobj_set_focus(uiobj_id_t uiobji)
 
 uiobj_id_t uiobj_find_obj_at_cursor(void)
 {
-    int x = mouse_x, y = mouse_y;
+    int x = moo_mouse_x, y = moo_mouse_y;
     ui_cursor_update_gfx_i(x, y);
     uiobj_mouseoff = ui_cursor_mouseoff;
     for (uiobj_id_t i = UIOBJI_1; i < uiobj_table_num; ++i) {
@@ -1710,7 +1710,7 @@ uiobj_id_t uiobj_find_obj_at_cursor(void)
 uiobj_id_t uiobj_at_cursor(void)
 {
     uiobj_t *p;
-    int i, x = mouse_x, y = mouse_y;
+    int i, x = moo_mouse_x, y = moo_mouse_y;
     ui_cursor_update_gfx_i(x, y);
     uiobj_mouseoff = ui_cursor_mouseoff;
     i = uiobj_find_obj_at_cursor();
