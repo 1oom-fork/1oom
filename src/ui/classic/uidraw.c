@@ -554,7 +554,7 @@ void ui_draw_hmm3(int x0, int y0, int x1, int y1, uint8_t color0, uint8_t color1
     }
 }
 
-static void ui_draw_finish_hmm3(int x, int y, int f)
+static void ui_draw_finish_wipe_anim_do(int x, int y, int f)
 {
     int vx, vy;
     vx = x + 0x13;
@@ -573,7 +573,7 @@ static void ui_draw_finish_wipe_anim(void)
     for (int f = 0; f < 0xa; ++f) {
         for (int x = 0; x < UI_SCREEN_W; x += 0x14) {
             for (int y = 0; y < UI_SCREEN_W; y += 0x14) {
-                ui_draw_finish_hmm3(x, y, f);
+                ui_draw_finish_wipe_anim_do(x, y, f);
             }
         }
     }
