@@ -23,6 +23,7 @@
 #include "uiobj.h"
 #include "uipal.h"
 #include "uisound.h"
+#include "uiswitch.h"
 #include "util.h"
 
 /* -------------------------------------------------------------------------- */
@@ -98,6 +99,7 @@ void ui_landing(struct game_s *g, player_id_t pi, uint8_t planet_i)
 {
     struct landing_data_s d;
     bool flag_done = false;
+    ui_switch_1(g, pi);
     memset(&d, 0, sizeof(d));
     d.g = g;
     d.api = pi;
