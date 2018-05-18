@@ -393,6 +393,7 @@ static void ui_starmap_draw_textbox_finished(struct game_s *g, player_id_t api, 
             sprintf(buf, "%s %s %s %s.", p->name, game_str_sm_hasfshield, game_str_tbl_roman[p->shield], game_str_sm_planshield);
             break;
         default:
+            buf[0] = '\0';
             break;
     }
     ui_draw_textbox_2str("", buf, 54);
