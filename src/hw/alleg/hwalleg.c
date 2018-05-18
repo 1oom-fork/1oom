@@ -50,3 +50,8 @@ void hw_log_error(const char *msg)
         fputs(msg, stderr);
     }
 }
+
+int hw_icon_set(const uint8_t *data, const uint8_t *pal, int w, int h)
+{
+    return 0;
+}
