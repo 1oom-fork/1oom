@@ -508,7 +508,7 @@ void ui_newtech(struct game_s *g, int pi)
             int v;
             if (d.nt.tech <= 50) {
                 const uint8_t *p;
-                p = RESEARCH_D0_PTR(g->gaux, d.nt.field, d.nt.tech - 1); /* FIXME check -1 */
+                p = RESEARCH_D0_PTR(g->gaux, d.nt.field, d.nt.tech);
                 v = p[2];
             } else {
                 const int tbl[TECH_FIELD_NUM] = { 9, 22, 20, 25, 15, 29 };
