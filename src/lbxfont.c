@@ -624,8 +624,9 @@ int lbxfont_calc_str_width(const char *str)
 int lbxfont_calc_split_str_h(int maxw, const char *str)
 {
     split_str_t s;
+    memset(&s, 0, sizeof(s));   /* FIXME HACK deviation from the original */
     lbxfont_split_str(0, 0, maxw, str, &s, 200/*irrelevant*/);
-    return s.y[s.num - 1] + GET_LE_16(&(lbxfontdata[0x10]));
+    return s.y[s.num - 1] + GET_LE_16(&(lbxfontdata[0x10]));    /* s.num can be 0 */
 }
 
 int lbxfont_print_str_normal(int x, int y, const char *str, uint16_t pitch)
