@@ -22,6 +22,7 @@
 #include "uiobj.h"
 #include "uipal.h"
 #include "uisound.h"
+#include "uiswitch.h"
 
 /* -------------------------------------------------------------------------- */
 
@@ -288,6 +289,7 @@ void ui_news(struct game_s *g, struct news_s *ns)
 {
     bool flag_skip = false, flag_fade;
     struct news_data_s d;
+    ui_switch_all(g);
     d.ns = ns;
     if (!ui_data.news.flag_also) {
         if (ui_draw_finish_mode == 0) {
@@ -313,7 +315,6 @@ void ui_news(struct game_s *g, struct news_s *ns)
         }
         flag_fade = false;
     }
-    /*7df17*/
     game_news_get_msg(g, ns, ui_data.strbuf);
     d.str = ui_data.strbuf;
 
