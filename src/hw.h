@@ -18,6 +18,7 @@ extern const struct cmdline_options_s hw_cmdline_options_extra[];
 extern int hw_event_handle(void);
 
 extern int hw_video_init(int w, int h);
+extern int hw_icon_set(const uint8_t *data, const uint8_t *pal, int w, int h);
 extern void hw_video_refresh_palette(void);
 /* Redraw the front buffer. */
 extern void hw_video_redraw_front(void);
