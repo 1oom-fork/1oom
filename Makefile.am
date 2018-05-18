@@ -6,4 +6,9 @@ bindist:
 bindistzip:
 	$(SHELL) @BINDIST_SCRIPT@ $(STRIP) $(top_srcdir) zip
 
-EXTRA_DIST = AUTHORS COPYING HACKING INSTALL NEWS PHILOSOPHY README .gitignore
+EXTRA_DIST = \
+    AUTHORS COPYING HACKING INSTALL NEWS PHILOSOPHY README \
+    make-bindist_install.sh \
+    make-bindist_msdos.sh \
+    make-bindist_win32.sh \
+    .gitignore
