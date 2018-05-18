@@ -59,7 +59,7 @@ void game_news_get_msg(const struct game_s *g, struct news_s *ns, char *buf)
                     buf += len;
                     break;
                 case 5:
-                    len = sprintf(buf, "%s", game_str_tbl_race[ns->num2]);
+                    len = sprintf(buf, "%s", game_str_tbl_race[g->eto[ns->num2].race]);
                     buf += len;
                     break;
                 case 6:
