@@ -118,8 +118,8 @@ int ui_input_list(const char *title, const char *prompt, const struct input_list
         i = 0;
         while ((l->str) || (l->key)) {
             if (match_input(in, l->key, l->str ? l->str : shortcuts[i])) {
-                for (int i = 0; i < num_shortcuts; ++i) {
-                    lib_free(shortcuts[i]);
+                for (int j = 0; j < num_shortcuts; ++j) {
+                    lib_free(shortcuts[j]);
                 }
                 lib_free(shortcuts);
                 return l->value;

@@ -477,7 +477,7 @@ void game_tech_get_name(const struct game_aux_s *gaux, tech_field_t field, int t
     } else if (tech > 50) {
         sprintf(buf, "%s %s %s %s", game_str_te_adv, game_str_tbl_te_field[field], game_str_te_tech, game_str_tbl_roman[tech / 5]);
     } else {
-        const uint8_t *p = &(gaux->research.d0[(field * 50 + tech - 1) * 6]);
+        const uint8_t *p = RESEARCH_D0_PTR(gaux, field, tech);
         if (p[0] != 0xff) {
             int offs = GET_LE_16(&p[4]);
             strcpy(buf, &(gaux->research.names[offs]));
@@ -739,7 +739,7 @@ void game_tech_get_orion_loot(struct game_s *g, player_id_t player)
             const uint8_t *p;
             field = rnd_0_nm1(TECH_FIELD_NUM, &g->seed);
             tech = rnd_1_n(31, &g->seed) + 19;
-            p = RESEARCH_D0_PTR(g->gaux, field, tech); /* FIXME or tech - 1 ? */
+            p = RESEARCH_D0_PTR(g->gaux, field, tech);
             if ((percent[field] >= tech) && (p[0] != 0xff)) {
                 const uint8_t *rc;
                 bool have_tech;
@@ -778,7 +778,7 @@ void game_tech_get_artifact_loot(struct game_s *g, uint8_t planet, player_id_t p
             const uint8_t *p;
             field = rnd_0_nm1(TECH_FIELD_NUM, &g->seed);
             tech = rnd_1_n(30, &g->seed);
-            p = RESEARCH_D0_PTR(g->gaux, field, tech); /* FIXME or tech - 1 ? */
+            p = RESEARCH_D0_PTR(g->gaux, field, tech);
             if ((percent[field] >= tech) && (p[0] != 0xff)) {
                 const uint8_t *rc;
                 bool have_tech;
