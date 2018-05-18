@@ -28,6 +28,8 @@ extern int hw_event_handle(void);
 extern void hw_textinput_start(void);
 extern void hw_textinput_stop(void);
 
+extern int hw_icon_set(const uint8_t *data, const uint8_t *pal, int w, int h);
+
 extern int hw_video_init(int w, int h);
 extern void hw_video_set_palette(uint8_t *palette, int first, int num);
 extern uint8_t hw_video_get_palette_byte(int i);
