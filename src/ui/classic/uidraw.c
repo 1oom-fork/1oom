@@ -9,6 +9,7 @@
 #include "mouse.h"
 #include "rnd.h"
 #include "uicursor.h"
+#include "uidelay.h"
 #include "uidefs.h"
 #include "uiobj.h"
 #include "uipal.h"
@@ -571,13 +572,17 @@ static void ui_draw_finish_wipe_anim_do(int x, int y, int f)
 static void ui_draw_finish_wipe_anim(void)
 {
     for (int f = 0; f < 10; ++f) {
+        ui_delay_prepare();
         for (int x = 0; x < UI_SCREEN_W; x += 20) {
             for (int y = 0; y < UI_SCREEN_W; y += 20) {
                 ui_draw_finish_wipe_anim_do(x, y, f);
             }
         }
+        hw_video_redraw_front();
+        ui_delay_us_or_click(MOO_TICKS_TO_US(1) / 2);
     }
     ui_cursor_store_bg0(mouse_x, mouse_y);
+    hw_video_draw_buf();
 }
 
 void ui_draw_finish(void)
