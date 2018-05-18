@@ -1,6 +1,7 @@
 #ifndef INC_1OOM_UIDEFS_H
 #define INC_1OOM_UIDEFS_H
 
+#include "boolvec.h"
 #include "game.h"
 #include "game_planet.h"
 #include "game_types.h"
@@ -239,6 +240,7 @@ struct ui_data_s {
     ui_main_loop_action_t ui_main_loop_action_prev;
     ui_main_loop_action_t ui_main_loop_action_next;
     bool flag_main_hmm1;
+    BOOLVEC_DECLARE(players_viewing, PLAYER_NUM);
     char strbuf[1024];
 };
 
