@@ -22,6 +22,7 @@
 #include "uiobj.h"
 #include "uisound.h"
 #include "uistarmap_common.h"
+#include "uiswitch.h"
 
 /* -------------------------------------------------------------------------- */
 
@@ -257,6 +258,7 @@ ui_sabotage_t ui_spy_sabotage_ask(struct game_s *g, int spy, int target, uint8_t
     int16_t oi_bases, oi_ind, oi_revolt, oi_planet[PLANETS_MAX];
     bool flag_done = false;
     ui_sabotage_t action = UI_SABOTAGE_NONE;
+    ui_switch_1(g, spy);
     d.g = g;
     d.api = spy;
     d.spy = spy;
@@ -349,6 +351,7 @@ int ui_spy_sabotage_done(struct game_s *g, int pi, int spy, int target, ui_sabot
     int16_t oi_cont, oi_other1, oi_other2;
     bool flag_done = false;
     int other = PLAYER_NONE;
+    ui_switch_1(g, pi);
     d.g = g;
     d.api = pi;
     d.spy = spy;

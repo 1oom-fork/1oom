@@ -28,6 +28,7 @@
 #include "uiobj.h"
 #include "uipal.h"
 #include "uisound.h"
+#include "uiswitch.h"
 #include "util.h"
 
 /* -------------------------------------------------------------------------- */
@@ -212,6 +213,7 @@ void ui_ground(struct ground_s *gr)
     struct ground_data_s d;
     bool flag_done = false;
     int downcount = 4;
+    ui_switch_2(gr->g, gr->s[0].player, gr->s[1].player);
     memset(&d, 0, sizeof(d));
     d.gr = gr;
     d.l.g = gr->g;

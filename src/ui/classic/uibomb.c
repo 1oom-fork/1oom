@@ -23,6 +23,7 @@
 #include "uiobj.h"
 #include "uisound.h"
 #include "uistarmap_common.h"
+#include "uiswitch.h"
 
 /* -------------------------------------------------------------------------- */
 
@@ -183,6 +184,7 @@ bool ui_bomb_ask(struct game_s *g, int pi, uint8_t planet_i, int pop_inbound)
     struct bomb_data_s d;
     int16_t oi_y, oi_n;
     bool flag_done = false, flag_do_bomb = false;
+    ui_switch_1(g, pi);
     d.g = g;
     d.api = pi;
     d.planet = planet_i;
@@ -222,6 +224,7 @@ void ui_bomb_show(struct game_s *g, int attacker_i, int owner_i, uint8_t planet_
 {
     struct bomb_data_s d;
     bool flag_done = false;
+    ui_switch_2(g, attacker_i, owner_i);
     d.g = g;
     d.api = attacker_i;
     d.owner = owner_i;

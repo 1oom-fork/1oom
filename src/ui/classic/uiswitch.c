@@ -5,6 +5,7 @@
 #include "uiswitch.h"
 #include "comp.h"
 #include "game.h"
+#include "game_aux.h"
 #include "game_str.h"
 #include "kbd.h"
 #include "lbx.h"
@@ -68,9 +69,7 @@ static void switch_draw_cb(void *vptr)
     ui_gmap_basic_shutdown(ctx);
 }
 
-/* -------------------------------------------------------------------------- */
-
-bool ui_switch(struct game_s *g, player_id_t *tbl_pi, int num_pi, bool allow_opts)
+static bool ui_switch(struct game_s *g, player_id_t *tbl_pi, int num_pi, bool allow_opts)
 {
     struct switch_data_s d;
     bool flag_done = false, flag_opts = false;
@@ -123,4 +122,78 @@ bool ui_switch(struct game_s *g, player_id_t *tbl_pi, int num_pi, bool allow_opt
 
     uiobj_unset_callback();
     return flag_opts;
+}
+
+/* -------------------------------------------------------------------------- */
+
+bool ui_switch_1_opts(struct game_s *g, player_id_t pi)
+{
+    BOOLVEC_DECLARE(viewing, PLAYER_NUM);
+    if ((g->gaux->local_players <= 1) || IS_AI(g, pi)) {
+        return false;
+    }
+    BOOLVEC_CLEAR(viewing, PLAYER_NUM);
+    BOOLVEC_SET1(viewing, pi);
+    if (!BOOLVEC_COMP(ui_data.players_viewing, viewing, PLAYER_NUM)) {
+        BOOLVEC_COPY(ui_data.players_viewing, viewing, PLAYER_NUM);
+        return ui_switch(g, &pi, 1, true);
+    }
+    return false;
+}
+
+void ui_switch_1(struct game_s *g, player_id_t pi)
+{
+    BOOLVEC_DECLARE(viewing, PLAYER_NUM);
+    if ((g->gaux->local_players <= 1) || IS_AI(g, pi)) {
+        return;
+    }
+    BOOLVEC_CLEAR(viewing, PLAYER_NUM);
+    BOOLVEC_SET1(viewing, pi);
+    if (!BOOLVEC_COMP(ui_data.players_viewing, viewing, PLAYER_NUM)) {
+        BOOLVEC_COPY(ui_data.players_viewing, viewing, PLAYER_NUM);
+        ui_switch(g, &pi, 1, false);
+    }
+}
+
+void ui_switch_2(struct game_s *g, player_id_t pi1, player_id_t pi2)
+{
+    player_id_t tbl[2];
+    int n = 0;
+    BOOLVEC_DECLARE(viewing, PLAYER_NUM);
+    if (g->gaux->local_players <= 1) {
+        return;
+    }
+    BOOLVEC_CLEAR(viewing, PLAYER_NUM);
+    if (IS_HUMAN(g, pi1)) {
+        BOOLVEC_SET1(viewing, pi1);
+        tbl[n++] = pi1;
+    }
+    if (IS_HUMAN(g, pi2)) {
+        BOOLVEC_SET1(viewing, pi2);
+        tbl[n++] = pi2;
+    }
+    if (!BOOLVEC_COMP(ui_data.players_viewing, viewing, PLAYER_NUM)) {
+        BOOLVEC_COPY(ui_data.players_viewing, viewing, PLAYER_NUM);
+        ui_switch(g, tbl, n, false);
+    }
+}
+
+void ui_switch_all(struct game_s *g)
+{
+    player_id_t tbl[PLAYER_NUM];
+    int n = 0;
+    BOOLVEC_DECLARE(viewing, PLAYER_NUM);
+    if (g->gaux->local_players <= 1) {
+        return;
+    }
+    BOOLVEC_CLEAR(viewing, PLAYER_NUM);
+    for (player_id_t pi = PLAYER_0; pi < g->players; ++pi) {
+        if (IS_HUMAN(g, pi) && IS_ALIVE(g, pi)) {
+            tbl[n++] = pi;
+        }
+    }
+    if (!BOOLVEC_COMP(ui_data.players_viewing, viewing, PLAYER_NUM)) {
+        BOOLVEC_COPY(ui_data.players_viewing, viewing, PLAYER_NUM);
+        ui_switch(g, tbl, n, false);
+    }
 }

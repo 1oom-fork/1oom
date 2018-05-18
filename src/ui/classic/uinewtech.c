@@ -29,6 +29,7 @@
 #include "uiobj.h"
 #include "uipal.h"
 #include "uisound.h"
+#include "uiswitch.h"
 
 /* -------------------------------------------------------------------------- */
 
@@ -481,6 +482,9 @@ void ui_newtech(struct game_s *g, int pi)
     bool flag_copybuf = false;
 
     ui_sound_stop_music();
+    if (g->evn.newtech[pi].num > 0) {
+        ui_switch_1(g, pi);
+    }
     uiobj_set_xyoff(0, 0);
 
     memset(&d, 0, sizeof(d));

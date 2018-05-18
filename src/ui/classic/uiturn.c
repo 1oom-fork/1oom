@@ -23,6 +23,7 @@
 #include "uiobj.h"
 #include "uisound.h"
 #include "uistarmap_common.h"
+#include "uiswitch.h"
 
 /* -------------------------------------------------------------------------- */
 
@@ -54,6 +55,7 @@ void ui_turn_msg(struct game_s *g, int pi, const char *str)
     struct turnmsg_data_s d;
     bool flag_done = false;
     int tempnum;
+    ui_switch_1(g, pi);
     tempnum = g->evn.build_finished_num[pi];
     g->evn.build_finished_num[pi] = 0;
     d.g = g;

@@ -421,9 +421,7 @@ void ui_gmap_basic_start_player(void *ctx, int pi)
 {
     struct gmap_basic_data_s *d = ctx;
     if (d->show_switch) {
-        player_id_t pil;
-        pil = pi;
-        ui_switch(d->g, &pil, 1, false);
+        ui_switch_1(d->g, pi);
         ui_draw_copy_buf();
         hw_video_copy_back_to_page2();
     }
