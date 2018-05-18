@@ -72,7 +72,6 @@ ui_turn_action_t ui_game_turn(struct game_s *g, int *load_game_i_ptr, int pi)
             ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
             ui_starmap_set_pos_focus(g, pi);
         }
-        game_update_have_reserve_fuel(g); /* TODO move to game_* ? */
         ui_data.flag_scrap_for_new_design = false;
         switch (ui_data.ui_main_loop_action) {
             case UI_MAIN_LOOP_STARMAP:
@@ -133,8 +132,7 @@ ui_turn_action_t ui_game_turn(struct game_s *g, int *load_game_i_ptr, int pi)
                         ok = (sd_num < NUM_SHIPDESIGNS);
                     }
                     if (ok) {
-                        g->srd[pi].design[sd_num] = gd.sd;
-                        g->eto[pi].shipdesigns_num = ++sd_num;
+                        game_design_add(g, pi, &gd.sd, true);
                     }
                     g->current_design[pi] = gd.sd;
                 }

@@ -1080,11 +1080,7 @@ static void game_ai_classic_turn_p1(struct game_s *g)
 static void game_ai_classic_design_scrap(struct game_s *g, player_id_t pi, int shipi)
 {
     empiretechorbit_t *e = &(g->eto[pi]);
-    shipresearch_t *srd = &(g->srd[pi]);
     int si;
-    for (int i = shipi; i < (NUM_SHIPDESIGNS - 1); ++i) {
-        srd->year[i] = srd->year[i + 1];
-    }
     game_design_scrap(g, pi, shipi, false);
     si = e->shipi_colony;
     if (si == shipi) {
@@ -1487,7 +1483,7 @@ again:
             goto again;
         }
     }
-    g->srd[pi].design[e->shipdesigns_num++] = *sd;
+    game_design_add(g, pi, sd, false);
 }
 
 static void game_ai_classic_turn_p2_do(struct game_s *g, player_id_t pi)
@@ -1574,7 +1570,6 @@ static void game_ai_classic_turn_p2_do(struct game_s *g, player_id_t pi)
     while (e->shipdesigns_num < NUM_SHIPDESIGNS) {
         int si;
         si = e->shipdesigns_num;
-        srd->year[si] = g->year;
         if (e->shipi_colony == -1) {
             e->shipi_colony = si;
             ait->shiptype = 0/*colony*/;
