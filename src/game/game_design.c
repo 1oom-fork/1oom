@@ -665,6 +665,9 @@ void game_design_scrap(struct game_s *g, player_id_t player, int shipi, bool fla
     if ((e->shipdesigns_num <= 1) || (shipi >= e->shipdesigns_num)) {
         return;
     }
+    for (int i = shipi; i < (NUM_SHIPDESIGNS - 1); ++i) {
+        srd->year[i] = srd->year[i + 1];
+    }
     for (int i = 0; i < g->galaxy_stars; ++i) {
         fleet_orbit_t *r = &(e->orbit[i]);
         for (int j = shipi; j < (NUM_SHIPDESIGNS - 1); ++j) {
@@ -703,6 +706,25 @@ void game_design_scrap(struct game_s *g, player_id_t player, int shipi, bool fla
     game_update_visibility(g);
     --e->shipdesigns_num;
     game_update_maint_costs(g);
+    game_update_have_reserve_fuel(g);
+}
+
+bool game_design_add(struct game_s *g, player_id_t player, const shipdesign_t *sd, bool update_reserve_fuel)
+{
+    empiretechorbit_t *e = &(g->eto[player]);
+    int num = e->shipdesigns_num;
+    if (num < NUM_SHIPDESIGNS) {
+        shipresearch_t *srd = &(g->srd[player]);
+        srd->design[num] = *sd;
+        srd->year[num] = g->year;
+        e->shipdesigns_num = ++num;
+        if (update_reserve_fuel) {
+            game_update_have_reserve_fuel(g);
+        }
+        return true;
+    } else {
+        return false;
+    }
 }
 
 void game_design_set_hp(shipdesign_t *sd)
