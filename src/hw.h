@@ -19,6 +19,7 @@ extern void hw_mouse_toggle_grab(void);
 
 extern int hw_video_init(int w, int h);
 extern int hw_video_toggle_fullscreen(void);
+extern int hw_icon_set(const uint8_t *data, const uint8_t *pal, int w, int h);
 extern void hw_video_refresh_palette(void);
 /* Redraw the front buffer. */
 extern void hw_video_redraw_front(void);
