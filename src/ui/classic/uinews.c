@@ -199,45 +199,29 @@ static void ui_news_fade(void)
                 si += v * 2;
                 bl += dx + we0;
                 ah = ui_news_fade_tbl_xoff[bl++];
-                if (si < ((UI_SCREEN_W * UI_SCREEN_H) / 4)) {
-                    pf[si * 4 + ah] = pb[si * 4 + ah];
-                }
+                pf[si * 4 + ah] = pb[si * 4 + ah];
                 --pixelcount;
                 si += 8000;
-                if (si < ((UI_SCREEN_W * UI_SCREEN_H) / 4)) {
-                    pf[si * 4 + ah] = pb[si * 4 + ah];
-                }
+                pf[si * 4 + ah] = pb[si * 4 + ah];
                 --pixelcount;
                 si -= 4000;
-                if (si < ((UI_SCREEN_W * UI_SCREEN_H) / 4)) {
-                    pf[si * 4 + ah] = pb[si * 4 + ah];
-                }
+                pf[si * 4 + ah] = pb[si * 4 + ah];
                 --pixelcount;
                 si += 8000;
-                if (si < ((UI_SCREEN_W * UI_SCREEN_H) / 4)) {
-                    pf[si * 4 + ah] = pb[si * 4 + ah];
-                }
+                pf[si * 4 + ah] = pb[si * 4 + ah];
                 --pixelcount;
                 si -= 12000;
                 ah = ui_news_fade_tbl_xoff[bl++];
-                if (si < ((UI_SCREEN_W * UI_SCREEN_H) / 4)) {
-                    pf[si * 4 + ah] = pb[si * 4 + ah];
-                }
+                pf[si * 4 + ah] = pb[si * 4 + ah];
                 --pixelcount;
                 si += 8000;
-                if (si < ((UI_SCREEN_W * UI_SCREEN_H) / 4)) {
-                    pf[si * 4 + ah] = pb[si * 4 + ah];
-                }
+                pf[si * 4 + ah] = pb[si * 4 + ah];
                 --pixelcount;
                 si -= 4000;
-                if (si < ((UI_SCREEN_W * UI_SCREEN_H) / 4)) {
-                    pf[si * 4 + ah] = pb[si * 4 + ah];
-                }
+                pf[si * 4 + ah] = pb[si * 4 + ah];
                 --pixelcount;
                 si += 8000;
-                if (si < ((UI_SCREEN_W * UI_SCREEN_H) / 4)) {
-                    pf[si * 4 + ah] = pb[si * 4 + ah];
-                }
+                pf[si * 4 + ah] = pb[si * 4 + ah];
                 --pixelcount;
                 if (pixelcount <= 0) {
                     pixelcount = UI_NEWS_FADE_PIXELS_PER_FRAME;
