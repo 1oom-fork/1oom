@@ -124,7 +124,7 @@ static int16_t uiobj_handle_downcount = 0;
 static uint16_t uiobj_kbd_hmm1 = 0;
 static uint16_t uiobj_hmm5_delay = 2;
 static uint16_t uiobj_hmm6 = 0;
-static int16_t uiobj_help_id = 0;
+static int16_t uiobj_help_id = -1;
 static int16_t uiobj_hmm8 = 1;
 static bool uiobj_hmm9 = false;
 static int16_t uiobj_kbd_movey = -1;
@@ -1816,7 +1816,7 @@ int16_t uiobj_add_mousearea_limited(uint16_t x0, uint16_t y0, uint16_t x1, uint1
     return uiobj_add_mousearea(x0, y0, x1, y1, key, helpid);
 }
 
-int16_t uiobj_add_inputkey(mookey_t key)
+int16_t uiobj_add_inputkey(uint32_t key)
 {
     uiobj_t *p = &uiobj_tbl[uiobj_table_num];
     p->x0 = UIOBJ_OFFSCREEN;
