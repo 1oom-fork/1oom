@@ -83,10 +83,8 @@ int ui_cmd_fleet_send(struct game_s *g, int api, struct input_token_s *param, in
     {
         bool have_reserve_fuel = true;
         bool *hrf = &(g->srd[api].have_reserve_fuel[0]);
-        game_update_have_reserve_fuel(g); /* FIXME this should not be needed */
         for (int i = 0; i < e->shipdesigns_num; ++i) {
             if (ships[i] && (!hrf[i])) {
-printf("%i no res\n", i);
                 have_reserve_fuel = false;
                 break;
             }

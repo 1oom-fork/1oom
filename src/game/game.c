@@ -58,6 +58,7 @@ static void game_start(struct game_s *g)
     }
     game_update_within_range(g);
     game_update_visibility(g);
+    game_update_have_reserve_fuel(g);
 }
 
 static void game_set_opts_from_value(struct game_new_options_s *go, int v)
