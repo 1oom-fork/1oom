@@ -569,7 +569,7 @@ static void ui_draw_finish_hmm3(int x, int y, int f)
     ui_draw_copy_line(vx, y, vx, vy, 0);
 }
 
-static void ui_draw_finish_hmm2(void)
+static void ui_draw_finish_wipe_anim(void)
 {
     for (int f = 0; f < 10; ++f) {
         for (int x = 0; x < UI_SCREEN_W; x += 20) {
@@ -587,7 +587,7 @@ void ui_draw_finish(void)
         ui_palette_set_n();
         uiobj_finish_frame();
     } else if (ui_draw_finish_mode == 1) {
-        ui_draw_finish_hmm2();
+        ui_draw_finish_wipe_anim();
     } else if (ui_draw_finish_mode == 2) {
         uiobj_finish_frame();
         ui_palette_fadein_4b_19_1();
