@@ -370,7 +370,6 @@ static int libsave_moo13_de_do(uint8_t *buf, struct game_s *g)
                 ++pos;
             }
         }
-        M13_GET_TBL_16(srd->have_reserve_fuel, srdb + 0x444);
         M13_GET_TBL_16(srd->year, srdb + 0x450);
         /* M13_GET_TBL_16(srd->shipcount, srdb + 0x45c); */
     }
@@ -789,7 +788,6 @@ static int libsave_moo13_en_do(uint8_t *buf, const struct game_s *g)
                 ++pos;
             }
         }
-        M13_SET_TBL_16(srd->have_reserve_fuel, srdb + 0x444);
         M13_SET_TBL_16(srd->year, srdb + 0x450);
         /* M13_SET_TBL_16(srd->shipcount, srdb + 0x45c); */
     }
