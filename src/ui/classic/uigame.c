@@ -44,9 +44,7 @@ ui_turn_action_t ui_game_turn(struct game_s *g, int *load_game_i_ptr, int pi)
     int scrapi = -1;
     int opponi = -1;
     if (g->gaux->local_players > 1) {
-        player_id_t pil;
-        pil = pi;
-        while (ui_switch(g, &pil, 1, true)) {
+        while (ui_switch_1_opts(g, pi)) {
             switch (ui_gameopts(g, load_game_i_ptr)) {
                 case GAMEOPTS_DONE:
                     break;
@@ -255,6 +253,7 @@ void ui_game_start(struct game_s *g)
             break;
         }
     }
+    BOOLVEC_CLEAR(ui_data.players_viewing, PLAYER_NUM);
 }
 
 void ui_game_end(struct game_s *g)

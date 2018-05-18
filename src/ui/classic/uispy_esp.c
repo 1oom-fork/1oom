@@ -20,6 +20,7 @@
 #include "uidraw.h"
 #include "uiobj.h"
 #include "uisound.h"
+#include "uiswitch.h"
 #include "vgabuf.h"
 
 /* -------------------------------------------------------------------------- */
@@ -138,6 +139,7 @@ int ui_spy_steal(struct game_s *g, int spy, int target, uint8_t flags_field)
     int16_t oi_tbl_field[TECH_FIELD_NUM];
     int selected = -1;
 
+    ui_switch_1(g, spy);
     ui_sound_play_music(0xf);
 
     /* HACK
@@ -205,6 +207,7 @@ void ui_spy_stolen(struct game_s *g, int pi, int spy, int field, uint8_t tech)
 {
     struct stolen_data_s d;
     bool flag_done = false;
+    ui_switch_1(g, pi);
     d.g = g;
     d.api = pi;
     d.spy = spy;
