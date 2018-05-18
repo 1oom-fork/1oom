@@ -22,6 +22,7 @@
 #include "uiobj.h"
 #include "uipal.h"
 #include "uisound.h"
+#include "uiswitch.h"
 #include "vgabuf.h"
 
 /* -------------------------------------------------------------------------- */
@@ -136,6 +137,7 @@ void ui_election_start(struct election_s *el)
     static struct election_data_s d;    /* HACK */
     d.el = el;
     el->uictx = &d;
+    ui_switch_all(el->g);
     vgabuf_copy_back_from_page2();
     vgabuf_copy_back_to_page3();
     if (ui_draw_finish_mode == 0) {
