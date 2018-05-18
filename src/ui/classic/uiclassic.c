@@ -260,6 +260,18 @@ static void init_gfx(void)
     ui_data.gfx.initialized = true;
 }
 
+static int set_ui_icon(void)
+{
+    struct gfx_aux_s *aux = &ui_data.aux.ship_p1;
+    uint8_t *gfx, *pal;
+    gfx = ui_data.gfx.ships[0x48 * 2 + 2];
+    pal = lbxfile_item_get(LBXFILE_FONTS, 2, 0);
+    gfx_aux_draw_frame_to(gfx, aux);
+    hw_icon_set(aux->data, pal, aux->w, aux->h);    /* do not care if the icon got set */
+    lbxfile_item_release(LBXFILE_FONTS, pal);
+    return 0;
+}
+
 /* -------------------------------------------------------------------------- */
 
 int ui_init(void)
@@ -291,6 +303,8 @@ int ui_late_init(void)
     }
     ui_data.music_i = -1;
     init_gfx();
+    set_ui_icon();
+
     uiobj_table_clear();
     return 0;
 }
