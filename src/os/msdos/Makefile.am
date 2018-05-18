@@ -6,4 +6,4 @@ noinst_LIBRARIES = libos.a
 
 libos_a_SOURCES = \
     os.c \
-    os.h
+    osdefs.h
