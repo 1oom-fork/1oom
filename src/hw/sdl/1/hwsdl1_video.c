@@ -343,4 +343,49 @@ void hw_video_position_cursor(int mx, int my)
     /* Not implemented */
 }
 
+int hw_icon_set(const uint8_t *data, const uint8_t *pal, int w, int h)
+{
+    SDL_Color color[256];
+    SDL_Surface *icon;
+    Uint8 *mask = 0;
+    Uint8 *p;
+    uint8_t maxb = 0;
+    uint32_t mi = 0;
+    icon = SDL_CreateRGBSurface(SDL_SWSURFACE, w, h, 8, 0, 0, 0, 0);
+    if (!icon) {
+        log_error("Icon: SDL_CreateRGBSurface failed!\n");
+        return -1;
+    }
+    mask = lib_malloc((w * h + 7) / 8);
+    p = (Uint8 *)icon->pixels;
+    mi = 0;
+    for (int y = 0; y < h; ++y) {
+        for (int x = 0; x < w; ++x) {
+            uint8_t b;
+            b = *data++;
+            p[x] = b;
+            if (b) {
+                mask[mi >> 3] |= (1 << (7 - (mi & 7)));
+                if (b > maxb) {
+                    maxb = b;
+                }
+            }
+            ++mi;
+        }
+        p += icon->pitch;
+    }
+    for (int i = 0; i < 256; ++i) {
+        color[i].r = vgapal_6bit_to_8bit(*pal++);
+        color[i].g = vgapal_6bit_to_8bit(*pal++);
+        color[i].b = vgapal_6bit_to_8bit(*pal++);
+    }
+    SDL_SetColors(icon, color, 0, maxb + 1);
+    SDL_WM_SetIcon(icon, mask);
+    SDL_FreeSurface(icon);
+    icon = NULL;
+    lib_free(mask);
+    mask = NULL;
+    return 0;
+}
+
 #include "hw_video.c"
