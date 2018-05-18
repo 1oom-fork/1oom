@@ -866,6 +866,7 @@ static int16_t uiobj_kbd_dir_key_dy(int diry)
 
 static int16_t uiobj_kbd_dir_key_dxdy(int dirx, int diry, int16_t oi2, int mx, int my)
 {
+    /* FIXME this behaves like MOO1, meaning it sucks */
     int dx = UIOBJ_OFFSCREEN, dy = UIOBJ_OFFSCREEN;
     int slope = UIOBJ_OFFSCREEN;
     int mind = UIOBJ_OFFSCREEN * 100;
@@ -907,7 +908,6 @@ static int16_t uiobj_kbd_dir_key_dxdy(int dirx, int diry, int16_t oi2, int mx, i
                 }
             }
         }
-        /*14a4a*/
         if (oi == oi2) {
             for (int i = 1; i < uiobj_table_num; ++i) {
                 if (i == oi2) {
@@ -945,7 +945,6 @@ static int16_t uiobj_kbd_dir_key_dxdy(int dirx, int diry, int16_t oi2, int mx, i
             }
         }
     }
-    /*14c95*/
     if ((dirx != 0) && (diry == 0)) {
         for (int i = 1; i < uiobj_table_num; ++i) {
             if (i == oi2) {
@@ -968,7 +967,6 @@ static int16_t uiobj_kbd_dir_key_dxdy(int dirx, int diry, int16_t oi2, int mx, i
                 }
             }
         }
-        /*14e6a*/
         if (oi == oi2) {
             for (int i = 1; i < uiobj_table_num; ++i) {
                 if (i == oi2) {
@@ -1006,7 +1004,6 @@ static int16_t uiobj_kbd_dir_key_dxdy(int dirx, int diry, int16_t oi2, int mx, i
             }
         }
     }
-    /*150ba*/
     if ((dirx != 0) && (diry != 0)) {
         for (int i = 1; i < uiobj_table_num; ++i) {
             if (i == oi2) {
@@ -1024,19 +1021,16 @@ static int16_t uiobj_kbd_dir_key_dxdy(int dirx, int diry, int16_t oi2, int mx, i
                     slope = UIOBJ_OFFSCREEN;
                     continue;
                 }
-                /* FIMXE the rest of the function is probably wrong */
                 if ((dx >= dy) && (dy != 0)) {
                     slope = (dx * 100) / dy;
                 }
-                /*15265*/
                 if ((dy > dx) && (dx != 0)) {
                     slope = (dy * 100) / dx;
                 }
-                /*15292*/
                 if ((dx == 0) || (dy == 0)) {
                     slope = UIOBJ_OFFSCREEN;
                 }
-                if ((slope >= 0) && /* FIXME not like MOO1 */(slope < 0x69)) {
+                if ((slope >= 34) && (slope <= 105)) {
                     dist = (dx * dx) + (dy * dy);
                     if (dist < mind) {
                         mind = dist;
@@ -1046,8 +1040,6 @@ static int16_t uiobj_kbd_dir_key_dxdy(int dirx, int diry, int16_t oi2, int mx, i
             }
         }
     }
-    /*1531b merged to above*/
-    /*1557a*/
     return oi;
 }
 
