@@ -17,7 +17,7 @@
 
 #define RESEARCH_DESCR_LEN  0xc3
 
-#define RESEARCH_D0_PTR(ga_, f_, t_)   ((const uint8_t *)&((ga_)->research.d0[((f_) * 50 + (t_)) * 6]))
+#define RESEARCH_D0_PTR(ga_, f_, t_)   ((const uint8_t *)&((ga_)->research.d0[((f_) * 50 + (t_) - 1) * 6]))
 #define RESEARCH_D0_B1(p_)   (((p_)[0] == 0xff) ? 0 : ((p_)[1]))
 
 #define EVENTMSG_NUM  154
