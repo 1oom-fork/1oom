@@ -56,6 +56,7 @@ util_sources = \
     log.c \
     log.h \
     main.c \
+    main.h \
     mouse.c \
     mouse.h \
     options.c \
