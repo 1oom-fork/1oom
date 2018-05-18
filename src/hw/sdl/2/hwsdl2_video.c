@@ -49,6 +49,9 @@ static struct sdl_video_s {
     SDL_Rect blit_rect;
     uint32_t pixel_format;
 
+    SDL_Surface *icon;
+    SDL_Palette *iconpal;
+
     /* SDL display number on which to run. */
     int display;
 
@@ -335,6 +338,9 @@ static int video_sw_set(int w, int h)
         video.pixel_format = SDL_GetWindowPixelFormat(video.window);
         SDL_SetWindowMinimumSize(video.window, video.bufw, video.actualh);
         SDL_SetWindowTitle(video.window, "1oom");
+        if (video.icon) {
+            SDL_SetWindowIcon(video.window, video.icon);
+        }
     }
     /* The SDL_RENDERER_TARGETTEXTURE flag is required to render the
        intermediate texture into the upscaled texture.
@@ -494,6 +500,14 @@ void hw_video_shutdown(void)
         SDL_FreeSurface(video.rgbabuffer);
         video.rgbabuffer = NULL;
     }
+    if (video.icon) {
+        SDL_FreeSurface(video.icon);
+        video.icon = NULL;
+    }
+    if (video.iconpal) {
+        SDL_FreePalette(video.iconpal);
+        video.iconpal = NULL;
+    }
     for (int i = 0; i < NUM_VIDEOBUF; ++i) {
         lib_free(video.buf[i]);
         video.buf[i] = NULL;
@@ -504,6 +518,56 @@ void hw_video_input_grab(bool grab)
 {
     SDL_SetWindowGrab(video.window, grab);
     SDL_SetRelativeMouseMode(grab);
+}
+
+int hw_icon_set(const uint8_t *data, const uint8_t *pal, int w, int h)
+{
+    SDL_Color color[256];
+    SDL_Surface *icon;
+    Uint8 *p;
+    video.icon = NULL;
+    icon = SDL_CreateRGBSurface(SDL_SWSURFACE, w, h, 8, 0, 0, 0, 0);
+    if (!icon) {
+        log_error("Icon: SDL_CreateRGBSurface failed!\n");
+        return -1;
+    }
+    p = (Uint8 *)icon->pixels;
+    for (int y = 0; y < h; ++y) {
+        memcpy(p, data, w);
+        data += w;
+        p += icon->pitch;
+    }
+    for (int i = 0; i < 256; ++i) {
+        color[i].r = *pal++ << 2;
+        color[i].g = *pal++ << 2;
+        color[i].b = *pal++ << 2;
+        color[i].a = 255;
+    }
+    color[0].a = 0;
+    {
+        SDL_Palette *sdlpal;
+        sdlpal = SDL_AllocPalette(256);
+        if (!sdlpal) {
+            log_error("Icon: SDL_AllocPalette failed!\n");
+            SDL_FreeSurface(icon);
+            return false;
+        }
+        if (SDL_SetPaletteColors(sdlpal, color, 0, 256)) {
+            log_error("Icon: SetPaletteColors failed!\n");
+            SDL_FreePalette(sdlpal);
+            SDL_FreeSurface(icon);
+            return false;
+        }
+        if (SDL_SetSurfacePalette(icon, sdlpal)) {
+            log_error("Icon: SetSurfacePalette failed! %s\n", SDL_GetError());
+            SDL_FreePalette(sdlpal);
+            SDL_FreeSurface(icon);
+            return false;
+        }
+        video.iconpal = sdlpal;
+    }
+    video.icon = icon;
+    return 0;
 }
 
 #include "hwsdl_video.c"

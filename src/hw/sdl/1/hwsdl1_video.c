@@ -368,4 +368,49 @@ void hw_video_input_grab(bool grab)
     SDL_WM_GrabInput(grab ? SDL_GRAB_ON : SDL_GRAB_OFF);
 }
 
+int hw_icon_set(const uint8_t *data, const uint8_t *pal, int w, int h)
+{
+    SDL_Color color[256];
+    SDL_Surface *icon;
+    Uint8 *mask = 0;
+    Uint8 *p;
+    uint8_t maxb = 0;
+    uint32_t mi = 0;
+    icon = SDL_CreateRGBSurface(SDL_SWSURFACE, w, h, 8, 0, 0, 0, 0);
+    if (!icon) {
+        log_error("Icon: SDL_CreateRGBSurface failed!\n");
+        return -1;
+    }
+    mask = lib_malloc((w * h + 7) / 8);
+    p = (Uint8 *)icon->pixels;
+    mi = 0;
+    for (int y = 0; y < h; ++y) {
+        for (int x = 0; x < w; ++x) {
+            uint8_t b;
+            b = *data++;
+            p[x] = b;
+            if (b) {
+                mask[mi >> 3] |= (1 << (7 - (mi & 7)));
+                if (b > maxb) {
+                    maxb = b;
+                }
+            }
+            ++mi;
+        }
+        p += icon->pitch;
+    }
+    for (int i = 0; i < 256; ++i) {
+        color[i].r = *pal++ << 2;
+        color[i].g = *pal++ << 2;
+        color[i].b = *pal++ << 2;
+    }
+    SDL_SetColors(icon, color, 0, maxb + 1);
+    SDL_WM_SetIcon(icon, mask);
+    SDL_FreeSurface(icon);
+    icon = NULL;
+    lib_free(mask);
+    mask = NULL;
+    return 0;
+}
+
 #include "hwsdl_video.c"
