@@ -240,7 +240,7 @@ S*28    number of ship designs * Ship design: $SHIPDESIGN
         1   hit points
 6*a*3   limited research list (data is tech ID)
 6*3c    completed research (data is tech ID; table length is @TECHCOMPL)
-6*1     have reserve fuel (0/1)
+6*1     (0, unused)
 6*2     year of ship design
 6*4     (0, unused)
 
