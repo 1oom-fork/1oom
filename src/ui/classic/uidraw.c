@@ -9,6 +9,7 @@
 #include "mouse.h"
 #include "rnd.h"
 #include "uicursor.h"
+#include "uidelay.h"
 #include "uidefs.h"
 #include "uiobj.h"
 #include "uipal.h"
@@ -554,11 +555,11 @@ void ui_draw_hmm3(int x0, int y0, int x1, int y1, uint8_t color0, uint8_t color1
     }
 }
 
-static void ui_draw_finish_hmm3(int x, int y, int f)
+static void ui_draw_finish_wipe_anim_do(int x, int y, int f)
 {
     int vx, vy;
-    vx = x + 0x13;
-    vy = y + 0x13;
+    vx = x + 19;
+    vy = y + 19;
     x += f;
     y += f;
     vx -= f;
@@ -568,16 +569,20 @@ static void ui_draw_finish_hmm3(int x, int y, int f)
     ui_draw_copy_line(vx, y, vx, vy, 0);
 }
 
-static void ui_draw_finish_hmm2(void)
+static void ui_draw_finish_wipe_anim(void)
 {
-    for (int f = 0; f < 0xa; ++f) {
-        for (int x = 0; x < UI_SCREEN_W; x += 0x14) {
-            for (int y = 0; y < UI_SCREEN_W; y += 0x14) {
-                ui_draw_finish_hmm3(x, y, f);
+    for (int f = 0; f < 10; ++f) {
+        ui_delay_prepare();
+        for (int x = 0; x < UI_SCREEN_W; x += 20) {
+            for (int y = 0; y < UI_SCREEN_W; y += 20) {
+                ui_draw_finish_wipe_anim_do(x, y, f);
             }
         }
+        hw_video_redraw_front();
+        ui_delay_us_or_click(MOO_TICKS_TO_US(1) / 2);
     }
     ui_cursor_store_bg0(moouse_x, moouse_y);
+    hw_video_draw_buf();
 }
 
 void ui_draw_finish(void)
@@ -586,7 +591,7 @@ void ui_draw_finish(void)
         ui_palette_set_n();
         uiobj_finish_frame();
     } else if (ui_draw_finish_mode == 1) {
-        ui_draw_finish_hmm2();
+        ui_draw_finish_wipe_anim();
     } else if (ui_draw_finish_mode == 2) {
         uiobj_finish_frame();
         ui_palette_fadein_4b_19_1();
