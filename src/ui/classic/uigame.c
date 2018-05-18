@@ -235,6 +235,8 @@ void ui_game_start(struct game_s *g)
     /* HACK remove visual glitch on load game */
     ui_draw_erase_buf();
     hw_video_draw_buf();
+    /* HACK clear both buffers just to be sure */
+    hw_video_copy_buf();
 
     lbxpal_select(0, -1, 0);
     lbxpal_build_colortables();
