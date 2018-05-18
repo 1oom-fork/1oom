@@ -232,22 +232,6 @@ static void init_gfx(void)
     ui_data.gfx.planets.smonster = lbxfile_item_get(LBXFILE_PLANETS, 0x2d, 0);
     ui_data.gfx.planets.tmonster = lbxfile_item_get(LBXFILE_PLANETS, 0x2e, 0);
 
-    for (int i = 0; i < 0x48; ++i) {
-        uint8_t *t;
-        if (i < 0x46) {
-            t = lbxfile_item_get(LBXFILE_SHIPS2, i, 0);
-        } else if (i == 0x46) {
-            t = lbxfile_item_get(LBXFILE_PLANETS, i - 0x17, 0);
-        } else /*(i == 0x47)*/ {
-            t = lbxfile_item_get(LBXFILE_SCREENS, 7, 0);
-        }
-        ui_data.gfx.ships[i] = t;
-        ui_data.gfx.ships[0x48 + i] = lbxfile_item_get(LBXFILE_SHIPS, i, 0);
-    }
-    for (int i = 0; i < 3; ++i) {
-        ui_data.gfx.ships[0x48 * 2 + i] = lbxfile_item_get(LBXFILE_SHIPS2, 0x48 + i, 0);
-    }
-
     ui_data.gfx.screens.tech_but_up = lbxfile_item_get(LBXFILE_SCREENS, 1, 0);
     ui_data.gfx.screens.tech_but_down = lbxfile_item_get(LBXFILE_SCREENS, 2, 0);
     ui_data.gfx.screens.tech_but_ok = lbxfile_item_get(LBXFILE_SCREENS, 3, 0);
@@ -276,12 +260,45 @@ static void init_gfx(void)
     ui_data.gfx.vgafileh = lib_malloc(UI_SCREEN_W * UI_SCREEN_H);
 
     gfx_aux_setup_wh(&ui_data.aux.screen, UI_SCREEN_W, UI_SCREEN_H);
-    gfx_aux_setup_wh(&ui_data.aux.ship_p1, 34, 26);
     gfx_aux_setup_wh(&ui_data.aux.ship_overlay, 34, 26);
     gfx_aux_setup_wh(&ui_data.aux.btemp, 38, 30);
 
     /* load musics 5..8, TODO? */
     ui_data.gfx.initialized = true;
+}
+
+static int init_lbx_ships(void)
+{
+    for (int i = 0; i < 0x48; ++i) {
+        uint8_t *t;
+        if (i < 0x46) {
+            t = lbxfile_item_get(LBXFILE_SHIPS2, i, 0);
+        } else if (i == 0x46) {
+            t = lbxfile_item_get(LBXFILE_PLANETS, i - 0x17, 0);
+        } else /*(i == 0x47)*/ {
+            t = lbxfile_item_get(LBXFILE_SCREENS, 7, 0);
+        }
+        ui_data.gfx.ships[i] = t;
+        ui_data.gfx.ships[0x48 + i] = lbxfile_item_get(LBXFILE_SHIPS, i, 0);
+    }
+    for (int i = 0; i < 3; ++i) {
+        ui_data.gfx.ships[0x48 * 2 + i] = lbxfile_item_get(LBXFILE_SHIPS2, 0x48 + i, 0);
+    }
+    gfx_aux_setup_wh(&ui_data.aux.ship_p1, 34, 26);
+    return 0;
+}
+
+static int set_ui_icon(void)
+{
+    struct gfx_aux_s *aux = &ui_data.aux.ship_p1;
+    uint8_t *gfx, *pal;
+    gfx = ui_data.gfx.ships[0x48 * 2 + 2];
+    pal = lbxfile_item_get(LBXFILE_FONTS, 2, 0);
+    memcpy(lbxpal_palette, pal, 256 * 3);
+    gfx_aux_draw_frame_to(gfx, aux);
+    hw_icon_set(aux->data, pal, aux->w, aux->h);    /* do not care if the icon got set */
+    lbxfile_item_release(LBXFILE_FONTS, pal);
+    return 0;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -301,9 +318,11 @@ int ui_late_init(void)
 {
     mouse_set_limits(UI_SCREEN_W, UI_SCREEN_H);
     if (0
-     || lbxfont_init()
-     || hw_video_init(UI_SCREEN_W, UI_SCREEN_H)
-     || lbxpal_init()
+      || lbxfont_init()
+      || init_lbx_ships()
+      || set_ui_icon()
+      || hw_video_init(UI_SCREEN_W, UI_SCREEN_H)
+      || lbxpal_init()
     ) {
         return 1;
     }

@@ -22,3 +22,10 @@ static bool hw_kbd_check_hotkey(uint32_t key, uint32_t smod)
     }
     return false;
 }
+
+/* -------------------------------------------------------------------------- */
+
+int hw_icon_set(const uint8_t *data, const uint8_t *pal, int w, int h)
+{
+    return 0;
+}
