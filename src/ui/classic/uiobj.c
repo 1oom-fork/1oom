@@ -906,7 +906,6 @@ static int16_t uiobj_kbd_dir_key_dxdy(int dirx, int diry, int16_t oi2, int mx, i
                 }
             }
         }
-        /*14a4a*/
         if (oi == oi2) {
             for (int i = 1; i < uiobj_table_num; ++i) {
                 if (i == oi2) {
@@ -944,7 +943,6 @@ static int16_t uiobj_kbd_dir_key_dxdy(int dirx, int diry, int16_t oi2, int mx, i
             }
         }
     }
-    /*14c95*/
     if ((dirx != 0) && (diry == 0)) {
         for (int i = 1; i < uiobj_table_num; ++i) {
             if (i == oi2) {
@@ -967,7 +965,6 @@ static int16_t uiobj_kbd_dir_key_dxdy(int dirx, int diry, int16_t oi2, int mx, i
                 }
             }
         }
-        /*14e6a*/
         if (oi == oi2) {
             for (int i = 1; i < uiobj_table_num; ++i) {
                 if (i == oi2) {
@@ -1005,7 +1002,6 @@ static int16_t uiobj_kbd_dir_key_dxdy(int dirx, int diry, int16_t oi2, int mx, i
             }
         }
     }
-    /*150ba*/
     if ((dirx != 0) && (diry != 0)) {
         for (int i = 1; i < uiobj_table_num; ++i) {
             if (i == oi2) {
@@ -1023,15 +1019,12 @@ static int16_t uiobj_kbd_dir_key_dxdy(int dirx, int diry, int16_t oi2, int mx, i
                     slope = UIOBJ_OFFSCREEN;
                     continue;
                 }
-                /* FIMXE the rest of the function is probably wrong */
                 if ((dx >= dy) && (dy != 0)) {
                     slope = (dx * 100) / dy;
                 }
-                /*15265*/
                 if ((dy > dx) && (dx != 0)) {
                     slope = (dy * 100) / dx;
                 }
-                /*15292*/
                 if ((dx == 0) || (dy == 0)) {
                     slope = UIOBJ_OFFSCREEN;
                 }
@@ -1045,8 +1038,6 @@ static int16_t uiobj_kbd_dir_key_dxdy(int dirx, int diry, int16_t oi2, int mx, i
             }
         }
     }
-    /*1531b merged to above*/
-    /*1557a*/
     return oi;
 }
 
