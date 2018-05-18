@@ -797,13 +797,7 @@ void ui_battle_init(struct battle_s *bt)
     ctx.bt = bt;
     ctx.show_switch = (bt->g->gaux->local_players > 1);
     if (ctx.show_switch) {
-        player_id_t tbl[2];
-        int n = 1;
-        tbl[0] = party_human;
-        if ((party_opp < PLAYER_NUM) && IS_HUMAN(bt->g, party_opp)) {
-            tbl[n++] = party_opp;
-        }
-        ui_switch(bt->g, tbl, n, false);
+        ui_switch_2(bt->g, party_human, party_opp);
     }
     ui_sound_play_music(8);
     ui_battle_pre(bt->g, party_human, party_opp, bt->planet_i, bt->flag_human_att, ctx.show_switch);

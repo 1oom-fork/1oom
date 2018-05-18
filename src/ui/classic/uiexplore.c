@@ -23,6 +23,7 @@
 #include "uiobj.h"
 #include "uisound.h"
 #include "uistarmap_common.h"
+#include "uiswitch.h"
 
 /* -------------------------------------------------------------------------- */
 
@@ -148,6 +149,7 @@ bool ui_explore(struct game_s *g, int pi, uint8_t planet_i, bool by_scanner, boo
     struct explore_data_s d;
     int16_t oi_cont, oi_y, oi_n;
     bool flag_done = false;
+    ui_switch_1(g, pi);
     d.g = g;
     d.api = pi;
     d.planet = planet_i;
