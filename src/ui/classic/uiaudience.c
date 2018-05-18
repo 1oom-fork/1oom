@@ -23,6 +23,7 @@
 #include "uiobj.h"
 #include "uipal.h"
 #include "uisound.h"
+#include "uiswitch.h"
 
 /* -------------------------------------------------------------------------- */
 
@@ -31,14 +32,14 @@ struct audience_data_s {
     uint8_t *gfx_border;
     uint8_t *gfx_race;
     uint8_t *gfx_emperor;
-    int music_0;
-    int music_1;
-    int music_i;
+    int8_t music_0;
+    int8_t music_1;
+    int8_t music_i;
     uint8_t gfxi;
     int delay;
 };
 
-static const int tbl_audience_music[RACE_NUM] = {
+static const int8_t tbl_audience_music[RACE_NUM] = {
     0x16, 0x14, 0x22, 0x20, 0x1c, 0x12, 0x18, 0x24, 0x1a, 0x1e
 };
 
@@ -244,6 +245,7 @@ static int16_t ui_audience_ask_do(struct audience_s *au, int y, void (*draw_cb)(
 void ui_audience_start(struct audience_s *au)
 {
     static struct audience_data_s d;    /* HACK */
+    ui_switch_2(au->g, au->ph, au->pa);
     d.au = au;
     au->uictx = &d;
     d.delay = 0;
@@ -375,6 +377,7 @@ void ui_audience_newtech(struct audience_s *au)
     lbxpal_set_update_range(0, 255);
     lbxpal_build_colortables();
     ui_newtech(au->g, au->ph);
+    ui_switch_2(au->g, au->ph, au->pa);
     lbxpal_select(7, -1, 0);
     lbxpal_set_update_range(0, 255);
     if (ui_draw_finish_mode == 0) {
@@ -401,5 +404,6 @@ void ui_audience_end(struct audience_s *au)
     lbxpal_select(0, -1, 0);
     lbxpal_set_update_range(0, 255);
     lbxpal_build_colortables();
+    ui_switch_1(au->g, au->ph);
     audience_free_data(d);
 }
