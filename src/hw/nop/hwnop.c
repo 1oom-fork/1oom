@@ -74,6 +74,11 @@ int hw_event_handle(void)
     return 0;
 }
 
+int hw_icon_set(const uint8_t *data, const uint8_t *pal, int w, int h)
+{
+    return 0;
+}
+
 int hw_video_init(int w, int h)
 {
     return 0;
