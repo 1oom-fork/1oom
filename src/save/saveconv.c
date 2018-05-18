@@ -454,7 +454,6 @@ int saveconv_de_moo13(struct game_s *g, const char *fname)
                 ++pos;
             }
         }
-        M13_GET_TBL_16(srd->have_reserve_fuel, srdb + 0x444);
         M13_GET_TBL_16(srd->year, srdb + 0x450);
         /* M13_GET_TBL_16(srd->shipcount, srdb + 0x45c); */
     }
@@ -903,7 +902,6 @@ int saveconv_en_moo13(struct game_s *g, const char *fname)
                 ++pos;
             }
         }
-        M13_SET_TBL_16(srd->have_reserve_fuel, srdb + 0x444);
         M13_SET_TBL_16(srd->year, srdb + 0x450);
         /* M13_SET_TBL_16(srd->shipcount, srdb + 0x45c); */
     }
@@ -1282,7 +1280,6 @@ static const struct game_intros_s game_intros_srd[] = {
     GAME_INTROS_SUB(shipresearch_s, design, game_intros_design),
     GAME_INTROS_SUB(shipresearch_s, researchlist, game_intros_researchlist0),
     GAME_INTROS_SUB(shipresearch_s, researchcompleted, game_intros_researchcompleted),
-    GAME_INTROS_TBL(shipresearch_s, have_reserve_fuel),
     GAME_INTROS_TBL(shipresearch_s, year),
     GAME_INTROS_END
 };
@@ -2110,7 +2107,6 @@ int saveconv_en_text(struct game_s *g, const char *fname)
             text_dump_prefix_del(tp);
         }
         OUTFLUSH();
-        OUTLINETBL("have_reserve_fuel", e->shipdesigns_num, srd->have_reserve_fuel);
         OUTLINETBL("year", e->shipdesigns_num, srd->year);
         text_dump_prefix_del(tp);
     }
