@@ -166,7 +166,7 @@ int hw_audio_music_init(int mus_index, const uint8_t *data_in, uint32_t len_in)
     m = &mustbl[mus_index];
 
     if (m->type != MUS_TYPE_UNKNOWN) {
-        hw_audio_sfx_release(mus_index);
+        hw_audio_music_release(mus_index);
     }
 
     m->type = fmt_mus_detect(data_in, len_in);
@@ -362,7 +362,7 @@ void hw_audio_sfx_volume(int volume)
 int hw_audio_init(void)
 {
     if (opt_audio_enabled) {
-        log_warning("SDLA: no audio due to missing SDL_mixer");
+        log_warning("SDLA: no audio due to missing SDL_mixer!\n");
     }
     return 0;
 }
