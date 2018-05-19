@@ -158,6 +158,33 @@ static void ui_draw_line_limit_do(int x0, int y0, int x1, int y1, uint8_t color,
     }
 }
 
+static void ui_draw_copy_line(int x0, int y0, int x1, int y1)
+{
+    int step, numpixels;
+    /* ((x0 <= x1) && (y0 <= y1)) && (((x1 - x0) == 0) || ((y1 - y0) == 0)) */
+    {
+        int dx, dy;
+        dx = x1 - x0;
+        dy = y1 - y0;
+        if (dx < dy) {
+            numpixels = dy + 1;
+            step = UI_SCREEN_W;
+        } else {
+            numpixels = dx + 1;
+            step = 1;
+        }
+    }
+    {
+        uint8_t *q = vgabuf_get_back() + y0 * UI_SCREEN_W + x0;
+        uint8_t *p = vgabuf_get_front() + y0 * UI_SCREEN_W + x0;
+        while (numpixels--) {
+            *p = *q;
+            p += step;
+            q += step;
+        }
+    }
+}
+
 /* -------------------------------------------------------------------------- */
 
 void ui_draw_erase_buf(void)
@@ -354,72 +381,6 @@ void ui_draw_box2(int x0, int y0, int x1, int y1, uint8_t color1, uint8_t color2
     ui_draw_box1(x0, y0, x1, y1, color2, color4);
 }
 
-void ui_draw_copy_line(int x0, int y0, int x1, int y1, bool flag_hmm)
-{
-    int xslope = 0, yslope = 0, yinc, numpixels;    /* BUG? xslope and yslope not cleared by MOO1 */
-
-    if (x1 < x0) {
-        int t;
-        t = x1; x1 = x0; x0 = t;
-        t = y1; y1 = y0; y0 = t;
-    }
-
-    {
-        int dx, dy;
-        dx = x1 - x0;
-        dy = y1 - y0;
-        yinc = UI_SCREEN_W;
-        if (dy < 0) {
-            dy = -dy;
-            yinc = -UI_SCREEN_W;
-        }
-        if (dx < dy) {
-            numpixels = dy + 1;
-            yslope = 0x100;
-            if (dy != 0) {
-                xslope = (dx << 8) / dy;
-            }
-        } else {
-            numpixels = dx + 1;
-            if (dx != 0) {
-                xslope = 0x100;
-                yslope = (dy << 8) / dx;
-            }
-        }
-    }
-
-    if (flag_hmm != 0) {
-        numpixels <<= 1;
-        xslope /= 2;
-        yslope /= 2;
-    }
-
-    {
-        uint8_t *q = vgabuf_get_back() + y0 * UI_SCREEN_W + x0;
-        uint8_t *p = vgabuf_get_front() + y0 * UI_SCREEN_W + x0;
-        int xerr, yerr;
-
-        xerr = 0x100 / 2;
-        yerr = 0x100 / 2;
-
-        while (numpixels--) {
-            *p = *q;
-            xerr += xslope;
-            if ((xerr & 0xff00) != 0) {
-                xerr &= 0xff;
-                ++p;
-                ++q;
-            }
-            yerr += yslope;
-            if ((yerr & 0xff00) != 0) {
-                yerr &= 0xff;
-                p += yinc;
-                q += yinc;
-            }
-        }
-    }
-}
-
 void ui_draw_box_fill(int x0, int y0, int x1, int y1, const uint8_t *colorptr, uint8_t color0, uint16_t colorhalf, uint16_t ac, uint8_t colorpos)
 {
     uint8_t *s = vgabuf_get_back() + y0 * UI_SCREEN_W + x0;
@@ -579,9 +540,9 @@ static void ui_draw_finish_wipe_anim_do(int x, int y, int f)
     y += f;
     vx -= f;
     vy -= f;
-    ui_draw_copy_line(x, y, vx, y, 0);
-    ui_draw_copy_line(x, y, x, vy, 0);
-    ui_draw_copy_line(vx, y, vx, vy, 0);
+    ui_draw_copy_line(x, y, vx, y);
+    ui_draw_copy_line(x, y, x, vy);
+    ui_draw_copy_line(vx, y, vx, vy);
 }
 
 static void ui_draw_finish_wipe_anim(void)
