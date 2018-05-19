@@ -21,7 +21,6 @@ extern void ui_draw_line_limit_ctbl(int x0, int y0, int x1, int y1, const uint8_
 extern void ui_draw_slider(int x0, int y0, int x1, uint8_t color);
 extern void ui_draw_box1(int x0, int y0, int x1, int y1, uint8_t color1, uint8_t color2);
 extern void ui_draw_box2(int x0, int y0, int x1, int y1, uint8_t color1, uint8_t color2, uint8_t color3, uint8_t color4);
-extern void ui_draw_copy_line(int x0, int y0, int x1, int y1, bool flag_hmm);
 extern void ui_draw_box_fill(int x0, int y0, int x1, int y1, const uint8_t *colorptr, uint8_t color0, uint16_t colorhalf, uint16_t ac, uint8_t colorpos);
 extern void ui_draw_box_grain(int x0, int y0, int x1, int y1, uint8_t color0, uint8_t color1, uint8_t ae);
 extern void ui_draw_text_overlay(int x, int y, const char *str);
