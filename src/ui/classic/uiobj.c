@@ -1332,7 +1332,6 @@ static int16_t uiobj_handle_input_sub0(void)
     if (kbd_have_keypress()) {
         uint32_t key = uiobj_handle_kbd(&oi);
         if (KBD_GET_KEY(key) == MOO_KEY_UNKNOWN) {
-            loc_13640:
             return 0;
         }
         /*loc_1364a;*/
@@ -1358,11 +1357,9 @@ static int16_t uiobj_handle_input_sub0(void)
         }
         if (KBD_GET_KEYMOD(key) == p->key) {
             if (p->type == 6) {
-                goto loc_13640;
+                return 0;
             }
-            if (oi == 0) {
-                goto loc_13896;
-            }
+            if (oi != 0) {
             mx = p->x0 + (p->x1 - p->x0) / 2;
             my = p->y0 + (p->y1 - p->y0) / 2;
             uiobj_cursor_redraw_hmm2(oi, mx, my);
@@ -1380,7 +1377,7 @@ static int16_t uiobj_handle_input_sub0(void)
                 uiobj_hmm1_oi = -1;
                 return p->t9.uiobji;
             }
-            loc_13896:
+            }
             uiobj_finish_callback_delay_1();
             uiobj_hmm1_oi = -1;
             return oi;
@@ -1404,18 +1401,20 @@ static int16_t uiobj_handle_input_sub0(void)
                     }
                 } else if (p->type == 9) {
                     uiobj_hmm1_oi = -1;
-                    goto loc_13e11;
+                    return p->t9.uiobji;
                 }
                 if (uiobj_flag_skip_delay == 0) {
                     uiobj_finish_callback_delay_1();
                 }
-                goto loc_13a42;
+                uiobj_hmm1_oi = -1;
+                return oi;
             } else {
                 if (uiobj_hmm6 != 0) {
                     for (oi = 1; oi < uiobj_table_num; ++oi) {
                         p = &uiobj_tbl[oi];
                         if ((p->type == 0xa) && (*p->vptr == p->ta.z18) && p->ta.z12) {
-                            goto loc_13a42;
+                            uiobj_hmm1_oi = -1;
+                            return oi;
                         }
                     }
                 }
@@ -1431,7 +1430,6 @@ static int16_t uiobj_handle_input_sub0(void)
                     } else {
                         uiobj_slider_minus(p);
                     }
-                    loc_13a42:
                     uiobj_hmm1_oi = -1;
                     return oi;
                 } else {
@@ -1441,15 +1439,14 @@ static int16_t uiobj_handle_input_sub0(void)
             }
         }
         uiobj_hmm1_oi = -1;
-        goto loc_13640;
+        return 0;
     }
     if (mouse_buttons == 0) {
         if (!mouse_getclear_hmm4()) {
-            goto loc_13640;
+            return 0;
         }
         mb = mouse_click_buttons;
         if (mb == MOUSE_BUTTON_MASK_RIGHT) {
-            loc_13a99:
             mouse_getclear_hmm4();
             mouse_getclear_hmm5();
             return -1;
@@ -1479,13 +1476,14 @@ static int16_t uiobj_handle_input_sub0(void)
                 mouse_getclear_hmm5();
             }
             if (p->type == 9) {
-                goto loc_13e0e;
+                p = &uiobj_tbl[oi];
+                return p->t9.uiobji;
             } else {
                 uiobj_hmm2_oi = oi;
                 if (mb == MOUSE_BUTTON_MASK_RIGHT) {
-                    goto loc_13e8e;
+                    return -oi;
                 } else {
-                    goto loc_13e98;
+                    return oi;
                 }
             }
         }
@@ -1495,7 +1493,9 @@ static int16_t uiobj_handle_input_sub0(void)
             while ((mb = mouse_buttons) == MOUSE_BUTTON_MASK_RIGHT) {
                 uiobj_finish_callback_delay_1();
             }
-            goto loc_13a99;
+            mouse_getclear_hmm4();
+            mouse_getclear_hmm5();
+            return -1;
         }
         while (mouse_buttons != 0) {
             mx = mouse_x;
@@ -1553,9 +1553,7 @@ static int16_t uiobj_handle_input_sub0(void)
                 case 9:
                     if (mb != MOUSE_BUTTON_MASK_RIGHT) {
                         uiobj_hmm1_oi = -1;
-                        loc_13e0e:
                         p = &uiobj_tbl[oi];
-                        loc_13e11:
                         return p->t9.uiobji;
                     }
                     return -1;
@@ -1574,10 +1572,8 @@ static int16_t uiobj_handle_input_sub0(void)
         }
         uiobj_hmm1_oi = -1;
         if (mb == MOUSE_BUTTON_MASK_RIGHT) {
-            loc_13e8e:
             return -oi;
         } else {
-            loc_13e98:
             return oi;
         }
     }
