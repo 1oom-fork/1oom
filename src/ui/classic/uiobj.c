@@ -1286,23 +1286,23 @@ static int16_t uiobj_handle_input_sub0(void)
                 return 0;
             }
             if (oi != 0) {
-            mx = p->x0 + (p->x1 - p->x0) / 2;
-            my = p->y0 + (p->y1 - p->y0) / 2;
-            uiobj_cursor_redraw_hmm2(oi, mx, my);
-            if (p->type == 1) {
-                if (*p->vptr == 0) {
-                    *p->vptr = 1;
-                } else {
-                    *p->vptr = 0;
+                mx = p->x0 + (p->x1 - p->x0) / 2;
+                my = p->y0 + (p->y1 - p->y0) / 2;
+                uiobj_cursor_redraw_hmm2(oi, mx, my);
+                if (p->type == 1) {
+                    if (*p->vptr == 0) {
+                        *p->vptr = 1;
+                    } else {
+                        *p->vptr = 0;
+                    }
+                } else if (p->type == 2) {
+                    if (*p->vptr == 0) {
+                        *p->vptr = 1;
+                    }
+                } else if (p->type == 9) {
+                    uiobj_hmm1_oi = -1;
+                    return p->t9.uiobji;
                 }
-            } else if (p->type == 2) {
-                if (*p->vptr == 0) {
-                    *p->vptr = 1;
-                }
-            } else if (p->type == 9) {
-                uiobj_hmm1_oi = -1;
-                return p->t9.uiobji;
-            }
             }
             uiobj_finish_callback_delay_1();
             uiobj_hmm1_oi = -1;
