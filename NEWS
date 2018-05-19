@@ -1,3 +1,13 @@
+2018-05-19: v0.3 released
+    - new HW libraries: SDL2 and Allegro 4
+    - new OS: MSDOS
+    - win32 version now actually compiles
+    - numerous bugs fixed
+    - a log file is written by default
+    - cmdline UI has emerged but is not fully playable yet
+    - pkg-config support added for easier compiling
+    - saveconv supports text input for debugging
+
 2018-04-30: v0.2 released
     - help dialogs and news transition implemented; all done!?
     - configuration files implemented
