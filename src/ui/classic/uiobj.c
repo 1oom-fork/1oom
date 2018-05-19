@@ -82,10 +82,6 @@ typedef struct uiobj_s {
             /*1a*/ uint16_t len;
         } t8;
         struct {
-            /*16*/ uint16_t uiobji;
-            /*18*/ int16_t z18;
-        } t9;
-        struct {
             /*0c*/ uint16_t fontnum;
             /*0e*/ uint16_t fonta2;
             /*10*/ uint16_t subtype;
@@ -171,9 +167,6 @@ static void dump_uiobj_p(const uiobj_t *p)
             break;
         case 8:
             LOG_DEBUG((DEBUGLEVEL_UIOBJ, "'%s' p:%i l:%i\n", p->t8.str, p->t8.pos, p->t8.len));
-            break;
-        case 9:
-            LOG_DEBUG((DEBUGLEVEL_UIOBJ, "oi:%i z18:%i\n", p->t9.uiobji, p->t9.z18));
             break;
         case 0xa:
             LOG_DEBUG((DEBUGLEVEL_UIOBJ, "font:%i,%i|%i s:%i z12:%i '%s' z18:%i p0p:%p p0v:%i p1:%i p2:%i p3:%i\n",
@@ -648,11 +641,6 @@ static void uiobj_handle_click(int i, bool in_focus)
         case 6:
             if (in_focus) {
                 uiobj_handle_t6_slider_input(p);
-            }
-            break;
-        case 9:
-            if (in_focus) {
-                *p->vptr = p->t9.z18;
             }
             break;
         case 4:
@@ -1326,9 +1314,6 @@ static int16_t uiobj_handle_input_sub0(void)
                     if (*p->vptr == 0) {
                         *p->vptr = 1;
                     }
-                } else if (p->type == 9) {
-                    uiobj_focus_oi = -1;
-                    return p->t9.uiobji;
                 }
             }
             uiobj_finish_callback_delay_1();
@@ -1352,9 +1337,6 @@ static int16_t uiobj_handle_input_sub0(void)
                     if (*p->vptr == 0) {
                         *p->vptr = 1;
                     }
-                } else if (p->type == 9) {
-                    uiobj_focus_oi = -1;
-                    return p->t9.uiobji;
                 }
                 if (uiobj_flag_skip_delay == 0) {
                     uiobj_finish_callback_delay_1();
@@ -1428,10 +1410,7 @@ static int16_t uiobj_handle_input_sub0(void)
             if (oi != 0) {
                 mouse_getclear_click_sw();
             }
-            if (p->type == 9) {
-                p = &uiobj_tbl[oi];
-                return p->t9.uiobji;
-            } else {
+            {
                 uiobj_clicked_oi = oi;
                 if (mb == MOUSE_BUTTON_MASK_RIGHT) {
                     return -oi;
@@ -1503,13 +1482,6 @@ static int16_t uiobj_handle_input_sub0(void)
                         *p->vptr = 1;
                     }
                     break;
-                case 9:
-                    if (mb != MOUSE_BUTTON_MASK_RIGHT) {
-                        uiobj_focus_oi = -1;
-                        p = &uiobj_tbl[oi];
-                        return p->t9.uiobji;
-                    }
-                    return -1;
                 case 1:
                     if (*p->vptr == 0) {
                         *p->vptr = 1;
@@ -1750,10 +1722,7 @@ int16_t uiobj_at_cursor(void)
     uiobj_mouseoff = ui_cursor_mouseoff;
     i = uiobj_find_obj_at_cursor();
     p = &uiobj_tbl[i];
-    if (p->type == 9) {
-        *p->vptr = p->t9.z18;
-        i = p->t9.uiobji;
-    } else if ((p->type == 0xa) && !p->ta.z12) {
+    if ((p->type == 0xa) && !p->ta.z12) {
         i = 0;
     }
     return i;
