@@ -212,7 +212,7 @@ ui_turn_action_t ui_game_turn(struct game_s *g, int *load_game_i_ptr, int pi)
                 ui_data.news.flag_also = false;
                 return UI_TURN_ACT_NEXT_TURN;
             default:
-                LOG_DEBUG((3, "%s: unimpl 0x%x\n", __func__, ui_data.ui_main_loop_action));
+                LOG_DEBUG((0, "BUG: %s: invalid action 0x%x\n", __func__, ui_data.ui_main_loop_action));
                 ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
                 break;
         }
@@ -231,12 +231,14 @@ void ui_game_start(struct game_s *g)
     /* HACK remove visual glitch on load game */
     ui_draw_erase_buf();
     hw_video_draw_buf();
-    /* HACK clear both buffers just to be sure */
     hw_video_copy_buf();
 
     lbxpal_select(0, -1, 0);
     lbxpal_build_colortables();
-    /* HACK fix wrong palette after new game */
+    /* HACK Fix wrong palette after new game via main menu.
+       MOO1 goes from orion.exe to starmap.exe in between and the palette is initialized before coming here.
+       We only need to set the update flags of this range.
+    */
     lbxpal_set_update_range(248, 255);
     ui_palette_set_n();
     ui_draw_finish_mode = 1;
