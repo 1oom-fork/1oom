@@ -56,6 +56,10 @@ int hw_audio_init(void)
         log_message("Audio: Sound %s: %s\n", digi_driver->name, digi_driver->desc);
         log_message("Audio: Sound %i bit, %i Hz, %i ch\n", audio_bits, audio_rate, audio_channels);
         log_message("Audio: Music %s: %s\n", midi_driver->name, midi_driver->desc);
+        if ((audio_bits == 8) && (audio_channels == 1)) {
+            log_error("8 bit 1 ch sound currently not supported! Set sbtype=sb16 in your dosbox-*.conf, buy some new hardware, or start with -noaudio.\n");
+            return -1;
+        }
         sfx_playing = -1;
         mus_playing = -1;
         audio_initialized = true;
@@ -233,17 +237,46 @@ int hw_audio_sfx_init(int sfx_index, const uint8_t *data_in, uint32_t len_in)
 
     if (fmt_sfx_convert(data_in, len_in, &data, &len, NULL, audio_rate, false)) {
         SAMPLE *s;
-        uint16_t *p;
         const int16_t *q;
-        s = create_sample(16, 2, audio_rate, len / 4);
+        s = create_sample(audio_bits, audio_channels, audio_rate, len / 4);
         if (!s) {
             log_error("Audio: failed to init sound %i\n", sfx_index);
             return -1;
         }
-        p = s->data;
         q = (const int16_t *)data;
-        for (uint32_t i = 0; i < (len / 2); ++i) {
-            *p++ = *q++ ^ 0x8000;   /* convert signed to unsigned */
+        /* convert signed to unsigned, (if needed) stereo to mono and 16 to 8 bits */
+        if (audio_bits == 16) {
+            uint16_t *p;
+            p = s->data;
+            if (audio_channels == 2) {
+                for (uint32_t i = 0; i < (len / 2); ++i) {
+                    *p++ = *q++ ^ 0x8000;
+                }
+            } else {
+                for (uint32_t i = 0; i < (len / 4); ++i) {
+                    int v;
+                    v = *q++;
+                    v += *q++;
+                    v = ((v / 2) & 0xffff);
+                    *p++ = v ^ 0x8000;
+                }
+            }
+        } else {
+            uint8_t *p;
+            p = s->data;
+            if (audio_channels == 2) {
+                for (uint32_t i = 0; i < (len / 2); ++i) {
+                    *p++ = ((((uint16_t)*q++) >> 9) ^ 0x40) | 0x80;
+                }
+            } else {
+                for (uint32_t i = 0; i < (len / 4); ++i) {
+                    int v;
+                    v = *q++;
+                    v += *q++;
+                    v = ((v / 2) & 0xffff);
+                    *p++ = ((((uint16_t)v) >> 9) ^ 0x40) | 0x80;
+                }
+            }
         }
         sfxtbl[sfx_index].s = s;
         lib_free(data);
