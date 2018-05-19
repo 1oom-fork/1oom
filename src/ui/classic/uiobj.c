@@ -44,6 +44,8 @@ typedef struct uiobj_s {
         t6: slider
         t7: mousearea or inputkey
         t8: altstr
+        ta: text line
+        tb: scroll area
     */
     /*08*/ uint16_t type;
     /*0a*/ int16_t helpid;
