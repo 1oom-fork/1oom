@@ -1,4 +1,4 @@
-AC_INIT([1oom], [0.2])
+AC_INIT([1oom], [0.3])
 
 AC_ARG_ENABLE(modebug, AS_HELP_STRING([--enable-modebug], [add debugging options]))
 AC_ARG_WITH(readline, AS_HELP_STRING([--without-readline], [do not try to use the readline library]))

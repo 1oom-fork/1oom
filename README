@@ -5,7 +5,7 @@
 1oom is a clone of the classic DOS game "Master of Orion" (MicroProse, 1993).
 1oom is Free Software (GPLv2), see COPYING.
 
-This project is in a very early state and is missing the following:
+This project is in an early state and is missing the following:
 
 - testing
 - polish
@@ -23,8 +23,8 @@ See doc/usage_common.txt for more info.
 Simply copy the EXE and DLLs (if any) to your MOO1 directory.
 Ssee doc/usage_common.txt if you prefer to use a separate directory.
 
-1.2 Linux
-----------
+1.2 Unix (Linux)
+-----------------
 
 1oom requires the following libraries:
 
@@ -70,6 +70,8 @@ See INSTALL and HACKING for more information.
 - 1oom_*_alleg4     (using Allegro 4.x)
 
 See doc/usage_* for more documentation.
+
+Some ports have shorter filenames due to filesystem limitations.
 
 
 5. Acknowledgements
