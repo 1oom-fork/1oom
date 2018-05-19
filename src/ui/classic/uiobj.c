@@ -96,10 +96,6 @@ typedef struct uiobj_s {
             /*1a*/ uint16_t len;
         } t8;
         struct {
-            /*16*/ uint16_t uiobji;
-            /*18*/ int16_t z18;
-        } t9;
-        struct {
             /*0c*/ uint16_t fontnum;
             /*0e*/ uint16_t fonta2;
             /*10*/ uint16_t subtype;
@@ -594,11 +590,6 @@ static void uiobj_handle_click(int i, bool in_focus)
         case UIOBJ_TYPE_SLIDER:
             if (in_focus) {
                 uiobj_handle_t6_slider_input(p);
-            }
-            break;
-        case UIOBJ_TYPE_T9:
-            if (in_focus) {
-                *p->vptr = p->t9.z18;
             }
             break;
         case UIOBJ_TYPE_TEXTINPUT:
@@ -1272,9 +1263,6 @@ static int16_t uiobj_handle_input_sub0(void)
                     if (*p->vptr == 0) {
                         *p->vptr = 1;
                     }
-                } else if (p->type == UIOBJ_TYPE_T9) {
-                    uiobj_focus_oi = -1;
-                    return p->t9.uiobji;
                 }
             }
             uiobj_finish_callback_delay_1();
@@ -1298,9 +1286,6 @@ static int16_t uiobj_handle_input_sub0(void)
                     if (*p->vptr == 0) {
                         *p->vptr = 1;
                     }
-                } else if (p->type == UIOBJ_TYPE_T9) {
-                    uiobj_focus_oi = -1;
-                    return p->t9.uiobji;
                 }
                 if (uiobj_flag_skip_delay == 0) {
                     uiobj_finish_callback_delay_1();
@@ -1374,10 +1359,7 @@ static int16_t uiobj_handle_input_sub0(void)
             if (oi != 0) {
                 mouse_getclear_click_sw();
             }
-            if (p->type == UIOBJ_TYPE_T9) {
-                p = &uiobj_tbl[oi];
-                return p->t9.uiobji;
-            } else {
+            {
                 uiobj_clicked_oi = oi;
                 if (mb == MOUSE_BUTTON_MASK_RIGHT) {
                     return -oi;
@@ -1449,13 +1431,6 @@ static int16_t uiobj_handle_input_sub0(void)
                         *p->vptr = 1;
                     }
                     break;
-                case UIOBJ_TYPE_T9:
-                    if (mb != MOUSE_BUTTON_MASK_RIGHT) {
-                        uiobj_focus_oi = -1;
-                        p = &uiobj_tbl[oi];
-                        return p->t9.uiobji;
-                    }
-                    return -1;
                 case UIOBJ_TYPE_TOGGLE:
                     if (*p->vptr == 0) {
                         *p->vptr = 1;
@@ -1696,10 +1671,7 @@ int16_t uiobj_at_cursor(void)
     uiobj_mouseoff = ui_cursor_mouseoff;
     i = uiobj_find_obj_at_cursor();
     p = &uiobj_tbl[i];
-    if (p->type == UIOBJ_TYPE_T9) {
-        *p->vptr = p->t9.z18;
-        i = p->t9.uiobji;
-    } else if ((p->type == UIOBJ_TYPE_TEXTLINE) && !p->ta.z12) {
+    if ((p->type == UIOBJ_TYPE_TEXTLINE) && !p->ta.z12) {
         i = 0;
     }
     return i;
