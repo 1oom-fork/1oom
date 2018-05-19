@@ -572,7 +572,7 @@ static void ui_draw_finish_wipe_anim(void)
 {
     for (int f = 0; f < 0xa; ++f) {
         for (int x = 0; x < UI_SCREEN_W; x += 0x14) {
-            for (int y = 0; y < UI_SCREEN_W; y += 0x14) {
+            for (int y = 0; y < UI_SCREEN_H; y += 0x14) {
                 ui_draw_finish_hmm3(x, y, f);
             }
         }
