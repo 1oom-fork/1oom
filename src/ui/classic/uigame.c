@@ -255,9 +255,9 @@ void ui_game_end(struct game_s *g)
 {
     for (int i = 0; i < NEBULA_MAX; ++i) {
         if (ui_data.gfx.starmap.nebula[i]) {
-             lbxfile_item_release(LBXFILE_STARMAP, ui_data.gfx.starmap.nebula[i]);
-             ui_data.gfx.starmap.nebula[i] = NULL;
-             ui_data.gfx.starmap.smnebula[i] = NULL;
+            lbxfile_item_release(LBXFILE_STARMAP, ui_data.gfx.starmap.nebula[i]);
+            ui_data.gfx.starmap.nebula[i] = NULL;
+            ui_data.gfx.starmap.smnebula[i] = NULL;
         }
     }
     lbxfile_item_release(LBXFILE_V11, ui_data.gfx.starmap.bmap);
