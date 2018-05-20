@@ -214,6 +214,8 @@ int hw_init(void)
         log_error("install_mouse failed!\n");
         return -1;
     }
+    enable_hardware_cursor();
+    show_mouse(NULL);
     if (install_timer() < 0) {
         log_error("install_timer failed!\n");
         return -1;
