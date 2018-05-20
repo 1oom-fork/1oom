@@ -74,6 +74,7 @@ int hw_video_init(int w, int h)
         log_error("set_gfx_mode(..., %i, %i, 0, 0) failed!\n", w, h);
         return -1;
     }
+    set_mouse_range(0, 0, w - 1, h - 1);
     hw_video_in_gfx = true;
     video.bm = create_bitmap(w, h);
     return 0;
