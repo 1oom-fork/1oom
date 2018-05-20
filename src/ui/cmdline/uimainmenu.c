@@ -119,7 +119,7 @@ main_menu_action_t ui_main_menu(struct game_new_options_s *newopts, int *load_ga
     main_menu_action_t ret = MAIN_MENU_ACT_QUIT_GAME;
     bool flag_done = false;
     while (!flag_done) {
-        ret = ui_input_list("\nMaster of Orion", "> ", main_menu_in);
+        ret = ui_input_list("Main menu", "> ", main_menu_in);
         switch (ret) {
             case MAIN_MENU_ACT_NEW_GAME:
                 flag_done = ui_new_game(newopts);
