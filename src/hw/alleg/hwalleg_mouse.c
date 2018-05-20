@@ -48,6 +48,7 @@ void hw_mouse_set_limits(int w, int h)
 {
     hw_mouse_w = w;
     hw_mouse_h = h;
+    set_mouse_range(0, 0, w - 1, h - 1);
 }
 
 void hw_mouse_set(int x, int y)
