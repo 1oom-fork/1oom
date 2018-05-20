@@ -195,6 +195,9 @@ static void hw_event_handle_window(SDL_WindowEvent *e)
         case SDL_WINDOWEVENT_EXPOSED:
             hw_video_update();
             break;
+        case SDL_WINDOWEVENT_FOCUS_LOST:
+            hw_mouse_ungrab();
+            break;
         default:
             break;
     }
