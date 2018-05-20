@@ -64,7 +64,6 @@ static void video_setpal_8bpp(uint8_t *pal, int first, int num)
 
 int hw_video_init(int w, int h)
 {
-    mouse_set_limits(w, h);
     video.buf = vgabuf_get_front();
     video.bufw = w;
     video.bufh = h;
@@ -76,6 +75,8 @@ int hw_video_init(int w, int h)
         log_error("set_gfx_mode(..., %i, %i, 0, 0) failed!\n", w, h);
         return -1;
     }
+    mouse_set_limits(w, h);
+    set_mouse_range(0, 0, w - 1, h - 1);
     hw_video_in_gfx = true;
     video.bm = create_bitmap(w, h);
     return 0;
@@ -83,10 +84,13 @@ int hw_video_init(int w, int h)
 
 void hw_video_shutdown(void)
 {
+#if 0
+    /* FIXME doing this crashes the program */
     if (video.bm) {
         destroy_bitmap(video.bm);
         video.bm = NULL;
     }
+#endif
     video.buf = NULL;
 }
 
