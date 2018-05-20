@@ -257,6 +257,15 @@ int hw_event_handle(void)
             case SDL_VIDEOEXPOSE:
                 hw_video_update();
                 break;
+            case SDL_ACTIVEEVENT:
+                {
+                    Uint8 state;
+                    state = SDL_GetAppState();
+                    if ((state & (SDL_APPINPUTFOCUS | SDL_APPACTIVE)) != (SDL_APPINPUTFOCUS | SDL_APPACTIVE)) {
+                        hw_mouse_ungrab();
+                    }
+                }
+                break;
             default:
                 break;
         }
