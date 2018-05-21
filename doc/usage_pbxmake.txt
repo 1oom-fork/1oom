@@ -2,9 +2,6 @@
 # 1oom_pbxmake #
 ################
 
-1oom is a clone of the classic DOS game "Master of Orion" (MicroProse, 1993).
-1oom is Free Software (GPLv2), see COPYING.
-
 1oom_pbxmake is a tool for creating PBX files.
 
 PBX files are patch files that replace LBX data or not-really-constants.
