@@ -429,7 +429,7 @@ static int loadfont(void)
             log_message("!! You need a 8x8 1bpp font (2048 bytes) file to use this program.\n"
                         "!! If you have one ready elsewhere, use -font <file> to use it.\n"
                         "!! If you have DOSBox and base64;\n"
-                        "!! 1) Generate a font dumper:  (source in doc/fontdump.asm)\n"
+                        "!! 1) Generate a font dumper:  (source in doc/ext/fontdump.asm)\n"
                         "!!  echo uDARtwPNEAa6MwExybQ8zSFyGonDuQAIieoftEDNIXIMOch1CLQ+zSGwAHMCsAG0TM0hci5iaW4A | base64 -d > fontdump.com\n"
                         "!! 2) Run fontdump.com in DOSBox to generate the font file r.bin.\n"
                         "!! 3) Run lbxview again with -font r.bin\n"
