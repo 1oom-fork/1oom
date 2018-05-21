@@ -1,6 +1,6 @@
 ; dumps VGA 8x8 font to "r.bin"
-; written in fasm syntax
-; fasm fontdump.asm fontdump.com
+; written in nasm syntax
+; nasm -o fontdump.com fontdump.asm
     org 100h    ; code starts at offset 100h
     use16       ; use 16-bit code
     ; get pointer to ROM font
