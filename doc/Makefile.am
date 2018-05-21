@@ -1,3 +1,5 @@
+DIST_SUBDIRS = ext
+
 docdir = $(prefix)/share/doc/1oom
 
 doc_DATA = \
