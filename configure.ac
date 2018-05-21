@@ -560,6 +560,7 @@ AC_SUBST(BINDIST_SCRIPT)
 AC_CONFIG_HEADERS([src/config.h])
 AC_CONFIG_FILES([Makefile
                  doc/Makefile
+                 doc/ext/Makefile
                  src/Makefile
                  src/game/Makefile
                  src/os/Makefile
