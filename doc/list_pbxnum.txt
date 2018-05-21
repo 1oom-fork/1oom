@@ -15,7 +15,7 @@ monster_rest_att : 0..1, 0
 
 orbital_weap_any : 0..1, 0
   - Allow orbital bombardment with any weapon.
-    In MOO1 neither death ray, crytal ray or amoeba stream can be used for
+    In MOO1 neither death ray, crystal ray nor amoeba stream can be used for
     orbital bombardment. The last two are only available via save game editing,
     but the omission of death ray is puzzling.
 
