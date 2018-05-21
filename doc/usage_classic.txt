@@ -2,9 +2,6 @@
 # 1oom_classic #
 ################
 
-1oom is a clone of the classic DOS game "Master of Orion" (MicroProse, 1993).
-1oom is Free Software (GPLv2), see COPYING.
-
 1oom_classic_* replicate the 1993 UI.
 
 See doc/usage_common.txt for the data/user file locations and command-line

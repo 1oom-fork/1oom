@@ -2,9 +2,6 @@
 # 1oom_saveconv #
 #################
 
-1oom is a clone of the classic DOS game "Master of Orion" (MicroProse, 1993).
-1oom is Free Software (GPLv2), see COPYING.
-
 1oom_saveconv is a tool for converting save game files.
 
 Usage:
