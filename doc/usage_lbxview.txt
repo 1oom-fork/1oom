@@ -16,7 +16,7 @@ Rest of the command-line arguments:
 !! You need a 8x8 1bpp font (2048 bytes) file to use this program.
 !! If you have one ready elsewhere, use -font <file> to use it.
 !! If you have DOSBox and base64;
-!! 1) Generate a font dumper:  (source in doc/fontdump.asm)
+!! 1) Generate a font dumper:  (source in doc/ext/fontdump.asm)
 !!  echo uDARtwPNEAa6MwExybQ8zSFyGonDuQAIieoftEDNIXIMOch1CLQ+zSGwAHMCsAG0TM0hci5iaW4A | base64 -d > fontdump.com
 !! 2) Run fontdump.com in DOSBox to generate the font file r.bin.
 !! 3) Run lbxview again with -font r.bin
