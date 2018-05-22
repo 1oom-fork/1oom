@@ -3540,8 +3540,8 @@ static void game_ai_classic_turn_diplo_p2(struct game_s *g)
                 if (e1->diplo_type[p2] != 59) {
                     e1->diplo_type[p2] = 0;
                 }
-            } else if (e1->hmm27c[p2] == 1) {
-                e1->hmm27c[p2] = 2;
+            } else if (e1->have_met[p2] == 1) {
+                e1->have_met[p2] = 2;
                 e1->diplo_type[p2] = e2->trait1 + 14;
             } else if (e1->mutual_enemy[p2] != PLAYER_NONE) {
                 e1->diplo_type[p2] = 58;
