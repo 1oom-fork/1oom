@@ -23,6 +23,7 @@
 #include "uiobj.h"
 #include "uisound.h"
 #include "uistarmap_common.h"
+#include "uiswitch.h"
 
 /* -------------------------------------------------------------------------- */
 
@@ -90,6 +91,7 @@ void ui_newships(struct game_s *g, int pi)
     int tempnum;
     tempnum = g->evn.build_finished_num[pi];
     g->evn.build_finished_num[pi] = 0;
+    ui_switch_1(g, pi);
     d.g = g;
     d.api = pi;
     d.sm.g = g;
