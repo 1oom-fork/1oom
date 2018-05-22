@@ -349,7 +349,7 @@ static bool game_audience_sub2(struct audience_s *au)
     }
 }
 
-static void game_audience_sub4(struct audience_s *au, uint8_t dtype, int a2)
+static void game_audience_set_dtype(struct audience_s *au, uint8_t dtype, int a2)
 {
     struct game_s *g = au->g;
     player_id_t ph = au->ph, pa = au->pa;
@@ -662,7 +662,7 @@ static void audience_menu_treaty(struct audience_s *au)
             break;
     }
     if ((selected != -1) && (si != 1)) {
-        game_audience_sub4(au, dtype, si);
+        game_audience_set_dtype(au, dtype, si);
     }
 }
 
@@ -692,7 +692,7 @@ static void audience_menu_trade(struct audience_s *au)
         } else {
             game_diplo_set_trade(g, ph, pa, au->bctbl[selected]);
         }
-        game_audience_sub4(au, 64, si);
+        game_audience_set_dtype(au, 64, si);
     }
 }
 
@@ -789,7 +789,7 @@ static void audience_menu_threat(struct audience_s *au)
     }
     game_diplo_annoy(g, ph, pa, 10);    /* FIXME BUG? MOO1 does this before the if, annoying by only entering the menu */
     if ((selected != -1) && (selected != 4)) {
-        game_audience_sub4(au, dtype, 3);
+        game_audience_set_dtype(au, dtype, 3);
     }
 }
 
@@ -863,7 +863,7 @@ static void audience_menu_tribute(struct audience_s *au)
             SETMIN(ea->relation1[ph], 65);
         }
         /* FIXME BUG? eh->relation1[pa] = ea->relation1[ph]; is missing */
-        game_audience_sub4(au, 1, 3);
+        game_audience_set_dtype(au, 1, 3);
     } else {
         struct spy_esp_s s[1];
         int hmm1 = 0; /* FIXME BUG = diplo_p2_sub1_zhmm4[bcnum]; uninitialized, wrong index */
@@ -910,10 +910,10 @@ static void audience_menu_tribute(struct audience_s *au)
                     SETMIN(ea->relation1[ph], 70);
                 }
                 /* FIXME BUG? eh->relation1[pa] = ea->relation1[ph]; is missing */
-                game_audience_sub4(au, 1, 3);
+                game_audience_set_dtype(au, 1, 3);
             }
         } else {
-            game_audience_sub4(au, 75, 3);
+            game_audience_set_dtype(au, 75, 3);
         }
     }
 }
@@ -1025,10 +1025,10 @@ static void audience_menu_tech(struct audience_s *au)
                     }
                 }
             } else {
-                game_audience_sub4(au, 75, 3);
+                game_audience_set_dtype(au, 75, 3);
             }
         } else {
-            game_audience_sub4(au, 75, 3);
+            game_audience_set_dtype(au, 75, 3);
         }
     }
     game_diplo_annoy(g, ph, pa, 3);
@@ -1083,7 +1083,7 @@ static void audience_menu_main(struct audience_s *au)
             }
         }
         if (game_diplo_get_relation_hmm1(g, ph, pa) < -100) {
-            game_audience_sub4(au, 74, 3);
+            game_audience_set_dtype(au, 74, 3);
             break;
         }
         strcpy(au->buf, game_str_au_howmay);
@@ -1187,11 +1187,11 @@ static void game_audience_do(struct audience_s *au)
             if (au->dtype == 76) {
                 au->dtype = (selected != 0) ? 77 : 78;
                 au->mode = 6;
-                game_audience_sub4(au, au->dtype, 3);
+                game_audience_set_dtype(au, au->dtype, 3);
             }
             break;
         case 6:
-            game_audience_sub4(au, au->dtype, 3);
+            game_audience_set_dtype(au, au->dtype, 3);
             break;
         case 0:
             audience_menu_main(au);
