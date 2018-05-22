@@ -321,14 +321,14 @@ static void game_turn_update_trade(struct game_s *g)
                     e->trade_percent[j] = 0;
                     e->trade_established_bc[j] = 0;
                 } else {
-                    uint16_t hmm;
+                    uint16_t estbc;
                     int16_t v;
-                    hmm = e->trade_established_bc[j];
-                    if (hmm < bc) {
-                        hmm += bc / 10;
-                        SETMIN(hmm, bc);
-                        e->trade_established_bc[j] = hmm;
-                        e2->trade_established_bc[i] = hmm;
+                    estbc = e->trade_established_bc[j];
+                    if (estbc < bc) {   /* FIXME BUG? never true ; both are set to bc */
+                        estbc += bc / 10;
+                        SETMIN(estbc, bc);
+                        e->trade_established_bc[j] = estbc;
+                        e2->trade_established_bc[i] = estbc;
                     }
                     v = (rnd_1_n(200, &g->seed) + e->relation1[j] + 25) / 60;
                     SETMAX(v, 0);
@@ -1491,8 +1491,11 @@ static bool game_turn_check_end(struct game_s *g, struct game_end_s *ge)
 static void game_turn_update_have_met(struct game_s *g)
 {
     game_update_empire_within_range(g);
-    for (player_id_t i = PLAYER_0; i < PLAYER_1; ++i) { /* FIXME multiplayer */
+    for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         empiretechorbit_t *e = &(g->eto[i]);
+        if (IS_AI(g, i)) {
+            continue;
+        }
         for (player_id_t j = PLAYER_0; j < g->players; ++j) {
             if ((i != j) && (!e->have_met[j]) && BOOLVEC_IS1(e->within_frange, j)) {
                 e->have_met[j] = 1;
