@@ -190,7 +190,7 @@ fc      2*6 AI next spy mode: 0=hide, 1=espionage, 2=sabotage
 264     2*6 ?
 270     2*6 hatred
 27c     2*6 ?
-288     2*6 ?
+288     2*6 established trade BC
 294     2*6 ?
 2a0     2   have planetary shield tech (0, 5, 10, 15, 20)
 2a4     2*6 spying percent in tenths
