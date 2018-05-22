@@ -305,8 +305,8 @@ void game_diplo_break_trade(struct game_s *g, player_id_t pi, player_id_t pi2)
     e2 = &(g->eto[pi2]);
     e->trade_bc[pi2] = 0;
     e2->trade_bc[pi] = 0;
-    e->hmm288[pi2] = 0;
-    e2->hmm288[pi] = 0;
+    e->trade_established_bc[pi2] = 0;
+    e2->trade_established_bc[pi] = 0;
     e->trade_percent[pi2] = 0;
     e2->trade_percent[pi] = 0;
     e->hated[pi2] = PLAYER_NONE;
@@ -515,17 +515,17 @@ void game_diplo_set_trade(struct game_s *g, player_id_t p1, player_id_t p2, int 
     if (bc == 0) {
         return;
     }
-    if (e1->hmm288[p2] < bc) {
-        v = ((e1->trade_percent[p2] * e1->hmm288[p2]) - (bc * 30)) / (e1->hmm288[p2] + bc);
+    if (e1->trade_established_bc[p2] < bc) {
+        v = ((e1->trade_percent[p2] * e1->trade_established_bc[p2]) - (bc * 30)) / (e1->trade_established_bc[p2] + bc);
     } else {
         v = e1->trade_percent[p2];
     }
     SETMIN(v, 100);
     e1->trade_bc[p2] = bc;
-    e1->hmm288[p2] = bc;
+    e1->trade_established_bc[p2] = bc;
     e1->trade_percent[p2] = v;
     e2->trade_bc[p1] = bc;
-    e2->hmm288[p1] = bc;
+    e2->trade_established_bc[p1] = bc;
     e2->trade_percent[p1] = v;
 }
 

@@ -522,7 +522,7 @@ static int savetype_de_moo13(struct game_s *g, const char *fname)
         M13_GET_TBL_16_HATED(e->mutual_enemy, eb + 0x228);
         M13_GET_TBL_16(e->hatred, eb + 0x270);
         M13_GET_TBL_16(e->hmm27c, eb + 0x27c);
-        M13_GET_TBL_16(e->hmm288, eb + 0x288);
+        M13_GET_TBL_16(e->trade_established_bc, eb + 0x288);
         M13_GET_TBL_16(e->spying, eb + 0x2a4);
         M13_GET_TBL_16(e->spyfund, eb + 0x2b0);
         M13_GET_TBL_16(e->spymode, eb + 0x2c8);
@@ -968,7 +968,7 @@ static int savetype_en_moo13(struct game_s *g, const char *fname)
         M13_SET_TBL_16_HATED(e->mutual_enemy, eb + 0x228);
         M13_SET_TBL_16(e->hatred, eb + 0x270);
         M13_SET_TBL_16(e->hmm27c, eb + 0x27c);
-        M13_SET_TBL_16(e->hmm288, eb + 0x288);
+        M13_SET_TBL_16(e->trade_established_bc, eb + 0x288);
         M13_SET_TBL_16(e->spying, eb + 0x2a4);
         M13_SET_TBL_16(e->spyfund, eb + 0x2b0);
         M13_SET_TBL_16(e->spymode, eb + 0x2c8);
@@ -1339,7 +1339,7 @@ static const struct game_intros_s game_intros_eto[] = {
     GAME_INTROS_TBL(empiretechorbit_s, mutual_enemy),
     GAME_INTROS_TBL(empiretechorbit_s, hatred),
     GAME_INTROS_TBL(empiretechorbit_s, hmm27c),
-    GAME_INTROS_TBL(empiretechorbit_s, hmm288),
+    GAME_INTROS_TBL(empiretechorbit_s, trade_established_bc),
     GAME_INTROS_TBL(empiretechorbit_s, spying),
     GAME_INTROS_TBL(empiretechorbit_s, spyfund),
     GAME_INTROS_TBL(empiretechorbit_s, spymode),
@@ -2146,7 +2146,7 @@ static int savetype_en_text(struct game_s *g, const char *fname)
         OUTLINETBL("mutual_enemy", g->players, e->mutual_enemy);
         OUTLINETBL("hatred", g->players, e->hatred);
         OUTLINETBL("hmm27c", g->players, e->hmm27c);
-        OUTLINETBL("hmm288", g->players, e->hmm288);
+        OUTLINETBL("trade_established_bc", g->players, e->trade_established_bc);
         OUTLINETBL("spying", g->players, e->spying);
         OUTLINETBL("spyfund", g->players, e->spyfund);
         OUTLINETBL("spymode", g->players, e->spymode);
