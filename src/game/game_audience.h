@@ -17,7 +17,7 @@ struct audience_s {
     player_id_t ph;
     player_id_t pa;
     player_id_t pwar;
-    player_id_t hmm5;
+    player_id_t pstartwar;
     uint8_t mode;   /*0,1,2,6*/
     uint8_t dtype;
     uint8_t dtype_next;
