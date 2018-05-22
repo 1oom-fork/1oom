@@ -326,14 +326,14 @@ static void game_turn_update_trade(struct game_s *g)
                     e->trade_percent[j] = 0;
                     e->trade_established_bc[j] = 0;
                 } else {
-                    uint16_t hmm;
+                    uint16_t estbc;
                     int16_t v;
-                    hmm = e->trade_established_bc[j];
-                    if (hmm < bc) {
-                        hmm += bc / 10;
-                        SETMIN(hmm, bc);
-                        e->trade_established_bc[j] = hmm;
-                        e2->trade_established_bc[i] = hmm;
+                    estbc = e->trade_established_bc[j];
+                    if (estbc < bc) {
+                        estbc += bc / 10;
+                        SETMIN(estbc, bc);
+                        e->trade_established_bc[j] = estbc;
+                        e2->trade_established_bc[i] = estbc;
                     }
                     v = (e->relation1[j] + 25) / 60;
                     SETMAX(v, 0);
