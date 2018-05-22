@@ -24,6 +24,7 @@ struct audience_s {
     uint8_t gfxi;   /*0..2*/
     uint8_t musi;   /*0..2*/
     uint8_t num_bc;   /*0..5*/
+    int new_trade_bc;
     int16_t tribute_bc;
     tech_field_t tribute_field;
     uint8_t tribute_tech;
