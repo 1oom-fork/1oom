@@ -1491,14 +1491,14 @@ static bool game_turn_check_end(struct game_s *g, struct game_end_s *ge)
     return false;
 }
 
-static void game_turn_update_hmm27c(struct game_s *g)
+static void game_turn_update_have_met(struct game_s *g)
 {
     game_update_empire_within_range(g);
     for (player_id_t i = PLAYER_0; i < PLAYER_1; ++i) { /* FIXME multiplayer */
         empiretechorbit_t *e = &(g->eto[i]);
         for (player_id_t j = PLAYER_0; j < g->players; ++j) {
-            if ((i != j) && (!e->hmm27c[j]) && BOOLVEC_IS1(e->within_frange, j)) {
-                e->hmm27c[j] = 1;
+            if ((i != j) && (!e->have_met[j]) && BOOLVEC_IS1(e->within_frange, j)) {
+                e->have_met[j] = 1;
                 e->treaty[j] = TREATY_NONE;
                 g->eto[j].treaty[i] = TREATY_NONE;
             }
@@ -1814,7 +1814,7 @@ struct game_end_s game_turn_process(struct game_s *g)
         }
         g->evn.newtech[i].num = 0;
     }
-    game_turn_update_hmm27c(g);
+    game_turn_update_have_met(g);
     game_ai->turn_diplo_p1(g);
     for (int i = 0; i < g->galaxy_stars; ++i) {
         if (g->planet[i].owner != PLAYER_NONE) {
