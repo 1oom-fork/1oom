@@ -168,7 +168,7 @@ extern int16_t ui_audience_ask2a(struct audience_s *au);
 extern int16_t ui_audience_ask2b(struct audience_s *au);
 extern int16_t ui_audience_ask3(struct audience_s *au);
 extern int16_t ui_audience_ask4(struct audience_s *au);
-extern void ui_audience_newtech(struct audience_s *au);
+extern void ui_audience_newtech(struct audience_s *au, int pi);
 extern void ui_audience_end(struct audience_s *au);
 
 extern void ui_newships(struct game_s *g, int pi);
