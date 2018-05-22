@@ -14,6 +14,7 @@
 #include "comp.h"
 #include "game.h"
 #include "game_ai.h"
+#include "game_audience.h"
 #include "game_aux.h"
 #include "game_battle.h"
 #include "game_battle_human.h"
@@ -3622,6 +3623,369 @@ static void game_ai_classic_turn_diplo_p2(struct game_s *g)
 
 /* -------------------------------------------------------------------------- */
 
+static int game_ai_classic_aud_check_mood(struct audience_s *au, int a0, int a2)
+{
+    struct game_s *g = au->g;
+    player_id_t ph = au->ph, pa = au->pa;
+    empiretechorbit_t *eh = &(g->eto[ph]);
+    empiretechorbit_t *ea = &(g->eto[pa]);
+    int v;
+    switch (a2) {
+        default:
+        case 0:
+            v = eh->mood_treaty[pa];
+            break;
+        case 1:
+            v = eh->mood_trade[pa];
+            break;
+        case 2:
+            v = eh->mood_peace[pa];
+            break;
+        case 3:
+            v = eh->mood_tech[pa];
+            break;
+    }
+    v += eh->trust[pa] + eh->relation1[pa] + ((eh->race == RACE_HUMAN) ? 50 : 0) + game_diplo_tbl_reldiff[ea->trait1];
+    v += rnd_1_n(100, &g->seed);
+    v -= a0;
+    if (eh->treaty[pa] == TREATY_ALLIANCE) {
+        v += 40;
+    }
+    game_diplo_annoy(g, ph, pa, 1);
+    switch (a2) {
+        default:
+        case 0:
+            eh->mood_treaty[pa] -= rnd_1_n(30, &g->seed) + 20;
+            break;
+        case 1:
+            eh->mood_trade[pa] -= rnd_1_n(30, &g->seed) + 20;
+            break;
+        case 2:
+            eh->mood_peace[pa] -= rnd_1_n(50, &g->seed) + 50;
+            break;
+        case 3:
+            eh->mood_tech[pa] -= rnd_1_n(50, &g->seed) + 20;
+            break;
+    }
+    if (v < -75) {
+        return 0;
+    } else if (v < -50) {
+        return 1;
+    } else if (v < 0) {
+        return 2;
+    } else {
+        return 3;
+    }
+}
+
+static void game_ai_classic_aud_start_human(struct audience_s *au)
+{
+    struct game_s *g = au->g;
+    player_id_t ph = au->ph, pa = au->pa;
+    empiretechorbit_t *eh = &(g->eto[ph]);
+    empiretechorbit_t *ea = &(g->eto[pa]);
+    int v;
+    v = eh->trust[pa] + game_diplo_get_mood(g, ph, pa) + game_diplo_tbl_reldiff[ea->trait1];
+    if (v < -100) {
+        au->dtype = (eh->treaty[pa] >= TREATY_WAR) ? 20 : 21;
+        au->mode = 1;
+    } else {
+        v += eh->relation1[pa];
+        au->dtype = (v > -50) ? 22 : 23;
+        au->mode = 0;
+    }
+}
+
+static int game_ai_classic_aud_treaty_nap(struct audience_s *au)
+{
+    struct game_s *g = au->g;
+    player_id_t ph = au->ph, pa = au->pa;
+    empiretechorbit_t *eh = &(g->eto[ph]);
+    int si;
+    if (eh->relation1[pa] > 10) {
+        si = game_ai_classic_aud_check_mood(au, 50, 0);
+    } else {
+        si = 0;
+    }
+    return si;
+}
+
+static int game_ai_classic_aud_treaty_alliance(struct audience_s *au)
+{
+    struct game_s *g = au->g;
+    player_id_t ph = au->ph, pa = au->pa;
+    empiretechorbit_t *eh = &(g->eto[ph]);
+    int si;
+    if (eh->relation1[pa] > 50) {
+        si = game_ai_classic_aud_check_mood(au, 125, 0);
+    } else {
+        si = 0;
+    }
+    return si;
+}
+
+static int game_ai_classic_aud_treaty_peace(struct audience_s *au)
+{
+    int si;
+    si = game_ai_classic_aud_check_mood(au, 60, 0); /* FIXME BUG? should be 2 for mood_peace? */
+    return si;
+}
+
+static int game_ai_classic_aud_treaty_declare_war(struct audience_s *au)
+{
+    struct game_s *g = au->g;
+    player_id_t ph = au->ph, pa = au->pa;
+    empiretechorbit_t *eh = &(g->eto[ph]);
+    empiretechorbit_t *ea = &(g->eto[pa]);
+    int si;
+    if ((eh->treaty[pa] == TREATY_ALLIANCE) && (eh->treaty[au->pstartwar] == TREATY_WAR)) {
+        si = (!rnd_0_nm1(8, &g->seed)) ? 2 : 3;
+    } else {
+        si = game_ai_classic_aud_check_mood(au, ea->relation1[au->pstartwar] + 150, 0);
+    }
+    return si;
+}
+
+static int game_ai_classic_aud_treaty_break_alliance(struct audience_s *au)
+{
+    struct game_s *g = au->g;
+    player_id_t ph = au->ph, pa = au->pa;
+    empiretechorbit_t *eh = &(g->eto[ph]);
+    empiretechorbit_t *ea = &(g->eto[pa]);
+    int si;
+    if (eh->relation1[pa] > 24) {
+        si = game_ai_classic_aud_check_mood(au, ea->relation1[au->pwar] + 175, 0);
+    } else {
+        si = 0;
+    }
+    return si;
+}
+
+static int game_ai_classic_aud_trade(struct audience_s *au)
+{
+    int si;
+    si = game_ai_classic_aud_check_mood(au, 50, 1);
+    return si;
+}
+
+static bool game_ai_classic_aud_sweeten(struct audience_s *au, int *bcptr, tech_field_t *fieldptr, uint8_t *techptr)
+{
+    struct game_s *g = au->g;
+    player_id_t ph = au->ph, pa = au->pa;
+    empiretechorbit_t *eh = &(g->eto[ph]);
+    int bc;
+    tech_field_t field = 0;
+    uint8_t tech;
+    bc = (((rnd_1_n(8, &g->seed) + rnd_1_n(8, &g->seed)) * g->year) / 25) * 25;
+    if (bc > eh->reserve_bc) {
+        bc = 0;
+    }
+    {
+        struct spy_esp_s s[1];
+        s->spy = pa;
+        s->target = ph;
+        if (game_spy_esp_sub1(g, s, g->year, 1) > 0) {
+            field = s->tbl_field[0];
+            tech = s->tbl_tech2[0];
+        } else {
+            tech = 0;
+        }
+    }
+    *bcptr = bc;
+    *fieldptr = field;
+    *techptr = tech;
+    if ((bc == 0) && (tech == 0)) {
+        return false;
+    }
+    return true;
+}
+
+static uint8_t game_ai_classic_aud_threaten(struct audience_s *au)
+{
+    struct game_s *g = au->g;
+    player_id_t ph = au->ph, pa = au->pa;
+    empiretechorbit_t *eh = &(g->eto[ph]);
+    empiretechorbit_t *ea = &(g->eto[pa]);
+    int v;
+    uint8_t dtype;
+    v = rnd_1_n(200, &g->seed) + eh->mood_treaty[pa] / 2;
+    v += game_diplo_tbl_reldiff[ea->trait1] * 2;
+    if (ea->total_production_bc > 0) {
+        v += (eh->total_production_bc * 100) / ea->total_production_bc;
+    } else {
+        v += 100;
+    }
+    SUBSATT(eh->relation1[pa], rnd_1_n(15, &g->seed), -100);
+    ea->relation1[ph] = eh->relation1[pa];
+    eh->mood_treaty[pa] = -120;
+    if (v < 170) {
+        if ((rnd_1_n(15, &g->seed) - game_diplo_tbl_reldiff[ea->trait1]) > rnd_1_n(100, &g->seed)) {
+            game_diplo_start_war(g, ph, pa);
+            dtype = 13;
+        } else {
+            dtype = 69;
+        }
+    } else {
+        eh->spymode_next[pa] = SPYMODE_HIDE;    /* FIXME BUG? should be ea->..[ph] */
+        eh->spymode[pa] = SPYMODE_HIDE;         /* FIXME BUG? should be ea->..[ph] */
+        g->evn.ceasefire[ph][pa] = rnd_1_n(15, &g->seed) + 5;
+        dtype = 70;
+        if (v >= 275) {
+            struct spy_esp_s s[1];
+            s->spy = ph;
+            s->target = pa;
+            if (game_spy_esp_sub1(g, s, 0, 1) > 0) {
+                au->tribute_field = s->tbl_field[0];
+                au->tribute_tech = s->tbl_tech2[0];
+                game_tech_get_new(g, ph, au->tribute_field, au->tribute_tech, TECHSOURCE_TRADE, pa, 0, false);   /* WASBUG? pa was 0 */
+            }
+        } else if (v >= 200) {
+            int bc;
+            bc = (((rnd_1_n(8, &g->seed) + 2) * g->year) / 25) * 25;
+            if (bc != 0) {
+                eh->reserve_bc += bc;
+                au->tribute_bc = bc;
+                dtype = 71;
+            }
+        }
+    }
+    return dtype;
+}
+
+static void game_ai_classic_aud_tribute_bc(struct audience_s *au, int selected, int bc)
+{
+    struct game_s *g = au->g;
+    player_id_t ph = au->ph, pa = au->pa;
+    empiretechorbit_t *eh = &(g->eto[ph]);
+    empiretechorbit_t *ea = &(g->eto[pa]);
+    int v;
+    if (ea->total_production_bc != 0) {
+        /* FIXME BUG MOO1 uses the value
+              (reserve * 12) / (0x786e + 0xdd4 * pa + 0x326b0000)
+           == (reserve * 12) / ea->relation1
+           == 0
+           Maybe the divisor was supposed to be eh->relation1[pa]? Or ea->total_production_bc?
+           This makes money tributes quite useless.
+        */
+        v = 0;
+    } else {
+        v = 10;
+    }
+    v = ((selected + 1) * v) / 10;
+    if (eh->race == RACE_HUMAN) {
+        v *= 2;
+    }
+    ADDSATT(eh->relation1[pa], v, 100);
+    ea->relation1[ph] = eh->relation1[pa];
+    if (eh->treaty[pa] >= TREATY_WAR) {
+        SETMIN(ea->relation1[ph], -25);
+    }
+    if (eh->treaty[pa] != TREATY_ALLIANCE) {
+        SETMIN(ea->relation1[ph], 65);
+    }
+    /* FIXME BUG? eh->relation1[pa] = ea->relation1[ph]; is missing */
+}
+
+static void game_ai_classic_aud_tribute_tech(struct audience_s *au, int selected, tech_field_t field, uint8_t tech)
+{
+    struct game_s *g = au->g;
+    player_id_t ph = au->ph, pa = au->pa;
+    empiretechorbit_t *eh = &(g->eto[ph]);
+    empiretechorbit_t *ea = &(g->eto[pa]);
+    int v;
+    if (eh->relation1[pa] < 0) {
+        v = 20;
+    } else {
+        v = (100 - eh->relation1[pa]) / 10;
+    }
+    v = ((rnd_1_n(8, &g->seed) + rnd_1_n(8, &g->seed) + (tech / 4)) * v) / 10;
+    if (eh->race == RACE_HUMAN) {
+        v *= 2;
+    }
+    ADDSATT(eh->relation1[pa], v, 100);
+    ea->relation1[ph] = eh->relation1[pa];
+    ADDSATT(eh->mood_peace[pa], v, 200);
+    ADDSATT(eh->trust[pa], rnd_1_n(8, &g->seed) + 2, 30);
+    if (eh->treaty[pa] >= TREATY_WAR) {
+        SETMIN(ea->relation1[ph], -25);
+    }
+    if (eh->treaty[pa] != TREATY_ALLIANCE) {
+        SETMIN(ea->relation1[ph], 70);
+    }
+    /* FIXME BUG? eh->relation1[pa] = ea->relation1[ph]; is missing */
+}
+
+static int game_ai_classic_aud_tech_scale(struct audience_s *au)
+{
+    struct game_s *g = au->g;
+    player_id_t ph = au->ph, pa = au->pa;
+    empiretechorbit_t *eh = &(g->eto[ph]);
+    empiretechorbit_t *ea = &(g->eto[pa]);
+    int v, di;
+    di = eh->mood_tech[pa];
+    if (di > 0) {
+        di /= 5;
+    }
+    SETMIN(di, 30);
+    if (eh->treaty[pa] == TREATY_ALLIANCE) {
+        di += 25;
+    }
+    v = eh->trust[pa] + eh->relation1[pa] / 2 + ((eh->race == RACE_HUMAN) ? 50 : 0);
+    v += game_diplo_tbl_reldiff[ea->trait1] * 2 + di - 125 + rnd_1_n(100, &g->seed);
+    if (v < 0) {
+        v = abs(v) + 100;
+    } else {
+        v = 20000 / (v + 200);
+    }
+    v /= 4;
+    SETMAX(v, 75);
+    return v;
+}
+
+static uint8_t game_ai_classic_aud_get_dtype(struct audience_s *au, uint8_t dtype, int a2)
+{
+    struct game_s *g = au->g;
+    player_id_t ph = au->ph, pa = au->pa;
+    empiretechorbit_t *eh = &(g->eto[ph]);
+    if ((dtype == 31) || ((dtype >= 33) && (dtype <= 41)) || ((dtype >= 62) && (dtype <= 68))) {
+        switch (a2) {
+            case 0:
+            case 1:
+            case 2:
+                if ((eh->blunder[pa] != 0) && (!rnd_0_nm1(2, &g->seed))) {
+                    dtype = eh->blunder[pa] + 30;
+                    eh->blunder[pa] = 0;
+                } else if ((eh->broken_treaty[pa] != TREATY_NONE) && (!rnd_0_nm1(4, &g->seed))) {
+                    dtype = 33;
+                    eh->broken_treaty[pa] = TREATY_NONE;
+                } else {
+                    dtype = 31;
+                }
+                break;
+            case 3:
+                if ((!rnd_0_nm1(4, &g->seed)) && (eh->tribute_tech[pa] != 0)) {
+                    au->tribute_field = eh->tribute_field[pa];
+                    au->tribute_tech = eh->tribute_tech[pa];
+                    eh->tribute_tech[pa] = 0;
+                    dtype = 66;
+                }
+                break;
+            default:
+                break;
+        }
+    }
+    return dtype;
+}
+
+static bool game_ai_classic_aud_later(struct audience_s *au)
+{
+    struct game_s *g = au->g;
+    player_id_t ph = au->ph, pa = au->pa;
+    return (game_diplo_get_mood(g, ph, pa) < -100);
+}
+
+/* -------------------------------------------------------------------------- */
+
 const struct game_ai_s game_ai_classic = {
     "Classic",
     game_ai_classic_turn_p1,
@@ -3638,5 +4002,19 @@ const struct game_ai_s game_ai_classic = {
     game_ai_classic_crank_ship, /* pirates */
     game_ai_classic_vote,
     game_ai_classic_turn_diplo_p1,
-    game_ai_classic_turn_diplo_p2
+    game_ai_classic_turn_diplo_p2,
+    game_ai_classic_aud_start_human,
+    game_ai_classic_aud_treaty_nap,
+    game_ai_classic_aud_treaty_alliance,
+    game_ai_classic_aud_treaty_peace,
+    game_ai_classic_aud_treaty_declare_war,
+    game_ai_classic_aud_treaty_break_alliance,
+    game_ai_classic_aud_trade,
+    game_ai_classic_aud_sweeten,
+    game_ai_classic_aud_threaten,
+    game_ai_classic_aud_tribute_bc,
+    game_ai_classic_aud_tribute_tech,
+    game_ai_classic_aud_tech_scale,
+    game_ai_classic_aud_get_dtype,
+    game_ai_classic_aud_later
 };
