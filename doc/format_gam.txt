@@ -188,7 +188,7 @@ fc      2*6 AI next spy mode: 0=hide, 1=espionage, 2=sabotage
 24c     2*6 ?
 258     2*6 ?
 264     2*6 ?
-270     2*6 ?
+270     2*6 hatred
 27c     2*6 ?
 288     2*6 ?
 294     2*6 ?

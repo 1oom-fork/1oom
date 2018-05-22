@@ -485,7 +485,7 @@ static int savetype_de_moo13(struct game_s *g, const char *fname)
             M13_GET_16(e->offer_bc[j], eb2 + 0x1ec);
             M13_GET_16_HATED(e->hated[j], eb2 + 0x21c);
             M13_GET_16_HATED(e->mutual_enemy[j], eb2 + 0x228);
-            M13_GET_16(e->hmm270[j], eb2 + 0x270);
+            M13_GET_16(e->hatred[j], eb2 + 0x270);
             M13_GET_16(e->hmm27c[j], eb2 + 0x27c);
             M13_GET_16(e->hmm288[j], eb2 + 0x288);
             M13_GET_16(e->spying[j], eb2 + 0x2a4);
@@ -930,7 +930,7 @@ static int savetype_en_moo13(struct game_s *g, const char *fname)
             M13_SET_16(e->offer_bc[j], eb2 + 0x1ec);
             M13_SET_16_HATED(e->hated[j], eb2 + 0x21c);
             M13_SET_16_HATED(e->mutual_enemy[j], eb2 + 0x228);
-            M13_SET_16(e->hmm270[j], eb2 + 0x270);
+            M13_SET_16(e->hatred[j], eb2 + 0x270);
             M13_SET_16(e->hmm27c[j], eb2 + 0x27c);
             M13_SET_16(e->hmm288[j], eb2 + 0x288);
             M13_SET_16(e->spying[j], eb2 + 0x2a4);
@@ -1323,7 +1323,7 @@ static const struct game_intros_s game_intros_eto[] = {
     GAME_INTROS_TBL(empiretechorbit_s, offer_bc),
     GAME_INTROS_TBL(empiretechorbit_s, hated),
     GAME_INTROS_TBL(empiretechorbit_s, mutual_enemy),
-    GAME_INTROS_TBL(empiretechorbit_s, hmm270),
+    GAME_INTROS_TBL(empiretechorbit_s, hatred),
     GAME_INTROS_TBL(empiretechorbit_s, hmm27c),
     GAME_INTROS_TBL(empiretechorbit_s, hmm288),
     GAME_INTROS_TBL(empiretechorbit_s, spying),
@@ -2131,7 +2131,7 @@ static int savetype_en_text(struct game_s *g, const char *fname)
         OUTLINETBL("offer_bc", g->players, e->offer_bc);
         OUTLINETBL("hated", g->players, e->hated);
         OUTLINETBL("mutual_enemy", g->players, e->mutual_enemy);
-        OUTLINETBL("hmm270", g->players, e->hmm270);
+        OUTLINETBL("hatred", g->players, e->hatred);
         OUTLINETBL("hmm27c", g->players, e->hmm27c);
         OUTLINETBL("hmm288", g->players, e->hmm288);
         OUTLINETBL("spying", g->players, e->spying);
