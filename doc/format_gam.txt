@@ -173,19 +173,20 @@ fc      2*6 AI next spy mode: 0=hide, 1=espionage, 2=sabotage
 108     2*6 ?
 114     2*6 ?
 120     2*6 ?
-138     2*6 ?
-144     2*6*6 ?
-18c     2*6*6 ?
+138     2*6 audience; tech trade num
+144     2*6*6 audience; tech trade field
+18c     2*6*6 audience; tech trade tech
 1d4     2*6 incentive offer tech field
 1e0     2*6 incentive offer tech
 1ec     2*6 incentive offer BC
-204     2*6 ?
+1f8     2*6 audience; attacker of ally
+204     2*6 audience; ask break treaty with
 210     2*6 ?
-21c     2*6 ?
-228     2*6 ?
-234     2*6 ?
-240     2*6 ?
-24c     2*6 ?
+21c     2*6 hated party
+228     2*6 mutual enemy
+234     2*6 audience; attack gift tech field
+240     2*6 audience; attack gift tech
+24c     2*6 audience; attack gift BC
 258     2*6 ?
 264     2*6 ?
 270     2*6 hatred
