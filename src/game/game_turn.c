@@ -82,11 +82,11 @@ static void game_turn_update_pp_hmm1(struct game_s *g)
                 int16_t v;
                 v = e->diplo_type[j];
                 if ((v >= 4) && (v <= 11)) {
-                    e->hmm084[j] = v;
+                    e->blunder[j] = v;
                 } else if ((v >= 42) && (v <= 49)) {
-                    e->hmm084[j] = v - 30;
+                    e->blunder[j] = v - 30;
                 } else if ((v >= 50) && (v <= 57)) {
-                    e->hmm084[j] = v - 46;
+                    e->blunder[j] = v - 46;
                 }
                 if (e->treaty[j] != TREATY_FINAL_WAR) {
                     v = e->mood_treaty[j];
@@ -324,16 +324,16 @@ static void game_turn_update_trade(struct game_s *g)
                 if (BOOLVEC_IS0(e->within_frange, j)) {
                     e->trade_bc[j] = 0;
                     e->trade_percent[j] = 0;
-                    e->hmm288[j] = 0;
+                    e->trade_established_bc[j] = 0;
                 } else {
-                    uint16_t hmm;
+                    uint16_t estbc;
                     int16_t v;
-                    hmm = e->hmm288[j];
-                    if (hmm < bc) {
-                        hmm += bc / 10;
-                        SETMIN(hmm, bc);
-                        e->hmm288[j] = hmm;
-                        e2->hmm288[i] = hmm;
+                    estbc = e->trade_established_bc[j];
+                    if (estbc < bc) {   /* FIXME BUG? never true ; both are set to bc */
+                        estbc += bc / 10;
+                        SETMIN(estbc, bc);
+                        e->trade_established_bc[j] = estbc;
+                        e2->trade_established_bc[i] = estbc;
                     }
                     v = (e->relation1[j] + 25) / 60;
                     SETMAX(v, 0);
@@ -1494,14 +1494,17 @@ static bool game_turn_check_end(struct game_s *g, struct game_end_s *ge)
     return false;
 }
 
-static void game_turn_update_hmm27c(struct game_s *g)
+static void game_turn_update_have_met(struct game_s *g)
 {
     game_update_empire_within_range(g);
-    for (player_id_t i = PLAYER_0; i < PLAYER_1; ++i) { /* FIXME multiplayer */
+    for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         empiretechorbit_t *e = &(g->eto[i]);
+        if (IS_AI(g, i)) {
+            continue;
+        }
         for (player_id_t j = PLAYER_0; j < g->players; ++j) {
-            if ((i != j) && (!e->hmm27c[j]) && BOOLVEC_IS1(e->within_frange, j)) {
-                e->hmm27c[j] = 1;
+            if ((i != j) && (!e->have_met[j]) && BOOLVEC_IS1(e->within_frange, j)) {
+                e->have_met[j] = 1;
                 e->treaty[j] = TREATY_NONE;
                 g->eto[j].treaty[i] = TREATY_NONE;
             }
@@ -1826,7 +1829,7 @@ struct game_end_s game_turn_process(struct game_s *g)
         }
         g->evn.newtech[i].num = 0;
     }
-    game_turn_update_hmm27c(g);
+    game_turn_update_have_met(g);
     game_ai->turn_diplo_p1(g);
     for (int i = 0; i < g->galaxy_stars; ++i) {
         if (g->planet[i].owner != PLAYER_NONE) {
