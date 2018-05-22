@@ -361,9 +361,9 @@ static void game_audience_set_dtype(struct audience_s *au, uint8_t dtype, int a2
             case 0:
             case 1:
             case 2:
-                if ((eh->hmm084[pa] != 0) && (!rnd_0_nm1(2, &g->seed))) {
-                    au->dtype = eh->hmm084[pa] + 30;
-                    eh->hmm084[pa] = 0;
+                if ((eh->blunder[pa] != 0) && (!rnd_0_nm1(2, &g->seed))) {
+                    au->dtype = eh->blunder[pa] + 30;
+                    eh->blunder[pa] = 0;
                 } else if ((eh->broken_treaty[pa] != TREATY_NONE) && (!rnd_0_nm1(4, &g->seed))) {
                     au->dtype = 33;
                     eh->broken_treaty[pa] = TREATY_NONE;
