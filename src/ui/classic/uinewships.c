@@ -23,6 +23,7 @@
 #include "uiobj.h"
 #include "uisound.h"
 #include "uistarmap_common.h"
+#include "uiswitch.h"
 
 /* -------------------------------------------------------------------------- */
 
@@ -87,6 +88,7 @@ void ui_newships(struct game_s *g, int pi)
 {
     struct newships_data_s d;
     bool flag_done = false;
+    ui_switch_1(g, pi);
     d.g = g;
     d.api = pi;
     d.sm.g = g;
