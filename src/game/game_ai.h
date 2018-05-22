@@ -7,6 +7,7 @@
 struct game_s;
 struct battle_s;
 struct election_s;
+struct audience_s;
 
 struct game_ai_s {
     char const * const name;
@@ -25,6 +26,20 @@ struct game_ai_s {
     int (*vote)(struct election_s *el, player_id_t player); /* 0 = abstain, N = candidate N */
     void (*turn_diplo_p1)(struct game_s *g);
     void (*turn_diplo_p2)(struct game_s *g);
+    void (*aud_start_human)(struct audience_s *au);
+    int (*aud_treaty_nap)(struct audience_s *au);
+    int (*aud_treaty_alliance)(struct audience_s *au);
+    int (*aud_treaty_peace)(struct audience_s *au);
+    int (*aud_treaty_declare_war)(struct audience_s *au);
+    int (*aud_treaty_break_alliance)(struct audience_s *au);
+    int (*aud_trade)(struct audience_s *au);
+    bool (*aud_sweeten)(struct audience_s *au, int *bcptr, tech_field_t *fieldptr, uint8_t *techptr);
+    uint8_t (*aud_threaten)(struct audience_s *au);
+    void (*aud_tribute_bc)(struct audience_s *au, int selected, int bc);
+    void (*aud_tribute_tech)(struct audience_s *au, int selected, tech_field_t field, uint8_t tech);
+    int (*aud_tech_scale)(struct audience_s *au);
+    uint8_t (*aud_get_dtype)(struct audience_s *au, uint8_t dtype, int a2);
+    bool (*aud_later)(struct audience_s *au);
 };
 
 extern const struct game_ai_s *game_ai;
