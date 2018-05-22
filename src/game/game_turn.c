@@ -82,11 +82,11 @@ static void game_turn_update_pp_hmm1(struct game_s *g)
                 int16_t v;
                 v = e->diplo_type[j];
                 if ((v >= 4) && (v <= 11)) {
-                    e->hmm084[j] = v;
+                    e->blunder[j] = v;
                 } else if ((v >= 42) && (v <= 49)) {
-                    e->hmm084[j] = v - 30;
+                    e->blunder[j] = v - 30;
                 } else if ((v >= 50) && (v <= 57)) {
-                    e->hmm084[j] = v - 46;
+                    e->blunder[j] = v - 46;
                 }
                 if (e->treaty[j] != TREATY_FINAL_WAR) {
                     v = e->mood_treaty[j];
