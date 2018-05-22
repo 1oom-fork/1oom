@@ -176,18 +176,18 @@ ui_turn_action_t ui_game_turn(struct game_s *g, int *load_game_i_ptr, int pi)
                 ui_data.ui_main_loop_action = UI_MAIN_LOOP_RACES;
                 break;
             case UI_MAIN_LOOP_EMPIREREPORT:
-                if ((opponi > 0) && (opponi < g->players)) {
+                if ((opponi >= PLAYER_0) && (opponi < g->players) && (opponi != pi)) {
                     ui_empirereport(g, pi, opponi);
                 } else {
-                    LOG_DEBUG((3, "%s: invalid opponi %i on EMPIREREPORT\n", __func__, opponi));
+                    LOG_DEBUG((3, "%s: invalid opponi %i for %i on EMPIREREPORT\n", __func__, opponi, pi));
                 }
                 ui_data.ui_main_loop_action = UI_MAIN_LOOP_RACES;
                 break;
             case UI_MAIN_LOOP_AUDIENCE:
-                if ((opponi > 0) && (opponi < g->players)) {
+                if ((opponi >= PLAYER_0) && (opponi < g->players) && (opponi != pi)) {
                     game_audience(g, pi, opponi);
                 } else {
-                    LOG_DEBUG((3, "%s: invalid opponi %i on AUDIENCE\n", __func__, opponi));
+                    LOG_DEBUG((3, "%s: invalid opponi %i for %i on AUDIENCE\n", __func__, opponi, pi));
                 }
                 ui_data.ui_main_loop_action = UI_MAIN_LOOP_RACES;
                 break;
