@@ -3517,7 +3517,7 @@ static void game_ai_classic_turn_diplo_p2_sub3(struct game_s *g, player_id_t p1,
 
 static void game_ai_classic_turn_diplo_p2(struct game_s *g)
 {
-    game_diplo_limit_0a8(g);
+    game_diplo_limit_mood_treaty(g);
     for (player_id_t p1 = PLAYER_0; p1 < g->players; ++p1) {
         empiretechorbit_t *e1 = &(g->eto[p1]);
         if (IS_AI(g, p1)) {
