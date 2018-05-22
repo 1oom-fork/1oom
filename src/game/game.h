@@ -76,7 +76,7 @@ typedef struct empiretechorbit_s {
     int16_t diplo_p2[PLAYER_NUM];
     int16_t trust[PLAYER_NUM];
     treaty_t broken_treaty[PLAYER_NUM];
-    int16_t hmm084[PLAYER_NUM];
+    int8_t blunder[PLAYER_NUM];
     tech_field_t tribute_field[PLAYER_NUM];
     uint8_t tribute_tech[PLAYER_NUM];
     int16_t mood_treaty[PLAYER_NUM];
@@ -103,9 +103,9 @@ typedef struct empiretechorbit_s {
     tech_field_t au_attack_gift_field[PLAYER_NUM];
     uint8_t au_attack_gift_tech[PLAYER_NUM];
     int16_t au_attack_gift_bc[PLAYER_NUM];
-    int16_t hmm270[PLAYER_NUM];
-    uint16_t hmm27c[PLAYER_NUM];    /* bool? */
-    uint16_t hmm288[PLAYER_NUM];    /* trade ? */
+    int16_t hatred[PLAYER_NUM];
+    uint8_t have_met[PLAYER_NUM]; /* 0, 1, 2 */
+    uint16_t trade_established_bc[PLAYER_NUM];
     uint8_t have_planet_shield; /* 0, 5, 10, 15, 20 */
     uint16_t planet_shield_cost;
     int16_t spying[PLAYER_NUM]; /* tenths */
