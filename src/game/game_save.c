@@ -276,7 +276,7 @@ static int game_save_encode_eto(uint8_t *buf, int pos, const empiretechorbit_t *
     SG_1OOM_EN_TBL_U16(e->mutual_enemy, pnum);
     SG_1OOM_EN_TBL_U16(e->hatred, pnum);
     SG_1OOM_EN_TBL_U16(e->hmm27c, pnum);
-    SG_1OOM_EN_TBL_U16(e->hmm288, pnum);
+    SG_1OOM_EN_TBL_U16(e->trade_established_bc, pnum);
     SG_1OOM_EN_TBL_U16(e->spying, pnum);
     SG_1OOM_EN_TBL_U16(e->spyfund, pnum);
     SG_1OOM_EN_TBL_U8(e->spymode, pnum);
@@ -339,7 +339,7 @@ static int game_save_decode_eto(const uint8_t *buf, int pos, empiretechorbit_t *
     SG_1OOM_DE_TBL_U16(e->mutual_enemy, pnum);
     SG_1OOM_DE_TBL_U16(e->hatred, pnum);
     SG_1OOM_DE_TBL_U16(e->hmm27c, pnum);
-    SG_1OOM_DE_TBL_U16(e->hmm288, pnum);
+    SG_1OOM_DE_TBL_U16(e->trade_established_bc, pnum);
     SG_1OOM_DE_TBL_U16(e->spying, pnum);
     SG_1OOM_DE_TBL_U16(e->spyfund, pnum);
     SG_1OOM_DE_TBL_U8(e->spymode, pnum);
