@@ -388,7 +388,7 @@ static void game_audience_set_dtype(struct audience_s *au, uint8_t dtype, int a2
     ui_audience_show3(au);
 }
 
-static int game_audience_sub6(struct audience_s *au, int a0, int a2)
+static int game_audience_check_mood(struct audience_s *au, int a0, int a2)
 {
     struct game_s *g = au->g;
     player_id_t ph = au->ph, pa = au->pa;
@@ -580,7 +580,7 @@ static void audience_menu_treaty(struct audience_s *au)
     switch (selected) {
         case 0:
             if (eh->relation1[pa] > 10) {
-                si = game_audience_sub6(au, 50, 0);
+                si = game_audience_check_mood(au, 50, 0);
             } else {
                 si = 0;
             }
@@ -594,7 +594,7 @@ static void audience_menu_treaty(struct audience_s *au)
             break;
         case 1:
             if (eh->relation1[pa] > 50) {
-                si = game_audience_sub6(au, 125, 0);
+                si = game_audience_check_mood(au, 125, 0);
             } else {
                 si = 0;
             }
@@ -607,7 +607,7 @@ static void audience_menu_treaty(struct audience_s *au)
             dtype = 63;
             break;
         case 2:
-            si = game_audience_sub6(au, 60, 0);
+            si = game_audience_check_mood(au, 60, 0);
             if ((si == 1) || (si == 2)) {
                 si = game_audience_sweeten(au, si);
             }
@@ -624,7 +624,7 @@ static void audience_menu_treaty(struct audience_s *au)
                 if ((eh->treaty[pa] == TREATY_ALLIANCE) && (eh->treaty[au->pstartwar] == TREATY_WAR)) {
                     si = (!rnd_0_nm1(8, &g->seed)) ? 2 : 3;
                 } else {
-                    si = game_audience_sub6(au, ea->relation1[au->pstartwar] + 150, 0);
+                    si = game_audience_check_mood(au, ea->relation1[au->pstartwar] + 150, 0);
                 }
                 if ((si == 1) || (si == 2)) {
                     si = game_audience_sweeten(au, si);
@@ -641,7 +641,7 @@ static void audience_menu_treaty(struct audience_s *au)
             au->pwar = audience_menu_race(au, all_tbl, all_num, game_str_au_whobrk);
             if (au->pwar != PLAYER_NONE) {
                 if (eh->relation1[pa] > 24) {
-                    si = game_audience_sub6(au, ea->relation1[au->pwar] + 175, 0);
+                    si = game_audience_check_mood(au, ea->relation1[au->pwar] + 175, 0);
                     if ((si == 1) || (si == 2)) {
                         si = game_audience_sweeten(au, si);
                     }
@@ -687,7 +687,7 @@ static void audience_menu_trade(struct audience_s *au)
     game_diplo_annoy(g, ph, pa, 1);
     eh->mood_trade[pa] -= rnd_1_n(30, &g->seed);
     if ((selected != -1) && (selected != au->num_bc)) {
-        int si = game_audience_sub6(au, 50, 1);
+        int si = game_audience_check_mood(au, 50, 1);
         if (si < 3) {
             si = 0;
         } else {
