@@ -3478,20 +3478,20 @@ static void game_ai_classic_turn_diplo_p2_sub3(struct game_s *g, player_id_t p1,
             game_diplo_start_war(g, p2, p1);
             e1->diplo_type[p2] = 13;
         } else if ((v - rnd_1_n(100, &g->seed) + e1->mood_treaty[p2]) <= -100) {
-            if (e1->hmm270[p2] > 0) {
-                ++e1->hmm270[p2];
-                if ((e1->hmm270[p2] > 2) || (e1->treaty[p2] == TREATY_NONE)) {
+            if (e1->hatred[p2] > 0) {
+                ++e1->hatred[p2];
+                if ((e1->hatred[p2] > 2) || (e1->treaty[p2] == TREATY_NONE)) {
                     if (rnd_1_n(100, &g->seed) < -(game_diplo_tbl_reldiff[e2->trait1] / 2 + e1->diplo_val[p2])) {
                         game_diplo_start_war(g, p2, p1);
                         e1->diplo_type[p2] = 13;
-                        e1->hmm270[p2] = 1;
+                        e1->hatred[p2] = 1;
                     }
                 } else {
                     e1->diplo_type[p2] += 46;
                     game_diplo_break_treaty(g, p2, p1);
                 }
             } else {
-                e1->hmm270[p2] = 1;
+                e1->hatred[p2] = 1;
                 if ((e1->treaty[p2] == TREATY_NONAGGRESSION) || (e1->treaty[p2] == TREATY_ALLIANCE) || (e1->trade_bc[p2] != 0)) {
                     e1->diplo_type[p2] += 38;
                 }
@@ -3556,16 +3556,16 @@ static void game_ai_classic_turn_diplo_p2(struct game_s *g)
                 if ((v2 <= -100) || (v <= -100)) {
                     e1->diplo_type[p2] = 0;
                 } else if (e1->diplo_val[p2] < 0) {
-                    if ((e1->hmm270[p2] > 0) || (rnd_1_n(100, &g->seed) < abs(dv2))) {
+                    if ((e1->hatred[p2] > 0) || (rnd_1_n(100, &g->seed) < abs(dv2))) {
                         game_ai_classic_turn_diplo_p2_sub3(g, p1, p2);
                     } else {
                         e1->diplo_type[p2] = 0;
                     }
                 } else if ((e1->treaty[p2] == TREATY_WAR) && ((rnd_1_n(100, &g->seed) + 30) < e1->mood_peace[p2])) {
                     game_ai_classic_turn_diplo_p2_sub3(g, p1, p2);
-                } else if ((rnd_1_n(100, &g->seed) < (dv2 + ((e1->hmm270[p2] == 0) ? 3 : 0))) && (!rnd_0_nm1(4, &g->seed))) {
-                    if (e1->hmm270[p2] > 0) {
-                        e1->hmm270[p2] = 0;
+                } else if ((rnd_1_n(100, &g->seed) < (dv2 + ((e1->hatred[p2] == 0) ? 3 : 0))) && (!rnd_0_nm1(4, &g->seed))) {
+                    if (e1->hatred[p2] > 0) {
+                        e1->hatred[p2] = 0;
                     } else {
                         game_ai_classic_turn_diplo_p2_sub1(g, p1, p2);
                     }
