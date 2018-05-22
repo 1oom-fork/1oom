@@ -258,7 +258,7 @@ static int game_save_encode_eto(uint8_t *buf, int pos, const empiretechorbit_t *
     SG_1OOM_EN_TBL_U16(e->diplo_p2, pnum);
     SG_1OOM_EN_TBL_U16(e->trust, pnum);
     SG_1OOM_EN_TBL_U8(e->broken_treaty, pnum);
-    SG_1OOM_EN_TBL_U16(e->hmm084, pnum);
+    SG_1OOM_EN_TBL_U16(e->blunder, pnum);
     SG_1OOM_EN_TBL_U8(e->tribute_field, pnum);
     SG_1OOM_EN_TBL_U8(e->tribute_tech, pnum);
     SG_1OOM_EN_TBL_U16(e->mood_treaty, pnum);
@@ -321,7 +321,7 @@ static int game_save_decode_eto(const uint8_t *buf, int pos, empiretechorbit_t *
     SG_1OOM_DE_TBL_U16(e->diplo_p2, pnum);
     SG_1OOM_DE_TBL_U16(e->trust, pnum);
     SG_1OOM_DE_TBL_U8(e->broken_treaty, pnum);
-    SG_1OOM_DE_TBL_U16(e->hmm084, pnum);
+    SG_1OOM_DE_TBL_U16(e->blunder, pnum);
     SG_1OOM_DE_TBL_U8(e->tribute_field, pnum);
     SG_1OOM_DE_TBL_U8(e->tribute_tech, pnum);
     SG_1OOM_DE_TBL_U16(e->mood_treaty, pnum);
