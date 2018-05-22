@@ -482,9 +482,6 @@ void ui_newtech(struct game_s *g, int pi)
     bool flag_copybuf = false;
 
     ui_sound_stop_music();
-    if (g->evn.newtech[pi].num > 0) {
-        ui_switch_1(g, pi);
-    }
     uiobj_set_xyoff(0, 0);
 
     memset(&d, 0, sizeof(d));
@@ -496,11 +493,11 @@ void ui_newtech(struct game_s *g, int pi)
     d.anim = 0;
 
     newtech_load_data(&d);
-
     for (int i = 0; i < g->evn.newtech[pi].num; ++i) {
         d.nt = g->evn.newtech[pi].d[i];
         if (!flag_copybuf) {
             flag_copybuf = true;
+            ui_switch_1(g, pi);
             hw_video_copy_back_from_page2();
             hw_video_copy_back_to_page3();
         }
@@ -570,6 +567,7 @@ void ui_newtech(struct game_s *g, int pi)
         ) {
             if (!flag_copybuf) {
                 flag_copybuf = true;
+                ui_switch_1(g, pi);
                 hw_video_copy_back_from_page2();
                 hw_video_copy_back_to_page3();
             }
