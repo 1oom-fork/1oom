@@ -268,11 +268,11 @@ void game_diplo_start_war(struct game_s *g, player_id_t pi, player_id_t pi2)
     }
     e = &(g->eto[pi]);
     e2 = &(g->eto[pi2]);
-    if (IS_HUMAN(g, pi) && (e->hmm27c[pi2] == 0)) {
-        e->hmm27c[pi2] = 1;
+    if (IS_HUMAN(g, pi) && (e->have_met[pi2] == 0)) {
+        e->have_met[pi2] = 1;
     }
-    if (IS_HUMAN(g, pi2) && (e2->hmm27c[pi] == 0)) {
-        e2->hmm27c[pi] = 1;
+    if (IS_HUMAN(g, pi2) && (e2->have_met[pi] == 0)) {
+        e2->have_met[pi] = 1;
     }
     if (e->treaty[pi2] >= TREATY_WAR) {
         return;
