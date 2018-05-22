@@ -369,14 +369,14 @@ int16_t ui_audience_ask4(struct audience_s *au)
     return ui_audience_ask_do(au, 139, ui_audience_draw_cb4);
 }
 
-void ui_audience_newtech(struct audience_s *au)
+void ui_audience_newtech(struct audience_s *au, int pi)
 {
     ui_palette_fadeout_a_f_1();
     ui_draw_finish_mode = 2;
     lbxpal_select(0, -1, 0);
     lbxpal_set_update_range(0, 255);
     lbxpal_build_colortables();
-    ui_newtech(au->g, au->ph);
+    ui_newtech(au->g, pi);
     ui_switch_2(au->g, au->ph, au->pa);
     lbxpal_select(7, -1, 0);
     lbxpal_set_update_range(0, 255);
