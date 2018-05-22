@@ -1,4 +1,4 @@
-SUBDIRS = ext
+DIST_SUBDIRS = ext
 
 docdir = $(prefix)/share/doc/1oom
 

@@ -1,4 +1,5 @@
-SUBDIRS = doc src
+SUBDIRS = src
+DIST_SUBDIRS = doc src
 
 bindist:
 	$(SHELL) @BINDIST_SCRIPT@ $(STRIP) $(top_srcdir) nozip
