@@ -165,6 +165,7 @@ N*2     diplo param 1 (depends on type)
 N*2     diplo param 2 (depends on type)
 N*2     trust
 N*1     broken treaty
+N*2     diplomatic blunder
 N*1     tribute tech field
 N*1     tribute tech
 N*2     mood for treaty (non-aggression or alliance)
@@ -180,9 +181,9 @@ N*1     incentive offer tech
 N*2     incentive offer BC
 N*2     hated player (0..5, 6)
 N*2     mutual enemy (0..5, 6)
-N*2     hmm270
-N*2     hmm27c
-N*2     hmm288
+N*2     hatred
+N*2     have met (0=no, 1=just, 2=introduced)
+N*2     established trade BC
 N*2     spying percent in tenths
 N*2     spy fund left over after creating new spies
 N*1     spy mode: 0=hide, 1=espionage, 2=sabotage
