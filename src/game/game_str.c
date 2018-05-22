@@ -659,6 +659,8 @@ const char *game_str_au_whobrk = "Who should we break our treaty with?";
 const char *game_str_au_bcpery = "BC / year";
 const char *game_str_au_whattr = "What do you offer as tribute?";
 const char *game_str_au_techn = "[ Technology";
+const char *game_str_au_nextp = "[ Next page";
+const char *game_str_au_back = "[ Back";
 
 const char *game_str_au_opts1[6] = {
     "[ Propose Treaty",
@@ -686,6 +688,12 @@ const char *game_str_au_opts4[5] = {
     "[ Break Trade Agreement",
     "[ Threaten To Attack",
     "[ Forget It"
+};
+const char *game_str_au_optsmp1[4] = {
+    "[ Agree",
+    "[ Forget It",
+    "[ Demand BC",
+    "[ Demand Technology"
 };
 
 const char *game_str_tr_cont1 = "Contact has been broken with the";
