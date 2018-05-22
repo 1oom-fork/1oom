@@ -104,7 +104,7 @@ typedef struct empiretechorbit_s {
     uint8_t au_attack_gift_tech[PLAYER_NUM];
     int16_t au_attack_gift_bc[PLAYER_NUM];
     int16_t hatred[PLAYER_NUM];
-    uint16_t hmm27c[PLAYER_NUM];    /* bool? */
+    uint16_t have_met[PLAYER_NUM]; /* 0, 1, 2 */
     uint16_t trade_established_bc[PLAYER_NUM];
     uint8_t have_planet_shield; /* 0, 5, 10, 15, 20 */
     uint16_t planet_shield_cost;
