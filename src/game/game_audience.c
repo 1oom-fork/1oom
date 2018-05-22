@@ -1211,7 +1211,7 @@ void game_audience(struct game_s *g, player_id_t ph, player_id_t pa)
     struct audience_s au[1];
     empiretechorbit_t *eh = &(g->eto[ph]);
     au->g = g;
-    game_diplo_limit_0a8(g);
+    game_diplo_limit_mood_treaty(g);
     game_audience_prepare(au, ph, pa);
     ui_audience_start(au);
     au->mode = 6;
