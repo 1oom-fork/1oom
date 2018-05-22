@@ -180,7 +180,7 @@ N*1     incentive offer tech
 N*2     incentive offer BC
 N*2     hated player (0..5, 6)
 N*2     mutual enemy (0..5, 6)
-N*2     hmm270
+N*2     hatred
 N*2     hmm27c
 N*2     hmm288
 N*2     spying percent in tenths
