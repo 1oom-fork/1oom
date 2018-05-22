@@ -187,7 +187,7 @@ static const char *game_audience_get_str1(struct audience_s *au)
                         len = sprintf(buf, "\x02 %s\x01", game_str_au_amreca);
                         break;
                     case 0x11:
-                        s = game_str_tbl_race[g->eto[au->hmm5].race];
+                        s = game_str_tbl_race[g->eto[au->pstartwar].race];
                         break;
                     case 0x12:
                         s = game_str_tbl_race[g->eto[au->pwar].race];
@@ -619,18 +619,18 @@ static void audience_menu_treaty(struct audience_s *au)
             break;
         case 3:
             dtype = 67;
-            au->hmm5 = audience_menu_race(au, war_tbl, war_num, game_str_au_whowar);
-            if (au->hmm5 != PLAYER_NONE) {
-                if ((eh->treaty[pa] == TREATY_ALLIANCE) && (eh->treaty[au->hmm5] == TREATY_WAR)) {
+            au->pstartwar = audience_menu_race(au, war_tbl, war_num, game_str_au_whowar);
+            if (au->pstartwar != PLAYER_NONE) {
+                if ((eh->treaty[pa] == TREATY_ALLIANCE) && (eh->treaty[au->pstartwar] == TREATY_WAR)) {
                     si = (!rnd_0_nm1(8, &g->seed)) ? 2 : 3;
                 } else {
-                    si = game_audience_sub6(au, ea->relation1[au->hmm5] + 150, 0);
+                    si = game_audience_sub6(au, ea->relation1[au->pstartwar] + 150, 0);
                 }
                 if ((si == 1) || (si == 2)) {
                     si = game_audience_sweeten(au, si);
                 }
                 if (si == 3) {
-                    game_diplo_start_war(g, pa, au->hmm5);
+                    game_diplo_start_war(g, pa, au->pstartwar);
                 }
             } else {
                 selected = -1;
