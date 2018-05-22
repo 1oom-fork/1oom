@@ -324,16 +324,16 @@ static void game_turn_update_trade(struct game_s *g)
                 if (BOOLVEC_IS0(e->within_frange, j)) {
                     e->trade_bc[j] = 0;
                     e->trade_percent[j] = 0;
-                    e->hmm288[j] = 0;
+                    e->trade_established_bc[j] = 0;
                 } else {
                     uint16_t hmm;
                     int16_t v;
-                    hmm = e->hmm288[j];
+                    hmm = e->trade_established_bc[j];
                     if (hmm < bc) {
                         hmm += bc / 10;
                         SETMIN(hmm, bc);
-                        e->hmm288[j] = hmm;
-                        e2->hmm288[i] = hmm;
+                        e->trade_established_bc[j] = hmm;
+                        e2->trade_established_bc[i] = hmm;
                     }
                     v = (e->relation1[j] + 25) / 60;
                     SETMAX(v, 0);
