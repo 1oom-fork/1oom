@@ -159,7 +159,7 @@ c       2*6 empire within fuel range: 0/1
 54      2*6 diplo param 2 (depends on type)
 6c      2*6 trust
 78      2*6 broken treaty
-84      2*6 ?
+84      2*6 diplomatic blunder (0 = none, diplomat.lbx message type)
 90      2*6 tribute tech field
 9c      2*6 tribute tech
 a8      2*6 mood for treaty (non-aggression or alliance)
