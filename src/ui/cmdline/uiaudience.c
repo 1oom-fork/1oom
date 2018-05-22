@@ -104,9 +104,9 @@ int16_t ui_audience_ask4(struct audience_s *au)
     return ui_audience_ask(au);
 }
 
-void ui_audience_newtech(struct audience_s *au)
+void ui_audience_newtech(struct audience_s *au, int pi)
 {
-    ui_newtech(au->g, au->ph);
+    ui_newtech(au->g, pi);
 }
 
 void ui_audience_end(struct audience_s *au)
