@@ -464,10 +464,13 @@ static const struct strtbl_s {
     DEFSTRITEM(au_whobrk),
     DEFSTRITEM(au_whattr),
     DEFSTRITEM(au_techn),
+    DEFSTRITEM(au_nextp),
+    DEFSTRITEM(au_back),
     DEFSTRITEMTBL(au_opts1),
     DEFSTRITEMTBL(au_opts2),
     DEFSTRITEMTBL(au_opts3),
     DEFSTRITEMTBL(au_opts4),
+    DEFSTRITEMTBL(au_optsmp1),
     DEFSTRITEM(tr_cont1),
     DEFSTRITEM(tr_cont2),
     DEFSTRITEM(tr_fuel1),
@@ -1176,6 +1179,8 @@ const char *game_str_au_whobrk = "Who should we break our treaty with?";
 const char *game_str_au_bcpery = "BC / year";
 const char *game_str_au_whattr = "What do you offer as tribute?";
 const char *game_str_au_techn = "[ Technology";
+const char *game_str_au_nextp = "[ Next page";
+const char *game_str_au_back = "[ Back";
 
 const char *game_str_au_opts1[6] = {
     "[ Propose Treaty",
@@ -1203,6 +1208,12 @@ const char *game_str_au_opts4[5] = {
     "[ Break Trade Agreement",
     "[ Threaten To Attack",
     "[ Forget It"
+};
+const char *game_str_au_optsmp1[4] = {
+    "[ Agree",
+    "[ Forget It",
+    "[ Demand BC",
+    "[ Demand Technology"
 };
 
 const char *game_str_tr_cont1 = "Contact has been broken with the";
