@@ -155,13 +155,13 @@ void ui_switch_1(struct game_s *g, player_id_t pi)
     }
 }
 
-void ui_switch_2(struct game_s *g, player_id_t pi1, player_id_t pi2)
+bool ui_switch_2(struct game_s *g, player_id_t pi1, player_id_t pi2)
 {
     player_id_t tbl[2];
     int n = 0;
     BOOLVEC_DECLARE(viewing, PLAYER_NUM);
     if (g->gaux->local_players <= 1) {
-        return;
+        return false;
     }
     BOOLVEC_CLEAR(viewing, PLAYER_NUM);
     if (IS_HUMAN(g, pi1) && IS_ALIVE(g, pi1)) {
@@ -172,10 +172,16 @@ void ui_switch_2(struct game_s *g, player_id_t pi1, player_id_t pi2)
         BOOLVEC_SET1(viewing, pi2);
         tbl[n++] = pi2;
     }
+    if ((n == 2) && (pi1 > pi2)) {
+        tbl[0] = pi2;
+        tbl[1] = pi1;
+    }
     if (!BOOLVEC_COMP(ui_data.players_viewing, viewing, PLAYER_NUM)) {
         BOOLVEC_COPY(ui_data.players_viewing, viewing, PLAYER_NUM);
         ui_switch(g, tbl, n, false);
+        return true;
     }
+    return false;
 }
 
 void ui_switch_all(struct game_s *g)
