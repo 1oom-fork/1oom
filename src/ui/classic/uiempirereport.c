@@ -109,7 +109,7 @@ static void empirereport_draw_cb(void *vptr)
         uint16_t tc;
         uint8_t first, num, rf;
         tc = e->tech.completed[f];
-        rf = e->spyreportfield[d->api][f];
+        rf = g->eto[d->api].spyreportfield[d->pi][f];
         num = 0;
         for (int i = 0; i < tc; ++i) {
             uint8_t rc;
