@@ -443,7 +443,7 @@ static int game_audience_sub6(struct audience_s *au, int a0, int a2)
     }
 }
 
-static int game_audience_sub7(struct audience_s *au, int a0)
+static int game_audience_sweeten(struct audience_s *au, int a0)
 {
     struct game_s *g = au->g;
     player_id_t ph = au->ph, pa = au->pa;
@@ -585,7 +585,7 @@ static void audience_menu_treaty(struct audience_s *au)
                 si = 0;
             }
             if ((si == 1) || (si == 2)) {
-                si = game_audience_sub7(au, si);
+                si = game_audience_sweeten(au, si);
             }
             if (si == 3) {
                 game_diplo_set_treaty(g, ph, pa, TREATY_NONAGGRESSION);
@@ -599,7 +599,7 @@ static void audience_menu_treaty(struct audience_s *au)
                 si = 0;
             }
             if ((si == 1) || (si == 2)) {
-                si = game_audience_sub7(au, si);
+                si = game_audience_sweeten(au, si);
             }
             if (si == 3) {
                 game_diplo_set_treaty(g, ph, pa, TREATY_ALLIANCE);
@@ -609,7 +609,7 @@ static void audience_menu_treaty(struct audience_s *au)
         case 2:
             si = game_audience_sub6(au, 60, 0);
             if ((si == 1) || (si == 2)) {
-                si = game_audience_sub7(au, si);
+                si = game_audience_sweeten(au, si);
             }
             if (si == 3) {
                 game_diplo_stop_war(g, ph, pa);
@@ -627,7 +627,7 @@ static void audience_menu_treaty(struct audience_s *au)
                     si = game_audience_sub6(au, ea->relation1[au->hmm5] + 150, 0);
                 }
                 if ((si == 1) || (si == 2)) {
-                    si = game_audience_sub7(au, si);
+                    si = game_audience_sweeten(au, si);
                 }
                 if (si == 3) {
                     game_diplo_start_war(g, pa, au->hmm5);
@@ -643,7 +643,7 @@ static void audience_menu_treaty(struct audience_s *au)
                 if (eh->relation1[pa] > 24) {
                     si = game_audience_sub6(au, ea->relation1[au->pwar] + 175, 0);
                     if ((si == 1) || (si == 2)) {
-                        si = game_audience_sub7(au, si);
+                        si = game_audience_sweeten(au, si);
                     }
                     if (si == 3) {
                         game_diplo_break_treaty(g, pa, au->pwar);
