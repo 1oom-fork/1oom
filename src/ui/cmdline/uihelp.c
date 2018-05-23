@@ -25,31 +25,44 @@ static int get_cmds_w(const struct input_cmd_s *cmds, int lmax)
     return lmax;
 }
 
-static void show_cmds(const struct input_cmd_s *cmds, int lmax)
+static int get_cmdsptr_w(const struct input_cmd_s * const *cmdsptr, int lmax)
 {
-    int i = 0;
+    const struct input_cmd_s *cmds;
+    while ((cmds = *cmdsptr++) != NULL) {
+        lmax = get_cmds_w(cmds, lmax);
+    }
+    return lmax;
+}
+
+static void show_cmds(const struct input_cmd_s * const *cmdsptr, int lmax)
+{
     char fmt1[16];
     char fmt2[16];
+    const struct input_cmd_s *cmds;
     sprintf(fmt1, "    %%-%is ", lmax);
     sprintf(fmt2, "%%s\n%%-%is", lmax + 5);
-    while (cmds[i].str_cmd != NULL) {
-        char buf[128];
-        if (cmds[i].str_help) {
-            const char *p, *q;
-            sprintf(buf, "%s %s", cmds[i].str_cmd, cmds[i].str_param ? cmds[i].str_param : "");
-            printf(fmt1, buf);
-            p = cmds[i].str_help;
-            while ((q = strchr(p, '\n')) != NULL) {
-                int len;
-                len = q - p;
-                memcpy(buf, p, len);
-                buf[len] = '\0';
-                printf(fmt2, buf, "");
-                p = q + 1;
+    while ((cmds = *cmdsptr++) != NULL) {
+        int i;
+        i = 0;
+        while (cmds[i].str_cmd != NULL) {
+            char buf[128];
+            if (cmds[i].str_help) {
+                const char *p, *q;
+                sprintf(buf, "%s %s", cmds[i].str_cmd, cmds[i].str_param ? cmds[i].str_param : "");
+                printf(fmt1, buf);
+                p = cmds[i].str_help;
+                while ((q = strchr(p, '\n')) != NULL) {
+                    int len;
+                    len = q - p;
+                    memcpy(buf, p, len);
+                    buf[len] = '\0';
+                    printf(fmt2, buf, "");
+                    p = q + 1;
+                }
+                printf("%s\n", p);
             }
-            printf("%s\n", p);
+            ++i;
         }
-        ++i;
     }
 }
 
@@ -57,9 +70,9 @@ static void show_cmds(const struct input_cmd_s *cmds, int lmax)
 
 int ui_cmd_help(struct game_s *g, int api, struct input_token_s *param, int num_param, void *var)
 {
-    const struct input_cmd_s *cmds = var;
+    const struct input_cmd_s * const *cmdsptr = var;
     int w;
-    w = get_cmds_w(cmds, 0) + 1;
-    show_cmds(cmds, w);
+    w = get_cmdsptr_w(cmdsptr, 0) + 1;
+    show_cmds(cmdsptr, w);
     return 0;
 }

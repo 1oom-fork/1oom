@@ -8,6 +8,7 @@
 #include "game_spy.h"
 #include "game_str.h"
 #include "game_tech.h"
+#include "uiswitch.h"
 
 /* -------------------------------------------------------------------------- */
 
@@ -31,6 +32,7 @@ void ui_ground(struct ground_s *gr)
 {
     const struct game_s *g = gr->g;
     const char *strrace[2];
+    ui_switch_2(gr->g, gr->s[0].player, gr->s[1].player);
     for (int i = 0; i < 2; ++i) {
         strrace[i] = game_str_tbl_race[g->eto[gr->s[i].player].race];
     }
@@ -111,4 +113,5 @@ void ui_ground(struct ground_s *gr)
             }
         }
     }
+    ui_switch_wait(gr->g);
 }

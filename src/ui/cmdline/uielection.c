@@ -9,11 +9,13 @@
 #include "types.h"
 #include "uidefs.h"
 #include "uiinput.h"
+#include "uiswitch.h"
 
 /* -------------------------------------------------------------------------- */
 
 void ui_election_start(struct election_s *el)
 {
+    ui_switch_all(el->g);
 }
 
 void ui_election_show(struct election_s *el)
@@ -67,4 +69,5 @@ bool ui_election_accept(struct election_s *el, int player_i)
 
 void ui_election_end(struct election_s *el)
 {
+    ui_switch_wait(el->g);
 }
