@@ -126,7 +126,15 @@ int hw_audio_init(void)
         sfx_playing = -1;
         mus_playing = -1;
         log_message("SDLA: init %i Hz slice %i\n", audio_rate, slice);
-        log_message("SDLA: soundfonts '%s'\n", Mix_GetSoundFonts());
+        {
+            const char *sfstr;
+            sfstr = Mix_GetSoundFonts();
+            if (sfstr) {
+                log_message("SDLA: soundfonts '%s'\n", sfstr);
+            } else {
+                log_message("SDLA: no soundfonts\n");
+            }
+        }
         if (hw_opt_sdlmixer_sf) {
             if (hw_audio_set_sdlmixer_sf(hw_opt_sdlmixer_sf) < 0) {
                 goto fail;
