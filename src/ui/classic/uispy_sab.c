@@ -157,7 +157,7 @@ static void sabotage_done_draw_cb(void *vptr)
     const empiretechorbit_t *e = &(g->eto[d->target]);
     const planet_t *p = &(g->planet[d->planet]);
     int pos;
-    char buf[0x80];
+    char *buf = ui_data.strbuf;
     hw_video_copy_back_from_page2();
     ui_draw_filled_rect(222, 4, 314, 179, 0);
     lbxgfx_draw_frame(222, 4, d->gfx_saboback, UI_SCREEN_W);
