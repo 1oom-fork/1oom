@@ -250,7 +250,6 @@ typedef struct gameevents_s {
     bool sabotage_is_bases[PLAYER_NUM][PLAYER_NUM]; /* [victim][spy] */
     uint8_t sabotage_planet[PLAYER_NUM][PLAYER_NUM]; /* [victim][spy] */
     uint16_t sabotage_num[PLAYER_NUM][PLAYER_NUM]; /* [victim][spy] */
-    uint16_t sabotage_num2[PLAYER_NUM][PLAYER_NUM]; /* [victim][spy] TODO merge with _num */
     player_id_t sabotage_spy[PLAYER_NUM][PLAYER_NUM]; /* [victim][spy] */
     uint16_t sabotage_hmm1[PLAYER_NUM][PLAYER_NUM]; /* [victim][spy] */
     int16_t hmm28e[PLAYER_NUM][PLAYER_NUM];
