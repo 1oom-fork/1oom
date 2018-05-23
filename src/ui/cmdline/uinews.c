@@ -8,6 +8,7 @@
 #include "log.h"
 #include "types.h"
 #include "uidefs.h"
+#include "uiswitch.h"
 
 /* -------------------------------------------------------------------------- */
 
@@ -17,6 +18,7 @@ void ui_news_start(void)
 
 void ui_news(struct game_s *g, struct news_s *ns)
 {
+    ui_switch_all(g);
     game_news_get_msg(g, ns, ui_data.strbuf);
     printf("GNN | %s", ui_data.strbuf);
     if (ns->type == GAME_NEWS_STATS) {
@@ -28,6 +30,7 @@ void ui_news(struct game_s *g, struct news_s *ns)
         }
     }
     putchar('\n');
+    ui_switch_wait(g);
 }
 
 void ui_news_end(void)
