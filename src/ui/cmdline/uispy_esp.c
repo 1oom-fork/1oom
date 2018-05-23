@@ -8,6 +8,7 @@
 #include "game_str.h"
 #include "game_tech.h"
 #include "uiinput.h"
+#include "uiswitch.h"
 
 /* -------------------------------------------------------------------------- */
 
@@ -24,6 +25,7 @@ int ui_spy_steal(struct game_s *g, int spy, int target, uint8_t flags_field)
         { 0, NULL, NULL, NULL }
     };
     int num = 0, v = -1;
+    ui_switch_1(g, spy);
     {
         char rbuf[0x20], *p, c;
         const empiretechorbit_t *e = &(g->eto[target]);
@@ -69,5 +71,7 @@ void ui_spy_stolen(struct game_s *g, int pi, int spy, int field, uint8_t tech)
     const empiretechorbit_t *e = &(g->eto[spy]);
     const char *s = game_str_tbl_race[e->race];
     char buf[0x80];
+    ui_switch_1(g, pi);
     printf("%s %s | %s %s %s\n", s, game_str_es_thesp1, s, game_str_es_thesp2, game_tech_get_name(g->gaux, field, tech, buf));
+    ui_switch_wait(g);
 }
