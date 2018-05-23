@@ -1633,7 +1633,7 @@ static void game_turn_finished_slider(struct game_s *g)
                     flag_pending_ecoproj = true;
                 }
             }
-            if (flag_pending_ecoproj) {
+            if (!flag_pending_ecoproj) {
                 int w, fact, waste, prod;
                 fact = p->factories;
                 SETMIN(fact, p->pop * e->colonist_oper_factories);
@@ -1659,16 +1659,17 @@ static void game_turn_finished_slider(struct game_s *g)
                         game_add_planet_to_build_finished(g, pli, pi, FINISHED_ECO1);
                     }
                 }
-            } else if (1
-              && (p->slider[PLANET_SLIDER_ECO] > 0)
-              && ((e->race == RACE_SILICOID) || ((e->ind_waste_scale == 0) && (p->waste == 0)))
-            ) {
-                if (p->factories >= (p->pop * e->colonist_oper_factories)) {
-                    p->slider[PLANET_SLIDER_TECH] += p->slider[PLANET_SLIDER_ECO];
-                } else {
-                    p->slider[PLANET_SLIDER_IND] += p->slider[PLANET_SLIDER_ECO];
+                if (1
+                  && (p->slider[PLANET_SLIDER_ECO] > 0)
+                  && ((e->race == RACE_SILICOID) || ((e->ind_waste_scale == 0) && (p->waste == 0)))
+                ) {
+                    if (p->factories >= (p->pop * e->colonist_oper_factories)) {
+                        p->slider[PLANET_SLIDER_TECH] += p->slider[PLANET_SLIDER_ECO];
+                    } else {
+                        p->slider[PLANET_SLIDER_IND] += p->slider[PLANET_SLIDER_ECO];
+                    }
+                    p->slider[PLANET_SLIDER_ECO] = 0;
                 }
-                p->slider[PLANET_SLIDER_ECO] = 0;
             }
         }
         if (BOOLVEC_IS1(p->finished, FINISHED_SHIELD)) {
