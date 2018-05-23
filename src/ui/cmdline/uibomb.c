@@ -9,6 +9,7 @@
 #include "types.h"
 #include "uidefs.h"
 #include "uiinput.h"
+#include "uiswitch.h"
 
 /* -------------------------------------------------------------------------- */
 
@@ -18,6 +19,7 @@ bool ui_bomb_ask(struct game_s *g, int pi, uint8_t planet_i, int pop_inbound)
     const empiretechorbit_t *e = &(g->eto[p->owner]);
     char buf[0x80];
     int v;
+    ui_switch_1(g, pi);
     printf("%s : %s %s, %s %i, %s %i", p->name, game_str_tbl_race[e->race], game_str_sm_colony, game_str_sb_pop, p->pop, game_str_sb_fact, p->factories);
     if (pop_inbound) {
         printf(", %i %s", pop_inbound, (pop_inbound == 1) ? game_str_sm_trinb1 : game_str_sm_trinb1s);
@@ -31,6 +33,7 @@ bool ui_bomb_ask(struct game_s *g, int pi, uint8_t planet_i, int pop_inbound)
 void ui_bomb_show(struct game_s *g, int pi, int attacker_i, int owner_i, uint8_t planet_i, int popdmg, int factdmg, bool play_music, bool hide_other)
 {
     const planet_t *p = &(g->planet[planet_i]);
+    ui_switch_2(g, attacker_i, owner_i);
     printf("%s : %s %s. ", p->name, game_str_sm_obomb1, game_str_sm_obomb2);
     {
         const char *s;
@@ -54,4 +57,5 @@ void ui_bomb_show(struct game_s *g, int pi, int attacker_i, int owner_i, uint8_t
         }
     }
     putchar('\n');
+    ui_switch_wait(g);
 }
