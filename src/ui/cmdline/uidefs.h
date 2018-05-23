@@ -1,6 +1,8 @@
 #ifndef INC_1OOM_UIDEFS_H
 #define INC_1OOM_UIDEFS_H
 
+#include "boolvec.h"
+#include "game_types.h"
 #include "types.h"
 
 #define UI_INPUT_TOKEN_MAX  32
@@ -44,6 +46,7 @@ struct ui_data_s {
     struct {
         char screen[8 * 3][10 * 4 + 7];
     } battle;
+    BOOLVEC_DECLARE(players_viewing, PLAYER_NUM);
     char strbuf[1024];
 };
 
