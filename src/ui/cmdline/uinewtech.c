@@ -13,6 +13,7 @@
 #include "rnd.h"
 #include "uidefs.h"
 #include "uiinput.h"
+#include "uiswitch.h"
 
 /* -------------------------------------------------------------------------- */
 
@@ -263,12 +264,17 @@ void ui_newtech(struct game_s *g, int pi)
 {
     struct newtech_data_s d;
     empiretechorbit_t *e = &(g->eto[pi]);
+    bool flag_switch = false;
 
     d.g = g;
     d.api = pi;
 
     for (int i = 0; i < g->evn.newtech[pi].num; ++i) {
         d.nt = g->evn.newtech[pi].d[i];
+        if (!flag_switch) {
+            flag_switch = true;
+            ui_switch_1(g, pi);
+        }
         d.flag_is_current = false;
         d.flag_choose_next = false;
         if (g->eto[pi].tech.project[d.nt.field] == d.nt.tech) {
@@ -302,6 +308,10 @@ void ui_newtech(struct game_s *g, int pi)
           && (e->tech.project[field] == 0)
           && (e->tech.percent[field] < 99)
         ) {
+            if (!flag_switch) {
+                flag_switch = true;
+                ui_switch_1(g, pi);
+            }
             d.nt.field = field;
             d.nt.tech = 0;
             d.nt.source = TECHSOURCE_CHOOSE;
@@ -310,6 +320,8 @@ void ui_newtech(struct game_s *g, int pi)
             ui_newtech_do(&d);
         }
     }
-
+    if (flag_switch) {
+        ui_switch_wait(g);
+    }
     g->evn.newtech[pi].num = 0;
 }
