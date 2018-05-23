@@ -9,6 +9,7 @@
 #include "types.h"
 #include "uidefs.h"
 #include "uiinput.h"
+#include "uiswitch.h"
 
 /* -------------------------------------------------------------------------- */
 
@@ -60,6 +61,7 @@ static int16_t ui_audience_ask(struct audience_s *au)
     rl_in[num].key = NULL;
     rl_in[num].str = NULL;
     rl_in[num].display = NULL;
+    ui_audience_show(au);
     return ui_input_list(NULL, "> ", rl_in);
 }
 
@@ -67,6 +69,7 @@ static int16_t ui_audience_ask(struct audience_s *au)
 
 void ui_audience_start(struct audience_s *au)
 {
+    ui_switch_2(au->g, au->ph, au->pa);
 }
 
 void ui_audience_show1(struct audience_s *au)
@@ -106,9 +109,16 @@ int16_t ui_audience_ask4(struct audience_s *au)
 
 void ui_audience_newtech(struct audience_s *au, int pi)
 {
-    ui_newtech(au->g, pi);
+    if (pi == PLAYER_NONE) {
+        ui_newtech(au->g, au->ph);
+        ui_newtech(au->g, au->pa);
+    } else {
+        ui_newtech(au->g, pi);
+    }
+    ui_switch_2(au->g, au->ph, au->pa);
 }
 
 void ui_audience_end(struct audience_s *au)
 {
+    ui_switch_1(au->g, au->ph);
 }
