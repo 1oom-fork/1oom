@@ -224,17 +224,7 @@ static void game_spy_espionage(struct game_s *g, player_id_t spy, player_id_t ta
         game_spy_esp_sub5(s, rmax);
         SETMIN(spied, s->tnum);
         if (s->tnum > 0) {
-            if (IS_HUMAN(g, target)) { /* FIXME multiplayer */
-                /*81f35*/
-                g->evn.stolen_field[target][spy] = s->tbl_field[0];
-                g->evn.stolen_tech[target][spy] = s->tbl_tech2[0];
-                g->evn.stolen_spy[target][spy] = flag_any_caught ? spy : PLAYER_NONE;
-                if (flag_frame) {
-                    g->evn.stolen_spy[target][spy] = game_spy_frame_random(g, spy, target);
-                }
-                /*81fa7*/
-                game_tech_get_new(g, spy, s->tbl_field[0], s->tbl_tech2[0], TECHSOURCE_AI_SPY, 0, 0, false);
-            } else if (IS_HUMAN(g, spy)) { /* FIXME multiplayer */
+            if (IS_HUMAN(g, spy)) {
                 /*81fd3*/
                 int v = 0;
                 st->tbl_rmax[target][spy] = rmax;
@@ -246,6 +236,16 @@ static void game_spy_espionage(struct game_s *g, player_id_t spy, player_id_t ta
                 if ((!flag_frame) && flag_any_caught) {
                     g->evn.spied_spy[target][spy] = v;
                 }
+            } else if (IS_HUMAN(g, target)) {
+                /*81f35*/
+                g->evn.stolen_field[target][spy] = s->tbl_field[0];
+                g->evn.stolen_tech[target][spy] = s->tbl_tech2[0];
+                g->evn.stolen_spy[target][spy] = flag_any_caught ? spy : PLAYER_NONE;
+                if (flag_frame) {
+                    g->evn.stolen_spy[target][spy] = game_spy_frame_random(g, spy, target);
+                }
+                /*81fa7*/
+                game_tech_get_new(g, spy, s->tbl_field[0], s->tbl_tech2[0], TECHSOURCE_AI_SPY, 0, 0, false);
             } else {
                 /*8207f*/
                 const empiretechorbit_t *e = &(g->eto[PLAYER_0]);
@@ -275,7 +275,11 @@ static void game_spy_sabotage(struct game_s *g, player_id_t spy, player_id_t tar
     pl = game_planet_get_random(g, target); /* WASBUG? used a function that returned 0 on no planets */
     if ((v8 > 0) && (pl != PLANET_NONE)) {
         planet_t *p = &(g->planet[pl]);
-        if (IS_HUMAN(g, target)) { /* FIXME multiplayer */
+        if (IS_HUMAN(g, spy)) {
+            /*82431*/
+            g->evn.sabotage_num[target][spy] = v8;
+            g->evn.sabotage_spy[target][spy] = flag_frame ? -1 : rcaught;
+        } else if (IS_HUMAN(g, target)) {
             if (rnd_0_nm1(4, &g->seed) == 0) {
                 v8 = (p->pop * (v8 / 2)) / 100;
                 SETMAX(v8, 1);
@@ -313,10 +317,6 @@ static void game_spy_sabotage(struct game_s *g, player_id_t spy, player_id_t tar
                     }
                 }
             }
-        } else if (IS_HUMAN(g, spy)) { /* FIXME multiplayer */
-            /*82431*/
-            g->evn.sabotage_num[target][spy] = v8;
-            g->evn.sabotage_spy[target][spy] = flag_frame ? -1 : rcaught;
         } else {
             /*8247a*/
             if (!flag_bases) {
