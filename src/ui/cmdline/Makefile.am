@@ -9,6 +9,7 @@ libuicmdline_a_SOURCES = \
     uibattle.c \
     uibomb.c \
     uicmdline.c \
+    uicmds.c \
     uidefs.h \
     uielection.c \
     uiending.c \
@@ -32,5 +33,9 @@ libuicmdline_a_SOURCES = \
     uiplanet.h \
     uiraces.c \
     uiraces.h \
+    uisave.c \
+    uisave.h \
     uispy_esp.c \
-    uispy_sab.c
+    uispy_sab.c \
+    uiswitch.c \
+    uiswitch.h
