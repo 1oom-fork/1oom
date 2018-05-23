@@ -293,7 +293,7 @@ static void game_spy_sabotage(struct game_s *g, player_id_t spy, player_id_t tar
             }
         } else if (IS_HUMAN(g, spy)) { /* FIXME multiplayer */
             /*82431*/
-            g->evn.sabotage_num2[target][spy] = v8;
+            g->evn.sabotage_num[target][spy] = v8;
             g->evn.sabotage_spy[target][spy] = flag_frame ? -1 : rcaught;
         } else {
             /*8247a*/
@@ -449,8 +449,6 @@ void game_spy_turn(struct game_s *g, struct spy_turn_s *st)
             g->evn.sabotage_is_bases[i][j] = 0;
             g->evn.sabotage_num[j][i] = 0;
             g->evn.sabotage_num[i][j] = 0;
-            g->evn.sabotage_num2[j][i] = 0;
-            g->evn.sabotage_num2[i][j] = 0;
             g->evn.sabotage_spy[j][i] = 0;
             g->evn.sabotage_spy[i][j] = 0;
             g->evn.sabotage_hmm1[j][i] = 0;
