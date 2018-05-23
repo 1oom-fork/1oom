@@ -91,6 +91,11 @@ static char *skip_and_end_token(char *str)
 
 /* -------------------------------------------------------------------------- */
 
+void ui_input_wait_enter(void)
+{
+    ui_input_line("(press enter)");
+}
+
 #ifdef HAVE_READLINE
 char *ui_input_line(const char *prompt)
 {
@@ -209,7 +214,7 @@ int ui_input_list(const char *title, const char *prompt, const struct input_list
     }
 }
 
-int ui_input_tokenize(char *inputbuf, const struct input_cmd_s *cmds)
+int ui_input_tokenize(char *inputbuf, const struct input_cmd_s * const *cmdsptr)
 {
     int num = 0;
     ui_data.input.num = 0;
@@ -241,25 +246,29 @@ int ui_input_tokenize(char *inputbuf, const struct input_cmd_s *cmds)
         }
         LOG_DEBUG((DEBUGLEVEL_INPUT, "%s: tok %i t %i '%s' %i\n", __func__, i, ui_data.input.tok[i].type, ui_data.input.tok[i].str, ui_data.input.tok[i].data.num));
     }
-    if ((num > 0) && cmds && (ui_data.input.tok[0].type == INPUT_TOKEN_UNKNOWN)) {
+    if ((num > 0) && cmdsptr && (ui_data.input.tok[0].type == INPUT_TOKEN_UNKNOWN)) {
+        const struct input_cmd_s *cmds;
         const char *p;
         p = ui_data.input.tok[0].str;
         if (p[0] == '"') {
             ++p;
         }
-        while (cmds->str_cmd) {
-            if (cmds->handle && (strcmp(cmds->str_cmd, p) == 0)) {
-                if (((num - 1) < cmds->num_param_min) || ((num - 1) > cmds->num_param_max)) {
-                    log_error("Input: wrong number of parameters %i for '%s' (min %i, max %i)\n", num - 1, cmds->str_cmd, cmds->num_param_min, cmds->num_param_max);
-                    num = 0;
+        while ((cmds = *cmdsptr++) != NULL) {
+            while (cmds->str_cmd) {
+                if (cmds->handle && (strcmp(cmds->str_cmd, p) == 0)) {
+                    if (((num - 1) < cmds->num_param_min) || ((num - 1) > cmds->num_param_max)) {
+                        log_error("Input: wrong number of parameters %i for '%s' (min %i, max %i)\n", num - 1, cmds->str_cmd, cmds->num_param_min, cmds->num_param_max);
+                        num = 0;
+                    }
+                    ui_data.input.tok[0].type = INPUT_TOKEN_COMMAND;
+                    ui_data.input.tok[0].data.cmd = cmds;
+                    goto done;
                 }
-                ui_data.input.tok[0].type = INPUT_TOKEN_COMMAND;
-                ui_data.input.tok[0].data.cmd = cmds;
-                break;
+                ++cmds;
             }
-            ++cmds;
         }
     }
+done:
     ui_data.input.num = num;
     return 0;
 }
