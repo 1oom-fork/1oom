@@ -707,6 +707,7 @@ bool game_event_run(struct game_s *g, struct game_end_s *ge)
                 e2->trade_percent[p1] = (e2->trade_percent[p1] * (100 - setback)) / 100;
             }
         }
+        ns.type = GAME_NEWS_PIRATES;
         switch (g->evn.have_pirates) {
             case 1:
                 ns.subtype = 0;
