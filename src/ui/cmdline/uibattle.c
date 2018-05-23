@@ -8,9 +8,11 @@
 #include "game_battle.h"
 #include "game_battle_human.h"
 #include "game_str.h"
+#include "uicmds.h"
 #include "uidefs.h"
 #include "uihelp.h"
 #include "uiinput.h"
+#include "uiswitch.h"
 
 /* -------------------------------------------------------------------------- */
 
@@ -74,28 +76,30 @@ static const char battlegfx[][3][5] = {
 
 /* -------------------------------------------------------------------------- */
 
-static int cmd_dummy_ret(struct game_s *g, int api, struct input_token_s *param, int num_param, void *var)
-{
-    return (int)(intptr_t)var;
-}
-
 static int cmd_battle_look(struct game_s *g, int api, struct input_token_s *param, int num_param, void *var)
 {
     return 0;
 }
 
+static const struct input_cmd_s * const cmdsptr_battle[2];
+
 static const struct input_cmd_s cmds_battle[] = {
-    { "?", NULL, "Help", 0, 0, 0, ui_cmd_help, (void *)cmds_battle },
+    { "?", NULL, "Help", 0, 0, 0, ui_cmd_help, (void *)cmdsptr_battle },
     { "[1-9][a-j]", NULL, "Move to / shoot coordinates", 0, 0, 0, NULL, 0 },
     { "[a-j][1-9]", NULL, "Move to / shoot coordinates", 0, 0, 0, NULL, 0 },
-    { "w", NULL, "Wait", 0, 0, 0, cmd_dummy_ret, (void *)UI_BATTLE_ACT_WAIT },
-    { "d", NULL, "Done", 0, 0, 0, cmd_dummy_ret, (void *)UI_BATTLE_ACT_DONE },
-    { "m", NULL, "Missile", 0, 0, 0, cmd_dummy_ret, (void *)UI_BATTLE_ACT_MISSILE },
-    { "a", NULL, "Auto", 0, 0, 0, cmd_dummy_ret, (void *)UI_BATTLE_ACT_AUTO },
-    { "r", NULL, "Retreat", 0, 0, 0, cmd_dummy_ret, (void *)UI_BATTLE_ACT_RETREAT },
-    { "s", NULL, "Scan", 0, 0, 0, cmd_dummy_ret, (void *)UI_BATTLE_ACT_SCAN },
+    { "w", NULL, "Wait", 0, 0, 0, ui_cmd_dummy_ret, (void *)UI_BATTLE_ACT_WAIT },
+    { "d", NULL, "Done", 0, 0, 0, ui_cmd_dummy_ret, (void *)UI_BATTLE_ACT_DONE },
+    { "m", NULL, "Missile", 0, 0, 0, ui_cmd_dummy_ret, (void *)UI_BATTLE_ACT_MISSILE },
+    { "a", NULL, "Auto", 0, 0, 0, ui_cmd_dummy_ret, (void *)UI_BATTLE_ACT_AUTO },
+    { "r", NULL, "Retreat", 0, 0, 0, ui_cmd_dummy_ret, (void *)UI_BATTLE_ACT_RETREAT },
+    { "s", NULL, "Scan", 0, 0, 0, ui_cmd_dummy_ret, (void *)UI_BATTLE_ACT_SCAN },
     { "l", NULL, "Look area, highlight clickable", 0, 0, 0, cmd_battle_look, 0 },
     { NULL, NULL, NULL, 0, 0, 0, NULL, 0 }
+};
+
+static const struct input_cmd_s * const cmdsptr_battle[2] = {
+    cmds_battle,
+    0
 };
 
 /* -------------------------------------------------------------------------- */
@@ -131,6 +135,7 @@ void ui_battle_init(struct battle_s *bt)
     struct game_s *g = bt->g;
     const planet_t *p = &(g->planet[bt->planet_i]);
     int party_u = bt->s[SIDE_L].party, party_d = bt->s[SIDE_R].party;
+    ui_switch_2(bt->g, party_u, party_d);
     printf("%s | %s | ", game_str_bp_scombat, p->name);
     if (party_d >= PLAYER_NUM) {
         fputs(game_str_tbl_mon_names[party_d - PLAYER_NUM], stdout);
@@ -146,11 +151,14 @@ void ui_battle_init(struct battle_s *bt)
         fputs(game_str_tbl_races[race], stdout);
     }
     putchar('\n');
+    ui_input_wait_enter();
 }
 
 void ui_battle_shutdown(struct battle_s *bt, bool colony_destroyed)
 {
+    ui_switch_wait(bt->g);
 }
+
 void ui_battle_draw_planetinfo(const struct battle_s *bt, bool side_r)
 {
 }
@@ -374,6 +382,7 @@ ui_battle_action_t ui_battle_turn(const struct battle_s *bt)
 {
     int itemi = bt->cur_item;
     const struct battle_item_s *b = &(bt->item[itemi]);
+    char prompt[EMPEROR_NAME_LEN + 5];
     ui_battle_draw_arena(bt, 0, 0);
     ui_battle_draw_finish(bt);
     if (0
@@ -384,17 +393,18 @@ ui_battle_action_t ui_battle_turn(const struct battle_s *bt)
     ) {
         return UI_BATTLE_ACT_DONE;
     }
+    sprintf(prompt, "%s > ", bt->g->emperor_names[bt->s[b->side].party]);
     while (1) {
         char *input;
-        input = ui_input_line("> ");
-        if ((ui_input_tokenize(input, cmds_battle) == 0) && (ui_data.input.num > 0)) {
+        input = ui_input_line(prompt);
+        if ((ui_input_tokenize(input, cmdsptr_battle) == 0) && (ui_data.input.num > 0)) {
             if (ui_data.input.tok[0].type == INPUT_TOKEN_COMMAND) {
                 const struct input_cmd_s *cmd;
                 int v;
                 cmd = ui_data.input.tok[0].data.cmd;
                 v = cmd->handle(bt->g, 0, &ui_data.input.tok[1], ui_data.input.num - 1, cmd->var);
                 if (v >= 0) {
-                    if (cmd->handle == cmd_dummy_ret) {
+                    if (cmd->handle == ui_cmd_dummy_ret) {
                         return v;
                     } else if (cmd->handle == cmd_battle_look) {
                         ui_battle_draw_arena(bt, 0, 0);
