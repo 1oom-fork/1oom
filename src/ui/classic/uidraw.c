@@ -452,7 +452,7 @@ void ui_draw_text_overlay(int x, int y, const char *str)
     /* TODO */
 }
 
-void ui_draw_hmm3(int x0, int y0, int x1, int y1, uint8_t color0, uint8_t color1, uint8_t ae)
+void ui_draw_box_grain(int x0, int y0, int x1, int y1, uint8_t color0, uint8_t color1, uint8_t ae)
 {
     uint8_t *s = hw_video_get_buf() + y0 * UI_SCREEN_W;
     uint8_t *p;
