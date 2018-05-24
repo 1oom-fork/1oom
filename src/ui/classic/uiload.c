@@ -51,13 +51,13 @@ static void load_game_draw_cb(void *vptr)
     const int xoff = 0x76;
     const int yoff = 0xa;
     hw_video_copy_back_from_page2();
-    lbxgfx_draw_frame(0, 0, d->gfx_loadgame, UI_SCREEN_W);
+    lbxgfx_draw_frame(0, 0, d->gfx_loadgame, UI_SCREEN_W, ui_scale);
     for (int i = 0; i < d->savenum; ++i) {
         int si;
         si = d->tbl_savei[i];
-        lbxgfx_draw_frame(0x10 + xoff, 0x17 + yoff + 0x12 * si, (d->selected == i) ? d->gfx_lg_green : d->gfx_lg_gray, UI_SCREEN_W);
+        lbxgfx_draw_frame(0x10 + xoff, 0x17 + yoff + 0x12 * si, (d->selected == i) ? d->gfx_lg_green : d->gfx_lg_gray, UI_SCREEN_W, ui_scale);
         lbxfont_select(0, 1, 0, 0);
-        lbxfont_print_str_normal(0x1f + xoff, 0x19 + yoff + 0x12 * si, game_save_tbl_name[si], UI_SCREEN_W);
+        lbxfont_print_str_normal(0x1f + xoff, 0x19 + yoff + 0x12 * si, game_save_tbl_name[si], UI_SCREEN_W, ui_scale);
     }
 }
 
