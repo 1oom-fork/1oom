@@ -471,7 +471,7 @@ static void uiobj_handle_ta_sub1(int x0, int y0, int x1, int y1, uint16_t subtyp
             ui_draw_box_fill(x0, y0, x1, y1, p0p, p0v, p1, p2, p3);
             break;
         case 0xd:
-            ui_draw_hmm3(x0, y0, x1, y1, p0v, p1, p3);
+            ui_draw_box_grain(x0, y0, x1, y1, p0v, p1, p3);
             break;
         default:
             break;
