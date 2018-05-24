@@ -1589,13 +1589,26 @@ static int16_t uiobj_handle_input_sub0(void)
     return 0;
 }
 
+static inline void uiobj_add_set_xys(uiobj_t *p, uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1)
+{
+    p->x0 = x0;
+    p->y0 = y0;
+    p->x1 = x1;
+    p->y1 = y1;
+}
+
+static inline void uiobj_add_set_xys_offscreen(uiobj_t *p)
+{
+    p->x0 = UIOBJ_OFFSCREEN;
+    p->y0 = UIOBJ_OFFSCREEN;
+    p->x1 = UIOBJ_OFFSCREEN;
+    p->y1 = UIOBJ_OFFSCREEN;
+}
+
 static void uiobj_add_t03_do(uint16_t x, uint16_t y, const char *str, uint8_t *lbxdata, mookey_t key)
 {
     uiobj_t *p = &uiobj_tbl[uiobj_table_num];
-    p->x0 = x;
-    p->y0 = y;
-    p->x1 = x + lbxgfx_get_w(lbxdata) - 1;
-    p->y1 = y + lbxgfx_get_h(lbxdata) - 1;
+    uiobj_add_set_xys(p, x, y, x + lbxgfx_get_w(lbxdata) - 1, y + lbxgfx_get_h(lbxdata) - 1);
     p->t0.str = str;
     p->t0.fontnum = lbxfont_get_current_fontnum();
     p->t0.fonta2 = lbxfont_get_current_fonta2();
@@ -1851,10 +1864,7 @@ int16_t uiobj_add_t3(uint16_t x, uint16_t y, const char *str, uint8_t *lbxdata, 
 int16_t uiobj_add_t4(int x, int y, int w, char *buf, uint16_t buflen, uint8_t rcolor, bool alignr, uint16_t z1e, const uint8_t *colortbl, mookey_t key)
 {
     uiobj_t *p = &uiobj_tbl[uiobj_table_num];
-    p->x0 = x;
-    p->y0 = y;
-    p->x1 = x + w;
-    p->y1 = y + lbxfont_get_height();
+    uiobj_add_set_xys(p, x, y, x + w, y + lbxfont_get_height());
     p->t4.fontnum = lbxfont_get_current_fontnum();
     p->t4.fonta2 = lbxfont_get_current_fonta2();
     p->t4.fonta4 = lbxfont_get_current_fonta2b();
@@ -1873,10 +1883,7 @@ int16_t uiobj_add_t4(int x, int y, int w, char *buf, uint16_t buflen, uint8_t rc
 int16_t uiobj_add_slider(uint16_t x0, uint16_t y0, uint16_t vmin, uint16_t vmax, uint16_t fmin, uint16_t fmax, uint16_t w, uint16_t h, int16_t *vptr, mookey_t key)
 {
     uiobj_t *p = &uiobj_tbl[uiobj_table_num];
-    p->x0 = x0;
-    p->y0 = y0;
-    p->x1 = x0 + w;
-    p->y1 = y0 + h;
+    uiobj_add_set_xys(p, x0, y0, x0 + w, y0 + h);
     p->t6.vmin = vmin;
     p->t6.vmax = vmax;
     p->t6.fmin = fmin;
@@ -1890,10 +1897,7 @@ int16_t uiobj_add_slider(uint16_t x0, uint16_t y0, uint16_t vmin, uint16_t vmax,
 int16_t uiobj_add_mousearea(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, mookey_t key)
 {
     uiobj_t *p = &uiobj_tbl[uiobj_table_num];
-    p->x0 = x0;
-    p->y0 = y0;
-    p->x1 = x1;
-    p->y1 = y1;
+    uiobj_add_set_xys(p, x0, y0, x1, y1);
     p->type = 7;
     p->vptr = 0;
     p->key = key;
@@ -1902,23 +1906,36 @@ int16_t uiobj_add_mousearea(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, 
 
 int16_t uiobj_add_mousearea_limited(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, mookey_t key)
 {
+    uiobj_t *p;
     if ((x1 < uiobj_minx) || (x0 > uiobj_maxx) || (y1 < uiobj_miny) || (y0 > uiobj_maxy)) {
         return UIOBJI_OUTSIDE;
     }
+    p = &uiobj_tbl[uiobj_table_num];
     x0 = MAX(x0, uiobj_minx);
     x1 = MIN(x1, uiobj_maxx);
     y0 = MAX(y0, uiobj_miny);
     y1 = MIN(y1, uiobj_maxy);
-    return uiobj_add_mousearea(x0, y0, x1, y1, key);
+    uiobj_add_set_xys(p, x0, y0, x1, y1);
+    p->type = 7;
+    p->vptr = 0;
+    p->key = key;
+    return UIOBJI_ALLOC();
+}
+
+int16_t uiobj_add_mousearea_all(mookey_t key)
+{
+    uiobj_t *p = &uiobj_tbl[uiobj_table_num];
+    uiobj_add_set_xys(p, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1);
+    p->type = 7;
+    p->vptr = 0;
+    p->key = key;
+    return UIOBJI_ALLOC();
 }
 
 int16_t uiobj_add_inputkey(uint32_t key)
 {
     uiobj_t *p = &uiobj_tbl[uiobj_table_num];
-    p->x0 = UIOBJ_OFFSCREEN;
-    p->y0 = UIOBJ_OFFSCREEN;
-    p->x1 = UIOBJ_OFFSCREEN;
-    p->y1 = UIOBJ_OFFSCREEN;
+    uiobj_add_set_xys_offscreen(p);
     p->type = 7;
     p->vptr = 0;
     p->key = key;
@@ -1929,10 +1946,7 @@ int16_t uiobj_add_alt_str(const char *str)
 {
     uiobj_t *p = &uiobj_tbl[uiobj_table_num];
     int len = strnlen(str, 0x1e);
-    p->x0 = UIOBJ_OFFSCREEN;
-    p->y0 = UIOBJ_OFFSCREEN;
-    p->x1 = UIOBJ_OFFSCREEN;
-    p->y1 = UIOBJ_OFFSCREEN;
+    uiobj_add_set_xys_offscreen(p);
     p->type = 8;
     p->vptr = 0;
     p->t8.str = str;
@@ -1951,10 +1965,7 @@ int16_t uiobj_add_alt_str(const char *str)
 int16_t uiobj_add_ta(uint16_t x, uint16_t y, uint16_t w, const char *str, bool z12, int16_t *vptr, int16_t z18, uint16_t subtype, uint8_t *sp0p, uint16_t sp0v, uint16_t sp1, uint16_t sp2, uint16_t sp3, mookey_t key)
 {
     uiobj_t *p = &uiobj_tbl[uiobj_table_num];
-    p->x0 = x;
-    p->y0 = y - 1;
-    p->x1 = x + w;
-    p->y1 = y + lbxfont_get_height() + 1;
+    uiobj_add_set_xys(p, x, y - 1, x + w, y + lbxfont_get_height() + 1);
     p->ta.fontnum = lbxfont_get_current_fontnum();
     p->ta.fonta2 = lbxfont_get_current_fonta2();
     p->ta.fonta2b = lbxfont_get_current_fonta2b();
@@ -1976,10 +1987,7 @@ int16_t uiobj_add_ta(uint16_t x, uint16_t y, uint16_t w, const char *str, bool z
 int16_t uiobj_add_tb(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t xscale, uint16_t yscale, uint16_t *xptr, uint16_t *yptr)
 {
     uiobj_t *p = &uiobj_tbl[uiobj_table_num];
-    p->x0 = x;
-    p->y0 = y;
-    p->x1 = x + w * xscale;
-    p->y1 = y + h * yscale;
+    uiobj_add_set_xys(p, x, y, x + w * xscale, y + h * yscale);
     p->tb.xdiv = w;
     p->tb.ydiv = h;
     p->tb.xptr = xptr;
