@@ -181,7 +181,7 @@ void ui_specs_before(struct game_s *g, player_id_t active_player)
         }
         specs_before_draw_cb(&d);
         uiobj_table_clear();
-        oi_ma = uiobj_add_mousearea(0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, MOO_KEY_UNKNOWN);
+        oi_ma = uiobj_add_mousearea_all(MOO_KEY_UNKNOWN);
         ui_draw_finish();
         ui_delay_ticks_or_click(3);
     }
@@ -295,7 +295,7 @@ int ui_specs(struct game_s *g, player_id_t active_player)
                     oi_tbl_scrap[i] = uiobj_add_t0(106, (i << 5) + 6, "", ui_data.gfx.starmap.viewshbt, MOO_KEY_UNKNOWN);
                 }
             }
-            oi_ma = uiobj_add_mousearea(0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, MOO_KEY_o);
+            oi_ma = uiobj_add_mousearea_all(MOO_KEY_o);
             ui_draw_finish();
             ui_delay_ticks_or_click(3);
         }
