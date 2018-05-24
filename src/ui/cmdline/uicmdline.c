@@ -3,6 +3,7 @@
 #include <stdio.h>
 
 #include "ui.h"
+#include "cfg.h"
 #include "game.h"
 #include "game_end.h"
 #include "game_turn.h"
@@ -12,6 +13,10 @@
 #include "uidefs.h"
 
 /* -------------------------------------------------------------------------- */
+
+const struct cfg_items_s ui_cfg_items[] = {
+    CFG_ITEM_END
+};
 
 const struct cmdline_options_s ui_cmdline_options[] = {
     { NULL, 0, NULL, NULL, NULL, NULL }
