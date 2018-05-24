@@ -102,14 +102,14 @@ static void gmap_draw_cb(void *vptr)
 
     uiobj_set_limits(GMAP_LIMITS);
     ui_draw_erase_buf();
-    lbxgfx_draw_frame(0, 0, ui_data.gfx.starmap.sky, UI_SCREEN_W);
-    lbxgfx_draw_frame(0, 0, d->gfx_mapview, UI_SCREEN_W);
+    lbxgfx_draw_frame(0, 0, ui_data.gfx.starmap.sky, UI_SCREEN_W, ui_scale);
+    lbxgfx_draw_frame(0, 0, d->gfx_mapview, UI_SCREEN_W, ui_scale);
 
     for (int i = 0; i < g->nebula_num; ++i) {
         int x, y;
         x = (g->nebula_x[i] * 224) / g->galaxy_maxx + 7;
         y = (g->nebula_y[i] * 185) / g->galaxy_maxy + 7;
-        lbxgfx_draw_frame_offs(x, y, ui_data.gfx.starmap.smnebula[i], GMAP_LIMITS, UI_SCREEN_W);
+        lbxgfx_draw_frame_offs(x, y, ui_data.gfx.starmap.smnebula[i], GMAP_LIMITS, UI_SCREEN_W, ui_scale);
     }
 
     for (int i = 0; i < g->enroute_num; ++i) {
@@ -120,7 +120,7 @@ static void gmap_draw_cb(void *vptr)
             x = (r->x * 224) / g->galaxy_maxx + 7;
             y = (r->y * 185) / g->galaxy_maxy + 7;
             gfx = ui_data.gfx.starmap.tinyship[g->eto[r->owner].banner];
-            lbxgfx_draw_frame_offs(x, y, gfx, GMAP_LIMITS, UI_SCREEN_W);
+            lbxgfx_draw_frame_offs(x, y, gfx, GMAP_LIMITS, UI_SCREEN_W, ui_scale);
         }
     }
 
@@ -132,7 +132,7 @@ static void gmap_draw_cb(void *vptr)
             x = (r->x * 224) / g->galaxy_maxx + 7;
             y = (r->y * 185) / g->galaxy_maxy + 7;
             gfx = ui_data.gfx.starmap.tinytran[g->eto[r->owner].banner];
-            lbxgfx_draw_frame_offs(x, y, gfx, GMAP_LIMITS, UI_SCREEN_W);
+            lbxgfx_draw_frame_offs(x, y, gfx, GMAP_LIMITS, UI_SCREEN_W, ui_scale);
         }
     }
 
@@ -141,9 +141,9 @@ static void gmap_draw_cb(void *vptr)
         lib_sprintf(buf, sizeof(buf), "Year %i", g->year+2299);
         lbxfont_select(0, 6, 0, 0);
         lbxfont_set_color_c_n(0, 5);
-        lbxfont_print_str_normal(9, 9, buf, UI_SCREEN_W);
+        lbxfont_print_str_normal(9, 9, buf, UI_SCREEN_W, ui_scale);
         lbxfont_set_color_c_n(194, 5);
-        lbxfont_print_str_normal(8, 8, buf, UI_SCREEN_W);
+        lbxfont_print_str_normal(8, 8, buf, UI_SCREEN_W, ui_scale);
     }
 
     for (int i = 0; i < g->galaxy_stars; ++i) {
@@ -170,7 +170,7 @@ static void gmap_draw_cb(void *vptr)
                 x = (p->x * 224) / g->galaxy_maxx + 14;
                 y = (p->y * 185) / g->galaxy_maxy + 8;
                 gfx = ui_data.gfx.starmap.tinyship[g->eto[tbl_have_orbit_owner[j]].banner];
-                lbxgfx_draw_frame_offs(x, y, gfx, GMAP_LIMITS, UI_SCREEN_W);
+                lbxgfx_draw_frame_offs(x, y, gfx, GMAP_LIMITS, UI_SCREEN_W, ui_scale);
             }
         }
     }
@@ -188,11 +188,11 @@ static void gmap_draw_cb(void *vptr)
             } else {
                 lbxgfx_set_frame_0(gfx);
             }
-            lbxgfx_draw_frame(x, y, gfx, UI_SCREEN_W);
+            lbxgfx_draw_frame(x, y, gfx, UI_SCREEN_W, ui_scale);
         } else {
             gfx = ui_data.gfx.starmap.smallstr;
             lbxgfx_set_frame_0(gfx);
-            lbxgfx_draw_frame(x + 1, y + 1, gfx, UI_SCREEN_W);
+            lbxgfx_draw_frame(x + 1, y + 1, gfx, UI_SCREEN_W, ui_scale);
         }
     }
 
@@ -206,7 +206,7 @@ static void gmap_draw_cb(void *vptr)
         owner = (BOOLVEC_IS1(p->within_srange, d->api)) ? p->owner : g->seen[d->api][i].owner;
         if (owner != PLAYER_NONE) {
             gfx = ui_data.gfx.starmap.smalflag[g->eto[owner].banner];
-            lbxgfx_draw_frame(x + 2, y - 3, gfx, UI_SCREEN_W);
+            lbxgfx_draw_frame(x + 2, y - 3, gfx, UI_SCREEN_W, ui_scale);
         }
         switch (d->mode) {
             case 1:
@@ -217,7 +217,7 @@ static void gmap_draw_cb(void *vptr)
                     pt = (PLANET_TYPE_TERRAN - p->type);
                     SETMAX(pt, 0);
                     buf[0] = game_str_gm_tchar[pt];
-                    lbxfont_print_str_normal_limit(x + 7, y, buf, GMAP_LIMITS, UI_SCREEN_W);
+                    lbxfont_print_str_normal_limit(x + 7, y, buf, GMAP_LIMITS, UI_SCREEN_W, ui_scale);
                 }
                 break;
             case 2:
@@ -230,7 +230,7 @@ static void gmap_draw_cb(void *vptr)
                     if (p->special == PLANET_SPECIAL_4XTECH) {
                         lbxfont_select(2, 0xe, 0, 0);
                     }
-                    lbxfont_print_str_center_limit(x + 2, y + 7, game_str_tbl_gm_spec[p->special], GMAP_LIMITS, UI_SCREEN_W);
+                    lbxfont_print_str_center_limit(x + 2, y + 7, game_str_tbl_gm_spec[p->special], GMAP_LIMITS, UI_SCREEN_W, ui_scale);
                 }
                 break;
             default:
@@ -243,8 +243,8 @@ static void gmap_draw_cb(void *vptr)
             for (int i = 0; i < racesnum; ++i) {
                 const empiretechorbit_t *e;
                 e = &(g->eto[tbl_races[i]]);
-                lbxgfx_draw_frame(245, 105 + 10 * i, ui_data.gfx.starmap.smalflag[e->banner], UI_SCREEN_W);
-                lbxfont_print_str_normal(260, 105 + 10 * i, game_str_tbl_race[e->race], UI_SCREEN_W);
+                lbxgfx_draw_frame(245, 105 + 10 * i, ui_data.gfx.starmap.smalflag[e->banner], UI_SCREEN_W, ui_scale);
+                lbxfont_print_str_normal(260, 105 + 10 * i, game_str_tbl_race[e->race], UI_SCREEN_W, ui_scale);
             }
             break;
         case 1:
@@ -252,61 +252,61 @@ static void gmap_draw_cb(void *vptr)
                 char buf[2] = { 0, 0 };
                 buf[0] = game_str_gm_tchar[i];
                 lbxfont_select(2, ((PLANET_TYPE_TERRAN - i) < g->eto[d->api].have_colony_for) ? 5 : 0xe, 0, 0);
-                lbxfont_print_str_normal(241, 105 + 7 * i, buf, UI_SCREEN_W);
+                lbxfont_print_str_normal(241, 105 + 7 * i, buf, UI_SCREEN_W, ui_scale);
                 lbxfont_select(2, 6, 0, 0);
-                lbxfont_print_str_normal(247, 105 + 7 * i, game_str_tbl_sm_pltype[13 - i], UI_SCREEN_W);
+                lbxfont_print_str_normal(247, 105 + 7 * i, game_str_tbl_sm_pltype[13 - i], UI_SCREEN_W, ui_scale);
             }
             for (int i = 7; i < 14; ++i) {
                 char buf[2] = { 0, 0 };
                 const char *str;
                 buf[0] = game_str_gm_tchar[i];
                 lbxfont_select(2, ((PLANET_TYPE_TERRAN - i) < g->eto[d->api].have_colony_for) ? 5 : 0xe, 0, 0);
-                lbxfont_print_str_normal(276, 105 + 7 * (i - 7), buf, UI_SCREEN_W);
+                lbxfont_print_str_normal(276, 105 + 7 * (i - 7), buf, UI_SCREEN_W, ui_scale);
                 lbxfont_select(2, 6, 0, 0);
                 if (i == 13) {
                     str = game_str_st_none2;
                 } else {
                     str = game_str_tbl_sm_pltype[13 - i];
                 }
-                lbxfont_print_str_normal(282, 105 + 7 * (i - 7), str, UI_SCREEN_W);
+                lbxfont_print_str_normal(282, 105 + 7 * (i - 7), str, UI_SCREEN_W, ui_scale);
             }
-            lbxfont_print_str_normal(247, 160, game_str_gm_unable, UI_SCREEN_W);
-            ui_draw_pixel(241, 161, 0x44);
-            ui_draw_pixel(241, 162, 0x44);
-            ui_draw_pixel(241, 163, 0x44);
-            ui_draw_pixel(242, 161, 0x44);
-            ui_draw_pixel(242, 162, 0x44);
-            ui_draw_pixel(242, 163, 0x44);
-            ui_draw_pixel(243, 161, 0x44);
-            ui_draw_pixel(243, 162, 0x44);
-            ui_draw_pixel(243, 163, 0x44);
+            lbxfont_print_str_normal(247, 160, game_str_gm_unable, UI_SCREEN_W, ui_scale);
+            ui_draw_pixel(241, 161, 0x44, ui_scale);
+            ui_draw_pixel(241, 162, 0x44, ui_scale);
+            ui_draw_pixel(241, 163, 0x44, ui_scale);
+            ui_draw_pixel(242, 161, 0x44, ui_scale);
+            ui_draw_pixel(242, 162, 0x44, ui_scale);
+            ui_draw_pixel(242, 163, 0x44, ui_scale);
+            ui_draw_pixel(243, 161, 0x44, ui_scale);
+            ui_draw_pixel(243, 162, 0x44, ui_scale);
+            ui_draw_pixel(243, 163, 0x44, ui_scale);
             break;
         case 2:
             lbxfont_select_set_12_1(2, 5, 0, 0);
-            lbxfont_print_str_normal(240, 103, game_str_tbl_sm_pspecial[0], UI_SCREEN_W);
-            lbxfont_print_str_normal(240, 111, game_str_tbl_sm_pspecial[1], UI_SCREEN_W);
+            lbxfont_print_str_normal(240, 103, game_str_tbl_sm_pspecial[0], UI_SCREEN_W, ui_scale);
+            lbxfont_print_str_normal(240, 111, game_str_tbl_sm_pspecial[1], UI_SCREEN_W, ui_scale);
             lbxfont_select_set_12_1(2, 1, 0, 0);
-            lbxfont_print_str_normal(240, 119, game_str_tbl_sm_pspecial[4], UI_SCREEN_W);
-            lbxfont_print_str_normal(240, 127, game_str_tbl_sm_pspecial[5], UI_SCREEN_W);
+            lbxfont_print_str_normal(240, 119, game_str_tbl_sm_pspecial[4], UI_SCREEN_W, ui_scale);
+            lbxfont_print_str_normal(240, 127, game_str_tbl_sm_pspecial[5], UI_SCREEN_W, ui_scale);
             lbxfont_select_set_12_1(2, 0xe, 0, 0);
-            lbxfont_print_str_normal(240, 135, game_str_tbl_sm_pspecial[3], UI_SCREEN_W);
-            lbxfont_print_str_normal(240, 143, game_str_tbl_gm_spec[6], UI_SCREEN_W);
+            lbxfont_print_str_normal(240, 135, game_str_tbl_sm_pspecial[3], UI_SCREEN_W, ui_scale);
+            lbxfont_print_str_normal(240, 143, game_str_tbl_gm_spec[6], UI_SCREEN_W, ui_scale);
             lbxfont_select(2, 6, 0, 0);
-            lbxfont_print_str_normal(295, 103, game_str_gm_prod, UI_SCREEN_W);
-            lbxfont_print_str_normal(295, 111, game_str_gm_prod, UI_SCREEN_W);
-            lbxfont_print_str_normal(295, 119, game_str_gm_prod, UI_SCREEN_W);
-            lbxfont_print_str_normal(295, 127, game_str_gm_prod, UI_SCREEN_W);
-            lbxfont_print_str_normal(295, 135, game_str_gm_tech, UI_SCREEN_W);
-            lbxfont_print_str_normal(295, 143, game_str_gm_tech, UI_SCREEN_W);
-            lbxfont_print_str_right(291, 103, game_str_gm_1_3, UI_SCREEN_W);
-            lbxfont_print_str_right(291, 111, game_str_gm_1_2, UI_SCREEN_W);
-            lbxfont_print_str_right(291, 119, game_str_gm_2x, UI_SCREEN_W);
-            lbxfont_print_str_right(291, 127, game_str_gm_3x, UI_SCREEN_W);
-            lbxfont_print_str_right(291, 135, game_str_gm_2x, UI_SCREEN_W);
-            lbxfont_print_str_right(291, 143, game_str_gm_4x, UI_SCREEN_W);
-            lbxfont_print_str_center(275, 152, game_str_gm_prodb1, UI_SCREEN_W);
-            lbxfont_print_str_center(275, 159, game_str_gm_prodb2, UI_SCREEN_W);
-            lbxfont_print_str_center(275, 166, game_str_gm_prodb3, UI_SCREEN_W);
+            lbxfont_print_str_normal(295, 103, game_str_gm_prod, UI_SCREEN_W, ui_scale);
+            lbxfont_print_str_normal(295, 111, game_str_gm_prod, UI_SCREEN_W, ui_scale);
+            lbxfont_print_str_normal(295, 119, game_str_gm_prod, UI_SCREEN_W, ui_scale);
+            lbxfont_print_str_normal(295, 127, game_str_gm_prod, UI_SCREEN_W, ui_scale);
+            lbxfont_print_str_normal(295, 135, game_str_gm_tech, UI_SCREEN_W, ui_scale);
+            lbxfont_print_str_normal(295, 143, game_str_gm_tech, UI_SCREEN_W, ui_scale);
+            lbxfont_print_str_right(291, 103, game_str_gm_1_3, UI_SCREEN_W, ui_scale);
+            lbxfont_print_str_right(291, 111, game_str_gm_1_2, UI_SCREEN_W, ui_scale);
+            lbxfont_print_str_right(291, 119, game_str_gm_2x, UI_SCREEN_W, ui_scale);
+            lbxfont_print_str_right(291, 127, game_str_gm_3x, UI_SCREEN_W, ui_scale);
+            lbxfont_print_str_right(291, 135, game_str_gm_2x, UI_SCREEN_W, ui_scale);
+            lbxfont_print_str_right(291, 143, game_str_gm_4x, UI_SCREEN_W, ui_scale);
+            lbxfont_print_str_center(275, 152, game_str_gm_prodb1, UI_SCREEN_W, ui_scale);
+            lbxfont_print_str_center(275, 159, game_str_gm_prodb2, UI_SCREEN_W, ui_scale);
+            lbxfont_print_str_center(275, 166, game_str_gm_prodb3, UI_SCREEN_W, ui_scale);
             break;
         default:
             break;
@@ -314,8 +314,8 @@ static void gmap_draw_cb(void *vptr)
 
     lbxfont_set_temp_color(0x2b);
     lbxfont_select_set_12_4(4, 0xf, 0, 0);
-    lbxfont_print_str_normal(242, 8, game_str_gm_gmap, UI_SCREEN_W);
-    lbxfont_print_str_normal(250, 88, game_str_gm_mapkey, UI_SCREEN_W);
+    lbxfont_print_str_normal(242, 8, game_str_gm_gmap, UI_SCREEN_W, ui_scale);
+    lbxfont_print_str_normal(250, 88, game_str_gm_mapkey, UI_SCREEN_W, ui_scale);
     lbxfont_set_temp_color(0x00);
     gmap_blink_step(&(d->b));
     {
@@ -323,9 +323,9 @@ static void gmap_draw_cb(void *vptr)
         x = (ui_data.starmap.x * 224) / g->galaxy_maxx + 7;
         y = (ui_data.starmap.y * 185) / g->galaxy_maxy + 7;
         if (ui_sm_expanded_scroll) {
-            lbxgfx_draw_frame_offs(x, y, ui_data.gfx.starmap.bmap, GMAP_LIMITS, UI_SCREEN_W);
+            lbxgfx_draw_frame_offs(x, y, ui_data.gfx.starmap.bmap, GMAP_LIMITS, UI_SCREEN_W, ui_scale);
         } else {
-            lbxgfx_draw_frame(x, y, ui_data.gfx.starmap.bmap, UI_SCREEN_W);
+            lbxgfx_draw_frame(x, y, ui_data.gfx.starmap.bmap, UI_SCREEN_W, ui_scale);
         }
     }
 }
@@ -333,14 +333,14 @@ static void gmap_draw_cb(void *vptr)
 static void ui_gmap_basic_draw_galaxy(struct gmap_basic_data_s *d)
 {
     const struct game_s *g = d->g;
-    ui_draw_filled_rect(6, 6, 221, 177, 0);
+    ui_draw_filled_rect(6, 6, 221, 177, 0, ui_scale);
     /*uiobj_set_limits(6, 6, 221, 177);*/
-    lbxgfx_draw_frame_offs(0, 0, ui_data.gfx.starmap.sky, 6, 6, 221, 177, UI_SCREEN_W);
+    lbxgfx_draw_frame_offs(0, 0, ui_data.gfx.starmap.sky, 6, 6, 221, 177, UI_SCREEN_W, ui_scale);
     for (int i = 0; i < g->nebula_num; ++i) {
         int x, y;
         x = (g->nebula_x[i] * 215) / g->galaxy_maxx + 6;
         y = (g->nebula_y[i] * 171) / g->galaxy_maxy + 6;
-        lbxgfx_draw_frame_offs(x, y, ui_data.gfx.starmap.smnebula[i], 6, 6, 221, 177, UI_SCREEN_W);
+        lbxgfx_draw_frame_offs(x, y, ui_data.gfx.starmap.smnebula[i], 6, 6, 221, 177, UI_SCREEN_W, ui_scale);
     }
     for (int i = 0; i < g->galaxy_stars; ++i) {
         const planet_t *p = &(g->planet[i]);
@@ -354,7 +354,7 @@ static void ui_gmap_basic_draw_galaxy(struct gmap_basic_data_s *d)
         } else {
             lbxgfx_set_frame_0(gfx);
         }
-        lbxgfx_draw_frame(x, y, gfx, UI_SCREEN_W);
+        lbxgfx_draw_frame(x, y, gfx, UI_SCREEN_W, ui_scale);
     }
 }
 
@@ -417,8 +417,8 @@ bool ui_gmap(struct game_s *g, player_id_t active_player)
         }
         if (ui_extra_enabled && (oi == oi_map)) {
             int x, y;
-            x = ((moouse_x - 7) * g->galaxy_maxx) / 224;
-            y = ((moouse_y - 7) * g->galaxy_maxy) / 185;
+            x = ((moouse_x / ui_scale - 7) * g->galaxy_maxx) / 224;
+            y = ((moouse_y / ui_scale - 7) * g->galaxy_maxy) / 185;
             ui_starmap_set_pos(g, x, y);
             flag_done = true;
         }
@@ -486,7 +486,7 @@ void ui_gmap_basic_draw_frame(void *ctx, int pi/*player_i*/)
                 x = (r->x * 215) / g->galaxy_maxx + 6;
                 y = (r->y * 171) / g->galaxy_maxy + 6;
                 gfx = ui_data.gfx.starmap.tinyship[g->eto[r->owner].banner];
-                lbxgfx_draw_frame_offs(x, y, gfx, 6, 6, 221, 177, UI_SCREEN_W);
+                lbxgfx_draw_frame_offs(x, y, gfx, 6, 6, 221, 177, UI_SCREEN_W, ui_scale);
             }
         }
         for (int i = 0; i < g->transport_num; ++i) {
@@ -497,7 +497,7 @@ void ui_gmap_basic_draw_frame(void *ctx, int pi/*player_i*/)
                 x = (r->x * 215) / g->galaxy_maxx + 6;
                 y = (r->y * 171) / g->galaxy_maxy + 6;
                 gfx = ui_data.gfx.starmap.tinytran[g->eto[r->owner].banner];
-                lbxgfx_draw_frame_offs(x, y, gfx, 6, 6, 221, 177, UI_SCREEN_W);
+                lbxgfx_draw_frame_offs(x, y, gfx, 6, 6, 221, 177, UI_SCREEN_W, ui_scale);
             }
         }
         for (int i = 0; i < g->galaxy_stars; ++i) {
@@ -522,7 +522,7 @@ void ui_gmap_basic_draw_frame(void *ctx, int pi/*player_i*/)
                     x = (p->x * 215) / g->galaxy_maxx + 13;
                     y = (p->y * 171) / g->galaxy_maxy + 7;
                     gfx = ui_data.gfx.starmap.tinyship[g->eto[tbl_have_orbit_owner[j]].banner];
-                    lbxgfx_draw_frame_offs(x, y, gfx, 6, 6, 221, 177, UI_SCREEN_W);
+                    lbxgfx_draw_frame_offs(x, y, gfx, 6, 6, 221, 177, UI_SCREEN_W, ui_scale);
                 }
             }
         }
@@ -535,7 +535,7 @@ void ui_gmap_basic_draw_frame(void *ctx, int pi/*player_i*/)
                 x = (r->x * 215) / g->galaxy_maxx + 6;
                 y = (r->y * 171) / g->galaxy_maxy + 6;
                 gfx = ui_data.gfx.planets.tmonster;
-                lbxgfx_draw_frame_offs(x, y, gfx, 6, 6, 221, 177, UI_SCREEN_W);
+                lbxgfx_draw_frame_offs(x, y, gfx, 6, 6, 221, 177, UI_SCREEN_W, ui_scale);
             }
         }
     }
@@ -568,7 +568,7 @@ void ui_gmap_basic_draw_only(void *ctx, int pi/*planet_i*/)
             x = (p->x * 215) / g->galaxy_maxx + 13;
             y = (p->y * 171) / g->galaxy_maxy + 7;
             gfx = ui_data.gfx.starmap.tinyship[g->eto[tbl_have_orbit_owner[j]].banner];
-            lbxgfx_draw_frame_offs(x, y, gfx, 6, 6, 221, 177, UI_SCREEN_W);
+            lbxgfx_draw_frame_offs(x, y, gfx, 6, 6, 221, 177, UI_SCREEN_W, ui_scale);
         }
         for (int i = 0; i < 2; ++i) {
             const monster_t *r;
@@ -579,7 +579,7 @@ void ui_gmap_basic_draw_only(void *ctx, int pi/*planet_i*/)
                 x = (r->x * 215) / g->galaxy_maxx + 6;
                 y = (r->y * 171) / g->galaxy_maxy + 6;
                 gfx = ui_data.gfx.planets.tmonster;
-                lbxgfx_draw_frame_offs(x, y, gfx, 6, 6, 221, 177, UI_SCREEN_W);
+                lbxgfx_draw_frame_offs(x, y, gfx, 6, 6, 221, 177, UI_SCREEN_W, ui_scale);
             }
         }
     }
@@ -599,5 +599,5 @@ void ui_gmap_draw_planet_border(const struct game_s *g, uint8_t planet_i)
     int x, y;
     x = (p->x * 215) / g->galaxy_maxx + 5;
     y = (p->y * 171) / g->galaxy_maxy + 5;
-    lbxgfx_draw_frame_offs(x, y, ui_data.gfx.starmap.slanbord, 6, 6, 221, 177, UI_SCREEN_W);
+    lbxgfx_draw_frame_offs(x, y, ui_data.gfx.starmap.slanbord, 6, 6, 221, 177, UI_SCREEN_W, ui_scale);
 }

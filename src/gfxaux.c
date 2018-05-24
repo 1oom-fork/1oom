@@ -5,6 +5,7 @@
 #include "gfxaux.h"
 #include "comp.h"
 #include "hw.h"
+#include "gfxscale.h"
 #include "lbxgfx.h"
 #include "lbxpal.h"
 #include "lib.h"
@@ -180,13 +181,8 @@ static void gfx_aux_overlay_do(int x, int y, struct gfx_aux_s *dest, struct gfx_
     fptr(&(dest->data[destskip0]), &(src->data[srcskip0]), w, h, destskipw, srcskipw);
 }
 
-static void gfx_aux_draw_frame_from_limit_do(int x, int y, int w, int h, int xskip, int yskip, struct gfx_aux_s *aux, uint16_t pitch_hw)
+static inline void gfx_aux_draw_frame_1x(const uint8_t *q, uint8_t *p, int w, int h, uint16_t pitch_aux, uint16_t pitch_hw)
 {
-    uint8_t *p, *q;
-    uint16_t pitch_aux = aux->w;
-    p = hw_video_get_buf() + y * pitch_hw + x;
-    q = aux->data + yskip * pitch_aux + xskip;
-
     for (int y = 0; y < h; ++y) {
         for (int x = 0; x < w; ++x) {
             uint8_t b = q[x];
@@ -196,6 +192,40 @@ static void gfx_aux_draw_frame_from_limit_do(int x, int y, int w, int h, int xsk
         }
         p += pitch_hw;
         q += pitch_aux;
+    }
+}
+
+static inline void gfx_aux_draw_frame_nx(const uint8_t *q, uint8_t *p, int w, int h, uint16_t pitch_aux, uint16_t pitch_hw, int scale)
+{
+    for (int y = 0; y < h; ++y) {
+        uint8_t *o;
+        o = p;
+        for (int x = 0; x < w; ++x) {
+            uint8_t b = q[x];
+            if (b) {
+                for (int sy = 0; sy < scale; ++sy) {
+                    for (int sx = 0; sx < scale; ++sx) {
+                        o[sx + sy * pitch_hw] = b;
+                    }
+                }
+            }
+            o += scale;
+        }
+        p += pitch_hw * scale;
+        q += pitch_aux;
+    }
+}
+
+static void gfx_aux_draw_frame_from_limit_do(int x, int y, int w, int h, int xskip, int yskip, struct gfx_aux_s *aux, uint16_t pitch_hw, int scale)
+{
+    uint8_t *p, *q;
+    uint16_t pitch_aux = aux->w;
+    p = hw_video_get_buf() + (y * pitch_hw + x) * scale;
+    q = aux->data + yskip * pitch_aux + xskip;
+    if (scale == 1) {
+        gfx_aux_draw_frame_1x(q, p, w, h, pitch_aux, pitch_hw);
+    } else {
+        gfx_aux_draw_frame_nx(q, p, w, h, pitch_aux, pitch_hw, scale);
     }
 }
 
@@ -236,13 +266,13 @@ struct rotate_param_s {
     int srch;
 };
 
-static void gfx_aux_draw_rotate_sub1(struct rotate_param_s *r, const uint8_t *gfx, uint16_t pitch_hw)
+static void gfx_aux_draw_rotate_sub1(struct rotate_param_s *r, const uint8_t *gfx, uint16_t pitch_hw, int scale)
 {
     int destxskip = r->destxskip, edest = 0x80, ex1 = 0x80, ex2 = 0x80, hx100 = r->h * 0x100, w = r->w, di, si;
     int sw = r->srcw, sh = r->srch;
     uint8_t *dest;
     dest = hw_video_get_buf();
-    di = r->desty * pitch_hw + r->destx;
+    di = (r->desty * pitch_hw + r->destx) * scale;
     si = r->srcstart;
 LOG_DEBUG((DEBUGLEVEL_ROTATE, "r: hf:%i S:%i d:%i,%i,0x%x  s:%i y:%i,%i,0x%x,%i,0x%x  x:%i,%i,0x%x,%i,0x%x\n", r->hfrac, r->destxskip, r->destxstep, r->destxadd, r->destxfrac, r->srcstart, r->srcystep, r->srcyadd1, r->srcyfrac1, r->srcyadd2, r->srcyfrac2, r->srcxstep, r->srcxadd1, r->srcxfrac1, r->srcxadd2, r->srcxfrac2));
     while (1) {
@@ -255,10 +285,20 @@ LOG_DEBUG((DEBUGLEVEL_ROTATE, "r: hf:%i S:%i d:%i,%i,0x%x  s:%i y:%i,%i,0x%x,%i,
             do {
                 uint8_t b;
                 b = gfx[(j % sh) * sw + (j / sh)];   /* FIXME HACK columnwise -> regular */
-                if ((b != 0) && (i >= r->destmin) && (i < r->destmax)) {
-                    dest[i] = b;
+                if (b != 0) {
+                    for (int y = 0; y < scale; ++y) {
+                        for (int x = 0; x < scale; ++x) {
+                            int xi;
+                            xi = i + x;
+                            if ((xi >= r->destmin) && (xi < r->destmax)) {
+                                dest[xi] = b;
+                            }
+                        }
+                        i += pitch_hw;
+                    }
+                } else {
+                    i += pitch_hw * scale;
                 }
-                i += pitch_hw;
                 j += r->srcystep;
                 if ((esy1 += r->srcyfrac1) >= 0x100) {
                     esy1 &= 0xff;
@@ -274,10 +314,10 @@ LOG_DEBUG((DEBUGLEVEL_ROTATE, "r: hf:%i S:%i d:%i,%i,0x%x  s:%i y:%i,%i,0x%x,%i,
         if (--w <= 0) {
             break;
         }
-        di += r->destxstep + 1;
+        di += (r->destxstep + 1 ) * scale;
         if ((edest += r->destxfrac) >= 0x100) {
             edest &= 0xff;
-            di += r->destxadd;
+            di += r->destxadd * scale;
         }
         hx100 += r->hfrac;
         si += r->srcxstep;
@@ -292,11 +332,7 @@ LOG_DEBUG((DEBUGLEVEL_ROTATE, "r: hf:%i S:%i d:%i,%i,0x%x  s:%i y:%i,%i,0x%x,%i,
     }
 }
 
-static void gfx_aux_draw_rotate_sub2(struct rotate_param_s *r, const uint8_t *gfx, uint16_t pitch_hw)
-{
-}
-
-static void gfx_aux_draw_frame_from_rotate_limit_do(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3, struct gfx_aux_s *aux, int lx0, int ly0, int lx1, int ly1, uint16_t pitch_hw)
+static void gfx_aux_draw_frame_from_rotate_limit_do(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3, struct gfx_aux_s *aux, int lx0, int ly0, int lx1, int ly1, uint16_t pitch_hw, int scale)
 {
     struct rotate_param_s r;
     int tx[4] = { x0, x1, x2, x3 };
@@ -323,8 +359,8 @@ static void gfx_aux_draw_frame_from_rotate_limit_do(int x0, int y0, int x1, int 
     memset(&r, 0, sizeof(r));
     r.srcw = aux->w;
     r.srch = aux->h;
-    r.destmin = lx0 * pitch_hw;
-    r.destmax = (lx1 + 1) * pitch_hw;
+    r.destmin = lx0 * pitch_hw * scale;
+    r.destmax = (lx1 + 1) * pitch_hw * scale;
     if (tx[0] == tx[1]) {
         if (ty[0] > ty[1]) {
             int t;
@@ -386,11 +422,7 @@ LOG_DEBUG((DEBUGLEVEL_ROTATE, "%s: case %i  y1:%i y2:%i -> %i\n", __func__, ti[0
         }
         r.srcxadd2 = r.srcyadd2;
         r.srcyadd1 = r.srcxadd1;
-        if (aux->v8 == 0) {
-            gfx_aux_draw_rotate_sub1(&r, aux->data, pitch_hw);
-        } else {
-            gfx_aux_draw_rotate_sub2(&r, aux->data, pitch_hw);
-        }
+        gfx_aux_draw_rotate_sub1(&r, aux->data, pitch_hw, scale);
     } else {
         int v4a;
 LOG_DEBUG((DEBUGLEVEL_ROTATE, "%s: case %i  y1:%i y2:%i -> %i\n", __func__, ti[0], ty[1], ty[2], ty[1] < ty[2]));
@@ -499,11 +531,7 @@ LOG_DEBUG((DEBUGLEVEL_ROTATE, "%s: case %i  y1:%i y2:%i -> %i\n", __func__, ti[0
             if (lx1 < tx[1]) {
                 r.w = lx1 - tx[0] + 1;
             }
-            if (aux->v8 == 0) {
-                gfx_aux_draw_rotate_sub1(&r, aux->data, pitch_hw);
-            } else {
-                gfx_aux_draw_rotate_sub2(&r, aux->data, pitch_hw);
-            }
+            gfx_aux_draw_rotate_sub1(&r, aux->data, pitch_hw, scale);
         }
         /*22297*/
         r.destx = tx[1];
@@ -582,11 +610,7 @@ LOG_DEBUG((DEBUGLEVEL_ROTATE, "%s: case %i  y1:%i y2:%i -> %i\n", __func__, ti[0
             if (lx1 < tx[2]) {
                 r.w = lx1 - tx[1] + 1;
             }
-            if (aux->v8 == 0) {
-                gfx_aux_draw_rotate_sub1(&r, aux->data, pitch_hw);
-            } else {
-                gfx_aux_draw_rotate_sub2(&r, aux->data, pitch_hw);
-            }
+            gfx_aux_draw_rotate_sub1(&r, aux->data, pitch_hw, scale);
         }
         /*225da*/
         r.destx = tx[2];
@@ -663,11 +687,7 @@ LOG_DEBUG((DEBUGLEVEL_ROTATE, "%s: case %i  y1:%i y2:%i -> %i\n", __func__, ti[0
             if (lx1 < tx[3]) {
                 r.w = lx1 - tx[2] + 1;
             }
-            if (aux->v8 == 0) {
-                gfx_aux_draw_rotate_sub1(&r, aux->data, pitch_hw);
-            } else {
-                gfx_aux_draw_rotate_sub2(&r, aux->data, pitch_hw);
-            }
+            gfx_aux_draw_rotate_sub1(&r, aux->data, pitch_hw, scale);
         }
     }
 }
@@ -893,28 +913,23 @@ void gfx_aux_draw_frame_to(uint8_t *data, struct gfx_aux_s *aux)
     }
     gfx_aux_setup(aux, data, frame);
     for (; f <= frame; ++f) {
-        lbxgfx_draw_frame_do(aux->data, data, aux->w);
+        lbxgfx_draw_frame_do(aux->data, data, aux->w, 1);
     }
 }
 
-void gfx_aux_draw_frame_from(int x, int y, struct gfx_aux_s *aux, uint16_t pitch)
+void gfx_aux_draw_frame_from(int x, int y, struct gfx_aux_s *aux, uint16_t pitch, int scale)
 {
     uint8_t *p, *q;
-    p = hw_video_get_buf() + y * pitch + x;
+    p = hw_video_get_buf() + (y * pitch + x) * scale;
     q = aux->data;
-    for (int y = 0; y < aux->h; ++y) {
-        for (int x = 0; x < aux->w; ++x) {
-            uint8_t b;
-            b = *q++;
-            if (b) {
-                p[x] = b;
-            }
-        }
-        p += pitch;
+    if (scale == 1) {
+        gfx_aux_draw_frame_1x(q, p, aux->w, aux->h, aux->w, pitch);
+    } else {
+        gfx_aux_draw_frame_nx(q, p, aux->w, aux->h, aux->w, pitch, scale);
     }
 }
 
-void gfx_aux_draw_frame_from_limit(int x, int y, struct gfx_aux_s *aux, int lx0, int ly0, int lx1, int ly1, uint16_t pitch)
+void gfx_aux_draw_frame_from_limit(int x, int y, struct gfx_aux_s *aux, int lx0, int ly0, int lx1, int ly1, uint16_t pitch, int scale)
 {
     int xskip, yskip, x0, y0, x1, y1, w, h;
 
@@ -946,10 +961,10 @@ void gfx_aux_draw_frame_from_limit(int x, int y, struct gfx_aux_s *aux, int lx0,
     w = ((x1 < lx1) ? x1 : lx1) - x0 + 1;
     h = ((y1 < ly1) ? y1 : ly1) - y0 + 1;
 
-    gfx_aux_draw_frame_from_limit_do(x0, y0, w, h, xskip, yskip, aux, pitch);
+    gfx_aux_draw_frame_from_limit_do(x0, y0, w, h, xskip, yskip, aux, pitch, scale);
 }
 
-void gfx_aux_draw_frame_from_rotate_limit(int x0, int y0, int x1, int y1, struct gfx_aux_s *aux, int lx0, int ly0, int lx1, int ly1, uint16_t pitch)
+void gfx_aux_draw_frame_from_rotate_limit(int x0, int y0, int x1, int y1, struct gfx_aux_s *aux, int lx0, int ly0, int lx1, int ly1, uint16_t pitch, int scale)
 {
     int h = aux->h, angle, angle2, x2, y2, x3, y3, xo, yo, v;
     angle = util_math_calc_angle(x1 - x0, y1 - y0);
@@ -971,6 +986,6 @@ void gfx_aux_draw_frame_from_rotate_limit(int x0, int y0, int x1, int y1, struct
     y2 = y1 + v;
     y3 = y0 + v;
     LOG_DEBUG((DEBUGLEVEL_ROTATE, "%s:t %i,%i  %i,%i  %i,%i  %i,%i\n", __func__, x0, y0, x1, y1, x2, y2, x3, y3));
-    gfx_aux_draw_frame_from_rotate_limit_do(x0, y0, x1, y1, x2, y2, x3, y3, aux, lx0, ly0, lx1, ly1, pitch);
+    gfx_aux_draw_frame_from_rotate_limit_do(x0, y0, x1, y1, x2, y2, x3, y3, aux, lx0, ly0, lx1, ly1, pitch, scale);
 }
 

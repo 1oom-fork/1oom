@@ -48,17 +48,17 @@ static void basescrap_draw_cb1(void *vptr)
     struct game_s *g = d->g;
     const int x = 56, y = 50;
     const planet_t *p = &(g->planet[g->planet_focus_i[d->api]]);
-    lbxgfx_draw_frame(x, y, d->gfx, UI_SCREEN_W);
-    ui_draw_filled_rect(x + 14, y + 35, x + 64, y + 38, 0x2f);
+    lbxgfx_draw_frame(x, y, d->gfx, UI_SCREEN_W, ui_scale);
+    ui_draw_filled_rect(x + 14, y + 35, x + 64, y + 38, 0x2f, ui_scale);
     if (d->slider_var > 0) {
-        ui_draw_line_3h(x + 14, y + 36, x + 13 + d->slider_var / 2, 0x74);
+        ui_draw_line_3h(x + 14, y + 36, (x + 13 + d->slider_var) / 2, 0x74, ui_scale);
     }
     lbxfont_select(0, 0xd, 0, 0);
-    lbxfont_print_str_center(x + 57, y + 11, game_str_bs_line1, UI_SCREEN_W);
-    lbxfont_print_str_center(x + 57, y + 20, game_str_bs_line2, UI_SCREEN_W);
+    lbxfont_print_str_center(x + 57, y + 11, game_str_bs_line1, UI_SCREEN_W, ui_scale);
+    lbxfont_print_str_center(x + 57, y + 20, game_str_bs_line2, UI_SCREEN_W, ui_scale);
     lbxfont_select(2, 6, 0, 0);
-    lbxfont_print_str_right(x + 104, y + 35, game_str_bs_bases, UI_SCREEN_W);
-    lbxfont_print_num_right(x + 83, y + 35, (p->missile_bases * d->slider_var) / 100, UI_SCREEN_W);
+    lbxfont_print_str_right(x + 104, y + 35, game_str_bs_bases, UI_SCREEN_W, ui_scale);
+    lbxfont_print_num_right(x + 83, y + 35, (p->missile_bases * d->slider_var) / 100, UI_SCREEN_W, ui_scale);
 }
 
 /* -------------------------------------------------------------------------- */

@@ -86,6 +86,7 @@ static bool have_mus = false;
 static bool flipx = false;
 static bool clearbeforedraw = false;
 static int test_rotate = 0;
+static int test_scale = 0;
 static uint8_t textcolor = 8;
 static uint32_t cur_key = 0;
 static int cur_xoff = 0;
@@ -173,7 +174,7 @@ static void drawscreen_outlbx(void)
         }
     }
     lbxfont_select(5, 1, 0, 0);
-    lbxfont_print_str_normal(0, 300, "Loading Master of Orion...", 320);
+    lbxfont_print_str_normal(0, 300 / (test_scale + 1), "Test string", UI_SCREEN_W, test_scale + 1);
     lib_sprintf(linebuf, sizeof(linebuf), "key 0x%x %c", cur_key, cur_key & 0xff);
     drawstr(0, 320, linebuf, textcolor, 0);
 }
@@ -185,7 +186,7 @@ static void drawscreen_inlbx_rotate(void)
     midy = 200 / 2;
     w = lbxgfx_get_w(cur_ptr);
     h = lbxgfx_get_h(cur_ptr);
-    maxwh = MAX(w, h);
+    maxwh = MAX(w, h) * (test_scale + 1);
     if ((maxwh < 80) && (test_rotate == 1)) {
         angle = cur_xoff % 45;
         while (angle < 0) {
@@ -197,11 +198,11 @@ static void drawscreen_inlbx_rotate(void)
             y = util_math_angle_dist_sin(angle, maxwh);
             xo = util_math_angle_dist_cos(angle, 90 - maxwh);
             yo = util_math_angle_dist_sin(angle, 90 - maxwh);
-            x0 = midx + xo - x / 2;
-            y0 = midy + yo - y / 2;
-            x1 = midx + xo + x / 2;
-            y1 = midy + yo + y / 2;
-            gfx_aux_draw_frame_from_rotate_limit(x0, y0, x1, y1, &gfxaux, 0, 0, UI_SCREEN_W - 1, 200 - 1, UI_SCREEN_W);
+            x0 = (midx + xo - x / 2) / (test_scale + 1);
+            y0 = (midy + yo - y / 2) / (test_scale + 1);
+            x1 = (midx + xo + x / 2) / (test_scale + 1);
+            y1 = (midy + yo + y / 2) / (test_scale + 1);
+            gfx_aux_draw_frame_from_rotate_limit(x0, y0, x1, y1, &gfxaux, 0, 0, UI_SCREEN_W - 1, 200 - 1, UI_SCREEN_W, test_scale + 1);
             angle = (angle + 45) % 360;
         }
     } else {
@@ -211,11 +212,11 @@ static void drawscreen_inlbx_rotate(void)
         }
         x = util_math_angle_dist_cos(angle, maxwh);
         y = util_math_angle_dist_sin(angle, maxwh);
-        x0 = midx - x / 2;
-        y0 = midy - y / 2;
-        x1 = midx + x / 2;
-        y1 = midy + y / 2;
-        gfx_aux_draw_frame_from_rotate_limit(x0, y0, x1, y1, &gfxaux, 0, 0, UI_SCREEN_W - 1, 200 - 1, UI_SCREEN_W);
+        x0 = (midx - x / 2) / (test_scale + 1);
+        y0 = (midy - y / 2) / (test_scale + 1);
+        x1 = (midx + x / 2) / (test_scale + 1);
+        y1 = (midy + y / 2) / (test_scale + 1);
+        gfx_aux_draw_frame_from_rotate_limit(x0, y0, x1, y1, &gfxaux, 0, 0, UI_SCREEN_W - 1, 200 - 1, UI_SCREEN_W, test_scale + 1);
     }
 }
 
@@ -280,7 +281,7 @@ static void drawscreen_inlbx(void)
         if (clearbeforedraw) {
             memset(hw_video_get_buf(), 0, 320 * 200);
             gfx_aux_setup(&gfxaux, p, 0);
-            lbxgfx_draw_frame_do(gfxaux.data, p, gfxaux.w);
+            lbxgfx_draw_frame_do(gfxaux.data, p, gfxaux.w, test_scale + 1);
         } else {
             gfx_aux_draw_frame_to(p, &gfxaux);
         }
@@ -290,7 +291,7 @@ static void drawscreen_inlbx(void)
         if (test_rotate) {
             drawscreen_inlbx_rotate();
         } else {
-            gfx_aux_draw_frame_from_limit(cur_xoff, cur_yoff, &gfxaux, 0, 0, UI_SCREEN_W - 1, 200 - 1, UI_SCREEN_W);
+            gfx_aux_draw_frame_from_limit(cur_xoff, cur_yoff, &gfxaux, 0, 0, UI_SCREEN_W - 1, 200 - 1, UI_SCREEN_W, test_scale + 1);
         }
         if (advance_frame) {
             advance_frame = false;
@@ -411,7 +412,7 @@ static void do_lbx_gfx(uint32_t k)
             pic.pix = hw_video_get_buf();
             for (int f = 0; f < frames; ++f) {
                 char fname[32];
-                lbxgfx_draw_frame(0, 0, cur_ptr, UI_SCREEN_W);
+                lbxgfx_draw_frame(0, 0, cur_ptr, UI_SCREEN_W, 1);
                 lib_sprintf(fname, sizeof(fname), "z_%s_%02x_%03i.pcx", bufname, cursor_i, f);
                 fmt_pic_save(fname, &pic);
             }
@@ -613,6 +614,9 @@ int main_do(void)
                     break;
                 case MOO_KEY_q:
                     test_rotate = (test_rotate + 1) % 3;
+                    break;
+                case MOO_KEY_z:
+                    test_scale = (test_scale + 1) % 3;
                     break;
                 case MOO_KEY_c:
                     clearbeforedraw = !clearbeforedraw;

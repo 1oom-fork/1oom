@@ -29,15 +29,15 @@
 #define lbxgfx_get_frameptr(_data_, _frame_) ((_data_) + lbxgfx_get_frameoffs0((_data_), (_frame_)))
 #define lbxgfx_get_frameclearflag(_data_, _frame_) (*lbxgfx_get_frameptr((_data_), (_frame_)))
 
-extern void lbxgfx_draw_frame(int x, int y, uint8_t *data, uint16_t pitch);
-extern void lbxgfx_draw_frame_pal(int x, int y, uint8_t *data, uint16_t pitch);
-extern void lbxgfx_draw_frame_offs(int x, int y, uint8_t *data, int lx0, int ly0, int lx1, int ly1, uint16_t pitch);
-extern void lbxgfx_draw_frame_offs_delay(int x, int y, bool next, uint8_t *data, int lx0, int ly0, int lx1, int ly1, uint16_t pitch);
-extern void lbxgfx_draw_frame_do(uint8_t *p, uint8_t *data, uint16_t pitch);
+extern void lbxgfx_draw_frame(int x, int y, uint8_t *data, uint16_t pitch, int scale);
+extern void lbxgfx_draw_frame_pal(int x, int y, uint8_t *data, uint16_t pitch, int scale);
+extern void lbxgfx_draw_frame_offs(int x, int y, uint8_t *data, int lx0, int ly0, int lx1, int ly1, uint16_t pitch, int scale);
+extern void lbxgfx_draw_frame_offs_delay(int x, int y, bool next, uint8_t *data, int lx0, int ly0, int lx1, int ly1, uint16_t pitch, int scale);
+extern void lbxgfx_draw_frame_do(uint8_t *p, uint8_t *data, uint16_t pitch, int scale);
 
 extern void lbxgfx_set_new_frame(uint8_t *data, uint16_t newframe);
 
-extern void lbxgfx_apply_colortable(int x0, int y0, int x1, int y1, uint8_t ctbli, uint16_t pitch);
+extern void lbxgfx_apply_colortable(int x0, int y0, int x1, int y1, uint8_t ctbli, uint16_t pitch, int scale);
 
 extern void lbxgfx_apply_palette(uint8_t *data);
 

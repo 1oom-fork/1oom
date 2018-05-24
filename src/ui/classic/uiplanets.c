@@ -122,7 +122,7 @@ static void planets_draw_cb(void *vptr)
     char buf[64];
     int v;
 
-    ui_draw_filled_rect(0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, 0x5d);
+    ui_draw_filled_rect(0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, 0x5d, ui_scale);
     for (int i = 0; i < PLANETS_ON_SCREEN; ++i) {
         int pi;
         pi = d->pos + i;
@@ -130,28 +130,28 @@ static void planets_draw_cb(void *vptr)
             int y0, y1;
             y0 = 21 + i * 11;
             y1 = y0 + 6;
-            ui_draw_filled_rect(8, y0, 309, y1, 0xeb);
+            ui_draw_filled_rect(8, y0, 309, y1, 0xeb, ui_scale);
         }
     }
-    lbxgfx_draw_frame(0, 0, d->gfx_report, UI_SCREEN_W);
+    lbxgfx_draw_frame(0, 0, d->gfx_report, UI_SCREEN_W, ui_scale);
     lbxgfx_set_new_frame(d->gfx_but_trans, 1);
-    lbxgfx_draw_frame(209, 181, d->gfx_but_trans, UI_SCREEN_W);
-    ui_draw_filled_rect(213, 159, 245, 162, 0x2f);
+    lbxgfx_draw_frame(209, 181, d->gfx_but_trans, UI_SCREEN_W, ui_scale);
+    ui_draw_filled_rect(213, 159, 245, 162, 0x2f, ui_scale);
 
     v = g->eto[d->api].tax;
     if (v > 0) {
-        ui_draw_line_3h(213, 160, 212 + (v * 4) / 25, 0x73);
+        ui_draw_line_3h(213, 160, 212 + (v * 4) / 25, 0x73, ui_scale);
     }
 
     lbxfont_select(2, 8, 0, 0);
-    lbxfont_print_str_normal(210, 170, game_str_pl_reserve, UI_SCREEN_W);
+    lbxfont_print_str_normal(210, 170, game_str_pl_reserve, UI_SCREEN_W, ui_scale);
     lbxfont_select(2, 6, 0, 0);
     v = (e->tax * e->total_production_bc) / 2000;
     lib_sprintf(buf, sizeof(buf), "+%i", v);
-    lbxfont_print_str_right(272, 159, buf, UI_SCREEN_W);
-    lbxfont_print_str_normal(276, 159, game_str_bc, UI_SCREEN_W);
-    lbxfont_print_str_normal(276, 170, game_str_bc, UI_SCREEN_W);
-    lbxfont_print_num_right(272, 170, e->reserve_bc, UI_SCREEN_W);
+    lbxfont_print_str_right(272, 159, buf, UI_SCREEN_W, ui_scale);
+    lbxfont_print_str_normal(276, 159, game_str_bc, UI_SCREEN_W, ui_scale);
+    lbxfont_print_str_normal(276, 170, game_str_bc, UI_SCREEN_W, ui_scale);
+    lbxfont_print_num_right(272, 170, e->reserve_bc, UI_SCREEN_W, ui_scale);
 
     for (int i = 0; i < PLANETS_ON_SCREEN; ++i) {
         int pi;
@@ -165,16 +165,16 @@ static void planets_draw_cb(void *vptr)
             y0 = 21 + i * 11 + 1;   /* di + 1 */
             p = &(g->planet[pli]);
             lbxfont_select(2, 0xb, 0, 0);
-            lbxfont_print_num_right(17, y0, ui_data.sorted.index[pi] + 1, UI_SCREEN_W);
+            lbxfont_print_num_right(17, y0, ui_data.sorted.index[pi] + 1, UI_SCREEN_W, ui_scale);
             lbxfont_select(2, 0xd, 0, 0);
-            lbxfont_print_str_normal(25, y0, p->name, UI_SCREEN_W);
+            lbxfont_print_str_normal(25, y0, p->name, UI_SCREEN_W, ui_scale);
             lbxfont_select(2, 6, 0, 0);
             if (ui_extra_enabled) {
-                lbxfont_print_num_right(99, y0, p->pop, UI_SCREEN_W);
+                lbxfont_print_num_right(99, y0, p->pop, UI_SCREEN_W, ui_scale);
                 lbxfont_select(2, 1, 0, 0);
-                lbxfont_print_num_normal(102, y0, p->max_pop3, UI_SCREEN_W);
+                lbxfont_print_num_normal(102, y0, p->max_pop3, UI_SCREEN_W, ui_scale);
             } else {
-                lbxfont_print_num_right(83, y0, p->pop, UI_SCREEN_W);
+                lbxfont_print_num_right(83, y0, p->pop, UI_SCREEN_W, ui_scale);
             }
             if (p->pop != p->pop_prev) {
                 int v;
@@ -199,24 +199,24 @@ static void planets_draw_cb(void *vptr)
                 }
                 lib_sprintf(buf, sizeof(buf), "%c%i", c, v);
                 if (ui_extra_enabled) {
-                    lbxfont_print_str_right(83, y0, buf, UI_SCREEN_W);
+                    lbxfont_print_str_right(83, y0, buf, UI_SCREEN_W, ui_scale);
                 } else {
-                    lbxgfx_draw_frame(92, y0 - 1, gfx, UI_SCREEN_W);
-                    lbxfont_print_str_right(111, y0, buf, UI_SCREEN_W);
+                    lbxgfx_draw_frame(92, y0 - 1, gfx, UI_SCREEN_W, ui_scale);
+                    lbxfont_print_str_right(111, y0, buf, UI_SCREEN_W, ui_scale);
                 }
             }
             lbxfont_select(2, 6, 0, 0);
             if (ui_extra_enabled && p->battlebg == 0) {
                 lbxfont_select(2, 1, 0, 0);
-                lbxfont_print_str_right(149, y0, "neb", UI_SCREEN_W);
+                lbxfont_print_str_right(149, y0, "neb", UI_SCREEN_W, ui_scale);
             } else {
-                lbxfont_print_str_right(149, y0, game_str_tbl_roman[p->shield], UI_SCREEN_W);
+                lbxfont_print_str_right(149, y0, game_str_tbl_roman[p->shield], UI_SCREEN_W, ui_scale);
             }
             lbxfont_select(2, 6, 0, 0);
-            lbxfont_print_num_right(132, y0, p->factories, UI_SCREEN_W);
-            lbxfont_print_num_right(170, y0, p->missile_bases, UI_SCREEN_W);
+            lbxfont_print_num_right(132, y0, p->factories, UI_SCREEN_W, ui_scale);
+            lbxfont_print_num_right(170, y0, p->missile_bases, UI_SCREEN_W, ui_scale);
             if (p->waste) {
-                lbxfont_print_num_right(189, y0, p->waste, UI_SCREEN_W);
+                lbxfont_print_num_right(189, y0, p->waste, UI_SCREEN_W, ui_scale);
             }
             lbxfont_select(0, 0xe, 0, 0);
             if (p->unrest == PLANET_UNREST_REBELLION) {
@@ -224,7 +224,7 @@ static void planets_draw_cb(void *vptr)
             } else {
                 v = p->total_prod;
             }
-            lbxfont_print_num_right(214, y0, v, UI_SCREEN_W);
+            lbxfont_print_num_right(214, y0, v, UI_SCREEN_W, ui_scale);
             lbxfont_select(2, 0xb, 0, 0);
             {
                 bool flag_normal;
@@ -233,7 +233,7 @@ static void planets_draw_cb(void *vptr)
                     lbxfont_select(2, 1, 0, 0);
                 }
                 if (str) {
-                    lbxfont_print_str_normal(268, y0, str, UI_SCREEN_W);
+                    lbxfont_print_str_normal(268, y0, str, UI_SCREEN_W, ui_scale);
                 }
             }
             if (ui_extra_enabled) {
@@ -241,16 +241,16 @@ static void planets_draw_cb(void *vptr)
             }
             if (p->slider[PLANET_SLIDER_SHIP] > 0) {
                 str = planets_get_dock_str(g, p);
-                lbxfont_print_str_normal(221, y0, str, UI_SCREEN_W);
+                lbxfont_print_str_normal(221, y0, str, UI_SCREEN_W, ui_scale);
             }
         }
     }
 
     lbxfont_select(2, 6, 0, 0);
     game_print_prod_of_total(g, d->api, e->ship_maint_bc, buf, sizeof(buf));
-    lbxfont_print_str_right(59, 174, buf, UI_SCREEN_W);
+    lbxfont_print_str_right(59, 174, buf, UI_SCREEN_W, ui_scale);
     game_print_prod_of_total(g, d->api, e->bases_maint_bc, buf, sizeof(buf));
-    lbxfont_print_str_right(59, 185, buf, UI_SCREEN_W);
+    lbxfont_print_str_right(59, 185, buf, UI_SCREEN_W, ui_scale);
 
     v = 0;
     for (player_id_t i = PLAYER_0; i < PLAYER_NUM; ++i) {
@@ -259,18 +259,18 @@ static void planets_draw_cb(void *vptr)
         }
     }
     lib_sprintf(buf, sizeof(buf), "%i.%i%%", v / 10, v % 10);
-    lbxfont_print_str_right(116, 174, buf, UI_SCREEN_W);
+    lbxfont_print_str_right(116, 174, buf, UI_SCREEN_W, ui_scale);
     v = e->security;
     lib_sprintf(buf, sizeof(buf), "%i.%i%%", v / 10, v % 10);
-    lbxfont_print_str_right(116, 185, buf, UI_SCREEN_W);
+    lbxfont_print_str_right(116, 185, buf, UI_SCREEN_W, ui_scale);
     lib_sprintf(buf, sizeof(buf), "%i %s", e->total_trade_bc, game_str_bc);
-    lbxfont_print_str_right(195, 174, buf, UI_SCREEN_W);
+    lbxfont_print_str_right(195, 174, buf, UI_SCREEN_W, ui_scale);
     lib_sprintf(buf, sizeof(buf), "%i %s", e->total_production_bc, game_str_bc);
-    lbxfont_print_str_right(195, 185, buf, UI_SCREEN_W);
+    lbxfont_print_str_right(195, 185, buf, UI_SCREEN_W, ui_scale);
 
     lbxfont_select_set_12_1(5, 8, 0, 0);
-    lbxfont_print_str_center(66, 161, game_str_pl_spending, UI_SCREEN_W);
-    lbxfont_print_str_center(163, 161, game_str_pl_tincome, UI_SCREEN_W);
+    lbxfont_print_str_center(66, 161, game_str_pl_spending, UI_SCREEN_W, ui_scale);
+    lbxfont_print_str_center(163, 161, game_str_pl_tincome, UI_SCREEN_W, ui_scale);
 }
 
 
@@ -284,21 +284,21 @@ static void planets_transfer_draw_cb(void *vptr)
     char buf[64];
 
     hw_video_copy_back_from_page2();
-    lbxgfx_draw_frame(x, y, d->gfx_transfer, UI_SCREEN_W);
-    ui_draw_filled_rect(x + 14, y + 35, x + 64, y + 38, 0x2f);
+    lbxgfx_draw_frame(x, y, d->gfx_transfer, UI_SCREEN_W, ui_scale);
+    ui_draw_filled_rect(x + 14, y + 35, x + 64, y + 38, 0x2f, ui_scale);
     if (d->amount_trans > 0) {
-        ui_draw_line_3h(x + 14, y + 35, x + 13 + d->amount_trans / 2, 0x74);
+        ui_draw_line_3h(x + 14, y + 35, x + 13 + d->amount_trans / 2, 0x74, ui_scale);
     }
     lib_sprintf(buf, sizeof(buf), "%s %s", game_str_pl_resto, p->name);
     lbxfont_select(0, 0xd, 0, 0);
-    lbxfont_print_str_center(x + 57, y + 11, game_str_pl_transof, UI_SCREEN_W);
-    lbxfont_print_str_center(x + 57, y + 20, buf, UI_SCREEN_W);
+    lbxfont_print_str_center(x + 57, y + 11, game_str_pl_transof, UI_SCREEN_W, ui_scale);
+    lbxfont_print_str_center(x + 57, y + 20, buf, UI_SCREEN_W, ui_scale);
     lbxfont_select(2, 6, 0, 0);
-    lbxfont_print_str_right(x + 104, y + 35, game_str_bc, UI_SCREEN_W);
+    lbxfont_print_str_right(x + 104, y + 35, game_str_bc, UI_SCREEN_W, ui_scale);
     {
         int v;
         v = (d->amount_trans * e->reserve_bc) / 100;
-        lbxfont_print_num_right(x + 95, y + 35, v, UI_SCREEN_W);
+        lbxfont_print_num_right(x + 95, y + 35, v, UI_SCREEN_W, ui_scale);
     }
 }
 
@@ -318,10 +318,10 @@ static void ui_planets_transfer(struct planets_data_s *d)
     lbxgfx_set_new_frame(d->gfx_but_trans, 1);
     lbxgfx_set_new_frame(ui_data.gfx.starmap.reprtbut_up, 1);
     lbxgfx_set_new_frame(ui_data.gfx.starmap.reprtbut_down, 1);
-    lbxgfx_draw_frame(292, 159, ui_data.gfx.starmap.reprtbut_up, UI_SCREEN_W);
-    lbxgfx_draw_frame(292, 176, ui_data.gfx.starmap.reprtbut_down, UI_SCREEN_W);
-    lbxgfx_draw_frame(256, 181, d->gfx_but_ok, UI_SCREEN_W);
-    lbxgfx_draw_frame(209, 181, d->gfx_but_trans, UI_SCREEN_W);
+    lbxgfx_draw_frame(292, 159, ui_data.gfx.starmap.reprtbut_up, UI_SCREEN_W, ui_scale);
+    lbxgfx_draw_frame(292, 176, ui_data.gfx.starmap.reprtbut_down, UI_SCREEN_W, ui_scale);
+    lbxgfx_draw_frame(256, 181, d->gfx_but_ok, UI_SCREEN_W, ui_scale);
+    lbxgfx_draw_frame(209, 181, d->gfx_but_trans, UI_SCREEN_W, ui_scale);
     hw_video_copy_back_to_page2();
 
     prod = p->prod_after_maint - p->reserve;

@@ -37,21 +37,21 @@ static void ui_starmap_trans_draw_cb(void *vptr)
     x0 = (pf->x - ui_data.starmap.x) * 2 + 8;
     y0 = (pf->y - ui_data.starmap.y) * 2 + 8;
     if (pt->owner == d->api) {
-        lbxgfx_draw_frame(222, 80, ui_data.gfx.starmap.relocate, UI_SCREEN_W);
+        lbxgfx_draw_frame(222, 80, ui_data.gfx.starmap.relocate, UI_SCREEN_W, ui_scale);
         /* if (pt->unrest == PLANET_UNREST_REBELLION) {} never true, trans button disabled in uistarmap.c */
     } else {
-        lbxgfx_draw_frame_offs(222, 80, ui_data.gfx.starmap.relocate, 0, 83, 310, 199, UI_SCREEN_W);
+        lbxgfx_draw_frame_offs(222, 80, ui_data.gfx.starmap.relocate, 0, 83, 310, 199, UI_SCREEN_W, ui_scale);
         if (BOOLVEC_IS0(pt->explored, d->api)) {
-            ui_draw_filled_rect(227, 57, 310, 159, 0);
-            lbxgfx_draw_frame_offs(224, 5, ui_data.gfx.starmap.unexplor, 227, 57, 310, 159, UI_SCREEN_W);
+            ui_draw_filled_rect(227, 57, 310, 159, 0, ui_scale);
+            lbxgfx_draw_frame_offs(224, 5, ui_data.gfx.starmap.unexplor, 227, 57, 310, 159, UI_SCREEN_W, ui_scale);
         } else {
-            ui_draw_filled_rect(227, 73, 310, 159, 7);
-            ui_draw_box1(227, 73, 310, 159, 4, 4);
+            ui_draw_filled_rect(227, 73, 310, 159, 7, ui_scale);
+            ui_draw_box1(227, 73, 310, 159, 4, 4, ui_scale);
         }
     }
-    lbxgfx_draw_frame_offs_delay(x0, y0, !d->anim_delay, ui_data.gfx.starmap.planbord, STARMAP_LIMITS, UI_SCREEN_W);
+    lbxgfx_draw_frame_offs_delay(x0, y0, !d->anim_delay, ui_data.gfx.starmap.planbord, STARMAP_LIMITS, UI_SCREEN_W, 1);
     lbxgfx_set_new_frame(ui_data.gfx.starmap.reloc_bu_accept, 1);
-    lbxgfx_draw_frame(271, 163, ui_data.gfx.starmap.reloc_bu_accept, UI_SCREEN_W);
+    lbxgfx_draw_frame(271, 163, ui_data.gfx.starmap.reloc_bu_accept, UI_SCREEN_W, ui_scale);
     if (d->from != g->planet_focus_i[d->api]) {
         const uint8_t *ctbl;
         int x1, y1;
@@ -68,19 +68,19 @@ static void ui_starmap_trans_draw_cb(void *vptr)
         } else {
             ctbl = colortbl_line_green;
         }
-        ui_draw_line_limit_ctbl(x0 + 6, y0 + 6, x1, y1, ctbl, 5, ui_data.starmap.line_anim_phase);
+        ui_draw_line_limit_ctbl(x0 + 6, y0 + 6, x1, y1, ctbl, 5, ui_data.starmap.line_anim_phase, 1);
     }
     if (d->from != g->planet_focus_i[d->api] || (ui_extra_enabled && d->tr.other)) {
         if (pt->within_frange[d->api] != 1) {
             int mindist = game_get_min_dist(g, d->api, g->planet_focus_i[d->api]);
             lbxfont_select_set_12_1(0, 0xe, 5, 0);
             lbxfont_set_gap_h(1);
-            lbxfont_print_str_split(228, 94, 82, game_str_sm_notrange, 2, UI_SCREEN_W, UI_SCREEN_H);
+            lbxfont_print_str_split(228, 94, 82, game_str_sm_notrange, 2, UI_SCREEN_W, UI_SCREEN_H, ui_scale);
             lib_sprintf(buf, sizeof(buf), "%s %i %s %i %s", game_str_sm_notrange1, mindist, game_str_sm_notrange2, g->eto[d->api].fuel_range, game_str_sm_notrange3);
-            lbxfont_print_str_split(229, 125, 80, game_str_sm_seltr, 2, UI_SCREEN_W, UI_SCREEN_H);
+            lbxfont_print_str_split(229, 125, 80, game_str_sm_seltr, 2, UI_SCREEN_W, UI_SCREEN_H, ui_scale);
         } else if (BOOLVEC_IS0(pt->explored, d->api)) {
             lbxfont_select(0, 0xe, 0, 0);
-            lbxfont_print_str_split(229, 105, 80, game_str_sm_trfirste, 2, UI_SCREEN_W, UI_SCREEN_H);
+            lbxfont_print_str_split(229, 105, 80, game_str_sm_trfirste, 2, UI_SCREEN_W, UI_SCREEN_H, ui_scale);
         } else if (pt->type < g->eto[d->api].have_colony_for) {
             int pos;
             lbxfont_select(0, 6, 0, 0);
@@ -89,10 +89,10 @@ static void ui_starmap_trans_draw_cb(void *vptr)
             lib_sprintf(&buf[pos], sizeof(buf) - pos, "%s ", game_str_tbl_sm_pltype[pt->type]);
             util_str_tolower(&buf[pos], sizeof(buf) - pos);
             lib_strcat(&buf[pos], game_str_sm_trcontr2, sizeof(buf) - pos);
-            lbxfont_print_str_split(228, 111, 82, buf, 2, UI_SCREEN_W, UI_SCREEN_H);
+            lbxfont_print_str_split(228, 111, 82, buf, 2, UI_SCREEN_W, UI_SCREEN_H, ui_scale);
         } else if (pt->owner == PLAYER_NONE) {
             lbxfont_select(0, 0xe, 0, 0);
-            lbxfont_print_str_split(230, 105, 80, game_str_sm_trfirstc, 2, UI_SCREEN_W, UI_SCREEN_H);
+            lbxfont_print_str_split(230, 105, 80, game_str_sm_trfirstc, 2, UI_SCREEN_W, UI_SCREEN_H, ui_scale);
         } else {
             treaty_t treaty = TREATY_NONE;
             uiobj_set_help_id(1);
@@ -104,14 +104,14 @@ static void ui_starmap_trans_draw_cb(void *vptr)
                 lib_sprintf(buf, sizeof(buf), "%s %i %s", game_str_sm_eta, eta, (eta == 1) ? game_str_sm_turn : game_str_sm_turns);
             }
             lbxfont_select(0, 0, 0, 0);
-            lbxfont_print_str_center(268, 149, buf, UI_SCREEN_W);
-            lbxgfx_draw_frame(230, 123, ui_data.gfx.starmap.tran_bar, UI_SCREEN_W);
+            lbxfont_print_str_center(268, 149, buf, UI_SCREEN_W, ui_scale);
+            lbxgfx_draw_frame(230, 123, ui_data.gfx.starmap.tran_bar, UI_SCREEN_W, ui_scale);
             lbxfont_select(0, 6, 0, 0);
             if (pt->owner != PLAYER_NONE) {/* WASBUG MOO1 tests for == PLAYER_NONE, reading from eto offs 0xcc */
                 treaty = g->eto[d->api].treaty[pt->owner];
             }
             if ((treaty == TREATY_NONAGGRESSION) || (treaty == TREATY_ALLIANCE)) {
-                lbxfont_print_str_split(228, 105, 84, game_str_sm_trwarna, 2, UI_SCREEN_W, UI_SCREEN_H);
+                lbxfont_print_str_split(228, 105, 84, game_str_sm_trwarna, 2, UI_SCREEN_W, UI_SCREEN_H, ui_scale);
             } else {
                 int v = 0;
                 if (pf->owner == pt->owner) {
@@ -125,29 +125,29 @@ static void ui_starmap_trans_draw_cb(void *vptr)
                     if (d->tr.blink) {
                         lbxfont_select(0, 5, 0, 0);
                         lib_sprintf(buf, sizeof(buf), "%s %i %s", game_str_sm_trwarnm1, pt->max_pop3, game_str_sm_trwarnm2);
-                        lbxfont_print_str_split(228, 101, 80, buf, 2, UI_SCREEN_W, UI_SCREEN_H);
+                        lbxfont_print_str_split(228, 101, 80, buf, 2, UI_SCREEN_W, UI_SCREEN_H, ui_scale);
                     }
                 } else {
                     const char *s = (pt->owner == pf->owner) ? game_str_sm_trchnum1 : game_str_sm_trchnum2;
-                    lbxfont_print_str_split(228, 105, 84, s, 2, UI_SCREEN_W, UI_SCREEN_H);
+                    lbxfont_print_str_split(228, 105, 84, s, 2, UI_SCREEN_W, UI_SCREEN_H, ui_scale);
                 }
             }
             lbxfont_select_set_12_1(0, 1, 0, 0);
-            lbxfont_print_num_right(273, 137, d->tr.num, UI_SCREEN_W);
-            ui_draw_filled_rect(258, 127, 299, 129, 0x2f);
+            lbxfont_print_num_right(273, 137, d->tr.num, UI_SCREEN_W, ui_scale);
+            ui_draw_filled_rect(258, 127, 299, 129, 0x2f, ui_scale);
             if (d->tr.num > 0) {
-                ui_draw_line_3h(258, 127, 258 + (d->tr.num * 40) / trans_max, 0x73);
+                ui_draw_line_3h(258, 127, 258 + (d->tr.num * 40) / trans_max, 0x73, ui_scale);
             }
         }
     } else {
         lbxfont_select(0, 6, 0, 0);
-        lbxfont_print_str_split(229, 110, 80, game_str_sm_seltr, 2, UI_SCREEN_W, UI_SCREEN_H);
+        lbxfont_print_str_split(229, 110, 80, game_str_sm_seltr, 2, UI_SCREEN_W, UI_SCREEN_H, ui_scale);
     }
     lbxfont_select_set_12_1(5, 5, 0, 0);
     {
         int y;
         y = (d->tr.other && (pt->within_frange[d->api] != 1)) ? 77 : 90;
-        lbxfont_print_str_center(269, y, game_str_sm_transs, UI_SCREEN_W);
+        lbxfont_print_str_center(269, y, game_str_sm_transs, UI_SCREEN_W, ui_scale);
     }
 }
 

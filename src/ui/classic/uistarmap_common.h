@@ -10,7 +10,7 @@
 #define STARMAP_ANIM_DELAY (ui_sm_smoother_scrolling ? 3 : 1)
 #define STARMAP_SCROLLSTEP  (ui_sm_smoother_scrolling ? ui_sm_scroll_speed : 10)
 
-#define STARMAP_LIMITS  6, 6, 222 - 1, 178 - 1
+#define STARMAP_LIMITS  6 * ui_scale, 6 * ui_scale, 222 * ui_scale - 1, 178 * ui_scale - 1
 
 struct shipnon0_s {
     shipcount_t ships[NUM_SHIPDESIGNS];

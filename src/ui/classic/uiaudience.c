@@ -54,11 +54,11 @@ static void audience_load_data(struct audience_data_s *d)
         uint8_t *gfx;
         gfx = lbxfile_item_get(LBXFILE_EMBASSY, 1);
         ui_draw_erase_buf();
-        lbxgfx_draw_frame(0, 0, gfx, UI_SCREEN_W);
+        lbxgfx_draw_frame(0, 0, gfx, UI_SCREEN_W, ui_scale);
         uiobj_table_clear();
         uiobj_finish_frame();
         ui_draw_erase_buf();
-        lbxgfx_draw_frame(0, 0, gfx, UI_SCREEN_W);
+        lbxgfx_draw_frame(0, 0, gfx, UI_SCREEN_W, ui_scale);
         lbxfile_item_release(LBXFILE_EMBASSY, gfx);
     }
     d->gfx_race = lbxfile_item_get(LBXFILE_EMBASSY, 0x2 + ra);
@@ -78,7 +78,7 @@ static void ui_audience_draw_race(struct audience_data_s *d)
 {
     struct audience_s *au = d->au;
     uint8_t *gfx = d->gfx_race;
-    int frame = -1;
+    int frame = -1, x = 96;
     if (au->gfxi != d->gfxi) {
         switch (au->gfxi) {
             case 0:
@@ -107,7 +107,7 @@ static void ui_audience_draw_race(struct audience_data_s *d)
             SETMAX(frame, 2);
             lbxgfx_set_new_frame(gfx, 2);
             for (int f = 0; f <= (frame - 2); ++f) {
-                lbxgfx_draw_frame(96, 0, gfx, UI_SCREEN_W);
+                lbxgfx_draw_frame(x, 0, gfx, UI_SCREEN_W, ui_scale);
             }
             d->delay = (d->delay + 1) % 4;
             if (d->delay != 0) {
@@ -117,7 +117,7 @@ static void ui_audience_draw_race(struct audience_data_s *d)
         case 1:
             if (frame < 2) {
                 lbxgfx_set_frame_0(gfx);
-                lbxgfx_draw_frame(96, 0, gfx, UI_SCREEN_W);
+                lbxgfx_draw_frame(x, 0, gfx, UI_SCREEN_W, ui_scale);
                 d->delay = (d->delay + 1) % 4;
             } else {
                 goto draw_anim;
@@ -126,8 +126,8 @@ static void ui_audience_draw_race(struct audience_data_s *d)
         case 2:
             if (frame < 2) {
                 lbxgfx_set_frame_0(gfx);
-                lbxgfx_draw_frame(96, 0, gfx, UI_SCREEN_W);
-                lbxgfx_draw_frame(96, 0, gfx, UI_SCREEN_W);
+                lbxgfx_draw_frame(x, 0, gfx, UI_SCREEN_W, ui_scale);
+                lbxgfx_draw_frame(x, 0, gfx, UI_SCREEN_W, ui_scale);
                 d->delay = (d->delay + 1) % 4;
             } else {
                 goto draw_anim;
@@ -135,12 +135,12 @@ static void ui_audience_draw_race(struct audience_data_s *d)
             break;
         case 3:
             lbxgfx_set_frame_0(gfx);
-            lbxgfx_draw_frame(96, 0, gfx, UI_SCREEN_W);
+            lbxgfx_draw_frame(x, 0, gfx, UI_SCREEN_W, ui_scale);
             break;
         case 4:
             lbxgfx_set_frame_0(gfx);
-            lbxgfx_draw_frame(96, 0, gfx, UI_SCREEN_W);
-            lbxgfx_draw_frame(96, 0, gfx, UI_SCREEN_W);
+            lbxgfx_draw_frame(x, 0, gfx, UI_SCREEN_W, ui_scale);
+            lbxgfx_draw_frame(x, 0, gfx, UI_SCREEN_W, ui_scale);
             break;
         case 5:
         default:
@@ -170,12 +170,12 @@ static void ui_audience_draw_cb1(void *vptr)
     if (au->mode != 1) {
         ui_audience_draw_race(d);
     }
-    lbxgfx_draw_frame(0, -2, d->gfx_emperor, UI_SCREEN_W);
-    lbxgfx_draw_frame(0, 0, d->gfx_border, UI_SCREEN_W);
+    lbxgfx_draw_frame(0, -2, d->gfx_emperor, UI_SCREEN_W, ui_scale);
+    lbxgfx_draw_frame(0, 0, d->gfx_border, UI_SCREEN_W, ui_scale);
     if ((au->mode >= 0) && (au->mode <= 2)) {
         lbxfont_select(3, 2, 0, 0);
         lbxfont_set_gap_h(1);
-        lbxfont_print_str_split(38, 140, 245, au->buf, 0, UI_SCREEN_W, UI_SCREEN_H);
+        lbxfont_print_str_split(38, 140, 245, au->buf, 0, UI_SCREEN_W, UI_SCREEN_H, ui_scale);
     }
     /*d->delay2 = (d->delay2 + 1) % 6;*/
 }
@@ -186,15 +186,15 @@ static void ui_audience_draw_cb2(void *vptr)
     struct audience_s *au = d->au;
     int strh;
     ui_audience_draw_race(d);
-    lbxgfx_draw_frame(0, -2, d->gfx_emperor, UI_SCREEN_W);
-    lbxgfx_draw_frame(0, 0, d->gfx_border, UI_SCREEN_W);
+    lbxgfx_draw_frame(0, -2, d->gfx_emperor, UI_SCREEN_W, ui_scale);
+    lbxgfx_draw_frame(0, 0, d->gfx_border, UI_SCREEN_W, ui_scale);
     lbxfont_select(3, 1, 0, 0);
     lbxfont_set_gap_h(1);
     strh = lbxfont_calc_split_str_h(245, au->buf);
     if (strh > 39) {
         lbxfont_set_gap_h(0);
     }
-    lbxfont_print_str_split(38, 140, 245, au->buf, 0, UI_SCREEN_W, UI_SCREEN_H);
+    lbxfont_print_str_split(38, 140, 245, au->buf, 0, UI_SCREEN_W, UI_SCREEN_H, ui_scale);
     /*d->delay2 = (d->delay2 + 1) % 6;*/
 }
 
@@ -203,11 +203,11 @@ static void ui_audience_draw_cb3(void *vptr)
     struct audience_data_s *d = vptr;
     struct audience_s *au = d->au;
     ui_audience_draw_race(d);
-    lbxgfx_draw_frame(0, -2, d->gfx_emperor, UI_SCREEN_W);
-    lbxgfx_draw_frame(0, 0, d->gfx_border, UI_SCREEN_W);
+    lbxgfx_draw_frame(0, -2, d->gfx_emperor, UI_SCREEN_W, ui_scale);
+    lbxgfx_draw_frame(0, 0, d->gfx_border, UI_SCREEN_W, ui_scale);
     lbxfont_select(3, 2, 1, 0);
     lbxfont_set_gap_h(1);
-    lbxfont_print_str_split(38, 140, 245, au->buf, 0, UI_SCREEN_W, UI_SCREEN_H);
+    lbxfont_print_str_split(38, 140, 245, au->buf, 0, UI_SCREEN_W, UI_SCREEN_H, ui_scale);
     /*d->delay2 = (d->delay2 + 1) % 6;*/
 }
 
@@ -217,15 +217,15 @@ static void ui_audience_draw_cb4(void *vptr)    /* FIXME combine with cb3 and/or
     struct audience_s *au = d->au;
     int strh;
     ui_audience_draw_race(d);
-    lbxgfx_draw_frame(0, -2, d->gfx_emperor, UI_SCREEN_W);
-    lbxgfx_draw_frame(0, 0, d->gfx_border, UI_SCREEN_W);
+    lbxgfx_draw_frame(0, -2, d->gfx_emperor, UI_SCREEN_W, ui_scale);
+    lbxgfx_draw_frame(0, 0, d->gfx_border, UI_SCREEN_W, ui_scale);
     lbxfont_select(3, 1, 0, 0);
     lbxfont_set_gap_h(1);
     strh = lbxfont_calc_split_str_h(245, au->buf);
     if (strh > 39) {
         lbxfont_set_gap_h(0);
     }
-    lbxfont_print_str_split(38, 136, 245, au->buf, 0, UI_SCREEN_W, UI_SCREEN_H);
+    lbxfont_print_str_split(38, 136, 245, au->buf, 0, UI_SCREEN_W, UI_SCREEN_H, ui_scale);
     /*d->delay2 = (d->delay2 + 1) % 6;*/
 }
 

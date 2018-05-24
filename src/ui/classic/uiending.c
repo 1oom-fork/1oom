@@ -84,11 +84,11 @@ static void ui_play_winlose_cb1(void *vptr)
     struct anim_winlose_1_s *p = vptr;
     int f = p->frame;
     ui_draw_erase_buf();
-    lbxgfx_draw_frame_offs(0x000 - f, 0, p->gfx_stars, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
-    lbxgfx_draw_frame_offs(0x140 - f, 0, p->gfx_stars, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
+    lbxgfx_draw_frame_offs(0 - f, 0, p->gfx_stars, 0, 0, UI_VGA_W - 1, UI_VGA_H - 1, UI_SCREEN_W, ui_scale);
+    lbxgfx_draw_frame_offs(UI_VGA_W - f, 0, p->gfx_stars, 0, 0, UI_VGA_W - 1, UI_VGA_H - 1, UI_SCREEN_W, ui_scale);
     if (f > 0x32) {
-        lbxgfx_draw_frame(0, 0, p->gfx_ships, UI_SCREEN_W);
-        lbxgfx_draw_frame_offs(0x13f - ((f - 0x32) * 3) / 2, 0, p->gfx_planets, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
+        lbxgfx_draw_frame(0, 0, p->gfx_ships, UI_SCREEN_W, ui_scale);
+        lbxgfx_draw_frame_offs(UI_VGA_W - 1 - ((f - 0x32) * 3) / 2, 0, p->gfx_planets, 0, 0, UI_VGA_W - 1, UI_VGA_H - 1, UI_SCREEN_W, ui_scale);
     }
     lbxfont_select(4, 0, 0, 0);
     if ((f > 0xa) && (f < 0x14)) {
@@ -107,8 +107,8 @@ static void ui_play_winlose_cb1(void *vptr)
         char buf[100];
         lib_strcpy(buf, game_str_wl_won_1, sizeof(buf));
         lib_strcat(buf, p->name, sizeof(buf));
-        lbxfont_print_str_normal(5, 10, buf, UI_SCREEN_W);
-        lbxfont_print_str_normal(5, 0x19, game_str_wl_won_2, UI_SCREEN_W);
+        lbxfont_print_str_normal(5, 10, buf, UI_SCREEN_W, ui_scale);
+        lbxfont_print_str_normal(5, 0x19, game_str_wl_won_2, UI_SCREEN_W, ui_scale);
     }
     if ((f > 0x50) && (f < 0x5a)) {
         lbxpal_set_update_range(2, 0x20);
@@ -123,7 +123,7 @@ static void ui_play_winlose_cb1(void *vptr)
         ui_palette_fade_n((f - 0x82) * 0xa);
     }
     if ((f > 0x50) && (f < 0x8c)) {
-        lbxfont_print_str_normal(10, 10, game_str_wl_won_3, UI_SCREEN_W);
+        lbxfont_print_str_normal(10, 10, game_str_wl_won_3, UI_SCREEN_W, ui_scale);
     }
 
     p->frame = ++f;
@@ -135,11 +135,11 @@ static void ui_play_winlose_cb2(void *vptr)
     int f = p->frame;
     if (f == 0) {
         ui_draw_erase_buf();
-        lbxgfx_draw_frame_pal(0, 0, p->gfx_winning2, UI_SCREEN_W);
+        lbxgfx_draw_frame_pal(0, 0, p->gfx_winning2, UI_SCREEN_W, ui_scale);
         lbxpal_set_update_range(0, 255);
     } else {
         hw_video_copy_buf();
-        lbxgfx_draw_frame_pal(0, 0, p->gfx_winning2, UI_SCREEN_W);
+        lbxgfx_draw_frame_pal(0, 0, p->gfx_winning2, UI_SCREEN_W, ui_scale);
     }
     p->frame = ++f;
 }
@@ -157,10 +157,10 @@ static void ui_play_winlose_cb3(void *vptr)
     } else {
         hw_video_copy_buf();
     }
-    lbxgfx_draw_frame_pal(0, 0, p->gfx_winlast, UI_SCREEN_W);
+    lbxgfx_draw_frame_pal(0, 0, p->gfx_winlast, UI_SCREEN_W, ui_scale);
     lbxgfx_set_frame_0(p->gfx_winface);
     for (f = 0; f <= ff; ++f) {
-        lbxgfx_draw_frame(0x82, 0x32, p->gfx_winface, UI_SCREEN_W);
+        lbxgfx_draw_frame(0x82, 0x32, p->gfx_winface, UI_SCREEN_W, ui_scale);
     }
     f = ++fc;
     lbxfont_select(4, 0, 0, 0);
@@ -177,16 +177,16 @@ static void ui_play_winlose_cb3(void *vptr)
         ui_palette_fade_n(0);
     }
     if ((f > 0x0a) && (f < 0x46)) {
-        lbxfont_print_str_normal(10, 10, p->str1, UI_SCREEN_W);
+        lbxfont_print_str_normal(10, 10, p->str1, UI_SCREEN_W, ui_scale);
         if (p->flag_good) {
-            lbxfont_print_str_normal(10, 0x19, p->str2, UI_SCREEN_W);
+            lbxfont_print_str_normal(10, 0x19, p->str2, UI_SCREEN_W, ui_scale);
         } else {
             char buf[0x48];
             lib_strcpy(buf, p->str2, sizeof(buf));
             lib_strcat(buf, p->name, sizeof(buf));
             lib_strcat(buf, p->str3, sizeof(buf));
-            lbxfont_print_str_normal(10, 0x19, buf, UI_SCREEN_W);
-            lbxfont_print_str_normal(10, 0x28, p->str4, UI_SCREEN_W);
+            lbxfont_print_str_normal(10, 0x19, buf, UI_SCREEN_W, ui_scale);
+            lbxfont_print_str_normal(10, 0x28, p->str4, UI_SCREEN_W, ui_scale);
         }
     }
     p->frame = f;
@@ -344,10 +344,10 @@ static void ui_play_winlose_exile_cb(void *vptr)
     struct anim_winlose_exile_s *p = vptr;
     int f = p->frame;
     ui_draw_erase_buf();
-    lbxgfx_draw_frame_offs(0x000 - f, 0, p->gfx_stars, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
-    lbxgfx_draw_frame_offs(0x140 - f, 0, p->gfx_stars, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
-    lbxgfx_draw_frame_offs(0x280 - f, 0, p->gfx_stars, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
-    lbxgfx_draw_frame_offs(f * 3 - 0xf0, 0, p->gfx_ships, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
+    lbxgfx_draw_frame_offs(0 - f, 0, p->gfx_stars, 0, 0, UI_VGA_W - 1, UI_VGA_H - 1, UI_SCREEN_W, ui_scale);
+    lbxgfx_draw_frame_offs(UI_VGA_W - f, 0, p->gfx_stars, 0, 0, UI_VGA_W - 1, UI_VGA_H - 1, UI_SCREEN_W, ui_scale);
+    lbxgfx_draw_frame_offs(UI_VGA_W * 2- f, 0, p->gfx_stars, 0, 0, UI_VGA_W - 1, UI_VGA_H - 1, UI_SCREEN_W, ui_scale);
+    lbxgfx_draw_frame_offs(f * 3 - 0xf0, 0, p->gfx_ships, 0, 0, UI_VGA_W - 1, UI_VGA_H - 1, UI_SCREEN_W, ui_scale);
 
     lbxfont_select(4, 0, 0, 0);
 
@@ -367,8 +367,8 @@ static void ui_play_winlose_exile_cb(void *vptr)
         char buf[100];
         lib_strcpy(buf, game_str_wl_exile_1, sizeof(buf));
         lib_strcat(buf, p->name, sizeof(buf));
-        lbxfont_print_str_normal(0, 0xa, buf, UI_SCREEN_W);
-        lbxfont_print_str_normal(0, 0x19, game_str_wl_exile_2, UI_SCREEN_W);
+        lbxfont_print_str_normal(0, 0xa, buf, UI_SCREEN_W, ui_scale);
+        lbxfont_print_str_normal(0, 0x19, game_str_wl_exile_2, UI_SCREEN_W, ui_scale);
     }
 
     lbxfont_select(4, 0, 0, 0);
@@ -387,8 +387,8 @@ static void ui_play_winlose_exile_cb(void *vptr)
     }
 
     if ((f > 0xa0) && (f < 0x118)) {
-        lbxfont_print_str_normal(0xa, 0xa, game_str_wl_exile_3, UI_SCREEN_W);
-        lbxfont_print_str_normal(0xa, 0x19, game_str_wl_exile_4, UI_SCREEN_W);
+        lbxfont_print_str_normal(0xa, 0xa, game_str_wl_exile_3, UI_SCREEN_W, ui_scale);
+        lbxfont_print_str_normal(0xa, 0x19, game_str_wl_exile_4, UI_SCREEN_W, ui_scale);
     }
 
     p->frame = ++f;
@@ -402,16 +402,16 @@ static void ui_play_winlose_funeral_cb(void *vptr)
     fa = lbxgfx_get_frame(p->gfx_lose);
     lbxgfx_set_frame_0(p->gfx_lose);
     for (int i = 0; i <= fa; ++i) {
-        lbxgfx_draw_frame(0, 0, p->gfx_lose, UI_SCREEN_W);
+        lbxgfx_draw_frame(0, 0, p->gfx_lose, UI_SCREEN_W, ui_scale);
     }
     if ((f > 0x14) && (f < 0xa6)) {
         int x, y;
         x = 0xf9 - ((f - 0x14) * 0x17b) / 0x92;
         y = ((f - 0x14) * 0xe3) / 0x92 - 0x4a;
-        lbxgfx_draw_frame_offs(x, y, p->gfx_coffin, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
-        lbxgfx_draw_frame_offs(x, y, p->gfx_march, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
+        lbxgfx_draw_frame_offs(x, y, p->gfx_coffin, 0, 0, UI_VGA_W - 1, UI_VGA_H - 1, UI_SCREEN_W, ui_scale);
+        lbxgfx_draw_frame_offs(x, y, p->gfx_march, 0, 0, UI_VGA_W - 1, UI_VGA_H - 1, UI_SCREEN_W, ui_scale);
     }
-    lbxgfx_draw_frame(0, 0, p->gfx_flag, UI_SCREEN_W);
+    lbxgfx_draw_frame(0, 0, p->gfx_flag, UI_SCREEN_W, ui_scale);
     p->frame = ++f;
 }
 

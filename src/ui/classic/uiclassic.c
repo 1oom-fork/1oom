@@ -20,8 +20,10 @@
 #include "log.h"
 #include "options.h"
 #include "types.h"
+#include "uicursor.h"
 #include "uidefs.h"
 #include "uidelay.h"
+#include "uiobj.h"
 #include "uipal.h"
 #include "uiobj.h"
 #include "vgapal.h"
@@ -51,6 +53,17 @@ void ui_extra_toggle_preset(bool enabled)
     ui_mouse_warp_disabled = enabled;
 }
 
+static bool check_ui_scale(void *var)
+{
+    int v = (int)(intptr_t)var;
+    if ((v > 0) && (v < UI_SCALE_MAX)) {
+        return true;
+    } else {
+        log_error("invalid ui_scale %i, must be 0 < N < %i\n", v, UI_SCALE_MAX);
+        return false;
+    }
+}
+
 static bool check_ui_icon(void *var)
 {
     int v = (int)(intptr_t)var;
@@ -74,6 +87,7 @@ static bool check_ui_sm_scroll_speed(void *var)
 }
 
 const struct cfg_items_s ui_cfg_items[] = {
+    CFG_ITEM_INT("uiscale", &ui_scale, check_ui_scale),
     CFG_ITEM_BOOL("uiextra", &ui_extra_enabled),
     CFG_ITEM_BOOL("uifixbugs", &ui_fixbugs_enabled),
     CFG_ITEM_BOOL("illogical_hotkey_fix", &ui_illogical_hotkey_fix),
@@ -103,6 +117,16 @@ const struct cfg_items_s ui_cfg_items[] = {
     CFG_ITEM_END
 };
 
+static int ui_options_set_scale(char **argv, void *var)
+{
+    int v = atoi(argv[1]);
+    if (check_ui_scale((void *)(intptr_t)v)) {
+        ui_scale = v;
+        return 0;
+    }
+    return -1;
+}
+
 static int ui_options_set_scroll_speed(char **argv, void *var)
 {
     int v = atoi(argv[1]);
@@ -114,6 +138,9 @@ static int ui_options_set_scroll_speed(char **argv, void *var)
 }
 
 const struct cmdline_options_s ui_cmdline_options[] = {
+    { "-uiscale", 1,
+      ui_options_set_scale, 0,
+      "SCALE", "UI scaling factor" },
     { "-uiextra", 0,
       options_enable_bool_var, (void *)&ui_extra_enabled,
       NULL, "Enable UI extras" },
@@ -144,6 +171,9 @@ const char *idstr_ui = "classic";
 
 struct ui_data_s ui_data = { 0 };
 
+int ui_screen_w = 0;
+int ui_screen_h = 0;
+int ui_scale = 0;
 bool ui_extra_enabled = false;
 bool ui_fixbugs_enabled = false;
 bool ui_illogical_hotkey_fix = false;
@@ -459,6 +489,14 @@ int ui_late_init(void)
         log_error("V11.LBX not found! Make sure that your MOO1 is updated to v1.3.\n");
         return 1;
     }
+    if (ui_scale == 0) {
+        ui_scale = 1;
+    }
+    ui_screen_w = UI_VGA_W * ui_scale;
+    ui_screen_h = UI_VGA_H * ui_scale;
+    ui_cursor_init(ui_scale);
+    log_message("UI: scale %i -> %ix%i\n", ui_scale, ui_screen_w, ui_screen_h);
+    uiobj_set_limits_all();
     if (0
       || lbxfont_init()
       || init_lbx_ships()

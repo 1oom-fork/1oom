@@ -69,11 +69,11 @@ static void explore_draw_planetinfo(const struct game_s *g, uint8_t planet)
             }
             y = 33;
             lbxfont_select_set_12_4(3, 0, 0, 0);
-            lbxfont_print_str_center(267, 92, game_str_ex_pg1[i], UI_SCREEN_W);
-            lbxfont_print_str_center(267, 101, game_str_ex_pg2[i], UI_SCREEN_W);
+            lbxfont_print_str_center(267, 92, game_str_ex_pg1[i], UI_SCREEN_W, ui_scale);
+            lbxfont_print_str_center(267, 101, game_str_ex_pg2[i], UI_SCREEN_W, ui_scale);
             lbxfont_select_set_12_4(2, 0xa, 0, 0);
-            lbxfont_print_str_center(267, 111, game_str_ex_popgr, UI_SCREEN_W);
-            lbxfont_print_str_center(267, 118, game_str_ex_pg3[i], UI_SCREEN_W);
+            lbxfont_print_str_center(267, 111, game_str_ex_popgr, UI_SCREEN_W, ui_scale);
+            lbxfont_print_str_center(267, 118, game_str_ex_pg3[i], UI_SCREEN_W, ui_scale);
         }
         if (p->special != PLANET_SPECIAL_NORMAL) {
             const char *s1, *s2, *s3;
@@ -85,7 +85,7 @@ static void explore_draw_planetinfo(const struct game_s *g, uint8_t planet)
                 --i;
             }
             lbxfont_select_set_12_4(3, 0, 0, 0);
-            lbxfont_print_str_center(267, 96 + y, game_str_ex_ps1[i], UI_SCREEN_W);
+            lbxfont_print_str_center(267, 96 + y, game_str_ex_ps1[i], UI_SCREEN_W, ui_scale);
             lbxfont_select_set_12_4(2, 0xa, 0, 0);
             if ((p->special != PLANET_SPECIAL_ARTIFACTS) && (p->special != PLANET_SPECIAL_4XTECH)) {
                 i = p->special;
@@ -100,9 +100,9 @@ static void explore_draw_planetinfo(const struct game_s *g, uint8_t planet)
                 s2 = game_str_ex_fromres;
                 s3 = (p->special == PLANET_SPECIAL_ARTIFACTS) ? game_str_ex_aredbl : game_str_ex_arequad;
             }
-            lbxfont_print_str_center(267, 106 + y, s1, UI_SCREEN_W);
-            lbxfont_print_str_center(267, 113 + y, s2, UI_SCREEN_W);
-            lbxfont_print_str_center(267, 120 + y, s3, UI_SCREEN_W);
+            lbxfont_print_str_center(267, 106 + y, s1, UI_SCREEN_W, ui_scale);
+            lbxfont_print_str_center(267, 113 + y, s2, UI_SCREEN_W, ui_scale);
+            lbxfont_print_str_center(267, 120 + y, s3, UI_SCREEN_W, ui_scale);
         }
     }
 }
@@ -112,32 +112,32 @@ static void explore_draw_cb(void *vptr)
     struct explore_data_s *d = vptr;
     const struct game_s *g = d->g;
     hw_video_copy_back_from_page2();
-    ui_draw_filled_rect(222, 4, 314, 179, 0);
-    lbxgfx_draw_frame(222, 4, d->gfx_explobac, UI_SCREEN_W);
+    ui_draw_filled_rect(222, 4, 314, 179, 0, ui_scale);
+    lbxgfx_draw_frame(222, 4, d->gfx_explobac, UI_SCREEN_W, ui_scale);
     ui_starmap_draw_planetinfo_2(g, d->api, PLAYER_NUM, d->planet);
-    lbxgfx_draw_frame(227, 58, d->gfx_colony, UI_SCREEN_W);
-    ui_draw_line1(227, 57, 227, 160, 0);
-    ui_draw_line1(227, 57, 310, 57, 0);
-    ui_draw_line1(310, 57, 310, 160, 0);
+    lbxgfx_draw_frame(227, 58, d->gfx_colony, UI_SCREEN_W, ui_scale);
+    ui_draw_line1(227, 57, 227, 160, 0, ui_scale);
+    ui_draw_line1(227, 57, 310, 57, 0, ui_scale);
+    ui_draw_line1(310, 57, 310, 160, 0, ui_scale);
     /*game_update_visibility();*/
     ui_gmap_basic_draw_frame(d->gmap, d->api);
     ui_gmap_draw_planet_border(g, d->planet);
     lbxfont_select_set_12_1(3, 0xa, 0, 0);
     if (!d->colony_ship) {
         if (d->by_scanner) {
-            lbxfont_print_str_center(267, 58, game_str_ex_planeta, UI_SCREEN_W);
-            lbxfont_print_str_center(267, 66, game_str_ex_scanner, UI_SCREEN_W);
-            lbxfont_print_str_center(267, 74, game_str_ex_explore, UI_SCREEN_W);
-            lbxfont_print_str_center(267, 82, game_str_ex_starsys, UI_SCREEN_W);
+            lbxfont_print_str_center(267, 58, game_str_ex_planeta, UI_SCREEN_W, ui_scale);
+            lbxfont_print_str_center(267, 66, game_str_ex_scanner, UI_SCREEN_W, ui_scale);
+            lbxfont_print_str_center(267, 74, game_str_ex_explore, UI_SCREEN_W, ui_scale);
+            lbxfont_print_str_center(267, 82, game_str_ex_starsys, UI_SCREEN_W, ui_scale);
         } else {
-            lbxfont_print_str_center(267, 60, game_str_ex_scout, UI_SCREEN_W);
-            lbxfont_print_str_center(267, 69, game_str_ex_explore, UI_SCREEN_W);
-            lbxfont_print_str_center(267, 78, game_str_ex_starsys, UI_SCREEN_W);
+            lbxfont_print_str_center(267, 60, game_str_ex_scout, UI_SCREEN_W, ui_scale);
+            lbxfont_print_str_center(267, 69, game_str_ex_explore, UI_SCREEN_W, ui_scale);
+            lbxfont_print_str_center(267, 78, game_str_ex_starsys, UI_SCREEN_W, ui_scale);
         }
     } else {
-        lbxfont_print_str_center(267, 60, game_str_ex_build, UI_SCREEN_W);
-        lbxfont_print_str_center(267, 69, game_str_ex_colony, UI_SCREEN_W);
-        lbxgfx_draw_frame(224, 159, d->gfx_yn_back, UI_SCREEN_W);
+        lbxfont_print_str_center(267, 60, game_str_ex_build, UI_SCREEN_W, ui_scale);
+        lbxfont_print_str_center(267, 69, game_str_ex_colony, UI_SCREEN_W, ui_scale);
+        lbxgfx_draw_frame(224, 159, d->gfx_yn_back, UI_SCREEN_W, ui_scale);
     }
     explore_draw_planetinfo(g, d->planet);
 }

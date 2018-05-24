@@ -43,13 +43,13 @@ static void empirestatus_draw_cb(void *vptr)
     const struct game_stats_s *st = &(d->st);
 
     ui_draw_color_buf(0x3a);
-    lbxgfx_draw_frame(0, 0, d->gfx, UI_SCREEN_W);
+    lbxgfx_draw_frame(0, 0, d->gfx, UI_SCREEN_W, ui_scale);
 
     lbxfont_select_set_12_4(4, 0xf, 0, 0);
-    lbxfont_print_str_center(160, 9, game_str_ra_stats, UI_SCREEN_W);
+    lbxfont_print_str_center(160, 9, game_str_ra_stats, UI_SCREEN_W, ui_scale);
     lbxfont_select_set_12_4(5, 5, 0, 0);
-    lbxfont_print_str_normal(15, 11, game_str_year, UI_SCREEN_W);
-    lbxfont_print_num_normal(42, 11, g->year + YEAR_BASE, UI_SCREEN_W);
+    lbxfont_print_str_normal(15, 11, game_str_year, UI_SCREEN_W, ui_scale);
+    lbxfont_print_num_normal(42, 11, g->year + YEAR_BASE, UI_SCREEN_W, ui_scale);
 
     lbxfont_select(2, 6, 0, 0);
     for (int s = 0; s < 6; ++s) {
@@ -62,12 +62,12 @@ static void empirestatus_draw_cb(void *vptr)
             y = (s % 3) * 57 + i * 7 + 38;
             pi = st->p[i];
             e = (&g->eto[pi]);
-            lbxfont_print_str_normal(x, y, game_str_tbl_race[e->race], UI_SCREEN_W);
+            lbxfont_print_str_normal(x, y, game_str_tbl_race[e->race], UI_SCREEN_W, ui_scale);
             v = st->v[s][i];
             if (v) {
-                ui_draw_filled_rect(x + 35, y + 1, x + 34 + v, y + 2, tbl_banner_color2[e->banner]);
+                ui_draw_filled_rect(x + 35, y + 1, x + 34 + v, y + 2, tbl_banner_color2[e->banner], ui_scale);
                 if (v > 1) {
-                    ui_draw_line1(x + 35, y + 3, x + 33 + v, y + 3, 0);
+                    ui_draw_line1(x + 35, y + 3, x + 33 + v, y + 3, 0, ui_scale);
                 }
             }
         }
