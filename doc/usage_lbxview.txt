@@ -51,3 +51,4 @@ Keys while in gfx LBX:
 - Ctrl-Enter: save all frames as z_$LBXNAME_$ITEMNUM_$FRAME.pcx
 - c: toggle clear before draw
 - q: cycle rotation test modes
+- z: cycle UI scaling test modes

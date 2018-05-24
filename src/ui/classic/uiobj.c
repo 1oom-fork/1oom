@@ -28,7 +28,7 @@
 */
 #define UIOBJ_MAX   (PLANETS_MAX * 7 + FLEET_ENROUTE_MAX + TRANSPORT_MAX + 32)
 
-#define UIOBJ_OFFSCREEN (((UI_SCREEN_W > UI_SCREEN_H) ? UI_SCREEN_W : UI_SCREEN_H) + 100)
+#define UIOBJ_OFFSCREEN (320 * UI_SCALE_MAX + 100)
 
 typedef struct uiobj_s {
     /*00*/ uint16_t x0;
@@ -48,6 +48,7 @@ typedef struct uiobj_s {
         tb: scroll area
     */
     /*08*/ uint8_t type;
+    /*..*/ uint8_t scale;
     /*1a*/ int16_t *vptr;
     /*24*/ uint32_t key;
     union {
@@ -152,8 +153,8 @@ static uiobj_t uiobj_tbl[UIOBJ_MAX];
 
 int uiobj_minx = 0;
 int uiobj_miny = 0;
-int uiobj_maxx = UI_SCREEN_W - 1;
-int uiobj_maxy = UI_SCREEN_H - 1;
+int uiobj_maxx = 0;
+int uiobj_maxy = 0;
 
 /* -------------------------------------------------------------------------- */
 
@@ -161,7 +162,7 @@ int uiobj_maxy = UI_SCREEN_H - 1;
 #define DEBUGLEVEL_UIOBJ    1
 static void dump_uiobj_p(uiobj_t *p)
 {
-    LOG_DEBUG((DEBUGLEVEL_UIOBJ, "i:%i xy:%i-%i,%i-%i t:%x key:%05x(%c) vptr:%i*:%i ", (p - uiobj_tbl), p->x0, p->x1, p->y0, p->y1, p->type, p->key, (p->key >= 0x20 && p->key < 0x7e) ? p->key : '.', p->vptr ? 0 : 1, p->vptr ? *p->vptr : 0));
+    LOG_DEBUG((DEBUGLEVEL_UIOBJ, "i:%i xy:%i-%i,%i-%i s:%i t:%x key:%05x(%c) vptr:%i*:%i ", (p - uiobj_tbl), p->x0, p->x1, p->y0, p->y1, p->scale, p->type, p->key, (p->key >= 0x20 && p->key < 0x7e) ? p->key : '.', p->vptr ? 0 : 1, p->vptr ? *p->vptr : 0));
     switch (p->type) {
         case 0:
         case 1:
@@ -241,6 +242,16 @@ static int smidy(uiobj_t *p)
     return p->y0 + (p->y1 - p->y0) / 2;
 }
 
+static int scmidx(uiobj_t *p)
+{
+    return (p->x0 + (p->x1 - p->x0) / 2) * p->scale;
+}
+
+static int scmidy(uiobj_t *p)
+{
+    return (p->y0 + (p->y1 - p->y0) / 2) * p->scale;
+}
+
 static int smidyhmm2(uiobj_t *p)
 {
     return smidy(p) - hmmdiv2(lbxfont_get_height());
@@ -250,7 +261,12 @@ static inline bool uiobj_is_at_xy(uiobj_t *p, int x, int y)
 {
     x += uiobj_mouseoff;
     y += uiobj_mouseoff;
-    if ((x < p->x0) || (x > p->x1) || (y < p->y0) || (y > p->y1)) {
+    if (0
+      || (x < (p->x0 * p->scale))
+      || (x > (p->x1 * p->scale))
+      || (y < (p->y0 * p->scale))
+      || (y > (p->y1 * p->scale))
+    ) {
         return false;
     }
     return true;
@@ -261,19 +277,19 @@ static void uiobj_handle_t03_cond(uiobj_t *p, bool cond)
     /* p->type == 0..3 */
     if (cond) {
         lbxgfx_set_frame_0(p->t0.lbxdata);
-        lbxgfx_draw_frame(p->x0, p->y0, p->t0.lbxdata, UI_SCREEN_W);
+        lbxgfx_draw_frame(p->x0, p->y0, p->t0.lbxdata, UI_SCREEN_W, p->scale);
         lbxfont_select(p->t0.fontnum, p->t0.fonta2, 0, 0);
-        lbxfont_print_str_center(smidx(p), smidyhmm2(p), p->t0.str, UI_SCREEN_W);
+        lbxfont_print_str_center(smidx(p), smidyhmm2(p), p->t0.str, UI_SCREEN_W, p->scale);
     } else {
         if (p->t0.indep == 0) {
             lbxgfx_set_frame_0(p->t0.lbxdata);
-            lbxgfx_draw_frame(p->x0, p->y0, p->t0.lbxdata, UI_SCREEN_W);
+            lbxgfx_draw_frame(p->x0, p->y0, p->t0.lbxdata, UI_SCREEN_W, p->scale);
         } else {
             lbxgfx_set_new_frame(p->t0.lbxdata, 1);
         }
-        lbxgfx_draw_frame(p->x0, p->y0, p->t0.lbxdata, UI_SCREEN_W);
+        lbxgfx_draw_frame(p->x0, p->y0, p->t0.lbxdata, UI_SCREEN_W, p->scale);
         lbxfont_select(p->t0.fontnum, p->t0.fonta2, 0, 0);
-        lbxfont_print_str_center(smidx(p) + uiobj_hmm3_xoff, smidyhmm2(p) + uiobj_hmm3_yoff, p->t0.str, UI_SCREEN_W);
+        lbxfont_print_str_center(smidx(p) + uiobj_hmm3_xoff, smidyhmm2(p) + uiobj_hmm3_yoff, p->t0.str, UI_SCREEN_W, p->scale);
     }
 }
 
@@ -290,7 +306,7 @@ static void uiobj_handle_t4_sub2(uiobj_t *p, uint16_t len, uint16_t a4, const ch
     lbxfont_select(p->t4.fontnum, p->t4.fonta2, p->t4.fonta4, 0);
     va = lbxfont_get_height() - 1;
     if (p->t4.rectcolor != 0) {
-        ui_draw_filled_rect(p->x0, p->y0, p->x1, p->y1, p->t4.rectcolor);
+        ui_draw_filled_rect(p->x0, p->y0, p->x1, p->y1, p->t4.rectcolor, p->scale);
     }
     if (p->t4.z1e == 0) {
         uint16_t l, w, x, vc;
@@ -304,7 +320,7 @@ static void uiobj_handle_t4_sub2(uiobj_t *p, uint16_t len, uint16_t a4, const ch
             vc = p->y0 + va;
             l = 0;
             while (si > 0) {
-                ui_draw_line1(x, vc - si + 1, x + w + 1, vc - si + 1, p->t4.colortbl[l]);
+                ui_draw_line1(x, vc - si + 1, x + w + 1, vc - si + 1, p->t4.colortbl[l], p->scale);
                 ++l;
                 --si;
             }
@@ -312,14 +328,14 @@ static void uiobj_handle_t4_sub2(uiobj_t *p, uint16_t len, uint16_t a4, const ch
             si = va - (si - va);
             l = 0;
             while (si > 0) {
-                ui_draw_line1(x, p->y0 + si - 1, x + w + 1, p->y0 + si - 1, p->t4.colortbl[va - l - 1]);
+                ui_draw_line1(x, p->y0 + si - 1, x + w + 1, p->y0 + si - 1, p->t4.colortbl[va - l - 1], p->scale);
                 ++l;
                 --si;
             }
         }
     }
     lbxfont_select_subcolors_13not1();
-    lbxfont_print_str_normal(p->x0, p->y0, strbuf, UI_SCREEN_W);
+    lbxfont_print_str_normal(p->x0, p->y0, strbuf, UI_SCREEN_W, p->scale);
     ui_palette_set_n();
     uiobj_finish_frame();
     ui_delay_ticks_or_click(uiobj_hmm5_delay);
@@ -512,8 +528,8 @@ static void uiobj_handle_t6_slider_input(uiobj_t *p)
     /* p->type == 6 */
     uint16_t sliderval, slideroff, di;
     di = moouse_x + uiobj_mouseoff;
-    slideroff = ((p->t6.vmax - p->t6.vmin) * (di - p->x0)) / (p->x1 - p->x0);
-    if (p->x1 <= di) {
+    slideroff = ((p->t6.vmax - p->t6.vmin) * (di - p->x0 * p->scale)) / ((p->x1 - p->x0) * p->scale);
+    if (p->x1 * p->scale <= di) {
         sliderval = p->t6.vmax;
     } else if (p->x0 >= di) {
         sliderval = p->t6.vmin;
@@ -529,24 +545,24 @@ static void uiobj_handle_t6_slider_input(uiobj_t *p)
     *p->vptr = sliderval;
 }
 
-static void uiobj_handle_ta_sub1(int x0, int y0, int x1, int y1, uint16_t subtype, uint8_t *p0p, uint16_t p0v, uint16_t p1, uint16_t p2, uint16_t p3)
+static void uiobj_handle_ta_sub1(int x0, int y0, int x1, int y1, uint16_t subtype, uint8_t *p0p, uint16_t p0v, uint16_t p1, uint16_t p2, uint16_t p3, int scale)
 {
     /* type == 0xa */
     switch (subtype) {
         case 1:
-            ui_draw_filled_rect(x0, y0, x1, y1, p0v);
+            ui_draw_filled_rect(x0, y0, x1, y1, p0v, scale);
             break;
         case 3:
             p0v = 0;
             /* fall through */
         case 0xf:
-            lbxgfx_apply_colortable(x0, y0, x1, y1, p0v, UI_SCREEN_W);
+            lbxgfx_apply_colortable(x0, y0, x1, y1, p0v, UI_SCREEN_W, scale);
             break;
         case 7:
-            ui_draw_box_fill(x0, y0, x1, y1, p0p, p0v, p1, p2, p3);
+            ui_draw_box_fill(x0, y0, x1, y1, p0p, p0v, p1, p2, p3, scale);
             break;
         case 0xd:
-            ui_draw_hmm3(x0, y0, x1, y1, p0v, p1, p3);
+            ui_draw_hmm3(x0, y0, x1, y1, p0v, p1, p3, scale);
             break;
         default:
             break;
@@ -578,7 +594,7 @@ static inline void uiobj_handle_hmm1_sub1(int i)
                     lbxfont_select(p->ta.fontnum, p->ta.fonta2b, uiobj_hmm3_fonta4, 0);
                 }
                 /*19ca3*/
-                lbxfont_print_str_normal(p->x0, p->y0 + 1, p->ta.str, UI_SCREEN_W);
+                lbxfont_print_str_normal(p->x0, p->y0 + 1, p->ta.str, UI_SCREEN_W, p->scale);
             } else {
                 int16_t v2, di;
                 v2 = lbxfont_get_diff_44_10();
@@ -589,18 +605,18 @@ static inline void uiobj_handle_hmm1_sub1(int i)
                 }
                 di = lbxfont_get_height();
                 /*19ce2*/
-                uiobj_handle_ta_sub1(p->x0 - 1, p->y0 - v2 + 1, p->x1, p->y0 + di + 1, p->ta.subtype, p->ta.sp0p, p->ta.sp0v, p->ta.sp1, p->ta.sp2, p->ta.sp3);
-                lbxfont_print_str_normal(p->x0, p->y0 + 1, p->ta.str, UI_SCREEN_W);
+                uiobj_handle_ta_sub1(p->x0 - 1, p->y0 - v2 + 1, p->x1, p->y0 + di + 1, p->ta.subtype, p->ta.sp0p, p->ta.sp0v, p->ta.sp1, p->ta.sp2, p->ta.sp3, p->scale);
+                lbxfont_print_str_normal(p->x0, p->y0 + 1, p->ta.str, UI_SCREEN_W, p->scale);
             }
             break;
         case 4:
             if (uiobj_hmm1_oi != i) {
                 lbxfont_select(p->t4.fontnum, p->t4.fonta2, p->t4.fonta4, 0);
-                ui_draw_filled_rect(p->x0, p->y0, p->x1, p->y1, p->t4.rectcolor);
+                ui_draw_filled_rect(p->x0, p->y0, p->x1, p->y1, p->t4.rectcolor, p->scale);
                 if (!p->t4.align_right) {
-                    lbxfont_print_str_normal(p->x0, p->y0, p->t4.buf, UI_SCREEN_W);
+                    lbxfont_print_str_normal(p->x0, p->y0, p->t4.buf, UI_SCREEN_W, p->scale);
                 } else {
-                    lbxfont_print_str_right(p->x1, p->y0, p->t4.buf, UI_SCREEN_W);
+                    lbxfont_print_str_right(p->x1, p->y0, p->t4.buf, UI_SCREEN_W, p->scale);
                 }
             }
             break;
@@ -651,10 +667,10 @@ static void uiobj_handle_hmm2(int i, uint16_t a2)
             lbxfont_select(p->ta.fontnum, p->ta.fonta2, uiobj_hmm3_fonta4, 0);
             if (*p->vptr != p->ta.z18) {
                 if (p->ta.z12) {
-                    lbxfont_print_str_normal(p->x0, p->y0, p->ta.str, UI_SCREEN_W);
+                    lbxfont_print_str_normal(p->x0, p->y0, p->ta.str, UI_SCREEN_W, p->scale);
                 } else {
                     lbxfont_select(p->ta.fontnum, p->ta.fonta2b, uiobj_hmm3_fonta4, 0);
-                    lbxfont_print_str_normal(p->x0, p->y0 + 1, p->ta.str, UI_SCREEN_W);
+                    lbxfont_print_str_normal(p->x0, p->y0 + 1, p->ta.str, UI_SCREEN_W, p->scale);
                     lbxfont_select_subcolors_0();
                 }
             } else {
@@ -666,8 +682,8 @@ static void uiobj_handle_hmm2(int i, uint16_t a2)
                     v4 = 1;
                 }
                 v2 = lbxfont_get_height();
-                uiobj_handle_ta_sub1(p->x0 - 1, p->y0 - v4 + 1, p->x1, p->y0 + v2 + 1, p->ta.subtype, p->ta.sp0p, p->ta.sp0v, p->ta.sp1, p->ta.sp2, p->ta.sp3);
-                lbxfont_print_str_normal(p->x0, p->y0 + 1, p->ta.str, UI_SCREEN_W);
+                uiobj_handle_ta_sub1(p->x0 - 1, p->y0 - v4 + 1, p->x1, p->y0 + v2 + 1, p->ta.subtype, p->ta.sp0p, p->ta.sp0v, p->ta.sp1, p->ta.sp2, p->ta.sp3, p->scale);
+                lbxfont_print_str_normal(p->x0, p->y0 + 1, p->ta.str, UI_SCREEN_W, p->scale);
             }
             break;
         case 0xb:
@@ -836,8 +852,8 @@ static int16_t uiobj_kbd_dir_key_dy(int diry)
     }
     if (oi > 0) {
         p = &uiobj_tbl[oi];
-        mouse_stored_x = smidx(p);
-        mouse_stored_y = smidy(p);
+        mouse_stored_x = scmidx(p);
+        mouse_stored_y = scmidy(p);
         if ((moouse_x != mouse_stored_x) || (moouse_y != mouse_stored_y)) {
             ui_cursor_update_gfx_i(mouse_stored_x, mouse_stored_y);
             uiobj_mouseoff = ui_cursor_mouseoff;
@@ -887,12 +903,12 @@ static int16_t uiobj_kbd_dir_key_dxdy(int dirx, int diry, int16_t oi2, int mx, i
             }
             p = &uiobj_tbl[i];
             if ((p->type < 0xb) && (p->key == MOO_KEY_UNKNOWN) && ((p->type != 0xa) || p->ta.z12)) {
-                dy = (diry < 0) ? (my - smidy(p)) : (smidy(p) - my);
-                dx = smidx(p) - mx;
-                if ((p->x0 <= mx) && (p->x1 >= mx) && ((dx < -6) || (dx > 6))) {
-                    dx = 6;
+                dy = (diry < 0) ? (my - scmidy(p)) : (scmidy(p) - my);
+                dx = scmidx(p) - mx;
+                if ((p->x0 * p->scale <= mx) && (p->x1 * p->scale >= mx) && ((dx < -6 * p->scale) || (dx > 6 * p->scale))) {
+                    dx = 6 * p->scale;
                 }
-                if ((dx > -6) && (dx < 6) && (dy > 0) && (dy < mind)) {
+                if ((dx > -6 * p->scale) && (dx < 6 * p->scale) && (dy > 0) && (dy < mind)) {
                     mind = dy;
                     oi = i;
                 }
@@ -909,10 +925,10 @@ static int16_t uiobj_kbd_dir_key_dxdy(int dirx, int diry, int16_t oi2, int mx, i
                 }
                 p = &uiobj_tbl[i];
                 if ((p->type < 0xb) && (p->key == MOO_KEY_UNKNOWN) && ((p->type != 0xa) || p->ta.z12)) {
-                    dy = (diry < 0) ? (my - smidy(p)) : (smidy(p) - my);
-                    dx = smidx(p) - mx;
-                    if ((p->x0 <= mx) && (p->x1 >= mx) && ((dx < -6) || (dx > 6))) {
-                        dx = 6;
+                    dy = (diry < 0) ? (my - scmidy(p)) : (scmidy(p) - my);
+                    dx = scmidx(p) - mx;
+                    if ((p->x0 * p->scale <= mx) && (p->x1 * p->scale >= mx) && ((dx < -6 * p->scale) || (dx > 6 * p->scale))) {
+                        dx = 6 * p->scale;
                     }
                     if (dx < 0) {
                         dx = -dx;
@@ -946,12 +962,12 @@ static int16_t uiobj_kbd_dir_key_dxdy(int dirx, int diry, int16_t oi2, int mx, i
             }
             p = &uiobj_tbl[i];
             if ((p->type < 0xb) && (p->key == MOO_KEY_UNKNOWN) && ((p->type != 0xa) || p->ta.z12)) {
-                dx = (dirx < 0) ? (mx - smidx(p)) : (smidx(p) - mx);
-                dy = smidy(p) - my;
-                if ((p->y0 <= my) && (p->y1 >= my) && ((dy < -6) || (dy > 6))) {
+                dx = (dirx < 0) ? (mx - scmidx(p)) : (scmidx(p) - mx);
+                dy = scmidy(p) - my;
+                if ((p->y0 * p->scale <= my) && (p->y1 * p->scale >= my) && ((dy * p->scale < -6) || (dy * p->scale > 6))) {
                     dy = 6;
                 }
-                if ((dy > -6) && (dy < 6) && (dx > 0) && (dx < mind)) {
+                if ((dy > -6 * p->scale) && (dy < 6 * p->scale) && (dx > 0) && (dx < mind)) {
                     mind = dx;
                     oi = i;
                 }
@@ -968,10 +984,10 @@ static int16_t uiobj_kbd_dir_key_dxdy(int dirx, int diry, int16_t oi2, int mx, i
                 }
                 p = &uiobj_tbl[i];
                 if ((p->type < 0xb) && (p->key == MOO_KEY_UNKNOWN) && ((p->type != 0xa) || p->ta.z12)) {
-                    dx = (dirx < 0) ? (mx - smidx(p)) : (smidx(p) - mx);
-                    dy = smidy(p) - my;
-                    if ((p->y0 <= my) && (p->y1 >= my) && ((dy < -6) || (dy > 6))) {
-                        dy = 6;
+                    dx = (dirx < 0) ? (mx - scmidx(p)) : (scmidx(p) - mx);
+                    dy = scmidy(p) - my;
+                    if ((p->y0 * p->scale <= my) && (p->y1 * p->scale >= my) && ((dy < -6 * p->scale) || (dy > 6 * p->scale))) {
+                        dy = 6 * p->scale;
                     }
                     if (dy < 0) {
                         dy = -dy;
@@ -1005,8 +1021,8 @@ static int16_t uiobj_kbd_dir_key_dxdy(int dirx, int diry, int16_t oi2, int mx, i
             }
             p = &uiobj_tbl[i];
             if ((p->type < 0xb) && (p->key == MOO_KEY_UNKNOWN) && ((p->type != 0xa) || p->ta.z12)) {
-                dx = (dirx < 0) ? (mx - smidx(p)) : (smidx(p) - mx);
-                dy = (diry < 0) ? (my - smidy(p)) : (smidy(p) - my);
+                dx = (dirx < 0) ? (mx - scmidx(p)) : (scmidx(p) - mx);
+                dy = (diry < 0) ? (my - scmidy(p)) : (scmidy(p) - my);
                 if ((dx < 0) || (dy < 0)) {
                     slope = UIOBJ_OFFSCREEN;
                     continue;
@@ -1073,8 +1089,8 @@ static int16_t uiobj_kbd_dir_key(int dirx, int diry)
         oi = uiobj_kbd_dir_key_dxdy(dirx, diry, oi2, mx, my);
         if ((oi != oi2) && (oi != UIOBJI_NONE)) {
             uiobj_t *p = &uiobj_tbl[oi];
-            mouse_stored_x = smidx(p);
-            mouse_stored_y = smidy(p);
+            mouse_stored_x = scmidx(p);
+            mouse_stored_y = scmidy(p);
             if ((mouse_stored_x >= 0) && (mouse_stored_x < UI_SCREEN_W) && (mouse_stored_y >= 0) && (mouse_stored_y < UI_SCREEN_H)) {
                 ui_cursor_update_gfx_i(mouse_stored_x, mouse_stored_y);
                 uiobj_mouseoff = ui_cursor_mouseoff;
@@ -1159,8 +1175,8 @@ static uint32_t uiobj_handle_kbd(int16_t *oiptr)
         *oiptr = oi;
         p = &uiobj_tbl[oi];
         if ((p->x0 < UI_SCREEN_W) && (p->y0 < UI_SCREEN_H)) {
-            mouse_stored_x = p->x0 + (p->x1 - p->x0) / 2;
-            mouse_stored_y = p->y0 + (p->y1 - p->y0) / 2;
+            mouse_stored_x = scmidx(p);
+            mouse_stored_y = scmidy(p);
             if ((mouse_stored_x < UI_SCREEN_W) && (mouse_stored_y < UI_SCREEN_H)) {
                 ui_cursor_update_gfx_i(mouse_stored_x, mouse_stored_y);
                 uiobj_mouseoff = ui_cursor_mouseoff;
@@ -1589,13 +1605,19 @@ static int16_t uiobj_handle_input_sub0(void)
     return 0;
 }
 
-static void uiobj_add_t03_do(uint16_t x, uint16_t y, const char *str, uint8_t *lbxdata, mookey_t key)
+static void uiobj_add_set_xys(uiobj_t *p, uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint8_t scale)
+{
+    p->scale = scale;
+    p->x0 = x0;
+    p->y0 = y0;
+    p->x1 = x1;
+    p->y1 = y1;
+}
+
+static void uiobj_add_t03_do(uint16_t x, uint16_t y, const char *str, uint8_t *lbxdata, mookey_t key, uint8_t scale)
 {
     uiobj_t *p = &uiobj_tbl[uiobj_table_num];
-    p->x0 = x;
-    p->y0 = y;
-    p->x1 = x + lbxgfx_get_w(lbxdata) - 1;
-    p->y1 = y + lbxgfx_get_h(lbxdata) - 1;
+    uiobj_add_set_xys(p, x, y, x + lbxgfx_get_w(lbxdata) - 1, y + lbxgfx_get_h(lbxdata) - 1, scale);
     p->t0.str = str;
     p->t0.fontnum = lbxfont_get_current_fontnum();
     p->t0.fonta2 = lbxfont_get_current_fonta2();
@@ -1814,7 +1836,7 @@ int16_t uiobj_at_cursor(void)
 int16_t uiobj_add_t0(uint16_t x, uint16_t y, const char *str, uint8_t *lbxdata, mookey_t key)
 {
     uiobj_t *p = &uiobj_tbl[uiobj_table_num];
-    uiobj_add_t03_do(x, y, str, lbxdata, key);
+    uiobj_add_t03_do(x, y, str, lbxdata, key, ui_scale);
     p->type = 0;
     p->vptr = 0;
     return UIOBJI_ALLOC();
@@ -1823,7 +1845,7 @@ int16_t uiobj_add_t0(uint16_t x, uint16_t y, const char *str, uint8_t *lbxdata, 
 int16_t uiobj_add_t1(uint16_t x, uint16_t y, const char *str, uint8_t *lbxdata, int16_t *vptr, mookey_t key)
 {
     uiobj_t *p = &uiobj_tbl[uiobj_table_num];
-    uiobj_add_t03_do(x, y, str, lbxdata, key);
+    uiobj_add_t03_do(x, y, str, lbxdata, key, ui_scale);
     p->type = 1;
     p->vptr = vptr;
     return UIOBJI_ALLOC();
@@ -1832,7 +1854,7 @@ int16_t uiobj_add_t1(uint16_t x, uint16_t y, const char *str, uint8_t *lbxdata, 
 int16_t uiobj_add_t2(uint16_t x, uint16_t y, const char *str, uint8_t *lbxdata, int16_t *vptr, mookey_t key)
 {
     uiobj_t *p = &uiobj_tbl[uiobj_table_num];
-    uiobj_add_t03_do(x, y, str, lbxdata, key);
+    uiobj_add_t03_do(x, y, str, lbxdata, key, ui_scale);
     p->type = 2;
     p->vptr = vptr;
     return UIOBJI_ALLOC();
@@ -1841,7 +1863,7 @@ int16_t uiobj_add_t2(uint16_t x, uint16_t y, const char *str, uint8_t *lbxdata, 
 int16_t uiobj_add_t3(uint16_t x, uint16_t y, const char *str, uint8_t *lbxdata, int16_t *vptr, int16_t z18, mookey_t key)
 {
     uiobj_t *p = &uiobj_tbl[uiobj_table_num];
-    uiobj_add_t03_do(x, y, str, lbxdata, key);
+    uiobj_add_t03_do(x, y, str, lbxdata, key, ui_scale);
     p->type = 3;
     p->vptr = vptr;
     p->t0.z18 = z18;
@@ -1851,10 +1873,7 @@ int16_t uiobj_add_t3(uint16_t x, uint16_t y, const char *str, uint8_t *lbxdata, 
 int16_t uiobj_add_t4(int x, int y, int w, char *buf, uint16_t buflen, uint8_t rcolor, bool alignr, uint16_t z1e, const uint8_t *colortbl, mookey_t key)
 {
     uiobj_t *p = &uiobj_tbl[uiobj_table_num];
-    p->x0 = x;
-    p->y0 = y;
-    p->x1 = x + w;
-    p->y1 = y + lbxfont_get_height();
+    uiobj_add_set_xys(p, x, y, x + w, y + lbxfont_get_height(), ui_scale);
     p->t4.fontnum = lbxfont_get_current_fontnum();
     p->t4.fonta2 = lbxfont_get_current_fonta2();
     p->t4.fonta4 = lbxfont_get_current_fonta2b();
@@ -1873,10 +1892,7 @@ int16_t uiobj_add_t4(int x, int y, int w, char *buf, uint16_t buflen, uint8_t rc
 int16_t uiobj_add_slider(uint16_t x0, uint16_t y0, uint16_t vmin, uint16_t vmax, uint16_t fmin, uint16_t fmax, uint16_t w, uint16_t h, int16_t *vptr, mookey_t key)
 {
     uiobj_t *p = &uiobj_tbl[uiobj_table_num];
-    p->x0 = x0;
-    p->y0 = y0;
-    p->x1 = x0 + w;
-    p->y1 = y0 + h;
+    uiobj_add_set_xys(p, x0, y0, x0 + w, y0 + h, ui_scale);
     p->t6.vmin = vmin;
     p->t6.vmax = vmax;
     p->t6.fmin = fmin;
@@ -1890,10 +1906,7 @@ int16_t uiobj_add_slider(uint16_t x0, uint16_t y0, uint16_t vmin, uint16_t vmax,
 int16_t uiobj_add_mousearea(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, mookey_t key)
 {
     uiobj_t *p = &uiobj_tbl[uiobj_table_num];
-    p->x0 = x0;
-    p->y0 = y0;
-    p->x1 = x1;
-    p->y1 = y1;
+    uiobj_add_set_xys(p, x0, y0, x1, y1, ui_scale);
     p->type = 7;
     p->vptr = 0;
     p->key = key;
@@ -1902,14 +1915,30 @@ int16_t uiobj_add_mousearea(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, 
 
 int16_t uiobj_add_mousearea_limited(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, mookey_t key)
 {
+    uiobj_t *p;
     if ((x1 < uiobj_minx) || (x0 > uiobj_maxx) || (y1 < uiobj_miny) || (y0 > uiobj_maxy)) {
         return UIOBJI_OUTSIDE;
     }
+    p = &uiobj_tbl[uiobj_table_num];
     x0 = MAX(x0, uiobj_minx);
     x1 = MIN(x1, uiobj_maxx);
     y0 = MAX(y0, uiobj_miny);
     y1 = MIN(y1, uiobj_maxy);
-    return uiobj_add_mousearea(x0, y0, x1, y1, key);
+    uiobj_add_set_xys(p, x0, y0, x1, y1, 1);
+    p->type = 7;
+    p->vptr = 0;
+    p->key = key;
+    return UIOBJI_ALLOC();
+}
+
+int16_t uiobj_add_mousearea_all(mookey_t key)
+{
+    uiobj_t *p = &uiobj_tbl[uiobj_table_num];
+    uiobj_add_set_xys(p, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, 1);
+    p->type = 7;
+    p->vptr = 0;
+    p->key = key;
+    return UIOBJI_ALLOC();
 }
 
 int16_t uiobj_add_inputkey(uint32_t key)
@@ -1951,10 +1980,7 @@ int16_t uiobj_add_alt_str(const char *str)
 int16_t uiobj_add_ta(uint16_t x, uint16_t y, uint16_t w, const char *str, bool z12, int16_t *vptr, int16_t z18, uint16_t subtype, uint8_t *sp0p, uint16_t sp0v, uint16_t sp1, uint16_t sp2, uint16_t sp3, mookey_t key)
 {
     uiobj_t *p = &uiobj_tbl[uiobj_table_num];
-    p->x0 = x;
-    p->y0 = y - 1;
-    p->x1 = x + w;
-    p->y1 = y + lbxfont_get_height() + 1;
+    uiobj_add_set_xys(p, x, y - 1, x + w, y + lbxfont_get_height() + 1, ui_scale);
     p->ta.fontnum = lbxfont_get_current_fontnum();
     p->ta.fonta2 = lbxfont_get_current_fonta2();
     p->ta.fonta2b = lbxfont_get_current_fonta2b();
@@ -1976,12 +2002,9 @@ int16_t uiobj_add_ta(uint16_t x, uint16_t y, uint16_t w, const char *str, bool z
 int16_t uiobj_add_tb(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t xscale, uint16_t yscale, uint16_t *xptr, uint16_t *yptr)
 {
     uiobj_t *p = &uiobj_tbl[uiobj_table_num];
-    p->x0 = x;
-    p->y0 = y;
-    p->x1 = x + w * xscale;
-    p->y1 = y + h * yscale;
-    p->tb.xdiv = w;
-    p->tb.ydiv = h;
+    uiobj_add_set_xys(p, x, y, x + w * xscale, y + h * yscale, ui_scale);
+    p->tb.xdiv = w * ui_scale;
+    p->tb.ydiv = h * ui_scale;
     p->tb.xptr = xptr;
     p->tb.yptr = yptr;
     p->type = 0xb;
@@ -1992,7 +2015,8 @@ int16_t uiobj_add_tb(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t xs
 
 void uiobj_dec_y1(int16_t oi)
 {
-    --uiobj_tbl[oi].y1;
+    uiobj_t *p = &uiobj_tbl[oi];
+    p->y1 -= p->scale;
 }
 
 void uiobj_ta_set_val_0(int16_t oi)

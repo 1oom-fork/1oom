@@ -5,6 +5,7 @@
 
 #include "ui.h"
 #include "bits.h"
+#include "cfg.h"
 #include "gfxaux.h"
 #include "hw.h"
 #include "lbx.h"
@@ -15,13 +16,45 @@
 #include "log.h"
 #include "options.h"
 #include "types.h"
+#include "uicursor.h"
 #include "uidefs.h"
+#include "uiobj.h"
 #include "uipal.h"
 #include "uiobj.h"
 
 /* -------------------------------------------------------------------------- */
 
+static bool check_ui_scale(void *var)
+{
+    int v = (int)(intptr_t)var;
+    if ((v > 0) && (v < UI_SCALE_MAX)) {
+        return true;
+    } else {
+        log_error("invalid ui_scale %i, must be 0 < N < %i\n", v, UI_SCALE_MAX);
+        return false;
+    }
+}
+
+const struct cfg_items_s ui_cfg_items[] = {
+    CFG_ITEM_INT("uiscale", &ui_scale, 0),
+    CFG_ITEM_END
+};
+
+static int ui_options_set_scale(char **argv, void *var)
+{
+    int v = atoi(argv[1]);
+    if (check_ui_scale((void *)(intptr_t)v)) {
+        ui_scale = v;
+        return 0;
+    }
+    return -1;
+}
+
+
 const struct cmdline_options_s ui_cmdline_options[] = {
+    { "-uiscale", 1,
+      ui_options_set_scale, 0,
+      "SCALE", "UI scaling factor" },
     { NULL, 0, NULL, NULL, NULL, NULL }
 };
 
@@ -30,6 +63,10 @@ const struct cmdline_options_s ui_cmdline_options[] = {
 const char *idstr_ui = "classic";
 
 struct ui_data_s ui_data = { 0 };
+
+int ui_screen_w = 0;
+int ui_screen_h = 0;
+int ui_scale = 0;
 
 bool ui_use_audio = true;
 
@@ -291,6 +328,14 @@ int ui_init(void)
 
 int ui_late_init(void)
 {
+    if (ui_scale == 0) {
+        ui_scale = 1;
+    }
+    ui_screen_w = UI_VGA_W * ui_scale;
+    ui_screen_h = UI_VGA_H * ui_scale;
+    ui_cursor_init(ui_scale);
+    log_message("UI: scale %i -> %ix%i\n", ui_scale, ui_screen_w, ui_screen_h);
+    uiobj_set_limits_all();
     if (0
       || lbxfont_init()
       || init_lbx_ships()

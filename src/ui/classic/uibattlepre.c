@@ -75,10 +75,10 @@ static void ui_battle_pre_draw_cb(void *vptr)
     const planet_t *p = &(g->planet[d->planet_i]);
     char buf[32];
     hw_video_copy_back_from_page2();
-    ui_draw_filled_rect(222, 4, 314, 179, 0);
-    lbxgfx_draw_frame(227, 57, d->gfx_ufleet, UI_SCREEN_W);
-    lbxgfx_draw_frame(227, 102, d->gfx_dfleet, UI_SCREEN_W);
-    lbxgfx_draw_frame(222, 4, d->gfx_fleet, UI_SCREEN_W);
+    ui_draw_filled_rect(222, 4, 314, 179, 0, ui_scale);
+    lbxgfx_draw_frame(227, 57, d->gfx_ufleet, UI_SCREEN_W, ui_scale);
+    lbxgfx_draw_frame(227, 102, d->gfx_dfleet, UI_SCREEN_W, ui_scale);
+    lbxgfx_draw_frame(222, 4, d->gfx_fleet, UI_SCREEN_W, ui_scale);
     if (d->hide_other) {
         ui_gmap_basic_draw_only(d->gmapctx, d->planet_i);
     } else {
@@ -92,23 +92,23 @@ static void ui_battle_pre_draw_cb(void *vptr)
         x = (p->x * 215) / g->galaxy_maxx + 5;
         y = (p->y * 171) / g->galaxy_maxy + 5;
         gfx = ui_data.gfx.starmap.smalflag[g->eto[p->owner].banner];
-        lbxgfx_draw_frame(x + 3, y - 2, gfx, UI_SCREEN_W);
+        lbxgfx_draw_frame(x + 3, y - 2, gfx, UI_SCREEN_W, ui_scale);
     }
     lbxfont_select_set_12_4(3, 0, 0, 0);
-    lbxfont_print_str_center(267, 64, game_str_bp_scombat, UI_SCREEN_W);
+    lbxfont_print_str_center(267, 64, game_str_bp_scombat, UI_SCREEN_W, ui_scale);
     if (d->party_d >= PLAYER_NUM) {
         strcpy(buf, game_str_tbl_mon_names[d->party_d - PLAYER_NUM]);
     } else {
         race_t race = g->eto[d->flag_human_att ? d->party_u : d->party_d].race;
         strcpy(buf, game_str_tbl_races[race]);
     }
-    lbxfont_print_str_center(267, 100, buf, UI_SCREEN_W);
-    lbxfont_print_str_center(267, 115, (d->party_d >= PLAYER_NUM) ? game_str_bp_attack : game_str_bp_attacks, UI_SCREEN_W);
+    lbxfont_print_str_center(267, 100, buf, UI_SCREEN_W, ui_scale);
+    lbxfont_print_str_center(267, 115, (d->party_d >= PLAYER_NUM) ? game_str_bp_attack : game_str_bp_attacks, UI_SCREEN_W, ui_scale);
     {
         race_t race = g->eto[d->flag_human_att ? d->party_d : d->party_u].race;
         strcpy(buf, game_str_tbl_races[race]);
     }
-    lbxfont_print_str_center(267, 130, buf, UI_SCREEN_W);
+    lbxfont_print_str_center(267, 130, buf, UI_SCREEN_W, ui_scale);
 }
 
 void ui_battle_pre(struct game_s *g, int party_u, int party_d, uint8_t planet_i, bool flag_human_att, bool hide_other)
@@ -123,14 +123,12 @@ void ui_battle_pre(struct game_s *g, int party_u, int party_d, uint8_t planet_i,
     d->flag_human_att = flag_human_att;
     d->hide_other = hide_other;
     battle_pre_load_data(d);
-#if 1
     if ((party_u < PLAYER_NUM) && IS_HUMAN(g, party_u)) {
         g->planet_focus_i[party_u] = planet_i;
     }
     if ((party_d < PLAYER_NUM) && IS_HUMAN(g, party_d)) {
         g->planet_focus_i[party_d] = planet_i;
     }
-#endif
     uiobj_table_clear();
     oi_cont = uiobj_add_t0(227, 163, "", d->gfx_contbutt, MOO_KEY_c);
     uiobj_set_focus(oi_cont);

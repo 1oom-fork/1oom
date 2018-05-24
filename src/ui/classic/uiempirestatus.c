@@ -48,13 +48,13 @@ static void empirestatus_draw_cb(void *vptr)
     int tbl_sum[PLAYER_NUM];
 
     ui_draw_color_buf(0x3a);
-    lbxgfx_draw_frame(0, 0, d->gfx, UI_SCREEN_W);
+    lbxgfx_draw_frame(0, 0, d->gfx, UI_SCREEN_W, ui_scale);
 
     lbxfont_select_set_12_4(4, 0xf, 0, 0);
-    lbxfont_print_str_center(160, 9, game_str_ra_stats, UI_SCREEN_W);
+    lbxfont_print_str_center(160, 9, game_str_ra_stats, UI_SCREEN_W, ui_scale);
     lbxfont_select_set_12_4(5, 5, 0, 0);
     sprintf(buf, "%s: %i", game_str_year, g->year + YEAR_BASE);
-    lbxfont_print_str_normal(15, 11, buf, UI_SCREEN_W);
+    lbxfont_print_str_normal(15, 11, buf, UI_SCREEN_W, ui_scale);
 
     for (int i = 0; i < d->num; ++i) {
         tbl_sum[i] = 0;
@@ -106,12 +106,12 @@ static void empirestatus_draw_cb(void *vptr)
             y = (s % 3) * 57 + i * 7 + 38;
             pi = d->tbl_ei[i];
             e = (&g->eto[pi]);
-            lbxfont_print_str_normal(x, y, game_str_tbl_race[e->race], UI_SCREEN_W);
+            lbxfont_print_str_normal(x, y, game_str_tbl_race[e->race], UI_SCREEN_W, ui_scale);
             v = tbl_stat[s][i];
             if (v) {
-                ui_draw_filled_rect(x + 35, y + 1, x + 34 + v, y + 2, tbl_banner_color2[e->banner]);
+                ui_draw_filled_rect(x + 35, y + 1, x + 34 + v, y + 2, tbl_banner_color2[e->banner], ui_scale);
                 if (v > 1) {
-                    ui_draw_line1(x + 35, y + 3, x + 33 + v, y + 3, 0);
+                    ui_draw_line1(x + 35, y + 3, x + 33 + v, y + 3, 0, ui_scale);
                 }
             }
         }
@@ -155,7 +155,7 @@ void ui_empirestatus(struct game_s *g, player_id_t active_player)
         if (!flag_done) {
             empirestatus_draw_cb(&d);
             uiobj_table_clear();
-            uiobj_add_mousearea(0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, MOO_KEY_UNKNOWN);
+            uiobj_add_mousearea_all(MOO_KEY_UNKNOWN);
             ui_draw_finish();
             ui_delay_ticks_or_click(1);
         }

@@ -39,20 +39,20 @@ static void ui_starmap_orbit_en_draw_cb(void *vptr)
         int x, y;
         x = (p->x - ui_data.starmap.x) * 2 + 23;
         y = (p->y - ui_data.starmap.y) * 2 + 5 + d->oe.yoff;
-        lbxgfx_draw_frame_offs(x, y, ui_data.gfx.starmap.shipbord, 6, 6, 221, 177, UI_SCREEN_W);
+        lbxgfx_draw_frame_offs(x, y, ui_data.gfx.starmap.shipbord, STARMAP_LIMITS, UI_SCREEN_W, 1);
     }
-    ui_draw_filled_rect(225, 8, 314, 180, 7);
-    lbxgfx_draw_frame(224, 5, ui_data.gfx.starmap.movextr2, UI_SCREEN_W);
-    ui_draw_filled_rect(227, 8, 310, 39, 0);
+    ui_draw_filled_rect(225, 8, 314, 180, 7, ui_scale);
+    lbxgfx_draw_frame(224, 5, ui_data.gfx.starmap.movextr2, UI_SCREEN_W, ui_scale);
+    ui_draw_filled_rect(227, 8, 310, 39, 0, ui_scale);
     lbxgfx_set_frame_0(ui_data.gfx.starmap.scanner);
     for (int f = 0; f <= d->oe.frame_scanner; ++f) {
-        lbxgfx_draw_frame(227, 8, ui_data.gfx.starmap.scanner, UI_SCREEN_W);
+        lbxgfx_draw_frame(227, 8, ui_data.gfx.starmap.scanner, UI_SCREEN_W, ui_scale);
     }
     sprintf(buf, "%s %s", game_str_tbl_race[e->race], game_str_sm_fleet);
     lbxfont_select_set_12_4(5, tbl_banner_fontparam[e->banner], 0, 0);
-    lbxfont_print_str_center(267, 10, buf, UI_SCREEN_W);
+    lbxfont_print_str_center(267, 10, buf, UI_SCREEN_W, ui_scale);
     lbxfont_select_set_12_4(0, 0, 0, 0);
-    lbxfont_print_str_center(268, 33, game_str_sm_inorbit, UI_SCREEN_W);
+    lbxfont_print_str_center(268, 33, game_str_sm_inorbit, UI_SCREEN_W, ui_scale);
     for (int i = 0; i < d->oe.sn0.num; ++i) {
         const shipdesign_t *sd = &(g->srd[d->oe.player].design[0]);
         struct draw_stars_s ds;
@@ -60,19 +60,19 @@ static void ui_starmap_orbit_en_draw_cb(void *vptr)
         int st, x, y;
         x = 228 + (i % 2) * 43;
         y = 44 + (i / 2) * 40;
-        ui_draw_filled_rect(x, y, x + 38, y + 24, 0);
-        ui_draw_filled_rect(x, y + 28, x + 38, y + 34, 0x1c);
+        ui_draw_filled_rect(x, y, x + 38, y + 24, 0, ui_scale);
+        ui_draw_filled_rect(x, y + 28, x + 38, y + 34, 0x1c, ui_scale);
         ds.xoff1 = 0;
         ds.xoff2 = 0;
-        ui_draw_stars(x, y, 0, 38, &ds);
+        ui_draw_stars(x, y, 0, 38, &ds, ui_scale);
         st = d->oe.sn0.type[i];
         gfx = ui_data.gfx.ships[sd[st].look];
         lbxgfx_set_frame_0(gfx);
-        lbxgfx_draw_frame(x, y, gfx, UI_SCREEN_W);
+        lbxgfx_draw_frame(x, y, gfx, UI_SCREEN_W, ui_scale);
         lbxfont_select(0, 0xd, 0, 0);
-        lbxfont_print_num_right(x + 35, y + 19, d->oe.ships[st], UI_SCREEN_W);
+        lbxfont_print_num_right(x + 35, y + 19, d->oe.ships[st], UI_SCREEN_W, ui_scale);
         lbxfont_select(2, 0xa, 0, 0);
-        lbxfont_print_str_center(x + 19, y + 29, sd[st].name, UI_SCREEN_W);
+        lbxfont_print_str_center(x + 19, y + 29, sd[st].name, UI_SCREEN_W, ui_scale);
     }
     if (d->oe.scanner_delay == 0) {
         d->oe.frame_scanner = (d->oe.frame_scanner + 1) % 20;
