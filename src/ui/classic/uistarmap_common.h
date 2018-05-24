@@ -17,6 +17,8 @@
 #define STARMAP_SCROLLSTEP 3
 #endif
 
+#define STARMAP_LIMITS  6 * ui_scale, 6 * ui_scale, 222 * ui_scale - 1, 178 * ui_scale - 1
+
 struct shipnon0_s {
     shipcount_t ships[NUM_SHIPDESIGNS];
     uint8_t type[NUM_SHIPDESIGNS];
