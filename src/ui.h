@@ -3,6 +3,7 @@
 
 /* API to ui/ */
 
+#include "cfg.h"
 #include "options.h"
 #include "types.h"
 
@@ -16,6 +17,7 @@ extern void ui_shutdown(void);
 extern bool ui_use_audio;
 
 extern const struct cmdline_options_s ui_cmdline_options[];
+extern const struct cfg_items_s ui_cfg_items[];
 
 extern char *ui_get_strbuf(void);
 
