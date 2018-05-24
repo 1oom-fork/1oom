@@ -78,10 +78,10 @@ static void ui_battle_pre_draw_cb(void *vptr)
     const planet_t *p = &(g->planet[d->planet_i]);
     char buf[32];
     hw_video_copy_back_from_page2();
-    ui_draw_filled_rect(222, 4, 314, 179, 0);
-    lbxgfx_draw_frame(227, 57, d->gfx_ufleet, UI_SCREEN_W);
-    lbxgfx_draw_frame(227, 102, d->gfx_dfleet, UI_SCREEN_W);
-    lbxgfx_draw_frame(222, 4, d->gfx_fleet, UI_SCREEN_W);
+    ui_draw_filled_rect(222, 4, 314, 179, 0, ui_scale);
+    lbxgfx_draw_frame(227, 57, d->gfx_ufleet, UI_SCREEN_W, ui_scale);
+    lbxgfx_draw_frame(227, 102, d->gfx_dfleet, UI_SCREEN_W, ui_scale);
+    lbxgfx_draw_frame(222, 4, d->gfx_fleet, UI_SCREEN_W, ui_scale);
     if (d->hide_other) {
         ui_gmap_basic_draw_only(d->gmapctx, d->planet_i);
     } else {
@@ -95,10 +95,10 @@ static void ui_battle_pre_draw_cb(void *vptr)
         x = (p->x * 215) / g->galaxy_maxx + 5;
         y = (p->y * 171) / g->galaxy_maxy + 5;
         gfx = ui_data.gfx.starmap.smalflag[g->eto[p->owner].banner];
-        lbxgfx_draw_frame(x + 3, y - 2, gfx, UI_SCREEN_W);
+        lbxgfx_draw_frame(x + 3, y - 2, gfx, UI_SCREEN_W, ui_scale);
     }
     lbxfont_select_set_12_4(3, 0, 0, 0);
-    lbxfont_print_str_center(267, 64, game_str_bp_scombat, UI_SCREEN_W);
+    lbxfont_print_str_center(267, 64, game_str_bp_scombat, UI_SCREEN_W, ui_scale);
     if (d->party_d >= PLAYER_NUM) {
         lib_strcpy(buf, game_str_tbl_mon_names[d->party_d - PLAYER_NUM], sizeof(buf));
     } else {
@@ -107,43 +107,43 @@ static void ui_battle_pre_draw_cb(void *vptr)
     }
     if (ui_space_combat_autoresolve) {
         if (d->flag_human_att) {
-            lbxfont_print_str_normal(230, 80, buf, UI_SCREEN_W);
+            lbxfont_print_str_normal(230, 80, buf, UI_SCREEN_W, ui_scale);
         } else {
-            lbxfont_print_str_right(308, 80, buf, UI_SCREEN_W);
+            lbxfont_print_str_right(308, 80, buf, UI_SCREEN_W, ui_scale);
         }
     } else {
-        lbxfont_print_str_center(267, 100, buf, UI_SCREEN_W);
+        lbxfont_print_str_center(267, 100, buf, UI_SCREEN_W, ui_scale);
     }
-    lbxfont_print_str_center(267, ui_space_combat_autoresolve ? 90 : 115, (d->party_d >= PLAYER_NUM) ? game_str_bp_attacks : game_str_bp_attack, UI_SCREEN_W);
+    lbxfont_print_str_center(267, ui_space_combat_autoresolve ? 90 : 115, (d->party_d >= PLAYER_NUM) ? game_str_bp_attacks : game_str_bp_attack, UI_SCREEN_W, ui_scale);
     {
         race_t race = g->eto[d->flag_human_att ? d->party_d : d->party_u].race;
         lib_strcpy(buf, game_str_tbl_races[race], sizeof(buf));
     }
     if (ui_space_combat_autoresolve) {
         if (d->flag_human_att) {
-            lbxfont_print_str_right(308, 100, buf, UI_SCREEN_W);
+            lbxfont_print_str_right(308, 100, buf, UI_SCREEN_W, ui_scale);
         } else {
-            lbxfont_print_str_normal(230, 100, buf, UI_SCREEN_W);
+            lbxfont_print_str_normal(230, 100, buf, UI_SCREEN_W, ui_scale);
         }
     } else {
-        lbxfont_print_str_center(267, 130, buf, UI_SCREEN_W);
+        lbxfont_print_str_center(267, 130, buf, UI_SCREEN_W, ui_scale);
     }
     if (ui_space_combat_autoresolve) {
         int y = 112;
         lbxfont_set_temp_color(0x0);
         lbxfont_select_set_12_4(0, 0x2, 0, 0);
         for (int i = 0; i < SHIP_HULL_NUM; ++i, y += 8) {
-            lbxfont_print_num_normal(230, y, d->force[SIDE_L][i], UI_SCREEN_W);
-            lbxfont_print_num_right(308, y, d->force[SIDE_R][i], UI_SCREEN_W);
-            lbxfont_print_str_center(269, y, game_str_tbl_st_hull[i], UI_SCREEN_W);
+            lbxfont_print_num_normal(230, y, d->force[SIDE_L][i], UI_SCREEN_W, ui_scale);
+            lbxfont_print_num_right(308, y, d->force[SIDE_R][i], UI_SCREEN_W, ui_scale);
+            lbxfont_print_str_center(269, y, game_str_tbl_st_hull[i], UI_SCREEN_W, ui_scale);
         }
         if (d->bases) {
             if (d->flag_human_att) {
-                lbxfont_print_num_right(308, y, d->bases, UI_SCREEN_W);
-                lbxfont_print_str_normal(230, y, game_str_bt_bases, UI_SCREEN_W);
+                lbxfont_print_num_right(308, y, d->bases, UI_SCREEN_W, ui_scale);
+                lbxfont_print_str_normal(230, y, game_str_bt_bases, UI_SCREEN_W, ui_scale);
             } else {
-                lbxfont_print_num_normal(230, y, d->bases, UI_SCREEN_W);
-                lbxfont_print_str_right(308, y, game_str_bt_bases, UI_SCREEN_W);
+                lbxfont_print_num_normal(230, y, d->bases, UI_SCREEN_W, ui_scale);
+                lbxfont_print_str_right(308, y, game_str_bt_bases, UI_SCREEN_W, ui_scale);
             }
         }
         if (d->party_winner >= 0) {
@@ -158,7 +158,7 @@ static void ui_battle_pre_draw_cb(void *vptr)
             }
             lib_sprintf(buf, sizeof(buf), "%s %s", str, game_str_bp_won);
             y += 8;
-            lbxfont_print_str_center(267, y, buf, UI_SCREEN_W);
+            lbxfont_print_str_center(267, y, buf, UI_SCREEN_W, ui_scale);
         }
     }
 }

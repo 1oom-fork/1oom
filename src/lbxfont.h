@@ -33,18 +33,18 @@ extern int lbxfont_get_char_w(char c);
 extern int lbxfont_calc_str_width(const char *str);
 extern int lbxfont_calc_split_str_h(int maxw, const char *str);
 
-extern uint16_t lbxfont_plotchar(char c, uint8_t *buf, uint16_t pitch);
+extern uint16_t lbxfont_plotchar(char c, uint8_t *buf, uint16_t pitch, int scale);
 
-extern int lbxfont_print_str_normal(int x, int y, const char *str, uint16_t pitch);
-extern int lbxfont_print_str_center(int x, int y, const char *str, uint16_t pitch);
-extern int lbxfont_print_str_right(int x, int y, const char *str, uint16_t pitch);
-extern void lbxfont_print_str_split(int x, int y, int maxw, const char *str, int type, uint16_t pitch, uint16_t maxy);
-extern int lbxfont_print_str_normal_limit(int x, int y, const char *str, int lx0, int ly0, int lx1, int ly1, uint16_t pitch);
-extern int lbxfont_print_str_center_limit(int x, int y, const char *str, int lx0, int ly0, int lx1, int ly1, uint16_t pitch);
-extern int lbxfont_print_num_normal(int x, int y, int num, uint16_t pitch);
-extern int lbxfont_print_num_center(int x, int y, int num, uint16_t pitch);
-extern int lbxfont_print_num_right(int x, int y, int num, uint16_t pitch);
-extern int lbxfont_print_range_right(int x, int y, int num0, int num1, uint16_t pitch);
+extern int lbxfont_print_str_normal(int x, int y, const char *str, uint16_t pitch, int scale);
+extern int lbxfont_print_str_center(int x, int y, const char *str, uint16_t pitch, int scale);
+extern int lbxfont_print_str_right(int x, int y, const char *str, uint16_t pitch, int scale);
+extern void lbxfont_print_str_split(int x, int y, int maxw, const char *str, int type, uint16_t pitch, uint16_t maxy, int scale);
+extern int lbxfont_print_str_normal_limit(int x, int y, const char *str, int lx0, int ly0, int lx1, int ly1, uint16_t pitch, int scale);
+extern int lbxfont_print_str_center_limit(int x, int y, const char *str, int lx0, int ly0, int lx1, int ly1, uint16_t pitch, int scale);
+extern int lbxfont_print_num_normal(int x, int y, int num, uint16_t pitch, int scale);
+extern int lbxfont_print_num_center(int x, int y, int num, uint16_t pitch, int scale);
+extern int lbxfont_print_num_right(int x, int y, int num, uint16_t pitch, int scale);
+extern int lbxfont_print_range_right(int x, int y, int num0, int num1, uint16_t pitch, int scale);
 
 extern uint8_t lbxfont_get_current_fontnum(void);
 extern uint8_t lbxfont_get_current_fonta2(void);

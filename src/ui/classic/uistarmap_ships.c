@@ -45,8 +45,8 @@ static void ui_starmap_ships_draw_cb1(void *vptr)
     const planet_t *p = &(g->planet[g->planet_focus_i[d->api]]);
     char buf[0x80];
     ui_starmap_draw_basic(d);
-    lbxgfx_draw_frame(222, 80, ui_data.gfx.starmap.relocate, UI_SCREEN_W);
-    ui_draw_filled_rect(225, 81, 312, 160, 0);
+    lbxgfx_draw_frame(222, 80, ui_data.gfx.starmap.relocate, UI_SCREEN_W, ui_scale);
+    ui_draw_filled_rect(225, 81, 312, 160, 0, ui_scale);
 
     const uint8_t n = g->eto[d->api].shipdesigns_num;
     ui_data.starmap.stars_xoff1 = 0;
@@ -54,7 +54,7 @@ static void ui_starmap_ships_draw_cb1(void *vptr)
     for (int i = 0; i < NUM_SHIPDESIGNS; ++i) {
         int x = ui_starmap_ships_get_x(i);
         int y = ui_starmap_ships_get_y(i);
-        ui_draw_stars(x, y, i * 5, 32);
+        ui_draw_stars(x, y, i * 5, 32, ui_scale);
     }
     for (int i = 0; i < n; ++i) {
         const shipdesign_t *sd = &g->srd[d->api].design[i];
@@ -62,20 +62,20 @@ static void ui_starmap_ships_draw_cb1(void *vptr)
         int x = ui_starmap_ships_get_x(i);
         int y = ui_starmap_ships_get_y(i);
         lbxgfx_set_frame_0(gfx);
-        lbxgfx_draw_frame(x, y, gfx, UI_SCREEN_W);
+        lbxgfx_draw_frame(x, y, gfx, UI_SCREEN_W, ui_scale);
         lbxfont_select(2, 0xd, 0, 0);
         lbxfont_select_set_12_1(2, 0xa, 0, 0);
-        lbxfont_print_str_center(x + 19, y + 18, sd->name, UI_SCREEN_W);
+        lbxfont_print_str_center(x + 19, y + 18, sd->name, UI_SCREEN_W, ui_scale);
     }
     int i = p->buildship;
     if (i < n) {
         int x = ui_starmap_ships_get_x(i);
         int y = ui_starmap_ships_get_y(i);
-        ui_draw_box1(x - 3, y - 1, x + 40, y + 24, 0x56, 0x56);
+        ui_draw_box1(x - 3, y - 1, x + 40, y + 24, 0x56, 0x56, ui_scale);
     }
     if (kbd_is_modifier(MOO_MOD_CTRL)) {
         lbxfont_select_set_12_1(2, 0xd, 0, 0);
-        lbxfont_print_str_center(272, 84, game_str_sm_ship_everywhere, UI_SCREEN_W);
+        lbxfont_print_str_center(272, 84, game_str_sm_ship_everywhere, UI_SCREEN_W, ui_scale);
     } else if (kbd_is_modifier(MOO_MOD_ALT)) {
         lbxfont_select_set_12_1(2, 0xd, 0, 0);
         if (p->buildship != BUILDSHIP_STARGATE) {
@@ -84,7 +84,7 @@ static void ui_starmap_ships_draw_cb1(void *vptr)
         } else {
             lib_sprintf(buf, sizeof(buf), "%s %s", game_str_sm_ship_replace, game_str_sm_stargate);
         }
-        lbxfont_print_str_center(272, 84, buf, UI_SCREEN_W);
+        lbxfont_print_str_center(272, 84, buf, UI_SCREEN_W, ui_scale);
     }
 }
 

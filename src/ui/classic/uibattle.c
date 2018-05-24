@@ -70,38 +70,38 @@ static void ui_battle_draw_scan_cb(void *vptr)
     itembase = (d->scan_side == SIDE_L) ? 1 : (bt->s[SIDE_L].items + 1);
     itemnum = bt->s[d->scan_side].items;
     ui_draw_color_buf(0x3a);
-    lbxgfx_draw_frame(0, 0, ui_data.gfx.starmap.viewship, UI_SCREEN_W);
+    lbxgfx_draw_frame(0, 0, ui_data.gfx.starmap.viewship, UI_SCREEN_W, ui_scale);
     for (int i = 0; i < itemnum; ++i) {
         const struct battle_item_s *b = &(bt->item[itembase + i]);
         int y;
         y = i * 32 + 5;
-        lbxgfx_draw_frame(46, y - 1, ui_data.gfx.space.vs2, UI_SCREEN_W);
-        ui_draw_filled_rect(6, y, 38, y + 29, 0);
-        ui_draw_stars(6, y + 1, 0, 32);
+        lbxgfx_draw_frame(46, y - 1, ui_data.gfx.space.vs2, UI_SCREEN_W, ui_scale);
+        ui_draw_filled_rect(6, y, 38, y + 29, 0, ui_scale);
+        ui_draw_stars(6, y + 1, 0, 32, ui_scale);
         ui_battle_draw_item(bt, itembase + i, 6, y + 1);
         lbxfont_select(2, 0xd, 0, 0);
-        lbxfont_print_str_normal(52, y + 3, b->name, UI_SCREEN_W);
+        lbxfont_print_str_normal(52, y + 3, b->name, UI_SCREEN_W, ui_scale);
         lbxfont_select(2, 0xb, 0, 0);
-        lbxfont_print_num_right(84, y + 13, b->defense, UI_SCREEN_W);
-        lbxfont_print_num_right(84, y + 23, b->misdefense, UI_SCREEN_W);
-        lbxfont_print_num_right(124, y + 13, b->complevel, UI_SCREEN_W);
+        lbxfont_print_num_right(84, y + 13, b->defense, UI_SCREEN_W, ui_scale);
+        lbxfont_print_num_right(84, y + 23, b->misdefense, UI_SCREEN_W, ui_scale);
+        lbxfont_print_num_right(124, y + 13, b->complevel, UI_SCREEN_W, ui_scale);
         if (b->hp1 < b->hp2) {
             lbxfont_select(2, 5, 0, 0);
         }
-        lbxfont_print_num_right(124, y + 23, b->hp1, UI_SCREEN_W);
+        lbxfont_print_num_right(124, y + 23, b->hp1, UI_SCREEN_W, ui_scale);
         lbxfont_select(2, 0xb, 0, 0);
-        lbxfont_print_num_right(161, y + 3, b->absorb, UI_SCREEN_W);
-        lbxfont_print_num_right(161, y + 13, b->hploss, UI_SCREEN_W);
-        lbxfont_print_num_right(161, y + 23, b->man - b->unman, UI_SCREEN_W);
+        lbxfont_print_num_right(161, y + 3, b->absorb, UI_SCREEN_W, ui_scale);
+        lbxfont_print_num_right(161, y + 13, b->hploss, UI_SCREEN_W, ui_scale);
+        lbxfont_print_num_right(161, y + 23, b->man - b->unman, UI_SCREEN_W, ui_scale);
         lbxfont_select(2, 0xa, 0, 0);
         for (int wi = 0; wi < WEAPON_SLOT_NUM; ++wi) {
             if (b->wpn[wi].n != 0) {
                 const struct shiptech_weap_s *w = &(tbl_shiptech_weap[b->wpn[wi].t]);
-                lbxfont_print_num_right(176, y + 3 + wi * 7, b->wpn[wi].n, UI_SCREEN_W);
-                lbxfont_print_str_normal(181, y + 3 + wi * 7, *w->nameptr, UI_SCREEN_W);
+                lbxfont_print_num_right(176, y + 3 + wi * 7, b->wpn[wi].n, UI_SCREEN_W, ui_scale);
+                lbxfont_print_str_normal(181, y + 3 + wi * 7, *w->nameptr, UI_SCREEN_W, ui_scale);
                 if (b->wpn[wi].numshots >= 0) {
-                    lbxfont_print_num_right(250, y + 3 + wi * 7, b->wpn[wi].numshots, UI_SCREEN_W);
-                    lbxfont_print_str_normal(252, y + 3 + wi * 7, "&", UI_SCREEN_W);
+                    lbxfont_print_num_right(250, y + 3 + wi * 7, b->wpn[wi].numshots, UI_SCREEN_W, ui_scale);
+                    lbxfont_print_str_normal(252, y + 3 + wi * 7, "&", UI_SCREEN_W, ui_scale);
                 }
                 if (w->misstype == 1) {
                     uint8_t c1, c2;
@@ -112,8 +112,8 @@ static void ui_battle_draw_scan_cb(void *vptr)
                         c1 = 0x28;
                         c2 = 0x41;
                     }
-                    ui_draw_filled_rect(248, y + 3 + wi * 7, 253, y + 7 + wi * 7, c1);
-                    ui_draw_filled_rect(249, y + 4 + wi * 7, 252, y + 6 + wi * 7, c2);
+                    ui_draw_filled_rect(248, y + 3 + wi * 7, 253, y + 7 + wi * 7, c1, ui_scale);
+                    ui_draw_filled_rect(249, y + 4 + wi * 7, 252, y + 6 + wi * 7, c2, ui_scale);
                 }
             }
         }
@@ -122,12 +122,12 @@ static void ui_battle_draw_scan_cb(void *vptr)
         } else {
             lbxfont_set_color_c_n(0xb5, 5);
         }
-        lbxfont_print_str_center(286, y + 2, game_str_tbl_st_specsh[b->special[0]], UI_SCREEN_W);
+        lbxfont_print_str_center(286, y + 2, game_str_tbl_st_specsh[b->special[0]], UI_SCREEN_W, ui_scale);
         if (b->special[1] != 0) {
-            lbxfont_print_str_center(286, y + 11, game_str_tbl_st_specsh[b->special[1]], UI_SCREEN_W);
+            lbxfont_print_str_center(286, y + 11, game_str_tbl_st_specsh[b->special[1]], UI_SCREEN_W, ui_scale);
         }
         if (b->special[2] != 0) {
-            lbxfont_print_str_center(286, y + 20, game_str_tbl_st_specsh[b->special[2]], UI_SCREEN_W);
+            lbxfont_print_str_center(286, y + 20, game_str_tbl_st_specsh[b->special[2]], UI_SCREEN_W, ui_scale);
         }
     }
     uiobj_finish_frame();
@@ -164,10 +164,10 @@ static void ui_battle_draw_focusinfo(const struct battle_s *bt)
     if (v >= 30) {
         v -= 30;
     }
-    ui_draw_filled_rect(0, 193, 94, UI_SCREEN_H - 1, 0xe9);
+    ui_draw_filled_rect(0, 193, 94, UI_VGA_H - 1, 0xe9, ui_scale);
     b = (v == 70) ? &(bt->item[bt->cur_item]) : &(bt->item[v]);
     lbxfont_select(2, 0xa, 5, 0);
-    lbxfont_print_str_normal(2, 194, b->name, UI_SCREEN_W);
+    lbxfont_print_str_normal(2, 194, b->name, UI_SCREEN_W, ui_scale);
     if (v != 70) {
         if (b->num > 0) {
             char buf[32];
@@ -177,7 +177,7 @@ static void ui_battle_draw_focusinfo(const struct battle_s *bt)
                 buf[pos++] = 2;
             }
             lib_sprintf(&buf[pos], sizeof(buf) - pos, "%i", h1);
-            lbxfont_print_str_right(92, 194, buf, UI_SCREEN_W);
+            lbxfont_print_str_right(92, 194, buf, UI_SCREEN_W, ui_scale);
         }
     }
 }
@@ -205,14 +205,14 @@ static void ui_battle_draw_bottom_no_ois(const struct battle_s *bt)
     struct ui_battle_data_s *d = bt->uictx;
     const struct battle_item_s *b;
     uint8_t *gfx;
-    ui_draw_filled_rect(0, 193, UI_SCREEN_W - 1, UI_SCREEN_H - 1, 0xe9);
-    ui_draw_line1(120, 192, 120, 199, 0xeb);
-    ui_draw_line1(96, 192, 96, 199, 0xeb);
-    ui_draw_line1(0, 192, UI_SCREEN_W - 1, 192, 0xeb);
+    ui_draw_filled_rect(0, 193, 319, 199, 0xe9, ui_scale);
+    ui_draw_line1(120, 192, 120, 199, 0xeb, ui_scale);
+    ui_draw_line1(96, 192, 96, 199, 0xeb, ui_scale);
+    ui_draw_line1(0, 192, 319, 192, 0xeb, ui_scale);
     lbxfont_select(2, 0xa, 5, 0);
     b = &(bt->item[bt->cur_item]);
     if (bt->s[b->side].flag_auto) {
-        lbxfont_print_str_normal(2, 194, game_str_bt_auto_move, UI_SCREEN_W);
+        lbxfont_print_str_normal(2, 194, game_str_bt_auto_move, UI_SCREEN_W, ui_scale);
     } else {
         ui_battle_draw_focusinfo(bt);
     }
@@ -222,7 +222,7 @@ static void ui_battle_draw_bottom_no_ois(const struct battle_s *bt)
     } else {
         gfx = ui_data.gfx.space.planet_off;
     }
-    lbxgfx_draw_frame(123, 193, gfx, UI_SCREEN_W);
+    lbxgfx_draw_frame(123, 193, gfx, UI_SCREEN_W, ui_scale);
     if (1
       && ((bt->cur_item != 0) || (b->num > 0) || (!bt->s[b->side].flag_auto))
       && (((b->man - b->unman) != 0) || (bt->cur_item == 0) || (!bt->s[b->side].flag_human))
@@ -232,7 +232,7 @@ static void ui_battle_draw_bottom_no_ois(const struct battle_s *bt)
     } else {
         gfx = ui_data.gfx.space.retr_off;
     }
-    lbxgfx_draw_frame(241, 193, gfx, UI_SCREEN_W);
+    lbxgfx_draw_frame(241, 193, gfx, UI_SCREEN_W, ui_scale);
     if (bt->s[b->side].flag_auto) {
         ui_battle_clear_ois(d);
     }
@@ -253,7 +253,7 @@ static void ui_battle_draw_bottom_no_ois(const struct battle_s *bt)
             lbxgfx_set_new_frame(gfx, 1);
         }
     }
-    lbxgfx_draw_frame(175, 193, gfx, UI_SCREEN_W);
+    lbxgfx_draw_frame(175, 193, gfx, UI_SCREEN_W, ui_scale);
     if ((bt->special_button == -1) || bt->s[b->side].flag_auto) {
         gfx = ui_data.gfx.space.spec_off;
     } else {
@@ -264,27 +264,27 @@ static void ui_battle_draw_bottom_no_ois(const struct battle_s *bt)
             lbxgfx_set_new_frame(gfx, 1);
         }
     }
-    lbxgfx_draw_frame(210, 193, gfx, UI_SCREEN_W);
+    lbxgfx_draw_frame(210, 193, gfx, UI_SCREEN_W, ui_scale);
     if (bt->s[bt->s[b->side].flag_human ? b->side : SIDE_L].flag_have_scan) {
         gfx = ui_data.gfx.space.scan;
         lbxgfx_set_frame_0(gfx);
     } else {
         gfx = ui_data.gfx.space.scan_off;
     }
-    lbxgfx_draw_frame(153, 193, gfx, UI_SCREEN_W);
+    lbxgfx_draw_frame(153, 193, gfx, UI_SCREEN_W, ui_scale);
     gfx = ui_data.gfx.space.done;
     lbxgfx_set_frame_0(gfx);
-    lbxgfx_draw_frame(297, 193, gfx, UI_SCREEN_W);
+    lbxgfx_draw_frame(297, 193, gfx, UI_SCREEN_W, ui_scale);
     gfx = ui_data.gfx.space.wait;
     lbxgfx_set_frame_0(gfx);
-    lbxgfx_draw_frame(274, 193, gfx, UI_SCREEN_W);
+    lbxgfx_draw_frame(274, 193, gfx, UI_SCREEN_W, ui_scale);
     gfx = ui_data.gfx.space.autob;
     if (bt->s[b->side].flag_auto) {
         lbxgfx_set_new_frame(gfx, 1);
     } else {
         lbxgfx_set_frame_0(gfx);
     }
-    lbxgfx_draw_frame(99, 193, gfx, UI_SCREEN_W);
+    lbxgfx_draw_frame(99, 193, gfx, UI_SCREEN_W, ui_scale);
 }
 
 static void ui_battle_draw_bottom_add_ois(const struct battle_s *bt)
@@ -302,21 +302,21 @@ static void ui_battle_draw_bottom_add_ois(const struct battle_s *bt)
             int x0, x1;
             x0 = sx * 32;
             x1 = x0 + 31;
-            cr->x0 = x0;
-            cr->y0 = y0;
-            cr->x1 = x1;
-            cr->y1 = y1;
+            cr->x0 = x0 * ui_scale;
+            cr->y0 = y0 * ui_scale;
+            cr->x1 = x1 * ui_scale + ui_scale - 1;
+            cr->y1 = y1 * ui_scale + ui_scale - 1;
             d->oi_area[sy][sx] = uiobj_add_mousearea(x0, y0, x1, y1, MOO_KEY_UNKNOWN);
         }
     }
-    ui_draw_filled_rect(0, 193, UI_SCREEN_W - 1, UI_SCREEN_H - 1, 0xe9);
-    ui_draw_line1(120, 192, 120, 199, 0xeb);
-    ui_draw_line1(96, 192, 96, 199, 0xeb);
-    ui_draw_line1(0, 192, UI_SCREEN_W - 1, 192, 0xeb);
+    ui_draw_filled_rect(0, 193, 319, 199, 0xe9, ui_scale);
+    ui_draw_line1(120, 192, 120, 199, 0xeb, ui_scale);
+    ui_draw_line1(96, 192, 96, 199, 0xeb, ui_scale);
+    ui_draw_line1(0, 192, 319, 192, 0xeb, ui_scale);
     if (bt->item[0].side != SIDE_NONE) {
         d->oi_planet = uiobj_add_t0(123, 193, "", ui_data.gfx.space.planet, MOO_KEY_p);
     } else {
-        lbxgfx_draw_frame(123, 193, ui_data.gfx.space.planet_off, UI_SCREEN_W);
+        lbxgfx_draw_frame(123, 193, ui_data.gfx.space.planet_off, UI_SCREEN_W, ui_scale);
         d->oi_planet = UIOBJI_INVALID;
     }
     b = &(bt->item[bt->cur_item]);
@@ -325,7 +325,7 @@ static void ui_battle_draw_bottom_add_ois(const struct battle_s *bt)
       || ((bt->cur_item != 0) && (b->num <= 0))
       || (((b->man - b->unman) != 0) && (bt->cur_item == 0))
     ) {
-        lbxgfx_draw_frame(241, 193, ui_data.gfx.space.retr_off, UI_SCREEN_W);
+        lbxgfx_draw_frame(241, 193, ui_data.gfx.space.retr_off, UI_SCREEN_W, ui_scale);
         d->oi_retreat = UIOBJI_INVALID;
     } else {
         d->oi_retreat = uiobj_add_t0(241, 193, "", ui_data.gfx.space.retreat, MOO_KEY_r);
@@ -366,11 +366,11 @@ static void ui_battle_draw_bottom_add_ois(const struct battle_s *bt)
         gfx = ui_data.gfx.space.misl_off;
         d->oi_missile = UIOBJI_INVALID;
     }
-    lbxgfx_draw_frame(175, 193, gfx, UI_SCREEN_W);
+    lbxgfx_draw_frame(175, 193, gfx, UI_SCREEN_W, ui_scale);
     if (bt->s[b->side].flag_have_scan) {
         d->oi_scan = uiobj_add_t0(153, 193, "", ui_data.gfx.space.scan, MOO_KEY_s);
     } else {
-        lbxgfx_draw_frame(153, 193, ui_data.gfx.space.scan_off, UI_SCREEN_W);
+        lbxgfx_draw_frame(153, 193, ui_data.gfx.space.scan_off, UI_SCREEN_W, ui_scale);
         d->oi_scan = UIOBJI_INVALID;
     }
     if ((bt->special_button == 0) || ((bt->special_button == 1) && (bt->cur_item != 0))) {
@@ -390,7 +390,7 @@ static void ui_battle_draw_bottom_add_ois(const struct battle_s *bt)
         gfx = ui_data.gfx.space.spec_off;
         d->oi_special = UIOBJI_INVALID;
     }
-    lbxgfx_draw_frame(210, 193, gfx, UI_SCREEN_W);
+    lbxgfx_draw_frame(210, 193, gfx, UI_SCREEN_W, ui_scale);
 }
 
 static void ui_battle_draw_cb(void *vptr)
@@ -423,7 +423,7 @@ static void ui_battle_transition_to(int px, int py, int steps)
         }
         gfx_aux_scale(&ui_data.aux.screen, percent, percent);
         gfx_aux_color_replace(&ui_data.aux.screen, 0, 1);
-        gfx_aux_draw_frame_from(x, y, &ui_data.aux.screen, UI_SCREEN_W);
+        gfx_aux_draw_frame_from(x, y, &ui_data.aux.screen, UI_SCREEN_W, 1);
         uiobj_finish_frame();
         ui_delay_us_or_click(MOO_TICKS_TO_US(1) / 3);
     }
@@ -467,7 +467,7 @@ static void ui_battle_draw_beam_line(int fx, int fy, int tx, int ty, int d0, int
     y1 = y0;
     util_math_go_line_dist(&x1, &y1, tx, ty, (d1 * dist) / 100);
     if ((v24 == 1) || (v24 == 3) || (v24 == 5)) {
-        ui_draw_line1(x0, y0, x1, y1, ctbl[0]);
+        ui_draw_line1(x0, y0, x1, y1, ctbl[0], ui_scale);
     } else {
         const uint8_t *c;
         uint8_t revctbl[7];
@@ -479,7 +479,7 @@ static void ui_battle_draw_beam_line(int fx, int fy, int tx, int ty, int d0, int
         } else {
             c = ctbl;
         }
-        ui_draw_line_ctbl(x0, y0, x1, y1, c, 7, 1/*ctblpos*/);
+        ui_draw_line_ctbl(x0, y0, x1, y1, c, 7, 1/*ctblpos*/, ui_scale);
     }
 }
 
@@ -522,20 +522,20 @@ static void ui_battle_draw_beam_attack_do1(const struct battle_s *bt, int *fx, i
             }
             if (btype == 1) {
                 if (v16 > 1) {
-                    ui_draw_line1(fx[0], fy[0], tx + xo, ty + yo, w->dtbl[f]);
-                    ui_draw_line1(fx[1], fy[1], tx + xo, ty + yo, w->dtbl[f]);
+                    ui_draw_line1(fx[0], fy[0], tx + xo, ty + yo, w->dtbl[f], ui_scale);
+                    ui_draw_line1(fx[1], fy[1], tx + xo, ty + yo, w->dtbl[f], ui_scale);
                 }
                 if (v16 != 2) {
-                    ui_draw_line1(fx[2], fy[2], tx + xo, ty + yo, w->dtbl[f]);
+                    ui_draw_line1(fx[2], fy[2], tx + xo, ty + yo, w->dtbl[f], ui_scale);
                 }
             }
             if (btype == 0) {
                 if (v16 > 1) {
-                    ui_draw_line_ctbl(fx[0], fy[0], tx + xo, ty + yo, w->dtbl, 7, 0);
-                    ui_draw_line_ctbl(fx[1], fy[1], tx + xo, ty + yo, w->dtbl, 7, 0);
+                    ui_draw_line_ctbl(fx[0], fy[0], tx + xo, ty + yo, w->dtbl, 7, 0, ui_scale);
+                    ui_draw_line_ctbl(fx[1], fy[1], tx + xo, ty + yo, w->dtbl, 7, 0, ui_scale);
                 }
                 if (v16 != 2) {
-                    ui_draw_line_ctbl(fx[2], fy[2], tx + xo, ty + yo, w->dtbl, 7, 0);
+                    ui_draw_line_ctbl(fx[2], fy[2], tx + xo, ty + yo, w->dtbl, 7, 0, ui_scale);
                 }
             }
             ui_battle_draw_item(bt, attacker_i, b->sx * 32, b->sy * 24);
@@ -617,70 +617,70 @@ static void ui_battle_draw_beam_attack_do2(const struct battle_s *bt, int *fx, i
         ui_delay_prepare();
         if ((w->v24 == 2) || (w->v24 == 4)) {
             if (v16 > 1) {
-                ui_draw_line_ctbl(fx[0], fy[0], tx, ty, w->dtbl, 7, 6 - f);
-                ui_draw_line_ctbl(fx[0], fy[0], tx - y_ns, ty - x_ns, w->dtbl, 7, 6 - f);
-                ui_draw_line_ctbl(fx[0], fy[0], tx + y_ns, ty + x_ns, w->dtbl, 7, 6 - f);
-                ui_draw_line_ctbl(fx[1], fy[1], tx, ty, w->dtbl, 7, 6 - f);
-                ui_draw_line_ctbl(fx[1], fy[1], tx - y_ns, ty - x_ns, w->dtbl, 7, 6 - f);
-                ui_draw_line_ctbl(fx[1], fy[1], tx + y_ns, ty + x_ns, w->dtbl, 7, 6 - f);
+                ui_draw_line_ctbl(fx[0], fy[0], tx, ty, w->dtbl, 7, 6 - f, ui_scale);
+                ui_draw_line_ctbl(fx[0], fy[0], tx - y_ns, ty - x_ns, w->dtbl, 7, 6 - f, ui_scale);
+                ui_draw_line_ctbl(fx[0], fy[0], tx + y_ns, ty + x_ns, w->dtbl, 7, 6 - f, ui_scale);
+                ui_draw_line_ctbl(fx[1], fy[1], tx, ty, w->dtbl, 7, 6 - f, ui_scale);
+                ui_draw_line_ctbl(fx[1], fy[1], tx - y_ns, ty - x_ns, w->dtbl, 7, 6 - f, ui_scale);
+                ui_draw_line_ctbl(fx[1], fy[1], tx + y_ns, ty + x_ns, w->dtbl, 7, 6 - f, ui_scale);
                 /*if (btype == 5) always true*/
-                ui_draw_line_ctbl(fx[0], fy[0], tx - y_ns * 2, ty - x_ns * 2, w->dtbl, 7, 6 - f);
-                ui_draw_line_ctbl(fx[0], fy[0], tx + y_ns * 2, ty + x_ns * 2, w->dtbl, 7, 6 - f);
-                ui_draw_line_ctbl(fx[1], fy[1], tx - y_ns * 2, ty - x_ns * 2, w->dtbl, 7, 6 - f);
-                ui_draw_line_ctbl(fx[1], fy[1], tx + y_ns * 2, ty + x_ns * 2, w->dtbl, 7, 6 - f);
+                ui_draw_line_ctbl(fx[0], fy[0], tx - y_ns * 2, ty - x_ns * 2, w->dtbl, 7, 6 - f, ui_scale);
+                ui_draw_line_ctbl(fx[0], fy[0], tx + y_ns * 2, ty + x_ns * 2, w->dtbl, 7, 6 - f, ui_scale);
+                ui_draw_line_ctbl(fx[1], fy[1], tx - y_ns * 2, ty - x_ns * 2, w->dtbl, 7, 6 - f, ui_scale);
+                ui_draw_line_ctbl(fx[1], fy[1], tx + y_ns * 2, ty + x_ns * 2, w->dtbl, 7, 6 - f, ui_scale);
                 if ((y_ns == 1) && (x_ns == 1)) {
-                    ui_draw_line_ctbl(fx[0], fy[0], tx, ty - x_ns, w->dtbl, 7, 6 - f);
-                    ui_draw_line_ctbl(fx[0], fy[0], tx - x_ns, ty, w->dtbl, 7, 6 - f);
-                    ui_draw_line_ctbl(fx[1], fy[1], tx, ty - x_ns, w->dtbl, 7, 6 - f);
-                    ui_draw_line_ctbl(fx[1], fy[1], tx - x_ns, ty, w->dtbl, 7, 6 - f);
+                    ui_draw_line_ctbl(fx[0], fy[0], tx, ty - x_ns, w->dtbl, 7, 6 - f, ui_scale);
+                    ui_draw_line_ctbl(fx[0], fy[0], tx - x_ns, ty, w->dtbl, 7, 6 - f, ui_scale);
+                    ui_draw_line_ctbl(fx[1], fy[1], tx, ty - x_ns, w->dtbl, 7, 6 - f, ui_scale);
+                    ui_draw_line_ctbl(fx[1], fy[1], tx - x_ns, ty, w->dtbl, 7, 6 - f, ui_scale);
                 }
             }
             /*54879*/
             if (v16 != 2) {
-                ui_draw_line_ctbl(fx[2], fy[2], tx, ty, w->dtbl, 7, 6 - f);
-                ui_draw_line_ctbl(fx[2], fy[2], tx - y_ns, ty - x_ns, w->dtbl, 7, 6 - f);
-                ui_draw_line_ctbl(fx[2], fy[2], tx + y_ns, ty + x_ns, w->dtbl, 7, 6 - f);
+                ui_draw_line_ctbl(fx[2], fy[2], tx, ty, w->dtbl, 7, 6 - f, ui_scale);
+                ui_draw_line_ctbl(fx[2], fy[2], tx - y_ns, ty - x_ns, w->dtbl, 7, 6 - f, ui_scale);
+                ui_draw_line_ctbl(fx[2], fy[2], tx + y_ns, ty + x_ns, w->dtbl, 7, 6 - f, ui_scale);
                 /*if (btype == 5) always true*/
-                ui_draw_line_ctbl(fx[2], fy[2], tx - y_ns * 2, ty - x_ns * 2, w->dtbl, 7, 6 - f);
-                ui_draw_line_ctbl(fx[2], fy[2], tx + y_ns * 2, ty + x_ns * 2, w->dtbl, 7, 6 - f);
+                ui_draw_line_ctbl(fx[2], fy[2], tx - y_ns * 2, ty - x_ns * 2, w->dtbl, 7, 6 - f, ui_scale);
+                ui_draw_line_ctbl(fx[2], fy[2], tx + y_ns * 2, ty + x_ns * 2, w->dtbl, 7, 6 - f, ui_scale);
                 if ((y_ns == 1) && (x_ns == 1)) {
-                    ui_draw_line_ctbl(fx[2], fy[2], tx, ty - x_ns, w->dtbl, 7, 6 - f);
-                    ui_draw_line_ctbl(fx[2], fy[2], tx - x_ns, ty, w->dtbl, 7, 6 - f);
+                    ui_draw_line_ctbl(fx[2], fy[2], tx, ty - x_ns, w->dtbl, 7, 6 - f, ui_scale);
+                    ui_draw_line_ctbl(fx[2], fy[2], tx - x_ns, ty, w->dtbl, 7, 6 - f, ui_scale);
                 }
             }
         } else {
             /*549fc*/
             uint8_t c = w->dtbl[0];
             if (v16 > 1) {
-                ui_draw_line1(fx[0], fy[0], tx, ty, c);
-                ui_draw_line1(fx[0], fy[0], tx - y_ns, ty - x_ns, c);
-                ui_draw_line1(fx[0], fy[0], tx + y_ns, ty + x_ns, c);
-                ui_draw_line1(fx[1], fy[1], tx, ty, c);
-                ui_draw_line1(fx[1], fy[1], tx - y_ns, ty - x_ns, c);
-                ui_draw_line1(fx[1], fy[1], tx + y_ns, ty + x_ns, c);
+                ui_draw_line1(fx[0], fy[0], tx, ty, c, ui_scale);
+                ui_draw_line1(fx[0], fy[0], tx - y_ns, ty - x_ns, c, ui_scale);
+                ui_draw_line1(fx[0], fy[0], tx + y_ns, ty + x_ns, c, ui_scale);
+                ui_draw_line1(fx[1], fy[1], tx, ty, c, ui_scale);
+                ui_draw_line1(fx[1], fy[1], tx - y_ns, ty - x_ns, c, ui_scale);
+                ui_draw_line1(fx[1], fy[1], tx + y_ns, ty + x_ns, c, ui_scale);
                 /*if (btype == 5) always true*/
-                ui_draw_line1(fx[0], fy[0], tx - y_ns * 2, ty - x_ns * 2, c);
-                ui_draw_line1(fx[0], fy[0], tx + y_ns * 2, ty + x_ns * 2, c);
-                ui_draw_line1(fx[1], fy[1], tx - y_ns * 2, ty - x_ns * 2, c);
-                ui_draw_line1(fx[1], fy[1], tx + y_ns * 2, ty + x_ns * 2, c);
+                ui_draw_line1(fx[0], fy[0], tx - y_ns * 2, ty - x_ns * 2, c, ui_scale);
+                ui_draw_line1(fx[0], fy[0], tx + y_ns * 2, ty + x_ns * 2, c, ui_scale);
+                ui_draw_line1(fx[1], fy[1], tx - y_ns * 2, ty - x_ns * 2, c, ui_scale);
+                ui_draw_line1(fx[1], fy[1], tx + y_ns * 2, ty + x_ns * 2, c, ui_scale);
                 if ((y_ns == 1) && (x_ns == 1)) {
-                    ui_draw_line1(fx[0], fy[0], tx, ty - x_ns, c);
-                    ui_draw_line1(fx[0], fy[0], tx - x_ns, ty, c);
-                    ui_draw_line1(fx[1], fy[1], tx, ty - x_ns, c);
-                    ui_draw_line1(fx[1], fy[1], tx - x_ns, ty, c);
+                    ui_draw_line1(fx[0], fy[0], tx, ty - x_ns, c, ui_scale);
+                    ui_draw_line1(fx[0], fy[0], tx - x_ns, ty, c, ui_scale);
+                    ui_draw_line1(fx[1], fy[1], tx, ty - x_ns, c, ui_scale);
+                    ui_draw_line1(fx[1], fy[1], tx - x_ns, ty, c, ui_scale);
                 }
             }
             /*54cb2*/
             if (v16 != 2) {
-                ui_draw_line1(fx[2], fy[2], tx, ty, c);
-                ui_draw_line1(fx[2], fy[2], tx - y_ns, ty - x_ns, c);
-                ui_draw_line1(fx[2], fy[2], tx + y_ns, ty + x_ns, c);
+                ui_draw_line1(fx[2], fy[2], tx, ty, c, ui_scale);
+                ui_draw_line1(fx[2], fy[2], tx - y_ns, ty - x_ns, c, ui_scale);
+                ui_draw_line1(fx[2], fy[2], tx + y_ns, ty + x_ns, c, ui_scale);
                 /*if (btype == 5) always true*/
-                ui_draw_line1(fx[2], fy[2], tx - y_ns * 2, ty - x_ns * 2, c);
-                ui_draw_line1(fx[2], fy[2], tx + y_ns * 2, ty + x_ns * 2, c);
+                ui_draw_line1(fx[2], fy[2], tx - y_ns * 2, ty - x_ns * 2, c, ui_scale);
+                ui_draw_line1(fx[2], fy[2], tx + y_ns * 2, ty + x_ns * 2, c, ui_scale);
                 if ((y_ns == 1) && (x_ns == 1)) {
-                    ui_draw_line1(fx[2], fy[2], tx, ty - x_ns, c);
-                    ui_draw_line1(fx[2], fy[2], tx - x_ns, ty, c);
+                    ui_draw_line1(fx[2], fy[2], tx, ty - x_ns, c, ui_scale);
+                    ui_draw_line1(fx[2], fy[2], tx - x_ns, ty, c, ui_scale);
                 }
             }
         }
@@ -771,14 +771,14 @@ static void ui_battle_draw_stasis_sub1(const struct battle_s *bt, int target_i, 
     gfx_aux_draw_frame_to(ui_data.gfx.space.circle, &ui_data.aux.ship_p1);
     gfx_aux_overlay_clear_unused(1, 1, &ui_data.aux.btemp, &ui_data.aux.ship_p1);
     gfx_aux_overlay(0, 0, &ui_data.aux.ship_overlay, &ui_data.aux.btemp);
-    gfx_aux_draw_frame_from_limit(x, y, &ui_data.aux.ship_overlay, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
+    gfx_aux_draw_frame_from_limit(x, y, &ui_data.aux.ship_overlay, 0, 0, UI_VGA_W - 1, UI_VGA_H - 1, UI_SCREEN_W, ui_scale);
     if (b->num > 0) {
         lbxfont_set_temp_color(0);
         lbxfont_select_set_12_4(2, 0xd, 0, 0);
         if (b->side == SIDE_L) {
-            lbxfont_print_num_right(x + 29, y + 18, b->num, UI_SCREEN_W);
+            lbxfont_print_num_right(x + 29, y + 18, b->num, UI_SCREEN_W, ui_scale);
         } else {
-            lbxfont_print_num_normal(x + 3, y + 18, b->num, UI_SCREEN_W);
+            lbxfont_print_num_normal(x + 3, y + 18, b->num, UI_SCREEN_W, ui_scale);
         }
     }
 }
@@ -786,7 +786,7 @@ static void ui_battle_draw_stasis_sub1(const struct battle_s *bt, int target_i, 
 static void ui_battle_draw_colony_destroyed_cb(void *vptr)
 {
     ui_draw_copy_buf();
-    ui_draw_textbox_2str("", game_str_bt_coldest, 74);
+    ui_draw_textbox_2str("", game_str_bt_coldest, 74, ui_scale);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -870,34 +870,34 @@ void ui_battle_draw_planetinfo(const struct battle_s *bt, bool side_r)
     uiobj_table_clear();
     ui_battle_draw_arena(bt, 0, 0);
     ui_battle_draw_bottom_no_ois(bt);
-    ui_draw_filled_rect(x, y, x + 131, y + 37, 0x3a);
-    ui_draw_filled_rect(x + 85, y + 4, x + 131, y + 37, 0);
-    lbxgfx_draw_frame(x, y, ui_data.gfx.space.vp2_top, UI_SCREEN_W);
-    lbxgfx_draw_frame(x + 90, y + 9, b->gfx, UI_SCREEN_W);
+    ui_draw_filled_rect(x, y, x + 131, y + 37, 0x3a, ui_scale);
+    ui_draw_filled_rect(x + 85, y + 4, x + 131, y + 37, 0, ui_scale);
+    lbxgfx_draw_frame(x, y, ui_data.gfx.space.vp2_top, UI_SCREEN_W, ui_scale);
+    lbxgfx_draw_frame(x + 90, y + 9, b->gfx, UI_SCREEN_W, ui_scale);
     lbxfont_select(1, 0xa, 0, 0);
-    lbxfont_print_str_center(x + 44, y + 7, b->name, UI_SCREEN_W);
+    lbxfont_print_str_center(x + 44, y + 7, b->name, UI_SCREEN_W, ui_scale);
     lbxfont_select(0, 0xa, 0, 0);
-    lbxfont_print_str_normal(x + 7, y + 21, game_str_bt_pop, UI_SCREEN_W);
-    lbxfont_print_str_normal(x + 7, y + 30, game_str_bt_ind, UI_SCREEN_W);
-    lbxfont_print_str_normal(x + 60, y + 21, ":", UI_SCREEN_W);
-    lbxfont_print_num_right(x + 80, y + 21, bt->pop, UI_SCREEN_W);
-    lbxfont_print_str_normal(x + 60, y + 30, ":", UI_SCREEN_W);
-    lbxfont_print_num_right(x + 80, y + 30, bt->fact, UI_SCREEN_W);
+    lbxfont_print_str_normal(x + 7, y + 21, game_str_bt_pop, UI_SCREEN_W, ui_scale);
+    lbxfont_print_str_normal(x + 7, y + 30, game_str_bt_ind, UI_SCREEN_W, ui_scale);
+    lbxfont_print_str_normal(x + 60, y + 21, ":", UI_SCREEN_W, ui_scale);
+    lbxfont_print_num_right(x + 80, y + 21, bt->pop, UI_SCREEN_W, ui_scale);
+    lbxfont_print_str_normal(x + 60, y + 30, ":", UI_SCREEN_W, ui_scale);
+    lbxfont_print_num_right(x + 80, y + 30, bt->fact, UI_SCREEN_W, ui_scale);
     if (bt->s[bt->item[bt->cur_item].side].flag_have_scan || (side_r == (b->side == SIDE_R))) {
         int y1;
-        ui_draw_filled_rect(x, y + 39, x + 131, y + 79, 0x3a);
-        lbxgfx_draw_frame(x, y + 38, ui_data.gfx.space.vp2_data, UI_SCREEN_W);
-        lbxfont_print_str_normal(x + 68, y + 42, game_str_bt_bases, UI_SCREEN_W);
+        ui_draw_filled_rect(x, y + 39, x + 131, y + 79, 0x3a, ui_scale);
+        lbxgfx_draw_frame(x, y + 38, ui_data.gfx.space.vp2_data, UI_SCREEN_W, ui_scale);
+        lbxfont_print_str_normal(x + 68, y + 42, game_str_bt_bases, UI_SCREEN_W, ui_scale);
         if (bt->have_subspace_int) {
-            ui_draw_filled_rect(x, y + 79, x + 131, y + 89, 0x3a);
-            lbxgfx_draw_frame(x, y + 77, ui_data.gfx.space.vp2_line, UI_SCREEN_W);
+            ui_draw_filled_rect(x, y + 79, x + 131, y + 89, 0x3a, ui_scale);
+            lbxgfx_draw_frame(x, y + 77, ui_data.gfx.space.vp2_line, UI_SCREEN_W, ui_scale);
             lbxfont_select(2, 6, 0, 0);
-            lbxfont_print_str_normal(x + 10, y + 80, game_str_bt_subint, UI_SCREEN_W);
+            lbxfont_print_str_normal(x + 10, y + 80, game_str_bt_subint, UI_SCREEN_W, ui_scale);
             y1 = y + 86;
         } else {
             y1 = y + 77;
         }
-        lbxgfx_draw_frame(x, y1, ui_data.gfx.space.vp2_bottom, UI_SCREEN_W);
+        lbxgfx_draw_frame(x, y1, ui_data.gfx.space.vp2_bottom, UI_SCREEN_W, ui_scale);
         lbxfont_select(2, 6, 0, 0);
         {
             char buf[80];
@@ -906,18 +906,17 @@ void ui_battle_draw_planetinfo(const struct battle_s *bt, bool side_r)
                 w = &(tbl_shiptech_weap[b->wpn[1].t]);
             }
             lib_sprintf(buf, sizeof(buf), "3 %s %s", *w->nameptr, game_str_bt_launch);
-            lbxfont_print_str_normal(x + 10, y + 71, buf, UI_SCREEN_W);
+            lbxfont_print_str_normal(x + 10, y + 71, buf, UI_SCREEN_W, ui_scale);
         }
         lbxfont_select(2, 0xb, 0, 0);
-        lbxfont_print_num_right(x + 46, y + 51, b->defense, UI_SCREEN_W);
-        lbxfont_print_num_right(x + 46, y + 61, b->misdefense, UI_SCREEN_W);
-        lbxfont_print_num_right(x + 86, y + 51, b->complevel, UI_SCREEN_W);
-        lbxfont_print_num_right(x + 86, y + 61, b->hp1, UI_SCREEN_W);
-        lbxfont_print_num_right(x + 123, y + 51, b->hploss, UI_SCREEN_W);
-        lbxfont_print_num_right(x + 124, y + 61, b->absorb, UI_SCREEN_W);
+        lbxfont_print_num_right(x + 46, y + 51, b->defense, UI_SCREEN_W, ui_scale);
+        lbxfont_print_num_right(x + 46, y + 61, b->misdefense, UI_SCREEN_W, ui_scale);
+        lbxfont_print_num_right(x + 86, y + 51, b->complevel, UI_SCREEN_W, ui_scale);
+        lbxfont_print_num_right(x + 86, y + 61, b->hp1, UI_SCREEN_W, ui_scale);
+        lbxfont_print_num_right(x + 123, y + 51, b->hploss, UI_SCREEN_W, ui_scale);
+        lbxfont_print_num_right(x + 124, y + 61, b->absorb, UI_SCREEN_W, ui_scale);
     } else {
-        /*5b512*/
-        lbxgfx_draw_frame(x, y + 37, ui_data.gfx.space.vp2_bottom, UI_SCREEN_W);
+        lbxgfx_draw_frame(x, y + 37, ui_data.gfx.space.vp2_bottom, UI_SCREEN_W, ui_scale);
     }
     uiobj_finish_frame();
     ui_draw_copy_buf();
@@ -958,7 +957,7 @@ void ui_battle_draw_item(const struct battle_s *bt, int itemi, int x, int y)
             }
             lbxgfx_set_frame_0(gfx);
             for (int i = 0; i <= d->frame_ship; ++i) {
-                lbxgfx_draw_frame(x, y, gfx, UI_SCREEN_W);
+                lbxgfx_draw_frame(x, y, gfx, UI_SCREEN_W, ui_scale);
             }
         }
         if (b->side != SIDE_NONE) {
@@ -1021,15 +1020,15 @@ void ui_battle_draw_item(const struct battle_s *bt, int itemi, int x, int y)
             xa += xoff;
             ya += yoff;
         }
-        gfx_aux_draw_frame_from_limit(xa, ya, &ui_data.aux.btemp, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
+        gfx_aux_draw_frame_from_limit(xa, ya, &ui_data.aux.btemp, 0, 0, UI_VGA_W - 1, UI_VGA_H - 1, UI_SCREEN_W, ui_scale);
     }
     if (b->num > 0) {
         lbxfont_set_temp_color(0);
         lbxfont_select_set_12_4(2, 0xd, 0, 0);
         if (b->side == SIDE_L) {
-            lbxfont_print_num_right(x + 29, y + 18, b->num, UI_SCREEN_W);
+            lbxfont_print_num_right(x + 29, y + 18, b->num, UI_SCREEN_W, ui_scale);
         } else {
-            lbxfont_print_num_normal(x + 3, y + 18, b->num, UI_SCREEN_W);
+            lbxfont_print_num_normal(x + 3, y + 18, b->num, UI_SCREEN_W, ui_scale);
         }
     }
 }
@@ -1040,15 +1039,15 @@ void ui_battle_draw_arena(const struct battle_s *bt, int itemi, int dmode)
     d->frame_ship = (d->frame_ship + 1) % 5;
     d->frame_missile = (d->frame_missile + 1) % 4;
     ui_draw_erase_buf();
-    lbxgfx_draw_frame(0, 0, d->gfx_bg, UI_SCREEN_W);
+    lbxgfx_draw_frame(0, 0, d->gfx_bg, UI_SCREEN_W, ui_scale);
     lbxfont_set_temp_color(0);
     lbxfont_select_set_12_4(2, 0xd, 0, 0);
     if (ui_extra_enabled && ui_data.battle.show_grid) {
         for (int x = 0; x < 10; ++x) {
-            ui_draw_line1(x * 32, 0, x * 32, 24 * 8 - 1, 4);
+            ui_draw_line1(x * 32, 0, x * 32, 24 * 8 - 1, 4, ui_scale);
         }
         for (int y = 0; y < 8; ++y) {
-            ui_draw_line1(0, y * 24, 32 * 10 - 1, y * 24, 4);
+            ui_draw_line1(0, y * 24, 32 * 10 - 1, y * 24, 4, ui_scale);
         }
     }
     for (int i = 0; i <= bt->items_num; ++i) {
@@ -1063,7 +1062,7 @@ void ui_battle_draw_arena(const struct battle_s *bt, int itemi, int dmode)
     for (int i = 0; i < bt->num_rocks; ++i) {
         const struct battle_rock_s *r;
         r = &(bt->rock[i]);
-        lbxgfx_draw_frame(r->sx * 32, r->sy * 24, r->gfx, UI_SCREEN_W);
+        lbxgfx_draw_frame(r->sx * 32, r->sy * 24, r->gfx, UI_SCREEN_W, ui_scale);
     }
     for (int i = 0; i < bt->num_missile; ++i) {
         const struct battle_missile_s *m = &(bt->missile[i]);
@@ -1101,11 +1100,11 @@ void ui_battle_draw_misshield(const struct battle_s *bt, int target_i, int targe
             ui_battle_draw_arena(bt, target_i, 1);
             ui_battle_draw_bottom(bt);
             ui_battle_draw_item(bt, target_i, target_x, target_y);
-            ui_draw_line_ctbl(target_x_hit, target_y_hit, mx, my, colortbl, 8, 0);
+            ui_draw_line_ctbl(target_x_hit, target_y_hit, mx, my, colortbl, 8, 0, ui_scale);
             if (f > 1) {
                 gfx_aux_draw_frame_to(ui_data.gfx.space.explos[f - 2], &ui_data.aux.btemp);
                 gfx_aux_scale(&ui_data.aux.btemp, 30, 30);
-                gfx_aux_draw_frame_from(mx - 4, my - 4, &ui_data.aux.btemp, UI_SCREEN_W);
+                gfx_aux_draw_frame_from(mx - 4, my - 4, &ui_data.aux.btemp, UI_SCREEN_W, ui_scale);
             }
             uiobj_finish_frame();
             ui_delay_ticks_or_click(2);
@@ -1155,7 +1154,7 @@ void ui_battle_draw_misshield(const struct battle_s *bt, int target_i, int targe
                 gfx_aux_overlay(2, 2, &ui_data.aux.btemp, &ui_data.aux.ship_p1);
             }
             gfx_aux_overlay(3, 3, &ui_data.aux.btemp, &ui_data.aux.ship_overlay);
-            gfx_aux_draw_frame_from_limit(target_x - 3, target_y - 3, &ui_data.aux.btemp, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
+            gfx_aux_draw_frame_from_limit(target_x - 3, target_y - 3, &ui_data.aux.btemp, 0, 0, UI_VGA_W - 1, UI_VGA_H - 1, UI_SCREEN_W, ui_scale);
             uiobj_finish_frame();
             ui_delay_ticks_or_click(5);
         }
@@ -1200,9 +1199,9 @@ void ui_battle_draw_damage(const struct battle_s *bt, int target_i, int target_x
         f = flag_quick ? (i * 2 + 4) : i;
         gfx_aux_draw_frame_to(ui_data.gfx.space.explos[f], &ui_data.aux.btemp);
         gfx_aux_scale(&ui_data.aux.btemp, scale, scale);
-        gfx_aux_draw_frame_from_limit(ax, ay, &ui_data.aux.btemp, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
+        gfx_aux_draw_frame_from_limit(ax, ay, &ui_data.aux.btemp, 0, 0, UI_VGA_W - 1, UI_VGA_H - 1, UI_SCREEN_W, ui_scale);
         lbxfont_select(2, 0xd, 0, 0);
-        lbxfont_print_num_center(target_x_hit, target_y_hit - 2, damage, UI_SCREEN_W);
+        lbxfont_print_num_center(target_x_hit, target_y_hit - 2, damage, UI_SCREEN_W, ui_scale);
         uiobj_finish_frame();
         ui_delay_ticks_or_click(1);
     }
@@ -1212,7 +1211,7 @@ void ui_battle_draw_explos_small(const struct battle_s *bt, int x, int y)
 {
     gfx_aux_draw_frame_to(ui_data.gfx.space.explos[5], &ui_data.aux.btemp);
     gfx_aux_scale(&ui_data.aux.btemp, 30, 30);
-    gfx_aux_draw_frame_from(x, y, &ui_data.aux.btemp, UI_SCREEN_W);
+    gfx_aux_draw_frame_from(x, y, &ui_data.aux.btemp, UI_SCREEN_W, ui_scale);
 }
 
 void ui_battle_draw_basic(const struct battle_s *bt)
@@ -1338,7 +1337,7 @@ void ui_battle_draw_missile(const struct battle_s *bt, int missilei, int x, int 
         yoff = util_math_angle_dist_cos(angle, tbl_missile_off[nummissiles - 1][i * 2 + 1])
              + util_math_angle_dist_sin(angle, tbl_missile_off[nummissiles - 1][i * 2 + 0])
              + ayoff - 3;
-        gfx_aux_draw_frame_from_limit(x + xoff, y + yoff, &ui_data.aux.btemp, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
+        gfx_aux_draw_frame_from_limit(x + xoff, y + yoff, &ui_data.aux.btemp, 0, 0, UI_VGA_W - 1, UI_VGA_H - 1, UI_SCREEN_W, ui_scale);
     }
 }
 
@@ -1376,7 +1375,7 @@ void ui_battle_draw_bomb_attack(const struct battle_s *bt, int attacker_i, int t
         ui_battle_draw_arena(bt, attacker_i, 1);
         ui_battle_draw_bottom(bt);
         gfx_aux_draw_frame_to(gfx, &ui_data.aux.btemp);
-        gfx_aux_draw_frame_from_rotate_limit(x0, y0, x1, y1, &ui_data.aux.btemp, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
+        gfx_aux_draw_frame_from_rotate_limit(x0, y0, x1, y1, &ui_data.aux.btemp, 0, 0, UI_VGA_W - 1, UI_VGA_H - 1, UI_SCREEN_W, ui_scale);
         ui_battle_draw_item(bt, attacker_i, x, y);
         uiobj_finish_frame();
         ui_delay_ticks_or_click(2);
@@ -1452,7 +1451,7 @@ void ui_battle_draw_stasis(const struct battle_s *bt, int attacker_i, int target
         ui_battle_draw_arena(bt, target_i, 1);
         ui_battle_draw_bottom(bt);
         gfx_aux_draw_frame_to(gfx, &ui_data.aux.btemp);
-        gfx_aux_draw_frame_from_rotate_limit(x0, y0, x1, y1, &ui_data.aux.btemp, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
+        gfx_aux_draw_frame_from_rotate_limit(x0, y0, x1, y1, &ui_data.aux.btemp, 0, 0, UI_VGA_W - 1, UI_VGA_H - 1, UI_SCREEN_W, ui_scale);
         if (f > 4) {
             ui_battle_draw_stasis_sub1(bt, target_i, f);
         } else {
@@ -1486,7 +1485,7 @@ void ui_battle_draw_pulsar(const struct battle_s *bt, int attacker_i, int ptype,
                 gfx_aux_recolor_ctbl(&ui_data.aux.btemp, ctbl, 5);
             }
             gfx_aux_scale(&ui_data.aux.btemp, f * 10 + 50, f * 10 + 50);
-            gfx_aux_draw_frame_from_limit(x - (f + 1) * 5, y - (f + 1) * 4, &ui_data.aux.btemp, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
+            gfx_aux_draw_frame_from_limit(x - (f + 1) * 5, y - (f + 1) * 4, &ui_data.aux.btemp, 0, 0, UI_VGA_W - 1, UI_VGA_H - 1, UI_SCREEN_W, ui_scale);
         }
         /*4cd27*/
         if (f > 2) {
@@ -1502,9 +1501,9 @@ void ui_battle_draw_pulsar(const struct battle_s *bt, int attacker_i, int ptype,
                         x1 = b->sx * 32 + fr[b->look].target_x;
                     }
                     y1 = b->sy * 24 + fr[b->look].target_y;
-                    gfx_aux_draw_frame_from_limit(x1 - 13, y1 - 12, &ui_data.aux.btemp, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
+                    gfx_aux_draw_frame_from_limit(x1 - 13, y1 - 12, &ui_data.aux.btemp, 0, 0, UI_VGA_W - 1, UI_VGA_H - 1, UI_SCREEN_W, ui_scale);
                     lbxfont_select(2, 0xd, 0, 0);
-                    lbxfont_print_num_center(x1, y1 - 2, dmgtbl[i], UI_SCREEN_W);
+                    lbxfont_print_num_center(x1, y1 - 2, dmgtbl[i], UI_SCREEN_W, ui_scale);
                 }
             }
         }
@@ -1537,7 +1536,7 @@ void ui_battle_draw_stream1(const struct battle_s *bt, int attacker_i, int targe
         ui_battle_draw_bottom(bt);
         gfx_aux_draw_frame_to(gfx, &ui_data.aux.btemp);
         gfx_aux_recolor_ctbl(&ui_data.aux.btemp, ctbl, 5);
-        gfx_aux_draw_frame_from_rotate_limit(x0, y0, x1, y1, &ui_data.aux.btemp, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
+        gfx_aux_draw_frame_from_rotate_limit(x0, y0, x1, y1, &ui_data.aux.btemp, 0, 0, UI_VGA_W - 1, UI_VGA_H - 1, UI_SCREEN_W, ui_scale);
         ui_battle_draw_item(bt, attacker_i, x, y);
         uiobj_finish_frame();
         ui_delay_ticks_or_click(2);
@@ -1567,7 +1566,7 @@ void ui_battle_draw_stream2(const struct battle_s *bt, int attacker_i, int targe
             ui_battle_draw_arena(bt, attacker_i, 1);
             ui_battle_draw_bottom(bt);
             gfx_aux_draw_frame_to(gfx, &ui_data.aux.btemp);
-            gfx_aux_draw_frame_from_rotate_limit(x0, y0, x1, y1, &ui_data.aux.btemp, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
+            gfx_aux_draw_frame_from_rotate_limit(x0, y0, x1, y1, &ui_data.aux.btemp, 0, 0, UI_VGA_W - 1, UI_VGA_H - 1, UI_SCREEN_W, ui_scale);
             ui_battle_draw_item(bt, attacker_i, x, y);
         }
         /*4c06a*/
@@ -1589,7 +1588,7 @@ void ui_battle_draw_stream2(const struct battle_s *bt, int attacker_i, int targe
                 y2 = b->sy * 24 + (f - 12) * 3;
             }
             gfx_aux_scale(&ui_data.aux.btemp, s, s);
-            gfx_aux_draw_frame_from_limit(x2, y2, &ui_data.aux.btemp, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
+            gfx_aux_draw_frame_from_limit(x2, y2, &ui_data.aux.btemp, 0, 0, UI_VGA_W - 1, UI_VGA_H - 1, UI_SCREEN_W, ui_scale);
         }
         /*4c19d*/
         uiobj_finish_frame();
@@ -1628,12 +1627,12 @@ void ui_battle_draw_retreat(const struct battle_s *bt)
             /*4da3c*/
             x1 = x + (4 - f) * 3;
         }
-        gfx_aux_draw_frame_from(x1, y + (4 - f) * 3, &ui_data.aux.btemp, UI_SCREEN_W);
+        gfx_aux_draw_frame_from(x1, y + (4 - f) * 3, &ui_data.aux.btemp, UI_SCREEN_W, ui_scale);
         gfx_aux_draw_frame_to(b->gfx, &ui_data.aux.btemp);
         if (b->side == SIDE_L) {
             gfx_aux_flipx(&ui_data.aux.btemp);
         }
-        gfx_aux_draw_frame_from_limit(x, y, &ui_data.aux.btemp, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
+        gfx_aux_draw_frame_from_limit(x, y, &ui_data.aux.btemp, 0, 0, UI_VGA_W - 1, UI_VGA_H - 1, UI_SCREEN_W, ui_scale);
         uiobj_finish_frame();
         ui_delay_ticks_or_click(1);
     }
@@ -1648,7 +1647,7 @@ void ui_battle_draw_retreat(const struct battle_s *bt)
         }
         s = 100 - (f * 5);
         gfx_aux_scale(&ui_data.aux.btemp, s, s);
-        gfx_aux_draw_frame_from(x + f / 2, y + (f * 3) / 5, &ui_data.aux.btemp, UI_SCREEN_W);
+        gfx_aux_draw_frame_from(x + f / 2, y + (f * 3) / 5, &ui_data.aux.btemp, UI_SCREEN_W, ui_scale);
         lbxgfx_set_frame_0(b->gfx);
         gfx_aux_draw_frame_to(b->gfx, &ui_data.aux.btemp);
         s = 100 - (f * 10);
@@ -1660,7 +1659,7 @@ void ui_battle_draw_retreat(const struct battle_s *bt)
             x1 = x + (xf * 2 * f * 10) / 100;
         }
         y1 = y + (f * yf * 10) / 100;
-        gfx_aux_draw_frame_from_limit(x1, y1, &ui_data.aux.btemp, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
+        gfx_aux_draw_frame_from_limit(x1, y1, &ui_data.aux.btemp, 0, 0, UI_VGA_W - 1, UI_VGA_H - 1, UI_SCREEN_W, ui_scale);
         uiobj_finish_frame();
         ui_delay_ticks_or_click(2);
     }
@@ -1697,13 +1696,13 @@ void ui_battle_draw_blackhole(const struct battle_s *bt, int attacker_i, int tar
         ui_battle_draw_arena(bt, attacker_i, 0);
         ui_battle_draw_bottom(bt);
         if (f < 5) {
-            ui_draw_line_ctbl(x0, y0, x1, y1, ctbl, 5, f);
-            ui_draw_line_ctbl(x0, y0, x1 - y_ns, y1 - x_ns, ctbl, 5, (f + 1) % 5);
-            ui_draw_line_ctbl(x0, y0, x1 + y_ns, y1 + x_ns, ctbl, 5, (f + 2) % 5);
+            ui_draw_line_ctbl(x0, y0, x1, y1, ctbl, 5, f, ui_scale);
+            ui_draw_line_ctbl(x0, y0, x1 - y_ns, y1 - x_ns, ctbl, 5, (f + 1) % 5, ui_scale);
+            ui_draw_line_ctbl(x0, y0, x1 + y_ns, y1 + x_ns, ctbl, 5, (f + 2) % 5, ui_scale);
         }
         if (f > 3) {
             gfx_aux_draw_frame_to(gfx, &ui_data.aux.btemp);
-            gfx_aux_draw_frame_from(x2 + 5, y2 + 3, &ui_data.aux.btemp, UI_SCREEN_W);
+            gfx_aux_draw_frame_from(x2 + 5, y2 + 3, &ui_data.aux.btemp, UI_SCREEN_W, ui_scale);
         }
         uiobj_finish_frame();
         ui_delay_ticks_or_click(2);
@@ -1738,7 +1737,7 @@ void ui_battle_draw_technull(const struct battle_s *bt, int attacker_i, int targ
         }
         gfx_aux_draw_frame_to(gfx, &ui_data.aux.btemp);
         util_math_go_line_dist(&x0, &y0, x1, y1, 4);
-        gfx_aux_draw_frame_from_limit(x0 - 16, y0 - 12, &ui_data.aux.btemp, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
+        gfx_aux_draw_frame_from_limit(x0 - 16, y0 - 12, &ui_data.aux.btemp, 0, 0, UI_VGA_W - 1, UI_VGA_H - 1, UI_SCREEN_W, ui_scale);
         uiobj_finish_frame();
         ui_delay_ticks_or_click(1);
     }
@@ -1748,7 +1747,7 @@ void ui_battle_draw_technull(const struct battle_s *bt, int attacker_i, int targ
         ui_battle_draw_arena(bt, target_i, 0);
         ui_battle_draw_bottom(bt);
         gfx_aux_draw_frame_to(gfx, &ui_data.aux.btemp);
-        gfx_aux_draw_frame_from_limit(x2, y2, &ui_data.aux.btemp, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
+        gfx_aux_draw_frame_from_limit(x2, y2, &ui_data.aux.btemp, 0, 0, UI_VGA_W - 1, UI_VGA_H - 1, UI_SCREEN_W, ui_scale);
         uiobj_finish_frame();
         ui_delay_ticks_or_click(2);
     }
@@ -1796,11 +1795,11 @@ void ui_battle_draw_repulse(const struct battle_s *bt, int attacker_i, int targe
         ui_delay_prepare();
         ui_battle_draw_arena(bt, attacker_i, 0);
         ui_battle_draw_bottom(bt);
-        ui_draw_line_ctbl(x0, y0, tx + fx, ty + fy, ctbl, 5, i % 5);
-        ui_draw_line_ctbl(x0, y0, tx + fx - yo, ty + fy - xo, ctbl, 5, (i + 1) % 5);
-        ui_draw_line_ctbl(x0, y0, tx + fx + yo, ty + fy + xo, ctbl, 5, (i + 2) % 5);
-        ui_draw_line_ctbl(x0, y0, tx + fx - yo * 2, ty + fy - xo * 2, ctbl, 5, (i + 3) % 5);
-        ui_draw_line_ctbl(x0, y0, tx + fx + yo * 2, ty + fy + xo * 2, ctbl, 5, (i + 4) % 5);
+        ui_draw_line_ctbl(x0, y0, tx + fx, ty + fy, ctbl, 5, i % 5, ui_scale);
+        ui_draw_line_ctbl(x0, y0, tx + fx - yo, ty + fy - xo, ctbl, 5, (i + 1) % 5, ui_scale);
+        ui_draw_line_ctbl(x0, y0, tx + fx + yo, ty + fy + xo, ctbl, 5, (i + 2) % 5, ui_scale);
+        ui_draw_line_ctbl(x0, y0, tx + fx - yo * 2, ty + fy - xo * 2, ctbl, 5, (i + 3) % 5, ui_scale);
+        ui_draw_line_ctbl(x0, y0, tx + fx + yo * 2, ty + fy + xo * 2, ctbl, 5, (i + 4) % 5, ui_scale);
         uiobj_finish_frame();
         ui_delay_ticks_or_click(2);
     }
@@ -1811,11 +1810,11 @@ void ui_battle_draw_repulse(const struct battle_s *bt, int attacker_i, int targe
         ui_battle_draw_arena(bt, target_i, 1);
         ui_battle_draw_bottom(bt);
         ui_battle_draw_item(bt, target_i, tx, ty);
-        ui_draw_line_ctbl(x0, y0, tx + fx, ty + fy, ctbl, 5, i % 5);
-        ui_draw_line_ctbl(x0, y0, tx + fx - yo, ty + fy - xo, ctbl, 5, (i + 1) % 5);
-        ui_draw_line_ctbl(x0, y0, tx + fx + yo, ty + fy + xo, ctbl, 5, (i + 2) % 5);
-        ui_draw_line_ctbl(x0, y0, tx + fx - yo * 2, ty + fy - xo * 2, ctbl, 5, (i + 3) % 5);
-        ui_draw_line_ctbl(x0, y0, tx + fx + yo * 2, ty + fy + xo * 2, ctbl, 5, (i + 4) % 5);
+        ui_draw_line_ctbl(x0, y0, tx + fx, ty + fy, ctbl, 5, i % 5, ui_scale);
+        ui_draw_line_ctbl(x0, y0, tx + fx - yo, ty + fy - xo, ctbl, 5, (i + 1) % 5, ui_scale);
+        ui_draw_line_ctbl(x0, y0, tx + fx + yo, ty + fy + xo, ctbl, 5, (i + 2) % 5, ui_scale);
+        ui_draw_line_ctbl(x0, y0, tx + fx - yo * 2, ty + fy - xo * 2, ctbl, 5, (i + 3) % 5, ui_scale);
+        ui_draw_line_ctbl(x0, y0, tx + fx + yo * 2, ty + fy + xo * 2, ctbl, 5, (i + 4) % 5, ui_scale);
         uiobj_finish_frame();
         ui_delay_ticks_or_click(2);
     }
@@ -1825,11 +1824,11 @@ void ui_battle_draw_repulse(const struct battle_s *bt, int attacker_i, int targe
         ui_battle_draw_arena(bt, target_i, 1);
         ui_battle_draw_bottom(bt);
         ui_battle_draw_item(bt, target_i, sx * 32, sy * 24);
-        ui_draw_line_ctbl(x0, y0, tx + fx, ty + fy, ctbl, 5, i % 5);
-        ui_draw_line_ctbl(x0, y0, tx + fx - yo, ty + fy - xo, ctbl, 5, (i + 1) % 5);
-        ui_draw_line_ctbl(x0, y0, tx + fx + yo, ty + fy + xo, ctbl, 5, (i + 2) % 5);
-        ui_draw_line_ctbl(x0, y0, tx + fx - yo * 2, ty + fy - xo * 2, ctbl, 5, (i + 3) % 5);
-        ui_draw_line_ctbl(x0, y0, tx + fx + yo * 2, ty + fy + xo * 2, ctbl, 5, (i + 4) % 5);
+        ui_draw_line_ctbl(x0, y0, tx + fx, ty + fy, ctbl, 5, i % 5, ui_scale);
+        ui_draw_line_ctbl(x0, y0, tx + fx - yo, ty + fy - xo, ctbl, 5, (i + 1) % 5, ui_scale);
+        ui_draw_line_ctbl(x0, y0, tx + fx + yo, ty + fy + xo, ctbl, 5, (i + 2) % 5, ui_scale);
+        ui_draw_line_ctbl(x0, y0, tx + fx - yo * 2, ty + fy - xo * 2, ctbl, 5, (i + 3) % 5, ui_scale);
+        ui_draw_line_ctbl(x0, y0, tx + fx + yo * 2, ty + fy + xo * 2, ctbl, 5, (i + 4) % 5, ui_scale);
         uiobj_finish_frame();
         ui_delay_ticks_or_click(2);
     }
@@ -1849,7 +1848,7 @@ void ui_battle_draw_cloaking(const struct battle_s *bt, int from, int to, int sx
             gfx_aux_flipx(&ui_data.aux.btemp);
         }
         gfx_aux_draw_cloak(&ui_data.aux.btemp, i, rnd_1_n(1000, &ui_data.seed));
-        gfx_aux_draw_frame_from_limit(b->sx * 32 + 1, b->sy * 24 + 1, &ui_data.aux.btemp, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
+        gfx_aux_draw_frame_from_limit(b->sx * 32 + 1, b->sy * 24 + 1, &ui_data.aux.btemp, 0, 0, UI_VGA_W - 1, UI_VGA_H - 1, UI_SCREEN_W, ui_scale);
         if (sx >= 0) {
             lbxgfx_set_frame_0(b->gfx);
             gfx_aux_draw_frame_to(b->gfx, &ui_data.aux.btemp);
@@ -1857,7 +1856,7 @@ void ui_battle_draw_cloaking(const struct battle_s *bt, int from, int to, int sx
                 gfx_aux_flipx(&ui_data.aux.btemp);
             }
             gfx_aux_draw_cloak(&ui_data.aux.btemp, from - i, rnd_1_n(1000, &ui_data.seed));
-            gfx_aux_draw_frame_from_limit(sx * 32 + 1, sy * 24 + 1, &ui_data.aux.btemp, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
+            gfx_aux_draw_frame_from_limit(sx * 32 + 1, sy * 24 + 1, &ui_data.aux.btemp, 0, 0, UI_VGA_W - 1, UI_VGA_H - 1, UI_SCREEN_W, ui_scale);
         }
         uiobj_finish_frame();
         ui_delay_ticks_or_click(2);

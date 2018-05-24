@@ -46,16 +46,16 @@ static void ui_dialog_yesno_draw_cb(void *vptr)
     struct ui_dialog_data_s *d = vptr;
     char buf[0x96];
     int x = d->x, y = d->y;
-    ui_draw_filled_rect(x, y, x + 135, y + 80, 0xf9);
-    lbxgfx_draw_frame(x, y, d->gfx_eco_chng2, UI_SCREEN_W);
+    ui_draw_filled_rect(x, y, x + 135, y + 80, 0xf9, ui_scale);
+    lbxgfx_draw_frame(x, y, d->gfx_eco_chng2, UI_SCREEN_W, ui_scale);
     lbxfont_select_set_12_1(0, 0, 0, 0);
     lib_strcpy(buf, game_str_nt_doyou, sizeof(buf));
     lib_strcat(buf, d->str, sizeof(buf));
-    lbxfont_print_str_split(x + 15 - (d->we / 2), y + 11, 110 + d->we, buf, 3, UI_SCREEN_W, UI_SCREEN_H);
+    lbxfont_print_str_split(x + 15 - (d->we / 2), y + 11, 110 + d->we, buf, 3, UI_SCREEN_W, UI_SCREEN_H, ui_scale);
     lbxgfx_set_frame_0(ui_data.gfx.starmap.scrapbut_yes);
     lbxgfx_set_frame_0(ui_data.gfx.starmap.scrapbut_no);
-    lbxgfx_draw_frame(x + 83, y + 60, ui_data.gfx.starmap.scrapbut_yes, UI_SCREEN_W);
-    lbxgfx_draw_frame(x + 18, y + 60, ui_data.gfx.starmap.scrapbut_no, UI_SCREEN_W);
+    lbxgfx_draw_frame(x + 83, y + 60, ui_data.gfx.starmap.scrapbut_yes, UI_SCREEN_W, ui_scale);
+    lbxgfx_draw_frame(x + 18, y + 60, ui_data.gfx.starmap.scrapbut_no, UI_SCREEN_W, ui_scale);
 }
 
 static void ui_dialog_choose_draw_cb(void *vptr)
@@ -63,12 +63,12 @@ static void ui_dialog_choose_draw_cb(void *vptr)
     struct ui_dialog_data_s *d = vptr;
     char buf[0x96];
     int x = d->x, y = d->y;
-    ui_draw_filled_rect(x, y, x + 135, y + 80, 0xf9);
-    lbxgfx_draw_frame(x, y, d->gfx_eco_chng4, UI_SCREEN_W);
+    ui_draw_filled_rect(x, y, x + 135, y + 80, 0xf9, ui_scale);
+    lbxgfx_draw_frame(x, y, d->gfx_eco_chng4, UI_SCREEN_W, ui_scale);
     lbxfont_select_set_12_1(0, 0, 0, 0);
     lib_strcpy(buf, game_str_nt_doyou, sizeof(buf));
     lib_strcat(buf, d->str, sizeof(buf));
-    lbxfont_print_str_split(x + 15 - (d->we / 2), y + 16, 110 + d->we, buf, 3, UI_SCREEN_W, UI_SCREEN_H);
+    lbxfont_print_str_split(x + 15 - (d->we / 2), y + 16, 110 + d->we, buf, 3, UI_SCREEN_W, UI_SCREEN_H, ui_scale);
 }
 
 static void ui_dialog_do(struct ui_dialog_data_s *d)

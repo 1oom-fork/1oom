@@ -88,18 +88,18 @@ static void sabotage_draw_cb(void *vptr)
     const planet_t *p = &(g->planet[d->planet]);
     int pop, bases, fact;
     hw_video_copy_back_from_page2();
-    ui_draw_filled_rect(222, 4, 314, 179, 0);
-    lbxgfx_draw_frame(222, 4, d->gfx_sabobac2, UI_SCREEN_W);
+    ui_draw_filled_rect(222, 4, 314, 179, 0, ui_scale);
+    lbxgfx_draw_frame(222, 4, d->gfx_sabobac2, UI_SCREEN_W, ui_scale);
     ui_starmap_draw_planetinfo_2(g, d->api, d->target, d->planet);
     /*set_limits(228, 110, 309, 143);*/
-    lbxgfx_draw_frame_offs(228, 70, d->gfx_colony, 228, 110, 309, 143, UI_SCREEN_W);
-    ui_draw_filled_rect(228, 58, 309, 68, tbl_banner_color2[e->banner]);
+    lbxgfx_draw_frame_offs(228, 70, d->gfx_colony, 228, 110, 309, 143, UI_SCREEN_W, ui_scale);
+    ui_draw_filled_rect(228, 58, 309, 68, tbl_banner_color2[e->banner], ui_scale);
     lbxfont_select(5, 6, 0, 0);
-    lbxfont_print_str_center(269, 60, game_str_tbl_races[e->race], UI_SCREEN_W);
-    ui_draw_filled_rect(227, 73, 310, 105, 0);
-    ui_draw_filled_rect(228, 74, 309, 104, 7);
+    lbxfont_print_str_center(269, 60, game_str_tbl_races[e->race], UI_SCREEN_W, ui_scale);
+    ui_draw_filled_rect(227, 73, 310, 105, 0, ui_scale);
+    ui_draw_filled_rect(228, 74, 309, 104, 7, ui_scale);
     lbxfont_select_set_12_1(5, 0, 0, 0);
-    lbxfont_print_str_split(228, 79, 80, game_str_sb_choose, 2, UI_SCREEN_W, UI_SCREEN_H);
+    lbxfont_print_str_split(228, 79, 80, game_str_sb_choose, 2, UI_SCREEN_W, UI_SCREEN_H, ui_scale);
     /*game_update_visibility();*/
     ui_gmap_basic_draw_frame(d->gmap, d->api);
     lbxfont_select_set_12_4(0, 0xa, 0, 0);
@@ -111,20 +111,20 @@ static void sabotage_draw_cb(void *vptr)
         pop = g->seen[d->api][d->planet].pop;
         bases = g->seen[d->api][d->planet].bases;
         fact = g->seen[d->api][d->planet].factories;
-        lbxfont_print_str_normal(230, 111, game_str_sb_lastrep, UI_SCREEN_W);
+        lbxfont_print_str_normal(230, 111, game_str_sb_lastrep, UI_SCREEN_W, ui_scale);
     }
     /*6d2b8*/
     if (pop > 0) {
-        lbxfont_print_str_normal(230, 120, game_str_sb_pop, UI_SCREEN_W);
-        lbxfont_print_num_right(305, 120, pop, UI_SCREEN_W);
+        lbxfont_print_str_normal(230, 120, game_str_sb_pop, UI_SCREEN_W, ui_scale);
+        lbxfont_print_num_right(305, 120, pop, UI_SCREEN_W, ui_scale);
     }
     if (fact > 0) {
-        lbxfont_print_str_normal(230, 128, game_str_sb_fact, UI_SCREEN_W);
-        lbxfont_print_num_right(305, 128, fact, UI_SCREEN_W);
+        lbxfont_print_str_normal(230, 128, game_str_sb_fact, UI_SCREEN_W, ui_scale);
+        lbxfont_print_num_right(305, 128, fact, UI_SCREEN_W, ui_scale);
     }
     if (bases > 0) {
-        lbxfont_print_str_normal(230, 136, game_str_sb_bases, UI_SCREEN_W);
-        lbxfont_print_num_right(305, 136, bases, UI_SCREEN_W);
+        lbxfont_print_str_normal(230, 136, game_str_sb_bases, UI_SCREEN_W, ui_scale);
+        lbxfont_print_num_right(305, 136, bases, UI_SCREEN_W, ui_scale);
     }
     ui_gmap_draw_planet_border(g, d->planet);
     for (int i = 0; i < g->galaxy_stars; ++i) {
@@ -133,7 +133,7 @@ static void sabotage_draw_cb(void *vptr)
             int x, y;
             x = (p->x * 215) / g->galaxy_maxx + 5 + 3;
             y = (p->y * 171) / g->galaxy_maxy + 5 - 2;
-            lbxgfx_draw_frame(x, y, ui_data.gfx.starmap.smalflag[e->banner], UI_SCREEN_W);
+            lbxgfx_draw_frame(x, y, ui_data.gfx.starmap.smalflag[e->banner], UI_SCREEN_W, ui_scale);
         }
     }
 }
@@ -143,7 +143,7 @@ static void sabotage_draw_anim(uint8_t *gfx, bool anim, int soundframe)
     int frame = anim ? lbxgfx_get_frame(gfx) : 0;
     lbxgfx_set_frame_0(gfx);
     for (int f = 0; f <= frame; ++f) {
-        lbxgfx_draw_frame(227, 73, gfx, UI_SCREEN_W);
+        lbxgfx_draw_frame(227, 73, gfx, UI_SCREEN_W, ui_scale);
     }
     if (frame == soundframe) {
         ui_sound_play_sfx(0x11);
@@ -159,11 +159,11 @@ static void sabotage_done_draw_cb(void *vptr)
     char *buf = ui_data.strbuf;
     struct strbuild_s strbuild = strbuild_init(buf, UI_STRBUF_SIZE);
     hw_video_copy_back_from_page2();
-    ui_draw_filled_rect(222, 4, 314, 179, 0);
-    lbxgfx_draw_frame(222, 4, d->gfx_saboback, UI_SCREEN_W);
-    lbxgfx_draw_frame(222, 159, d->gfx_contback, UI_SCREEN_W);
+    ui_draw_filled_rect(222, 4, 314, 179, 0, ui_scale);
+    lbxgfx_draw_frame(222, 4, d->gfx_saboback, UI_SCREEN_W, ui_scale);
+    lbxgfx_draw_frame(222, 159, d->gfx_contback, UI_SCREEN_W, ui_scale);
     /*set_limits(228, 110, 309, 158);*/
-    lbxgfx_draw_frame_offs(228, 70, d->gfx_colony, 228, 110, 309, 158, UI_SCREEN_W);
+    lbxgfx_draw_frame_offs(228, 70, d->gfx_colony, 228, 110, 309, 158, UI_SCREEN_W, ui_scale);
     switch (d->act) {
         case UI_SABOTAGE_FACT: /*0*/
             sabotage_draw_anim(d->gfx_ind_expl, (d->snum > 0), 11);
@@ -178,9 +178,9 @@ static void sabotage_done_draw_cb(void *vptr)
             break;
     }
     ui_starmap_draw_planetinfo_2(g, d->api, d->target, d->planet);
-    ui_draw_filled_rect(228, 58, 309, 68, tbl_banner_color2[e->banner]);
+    ui_draw_filled_rect(228, 58, 309, 68, tbl_banner_color2[e->banner], ui_scale);
     lbxfont_select(5, 6, 0, 0);
-    lbxfont_print_str_center(269, 60, game_str_tbl_races[e->race], UI_SCREEN_W);
+    lbxfont_print_str_center(269, 60, game_str_tbl_races[e->race], UI_SCREEN_W, ui_scale);
     if (d->spy == PLAYER_NONE) {
         strbuild_catf(&strbuild, "%s ", game_str_sb_unkn);
     } else {
@@ -226,27 +226,27 @@ static void sabotage_done_draw_cb(void *vptr)
     }
     /*6db14*/
     lbxfont_select_set_12_4(5, 5, 0, 0);
-    lbxfont_print_str_split(228, 118, 84, buf, 2, UI_SCREEN_W, UI_SCREEN_H);
+    lbxfont_print_str_split(228, 118, 84, buf, 2, UI_SCREEN_W, UI_SCREEN_H, ui_scale);
     ui_gmap_basic_draw_frame(d->gmap, d->api);
     ui_gmap_draw_planet_border(g, d->planet);
     lbxgfx_set_new_frame(d->gfx_contbutt, 1);
-    lbxgfx_draw_frame(227, 163, d->gfx_contbutt, UI_SCREEN_W);
+    lbxgfx_draw_frame(227, 163, d->gfx_contbutt, UI_SCREEN_W, ui_scale);
     if (d->other2 != PLAYER_NONE) {
-        ui_draw_filled_rect(31, 62, 202, 125, 0xbb);
-        ui_draw_filled_rect(37, 68, 196, 91, 0xba);
-        lbxgfx_draw_frame(31, 62, d->gfx_framing, UI_SCREEN_W);
-        ui_draw_filled_rect(50, 106, 110, 120, 0x00);
-        ui_draw_filled_rect(51, 107, 109, 119, tbl_banner_color2[g->eto[d->other1].banner]);
-        ui_draw_filled_rect(122, 106, 183, 120, 0x00);
-        ui_draw_filled_rect(123, 107, 182, 119, tbl_banner_color2[g->eto[d->other2].banner]);
+        ui_draw_filled_rect(31, 62, 202, 125, 0xbb, ui_scale);
+        ui_draw_filled_rect(37, 68, 196, 91, 0xba, ui_scale);
+        lbxgfx_draw_frame(31, 62, d->gfx_framing, UI_SCREEN_W, ui_scale);
+        ui_draw_filled_rect(50, 106, 110, 120, 0x00, ui_scale);
+        ui_draw_filled_rect(51, 107, 109, 119, tbl_banner_color2[g->eto[d->other1].banner], ui_scale);
+        ui_draw_filled_rect(122, 106, 183, 120, 0x00, ui_scale);
+        ui_draw_filled_rect(123, 107, 182, 119, tbl_banner_color2[g->eto[d->other2].banner], ui_scale);
         lbxfont_select(5, 6, 0, 0);
-        lbxfont_print_str_center(80, 110, game_str_tbl_races[g->eto[d->other1].race], UI_SCREEN_W);
-        lbxfont_print_str_center(152, 110, game_str_tbl_races[g->eto[d->other2].race], UI_SCREEN_W);
+        lbxfont_print_str_center(80, 110, game_str_tbl_races[g->eto[d->other1].race], UI_SCREEN_W, ui_scale);
+        lbxfont_print_str_center(152, 110, game_str_tbl_races[g->eto[d->other2].race], UI_SCREEN_W, ui_scale);
         lbxfont_select(5, 6, 0, 0);
         lbxfont_set_gap_h(2);
-        lbxfont_print_str_split(40, 70, 154, game_str_sb_frame, 3, UI_SCREEN_W, UI_SCREEN_H);
+        lbxfont_print_str_split(40, 70, 154, game_str_sb_frame, 3, UI_SCREEN_W, UI_SCREEN_H, ui_scale);
         lbxfont_select(0, 0, 0, 0);
-        lbxfont_print_str_center(115, 96, game_str_nt_victim, UI_SCREEN_W);
+        lbxfont_print_str_center(115, 96, game_str_nt_victim, UI_SCREEN_W, ui_scale);
     }
 }
 

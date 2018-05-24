@@ -51,12 +51,12 @@ static void newships_draw_cb(void *vptr)
     int x = 38, y = 27;
     char buf[0x20];
     ui_starmap_draw_basic(&d->sm);
-    ui_draw_filled_rect(x, y, x + 151, y + 128, 0x2b);
-    lbxgfx_draw_frame(x, y, d->gfx_newship, UI_SCREEN_W);
+    ui_draw_filled_rect(x, y, x + 151, y + 128, 0x2b, ui_scale);
+    lbxgfx_draw_frame(x, y, d->gfx_newship, UI_SCREEN_W, ui_scale);
     lbxfont_select(5, 6, 0, 0);
     lbxfont_set_color_c_n(0x49, 5);
     lib_sprintf(buf, sizeof(buf), "%s%i", game_str_year, g->year + YEAR_BASE);
-    lbxfont_print_str_center(x + 76, y + 9, buf, UI_SCREEN_W);
+    lbxfont_print_str_center(x + 76, y + 9, buf, UI_SCREEN_W, ui_scale);
     for (int i = 0; i < NUM_SHIPDESIGNS; ++i) {
         shipsum_t n;
         n = g->evn.new_ships[d->api][i];
@@ -66,17 +66,17 @@ static void newships_draw_cb(void *vptr)
             int x0, y0;
             x0 = x + 8 + (i % 3) * 48;
             y0 = y + 35 + (i / 3) * 47;
-            ui_draw_filled_rect(x0, y0, x0 + 39, y0 + 39, 0);
-            ui_draw_filled_rect(x0, y0 + 31, x0 + 39, y0 + 39, 0xe9);
-            ui_draw_line1(x0, y0 + 30, x0 + 39, y0 + 30, 0x5c);
+            ui_draw_filled_rect(x0, y0, x0 + 39, y0 + 39, 0, ui_scale);
+            ui_draw_filled_rect(x0, y0 + 31, x0 + 39, y0 + 39, 0xe9, ui_scale);
+            ui_draw_line1(x0, y0 + 30, x0 + 39, y0 + 30, 0x5c, ui_scale);
             lbxfont_select(2, 0, 0, 0);
-            lbxfont_print_str_center(x0 + 20, y0 + 33, sd->name, UI_SCREEN_W);
-            ui_draw_stars(x0, y0 + 2, i * 10, 40);
+            lbxfont_print_str_center(x0 + 20, y0 + 33, sd->name, UI_SCREEN_W, ui_scale);
+            ui_draw_stars(x0, y0 + 2, i * 10, 40, ui_scale);
             gfx = ui_data.gfx.ships[sd->look];
             lbxgfx_set_frame_0(gfx);
-            lbxgfx_draw_frame(x0 + 4, y0 + 3, gfx, UI_SCREEN_W);
+            lbxgfx_draw_frame(x0 + 4, y0 + 3, gfx, UI_SCREEN_W, ui_scale);
             lbxfont_select(0, 0xd, 0, 0);
-            lbxfont_print_num_right(x0 + 36, y0 + 23, n, UI_SCREEN_W);
+            lbxfont_print_num_right(x0 + 36, y0 + 23, n, UI_SCREEN_W, ui_scale);
         }
     }
     ui_draw_set_stars_xoffs(false);

@@ -3,6 +3,7 @@
 #include <string.h>
 
 #include "uicursor.h"
+#include "comp.h"
 #include "hw.h"
 #include "lbxpal.h"
 #include "types.h"
@@ -29,8 +30,8 @@ static bool cursor_i0_bg_stored = false;
 
 /* -------------------------------------------------------------------------- */
 
-ui_cursor_area_t ui_cursor_area_all_i0 = { 0, 0, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1 };
-ui_cursor_area_t ui_cursor_area_all_i1 = { 1, 0, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1 };
+ui_cursor_area_t ui_cursor_area_all_i0 = { 0, 0, 0, 0, 319, 199 };
+ui_cursor_area_t ui_cursor_area_all_i1 = { 1, 0, 0, 0, 319, 199 };
 
 ui_cursor_area_t ui_cursor_area_tbl[] = {
     /*0*/ { 1, 0, 0, 0, 319, 199 },
@@ -142,7 +143,32 @@ static void ui_cursor_erase(uint8_t *p, struct cursor_bg_s *bg)
     }
 }
 
+static void ui_cursor_init_do(int scale, ui_cursor_area_t *area)
+{
+    area->x0 *= scale;
+    area->y0 *= scale;
+    if (area->x1 == 319) {
+        area->x1 = UI_SCREEN_W - 1;
+    } else {
+        area->x1 *= scale;
+    }
+    if (area->y1 == 199) {
+        area->y1 = UI_SCREEN_H - 1;
+    } else {
+        area->y1 *= scale;
+    }
+}
+
 /* -------------------------------------------------------------------------- */
+
+void ui_cursor_init(int scale)
+{
+    ui_cursor_init_do(scale, &ui_cursor_area_all_i0);
+    ui_cursor_init_do(scale, &ui_cursor_area_all_i1);
+    for (int i = 0; i < TBLLEN(ui_cursor_area_tbl); ++i) {
+        ui_cursor_init_do(scale, &ui_cursor_area_tbl[i]);
+    }
+}
 
 void ui_cursor_setup_area(int num, ui_cursor_area_t *area)
 {

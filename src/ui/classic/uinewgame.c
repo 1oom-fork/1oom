@@ -101,7 +101,7 @@ static void new_game_draw_cb1(void *vptr)
 {
     struct new_game_data_s *d = vptr;
     ui_draw_erase_buf();
-    lbxgfx_draw_frame(0, 0, d->gfx_newgame, UI_SCREEN_W);
+    lbxgfx_draw_frame(0, 0, d->gfx_newgame, UI_SCREEN_W, ui_scale);
 }
 
 static void new_game_draw_race_cb(void *vptr)
@@ -109,11 +109,11 @@ static void new_game_draw_race_cb(void *vptr)
     struct new_game_data_s *d = vptr;
     hw_video_copy_back_from_page2();
     if (d->selected < RACE_NUM) {
-        lbxgfx_draw_frame(91, 11, d->gfx_portrait[d->selected], UI_SCREEN_W);
+        lbxgfx_draw_frame(91, 11, d->gfx_portrait[d->selected], UI_SCREEN_W, ui_scale);
         lbxfont_select(0, 4, 0, 0);
         for (int i = 0; i < 3; ++i) {
             if (*game_str_tbl_traits[d->selected * 3 + i]) {
-                lbxfont_print_str_center(0x6f, 0x35 + i * 8, game_str_tbl_traits[d->selected * 3 + i], UI_SCREEN_W);
+                lbxfont_print_str_center(0x6f, 0x35 + i * 8, game_str_tbl_traits[d->selected * 3 + i], UI_SCREEN_W, ui_scale);
             }
         }
     }
@@ -149,18 +149,18 @@ static void new_game_draw_banner_cb(void *vptr)
     hw_video_copy_back_from_page2();
     if (d->str_title) {
         lbxfont_select(5, 0, 0, 0);
-        lbxfont_print_str_normal(0xa, 0xa, d->str_title, UI_SCREEN_W);
-        lbxgfx_apply_colortable(0xa, 0x14, 0x52, 0x1f, 2, UI_SCREEN_W);
+        lbxfont_print_str_normal(0xa, 0xa, d->str_title, UI_SCREEN_W, ui_scale);
+        lbxgfx_apply_colortable(0xa, 0x14, 0x52, 0x1f, 2, UI_SCREEN_W, ui_scale);
     }
     if (race < RACE_NUM) {
-        lbxgfx_draw_frame(91, 11, d->gfx_portrait[race], UI_SCREEN_W);
+        lbxgfx_draw_frame(91, 11, d->gfx_portrait[race], UI_SCREEN_W, ui_scale);
     }
-    ui_draw_filled_rect(0x5a, 0x35, 0x83, 0x5a, 0);
-    ui_draw_box1(0x5a, 0x35, 0x83, 0x5a, 0x9b, 0x9b);
+    ui_draw_filled_rect(0x5a, 0x35, 0x83, 0x5a, 0, ui_scale);
+    ui_draw_box1(0x5a, 0x35, 0x83, 0x5a, 0x9b, 0x9b, ui_scale);
     if (d->selected < BANNER_NUM) {
         lbxgfx_set_new_frame(d->gfx_flag[d->selected], d->frame);
         gfx_aux_draw_frame_to(d->gfx_flag[d->selected], &ui_data.aux.screen);
-        gfx_aux_draw_frame_from(0x5b, 0x38, &ui_data.aux.screen, UI_SCREEN_W);
+        gfx_aux_draw_frame_from(0x5b, 0x38, &ui_data.aux.screen, UI_SCREEN_W, ui_scale);
     }
     if (++d->frame == 0xa) {
         d->frame = 0;
@@ -258,8 +258,8 @@ static bool ui_new_game_racebannernames(struct game_new_options_s *newopts, stru
     lbxpal_select(4, -1, 0);
     lbxpal_build_colortables();
     ui_draw_erase_buf();
-    lbxgfx_draw_frame(0, 0, d->gfx_custom, UI_SCREEN_W);
-    ui_draw_box1(0x5a, 0xa, 0x83, 0x2d, 0x9b, 0x9b);
+    lbxgfx_draw_frame(0, 0, d->gfx_custom, UI_SCREEN_W, ui_scale);
+    ui_draw_box1(0x5a, 0xa, 0x83, 0x2d, 0x9b, 0x9b, ui_scale);
     hw_video_copy_back_to_page2();
     if (0
       || (ui_new_game_choose_race(newopts, d) < 0)
@@ -284,21 +284,21 @@ static void new_game_draw_extra_cb(void *vptr)
         int x0 = 4 + (i / 3) * 160;
         int y0 = 20 + (i % 3) * 50;
         if (newopts->pdata[i].race < RACE_NUM) {
-            lbxgfx_draw_frame(x0 + 1, y0 + 1, d->gfx_portrait[newopts->pdata[i].race], UI_SCREEN_W);
+            lbxgfx_draw_frame(x0 + 1, y0 + 1, d->gfx_portrait[newopts->pdata[i].race], UI_SCREEN_W, ui_scale);
         }
         if (newopts->pdata[i].banner < BANNER_NUM) {
             lbxgfx_set_new_frame(d->gfx_flag[newopts->pdata[i].banner], d->frame);
             gfx_aux_draw_frame_to(d->gfx_flag[newopts->pdata[i].banner], &ui_data.aux.screen);
-            gfx_aux_draw_frame_from(x0 + 43 + 1, y0 + 1, &ui_data.aux.screen, UI_SCREEN_W);
+            gfx_aux_draw_frame_from(x0 + 43 + 1, y0 + 1, &ui_data.aux.screen, UI_SCREEN_W, ui_scale);
         }
-        lbxfont_print_str_normal(x0 + 43 + 41 + 2, y0 + 2 , d->newopts->pdata[i].playername, UI_SCREEN_W);
-        lbxfont_print_str_normal(x0 + 43 + 41 + 2, y0 + 2 + 11, d->newopts->pdata[i].homename, UI_SCREEN_W);
-        lbxfont_print_str_normal(x0 + 43 + 41 + 2, y0 + 2 + 22, d->newopts->pdata[i].is_ai ? game_str_ng_computer : game_str_ng_player, UI_SCREEN_W);
+        lbxfont_print_str_normal(x0 + 43 + 41 + 2, y0 + 2 , d->newopts->pdata[i].playername, UI_SCREEN_W, ui_scale);
+        lbxfont_print_str_normal(x0 + 43 + 41 + 2, y0 + 2 + 11, d->newopts->pdata[i].homename, UI_SCREEN_W, ui_scale);
+        lbxfont_print_str_normal(x0 + 43 + 41 + 2, y0 + 2 + 22, d->newopts->pdata[i].is_ai ? game_str_ng_computer : game_str_ng_player, UI_SCREEN_W, ui_scale);
     }
     if (!d->have_human) {
-        lbxfont_print_str_center(160, 2, game_str_ng_allai, UI_SCREEN_W);
+        lbxfont_print_str_center(160, 2, game_str_ng_allai, UI_SCREEN_W, ui_scale);
     }
-    lbxfont_print_str_normal(103, 165, game_ais[d->newopts->ai_id]->name, UI_SCREEN_W);
+    lbxfont_print_str_normal(103, 165, game_ais[d->newopts->ai_id]->name, UI_SCREEN_W, ui_scale);
     if (++d->frame >= 10) {
         d->frame = 0;
     }
@@ -335,23 +335,23 @@ static bool ui_new_game_extra(struct game_new_options_s *newopts, struct new_gam
     lbxpal_select(4, -1, 0);
     lbxpal_build_colortables();
     ui_draw_erase_buf();
-    lbxgfx_draw_frame(0, 0, d->gfx_custom, UI_SCREEN_W);
+    lbxgfx_draw_frame(0, 0, d->gfx_custom, UI_SCREEN_W, ui_scale);
     hw_video_copy_back_to_page3();
-    ui_draw_box1(0x5a, 0xa, 0x83, 0x2d, 0x9b, 0x9b);
+    ui_draw_box1(0x5a, 0xa, 0x83, 0x2d, 0x9b, 0x9b, ui_scale);
     hw_video_copy_back_to_page2();
     hw_video_copy_back_from_page3();
     for (int i = 0; i < newopts->players; ++i) {
         int x0 = 4 + (i / 3) * 160;
         int y0 = 20 + (i % 3) * 50;
-        ui_draw_box1(x0, y0, x0 + 41, y0 + 35, 0x9b, 0x9b);
-        ui_draw_filled_rect(x0 + 43, y0, x0 + 43 + 41, y0 + 35, 0);
-        ui_draw_box1(x0 + 43, y0, x0 + 43 + 41, y0 + 35, 0x9b, 0x9b);
+        ui_draw_box1(x0, y0, x0 + 41, y0 + 35, 0x9b, 0x9b, ui_scale);
+        ui_draw_filled_rect(x0 + 43, y0, x0 + 43 + 41, y0 + 35, 0, ui_scale);
+        ui_draw_box1(x0 + 43, y0, x0 + 43 + 41, y0 + 35, 0x9b, 0x9b, ui_scale);
     }
     lbxfont_select(5, 0, 0, 0);
-    lbxfont_print_str_right(100 - 3, 165, game_str_ng_ai, UI_SCREEN_W);
-    lbxfont_print_str_normal(100, 165, ":", UI_SCREEN_W);
-    lbxfont_print_str_center(40, 180, game_str_ng_cancel, UI_SCREEN_W);
-    lbxfont_print_str_center(260, 180, game_str_ng_ok, UI_SCREEN_W);
+    lbxfont_print_str_right(100 - 3, 165, game_str_ng_ai, UI_SCREEN_W, ui_scale);
+    lbxfont_print_str_normal(100, 165, ":", UI_SCREEN_W, ui_scale);
+    lbxfont_print_str_center(40, 180, game_str_ng_cancel, UI_SCREEN_W, ui_scale);
+    lbxfont_print_str_center(260, 180, game_str_ng_ok, UI_SCREEN_W, ui_scale);
 
     hw_video_copy_back_to_page3();
 

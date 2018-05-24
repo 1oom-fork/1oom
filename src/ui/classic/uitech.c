@@ -94,28 +94,28 @@ static void tech_draw_cb(void *vptr)
     const techdata_t *t = &(e->tech);
     char buf[0xe0];
 
-    ui_draw_filled_rect(0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, 0x3a);
-    ui_draw_filled_rect(3, 150, 275, 196, 0x5b);
-    ui_draw_filled_rect(5, 4, 53, 15, (d->field == 0) ? 0x89 : 0xc0);
-    ui_draw_filled_rect(55, 4, 108, 15, (d->field == 1) ? 0x89 : 0xc0);
-    ui_draw_filled_rect(109, 4, 161, 16, (d->field == 2) ? 0x89 : 0xc0);
-    ui_draw_filled_rect(5, 19, 54, 31, (d->field == 3) ? 0x89 : 0xc0);
-    ui_draw_filled_rect(55, 19, 108, 31, (d->field == 4) ? 0x89 : 0xc0);
-    ui_draw_filled_rect(109, 19, 161, 31, (d->field == 5) ? 0x89 : 0xc0);
+    ui_draw_color_buf(0x3a);
+    ui_draw_filled_rect(3, 150, 275, 196, 0x5b, ui_scale);
+    ui_draw_filled_rect(5, 4, 53, 15, (d->field == 0) ? 0x89 : 0xc0, ui_scale);
+    ui_draw_filled_rect(55, 4, 108, 15, (d->field == 1) ? 0x89 : 0xc0, ui_scale);
+    ui_draw_filled_rect(109, 4, 161, 16, (d->field == 2) ? 0x89 : 0xc0, ui_scale);
+    ui_draw_filled_rect(5, 19, 54, 31, (d->field == 3) ? 0x89 : 0xc0, ui_scale);
+    ui_draw_filled_rect(55, 19, 108, 31, (d->field == 4) ? 0x89 : 0xc0, ui_scale);
+    ui_draw_filled_rect(109, 19, 161, 31, (d->field == 5) ? 0x89 : 0xc0, ui_scale);
 
     for (int i = 0; i < TECH_FIELD_NUM; ++i) {
         int y;
         y = 21 * i + 22;
-        ui_draw_filled_rect(168, y, 218, y + 8, t->slider_lock[i] ? 0x24 : 0xbc);
+        ui_draw_filled_rect(168, y, 218, y + 8, t->slider_lock[i] ? 0x24 : 0xbc, ui_scale);
     }
 
-    ui_draw_filled_rect(7, 36, 154, 147, 0);
-    lbxgfx_draw_frame(7, 36, ui_data.gfx.screens.techback, UI_SCREEN_W);
-    lbxgfx_draw_frame(0, 0, d->gfx, UI_SCREEN_W);
+    ui_draw_filled_rect(7, 36, 154, 147, 0, ui_scale);
+    lbxgfx_draw_frame(7, 36, ui_data.gfx.screens.techback, UI_SCREEN_W, ui_scale);
+    lbxgfx_draw_frame(0, 0, d->gfx, UI_SCREEN_W, ui_scale);
 
     lib_sprintf(buf, sizeof(buf), "%i %s", e->total_research_bc, game_str_bc);
     lbxfont_select(2, 6, 0, 0);
-    lbxfont_print_str_right(309, 169, buf, UI_SCREEN_W);
+    lbxfont_print_str_right(309, 169, buf, UI_SCREEN_W, ui_scale);
 
     for (int i = 0; i < TECH_ON_SCREEN; ++i) {
         if ((i + d->pos) < d->num) {
@@ -129,34 +129,34 @@ static void tech_draw_cb(void *vptr)
             }
             lbxfont_select(2, a2, 0, 0);
             game_tech_get_name(g->gaux, d->field, d->completed[i + d->pos], buf, sizeof(buf));
-            lbxfont_print_str_normal(9, 37 + i * 7, buf, UI_SCREEN_W);
+            lbxfont_print_str_normal(9, 37 + i * 7, buf, UI_SCREEN_W, ui_scale);
         }
     }
     game_tech_get_descr(g->gaux, d->field, d->completed[d->selected + d->pos], buf, sizeof(buf));
     lbxfont_select(5, 6, 0, 0);
     lbxfont_set_gap_h(1);
-    lbxfont_print_str_split(10, 155, 260, buf, 0, UI_SCREEN_W, UI_SCREEN_H);
+    lbxfont_print_str_split(10, 155, 260, buf, 0, UI_SCREEN_W, UI_SCREEN_H, ui_scale);
 
     lbxgfx_set_new_frame(ui_data.gfx.screens.tech_but_up, 1);
     lbxgfx_set_new_frame(ui_data.gfx.screens.tech_but_down, 1);
-    lbxgfx_draw_frame(157, 35, ui_data.gfx.screens.tech_but_up, UI_SCREEN_W);
-    lbxgfx_draw_frame(157, 141, ui_data.gfx.screens.tech_but_down, UI_SCREEN_W);
+    lbxgfx_draw_frame(157, 35, ui_data.gfx.screens.tech_but_up, UI_SCREEN_W, ui_scale);
+    lbxgfx_draw_frame(157, 141, ui_data.gfx.screens.tech_but_down, UI_SCREEN_W, ui_scale);
 
     for (int i = 0; i < TECH_FIELD_NUM; ++i) {
         int y;
         y = 21 * i + 24;
-        ui_draw_filled_rect(227, y, 277, y + 3, 0x2f);
+        ui_draw_filled_rect(227, y, 277, y + 3, 0x2f, ui_scale);
         if (t->slider[i]) {
-            ui_draw_line_3h(227, y + 1, 226 + t->slider[i] / 2, t->slider_lock[i] ? 0x22 : 0x73);
+            ui_draw_line_3h(227, y + 1, 226 + t->slider[i] / 2, t->slider_lock[i] ? 0x22 : 0x73, ui_scale);
         }
         lbxfont_select(0, 6, 0, 0);
         lbxfont_set_color_c_n((g->gaux->flag_cheat_tech_hint && game_tech_current_research_has_max_bonus(g, d->api, i)) ? 0x41 : 0x26, 5);
-        lbxfont_print_num_right(307, y, t->percent[i], UI_SCREEN_W);
+        lbxfont_print_num_right(307, y, t->percent[i], UI_SCREEN_W, ui_scale);
     }
 
     lbxfont_select(2, 6, 0, 0);
     lib_sprintf(buf, sizeof(buf), "%s %i, %s %i/%s", game_str_te_scrange, e->scanner_range, game_str_te_rctrl, e->colonist_oper_factories, game_str_te_col);
-    lbxfont_print_str_normal(168, 33, buf, UI_SCREEN_W);
+    lbxfont_print_str_normal(168, 33, buf, UI_SCREEN_W, ui_scale);
     {
         uint8_t groundcmbonus = 0, groundcmbonus2 = 0;
         for (int i = 0; i < t->completed[TECH_FIELD_CONSTRUCTION]; ++i) {
@@ -173,7 +173,7 @@ static void tech_draw_cb(void *vptr)
         }
         groundcmbonus += groundcmbonus2;
         lib_sprintf(buf, sizeof(buf), "%s %i, %s +%i%%", game_str_te_fwaste, e->ind_waste_scale, game_str_te_gcombat, groundcmbonus);
-        lbxfont_print_str_normal(168, 54, buf, UI_SCREEN_W);
+        lbxfont_print_str_normal(168, 54, buf, UI_SCREEN_W, ui_scale);
     }
     {
         uint8_t groundcmbonus = 0;
@@ -188,12 +188,12 @@ static void tech_draw_cb(void *vptr)
             }
         }
         lib_sprintf(buf, sizeof(buf), "%s +%i%%", game_str_te_gcombat, groundcmbonus);
-        lbxfont_print_str_normal(168, 75, buf, UI_SCREEN_W);
+        lbxfont_print_str_normal(168, 75, buf, UI_SCREEN_W, ui_scale);
     }
     lib_sprintf(buf, sizeof(buf), "%s +%i, %s %i/%s", game_str_te_tform, e->have_terraform_n, game_str_te_wasteel, e->have_eco_restoration_n, game_str_bc);
-    lbxfont_print_str_normal(168, 96, buf, UI_SCREEN_W);
+    lbxfont_print_str_normal(168, 96, buf, UI_SCREEN_W, ui_scale);
     lib_sprintf(buf, sizeof(buf), "%s %i %s", game_str_te_shrange, e->fuel_range, game_str_sm_parsecs2);
-    lbxfont_print_str_normal(168, 117, buf, UI_SCREEN_W);
+    lbxfont_print_str_normal(168, 117, buf, UI_SCREEN_W, ui_scale);
     {
         uint8_t groundcmbonus = 0;
         for (int i = 0; i < t->completed[TECH_FIELD_WEAPON]; ++i) {
@@ -207,7 +207,7 @@ static void tech_draw_cb(void *vptr)
             }
         }
         lib_sprintf(buf, sizeof(buf), "%s +%i%%", game_str_te_gcombat, groundcmbonus);
-        lbxfont_print_str_normal(168, 138, buf, UI_SCREEN_W);
+        lbxfont_print_str_normal(168, 138, buf, UI_SCREEN_W, ui_scale);
     }
 
     for (int i = 0; i < TECH_FIELD_NUM; ++i) {
@@ -219,18 +219,18 @@ static void tech_draw_cb(void *vptr)
             if (complpercent > 0) {
                 lib_sprintf(buf, sizeof(buf), "%i%%", complpercent);
                 lbxfont_select_set_12_1(2, 0xd, 0, 0);
-                lbxfont_print_str_right(295, y + 3, buf, UI_SCREEN_W);
+                lbxfont_print_str_right(295, y + 3, buf, UI_SCREEN_W, ui_scale);
             } else {
                 int y0, y1;
                 complpercent = game_tech_current_research_percent1(g, d->api, i);
-                lbxgfx_draw_frame(287, y, ui_data.gfx.screens.litebulb_off, UI_SCREEN_W);
+                lbxgfx_draw_frame(287, y, ui_data.gfx.screens.litebulb_off, UI_SCREEN_W, ui_scale);
                 y0 = y + (8 - (complpercent * 4) / 50);
                 y1 = y + 7;
-                lbxgfx_draw_frame_offs(287, y, ui_data.gfx.screens.litebulb_on, 0, y0, UI_SCREEN_W - 1, y1, UI_SCREEN_W);
+                lbxgfx_draw_frame_offs(287, y, ui_data.gfx.screens.litebulb_on, 0, y0, UI_SCREEN_W - 1, y1, UI_SCREEN_W, ui_scale);
             }
         } else {
             lbxfont_select_set_12_1(2, 0xd, 0, 0);
-            lbxfont_print_str_right(295, y + 3, game_str_te_max, UI_SCREEN_W);
+            lbxfont_print_str_right(295, y + 3, game_str_te_max, UI_SCREEN_W, ui_scale);
         }
     }
 }

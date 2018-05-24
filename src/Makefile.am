@@ -71,6 +71,7 @@ gui_sources = \
     font8x8_draw.h \
     gfxaux.c \
     gfxaux.h \
+    gfxscale.h \
     kbd.c \
     kbd.h \
     lbxfont.c \

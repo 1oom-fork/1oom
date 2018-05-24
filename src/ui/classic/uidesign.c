@@ -85,43 +85,43 @@ static void design_draw_cb(void *vptr)
     char buf[64];
     uint8_t extraman;
 
-    ui_draw_filled_rect(5, 5, 315, 195, 1);
-    lbxgfx_draw_frame(0, 0, ui_data.gfx.design.bg, UI_SCREEN_W);
+    ui_draw_filled_rect(5, 5, 315, 195, 1, ui_scale);
+    lbxgfx_draw_frame(0, 0, ui_data.gfx.design.bg, UI_SCREEN_W, ui_scale);
     oi = uiobj_get_clicked_oi();
     lbxfont_select(0, 6, 0, 3);
     lbxfont_set_colors(((u->oi_comp == oi) || d->flag_disable_comp) ? colortbl_sd_ba : colortbl_sd_bf);
-    lbxfont_print_str_normal(17, 22, game_str_sd_comp, UI_SCREEN_W);
+    lbxfont_print_str_normal(17, 22, game_str_sd_comp, UI_SCREEN_W, ui_scale);
     lbxfont_set_colors(((u->oi_shield == oi) || d->flag_disable_shield) ? colortbl_sd_ba : colortbl_sd_bf);
-    lbxfont_print_str_normal(17, 34, game_str_sd_shield, UI_SCREEN_W);
+    lbxfont_print_str_normal(17, 34, game_str_sd_shield, UI_SCREEN_W, ui_scale);
     lbxfont_set_colors(((u->oi_jammer == oi) || d->flag_disable_jammer) ? colortbl_sd_ba : colortbl_sd_bf);
-    lbxfont_print_str_normal(17, 46, game_str_sd_ecm, UI_SCREEN_W);
+    lbxfont_print_str_normal(17, 46, game_str_sd_ecm, UI_SCREEN_W, ui_scale);
     lbxfont_set_colors(((u->oi_armor == oi) || d->flag_disable_armor) ? colortbl_sd_ba : colortbl_sd_bf);
-    lbxfont_print_str_normal(167, 22, game_str_sd_armor, UI_SCREEN_W);
+    lbxfont_print_str_normal(167, 22, game_str_sd_armor, UI_SCREEN_W, ui_scale);
     lbxfont_set_colors(((u->oi_engine == oi) || d->flag_disable_engine) ? colortbl_sd_ba : colortbl_sd_bf);
-    lbxfont_print_str_normal(167, 34, game_str_sd_engine, UI_SCREEN_W);
+    lbxfont_print_str_normal(167, 34, game_str_sd_engine, UI_SCREEN_W, ui_scale);
     lbxfont_set_colors(((u->oi_man == oi) || d->flag_disable_cspeed) ? colortbl_sd_ba : colortbl_sd_bf);
-    lbxfont_print_str_normal(167, 46, game_str_sd_man, UI_SCREEN_W);
+    lbxfont_print_str_normal(167, 46, game_str_sd_man, UI_SCREEN_W, ui_scale);
     for (int i = 0; i < SPECIAL_SLOT_NUM; ++i) {
         lbxfont_set_colors(((u->oi_tbl_spec[i] == oi) || d->flag_tbl_special[i]) ? colortbl_sd_ba : colortbl_sd_bf);
-        lbxfont_print_str_normal(17, 116 + i * 10, game_str_tbl_sd_spec[i], UI_SCREEN_W);
+        lbxfont_print_str_normal(17, 116 + i * 10, game_str_tbl_sd_spec[i], UI_SCREEN_W, ui_scale);
     }
     for (int i = 0; i < WEAPON_SLOT_NUM; ++i) {
         lbxfont_set_colors(((u->oi_tbl_weap[i] == oi) || d->flag_tbl_weapon[i]) ? colortbl_sd_ba : colortbl_sd_bf);
-        lbxfont_print_str_normal(17, 71 + i * 10, game_str_tbl_sd_weap[i], UI_SCREEN_W);
+        lbxfont_print_str_normal(17, 71 + i * 10, game_str_tbl_sd_weap[i], UI_SCREEN_W, ui_scale);
     }
 
     lbxfont_select(0, 6, 0, 3);
     lbxfont_set_colors(colortbl_sd_bf);
-    lbxfont_print_str_normal(59, 61, game_str_sd_count, UI_SCREEN_W);
-    lbxfont_print_str_normal(88, 61, game_str_sd_sweap, UI_SCREEN_W);
-    lbxfont_print_str_normal(163, 61, game_str_sd_damage, UI_SCREEN_W);
-    lbxfont_print_str_normal(196, 61, game_str_sd_rng, UI_SCREEN_W);
-    lbxfont_print_str_normal(215, 61, game_str_sd_notes, UI_SCREEN_W);
+    lbxfont_print_str_normal(59, 61, game_str_sd_count, UI_SCREEN_W, ui_scale);
+    lbxfont_print_str_normal(88, 61, game_str_sd_sweap, UI_SCREEN_W, ui_scale);
+    lbxfont_print_str_normal(163, 61, game_str_sd_damage, UI_SCREEN_W, ui_scale);
+    lbxfont_print_str_normal(196, 61, game_str_sd_rng, UI_SCREEN_W, ui_scale);
+    lbxfont_print_str_normal(215, 61, game_str_sd_notes, UI_SCREEN_W, ui_scale);
     lbxfont_select(0, 0, 0, 3);
-    lbxfont_print_str_normal(262, 163, game_str_bc, UI_SCREEN_W);
-    lbxfont_print_num_right(257, 163, sd->cost, UI_SCREEN_W);
-    lbxfont_print_num_right(270, 175, game_design_get_hull_space(d->gd), UI_SCREEN_W);
-    lbxfont_print_num_right(270, 187, sd->space, UI_SCREEN_W);
+    lbxfont_print_str_normal(262, 163, game_str_bc, UI_SCREEN_W, ui_scale);
+    lbxfont_print_num_right(257, 163, sd->cost, UI_SCREEN_W, ui_scale);
+    lbxfont_print_num_right(270, 175, game_design_get_hull_space(d->gd), UI_SCREEN_W, ui_scale);
+    lbxfont_print_num_right(270, 187, sd->space, UI_SCREEN_W, ui_scale);
 
     {
         ship_hull_t acthull;
@@ -137,7 +137,7 @@ static void design_draw_cb(void *vptr)
                 }
                 uiobj_ta_set_val_1(u->oi_tbl_hull[i]);
             }
-            lbxfont_print_str_center(38, 163 + i * 7, *tbl_shiptech_hull[i].nameptr, UI_SCREEN_W);
+            lbxfont_print_str_center(38, 163 + i * 7, *tbl_shiptech_hull[i].nameptr, UI_SCREEN_W, ui_scale);
         }
     }
     {
@@ -149,7 +149,7 @@ static void design_draw_cb(void *vptr)
             sd->look = look = d->gd->tbl_shiplook_hull[hull];
         }
         lbxgfx_set_frame_0(ui_data.gfx.ships[look]);
-        lbxgfx_draw_frame(93, 165, ui_data.gfx.ships[look], UI_SCREEN_W);
+        lbxgfx_draw_frame(93, 165, ui_data.gfx.ships[look], UI_SCREEN_W, ui_scale);
     }
 
     lbxfont_select(2, 8, 0, 8);
@@ -158,11 +158,11 @@ static void design_draw_cb(void *vptr)
         weapon_t wi;
         wi = sd->wpnt[i];
         if (wi != WEAPON_NONE) {
-            lbxfont_print_str_normal(88, 73 + i * 10, *tbl_shiptech_weap[wi].nameptr, UI_SCREEN_W);
+            lbxfont_print_str_normal(88, 73 + i * 10, *tbl_shiptech_weap[wi].nameptr, UI_SCREEN_W, ui_scale);
         }
     }
-    lbxfont_print_str_normal(200, 22, *tbl_shiptech_armor[sd->armor].nameptr, UI_SCREEN_W);
-    lbxfont_print_str_normal(200, 34, *tbl_shiptech_engine[sd->engine].nameptr, UI_SCREEN_W);
+    lbxfont_print_str_normal(200, 22, *tbl_shiptech_armor[sd->armor].nameptr, UI_SCREEN_W, ui_scale);
+    lbxfont_print_str_normal(200, 34, *tbl_shiptech_engine[sd->engine].nameptr, UI_SCREEN_W, ui_scale);
     {
         uint8_t v;
         extraman = 0;
@@ -171,22 +171,22 @@ static void design_draw_cb(void *vptr)
             SETMAX(extraman, v);
         }
         v = extraman + sd->man + 1;
-        lbxfont_print_num_right(220, 46, v, UI_SCREEN_W);
+        lbxfont_print_num_right(220, 46, v, UI_SCREEN_W, ui_scale);
     }
     if (sd->comp) {
-        lbxfont_print_str_normal(60, 22, *tbl_shiptech_comp[sd->comp].nameptr, UI_SCREEN_W);
+        lbxfont_print_str_normal(60, 22, *tbl_shiptech_comp[sd->comp].nameptr, UI_SCREEN_W, ui_scale);
     }
     if (sd->shield) {
-        lbxfont_print_str_normal(60, 34, *tbl_shiptech_shield[sd->shield].nameptr, UI_SCREEN_W);
+        lbxfont_print_str_normal(60, 34, *tbl_shiptech_shield[sd->shield].nameptr, UI_SCREEN_W, ui_scale);
     }
     if (sd->jammer) {
-        lbxfont_print_str_normal(60, 46, *tbl_shiptech_jammer[sd->jammer].nameptr, UI_SCREEN_W);
+        lbxfont_print_str_normal(60, 46, *tbl_shiptech_jammer[sd->jammer].nameptr, UI_SCREEN_W, ui_scale);
     }
     for (int i = 0; i < SPECIAL_SLOT_NUM; ++i) {
         ship_special_t si;
         si = sd->special[i];
         if (si != SHIP_SPECIAL_NONE) {
-            lbxfont_print_str_normal(61, 116 + i * 10, *tbl_shiptech_special[si].nameptr, UI_SCREEN_W);
+            lbxfont_print_str_normal(61, 116 + i * 10, *tbl_shiptech_special[si].nameptr, UI_SCREEN_W, ui_scale);
         }
     }
 
@@ -198,58 +198,58 @@ static void design_draw_cb(void *vptr)
         if (wi != WEAPON_NONE) {
             int y, dmin, dmax;
             y = 73 + i * 10;
-            lbxfont_print_str_normal(215, y, *tbl_shiptech_weap[wi].extratextptr, UI_SCREEN_W);
-            lbxfont_print_num_right(77, y, sd->wpnn[i], UI_SCREEN_W);
-            lbxfont_print_num_right(207, y, tbl_shiptech_weap[wi].range, UI_SCREEN_W);
+            lbxfont_print_str_normal(215, y, *tbl_shiptech_weap[wi].extratextptr, UI_SCREEN_W, ui_scale);
+            lbxfont_print_num_right(77, y, sd->wpnn[i], UI_SCREEN_W, ui_scale);
+            lbxfont_print_num_right(207, y, tbl_shiptech_weap[wi].range, UI_SCREEN_W, ui_scale);
             dmin = tbl_shiptech_weap[wi].damagemin;
             dmax = tbl_shiptech_weap[wi].damagemax;
             if (dmin != dmax) {
-                lbxfont_print_range_right(188, y, dmin, dmax, UI_SCREEN_W);
+                lbxfont_print_range_right(188, y, dmin, dmax, UI_SCREEN_W, ui_scale);
             } else {
-                lbxfont_print_num_right(188, y, dmin, UI_SCREEN_W);
+                lbxfont_print_num_right(188, y, dmin, UI_SCREEN_W, ui_scale);
             }
         }
     }
-    lbxfont_print_str_normal(250, 22, game_str_sd_hp, UI_SCREEN_W);
-    lbxfont_print_num_right(302, 22, sd->hp, UI_SCREEN_W);
-    lbxfont_print_str_normal(250, 34, game_str_sd_warp, UI_SCREEN_W);
-    lbxfont_print_num_right(272, 34, tbl_shiptech_engine[sd->engine].warp, UI_SCREEN_W);
-    lbxfont_print_str_normal(280, 34, game_str_sd_def, UI_SCREEN_W);
-    lbxfont_print_str_normal(250, 46, game_str_sd_cspeed, UI_SCREEN_W);
+    lbxfont_print_str_normal(250, 22, game_str_sd_hp, UI_SCREEN_W, ui_scale);
+    lbxfont_print_num_right(302, 22, sd->hp, UI_SCREEN_W, ui_scale);
+    lbxfont_print_str_normal(250, 34, game_str_sd_warp, UI_SCREEN_W, ui_scale);
+    lbxfont_print_num_right(272, 34, tbl_shiptech_engine[sd->engine].warp, UI_SCREEN_W, ui_scale);
+    lbxfont_print_str_normal(280, 34, game_str_sd_def, UI_SCREEN_W, ui_scale);
+    lbxfont_print_str_normal(250, 46, game_str_sd_cspeed, UI_SCREEN_W, ui_scale);
     /* FIXME these calculations should be a function somewhere else */
     {
         uint8_t v;
         v = extraman + sd->man + tbl_shiptech_hull[sd->hull].defense + 1;
-        lbxfont_print_num_right(302, 34, v, UI_SCREEN_W);
+        lbxfont_print_num_right(302, 34, v, UI_SCREEN_W, ui_scale);
         v = (extraman / 2) + (sd->man + 3) / 2;
-        lbxfont_print_num_right(302, 46, v, UI_SCREEN_W);
+        lbxfont_print_num_right(302, 46, v, UI_SCREEN_W, ui_scale);
     }
     if (sd->shield) {
         uint8_t v = tbl_shiptech_shield[sd->shield].absorb;
         lib_sprintf(buf, sizeof(buf), "%s %i %s", game_str_sd_absorbs, v, (v == 1) ? game_str_sd_hit : game_str_sd_hits);
-        lbxfont_print_str_normal(101, 34, buf, UI_SCREEN_W);
+        lbxfont_print_str_normal(101, 34, buf, UI_SCREEN_W, ui_scale);
     }
-    lbxfont_print_str_normal(101, 46, game_str_sd_misdef, UI_SCREEN_W);
+    lbxfont_print_str_normal(101, 46, game_str_sd_misdef, UI_SCREEN_W, ui_scale);
     {
         uint8_t v;
         v = extraman + sd->man + tbl_shiptech_jammer[sd->jammer].level + tbl_shiptech_hull[sd->hull].defense + 1;
-        lbxfont_print_num_right(155, 46, v, UI_SCREEN_W);
+        lbxfont_print_num_right(155, 46, v, UI_SCREEN_W, ui_scale);
     }
-    lbxfont_print_str_normal(101, 22, game_str_sd_att, UI_SCREEN_W);
+    lbxfont_print_str_normal(101, 22, game_str_sd_att, UI_SCREEN_W, ui_scale);
     {
         uint16_t v = 0;
         for (int i = 0; i < SPECIAL_SLOT_NUM; ++i) {
             v |= tbl_shiptech_special[sd->special[i]].boolmask;
         }
         v = tbl_shiptech_comp[sd->comp].level + ((v & (1 << SHIP_SPECIAL_BOOL_SCANNER)) ? 1 : 0);
-        lbxfont_print_num_right(155, 22, v, UI_SCREEN_W);
+        lbxfont_print_num_right(155, 22, v, UI_SCREEN_W, ui_scale);
     }
 
     for (int i = 0; i < SPECIAL_SLOT_NUM; ++i) {
         ship_special_t si;
         si = sd->special[i];
         if (si != SHIP_SPECIAL_NONE) {
-            lbxfont_print_str_normal(172, 116 + i * 10, *tbl_shiptech_special[si].extratextptr, UI_SCREEN_W);
+            lbxfont_print_str_normal(172, (116 + i * 10), *tbl_shiptech_special[si].extratextptr, UI_SCREEN_W, ui_scale);
         }
     }
 }
@@ -334,9 +334,9 @@ static struct xy_s ui_design_draw_selbox(int xpos, int xoff1, int xoff2, int xof
     struct xy_s xy;
     int x0, y0, x1, y1;
 
-    x0 = (UI_SCREEN_W / 2 - 1) - (xpos + xoff1) / 2;
+    x0 = (320 / 2 - 1) - (xpos + xoff1) / 2;
     x1 = x0 + xpos + 20;
-    y0 = (UI_SCREEN_H / 2 - 1) - (n * 8 + 20) / 2;
+    y0 = (200 / 2 - 1) - (n * 8 + 20) / 2;
     y1 = y0 + n * 8;
     SETMAX(x0, 0);
     SETMIN(x1, 159);
@@ -347,19 +347,19 @@ static struct xy_s ui_design_draw_selbox(int xpos, int xoff1, int xoff2, int xof
     } else {
         ui_cursor_erase1(); /* HACK should not be needed */
     }
-    ui_draw_box_grain(x0 + 4, y0 + 4, x0 + xpos + xoff2, y1 + 20, 1, 2, 0x37);
+    ui_draw_box_grain(x0 + 4, y0 + 4, x0 + xpos + xoff2, y1 + 20, 1, 2, 0x37, ui_scale);
     /*uiobj_set_limits(x0, y0, x1, y1);*/
-    lbxgfx_draw_frame_offs(x0, y0, ui_data.gfx.design.pop1_ul, x0, y0, x1, y1, UI_SCREEN_W);
+    lbxgfx_draw_frame_offs(x0, y0, ui_data.gfx.design.pop1_ul, x0, y0, x1, y1, UI_SCREEN_W, ui_scale);
     /*uiobj_set_limits(x1, y0, UI_SCREEN_W - 1, y1);*/
-    lbxgfx_draw_frame_offs(x0 + xpos + xoff3, y0, ui_data.gfx.design.pop1_ur, x1, y0, UI_SCREEN_W - 1, y1, UI_SCREEN_W);
+    lbxgfx_draw_frame_offs(x0 + xpos + xoff3, y0, ui_data.gfx.design.pop1_ur, x1, y0, UI_SCREEN_W - 1, y1, UI_SCREEN_W, ui_scale);
     /*uiobj_set_limits(x0, y1, x1, UI_SCREEN_H - 1);*/
-    lbxgfx_draw_frame_offs(x0, y1, ui_data.gfx.design.pop1_dl, x0, y1, x1, UI_SCREEN_H - 1, UI_SCREEN_W);
+    lbxgfx_draw_frame_offs(x0, y1, ui_data.gfx.design.pop1_dl, x0, y1, x1, UI_SCREEN_H - 1, UI_SCREEN_W, ui_scale);
     /*uiobj_set_limits(x1, y1, UI_SCREEN_W - 1, UI_SCREEN_H - 1);*/
-    lbxgfx_draw_frame_offs(x0 + xpos + xoff3, y1, ui_data.gfx.design.pop1_dr, x1, y1, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
+    lbxgfx_draw_frame_offs(x0 + xpos + xoff3, y1, ui_data.gfx.design.pop1_dr, x1, y1, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W, ui_scale);
     /*uiobj_set_limits_all();*/
-    lbxgfx_draw_frame(118, y0 + 3, ui_data.gfx.design.titlebox, UI_SCREEN_W);
+    lbxgfx_draw_frame(118, y0 + 3, ui_data.gfx.design.titlebox, UI_SCREEN_W, ui_scale);
     lbxfont_select(0, 0xe, 0xe, 0xe);
-    lbxfont_print_str_center(159, y0 + 5, str, UI_SCREEN_W);
+    lbxfont_print_str_center(159, y0 + 5, str, UI_SCREEN_W, ui_scale);
 
     hw_video_copy_back_to_page2();
 

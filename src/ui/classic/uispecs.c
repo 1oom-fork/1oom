@@ -58,8 +58,8 @@ static void specs_draw_cb1(void *vptr)
     empiretechorbit_t *e = &(g->eto[d->api]);
     shipresearch_t *srd = &(g->srd[d->api]);
 
-    ui_draw_filled_rect(0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, 0x3a);
-    lbxgfx_draw_frame(0, 0, ui_data.gfx.starmap.viewship, UI_SCREEN_W);
+    ui_draw_filled_rect(0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, 0x3a, ui_scale);
+    lbxgfx_draw_frame(0, 0, ui_data.gfx.starmap.viewship, UI_SCREEN_W, ui_scale);
 
     for (int si = 0; si < e->shipdesigns_num; ++si) {
         shipparsed_t sp;
@@ -68,39 +68,39 @@ static void specs_draw_cb1(void *vptr)
         sd = &(srd->design[si]);
         game_parsed_from_design(&sp, sd, 1);
         y = (si << 5) + 5;
-        lbxgfx_draw_frame(44, y - 1, ui_data.gfx.starmap.viewshp2, UI_SCREEN_W);
-        ui_draw_filled_rect(6, y, 37, y + 29, 0);
-        ui_draw_stars(6, y + 1, si * 5, 32);
+        lbxgfx_draw_frame(44, y - 1, ui_data.gfx.starmap.viewshp2, UI_SCREEN_W, ui_scale);
+        ui_draw_filled_rect(6, y, 37, y + 29, 0, ui_scale);
+        ui_draw_stars(6, y + 1, si * 5, 32, ui_scale);
         lbxgfx_set_frame_0(ui_data.gfx.ships[sp.look]);
         for (int f = 0; f <= ui_data.starmap.frame_ship; ++f) {
-            lbxgfx_draw_frame(6, y + 3, ui_data.gfx.ships[sp.look], UI_SCREEN_W);
+            lbxgfx_draw_frame(6, y + 3, ui_data.gfx.ships[sp.look], UI_SCREEN_W, ui_scale);
         }
         lbxgfx_set_new_frame(ui_data.gfx.starmap.viewshbt, 1);
-        lbxgfx_draw_frame(106, y + 1, ui_data.gfx.starmap.viewshbt, UI_SCREEN_W);
+        lbxgfx_draw_frame(106, y + 1, ui_data.gfx.starmap.viewshbt, UI_SCREEN_W, ui_scale);
         lbxfont_select(0, 0xd, 0, 0);
-        lbxfont_print_num_right(35, y + 22, srd->shipcount[si], UI_SCREEN_W);
+        lbxfont_print_num_right(35, y + 22, srd->shipcount[si], UI_SCREEN_W, ui_scale);
         if (d->renamei != si) {
-            lbxfont_print_str_normal(49, y + 2, sp.name, UI_SCREEN_W);
+            lbxfont_print_str_normal(49, y + 2, sp.name, UI_SCREEN_W, ui_scale);
         }
         lbxfont_select(2, 0xb, 0, 0);
-        lbxfont_print_num_right(86, y + 13, sp.defense, UI_SCREEN_W);
-        lbxfont_print_num_right(86, y + 23, sp.misdefense, UI_SCREEN_W);
-        lbxfont_print_num_right(126, y + 13, sp.complevel, UI_SCREEN_W);
-        lbxfont_print_num_right(126, y + 23, sp.hp, UI_SCREEN_W);
-        lbxfont_print_num_right(163, y + 3, sp.absorb, UI_SCREEN_W);
-        lbxfont_print_num_right(163, y + 13, sp.engine + 1, UI_SCREEN_W);
-        lbxfont_print_num_right(163, y + 23, sp.man, UI_SCREEN_W);
+        lbxfont_print_num_right(86, y + 13, sp.defense, UI_SCREEN_W, ui_scale);
+        lbxfont_print_num_right(86, y + 23, sp.misdefense, UI_SCREEN_W, ui_scale);
+        lbxfont_print_num_right(126, y + 13, sp.complevel, UI_SCREEN_W, ui_scale);
+        lbxfont_print_num_right(126, y + 23, sp.hp, UI_SCREEN_W, ui_scale);
+        lbxfont_print_num_right(163, y + 3, sp.absorb, UI_SCREEN_W, ui_scale);
+        lbxfont_print_num_right(163, y + 13, sp.engine + 1, UI_SCREEN_W, ui_scale);
+        lbxfont_print_num_right(163, y + 23, sp.man, UI_SCREEN_W, ui_scale);
         lbxfont_select(2, 0xa, 0, 0);
         for (int wi = 0; wi < WEAPON_SLOT_NUM; ++wi) {
             if (sp.wpnn[wi] != 0) {
                 char buf1[64];
                 char buf2[12];
-                lbxfont_print_num_right(176, y + 3 + wi * 7, sp.wpnn[wi], UI_SCREEN_W);
+                lbxfont_print_num_right(176, y + 3 + wi * 7, sp.wpnn[wi], UI_SCREEN_W, ui_scale);
                 specs_print_weap(sp.wpnt[wi], sp.wpnn[wi], buf1, sizeof(buf1), buf2, sizeof(buf2));
-                lbxfont_print_str_normal(180, y + 3 + wi * 7, buf1, UI_SCREEN_W);
+                lbxfont_print_str_normal(180, y + 3 + wi * 7, buf1, UI_SCREEN_W, ui_scale);
                 if (buf2[0] != '\0') {
-                    lbxfont_print_str_right(250, y + 3 + wi * 7, buf2, UI_SCREEN_W);
-                    lbxfont_print_str_normal(252, y + 3 + wi * 7, "&", UI_SCREEN_W);
+                    lbxfont_print_str_right(250, y + 3 + wi * 7, buf2, UI_SCREEN_W, ui_scale);
+                    lbxfont_print_str_normal(252, y + 3 + wi * 7, "&", UI_SCREEN_W, ui_scale);
                 }
             }
         }
@@ -109,17 +109,17 @@ static void specs_draw_cb1(void *vptr)
         } else {
             lbxfont_set_color_c_n(0xb5, 5);
         }
-        lbxfont_print_str_center(285, y + 2, game_str_tbl_st_specsh[sp.special[0]], UI_SCREEN_W);
+        lbxfont_print_str_center(285, y + 2, game_str_tbl_st_specsh[sp.special[0]], UI_SCREEN_W, ui_scale);
         if (sp.special[1] != 0) {
-            lbxfont_print_str_center(285, y + 9, game_str_tbl_st_specsh[sp.special[1]], UI_SCREEN_W);
+            lbxfont_print_str_center(285, y + 9, game_str_tbl_st_specsh[sp.special[1]], UI_SCREEN_W, ui_scale);
         }
         if (sp.special[2] != 0) {
-            lbxfont_print_str_center(285, y + 16, game_str_tbl_st_specsh[sp.special[2]], UI_SCREEN_W);
+            lbxfont_print_str_center(285, y + 16, game_str_tbl_st_specsh[sp.special[2]], UI_SCREEN_W, ui_scale);
         }
         lbxfont_select(2, 0xa, 0, 0);
-        lbxfont_print_str_normal(262, y + 23, game_str_sp_cost, UI_SCREEN_W);
-        lbxfont_print_str_normal(305, y + 23, game_str_bc, UI_SCREEN_W);
-        lbxfont_print_num_right(295, y + 23, sd->cost, UI_SCREEN_W);
+        lbxfont_print_str_normal(262, y + 23, game_str_sp_cost, UI_SCREEN_W, ui_scale);
+        lbxfont_print_str_normal(305, y + 23, game_str_bc, UI_SCREEN_W, ui_scale);
+        lbxfont_print_num_right(295, y + 23, sd->cost, UI_SCREEN_W, ui_scale);
     }
 
     ui_draw_set_stars_xoffs(false);
@@ -130,10 +130,10 @@ static void specs_before_draw_cb(void *vptr)
 {
     struct specs_data_s *d = vptr;
     specs_draw_cb1(d);
-    lbxgfx_apply_colortable(0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, 0, UI_SCREEN_W);
-    lbxgfx_draw_frame(67, 73, ui_data.gfx.starmap.dismiss, UI_SCREEN_W);
+    lbxgfx_apply_colortable(0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, 0, UI_SCREEN_W, ui_scale);
+    lbxgfx_draw_frame(67, 73, ui_data.gfx.starmap.dismiss, UI_SCREEN_W, ui_scale);
     lbxfont_select_set_12_1(3, 0, 0, 0);
-    lbxfont_print_str_split(74, 83, 174, game_str_sp_before, 2, UI_SCREEN_W, UI_SCREEN_H);
+    lbxfont_print_str_split(74, 83, 174, game_str_sp_before, 2, UI_SCREEN_W, UI_SCREEN_H, ui_scale);
 }
 
 static void specs_mustscrap_draw_cb(void *vptr)
@@ -143,15 +143,15 @@ static void specs_mustscrap_draw_cb(void *vptr)
     shipresearch_t *srd = &(g->srd[d->api]);
     uint8_t *gfx = ui_data.gfx.ships[srd->design[d->scrapi].look];
     hw_video_copy_back_from_page2();
-    lbxgfx_draw_frame(107, 50, ui_data.gfx.starmap.scrap, UI_SCREEN_W);
+    lbxgfx_draw_frame(107, 50, ui_data.gfx.starmap.scrap, UI_SCREEN_W, ui_scale);
     lbxfont_select(2, 6, 0, 0);
-    lbxfont_print_str_split(117, 58, 90, game_str_sp_only6, 2, UI_SCREEN_W, UI_SCREEN_H);
+    lbxfont_print_str_split(117, 58, 90, game_str_sp_only6, 2, UI_SCREEN_W, UI_SCREEN_H, ui_scale);
     lbxgfx_set_frame_0(gfx);
-    lbxgfx_draw_frame(114, 102, gfx, UI_SCREEN_W);
+    lbxgfx_draw_frame(114, 102, gfx, UI_SCREEN_W, ui_scale);
     lbxfont_select(0, 0xd, 0, 0);
-    lbxfont_print_num_right(143, 119, srd->shipcount[d->scrapi], UI_SCREEN_W);
+    lbxfont_print_num_right(143, 119, srd->shipcount[d->scrapi], UI_SCREEN_W, ui_scale);
     lbxfont_select(0, 0, 0, 0);
-    lbxfont_print_str_split(150, 107, 60, game_str_sp_wantscrap, 0, UI_SCREEN_W, UI_SCREEN_H);
+    lbxfont_print_str_split(150, 107, 60, game_str_sp_wantscrap, 0, UI_SCREEN_W, UI_SCREEN_H, ui_scale);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -209,7 +209,7 @@ void ui_specs_mustscrap(struct game_s *g, player_id_t active_player, int scrapi)
     uiobj_table_clear();
 
     ui_draw_copy_buf();
-    lbxgfx_apply_colortable(0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, 0, UI_SCREEN_W);
+    lbxgfx_apply_colortable(0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, 0, UI_SCREEN_W, ui_scale);
     hw_video_copy_back_to_page2();
 
     while (!flag_done) {

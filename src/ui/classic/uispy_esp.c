@@ -55,7 +55,7 @@ static void steal_draw_cb(void *vptr)
 
     hw_video_copy_back_from_page3();
     ui_gmap_basic_draw_frame(d->gmap, d->spy);
-    lbxgfx_draw_frame(6, 24, d->gfx_espionag, UI_SCREEN_W);
+    lbxgfx_draw_frame(6, 24, d->gfx_espionag, UI_SCREEN_W, ui_scale);
     {
         char rbuf[0x20], *p, c;
         bool usean = false;
@@ -74,18 +74,18 @@ static void steal_draw_cb(void *vptr)
         lib_sprintf(buf, sizeof(buf), "%s%s %s %s", game_str_es_youresp1, usean ? "N" : "", rbuf, game_str_es_youresp2);
     }
     lbxfont_select_set_12_1(0, 8, 0, 0);
-    lbxfont_print_str_center(118, 30, buf, UI_SCREEN_W);
-    lbxfont_print_str_normal(23, 83, game_str_es_youresp3, UI_SCREEN_W);
-    lbxgfx_draw_frame(102, 43, ui_data.gfx.planets.race[e->race], UI_SCREEN_W);
+    lbxfont_print_str_center(118, 30, buf, UI_SCREEN_W, ui_scale);
+    lbxfont_print_str_normal(23, 83, game_str_es_youresp3, UI_SCREEN_W, ui_scale);
+    lbxgfx_draw_frame(102, 43, ui_data.gfx.planets.race[e->race], UI_SCREEN_W, ui_scale);
 
     for (int i = 0; i < TECH_FIELD_NUM; ++i) {
         if (d->flags_field & (1 << i)) {
             int x, y;
             x = (i / 3) * 102 + 20;
             y = (i % 3) * 22 + 97;
-            ui_draw_filled_rect(x, y, x + 86, y + 11, 4);
+            ui_draw_filled_rect(x, y, x + 86, y + 11, 4, ui_scale);
             lbxfont_select(5, 0xe, 0, 0);
-            lbxfont_print_str_center(x + 43, y + 3, game_str_tbl_te_field[i], UI_SCREEN_W);
+            lbxfont_print_str_center(x + 43, y + 3, game_str_tbl_te_field[i], UI_SCREEN_W, ui_scale);
         }
     }
 }
@@ -129,16 +129,16 @@ static void stolen_draw_cb(void *vptr)
     }
     hw_video_copy_back_from_page2();
     ui_gmap_basic_draw_frame(d->gmap, d->api);
-    ui_draw_filled_rect(31, 62, 202, 103, 0x36);
-    lbxgfx_draw_frame(31, 62, d->gfx, UI_SCREEN_W);
+    ui_draw_filled_rect(31, 62, 202, 103, 0x36, ui_scale);
+    lbxgfx_draw_frame(31, 62, d->gfx, UI_SCREEN_W, ui_scale);
     lib_sprintf(buf, sizeof(buf), "%s %s", s, game_str_es_thesp1);
     lbxfont_select_set_12_1(5, fontparam, 0, 0);
-    lbxfont_print_str_center(116, 70, buf, UI_SCREEN_W);
+    lbxfont_print_str_center(116, 70, buf, UI_SCREEN_W, ui_scale);
     lbxfont_select(0, 0, 0, 0);
     lib_sprintf(buf, sizeof(buf), "%s %s ", s, game_str_es_thesp2);
-    lbxfont_print_str_center(118, 84, buf, UI_SCREEN_W);
+    lbxfont_print_str_center(118, 84, buf, UI_SCREEN_W, ui_scale);
     game_tech_get_name(g->gaux, d->field, d->tech, buf, sizeof(buf));
-    lbxfont_print_str_center(118, 94, buf, UI_SCREEN_W);
+    lbxfont_print_str_center(118, 94, buf, UI_SCREEN_W, ui_scale);
 }
 
 /* -------------------------------------------------------------------------- */

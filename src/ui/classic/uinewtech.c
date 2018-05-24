@@ -96,7 +96,7 @@ static void newtech_draw_cb1(void *vptr)
         int frame = lbxgfx_get_frame(d->gfx_spies);
         lbxgfx_set_frame_0(d->gfx_spies);
         for (int f = 0; f <= frame; ++f) {
-            lbxgfx_draw_frame(0, 0, d->gfx_spies, UI_SCREEN_W);
+            lbxgfx_draw_frame(0, 0, d->gfx_spies, UI_SCREEN_W, ui_scale);
         }
         if ((d->anim = (d->anim + 1) % 3) != 0) {
             lbxgfx_set_new_frame(d->gfx_spies, frame);
@@ -104,7 +104,7 @@ static void newtech_draw_cb1(void *vptr)
     }
     game_tech_get_newtech_msg(g, d->api, &(d->nt), buf, UI_STRBUF_SIZE);
     lbxfont_select_set_12_4(5, 5, 0, 0);
-    lbxfont_print_str_center(161, 7, buf, UI_SCREEN_W);
+    lbxfont_print_str_center(161, 7, buf, UI_SCREEN_W, ui_scale);
     if (d->nt.source != TECHSOURCE_CHOOSE) {
         int strh, y;
         char *p, c;
@@ -117,7 +117,7 @@ static void newtech_draw_cb1(void *vptr)
             ++p;
         }
         lbxfont_select_set_12_4(5, 8, 0, 0);
-        lbxfont_print_str_center(160, 32, buf, UI_SCREEN_W);
+        lbxfont_print_str_center(160, 32, buf, UI_SCREEN_W, ui_scale);
         game_tech_get_descr(d->g->gaux, d->nt.field, d->nt.tech, buf, UI_STRBUF_SIZE);
         lbxfont_select_set_12_5(4, 0xf, 0, 0);
         strh = lbxfont_calc_split_str_h(305, buf);
@@ -128,25 +128,25 @@ static void newtech_draw_cb1(void *vptr)
            to small visible artifacts.
         */
         y = (strh >= 36) ? 150 : 160;
-        lbxfont_print_str_split(9, y, 305, buf, 3, UI_SCREEN_W, UI_SCREEN_H);
+        lbxfont_print_str_split(9, y, 305, buf, 3, UI_SCREEN_W, UI_SCREEN_H, ui_scale);
     }
     if (d->nt.frame) {
         /*ui_newtech_draw_frame:*/
-        ui_draw_filled_rect(31, 62, 202, 125, 0xfb);
-        ui_draw_filled_rect(37, 68, 196, 91, 0x04);
-        lbxgfx_draw_frame(31, 62, d->gfx_framing, UI_SCREEN_W);
-        ui_draw_filled_rect(50, 106, 110, 120, 0x00);
-        ui_draw_filled_rect(51, 107, 109, 119, tbl_banner_color2[g->eto[d->nt.other1].banner]);
-        ui_draw_filled_rect(122, 106, 183, 120, 0x00);
-        ui_draw_filled_rect(123, 107, 182, 119, tbl_banner_color2[g->eto[d->nt.other2].banner]);
+        ui_draw_filled_rect(31, 62, 202, 125, 0xfb, ui_scale);
+        ui_draw_filled_rect(37, 68, 196, 91, 0x04, ui_scale);
+        lbxgfx_draw_frame(31, 62, d->gfx_framing, UI_SCREEN_W, ui_scale);
+        ui_draw_filled_rect(50, 106, 110, 120, 0x00, ui_scale);
+        ui_draw_filled_rect(51, 107, 109, 119, tbl_banner_color2[g->eto[d->nt.other1].banner], ui_scale);
+        ui_draw_filled_rect(122, 106, 183, 120, 0x00, ui_scale);
+        ui_draw_filled_rect(123, 107, 182, 119, tbl_banner_color2[g->eto[d->nt.other2].banner], ui_scale);
         lbxfont_select(5, 6, 0, 0);
-        lbxfont_print_str_center(80, 110, game_str_tbl_races[g->eto[d->nt.other1].race], UI_SCREEN_W);
-        lbxfont_print_str_center(152, 110, game_str_tbl_races[g->eto[d->nt.other2].race], UI_SCREEN_W);
+        lbxfont_print_str_center(80, 110, game_str_tbl_races[g->eto[d->nt.other1].race], UI_SCREEN_W, ui_scale);
+        lbxfont_print_str_center(152, 110, game_str_tbl_races[g->eto[d->nt.other2].race], UI_SCREEN_W, ui_scale);
         lbxfont_select(5, 0, 0, 0);
         lbxfont_set_gap_h(2);
-        lbxfont_print_str_split(40, 70, 154, game_str_nt_frame, 3, UI_SCREEN_W, UI_SCREEN_H);
+        lbxfont_print_str_split(40, 70, 154, game_str_nt_frame, 3, UI_SCREEN_W, UI_SCREEN_H, ui_scale);
         lbxfont_select(0, 0, 0, 0);
-        lbxfont_print_str_center(115, 96, game_str_nt_victim, UI_SCREEN_W);
+        lbxfont_print_str_center(115, 96, game_str_nt_victim, UI_SCREEN_W, ui_scale);
     }
 }
 
@@ -161,16 +161,16 @@ static void newtech_choose_next_draw_cb(void *vptr)
     newtech_draw_cb1(d);
     yo = ((d->num_next > 10) ? 8 : 9) * d->num_next + 8;
     SETMAX(yo, 30);
-    ui_draw_filled_rect(x, y, x + 165, y + yo + 12, 0xf9);
-    lbxgfx_draw_frame_offs(x, y, d->gfx_pulldown_u, 0, y, UI_SCREEN_W - 1, y + yo - 1, UI_SCREEN_W);
+    ui_draw_filled_rect(x, y, x + 165, y + yo + 12, 0xf9, ui_scale);
+    lbxgfx_draw_frame_offs(x, y, d->gfx_pulldown_u, 0, y, UI_VGA_W - 1, y + yo - 1, UI_SCREEN_W, ui_scale);
     /* WASBUG
        MOO1 does not limit the bottom part which will go below screen with enough techs to choose from.
        On DOS/v1.3 this only overwrite unused VRAM. We must the the _offs version.
     */
-    lbxgfx_draw_frame_offs(x, y + yo, d->gfx_pulldown_d, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
+    lbxgfx_draw_frame_offs(x, y + yo, d->gfx_pulldown_d, 0, 0, UI_VGA_W - 1, UI_VGA_H - 1, UI_SCREEN_W, ui_scale);
     lib_sprintf(buf, sizeof(buf), "%s %s", game_str_tbl_te_field[d->nt.field], game_str_te_techno);
     lbxfont_select(5, 0xe, 0, 0);
-    lbxfont_print_str_center(x + 85, y + 5, buf, UI_SCREEN_W);
+    lbxfont_print_str_center(x + 85, y + 5, buf, UI_SCREEN_W, ui_scale);
     lbxfont_select_set_12_1(0, 0, 0xe, 0);
     game_tech_get_descr(d->g->gaux, d->nt.field, tech, buf, sizeof(buf));
     pos = strlen(buf);
@@ -182,7 +182,7 @@ static void newtech_choose_next_draw_cb(void *vptr)
         cost = (cost * game_num_tech_costmul) / 100;
     }
     lib_sprintf(&buf[pos], sizeof(buf) - pos, " \x02(%u %s)\x1", cost, game_str_te_rp);
-    lbxfont_print_str_split(151, y + yo + 18, 156, buf, 0, UI_SCREEN_W, UI_SCREEN_H);
+    lbxfont_print_str_split(151, y + yo + 18, 156, buf, 0, UI_SCREEN_W, UI_SCREEN_H, ui_scale);
 }
 
 static void ui_newtech_choose_next(struct newtech_data_s *d)
@@ -208,9 +208,9 @@ static void ui_newtech_choose_next(struct newtech_data_s *d)
     newtech_choose_next_draw_cb(d);
     lbxfont_select(0, 0, 0, 0);
     lbxfont_set_gap_h(di - 6);
-    ui_draw_filled_rect(155, 49, 304, 56, 0x60);
+    ui_draw_filled_rect(155, 49, 304, 56, 0x60, ui_scale);
     for (int i = 0; i < d->num_next; ++i) {
-        lbxfont_print_str_normal(156, i * di + di + 41, tname[i], UI_SCREEN_W);
+        lbxfont_print_str_normal(156, i * di + di + 41, tname[i], UI_SCREEN_W, ui_scale);
     }
     lbxfont_select_set_12_1(0, 0, 0, 0);
     ui_draw_finish();
@@ -231,7 +231,7 @@ static void newtech_adjust_draw_typestr(char *buf, size_t bufsize, const char *s
     if (str2) {
         lib_strcat(buf, str2, bufsize);
     }
-    lbxfont_print_str_split(x + 15, y + 16, 110 + we, buf, 3, UI_SCREEN_W, UI_SCREEN_H);
+    lbxfont_print_str_split(x + 15, y + 16, 110 + we, buf, 3, UI_SCREEN_W, UI_SCREEN_H, ui_scale);
 }
 
 static void newtech_adjust_draw_cb(void *vptr)
@@ -240,18 +240,18 @@ static void newtech_adjust_draw_cb(void *vptr)
     char buf[0x96];
     int x = 150, y = 30;
     newtech_draw_cb1(d);
-    ui_draw_filled_rect(x, y, x + 135, y + 80, 0xf9);
-    lbxgfx_draw_frame(x, y, (d->dialog_type == 0) ? d->gfx_eco_chng2 : d->gfx_eco_chng4, UI_SCREEN_W);
+    ui_draw_filled_rect(x, y, x + 135, y + 80, 0xf9, ui_scale);
+    lbxgfx_draw_frame(x, y, (d->dialog_type == 0) ? d->gfx_eco_chng2 : d->gfx_eco_chng4, UI_SCREEN_W, ui_scale);
     lbxfont_select_set_12_1(0, 0, 0, 0);
     lib_strcpy(buf, game_str_nt_doyou, sizeof(buf));
     switch (d->dialog_type) {
         case 0:
             lib_strcat(buf, game_str_nt_redueco, sizeof(buf));
-            lbxfont_print_str_split(x + 15, y + 11, 110, buf, 3, UI_SCREEN_W, UI_SCREEN_H);
+            lbxfont_print_str_split(x + 15, y + 11, 110, buf, 3, UI_SCREEN_W, UI_SCREEN_H, ui_scale);
             lbxgfx_set_frame_0(ui_data.gfx.starmap.scrapbut_yes);
             lbxgfx_set_frame_0(ui_data.gfx.starmap.scrapbut_no);
-            lbxgfx_draw_frame(x + 83, y + 60, ui_data.gfx.starmap.scrapbut_yes, UI_SCREEN_W);
-            lbxgfx_draw_frame(x + 18, y + 60, ui_data.gfx.starmap.scrapbut_no, UI_SCREEN_W);
+            lbxgfx_draw_frame(x + 83, y + 60, ui_data.gfx.starmap.scrapbut_yes, UI_SCREEN_W, ui_scale);
+            lbxgfx_draw_frame(x + 18, y + 60, ui_data.gfx.starmap.scrapbut_no, UI_SCREEN_W, ui_scale);
             break;
         case 1:
             newtech_adjust_draw_typestr(buf, sizeof(buf), game_str_nt_ind, 0, x, y, 0);
@@ -491,7 +491,7 @@ void ui_newtech(struct game_s *g, int pi)
         }
         ui_draw_erase_buf();
         d.gfx_lab = lbxfile_item_get(LBXFILE_TECHNO, (d.nt.source != TECHSOURCE_TRADE) ? d.nt.source : 0);
-        lbxgfx_draw_frame(0, 0, d.gfx_lab, UI_SCREEN_W);
+        lbxgfx_draw_frame(0, 0, d.gfx_lab, UI_SCREEN_W, ui_scale);
         {
             int v;
             if (d.nt.tech <= 50) {
@@ -502,7 +502,7 @@ void ui_newtech(struct game_s *g, int pi)
             }
             d.gfx_tech = lbxfile_item_get(LBXFILE_TECHNO, v);
         }
-        lbxgfx_draw_frame(145, 54, d.gfx_tech, UI_SCREEN_W);
+        lbxgfx_draw_frame(145, 54, d.gfx_tech, UI_SCREEN_W, ui_scale);
         hw_video_copy_back_to_page2();
         {
             int v;
@@ -532,7 +532,7 @@ void ui_newtech(struct game_s *g, int pi)
             if (d.cur_source == -1) {
                 ui_draw_erase_buf();
                 d.gfx_lab = lbxfile_item_get(LBXFILE_TECHNO, 0);
-                lbxgfx_draw_frame(0, 0, d.gfx_lab, UI_SCREEN_W);
+                lbxgfx_draw_frame(0, 0, d.gfx_lab, UI_SCREEN_W, ui_scale);
                 hw_video_copy_back_to_page2();
                 lbxfile_item_release(LBXFILE_TECHNO, d.gfx_lab);
                 if (d.gfx_spies) {

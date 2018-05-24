@@ -62,25 +62,25 @@ static void races_draw_cb(void *vptr)
     }
 
     ui_draw_color_buf(0x5b);
-    lbxgfx_draw_frame(0, 0, d->gfx, UI_SCREEN_W);
+    lbxgfx_draw_frame(0, 0, d->gfx, UI_SCREEN_W, ui_scale);
 
     lbxfont_select_set_12_1(5, 0xa, 0, 0);
     for (int i = d->num; i < (PLAYER_NUM - 1); ++i) {
         int x, y;
         x = (i / 3) * 157;
         y = (i % 3) * 64;
-        ui_draw_filled_rect(x + 58, y + 9, x + 156, y + 21, 0x5b);
-        ui_draw_filled_rect(x + 56, y + 25, x + 158, y + 37, 0x5b);
-        ui_draw_filled_rect(x + 58, y + 41, x + 156, y + 51, 0x5b);
-        ui_draw_filled_rect(x + 56, y + 55, x + 158, y + 65, 0x5b);
-        lbxfont_print_str_center(x + 109, y + 27, (i < g->players - 1) ? game_str_ra_nocont : game_str_ra_notpres, UI_SCREEN_W);
+        ui_draw_filled_rect(x + 58, y + 9, x + 156, y + 21, 0x5b, ui_scale);
+        ui_draw_filled_rect(x + 56, y + 25, x + 158, y + 37, 0x5b, ui_scale);
+        ui_draw_filled_rect(x + 58, y + 41, x + 156, y + 51, 0x5b, ui_scale);
+        ui_draw_filled_rect(x + 56, y + 55, x + 158, y + 65, 0x5b, ui_scale);
+        lbxfont_print_str_center(x + 109, y + 27, (i < g->players - 1) ? game_str_ra_nocont : game_str_ra_notpres, UI_SCREEN_W, ui_scale);
     }
 
     if (d->num) {
         int v;
-        ui_draw_filled_rect(238, 141, 283, 144, 0);
+        ui_draw_filled_rect(238, 141, 283, 144, 0, ui_scale);
         if (e->security) {
-            ui_draw_line_3h(238, 142, 237 + (e->security * 9) / 40, 0x73);
+            ui_draw_line_3h(238, 142, 237 + (e->security * 9) / 40, 0x73, ui_scale);
         }
         v = (e->security / 5);
         if (e->race == RACE_DARLOK) {
@@ -89,13 +89,13 @@ static void races_draw_cb(void *vptr)
         lib_sprintf(buf, sizeof(buf), "+%i%%", v);
         lbxfont_select(2, 0xb, 0, 0);
         lbxfont_set_color_c_n(0x26, 5);
-        lbxfont_print_str_right(309, 141, buf, UI_SCREEN_W);
+        lbxfont_print_str_right(309, 141, buf, UI_SCREEN_W, ui_scale);
     } else {
-        ui_draw_filled_rect(238, 141, 283, 144, 0x5a);
+        ui_draw_filled_rect(238, 141, 283, 144, 0x5a, ui_scale);
     }
     lbxfont_select(2, 6, 0, 0);
-    lbxfont_print_str_normal(167, 150, game_str_ra_secline1, UI_SCREEN_W);
-    lbxfont_print_str_normal(167, 157, game_str_ra_secline2, UI_SCREEN_W);
+    lbxfont_print_str_normal(167, 150, game_str_ra_secline1, UI_SCREEN_W, ui_scale);
+    lbxfont_print_str_normal(167, 157, game_str_ra_secline2, UI_SCREEN_W, ui_scale);
     {
         int sumalloc = e->security;
         struct strbuild_s strbuild = strbuild_init(buf, sizeof(buf));
@@ -112,7 +112,7 @@ static void races_draw_cb(void *vptr)
         }
         strbuild_catf(&strbuild, "%% %s", game_str_ra_planres);
         lbxfont_select(2, 0, 0, 0);
-        lbxfont_print_str_normal(167, 170, buf, UI_SCREEN_W);
+        lbxfont_print_str_normal(167, 170, buf, UI_SCREEN_W, ui_scale);
     }
     for (int i = 0; i < d->num; ++i) {
         const uint8_t colortbl_races_banner[BANNER_NUM] = { 0xeb, 0x6d, 0xd4, 0x43, 0x0a, 0x52 };
@@ -121,19 +121,19 @@ static void races_draw_cb(void *vptr)
         pi = d->tbl_ei[i];
         x = (i / 3) * 157;
         y = (i % 3) * 64;
-        lbxgfx_draw_frame(x + 9, y + 10, ui_data.gfx.planets.race[g->eto[pi].race], UI_SCREEN_W);
+        lbxgfx_draw_frame(x + 9, y + 10, ui_data.gfx.planets.race[g->eto[pi].race], UI_SCREEN_W, ui_scale);
         if (d->tbl_gone[i] != 0) {
             lbxfont_select_set_12_4(0, 0, 0, 0);
-            lbxfont_print_str_center(x + 29, y + 23, game_str_ra_diplo, UI_SCREEN_W);
-            lbxfont_print_str_center(x + 29, y + 31, game_str_ra_gone, UI_SCREEN_W);
+            lbxfont_print_str_center(x + 29, y + 23, game_str_ra_diplo, UI_SCREEN_W, ui_scale);
+            lbxfont_print_str_center(x + 29, y + 31, game_str_ra_gone, UI_SCREEN_W, ui_scale);
         }
-        ui_draw_filled_rect(x + 9, y + 48, x + 48, y + 61, colortbl_races_banner[g->eto[pi].banner]);
+        ui_draw_filled_rect(x + 9, y + 48, x + 48, y + 61, colortbl_races_banner[g->eto[pi].banner], ui_scale);
         lbxfont_select(5, 6, 0, 0);
-        lbxfont_print_str_center(x + 29, y + 51, game_str_tbl_races[g->eto[pi].race], UI_SCREEN_W);
+        lbxfont_print_str_center(x + 29, y + 51, game_str_tbl_races[g->eto[pi].race], UI_SCREEN_W, ui_scale);
         {
             int spying, spyprod, spyspend, spies, spycost;
             spying = e->spying[pi];
-            ui_draw_filled_rect(x + 103, y + 44, x + 128, y + 47, 0);
+            ui_draw_filled_rect(x + 103, y + 44, x + 128, y + 47, 0, ui_scale);
             lbxfont_select(2, 0, 0, 0);
             lbxfont_set_color_c_n(0x26, 5);
             spyprod = (e->total_production_bc * spying) / 1000;
@@ -144,7 +144,7 @@ static void races_draw_cb(void *vptr)
                spycost /= 2;
             }
             if (spying != 0) {
-                ui_draw_line_3h(x + 103, y + 45, x + 102 + spying / 4, 0x73);
+                ui_draw_line_3h(x + 103, y + 45, x + 102 + spying / 4, 0x73, ui_scale);
             }
             if (spies == 0) {
                 lib_strcpy(buf, game_str_ra_nospies, sizeof(buf));
@@ -152,7 +152,7 @@ static void races_draw_cb(void *vptr)
                 lib_sprintf(buf, sizeof(buf), "%i %s", spies, (spies == 1) ? game_str_ra_spy : game_str_ra_spies);
             }
             lbxfont_select(2, 6, 0, 0);
-            lbxfont_print_str_right(x + 91, y + 44, buf, UI_SCREEN_W);
+            lbxfont_print_str_right(x + 91, y + 44, buf, UI_SCREEN_W, ui_scale);
             if (spycost <= spyspend) {
                 spies = 0;
                 while (spycost <= spyspend) {
@@ -174,17 +174,17 @@ static void races_draw_cb(void *vptr)
                     lib_sprintf(buf, sizeof(buf), "%i %s", years, game_str_y);
                 }
             }
-            lbxfont_print_str_right(x + 153, y + 44, buf, UI_SCREEN_W);
+            lbxfont_print_str_right(x + 153, y + 44, buf, UI_SCREEN_W, ui_scale);
         }
         {
             const char *str;
             str = game_str_tbl_ra_treaty[e->treaty[pi]];
-            ui_draw_filled_rect(x + 57, y + 8, x + 157, y + 22, 0x5b);
+            ui_draw_filled_rect(x + 57, y + 8, x + 157, y + 22, 0x5b, ui_scale);
             lbxfont_select(0, 6, 0, 0);
-            lbxfont_print_str_normal(x + 61, y + 10, str, UI_SCREEN_W);
+            lbxfont_print_str_normal(x + 61, y + 10, str, UI_SCREEN_W, ui_scale);
             lbxfont_select(0, 0, 0, 0);
             lbxfont_set_color_c_n(0xe6, 5);
-            lbxfont_print_str_normal(x + 60, y + 9, str, UI_SCREEN_W);
+            lbxfont_print_str_normal(x + 60, y + 9, str, UI_SCREEN_W, ui_scale);
         }
         if (e->trade_bc[pi] != 0) {
             lib_sprintf(buf, sizeof(buf), "%s: %i %s%s", game_str_ra_trade, e->trade_bc[pi], game_str_bc, game_str_year0);
@@ -192,40 +192,40 @@ static void races_draw_cb(void *vptr)
             lib_strcpy(buf, game_str_ra_notrade, sizeof(buf));
         }
         lbxfont_select(0, 6, 0, 0);
-        lbxfont_print_str_normal(x + 61, y + 17, buf, UI_SCREEN_W);
+        lbxfont_print_str_normal(x + 61, y + 17, buf, UI_SCREEN_W, ui_scale);
         lbxfont_select(0, 0, 0, 0);
         lbxfont_set_color_c_n(0xe6, 5);
-        lbxfont_print_str_normal(x + 60, y + 16, buf, UI_SCREEN_W);
+        lbxfont_print_str_normal(x + 60, y + 16, buf, UI_SCREEN_W, ui_scale);
         {
             int rel;
             rel = e->relation1[pi] / 2;
             SETRANGE(rel, -50, 50);
             lbxfont_select_set_12_4(0, 6, 0, 0);
             lbxfont_select(2, 0xd, 0, 0);
-            lbxgfx_draw_frame(x + 107 + rel, y + 34, ui_data.gfx.screens.race_pnt, UI_SCREEN_W);
+            lbxgfx_draw_frame(x + 107 + rel, y + 34, ui_data.gfx.screens.race_pnt, UI_SCREEN_W, ui_scale);
             rel = e->relation1[pi] / 12 + 8;
             SETRANGE(rel, 0, 16);
-            lbxfont_print_str_center(x + 107, y + 27, game_str_tbl_ra_relat[rel], UI_SCREEN_W);
+            lbxfont_print_str_center(x + 107, y + 27, game_str_tbl_ra_relat[rel], UI_SCREEN_W, ui_scale);
         }
     }
     lbxgfx_set_new_frame(ui_data.gfx.screens.races_bu.status, 1);
-    lbxgfx_draw_frame(165, 180, ui_data.gfx.screens.races_bu.status, UI_SCREEN_W);
+    lbxgfx_draw_frame(165, 180, ui_data.gfx.screens.races_bu.status, UI_SCREEN_W, ui_scale);
     lbxgfx_set_new_frame(ui_data.gfx.screens.races_bu.report, 1);
-    lbxgfx_draw_frame(205, 180, ui_data.gfx.screens.races_bu.report, UI_SCREEN_W);
+    lbxgfx_draw_frame(205, 180, ui_data.gfx.screens.races_bu.report, UI_SCREEN_W, ui_scale);
     lbxgfx_set_new_frame(ui_data.gfx.screens.races_bu.audience, 1);
-    lbxgfx_draw_frame(245, 180, ui_data.gfx.screens.races_bu.audience, UI_SCREEN_W);
+    lbxgfx_draw_frame(245, 180, ui_data.gfx.screens.races_bu.audience, UI_SCREEN_W, ui_scale);
     lbxgfx_set_new_frame(ui_data.gfx.screens.races_bu.ok, 1);
-    lbxgfx_draw_frame(290, 180, ui_data.gfx.screens.races_bu.ok, UI_SCREEN_W);
+    lbxgfx_draw_frame(290, 180, ui_data.gfx.screens.races_bu.ok, UI_SCREEN_W, ui_scale);
     for (int i = 0; i < d->num; ++i) {
         int x, y;
         x = (i / 3) * 157;
         y = (i % 3) * 64;
         lbxgfx_set_new_frame(ui_data.gfx.screens.races_bu.hiding, (d->tbl_spymode[i] == SPYMODE_HIDE) ? 1 : 0);
-        lbxgfx_draw_frame(x + 59, y + 55, ui_data.gfx.screens.races_bu.hiding, UI_SCREEN_W);
+        lbxgfx_draw_frame(x + 59, y + 55, ui_data.gfx.screens.races_bu.hiding, UI_SCREEN_W, ui_scale);
         lbxgfx_set_new_frame(ui_data.gfx.screens.races_bu.sabotage, (d->tbl_spymode[i] == SPYMODE_SABOTAGE) ? 1 : 0);
-        lbxgfx_draw_frame(x + 77, y + 55, ui_data.gfx.screens.races_bu.sabotage, UI_SCREEN_W);
+        lbxgfx_draw_frame(x + 77, y + 55, ui_data.gfx.screens.races_bu.sabotage, UI_SCREEN_W, ui_scale);
         lbxgfx_set_new_frame(ui_data.gfx.screens.races_bu.espionage, (d->tbl_spymode[i] == SPYMODE_ESPIONAGE) ? 1 : 0);
-        lbxgfx_draw_frame(x + 114, y + 55, ui_data.gfx.screens.races_bu.espionage, UI_SCREEN_W);
+        lbxgfx_draw_frame(x + 114, y + 55, ui_data.gfx.screens.races_bu.espionage, UI_SCREEN_W, ui_scale);
     }
 }
 

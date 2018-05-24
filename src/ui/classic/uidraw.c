@@ -4,6 +4,7 @@
 
 #include "uidraw.h"
 #include "comp.h"
+#include "gfxscale.h"
 #include "hw.h"
 #include "lbxfont.h"
 #include "mouse.h"
@@ -73,7 +74,7 @@ static void ui_draw_box_fill_sub1(uint16_t num, const uint8_t *colorptr, uint8_t
     }
 }
 
-static void ui_draw_line_limit_do(int x0, int y0, int x1, int y1, uint8_t color, const uint8_t *colortbl, int colornum, int colorpos)
+static void ui_draw_line_limit_do(int x0, int y0, int x1, int y1, uint8_t color, const uint8_t *colortbl, int colornum, int colorpos, int scale)
 {
     if (x0 == x1) {
         if ((x0 < uiobj_minx) || (x0 > uiobj_maxx)) {
@@ -150,9 +151,9 @@ static void ui_draw_line_limit_do(int x0, int y0, int x1, int y1, uint8_t color,
         }
     }
     if (colortbl) {
-        ui_draw_line_ctbl(x0, y0, x1, y1, colortbl, colornum, colorpos);
+        ui_draw_line_ctbl(x0, y0, x1, y1, colortbl, colornum, colorpos, scale);
     } else {
-        ui_draw_line1(x0, y0, x1, y1, color);
+        ui_draw_line1(x0, y0, x1, y1, color, scale);
     }
 }
 
@@ -200,24 +201,35 @@ void ui_draw_color_buf(uint8_t color)
     memset(hw_video_get_buf(), color, UI_SCREEN_W * UI_SCREEN_H);
 }
 
-void ui_draw_pixel(int x, int y, uint8_t color)
+void ui_draw_pixel(int x, int y, uint8_t color, int scale)
 {
     uint8_t *p = hw_video_get_buf();
-    p[y * UI_SCREEN_W + x] = color;
+    if (scale == 1) {
+        p[y * UI_SCREEN_W + x] = color;
+    } else {
+        gfxscale_draw_pixel(p + (y * UI_SCREEN_W + x) * scale, color, UI_SCREEN_W, scale);
+    }
 }
 
-void ui_draw_filled_rect(int x0, int y0, int x1, int y1, uint8_t color)
+void ui_draw_filled_rect(int x0, int y0, int x1, int y1, uint8_t color, int scale)
 {
     uint8_t *s = hw_video_get_buf();
+    int w;
     if (x1 < x0) {
         return;
     }
+    w = (x1 - x0 + 1) * scale;
+    x0 *= scale;
+    y0 *= scale;
+    y1 *= scale;
+    s += y0 * UI_SCREEN_W + x0;
     for (; y0 <= y1; ++y0) {
-        memset(&s[y0 * UI_SCREEN_W + x0], color, x1 - x0 + 1);
+        memset(s, color, w);
+        s += UI_SCREEN_W;
     }
 }
 
-void ui_draw_line1(int x0, int y0, int x1, int y1, uint8_t color)
+void ui_draw_line1(int x0, int y0, int x1, int y1, uint8_t color, int scale)
 {
     int xslope = 0, yslope = 0, yinc, numpixels;    /* BUG? xslope and yslope not cleared by MOO1 */
 
@@ -231,10 +243,10 @@ void ui_draw_line1(int x0, int y0, int x1, int y1, uint8_t color)
         int dx, dy;
         dx = x1 - x0;
         dy = y1 - y0;
-        yinc = UI_SCREEN_W;
+        yinc = UI_SCREEN_W * scale;
         if (dy < 0) {
             dy = -dy;
-            yinc = -UI_SCREEN_W;
+            yinc = -UI_SCREEN_W * scale;
         }
         if (dx < dy) {
             numpixels = dy + 1;
@@ -252,18 +264,22 @@ void ui_draw_line1(int x0, int y0, int x1, int y1, uint8_t color)
     }
 
     {
-        uint8_t *p = hw_video_get_buf() + y0 * UI_SCREEN_W + x0;
+        uint8_t *p = hw_video_get_buf() + (y0 * UI_SCREEN_W + x0) * scale;
         int xerr, yerr;
 
         xerr = 0x100 / 2;
         yerr = 0x100 / 2;
 
         while (numpixels--) {
-            *p = color;
+            if (scale == 1) {
+                *p = color;
+            } else {
+                gfxscale_draw_pixel(p, color, UI_SCREEN_W, scale);
+            }
             xerr += xslope;
             if ((xerr & 0xff00) != 0) {
                 xerr &= 0xff;
-                ++p;
+                p += scale;
             }
             yerr += yslope;
             if ((yerr & 0xff00) != 0) {
@@ -274,7 +290,7 @@ void ui_draw_line1(int x0, int y0, int x1, int y1, uint8_t color)
     }
 }
 
-void ui_draw_line_ctbl(int x0, int y0, int x1, int y1, const uint8_t *colortbl, int colornum, int pos)
+void ui_draw_line_ctbl(int x0, int y0, int x1, int y1, const uint8_t *colortbl, int colornum, int pos, int scale)
 {
     int xslope = 0, yslope = 0, yinc, numpixels;    /* BUG? xslope and yslope not cleared by MOO1 */
 
@@ -288,10 +304,10 @@ void ui_draw_line_ctbl(int x0, int y0, int x1, int y1, const uint8_t *colortbl, 
         int dx, dy;
         dx = x1 - x0;
         dy = y1 - y0;
-        yinc = UI_SCREEN_W;
+        yinc = UI_SCREEN_W * scale;
         if (dy < 0) {
             dy = -dy;
-            yinc = -UI_SCREEN_W;
+            yinc = -UI_SCREEN_W * scale;
         }
         if (dx < dy) {
             numpixels = dy + 1;
@@ -309,7 +325,7 @@ void ui_draw_line_ctbl(int x0, int y0, int x1, int y1, const uint8_t *colortbl, 
     }
 
     {
-        uint8_t *p = hw_video_get_buf() + y0 * UI_SCREEN_W + x0;
+        uint8_t *p = hw_video_get_buf() + (y0 * UI_SCREEN_W + x0) * scale;
         int xerr, yerr;
 
         xerr = 0x100 / 2;
@@ -320,12 +336,16 @@ void ui_draw_line_ctbl(int x0, int y0, int x1, int y1, const uint8_t *colortbl, 
             color = colortbl[pos++];
             if (pos >= colornum) { pos = 0; }
             if (color != 0) {
-                *p = color;
+                if (scale == 1) {
+                    *p = color;
+                } else {
+                    gfxscale_draw_pixel(p, color, UI_SCREEN_W, scale);
+                }
             }
             xerr += xslope;
             if ((xerr & 0xff00) != 0) {
                 xerr &= 0xff;
-                ++p;
+                p += scale;
             }
             yerr += yslope;
             if ((yerr & 0xff00) != 0) {
@@ -336,42 +356,42 @@ void ui_draw_line_ctbl(int x0, int y0, int x1, int y1, const uint8_t *colortbl, 
     }
 }
 
-void ui_draw_line_limit(int x0, int y0, int x1, int y1, uint8_t color)
+void ui_draw_line_limit(int x0, int y0, int x1, int y1, uint8_t color, int scale)
 {
-    ui_draw_line_limit_do(x0, y0, x1, y1, color, NULL, 0, 0);
+    ui_draw_line_limit_do(x0, y0, x1, y1, color, NULL, 0, 0, scale);
 }
 
-void ui_draw_line_limit_ctbl(int x0, int y0, int x1, int y1, const uint8_t *colortbl, int colornum, int pos)
+void ui_draw_line_limit_ctbl(int x0, int y0, int x1, int y1, const uint8_t *colortbl, int colornum, int pos, int scale)
 {
-    ui_draw_line_limit_do(x0, y0, x1, y1, 0, colortbl, colornum, pos);
+    ui_draw_line_limit_do(x0, y0, x1, y1, 0, colortbl, colornum, pos, scale);
 }
 
-void ui_draw_line_3h(int x0, int y0, int x1, uint8_t color)
+void ui_draw_line_3h(int x0, int y0, int x1, uint8_t color, int scale)
 {
     for (int i = 0; i < 3; ++i, ++y0) {
-        ui_draw_line1(x0, y0, x1, y0, color);
+        ui_draw_line1(x0, y0, x1, y0, color, scale);
     }
 }
 
-void ui_draw_box1(int x0, int y0, int x1, int y1, uint8_t color1, uint8_t color2)
+void ui_draw_box1(int x0, int y0, int x1, int y1, uint8_t color1, uint8_t color2, int scale)
 {
-    ui_draw_line1(x0, y0, x1, y0, color1);
-    ui_draw_line1(x0, y0, x0, y1, color1);
-    ui_draw_line1(x0 + 1, y1, x1, y1, color2);
-    ui_draw_line1(x1, y0 + 1, x1, y1, color2);
+    ui_draw_line1(x0, y0, x1, y0, color1, scale);
+    ui_draw_line1(x0, y0, x0, y1, color1, scale);
+    ui_draw_line1(x0 + 1, y1, x1, y1, color2, scale);
+    ui_draw_line1(x1, y0 + 1, x1, y1, color2, scale);
 }
 
-void ui_draw_box2(int x0, int y0, int x1, int y1, uint8_t color1, uint8_t color2, uint8_t color3, uint8_t color4)
+void ui_draw_box2(int x0, int y0, int x1, int y1, uint8_t color1, uint8_t color2, uint8_t color3, uint8_t color4, int scale)
 {
-    ui_draw_box1(x0, y0, x1, y1, color1, color3);
+    ui_draw_box1(x0, y0, x1, y1, color1, color3, scale);
     ++x0; ++y0; --x1; --y1;
-    ui_draw_box1(x0, y0, x1, y1, color2, color4);
+    ui_draw_box1(x0, y0, x1, y1, color2, color4, scale);
 }
 
 
-void ui_draw_box_fill(int x0, int y0, int x1, int y1, const uint8_t *colorptr, uint8_t color0, uint16_t colorhalf, uint16_t ac, uint8_t colorpos)
+void ui_draw_box_fill(int x0, int y0, int x1, int y1, const uint8_t *colorptr, uint8_t color0, uint16_t colorhalf, uint16_t ac, uint8_t colorpos, int scale)
 {
-    uint8_t *s = hw_video_get_buf() + y0 * UI_SCREEN_W + x0;
+    uint8_t *s = hw_video_get_buf() + (y0 * UI_SCREEN_W + x0) * scale;
     uint16_t xstep, ystep, vx, vy, h, w, colornum;
     colornum = colorhalf << 1;
     /*v12 = colorpos & 0xff;*/
@@ -384,7 +404,8 @@ void ui_draw_box_fill(int x0, int y0, int x1, int y1, const uint8_t *colorptr, u
     do {
         uint8_t *p;
         vx = vy = vx + xstep;
-        p = s++;
+        p = s;
+        s += scale;
         for (int y = 0; y < h; ++y) {
             uint8_t c;
             vy += ystep;
@@ -392,8 +413,13 @@ void ui_draw_box_fill(int x0, int y0, int x1, int y1, const uint8_t *colorptr, u
             while (c >= colornum) {
                 c -= colornum;
             }
-            *p = ui_draw_box_fill_tbl[c];
-            p += UI_SCREEN_W;
+            c = ui_draw_box_fill_tbl[c];
+            if (scale == 1) {
+                *p = c;
+                p += UI_SCREEN_W;
+            } else {
+                p = gfxscale_draw_pixel(p, c, UI_SCREEN_W, scale);
+            }
         }
     } while (--w);
 }
@@ -409,19 +435,19 @@ void ui_draw_text_overlay(int x, int y, const char *str)
     y0 = y - 3;
     SETMAX(y0, 0);
     x1 = x + w + 4;
-    SETMIN(x1, UI_SCREEN_W - 1);
+    SETMIN(x1, UI_VGA_W - 1);
     y1 = y + h + 5;
-    SETMIN(y1, UI_SCREEN_H - 1);
-    ui_draw_filled_rect(x0, y0, x1, y1, 0);
-    lbxfont_print_str_normal(x + 1, y + 1, str, UI_SCREEN_W);
+    SETMIN(y1, UI_VGA_H - 1);
+    ui_draw_filled_rect(x0, y0, x1, y1, 0, ui_scale);
+    lbxfont_print_str_normal(x + 1, y + 1, str, UI_SCREEN_W, ui_scale);
 }
 
-void ui_draw_box_grain(int x0, int y0, int x1, int y1, uint8_t color0, uint8_t color1, uint8_t ae)
+void ui_draw_box_grain(int x0, int y0, int x1, int y1, uint8_t color0, uint8_t color1, uint8_t ae, int scale)
 {
-    uint8_t *s = hw_video_get_buf() + y0 * UI_SCREEN_W;
+    uint8_t *s = hw_video_get_buf() + (y0 * UI_SCREEN_W) * scale;
     uint8_t *p;
     uint16_t h;
-
+    /* TODO scale */
     h = y1 - y0 + 1;
 
     if ((x0 / 4) == (x1 / 4)) {
@@ -564,21 +590,21 @@ void ui_draw_finish(void)
     ui_draw_finish_mode = 0;
 }
 
-void ui_draw_stars(int x, int y, int xoff1, int xoff2)
+void ui_draw_stars(int x, int y, int xoff1, int xoff2, int scale)
 {
     const int sx1[16] = { 2, 6, 30, 34, 48, 74, 88, 96, 99, 103, 119, 123, 136, 137, 152, 159 };
     const int sy1[16] = { 15, 2, 16, 24, 19, 4, 11, 23, 22, 10, 21, 11, 4, 12, 22, 10 };
     const int sx2[23] = { 0, 6, 11, 33, 36, 46, 52, 67, 84, 86, 91, 95, 98, 103, 107, 112, 123, 125, 139, 142, 148, 151, 159 };
     const int sy2[23] = { 22, 8, 18, 19, 3, 18, 7, 24, 14, 17, 11, 1, 13, 15, 5, 6, 19, 1, 13, 10, 6, 23, 13 };
     int xo1, xo2;
-    xo1 = (ui_data.starmap.stars_xoff1 + xoff1) % (UI_SCREEN_W / 2);
-    xo2 = (ui_data.starmap.stars_xoff2 + xoff1 * 2) % (UI_SCREEN_W / 2);
+    xo1 = (ui_data.starmap.stars_xoff1 + xoff1) % (320 / 2);
+    xo2 = (ui_data.starmap.stars_xoff2 + xoff1 * 2) % (320 / 2);
     if (((UI_SCREEN_W / 2) - xoff2) > xo1) {
         int tx = xo1 + xoff2;
         for (int i = 0; i < 16; ++i) {
             int sx = sx1[i];
             if ((sx >= xo1) && (sx < tx)) {
-                ui_draw_pixel(sx - xo1 + x, sy1[i] + y, 4);
+                ui_draw_pixel(sx - xo1 + x, sy1[i] + y, 4, scale);
             }
         }
     } else {
@@ -586,23 +612,23 @@ void ui_draw_stars(int x, int y, int xoff1, int xoff2)
         for (int i = 0; i < 16; ++i) {
             int sx = sx1[i];
             if (sx >= xo1) {
-                ui_draw_pixel(sx - xo1 + x, sy1[i] + y, 4);
+                ui_draw_pixel(sx - xo1 + x, sy1[i] + y, 4, scale);
             }
         }
-        tx = (xo1 + xoff2) % (UI_SCREEN_W / 2);
+        tx = (xo1 + xoff2) % (320 / 2);
         for (int i = 0; i < 16; ++i) {
             int sx = sx1[i];
             if (sx < tx) {
-                ui_draw_pixel(sx - xo1 + x + 160, sy1[i] + y, 4);
+                ui_draw_pixel(sx - xo1 + x + 160, sy1[i] + y, 4, scale);
             }
         }
     }
-    if (((UI_SCREEN_W / 2) - xoff2) > xo2) {
+    if (((320 / 2) - xoff2) > xo2) {
         int tx = xo2 + xoff2;
         for (int i = 0; i < 23; ++i) {
             int sx = sx2[i];
             if ((sx >= xo2) && (sx < tx)) {
-                ui_draw_pixel(sx - xo2 + x, sy2[i] + y, 6);
+                ui_draw_pixel(sx - xo2 + x, sy2[i] + y, 6, scale);
             }
         }
     } else {
@@ -610,14 +636,14 @@ void ui_draw_stars(int x, int y, int xoff1, int xoff2)
         for (int i = 0; i < 23; ++i) {
             int sx = sx2[i];
             if (sx >= xo2) {
-                ui_draw_pixel(sx - xo2 + x, sy2[i] + y, 6);
+                ui_draw_pixel(sx - xo2 + x, sy2[i] + y, 6, scale);
             }
         }
-        tx = (xo2 + xoff2) % (UI_SCREEN_W / 2);
+        tx = (xo2 + xoff2) % (320 / 2);
         for (int i = 0; i < 23; ++i) {
             int sx = sx2[i];
             if (sx < tx) {
-                ui_draw_pixel(sx - xo2 + x + 160, sy2[i] + y, 6);
+                ui_draw_pixel(sx - xo2 + x + 160, sy2[i] + y, 6, scale);
             }
         }
     }
@@ -637,7 +663,7 @@ void ui_draw_set_stars_xoffs(bool flag_right)
     ui_data.starmap.stars_xoff2 = (ui_data.starmap.stars_xoff2 + x2) % (UI_SCREEN_W / 2);
 }
 
-void ui_draw_textbox_2str(const char *str1, const char *str2, int y0)
+void ui_draw_textbox_2str(const char *str1, const char *str2, int y0, int scale)
 {
     int x0 = 48, w = 132, x1 = x0 + w - 1, y1;
     lbxfont_select_set_12_1(0, 0, 0, 0);
@@ -647,20 +673,20 @@ void ui_draw_textbox_2str(const char *str1, const char *str2, int y0)
     if (*str1 != '\0') {
         y1 += lbxfont_get_height() + 4;
     }
-    ui_draw_box_fill(x0 + 2, y0 + 2, x1 - 2, y1 - 2, colortbl_textbox, 0, 5, 1, (0x2737 & 0xffu));
-    ui_draw_box2(x0, y0, x1, y1, 0x7, 0x10, 0x13, 0x12);
-    ui_draw_pixel(x0, y0, 0x10);
-    ui_draw_pixel(x0 + 1, y0 + 1, 0xf);
-    ui_draw_pixel(x0 + 2, y0 + 1, 0xf);
-    ui_draw_pixel(x0 + 1, y0 + 2, 0xf);
-    ui_draw_pixel(x0 + 1, y0 + 3, 0xf);
-    ui_draw_line1(x0 + 1, y1 + 1, x1 + 1, y1 + 1, 0);
-    ui_draw_line1(x1 + 1, y0 + 1, x1 + 1, y1, 0);
+    ui_draw_box_fill(x0 + 2, y0 + 2, x1 - 2, y1 - 2, colortbl_textbox, 0, 5, 1, (0x2737 & 0xffu), scale);
+    ui_draw_box2(x0, y0, x1, y1, 0x7, 0x10, 0x13, 0x12, scale);
+    ui_draw_pixel(x0, y0, 0x10, scale);
+    ui_draw_pixel(x0 + 1, y0 + 1, 0xf, scale);
+    ui_draw_pixel(x0 + 2, y0 + 1, 0xf, scale);
+    ui_draw_pixel(x0 + 1, y0 + 2, 0xf, scale);
+    ui_draw_pixel(x0 + 1, y0 + 3, 0xf, scale);
+    ui_draw_line1(x0 + 1, y1 + 1, x1 + 1, y1 + 1, 0, scale);
+    ui_draw_line1(x1 + 1, y0 + 1, x1 + 1, y1, 0, scale);
     if (*str1 != '\0') {
         lbxfont_select_subcolors_13not1();
-        lbxfont_print_str_center(x0 + w / 2, y0 + 4, str1, UI_SCREEN_W);
+        lbxfont_print_str_center(x0 + w / 2, y0 + 4, str1, UI_SCREEN_W, scale);
         lbxfont_select_subcolors_0();
         y0 += lbxfont_get_height() + 5;
     }
-    lbxfont_print_str_split(x0 + 4, y0 + 4, w - 8, str2, 2, UI_SCREEN_W, UI_SCREEN_H);
+    lbxfont_print_str_split(x0 + 4, y0 + 4, w - 8, str2, 2, UI_SCREEN_W, UI_SCREEN_H, scale);
 }

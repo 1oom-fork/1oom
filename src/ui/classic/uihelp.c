@@ -47,75 +47,75 @@ static void ui_help_draw(const char *str0, const char *str1, int x, int y, int w
     if (str0[0] != '\0') {
         y1 += lbxfont_get_height() + 4;
     }
-    ui_draw_box_fill(x, y, x1, y1, ctbl, 0, 5, 1, colorpos);
+    ui_draw_box_fill(x, y, x1, y1, ctbl, 0, 5, 1, colorpos, ui_scale);
     if (ltype != 0) {
         if ((lx1 >= x) && (lx1 <= x1)) {
             int lx0, ly0;
             lx0 = (x + x1) / 2;
             ly0 = (ly1 < y) ? (y - 1) : (y1 + 1);
-            ui_draw_line1(lx0, ly0 + 1, lx1, ly1 + 1, 0);
-            ui_draw_line1(lx0, ly0, lx1, ly1 + 1, c6);
+            ui_draw_line1(lx0, ly0 + 1, lx1, ly1 + 1, 0, ui_scale);
+            ui_draw_line1(lx0, ly0, lx1, ly1 + 1, c6, ui_scale);
         } else {
             int lx0, ly0;
             ly0 = (y + y1) / 2;
             if (lx1 < x) {
                 if (ltype == 1) {
                     lx0 = x - 1;
-                    ui_draw_line1(lx0, ly0 + 1, lx1, ly1 + 1, 0);
-                    ui_draw_line1(lx0, ly0, lx1, ly1 + 1, c6);
+                    ui_draw_line1(lx0, ly0 + 1, lx1, ly1 + 1, 0, ui_scale);
+                    ui_draw_line1(lx0, ly0, lx1, ly1 + 1, c6, ui_scale);
                 } else {
                     int v;
                     v = lx1 + abs(ly1 - ly0);
                     if (v > x) {
                         lx0 = x - 1;
-                        ui_draw_line1(lx0, ly0 + 1, lx1, ly1 + 1, 0);
-                        ui_draw_line1(lx0, ly0, lx1, ly1 + 1, c6);
+                        ui_draw_line1(lx0, ly0 + 1, lx1, ly1 + 1, 0, ui_scale);
+                        ui_draw_line1(lx0, ly0, lx1, ly1 + 1, c6, ui_scale);
                     } else {
-                        ui_draw_line1(v, ly0 + 1, x - 1, ly0 + 1, 0);
-                        ui_draw_line1(lx1, ly1 + 1, v, ly0 + 1, 0);
-                        ui_draw_line1(v, ly0, x - 1, ly0, c6);
-                        ui_draw_line1(lx1, ly1, v, ly0, c6);
+                        ui_draw_line1(v, ly0 + 1, x - 1, ly0 + 1, 0, ui_scale);
+                        ui_draw_line1(lx1, ly1 + 1, v, ly0 + 1, 0, ui_scale);
+                        ui_draw_line1(v, ly0, x - 1, ly0, c6, ui_scale);
+                        ui_draw_line1(lx1, ly1, v, ly0, c6, ui_scale);
                     }
                 }
             } else {
                 if (ltype == 1) {
                     lx0 = x1 + 1;
-                    ui_draw_line1(lx0, ly0 + 1, lx1, ly1 + 1, 0);
-                    ui_draw_line1(lx0, ly0, lx1, ly1 + 1, c6);
+                    ui_draw_line1(lx0, ly0 + 1, lx1, ly1 + 1, 0, ui_scale);
+                    ui_draw_line1(lx0, ly0, lx1, ly1 + 1, c6, ui_scale);
                 } else {
                     int v;
                     v = lx1 - abs(ly1 - ly0);
                     if (v < x1) {
                         lx0 = x1 + 1;
-                        ui_draw_line1(lx0, ly0 + 1, lx1, ly1 + 1, 0);
-                        ui_draw_line1(lx0, ly0, lx1, ly1 + 1, c6);
+                        ui_draw_line1(lx0, ly0 + 1, lx1, ly1 + 1, 0, ui_scale);
+                        ui_draw_line1(lx0, ly0, lx1, ly1 + 1, c6, ui_scale);
                     } else {
-                        ui_draw_line1(x1 + 1, ly0 + 1, v, ly0 + 1, 0);
-                        ui_draw_line1(v, ly0 + 1, lx1, ly1 + 1, 0);
-                        ui_draw_line1(x1 + 1, ly0, v, ly0, c6);
-                        ui_draw_line1(v, ly0, lx1, ly1, c6);
+                        ui_draw_line1(x1 + 1, ly0 + 1, v, ly0 + 1, 0, ui_scale);
+                        ui_draw_line1(v, ly0 + 1, lx1, ly1 + 1, 0, ui_scale);
+                        ui_draw_line1(x1 + 1, ly0, v, ly0, c6, ui_scale);
+                        ui_draw_line1(v, ly0, lx1, ly1, c6, ui_scale);
                     }
                 }
             }
         }
     }
     /*2e3d4*/
-    ui_draw_box2(x, y, x1, y1, c0, c1, c2, c3);
-    ui_draw_pixel(x, y, c4);
-    ui_draw_pixel(x + 1, y + 1, c5);
-    ui_draw_pixel(x + 2, y + 1, c5);
-    ui_draw_pixel(x + 1, y + 2, c5);
-    ui_draw_pixel(x + 1, y + 3, c5);
-    ui_draw_line1(x + 1, y1 + 1, x1 + 1, y1 + 1, 0);
-    ui_draw_line1(x1 + 1, y + 1, x1 + 1, y1, 0);
+    ui_draw_box2(x, y, x1, y1, c0, c1, c2, c3, ui_scale);
+    ui_draw_pixel(x, y, c4, ui_scale);
+    ui_draw_pixel(x + 1, y + 1, c5, ui_scale);
+    ui_draw_pixel(x + 2, y + 1, c5, ui_scale);
+    ui_draw_pixel(x + 1, y + 2, c5, ui_scale);
+    ui_draw_pixel(x + 1, y + 3, c5, ui_scale);
+    ui_draw_line1(x + 1, y1 + 1, x1 + 1, y1 + 1, 0, ui_scale);
+    ui_draw_line1(x1 + 1, y + 1, x1 + 1, y1, 0, ui_scale);
     if (str0[0] != '\0') {
         lbxfont_select_subcolors_13not1();
-        lbxfont_print_str_center(x + w / 2, y + 6, str0, UI_SCREEN_W);
+        lbxfont_print_str_center(x + w / 2, y + 6, str0, UI_SCREEN_W, ui_scale);
         lbxfont_select_subcolors_0();
         y += lbxfont_get_height() + 5;
     }
     /*2e4ff*/
-    lbxfont_print_str_split(x + 6, y + 6, w - 12, str1, 0, UI_SCREEN_W, UI_SCREEN_H);
+    lbxfont_print_str_split(x + 6, y + 6, w - 12, str1, 0, UI_SCREEN_W, UI_SCREEN_H, ui_scale);
 }
 
 /* -------------------------------------------------------------------------- */

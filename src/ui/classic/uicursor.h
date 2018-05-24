@@ -20,6 +20,7 @@ extern ui_cursor_area_t ui_cursor_area_tbl[];   /* not const! */
 extern uint16_t ui_cursor_gfx_i;
 extern uint16_t ui_cursor_mouseoff;
 
+extern void ui_cursor_init(int scale);
 extern void ui_cursor_setup_area(int num, ui_cursor_area_t *area);
 extern void ui_cursor_update_gfx_i(int mx, int my);
 extern void ui_cursor_store_bg1(int mx, int my);

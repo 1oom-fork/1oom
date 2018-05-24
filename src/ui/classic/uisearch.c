@@ -31,7 +31,7 @@
 static void search_draw_cb(void *vptr)
 {
     const int x = SEARCH_POS_X, y = SEARCH_POS_Y;
-    ui_draw_filled_rect(x, y, x + 100, y + 8, 0x06);
+    ui_draw_filled_rect(x, y, x + 100, y + 8, 0x06, ui_scale);
 }
 
 static inline bool can_see_name(const struct game_s *g, player_id_t pi, const planet_t *p)

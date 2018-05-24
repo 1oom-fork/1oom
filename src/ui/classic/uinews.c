@@ -60,33 +60,33 @@ static void news_load_data(news_type_t type)
 static void ui_news_cb1(void *vptr)
 {
     struct news_data_s *d = vptr;
-    ui_draw_filled_rect(32, 142, 287, 182, 0);
-    ui_draw_filled_rect(34, 184, 285, 191, 0);
-    ui_draw_line1(33, 182, 286, 182, 0);
-    ui_draw_line1(32, 183, 287, 183, 0);
+    ui_draw_filled_rect(32, 142, 287, 182, 0, ui_scale);
+    ui_draw_filled_rect(34, 184, 285, 191, 0, ui_scale);
+    ui_draw_line1(33, 182, 286, 182, 0, ui_scale);
+    ui_draw_line1(32, 183, 287, 183, 0, ui_scale);
     {
         uint8_t *gfx = ui_data.gfx.news.nc;
         int fn = lbxgfx_get_frame(gfx);
         lbxgfx_set_frame_0(gfx);
         for (int f = 0; f <= fn; ++f) {
-            lbxgfx_draw_frame(14, 14, gfx, UI_SCREEN_W);
+            lbxgfx_draw_frame(14, 14, gfx, UI_SCREEN_W, ui_scale);
         }
     }
     if (ui_data.gfx.news.icon != 0) {
-        lbxgfx_draw_frame(208, 38, ui_data.gfx.news.icon, UI_SCREEN_W);
+        lbxgfx_draw_frame(208, 38, ui_data.gfx.news.icon, UI_SCREEN_W, ui_scale);
     }
     {
         uint8_t *gfx = ui_data.gfx.news.world;
         int fn = lbxgfx_get_frame(gfx);
         lbxgfx_set_frame_0(gfx);
         for (int f = 0; f <= fn; ++f) {
-            lbxgfx_draw_frame(76, 36, gfx, UI_SCREEN_W);
+            lbxgfx_draw_frame(76, 36, gfx, UI_SCREEN_W, ui_scale);
         }
     }
     lbxfont_select(3, 1, 0, 0);
-    ui_draw_filled_rect(38, 145, 284, 190, 0);
+    ui_draw_filled_rect(38, 145, 284, 190, 0, ui_scale);
     lbxfont_set_space_w(2);
-    lbxfont_print_str_split(38, 145, 245, d->str, 3, UI_SCREEN_W, UI_SCREEN_H);
+    lbxfont_print_str_split(38, 145, 245, d->str, 3, UI_SCREEN_W, UI_SCREEN_H, ui_scale);
     if (d->ns->type == GAME_NEWS_STATS) {
         lbxfont_select(3, 1, 0, 0);
         for (int i = 0; i < d->ns->statsnum; ++i) {
@@ -95,8 +95,8 @@ static void ui_news_cb1(void *vptr)
             x = 48 + (i / 3) * 122;
             y = 157 + (i % 3) * 10;
             lib_sprintf(buf, sizeof(buf), "%i.", i + 1);
-            lbxfont_print_str_right(x, y, buf, UI_SCREEN_W);
-            lbxfont_print_str_normal(x + 7, y, d->ns->stats[i], UI_SCREEN_W);
+            lbxfont_print_str_right(x, y, buf, UI_SCREEN_W, ui_scale);
+            lbxfont_print_str_normal(x + 7, y, d->ns->stats[i], UI_SCREEN_W, ui_scale);
         }
     }
     ++d->frame;
@@ -109,10 +109,10 @@ static void ui_news_draw_start_anim(void)
     ui_sound_stop_music();
     uiobj_table_clear();
     ui_draw_erase_buf();
-    lbxgfx_draw_frame(0, 0, ui_data.gfx.news.tv, UI_SCREEN_W);
+    lbxgfx_draw_frame(0, 0, ui_data.gfx.news.tv, UI_SCREEN_W, ui_scale);
     uiobj_finish_frame();
     ui_draw_erase_buf();
-    lbxgfx_draw_frame(0, 0, ui_data.gfx.news.tv, UI_SCREEN_W);
+    lbxgfx_draw_frame(0, 0, ui_data.gfx.news.tv, UI_SCREEN_W, ui_scale);
     ui_sound_play_music(9);
     frame = 0;
     while (frame < 25) {
@@ -121,13 +121,13 @@ static void ui_news_draw_start_anim(void)
             uint16_t f;
             f = lbxgfx_get_frame(ui_data.gfx.news.gnn) - 1;
             lbxgfx_set_new_frame(ui_data.gfx.news.gnn, f);
-            lbxgfx_draw_frame(14, 14, ui_data.gfx.news.gnn, UI_SCREEN_W);
+            lbxgfx_draw_frame(14, 14, ui_data.gfx.news.gnn, UI_SCREEN_W, ui_scale);
         }
-        lbxgfx_draw_frame(14, 14, ui_data.gfx.news.gnn, UI_SCREEN_W);
-        ui_draw_filled_rect(32, 142, 287, 182, 0xc1);
-        ui_draw_filled_rect(34, 184, 285, 191, 0xc1);
-        ui_draw_line1(33, 182, 286, 182, 0xc1);
-        ui_draw_line1(32, 183, 287, 183, 0xc1);
+        lbxgfx_draw_frame(14, 14, ui_data.gfx.news.gnn, UI_SCREEN_W, ui_scale);
+        ui_draw_filled_rect(32, 142, 287, 182, 0xc1, ui_scale);
+        ui_draw_filled_rect(34, 184, 285, 191, 0xc1, ui_scale);
+        ui_draw_line1(33, 182, 286, 182, 0xc1, ui_scale);
+        ui_draw_line1(32, 183, 287, 183, 0xc1, ui_scale);
         ui_draw_finish();
         ui_delay_ticks_or_click(1);
         ++frame;
@@ -168,6 +168,23 @@ static uint8_t ui_news_fade_tbl_col[] = {
     15, 21, 4, 17, 6, 3, 39, 34
 };
 
+static inline void ui_news_fade_plot(uint8_t *pb, uint8_t *pf, int si, uint8_t ah)
+{
+    if (ui_scale == 1) {
+        pf[si * 4 + ah] = pb[si * 4 + ah];
+    } else {
+        pf += (si * 4 + ah) * ui_scale;
+        pb += (si * 4 + ah) * ui_scale;
+        for (int y = 0; y < ui_scale; ++y) {
+            for (int x = 0; x < ui_scale; ++x) {
+                pf[x] = pb[x];
+            }
+            pf += UI_SCREEN_W;
+            pb += UI_SCREEN_W;
+        }
+    }
+}
+
 #define UI_NEWS_FADE_PIXELS_PER_FRAME  12000
 
 static void ui_news_fade(void)
@@ -181,9 +198,8 @@ static void ui_news_fade(void)
         we0 = (loops - 1) << 6;
         for (int wde = 39; wde >= 0; --wde) {
             for (int we2 = 49; we2 >= 0; --we2) {
-                int dx, v;
+                int dx, v, si;
                 uint8_t bl, ah;
-                uint16_t si;
                 v = dx = ui_news_fade_tbl_line[we2];
                 si = v * UI_SCREEN_W / 4;
                 v += wde;
@@ -198,30 +214,23 @@ static void ui_news_fade(void)
                 si += v * 2;
                 bl += dx + we0;
                 ah = ui_news_fade_tbl_xoff[bl++];
-                pf[si * 4 + ah] = pb[si * 4 + ah];
-                --pixelcount;
+                ui_news_fade_plot(pb, pf, si, ah);
                 si += 8000;
-                pf[si * 4 + ah] = pb[si * 4 + ah];
-                --pixelcount;
+                ui_news_fade_plot(pb, pf, si, ah);
                 si -= 4000;
-                pf[si * 4 + ah] = pb[si * 4 + ah];
-                --pixelcount;
+                ui_news_fade_plot(pb, pf, si, ah);
                 si += 8000;
-                pf[si * 4 + ah] = pb[si * 4 + ah];
-                --pixelcount;
+                ui_news_fade_plot(pb, pf, si, ah);
                 si -= 12000;
                 ah = ui_news_fade_tbl_xoff[bl++];
-                pf[si * 4 + ah] = pb[si * 4 + ah];
-                --pixelcount;
+                ui_news_fade_plot(pb, pf, si, ah);
                 si += 8000;
-                pf[si * 4 + ah] = pb[si * 4 + ah];
-                --pixelcount;
+                ui_news_fade_plot(pb, pf, si, ah);
                 si -= 4000;
-                pf[si * 4 + ah] = pb[si * 4 + ah];
-                --pixelcount;
+                ui_news_fade_plot(pb, pf, si, ah);
                 si += 8000;
-                pf[si * 4 + ah] = pb[si * 4 + ah];
-                --pixelcount;
+                ui_news_fade_plot(pb, pf, si, ah);
+                pixelcount -= 8;
                 if (pixelcount <= 0) {
                     pixelcount = UI_NEWS_FADE_PIXELS_PER_FRAME;
                     hw_video_redraw_front();

@@ -45,25 +45,25 @@ static void ui_starmap_reloc_draw_cb(void *vptr)
         } else {
             ctbl = colortbl_line_red;
         }
-        ui_draw_line_limit_ctbl(x0 + 6, y0 + 6, x1, y1, ctbl, 5, ui_data.starmap.line_anim_phase);
+        ui_draw_line_limit_ctbl(x0 + 6, y0 + 6, x1, y1, ctbl, 5, ui_data.starmap.line_anim_phase, 1);
     }
-    lbxgfx_draw_frame_offs_delay(x0, y0, !d->anim_delay, ui_data.gfx.starmap.planbord, STARMAP_LIMITS, UI_SCREEN_W);
+    lbxgfx_draw_frame_offs_delay(x0, y0, !d->anim_delay, ui_data.gfx.starmap.planbord, STARMAP_LIMITS, UI_SCREEN_W, 1);
     if (pt->owner == d->api) {
-        lbxgfx_draw_frame(222, 80, ui_data.gfx.starmap.relocate, UI_SCREEN_W);
+        lbxgfx_draw_frame(222, 80, ui_data.gfx.starmap.relocate, UI_SCREEN_W, ui_scale);
     } else {
-        lbxgfx_draw_frame_offs(222, 80, ui_data.gfx.starmap.relocate, 0, 83, 310, 199, UI_SCREEN_W);
+        lbxgfx_draw_frame_offs(222, 80, ui_data.gfx.starmap.relocate, 0, 83, 310, 199, UI_SCREEN_W, ui_scale);
         if (BOOLVEC_IS0(pt->explored, d->api)) {
-            ui_draw_filled_rect(227, 57, 310, 159, 0);
-            lbxgfx_draw_frame_offs(224, 5, ui_data.gfx.starmap.unexplor, 227, 57, 310, 159, UI_SCREEN_W);
+            ui_draw_filled_rect(227, 57, 310, 159, 0, ui_scale);
+            lbxgfx_draw_frame_offs(224, 5, ui_data.gfx.starmap.unexplor, 227, 57, 310, 159, UI_SCREEN_W, ui_scale);
         } else {
-            ui_draw_filled_rect(227, 73, 310, 159, 7);
-            ui_draw_box1(227, 73, 310, 159, 4, 4);
+            ui_draw_filled_rect(227, 73, 310, 159, 7, ui_scale);
+            ui_draw_box1(227, 73, 310, 159, 4, 4, ui_scale);
         }
     }
     lbxfont_select_set_12_1(5, 5, 0, 0);
-    lbxfont_print_str_center(269, 90, game_str_sm_sreloc, UI_SCREEN_W);
+    lbxfont_print_str_center(269, 90, game_str_sm_sreloc, UI_SCREEN_W, ui_scale);
     lbxfont_select(0, 6, 0, 0);
-    lbxfont_print_str_split(229, 105, 80, game_str_sm_sreloc2, 2, UI_SCREEN_W, UI_SCREEN_H);
+    lbxfont_print_str_split(229, 105, 80, game_str_sm_sreloc2, 2, UI_SCREEN_W, UI_SCREEN_H, ui_scale);
     if (g->planet_focus_i[d->api] != d->from) {
         if (pf->have_stargate && pt->have_stargate && pf->owner == pt->owner) {
             lib_strcpy(buf, game_str_sm_stargate, sizeof(buf));
@@ -73,10 +73,10 @@ static void ui_starmap_reloc_draw_cb(void *vptr)
             lib_sprintf(buf, sizeof(buf), "%s %i %s", game_str_sm_delay, eta, (eta == 1) ? game_str_sm_turn : game_str_sm_turns);
         }
         lbxfont_select(0, 0, 0, 0);
-        lbxfont_print_str_center(268, 149, buf, UI_SCREEN_W);
+        lbxfont_print_str_center(268, 149, buf, UI_SCREEN_W, ui_scale);
     }
     lbxgfx_set_new_frame(ui_data.gfx.starmap.reloc_bu_accept, 1);
-    lbxgfx_draw_frame(271, 163, ui_data.gfx.starmap.reloc_bu_accept, UI_SCREEN_W);
+    lbxgfx_draw_frame(271, 163, ui_data.gfx.starmap.reloc_bu_accept, UI_SCREEN_W, ui_scale);
 }
 
 /* -------------------------------------------------------------------------- */
