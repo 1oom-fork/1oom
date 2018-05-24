@@ -208,7 +208,7 @@ void ui_spy_stolen(struct game_s *g, int pi, int spy, int field, uint8_t tech)
     d.gmap = ui_gmap_basic_init(g, true);
     stolen_load_data(&d);
     uiobj_table_clear();
-    uiobj_add_mousearea(0, 0, UI_SCREEN_W - 1, UI_SCREEN_H -1, MOO_KEY_UNKNOWN, -1);
+    uiobj_add_mousearea_all(MOO_KEY_UNKNOWN);
     while (!flag_done) {
         int16_t oi;
         ui_delay_prepare();
