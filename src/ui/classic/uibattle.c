@@ -837,7 +837,7 @@ void ui_battle_shutdown(struct battle_s *bt, bool colony_destroyed)
         ui_draw_copy_buf();
         uiobj_finish_frame();
         uiobj_table_clear();
-        uiobj_add_mousearea(0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, MOO_KEY_UNKNOWN, -1);
+        uiobj_add_mousearea_all(MOO_KEY_UNKNOWN);
         while (!flag_done) {
             ui_delay_prepare();
             if (uiobj_handle_input_cond() != 0) {
@@ -1980,7 +1980,7 @@ void ui_battle_ai_pre(const struct battle_s *bt)
 {
     struct ui_battle_data_s *d = bt->uictx;
     uiobj_table_clear();
-    d->oi_ai = uiobj_add_mousearea(0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, MOO_KEY_UNKNOWN, -1);
+    d->oi_ai = uiobj_add_mousearea_all(MOO_KEY_UNKNOWN);
 }
 
 bool ui_battle_ai_post(const struct battle_s *bt)

@@ -54,6 +54,7 @@ extern int16_t uiobj_add_textinput(int x, int y, int w, char *buf, uint16_t bufl
 extern int16_t uiobj_add_slider(uint16_t x0, uint16_t y0, uint16_t vmin, uint16_t vmax, uint16_t fmin, uint16_t fmax, uint16_t w, uint16_t h, int16_t *vptr, mookey_t key, int16_t helpid);
 extern int16_t uiobj_add_mousearea(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, mookey_t key, int16_t helpid);
 extern int16_t uiobj_add_mousearea_limited(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, mookey_t key, int16_t helpid);
+extern int16_t uiobj_add_mousearea_all(mookey_t key);
 extern int16_t uiobj_add_inputkey(uint32_t key);
 extern int16_t uiobj_add_alt_str(const char *str);
 extern int16_t uiobj_add_ta(uint16_t x, uint16_t y, uint16_t w, const char *str, bool z12, int16_t *vptr, int16_t z18, uint16_t subtype, uint8_t *sp0p, uint16_t sp0v, uint16_t sp1, uint16_t sp2, uint16_t sp3, mookey_t key, int16_t helpid);

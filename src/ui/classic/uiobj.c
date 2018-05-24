@@ -1832,6 +1832,20 @@ int16_t uiobj_add_mousearea_limited(uint16_t x0, uint16_t y0, uint16_t x1, uint1
     return uiobj_add_mousearea(x0, y0, x1, y1, key, helpid);
 }
 
+int16_t uiobj_add_mousearea_all(mookey_t key)
+{
+    uiobj_t *p = &uiobj_tbl[uiobj_table_num];
+    p->x0 = 0;
+    p->y0 = 0;
+    p->x1 = UI_SCREEN_W - 1;
+    p->y1 = UI_SCREEN_H - 1;
+    p->type = UIOBJ_TYPE_MOUSEAREA;
+    p->helpid = -1;
+    p->vptr = 0;
+    p->key = key;
+    return UIOBJI_ALLOC();
+}
+
 int16_t uiobj_add_inputkey(uint32_t key)
 {
     uiobj_t *p = &uiobj_tbl[uiobj_table_num];
