@@ -40,6 +40,7 @@ util_sources = \
     gameapi.h \
     gfxaux.c \
     gfxaux.h \
+    gfxscale.h \
     hw.h \
     kbd.c \
     kbd.h \
