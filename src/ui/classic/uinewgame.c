@@ -98,7 +98,7 @@ static void new_game_draw_cb1(void *vptr)
 {
     struct new_game_data_s *d = vptr;
     ui_draw_erase_buf();
-    lbxgfx_draw_frame(0, 0, d->gfx_newgame, UI_SCREEN_W);
+    lbxgfx_draw_frame(0, 0, d->gfx_newgame, UI_SCREEN_W, ui_scale);
 }
 
 static void new_game_draw_race_cb(void *vptr)
@@ -106,11 +106,11 @@ static void new_game_draw_race_cb(void *vptr)
     struct new_game_data_s *d = vptr;
     hw_video_copy_back_from_page2();
     if (d->selected < RACE_NUM) {
-        lbxgfx_draw_frame(91, 11, d->gfx_portrait[d->selected], UI_SCREEN_W);
+        lbxgfx_draw_frame(91, 11, d->gfx_portrait[d->selected], UI_SCREEN_W, ui_scale);
         lbxfont_select(0, 4, 0, 0);
         for (int i = 0; i < 3; ++i) {
             if (*game_str_tbl_traits[d->selected * 3 + i]) {
-                lbxfont_print_str_center(0x6f, 0x35 + i * 8, game_str_tbl_traits[d->selected * 3 + i], UI_SCREEN_W);
+                lbxfont_print_str_center(0x6f, 0x35 + i * 8, game_str_tbl_traits[d->selected * 3 + i], UI_SCREEN_W, ui_scale);
             }
         }
     }
@@ -122,18 +122,18 @@ static void new_game_draw_banner_cb(void *vptr)
     hw_video_copy_back_from_page2();
     if (d->str_title) {
         lbxfont_select(5, 0, 0, 0);
-        lbxfont_print_str_normal(0xa, 0xa, d->str_title, UI_SCREEN_W);
-        lbxgfx_apply_colortable(0xa, 0x14, 0x52, 0x1f, 2, UI_SCREEN_W);
+        lbxfont_print_str_normal(0xa, 0xa, d->str_title, UI_SCREEN_W, ui_scale);
+        lbxgfx_apply_colortable(0xa, 0x14, 0x52, 0x1f, 2, UI_SCREEN_W, ui_scale);
     }
     if (d->race < RACE_NUM) {
-        lbxgfx_draw_frame(91, 11, d->gfx_portrait[d->race], UI_SCREEN_W);
+        lbxgfx_draw_frame(91, 11, d->gfx_portrait[d->race], UI_SCREEN_W, ui_scale);
     }
-    ui_draw_filled_rect(0x5a, 0x35, 0x83, 0x5a, 0);
-    ui_draw_box1(0x5a, 0x35, 0x83, 0x5a, 0x9b, 0x9b);
+    ui_draw_filled_rect(0x5a, 0x35, 0x83, 0x5a, 0, ui_scale);
+    ui_draw_box1(0x5a, 0x35, 0x83, 0x5a, 0x9b, 0x9b, ui_scale);
     if (d->selected < BANNER_NUM) {
         lbxgfx_set_new_frame(d->gfx_flag[d->selected], d->frame);
         gfx_aux_draw_frame_to(d->gfx_flag[d->selected], &ui_data.aux.screen);
-        gfx_aux_draw_frame_from(0x5b, 0x38, &ui_data.aux.screen, UI_SCREEN_W);
+        gfx_aux_draw_frame_from(0x5b, 0x38, &ui_data.aux.screen, UI_SCREEN_W, ui_scale);
     }
     if (++d->frame == 0xa) {
         d->frame = 0;
@@ -191,8 +191,8 @@ static bool ui_new_game_racebannernames(struct game_new_options_s *newopts, stru
     lbxpal_select(4, -1, 0);
     lbxpal_build_colortables();
     ui_draw_erase_buf();
-    lbxgfx_draw_frame(0, 0, d->gfx_custom, UI_SCREEN_W);
-    ui_draw_box1(0x5a, 0xa, 0x83, 0x2d, 0x9b, 0x9b);
+    lbxgfx_draw_frame(0, 0, d->gfx_custom, UI_SCREEN_W, ui_scale);
+    ui_draw_box1(0x5a, 0xa, 0x83, 0x2d, 0x9b, 0x9b, ui_scale);
     hw_video_copy_back_to_page2();
     d->selected = 0;
 

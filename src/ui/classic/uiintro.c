@@ -40,7 +40,7 @@ void ui_play_intro(void)
     lbxpal_select(0, -1, 0);
     ui_draw_erase_buf();
     lbxfont_select(5, 1, 0, 0);
-    lbxfont_print_str_normal(0, 0, game_str_in_loading, UI_SCREEN_W);
+    lbxfont_print_str_normal(0, 0, game_str_in_loading, UI_SCREEN_W, ui_scale);
     ui_cursor_setup_area(1, &ui_cursor_area_all_i0);
     uiobj_table_clear();
     uiobj_finish_frame();
@@ -91,9 +91,9 @@ void ui_play_intro(void)
                 ui_draw_erase_buf();
             } else {
                 lbxgfx_set_frame(intro_gfx, frame - 1);
-                lbxgfx_draw_frame_pal(0, 0, intro_gfx, UI_SCREEN_W);
+                lbxgfx_draw_frame_pal(0, 0, intro_gfx, UI_SCREEN_W, ui_scale);
             }
-            lbxgfx_draw_frame_pal(0, 0, intro_gfx, UI_SCREEN_W);
+            lbxgfx_draw_frame_pal(0, 0, intro_gfx, UI_SCREEN_W, ui_scale);
             if (!flag_fadein) {
                 uiobj_finish_frame();
                 ui_palette_fadein_50_14_2();
@@ -140,9 +140,9 @@ void ui_play_intro(void)
                     }
                 }
                 lbxgfx_set_frame(intro_gfx, frame - 1);
-                lbxgfx_draw_frame_pal(0, 0, intro_gfx, UI_SCREEN_W);
+                lbxgfx_draw_frame_pal(0, 0, intro_gfx, UI_SCREEN_W, ui_scale);
             }
-            lbxgfx_draw_frame_pal(0, 0, intro_gfx, UI_SCREEN_W);
+            lbxgfx_draw_frame_pal(0, 0, intro_gfx, UI_SCREEN_W, ui_scale);
             if (!flag_fadein) {
                 uiobj_finish_frame();
                 ui_palette_fadein_60_3_1();
@@ -192,9 +192,9 @@ void ui_play_intro(void)
                     }
                 }
                 lbxgfx_set_frame(intro_gfx, frame - 1);
-                lbxgfx_draw_frame_pal(0, 0, intro_gfx, UI_SCREEN_W);
+                lbxgfx_draw_frame_pal(0, 0, intro_gfx, UI_SCREEN_W, ui_scale);
             }
-            lbxgfx_draw_frame_pal(0, 0, intro_gfx, UI_SCREEN_W);
+            lbxgfx_draw_frame_pal(0, 0, intro_gfx, UI_SCREEN_W, ui_scale);
             if (!flag_fadein) {
                 uiobj_finish_frame();
                 ui_palette_fadein_50_14_2();
@@ -237,9 +237,9 @@ void ui_play_intro(void)
                     }
                 }
                 lbxgfx_set_frame(intro_gfx, frame - 1);
-                lbxgfx_draw_frame_pal(0, 0, intro_gfx, UI_SCREEN_W);
+                lbxgfx_draw_frame_pal(0, 0, intro_gfx, UI_SCREEN_W, ui_scale);
             }
-            lbxgfx_draw_frame_pal(0, 0, intro_gfx, UI_SCREEN_W);
+            lbxgfx_draw_frame_pal(0, 0, intro_gfx, UI_SCREEN_W, ui_scale);
             if (!flag_fadein) {
                 uiobj_finish_frame();
                 ui_palette_fadein_50_14_2();
@@ -286,9 +286,9 @@ void ui_play_intro(void)
                     }
                 }
                 lbxgfx_set_frame(intro_gfx, frame - 1);
-                lbxgfx_draw_frame_pal(0, 0, intro_gfx, UI_SCREEN_W);
+                lbxgfx_draw_frame_pal(0, 0, intro_gfx, UI_SCREEN_W, ui_scale);
             }
-            lbxgfx_draw_frame_pal(0, 0, intro_gfx, UI_SCREEN_W);
+            lbxgfx_draw_frame_pal(0, 0, intro_gfx, UI_SCREEN_W, ui_scale);
             if (!flag_fadein) {
                 uiobj_finish_frame();
                 ui_palette_fadein_50_14_2();
@@ -326,9 +326,9 @@ void ui_play_intro(void)
                     ui_draw_erase_buf();
                 }
                 lbxgfx_set_frame(intro_gfx, frame - 1);
-                lbxgfx_draw_frame_pal(0, 0, intro_gfx, UI_SCREEN_W);
+                lbxgfx_draw_frame_pal(0, 0, intro_gfx, UI_SCREEN_W, ui_scale);
             }
-            lbxgfx_draw_frame_pal(0, 0, intro_gfx, UI_SCREEN_W);
+            lbxgfx_draw_frame_pal(0, 0, intro_gfx, UI_SCREEN_W, ui_scale);
             if (!flag_fadein) {
                 uiobj_finish_frame();
                 ui_palette_fadein_50_14_2();
@@ -369,9 +369,9 @@ void ui_play_intro(void)
                     hw_audio_music_fadeout();
                 }
                 lbxgfx_set_frame(intro_gfx, frame - 1);
-                lbxgfx_draw_frame_pal(0, 0, intro_gfx, UI_SCREEN_W);
+                lbxgfx_draw_frame_pal(0, 0, intro_gfx, UI_SCREEN_W, ui_scale);
             }
-            lbxgfx_draw_frame_pal(0, 0, intro_gfx, UI_SCREEN_W);
+            lbxgfx_draw_frame_pal(0, 0, intro_gfx, UI_SCREEN_W, ui_scale);
             if (!flag_fadein) {
                 uiobj_finish_frame();
                 ui_palette_fadein_50_14_2();
