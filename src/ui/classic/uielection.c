@@ -45,7 +45,7 @@ static void election_load_data(struct election_data_s *d)
         const int item[3] = { 0x17, 0, 0x16 };
         uint8_t *gfx;
         gfx = lbxfile_item_get(LBXFILE_COUNCIL, item[i]);
-        lbxgfx_draw_frame(0, 0, gfx, UI_SCREEN_W);
+        lbxgfx_draw_frame(0, 0, gfx, UI_SCREEN_W, ui_scale);
         lbxfile_item_release(LBXFILE_COUNCIL, gfx);
     }
     hw_video_copy_back_to_page2();
@@ -83,19 +83,19 @@ static void ui_election_draw_cb(void *vptr)
         int fn = lbxgfx_get_frame(gfx);
         lbxgfx_set_frame_0(gfx);
         for (int f = 0; f <= fn; ++f) {
-            lbxgfx_draw_frame(125, 0, gfx, UI_SCREEN_W);
+            lbxgfx_draw_frame(125, 0, gfx, UI_SCREEN_W, ui_scale);
         }
     }
-    lbxgfx_draw_frame(0, 0, d->gfx_cylinder, UI_SCREEN_W);
+    lbxgfx_draw_frame(0, 0, d->gfx_cylinder, UI_SCREEN_W, ui_scale);
     for (int i = 0; i < MIN(el->num, 4); ++i) {
         const int lx0[4] = { 50, 200, 0, 275 };
-        const int lx1[4] = { 125, 275, 50, UI_SCREEN_W - 1 };
-        lbxgfx_draw_frame_offs(0, 0, d->gfx_racem[i], lx0[i], 0, lx1[i], UI_SCREEN_H - 1, UI_SCREEN_W);
+        const int lx1[4] = { 125, 275, 50, 319 };
+        lbxgfx_draw_frame_offs(0, 0, d->gfx_racem[i], lx0[i], 0, lx1[i], UI_VGA_H - 1, UI_SCREEN_W, ui_scale);
     }
     if (el->str) {
         lbxfont_select_set_12_1(3, 0, 0, 0);
         lbxfont_set_gap_h(1);
-        lbxfont_print_str_split(10, 169, 305, el->str, 0, UI_SCREEN_W, UI_SCREEN_H);
+        lbxfont_print_str_split(10, 169, 305, el->str, 0, UI_SCREEN_W, UI_SCREEN_H, ui_scale);
     }
     if (d->flag_countdown) {
         if (--d->count <= 0) {
@@ -118,13 +118,13 @@ static void ui_election_draw_cb(void *vptr)
         lbxfont_select(3, 1, 0, 0);
         n = el->got_votes[0];
         lib_sprintf(buf, sizeof(buf), "%s %s", game_election_print_votes(n, vbuf, sizeof(vbuf)), g->emperor_names[el->candidate[0]]);
-        lbxfont_print_str_normal(10, 10, buf, UI_SCREEN_W);
+        lbxfont_print_str_normal(10, 10, buf, UI_SCREEN_W, ui_scale);
         n = el->got_votes[1];
         lib_sprintf(buf, sizeof(buf), "%s %s", game_election_print_votes(n, vbuf, sizeof(vbuf)), g->emperor_names[el->candidate[1]]);
-        lbxfont_print_str_right(310, 10, buf, UI_SCREEN_W);
+        lbxfont_print_str_right(310, 10, buf, UI_SCREEN_W, ui_scale);
         n = el->total_votes;
         lib_sprintf(buf, sizeof(buf), "%s %s", game_election_print_votes(n, vbuf, sizeof(vbuf)), game_str_el_total);
-        lbxfont_print_str_center(160, 10, buf, UI_SCREEN_W);
+        lbxfont_print_str_center(160, 10, buf, UI_SCREEN_W, ui_scale);
     }
 }
 

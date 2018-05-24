@@ -173,7 +173,7 @@ static void drawscreen_outlbx(void)
         }
     }
     lbxfont_select(5, 1, 0, 0);
-    lbxfont_print_str_normal(0, 300, "Loading Master of Orion...", 320);
+    lbxfont_print_str_normal(0, 300, "Loading Master of Orion...", 320, 1);
     lib_sprintf(linebuf, sizeof(linebuf), "key 0x%x %c", cur_key, cur_key & 0xff);
     drawstr(0, 320, linebuf, textcolor, 0);
 }
@@ -201,7 +201,7 @@ static void drawscreen_inlbx_rotate(void)
             y0 = midy + yo - y / 2;
             x1 = midx + xo + x / 2;
             y1 = midy + yo + y / 2;
-            gfx_aux_draw_frame_from_rotate_limit(x0, y0, x1, y1, &gfxaux, 0, 0, UI_SCREEN_W - 1, 200 - 1, UI_SCREEN_W);
+            gfx_aux_draw_frame_from_rotate_limit(x0, y0, x1, y1, &gfxaux, 0, 0, UI_SCREEN_W - 1, 200 - 1, UI_SCREEN_W, 1);
             angle = (angle + 45) % 360;
         }
     } else {
@@ -215,7 +215,7 @@ static void drawscreen_inlbx_rotate(void)
         y0 = midy - y / 2;
         x1 = midx + x / 2;
         y1 = midy + y / 2;
-        gfx_aux_draw_frame_from_rotate_limit(x0, y0, x1, y1, &gfxaux, 0, 0, UI_SCREEN_W - 1, 200 - 1, UI_SCREEN_W);
+        gfx_aux_draw_frame_from_rotate_limit(x0, y0, x1, y1, &gfxaux, 0, 0, UI_SCREEN_W - 1, 200 - 1, UI_SCREEN_W, 1);
     }
 }
 
@@ -280,7 +280,7 @@ static void drawscreen_inlbx(void)
         if (clearbeforedraw) {
             memset(hw_video_get_buf(), 0, 320 * 200);
             gfx_aux_setup(&gfxaux, p, 0);
-            lbxgfx_draw_frame_do(gfxaux.data, p, gfxaux.w);
+            lbxgfx_draw_frame_do(gfxaux.data, p, gfxaux.w, 1);
         } else {
             gfx_aux_draw_frame_to(p, &gfxaux);
         }
@@ -290,7 +290,7 @@ static void drawscreen_inlbx(void)
         if (test_rotate) {
             drawscreen_inlbx_rotate();
         } else {
-            gfx_aux_draw_frame_from_limit(cur_xoff, cur_yoff, &gfxaux, 0, 0, UI_SCREEN_W - 1, 200 - 1, UI_SCREEN_W);
+            gfx_aux_draw_frame_from_limit(cur_xoff, cur_yoff, &gfxaux, 0, 0, UI_SCREEN_W - 1, 200 - 1, UI_SCREEN_W, 1);
         }
         if (advance_frame) {
             advance_frame = false;
@@ -411,7 +411,7 @@ static void do_lbx_gfx(uint32_t k)
             pic.pix = hw_video_get_buf();
             for (int f = 0; f < frames; ++f) {
                 char fname[32];
-                lbxgfx_draw_frame(0, 0, cur_ptr, UI_SCREEN_W);
+                lbxgfx_draw_frame(0, 0, cur_ptr, UI_SCREEN_W, 1);
                 lib_sprintf(fname, sizeof(fname), "z_%s_%02x_%03i.pcx", bufname, cursor_i, f);
                 fmt_pic_save(fname, &pic);
             }

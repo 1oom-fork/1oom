@@ -49,14 +49,14 @@ static void load_game_draw_cb(void *vptr)
 {
     struct load_game_data_s *d = vptr;
     hw_video_copy_back_from_page2();
-    lbxgfx_draw_frame(0, 0, d->gfx_loadgame, UI_SCREEN_W);
+    lbxgfx_draw_frame(0, 0, d->gfx_loadgame, UI_SCREEN_W, ui_scale);
     for (int i = 0; i < d->savenum; ++i) {
         int si, y;
         si = d->tbl_savei[i];
         y = (si < NUM_SAVES) ? (33 + 18 * si) : (110 + 10 * si);
-        lbxgfx_draw_frame(134, y, (d->selected == i) ? d->gfx_lg_green : d->gfx_lg_gray, UI_SCREEN_W);
+        lbxgfx_draw_frame(134, y, (d->selected == i) ? d->gfx_lg_green : d->gfx_lg_gray, UI_SCREEN_W, ui_scale);
         lbxfont_select(0, (d->selected == i) ? 2 : 1, 0, 0);
-        lbxfont_print_str_normal(149, y + 2, game_save_tbl_name[si], UI_SCREEN_W);
+        lbxfont_print_str_normal(149, y + 2, game_save_tbl_name[si], UI_SCREEN_W, ui_scale);
     }
 }
 

@@ -3,6 +3,7 @@
 #include <string.h>
 
 #include "uicursor.h"
+#include "comp.h"
 #include "hw.h"
 #include "lbxpal.h"
 #include "types.h"
@@ -29,21 +30,21 @@ static bool cursor_i0_bg_stored = false;
 
 /* -------------------------------------------------------------------------- */
 
-ui_cursor_area_t ui_cursor_area_all_i0 = { 0, 0, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1 };
-ui_cursor_area_t ui_cursor_area_all_i1 = { 1, 0, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1 };
+ui_cursor_area_t ui_cursor_area_all_i0 = { 0, 0, 0, 0, UI_VGA_W - 1, UI_VGA_H - 1 };
+ui_cursor_area_t ui_cursor_area_all_i1 = { 1, 0, 0, 0, UI_VGA_W - 1, UI_VGA_H - 1 };
 
 ui_cursor_area_t ui_cursor_area_tbl[] = {
-    /*0*/ { 1, 0, 0, 0, 319, 199 },
-    /*1*/ { 1, 0, 0, 0, 319, 199 },
+    /*0*/ { 1, 0, 0, 0, UI_VGA_W - 1, UI_VGA_H - 1 },
+    /*1*/ { 1, 0, 0, 0, UI_VGA_W - 1, UI_VGA_H - 1 },
     /*2*/ { 8, 0, 3, 2, 218, 174 },
-    /*3*/ { 1, 0, 0, 0, 319, 199 },
+    /*3*/ { 1, 0, 0, 0, UI_VGA_W - 1, UI_VGA_H - 1 },
     /*4*/ { 7, 4, 3, 2, 218, 174 },
-    /*5*/ { 1, 0, 0, 0, 319, 199 },
+    /*5*/ { 1, 0, 0, 0, UI_VGA_W - 1, UI_VGA_H - 1 },
     /*6*/ { 7, 4, 3, 2, 218, 174 },
     /*7*/ { 5, 0, 0, 0, 0, 0 },
-    /*8*/ { 9, 0, 0, 0, 319, 199 },
-    /*9*/ { 10, 0, 0, 0, 319, 199 },
-    /*a*/ { 11, 0, 0, 0, 319, 199 }
+    /*8*/ { 9, 0, 0, 0, UI_VGA_W - 1, UI_VGA_H - 1 },
+    /*9*/ { 10, 0, 0, 0, UI_VGA_W - 1, UI_VGA_H - 1 },
+    /*a*/ { 11, 0, 0, 0, UI_VGA_W - 1, UI_VGA_H - 1 }
 };
 
 uint16_t ui_cursor_mouseoff = 0;
@@ -142,7 +143,32 @@ static void ui_cursor_erase(uint8_t *p, struct cursor_bg_s *bg)
     }
 }
 
+static void ui_cursor_init_do(int scale, ui_cursor_area_t *area)
+{
+    area->x0 *= scale;
+    area->y0 *= scale;
+    if (area->x1 == (UI_VGA_W - 1)) {
+        area->x1 = UI_SCREEN_W - 1;
+    } else {
+        area->x1 *= scale;
+    }
+    if (area->y1 == (UI_VGA_H - 1)) {
+        area->y1 = UI_SCREEN_H - 1;
+    } else {
+        area->y1 *= scale;
+    }
+}
+
 /* -------------------------------------------------------------------------- */
+
+void ui_cursor_init(int scale)
+{
+    ui_cursor_init_do(scale, &ui_cursor_area_all_i0);
+    ui_cursor_init_do(scale, &ui_cursor_area_all_i1);
+    for (int i = 0; i < TBLLEN(ui_cursor_area_tbl); ++i) {
+        ui_cursor_init_do(scale, &ui_cursor_area_tbl[i]);
+    }
+}
 
 void ui_cursor_setup_area(int num, ui_cursor_area_t *area)
 {

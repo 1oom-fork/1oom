@@ -50,19 +50,19 @@ static void empirereport_draw_cb(void *vptr)
     char buf[0x40];
 
     ui_draw_color_buf(0x3e);
-    lbxgfx_draw_frame(0, 0, d->gfx, UI_SCREEN_W);
-    ui_draw_filled_rect(21, 15, 60, 48, 0);
-    lbxgfx_draw_frame(21, 15, ui_data.gfx.planets.race[e->race], UI_SCREEN_W);
-    ui_draw_filled_rect(17, 58, 64, 68, tbl_banner_color2[e->banner]);
+    lbxgfx_draw_frame(0, 0, d->gfx, UI_SCREEN_W, ui_scale);
+    ui_draw_filled_rect(21, 15, 60, 48, 0, ui_scale);
+    lbxgfx_draw_frame(21, 15, ui_data.gfx.planets.race[e->race], UI_SCREEN_W, ui_scale);
+    ui_draw_filled_rect(17, 58, 64, 68, tbl_banner_color2[e->banner], ui_scale);
     lbxfont_select(5, 6, 0, 0);
     {
         const char *str = ui_extra_enabled ? g->emperor_names[d->pi] : game_str_tbl_races[e->race];
-        lbxfont_print_str_center(40, 60, str, UI_SCREEN_W);
+        lbxfont_print_str_center(40, 60, str, UI_SCREEN_W, ui_scale);
     }
     lbxfont_select(0, 6, 0, 0);
-    lbxfont_print_str_center(40, 74, game_str_tbl_trait1[e->trait1], UI_SCREEN_W);
-    lbxfont_print_str_center(40, 81, game_str_tbl_trait2[e->trait2], UI_SCREEN_W);
-    lbxfont_print_str_center(40, 101, game_str_re_reportis, UI_SCREEN_W);
+    lbxfont_print_str_center(40, 74, game_str_tbl_trait1[e->trait1], UI_SCREEN_W, ui_scale);
+    lbxfont_print_str_center(40, 81, game_str_tbl_trait2[e->trait2], UI_SCREEN_W, ui_scale);
+    lbxfont_print_str_center(40, 101, game_str_re_reportis, UI_SCREEN_W, ui_scale);
     {
         int reportage = g->year - g->eto[d->api].spyreportyear[d->pi] - 1;
         if (reportage < 2) {
@@ -70,40 +70,40 @@ static void empirereport_draw_cb(void *vptr)
         } else {
             lib_sprintf(buf, sizeof(buf), "%i %s", reportage, game_str_re_yearsold);
         }
-        lbxfont_print_str_center(40, 108, buf, UI_SCREEN_W);
+        lbxfont_print_str_center(40, 108, buf, UI_SCREEN_W, ui_scale);
     }
     lbxfont_select(3, 0, 0, 0);
     lbxfont_set_color_c_n(0x26, 6);
-    lbxfont_print_str_center(41, 128, game_str_re_alliance, UI_SCREEN_W);
-    ui_draw_line1(9, 136, 72, 136, 0x26);
+    lbxfont_print_str_center(41, 128, game_str_re_alliance, UI_SCREEN_W, ui_scale);
+    ui_draw_line1(9, 136, 72, 136, 0x26, ui_scale);
     lbxfont_select(0, 6, 0, 0);
     {
         int n = 0;
         for (int i = 0; (i < g->players) && (n < 3); ++i) {
             if ((i != d->pi) && (e->treaty[i] == TREATY_ALLIANCE) && IS_ALIVE(g, i)) {
-                ui_draw_pixel(9, 140 + 6 * n, 0);
-                ui_draw_pixel(9, 141 + 6 * n, 0);
-                ui_draw_pixel(10, 140 + 6 * n, 0);
-                ui_draw_pixel(10, 141 + 6 * n, 0);
-                lbxfont_print_str_normal(13, 139 + 6 * n, game_str_tbl_races[g->eto[i].race], UI_SCREEN_W);
+                ui_draw_pixel(9, 140 + 6 * n, 0, ui_scale);
+                ui_draw_pixel(9, 141 + 6 * n, 0, ui_scale);
+                ui_draw_pixel(10, 140 + 6 * n, 0, ui_scale);
+                ui_draw_pixel(10, 141 + 6 * n, 0, ui_scale);
+                lbxfont_print_str_normal(13, 139 + 6 * n, game_str_tbl_races[g->eto[i].race], UI_SCREEN_W, ui_scale);
                 ++n;
             }
         }
     }
     lbxfont_select(3, 0, 0, 0);
     lbxfont_set_color_c_n(0x26, 6);
-    lbxfont_print_str_center(41, 165, game_str_re_wars, UI_SCREEN_W);
-    ui_draw_line1(9, 173, 72, 173, 0x26);
+    lbxfont_print_str_center(41, 165, game_str_re_wars, UI_SCREEN_W, ui_scale);
+    ui_draw_line1(9, 173, 72, 173, 0x26, ui_scale);
     lbxfont_select(0, 6, 0, 0);
     {
         int n = 0;
         for (int i = 0; (i < g->players) && (n < 3); ++i) {
             if ((i != d->pi) && (e->treaty[i] >= TREATY_WAR) && IS_ALIVE(g, i)) {
-                ui_draw_pixel(9, 177 + 6 * n, 0);
-                ui_draw_pixel(9, 178 + 6 * n, 0);
-                ui_draw_pixel(10, 177 + 6 * n, 0);
-                ui_draw_pixel(10, 178 + 6 * n, 0);
-                lbxfont_print_str_normal(13, 176 + 6 * n, game_str_tbl_races[g->eto[i].race], UI_SCREEN_W);
+                ui_draw_pixel(9, 177 + 6 * n, 0, ui_scale);
+                ui_draw_pixel(9, 178 + 6 * n, 0, ui_scale);
+                ui_draw_pixel(10, 177 + 6 * n, 0, ui_scale);
+                ui_draw_pixel(10, 178 + 6 * n, 0, ui_scale);
+                lbxfont_print_str_normal(13, 176 + 6 * n, game_str_tbl_races[g->eto[i].race], UI_SCREEN_W, ui_scale);
                 ++n;
             }
         }
@@ -145,7 +145,7 @@ static void empirereport_draw_cb(void *vptr)
                 }
                 lib_sprintf(&buf[pos_space], sizeof(buf) - pos_space, " %s", game_str_re_environ);
             }
-            lbxfont_print_str_normal(85 + (f & 1) * 120, 16 + (f / 2) * 65 + i * 6, buf, UI_SCREEN_W);
+            lbxfont_print_str_normal(85 + (f & 1) * 120, 16 + (f / 2) * 65 + i * 6, buf, UI_SCREEN_W, ui_scale);
         }
     }
 }

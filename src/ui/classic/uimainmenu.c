@@ -52,30 +52,30 @@ static void main_menu_draw_cb(void *vptr)
     struct main_menu_data_s *d = vptr;
     ui_draw_erase_buf();
     ui_draw_copy_buf();
-    lbxgfx_draw_frame(0, 0, d->gfx_vortex, UI_SCREEN_W);
+    lbxgfx_draw_frame(0, 0, d->gfx_vortex, UI_SCREEN_W, ui_scale);
     if (!ui_extra_enabled) {
-        lbxgfx_draw_frame(0, 0, d->gfx_title, UI_SCREEN_W);
+        lbxgfx_draw_frame(0, 0, d->gfx_title, UI_SCREEN_W, ui_scale);
     } else {
-        lbxgfx_draw_frame_offs(0, 0, d->gfx_title, 0, 0, UI_SCREEN_W - 1, 191, UI_SCREEN_W);
+        lbxgfx_draw_frame_offs(0, 0, d->gfx_title, 0, 0, UI_VGA_W - 1, 191, UI_SCREEN_W, ui_scale);
         lbxfont_select(2, 7, 0, 0);
-        lbxfont_print_str_center(160, 193, "PROGRAM VERSION " PACKAGE_NAME " " VERSION_STR, UI_SCREEN_W);
+        lbxfont_print_str_center(160, 193, "PROGRAM VERSION " PACKAGE_NAME " " VERSION_STR, UI_SCREEN_W, ui_scale);
     }
     if (d->have_continue) {
         lbxfont_select(4, (d->selected == MAIN_MENU_ACT_CONTINUE_GAME) ? 3 : 2, 0, 0);
     } else {
         lbxfont_select(4, 7, 0, 0);
     }
-    lbxfont_print_str_center(0xa0, 0x7f, game_str_mm_continue, UI_SCREEN_W);
+    lbxfont_print_str_center(0xa0, 0x7f, game_str_mm_continue, UI_SCREEN_W, ui_scale);
     if (d->have_loadgame) {
         lbxfont_select(4, (d->selected == MAIN_MENU_ACT_LOAD_GAME) ? 3 : 2, 0, 0);
     } else {
         lbxfont_select(4, 7, 0, 0);
     }
-    lbxfont_print_str_center(0xa0, 0x8f, game_str_mm_load, UI_SCREEN_W);
+    lbxfont_print_str_center(0xa0, 0x8f, game_str_mm_load, UI_SCREEN_W, ui_scale);
     lbxfont_select(4, (d->selected == MAIN_MENU_ACT_NEW_GAME) ? 3 : 2, 0, 0);
-    lbxfont_print_str_center(0xa0, 0x9f, game_str_mm_new, UI_SCREEN_W);
+    lbxfont_print_str_center(0xa0, 0x9f, game_str_mm_new, UI_SCREEN_W, ui_scale);
     lbxfont_select(4, (d->selected == MAIN_MENU_ACT_QUIT_GAME) ? 3 : 2, 0, 0);
-    lbxfont_print_str_center(0xa0, 0xaf, game_str_mm_quit, UI_SCREEN_W);
+    lbxfont_print_str_center(0xa0, 0xaf, game_str_mm_quit, UI_SCREEN_W, ui_scale);
     d->frame = (d->frame + 1) % 0x30;
 }
 

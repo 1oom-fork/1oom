@@ -46,11 +46,11 @@ static void caught_draw_cb(void *vptr)
     char buf[0x40];
     int x = 56, y = 50, n = 0;
 
-    lbxgfx_draw_frame(x, y, d->gfx, UI_SCREEN_W);
-    ui_draw_filled_rect(x + 5, y + 5, x + 110, y + 63, 0xfb);
+    lbxgfx_draw_frame(x, y, d->gfx, UI_SCREEN_W, ui_scale);
+    ui_draw_filled_rect(x + 5, y + 5, x + 110, y + 63, 0xfb, ui_scale);
 
     lbxfont_select(2, 0, 0, 0);
-    lbxfont_print_str_normal(x + 10, y + 8, game_str_sc_caught, UI_SCREEN_W); /* FIXME split str to 3 and place using x */
+    lbxfont_print_str_normal(x + 10, y + 8, game_str_sc_caught, UI_SCREEN_W, ui_scale); /* FIXME split str to 3 and place using x */
     lbxfont_select(2, 6, 0, 0);
 
     y += 20;
@@ -58,11 +58,11 @@ static void caught_draw_cb(void *vptr)
         if ((i != d->api) && BOOLVEC_IS1(e->contact, i)) {
             int v;
             lib_sprintf(buf, sizeof(buf), "%s:", game_str_tbl_race[g->eto[i].race]);
-            lbxfont_print_str_normal(x + 11, y, buf, UI_SCREEN_W);
+            lbxfont_print_str_normal(x + 11, y, buf, UI_SCREEN_W, ui_scale);
             v = g->evn.spies_caught[i][d->api];
-            lbxfont_print_num_normal(x + 68, y, v, UI_SCREEN_W);
+            lbxfont_print_num_normal(x + 68, y, v, UI_SCREEN_W, ui_scale);
             v = g->evn.spies_caught[d->api][i];
-            lbxfont_print_num_normal(x + 96, y, v, UI_SCREEN_W);
+            lbxfont_print_num_normal(x + 96, y, v, UI_SCREEN_W, ui_scale);
             ++n;
             y += 8;
         }

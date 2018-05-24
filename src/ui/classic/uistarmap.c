@@ -93,7 +93,7 @@ static void ui_starmap_fill_oi_slider(struct starmap_data_s *d, planet_t *p)
         }
         if (g->evn.have_plague && (g->evn.plague_planet_i == g->planet_focus_i[d->api])) {
             lbxgfx_set_frame(ui_data.gfx.starmap.col_butt_trans, 1);
-            lbxgfx_draw_frame(282, 164, ui_data.gfx.starmap.col_butt_trans, UI_SCREEN_W);
+            lbxgfx_draw_frame(282, 164, ui_data.gfx.starmap.col_butt_trans, UI_SCREEN_W, ui_scale);
         } else {
             d->sm.oi_trans = uiobj_add_t0(282, 164, "", ui_data.gfx.starmap.col_butt_trans, MOO_KEY_x);
         }
@@ -640,7 +640,13 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
                 ui_cursor_area_tbl[7].x1 = x1;
                 ui_cursor_area_tbl[7].y0 = y0;
                 ui_cursor_area_tbl[7].y1 = y1;
-                if (!ui_sm_no_question_mark_cursor && (x0 >= 7) && (x1 <= 221) && (y0 >= 7) && (y1 <= 177) && BOOLVEC_IS1(p->explored, active_player)) {
+                if (!ui_sm_no_question_mark_cursor
+                  && BOOLVEC_IS1(p->explored, active_player)
+                  && (x0 >= 7 * ui_scale)
+                  && (x1 <= 221 * ui_scale)
+                  && (y0 >= 7 * ui_scale)
+                  && (y1 <= 177 * ui_scale)
+                ) {
                     /* FIXME why were these here? these only seem to break stuff */
                     /*
                     SETMAX(ui_cursor_area_tbl[5].x0, 7);
