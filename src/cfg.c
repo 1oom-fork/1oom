@@ -27,6 +27,7 @@ static const struct cfg_module_s {
     { "game", game_cfg_items },
     { "hw", hw_cfg_items },
     { "hwx", hw_cfg_items_extra },
+    { "ui", ui_cfg_items },
     { 0, 0 }
 };
 
