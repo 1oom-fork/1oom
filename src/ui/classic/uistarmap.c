@@ -85,7 +85,7 @@ static void ui_starmap_fill_oi_slider(struct starmap_data_s *d)
         }
         if (g->evn.have_plague && (g->evn.plague_planet_i == g->planet_focus_i[d->api])) {
             lbxgfx_set_frame(ui_data.gfx.starmap.col_butt_trans, 1);
-            lbxgfx_draw_frame(282, 164, ui_data.gfx.starmap.col_butt_trans, UI_SCREEN_W);
+            lbxgfx_draw_frame(282, 164, ui_data.gfx.starmap.col_butt_trans, UI_SCREEN_W, ui_scale);
         } else {
             d->sm.oi_trans = uiobj_add_t0(282, 164, "", ui_data.gfx.starmap.col_butt_trans, MOO_KEY_x);
         }
@@ -206,21 +206,21 @@ void ui_starmap_set_pos_focus(struct game_s *g, player_id_t active_player)
 
 void ui_starmap_set_pos(struct game_s *g, int x, int y)
 {
-    x -= 0x36;
+    x -= 0x36 * ui_scale;
     if (x < 0) {
         x = 0;
     }
-    if (x > (g->galaxy_maxx - 0x6c)) {
-        x = (g->galaxy_maxx - 0x6c);
+    if (x > (g->galaxy_maxx - 0x6c * ui_scale)) {
+        x = (g->galaxy_maxx - 0x6c * ui_scale);
     }
     ui_data.starmap.x = x;
     ui_data.starmap.x2 = x;
-    y -= 0x2b;
+    y -= 0x2b * ui_scale;
     if (y < 0) {
         y = 0;
     }
-    if (y > (g->galaxy_maxy - 0x56)) {
-        y = (g->galaxy_maxy - 0x56);
+    if (y > (g->galaxy_maxy - 0x56 * ui_scale)) {
+        y = (g->galaxy_maxy - 0x56 * ui_scale);
     }
     ui_data.starmap.y = y;
     ui_data.starmap.y2 = y;

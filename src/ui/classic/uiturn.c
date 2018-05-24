@@ -38,7 +38,7 @@ static void ui_turn_msg_draw_cb(void *vptr)
 {
     struct turnmsg_data_s *d = vptr;
     ui_starmap_draw_basic(&d->sm);
-    ui_draw_textbox_2str("", d->str, 74);
+    ui_draw_textbox_2str("", d->str, 74, ui_scale);
 }
 
 /* -------------------------------------------------------------------------- */

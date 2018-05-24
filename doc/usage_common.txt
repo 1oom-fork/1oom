@@ -157,6 +157,9 @@ For all game UIs:
     YOMAMA               Skip intro
     s                    Continue game
 
+For classic game UI:
+    -uiscale SCALE       UI scaling factor
+
 3.1. -new
 ----------
 

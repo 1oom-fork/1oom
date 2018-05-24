@@ -50,9 +50,9 @@ static void save_game_draw_cb(void *vptr)
     const int xoff = 0x76;
     const int yoff = 0xa;
     hw_video_copy_back_from_page2();
-    lbxgfx_draw_frame(0, 0, d->gfx_savegame, UI_SCREEN_W);
+    lbxgfx_draw_frame(0, 0, d->gfx_savegame, UI_SCREEN_W, ui_scale);
     for (int i = 0; i < NUM_SAVES; ++i) {
-        lbxgfx_draw_frame(16 + xoff, 23 + yoff + 18 * i, (d->selected == i) ? d->gfx_lg_green : d->gfx_lg_gray, UI_SCREEN_W);
+        lbxgfx_draw_frame(16 + xoff, 23 + yoff + 18 * i, (d->selected == i) ? d->gfx_lg_green : d->gfx_lg_gray, UI_SCREEN_W, ui_scale);
     }
 }
 
