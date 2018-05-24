@@ -554,7 +554,7 @@ static struct xy_s ui_design_draw_selbox(int xpos, int xoff1, int xoff2, int xof
     SETMAX(y0, 0);
 
     ui_cursor_erase1(); /* HACK should not be needed */
-    ui_draw_hmm3(x0 + 4, y0 + 4, x0 + xpos + xoff2, y1 + 20, 1, 2, 0x37);
+    ui_draw_box_grain(x0 + 4, y0 + 4, x0 + xpos + xoff2, y1 + 20, 1, 2, 0x37);
     /*uiobj_set_limits(x0, y0, x1, y1);*/
     lbxgfx_draw_frame_offs(x0, y0, ui_data.gfx.design.pop1_ul, x0, y0, x1, y1, UI_SCREEN_W);
     /*uiobj_set_limits(x1, y0, UI_SCREEN_W - 1, y1);*/
