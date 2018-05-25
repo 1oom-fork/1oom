@@ -38,6 +38,7 @@ void ui_play_intro(void)
 
     lbxpal_select(0, -1, 0);
     ui_draw_erase_buf();
+    ui_palette_fadeout_14_14_2();
     lbxfont_select(5, 1, 0, 0);
     lbxfont_print_str_normal(0, 0, game_str_in_loading, UI_SCREEN_W, ui_scale);
     ui_cursor_setup_area(1, &ui_cursor_area_all_i0);
