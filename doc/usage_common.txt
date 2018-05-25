@@ -18,13 +18,13 @@ to the configuration file.
 The LBX files are first looked for in the directory specified with
 "-data <path>". If not found there, the following subsections apply.
 
-1.1. Windows
--------------
+1.1. Windows, MSDOS
+--------------------
 
 1oom will check the directory of the executable.
 
-1.2 Linux
-----------
+1.2 Unix (Linux)
+-----------------
 
 According to the XDG standard, 1oom will also check the
 following directories:
@@ -45,7 +45,7 @@ Choose whichever you prefer.
 =================
 
 1oom is configured via command-line arguments or editing the
-configuration file. Each program has a it's own configuration file (if any).
+configuration file. Each program has a separate configuration file (if any).
 
 2.1. User Directory
 --------------------
@@ -53,9 +53,9 @@ configuration file. Each program has a it's own configuration file (if any).
 1oom creates a User directory with all the user savegames and
 options in one of the following paths:
 
-- <game directory> (win32)
-- $XDG_CONFIG_HOME/1oom (Linux)
-- ~/.config/1oom (Linux)
+- <game directory> (win32, msdos)
+- $XDG_CONFIG_HOME/1oom (Unix)
+- ~/.config/1oom (Unix)
 
 You can also specify your own path by passing the command-line
 argument "-user <path>" when running 1oom.

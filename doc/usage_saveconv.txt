@@ -43,10 +43,6 @@ Examples:
     1oom_saveconv 1oom_save5.bin SAVE6.GAM
         - convert 1oom_save5.bin to SAVE6.GAM
 
-    1oom_saveconv -n "foo bar" 5 SAVE6.GAM
-        - convert 1oom save 5 to SAVE6.GAM
-        - set save name to "foo bar"
-
     1oom_saveconv -cmoo 5 SAVE6.GAM
         - convert 1oom save 5 to SAVE6.GAM
         - update save name and availability in CONFIG.MOO (if found)
