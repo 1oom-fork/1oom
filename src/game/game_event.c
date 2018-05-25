@@ -1137,11 +1137,9 @@ bool game_event_run(struct game_s *g, struct game_end_s *ge)
     /*114fb*/
     if (1
       && (!any_news)
-#if 0
       && (!rnd_0_nm1(40, &g->seed))
       && (g->year > 25)
       && (g->end == GAME_END_NONE)
-#endif
     ) {
         ns.type = GAME_NEWS_STATS;
         ns.subtype = rnd_0_nm1(4, &g->seed);
