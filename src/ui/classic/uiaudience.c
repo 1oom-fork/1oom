@@ -339,7 +339,7 @@ void ui_audience_show3(struct audience_s *au)
 
 int16_t ui_audience_ask2a(struct audience_s *au)
 {
-    return ui_audience_ask_do(au, 145 * ui_scale, ui_audience_draw_cb2);
+    return ui_audience_ask_do(au, 145, ui_audience_draw_cb2);
 }
 
 int16_t ui_audience_ask2b(struct audience_s *au)
