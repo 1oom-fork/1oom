@@ -105,6 +105,7 @@ static void ui_starmap_draw_range_parsec(struct starmap_data_s *d, int y)
     int dist = game_get_min_dist(g, d->api, g->planet_focus_i[d->api]);
     char buf[64];
     sprintf(buf, "%s %i %s", game_str_sm_range, dist, (dist == 1) ? game_str_sm_parsec : game_str_sm_parsecs);
+    lbxfont_select_set_12_4(0, 4, 0, 0);
     lbxfont_print_str_center(269, y, buf, UI_SCREEN_W);
 }
 
