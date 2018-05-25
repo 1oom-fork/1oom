@@ -32,6 +32,7 @@
 /* -------------------------------------------------------------------------- */
 
 #define GMAP_LIMITS  7, 7, 230, 191
+#define GMAP_SCALED_LIMITS  7 * ui_scale, 7 * ui_scale, 230 * ui_scale, 191 * ui_scale
 
 struct gmap_blink_data_s {
     struct game_s *g;
@@ -217,7 +218,7 @@ static void gmap_draw_cb(void *vptr)
                     pt = (PLANET_TYPE_TERRAN - p->type);
                     SETMAX(pt, 0);
                     buf[0] = game_str_gm_tchar[pt];
-                    lbxfont_print_str_normal_limit(x + 7, y, buf, GMAP_LIMITS, UI_SCREEN_W, ui_scale);
+                    lbxfont_print_str_normal_limit(x + 7, y, buf, GMAP_SCALED_LIMITS, UI_SCREEN_W, ui_scale);
                 }
                 break;
             case 2:
@@ -230,7 +231,7 @@ static void gmap_draw_cb(void *vptr)
                     if (p->special == PLANET_SPECIAL_4XTECH) {
                         lbxfont_select(2, 0xe, 0, 0);
                     }
-                    lbxfont_print_str_center_limit(x + 2, y + 7, game_str_tbl_gm_spec[p->special], GMAP_LIMITS, UI_SCREEN_W, ui_scale);
+                    lbxfont_print_str_center_limit(x + 2, y + 7, game_str_tbl_gm_spec[p->special], GMAP_SCALED_LIMITS, UI_SCREEN_W, ui_scale);
                 }
                 break;
             default:
