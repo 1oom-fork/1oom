@@ -31,7 +31,7 @@ bool ui_delay_ticks_or_click(int ticks)
 
 bool ui_delay_us_or_click(uint32_t delay)
 {
-    bool pressed = false;
+    bool pressed = false, handled = false;
     int mx = moouse_x, my = moouse_y;
     uint32_t mouse_time = hw_get_time_us();
     if (delay_hmm1 == 0) {
@@ -43,12 +43,16 @@ bool ui_delay_us_or_click(uint32_t delay)
         now = hw_get_time_us();
         diff = now - delay_start;
         if ((diff < 0) || (diff >= delay)) {
+            if (!handled) {
+                hw_event_handle();
+            }
             return false;
         }
         if (diff < DELAY_EVENT_HANDLE_LIMIT) {
             continue;
         }
         hw_event_handle();
+        handled = true;
         if (!pressed) {
             if (mouse_buttons) {
                 pressed = true;
