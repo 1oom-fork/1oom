@@ -1865,6 +1865,7 @@ int16_t uiobj_add_inputkey(uint32_t key)
     p->y0 = UIOBJ_OFFSCREEN;
     p->x1 = UIOBJ_OFFSCREEN;
     p->y1 = UIOBJ_OFFSCREEN;
+    p->scale = 1;
     p->type = 7;
     p->vptr = 0;
     p->key = key;
@@ -1882,6 +1883,7 @@ int16_t uiobj_add_alt_str(const char *str)
     p->y0 = UIOBJ_OFFSCREEN;
     p->x1 = UIOBJ_OFFSCREEN;
     p->y1 = UIOBJ_OFFSCREEN;
+    p->scale = 1;
     p->type = 8;
     p->vptr = 0;
     p->t8.str = str;
