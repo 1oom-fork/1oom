@@ -367,6 +367,7 @@ static void game_turn_fleet_send(struct game_s *g, struct ai_turn_p1_s *ait, pla
     ait->tbl_hmm7[from] = 0;
     if (g->enroute_num == FLEET_ENROUTE_MAX) {
         log_warning("fleet enroute table (size %i) full, could not leave orbit!\n", FLEET_ENROUTE_MAX);
+        return;
     }
     pf = &(g->planet[from]);
     pt = &(g->planet[dest]);
@@ -402,6 +403,7 @@ static void game_turn_fleet_send(struct game_s *g, struct ai_turn_p1_s *ait, pla
         r->owner = pi;
         r->x = pf->x;
         r->y = pf->y;
+        ++g->enroute_num;
     }
     for (int i = 0; i < NUM_SHIPDESIGNS; ++i) {
         o->ships[i] = 0;    /* BUG ships removed even if they were not sent due to range == 2 && !reserve_fuel */
