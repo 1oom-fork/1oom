@@ -10,7 +10,7 @@ weapon_list_max : 0..64, 30
 
 monster_rest_att : 0..1, 0
   - Allow attacking resting space monsters.
-    In MOO1 it is impossible to attack a space crytal or amoeba after the
+    In MOO1 it is impossible to attack a space crystal or amoeba after the
     turn it has reached a planet.
 
 orbital_weap_any : 0..1, 0
