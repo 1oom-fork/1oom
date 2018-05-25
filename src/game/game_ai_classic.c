@@ -1405,7 +1405,11 @@ static void game_ai_classic_design_ship(struct game_s *g, struct ai_turn_p2_s *a
 {
     shipdesign_t *sd = &(ait->gd.sd);
     empiretechorbit_t *e = &(g->eto[pi]);
+    int loops = 0;
 again:
+    if (++loops >= 100000) {
+        log_fatal_and_die("BUG: %s looped %i times\n", __func__, loops);
+    }
     if (ait->shiptype != 0/*colony*/) {
         const int8_t tbl_hulldiff[RACE_NUM] = { 0, 0, 3, 0, 0, -3, -3, 3, 3, 0 };
         const ship_hull_t tbl_hull[12] = { 0, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3 };
@@ -1422,7 +1426,7 @@ again:
     }
     ait->shiplook = game_ai_classic_design_ship_get_look(g, pi, ait->hull);
     sd->wpnn[0] = 0;
-    while (sd->wpnn[0] == 0) {
+    for (int loops2 = 0; (sd->wpnn[0] == 0) && (loops2 < 100000); ++loops2) {
         game_design_prepare_ai(g, &ait->gd, pi, ait->hull, ait->shiplook);
         game_ai_classic_design_ship_base(g, ait, pi);
         game_ai_classic_design_ship_sub2(g, ait, pi);
@@ -1437,6 +1441,9 @@ again:
             }
         }
         sd->cost = game_design_calc_cost(&ait->gd);
+    }
+    if (sd->wpnn[0] == 0) {
+        log_fatal_and_die("BUG: %s loops2\n", __func__);
     }
     {
         bool flag_again, is_missile;
@@ -1549,7 +1556,7 @@ static void game_ai_classic_turn_p2_do(struct game_s *g, player_id_t pi)
             game_ai_classic_design_scrap(g, pi, shipi_remove);
         }
     }
-    while (e->shipdesigns_num < NUM_SHIPDESIGNS) {
+    for (int loops = 0; (e->shipdesigns_num < NUM_SHIPDESIGNS) && (loops < 10000); ++loops) {
         int si;
         si = e->shipdesigns_num;
         if (e->shipi_colony == -1) {
@@ -1562,6 +1569,9 @@ static void game_ai_classic_turn_p2_do(struct game_s *g, player_id_t pi)
             ait->shiptype = 1/*fighter*/;
         }
         game_ai_classic_design_ship(g, ait, pi);
+    }
+    if (e->shipdesigns_num < NUM_SHIPDESIGNS) {
+        log_fatal_and_die("BUG: %s hang\n", __func__);
     }
     for (int i = 0; i < e->shipdesigns_num; ++i) {
         ship_special_t *ss = &(sd[i].special[0]);
