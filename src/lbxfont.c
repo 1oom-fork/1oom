@@ -224,6 +224,12 @@ static int lbxfont_print_str_limit_do(int x, int y, const char *str, bool change
     lbxfont_temp_x = x;
     lbxfont_temp_y = y;
     char c;
+    if (scale != 1) {
+        lx0 /= scale;
+        lx1 /= scale;
+        ly0 /= scale;
+        ly1 /= scale;
+    }
     if ((y > ly1) || ((y + h) < ly0)) {
         return 0;
     }

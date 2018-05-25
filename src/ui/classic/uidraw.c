@@ -222,6 +222,7 @@ void ui_draw_filled_rect(int x0, int y0, int x1, int y1, uint8_t color, int scal
     x0 *= scale;
     y0 *= scale;
     y1 *= scale;
+    y1 += scale - 1;
     s += y0 * UI_SCREEN_W + x0;
     for (; y0 <= y1; ++y0) {
         memset(s, color, w);
@@ -444,30 +445,19 @@ void ui_draw_text_overlay(int x, int y, const char *str)
 
 void ui_draw_box_grain(int x0, int y0, int x1, int y1, uint8_t color0, uint8_t color1, uint8_t ae, int scale)
 {
-    uint8_t *s = hw_video_get_buf() + (y0 * UI_SCREEN_W) * scale;
-    uint8_t *p;
-    uint16_t h;
-    /* TODO scale */
-    h = y1 - y0 + 1;
-
     if ((x0 / 4) == (x1 / 4)) {
-        p = s;
-        for (int y = 0; y < h; ++y) {
-            for (int x = x0; x <= x1; ++x) {
-                p[x] = color0;
-            }
-            p += UI_SCREEN_W;
-        }
+        ui_draw_filled_rect(x0, y0, x1, y1, color0, scale);
     } else {
         const uint8_t vga_tbl_mask_x0[4] = { 0xf, 0xe, 0xc, 0x8 };
         const uint8_t vga_tbl_mask_x1[4] = { 0x1, 0x3, 0x7, 0xf };
 
-        uint16_t v6;
+        uint8_t *s = hw_video_get_buf() + (y0 * UI_SCREEN_W) * scale;
+        uint8_t *p;
+        uint16_t v6, h = y1 - y0 + 1;
         uint8_t ah, bl;
 
         v6 = rnd_bitfiddle(ae);
-
-        p = s + (x0 & ~3);
+        p = s + (x0 & ~3) * scale;
         ah = vga_tbl_mask_x0[x0 & 3];
         bl = v6 & 0xff;
         for (int y = 0; y < h; ++y) {
@@ -475,22 +465,38 @@ void ui_draw_box_grain(int x0, int y0, int x1, int y1, uint8_t color0, uint8_t c
             m = ah;
             for (int xa = 0; xa < 4; ++xa, m >>= 1) {
                 if (m & 0x1) {
-                    p[xa] = color0;
+                    if (scale == 1) {
+                        p[xa] = color0;
+                    } else {
+                        for (int sy = 0; sy < scale; ++sy) {
+                            for (int sx = 0; sx < scale; ++sx) {
+                                p[sy * UI_SCREEN_W + xa * scale + sx] = color0;
+                            }
+                        }
+                    }
                 }
             }
             m = tbl_color_grain[bl] & ah;
             for (int xa = 0; xa < 4; ++xa, m >>= 1) {
                 if (m & 0x1) {
-                    p[xa] = color1;
+                    if (scale == 1) {
+                        p[xa] = color1;
+                    } else {
+                        for (int sy = 0; sy < scale; ++sy) {
+                            for (int sx = 0; sx < scale; ++sx) {
+                                p[sy * UI_SCREEN_W + xa * scale + sx] = color1;
+                            }
+                        }
+                    }
                 }
             }
             ++bl;
-            p += UI_SCREEN_W;
+            p += UI_SCREEN_W * scale;
         }
 
         v6 = rnd_bitfiddle(v6);
 
-        p = s + (x1 & ~3);
+        p = s + (x1 & ~3) * scale;
         ah = vga_tbl_mask_x1[x1 & 3];
         bl = v6 & 0xff;
         for (int y = 0; y < h; ++y) {
@@ -498,17 +504,33 @@ void ui_draw_box_grain(int x0, int y0, int x1, int y1, uint8_t color0, uint8_t c
             m = ah;
             for (int xa = 0; xa < 4; ++xa, m >>= 1) {
                 if (m & 0x1) {
-                    p[xa] = color0;
+                    if (scale == 1) {
+                        p[xa] = color0;
+                    } else {
+                        for (int sy = 0; sy < scale; ++sy) {
+                            for (int sx = 0; sx < scale; ++sx) {
+                                p[sy * UI_SCREEN_W + xa * scale + sx] = color0;
+                            }
+                        }
+                    }
                 }
             }
             m = tbl_color_grain[bl] & ah;
             for (int xa = 0; xa < 4; ++xa, m >>= 1) {
                 if (m & 0x1) {
-                    p[xa] = color1;
+                    if (scale == 1) {
+                        p[xa] = color1;
+                    } else {
+                        for (int sy = 0; sy < scale; ++sy) {
+                            for (int sx = 0; sx < scale; ++sx) {
+                                p[sy * UI_SCREEN_W + xa * scale + sx] = color1;
+                            }
+                        }
+                    }
                 }
             }
             ++bl;
-            p += UI_SCREEN_W;
+            p += UI_SCREEN_W * scale;
         }
 
         v6 = rnd_bitfiddle(v6);
@@ -518,28 +540,42 @@ void ui_draw_box_grain(int x0, int y0, int x1, int y1, uint8_t color0, uint8_t c
             return;
         }
 
-        p = s + (x0 & ~3) + 4/* skip x0..x0+3 */;
+        p = s + ((x0 & ~3) + 4/* skip x0..x0+3 */) * scale;
 
         for (int y = 0; y < h; ++y) {
             bl = v6 & 0xff;
             for (int xq = 0; xq < wp4; ++xq) {
                 uint8_t m;
 
-                p[0] = color0;
-                p[1] = color0;
-                p[2] = color0;
-                p[3] = color0;
+                if (scale == 1) {
+                    p[0] = color0;
+                    p[1] = color0;
+                    p[2] = color0;
+                    p[3] = color0;
+                } else {
+                    for (int sy = 0; sy < scale; ++sy) {
+                        memset(&p[sy * UI_SCREEN_W], color0, 4 * scale);
+                    }
+                }
 
                 m = tbl_color_grain[bl] & 0xf;
                 for (int xa = 0; xa < 4; ++xa, m >>= 1) {
                     if (m & 0x1) {
-                        p[xa] = color1;
+                        if (scale == 1) {
+                            p[xa] = color1;
+                        } else {
+                            for (int sy = 0; sy < scale; ++sy) {
+                                for (int sx = 0; sx < scale; ++sx) {
+                                    p[sy * UI_SCREEN_W + xa * scale + sx] = color1;
+                                }
+                            }
+                        }
                     }
                 }
                 ++bl;
-                p += 4;
+                p += 4 * scale;
             }
-            p += UI_SCREEN_W - wp4 * 4;
+            p += (UI_SCREEN_W - wp4 * 4) * scale;
             v6 = rnd_bitfiddle(v6);
         }
     }
