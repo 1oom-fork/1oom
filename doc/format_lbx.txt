@@ -38,14 +38,14 @@ e       2   offset to palette (or 0 if none)
 frame data
 
 offset  sz  description
-0       1   if 0: overlay on previous frame ; 1: clear buffer
+0       1   (unused) if 0: overlay on previous frame ; 1: clear buffer
 1..     ?   columnwise pixel data
             - 0xff: skip this column
             - 0x00: uncompressed:
                 - total_len
                     - part_len, skip_pixels, pixel*part_len
                         - v=geti(); puto(v, 1);
-            - 0x80: uncompressed:
+            - 0x80: compressed:
                 - total_len
                     - part_len, skip_pixels, compressed_data*part_len
                         - v=geti(); if (v>223) { len=v-223; v=geti(); } else { len=1; } ; puto(v, len);
@@ -237,6 +237,7 @@ offset  sz  description
 
 
 music data (XMI) http://www.shikadi.net/wiki/modding/index.php?title=XMI_Format&oldid=6874
+
 offset  sz  description
 0       16  0xaf 0xde 0x01 0x00 .. ("deaf 1"?)
 10      4   "FORM"
