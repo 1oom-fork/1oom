@@ -35,6 +35,7 @@ bool ui_delay_us_or_click(uint32_t delay)
     bool pressed = false;
     int mx = mouse_x, my = mouse_y;
     uint32_t mouse_time = os_get_time_us();
+    hw_event_handle();
     if (delay_hmm1 == 0) {
         return false;
     }
