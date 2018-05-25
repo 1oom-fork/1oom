@@ -687,7 +687,13 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
                 ui_cursor_area_tbl[7].x1 = x1;
                 ui_cursor_area_tbl[7].y0 = y0;
                 ui_cursor_area_tbl[7].y1 = y1;
-                if ((x0 >= 7) && (x1 <= 221) && (y0 >= 7) && (y1 <= 177) && BOOLVEC_IS1(p->explored, active_player)) {
+                if (1
+                  && BOOLVEC_IS1(p->explored, active_player)
+                  && (x0 >= 7 * ui_scale)
+                  && (x1 <= 221 * ui_scale)
+                  && (y0 >= 7 * ui_scale)
+                  && (y1 <= 177 * ui_scale)
+                ) {
                     /* FIXME why were these here? these only seem to break stuff */
                     /*
                     SETMAX(ui_cursor_area_tbl[5].x0, 7);

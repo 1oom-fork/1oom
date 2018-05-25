@@ -225,12 +225,18 @@ static int lbxfont_print_str_do(int x, int y, const char *str, bool change_color
 
 static int lbxfont_print_str_limit_do(int x, int y, const char *str, bool change_color, int lx0, int ly0, int lx1, int ly1, uint16_t pitch, int scale)
 {
-    uint8_t hmm10 = lbxfontdata[0x10];
+    uint8_t h = lbxfontdata[0x10];
     int w;
     lbxfont_temp_x = x;
     lbxfont_temp_y = y;
     char c;
-    if ((y > ly1) || ((y + hmm10) < ly0)) {
+    if (scale != 1) {
+        lx0 /= scale;
+        lx1 /= scale;
+        ly0 /= scale;
+        ly1 /= scale;
+    }
+    if ((y > ly1) || ((y + h) < ly0)) {
         return 0;
     }
     if (x > lx1) {
