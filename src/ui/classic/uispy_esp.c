@@ -142,7 +142,10 @@ int ui_spy_steal(struct game_s *g, int spy, int target, uint8_t flags_field)
     ui_switch_1(g, spy);
     ui_sound_play_music(0xf);
 
-    ui_draw_copy_buf();
+    /* TODO
+       MOO1 does ui_draw_copy_buf() here but it seems to cause gfx glitch
+       when two tech steals happen on same turn.
+    */
     hw_video_copy_back_to_page3();
 
     d.g = g;
