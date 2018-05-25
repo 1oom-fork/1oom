@@ -15,7 +15,6 @@ static void fadeout_do(int start, int step, int delay)
 {
     for (uint16_t v = start; v < 0x65; v += step) {
         ui_delay_prepare();
-        hw_event_handle();
         lbxpal_set_update_range(0, 255);
         ui_palette_fade_n(v);
         ui_delay_ticks_or_click(delay);
@@ -26,7 +25,6 @@ static void fadein_do(int start, int step, int delay)
 {
     for (int v = start; v >= 0; v -= step) {
         ui_delay_prepare();
-        hw_event_handle();
         lbxpal_set_update_range(0, 255);
         ui_palette_fade_n(v);
         ui_delay_ticks_or_click(delay);
