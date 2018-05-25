@@ -51,6 +51,9 @@
 3,tbl_race,0,"Hunam"
 # Example of changing an other item in the same table:
 3,tbl_race,9,"Google"
+# Let's not forget the other table:
+3,tbl_races,0,"Hunams"
+3,tbl_races,9,"Googles"
 # New strings may be longer than the original, but excessive length may break the UI.
 
 
