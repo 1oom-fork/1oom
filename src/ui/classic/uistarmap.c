@@ -442,13 +442,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             }
         }
         if ((oi1 == oi_scroll) && !g->evn.build_finished_num[active_player]) {
-            int x, y;
-            x = ui_data.starmap.x + scrollx - 0x36;
-            y = ui_data.starmap.y + scrolly - 0x2b;
-            SETRANGE(x, 0, g->galaxy_maxx - 0x6c);
-            SETRANGE(y, 0, g->galaxy_maxy - 0x56);
-            ui_data.starmap.x2 = x;
-            ui_data.starmap.y2 = y;
+            ui_starmap_scroll(g, scrollx, scrolly);
         }
         ui_starmap_handle_oi_ctrl(&d, oi1);
         if (oi1 == oi_f2) {
