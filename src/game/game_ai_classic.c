@@ -1410,10 +1410,10 @@ static void game_ai_classic_design_ship(struct game_s *g, struct ai_turn_p2_s *a
     empiretechorbit_t *e = &(g->eto[pi]);
 again:
     if (ait->shiptype != 0/*colony*/) {
-        const int tbl_hmm1[RACE_NUM] = { 0, 0, 3, 0, 0, -3, -3, 3, 3, 0 };
+        const int8_t tbl_hulldiff[RACE_NUM] = { 0, 0, 3, 0, 0, -3, -3, 3, 3, 0 };
         const ship_hull_t tbl_hull[12] = { 0, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3 };
         int v;
-        v = rnd_0_nm1(12, &g->seed) + tbl_hmm1[e->race];
+        v = rnd_0_nm1(12, &g->seed) + tbl_hulldiff[e->race];
         SETMAX(v, 0);
         if (ait->have_pulsar) { /* BUG the pulsar ship may have been scrapped */
             ++v;
