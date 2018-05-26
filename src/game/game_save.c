@@ -43,8 +43,8 @@ char game_save_tbl_name[NUM_ALL_SAVES][SAVE_NAME_LEN];
 #define SG_1OOM_DE_U16(_v_)  (_v_) = GET_LE_16(&buf[pos]), pos += 2
 #define SG_1OOM_EN_U32(_v_)  SET_LE_32(&buf[pos], (_v_)), pos += 4
 #define SG_1OOM_DE_U32(_v_)  (_v_) = GET_LE_32(&buf[pos]), pos += 4
-#define SG_1OOM_EN_BV(_v_, _n_)  do { int l = (_n_) + 7 / 8; memcpy(&buf[pos], (_v_), l); pos += l; } while (0)
-#define SG_1OOM_DE_BV(_v_, _n_)  do { int l = (_n_) + 7 / 8; memcpy((_v_), &buf[pos], l); pos += l; } while (0)
+#define SG_1OOM_EN_BV(_v_, _n_)  do { int l = ((_n_) + 7) / 8; memcpy(&buf[pos], (_v_), l); pos += l; } while (0)
+#define SG_1OOM_DE_BV(_v_, _n_)  do { int l = ((_n_) + 7) / 8; memcpy((_v_), &buf[pos], l); pos += l; } while (0)
 #define SG_1OOM_EN_TBL_U8(_v_, _n_)  do { for (int i_ = 0; i_ < (_n_); ++i_) { buf[pos] = (_v_)[i_]; ++pos; } } while (0)
 #define SG_1OOM_DE_TBL_U8(_v_, _n_)  do { for (int i_ = 0; i_ < (_n_); ++i_) { (_v_)[i_] = buf[pos]; ++pos; } } while (0)
 #define SG_1OOM_EN_TBL_U16(_v_, _n_)  do { for (int i_ = 0; i_ < (_n_); ++i_) { SET_LE_16(&buf[pos], (_v_)[i_]); pos += 2; } } while (0)
@@ -100,12 +100,14 @@ static int game_save_encode_planet(uint8_t *buf, int pos, const planet_t *p, int
     SG_1OOM_EN_U8(p->trans_dest);
     SG_1OOM_EN_U8(p->pop_tenths);
     SG_1OOM_EN_BV(p->explored, PLAYER_NUM);
+    SG_1OOM_EN_DUMMY(5);
     SG_1OOM_EN_U8(p->pop_oper_fact);
     SG_1OOM_EN_U16(p->bc_to_refit);
     SG_1OOM_EN_U16(p->rebels);
     SG_1OOM_EN_U8(p->unrest);
     SG_1OOM_EN_U8(p->unrest_reported);
     SG_1OOM_EN_BV(p->finished, FINISHED_NUM);
+    SG_1OOM_EN_DUMMY(5);
     return pos;
 }
 
@@ -151,12 +153,14 @@ static int game_save_decode_planet(const uint8_t *buf, int pos, planet_t *p, int
     SG_1OOM_DE_U8(p->trans_dest);
     SG_1OOM_DE_U8(p->pop_tenths);
     SG_1OOM_DE_BV(p->explored, PLAYER_NUM);
+    SG_1OOM_DE_DUMMY(5);
     SG_1OOM_DE_U8(p->pop_oper_fact);
     SG_1OOM_DE_U16(p->bc_to_refit);
     SG_1OOM_DE_U16(p->rebels);
     SG_1OOM_DE_U8(p->unrest);
     SG_1OOM_DE_U8(p->unrest_reported);
     SG_1OOM_DE_BV(p->finished, FINISHED_NUM);
+    SG_1OOM_DE_DUMMY(5);
     return pos;
 }
 
@@ -250,6 +254,7 @@ static int game_save_encode_eto(uint8_t *buf, int pos, const empiretechorbit_t *
     SG_1OOM_EN_U8(e->ai_p3_countdown);
     SG_1OOM_EN_U8(e->ai_p2_countdown);
     SG_1OOM_EN_BV(e->within_frange, PLAYER_NUM);
+    SG_1OOM_EN_DUMMY(5);
     SG_1OOM_EN_TBL_U16(e->relation1, pnum);
     SG_1OOM_EN_TBL_U16(e->relation2, pnum);
     SG_1OOM_EN_TBL_U8(e->diplo_type, pnum);
@@ -313,6 +318,7 @@ static int game_save_decode_eto(const uint8_t *buf, int pos, empiretechorbit_t *
     SG_1OOM_DE_U8(e->ai_p3_countdown);
     SG_1OOM_DE_U8(e->ai_p2_countdown);
     SG_1OOM_DE_BV(e->within_frange, PLAYER_NUM);
+    SG_1OOM_DE_DUMMY(5);
     SG_1OOM_DE_TBL_U16(e->relation1, pnum);
     SG_1OOM_DE_TBL_U16(e->relation2, pnum);
     SG_1OOM_DE_TBL_U8(e->diplo_type, pnum);
@@ -474,6 +480,7 @@ static int game_save_encode_evn(uint8_t *buf, int pos, const gameevents_t *ev, i
 {
     SG_1OOM_EN_U16(ev->year);
     SG_1OOM_EN_BV(ev->done, GAME_EVENT_TBL_NUM);
+    SG_1OOM_EN_DUMMY(17);
     SG_1OOM_EN_U8(ev->have_plague);
     SG_1OOM_EN_U8(ev->plague_player);
     SG_1OOM_EN_U8(ev->plague_planet_i);
@@ -505,6 +512,7 @@ static int game_save_encode_evn(uint8_t *buf, int pos, const gameevents_t *ev, i
     SG_1OOM_EN_TBL_TBL_U16(ev->hmm28e, pnum, pnum);
     for (int i = 0; i < pnum; ++i) {
         SG_1OOM_EN_BV(ev->help_shown[i], HELP_SHOWN_NUM);
+        SG_1OOM_EN_DUMMY(14);
     }
     SG_1OOM_EN_TBL_U16(ev->build_finished_num, pnum);
     SG_1OOM_EN_TBL_U8(ev->voted, pnum);
@@ -519,6 +527,7 @@ static int game_save_decode_evn(const uint8_t *buf, int pos, gameevents_t *ev, i
 {
     SG_1OOM_DE_U16(ev->year);
     SG_1OOM_DE_BV(ev->done, GAME_EVENT_TBL_NUM);
+    SG_1OOM_DE_DUMMY(17);
     SG_1OOM_DE_U8(ev->have_plague);
     SG_1OOM_DE_U8(ev->plague_player);
     SG_1OOM_DE_U8(ev->plague_planet_i);
@@ -550,6 +559,7 @@ static int game_save_decode_evn(const uint8_t *buf, int pos, gameevents_t *ev, i
     SG_1OOM_DE_TBL_TBL_U16(ev->hmm28e, pnum, pnum);
     for (int i = 0; i < pnum; ++i) {
         SG_1OOM_DE_BV(ev->help_shown[i], HELP_SHOWN_NUM);
+        SG_1OOM_DE_DUMMY(14);
     }
     SG_1OOM_DE_TBL_U16(ev->build_finished_num, pnum);
     SG_1OOM_DE_TBL_U8(ev->voted, pnum);
@@ -569,6 +579,7 @@ static int game_save_encode(uint8_t *buf, int buflen, const struct game_s *g)
     }
     SG_1OOM_EN_U8(g->players);
     SG_1OOM_EN_BV(g->is_ai, PLAYER_NUM);
+    SG_1OOM_EN_DUMMY(5);
     SG_1OOM_EN_U8(g->active_player);
     SG_1OOM_EN_U8(g->difficulty);
     SG_1OOM_EN_U8(g->galaxy_size);
@@ -645,6 +656,7 @@ static int game_save_decode(const uint8_t *buf, int buflen, struct game_s *g)
         return -1;
     }
     SG_1OOM_DE_BV(g->is_ai, PLAYER_NUM);
+    SG_1OOM_DE_DUMMY(5);
     SG_1OOM_DE_U8(g->active_player);
     SG_1OOM_DE_U8(g->difficulty);
     SG_1OOM_DE_U8(g->galaxy_size);
