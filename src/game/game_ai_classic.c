@@ -1367,7 +1367,7 @@ static void game_ai_classic_design_ship_sub3_do(struct game_s *g, struct ai_turn
     }
 }
 
-static void game_ai_classic_design_ship_sub3(struct game_s *g, struct ai_turn_p2_s *ait, player_id_t pi)
+static void game_ai_classic_design_ship_weapons(struct game_s *g, struct ai_turn_p2_s *ait, player_id_t pi)
 {
     int numshots_ignore, weapnum = 1;
     numshots_ignore = rnd_0_nm1(2, &g->seed) ? 2 : 5;
@@ -1429,7 +1429,7 @@ again:
         game_design_prepare_ai(g, &ait->gd, pi, ait->hull, ait->shiplook);
         game_ai_classic_design_ship_base(g, ait, pi);
         game_ai_classic_design_ship_sub2(g, ait, pi);
-        game_ai_classic_design_ship_sub3(g, ait, pi);
+        game_ai_classic_design_ship_weapons(g, ait, pi);
         game_design_set_hp(sd);
         game_design_compact_slots(sd);
         if (ait->shiptype == 0/*colony*/) {
