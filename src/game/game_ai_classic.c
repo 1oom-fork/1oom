@@ -1146,7 +1146,7 @@ static int game_ai_classic_design_update_engines_space(struct game_design_s *gd)
     return sd->space;
 }
 
-static void game_ai_classic_design_ship_sub1(struct game_s *g, struct ai_turn_p2_s *ait, player_id_t pi)
+static void game_ai_classic_design_ship_base(struct game_s *g, struct ai_turn_p2_s *ait, player_id_t pi)
 {
     int8_t tbl_have[SHIP_SPECIAL_NUM];  /* largest of the used */
     shipdesign_t *sd = &(ait->gd.sd);
@@ -1427,7 +1427,7 @@ again:
     sd->wpnn[0] = 0;
     while (sd->wpnn[0] == 0) {
         game_design_prepare_ai(g, &ait->gd, pi, ait->hull, ait->shiplook);
-        game_ai_classic_design_ship_sub1(g, ait, pi);
+        game_ai_classic_design_ship_base(g, ait, pi);
         game_ai_classic_design_ship_sub2(g, ait, pi);
         game_ai_classic_design_ship_sub3(g, ait, pi);
         game_design_set_hp(sd);
