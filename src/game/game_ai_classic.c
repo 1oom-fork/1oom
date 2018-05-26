@@ -1002,23 +1002,23 @@ static void game_ai_classic_turn_p1(struct game_s *g)
         }
     }
     for (player_id_t pi = PLAYER_0; pi < g->players; ++pi) {
-        int num_planets, v8;
+        int num_planets, num_developing_planets;
         if (IS_HUMAN(g, pi)) {
             continue;
         }
         ait->hmm4 = false;
         num_planets = 0;
-        v8 = 0;
+        num_developing_planets = 0;
         for (int i = 0; i < g->galaxy_stars; ++i) {
             const planet_t *p = &(g->planet[i]);
             if (p->owner == pi) {
                 ++num_planets;
                 if ((p->missile_bases < (p->max_pop3 / 20)) && (p->pop < ((p->max_pop3 * 2) / 3))) {
-                    ++v8;
+                    ++num_developing_planets;
                 }
             }
         }
-        if (((num_planets / 2) < v8) && BOOLVEC_IS1(g->eto[PLAYER_0].within_frange, pi)) {
+        if (((num_planets / 2) < num_developing_planets) && BOOLVEC_IS1(g->eto[PLAYER_0].within_frange, pi)) {
             ait->hmm4 = true;
         }
         if (g->eto[pi].trait2 == 2) {
