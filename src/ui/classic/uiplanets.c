@@ -85,7 +85,7 @@ static void planets_draw_cb(void *vptr)
 
     v = g->eto[d->api].tax;
     if (v > 0) {
-        ui_draw_line_3h(213, 160, 212 + (v * 4) / 25, 0x73);
+        ui_draw_slider(213, 160, 212 + (v * 4) / 25, 0x73);
     }
 
     lbxfont_select(2, 8, 0, 0);
@@ -230,7 +230,7 @@ static void planets_transfer_draw_cb(void *vptr)
     lbxgfx_draw_frame(x, y, d->gfx_transfer, UI_SCREEN_W);
     ui_draw_filled_rect(x + 14, y + 35, x + 64, y + 38, 0x2f);
     if (d->amount_trans > 0) {
-        ui_draw_line_3h(x + 14, y + 35, x + 13 + d->amount_trans / 2, 0x74);
+        ui_draw_slider(x + 14, y + 35, x + 13 + d->amount_trans / 2, 0x74);
     }
     sprintf(buf, "%s %s", game_str_pl_resto, p->name);
     lbxfont_select(0, 0xd, 0, 0);
