@@ -1021,7 +1021,7 @@ static void game_ai_classic_turn_p1(struct game_s *g)
         if (((num_planets / 2) < num_developing_planets) && BOOLVEC_IS1(g->eto[PLAYER_0].within_frange, pi)) {
             ait->do_not_send_colony = true;
         }
-        if (g->eto[pi].trait2 == 2) {
+        if (g->eto[pi].trait2 == TRAIT2_EXPANSIONIST) {
             ait->do_not_send_colony = false;
         }
         game_ai_classic_turn_p1_send_scout(g, ait, pi);
