@@ -19,23 +19,24 @@ Save payload (? bytes)
 offset  sz      description
 40      1       number of players: @PLAYERS (2..6)
 41      1       player is AI (bitmask)
-42      1       active player when save was made
-43      1       difficulty (0..4)
-44      1       galaxy size (0..3)
-45      1       galaxy width
-46      1       galaxy height
-47      1       galaxy stars; @STARS (width * height; 24, 48, 70, 108)
-48      2       galaxy max x
-4a      2       galaxy max y
-4c      4       galaxy seed
-50      4       current RNG seed
-54      2       year (add 2299 for shown year)
-56      2       number of fleets enroute: @FLEETS
-58      2       number of transports enroute: @TRANSPORTS
-5a      1       end state: 0=none, 3=final war
-5b      1       election winner (0..5, 6)
-5c      1       election held (0/1)
-5d      1       nebula num: @NEBULAS (0..4)
+42      5       (0, unused)
+47      1       active player when save was made
+48      1       difficulty (0..4)
+49      1       galaxy size (0..3)
+4a      1       galaxy width
+4b      1       galaxy height
+4c      1       galaxy stars; @STARS (width * height; 24, 48, 70, 108)
+4d      2       galaxy max x
+4f      2       galaxy max y
+51      4       galaxy seed
+55      4       current RNG seed
+59      2       year (add 2299 for shown year)
+5b      2       number of fleets enroute: @FLEETS
+5d      2       number of transports enroute: @TRANSPORTS
+5f      1       end state: 0=none, 3=final war
+60      1       election winner (0..5, 6)
+61      1       election held (0/1)
+62      1       nebula num: @NEBULAS (0..4)
 
 
 (The rest of payload uses variable length tables and thus have no constant
@@ -108,12 +109,14 @@ c       name (ASCIIz)
 1       transport destination (planet index)
 1       population tenths
 1       explored by player (bitmask)
+5       (0, unused)
 1       a colonist operates N factories
 2       BC towards industy refit
 2       rebels (0..actual pop)
 1       unrest: 1=unrest, 3=rebellion
 1       unrest reported (0/1)
 1       build finished (bitmask; bits: 0=factories, 1=eco1, 2=eco2, 3=stargate, 4=shield, 5=ship)
+5       (0, unused)
 
 
 @PLAYERS * @STARS * Seen data
@@ -157,6 +160,7 @@ sz      description
 1       AI turn p3 countdown (0..6)
 1       AI turn p2 countdown (0..20)
 1       empire within fuel range (bitmask)
+5       (0, unused)
 N*2     relation1
 N*2     relation2
 N*1     diplo type: ...
@@ -252,6 +256,7 @@ Event data (N = @PLAYERS)
 sz      description
 2       year of last event
 3       event has happened (bitmask of 20 bits)
+17      (0, unused)
 1       have plague (0..3)
 1       plague player
 1       plague planet
@@ -289,7 +294,7 @@ N*1     home planet (0..107, 255 means player is dead)
 N*6*4   number of new ships
 N*N*2   number of caught spies
 N*N*2   hmm28e
-N*2     help shown (bitmask of 16 bits)
+N*10    help shown (bitmask of 16 bits) + 14 unused bytes
 N*2     build finished num
 N*1     voted for (0..5, 6)
 N*1     best eco restore
