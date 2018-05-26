@@ -18,7 +18,7 @@ extern void ui_draw_line1(int x0, int y0, int x1, int y1, uint8_t color, int sca
 extern void ui_draw_line_ctbl(int x0, int y0, int x1, int y1, const uint8_t *colortbl, int colornum, int pos, int scale);
 extern void ui_draw_line_limit(int x0, int y0, int x1, int y1, uint8_t color, int scale);
 extern void ui_draw_line_limit_ctbl(int x0, int y0, int x1, int y1, const uint8_t *colortbl, int colornum, int pos, int scale);
-extern void ui_draw_line_3h(int x0, int y0, int x1, uint8_t color, int scale);
+extern void ui_draw_slider(int x, int y, int w, int wdiv, int xoff, uint8_t color, int scale);
 extern void ui_draw_box1(int x0, int y0, int x1, int y1, uint8_t color1, uint8_t color2, int scale);
 extern void ui_draw_box2(int x0, int y0, int x1, int y1, uint8_t color1, uint8_t color2, uint8_t color3, uint8_t color4, int scale);
 extern void ui_draw_box_fill(int x0, int y0, int x1, int y1, const uint8_t *colorptr, uint8_t color0, uint16_t colorhalf, uint16_t ac, uint8_t colorpos, int scale);

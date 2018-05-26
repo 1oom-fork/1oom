@@ -367,11 +367,18 @@ void ui_draw_line_limit_ctbl(int x0, int y0, int x1, int y1, const uint8_t *colo
     ui_draw_line_limit_do(x0, y0, x1, y1, 0, colortbl, colornum, pos, scale);
 }
 
-void ui_draw_line_3h(int x0, int y0, int x1, uint8_t color, int scale)
+void ui_draw_slider(int x, int y, int w, int wdiv, int xoff, uint8_t color, int scale)
 {
-    for (int i = 0; i < 3; ++i, ++y0) {
-        ui_draw_line1(x0, y0, x1, y0, color, scale);
+    int y1, x1;
+    x1 = x * scale + xoff + (w * scale) / wdiv;
+    x *= scale;
+    y *= scale;
+    y1 = y + 2 * scale + scale - 1;
+    if (x1 < x) {
+        int t;
+        t = x1; x1 = x; x = t;
     }
+    ui_draw_filled_rect(x, y, x1, y1, color, 1);
 }
 
 void ui_draw_box1(int x0, int y0, int x1, int y1, uint8_t color1, uint8_t color2, int scale)
@@ -388,7 +395,6 @@ void ui_draw_box2(int x0, int y0, int x1, int y1, uint8_t color1, uint8_t color2
     ++x0; ++y0; --x1; --y1;
     ui_draw_box1(x0, y0, x1, y1, color2, color4, scale);
 }
-
 
 void ui_draw_box_fill(int x0, int y0, int x1, int y1, const uint8_t *colorptr, uint8_t color0, uint16_t colorhalf, uint16_t ac, uint8_t colorpos, int scale)
 {

@@ -147,7 +147,7 @@ static void tech_draw_cb(void *vptr)
         y = 21 * i + 24;
         ui_draw_filled_rect(227, y, 277, y + 3, 0x2f, ui_scale);
         if (t->slider[i]) {
-            ui_draw_line_3h(227, y + 1, 226 + t->slider[i] / 2, t->slider_lock[i] ? 0x22 : 0x73, ui_scale);
+            ui_draw_slider(227, y + 1, t->slider[i], 2, -1, t->slider_lock[i] ? 0x22 : 0x73, ui_scale);
         }
         lbxfont_select(0, 6, 0, 0);
         lbxfont_set_color_c_n((g->gaux->flag_cheat_tech_hint && game_tech_current_research_has_max_bonus(g, d->api, i)) ? 0x41 : 0x26, 5);
