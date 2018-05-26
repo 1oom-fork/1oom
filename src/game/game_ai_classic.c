@@ -36,7 +36,6 @@
 /* -------------------------------------------------------------------------- */
 
 struct ai_turn_p1_s {
-    bool do_not_send_colony;
     bool have_colonizable;
     bool need_conquer;
     uint16_t tbl_shipthreat[PLAYER_NUM + 1][NUM_SHIPDESIGNS];
@@ -437,9 +436,6 @@ static void game_ai_classic_turn_p1_send_colony_ships(struct game_s *g, struct a
     shipcount_t tbl_orbit[PLANETS_MAX];
     BOOLVEC_DECLARE(tbl_planet_ignore, PLANETS_MAX);
 
-    if (ait->do_not_send_colony) {
-        return;
-    }
     for (int i = 0; i < g->galaxy_stars; ++i) {
         const planet_t *p = &(g->planet[i]);
         BOOLVEC_SET(tbl_planet_ignore, i, (p->owner != PLAYER_NONE) || (p->within_frange[pi] == 0));
@@ -461,14 +457,13 @@ static void game_ai_classic_turn_p1_send_colony_ships(struct game_s *g, struct a
         }
     }
     if (e->race == RACE_SILICOID) {
-        can_colonize = 0/*any*/;    /* BUG? does this make silicoids send colony ships to non-habitable stars? */
+        can_colonize = PLANET_TYPE_RADIATED;
     }
     for (int i = 0; i < g->galaxy_stars; ++i) {
         const planet_t *p = &(g->planet[i]);
         if (1
           && (p->owner == PLAYER_NONE)
           && BOOLVEC_IS0(tbl_planet_ignore, i)
-          && (p->type >= e->have_colony_for)    /* FIXME redundant due to can_colonize test later */
           && ((g->evn.planet_orion_i != i) || (!g->evn.have_guardian))
           && (p->type >= can_colonize)
         ) {
@@ -1022,32 +1017,39 @@ static void game_ai_classic_turn_p1(struct game_s *g)
         }
     }
     for (player_id_t pi = PLAYER_0; pi < g->players; ++pi) {
-        int num_planets, num_developing_planets;
+        bool flag_send_colony;
         if (IS_HUMAN(g, pi)) {
             continue;
         }
-        ait->do_not_send_colony = false;
-        num_planets = 0;
-        num_developing_planets = 0;
-        for (int i = 0; i < g->galaxy_stars; ++i) {
-            const planet_t *p = &(g->planet[i]);
-            if (p->owner == pi) {
-                ++num_planets;
-                if ((p->missile_bases < (p->max_pop3 / 20)) && (p->pop < ((p->max_pop3 * 2) / 3))) {
-                    ++num_developing_planets;
+        flag_send_colony = true;
+        if (g->eto[pi].trait2 != TRAIT2_EXPANSIONIST) {
+            int num_planets, num_developing_planets;
+            num_planets = 0;
+            num_developing_planets = 0;
+            for (int i = 0; i < g->galaxy_stars; ++i) {
+                const planet_t *p = &(g->planet[i]);
+                if (p->owner == pi) {
+                    ++num_planets;
+                    if ((p->missile_bases < (p->max_pop3 / 20)) && (p->pop < ((p->max_pop3 * 2) / 3))) {
+                        ++num_developing_planets;
+                    }
                 }
             }
-        }
-        if (((num_planets / 2) < num_developing_planets) && BOOLVEC_IS1(g->eto[PLAYER_0].within_frange, pi)) {
-            ait->do_not_send_colony = true;
-        }
-        if (g->eto[pi].trait2 == 2) {
-            ait->do_not_send_colony = false;
+            if ((num_planets / 2) < num_developing_planets) {
+                for (player_id_t pi2 = PLAYER_0; pi2 < g->players; ++pi2) {
+                    if (IS_HUMAN(g, pi2) && BOOLVEC_IS1(g->eto[pi2].within_frange, pi)) {
+                        flag_send_colony = false;
+                        break;
+                    }
+                }
+            }
         }
         game_ai_classic_turn_p1_send_scout(g, ait, pi);
         game_ai_classic_turn_p1_front(g, ait, pi);
         if (game_ai_classic_turn_p1_spawn_colony_ship(g, ait, pi) != 0) {
-            game_ai_classic_turn_p1_send_colony_ships(g, ait, pi);
+            if (flag_send_colony) {
+                game_ai_classic_turn_p1_send_colony_ships(g, ait, pi);
+            }
         }
         game_ai_classic_turn_p1_front(g, ait, pi);
         game_ai_classic_turn_p1_planet_w(g, ait, pi);
@@ -1299,9 +1301,6 @@ static void game_ai_classic_design_ship_base(struct game_s *g, struct ai_turn_p2
     if (game_ai_classic_design_update_engines_space(&ait->gd) < space) {
         return;
     }
-    if (ait->shiptype == 0/*colony*/) { /* FIXME redundant, already returned from this function */
-        return;
-    }
     {
         const int tbl_chance[SHIP_HULL_NUM] = { 2, 8, 20, 30 };
         int v;
@@ -1310,7 +1309,6 @@ static void game_ai_classic_design_ship_base(struct game_s *g, struct ai_turn_p2
         v = game_ai_classic_design_ship_get_item(g, v, tbl_chance[hull]);
         sd->jammer = find_havebuf_item(tbl_have, v);
     }
-    /* BUG? no update_engines */
     {
         int v;
         ship_special_t st;
@@ -1326,7 +1324,6 @@ static void game_ai_classic_design_ship_base(struct game_s *g, struct ai_turn_p2
         }
         sd->special[2] = st;
     }
-    /* BUG? no update_engines */
 }
 
 static void game_ai_classic_design_ship_sub2(struct game_s *g, struct ai_turn_p2_s *ait, player_id_t pi)
@@ -1468,9 +1465,6 @@ again:
         bool flag_again, is_missile;
         weapon_t wt;
         flag_again = false;
-        if ((ait->shiptype == 0/*colony*/) && (sd->wpnn[0] == 0)/*FIXME always false*/) {
-            flag_again = true;
-        }
         wt = sd->wpnt[0];
         is_missile = tbl_shiptech_weap[wt].damagemin == tbl_shiptech_weap[wt].damagemax;
         if (is_missile || tbl_shiptech_weap[wt].is_bomb) {
