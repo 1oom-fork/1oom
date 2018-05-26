@@ -853,15 +853,15 @@ static int game_save_decode(const uint8_t *buf, int buflen, struct game_s *g)
 
 /* -------------------------------------------------------------------------- */
 
-static void game_save_make_header(uint8_t *buf, const char *savename)
+static void game_save_make_header(uint8_t *buf, const char *savename, uint32_t version)
 {
     memset(buf, 0, GAME_SAVE_HDR_SIZE);
     memcpy(buf, (const uint8_t *)GAME_SAVE_MAGIC, 8);
-    SET_LE_32(&buf[GAME_SAVE_OFFS_VERSION], GAME_SAVE_VERSION);
+    SET_LE_32(&buf[GAME_SAVE_OFFS_VERSION], version);
     strncpy((char *)&buf[GAME_SAVE_OFFS_NAME], savename, SAVE_NAME_LEN);
 }
 
-static int game_save_do_save_do(const char *filename, const char *savename, const struct game_s *g, int savei)
+static int game_save_do_save_do(const char *filename, const char *savename, const struct game_s *g, int savei, uint32_t version)
 {
     FILE *fd;
     uint8_t hdr[GAME_SAVE_HDR_SIZE];
@@ -872,8 +872,8 @@ static int game_save_do_save_do(const char *filename, const char *savename, cons
     if (os_make_path_for(filename)) {
         log_error("Save: failed to create path for '%s'\n", filename);
     }
-    game_save_make_header(hdr, savename);
-    fd = game_save_open_check_header(filename, -1, false, 0);
+    game_save_make_header(hdr, savename, version);
+    fd = game_save_open_check_header(filename, -1, false, 0, 0);
     if (fd) {
         /* file exists */
         fclose(fd);
@@ -911,8 +911,9 @@ static int game_save_do_load_do(const char *filename, struct game_s *g, int save
 {
     FILE *fd = NULL;
     int res = -1, len = 0;
+    uint32_t version;
 
-    fd = game_save_open_check_header(filename, savei, true, savename);
+    fd = game_save_open_check_header(filename, savei, true, savename, &version);
     if ((!fd) || ((len = fread(savebuf, 1, savebuflen, fd)) == 0) || (!feof(fd))) {
         log_error("Save: failed to load '%s'\n", filename);
     } else if (game_save_decode(savebuf, len, g) != 0) {
@@ -930,7 +931,7 @@ static int game_save_do_load_do(const char *filename, struct game_s *g, int save
 
 /* -------------------------------------------------------------------------- */
 
-void *game_save_open_check_header(const char *filename, int i, bool update_table, char *savename)
+void *game_save_open_check_header(const char *filename, int i, bool update_table, char *savename, uint32_t *versionptr)
 {
     uint8_t hdr[GAME_SAVE_HDR_SIZE];
     FILE *fd;
@@ -945,27 +946,36 @@ void *game_save_open_check_header(const char *filename, int i, bool update_table
         savename[0] = '\0';
     }
     fd = fopen(filename, "rb");
-    if (fd) {
-        if (1
-          && (fread(hdr, GAME_SAVE_HDR_SIZE, 1, fd) == 1)
-          && (memcmp(hdr, (const uint8_t *)GAME_SAVE_MAGIC, 8) == 0)
-          && (GET_LE_32(&hdr[GAME_SAVE_OFFS_VERSION]) == GAME_SAVE_VERSION)
-        ) {
-            if (update_table) {
-                game_save_tbl_have_save[i] = true;
-                memcpy(game_save_tbl_name[i], &hdr[GAME_SAVE_OFFS_NAME], SAVE_NAME_LEN);
-                game_save_tbl_name[i][SAVE_NAME_LEN - 1] = '\0';
-            }
-            if (savename) {
-                memcpy(savename, &hdr[GAME_SAVE_OFFS_NAME], SAVE_NAME_LEN);
-                savename[SAVE_NAME_LEN - 1] = '\0';
-            }
-        } else {
-            fclose(fd);
-            fd = NULL;
+    if (0
+      || (!fd) || (fread(hdr, GAME_SAVE_HDR_SIZE, 1, fd) != 1)
+      || (memcmp(hdr, (const uint8_t *)GAME_SAVE_MAGIC, 8) != 0)
+    ) {
+        goto fail;
+    } else {
+        uint32_t version = GET_LE_32(&hdr[GAME_SAVE_OFFS_VERSION]);
+        if (versionptr) {
+            *versionptr = version;
+        }
+        if (version > GAME_SAVE_VERSION) {
+            goto fail;
+        }
+        if (update_table) {
+            game_save_tbl_have_save[i] = true;
+            memcpy(game_save_tbl_name[i], &hdr[GAME_SAVE_OFFS_NAME], SAVE_NAME_LEN);
+            game_save_tbl_name[i][SAVE_NAME_LEN - 1] = '\0';
+        }
+        if (savename) {
+            memcpy(savename, &hdr[GAME_SAVE_OFFS_NAME], SAVE_NAME_LEN);
+            savename[SAVE_NAME_LEN - 1] = '\0';
         }
     }
     return fd;
+fail:
+    if (fd) {
+        fclose(fd);
+        fd = NULL;
+    }
+    return NULL;
 }
 
 const char *libsave_select_slot_fname(int i)
@@ -990,7 +1000,7 @@ int libsave_check_saves(void)
 
     for (int i = 0; i < NUM_ALL_SAVES; ++i) {
         const char *fname = libsave_select_slot_fname(i);
-        fd = game_save_open_check_header(fname, i, true, 0);
+        fd = game_save_open_check_header(fname, i, true, 0, 0);
         if (fd) {
             fclose(fd);
         }
@@ -1003,9 +1013,13 @@ int game_save_do_load_fname(const char *filename, char *savename, struct game_s 
     return game_save_do_load_do(filename, g, -1, savename);
 }
 
-int game_save_do_save_fname(const char *filename, const char *savename, const struct game_s *g)
+int game_save_do_save_fname(const char *filename, const char *savename, const struct game_s *g, uint32_t version)
 {
-    return game_save_do_save_do(filename, savename, g, -1);
+    if (version > GAME_SAVE_VERSION) {
+        log_error("Save: BUG: invalid version %i > %i\n", version, GAME_SAVE_VERSION);
+        return -1;
+    }
+    return game_save_do_save_do(filename, savename, g, -1, version);
 }
 
 int game_save_do_load_i(int savei, struct game_s *g)
@@ -1024,6 +1038,6 @@ int game_save_do_save_i(int savei, const char *savename, const struct game_s *g)
         log_error("Save: failed to create user path '%s'\n", os_get_path_user());
     }
     filename = libsave_select_slot_fname(savei);
-    res = game_save_do_save_do(filename, savename, g, savei);
+    res = game_save_do_save_do(filename, savename, g, savei, GAME_SAVE_VERSION);
     return res;
 }
