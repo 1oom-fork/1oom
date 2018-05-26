@@ -1334,7 +1334,7 @@ static void game_ai_classic_design_ship_sub2(struct game_s *g, struct ai_turn_p2
     }
 }
 
-static void game_ai_classic_design_ship_sub3_do(struct game_s *g, struct ai_turn_p2_s *ait, player_id_t pi, int sloti, int numshots_ignore, int c1, int c2)
+static void game_ai_classic_design_ship_weapon(struct game_s *g, struct ai_turn_p2_s *ait, player_id_t pi, int sloti, int numshots_ignore, int c1, int c2)
 {
     int8_t tbl_have[WEAPON_NUM];
     shipdesign_t *sd = &(ait->gd.sd);
@@ -1400,7 +1400,7 @@ static void game_ai_classic_design_ship_weapons(struct game_s *g, struct ai_turn
             { 70, 70, 100, 100 },
             { 60, 60, 80, 100 }
         };
-        game_ai_classic_design_ship_sub3_do(g, ait, pi, i, numshots_ignore, tbl_c1[weapnum - 1][i], tbl_c2[weapnum - 1][i]);
+        game_ai_classic_design_ship_weapon(g, ait, pi, i, numshots_ignore, tbl_c1[weapnum - 1][i], tbl_c2[weapnum - 1][i]);
     }
 }
 
