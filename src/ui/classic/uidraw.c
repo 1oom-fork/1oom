@@ -330,7 +330,7 @@ void ui_draw_line_limit_ctbl(int x0, int y0, int x1, int y1, const uint8_t *colo
     ui_draw_line_limit_do(x0, y0, x1, y1, 0, colortbl, colornum, pos);
 }
 
-void ui_draw_line_3h(int x0, int y0, int x1, uint8_t color)
+void ui_draw_slider(int x0, int y0, int x1, uint8_t color)
 {
     for (int i = 0; i < 3; ++i, ++y0) {
         ui_draw_line1(x0, y0, x1, y0, color);
