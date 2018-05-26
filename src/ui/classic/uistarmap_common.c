@@ -775,3 +775,13 @@ int ui_starmap_newship_prev(const struct game_s *g, player_id_t pi, int i)
     return i;
 }
 
+void ui_starmap_scroll(const struct game_s *g, int scrollx, int scrolly)
+{
+    int x, y;
+    x = ui_data.starmap.x + scrollx - 54;
+    y = ui_data.starmap.y + scrolly - 43;
+    SETRANGE(x, 0, g->galaxy_maxx - 108);
+    SETRANGE(y, 0, g->galaxy_maxy - 86);
+    ui_data.starmap.x2 = x;
+    ui_data.starmap.y2 = y;
+}
