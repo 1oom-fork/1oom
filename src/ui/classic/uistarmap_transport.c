@@ -243,13 +243,7 @@ void ui_starmap_transport(struct game_s *g, player_id_t active_player)
             }
         }
         if (oi1 == oi_scroll) {
-            int x, y;
-            x = ui_data.starmap.x + scrollx - 54;
-            y = ui_data.starmap.y + scrolly - 43;
-            SETRANGE(x, 0, g->galaxy_maxx - 108);
-            SETRANGE(y, 0, g->galaxy_maxy - 86);
-            ui_data.starmap.x2 = x;
-            ui_data.starmap.y2 = y;
+            ui_starmap_scroll(g, scrollx, scrolly);
         }
         ui_starmap_handle_oi_ctrl(&d, oi1);
         for (int i = 0; i < g->galaxy_stars; ++i) {
