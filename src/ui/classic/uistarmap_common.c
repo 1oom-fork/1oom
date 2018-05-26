@@ -331,19 +331,23 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
     lbxgfx_draw_frame(0, 0, ui_data.gfx.starmap.mainview, UI_SCREEN_W, ui_scale);
     uiobj_set_limits(STARMAP_LIMITS);
     {
-        int x0, y0, x1, y1;
+        int x0, y0, x1, y1, lx, ly;
         x0 = (-x / 4) + 6;
         y0 = (-y / 4) + 6;
         x1 = ((-x + 1) / 2) + 6;
         y1 = ((-y + 1) / 2) + 6;
-        lbxgfx_draw_frame_offs(x0, y0, ui_data.gfx.starmap.starback, STARMAP_LIMITS, UI_SCREEN_W, 1);
-        lbxgfx_draw_frame_offs(x0 + 320, y0, ui_data.gfx.starmap.starback, STARMAP_LIMITS, UI_SCREEN_W, 1);
-        lbxgfx_draw_frame_offs(x0, y0 + 200, ui_data.gfx.starmap.starback, STARMAP_LIMITS, UI_SCREEN_W, 1);
-        lbxgfx_draw_frame_offs(x0 + 320, y0 + 200, ui_data.gfx.starmap.starback, STARMAP_LIMITS, UI_SCREEN_W, 1);
-        lbxgfx_draw_frame_offs(x1, y1, ui_data.gfx.starmap.starbak2, STARMAP_LIMITS, UI_SCREEN_W, 1);
-        lbxgfx_draw_frame_offs(x1 + 320, y1, ui_data.gfx.starmap.starbak2, STARMAP_LIMITS, UI_SCREEN_W, 1);
-        lbxgfx_draw_frame_offs(x1, y1 + 200, ui_data.gfx.starmap.starbak2, STARMAP_LIMITS, UI_SCREEN_W, 1);
-        lbxgfx_draw_frame_offs(x1 + 320, y1 + 200, ui_data.gfx.starmap.starbak2, STARMAP_LIMITS, UI_SCREEN_W, 1);
+        lx = 222 * ui_scale - 1;
+        ly = 178 * ui_scale - 1;
+        for (int yb = y0; yb < ly; yb += 200) {
+            for (int xb = x0; xb < lx; xb += 320) {
+                lbxgfx_draw_frame_offs(xb, yb, ui_data.gfx.starmap.starback, STARMAP_LIMITS, UI_SCREEN_W, 1);
+            }
+        }
+        for (int yb = y1; yb < ly; yb += 200) {
+            for (int xb = x1; xb < lx; xb += 320) {
+                lbxgfx_draw_frame_offs(xb, yb, ui_data.gfx.starmap.starbak2, STARMAP_LIMITS, UI_SCREEN_W, 1);
+            }
+        }
     }
     for (int i = 0; i < g->nebula_num; ++i) {
         int tx, ty;
@@ -799,3 +803,13 @@ int ui_starmap_newship_prev(const struct game_s *g, player_id_t pi, int i)
     return i;
 }
 
+void ui_starmap_scroll(const struct game_s *g, int scrollx, int scrolly)
+{
+    int x, y;
+    x = ui_data.starmap.x + scrollx - 54;
+    y = ui_data.starmap.y + scrolly - 43;
+    SETRANGE(x, 0, g->galaxy_maxx - (108 * ui_scale));
+    SETRANGE(y, 0, g->galaxy_maxy - (86 * ui_scale));
+    ui_data.starmap.x2 = x;
+    ui_data.starmap.y2 = y;
+}
