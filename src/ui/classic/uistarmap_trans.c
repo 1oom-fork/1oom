@@ -137,7 +137,7 @@ static void ui_starmap_trans_draw_cb(void *vptr)
             lbxfont_print_num_right(273, 137, d->tr.num, UI_SCREEN_W, ui_scale);
             ui_draw_filled_rect(258, 127, 299, 129, 0x2f, ui_scale);
             if (d->tr.num > 0) {
-                ui_draw_line_3h(258, 127, 258 + (d->tr.num * 40) / trans_max, 0x73, ui_scale);
+                ui_draw_slider(258, 127, d->tr.num * 40, trans_max, 0, 0x73, ui_scale);
             }
         }
     } else {

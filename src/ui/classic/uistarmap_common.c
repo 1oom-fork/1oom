@@ -154,7 +154,7 @@ static void ui_starmap_draw_sliders_and_prod(struct starmap_data_s *d)
     for (planet_slider_i_t i = PLANET_SLIDER_SHIP; i < PLANET_SLIDER_NUM; ++i) {
         ui_draw_filled_rect(253, 84 + 11 * i, 278, 84 + 11 * i + 3, 0x2f, ui_scale);
         if (p->slider[i] != 0) {
-            ui_draw_line_3h(253, 84 + 11 * i + 1, 252 + p->slider[i] / 4, p->slider_lock[i] ? 0x22 : 0x73, ui_scale);
+            ui_draw_slider(253, 84 + 11 * i + 1, p->slider[i], 4, -1, p->slider_lock[i] ? 0x22 : 0x73, ui_scale);
         }
     }
 
