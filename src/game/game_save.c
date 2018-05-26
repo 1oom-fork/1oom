@@ -58,7 +58,7 @@ char game_save_tbl_name[NUM_ALL_SAVES][SAVE_NAME_LEN];
 #define SG_1OOM_EN_TBL_TBL_U32(_v_, _no_, _ni_)  do { for (int o_ = 0; o_ < (_no_); ++o_) { for (int i_ = 0; i_ < (_ni_); ++i_) { SET_LE_32(&buf[pos], (_v_)[o_][i_]); pos += 4; } } } while (0)
 #define SG_1OOM_DE_TBL_TBL_U32(_v_, _no_, _ni_)  do { for (int o_ = 0; o_ < (_no_); ++o_) { for (int i_ = 0; i_ < (_ni_); ++i_) { (_v_)[o_][i_] = GET_LE_32(&buf[pos]); pos += 4; } } } while (0)
 
-static int game_save_encode_planet(uint8_t *buf, int pos, const planet_t *p, uint8_t pnum)
+static int game_save_encode_planet(uint8_t *buf, int pos, const planet_t *p, uint8_t pnum, uint32_t version)
 {
     SG_1OOM_EN_TBL_U8(p->name, PLANET_NAME_LEN);
     SG_1OOM_EN_U16(p->x);
@@ -111,7 +111,7 @@ static int game_save_encode_planet(uint8_t *buf, int pos, const planet_t *p, uin
     return pos;
 }
 
-static int game_save_decode_planet(const uint8_t *buf, int pos, planet_t *p, uint8_t pnum)
+static int game_save_decode_planet(const uint8_t *buf, int pos, planet_t *p, uint8_t pnum, uint32_t version)
 {
     SG_1OOM_DE_TBL_U8(p->name, PLANET_NAME_LEN);
     SG_1OOM_DE_U16(p->x);
@@ -245,7 +245,7 @@ static int game_save_decode_orbits(const uint8_t *buf, int pos, fleet_orbit_t *o
     return -1;
 }
 
-static int game_save_encode_eto(uint8_t *buf, int pos, const empiretechorbit_t *e, uint8_t pnum, int planets)
+static int game_save_encode_eto(uint8_t *buf, int pos, const empiretechorbit_t *e, uint8_t pnum, int planets, uint32_t version)
 {
     SG_1OOM_EN_U8(e->race);
     SG_1OOM_EN_U8(e->banner);
@@ -309,7 +309,7 @@ static int game_save_encode_eto(uint8_t *buf, int pos, const empiretechorbit_t *
     return pos;
 }
 
-static int game_save_decode_eto(const uint8_t *buf, int pos, empiretechorbit_t *e, uint8_t pnum, int planets)
+static int game_save_decode_eto(const uint8_t *buf, int pos, empiretechorbit_t *e, uint8_t pnum, int planets, uint32_t version)
 {
     SG_1OOM_DE_U8(e->race);
     SG_1OOM_DE_U8(e->banner);
@@ -422,7 +422,7 @@ static int game_save_decode_sd(const uint8_t *buf, int pos, shipdesign_t *sd)
     return pos;
 }
 
-static int game_save_encode_srd(uint8_t *buf, int pos, const shipresearch_t *srd, int sdnum)
+static int game_save_encode_srd(uint8_t *buf, int pos, const shipresearch_t *srd, int sdnum, uint32_t version)
 {
     for (int i = 0; i < sdnum; ++i) {
         pos = game_save_encode_sd(buf, pos, &(srd->design[i]));
@@ -437,7 +437,7 @@ static int game_save_encode_srd(uint8_t *buf, int pos, const shipresearch_t *srd
     return pos;
 }
 
-static int game_save_decode_srd(const uint8_t *buf, int pos, shipresearch_t *srd, int sdnum)
+static int game_save_decode_srd(const uint8_t *buf, int pos, shipresearch_t *srd, int sdnum, uint32_t version)
 {
     for (int i = 0; i < sdnum; ++i) {
         pos = game_save_decode_sd(buf, pos, &(srd->design[i]));
@@ -476,7 +476,7 @@ static int game_save_decode_monster(const uint8_t *buf, int pos, monster_t *m)
     return pos;
 }
 
-static int game_save_encode_evn(uint8_t *buf, int pos, const gameevents_t *ev, uint8_t pnum)
+static int game_save_encode_evn(uint8_t *buf, int pos, const gameevents_t *ev, uint8_t pnum, uint32_t version)
 {
     SG_1OOM_EN_U16(ev->year);
     SG_1OOM_EN_BV(ev->done, GAME_EVENT_TBL_NUM);
@@ -523,7 +523,7 @@ static int game_save_encode_evn(uint8_t *buf, int pos, const gameevents_t *ev, u
     return pos;
 }
 
-static int game_save_decode_evn(const uint8_t *buf, int pos, gameevents_t *ev, uint8_t pnum)
+static int game_save_decode_evn(const uint8_t *buf, int pos, gameevents_t *ev, uint8_t pnum, uint32_t version)
 {
     SG_1OOM_DE_U16(ev->year);
     SG_1OOM_DE_BV(ev->done, GAME_EVENT_TBL_NUM);
@@ -570,7 +570,7 @@ static int game_save_decode_evn(const uint8_t *buf, int pos, gameevents_t *ev, u
     return pos;
 }
 
-static int game_save_encode(uint8_t *buf, int buflen, const struct game_s *g)
+static int game_save_encode(uint8_t *buf, int buflen, const struct game_s *g, uint32_t version)
 {
     int pos = 0;
     if (buflen < sizeof(*g)) {
@@ -608,7 +608,7 @@ static int game_save_encode(uint8_t *buf, int buflen, const struct game_s *g)
     SG_1OOM_EN_TBL_TBL_U8(g->emperor_names, g->players, EMPEROR_NAME_LEN);
     SG_1OOM_EN_TBL_U8(g->planet_focus_i, g->players);
     for (int i = 0; i < g->galaxy_stars; ++i) {
-        pos = game_save_encode_planet(buf, pos, &(g->planet[i]), g->players);
+        pos = game_save_encode_planet(buf, pos, &(g->planet[i]), g->players, version);
     }
     for (player_id_t j = PLAYER_0; j < g->players; ++j) {
         for (int i = 0; i < g->galaxy_stars; ++i) {
@@ -626,20 +626,20 @@ static int game_save_encode(uint8_t *buf, int buflen, const struct game_s *g)
         pos = game_save_encode_transport(buf, pos, &(g->transport[i]));
     }
     for (player_id_t i = PLAYER_0; i < g->players; ++i) {
-        pos = game_save_encode_eto(buf, pos, &(g->eto[i]), g->players, g->galaxy_stars);
+        pos = game_save_encode_eto(buf, pos, &(g->eto[i]), g->players, g->galaxy_stars, version);
     }
     for (player_id_t i = PLAYER_0; i < g->players; ++i) {
-        pos = game_save_encode_srd(buf, pos, &(g->srd[i]), g->eto[i].shipdesigns_num);
+        pos = game_save_encode_srd(buf, pos, &(g->srd[i]), g->eto[i].shipdesigns_num, version);
     }
     for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         pos = game_save_encode_sd(buf, pos, &(g->current_design[i]));
     }
-    pos = game_save_encode_evn(buf, pos, &(g->evn), g->players);
+    pos = game_save_encode_evn(buf, pos, &(g->evn), g->players, version);
     SG_1OOM_EN_U32(GAME_SAVE_END);
     return pos;
 }
 
-static int game_save_decode(const uint8_t *buf, int buflen, struct game_s *g)
+static int game_save_decode(const uint8_t *buf, int buflen, struct game_s *g, uint32_t version)
 {
     int pos = 0;
     if (buflen < 512) {
@@ -714,7 +714,7 @@ static int game_save_decode(const uint8_t *buf, int buflen, struct game_s *g)
     SG_1OOM_DE_TBL_TBL_U8(g->emperor_names, g->players, EMPEROR_NAME_LEN);
     SG_1OOM_DE_TBL_U8(g->planet_focus_i, g->players);
     for (int i = 0; i < g->galaxy_stars; ++i) {
-        pos = game_save_decode_planet(buf, pos, &(g->planet[i]), g->players);
+        pos = game_save_decode_planet(buf, pos, &(g->planet[i]), g->players, version);
     }
     for (player_id_t j = PLAYER_0; j < g->players; ++j) {
         for (int i = 0; i < g->galaxy_stars; ++i) {
@@ -732,18 +732,18 @@ static int game_save_decode(const uint8_t *buf, int buflen, struct game_s *g)
         pos = game_save_decode_transport(buf, pos, &(g->transport[i]));
     }
     for (player_id_t i = PLAYER_0; i < g->players; ++i) {
-        pos = game_save_decode_eto(buf, pos, &(g->eto[i]), g->players, g->galaxy_stars);
+        pos = game_save_decode_eto(buf, pos, &(g->eto[i]), g->players, g->galaxy_stars, version);
         if (pos < 0) {
             return -1;
         }
     }
     for (player_id_t i = PLAYER_0; i < g->players; ++i) {
-        pos = game_save_decode_srd(buf, pos, &(g->srd[i]), g->eto[i].shipdesigns_num);
+        pos = game_save_decode_srd(buf, pos, &(g->srd[i]), g->eto[i].shipdesigns_num, version);
     }
     for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         pos = game_save_decode_sd(buf, pos, &(g->current_design[i]));
     }
-    pos = game_save_decode_evn(buf, pos, &(g->evn), g->players);
+    pos = game_save_decode_evn(buf, pos, &(g->evn), g->players, version);
     {
         uint32_t v;
         SG_1OOM_DE_U32(v);
@@ -765,27 +765,27 @@ static int game_save_decode(const uint8_t *buf, int buflen, struct game_s *g)
 
 /* -------------------------------------------------------------------------- */
 
-static void game_save_make_header(uint8_t *buf, const char *savename)
+static void game_save_make_header(uint8_t *buf, const char *savename, uint32_t version)
 {
     memset(buf, 0, GAME_SAVE_HDR_SIZE);
     memcpy(buf, (const uint8_t *)GAME_SAVE_MAGIC, 8);
-    SET_LE_32(&buf[GAME_SAVE_OFFS_VERSION], GAME_SAVE_VERSION);
+    SET_LE_32(&buf[GAME_SAVE_OFFS_VERSION], version);
     strncpy((char *)&buf[GAME_SAVE_OFFS_NAME], savename, SAVE_NAME_LEN);
 }
 
-static int game_save_do_save_do(const char *filename, const char *savename, const struct game_s *g, int savei)
+static int game_save_do_save_do(const char *filename, const char *savename, const struct game_s *g, int savei, uint32_t version)
 {
     FILE *fd;
     uint8_t hdr[GAME_SAVE_HDR_SIZE];
     int res = -1, len;
-    if ((len = game_save_encode(g->gaux->savebuf, g->gaux->savebuflen, g)) <= 0) {
+    if ((len = game_save_encode(g->gaux->savebuf, g->gaux->savebuflen, g, version)) <= 0) {
         return -1;
     }
     if (os_make_path_for(filename)) {
         log_error("Save: failed to create path for '%s'\n", filename);
     }
-    game_save_make_header(hdr, savename);
-    fd = game_save_open_check_header(filename, -1, false, 0);
+    game_save_make_header(hdr, savename, version);
+    fd = game_save_open_check_header(filename, -1, false, 0, 0);
     if (fd) {
         /* file exists */
         fclose(fd);
@@ -823,11 +823,12 @@ static int game_save_do_load_do(const char *filename, struct game_s *g, int save
 {
     FILE *fd = NULL;
     int res = -1, len = 0;
+    uint32_t version;
 
-    fd = game_save_open_check_header(filename, savei, true, savename);
+    fd = game_save_open_check_header(filename, savei, true, savename, &version);
     if ((!fd) || ((len = fread(g->gaux->savebuf, 1, g->gaux->savebuflen, fd)) == 0) || (!feof(fd))) {
         log_error("Save: failed to load '%s'\n", filename);
-    } else if (game_save_decode(g->gaux->savebuf, len, g) != 0) {
+    } else if (game_save_decode(g->gaux->savebuf, len, g, version) != 0) {
         log_error("Save: invalid data on load '%s'\n", filename);
     } else {
         log_message("Save: load '%s'\n", filename);
@@ -842,7 +843,7 @@ static int game_save_do_load_do(const char *filename, struct game_s *g, int save
 
 /* -------------------------------------------------------------------------- */
 
-void *game_save_open_check_header(const char *filename, int i, bool update_table, char *savename)
+void *game_save_open_check_header(const char *filename, int i, bool update_table, char *savename, uint32_t *versionptr)
 {
     uint8_t hdr[GAME_SAVE_HDR_SIZE];
     FILE *fd;
@@ -857,27 +858,36 @@ void *game_save_open_check_header(const char *filename, int i, bool update_table
         savename[0] = '\0';
     }
     fd = fopen(filename, "rb");
-    if (fd) {
-        if (1
-          && (fread(hdr, GAME_SAVE_HDR_SIZE, 1, fd) == 1)
-          && (memcmp(hdr, (const uint8_t *)GAME_SAVE_MAGIC, 8) == 0)
-          && (GET_LE_32(&hdr[GAME_SAVE_OFFS_VERSION]) == GAME_SAVE_VERSION)
-        ) {
-            if (update_table) {
-                game_save_tbl_have_save[i] = true;
-                memcpy(game_save_tbl_name[i], &hdr[GAME_SAVE_OFFS_NAME], SAVE_NAME_LEN);
-                game_save_tbl_name[i][SAVE_NAME_LEN - 1] = '\0';
-            }
-            if (savename) {
-                memcpy(savename, &hdr[GAME_SAVE_OFFS_NAME], SAVE_NAME_LEN);
-                savename[SAVE_NAME_LEN - 1] = '\0';
-            }
-        } else {
-            fclose(fd);
-            fd = NULL;
+    if (0
+      || (!fd) || (fread(hdr, GAME_SAVE_HDR_SIZE, 1, fd) != 1)
+      || (memcmp(hdr, (const uint8_t *)GAME_SAVE_MAGIC, 8) != 0)
+    ) {
+        goto fail;
+    } else {
+        uint32_t version = GET_LE_32(&hdr[GAME_SAVE_OFFS_VERSION]);
+        if (versionptr) {
+            *versionptr = version;
+        }
+        if (version > GAME_SAVE_VERSION) {
+            goto fail;
+        }
+        if (update_table) {
+            game_save_tbl_have_save[i] = true;
+            memcpy(game_save_tbl_name[i], &hdr[GAME_SAVE_OFFS_NAME], SAVE_NAME_LEN);
+            game_save_tbl_name[i][SAVE_NAME_LEN - 1] = '\0';
+        }
+        if (savename) {
+            memcpy(savename, &hdr[GAME_SAVE_OFFS_NAME], SAVE_NAME_LEN);
+            savename[SAVE_NAME_LEN - 1] = '\0';
         }
     }
     return fd;
+fail:
+    if (fd) {
+        fclose(fd);
+        fd = NULL;
+    }
+    return NULL;
 }
 
 int game_save_get_slot_fname(char *buf, int buflen, int i)
@@ -902,7 +912,7 @@ int game_save_check_saves(char *fnamebuf, int buflen)
 
     for (int i = 0; i < NUM_ALL_SAVES; ++i) {
         game_save_get_slot_fname(fnamebuf, buflen, i);
-        fd = game_save_open_check_header(fnamebuf, i, true, 0);
+        fd = game_save_open_check_header(fnamebuf, i, true, 0, 0);
         if (fd) {
             fclose(fd);
         }
@@ -915,9 +925,13 @@ int game_save_do_load_fname(const char *filename, char *savename, struct game_s 
     return game_save_do_load_do(filename, g, -1, savename);
 }
 
-int game_save_do_save_fname(const char *filename, const char *savename, const struct game_s *g)
+int game_save_do_save_fname(const char *filename, const char *savename, const struct game_s *g, uint32_t version)
 {
-    return game_save_do_save_do(filename, savename, g, -1);
+    if (version > GAME_SAVE_VERSION) {
+        log_error("Save: BUG: invalid version %i > %i\n", version, GAME_SAVE_VERSION);
+        return -1;
+    }
+    return game_save_do_save_do(filename, savename, g, -1, version);
 }
 
 int game_save_do_load_i(int savei, struct game_s *g)
@@ -937,6 +951,6 @@ int game_save_do_save_i(int savei, const char *savename, const struct game_s *g)
         log_error("Save: failed to create user path '%s'\n", os_get_path_user());
     }
     game_save_get_slot_fname(filename, g->gaux->savenamebuflen, savei);
-    res = game_save_do_save_do(filename, savename, g, savei);
+    res = game_save_do_save_do(filename, savename, g, savei, GAME_SAVE_VERSION);
     return res;
 }

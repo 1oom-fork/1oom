@@ -135,7 +135,7 @@ static int savetype_de_smart(struct game_s *g, const char *fname)
     }
     fclose(fd);
     fd = NULL;
-    if ((fd = game_save_open_check_header(fname, -1, false, 0)) != 0) {
+    if ((fd = game_save_open_check_header(fname, -1, false, 0, 0)) != 0) {
         fclose(fd);
         fd = NULL;
         savetypei = SAVETYPE_NATIVE;
