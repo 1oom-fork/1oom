@@ -23,7 +23,7 @@ extern void ui_draw_line1(int x0, int y0, int x1, int y1, uint8_t color);
 extern void ui_draw_line_ctbl(int x0, int y0, int x1, int y1, const uint8_t *colortbl, int colornum, int pos);
 extern void ui_draw_line_limit(int x0, int y0, int x1, int y1, uint8_t color);
 extern void ui_draw_line_limit_ctbl(int x0, int y0, int x1, int y1, const uint8_t *colortbl, int colornum, int pos);
-extern void ui_draw_line_3h(int x0, int y0, int x1, uint8_t color);
+extern void ui_draw_slider(int x0, int y0, int x1, uint8_t color);
 extern void ui_draw_box1(int x0, int y0, int x1, int y1, uint8_t color1, uint8_t color2);
 extern void ui_draw_box2(int x0, int y0, int x1, int y1, uint8_t color1, uint8_t color2, uint8_t color3, uint8_t color4);
 extern void ui_draw_copy_line(int x0, int y0, int x1, int y1, bool flag_hmm);
