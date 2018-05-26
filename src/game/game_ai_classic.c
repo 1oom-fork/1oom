@@ -35,7 +35,7 @@
 /* -------------------------------------------------------------------------- */
 
 struct ai_turn_p1_s {
-    bool hmm4;
+    bool do_not_send_colony;
     bool hmm5;
     bool hmm6;
     uint16_t tbl_shipthreat[PLAYER_NUM + 1][NUM_SHIPDESIGNS];
@@ -416,7 +416,7 @@ static void game_ai_classic_turn_p1_send_colony_ships(struct game_s *g, struct a
     shipcount_t tbl_orbit[PLANETS_MAX];
     BOOLVEC_DECLARE(tbl_planet_ignore, PLANETS_MAX);
 
-    if (ait->hmm4) {
+    if (ait->do_not_send_colony) {
         return;
     }
     for (int i = 0; i < g->galaxy_stars; ++i) {
@@ -1006,7 +1006,7 @@ static void game_ai_classic_turn_p1(struct game_s *g)
         if (IS_HUMAN(g, pi)) {
             continue;
         }
-        ait->hmm4 = false;
+        ait->do_not_send_colony = false;
         num_planets = 0;
         num_developing_planets = 0;
         for (int i = 0; i < g->galaxy_stars; ++i) {
@@ -1019,10 +1019,10 @@ static void game_ai_classic_turn_p1(struct game_s *g)
             }
         }
         if (((num_planets / 2) < num_developing_planets) && BOOLVEC_IS1(g->eto[PLAYER_0].within_frange, pi)) {
-            ait->hmm4 = true;
+            ait->do_not_send_colony = true;
         }
         if (g->eto[pi].trait2 == 2) {
-            ait->hmm4 = false;
+            ait->do_not_send_colony = false;
         }
         game_ai_classic_turn_p1_send_scout(g, ait, pi);
         game_ai_classic_turn_p1_sub2(g, ait, pi);
