@@ -2192,7 +2192,7 @@ int saveconv_de_1oom0(struct game_s *g, const char *fname)
 int saveconv_en_1oom0(struct game_s *g, const char *fname)
 {
     LOG_DEBUG((2, "%s: '%s'\n", __func__, fname ? fname : "(null)"));
-    return game_save_do_save_fname(fname, savename, g);
+    return game_save_do_save_fname(fname, savename, g, 0);
 }
 
 /* -------------------------------------------------------------------------- */
