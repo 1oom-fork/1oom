@@ -80,7 +80,7 @@ static void races_draw_cb(void *vptr)
         int v;
         ui_draw_filled_rect(238, 141, 283, 144, 0);
         if (e->security) {
-            ui_draw_line_3h(238, 142, 237 + (e->security * 9) / 40, 0x73);
+            ui_draw_slider(238, 142, 237 + (e->security * 9) / 40, 0x73);
         }
         v = (e->security / 5);
         if (e->race == RACE_DARLOK) {
@@ -147,7 +147,7 @@ static void races_draw_cb(void *vptr)
                v3 /= 2;
             }
             if (spying != 0) {
-                ui_draw_line_3h(x + 103, y + 45, x + 102 + spying / 4, 0x73);
+                ui_draw_slider(x + 103, y + 45, x + 102 + spying / 4, 0x73);
             }
             if (spies == 0) {
                 strcpy(buf, game_str_ra_nospies);
