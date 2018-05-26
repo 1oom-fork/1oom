@@ -407,7 +407,7 @@ static void game_turn_fleet_send(struct game_s *g, struct ai_turn_p1_s *ait, pla
     BOOLVEC_CLEAR(o->visible, NUM_SHIPDESIGNS); /* FIXME if above fixed */
 }
 
-static void game_ai_classic_turn_p1_sub4(struct game_s *g, struct ai_turn_p1_s *ait, player_id_t pi)
+static void game_ai_classic_turn_p1_send_colony_ships(struct game_s *g, struct ai_turn_p1_s *ait, player_id_t pi)
 {
     empiretechorbit_t *e = &(g->eto[pi]);
     planet_type_t can_colonize = PLANET_TYPE_MINIMAL;
@@ -1027,7 +1027,7 @@ static void game_ai_classic_turn_p1(struct game_s *g)
         game_ai_classic_turn_p1_send_scout(g, ait, pi);
         game_ai_classic_turn_p1_sub2(g, ait, pi);
         if (game_ai_classic_turn_p1_sub3(g, ait, pi) != 0) {
-            game_ai_classic_turn_p1_sub4(g, ait, pi);
+            game_ai_classic_turn_p1_send_colony_ships(g, ait, pi);
         }
         game_ai_classic_turn_p1_sub2(g, ait, pi);
         game_ai_classic_turn_p1_sub5(g, ait, pi);
