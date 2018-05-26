@@ -143,7 +143,7 @@ static void tech_draw_cb(void *vptr)
         y = 21 * i + 24;
         ui_draw_filled_rect(227, y, 277, y + 3, 0x2f);
         if (t->slider) {
-            ui_draw_line_3h(227, y + 1, 226 + t->slider[i] / 2, t->slider_lock[i] ? 0x22 : 0x73);
+            ui_draw_slider(227, y + 1, 226 + t->slider[i] / 2, t->slider_lock[i] ? 0x22 : 0x73);
         }
         lbxfont_select(0, 6, 0, 0);
         lbxfont_set_color_c_n(0x26, 5);
