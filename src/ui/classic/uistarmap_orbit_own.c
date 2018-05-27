@@ -356,7 +356,11 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
             ui_starmap_set_pos_focus(g, active_player);
             d.from = i;
             ui_sound_play_sfx_24();
-            ui_data.starmap.orbit_player = active_player;
+            if (BOOLVEC_IS1(g->eto[active_player].orbit[i].visible, active_player)) {
+                ui_data.starmap.orbit_player = active_player;
+            } else {
+                ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
+            }
             flag_done = true;
         } else if (oi1 == oi_f7) {
             int i;
@@ -365,7 +369,11 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
             ui_starmap_set_pos_focus(g, active_player);
             d.from = i;
             ui_sound_play_sfx_24();
-            ui_data.starmap.orbit_player = active_player;
+            if (BOOLVEC_IS1(g->eto[active_player].orbit[i].visible, active_player)) {
+                ui_data.starmap.orbit_player = active_player;
+            } else {
+                ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
+            }
             flag_done = true;
         }
         for (int i = 0; i < g->enroute_num; ++i) {
