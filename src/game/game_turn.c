@@ -589,15 +589,17 @@ static void game_turn_build_ship(struct game_s *g)
                     shipnum = game_num_limit_ships_all - srd->shipcount[si];
                 }
                 SETMAX(shipnum, 0);
-                srd->shipcount[si] += shipnum;
-                dest = p->reloc;
-                if (dest == i) {
-                    e->orbit[i].ships[si] += shipnum;
-                    BOOLVEC_SET1(p->finished, FINISHED_SHIP);
-                } else {
-                    game_send_fleet_reloc(g, owner, i, dest, si, shipnum);
+                if (shipnum > 0) {
+                    srd->shipcount[si] += shipnum;
+                    dest = p->reloc;
+                    if (dest == i) {
+                        e->orbit[i].ships[si] += shipnum;
+                        BOOLVEC_SET1(p->finished, FINISHED_SHIP);
+                    } else {
+                        game_send_fleet_reloc(g, owner, i, dest, si, shipnum);
+                    }
+                    g->evn.new_ships[owner][si] += shipnum;
                 }
-                g->evn.new_ships[owner][si] += shipnum;
                 p->bc_to_ship = prod;
             }
         }
