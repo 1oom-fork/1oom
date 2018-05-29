@@ -4,6 +4,8 @@
 #include "types.h"
 
 extern bool hw_mouse_enabled;
+extern int hw_mouse_w;
+extern int hw_mouse_h;
 
 extern void hw_mouse_grab(void);
 extern void hw_mouse_ungrab(void);
@@ -11,7 +13,7 @@ extern void hw_mouse_toggle_grab(void);
 
 extern void hw_mouse_set_limits(int w, int h);
 
-extern void hw_mouse_set(int x, int y);
+extern void hw_mouse_move(int dx, int dy);
 extern void hw_mouse_buttons(int state);
 
 #endif
