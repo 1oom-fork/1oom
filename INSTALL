@@ -140,16 +140,13 @@ Get allegro-4.2.3.1.tar.gz from http://liballeg.org/
 "Fix" it for djgpp:
     ./fix.sh djgpp
 
-Apply patch:
-    patch -p1 < /path/to/1oom/doc/ext/allegro-4.2.3.1-modern-xmake.patch
+Apply patches:
+    patch -p1 < /path/to/1oom/doc/ext/allegro-4.2.3.1-p1-modern-xmake.patch
+    patch -p1 < /path/to/1oom/doc/ext/allegro-4.2.3.1-p2-remove-mouse-cursor.patch
+    patch -p1 < /path/to/1oom/doc/ext/allegro-4.2.3.1-p3-disable-unused.patch
 
 Edit xmake.sh and check that the paths and compiler name are correct.
     ./xmake.sh
-
-The compile may stop with this error:
-make: *** No rule to make target 'examples/ex12bit.exe', needed by 'examples'.  Stop.
-We do not care about the examples. We want lib/djgpp/liballeg.a;
-if that exists then we just move on.
 
 Copy the header files to the cross compiler:
     cp -r include/* /opt/djgpp/i586-pc-msdosdjgpp/include
