@@ -39,9 +39,9 @@ void hw_mouse_toggle_grab(void)
     }
 }
 
-void hw_mouse_set(int x, int y)
+void hw_mouse_move(int dx, int dy)
 {
-    mouse_set_xy_from_hw(x, y);
+    mouse_set_xy_from_hw(moouse_x + dx, moouse_y + dy);
 }
 
 void hw_mouse_buttons(int state)
