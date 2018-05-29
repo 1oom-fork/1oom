@@ -1,4 +1,4 @@
-From 64575ae6f69a5463e3fc88c605d3356ffeed3db8 Mon Sep 17 00:00:00 2001
+From cb45ae601811d05dec9787d08be8dc8c1cc34616 Mon Sep 17 00:00:00 2001
 From: Kilgore Trout Mask Replicant <kilgore.replicant@tutanota.com>
 Date: Mon, 21 May 2018 17:49:35 +0300
 Subject: [PATCH] Fix djgpp target for modern(ish) gcc cross compile
@@ -18,6 +18,9 @@ saved_ds in src/misc/vbeafex.c seems to be optimized away if not
 declared volatile. Another way to fix it would be editing the
 load_ds() asm block constraints.
 
+aldjgpp.h did not declare ALLEGRO_HAVE_INTTYPES_H which broke
+code including inttypes.h after allegro.h.
+
 makefile.dj setting CC = gcc is just bizarre.
 
 makefile.lst tests etc are dropped.
@@ -28,12 +31,13 @@ xmake.sh is edited for the assumed cross compiler.
 Edit as appropriate.
 ---
  include/allegro/internal/alconfig.h |  5 ++--
+ include/allegro/platform/aldjgpp.h  |  3 +--
  makefile.dj                         |  6 ++---
  makefile.lst                        | 46 +++++++++++++++++++------------------
  makefile.tst                        |  4 ++--
  src/misc/vbeafex.c                  |  2 +-
  xmake.sh                            | 11 +++++----
- 6 files changed, 38 insertions(+), 36 deletions(-)
+ 7 files changed, 39 insertions(+), 38 deletions(-)
 
 diff --git a/include/allegro/internal/alconfig.h b/include/allegro/internal/alconfig.h
 index 15f751f..7131175 100644
@@ -57,6 +61,20 @@ index 15f751f..7131175 100644
     #endif
  
     #if __GNUC__ >= 3
+diff --git a/include/allegro/platform/aldjgpp.h b/include/allegro/platform/aldjgpp.h
+index 9f1b0cf..02b74cd 100644
+--- a/include/allegro/platform/aldjgpp.h
++++ b/include/allegro/platform/aldjgpp.h
+@@ -32,8 +32,7 @@
+ #define ALLEGRO_DOS
+ #define ALLEGRO_I386
+ #define ALLEGRO_LITTLE_ENDIAN
+-#define ALLEGRO_GUESS_INTTYPES_OK
+-   /* inttypes.h and stdint.h not available in djgpp 2.02 */
++#define ALLEGRO_HAVE_INTTYPES_H
+ #define ALLEGRO_CONSOLE_OK
+ #define ALLEGRO_VRAM_SINGLE_SURFACE
+ #define ALLEGRO_USE_CONSTRUCTOR
 diff --git a/makefile.dj b/makefile.dj
 index 034f3ef..d5ec6a5 100644
 --- a/makefile.dj
