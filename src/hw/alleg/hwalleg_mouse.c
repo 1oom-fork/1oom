@@ -10,12 +10,9 @@
 
 /* -------------------------------------------------------------------------- */
 
-static int hw_mouse_w;
-static int hw_mouse_h;
-
-/* -------------------------------------------------------------------------- */
-
 bool hw_mouse_enabled = true;
+int hw_mouse_w;
+int hw_mouse_h;
 
 /* -------------------------------------------------------------------------- */
 
@@ -51,10 +48,13 @@ void hw_mouse_set_limits(int w, int h)
     set_mouse_range(0, 0, w - 1, h - 1);
 }
 
-void hw_mouse_set(int x, int y)
+void hw_mouse_move(int dx, int dy)
 {
+    int x, y;
+    x = moouse_x + dx;
     if (x < 0) { x = 0; }
     if (x >= hw_mouse_w) { x = hw_mouse_w - 1; }
+    y = moouse_y + dy;
     if (y < 0) { y = 0; }
     if (y >= hw_mouse_h) { y = hw_mouse_h - 1; }
     mouse_set_xy_from_hw(x, y);
