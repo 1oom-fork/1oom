@@ -280,10 +280,31 @@ int hw_event_handle(void)
             kbd_add_keypress(key, mod, c);
         }
     }
-    poll_mouse();
-    hw_mouse_set(mouse_x, mouse_y);
+    if (mouse_needs_poll()) {
+        poll_mouse();
+    }
+    {
+        static int prev_x = -1, prev_y;
+        int pos, x, y;
+        pos = mouse_pos;
+        x = ((unsigned int)pos) >> 16;
+        y = pos & 0x0000ffff;
+        if (prev_x < 0) {
+            prev_x = x;
+            prev_y = y;
+        }
+        hw_mouse_move(x - prev_x, y - prev_y);
+        if ((x <= 10) || (x >= (hw_mouse_w - 10)) || (y <= 10) || (y >= (hw_mouse_h - 10))) {
+            x = hw_mouse_w / 2;
+            y = hw_mouse_h / 2;
+            position_mouse(x, y);
+        }
+        prev_x = x;
+        prev_y = y;
+    }
     hw_mouse_buttons(mouse_b);
-    rest(10);
+    /* rest(10) here would be nice for multitasking OSs,
+       but seems to cause crashes on DOS mouse handler (?!) */
     return 0;
 }
 
