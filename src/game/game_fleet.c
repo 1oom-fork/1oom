@@ -244,7 +244,6 @@ void game_fleet_unrefuel(struct game_s *g)
                     sprintf(b, " %s", game_str_tr_fuel2);
                     g->planet_focus_i[pi] = pli;
                     ui_turn_msg(g, pi, buf);
-                    /*temp_turn_hmm3 = 0;*/
                 }
             }
         }
