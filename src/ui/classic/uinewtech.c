@@ -415,7 +415,6 @@ static void ui_newtech_do(struct newtech_data_s *d)
     /*14a44*/
     if ((ui_draw_finish_mode == 0) && d->flag_fadeout) {
         ui_palette_fadeout_a_f_1();
-        /* FIXME temp_turn_hmm3 = 1; */
         ui_draw_finish_mode = 2;
     }
     d->flag_fadeout = false;
