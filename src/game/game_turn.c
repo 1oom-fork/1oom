@@ -1570,7 +1570,6 @@ static void game_turn_update_seen(struct game_s *g)
 
 static void game_turn_show_newships(struct game_s *g)
 {
-    /*temp_turn_hmm3 = 0;*/
     for (player_id_t pi = PLAYER_0; pi < g->players; ++pi) {
         if (IS_HUMAN(g, pi)) {
             bool any_new;
@@ -1750,7 +1749,6 @@ struct game_end_s game_turn_process(struct game_s *g)
     }
     ui_turn_pre(g);
     game_turn_countdown_ceasefire(g);
-    /* temp_turn_hmm3 = 0; */
     game_turn_update_mood_blunder(g);
     game_update_have_reserve_fuel(g);
     game_ai->turn_p1(g);
@@ -1880,7 +1878,6 @@ struct game_end_s game_turn_process(struct game_s *g)
     game_turn_show_newships(g);
     /* TODO autosave */
     game_update_tech_util(g);
-    /* if (temp_turn_hmm3 != 0) { ui_palette_fadeout_a_f_1(); ui_draw_finish_mode = 2; }*/
     for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         empiretechorbit_t *e = &(g->eto[i]);
         for (tech_field_t f = 0; f < TECH_FIELD_NUM; ++f) {
