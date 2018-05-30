@@ -1106,41 +1106,40 @@ static uint32_t uiobj_handle_kbd(int16_t *oiptr)
             case MOO_KEY_LEFT:
             case MOO_KEY_KP4:
                 dirx = -1;
-                loc_14704:
-                if (KBD_GET_MOD(key) == 0) {
-                    oi2 = uiobj_kbd_dir_key(dirx, diry);
-                }
                 break;
             case MOO_KEY_RIGHT:
             case MOO_KEY_KP6:
                 dirx = 1;
-                goto loc_14704;
+                break;
             case MOO_KEY_UP:
             case MOO_KEY_KP8:
                 diry = -1;
-                goto loc_14704;
+                break;
             case MOO_KEY_DOWN:
             case MOO_KEY_KP2:
                 diry = 1;
-                goto loc_14704;
+                break;
             case MOO_KEY_KP7:
                 dirx = -1;
                 diry = -1;
-                goto loc_14704;
+                break;
             case MOO_KEY_KP9:
                 dirx = 1;
                 diry = -1;
-                goto loc_14704;
+                break;
             case MOO_KEY_KP1:
                 dirx = -1;
                 diry = 1;
-                goto loc_14704;
+                break;
             case MOO_KEY_KP3:
                 dirx = 1;
                 diry = 1;
-                goto loc_14704;
+                break;
             default:
                 break;
+        }
+        if ((dirx || diry) && (KBD_GET_MOD(key) == 0)) {
+            oi2 = uiobj_kbd_dir_key(dirx, diry);
         }
         *oiptr = oi2;
     }
