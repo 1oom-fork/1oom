@@ -1008,6 +1008,22 @@ static int16_t uiobj_kbd_dir_key(int dirx, int diry)
     }
 }
 
+static int16_t uiobj_handle_kbd_find_alt(int16_t oi, uint32_t key)
+{
+    const uiobj_t *p = &uiobj_tbl[oi];
+    while (1
+      && (oi != uiobj_table_num)
+      && (!((KBD_GET_KEYMOD(key) == p->key) && (p->type != 8)))
+    ) {
+        if ((p->type == 8) && KBD_MOD_ONLY_ALT(key) && (KBD_GET_KEY(key) == p->key)) {
+            break;
+        }
+        ++oi;
+        p = &uiobj_tbl[oi];
+    }
+    return oi;
+}
+
 static uint32_t uiobj_handle_kbd(int16_t *oiptr)
 {
     uint32_t key = kbd_get_keypress();
@@ -1023,48 +1039,13 @@ static uint32_t uiobj_handle_kbd(int16_t *oiptr)
         uiobj_kbd_hmm1 = 0;
     }
     oi = uiobj_kbd_hmm1 + 1;
+    oi = uiobj_handle_kbd_find_alt(oi, key);
     p = &uiobj_tbl[oi];
     /*key = ucase(key)*/
-    goto loc_14417;
-    loc_143cd:
-    if ((p->type == 8) && KBD_MOD_ONLY_ALT(key) && (KBD_GET_KEY(key) == p->key)) {
-        goto loc_14447;
-    }
-    ++oi;
-    p = &uiobj_tbl[oi];
-    loc_14417:
-    if (KBD_GET_KEYMOD(key) == p->key) {
-        if (p->type != 8) {
-            goto loc_14447;
-        }
-    }
-    if (oi != uiobj_table_num) {
-        goto loc_143cd;
-    }
-    loc_14447:
     if (oi == uiobj_table_num) {
-        oi = 1;
+        oi = uiobj_handle_kbd_find_alt(1, key);
         p = &uiobj_tbl[oi];
-        goto loc_1449f;
-    } else {
-        goto loc_144cf;
     }
-    loc_14455:
-    if ((p->type == 8) && KBD_MOD_ONLY_ALT(key) && (KBD_GET_KEY(key) == p->key)) {
-        goto loc_144cf;
-    }
-    ++oi;
-    p = &uiobj_tbl[oi];
-    loc_1449f:
-    if (KBD_GET_KEYMOD(key) == p->key) {
-        if (p->type != 8) {
-            goto loc_144cf;
-        }
-    }
-    if (oi != uiobj_table_num) {
-        goto loc_14455;
-    }
-    loc_144cf:
     uiobj_kbd_hmm1 = oi;
     flag_reset_alt_str = true;
     if (oi < uiobj_table_num) {
