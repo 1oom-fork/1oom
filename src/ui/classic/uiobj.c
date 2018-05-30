@@ -232,27 +232,27 @@ static inline int16_t hmmdiv2(int16_t v)
     return v / 2;
 }
 
-static int smidx(uiobj_t *p)
+static int smidx(const uiobj_t *p)
 {
     return p->x0 + (p->x1 - p->x0) / 2;
 }
 
-static int smidy(uiobj_t *p)
+static int smidy(const uiobj_t *p)
 {
     return p->y0 + (p->y1 - p->y0) / 2;
 }
 
-static int scmidx(uiobj_t *p)
+static int scmidx(const uiobj_t *p)
 {
     return (p->x0 + (p->x1 - p->x0) / 2) * p->scale;
 }
 
-static int scmidy(uiobj_t *p)
+static int scmidy(const uiobj_t *p)
 {
     return (p->y0 + (p->y1 - p->y0) / 2) * p->scale;
 }
 
-static int smidyhmm2(uiobj_t *p)
+static int smidyhmm2(const uiobj_t *p)
 {
     return smidy(p) - hmmdiv2(lbxfont_get_height());
 }
@@ -1400,8 +1400,13 @@ static int16_t uiobj_handle_input_sub0(void)
                 return 0;
             }
             if (oi != 0) {
-                mx = p->x0 + (p->x1 - p->x0) / 2;
-                my = p->y0 + (p->y1 - p->y0) / 2;
+                if (p->x0 == UIOBJ_OFFSCREEN) {
+                    mx = UIOBJ_OFFSCREEN;
+                    my = UIOBJ_OFFSCREEN;
+                } else {
+                    mx = scmidx(p);
+                    my = scmidy(p);
+                }
                 uiobj_cursor_redraw_hmm2(oi, mx, my);
                 if (p->type == 1) {
                     if (*p->vptr == 0) {
