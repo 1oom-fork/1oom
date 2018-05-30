@@ -1278,8 +1278,13 @@ static int16_t uiobj_handle_input_sub0(void)
                 return 0;
             }
             if (oi != 0) {
-                mx = p->x0 + (p->x1 - p->x0) / 2;
-                my = p->y0 + (p->y1 - p->y0) / 2;
+                if (p->x0 == UIOBJ_OFFSCREEN) {
+                    mx = UIOBJ_OFFSCREEN;
+                    my = UIOBJ_OFFSCREEN;
+                } else {
+                    mx = scmidx(p);
+                    my = scmidy(p);
+                }
                 uiobj_click_obj(oi, mx, my);
                 if (p->type == UIOBJ_TYPE_TOGGLE) {
                     if (*p->vptr == 0) {
