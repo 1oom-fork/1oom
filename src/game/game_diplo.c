@@ -65,7 +65,7 @@ static void game_diplo_hmm6_sub2(struct game_s *g, player_id_t p1, player_id_t p
                 e2->relation1[p1] = 30;
             }
         }
-    } else if (g->evn.hmm28e[p2][p1] < 0) { /* FIXME check indices */
+    } else if (g->evn.ceasefire[p2][p1] < 0) { /* FIXME check indices */
         game_diplo_act(g, -10000, p1, p2, (e1->relation1[p2] < 0) ? 13 : 60, 0, 0);
         game_diplo_start_war(g, p2, p1);
     }
@@ -358,7 +358,7 @@ void game_diplo_hmm6(struct game_s *g, player_id_t p1, player_id_t p2)
         if (1
           && (e2->trait1 == TRAIT1_ERRATIC)
           && (rnd_1_n(300, &g->seed) <= g->difficulty)
-          && (IS_AI(g, p1) || (g->evn.hmm28e[p2][p1] < 1)) /* FIXME check index order */
+          && (IS_AI(g, p1) || (g->evn.ceasefire[p2][p1] < 1)) /* FIXME check index order */
         ) {
             e1->diplo_type[p2] = 61;
             e1->diplo_val[p2] = 2000;
@@ -368,7 +368,7 @@ void game_diplo_hmm6(struct game_s *g, player_id_t p1, player_id_t p2)
               && (!rnd_0_nm1(20, &g->seed))
               && ((e1->trait2 == TRAIT2_MILITARIST) || (e1->trait2 == TRAIT2_EXPANSIONIST))
               && (e2->trait1 != TRAIT1_HONORABLE)
-              && (IS_AI(g, p1) || (g->evn.hmm28e[p2][p1] < 1)) /* FIXME check index order */
+              && (IS_AI(g, p1) || (g->evn.ceasefire[p2][p1] < 1)) /* FIXME check index order */
             ) {
                 int v;
                 v = game_diplo_hmm6_sub1(g, p1, p2);
@@ -380,7 +380,7 @@ void game_diplo_hmm6(struct game_s *g, player_id_t p1, player_id_t p2)
             /*1679f*/
             if (1
               && (!rnd_0_nm1(20, &g->seed))
-              && (IS_AI(g, p1) || (g->evn.hmm28e[p2][p1] < 1)) /* FIXME check index order */
+              && (IS_AI(g, p1) || (g->evn.ceasefire[p2][p1] < 1)) /* FIXME check index order */
             ) {
                 int v;
                 v = game_diplo_hmm6_sub3(g, p1, p2);
@@ -403,7 +403,7 @@ void game_diplo_hmm6(struct game_s *g, player_id_t p1, player_id_t p2)
                 if (1
                   && (e4->treaty[p3] == TREATY_WAR)
                   && (e2->treaty[p3] == TREATY_ALLIANCE)
-                  && (g->evn.hmm28e[p2][p4] < 0) /* FIXME check index order */
+                  && (g->evn.ceasefire[p2][p4] < 0) /* FIXME check index order */
                   && (e2->treaty[p1] == TREATY_ALLIANCE)
                 ) {
                     game_diplo_hmm6_sub2(g, p1, p2);
@@ -537,10 +537,10 @@ void game_diplo_stop_war(struct game_s *g, player_id_t p1, player_id_t p2)
     ADDSATT(e1->relation1[p2], 40, 100);
     e2->relation1[p1] = e1->relation1[p2];
     if (IS_HUMAN(g, p1) /* && IS_AI(g, p2) */) {
-        g->evn.hmm28e[p2][p1] = rnd_0_nm1(6, &g->seed) + 8; /* FIXME check index order */
+        g->evn.ceasefire[p2][p1] = rnd_0_nm1(6, &g->seed) + 8; /* FIXME check index order */
     }
     if (IS_HUMAN(g, p2) /* && IS_AI(g, p1) */) {
-        g->evn.hmm28e[p1][p2] = rnd_0_nm1(6, &g->seed) + 8; /* FIXME check index order */
+        g->evn.ceasefire[p1][p2] = rnd_0_nm1(6, &g->seed) + 8; /* FIXME check index order */
     }
 }
 
