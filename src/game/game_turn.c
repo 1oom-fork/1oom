@@ -36,11 +36,6 @@
 
 /* -------------------------------------------------------------------------- */
 
-/* FIXME make these a stack allocated struct */
-static int temp_turn_hmm3;
-
-/* -------------------------------------------------------------------------- */
-
 static void game_turn_limit_ships(struct game_s *g)
 {
     for (int ei = 0; ei < g->enroute_num; ++ei) {
@@ -1739,7 +1734,7 @@ struct game_end_s game_turn_process(struct game_s *g)
     }
 #endif
     game_turn_countdown_ceasefire(g);
-    temp_turn_hmm3 = 0;
+    /* temp_turn_hmm3 = 0; */
     game_turn_update_pp_hmm1(g);
     game_update_have_reserve_fuel(g);
     game_ai->turn_p1(g);
