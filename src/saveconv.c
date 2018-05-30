@@ -639,7 +639,7 @@ static int savetype_de_moo13(struct game_s *g, const char *fname)
             M13_GET_16(ev->spies_caught[i][PLAYER_0], evb + 0x1f2 + i * 2);
         }
         M13_GET_TBL_16(ev->spies_caught[PLAYER_0], evb + 0x1fe);
-        M13_GET_TBL_16(ev->hmm28e[PLAYER_0], evb + 0x28e); /* FIXME check index order */
+        M13_GET_TBL_16(ev->ceasefire[PLAYER_0], evb + 0x28e); /* FIXME check index order */
         M13_GET_TBL_BVN_8(ev->help_shown[PLAYER_0], evb + 0x2e2, 16);
         /* TODO build_finished ; is it even possible to save before clicking them away? */
         M13_GET_TBL_16_OWNER(ev->voted, evb + 0x320);
@@ -1086,7 +1086,7 @@ static int savetype_en_moo13(struct game_s *g, const char *fname)
             M13_SET_16(ev->spies_caught[i][PLAYER_0], evb + 0x1f2 + i * 2);
         }
         M13_SET_TBL_16(ev->spies_caught[PLAYER_0], evb + 0x1fe);
-        M13_SET_TBL_16(ev->hmm28e[PLAYER_0], evb + 0x28e); /* FIXME check index order */
+        M13_SET_TBL_16(ev->ceasefire[PLAYER_0], evb + 0x28e); /* FIXME check index order */
         M13_SET_TBL_BVN_8(ev->help_shown[PLAYER_0], evb + 0x2e2, 16);
         /* TODO build_finished ; is it even possible to save before clicking them away? */
         M13_SET_TBL_16_OWNER(ev->voted, evb + 0x320);
@@ -1433,8 +1433,8 @@ static const struct game_intros_s game_intros_spies_caught[] = {
     GAME_INTROS_END
 };
 
-static const struct game_intros_s game_intros_hmm28e[] = {
-    GAME_INTROS_LTBL(gameevents_s, hmm28e[0]),
+static const struct game_intros_s game_intros_ceasefire[] = {
+    GAME_INTROS_LTBL(gameevents_s, ceasefire[0]),
     GAME_INTROS_END
 };
 
@@ -1474,7 +1474,7 @@ static const struct game_intros_s game_intros_evn[] = {
     GAME_INTROS_VAL(gameevents_s, report_stars),
     GAME_INTROS_SUB(gameevents_s, new_ships, game_intros_new_ships),
     GAME_INTROS_SUB(gameevents_s, spies_caught, game_intros_spies_caught),
-    GAME_INTROS_SUB(gameevents_s, hmm28e, game_intros_hmm28e),
+    GAME_INTROS_SUB(gameevents_s, ceasefire, game_intros_ceasefire),
     GAME_INTROS_SUB(gameevents_s, help_shown, game_intros_help_shown),
     GAME_INTROS_TBL(gameevents_s, build_finished_num),
     GAME_INTROS_TBL(gameevents_s, voted),
@@ -2280,8 +2280,8 @@ static int savetype_en_text(struct game_s *g, const char *fname)
             text_dump_prefix_del(tp);
         }
         for (int pl = 0; pl < g->players; ++pl) {
-            text_dump_prefix_add_tbl(tp, "hmm28e", "", pl);
-            OUTLINETBL("", g->players, ev->hmm28e[pl]);
+            text_dump_prefix_add_tbl(tp, "ceasefire", "", pl);
+            OUTLINETBL("", g->players, ev->ceasefire[pl]);
             text_dump_prefix_del(tp);
         }
         for (int pl = 0; pl < g->players; ++pl) {
