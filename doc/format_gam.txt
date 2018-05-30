@@ -366,7 +366,7 @@ f0      2*15    new tech field
 1a4     2*6 new ships
 1f2     2*6 spies caught (my)
 1fe     2*6 spies caught (their)
-28e     2*6 ?
+28e     2*6 ceasefire (years)
 2e2     20  help show (0/1 * 20)
 2f6     2   build finished number (0..20)
 2f8     20  build finished planet index
