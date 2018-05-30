@@ -254,7 +254,6 @@ void ui_audience_start(struct audience_s *au)
     if (ui_draw_finish_mode == 0) {
         ui_palette_fadeout_a_f_1();
     }
-    /*temp_turn_hmm3 = 1;*/
     ui_draw_finish_mode = 2;
     ui_sound_stop_music();
     ui_delay_1();
