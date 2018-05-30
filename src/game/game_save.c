@@ -509,7 +509,7 @@ static int game_save_encode_evn(uint8_t *buf, int pos, const gameevents_t *ev, i
     SG_1OOM_EN_U8(ev->report_stars);
     SG_1OOM_EN_TBL_TBL_U32(ev->new_ships, pnum, NUM_SHIPDESIGNS);
     SG_1OOM_EN_TBL_TBL_U16(ev->spies_caught, pnum, pnum);
-    SG_1OOM_EN_TBL_TBL_U16(ev->hmm28e, pnum, pnum);
+    SG_1OOM_EN_TBL_TBL_U16(ev->ceasefire, pnum, pnum);
     for (int i = 0; i < pnum; ++i) {
         SG_1OOM_EN_BV(ev->help_shown[i], HELP_SHOWN_NUM);
         SG_1OOM_EN_DUMMY(14);
@@ -556,7 +556,7 @@ static int game_save_decode_evn(const uint8_t *buf, int pos, gameevents_t *ev, i
     SG_1OOM_DE_U8(ev->report_stars);
     SG_1OOM_DE_TBL_TBL_U32(ev->new_ships, pnum, NUM_SHIPDESIGNS);
     SG_1OOM_DE_TBL_TBL_U16(ev->spies_caught, pnum, pnum);
-    SG_1OOM_DE_TBL_TBL_U16(ev->hmm28e, pnum, pnum);
+    SG_1OOM_DE_TBL_TBL_U16(ev->ceasefire, pnum, pnum);
     for (int i = 0; i < pnum; ++i) {
         SG_1OOM_DE_BV(ev->help_shown[i], HELP_SHOWN_NUM);
         SG_1OOM_DE_DUMMY(14);

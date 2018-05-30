@@ -762,7 +762,7 @@ static void audience_menu_threat(struct audience_s *au)
                 } else {
                     eh->spymode_next[pa] = SPYMODE_HIDE;    /* FIXME BUG? should be ea->..[ph] */
                     eh->spymode[pa] = SPYMODE_HIDE;         /* FIXME BUG? should be ea->..[ph] */
-                    g->evn.hmm28e[ph][pa] = rnd_1_n(15, &g->seed) + 5;  /* FIXME check index order */
+                    g->evn.ceasefire[ph][pa] = rnd_1_n(15, &g->seed) + 5;  /* FIXME check index order */
                     dtype = 70;
                     if (v >= 275) {
                         struct spy_esp_s s[1];
