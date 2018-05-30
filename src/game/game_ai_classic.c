@@ -1502,7 +1502,7 @@ static void game_ai_classic_turn_p2_do(struct game_s *g, player_id_t pi)
     ait->have_pulsar = false;
     ait->have_repulwarp = false;
     for (int i = 0; i < e->shipdesigns_num; ++i) {
-        ship_special_t *ss = &(sd[i].special[0]);
+        const ship_special_t *ss = &(sd[i].special[0]);
         for (int j = 0; j < SPECIAL_SLOT_NUM; ++j) {
             ship_special_t s;
             s = ss[j];
