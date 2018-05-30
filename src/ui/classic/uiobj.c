@@ -156,22 +156,22 @@ static inline int16_t hmmdiv2(int16_t v)
     return v / 2;
 }
 
-static int smidx(uiobj_t *p)
+static int smidx(const uiobj_t *p)
 {
     return p->x0 + (p->x1 - p->x0) / 2;
 }
 
-static int smidy(uiobj_t *p)
+static int smidy(const uiobj_t *p)
 {
     return p->y0 + (p->y1 - p->y0) / 2;
 }
 
-static int smidyhmm2(uiobj_t *p)
+static int smidyhmm2(const uiobj_t *p)
 {
     return smidy(p) - hmmdiv2(lbxfont_get_height());
 }
 
-static inline bool uiobj_is_at_xy(uiobj_t *p, int x, int y)
+static inline bool uiobj_is_at_xy(const uiobj_t *p, int x, int y)
 {
     x += uiobj_mouseoff;
     y += uiobj_mouseoff;
