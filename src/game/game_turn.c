@@ -64,8 +64,8 @@ static void game_turn_countdown_ceasefire(struct game_s *g)
 {
     for (player_id_t j = PLAYER_0; j < g->players; ++j) {
         for (player_id_t i = PLAYER_0; i < g->players; ++i) {
-            if (g->evn.hmm28e[j][i] > 0) {
-                --g->evn.hmm28e[j][i];
+            if (g->evn.ceasefire[j][i] > 0) {
+                --g->evn.ceasefire[j][i];
             }
         }
     }
