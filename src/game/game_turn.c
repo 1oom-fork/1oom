@@ -36,11 +36,6 @@
 
 /* -------------------------------------------------------------------------- */
 
-/* FIXME make these a stack allocated struct */
-static int temp_turn_hmm3;
-
-/* -------------------------------------------------------------------------- */
-
 static void game_turn_limit_ships(struct game_s *g)
 {
     for (int ei = 0; ei < g->enroute_num; ++ei) {
@@ -60,14 +55,14 @@ static void game_turn_limit_ships(struct game_s *g)
     game_remove_empty_fleets(g);
 }
 
-static void game_turn_countdown_hmm28e(struct game_s *g)
+static void game_turn_countdown_ceasefire(struct game_s *g)
 {
     for (player_id_t j = PLAYER_0; j < g->players; ++j) {
         for (player_id_t i = PLAYER_0; i < g->players; ++i) {
-            int16_t v;
-            v = g->evn.hmm28e[j][i] - 1;
-            if (v >= 0) {
-                g->evn.hmm28e[j][i] = v;
+            uint8_t v;
+            v = g->evn.ceasefire[j][i];
+            if (v > 0) {
+                g->evn.ceasefire[j][i] = v - 1;
             }
         }
     }
@@ -1756,8 +1751,8 @@ struct game_end_s game_turn_process(struct game_s *g)
         copyprot_status = 1;
     }
 #endif
-    game_turn_countdown_hmm28e(g);
-    temp_turn_hmm3 = 0;
+    game_turn_countdown_ceasefire(g);
+    /* temp_turn_hmm3 = 0; */
     game_turn_update_pp_hmm1(g);
     game_update_have_reserve_fuel(g);
     game_ai->turn_p1(g);
