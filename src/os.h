@@ -22,6 +22,7 @@ extern const char *os_get_path_data(void);
 extern void os_set_path_data(const char *path);
 extern const char *os_get_path_user(void);
 extern void os_set_path_user(const char *path);
+extern int os_make_path(const char *path);
 extern int os_make_path_user(void);
 extern int os_make_path_for(const char *filename);
 
