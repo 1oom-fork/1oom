@@ -1017,7 +1017,7 @@ static uint32_t uiobj_handle_kbd(int16_t *oiptr)
 {
     uint32_t key = kbd_get_keypress();
     int16_t /*si*/oi, /*di*/oi2;
-    uint16_t v4;
+    bool flag_reset_alt_str;
     if (uiobj_kbd_hmm1 >= uiobj_table_num) {
         uiobj_kbd_hmm1 = 0;
     }
@@ -1028,7 +1028,7 @@ static uint32_t uiobj_handle_kbd(int16_t *oiptr)
         oi = uiobj_handle_kbd_find_alt(1, key);
     }
     uiobj_kbd_hmm1 = oi;
-    v4 = 1;
+    flag_reset_alt_str = true;
     if (oi < uiobj_table_num) {
         uiobj_t *p = &uiobj_tbl[oi];
         *oiptr = oi;
@@ -1057,7 +1057,7 @@ static uint32_t uiobj_handle_kbd(int16_t *oiptr)
                 key = MOO_KEY_UNKNOWN;
             }
             p->key = p->t8.str[p->t8.pos];
-            v4 = 0;
+            flag_reset_alt_str = false;
         }
     } else {
         int dirx, diry;
@@ -1105,7 +1105,7 @@ static uint32_t uiobj_handle_kbd(int16_t *oiptr)
         }
         *oiptr = oi2;
     }
-    if (v4 != 0) {
+    if (flag_reset_alt_str) {
         for (int16_t oi3 = 0; oi3 < uiobj_table_num; ++oi3) {
             uiobj_t *p = &uiobj_tbl[oi3];
             if (p->type == 8) {
