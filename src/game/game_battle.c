@@ -350,7 +350,7 @@ void game_battle_handle_all(struct game_s *g)
                 } else {
                     /*11926*/
                     /* BUG? first check not in MOO1, reads past table if monster */
-                    if ((party_att < PLAYER_NUM) && IS_AI(g, party_att) && (g->evn.hmm28e[party_def][party_att] > 0)) {
+                    if ((party_att < PLAYER_NUM) && IS_AI(g, party_att) && (g->evn.ceasefire[party_def][party_att] > 0)) {
                         BOOLVEC_SET0(tbl_have_force, party_att);
                         game_battle_post(g, party_att, party_def, pli);
                     } else {
