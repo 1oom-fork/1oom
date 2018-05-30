@@ -784,7 +784,7 @@ static void game_ai_classic_turn_p1_sub9(struct game_s *g, struct ai_turn_p1_s *
         have_orbit = false;
         if (1
           && (p->owner != PLAYER_NONE) && (p->owner != pi)
-          && (IS_AI(g, p->owner) || (g->evn.hmm28e[p->owner][pi] < 0)) /* FIXME or <= 0 ? */
+          && (IS_AI(g, p->owner) || (g->evn.ceasefire[p->owner][pi] < 0)) /* FIXME or <= 0 ? */
           && (e->treaty[p->owner] != TREATY_ALLIANCE)
           && (e->have_colony_for <= p->type)
         ) {
@@ -1638,7 +1638,7 @@ static void game_ai_classic_turn_p3_sub1(struct game_s *g, player_id_t pi)
 {
     empiretechorbit_t *e = &(g->eto[pi]);
     for (player_id_t pi2 = PLAYER_0; pi2 < g->players; ++pi2) {
-        if ((e->spymode_next[pi2] == SPYMODE_HIDE) && (g->evn.hmm28e[pi][pi2] > 0)) {
+        if ((e->spymode_next[pi2] == SPYMODE_HIDE) && (g->evn.ceasefire[pi][pi2] > 0)) {
             e->spymode_next[pi2] = SPYMODE_HIDE; /* FIXME redundant */
         } else if ((pi != pi2) && BOOLVEC_IS1(e->within_frange, pi2)) {
             if (e->treaty[pi2] >= TREATY_WAR) {
@@ -3011,7 +3011,7 @@ static bool game_ai_classic_bomb(struct game_s *g, player_id_t player, uint8_t p
     }
     flag_do_bomb = (p->pop > pop_inbound);
     if (IS_HUMAN(g, p->owner)) { /* FIXME check multiplayer */
-        if (g->evn.hmm28e[p->owner][player] > 0) { /* FIXME check index order */
+        if (g->evn.ceasefire[p->owner][player] > 0) { /* FIXME check index order */
             flag_do_bomb = false;
         }
     }
