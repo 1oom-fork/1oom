@@ -213,6 +213,9 @@ main_menu_action_t ui_main_menu(struct game_new_options_s *newopts, int *load_ga
                     ui_draw_finish_mode = 1;
                 }
                 break;
+            case MAIN_MENU_ACT_QUIT_GAME:
+                flag_done = true;
+                break;
             default:
                 flag_done = true;
                 break;
