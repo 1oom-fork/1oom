@@ -257,8 +257,11 @@ static int smidyhmm2(const uiobj_t *p)
     return smidy(p) - hmmdiv2(lbxfont_get_height());
 }
 
-static inline bool uiobj_is_at_xy(uiobj_t *p, int x, int y)
+static inline bool uiobj_is_at_xy(const uiobj_t *p, int x, int y)
 {
+    if (p->x0 == UIOBJ_OFFSCREEN) {
+        return false;
+    }
     x += uiobj_mouseoff;
     y += uiobj_mouseoff;
     if (0
@@ -1097,11 +1100,11 @@ static int16_t uiobj_kbd_dir_key(int dirx, int diry)
                 mouse_stored_x -= uiobj_mouseoff;
                 mouse_stored_y -= uiobj_mouseoff;
                 mouse_set_xy(mouse_stored_x, mouse_stored_y);
-/*
+                /*
                 ui_cursor_erase0();
                 ui_cursor_store_bg0(mouse_stored_x, mouse_stored_y);
                 ui_cursor_draw0(mouse_stored_x, mouse_stored_y);
-*/
+                */
                 /*hw_video_redraw_front();*/
             }
         }
@@ -1109,12 +1112,28 @@ static int16_t uiobj_kbd_dir_key(int dirx, int diry)
     }
 }
 
+static int16_t uiobj_handle_kbd_find_alt(int16_t oi, uint32_t key)
+{
+    const uiobj_t *p = &uiobj_tbl[oi];
+    while (1
+      && (oi != uiobj_table_num)
+      && (!((KBD_GET_KEYMOD(key) == p->key) && (p->type != 8)))
+    ) {
+        if ((p->type == 8) && KBD_MOD_ONLY_ALT(key) && (KBD_GET_KEY(key) == p->key)) {
+            break;
+        }
+        ++oi;
+        p = &uiobj_tbl[oi];
+    }
+    return oi;
+}
+
 static uint32_t uiobj_handle_kbd(int16_t *oiptr)
 {
     uint32_t key = kbd_get_keypress();
     uiobj_t *p;
     int16_t /*si*/oi, /*di*/oi2;
-    uint16_t v4;
+    bool flag_reset_alt_str;
 #ifdef FEATURE_MODEBUG
     if (KBD_GET_KEY(key) == 0) {
         LOG_DEBUG((0, "%s: got 0 key 0x%x\n", __func__, KBD_GET_KEY(key), key));
@@ -1124,53 +1143,14 @@ static uint32_t uiobj_handle_kbd(int16_t *oiptr)
         uiobj_kbd_hmm1 = 0;
     }
     oi = uiobj_kbd_hmm1 + 1;
+    oi = uiobj_handle_kbd_find_alt(oi, key);
     p = &uiobj_tbl[oi];
-    /*key = ucase(key)*/
-    goto loc_14417;
-    loc_143cd:
-    if ((p->type == 8) && KBD_MOD_ONLY_ALT(key) && (KBD_GET_KEY(key) == p->key)) {
-        goto loc_14447;
-    }
-    /*loc_14416:*/
-    ++oi;
-    p = &uiobj_tbl[oi];
-    loc_14417:
-    if (KBD_GET_KEYMOD(key) == p->key) {
-        if (p->type != 8) {
-            goto loc_14447;
-        }
-    }
-    /*loc_14441:*/
-    if (oi != uiobj_table_num) {
-        goto loc_143cd;
-    }
-    loc_14447:
     if (oi == uiobj_table_num) {
-        oi = 1;
+        oi = uiobj_handle_kbd_find_alt(1, key);
         p = &uiobj_tbl[oi];
-        goto loc_1449f;
-    } else {
-        goto loc_144cf;
     }
-    loc_14455:
-    if ((p->type == 8) && KBD_MOD_ONLY_ALT(key) && (KBD_GET_KEY(key) == p->key)) {
-        goto loc_144cf;
-    }
-    /*loc_1449e:*/
-    ++oi;
-    p = &uiobj_tbl[oi];
-    loc_1449f:
-    if (KBD_GET_KEYMOD(key) == p->key) {
-        if (p->type != 8) {
-            goto loc_144cf;
-        }
-    }
-    if (oi != uiobj_table_num) {
-        goto loc_14455;
-    }
-    loc_144cf:
     uiobj_kbd_hmm1 = oi;
-    v4 = 1;
+    flag_reset_alt_str = true;
     if (oi < uiobj_table_num) {
         *oiptr = oi;
         p = &uiobj_tbl[oi];
@@ -1183,30 +1163,25 @@ static uint32_t uiobj_handle_kbd(int16_t *oiptr)
                 mouse_stored_x -= uiobj_mouseoff;
                 mouse_stored_y -= uiobj_mouseoff;
                 mouse_set_xy(mouse_stored_x, mouse_stored_y);
-/*
+                /*
                 ui_cursor_erase0();
                 ui_cursor_store_bg0(mouse_stored_x, mouse_stored_y);
                 ui_cursor_draw0(mouse_stored_x, mouse_stored_y);
-*/
+                */
                 /*hw_video_redraw_front();*/
             }
         }
-        /*loc_1460c:*/
         if (p->type == 8) {
             if (++p->t8.pos >= p->t8.len) {
                 p->t8.pos = 0;
             } else {
-                /*loc_1469f*/
                 *oiptr = 0;
                 key = MOO_KEY_UNKNOWN;
             }
             p->key = p->t8.str[p->t8.pos];
-            v4 = 0;
+            flag_reset_alt_str = false;
         }
-        /*loc_146da:*/
-        /*goto loc_14739;*/
     } else {
-        /*loc_146dc:*/
         int dirx, diry;
         dirx = 0;
         diry = 0;
@@ -1215,47 +1190,44 @@ static uint32_t uiobj_handle_kbd(int16_t *oiptr)
             case MOO_KEY_LEFT:
             case MOO_KEY_KP4:
                 dirx = -1;
-                loc_14704:
-                if (KBD_GET_MOD(key) == 0) {
-                    oi2 = uiobj_kbd_dir_key(dirx, diry);
-                }
                 break;
             case MOO_KEY_RIGHT:
             case MOO_KEY_KP6:
                 dirx = 1;
-                goto loc_14704;
+                break;
             case MOO_KEY_UP:
             case MOO_KEY_KP8:
                 diry = -1;
-                goto loc_14704;
+                break;
             case MOO_KEY_DOWN:
             case MOO_KEY_KP2:
                 diry = 1;
-                goto loc_14704;
+                break;
             case MOO_KEY_KP7:
                 dirx = -1;
                 diry = -1;
-                goto loc_14704;
+                break;
             case MOO_KEY_KP9:
                 dirx = 1;
                 diry = -1;
-                goto loc_14704;
+                break;
             case MOO_KEY_KP1:
                 dirx = -1;
                 diry = 1;
-                goto loc_14704;
+                break;
             case MOO_KEY_KP3:
                 dirx = 1;
                 diry = 1;
-                goto loc_14704;
+                break;
             default:
                 break;
         }
-        /*loc_14734:*/
+        if ((dirx || diry) && (KBD_GET_MOD(key) == 0)) {
+            oi2 = uiobj_kbd_dir_key(dirx, diry);
+        }
         *oiptr = oi2;
     }
-    /*loc_14739:*/
-    if (v4 != 0) {
+    if (flag_reset_alt_str) {
         for (int16_t oi3 = 0; oi3 < uiobj_table_num; ++oi3) {
             p = &uiobj_tbl[oi3];
             if (p->type == 8) {
@@ -1264,7 +1236,6 @@ static uint32_t uiobj_handle_kbd(int16_t *oiptr)
             }
         }
     }
-    /*loc_147ad:*/
     return key;
 }
 
