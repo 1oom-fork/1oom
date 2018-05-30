@@ -293,7 +293,7 @@ N*1     home planet (0..107, 255 means player is dead)
 1       reported stars
 N*6*4   number of new ships
 N*N*2   number of caught spies
-N*N*2   hmm28e
+N*N*2   ceasefire (years)
 N*10    help shown (bitmask of 16 bits) + 14 unused bytes
 N*2     build finished num
 N*1     voted for (0..5, 6)
