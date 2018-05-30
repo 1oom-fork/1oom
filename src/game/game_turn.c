@@ -60,7 +60,7 @@ static void game_turn_limit_ships(struct game_s *g)
     game_remove_empty_fleets(g);
 }
 
-static void game_turn_countdown_hmm28e(struct game_s *g)
+static void game_turn_countdown_ceasefire(struct game_s *g)
 {
     for (player_id_t j = PLAYER_0; j < g->players; ++j) {
         for (player_id_t i = PLAYER_0; i < g->players; ++i) {
@@ -1738,7 +1738,7 @@ struct game_end_s game_turn_process(struct game_s *g)
         copyprot_status = 1;
     }
 #endif
-    game_turn_countdown_hmm28e(g);
+    game_turn_countdown_ceasefire(g);
     temp_turn_hmm3 = 0;
     game_turn_update_pp_hmm1(g);
     game_update_have_reserve_fuel(g);
