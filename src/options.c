@@ -152,7 +152,7 @@ static int options_set_datadir(char **argv, void *var)
 
 static int options_add_patchfile(char **argv, void *var)
 {
-    return pbx_add_file(argv[1]);
+    return pbx_add_file(argv[1], NULL, NULL);
 }
 
 /* -------------------------------------------------------------------------- */
