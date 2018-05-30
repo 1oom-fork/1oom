@@ -16,6 +16,7 @@ doc_DATA = \
     usage_common.txt \
     usage_gfxconv.txt \
     usage_lbxview.txt \
+    usage_pbxdump.txt \
     usage_pbxmake.txt \
     usage_saveconv.txt
 

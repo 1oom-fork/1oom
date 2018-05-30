@@ -15,9 +15,51 @@
 
 /* -------------------------------------------------------------------------- */
 
+static int pbx_cb_name(void *ctx, const char *filename, int pbxi, char *str, uint32_t len)
+{
+    log_message("PBX: name '%s'\n", str);
+    return 0;
+}
+
+static int pbx_cb_desc(void *ctx, const char *filename, int pbxi, char *str, uint32_t len)
+{
+    /* ignore */
+    return 0;
+}
+
+static int pbx_cb_lbxp(void *ctx, const char *filename, int pbxi, const char *id, uint16_t itemi, uint8_t *data, uint32_t len)
+{
+    lbxfile_e lbxf = lbxfile_id(id);
+    if (lbxf < LBXFILE_NUM) {
+        lbxfile_add_patch(lbxf, itemi, data, len, filename);
+        return 1;
+    } else {
+        log_error("patch file '%s' item %i base filename '%s' not recognized!\n", filename, pbxi, id);
+        return -1;
+    }
+}
+
+static bool pbx_cb_strp(void *ctx, const char *filename, int pbxi, const char *id, const char *patchstr, int itemi, uint32_t len)
+{
+    if (!game_str_patch(id, patchstr, itemi)) {
+        log_error("patch file '%s' item %i strid '%s' (%i) invalid!\n", filename, pbxi, id, itemi);
+        return false;
+    }
+    return true;
+}
+
+static bool pbx_cb_nump(void *ctx, const char *filename, int pbxi, const char *id, const int32_t *patchnums, int first, int num)
+{
+    if (!game_num_patch(id, patchnums, first, num)) {
+        log_error("patch file '%s' item %i numid '%s' (%i) invalid!\n", filename, pbxi, id, first);
+        return false;
+    }
+    return true;
+}
+
 /* -------------------------------------------------------------------------- */
 
-int pbx_add_file(const char *filename)
+int pbx_add_file(const char *filename, struct pbx_add_cbs *cbs_in, void *ctx)
 {
     FILE *fd;
     uint8_t buf[PBX_ITEM_HEADER_LEN];
@@ -25,6 +67,13 @@ int pbx_add_file(const char *filename)
     uint32_t items;
     uint8_t *data = NULL;
     int res = -1;
+    struct pbx_add_cbs cbs;
+
+    cbs.name = (cbs_in && cbs_in->name) ? cbs_in->name : pbx_cb_name;
+    cbs.desc = (cbs_in && cbs_in->desc) ? cbs_in->desc : pbx_cb_desc;
+    cbs.lbxp = (cbs_in && cbs_in->lbxp) ? cbs_in->lbxp : pbx_cb_lbxp;
+    cbs.strp = (cbs_in && cbs_in->strp) ? cbs_in->strp : pbx_cb_strp;
+    cbs.nump = (cbs_in && cbs_in->nump) ? cbs_in->nump : pbx_cb_nump;
 
     log_message("PBX: applying patch file '%s'\n", filename);
 
@@ -51,7 +100,7 @@ int pbx_add_file(const char *filename)
         uint32_t offs, len;
         uint16_t type, itemi;
         const char *id;
-        lbxfile_e lbxf;
+        int ri;
         if (fseek(fd, PBX_HEADER_LEN + i * 4, SEEK_SET)) {
             log_error("problem seeking to item %i offs %i\n", i, PBX_HEADER_LEN + i * 4);
             goto fail;
@@ -80,24 +129,31 @@ int pbx_add_file(const char *filename)
         }
         switch (type) {
             case PBX_ITEM_TYPE_NAME:
-                log_message("PBX: name '%s'\n", data);
+                ri = cbs.name(ctx, filename, i, (char *)data, len);
+                if (ri > 0) {
+                    data = NULL;
+                } else if (ri < 0) {
+                    goto fail;
+                }
                 break;
             case PBX_ITEM_TYPE_DESC:
-                /* ignore */
+                ri = cbs.desc(ctx, filename, i, (char *)data, len);
+                if (ri > 0) {
+                    data = NULL;
+                } else if (ri < 0) {
+                    goto fail;
+                }
                 break;
             case PBX_ITEM_TYPE_LBXP:
-                lbxf = lbxfile_id(id);
-                if (lbxf < LBXFILE_NUM) {
-                    lbxfile_add_patch(lbxf, itemi, data, len, filename);
+                ri = cbs.lbxp(ctx, filename, i, id, itemi, data, len);
+                if (ri > 0) {
                     data = NULL;
-                } else {
-                    log_error("patch file '%s' item %i base filename '%s' not recognized!\n", filename, i, id);
+                } else if (ri < 0) {
                     goto fail;
                 }
                 break;
             case PBX_ITEM_TYPE_STRP:
-                if (!game_str_patch(id, (const char *)data, itemi)) {
-                    log_error("patch file '%s' item %i strid '%s' (%i) invalid!\n", filename, i, id, itemi);
+                if (!cbs.strp(ctx, filename, i, id, (const char *)data, itemi, len)) {
                     goto fail;
                 }
                 break;
@@ -113,8 +169,7 @@ int pbx_add_file(const char *filename)
                         nums[j] = (int32_t)GET_LE_32(p);
                         p += 4;
                     }
-                    if (!game_num_patch(id, nums, itemi, numnum)) {
-                        log_error("patch file '%s' item %i numid '%s' (%i) invalid!\n", filename, i, id, itemi);
+                    if (!cbs.nump(ctx, filename, i, id, nums, itemi, numnum)) {
                         lib_free(nums);
                         goto fail;
                     }

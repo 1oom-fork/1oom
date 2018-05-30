@@ -2440,7 +2440,9 @@ const struct cmdline_options_s main_cmdline_options[] = {
     { 0, 0, 0, 0, 0, 0 }
 };
 
-int pbx_add_file(const char *filename)
+struct pbx_add_cbs;
+
+int pbx_add_file(const char *filename, struct pbx_add_cbs *cbs)
 {
     return -1;
 }

@@ -23,16 +23,6 @@ static char *all_data_paths[] = { NULL, NULL, NULL };
 
 /* -------------------------------------------------------------------------- */
 
-static int os_make_path(const char *path)
-{
-    if ((path == NULL) || ((path[0] == '.') && (path[1] == '\0'))) {
-        return 0;
-    }
-    return mkdir(path);
-}
-
-/* -------------------------------------------------------------------------- */
-
 const char *idstr_os = "win32";
 
 int os_early_init(void)
@@ -89,6 +79,14 @@ void os_set_path_user(const char *path)
         user_path = NULL;
     }
     user_path = lib_stralloc(path);
+}
+
+int os_make_path(const char *path)
+{
+    if ((path == NULL) || ((path[0] == '.') && (path[1] == '\0'))) {
+        return 0;
+    }
+    return mkdir(path);
 }
 
 int os_make_path_user(void)
