@@ -179,6 +179,9 @@ static int smidtexty(const uiobj_t *p)
 
 static inline bool uiobj_is_at_xy(const uiobj_t *p, int x, int y)
 {
+    if (p->x0 == UIOBJ_OFFSCREEN) {
+        return false;
+    }
     x += uiobj_mouseoff;
     y += uiobj_mouseoff;
     if ((x < p->x0) || (x > p->x1) || (y < p->y0) || (y > p->y1)) {
@@ -981,11 +984,11 @@ static int16_t uiobj_kbd_dir_key(int dirx, int diry)
                 mouse_stored_x -= uiobj_mouseoff;
                 mouse_stored_y -= uiobj_mouseoff;
                 mouse_set_xy(mouse_stored_x, mouse_stored_y);
-/*
+                /*
                 ui_cursor_erase0();
                 ui_cursor_store_bg0(mouse_stored_x, mouse_stored_y);
                 ui_cursor_draw0(mouse_stored_x, mouse_stored_y);
-*/
+                */
                 /*hw_video_redraw_front();*/
             }
         }
@@ -1026,7 +1029,6 @@ static uint32_t uiobj_handle_kbd(int16_t *oiptr)
     oi = uiobj_kbd_alt_oi + 1;
     oi = uiobj_handle_kbd_find_alt(oi, key);
     p = &uiobj_tbl[oi];
-    /*key = ucase(key)*/
     if (oi == uiobj_table_num) {
         oi = uiobj_handle_kbd_find_alt(1, key);
         p = &uiobj_tbl[oi];
@@ -1045,11 +1047,11 @@ static uint32_t uiobj_handle_kbd(int16_t *oiptr)
                 mouse_stored_x -= uiobj_mouseoff;
                 mouse_stored_y -= uiobj_mouseoff;
                 mouse_set_xy(mouse_stored_x, mouse_stored_y);
-/*
+                /*
                 ui_cursor_erase0();
                 ui_cursor_store_bg0(mouse_stored_x, mouse_stored_y);
                 ui_cursor_draw0(mouse_stored_x, mouse_stored_y);
-*/
+                */
                 /*hw_video_redraw_front();*/
             }
         }
