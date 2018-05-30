@@ -1186,6 +1186,12 @@ int game_new_tutor(struct game_s *g, struct game_aux_s *gaux)
     opt.difficulty = DIFFICULTY_SIMPLE;
     opt.pdata[PLAYER_0].race = RACE_KLACKON;
     opt.pdata[PLAYER_0].banner = BANNER_WHITE;
+    opt.pdata[PLAYER_1].race = RACE_SAKKRA;
+    opt.pdata[PLAYER_1].banner = BANNER_YELLOW;
+    opt.pdata[PLAYER_2].race = RACE_PSILON;
+    opt.pdata[PLAYER_2].banner = BANNER_BLUE;
+    opt.pdata[PLAYER_3].race = RACE_SILICOID;
+    opt.pdata[PLAYER_3].banner = BANNER_GREEN;
     strcpy(opt.pdata[PLAYER_0].playername, "Mr Tutor");
     strcpy(opt.pdata[PLAYER_0].homename, "SOL");
     opt.galaxy_seed = 0xdeadbeef; /* FIXME find value that gives an easy game */
