@@ -418,6 +418,8 @@ static void uiobj_handle_t4_sub1(uiobj_t *p)
         while (mouse_buttons) {
             hw_event_handle();
         }
+        mouse_getclear_hmm4();
+        mouse_getclear_hmm5();
     }
     /* TODO ui_cursor_erase0(); */
     uiobj_hmm1_oi = -1;
