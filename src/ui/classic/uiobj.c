@@ -1023,7 +1023,7 @@ static int16_t uiobj_kbd_dir_key_dxdy(int dirx, int diry, int16_t oi2, int mx, i
                 if ((dx == 0) || (dy == 0)) {
                     slope = UIOBJ_OFFSCREEN;
                 }
-                if ((slope >= 0) && /* FIXME not like MOO1 */(slope < 0x69)) {
+                if ((slope >= 34) && (slope <= 105)) {
                     dist = (dx * dx) + (dy * dy);
                     if (dist < mind) {
                         mind = dist;

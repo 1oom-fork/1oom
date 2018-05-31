@@ -552,7 +552,7 @@ void ui_newtech(struct game_s *g, int pi)
                     }
                 }
             }
-            if ((d.other2 == PLAYER_NONE) || (d.nt.source == 1)) {
+            if ((d.other2 == PLAYER_NONE) || (d.nt.source != 1)) {
                 d.nt.frame = false;
             }
         }
