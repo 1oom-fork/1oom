@@ -261,7 +261,7 @@ static void uiobj_handle_t4_sub2(uiobj_t *p, uint16_t len, uint16_t a4, const ch
 
 static void uiobj_handle_t4_sub1(uiobj_t *p)
 {
-    uint16_t len, pos, buflen, w, fonth, animpos;
+    int len, pos, buflen, w, fonth, animpos;
     mookey_t key = MOO_KEY_UNKNOWN;
     bool flag_mouse_button = false, flag_got_first = false;
     char strbuf[64];
