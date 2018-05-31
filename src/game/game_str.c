@@ -231,8 +231,8 @@ const char *game_str_tbl_sm_pspecial[PLANET_SPECIAL_NUM] = {
     "ULTRA POOR", "POOR", "", "ARTIFACTS", "RICH", "ULTRA RICH", "4$ TECH"
 };
 
-const char *game_str_sm_popmaxw = "POP      MAX";
-const char *game_str_sm_popmaxn = "POP     MAX";
+const char *game_str_sm_pop = "POP";
+const char *game_str_sm_max = "MAX";
 
 const char *game_str_sm_hasreached = "has reached its";
 const char *game_str_sm_indmaxof = "industry maximum of";
