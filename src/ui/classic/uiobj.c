@@ -401,7 +401,7 @@ static void uiobj_handle_t4_sub1(uiobj_t *p)
         uiobj_handle_t4_sub2(p, pos, animpos, strbuf);
     }
     strcpy(p->t4.buf, strbuf);
-    if (!flag_mouse_button) /*&& (mouse_flag_initialized)*/ {
+    if (flag_mouse_button) /*&& (mouse_flag_initialized)*/ {
         while (mouse_buttons) {
             hw_event_handle();
         }
@@ -925,7 +925,7 @@ static int16_t uiobj_kbd_dir_key_dxdy(int dirx, int diry, int16_t oi2, int mx, i
                 if ((dx == 0) || (dy == 0)) {
                     slope = UIOBJ_OFFSCREEN;
                 }
-                if ((slope >= 0) && /* FIXME not like MOO1 */(slope < 0x69)) {
+                if ((slope >= 34) && (slope <= 105)) {
                     dist = (dx * dx) + (dy * dy);
                     if (dist < mind) {
                         mind = dist;

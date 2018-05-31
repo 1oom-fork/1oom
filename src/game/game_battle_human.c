@@ -1189,7 +1189,7 @@ static void game_battle_with_human_do_turn_ai(struct battle_s *bt)
     struct battle_item_s *b = &(bt->item[itemi]);
     ui_battle_ai_pre(bt);
     b->maxrange = game_battle_get_weap_maxrange(bt);
-    if (b->retreat == 2) {
+    if (b->retreat >= 2) {
         bt->s[b->side].tbl_ships[b->shiptbli] = b->num;
         ui_battle_draw_retreat(bt);
         game_battle_item_destroy(bt, itemi);

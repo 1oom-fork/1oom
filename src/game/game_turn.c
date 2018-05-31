@@ -64,10 +64,8 @@ static void game_turn_countdown_ceasefire(struct game_s *g)
 {
     for (player_id_t j = PLAYER_0; j < g->players; ++j) {
         for (player_id_t i = PLAYER_0; i < g->players; ++i) {
-            int16_t v;
-            v = g->evn.ceasefire[j][i] - 1;
-            if (v >= 0) {
-                g->evn.ceasefire[j][i] = v;
+            if (g->evn.ceasefire[j][i] > 0) {
+                --g->evn.ceasefire[j][i];
             }
         }
     }
@@ -593,9 +591,13 @@ static void game_turn_build_ship(struct game_s *g)
                 dest = p->reloc;
                 if (dest == i) {
                     e->orbit[i].ships[si] += shipnum;
-                    BOOLVEC_SET1(p->finished, FINISHED_SHIP);
+                    if (shipnum > 0) {
+                        BOOLVEC_SET1(p->finished, FINISHED_SHIP);
+                    }
                 } else {
-                    game_send_fleet_reloc(g, owner, i, dest, si, shipnum);
+                    if (shipnum > 0) {
+                        game_send_fleet_reloc(g, owner, i, dest, si, shipnum);
+                    }
                 }
                 g->evn.new_ships[owner][si] += shipnum;
                 p->bc_to_ship = prod;
@@ -1628,7 +1630,7 @@ static void game_turn_finished_slider(struct game_s *g)
                     flag_pending_ecoproj = true;
                 }
             }
-            if (flag_pending_ecoproj) {
+            if (!flag_pending_ecoproj) {
                 int w, fact, waste, prod;
                 fact = p->factories;
                 SETMIN(fact, p->pop * e->colonist_oper_factories);
@@ -1827,7 +1829,7 @@ struct game_end_s game_turn_process(struct game_s *g)
         }
     }
     if (1
-      && ((g->year % 25) || (!g->election_held))
+      && (((g->year % 25) == 0) || (!g->election_held))
       && (num_alive > 2)
       && (((g->galaxy_stars * 2) / 3) <= num_colony)
       && (g->end == GAME_END_NONE)
