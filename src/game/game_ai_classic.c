@@ -43,7 +43,7 @@ struct ai_turn_p1_s {
     int tbl_ycenter[PLAYER_NUM];
     int tbl_force_own[PLANETS_MAX];
     int num_fronts;
-    int tbl_hmm9[PLAYER_NUM];
+    int tbl_front_relation[PLAYER_NUM];
     uint8_t tbl_hmm10[PLAYER_NUM]; /* planet index */
     int hmm11;
     int hmm12;
@@ -254,7 +254,7 @@ static void game_ai_classic_turn_p1_front(struct game_s *g, struct ai_turn_p1_s 
           && ((pi == PLAYER_0)/*never?*/ || (g->end == GAME_END_NONE))
         ) {
             int v8, vc;
-            ait->tbl_hmm9[ait->num_fronts] = 0;
+            ait->tbl_front_relation[ait->num_fronts] = 0;
             tbl_hmm_x[ait->num_fronts] = (ait->tbl_xcenter[pi2] * 4 + ait->tbl_xcenter[pi] * 6) / 10;
             tbl_hmm_y[ait->num_fronts] = (ait->tbl_ycenter[pi2] * 4 + ait->tbl_ycenter[pi] * 6) / 10;
             vc = 0;
@@ -268,7 +268,7 @@ static void game_ai_classic_turn_p1_front(struct game_s *g, struct ai_turn_p1_s 
             if (vc != 0) {
                 ait->tbl_force_own[vc] += v8;
             } else {
-                ait->tbl_hmm9[ait->num_fronts++] = v8;
+                ait->tbl_front_relation[ait->num_fronts++] = v8;
             }
         }
     }
@@ -290,9 +290,9 @@ static void game_ai_classic_turn_p1_front(struct game_s *g, struct ai_turn_p1_s 
                 }
             }
             if (v6 != -1) {
-                ait->tbl_hmm9[i] += ait->tbl_hmm9[v6];
+                ait->tbl_front_relation[i] += ait->tbl_front_relation[v6];
                 for (int j = v6; j < (ait->num_fronts - 1); ++j) {
-                    ait->tbl_hmm9[j] = ait->tbl_hmm9[j + 1];
+                    ait->tbl_front_relation[j] = ait->tbl_front_relation[j + 1];
                     ait->tbl_hmm10[j] = ait->tbl_hmm10[j + 1];
                 }
                 --ait->num_fronts;
@@ -312,7 +312,7 @@ static void game_ai_classic_turn_p1_front(struct game_s *g, struct ai_turn_p1_s 
         }
         if (sum != 0) {
             for (int i = 0; i < ait->num_fronts; ++i) {
-                ait->tbl_hmm9[i] += (ait->tbl_force_own[ait->tbl_hmm10[i]] * 100) / sum;
+                ait->tbl_front_relation[i] += (ait->tbl_force_own[ait->tbl_hmm10[i]] * 100) / sum;
             }
         }
         ait->hmm11 = sum / 25;
@@ -760,7 +760,7 @@ static void game_ai_classic_turn_p1_sub8(struct game_s *g, struct ai_turn_p1_s *
                 uint8_t pli;
                 pli = ait->tbl_hmm10[j];
                 pt = &(g->planet[pli]);
-                v = (util_math_dist_fast(pt->x, pt->y, pf->x, pf->y) * 10) / bestspeed + ait->tbl_hmm9[j];
+                v = (util_math_dist_fast(pt->x, pt->y, pf->x, pf->y) * 10) / bestspeed + ait->tbl_front_relation[j];
                 if (v < minv) {
                     minv = v;
                     pto = pli;
