@@ -282,16 +282,16 @@ static void game_ai_classic_turn_p1_front(struct game_s *g, struct ai_turn_p1_s 
     }
     for (int k = 0; k < (PLAYER_NUM - 1); ++k) {
         for (int i = 0; i < ait->num_fronts;) {
-            int v6;
-            v6 = -1;
+            int m;
+            m = -1;
             for (int j = i + 1; j < ait->num_fronts; ++j) {
                 if (ait->tbl_front_planet[i] == ait->tbl_front_planet[j]) {
-                    v6 = j;
+                    m = j;
                 }
             }
-            if (v6 != -1) {
-                ait->tbl_front_relation[i] += ait->tbl_front_relation[v6];
-                for (int j = v6; j < (ait->num_fronts - 1); ++j) {
+            if (m != -1) {
+                ait->tbl_front_relation[i] += ait->tbl_front_relation[m];
+                for (int j = m; j < (ait->num_fronts - 1); ++j) {
                     ait->tbl_front_relation[j] = ait->tbl_front_relation[j + 1];
                     ait->tbl_front_planet[j] = ait->tbl_front_planet[j + 1];
                 }
