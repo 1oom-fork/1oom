@@ -37,7 +37,7 @@
 struct ai_turn_p1_s {
     bool do_not_send_colony;
     bool have_colonizable;
-    bool hmm6;
+    bool need_conquer;
     uint16_t tbl_shipthreat[PLAYER_NUM + 1][NUM_SHIPDESIGNS];
     int tbl_xcenter[PLAYER_NUM];
     int tbl_ycenter[PLAYER_NUM];
@@ -103,9 +103,9 @@ static void game_ai_classic_turn_p1_send_scout(struct game_s *g, struct ai_turn_
         }
     }
     ait->have_colonizable = false;
-    ait->hmm6 = true;
+    ait->need_conquer = true;
     if (rnd_1_n(8 - g->difficulty, &g->seed) > 1) {
-        ait->hmm6 = false;
+        ait->need_conquer = false;
     }
     for (int i = 0; i < g->galaxy_stars; ++i) {
         const planet_t *p = &(g->planet[i]);
@@ -115,12 +115,12 @@ static void game_ai_classic_turn_p1_send_scout(struct game_s *g, struct ai_turn_
             }
             if ((p->type >= e->have_colony_for) && ((g->evn.planet_orion_i != i) || (!g->evn.have_guardian))) {
                 ait->have_colonizable = true;
-                ait->hmm6 = false;
+                ait->need_conquer = false;
             }
         }
     }
     if (g->end != GAME_END_NONE) {
-        ait->hmm6 = false;
+        ait->need_conquer = false;
     }
     for (int i = 0; i < g->galaxy_stars; ++i) {
         const shipcount_t *t = &(e->orbit[i].ships[0]);
@@ -524,7 +524,7 @@ static void game_ai_classic_turn_p1_sub5(struct game_s *g, struct ai_turn_p1_s *
         } else if (owner != PLAYER_NONE) {
             empiretechorbit_t *e = &(g->eto[pi]);
             if (1
-              && ((e->treaty[owner] >= TREATY_WAR) || ait->hmm6 || (g->end != GAME_END_NONE))
+              && ((e->treaty[owner] >= TREATY_WAR) || ait->need_conquer || (g->end != GAME_END_NONE))
               && (p->within_frange[pi] == 1) && (p->type >= e->have_colony_for)
               && ((g->year > 120) || (g->evn.planet_orion_i != i))
             ) {
