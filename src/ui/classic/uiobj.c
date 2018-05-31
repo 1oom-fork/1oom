@@ -250,7 +250,7 @@ static void uiobj_handle_t4_sub2(uiobj_t *p, uint16_t len, uint16_t a4, const ch
 
 static void uiobj_handle_t4_sub1(uiobj_t *p)
 {
-    uint16_t si, di, buflen, v8, fonth, v10;
+    uint16_t len, di, buflen, v8, fonth, v10;
     mookey_t key = 0;
     uint16_t vc = 0, v6 = 0, ve = 0;
     char strbuf[64];
@@ -265,16 +265,16 @@ static void uiobj_handle_t4_sub1(uiobj_t *p)
     v8 = p->x1 - p->x0;
     lbxfont_select(p->t4.fontnum, p->t4.fonta2, p->t4.fonta4, 0);
     strcpy(strbuf, p->t4.buf);
-    si = strlen(strbuf);
+    len = strlen(strbuf);
     loc_15ce0:
     if (lbxfont_calc_str_width(strbuf) > v8) {
-        if (si != 0) {
-            si = 0;
-            strbuf[si] = '\0';
+        if (len != 0) {
+            len = 0;
+            strbuf[len] = '\0';
             goto loc_15ce0;
         }
     }
-    di = si;
+    di = len;
     if (di >= buflen) {
         di = buflen;
     }
@@ -308,41 +308,41 @@ static void uiobj_handle_t4_sub1(uiobj_t *p)
             case MOO_KEY_BACKSPACE:
                 if (v6 == 0) {
                     strbuf[0] = '\0';
-                    si = 0;
+                    len = 0;
                     di = 0;
                     v10 = 0;
                     v6 = 1;
                 } else {
-                    if (si > 0) {
-                        if (di >= si) {
-                            --si;
-                            strbuf[si] = '\0';
+                    if (len > 0) {
+                        if (di >= len) {
+                            --len;
+                            strbuf[len] = '\0';
                             --di;
                             v10 = 0;
                         } else if (di > 0) {
                             ve = di;
-                            while (ve < si) {
+                            while (ve < len) {
                                 strbuf[ve - 1] = strbuf[ve];
                                 ++ve;
                             }
-                            --si;
+                            --len;
                             --di;
                         }
                     }
                 }
                 v10 = 0;
-                strbuf[si] = '\0';
+                strbuf[len] = '\0';
                 break;
             case MOO_KEY_DELETE:
-                if ((si > 0) && (di < si)) {
+                if ((len > 0) && (di < len)) {
                     ve = di;
-                    while (ve < si) {
+                    while (ve < len) {
                         strbuf[ve] = strbuf[ve + 1];
                         ++ve;
                     }
-                    --si;
+                    --len;
                     v10 = 0;
-                    strbuf[si] = '\0';
+                    strbuf[len] = '\0';
                 }
                 break;
             case MOO_KEY_LEFT:
@@ -353,16 +353,16 @@ static void uiobj_handle_t4_sub1(uiobj_t *p)
                 }
                 break;
             case MOO_KEY_RIGHT:
-                if ((di < buflen) && (di < si)) {
+                if ((di < buflen) && (di < len)) {
                     ++di;
                     v10 = 0;
-                    if (di >= si) {
-                        strbuf[si] = ' ';
-                        strbuf[si + 1] = '\0';
+                    if (di >= len) {
+                        strbuf[len] = ' ';
+                        strbuf[len + 1] = '\0';
                         if ((di >= buflen) || (lbxfont_calc_str_width(strbuf) > v8)) {
                             --di;
                         }
-                        strbuf[si] = '\0';
+                        strbuf[len] = '\0';
                     }
                 }
                 break;
@@ -380,32 +380,32 @@ static void uiobj_handle_t4_sub1(uiobj_t *p)
                 }
                 if (flag_ok) {
                     v6 = 1;
-                    strbuf[si] = key;
-                    strbuf[si + 1] = '\0';
-                    if ((si < buflen) && (lbxfont_calc_str_width(strbuf) <= v8)) {
-                        strbuf[si] = '\0';
-                        if (di < si) {
-                            ve = si;
+                    strbuf[len] = key;
+                    strbuf[len + 1] = '\0';
+                    if ((len < buflen) && (lbxfont_calc_str_width(strbuf) <= v8)) {
+                        strbuf[len] = '\0';
+                        if (di < len) {
+                            ve = len;
                             while (ve > di) {
                                 strbuf[ve] = strbuf[ve - 1];
                                 --ve;
                             }
-                            ++si;
+                            ++len;
                             strbuf[di] = key;
                             ++di;
                         } else {
-                            strbuf[si] = key;
-                            ++si;
-                            strbuf[si] = ' ';
-                            strbuf[si + 1] = '\0';
-                            if ((si < buflen) && (lbxfont_calc_str_width(strbuf) <= v8)) {
+                            strbuf[len] = key;
+                            ++len;
+                            strbuf[len] = ' ';
+                            strbuf[len + 1] = '\0';
+                            if ((len < buflen) && (lbxfont_calc_str_width(strbuf) <= v8)) {
                                 ++di;
                             }
                         }
-                        strbuf[si] = '\0';
+                        strbuf[len] = '\0';
                         v10 = 0;
                     } else {
-                        strbuf[si] = '\0';
+                        strbuf[len] = '\0';
                     }
                 }
                 break;
