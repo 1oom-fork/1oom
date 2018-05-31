@@ -141,6 +141,7 @@ void ui_help(int help_index)
     /*c7 = c4 = lbxpal_find_closest(0x27, 0x27, 0x2f);*/
     c8 = lbxpal_find_closest(0x2d, 0x2d, 0x33);
     uiobj_table_num_store();
+    hw_video_copy_buf();
     hw_video_copy_back_to_page3();
     helplbx = lbxfile_item_get(LBXFILE_HELP, 0, 0);
     do {
