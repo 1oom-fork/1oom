@@ -251,7 +251,7 @@ static void game_ai_classic_turn_p1_front(struct game_s *g, struct ai_turn_p1_s 
         if (1
           && (pi != pi2)
           && BOOLVEC_IS1(e->within_frange, pi2)
-          && ((pi == PLAYER_0)/*never?*/ || (g->end == GAME_END_NONE))
+          && (IS_HUMAN(g, pi)/*never?*/ || (g->end == GAME_END_NONE))
         ) {
             int v8, vc;
             ait->tbl_front_relation[ait->num_fronts] = 0;
