@@ -132,7 +132,7 @@ void game_news_get_msg(const struct game_s *g, struct news_s *ns, char *buf)
         }
         ns->statsnum = num;
         for (int loops = 0; loops < num; ++loops) {
-            for (int i = 0; i < num; ++i) {
+            for (int i = 0; i < (num - 1); ++i) {
                 int v0, v1;
                 v0 = tbl_stat[i];
                 v1 = tbl_stat[i + 1];
