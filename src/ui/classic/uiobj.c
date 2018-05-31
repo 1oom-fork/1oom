@@ -320,7 +320,6 @@ static void uiobj_handle_t4_sub1(uiobj_t *p)
 {
     uint16_t len, pos, buflen, w, fonth, animpos;
     mookey_t key = 0;
-    uint16_t ve = 0;
     bool flag_mouse_button = false, flag_got_first = false;
     char strbuf[64];
 
@@ -335,12 +334,10 @@ static void uiobj_handle_t4_sub1(uiobj_t *p)
     lbxfont_select(p->t4.fontnum, p->t4.fonta2, p->t4.fonta4, 0);
     strcpy(strbuf, p->t4.buf);
     len = strlen(strbuf);
-    loc_15ce0:
     if (lbxfont_calc_str_width(strbuf) > w) {
         if (len != 0) {
             len = 0;
             strbuf[len] = '\0';
-            goto loc_15ce0;
         }
     }
     pos = len;
@@ -352,8 +349,7 @@ static void uiobj_handle_t4_sub1(uiobj_t *p)
     uiobj_handle_t4_sub2(p, pos, animpos, strbuf);
     while ((key != MOO_KEY_RETURN) && (!flag_mouse_button)) {
         bool flag_ok;
-        goto loc_15d85;
-        loc_15d3f:
+        while (!(kbd_have_keypress() || flag_mouse_button)) {
         hw_event_handle();
         if ((1/*mouse_flag_initialized*/) && (mouse_buttons || (mouse_getclear_hmm4() != 0))) {
             flag_mouse_button = true;
@@ -365,9 +361,6 @@ static void uiobj_handle_t4_sub1(uiobj_t *p)
             }
             uiobj_handle_t4_sub2(p, pos, animpos, strbuf);
         }
-        loc_15d85:
-        if (!(kbd_have_keypress() || flag_mouse_button)) {
-            goto loc_15d3f;
         }
         if (flag_mouse_button) {
             break;
@@ -389,10 +382,8 @@ static void uiobj_handle_t4_sub1(uiobj_t *p)
                             --pos;
                             animpos = 0;
                         } else if (pos > 0) {
-                            ve = pos;
-                            while (ve < len) {
-                                strbuf[ve - 1] = strbuf[ve];
-                                ++ve;
+                            for (int i = pos; i < len; ++i) {
+                                strbuf[i - 1] = strbuf[i];
                             }
                             --len;
                             --pos;
@@ -404,10 +395,8 @@ static void uiobj_handle_t4_sub1(uiobj_t *p)
                 break;
             case MOO_KEY_DELETE:
                 if ((len > 0) && (pos < len)) {
-                    ve = pos;
-                    while (ve < len) {
-                        strbuf[ve] = strbuf[ve + 1];
-                        ++ve;
+                    for (int i = pos; i < len; ++i) {
+                        strbuf[i] = strbuf[i + 1];
                     }
                     --len;
                     animpos = 0;
@@ -454,10 +443,8 @@ static void uiobj_handle_t4_sub1(uiobj_t *p)
                     if ((len < buflen) && (lbxfont_calc_str_width(strbuf) <= w)) {
                         strbuf[len] = '\0';
                         if (pos < len) {
-                            ve = len;
-                            while (ve > pos) {
-                                strbuf[ve] = strbuf[ve - 1];
-                                --ve;
+                            for (int i = len; i > pos; --i) {
+                                strbuf[i] = strbuf[i - 1];
                             }
                             ++len;
                             strbuf[pos] = key;
