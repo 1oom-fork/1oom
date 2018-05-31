@@ -1016,7 +1016,7 @@ static void audience_menu_tech(struct audience_s *au)
                     strcpy(au->buf, game_str_au_whatrad);
                     au->condtbl = 0;
                     selected = ui_audience_ask4(au);
-                    if ((selected != 1) && (selected < i)) {
+                    if ((selected != -1) && (selected < i)) {
                         g->evn.newtech[ph].num = 0;
                         game_tech_get_new(g, ph, gotf, gott, 4, pa, 0, false);
                         game_tech_get_new(g, pa, thf[selected2][selected], tht[selected2][selected], 4, pa, 0, false); /* FIXME BUG? last pa should be ph? */
