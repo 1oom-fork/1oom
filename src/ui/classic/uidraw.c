@@ -574,7 +574,7 @@ static void ui_draw_finish_wipe_anim(void)
     for (int f = 0; f < 10; ++f) {
         ui_delay_prepare();
         for (int x = 0; x < UI_SCREEN_W; x += 20) {
-            for (int y = 0; y < UI_SCREEN_W; y += 20) {
+            for (int y = 0; y < UI_SCREEN_H; y += 20) {
                 ui_draw_finish_wipe_anim_do(x, y, f);
             }
         }
