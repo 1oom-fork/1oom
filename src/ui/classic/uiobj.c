@@ -346,10 +346,9 @@ static void uiobj_handle_t4_sub2(uiobj_t *p, uint16_t len, uint16_t a4, const ch
 
 static void uiobj_handle_t4_sub1(uiobj_t *p)
 {
-    /* p->type == 4 */
-    uint16_t si, di, buflen, v8, fonth, v10;
-    mookey_t key = 0;
-    uint16_t vc = 0, v6 = 0, ve = 0;
+    int len, pos, buflen, w, fonth, animpos;
+    mookey_t key = MOO_KEY_UNKNOWN;
+    bool flag_mouse_button = false, flag_got_first = false;
     char strbuf[64];
 
     while (mouse_buttons) {
@@ -357,111 +356,99 @@ static void uiobj_handle_t4_sub1(uiobj_t *p)
         uiobj_do_callback();
     }
 
-    v10 = 0;
+    animpos = 0;
     buflen = p->t4.buflen;
-    v8 = p->x1 - p->x0;
+    w = p->x1 - p->x0;
     lbxfont_select(p->t4.fontnum, p->t4.fonta2, p->t4.fonta4, 0);
     strcpy(strbuf, p->t4.buf);
-    si = strlen(strbuf);
-    loc_15ce0:
-    if (lbxfont_calc_str_width(strbuf) > v8) {
-        if (si != 0) {
-            si = 0;
-            strbuf[si] = '\0';
-            goto loc_15ce0;
+    len = strlen(strbuf);
+    if (lbxfont_calc_str_width(strbuf) > w) {
+        if (len != 0) {
+            len = 0;
+            strbuf[len] = '\0';
         }
     }
-    di = si;
-    if (di >= buflen) {
-        di = buflen;
+    pos = len;
+    if (pos >= buflen) {
+        pos = buflen;
     }
     strcpy(p->t4.buf, strbuf);
     fonth = lbxfont_get_height();
-    uiobj_handle_t4_sub2(p, di, v10, strbuf);
-    while ((key != MOO_KEY_RETURN) && (vc == 0)) {
+    uiobj_handle_t4_sub2(p, pos, animpos, strbuf);
+    while ((key != MOO_KEY_RETURN) && (!flag_mouse_button)) {
         bool flag_ok;
-        /*15d3d*/
-        goto loc_15d85;
-        loc_15d3f:
-        hw_event_handle();
-        if ((1/*mouse_flag_initialized*/) && ((mouse_buttons) || (mouse_getclear_hmm4() != 0))) {
-            vc = 1;
-            break; /*goto loc_15fae;*/
-        } else {
-            /*15d5f*/
-            ++v10;
-            if (((fonth << 1) - 1) < v10) {
-                v10 = 0;
+        while (!(kbd_have_keypress() || flag_mouse_button)) {
+            hw_event_handle();
+            if ((1/*mouse_flag_initialized*/) && (mouse_buttons || (mouse_getclear_hmm4() != 0))) {
+                flag_mouse_button = true;
+                break;
+            } else {
+                ++animpos;
+                if (((fonth << 1) - 1) < animpos) {
+                    animpos = 0;
+                }
+                uiobj_handle_t4_sub2(p, pos, animpos, strbuf);
             }
-            uiobj_handle_t4_sub2(p, di, v10, strbuf);
         }
-        loc_15d85:
-        if (!(kbd_have_keypress() || (vc != 0))) {
-            goto loc_15d3f;
-        }
-        if (vc != 0) {
+        if (flag_mouse_button) {
             break;
         }
         key = KBD_GET_KEY(kbd_get_keypress());
         switch (key) {
             case MOO_KEY_BACKSPACE:
-                if (v6 == 0) {
+                if (!flag_got_first) {
                     strbuf[0] = '\0';
-                    si = 0;
-                    di = 0;
-                    v10 = 0;
-                    v6 = 1;
+                    len = 0;
+                    pos = 0;
+                    animpos = 0;
+                    flag_got_first = true;
                 } else {
-                    if (si > 0) {
-                        if (di >= si) {
-                            --si;
-                            strbuf[si] = '\0';
-                            --di;
-                            v10 = 0;
-                        } else if (di > 0) {
-                            ve = di;
-                            while (ve < si) {
-                                strbuf[ve - 1] = strbuf[ve];
-                                ++ve;
+                    if (len > 0) {
+                        if (pos >= len) {
+                            --len;
+                            strbuf[len] = '\0';
+                            --pos;
+                            animpos = 0;
+                        } else if (pos > 0) {
+                            for (int i = pos; i < len; ++i) {
+                                strbuf[i - 1] = strbuf[i];
                             }
-                            --si;
-                            --di;
+                            --len;
+                            --pos;
                         }
                     }
                 }
-                v10 = 0;
-                strbuf[si] = '\0';
+                animpos = 0;
+                strbuf[len] = '\0';
                 break;
             case MOO_KEY_DELETE:
-                if ((si > 0) && (di < si)) {
-                    ve = di;
-                    while (ve < si) {
-                        strbuf[ve] = strbuf[ve + 1];
-                        ++ve;
+                if ((len > 0) && (pos < len)) {
+                    for (int i = pos; i < len; ++i) {
+                        strbuf[i] = strbuf[i + 1];
                     }
-                    --si;
-                    v10 = 0;
-                    strbuf[si] = '\0';
+                    --len;
+                    animpos = 0;
+                    strbuf[len] = '\0';
                 }
                 break;
             case MOO_KEY_LEFT:
-                v6 = 1;
-                if (di > 0) {
-                    --di;
-                    v10 = 0;
+                flag_got_first = true;
+                if (pos > 0) {
+                    --pos;
+                    animpos = 0;
                 }
                 break;
             case MOO_KEY_RIGHT:
-                if ((di < buflen) && (di < si)) {
-                    ++di;
-                    v10 = 0;
-                    if (di >= si) {
-                        strbuf[si] = ' ';
-                        strbuf[si + 1] = '\0';
-                        if ((di >= buflen) || (lbxfont_calc_str_width(strbuf) > v8)) {
-                            --di;
+                if ((pos < buflen) && (pos < len)) {
+                    ++pos;
+                    animpos = 0;
+                    if (pos >= len) {
+                        strbuf[len] = ' ';
+                        strbuf[len + 1] = '\0';
+                        if ((pos >= buflen) || (lbxfont_calc_str_width(strbuf) > w)) {
+                            --pos;
                         }
-                        strbuf[si] = '\0';
+                        strbuf[len] = '\0';
                     }
                 }
                 break;
@@ -478,49 +465,44 @@ static void uiobj_handle_t4_sub1(uiobj_t *p)
                     flag_ok = true;
                 }
                 if (flag_ok) {
-                    v6 = 1;
-                    strbuf[si] = key;
-                    strbuf[si + 1] = '\0';
-                    if ((si < buflen) && (lbxfont_calc_str_width(strbuf) <= v8)) {
-                        strbuf[si] = '\0';
-                        if (di < si) {
-                            ve = si;
-                            while (ve > di) {
-                                strbuf[ve] = strbuf[ve - 1];
-                                --ve;
+                    flag_got_first = true;
+                    strbuf[len] = key;
+                    strbuf[len + 1] = '\0';
+                    if ((len < buflen) && (lbxfont_calc_str_width(strbuf) <= w)) {
+                        strbuf[len] = '\0';
+                        if (pos < len) {
+                            for (int i = len; i > pos; --i) {
+                                strbuf[i] = strbuf[i - 1];
                             }
-                            ++si;
-                            strbuf[di] = key;
-                            ++di;
+                            ++len;
+                            strbuf[pos] = key;
+                            ++pos;
                         } else {
-                            /*15f53*/
-                            strbuf[si] = key;
-                            ++si;
-                            strbuf[si] = ' ';
-                            strbuf[si + 1] = '\0';
-                            if ((si < buflen) && (lbxfont_calc_str_width(strbuf) <= v8)) {
-                                ++di;
+                            strbuf[len] = key;
+                            ++len;
+                            strbuf[len] = ' ';
+                            strbuf[len + 1] = '\0';
+                            if ((len < buflen) && (lbxfont_calc_str_width(strbuf) <= w)) {
+                                ++pos;
                             }
                         }
-                        /*15f7b*/
-                        strbuf[si] = '\0';
-                        v10 = 0;
+                        strbuf[len] = '\0';
+                        animpos = 0;
                     } else {
-                        /*15f86*/
-                        strbuf[si] = '\0';
+                        strbuf[len] = '\0';
                     }
                 }
                 break;
         }
-        /*15f8c*/
-        uiobj_handle_t4_sub2(p, di, v10, strbuf);
+        uiobj_handle_t4_sub2(p, pos, animpos, strbuf);
     }
-    /*loc_15fae:*/
     strcpy(p->t4.buf, strbuf);
-    if (vc == 0) /*&& (mouse_flag_initialized)*/ {
+    if (flag_mouse_button) /*&& (mouse_flag_initialized)*/ {
         while (mouse_buttons) {
             hw_event_handle();
         }
+        mouse_getclear_hmm4();
+        mouse_getclear_hmm5();
     }
     /* TODO ui_cursor_erase0(); */
     uiobj_hmm1_oi = -1;
@@ -1590,6 +1572,15 @@ static void uiobj_add_set_xys(uiobj_t *p, uint16_t x0, uint16_t y0, uint16_t x1,
     p->y1 = y1;
 }
 
+static void uiobj_add_set_xys_offscreen(uiobj_t *p)
+{
+    p->scale = 1;
+    p->x0 = UIOBJ_OFFSCREEN;
+    p->y0 = UIOBJ_OFFSCREEN;
+    p->x1 = UIOBJ_OFFSCREEN;
+    p->y1 = UIOBJ_OFFSCREEN;
+}
+
 static void uiobj_add_t03_do(uint16_t x, uint16_t y, const char *str, uint8_t *lbxdata, mookey_t key, uint8_t scale)
 {
     uiobj_t *p = &uiobj_tbl[uiobj_table_num];
@@ -1920,10 +1911,7 @@ int16_t uiobj_add_mousearea_all(mookey_t key)
 int16_t uiobj_add_inputkey(uint32_t key)
 {
     uiobj_t *p = &uiobj_tbl[uiobj_table_num];
-    p->x0 = UIOBJ_OFFSCREEN;
-    p->y0 = UIOBJ_OFFSCREEN;
-    p->x1 = UIOBJ_OFFSCREEN;
-    p->y1 = UIOBJ_OFFSCREEN;
+    uiobj_add_set_xys_offscreen(p);
     p->type = 7;
     p->vptr = 0;
     p->key = key;
@@ -1934,10 +1922,7 @@ int16_t uiobj_add_alt_str(const char *str)
 {
     uiobj_t *p = &uiobj_tbl[uiobj_table_num];
     int len = strnlen(str, 0x1e);
-    p->x0 = UIOBJ_OFFSCREEN;
-    p->y0 = UIOBJ_OFFSCREEN;
-    p->x1 = UIOBJ_OFFSCREEN;
-    p->y1 = UIOBJ_OFFSCREEN;
+    uiobj_add_set_xys_offscreen(p);
     p->type = 8;
     p->vptr = 0;
     p->t8.str = str;
