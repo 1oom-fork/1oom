@@ -250,7 +250,7 @@ static void uiobj_handle_t4_sub2(uiobj_t *p, uint16_t len, uint16_t a4, const ch
 
 static void uiobj_handle_t4_sub1(uiobj_t *p)
 {
-    uint16_t len, pos, buflen, v8, fonth, v10;
+    uint16_t len, pos, buflen, w, fonth, v10;
     mookey_t key = 0;
     uint16_t vc = 0, v6 = 0, ve = 0;
     char strbuf[64];
@@ -262,12 +262,12 @@ static void uiobj_handle_t4_sub1(uiobj_t *p)
 
     v10 = 0;
     buflen = p->t4.buflen;
-    v8 = p->x1 - p->x0;
+    w = p->x1 - p->x0;
     lbxfont_select(p->t4.fontnum, p->t4.fonta2, p->t4.fonta4, 0);
     strcpy(strbuf, p->t4.buf);
     len = strlen(strbuf);
     loc_15ce0:
-    if (lbxfont_calc_str_width(strbuf) > v8) {
+    if (lbxfont_calc_str_width(strbuf) > w) {
         if (len != 0) {
             len = 0;
             strbuf[len] = '\0';
@@ -359,7 +359,7 @@ static void uiobj_handle_t4_sub1(uiobj_t *p)
                     if (pos >= len) {
                         strbuf[len] = ' ';
                         strbuf[len + 1] = '\0';
-                        if ((pos >= buflen) || (lbxfont_calc_str_width(strbuf) > v8)) {
+                        if ((pos >= buflen) || (lbxfont_calc_str_width(strbuf) > w)) {
                             --pos;
                         }
                         strbuf[len] = '\0';
@@ -382,7 +382,7 @@ static void uiobj_handle_t4_sub1(uiobj_t *p)
                     v6 = 1;
                     strbuf[len] = key;
                     strbuf[len + 1] = '\0';
-                    if ((len < buflen) && (lbxfont_calc_str_width(strbuf) <= v8)) {
+                    if ((len < buflen) && (lbxfont_calc_str_width(strbuf) <= w)) {
                         strbuf[len] = '\0';
                         if (pos < len) {
                             ve = len;
@@ -398,7 +398,7 @@ static void uiobj_handle_t4_sub1(uiobj_t *p)
                             ++len;
                             strbuf[len] = ' ';
                             strbuf[len + 1] = '\0';
-                            if ((len < buflen) && (lbxfont_calc_str_width(strbuf) <= v8)) {
+                            if ((len < buflen) && (lbxfont_calc_str_width(strbuf) <= w)) {
                                 ++pos;
                             }
                         }
