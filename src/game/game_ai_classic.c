@@ -191,7 +191,7 @@ static void game_ai_classic_turn_p1_send_scout(struct game_s *g, struct ai_turn_
     }
 }
 
-static uint8_t game_ai_classic_turn_p1_sub2_find_planet(struct game_s *g, struct ai_turn_p1_s *ait, player_id_t pi, int x, int y)
+static uint8_t game_ai_classic_turn_p1_front_find_planet(struct game_s *g, struct ai_turn_p1_s *ait, player_id_t pi, int x, int y)
 {
     empiretechorbit_t *e = &(g->eto[pi]);
     uint8_t mini = 0;
@@ -278,7 +278,7 @@ static void game_ai_classic_turn_p1_sub2(struct game_s *g, struct ai_turn_p1_s *
         ++ait->hmm8;
     }
     for (int i = 0; i < ait->hmm8; ++i) {
-        ait->tbl_hmm10[i] = game_ai_classic_turn_p1_sub2_find_planet(g, ait, pi, tbl_hmm_x[i], tbl_hmm_y[i]);
+        ait->tbl_hmm10[i] = game_ai_classic_turn_p1_front_find_planet(g, ait, pi, tbl_hmm_x[i], tbl_hmm_y[i]);
     }
     for (int k = 0; k < (PLAYER_NUM - 1); ++k) {
         for (int i = 0; i < ait->hmm8;) {
