@@ -330,7 +330,7 @@ void game_update_within_range(struct game_s *g)
                 uint16_t dist, mindist1, mindist2;
                 mindist1 = 0x2710;
                 mindist2 = 0x2710;
-                for (int j = 0; (j < tblplanet_num) && (mindist1 > frange) && (mindist2 > srange); ++j) {
+                for (int j = 0; (j < tblplanet_num) && ((mindist1 > frange) || (mindist2 > srange)); ++j) {
                     uint8_t planet_i2;
                     planet_i2 = tblplanet[j];
                     dist = g->gaux->star_dist[i][planet_i2];
