@@ -41,7 +41,7 @@ struct ai_turn_p1_s {
     uint16_t tbl_shipthreat[PLAYER_NUM + 1][NUM_SHIPDESIGNS];
     int tbl_xcenter[PLAYER_NUM];
     int tbl_ycenter[PLAYER_NUM];
-    int tbl_hmm7[PLANETS_MAX];
+    int tbl_force_own[PLANETS_MAX];
     int hmm8;
     int tbl_hmm9[PLAYER_NUM];
     uint8_t tbl_hmm10[PLAYER_NUM]; /* planet index */
@@ -266,7 +266,7 @@ static void game_ai_classic_turn_p1_front(struct game_s *g, struct ai_turn_p1_s 
             v8 = e->relation1[pi2];
             SETMIN(v8, 0);
             if (vc != 0) {
-                ait->tbl_hmm7[vc] += v8;
+                ait->tbl_force_own[vc] += v8;
             } else {
                 ait->tbl_hmm9[ait->hmm8++] = v8;
             }
@@ -308,11 +308,11 @@ static void game_ai_classic_turn_p1_front(struct game_s *g, struct ai_turn_p1_s 
     {
         int sum = 0;
         for (int i = 0; i < g->galaxy_stars; ++i) {
-            sum += ait->tbl_hmm7[i];
+            sum += ait->tbl_force_own[i];
         }
         if (sum != 0) {
             for (int i = 0; i < ait->hmm8; ++i) {
-                ait->tbl_hmm9[i] += (ait->tbl_hmm7[ait->tbl_hmm10[i]] * 100) / sum;
+                ait->tbl_hmm9[i] += (ait->tbl_force_own[ait->tbl_hmm10[i]] * 100) / sum;
             }
         }
         ait->hmm11 = sum / 25;
@@ -361,7 +361,7 @@ static void game_turn_fleet_send(struct game_s *g, struct ai_turn_p1_s *ait, pla
     if (from == dest) {
         return;
     }
-    ait->tbl_hmm7[from] = 0;
+    ait->tbl_force_own[from] = 0;
     if (g->enroute_num == FLEET_ENROUTE_MAX) {
         log_warning("fleet enroute table (size %i) full, could not leave orbit!\n", FLEET_ENROUTE_MAX);
         return;
@@ -584,7 +584,7 @@ static void game_ai_classic_turn_p1_sub6(struct game_s *g, struct ai_turn_p1_s *
                     e2 = &(g->eto[pt->owner]);
                     weight += ((e2->tech.percent[TECH_FIELD_WEAPON] * 5) + (e2->have_planet_shield + 10) * 10) * pt->missile_bases;
                 }
-                if (ait->tbl_hmm7[pfrom] > weight) {
+                if (ait->tbl_force_own[pfrom] > weight) {
                     pto2 = pto;
                     if (pt->owner == PLAYER_NONE) {
                         game_turn_fleet_send(g, ait, pi, pfrom, pto2);
@@ -616,7 +616,7 @@ static void game_ai_classic_turn_p1_sub6(struct game_s *g, struct ai_turn_p1_s *
     }
     for (int i = 0; i < g->galaxy_stars; ++i) {
         const planet_t *p = &(g->planet[i]);
-        if ((p->owner != PLAYER_NONE) && (p->owner != pi) && (ait->tbl_hmm7[i] != 0)) {
+        if ((p->owner != PLAYER_NONE) && (p->owner != pi) && (ait->tbl_force_own[i] != 0)) {
             uint8_t pfrom, pto, pto2;
             pto2 = PLANET_NONE;
             pfrom = i;
@@ -642,7 +642,7 @@ static void game_ai_classic_turn_p1_sub6(struct game_s *g, struct ai_turn_p1_s *
                                 }
                             }
                         }
-                        if ((((ait->tbl_hmm7[pfrom] * 3) / 2) > weight) && (ait->tbl_hmm7[pfrom] != 0)) {
+                        if ((((ait->tbl_force_own[pfrom] * 3) / 2) > weight) && (ait->tbl_force_own[pfrom] != 0)) {
                             pto2 = pto;
                             game_turn_fleet_send(g, ait, pi, pfrom, pto2);
                             ait->tbl_hmm15[j] = -1000;
@@ -692,18 +692,18 @@ static void game_ai_classic_turn_p1_sub7(struct game_s *g, struct ai_turn_p1_s *
     }
     for (int i = 0; i < g->galaxy_stars; ++i) {
         const planet_t *p = &(g->planet[i]);
-        if ((p->missile_bases < 5) && (ait->tbl_hmm7[i] == 0)) {
+        if ((p->missile_bases < 5) && (ait->tbl_force_own[i] == 0)) {
             tbl_planet_threat[i] = 50;
         }
     }
     for (int i = 0; i < g->galaxy_stars; ++i) {
         const planet_t *p = &(g->planet[i]);
-        if ((p->owner == pi) && (((ait->tbl_hmm7[i] * 4) / 3) < tbl_planet_threat[i])) {
+        if ((p->owner == pi) && (((ait->tbl_force_own[i] * 4) / 3) < tbl_planet_threat[i])) {
             tbl_hmm2[num_hmm2++] = i;
         }
     }
     for (int i = 0; i < g->galaxy_stars; ++i) {
-        if ((ait->tbl_hmm7[i] > 0) && (tbl_planet_threat[i] == 0)) {
+        if ((ait->tbl_force_own[i] > 0) && (tbl_planet_threat[i] == 0)) {
             const planet_t *pf;
             uint8_t pto;
             pto = PLANET_NONE;
@@ -716,7 +716,7 @@ static void game_ai_classic_turn_p1_sub7(struct game_s *g, struct ai_turn_p1_s *
                     pto = pli;
                 }
             }
-            if ((pto != PLANET_NONE) && ((tbl_planet_threat[pto] * 5) / 3) < ait->tbl_hmm7[i]) {
+            if ((pto != PLANET_NONE) && ((tbl_planet_threat[pto] * 5) / 3) < ait->tbl_force_own[i]) {
                 game_turn_fleet_send(g, ait, pi, i, pto);
                 tbl_planet_threat[pto] = 1600000000;
             }
@@ -728,11 +728,11 @@ static void game_ai_classic_turn_p1_sub8(struct game_s *g, struct ai_turn_p1_s *
 {
     int bestspeed = game_tech_player_best_engine(g, pi) * 20 + 20;
     for (int i = 0; i < ait->hmm8; ++i) {
-        ait->tbl_hmm7[ait->tbl_hmm10[i]] = 0;
+        ait->tbl_force_own[ait->tbl_hmm10[i]] = 0;
     }
     for (int i = 0; i < ait->hmm13; ++i) {
-        if ((ait->tbl_hmm7[ait->tbl_hmm16[i]] - ait->tbl_hmm14[i]) < 0) {
-            ait->tbl_hmm7[i] = 0;
+        if ((ait->tbl_force_own[ait->tbl_hmm16[i]] - ait->tbl_hmm14[i]) < 0) {
+            ait->tbl_force_own[i] = 0;
         }
     }
     if (g->election_held) {
@@ -742,12 +742,12 @@ static void game_ai_classic_turn_p1_sub8(struct game_s *g, struct ai_turn_p1_s *
         ait->hmm11 /= 2;
     }
     for (int i = 0; i < g->galaxy_stars; ++i) {
-        if (ait->tbl_hmm7[i] < ait->hmm11) {
-            ait->tbl_hmm7[i] = 0;
+        if (ait->tbl_force_own[i] < ait->hmm11) {
+            ait->tbl_force_own[i] = 0;
         }
     }
     for (int i = 0; i < g->galaxy_stars; ++i) {
-        if (ait->tbl_hmm7[i] > 0) {
+        if (ait->tbl_force_own[i] > 0) {
             uint8_t pto;
             const planet_t *pf;
             int minv;
