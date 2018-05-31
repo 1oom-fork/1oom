@@ -36,7 +36,7 @@
 
 struct ai_turn_p1_s {
     bool do_not_send_colony;
-    bool hmm5;
+    bool have_colonizable;
     bool hmm6;
     uint16_t tbl_shipthreat[PLAYER_NUM + 1][NUM_SHIPDESIGNS];
     int tbl_xcenter[PLAYER_NUM];
@@ -102,7 +102,7 @@ static void game_ai_classic_turn_p1_send_scout(struct game_s *g, struct ai_turn_
             BOOLVEC_SET1(tbl_planet_ignore, r->dest);
         }
     }
-    ait->hmm5 = false;
+    ait->have_colonizable = false;
     ait->hmm6 = true;
     if (rnd_1_n(8 - g->difficulty, &g->seed) > 1) {
         ait->hmm6 = false;
@@ -114,7 +114,7 @@ static void game_ai_classic_turn_p1_send_scout(struct game_s *g, struct ai_turn_
                 tbl_planet_scout[num_to_scout++] = i;
             }
             if ((p->type >= e->have_colony_for) && ((g->evn.planet_orion_i != i) || (!g->evn.have_guardian))) {
-                ait->hmm5 = true;
+                ait->have_colonizable = true;
                 ait->hmm6 = false;
             }
         }
@@ -342,7 +342,7 @@ static shipcount_t game_ai_classic_turn_p1_spawn_colony_ship(struct game_s *g, s
             v6 = 0;
         }
     }
-    if ((!ait->hmm5) || (rnd_1_n(500, &g->seed) > v6)) {
+    if ((!ait->have_colonizable) || (rnd_1_n(500, &g->seed) > v6)) {
         return shipn;
     }
     ++shipn;
