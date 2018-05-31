@@ -39,13 +39,13 @@ struct ai_turn_p1_s {
     bool have_colonizable;
     bool need_conquer;
     uint16_t tbl_shipthreat[PLAYER_NUM + 1][NUM_SHIPDESIGNS];
-    int tbl_xcenter[PLAYER_NUM];
-    int tbl_ycenter[PLAYER_NUM];
+    uint16_t tbl_xcenter[PLAYER_NUM];
+    uint16_t tbl_ycenter[PLAYER_NUM];
     int tbl_force_own[PLANETS_MAX];
     int num_fronts;
     int tbl_front_relation[PLAYER_NUM];
     uint8_t tbl_front_planet[PLAYER_NUM];
-    int force_own_sum;
+    uint32_t force_own_sum;
     int planet_en_num;
     int planet_own_num;
     int tbl_planet_own_w[PLANETS_MAX];
@@ -70,13 +70,13 @@ static void game_ai_classic_turn_p1_send_scout(struct game_s *g, struct ai_turn_
     empiretechorbit_t *e = &(g->eto[pi]);
     BOOLVEC_DECLARE(tbl_planet_ignore, PLANETS_MAX);
     uint8_t tbl_planet_scout[PLANETS_MAX];
-    uint32_t tbl_ownorbit[PLANETS_MAX];
+    shipsum_t tbl_ownorbit[PLANETS_MAX];
     int num_to_scout = 0;
 
     BOOLVEC_CLEAR(tbl_planet_ignore, PLANETS_MAX);
     for (int i = 0; i < g->galaxy_stars; ++i) {
         const planet_t *p = &(g->planet[i]);
-        uint32_t ships;
+        shipsum_t ships;
         ships = 0;
         for (player_id_t pi2 = PLAYER_0; pi2 < g->players; ++pi2) {
             if ((pi != pi2) && (e->treaty[pi2] != TREATY_ALLIANCE)) {
@@ -103,10 +103,7 @@ static void game_ai_classic_turn_p1_send_scout(struct game_s *g, struct ai_turn_
         }
     }
     ait->have_colonizable = false;
-    ait->need_conquer = true;
-    if (rnd_1_n(8 - g->difficulty, &g->seed) > 1) {
-        ait->need_conquer = false;
-    }
+    ait->need_conquer = !rnd_0_nm1(8 - g->difficulty, &g->seed);
     for (int i = 0; i < g->galaxy_stars; ++i) {
         const planet_t *p = &(g->planet[i]);
         if (p->owner == PLAYER_NONE) {
@@ -124,7 +121,7 @@ static void game_ai_classic_turn_p1_send_scout(struct game_s *g, struct ai_turn_
     }
     for (int i = 0; i < g->galaxy_stars; ++i) {
         const shipcount_t *t = &(e->orbit[i].ships[0]);
-        uint32_t ships; /* MOO1 uses uint16_t */
+        shipsum_t ships; /* MOO1 uses uint16_t */
         ships = 0;
         for (int j = 0; j < e->shipdesigns_num; ++j) {
             ships += t[j];
@@ -211,7 +208,7 @@ static uint8_t game_ai_classic_turn_p1_front_find_planet(struct game_s *g, struc
     for (int i = 0; i < g->galaxy_stars; ++i) {
         const planet_t *p = &(g->planet[i]);
         if (p->owner == pi) {
-            uint32_t defense;
+            shipsum_t defense;
             defense = p->missile_bases ? 1 : 0;
             for (int j = 0; (j < e->shipdesigns_num) && (defense == 0); ++j) {
                 defense += e->orbit[i].ships[j];
@@ -251,7 +248,7 @@ static void game_ai_classic_turn_p1_front(struct game_s *g, struct ai_turn_p1_s 
         if (1
           && (pi != pi2)
           && BOOLVEC_IS1(e->within_frange, pi2)
-          && (IS_HUMAN(g, pi)/*never?*/ || (g->end == GAME_END_NONE))
+          && (IS_HUMAN(g, pi) || (g->end == GAME_END_NONE)) /* BUG IS_HUMAN(g, pi) is never true, but (g, pi2) could be and makes more sense */
         ) {
             int v8, vc;
             ait->tbl_front_relation[ait->num_fronts] = 0;
@@ -265,10 +262,12 @@ static void game_ai_classic_turn_p1_front(struct game_s *g, struct ai_turn_p1_s 
             }
             v8 = e->relation1[pi2];
             SETMIN(v8, 0);
-            if (vc != 0) {
-                ait->tbl_force_own[vc] += v8;
-            } else {
+            if (vc == 0) {
                 ait->tbl_front_relation[ait->num_fronts++] = v8;
+            /* unused before overwritten below
+            } else {
+                ait->tbl_force_own[vc] += v8;
+            */
             }
         }
     }
@@ -306,9 +305,22 @@ static void game_ai_classic_turn_p1_front(struct game_s *g, struct ai_turn_p1_s 
     foreach shipdesign { tbl_shipweight[i] = game_num_tbl_hull_w[sd[i].hull]; }
     */
     {
-        int sum = 0;
+        uint32_t sum = 0;
         for (int i = 0; i < g->galaxy_stars; ++i) {
-            sum += ait->tbl_force_own[i];
+            const planet_t *p = &(g->planet[i]);
+            ait->tbl_force_own[i] = 0;
+            if ((p->owner == pi) || (p->owner == PLAYER_NONE)) {
+                for (int j = 0; j < e->shipdesigns_num; ++j) {
+                    shipcount_t n;
+                    n = e->orbit[i].ships[j];
+                    if (n) {
+                        uint32_t v;
+                        v = ait->tbl_shipthreat[pi][j] * n;
+                        sum += v;
+                        ait->tbl_force_own[i] += v;
+                    }
+                }
+            }
         }
         if (sum != 0) {
             for (int i = 0; i < ait->num_fronts; ++i) {
@@ -327,7 +339,7 @@ static shipcount_t game_ai_classic_turn_p1_spawn_colony_ship(struct game_s *g, s
     int shipi, planeti, prod;
     shipcount_t shipn;
     if (0
-      || (ait->num_fronts == 0)
+      /*|| (ait->num_fronts == 0) never true */
       || ((shipi = e->shipi_colony) == -1)
       || (e->total_production_bc == 0)
       || ((shipn = srd->shipcount[shipi]) > 3)
