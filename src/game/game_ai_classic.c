@@ -87,7 +87,7 @@ static void game_ai_classic_turn_p1_send_scout(struct game_s *g, struct ai_turn_
                 }
             }
         }
-        if (1
+        if (0
           || BOOLVEC_IS1(p->explored, pi)
           || (!p->within_frange[pi])
           || ((g->year >= 150) && (g->evn.planet_orion_i == i))
@@ -211,13 +211,12 @@ static uint8_t game_ai_classic_turn_p1_sub2_find_planet(struct game_s *g, struct
     for (int i = 0; i < g->galaxy_stars; ++i) {
         const planet_t *p = &(g->planet[i]);
         if (p->owner == pi) {
-            /* BUG? this defense test for "!= 1" seems quite weird */
             uint32_t defense;
             defense = p->missile_bases ? 1 : 0;
             for (int j = 0; (j < e->shipdesigns_num) && (defense == 0); ++j) {
                 defense += e->orbit[i].ships[j];
             }
-            if (defense != 1) {
+            if (defense == 1) {
                 int dist;
                 dist = util_math_dist_fast(p->x, p->y, x, y);
                 if (dist < mindist) {
@@ -265,7 +264,7 @@ static void game_ai_classic_turn_p1_sub2(struct game_s *g, struct ai_turn_p1_s *
                 }
             }
             v8 = e->relation1[pi2];
-            SETMAX(v8, 0);
+            SETMIN(v8, 0);
             if (vc != 0) {
                 ait->tbl_hmm7[vc] += v8;
             } else {
@@ -365,6 +364,7 @@ static void game_turn_fleet_send(struct game_s *g, struct ai_turn_p1_s *ait, pla
     ait->tbl_hmm7[from] = 0;
     if (g->enroute_num == FLEET_ENROUTE_MAX) {
         log_warning("fleet enroute table (size %i) full, could not leave orbit!\n", FLEET_ENROUTE_MAX);
+        return;
     }
     pf = &(g->planet[from]);
     pt = &(g->planet[dest]);
@@ -400,6 +400,7 @@ static void game_turn_fleet_send(struct game_s *g, struct ai_turn_p1_s *ait, pla
         r->owner = pi;
         r->x = pf->x;
         r->y = pf->y;
+        ++g->enroute_num;
     }
     for (int i = 0; i < NUM_SHIPDESIGNS; ++i) {
         o->ships[i] = 0;    /* BUG ships removed even if they were not sent due to range == 2 && !reserve_fuel */
@@ -784,7 +785,7 @@ static void game_ai_classic_turn_p1_sub9(struct game_s *g, struct ai_turn_p1_s *
         have_orbit = false;
         if (1
           && (p->owner != PLAYER_NONE) && (p->owner != pi)
-          && (IS_AI(g, p->owner) || (g->evn.ceasefire[p->owner][pi] < 0)) /* FIXME or <= 0 ? */
+          && (IS_AI(g, p->owner) || (g->evn.ceasefire[p->owner][pi] <= 0))
           && (e->treaty[p->owner] != TREATY_ALLIANCE)
           && (e->have_colony_for <= p->type)
         ) {
@@ -1487,7 +1488,7 @@ static void game_ai_classic_turn_p2_do(struct game_s *g, player_id_t pi)
     ait->have_repulwarp = false;
     for (int i = 0; i < e->shipdesigns_num; ++i) {
         ship_special_t *ss = &(sd[i].special[0]);
-        for (int j = 0; j < SHIP_SPECIAL_NUM; ++j) {
+        for (int j = 0; j < SPECIAL_SLOT_NUM; ++j) {
             ship_special_t s;
             s = ss[j];
             if ((s == SHIP_SPECIAL_ENERGY_PULSAR) || (s == SHIP_SPECIAL_IONIC_PULSAR)) {
@@ -1507,7 +1508,7 @@ static void game_ai_classic_turn_p2_do(struct game_s *g, player_id_t pi)
         if (srd->shipcount[i] != 0) {
             ++num_non0;
         }
-        for (int j = 0; j < SHIP_SPECIAL_NUM; ++j) {
+        for (int j = 0; j < SPECIAL_SLOT_NUM; ++j) {
             ship_special_t s;
             s = ss[j];
             if ((s >= SHIP_SPECIAL_STANDARD_COLONY_BASE) || (s <= SHIP_SPECIAL_RADIATED_COLONY_BASE)) {
@@ -1574,7 +1575,7 @@ static void game_ai_classic_turn_p2_do(struct game_s *g, player_id_t pi)
     }
     for (int i = 0; i < e->shipdesigns_num; ++i) {
         ship_special_t *ss = &(sd[i].special[0]);
-        for (int j = 0; j < SHIP_SPECIAL_NUM; ++j) {
+        for (int j = 0; j < SPECIAL_SLOT_NUM; ++j) {
             ship_special_t s;
             s = ss[j];
             if ((s >= SHIP_SPECIAL_STANDARD_COLONY_BASE) || (s <= SHIP_SPECIAL_RADIATED_COLONY_BASE)) {
@@ -1643,12 +1644,13 @@ static void game_ai_classic_turn_p3_sub1(struct game_s *g, player_id_t pi)
 {
     empiretechorbit_t *e = &(g->eto[pi]);
     for (player_id_t pi2 = PLAYER_0; pi2 < g->players; ++pi2) {
-        if ((e->spymode_next[pi2] == SPYMODE_HIDE) && (g->evn.ceasefire[pi][pi2] > 0)) {
+        e->spymode_next[pi2] = SPYMODE_HIDE;
+        if (IS_HUMAN(g, pi2) && (g->evn.ceasefire[pi2][pi2] > 0)) { /* FIXME BUG should be [pi2][pi] */
             e->spymode_next[pi2] = SPYMODE_HIDE; /* FIXME redundant */
         } else if ((pi != pi2) && BOOLVEC_IS1(e->within_frange, pi2)) {
             if (e->treaty[pi2] >= TREATY_WAR) {
                 e->spymode_next[pi2] = SPYMODE_SABOTAGE;
-            } else if (e->spymode_next[pi2] == SPYMODE_HIDE) {
+            } else if (e->spymode_next[pi2] == SPYMODE_HIDE) { /* FIXME BUG always true */
                 if ((e->race == RACE_DARLOK) || rnd_0_nm1(0, &g->seed)) {
                     if (rnd_1_n(200, &g->seed) > (e->relation1[pi2] * 2 + 200)) {
                         e->spymode_next[pi2] = SPYMODE_ESPIONAGE;
@@ -3015,8 +3017,8 @@ static bool game_ai_classic_bomb(struct game_s *g, player_id_t player, uint8_t p
         pop_inbound += pop_inbound / 5;
     }
     flag_do_bomb = (p->pop > pop_inbound);
-    if (IS_HUMAN(g, p->owner)) { /* FIXME check multiplayer */
-        if (g->evn.ceasefire[p->owner][player] > 0) { /* FIXME check index order */
+    if (IS_HUMAN(g, p->owner)) {
+        if (g->evn.ceasefire[p->owner][player] > 0) {
             flag_do_bomb = false;
         }
     }
@@ -3272,7 +3274,7 @@ static void game_ai_classic_turn_diplo_p2_sub1(struct game_s *g, player_id_t p1,
     empiretechorbit_t *e1 = &(g->eto[p1]);
     empiretechorbit_t *e2 = &(g->eto[p2]);
     int v, v4;
-    if (BOOLVEC_IS1(e1->within_frange, p2) || (e1->treaty[p2] >= TREATY_WAR)) { /* WASBUG? MOO1 also tests for "|| (e1->diplo_val == 0)" ; note the missing [p2] */
+    if (BOOLVEC_IS0(e1->within_frange, p2) || (e1->treaty[p2] >= TREATY_WAR)) { /* WASBUG? MOO1 also tests for "|| (e1->diplo_val == 0)" ; note the missing [p2] */
         e1->diplo_type[p2] = 0;
         return;
     }
@@ -3473,7 +3475,7 @@ static void game_ai_classic_turn_diplo_p2_sub3(struct game_s *g, player_id_t p1,
     empiretechorbit_t *e1 = &(g->eto[p1]);
     empiretechorbit_t *e2 = &(g->eto[p2]);
     int v;
-    if (BOOLVEC_IS1(e1->within_frange, p2)) { /* WASBUG? MOO1 also tests for "|| (e1->diplo_val == 0)" ; note the missing [p2] */
+    if (BOOLVEC_IS0(e1->within_frange, p2)) { /* WASBUG? MOO1 also tests for "|| (e1->diplo_val == 0)" ; note the missing [p2] */
         e1->diplo_type[p2] = 0;
         return;
     }
