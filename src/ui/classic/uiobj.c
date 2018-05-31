@@ -252,8 +252,8 @@ static void uiobj_handle_t4_sub1(uiobj_t *p)
 {
     uint16_t len, pos, buflen, w, fonth, animpos;
     mookey_t key = 0;
-    uint16_t v6 = 0, ve = 0;
-    bool flag_mouse_button = false;
+    uint16_t ve = 0;
+    bool flag_mouse_button = false, flag_got_first = false;
     char strbuf[64];
 
     while (mouse_buttons) {
@@ -307,12 +307,12 @@ static void uiobj_handle_t4_sub1(uiobj_t *p)
         key = KBD_GET_KEY(kbd_get_keypress());
         switch (key) {
             case MOO_KEY_BACKSPACE:
-                if (v6 == 0) {
+                if (!flag_got_first) {
                     strbuf[0] = '\0';
                     len = 0;
                     pos = 0;
                     animpos = 0;
-                    v6 = 1;
+                    flag_got_first = true;
                 } else {
                     if (len > 0) {
                         if (pos >= len) {
@@ -347,7 +347,7 @@ static void uiobj_handle_t4_sub1(uiobj_t *p)
                 }
                 break;
             case MOO_KEY_LEFT:
-                v6 = 1;
+                flag_got_first = true;
                 if (pos > 0) {
                     --pos;
                     animpos = 0;
@@ -380,7 +380,7 @@ static void uiobj_handle_t4_sub1(uiobj_t *p)
                     flag_ok = true;
                 }
                 if (flag_ok) {
-                    v6 = 1;
+                    flag_got_first = true;
                     strbuf[len] = key;
                     strbuf[len + 1] = '\0';
                     if ((len < buflen) && (lbxfont_calc_str_width(strbuf) <= w)) {
