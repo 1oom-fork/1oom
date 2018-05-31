@@ -316,7 +316,7 @@ static void game_ai_classic_turn_p1_front(struct game_s *g, struct ai_turn_p1_s 
     }
 }
 
-static shipcount_t game_ai_classic_turn_p1_sub3(struct game_s *g, struct ai_turn_p1_s *ait, player_id_t pi)
+static shipcount_t game_ai_classic_turn_p1_spawn_colony_ship(struct game_s *g, struct ai_turn_p1_s *ait, player_id_t pi)
 {
     /* spawn a new colony ship by magic */
     empiretechorbit_t *e = &(g->eto[pi]);
@@ -1026,7 +1026,7 @@ static void game_ai_classic_turn_p1(struct game_s *g)
         }
         game_ai_classic_turn_p1_send_scout(g, ait, pi);
         game_ai_classic_turn_p1_front(g, ait, pi);
-        if (game_ai_classic_turn_p1_sub3(g, ait, pi) != 0) {
+        if (game_ai_classic_turn_p1_spawn_colony_ship(g, ait, pi) != 0) {
             game_ai_classic_turn_p1_send_colony_ships(g, ait, pi);
         }
         game_ai_classic_turn_p1_front(g, ait, pi);
