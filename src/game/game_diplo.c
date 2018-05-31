@@ -523,7 +523,7 @@ void game_diplo_set_trade(struct game_s *g, player_id_t p1, player_id_t p2, int 
     }
     SETMIN(v, 100);
     e1->trade_bc[p2] = bc;
-    e1->trade_established_bc[p2] = bc;
+    e1->trade_established_bc[p2] = bc;  /* FIXME BUG? should be < bc to make the variable have a purpose */
     e1->trade_percent[p2] = v;
     e2->trade_bc[p1] = bc;
     e2->trade_established_bc[p1] = bc;

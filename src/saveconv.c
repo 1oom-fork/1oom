@@ -633,7 +633,7 @@ static int savetype_de_moo13(struct game_s *g, const char *fname)
             M13_GET_16(ev->spies_caught[i][PLAYER_0], evb + 0x1f2 + i * 2);
         }
         M13_GET_TBL_16(ev->spies_caught[PLAYER_0], evb + 0x1fe);
-        M13_GET_TBL_16(ev->ceasefire[PLAYER_0], evb + 0x28e); /* FIXME check index order */
+        M13_GET_TBL_16(ev->ceasefire[PLAYER_0], evb + 0x28e);
         M13_GET_TBL_BVN_8(ev->help_shown[PLAYER_0], evb + 0x2e2, 16);
         /* TODO build_finished ; is it even possible to save before clicking them away? */
         M13_GET_TBL_16_OWNER(ev->voted, evb + 0x320);
@@ -1080,7 +1080,7 @@ static int savetype_en_moo13(struct game_s *g, const char *fname)
             M13_SET_16(ev->spies_caught[i][PLAYER_0], evb + 0x1f2 + i * 2);
         }
         M13_SET_TBL_16(ev->spies_caught[PLAYER_0], evb + 0x1fe);
-        M13_SET_TBL_16(ev->ceasefire[PLAYER_0], evb + 0x28e); /* FIXME check index order */
+        M13_SET_TBL_16(ev->ceasefire[PLAYER_0], evb + 0x28e);
         M13_SET_TBL_BVN_8(ev->help_shown[PLAYER_0], evb + 0x2e2, 16);
         /* TODO build_finished ; is it even possible to save before clicking them away? */
         M13_SET_TBL_16_OWNER(ev->voted, evb + 0x320);
