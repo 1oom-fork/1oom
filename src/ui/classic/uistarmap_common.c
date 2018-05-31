@@ -72,12 +72,12 @@ static void ui_starmap_draw_planetinfo_do(const struct game_s *g, player_id_t ap
                 if (p->special == PLANET_SPECIAL_NORMAL) {
                     str = game_str_tbl_sm_pgrowth[p->growth];
                 } else {
-                    str = game_str_tbl_sm_pspecial[p->growth];
+                    str = game_str_tbl_sm_pspecial[p->special];
                 }
                 lbxfont_print_str_right(305, 36, str, UI_SCREEN_W);
                 lbxfont_select(2, 0xe, 0, 0);
-                if (show_plus && (p->owner == api) && ((p->max_pop2 + g->eto[api].have_terraform_n) < max_pop) && (max_pop < game_num_max_pop)) {
-                    lbxfont_print_str_normal(298, 44, "+", UI_SCREEN_W);
+                if (show_plus && (p->owner == api) && ((p->max_pop2 + g->eto[api].have_terraform_n) > max_pop) && (max_pop < game_num_max_pop)) {
+                    lbxfont_print_str_normal(289, 44, "+", UI_SCREEN_W);
                     str = game_str_sm_popmaxw;
                     x = 287;
                 } else {
@@ -105,6 +105,7 @@ static void ui_starmap_draw_range_parsec(struct starmap_data_s *d, int y)
     int dist = game_get_min_dist(g, d->api, g->planet_focus_i[d->api]);
     char buf[64];
     sprintf(buf, "%s %i %s", game_str_sm_range, dist, (dist == 1) ? game_str_sm_parsec : game_str_sm_parsecs);
+    lbxfont_select_set_12_4(0, 4, 0, 0);
     lbxfont_print_str_center(269, y, buf, UI_SCREEN_W);
 }
 
@@ -434,7 +435,7 @@ void ui_starmap_draw_basic(struct starmap_data_s *d)
             lbxgfx_draw_frame(227, 73, ui_data.gfx.colonies.current, UI_SCREEN_W);
             ui_draw_box1(227, 73, 310, 174, 0, 0);
             sprintf(buf, "%s %s", game_str_tbl_race[g->eto[owner].race], game_str_sm_colony);
-            if (BOOLVEC_IS0(p->within_srange, d->api)) {
+            if (BOOLVEC_IS1(p->within_srange, d->api)) {
                 lbxfont_select_set_12_4(5, tbl_banner_fontparam[g->eto[owner].banner], 0, 0);
                 lbxfont_print_str_center(270, 84, buf, UI_SCREEN_W);
                 pop = p->pop;
