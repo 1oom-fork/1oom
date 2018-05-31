@@ -366,6 +366,7 @@ static void game_turn_fleet_send(struct game_s *g, struct ai_turn_p1_s *ait, pla
     ait->tbl_hmm7[from] = 0;
     if (g->enroute_num == FLEET_ENROUTE_MAX) {
         log_warning("fleet enroute table (size %i) full, could not leave orbit!\n", FLEET_ENROUTE_MAX);
+        return;
     }
     pf = &(g->planet[from]);
     pt = &(g->planet[dest]);
@@ -401,6 +402,7 @@ static void game_turn_fleet_send(struct game_s *g, struct ai_turn_p1_s *ait, pla
         r->owner = pi;
         r->x = pf->x;
         r->y = pf->y;
+        ++g->enroute_num;
     }
     for (int i = 0; i < NUM_SHIPDESIGNS; ++i) {
         o->ships[i] = 0;    /* BUG ships removed even if they were not sent due to range == 2 && !reserve_fuel */
@@ -785,7 +787,7 @@ static void game_ai_classic_turn_p1_sub9(struct game_s *g, struct ai_turn_p1_s *
         have_orbit = false;
         if (1
           && (p->owner != PLAYER_NONE) && (p->owner != pi)
-          && (IS_AI(g, p->owner) || (g->evn.ceasefire[p->owner][pi] < 0)) /* FIXME or <= 0 ? */
+          && (IS_AI(g, p->owner) || (g->evn.ceasefire[p->owner][pi] <= 0))
           && (e->treaty[p->owner] != TREATY_ALLIANCE)
           && (e->have_colony_for <= p->type)
         ) {
@@ -3269,7 +3271,7 @@ static void game_ai_classic_turn_diplo_p2_sub1(struct game_s *g, player_id_t p1,
     empiretechorbit_t *e1 = &(g->eto[p1]);
     empiretechorbit_t *e2 = &(g->eto[p2]);
     int v, v4;
-    if (BOOLVEC_IS1(e1->within_frange, p2) || (e1->treaty[p2] >= TREATY_WAR)) { /* WASBUG? MOO1 also tests for "|| (e1->diplo_val == 0)" ; note the missing [p2] */
+    if (BOOLVEC_IS0(e1->within_frange, p2) || (e1->treaty[p2] >= TREATY_WAR)) { /* WASBUG? MOO1 also tests for "|| (e1->diplo_val == 0)" ; note the missing [p2] */
         e1->diplo_type[p2] = 0;
         return;
     }
@@ -3470,7 +3472,7 @@ static void game_ai_classic_turn_diplo_p2_sub3(struct game_s *g, player_id_t p1,
     empiretechorbit_t *e1 = &(g->eto[p1]);
     empiretechorbit_t *e2 = &(g->eto[p2]);
     int v;
-    if (BOOLVEC_IS1(e1->within_frange, p2)) { /* WASBUG? MOO1 also tests for "|| (e1->diplo_val == 0)" ; note the missing [p2] */
+    if (BOOLVEC_IS0(e1->within_frange, p2)) { /* WASBUG? MOO1 also tests for "|| (e1->diplo_val == 0)" ; note the missing [p2] */
         e1->diplo_type[p2] = 0;
         return;
     }
