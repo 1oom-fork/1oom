@@ -67,7 +67,7 @@ static void ui_starmap_draw_planetinfo_do(const struct game_s *g, player_id_t ap
                 lbxfont_select(5, 5, 0, 0);
                 lbxfont_print_str_right(305, 40, str, UI_SCREEN_W, ui_scale);
             } else {
-                int x, max_pop = p->max_pop3;
+                int x, xp, max_pop = p->max_pop3;
                 lbxfont_select(0, 1, 0, 0);
                 if (p->special == PLANET_SPECIAL_NORMAL) {
                     str = game_str_tbl_sm_pgrowth[p->growth];
@@ -76,16 +76,16 @@ static void ui_starmap_draw_planetinfo_do(const struct game_s *g, player_id_t ap
                 }
                 lbxfont_print_str_right(305, 36, str, UI_SCREEN_W, ui_scale);
                 lbxfont_select(2, 0xe, 0, 0);
-                if (show_plus && (p->owner == api) && ((p->max_pop2 + g->eto[api].have_terraform_n) < max_pop) && (max_pop < game_num_max_pop)) {
-                    lbxfont_print_str_normal(298, 44, "+", UI_SCREEN_W, ui_scale);
-                    str = game_str_sm_popmaxw;
+                if (show_plus && (p->owner == api) && ((p->max_pop2 + g->eto[api].have_terraform_n) > max_pop) && (max_pop < game_num_max_pop)) {
+                    lbxfont_print_str_normal(289, 44, "+", UI_SCREEN_W, ui_scale);
                     x = 287;
+                    xp = x - 22;
                 } else {
-                    str = game_str_sm_popmaxn;
                     x = 291;
+                    xp = x - 23;
                 }
-                /* FIXME split the popmax strings and use x for positioning */
-                lbxfont_print_str_right(305, 45, str, UI_SCREEN_W, ui_scale);
+                lbxfont_print_str_normal(xp, 45, game_str_sm_pop, UI_SCREEN_W, ui_scale);
+                lbxfont_print_str_normal(295, 45, game_str_sm_max, UI_SCREEN_W, ui_scale);
                 if ((!show_plus) || (g->eto[api].race != RACE_SILICOID)) {
                     max_pop -= p->waste;
                 }
