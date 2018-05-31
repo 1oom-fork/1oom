@@ -45,7 +45,7 @@ struct ai_turn_p1_s {
     int num_fronts;
     int tbl_front_relation[PLAYER_NUM];
     uint8_t tbl_front_planet[PLAYER_NUM];
-    int force_own_sum;
+    uint32_t force_own_sum;
     int hmm12;
     int hmm13;
     int tbl_hmm14[PLANETS_MAX];
@@ -306,7 +306,22 @@ static void game_ai_classic_turn_p1_front(struct game_s *g, struct ai_turn_p1_s 
     foreach shipdesign { tbl_shipweight[i] = game_num_tbl_hull_w[sd[i].hull]; }
     */
     {
-        int sum = 0;
+        uint32_t sum = 0;
+        for (int i = 0; i < g->galaxy_stars; ++i) {
+            const planet_t *p = &(g->planet[i]);
+            ait->tbl_force_own[i] = 0;
+            if ((p->owner == pi) || (p->owner == PLAYER_NONE)) {
+                for (int j = 0; j < e->shipdesigns_num; ++j) {
+                    shipcount_t n;
+                    n = e->orbit[i].ships[j];
+                    if (n) {
+                        uint32_t v;
+                        v = ait->tbl_shipthreat[pi][j] * n;
+                        ait->tbl_force_own[i] += v;
+                    }
+                }
+            }
+        }
         for (int i = 0; i < g->galaxy_stars; ++i) {
             sum += ait->tbl_force_own[i];
         }
