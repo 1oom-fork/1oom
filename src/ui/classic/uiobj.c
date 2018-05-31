@@ -252,7 +252,8 @@ static void uiobj_handle_t4_sub1(uiobj_t *p)
 {
     uint16_t len, pos, buflen, w, fonth, animpos;
     mookey_t key = 0;
-    uint16_t vc = 0, v6 = 0, ve = 0;
+    uint16_t v6 = 0, ve = 0;
+    bool flag_mouse_button = false;
     char strbuf[64];
 
     while (mouse_buttons) {
@@ -281,13 +282,13 @@ static void uiobj_handle_t4_sub1(uiobj_t *p)
     strcpy(p->t4.buf, strbuf);
     fonth = lbxfont_get_height();
     uiobj_handle_t4_sub2(p, pos, animpos, strbuf);
-    while ((key != MOO_KEY_RETURN) && (vc == 0)) {
+    while ((key != MOO_KEY_RETURN) && (!flag_mouse_button)) {
         bool flag_ok;
         goto loc_15d85;
         loc_15d3f:
         hw_event_handle();
         if ((1/*mouse_flag_initialized*/) && (mouse_buttons || (mouse_getclear_hmm4() != 0))) {
-            vc = 1;
+            flag_mouse_button = true;
             break;
         } else {
             ++animpos;
@@ -297,10 +298,10 @@ static void uiobj_handle_t4_sub1(uiobj_t *p)
             uiobj_handle_t4_sub2(p, pos, animpos, strbuf);
         }
         loc_15d85:
-        if (!(kbd_have_keypress() || (vc != 0))) {
+        if (!(kbd_have_keypress() || flag_mouse_button)) {
             goto loc_15d3f;
         }
-        if (vc != 0) {
+        if (flag_mouse_button) {
             break;
         }
         key = KBD_GET_KEY(kbd_get_keypress());
@@ -413,7 +414,7 @@ static void uiobj_handle_t4_sub1(uiobj_t *p)
         uiobj_handle_t4_sub2(p, pos, animpos, strbuf);
     }
     strcpy(p->t4.buf, strbuf);
-    if (vc == 0) /*&& (mouse_flag_initialized)*/ {
+    if (!flag_mouse_button) /*&& (mouse_flag_initialized)*/ {
         while (mouse_buttons) {
             hw_event_handle();
         }
