@@ -251,7 +251,7 @@ static void uiobj_handle_t4_sub2(uiobj_t *p, uint16_t len, uint16_t a4, const ch
 static void uiobj_handle_t4_sub1(uiobj_t *p)
 {
     uint16_t len, pos, buflen, w, fonth, animpos;
-    mookey_t key = 0;
+    mookey_t key = MOO_KEY_UNKNOWN;
     bool flag_mouse_button = false, flag_got_first = false;
     char strbuf[64];
 
@@ -282,17 +282,17 @@ static void uiobj_handle_t4_sub1(uiobj_t *p)
     while ((key != MOO_KEY_RETURN) && (!flag_mouse_button)) {
         bool flag_ok;
         while (!(kbd_have_keypress() || flag_mouse_button)) {
-        hw_event_handle();
-        if ((1/*mouse_flag_initialized*/) && (mouse_buttons || (mouse_getclear_hmm4() != 0))) {
-            flag_mouse_button = true;
-            break;
-        } else {
-            ++animpos;
-            if (((fonth << 1) - 1) < animpos) {
-                animpos = 0;
+            hw_event_handle();
+            if ((1/*mouse_flag_initialized*/) && (mouse_buttons || (mouse_getclear_hmm4() != 0))) {
+                flag_mouse_button = true;
+                break;
+            } else {
+                ++animpos;
+                if (((fonth << 1) - 1) < animpos) {
+                    animpos = 0;
+                }
+                uiobj_handle_t4_sub2(p, pos, animpos, strbuf);
             }
-            uiobj_handle_t4_sub2(p, pos, animpos, strbuf);
-        }
         }
         if (flag_mouse_button) {
             break;
