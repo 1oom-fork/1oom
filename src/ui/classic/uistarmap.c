@@ -125,8 +125,8 @@ static void ui_starmap_do_help(struct starmap_data_s *d)
         return;
     }
     if (BOOLVEC_TBL_IS0(g->evn.help_shown, api, 5)) {
-        for (int i = 0; i < e->tech.completed[TECH_FIELD_WEAPON]; ++i) {
-            if (srd->researchcompleted[TECH_FIELD_WEAPON][i] == 2) {
+        for (int i = 1; i < e->tech.completed[TECH_FIELD_WEAPON]; ++i) {
+            if (srd->researchcompleted[TECH_FIELD_WEAPON][i] != 2) {
                 BOOLVEC_TBL_SET1(g->evn.help_shown, api, 5);
                 ui_help(0x17);
                 return;
