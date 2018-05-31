@@ -45,7 +45,7 @@ struct ai_turn_p1_s {
     int num_fronts;
     int tbl_front_relation[PLAYER_NUM];
     uint8_t tbl_front_planet[PLAYER_NUM];
-    int hmm11;
+    int force_own_sum;
     int hmm12;
     int hmm13;
     int tbl_hmm14[PLANETS_MAX];
@@ -315,7 +315,7 @@ static void game_ai_classic_turn_p1_front(struct game_s *g, struct ai_turn_p1_s 
                 ait->tbl_front_relation[i] += (ait->tbl_force_own[ait->tbl_front_planet[i]] * 100) / sum;
             }
         }
-        ait->hmm11 = sum / 25;
+        ait->force_own_sum = sum / 25;
     }
 }
 
@@ -736,13 +736,13 @@ static void game_ai_classic_turn_p1_sub8(struct game_s *g, struct ai_turn_p1_s *
         }
     }
     if (g->election_held) {
-        ait->hmm11 /= 2;
+        ait->force_own_sum /= 2;
     }
     if (g->end != GAME_END_NONE) {
-        ait->hmm11 /= 2;
+        ait->force_own_sum /= 2;
     }
     for (int i = 0; i < g->galaxy_stars; ++i) {
-        if (ait->tbl_force_own[i] < ait->hmm11) {
+        if (ait->tbl_force_own[i] < ait->force_own_sum) {
             ait->tbl_force_own[i] = 0;
         }
     }
