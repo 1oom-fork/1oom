@@ -251,6 +251,7 @@ int saveconv_de_moo13(struct game_s *g, const char *fname)
     M13_GET_16_CHECK(g->enroute_num, 0xe1b6, 0, 259);
     M13_GET_16_CHECK(g->transport_num, 0xe1b8, 0, 99);
     M13_GET_16(g->end, 0xe686);
+    g->refuse[0] = (!g->end) ? 0 : 1;
     M13_GET_16_OWNER(g->winner, 0xe688);
     M13_GET_16(g->guardian_killer, 0xe68a);
     if (g->guardian_killer == 1000) {
@@ -1355,6 +1356,7 @@ static const struct game_intros_s game_intros_nebula_coord[] = {
 static const struct game_intros_s game_intros_root[] = {
     GAME_INTROS_VAL(game_s, players),
     GAME_INTROS_BV(game_s, is_ai, PLAYER_NUM),
+    GAME_INTROS_BV(game_s, refuse, PLAYER_NUM),
     GAME_INTROS_VAL(game_s, active_player),
     GAME_INTROS_VAL(game_s, difficulty),
     GAME_INTROS_VAL(game_s, galaxy_size),
@@ -1870,6 +1872,7 @@ int saveconv_en_text(struct game_s *g, const char *fname)
     text_dump_prefix_add(tp, "g", "->");
     OUTLINE "players = %i\n", g->players);
     OUTLINE "is_ai = %s\n", savetype_en_bv(g->is_ai, g->players));
+    OUTLINE "refuse = %s\n", savetype_en_bv(g->refuse, g->players));
     OUTLINE "active_player = %i\n", g->active_player);
     OUTLINE "difficulty = %i // %s\n", g->difficulty, game_str_tbl_diffic[g->difficulty]);
     OUTLINE "galaxy_size = %i // %s\n", g->galaxy_size, game_str_tbl_gsize[g->galaxy_size]);
