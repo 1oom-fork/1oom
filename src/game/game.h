@@ -238,7 +238,7 @@ typedef struct gameevents_s {
     bool have_guardian;
     uint8_t home[PLAYER_NUM];   /* home planet index or PLANET_NONE if dead */
     uint8_t report_stars;
-    player_id_t coup;
+    BOOLVEC_DECLARE(coup, PLAYER_NUM);
     newtechs_t newtech[PLAYER_NUM];
     shipsum_t new_ships[PLAYER_NUM][NUM_SHIPDESIGNS];
     uint16_t spies_caught[PLAYER_NUM][PLAYER_NUM]; /* [catcher][spy] */
@@ -312,6 +312,7 @@ struct game_s {
     player_id_t winner;
     player_id_t guardian_killer;
     bool election_held;
+    BOOLVEC_DECLARE(refuse, PLAYER_NUM);
     uint32_t seed;   /* current random seed */
     uint32_t galaxy_seed; /* seed of generated galaxy */
     struct game_aux_s *gaux;
@@ -319,5 +320,6 @@ struct game_s {
 
 #define IS_AI(_g_, _i_) BOOLVEC_IS1((_g_)->is_ai, (_i_))
 #define IS_HUMAN(_g_, _i_) BOOLVEC_IS0((_g_)->is_ai, (_i_))
+#define IS_ALIVE(_g_, _i_) ((_g_)->evn.home[(_i_)] != PLANET_NONE)
 
 #endif

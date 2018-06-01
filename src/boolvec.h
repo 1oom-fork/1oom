@@ -16,6 +16,7 @@
 #define BOOLVEC_IS0(_name_, _i_) ((_name_[(_i_) / 8] & (1 << ((_i_) & 7))) == 0)
 #define BOOLVEC_IS1(_name_, _i_) ((_name_[(_i_) / 8] & (1 << ((_i_) & 7))) != 0)
 #define BOOLVEC_IS_CLEAR(_name_, _fnum_) (((_fnum_) <= 8) ? ((_name_)[0] == 0) : (/*FIXME*/0))
+#define BOOLVEC_ONLY1(_name_, _fnum_) (((_fnum_) <= 8) ? (((_name_)[0] != 0) && (((_name_)[0] & ((_name_)[0] - 1)) == 0)) : (/*FIXME*/0))
 
 #define BOOLVEC_TBL_DECLARE(_name_, _tnum_, _fnum_) uint8_t _name_[(_tnum_)][((_fnum_) + 7) / 8]
 #define BOOLVEC_TBL_PTRPARAMM(_name_, _tnum_) &(_name_[(_tnum_)][0])
