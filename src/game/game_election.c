@@ -255,7 +255,7 @@ void game_election(struct game_s *g)
                     sprintf(&el->buf[pos], " %s %s %s", game_str_el_emperor, g->emperor_names[g->winner], game_str_el_isnow);
                 }
             }
-            game_tech_ai_share(g);
+            game_tech_final_war_share(g);
             el->str = el->buf;
             el->ui_delay = 3;
             ui_election_show(el);
