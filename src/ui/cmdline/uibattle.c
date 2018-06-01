@@ -273,7 +273,7 @@ void ui_battle_draw_item(const struct battle_s *bt, int itemi, int x, int y)
             ui_data.battle.screen[ty + dy][tx + dx] = c;
         }
     }
-    if (b->selected && (!bt->s[b->side].flag_auto)/* && (b->side != SIDE_R)*/) {   /* FIXME check multiplayer */
+    if (b->selected && (!bt->s[b->side].flag_auto)) {
         if (b->selected != 2/*moving*/) {
             for (int dy = 0; dy < 3; ++dy) {
                 for (int dx = 0; dx < 4; ++dx) {

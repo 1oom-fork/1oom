@@ -167,6 +167,7 @@ static int libsave_moo13_de_do(uint8_t *buf, struct game_s *g)
     M13_GET_16_CHECK(g->enroute_num, 0xe1b6, 0, 259);
     M13_GET_16_CHECK(g->transport_num, 0xe1b8, 0, 99);
     M13_GET_16(g->end, 0xe686);
+    g->refuse[0] = (!g->end) ? 0 : 1;
     M13_GET_16_OWNER(g->winner, 0xe688);
     M13_GET_16(g->guardian_killer, 0xe68a);
     if (g->guardian_killer == 1000) {
