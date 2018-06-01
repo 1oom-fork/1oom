@@ -799,7 +799,7 @@ void game_tech_get_artifact_loot(struct game_s *g, uint8_t planet, player_id_t p
     }
 }
 
-void game_tech_ai_share(struct game_s *g)
+void game_tech_final_war_share(struct game_s *g)
 {
     for (tech_field_t field_i = TECH_FIELD_COMPUTER; field_i < TECH_FIELD_NUM; ++field_i) {
         BOOLVEC_DECLARE(tbl_techcompl, 60);
