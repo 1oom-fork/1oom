@@ -1697,7 +1697,7 @@ static void game_turn_update_final_war(struct game_s *g)
         return;
     }
     /* FIXME multiplayer */
-    game_tech_ai_share(g);
+    game_tech_final_war_share(g);
     for (player_id_t pi1 = PLAYER_0; pi1 < g->players; ++pi1) {
         empiretechorbit_t *e1 = &(g->eto[pi1]);
         for (player_id_t pi2 = pi1 + 1; pi2 < g->players; ++pi2) {
