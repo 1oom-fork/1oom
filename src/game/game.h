@@ -317,6 +317,11 @@ struct game_s {
     struct game_aux_s *gaux;
 };
 
+static inline bool IS_ALIVE(const struct game_s *g, player_id_t i)
+{
+    return (g->evn.home[i] != PLANET_NONE);
+}
+
 #define IS_AI(_g_, _i_) BOOLVEC_IS1((_g_)->is_ai, (_i_))
 #define IS_HUMAN(_g_, _i_) BOOLVEC_IS0((_g_)->is_ai, (_i_))
 

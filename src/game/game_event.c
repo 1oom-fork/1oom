@@ -1000,7 +1000,7 @@ bool game_event_run(struct game_s *g, struct game_end_s *ge)
             }
         }
         for (player_id_t i = PLAYER_0; i < g->players; ++i) {
-            if (IS_AI(g, i) && (num_planets[i] == 0) && (g->evn.home[i] != PLANET_NONE)) {
+            if (IS_AI(g, i) && (num_planets[i] == 0) && IS_ALIVE(g, i)) {
                 player_id_t killer;
                 killer = PLAYER_NONE;
                 for (player_id_t j = PLAYER_0; (j < g->players) && (killer == PLAYER_NONE); ++j) {
@@ -1046,7 +1046,7 @@ bool game_event_run(struct game_s *g, struct game_end_s *ge)
         ns.type = GAME_NEWS_COUP;
         ns.race = e->race;
         for (int i = PLAYER_0; i < g->players; ++i) {
-            if (IS_HUMAN(g, i) && (g->evn.home[i] != PLANET_NONE)) {
+            if (IS_HUMAN(g, i) && IS_ALIVE(g, i)) {
                 ++num_humans;
             }
         }
@@ -1071,7 +1071,7 @@ bool game_event_run(struct game_s *g, struct game_end_s *ge)
             any_in_range = IS_HUMAN(g, player);
             for (int i = PLAYER_0; (i < g->players) && (!any_in_range); ++i) {
                 empiretechorbit_t *e2 = &(g->eto[i]);
-                if (IS_HUMAN(g, i) && BOOLVEC_IS1(e2->within_frange, player) && (g->evn.home[i] != PLANET_NONE)) {
+                if (IS_HUMAN(g, i) && BOOLVEC_IS1(e2->within_frange, player) && IS_ALIVE(g, i)) {
                     any_in_range = true;
                 }
             }
