@@ -28,7 +28,7 @@ static void game_election_prepare(struct election_s *el)
                 el->first_human = i;
                 continue;
             }
-            if (g->evn.home[i] != PLANET_NONE) {
+            if (IS_ALIVE(g, i)) {
                 el->tbl_ei[num] = i;
                 ++num;
             }
