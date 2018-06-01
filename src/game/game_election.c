@@ -4,6 +4,7 @@
 #include <string.h>
 
 #include "game_election.h"
+#include "boolvec.h"
 #include "game.h"
 #include "game_ai.h"
 #include "game_aux.h"
@@ -23,12 +24,15 @@ static void game_election_prepare(struct election_s *el)
     {
         bool found_human = false;
         for (player_id_t i = PLAYER_0; i < g->players; ++i) {
-            if (IS_HUMAN(g, i) && (!found_human)) {
-                found_human = true;
-                el->first_human = i;
-                continue;
-            }
             if (IS_ALIVE(g, i)) {
+                if (IS_HUMAN(g, i)) {
+                    el->last_human = i;
+                    if (!found_human) {
+                        found_human = true;
+                        el->first_human = i;
+                        continue;
+                    }
+                }
                 el->tbl_ei[num] = i;
                 ++num;
             }
@@ -66,7 +70,7 @@ static void game_election_prepare(struct election_s *el)
             }
         }
     }
-    if (IS_HUMAN(g, tbl_ei[1])) {
+    if (IS_AI(g, tbl_ei[0]) && IS_HUMAN(g, tbl_ei[1])) {
         el->candidate[0] = tbl_ei[1];
         el->candidate[1] = tbl_ei[0];
     } else {
@@ -78,6 +82,65 @@ static void game_election_prepare(struct election_s *el)
     el->got_votes[1] = 0;
     el->str = game_str_el_start;
     el->cur_i = PLAYER_NONE;
+}
+
+static void game_election_accept(struct election_s *el)
+{
+    struct game_s *g = el->g;
+    BOOLVEC_CLEAR(g->refuse, PLAYER_NUM);
+    for (player_id_t ph = el->first_human; ph <= el->last_human; ++ph) {
+        if (IS_AI(g, ph) || (!IS_ALIVE(g, ph))) {
+            continue;
+        }
+        if (el->first_human == el->last_human) {
+            el->str = game_str_el_accept;
+        } else {
+            sprintf(el->buf, "(%s) %s", g->emperor_names[ph], game_str_el_accept);
+            el->str = el->buf;
+        }
+        if (!ui_election_accept(el, ph)) {
+            BOOLVEC_SET1(g->refuse, ph);
+        }
+    }
+    if (!BOOLVEC_IS_CLEAR(g->refuse, PLAYER_NUM)) {
+        for (player_id_t p1 = PLAYER_0; p1 < g->players; ++p1) {
+            if (BOOLVEC_IS1(g->refuse, p1)) {
+                continue;
+            }
+            for (player_id_t ph = el->first_human; ph <= el->last_human; ++ph) {
+                if (BOOLVEC_IS0(g->refuse, ph)) {
+                    continue;
+                }
+                game_diplo_break_trade(g, ph, p1);
+                game_diplo_set_treaty(g, ph, p1, TREATY_FINAL_WAR);
+            }
+            for (player_id_t p2 = p1; p2 < g->players; ++p2) {
+                if (BOOLVEC_IS1(g->refuse, p2)) {
+                    continue;
+                }
+                game_diplo_set_treaty(g, p1, p2, TREATY_ALLIANCE);
+            }
+        }
+        for (int i = 0; i < el->num; ++i) {
+            if (el->tbl_ei[i] == el->candidate[1]) {
+                el->cur_i = i;
+                break;
+            }
+        }
+        {
+            int pos;
+            pos = sprintf(el->buf, "%s", game_str_el_sobeit);
+            if (g->end == GAME_END_WON_GOOD) {
+                g->winner = el->candidate[1];
+                sprintf(&el->buf[pos], " %s %s %s", game_str_el_emperor, g->emperor_names[g->winner], game_str_el_isnow);
+            }
+        }
+        game_tech_final_war_share(g);
+        el->str = el->buf;
+        el->ui_delay = 3;
+        ui_election_show(el);
+        g->end = GAME_END_FINAL_WAR;
+    }
 }
 
 /* -------------------------------------------------------------------------- */
@@ -228,39 +291,7 @@ void game_election(struct game_s *g)
         ui_election_show(el);
     }
     if (g->end != GAME_END_NONE) {
-        player_id_t ph = el->first_human;
-        el->str = game_str_el_accept;
-        if (!ui_election_accept(el, ph)) { /* FIXME multiplayer ask everyone in turn? */
-            for (player_id_t p1 = PLAYER_0; p1 < g->players; ++p1) {
-                game_diplo_break_trade(g, ph, p1);  /* FIXME multiplayer */
-                game_diplo_set_treaty(g, ph, p1, TREATY_FINAL_WAR);  /* FIXME multiplayer */
-                for (player_id_t p2 = p1; p2 < g->players; ++p2) {
-                    if ((p2 == ph) || (p1 == ph)) { /* FIXME multiplayer */
-                        continue;
-                    }
-                    game_diplo_set_treaty(g, p1, p2, TREATY_ALLIANCE);
-                }
-            }
-            for (int i = 0; i < el->num; ++i) {
-                if (el->tbl_ei[i] == el->candidate[1]) {
-                    el->cur_i = i;
-                    break;
-                }
-            }
-            {
-                int pos;
-                pos = sprintf(el->buf, "%s", game_str_el_sobeit);
-                if (g->end == GAME_END_WON_GOOD) {
-                    g->winner = el->candidate[1];
-                    sprintf(&el->buf[pos], " %s %s %s", game_str_el_emperor, g->emperor_names[g->winner], game_str_el_isnow);
-                }
-            }
-            game_tech_final_war_share(g);
-            el->str = el->buf;
-            el->ui_delay = 3;
-            ui_election_show(el);
-            g->end = GAME_END_FINAL_WAR;
-        }
+        game_election_accept(el);
     }
     ui_election_end(el);
 }
