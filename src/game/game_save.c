@@ -579,7 +579,8 @@ static int game_save_encode(uint8_t *buf, int buflen, const struct game_s *g, ui
     }
     SG_1OOM_EN_U8(g->players);
     SG_1OOM_EN_BV(g->is_ai, PLAYER_NUM);
-    SG_1OOM_EN_DUMMY(3);
+    SG_1OOM_EN_BV(g->refuse, PLAYER_NUM);
+    SG_1OOM_EN_DUMMY(2);
     SG_1OOM_EN_U8((g->nebula_type[0] & 0xf) | ((g->nebula_type[1] & 0xf) << 4));
     SG_1OOM_EN_U8((g->nebula_type[2] & 0xf) | ((g->nebula_type[3] & 0xf) << 4));
     SG_1OOM_EN_U8(g->active_player);
@@ -658,7 +659,8 @@ static int game_save_decode(const uint8_t *buf, int buflen, struct game_s *g, ui
         return -1;
     }
     SG_1OOM_DE_BV(g->is_ai, PLAYER_NUM);
-    SG_1OOM_DE_DUMMY(3);
+    SG_1OOM_DE_BV(g->refuse, PLAYER_NUM);
+    SG_1OOM_DE_DUMMY(2);
     {
         uint8_t tmp;
         SG_1OOM_DE_U8(tmp);
@@ -758,6 +760,14 @@ static int game_save_decode(const uint8_t *buf, int buflen, struct game_s *g, ui
     }
     if (pos < buflen) {
         log_warning("Save: decode read len %i < got %i (left %i)\n", pos, buflen, buflen - pos);
+    }
+    /* generate g->refuse if needed  */
+    if ((g->end == GAME_END_FINAL_WAR) && BOOLVEC_IS_CLEAR(g->refuse, PLAYER_NUM)) {
+        for (player_id_t i = PLAYER_0; i < g->players; ++i) {
+            if (IS_HUMAN(g, i) && IS_ALIVE(g, i)) {
+                BOOLVEC_SET1(g->refuse, i);
+            }
+        }
     }
     g->guardian_killer = PLAYER_NONE;
     return 0;
