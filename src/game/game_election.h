@@ -17,6 +17,7 @@ struct election_s {
     uint16_t total_votes;
     uint16_t got_votes[2];
     player_id_t first_human;
+    player_id_t last_human;
     int cur_i;
     bool flag_show_votes;
     int ui_delay;
