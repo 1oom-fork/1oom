@@ -1580,7 +1580,7 @@ handle_comment:
         }
         return ++p;
     } else if (c == '{') {
-        return savetype_de_text_parse_right(g, fname, p + 1, lnum, offs, gitbl, braces + 1);
+        return savetype_de_text_parse_right(g, fname, p + 1, lnum, offs, gi, braces + 1);
     } else if (c == '}') {
 handle_brace_close:
         if (braces) {
@@ -1601,6 +1601,7 @@ handle_dot:
         while ((((c = *p) >= 'a') && (c <= 'z')) || (c == '_') || ((c >= '0') && (c <= '9'))) {
             ++p;
         }
+        c = *p;
         *p++ = 0;
         for (gi = gitbl; gi->str != NULL; ++gi) {
             if (strcmp(gi->str, buf) == 0) {
@@ -1612,6 +1613,12 @@ handle_dot:
             return 0;
         }
         offs = offs_base + gi->offs;
+        if (c == '[') {
+            if (((c = *p++) != ']') || (*p++ != ' ')) {
+                log_error("'%s' invalid '[] ' on line %i\n", fname, lnum);
+                return 0;
+            }
+        }
         if (((c = *p++) != '=') || ((c = *p++) != ' ')) {
             log_error("'%s' invalid = on line %i\n", fname, lnum);
             return 0;
@@ -1675,7 +1682,7 @@ handle_dot:
                     return 0;
                 }
                 if (n >= gi->len) {
-                    log_error("'%s' too many values (%i) on line %i\n", fname, n, lnum);
+                    log_error("'%s' too many values (%i) on line %i for '%s'\n", fname, n, lnum, gi->str);
                     return 0;
                 }
                 switch (gi->size) {
@@ -2107,7 +2114,7 @@ static int savetype_en_text(struct game_s *g, const char *fname)
     for (int i = 0; i < g->enroute_num; ++i) {
         const fleet_enroute_t *r = &(g->enroute[i]);
         OUTLINE "enroute[%i] = { .owner = %i, .x = %i, .y = %i, .dest = %i, .speed = %i", i, r->owner, r->x, r->y, r->dest, r->speed);
-        OUTADD ", .ships = { %i, %i, %i, %i, %i, %i } }\n", r->ships[0], r->ships[1], r->ships[2], r->ships[3], r->ships[4], r->ships[5]);
+        OUTADD ", .ships[] = { %i, %i, %i, %i, %i, %i } }\n", r->ships[0], r->ships[1], r->ships[2], r->ships[3], r->ships[4], r->ships[5]);
     }
     OUTFLUSH();
     for (int i = 0; i < g->transport_num; ++i) {
