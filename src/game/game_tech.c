@@ -154,6 +154,49 @@ static void game_tech_ai_tech_next(struct game_s *g, player_id_t player, tech_fi
     }
 }
 
+static void game_tech_share(struct game_s *g, tech_field_t f, bool accepted, bool from_dead)
+{
+    player_id_t tbl_source[TECH_MAX_LEVEL + 1];
+    uint8_t maxtech = 0;
+    BOOLVEC_DECLARE(tbl_techcompl, TECH_MAX_LEVEL + 1);
+    BOOLVEC_CLEAR(tbl_techcompl, TECH_MAX_LEVEL + 1);
+    for (player_id_t pi = PLAYER_0; pi < g->players; ++pi) {
+        if ((BOOLVEC_IS0(g->refuse, pi) == accepted) && (from_dead || IS_ALIVE(g, pi))) {   /* BUG MOO1 takes tech also from dead races */
+            uint8_t *p = g->srd[pi].researchcompleted[f];
+            uint32_t len = g->eto[pi].tech.completed[f];
+            while (len--) {
+                uint8_t tech_i;
+                tech_i = *p++;
+                BOOLVEC_SET1(tbl_techcompl, tech_i);
+                SETMAX(maxtech, tech_i);
+                tbl_source[tech_i] = pi;
+            }
+        }
+    }
+    for (player_id_t pi = PLAYER_0; pi < g->players; ++pi) {
+        if ((BOOLVEC_IS1(g->refuse, pi) == accepted) || (!IS_ALIVE(g, pi))) {
+            continue;
+        }
+        if (IS_AI(g, pi)) {
+            uint8_t *p = g->srd[pi].researchcompleted[f];
+            int n;
+            n = 0;
+            for (uint8_t tech_i = 0; tech_i <= maxtech; ++tech_i) {
+                if (BOOLVEC_IS1(tbl_techcompl, tech_i)) {
+                    p[n++] = tech_i;
+                }
+            }
+            g->eto[pi].tech.completed[f] = n;
+        } else {
+            for (uint8_t tech_i = 0; (tech_i <= maxtech) && (g->evn.newtech[pi].num < NEWTECH_MAX); ++tech_i) {
+                if (BOOLVEC_IS1(tbl_techcompl, tech_i) && (!game_tech_player_has_tech(g, f, tech_i, pi))) {
+                    game_tech_get_new(g, pi, f, tech_i, TECHSOURCE_TRADE, tbl_source[tech_i], 0, false);
+                }
+            }
+        }
+    }
+}
+
 /* -------------------------------------------------------------------------- */
 
 uint8_t game_tech_player_has_tech(const struct game_s *g, int field_i, int tech_i, int player_i)
@@ -823,31 +866,9 @@ void game_tech_get_artifact_loot(struct game_s *g, uint8_t planet, player_id_t p
 void game_tech_final_war_share(struct game_s *g)
 {
     for (tech_field_t field_i = TECH_FIELD_COMPUTER; field_i < TECH_FIELD_NUM; ++field_i) {
-        BOOLVEC_DECLARE(tbl_techcompl, 0x96);
-        BOOLVEC_CLEAR(tbl_techcompl, 0x96); /* NOTE: MOO1 clears 60 */
-        for (player_id_t pi = PLAYER_0; pi < g->players; ++pi) {
-            if (IS_AI(g, pi)) {
-                uint8_t *p = g->srd[pi].researchcompleted[field_i];
-                uint32_t len = g->eto[pi].tech.completed[field_i];
-                while (len--) {
-                    uint8_t tech_i;
-                    tech_i = *p++;
-                    BOOLVEC_SET1(tbl_techcompl, tech_i);
-                }
-            }
-        }
-        for (player_id_t pi = PLAYER_0; pi < g->players; ++pi) {
-            if (IS_AI(g, pi)) {
-                uint8_t *p = g->srd[pi].researchcompleted[field_i];
-                int n;
-                n = 0;
-                for (uint8_t tech_i = 0; tech_i < 60; ++tech_i) {
-                    if (BOOLVEC_IS1(tbl_techcompl, tech_i)) {
-                        p[n++] = tech_i;
-                    }
-                }
-                g->eto[pi].tech.completed[field_i] = n;
-            }
+        game_tech_share(g, field_i, true, true); /* BUG MOO1 takes tech also from dead races */
+        if (!BOOLVEC_ONLY1(g->refuse, PLAYER_NUM)) {
+            game_tech_share(g, field_i, false, false);
         }
     }
 }
