@@ -940,7 +940,7 @@ void ui_battle_draw_item(const struct battle_s *bt, int itemi, int x, int y)
     b = &(bt->item[itemi]);
     xoff = rnd_0_nm1(5, &g->seed) - 2;
     yoff = rnd_0_nm1(5, &g->seed) - 2;
-    if (b->selected && (!bt->s[b->side].flag_auto)/* && (b->side != SIDE_R)*/) {   /* FIXME check multiplayer */
+    if (b->selected && (!bt->s[b->side].flag_auto)) {
         if (b->selected != 2/*moving*/) {
             uint8_t *gfx;
             if ((b->sx != (BATTLE_AREA_W - 1)) && (!d->flag_scanning)) {
