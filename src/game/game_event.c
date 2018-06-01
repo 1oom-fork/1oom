@@ -146,6 +146,13 @@ static void game_monster_set_next_dest(struct game_s *g, monster_t *m)
     m->dest = dest;
 }
 
+static void game_event_kill_player(struct game_s *g, player_id_t pi)
+{
+    g->evn.home[pi] = PLANET_NONE;
+    game_remove_player_fleets(g, pi);
+    BOOLVEC_SET0(g->refuse, pi);
+}
+
 /* -------------------------------------------------------------------------- */
 
 void game_event_new(struct game_s *g)
@@ -890,8 +897,7 @@ bool game_event_run(struct game_s *g, struct game_end_s *ge)
                 ns.subtype = 6;
             }
             if (flag_last_planet) {
-                g->evn.home[owner] = PLANET_NONE;
-                game_remove_player_fleets(g, owner);
+                game_event_kill_player(g, owner);
             }
             if (ns.subtype != -1) {
                 ui_news(g, &ns);
@@ -995,6 +1001,7 @@ bool game_event_run(struct game_s *g, struct game_end_s *ge)
     ns.type = GAME_NEWS_GENOCIDE;
     ns.subtype = 0;
     {
+        int num_humans = 0;
         uint8_t num_planets[PLAYER_NUM];
         memset(num_planets, 0, sizeof(num_planets));
         for (int pli = 0; pli < g->galaxy_stars; ++pli) {
@@ -1004,7 +1011,15 @@ bool game_event_run(struct game_s *g, struct game_end_s *ge)
             }
         }
         for (player_id_t i = PLAYER_0; i < g->players; ++i) {
-            if (IS_AI(g, i) && (num_planets[i] == 0) && IS_ALIVE(g, i)) {
+            if (IS_HUMAN(g, i) && IS_ALIVE(g, i)) {
+                ++num_humans;
+            }
+        }
+        for (player_id_t i = PLAYER_0; i < g->players; ++i) {
+            if (1
+               && (num_planets[i] == 0) && IS_ALIVE(g, i)
+               && (IS_AI(g, i) || (num_humans > 1))
+            ) {
                 player_id_t killer;
                 killer = PLAYER_NONE;
                 for (player_id_t j = PLAYER_0; (j < g->players) && (killer == PLAYER_NONE); ++j) {
@@ -1037,16 +1052,22 @@ bool game_event_run(struct game_s *g, struct game_end_s *ge)
                         }
                     }
                 }
-                g->evn.home[i] = PLANET_NONE;
-                game_remove_player_fleets(g, i);
+                game_event_kill_player(g, i);
+                if (IS_HUMAN(g, i)) {
+                    --num_humans;
+                }
             }
         }
     }
     /*1124f*/
-    if ((g->evn.coup != PLAYER_NONE) && IS_ALIVE(g, g->evn.coup)) {
-        player_id_t player = g->evn.coup;
-        empiretechorbit_t *e = &(g->eto[player]);
-        int num_humans = 0;
+    for (player_id_t player = PLAYER_0; player < g->players; ++player) {
+        empiretechorbit_t *e;
+        int num_humans;
+        if (BOOLVEC_IS0(g->evn.coup, player) || (!IS_ALIVE(g, player))) {
+            continue;
+        }
+        e = &(g->eto[player]);
+        num_humans = 0;
         ns.type = GAME_NEWS_COUP;
         ns.race = e->race;
         for (player_id_t i = PLAYER_0; i < g->players; ++i) {
@@ -1060,7 +1081,12 @@ bool game_event_run(struct game_s *g, struct game_end_s *ge)
             ui_news(g, &ns);
             any_news = true;
             ge->type = GAME_END_LOST_FUNERAL;
-            ge->race = g->eto[1].banner; /* FIXME find other alive opponent */
+            for (player_id_t i = PLAYER_0; i < g->players; ++i) {
+                if ((i != player) && IS_ALIVE(g, i)) {
+                    ge->race = g->eto[i].banner;
+                    break;
+                }
+            }
             ge->banner_dead = e->banner;
             return true;
         } else {
@@ -1083,6 +1109,7 @@ bool game_event_run(struct game_s *g, struct game_end_s *ge)
                 ui_news(g, &ns);
                 any_news = true;
             }
+            /* TODO What about multiplayer? Set overthrown player to AI? */
         }
     }
     /*11383*/

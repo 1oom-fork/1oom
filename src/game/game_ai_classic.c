@@ -231,7 +231,6 @@ static void game_ai_classic_turn_p1_front(struct game_s *g, struct ai_turn_p1_s 
 {
     empiretechorbit_t *e = &(g->eto[pi]);
     int bestspeed;
-    uint16_t num_oppon;
     int tbl_x[PLAYER_NUM], tbl_y[PLAYER_NUM];
     bestspeed = game_tech_player_best_engine(g, pi) * 10 + 10;
     ait->num_fronts = 0;
@@ -245,11 +244,10 @@ static void game_ai_classic_turn_p1_front(struct game_s *g, struct ai_turn_p1_s 
         }
     }
     */
-    num_oppon = (g->end == GAME_END_NONE) ? g->players : 1;   /* FIXME multiplayer */
-    for (player_id_t pi2 = PLAYER_0; pi2 < num_oppon; ++pi2) {
+    for (player_id_t pi2 = PLAYER_0; pi2 < g->players; ++pi2) {
         if (1
           && IN_CONTACT(g, pi, pi2)
-          && (IS_HUMAN(g, pi) || (g->end == GAME_END_NONE)) /* BUG IS_HUMAN(g, pi) is never true, but (g, pi2) could be and makes more sense */
+          && ((g->end == GAME_END_NONE) || BOOLVEC_IS1(g->refuse, pi2))
         ) {
             int v8, vc;
             ait->tbl_front_relation[ait->num_fronts] = 0;

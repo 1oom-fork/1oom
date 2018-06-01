@@ -642,6 +642,7 @@ static const struct game_intros_s game_intros_nebula_coord[] = {
 static const struct game_intros_s game_intros_root[] = {
     GAME_INTROS_VAL(game_s, players),
     GAME_INTROS_BV(game_s, is_ai, PLAYER_NUM),
+    GAME_INTROS_BV(game_s, refuse, PLAYER_NUM),
     GAME_INTROS_VAL(game_s, active_player),
     GAME_INTROS_VAL(game_s, difficulty),
     GAME_INTROS_VAL(game_s, galaxy_size),
@@ -1161,6 +1162,7 @@ static int savetype_en_text(const struct game_s *g, const char *fname)
     text_dump_prefix_add(tp, "g", "->");
     OUTLINEI("players", g->players);
     OUTLINEBV("is_ai", g->is_ai, g->players);
+    OUTLINEBV("refuse", g->refuse, g->players);
     OUTLINEI("active_player", g->active_player);
     OUTLINEI("difficulty", g->difficulty);
     OUTLINEI("galaxy_size", g->galaxy_size);
