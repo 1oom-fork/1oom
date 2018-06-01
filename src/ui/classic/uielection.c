@@ -235,16 +235,20 @@ bool ui_election_accept(struct election_s *el, int player_i)
 {
     struct election_data_s *d = el->uictx;
     char buf[2][0x20];
-    int16_t oi_y, oi_n, choice = -1;
+    int16_t oi_y, oi_n, choice = -1, y = 169;
     bool flag_done = false, flag_accept = false;
     sprintf(buf[0], "%s %s", game_str_el_bull, game_str_el_yes);
     sprintf(buf[1], "%s %s", game_str_el_bull, game_str_el_no2);
     uiobj_table_clear();
+    lbxfont_select_set_12_1(3, 0, 0, 0);
+    if (lbxfont_calc_str_width(el->str) >= (160 - 10)) {
+        y += 10;
+    }
     lbxfont_select(3, 1, 0, 0);
-    oi_y = uiobj_add_mousearea(160, 169, 200, 177, MOO_KEY_y);
-    oi_n = uiobj_add_mousearea(160, 179, 200, 187, MOO_KEY_n);
-    uiobj_add_ta(160, 169, 40, buf[0], false, &choice, 1, 0, 0, 0, 0, 0, 0, MOO_KEY_UNKNOWN);
-    uiobj_add_ta(160, 179, 40, buf[1], false, &choice, 0, 0, 0, 0, 0, 0, 0, MOO_KEY_UNKNOWN);
+    oi_y = uiobj_add_mousearea(160, y, 200, y + 8, MOO_KEY_y);
+    oi_n = uiobj_add_mousearea(160, y + 10, 200, y + 18, MOO_KEY_n);
+    uiobj_add_ta(160, y, 40, buf[0], false, &choice, 1, 0, 0, 0, 0, 0, 0, MOO_KEY_UNKNOWN);
+    uiobj_add_ta(160, y + 10, 40, buf[1], false, &choice, 0, 0, 0, 0, 0, 0, 0, MOO_KEY_UNKNOWN);
     while (!flag_done) {
         int16_t oi;
         ui_delay_prepare();

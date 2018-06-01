@@ -50,6 +50,7 @@ typedef struct techdata_s {
 
 #define TECH_TIER_NUM   10
 #define TECH_PER_FIELD  60
+#define TECH_MAX_LEVEL  100
 
 typedef struct shipresearch_s {
     shipdesign_t design[NUM_SHIPDESIGNS];
@@ -238,7 +239,7 @@ typedef struct gameevents_s {
     bool have_guardian;
     uint8_t home[PLAYER_NUM];   /* home planet index or PLANET_NONE if dead */
     uint8_t report_stars;
-    player_id_t coup;
+    BOOLVEC_DECLARE(coup, PLAYER_NUM);
     newtechs_t newtech[PLAYER_NUM];
     shipsum_t new_ships[PLAYER_NUM][NUM_SHIPDESIGNS];
     uint16_t spies_caught[PLAYER_NUM][PLAYER_NUM]; /* [catcher][spy] */
@@ -312,6 +313,7 @@ struct game_s {
     player_id_t winner;
     player_id_t guardian_killer;
     bool election_held;
+    BOOLVEC_DECLARE(refuse, PLAYER_NUM);
     uint32_t seed;   /* current random seed */
     uint32_t galaxy_seed; /* seed of generated galaxy */
     struct game_aux_s *gaux;

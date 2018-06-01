@@ -1378,7 +1378,7 @@ static void game_turn_coup(struct game_s *g)
     uint8_t tbl_rebelplanets[PLAYER_NUM];
     memset(tbl_planets, 0, sizeof(tbl_planets));
     memset(tbl_rebelplanets, 0, sizeof(tbl_rebelplanets));
-    g->evn.coup = PLAYER_NONE;
+    BOOLVEC_CLEAR(g->evn.coup, PLAYER_NUM);
     for (int pli = 0; pli < g->galaxy_stars; ++pli) {
         planet_t *p = &(g->planet[pli]);
         if (p->owner != PLAYER_NONE) {
@@ -1401,13 +1401,13 @@ static void game_turn_coup(struct game_s *g)
                 e->relation1[j] = rel;
                 if (i != j) {
                     g->eto[j].relation1[i] = rel;
+                    if (IS_HUMAN(g, j)) {
+                        game_diplo_break_treaty(g, i, j);
+                        game_diplo_break_trade(g, i, j);
+                    }
                 }
             }
-            game_diplo_break_treaty(g, i, PLAYER_0); /* FIXME multiplayer */
-            game_diplo_break_trade(g, i, PLAYER_0); /* FIXME multiplayer */
-            if (g->evn.coup == PLAYER_NONE) {
-                g->evn.coup = i;
-            }
+            BOOLVEC_SET1(g->evn.coup, i);
             for (int pli = 0; pli < g->galaxy_stars; ++pli) {
                 planet_t *p = &(g->planet[pli]);
                 if (p->owner == i) {
@@ -1421,19 +1421,34 @@ static void game_turn_coup(struct game_s *g)
 
 static bool game_turn_check_end(struct game_s *g, struct game_end_s *ge)
 {
+    player_id_t pih = PLAYER_NONE;
+    for (player_id_t i = PLAYER_0; i < g->players; ++i) {
+        if (IS_HUMAN(g, i) && IS_ALIVE(g, i)) {
+            pih = i;
+            break;
+        }
+    }
     if (g->end == GAME_END_LOST_EXILE) {
         ge->type = GAME_END_LOST_EXILE;
-        ge->name = g->emperor_names[PLAYER_0]; /* FIXME multiplayer */
+        if (pih == g->winner) {
+            for (player_id_t i = pih + 1; i < g->players; ++i) {
+                if (IS_HUMAN(g, i) && IS_ALIVE(g, i)) {
+                    pih = i;
+                    break;
+                }
+            }
+        }
+        ge->name = g->emperor_names[pih];
         return true;
     }
     if (g->end == GAME_END_WON_GOOD) {
         ge->type = GAME_END_WON_GOOD;
-        ge->name = g->emperor_names[PLAYER_0]; /* FIXME multiplayer */
-        ge->race = g->eto[PLAYER_0].race; /* FIXME multiplayer */
+        ge->name = g->emperor_names[g->winner];
+        ge->race = g->eto[g->winner].race;
         return true;
     }
     {
-        player_id_t pi1 = PLAYER_NONE, pi2 = PLAYER_NONE, pih = PLAYER_NONE;
+        player_id_t pi1 = PLAYER_NONE, pi2 = PLAYER_NONE;
         bool human_alive = false;
         uint8_t num_planets[PLAYER_NUM];
         uint8_t good_planets[PLAYER_NUM];
@@ -1455,11 +1470,8 @@ static bool game_turn_check_end(struct game_s *g, struct game_end_s *ge)
                 } else if (pi2 == PLAYER_NONE) {
                     pi2 = i;
                 }
-                if (IS_HUMAN(g, i)) {
-                    pih = i;
-                    if (good_planets[i] > 0) {
-                        human_alive = true;
-                    }
+                if (IS_HUMAN(g, i) && (good_planets[i] > 0)) {
+                    human_alive = true;
                 }
             }
         }
@@ -1476,9 +1488,9 @@ static bool game_turn_check_end(struct game_s *g, struct game_end_s *ge)
                 killer = (pi1 != PLAYER_NONE) ? pi1 : 1;
             }
             ns.type = GAME_NEWS_GENOCIDE;
-            ns.race = g->eto[PLAYER_0].race;    /* FIXME multiplayer */
+            ns.race = g->eto[pih].race;
             ns.subtype = 3;
-            ns.num1 = 0;
+            ns.num1 = pih;
             ui_news_start();
             ui_news(g, &ns);
             ge->type = GAME_END_LOST_FUNERAL;
@@ -1707,13 +1719,17 @@ static void game_turn_update_final_war(struct game_s *g)
     if (g->end != GAME_END_FINAL_WAR) {
         return;
     }
-    /* FIXME multiplayer */
     game_tech_final_war_share(g);
+    for (player_id_t i = 0; i < g->players; ++i) {
+        if (IS_HUMAN(g, i)) {
+            ui_newtech(g, i);
+        }
+    }
     for (player_id_t pi1 = PLAYER_0; pi1 < g->players; ++pi1) {
         empiretechorbit_t *e1 = &(g->eto[pi1]);
         for (player_id_t pi2 = pi1 + 1; pi2 < g->players; ++pi2) {
             empiretechorbit_t *e2 = &(g->eto[pi2]);
-            if (IS_AI(g, pi1) && IS_AI(g, pi2)) {
+            if (BOOLVEC_IS1(g->refuse, pi1) == BOOLVEC_IS1(g->refuse, pi2)) {
                 e1->treaty[pi2] = TREATY_ALLIANCE;
                 e2->treaty[pi1] = TREATY_ALLIANCE;
                 e1->relation1[pi2] = 100;
@@ -1848,6 +1864,9 @@ struct game_end_s game_turn_process(struct game_s *g)
     if (game_turn_check_end(g, &game_end)) {
         return game_end;
     }
+    if (g->gaux->local_players > 1) {
+        game_turn_update_final_war(g); /* MOO1 does this much later */
+    }
     game_ai->turn_diplo_p2(g);
     game_turn_audiences(g);
     if (game_turn_check_end(g, &game_end)) {
@@ -1888,7 +1907,9 @@ struct game_end_s game_turn_process(struct game_s *g)
     game_turn_claim(g);
     game_update_within_range(g);
     game_update_visibility(g);
-    game_turn_update_final_war(g);
+    if (g->gaux->local_players == 1) {
+        game_turn_update_final_war(g);  /* MOO1 does this here, after update_tech_util etc */
+    }
     game_remove_empty_fleets(g);
     game_planet_update_home(g);
     return game_end;
