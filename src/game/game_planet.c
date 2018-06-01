@@ -159,11 +159,11 @@ int game_planet_get_w1(const struct game_s *g, uint8_t planet_i)
 void game_planet_update_home(struct game_s *g)
 {
     for (int i = 0; i < g->galaxy_stars; ++i) {
-        planet_t *p = &(g->planet[i]);
+        const planet_t *p = &(g->planet[i]);
         player_id_t pi;
         pi = p->owner;
-        if ((pi != PLAYER_NONE) && IS_AI(g, pi) && (g->evn.home[pi] == PLANET_NONE)) { /* FIXME multiplayer */
-            g->evn.home[pi] = 0;   /* FIXME why not "= i"? */
+        if ((pi != PLAYER_NONE) && (g->evn.home[pi] == PLANET_NONE)) {
+            g->evn.home[pi] = i;   /* MOO1 sets to 0 */
         }
     }
 }
