@@ -83,14 +83,14 @@ static void ui_election_draw_cb(void *vptr)
         int fn = lbxgfx_get_frame(gfx);
         lbxgfx_set_frame_0(gfx);
         for (int f = 0; f <= fn; ++f) {
-            lbxgfx_draw_frame(125 * ui_scale, 0, gfx, UI_SCREEN_W, ui_scale);
+            lbxgfx_draw_frame(125, 0, gfx, UI_SCREEN_W, ui_scale);
         }
     }
     lbxgfx_draw_frame(0, 0, d->gfx_cylinder, UI_SCREEN_W, ui_scale);
     for (int i = 0; i < MIN(el->num, 4); ++i) {
         const int lx0[4] = { 50, 200, 0, 275 };
         const int lx1[4] = { 125, 275, 50, 319 };
-        lbxgfx_draw_frame_offs(0, 0, d->gfx_racem[i], lx0[i] * ui_scale, 0, lx1[i] * ui_scale, UI_SCREEN_H - 1, UI_SCREEN_W, ui_scale);
+        lbxgfx_draw_frame_offs(0, 0, d->gfx_racem[i], lx0[i], 0, lx1[i], UI_VGA_H - 1, UI_SCREEN_W, ui_scale);
     }
     if (el->str) {
         lbxfont_select_set_12_1(3, 0, 0, 0);
