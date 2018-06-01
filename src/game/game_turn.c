@@ -1387,7 +1387,7 @@ static void game_turn_coup(struct game_s *g)
         }
     }
     for (player_id_t i = PLAYER_0; i < g->players; ++i) {
-        if ((tbl_rebelplanets[i] > ((tbl_planets[i] + 1) / 2)) && (g->evn.home[i] != PLANET_NONE)) {
+        if ((tbl_rebelplanets[i] > ((tbl_planets[i] + 1) / 2)) && IS_ALIVE(g, i)) {
             empiretechorbit_t *e = &(g->eto[i]);
             e->trait2 = rnd_0_nm1(TRAIT2_NUM, &g->seed);
             e->trait1 = rnd_0_nm1(TRAIT1_NUM, &g->seed);
@@ -1822,7 +1822,7 @@ struct game_end_s game_turn_process(struct game_s *g)
         }
     }
     for (int i = 0; i < g->players; ++i) {
-        if (g->evn.home[i] != PLANET_NONE) {
+        if (IS_ALIVE(g, i)) {
             ++num_alive;
         }
     }
