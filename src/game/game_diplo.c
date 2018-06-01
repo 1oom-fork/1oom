@@ -97,7 +97,7 @@ void game_diplo_act(struct game_s *g, int dv, player_id_t pi, player_id_t pi2, i
     empiretechorbit_t *e2 = &(g->eto[pi2]);
     int v1;
     if (g->end == GAME_END_FINAL_WAR) {
-        if (IS_AI(g, pi) && (dv < 0) && IS_HUMAN(g, pi2) && (rnd_1_n(100, &g->seed) <= (dv / -10))) {
+        if (IS_AI(g, pi) && (dv < 0) && IS_HUMAN(g, pi2) && BOOLVEC_IS1(g->refuse, pi2) && (rnd_1_n(100, &g->seed) <= (dv / -10))) {
             player_id_t i = g->winner;
             e2->diplo_val[i] = 100;
             e2->diplo_type[i] = 59;
@@ -336,17 +336,12 @@ void game_diplo_annoy(struct game_s *g, player_id_t p1, player_id_t p2, int n)
 void game_diplo_wage_war(struct game_s *g, player_id_t p1, player_id_t p2)
 {
     if (g->end != GAME_END_NONE) {
-        /* FIXME multiplayer ; gang up against rejecting player(s) */
         for (p1 = PLAYER_0; p1 < g->players; ++p1) {
             empiretechorbit_t *e1 = &(g->eto[p1]);
-            if (IS_HUMAN(g, p1)) {
-                continue;
-            }
             for (p2 = PLAYER_0; p2 < g->players; ++p2) {
-                if ((p1 == p2) || IS_HUMAN(g, p2)) {
-                    continue;
+                if ((p1 != p2) && (BOOLVEC_IS1(g->refuse, p1) == BOOLVEC_IS1(g->refuse, p2))) {
+                    e1->treaty[p2] = TREATY_ALLIANCE;
                 }
-                e1->treaty[p2] = TREATY_ALLIANCE;
             }
         }
     } else {
@@ -434,11 +429,10 @@ void game_diplo_wage_war(struct game_s *g, player_id_t p1, player_id_t p2)
 
 void game_diplo_battle_finish(struct game_s *g, int def, int att, int popdiff, uint32_t app_def, uint16_t biodamage, uint32_t app_att, uint8_t planet_i)
 {
-    /* FIXME multiplayer */
     player_id_t claim, side_z, side_ai;
     uint32_t app_ai;
     planet_t *p;
-    int offense, extra;
+    int offense;
     if ((att >= PLAYER_NUM) || (def >= PLAYER_NUM)) {
         return;
     }
@@ -477,19 +471,25 @@ void game_diplo_battle_finish(struct game_s *g, int def, int att, int popdiff, u
     biodamage *= 10;
     offense = MAX(popdiff, app_ai);
     SETMAX(offense, biodamage);
-    if (biodamage > 0) {
-        extra = 11;
-    } else if (popdiff > 0) {
-        extra = 10;
-    } else {
-        extra = 9;
+    if (IS_AI(g, side_ai)) {
+        int extra;
+        if (biodamage > 0) {
+            extra = 11;
+        } else if (popdiff > 0) {
+            extra = 10;
+        } else {
+            extra = 9;
+        }
+        game_diplo_act(g, -offense, side_z, side_ai, extra, planet_i, 0);
     }
-    game_diplo_act(g, -offense, side_z, side_ai, extra, planet_i, 0);
     if ((offense >= 30) && IS_HUMAN(g, side_z)) {
         empiretechorbit_t *ea = &(g->eto[side_ai]);
         empiretechorbit_t *ez = &(g->eto[side_z]);
         for (player_id_t i = PLAYER_0; i < g->players; ++i) {
-            if ((i != side_z) && (i != side_ai) && ((ea->treaty[i] >= TREATY_WAR) || (ez->mutual_enemy[i] == side_ai))) {
+            if (1
+              && (i != side_z) && (i != side_ai) && IS_AI(g, i)
+              && ((ea->treaty[i] >= TREATY_WAR) || (ez->mutual_enemy[i] == side_ai))
+            ) {
                 if (ez->hated[i] == side_ai) {
                     ez->mutual_enemy[i] = i;
                 } else if (game_planet_get_random(g, side_ai) == PLANET_NONE) {
@@ -600,7 +600,9 @@ int16_t game_diplo_get_mood(struct game_s *g, player_id_t p1, player_id_t p2)
 
 uint8_t game_diplo_is_gone(struct game_s *g, player_id_t api, player_id_t pi)
 {
-    /* FIXME multiplayer */
+    if (IS_HUMAN(g, pi)) {
+        return 0;   /* FIXME remote multiplayer */
+    }
     const empiretechorbit_t *e = &(g->eto[api]);
     int16_t v, vr;
     vr = game_diplo_get_mood(g, api, pi);
