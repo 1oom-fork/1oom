@@ -227,10 +227,20 @@ static void game_spy_espionage(struct game_s *g, player_id_t spy, player_id_t ta
                 game_tech_get_new(g, spy, s->tbl_field[0], s->tbl_tech2[0], 3, 0, 0, false);
             } else {
                 /*8207f*/
-                const empiretechorbit_t *e = &(g->eto[PLAYER_0]);
                 game_tech_get_new(g, spy, s->tbl_field[0], s->tbl_tech2[0], 3, 0, 0, false);
-                if (flag_frame && BOOLVEC_IS1(e->within_frange, target) && (rnd_0_nm1(2, &g->seed) == 0)) {
-                    game_diplo_act(g, -(rnd_1_n(20, &g->seed) + 20), PLAYER_0, target, 5, 0, s->tbl_field[0]); /* FIXME multiplayer */
+                if (flag_frame && (rnd_0_nm1(2, &g->seed) == 0)) {
+                    player_id_t scapegoat[PLAYER_NUM];
+                    player_id_t pi;
+                    int n = 0;
+                    for (pi = PLAYER_0; pi < g->players; ++pi) {
+                        if ((pi != target) && IS_HUMAN(g, pi) && IS_ALIVE(g, pi) && BOOLVEC_IS1(et->within_frange, pi)) {
+                            scapegoat[n++] = pi;
+                        }
+                    }
+                    if (n > 0) {
+                        pi = scapegoat[(n > 1) ? rnd_0_nm1(n, &g->seed) : 0];
+                        game_diplo_act(g, -(rnd_1_n(20, &g->seed) + 20), pi, target, 5, 0, s->tbl_field[0]);
+                    }
                 }
             }
             /*820e6*/

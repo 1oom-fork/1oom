@@ -1277,7 +1277,7 @@ static void game_battle_with_human_do_sub3(struct battle_s *bt)
                 b->selected = 1;
                 bt->flag_cur_item_destroyed = false;
                 bt->num_repulsed = 0;
-                if (bt->s[b->side].flag_auto || (b->retreat > 0)) {   /* FIXME multiplayer */
+                if (bt->s[b->side].flag_auto || (b->retreat > 0)) {
                     game_battle_with_human_do_turn_ai(bt);
                     flag_turn_done = true;
                     game_battle_item_done(bt);
