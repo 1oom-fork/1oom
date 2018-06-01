@@ -35,6 +35,6 @@ extern int game_tech_get_field_percent(const struct game_s *g, player_id_t playe
 extern void game_tech_research(struct game_s *g);
 extern void game_tech_get_orion_loot(struct game_s *g, player_id_t player);
 extern void game_tech_get_artifact_loot(struct game_s *g, uint8_t planet, player_id_t player);
-extern void game_tech_ai_share(struct game_s *g);
+extern void game_tech_final_war_share(struct game_s *g);
 
 #endif
