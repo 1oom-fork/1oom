@@ -213,6 +213,18 @@ void hw_audio_music_volume(int volume)
     }
 }
 
+/* -------------------------------------------------------------------------- */
+
+int hw_audio_sfx_batch_start(int sfx_index_max)
+{
+    return 0;
+}
+
+int hw_audio_sfx_batch_end(void)
+{
+    return 0;
+}
+
 int hw_audio_sfx_init(int sfx_index, const uint8_t *data_in, uint32_t len_in)
 {
     uint8_t *data = NULL;
