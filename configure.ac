@@ -6,9 +6,9 @@ AC_ARG_WITH(samplerate, AS_HELP_STRING([--without-samplerate], [do not try to us
 AC_ARG_ENABLE(tools, AS_HELP_STRING([--disable-tools], [disables extra tools]))
 AC_ARG_ENABLE(uiclassic, AS_HELP_STRING([--disable-uiclassic], [disables classic UI]))
 AC_ARG_ENABLE(uicmdline, AS_HELP_STRING([--disable-uicmdline], [disables cmdline UI]))
-AC_ARG_ENABLE(sdl1hw, AS_HELP_STRING([--disable-sdl1hw], [disables SDL1 HW]))
-AC_ARG_ENABLE(sdl2hw, AS_HELP_STRING([--disable-sdl2hw], [disables SDL2 HW]))
-AC_ARG_ENABLE(alleg4hw, AS_HELP_STRING([--disable-alleg4hw], [disables Allegro 4 HW]))
+AC_ARG_ENABLE(hwsdl1, AS_HELP_STRING([--disable-hwsdl1], [disables SDL1 HW]))
+AC_ARG_ENABLE(hwsdl2, AS_HELP_STRING([--disable-hwsdl2], [disables SDL2 HW]))
+AC_ARG_ENABLE(hwalleg4, AS_HELP_STRING([--disable-hwalleg4], [disables Allegro 4 HW]))
 
 AC_CONFIG_SRCDIR([src/main.c])
 AC_CONFIG_AUX_DIR([build-aux])
@@ -154,7 +154,7 @@ AM_CONDITIONAL(COMPILE_HW_SDL, false)
 AM_CONDITIONAL(COMPILE_HW_SDL1, false)
 HW_SDL1_CFLAGS=
 HW_SDL1_LIBS=
-if test x"$enable_sdl1hw" != "xno"; then
+if test x"$enable_hwsdl1" != "xno"; then
     dnl check for sdl-config
     AC_CHECK_TOOLS(sdl_config, sdl-config, no)
 
@@ -193,7 +193,7 @@ if test x"$enable_sdl1hw" != "xno"; then
     if test x"$ac_cv_lib_SDL_SDL_SetVideoMode" != "xyes"; then
         AC_MSG_WARN([SDL1 headers and/or libraries missing!])
     else
-        AC_DEFINE(USE_SDL1HW,,[Enable SDL1 HW support.])
+        AC_DEFINE(USE_HWSDL1,,[Enable SDL1 HW support.])
         AM_CONDITIONAL(COMPILE_HW_SDL1, true)
         AM_CONDITIONAL(COMPILE_HW_SDL, true)
         have_sdl1=yes
@@ -313,7 +313,7 @@ dnl Check and setup SDL 2 compilation.
 AM_CONDITIONAL(COMPILE_HW_SDL2, false)
 HW_SDL2_CFLAGS=
 HW_SDL2_LIBS=
-if test x"$enable_sdl2hw" != "xno"; then
+if test x"$enable_hwsdl2" != "xno"; then
     dnl check for sdl2-config
     AC_CHECK_TOOLS(sdl2_config, sdl2-config, no)
 
@@ -352,7 +352,7 @@ if test x"$enable_sdl2hw" != "xno"; then
     if test x"$ac_cv_lib_SDL2_SDL_CreateTexture" != "xyes"; then
         AC_MSG_WARN([SDL2 headers and/or libraries missing!])
     else
-        AC_DEFINE(USE_SDL2HW,,[Enable SDL2 HW support.])
+        AC_DEFINE(USE_HWSDL2,,[Enable SDL2 HW support.])
         AM_CONDITIONAL(COMPILE_HW_SDL2, true)
         AM_CONDITIONAL(COMPILE_HW_SDL, true)
         have_sdl2=yes
@@ -417,7 +417,7 @@ dnl Check and setup Allegro 4 compilation.
 
 AM_CONDITIONAL(COMPILE_HW_ALLEG4, false)
 HW_ALLEG4_LIBS=
-if test x"$enable_alleg4hw" != "xno"; then
+if test x"$enable_hwalleg4" != "xno"; then
     old_LIBS="$LIBS"
 
     dnl check for the allegro.h header
@@ -442,7 +442,7 @@ if test x"$enable_alleg4hw" != "xno"; then
                  have_alleg4=no])
 
         if test x"$have_alleg4" = "xyes"; then
-            AC_DEFINE(USE_ALLEG4HW,,[Enable Allegro 4 HW support.])
+            AC_DEFINE(USE_HWALLEG4,,[Enable Allegro 4 HW support.])
             AM_CONDITIONAL(COMPILE_HW_ALLEG4, true)
             HW_ALLEG4_LIBS="-lalleg"
         else
