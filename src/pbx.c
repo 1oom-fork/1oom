@@ -15,19 +15,19 @@
 
 /* -------------------------------------------------------------------------- */
 
-static int pbx_cb_name(const char *filename, int pbxi, char *str, uint32_t len)
+static int pbx_cb_name(void *ctx, const char *filename, int pbxi, char *str, uint32_t len)
 {
     log_message("PBX: name '%s'\n", str);
     return 0;
 }
 
-static int pbx_cb_desc(const char *filename, int pbxi, char *str, uint32_t len)
+static int pbx_cb_desc(void *ctx, const char *filename, int pbxi, char *str, uint32_t len)
 {
     /* ignore */
     return 0;
 }
 
-static int pbx_cb_lbxp(const char *filename, int pbxi, const char *id, uint16_t itemi, uint8_t *data, uint32_t len)
+static int pbx_cb_lbxp(void *ctx, const char *filename, int pbxi, const char *id, uint16_t itemi, uint8_t *data, uint32_t len)
 {
     lbxfile_e lbxf = lbxfile_id(id);
     if (lbxf < LBXFILE_NUM) {
@@ -39,7 +39,7 @@ static int pbx_cb_lbxp(const char *filename, int pbxi, const char *id, uint16_t 
     }
 }
 
-static bool pbx_cb_strp(const char *filename, int pbxi, const char *id, const char *patchstr, int itemi, uint32_t len)
+static bool pbx_cb_strp(void *ctx, const char *filename, int pbxi, const char *id, const char *patchstr, int itemi, uint32_t len)
 {
     if (!game_str_patch(id, patchstr, itemi)) {
         log_error("patch file '%s' item %i strid '%s' (%i) invalid!\n", filename, pbxi, id, itemi);
@@ -48,7 +48,7 @@ static bool pbx_cb_strp(const char *filename, int pbxi, const char *id, const ch
     return true;
 }
 
-static bool pbx_cb_nump(const char *filename, int pbxi, const char *id, const int32_t *patchnums, int first, int num)
+static bool pbx_cb_nump(void *ctx, const char *filename, int pbxi, const char *id, const int32_t *patchnums, int first, int num)
 {
     if (!game_num_patch(id, patchnums, first, num)) {
         log_error("patch file '%s' item %i numid '%s' (%i) invalid!\n", filename, pbxi, id, first);
