@@ -4,7 +4,7 @@ AC_ARG_ENABLE(modebug, AS_HELP_STRING([--enable-modebug], [add debugging options
 AC_ARG_WITH(samplerate, AS_HELP_STRING([--without-samplerate], [do not try to use libsamplerate]))
 AC_ARG_ENABLE(tools, AS_HELP_STRING([--disable-tools], [disables extra tools]))
 AC_ARG_ENABLE(uiclassic, AS_HELP_STRING([--disable-uiclassic], [disables classic UI]))
-AC_ARG_ENABLE(sdl1hw, AS_HELP_STRING([--disable-sdl1hw], [disables SDL1 HW]))
+AC_ARG_ENABLE(hwsdl1, AS_HELP_STRING([--disable-hwsdl1], [disables SDL1 HW]))
 
 AC_CONFIG_SRCDIR([src/main.c])
 AC_CONFIG_AUX_DIR([build-aux])
@@ -101,7 +101,7 @@ dnl Check and setup SDL 1.2 compilation.
 AM_CONDITIONAL(COMPILE_HW_SDL1, false)
 HW_SDL1_CFLAGS=
 HW_SDL1_LIBS=
-if test x"$enable_sdl1hw" != "xno"; then
+if test x"$enable_hwsdl1" != "xno"; then
     dnl check for sdl-config
     AC_CHECK_TOOLS(sdl_config, sdl-config, no)
 
@@ -140,7 +140,7 @@ if test x"$enable_sdl1hw" != "xno"; then
     if test x"$ac_cv_lib_SDL_SDL_SetVideoMode" != "xyes"; then
         AC_MSG_WARN([SDL1 headers and/or libraries missing!])
     else
-        AC_DEFINE(USE_SDL1HW,,[Enable SDL1 HW support.])
+        AC_DEFINE(USE_HWSDL1,,[Enable SDL1 HW support.])
         AM_CONDITIONAL(COMPILE_HW_SDL1, true)
         have_sdl1=yes
 
