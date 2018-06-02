@@ -32,6 +32,7 @@ int opt_modebug = 0;
 bool opt_audio_enabled = true;
 bool opt_music_enabled = true;
 bool opt_sfx_enabled = true;
+bool opt_sfx_init_parallel = true;
 int opt_music_volume = 64;
 int opt_sfx_volume = 100;
 int opt_audiorate = 48000;
@@ -60,6 +61,7 @@ const struct cfg_items_s opt_cfg_items_audio[] = {
     CFG_ITEM_BOOL("audio", &opt_audio_enabled),
     CFG_ITEM_BOOL("music", &opt_music_enabled),
     CFG_ITEM_BOOL("sfx", &opt_sfx_enabled),
+    CFG_ITEM_BOOL("sfxinitpar", &opt_sfx_init_parallel),
     CFG_ITEM_INT("music_volume", &opt_music_volume, 0),
     CFG_ITEM_INT("sfx_volume", &opt_sfx_volume, 0),
     CFG_ITEM_INT("audiorate", &opt_audiorate, 0),
@@ -202,6 +204,12 @@ static const struct cmdline_options_s cmdline_options_audio[] = {
     { "-nosfx", 0,
       options_disable_bool_var, (void *)&opt_sfx_enabled,
       NULL, "Disable SFX" },
+    { "-sfxinitpar", 0,
+      options_enable_bool_var, (void *)&opt_sfx_init_parallel,
+      NULL, "Init SFX in parallel (if possible)" },
+    { "-nosfxinitpar", 0,
+      options_disable_bool_var, (void *)&opt_sfx_init_parallel,
+      NULL, "Do not init SFX in parallel" },
     { "-musicvol", 1,
       options_set_int_var, (void *)&opt_music_volume,
       "VOLUME", "Set music volume (0..128)" },
