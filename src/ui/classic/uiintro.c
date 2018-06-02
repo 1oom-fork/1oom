@@ -46,18 +46,20 @@ void ui_play_intro(void)
     uiobj_finish_frame();
     ui_palette_fadein_60_3_1();
 
+    ui_palette_fadeout_4_3_1();
+
     /* uisound.c is not used as these are only used once */
     {
         uint32_t len;
+        hw_audio_sfx_batch_start(SFX_ID_5);
         intro_sfx5 = lbxfile_item_get(LBXFILE_INTROSND, 5, &len);
         hw_audio_sfx_init(SFX_ID_5, intro_sfx5, len);
         intro_sfx3 = lbxfile_item_get(LBXFILE_INTROSND, 3, &len);
         hw_audio_sfx_init(SFX_ID_3, intro_sfx3, len);
         intro_sfx1 = lbxfile_item_get(LBXFILE_INTROSND, 1, &len);
         hw_audio_sfx_init(SFX_ID_1, intro_sfx1, len);
+        hw_audio_sfx_batch_end();
     }
-
-    ui_palette_fadeout_4_3_1();
 
     ui_sound_play_music(0);
     ui_draw_erase_buf();
