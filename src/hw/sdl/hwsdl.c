@@ -3,6 +3,7 @@ static bool hw_kbd_check_hotkey(SDL1or2Key key, SDL1or2Mod smod, char c)
     if ((smod & KMOD_CTRL) && !(smod & KMOD_ALT)) {
         if (key == SDLK_ESCAPE) {
             log_message("SDL: got Ctrl-ESC, quitting now\n");
+            hw_audio_shutdown_pre();
             exit(EXIT_SUCCESS);
         } else if (key == SDLK_F10) {
             hw_mouse_toggle_grab();
