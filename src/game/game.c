@@ -26,6 +26,7 @@
 
 /* -------------------------------------------------------------------------- */
 
+static bool game_opt_skip_intro_always = false;
 static bool game_opt_skip_intro = false;
 static bool game_opt_new_game = false;
 static bool game_opt_continue = false;
@@ -386,6 +387,12 @@ const struct cmdline_options_s main_cmdline_options[] = {
     { "-noundo", 0,
       options_disable_bool_var, (void *)&game_opt_undo_enabled,
       NULL, "Disable undo saves" },
+    { "-skipintro", 0,
+      options_enable_bool_var, (void *)&game_opt_skip_intro_always,
+      NULL, "Skip intro" },
+    { "-noskipintro", 0,
+      options_disable_bool_var, (void *)&game_opt_skip_intro_always,
+      NULL, "Do not skip intro" },
     { "-nextturn", 0,
       options_enable_bool_var, (void *)&game_opt_next_turn,
       NULL, "Go directly to next turn" },
@@ -422,6 +429,7 @@ static bool game_cfg_check_new_game_opts(void *val)
 
 const struct cfg_items_s game_cfg_items[] = {
     CFG_ITEM_BOOL("undo", &game_opt_undo_enabled),
+    CFG_ITEM_BOOL("skipintro", &game_opt_skip_intro_always),
     CFG_ITEM_COMMENT("PLAYERS*100+GALAXYSIZE*10+DIFFICULTY"),
     CFG_ITEM_COMMENT(" 2..6, 0..3 = small..huge, 0..4 = simple..impossible"),
     CFG_ITEM_INT("new_game_opts", &game_opt_new_value, game_cfg_check_new_game_opts),
@@ -514,7 +522,7 @@ int main_do(void)
     if ((game_opt_end.type != GAME_END_NONE) && (game_opt_end.varnum == 2)) {
         goto do_ending;
     }
-    if (!game_opt_skip_intro) {
+    if (!(game_opt_skip_intro || game_opt_skip_intro_always)) {
         ui_play_intro();
     }
     while (1) {
