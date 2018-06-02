@@ -171,9 +171,11 @@ For all game UIs:
     -continue            Continue game
     -undo                Enable undo saves
     -noundo              Disable undo saves
+    -skipintro           Skip intro
+    -noskipintro         Do not skip intro
     -nextturn            Go directly to next turn
     -savequit            Save and quit
-    YOMAMA               Skip intro
+    YOMAMA               Skip intro this time
     s                    Continue game
 
 For classic game UI:
