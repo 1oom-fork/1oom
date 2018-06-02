@@ -16,11 +16,11 @@ The configuration options:
                             (do not build 1oom_classic_*)
     --disable-uicmdline     disables cmdline UI
                             (do not build 1oom_cmdline)
-    --disable-sdl1hw        disables SDL1 HW
+    --disable-hwsdl1        disables SDL1 HW
                             (do not build 1oom_*_sdl1)
-    --disable-sdl2hw        disables SDL2 HW
+    --disable-hwsdl2        disables SDL2 HW
                             (do not build 1oom_*_sdl2)
-    --disable-alleg4hw      disables Allegro 4 HW
+    --disable-hwalleg4      disables Allegro 4 HW
                             (do not build 1oom_*_alleg4)
 
 Parameters for configure:
@@ -65,6 +65,9 @@ Then the usual:
 Actual install step is not needed:
     src/1oom_classic_sdl1 -data /path/to/moo
     src/1oom_classic_sdl2 -data /path/to/moo
+
+The install step can still be done:
+    make install
 
 
 3. Cross-compiling
@@ -113,11 +116,6 @@ If you want to make distributable packages of .shared compiles:
     cp /MXE_path/usr/i686-w64-mingw32.shared/bin/{SDL*,libgcc_s_sjlj-1.dll,libsamplerate.dll} extrabindist_win32
 (the list may be incomplete; run the EXEs in wine and see the error messages)
 
-Build a binary distribution:
-    make -j 3 && make bindist
-
-Build a binary distribution zip:
-    make -j 3 && make bindistzip
 
 3.2. Unix to msdos
 ===================
@@ -159,6 +157,18 @@ Now to cross compile 1oom:
     mkdir build-msdos
     cd build-msdos
     ../configure --host=i586-pc-msdosdjgpp && make -j 3
+
+
+4. Building distributable packages
+===================================
+
+Build a tarball requiring no Autotools:
+    make dist
+
+Some OS targets support building binary distributions. The bindist scripts
+use git for version information if .git/ exists, otherwise the version is
+"vUnknown". Files from extrabindist_common/ and extrabindist_$OS/ are copied
+to the distribution.
 
 Build a binary distribution:
     make -j 3 && make bindist
