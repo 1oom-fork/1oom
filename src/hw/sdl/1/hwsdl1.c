@@ -261,6 +261,7 @@ int hw_event_handle(void)
                 hw_mouse_button((int)(e.button.button), (e.button.state == SDL_PRESSED));
                 break;
             case SDL_QUIT:
+                hw_audio_shutdown_pre();
                 exit(EXIT_SUCCESS);
                 break;
             case SDL_VIDEORESIZE:
@@ -272,6 +273,10 @@ int hw_event_handle(void)
             default:
                 break;
         }
+    }
+
+    if (hw_audio_check_process()) {
+        exit(EXIT_FAILURE);
     }
 
     return 0;
