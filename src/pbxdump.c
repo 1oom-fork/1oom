@@ -41,6 +41,7 @@ void lbxfile_add_patch(lbxfile_e file_id, uint16_t i, uint8_t *data, uint32_t le
 
 struct pbxdump_s {
     FILE *fd;
+    const char *pbxin;
     const char *prefix;
     const char *prefix_file;
     bool flag_write;
@@ -62,67 +63,111 @@ static int pbxdump_write(const char *prefix, const char *suffix, bool flag_write
     return 0;
 }
 
-static int pbx_cb_name(void *ctx, const char *filename, int pbxi, char *str, uint32_t len)
+static int pbx_dump_textish(struct pbxdump_s *d, const char *filename, int pbxi, const char *str, uint32_t len, const char *pbxtext, const char *suffix)
 {
-    struct pbxdump_s *d = ctx;
-    bool can_print = true;
-    if (len > 100) {
+    bool can_print;
+    if (len < 10) {
+        can_print = true;
+    } else if (len > 200) {
         can_print = false;
     } else {
+        int n = 0;
         for (uint32_t i = 0; i < len; ++i) {
             char c;
             c = str[i];
-            if ((c < 0x20) || (c > 0x7e)) {
-                can_print = false;
-                break;
-            }
+            n += ((c < 0x20) || (c > 0x7e)) ? -1 : 1;
         }
+        can_print = (n > 2);
     }
     if (can_print) {
-        if (fprintf(d->fd, "0,\"%s\"\n", str) < 0) {
-            return -1;
+        if (fprintf(d->fd, "%s,\"", pbxtext) < 0) {
+            goto fail;
+        }
+        for (uint32_t i = 0; i < len; ++i) {
+            char c, c0;
+            c = str[i];
+            switch (c) {
+                case '\\':
+                case '"':
+                    c0 = '\\';
+                    break;
+                case '\n':
+                    c0 = '\\';
+                    c = 'n';
+                    break;
+                case '\r':
+                    c0 = '\\';
+                    c = 'r';
+                    break;
+                default:
+                    c0 = 0;
+                    if ((c < 0x20) || (c > 0x7e)) {
+                        const char hexchars[0x10] = "0123456789abcdef";
+                        char buf[4];
+                        buf[0] = '\\';
+                        buf[1] = 'x';
+                        buf[2] = hexchars[(c >> 4) & 0xf];
+                        buf[3] = hexchars[c & 0xf];
+                        c = 0;
+                        if (fwrite(buf, 4, 1, d->fd) < 1) {
+                            goto fail;
+                        }
+                    }
+                    break;
+            }
+            if (0
+              || (c0 && (fputc(c0, d->fd) == EOF))
+              || (c && (fputc(c, d->fd) == EOF))
+            ) {
+                goto fail;
+            }
+        }
+        if (fprintf(d->fd, "\"\n") < 0) {
+            goto fail;
         }
         return 0;
     } else {
-        if (fprintf(d->fd, "0,%s_name.txt\n", d->prefix_file) < 0) {
-            return -1;
+        if (fprintf(d->fd, "%s,%s%s\n", pbxtext, d->prefix_file, suffix) < 0) {
+            goto fail;
         }
-        return pbxdump_write(d->prefix, "_name.txt", d->flag_write, (const uint8_t *)str, len);
+        return pbxdump_write(d->prefix, suffix, d->flag_write, (const uint8_t *)str, len);
     }
+fail:
+    log_error("writing PBXIN file %s\n", d->pbxin);
+    return -1;
+}
+
+static int pbx_cb_name(void *ctx, const char *filename, int pbxi, char *str, uint32_t len)
+{
+    return pbx_dump_textish(ctx, filename, pbxi, str, len, "0", "_name.txt");
 }
 
 static int pbx_cb_desc(void *ctx, const char *filename, int pbxi, char *str, uint32_t len)
 {
-    struct pbxdump_s *d = ctx;
-    if (fprintf(d->fd, "1,%s_desc.txt\n", d->prefix_file) < 0) {
-        return -1;
-    }
-    return pbxdump_write(d->prefix, "_desc.txt", d->flag_write, (const uint8_t *)str, len);
+    return pbx_dump_textish(ctx, filename, pbxi, str, len, "1", "_desc.txt");
 }
 
 static int pbx_cb_lbxp(void *ctx, const char *filename, int pbxi, const char *id, uint16_t itemi, uint8_t *data, uint32_t len)
 {
-    struct pbxdump_s *d = ctx;
-    char buf[32];
-    char *p = buf;
+    char pbxtext[32];
+    char suffix[40];
+    char *p = suffix;
     *p++ = '_';
     for (const char *q = id; *q != '.';) {
         *p++ = *q++;
     }
     sprintf(p, "_%03u.bin", itemi);
-    if (fprintf(d->fd, "2,%s,%u,%s%s\n", id, itemi, d->prefix_file, buf) < 0) {
-        return -1;
-    }
-    return pbxdump_write(d->prefix, buf, d->flag_write, data, len);
+    sprintf(pbxtext, "2,%s,%u", id, itemi);
+    return pbx_dump_textish(ctx, filename, pbxi, (const char *)data, len, pbxtext, suffix);
 }
 
 static bool pbx_cb_strp(void *ctx, const char *filename, int pbxi, const char *id, const char *patchstr, int itemi, uint32_t len)
 {
-    struct pbxdump_s *d = ctx;
-    if (fprintf(d->fd, "3,%s,%i,\"%s\"\n", id, itemi, patchstr) < 0) {
-        return false;
-    }
-    return true;
+    char pbxtext[32];
+    char suffix[40];
+    sprintf(pbxtext, "3,%s,%i", id, itemi);
+    sprintf(suffix, "_%s_%i.txt", id, itemi);
+    return (pbx_dump_textish(ctx, filename, pbxi, patchstr, len, pbxtext, suffix) == 0);
 }
 
 static bool pbx_cb_nump(void *ctx, const char *filename, int pbxi, const char *id, const int32_t *patchnums, int first, int num)
@@ -177,9 +222,11 @@ static int dump_pbx(const char *filename, const char *prefix_in, bool flag_write
     if (flag_write) {
         log_message("PBXDUMP: writing to '%s'\n", fname_pbxin);
         ctx.fd = fopen(fname_pbxin, "w+");
+        ctx.pbxin = fname_pbxin;
     } else {
         log_message("PBXDUMP: dry run, would use prefix '%s'\n", ctx.prefix);
         ctx.fd = stdout;
+        ctx.pbxin = "(stdout)";
     }
     res = pbx_add_file(filename, &cbs, &ctx);
     if (flag_write) {
