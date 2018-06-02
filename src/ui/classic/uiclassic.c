@@ -6,6 +6,8 @@
 #include "ui.h"
 #include "bits.h"
 #include "cfg.h"
+#include "comp.h"
+#include "game_shiptech.h"  /* for sounds used */
 #include "gfxaux.h"
 #include "hw.h"
 #include "lbx.h"
@@ -306,16 +308,51 @@ int ui_late_init(void)
         return 1;
     }
     if (opt_audio_enabled) {
-        uint32_t t0, t1;
+        const uint8_t sounds[] = { /* sounds used by ui or game code */
+            0x24, 0x06, /* these are the most common sounds and are prepared first */
+            0x02, 0x09, 0x0e, 0x11, 0x13, 0x15, 0x16, 0x18, 0x1d, 0x20
+        };
+        uint32_t t0;
+        int res;
+        BOOLVEC_DECLARE(sound_added, NUM_SOUNDS);
+        BOOLVEC_CLEAR(sound_added, NUM_SOUNDS);
         t0 = hw_get_time_us();
-        log_message("Preparing sounds, this may take a while...\n");
-        for (int i = NUM_SOUNDS - 1; i >= 0; --i) {
+        res = hw_audio_sfx_batch_start(NUM_SOUNDS);
+        if (res < 0) {
+            return -1;
+        } else if (res == 0) {
+            log_message("Preparing sounds, this may take a while...\n");
+        } else {
+            log_message("Preparing sounds in a thread\n");
+        }
+        for (int ti = 0; ti < TBLLEN(sounds); ++ti) {
             uint32_t len;
+            int i;
+            i = sounds[ti];
+            BOOLVEC_SET1(sound_added, i);
+            LOG_DEBUG((4, "%s: sfx 0x%02x\n", __func__, i));
             ui_data.sfx[i] = lbxfile_item_get(LBXFILE_SOUNDFX, i, &len);
             hw_audio_sfx_init(i, ui_data.sfx[i], len);
         }
-        t1 = hw_get_time_us();
-        log_message("Preparing sounds took %i ms\n", (t1 - t0) / 1000);
+        for (int ti = 0; ti < WEAPON_NUM; ++ti) {
+            uint32_t len;
+            int i;
+            i = tbl_shiptech_weap[ti].sound;
+            if (BOOLVEC_IS0(sound_added, i)) {
+                BOOLVEC_SET1(sound_added, i);
+                LOG_DEBUG((4, "%s: sfx 0x%02x\n", __func__, i));
+                ui_data.sfx[i] = lbxfile_item_get(LBXFILE_SOUNDFX, i, &len);
+                hw_audio_sfx_init(i, ui_data.sfx[i], len);
+            }
+        }
+        res = hw_audio_sfx_batch_end();
+        if (res < 0) {
+            return -1;
+        } else if (res == 0) {
+            uint32_t t1;
+            t1 = hw_get_time_us();
+            log_message("Preparing sounds took %i ms\n", (t1 - t0) / 1000);
+        }
     }
     ui_data.music_i = -1;
     init_gfx();

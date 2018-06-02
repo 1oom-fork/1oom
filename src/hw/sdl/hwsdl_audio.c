@@ -24,10 +24,34 @@ static int audio_rate = 0;
 
 struct sfx_s {
     Mix_Chunk *chunk;
+    bool pending;
 };
+
 static int sfx_num = 0;
 static struct sfx_s *sfxtbl = NULL;
 static int sfx_playing;
+
+#ifdef USE_SFX_INIT_THREAD
+
+struct sfx_process_sfx_s {
+    int sfxi;
+    const uint8_t *data;
+    uint32_t len;
+};
+
+struct sfx_process_s {
+    volatile bool working;
+    volatile bool busy;
+    bool started;
+    int num, sfximax, error, errori;
+    uint32_t t_start;
+    struct sfx_process_sfx_s *tbl;
+};
+static struct sfx_process_s sfx_process = { false, false, false, 0, 0, 0, 0, 0, NULL };
+
+static SDL_Thread *sfx_process_thread = NULL;
+
+#endif /* USE_SFX_INIT_THREAD */
 
 struct mus_s {
     mus_type_t type;
@@ -130,12 +154,31 @@ int hw_audio_init(void)
     return 0;
 }
 
+void hw_audio_shutdown_pre(void)
+{
+#ifdef USE_SFX_INIT_THREAD
+    sfx_process.working = false;
+#endif /* USE_SFX_INIT_THREAD */
+}
+
 void hw_audio_shutdown(void)
 {
     if (audio_initialized) {
         log_message("SDLA: shutdown\n");
         Mix_CloseAudio();
         SDL_QuitSubSystem(SDL_INIT_AUDIO);
+#ifdef USE_SFX_INIT_THREAD
+        sfx_process.working = false;
+        if (sfx_process.busy) {
+            int timeout = 20;
+            while (sfx_process.busy && (--timeout)) {
+                SDL_Delay(100);
+            }
+            if (!timeout) {
+                log_warning("SDLA: timeout waiting for sfx process thread\n");
+            }
+        }
+#endif /* USE_SFX_INIT_THREAD */
         for (int i = 0; i < sfx_num; ++i) {
             hw_audio_sfx_release(i);
         }
@@ -298,23 +341,27 @@ void hw_audio_music_volume(int volume)
     }
 }
 
-int hw_audio_sfx_init(int sfx_index, const uint8_t *data_in, uint32_t len_in)
+/* -------------------------------------------------------------------------- */
+
+static void hw_audio_sfx_init_alloc(int sfx_index)
 {
-    uint8_t *data = NULL;
-    uint32_t len = 0;
-
-    if (!audio_initialized) {
-        return 0;
-    }
-
     if (sfx_index >= sfx_num) {
         int old_sfx_num = sfx_num;
         sfx_num = (sfx_index + 1);
         sfxtbl = lib_realloc(sfxtbl, sfx_num * sizeof(struct sfx_s));
         for (int i = old_sfx_num; i < sfx_num; ++i) {
             sfxtbl[i].chunk = NULL;
+            sfxtbl[i].pending = false;
         }
     }
+}
+
+static int hw_audio_sfx_init_do(int sfx_index, const uint8_t *data_in, uint32_t len_in)
+{
+    uint8_t *data = NULL;
+    uint32_t len = 0;
+
+    hw_audio_sfx_init_alloc(sfx_index);
 
     if (sfxtbl[sfx_index].chunk) {
         hw_audio_sfx_release(sfx_index);
@@ -323,16 +370,188 @@ int hw_audio_sfx_init(int sfx_index, const uint8_t *data_in, uint32_t len_in)
     if (fmt_sfx_convert(data_in, len_in, &data, &len, NULL, audio_rate, true)) {
         sfxtbl[sfx_index].chunk = Mix_LoadWAV_RW(SDL_RWFromMem(data, len), 0);
         lib_free(data);
+        sfxtbl[sfx_index].pending = false;
     } else {
+        sfxtbl[sfx_index].pending = false;
+        return -1;
+    }
+    return 0;
+}
+
+#ifdef USE_SFX_INIT_THREAD
+
+static int hw_audio_sfx_init_thread(void *data)
+{
+    int i, res = 0;
+    for (i = 0; (i < sfx_process.num) && sfx_process.working; ++i) {
+        int sfxi;
+        sfxi = sfx_process.tbl[i].sfxi;
+        if (hw_audio_sfx_init_do(sfxi, sfx_process.tbl[i].data, sfx_process.tbl[i].len)) {
+            sfx_process.error = 1;
+            sfx_process.errori = sfxi;
+            res = -1;
+            break;
+        }
+    }
+    for (; i < sfx_process.num; ++i) {
+        int sfxi;
+        sfxi = sfx_process.tbl[i].sfxi;
+        sfxtbl[sfxi].pending = false;
+    }
+    lib_free(sfx_process.tbl);
+    sfx_process.tbl = NULL;
+    sfx_process.busy = false;
+    sfx_process.working = false;
+    sfx_process_thread = NULL;
+    return res;
+}
+
+#endif /* USE_SFX_INIT_THREAD */
+
+/* -------------------------------------------------------------------------- */
+
+#ifdef USE_SFX_INIT_THREAD
+
+int hw_audio_sfx_batch_start(int sfx_index_max)
+{
+    if ((!audio_initialized) || (!opt_sfx_init_parallel)) {
+        return 0;
+    }
+    if (sfx_process.working) {
+        while (sfx_process.busy) {
+            SDL_Delay(100);
+            hw_audio_check_process();
+        }
+    }
+    sfx_process.t_start = hw_get_time_us();
+    hw_audio_sfx_init_alloc(sfx_index_max);
+    if (sfx_process.tbl) {
+        lib_free(sfx_process.tbl);
+        sfx_process.tbl = NULL;
+    }
+    sfx_process.tbl = lib_malloc(sfx_index_max * sizeof(struct sfx_process_sfx_s));
+    sfx_process.num = 0;
+    sfx_process.sfximax = sfx_index_max;
+    sfx_process.error = 0;
+    sfx_process.errori = 0;
+    hw_audio_sfx_init_alloc(sfx_index_max);
+    sfx_process.started = true;
+    sfx_process.working = false;
+    sfx_process.busy = false;
+    return 1;
+}
+
+int hw_audio_sfx_batch_end(void)
+{
+    int res;
+    if ((!audio_initialized) || (!opt_sfx_init_parallel)) {
+        return 0;
+    }
+    sfx_process.busy = true;
+    sfx_process.working = true;
+    for (int i = 0; i < sfx_process.num; ++i) {
+        sfxtbl[sfx_process.tbl[i].sfxi].pending = true;
+    }
+    sfx_process_thread = HWSDLX_CreateThread(hw_audio_sfx_init_thread);
+    if (sfx_process_thread == NULL) {
+        log_error("SDLA: Couldn't create thread: %s\n", SDL_GetError());
+        hw_audio_sfx_init_thread(0);
+        res = 0;
+    } else {
+        log_message("SDLA: created sfx processing thread\n");
+        res = 1;
+    }
+    return res;
+}
+
+int hw_audio_sfx_init(int sfx_index, const uint8_t *data_in, uint32_t len_in)
+{
+    if (!audio_initialized) {
+        return 0;
+    }
+    if (!sfx_process.started) {
+        if (hw_audio_sfx_init_do(sfx_index, data_in, len_in)) {
+            log_error("SDLA: failed to init sound %i\n", sfx_index);
+            return -1;
+        }
+    } else {
+        if (sfx_index >= sfx_num) {
+            log_error("SDLA: BUG: sfx %i >= max %i\n", sfx_index, sfx_num);
+            return -1;
+        }
+        for (int i = 0; i < sfx_process.num; ++i) {
+            if (sfx_process.tbl[i].sfxi == sfx_index) {
+                log_warning("SDLA: BUG: sfx %i already selected for init\n", sfx_index);
+                return 0;
+            }
+        }
+        if (sfxtbl[sfx_index].chunk) {
+            hw_audio_sfx_release(sfx_index);
+        }
+        sfx_process.tbl[sfx_process.num].sfxi = sfx_index;
+        sfx_process.tbl[sfx_process.num].data = data_in;
+        sfx_process.tbl[sfx_process.num].len = len_in;
+        ++sfx_process.num;
+    }
+    return 0;
+}
+
+int hw_audio_check_process(void)
+{
+    if (sfx_process.started) {
+        if (!sfx_process.busy) {
+            uint32_t t_end = hw_get_time_us();
+            sfx_process.started = false;
+            if (sfx_process.error) {
+                log_error("SDLA: failed to init sound %i\n", sfx_process.errori);
+                return -1;
+            } else {
+                log_message("SDLA: sfx processing took %i ms\n", (t_end - sfx_process.t_start) / 1000);
+            }
+        }
+    }
+    return 0;
+}
+
+#else /* !USE_SFX_INIT_THREAD */
+
+int hw_audio_sfx_batch_start(int sfx_index_max)
+{
+    return 0;
+}
+
+int hw_audio_sfx_batch_end(void)
+{
+    return 0;
+}
+
+int hw_audio_sfx_init(int sfx_index, const uint8_t *data_in, uint32_t len_in)
+{
+    if (!audio_initialized) {
+        return 0;
+    }
+    if (hw_audio_sfx_init_do(sfx_index, data_in, len_in)) {
         log_error("SDLA: failed to init sound %i\n", sfx_index);
         return -1;
     }
     return 0;
 }
 
+int hw_audio_check_process(void)
+{
+    return 0;
+}
+
+#endif /* USE_SFX_INIT_THREAD */
+
 void hw_audio_sfx_release(int sfx_index)
 {
     if (sfx_index < sfx_num) {
+#ifdef USE_SFX_INIT_THREAD
+        while (sfxtbl[sfx_index].pending) {
+            SDL_Delay(10);
+        }
+#endif /* USE_SFX_INIT_THREAD */
         if (sfxtbl[sfx_index].chunk) {
             if (sfx_playing == sfx_index) {
                 hw_audio_sfx_stop();
@@ -346,6 +565,11 @@ void hw_audio_sfx_release(int sfx_index)
 void hw_audio_sfx_play(int sfx_index)
 {
     if (audio_initialized && opt_sfx_enabled && (sfx_index < sfx_num)) {
+#ifdef USE_SFX_INIT_THREAD
+        while (sfxtbl[sfx_index].pending) {
+            SDL_Delay(10);
+        }
+#endif /* USE_SFX_INIT_THREAD */
         Mix_PlayChannel(0, sfxtbl[sfx_index].chunk, 0);
         sfx_playing = sfx_index;
     }
@@ -386,8 +610,15 @@ int hw_audio_init(void)
     return 0;
 }
 
+void hw_audio_shutdown_pre(void)
+{
+}
 void hw_audio_shutdown(void)
 {
+}
+int hw_audio_set_sdlmixer_sf(const char *path)
+{
+    return 0;
 }
 int hw_audio_music_init(int mus_index, const uint8_t *data, uint32_t len)
 {
@@ -408,7 +639,19 @@ void hw_audio_music_stop(void)
 void hw_audio_music_volume(int volume/*0..128*/)
 {
 }
+int hw_audio_sfx_batch_start(int sfx_index_max)
+{
+    return 0;
+}
+int hw_audio_sfx_batch_end(void)
+{
+    return 0;
+}
 int hw_audio_sfx_init(int sfx_index, const uint8_t *data, uint32_t len)
+{
+    return 0;
+}
+int hw_audio_check_process(void)
 {
     return 0;
 }

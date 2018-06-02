@@ -84,6 +84,8 @@ For UIs with audio support:
     -nomusic             Disable music
     -sfx                 Enable SFX
     -nosfx               Disable SFX
+    -sfxinitpar          Init SFX in parallel (if possible)
+    -nosfxinitpar        Do not init SFX in parallel
     -musicvol VOLUME     Set music volume (0..128)
     -sfxvol VOLUME       Set SFX volume (0..128)
     -audiohz HZ          Set audio sample rate (Hz)
