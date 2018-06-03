@@ -195,9 +195,9 @@ typedef struct gameevents_s {
     player_id_t plague_player;
     uint8_t plague_planet_i;
     int plague_val;
-    bool have_e02;
-    player_id_t e02_player;
-    uint8_t e02_planet_i;
+    bool have_quake;
+    player_id_t quake_player;
+    uint8_t quake_planet_i;
     uint8_t have_nova;  /* 0..3 */
     player_id_t nova_player;
     uint8_t nova_planet_i;
