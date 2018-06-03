@@ -168,7 +168,7 @@ void game_event_new(struct game_s *g)
         g->evn.have_derelict = false;
         g->evn.crystal.exists = 0;
         g->evn.amoeba.exists = 0;
-        g->evn.have_e13 = false;
+        g->evn.have_enviro = false;
         g->evn.have_e14 = false;
         g->evn.have_e15 = false;
         g->evn.have_e16 = false;
@@ -220,11 +220,11 @@ void game_event_new(struct game_s *g)
           || (((type == GAME_EVENT_CRYSTAL) || (type == GAME_EVENT_AMOEBA)) && (g->evn.crystal.exists || g->evn.amoeba.exists))
           || ((type == GAME_EVENT_DERELICT) && IS_HUMAN(g, player))
           || ((type == GAME_EVENT_ASSASSIN) && (g->end != GAME_END_NONE))
-          || ((type == GAME_EVENT_13) && (p->type < PLANET_TYPE_MINIMAL))
+          || ((type == GAME_EVENT_ENVIRO) && (p->type < PLANET_TYPE_MINIMAL))
           || ((type == GAME_EVENT_COMET) && (g->year < 100))
           || ((type == GAME_EVENT_PIRATES) && (game_event_new_get_trader(g, player) == PLAYER_NONE))
           || (((type == GAME_EVENT_ACCIDENT) || (type == GAME_EVENT_PLAGUE)) && (e->race == RACE_SILICOID))
-          || ((type == GAME_EVENT_13) && ((p->growth >= PLANET_GROWTH_FERTILE) || (p->special > PLANET_SPECIAL_NORMAL)))
+          || ((type == GAME_EVENT_ENVIRO) && ((p->growth >= PLANET_GROWTH_FERTILE) || (p->special > PLANET_SPECIAL_NORMAL)))
           || ((type == GAME_EVENT_14) && (p->special > PLANET_SPECIAL_NORMAL))
           || ((type == GAME_EVENT_16) && (p->special < PLANET_SPECIAL_NORMAL))
           || ((type == GAME_EVENT_16) && (p->special == PLANET_SPECIAL_ARTIFACTS))
@@ -366,9 +366,9 @@ void game_event_new(struct game_s *g)
                 game_monster_set_start(g, m);
             }
             break;
-        case GAME_EVENT_13:
-            g->evn.have_e13 = true;
-            g->evn.e13_planet_i = planet;
+        case GAME_EVENT_ENVIRO:
+            g->evn.have_enviro = true;
+            g->evn.enviro_planet_i = planet;
             break;
         case GAME_EVENT_14:
             g->evn.have_e14 = true;
@@ -379,8 +379,8 @@ void game_event_new(struct game_s *g)
             g->evn.e15_player = player;
             break;
         case GAME_EVENT_16:
-            g->evn.have_e13 = true;
-            g->evn.e13_planet_i = planet;
+            g->evn.have_enviro = true;
+            g->evn.enviro_planet_i = planet;
             break;
         default:
             break;
@@ -896,8 +896,8 @@ bool game_event_run(struct game_s *g, struct game_end_s *ge)
         }
     }
     /*10c37*/
-    if (g->evn.have_e13) {
-        uint8_t pli = g->evn.e13_planet_i;
+    if (g->evn.have_enviro) {
+        uint8_t pli = g->evn.enviro_planet_i;
         planet_t *p = &(g->planet[pli]);
         player_id_t player = p->owner;
         empiretechorbit_t *e = 0;
@@ -918,8 +918,8 @@ bool game_event_run(struct game_s *g, struct game_end_s *ge)
         p->max_pop3 += v;
         SETMIN(p->max_pop3, p->max_pop2 + terraf);
         SETMIN(p->max_pop3, game_num_max_pop);
-        g->evn.have_e13 = false;
-        ns.type = GAME_NEWS_13;
+        g->evn.have_enviro = false;
+        ns.type = GAME_NEWS_ENVIRO;
         ns.subtype = IS_HUMAN(g, player) ? 0 : 4;
         ui_news(g, &ns);
         any_news = true;
