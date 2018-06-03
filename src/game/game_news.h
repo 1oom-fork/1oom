@@ -8,7 +8,7 @@
 typedef enum {
     GAME_NEWS_NONE = 0,
     GAME_NEWS_PLAGUE, /*1*/
-    GAME_NEWS_02,
+    GAME_NEWS_QUAKE, /*2*/
     GAME_NEWS_NOVA, /*3*/
     GAME_NEWS_ACCIDENT, /*4*/
     GAME_NEWS_05,
