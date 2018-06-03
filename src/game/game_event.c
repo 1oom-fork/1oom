@@ -379,8 +379,8 @@ void game_event_new(struct game_s *g)
             g->evn.support_player = player;
             break;
         case GAME_EVENT_POOR:
-            g->evn.have_enviro = true;
-            g->evn.enviro_planet_i = planet;
+            g->evn.have_poor = true;
+            g->evn.poor_planet_i = planet;
             break;
         default:
             break;
@@ -706,6 +706,7 @@ bool game_event_run(struct game_s *g, struct game_end_s *ge)
                 e2->trade_percent[p1] = (e2->trade_percent[p1] * (100 - setback)) / 100;
             }
         }
+        ns.type = GAME_NEWS_PIRATES;
         switch (g->evn.have_pirates) {
             case 1:
                 ns.subtype = 0;
