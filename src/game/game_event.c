@@ -162,7 +162,7 @@ void game_event_new(struct game_s *g)
         g->evn.have_nova = 0;
         g->evn.have_accident = 0;
         g->evn.have_assassin = false;
-        g->evn.have_e06 = false;
+        g->evn.have_virus = false;
         g->evn.have_comet = 0;
         g->evn.have_pirates = 0;
         g->evn.have_e09 = false;
@@ -318,9 +318,9 @@ void game_event_new(struct game_s *g)
                 g->evn.assassin_player2 = player2;
             }
             break;
-        case GAME_EVENT_06:
-            g->evn.have_e06 = true;
-            g->evn.e06_player = player;
+        case GAME_EVENT_VIRUS:
+            g->evn.have_virus = true;
+            g->evn.virus_player = player;
             {
                 int v;
                 v = rnd_0_nm1(4, &g->seed);
@@ -330,7 +330,7 @@ void game_event_new(struct game_s *g)
                     case 2: v = TECH_FIELD_PROPULSION; break;
                     default: v = TECH_FIELD_WEAPON; break;
                 }
-                g->evn.e06_field = v;
+                g->evn.virus_field = v;
             }
             break;
         case GAME_EVENT_COMET:
@@ -585,16 +585,16 @@ bool game_event_run(struct game_s *g, struct game_end_s *ge)
         any_news = true;
     }
     /*fba9*/
-    if (g->evn.have_e06) {
-        player_id_t player = g->evn.e06_player;
+    if (g->evn.have_virus) {
+        player_id_t player = g->evn.virus_player;
         empiretechorbit_t *e = &(g->eto[player]);
-        ns.type = GAME_NEWS_06;
+        ns.type = GAME_NEWS_VIRUS;
         ns.race = e->race;
-        ns.num1 = g->evn.e06_field;
-        ns.num2 = e->tech.investment[g->evn.e06_field];
+        ns.num1 = g->evn.virus_field;
+        ns.num2 = e->tech.investment[g->evn.virus_field];
         /* MOO1 limits the shown loss to 32000 and also sets it to 100 if 0 */
-        e->tech.investment[g->evn.e06_field] = 0;
-        g->evn.have_e06 = false;
+        e->tech.investment[g->evn.virus_field] = 0;
+        g->evn.have_virus = false;
         ns.subtype = 4;
         ui_news(g, &ns);
         any_news = true;
