@@ -206,9 +206,9 @@ typedef struct gameevents_s {
     uint8_t have_accident;  /* 0..2 */
     player_id_t accident_player;
     uint8_t accident_planet_i;
-    bool have_e05;
-    player_id_t e05_player;
-    player_id_t e05_player2;
+    bool have_assassin;
+    player_id_t assassin_player;
+    player_id_t assassin_player2;
     bool have_e06;
     player_id_t e06_player;
     tech_field_t e06_field;
