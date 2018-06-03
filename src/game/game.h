@@ -195,9 +195,9 @@ typedef struct gameevents_s {
     player_id_t plague_player;
     uint8_t plague_planet_i;
     int plague_val;
-    bool have_e02;
-    player_id_t e02_player;
-    uint8_t e02_planet_i;
+    bool have_quake;
+    player_id_t quake_player;
+    uint8_t quake_planet_i;
     uint8_t have_nova;  /* 0..3 */
     player_id_t nova_player;
     uint8_t nova_planet_i;
@@ -206,12 +206,12 @@ typedef struct gameevents_s {
     uint8_t have_accident;  /* 0..2 */
     player_id_t accident_player;
     uint8_t accident_planet_i;
-    bool have_e05;
-    player_id_t e05_player;
-    player_id_t e05_player2;
-    bool have_e06;
-    player_id_t e06_player;
-    tech_field_t e06_field;
+    bool have_assassin;
+    player_id_t assassin_player;
+    player_id_t assassin_player2;
+    bool have_virus;
+    player_id_t virus_player;
+    tech_field_t virus_field;
     uint8_t have_comet; /* 0..3 */
     player_id_t comet_player;
     uint8_t comet_planet_i;
@@ -221,19 +221,19 @@ typedef struct gameevents_s {
     uint8_t have_pirates;   /* 0..3 */
     uint8_t pirates_planet_i;
     uint16_t pirates_hp;
-    bool have_e09;
-    player_id_t e09_player;
+    bool have_derelict;
+    player_id_t derelict_player;
     monster_t crystal;
     monster_t amoeba;
-    bool have_e13;
-    uint8_t e13_planet_i;
-    bool have_e14;
-    uint8_t e14_planet_i;
-    bool have_e15;
-    player_id_t e15_player;
-    bool have_e16;
-    uint8_t e16_planet_i;
-    uint8_t have_e17; /* 0, pi+1 */
+    bool have_enviro;
+    uint8_t enviro_planet_i;
+    bool have_rich;
+    uint8_t rich_planet_i;
+    bool have_support;
+    player_id_t support_player;
+    bool have_poor;
+    uint8_t poor_planet_i;
+    uint8_t have_orion_conquer; /* 0, pi+1 */
     uint8_t planet_orion_i;
     bool have_guardian;
     uint8_t home[PLAYER_NUM];   /* home planet index or PLANET_NONE if dead */

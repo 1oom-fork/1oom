@@ -166,20 +166,20 @@ void game_event_new(struct game_s *g)
     planet_t *p;
     if (g->gaux->flag_cheat_events) {
         g->evn.have_plague = 0;
-        g->evn.have_e02 = false;
+        g->evn.have_quake = false;
         g->evn.have_nova = 0;
         g->evn.have_accident = 0;
-        g->evn.have_e05 = false;
-        g->evn.have_e06 = false;
+        g->evn.have_assassin = false;
+        g->evn.have_virus = false;
         g->evn.have_comet = 0;
         g->evn.have_pirates = 0;
-        g->evn.have_e09 = false;
+        g->evn.have_derelict = false;
         g->evn.crystal.exists = 0;
         g->evn.amoeba.exists = 0;
-        g->evn.have_e13 = false;
-        g->evn.have_e14 = false;
-        g->evn.have_e15 = false;
-        g->evn.have_e16 = false;
+        g->evn.have_enviro = false;
+        g->evn.have_rich = false;
+        g->evn.have_support = false;
+        g->evn.have_poor = false;
         return;
     }
     if (g->evn.year > g->year) {
@@ -219,28 +219,28 @@ void game_event_new(struct game_s *g)
     p = &(g->planet[planet]);
     type = GAME_EVENT_NONE;
     for (int loops = 0; (loops < 5) && (type == GAME_EVENT_NONE); ++loops) {
-        type = rnd_1_n(GAME_EVENT_16, &g->seed);
+        type = rnd_1_n(GAME_EVENT_NUM - 1, &g->seed);
         if (0
           || BOOLVEC_IS1(g->evn.done, type)
           || ((type == GAME_EVENT_REBELLION) && IS_AI(g, player))
-          || ((type == GAME_EVENT_02) && (p->pop < 50))
+          || ((type == GAME_EVENT_QUAKE) && (p->pop < 50))
           || (((type == GAME_EVENT_CRYSTAL) || (type == GAME_EVENT_AMOEBA)) && (g->year < 200))
           || (((type == GAME_EVENT_CRYSTAL) || (type == GAME_EVENT_AMOEBA)) && (g->evn.crystal.exists || g->evn.amoeba.exists))
-          || ((type == GAME_EVENT_09) && IS_HUMAN(g, player))
-          || ((type == GAME_EVENT_05) && (g->end != GAME_END_NONE))
-          || ((type == GAME_EVENT_13) && (p->type < PLANET_TYPE_MINIMAL))
+          || ((type == GAME_EVENT_DERELICT) && IS_HUMAN(g, player))
+          || ((type == GAME_EVENT_ASSASSIN) && (g->end != GAME_END_NONE))
           || ((type == GAME_EVENT_COMET) && (g->year < 100))
           || ((type == GAME_EVENT_PIRATES) && (game_event_new_get_trader(g, player) == PLAYER_NONE))
           || (((type == GAME_EVENT_ACCIDENT) || (type == GAME_EVENT_PLAGUE)) && (e->race == RACE_SILICOID))
-          || ((type == GAME_EVENT_13) && ((p->growth >= PLANET_GROWTH_FERTILE) || (p->special > PLANET_SPECIAL_NORMAL)))
-          || ((type == GAME_EVENT_14) && (p->special > PLANET_SPECIAL_NORMAL))
-          || ((type == GAME_EVENT_16) && (p->special < PLANET_SPECIAL_NORMAL))
-          || ((type == GAME_EVENT_16) && (p->special == PLANET_SPECIAL_ARTIFACTS))
-          || ((type == GAME_EVENT_14) && (p->special == PLANET_SPECIAL_ARTIFACTS))
+          || ((type == GAME_EVENT_ENVIRO) && (p->type < PLANET_TYPE_MINIMAL))
+          || ((type == GAME_EVENT_ENVIRO) && ((p->growth >= PLANET_GROWTH_FERTILE) || (p->special > PLANET_SPECIAL_NORMAL)))
+          || ((type == GAME_EVENT_RICH) && (p->special > PLANET_SPECIAL_NORMAL))
+          || ((type == GAME_EVENT_RICH) && (p->special == PLANET_SPECIAL_ARTIFACTS))
+          || ((type == GAME_EVENT_POOR) && (p->special < PLANET_SPECIAL_NORMAL))
+          || ((type == GAME_EVENT_POOR) && (p->special == PLANET_SPECIAL_ARTIFACTS))
         ) {
             type = GAME_EVENT_NONE;
         }
-        if (type == GAME_EVENT_05) {
+        if (type == GAME_EVENT_ASSASSIN) {
             bool found;
             found = false;
             for (player_id_t i = PLAYER_0; i < g->players; ++i) {
@@ -291,10 +291,10 @@ void game_event_new(struct game_s *g)
             g->evn.plague_planet_i = planet;
             g->evn.plague_val = (rnd_1_n(8, &g->seed) + g->difficulty * 2) * p->prod_after_maint;
             break;
-        case GAME_EVENT_02:
-            g->evn.have_e02 = true;
-            g->evn.e02_player = player;
-            g->evn.e02_planet_i = planet;
+        case GAME_EVENT_QUAKE:
+            g->evn.have_quake = true;
+            g->evn.quake_player = player;
+            g->evn.quake_planet_i = planet;
             break;
         case GAME_EVENT_NOVA:
             g->evn.have_nova = 1;
@@ -308,9 +308,9 @@ void game_event_new(struct game_s *g)
             g->evn.accident_player = player;
             g->evn.accident_planet_i = planet;
             break;
-        case GAME_EVENT_05:
-            g->evn.have_e05 = true;
-            g->evn.e05_player = player;
+        case GAME_EVENT_ASSASSIN:
+            g->evn.have_assassin = true;
+            g->evn.assassin_player = player;
             {
                 player_id_t player2;
                 player2 = PLAYER_NONE;
@@ -323,12 +323,12 @@ void game_event_new(struct game_s *g)
                         player2 = i;
                     }
                 }
-                g->evn.e05_player2 = player2;
+                g->evn.assassin_player2 = player2;
             }
             break;
-        case GAME_EVENT_06:
-            g->evn.have_e06 = true;
-            g->evn.e06_player = player;
+        case GAME_EVENT_VIRUS:
+            g->evn.have_virus = true;
+            g->evn.virus_player = player;
             {
                 int v;
                 v = rnd_0_nm1(4, &g->seed);
@@ -338,7 +338,7 @@ void game_event_new(struct game_s *g)
                     case 2: v = TECH_FIELD_PROPULSION; break;
                     default: v = TECH_FIELD_WEAPON; break;
                 }
-                g->evn.e06_field = v;
+                g->evn.virus_field = v;
             }
             break;
         case GAME_EVENT_COMET:
@@ -354,9 +354,9 @@ void game_event_new(struct game_s *g)
             g->evn.pirates_planet_i = rnd_0_nm1(g->galaxy_stars, &g->seed);
             g->evn.pirates_hp = (rnd_1_n(5, &g->seed) + 10 + g->difficulty) * 30;
             break;
-        case GAME_EVENT_09:
-            g->evn.have_e09 = true;
-            g->evn.e09_player = player;
+        case GAME_EVENT_DERELICT:
+            g->evn.have_derelict = true;
+            g->evn.derelict_player = player;
             break;
         case GAME_EVENT_REBELLION:
             p->rebels = p->pop / 2;
@@ -374,21 +374,21 @@ void game_event_new(struct game_s *g)
                 game_monster_set_start(g, m);
             }
             break;
-        case GAME_EVENT_13:
-            g->evn.have_e13 = true;
-            g->evn.e13_planet_i = planet;
+        case GAME_EVENT_ENVIRO:
+            g->evn.have_enviro = true;
+            g->evn.enviro_planet_i = planet;
             break;
-        case GAME_EVENT_14:
-            g->evn.have_e14 = true;
-            g->evn.e14_planet_i = planet;
+        case GAME_EVENT_RICH:
+            g->evn.have_rich = true;
+            g->evn.rich_planet_i = planet;
             break;
-        case GAME_EVENT_15:
-            g->evn.have_e15 = true;
-            g->evn.e15_player = player;
+        case GAME_EVENT_SUPPORT:
+            g->evn.have_support = true;
+            g->evn.support_player = player;
             break;
-        case GAME_EVENT_16:
-            g->evn.have_e13 = true;
-            g->evn.e13_planet_i = planet;
+        case GAME_EVENT_POOR:
+            g->evn.have_poor = true;
+            g->evn.poor_planet_i = planet;
             break;
         default:
             break;
@@ -457,10 +457,10 @@ bool game_event_run(struct game_s *g, struct game_end_s *ge)
         }
     }
     /*f4ec*/
-    if (g->evn.have_e02) {
-        uint8_t pli = g->evn.e02_planet_i;
+    if (g->evn.have_quake) {
+        uint8_t pli = g->evn.quake_planet_i;
         planet_t *p = &(g->planet[pli]);
-        player_id_t player = g->evn.e02_player;
+        player_id_t player = g->evn.quake_player;
         int vp, vf;
         ns.planet_i = pli;
         vp = ((rnd_1_n(10, &g->seed) + 20) * p->pop) / 100;
@@ -469,10 +469,10 @@ bool game_event_run(struct game_s *g, struct game_end_s *ge)
         SETMIN(vf, p->factories);
         ns.num1 = vp;
         ns.num2 = vf;
-        ns.type = GAME_NEWS_02;
+        ns.type = GAME_NEWS_QUAKE;
         ns.planet_i = pli;
         ns.race = g->eto[p->owner].race;
-        g->evn.have_e02 = false;
+        g->evn.have_quake = false;
         p->pop -= vp;
         p->factories -= vf;
         ns.subtype = IS_HUMAN(g, player) ? 0 : 4;
@@ -575,11 +575,11 @@ bool game_event_run(struct game_s *g, struct game_end_s *ge)
         }
     }
     /*fb20*/
-    if (g->evn.have_e05) {
-        player_id_t player = g->evn.e05_player;
-        player_id_t player2 = g->evn.e05_player2;
+    if (g->evn.have_assassin) {
+        player_id_t player = g->evn.assassin_player;
+        player_id_t player2 = g->evn.assassin_player2;
         empiretechorbit_t *e = &(g->eto[player]);
-        ns.type = GAME_NEWS_05;
+        ns.type = GAME_NEWS_ASSASSIN;
         ns.race = e->race;
         ns.num1 = player2;
         game_diplo_start_war(g, player2, player);
@@ -587,22 +587,22 @@ bool game_event_run(struct game_s *g, struct game_end_s *ge)
             e->diplo_type[player2] = 13;
             e->diplo_val[player2] = 100;
         }
-        g->evn.have_e05 = false;
+        g->evn.have_assassin = false;
         ns.subtype = 0;
         ui_news(g, &ns);
         any_news = true;
     }
     /*fba9*/
-    if (g->evn.have_e06) {
-        player_id_t player = g->evn.e06_player;
+    if (g->evn.have_virus) {
+        player_id_t player = g->evn.virus_player;
         empiretechorbit_t *e = &(g->eto[player]);
-        ns.type = GAME_NEWS_06;
+        ns.type = GAME_NEWS_VIRUS;
         ns.race = e->race;
-        ns.num1 = g->evn.e06_field;
-        ns.num2 = e->tech.investment[g->evn.e06_field];
+        ns.num1 = g->evn.virus_field;
+        ns.num2 = e->tech.investment[g->evn.virus_field];
         /* MOO1 limits the shown loss to 32000 and also sets it to 100 if 0 */
-        e->tech.investment[g->evn.e06_field] = 0;
-        g->evn.have_e06 = false;
+        e->tech.investment[g->evn.virus_field] = 0;
+        g->evn.have_virus = false;
         ns.subtype = 4;
         ui_news(g, &ns);
         any_news = true;
@@ -742,11 +742,11 @@ bool game_event_run(struct game_s *g, struct game_end_s *ge)
         game_ai->pirates(g, pli);
     }
     /*10244*/
-    if (g->evn.have_e09) {
-        player_id_t player = g->evn.e09_player;
+    if (g->evn.have_derelict) {
+        player_id_t player = g->evn.derelict_player;
         empiretechorbit_t *e = &(g->eto[player]);
         const uint8_t (*rl)[TECH_TIER_NUM][3] = g->srd[player].researchlist;
-        ns.type = GAME_NEWS_09;
+        ns.type = GAME_NEWS_DERELICT;
         ns.race = e->race;
         for (int fi = 0; fi < 2; ++fi) {
             const tech_field_t ftbl[2] = { TECH_FIELD_WEAPON, TECH_FIELD_FORCE_FIELD };
@@ -761,7 +761,7 @@ bool game_event_run(struct game_s *g, struct game_end_s *ge)
         ns.subtype = 0;
         ui_news(g, &ns);
         any_news = true;
-        g->evn.have_e09 = false;
+        g->evn.have_derelict = false;
     }
     /*10364,10470*/
     for (int pli = 0; pli < g->galaxy_stars; ++pli) {
@@ -910,8 +910,8 @@ bool game_event_run(struct game_s *g, struct game_end_s *ge)
         }
     }
     /*10c37*/
-    if (g->evn.have_e13) {
-        uint8_t pli = g->evn.e13_planet_i;
+    if (g->evn.have_enviro) {
+        uint8_t pli = g->evn.enviro_planet_i;
         planet_t *p = &(g->planet[pli]);
         player_id_t player = p->owner;
         empiretechorbit_t *e = 0;
@@ -932,15 +932,15 @@ bool game_event_run(struct game_s *g, struct game_end_s *ge)
         p->max_pop3 += v;
         SETMIN(p->max_pop3, p->max_pop2 + terraf);
         SETMIN(p->max_pop3, game_num_max_pop);
-        g->evn.have_e13 = false;
-        ns.type = GAME_NEWS_13;
+        g->evn.have_enviro = false;
+        ns.type = GAME_NEWS_ENVIRO;
         ns.subtype = IS_HUMAN(g, player) ? 0 : 4;
         ui_news(g, &ns);
         any_news = true;
     }
     /*10dfb*/
-    if (g->evn.have_e14) {
-        uint8_t pli = g->evn.e14_planet_i;
+    if (g->evn.have_rich) {
+        uint8_t pli = g->evn.rich_planet_i;
         planet_t *p = &(g->planet[pli]);
         player_id_t player = p->owner;
         empiretechorbit_t *e = 0;
@@ -950,15 +950,15 @@ bool game_event_run(struct game_s *g, struct game_end_s *ge)
         ns.planet_i = pli;
         ns.race = (player != PLAYER_NONE) ? e->race : RACE_HUMAN; /* WASBUG MOO1 does not check for none, taking race from eto[-1] */
         p->special = PLANET_SPECIAL_RICH;
-        g->evn.have_e14 = false;
-        ns.type = GAME_NEWS_14;
+        g->evn.have_rich = false;
+        ns.type = GAME_NEWS_RICH;
         ns.subtype = IS_HUMAN(g, player) ? 0 : 4;
         ui_news(g, &ns);
         any_news = true;
     }
     /*10e80*/
-    if (g->evn.have_e15) {
-        player_id_t player = g->evn.e15_player;
+    if (g->evn.have_support) {
+        player_id_t player = g->evn.support_player;
         empiretechorbit_t *e = &(g->eto[player]);
         int v;
         ns.race = e->race;
@@ -966,15 +966,15 @@ bool game_event_run(struct game_s *g, struct game_end_s *ge)
         SETMAX(v, 500);
         e->reserve_bc += v;
         ns.num1 = v;
-        g->evn.have_e15 = false;
-        ns.type = GAME_NEWS_15;
+        g->evn.have_support = false;
+        ns.type = GAME_NEWS_SUPPORT;
         ns.subtype = IS_HUMAN(g, player) ? 0 : 4;
         ui_news(g, &ns);
         any_news = true;
     }
     /*10f1e*/
-    if (g->evn.have_e16) {
-        uint8_t pli = g->evn.e16_planet_i;
+    if (g->evn.have_poor) {
+        uint8_t pli = g->evn.poor_planet_i;
         planet_t *p = &(g->planet[pli]);
         player_id_t player = p->owner;
         empiretechorbit_t *e = 0;
@@ -984,15 +984,14 @@ bool game_event_run(struct game_s *g, struct game_end_s *ge)
         ns.planet_i = pli;
         ns.race = (player != PLAYER_NONE) ? e->race : RACE_HUMAN; /* WASBUG MOO1 does not check for none, taking race from eto[-1] */
         p->special = PLANET_SPECIAL_POOR;
-        g->evn.have_e16 = false;
-        ns.type = GAME_NEWS_16;
+        g->evn.have_poor = false;
+        ns.type = GAME_NEWS_POOR;
         ns.subtype = IS_HUMAN(g, player) ? 0 : 4;
         ui_news(g, &ns);
         any_news = true;
     }
-    /*10fa3*/
-    if (g->evn.have_e17 && BOOLVEC_IS0(g->evn.done, 17)) {
-        player_id_t player = g->evn.have_e17 - 1;
+    if (g->evn.have_orion_conquer && BOOLVEC_IS0(g->evn.done, 17)) { /* BUG MOO1 nevers sets have_orion_conquer */
+        player_id_t player = g->evn.have_orion_conquer - 1;
         empiretechorbit_t *e = &(g->eto[player]);
         BOOLVEC_SET1(g->evn.done, 17);
         ns.race = e->race;
