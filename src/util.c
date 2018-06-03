@@ -139,12 +139,10 @@ void util_fname_split(const char *path, char **dir_out, char **name_out)
 
     p = strrchr(path, FSDEV_DIR_SEP_CHR);
 
-#ifdef IS_WINDOWS
-    /* Both `/' and `\' are valid.  */
+#ifdef FSDEV_DIR_SEP_ALT
     {
         const char *p1;
-
-        p1 = strrchr(path, '\\');
+        p1 = strrchr(path, FSDEV_DIR_SEP_ALT);
         if ((p == NULL) || (p < p1)) {
             p = p1;
         }
