@@ -102,7 +102,7 @@ fonts.lbx entries 2..12: the palettes (size 0x1560)
 offset  sz  description
 0       256*3   RGB palette values (6bpp per item)
 300     16*16   palette indices for fonts
-400     256?    ?
+400     256     ? (unused)
 500     0x1000  cursor data: 16*16 pix * 16 cursors, columnwise
 1500    4*0x18  color table generation parameters : r g b percent
 
