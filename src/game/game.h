@@ -233,7 +233,7 @@ typedef struct gameevents_s {
     player_id_t support_player;
     bool have_poor;
     uint8_t poor_planet_i;
-    uint8_t have_e17; /* 0, pi+1 */
+    uint8_t have_orion_conquer; /* 0, pi+1 */
     uint8_t planet_orion_i;
     bool have_guardian;
     uint8_t home[PLAYER_NUM];   /* home planet index or PLANET_NONE if dead */
