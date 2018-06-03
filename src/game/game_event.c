@@ -212,7 +212,7 @@ void game_event_new(struct game_s *g)
     p = &(g->planet[planet]);
     type = GAME_EVENT_NONE;
     for (int loops = 0; (loops < 5) && (type == GAME_EVENT_NONE); ++loops) {
-        type = rnd_1_n(GAME_EVENT_POOR, &g->seed);
+        type = rnd_1_n(GAME_EVENT_NUM - 1, &g->seed);
         if (0
           || BOOLVEC_IS1(g->evn.done, type)
           || ((type == GAME_EVENT_REBELLION) && IS_AI(g, player))
@@ -221,15 +221,15 @@ void game_event_new(struct game_s *g)
           || (((type == GAME_EVENT_CRYSTAL) || (type == GAME_EVENT_AMOEBA)) && (g->evn.crystal.exists || g->evn.amoeba.exists))
           || ((type == GAME_EVENT_DERELICT) && IS_HUMAN(g, player))
           || ((type == GAME_EVENT_ASSASSIN) && (g->end != GAME_END_NONE))
-          || ((type == GAME_EVENT_ENVIRO) && (p->type < PLANET_TYPE_MINIMAL))
           || ((type == GAME_EVENT_COMET) && (g->year < 100))
           || ((type == GAME_EVENT_PIRATES) && (game_event_new_get_trader(g, player) == PLAYER_NONE))
           || (((type == GAME_EVENT_ACCIDENT) || (type == GAME_EVENT_PLAGUE)) && (e->race == RACE_SILICOID))
+          || ((type == GAME_EVENT_ENVIRO) && (p->type < PLANET_TYPE_MINIMAL))
           || ((type == GAME_EVENT_ENVIRO) && ((p->growth >= PLANET_GROWTH_FERTILE) || (p->special > PLANET_SPECIAL_NORMAL)))
           || ((type == GAME_EVENT_RICH) && (p->special > PLANET_SPECIAL_NORMAL))
+          || ((type == GAME_EVENT_RICH) && (p->special == PLANET_SPECIAL_ARTIFACTS))
           || ((type == GAME_EVENT_POOR) && (p->special < PLANET_SPECIAL_NORMAL))
           || ((type == GAME_EVENT_POOR) && (p->special == PLANET_SPECIAL_ARTIFACTS))
-          || ((type == GAME_EVENT_RICH) && (p->special == PLANET_SPECIAL_ARTIFACTS))
         ) {
             type = GAME_EVENT_NONE;
         }
