@@ -349,7 +349,7 @@ offset  sz  description
 94      2   support player
 96      2   have poor event (0/1)
 98      2   poor planet
-9a      2   have event17 (0/1)
+9a      2   have orion conqueror (0 or player_id+1)
 9c      2   orion planet index
 9e      2   have guardian
 a0      2*6 home planet index (-1, 0..107 ; -1 means player is dead)
