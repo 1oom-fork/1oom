@@ -28,7 +28,7 @@ typedef enum {
     GAME_NEWS_STARS, /*19*/
     GAME_NEWS_STATS, /*20*/
     GAME_NEWS_GENOCIDE, /*21*/
-    GAME_NEWS_GUARDIAN
+    GAME_NEWS_GUARDIAN /*22*/
 } news_type_t;
 
 struct news_s {
