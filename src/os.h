@@ -14,6 +14,7 @@
 #define FSDEV_PATH_MAX  2048
 #define FSDEV_DIR_SEP_STR    "\\"
 #define FSDEV_DIR_SEP_CHR    '\\'
+#define FSDEV_DIR_SEP_ALT    '/'
 #else
 #define FSDEV_PATH_MAX  2048
 #define FSDEV_DIR_SEP_STR    "/"
