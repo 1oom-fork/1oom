@@ -309,9 +309,9 @@ offset  sz  description
 44      2   have accident
 46      2   accident player
 48      2   accident planet
-4a      2   have event05 (0/1)
-4c      2   event05 player2
-4e      2   event05 player
+4a      2   have assassination attempt (0/1)
+4c      2   assassination player2
+4e      2   assassination player
 50      2   have event06 (0/1)
 52      2   event06 player
 54      2   event06 tech field
