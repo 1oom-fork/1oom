@@ -345,8 +345,8 @@ offset  sz  description
 8c      2   environment planet
 8e      2   have rich event (0/1)
 90      2   rich planet
-92      2   have event15 (0/1)
-94      2   event15 player
+92      2   have support BC event (0/1)
+94      2   support player
 96      2   have event16 (0/1)
 98      2   event16 planet
 9a      2   have event17 (0/1)
