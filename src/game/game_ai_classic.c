@@ -1437,7 +1437,7 @@ again:
         SETMIN(v, 11);
         ait->hull = tbl_hull[v];
     } else {
-        ait->hull = SHIP_HULL_SMALL;
+        ait->hull = SHIP_HULL_LARGE;
     }
     ait->shiplook = game_ai_classic_design_ship_get_look(g, pi, ait->hull);
     sd->wpnn[0] = 0;
