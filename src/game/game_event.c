@@ -166,7 +166,7 @@ void game_event_new(struct game_s *g)
         g->evn.have_virus = false;
         g->evn.have_comet = 0;
         g->evn.have_pirates = 0;
-        g->evn.have_e09 = false;
+        g->evn.have_derelict = false;
         g->evn.crystal.exists = 0;
         g->evn.amoeba.exists = 0;
         g->evn.have_e13 = false;
@@ -219,7 +219,7 @@ void game_event_new(struct game_s *g)
           || ((type == GAME_EVENT_QUAKE) && (p->pop < 50))
           || (((type == GAME_EVENT_CRYSTAL) || (type == GAME_EVENT_AMOEBA)) && (g->year < 200))
           || (((type == GAME_EVENT_CRYSTAL) || (type == GAME_EVENT_AMOEBA)) && (g->evn.crystal.exists || g->evn.amoeba.exists))
-          || ((type == GAME_EVENT_09) && IS_HUMAN(g, player))
+          || ((type == GAME_EVENT_DERELICT) && IS_HUMAN(g, player))
           || ((type == GAME_EVENT_ASSASSIN) && (g->end != GAME_END_NONE))
           || ((type == GAME_EVENT_13) && (p->type < PLANET_TYPE_MINIMAL))
           || ((type == GAME_EVENT_COMET) && (g->year < 100))
@@ -347,9 +347,9 @@ void game_event_new(struct game_s *g)
             g->evn.pirates_planet_i = rnd_0_nm1(g->galaxy_stars, &g->seed);
             g->evn.pirates_hp = (rnd_1_n(5, &g->seed) + 10 + g->difficulty) * 30;
             break;
-        case GAME_EVENT_09:
-            g->evn.have_e09 = true;
-            g->evn.e09_player = player;
+        case GAME_EVENT_DERELICT:
+            g->evn.have_derelict = true;
+            g->evn.derelict_player = player;
             break;
         case GAME_EVENT_REBELLION:
             p->rebels = p->pop / 2;
@@ -734,11 +734,11 @@ bool game_event_run(struct game_s *g, struct game_end_s *ge)
         game_ai->pirates(g, pli);
     }
     /*10244*/
-    if (g->evn.have_e09) {
-        player_id_t player = g->evn.e09_player;
+    if (g->evn.have_derelict) {
+        player_id_t player = g->evn.derelict_player;
         empiretechorbit_t *e = &(g->eto[player]);
         const uint8_t (*rl)[TECH_TIER_NUM][3] = g->srd[player].researchlist;
-        ns.type = GAME_NEWS_09;
+        ns.type = GAME_NEWS_DERELICT;
         ns.race = e->race;
         for (int fi = 0; fi < 2; ++fi) {
             const tech_field_t ftbl[2] = { TECH_FIELD_WEAPON, TECH_FIELD_FORCE_FIELD };
@@ -753,7 +753,7 @@ bool game_event_run(struct game_s *g, struct game_end_s *ge)
         ns.subtype = 0;
         ui_news(g, &ns);
         any_news = true;
-        g->evn.have_e09 = false;
+        g->evn.have_derelict = false;
     }
     /*10364,10470*/
     for (int pli = 0; pli < g->galaxy_stars; ++pli) {
