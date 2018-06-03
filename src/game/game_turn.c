@@ -698,8 +698,8 @@ static void game_turn_move_ships(struct game_s *g)
     bool local_multiplayer = g->gaux->local_players > 1, move_back = false;
     ctx = ui_gmap_basic_init(g, local_multiplayer);
     if (local_multiplayer) {
-        memcpy(g->gaux->move_temp->enroute, g->enroute, g->enroute_num);
-        memcpy(g->gaux->move_temp->transport, g->transport, g->transport_num);
+        memcpy(g->gaux->move_temp->enroute, g->enroute, g->enroute_num * sizeof(fleet_enroute_t));
+        memcpy(g->gaux->move_temp->transport, g->transport, g->transport_num * sizeof(transport_t));
         g->gaux->move_temp->crystal = g->evn.crystal;
         g->gaux->move_temp->amoeba = g->evn.amoeba;
     }
@@ -709,8 +709,8 @@ static void game_turn_move_ships(struct game_s *g)
             continue;
         }
         if (move_back) {
-            memcpy(g->enroute, g->gaux->move_temp->enroute, g->enroute_num);
-            memcpy(g->transport, g->gaux->move_temp->transport, g->transport_num);
+            memcpy(g->enroute, g->gaux->move_temp->enroute, g->enroute_num * sizeof(fleet_enroute_t));
+            memcpy(g->transport, g->gaux->move_temp->transport, g->transport_num * sizeof(transport_t));
             g->evn.crystal = g->gaux->move_temp->crystal;
             g->evn.amoeba = g->gaux->move_temp->amoeba;
         }
