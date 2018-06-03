@@ -762,7 +762,7 @@ static void audience_menu_threat(struct audience_s *au)
                 } else {
                     eh->spymode_next[pa] = SPYMODE_HIDE;    /* FIXME BUG? should be ea->..[ph] */
                     eh->spymode[pa] = SPYMODE_HIDE;         /* FIXME BUG? should be ea->..[ph] */
-                    g->evn.ceasefire[ph][pa] = rnd_1_n(15, &g->seed) + 5;  /* FIXME check index order */
+                    g->evn.ceasefire[ph][pa] = rnd_1_n(15, &g->seed) + 5;
                     dtype = 70;
                     if (v >= 275) {
                         struct spy_esp_s s[1];
@@ -888,7 +888,7 @@ static void audience_menu_tribute(struct audience_s *au)
             selected = ui_audience_ask4(au);
             if ((selected != -1) && (selected < s->tnum) && (selected < 4)) {
                 int v;
-                game_tech_get_new(g, pa, s->tbl_field[i], s->tbl_tech2[i], 4, ph, 0, false);
+                game_tech_get_new(g, pa, s->tbl_field[selected], s->tbl_tech2[selected], 4, ph, 0, false);
                 if (eh->relation1[pa] < 0) {
                     v = 20;
                 } else {
