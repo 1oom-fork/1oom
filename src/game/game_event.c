@@ -161,7 +161,7 @@ void game_event_new(struct game_s *g)
         g->evn.have_quake = false;
         g->evn.have_nova = 0;
         g->evn.have_accident = 0;
-        g->evn.have_e05 = false;
+        g->evn.have_assassin = false;
         g->evn.have_e06 = false;
         g->evn.have_comet = 0;
         g->evn.have_pirates = 0;
@@ -219,7 +219,7 @@ void game_event_new(struct game_s *g)
           || (((type == GAME_EVENT_CRYSTAL) || (type == GAME_EVENT_AMOEBA)) && (g->year < 200))
           || (((type == GAME_EVENT_CRYSTAL) || (type == GAME_EVENT_AMOEBA)) && (g->evn.crystal.exists || g->evn.amoeba.exists))
           || ((type == GAME_EVENT_09) && IS_HUMAN(g, player))
-          || ((type == GAME_EVENT_05) && (g->end != GAME_END_NONE))
+          || ((type == GAME_EVENT_ASSASSIN) && (g->end != GAME_END_NONE))
           || ((type == GAME_EVENT_13) && (p->type < PLANET_TYPE_MINIMAL))
           || ((type == GAME_EVENT_COMET) && (g->year < 100))
           || ((type == GAME_EVENT_PIRATES) && (game_event_new_get_trader(g, player) == PLAYER_NONE))
@@ -232,7 +232,7 @@ void game_event_new(struct game_s *g)
         ) {
             type = GAME_EVENT_NONE;
         }
-        if (type == GAME_EVENT_05) {
+        if (type == GAME_EVENT_ASSASSIN) {
             bool found;
             found = false;
             for (player_id_t i = PLAYER_0; i < g->players; ++i) {
@@ -300,9 +300,9 @@ void game_event_new(struct game_s *g)
             g->evn.accident_player = player;
             g->evn.accident_planet_i = planet;
             break;
-        case GAME_EVENT_05:
-            g->evn.have_e05 = true;
-            g->evn.e05_player = player;
+        case GAME_EVENT_ASSASSIN:
+            g->evn.have_assassin = true;
+            g->evn.assassin_player = player;
             {
                 player_id_t player2;
                 player2 = PLAYER_NONE;
@@ -315,7 +315,7 @@ void game_event_new(struct game_s *g)
                         player2 = i;
                     }
                 }
-                g->evn.e05_player2 = player2;
+                g->evn.assassin_player2 = player2;
             }
             break;
         case GAME_EVENT_06:
@@ -567,11 +567,11 @@ bool game_event_run(struct game_s *g, struct game_end_s *ge)
         }
     }
     /*fb20*/
-    if (g->evn.have_e05) {
-        player_id_t player = g->evn.e05_player;
-        player_id_t player2 = g->evn.e05_player2;
+    if (g->evn.have_assassin) {
+        player_id_t player = g->evn.assassin_player;
+        player_id_t player2 = g->evn.assassin_player2;
         empiretechorbit_t *e = &(g->eto[player]);
-        ns.type = GAME_NEWS_05;
+        ns.type = GAME_NEWS_ASSASSIN;
         ns.race = e->race;
         ns.num1 = player2;
         game_diplo_start_war(g, player2, player);
@@ -579,7 +579,7 @@ bool game_event_run(struct game_s *g, struct game_end_s *ge)
             e->diplo_type[player2] = 13;
             e->diplo_val[player2] = 100;
         }
-        g->evn.have_e05 = false;
+        g->evn.have_assassin = false;
         ns.subtype = 0;
         ui_news(g, &ns);
         any_news = true;
