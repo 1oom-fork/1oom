@@ -179,7 +179,7 @@ static const struct cmdline_options_s cmdline_options_cfg_early[] = {
       "FILE.TXT", "Set config filename" },
     { "-cro", 0,
       options_enable_bool_var, (void *)&opt_config_ro,
-      NULL, "Set config file read-only" },
+      NULL, "Do not write a config file" },
     { "-user", 1,
       options_set_userdir, NULL,
       "PATH", "Set user directory" },
