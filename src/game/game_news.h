@@ -22,7 +22,7 @@ typedef enum {
     GAME_NEWS_ENVIRO, /*13*/
     GAME_NEWS_RICH, /*14*/
     GAME_NEWS_SUPPORT, /*15*/
-    GAME_NEWS_16,
+    GAME_NEWS_POOR, /*16*/
     GAME_NEWS_ORION, /*17*/
     GAME_NEWS_COUP, /*18*/
     GAME_NEWS_STARS, /*19*/
