@@ -111,7 +111,7 @@ typedef enum {
     GAME_EVENT_QUAKE, /*2*/
     GAME_EVENT_NOVA, /*3*/
     GAME_EVENT_ACCIDENT, /*4*/
-    GAME_EVENT_05, /*5*/
+    GAME_EVENT_ASSASSIN, /*5*/
     GAME_EVENT_06, /*6*/
     GAME_EVENT_COMET, /*7*/
     GAME_EVENT_PIRATES, /*8*/
