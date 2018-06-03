@@ -225,8 +225,8 @@ typedef struct gameevents_s {
     player_id_t derelict_player;
     monster_t crystal;
     monster_t amoeba;
-    bool have_e13;
-    uint8_t e13_planet_i;
+    bool have_enviro;
+    uint8_t enviro_planet_i;
     bool have_e14;
     uint8_t e14_planet_i;
     bool have_e15;
