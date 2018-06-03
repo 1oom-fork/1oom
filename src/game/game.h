@@ -229,8 +229,8 @@ typedef struct gameevents_s {
     uint8_t enviro_planet_i;
     bool have_rich;
     uint8_t rich_planet_i;
-    bool have_e15;
-    player_id_t e15_player;
+    bool have_support;
+    player_id_t support_player;
     bool have_e16;
     uint8_t e16_planet_i;
     uint8_t have_e17; /* 0, pi+1 */
