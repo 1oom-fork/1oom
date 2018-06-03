@@ -580,7 +580,7 @@ void game_spy_esp_human(struct game_s *g, struct spy_turn_s *st)
                         uint8_t planet;
                         planet = game_planet_get_random(g, target);
                         framed = (g->evn.spied_spy[target][spy] == -1);
-                        game_tech_get_new(g, spy, target, tbl_tech[field], 1, planet, target, framed);
+                        game_tech_get_new(g, spy, field, tbl_tech[field], 1, planet, target, framed);
                         if (!framed) {
                             game_diplo_act(g, -g->evn.spied_spy[target][spy], spy, target, 4, 0, target);
                         }
