@@ -538,10 +538,10 @@ void game_diplo_stop_war(struct game_s *g, player_id_t p1, player_id_t p2)
     ADDSATT(e1->relation1[p2], 40, 100);
     e2->relation1[p1] = e1->relation1[p2];
     if (IS_HUMAN(g, p1) /* && IS_AI(g, p2) */) {
-        g->evn.ceasefire[p2][p1] = rnd_0_nm1(6, &g->seed) + 8; /* FIXME check index order */
+        g->evn.ceasefire[p1][p2] = rnd_0_nm1(6, &g->seed) + 8;
     }
     if (IS_HUMAN(g, p2) /* && IS_AI(g, p1) */) {
-        g->evn.ceasefire[p1][p2] = rnd_0_nm1(6, &g->seed) + 8; /* FIXME check index order */
+        g->evn.ceasefire[p2][p1] = rnd_0_nm1(6, &g->seed) + 8;
     }
 }
 

@@ -1648,12 +1648,13 @@ static void game_ai_classic_turn_p3_sub1(struct game_s *g, player_id_t pi)
 {
     empiretechorbit_t *e = &(g->eto[pi]);
     for (player_id_t pi2 = PLAYER_0; pi2 < g->players; ++pi2) {
-        if ((e->spymode_next[pi2] == SPYMODE_HIDE) && (g->evn.ceasefire[pi][pi2] > 0)) {
+        e->spymode_next[pi2] = SPYMODE_HIDE;
+        if (IS_HUMAN(g, pi2) && (g->evn.ceasefire[pi2][pi2] > 0)) { /* FIXME BUG should be [pi2][pi] */
             e->spymode_next[pi2] = SPYMODE_HIDE; /* FIXME redundant */
         } else if ((pi != pi2) && BOOLVEC_IS1(e->within_frange, pi2)) {
             if (e->treaty[pi2] >= TREATY_WAR) {
                 e->spymode_next[pi2] = SPYMODE_SABOTAGE;
-            } else if (e->spymode_next[pi2] == SPYMODE_HIDE) {
+            } else if (e->spymode_next[pi2] == SPYMODE_HIDE) { /* FIXME BUG always true */
                 if ((e->race == RACE_DARLOK) || rnd_0_nm1(0, &g->seed)) {
                     if (rnd_1_n(200, &g->seed) > (e->relation1[pi2] * 2 + 200)) {
                         e->spymode_next[pi2] = SPYMODE_ESPIONAGE;
