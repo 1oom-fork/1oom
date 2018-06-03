@@ -15,7 +15,7 @@ typedef enum {
     GAME_NEWS_VIRUS, /*6*/
     GAME_NEWS_COMET, /*7*/
     GAME_NEWS_PIRATES, /*8*/
-    GAME_NEWS_09,
+    GAME_NEWS_DERELICT, /*9*/
     GAME_NEWS_REBELLION, /*10*/
     GAME_NEWS_CRYSTAL, /*11*/
     GAME_NEWS_AMOEBA, /*12*/

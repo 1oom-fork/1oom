@@ -325,8 +325,8 @@ offset  sz  description
 64      2   ?
 66      2   pirates planet
 68      2   pirates HP
-6a      2   have event09 (0/1)
-6c      2   event09 player
+6a      2   have derelict event (0/1)
+6c      2   derelict player
 6e      2   crystal exists (0..3)
 70      2   crystal x
 72      2   crystal y
