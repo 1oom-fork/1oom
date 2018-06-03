@@ -781,7 +781,7 @@ bool game_event_run(struct game_s *g, struct game_end_s *ge)
             {
                 int n;
                 n = 0;
-                for (player_id_t i = PLAYER_0; i < g->players; ++i) {
+                for (int i = 0; (i < g->galaxy_stars) && (n < 2); ++i) { /* WASBUG MOO1 loops while i < g->players */
                     const planet_t *p2 = &(g->planet[i]);
                     if ((p2->owner == player) && (p2->unrest == PLANET_UNREST_REBELLION)) {
                         ++n;
