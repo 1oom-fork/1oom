@@ -298,9 +298,9 @@ offset  sz  description
 2e      2   plague player
 30      2   plague planet
 32      2   plague value
-34      2   have event02 (0/1)
-36      2   event02 player
-38      2   event02 planet
+34      2   have quake event (0/1)
+36      2   quake player
+38      2   quake planet
 3a      2   have nova (0..3)
 3c      2   nova player
 3e      2   nova planet
