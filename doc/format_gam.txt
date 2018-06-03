@@ -63,7 +63,7 @@ e       2   ypos
 10      2   star type (0..5)
 12      2   look (0, 6)
 14      2   frame (0..49)
-16      2   hmm16 (0..4?)
+16      2   ? unused (0..4?)
 18      2   rocks: 0=0, 1=1..4, 2=5..7
 1a      2   max pop1 (base size)
 1c      2   max pop2 (base size modified by soil enrichment tech)
@@ -108,7 +108,7 @@ a2      2*6 total inbound troopers
 ae      2   a colonist operates N factories
 b0      2   BC towards industy refit
 b2      2   rebels (0..actual pop)
-b4      2   unrest: 1=unrest, 3=rebellion
+b4      2   unrest: 0=no, 1=unrest, 3=rebellion
 b6      2   unrest reported: 0/1
 
 
@@ -266,7 +266,7 @@ offset  sz      description
 ship design (0x44)
 offset  sz  description
 0       12  name
-c       ?   ?
+c       8   ? unused
 14      2   ship cost
 16      2   space
 18      2   hull size (0..3)
