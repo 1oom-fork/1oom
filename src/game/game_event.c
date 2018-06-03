@@ -158,7 +158,7 @@ void game_event_new(struct game_s *g)
     planet_t *p;
     if (g->gaux->flag_cheat_events) {
         g->evn.have_plague = 0;
-        g->evn.have_e02 = false;
+        g->evn.have_quake = false;
         g->evn.have_nova = 0;
         g->evn.have_accident = 0;
         g->evn.have_e05 = false;
@@ -215,7 +215,7 @@ void game_event_new(struct game_s *g)
         if (0
           || BOOLVEC_IS1(g->evn.done, type)
           || ((type == GAME_EVENT_REBELLION) && IS_AI(g, player))
-          || ((type == GAME_EVENT_02) && (p->pop < 50))
+          || ((type == GAME_EVENT_QUAKE) && (p->pop < 50))
           || (((type == GAME_EVENT_CRYSTAL) || (type == GAME_EVENT_AMOEBA)) && (g->year < 200))
           || (((type == GAME_EVENT_CRYSTAL) || (type == GAME_EVENT_AMOEBA)) && (g->evn.crystal.exists || g->evn.amoeba.exists))
           || ((type == GAME_EVENT_09) && IS_HUMAN(g, player))
@@ -283,10 +283,10 @@ void game_event_new(struct game_s *g)
             g->evn.plague_planet_i = planet;
             g->evn.plague_val = (rnd_1_n(8, &g->seed) + g->difficulty * 2) * p->prod_after_maint;
             break;
-        case GAME_EVENT_02:
-            g->evn.have_e02 = true;
-            g->evn.e02_player = player;
-            g->evn.e02_planet_i = planet;
+        case GAME_EVENT_QUAKE:
+            g->evn.have_quake = true;
+            g->evn.quake_player = player;
+            g->evn.quake_planet_i = planet;
             break;
         case GAME_EVENT_NOVA:
             g->evn.have_nova = 1;
@@ -449,10 +449,10 @@ bool game_event_run(struct game_s *g, struct game_end_s *ge)
         }
     }
     /*f4ec*/
-    if (g->evn.have_e02) {
-        uint8_t pli = g->evn.e02_planet_i;
+    if (g->evn.have_quake) {
+        uint8_t pli = g->evn.quake_planet_i;
         planet_t *p = &(g->planet[pli]);
-        player_id_t player = g->evn.e02_player;
+        player_id_t player = g->evn.quake_player;
         int vp, vf;
         ns.planet_i = pli;
         vp = ((rnd_1_n(10, &g->seed) + 20) * p->pop) / 100;
@@ -461,10 +461,10 @@ bool game_event_run(struct game_s *g, struct game_end_s *ge)
         SETMIN(vf, p->factories);
         ns.num1 = vp;
         ns.num2 = vf;
-        ns.type = GAME_NEWS_02;
+        ns.type = GAME_NEWS_QUAKE;
         ns.planet_i = pli;
         ns.race = g->eto[p->owner].race;
-        g->evn.have_e02 = false;
+        g->evn.have_quake = false;
         p->pop -= vp;
         p->factories -= vf;
         ns.subtype = IS_HUMAN(g, player) ? 0 : 4;

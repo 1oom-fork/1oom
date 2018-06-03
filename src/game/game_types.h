@@ -108,7 +108,7 @@ typedef enum {
 typedef enum {
     GAME_EVENT_NONE = 0,
     GAME_EVENT_PLAGUE, /*1*/
-    GAME_EVENT_02, /*2*/
+    GAME_EVENT_QUAKE, /*2*/
     GAME_EVENT_NOVA, /*3*/
     GAME_EVENT_ACCIDENT, /*4*/
     GAME_EVENT_05, /*5*/
