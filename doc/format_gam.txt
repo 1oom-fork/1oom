@@ -343,8 +343,8 @@ offset  sz  description
 88      2   amoeba number of destroyed planets
 8a      2   have environment event (0/1)
 8c      2   environment planet
-8e      2   have event14 (0/1)
-90      2   event14 planet
+8e      2   have rich event (0/1)
+90      2   rich planet
 92      2   have event15 (0/1)
 94      2   event15 player
 96      2   have event16 (0/1)
