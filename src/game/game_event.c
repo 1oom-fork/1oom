@@ -170,7 +170,7 @@ void game_event_new(struct game_s *g)
         g->evn.crystal.exists = 0;
         g->evn.amoeba.exists = 0;
         g->evn.have_enviro = false;
-        g->evn.have_e14 = false;
+        g->evn.have_rich = false;
         g->evn.have_e15 = false;
         g->evn.have_e16 = false;
         return;
@@ -226,10 +226,10 @@ void game_event_new(struct game_s *g)
           || ((type == GAME_EVENT_PIRATES) && (game_event_new_get_trader(g, player) == PLAYER_NONE))
           || (((type == GAME_EVENT_ACCIDENT) || (type == GAME_EVENT_PLAGUE)) && (e->race == RACE_SILICOID))
           || ((type == GAME_EVENT_ENVIRO) && ((p->growth >= PLANET_GROWTH_FERTILE) || (p->special > PLANET_SPECIAL_NORMAL)))
-          || ((type == GAME_EVENT_14) && (p->special > PLANET_SPECIAL_NORMAL))
+          || ((type == GAME_EVENT_RICH) && (p->special > PLANET_SPECIAL_NORMAL))
           || ((type == GAME_EVENT_16) && (p->special < PLANET_SPECIAL_NORMAL))
           || ((type == GAME_EVENT_16) && (p->special == PLANET_SPECIAL_ARTIFACTS))
-          || ((type == GAME_EVENT_14) && (p->special == PLANET_SPECIAL_ARTIFACTS))
+          || ((type == GAME_EVENT_RICH) && (p->special == PLANET_SPECIAL_ARTIFACTS))
         ) {
             type = GAME_EVENT_NONE;
         }
@@ -371,9 +371,9 @@ void game_event_new(struct game_s *g)
             g->evn.have_enviro = true;
             g->evn.enviro_planet_i = planet;
             break;
-        case GAME_EVENT_14:
-            g->evn.have_e14 = true;
-            g->evn.e14_planet_i = planet;
+        case GAME_EVENT_RICH:
+            g->evn.have_rich = true;
+            g->evn.rich_planet_i = planet;
             break;
         case GAME_EVENT_15:
             g->evn.have_e15 = true;
@@ -926,8 +926,8 @@ bool game_event_run(struct game_s *g, struct game_end_s *ge)
         any_news = true;
     }
     /*10dfb*/
-    if (g->evn.have_e14) {
-        uint8_t pli = g->evn.e14_planet_i;
+    if (g->evn.have_rich) {
+        uint8_t pli = g->evn.rich_planet_i;
         planet_t *p = &(g->planet[pli]);
         player_id_t player = p->owner;
         empiretechorbit_t *e = 0;
@@ -937,8 +937,8 @@ bool game_event_run(struct game_s *g, struct game_end_s *ge)
         ns.planet_i = pli;
         ns.race = (player != PLAYER_NONE) ? e->race : RACE_HUMAN; /* WASBUG MOO1 does not check for none, taking race from eto[-1] */
         p->special = PLANET_SPECIAL_RICH;
-        g->evn.have_e14 = false;
-        ns.type = GAME_NEWS_14;
+        g->evn.have_rich = false;
+        ns.type = GAME_NEWS_RICH;
         ns.subtype = IS_HUMAN(g, player) ? 0 : 4;
         ui_news(g, &ns);
         any_news = true;
