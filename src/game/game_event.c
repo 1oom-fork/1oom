@@ -170,7 +170,7 @@ void game_event_new(struct game_s *g)
         g->evn.amoeba.exists = 0;
         g->evn.have_enviro = false;
         g->evn.have_rich = false;
-        g->evn.have_e15 = false;
+        g->evn.have_support = false;
         g->evn.have_e16 = false;
         return;
     }
@@ -374,9 +374,9 @@ void game_event_new(struct game_s *g)
             g->evn.have_rich = true;
             g->evn.rich_planet_i = planet;
             break;
-        case GAME_EVENT_15:
-            g->evn.have_e15 = true;
-            g->evn.e15_player = player;
+        case GAME_EVENT_SUPPORT:
+            g->evn.have_support = true;
+            g->evn.support_player = player;
             break;
         case GAME_EVENT_16:
             g->evn.have_enviro = true;
@@ -943,8 +943,8 @@ bool game_event_run(struct game_s *g, struct game_end_s *ge)
         any_news = true;
     }
     /*10e80*/
-    if (g->evn.have_e15) {
-        player_id_t player = g->evn.e15_player;
+    if (g->evn.have_support) {
+        player_id_t player = g->evn.support_player;
         empiretechorbit_t *e = &(g->eto[player]);
         int v;
         ns.race = e->race;
@@ -952,8 +952,8 @@ bool game_event_run(struct game_s *g, struct game_end_s *ge)
         SETMAX(v, 500);
         e->reserve_bc += v;
         ns.num1 = v;
-        g->evn.have_e15 = false;
-        ns.type = GAME_NEWS_15;
+        g->evn.have_support = false;
+        ns.type = GAME_NEWS_SUPPORT;
         ns.subtype = IS_HUMAN(g, player) ? 0 : 4;
         ui_news(g, &ns);
         any_news = true;
