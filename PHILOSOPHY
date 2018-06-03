@@ -54,9 +54,8 @@ examples of situations where changes are considered acceptable:
 
  2. Supporting obsolete technology is not a goal: it’s considered
     acceptable that 1oom does not support every type of hardware
-    from 1993. However, Chocolate Doom should aim to recreate
-    the functionality in a modern way. Examples of technologies that
-    aren’t supported are:
+    from 1993. However, 1oom should aim to recreate the functionality
+    in a modern way. Examples of technologies that aren’t supported are:
 
     - No 286 version.
 
@@ -64,21 +63,17 @@ A good litmus test of when it’s acceptable to break from Vanilla
 behavior is to ask the question: “Although this is Vanilla behavior,
 is there anyone who would want this?”
 
-For example, emulating Vanilla bugs like the visplane overflow bug is
-something that is useful for people making Vanilla format maps. On the
-other hand, painstakingly emulating Vanilla Doom by starting with no
-sound or music by default is not helpful to anyone.
-
 # New features
 
 While 1oom recreates the Vanilla behaviour, it also extends it:
 
  * The "classic" UI (1oom_classic_*) will always remain reasonably close to
    the one in the DOS binaries, but alternative UIs are within the scope.
+   The UI can be scaled to allow the player to see more of the galaxy at once.
  * The "classic" AI will always remain reasonably close to the one in the
    DOS binaries, but alternative AIs are within the scope.
  * Doom-like file patching is supported via PBX files.
- * Multiplayer! (not yet)
+ * Multiplayer! (only local for now)
 
 # Other philosophical aspects
 
@@ -87,8 +82,8 @@ different CPUs, different operating systems and different devices
 (ie. not just a desktop machine with a keyboard and mouse).
 
 1oom does not need to be installed. The only required data files are the
-LBX files from the original game. The other data files are the savegame
-and configuration files.
+LBX files from the original game. The other data files are the savegame,
+configuration and log files.
 
 1oom is and will always remain Free Software. It will never
 include code that is not compatible with the GNU GPL.
