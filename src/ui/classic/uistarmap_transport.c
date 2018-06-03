@@ -146,7 +146,7 @@ void ui_starmap_transport(struct game_s *g, player_id_t active_player)
     d.ts.scanner_delay = 0;
     d.ts.from = g->planet_focus_i[active_player];
     g->planet_focus_i[active_player] = r->dest;
-    d.ts.can_move = (1 || g->eto[active_player].have_hyperspace_comm) ? GOT_HYPERCOMM : NO_MOVE;
+    d.ts.can_move = g->eto[active_player].have_hyperspace_comm ? GOT_HYPERCOMM : NO_MOVE;
     d.ts.ds.xoff1 = 0;
     d.ts.ds.xoff2 = 0;
 
