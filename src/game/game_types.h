@@ -108,21 +108,21 @@ typedef enum {
 typedef enum {
     GAME_EVENT_NONE = 0,
     GAME_EVENT_PLAGUE, /*1*/
-    GAME_EVENT_02, /*2*/
+    GAME_EVENT_QUAKE, /*2*/
     GAME_EVENT_NOVA, /*3*/
     GAME_EVENT_ACCIDENT, /*4*/
-    GAME_EVENT_05, /*5*/
-    GAME_EVENT_06, /*6*/
+    GAME_EVENT_ASSASSIN, /*5*/
+    GAME_EVENT_VIRUS, /*6*/
     GAME_EVENT_COMET, /*7*/
     GAME_EVENT_PIRATES, /*8*/
-    GAME_EVENT_09, /*9*/
+    GAME_EVENT_DERELICT, /*9*/
     GAME_EVENT_REBELLION, /*10*/
     GAME_EVENT_CRYSTAL, /*11*/
     GAME_EVENT_AMOEBA, /*12*/
-    GAME_EVENT_13, /*13*/
-    GAME_EVENT_14, /*14*/
-    GAME_EVENT_15, /*15*/
-    GAME_EVENT_16, /*16*/
+    GAME_EVENT_ENVIRO, /*13*/
+    GAME_EVENT_RICH, /*14*/
+    GAME_EVENT_SUPPORT, /*15*/
+    GAME_EVENT_POOR, /*16*/
     GAME_EVENT_NUM
 } gameevent_type_t;
 
