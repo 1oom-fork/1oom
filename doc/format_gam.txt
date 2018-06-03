@@ -341,8 +341,8 @@ offset  sz  description
 84      2   amoeba killer (0 or killer_player_id+1)
 86      2   amoeba dest
 88      2   amoeba number of destroyed planets
-8a      2   have event13 (0/1)
-8c      2   event13 planet
+8a      2   have environment event (0/1)
+8c      2   environment planet
 8e      2   have event14 (0/1)
 90      2   event14 planet
 92      2   have event15 (0/1)
