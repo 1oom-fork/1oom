@@ -23,9 +23,9 @@ The code is divided into the following directories:
 
 Some facts:
  * main is in hw/ (due to SDL)
- * os/ known nothing about game/, ui/ or hw/
- * hw/ known nothing about game/ or ui/
- * game/ known nothing about hw/
+ * os/ knows nothing about game/, ui/ or hw/
+ * hw/ knows nothing about game/ or ui/
+ * game/ knows nothing about hw/
  * ui/ is known via src/ui.h
  * hw/ is known via src/hw.h
  * os/ is known via src/os.h
@@ -150,7 +150,7 @@ An incomplete list of reasons for rejecting patches:
     Limiting build deps benefits portability.
 
 - new buildtime data files
-  * This help with the above item.
+  * This helps with the above item.
 
 - new runtime data files
   * This projects aims to have 0 extra files required besides the executable
@@ -183,6 +183,6 @@ An incomplete list of reasons for rejecting patches:
 - software 2x, 3x, ... scaling
   * Show a platform without OpenGL and with screen resolution exceeding 400x300
     and port 1oom to it (configure.ac, os/FOO/, also hw/FOO/ if no SDL) then OK.
-    Otherwise nearest/linear via OpenGL should be enough.
+    Otherwise -uiscale and nearest/linear via OpenGL should be enough.
 
 If you *must* have some of these then have fun with your fork.
