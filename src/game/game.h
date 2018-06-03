@@ -227,8 +227,8 @@ typedef struct gameevents_s {
     monster_t amoeba;
     bool have_enviro;
     uint8_t enviro_planet_i;
-    bool have_e14;
-    uint8_t e14_planet_i;
+    bool have_rich;
+    uint8_t rich_planet_i;
     bool have_e15;
     player_id_t e15_player;
     bool have_e16;
