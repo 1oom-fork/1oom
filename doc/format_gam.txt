@@ -312,9 +312,9 @@ offset  sz  description
 4a      2   have assassination attempt (0/1)
 4c      2   assassination player2
 4e      2   assassination player
-50      2   have event06 (0/1)
-52      2   event06 player
-54      2   event06 tech field
+50      2   have virus (0/1)
+52      2   virus player
+54      2   virus tech field
 56      2   have comet (0..3)
 58      2   comet player
 5a      2   comet planet
