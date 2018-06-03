@@ -80,9 +80,8 @@ Note that declaring the loop variable inside for is ok:
 
 Otherwise, try to keep close to C89.
 
-Avoid #ifdefs! No OS-specific #ifdefs are allowing in game/ or ui/, and
-only one in src/ (util_fname_split). Acceptable #ifdefs include the
-ones for HAVE_SAMPLERATE etc and FEATURE_MODEBUG.
+Avoid #ifdefs! No OS-specific #ifdefs are allowed in game/, ui/ or src/.
+Acceptable ones include HAVE_SAMPLERATE etc and FEATURE_MODEBUG.
 
 ## Portability
 
