@@ -120,7 +120,7 @@ void game_election(struct game_s *g)
         el->str = 0;
         el->ui_delay = 2;
         ui_election_delay(el, 5);
-        n = el->tbl_votes[i];
+        n = el->tbl_votes[player];
         if (IS_AI(g, player)) {
             votefor = game_ai->vote(el, player);
         } else {
@@ -163,7 +163,7 @@ void game_election(struct game_s *g)
         el->str = 0;
         el->ui_delay = 2;
         ui_election_delay(el, 5);
-        n = el->tbl_votes[player] /* HACK */ + 10;
+        n = el->tbl_votes[player];
         if (g->gaux->local_players > 1) {
             el->cur_i = el->num;
             sprintf(el->buf, "%s (%s%s", g->emperor_names[player], game_election_print_votes(n, vbuf), game_str_el_dots);
