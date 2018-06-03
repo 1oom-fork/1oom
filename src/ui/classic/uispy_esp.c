@@ -182,7 +182,7 @@ int ui_spy_steal(struct game_s *g, int spy, int target, uint8_t flags_field)
         for (int i = 0; i < TECH_FIELD_NUM; ++i) {
             if (oi == oi_tbl_field[i]) {
                 ui_sound_play_sfx_24();
-                selected = 1;
+                selected = i;
                 flag_done = true;
             }
         }
