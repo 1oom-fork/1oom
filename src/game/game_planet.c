@@ -163,7 +163,7 @@ void game_planet_update_home(struct game_s *g)
         player_id_t pi;
         pi = p->owner;
         if ((pi != PLAYER_NONE) && (g->evn.home[pi] == PLANET_NONE)) {
-            g->evn.home[pi] = i;   /* MOO1 sets to 0 */
+            g->evn.home[pi] = i;   /* WASBUG? MOO1 sets to 0 which affects rebellion event check */
         }
     }
 }
