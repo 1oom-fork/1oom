@@ -306,7 +306,7 @@ offset  sz  description
 3e      2   nova planet
 40      2   nova years
 42      2   nova value
-44      2   have accident
+44      2   have accident (0..2)
 46      2   accident player
 48      2   accident planet
 4a      2   have assassination attempt (0/1)
