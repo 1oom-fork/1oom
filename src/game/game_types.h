@@ -120,7 +120,7 @@ typedef enum {
     GAME_EVENT_CRYSTAL, /*11*/
     GAME_EVENT_AMOEBA, /*12*/
     GAME_EVENT_ENVIRO, /*13*/
-    GAME_EVENT_14, /*14*/
+    GAME_EVENT_RICH, /*14*/
     GAME_EVENT_15, /*15*/
     GAME_EVENT_16, /*16*/
     GAME_EVENT_NUM
