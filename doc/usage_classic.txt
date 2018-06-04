@@ -20,3 +20,10 @@ New hotkeys:
 Unlike the original, 1oom does not autosave the "continue game" (save slot 7)
 when starting a new game or every N turns. It only saves it when quitting the
 game or when F10 is pressed while in the "galaxy movement screen".
+
+The following new UI features are always enabled/available:
+- Random race / banner
+
+The config file item "ui.uiextra" (set via the -uiextra command-line option)
+enables the following extra UI features:
+- (none at the moment)
