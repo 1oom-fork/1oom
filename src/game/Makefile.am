@@ -46,6 +46,8 @@ libgame_a_SOURCES = \
     game_news.h \
     game_num.c \
     game_num.h \
+    game_nump.c \
+    game_nump.h \
     game_parsed.c \
     game_parsed.h \
     game_planet.c \
@@ -63,6 +65,8 @@ libgame_a_SOURCES = \
     game_str.c \
     game_str_shipnames.c \
     game_str.h \
+    game_strp.c \
+    game_strp.h \
     game_tech.c \
     game_tech.h \
     game_techtypes.h \

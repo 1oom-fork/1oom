@@ -53,6 +53,11 @@ retreat_redir_fix : 0..1, 0
     next turn. This fix disables redirecting back to the planet the fleet just
     retreated from unless Hyperspace Communications is available.
 
+eco_slider_slack : 0..255, 7
+  - Eco slider automatic adjustment slack.
+    Reducing the value to 0 eliminates extraneous eco spending. Also affects
+    the AI players.
+
 event_roll : 0..2147483647, 512
   - Special event probability. Bigger number means events are less likely.
     Zero means events are disabled.
