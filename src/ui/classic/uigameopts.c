@@ -36,13 +36,13 @@ struct gameopts_data_s {
 
 static void load_go_data(struct gameopts_data_s *d)
 {
-    d->gfx_game = lbxfile_item_get(LBXFILE_VORTEX, 0x1c, 0);
-    d->gfx_save = lbxfile_item_get(LBXFILE_VORTEX, 0x1d, 0);
-    d->gfx_load = lbxfile_item_get(LBXFILE_VORTEX, 0x1e, 0);
-    d->gfx_quit = lbxfile_item_get(LBXFILE_VORTEX, 0x1f, 0);
-    d->gfx_silent = lbxfile_item_get(LBXFILE_VORTEX, 0x20, 0);
-    d->gfx_fx = lbxfile_item_get(LBXFILE_VORTEX, 0x21, 0);
-    d->gfx_music = lbxfile_item_get(LBXFILE_VORTEX, 0x22, 0);
+    d->gfx_game = lbxfile_item_get(LBXFILE_VORTEX, 0x1c);
+    d->gfx_save = lbxfile_item_get(LBXFILE_VORTEX, 0x1d);
+    d->gfx_load = lbxfile_item_get(LBXFILE_VORTEX, 0x1e);
+    d->gfx_quit = lbxfile_item_get(LBXFILE_VORTEX, 0x1f);
+    d->gfx_silent = lbxfile_item_get(LBXFILE_VORTEX, 0x20);
+    d->gfx_fx = lbxfile_item_get(LBXFILE_VORTEX, 0x21);
+    d->gfx_music = lbxfile_item_get(LBXFILE_VORTEX, 0x22);
 }
 
 static void free_go_data(struct gameopts_data_s *d)

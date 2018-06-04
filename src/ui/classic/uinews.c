@@ -51,7 +51,7 @@ static void news_load_data(news_type_t type)
         lbxgfx_set_frame_0(ui_data.gfx.news.gnn);
     }
     if (type != GAME_NEWS_NONE) {
-        ui_data.gfx.news.icon = lbxfile_item_get(LBXFILE_NEWSCAST, 3 + (int)type, 0);
+        ui_data.gfx.news.icon = lbxfile_item_get(LBXFILE_NEWSCAST, 3 + (int)type);
     } else {
         news_free_data();
     }

@@ -40,7 +40,7 @@ struct races_data_s {
 
 static void races_data_load(struct races_data_s *d)
 {
-    d->gfx = lbxfile_item_get(LBXFILE_BACKGRND, 0x34, 0);
+    d->gfx = lbxfile_item_get(LBXFILE_BACKGRND, 0x34);
 }
 
 static void races_data_free(struct races_data_s *d)

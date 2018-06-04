@@ -483,7 +483,7 @@ static uint16_t lbxfont_plotchar_nx(char c, uint8_t *buf, uint16_t pitch, int sc
 
 int lbxfont_init(void)
 {
-    uint8_t *fontdata = lbxfile_item_get(LBXFILE_FONTS, 0, 0);
+    uint8_t *fontdata = lbxfile_item_get(LBXFILE_FONTS, 0);
     lbxfontdata = fontdata;
     return 0;
 }
