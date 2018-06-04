@@ -97,6 +97,7 @@ AM_CPPFLAGS = \
 common_libs = @OS_LIBS@
 game_lib = $(top_builddir)/src/game/libgame.a
 gamemain_lib = $(top_builddir)/src/game/libgamemain.a
+gamesaveconv_lib = $(top_builddir)/src/game/libgamesaveconv.a
 
 uicmdline_lib = $(top_builddir)/src/ui/cmdline/libuicmdline.a
 hwnop_lib = $(top_builddir)/src/hw/nop/libhwnop.a
@@ -155,7 +156,7 @@ hwalleg4_lib = $(top_builddir)/src/hw/alleg/4/libhwalleg4.a
 1oom_gfxconv_LDADD = $(1oom_gfxconv_libs)
 1oom_gfxconv_DEPENDENCIES = $(1oom_gfxconv_libs)
 
-1oom_saveconv_libs = $(game_lib) $(hwnop_lib) $(uinop_lib) $(common_libs)
+1oom_saveconv_libs = $(gamesaveconv_lib) $(hwnop_lib) $(uinop_lib) $(common_libs)
 1oom_saveconv_SOURCES = saveconv.c lib.c log.c options.c util.c
 1oom_saveconv_LDADD = $(1oom_saveconv_libs)
 1oom_saveconv_DEPENDENCIES = $(1oom_saveconv_libs)
@@ -172,3 +173,5 @@ libgame:
 	(cd game && $(MAKE) libgame.a)
 libgamemain:
 	(cd game && $(MAKE) libgamemain.a)
+libgamesaveconv:
+	(cd game && $(MAKE) libgamesaveconv.a)
