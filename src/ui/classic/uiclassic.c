@@ -38,7 +38,8 @@ static bool check_ui_scale(void *var)
 }
 
 const struct cfg_items_s ui_cfg_items[] = {
-    CFG_ITEM_INT("uiscale", &ui_scale, 0),
+    CFG_ITEM_INT("uiscale", &ui_scale, check_ui_scale),
+    CFG_ITEM_BOOL("uiextra", &ui_extra_enabled),
     CFG_ITEM_END
 };
 
@@ -57,6 +58,12 @@ const struct cmdline_options_s ui_cmdline_options[] = {
     { "-uiscale", 1,
       ui_options_set_scale, 0,
       "SCALE", "UI scaling factor" },
+    { "-uiextra", 0,
+      options_enable_bool_var, (void *)&ui_extra_enabled,
+      NULL, "Enable UI extras" },
+    { "-nouiextra", 0,
+      options_disable_bool_var, (void *)&ui_extra_enabled,
+      NULL, "Disable UI extras" },
     { NULL, 0, NULL, NULL, NULL, NULL }
 };
 
@@ -69,6 +76,7 @@ struct ui_data_s ui_data = { 0 };
 int ui_screen_w = 0;
 int ui_screen_h = 0;
 int ui_scale = 0;
+bool ui_extra_enabled = false;
 
 bool ui_use_audio = true;
 

@@ -29,3 +29,7 @@ is an integer scaling factor for the whole UI except:
 - sliders
 The default value is 1 for that classic 320x200 feeling. Larger values allow
 more of the galaxy to be viewed without scrolling.
+
+The config file item "ui.uiextra" (set via the -uiextra command-line option)
+enables the following UI features not in original:
+- (none at the moment)

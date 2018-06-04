@@ -164,6 +164,8 @@ For all game UIs:
 
 For classic game UI:
     -uiscale SCALE       UI scaling factor
+    -uiextra             Enable UI extras
+    -nouiextra           Disable UI extras
 
 3.1. -new
 ----------
