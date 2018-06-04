@@ -49,10 +49,10 @@ static void audience_load_data(struct audience_data_s *d)
 {
     struct game_s *g = d->au->g;
     race_t ra = g->eto[d->au->pa].race;
-    d->gfx_border = lbxfile_item_get(LBXFILE_EMBASSY, 0, 0);
+    d->gfx_border = lbxfile_item_get(LBXFILE_EMBASSY, 0);
     {
         uint8_t *gfx;
-        gfx = lbxfile_item_get(LBXFILE_EMBASSY, 1, 0);
+        gfx = lbxfile_item_get(LBXFILE_EMBASSY, 1);
         ui_draw_erase_buf();
         lbxgfx_draw_frame(0, 0, gfx, UI_SCREEN_W);
         uiobj_table_clear();
@@ -61,8 +61,8 @@ static void audience_load_data(struct audience_data_s *d)
         lbxgfx_draw_frame(0, 0, gfx, UI_SCREEN_W);
         lbxfile_item_release(LBXFILE_EMBASSY, gfx);
     }
-    d->gfx_race = lbxfile_item_get(LBXFILE_EMBASSY, 0x2 + ra, 0);
-    d->gfx_emperor = lbxfile_item_get(LBXFILE_EMBASSY, 0xc + g->eto[d->au->ph].banner, 0);
+    d->gfx_race = lbxfile_item_get(LBXFILE_EMBASSY, 0x2 + ra);
+    d->gfx_emperor = lbxfile_item_get(LBXFILE_EMBASSY, 0xc + g->eto[d->au->ph].banner);
     d->music_0 = tbl_audience_music[ra];
     d->music_1 = tbl_audience_music[ra] + 1;
 }
