@@ -77,14 +77,14 @@ void ui_landing_prepare(struct landing_data_s *d)
         uint8_t *gfx;
         int i = p->type;
         i += d->colonize ? 6 : 0x24;
-        gfx = lbxfile_item_get(LBXFILE_LANDING, i, 0);
+        gfx = lbxfile_item_get(LBXFILE_LANDING, i);
         lbxgfx_draw_frame(0, 0, gfx, UI_SCREEN_W);
         lbxgfx_apply_palette(gfx);
         lbxfile_item_release(LBXFILE_LANDING, gfx);
     }
     hw_video_copy_back_to_page3();
-    d->gfx_transprt = lbxfile_item_get(LBXFILE_LANDING, 0x0, 0);
-    d->gfx_walk = lbxfile_item_get(LBXFILE_LANDING, 0x15 + g->eto[d->api].banner, 0);
+    d->gfx_transprt = lbxfile_item_get(LBXFILE_LANDING, 0x0);
+    d->gfx_walk = lbxfile_item_get(LBXFILE_LANDING, 0x15 + g->eto[d->api].banner);
     lbxgfx_set_frame_0(d->gfx_walk);
     d->music_i = d->colonize ? 0xa : 8;
 }

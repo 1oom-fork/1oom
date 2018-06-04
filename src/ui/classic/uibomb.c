@@ -46,12 +46,12 @@ struct bomb_data_s {
 
 static void bomb_load_data(struct bomb_data_s *d)
 {
-    d->gfx_bombback = lbxfile_item_get(LBXFILE_BACKGRND, 0x11, 0);
-    d->gfx_bombbutt = lbxfile_item_get(LBXFILE_BACKGRND, 0x13, 0);
-    d->gfx_bombbutc = lbxfile_item_get(LBXFILE_BACKGRND, 0x12, 0);
-    d->gfx_explobac = lbxfile_item_get(LBXFILE_BACKGRND, 0xf, 0);
-    d->gfx_contbutt = lbxfile_item_get(LBXFILE_BACKGRND, 0xc, 0);
-    d->gfx_bombard = lbxfile_item_get(LBXFILE_BACKGRND, 0x10, 0);
+    d->gfx_bombback = lbxfile_item_get(LBXFILE_BACKGRND, 0x11);
+    d->gfx_bombbutt = lbxfile_item_get(LBXFILE_BACKGRND, 0x13);
+    d->gfx_bombbutc = lbxfile_item_get(LBXFILE_BACKGRND, 0x12);
+    d->gfx_explobac = lbxfile_item_get(LBXFILE_BACKGRND, 0xf);
+    d->gfx_contbutt = lbxfile_item_get(LBXFILE_BACKGRND, 0xc);
+    d->gfx_bombard = lbxfile_item_get(LBXFILE_BACKGRND, 0x10);
 }
 
 static void bomb_free_data(struct bomb_data_s *d)

@@ -52,7 +52,8 @@ extern int lbxfile_init(void);
 extern void lbxfile_shutdown(void);
 extern int lbxfile_find_dir(void);
 
-extern uint8_t *lbxfile_item_get(lbxfile_e file_id, uint16_t entry_id, uint32_t *len_ptr);
+extern uint8_t *lbxfile_item_get(lbxfile_e file_id, uint16_t entry_id);
+extern uint8_t *lbxfile_item_get_with_len(lbxfile_e file_id, uint16_t entry_id, uint32_t *len_ptr);
 extern void lbxfile_item_release(lbxfile_e file_id, uint8_t *ptr);
 extern void lbxfile_item_release_file(lbxfile_e file_id);
 

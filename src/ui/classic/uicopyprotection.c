@@ -69,8 +69,8 @@ void ui_copyprotection_check(struct game_s *g)
     }
     ui_delay_1();
     ui_sound_stop_music();
-    d.gfx = lbxfile_item_get(LBXFILE_BACKGRND, 0x20, 0);
-    d.gfx2 = lbxfile_item_get(LBXFILE_BACKGRND, 0x2f, 0);
+    d.gfx = lbxfile_item_get(LBXFILE_BACKGRND, 0x20);
+    d.gfx2 = lbxfile_item_get(LBXFILE_BACKGRND, 0x2f);
     uiobj_table_clear();
     if (ui_draw_finish_mode == 0) {
         ui_palette_fadeout_a_f_1();

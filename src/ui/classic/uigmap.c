@@ -53,11 +53,11 @@ struct gmap_basic_data_s {
 
 static void gmap_load_data(struct gmap_data_s *d)
 {
-    d->gfx_mapview = lbxfile_item_get(LBXFILE_STARMAP, 0x30, 0);
-    d->gfx_but_col = lbxfile_item_get(LBXFILE_STARMAP, 0x31, 0);
-    d->gfx_but_env = lbxfile_item_get(LBXFILE_STARMAP, 0x32, 0);
-    d->gfx_but_min = lbxfile_item_get(LBXFILE_STARMAP, 0x33, 0);
-    d->gfx_but_ok = lbxfile_item_get(LBXFILE_STARMAP, 0x34, 0);
+    d->gfx_mapview = lbxfile_item_get(LBXFILE_STARMAP, 0x30);
+    d->gfx_but_col = lbxfile_item_get(LBXFILE_STARMAP, 0x31);
+    d->gfx_but_env = lbxfile_item_get(LBXFILE_STARMAP, 0x32);
+    d->gfx_but_min = lbxfile_item_get(LBXFILE_STARMAP, 0x33);
+    d->gfx_but_ok = lbxfile_item_get(LBXFILE_STARMAP, 0x34);
 }
 
 static void gmap_free_data(struct gmap_data_s *d)

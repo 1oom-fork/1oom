@@ -29,7 +29,7 @@ struct caught_data_s {
 
 static void caught_data_load(struct caught_data_s *d)
 {
-    d->gfx = lbxfile_item_get(LBXFILE_BACKGRND, 0x1e, 0);
+    d->gfx = lbxfile_item_get(LBXFILE_BACKGRND, 0x1e);
 }
 
 static void caught_data_free(struct caught_data_s *d)

@@ -46,7 +46,7 @@ struct fleet_data_s {
 
 static void load_fl_data(struct fleet_data_s *d)
 {
-    d->gfx_fleetbrb = lbxfile_item_get(LBXFILE_BACKGRND, 0, 0);
+    d->gfx_fleetbrb = lbxfile_item_get(LBXFILE_BACKGRND, 0);
 }
 
 static void free_fl_data(struct fleet_data_s *d)

@@ -32,9 +32,9 @@ struct save_game_data_s {
 
 static void load_sg_data(struct save_game_data_s *d)
 {
-    d->gfx_savegame = lbxfile_item_get(LBXFILE_VORTEX, 4, 0);
-    d->gfx_lg_gray = lbxfile_item_get(LBXFILE_VORTEX, 7, 0);
-    d->gfx_lg_green = lbxfile_item_get(LBXFILE_VORTEX, 8, 0);
+    d->gfx_savegame = lbxfile_item_get(LBXFILE_VORTEX, 4);
+    d->gfx_lg_gray = lbxfile_item_get(LBXFILE_VORTEX, 7);
+    d->gfx_lg_green = lbxfile_item_get(LBXFILE_VORTEX, 8);
 }
 
 static void free_sg_data(struct save_game_data_s *d)

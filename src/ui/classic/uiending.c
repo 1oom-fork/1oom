@@ -206,10 +206,10 @@ static void ui_play_ending_good_or_tyrant(int race, const char *name, bool flag_
 
     lbxpal_select(8, -1, 0);
     wld1.name = name;
-    wld1.gfx_planets = lbxfile_item_get(LBXFILE_WINLOSE, 0x13, 0);
-    wld1.gfx_stars = lbxfile_item_get(LBXFILE_WINLOSE, 0x14, 0);
-    wld3.gfx_winface = lbxfile_item_get(LBXFILE_WINLOSE, 0x15 + race, 0);
-    wld1.gfx_ships = lbxfile_item_get(LBXFILE_WINLOSE, 0x20, 0);
+    wld1.gfx_planets = lbxfile_item_get(LBXFILE_WINLOSE, 0x13);
+    wld1.gfx_stars = lbxfile_item_get(LBXFILE_WINLOSE, 0x14);
+    wld3.gfx_winface = lbxfile_item_get(LBXFILE_WINLOSE, 0x15 + race);
+    wld1.gfx_ships = lbxfile_item_get(LBXFILE_WINLOSE, 0x20);
 
     ui_sound_play_music(2);
 
@@ -246,7 +246,7 @@ static void ui_play_ending_good_or_tyrant(int race, const char *name, bool flag_
     lbxfile_item_release(LBXFILE_WINLOSE, wld1.gfx_ships);
     lbxfile_item_release(LBXFILE_WINLOSE, wld1.gfx_stars);
 
-    wld2.gfx_winning2 = lbxfile_item_get(LBXFILE_WINLOSE, 0x1f, 0);
+    wld2.gfx_winning2 = lbxfile_item_get(LBXFILE_WINLOSE, 0x1f);
     wld2.frame = 0;
 
     uiobj_set_callback_and_delay(ui_play_winlose_cb2, &wld2, 3);
@@ -275,7 +275,7 @@ static void ui_play_ending_good_or_tyrant(int race, const char *name, bool flag_
 
     lbxfile_item_release(LBXFILE_WINLOSE, wld2.gfx_winning2);
 
-    wld3.gfx_winlast = lbxfile_item_get(LBXFILE_WINLOSE, 0x21, 0);
+    wld3.gfx_winlast = lbxfile_item_get(LBXFILE_WINLOSE, 0x21);
     wld3.frame = 0;
 
     uiobj_set_callback_and_delay(ui_play_winlose_cb3, &wld3, 3);
@@ -418,10 +418,10 @@ void ui_play_ending_funeral(int banner_live, int banner_dead)
 
     ui_palette_fadeout_4_3_1();
 
-    wld.gfx_lose = lbxfile_item_get(LBXFILE_WINLOSE, 0, 0);
-    wld.gfx_flag = lbxfile_item_get(LBXFILE_WINLOSE, 1 + banner_live, 0);
-    wld.gfx_coffin = lbxfile_item_get(LBXFILE_WINLOSE, 7 + banner_dead, 0);
-    wld.gfx_march = lbxfile_item_get(LBXFILE_WINLOSE, 0xd + banner_live, 0);
+    wld.gfx_lose = lbxfile_item_get(LBXFILE_WINLOSE, 0);
+    wld.gfx_flag = lbxfile_item_get(LBXFILE_WINLOSE, 1 + banner_live);
+    wld.gfx_coffin = lbxfile_item_get(LBXFILE_WINLOSE, 7 + banner_dead);
+    wld.gfx_march = lbxfile_item_get(LBXFILE_WINLOSE, 0xd + banner_live);
 
     ui_sound_play_music(3);
 
@@ -475,8 +475,8 @@ void ui_play_ending_exile(const char *name)
 
     lbxpal_select(8, -1, 0);
     wld.name = name;
-    wld.gfx_ships = lbxfile_item_get(LBXFILE_WINLOSE, 0x22, 0);
-    wld.gfx_stars = lbxfile_item_get(LBXFILE_WINLOSE, 0x23, 0);
+    wld.gfx_ships = lbxfile_item_get(LBXFILE_WINLOSE, 0x22);
+    wld.gfx_stars = lbxfile_item_get(LBXFILE_WINLOSE, 0x23);
 
     ui_sound_play_music(3);
 

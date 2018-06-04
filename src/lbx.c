@@ -270,6 +270,33 @@ static uint8_t *lbxfile_get_patch(struct lbx_s *lbx, uint16_t i, uint32_t *len_p
     return NULL;
 }
 
+static uint8_t *lbxfile_item_get_do(lbxfile_e file_id, uint16_t entry_id, uint32_t *len_ptr)
+{
+    uint8_t *p = NULL;
+
+    p = lbxfile_get_patch(&lbxtbl[file_id], entry_id, len_ptr);
+
+    if (p == NULL) {
+        if (lbxtbl[file_id].mode == LBX_MODE_NONE) {
+            if (lbxfile_load(file_id)) {
+                goto fail;
+            }
+        }
+
+        p = lbx_extract(&lbxtbl[file_id], entry_id, len_ptr, lbxinfo[file_id].filename);
+
+        if (p == NULL) {
+            goto fail;
+        }
+    }
+
+    ++lbxtbl[file_id].num_in_use;
+    return p;
+
+fail:
+    return NULL;
+}
+
 static void lbxfile_shutdown_patches(struct lbx_s *lbx)
 {
     struct lbxpatch_s *p, *pn;
@@ -328,31 +355,14 @@ int lbxfile_find_dir(void)
     return 0;
 }
 
-uint8_t *lbxfile_item_get(lbxfile_e file_id, uint16_t entry_id, uint32_t *len_ptr)
+uint8_t *lbxfile_item_get(lbxfile_e file_id, uint16_t entry_id)
 {
-    uint8_t *p = NULL;
+    return lbxfile_item_get_do(file_id, entry_id, 0);
+}
 
-    p = lbxfile_get_patch(&lbxtbl[file_id], entry_id, len_ptr);
-
-    if (p == NULL) {
-        if (lbxtbl[file_id].mode == LBX_MODE_NONE) {
-            if (lbxfile_load(file_id)) {
-                goto fail;
-            }
-        }
-
-        p = lbx_extract(&lbxtbl[file_id], entry_id, len_ptr, lbxinfo[file_id].filename);
-
-        if (p == NULL) {
-            goto fail;
-        }
-    }
-
-    ++lbxtbl[file_id].num_in_use;
-    return p;
-
-fail:
-    return NULL;
+uint8_t *lbxfile_item_get_with_len(lbxfile_e file_id, uint16_t entry_id, uint32_t *len_ptr)
+{
+    return lbxfile_item_get_do(file_id, entry_id, len_ptr);
 }
 
 void lbxfile_item_release(lbxfile_e file_id, uint8_t *ptr)

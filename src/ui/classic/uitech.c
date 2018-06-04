@@ -45,7 +45,7 @@ struct tech_data_s {
 
 static void tech_load_data(struct tech_data_s *d)
 {
-    d->gfx = lbxfile_item_get(LBXFILE_BACKGRND, 4, 0);
+    d->gfx = lbxfile_item_get(LBXFILE_BACKGRND, 4);
 }
 
 static void tech_free_data(struct tech_data_s *d)

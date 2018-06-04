@@ -421,7 +421,7 @@ static void lbxfont_split_str(int x, int y, int maxw, const char *str, split_str
 
 int lbxfont_init(void)
 {
-    uint8_t *fontdata = lbxfile_item_get(LBXFILE_FONTS, 0, 0);
+    uint8_t *fontdata = lbxfile_item_get(LBXFILE_FONTS, 0);
     lbxfontdata = fontdata;
     return 0;
 }
