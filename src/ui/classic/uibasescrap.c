@@ -34,7 +34,7 @@ struct basescrap_data_s {
 
 static void basescrap_load_data(struct basescrap_data_s *d)
 {
-    d->gfx = lbxfile_item_get(LBXFILE_BACKGRND, 0x1e, 0);
+    d->gfx = lbxfile_item_get(LBXFILE_BACKGRND, 0x1e);
 }
 
 static void basescrap_free_data(struct basescrap_data_s *d)

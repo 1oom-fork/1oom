@@ -33,9 +33,9 @@ struct load_game_data_s {
 
 static void load_lg_data(struct load_game_data_s *d)
 {
-    d->gfx_loadgame = lbxfile_item_get(LBXFILE_VORTEX, 3, 0);
-    d->gfx_lg_gray = lbxfile_item_get(LBXFILE_VORTEX, 7, 0);
-    d->gfx_lg_green = lbxfile_item_get(LBXFILE_VORTEX, 8, 0);
+    d->gfx_loadgame = lbxfile_item_get(LBXFILE_VORTEX, 3);
+    d->gfx_lg_gray = lbxfile_item_get(LBXFILE_VORTEX, 7);
+    d->gfx_lg_green = lbxfile_item_get(LBXFILE_VORTEX, 8);
 }
 
 static void free_lg_data(struct load_game_data_s *d)
