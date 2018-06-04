@@ -143,7 +143,7 @@ void ui_help(int help_index)
     uiobj_table_num_store();
     vgabuf_copy_buf();
     vgabuf_copy_back_to_page3();
-    helplbx = lbxfile_item_get(LBXFILE_HELP, 0, 0);
+    helplbx = lbxfile_item_get(LBXFILE_HELP, 0);
     do {
         const uint8_t *p;
         uint8_t old_fontnum, old_fonta2;
