@@ -50,15 +50,15 @@ static void battle_pre_load_data(struct ui_battle_pre_data_s *d)
 {
     int iu, id;
     struct game_s *g = d->g;
-    d->gfx_contbutt = lbxfile_item_get(LBXFILE_BACKGRND, 0x0c, 0);
-    d->gfx_fleet = lbxfile_item_get(LBXFILE_BACKGRND, 0x15, 0);
+    d->gfx_contbutt = lbxfile_item_get(LBXFILE_BACKGRND, 0x0c);
+    d->gfx_fleet = lbxfile_item_get(LBXFILE_BACKGRND, 0x15);
     id = (d->party_d < PLAYER_NUM) ? g->eto[d->party_d].banner : 6;
     iu = (d->party_u < PLAYER_NUM) ? g->eto[d->party_u].banner : 6;
     if (!d->flag_human_att) {
         uint8_t t = id; id = iu; iu = t;
     }
-    d->gfx_dfleet = lbxfile_item_get(LBXFILE_BACKGRND, 0x28 + id, 0);
-    d->gfx_ufleet = lbxfile_item_get(LBXFILE_BACKGRND, 0x21 + iu, 0);
+    d->gfx_dfleet = lbxfile_item_get(LBXFILE_BACKGRND, 0x28 + id);
+    d->gfx_ufleet = lbxfile_item_get(LBXFILE_BACKGRND, 0x21 + iu);
     d->gmapctx = ui_gmap_basic_init(g, true);
 }
 
