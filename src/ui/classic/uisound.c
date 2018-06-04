@@ -49,7 +49,7 @@ void ui_sound_play_music(int musici)
     if (ui_data.music_i != musici) {
         uint8_t *n;
         uint32_t len;
-        n = lbxfile_item_get(LBXFILE_MUSIC, musici, &len);
+        n = lbxfile_item_get_with_len(LBXFILE_MUSIC, musici, &len);
         if (ui_data.mus) {
             hw_audio_music_release(0);
             lbxfile_item_release(LBXFILE_MUSIC, ui_data.mus);
