@@ -172,6 +172,10 @@ For all game UIs:
     YOMAMA               Skip intro
     s                    Continue game
 
+For classic game UI:
+    -uiextra             Enable UI extras
+    -nouiextra           Disable UI extras
+
 3.1. -new
 ----------
 
