@@ -53,17 +53,17 @@ struct sabotage_data_s {
 
 static void sabotage_load_data(struct sabotage_data_s *d)
 {
-    d->gfx_saboback = lbxfile_item_get(LBXFILE_BACKGRND, 0x5, 0);
-    d->gfx_sabobac2 = lbxfile_item_get(LBXFILE_BACKGRND, 0x32, 0);
-    d->gfx_butt_revolt = lbxfile_item_get(LBXFILE_BACKGRND, 0x33, 0);
-    d->gfx_butt_bases = lbxfile_item_get(LBXFILE_BACKGRND, 0x6, 0);
-    d->gfx_butt_ind = lbxfile_item_get(LBXFILE_BACKGRND, 0xa, 0);
-    d->gfx_basexplo = lbxfile_item_get(LBXFILE_BACKGRND, 0x7, 0);
-    d->gfx_ind_expl = lbxfile_item_get(LBXFILE_BACKGRND, 0x8, 0);
-    d->gfx_framing = lbxfile_item_get(LBXFILE_BACKGRND, 0x9, 0);
-    d->gfx_contbutt = lbxfile_item_get(LBXFILE_BACKGRND, 0xc, 0);
-    d->gfx_contback = lbxfile_item_get(LBXFILE_BACKGRND, 0xb, 0);
-    d->gfx_colony = lbxfile_item_get(LBXFILE_COLONIES, d->g->planet[d->planet].type * 2 + 1, 0);
+    d->gfx_saboback = lbxfile_item_get(LBXFILE_BACKGRND, 0x5);
+    d->gfx_sabobac2 = lbxfile_item_get(LBXFILE_BACKGRND, 0x32);
+    d->gfx_butt_revolt = lbxfile_item_get(LBXFILE_BACKGRND, 0x33);
+    d->gfx_butt_bases = lbxfile_item_get(LBXFILE_BACKGRND, 0x6);
+    d->gfx_butt_ind = lbxfile_item_get(LBXFILE_BACKGRND, 0xa);
+    d->gfx_basexplo = lbxfile_item_get(LBXFILE_BACKGRND, 0x7);
+    d->gfx_ind_expl = lbxfile_item_get(LBXFILE_BACKGRND, 0x8);
+    d->gfx_framing = lbxfile_item_get(LBXFILE_BACKGRND, 0x9);
+    d->gfx_contbutt = lbxfile_item_get(LBXFILE_BACKGRND, 0xc);
+    d->gfx_contback = lbxfile_item_get(LBXFILE_BACKGRND, 0xb);
+    d->gfx_colony = lbxfile_item_get(LBXFILE_COLONIES, d->g->planet[d->planet].type * 2 + 1);
 }
 
 static void sabotage_free_data(struct sabotage_data_s *d)
@@ -311,7 +311,7 @@ ui_sabotage_t ui_spy_sabotage_ask(struct game_s *g, int spy, int target, uint8_t
             if (oi == oi_planet[i]) {
                 d.planet = i;
                 lbxfile_item_release(LBXFILE_COLONIES, d.gfx_colony);
-                d.gfx_colony = lbxfile_item_get(LBXFILE_COLONIES, g->planet[i].type * 2 + 1, 0);
+                d.gfx_colony = lbxfile_item_get(LBXFILE_COLONIES, g->planet[i].type * 2 + 1);
                 break;
             }
         }

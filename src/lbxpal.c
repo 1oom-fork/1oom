@@ -19,7 +19,6 @@ uint8_t lbxpal_colortable[0x18][256];
 
 uint8_t *lbxpal_palette_inlbx = 0;
 uint8_t *lbxpal_fontcolors = 0;
-uint8_t *lbxpal_hmm1 = 0;
 uint8_t *lbxpal_cursors = 0;
 
 /* -------------------------------------------------------------------------- */
@@ -126,13 +125,12 @@ static void lbxpal_build_colortable(int ctablei, uint8_t pr, uint8_t pg, uint8_t
 
 void lbxpal_select(int pal_index, int first/*or -1*/, int last)
 {
-    uint8_t *pal = lbxfile_item_get(LBXFILE_FONTS, pal_index + 2, 0);
+    uint8_t *pal = lbxfile_item_get(LBXFILE_FONTS, pal_index + 2);
     if (lbxpal_palette_inlbx) {
         lbxfile_item_release(LBXFILE_FONTS, lbxpal_palette_inlbx);
     }
     lbxpal_palette_inlbx = pal;
     lbxpal_fontcolors = pal + 0x300;
-    lbxpal_hmm1 = pal + 0x400;
     lbxpal_cursors = pal + 0x500;
     lbxpal_ctableparam = pal + 0x1500;
     {

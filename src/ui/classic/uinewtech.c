@@ -67,12 +67,12 @@ static const uint8_t newtech_music_tbl[6] = { 5, 6, 7, 5, 5, 5 };
 
 static void newtech_load_data(struct newtech_data_s *d)
 {
-    d->gfx_framing = lbxfile_item_get(LBXFILE_BACKGRND, 9, 0);
-    d->gfx_pulldown_u = lbxfile_item_get(LBXFILE_BACKGRND, 0x1a, 0);
-    d->gfx_pulldown_d = lbxfile_item_get(LBXFILE_BACKGRND, 0x1b, 0);
-    d->gfx_eco_chng2 = lbxfile_item_get(LBXFILE_BACKGRND, 0x1f, 0);
-    d->gfx_eco_chng4 = lbxfile_item_get(LBXFILE_BACKGRND, 0x30, 0);
-    d->gfx_robo_but = lbxfile_item_get(LBXFILE_BACKGRND, 0x31, 0);
+    d->gfx_framing = lbxfile_item_get(LBXFILE_BACKGRND, 9);
+    d->gfx_pulldown_u = lbxfile_item_get(LBXFILE_BACKGRND, 0x1a);
+    d->gfx_pulldown_d = lbxfile_item_get(LBXFILE_BACKGRND, 0x1b);
+    d->gfx_eco_chng2 = lbxfile_item_get(LBXFILE_BACKGRND, 0x1f);
+    d->gfx_eco_chng4 = lbxfile_item_get(LBXFILE_BACKGRND, 0x30);
+    d->gfx_robo_but = lbxfile_item_get(LBXFILE_BACKGRND, 0x31);
     d->gfx_spies = 0;
 }
 
@@ -516,7 +516,7 @@ void ui_newtech(struct game_s *g, int pi)
             d.flag_is_current = true;
         }
         ui_draw_erase_buf();
-        d.gfx_lab = lbxfile_item_get(LBXFILE_TECHNO, (d.nt.source != TECHSOURCE_TRADE) ? d.nt.source : 0, 0);
+        d.gfx_lab = lbxfile_item_get(LBXFILE_TECHNO, (d.nt.source != TECHSOURCE_TRADE) ? d.nt.source : 0);
         lbxgfx_draw_frame(0, 0, d.gfx_lab, UI_SCREEN_W);
         {
             int v;
@@ -526,7 +526,7 @@ void ui_newtech(struct game_s *g, int pi)
                 const int tbl[TECH_FIELD_NUM] = { 9, 22, 20, 25, 15, 29 };
                 v = tbl[d.nt.field];
             }
-            d.gfx_tech = lbxfile_item_get(LBXFILE_TECHNO, v, 0);
+            d.gfx_tech = lbxfile_item_get(LBXFILE_TECHNO, v);
         }
         lbxgfx_draw_frame(145, 54, d.gfx_tech, UI_SCREEN_W);
         vgabuf_copy_back_to_page2();
@@ -540,7 +540,7 @@ void ui_newtech(struct game_s *g, int pi)
             if (d.gfx_spies) {
                 lbxfile_item_release(LBXFILE_SPIES, d.gfx_spies);
             }
-            d.gfx_spies = lbxfile_item_get(LBXFILE_SPIES, v, 0);
+            d.gfx_spies = lbxfile_item_get(LBXFILE_SPIES, v);
         }
         d.music_i = newtech_music_tbl[d.nt.source];
         /* FIXME move below to game/ */
@@ -580,14 +580,14 @@ void ui_newtech(struct game_s *g, int pi)
             }
             if (d.cur_source == -1) {
                 ui_draw_erase_buf();
-                d.gfx_lab = lbxfile_item_get(LBXFILE_TECHNO, 0, 0);
+                d.gfx_lab = lbxfile_item_get(LBXFILE_TECHNO, 0);
                 lbxgfx_draw_frame(0, 0, d.gfx_lab, UI_SCREEN_W);
                 vgabuf_copy_back_to_page2();
                 lbxfile_item_release(LBXFILE_TECHNO, d.gfx_lab);
                 if (d.gfx_spies) {
                     lbxfile_item_release(LBXFILE_SPIES, d.gfx_spies);
                 }
-                d.gfx_spies = lbxfile_item_get(LBXFILE_SPIES, e->race, 0);
+                d.gfx_spies = lbxfile_item_get(LBXFILE_SPIES, e->race);
                 d.music_i = newtech_music_tbl[0];
             }
             d.nt.field = field;

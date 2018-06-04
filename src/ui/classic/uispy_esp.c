@@ -36,7 +36,7 @@ struct steal_data_s {
 
 static void steal_load_data(struct steal_data_s *d)
 {
-    d->gfx_espionag = lbxfile_item_get(LBXFILE_BACKGRND, 0xd, 0);
+    d->gfx_espionag = lbxfile_item_get(LBXFILE_BACKGRND, 0xd);
 }
 
 static void steal_free_data(struct steal_data_s *d)
@@ -102,7 +102,7 @@ struct stolen_data_s {
 
 static void stolen_load_data(struct stolen_data_s *d)
 {
-    d->gfx = lbxfile_item_get(LBXFILE_BACKGRND, 0xe, 0);
+    d->gfx = lbxfile_item_get(LBXFILE_BACKGRND, 0xe);
 }
 
 static void stolen_free_data(struct stolen_data_s *d)
