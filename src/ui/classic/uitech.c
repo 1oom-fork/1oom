@@ -70,6 +70,10 @@ static void ui_tech_build_completed(struct tech_data_s *d)
     if (field == TECH_FIELD_WEAPON) {
         num += 2;
     }
+    if (t->project[field]) {
+        *p++ = t->project[field];
+        num++;
+    }
     d->num = num;
 }
 
