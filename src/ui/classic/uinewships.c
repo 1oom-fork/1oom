@@ -36,7 +36,7 @@ struct newships_data_s {
 
 static void newships_load_data(struct newships_data_s *d)
 {
-    d->gfx_newship = lbxfile_item_get(LBXFILE_BACKGRND, 0x14, 0);
+    d->gfx_newship = lbxfile_item_get(LBXFILE_BACKGRND, 0x14);
 }
 
 static void newships_free_data(struct newships_data_s *d)

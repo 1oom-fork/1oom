@@ -45,25 +45,25 @@ static void election_load_data(struct election_data_s *d)
     for (int i = 0; i < 3; ++i) {
         const int item[3] = { 0x17, 0, 0x16 };
         uint8_t *gfx;
-        gfx = lbxfile_item_get(LBXFILE_COUNCIL, item[i], 0);
+        gfx = lbxfile_item_get(LBXFILE_COUNCIL, item[i]);
         lbxgfx_draw_frame(0, 0, gfx, UI_SCREEN_W);
         lbxfile_item_release(LBXFILE_COUNCIL, gfx);
     }
     vgabuf_copy_back_to_page2();
-    d->gfx_cylinder = lbxfile_item_get(LBXFILE_COUNCIL, 1, 0);
+    d->gfx_cylinder = lbxfile_item_get(LBXFILE_COUNCIL, 1);
     {
         int num;
         num = d->el->num;
         SETRANGE(num, 1, 4);
         for (int i = 0; i < num; ++i) {
-            d->gfx_racem[i] = lbxfile_item_get(LBXFILE_COUNCIL, 0xc + g->eto[d->el->tbl_ei[i]].race, 0);
+            d->gfx_racem[i] = lbxfile_item_get(LBXFILE_COUNCIL, 0xc + g->eto[d->el->tbl_ei[i]].race);
         }
         for (int i = num; i < 4; ++i) {
             d->gfx_racem[i] = 0;
         }
         num = d->el->num + 1;
         for (int i = 0; i < num; ++i) {
-            d->gfx_race[i] = lbxfile_item_get(LBXFILE_COUNCIL, 0x2 + g->eto[d->el->tbl_ei[i]].race, 0);
+            d->gfx_race[i] = lbxfile_item_get(LBXFILE_COUNCIL, 0x2 + g->eto[d->el->tbl_ei[i]].race);
         }
     }
 }

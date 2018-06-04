@@ -54,19 +54,19 @@ struct new_game_data_s {
 
 static void new_game_load_data(struct new_game_data_s *d)
 {
-    d->gfx_newgame = lbxfile_item_get(LBXFILE_VORTEX, 5, 0);
-    d->gfx_optb_ng = lbxfile_item_get(LBXFILE_VORTEX, 6, 0);
-    d->gfx_optb_cancel = lbxfile_item_get(LBXFILE_VORTEX, 0x1a, 0);
-    d->gfx_optb_ok = lbxfile_item_get(LBXFILE_VORTEX, 0x1b, 0);
-    d->gfx_custom = lbxfile_item_get(LBXFILE_VORTEX, 9, 0);
+    d->gfx_newgame = lbxfile_item_get(LBXFILE_VORTEX, 5);
+    d->gfx_optb_ng = lbxfile_item_get(LBXFILE_VORTEX, 6);
+    d->gfx_optb_cancel = lbxfile_item_get(LBXFILE_VORTEX, 0x1a);
+    d->gfx_optb_ok = lbxfile_item_get(LBXFILE_VORTEX, 0x1b);
+    d->gfx_custom = lbxfile_item_get(LBXFILE_VORTEX, 9);
     for (int i = 0; i < BANNER_NUM; ++i) {
         const banner_t t[BANNER_NUM] = { /* wrong order in lbx */
             BANNER_GREEN, BANNER_BLUE, BANNER_RED, BANNER_WHITE, BANNER_YELLOW, BANNER_PURPLE
         };
-        d->gfx_flag[t[i]] = lbxfile_item_get(LBXFILE_VORTEX, 0xa + i, 0);
+        d->gfx_flag[t[i]] = lbxfile_item_get(LBXFILE_VORTEX, 0xa + i);
     }
     for (int i = 0; i < RACE_NUM; ++i) {
-        d->gfx_portrait[i] = lbxfile_item_get(LBXFILE_VORTEX, 0x10 + i, 0);
+        d->gfx_portrait[i] = lbxfile_item_get(LBXFILE_VORTEX, 0x10 + i);
     }
     for (int i = 0; i < RACE_NUM + 1; ++i) {
         d->str_tbl_2space_race[i] = util_concat("  ", game_str_tbl_race[i], NULL);
