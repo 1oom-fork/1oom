@@ -521,7 +521,7 @@ int game_design_build_tbl_fit_engine(struct game_s *g, struct game_design_s *gd,
     int last = 0;
     buf[0] = 1/*HAVE*/;
     for (int i = 1; i < SHIP_ENGINE_NUM; ++i) {
-        if (game_tech_player_has_tech(g, TECH_FIELD_CONSTRUCTION, tbl_shiptech_engine[i].tech_i, gd->player_i)) {
+        if (game_tech_player_has_tech(g, TECH_FIELD_PROPULSION, tbl_shiptech_engine[i].tech_i, gd->player_i)) {
             sd->engine = i;
             game_design_update_engines(sd);
             buf[i] = (game_design_calc_space(gd) >= 0) ? 1/*HAVE*/ : 0/*NOPE*/;
