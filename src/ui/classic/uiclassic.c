@@ -23,7 +23,19 @@
 
 /* -------------------------------------------------------------------------- */
 
+const struct cfg_items_s ui_cfg_items[] = {
+    CFG_ITEM_BOOL("uiextra", &ui_extra_enabled),
+    CFG_ITEM_END
+};
+
+
 const struct cmdline_options_s ui_cmdline_options[] = {
+    { "-uiextra", 0,
+      options_enable_bool_var, (void *)&ui_extra_enabled,
+      NULL, "Enable UI extras" },
+    { "-nouiextra", 0,
+      options_disable_bool_var, (void *)&ui_extra_enabled,
+      NULL, "Disable UI extras" },
     { NULL, 0, NULL, NULL, NULL, NULL }
 };
 
@@ -33,6 +45,7 @@ const char *idstr_ui = "classic";
 
 struct ui_data_s ui_data = { 0 };
 
+bool ui_extra_enabled = false;
 bool ui_use_audio = true;
 
 /* -------------------------------------------------------------------------- */
