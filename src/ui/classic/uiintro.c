@@ -52,11 +52,11 @@ void ui_play_intro(void)
     {
         uint32_t len;
         hw_audio_sfx_batch_start(SFX_ID_5);
-        intro_sfx5 = lbxfile_item_get(LBXFILE_INTROSND, 5, &len);
+        intro_sfx5 = lbxfile_item_get_with_len(LBXFILE_INTROSND, 5, &len);
         hw_audio_sfx_init(SFX_ID_5, intro_sfx5, len);
-        intro_sfx3 = lbxfile_item_get(LBXFILE_INTROSND, 3, &len);
+        intro_sfx3 = lbxfile_item_get_with_len(LBXFILE_INTROSND, 3, &len);
         hw_audio_sfx_init(SFX_ID_3, intro_sfx3, len);
-        intro_sfx1 = lbxfile_item_get(LBXFILE_INTROSND, 1, &len);
+        intro_sfx1 = lbxfile_item_get_with_len(LBXFILE_INTROSND, 1, &len);
         hw_audio_sfx_init(SFX_ID_1, intro_sfx1, len);
         hw_audio_sfx_batch_end();
     }
@@ -76,7 +76,7 @@ void ui_play_intro(void)
     uiobj_set_downcount(2);
 
     if (!flag_skip) {
-        intro_gfx = lbxfile_item_get(LBXFILE_INTRO, 0, 0);
+        intro_gfx = lbxfile_item_get(LBXFILE_INTRO, 0);
         old_gfx = intro_gfx;
         ui_palette_fadeout_14_14_2();
         frame = 0;
@@ -110,7 +110,7 @@ void ui_play_intro(void)
     }
 
     if (!flag_skip) {
-        intro_gfx = lbxfile_item_get(LBXFILE_INTRO, 1, 0);
+        intro_gfx = lbxfile_item_get(LBXFILE_INTRO, 1);
         lbxfile_item_release(LBXFILE_INTRO, old_gfx);
         old_gfx = intro_gfx;
         ui_palette_fadeout_14_14_2();
@@ -157,7 +157,7 @@ void ui_play_intro(void)
     }
 
     if (!flag_skip) {
-        intro_gfx = lbxfile_item_get(LBXFILE_INTRO, 2, 0);
+        intro_gfx = lbxfile_item_get(LBXFILE_INTRO, 2);
         lbxfile_item_release(LBXFILE_INTRO, old_gfx);
         old_gfx = intro_gfx;
         ui_palette_fadeout_14_14_2();
@@ -207,7 +207,7 @@ void ui_play_intro(void)
     }
 
     if (!flag_skip) {
-        intro_gfx = lbxfile_item_get(LBXFILE_INTRO, 3, 0);
+        intro_gfx = lbxfile_item_get(LBXFILE_INTRO, 3);
         lbxfile_item_release(LBXFILE_INTRO, old_gfx);
         old_gfx = intro_gfx;
         ui_palette_fadeout_14_14_2();
@@ -255,7 +255,7 @@ void ui_play_intro(void)
     }
 
     if (!flag_skip) {
-        intro_gfx = lbxfile_item_get(LBXFILE_INTRO2, 0, 0);
+        intro_gfx = lbxfile_item_get(LBXFILE_INTRO2, 0);
         old_gfx = intro_gfx;
         ui_palette_fadeout_14_14_2();
         frame = 0;
@@ -297,7 +297,7 @@ void ui_play_intro(void)
     }
 
     if (!flag_skip) {
-        intro_gfx = lbxfile_item_get(LBXFILE_INTRO2, 1, 0);
+        intro_gfx = lbxfile_item_get(LBXFILE_INTRO2, 1);
         lbxfile_item_release(LBXFILE_INTRO2, old_gfx);
         old_gfx = intro_gfx;
         ui_palette_fadeout_14_14_2();
@@ -335,7 +335,7 @@ void ui_play_intro(void)
     }
 
     if (!flag_skip) {
-        intro_gfx = lbxfile_item_get(LBXFILE_INTRO2, 2, 0);
+        intro_gfx = lbxfile_item_get(LBXFILE_INTRO2, 2);
         lbxfile_item_release(LBXFILE_INTRO2, old_gfx);
         old_gfx = intro_gfx;
         ui_palette_fadeout_14_14_2();
