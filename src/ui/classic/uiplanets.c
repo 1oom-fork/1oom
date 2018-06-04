@@ -46,10 +46,10 @@ struct planets_data_s {
 
 static void load_pl_data(struct planets_data_s *d)
 {
-    d->gfx_report = lbxfile_item_get(LBXFILE_BACKGRND, 1, 0);
-    d->gfx_but_trans = lbxfile_item_get(LBXFILE_BACKGRND, 0x1c, 0);
-    d->gfx_but_ok = lbxfile_item_get(LBXFILE_BACKGRND, 0x1d, 0);
-    d->gfx_transfer = lbxfile_item_get(LBXFILE_BACKGRND, 0x1e, 0);
+    d->gfx_report = lbxfile_item_get(LBXFILE_BACKGRND, 1);
+    d->gfx_but_trans = lbxfile_item_get(LBXFILE_BACKGRND, 0x1c);
+    d->gfx_but_ok = lbxfile_item_get(LBXFILE_BACKGRND, 0x1d);
+    d->gfx_transfer = lbxfile_item_get(LBXFILE_BACKGRND, 0x1e);
 }
 
 static void free_pl_data(struct planets_data_s *d)
