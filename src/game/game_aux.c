@@ -54,19 +54,19 @@ int game_aux_init(struct game_aux_s *gaux, struct game_s *g)
     memset(g, 0, sizeof(struct game_s));
     g->gaux = gaux;
 
-    t = lbxfile_item_get(LBXFILE_RESEARCH, 0, 0);
+    t = lbxfile_item_get(LBXFILE_RESEARCH, 0);
     gaux->research.d0 = t + 4;
-    t = lbxfile_item_get(LBXFILE_RESEARCH, 1, 0);
+    t = lbxfile_item_get(LBXFILE_RESEARCH, 1);
     gaux->research.names = (char *)t + 4;
-    t = lbxfile_item_get(LBXFILE_RESEARCH, 2, 0);
+    t = lbxfile_item_get(LBXFILE_RESEARCH, 2);
     gaux->research.descr = (char *)t + 4;
     /* TODO check num/size*/
 
-    t = lbxfile_item_get(LBXFILE_DIPLOMAT, 1, 0);
+    t = lbxfile_item_get(LBXFILE_DIPLOMAT, 1);
     check_lbx_t5(t, "diplomat", DIPLOMAT_MSG_NUM, DIPLOMAT_MSG_LEN);
     gaux->diplomat.msg = (const char *)(t + 4);
 
-    data = t = lbxfile_item_get(LBXFILE_DIPLOMAT, 0, 0);
+    data = t = lbxfile_item_get(LBXFILE_DIPLOMAT, 0);
     check_lbx_t5(data, "diplomat", DIPLOMAT_D0_NUM, 2);
     t += 4;
     for (int i = 0; i < DIPLOMAT_D0_NUM; ++i, t += 2) {
@@ -74,7 +74,7 @@ int game_aux_init(struct game_aux_s *gaux, struct game_s *g)
     }
     lbxfile_item_release(LBXFILE_DIPLOMAT, data);
 
-    data = t = lbxfile_item_get(LBXFILE_FIRING, 0, 0);
+    data = t = lbxfile_item_get(LBXFILE_FIRING, 0);
     check_lbx_t5(data, "firing", NUM_SHIPLOOKS, 0x1c);
     t += 4;
     for (int j = 0; j < NUM_SHIPLOOKS; ++j) {
@@ -88,7 +88,7 @@ int game_aux_init(struct game_aux_s *gaux, struct game_s *g)
     }
     lbxfile_item_release(LBXFILE_FIRING, data);
 
-    t = lbxfile_item_get(LBXFILE_EVENTMSG, 0, 0);
+    t = lbxfile_item_get(LBXFILE_EVENTMSG, 0);
     check_lbx_t5(t, "eventmsg", EVENTMSG_NUM, EVENTMSG_LEN);
     gaux->eventmsg = (const char *)(t + 4);
 

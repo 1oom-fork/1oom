@@ -376,14 +376,14 @@ int main_handle_option(const char *argv)
             in_lbx = true;
             cur_lbx = v;
             cur_items = lbxfile_num_items(cur_lbx);
-            cur_ptr = lbxfile_item_get(cur_lbx, cursor_i, &cur_len);
+            cur_ptr = lbxfile_item_get_with_len(cur_lbx, cursor_i, &cur_len);
             ++optn;
             break;
         case 1:
             cursor_i = v;
             cursor_offs = v;
             {
-                uint8_t *p = lbxfile_item_get(cur_lbx, cursor_i, &cur_len);
+                uint8_t *p = lbxfile_item_get_with_len(cur_lbx, cursor_i, &cur_len);
                 if (cur_ptr) {
                     lbxfile_item_release(cur_lbx, cur_ptr);
                 }
@@ -529,7 +529,7 @@ int main_do(void)
                     break;
             }
             if (change_cur_ptr) {
-                uint8_t *p = lbxfile_item_get(cur_lbx, cursor_i, &cur_len);
+                uint8_t *p = lbxfile_item_get_with_len(cur_lbx, cursor_i, &cur_len);
                 if (cur_ptr) {
                     lbxfile_item_release(cur_lbx, cur_ptr);
                 }

@@ -27,7 +27,7 @@ struct empirestatus_data_s {
 
 static void empirestatus_data_load(struct empirestatus_data_s *d)
 {
-    d->gfx = lbxfile_item_get(LBXFILE_BACKGRND, 2, 0);
+    d->gfx = lbxfile_item_get(LBXFILE_BACKGRND, 2);
 }
 
 static void empirestatus_data_free(struct empirestatus_data_s *d)

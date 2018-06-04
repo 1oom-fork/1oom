@@ -1172,7 +1172,7 @@ int game_new(struct game_s *g, struct game_aux_s *gaux, struct game_new_options_
         }
     }
     {
-        uint8_t *namedata = lbxfile_item_get(LBXFILE_NAMES, 0, NULL);
+        uint8_t *namedata = lbxfile_item_get(LBXFILE_NAMES, 0);
         game_generate_emperor_names(g, namedata);
         lbxfile_item_release(LBXFILE_NAMES, namedata);
     }
@@ -1200,7 +1200,7 @@ void game_new_generate_emperor_name(race_t race, char *buf)
         strcpy(buf, game_str_rndempname);
     } else {
         uint32_t seed = rnd_get_new_seed();
-        uint8_t *namedata = lbxfile_item_get(LBXFILE_NAMES, 0, NULL);
+        uint8_t *namedata = lbxfile_item_get(LBXFILE_NAMES, 0);
         int base = race * EMPEROR_NAMES_PER_RACE;
         const char *str = (const char *)&namedata[4 + (base + rnd_0_nm1(EMPEROR_NAMES_PER_RACE, &seed)) * EMPEROR_NAME_LBX_LEN];
         /* TODO check if in use for the case of forced same races */
@@ -1218,7 +1218,7 @@ void game_new_generate_home_name(race_t race, char *buf)
 
 void game_new_generate_other_emperor_name(struct game_s *g, player_id_t player)
 {
-    uint8_t *namedata = lbxfile_item_get(LBXFILE_NAMES, 0, NULL);
+    uint8_t *namedata = lbxfile_item_get(LBXFILE_NAMES, 0);
     int base = g->eto[player].race * EMPEROR_NAMES_PER_RACE;
     for (int loops = 0; loops < 500; ++loops) {
         const char *str;

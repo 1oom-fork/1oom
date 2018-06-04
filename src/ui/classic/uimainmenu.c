@@ -36,8 +36,8 @@ struct main_menu_data_s {
 
 static void load_mainmenu_data(struct main_menu_data_s *d)
 {
-    d->gfx_vortex = lbxfile_item_get(LBXFILE_VORTEX, 0, 0);
-    d->gfx_title = lbxfile_item_get(LBXFILE_V11, 0, 0);
+    d->gfx_vortex = lbxfile_item_get(LBXFILE_VORTEX, 0);
+    d->gfx_title = lbxfile_item_get(LBXFILE_V11, 0);
 }
 
 static void free_mainmenu_data(struct main_menu_data_s *d)

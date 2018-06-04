@@ -32,7 +32,7 @@ struct empirereport_data_s {
 
 static void empirereport_data_load(struct empirereport_data_s *d)
 {
-    d->gfx = lbxfile_item_get(LBXFILE_BACKGRND, 3, 0);
+    d->gfx = lbxfile_item_get(LBXFILE_BACKGRND, 3);
 }
 
 static void empirereport_data_free(struct empirereport_data_s *d)

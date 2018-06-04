@@ -53,9 +53,9 @@ static void ground_prepare(struct ground_data_s *d)
     ui_delay_1();
     ui_sound_stop_music();
     for (int i = 0; i < 2; ++i) {
-        d->gfx_s[i] = lbxfile_item_get(LBXFILE_LANDING, 0x1b + g->eto[d->gr->s[i].player].race, 0);
+        d->gfx_s[i] = lbxfile_item_get(LBXFILE_LANDING, 0x1b + g->eto[d->gr->s[i].player].race);
     }
-    d->gfx_death = lbxfile_item_get(LBXFILE_LANDING, 0x14, 0);
+    d->gfx_death = lbxfile_item_get(LBXFILE_LANDING, 0x14);
 }
 
 static void ground_free_data(struct ground_data_s *d)
