@@ -11,7 +11,6 @@ extern uint8_t lbxpal_colortable[0x18][256];
 
 extern uint8_t *lbxpal_palette_inlbx;
 extern uint8_t *lbxpal_fontcolors;
-extern uint8_t *lbxpal_hmm1;
 extern uint8_t *lbxpal_cursors;
 
 extern int lbxpal_init(void);

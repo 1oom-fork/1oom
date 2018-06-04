@@ -46,8 +46,8 @@ static void starview_load_data(struct starview_data_s *d)
 {
     const struct game_s *g = d->g;
     const planet_t *p = &(g->planet[d->planet_i]);
-    d->gfx_planet = lbxfile_item_get(LBXFILE_STARVIEW, 7 + p->infogfx, 0);
-    d->gfx_shield = lbxfile_item_get(LBXFILE_STARVIEW, 0, 0);
+    d->gfx_planet = lbxfile_item_get(LBXFILE_STARVIEW, 7 + p->infogfx);
+    d->gfx_shield = lbxfile_item_get(LBXFILE_STARVIEW, 0);
     {
         int i = p->star_type;
         if (i == 3) {
@@ -55,12 +55,12 @@ static void starview_load_data(struct starview_data_s *d)
         } else if (i == 4) {
             i = 3;
         }
-        d->gfx_star = lbxfile_item_get(LBXFILE_STARVIEW, 1 + i, 0);
+        d->gfx_star = lbxfile_item_get(LBXFILE_STARVIEW, 1 + i);
     }
-    d->gfx_pop = lbxfile_item_get(LBXFILE_STARVIEW, 0x2a, 0);
-    d->gfx_fact = lbxfile_item_get(LBXFILE_STARVIEW, 0x2b, 0);
-    d->gfx_waste = lbxfile_item_get(LBXFILE_STARVIEW, 0x2c, 0);
-    d->gfx_base = lbxfile_item_get(LBXFILE_STARVIEW, 0x2d, 0);
+    d->gfx_pop = lbxfile_item_get(LBXFILE_STARVIEW, 0x2a);
+    d->gfx_fact = lbxfile_item_get(LBXFILE_STARVIEW, 0x2b);
+    d->gfx_waste = lbxfile_item_get(LBXFILE_STARVIEW, 0x2c);
+    d->gfx_base = lbxfile_item_get(LBXFILE_STARVIEW, 0x2d);
 }
 
 static void starview_free_data(struct starview_data_s *d)
