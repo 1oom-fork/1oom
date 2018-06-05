@@ -1,3 +1,12 @@
+2018-06-05: v0.4 released
+    - add -uiscale N for viewing more of the galaxy at once
+    - local multiplayer is ready for testing (use -new to start)
+    - 1oom_pbxdump as the counterpart to 1oom_pbxmake
+    - bug genocide marches on, notably:
+    _ AI fleets disappearing when sent fixed
+    - AI ship design phase can no longer hang
+    - MSDOS port should not crash at the slightest provocation
+
 2018-05-19: v0.3 released
     - new HW libraries: SDL2 and Allegro 4
     - new OS: MSDOS
