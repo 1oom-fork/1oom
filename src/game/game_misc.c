@@ -332,7 +332,7 @@ void game_update_within_range(struct game_s *g)
                 uint16_t dist, mindist1, mindist2;
                 mindist1 = 0x2710;
                 mindist2 = 0x2710;
-                for (int j = 0; (j < tblplanet_num) && (mindist1 > frange) && (mindist2 > srange); ++j) {
+                for (int j = 0; (j < tblplanet_num) && ((mindist1 > frange) || (mindist2 > srange)); ++j) {
                     uint8_t planet_i2;
                     planet_i2 = tblplanet[j];
                     dist = g->gaux->star_dist[i][planet_i2];
@@ -350,9 +350,9 @@ void game_update_within_range(struct game_s *g)
                 }
                 BOOLVEC_SET(p->within_srange, pi, (mindist2 <= srange));
 #if 0   /* buggy and pointless code */
-                if (BOOLVER_IS1(p->within_srange, pi) && (srange2 > 0)) {
+                if (BOOLVEC_IS0(p->within_srange, pi) && (srange2 > 0)) {
                     mindist1 = 0x2710;
-                    for (j = 0; (j < g->enroute_num) && (mindist1 > srange2); ++j) {
+                    for (int j = 0; (j < g->enroute_num) && (mindist1 > srange2); ++j) {
                         if (g->enroute[j].owner == pi) {
                             dist = util_math_dist_fast(g->enroute[j].x, g->enroute[j].y, p->x, p->y);
                             dist = (dist + 9) / 10;
@@ -361,8 +361,8 @@ void game_update_within_range(struct game_s *g)
                             }
                         }
                     }
-                    if (mindist1 <= srange2) {
-                        BOOLVEC_SET1(p->within_srange, pi); /* BUG? this is already checked to be true */
+                    if (mindist1 <= srange2) { /* never true */
+                        BOOLVEC_SET1(p->within_srange, pi);
                     }
                 }
 #endif

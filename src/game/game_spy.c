@@ -228,7 +228,7 @@ static void game_spy_espionage(struct game_s *g, player_id_t spy, player_id_t ta
             } else {
                 /*8207f*/
                 game_tech_get_new(g, spy, s->tbl_field[0], s->tbl_tech2[0], 3, 0, 0, false);
-                if (flag_frame && (et->within_frange != 0) && (rnd_0_nm1(2, &g->seed) == 0)) {
+                if (flag_frame && BOOLVEC_IS1(et->within_frange, target) && (rnd_0_nm1(2, &g->seed) == 0)) {
                     game_diplo_act(g, -(rnd_1_n(20, &g->seed) + 20), PLAYER_0, target, 5, 0, s->tbl_field[0]); /* FIXME multiplayer */
                 }
             }
@@ -570,7 +570,7 @@ void game_spy_esp_human(struct game_s *g, struct spy_turn_s *st)
                         uint8_t planet;
                         planet = game_planet_get_random(g, target);
                         framed = (g->evn.spied_spy[target][spy] == -1);
-                        game_tech_get_new(g, spy, target, tbl_tech[field], 1, planet, target, framed);
+                        game_tech_get_new(g, spy, field, tbl_tech[field], 1, planet, target, framed);
                         if (!framed) {
                             game_diplo_act(g, -g->evn.spied_spy[target][spy], spy, target, 4, 0, target);
                         }
