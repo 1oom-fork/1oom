@@ -10,6 +10,7 @@ libuicmdline_a_SOURCES = \
     uibomb.c \
     uicmdline.c \
     uicmds.c \
+    uicmds.h \
     uidefs.h \
     uielection.c \
     uiending.c \
