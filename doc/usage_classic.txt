@@ -22,6 +22,11 @@ when starting a new game or every N turns. It only saves it when quitting the
 game via Game -> Quit or when F10 is pressed while in the "control screen" /
 "galaxy movement screen".
 
+The following new UI features are always enabled/available:
+- Smoother galaxy movement screen scrolling
+- Random race / banner
+- Local multiplayer (use -new to start a game, see doc/usage_common.txt)
+
 The config file item "ui.uiextra" (set via the -uiextra command-line option)
 enables the following extra UI features:
 - (none at the moment)
