@@ -26,7 +26,7 @@ The original copy protection dialog is not implemented.
 The following new UI features are always enabled/available:
 - Smoother galaxy movement screen scrolling
 - Random race / banner
-- Local multiplayer (use -new to start a game, see doc/usage_common.txt)
+- Local multiplayer (use -new or -uiextra to start a game)
 - Lowercase allowed in save names
 - Objects with hotkeys can be navigated to using cursor keys
 
@@ -35,4 +35,4 @@ The following new UI features are enabled by default:
 
 The config file item "ui.uiextra" (set via the -uiextra command-line option)
 enables the following extra UI features:
-- (none at the moment)
+- New Game screen allows setting opponent race/banner/names and AI/human flag
