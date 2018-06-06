@@ -68,6 +68,7 @@ While 1oom recreates the Vanilla behaviour, it also extends it:
 
  * The "classic" UI (1oom_classic_*) will always remain reasonably close to
    the one in the DOS binaries, but alternative UIs are within the scope.
+   New/improved UI features are documented and enabled with -uiextra.
  * The "classic" AI will always remain reasonably close to the one in the
    DOS binaries, but alternative AIs are within the scope.
  * Multiplayer! (only local for now)

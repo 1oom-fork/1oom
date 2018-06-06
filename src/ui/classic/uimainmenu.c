@@ -78,6 +78,7 @@ static main_menu_action_t main_menu_do(struct main_menu_data_s *d)
     int16_t oi_newgame, oi_continue, oi_loadgame, oi_quit;
     int16_t oi_tutor, cursor_at;
     bool flag_done = false, flag_fadein = false;
+    const int num_saves = ui_extra_enabled ? NUM_ALL_SAVES : NUM_SAVES;
 
     d->frame = 0;
     if (ui_draw_finish_mode != 0) {
@@ -101,7 +102,7 @@ static main_menu_action_t main_menu_do(struct main_menu_data_s *d)
     }
     oi_loadgame = UIOBJI_INVALID;
     d->have_loadgame = false;
-    for (int i = 0; i < NUM_SAVES; ++i) {
+    for (int i = 0; i < num_saves; ++i) {
         if (game_save_tbl_have_save[i]) {
             oi_loadgame = uiobj_add_mousearea(0x3c, 0x8f, 0x104, 0x9e, MOO_KEY_UNKNOWN);
             d->have_loadgame = true;
