@@ -81,7 +81,7 @@ typedef struct uiobj_s {
             /*16*/ char *buf;
             /*1a*/ uint8_t rectcolor;
             /*1c*/ bool align_right;
-            /*1e*/ uint16_t z1e;    /* bool? */
+            /*..*/ bool allow_lcase;
             /*20*/ uint16_t buflen;
             /*22*/ const uint8_t *colortbl;
         } t4;
@@ -222,7 +222,7 @@ static void uiobj_handle_t4_sub2(uiobj_t *p, uint16_t len, uint16_t a4, const ch
     if (p->t4.rectcolor != 0) {
         ui_draw_filled_rect(p->x0, p->y0, p->x1, p->y1, p->t4.rectcolor);
     }
-    if (p->t4.z1e == 0) {
+    {
         uint16_t l, w, x, vc;
         char c;
         c = strbuf[len];
@@ -255,23 +255,16 @@ static void uiobj_handle_t4_sub2(uiobj_t *p, uint16_t len, uint16_t a4, const ch
     ui_delay_ticks_or_click(uiobj_delay);
 }
 
-static void uiobj_handle_t4_sub1(uiobj_t *p)
+static bool uiobj_textinput_do(uiobj_t *p, int w, char *buf, int buflen, bool allow_lcase, bool copy_truncated)
 {
-    uint16_t len, pos, buflen, w, fonth, animpos;
-    mookey_t key = MOO_KEY_UNKNOWN;
-    bool flag_mouse_button = false, flag_got_first = false;
     char strbuf[64];
+    int len, pos, fonth, animpos = 0;
+    bool flag_mouse_button = false, flag_quit = false, flag_got_first = false;
+    mookey_t key = MOO_KEY_UNKNOWN;
 
-    while (mouse_buttons) {
-        hw_event_handle();
-        uiobj_do_callback();
-    }
+    hw_textinput_start();
 
-    animpos = 0;
-    buflen = p->t4.buflen;
-    w = p->x1 - p->x0;
-    lbxfont_select(p->t4.fontnum, p->t4.fonta2, p->t4.fonta4, 0);
-    strcpy(strbuf, p->t4.buf);
+    strcpy(strbuf, buf);
     len = strlen(strbuf);
     if (lbxfont_calc_str_width(strbuf) > w) {
         if (len != 0) {
@@ -283,11 +276,16 @@ static void uiobj_handle_t4_sub1(uiobj_t *p)
     if (pos >= buflen) {
         pos = buflen;
     }
-    strcpy(p->t4.buf, strbuf);
+    if (copy_truncated) {
+        strcpy(buf, strbuf);
+    }
     fonth = lbxfont_get_height();
     uiobj_handle_t4_sub2(p, pos, animpos, strbuf);
+
     while ((key != MOO_KEY_RETURN) && (!flag_mouse_button)) {
+        uint32_t keyp;
         bool flag_ok;
+        char c;
         while (!(kbd_have_keypress() || flag_mouse_button)) {
             hw_event_handle();
             if ((1/*mouse_flag_initialized*/) && (mouse_buttons || (mouse_getclear_click_hw() != 0))) {
@@ -304,33 +302,30 @@ static void uiobj_handle_t4_sub1(uiobj_t *p)
         if (flag_mouse_button) {
             break;
         }
-        key = KBD_GET_KEY(kbd_get_keypress());
+        keyp = kbd_get_keypress();
+        key = KBD_GET_KEY(keyp);
+        c = KBD_GET_CHAR(keyp);
         switch (key) {
             case MOO_KEY_BACKSPACE:
                 if (!flag_got_first) {
                     strbuf[0] = '\0';
-                    len = 0;
-                    pos = 0;
+                    len = pos = 0;
                     animpos = 0;
                     flag_got_first = true;
-                } else {
-                    if (len > 0) {
-                        if (pos >= len) {
-                            --len;
-                            strbuf[len] = '\0';
-                            --pos;
-                            animpos = 0;
-                        } else if (pos > 0) {
-                            for (int i = pos; i < len; ++i) {
-                                strbuf[i - 1] = strbuf[i];
-                            }
-                            --len;
-                            --pos;
+                } else if (len > 0) {
+                    if (pos >= len) {
+                        --len;
+                        --pos;
+                        animpos = 0;
+                    } else if (pos > 0) {
+                        for (int i = pos; i < len; ++i) {
+                            strbuf[i - 1] = strbuf[i];
                         }
+                        --len;
+                        --pos;
                     }
+                    strbuf[len] = '\0';
                 }
-                animpos = 0;
-                strbuf[len] = '\0';
                 break;
             case MOO_KEY_DELETE:
                 if ((len > 0) && (pos < len)) {
@@ -363,21 +358,26 @@ static void uiobj_handle_t4_sub1(uiobj_t *p)
                     }
                 }
                 break;
+            case MOO_KEY_ESCAPE:
+                flag_mouse_button = true;
+                flag_quit = true;
+                break;
             default:
                 flag_ok = false;
-                if ((key >= MOO_KEY_a) && (key <= MOO_KEY_z)) {
-                    key -= 0x20;    /* az -> AZ */
+                if ((!allow_lcase) && (c >= 'a') && (c <= 'z')) {
+                    c -= 0x20;    /* az -> AZ */
                 }
                 if (0
-                  || ((key >= 'A') && (key < ']'))
-                  || ((key >= '.') && (key < ';'))
-                  || (key == ' ') || (key == '-')
+                  || ((c >= 'A') && (c < ']'))
+                  || (allow_lcase && (c >= 'a') && (c < '{'))
+                  || ((c >= '-') && (c < ';'))
+                  || (c == ' ') || (c == '-')
                 ) {
                     flag_ok = true;
                 }
                 if (flag_ok) {
                     flag_got_first = true;
-                    strbuf[len] = key;
+                    strbuf[len] = c;
                     strbuf[len + 1] = '\0';
                     if ((len < buflen) && (lbxfont_calc_str_width(strbuf) <= w)) {
                         strbuf[len] = '\0';
@@ -386,10 +386,10 @@ static void uiobj_handle_t4_sub1(uiobj_t *p)
                                 strbuf[i] = strbuf[i - 1];
                             }
                             ++len;
-                            strbuf[pos] = key;
+                            strbuf[pos] = c;
                             ++pos;
                         } else {
-                            strbuf[len] = key;
+                            strbuf[len] = c;
                             ++len;
                             strbuf[len] = ' ';
                             strbuf[len + 1] = '\0';
@@ -407,16 +407,30 @@ static void uiobj_handle_t4_sub1(uiobj_t *p)
         }
         uiobj_handle_t4_sub2(p, pos, animpos, strbuf);
     }
-    strcpy(p->t4.buf, strbuf);
+    hw_textinput_stop();
+    strcpy(buf, strbuf);
     if (flag_mouse_button) /*&& (mouse_flag_initialized)*/ {
         while (mouse_buttons) {
             hw_event_handle();
         }
-        mouse_getclear_click_hw();
-        mouse_getclear_click_sw();
     }
     /* TODO ui_cursor_erase0(); */
     uiobj_focus_oi = -1;
+    mouse_getclear_click_hw();
+    mouse_getclear_click_sw();
+    return flag_quit;
+}
+
+static void uiobj_handle_t4_sub1(uiobj_t *p)
+{
+    int w;
+    while (mouse_buttons) {
+        hw_event_handle();
+        uiobj_do_callback();
+    }
+    w = p->x1 - p->x0;
+    lbxfont_select(p->t4.fontnum, p->t4.fonta2, p->t4.fonta4, 0);
+    uiobj_textinput_do(p, w, p->t4.buf, p->t4.buflen, p->t4.allow_lcase, true);
 }
 
 static void uiobj_handle_t6_slider_input(uiobj_t *p)
@@ -1742,7 +1756,7 @@ int16_t uiobj_add_t3(uint16_t x, uint16_t y, const char *str, uint8_t *lbxdata, 
     return UIOBJI_ALLOC();
 }
 
-int16_t uiobj_add_textinput(int x, int y, int w, char *buf, uint16_t buflen, uint8_t rcolor, bool alignr, uint16_t z1e, const uint8_t *colortbl, mookey_t key)
+int16_t uiobj_add_textinput(int x, int y, int w, char *buf, uint16_t buflen, uint8_t rcolor, bool alignr, bool allow_lcase, const uint8_t *colortbl, mookey_t key)
 {
     uiobj_t *p = &uiobj_tbl[uiobj_table_num];
     p->x0 = x;
@@ -1756,7 +1770,7 @@ int16_t uiobj_add_textinput(int x, int y, int w, char *buf, uint16_t buflen, uin
     p->t4.buf = buf;
     p->t4.rectcolor = rcolor;
     p->t4.align_right = alignr;
-    p->t4.z1e = z1e;
+    p->t4.allow_lcase = allow_lcase;
     p->t4.colortbl = colortbl;
     p->type = UIOBJ_TYPE_TEXTINPUT;
     p->vptr = 0;
@@ -2184,16 +2198,11 @@ int16_t uiobj_select_from_list2(int x, int y, int w, const char *title, char con
     return oi + itemoffs - 1;
 }
 
-bool uiobj_read_str(int x, int y, int w, char *buf, int buflen, uint8_t rcolor, bool alignr, uint16_t z1e, const uint8_t *ctbl)
-{
-    char strbuf[64];
-    uint16_t fonth, v4 = 0, vc = 0, va;
-    int si, di;
-    bool flag_done = false, flag_quit = false;
-    mookey_t key = 0;
-    uiobj_t *p;
 
-    hw_textinput_start();
+bool uiobj_read_str(int x, int y, int w, char *buf, int buflen, uint8_t rcolor, bool alignr, const uint8_t *ctbl)
+{
+    bool flag_quit = false;
+    uiobj_t *p;
     uiobj_table_clear();
     if (1/*mouse_flag_initialized*/) {
         while (mouse_buttons) {
@@ -2204,159 +2213,12 @@ bool uiobj_read_str(int x, int y, int w, char *buf, int buflen, uint8_t rcolor, 
     }
     uiobj_set_downcount(1);
     {
-        int16_t oi = uiobj_add_textinput(x, y, w, buf, buflen, rcolor, alignr, z1e, ctbl, MOO_KEY_UNKNOWN);
+        int16_t oi = uiobj_add_textinput(x, y, w, buf, buflen, rcolor, alignr, false, ctbl, MOO_KEY_UNKNOWN);
         uiobj_focus_oi = oi;
         p = &uiobj_tbl[oi];
     }
-    fonth = lbxfont_get_height();
-    strcpy(strbuf, buf);
-    si = strlen(strbuf);
-    if (lbxfont_calc_str_width(strbuf) >= w) {
-        strbuf[0] = 0;
-        si = 0;
-    }
-    di = si;
-    if (di > buflen) {
-        di = buflen;
-    }
-    uiobj_handle_t4_sub2(p, di, vc, strbuf);
-
-    while ((key != MOO_KEY_RETURN) && !flag_done) {
-        uint32_t keyp;
-        bool flag_ok;
-        char c;
-        while (!kbd_have_keypress() && !flag_done) {
-            if ((1/*mouse_flag_initialized*/) && (mouse_buttons || mouse_getclear_click_hw())) {
-                flag_done = true;
-                break;
-            }
-            if (++vc >= ((fonth << 1) - 1)) { vc = 0; }
-            uiobj_handle_t4_sub2(p, di, vc, strbuf);
-        }
-        if (flag_done) {
-            break;
-        }
-        keyp = kbd_get_keypress();
-        key = KBD_GET_KEY(keyp);
-        c = KBD_GET_CHAR(keyp);
-        switch (key) {
-            case MOO_KEY_BACKSPACE:
-                if (v4 == 0) {
-                    strbuf[0] = '\0';
-                    si = di = 0;
-                    vc = 0;
-                    v4 = 1;
-                } else if (si > 0) {
-                    if (di >= si) {
-                        --si;
-                        strbuf[si] = '\0';
-                        --di;
-                        vc = 0;
-                    } else if (di > 0) {
-                        va = di;
-                        while (va < si) {
-                            strbuf[va - 1] = strbuf[va];
-                            ++va;
-                        }
-                        --si;
-                        --di;
-                    }
-                    strbuf[si] = '\0';
-                }
-                break;
-            case MOO_KEY_DELETE:
-                if ((si > 0) && (di < si)) {
-                    va = di;
-                    while (va < si) {
-                        strbuf[va] = strbuf[va + 1];
-                        ++va;
-                    }
-                    --si;
-                    vc = 0;
-                    strbuf[si] = '\0';
-                }
-                break;
-            case MOO_KEY_LEFT:
-                v4 = 1;
-                if (di > 0) {
-                    --di;
-                    vc = 0;
-                }
-                break;
-            case MOO_KEY_RIGHT:
-                if ((di < buflen) && (di < si)) {
-                    ++di;
-                    vc = 0;
-                    if (di >= si) {
-                        strbuf[si] = ' ';
-                        strbuf[si + 1] = '\0';
-                        if ((di >= buflen) || (lbxfont_calc_str_width(strbuf) > w)) {
-                            --di;
-                        }
-                        strbuf[si] = '\0';
-                    }
-                }
-                break;
-            case MOO_KEY_ESCAPE:
-                flag_done = true;
-                flag_quit = true;
-                break;
-            default:
-                flag_ok = false;
-                if (0
-                  || ((c >= 'A') && (c < ']'))
-                  || ((c >= 'a') && (c < '{'))
-                  || ((c >= '-') && (c < ';'))
-                  || (c == ' ') || (c == '-')
-                ) {
-                    flag_ok = true;
-                }
-                if (flag_ok) {
-                    v4 = 1;
-                    strbuf[si] = c;
-                    strbuf[si + 1] = '\0';
-                    if ((si < buflen) && (lbxfont_calc_str_width(strbuf) <= w)) {
-                        strbuf[si] = '\0';
-                        if (di < si) {
-                            va = si;
-                            while (va > di) {
-                                strbuf[va] = strbuf[va - 1];
-                                --va;
-                            }
-                            ++si;
-                            strbuf[di] = c;
-                            ++di;
-                        } else {
-                            strbuf[si] = c;
-                            ++si;
-                            strbuf[si] = ' ';
-                            strbuf[si + 1] = '\0';
-                            if ((si < buflen) && (lbxfont_calc_str_width(strbuf) <= w)) {
-                                ++di;
-                            }
-                        }
-                        strbuf[si] = '\0';
-                        vc = 0;
-                    } else {
-                        strbuf[si] = '\0';
-                    }
-                }
-                break;
-        }
-        uiobj_handle_t4_sub2(p, di, vc, strbuf);
-    }
-    hw_textinput_stop();
-    strcpy(buf, strbuf);
-    if (flag_done != 0) /*&& (mouse_flag_initialized)*/ {
-        while (mouse_buttons) {
-            hw_event_handle();
-        }
-    }
-    /* TODO ui_cursor_erase0(); */
-    uiobj_focus_oi = -1;
+    flag_quit = uiobj_textinput_do(p, w, buf, buflen, true, false);
     uiobj_table_clear();
-    mouse_getclear_click_hw();
-    mouse_getclear_click_sw();
     return !flag_quit;
 }
 
