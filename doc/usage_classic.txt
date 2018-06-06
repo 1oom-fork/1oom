@@ -27,7 +27,8 @@ The following new UI features are always enabled/available:
 - Random race / banner
 - Local multiplayer (use -new to start a game, see doc/usage_common.txt)
 - Lowercase allowed in save names
+- Load Game screen uses numbers as hotkeys for slots
 
 The config file item "ui.uiextra" (set via the -uiextra command-line option)
 enables the following extra UI features:
-- (none at the moment)
+- Continue and Undo saves can be chosen in the Load Game screen
