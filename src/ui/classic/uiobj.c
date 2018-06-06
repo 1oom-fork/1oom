@@ -1748,7 +1748,7 @@ int16_t uiobj_add_t3(uint16_t x, uint16_t y, const char *str, uint8_t *lbxdata, 
     return UIOBJI_ALLOC();
 }
 
-int16_t uiobj_add_t4(int x, int y, int w, char *buf, uint16_t buflen, uint8_t rcolor, bool alignr, uint16_t z1e, const uint8_t *colortbl, mookey_t key, int16_t helpid)
+int16_t uiobj_add_textinput(int x, int y, int w, char *buf, uint16_t buflen, uint8_t rcolor, bool alignr, uint16_t z1e, const uint8_t *colortbl, mookey_t key, int16_t helpid)
 {
     uiobj_t *p = &uiobj_tbl[uiobj_table_num];
     p->x0 = x;
@@ -2213,7 +2213,7 @@ bool uiobj_read_str(int x, int y, int w, char *buf, int buflen, uint8_t rcolor, 
     }
     uiobj_set_downcount(1);
     {
-        int16_t oi = uiobj_add_t4(x, y, w, buf, buflen, rcolor, alignr, z1e, ctbl, MOO_KEY_UNKNOWN, helpid);
+        int16_t oi = uiobj_add_textinput(x, y, w, buf, buflen, rcolor, alignr, z1e, ctbl, MOO_KEY_UNKNOWN, helpid);
         uiobj_hmm1_oi = oi;
         p = &uiobj_tbl[oi];
     }
