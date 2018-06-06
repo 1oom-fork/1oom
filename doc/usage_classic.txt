@@ -24,3 +24,4 @@ game or when F10 is pressed while in the "galaxy movement screen".
 
 The following new UI features are always enabled/available:
 - Random race / banner
+- Lowercase allowed in save names

@@ -307,7 +307,7 @@ static void design_init_ois(struct design_data_s *d)
     d->oi_build = uiobj_add_t0(282, 182, game_str_sd_build, ui_data.gfx.design.blank, MOO_KEY_b);
     d->oi_clear = uiobj_add_t0(282, 166, game_str_sd_clear, ui_data.gfx.design.blank, MOO_KEY_c);
     lbxfont_select(0, 0, 5, 3);
-    d->oi_name = uiobj_add_textinput(214, 151, 56, d->gd->sd.name, SHIP_NAME_LEN - 1, 1, true, 0, colortbl_sd_textinput, MOO_KEY_UNKNOWN);
+    d->oi_name = uiobj_add_textinput(214, 151, 56, d->gd->sd.name, SHIP_NAME_LEN - 1, 1, true, false, colortbl_sd_textinput, MOO_KEY_UNKNOWN);
     uiobj_dec_y1(d->oi_name);
     SETMIN(d->gd->sd.man, d->gd->sd.engine);
     d->oi_man = uiobj_add_mousearea(167, 45, 305, 52, MOO_KEY_UNKNOWN);

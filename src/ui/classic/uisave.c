@@ -112,7 +112,7 @@ int ui_save_game(struct game_s *g)
             mookey_t key;
             lbxfont_select(0, (i == d.selected) ? 2 : 1, 0, 0);
             key = ui_qol_numeric_key_bindings ? (MOO_KEY_1 + i) : MOO_KEY_UNKNOWN;
-            oi_save[i] = uiobj_add_textinput(149, 35 + i * 18, 106, &(d.tbl_savename[i][0]), SAVE_NAME_LEN - 1, 1, false, 0, ctbl, key);
+            oi_save[i] = uiobj_add_textinput(149, 35 + i * 18, 106, &(d.tbl_savename[i][0]), SAVE_NAME_LEN - 1, 1, false, true, ctbl, key);
             uiobj_dec_y1(oi_save[i]);
         }
         oi_esc = uiobj_add_inputkey(MOO_KEY_ESCAPE);
