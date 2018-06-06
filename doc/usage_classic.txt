@@ -31,6 +31,7 @@ The following new UI features are always enabled/available:
 - Random race / banner
 - Local multiplayer (use -new or -uiextra to start a game)
 - Lowercase allowed in save names
+- Load Game screen uses numbers as hotkeys for slots
 - Objects with hotkeys can be navigated to using cursor keys
 - Mouse wheel can be used to scroll lists and adjust many things
 - Space bar works as a generic dismiss message key (Continue, ...)
@@ -59,6 +60,7 @@ The following new UI features are always enabled/available:
 
 The config file item "ui.uiextra" (set via the -uiextra command-line option)
 or pressing Alt-X in the main menu enables the following extra UI features:
+- Continue and Undo saves can be chosen in the Load Game screen
 - New Game screen allows setting opponent race/banner/names and AI/human flag
 - Clicking the portraits in Races screen brings Report page
 - Pressing a hotkey does not trigger mouse warp
