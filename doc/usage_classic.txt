@@ -23,6 +23,7 @@ game or when F10 is pressed while in the "galaxy movement screen".
 
 The following new UI features are always enabled/available:
 - Random race / banner
+- Lowercase allowed in save names
 
 The config file item "ui.uiextra" (set via the -uiextra command-line option)
 enables the following extra UI features:
