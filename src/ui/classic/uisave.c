@@ -65,7 +65,7 @@ int ui_save_game(struct game_s *g)
     const int xoff = 118;
     const int yoff = 10;
     int16_t oi_esc, oi_cancel, oi_ok, oi_save[NUM_SAVES];
-    const uint8_t tbl_save_hmm[] = { 5, 6, 7, 8, 9, 10, 0, 0, 0, 0 };
+    const uint8_t ctbl[] = { 5, 6, 7, 8, 9, 10, 0, 0, 0, 0 };
     load_sg_data(&d);
 
     for (int i = 0; i < NUM_SAVES; ++i) {
@@ -109,7 +109,7 @@ int ui_save_game(struct game_s *g)
         uiobj_table_clear();
         for (int i = 0; i < NUM_SAVES; ++i) {
             lbxfont_select(0, (i == d.selected) ? 2 : 1, 0, 0);
-            oi_save[i] = uiobj_add_t4(149, 35 + i * 18, 106, &(d.tbl_savename[i][0]), SAVE_NAME_LEN - 1, 1, false, 0, tbl_save_hmm, MOO_KEY_UNKNOWN, -1);
+            oi_save[i] = uiobj_add_t4(149, 35 + i * 18, 106, &(d.tbl_savename[i][0]), SAVE_NAME_LEN - 1, 1, false, 0, ctbl, MOO_KEY_UNKNOWN, -1);
             uiobj_dec_y1(oi_save[i]);
         }
         oi_esc = uiobj_add_inputkey(MOO_KEY_ESCAPE);
