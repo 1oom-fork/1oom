@@ -137,7 +137,7 @@ void ui_landing(struct game_s *g, player_id_t pi, uint8_t planet_i)
         char buf[PLANET_NAME_LEN];
         strcpy(buf, g->planet[planet_i].name);
         lbxfont_select(5, 0xf, 0xf, 0);
-        if (uiobj_read_str(125, 97, 65, buf, PLANET_NAME_LEN - 1, 0, false, 0, ctbl)) {
+        if (uiobj_read_str(125, 97, 65, buf, PLANET_NAME_LEN - 1, 0, false, ctbl)) {
             util_trim_whitespace(buf);
             if (buf[0] != 0) {
                 strcpy(g->planet[planet_i].name, buf);

@@ -152,7 +152,7 @@ static bool ui_new_game_names(struct game_new_options_s *newopts, struct new_gam
     while (!flag_ok) {
         lbxfont_select(5, 0xf, 0xf, 0xf);
         game_new_generate_emperor_name(d->race, buf);
-        if (!uiobj_read_str(0xf, 0x16, 0x41, buf, 0xb/*len*/, 0, 0, 0, tbl_cursor_color)) {
+        if (!uiobj_read_str(0xf, 0x16, 0x41, buf, 0xb/*len*/, 0, 0, tbl_cursor_color)) {
             return false;
         }
         util_trim_whitespace(buf);
@@ -167,7 +167,7 @@ static bool ui_new_game_names(struct game_new_options_s *newopts, struct new_gam
     while (!flag_ok) {
         lbxfont_select(5, 0xf, 0xf, 0xf);
         game_new_generate_home_name(d->race, buf);
-        if (!uiobj_read_str(0xf, 0x16, 0x32, buf, PLANET_NAME_LEN, 0, 0, 0, tbl_cursor_color)) {
+        if (!uiobj_read_str(0xf, 0x16, 0x32, buf, PLANET_NAME_LEN, 0, 0, tbl_cursor_color)) {
             return false;
         }
         util_trim_whitespace(buf);
