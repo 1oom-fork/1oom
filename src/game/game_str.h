@@ -24,6 +24,11 @@ extern const char *game_str_ng_choose_race;
 extern const char *game_str_ng_choose_banner;
 extern const char *game_str_ng_your_name;
 extern const char *game_str_ng_home_name;
+extern const char *game_str_ng_ai;
+extern const char *game_str_ng_player;
+extern const char *game_str_ng_cancel;
+extern const char *game_str_ng_ok;
+extern const char *game_str_ng_allai;
 #define PLANET_NAMES_MAX    110
 extern const char *game_str_tbl_planet_names[PLANET_NAMES_MAX];
 extern const char *game_str_tbl_home_names[RACE_NUM + 1];
