@@ -23,4 +23,8 @@ game or when F10 is pressed while in the "galaxy movement screen".
 
 The following new UI features are always enabled/available:
 - Random race / banner
+- Local multiplayer (use -new or -uiextra to start a game)
 - Lowercase allowed in save names
+
+Extra UI features:
+- New Game screen allows setting opponent race/banner/names and AI/human flag
