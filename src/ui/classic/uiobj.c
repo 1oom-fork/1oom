@@ -773,6 +773,11 @@ static int16_t uiobj_kbd_dir_key_dy_list(int diry)
     return oi;
 }
 
+static inline bool uiobj_kbd_dir_obj_ok(const uiobj_t *p)
+{
+    return ((p->type < UIOBJ_TYPE_SCROLLAREA) && (p->x0 != UIOBJ_OFFSCREEN) && ((p->type != UIOBJ_TYPE_TEXTLINE) || p->ta.z12));
+}
+
 static int16_t uiobj_kbd_dir_key_dxdy(int dirx, int diry, int16_t oi2, int mx, int my)
 {
     int dx = UIOBJ_OFFSCREEN, dy = UIOBJ_OFFSCREEN;
@@ -785,7 +790,7 @@ static int16_t uiobj_kbd_dir_key_dxdy(int dirx, int diry, int16_t oi2, int mx, i
         bool flag_found = false;
         for (int i = 1; i < uiobj_table_num; ++i) {
             p = &uiobj_tbl[i];
-            if ((p->type < UIOBJ_TYPE_SCROLLAREA) && (p->key == MOO_KEY_UNKNOWN) && ((p->type != UIOBJ_TYPE_TEXTLINE) || p->ta.z12)) {
+            if (uiobj_kbd_dir_obj_ok(p)) {
                 flag_found = true;
                 break;
             }
@@ -804,7 +809,7 @@ static int16_t uiobj_kbd_dir_key_dxdy(int dirx, int diry, int16_t oi2, int mx, i
                 }
             }
             p = &uiobj_tbl[i];
-            if ((p->type < UIOBJ_TYPE_SCROLLAREA) && (p->key == MOO_KEY_UNKNOWN) && ((p->type != UIOBJ_TYPE_TEXTLINE) || p->ta.z12)) {
+            if (uiobj_kbd_dir_obj_ok(p)) {
                 dy = (diry < 0) ? (my - smidy(p)) : (smidy(p) - my);
                 dx = smidx(p) - mx;
                 if ((p->x0 <= mx) && (p->x1 >= mx) && ((dx < -6) || (dx > 6))) {
@@ -826,7 +831,7 @@ static int16_t uiobj_kbd_dir_key_dxdy(int dirx, int diry, int16_t oi2, int mx, i
                     }
                 }
                 p = &uiobj_tbl[i];
-                if ((p->type < UIOBJ_TYPE_SCROLLAREA) && (p->key == MOO_KEY_UNKNOWN) && ((p->type != UIOBJ_TYPE_TEXTLINE) || p->ta.z12)) {
+                if (uiobj_kbd_dir_obj_ok(p)) {
                     dy = (diry < 0) ? (my - smidy(p)) : (smidy(p) - my);
                     dx = smidx(p) - mx;
                     if ((p->x0 <= mx) && (p->x1 >= mx) && ((dx < -6) || (dx > 6))) {
@@ -863,7 +868,7 @@ static int16_t uiobj_kbd_dir_key_dxdy(int dirx, int diry, int16_t oi2, int mx, i
                 }
             }
             p = &uiobj_tbl[i];
-            if ((p->type < UIOBJ_TYPE_SCROLLAREA) && (p->key == MOO_KEY_UNKNOWN) && ((p->type != UIOBJ_TYPE_TEXTLINE) || p->ta.z12)) {
+            if (uiobj_kbd_dir_obj_ok(p)) {
                 dx = (dirx < 0) ? (mx - smidx(p)) : (smidx(p) - mx);
                 dy = smidy(p) - my;
                 if ((p->y0 <= my) && (p->y1 >= my) && ((dy < -6) || (dy > 6))) {
@@ -885,7 +890,7 @@ static int16_t uiobj_kbd_dir_key_dxdy(int dirx, int diry, int16_t oi2, int mx, i
                     }
                 }
                 p = &uiobj_tbl[i];
-                if ((p->type < UIOBJ_TYPE_SCROLLAREA) && (p->key == MOO_KEY_UNKNOWN) && ((p->type != UIOBJ_TYPE_TEXTLINE) || p->ta.z12)) {
+                if (uiobj_kbd_dir_obj_ok(p)) {
                     dx = (dirx < 0) ? (mx - smidx(p)) : (smidx(p) - mx);
                     dy = smidy(p) - my;
                     if ((p->y0 <= my) && (p->y1 >= my) && ((dy < -6) || (dy > 6))) {
@@ -922,7 +927,7 @@ static int16_t uiobj_kbd_dir_key_dxdy(int dirx, int diry, int16_t oi2, int mx, i
                 }
             }
             p = &uiobj_tbl[i];
-            if ((p->type < UIOBJ_TYPE_SCROLLAREA) && (p->key == MOO_KEY_UNKNOWN) && ((p->type != UIOBJ_TYPE_TEXTLINE) || p->ta.z12)) {
+            if (uiobj_kbd_dir_obj_ok(p)) {
                 dx = (dirx < 0) ? (mx - smidx(p)) : (smidx(p) - mx);
                 dy = (diry < 0) ? (my - smidy(p)) : (smidy(p) - my);
                 if ((dx < 0) || (dy < 0)) {
