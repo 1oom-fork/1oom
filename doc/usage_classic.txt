@@ -24,10 +24,11 @@ game or when F10 is pressed while in the "galaxy movement screen".
 The following new UI features are always enabled/available:
 - Random race / banner
 - Lowercase allowed in save names
+- Load Game screen uses numbers as hotkeys for slots
 
 The config file item "ui.uiextra" (set via the -uiextra command-line option)
 enables the following extra UI features:
-- (none at the moment)
+- Continue and Undo saves can be chosen in the Load Game screen
 
 The config file item "ui.uifixbugs" (set via the -uifixbugs command-line option)
 enables the following UI bug fixes:
