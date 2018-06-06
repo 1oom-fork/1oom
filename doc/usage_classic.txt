@@ -34,6 +34,7 @@ The following new UI features are always enabled/available:
 - Smoother galaxy movement screen scrolling
 - Random race / banner
 - Local multiplayer (use -new to start a game, see doc/usage_common.txt)
+- Lowercase allowed in save names
 
 The following new UI features are enabled by default:
 - Undo saves (save slot 8)
