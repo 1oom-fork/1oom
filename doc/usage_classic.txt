@@ -25,7 +25,7 @@ game via Game -> Quit or when F10 is pressed while in the "control screen" /
 The following new UI features are always enabled/available:
 - Smoother galaxy movement screen scrolling
 - Random race / banner
-- Local multiplayer (use -new to start a game, see doc/usage_common.txt)
+- Local multiplayer (use -new or -uiextra to start a game)
 - Lowercase allowed in save names
 - Load Game screen uses numbers as hotkeys for slots
 - Objects with hotkeys can be navigated to using cursor keys
@@ -33,3 +33,4 @@ The following new UI features are always enabled/available:
 The config file item "ui.uiextra" (set via the -uiextra command-line option)
 enables the following extra UI features:
 - Continue and Undo saves can be chosen in the Load Game screen
+- New Game screen allows setting opponent race/banner/names and AI/human flag

@@ -28,15 +28,17 @@
 
 /* -------------------------------------------------------------------------- */
 
-static const bool tbllistallow[] = { true, true, true, true, true, true, true, true, true, true, true, true };
+static const uint8_t tbl_cursor_color[] = { 0x91, 0x91, 0x8d, 0x8d, 0x89, 0x89, 0x84, 0x84, 0x7f, 0x7f };
 
 /* -------------------------------------------------------------------------- */
 
 struct new_game_data_s {
+    struct game_new_options_s *newopts;
     int frame;
+    bool fadein;
     int16_t selected;
-    int16_t race;
-    int16_t banner;
+    player_id_t pi;
+    bool have_human;
     const char *str_title;
     uint8_t *gfx_newgame;
     uint8_t *gfx_optb_ng;
@@ -116,17 +118,41 @@ static void new_game_draw_race_cb(void *vptr)
     }
 }
 
+static int16_t ui_new_game_choose_race(struct game_new_options_s *newopts, struct new_game_data_s *d)
+{
+    int16_t race;
+    d->selected = 0;
+    new_game_draw_race_cb(d);
+    uiobj_finish_frame();
+    if (d->fadein) {
+        d->fadein = false;
+        ui_palette_fadein_4b_19_1();
+    }
+    uiobj_set_callback_and_delay(new_game_draw_race_cb, d, 2);
+    uiobj_table_clear();
+    lbxfont_select(5, 0xf, 0, 0);
+    race = uiobj_select_from_list1(0xa, 0xa, 0x32, game_str_ng_choose_race, (char const * const *)d->str_tbl_2space_race, &d->selected, 0, 0xf, 0, 2, 0, 0, 0);
+    if (race == -1) {
+        ui_sound_play_sfx_06();
+        return -1;
+    }
+    ui_sound_play_sfx_24();
+    newopts->pdata[d->pi].race = race;
+    return race;
+}
+
 static void new_game_draw_banner_cb(void *vptr)
 {
     struct new_game_data_s *d = vptr;
+    race_t race = d->newopts->pdata[d->pi].race;
     hw_video_copy_back_from_page2();
     if (d->str_title) {
         lbxfont_select(5, 0, 0, 0);
         lbxfont_print_str_normal(0xa, 0xa, d->str_title, UI_SCREEN_W);
         lbxgfx_apply_colortable(0xa, 0x14, 0x52, 0x1f, 2, UI_SCREEN_W);
     }
-    if (d->race < RACE_NUM) {
-        lbxgfx_draw_frame(91, 11, d->gfx_portrait[d->race], UI_SCREEN_W);
+    if (race < RACE_NUM) {
+        lbxgfx_draw_frame(91, 11, d->gfx_portrait[race], UI_SCREEN_W);
     }
     ui_draw_filled_rect(0x5a, 0x35, 0x83, 0x5a, 0);
     ui_draw_box1(0x5a, 0x35, 0x83, 0x5a, 0x9b, 0x9b);
@@ -140,95 +166,270 @@ static void new_game_draw_banner_cb(void *vptr)
     }
 }
 
-static bool ui_new_game_names(struct game_new_options_s *newopts, struct new_game_data_s *d)
+static int16_t ui_new_game_choose_banner(struct game_new_options_s *newopts, struct new_game_data_s *d)
 {
-    const uint8_t tbl_cursor_color[] = { 0x91, 0x91, 0x8d, 0x8d, 0x89, 0x89, 0x84, 0x84, 0x7f, 0x7f };
+    int16_t banner;
+    d->selected = 0;
+    d->frame = 0;
+    d->str_title = 0;
+    uiobj_table_clear();
+    uiobj_set_callback_and_delay(new_game_draw_banner_cb, d, 2);
+    lbxfont_select(5, 0xf, 0, 0);
+    banner = uiobj_select_from_list1(0xa, 0xa, 0x32, game_str_ng_choose_banner, (char const * const *)d->str_tbl_2space_banner, &d->selected, 0, 0xf, 0, 2, 0, 0, 0);
+    if (banner == -1) {
+        ui_sound_play_sfx_06();
+        return -1;
+    }
+    ui_sound_play_sfx_24();
+    newopts->pdata[d->pi].banner = banner;
+    return banner;
+}
+
+static bool ui_new_game_pname(struct game_new_options_s *newopts, struct new_game_data_s *d)
+{
     char buf[32];
     bool flag_ok;
 
+    uiobj_set_callback_and_delay(new_game_draw_banner_cb, d, 2);
     d->str_title = game_str_ng_your_name;
     uiobj_table_clear();
     flag_ok = false;
     while (!flag_ok) {
         lbxfont_select(5, 0xf, 0xf, 0xf);
-        game_new_generate_emperor_name(d->race, buf);
+        game_new_generate_emperor_name(d->newopts->pdata[d->pi].race, buf);
         if (!uiobj_read_str(0xf, 0x16, 0x41, buf, 0xb/*len*/, 0, 0, tbl_cursor_color)) {
             return false;
         }
         util_trim_whitespace(buf);
         flag_ok = buf[0] != '\0';
     }
-    strcpy(newopts->pdata[PLAYER_0].playername, buf);
+    strcpy(newopts->pdata[d->pi].playername, buf);
     ui_sound_play_sfx_24();
+    return true;
+}
 
+static bool ui_new_game_hname(struct game_new_options_s *newopts, struct new_game_data_s *d)
+{
+    char buf[32];
+    bool flag_ok;
+
+    uiobj_set_callback_and_delay(new_game_draw_banner_cb, d, 2);
     d->str_title = game_str_ng_home_name;
     uiobj_table_clear();
     flag_ok = false;
     while (!flag_ok) {
         lbxfont_select(5, 0xf, 0xf, 0xf);
-        game_new_generate_home_name(d->race, buf);
+        game_new_generate_home_name(d->newopts->pdata[d->pi].race, buf);
         if (!uiobj_read_str(0xf, 0x16, 0x32, buf, PLANET_NAME_LEN, 0, 0, tbl_cursor_color)) {
             return false;
         }
         util_trim_whitespace(buf);
         flag_ok = buf[0] != '\0';
     }
-    strcpy(newopts->pdata[PLAYER_0].homename, buf);
+    strcpy(newopts->pdata[d->pi].homename, buf);
     ui_sound_play_sfx_24();
 
     lbxfont_select(5, 1, 0xf, 0xf);
-    /* orion.exe generates other emperor names here */
     return true;
 }
 
 static bool ui_new_game_racebannernames(struct game_new_options_s *newopts, struct new_game_data_s *d)
 {
-    int16_t race = 0, banner = 0;
-    d->str_title = 0;
+    d->pi = PLAYER_0;
     /* orion.exe inits game->hmm02 and game_new:researchflag here for whatever reason */
     uiobj_table_clear();
     ui_palette_fadeout_19_19_1();
+    d->fadein = true;
     lbxpal_select(4, -1, 0);
     lbxpal_build_colortables();
     ui_draw_erase_buf();
     lbxgfx_draw_frame(0, 0, d->gfx_custom, UI_SCREEN_W);
     ui_draw_box1(0x5a, 0xa, 0x83, 0x2d, 0x9b, 0x9b);
     hw_video_copy_back_to_page2();
-    d->selected = 0;
-
-    /* race */
-    new_game_draw_race_cb(d);
-    uiobj_finish_frame();
-    ui_palette_fadein_4b_19_1();
-    uiobj_set_callback_and_delay(new_game_draw_race_cb, d, 2);
-    uiobj_table_clear();
-    lbxfont_select(5, 0xf, 0, 0);
-    race = uiobj_select_from_list1(0xa, 0xa, 0x32, game_str_ng_choose_race, (char const * const *)d->str_tbl_2space_race, &d->selected, tbllistallow, 0xf, 0, 2, 0, 0, 0);
-    if (race == -1) {
-        ui_sound_play_sfx_06();
+    if (0
+      || (ui_new_game_choose_race(newopts, d) < 0)
+      || (ui_new_game_choose_banner(newopts, d) < 0)
+      || (!ui_new_game_pname(newopts, d))
+      || (!ui_new_game_hname(newopts, d))
+    ) {
         return false;
     }
-    ui_sound_play_sfx_24();
-    newopts->pdata[PLAYER_0].race = race;
-    d->race = race;
+    return true;
+}
 
-    /* banner */
-    d->selected = 0;
+/* -------------------------------------------------------------------------- */
+
+static void new_game_draw_extra_cb(void *vptr)
+{
+    struct new_game_data_s *d = vptr;
+    struct game_new_options_s *newopts = d->newopts;
+    hw_video_copy_back_from_page3();
+    for (player_id_t i = 0; i < d->newopts->players; ++i) {
+        int x0 = 4 + (i / 3) * 160;
+        int y0 = 20 + (i % 3) * 50;
+        if (newopts->pdata[i].race < RACE_NUM) {
+            lbxgfx_draw_frame(x0 + 1, y0 + 1, d->gfx_portrait[newopts->pdata[i].race], UI_SCREEN_W);
+        }
+        if (newopts->pdata[i].banner < BANNER_NUM) {
+            lbxgfx_set_new_frame(d->gfx_flag[newopts->pdata[i].banner], d->frame);
+            gfx_aux_draw_frame_to(d->gfx_flag[newopts->pdata[i].banner], &ui_data.aux.screen);
+            gfx_aux_draw_frame_from(x0 + 43 + 1, y0 + 1, &ui_data.aux.screen, UI_SCREEN_W);
+        }
+        lbxfont_select(5, 0, 0, 0);
+        lbxfont_print_str_normal(x0 + 43 + 41 + 2, y0 + 2 , d->newopts->pdata[i].playername, UI_SCREEN_W);
+        lbxfont_print_str_normal(x0 + 43 + 41 + 2, y0 + 2 + 11, d->newopts->pdata[i].homename, UI_SCREEN_W);
+        lbxfont_print_str_normal(x0 + 43 + 41 + 2, y0 + 2 + 22, d->newopts->pdata[i].is_ai ? game_str_ng_ai : game_str_ng_player, UI_SCREEN_W);
+    }
+    if (!d->have_human) {
+        lbxfont_print_str_center(160, 2, game_str_ng_allai, UI_SCREEN_W);
+    }
+    if (++d->frame >= 10) {
+        d->frame = 0;
+    }
+}
+
+static bool ui_new_game_extra(struct game_new_options_s *newopts, struct new_game_data_s *d)
+{
+    bool flag_done = false, flag_ok = false;
+    int16_t oi_cancel, oi_ok, oi_race[PLAYER_NUM], oi_banner[PLAYER_NUM], oi_pname[PLAYER_NUM], oi_hname[PLAYER_NUM], oi_ai[PLAYER_NUM];
+    d->pi = PLAYER_0;
+    d->str_title = 0;
     d->frame = 0;
-    uiobj_table_clear();
-    uiobj_set_callback_and_delay(new_game_draw_banner_cb, d, 2);
-    lbxfont_select(5, 0xf, 0, 0);
-    banner = uiobj_select_from_list1(0xa, 0xa, 0x32, game_str_ng_choose_banner, (char const * const *)d->str_tbl_2space_banner, &d->selected, tbllistallow, 0xf, 0, 2, 0, 0, 0);
-    if (banner == -1) {
-        ui_sound_play_sfx_06();
-        return false;
-    }
-    ui_sound_play_sfx_24();
-    newopts->pdata[PLAYER_0].banner = banner;
-    d->banner = banner;
 
-    /* name & home */
-    return ui_new_game_names(newopts, d);
+    newopts->pdata[PLAYER_0].race = RACE_HUMAN;
+    newopts->pdata[PLAYER_0].banner = BANNER_BLUE;
+    d->have_human = true;
+    game_new_generate_emperor_name(newopts->pdata[PLAYER_0].race, newopts->pdata[PLAYER_0].playername);
+    game_new_generate_home_name(newopts->pdata[PLAYER_0].race, newopts->pdata[PLAYER_0].homename);
+    uiobj_table_clear();
+    ui_palette_fadeout_19_19_1();
+    d->fadein = true;
+    lbxpal_select(4, -1, 0);
+    lbxpal_build_colortables();
+    ui_draw_erase_buf();
+    lbxgfx_draw_frame(0, 0, d->gfx_custom, UI_SCREEN_W);
+    hw_video_copy_back_to_page3();
+    ui_draw_box1(0x5a, 0xa, 0x83, 0x2d, 0x9b, 0x9b);
+    hw_video_copy_back_to_page2();
+    hw_video_copy_back_from_page3();
+    for (int i = 0; i < newopts->players; ++i) {
+        int x0 = 4 + (i / 3) * 160;
+        int y0 = 20 + (i % 3) * 50;
+        ui_draw_box1(x0, y0, x0 + 41, y0 + 35, 0x9b, 0x9b);
+        ui_draw_filled_rect(x0 + 43, y0, x0 + 43 + 41, y0 + 35, 0);
+        ui_draw_box1(x0 + 43, y0, x0 + 43 + 41, y0 + 35, 0x9b, 0x9b);
+    }
+    lbxfont_select(5, 0, 0, 0);
+    lbxfont_print_str_center(40, 180, game_str_ng_cancel, UI_SCREEN_W);
+    lbxfont_print_str_center(260, 180, game_str_ng_ok, UI_SCREEN_W);
+
+    hw_video_copy_back_to_page3();
+
+#define MAKE_UIOBJS() \
+    do { \
+        uiobj_table_clear(); \
+        oi_cancel = uiobj_add_mousearea(0, 170, 80, 199, MOO_KEY_ESCAPE); \
+        oi_ok = uiobj_add_mousearea(220, 170, 300, 199, MOO_KEY_SPACE); \
+        for (int i = 0; i < newopts->players; ++i) { \
+            int x0 = 4 + (i / 3) * 160; \
+            int y0 = 20 + (i % 3) * 50; \
+            oi_race[i] = uiobj_add_mousearea(x0, y0, x0 + 41, y0 + 35, MOO_KEY_UNKNOWN); \
+            oi_banner[i] = uiobj_add_mousearea(x0 + 43, y0, x0 + 43 + 41, y0 + 35, MOO_KEY_UNKNOWN); \
+            oi_pname[i] = uiobj_add_mousearea(x0 + 43 + 41 + 2, y0 + 2, x0 + 43 + 41 + 2 + 60, y0 + 2 + 10, MOO_KEY_UNKNOWN); \
+            oi_hname[i] = uiobj_add_mousearea(x0 + 43 + 41 + 2, y0 + 2 + 11, x0 + 43 + 41 + 2 + 60, y0 + 2 + 11 + 10, MOO_KEY_UNKNOWN); \
+            oi_ai[i] = uiobj_add_mousearea(x0 + 43 + 41 + 2, y0 + 2 + 22, x0 + 43 + 41 + 2 + 60, y0 + 2 + 22 + 10, MOO_KEY_UNKNOWN); \
+        } \
+        for (int i = newopts->players; i < PLAYER_NUM; ++i) { \
+            oi_race[i] = UIOBJI_INVALID; \
+            oi_banner[i] = UIOBJI_INVALID; \
+            oi_pname[i] = UIOBJI_INVALID; \
+            oi_hname[i] = UIOBJI_INVALID; \
+            oi_ai[i] = UIOBJI_INVALID; \
+        } \
+    } while (0)
+
+    MAKE_UIOBJS();
+
+    uiobj_set_callback_and_delay(new_game_draw_extra_cb, d, 2);
+    uiobj_set_xyoff(1, 1);
+
+    while (!flag_done) {
+        int16_t oi;
+        oi = uiobj_handle_input_cond();
+        ui_delay_prepare();
+        if ((oi != UIOBJI_ESC) && (oi != UIOBJI_NONE) && (oi != oi_cancel)) {
+            ui_sound_play_sfx_24();
+        }
+        if ((oi == UIOBJI_ESC) || (oi == oi_cancel)) {
+            ui_sound_play_sfx_06();
+            flag_ok = false;
+            flag_done = true;
+        }
+        if (oi == oi_ok) {
+            if (d->have_human) {
+                flag_ok = true;
+                flag_done = true;
+            }
+        }
+        for (int i = 0; i < newopts->players; ++i) {
+            if (oi == oi_race[i]) {
+                race_t old_race, new_race;
+                old_race = newopts->pdata[i].race;
+                d->pi = i;
+                ui_new_game_choose_race(newopts, d);
+                new_race = newopts->pdata[i].race;
+                if (new_race != old_race) {
+                    if (new_race < RACE_NUM) {
+                        game_new_generate_emperor_name(new_race, newopts->pdata[i].playername);
+                        game_new_generate_home_name(new_race, newopts->pdata[i].homename);
+                    } else {
+                        newopts->pdata[i].playername[0] = '\0';
+                        newopts->pdata[i].homename[0] = '\0';
+                    }
+                }
+                uiobj_set_callback_and_delay(new_game_draw_extra_cb, d, 2);
+            } else if (oi == oi_banner[i]) {
+                d->pi = i;
+                d->selected = newopts->pdata[i].banner;
+                ui_new_game_choose_banner(newopts, d);
+                uiobj_set_callback_and_delay(new_game_draw_extra_cb, d, 2);
+            } else if (oi == oi_pname[i]) {
+                d->pi = i;
+                d->selected = newopts->pdata[i].banner;
+                ui_new_game_pname(newopts, d);
+                uiobj_set_callback_and_delay(new_game_draw_extra_cb, d, 2);
+            } else if (oi == oi_hname[i]) {
+                d->pi = i;
+                d->selected = newopts->pdata[i].banner;
+                ui_new_game_hname(newopts, d);
+                uiobj_set_callback_and_delay(new_game_draw_extra_cb, d, 2);
+            } else if (oi == oi_ai[i]) {
+                newopts->pdata[i].is_ai = !newopts->pdata[i].is_ai;
+                d->have_human = false;
+                for (int j = 0; j < newopts->players; ++j) {
+                    if (!newopts->pdata[j].is_ai) {
+                        d->have_human = true;
+                        break;
+                    }
+                }
+            }
+        }
+
+        new_game_draw_extra_cb(d);
+
+        MAKE_UIOBJS();
+
+        uiobj_finish_frame();
+        if (d->fadein) {
+            d->fadein = false;
+            ui_palette_fadein_4b_19_1();
+        }
+        ui_delay_ticks_or_click(2);
+    }
+
+#undef MAKE_UIOBJS
+
+    return flag_ok;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -240,6 +441,8 @@ bool ui_new_game(struct game_new_options_s *newopts)
     uint16_t oppon = 0, gsize = 0, diffic = 0;
     int16_t oi_gsize, oi_diffic, oi_oppon, oi_cancel, oi_ok;
     int16_t oi_esc, oi_d, oi_g, oi_o, oi_space;
+
+    d.newopts = newopts;
 
     gsize = newopts->galaxy_size;
     diffic = newopts->difficulty;
@@ -293,11 +496,11 @@ bool ui_new_game(struct game_new_options_s *newopts)
         }
         if ((oi == UIOBJI_ESC) || (oi == oi_cancel) || (oi == oi_esc)) {
             flag_ok = false;
-            flag_done = 1;
+            flag_done = true;
         }
         if ((oi == oi_ok) || (oi == oi_space)) {
             flag_ok = true;
-            flag_done = 1;
+            flag_done = true;
         }
         new_game_draw_cb1(&d);
 
@@ -321,7 +524,11 @@ bool ui_new_game(struct game_new_options_s *newopts)
     uiobj_unset_callback();
 
     if (flag_ok) {
-        flag_ok = ui_new_game_racebannernames(newopts, &d);
+        if (ui_extra_enabled) {
+            flag_ok = ui_new_game_extra(newopts, &d);
+        } else {
+            flag_ok = ui_new_game_racebannernames(newopts, &d);
+        }
     }
 
     uiobj_unset_callback();
