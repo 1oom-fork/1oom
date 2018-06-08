@@ -1357,6 +1357,7 @@ static const struct game_intros_s game_intros_root[] = {
     GAME_INTROS_VAL(game_s, players),
     GAME_INTROS_BV(game_s, is_ai, PLAYER_NUM),
     GAME_INTROS_BV(game_s, refuse, PLAYER_NUM),
+    GAME_INTROS_VAL(game_s, ai_id),
     GAME_INTROS_VAL(game_s, active_player),
     GAME_INTROS_VAL(game_s, difficulty),
     GAME_INTROS_VAL(game_s, galaxy_size),
@@ -1877,6 +1878,7 @@ int saveconv_en_text(struct game_s *g, const char *fname)
     OUTLINEI("players", g->players);
     OUTLINEBV("is_ai", g->is_ai, g->players);
     OUTLINEBV("refuse", g->refuse, g->players);
+    OUTLINEI("ai_id", g->ai_id);
     OUTLINEI("active_player", g->active_player);
     OUTLINEI("difficulty", g->difficulty);
     OUTLINEI("galaxy_size", g->galaxy_size);
