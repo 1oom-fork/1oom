@@ -883,16 +883,16 @@ static void game_ai_classic_turn_p1_trans_own(struct game_s *g, struct ai_turn_p
 static void game_ai_classic_turn_p1_build_defending_ships(struct game_s *g, player_id_t pi)
 {
     empiretechorbit_t *e = &(g->eto[pi]);
-    BOOLVEC_DECLARE(tbl_hmm, PLANETS_MAX);
-    BOOLVEC_CLEAR(tbl_hmm, PLANETS_MAX);
+    BOOLVEC_DECLARE(tbl_incoming, PLANETS_MAX);
+    BOOLVEC_CLEAR(tbl_incoming, PLANETS_MAX);
     for (int i = 0; i < g->enroute_num; ++i) {
         const fleet_enroute_t *r = &(g->enroute[i]);
         if ((r->owner != pi) && (g->planet[r->dest].owner == pi)) {
-            BOOLVEC_SET1(tbl_hmm, r->dest);
+            BOOLVEC_SET1(tbl_incoming, r->dest);
         }
     }
     for (int i = 0; i < g->galaxy_stars; ++i) {
-        if (BOOLVEC_IS1(tbl_hmm, i)) {
+        if (BOOLVEC_IS1(tbl_incoming, i)) {
             uint32_t v;
             planet_t *p;
             p = &(g->planet[i]);
