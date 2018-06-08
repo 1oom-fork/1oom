@@ -508,7 +508,7 @@ static void game_ai_classic_turn_p1_send_colony_ships(struct game_s *g, struct a
     }
 }
 
-static void game_ai_classic_turn_p1_sub5(struct game_s *g, struct ai_turn_p1_s *ait, player_id_t pi)
+static void game_ai_classic_turn_p1_planet_w(struct game_s *g, struct ai_turn_p1_s *ait, player_id_t pi)
 {
     ait->hmm12 = 0;
     ait->hmm13 = 0;
@@ -1051,7 +1051,7 @@ static void game_ai_classic_turn_p1(struct game_s *g)
             game_ai_classic_turn_p1_send_colony_ships(g, ait, pi);
         }
         game_ai_classic_turn_p1_front(g, ait, pi);
-        game_ai_classic_turn_p1_sub5(g, ait, pi);
+        game_ai_classic_turn_p1_planet_w(g, ait, pi);
         if (ait->hmm12 != 0) {
             game_ai_classic_turn_p1_sub6(g, ait, pi);
         }
