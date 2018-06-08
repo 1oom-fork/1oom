@@ -659,8 +659,8 @@ static void game_ai_classic_turn_p1_send_defend(struct game_s *g, struct ai_turn
     int bestspeed = game_tech_player_best_engine(g, pi) * 30 + 20;
     uint8_t tbl_shipw[PLAYER_NUM][NUM_SHIPDESIGNS];
     uint32_t tbl_planet_threat[PLANETS_MAX];
-    uint32_t tbl_hmm2[PLANETS_MAX];
-    int num_hmm2 = 0;
+    uint32_t tbl_defend[PLANETS_MAX];
+    int num_defend = 0;
     for (player_id_t pi2 = PLAYER_0; pi2 < g->players; ++pi2) {
         const empiretechorbit_t *e2 = &(g->eto[pi2]);
         const shipdesign_t *sd = &(g->srd[pi2].design[0]);
@@ -699,7 +699,7 @@ static void game_ai_classic_turn_p1_send_defend(struct game_s *g, struct ai_turn
     for (int i = 0; i < g->galaxy_stars; ++i) {
         const planet_t *p = &(g->planet[i]);
         if ((p->owner == pi) && (((ait->tbl_force_own[i] * 4) / 3) < tbl_planet_threat[i])) {
-            tbl_hmm2[num_hmm2++] = i;
+            tbl_defend[num_defend++] = i;
         }
     }
     for (int i = 0; i < g->galaxy_stars; ++i) {
@@ -708,9 +708,9 @@ static void game_ai_classic_turn_p1_send_defend(struct game_s *g, struct ai_turn
             uint8_t pto;
             pto = PLANET_NONE;
             pf = &(g->planet[i]);
-            for (int j = 0; (j < num_hmm2) && (pto == PLANET_NONE); ++j) {
+            for (int j = 0; (j < num_defend) && (pto == PLANET_NONE); ++j) {
                 const planet_t *pt;
-                uint8_t pli = tbl_hmm2[j];
+                uint8_t pli = tbl_defend[j];
                 pt = &(g->planet[pli]);
                 if (util_math_dist_fast(pf->x, pf->y, pt->x, pt->y) <= bestspeed) {
                     pto = pli;
