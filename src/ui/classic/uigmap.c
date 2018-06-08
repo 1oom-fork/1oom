@@ -78,7 +78,7 @@ static void gmap_draw_cb(void *vptr)
 
     tbl_havehome[0] = d->api;
     for (player_id_t i = PLAYER_0; i < g->players; ++i) {
-        if ((i != d->api) && (g->evn.home[i] != PLANET_NONE)) {
+        if ((i != d->api) && IS_ALIVE(g, i)) {
             tbl_havehome[havehomenum++] = i;
         }
     }
