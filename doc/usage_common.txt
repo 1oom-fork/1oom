@@ -149,6 +149,7 @@ For all game UIs:
                            default 1 (player 1 is human, others AI)
     -ngn PLAYER NAME     Set new game emperor name for player 1..6
     -ngh PLAYER NAME     Set new game home world name for player 1..6
+    -nga AITYPE          Set new game AI type (0..1)
     -load SAVE           Load game (1..8 or filename)
                          1..6 are regular save slots
                          7 is continue game
