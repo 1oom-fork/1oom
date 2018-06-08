@@ -1111,6 +1111,7 @@ int game_new(struct game_s *g, struct game_aux_s *gaux, struct game_new_options_
         g->galaxy_seed = opt->galaxy_seed;
     }
     g->seed = g->galaxy_seed;
+    g->ai_id = opt->ai_id;
     g->players = opt->players;
     g->difficulty = opt->difficulty;
     g->galaxy_size = opt->galaxy_size;
@@ -1145,7 +1146,7 @@ int game_new(struct game_s *g, struct game_aux_s *gaux, struct game_new_options_
                 va += m;
             }
         }
-        log_message("Game: new game -new %u:0x%x:%u:0x%x:%u\n", vo, vr, vb, g->galaxy_seed, va);
+        log_message("Game: new game -new %u:0x%x:%u:0x%x:%u -nga %u\n", vo, vr, vb, g->galaxy_seed, va, g->ai_id);
     }
     game_generate_galaxy(g);
     game_generate_planet_names(g);
