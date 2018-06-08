@@ -511,13 +511,11 @@ static void game_ai_classic_turn_p1_planet_w(struct game_s *g, struct ai_turn_p1
         v4 = (p->special - 2) * 20 + p->special * 10 + 20;
         owner = p->owner;
         if (owner == PLAYER_NONE) {
-            int va;
-            va = 0;
-            for (player_id_t pi2 = PLAYER_0; (pi2 < PLAYER_NUM) && !va; ++pi2) {
+            for (player_id_t pi2 = PLAYER_0; (pi2 < PLAYER_NUM) && (owner == PLAYER_NONE); ++pi2) {
                 const empiretechorbit_t *e2 = &(g->eto[pi2]);
                 if (pi2 != pi) {
-                    for (int j = 0; (j < e2->shipdesigns_num) && !va; ++j) {
-                        if ((va = e2->orbit[i].ships[j]) != 0) {
+                    for (int j = 0; (j < e2->shipdesigns_num) && (owner == PLAYER_NONE); ++j) {
+                        if (e2->orbit[i].ships[j]) {
                             owner = pi2;
                         }
                     }
@@ -665,7 +663,7 @@ static void game_ai_classic_turn_p1_send_defend(struct game_s *g, struct ai_turn
     int bestspeed = game_tech_player_best_engine(g, pi) * 30 + 20;
     uint8_t tbl_shipw[PLAYER_NUM][NUM_SHIPDESIGNS];
     uint32_t tbl_planet_threat[PLANETS_MAX];
-    uint32_t tbl_defend[PLANETS_MAX];
+    uint8_t tbl_defend[PLANETS_MAX];
     int num_defend = 0;
     for (player_id_t pi2 = PLAYER_0; pi2 < g->players; ++pi2) {
         const empiretechorbit_t *e2 = &(g->eto[pi2]);
