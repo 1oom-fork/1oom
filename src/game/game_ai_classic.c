@@ -936,7 +936,7 @@ static void game_ai_classic_turn_p1_fund_developing(struct game_s *g, player_id_
     }
 }
 
-static void game_ai_classic_turn_p1_sub13(struct game_s *g, player_id_t pi)
+static void game_ai_classic_turn_p1_tax(struct game_s *g, player_id_t pi)
 {
     g->eto[pi].tax = (g->year >= 20) ? (rnd_1_n(10, &g->seed) + g->difficulty + 2) : 0;
 }
@@ -1068,7 +1068,7 @@ static void game_ai_classic_turn_p1(struct game_s *g)
         game_ai_classic_turn_p1_trans_own(g, ait, pi);
         game_ai_classic_turn_p1_build_defending_ships(g, pi);
         game_ai_classic_turn_p1_fund_developing(g, pi);
-        game_ai_classic_turn_p1_sub13(g, pi);
+        game_ai_classic_turn_p1_tax(g, pi);
     }
 }
 
