@@ -5,15 +5,15 @@
 1oom_gfxconv is a tool for converting GFX for use in PBX files.
 
 Usage:
-  1oom_gfxconv [OPTIONS] OUT.BIN IN.PCX [INn.PCX]*
-  1oom_gfxconv -d IN.BIN
+    1oom_gfxconv [OPTIONS] OUT.BIN IN.PCX [INn.PCX]*
+    1oom_gfxconv -d IN.BIN
 Options:
-  -f       - make format 1 binary (only council.lbx item 1)
-  -i       - all independent frames (winlose.lbx items 1-...)
-  -e N     - extra independent frame (embassy.lbx items 2-...)
-  -l N     - set loop frame
-  -p F N   - include palette ; First, Number of colors
-  -d       - dump converted file for debugging
+    -f       Make format 1 binary (only council.lbx item 1)
+    -i       All independent frames (winlose.lbx items 1-...)
+    -e N     Extra independent frame (embassy.lbx items 2-...)
+    -l N     Set loop frame
+    -p F N   Include palette ; First, Number of colors
+    -d       Dump converted file for debugging
 
 Examples:
     1oom_gfxconv title.bin title_screen.pcx
