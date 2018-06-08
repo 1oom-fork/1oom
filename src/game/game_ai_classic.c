@@ -773,7 +773,7 @@ static void game_ai_classic_turn_p1_send_idle(struct game_s *g, struct ai_turn_p
     }
 }
 
-static void game_ai_classic_turn_p1_sub9(struct game_s *g, struct ai_turn_p1_s *ait, player_id_t pi)
+static void game_ai_classic_turn_p1_trans_en(struct game_s *g, struct ai_turn_p1_s *ait, player_id_t pi)
 {
     int bestspeed = game_tech_player_best_engine(g, pi) * 30 + 30;
     empiretechorbit_t *e = &(g->eto[pi]);
@@ -1049,7 +1049,7 @@ static void game_ai_classic_turn_p1(struct game_s *g)
                 game_ai_classic_turn_p1_send_idle(g, ait, pi);
             }
         }
-        game_ai_classic_turn_p1_sub9(g, ait, pi);
+        game_ai_classic_turn_p1_trans_en(g, ait, pi);
         game_ai_classic_turn_p1_sub10(g, ait, pi);
         game_ai_classic_turn_p1_sub11(g, pi);
         game_ai_classic_turn_p1_sub12(g, pi);
