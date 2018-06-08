@@ -50,7 +50,7 @@ struct ai_turn_p1_s {
     int planet_own_num;
     int tbl_planet_own_w[PLANETS_MAX];
     int tbl_planet_en_w[PLANETS_MAX];
-    uint8_t tbl_hmm16[PLANETS_MAX];
+    uint8_t tbl_planet_own_i[PLANETS_MAX];
     uint8_t tbl_hmm17[PLANETS_MAX];
 };
 
@@ -518,7 +518,7 @@ static void game_ai_classic_turn_p1_planet_w(struct game_s *g, struct ai_turn_p1
             }
         }
         if (owner == pi) {
-            ait->tbl_hmm16[ait->planet_own_num] = i;
+            ait->tbl_planet_own_i[ait->planet_own_num] = i;
             ait->tbl_planet_own_w[ait->planet_own_num] = p->pop - (p->missile_bases * 5) + v4;
             ++ait->planet_own_num;
         } else if (owner != PLAYER_NONE) {
@@ -731,7 +731,7 @@ static void game_ai_classic_turn_p1_send_idle(struct game_s *g, struct ai_turn_p
         ait->tbl_force_own[ait->tbl_front_planet[i]] = 0;
     }
     for (int i = 0; i < ait->planet_own_num; ++i) {
-        if ((ait->tbl_force_own[ait->tbl_hmm16[i]] - ait->tbl_planet_own_w[i]) < 0) {
+        if ((ait->tbl_force_own[ait->tbl_planet_own_i[i]] - ait->tbl_planet_own_w[i]) < 0) {
             ait->tbl_force_own[i] = 0;
         }
     }
@@ -777,7 +777,7 @@ static void game_ai_classic_turn_p1_trans_en(struct game_s *g, struct ai_turn_p1
 {
     int bestspeed = game_tech_player_best_engine(g, pi) * 30 + 30;
     empiretechorbit_t *e = &(g->eto[pi]);
-    BOOLVEC_DECLARE(tbl_trans_from, PLANETS_MAX); /* NOTE overwrites ait->tbl_hmm16 */
+    BOOLVEC_DECLARE(tbl_trans_from, PLANETS_MAX); /* NOTE overwrites ait->tbl_planet_own_i */
     BOOLVEC_DECLARE(tbl_trans_to, PLANETS_MAX);
     for (int i = 0; i < g->galaxy_stars; ++i) {
         const planet_t *p = &(g->planet[i]);
