@@ -4,6 +4,7 @@
 
 #include "ui.h"
 #include "game.h"
+#include "game_ai.h"
 #include "game_new.h"
 #include "game_str.h"
 #include "gfxaux.h"
@@ -264,6 +265,7 @@ static void new_game_draw_extra_cb(void *vptr)
     struct new_game_data_s *d = vptr;
     struct game_new_options_s *newopts = d->newopts;
     vgabuf_copy_back_from_page3();
+    lbxfont_select(5, 0, 0, 0);
     for (player_id_t i = 0; i < d->newopts->players; ++i) {
         int x0 = 4 + (i / 3) * 160;
         int y0 = 20 + (i % 3) * 50;
@@ -275,10 +277,9 @@ static void new_game_draw_extra_cb(void *vptr)
             gfx_aux_draw_frame_to(d->gfx_flag[newopts->pdata[i].banner], &ui_data.aux.screen);
             gfx_aux_draw_frame_from(x0 + 43 + 1, y0 + 1, &ui_data.aux.screen, UI_SCREEN_W);
         }
-        lbxfont_select(5, 0, 0, 0);
         lbxfont_print_str_normal(x0 + 43 + 41 + 2, y0 + 2 , d->newopts->pdata[i].playername, UI_SCREEN_W);
         lbxfont_print_str_normal(x0 + 43 + 41 + 2, y0 + 2 + 11, d->newopts->pdata[i].homename, UI_SCREEN_W);
-        lbxfont_print_str_normal(x0 + 43 + 41 + 2, y0 + 2 + 22, d->newopts->pdata[i].is_ai ? game_str_ng_ai : game_str_ng_player, UI_SCREEN_W);
+        lbxfont_print_str_normal(x0 + 43 + 41 + 2, y0 + 2 + 22, d->newopts->pdata[i].is_ai ? game_str_ng_computer : game_str_ng_player, UI_SCREEN_W);
     }
     if (!d->have_human) {
         lbxfont_print_str_center(160, 2, game_str_ng_allai, UI_SCREEN_W);
@@ -364,8 +365,7 @@ static bool ui_new_game_extra(struct game_new_options_s *newopts, struct new_gam
             ui_sound_play_sfx_06();
             flag_ok = false;
             flag_done = true;
-        }
-        if (oi == oi_ok) {
+        } else if (oi == oi_ok) {
             if (d->have_human) {
                 flag_ok = true;
                 flag_done = true;
