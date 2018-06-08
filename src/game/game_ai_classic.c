@@ -654,7 +654,7 @@ static void game_ai_classic_turn_p1_send_attack(struct game_s *g, struct ai_turn
     }
 }
 
-static void game_ai_classic_turn_p1_sub7(struct game_s *g, struct ai_turn_p1_s *ait, player_id_t pi)
+static void game_ai_classic_turn_p1_send_defend(struct game_s *g, struct ai_turn_p1_s *ait, player_id_t pi)
 {
     int bestspeed = game_tech_player_best_engine(g, pi) * 30 + 20;
     uint8_t tbl_shipw[PLAYER_NUM][NUM_SHIPDESIGNS];
@@ -1035,7 +1035,7 @@ static void game_ai_classic_turn_p1(struct game_s *g)
         if (ait->hmm12 != 0) {
             game_ai_classic_turn_p1_send_attack(g, ait, pi);
         }
-        game_ai_classic_turn_p1_sub7(g, ait, pi);
+        game_ai_classic_turn_p1_send_defend(g, ait, pi);
         /* WASBUG moved above to next loop as only the last player affected num_enroute */
         {
             int num_enroute;
