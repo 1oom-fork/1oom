@@ -76,7 +76,7 @@ static void empirereport_draw_cb(void *vptr)
     {
         int n = 0;
         for (int i = 0; (i < g->players) && (n < 3); ++i) {
-            if ((i != d->pi) && (e->treaty[i] == TREATY_ALLIANCE) && (g->evn.home[i] != PLANET_NONE)) {
+            if ((i != d->pi) && (e->treaty[i] == TREATY_ALLIANCE) && IS_ALIVE(g, i)) {
                 ui_draw_pixel(9, 140 + 6 * n, 0);
                 ui_draw_pixel(9, 141 + 6 * n, 0);
                 ui_draw_pixel(10, 140 + 6 * n, 0);
@@ -94,7 +94,7 @@ static void empirereport_draw_cb(void *vptr)
     {
         int n = 0;
         for (int i = 0; (i < g->players) && (n < 3); ++i) {
-            if ((i != d->pi) && (e->treaty[i] >= TREATY_WAR) && (g->evn.home[i] != PLANET_NONE)) {
+            if ((i != d->pi) && (e->treaty[i] >= TREATY_WAR) && IS_ALIVE(g, i)) {
                 ui_draw_pixel(9, 177 + 6 * n, 0);
                 ui_draw_pixel(9, 178 + 6 * n, 0);
                 ui_draw_pixel(10, 177 + 6 * n, 0);

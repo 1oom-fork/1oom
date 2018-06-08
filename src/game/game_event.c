@@ -1040,7 +1040,7 @@ bool game_event_run(struct game_s *g, struct game_end_s *ge)
         }
     }
     /*1124f*/
-    if ((g->evn.coup != PLAYER_NONE) && (g->evn.home[g->evn.coup] != PLANET_NONE)) {
+    if ((g->evn.coup != PLAYER_NONE) && IS_ALIVE(g, g->evn.coup)) {
         player_id_t player = g->evn.coup;
         empiretechorbit_t *e = &(g->eto[player]);
         int num_humans = 0;
