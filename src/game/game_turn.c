@@ -1528,7 +1528,7 @@ static void game_turn_contact_broken(struct game_s *g, player_id_t pi, const BOO
 {
     empiretechorbit_t *e = &(g->eto[pi]);
     for (player_id_t i = PLAYER_0; i < g->players; ++i) {
-        if ((i != pi) && (g->evn.home[i] != PLANET_NONE) && BOOLVEC_IS0(e->within_frange, i) && BOOLVEC_IS1(bv, i)) {
+        if ((i != pi) && IS_ALIVE(g, i) && BOOLVEC_IS0(e->within_frange, i) && BOOLVEC_IS1(bv, i)) {
             empiretechorbit_t *e2 = &(g->eto[i]);
             e->mood_trade[i] = 0;
             e->trade_bc[i] = 0;
