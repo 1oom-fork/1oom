@@ -19,8 +19,9 @@ orbital_weap_any : 0..1, 0
     orbital bombardment. The last two are only available via save game editing,
     but the omission of death ray is puzzling.
 
-event_roll : 1..2147483647, 512
+event_roll : 0..2147483647, 512
   - Special event probability. Bigger number means events are less likely.
+    Zero means events are disabled.
 
 crystal_* : ?, ?
 amoeba_* : ?, ?
