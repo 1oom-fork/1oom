@@ -47,6 +47,7 @@ const char *game_str_ng_choose_banner = "Choose Banner";
 const char *game_str_ng_your_name = "Your Name...";
 const char *game_str_ng_home_name = "Home World...";
 const char *game_str_ng_ai = "AI";
+const char *game_str_ng_computer = "Computer";
 const char *game_str_ng_player = "Player";
 const char *game_str_ng_cancel = "Cancel";
 const char *game_str_ng_ok = "Start Game";

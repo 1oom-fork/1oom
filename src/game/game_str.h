@@ -25,6 +25,7 @@ extern const char *game_str_ng_choose_banner;
 extern const char *game_str_ng_your_name;
 extern const char *game_str_ng_home_name;
 extern const char *game_str_ng_ai;
+extern const char *game_str_ng_computer;
 extern const char *game_str_ng_player;
 extern const char *game_str_ng_cancel;
 extern const char *game_str_ng_ok;

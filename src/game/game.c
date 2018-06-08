@@ -7,6 +7,7 @@
 #include "cfg.h"
 #include "game.h"
 #include "gameapi.h"
+#include "game_ai.h"
 #include "game_aux.h"
 #include "game_misc.h"
 #include "game_new.h"
@@ -49,6 +50,10 @@ static void game_start(struct game_s *g)
     if (g->seed == 0) {
         g->seed = rnd_get_new_seed();
         log_message("Game: seed was 0, got new seed 0x%0x\n", g->seed);
+    }
+    if (g->ai_id >= GAME_AI_NUM) {
+        log_warning("Game: AI ID was %i >= %i, setting to %i (%s)\n", g->ai_id, GAME_AI_NUM, GAME_AI_CLASSIC, game_ais[GAME_AI_CLASSIC]);
+        g->ai_id = GAME_AI_CLASSIC;
     }
     game_update_production(g);
     game_update_tech_util(g);
@@ -266,6 +271,22 @@ static int game_opt_set_new_home(char **argv, void *var)
     return 0;
 }
 
+static int game_opt_set_new_ai(char **argv, void *var)
+{
+    uint32_t v = 0;
+    if (!util_parse_number(argv[1], &v)) {
+        log_error("invalid value '%s'\n", argv[1]);
+        return -1;
+    } else if (v > GAME_AI_NUM) {
+        log_error("invalid AI num %i\n", v);
+        return -1;
+    }
+    game_opt_new.ai_id = v;
+    log_message("Game: AI type %i '%s'\n", v, game_ais[v]);
+    return 0;
+}
+
+
 static int game_opt_do_load(char **argv, void *var)
 {
     if ((argv[1][1] == 0) && (argv[1][0] >= '1') && (argv[1][0] <= '8')) {
@@ -324,6 +345,9 @@ const struct cmdline_options_s main_cmdline_options[] = {
     { "-ngh", 2,
       game_opt_set_new_home, 0,
       "PLAYER NAME", "Set new game home world name for player 1..6" },
+    { "-nga", 1,
+      game_opt_set_new_ai, 0,
+      "AITYPE", "Set new game AI type (0..1)" },
     { "-load", 1,
       game_opt_do_load, 0,
       "SAVE", "Load game (1..8 or filename)\n1..6 are regular save slots\n7 is continue game\n8 is undo" },

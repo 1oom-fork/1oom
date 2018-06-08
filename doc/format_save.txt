@@ -20,7 +20,8 @@ offset  sz      description
 40      1       number of players: @PLAYERS (2..6)
 41      1       player is AI (bitmask)
 42      1       player refused council ruling (bitmask)
-43      2       (0, unused)
+43      1       AI type ID
+44      1       (0, unused)
 45      1       nebula type (0,1)
 46      1       nebula type (2,3)
 47      1       active player when save was made
