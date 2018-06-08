@@ -1,7 +1,8 @@
 /*
     The "Classic" AI mimics MOO1 v1.3 behaviour.
     Minor bug fixes are allowed.
-    Improvements go to other game_ai_* implementations.
+    The "Classic+" AI fixes small bugs and does small improvements.
+    Major improvements go to other game_ai_* implementations.
 */
 
 #include "config.h"
@@ -395,6 +396,9 @@ static void game_turn_fleet_send(struct game_s *g, struct ai_turn_p1_s *ait, pla
         if (n > 0) {
             uint8_t s;
             r->ships[i] = n;
+            if (g->ai_id == GAME_AI_CLASSICPLUS) {
+                o->ships[i] = 0;
+            }
             ++num_shiptypes;
             s = g->srd[pi].design[i].engine;
             SETMIN(speed, s);
@@ -413,10 +417,24 @@ static void game_turn_fleet_send(struct game_s *g, struct ai_turn_p1_s *ait, pla
         r->y = pf->y;
         ++g->enroute_num;
     }
-    for (int i = 0; i < NUM_SHIPDESIGNS; ++i) {
-        o->ships[i] = 0;    /* BUG ships removed even if they were not sent due to range == 2 && !reserve_fuel */
+    {
+        bool all_sent = true;
+        if (g->ai_id == GAME_AI_CLASSICPLUS) {
+            for (int i = 0; i < NUM_SHIPDESIGNS; ++i) {
+                if (o->ships[i]) {
+                    all_sent = false;
+                    break;
+                }
+            }
+        } else {
+            for (int i = 0; i < NUM_SHIPDESIGNS; ++i) {
+                o->ships[i] = 0;    /* BUG ships removed even if they were not sent due to range == 2 && !reserve_fuel */
+            }
+        }
+        if (all_sent) {
+            BOOLVEC_CLEAR(o->visible, NUM_SHIPDESIGNS);
+        }
     }
-    BOOLVEC_CLEAR(o->visible, NUM_SHIPDESIGNS); /* FIXME if above fixed */
 }
 
 static void game_ai_classic_turn_p1_send_colony_ships(struct game_s *g, struct ai_turn_p1_s *ait, player_id_t pi)
@@ -3968,7 +3986,42 @@ static bool game_ai_classic_aud_later(struct audience_s *au)
 /* -------------------------------------------------------------------------- */
 
 const struct game_ai_s game_ai_classic = {
+    GAME_AI_CLASSIC,
     "Classic",
+    game_ai_classic_turn_p1,
+    game_ai_classic_turn_p2,
+    game_ai_classic_turn_p3,
+    game_ai_classic_battle_ai_ai_resolve,
+    game_ai_classic_battle_ai_turn,
+    game_ai_classic_battle_ai_retreat,
+    game_ai_classic_tech_next,
+    game_ai_classic_bomb,
+    game_ai_classic_crank_tech, /* plague */
+    game_ai_classic_crank_tech, /* nova */
+    game_ai_classic_crank_ship, /* comet */
+    game_ai_classic_crank_ship, /* pirates */
+    game_ai_classic_vote,
+    game_ai_classic_turn_diplo_p1,
+    game_ai_classic_turn_diplo_p2,
+    game_ai_classic_aud_start_human,
+    game_ai_classic_aud_treaty_nap,
+    game_ai_classic_aud_treaty_alliance,
+    game_ai_classic_aud_treaty_peace,
+    game_ai_classic_aud_treaty_declare_war,
+    game_ai_classic_aud_treaty_break_alliance,
+    game_ai_classic_aud_trade,
+    game_ai_classic_aud_sweeten,
+    game_ai_classic_aud_threaten,
+    game_ai_classic_aud_tribute_bc,
+    game_ai_classic_aud_tribute_tech,
+    game_ai_classic_aud_tech_scale,
+    game_ai_classic_aud_get_dtype,
+    game_ai_classic_aud_later
+};
+
+const struct game_ai_s game_ai_classicplus = {
+    GAME_AI_CLASSICPLUS,
+    "Classic+",
     game_ai_classic_turn_p1,
     game_ai_classic_turn_p2,
     game_ai_classic_turn_p3,
