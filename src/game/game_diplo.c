@@ -352,7 +352,7 @@ void game_diplo_hmm6(struct game_s *g, player_id_t p1, player_id_t p2)
     } else {
         empiretechorbit_t *e1 = &(g->eto[p1]);
         empiretechorbit_t *e2 = &(g->eto[p2]);
-        if ((e1->treaty[p2] >= TREATY_WAR) || BOOLVEC_IS0(e1->within_frange, p2) || (g->evn.home[p1] == PLANET_NONE)) {
+        if ((e1->treaty[p2] >= TREATY_WAR) || BOOLVEC_IS0(e1->within_frange, p2) || (!IS_ALIVE(g, p1))) {
             return;
         }
         if (1
