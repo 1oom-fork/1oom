@@ -245,9 +245,9 @@ static int dump_pbx(const char *filename, const char *prefix_in, bool flag_write
 static void show_usage(void)
 {
     fprintf(stderr, "Usage:\n"
-                    "  1oom_pbxdump [OPTIONS] IN.PBX [OUTPREFIX]\n"
+                    "    1oom_pbxdump [OPTIONS] IN.PBX [OUTPREFIX]\n"
                     "Options:\n"
-                    "  -w       - write files\n"
+                    "    -w       Write files\n"
            );
 }
 
