@@ -46,7 +46,7 @@ struct ai_turn_p1_s {
     int tbl_front_relation[PLAYER_NUM];
     uint8_t tbl_front_planet[PLAYER_NUM];
     uint32_t force_own_sum;
-    int hmm12;
+    int planet_en_num;
     int hmm13;
     int tbl_hmm14[PLANETS_MAX];
     int tbl_hmm15[PLANETS_MAX];
@@ -510,7 +510,7 @@ static void game_ai_classic_turn_p1_send_colony_ships(struct game_s *g, struct a
 
 static void game_ai_classic_turn_p1_planet_w(struct game_s *g, struct ai_turn_p1_s *ait, player_id_t pi)
 {
-    ait->hmm12 = 0;
+    ait->planet_en_num = 0;
     ait->hmm13 = 0;
     for (int i = 0; i < g->galaxy_stars; ++i) {
         const planet_t *p = &(g->planet[i]);
@@ -543,16 +543,16 @@ static void game_ai_classic_turn_p1_planet_w(struct game_s *g, struct ai_turn_p1
               && (p->within_frange[pi] == 1) && (p->type >= e->have_colony_for)
               && ((g->year > 120) || (g->evn.planet_orion_i != i))
             ) {
-                ait->tbl_hmm17[ait->hmm12] = i;
-                ait->tbl_hmm15[ait->hmm12] = p->pop - (p->missile_bases * 10) + v4;
-                ++ait->hmm12;
+                ait->tbl_hmm17[ait->planet_en_num] = i;
+                ait->tbl_hmm15[ait->planet_en_num] = p->pop - (p->missile_bases * 10) + v4;
+                ++ait->planet_en_num;
             }
         }
     }
     {
         bool work_left = true;
-        for (int i = 0; (i < ait->hmm12) && work_left; ++i) {
-            for (int j = 0; j < (ait->hmm12 - 1); ++j) {
+        for (int i = 0; (i < ait->planet_en_num) && work_left; ++i) {
+            for (int j = 0; j < (ait->planet_en_num - 1); ++j) {
                 work_left = false;
                 if (ait->tbl_hmm15[j] < ait->tbl_hmm15[j + 1]) {
                     { int t; t = ait->tbl_hmm15[j]; ait->tbl_hmm15[j] = ait->tbl_hmm15[j + 1]; ait->tbl_hmm15[j + 1] = t; }
@@ -572,14 +572,14 @@ static void game_ai_classic_turn_p1_send_attack(struct game_s *g, struct ai_turn
         uint8_t pfrom, pto, pto2;
         pto2 = PLANET_NONE;
         pfrom = ait->tbl_front_planet[i];
-        for (int j = 0; (j < ait->hmm12) && (pto2 == PLANET_NONE); ++j) {
+        for (int j = 0; (j < ait->planet_en_num) && (pto2 == PLANET_NONE); ++j) {
             const planet_t *pt;
             pto = ait->tbl_hmm17[j];
             pt = &(g->planet[pto]);
             if (1
               && (ait->tbl_hmm15[j] != -1000)
               && (util_math_dist_fast(pt->x, pt->y, g->planet[pfrom].x, g->planet[pfrom].y) < range)
-              && ((rnd_1_n(100, &g->seed) < 40) || (ait->hmm12 < 2))
+              && ((rnd_1_n(100, &g->seed) < 40) || (ait->planet_en_num < 2))
             ) {
                 empiretechorbit_t *e2;
                 int weight;
@@ -635,7 +635,7 @@ static void game_ai_classic_turn_p1_send_attack(struct game_s *g, struct ai_turn
             uint8_t pfrom, pto, pto2;
             pto2 = PLANET_NONE;
             pfrom = i;
-            for (int j = 0; (j < ait->hmm12) && (pto2 == PLANET_NONE); ++j) {
+            for (int j = 0; (j < ait->planet_en_num) && (pto2 == PLANET_NONE); ++j) {
                 if (ait->tbl_hmm15[j] > -1000) {
                     const planet_t *pt;
                     pto = ait->tbl_hmm17[j];
@@ -1047,7 +1047,7 @@ static void game_ai_classic_turn_p1(struct game_s *g)
         }
         game_ai_classic_turn_p1_front(g, ait, pi);
         game_ai_classic_turn_p1_planet_w(g, ait, pi);
-        if (ait->hmm12 != 0) {
+        if (ait->planet_en_num != 0) {
             game_ai_classic_turn_p1_send_attack(g, ait, pi);
         }
         game_ai_classic_turn_p1_send_defend(g, ait, pi);
