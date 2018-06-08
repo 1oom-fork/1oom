@@ -43,6 +43,7 @@ static const struct strtbl_s {
     DEFSTRITEM(ng_your_name),
     DEFSTRITEM(ng_home_name),
     DEFSTRITEM(ng_ai),
+    DEFSTRITEM(ng_computer),
     DEFSTRITEM(ng_player),
     DEFSTRITEM(ng_cancel),
     DEFSTRITEM(ng_ok),
