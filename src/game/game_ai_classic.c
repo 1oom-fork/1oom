@@ -971,7 +971,7 @@ static void game_ai_classic_turn_p1(struct game_s *g)
     }
     game_update_maint_costs(g);
     for (player_id_t pi = PLAYER_0; pi < g->players; ++pi) {
-        if (g->evn.home[pi] != PLANET_NONE) {
+        if (IS_ALIVE(g, pi)) {
             int xsum, ysum, num_planets;
             /* BUG moved below to next loop as only the last player affected num_enroute
             int num_enroute;
@@ -3525,7 +3525,7 @@ static void game_ai_classic_turn_diplo_p2(struct game_s *g)
         if (IS_AI(g, p1)) {
             continue;
         }
-        if (g->evn.home[p1] == PLANET_NONE) {
+        if (!IS_ALIVE(g, p1)) {
             memset(e1->diplo_type, 0, sizeof(e1->diplo_type));
             continue;
         }
@@ -3534,7 +3534,7 @@ static void game_ai_classic_turn_diplo_p2(struct game_s *g)
             if (IS_HUMAN(g, p2)) {
                 continue;
             }
-            if (g->evn.home[p2] == PLANET_NONE) {
+            if (!IS_ALIVE(g, p2)) {
                 e1->diplo_type[p2] = 0;
                 continue;
             }
