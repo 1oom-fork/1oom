@@ -6,9 +6,9 @@
 See doc/usage_pbxmake.txt for information on PBX files.
 
 Usage:
-  1oom_pbxdump [OPTIONS] IN.PBX [OUTPREFIX]
+    1oom_pbxdump [OPTIONS] IN.PBX [OUTPREFIX]
 Options:
-  -w       - write files
+    -w       Write files
 
 If the -w option is not given then no files are written.
 The input filename without the .PBX extension (if any) is used for the output
