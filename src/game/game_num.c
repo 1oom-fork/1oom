@@ -8,6 +8,7 @@
 
 int game_num_bt_turn_max = 50;
 int game_num_stargate_cost = 3000;
+int game_num_stargate_maint = 100;
 int game_num_weapon_list_max = 30;
 int game_num_limit_ships = 32000;
 int game_num_limit_ships_all = 32000;
