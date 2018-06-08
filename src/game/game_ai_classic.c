@@ -895,7 +895,7 @@ static void game_ai_classic_turn_p1_trans_own(struct game_s *g, struct ai_turn_p
     }
 }
 
-static void game_ai_classic_turn_p1_sub11(struct game_s *g, player_id_t pi)
+static void game_ai_classic_turn_p1_build_defending_ships(struct game_s *g, player_id_t pi)
 {
     empiretechorbit_t *e = &(g->eto[pi]);
     BOOLVEC_DECLARE(tbl_hmm, PLANETS_MAX);
@@ -1071,7 +1071,7 @@ static void game_ai_classic_turn_p1(struct game_s *g)
         }
         game_ai_classic_turn_p1_trans_en(g, ait, pi);
         game_ai_classic_turn_p1_trans_own(g, ait, pi);
-        game_ai_classic_turn_p1_sub11(g, pi);
+        game_ai_classic_turn_p1_build_defending_ships(g, pi);
         game_ai_classic_turn_p1_sub12(g, pi);
         game_ai_classic_turn_p1_sub13(g, pi);
     }
