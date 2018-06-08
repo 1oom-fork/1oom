@@ -73,13 +73,13 @@ static void gmap_draw_cb(void *vptr)
 {
     struct gmap_data_s *d = vptr;
     struct game_s *g = d->g;
-    player_id_t tbl_havehome[PLAYER_NUM];
-    int havehomenum = 1;
+    player_id_t tbl_races[PLAYER_NUM];
+    int racesnum = 1;
 
-    tbl_havehome[0] = d->api;
+    tbl_races[0] = d->api;
     for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         if ((i != d->api) && IS_ALIVE(g, i)) {
-            tbl_havehome[havehomenum++] = i;
+            tbl_races[racesnum++] = i;
         }
     }
 
@@ -213,9 +213,9 @@ static void gmap_draw_cb(void *vptr)
     switch (d->mode) {
         case 0:
             lbxfont_select(0, 6, 0, 0);
-            for (int i = 0; i < havehomenum; ++i) {
+            for (int i = 0; i < racesnum; ++i) {
                 empiretechorbit_t *e;
-                e = &(g->eto[tbl_havehome[i]]);
+                e = &(g->eto[tbl_races[i]]);
                 lbxgfx_draw_frame(245, 105 + 10 * i, ui_data.gfx.starmap.smalflag[e->banner], UI_SCREEN_W);
                 lbxfont_print_str_normal(260, 105 + 10 * i, game_str_tbl_race[e->race], UI_SCREEN_W);
             }
