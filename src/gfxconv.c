@@ -300,15 +300,15 @@ static int gfx_dump(const char *filename)
 static void show_usage(void)
 {
     fprintf(stderr, "Usage:\n"
-                    "  1oom_gfxconv [OPTIONS] OUT.BIN IN.PCX [INn.PCX]*\n"
-                    "  1oom_gfxconv -d IN.BIN\n"
+                    "    1oom_gfxconv [OPTIONS] OUT.BIN IN.PCX [INn.PCX]*\n"
+                    "    1oom_gfxconv -d IN.BIN\n"
                     "Options:\n"
-                    "  -f       - make format 1 binary (only council.lbx item 1)\n"
-                    "  -i       - all independent frames (winlose.lbx items 1-...)\n"
-                    "  -e N     - extra independent frame (embassy.lbx items 2-...)\n"
-                    "  -l N     - set loop frame\n"
-                    "  -p F N   - include palette ; First, Number of colors\n"
-                    "  -d       - dump converted file for debugging\n"
+                    "    -f       Make format 1 binary (only council.lbx item 1)\n"
+                    "    -i       All independent frames (winlose.lbx items 1-...)\n"
+                    "    -e N     Extra independent frame (embassy.lbx items 2-...)\n"
+                    "    -l N     Set loop frame\n"
+                    "    -p F N   Include palette ; First, Number of colors\n"
+                    "    -d       Dump converted file for debugging\n"
            );
 }
 
