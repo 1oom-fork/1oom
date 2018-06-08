@@ -9,7 +9,14 @@ struct battle_s;
 struct election_s;
 struct audience_s;
 
+typedef enum {
+    GAME_AI_CLASSIC = 0,
+    GAME_AI_CLASSICPLUS, /*1*/
+    GAME_AI_NUM
+} game_ai_id_t;
+
 struct game_ai_s {
+    game_ai_id_t id;
     char const * const name;
     void (*turn_p1)(struct game_s *g);
     void (*turn_p2)(struct game_s *g);
@@ -43,5 +50,6 @@ struct game_ai_s {
 };
 
 extern const struct game_ai_s *game_ai;
+extern const struct game_ai_s *const game_ais[GAME_AI_NUM];
 
 #endif
