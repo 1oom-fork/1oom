@@ -51,7 +51,7 @@ struct ai_turn_p1_s {
     int tbl_planet_own_w[PLANETS_MAX];
     int tbl_planet_en_w[PLANETS_MAX];
     uint8_t tbl_planet_own_i[PLANETS_MAX];
-    uint8_t tbl_hmm17[PLANETS_MAX];
+    uint8_t tbl_planet_en_i[PLANETS_MAX];
 };
 
 struct ai_turn_p2_s {
@@ -528,7 +528,7 @@ static void game_ai_classic_turn_p1_planet_w(struct game_s *g, struct ai_turn_p1
               && (p->within_frange[pi] == 1) && (p->type >= e->have_colony_for)
               && ((g->year > 120) || (g->evn.planet_orion_i != i))
             ) {
-                ait->tbl_hmm17[ait->planet_en_num] = i;
+                ait->tbl_planet_en_i[ait->planet_en_num] = i;
                 ait->tbl_planet_en_w[ait->planet_en_num] = p->pop - (p->missile_bases * 10) + v4;
                 ++ait->planet_en_num;
             }
@@ -541,7 +541,7 @@ static void game_ai_classic_turn_p1_planet_w(struct game_s *g, struct ai_turn_p1
                 work_left = false;
                 if (ait->tbl_planet_en_w[j] < ait->tbl_planet_en_w[j + 1]) {
                     { int t; t = ait->tbl_planet_en_w[j]; ait->tbl_planet_en_w[j] = ait->tbl_planet_en_w[j + 1]; ait->tbl_planet_en_w[j + 1] = t; }
-                    { uint8_t t; t = ait->tbl_hmm17[j]; ait->tbl_hmm17[j] = ait->tbl_hmm17[j + 1]; ait->tbl_hmm17[j + 1] = t; }
+                    { uint8_t t; t = ait->tbl_planet_en_i[j]; ait->tbl_planet_en_i[j] = ait->tbl_planet_en_i[j + 1]; ait->tbl_planet_en_i[j + 1] = t; }
                     work_left = true;
                 }
             }
@@ -559,7 +559,7 @@ static void game_ai_classic_turn_p1_send_attack(struct game_s *g, struct ai_turn
         pfrom = ait->tbl_front_planet[i];
         for (int j = 0; (j < ait->planet_en_num) && (pto2 == PLANET_NONE); ++j) {
             const planet_t *pt;
-            pto = ait->tbl_hmm17[j];
+            pto = ait->tbl_planet_en_i[j];
             pt = &(g->planet[pto]);
             if (1
               && (ait->tbl_planet_en_w[j] != -1000)
@@ -623,7 +623,7 @@ static void game_ai_classic_turn_p1_send_attack(struct game_s *g, struct ai_turn
             for (int j = 0; (j < ait->planet_en_num) && (pto2 == PLANET_NONE); ++j) {
                 if (ait->tbl_planet_en_w[j] > -1000) {
                     const planet_t *pt;
-                    pto = ait->tbl_hmm17[j];
+                    pto = ait->tbl_planet_en_i[j];
                     pt = &(g->planet[pto]);
                     if (1
                       && (util_math_dist_fast(pt->x, pt->y, g->planet[pfrom].x, g->planet[pfrom].y) < range)
