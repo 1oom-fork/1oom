@@ -48,7 +48,7 @@ struct ai_turn_p1_s {
     int force_own_sum;
     int planet_en_num;
     int planet_own_num;
-    int tbl_hmm14[PLANETS_MAX];
+    int tbl_planet_own_w[PLANETS_MAX];
     int tbl_hmm15[PLANETS_MAX];
     uint8_t tbl_hmm16[PLANETS_MAX];
     uint8_t tbl_hmm17[PLANETS_MAX];
@@ -519,7 +519,7 @@ static void game_ai_classic_turn_p1_planet_w(struct game_s *g, struct ai_turn_p1
         }
         if (owner == pi) {
             ait->tbl_hmm16[ait->planet_own_num] = i;
-            ait->tbl_hmm14[ait->planet_own_num] = p->pop - (p->missile_bases * 5) + v4;
+            ait->tbl_planet_own_w[ait->planet_own_num] = p->pop - (p->missile_bases * 5) + v4;
             ++ait->planet_own_num;
         } else if (owner != PLAYER_NONE) {
             empiretechorbit_t *e = &(g->eto[pi]);
@@ -731,7 +731,7 @@ static void game_ai_classic_turn_p1_send_idle(struct game_s *g, struct ai_turn_p
         ait->tbl_force_own[ait->tbl_front_planet[i]] = 0;
     }
     for (int i = 0; i < ait->planet_own_num; ++i) {
-        if ((ait->tbl_force_own[ait->tbl_hmm16[i]] - ait->tbl_hmm14[i]) < 0) {
+        if ((ait->tbl_force_own[ait->tbl_hmm16[i]] - ait->tbl_planet_own_w[i]) < 0) {
             ait->tbl_force_own[i] = 0;
         }
     }
