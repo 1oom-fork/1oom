@@ -8,3 +8,8 @@
 /* -------------------------------------------------------------------------- */
 
 const struct game_ai_s *game_ai = &game_ai_classic;
+
+const char *game_ais[GAME_AI_NUM] = {
+    "Classic",
+    "Classic+",
+};
