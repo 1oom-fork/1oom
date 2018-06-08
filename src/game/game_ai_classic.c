@@ -1,7 +1,8 @@
 /*
     The "Classic" AI mimics MOO1 v1.3 behaviour.
     Minor bug fixes are allowed.
-    Improvements go to other game_ai_* implementations.
+    The "Classic+" AI fixes small bugs and does small improvements.
+    Major improvements go to other game_ai_* implementations.
 */
 
 #include "config.h"
@@ -400,6 +401,9 @@ static void game_turn_fleet_send(struct game_s *g, struct ai_turn_p1_s *ait, pla
         if (n > 0) {
             uint8_t s;
             r->ships[i] = n;
+            if (g->ai_id == GAME_AI_CLASSICPLUS) {
+                o->ships[i] = 0;
+            }
             ++num_shiptypes;
             s = g->srd[pi].design[i].engine;
             SETMIN(speed, s);
@@ -418,10 +422,24 @@ static void game_turn_fleet_send(struct game_s *g, struct ai_turn_p1_s *ait, pla
         r->y = pf->y;
         ++g->enroute_num;
     }
-    for (int i = 0; i < NUM_SHIPDESIGNS; ++i) {
-        o->ships[i] = 0;    /* BUG ships removed even if they were not sent due to range == 2 && !reserve_fuel */
+    {
+        bool all_sent = true;
+        if (g->ai_id == GAME_AI_CLASSICPLUS) {
+            for (int i = 0; i < NUM_SHIPDESIGNS; ++i) {
+                if (o->ships[i]) {
+                    all_sent = false;
+                    break;
+                }
+            }
+        } else {
+            for (int i = 0; i < NUM_SHIPDESIGNS; ++i) {
+                o->ships[i] = 0;    /* BUG ships removed even if they were not sent due to range == 2 && !reserve_fuel */
+            }
+        }
+        if (all_sent) {
+            BOOLVEC_CLEAR(o->visible, NUM_SHIPDESIGNS);
+        }
     }
-    BOOLVEC_CLEAR(o->visible, NUM_SHIPDESIGNS); /* FIXME if above fixed */
 }
 
 static void game_ai_classic_turn_p1_send_colony_ships(struct game_s *g, struct ai_turn_p1_s *ait, player_id_t pi)
