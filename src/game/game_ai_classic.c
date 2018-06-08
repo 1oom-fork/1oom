@@ -907,7 +907,7 @@ static void game_ai_classic_turn_p1_build_defending_ships(struct game_s *g, play
     }
 }
 
-static void game_ai_classic_turn_p1_sub12(struct game_s *g, player_id_t pi)
+static void game_ai_classic_turn_p1_fund_developing(struct game_s *g, player_id_t pi)
 {
     empiretechorbit_t *e = &(g->eto[pi]);
     for (int i = 0; i < g->galaxy_stars; ++i) {
@@ -1052,7 +1052,7 @@ static void game_ai_classic_turn_p1(struct game_s *g)
         game_ai_classic_turn_p1_trans_en(g, ait, pi);
         game_ai_classic_turn_p1_trans_own(g, ait, pi);
         game_ai_classic_turn_p1_build_defending_ships(g, pi);
-        game_ai_classic_turn_p1_sub12(g, pi);
+        game_ai_classic_turn_p1_fund_developing(g, pi);
         game_ai_classic_turn_p1_sub13(g, pi);
     }
 }
