@@ -724,7 +724,7 @@ static void game_ai_classic_turn_p1_send_defend(struct game_s *g, struct ai_turn
     }
 }
 
-static void game_ai_classic_turn_p1_sub8(struct game_s *g, struct ai_turn_p1_s *ait, player_id_t pi)
+static void game_ai_classic_turn_p1_send_idle(struct game_s *g, struct ai_turn_p1_s *ait, player_id_t pi)
 {
     int bestspeed = game_tech_player_best_engine(g, pi) * 20 + 20;
     for (int i = 0; i < ait->num_fronts; ++i) {
@@ -1046,7 +1046,7 @@ static void game_ai_classic_turn_p1(struct game_s *g)
                 }
             }
             if (num_enroute < 8) {
-                game_ai_classic_turn_p1_sub8(g, ait, pi);
+                game_ai_classic_turn_p1_send_idle(g, ait, pi);
             }
         }
         game_ai_classic_turn_p1_sub9(g, ait, pi);
