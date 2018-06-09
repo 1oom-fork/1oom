@@ -15,6 +15,7 @@ int moouse_y = 0;
 int moouse_w;
 int moouse_h;
 int mouse_buttons = 0;
+int mouse_scroll = 0;
 int mouse_stored_x = 0;
 int mouse_stored_y = 0;
 int mouse_click_x = 0;
@@ -48,6 +49,11 @@ void mouse_set_buttons_from_hw(int buttons)
         mouse_have_click_hw = true;
         mouse_have_click_sw = true;
     }
+}
+
+void mouse_set_scroll_from_hw(int scroll)
+{
+    mouse_scroll += scroll;
 }
 
 void mouse_set_xy(int mx, int my)

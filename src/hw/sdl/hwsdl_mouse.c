@@ -74,3 +74,8 @@ void hw_mouse_button(int i, int pressed)
         }
     }
 }
+
+void hw_mouse_scroll(int scroll)
+{
+    mouse_set_scroll_from_hw(scroll);
+}
