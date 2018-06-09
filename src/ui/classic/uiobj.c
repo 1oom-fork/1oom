@@ -1304,12 +1304,12 @@ static void uiobj_finish_callback_delay_hmm5(void)
     uiobj_finish_callback_delay_p(uiobj_hmm5_delay);
 }
 
-static void uiobj_slider_plus(uiobj_t *p)
+static void uiobj_slider_plus(uiobj_t *p, int adj)
 {
     uint16_t vmin = p->t6.vmin;
     uint16_t value = *p->vptr;
     uint16_t vdiff = p->t6.vmax - vmin;
-    int newval = ((value - vmin) * 100) / vdiff + 5;
+    int newval = ((value - vmin) * 100) / vdiff + adj;
     if (newval <= 100) {
         newval = (newval * vdiff) / 100 + vmin;
     } else {
@@ -1322,12 +1322,12 @@ static void uiobj_slider_plus(uiobj_t *p)
     *p->vptr = value;
 }
 
-static void uiobj_slider_minus(uiobj_t *p)
+static void uiobj_slider_minus(uiobj_t *p, int adj)
 {
     uint16_t vmin = p->t6.vmin;
     uint16_t value = *p->vptr;
     uint16_t vdiff = p->t6.vmax - vmin;
-    int newval = ((value - vmin) * 100) / vdiff - 5;
+    int newval = ((value - vmin) * 100) / vdiff - adj;
     if (newval >= 0) {
         newval = (newval * vdiff) / 100 + vmin;
     } else {
@@ -1437,9 +1437,9 @@ static int16_t uiobj_handle_input_sub0(void)
                 p = &uiobj_tbl[oi];
                 if (p->type == 6) {
                     if (KBD_GET_CHAR(key) == '+') {
-                        uiobj_slider_plus(p);
+                        uiobj_slider_plus(p, 5);
                     } else {
-                        uiobj_slider_minus(p);
+                        uiobj_slider_minus(p, 5);
                     }
                     uiobj_hmm1_oi = -1;
                     return oi;
@@ -1447,6 +1447,32 @@ static int16_t uiobj_handle_input_sub0(void)
             }
         }
         uiobj_hmm1_oi = -1;
+        return 0;
+    }
+    if (mouse_scroll) {
+        int scroll = mouse_scroll;
+        mouse_scroll = 0;
+        uiobj_hmm1_oi = -1;
+        oi = 0;
+        ui_cursor_update_gfx_i(mx, my);
+        uiobj_mouseoff = ui_cursor_mouseoff;
+        for (int i = 1; i < uiobj_table_num; ++i) {
+            p = &uiobj_tbl[i];
+            if ((p->type == 6) && uiobj_is_at_xy(p, mx, my)) {
+                oi = i;
+                break;
+            }
+        }
+        if (oi != 0) {
+            if (p->type == 6) {
+                if (scroll > 0) {
+                    uiobj_slider_plus(p, 1);
+                } else {
+                    uiobj_slider_minus(p, 1);
+                }
+                return oi;
+            }
+        }
         return 0;
     }
     if (mouse_buttons == 0) {
