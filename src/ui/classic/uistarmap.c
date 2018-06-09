@@ -206,22 +206,12 @@ void ui_starmap_set_pos_focus(const struct game_s *g, player_id_t active_player)
 
 void ui_starmap_set_pos(const struct game_s *g, int x, int y)
 {
-    x -= 0x36;
-    if (x < 0) {
-        x = 0;
-    }
-    if (x > (g->galaxy_maxx - 0x6c)) {
-        x = (g->galaxy_maxx - 0x6c);
-    }
+    x -= 54;
+    SETRANGE(x, 0, g->galaxy_maxx - 108);
     ui_data.starmap.x = x;
     ui_data.starmap.x2 = x;
-    y -= 0x2b;
-    if (y < 0) {
-        y = 0;
-    }
-    if (y > (g->galaxy_maxy - 0x56)) {
-        y = (g->galaxy_maxy - 0x56);
-    }
+    y -= 43;
+    SETRANGE(y, 0, g->galaxy_maxy - 86);
     ui_data.starmap.y = y;
     ui_data.starmap.y2 = y;
 }
