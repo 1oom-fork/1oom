@@ -13,5 +13,6 @@ extern void hw_mouse_set_limits(int w, int h);
 
 extern void hw_mouse_move(int dx, int dy);
 extern void hw_mouse_button(int i, int pressed);
+extern void hw_mouse_scroll(int scroll);
 
 #endif
