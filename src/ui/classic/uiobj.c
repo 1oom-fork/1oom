@@ -1367,9 +1367,6 @@ static uiobj_id_t uiobj_handle_input_sub0(void)
                     }
                     uiobj_focus_oi = UIOBJI_ESC;
                     return oi;
-                } else {
-                    uiobj_focus_oi = UIOBJI_ESC;
-                    return UIOBJI_NONE;
                 }
             }
         }
