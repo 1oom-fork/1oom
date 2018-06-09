@@ -1426,9 +1426,6 @@ static int16_t uiobj_handle_input_sub0(void)
                     }
                     uiobj_hmm1_oi = -1;
                     return oi;
-                } else {
-                    uiobj_hmm1_oi = -1;
-                    return 0;
                 }
             }
         }
