@@ -174,6 +174,7 @@ struct ui_data_s ui_data = { 0 };
 int ui_screen_w = 0;
 int ui_screen_h = 0;
 int ui_scale = 0;
+int starmap_scale = 0;
 bool ui_extra_enabled = false;
 bool ui_fixbugs_enabled = false;
 bool ui_illogical_hotkey_fix = false;
@@ -492,6 +493,7 @@ int ui_late_init(void)
     if (ui_scale == 0) {
         ui_scale = 1;
     }
+    starmap_scale = 1;
     ui_screen_w = UI_VGA_W * ui_scale;
     ui_screen_h = UI_VGA_H * ui_scale;
     ui_cursor_init(ui_scale);

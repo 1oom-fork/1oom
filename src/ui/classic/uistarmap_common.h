@@ -10,7 +10,9 @@
 #define STARMAP_ANIM_DELAY (ui_sm_smoother_scrolling ? 3 : 1)
 #define STARMAP_SCROLLSTEP  (ui_sm_smoother_scrolling ? ui_sm_scroll_speed : 10)
 
-#define STARMAP_LIMITS  6 * ui_scale, 6 * ui_scale, 222 * ui_scale - 1, 178 * ui_scale - 1
+#define STARMAP_LIM_INIT()  const int slx0 = (6 * ui_scale) / starmap_scale, sly0 = (6 * ui_scale) / starmap_scale, slx1 = (222 * ui_scale) / starmap_scale - 1, sly1 = (178 * ui_scale) / starmap_scale - 1
+#define STARMAP_TEXT_LIMITS 6 * ui_scale, 6 * ui_scale, 222 * ui_scale - 1, 178 * ui_scale - 1
+#define STARMAP_LIMITS  slx0, sly0, slx1, sly1
 
 struct shipnon0_s {
     shipcount_t ships[NUM_SHIPDESIGNS];
@@ -29,6 +31,7 @@ struct starmap_data_s {
     int anim_delay;
     int16_t scrollx;
     int16_t scrolly;
+    uint8_t scrollz;
     int16_t oi_gameopts;
     int16_t oi_design;
     int16_t oi_fleet;

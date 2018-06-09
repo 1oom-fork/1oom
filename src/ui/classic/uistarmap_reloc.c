@@ -32,6 +32,7 @@ static void ui_starmap_reloc_draw_cb(void *vptr)
     const planet_t *pt = &g->planet[g->planet_focus_i[d->api]];
     char buf[0x40];
     int x0, y0;
+    STARMAP_LIM_INIT();
     ui_starmap_draw_basic(d);
     x0 = (pf->x - ui_data.starmap.x) * 2 + 8;
     y0 = (pf->y - ui_data.starmap.y) * 2 + 8;
@@ -45,9 +46,9 @@ static void ui_starmap_reloc_draw_cb(void *vptr)
         } else {
             ctbl = colortbl_line_red;
         }
-        ui_draw_line_limit_ctbl(x0 + 6, y0 + 6, x1, y1, ctbl, 5, ui_data.starmap.line_anim_phase, 1);
+        ui_draw_line_limit_ctbl(x0 + 6, y0 + 6, x1, y1, ctbl, 5, ui_data.starmap.line_anim_phase, starmap_scale);
     }
-    lbxgfx_draw_frame_offs_delay(x0, y0, !d->anim_delay, ui_data.gfx.starmap.planbord, STARMAP_LIMITS, UI_SCREEN_W, 1);
+    lbxgfx_draw_frame_offs_delay(x0, y0, !d->anim_delay, ui_data.gfx.starmap.planbord, STARMAP_LIMITS, UI_SCREEN_W, starmap_scale);
     if (pt->owner == d->api) {
         lbxgfx_draw_frame(222, 80, ui_data.gfx.starmap.relocate, UI_SCREEN_W, ui_scale);
     } else {

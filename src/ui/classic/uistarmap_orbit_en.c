@@ -34,13 +34,14 @@ static void ui_starmap_orbit_en_draw_cb(void *vptr)
     const planet_t *p = &g->planet[d->from];
     const empiretechorbit_t *e = &(g->eto[d->oe.player]);
     char buf[0x80];
+    STARMAP_LIM_INIT();
 
     ui_starmap_draw_basic(d);
     {
         int x, y;
         x = (p->x - ui_data.starmap.x) * 2 + 23;
         y = (p->y - ui_data.starmap.y) * 2 + 5 + d->oe.yoff;
-        lbxgfx_draw_frame_offs_delay(x, y, !d->anim_delay, ui_data.gfx.starmap.shipbord, STARMAP_LIMITS, UI_SCREEN_W, 1);
+        lbxgfx_draw_frame_offs_delay(x, y, !d->anim_delay, ui_data.gfx.starmap.shipbord, STARMAP_LIMITS, UI_SCREEN_W, starmap_scale);
     }
     ui_draw_filled_rect(225, 8, 314, 180, 7, ui_scale);
     lbxgfx_draw_frame(224, 4, ui_data.gfx.starmap.movextr2, UI_SCREEN_W, ui_scale);
