@@ -101,8 +101,10 @@ typedef struct uiobj_s {
         struct {
             /*18*/ uint16_t xdiv;
             /*1a*/ uint16_t ydiv;
-            /*1c*/ uint16_t *xptr;
-            /*1e*/ uint16_t *yptr;
+            /*1c*/ int16_t *xptr;
+            /*1e*/ int16_t *yptr;
+            /*..*/ uint8_t *zptr;
+            /*..*/ uint8_t zmax;
         } tb;
 #if 0
         struct {
@@ -1458,7 +1460,7 @@ static int16_t uiobj_handle_input_sub0(void)
         uiobj_mouseoff = ui_cursor_mouseoff;
         for (int i = 1; i < uiobj_table_num; ++i) {
             p = &uiobj_tbl[i];
-            if ((p->type == 6) && uiobj_is_at_xy(p, mx, my)) {
+            if (((p->type == 6) || (p->type == 0xb)) && uiobj_is_at_xy(p, mx, my)) {
                 oi = i;
                 break;
             }
@@ -1470,6 +1472,25 @@ static int16_t uiobj_handle_input_sub0(void)
                 } else {
                     uiobj_slider_minus(p, 1);
                 }
+                return oi;
+            } else if (p->type == 0xb) {
+                uint8_t z = *p->tb.zptr;
+                if (scroll > 0) {
+                    if (z < p->tb.zmax) {
+                        ++z;
+                    } else {
+                        return 0;
+                    }
+                } else {
+                   if (z > 1) {
+                        --z;
+                    } else {
+                        return 0;
+                    }
+                }
+                *p->tb.zptr = z;
+                *p->tb.xptr = -1;
+                *p->tb.yptr = -1;
                 return oi;
             }
         }
@@ -1922,7 +1943,7 @@ int16_t uiobj_add_mousearea(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, 
     return UIOBJI_ALLOC();
 }
 
-int16_t uiobj_add_mousearea_limited(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, mookey_t key)
+int16_t uiobj_add_mousearea_limited(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint8_t scale, mookey_t key)
 {
     uiobj_t *p;
     if ((x1 < uiobj_minx) || (x0 > uiobj_maxx) || (y1 < uiobj_miny) || (y0 > uiobj_maxy)) {
@@ -1933,7 +1954,7 @@ int16_t uiobj_add_mousearea_limited(uint16_t x0, uint16_t y0, uint16_t x1, uint1
     x1 = MIN(x1, uiobj_maxx);
     y0 = MAX(y0, uiobj_miny);
     y1 = MIN(y1, uiobj_maxy);
-    uiobj_add_set_xys(p, x0, y0, x1, y1, 1);
+    uiobj_add_set_xys(p, x0, y0, x1, y1, scale);
     p->type = 7;
     p->vptr = 0;
     p->key = key;
@@ -2002,7 +2023,7 @@ int16_t uiobj_add_ta(uint16_t x, uint16_t y, uint16_t w, const char *str, bool z
     return UIOBJI_ALLOC();
 }
 
-int16_t uiobj_add_tb(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t xscale, uint16_t yscale, uint16_t *xptr, uint16_t *yptr)
+int16_t uiobj_add_tb(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t xscale, uint16_t yscale, int16_t *xptr, int16_t *yptr, uint8_t *zptr, uint8_t zmax)
 {
     uiobj_t *p = &uiobj_tbl[uiobj_table_num];
     uiobj_add_set_xys(p, x, y, x + w * xscale, y + h * yscale, ui_scale);
@@ -2010,6 +2031,8 @@ int16_t uiobj_add_tb(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t xs
     p->tb.ydiv = h * ui_scale;
     p->tb.xptr = xptr;
     p->tb.yptr = yptr;
+    p->tb.zptr = zptr;
+    p->tb.zmax = zmax;
     p->type = 0xb;
     p->vptr = 0;
     p->key = MOO_KEY_UNKNOWN;

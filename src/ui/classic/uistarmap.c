@@ -206,22 +206,12 @@ void ui_starmap_set_pos_focus(const struct game_s *g, player_id_t active_player)
 
 void ui_starmap_set_pos(const struct game_s *g, int x, int y)
 {
-    x -= 0x36 * ui_scale;
-    if (x < 0) {
-        x = 0;
-    }
-    if (x > (g->galaxy_maxx - 0x6c * ui_scale)) {
-        x = (g->galaxy_maxx - 0x6c * ui_scale);
-    }
+    x -= (54 * ui_scale) / starmap_scale;
+    SETRANGE(x, 0, g->galaxy_maxx - ((108 * ui_scale) / starmap_scale));
     ui_data.starmap.x = x;
     ui_data.starmap.x2 = x;
-    y -= 0x2b * ui_scale;
-    if (y < 0) {
-        y = 0;
-    }
-    if (y > (g->galaxy_maxy - 0x56 * ui_scale)) {
-        y = (g->galaxy_maxy - 0x56 * ui_scale);
-    }
+    y -= (43 * ui_scale) / starmap_scale;
+    SETRANGE(y, 0, g->galaxy_maxy - ((86 * ui_scale) / starmap_scale));
     ui_data.starmap.y = y;
     ui_data.starmap.y2 = y;
 }
@@ -233,7 +223,8 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             oi_f2, oi_f3, oi_f4, oi_f5, oi_f6, oi_f7, oi_f8, oi_f9, oi_f10,
             oi_alt_galaxy, oi_alt_m, oi_alt_c, oi_alt_p, oi_alt_r, oi_alt_events
             ;
-    uint16_t scrollx = 0, scrolly = 0;
+    int16_t scrollx = 0, scrolly = 0;
+    uint8_t scrollz = starmap_scale;
     struct starmap_data_s d;
 
     d.g = g;
@@ -442,7 +433,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             }
         }
         if ((oi1 == oi_scroll) && !g->evn.build_finished_num[active_player]) {
-            ui_starmap_scroll(g, scrollx, scrolly);
+            ui_starmap_scroll(g, scrollx, scrolly, scrollz);
         }
         ui_starmap_handle_oi_ctrl(&d, oi1);
         if (oi1 == oi_f2) {
@@ -669,11 +660,11 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
                 int x0, y0;
                 x0 = (p->x - ui_data.starmap.x) * 2 + 6;
                 y0 = (p->y - ui_data.starmap.y) * 2 + 6;
-                oi_starview1 = uiobj_add_mousearea_limited(x0, y0, x0 + 16, y0 + 16, MOO_KEY_UNKNOWN);
+                oi_starview1 = uiobj_add_mousearea_limited(x0, y0, x0 + 16, y0 + 16, starmap_scale, MOO_KEY_UNKNOWN);
             }
             ui_starmap_fill_oi_tbl_stars(&d);
             ui_starmap_fill_oi_slider(&d);
-            oi_scroll = uiobj_add_tb(6, 6, 2, 2, 108, 86, &scrollx, &scrolly);
+            oi_scroll = uiobj_add_tb(6, 6, 2, 2, 108, 86, &scrollx, &scrolly, &scrollz, ui_scale);
             ui_starmap_fill_oi_ctrl(&d);
             if (1) {
                 int x0, y0, x1, y1;

@@ -28,7 +28,8 @@ is an integer scaling factor for the whole UI except:
 - galaxy movement screen map
 - sliders
 The default value is 1 for that classic 320x200 feeling. Larger values allow
-more of the galaxy to be viewed without scrolling.
+more of the galaxy to be viewed without scrolling. Mouse wheel can be used
+to adjust the scaling of the galaxy movement screen map.
 
 The following new UI features are always enabled/available:
 - Smoother galaxy movement screen scrolling
