@@ -257,7 +257,11 @@ int hw_event_handle(void)
                 break;
             case SDL_MOUSEBUTTONDOWN:
             case SDL_MOUSEBUTTONUP:
-                hw_mouse_button((int)(e.button.button), (e.button.state == SDL_PRESSED));
+                if ((e.button.state == SDL_PRESSED) && ((e.button.button == SDL_BUTTON_WHEELUP) || (e.button.button == SDL_BUTTON_WHEELDOWN))) {
+                    hw_mouse_scroll((e.button.button == SDL_BUTTON_WHEELUP) ? -1 : 1);
+                } else {
+                    hw_mouse_button((int)(e.button.button), (e.button.state == SDL_PRESSED));
+                }
                 break;
             case SDL_QUIT:
                 hw_audio_shutdown_pre();
