@@ -30,6 +30,7 @@ static void ui_starmap_reloc_draw_cb(void *vptr)
     planet_t *pt = &g->planet[g->planet_focus_i[d->api]];
     char buf[0x40];
     int x0, y0;
+    STARMAP_LIM_INIT();
     ui_starmap_draw_starmap(d);
     ui_starmap_draw_button_text(d, true);
     x0 = (pf->x - ui_data.starmap.x) * 2 + 8;
@@ -38,9 +39,9 @@ static void ui_starmap_reloc_draw_cb(void *vptr)
         int x1, y1;
         x1 = (pt->x - ui_data.starmap.x) * 2 + 14;
         y1 = (pt->y - ui_data.starmap.y) * 2 + 14;
-        ui_draw_line_limit_ctbl(x0 + 6, y0 + 6, x1, y1, colortbl_line_hmm1, 5, ui_data.starmap.line_anim_phase, 1);
+        ui_draw_line_limit_ctbl(x0 + 6, y0 + 6, x1, y1, colortbl_line_hmm1, 5, ui_data.starmap.line_anim_phase, starmap_scale);
     }
-    lbxgfx_draw_frame_offs(x0, y0, ui_data.gfx.starmap.planbord, STARMAP_LIMITS, UI_SCREEN_W, 1);
+    lbxgfx_draw_frame_offs(x0, y0, ui_data.gfx.starmap.planbord, STARMAP_LIMITS, UI_SCREEN_W, starmap_scale);
     lbxgfx_draw_frame(222, 80, ui_data.gfx.starmap.relocate, UI_SCREEN_W, ui_scale);
     lbxfont_select_set_12_1(5, 5, 0, 0);
     lbxfont_print_str_center(269, 90, game_str_sm_sreloc, UI_SCREEN_W, ui_scale);
@@ -69,7 +70,8 @@ void ui_starmap_reloc(struct game_s *g, player_id_t active_player)
     int16_t oi_scroll, oi_cancel, oi_accept,
             oi_f2, oi_f3, oi_f4, oi_f5, oi_f6, oi_f7, oi_f8, oi_f9, oi_f10
             ;
-    uint16_t scrollx = 0, scrolly = 0;
+    int16_t scrollx = 0, scrolly = 0;
+    uint8_t scrollz = starmap_scale;
     struct starmap_data_s d;
     uint8_t oldreloc;
     d.g = g;
@@ -274,7 +276,7 @@ void ui_starmap_reloc(struct game_s *g, player_id_t active_player)
             g->planet[d.rl.from].reloc = g->planet_focus_i[active_player];
             ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
         } else if (oi1 == oi_scroll) {
-            ui_starmap_scroll(g, scrollx, scrolly);
+            ui_starmap_scroll(g, scrollx, scrolly, scrollz);
         }
         ui_starmap_handle_oi_ctrl(&d, oi1);
         for (int i = 0; i < g->galaxy_stars; ++i) {
@@ -321,7 +323,7 @@ void ui_starmap_reloc(struct game_s *g, player_id_t active_player)
             if (g->planet[d.rl.from].buildship != BUILDSHIP_STARGATE) {
                 oi_accept = uiobj_add_t0(271, 163, "", ui_data.gfx.starmap.reloc_bu_accept, MOO_KEY_SPACE);
             }
-            oi_scroll = uiobj_add_tb(6, 6, 2, 2, 108, 86, &scrollx, &scrolly);
+            oi_scroll = uiobj_add_tb(6, 6, 2, 2, 108, 86, &scrollx, &scrolly, &scrollz, ui_scale);
             ui_starmap_fill_oi_ctrl(&d);
             ui_starmap_add_oi_bottom_buttons(&d);
             ui_draw_finish();

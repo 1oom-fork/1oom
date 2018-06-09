@@ -28,7 +28,8 @@ is an integer scaling factor for the whole UI except:
 - galaxy movement screen map
 - sliders
 The default value is 1 for that classic 320x200 feeling. Larger values allow
-more of the galaxy to be viewed without scrolling.
+more of the galaxy to be viewed without scrolling. Mouse wheel can be used
+to adjust the scaling of the galaxy movement screen map.
 
 The following new UI features are always enabled/available:
 - Smoother galaxy movement screen scrolling
@@ -37,6 +38,7 @@ The following new UI features are always enabled/available:
 - Lowercase allowed in save names
 - Load Game screen uses numbers as hotkeys for slots
 - Objects with hotkeys can be navigated to using cursor keys
+- Mouse wheel can be used to adjust sliders
 
 The following new UI features are enabled by default:
 - Undo saves (save slot 8)

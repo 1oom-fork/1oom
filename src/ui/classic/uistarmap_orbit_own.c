@@ -32,6 +32,7 @@ static void ui_starmap_orbit_own_draw_cb(void *vptr)
     planet_t *pf = &g->planet[d->oo.from];
     planet_t *pt = &g->planet[g->planet_focus_i[d->api]];
     char buf[0x80];
+    STARMAP_LIM_INIT();
 
     ui_starmap_draw_starmap(d);
     ui_starmap_draw_button_text(d, true);
@@ -39,7 +40,7 @@ static void ui_starmap_orbit_own_draw_cb(void *vptr)
         int x, y;
         x = (pf->x - ui_data.starmap.x) * 2 + 23;
         y = (pf->y - ui_data.starmap.y) * 2 + 5;
-        lbxgfx_draw_frame_offs(x, y, ui_data.gfx.starmap.shipbord, STARMAP_LIMITS, UI_SCREEN_W, 1);
+        lbxgfx_draw_frame_offs(x, y, ui_data.gfx.starmap.shipbord, STARMAP_LIMITS, UI_SCREEN_W, starmap_scale);
     }
     ui_draw_filled_rect(225, 8, 314, 192, 7, ui_scale);
     lbxgfx_draw_frame(224, 5, ui_data.gfx.starmap.move_shi, UI_SCREEN_W, ui_scale);
@@ -57,7 +58,7 @@ static void ui_starmap_orbit_own_draw_cb(void *vptr)
         uint8_t *gfx;
         x1 = (pt->x - ui_data.starmap.x) * 2 + 8;
         y1 = (pt->y - ui_data.starmap.y) * 2 + 8;
-        lbxgfx_draw_frame_offs(x1, y1, ui_data.gfx.starmap.planbord, STARMAP_LIMITS, UI_SCREEN_W, 1);
+        lbxgfx_draw_frame_offs(x1, y1, ui_data.gfx.starmap.planbord, STARMAP_LIMITS, UI_SCREEN_W, starmap_scale);
         x0 = (pf->x - ui_data.starmap.x) * 2 + 26;
         y0 = (pf->y - ui_data.starmap.y) * 2 + 8;
         /* FIXME update outside draw */
@@ -68,10 +69,10 @@ static void ui_starmap_orbit_own_draw_cb(void *vptr)
             ctbl = colortbl_line_enroute;
             d->oo.in_frange = false;
         }
-        ui_draw_line_limit_ctbl(x0 + 3, y0 + 1, x1 + 6, y1 + 6, ctbl, 5, ui_data.starmap.line_anim_phase, 1);
+        ui_draw_line_limit_ctbl(x0 + 3, y0 + 1, x1 + 6, y1 + 6, ctbl, 5, ui_data.starmap.line_anim_phase, starmap_scale);
         gfx = ui_data.gfx.starmap.smalship[g->eto[d->api].banner];
         lbxgfx_set_frame_0(gfx);
-        lbxgfx_draw_frame_offs(x0, y0, gfx, STARMAP_LIMITS, UI_SCREEN_W, 1);
+        lbxgfx_draw_frame_offs(x0, y0, gfx, STARMAP_LIMITS, UI_SCREEN_W, starmap_scale);
         if (!d->oo.in_frange) {
             if (d->oo.sn0.num < 7) { /* FIXME ?? always true */
                 sprintf(buf, "%s %i %s", game_str_sm_destoor, dist, game_str_sm_parsfromcc);
@@ -147,7 +148,8 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
             oi_tbl_a[NUM_SHIPDESIGNS],
             oi_tbl_n[NUM_SHIPDESIGNS]
             ;
-    uint16_t scrollx = 0, scrolly = 0;
+    int16_t scrollx = 0, scrolly = 0;
+    uint8_t scrollz = starmap_scale;
     struct starmap_data_s d;
     shipcount_t *os;
     const uint8_t shiptypes[NUM_SHIPDESIGNS] = { 0, 1, 2, 3, 4, 5 };
@@ -426,7 +428,7 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
             }
             ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
         } else if (oi1 == oi_scroll) {
-            ui_starmap_scroll(g, scrollx, scrolly);
+            ui_starmap_scroll(g, scrollx, scrolly, scrollz);
         }
         ui_starmap_handle_oi_ctrl(&d, oi1);
         for (int i = 0; i < g->galaxy_stars; ++i) {
@@ -511,7 +513,7 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
             if (d.oo.in_frange && d.oo.shiptypenon0numsel) {
                 oi_accept = uiobj_add_t0(271, 180, "", ui_data.gfx.starmap.reloc_bu_accept, MOO_KEY_SPACE);
             }
-            oi_scroll = uiobj_add_tb(6, 6, 2, 2, 108, 86, &scrollx, &scrolly);
+            oi_scroll = uiobj_add_tb(6, 6, 2, 2, 108, 86, &scrollx, &scrolly, &scrollz, ui_scale);
             ui_starmap_fill_oi_ctrl(&d);
             for (int i = 0; i < d.oo.sn0.num; ++i) {
                 oi_tbl_p[i] = uiobj_add_t0(288, 35 + i * 26, "", ui_data.gfx.starmap.move_but_p, MOO_KEY_UNKNOWN);
