@@ -32,6 +32,7 @@ static void ui_starmap_orbit_en_draw_cb(void *vptr)
     const planet_t *p = &g->planet[d->oe.from];
     const empiretechorbit_t *e = &(g->eto[d->oe.player]);
     char buf[0x80];
+    STARMAP_LIM_INIT();
 
     ui_starmap_draw_starmap(d);
     ui_starmap_draw_button_text(d, true);
@@ -39,7 +40,7 @@ static void ui_starmap_orbit_en_draw_cb(void *vptr)
         int x, y;
         x = (p->x - ui_data.starmap.x) * 2 + 23;
         y = (p->y - ui_data.starmap.y) * 2 + 5 + d->oe.yoff;
-        lbxgfx_draw_frame_offs(x, y, ui_data.gfx.starmap.shipbord, STARMAP_LIMITS, UI_SCREEN_W, 1);
+        lbxgfx_draw_frame_offs(x, y, ui_data.gfx.starmap.shipbord, STARMAP_LIMITS, UI_SCREEN_W, starmap_scale);
     }
     ui_draw_filled_rect(225, 8, 314, 180, 7, ui_scale);
     lbxgfx_draw_frame(224, 5, ui_data.gfx.starmap.movextr2, UI_SCREEN_W, ui_scale);
@@ -88,7 +89,8 @@ void ui_starmap_orbit_en(struct game_s *g, player_id_t active_player)
 {
     bool flag_done = false;
     int16_t oi_scroll;
-    uint16_t scrollx = 0, scrolly = 0;
+    int16_t scrollx = 0, scrolly = 0;
+    uint8_t scrollz = starmap_scale;
     struct starmap_data_s d;
     shipcount_t *os;
 
@@ -203,7 +205,7 @@ void ui_starmap_orbit_en(struct game_s *g, player_id_t active_player)
             flag_done = true;
             ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
         } else if (oi1 == oi_scroll) {
-            ui_starmap_scroll(g, scrollx, scrolly);
+            ui_starmap_scroll(g, scrollx, scrolly, scrollz);
         }
         ui_starmap_handle_oi_ctrl(&d, oi1);
         for (int i = 0; i < g->galaxy_stars; ++i) {
@@ -240,7 +242,7 @@ void ui_starmap_orbit_en(struct game_s *g, player_id_t active_player)
             UIOBJ_CLEAR_LOCAL();
             ui_starmap_fill_oi_tbls(&d);
             ui_starmap_fill_oi_tbl_stars(&d);
-            oi_scroll = uiobj_add_tb(6, 6, 2, 2, 108, 86, &scrollx, &scrolly);
+            oi_scroll = uiobj_add_tb(6, 6, 2, 2, 108, 86, &scrollx, &scrolly, &scrollz, ui_scale);
             ui_starmap_fill_oi_ctrl(&d);
             ui_starmap_add_oi_bottom_buttons(&d);
             ui_draw_finish();

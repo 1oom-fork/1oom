@@ -17,7 +17,9 @@
 #define STARMAP_SCROLLSTEP 3
 #endif
 
-#define STARMAP_LIMITS  6 * ui_scale, 6 * ui_scale, 222 * ui_scale - 1, 178 * ui_scale - 1
+#define STARMAP_LIM_INIT()  const int slx0 = (6 * ui_scale) / starmap_scale, sly0 = (6 * ui_scale) / starmap_scale, slx1 = (222 * ui_scale) / starmap_scale - 1, sly1 = (178 * ui_scale) / starmap_scale - 1
+#define STARMAP_TEXT_LIMITS 6 * ui_scale, 6 * ui_scale, 222 * ui_scale - 1, 178 * ui_scale - 1
+#define STARMAP_LIMITS  slx0, sly0, slx1, sly1
 
 struct shipnon0_s {
     shipcount_t ships[NUM_SHIPDESIGNS];
@@ -172,6 +174,6 @@ extern void ui_starmap_draw_planetinfo(const struct game_s *g, player_id_t api, 
 extern void ui_starmap_draw_planetinfo_2(const struct game_s *g, int p1, int p2, int planet_i);
 extern int ui_starmap_newship_next(const struct game_s *g, player_id_t pi, int i);
 extern int ui_starmap_newship_prev(const struct game_s *g, player_id_t pi, int i);
-extern void ui_starmap_scroll(const struct game_s *g, int scrollx, int scrolly);
+extern void ui_starmap_scroll(const struct game_s *g, int scrollx, int scrolly, uint8_t scrollz);
 
 #endif
