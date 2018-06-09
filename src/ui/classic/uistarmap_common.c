@@ -116,6 +116,10 @@ static void ui_starmap_draw_sliders_and_prod(struct starmap_data_s *d)
     int x = 311;
     char buf[64];
 
+    for (planet_slider_i_t i = PLANET_SLIDER_SHIP; i < PLANET_SLIDER_NUM; ++i) {
+        ui_draw_filled_rect(227, 81 + 11 * i, 244, 90 + 11 * i, p->slider_lock[i] ? 0x22 : 0, ui_scale);
+    }
+
     lbxgfx_draw_frame(224, 5, ui_data.gfx.starmap.yourplnt, UI_SCREEN_W, ui_scale);
     lbxfont_select(2, 0xd, 0xe, 0);
     sprintf(buf, "%i \x02(%i)\x01", p->prod_after_maint, p->total_prod);
