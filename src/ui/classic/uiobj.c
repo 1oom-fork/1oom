@@ -1337,9 +1337,6 @@ static int16_t uiobj_handle_input_sub0(void)
                     }
                     uiobj_focus_oi = -1;
                     return oi;
-                } else {
-                    uiobj_focus_oi = -1;
-                    return 0;
                 }
             }
         }
