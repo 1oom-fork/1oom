@@ -35,13 +35,14 @@ static void ui_starmap_transport_draw_cb(void *vptr)
     const empiretechorbit_t *e = &(g->eto[r->owner]);
     const planet_t *pt = &g->planet[g->planet_focus_i[d->api]];
     char buf[0x80];
+    STARMAP_LIM_INIT();
 
     ui_starmap_draw_basic(d);
     {
         int x, y;
         x = (r->x - ui_data.starmap.x) * 2 + 5;
         y = (r->y - ui_data.starmap.y) * 2 + 5;
-        lbxgfx_draw_frame_offs_delay(x, y, !d->anim_delay, ui_data.gfx.starmap.shipbord, STARMAP_LIMITS, UI_SCREEN_W, 1);
+        lbxgfx_draw_frame_offs_delay(x, y, !d->anim_delay, ui_data.gfx.starmap.shipbord, STARMAP_LIMITS, UI_SCREEN_W, starmap_scale);
     }
     ui_draw_filled_rect(225, 8, 314, 180, 7, ui_scale);
     lbxgfx_draw_frame(224, 4, ui_data.gfx.starmap.tranbord, UI_SCREEN_W, ui_scale);
@@ -63,7 +64,7 @@ static void ui_starmap_transport_draw_cb(void *vptr)
         bool dest_ok = true;
         x1 = (pt->x - ui_data.starmap.x) * 2 + 8;
         y1 = (pt->y - ui_data.starmap.y) * 2 + 8;
-        lbxgfx_draw_frame_offs_delay(x1, y1, !d->anim_delay, ui_data.gfx.starmap.planbord, STARMAP_LIMITS, UI_SCREEN_W, 1);
+        lbxgfx_draw_frame_offs_delay(x1, y1, !d->anim_delay, ui_data.gfx.starmap.planbord, STARMAP_LIMITS, UI_SCREEN_W, starmap_scale);
         x0 = (r->x - ui_data.starmap.x) * 2 + 8;
         y0 = (r->y - ui_data.starmap.y) * 2 + 8;
         if (d->controllable) {
@@ -72,13 +73,13 @@ static void ui_starmap_transport_draw_cb(void *vptr)
         {
             const uint8_t *ctbl;
             ctbl = dest_ok ? colortbl_line_green : colortbl_line_red;
-            ui_draw_line_limit_ctbl(x0 + 4, y0 + 1, x1 + 6, y1 + 6, ctbl, 5, ui_data.starmap.line_anim_phase, 1);
+            ui_draw_line_limit_ctbl(x0 + 4, y0 + 1, x1 + 6, y1 + 6, ctbl, 5, ui_data.starmap.line_anim_phase, starmap_scale);
         }
         if (ui_extra_enabled && ui_data.starmap.flag_show_own_routes && (r->owner == d->api)) {
             int x2, y2;
             x2 = (pd->x - ui_data.starmap.x) * 2 + 8;
             y2 = (pd->y - ui_data.starmap.y) * 2 + 8;
-            ui_draw_line_limit_ctbl(x0 + 4, y0 + 1, x2 + 6, y2 + 6, colortbl_line_green, 5, ui_data.starmap.line_anim_phase, 1);
+            ui_draw_line_limit_ctbl(x0 + 4, y0 + 1, x2 + 6, y2 + 6, colortbl_line_green, 5, ui_data.starmap.line_anim_phase, starmap_scale);
         }
         gfx = ui_data.gfx.starmap.smaltran[e->banner];
         if (pd->x < r->x) {
@@ -86,7 +87,7 @@ static void ui_starmap_transport_draw_cb(void *vptr)
         } else {
             lbxgfx_set_frame_0(gfx);
         }
-        lbxgfx_draw_frame_offs(x0, y0, gfx, STARMAP_LIMITS, UI_SCREEN_W, 1);
+        lbxgfx_draw_frame_offs(x0, y0, gfx, STARMAP_LIMITS, UI_SCREEN_W, starmap_scale);
         dist = game_get_min_dist(g, r->owner, g->planet_focus_i[d->api]);
         if (d->controllable && (pt->within_frange[d->api] == 0)) {
             /* FIXME use proper positioning for varying str length */

@@ -673,7 +673,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
                 int x0, y0;
                 x0 = (p->x - ui_data.starmap.x) * 2 + 6;
                 y0 = (p->y - ui_data.starmap.y) * 2 + 6;
-                oi_starview1 = uiobj_add_mousearea_limited(x0, y0, x0 + 16, y0 + 16, MOO_KEY_UNKNOWN);
+                oi_starview1 = uiobj_add_mousearea_limited(x0, y0, x0 + 16, y0 + 16, starmap_scale, MOO_KEY_UNKNOWN);
             }
             ui_starmap_fill_oi_tbl_stars(&d);
             if (ui_sm_no_question_mark_cursor && BOOLVEC_IS1(p->explored, active_player)) {
@@ -684,10 +684,10 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             ui_starmap_fill_oi_ctrl(&d);
             if (1) {
                 int x0, y0, x1, y1;
-                x0 = (p->x - ui_data.starmap.x) * 2 + 6;
-                y0 = (p->y - ui_data.starmap.y) * 2 + 6;
-                x1 = x0 + 16;
-                y1 = y0 + 16;
+                x0 = ((p->x - ui_data.starmap.x) * 2 + 6) * starmap_scale;
+                y0 = ((p->y - ui_data.starmap.y) * 2 + 6) * starmap_scale;
+                x1 = x0 + 16 * starmap_scale;
+                y1 = y0 + 16 * starmap_scale;
                 ui_cursor_area_tbl[7].x0 = x0;
                 ui_cursor_area_tbl[7].x1 = x1;
                 ui_cursor_area_tbl[7].y0 = y0;
