@@ -10,6 +10,7 @@
 extern int moouse_x;
 extern int moouse_y;
 extern int mouse_buttons;
+extern int mouse_scroll;
 extern int mouse_stored_x;
 extern int mouse_stored_y;
 extern int mouse_click_x;
@@ -18,6 +19,7 @@ extern int mouse_click_buttons;
 
 extern void mouse_set_xy_from_hw(int mx, int my);
 extern void mouse_set_buttons_from_hw(int buttons);
+extern void mouse_set_scroll_from_hw(int scroll);
 extern void mouse_set_click_xy(int mx, int my);
 extern void mouse_set_xy(int mx, int my);
 
