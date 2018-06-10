@@ -10,6 +10,7 @@ doc_DATA = \
     format_pbx.txt \
     format_save.txt \
     lbxmd5.txt \
+    list_gamediff.txt \
     list_pbxnum.txt \
     usage_classic.txt \
     usage_cmdline.txt \
