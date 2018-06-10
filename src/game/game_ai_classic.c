@@ -1809,7 +1809,13 @@ static void game_ai_classic_turn_p3(struct game_s *g)
                   && ((p->missile_bases * 3) >= (p->pop / (5 - g->difficulty)))
                   && (p->shield >= e->have_planet_shield)
                 ) {
-                    sl[PLANET_SLIDER_SHIP] += sl[PLANET_SLIDER_SHIP];   /* BUG? should be += DEF ? */
+                    uint16_t v;
+                    if (g->ai_id == GAME_AI_CLASSICPLUS) {
+                        v = sl[PLANET_SLIDER_DEF];
+                    } else {
+                        v = sl[PLANET_SLIDER_SHIP];   /* BUG should be DEF */
+                    }
+                    sl[PLANET_SLIDER_SHIP] += v;
                     sl[PLANET_SLIDER_DEF] = 0;
                 }
             }
@@ -3883,7 +3889,10 @@ static void game_ai_classic_aud_tribute_bc(struct audience_s *au, int selected, 
     if (eh->treaty[pa] != TREATY_ALLIANCE) {
         SETMIN(ea->relation1[ph], 65);
     }
-    /* FIXME BUG? eh->relation1[pa] = ea->relation1[ph]; is missing */
+    /* BUG? eh->relation1[pa] = ea->relation1[ph]; is missing */
+    if (g->ai_id == GAME_AI_CLASSICPLUS) {
+        eh->relation1[pa] = ea->relation1[ph];
+    }
 }
 
 static void game_ai_classic_aud_tribute_tech(struct audience_s *au, int selected, tech_field_t field, uint8_t tech)
@@ -3912,7 +3921,10 @@ static void game_ai_classic_aud_tribute_tech(struct audience_s *au, int selected
     if (eh->treaty[pa] != TREATY_ALLIANCE) {
         SETMIN(ea->relation1[ph], 70);
     }
-    /* FIXME BUG? eh->relation1[pa] = ea->relation1[ph]; is missing */
+    /* BUG? eh->relation1[pa] = ea->relation1[ph]; is missing */
+    if (g->ai_id == GAME_AI_CLASSICPLUS) {
+        eh->relation1[pa] = ea->relation1[ph];
+    }
 }
 
 static int game_ai_classic_aud_tech_scale(struct audience_s *au)
