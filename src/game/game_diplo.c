@@ -221,10 +221,10 @@ void game_diplo_break_treaty(struct game_s *g, player_id_t pi, player_id_t pi2)
     }
     v2 = 0;
     if (e->treaty[pi2] == TREATY_NONAGGRESSION) {
-        v2 = -10;
+        v2 = 10;
     }
     if (e->treaty[pi2] == TREATY_ALLIANCE) {
-        v2 = -20;
+        v2 = 20;
     }
     if (e->trait1 == TRAIT1_HONORABLE) {
         v2 *= 2;
