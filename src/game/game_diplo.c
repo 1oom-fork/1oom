@@ -5,6 +5,7 @@
 #include "game_diplo.h"
 #include "comp.h"
 #include "game.h"
+#include "game_ai.h"
 #include "game_num.h"
 #include "game_planet.h"
 #include "game_spy.h"
@@ -154,6 +155,9 @@ void game_diplo_break_treaty(struct game_s *g, player_id_t breaker, player_id_t 
     }
     if (eb->treaty[victim] == TREATY_ALLIANCE) {
         w = -20;
+    }
+    if (g->ai_id != GAME_AI_CLASSIC) {
+        w = -w;
     }
     if (eb->trait1 == TRAIT1_HONORABLE) {
         w *= 2;
