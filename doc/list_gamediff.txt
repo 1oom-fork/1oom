@@ -5,6 +5,7 @@ See doc/usage_classic.txt for UI differences.
 Much of this file is based on the readme from the unofficial v1.40m patch.
 
 - the game makes an undo save (slot 8) on every next turn click, run with -noundo if you do not want this
+- multiple fleets sent to same destination on the same turn are combined if they have the same speed
 - annoying bug / cheat when a fleet with bioweapons automatically bombed an enemy planet while orbiting is gone for good
 - entering the general "threaten / break treaty" dialogue no more equals to a large temporary diplomatic penalty
 - the discovery percentages on tech screen are no more only 1/2 of the true probability of a tech hit
