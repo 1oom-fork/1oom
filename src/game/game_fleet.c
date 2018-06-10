@@ -19,6 +19,7 @@ static bool game_send_fleet_do(struct game_s *g, player_id_t owner, uint8_t from
 {
     fleet_enroute_t *r;
     const planet_t *pf, *pt;
+    uint8_t speed;
     {
         bool found = false;
         for (int i = 0; i < numtypes; ++i) {
@@ -31,36 +32,54 @@ static bool game_send_fleet_do(struct game_s *g, player_id_t owner, uint8_t from
             return false;
         }
     }
+    pf = (&g->planet[from]);
+    pt = (&g->planet[dest]);
+    if ((pt->owner == owner) && (pf->owner == owner) && pt->have_stargate && pf->have_stargate) {
+        speed = FLEET_SPEED_STARGATE;
+    } else {
+        const shipdesign_t *sd = (&g->srd[owner].design[0]);
+        speed = 100;
+        for (int i = 0; i < numtypes; ++i) {
+            if (ships[i] > 0) {
+                uint8_t s, st;
+                st = shiptypes[i];
+                s = sd[st].engine + 1;
+                SETMIN(speed, s);
+            }
+        }
+    }
+    for (int i = 0; i < g->enroute_num; ++i) {
+        r = &(g->enroute[i]);
+        if ((r->owner == owner) && (r->x == pf->x) && (r->y == pf->y) && (r->dest == dest) && (r->speed == speed)) {
+            for (int j = 0; j < numtypes; ++j) {
+                if (ships[j] > 0) {
+                    uint8_t st;
+                    st = shiptypes[j];
+                    r->ships[st] += ships[j];
+                }
+            }
+            return true;
+        }
+    }
     if (g->enroute_num == FLEET_ENROUTE_MAX) {
         log_warning("fleet enroute table (size %i) full!\n", FLEET_ENROUTE_MAX);
         return false;
     }
-    pf = (&g->planet[from]);
-    pt = (&g->planet[dest]);
     r = (&g->enroute[g->enroute_num]);
     r->owner = owner;
     r->x = pf->x;
     r->y = pf->y;
     r->dest = dest;
+    r->speed = speed;
     for (int i = 0; i < NUM_SHIPDESIGNS; ++i) {
         r->ships[i] = 0;
     }
-    {
-        uint8_t speed = 100;
-        shipdesign_t *sd = (&g->srd[owner].design[0]);
-        for (int i = 0; i < numtypes; ++i) {
-            if (ships[i] > 0) {
-                uint8_t s, st;
-                st = shiptypes[i];
-                r->ships[st] = ships[i];
-                s = sd[st].engine + 1;
-                SETMIN(speed, s);
-            }
+    for (int i = 0; i < numtypes; ++i) {
+        if (ships[i] > 0) {
+            uint8_t st;
+            st = shiptypes[i];
+            r->ships[st] = ships[i];
         }
-        if ((pt->owner == owner) && (pf->owner == owner) && pt->have_stargate && pf->have_stargate) {
-            speed = FLEET_SPEED_STARGATE;
-        }
-        r->speed = speed;
     }
     BOOLVEC_CLEAR(r->visible, PLAYER_NUM);
     BOOLVEC_SET1(r->visible, owner);
