@@ -39,3 +39,5 @@ enables the following extra UI features:
 The config file item "ui.uifixbugs" (set via the -uifixbugs command-line option)
 enables the following UI bug fixes:
 - (none at the moment)
+
+See doc/list_gamediff.txt for a list of differences in the game itself.
