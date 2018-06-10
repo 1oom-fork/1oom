@@ -35,3 +35,5 @@ The config file item "ui.uiextra" (set via the -uiextra command-line option)
 enables the following extra UI features:
 - Continue and Undo saves can be chosen in the Load Game screen
 - New Game screen allows setting opponent race/banner/names and AI/human flag
+
+See doc/list_gamediff.txt for a list of differences in the game itself.
