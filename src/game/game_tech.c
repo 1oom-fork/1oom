@@ -572,8 +572,8 @@ const char *game_tech_get_descr(const struct game_aux_s *gaux, tech_field_t fiel
 int game_tech_current_research_percent1(const struct game_s *g, player_id_t player_i, tech_field_t field)
 {
     const empiretechorbit_t *e = &(g->eto[player_i]);
-    uint32_t cost;
-    int slider, invest, t1, t2, t3, percent;
+    uint32_t invest, cost;
+    int slider, t1, t3, percent;
     cost = e->tech.cost[field];
     slider = e->tech.slider[field];
     if ((cost == 0) || (slider == 0)) {
@@ -583,16 +583,16 @@ int game_tech_current_research_percent1(const struct game_s *g, player_id_t play
     t1 = (invest * 3) / 20;
     t3 = (slider * e->total_research_bc) / 100;
     SETMIN(t1, t3 * 2);
-    t2 = t3 + invest + t1;
-    percent = (t2 * 100) / cost;
+    invest += t3 + t1;
+    percent = (invest * 100) / cost;
     return percent;
 }
 
 int game_tech_current_research_percent2(const struct game_s *g, player_id_t player_i, tech_field_t field)
 {
     const empiretechorbit_t *e = &(g->eto[player_i]);
-    uint32_t cost;
-    int slider, invest, t1, t2, t3;
+    uint32_t invest, cost;
+    int slider, t1, t3;
     cost = e->tech.cost[field];
     slider = e->tech.slider[field];
     if ((cost == 0) || (slider == 0)) {
@@ -602,11 +602,11 @@ int game_tech_current_research_percent2(const struct game_s *g, player_id_t play
     t1 = (invest * 3) / 20;
     t3 = (slider * e->total_research_bc) / 100;
     SETMIN(t1, t3 * 2);
-    t2 = t3 + invest + t1;
-    if (t2 <= cost) {
+    invest += t3 + t1;
+    if (invest <= cost) {
         return 0;
     } else {
-        int percent = (((t2 - cost) * 50) / cost) / 2;
+        int percent = ((invest - cost) * 50) / cost;
         SETRANGE(percent, 0, 99);
         return percent;
     }
