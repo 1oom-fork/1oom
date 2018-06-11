@@ -13,7 +13,7 @@ extern void lbxfont_select_set_12_5(uint8_t a0, uint8_t a1, uint8_t a2, uint8_t 
 
 extern uint16_t lbxfont_get_height(void);
 extern int lbxfont_get_diff_44_10(void);
-extern void lbxfont_set_44_10_plus(uint16_t value);
+extern void lbxfont_set_gap_h(uint16_t value);
 
 extern void lbxfont_select_subcolors(uint16_t a0);
 extern void lbxfont_select_subcolors_0(void);
