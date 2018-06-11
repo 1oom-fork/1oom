@@ -2898,7 +2898,7 @@ static void game_ai_classic_battle_ai_turn(struct battle_s *bt)
         }
         /*5a91b*/
         b->f48 = 0;
-        bt->hmm30 = true;
+        bt->turn_done = true;
     }
     /*5a934*/
 }
