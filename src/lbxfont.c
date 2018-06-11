@@ -304,7 +304,7 @@ static int lbxfont_print_str_hmm2(int x, int y, const char *str, int w, uint16_t
 static void lbxfont_split_str(int x, int y, int maxw, const char *str, split_str_t *s, uint16_t maxy)
 {
     int i = 0, j, x0, x1, w, pos_space, last_c, ty = y, v12, xnext = -1, v18;
-    uint16_t hmm44 = lbxfontdata[0x44];
+    uint16_t line_h = lbxfontdata[0x44];
     int16_t gap_w = lbxfontdata[0x48];
     uint8_t hmm10 = lbxfontdata[0x10];
     s->num = 0;
@@ -327,7 +327,7 @@ static void lbxfont_split_str(int x, int y, int maxw, const char *str, split_str
               || (lbxfont_tbl_split_hmm1[z] < ty)
             ) {
                 if (0
-                  || (lbxfont_tbl_split_hmm3[z] > (ty + hmm44))
+                  || (lbxfont_tbl_split_hmm3[z] > (ty + line_h))
                   || (lbxfont_tbl_split_hmm1[z] < (ty + hmm10))
                 ) {
                     continue;
@@ -383,11 +383,11 @@ static void lbxfont_split_str(int x, int y, int maxw, const char *str, split_str
             if (last_c != -1) {
                 if (last_c == 0x19) {
                     v18 = (s->buf[j] - 0x30) * 10 + (s->buf[j/*bug?*/] - 0x30);
-                    ty = v18 - hmm44;
+                    ty = v18 - line_h;
                     j += 2;
                 } else if (last_c == 0x1d) {
                     v18 = (s->buf[j] - 0x30) * 10 + (s->buf[j/*bug?*/] - 0x30);
-                    ty -= hmm44;
+                    ty -= line_h;
                     xnext = v18;
                     j += 2;
                 }
@@ -402,7 +402,7 @@ static void lbxfont_split_str(int x, int y, int maxw, const char *str, split_str
         if ((x + maxw - 1) > x1) {
             xnext = x1 + 1;
         } else {
-            ty += hmm44;
+            ty += line_h;
         }
     }
 }
