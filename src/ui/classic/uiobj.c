@@ -496,7 +496,7 @@ static inline void uiobj_handle_hmm1_sub1(int i)
                 lbxfont_print_str_normal(p->x0, p->y0 + 1, p->ta.str, UI_SCREEN_W);
             } else {
                 int16_t v2, di;
-                v2 = lbxfont_get_diff_44_10();
+                v2 = lbxfont_get_gap_h();
                 if (v2 < 0) { ++v2; }
                 v2 /= 2;
                 if (v2 == 0) {
@@ -574,7 +574,7 @@ static void uiobj_handle_hmm2(int i, uint16_t a2)
                 }
             } else {
                 int16_t v2, v4;
-                v4 = lbxfont_get_diff_44_10();
+                v4 = lbxfont_get_gap_h();
                 if (v4 < 0) { ++v2; }
                 v4 /= 2;
                 if (v4 == 0) {
@@ -1935,7 +1935,7 @@ int16_t uiobj_select_from_list1(int x, int y, int w, const char *title, char con
     uiobj_set_downcount(1);
     uiobj_table_clear();
     h = lbxfont_get_height();
-    dy = lbxfont_get_diff_44_10() + h;
+    dy = lbxfont_get_gap_h() + h;
 
     while (!flag_done) {
         if (*s == 0) {
@@ -2030,7 +2030,7 @@ int16_t uiobj_select_from_list2(int x, int y, int w, const char *title, char con
     uiobj_set_downcount(1);
     uiobj_table_clear();
     h = lbxfont_get_height();
-    dy = lbxfont_get_diff_44_10() + h;
+    dy = lbxfont_get_gap_h() + h;
     ty = y + dy;
 
     while (!flag_done) {
