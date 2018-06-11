@@ -2347,7 +2347,7 @@ static int game_battle_item_rival1(struct battle_s *bt, int itemi, int a2)
             if (v12 > v1c) {
                 rival = i;
                 v1c = v12;
-                bt->hmm24 = (tbl_shiptech_weap[bt->item[0/*planet*/].wpn[0].t].nummiss > 1);
+                bt->bases_using_mirv = (tbl_shiptech_weap[bt->item[0/*planet*/].wpn[0].t].nummiss > 1);
             }
         }
     }
@@ -2355,7 +2355,7 @@ static int game_battle_item_rival1(struct battle_s *bt, int itemi, int a2)
     if (itemi == 0/*planet*/) {
         weapon_t t = b->wpn[0].t;
         bool nm = (tbl_shiptech_weap[t].nummiss > 1);
-        if (bt->hmm24 != nm) {
+        if (bt->bases_using_mirv != nm) {
             b->wpn[0].t = b->wpn[1].t; b->wpn[1].t = t;
         }
     }
