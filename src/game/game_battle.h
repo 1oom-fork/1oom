@@ -115,7 +115,7 @@ struct battle_s {
     uint16_t bases;
     uint16_t biodamage;
     struct battle_side_s s[2];
-    bool hmm21;
+    bool has_attacked;
     bool hmm24;
     bool turn_done;
     uint8_t num_repulsed;
