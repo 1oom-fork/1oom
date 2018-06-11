@@ -1300,7 +1300,7 @@ static void game_battle_with_human_do_sub3(struct battle_s *bt)
                         act = UI_BATTLE_ACT_DONE;
                     }
                     if (0
-                      || (act == UI_BATTLE_ACT_DONE) || (bt->hmm30)
+                      || (act == UI_BATTLE_ACT_DONE) || (bt->turn_done)
                       || ((b->missile != 0) && (b->maxrange == 0) && bt->hmm21)
                     ) {
                         flag_turn_done = true;
@@ -1413,7 +1413,7 @@ static void game_battle_with_human_do_sub3(struct battle_s *bt)
                     b = &(bt->item[itemi]);
                     if (!bt->flag_cur_item_destroyed) {
                         game_battle_area_setup(bt);
-                        if (bt->hmm30 || (bt->hmm21 && (b->maxrange == 0) && (b->missile != 0))) {
+                        if (bt->turn_done || (bt->hmm21 && (b->maxrange == 0) && (b->missile != 0))) {
                             b->f48 = 0;
                         }
                         if ((b->num > 0) && (b->side != SIDE_NONE)) {
@@ -1885,7 +1885,7 @@ void game_battle_area_setup(struct battle_s *bt)
     if (!bt->s[b->side].flag_auto) {
         b->maxrange = game_battle_get_weap_maxrange(bt);
     }
-    bt->hmm30 = true;
+    bt->turn_done = true;
     for (int sy = 0; sy < BATTLE_AREA_H; ++sy) {
         for (int sx = 0; sx < BATTLE_AREA_W; ++sx) {
             bt->area[sy][sx] = 0;
@@ -1925,7 +1925,7 @@ void game_battle_area_setup(struct battle_s *bt)
                             hmm1 = false;
                         }
                         if ((b->actman > 0) || ((w->range >= dist) && (b->wpn[i].numfire > 0) && (b->wpn[i].numshots != 0))) {
-                            bt->hmm30 = false;
+                            bt->turn_done = false;
                         }
                         if ((b->wpn[i].numshots == -1) && (w->misstype == 0)) {
                             range = w->range + b->extrarange;
@@ -1942,13 +1942,13 @@ void game_battle_area_setup(struct battle_s *bt)
                       || (((b->stream == 1) || (b->stream == 2)) && (dist <= 2))
                       || ((b->technull == 1) && (dist <= 4))
                     ) {
-                        bt->hmm30 = false;
+                        bt->turn_done = false;
                         v = 30;
                     }
                 } else {
                     v = -i;
                     if ((b->maxrange >= dist) && (b2->stasisby == 0)) {
-                        bt->hmm30 = false;
+                        bt->turn_done = false;
                         v = 30 + i;
                     }
                 }
@@ -2017,7 +2017,7 @@ void game_battle_area_setup(struct battle_s *bt)
         }
     }
     if (b->missile != 0) {
-        bt->hmm30 = false;
+        bt->turn_done = false;
     }
     ui_battle_area_setup(bt);
 }
