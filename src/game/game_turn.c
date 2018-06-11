@@ -958,7 +958,7 @@ static void game_turn_bomb_damage(struct game_s *g, uint8_t pli, player_id_t att
     for (int i = 0; i < ea->shipdesigns_num; ++i) {
         const shipdesign_t *sd = &(g->srd[attacker].design[i]);
         SETMAX(maxcomp, sd->comp);
-        for (int j = 0; j < (WEAPON_SLOT_NUM - 1); ++j) { /* FIXME BUG -1 */
+        for (int j = 0; j < (game_num_orbital_weap_4 ? WEAPON_SLOT_NUM : (WEAPON_SLOT_NUM - 1)); ++j) { /* WASBUG? last weapon not used */
             weapon_t wpnt = sd->wpnt[j];
             uint32_t v;
             v = ea->orbit[pli].ships[i] * sd->wpnn[j];
