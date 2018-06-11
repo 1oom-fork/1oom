@@ -1317,7 +1317,7 @@ static int savetype_en_text(struct game_s *g, const char *fname)
         OUTLINE "claim = %i\n", p->claim);
         OUTLINE "waste = %i\n", p->waste);
         OUTLINE "explored = %s\n", savetype_en_bv(p->explored, g->players));
-        if (p->owner != PLAYER_NONE) {
+        {
             OUTLINE "bc_to_ecoproj = %i\n", p->bc_to_ecoproj);
             OUTLINE "bc_to_ship = %i\n", p->bc_to_ship);
             OUTLINE "bc_to_factory = %i\n", p->bc_to_factory);
