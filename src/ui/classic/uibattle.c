@@ -1291,7 +1291,7 @@ void ui_battle_draw_missile(const struct battle_s *bt, int missilei, int x, int 
             gfx = 0;
             {
                 int v;
-                v = w->damagemax - (((w->v24 - m->hmm0c) * w->dtbl[0] + (w->dtbl[0] - m->hmm10))) / 2; /* FIXME check this calc */
+                v = w->damagemax - (((w->v24 - m->fuel) * w->dtbl[0] + (w->dtbl[0] - m->hmm10))) / 2; /* FIXME check this calc */
                 if (v < 0) {
                     v = 0;
                     /*m->target = -1; XXX moved to game */

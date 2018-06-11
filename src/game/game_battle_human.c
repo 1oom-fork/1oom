@@ -250,9 +250,9 @@ static void game_battle_missile_spawn(struct battle_s *bt, int attacker_i, int t
         m->x = b->sx * 32 + fr->target_x + (32 - fr->target_x * 2) * b->side;
         m->y = b->sy * 24 + fr->target_y;
     }
-    m->hmm0c = w->v24;
+    m->fuel = w->v24;
     if (attacker_i == 0/*planet*/) {
-        m->hmm0c += 12;
+        m->fuel += 12;
     }
     m->wpnt = wpnt;
     m->nummissiles = nummissiles * w->nummiss;
@@ -279,7 +279,7 @@ static void game_battle_missile_hit(struct battle_s *bt, int missile_i, int targ
             damagediv = 2;
         }
         if (w->damagefade) {
-            damage = w->damagemax - ((w->v24 - m->hmm0c) * w->dtbl[0] + (w->dtbl[0] - m->hmm10)) / 2;
+            damage = w->damagemax - ((w->v24 - m->fuel) * w->dtbl[0] + (w->dtbl[0] - m->hmm10)) / 2;
         } else {
             damage = w->damagemax;
         }
@@ -434,7 +434,7 @@ static void game_battle_missile_move(struct battle_s *bt, int missile_i, int tar
             const struct shiptech_weap_s *w = &(tbl_shiptech_weap[m->wpnt]);
             if (w->misstype == 4) {
                 int v;
-                v = w->damagemax - (((w->v24 - m->hmm0c) * w->dtbl[0] + (w->dtbl[0] - m->hmm10))) / 2; /* FIXME check this calc */
+                v = w->damagemax - (((w->v24 - m->fuel) * w->dtbl[0] + (w->dtbl[0] - m->hmm10))) / 2; /* FIXME check this calc */
                 if (v < 0) {
                     m->target = MISSILE_TARGET_NONE;
                 }
@@ -579,7 +579,7 @@ static void game_battle_missile_turn_done(struct battle_s *bt)
         struct battle_missile_s *m = &(bt->missile[i]);
         if (m->hmm10 <= 0) {
             m->hmm10 = tbl_shiptech_weap[m->wpnt].dtbl[0];
-            if (--m->hmm0c == 0) {
+            if (--m->fuel == 0) {
                 m->target = MISSILE_TARGET_NONE;
             }
         }
