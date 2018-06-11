@@ -1920,7 +1920,7 @@ ui_battle_action_t ui_battle_turn(const struct battle_s *bt)
     }
     if (0
       || (oi == d->oi_done) || (bt->turn_done) || (oi == UIOBJI_ESC)
-      || ((b->missile != 0) && (b->maxrange == 0) && bt->hmm21)
+      || ((b->missile != 0) && (b->maxrange == 0) && bt->has_attacked)
     ) {
         if (oi == d->oi_done) {
             ui_sound_play_sfx_24();

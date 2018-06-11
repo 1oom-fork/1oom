@@ -710,7 +710,7 @@ static int game_battle_get_weap_maxrange(struct battle_s *bt)
         for (int i = 0; i < num_weap; ++i) {
             struct shiptech_weap_s *w = &(tbl_shiptech_weap[b->wpn[i].t]);
             if ((b->wpn[i].n > 0) && (b->wpn[i].numfire > 0) && (b->wpn[i].numshots != 0) && w->is_bomb) {
-                bt->hmm21 = false;
+                bt->has_attacked = false;
             }
         }
     }
@@ -1259,7 +1259,7 @@ static void game_battle_with_human_do_sub3(struct battle_s *bt)
         } else {
             /*4eb6b*/
             bool flag_turn_done;
-            bt->hmm21 = false;
+            bt->has_attacked = false;
             game_battle_reset_specials(bt);
             game_battle_area_setup(bt);
             if (/*(b->num > 0) &&*/ (b->side != -1)) {
@@ -1301,7 +1301,7 @@ static void game_battle_with_human_do_sub3(struct battle_s *bt)
                     }
                     if (0
                       || (act == UI_BATTLE_ACT_DONE) || (bt->turn_done)
-                      || ((b->missile != 0) && (b->maxrange == 0) && bt->hmm21)
+                      || ((b->missile != 0) && (b->maxrange == 0) && bt->has_attacked)
                     ) {
                         flag_turn_done = true;
                         if ((b->cloak == 2) && (b->stasisby == 0)) {
@@ -1413,7 +1413,7 @@ static void game_battle_with_human_do_sub3(struct battle_s *bt)
                     b = &(bt->item[itemi]);
                     if (!bt->flag_cur_item_destroyed) {
                         game_battle_area_setup(bt);
-                        if (bt->turn_done || (bt->hmm21 && (b->maxrange == 0) && (b->missile != 0))) {
+                        if (bt->turn_done || (bt->has_attacked && (b->maxrange == 0) && (b->missile != 0))) {
                             b->f48 = 0;
                         }
                         if ((b->num > 0) && (b->side != SIDE_NONE)) {
@@ -1574,7 +1574,7 @@ bool game_battle_attack(struct battle_s *bt, int attacker_i, int target_i, int a
     }
     dist = util_math_dist_maxabs(b->sx, b->sy, bd->sx, bd->sy);
     if (a4 == 0) {
-        bt->hmm21 = true;
+        bt->has_attacked = true;
     }
     miss_chance_beam = 50 - (b->complevel - bd->defense) * 10;
     miss_chance_missile = 50 - (b->complevel - bd->misdefense) * 10;
