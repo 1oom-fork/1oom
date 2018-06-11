@@ -77,7 +77,7 @@ static void ui_starmap_enroute_draw_cb(void *vptr)
             /* FIXME use proper positioning for varying str length */
             sprintf(buf, "  %s   %i %s.", game_str_sm_outsr, dist - e->fuel_range, game_str_sm_parsecs2);
             lbxfont_select_set_12_4(2, 0, 0, 0);
-            lbxfont_set_44_10_plus(2);
+            lbxfont_set_gap_h(2);
             lbxfont_print_str_split(230, 26, 80, buf, 2, UI_SCREEN_W, UI_SCREEN_H);
         } else {
             int eta = game_calc_eta(g, r->speed, pt->x, pt->y, r->x, r->y);
