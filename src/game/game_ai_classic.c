@@ -2362,7 +2362,7 @@ static int game_ai_battle_rival(struct battle_s *bt, int itemi, int a2)
             }
         }
     }
-    /*59345*/
+    /*59354*/
     if (itemi == 0/*planet*/) {
         weapon_t t = b->wpn[0].t;
         bool is_mirv = (tbl_shiptech_weap[t].nummiss > 1);
