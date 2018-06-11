@@ -1919,7 +1919,7 @@ ui_battle_action_t ui_battle_turn(const struct battle_s *bt)
         oi = d->oi_done;
     }
     if (0
-      || (oi == d->oi_done) || (bt->hmm30) || (oi == UIOBJI_ESC)
+      || (oi == d->oi_done) || (bt->turn_done) || (oi == UIOBJI_ESC)
       || ((b->missile != 0) && (b->maxrange == 0) && bt->hmm21)
     ) {
         if (oi == d->oi_done) {
