@@ -242,7 +242,7 @@ static void sabotage_done_draw_cb(void *vptr)
         lbxfont_print_str_center(80, 110, game_str_tbl_races[g->eto[d->other1].race], UI_SCREEN_W);
         lbxfont_print_str_center(152, 110, game_str_tbl_races[g->eto[d->other2].race], UI_SCREEN_W);
         lbxfont_select(5, 6, 0, 0);
-        lbxfont_set_44_10_plus(2);
+        lbxfont_set_gap_h(2);
         lbxfont_print_str_split(40, 70, 154, game_str_sb_frame, 3, UI_SCREEN_W, UI_SCREEN_H);
         lbxfont_select(0, 0, 0, 0);
         lbxfont_print_str_center(115, 96, game_str_nt_victim, UI_SCREEN_W);
