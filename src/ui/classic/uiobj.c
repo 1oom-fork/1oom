@@ -581,16 +581,16 @@ static inline void uiobj_handle_objects_sub1(int i)
                 /*19ca3*/
                 lbxfont_print_str_normal(p->x0, p->y0 + 1, p->ta.str, UI_SCREEN_W, p->scale);
             } else {
-                int16_t v2, di;
-                v2 = lbxfont_get_gap_h();
-                if (v2 < 0) { ++v2; }
-                v2 /= 2;
-                if (v2 == 0) {
-                    v2 = 1;
+                int16_t gap_h, char_h;
+                gap_h = lbxfont_get_gap_h();
+                if (gap_h < 0) { ++gap_h; }
+                gap_h /= 2;
+                if (gap_h == 0) {
+                    gap_h = 1;
                 }
-                di = lbxfont_get_height();
+                char_h = lbxfont_get_height();
                 /*19ce2*/
-                uiobj_handle_ta_sub1(p->x0 - 1, p->y0 - v2 + 1, p->x1, p->y0 + di + 1, p->ta.subtype, p->ta.sp0p, p->ta.sp0v, p->ta.sp1, p->ta.sp2, p->ta.sp3, p->scale);
+                uiobj_handle_ta_sub1(p->x0 - 1, p->y0 - gap_h + 1, p->x1, p->y0 + char_h + 1, p->ta.subtype, p->ta.sp0p, p->ta.sp0v, p->ta.sp1, p->ta.sp2, p->ta.sp3, p->scale);
                 lbxfont_print_str_normal(p->x0, p->y0 + 1, p->ta.str, UI_SCREEN_W, p->scale);
             }
             break;
@@ -659,15 +659,15 @@ static void uiobj_handle_click(int i, uint16_t a2)
                     lbxfont_select_subcolors_0();
                 }
             } else {
-                int16_t v2, v4;
-                v4 = lbxfont_get_gap_h();
-                if (v4 < 0) { ++v2; }
-                v4 /= 2;
-                if (v4 == 0) {
-                    v4 = 1;
+                int16_t char_h, gap_h;
+                gap_h = lbxfont_get_gap_h();
+                if (gap_h < 0) { ++gap_h; }
+                gap_h /= 2;
+                if (gap_h == 0) {
+                    gap_h = 1;
                 }
-                v2 = lbxfont_get_height();
-                uiobj_handle_ta_sub1(p->x0 - 1, p->y0 - v4 + 1, p->x1, p->y0 + v2 + 1, p->ta.subtype, p->ta.sp0p, p->ta.sp0v, p->ta.sp1, p->ta.sp2, p->ta.sp3, p->scale);
+                char_h = lbxfont_get_height();
+                uiobj_handle_ta_sub1(p->x0 - 1, p->y0 - gap_h + 1, p->x1, p->y0 + char_h + 1, p->ta.subtype, p->ta.sp0p, p->ta.sp0v, p->ta.sp1, p->ta.sp2, p->ta.sp3, p->scale);
                 lbxfont_print_str_normal(p->x0, p->y0 + 1, p->ta.str, UI_SCREEN_W, p->scale);
             }
             break;
