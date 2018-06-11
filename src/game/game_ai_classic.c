@@ -2366,11 +2366,11 @@ static int game_ai_battle_rival(struct battle_s *bt, int itemi, int a2)
             }
         }
     }
-    /*59345*/
+    /*59354*/
     if (itemi == 0/*planet*/) {
         weapon_t t = b->wpn[0].t;
-        bool nm = (tbl_shiptech_weap[t].nummiss > 1);
-        if (bt->bases_using_mirv != nm) {
+        bool is_mirv = (tbl_shiptech_weap[t].nummiss > 1);
+        if (bt->bases_using_mirv != is_mirv) {
             b->wpn[0].t = b->wpn[1].t; b->wpn[1].t = t;
         }
     }
@@ -2449,12 +2449,12 @@ static int game_battle_ai_missile_evade(const struct battle_s *bt)
                     roomx = b->sx;
                 }
             }
-            movex = (b->man - b->unman) * m->hmm0c;
+            movex = (b->man - b->unman) * m->fuel;
             if ((movex > roomx) || (b->subspace == 1)) {
                 movex = roomx;
             }
             dist = util_math_dist_fast(b->sx * 32 + 16, b->sy * 24 + 12, m->x, m->y);
-            dangerdist = tbl_shiptech_weap[m->wpnt].dtbl[0] * m->hmm0c + 13;
+            dangerdist = tbl_shiptech_weap[m->wpnt].dtbl[0] * m->fuel + 13;
             if (dist > dangerdist) {
                 evade = 1;
             }
@@ -2736,7 +2736,7 @@ static void game_battle_ai_target1_sub5(struct battle_s *bt)
                 if (bt->area[sy][sx] == 1) {
                     for (int i = 0; i < bt->num_missile; ++i) {
                         const struct battle_missile_s *m = &(bt->missile[i]);
-                        if ((m->target == itemi) && (m->hmm0c < 8)) {
+                        if ((m->target == itemi) && (m->fuel < 8)) {
                             mindist = 10;   /* FIXME BUG this results in always setting to last missile dist */
                             dist = util_math_dist_maxabs(sx, sy, m->x / 32, m->y / 24);
                             SETMIN(mindist, dist);
@@ -2756,7 +2756,7 @@ static void game_battle_ai_target1_sub5(struct battle_s *bt)
             missdist = 10;
             for (int i = 0; i < bt->num_missile; ++i) {
                 const struct battle_missile_s *m = &(bt->missile[i]);
-                if ((m->target == itemi) && (m->hmm0c < 8)) {
+                if ((m->target == itemi) && (m->fuel < 8)) {
                     dist = util_math_dist_maxabs(b->sx, b->sy, m->x / 32, m->y / 24);
                     SETMIN(missdist, dist);
                 }
@@ -2774,7 +2774,7 @@ static void game_battle_ai_target1_sub5(struct battle_s *bt)
                         mindist = 10;
                         for (int i = 0; i < bt->num_missile; ++i) {
                             const struct battle_missile_s *m = &(bt->missile[i]);
-                            if ((m->target == itemi) && (m->hmm0c < 8)) {
+                            if ((m->target == itemi) && (m->fuel < 8)) {
                                 dist = util_math_dist_maxabs(sx, sy, m->x / 32, m->y / 24);
                                 SETMIN(mindist, dist);
                             }
@@ -2867,7 +2867,7 @@ static void game_ai_classic_battle_ai_turn(struct battle_s *bt)
                 const struct battle_item_s *bd = &(bt->item[target_i]);
                 if (util_math_dist_maxabs(b->sx, b->sy, bd->sx, bd->sy) <= 1) {
                     get_possible_distance_increase(bt, target_i);
-                    game_battle_attack(bt, itemi, target_i, 0);
+                    game_battle_attack(bt, itemi, target_i, false);
                 }
             }
         }
@@ -2886,7 +2886,7 @@ static void game_ai_classic_battle_ai_turn(struct battle_s *bt)
         }
         /*5a72a*/
         get_possible_distance_increase(bt, target_i);
-        game_battle_attack(bt, itemi, target_i, 0);
+        game_battle_attack(bt, itemi, target_i, false);
     }
     /*5a740*/
     if (bt->special_button == -1) {
@@ -2912,7 +2912,7 @@ static void game_ai_classic_battle_ai_turn(struct battle_s *bt)
         if ((target_i == -1) && (itemi == 0/*planet*/) && (b->num > 0)) {
             int ii = (b->side == SIDE_R) ? 1 : (bt->s[SIDE_L].items + 1);
             if (bt->item[ii].side != b->side) {
-                game_battle_attack(bt, itemi, ii, 0);
+                game_battle_attack(bt, itemi, ii, false);
             }
         }
         /*5a866*/
@@ -2933,7 +2933,7 @@ static void game_ai_classic_battle_ai_turn(struct battle_s *bt)
             /*5a8e1*/
             if (target_i > -1) {
                 get_possible_distance_increase(bt, target_i);
-                game_battle_attack(bt, itemi, target_i, 0);
+                game_battle_attack(bt, itemi, target_i, false);
             }
             if (loops > 200) {  /* FIXME MOO1 does not need this but it does have the loop counter */
                 LOG_DEBUG((3, "%s: break from loop, target_i:%i\n", __func__, target_i));
