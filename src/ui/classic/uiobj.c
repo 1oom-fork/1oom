@@ -495,16 +495,16 @@ static inline void uiobj_handle_hmm1_sub1(int i)
                 /*19ca3*/
                 lbxfont_print_str_normal(p->x0, p->y0 + 1, p->ta.str, UI_SCREEN_W);
             } else {
-                int16_t v2, di;
-                v2 = lbxfont_get_gap_h();
-                if (v2 < 0) { ++v2; }
-                v2 /= 2;
-                if (v2 == 0) {
-                    v2 = 1;
+                int16_t gap_h, di;
+                gap_h = lbxfont_get_gap_h();
+                if (gap_h < 0) { ++gap_h; }
+                gap_h /= 2;
+                if (gap_h == 0) {
+                    gap_h = 1;
                 }
                 di = lbxfont_get_height();
                 /*19ce2*/
-                uiobj_handle_ta_sub1(p->x0 - 1, p->y0 - v2 + 1, p->x1, p->y0 + di + 1, p->ta.subtype, p->ta.sp0p, p->ta.sp0v, p->ta.sp1, p->ta.sp2, p->ta.sp3);
+                uiobj_handle_ta_sub1(p->x0 - 1, p->y0 - gap_h + 1, p->x1, p->y0 + di + 1, p->ta.subtype, p->ta.sp0p, p->ta.sp0v, p->ta.sp1, p->ta.sp2, p->ta.sp3);
                 lbxfont_print_str_normal(p->x0, p->y0 + 1, p->ta.str, UI_SCREEN_W);
             }
             break;
