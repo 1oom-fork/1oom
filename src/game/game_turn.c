@@ -844,10 +844,11 @@ static void game_turn_unrest_hmm1(struct game_s *g)
 }
 #endif
 
-static void game_turn_explore(struct game_s *g, uint8_t *planetptr, player_id_t *playerptr)
+static void game_turn_explore(struct game_s *g)
 {
     for (int pli = 0; pli < g->galaxy_stars; ++pli) {
         planet_t *p = &(g->planet[pli]);
+        p->artifact_looter = PLAYER_NONE;
         for (player_id_t i = PLAYER_0; i < g->players; ++i) {
             if (BOOLVEC_IS0(p->explored, i) || (p->owner == PLAYER_NONE)) {
                 empiretechorbit_t *e = &(g->eto[i]);
@@ -874,11 +875,11 @@ static void game_turn_explore(struct game_s *g, uint8_t *planetptr, player_id_t 
                 if (flag_visible) {
                     bool first, flag_colony_ship, was_explored;
                     int best_colonize, best_colonyship = 0;
+                    /* FIXME artifacts disappearing due to scanning a planet is weird */
                     first = BOOLVEC_IS_CLEAR(p->explored, PLAYER_NUM);
                     if ((p->special == PLANET_SPECIAL_ARTIFACTS) && (!by_scanner) && first) {
-                        /* FIXME BUG only 1 artifact landing per turn */
-                        *planetptr = pli;
-                        *playerptr = i;
+                        /* FIXME? AIs (last player ID) win on simultaneous explore */
+                        p->artifact_looter = i;
                     }
                     flag_colony_ship = false;
                     best_colonize = 200;
@@ -1756,8 +1757,6 @@ struct game_end_s game_turn_process(struct game_s *g)
     BOOLVEC_TBL_DECLARE(old_contact, PLAYER_NUM, PLAYER_NUM);
     uint8_t old_focus[PLAYER_NUM];
     int num_alive = 0, num_colony = 0;
-    uint8_t artifact_planet = PLANET_NONE;
-    player_id_t artifact_player = PLAYER_NONE;
     game_end.type = GAME_END_NONE;
     game_turn_limit_ships(g);
     for (player_id_t i = PLAYER_0; i < g->players; ++i) {
@@ -1824,7 +1823,7 @@ struct game_end_s game_turn_process(struct game_s *g)
             memset(s, 0, sizeof(*s));
         }
     }
-    game_turn_explore(g, &artifact_planet, &artifact_player);
+    game_turn_explore(g);
     game_turn_bomb(g);
     game_turn_transport(g);
     game_turn_ground(g);
@@ -1836,8 +1835,12 @@ struct game_end_s game_turn_process(struct game_s *g)
     if (game_event_run(g, &game_end)) {
         return game_end;
     }
-    if (artifact_planet != PLANET_NONE) {
-        game_tech_get_artifact_loot(g, artifact_planet, artifact_player);
+    for (int pli = 0; pli < g->galaxy_stars; ++pli) {
+        player_id_t looter;
+        looter = g->planet[pli].artifact_looter;
+        if (looter != PLAYER_NONE) {
+            game_tech_get_artifact_loot(g, pli, looter);
+        }
     }
     for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         if (IS_HUMAN(g, i)) {
