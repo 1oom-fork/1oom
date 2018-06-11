@@ -85,7 +85,7 @@ static void ui_starmap_trans_draw_cb(void *vptr)
         if (pt->within_frange[d->api] != 1) {
             int mindist = game_get_min_dist(g, d->api, g->planet_focus_i[d->api]);
             lbxfont_select_set_12_1(0, 0xe, 5, 0);
-            lbxfont_set_44_10_plus(1);
+            lbxfont_set_gap_h(1);
             lbxfont_print_str_split(228, 94, 82, game_str_sm_notrange, 2, UI_SCREEN_W, UI_SCREEN_H);
             sprintf(buf, "%s %i %s %i %s", game_str_sm_notrange1, mindist, game_str_sm_notrange2, g->eto[d->api].fuel_range, game_str_sm_notrange3);
             lbxfont_print_str_split(229, 125, 80, game_str_sm_seltr, 2, UI_SCREEN_W, UI_SCREEN_H);
@@ -95,7 +95,7 @@ static void ui_starmap_trans_draw_cb(void *vptr)
         } else if (pt->type < g->eto[d->api].have_colony_for) {
             int pos;
             lbxfont_select(0, 6, 0, 0);
-            lbxfont_set_44_10_plus(1);
+            lbxfont_set_gap_h(1);
             pos = sprintf(buf, "%s ", game_str_sm_trcontr1);
             sprintf(&buf[pos], "%s ", game_str_tbl_sm_pltype[pt->type]);
             util_str_tolower(&buf[pos]);
