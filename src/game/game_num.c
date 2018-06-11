@@ -31,6 +31,7 @@ int game_num_max_bomb_dmg = 100000;
 int game_num_max_bio_dmg = 10000;
 int game_num_max_trans_dmg = 32000;
 int game_num_max_ship_maint = 32000;
+int game_num_max_tribute_bc = 32000;
 int game_num_event_roll = 512;
 int game_num_council_years = 25;
 int game_num_eco_slider_slack = 7;

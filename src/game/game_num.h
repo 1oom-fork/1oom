@@ -26,6 +26,7 @@ extern int game_num_max_bomb_dmg;
 extern int game_num_max_bio_dmg;
 extern int game_num_max_trans_dmg;
 extern int game_num_max_ship_maint;
+extern int game_num_max_tribute_bc;
 extern int game_num_event_roll;
 extern int game_num_council_years;
 extern int game_num_eco_slider_slack;
