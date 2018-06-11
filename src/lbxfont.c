@@ -487,7 +487,7 @@ int lbxfont_get_diff_44_10(void)
     return ((uint16_t)lbxfontdata[0x44]) - GET_LE_16(&(lbxfontdata[0x10]));
 }
 
-void lbxfont_set_44_10_plus(uint16_t value)
+void lbxfont_set_gap_h(uint16_t value)
 {
     value += GET_LE_16(&(lbxfontdata[0x10]));
     SET_LE_16(&(lbxfontdata[0x44]), value);
