@@ -2843,7 +2843,7 @@ static void game_ai_classic_battle_ai_turn(struct battle_s *bt)
                 const struct battle_item_s *bd = &(bt->item[target_i]);
                 if (util_math_dist_maxabs(b->sx, b->sy, bd->sx, bd->sy) <= 1) {
                     game_battle_ai_range_hmm1(bt, target_i);
-                    game_battle_attack(bt, itemi, target_i, 0);
+                    game_battle_attack(bt, itemi, target_i, false);
                 }
             }
         }
@@ -2862,7 +2862,7 @@ static void game_ai_classic_battle_ai_turn(struct battle_s *bt)
         }
         /*5a72a*/
         game_battle_ai_range_hmm1(bt, target_i);
-        game_battle_attack(bt, itemi, target_i, 0);
+        game_battle_attack(bt, itemi, target_i, false);
     }
     /*5a740*/
     if (bt->special_button == -1) {
@@ -2888,7 +2888,7 @@ static void game_ai_classic_battle_ai_turn(struct battle_s *bt)
         if ((target_i != -1) && (itemi == 0/*planet*/) && (b->num > 0)) {
             int ii = (b->side == SIDE_R) ? 1 : (bt->s[SIDE_L].items + 1);
             if (bt->item[ii].side != b->side) {
-                game_battle_attack(bt, itemi, ii, 0);
+                game_battle_attack(bt, itemi, ii, false);
             }
         }
         /*5a866*/
@@ -2909,7 +2909,7 @@ static void game_ai_classic_battle_ai_turn(struct battle_s *bt)
             /*5a8e1*/
             if (target_i > -1) {
                 game_battle_ai_range_hmm1(bt, target_i);
-                game_battle_attack(bt, itemi, target_i, 0);
+                game_battle_attack(bt, itemi, target_i, false);
             }
             if (loops > 200) {  /* FIXME MOO1 does not need this but it does have the loop counter */
                 LOG_DEBUG((3, "%s: break from loop, target_i:%i\n", __func__, target_i));
