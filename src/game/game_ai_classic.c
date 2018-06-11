@@ -2354,8 +2354,8 @@ static int game_battle_item_rival1(struct battle_s *bt, int itemi, int a2)
     /*59345*/
     if (itemi == 0/*planet*/) {
         weapon_t t = b->wpn[0].t;
-        bool nm = (tbl_shiptech_weap[t].nummiss > 1);
-        if (bt->bases_using_mirv != nm) {
+        bool is_mirv = (tbl_shiptech_weap[t].nummiss > 1);
+        if (bt->bases_using_mirv != is_mirv) {
             b->wpn[0].t = b->wpn[1].t; b->wpn[1].t = t;
         }
     }
