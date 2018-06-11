@@ -11,6 +11,7 @@
 #include "game_ai.h"
 #include "game_aux.h"
 #include "game_diplo.h"
+#include "game_num.h"
 #include "game_spy.h"
 #include "game_str.h"
 #include "game_tech.h"
@@ -529,7 +530,7 @@ static bool game_audiece_mp_sweeten_bc(struct audience_s *au, int *bcptr)
     uint32_t reserve = eh->reserve_bc;
     uint16_t bctbl[5];
     char *cbuf = &(au->buf[AUDIENCE_CBUF_POS]);
-    SETMIN(reserve, 32000);
+    SETMIN(reserve, game_num_max_tribute_bc);
     reserve = ((reserve) / 20) * 20;
     if (reserve < 100) {
         bcnum = reserve / 20;
@@ -897,7 +898,7 @@ static void audience_menu_tribute(struct audience_s *au)
     uint32_t reserve = eh->reserve_bc;
     uint16_t bctbl[4];
     char *cbuf = &(au->buf[AUDIENCE_CBUF_POS]);
-    SETMIN(reserve, 32000);
+    SETMIN(reserve, game_num_max_tribute_bc);
     reserve = ((reserve) / 25) * 25;
     if (reserve < 100) {
         bcnum = reserve / 25;
