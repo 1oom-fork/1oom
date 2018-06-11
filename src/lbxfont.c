@@ -482,7 +482,7 @@ uint16_t lbxfont_get_height(void)
     return GET_LE_16(&(lbxfontdata[0x10]));
 }
 
-int lbxfont_get_diff_44_10(void)
+int lbxfont_get_gap_h(void)
 {
     return ((uint16_t)lbxfontdata[0x44]) - GET_LE_16(&(lbxfontdata[0x10]));
 }
