@@ -31,16 +31,16 @@ static void game_battle_with_human_init_sub1(struct battle_s *bt)
     /* from ui_battle_do_sub1 */
     bt->items_num = bt->s[SIDE_L].items + bt->s[SIDE_R].items;
     for (int i = 0; i < bt->items_num; ++i) {
-        bool flag_have_only_bombs;
-        flag_have_only_bombs = true;
+        bool flag_no_missiles;
+        flag_no_missiles = true;
         for (int j = 0; j < WEAPON_SLOT_NUM; ++j) {
             weapon_t w;
             w = bt->item[i].wpn[j].t;
             if ((tbl_shiptech_weap[w].numshots > 0) && (!tbl_shiptech_weap[w].is_bomb)) {
-                flag_have_only_bombs = false;
+                flag_no_missiles = false;
             }
         }
-        bt->item[i].missile = flag_have_only_bombs ? -1 : 1;
+        bt->item[i].missile = flag_no_missiles ? -1 : 1;
     }
     bt->antidote = bt->item[0].pulsar;  /* HACK */
     bt->item[0].pulsar = 0;
