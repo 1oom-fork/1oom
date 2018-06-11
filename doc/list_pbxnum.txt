@@ -14,10 +14,14 @@ monster_rest_att : 0..1, 0
     turn it has reached a planet.
 
 orbital_weap_any : 0..1, 0
-  - Allow orbital bombardment with any weapon.
+  - Allow orbital bombardment with any weapon type.
     In MOO1 neither death ray, crystal ray nor amoeba stream can be used for
     orbital bombardment. The last two are only available via save game editing,
     but the omission of death ray is puzzling.
+
+orbital_weap_4 : 0..1, 0
+  - Allow orbital bombardment with weapon in slot 4.
+    In MOO1 the weapon in slot 4 is not used in orbital bombardment.
 
 event_roll : 0..2147483647, 512
   - Special event probability. Bigger number means events are less likely.
