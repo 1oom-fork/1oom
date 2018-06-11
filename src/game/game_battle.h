@@ -17,10 +17,6 @@ typedef enum { SIDE_L, SIDE_R, SIDE_NONE } battle_side_i_t;
 struct battle_item_s {
     uint8_t *gfx;
     char name[SHIP_NAME_LEN];
-    uint16_t f10;
-    uint16_t f12;
-    uint16_t f14;
-    uint16_t f16;
     uint8_t shiptbli;
     int8_t complevel;
     ship_special_t special[SPECIAL_SLOT_NUM];
@@ -78,15 +74,15 @@ struct battle_rock_s {
 #define MISSILE_TARGET_NONE -1
 
 struct battle_missile_s {
+    weapon_t wpnt;
     uint16_t nummissiles;
     uint16_t damagemul2;
     int8_t source;  /* item index */
     int8_t target;  /* item index or MISSILE_TARGET_NONE */
     int16_t x;
     int16_t y;
-    uint16_t fuel;
-    weapon_t wpnt;
-    uint16_t speed;
+    uint8_t fuel;
+    uint8_t speed;
 };
 
 struct battle_side_s {
