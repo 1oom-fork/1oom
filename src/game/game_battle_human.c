@@ -176,7 +176,7 @@ static void game_battle_item_destroy(struct battle_s *bt, int item_i)
 {
     struct battle_item_s *b = &(bt->item[item_i]);
     battle_side_i_t side = b->side;
-    b->f48 = 0;
+    b->selected = 0;
     if (item_i != 0) {
         if (bt->cur_item > item_i) {
             --bt->cur_item;
@@ -566,7 +566,7 @@ static void game_battle_build_priority(struct battle_s *bt)
 static void game_battle_item_done(struct battle_s *bt)
 {
     struct battle_item_s *b = &(bt->item[bt->cur_item]);
-    b->f48 = 0;
+    b->selected = 0;
     do {
         bt->priority[bt->prio_i] = -1;
         bt->prio_i = (bt->prio_i + 1) % (bt->items_num2 + 1);
@@ -1286,7 +1286,7 @@ static void game_battle_with_human_do_sub3(struct battle_s *bt)
                     b->missile = 1;
                 }
                 /*4ec80*/
-                b->f48 = 1;
+                b->selected = 1;
                 bt->flag_cur_item_destroyed = false;
                 bt->num_repulsed = 0;
                 if (bt->s[b->side].flag_auto || (b->retreat > 0)) {   /* FIXME multiplayer */
@@ -1308,13 +1308,13 @@ static void game_battle_with_human_do_sub3(struct battle_s *bt)
                             ui_battle_draw_cloaking(bt, 100, 20, -1, -1);
                             b->cloak = 1;
                         }
-                        b->f48 = 0;
+                        b->selected = 0;
                         game_battle_item_done(bt);
                     }
                     /*4eddd*/
                     if (act == UI_BATTLE_ACT_WAIT) {
                         flag_turn_done = true;
-                        b->f48 = 0;
+                        b->selected = 0;
                         b->can_retaliate = true;
                         bt->priority[vc] = itemi;
                         if (vc != bt->prio_i) {
@@ -1414,7 +1414,7 @@ static void game_battle_with_human_do_sub3(struct battle_s *bt)
                     if (!bt->flag_cur_item_destroyed) {
                         game_battle_area_setup(bt);
                         if (bt->turn_done || (bt->has_attacked && (b->maxrange == 0) && (b->missile != 0))) {
-                            b->f48 = 0;
+                            b->selected = 0;
                         }
                         if ((b->num > 0) && (b->side != SIDE_NONE)) {
                             ui_battle_draw_basic_copy(bt);
@@ -1823,9 +1823,9 @@ void game_battle_item_move(struct battle_s *bt, int itemi, int sx, int sy)
                 y += vy;
                 ui_battle_draw_arena(bt, itemi, 2);
                 ui_battle_draw_bottom(bt);
-                b->f48 = 2;
+                b->selected = 2/*moving*/;
                 ui_battle_draw_item(bt, itemi, x, y);
-                b->f48 = 1;
+                b->selected = 1;
                 for (int j = 0; j < bt->num_missile; ++j) {
                     struct battle_missile_s *m = &(bt->missile[j]);
                     if (m->target == itemi) {
