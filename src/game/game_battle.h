@@ -117,7 +117,7 @@ struct battle_s {
     struct battle_side_s s[2];
     bool hmm21;
     bool hmm24;
-    bool hmm30;
+    bool turn_done;
     uint8_t num_repulsed;
     bool flag_human_att;
     bool flag_cur_item_destroyed;
