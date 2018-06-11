@@ -306,7 +306,7 @@ static void lbxfont_split_str(int x, int y, int maxw, const char *str, split_str
     int i = 0, j, x0, x1, w, pos_space, last_c, ty = y, v12, xnext = -1, v18;
     uint16_t line_h = lbxfontdata[0x44];
     int16_t gap_w = lbxfontdata[0x48];
-    uint8_t hmm10 = lbxfontdata[0x10];
+    uint8_t char_h = lbxfontdata[0x10];
     s->num = 0;
 
     strncpy(s->buf, str, SPLIT_STR_MAX_LEN);
@@ -328,7 +328,7 @@ static void lbxfont_split_str(int x, int y, int maxw, const char *str, split_str
             ) {
                 if (0
                   || (lbxfont_tbl_split_hmm3[z] > (ty + line_h))
-                  || (lbxfont_tbl_split_hmm1[z] < (ty + hmm10))
+                  || (lbxfont_tbl_split_hmm1[z] < (ty + char_h))
                 ) {
                     continue;
                 }
@@ -348,7 +348,7 @@ static void lbxfont_split_str(int x, int y, int maxw, const char *str, split_str
             }
         }
         if (v12 == 0) {
-            if ((ty + hmm10) >= maxy) {
+            if ((ty + char_h) >= maxy) {
                 s->num = 0;
                 return;
             }
