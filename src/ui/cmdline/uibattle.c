@@ -281,8 +281,8 @@ void ui_battle_draw_item(const struct battle_s *bt, int itemi, int x, int y)
             ui_data.battle.screen[ty + dy][tx + dx] = c;
         }
     }
-    if ((b->f48) && (!bt->s[b->side].flag_auto)) {
-        if (b->f48 != 2) {
+    if (b->selected && (!bt->s[b->side].flag_auto)) {
+        if (b->selected != 2/*moving*/) {
             for (int dy = 0; dy < 3; ++dy) {
                 for (int dx = 0; dx < 4; ++dx) {
                     char c;
@@ -388,8 +388,8 @@ ui_battle_action_t ui_battle_turn(const struct battle_s *bt)
     if (0
       || (b->stasisby > 0)
       || ((itemi == 0) && (b->num <= 0))
-      || (bt->hmm30)
-      || ((b->f85 != 0) && (b->maxrange == 0) && bt->hmm21)
+      || (bt->turn_done)
+      || ((b->missile != 0) && (b->maxrange == 0) && bt->has_attacked)
     ) {
         return UI_BATTLE_ACT_DONE;
     }

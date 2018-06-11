@@ -30,16 +30,16 @@ static void game_battle_with_human_init_sub1(struct battle_s *bt)
     /* from ui_battle_do_sub1 */
     bt->items_num = bt->s[SIDE_L].items + bt->s[SIDE_R].items;
     for (int i = 0; i < bt->items_num; ++i) {
-        bool flag_have_only_bombs;
-        flag_have_only_bombs = true;
+        bool flag_no_missiles;
+        flag_no_missiles = true;
         for (int j = 0; j < WEAPON_SLOT_NUM; ++j) {
             weapon_t w;
             w = bt->item[i].wpn[j].t;
             if ((tbl_shiptech_weap[w].numshots > 0) && (!tbl_shiptech_weap[w].is_bomb)) {
-                flag_have_only_bombs = false;
+                flag_no_missiles = false;
             }
         }
-        bt->item[i].f85 = flag_have_only_bombs ? -1 : 1;
+        bt->item[i].missile = flag_no_missiles ? -1 : 1;
     }
     bt->antidote = bt->item[0].pulsar;  /* HACK */
     bt->item[0].pulsar = 0;
@@ -175,7 +175,7 @@ static void game_battle_item_destroy(struct battle_s *bt, int item_i)
 {
     struct battle_item_s *b = &(bt->item[item_i]);
     battle_side_i_t side = b->side;
-    b->f48 = 0;
+    b->selected = 0;
     if (item_i != 0) {
         if (bt->cur_item > item_i) {
             --bt->cur_item;
@@ -249,13 +249,13 @@ static void game_battle_missile_spawn(struct battle_s *bt, int attacker_i, int t
         m->x = b->sx * 32 + fr->target_x + (32 - fr->target_x * 2) * b->side;
         m->y = b->sy * 24 + fr->target_y;
     }
-    m->hmm0c = w->v24;
+    m->fuel = w->v24;
     if (attacker_i == 0/*planet*/) {
-        m->hmm0c += 12;
+        m->fuel += 12;
     }
     m->wpnt = wpnt;
     m->nummissiles = nummissiles * w->nummiss;
-    m->hmm10 = w->dtbl[0];
+    m->speed = w->dtbl[0];
     ++bt->num_missile;
 }
 
@@ -278,7 +278,7 @@ static void game_battle_missile_hit(struct battle_s *bt, int missile_i, int targ
             damagediv = 2;
         }
         if (w->damagefade) {
-            damage = w->damagemax - ((w->v24 - m->hmm0c) * w->dtbl[0] + (w->dtbl[0] - m->hmm10)) / 2;
+            damage = w->damagemax - ((w->v24 - m->fuel) * w->dtbl[0] + (w->dtbl[0] - m->speed)) / 2;
         } else {
             damage = w->damagemax;
         }
@@ -433,7 +433,7 @@ static void game_battle_missile_move(struct battle_s *bt, int missile_i, int tar
             const struct shiptech_weap_s *w = &(tbl_shiptech_weap[m->wpnt]);
             if (w->misstype == 4) {
                 int v;
-                v = w->damagemax - (((w->v24 - m->hmm0c) * w->dtbl[0] + (w->dtbl[0] - m->hmm10))) / 2; /* FIXME check this calc */
+                v = w->damagemax - (((w->v24 - m->fuel) * w->dtbl[0] + (w->dtbl[0] - m->speed))) / 2; /* FIXME check this calc */
                 if (v < 0) {
                     m->target = MISSILE_TARGET_NONE;
                 }
@@ -451,9 +451,9 @@ static void game_battle_missile_move(struct battle_s *bt, int missile_i, int tar
         int v;
         m->x = mx;
         m->y = my;
-        v = m->hmm10 - step;
+        v = m->speed - step;
         SETMAX(v, 0);
-        m->hmm10 = v;
+        m->speed = v;
     }
 }
 
@@ -470,10 +470,10 @@ static void game_battle_item_finish(struct battle_s *bt, bool flag_quick)
         flag_done = true;
         for (int i = 0; i < bt->num_missile; ++i) {
             struct battle_missile_s *m = &(bt->missile[i]);
-            if ((m->target == itemi) && (m->hmm10 > 0)) {
+            if ((m->target == itemi) && (m->speed > 0)) {
                 int step;
                 step = tbl_shiptech_weap[m->wpnt].dtbl[0] / delay;
-                SETMIN(step, m->hmm10);
+                SETMIN(step, m->speed);
                 game_battle_missile_move(bt, i, b->sx * 32, b->sy * 24, step);
                 flag_done = false;
             }
@@ -565,7 +565,7 @@ static void game_battle_build_priority(struct battle_s *bt)
 static void game_battle_item_done(struct battle_s *bt)
 {
     struct battle_item_s *b = &(bt->item[bt->cur_item]);
-    b->f48 = 0;
+    b->selected = 0;
     do {
         bt->priority[bt->prio_i] = -1;
         bt->prio_i = (bt->prio_i + 1) % (bt->items_num2 + 1);
@@ -576,9 +576,9 @@ static void game_battle_missile_turn_done(struct battle_s *bt)
 {
     for (int i = 0; i < bt->num_missile; ++i) {
         struct battle_missile_s *m = &(bt->missile[i]);
-        if (m->hmm10 <= 0) {
-            m->hmm10 = tbl_shiptech_weap[m->wpnt].dtbl[0];
-            if (--m->hmm0c == 0) {
+        if (m->speed <= 0) {
+            m->speed = tbl_shiptech_weap[m->wpnt].dtbl[0];
+            if (--m->fuel == 0) {
                 m->target = MISSILE_TARGET_NONE;
             }
         }
@@ -647,17 +647,17 @@ static void game_battle_reset_specials(struct battle_s *bt)
     b = &(bt->item[itemi]);
     b->can_retaliate = true;
     {
-        bool flag_have_only_bombs = true;
+        bool flag_no_missiles = true;
         for (int i = 0; i < WEAPON_SLOT_NUM; ++i) {
             if ((b->wpn[i].numshots > 0) && (!tbl_shiptech_weap[b->wpn[i].t].is_bomb)) {
-                flag_have_only_bombs = false;
+                flag_no_missiles = false;
             }
         }
-        if (flag_have_only_bombs) {
-            b->f85 = -1;
+        if (flag_no_missiles) {
+            b->missile = -1;
         }
         if (itemi == 0) {
-            b->f85 = 1;
+            b->missile = 1;
         }
     }
     if (b->cloak == 1) {
@@ -699,7 +699,7 @@ static int game_battle_get_weap_maxrange(struct battle_s *bt)
                 range = w->range + b->extrarange;
             } else {
                 range = w->range;
-                if ((b->f85 == 0) && (range > 1) && (w->misstype == 0)) {
+                if ((b->missile == 0) && (range > 1) && (w->misstype == 0)) {
                     range = 0;
                 }
             }
@@ -710,7 +710,7 @@ static int game_battle_get_weap_maxrange(struct battle_s *bt)
         for (int i = 0; i < num_weap; ++i) {
             struct shiptech_weap_s *w = &(tbl_shiptech_weap[b->wpn[i].t]);
             if ((b->wpn[i].n > 0) && (b->wpn[i].numfire > 0) && (b->wpn[i].numshots != 0) && w->is_bomb) {
-                bt->hmm21 = false;
+                bt->has_attacked = false;
             }
         }
     }
@@ -1167,7 +1167,7 @@ static void game_battle_move_retaliate(struct battle_s *bt, int itemi)
         if ((b->side + b2->side) == 1) {
             if ((b2->stasisby == 0) && (b2->cloak != 1)) {
                 if (b2->can_retaliate) {
-                    destroyed = game_battle_attack(bt, i, itemi, 1);
+                    destroyed = game_battle_attack(bt, i, itemi, true);
                 } else if ((b2->repulsor == 1) && (util_math_dist_maxabs(b->sx, b->sy, b2->sx, b2->sy) == 1)) {
                     game_battle_repulse(bt, i, itemi);
                     if (bt->num_repulsed > num_repulsed) {
@@ -1250,7 +1250,7 @@ static void game_battle_with_human_do_sub3(struct battle_s *bt)
         b = &(bt->item[itemi]);
         if (itemi == 0) {
             b->retreat = 0;
-            bt->hmm24 = bt->s[b->side].flag_base_missile;
+            bt->bases_using_mirv = bt->s[b->side].flag_base_missile;
         }
         if ((itemi == 0) && (b->num <= 0)) {
             bt->special_button = -1;
@@ -1259,7 +1259,7 @@ static void game_battle_with_human_do_sub3(struct battle_s *bt)
         } else {
             /*4eb6b*/
             bool flag_turn_done;
-            bt->hmm21 = false;
+            bt->has_attacked = false;
             game_battle_reset_specials(bt);
             game_battle_area_setup(bt);
             if (/*(b->num > 0) &&*/ (b->side != -1)) {
@@ -1269,24 +1269,26 @@ static void game_battle_with_human_do_sub3(struct battle_s *bt)
             flag_turn_done = false;
             while (!flag_turn_done) {
                 ui_battle_action_t act;
-                bool flag_hmm3;
                 ui_battle_turn_pre(bt);
-                flag_hmm3 = true; /* BUG? uninitialized in MOO1 */
-                if ((b->f85 == 1) || (b->f85 == 0)) {
-                    for (int i = 0; i < WEAPON_SLOT_NUM; ++i) {
-                        if ((b->wpn[i].numshots > 0) && (!tbl_shiptech_weap[b->wpn[i].t].is_bomb)) {
-                            flag_hmm3 = false;
+                {
+                    bool flag_no_missiles;
+                    flag_no_missiles = true;    /* BUG? uninitialized in MOO1 if b->missile == -1 */
+                    if ((b->missile == 1) || (b->missile == 0)) {
+                        for (int i = 0; i < WEAPON_SLOT_NUM; ++i) {
+                            if ((b->wpn[i].numshots > 0) && (!tbl_shiptech_weap[b->wpn[i].t].is_bomb)) {
+                                flag_no_missiles = false;
+                            }
                         }
                     }
-                }
-                if (flag_hmm3) {
-                    b->f85 = -1;
+                    if (flag_no_missiles) {
+                        b->missile = -1;
+                    }
                 }
                 if (itemi == 0) {
-                    b->f85 = 1;
+                    b->missile = 1;
                 }
                 /*4ec80*/
-                b->f48 = 1;
+                b->selected = 1;
                 bt->flag_cur_item_destroyed = false;
                 bt->num_repulsed = 0;
                 if (bt->s[b->side].flag_auto || (b->retreat > 0)) {
@@ -1301,21 +1303,20 @@ static void game_battle_with_human_do_sub3(struct battle_s *bt)
                         act = UI_BATTLE_ACT_DONE;
                     }
                     if (0
-                      || (act == UI_BATTLE_ACT_DONE) || (bt->hmm30)
-                      || ((b->f85 != 0) && (b->maxrange == 0) && bt->hmm21)
+                      || (act == UI_BATTLE_ACT_DONE) || (bt->turn_done)
+                      || ((b->missile != 0) && (b->maxrange == 0) && bt->has_attacked)
                     ) {
                         flag_turn_done = true;
                         if ((b->cloak == 2) && (b->stasisby == 0)) {
                             ui_battle_draw_cloaking(bt, 100, 20, -1, -1);
                             b->cloak = 1;
                         }
-                        b->f48 = 0;
                         game_battle_item_done(bt);
                     }
                     /*4eddd*/
                     if (act == UI_BATTLE_ACT_WAIT) {
                         flag_turn_done = true;
-                        b->f48 = 0;
+                        b->selected = 0;
                         b->can_retaliate = true;
                         bt->priority[vc] = itemi;
                         if (vc != bt->prio_i) {
@@ -1329,21 +1330,21 @@ static void game_battle_with_human_do_sub3(struct battle_s *bt)
                     /*4ee70*/
                     if (act == UI_BATTLE_ACT_AUTO) {
                         bt->s[b->side].flag_auto = 1;
-                        if (b->f85 == 0) {
-                            b->f85 = 1;
+                        if (b->missile == 0) {
+                            b->missile = 1;
                         }
                     }
                     /*4eeb8*/
                     if (act == UI_BATTLE_ACT_MISSILE) {
                         if (itemi == 0) {
                             weapon_t t;
-                            bt->hmm24 = !bt->hmm24;
+                            bt->bases_using_mirv = !bt->bases_using_mirv;
                             bt->s[b->side].flag_base_missile = !bt->s[b->side].flag_base_missile;
                             t = bt->item[0].wpn[0].t;
                             bt->item[0].wpn[0].t = bt->item[0].wpn[1].t;
                             bt->item[0].wpn[1].t = t;
                         } else {
-                            b->f85 = !b->f85;
+                            b->missile = !b->missile;
                         }
                     }
                     /*4ef23*/
@@ -1402,7 +1403,7 @@ static void game_battle_with_human_do_sub3(struct battle_s *bt)
                                 case 41:
                                 case 42:
                                 case 43:
-                                    game_battle_attack(bt, itemi, sa - 30, 0);
+                                    game_battle_attack(bt, itemi, sa - 30, false);
                                     break;
                                 default:
                                     break;
@@ -1414,8 +1415,8 @@ static void game_battle_with_human_do_sub3(struct battle_s *bt)
                     b = &(bt->item[itemi]);
                     if (!bt->flag_cur_item_destroyed) {
                         game_battle_area_setup(bt);
-                        if (bt->hmm30 || (bt->hmm21 && (b->maxrange == 0) && (b->f85 != 0))) {
-                            b->f48 = 0;
+                        if (bt->turn_done || (bt->has_attacked && (b->maxrange == 0) && (b->missile != 0))) {
+                            b->selected = 0;
                         }
                         if ((b->num > 0) && (b->side != SIDE_NONE)) {
                             ui_battle_draw_basic_copy(bt);
@@ -1540,7 +1541,7 @@ int game_battle_area_check_line_ok(struct battle_s *bt, int *tblx, int *tbly, in
     return r;
 }
 
-bool game_battle_attack(struct battle_s *bt, int attacker_i, int target_i, int a4)
+bool game_battle_attack(struct battle_s *bt, int attacker_i, int target_i, bool retaliate)
 {
     /*di*/struct battle_item_s *b = &(bt->item[attacker_i]);
     /*si*/struct battle_item_s *bd = &(bt->item[target_i]);
@@ -1574,8 +1575,8 @@ bool game_battle_attack(struct battle_s *bt, int attacker_i, int target_i, int a
         totalhp = 2000000000;   /* FIXME uint32_t max */
     }
     dist = util_math_dist_maxabs(b->sx, b->sy, bd->sx, bd->sy);
-    if (a4 == 0) {
-        bt->hmm21 = true;
+    if (!retaliate) {
+        bt->has_attacked = true;
     }
     miss_chance_beam = 50 - (b->complevel - bd->defense) * 10;
     miss_chance_missile = 50 - (b->complevel - bd->misdefense) * 10;
@@ -1595,7 +1596,7 @@ bool game_battle_attack(struct battle_s *bt, int attacker_i, int target_i, int a
     {
         bool flag_done1 = false;
         int hmm1 = 0;
-        if (!((a4 == 1) && (bd->cloak != 1))) {
+        if (!(retaliate && (bd->cloak != 1))) {
             flag_done1 = game_battle_special(bt, attacker_i, target_i, dist, &hmm1);
         }
         if (hmm1 > 0) {
@@ -1729,7 +1730,7 @@ bool game_battle_attack(struct battle_s *bt, int attacker_i, int target_i, int a
                     if (damage2 > 0) {
                         ui_battle_draw_damage(bt, target_i, bd->sx * 32, bd->sy * 24, damage2);
                     }
-                } else if ((!a4) && (bt->item[bt->cur_item].f85 != 0)) {  /* FIXME BUG? should be [attacker_i] */
+                } else if ((!retaliate) && (bt->item[bt->cur_item].missile != 0)) {  /* FIXME BUG? should be [attacker_i] */
                     /*57a85*/
                     ui_sound_play_sfx(w->sound);
                     if (w->misstype >= 1) {
@@ -1824,9 +1825,9 @@ void game_battle_item_move(struct battle_s *bt, int itemi, int sx, int sy)
                 y += vy;
                 ui_battle_draw_arena(bt, itemi, 2);
                 ui_battle_draw_bottom(bt);
-                b->f48 = 2;
+                b->selected = 2/*moving*/;
                 ui_battle_draw_item(bt, itemi, x, y);
-                b->f48 = 1;
+                b->selected = 1;
                 for (int j = 0; j < bt->num_missile; ++j) {
                     struct battle_missile_s *m = &(bt->missile[j]);
                     if (m->target == itemi) {
@@ -1836,7 +1837,7 @@ void game_battle_item_move(struct battle_s *bt, int itemi, int sx, int sy)
                             v /= (b->man - b->unman);
                         }
                         v = (v + stepdiv - 1) / stepdiv;
-                        SETMIN(v, m->hmm10);
+                        SETMIN(v, m->speed);
                         game_battle_missile_move(bt, j, x, y, v);
                         if (bt->flag_cur_item_destroyed || bt->num_repulsed) {
                             break;
@@ -1886,7 +1887,7 @@ void game_battle_area_setup(struct battle_s *bt)
     if (!bt->s[b->side].flag_auto) {
         b->maxrange = game_battle_get_weap_maxrange(bt);
     }
-    bt->hmm30 = true;
+    bt->turn_done = true;
     for (int sy = 0; sy < BATTLE_AREA_H; ++sy) {
         for (int sx = 0; sx < BATTLE_AREA_W; ++sx) {
             bt->area[sy][sx] = 0;
@@ -1926,14 +1927,14 @@ void game_battle_area_setup(struct battle_s *bt)
                             hmm1 = false;
                         }
                         if ((b->actman > 0) || ((w->range >= dist) && (b->wpn[i].numfire > 0) && (b->wpn[i].numshots != 0))) {
-                            bt->hmm30 = false;
+                            bt->turn_done = false;
                         }
                         if ((b->wpn[i].numshots == -1) && (w->misstype == 0)) {
                             range = w->range + b->extrarange;
                         } else {
                             range = w->range;
                         }
-                        if ((range >= dist) && ((b->f85 == 1) || (!hmm1)) && (b->wpn[i].numfire > 0) && (b->wpn[i].numshots != 0)) {
+                        if ((range >= dist) && ((b->missile == 1) || (!hmm1)) && (b->wpn[i].numfire > 0) && (b->wpn[i].numshots != 0)) {
                             v = 30;
                         }
                     }
@@ -1943,13 +1944,13 @@ void game_battle_area_setup(struct battle_s *bt)
                       || (((b->stream == 1) || (b->stream == 2)) && (dist <= 2))
                       || ((b->technull == 1) && (dist <= 4))
                     ) {
-                        bt->hmm30 = false;
+                        bt->turn_done = false;
                         v = 30;
                     }
                 } else {
                     v = -i;
                     if ((b->maxrange >= dist) && (b2->stasisby == 0)) {
-                        bt->hmm30 = false;
+                        bt->turn_done = false;
                         v = 30 + i;
                     }
                 }
@@ -2017,8 +2018,8 @@ void game_battle_area_setup(struct battle_s *bt)
             bt->area[zy][zx] = 0;
         }
     }
-    if (b->f85 != 0) {
-        bt->hmm30 = false;
+    if (b->missile != 0) {
+        bt->turn_done = false;
     }
     ui_battle_area_setup(bt);
 }
