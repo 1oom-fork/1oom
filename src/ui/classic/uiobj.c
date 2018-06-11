@@ -573,15 +573,15 @@ static void uiobj_handle_hmm2(int i, uint16_t a2)
                     lbxfont_select_subcolors_0();
                 }
             } else {
-                int16_t v2, v4;
+                int16_t char_h, v4;
                 v4 = lbxfont_get_gap_h();
-                if (v4 < 0) { ++v2; }
+                if (v4 < 0) { ++char_h; }
                 v4 /= 2;
                 if (v4 == 0) {
                     v4 = 1;
                 }
-                v2 = lbxfont_get_height();
-                uiobj_handle_ta_sub1(p->x0 - 1, p->y0 - v4 + 1, p->x1, p->y0 + v2 + 1, p->ta.subtype, p->ta.sp0p, p->ta.sp0v, p->ta.sp1, p->ta.sp2, p->ta.sp3);
+                char_h = lbxfont_get_height();
+                uiobj_handle_ta_sub1(p->x0 - 1, p->y0 - v4 + 1, p->x1, p->y0 + char_h + 1, p->ta.subtype, p->ta.sp0p, p->ta.sp0v, p->ta.sp1, p->ta.sp2, p->ta.sp3);
                 lbxfont_print_str_normal(p->x0, p->y0 + 1, p->ta.str, UI_SCREEN_W);
             }
             break;
