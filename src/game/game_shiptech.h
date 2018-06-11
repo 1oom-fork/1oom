@@ -212,8 +212,8 @@ struct shiptech_weap_s {
     uint16_t power;
     bool is_bio;
     uint8_t tech_i;
-    uint8_t v24;
-    uint8_t dtbl[7]; /* beam: color table ; missile: 0=? */
+    uint8_t v24;    /* beam: ? ; missile: fuel */
+    uint8_t dtbl[7]; /* beam: color table ; missile: 0=speed */
     uint8_t sound;
     uint8_t nummiss; /* beam: streaming */
 };
