@@ -22,7 +22,6 @@ static uint8_t *lbxfontdata = 0;
 static uint8_t lbxfont_temp_color = 0;
 static int16_t lbxfont_temp_x = 0;
 static int16_t lbxfont_temp_y = 0;
-static uint16_t lbxfont_hmm4 = 0;
 static uint8_t lbxfont_current_fontnum = 0;
 static uint8_t lbxfont_current_fonta2 = 0;
 static uint8_t lbxfont_current_fonta2b = 0;
@@ -39,11 +38,6 @@ typedef struct split_str_s {
     int i[SPLIT_STR_MAX_LINES];
     char buf[SPLIT_STR_MAX_LEN + 1];
 } split_str_t;
-
-static uint16_t lbxfont_tbl_split_hmm1[4] = { 0, 0, 0, 0 };
-static uint16_t lbxfont_tbl_split_hmm2[4] = { 0, 0, 0, 0 };
-static uint16_t lbxfont_tbl_split_hmm3[4] = { 0, 0, 0, 0 };
-static uint16_t lbxfont_tbl_split_hmm4[4] = { 0, 0, 0, 0 };
 
 /* -------------------------------------------------------------------------- */
 
@@ -313,7 +307,7 @@ static int lbxfont_print_str_normal_do_w0(int x, int y, const char *str, int w, 
 
 static void lbxfont_split_str(int x, int y, int maxw, const char *str, split_str_t *s, uint16_t maxy)
 {
-    int i = 0, j, x0, x1, w, pos_space, last_c, ty = y, v12, xnext = -1;
+    int i = 0, j, x0, x1, w, pos_space, last_c, ty = y, xnext = -1;
     uint16_t line_h = lbxfontdata[0x44];
     int16_t gap_w = lbxfontdata[0x48];
     uint8_t char_h = lbxfontdata[0x10];
@@ -323,7 +317,6 @@ static void lbxfont_split_str(int x, int y, int maxw, const char *str, split_str
     s->buf[SPLIT_STR_MAX_LEN] = 0;
 
     while (s->buf[i] != '\0') {
-        v12 = 0;
         if (xnext == -1) {
             x0 = x;
         } else {
@@ -331,33 +324,7 @@ static void lbxfont_split_str(int x, int y, int maxw, const char *str, split_str
             xnext = -1;
         }
         x1 = x + maxw - 1;
-        for (int z = 0; (z < lbxfont_hmm4) && (v12 == 0); ++z) {
-            if (0
-              || (lbxfont_tbl_split_hmm3[z] > ty)
-              || (lbxfont_tbl_split_hmm1[z] < ty)
-            ) {
-                if (0
-                  || (lbxfont_tbl_split_hmm3[z] > (ty + line_h))
-                  || (lbxfont_tbl_split_hmm1[z] < (ty + char_h))
-                ) {
-                    continue;
-                }
-            }
-            if (1
-              && (lbxfont_tbl_split_hmm2[z] > x0)
-              && (lbxfont_tbl_split_hmm4[z] < x1)
-            ) {
-                if (lbxfont_tbl_split_hmm4[z] > x0) {
-                    x1 = lbxfont_tbl_split_hmm4[z];
-                } else {
-                    x0 = lbxfont_tbl_split_hmm2[z];
-                }
-            }
-            if (x0 >= x1) {
-                v12 = 1;
-            }
-        }
-        if (v12 == 0) {
+        {
             if ((ty + char_h) >= maxy) {
                 s->num = 0;
                 return;
@@ -733,7 +700,6 @@ void lbxfont_print_str_split(int x, int y, int maxw, const char *str, int type, 
                 break;
         }
     }
-    lbxfont_hmm4 = 0;
 }
 
 int lbxfont_print_num_normal(int x, int y, int num, uint16_t pitch)
