@@ -86,7 +86,7 @@ struct battle_missile_s {
     int16_t y;
     uint16_t fuel;
     weapon_t wpnt;
-    uint16_t hmm10;
+    uint16_t speed;
 };
 
 struct battle_side_s {
