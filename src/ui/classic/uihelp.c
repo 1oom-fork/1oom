@@ -151,7 +151,7 @@ void ui_help(int help_index)
         old_fonta2 = lbxfont_get_current_fonta2();
         /* old_vgabuf_seg = vgabuf_seg; */
         lbxfont_select(0, 0, 0, 0);
-        lbxfont_set_44_10_plus(3);
+        lbxfont_set_gap_h(3);
         lbxfont_set_14_24(c1, c0);
         p = &(helplbx[4 + HELP_ITEM_SIZE * help_index]);
         ui_help_draw((const char *)&p[HELP_OFFS_STR0], (const char *)&p[HELP_OFFS_STR1],
