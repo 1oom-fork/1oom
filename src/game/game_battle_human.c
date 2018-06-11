@@ -647,13 +647,13 @@ static void game_battle_reset_specials(struct battle_s *bt)
     b = &(bt->item[itemi]);
     b->can_retaliate = true;
     {
-        bool flag_have_only_bombs = true;
+        bool flag_no_missiles = true;
         for (int i = 0; i < WEAPON_SLOT_NUM; ++i) {
             if ((b->wpn[i].numshots > 0) && (!tbl_shiptech_weap[b->wpn[i].t].is_bomb)) {
-                flag_have_only_bombs = false;
+                flag_no_missiles = false;
             }
         }
-        if (flag_have_only_bombs) {
+        if (flag_no_missiles) {
             b->missile = -1;
         }
         if (itemi == 0) {
