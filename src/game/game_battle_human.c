@@ -1250,7 +1250,7 @@ static void game_battle_with_human_do_sub3(struct battle_s *bt)
         b = &(bt->item[itemi]);
         if (itemi == 0) {
             b->retreat = 0;
-            bt->hmm24 = bt->s[b->side].flag_base_missile;
+            bt->bases_using_mirv = bt->s[b->side].flag_base_missile;
         }
         if ((itemi == 0) && (b->num <= 0)) {
             bt->special_button = -1;
@@ -1336,7 +1336,7 @@ static void game_battle_with_human_do_sub3(struct battle_s *bt)
                     if (act == UI_BATTLE_ACT_MISSILE) {
                         if (itemi == 0) {
                             weapon_t t;
-                            bt->hmm24 = !bt->hmm24;
+                            bt->bases_using_mirv = !bt->bases_using_mirv;
                             bt->s[b->side].flag_base_missile = !bt->s[b->side].flag_base_missile;
                             t = bt->item[0].wpn[0].t;
                             bt->item[0].wpn[0].t = bt->item[0].wpn[1].t;
