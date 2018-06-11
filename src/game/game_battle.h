@@ -17,10 +17,6 @@ typedef enum { SIDE_L, SIDE_R, SIDE_NONE } battle_side_i_t;
 struct battle_item_s {
     uint8_t *gfx;
     char name[SHIP_NAME_LEN];
-    uint16_t f10;
-    uint16_t f12;
-    uint16_t f14;
-    uint16_t f16;
     uint8_t shiptbli;
     uint8_t complevel;
     ship_special_t special[SPECIAL_SLOT_NUM];
@@ -49,7 +45,7 @@ struct battle_item_s {
     uint8_t retreat;
     int8_t sx;  /* -1, 0..BATTLE_AREA_W - 1 */
     int8_t sy;  /* -1, 0..BATTLE_AREA_H - 1 */
-    uint8_t f48;    /* 0, 1, 2 */
+    uint8_t selected;    /* 0, 1, 2=moving */
     uint8_t stasisby;
     uint8_t unman;
     bool can_retaliate;
@@ -57,7 +53,7 @@ struct battle_item_s {
     int8_t actman;
     uint16_t hploss;
     int8_t maxrange;
-    int8_t f85;
+    int8_t missile; /* -1=none, 0=disabled, 1=enabled */
     struct {
         weapon_t t;
         uint8_t n;
@@ -78,15 +74,15 @@ struct battle_rock_s {
 #define MISSILE_TARGET_NONE -1
 
 struct battle_missile_s {
+    weapon_t wpnt;
     uint16_t nummissiles;
     uint16_t damagemul2;
-    int8_t source;  /* item index */
-    int8_t target;  /* item index or MISSILE_TARGET_NONE */
     int16_t x;
     int16_t y;
-    uint16_t hmm0c;
-    weapon_t wpnt;
-    uint16_t hmm10;
+    int8_t source;  /* item index */
+    int8_t target;  /* item index or MISSILE_TARGET_NONE */
+    uint8_t fuel;
+    uint8_t speed;
 };
 
 struct battle_side_s {
@@ -115,9 +111,9 @@ struct battle_s {
     uint16_t bases;
     uint16_t biodamage;
     struct battle_side_s s[2];
-    bool hmm21;
-    bool hmm24;
-    bool hmm30;
+    bool has_attacked;
+    bool bases_using_mirv;
+    bool turn_done;
     uint8_t num_repulsed;
     bool flag_human_att;
     bool flag_cur_item_destroyed;
