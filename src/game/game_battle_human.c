@@ -1269,18 +1269,20 @@ static void game_battle_with_human_do_sub3(struct battle_s *bt)
             flag_turn_done = false;
             while (!flag_turn_done) {
                 ui_battle_action_t act;
-                bool flag_no_missiles;
                 ui_battle_turn_pre(bt);
-                flag_no_missiles = true; /* BUG? uninitialized in MOO1 */
-                if ((b->missile == 1) || (b->missile == 0)) {
-                    for (int i = 0; i < WEAPON_SLOT_NUM; ++i) {
-                        if ((b->wpn[i].numshots > 0) && (!tbl_shiptech_weap[b->wpn[i].t].is_bomb)) {
-                            flag_no_missiles = false;
+                {
+                    bool flag_no_missiles;
+                    flag_no_missiles = true;    /* BUG? uninitialized in MOO1 if b->missile == -1 */
+                    if ((b->missile == 1) || (b->missile == 0)) {
+                        for (int i = 0; i < WEAPON_SLOT_NUM; ++i) {
+                            if ((b->wpn[i].numshots > 0) && (!tbl_shiptech_weap[b->wpn[i].t].is_bomb)) {
+                                flag_no_missiles = false;
+                            }
                         }
                     }
-                }
-                if (flag_no_missiles) {
-                    b->missile = -1;
+                    if (flag_no_missiles) {
+                        b->missile = -1;
+                    }
                 }
                 if (itemi == 0) {
                     b->missile = 1;
