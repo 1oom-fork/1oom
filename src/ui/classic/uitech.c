@@ -134,7 +134,7 @@ static void tech_draw_cb(void *vptr)
     }
     game_tech_get_descr(g->gaux, d->field, d->completed[d->selected + d->pos], buf);
     lbxfont_select(5, 6, 0, 0);
-    lbxfont_set_44_10_plus(1);
+    lbxfont_set_gap_h(1);
     lbxfont_print_str_split(10, 155, 260, buf, 0, UI_SCREEN_W, UI_SCREEN_H);
 
     lbxgfx_set_new_frame(ui_data.gfx.screens.tech_but_up, 1);

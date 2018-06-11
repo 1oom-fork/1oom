@@ -76,7 +76,7 @@ static void ui_starmap_orbit_own_draw_cb(void *vptr)
             if (d->oo.sn0.num < 7) { /* FIXME ?? always true */
                 sprintf(buf, "%s %i %s", game_str_sm_destoor, dist, game_str_sm_parsfromcc);
                 lbxfont_select(2, 0, 0, 0);
-                lbxfont_set_44_10_plus(2);
+                lbxfont_set_gap_h(2);
                 lbxfont_print_str_split(228, 156, 81, buf, 2, UI_SCREEN_W, UI_SCREEN_H);
             } else {
                 /* dont care */
