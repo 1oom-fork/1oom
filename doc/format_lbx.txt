@@ -86,8 +86,8 @@ offset  sz  description
 14      16  font colors 0 (palette indices, copied runtime from active palette), same as offset 0
 24      16  font colors 1 (copied runtime from active palette)
 34      16  font colors 2 (copied runtime from active palette)
-44      2   (copied runtime from selected font, offset 0x10 + offset 0x46)
-46      2   (copied runtime from selected font from offset 0x18a + active_font * 2)
+44      2   line height (copied runtime from selected font, offset 0x10 + offset 0x46)
+46      2   gap height (copied runtime from selected font from offset 0x18a + active_font * 2)
 48      2   gap width (copied runtime from selected font from offset 0x17a + active_font * 2)
 4a      0x60    character c-0x20 width (copied runtime from selected font from offset 0x19a + active_font * 0x60)
 aa      0xc0    character c-0x20 data offset (copied runtime from selected font from offset 0x49a + active_font * 0xc0)
