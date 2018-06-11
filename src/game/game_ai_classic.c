@@ -2429,12 +2429,12 @@ static int game_battle_ai_target1_sub1(const struct battle_s *bt)
                     v6 = b->sx;
                 }
             }
-            v8 = (b->man - b->unman) * m->hmm0c;
+            v8 = (b->man - b->unman) * m->fuel;
             if ((v8 <= v6) || (b->subspace == 1)) {
                 v8 = v6;
             }
             dist = util_math_dist_fast(b->sx * 32 + 16, b->sy * 24 + 12, m->x, m->y);
-            dangerdist = tbl_shiptech_weap[m->wpnt].dtbl[0] * m->hmm0c + 13;
+            dangerdist = tbl_shiptech_weap[m->wpnt].dtbl[0] * m->fuel + 13;
             if (dist > dangerdist) {
                 vc = 1;
             }
@@ -2707,7 +2707,7 @@ static void game_battle_ai_target1_sub5(struct battle_s *bt)
                 if (bt->area[sy][sx] == 1) {
                     for (int i = 0; i < bt->num_missile; ++i) {
                         const struct battle_missile_s *m = &(bt->missile[i]);
-                        if ((m->target == itemi) && (m->hmm0c < 8)) {
+                        if ((m->target == itemi) && (m->fuel < 8)) {
                             mindist = 10;   /* FIXME BUG this results in always setting to last missile dist */
                             dist = util_math_dist_maxabs(sx, sy, m->x / 32, m->y / 24);
                             SETMIN(mindist, dist);
@@ -2727,7 +2727,7 @@ static void game_battle_ai_target1_sub5(struct battle_s *bt)
             v4 = 10;
             for (int i = 0; i < bt->num_missile; ++i) {
                 const struct battle_missile_s *m = &(bt->missile[i]);
-                if ((m->target == itemi) && (m->hmm0c < 8)) {
+                if ((m->target == itemi) && (m->fuel < 8)) {
                     dist = util_math_dist_maxabs(b->sx, b->sy, m->x / 32, m->y / 24);
                     SETMIN(v4, dist);
                 }
@@ -2745,7 +2745,7 @@ static void game_battle_ai_target1_sub5(struct battle_s *bt)
                         mindist = 10;
                         for (int i = 0; i < bt->num_missile; ++i) {
                             const struct battle_missile_s *m = &(bt->missile[i]);
-                            if ((m->target == itemi) && (m->hmm0c < 8)) {
+                            if ((m->target == itemi) && (m->fuel < 8)) {
                                 dist = util_math_dist_maxabs(sx, sy, m->x / 32, m->y / 24);
                                 SETMIN(mindist, dist);
                             }
