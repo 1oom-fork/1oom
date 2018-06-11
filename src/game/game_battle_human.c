@@ -256,7 +256,7 @@ static void game_battle_missile_spawn(struct battle_s *bt, int attacker_i, int t
     }
     m->wpnt = wpnt;
     m->nummissiles = nummissiles * w->nummiss;
-    m->hmm10 = w->dtbl[0];
+    m->speed = w->dtbl[0];
     ++bt->num_missile;
 }
 
@@ -279,7 +279,7 @@ static void game_battle_missile_hit(struct battle_s *bt, int missile_i, int targ
             damagediv = 2;
         }
         if (w->damagefade) {
-            damage = w->damagemax - ((w->v24 - m->fuel) * w->dtbl[0] + (w->dtbl[0] - m->hmm10)) / 2;
+            damage = w->damagemax - ((w->v24 - m->fuel) * w->dtbl[0] + (w->dtbl[0] - m->speed)) / 2;
         } else {
             damage = w->damagemax;
         }
@@ -434,7 +434,7 @@ static void game_battle_missile_move(struct battle_s *bt, int missile_i, int tar
             const struct shiptech_weap_s *w = &(tbl_shiptech_weap[m->wpnt]);
             if (w->misstype == 4) {
                 int v;
-                v = w->damagemax - (((w->v24 - m->fuel) * w->dtbl[0] + (w->dtbl[0] - m->hmm10))) / 2; /* FIXME check this calc */
+                v = w->damagemax - (((w->v24 - m->fuel) * w->dtbl[0] + (w->dtbl[0] - m->speed))) / 2; /* FIXME check this calc */
                 if (v < 0) {
                     m->target = MISSILE_TARGET_NONE;
                 }
@@ -452,9 +452,9 @@ static void game_battle_missile_move(struct battle_s *bt, int missile_i, int tar
         int v;
         m->x = mx;
         m->y = my;
-        v = m->hmm10 - step;
+        v = m->speed - step;
         SETMAX(v, 0);
-        m->hmm10 = v;
+        m->speed = v;
     }
 }
 
@@ -471,10 +471,10 @@ static void game_battle_item_finish(struct battle_s *bt, bool flag_quick)
         flag_done = true;
         for (int i = 0; i < bt->num_missile; ++i) {
             struct battle_missile_s *m = &(bt->missile[i]);
-            if ((m->target == itemi) && (m->hmm10 > 0)) {
+            if ((m->target == itemi) && (m->speed > 0)) {
                 int step;
                 step = tbl_shiptech_weap[m->wpnt].dtbl[0] / delay;
-                SETMIN(step, m->hmm10);
+                SETMIN(step, m->speed);
                 game_battle_missile_move(bt, i, b->sx * 32, b->sy * 24, step);
                 flag_done = false;
             }
@@ -577,8 +577,8 @@ static void game_battle_missile_turn_done(struct battle_s *bt)
 {
     for (int i = 0; i < bt->num_missile; ++i) {
         struct battle_missile_s *m = &(bt->missile[i]);
-        if (m->hmm10 <= 0) {
-            m->hmm10 = tbl_shiptech_weap[m->wpnt].dtbl[0];
+        if (m->speed <= 0) {
+            m->speed = tbl_shiptech_weap[m->wpnt].dtbl[0];
             if (--m->fuel == 0) {
                 m->target = MISSILE_TARGET_NONE;
             }
@@ -1835,7 +1835,7 @@ void game_battle_item_move(struct battle_s *bt, int itemi, int sx, int sy)
                             v /= (b->man - b->unman);
                         }
                         v = (v + stepdiv - 1) / stepdiv;
-                        SETMIN(v, m->hmm10);
+                        SETMIN(v, m->speed);
                         game_battle_missile_move(bt, j, x, y, v);
                         if (bt->flag_cur_item_destroyed || bt->num_repulsed) {
                             break;
