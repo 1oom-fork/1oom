@@ -57,7 +57,7 @@ struct battle_item_s {
     int8_t actman;
     uint16_t hploss;
     int8_t maxrange;
-    int8_t f85;
+    int8_t missile; /* -1=none, 0=disabled, 1=enabled */
     struct {
         weapon_t t;
         uint8_t n;

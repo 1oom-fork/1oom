@@ -40,7 +40,7 @@ static void game_battle_with_human_init_sub1(struct battle_s *bt)
                 flag_have_only_bombs = false;
             }
         }
-        bt->item[i].f85 = flag_have_only_bombs ? -1 : 1;
+        bt->item[i].missile = flag_have_only_bombs ? -1 : 1;
     }
     bt->antidote = bt->item[0].pulsar;  /* HACK */
     bt->item[0].pulsar = 0;
@@ -654,10 +654,10 @@ static void game_battle_reset_specials(struct battle_s *bt)
             }
         }
         if (flag_have_only_bombs) {
-            b->f85 = -1;
+            b->missile = -1;
         }
         if (itemi == 0) {
-            b->f85 = 1;
+            b->missile = 1;
         }
     }
     if (b->cloak == 1) {
@@ -699,7 +699,7 @@ static int game_battle_get_weap_maxrange(struct battle_s *bt)
                 range = w->range + b->extrarange;
             } else {
                 range = w->range;
-                if ((b->f85 == 0) && (range > 1) && (w->misstype == 0)) {
+                if ((b->missile == 0) && (range > 1) && (w->misstype == 0)) {
                     range = 0;
                 }
             }
@@ -1272,7 +1272,7 @@ static void game_battle_with_human_do_sub3(struct battle_s *bt)
                 bool flag_hmm3;
                 ui_battle_turn_pre(bt);
                 flag_hmm3 = true; /* BUG? uninitialized in MOO1 */
-                if ((b->f85 == 1) || (b->f85 == 0)) {
+                if ((b->missile == 1) || (b->missile == 0)) {
                     for (int i = 0; i < WEAPON_SLOT_NUM; ++i) {
                         if ((b->wpn[i].numshots > 0) && (!tbl_shiptech_weap[b->wpn[i].t].is_bomb)) {
                             flag_hmm3 = false;
@@ -1280,10 +1280,10 @@ static void game_battle_with_human_do_sub3(struct battle_s *bt)
                     }
                 }
                 if (flag_hmm3) {
-                    b->f85 = -1;
+                    b->missile = -1;
                 }
                 if (itemi == 0) {
-                    b->f85 = 1;
+                    b->missile = 1;
                 }
                 /*4ec80*/
                 b->f48 = 1;
@@ -1301,7 +1301,7 @@ static void game_battle_with_human_do_sub3(struct battle_s *bt)
                     }
                     if (0
                       || (act == UI_BATTLE_ACT_DONE) || (bt->hmm30)
-                      || ((b->f85 != 0) && (b->maxrange == 0) && bt->hmm21)
+                      || ((b->missile != 0) && (b->maxrange == 0) && bt->hmm21)
                     ) {
                         flag_turn_done = true;
                         if ((b->cloak == 2) && (b->stasisby == 0)) {
@@ -1328,8 +1328,8 @@ static void game_battle_with_human_do_sub3(struct battle_s *bt)
                     /*4ee70*/
                     if (act == UI_BATTLE_ACT_AUTO) {
                         bt->s[b->side].flag_auto = 1;
-                        if (b->f85 == 0) {
-                            b->f85 = 1;
+                        if (b->missile == 0) {
+                            b->missile = 1;
                         }
                     }
                     /*4eeb8*/
@@ -1342,7 +1342,7 @@ static void game_battle_with_human_do_sub3(struct battle_s *bt)
                             bt->item[0].wpn[0].t = bt->item[0].wpn[1].t;
                             bt->item[0].wpn[1].t = t;
                         } else {
-                            b->f85 = !b->f85;
+                            b->missile = !b->missile;
                         }
                     }
                     /*4ef23*/
@@ -1413,7 +1413,7 @@ static void game_battle_with_human_do_sub3(struct battle_s *bt)
                     b = &(bt->item[itemi]);
                     if (!bt->flag_cur_item_destroyed) {
                         game_battle_area_setup(bt);
-                        if (bt->hmm30 || (bt->hmm21 && (b->maxrange == 0) && (b->f85 != 0))) {
+                        if (bt->hmm30 || (bt->hmm21 && (b->maxrange == 0) && (b->missile != 0))) {
                             b->f48 = 0;
                         }
                         if ((b->num > 0) && (b->side != SIDE_NONE)) {
@@ -1728,7 +1728,7 @@ bool game_battle_attack(struct battle_s *bt, int attacker_i, int target_i, int a
                     if (damage2 > 0) {
                         ui_battle_draw_damage(bt, target_i, bd->sx * 32, bd->sy * 24, damage2);
                     }
-                } else if ((!a4) && (bt->item[bt->cur_item].f85 != 0)) {  /* FIXME BUG? should be [attacker_i] */
+                } else if ((!a4) && (bt->item[bt->cur_item].missile != 0)) {  /* FIXME BUG? should be [attacker_i] */
                     /*57a85*/
                     ui_sound_play_sfx(w->sound);
                     if (w->misstype >= 1) {
@@ -1932,7 +1932,7 @@ void game_battle_area_setup(struct battle_s *bt)
                         } else {
                             range = w->range;
                         }
-                        if ((range >= dist) && ((b->f85 == 1) || (!hmm1)) && (b->wpn[i].numfire > 0) && (b->wpn[i].numshots != 0)) {
+                        if ((range >= dist) && ((b->missile == 1) || (!hmm1)) && (b->wpn[i].numfire > 0) && (b->wpn[i].numshots != 0)) {
                             v = 30;
                         }
                     }
@@ -2016,7 +2016,7 @@ void game_battle_area_setup(struct battle_s *bt)
             bt->area[zy][zx] = 0;
         }
     }
-    if (b->f85 != 0) {
+    if (b->missile != 0) {
         bt->hmm30 = false;
     }
     ui_battle_area_setup(bt);

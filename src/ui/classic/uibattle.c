@@ -235,7 +235,7 @@ static void ui_battle_draw_bottom_no_ois(const struct battle_s *bt)
     if (bt->s[b->side].flag_auto) {
         ui_battle_clear_ois(d);
     }
-    if ((b->f85 == -1) || bt->s[b->side].flag_auto) {
+    if ((b->missile == -1) || bt->s[b->side].flag_auto) {
         gfx = ui_data.gfx.space.misl_off;
     } else if (bt->cur_item == 0) {
         gfx = ui_data.gfx.space.base_btn;
@@ -246,7 +246,7 @@ static void ui_battle_draw_bottom_no_ois(const struct battle_s *bt)
         }
     } else {
         gfx = ui_data.gfx.space.misbutt;
-        if (b->f85 == 0) {
+        if (b->missile == 0) {
             lbxgfx_set_frame_0(gfx);
         } else {
             lbxgfx_set_new_frame(gfx, 1);
@@ -337,7 +337,7 @@ static void ui_battle_draw_bottom_add_ois(const struct battle_s *bt)
     /* HACK MOO1 does this. Breaks const *bt and requires flag to be int16_t, but works while it is not the player's turn. */
     d->oi_auto = uiobj_add_t1(99, 193, "", ui_data.gfx.space.autob, &(((struct battle_s *)bt)->s[b->side].flag_auto), MOO_KEY_a, -1);
 #endif
-    if ((b->f85 == 0) || (b->f85 == 1)) {
+    if ((b->missile == 0) || (b->missile == 1)) {
         if (bt->cur_item == 0) {
             if (b->wpn[0].t != b->wpn[1].t) {
                 d->oi_missile = uiobj_add_mousearea(175, 193, 208, 199, MOO_KEY_m, -1);
@@ -354,7 +354,7 @@ static void ui_battle_draw_bottom_add_ois(const struct battle_s *bt)
         } else {
             d->oi_missile = uiobj_add_mousearea(175, 193, 208, 199, MOO_KEY_m, -1);
             gfx = ui_data.gfx.space.misbutt;
-            if (b->f85 == 0) {
+            if (b->missile == 0) {
                 lbxgfx_set_frame_0(gfx);
             } else {
                 lbxgfx_set_new_frame(gfx, 1);
@@ -1920,7 +1920,7 @@ ui_battle_action_t ui_battle_turn(const struct battle_s *bt)
     }
     if (0
       || (oi == d->oi_done) || (bt->hmm30) || (oi == UIOBJI_ESC)
-      || ((b->f85 != 0) && (b->maxrange == 0) && bt->hmm21)
+      || ((b->missile != 0) && (b->maxrange == 0) && bt->hmm21)
     ) {
         if (oi == d->oi_done) {
             ui_sound_play_sfx_24();
@@ -1936,8 +1936,8 @@ ui_battle_action_t ui_battle_turn(const struct battle_s *bt)
     if (oi == d->oi_auto) {
         ui_sound_play_sfx_24();
         /*bt->s[b->side].flag_auto = 1;*/
-        if (b->f85 == 0) {
-            /*b->f85 = 1;*/
+        if (b->missile == 0) {
+            /*b->missile = 1;*/
             ui_battle_draw_bottom_no_ois(bt);
             uiobj_finish_frame();
         }
