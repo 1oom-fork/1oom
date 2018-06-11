@@ -84,7 +84,7 @@ struct battle_missile_s {
     int8_t target;  /* item index or MISSILE_TARGET_NONE */
     int16_t x;
     int16_t y;
-    uint16_t hmm0c;
+    uint16_t fuel;
     weapon_t wpnt;
     uint16_t hmm10;
 };
