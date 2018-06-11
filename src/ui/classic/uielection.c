@@ -93,7 +93,7 @@ static void ui_election_draw_cb(void *vptr)
     }
     if (el->str) {
         lbxfont_select_set_12_1(3, 0, 0, 0);
-        lbxfont_set_44_10_plus(1);
+        lbxfont_set_gap_h(1);
         lbxfont_print_str_split(10, 169, 305, el->str, 0, UI_SCREEN_W, UI_SCREEN_H);
     }
     if (d->flag_countdown) {

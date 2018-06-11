@@ -676,7 +676,7 @@ void ui_draw_textbox_2str(const char *str1, const char *str2, int y0)
 {
     int x0 = 48, w = 132, x1 = x0 + w - 1, y1;
     lbxfont_select_set_12_1(0, 0, 0, 0);
-    lbxfont_set_44_10_plus(3);
+    lbxfont_set_gap_h(3);
     lbxfont_set_14_24(0xb, 0xe);
     y1 = lbxfont_calc_split_str_h(w - 8, str2) + y0 + 7;
     if (*str1 != '\0') {

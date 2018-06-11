@@ -173,7 +173,7 @@ static void ui_audience_draw_cb1(void *vptr)
     lbxgfx_draw_frame(0, 0, d->gfx_border, UI_SCREEN_W);
     if ((au->mode >= 0) && (au->mode <= 2)) {
         lbxfont_select(3, 2, 0, 0);
-        lbxfont_set_44_10_plus(1);
+        lbxfont_set_gap_h(1);
         lbxfont_print_str_split(38, 140, 245, au->buf, 0, UI_SCREEN_W, UI_SCREEN_H);
     }
     /*d->delay2 = (d->delay2 + 1) % 6;*/
@@ -188,10 +188,10 @@ static void ui_audience_draw_cb2(void *vptr)
     lbxgfx_draw_frame(0, -2, d->gfx_emperor, UI_SCREEN_W);
     lbxgfx_draw_frame(0, 0, d->gfx_border, UI_SCREEN_W);
     lbxfont_select(3, 1, 0, 0);
-    lbxfont_set_44_10_plus(1);
+    lbxfont_set_gap_h(1);
     strh = lbxfont_calc_split_str_h(245, au->buf);
     if (strh > 39) {
-        lbxfont_set_44_10_plus(0);
+        lbxfont_set_gap_h(0);
     }
     lbxfont_print_str_split(38, 140, 245, au->buf, 0, UI_SCREEN_W, UI_SCREEN_H);
     /*d->delay2 = (d->delay2 + 1) % 6;*/
@@ -205,7 +205,7 @@ static void ui_audience_draw_cb3(void *vptr)
     lbxgfx_draw_frame(0, -2, d->gfx_emperor, UI_SCREEN_W);
     lbxgfx_draw_frame(0, 0, d->gfx_border, UI_SCREEN_W);
     lbxfont_select(3, 2, 1, 0);
-    lbxfont_set_44_10_plus(1);
+    lbxfont_set_gap_h(1);
     lbxfont_print_str_split(38, 140, 245, au->buf, 0, UI_SCREEN_W, UI_SCREEN_H);
     /*d->delay2 = (d->delay2 + 1) % 6;*/
 }
@@ -219,10 +219,10 @@ static void ui_audience_draw_cb4(void *vptr)    /* FIXME combine with cb3 and/or
     lbxgfx_draw_frame(0, -2, d->gfx_emperor, UI_SCREEN_W);
     lbxgfx_draw_frame(0, 0, d->gfx_border, UI_SCREEN_W);
     lbxfont_select(3, 1, 0, 0);
-    lbxfont_set_44_10_plus(1);
+    lbxfont_set_gap_h(1);
     strh = lbxfont_calc_split_str_h(245, au->buf);
     if (strh > 39) {
-        lbxfont_set_44_10_plus(0);
+        lbxfont_set_gap_h(0);
     }
     lbxfont_print_str_split(38, 136, 245, au->buf, 0, UI_SCREEN_W, UI_SCREEN_H);
     /*d->delay2 = (d->delay2 + 1) % 6;*/
@@ -344,10 +344,10 @@ int16_t ui_audience_ask2b(struct audience_s *au)
 {
     int strh;
     lbxfont_select(3, 1, 0, 0);
-    lbxfont_set_44_10_plus(1);
+    lbxfont_set_gap_h(1);
     strh = lbxfont_calc_split_str_h(245, au->buf);
     if (strh > 39) {
-        lbxfont_set_44_10_plus(0);
+        lbxfont_set_gap_h(0);
         strh = lbxfont_calc_split_str_h(245, au->buf);
     }
     return ui_audience_ask_do(au, 133 + strh, ui_audience_draw_cb2);
@@ -357,7 +357,7 @@ int16_t ui_audience_ask3(struct audience_s *au)
 {
     int strh;
     lbxfont_select(3, 2, 1, 0);
-    lbxfont_set_44_10_plus(1);
+    lbxfont_set_gap_h(1);
     strh = lbxfont_calc_split_str_h(245, au->buf);
     return ui_audience_ask_do(au, 139 + strh, ui_audience_draw_cb3);
 }
