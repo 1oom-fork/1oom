@@ -49,7 +49,7 @@ struct battle_item_s {
     uint8_t retreat;
     int8_t sx;  /* -1, 0..BATTLE_AREA_W - 1 */
     int8_t sy;  /* -1, 0..BATTLE_AREA_H - 1 */
-    uint8_t f48;    /* 0, 1, 2 */
+    uint8_t selected;    /* 0, 1, 2=moving */
     uint8_t stasisby;
     uint8_t unman;
     bool can_retaliate;
