@@ -25,9 +25,11 @@ int game_num_max_bomb_dmg = 100000;
 int game_num_max_bio_dmg = 10000;
 int game_num_max_trans_dmg = 32000;
 int game_num_max_ship_maint = 32000;
+int game_num_max_tribute_bc = 32000;
 int game_num_event_roll = 512;
 bool game_num_monster_rest_att = false;
 bool game_num_orbital_weap_any = false;
+bool game_num_orbital_weap_4 = false;
 
 uint8_t game_num_tbl_hull_w[4] = { 1, 5, 25, 125 };
 
