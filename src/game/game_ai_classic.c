@@ -336,25 +336,25 @@ static shipcount_t game_ai_classic_turn_p1_spawn_colony_ship(struct game_s *g, s
     /* spawn a new colony ship by magic */
     empiretechorbit_t *e = &(g->eto[pi]);
     shipresearch_t *srd = &(g->srd[pi]);
-    int shipi, planeti, v6;
+    int shipi, planeti, prod;
     shipcount_t shipn;
     if (0
       /*|| (ait->num_fronts == 0) never true */
       || ((shipi = e->shipi_colony) == -1)
       || (e->total_production_bc == 0)
       || ((shipn = srd->shipcount[shipi]) > 3)
-      || ((planeti = ait->tbl_front_planet[rnd_0_nm1(ait->num_fronts, &g->seed)]) == -1)
+      || ((planeti = ait->tbl_front_planet[rnd_0_nm1(ait->num_fronts, &g->seed)]) == PLANET_NONE) /* never true? */
     ) {
         return 0;
     }
-    v6 = (e->total_production_bc * 2) / 5;
-    SETRANGE(v6, 1, 500);
+    prod = (e->total_production_bc * 2) / 5;
+    SETRANGE(prod, 1, 500);
     if (g->difficulty < DIFFICULTY_AVERAGE) {
         if (rnd_0_nm1(6, &g->seed) > g->difficulty) {
-            v6 = 0;
+            prod = 0;
         }
     }
-    if ((!ait->have_colonizable) || (rnd_1_n(500, &g->seed) > v6)) {
+    if ((!ait->have_colonizable) || (rnd_1_n(500, &g->seed) > prod)) {
         return shipn;
     }
     ++shipn;
@@ -451,7 +451,7 @@ static void game_ai_classic_turn_p1_send_colony_ships(struct game_s *g, struct a
         BOOLVEC_SET(tbl_planet_ignore, i, (p->owner != PLAYER_NONE) || (p->within_frange[pi] == 0));
     }
     for (int i = 0; i < g->enroute_num; ++i) {
-        fleet_enroute_t *r = &(g->enroute[i]);
+        const fleet_enroute_t *r = &(g->enroute[i]);
         if ((r->owner == pi) && (r->ships[si] > 0)) {
             BOOLVEC_SET1(tbl_planet_ignore, r->dest);
         }
@@ -1232,7 +1232,10 @@ static void game_ai_classic_design_ship_base(struct game_s *g, struct ai_turn_p2
         v = count_havebuf_items(tbl_have, v);
         if (v >= 2) {
             v = find_havebuf_item(tbl_have, v);
-            SETMAX(v, 0);
+            if (v < SHIP_SPECIAL_STANDARD_COLONY_BASE) {
+                LOG_DEBUG((1, "%s: BUG: invalid colony special %i\n", __func__, v));
+                v = SHIP_SPECIAL_STANDARD_COLONY_BASE;
+            }
         } else {
             v = SHIP_SPECIAL_STANDARD_COLONY_BASE;
         }
@@ -1600,7 +1603,7 @@ static void game_ai_classic_turn_p2_do(struct game_s *g, player_id_t pi)
         for (int j = 0; j < SPECIAL_SLOT_NUM; ++j) {
             ship_special_t s;
             s = ss[j];
-            if ((s >= SHIP_SPECIAL_STANDARD_COLONY_BASE) || (s <= SHIP_SPECIAL_RADIATED_COLONY_BASE)) {
+            if ((s >= SHIP_SPECIAL_STANDARD_COLONY_BASE) && (s <= SHIP_SPECIAL_RADIATED_COLONY_BASE)) {
                 e->shipi_colony = i;
             }
         }
