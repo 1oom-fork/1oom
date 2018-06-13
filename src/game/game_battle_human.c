@@ -31,16 +31,17 @@ static void game_battle_with_human_init_sub1(struct battle_s *bt)
     /* from ui_battle_do_sub1 */
     bt->items_num = bt->s[SIDE_L].items + bt->s[SIDE_R].items;
     for (int i = 0; i <= bt->items_num; ++i) {
+        struct battle_item_s *b = &(bt->item[i]);
         bool flag_no_missiles;
         flag_no_missiles = true;
         for (int j = 0; j < WEAPON_SLOT_NUM; ++j) {
             weapon_t w;
-            w = bt->item[i].wpn[j].t;
+            w = b->wpn[j].t;
             if ((tbl_shiptech_weap[w].numshots > 0) && (!tbl_shiptech_weap[w].is_bomb)) {
                 flag_no_missiles = false;
             }
         }
-        bt->item[i].missile = flag_no_missiles ? -1 : 1;
+        b->missile = flag_no_missiles ? -1 : 1;
     }
     bt->antidote = bt->item[0].pulsar;  /* HACK */
     bt->item[0].pulsar = 0;
@@ -1546,19 +1547,11 @@ bool game_battle_attack(struct battle_s *bt, int attacker_i, int target_i, bool 
     uint32_t planetdamage = 0, totalhp;
     bool destroyed = false;
     if (attacker_i == 0) {
-        if ((!bt->s[b->side].flag_auto) && (b->wpn[1].t > 0)) {
-            if (bt->s[b->side].flag_base_missile && (tbl_shiptech_weap[b->wpn[0].t].nummiss > 1)) {
-                weapon_t t;
-                t = b->wpn[1].t;
-                b->wpn[1].t = b->wpn[0].t;
-                b->wpn[0].t = t;
-            }
-            if ((!bt->s[b->side].flag_base_missile) && (tbl_shiptech_weap[b->wpn[0].t].nummiss == 1)) {
-                weapon_t t;
-                t = b->wpn[1].t;
-                b->wpn[1].t = b->wpn[0].t;
-                b->wpn[0].t = t;
-            }
+        if (1
+          && (!bt->s[b->side].flag_auto) && (b->wpn[1].t != WEAPON_NONE)
+          && (bt->s[b->side].flag_base_missile == (tbl_shiptech_weap[b->wpn[0].t].nummiss > 1))
+        ) {
+            weapon_t t = b->wpn[1].t; b->wpn[1].t = b->wpn[0].t; b->wpn[0].t = t;
         }
         num_weap = 1;
     } else {
