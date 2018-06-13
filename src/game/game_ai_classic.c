@@ -1236,7 +1236,10 @@ static void game_ai_classic_design_ship_base(struct game_s *g, struct ai_turn_p2
         v = count_havebuf_items(tbl_have, v);
         if (v >= 2) {
             v = find_havebuf_item(tbl_have, v);
-            SETMAX(v, 0);
+            if (v < SHIP_SPECIAL_STANDARD_COLONY_BASE) {
+                LOG_DEBUG((1, "%s: BUG: invalid colony special %i\n", __func__, v));
+                v = SHIP_SPECIAL_STANDARD_COLONY_BASE;
+            }
         } else {
             v = SHIP_SPECIAL_STANDARD_COLONY_BASE;
         }
