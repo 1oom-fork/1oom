@@ -519,6 +519,9 @@ void options_show_usage(void)
 
 void options_finish(void)
 {
+    if (opt_datapath) { /* from config file */
+        lib_free(opt_datapath);
+    }
     opt_datapath = lib_stralloc(os_get_path_data());
 }
 
