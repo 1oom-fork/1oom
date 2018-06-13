@@ -184,10 +184,10 @@ void hw_audio_shutdown(void)
         }
         lib_free(sfxtbl);
         sfxtbl = NULL;
-        lib_free(hw_opt_sdlmixer_sf);
-        hw_opt_sdlmixer_sf = NULL;
         audio_initialized = false;
     }
+    lib_free(hw_opt_sdlmixer_sf);
+    hw_opt_sdlmixer_sf = NULL;
 }
 
 int hw_audio_set_sdlmixer_sf(const char *path)
