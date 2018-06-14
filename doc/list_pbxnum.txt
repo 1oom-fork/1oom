@@ -8,6 +8,10 @@ bt_turn_max : 1..65535, 50
 weapon_list_max : 0..64, 30
   - Max. number of weapons shown in the ship design weapon list.
 
+news_orion : 0..1, 0
+  - Show news when Orion is first colonized.
+    MOO1 has a news item for conquering Orion but never shows it.
+
 monster_rest_att : 0..1, 0
   - Allow attacking resting space monsters.
     In MOO1 it is impossible to attack a space crystal or amoeba after the
