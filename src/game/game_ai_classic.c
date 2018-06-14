@@ -1443,7 +1443,7 @@ again:
         int v;
         v = rnd_0_nm1(12, &g->seed) + tbl_hulldiff[e->race];
         SETMAX(v, 0);
-        if (ait->have_pulsar) { /* BUG the pulsar ship may have been scrapped */
+        if (ait->have_pulsar) {
             ++v;
         }
         SETMIN(v, 11);
@@ -1508,16 +1508,25 @@ static void game_ai_classic_turn_p2_do(struct game_s *g, player_id_t pi)
     int num_non0 = 0;
     ait->have_pulsar = false;
     ait->have_repulwarp = false;
-    for (int i = 0; i < e->shipdesigns_num; ++i) {
-        const ship_special_t *ss = &(sd[i].special[0]);
-        for (int j = 0; j < SPECIAL_SLOT_NUM; ++j) {
-            ship_special_t s;
-            s = ss[j];
-            if ((s == SHIP_SPECIAL_ENERGY_PULSAR) || (s == SHIP_SPECIAL_IONIC_PULSAR)) {
-                ait->have_pulsar = true;
-            }
-            if ((s == SHIP_SPECIAL_REPULSOR_BEAM) || (s == SHIP_SPECIAL_WARP_DISSIPATOR)) {
-                ait->have_repulwarp = true;
+    for (player_id_t p2 = PLAYER_0; p2 < g->players; ++p2) {
+        const shipdesign_t *sd2;
+        int sn;
+        if (IS_AI(g, p2) || (!IS_ALIVE(g, p2))) {
+            continue;
+        }
+        sn = g->eto[p2].shipdesigns_num;
+        sd2 = &(g->srd[p2].design[0]);
+        for (int i = 0; i < sn; ++i) {
+            const ship_special_t *ss = &(sd2[i].special[0]);
+            for (int j = 0; j < SPECIAL_SLOT_NUM; ++j) {
+                ship_special_t s;
+                s = ss[j];
+                if ((s == SHIP_SPECIAL_ENERGY_PULSAR) || (s == SHIP_SPECIAL_IONIC_PULSAR)) {
+                    ait->have_pulsar = true;
+                }
+                if ((s == SHIP_SPECIAL_REPULSOR_BEAM) || (s == SHIP_SPECIAL_WARP_DISSIPATOR)) {
+                    ait->have_repulwarp = true;
+                }
             }
         }
     }
