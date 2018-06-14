@@ -44,7 +44,7 @@ static void game_audience_start_human(struct audience_s *au)
     empiretechorbit_t *eh = &(g->eto[ph]);
     empiretechorbit_t *ea = &(g->eto[pa]);
     int v;
-    v = eh->trust[pa] + game_diplo_get_relation_hmm1(g, ph, pa) + game_diplo_tbl_reldiff[ea->trait1];
+    v = eh->trust[pa] + game_diplo_get_mood(g, ph, pa) + game_diplo_tbl_reldiff[ea->trait1];
     if (v < -100) {
         au->dtype = (eh->treaty[pa] >= TREATY_WAR) ? 20 : 21;
         au->mode = 1;
@@ -1083,7 +1083,7 @@ static void audience_menu_main(struct audience_s *au)
                 au->bctbl[4] = want_trade + cur_trade;
             }
         }
-        if (game_diplo_get_relation_hmm1(g, ph, pa) < -100) {
+        if (game_diplo_get_mood(g, ph, pa) < -100) {
             game_audience_set_dtype(au, 74, 3);
             break;
         }
