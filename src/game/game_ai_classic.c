@@ -3567,7 +3567,7 @@ static void game_ai_classic_turn_diplo_p2(struct game_s *g)
             } else {
                 /*16441*/
                 int16_t v, v2, dv2;
-                v = game_diplo_get_relation_hmm1(g, p1, p2);
+                v = game_diplo_get_mood(g, p1, p2);
                 v2 = v + e2->trust[p1] + game_diplo_tbl_reldiff[e2->trait1];
                 dv2 = e1->diplo_val[p2] * 2;
                 if ((v2 <= -100) || (v <= -100)) {
