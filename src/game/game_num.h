@@ -28,6 +28,7 @@ extern int game_num_eco_slider_slack;
 extern int game_num_race_bonus_alkari;
 extern int game_num_race_bonus_bulrathi;
 extern int game_num_race_bonus_mrrshan;
+extern bool game_num_news_orion;
 extern uint8_t game_num_tbl_hull_w[4];
 extern uint8_t game_num_tech_costmuld[DIFFICULTY_NUM];
 extern uint8_t game_num_tech_costmulr[RACE_NUM][TECH_FIELD_NUM];
