@@ -1858,7 +1858,7 @@ struct game_end_s game_turn_process(struct game_s *g)
         game_update_eco_on_waste(g, i, false);
     }
     game_turn_update_seen(g);
-    game_diplo_hmm8(g);
+    game_diplo_mood_relax(g);
     for (int i = 0; i < g->players; ++i) {
         g->planet_focus_i[i] = old_focus[i];
     }
