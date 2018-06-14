@@ -580,7 +580,7 @@ void game_diplo_hmm8(struct game_s *g)
     }
 }
 
-int16_t game_diplo_get_relation_hmm1(struct game_s *g, player_id_t p1, player_id_t p2)
+int16_t game_diplo_get_mood(struct game_s *g, player_id_t p1, player_id_t p2)
 {
     if (g->end == GAME_END_FINAL_WAR) {
         return 0;
