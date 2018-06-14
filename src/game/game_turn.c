@@ -874,7 +874,7 @@ static void game_turn_explore(struct game_s *g)
                 }
                 /*c4ca*/
                 if (flag_visible) {
-                    bool first, flag_colony_ship, was_explored;
+                    bool first, flag_colony_ship, flag_do_colonize, was_explored;
                     int best_colonize, best_colonyship = 0;
                     /* FIXME artifacts disappearing due to scanning a planet is weird */
                     first = BOOLVEC_IS_CLEAR(p->explored, PLAYER_NUM);
@@ -883,6 +883,7 @@ static void game_turn_explore(struct game_s *g)
                         p->artifact_looter = i;
                     }
                     flag_colony_ship = false;
+                    flag_do_colonize = false;
                     best_colonize = 200;
                     for (int j = 0; j < e->shipdesigns_num; ++j) {
                         const shipdesign_t *sd = &(g->srd[i].design[j]);
@@ -906,16 +907,12 @@ static void game_turn_explore(struct game_s *g)
                             }
                         }
                     }
-                    if (best_colonize == 200) {
-                        best_colonize = 0;
-                    }
-                    if (p->owner != PLAYER_NONE) {
-                        best_colonize = 0;
-                    }
-                    if (p->type == PLANET_TYPE_NOT_HABITABLE) {
-                        best_colonize = 0;
-                    }
-                    if (p->type < best_colonize) {
+                    if (0
+                      || (best_colonize == 200)
+                      || (p->owner != PLAYER_NONE)
+                      || (p->type == PLANET_TYPE_NOT_HABITABLE)
+                      || (p->type < best_colonize)
+                    ) {
                         best_colonize = 0;
                     }
                     was_explored = BOOLVEC_IS1(p->explored, i);
@@ -929,16 +926,20 @@ static void game_turn_explore(struct game_s *g)
                                 flag_colony_ship = true;
                             }
                             if (ui_explore(g, i, pli, by_scanner, flag_colony_ship) && flag_colony_ship) {
-                                p->owner = i;
-                                p->pop = 2;
-                                --e->orbit[pli].ships[best_colonyship];
+                                flag_do_colonize = true;
                             }
                         }
                     } else {
                         if (best_colonize != 0) {
-                            p->owner = i;
-                            p->pop = 2;
-                            --e->orbit[pli].ships[best_colonyship];
+                            flag_do_colonize = true;
+                        }
+                    }
+                    if (flag_do_colonize) {
+                        p->owner = i;
+                        p->pop = 2;
+                        --e->orbit[pli].ships[best_colonyship];
+                        if ((pli == g->evn.planet_orion_i) && game_num_news_orion) {
+                            g->evn.have_orion_conquer = i + 1;
                         }
                     }
                 }
