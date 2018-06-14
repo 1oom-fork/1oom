@@ -154,6 +154,7 @@ static const struct numtbl_s {
     DEFNUMITEMLSTBL(st_hull_power, tbl_shiptech_hull, power, NUMTYPE_U16, 0, 0xffff),
     DEFNUMITEMLSTBL(st_hull_defense, tbl_shiptech_hull, defense, NUMTYPE_S16, -0x8000, 0x7fff),
     DEFNUMITEML(bt_turn_max, NUMTYPE_S, 1, 0xffff),
+    DEFNUMITEML(bt_wait_no_reload, NUMTYPE_BOOL, 0, 1),
     DEFNUMITEML(stargate_cost, NUMTYPE_S, 1, 0xffff),
     DEFNUMITEML(stargate_maint, NUMTYPE_S, 1, 0xffff),
     DEFNUMITEML(weapon_list_max, NUMTYPE_S, 0, WEAPON_NUM),

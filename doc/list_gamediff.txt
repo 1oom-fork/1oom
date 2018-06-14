@@ -8,6 +8,8 @@ Much of this file is based on the readme from the unofficial v1.40m patch.
 - multiple fleets sent to same destination on the same turn are combined if they have the same speed
 - fixed "bug" where on a given year only one scouted artifact planets gave new tech
 - the number of build finished messages per turn is no longer limited to 10 per category
+- fixed weird behaviour when space monsters attack colonized Orion
+
 - annoying bug / cheat when a fleet with bioweapons automatically bombed an enemy planet while orbiting is gone for good
 - entering the general "threaten / break treaty" dialogue no more equals to a large temporary diplomatic penalty
 - the discovery percentages on tech screen are no more only 1/2 of the true probability of a tech hit
