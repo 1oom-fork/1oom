@@ -106,8 +106,8 @@ typedef struct uiobj_s {
         struct {
             /*18*/ uint16_t xdiv;
             /*1a*/ uint16_t ydiv;
-            /*1c*/ uint16_t *xptr;
-            /*1e*/ uint16_t *yptr;
+            /*1c*/ int16_t *xptr;
+            /*1e*/ int16_t *yptr;
         } tb;
     };
 } uiobj_t;
@@ -1879,7 +1879,7 @@ int16_t uiobj_add_ta(uint16_t x, uint16_t y, uint16_t w, const char *str, bool z
     return UIOBJI_ALLOC();
 }
 
-int16_t uiobj_add_tb(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t xscale, uint16_t yscale, uint16_t *xptr, uint16_t *yptr, int16_t helpid)
+int16_t uiobj_add_tb(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t xscale, uint16_t yscale, int16_t *xptr, int16_t *yptr, int16_t helpid)
 {
     uiobj_t *p = &uiobj_tbl[uiobj_table_num];
     p->x0 = x;
