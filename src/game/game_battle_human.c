@@ -606,9 +606,34 @@ static void game_battle_reset_specials(struct battle_s *bt)
     } else {
         bt->special_button = -1;
     }
-    if (bt->cur_item == 0) {
+    if (itemi == 0) {
         bt->special_button = -1;
     }
+    {
+        bool flag_no_missiles = true;
+        for (int i = 0; i < WEAPON_SLOT_NUM; ++i) {
+            if ((b->wpn[i].numshots > 0) && (!tbl_shiptech_weap[b->wpn[i].t].is_bomb)) {
+                flag_no_missiles = false;
+            }
+        }
+        if (flag_no_missiles) {
+            b->missile = -1;
+        }
+        if (itemi == 0) {
+            b->missile = 1;
+        }
+    }
+    if (game_num_bt_wait_no_reload && b->can_retaliate) {   /* WASBUG MOO1 reloads specials on Wait */
+        return;
+    }
+    b->can_retaliate = true;
+    for (int i = 0; i <= bt->items_num; ++i) {
+        b = &(bt->item[i]);
+        if (b->stasisby == itemi) {
+            b->stasisby = 0;
+        }
+    }
+    b = &(bt->item[itemi]);
     if (b->warpdis == 2) {
         b->warpdis = 1;
     }
@@ -639,28 +664,6 @@ static void game_battle_reset_specials(struct battle_s *bt)
             int v = b->hploss - repair;
             SETMAX(v, 0);
             b->hploss = v;
-        }
-    }
-    for (int i = 0; i <= bt->items_num; ++i) {
-        b = &(bt->item[i]);
-        if (b->stasisby == itemi) {
-            b->stasisby = 0;
-        }
-    }
-    b = &(bt->item[itemi]);
-    b->can_retaliate = true;
-    {
-        bool flag_no_missiles = true;
-        for (int i = 0; i < WEAPON_SLOT_NUM; ++i) {
-            if ((b->wpn[i].numshots > 0) && (!tbl_shiptech_weap[b->wpn[i].t].is_bomb)) {
-                flag_no_missiles = false;
-            }
-        }
-        if (flag_no_missiles) {
-            b->missile = -1;
-        }
-        if (itemi == 0) {
-            b->missile = 1;
         }
     }
     if (b->cloak > 1) {
@@ -1311,7 +1314,7 @@ static void game_battle_with_human_do_sub3(struct battle_s *bt)
                     if (act == UI_BATTLE_ACT_WAIT) {
                         flag_turn_done = true;
                         b->selected = 0;
-                        b->can_retaliate = true;
+                        b->can_retaliate = true; /* XXX redundant, set by game_battle_reset_specials */
                         bt->priority[vc] = itemi;
                         if (vc != bt->prio_i) {
                             bt->priority[bt->prio_i] = -1;
