@@ -3193,6 +3193,171 @@ static int game_ai_classic_vote(struct election_s *el, player_id_t player)
 
 /* -------------------------------------------------------------------------- */
 
+static int game_ai_classic_diplo_wage_war_fleet_w(struct game_s *g, player_id_t p1, player_id_t p2)
+{
+    int ratio;
+    uint32_t fleetw[2];
+    for (int i = 0; i < 2; ++i) {
+        player_id_t player;
+        empiretechorbit_t *e;
+        shipresearch_t *srd;
+        player = (i == 0) ? p1 : p2;
+        e = &(g->eto[player]);
+        srd = &(g->srd[player]);
+        fleetw[i] = 0;
+        for (int j = 0; j < e->shipdesigns_num; ++j) {
+            fleetw[i] += srd->shipcount[j] * game_num_tbl_hull_w[srd->design[j].hull];
+        }
+        SETRANGE(fleetw[i], 1, 3250000);
+    }
+    ratio = ((fleetw[0] - fleetw[1]) * 100) / fleetw[1];
+    SETRANGE(ratio, -300, 300);
+    if (ratio == 0) {
+        return 0;
+    } else if (ratio < 0) {
+        return -rnd_1_n(-ratio, &g->seed);
+    } else {
+        return rnd_1_n(ratio, &g->seed);
+    }
+}
+
+static void game_ai_classic_diplo_wage_war_do(struct game_s *g, player_id_t p1, player_id_t p2)
+{
+    empiretechorbit_t *e1 = &(g->eto[p1]);
+    empiretechorbit_t *e2 = &(g->eto[p2]);
+    if ((e1->treaty[p2] == TREATY_ALLIANCE) || (e1->treaty[p2] == TREATY_NONAGGRESSION)) {
+        if (g->difficulty < DIFFICULTY_AVERAGE) {
+            return;
+        }
+        if (0
+          || ((e1->treaty[p2] == TREATY_ALLIANCE) && ((!rnd_0_nm1(4, &g->seed)) || ((!rnd_0_nm1(2, &g->seed)) && (e2->trait2 == TRAIT2_EXPANSIONIST))))
+          || ((e1->treaty[p2] == TREATY_NONAGGRESSION) && ((!rnd_0_nm1(2, &g->seed)) || (e2->trait2 == TRAIT2_EXPANSIONIST)))
+        ) {
+            game_diplo_act(g, -10000, p1, p2, 32, 0, 0);
+            game_diplo_break_treaty(g, p2, p1);
+            if (e1->relation1[p2] > 30) {
+                e1->relation1[p2] = 30;
+                e2->relation1[p1] = 30;
+            }
+        }
+    } else if (g->evn.ceasefire[p1][p2] <= 0) {
+        game_diplo_act(g, -10000, p1, p2, (e1->relation1[p2] < 0) ? 13 : 60, 0, 0);
+        game_diplo_start_war(g, p2, p1);
+    }
+}
+
+static int game_ai_classic_diplo_wage_war_prod_w(struct game_s *g, player_id_t p1, player_id_t p2)
+{
+    int ratio;
+    uint32_t prod[2];
+    prod[0] = g->eto[p1].total_production_bc;
+    prod[1] = g->eto[p2].total_production_bc;
+    SETRANGE(prod[1], 1, 3250000);  /* FIXME BUG? only p2 prod limited */
+    ratio = ((prod[0] - prod[1]) * 100) / prod[1];
+    SETRANGE(ratio, -300, 300);
+    if (ratio == 0) {
+        return 0;
+    } else if (ratio < 0) {
+        return -rnd_1_n(-ratio, &g->seed);
+    } else {
+        return rnd_1_n(ratio, &g->seed);
+    }
+}
+
+static void game_ai_classic_diplo_wage_war(struct game_s *g, player_id_t p1, player_id_t p2)
+{
+    if (g->end != GAME_END_NONE) {
+        for (p1 = PLAYER_0; p1 < g->players; ++p1) {
+            empiretechorbit_t *e1 = &(g->eto[p1]);
+            for (p2 = PLAYER_0; p2 < g->players; ++p2) {
+                if ((p1 != p2) && (BOOLVEC_IS1(g->refuse, p1) == BOOLVEC_IS1(g->refuse, p2))) {
+                    e1->treaty[p2] = TREATY_ALLIANCE;
+                }
+            }
+        }
+    } else {
+        empiretechorbit_t *e1 = &(g->eto[p1]);
+        empiretechorbit_t *e2 = &(g->eto[p2]);
+        if ((e1->treaty[p2] >= TREATY_WAR) || BOOLVEC_IS0(e1->within_frange, p2) || (!IS_ALIVE(g, p1))) {
+            return;
+        }
+        if (1
+          && (e2->trait1 == TRAIT1_ERRATIC)
+          && (rnd_1_n(300, &g->seed) <= g->difficulty)
+          && (IS_AI(g, p1) || (g->evn.ceasefire[p1][p2] < 1))
+        ) {
+            e1->diplo_type[p2] = 61;
+            e1->diplo_val[p2] = 2000;
+            game_diplo_start_war(g, p2, p1);
+        } else {
+            if (1
+              && (!rnd_0_nm1(20, &g->seed))
+              && ((e2->trait2 == TRAIT2_MILITARIST) || (e2->trait2 == TRAIT2_EXPANSIONIST))
+              && (e2->trait1 != TRAIT1_HONORABLE)
+              && (IS_AI(g, p1) || (g->evn.ceasefire[p1][p2] < 1))
+            ) {
+                int v;
+                v = game_ai_classic_diplo_wage_war_fleet_w(g, p1, p2);
+                v = e1->relation1[p2] - v + game_diplo_tbl_reldiff[e2->trait1] + e1->trust[p2];
+                if (v < -150) {
+                    game_ai_classic_diplo_wage_war_do(g, p1, p2);
+                }
+            }
+            /*1679f*/
+            if (1
+              && (!rnd_0_nm1(20, &g->seed))
+              && (IS_AI(g, p1) || (g->evn.ceasefire[p1][p2] < 1))
+            ) {
+                int v;
+                v = game_ai_classic_diplo_wage_war_prod_w(g, p1, p2);
+                v = e1->relation1[p2] - v + game_diplo_tbl_reldiff[e2->trait1] + e1->trust[p2];
+                if (v < -150) {
+                    game_ai_classic_diplo_wage_war_do(g, p1, p2);
+                }
+            }
+        }
+        /*16829*/
+        for (player_id_t p3 = PLAYER_0; p3 < g->players; ++p3) {
+            if (IS_HUMAN(g, p3)) {
+                continue;
+            }
+            for (player_id_t p4 = PLAYER_0; p4 < g->players; ++p4) {
+                empiretechorbit_t *e4 = &(g->eto[p4]);
+                if (IS_AI(g, p4)) {
+                    continue;
+                }
+                if (1
+                  && (e4->treaty[p3] == TREATY_WAR)
+                  && (e2->treaty[p3] == TREATY_ALLIANCE)
+                  && (g->evn.ceasefire[p4][p2] <= 0)
+                  && (!rnd_0_nm1(10, &g->seed))
+                  && (e2->treaty[p1] == TREATY_ALLIANCE)
+                ) {
+                    game_ai_classic_diplo_wage_war_do(g, p1, p2);
+                }
+            }
+        }
+        if (IS_HUMAN(g, p1) && (g->difficulty >= DIFFICULTY_AVERAGE)) {
+            int num = 0;
+            for (player_id_t p3 = PLAYER_0; p3 < g->players; ++p3) {
+                if (e1->treaty[p3] >= TREATY_WAR) {
+                    ++num;
+                }
+            }
+            if (num < g->difficulty) {
+                /* MOO1 does unused buggy count of planets ; overwrites local variable at tbl[-1] (which is also unused) */
+                int v = e1->relation1[p2];
+                if (v < -30) {
+                    v = (-v) / 10;
+                    if (rnd_1_n(10, &g->seed) <= v) {
+                        game_ai_classic_diplo_wage_war_do(g, p1, p2);
+                    }
+                }
+            }
+        }
+    }
+}
+
 static void game_ai_classic_turn_diplo_p1_sub1(struct game_s *g)
 {
     for (player_id_t p1 = PLAYER_0; p1 < g->players; ++p1) {
@@ -3283,7 +3448,7 @@ static void game_ai_classic_turn_diplo_p1(struct game_s *g)
                 }
                 game_diplo_annoy(g, p1, p2, 3);
                 game_ai_classic_turn_diplo_p1_sub1(g);
-                game_diplo_wage_war(g, p1, p2);
+                game_ai_classic_diplo_wage_war(g, p1, p2);
             }
         }
     }
@@ -3625,7 +3790,7 @@ static void game_ai_classic_turn_diplo_p2(struct game_s *g)
             }
             /*16576*/
             if (e1->diplo_type[p2] == 0) {
-                game_diplo_wage_war(g, p1, p2);
+                game_ai_classic_diplo_wage_war(g, p1, p2);
             }
             if ((e1->diplo_type[p2] == 2) && rnd_0_nm1(10, &g->seed)) {
                 e1->diplo_type[p2] = 0;
