@@ -170,7 +170,7 @@ void ui_starmap_trans(struct game_s *g, player_id_t active_player)
     int16_t oi_scroll, oi_cancel, oi_accept, oi_plus, oi_minus,
             oi_f2, oi_f3, oi_f4, oi_f5, oi_f6, oi_f7, oi_f8, oi_f9, oi_f10
             ;
-    uint16_t scrollx = 0, scrolly = 0;
+    int16_t scrollx = 0, scrolly = 0;
     struct starmap_data_s d;
     uint8_t olddest;
     planet_t *p;
