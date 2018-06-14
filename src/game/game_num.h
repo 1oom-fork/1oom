@@ -26,6 +26,7 @@ extern int game_num_max_ship_maint;
 extern int game_num_max_tribute_bc;
 extern int game_num_event_roll;
 extern int game_num_council_years;
+extern bool game_num_news_orion;
 extern bool game_num_monster_rest_att;
 extern bool game_num_orbital_weap_any;
 extern bool game_num_orbital_weap_4;
