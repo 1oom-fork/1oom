@@ -13,6 +13,7 @@ Much of this file is based on the readme from the unofficial v1.40m patch.
 - annoying bug / cheat when a fleet with bioweapons automatically bombed an enemy planet while orbiting is gone for good
 - the discovery percentages on tech screen are no more only 1/2 of the true probability of a tech hit
 - Psilon leader "Zygot  " name correction (extra whitespace trimmed from all names)
+- the spies you educate on the same turn against different races are no more overpriced
 - 8th stargate bug corrected (no ship maintenance overflow)
 
 - changes in Classic+ AI:
