@@ -989,17 +989,6 @@ bool game_event_run(struct game_s *g, struct game_end_s *ge)
         ui_news(g, &ns);
         any_news = true;
     }
-    if (g->evn.have_orion_conquer && BOOLVEC_IS0(g->evn.done, 17)) {
-        player_id_t player = g->evn.have_orion_conquer - 1;
-        empiretechorbit_t *e = &(g->eto[player]);
-        BOOLVEC_SET1(g->evn.done, 17);
-        ns.race = e->race;
-        ns.num1 = player;
-        ns.type = GAME_NEWS_ORION;
-        ns.subtype = 0; /* WASBUG MOO1 does not set this here */
-        ui_news(g, &ns);
-        any_news = true;
-    }
     /*10ff3*/
     ns.type = GAME_NEWS_GENOCIDE;
     ns.subtype = 0;
@@ -1157,6 +1146,18 @@ bool game_event_run(struct game_s *g, struct game_end_s *ge)
         any_news = true;
         game_tech_get_orion_loot(g, player);
         g->guardian_killer = PLAYER_NONE;
+    }
+    /* MOO1 has the following way before the guardian news which gives a strange news order */
+    if (g->evn.have_orion_conquer && BOOLVEC_IS0(g->evn.done, 17)) {
+        player_id_t player = g->evn.have_orion_conquer - 1;
+        empiretechorbit_t *e = &(g->eto[player]);
+        BOOLVEC_SET1(g->evn.done, 17);
+        ns.race = e->race;
+        ns.num1 = player;
+        ns.type = GAME_NEWS_ORION;
+        ns.subtype = 0; /* WASBUG MOO1 does not set this here */
+        ui_news(g, &ns);
+        any_news = true;
     }
     /*114fb*/
     if (1
