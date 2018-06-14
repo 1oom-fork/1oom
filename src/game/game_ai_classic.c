@@ -4024,8 +4024,13 @@ static uint8_t game_ai_classic_aud_threaten(struct audience_s *au)
             dtype = 69;
         }
     } else {
-        eh->spymode_next[pa] = SPYMODE_HIDE;    /* FIXME BUG? should be ea->..[ph] */
-        eh->spymode[pa] = SPYMODE_HIDE;         /* FIXME BUG? should be ea->..[ph] */
+        if (g->ai_id == GAME_AI_CLASSICPLUS) {
+            ea->spymode_next[ph] = SPYMODE_HIDE;
+            ea->spymode[ph] = SPYMODE_HIDE;
+        } else { /* WASBUG MOO1 hides your spies */
+            eh->spymode_next[pa] = SPYMODE_HIDE;
+            eh->spymode[pa] = SPYMODE_HIDE;
+        }
         g->evn.ceasefire[ph][pa] = rnd_1_n(15, &g->seed) + 5;
         dtype = 70;
         if (v >= 275) {
