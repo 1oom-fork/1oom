@@ -18,13 +18,13 @@ struct battle_item_s {
     uint8_t *gfx;
     char name[SHIP_NAME_LEN];
     uint8_t shiptbli;
-    uint8_t complevel;
+    int8_t complevel;
     ship_special_t special[SPECIAL_SLOT_NUM];
     uint16_t hp1;
     uint16_t hp2;
     uint8_t man;
-    uint8_t defense;
-    uint8_t misdefense;
+    int8_t defense;
+    int8_t misdefense;
     uint8_t absorb;
     uint8_t repair;
     uint8_t misshield;
