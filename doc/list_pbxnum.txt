@@ -5,6 +5,13 @@ This is an incomplete list of PBX number replacements.
 bt_turn_max : 1..65535, 50
   - The number of battle turns before a forced retreat.
 
+bt_wait_no_reload : 0..1, 0
+  - Do not reload ship specials on Wait.
+    MOO1 reloads ship specials when Wait is pressed and the ship's turn resumes.
+    This means it is possible to fire the Pulsars, Black Hole Generator etc an
+    unlimited number of times. Automated repair also kicks in on every resume
+    from wait.
+
 weapon_list_max : 0..64, 30
   - Max. number of weapons shown in the ship design weapon list.
 
@@ -19,9 +26,9 @@ monster_rest_att : 0..1, 0
 
 orbital_weap_any : 0..1, 0
   - Allow orbital bombardment with any weapon type.
-    In MOO1 neither death ray, crystal ray nor amoeba stream can be used for
+    In MOO1 neither Death Ray, Crystal Ray nor Amoeba Stream can be used for
     orbital bombardment. The last two are only available via save game editing,
-    but the omission of death ray is puzzling.
+    but the omission of Death Ray is puzzling.
 
 orbital_weap_4 : 0..1, 0
   - Allow orbital bombardment with weapon in slot 4.
