@@ -410,15 +410,16 @@ void game_spy_build(struct game_s *g)
 {
     for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         empiretechorbit_t *e = &(g->eto[i]);
-        int spycost;
-        spycost = e->tech.percent[TECH_FIELD_COMPUTER] * 2 + 25;
+        int spycost_base;
+        spycost_base = e->tech.percent[TECH_FIELD_COMPUTER] * 2 + 25;
         if (e->race == RACE_DARLOK) {
-            spycost /= 2;
+            spycost_base /= 2;
         }
         for (player_id_t j = PLAYER_0; j < g->players; ++j) {
             if ((i != j) && (e->spying[j] != 0)) {
-                int spyfund;
+                int spyfund, spycost;
                 spyfund = (e->total_production_bc * e->spying[j]) / 1000 + e->spyfund[j];
+                spycost = spycost_base; /* WASBUG MOO1 does not reset spycost between target players */
                 while (spyfund >= spycost) {
                     ++e->spies[j];
                     spyfund -= spycost;
