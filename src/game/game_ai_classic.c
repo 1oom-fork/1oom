@@ -3884,18 +3884,21 @@ static void game_ai_classic_aud_tribute_bc(struct audience_s *au, int selected, 
     empiretechorbit_t *ea = &(g->eto[pa]);
     int v;
     if (ea->total_production_bc != 0) {
-        /* FIXME BUG MOO1 uses the value
+        /* WASBUG MOO1 uses the value
               (reserve * 12) / (0x786e + 0xdd4 * pa + 0x326b0000)
            == (reserve * 12) / ea->relation1
            == 0
-           Maybe the divisor was supposed to be eh->relation1[pa]? Or ea->total_production_bc?
            This makes money tributes quite useless.
+           The formula below is according to OSG.
         */
-        v = 0;
+        if (g->ai_id == GAME_AI_CLASSICPLUS) {
+            v = (bc * 12) / ea->total_production_bc;
+        } else {
+            v = 0;
+        }
     } else {
-        v = 10;
+        v = selected + 1;
     }
-    v = ((selected + 1) * v) / 10;
     if (eh->race == RACE_HUMAN) {
         v *= 2;
     }
