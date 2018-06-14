@@ -270,7 +270,7 @@ int ui_races(struct game_s *g, player_id_t api)
         int16_t v, vr;
         player_id_t pi;
         pi = d.tbl_ei[i];
-        vr = game_diplo_get_relation_hmm1(g, api, pi);
+        vr = game_diplo_get_mood(g, api, pi);
         v = e->trust[pi] /*+ e->relation1[pi]*/ + vr + game_diplo_tbl_reldiff[g->eto[pi].trait1];
         if (((v /*- e->relation1[pi]*/) <= -100) || (vr <= -100)) {
             if (e->treaty[pi] >= TREATY_WAR) {
