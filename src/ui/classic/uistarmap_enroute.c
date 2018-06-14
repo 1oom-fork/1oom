@@ -128,7 +128,7 @@ void ui_starmap_enroute(struct game_s *g, player_id_t active_player)
 {
     bool flag_done = false;
     int16_t oi_scroll, oi_cancel, oi_accept;
-    uint16_t scrollx = 0, scrolly = 0;
+    int16_t scrollx = 0, scrolly = 0;
     struct starmap_data_s d;
     fleet_enroute_t *r = &(g->enroute[ui_data.starmap.fleet_selected]);
 
