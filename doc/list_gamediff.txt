@@ -19,6 +19,7 @@ Much of this file is based on the readme from the unofficial v1.40m patch.
 - 8th stargate bug corrected (no ship maintenance overflow)
 
 - changes in Classic+ AI:
+    - cash tributes work as described in OSG instead of not at all
     - a small issue concerning the change in AI defense and ship production when too many MBases on a planet has been corrected
 
 - the game has multiplayer (only local/hotseat for now); multiplayer differences to single player:
