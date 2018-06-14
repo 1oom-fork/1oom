@@ -6,6 +6,7 @@
 #include "boolvec.h"
 #include "comp.h"
 #include "game.h"
+#include "game_num.h"
 #include "game_str.h"
 #include "game_util.h"
 #include "log.h"
@@ -55,7 +56,7 @@ static bool game_send_fleet_do(struct game_s *g, player_id_t owner, uint8_t from
                 if (ships[j] > 0) {
                     uint8_t st;
                     st = shiptypes[j];
-                    r->ships[st] += ships[j];
+                    ADDSATT(r->ships[st], ships[j], game_num_limit_ships);
                 }
             }
             return true;
