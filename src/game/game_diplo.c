@@ -557,7 +557,7 @@ void game_diplo_limit_mood_treaty(struct game_s *g)
     }
 }
 
-void game_diplo_hmm8(struct game_s *g)
+void game_diplo_mood_relax(struct game_s *g)
 {
     for (player_id_t p1 = PLAYER_0; p1 < g->players; ++p1) {
         empiretechorbit_t *e = &(g->eto[p1]);
