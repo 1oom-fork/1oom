@@ -174,6 +174,7 @@ static const struct numtbl_s {
     DEFNUMITEML(max_ship_maint, NUMTYPE_S, 1, 0x7fffffff),
     DEFNUMITEML(max_tribute_bc, NUMTYPE_S, 1, 0x7fffffff),
     DEFNUMITEML(event_roll, NUMTYPE_S, 0, 0x7fffffff),
+    DEFNUMITEML(news_orion, NUMTYPE_BOOL, 0, 1),
     DEFNUMITEML(monster_rest_att, NUMTYPE_BOOL, 0, 1),
     DEFNUMITEML(orbital_weap_any, NUMTYPE_BOOL, 0, 1),
     DEFNUMITEML(orbital_weap_4, NUMTYPE_BOOL, 0, 1),
