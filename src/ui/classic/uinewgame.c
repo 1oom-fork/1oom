@@ -293,11 +293,11 @@ bool ui_new_game(struct game_new_options_s *newopts)
         }
         if ((oi == UIOBJI_ESC) || (oi == oi_cancel) || (oi == oi_esc)) {
             flag_ok = false;
-            flag_done = 1;
+            flag_done = true;
         }
         if ((oi == oi_ok) || (oi == oi_space)) {
             flag_ok = true;
-            flag_done = 1;
+            flag_done = true;
         }
         new_game_draw_cb1(&d);
 
