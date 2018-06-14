@@ -627,11 +627,11 @@ int game_design_build_tbl_fit_special(struct game_s *g, struct game_design_s *gd
 
 void game_design_compact_slots(shipdesign_t *sd)
 {
-    for (int i = 0; i < SPECIAL_SLOT_NUM - 1; ++i) {
-        if (sd->special[i] == 0) {
-            for (int j = i; j < SPECIAL_SLOT_NUM - 1; ++j) {
-                sd->special[j] = sd->special[j + 1];
-                sd->special[j + 1] = 0;
+    for (int loops = 0; loops < SPECIAL_SLOT_NUM; ++loops) {
+        for (int i = 0; i < SPECIAL_SLOT_NUM - 1; ++i) {
+            if (sd->special[i] == 0) {
+                sd->special[i] = sd->special[i + 1];
+                sd->special[i + 1] = 0;
             }
         }
     }
@@ -641,13 +641,13 @@ void game_design_compact_slots(shipdesign_t *sd)
             sd->wpnn[i] = 0;
         }
     }
-    for (int i = 0; i < WEAPON_SLOT_NUM - 1; ++i) {
-        if (sd->wpnt[i] == 0) {
-            for (int j = i; j < WEAPON_SLOT_NUM - 1; ++j) {
-                sd->wpnt[j] = sd->wpnt[j + 1];
-                sd->wpnn[j] = sd->wpnn[j + 1];
-                sd->wpnt[j + 1] = 0;
-                sd->wpnn[j + 1] = 0;
+    for (int loops = 0; loops < WEAPON_SLOT_NUM; ++loops) {
+        for (int i = 0; i < WEAPON_SLOT_NUM - 1; ++i) {
+            if (sd->wpnt[i] == 0) {
+                sd->wpnt[i] = sd->wpnt[i + 1];
+                sd->wpnn[i] = sd->wpnn[i + 1];
+                sd->wpnt[i + 1] = 0;
+                sd->wpnn[i + 1] = 0;
             }
         }
     }
