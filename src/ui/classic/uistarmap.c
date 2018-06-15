@@ -36,7 +36,7 @@ static void ui_starmap_draw_cb1(void *vptr)
     struct game_s *g = d->g;
     planet_t *p = &g->planet[g->planet_focus_i[d->api]];
 
-    int16_t oi2 = uiobj_get_hmm2_oi();
+    int16_t oi2 = uiobj_get_clicked_oi();
     for (planet_slider_i_t i = PLANET_SLIDER_SHIP; i < PLANET_SLIDER_NUM; ++i) {
         if ((oi2 == d->sm.oi_tbl_slider[i]) && (p->slider_lock[i] == 0)) {
             game_adjust_slider_group(p->slider, i, p->slider[i], PLANET_SLIDER_NUM, p->slider_lock);
