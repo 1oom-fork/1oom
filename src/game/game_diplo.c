@@ -333,7 +333,7 @@ void game_diplo_annoy(struct game_s *g, player_id_t p1, player_id_t p2, int n)
     e1->mood_peace[p2] -= n;
 }
 
-void game_diplo_hmm6(struct game_s *g, player_id_t p1, player_id_t p2)
+void game_diplo_wage_war(struct game_s *g, player_id_t p1, player_id_t p2)
 {
     if (g->end != GAME_END_NONE) {
         /* FIXME multiplayer ; gang up against rejecting player(s) */
