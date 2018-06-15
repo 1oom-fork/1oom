@@ -3748,7 +3748,7 @@ static void game_ai_classic_turn_diplo_p2(struct game_s *g)
             continue;
         }
         if (!IS_ALIVE(g, p1)) {
-            e1->diplo_type[p2] = 0;
+            memset(e1->diplo_type, 0, sizeof(e1->diplo_type));
             continue;
         }
         for (player_id_t p2 = PLAYER_0; p2 < g->players; ++p2) {
