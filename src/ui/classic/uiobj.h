@@ -36,7 +36,7 @@ extern void uiobj_set_limits_all(void);
 extern void uiobj_set_focus(int16_t uiobji);
 extern void uiobj_set_help_id(int16_t v);
 extern void uiobj_set_hmm8_0(void);
-extern int16_t uiobj_get_hmm2_oi(void);
+extern int16_t uiobj_get_clicked_oi(void);
 extern void uiobj_set_skip_delay(bool v);
 
 extern int16_t uiobj_find_obj_at_cursor(void);
