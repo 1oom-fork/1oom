@@ -400,7 +400,7 @@ static void game_turn_diplo_adjust(struct game_s *g)
                     v /= 2;
                 }
                 for (player_id_t j = PLAYER_0; j < g->players; ++j) {
-                    if (BOOLVEC_IS0(g->is_ai, j)) {
+                    if (IS_HUMAN(g, j)) {
                         continue;
                     }
                     if (BOOLVEC_IS1(e->within_frange, j) && (e->treaty[j] == TREATY_ALLIANCE)) {
