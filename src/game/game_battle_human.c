@@ -1914,11 +1914,7 @@ void game_battle_area_setup(struct battle_s *bt)
                         bool is_missile;
                         const struct shiptech_weap_s *w;
                         w = &(tbl_shiptech_weap[b->wpn[j].t]);
-                        if ((w->damagemax == w->damagemin) && (!w->is_bomb) && (w->misstype == 0)) {
-                            is_missile = true;
-                        } else {
-                            is_missile = false;
-                        }
+                        is_missile = ((w->damagemax == w->damagemin) && (!w->is_bomb) && (w->misstype == 0));
                         if ((b->actman > 0) || ((w->range >= dist) && (b->wpn[j].numfire > 0) && (b->wpn[j].numshots != 0))) {
                             bt->turn_done = false;
                         }
