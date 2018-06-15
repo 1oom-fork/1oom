@@ -3203,7 +3203,7 @@ static int game_ai_classic_vote(struct election_s *el, player_id_t player)
 
 /* -------------------------------------------------------------------------- */
 
-static int game_ai_classic_diplo_hmm6_sub1(struct game_s *g, player_id_t p1, player_id_t p2)
+static int game_ai_classic_diplo_wage_war_fleet_w(struct game_s *g, player_id_t p1, player_id_t p2)
 {
     int ratio;
     uint32_t fleetw[2];
@@ -3231,7 +3231,7 @@ static int game_ai_classic_diplo_hmm6_sub1(struct game_s *g, player_id_t p1, pla
     }
 }
 
-static void game_ai_classic_diplo_hmm6_sub2(struct game_s *g, player_id_t p1, player_id_t p2)
+static void game_ai_classic_diplo_wage_war_do(struct game_s *g, player_id_t p1, player_id_t p2)
 {
     empiretechorbit_t *e1 = &(g->eto[p1]);
     empiretechorbit_t *e2 = &(g->eto[p2]);
@@ -3256,7 +3256,7 @@ static void game_ai_classic_diplo_hmm6_sub2(struct game_s *g, player_id_t p1, pl
     }
 }
 
-static int game_ai_classic_diplo_hmm6_sub3(struct game_s *g, player_id_t p1, player_id_t p2)
+static int game_ai_classic_diplo_wage_war_prod_w(struct game_s *g, player_id_t p1, player_id_t p2)
 {
     int ratio;
     uint32_t prod[2];
@@ -3274,7 +3274,7 @@ static int game_ai_classic_diplo_hmm6_sub3(struct game_s *g, player_id_t p1, pla
     }
 }
 
-static void game_ai_classic_diplo_hmm6(struct game_s *g, player_id_t p1, player_id_t p2)
+static void game_ai_classic_diplo_wage_war(struct game_s *g, player_id_t p1, player_id_t p2)
 {
     if (g->end != GAME_END_NONE) {
         for (p1 = PLAYER_0; p1 < g->players; ++p1) {
@@ -3302,15 +3302,15 @@ static void game_ai_classic_diplo_hmm6(struct game_s *g, player_id_t p1, player_
         } else {
             if (1
               && (!rnd_0_nm1(20, &g->seed))
-              && ((e1->trait2 == TRAIT2_MILITARIST) || (e1->trait2 == TRAIT2_EXPANSIONIST))
+              && ((e2->trait2 == TRAIT2_MILITARIST) || (e2->trait2 == TRAIT2_EXPANSIONIST))
               && (e2->trait1 != TRAIT1_HONORABLE)
               && (IS_AI(g, p1) || (g->evn.ceasefire[p1][p2] < 1))
             ) {
                 int v;
-                v = game_ai_classic_diplo_hmm6_sub1(g, p1, p2);
+                v = game_ai_classic_diplo_wage_war_fleet_w(g, p1, p2);
                 v = e1->relation1[p2] - v + game_diplo_tbl_reldiff[e2->trait1] + e1->trust[p2];
                 if (v < -150) {
-                    game_ai_classic_diplo_hmm6_sub2(g, p1, p2);
+                    game_ai_classic_diplo_wage_war_do(g, p1, p2);
                 }
             }
             /*1679f*/
@@ -3319,10 +3319,10 @@ static void game_ai_classic_diplo_hmm6(struct game_s *g, player_id_t p1, player_
               && (IS_AI(g, p1) || (g->evn.ceasefire[p1][p2] < 1))
             ) {
                 int v;
-                v = game_ai_classic_diplo_hmm6_sub3(g, p1, p2);
+                v = game_ai_classic_diplo_wage_war_prod_w(g, p1, p2);
                 v = e1->relation1[p2] - v + game_diplo_tbl_reldiff[e2->trait1] + e1->trust[p2];
                 if (v < -150) {
-                    game_ai_classic_diplo_hmm6_sub2(g, p1, p2);
+                    game_ai_classic_diplo_wage_war_do(g, p1, p2);
                 }
             }
         }
@@ -3343,7 +3343,7 @@ static void game_ai_classic_diplo_hmm6(struct game_s *g, player_id_t p1, player_
                   && (!rnd_0_nm1(10, &g->seed))
                   && (e2->treaty[p1] == TREATY_ALLIANCE)
                 ) {
-                    game_ai_classic_diplo_hmm6_sub2(g, p1, p2);
+                    game_ai_classic_diplo_wage_war_do(g, p1, p2);
                 }
             }
         }
@@ -3360,7 +3360,7 @@ static void game_ai_classic_diplo_hmm6(struct game_s *g, player_id_t p1, player_
                 if (v < -30) {
                     v = (-v) / 10;
                     if (rnd_1_n(10, &g->seed) <= v) {
-                        game_ai_classic_diplo_hmm6_sub2(g, p1, p2);
+                        game_ai_classic_diplo_wage_war_do(g, p1, p2);
                     }
                 }
             }
@@ -3459,7 +3459,7 @@ static void game_ai_classic_turn_diplo_p1(struct game_s *g)
                 }
                 game_diplo_annoy(g, p1, p2, 3);
                 game_ai_classic_turn_diplo_p1_sub1(g);
-                game_ai_classic_diplo_hmm6(g, p1, p2);
+                game_ai_classic_diplo_wage_war(g, p1, p2);
             }
         }
     }
@@ -3801,7 +3801,7 @@ static void game_ai_classic_turn_diplo_p2(struct game_s *g)
             }
             /*16576*/
             if (e1->diplo_type[p2] == 0) {
-                game_ai_classic_diplo_hmm6(g, p1, p2);
+                game_ai_classic_diplo_wage_war(g, p1, p2);
             }
             if ((e1->diplo_type[p2] == 2) && (!rnd_0_nm1(10, &g->seed))) {
                 e1->diplo_type[p2] = 0;
