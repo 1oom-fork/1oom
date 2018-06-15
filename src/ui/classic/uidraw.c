@@ -449,7 +449,20 @@ void ui_draw_box_fill(int x0, int y0, int x1, int y1, const uint8_t *colorptr, u
 
 void ui_draw_text_overlay(int x, int y, const char *str)
 {
-    /* TODO */
+    int x0, x1, y0, y1, w, h;
+    lbxfont_select(0, 0, 0, 0);
+    h = lbxfont_get_height();
+    w = lbxfont_calc_str_width(str);
+    x0 = x - 3;
+    SETMAX(x0, 0);
+    y0 = y - 3;
+    SETMAX(y0, 0);
+    x1 = x + w + 4;
+    SETMIN(x1, UI_SCREEN_W - 1);
+    y1 = y + h + 5;
+    SETMIN(y1, UI_SCREEN_H - 1);
+    ui_draw_filled_rect(x0, y0, x1, y1, 0);
+    lbxfont_print_str_normal(x, y, str, UI_SCREEN_W);
 }
 
 void ui_draw_box_grain(int x0, int y0, int x1, int y1, uint8_t color0, uint8_t color1, uint8_t ae)
