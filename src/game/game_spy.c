@@ -68,7 +68,7 @@ static void game_spy_esp_sub3(struct game_s *g, struct spy_esp_s *s, tech_field_
     }
 }
 
-static int game_spy_esp_sub4(struct game_s *g, struct spy_esp_s *s, tech_field_t field, uint8_t techi)
+static int game_spy_esp_get_value(struct game_s *g, struct spy_esp_s *s, tech_field_t field, uint8_t techi)
 {
     empiretechorbit_t *es = &(g->eto[s->spy]);
     const shipresearch_t *srds = &(g->srd[s->spy]);
@@ -338,7 +338,7 @@ int game_spy_esp_sub1(struct game_s *g, struct spy_esp_s *s, int a4, int a6)
                     have_tech = true;
                 }
             }
-            v8 = game_spy_esp_sub4(g, s, field, techi);
+            v8 = game_spy_esp_get_value(g, s, field, techi);
             if ((v8 == 0) || (v8 < a4)) {
                 have_tech = true;
             }
