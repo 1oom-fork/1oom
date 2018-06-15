@@ -42,7 +42,6 @@ struct design_data_s {
     int16_t oi_tbl_weap_dn[WEAPON_SLOT_NUM];    /* + 2 */
     int16_t flag_tbl_weap_up[WEAPON_SLOT_NUM];  /* + 3 */
     int16_t flag_tbl_weap_dn[WEAPON_SLOT_NUM];  /* + 4 */
-    int16_t oi_hmm04;
     int16_t oi_cancel;
     int16_t oi_build;
     int16_t oi_clear;
@@ -99,7 +98,7 @@ static void design_draw_cb(void *vptr)
 
     ui_draw_filled_rect(5, 5, 315, 195, 1, ui_scale);
     lbxgfx_draw_frame(0, 0, ui_data.gfx.design.bg, UI_SCREEN_W, ui_scale);
-    oi = uiobj_get_hmm2_oi();
+    oi = uiobj_get_clicked_oi();
     lbxfont_select(0, 6, 0, 3);
     lbxfont_set_colors(((d->oi_comp == oi) || d->flag_disable_comp) ? colortbl_sd_ba : colortbl_sd_bf);
     lbxfont_print_str_normal(17, 22, game_str_sd_comp, UI_SCREEN_W, ui_scale);
@@ -276,7 +275,6 @@ static void design_clear_ois(struct design_data_s *d)
         d->flag_tbl_weap_dn[i] = 0;
         d->flag_tbl_weapon[i] = false;
     }
-    d->oi_hmm04 = UIOBJI_INVALID;
     d->oi_cancel = UIOBJI_INVALID;
     d->oi_build = UIOBJI_INVALID;
     d->oi_clear = UIOBJI_INVALID;
