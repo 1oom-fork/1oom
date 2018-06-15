@@ -481,7 +481,7 @@ void ui_newtech(struct game_s *g, int pi)
     bool flag_copybuf = false;
 
     ui_sound_stop_music();
-    uiobj_set_hmm3_xyoff(0, 0);
+    uiobj_set_xyoff(0, 0);
 
     memset(&d, 0, sizeof(d));
     d.g = g;
