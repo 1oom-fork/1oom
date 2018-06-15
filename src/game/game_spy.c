@@ -347,7 +347,7 @@ int game_spy_esp_sub1(struct game_s *g, struct spy_esp_s *s, int a4, int a6)
                 i = s->tnum;
                 s->tbl_field[i] = field;
                 s->tbl_tech2[i] = techi;
-                s->tbl_hmm4[i] = v8;
+                s->tbl_value[i] = v8;
                 s->tnum = i + 1;
             }
         }
