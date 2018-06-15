@@ -959,7 +959,7 @@ static void audience_menu_tech(struct audience_s *au)
             for (int i = 0; i < tanum; ++i) {
                 taf[i] = s->tbl_field[i];
                 tat[i] = s->tbl_tech2[i];
-                ta4[i] = (s->tbl_hmm4[i] * v) / 100;
+                ta4[i] = (s->tbl_value[i] * v) / 100;
             }
             s->spy = pa;
             s->target = ph;
