@@ -218,7 +218,7 @@ void ui_specs_mustscrap(struct game_s *g, player_id_t active_player, int scrapi)
             flag_done = true;
         } else if (oi == oi_yes) {
             ui_sound_play_sfx_24();
-            game_design_scrap(g, active_player, scrapi, ui_data.flag_main_hmm1);
+            game_design_scrap(g, active_player, scrapi, ui_data.flag_scrap_for_new_design);
             ui_data.ui_main_loop_action = ui_data.ui_main_loop_action_prev;
             flag_done = true;
         }
@@ -265,7 +265,7 @@ int ui_specs(struct game_s *g, player_id_t active_player)
         ui_delay_prepare();
         if ((oi == oi_ma) || (oi == UIOBJI_ESC)) {
             ui_data.ui_main_loop_action = UI_MAIN_LOOP_FLEET;
-            ui_data.flag_main_hmm1 = false;
+            ui_data.flag_scrap_for_new_design = false;
             flag_done = true;
         }
         for (int i = 0; i < NUM_SHIPDESIGNS; ++i) {
@@ -273,7 +273,7 @@ int ui_specs(struct game_s *g, player_id_t active_player)
                 ui_sound_play_sfx_24();
                 scrapi = i;
                 ui_data.ui_main_loop_action = UI_MAIN_LOOP_MUSTSCRAP;
-                if (!ui_data.flag_main_hmm1) {
+                if (!ui_data.flag_scrap_for_new_design) {
                     ui_data.ui_main_loop_action_prev = UI_MAIN_LOOP_SPECS;
                     ui_data.ui_main_loop_action_next = UI_MAIN_LOOP_SPECS;
                 } else {
