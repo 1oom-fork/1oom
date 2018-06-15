@@ -653,7 +653,7 @@ void game_design_compact_slots(shipdesign_t *sd)
     }
 }
 
-void game_design_scrap(struct game_s *g, player_id_t player, int shipi, bool flag_hmm)
+void game_design_scrap(struct game_s *g, player_id_t player, int shipi, bool flag_for_new)
 {
     empiretechorbit_t *e = &(g->eto[player]);
     shipresearch_t *srd = &(g->srd[player]);
@@ -684,7 +684,7 @@ void game_design_scrap(struct game_s *g, player_id_t player, int shipi, bool fla
         bs = p->buildship;
         if ((p->owner == player) && (bs != BUILDSHIP_STARGATE)) {
             if (bs == shipi) {
-                if ((player != PLAYER_0) || (!flag_hmm)) {
+                if ((player != PLAYER_0) || (!flag_for_new)) {
                     p->buildship = 0;
                 } else {
                     p->buildship = e->shipdesigns_num - 1;
