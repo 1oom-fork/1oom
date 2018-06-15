@@ -15,8 +15,6 @@
 
 static uint32_t delay_start;
 
-static uint16_t delay_hmm1 = 1;
-
 /* -------------------------------------------------------------------------- */
 
 void ui_delay_prepare(void)
@@ -34,9 +32,6 @@ bool ui_delay_us_or_click(uint32_t delay)
     bool pressed = false, handled = false;
     int mx = moouse_x, my = moouse_y;
     uint32_t mouse_time = hw_get_time_us();
-    if (delay_hmm1 == 0) {
-        return false;
-    }
     while (1) {
         int32_t diff;
         uint32_t now;
