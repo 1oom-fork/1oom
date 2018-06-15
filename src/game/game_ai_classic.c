@@ -3252,7 +3252,7 @@ static void game_ai_classic_turn_diplo_p1(struct game_s *g)
                 }
                 game_diplo_annoy(g, p1, p2, 3);
                 game_ai_classic_turn_diplo_p1_sub1(g);
-                game_diplo_hmm6(g, p1, p2);
+                game_diplo_wage_war(g, p1, p2);
             }
         }
     }
@@ -3593,7 +3593,7 @@ static void game_ai_classic_turn_diplo_p2(struct game_s *g)
             }
             /*16576*/
             if (e1->diplo_type[p2] == 0) {
-                game_diplo_hmm6(g, p1, p2);
+                game_diplo_wage_war(g, p1, p2);
             }
             if ((e1->diplo_type[p2] == 2) && (!rnd_0_nm1(10, &g->seed))) {
                 e1->diplo_type[p2] = 0;
