@@ -46,7 +46,7 @@ static int game_diplo_wage_war_fleet_w(struct game_s *g, player_id_t p1, player_
     }
 }
 
-static void game_diplo_hmm6_sub2(struct game_s *g, player_id_t p1, player_id_t p2)
+static void game_diplo_wage_war_do(struct game_s *g, player_id_t p1, player_id_t p2)
 {
     empiretechorbit_t *e1 = &(g->eto[p1]);
     empiretechorbit_t *e2 = &(g->eto[p2]);
@@ -375,7 +375,7 @@ void game_diplo_wage_war(struct game_s *g, player_id_t p1, player_id_t p2)
                 v = game_diplo_wage_war_fleet_w(g, p1, p2);
                 v = e1->relation1[p2] - v + game_diplo_tbl_reldiff[e2->trait1] + e1->trust[p2];
                 if (v < -150) {
-                    game_diplo_hmm6_sub2(g, p1, p2);
+                    game_diplo_wage_war_do(g, p1, p2);
                 }
             }
             /*1679f*/
@@ -387,7 +387,7 @@ void game_diplo_wage_war(struct game_s *g, player_id_t p1, player_id_t p2)
                 v = game_diplo_hmm6_sub3(g, p1, p2);
                 v = e1->relation1[p2] - v + game_diplo_tbl_reldiff[e2->trait1] + e1->trust[p2];
                 if (v < -150) {
-                    game_diplo_hmm6_sub2(g, p1, p2);
+                    game_diplo_wage_war_do(g, p1, p2);
                 }
             }
         }
@@ -407,7 +407,7 @@ void game_diplo_wage_war(struct game_s *g, player_id_t p1, player_id_t p2)
                   && (g->evn.ceasefire[p2][p4] < 0) /* FIXME check index order */
                   && (e2->treaty[p1] == TREATY_ALLIANCE)
                 ) {
-                    game_diplo_hmm6_sub2(g, p1, p2);
+                    game_diplo_wage_war_do(g, p1, p2);
                 }
             }
         }
@@ -424,7 +424,7 @@ void game_diplo_wage_war(struct game_s *g, player_id_t p1, player_id_t p2)
                 if (v < -30) {
                     v = (-v) / 10;
                     if (rnd_1_n(10, &g->seed) <= v) {
-                        game_diplo_hmm6_sub2(g, p1, p2);
+                        game_diplo_wage_war_do(g, p1, p2);
                     }
                 }
             }
