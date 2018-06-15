@@ -265,7 +265,7 @@ static int lbxfont_print_str_limit_do(int x, int y, const char *str, bool change
     return lbxfont_temp_x;
 }
 
-static int lbxfont_print_str_hmm2(int x, int y, const char *str, int w, uint16_t pitch)
+static int lbxfont_print_str_normal_do(int x, int y, const char *str, int w, uint16_t pitch)
 {
     uint16_t v2;
     v2 = lbxfontdata[0x12];
@@ -299,6 +299,14 @@ static int lbxfont_print_str_hmm2(int x, int y, const char *str, int w, uint16_t
         lbxfont_select_subcolors(lbxfontdata[0x13]);
     }
     return lbxfont_print_str_do(x, y, str, true, w, pitch);
+}
+
+static int lbxfont_print_str_normal_do_w0(int x, int y, const char *str, int w, uint16_t pitch)
+{
+    if (w < 0) {
+        w = 0;
+    }
+    return lbxfont_print_str_normal_do(x, y, str, w, pitch);
 }
 
 static void lbxfont_split_str(int x, int y, int maxw, const char *str, split_str_t *s, uint16_t maxy)
@@ -634,7 +642,7 @@ int lbxfont_calc_split_str_h(int maxw, const char *str)
 
 int lbxfont_print_str_normal(int x, int y, const char *str, uint16_t pitch)
 {
-    return lbxfont_print_str_hmm2(x, y, str, 0, pitch);
+    return lbxfont_print_str_normal_do(x, y, str, 0, pitch);
 }
 
 int lbxfont_print_str_center(int x, int y, const char *str, uint16_t pitch)
@@ -647,14 +655,6 @@ int lbxfont_print_str_right(int x, int y, const char *str, uint16_t pitch)
 {
     int w = lbxfont_calc_str_width(str) - 1;
     return lbxfont_print_str_normal(x - w, y, str, pitch);
-}
-
-int lbxfont_print_str_hmm5(int x, int y, const char *str, int w, uint16_t pitch)
-{
-    if (w < 0) {
-        w = 0;
-    }
-    return lbxfont_print_str_hmm2(x, y, str, w, pitch);
 }
 
 int lbxfont_print_str_normal_limit(int x, int y, const char *str, int lx0, int ly0, int lx1, int ly1, uint16_t pitch)
@@ -723,7 +723,7 @@ void lbxfont_print_str_split(int x, int y, int maxw, const char *str, int type, 
                 break;
             case 3:
                 if (i != (s.num - 1)) {
-                    lbxfont_print_str_hmm5(s.x0[i], s.y[i], &s.buf[s.i[i]], s.x1[i] - s.x0[i], pitch);
+                    lbxfont_print_str_normal_do_w0(s.x0[i], s.y[i], &s.buf[s.i[i]], s.x1[i] - s.x0[i], pitch);
                 } else {
                     lbxfont_print_str_normal(s.x0[i], s.y[i], &s.buf[s.i[i]], pitch);
                 }
