@@ -41,7 +41,6 @@ struct design_data_s {
     uiobj_id_t oi_tbl_weap_dn[WEAPON_SLOT_NUM];    /* + 2 */
     int16_t flag_tbl_weap_up[WEAPON_SLOT_NUM];  /* + 3 */
     int16_t flag_tbl_weap_dn[WEAPON_SLOT_NUM];  /* + 4 */
-    uiobj_id_t oi_hmm04;
     uiobj_id_t oi_cancel;
     uiobj_id_t oi_build;
     uiobj_id_t oi_clear;
@@ -275,7 +274,6 @@ static void design_clear_ois(struct design_data_s *d)
         d->flag_tbl_weap_dn[i] = 0;
         d->flag_tbl_weapon[i] = false;
     }
-    d->oi_hmm04 = UIOBJI_INVALID;
     d->oi_cancel = UIOBJI_INVALID;
     d->oi_build = UIOBJI_INVALID;
     d->oi_clear = UIOBJI_INVALID;
