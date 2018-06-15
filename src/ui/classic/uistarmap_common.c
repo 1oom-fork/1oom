@@ -272,7 +272,7 @@ static void ui_starmap_draw_sliders_and_prod(struct starmap_data_s *d)
     {
         const char *str = NULL;
         int vthis, factoper, waste, adjwaste;
-        bool flag_hmm = false, v6 = false;
+        bool flag_tform = false, v6 = false;
         vthis = (p->prod_after_maint * p->slider[PLANET_SLIDER_ECO]) / 100;
         factoper = (p->pop - p->trans_num) * g->eto[d->api].colonist_oper_factories;
         SETMIN(factoper, p->factories);
@@ -310,7 +310,7 @@ static void ui_starmap_draw_sliders_and_prod(struct starmap_data_s *d)
                     }
                 }
             }
-            flag_hmm = false;
+            flag_tform = false;
             if (vthis > 0) {
                 if (p->max_pop3 < game_num_max_pop) {
                     adjwaste = (p->max_pop2 + (g->eto[d->api].have_terraform_n - p->max_pop3)) * g->eto[d->api].terraform_cost_per_inc;
@@ -322,7 +322,7 @@ static void ui_starmap_draw_sliders_and_prod(struct starmap_data_s *d)
                 } else {
                     int growth, growth2;
                     if (adjwaste > 0) {
-                        flag_hmm = true;
+                        flag_tform = true;
                     }
                     vthis -= adjwaste;
                     growth = game_get_pop_growth_max(g, g->planet_focus_i[d->api], p->max_pop3) + p->pop_tenths;
@@ -335,7 +335,7 @@ static void ui_starmap_draw_sliders_and_prod(struct starmap_data_s *d)
                     }
                     growth = growth2 / 10 - growth / 10;
                     if (growth <= 0) {
-                        str = flag_hmm ? game_str_sm_ecotform : game_str_sm_ecoclean;
+                        str = flag_tform ? game_str_sm_ecotform : game_str_sm_ecoclean;
                     } else {
                         sprintf(buf, "+%i", growth);
                         lbxfont_print_str_right(297, 116, buf, UI_SCREEN_W);
