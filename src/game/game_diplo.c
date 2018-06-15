@@ -71,7 +71,7 @@ static void game_diplo_wage_war_do(struct game_s *g, player_id_t p1, player_id_t
     }
 }
 
-static int game_diplo_hmm6_sub3(struct game_s *g, player_id_t p1, player_id_t p2)
+static int game_diplo_wage_war_prod_w(struct game_s *g, player_id_t p1, player_id_t p2)
 {
     int ratio;
     uint32_t prod[2];
@@ -383,7 +383,7 @@ void game_diplo_wage_war(struct game_s *g, player_id_t p1, player_id_t p2)
               && (IS_AI(g, p1) || (g->evn.ceasefire[p1][p2] < 1))
             ) {
                 int v;
-                v = game_diplo_hmm6_sub3(g, p1, p2);
+                v = game_diplo_wage_war_prod_w(g, p1, p2);
                 v = e1->relation1[p2] - v + game_diplo_tbl_reldiff[e2->trait1] + e1->trust[p2];
                 if (v < -150) {
                     game_diplo_wage_war_do(g, p1, p2);
