@@ -68,7 +68,7 @@ static void game_spy_esp_sub3(struct game_s *g, struct spy_esp_s *s, tech_field_
     }
 }
 
-static int game_spy_esp_sub4(struct game_s *g, struct spy_esp_s *s, tech_field_t field, uint8_t techi)
+static int game_spy_esp_get_value(struct game_s *g, struct spy_esp_s *s, tech_field_t field, uint8_t techi)
 {
     empiretechorbit_t *es = &(g->eto[s->spy]);
     const shipresearch_t *srds = &(g->srd[s->spy]);
@@ -295,7 +295,6 @@ static void game_spy_sabotage(struct game_s *g, player_id_t spy, player_id_t tar
                     g->evn.sabotage_planet[target][spy] = pl;
                     g->evn.sabotage_num[target][spy] = v8;
                     g->evn.sabotage_spy[target][spy] = rcaught ? spy : PLAYER_NONE;
-                    /*g->evn.sabotage_hmm1[target][spy] = vc; FIXME BUG uninitialized variable */
                     if (flag_frame) {
                         g->evn.sabotage_spy[target][spy] = game_spy_frame_random(g, spy, target);
                     }
@@ -338,7 +337,7 @@ int game_spy_esp_sub1(struct game_s *g, struct spy_esp_s *s, int a4, int a6)
         tech_field_t field;
         field = rnd_0_nm1(TECH_FIELD_NUM, &g->seed);
         if (s->tbl_num[field] > 0) {
-            int v8;
+            int value;
             bool have_tech;
             uint8_t techi;
             techi = s->tbl_techi[field][rnd_0_nm1(s->tbl_num[field], &g->seed)];
@@ -349,8 +348,8 @@ int game_spy_esp_sub1(struct game_s *g, struct spy_esp_s *s, int a4, int a6)
                     have_tech = true;
                 }
             }
-            v8 = game_spy_esp_sub4(g, s, field, techi);
-            if ((v8 == 0) || (v8 < a4)) {
+            value = game_spy_esp_get_value(g, s, field, techi);
+            if ((value == 0) || (value < a4)) {
                 have_tech = true;
             }
             if (!have_tech) {
@@ -358,7 +357,7 @@ int game_spy_esp_sub1(struct game_s *g, struct spy_esp_s *s, int a4, int a6)
                 i = s->tnum;
                 s->tbl_field[i] = field;
                 s->tbl_tech2[i] = techi;
-                s->tbl_hmm4[i] = v8;
+                s->tbl_value[i] = value;
                 s->tnum = i + 1;
             }
         }
@@ -464,8 +463,6 @@ void game_spy_turn(struct game_s *g, struct spy_turn_s *st)
             g->evn.sabotage_num[i][j] = 0;
             g->evn.sabotage_spy[j][i] = 0;
             g->evn.sabotage_spy[i][j] = 0;
-            g->evn.sabotage_hmm1[j][i] = 0;
-            g->evn.sabotage_hmm1[i][j] = 0;
         }
     }
     /*8af1*/

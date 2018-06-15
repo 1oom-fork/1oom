@@ -822,8 +822,8 @@ bool game_event_run(struct game_s *g, struct game_end_s *ge)
         if (m->exists) {
             planet_t *p = &(g->planet[m->dest]);
             player_id_t owner;
-            bool flag_hmm1, flag_last_planet = false, flag_new_dest;
-            flag_hmm1 = false;
+            bool flag_colony, flag_last_planet = false, flag_new_dest;
+            flag_colony = false;
             owner = p->owner;
             if ((m->nuked > 4) || (m->killer != PLAYER_NONE)) {
                 m->exists = 3;
@@ -838,7 +838,7 @@ bool game_event_run(struct game_s *g, struct game_end_s *ge)
             flag_new_dest = false;
             if ((m->x == p->x) && (m->y == p->y) && (m->killer == PLAYER_NONE) && (m->counter <= 0)) {
                 if ((p->pop > 0) && (owner != PLAYER_NONE)) {
-                    flag_hmm1 = true;
+                    flag_colony = true;
                 }
                 ns.planet_i = m->dest;
                 p->pop = 0;
@@ -877,11 +877,8 @@ bool game_event_run(struct game_s *g, struct game_end_s *ge)
                     break;
                 case 3:
                     if (flag_new_dest) {
-                        ns.subtype = 3;
+                        ns.subtype = flag_colony ? 3 : -1;
                         m->exists = 2;
-                        if (!flag_hmm1) {
-                            ns.subtype = -1;
-                        }
                     } else {
                         ns.subtype = (m->killer == PLAYER_NONE) ? 2 : 1;
                     }
