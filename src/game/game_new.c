@@ -1055,7 +1055,7 @@ static void game_generate_research(struct game_s *g, const uint8_t *rflag)
     }
 }
 
-static void game_generate_hmm5(struct game_s *g)
+static void game_generate_misc(struct game_s *g)
 {
     g->year = 1;
     g->evn.year = 40;
@@ -1152,7 +1152,7 @@ int game_new(struct game_s *g, struct game_aux_s *gaux, struct game_new_options_
     game_generate_home_etc(g);
     game_generate_relation_etc(g);
     game_generate_research(g, researchflag);
-    game_generate_hmm5(g);
+    game_generate_misc(g);
     for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         char *b;
         const char *str;
