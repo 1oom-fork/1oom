@@ -20,6 +20,7 @@ Much of this file is based on the readme from the unofficial v1.40m patch.
 
 - changes in Classic+ AI:
     - cash tributes work as described in OSG instead of not at all
+    - AI checks the correct mood variable when asked for a peace treaty
     - AI clears his spies' missions when succesfully threatened
     - a small issue concerning the change in AI defense and ship production when too many MBases on a planet has been corrected
 
