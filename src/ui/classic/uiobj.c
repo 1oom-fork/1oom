@@ -115,7 +115,7 @@ typedef struct uiobj_s {
 static uint16_t uiobj_table_num = 0;
 static uint16_t uiobj_table_num_old = 0;
 static int16_t uiobj_hmm1_oi = -1;
-static int16_t uiobj_hmm2_oi = 0;
+static int16_t uiobj_clicked_oi = 0;
 static int uiobj_xoff = 1;
 static int uiobj_yoff = -1;
 static uint16_t uiobj_hmm3_fonta4 = 0;
@@ -1361,7 +1361,7 @@ static int16_t uiobj_handle_input_sub0(void)
     uiobj_t *p, *q;
     int mx = mouse_x, my = mouse_y, mb;
     uiobj_hmm1_oi = -1;
-    uiobj_hmm2_oi = 0;
+    uiobj_clicked_oi = 0;
     uiobj_mouseoff = ui_cursor_mouseoff;
     if (kbd_have_keypress()) {
         uint32_t key = uiobj_handle_kbd(&oi);
@@ -1515,7 +1515,7 @@ static int16_t uiobj_handle_input_sub0(void)
             }
             p = &uiobj_tbl[oi];
             if (oi != 0) {
-                uiobj_hmm2_oi = oi;
+                uiobj_clicked_oi = oi;
                 uiobj_cursor_redraw_hmm2(oi, mx, my);
                 uiobj_finish_callback_delay_1();
             }
@@ -1526,7 +1526,7 @@ static int16_t uiobj_handle_input_sub0(void)
             if (p->type == 9) {
                 goto loc_13e0e;
             } else {
-                uiobj_hmm2_oi = oi;
+                uiobj_clicked_oi = oi;
                 if (mb == MOUSE_BUTTON_MASK_RIGHT) {
                     goto loc_13e8e;
                 } else {
@@ -1580,7 +1580,7 @@ static int16_t uiobj_handle_input_sub0(void)
                 uiobj_cursor_redraw_hmm2(oi, mx, my);
             }
             /*loc_13d1e:*/
-            uiobj_hmm2_oi = oi;
+            uiobj_clicked_oi = oi;
             if (uiobj_flag_skip_delay != 0) {
                 break; /*goto loc_13d47;*/
             }
@@ -1591,11 +1591,11 @@ static int16_t uiobj_handle_input_sub0(void)
             /*loc_13d3b:*/
         }
         /*loc_13d47:*/
-        q = &uiobj_tbl[uiobj_hmm2_oi];
+        q = &uiobj_tbl[uiobj_clicked_oi];
         if (q->type == 6) {
             uiobj_do_callback();
         }
-        uiobj_hmm2_oi = 0;
+        uiobj_clicked_oi = 0;
         if (oi != 0) {
             /*loc_13d70*/
             mouse_getclear_hmm4();
@@ -1666,7 +1666,7 @@ void uiobj_table_clear(void)
 {
     uiobj_table_num = 1;
     uiobj_hmm1_oi = -1;
-    uiobj_hmm2_oi = 0;
+    uiobj_clicked_oi = 0;
 }
 
 void uiobj_table_set_last(int16_t oi)
@@ -1786,7 +1786,7 @@ void uiobj_set_hmm8_0(void)
 
 int16_t uiobj_get_hmm2_oi(void)
 {
-    return uiobj_hmm2_oi;
+    return uiobj_clicked_oi;
 }
 
 void uiobj_set_skip_delay(bool v)
@@ -2529,7 +2529,7 @@ bool uiobj_read_str(int x, int y, int w, char *buf, int buflen, uint8_t rcolor, 
 
 void uiobj_input_flush(void)
 {
-    uiobj_hmm2_oi = 0;
+    uiobj_clicked_oi = 0;
     while (kbd_have_keypress()) {
         kbd_get_keypress();
     }
