@@ -175,7 +175,7 @@ static const char *game_audience_get_str1(struct audience_s *au)
                         len = sprintf(buf, "%i", g->year + YEAR_BASE);
                         break;
                     case 0x13:
-                        len = sprintf(buf, "%i", au->hmm4_bc);
+                        len = sprintf(buf, "%i", au->tribute_bc);
                         break;
                     case 7:
                         len = sprintf(buf, "%u", eh->au_want_trade[pa]);
@@ -778,7 +778,7 @@ static void audience_menu_threat(struct audience_s *au)
                         bc = (((rnd_1_n(8, &g->seed) + 2) * g->year) / 25) * 25;
                         if (bc != 0) {
                             eh->reserve_bc += bc;
-                            au->hmm4_bc = bc;
+                            au->tribute_bc = bc;
                             dtype = 71;
                         }
                     }
