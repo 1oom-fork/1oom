@@ -24,7 +24,7 @@ struct audience_s {
     uint8_t gfxi;   /*0..2*/
     uint8_t musi;   /*0..2*/
     uint8_t num_bc;   /*0..5*/
-    int16_t hmm4_bc;
+    int16_t tribute_bc;
     tech_field_t hmm6_field;
     uint8_t hmm6_tech;
     const char *strtbl[AUDIENCE_STR_MAX];
