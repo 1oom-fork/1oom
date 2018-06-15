@@ -41,7 +41,6 @@ struct tech_data_s {
     int num;
     int pos;
     int selected;
-    bool hmm;
 };
 
 static void tech_load_data(struct tech_data_s *d)
@@ -250,7 +249,6 @@ void ui_tech(struct game_s *g, player_id_t active_player)
             oi_tbl_plus[TECH_FIELD_NUM],
             oi_tbl_minus[TECH_FIELD_NUM],
             oi_tbl_field[TECH_FIELD_NUM],
-            oi_tbl_hmm15[TECH_FIELD_NUM],
             oi_tbl_techname[TECH_ON_SCREEN]
             ;
     techdata_t *t = &(g->eto[active_player].tech);
@@ -267,7 +265,7 @@ void ui_tech(struct game_s *g, player_id_t active_player)
         oi_up = UIOBJI_INVALID; \
         oi_down = UIOBJI_INVALID; \
         oi_equals = UIOBJI_INVALID; \
-        UIOBJI_SET_TBL6_INVALID(oi_tbl_lock, oi_tbl_plus, oi_tbl_minus, oi_tbl_field, oi_tbl_hmm15, d.oi_tbl_slider); \
+        UIOBJI_SET_TBL5_INVALID(oi_tbl_lock, oi_tbl_plus, oi_tbl_minus, oi_tbl_field, d.oi_tbl_slider); \
         UIOBJI_SET_TBL_INVALID(oi_tbl_techname); \
     } while (0)
 
@@ -327,8 +325,6 @@ void ui_tech(struct game_s *g, player_id_t active_player)
                 game_adjust_slider_group(t->slider, i, v, TECH_FIELD_NUM, t->slider_lock);
             } else if ((oi == d.oi_tbl_slider[i]) && (!t->slider_lock[i])) {
                 game_adjust_slider_group(t->slider, i, t->slider[i], TECH_FIELD_NUM, t->slider_lock);
-            } else if (oi == oi_tbl_hmm15[i]) {
-                d.hmm = !d.hmm;
             }
         }
         for (int i = 0; i < TECH_ON_SCREEN; ++i) {
@@ -377,7 +373,6 @@ void ui_tech(struct game_s *g, player_id_t active_player)
             for (int i = 0; i < TECH_FIELD_NUM; ++i) {
                 int y;
                 y = i * 21 + 22;
-                oi_tbl_hmm15[i] = uiobj_add_mousearea(287, y - 1, 295, y + 7, MOO_KEY_UNKNOWN);
                 oi_tbl_lock[i] = uiobj_add_mousearea(168, y, 218, y + 8, MOO_KEY_UNKNOWN);
                 if (!t->slider_lock[i]) {
                     oi_tbl_minus[i] = uiobj_add_mousearea(223, y, 226, y + 8, MOO_KEY_UNKNOWN);
