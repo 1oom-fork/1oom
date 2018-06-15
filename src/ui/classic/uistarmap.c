@@ -44,6 +44,9 @@ static void ui_starmap_draw_cb1(void *vptr)
     }
 
     ui_starmap_draw_basic(d);
+    if (g->gaux->flag_cheat_events) {
+        ui_draw_text_overlay(0, 0, game_str_no_events);
+    }
 }
 
 static void ui_starmap_remove_build_finished(struct game_s *g, player_id_t api, planet_t *p)
@@ -702,9 +705,6 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             }
             if (g->evn.build_finished_num[active_player]) {
                 ui_cursor_setup_area(2, &ui_cursor_area_tbl[0]);
-            }
-            if (g->gaux->flag_cheat_events) {
-                ui_draw_text_overlay(0, 0, game_str_no_events);
             }
             ui_draw_finish();
             if (g->difficulty < DIFFICULTY_AVERAGE) {
