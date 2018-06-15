@@ -272,7 +272,7 @@ static void ui_starmap_draw_sliders_and_prod(struct starmap_data_s *d)
     {
         const char *str = NULL;
         int vthis, factoper, waste, adjwaste;
-        bool flag_tform = false, v6 = false;
+        bool flag_tform = false, flag_ecoproj = false;
         vthis = (p->prod_after_maint * p->slider[PLANET_SLIDER_ECO]) / 100;
         factoper = (p->pop - p->trans_num) * g->eto[d->api].colonist_oper_factories;
         SETMIN(factoper, p->factories);
@@ -291,21 +291,21 @@ static void ui_starmap_draw_sliders_and_prod(struct starmap_data_s *d)
                 if ((vthis > 0) && (g->eto[d->api].have_atmos_terra) && (p->growth == PLANET_GROWTH_HOSTILE)) {
                     vthis -= game_num_atmos_cost - p->bc_to_ecoproj;
                     if (vthis < 0) {
-                        v6 = true;
+                        flag_ecoproj = true;
                         str = game_str_sm_ecoatmos;
                     }
                 }
                 if ((vthis > 0) && (g->eto[d->api].have_soil_enrich) && (p->growth == PLANET_GROWTH_NORMAL)) {
                     vthis -= game_num_soil_cost - p->bc_to_ecoproj;
                     if (vthis < 0) {
-                        v6 = true;
+                        flag_ecoproj = true;
                         str = game_str_sm_ecosoil;
                     }
                 }
                 if ((vthis > 0) && (g->eto[d->api].have_adv_soil_enrich) && ((p->growth == PLANET_GROWTH_NORMAL) || (p->growth == PLANET_GROWTH_FERTILE))) {
                     vthis -= game_num_adv_soil_cost - p->bc_to_ecoproj;
                     if (vthis < 0) {
-                        v6 = true;
+                        flag_ecoproj = true;
                         str = game_str_sm_ecogaia;
                     }
                 }
@@ -343,7 +343,7 @@ static void ui_starmap_draw_sliders_and_prod(struct starmap_data_s *d)
                     }
                 }
             } else {
-                if ((v6 == false) && (g->eto[d->api].race != RACE_SILICOID)) {
+                if ((flag_ecoproj == false) && (g->eto[d->api].race != RACE_SILICOID)) {
                     str = game_str_sm_ecoclean;
                 }
             }
