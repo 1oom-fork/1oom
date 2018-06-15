@@ -30,7 +30,7 @@ extern int16_t uiobj_handle_input_cond(void);
 
 extern void uiobj_finish_frame(void);
 extern void uiobj_set_downcount(int16_t v);
-extern void uiobj_set_hmm3_xyoff(int xoff, int yoff);
+extern void uiobj_set_xyoff(int xoff, int yoff);
 extern void uiobj_set_limits(int minx, int miny, int maxx, int maxy);
 extern void uiobj_set_limits_all(void);
 extern void uiobj_set_focus(int16_t uiobji);
