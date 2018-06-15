@@ -13,6 +13,7 @@
 #define UIOBJI_SET_TBL2_INVALID(n0_, n1_) do { for (int i_ = 0; i_ < (sizeof(n0_)/sizeof(n0_[0])); ++i_) { n0_[i_] = UIOBJI_INVALID; n1_[i_] = UIOBJI_INVALID; } } while (0)
 #define UIOBJI_SET_TBL3_INVALID(n0_, n1_, n2_) do { for (int i_ = 0; i_ < (sizeof(n0_)/sizeof(n0_[0])); ++i_) { n0_[i_] = UIOBJI_INVALID; n1_[i_] = UIOBJI_INVALID; n2_[i_] = UIOBJI_INVALID; } } while (0)
 #define UIOBJI_SET_TBL4_INVALID(n0_, n1_, n2_, n3_) do { for (int i_ = 0; i_ < (sizeof(n0_)/sizeof(n0_[0])); ++i_) { n0_[i_] = UIOBJI_INVALID; n1_[i_] = UIOBJI_INVALID; n2_[i_] = UIOBJI_INVALID; n3_[i_] = UIOBJI_INVALID; } } while (0)
+#define UIOBJI_SET_TBL5_INVALID(n0_, n1_, n2_, n3_, n4_) do { for (int i_ = 0; i_ < (sizeof(n0_)/sizeof(n0_[0])); ++i_) { n0_[i_] = UIOBJI_INVALID; n1_[i_] = UIOBJI_INVALID; n2_[i_] = UIOBJI_INVALID; n3_[i_] = UIOBJI_INVALID; n4_[i_] = UIOBJI_INVALID; } } while (0)
 #define UIOBJI_SET_TBL6_INVALID(n0_, n1_, n2_, n3_, n4_, n5_) do { for (int i_ = 0; i_ < (sizeof(n0_)/sizeof(n0_[0])); ++i_) { n0_[i_] = UIOBJI_INVALID; n1_[i_] = UIOBJI_INVALID; n2_[i_] = UIOBJI_INVALID; n3_[i_] = UIOBJI_INVALID; n4_[i_] = UIOBJI_INVALID; n5_[i_] = UIOBJI_INVALID; } } while (0)
 
 /* HACK for lbxgfx_draw_frame_offs params */
