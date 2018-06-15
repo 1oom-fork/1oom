@@ -203,10 +203,10 @@ static const char *game_audience_get_str1(struct audience_s *au)
                         len = game_audience_print_tech(g, eh->au_want_field[pa], eh->au_want_tech[pa], buf, true);
                         break;
                     case 0x10:
-                        len = game_audience_print_tech(g, au->tribute_field, au->hmm6_tech, buf, false);
+                        len = game_audience_print_tech(g, au->tribute_field, au->tribute_tech, buf, false);
                         break;
                     case 0x14:
-                        len = game_audience_print_tech(g, au->tribute_field, au->hmm6_tech, buf, true);
+                        len = game_audience_print_tech(g, au->tribute_field, au->tribute_tech, buf, true);
                         break;
                     default:
                         *buf = c;
@@ -374,7 +374,7 @@ static void game_audience_set_dtype(struct audience_s *au, uint8_t dtype, int a2
             case 3:
                 if ((!rnd_0_nm1(4, &g->seed)) && (eh->tribute_tech[pa] != 0)) {
                     au->tribute_field = eh->tribute_field[pa];
-                    au->hmm6_tech = eh->tribute_tech[pa];
+                    au->tribute_tech = eh->tribute_tech[pa];
                     eh->tribute_tech[pa] = 0;
                     au->dtype = 66;
                 }
@@ -770,8 +770,8 @@ static void audience_menu_threat(struct audience_s *au)
                         s->target = pa;
                         if (game_spy_esp_sub1(g, s, 0, 1) > 0) {
                             au->tribute_field = s->tbl_field[0];
-                            au->hmm6_tech = s->tbl_tech2[0];
-                            game_tech_get_new(g, ph, au->tribute_field, au->hmm6_tech, 4, pa, 0, false);   /* WASBUG? pa was 0 */
+                            au->tribute_tech = s->tbl_tech2[0];
+                            game_tech_get_new(g, ph, au->tribute_field, au->tribute_tech, 4, pa, 0, false);   /* WASBUG? pa was 0 */
                         }
                     } else if (v >= 200) {
                         int bc;
