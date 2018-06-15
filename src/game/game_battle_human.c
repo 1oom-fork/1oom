@@ -867,7 +867,7 @@ static void game_battle_pulsar(struct battle_s *bt, int attacker_i, int ptype)
     ui_battle_draw_pulsar(bt, attacker_i, ptype, dmgtbl);
 }
 
-static bool game_battle_special(struct battle_s *bt, int attacker_i, int target_i, int dist, int *hmm1ptr)
+static bool game_battle_special(struct battle_s *bt, int attacker_i, int target_i, int dist, int *killedbelowtargetptr)
 {
     /*di*/struct battle_item_s *b = &(bt->item[attacker_i]);
     /*si*/struct battle_item_s *bd = &(bt->item[target_i]);
@@ -973,7 +973,7 @@ static bool game_battle_special(struct battle_s *bt, int attacker_i, int target_
     }
     /*55fce*/
     if ((b->pulsar >= 1) && (dist <= 1) && (bt->special_button != 0)) {
-        int n, hmm1;
+        int n, belowtarget;
         bt->special_button = 0;
         switch (b->pulsar) {
             case 1:
@@ -986,12 +986,12 @@ static bool game_battle_special(struct battle_s *bt, int attacker_i, int target_
                 break;
         }
         n = bt->items_num;
-        hmm1 = 0;
+        belowtarget = 0;
         while (n > -1) {    /* FIXME nothing is done on n == 0 loop */
             if ((bt->item[n].num <= 0) && (n != 0/*planet*/)) {
                 game_battle_item_destroy(bt, n);
                 if (target_i > n) {
-                    ++hmm1;
+                    ++belowtarget;
                 }
                 if ((target_i == n) && (target_i != 0/*planet*/)) { /* FIXME redundant check */
                     dist = 100;
@@ -999,7 +999,7 @@ static bool game_battle_special(struct battle_s *bt, int attacker_i, int target_
             }
             --n;
         }
-        *hmm1ptr = hmm1;
+        *killedbelowtargetptr = belowtarget;
         if ((dist == 100) && (target_i != 0/*planet*/)) { /* FIXME redundant check */
             return true;
         }
