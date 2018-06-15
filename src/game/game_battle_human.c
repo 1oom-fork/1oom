@@ -869,7 +869,7 @@ static void game_battle_pulsar(struct battle_s *bt, int attacker_i, int ptype)
     ui_battle_draw_pulsar(bt, attacker_i, ptype, dmgtbl);
 }
 
-static bool game_battle_special(struct battle_s *bt, int attacker_i, int target_i, int dist, int *hmm1ptr)
+static bool game_battle_special(struct battle_s *bt, int attacker_i, int target_i, int dist, int *killedbelowtargetptr)
 {
     /*di*/struct battle_item_s *b = &(bt->item[attacker_i]);
     /*si*/struct battle_item_s *bd = &(bt->item[target_i]);
@@ -975,7 +975,7 @@ static bool game_battle_special(struct battle_s *bt, int attacker_i, int target_
     }
     /*55fce*/
     if ((b->pulsar >= 1) && (dist <= 1) && (bt->special_button != 0)) {
-        int n, hmm1;
+        int n, belowtarget;
         bt->special_button = 0;
         switch (b->pulsar) {
             case 1:
@@ -988,12 +988,12 @@ static bool game_battle_special(struct battle_s *bt, int attacker_i, int target_
                 break;
         }
         n = bt->items_num;
-        hmm1 = 0;
+        belowtarget = 0;
         while (n > -1) {    /* FIXME nothing is done on n == 0 loop */
             if ((bt->item[n].num <= 0) && (n != 0/*planet*/)) {
                 game_battle_item_destroy(bt, n);
                 if (target_i > n) {
-                    ++hmm1;
+                    ++belowtarget;
                 }
                 if ((target_i == n) && (target_i != 0/*planet*/)) { /* FIXME redundant check */
                     dist = 100;
@@ -1001,7 +1001,7 @@ static bool game_battle_special(struct battle_s *bt, int attacker_i, int target_
             }
             --n;
         }
-        *hmm1ptr = hmm1;
+        *killedbelowtargetptr = belowtarget;
         if ((dist == 100) && (target_i != 0/*planet*/)) { /* FIXME redundant check */
             return true;
         }
@@ -1589,13 +1589,13 @@ bool game_battle_attack(struct battle_s *bt, int attacker_i, int target_i, bool 
     SETMIN(miss_chance_missile, 95);
     {
         bool flag_done1 = false;
-        int hmm1 = 0;
+        int killedbelowtarget = 0;
         if (!(retaliate && (bd->cloak != 1))) {
-            flag_done1 = game_battle_special(bt, attacker_i, target_i, dist, &hmm1);
+            flag_done1 = game_battle_special(bt, attacker_i, target_i, dist, &killedbelowtarget);
         }
-        if (hmm1 > 0) {
+        if (killedbelowtarget > 0) {
             bt->flag_cur_item_destroyed = false;
-            target_i -= hmm1;
+            target_i -= killedbelowtarget;
             bd = &(bt->item[target_i]);
             /* FIXME BUG? what about attacker_i ? */
         }
@@ -1912,14 +1912,10 @@ void game_battle_area_setup(struct battle_s *bt)
                 if (i == 0) {
                     v = -30;
                     for (int i = 0; i < num_weap; ++i) {
-                        bool hmm1;
+                        bool is_missile;
                         const struct shiptech_weap_s *w;
                         w = &(tbl_shiptech_weap[b->wpn[i].t]);
-                        if ((w->damagemax == w->damagemin) && (!w->is_bomb) && (w->misstype == 0)) {
-                            hmm1 = true;
-                        } else {
-                            hmm1 = false;
-                        }
+                        is_missile = ((w->damagemax == w->damagemin) && (!w->is_bomb) && (w->misstype == 0));
                         if ((b->actman > 0) || ((w->range >= dist) && (b->wpn[i].numfire > 0) && (b->wpn[i].numshots != 0))) {
                             bt->turn_done = false;
                         }
@@ -1928,7 +1924,7 @@ void game_battle_area_setup(struct battle_s *bt)
                         } else {
                             range = w->range;
                         }
-                        if ((range >= dist) && ((b->missile == 1) || (!hmm1)) && (b->wpn[i].numfire > 0) && (b->wpn[i].numshots != 0)) {
+                        if ((range >= dist) && ((b->missile == 1) || (!is_missile)) && (b->wpn[i].numfire > 0) && (b->wpn[i].numshots != 0)) {
                             v = 30;
                         }
                     }

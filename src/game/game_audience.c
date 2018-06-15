@@ -169,7 +169,7 @@ static const char *game_audience_get_str1(struct audience_s *au)
                         len = sprintf(buf, "%i", g->year + YEAR_BASE);
                         break;
                     case 0x13:
-                        len = sprintf(buf, "%i", au->hmm4_bc);
+                        len = sprintf(buf, "%i", au->tribute_bc);
                         break;
                     case 7:
                         len = sprintf(buf, "%u", eh->au_want_trade[pa]);
@@ -197,10 +197,10 @@ static const char *game_audience_get_str1(struct audience_s *au)
                         len = game_audience_print_tech(g, eh->au_want_field[pa], eh->au_want_tech[pa], buf, true);
                         break;
                     case 0x10:
-                        len = game_audience_print_tech(g, au->hmm6_field, au->hmm6_tech, buf, false);
+                        len = game_audience_print_tech(g, au->tribute_field, au->tribute_tech, buf, false);
                         break;
                     case 0x14:
-                        len = game_audience_print_tech(g, au->hmm6_field, au->hmm6_tech, buf, true);
+                        len = game_audience_print_tech(g, au->tribute_field, au->tribute_tech, buf, true);
                         break;
                     default:
                         *buf = c;
@@ -991,7 +991,7 @@ static void audience_menu_tech(struct audience_s *au)
         struct spy_esp_s s[1];
         tech_field_t taf[TECH_SPY_MAX]; /* diplo_p2_sub1_field */
         uint8_t tat[TECH_SPY_MAX];
-        int ta4[TECH_SPY_MAX];
+        int tav[TECH_SPY_MAX];
         tech_field_t thf[TECH_SPY_MAX][TECH_SPY_MAX];
         uint8_t tht[TECH_SPY_MAX][TECH_SPY_MAX];
         tech_field_t thaf[TECH_SPY_MAX * TECH_SPY_MAX];
@@ -1004,13 +1004,13 @@ static void audience_menu_tech(struct audience_s *au)
             for (int i = 0; i < tanum; ++i) {
                 taf[i] = s->tbl_field[i];
                 tat[i] = s->tbl_tech2[i];
-                ta4[i] = (s->tbl_hmm4[i] * v) / 100;
+                tav[i] = (s->tbl_value[i] * v) / 100;
             }
             s->spy = pa;
             s->target = ph;
             total_thnum = 0;
             for (int i = 0; i < tanum; ++i) {
-                if (game_spy_esp_sub1(g, s, ta4[i], 0) > 0) {
+                if (game_spy_esp_sub1(g, s, tav[i], 0) > 0) {
                     int n;
                     n = s->tnum;
                     thnum[total_thnum] = n;

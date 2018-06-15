@@ -340,7 +340,7 @@ static void game_turn_update_trade(struct game_s *g)
     }
 }
 
-static void game_turn_diplo_hmm1(struct game_s *g)
+static void game_turn_diplo_adjust(struct game_s *g)
 {
     for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         empiretechorbit_t *e = &(g->eto[i]);
@@ -402,7 +402,7 @@ static void game_turn_diplo_hmm1(struct game_s *g)
                     v /= 2;
                 }
                 for (player_id_t j = PLAYER_0; j < g->players; ++j) {
-                    if (BOOLVEC_IS0(g->is_ai, j)) {
+                    if (IS_HUMAN(g, j)) {
                         continue;
                     }
                     if (BOOLVEC_IS1(e->within_frange, j) && (e->treaty[j] == TREATY_ALLIANCE)) {
@@ -814,35 +814,6 @@ static void game_turn_move_ships(struct game_s *g)
     }
     game_update_visibility(g);
 }
-
-#if 0
-static void game_turn_unrest_hmm1(struct game_s *g)
-{
-    /* TODO remove ; this does nothing except churn the rng! */
-    int tbl1[PLAYER_NUM], tbl2[PLAYER_NUM];
-    for (player_id_t i = PLAYER_0; i < g->players; ++i) {
-        tbl1[i] = 0;
-        tbl2[i] = 0;
-    }
-    for (player_id_t i = PLAYER_0; i < g->players; ++i) {
-        const planet_t *p;
-        int pl, v;
-        v = tbl2[i] * 2;   /* always 0 */
-        pl = game_planet_get_random(g, i);
-        if (pl != PLANET_NONE) {
-            p = &(g->planet[pi]);
-            /* WASBUG unrest != RESOLVED test done even when pl < 0 */
-            if ((p->unrest != PLANET_UNREST_REBELLION) || (p->unrest != PLANET_UNREST_RESOLVED)) {
-                if (rnd_1_n(100, &g->seed) <= v) {  /* never true */
-                    p->unrest = PLANET_UNREST_REBELLION;
-                    p->unrest_reported = false;
-                    p->rebels = p->pop / 2;
-                }
-            }
-        }
-    }
-}
-#endif
 
 static void game_turn_explore(struct game_s *g)
 {
@@ -1790,7 +1761,7 @@ struct game_end_s game_turn_process(struct game_s *g)
     game_turn_update_trade(g);
     game_spy_build(g);
     game_update_production(g);
-    game_turn_diplo_hmm1(g);
+    game_turn_diplo_adjust(g);
     game_turn_build_def(g);
     game_turn_build_ship(g);
     game_turn_reserve(g);
@@ -1800,7 +1771,6 @@ struct game_end_s game_turn_process(struct game_s *g)
     game_remove_empty_fleets(g);
     game_spy_report(g);
     game_battle_handle_all(g);
-    /*game_turn_unrest_hmm1(g);*/
     for (int i = 0; i < g->players; ++i) {
         g->evn.newtech[i].num = 0;
     }
