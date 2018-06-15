@@ -232,7 +232,7 @@ void ui_starmap_set_pos(struct game_s *g, int x, int y)
 void ui_starmap_do(struct game_s *g, player_id_t active_player)
 {
     bool flag_done = false;
-    int16_t oi_b, oi_c, oi_scroll, oi_starview1, oi_starview2, oi_shippic, oi_hmm25, oi_equals,
+    int16_t oi_b, oi_c, oi_scroll, oi_starview1, oi_starview2, oi_shippic, oi_finished, oi_equals,
             oi_f2, oi_f3, oi_f4, oi_f5, oi_f6, oi_f7, oi_f8, oi_f9, oi_f10,
             oi_alt_galaxy, oi_alt_m, oi_alt_c, oi_alt_p, oi_alt_r, oi_alt_events
             ;
@@ -260,7 +260,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
         oi_starview1 = UIOBJI_INVALID; \
         oi_starview2 = UIOBJI_INVALID; \
         oi_shippic = UIOBJI_INVALID; \
-        oi_hmm25 = UIOBJI_INVALID; \
+        oi_finished = UIOBJI_INVALID; \
         oi_equals = UIOBJI_INVALID; \
         d.sm.oi_ship = UIOBJI_INVALID; \
         d.sm.oi_reloc = UIOBJI_INVALID; \
@@ -350,7 +350,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
         } else if (oi1 == oi_alt_m) {
             ui_data.starmap.flag_show_grid = !ui_data.starmap.flag_show_grid;
             ui_sound_play_sfx_24();
-        } else if ((oi1 == oi_hmm25) || ((oi1 != 0) && (oi_hmm25 != UIOBJI_INVALID))) {
+        } else if ((oi1 == oi_finished) || ((oi1 != 0) && (oi_finished != UIOBJI_INVALID))) {
             ui_starmap_remove_build_finished(g, active_player, p);
             ui_sound_play_sfx_24();
             flag_done = true;
@@ -663,7 +663,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             oi_c = uiobj_add_inputkey(MOO_KEY_c);
             ui_starmap_add_oi_bottom_buttons(&d);
             if (g->evn.build_finished_num[active_player]) {
-                oi_hmm25 = uiobj_add_mousearea(6, 6, 225, 180, MOO_KEY_UNKNOWN, -1);
+                oi_finished = uiobj_add_mousearea(6, 6, 225, 180, MOO_KEY_UNKNOWN, -1);
             }
             if (p->owner == active_player) {
                 oi_starview2 = uiobj_add_mousearea(227, 24, 310, 53, MOO_KEY_UNKNOWN, -1);
