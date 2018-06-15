@@ -3399,16 +3399,16 @@ static void game_ai_classic_turn_diplo_p2_sub1(struct game_s *g, player_id_t p1,
                 bool found;
                 tech_field_t zfield;
                 uint8_t ztech;
-                int zhmm4;
+                int zvalue;
                 zfield = s->tbl_field[0];
                 ztech = s->tbl_tech2[0];
-                zhmm4 = (s->tbl_value[0] * 100) / v14;
+                zvalue = (s->tbl_value[0] * 100) / v14;
                 s->spy = p1;
                 s->target = p2;
-                num = game_spy_esp_sub1(g, s, zhmm4, 1);
+                num = game_spy_esp_sub1(g, s, zvalue, 1);
                 found = false;
                 for (int i = 0; i < num; ++i) {
-                    if (s->tbl_value[i] <= zhmm4) {
+                    if (s->tbl_value[i] <= zvalue) {
                         found = true;
                         break;
                     }
@@ -3420,7 +3420,7 @@ static void game_ai_classic_turn_diplo_p2_sub1(struct game_s *g, player_id_t p1,
                     e1->au_want_field[p2] = zfield;
                     e1->au_want_tech[p2] = ztech;
                     for (int i = 0; i < num; ++i) {
-                        if (s->tbl_value[i] <= zhmm4) {
+                        if (s->tbl_value[i] <= zvalue) {
                             e1->au_tech_trade_field[p2][n] = s->tbl_field[i];
                             e1->au_tech_trade_tech[p2][n] = s->tbl_tech2[i];
                             ++n;
