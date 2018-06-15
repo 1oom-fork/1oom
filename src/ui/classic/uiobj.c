@@ -118,8 +118,8 @@ static uint16_t uiobj_table_num = 0;
 static uint16_t uiobj_table_num_old = 0;
 static int16_t uiobj_hmm1_oi = -1;
 static int16_t uiobj_hmm2_oi = 0;
-static int uiobj_hmm3_xoff = 1;
-static int uiobj_hmm3_yoff = -1;
+static int uiobj_xoff = 1;
+static int uiobj_yoff = -1;
 static uint16_t uiobj_hmm3_fonta4 = 0;
 static int16_t uiobj_mouseoff = 0;
 static int16_t uiobj_handle_downcount = 0;
@@ -197,7 +197,7 @@ static void uiobj_handle_t03_cond(uiobj_t *p, bool cond)
         }
         lbxgfx_draw_frame(p->x0, p->y0, p->t0.lbxdata, UI_SCREEN_W);
         lbxfont_select(p->t0.fontnum, p->t0.fonta2, 0, 0);
-        lbxfont_print_str_center(smidx(p) + uiobj_hmm3_xoff, smidyhmm2(p) + uiobj_hmm3_yoff, p->t0.str, UI_SCREEN_W);
+        lbxfont_print_str_center(smidx(p) + uiobj_xoff, smidyhmm2(p) + uiobj_yoff, p->t0.str, UI_SCREEN_W);
     }
 }
 
@@ -1584,10 +1584,10 @@ void uiobj_set_downcount(int16_t v)
     mouse_getclear_hmm5();
 }
 
-void uiobj_set_hmm3_xyoff(int xoff, int yoff)
+void uiobj_set_xyoff(int xoff, int yoff)
 {
-    uiobj_hmm3_xoff = xoff;
-    uiobj_hmm3_yoff = yoff;
+    uiobj_xoff = xoff;
+    uiobj_yoff = yoff;
 }
 
 void uiobj_set_limits(int minx, int miny, int maxx, int maxy)
