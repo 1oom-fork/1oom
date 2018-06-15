@@ -1591,13 +1591,13 @@ bool game_battle_attack(struct battle_s *bt, int attacker_i, int target_i, bool 
     SETMIN(miss_chance_missile, 95);
     {
         bool flag_done1 = false;
-        int hmm1 = 0;
+        int killedbelowtarget = 0;
         if (!(retaliate && (bd->cloak != 1))) {
-            flag_done1 = game_battle_special(bt, attacker_i, target_i, dist, &hmm1);
+            flag_done1 = game_battle_special(bt, attacker_i, target_i, dist, &killedbelowtarget);
         }
-        if (hmm1 > 0) {
+        if (killedbelowtarget > 0) {
             bt->flag_cur_item_destroyed = false;
-            target_i -= hmm1;
+            target_i -= killedbelowtarget;
             bd = &(bt->item[target_i]);
             /* FIXME BUG? what about attacker_i ? */
         }
