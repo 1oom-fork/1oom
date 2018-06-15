@@ -3601,16 +3601,16 @@ static void game_ai_classic_turn_diplo_p2_sub1(struct game_s *g, player_id_t p1,
                 bool found;
                 tech_field_t zfield;
                 uint8_t ztech;
-                int zhmm4;
+                int zvalue;
                 zfield = s->tbl_field[0];
                 ztech = s->tbl_tech2[0];
-                zhmm4 = (s->tbl_hmm4[0] * 100) / v14;
+                zvalue = (s->tbl_value[0] * 100) / v14;
                 s->spy = p1;
                 s->target = p2;
-                num = game_spy_esp_sub1(g, s, zhmm4, 1);
+                num = game_spy_esp_sub1(g, s, zvalue, 1);
                 found = false;
                 for (int i = 0; i < num; ++i) {
-                    if (s->tbl_hmm4[i] <= zhmm4) {
+                    if (s->tbl_value[i] <= zvalue) {
                         found = true;
                         break;
                     }
@@ -3622,7 +3622,7 @@ static void game_ai_classic_turn_diplo_p2_sub1(struct game_s *g, player_id_t p1,
                     e1->au_want_field[p2] = zfield;
                     e1->au_want_tech[p2] = ztech;
                     for (int i = 0; i < num; ++i) {
-                        if (s->tbl_hmm4[i] <= zhmm4) {
+                        if (s->tbl_value[i] <= zvalue) {
                             e1->au_tech_trade_field[p2][n] = s->tbl_field[i];
                             e1->au_tech_trade_tech[p2][n] = s->tbl_tech2[i];
                             ++n;
@@ -4029,16 +4029,16 @@ static uint8_t game_ai_classic_aud_threaten(struct audience_s *au)
             s->spy = ph;
             s->target = pa;
             if (game_spy_esp_sub1(g, s, 0, 1) > 0) {
-                au->hmm6_field = s->tbl_field[0];
-                au->hmm6_tech = s->tbl_tech2[0];
-                game_tech_get_new(g, ph, au->hmm6_field, au->hmm6_tech, 4, pa, 0, false);   /* WASBUG? pa was 0 */
+                au->tribute_field = s->tbl_field[0];
+                au->tribute_tech = s->tbl_tech2[0];
+                game_tech_get_new(g, ph, au->tribute_field, au->tribute_tech, 4, pa, 0, false); /* WASBUG? pa was 0 */
             }
         } else if (v >= 200) {
             int bc;
             bc = (((rnd_1_n(8, &g->seed) + 2) * g->year) / 25) * 25;
             if (bc != 0) {
                 eh->reserve_bc += bc;
-                au->hmm4_bc = bc;
+                au->tribute_bc = bc;
                 dtype = 71;
             }
         }
@@ -4166,8 +4166,8 @@ static uint8_t game_ai_classic_aud_get_dtype(struct audience_s *au, uint8_t dtyp
                 break;
             case 3:
                 if ((!rnd_0_nm1(4, &g->seed)) && (eh->tribute_tech[pa] != 0)) {
-                    au->hmm6_field = eh->tribute_field[pa];
-                    au->hmm6_tech = eh->tribute_tech[pa];
+                    au->tribute_field = eh->tribute_field[pa];
+                    au->tribute_tech = eh->tribute_tech[pa];
                     eh->tribute_tech[pa] = 0;
                     dtype = 66;
                 }
