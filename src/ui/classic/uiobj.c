@@ -124,7 +124,7 @@ static uint16_t uiobj_hmm3_fonta4 = 0;
 static int16_t uiobj_mouseoff = 0;
 static int16_t uiobj_handle_downcount = 0;
 static uint16_t uiobj_kbd_hmm1 = 0;
-static uint16_t uiobj_hmm5_delay = 2;
+static uint16_t uiobj_delay = 2;
 static uint16_t uiobj_hmm6 = 0;
 static int16_t uiobj_help_id = -1;
 static int16_t uiobj_hmm8 = 1;
@@ -245,7 +245,7 @@ static void uiobj_handle_t4_sub2(uiobj_t *p, uint16_t len, uint16_t a4, const ch
     lbxfont_print_str_normal(p->x0, p->y0, strbuf, UI_SCREEN_W);
     ui_palette_set_n();
     uiobj_finish_frame();
-    ui_delay_ticks_or_click(uiobj_hmm5_delay);
+    ui_delay_ticks_or_click(uiobj_delay);
 }
 
 static void uiobj_handle_t4_sub1(uiobj_t *p)
@@ -1186,7 +1186,7 @@ static void uiobj_finish_callback_delay_1(void)
 
 static void uiobj_finish_callback_delay_hmm5(void)
 {
-    uiobj_finish_callback_delay_p(uiobj_hmm5_delay);
+    uiobj_finish_callback_delay_p(uiobj_delay);
 }
 
 static void uiobj_slider_plus(uiobj_t *p)
@@ -1639,7 +1639,7 @@ void uiobj_set_callback_and_delay(void (*cb)(void *), void *data, uint16_t delay
     uiobj_callback = cb;
     uiobj_cbdata = data;
     uiobj_flag_have_cb = true;
-    uiobj_hmm5_delay = ((delay > 0) && (delay < 10)) ? delay : 2;
+    uiobj_delay = ((delay > 0) && (delay < 10)) ? delay : 2;
 }
 
 void uiobj_unset_callback(void)
@@ -1996,7 +1996,7 @@ int16_t uiobj_select_from_list1(int x, int y, int w, const char *title, char con
             ui_draw_copy_buf();
             flag_copy_buf = true;
         }
-        ui_delay_ticks_or_click(uiobj_hmm5_delay);
+        ui_delay_ticks_or_click(uiobj_delay);
     }
     uiobj_table_clear();
     uiobj_hmm6 = 0;
@@ -2178,7 +2178,7 @@ int16_t uiobj_select_from_list2(int x, int y, int w, const char *title, char con
             ui_draw_copy_buf();
             flag_copy_buf = true;
         }
-        ui_delay_ticks_or_click(uiobj_hmm5_delay);
+        ui_delay_ticks_or_click(uiobj_delay);
     }
     uiobj_table_clear();
     uiobj_hmm6 = 0;
