@@ -13,6 +13,7 @@
 #define UIOBJI_SET_TBL2_INVALID(n0_, n1_) do { for (int i_ = 0; i_ < (sizeof(n0_)/sizeof(n0_[0])); ++i_) { n0_[i_] = UIOBJI_INVALID; n1_[i_] = UIOBJI_INVALID; } } while (0)
 #define UIOBJI_SET_TBL3_INVALID(n0_, n1_, n2_) do { for (int i_ = 0; i_ < (sizeof(n0_)/sizeof(n0_[0])); ++i_) { n0_[i_] = UIOBJI_INVALID; n1_[i_] = UIOBJI_INVALID; n2_[i_] = UIOBJI_INVALID; } } while (0)
 #define UIOBJI_SET_TBL4_INVALID(n0_, n1_, n2_, n3_) do { for (int i_ = 0; i_ < (sizeof(n0_)/sizeof(n0_[0])); ++i_) { n0_[i_] = UIOBJI_INVALID; n1_[i_] = UIOBJI_INVALID; n2_[i_] = UIOBJI_INVALID; n3_[i_] = UIOBJI_INVALID; } } while (0)
+#define UIOBJI_SET_TBL5_INVALID(n0_, n1_, n2_, n3_, n4_) do { for (int i_ = 0; i_ < (sizeof(n0_)/sizeof(n0_[0])); ++i_) { n0_[i_] = UIOBJI_INVALID; n1_[i_] = UIOBJI_INVALID; n2_[i_] = UIOBJI_INVALID; n3_[i_] = UIOBJI_INVALID; n4_[i_] = UIOBJI_INVALID; } } while (0)
 #define UIOBJI_SET_TBL6_INVALID(n0_, n1_, n2_, n3_, n4_, n5_) do { for (int i_ = 0; i_ < (sizeof(n0_)/sizeof(n0_[0])); ++i_) { n0_[i_] = UIOBJI_INVALID; n1_[i_] = UIOBJI_INVALID; n2_[i_] = UIOBJI_INVALID; n3_[i_] = UIOBJI_INVALID; n4_[i_] = UIOBJI_INVALID; n5_[i_] = UIOBJI_INVALID; } } while (0)
 
 /* HACK for lbxgfx_draw_frame_offs params */
@@ -30,13 +31,13 @@ extern int16_t uiobj_handle_input_cond(void);
 
 extern void uiobj_finish_frame(void);
 extern void uiobj_set_downcount(int16_t v);
-extern void uiobj_set_hmm3_xyoff(int xoff, int yoff);
+extern void uiobj_set_xyoff(int xoff, int yoff);
 extern void uiobj_set_limits(int minx, int miny, int maxx, int maxy);
 extern void uiobj_set_limits_all(void);
 extern void uiobj_set_focus(int16_t uiobji);
 extern void uiobj_set_help_id(int16_t v);
 extern void uiobj_set_hmm8_0(void);
-extern int16_t uiobj_get_hmm2_oi(void);
+extern int16_t uiobj_get_clicked_oi(void);
 extern void uiobj_set_skip_delay(bool v);
 
 extern int16_t uiobj_find_obj_at_cursor(void);
