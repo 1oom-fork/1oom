@@ -1327,7 +1327,7 @@ bool ui_design(struct game_s *g, struct game_design_s *gd, player_id_t active_pl
     sd->look = gd->tbl_shiplook_hull[sd->hull];
 
     uiobj_table_clear();
-    uiobj_set_hmm3_xyoff(0, 0);
+    uiobj_set_xyoff(0, 0);
 
     design_init_ois(&d);
     design_init_maxtech_haveflags(&d);
