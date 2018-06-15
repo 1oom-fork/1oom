@@ -87,7 +87,7 @@ static void tech_draw_cb(void *vptr)
     char buf[0xe0];
 
     game_update_total_research(g);
-    oi = uiobj_get_hmm2_oi();
+    oi = uiobj_get_clicked_oi();
     for (int i = 0; i < TECH_FIELD_NUM; ++i) {
         if ((oi == d->oi_tbl_slider[i]) && (!t->slider_lock[i])) {
             game_adjust_slider_group(t->slider, i, t->slider[i], TECH_FIELD_NUM, t->slider_lock);
