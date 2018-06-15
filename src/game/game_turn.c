@@ -338,7 +338,7 @@ static void game_turn_update_trade(struct game_s *g)
     }
 }
 
-static void game_turn_diplo_hmm1(struct game_s *g)
+static void game_turn_diplo_adjust(struct game_s *g)
 {
     for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         empiretechorbit_t *e = &(g->eto[i]);
@@ -1754,7 +1754,7 @@ struct game_end_s game_turn_process(struct game_s *g)
     game_turn_update_trade(g);
     game_spy_build(g);
     game_update_production(g);
-    game_turn_diplo_hmm1(g);
+    game_turn_diplo_adjust(g);
     game_turn_build_def(g);
     game_turn_build_ship(g);
     game_turn_reserve(g);
