@@ -3924,7 +3924,8 @@ static int game_ai_classic_aud_treaty_alliance(struct audience_s *au)
 static int game_ai_classic_aud_treaty_peace(struct audience_s *au)
 {
     int si;
-    si = game_ai_classic_aud_check_mood(au, 60, 0); /* FIXME BUG? should be 2 for mood_peace? */
+    int mi = (au->g->ai_id == GAME_AI_CLASSICPLUS) ? 2/*peace*/ : 0/*treaty*/;  /* WASBUG? mood_peace makes sense */
+    si = game_ai_classic_aud_check_mood(au, 60, mi);
     return si;
 }
 
