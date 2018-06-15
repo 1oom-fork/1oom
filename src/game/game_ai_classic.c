@@ -2060,7 +2060,7 @@ static int game_battle_missile_hmm1(const struct battle_s *bt, int missile_i)
 {
     const struct battle_missile_s *m = &(bt->missile[missile_i]);
     /*di*/const struct battle_item_s *b = &(bt->item[m->target]);
-    const struct battle_item_s *bs = &(bt->item[m->target]);
+    const struct battle_item_s *bs = &(bt->item[m->source]);
     const struct shiptech_weap_s *w = &(tbl_shiptech_weap[m->wpnt]);
     int damagepotential, damagediv = 1, /*si*/miss_chance, absorbdiv, damage;
     miss_chance = 50 - (bs->complevel - b->misdefense) * 10;
@@ -3915,7 +3915,8 @@ static int game_ai_classic_aud_treaty_alliance(struct audience_s *au)
 static int game_ai_classic_aud_treaty_peace(struct audience_s *au)
 {
     int si;
-    si = game_ai_classic_aud_check_mood(au, 60, 0); /* FIXME BUG? should be 2 for mood_peace? */
+    int mi = (au->g->ai_id == GAME_AI_CLASSICPLUS) ? 2/*peace*/ : 0/*treaty*/;  /* WASBUG? mood_peace makes sense */
+    si = game_ai_classic_aud_check_mood(au, 60, mi);
     return si;
 }
 
