@@ -99,7 +99,7 @@ static void design_draw_cb(void *vptr)
 
     ui_draw_filled_rect(5, 5, 315, 195, 1);
     lbxgfx_draw_frame(0, 0, ui_data.gfx.design.bg, UI_SCREEN_W);
-    oi = uiobj_get_hmm2_oi();
+    oi = uiobj_get_clicked_oi();
     lbxfont_select(0, 6, 0, 3);
     lbxfont_set_colors(((d->oi_comp == oi) || d->flag_disable_comp) ? colortbl_sd_ba : colortbl_sd_bf);
     lbxfont_print_str_normal(17, 22, game_str_sd_comp, UI_SCREEN_W);
