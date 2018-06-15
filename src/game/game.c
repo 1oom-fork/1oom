@@ -472,7 +472,7 @@ int main_do(void)
         game_end.type = GAME_END_NONE;
         while ((game_end.type == GAME_END_NONE) || (game_end.type == GAME_END_FINAL_WAR)) {
             for (; ((game_end.type == GAME_END_NONE) || (game_end.type == GAME_END_FINAL_WAR)) && (game.active_player < game.players); ++game.active_player) {
-                if (BOOLVEC_IS1(game.is_ai, game.active_player)) {
+                if (!IS_HUMAN(&game, game.active_player)) {
                     continue;
                 }
                 if (game_opt_next_turn) {
