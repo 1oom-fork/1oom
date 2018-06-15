@@ -1629,7 +1629,7 @@ void uiobj_set_hmm8_0(void)
     uiobj_hmm8 = 0;
 }
 
-int16_t uiobj_get_hmm2_oi(void)
+int16_t uiobj_get_clicked_oi(void)
 {
     return uiobj_clicked_oi;
 }
