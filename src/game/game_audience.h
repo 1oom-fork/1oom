@@ -26,7 +26,7 @@ struct audience_s {
     uint8_t num_bc;   /*0..5*/
     int16_t tribute_bc;
     tech_field_t tribute_field;
-    uint8_t hmm6_tech;
+    uint8_t tribute_tech;
     const char *strtbl[AUDIENCE_STR_MAX];
     bool *condtbl;
     uint16_t bctbl[AUDIENCE_BC_MAX];
