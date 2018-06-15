@@ -130,14 +130,14 @@ typedef struct uiobj_s {
 static uint16_t uiobj_table_num = 0;
 static uint16_t uiobj_table_num_old = 0;
 static int16_t uiobj_hmm1_oi = -1;
-static int16_t uiobj_hmm2_oi = 0;
-static int uiobj_hmm3_xoff = 1;
-static int uiobj_hmm3_yoff = -1;
+static int16_t uiobj_clicked_oi = 0;
+static int uiobj_xoff = 1;
+static int uiobj_yoff = -1;
 static uint16_t uiobj_hmm3_fonta4 = 0;
 static int16_t uiobj_mouseoff = 0;
 static int16_t uiobj_handle_downcount = 0;
 static uint16_t uiobj_kbd_hmm1 = 0;
-static uint16_t uiobj_hmm5_delay = 2;
+static uint16_t uiobj_delay = 2;
 static uint16_t uiobj_hmm6 = 0;
 static int16_t uiobj_help_id = -1;
 static int16_t uiobj_hmm8 = 1;
@@ -294,7 +294,7 @@ static void uiobj_handle_t03_cond(uiobj_t *p, bool cond)
         }
         lbxgfx_draw_frame(p->x0, p->y0, p->t0.lbxdata, UI_SCREEN_W, p->scale);
         lbxfont_select(p->t0.fontnum, p->t0.fonta2, 0, 0);
-        lbxfont_print_str_center(smidx(p) + uiobj_hmm3_xoff, smidyhmm2(p) + uiobj_hmm3_yoff, p->t0.str, UI_SCREEN_W, p->scale);
+        lbxfont_print_str_center(smidx(p) + uiobj_xoff, smidyhmm2(p) + uiobj_yoff, p->t0.str, UI_SCREEN_W, p->scale);
     }
 }
 
@@ -343,7 +343,7 @@ static void uiobj_handle_t4_sub2(uiobj_t *p, uint16_t len, uint16_t a4, const ch
     lbxfont_print_str_normal(p->x0, p->y0, strbuf, UI_SCREEN_W, p->scale);
     ui_palette_set_n();
     uiobj_finish_frame();
-    ui_delay_ticks_or_click(uiobj_hmm5_delay);
+    ui_delay_ticks_or_click(uiobj_delay);
 }
 
 static bool uiobj_textinput_do(uiobj_t *p, int w, char *buf, int buflen, bool allow_lcase, bool copy_truncated)
@@ -1303,7 +1303,7 @@ static void uiobj_finish_callback_delay_1(void)
 
 static void uiobj_finish_callback_delay_hmm5(void)
 {
-    uiobj_finish_callback_delay_p(uiobj_hmm5_delay);
+    uiobj_finish_callback_delay_p(uiobj_delay);
 }
 
 static void uiobj_slider_plus(uiobj_t *p, int adj)
@@ -1348,7 +1348,7 @@ static int16_t uiobj_handle_input_sub0(void)
     uiobj_t *p, *q;
     int mx = moouse_x, my = moouse_y, mb;
     uiobj_hmm1_oi = -1;
-    uiobj_hmm2_oi = 0;
+    uiobj_clicked_oi = 0;
     uiobj_mouseoff = ui_cursor_mouseoff;
     if (kbd_have_keypress()) {
         uint32_t key = uiobj_handle_kbd(&oi);
@@ -1522,7 +1522,7 @@ static int16_t uiobj_handle_input_sub0(void)
             }
             p = &uiobj_tbl[oi];
             if (oi != 0) {
-                uiobj_hmm2_oi = oi;
+                uiobj_clicked_oi = oi;
                 uiobj_cursor_redraw_hmm2(oi, mx, my);
                 uiobj_finish_callback_delay_1();
             }
@@ -1531,7 +1531,7 @@ static int16_t uiobj_handle_input_sub0(void)
                 mouse_getclear_hmm5();
             }
             {
-                uiobj_hmm2_oi = oi;
+                uiobj_clicked_oi = oi;
                 if (mb == MOUSE_BUTTON_MASK_RIGHT) {
                     return -oi;
                 } else {
@@ -1580,7 +1580,7 @@ static int16_t uiobj_handle_input_sub0(void)
                 }
                 uiobj_cursor_redraw_hmm2(oi, mx, my);
             }
-            uiobj_hmm2_oi = oi;
+            uiobj_clicked_oi = oi;
             if (uiobj_flag_skip_delay != 0) {
                 break;
             }
@@ -1588,11 +1588,11 @@ static int16_t uiobj_handle_input_sub0(void)
                 uiobj_finish_callback_delay_hmm5();
             }
         }
-        q = &uiobj_tbl[uiobj_hmm2_oi];
+        q = &uiobj_tbl[uiobj_clicked_oi];
         if (q->type == 6) {
             uiobj_do_callback();
         }
-        uiobj_hmm2_oi = 0;
+        uiobj_clicked_oi = 0;
         if (oi != 0) {
             mouse_getclear_hmm4();
             mouse_getclear_hmm5();
@@ -1662,7 +1662,7 @@ void uiobj_table_clear(void)
 {
     uiobj_table_num = 1;
     uiobj_hmm1_oi = -1;
-    uiobj_hmm2_oi = 0;
+    uiobj_clicked_oi = 0;
 }
 
 void uiobj_table_set_last(int16_t oi)
@@ -1742,10 +1742,10 @@ void uiobj_set_downcount(int16_t v)
     mouse_getclear_hmm5();
 }
 
-void uiobj_set_hmm3_xyoff(int xoff, int yoff)
+void uiobj_set_xyoff(int xoff, int yoff)
 {
-    uiobj_hmm3_xoff = xoff;
-    uiobj_hmm3_yoff = yoff;
+    uiobj_xoff = xoff;
+    uiobj_yoff = yoff;
 }
 
 void uiobj_set_limits(int minx, int miny, int maxx, int maxy)
@@ -1780,9 +1780,9 @@ void uiobj_set_hmm8_0(void)
     uiobj_hmm8 = 0;
 }
 
-int16_t uiobj_get_hmm2_oi(void)
+int16_t uiobj_get_clicked_oi(void)
 {
-    return uiobj_hmm2_oi;
+    return uiobj_clicked_oi;
 }
 
 void uiobj_set_skip_delay(bool v)
@@ -1795,7 +1795,7 @@ void uiobj_set_callback_and_delay(void (*cb)(void *), void *data, uint16_t delay
     uiobj_callback = cb;
     uiobj_cbdata = data;
     uiobj_flag_have_cb = true;
-    uiobj_hmm5_delay = ((delay > 0) && (delay < 10)) ? delay : 2;
+    uiobj_delay = ((delay > 0) && (delay < 10)) ? delay : 2;
 }
 
 void uiobj_unset_callback(void)
@@ -2139,7 +2139,7 @@ int16_t uiobj_select_from_list1(int x, int y, int w, const char *title, char con
             ui_draw_copy_buf();
             flag_copy_buf = true;
         }
-        ui_delay_ticks_or_click(uiobj_hmm5_delay);
+        ui_delay_ticks_or_click(uiobj_delay);
     }
     uiobj_table_clear();
     uiobj_hmm6 = 0;
@@ -2321,7 +2321,7 @@ int16_t uiobj_select_from_list2(int x, int y, int w, const char *title, char con
             ui_draw_copy_buf();
             flag_copy_buf = true;
         }
-        ui_delay_ticks_or_click(uiobj_hmm5_delay);
+        ui_delay_ticks_or_click(uiobj_delay);
     }
     uiobj_table_clear();
     uiobj_hmm6 = 0;
@@ -2362,7 +2362,7 @@ bool uiobj_read_str(int x, int y, int w, char *buf, int buflen, uint8_t rcolor, 
 
 void uiobj_input_flush(void)
 {
-    uiobj_hmm2_oi = 0;
+    uiobj_clicked_oi = 0;
     while (kbd_have_keypress()) {
         kbd_get_keypress();
     }

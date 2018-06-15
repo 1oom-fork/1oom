@@ -244,7 +244,7 @@ struct ui_data_s {
     ui_main_loop_action_t ui_main_loop_action;
     ui_main_loop_action_t ui_main_loop_action_prev;
     ui_main_loop_action_t ui_main_loop_action_next;
-    bool flag_main_hmm1;
+    bool flag_scrap_for_new_design;
     BOOLVEC_DECLARE(players_viewing, PLAYER_NUM);
     char strbuf[1024];
 };

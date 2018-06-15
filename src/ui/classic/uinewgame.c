@@ -356,7 +356,7 @@ static bool ui_new_game_extra(struct game_new_options_s *newopts, struct new_gam
     MAKE_UIOBJS();
 
     uiobj_set_callback_and_delay(new_game_draw_extra_cb, d, 2);
-    uiobj_set_hmm3_xyoff(1, 1);
+    uiobj_set_xyoff(1, 1);
 
     while (!flag_done) {
         int16_t oi;
@@ -479,7 +479,7 @@ bool ui_new_game(struct game_new_options_s *newopts)
     MAKE_UIOBJS();
 
     uiobj_set_callback_and_delay(new_game_draw_cb1, &d, 2);
-    uiobj_set_hmm3_xyoff(1, 1);
+    uiobj_set_xyoff(1, 1);
 
     while (!flag_done) {
         int16_t oi;
