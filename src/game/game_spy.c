@@ -316,7 +316,6 @@ static void game_spy_sabotage(struct game_s *g, player_id_t spy, player_id_t tar
                     g->evn.sabotage_planet[target][spy] = pl;
                     g->evn.sabotage_num[target][spy] = v8;
                     g->evn.sabotage_spy[target][spy] = rcaught ? spy : PLAYER_NONE;
-                    /*g->evn.sabotage_hmm1[target][spy] = vc; FIXME BUG uninitialized variable */
                     if (flag_frame) {
                         g->evn.sabotage_spy[target][spy] = game_spy_frame_random(g, spy, target);
                     }
@@ -479,7 +478,6 @@ void game_spy_turn(struct game_s *g, struct spy_turn_s *st)
             g->evn.sabotage_planet[i][j] = 0;
             g->evn.sabotage_num[i][j] = 0;
             g->evn.sabotage_spy[i][j] = 0;
-            g->evn.sabotage_hmm1[i][j] = 0;
         }
     }
     /*8af1*/
