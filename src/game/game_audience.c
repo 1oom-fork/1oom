@@ -946,7 +946,7 @@ static void audience_menu_tech(struct audience_s *au)
         struct spy_esp_s s[1];
         tech_field_t taf[TECH_SPY_MAX]; /* diplo_p2_sub1_field */
         uint8_t tat[TECH_SPY_MAX];
-        int ta4[TECH_SPY_MAX];
+        int tav[TECH_SPY_MAX];
         tech_field_t thf[TECH_SPY_MAX][TECH_SPY_MAX];
         uint8_t tht[TECH_SPY_MAX][TECH_SPY_MAX];
         tech_field_t thaf[TECH_SPY_MAX * TECH_SPY_MAX];
@@ -959,13 +959,13 @@ static void audience_menu_tech(struct audience_s *au)
             for (int i = 0; i < tanum; ++i) {
                 taf[i] = s->tbl_field[i];
                 tat[i] = s->tbl_tech2[i];
-                ta4[i] = (s->tbl_value[i] * v) / 100;
+                tav[i] = (s->tbl_value[i] * v) / 100;
             }
             s->spy = pa;
             s->target = ph;
             total_thnum = 0;
             for (int i = 0; i < tanum; ++i) {
-                if (game_spy_esp_sub1(g, s, ta4[i], 0) > 0) {
+                if (game_spy_esp_sub1(g, s, tav[i], 0) > 0) {
                     int n;
                     n = s->tnum;
                     thnum[total_thnum] = n;
