@@ -1313,14 +1313,24 @@ static void game_turn_transport(struct game_s *g)
                 }
             }
             SETMAX(pop3, 0);
-            if (g->eto[owner].have_combat_transporter && (!g->eto[p->owner].have_sub_space_int)) {
+            if (g->eto[owner].have_combat_transporter) {
                 int n;
                 n = pop2 - pop3;
-                for (int j = 0; j < n; ++j) {
-                    if (!rnd_0_nm1(4, &g->seed)) {
-                        ++pop3;
-                    } else if (!rnd_0_nm1(2, &g->seed)) {
-                        ++pop3;
+                if (game_num_combat_trans_fix) {    /* do as OSG says: 50% chance, 25% if interdictor */
+                    int c;
+                    c = g->eto[p->owner].have_sub_space_int ? 4 : 2;
+                    for (int j = 0; j < n; ++j) {
+                        if (!rnd_0_nm1(c, &g->seed)) {
+                            ++pop3;
+                        }
+                    }
+                } else if (g->eto[p->owner].have_sub_space_int) {   /* WASBUG transporters only work when planet owner has interdictor */
+                    for (int j = 0; j < n; ++j) {
+                        if (!rnd_0_nm1(4, &g->seed)) {
+                            ++pop3;
+                        } else if (!rnd_0_nm1(2, &g->seed)) {
+                            ++pop3;
+                        }
                     }
                 }
             }
