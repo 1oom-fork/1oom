@@ -4026,7 +4026,7 @@ static uint8_t game_ai_classic_aud_threaten(struct audience_s *au)
             if (game_spy_esp_sub1(g, s, 0, 1) > 0) {
                 au->tribute_field = s->tbl_field[0];
                 au->tribute_tech = s->tbl_tech2[0];
-                game_tech_get_new(g, ph, au->tribute_field, au->tribute_tech, 4, pa, 0, false);   /* WASBUG? pa was 0 */
+                game_tech_get_new(g, ph, au->tribute_field, au->tribute_tech, 4, pa, 0, false); /* WASBUG? pa was 0 */
             }
         } else if (v >= 200) {
             int bc;
