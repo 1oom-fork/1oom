@@ -42,7 +42,6 @@ struct design_data_s {
     int16_t oi_tbl_weap_dn[WEAPON_SLOT_NUM];    /* + 2 */
     int16_t flag_tbl_weap_up[WEAPON_SLOT_NUM];  /* + 3 */
     int16_t flag_tbl_weap_dn[WEAPON_SLOT_NUM];  /* + 4 */
-    int16_t oi_hmm04;
     int16_t oi_cancel;
     int16_t oi_build;
     int16_t oi_clear;
@@ -93,32 +92,32 @@ static void design_draw_cb(void *vptr)
 {
     struct design_data_s *d = vptr;
     shipdesign_t *sd = &(d->gd->sd);
-    int16_t oi_hmm2;
+    int16_t oi;
     char buf[64];
     uint8_t extraman;
 
     ui_draw_filled_rect(5, 5, 315, 195, 1, ui_scale);
     lbxgfx_draw_frame(0, 0, ui_data.gfx.design.bg, UI_SCREEN_W, ui_scale);
-    oi_hmm2 = uiobj_get_hmm2_oi();
+    oi = uiobj_get_clicked_oi();
     lbxfont_select(0, 6, 0, 3);
-    lbxfont_set_colors(((d->oi_comp == oi_hmm2) || d->flag_disable_comp) ? colortbl_sd_ba : colortbl_sd_bf);
+    lbxfont_set_colors(((d->oi_comp == oi) || d->flag_disable_comp) ? colortbl_sd_ba : colortbl_sd_bf);
     lbxfont_print_str_normal(17, 22, game_str_sd_comp, UI_SCREEN_W, ui_scale);
-    lbxfont_set_colors(((d->oi_shield == oi_hmm2) || d->flag_disable_shield) ? colortbl_sd_ba : colortbl_sd_bf);
+    lbxfont_set_colors(((d->oi_shield == oi) || d->flag_disable_shield) ? colortbl_sd_ba : colortbl_sd_bf);
     lbxfont_print_str_normal(17, 34, game_str_sd_shield, UI_SCREEN_W, ui_scale);
-    lbxfont_set_colors(((d->oi_jammer == oi_hmm2) || d->flag_disable_jammer) ? colortbl_sd_ba : colortbl_sd_bf);
+    lbxfont_set_colors(((d->oi_jammer == oi) || d->flag_disable_jammer) ? colortbl_sd_ba : colortbl_sd_bf);
     lbxfont_print_str_normal(17, 46, game_str_sd_ecm, UI_SCREEN_W, ui_scale);
-    lbxfont_set_colors(((d->oi_armor == oi_hmm2) || d->flag_disable_armor) ? colortbl_sd_ba : colortbl_sd_bf);
+    lbxfont_set_colors(((d->oi_armor == oi) || d->flag_disable_armor) ? colortbl_sd_ba : colortbl_sd_bf);
     lbxfont_print_str_normal(167, 22, game_str_sd_armor, UI_SCREEN_W, ui_scale);
-    lbxfont_set_colors(((d->oi_engine == oi_hmm2) || d->flag_disable_engine) ? colortbl_sd_ba : colortbl_sd_bf);
+    lbxfont_set_colors(((d->oi_engine == oi) || d->flag_disable_engine) ? colortbl_sd_ba : colortbl_sd_bf);
     lbxfont_print_str_normal(167, 34, game_str_sd_engine, UI_SCREEN_W, ui_scale);
-    lbxfont_set_colors(((d->oi_man == oi_hmm2) || d->flag_disable_cspeed) ? colortbl_sd_ba : colortbl_sd_bf);
+    lbxfont_set_colors(((d->oi_man == oi) || d->flag_disable_cspeed) ? colortbl_sd_ba : colortbl_sd_bf);
     lbxfont_print_str_normal(167, 46, game_str_sd_man, UI_SCREEN_W, ui_scale);
     for (int i = 0; i < SPECIAL_SLOT_NUM; ++i) {
-        lbxfont_set_colors(((d->oi_tbl_spec[i] == oi_hmm2) || d->flag_tbl_special[i]) ? colortbl_sd_ba : colortbl_sd_bf);
+        lbxfont_set_colors(((d->oi_tbl_spec[i] == oi) || d->flag_tbl_special[i]) ? colortbl_sd_ba : colortbl_sd_bf);
         lbxfont_print_str_normal(17, 116 + i * 10, game_str_tbl_sd_spec[i], UI_SCREEN_W, ui_scale);
     }
     for (int i = 0; i < WEAPON_SLOT_NUM; ++i) {
-        lbxfont_set_colors(((d->oi_tbl_weap[i] == oi_hmm2) || d->flag_tbl_weapon[i]) ? colortbl_sd_ba : colortbl_sd_bf);
+        lbxfont_set_colors(((d->oi_tbl_weap[i] == oi) || d->flag_tbl_weapon[i]) ? colortbl_sd_ba : colortbl_sd_bf);
         lbxfont_print_str_normal(17, 71 + i * 10, game_str_tbl_sd_weap[i], UI_SCREEN_W, ui_scale);
     }
 
@@ -276,7 +275,6 @@ static void design_clear_ois(struct design_data_s *d)
         d->flag_tbl_weap_dn[i] = 0;
         d->flag_tbl_weapon[i] = false;
     }
-    d->oi_hmm04 = UIOBJI_INVALID;
     d->oi_cancel = UIOBJI_INVALID;
     d->oi_build = UIOBJI_INVALID;
     d->oi_clear = UIOBJI_INVALID;
@@ -1327,7 +1325,7 @@ bool ui_design(struct game_s *g, struct game_design_s *gd, player_id_t active_pl
     sd->look = gd->tbl_shiplook_hull[sd->hull];
 
     uiobj_table_clear();
-    uiobj_set_hmm3_xyoff(0, 0);
+    uiobj_set_xyoff(0, 0);
 
     design_init_ois(&d);
     design_init_maxtech_haveflags(&d);

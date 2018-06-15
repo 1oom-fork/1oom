@@ -290,7 +290,7 @@ int game_planet_get_slider_text(const struct game_s *g, const planet_t *p, playe
             {
                 const char *str = NULL;
                 int vthis, factoper, waste, adjwaste;
-                bool flag_hmm = false, v6 = false;
+                bool flag_tform = false, flag_ecoproj = false;
                 vthis = (p->prod_after_maint * p->slider[PLANET_SLIDER_ECO]) / 100;
                 factoper = (p->pop - p->trans_num) * e->colonist_oper_factories;
                 SETMIN(factoper, p->factories);
@@ -309,26 +309,26 @@ int game_planet_get_slider_text(const struct game_s *g, const planet_t *p, playe
                         if ((vthis > 0) && (e->have_atmos_terra) && (p->growth == PLANET_GROWTH_HOSTILE)) {
                             vthis -= game_num_atmos_cost - p->bc_to_ecoproj;
                             if (vthis < 0) {
-                                v6 = true;
+                                flag_ecoproj = true;
                                 str = game_str_sm_ecoatmos;
                             }
                         }
                         if ((vthis > 0) && (e->have_soil_enrich) && (p->growth == PLANET_GROWTH_NORMAL)) {
                             vthis -= game_num_soil_cost - p->bc_to_ecoproj;
                             if (vthis < 0) {
-                                v6 = true;
+                                flag_ecoproj = true;
                                 str = game_str_sm_ecosoil;
                             }
                         }
                         if ((vthis > 0) && (e->have_adv_soil_enrich) && ((p->growth == PLANET_GROWTH_NORMAL) || (p->growth == PLANET_GROWTH_FERTILE))) {
                             vthis -= game_num_adv_soil_cost - p->bc_to_ecoproj;
                             if (vthis < 0) {
-                                v6 = true;
+                                flag_ecoproj = true;
                                 str = game_str_sm_ecogaia;
                             }
                         }
                     }
-                    flag_hmm = false;
+                    flag_tform = false;
                     if (vthis > 0) {
                         if (p->max_pop3 < game_num_max_pop) {
                             adjwaste = (p->max_pop2 + (e->have_terraform_n - p->max_pop3)) * e->terraform_cost_per_inc;
@@ -340,7 +340,7 @@ int game_planet_get_slider_text(const struct game_s *g, const planet_t *p, playe
                         } else {
                             int growth, growth2;
                             if (adjwaste > 0) {
-                                flag_hmm = true;
+                                flag_tform = true;
                             }
                             vthis -= adjwaste;
                             growth = game_get_pop_growth_max(g, p, p->max_pop3) + p->pop_tenths;
@@ -353,14 +353,14 @@ int game_planet_get_slider_text(const struct game_s *g, const planet_t *p, playe
                             }
                             growth = growth2 / 10 - growth / 10;
                             if (growth <= 0) {
-                                str = flag_hmm ? game_str_sm_ecotform : game_str_sm_ecoclean;
+                                str = flag_tform ? game_str_sm_ecotform : game_str_sm_ecoclean;
                             } else {
                                 retval = growth;
                                 str = game_str_sm_ecopop;
                             }
                         }
                     } else {
-                        if ((v6 == false) && (e->race != RACE_SILICOID)) {
+                        if ((flag_ecoproj == false) && (e->race != RACE_SILICOID)) {
                             str = game_str_sm_ecoclean;
                         }
                     }
