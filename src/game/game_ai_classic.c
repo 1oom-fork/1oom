@@ -339,15 +339,19 @@ static shipcount_t game_ai_classic_turn_p1_spawn_colony_ship(struct game_s *g, s
     /* spawn a new colony ship by magic */
     empiretechorbit_t *e = &(g->eto[pi]);
     shipresearch_t *srd = &(g->srd[pi]);
-    int shipi, planeti, prod;
-    shipcount_t shipn;
+    int shipi = e->shipi_colony;
+    shipcount_t shipn = srd->shipcount[shipi];
+    int planeti, prod;
     if (0
       || (ait->num_fronts == 0)
-      || ((shipi = e->shipi_colony) == -1)
+      || (shipi == -1)
       || (e->total_production_bc == 0)
-      || ((shipn = srd->shipcount[shipi]) > 3)
-      || ((planeti = ait->tbl_front_planet[rnd_0_nm1(ait->num_fronts, &g->seed)]) == -1)
+      || (shipn > 3)
     ) {
+        return 0;
+    }
+    planeti = ait->tbl_front_planet[rnd_0_nm1(ait->num_fronts, &g->seed)];
+    if (planeti == -1) {
         return 0;
     }
     prod = (e->total_production_bc * 2) / 5;
@@ -360,8 +364,7 @@ static shipcount_t game_ai_classic_turn_p1_spawn_colony_ship(struct game_s *g, s
     if ((!ait->have_colonizable) || (rnd_1_n(500, &g->seed) > prod)) {
         return shipn;
     }
-    ++shipn;
-    srd->shipcount[shipi] = shipn;
+    srd->shipcount[shipi] = ++shipn;
     ++e->orbit[planeti].ships[shipi];
     return shipn;
 }
