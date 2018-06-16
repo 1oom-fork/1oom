@@ -346,7 +346,7 @@ int ui_races(struct game_s *g, player_id_t api)
                 e->spying[d.tbl_ei[i]] = v;
             } else if (oi == oi_tbl_oppon[i]) {
                 ui_sound_play_sfx_24();
-                if (d.cursor_mode == 4) {
+                if ((d.cursor_mode == 4) || (ui_extra_enabled && (d.cursor_mode == 0))) {
                     flag_done = true;
                     ui_data.ui_main_loop_action = UI_MAIN_LOOP_EMPIREREPORT;
                     ret = d.tbl_ei[i];
@@ -384,21 +384,20 @@ int ui_races(struct game_s *g, player_id_t api)
                     if (g->end == GAME_END_NONE) {
                         oi_audience = uiobj_add_t0(245, 180, "", ui_data.gfx.screens.races_bu.audience, MOO_KEY_a);
                     }
-                    for (int i = 0; i < d.num; ++i) {
-                        int x, y;
-                        x = (i / 3) * 157;
-                        y = (i % 3) * 64;
+                }
+                for (int i = 0; i < d.num; ++i) {
+                    int x, y, x1;
+                    x = (i / 3) * 157;
+                    y = (i % 3) * 64;
+                    if (d.cursor_mode == 0) {
                         /*oi_tbl_hiding[i] =*/ uiobj_add_t3(x + 59, y + 55, "", ui_data.gfx.screens.races_bu.hiding, &(d.tbl_spymode[i]), SPYMODE_HIDE, MOO_KEY_UNKNOWN);
                         /*oi_tbl_sabotage[i] =*/ uiobj_add_t3(x + 77, y + 55, "", ui_data.gfx.screens.races_bu.sabotage, &(d.tbl_spymode[i]), SPYMODE_SABOTAGE, MOO_KEY_UNKNOWN);
                         /*oi_tbl_espionage[i] =*/ uiobj_add_t3(x + 114, y + 55, "", ui_data.gfx.screens.races_bu.espionage, &(d.tbl_spymode[i]), SPYMODE_ESPIONAGE, MOO_KEY_UNKNOWN);
+                        x1 = x + 54;
+                    } else {
+                        x1 = x + 157;
                     }
-                } else {
-                    for (int i = 0; i < d.num; ++i) {
-                        int x, y;
-                        x = (i / 3) * 157;
-                        y = (i % 3) * 64;
-                        oi_tbl_oppon[i] = uiobj_add_mousearea(x + 4, y + 5, x + 157, y + 66, MOO_KEY_UNKNOWN);
-                    }
+                    oi_tbl_oppon[i] = uiobj_add_mousearea(x + 4, y + 5, x1, y + 66, MOO_KEY_UNKNOWN);
                 }
             }
             if (d.cursor_mode == 0) {

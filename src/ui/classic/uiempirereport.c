@@ -54,7 +54,10 @@ static void empirereport_draw_cb(void *vptr)
     lbxgfx_draw_frame(21, 15, ui_data.gfx.planets.race[e->race], UI_SCREEN_W);
     ui_draw_filled_rect(17, 58, 64, 68, tbl_banner_color2[e->banner]);
     lbxfont_select(5, 6, 0, 0);
-    lbxfont_print_str_center(40, 60, game_str_tbl_races[e->race], UI_SCREEN_W);
+    {
+        const char *str = ui_extra_enabled ? g->emperor_names[d->pi] : game_str_tbl_races[e->race];
+        lbxfont_print_str_center(40, 60, str, UI_SCREEN_W);
+    }
     lbxfont_select(0, 6, 0, 0);
     lbxfont_print_str_center(40, 74, game_str_tbl_trait1[e->trait1], UI_SCREEN_W);
     lbxfont_print_str_center(40, 81, game_str_tbl_trait2[e->trait2], UI_SCREEN_W);
