@@ -186,46 +186,60 @@ static int16_t ui_new_game_choose_banner(struct game_new_options_s *newopts, str
     return banner;
 }
 
-static bool ui_new_game_pname(struct game_new_options_s *newopts, struct new_game_data_s *d)
+static bool ui_new_game_pname(struct game_new_options_s *newopts, struct new_game_data_s *d, bool flag_generate)
 {
     char buf[32];
     bool flag_ok;
 
+    if (!flag_generate) {
+        strcpy(buf, newopts->pdata[d->pi].playername);
+        flag_generate = (buf[0] == '\0');
+    }
     uiobj_set_callback_and_delay(new_game_draw_banner_cb, d, 2);
     d->str_title = game_str_ng_your_name;
     uiobj_table_clear();
     flag_ok = false;
     while (!flag_ok) {
         lbxfont_select(5, 0xf, 0xf, 0xf);
-        game_new_generate_emperor_name(d->newopts->pdata[d->pi].race, buf);
+        if (flag_generate) {
+            game_new_generate_emperor_name(d->newopts->pdata[d->pi].race, buf);
+        }
         if (!uiobj_read_str(0xf, 0x16, 0x41, buf, 0xb/*len*/, 0, 0, tbl_cursor_color)) {
             return false;
         }
         util_trim_whitespace(buf);
         flag_ok = buf[0] != '\0';
+        flag_generate = true;
     }
     strcpy(newopts->pdata[d->pi].playername, buf);
     ui_sound_play_sfx_24();
     return true;
 }
 
-static bool ui_new_game_hname(struct game_new_options_s *newopts, struct new_game_data_s *d)
+static bool ui_new_game_hname(struct game_new_options_s *newopts, struct new_game_data_s *d, bool flag_generate)
 {
     char buf[32];
     bool flag_ok;
 
+    if (!flag_generate) {
+        strcpy(buf, newopts->pdata[d->pi].homename);
+        flag_generate = (buf[0] == '\0');
+    }
     uiobj_set_callback_and_delay(new_game_draw_banner_cb, d, 2);
     d->str_title = game_str_ng_home_name;
     uiobj_table_clear();
     flag_ok = false;
     while (!flag_ok) {
         lbxfont_select(5, 0xf, 0xf, 0xf);
-        game_new_generate_home_name(d->newopts->pdata[d->pi].race, buf);
+        if (flag_generate) {
+            game_new_generate_home_name(d->newopts->pdata[d->pi].race, buf);
+        }
         if (!uiobj_read_str(0xf, 0x16, 0x32, buf, PLANET_NAME_LEN, 0, 0, tbl_cursor_color)) {
             return false;
         }
         util_trim_whitespace(buf);
         flag_ok = buf[0] != '\0';
+        flag_generate = true;
     }
     strcpy(newopts->pdata[d->pi].homename, buf);
     ui_sound_play_sfx_24();
@@ -250,8 +264,8 @@ static bool ui_new_game_racebannernames(struct game_new_options_s *newopts, stru
     if (0
       || (ui_new_game_choose_race(newopts, d) < 0)
       || (ui_new_game_choose_banner(newopts, d) < 0)
-      || (!ui_new_game_pname(newopts, d))
-      || (!ui_new_game_hname(newopts, d))
+      || (!ui_new_game_pname(newopts, d, true))
+      || (!ui_new_game_hname(newopts, d, true))
     ) {
         return false;
     }
@@ -402,12 +416,12 @@ static bool ui_new_game_extra(struct game_new_options_s *newopts, struct new_gam
             } else if (oi == oi_pname[i]) {
                 d->pi = i;
                 d->selected = newopts->pdata[i].banner;
-                ui_new_game_pname(newopts, d);
+                ui_new_game_pname(newopts, d, false);
                 uiobj_set_callback_and_delay(new_game_draw_extra_cb, d, 2);
             } else if (oi == oi_hname[i]) {
                 d->pi = i;
                 d->selected = newopts->pdata[i].banner;
-                ui_new_game_hname(newopts, d);
+                ui_new_game_hname(newopts, d, false);
                 uiobj_set_callback_and_delay(new_game_draw_extra_cb, d, 2);
             } else if (oi == oi_ai[i]) {
                 newopts->pdata[i].is_ai = !newopts->pdata[i].is_ai;
