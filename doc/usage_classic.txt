@@ -30,10 +30,12 @@ The following new UI features are always enabled/available:
 - Load Game screen uses numbers as hotkeys for slots
 - Objects with hotkeys can be navigated to using cursor keys
 - Mouse wheel can be used to adjust sliders
+- Clicking the portraits in Races screen brings Report page
 
 The config file item "ui.uiextra" (set via the -uiextra command-line option)
 enables the following extra UI features:
 - Continue and Undo saves can be chosen in the Load Game screen
 - New Game screen allows setting opponent race/banner/names and AI/human flag
+- Report screen shows name of AI leaders, Map screen shows current year
 
 See doc/list_gamediff.txt for a list of differences in the game itself.

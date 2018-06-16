@@ -288,7 +288,11 @@ static void gmap_draw_cb(void *vptr)
     lbxfont_set_temp_color(0x2b);
     lbxfont_select_set_12_4(4, 0xf, 0, 0);
     lbxfont_print_str_normal(242, 8, game_str_gm_gmap, UI_SCREEN_W);
-    lbxfont_print_str_normal(250, 88, game_str_gm_mapkey, UI_SCREEN_W);
+    if (ui_extra_enabled) {
+        lbxfont_print_num_normal(250, 88, g->year + YEAR_BASE, UI_SCREEN_W);
+    } else {
+        lbxfont_print_str_normal(250, 88, game_str_gm_mapkey, UI_SCREEN_W);
+    }
     lbxfont_set_temp_color(0x00);
 
     if (d->countdown < 0) {
