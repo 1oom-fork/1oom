@@ -39,14 +39,14 @@
 struct ai_turn_p1_s {
     bool have_colonizable;
     bool need_conquer;
-    uint16_t tbl_shipthreat[PLAYER_NUM + 1][NUM_SHIPDESIGNS];
+    uint32_t tbl_shipthreat[PLAYER_NUM + 1][NUM_SHIPDESIGNS];
     uint16_t tbl_xcenter[PLAYER_NUM];
     uint16_t tbl_ycenter[PLAYER_NUM];
-    int tbl_force_own[PLANETS_MAX];
+    uint64_t tbl_force_own[PLANETS_MAX];
     int num_fronts;
     int tbl_front_relation[PLAYER_NUM];
     uint8_t tbl_front_planet[PLAYER_NUM];
-    uint32_t force_own_sum;
+    uint64_t force_own_sum;
     int planet_en_num;
     int planet_own_num;
     int tbl_planet_own_w[PLANETS_MAX];
@@ -305,7 +305,7 @@ static void game_ai_classic_turn_p1_front(struct game_s *g, struct ai_turn_p1_s 
     foreach shipdesign { tbl_shipweight[i] = game_num_tbl_hull_w[sd[i].hull]; }
     */
     {
-        uint32_t sum = 0;
+        uint64_t sum = 0;
         for (int i = 0; i < g->galaxy_stars; ++i) {
             const planet_t *p = &(g->planet[i]);
             ait->tbl_force_own[i] = 0;
@@ -314,13 +314,19 @@ static void game_ai_classic_turn_p1_front(struct game_s *g, struct ai_turn_p1_s 
                     shipcount_t n;
                     n = e->orbit[i].ships[j];
                     if (n) {
-                        uint32_t v;
+                        uint64_t v;
                         v = ait->tbl_shipthreat[pi][j] * n;
                         sum += v;
+                        if (g->ai_id == GAME_AI_CLASSIC) {
+                            v &= 0xffffffff;    /* WASBUG MOO1 uses 32 bit var */
+                        }
                         ait->tbl_force_own[i] += v;
                     }
                 }
             }
+        }
+        if (g->ai_id == GAME_AI_CLASSIC) {
+            sum &= 0xffffffff;  /* WASBUG MOO1 uses 32 bit var */
         }
         if (sum != 0) {
             for (int i = 0; i < ait->num_fronts; ++i) {
@@ -600,12 +606,12 @@ static void game_ai_classic_turn_p1_send_attack(struct game_s *g, struct ai_turn
               && ((rnd_1_n(100, &g->seed) < 40) || (ait->planet_en_num < 2))
             ) {
                 empiretechorbit_t *e2;
-                int weight;
+                uint64_t weight;
                 weight = 0;
                 for (player_id_t pi2 = PLAYER_0; pi2 < g->players; ++pi2) {
                     if (pi2 != pi) {
                         e2 = &(g->eto[pi2]);
-                        for (int l = 0; l < e->shipdesigns_num; ++l) { /* BUG? should be e2->shipdesigns_num? */
+                        for (int l = 0; l < e2->shipdesigns_num; ++l) { /* WASBUG MOO1 uses e->shipdesigns_num */
                             shipcount_t n;
                             if ((n = e2->orbit[pto].ships[l]) != 0) {
                                 weight += n * ait->tbl_shipthreat[pi2][l];
@@ -616,6 +622,9 @@ static void game_ai_classic_turn_p1_send_attack(struct game_s *g, struct ai_turn
                 if (pt->owner != PLAYER_NONE) {
                     e2 = &(g->eto[pt->owner]);
                     weight += ((e2->tech.percent[TECH_FIELD_WEAPON] * 5) + (e2->have_planet_shield + 10) * 10) * pt->missile_bases;
+                }
+                if (g->ai_id == GAME_AI_CLASSIC) {
+                    weight &= 0xffffffff;   /* WASBUG MOO1 uses 32 bit var */
                 }
                 if (ait->tbl_force_own[pfrom] > weight) {
                     pto2 = pto;
@@ -650,18 +659,17 @@ static void game_ai_classic_turn_p1_send_attack(struct game_s *g, struct ai_turn
     for (uint8_t pfrom = 0; pfrom < g->galaxy_stars; ++pfrom) {
         const planet_t *p = &(g->planet[pfrom]);
         if ((p->owner != PLAYER_NONE) && (p->owner != pi) && (ait->tbl_force_own[pfrom] != 0)) {
-            uint8_t pto, pto2;
-            pto2 = PLANET_NONE;
-            for (int j = 0; (j < ait->planet_en_num) && (pto2 == PLANET_NONE); ++j) {
+            for (int j = 0; j < ait->planet_en_num; ++j) {
                 if (ait->tbl_planet_en_w[j] > -1000) {
                     const planet_t *pt;
+                    uint8_t pto;
                     pto = ait->tbl_planet_en_i[j];
                     pt = &(g->planet[pto]);
                     if (1
                       && (util_math_dist_fast(pt->x, pt->y, g->planet[pfrom].x, g->planet[pfrom].y) < range)
                       && (rnd_1_n(100, &g->seed) < 60)
                     ) {
-                        int weight;
+                        uint32_t weight;
                         weight = 0;
                         for (player_id_t pi2 = PLAYER_0; pi2 < g->players; ++pi2) {
                             if (pi2 != pi) {
@@ -670,14 +678,14 @@ static void game_ai_classic_turn_p1_send_attack(struct game_s *g, struct ai_turn
                                 e2 = &(g->eto[pi2]);
                                 sd = &(g->srd[pi2].design[0]);
                                 for (int k = 0; k < e2->shipdesigns_num; ++k) {
-                                    weight += e2->orbit[pto].ships[k] * game_num_tbl_hull_w[sd[k].hull];
+                                    weight += e2->orbit[pto].ships[k] * game_num_tbl_hull_w[sd[k].hull]; /* FIXME? why not tbl_shipthreat? */
                                 }
                             }
                         }
-                        if ((((ait->tbl_force_own[pfrom] * 3) / 2) > weight) && (ait->tbl_force_own[pfrom] != 0)) {
-                            pto2 = pto;
-                            game_turn_fleet_send(g, ait, pi, pfrom, pto2);
+                        if (((ait->tbl_force_own[pfrom] * 3) / 2) > weight) {
+                            game_turn_fleet_send(g, ait, pi, pfrom, pto);
                             ait->tbl_planet_en_w[j] = -1000;
+                            break;
                         }
                     }
                 }
@@ -690,7 +698,7 @@ static void game_ai_classic_turn_p1_send_defend(struct game_s *g, struct ai_turn
 {
     int bestspeed = game_tech_player_best_engine(g, pi) * 30 + 20;
     uint8_t tbl_shipw[PLAYER_NUM][NUM_SHIPDESIGNS];
-    uint32_t tbl_planet_threat[PLANETS_MAX];
+    uint64_t tbl_planet_threat[PLANETS_MAX];
     uint8_t tbl_defend[PLANETS_MAX];
     int num_defend = 0;
     for (player_id_t pi2 = PLAYER_0; pi2 < g->players; ++pi2) {
@@ -726,6 +734,11 @@ static void game_ai_classic_turn_p1_send_defend(struct game_s *g, struct ai_turn
         const planet_t *p = &(g->planet[i]);
         if ((p->missile_bases < 5) && (ait->tbl_force_own[i] == 0)) {
             tbl_planet_threat[i] = 50;
+        }
+    }
+    if (g->ai_id == GAME_AI_CLASSIC) {
+        for (int i = 0; i < g->galaxy_stars; ++i) {
+            tbl_planet_threat[i] &= 0xffffffff; /* WASBUG MOO1 uses 32 bit var */
         }
     }
     for (int i = 0; i < g->galaxy_stars; ++i) {
@@ -965,7 +978,7 @@ static void game_ai_classic_turn_p1(struct game_s *g)
         const empiretechorbit_t *e = &(g->eto[pi]);
         const shipdesign_t *sd = &(g->srd[pi].design[0]);
         for (int i = 0; i < e->shipdesigns_num; ++i) {
-            int v;
+            uint32_t v;
             v = 0;
             for (int j = 0; j < WEAPON_SLOT_NUM; ++j) {
                 weapon_t wt;
@@ -991,6 +1004,9 @@ static void game_ai_classic_turn_p1(struct game_s *g)
                 if (g->end != GAME_END_NONE) {
                     v *= 2;
                 }
+            }
+            if (g->ai_id == GAME_AI_CLASSIC) {
+                v &= 0xffff;    /* WASBUG the table variables are 16 bit in MOO1 */
             }
             ait->tbl_shipthreat[pi][i] = v;
         }
