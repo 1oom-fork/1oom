@@ -345,13 +345,16 @@ static shipcount_t game_ai_classic_turn_p1_spawn_colony_ship(struct game_s *g, s
       || (ait->num_fronts == 0) /* never true? */
       || (shipi == -1)
       || (e->total_production_bc == 0)
-      || (shipn > 3)
+      || ((g->ai_id == GAME_AI_CLASSIC) && (shipn > 3)) /* WASBUG 4th colony ship disables sending colony ships */
     ) {
         return 0;
     }
     planeti = ait->tbl_front_planet[rnd_0_nm1(ait->num_fronts, &g->seed)];
     if (planeti == PLANET_NONE) { /* never true? */
         return 0;
+    }
+    if (shipn > 3) {
+        return shipn;
     }
     prod = (e->total_production_bc * 2) / 5;
     SETRANGE(prod, 1, 500);
