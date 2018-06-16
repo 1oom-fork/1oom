@@ -33,15 +33,11 @@
 
 /* -------------------------------------------------------------------------- */
 
-struct design_data_s {
-    struct game_s *g;
-    struct game_design_s *gd;
-    player_id_t api;
+struct ui_design_data_s {
+    struct design_data_s *d;
     int16_t oi_tbl_weap[WEAPON_SLOT_NUM];
     int16_t oi_tbl_weap_up[WEAPON_SLOT_NUM];    /* + 1 */
     int16_t oi_tbl_weap_dn[WEAPON_SLOT_NUM];    /* + 2 */
-    int16_t flag_tbl_weap_up[WEAPON_SLOT_NUM];  /* + 3 */
-    int16_t flag_tbl_weap_dn[WEAPON_SLOT_NUM];  /* + 4 */
     int16_t oi_cancel;
     int16_t oi_build;
     int16_t oi_clear;
@@ -57,17 +53,6 @@ struct design_data_s {
     int16_t oi_tbl_spec[SPECIAL_SLOT_NUM];
     int16_t oi_tbl_hull[SHIP_HULL_NUM];
     int16_t oi_icon;
-    weapon_t last_avail_tech_weap;
-    ship_special_t last_avail_tech_special;
-    bool flag_disable_cspeed;
-    bool flag_disable_comp;
-    bool flag_disable_jammer;
-    bool flag_disable_shield;
-    bool flag_disable_armor;
-    bool flag_disable_engine;
-    bool flag_tbl_weapon[WEAPON_SLOT_NUM];
-    bool flag_tbl_special[SPECIAL_SLOT_NUM];
-    bool flag_tbl_hull[SHIP_HULL_NUM];
 };
 
 static const uint8_t colortbls_sd[] = {
@@ -90,7 +75,8 @@ static uint8_t const * const colortbl_sd_ba = &colortbls_sd[0x15];
 
 static void design_draw_cb(void *vptr)
 {
-    struct design_data_s *d = vptr;
+    struct ui_design_data_s *u = vptr;
+    struct design_data_s *d = u->d;
     shipdesign_t *sd = &(d->gd->sd);
     int16_t oi;
     char buf[64];
@@ -100,24 +86,24 @@ static void design_draw_cb(void *vptr)
     lbxgfx_draw_frame(0, 0, ui_data.gfx.design.bg, UI_SCREEN_W);
     oi = uiobj_get_clicked_oi();
     lbxfont_select(0, 6, 0, 3);
-    lbxfont_set_colors(((d->oi_comp == oi) || d->flag_disable_comp) ? colortbl_sd_ba : colortbl_sd_bf);
+    lbxfont_set_colors(((u->oi_comp == oi) || d->flag_disable_comp) ? colortbl_sd_ba : colortbl_sd_bf);
     lbxfont_print_str_normal(17, 22, game_str_sd_comp, UI_SCREEN_W);
-    lbxfont_set_colors(((d->oi_shield == oi) || d->flag_disable_shield) ? colortbl_sd_ba : colortbl_sd_bf);
+    lbxfont_set_colors(((u->oi_shield == oi) || d->flag_disable_shield) ? colortbl_sd_ba : colortbl_sd_bf);
     lbxfont_print_str_normal(17, 34, game_str_sd_shield, UI_SCREEN_W);
-    lbxfont_set_colors(((d->oi_jammer == oi) || d->flag_disable_jammer) ? colortbl_sd_ba : colortbl_sd_bf);
+    lbxfont_set_colors(((u->oi_jammer == oi) || d->flag_disable_jammer) ? colortbl_sd_ba : colortbl_sd_bf);
     lbxfont_print_str_normal(17, 46, game_str_sd_ecm, UI_SCREEN_W);
-    lbxfont_set_colors(((d->oi_armor == oi) || d->flag_disable_armor) ? colortbl_sd_ba : colortbl_sd_bf);
+    lbxfont_set_colors(((u->oi_armor == oi) || d->flag_disable_armor) ? colortbl_sd_ba : colortbl_sd_bf);
     lbxfont_print_str_normal(167, 22, game_str_sd_armor, UI_SCREEN_W);
-    lbxfont_set_colors(((d->oi_engine == oi) || d->flag_disable_engine) ? colortbl_sd_ba : colortbl_sd_bf);
+    lbxfont_set_colors(((u->oi_engine == oi) || d->flag_disable_engine) ? colortbl_sd_ba : colortbl_sd_bf);
     lbxfont_print_str_normal(167, 34, game_str_sd_engine, UI_SCREEN_W);
-    lbxfont_set_colors(((d->oi_man == oi) || d->flag_disable_cspeed) ? colortbl_sd_ba : colortbl_sd_bf);
+    lbxfont_set_colors(((u->oi_man == oi) || d->flag_disable_cspeed) ? colortbl_sd_ba : colortbl_sd_bf);
     lbxfont_print_str_normal(167, 46, game_str_sd_man, UI_SCREEN_W);
     for (int i = 0; i < SPECIAL_SLOT_NUM; ++i) {
-        lbxfont_set_colors(((d->oi_tbl_spec[i] == oi) || d->flag_tbl_special[i]) ? colortbl_sd_ba : colortbl_sd_bf);
+        lbxfont_set_colors(((u->oi_tbl_spec[i] == oi) || d->flag_tbl_special[i]) ? colortbl_sd_ba : colortbl_sd_bf);
         lbxfont_print_str_normal(17, 116 + i * 10, game_str_tbl_sd_spec[i], UI_SCREEN_W);
     }
     for (int i = 0; i < WEAPON_SLOT_NUM; ++i) {
-        lbxfont_set_colors(((d->oi_tbl_weap[i] == oi) || d->flag_tbl_weapon[i]) ? colortbl_sd_ba : colortbl_sd_bf);
+        lbxfont_set_colors(((u->oi_tbl_weap[i] == oi) || d->flag_tbl_weapon[i]) ? colortbl_sd_ba : colortbl_sd_bf);
         lbxfont_print_str_normal(17, 71 + i * 10, game_str_tbl_sd_weap[i], UI_SCREEN_W);
     }
 
@@ -141,12 +127,12 @@ static void design_draw_cb(void *vptr)
             lbxfont_select(0, 0, 4, 7);
             if (d->flag_tbl_hull[i]) {
                 lbxfont_select_subcolors_13not2();
-                uiobj_ta_set_val_0(d->oi_tbl_hull[i]);
+                uiobj_ta_set_val_0(u->oi_tbl_hull[i]);
             } else {
                 if (i != acthull) {
                     lbxfont_select_subcolors_13not1();
                 }
-                uiobj_ta_set_val_1(d->oi_tbl_hull[i]);
+                uiobj_ta_set_val_1(u->oi_tbl_hull[i]);
             }
             lbxfont_print_str_center(38, 163 + i * 7, *tbl_shiptech_hull[i].nameptr, UI_SCREEN_W);
         }
@@ -265,272 +251,68 @@ static void design_draw_cb(void *vptr)
     }
 }
 
-static void design_clear_ois(struct design_data_s *d)
+static void design_clear_ois(struct ui_design_data_s *u)
 {
     for (int i = 0; i < WEAPON_SLOT_NUM; ++i) {
-        d->oi_tbl_weap[i] = UIOBJI_INVALID;
-        d->oi_tbl_weap_up[i] = UIOBJI_INVALID;
-        d->oi_tbl_weap_dn[i] = UIOBJI_INVALID;
-        d->flag_tbl_weap_up[i] = 0;
-        d->flag_tbl_weap_dn[i] = 0;
-        d->flag_tbl_weapon[i] = false;
+        u->oi_tbl_weap[i] = UIOBJI_INVALID;
+        u->oi_tbl_weap_up[i] = UIOBJI_INVALID;
+        u->oi_tbl_weap_dn[i] = UIOBJI_INVALID;
     }
-    d->oi_cancel = UIOBJI_INVALID;
-    d->oi_build = UIOBJI_INVALID;
-    d->oi_clear = UIOBJI_INVALID;
-    d->oi_name = UIOBJI_INVALID;
-    d->oi_idn = UIOBJI_INVALID;
-    d->oi_iup = UIOBJI_INVALID;
-    d->oi_man = UIOBJI_INVALID;
-    d->oi_comp = UIOBJI_INVALID;
-    d->oi_jammer = UIOBJI_INVALID;
-    d->oi_shield = UIOBJI_INVALID;
-    d->oi_armor = UIOBJI_INVALID;
-    d->oi_engine = UIOBJI_INVALID;
+    u->oi_cancel = UIOBJI_INVALID;
+    u->oi_build = UIOBJI_INVALID;
+    u->oi_clear = UIOBJI_INVALID;
+    u->oi_name = UIOBJI_INVALID;
+    u->oi_idn = UIOBJI_INVALID;
+    u->oi_iup = UIOBJI_INVALID;
+    u->oi_man = UIOBJI_INVALID;
+    u->oi_comp = UIOBJI_INVALID;
+    u->oi_jammer = UIOBJI_INVALID;
+    u->oi_shield = UIOBJI_INVALID;
+    u->oi_armor = UIOBJI_INVALID;
+    u->oi_engine = UIOBJI_INVALID;
     for (int i = 0; i < SPECIAL_SLOT_NUM; ++i) {
-        d->oi_tbl_spec[i] = UIOBJI_INVALID;
+        u->oi_tbl_spec[i] = UIOBJI_INVALID;
     }
     for (int i = 0; i < SHIP_HULL_NUM; ++i) {
-        d->oi_tbl_hull[i] = UIOBJI_INVALID;
+        u->oi_tbl_hull[i] = UIOBJI_INVALID;
     }
-    d->oi_icon = UIOBJI_INVALID;
+    u->oi_icon = UIOBJI_INVALID;
 }
 
-static void design_init_ois(struct design_data_s *d)
+static void design_init_ois(struct ui_design_data_s *u)
 {
+    struct design_data_s *d = u->d;
     lbxfont_select(0, 1, 0, 3);
-    d->oi_iup = uiobj_add_t0(143, 162, "", ui_data.gfx.design.icon_up, MOO_KEY_UNKNOWN);
-    d->oi_idn = uiobj_add_t0(143, 179, "", ui_data.gfx.design.icon_dn, MOO_KEY_UNKNOWN);
-    d->oi_icon = uiobj_add_mousearea(89, 161, 128, 192, MOO_KEY_UNKNOWN);
+    u->oi_iup = uiobj_add_t0(143, 162, "", ui_data.gfx.design.icon_up, MOO_KEY_UNKNOWN);
+    u->oi_idn = uiobj_add_t0(143, 179, "", ui_data.gfx.design.icon_dn, MOO_KEY_UNKNOWN);
+    u->oi_icon = uiobj_add_mousearea(89, 161, 128, 192, MOO_KEY_UNKNOWN);
     lbxfont_select(2, 6, 0, 3);
-    d->oi_cancel = uiobj_add_t0(282, 150, game_str_sd_cancel, ui_data.gfx.design.blank, MOO_KEY_ESCAPE);
-    d->oi_build = uiobj_add_t0(282, 182, game_str_sd_build, ui_data.gfx.design.blank, MOO_KEY_b);
-    d->oi_clear = uiobj_add_t0(282, 166, game_str_sd_clear, ui_data.gfx.design.blank, MOO_KEY_c);
+    u->oi_cancel = uiobj_add_t0(282, 150, game_str_sd_cancel, ui_data.gfx.design.blank, MOO_KEY_ESCAPE);
+    u->oi_build = uiobj_add_t0(282, 182, game_str_sd_build, ui_data.gfx.design.blank, MOO_KEY_b);
+    u->oi_clear = uiobj_add_t0(282, 166, game_str_sd_clear, ui_data.gfx.design.blank, MOO_KEY_c);
     lbxfont_select(0, 0, 5, 3);
-    d->oi_name = uiobj_add_textinput(214, 151, 56, d->gd->sd.name, SHIP_NAME_LEN - 1, 1, true, false, colortbl_sd_textinput, MOO_KEY_UNKNOWN);
-    uiobj_dec_y1(d->oi_name);
+    u->oi_name = uiobj_add_textinput(214, 151, 56, d->gd->sd.name, SHIP_NAME_LEN - 1, 1, true, false, colortbl_sd_textinput, MOO_KEY_UNKNOWN);
+    uiobj_dec_y1(u->oi_name);
     SETMIN(d->gd->sd.man, d->gd->sd.engine);
-    d->oi_man = uiobj_add_mousearea(167, 45, 305, 52, MOO_KEY_UNKNOWN);
-    d->oi_comp = uiobj_add_mousearea(17, 21, 155, 28, MOO_KEY_UNKNOWN);
-    d->oi_jammer = uiobj_add_mousearea(17, 45, 155, 52, MOO_KEY_UNKNOWN);
-    d->oi_shield = uiobj_add_mousearea(17, 33, 155, 48, MOO_KEY_UNKNOWN);
-    d->oi_armor = uiobj_add_mousearea(167, 21, 305, 28, MOO_KEY_UNKNOWN);
-    d->oi_engine = uiobj_add_mousearea(167, 33, 305, 40, MOO_KEY_UNKNOWN);
+    u->oi_man = uiobj_add_mousearea(167, 45, 305, 52, MOO_KEY_UNKNOWN);
+    u->oi_comp = uiobj_add_mousearea(17, 21, 155, 28, MOO_KEY_UNKNOWN);
+    u->oi_jammer = uiobj_add_mousearea(17, 45, 155, 52, MOO_KEY_UNKNOWN);
+    u->oi_shield = uiobj_add_mousearea(17, 33, 155, 48, MOO_KEY_UNKNOWN);
+    u->oi_armor = uiobj_add_mousearea(167, 21, 305, 28, MOO_KEY_UNKNOWN);
+    u->oi_engine = uiobj_add_mousearea(167, 33, 305, 40, MOO_KEY_UNKNOWN);
     lbxfont_select(0, 0, 7, 5);
     for (int i = 0; i < SHIP_HULL_NUM; ++i) {
         const int y[SHIP_HULL_NUM] = { 162, 169, 176, 184 };
-        d->oi_tbl_hull[i] = uiobj_add_mousearea(21, y[i], 57, y[i] + 7, MOO_KEY_UNKNOWN);
+        u->oi_tbl_hull[i] = uiobj_add_mousearea(21, y[i], 57, y[i] + 7, MOO_KEY_UNKNOWN);
     }
     for (int i = 0; i < WEAPON_SLOT_NUM; ++i) {
-        d->oi_tbl_weap_dn[i] = uiobj_add_t2(59, i * 10 + 74, "", ui_data.gfx.design.count_dn, &d->flag_tbl_weap_dn[i], MOO_KEY_UNKNOWN);
-        d->oi_tbl_weap_up[i] = uiobj_add_t2(59, i * 10 + 69, "", ui_data.gfx.design.count_up, &d->flag_tbl_weap_up[i], MOO_KEY_UNKNOWN);
-        d->oi_tbl_weap[i] = uiobj_add_mousearea(16, i * 10 + 70, 305, i * 10 + 77, MOO_KEY_UNKNOWN);
+        u->oi_tbl_weap_dn[i] = uiobj_add_t2(59, i * 10 + 74, "", ui_data.gfx.design.count_dn, &d->flag_tbl_weap_dn[i], MOO_KEY_UNKNOWN);
+        u->oi_tbl_weap_up[i] = uiobj_add_t2(59, i * 10 + 69, "", ui_data.gfx.design.count_up, &d->flag_tbl_weap_up[i], MOO_KEY_UNKNOWN);
+        u->oi_tbl_weap[i] = uiobj_add_mousearea(16, i * 10 + 70, 305, i * 10 + 77, MOO_KEY_UNKNOWN);
     }
     for (int i = 0; i < SPECIAL_SLOT_NUM; ++i) {
-        d->oi_tbl_spec[i] = uiobj_add_mousearea(17, 115 + i * 10, 305, 123 + i * 10, MOO_KEY_UNKNOWN);
+        u->oi_tbl_spec[i] = uiobj_add_mousearea(17, 115 + i * 10, 305, 123 + i * 10, MOO_KEY_UNKNOWN);
     }
-}
-
-static void design_update_haveflags(struct design_data_s *d)
-{
-    shipdesign_t *sd = &(d->gd->sd);
-    SETRANGE(sd->man, 0, sd->engine);
-    game_design_update_engines(sd);
-    sd->cost = game_design_calc_cost(d->gd);
-    sd->space = game_design_calc_space(d->gd);
-    game_design_set_hp(sd);
-    d->flag_disable_cspeed = true;
-    if (sd->man < sd->engine) {
-        ++sd->man;
-        game_design_update_engines(sd);
-        if (game_design_calc_space(d->gd) >= 0) {
-            d->flag_disable_cspeed = false;
-        }
-        --sd->man;
-    }
-    d->flag_disable_comp = true;
-    {
-        ship_comp_t actcomp = sd->comp;
-        ship_comp_t comp = actcomp;
-        while (++comp < SHIP_COMP_NUM) {
-            if (game_tech_player_has_tech(d->g, TECH_FIELD_COMPUTER, tbl_shiptech_comp[comp].tech_i, d->gd->player_i)) {
-                sd->comp = comp;
-                game_design_update_engines(sd);
-                if (game_design_calc_space(d->gd) >= 0) {
-                    d->flag_disable_comp = false;
-                    break;
-                }
-            }
-        }
-        sd->comp = actcomp;
-    }
-    d->flag_disable_jammer = true;
-    {
-        ship_jammer_t actjammer = sd->jammer;
-        ship_jammer_t jammer = actjammer;
-        while (++jammer < SHIP_JAMMER_NUM) {
-            if (game_tech_player_has_tech(d->g, TECH_FIELD_COMPUTER, tbl_shiptech_jammer[jammer].tech_i, d->gd->player_i)) {
-                sd->jammer = jammer;
-                game_design_update_engines(sd);
-                if (game_design_calc_space(d->gd) >= 0) {
-                    d->flag_disable_jammer = false;
-                    break;
-                }
-            }
-        }
-        sd->jammer = actjammer;
-    }
-    d->flag_disable_shield = true;
-    {
-        ship_shield_t actshield = sd->shield;
-        ship_shield_t shield = actshield;
-        while (++shield < SHIP_SHIELD_NUM) {
-            if (game_tech_player_has_tech(d->g, TECH_FIELD_FORCE_FIELD, tbl_shiptech_shield[shield].tech_i, d->gd->player_i)) {
-                sd->shield = shield;
-                game_design_update_engines(sd);
-                if (game_design_calc_space(d->gd) >= 0) {
-                    d->flag_disable_shield = false;
-                    break;
-                }
-            }
-        }
-        sd->shield = actshield;
-    }
-    d->flag_disable_armor = true;
-    {
-        ship_armor_t actarmor = sd->armor;
-        ship_armor_t armor = actarmor;
-        while (++armor < SHIP_ARMOR_NUM) {
-            if (game_tech_player_has_tech(d->g, TECH_FIELD_CONSTRUCTION, tbl_shiptech_armor[armor].tech_i, d->gd->player_i)) {
-                sd->armor = armor;
-                game_design_update_engines(sd);
-                if (game_design_calc_space(d->gd) >= 0) {
-                    d->flag_disable_armor = false;
-                    break;
-                }
-            }
-        }
-        sd->armor = actarmor;
-    }
-    d->flag_disable_engine = true;
-    {
-        ship_engine_t actengine = sd->engine;
-        ship_engine_t engine = actengine;
-        while (++engine < SHIP_ENGINE_NUM) {
-            if (game_tech_player_has_tech(d->g, TECH_FIELD_PROPULSION, tbl_shiptech_engine[engine].tech_i, d->gd->player_i)) {
-                sd->engine = engine;
-                game_design_update_engines(sd);
-                if (game_design_calc_space(d->gd) >= 0) {
-                    d->flag_disable_engine = false;
-                    break;
-                }
-            }
-        }
-        sd->engine = actengine;
-    }
-    for (int i = 0; i < WEAPON_SLOT_NUM; ++i) {
-        weapon_t wi, actwi;
-        int wn;
-        wi = actwi = sd->wpnt[i];
-        wn = sd->wpnn[i];
-        d->flag_tbl_weap_dn[i] = ((wn == 0) || (wi == WEAPON_NONE)) ? 1 : 0;
-        d->flag_tbl_weap_up[i] = 1;
-        if ((wi != WEAPON_NONE) && (wn < 99)) {
-            sd->wpnn[i] = wn + 1;
-            game_design_update_engines(sd);
-            if (game_design_calc_space(d->gd) >= 0) {
-                d->flag_tbl_weap_up[i] = 0;
-            }
-            sd->wpnn[i] = wn;
-        }
-        d->flag_tbl_weapon[i] = true;
-        while (++wi <= d->last_avail_tech_weap) {
-            tech_field_t fi;
-            fi = tbl_shiptech_weap[wi].is_bio ? TECH_FIELD_PLANETOLOGY : TECH_FIELD_WEAPON;
-            if (game_tech_player_has_tech(d->g, fi, tbl_shiptech_weap[wi].tech_i, d->gd->player_i)) {
-                sd->wpnt[i] = wi;
-                sd->wpnn[i] = 1;
-                game_design_update_engines(sd);
-                if (game_design_calc_space(d->gd) >= 0) {
-                    d->flag_tbl_weapon[i] = false;
-                    break;
-                }
-            }
-        }
-        sd->wpnt[i] = actwi;
-        sd->wpnn[i] = wn;
-    }
-    for (int i = 0; i < SPECIAL_SLOT_NUM; ++i) {
-        ship_special_t otherspecial[SPECIAL_SLOT_NUM - 1];
-        ship_special_t actsi, si;
-        si = actsi = sd->special[i];
-        {
-            int j, n;
-            for (j = 0, n = 0; j < SPECIAL_SLOT_NUM; ++j) {
-                if (i != j) {
-                    otherspecial[n++] = sd->special[j];
-                }
-            }
-        }
-        d->flag_tbl_special[i] = true;
-        while (++si <= d->last_avail_tech_special) {
-            bool flag_check;
-            flag_check = true;
-            for (int j = 0; j < SPECIAL_SLOT_NUM - 1; ++j) {
-                ship_special_t osi;
-                osi = otherspecial[j];
-                if ((si == osi) || (tbl_shiptech_special[si].type == tbl_shiptech_special[osi].type)) {
-                    flag_check = false;
-                    break;
-                }
-            }
-            if (flag_check && game_tech_player_has_tech(d->g, tbl_shiptech_special[si].field, tbl_shiptech_special[si].tech_i, d->gd->player_i)) {
-                sd->special[i] = si;
-                game_design_update_engines(sd);
-                if (game_design_calc_space(d->gd) >= 0) {
-                    d->flag_tbl_special[i] = false;
-                    break;
-                }
-            }
-        }
-        sd->special[i] = actsi;
-    }
-    {
-        ship_hull_t acthull;
-        acthull = sd->hull;
-        for (ship_hull_t i = SHIP_HULL_SMALL; i < SHIP_HULL_NUM; ++i) {
-            sd->hull = i;
-            game_design_update_engines(sd);
-            d->flag_tbl_hull[i] = (game_design_calc_space(d->gd) < 0);
-        }
-        sd->hull = acthull;
-    }
-    game_design_update_engines(sd);
-}
-
-static void design_init_maxtech_haveflags(struct design_data_s *d)
-{
-    {
-        weapon_t j = 0;
-        for (weapon_t wi = WEAPON_NUCLEAR_BOMB; wi < WEAPON_NUM; ++wi) {
-            tech_field_t fi;
-            fi = tbl_shiptech_weap[wi].is_bio ? TECH_FIELD_PLANETOLOGY : TECH_FIELD_WEAPON;
-            if (game_tech_player_has_tech(d->g, fi, tbl_shiptech_weap[wi].tech_i, d->gd->player_i)) {
-                j = wi;
-            }
-        }
-        d->last_avail_tech_weap = j;
-    }
-    {
-        ship_special_t j = 0;
-        for (ship_special_t si = SHIP_SPECIAL_RESERVE_FUEL_TANKS; si < SHIP_SPECIAL_NUM; ++si) {
-            if (game_tech_player_has_tech(d->g, tbl_shiptech_special[si].field, tbl_shiptech_special[si].tech_i, d->gd->player_i)) {
-                j = si;
-            }
-        }
-        d->last_avail_tech_special = j;
-    }
-    design_update_haveflags(d);
 }
 
 struct xy_s {
@@ -1267,8 +1049,9 @@ static void design_draw_sub_cb(void *vptr)
     vgabuf_copy_back_from_page2();
 }
 
-static void ui_design_sub(struct design_data_s *d, design_slot_t selmode)
+static void ui_design_sub(struct ui_design_data_s *u, design_slot_t selmode)
 {
+    struct design_data_s *d = u->d;
     uiobj_unset_callback();
     uiobj_set_callback_and_delay(design_draw_sub_cb, 0, 1);
     switch (selmode) {
@@ -1307,9 +1090,9 @@ static void ui_design_sub(struct design_data_s *d, design_slot_t selmode)
     uiobj_unset_callback();
     uiobj_table_clear();
     uiobj_set_help_id(-1);
-    uiobj_set_callback_and_delay(design_draw_cb, d, 1);
-    design_init_ois(d);
-    design_update_haveflags(d);
+    uiobj_set_callback_and_delay(design_draw_cb, u, 1);
+    design_init_ois(u);
+    game_design_update_haveflags(d);
     uiobj_set_help_id(5);
 }
 
@@ -1317,6 +1100,7 @@ static void ui_design_sub(struct design_data_s *d, design_slot_t selmode)
 
 bool ui_design(struct game_s *g, struct game_design_s *gd, player_id_t active_player)
 {
+    struct ui_design_data_s u;
     struct design_data_s d;
     shipdesign_t *sd = &(gd->sd);
     bool flag_done = false, flag_ret = false, flag_copy = false, flag_name = false;
@@ -1324,27 +1108,28 @@ bool ui_design(struct game_s *g, struct game_design_s *gd, player_id_t active_pl
     d.g = g;
     d.gd = gd;
     d.api = active_player;
+    u.d = &d;
 
     /* design_hmma6 = a6; always 0 */
 
-    design_clear_ois(&d);
+    design_clear_ois(&u);
 
     sd->look = gd->tbl_shiplook_hull[sd->hull];
 
     uiobj_table_clear();
     uiobj_set_xyoff(0, 0);
 
-    design_init_ois(&d);
-    design_init_maxtech_haveflags(&d);
+    design_init_ois(&u);
+    game_design_init_maxtech_haveflags(&d);
 
     uiobj_set_help_id(5);
-    uiobj_set_callback_and_delay(design_draw_cb, &d, 1);
+    uiobj_set_callback_and_delay(design_draw_cb, &u, 1);
 
     while (!flag_done) {
         int16_t oi;
         ui_delay_prepare();
         oi = uiobj_handle_input_cond();
-        if (oi == d.oi_name) {
+        if (oi == u.oi_name) {
             ui_sound_play_sfx_24();
             util_trim_whitespace(sd->name);
             if (sd->name[0] == '\0') {
@@ -1355,28 +1140,28 @@ bool ui_design(struct game_s *g, struct game_design_s *gd, player_id_t active_pl
         if (!flag_name) {
             strcpy(sd->name, gd->names[sd->hull]);
         }
-        if ((oi == d.oi_cancel) || (oi == UIOBJI_ESC)) {
+        if ((oi == u.oi_cancel) || (oi == UIOBJI_ESC)) {
             ui_sound_play_sfx_06();
             flag_done = true;
-        } else if (oi == d.oi_build) {
+        } else if (oi == u.oi_build) {
             ui_sound_play_sfx_24();
             flag_done = true;
             flag_ret = true;
-        } else if (oi == d.oi_clear) {
+        } else if (oi == u.oi_clear) {
             ui_sound_play_sfx_24();
             game_design_clear(gd);
-            design_update_haveflags(&d);
+            game_design_update_haveflags(&d);
         }
         for (ship_hull_t i = SHIP_HULL_SMALL; i < SHIP_HULL_NUM; ++i) {
-            if ((oi == d.oi_tbl_hull[i]) && !d.flag_tbl_hull[i]) {
+            if ((oi == u.oi_tbl_hull[i]) && !d.flag_tbl_hull[i]) {
                 ui_sound_play_sfx_24();
                 sd->hull = i;
                 sd->look = gd->tbl_shiplook_hull[i];
-                design_update_haveflags(&d);
+                game_design_update_haveflags(&d);
             }
         }
         for (int i = 0; i < WEAPON_SLOT_NUM; ++i) {
-            if ((oi == d.oi_tbl_weap_up[i]) && (sd->wpnn[i] < 99)) {
+            if ((oi == u.oi_tbl_weap_up[i]) && (sd->wpnn[i] < 99)) {
                 int space;
                 ui_sound_play_sfx_24();
                 ++sd->wpnn[i];
@@ -1384,57 +1169,57 @@ bool ui_design(struct game_s *g, struct game_design_s *gd, player_id_t active_pl
                 space = game_design_calc_space(gd);
                 if (space >= 0) {
                     sd->space = space;
-                    design_update_haveflags(&d);
+                    game_design_update_haveflags(&d);
                 } else {
                     --sd->wpnn[i];
                     game_design_update_engines(sd);
                 }
                 break;
-            } else if ((oi == d.oi_tbl_weap_dn[i]) && (sd->wpnn[i] > 0)) {
+            } else if ((oi == u.oi_tbl_weap_dn[i]) && (sd->wpnn[i] > 0)) {
                 ui_sound_play_sfx_24();
                 --sd->wpnn[i];
-                design_update_haveflags(&d);
+                game_design_update_haveflags(&d);
                 d.flag_tbl_weap_dn[i] = (sd->wpnn[i] == 0);
                 break;
-            } else if (oi == d.oi_tbl_weap[i]) {
+            } else if (oi == u.oi_tbl_weap[i]) {
                 ui_sound_play_sfx_24();
-                ui_design_sub(&d, DESIGN_SLOT_WEAPON1 + i);
+                ui_design_sub(&u, DESIGN_SLOT_WEAPON1 + i);
                 break;
             }
         }
-        if ((oi == d.oi_iup) || (oi == d.oi_icon)) {
+        if ((oi == u.oi_iup) || (oi == u.oi_icon)) {
             ui_sound_play_sfx_24();
             game_design_look_next(gd);
-        } else if (oi == d.oi_idn) {
+        } else if (oi == u.oi_idn) {
             ui_sound_play_sfx_24();
             game_design_look_prev(gd);
-        } else if (oi == d.oi_armor) {
+        } else if (oi == u.oi_armor) {
             ui_sound_play_sfx_24();
-            ui_design_sub(&d, DESIGN_SLOT_ARMOR);
-        } else if (oi == d.oi_shield) {
+            ui_design_sub(&u, DESIGN_SLOT_ARMOR);
+        } else if (oi == u.oi_shield) {
             ui_sound_play_sfx_24();
-            ui_design_sub(&d, DESIGN_SLOT_SHIELD);
-        } else if (oi == d.oi_man) {
+            ui_design_sub(&u, DESIGN_SLOT_SHIELD);
+        } else if (oi == u.oi_man) {
             ui_sound_play_sfx_24();
-            ui_design_sub(&d, DESIGN_SLOT_MAN);
-        } else if (oi == d.oi_engine) {
+            ui_design_sub(&u, DESIGN_SLOT_MAN);
+        } else if (oi == u.oi_engine) {
             ui_sound_play_sfx_24();
-            ui_design_sub(&d, DESIGN_SLOT_ENGINE);
-        } else if (oi == d.oi_comp) {
+            ui_design_sub(&u, DESIGN_SLOT_ENGINE);
+        } else if (oi == u.oi_comp) {
             ui_sound_play_sfx_24();
-            ui_design_sub(&d, DESIGN_SLOT_COMP);
-        } else if (oi == d.oi_jammer) {
+            ui_design_sub(&u, DESIGN_SLOT_COMP);
+        } else if (oi == u.oi_jammer) {
             ui_sound_play_sfx_24();
-            ui_design_sub(&d, DESIGN_SLOT_JAMMER);
+            ui_design_sub(&u, DESIGN_SLOT_JAMMER);
         }
         for (int i = 0; i < SPECIAL_SLOT_NUM; ++i) {
-            if (oi == d.oi_tbl_spec[i]) {
+            if (oi == u.oi_tbl_spec[i]) {
                 ui_sound_play_sfx_24();
-                ui_design_sub(&d, DESIGN_SLOT_SPECIAL1 + i);
+                ui_design_sub(&u, DESIGN_SLOT_SPECIAL1 + i);
                 break;
             }
         }
-        design_draw_cb(&d);
+        design_draw_cb(&u);
         ui_palette_set_n();
         uiobj_finish_frame();
         if (!flag_copy) {
