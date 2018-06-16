@@ -770,3 +770,205 @@ void game_design_set_hp(shipdesign_t *sd)
 {
     sd->hp = (tbl_shiptech_hull[sd->hull].hits * tbl_shiptech_armor[sd->armor].armor) / 100;
 }
+
+void game_design_update_haveflags(struct design_data_s *d)
+{
+    shipdesign_t *sd = &(d->gd->sd);
+    SETRANGE(sd->man, 0, sd->engine);
+    game_design_update_engines(sd);
+    sd->cost = game_design_calc_cost(d->gd);
+    sd->space = game_design_calc_space(d->gd);
+    game_design_set_hp(sd);
+    d->flag_disable_cspeed = true;
+    if (sd->man < sd->engine) {
+        ++sd->man;
+        game_design_update_engines(sd);
+        if (game_design_calc_space(d->gd) >= 0) {
+            d->flag_disable_cspeed = false;
+        }
+        --sd->man;
+    }
+    d->flag_disable_comp = true;
+    {
+        ship_comp_t actcomp = sd->comp;
+        ship_comp_t comp = actcomp;
+        while (++comp < SHIP_COMP_NUM) {
+            if (game_tech_player_has_tech(d->g, TECH_FIELD_COMPUTER, tbl_shiptech_comp[comp].tech_i, d->gd->player_i)) {
+                sd->comp = comp;
+                game_design_update_engines(sd);
+                if (game_design_calc_space(d->gd) >= 0) {
+                    d->flag_disable_comp = false;
+                    break;
+                }
+            }
+        }
+        sd->comp = actcomp;
+    }
+    d->flag_disable_jammer = true;
+    {
+        ship_jammer_t actjammer = sd->jammer;
+        ship_jammer_t jammer = actjammer;
+        while (++jammer < SHIP_JAMMER_NUM) {
+            if (game_tech_player_has_tech(d->g, TECH_FIELD_COMPUTER, tbl_shiptech_jammer[jammer].tech_i, d->gd->player_i)) {
+                sd->jammer = jammer;
+                game_design_update_engines(sd);
+                if (game_design_calc_space(d->gd) >= 0) {
+                    d->flag_disable_jammer = false;
+                    break;
+                }
+            }
+        }
+        sd->jammer = actjammer;
+    }
+    d->flag_disable_shield = true;
+    {
+        ship_shield_t actshield = sd->shield;
+        ship_shield_t shield = actshield;
+        while (++shield < SHIP_SHIELD_NUM) {
+            if (game_tech_player_has_tech(d->g, TECH_FIELD_FORCE_FIELD, tbl_shiptech_shield[shield].tech_i, d->gd->player_i)) {
+                sd->shield = shield;
+                game_design_update_engines(sd);
+                if (game_design_calc_space(d->gd) >= 0) {
+                    d->flag_disable_shield = false;
+                    break;
+                }
+            }
+        }
+        sd->shield = actshield;
+    }
+    d->flag_disable_armor = true;
+    {
+        ship_armor_t actarmor = sd->armor;
+        ship_armor_t armor = actarmor;
+        while (++armor < SHIP_ARMOR_NUM) {
+            if (game_tech_player_has_tech(d->g, TECH_FIELD_CONSTRUCTION, tbl_shiptech_armor[armor].tech_i, d->gd->player_i)) {
+                sd->armor = armor;
+                game_design_update_engines(sd);
+                if (game_design_calc_space(d->gd) >= 0) {
+                    d->flag_disable_armor = false;
+                    break;
+                }
+            }
+        }
+        sd->armor = actarmor;
+    }
+    d->flag_disable_engine = true;
+    {
+        ship_engine_t actengine = sd->engine;
+        ship_engine_t engine = actengine;
+        while (++engine < SHIP_ENGINE_NUM) {
+            if (game_tech_player_has_tech(d->g, TECH_FIELD_PROPULSION, tbl_shiptech_engine[engine].tech_i, d->gd->player_i)) {
+                sd->engine = engine;
+                game_design_update_engines(sd);
+                if (game_design_calc_space(d->gd) >= 0) {
+                    d->flag_disable_engine = false;
+                    break;
+                }
+            }
+        }
+        sd->engine = actengine;
+    }
+    for (int i = 0; i < WEAPON_SLOT_NUM; ++i) {
+        weapon_t wi, actwi;
+        int wn;
+        wi = actwi = sd->wpnt[i];
+        wn = sd->wpnn[i];
+        d->flag_tbl_weap_dn[i] = ((wn == 0) || (wi == WEAPON_NONE)) ? 1 : 0;
+        d->flag_tbl_weap_up[i] = 1;
+        if ((wi != WEAPON_NONE) && (wn < 99)) {
+            sd->wpnn[i] = wn + 1;
+            game_design_update_engines(sd);
+            if (game_design_calc_space(d->gd) >= 0) {
+                d->flag_tbl_weap_up[i] = 0;
+            }
+            sd->wpnn[i] = wn;
+        }
+        d->flag_tbl_weapon[i] = true;
+        while (++wi <= d->last_avail_tech_weap) {
+            tech_field_t fi;
+            fi = tbl_shiptech_weap[wi].is_bio ? TECH_FIELD_PLANETOLOGY : TECH_FIELD_WEAPON;
+            if (game_tech_player_has_tech(d->g, fi, tbl_shiptech_weap[wi].tech_i, d->gd->player_i)) {
+                sd->wpnt[i] = wi;
+                sd->wpnn[i] = 1;
+                game_design_update_engines(sd);
+                if (game_design_calc_space(d->gd) >= 0) {
+                    d->flag_tbl_weapon[i] = false;
+                    break;
+                }
+            }
+        }
+        sd->wpnt[i] = actwi;
+        sd->wpnn[i] = wn;
+    }
+    for (int i = 0; i < SPECIAL_SLOT_NUM; ++i) {
+        ship_special_t otherspecial[SPECIAL_SLOT_NUM - 1];
+        ship_special_t actsi, si;
+        si = actsi = sd->special[i];
+        {
+            int j, n;
+            for (j = 0, n = 0; j < SPECIAL_SLOT_NUM; ++j) {
+                if (i != j) {
+                    otherspecial[n++] = sd->special[j];
+                }
+            }
+        }
+        d->flag_tbl_special[i] = true;
+        while (++si <= d->last_avail_tech_special) {
+            bool flag_check;
+            flag_check = true;
+            for (int j = 0; j < SPECIAL_SLOT_NUM - 1; ++j) {
+                ship_special_t osi;
+                osi = otherspecial[j];
+                if ((si == osi) || (tbl_shiptech_special[si].type == tbl_shiptech_special[osi].type)) {
+                    flag_check = false;
+                    break;
+                }
+            }
+            if (flag_check && game_tech_player_has_tech(d->g, tbl_shiptech_special[si].field, tbl_shiptech_special[si].tech_i, d->gd->player_i)) {
+                sd->special[i] = si;
+                game_design_update_engines(sd);
+                if (game_design_calc_space(d->gd) >= 0) {
+                    d->flag_tbl_special[i] = false;
+                    break;
+                }
+            }
+        }
+        sd->special[i] = actsi;
+    }
+    {
+        ship_hull_t acthull;
+        acthull = sd->hull;
+        for (ship_hull_t i = SHIP_HULL_SMALL; i < SHIP_HULL_NUM; ++i) {
+            sd->hull = i;
+            game_design_update_engines(sd);
+            d->flag_tbl_hull[i] = (game_design_calc_space(d->gd) < 0);
+        }
+        sd->hull = acthull;
+    }
+    game_design_update_engines(sd);
+}
+
+void game_design_init_maxtech_haveflags(struct design_data_s *d)
+{
+    {
+        weapon_t j = 0;
+        for (weapon_t wi = WEAPON_NUCLEAR_BOMB; wi < WEAPON_NUM; ++wi) {
+            tech_field_t fi;
+            fi = tbl_shiptech_weap[wi].is_bio ? TECH_FIELD_PLANETOLOGY : TECH_FIELD_WEAPON;
+            if (game_tech_player_has_tech(d->g, fi, tbl_shiptech_weap[wi].tech_i, d->gd->player_i)) {
+                j = wi;
+            }
+        }
+        d->last_avail_tech_weap = j;
+    }
+    {
+        ship_special_t j = 0;
+        for (ship_special_t si = SHIP_SPECIAL_RESERVE_FUEL_TANKS; si < SHIP_SPECIAL_NUM; ++si) {
+            if (game_tech_player_has_tech(d->g, tbl_shiptech_special[si].field, tbl_shiptech_special[si].tech_i, d->gd->player_i)) {
+                j = si;
+            }
+        }
+        d->last_avail_tech_special = j;
+    }
+    game_design_update_haveflags(d);
+}
