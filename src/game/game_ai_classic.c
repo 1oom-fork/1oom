@@ -331,21 +331,31 @@ static void game_ai_classic_turn_p1_front(struct game_s *g, struct ai_turn_p1_s 
     }
 }
 
-static shipcount_t game_ai_classic_turn_p1_spawn_colony_ship(struct game_s *g, struct ai_turn_p1_s *ait, player_id_t pi)
+static bool game_ai_classic_turn_p1_have_colony_ship(struct game_s *g, struct ai_turn_p1_s *ait, player_id_t pi)
 {
-    /* spawn a new colony ship by magic */
     empiretechorbit_t *e = &(g->eto[pi]);
     shipresearch_t *srd = &(g->srd[pi]);
-    int shipi, planeti, prod;
+    int shipi = e->shipi_colony;
+    uint32_t prod;
+    uint8_t planeti;
     shipcount_t shipn;
     if (0
-      /*|| (ait->num_fronts == 0) never true */
-      || ((shipi = e->shipi_colony) == -1)
+      || (ait->num_fronts == 0) /* never true? */
+      || (shipi == -1)
       || (e->total_production_bc == 0)
-      || ((shipn = srd->shipcount[shipi]) > 3)
-      || ((planeti = ait->tbl_front_planet[rnd_0_nm1(ait->num_fronts, &g->seed)]) == PLANET_NONE) /* never true? */
     ) {
-        return 0;
+        return false;
+    }
+    shipn = srd->shipcount[shipi];
+    if ((g->ai_id == GAME_AI_CLASSIC) && (shipn > 3)) { /* WASBUG 4th colony ship disables sending colony ships */
+        return false;
+    }
+    planeti = ait->tbl_front_planet[rnd_0_nm1(ait->num_fronts, &g->seed)];
+    if (planeti == PLANET_NONE) { /* never true? */
+        return false;
+    }
+    if (shipn > 3) {
+        return true;
     }
     prod = (e->total_production_bc * 2) / 5;
     SETRANGE(prod, 1, 500);
@@ -355,12 +365,12 @@ static shipcount_t game_ai_classic_turn_p1_spawn_colony_ship(struct game_s *g, s
         }
     }
     if ((!ait->have_colonizable) || (rnd_1_n(500, &g->seed) > prod)) {
-        return shipn;
+        return (shipn > 0);
     }
-    ++shipn;
-    srd->shipcount[shipi] = shipn;
+    /* spawn a new colony ship by magic */
+    srd->shipcount[shipi] = ++shipn;
     ++e->orbit[planeti].ships[shipi];
-    return shipn;
+    return true;
 }
 
 static void game_turn_fleet_send(struct game_s *g, struct ai_turn_p1_s *ait, player_id_t pi, uint8_t from, uint8_t dest)
@@ -1054,7 +1064,7 @@ static void game_ai_classic_turn_p1(struct game_s *g)
         }
         game_ai_classic_turn_p1_send_scout(g, ait, pi);
         game_ai_classic_turn_p1_front(g, ait, pi);
-        if (game_ai_classic_turn_p1_spawn_colony_ship(g, ait, pi) != 0) {
+        if (game_ai_classic_turn_p1_have_colony_ship(g, ait, pi)) {
             if (flag_send_colony) {
                 game_ai_classic_turn_p1_send_colony_ships(g, ait, pi);
             }
