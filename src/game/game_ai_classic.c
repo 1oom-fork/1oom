@@ -632,12 +632,11 @@ static void game_ai_classic_turn_p1_send_attack(struct game_s *g, struct ai_turn
             }
         }
     }
-    for (int i = 0; i < g->galaxy_stars; ++i) {
-        const planet_t *p = &(g->planet[i]);
-        if ((p->owner != PLAYER_NONE) && (p->owner != pi) && (ait->tbl_force_own[i] != 0)) {
-            uint8_t pfrom, pto, pto2;
+    for (uint8_t pfrom = 0; pfrom < g->galaxy_stars; ++pfrom) {
+        const planet_t *p = &(g->planet[pfrom]);
+        if ((p->owner != PLAYER_NONE) && (p->owner != pi) && (ait->tbl_force_own[pfrom] != 0)) {
+            uint8_t pto, pto2;
             pto2 = PLANET_NONE;
-            pfrom = i;
             for (int j = 0; (j < ait->planet_en_num) && (pto2 == PLANET_NONE); ++j) {
                 if (ait->tbl_planet_en_w[j] > -1000) {
                     const planet_t *pt;
