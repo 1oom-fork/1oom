@@ -208,21 +208,15 @@ size_t util_file_load_len(const char *fname, uint8_t *buf, size_t start, size_t 
 
 void util_trim_whitespace(char *buf)
 {
-    int i, j;
+    int i;
     for (i = 0; ((buf[i] == ' ') || (buf[i] == '\t')); ++i);
     if (i > 0) {
         strcpy(buf, &buf[i]);
     }
-    j = -1;
-    for (i = 0; buf[i] != '\0'; ++i) {
-        if ((buf[i] == ' ') || (buf[i] == '\t')) {
-            j = i;
-        } else {
-            j = -1;
-        }
-    }
-    if (j >= 0) {
-        buf[j] = 0;
+    for (i = 0; buf[i] != '\0'; ++i);
+    --i;
+    for (; (i >= 0) && (((buf[i] == ' ') || (buf[i] == '\t'))); --i) {
+        buf[i] = 0;
     }
 }
 
