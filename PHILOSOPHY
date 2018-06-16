@@ -25,8 +25,7 @@ of compatibility:
 
  * Master of Orion v1.3.
 
-Compatibility with older versions of the DOS binaries or newer hacked
-binaries are out of scope.
+Compatibility with older versions of the DOS binaries is out of scope.
 
 # Compatibility
 
@@ -59,6 +58,11 @@ examples of situations where changes are considered acceptable:
 
     - No 286 version.
 
+ 3. Fixes from the unofficial patch 1.40m which do not alter the Vanilla
+    behaviour much may be included unconditionally. Examples:
+
+    - Psilon leader "Zygot  " name correction.
+
 A good litmus test of when it’s acceptable to break from Vanilla
 behavior is to ask the question: “Although this is Vanilla behavior,
 is there anyone who would want this?”
@@ -71,9 +75,12 @@ While 1oom recreates the Vanilla behaviour, it also extends it:
    the one in the DOS binaries, but alternative UIs are within the scope.
    The UI can be scaled to allow the player to see more of the galaxy at once.
    New/improved UI features are documented and enabled with -uiextra.
- * The "classic" AI will always remain reasonably close to the one in the
+ * The "Classic" AI will always remain reasonably close to the one in the
    DOS binaries, but alternative AIs are within the scope.
+ * The "Classic+" AI will always remain somewhat close to the one in the
+   DOS binaries, but includes small fixes (some from the unofficial patch).
  * Doom-like file patching is supported via PBX files.
+   PBX files can be used for enabling fixes for Vanilla bugs.
  * Multiplayer! (only local for now)
 
 # Other philosophical aspects
