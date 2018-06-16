@@ -36,6 +36,25 @@ typedef enum {
 struct game_s;
 struct game_aux_s;
 
+struct design_data_s {
+    struct game_s *g;
+    struct game_design_s *gd;
+    player_id_t api;
+    weapon_t last_avail_tech_weap;
+    ship_special_t last_avail_tech_special;
+    bool flag_disable_cspeed;
+    bool flag_disable_comp;
+    bool flag_disable_jammer;
+    bool flag_disable_shield;
+    bool flag_disable_armor;
+    bool flag_disable_engine;
+    bool flag_tbl_weapon[WEAPON_SLOT_NUM];
+    bool flag_tbl_special[SPECIAL_SLOT_NUM];
+    bool flag_tbl_hull[SHIP_HULL_NUM];
+    int16_t flag_tbl_weap_up[WEAPON_SLOT_NUM];  /* HACK int16_t for uiobj */
+    int16_t flag_tbl_weap_dn[WEAPON_SLOT_NUM];  /* HACK int16_t for uiobj */
+};
+
 extern void game_design_prepare(struct game_s *g, struct game_design_s *gd, player_id_t player, shipdesign_t *sd);
 extern void game_design_prepare_ai(struct game_s *g, struct game_design_s *gd, player_id_t player, ship_hull_t hull, uint8_t look);
 extern void game_design_update_engines(shipdesign_t *sd);
@@ -60,5 +79,7 @@ extern void game_design_compact_slots(shipdesign_t *sd);
 extern void game_design_scrap(struct game_s *g, player_id_t player, int shipi, bool flag_for_new);
 extern bool game_design_add(struct game_s *g, player_id_t player, const shipdesign_t *sd, bool update_reserve_fuel);
 extern void game_design_set_hp(shipdesign_t *sd);
+extern void game_design_update_haveflags(struct design_data_s *d);
+extern void game_design_init_maxtech_haveflags(struct design_data_s *d);
 
 #endif
