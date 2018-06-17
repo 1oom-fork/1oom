@@ -61,7 +61,8 @@ util_sources = \
     util_cstr.c \
     util_cstr.h \
     util_math.c \
-    util_math.h
+    util_math.h \
+    version.h
 
 gui_sources = \
     gfxaux.c \
@@ -89,6 +90,17 @@ audio_sources = \
 pic_sources = \
     fmt_pic.c \
     fmt_pic.h
+
+BUILT_SOURCES = version.inc
+
+.PHONY: version.inc.indirect
+
+version.inc: version.inc.indirect
+
+version.inc.indirect:
+	$(SHELL) $(srcdir)/version.sh $(top_srcdir) $(srcdir)/version.inc @USE_GIT@ @VERSION_1OOM@
+
+EXTRA_DIST = version.sh
 
 AM_CPPFLAGS = \
     @OS_INCLUDES@ \
