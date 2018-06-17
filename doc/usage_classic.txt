@@ -8,7 +8,7 @@ See doc/usage_common.txt for the data/user file locations and command-line
 arguments.
 
 The UI controls like the original. Consult the game manual and the readme.txt
-from v1.3.
+from v1.3. This document describes only the differences.
 
 New hoykeys:
 - Middle click or Ctrl-F10 to grab/ungrab input
@@ -41,6 +41,7 @@ The following new UI features are always enabled/available:
 - Mouse wheel can be used to adjust sliders
 - In Tech screen Tab runs through tech fields
 - Clicking the portraits in Races screen brings Report page
+- Right-clicking on the ship image or Ships button cycles the other way
 
 The following new UI features are enabled by default:
 - (none at the moment)

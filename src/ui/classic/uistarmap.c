@@ -346,6 +346,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             ui_sound_play_sfx_24();
             flag_done = true;
             ui_delay_1();
+            oi1 = 0;
         } else if (oi1 == oi_alt_galaxy) {
             ui_sound_play_sfx_24();
             g->gaux->flag_cheat_galaxy = !g->gaux->flag_cheat_galaxy;
@@ -406,6 +407,20 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
                     n = BUILDSHIP_STARGATE;
                 } else {
                     n = 0;
+                }
+            }
+            p->buildship = n;
+        }
+        if ((oi1 == -1) && ((oi2 == d.sm.oi_ship) || (oi2 == oi_shippic))) {
+            int n;
+            n = p->buildship - 1;
+            if (n >= g->eto[active_player].shipdesigns_num) {
+                n = g->eto[active_player].shipdesigns_num - 1;
+            } else if (n < 0) {
+                if (g->eto[active_player].have_stargates && !p->have_stargate) {
+                    n = BUILDSHIP_STARGATE;
+                } else {
+                    n = g->eto[active_player].shipdesigns_num - 1;
                 }
             }
             p->buildship = n;
