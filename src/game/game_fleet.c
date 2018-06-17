@@ -57,7 +57,7 @@ static bool game_send_fleet_do(struct game_s *g, player_id_t owner, uint8_t from
             }
         }
         if ((pt->owner == owner) && (pf->owner == owner) && pt->have_stargate && pf->have_stargate) {
-            speed = 35;
+            speed = FLEET_SPEED_STARGATE;
         }
         r->speed = speed;
     }
@@ -121,7 +121,7 @@ bool game_send_transport(struct game_s *g, struct planet_s *pf)
     {
         uint8_t speed = g->eto[owner].have_engine;
         if ((pt->owner == owner) && pt->have_stargate && pf->have_stargate) {
-            speed = 35;
+            speed = FLEET_SPEED_STARGATE;
         }
         r->speed = speed;
     }
