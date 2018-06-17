@@ -236,3 +236,47 @@ void game_fleet_unrefuel(struct game_s *g)
         }
     }
 }
+
+uint8_t game_fleet_get_speed(const struct game_s *g, const struct fleet_enroute_s *r, uint8_t pfrom, uint8_t pto)
+{
+    if (game_num_stargate_redir_fix && ((r->speed == FLEET_SPEED_STARGATE) || (pfrom != PLANET_NONE))) {
+        player_id_t owner = r->owner;
+        const planet_t *pt = (&g->planet[pto]);
+        const planet_t *pf = (pfrom != PLANET_NONE) ? (&g->planet[pfrom]) : 0;
+        if (1
+          && ((pt->owner == owner) && pt->have_stargate)
+          && ((r->speed == FLEET_SPEED_STARGATE) || (pf && (pf->owner == owner) && pf->have_stargate))
+        ) {
+            return FLEET_SPEED_STARGATE;
+        } else {
+            const shipdesign_t *sd = (&g->srd[owner].design[0]);
+            uint8_t speed = 100;
+            for (int i = 0; i < NUM_SHIPDESIGNS; ++i) {
+                if (r->ships[i] > 0) {
+                    uint8_t s;
+                    s = sd[i].engine + 1;
+                    SETMIN(speed, s);
+                }
+            }
+            return speed;
+        }
+    } else {
+        return r->speed;
+    }
+}
+
+void game_fleet_redirect(struct game_s *g, struct fleet_enroute_s *r, uint8_t pfrom, uint8_t pto)
+{
+    if ((pfrom != PLANET_NONE) && (pfrom == pto)) {
+        shipcount_t *os;
+        os = &(g->eto[r->owner].orbit[pto].ships[0]);
+        for (int i = 0; i < NUM_SHIPDESIGNS; ++i) {
+            os[i] += r->ships[i];
+        }
+        util_table_remove_item_any_order(r - g->enroute, g->enroute, sizeof(fleet_enroute_t), g->enroute_num);
+        --g->enroute_num;
+    } else {
+        r->dest = pto;
+        r->speed = game_fleet_get_speed(g, r, pfrom, pto);
+    }
+}
