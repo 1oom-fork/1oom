@@ -14,6 +14,7 @@
 #include "log.h"
 #include "types.h"
 #include "mouse.h"
+#include "version.h"
 #include "vgabuf.h"
 #include "vgapal.h"
 
@@ -347,7 +348,7 @@ static int video_sw_set(int w, int h)
         }
         video.pixel_format = SDL_GetWindowPixelFormat(video.window);
         SDL_SetWindowMinimumSize(video.window, video.bufw, video.actualh);
-        SDL_SetWindowTitle(video.window, "1oom");
+        SDL_SetWindowTitle(video.window, PACKAGE_NAME " " VERSION_STR);
         if (video.icon) {
             SDL_SetWindowIcon(video.window, video.icon);
         }
