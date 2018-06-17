@@ -106,6 +106,7 @@ struct starmap_data_s {
             struct shipnon0_s sn0;
             bool in_frange;
             uint8_t from;
+            uint8_t pon;
             can_move_t can_move;
             int frame_ship;
             int frame_scanner;
