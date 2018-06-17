@@ -1,4 +1,5 @@
 AC_INIT([1oom], [0.1])
+VERSION_1OOM=v0.1
 
 AC_ARG_ENABLE(modebug, AS_HELP_STRING([--enable-modebug], [add debugging options]))
 AC_ARG_WITH(readline, AS_HELP_STRING([--without-readline], [do not try to use the readline library]))
@@ -24,6 +25,7 @@ AC_PROG_CPP
 m4_ifdef([AM_PROG_AR], [AM_PROG_AR])
 AC_CHECK_TOOL(RANLIB, ranlib, :)
 AC_CHECK_TOOL(STRIP, strip, :)
+AC_CHECK_PROG(GIT, git, git, :)
 AC_PROG_INSTALL
 
 AC_C_BIGENDIAN
@@ -58,6 +60,18 @@ dnl - check common stuff
 
 AC_CHECK_HEADERS(inttypes.h stdbool.h)
 AC_CHECK_FUNCS(atexit strcasecmp)
+
+
+dnl - git version
+
+USE_GIT="no"
+if test x"$GIT" != "x"; then
+    gitversion=`$GIT describe --tags`
+    if test x"$gitversion" != "x"; then
+        USE_GIT=$GIT
+    fi
+fi
+AC_SUBST(USE_GIT)
 
 
 dnl - OS detection
@@ -548,6 +562,7 @@ fi
 
 dnl - finish up
 
+AC_SUBST(VERSION_1OOM)
 AC_SUBST(HAVE_READLINE)
 AC_SUBST(EXTRA_SDL1_LIBS)
 AC_SUBST(EXTRA_SDL2_LIBS)
