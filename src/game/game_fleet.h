@@ -6,6 +6,7 @@
 
 struct game_s;
 struct planet_s;
+struct fleet_enroute_s;
 
 #define FLEET_SPEED_STARGATE    35
 
@@ -16,5 +17,7 @@ extern void game_remove_empty_fleets(struct game_s *g);
 extern void game_remove_player_fleets(struct game_s *g, player_id_t owner);
 extern bool game_fleet_any_dest_player(const struct game_s *g, player_id_t owner, player_id_t target);
 extern void game_fleet_unrefuel(struct game_s *g);
+extern uint8_t game_fleet_get_speed(const struct game_s *g, const struct fleet_enroute_s *r, uint8_t pfrom, uint8_t pto);
+extern void game_fleet_redirect(struct game_s *g, struct fleet_enroute_s *r, uint8_t pfrom, uint8_t pto);
 
 #endif
