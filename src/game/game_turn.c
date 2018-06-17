@@ -733,7 +733,7 @@ static void game_turn_move_ships(struct game_s *g)
                         p = &(g->planet[r->dest]);
                         x1 = p->x;
                         y1 = p->y;
-                        if (r->speed == 35) {
+                        if (r->speed == FLEET_SPEED_STARGATE) {
                             x = x1;
                             y = y1;
                         } else {
@@ -757,7 +757,7 @@ static void game_turn_move_ships(struct game_s *g)
                         p = &(g->planet[r->dest]);
                         x1 = p->x;
                         y1 = p->y;
-                        if (r->speed == 35) {
+                        if (r->speed == FLEET_SPEED_STARGATE) {
                             x = x1;
                             y = y1;
                         } else {
