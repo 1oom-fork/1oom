@@ -13,6 +13,7 @@
 #include "os.h"
 #include "ui.h"
 #include "util.h"
+#include "version.h"
 
 /* -------------------------------------------------------------------------- */
 /* local options */
@@ -437,7 +438,7 @@ int options_parse(int argc, char **argv)
 void options_show_usage(void)
 {
     int lmax = 0;
-    log_message_direct(PACKAGE_NAME " v" PACKAGE_VERSION "\n");
+    log_message_direct(PACKAGE_NAME " " VERSION_STR "\n");
     if (main_usage) {
         main_usage();
     }
