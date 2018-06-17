@@ -10,6 +10,7 @@
 #include "options.h"
 #include "os.h"
 #include "ui.h"
+#include "version.h"
 
 /* -------------------------------------------------------------------------- */
 
@@ -64,7 +65,7 @@ int main_1oom(int argc, char **argv)
     if (options_parse_early(argc, argv)) {
         return 1;
     }
-    log_message("1oom: main:%s ui:%s hw:%s os:%s\n", idstr_main, idstr_ui, idstr_hw, idstr_os);
+    log_message(PACKAGE_NAME " " VERSION_STR ": main:%s ui:%s hw:%s os:%s\n", idstr_main, idstr_ui, idstr_hw, idstr_os);
     atexit(main_shutdown);
     if (main_init()) {
         return 2;
