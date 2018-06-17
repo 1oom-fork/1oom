@@ -48,6 +48,9 @@ The resulting binaries follow a "1oom_$UI_$HW" naming convention.
         return (foo * 4) + 2;
     }
 
+- add spaces around +, -, *, /, =, == etc:
+    a = (22 + b * 4) / 7;
+
 - have the opening brace on the same line as the statement,
   unless the condition spills to multiple lines:
     if (foo) {
