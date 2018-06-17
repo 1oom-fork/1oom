@@ -515,7 +515,7 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
             }
             tx = (p->x - x) * 2 + 25;
             if (p->have_stargate) {
-                lbxgfx_draw_frame_offs(tx, (p->y - y) * 2 + 14, ui_data.gfx.starmap.stargate2, STARMAP_LIMITS, UI_SCREEN_W, starmap_scale);
+                lbxgfx_draw_frame_offs(tx, (p->y - y) * 2 + 7, ui_data.gfx.starmap.stargate2, STARMAP_LIMITS, UI_SCREEN_W, starmap_scale);
             }
             ++tx;
             for (player_id_t i = PLAYER_0; i < num; ++i) {
