@@ -90,6 +90,7 @@ struct starmap_data_s {
         } oe;   /* orbit_en */
         struct {
             struct shipnon0_s sn0;
+            uint8_t pon;
             can_move_t can_move;
         } en;   /* enroute */
     };
