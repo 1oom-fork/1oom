@@ -10,6 +10,7 @@ aclocal.m4
 autom4te.cache/
 build-*/
 src/config.h*
+src/version.inc
 stamp-h1
 
 src/1oom*
