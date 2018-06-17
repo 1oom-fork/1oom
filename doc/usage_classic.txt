@@ -8,7 +8,7 @@ See doc/usage_common.txt for the data/user file locations and command-line
 arguments.
 
 The UI controls like the original. Consult the game manual and the readme.txt
-from v1.3.
+from v1.3. This document describes only the differences.
 
 New hoykeys:
 - Middle click or Ctrl-F10 to grab/ungrab input
