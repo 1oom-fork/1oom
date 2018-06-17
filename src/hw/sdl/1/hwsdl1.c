@@ -20,6 +20,7 @@
 #include "main.h"
 #include "options.h"
 #include "types.h"
+#include "version.h"
 
 /* -------------------------------------------------------------------------- */
 
@@ -197,7 +198,7 @@ int hw_init(void)
         log_error("SDL_Init(0x%x) failed: %s\n", flags, SDL_GetError());
         return 11;
     }
-    SDL_WM_SetCaption("1oom", "1oom");
+    SDL_WM_SetCaption(PACKAGE_NAME " " VERSION_STR, PACKAGE_NAME " " VERSION_STR);
     if (hw_audio_init()) {
         return 12;
     }
