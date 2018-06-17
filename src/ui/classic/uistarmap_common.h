@@ -82,6 +82,9 @@ struct starmap_data_s {
         player_id_t player;
         int yoff;
     } oe;   /* orbit_en */
+    struct {
+        uint8_t pon;
+    } en;   /* enroute */
 };
 
 #define STARMAP_UIOBJ_CLEAR_COMMON() \
