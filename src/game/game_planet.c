@@ -26,6 +26,130 @@ static int tenths_2str(char *buf, int num)
     return pos;
 }
 
+static void increment_slider(planet_t *p, int slideri)
+{
+    /* increment */
+    int v = p->slider[slideri] + 4;
+    SETMIN(v, 100);
+    p->slider[slideri] = v;
+    /* rebalance */
+    game_adjust_slider_group(p->slider, slideri, p->slider[slideri], PLANET_SLIDER_NUM, p->slider_lock);
+}
+static void set_slider(planet_t *p, int slideri, int16_t value)
+{
+    /* set to given value. Don't check min/max, as we assume given value was already set and is valid */
+    p->slider[slideri] = value;
+    /* rebalance */
+    game_adjust_slider_group(p->slider, slideri, p->slider[slideri], PLANET_SLIDER_NUM, p->slider_lock);
+}
+
+static bool slider_text_equals(const struct game_s *g, planet_t *p, int slideri, const char *string)
+{
+    char buf[64];
+
+    game_planet_get_slider_text(g, p, p->owner, slideri, buf);
+
+    return strcmp(string, buf) == 0;
+}
+
+/* Move eco slider right until "WASTE" disappears */
+static void move_eco_min(const struct game_s *g, planet_t *p)
+{
+    int slideri = PLANET_SLIDER_ECO;
+    int previous_allocation;
+    do {
+        if (!slider_text_equals(g, p, slideri, game_str_sm_ecowaste)) {
+            break;
+        }
+        previous_allocation = p->slider[slideri];
+        increment_slider(p, slideri);
+    } while (previous_allocation != p->slider[slideri]);
+}
+
+/* Move industry slider right until "RESERVE" appears. Then move 1 tick back */
+static void move_ind_max(const struct game_s *g, planet_t *p)
+{
+    int slideri = PLANET_SLIDER_IND;
+    int previous_allocation = p->slider[slideri];
+    do {
+        if (slider_text_equals(g, p, slideri, game_str_sm_indres)) {
+            /* restore previous value, to stop going into reserve. */
+            set_slider(p, slideri, previous_allocation);
+            break;
+        }
+        if (slider_text_equals(g, p, slideri, game_str_sm_indmax)) {
+            /* keep the value that went into "MAX". */
+            break;
+        }
+
+        previous_allocation = p->slider[slideri];
+        increment_slider(p, slideri);
+    } while (previous_allocation != p->slider[slideri]);
+}
+/* Move eco slider right until "CLEAR" or "NONE" disappear. If they never disappear, move slider back */
+static void move_eco_max(const struct game_s *g, planet_t *p)
+{
+    int slideri = PLANET_SLIDER_ECO;
+    int original_allocation = p->slider[slideri];
+    bool found = false;
+    int previous_allocation;
+    do {
+        if (slider_text_equals(g, p, slideri, game_str_sm_ecoclean) || slider_text_equals(g, p, slideri, game_str_sm_prodnone)) {
+            if (found) {
+                /* we already moved past "Terraform" back into "Clean", break */
+                break;
+            }
+        } else {
+            found = true;
+        }
+        previous_allocation = p->slider[slideri];
+        increment_slider(p, slideri);
+    } while (previous_allocation != p->slider[slideri]);
+
+    if (!found) {
+        set_slider(p, slideri, original_allocation);
+    }
+}
+/* Move DEF slider, if "UPGRD" or "SHIELD" appears, do that, otherwise move it back */
+static void move_def_min(const struct game_s *g, planet_t *p)
+{
+    int slideri = PLANET_SLIDER_DEF;
+    int original_allocation = p->slider[slideri];
+    bool found = false;
+    int previous_allocation;
+    do {
+        if (slider_text_equals(g, p, slideri, game_str_sm_defupg) || slider_text_equals(g, p, slideri, game_str_sm_defshld)) {
+            found = true;
+        } else {
+            if (found) {
+                /* we already moved past "upgrade"/"shield" back into "build bases", break */
+                break;
+            }
+        }
+        previous_allocation = p->slider[slideri];
+        increment_slider(p, slideri);
+    } while (previous_allocation != p->slider[slideri]);
+
+    if (!found) {
+        set_slider(p, slideri, original_allocation);
+    }
+}
+
+/* Move ship slider right until "1 Y" appears. Then stop moving it */
+static void move_ship_1(const struct game_s *g, planet_t *p)
+{
+    int slideri = PLANET_SLIDER_SHIP;
+    int previous_allocation = p->slider[slideri];
+    do {
+        if (slider_text_equals(g, p, slideri, "1 Y")) {
+            break;
+        }
+
+        previous_allocation = p->slider[slideri];
+        increment_slider(p, slideri);
+    } while (previous_allocation != p->slider[slideri]);
+}
+
 /* -------------------------------------------------------------------------- */
 
 void game_planet_destroy(struct game_s *g, uint8_t planet_i, player_id_t attacker)
@@ -71,6 +195,8 @@ void game_planet_destroy(struct game_s *g, uint8_t planet_i, player_id_t attacke
     p->have_stargate = false;
     p->shield = 0;
     p->bc_to_shield = 0;
+    /* stop governor for this planet */
+    BOOLVEC_SET(p->extras, PLANET_EXTRAS_GOVERNOR, false);
     for (int i = 0; i < g->galaxy_stars; ++i) {
         p = &(g->planet[i]);
         if (p->reloc == planet_i) {
@@ -384,4 +510,63 @@ int game_planet_get_slider_text(const struct game_s *g, const planet_t *p, playe
             break;
     }
     return retval;
+}
+
+/**
+ * Govern the colony.
+ * - First, set ecology to minimum that avoids waste.
+ * - Then move industry slider until maximum or reserve achieved.
+ * - Then move ecology slider if can terraform or grow population until "clean" is achieved.
+ * - Then set defense to upgrade bases or build shield. Will not build new bases.
+ * - Then set shipbuilding to minimum required to build stargate if technology is present.
+ * - If all of the above are finished, do research
+ *
+ * This works by moving slider by 1 tick (4%) until desired results happen. Implemented
+ * this way to avoid duplication of planet production logic.
+ *
+ */
+
+void game_planet_govern(const struct game_s *g, planet_t *p)
+{
+    player_id_t player = p->owner;
+    const empiretechorbit_t *e = &(g->eto[player]);
+    /* unlock all sliders */
+    for (planet_slider_i_t i = 0; i < PLANET_SLIDER_NUM; ++i) {
+        p->slider_lock[i] = false;
+    }
+    /* clear spending- all goes to research */
+    for (planet_slider_i_t i = 0; i < PLANET_SLIDER_NUM; ++i) {
+        if (i != PLANET_SLIDER_TECH) {
+            p->slider[i] = 0;
+            game_adjust_slider_group(p->slider, i, p->slider[i], PLANET_SLIDER_NUM, p->slider_lock);
+        } else {
+            p->slider[i] = 10000;
+            game_adjust_slider_group(p->slider, i, p->slider[i], PLANET_SLIDER_NUM, p->slider_lock);
+        }
+    }
+    /* set eco to minimum & lock it, keep increasing until "WASTE" disappears */
+    move_eco_min(g, p);
+    p->slider_lock[PLANET_SLIDER_ECO] = true;
+    /* Add maximum industry if factories would actually get used, until we get MAX or RESERVE */
+    move_ind_max(g, p);
+    p->slider_lock[PLANET_SLIDER_IND] = true;
+    /* Add ecology for terraforming/pop growth, until "CLEAN" is displayed */
+    p->slider_lock[PLANET_SLIDER_ECO] = false;
+    move_eco_max(g, p);
+    p->slider_lock[PLANET_SLIDER_ECO] = true;
+    /* For defense, since we don't have a limit to missile base number, only do upgrades/shields.
+       Click right until we get a number, if we get a number, move back */
+    move_def_min(g, p);
+    if (e->have_stargates && !p->have_stargate) {
+        /* Lock def not to use it up for stargate construction */
+        p->slider_lock[PLANET_SLIDER_DEF] = true;
+        /* build stargate */
+        p->buildship = BUILDSHIP_STARGATE;
+        /* move ship slider right until stargate can be built in "1 y" */
+        move_ship_1(g, p);
+        /* unlock def */
+        p->slider_lock[PLANET_SLIDER_DEF] = false;
+    }
+    /* at the end of govern, keep only eco slider locked to allow easy one-turn manual tweaks */
+    p->slider_lock[PLANET_SLIDER_IND] = false;
 }

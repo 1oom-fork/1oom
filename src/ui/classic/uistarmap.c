@@ -224,7 +224,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
     bool flag_done = false;
     int16_t oi_b, oi_c, oi_scroll, oi_starview1, oi_starview2, oi_shippic, oi_finished, oi_equals,
             oi_f2, oi_f3, oi_f4, oi_f5, oi_f6, oi_f7, oi_f8, oi_f9, oi_f10,
-            oi_alt_galaxy, oi_alt_m, oi_alt_c, oi_alt_p, oi_alt_r, oi_alt_events
+            oi_alt_galaxy, oi_alt_m, oi_alt_c, oi_alt_p, oi_alt_r, oi_alt_events, oi_governor
             ;
     int16_t scrollx = 0, scrolly = 0;
     uint8_t scrollz = starmap_scale;
@@ -253,6 +253,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
         oi_shippic = UIOBJI_INVALID; \
         oi_finished = UIOBJI_INVALID; \
         oi_equals = UIOBJI_INVALID; \
+        oi_governor = UIOBJI_INVALID; \
         d.sm.oi_ship = UIOBJI_INVALID; \
         d.sm.oi_reloc = UIOBJI_INVALID; \
         d.sm.oi_trans = UIOBJI_INVALID; \
@@ -571,6 +572,12 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
                 ui_data.ui_main_loop_action = UI_MAIN_LOOP_ORBIT_OWN_SEL;
                 flag_done = true;
             }
+        } else if (oi1 == oi_governor) {
+            /* invert the governor flag */
+            BOOLVEC_SET(p->extras, PLANET_EXTRAS_GOVERNOR, BOOLVEC_IS0(p->extras, PLANET_EXTRAS_GOVERNOR));
+            if (BOOLVEC_IS1(p->extras, PLANET_EXTRAS_GOVERNOR)) {
+                game_planet_govern(g, p);
+            }
         }
         for (int i = 0; i < g->galaxy_stars; ++i) {
             if ((oi1 == d.oi_tbl_stars[i]) && !g->evn.build_finished_num[active_player]) {
@@ -626,6 +633,9 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             if (p->owner == active_player) {
                 oi_starview2 = uiobj_add_mousearea(227, 24, 310, 53, MOO_KEY_UNKNOWN);
                 oi_shippic = uiobj_add_mousearea(228, 139, 275, 175, MOO_KEY_UNKNOWN);
+                if (ui_extra_enabled) {
+                    oi_governor = uiobj_add_mousearea(227, 8, 310, 20, MOO_KEY_UNKNOWN);
+                }
             }
             ui_starmap_fill_oi_tbls(&d);
             {
