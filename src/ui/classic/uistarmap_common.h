@@ -76,6 +76,7 @@ struct starmap_data_s {
     } oe;   /* orbit_en */
     struct {
         can_move_t can_move;
+        uint8_t pon;
     } en;   /* enroute */
 };
 

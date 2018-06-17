@@ -38,7 +38,8 @@ static void ui_starmap_enroute_draw_cb(void *vptr)
     const struct game_s *g = d->g;
     const fleet_enroute_t *r = &(g->enroute[ui_data.starmap.fleet_selected]);
     const empiretechorbit_t *e = &(g->eto[r->owner]);
-    const planet_t *pt = &g->planet[g->planet_focus_i[d->api]];
+    uint8_t pto = g->planet_focus_i[d->api];
+    const planet_t *pt = &g->planet[pto];
     char buf[0x80];
 
     ui_starmap_draw_basic(d);
@@ -86,7 +87,7 @@ static void ui_starmap_enroute_draw_cb(void *vptr)
             lbxfont_set_gap_h(2);
             lbxfont_print_str_split(230, 26, 80, buf, 2, UI_SCREEN_W, UI_SCREEN_H);
         } else {
-            int eta = game_calc_eta(g, r->speed, pt->x, pt->y, r->x, r->y);
+            int eta = game_calc_eta(g, game_fleet_get_speed(g, r, d->en.pon, pto), pt->x, pt->y, r->x, r->y);
             sprintf(buf, "%s %i %s", game_str_sm_eta, eta, (eta == 1) ? game_str_sm_turn : game_str_sm_turns);
             lbxfont_select_set_12_4(0, 0, 0, 0);
             lbxfont_print_str_center(268, 32, buf, UI_SCREEN_W);
@@ -140,11 +141,13 @@ void ui_starmap_enroute(struct game_s *g, player_id_t active_player)
     d.api = active_player;
 
     d.en.can_move = g->eto[active_player].have_hyperspace_comm ? GOT_HYPERCOMM : NO_MOVE;
+    d.en.pon = PLANET_NONE;
     for (int i = 0; i < g->galaxy_stars; ++i) {
         const planet_t *p;
         p = &g->planet[i];
         if ((p->x == r->x) && (p->y == r->y)) {
             d.en.can_move = ON_PLANET;
+            d.en.pon = i;
             break;
         }
     }
@@ -216,16 +219,7 @@ void ui_starmap_enroute(struct game_s *g, player_id_t active_player)
         } else if (oi1 == oi_accept) {
             ui_sound_play_sfx_24();
             if (p->within_frange[active_player] != 0) {
-                r->dest = g->planet_focus_i[active_player];
-                if ((d.en.can_move == ON_PLANET) && (r->x == p->x) && (r->y == p->y)) {
-                    shipcount_t *os;
-                    os = &(g->eto[r->owner].orbit[r->dest].ships[0]);
-                    for (int i = 0; i < NUM_SHIPDESIGNS; ++i) {
-                        os[i] += r->ships[i];
-                    }
-                    util_table_remove_item_any_order(ui_data.starmap.fleet_selected, g->enroute, sizeof(fleet_enroute_t), g->enroute_num);
-                    --g->enroute_num;
-                }
+                game_fleet_redirect(g, r, d.en.pon, g->planet_focus_i[active_player]);
                 flag_done = true;
             }
             ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
