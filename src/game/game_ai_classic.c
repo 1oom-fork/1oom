@@ -1710,7 +1710,7 @@ static void game_ai_classic_turn_p3_sub1(struct game_s *g, player_id_t pi)
             if (e->treaty[pi2] >= TREATY_WAR) {
                 e->spymode_next[pi2] = SPYMODE_SABOTAGE;
             } else if (e->spymode_next[pi2] == SPYMODE_HIDE) { /* FIXME BUG always true */
-                if ((e->race == RACE_DARLOK) || rnd_0_nm1(0, &g->seed)) {
+                if ((e->race == RACE_DARLOK) || rnd_0_nm1(2, &g->seed)) {
                     if (rnd_1_n(200, &g->seed) > (e->relation1[pi2] * 2 + 200)) {
                         e->spymode_next[pi2] = SPYMODE_ESPIONAGE;
                     }
