@@ -105,10 +105,10 @@ static void planets_draw_cb(void *vptr)
             int y0;
             planet_t *p;
             const char *str;
-            y0 = 21 + i * 11;
+            y0 = 22 + i * 11;
             p = &(g->planet[d->planets[pi]]);
             lbxfont_select(2, 0xb, 0, 0);
-            lbxfont_print_num_right(17, y0, pi, UI_SCREEN_W, ui_scale);
+            lbxfont_print_num_right(17, y0, pi + 1, UI_SCREEN_W, ui_scale);
             lbxfont_select(2, 0xd, 0, 0);
             lbxfont_print_str_normal(25, y0, p->name, UI_SCREEN_W, ui_scale);
             lbxfont_select(2, 6, 0, 0);
@@ -126,7 +126,7 @@ static void planets_draw_cb(void *vptr)
                     c = '-';
                     gfx = ui_data.gfx.starmap.gr_arrow_d;
                 }
-                lbxgfx_draw_frame(92, y0, gfx, UI_SCREEN_W, ui_scale);
+                lbxgfx_draw_frame(92, y0 - 1, gfx, UI_SCREEN_W, ui_scale);
                 sprintf(buf, "%c%i", c, v);
                 lbxfont_print_str_right(111, y0, buf, UI_SCREEN_W, ui_scale);
             }
