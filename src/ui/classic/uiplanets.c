@@ -209,7 +209,7 @@ static void planets_draw_cb(void *vptr)
     lbxfont_print_str_right(116, 185, buf, UI_SCREEN_W, ui_scale);
     sprintf(buf, "%i %s", e->total_trade_bc, game_str_bc);
     lbxfont_print_str_right(195, 174, buf, UI_SCREEN_W, ui_scale);
-    sprintf(buf, "%i %s", e->total_production_bc / 10, game_str_bc);
+    sprintf(buf, "%i %s", e->total_production_bc, game_str_bc);
     lbxfont_print_str_right(195, 185, buf, UI_SCREEN_W, ui_scale);
 
     lbxfont_select_set_12_1(5, 8, 0, 0);
