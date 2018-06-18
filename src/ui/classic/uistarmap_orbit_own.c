@@ -88,19 +88,20 @@ static void ui_starmap_orbit_own_draw_cb(void *vptr)
                 /* dont care */
             }
         } else {
-            const shipdesign_t *sd = &(g->srd[d->api].design[0]);
-            int speed = 20;
-            for (int i = 0; i < d->ss.sn0.num; ++i) {
-                int st, en;
-                st = d->ss.sn0.type[i];
-                en = sd[st].engine;
-                SETMIN(speed, en);
-            }
-            ++speed;
             if ((pt->owner == d->api) && (pf->owner == d->api) && pt->have_stargate && pf->have_stargate) {
                 strcpy(buf, game_str_sm_stargate);
             } else if (d->ss.shiptypenon0numsel > 0) {
-                int eta = game_calc_eta(g, speed, pt->x, pt->y, pf->x, pf->y);
+                const shipdesign_t *sd = &(g->srd[d->api].design[0]);
+                int eta, speed = 20;
+                for (int i = 0; i < d->ss.sn0.num; ++i) {
+                    int st;
+                    st = d->ss.sn0.type[i];
+                    if (d->ss.ships[st] > 0) {
+                        SETMIN(speed, sd[st].engine);
+                    }
+                }
+                ++speed;
+                eta = game_calc_eta(g, speed, pt->x, pt->y, pf->x, pf->y);
                 sprintf(buf, "%s %i %s", game_str_sm_eta, eta, (eta == 1) ? game_str_sm_turn : game_str_sm_turns);
             } else {
                 buf[0] = '\0';
