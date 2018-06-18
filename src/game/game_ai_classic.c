@@ -3196,8 +3196,7 @@ static int game_ai_classic_vote(struct election_s *el, player_id_t player)
 
 static int game_ai_classic_diplo_wage_war_fleet_w(struct game_s *g, player_id_t p1, player_id_t p2)
 {
-    int ratio;
-    uint32_t fleetw[2];
+    int ratio, fleetw[2];
     for (int i = 0; i < 2; ++i) {
         player_id_t player;
         empiretechorbit_t *e;
@@ -3207,9 +3206,11 @@ static int game_ai_classic_diplo_wage_war_fleet_w(struct game_s *g, player_id_t 
         srd = &(g->srd[player]);
         fleetw[i] = 0;
         for (int j = 0; j < e->shipdesigns_num; ++j) {
-            fleetw[i] += srd->shipcount[j] * game_num_tbl_hull_w[srd->design[j].hull];
+            uint32_t v;
+            v = srd->shipcount[j] * game_num_tbl_hull_w[srd->design[j].hull];
+            ADDSATT(fleetw[i], v, 3250000);
         }
-        SETRANGE(fleetw[i], 1, 3250000);
+        SETMAX(fleetw[i], 1);
     }
     ratio = ((fleetw[0] - fleetw[1]) * 100) / fleetw[1];
     SETRANGE(ratio, -300, 300);
@@ -3249,8 +3250,7 @@ static void game_ai_classic_diplo_wage_war_do(struct game_s *g, player_id_t p1, 
 
 static int game_ai_classic_diplo_wage_war_prod_w(struct game_s *g, player_id_t p1, player_id_t p2)
 {
-    int ratio;
-    uint32_t prod[2];
+    int ratio, prod[2];
     prod[0] = g->eto[p1].total_production_bc;
     prod[1] = g->eto[p2].total_production_bc;
     SETRANGE(prod[1], 1, 3250000);  /* FIXME BUG? only p2 prod limited */
