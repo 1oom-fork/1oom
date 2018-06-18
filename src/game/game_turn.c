@@ -1745,6 +1745,7 @@ struct game_end_s game_turn_process(struct game_s *g)
     game_ai->turn_p1(g);
     game_ai->turn_p2(g);
     game_update_have_reserve_fuel(g);
+    game_ai->turn_p3(g);
     game_turn_init_z_finished(g);
     game_turn_send_transport(g);
     game_update_production(g);
