@@ -518,7 +518,9 @@ static void game_turn_build_def(struct game_s *g)
                 }
                 if (newshield != p->shield) {
                     p->shield = newshield;
-                    game_add_planet_to_shield_finished(g, i, owner);
+                    if (newshield == g->eto[owner].have_planet_shield) {
+                        game_add_planet_to_shield_finished(g, i, owner);
+                    }
                 }
             }
         }
