@@ -2947,8 +2947,8 @@ static void game_ai_classic_battle_ai_turn(struct battle_s *bt)
                 get_possible_distance_increase(bt, target_i);
                 game_battle_attack(bt, itemi, target_i, false);
             }
-            if (loops > 200) {  /* FIXME MOO1 does not need this but it does have the loop counter */
-                LOG_DEBUG((3, "%s: break from loop, target_i:%i\n", __func__, target_i));
+            if (loops > 10) {  /* MOO1 does not need this but it does have the loop counter */
+                LOG_DEBUG((3, "%s: BUG: break from loop, item:%i target_i:%i\n", __func__, itemi, target_i));
                 break;
             }
         }
