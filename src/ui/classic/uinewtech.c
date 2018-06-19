@@ -339,7 +339,7 @@ static void ui_newtech_adjust(struct newtech_data_s *d)
         }
         for (int i = 0; i < 3; ++i) {
             if (oi == oi_tbl[i]) {
-                const int tbl_si[5] = { 0, 3, 2, 3, 3 };
+                const planet_slider_i_t tbl_si[5] = { PLANET_SLIDER_IND, PLANET_SLIDER_ECO, PLANET_SLIDER_DEF, PLANET_SLIDER_ECO, PLANET_SLIDER_ECO };
                 const int tbl_gr[5] = { 0, 0, 0, 1, 2 };
                 ui_sound_play_sfx_24();
                 game_update_tech_util(d->g);
