@@ -2270,7 +2270,7 @@ static int game_battle_item_weight3(struct battle_s *bt, int itemi1, int itemi2,
 static int game_battle_item_rival1(struct battle_s *bt, int itemi, int a2)
 {
     /*di*/struct battle_item_s *b = &(bt->item[itemi]);
-    int rival = -1, v1c = 0;
+    int rival = -1, maxw = 0;
     for (int i = 0; i <= bt->items_num; ++i) {
         struct battle_item_s *b2 = &(bt->item[i]);
         if (((b->side + b2->side) == 1) && (b->num > 0)) { /* FIXME b2->num ? */
@@ -2341,9 +2341,9 @@ static int game_battle_item_rival1(struct battle_s *bt, int itemi, int a2)
                 }
             }
             /*59306*/
-            if (w > v1c) {
+            if (w > maxw) {
                 rival = i;
-                v1c = w;
+                maxw = w;
                 bt->bases_using_mirv = (tbl_shiptech_weap[bt->item[0/*planet*/].wpn[0].t].nummiss > 1);
             }
         }
