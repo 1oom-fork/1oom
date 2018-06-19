@@ -2274,7 +2274,7 @@ static int game_battle_item_rival1(struct battle_s *bt, int itemi, int a2)
     for (int i = 0; i <= bt->items_num; ++i) {
         struct battle_item_s *b2 = &(bt->item[i]);
         if (((b->side + b2->side) == 1) && (b->num > 0)) { /* FIXME b2->num ? */
-            int v8, v10, v12, v20, v28, repair;
+            int v8, v10, w, v20, v28, repair;
             v8 = game_battle_missile_hmm2(bt, i);
             v10 = game_battle_item_weight2(bt, i);
             v28 = game_battle_item_weight3(bt, itemi, i, a2);
@@ -2301,49 +2301,49 @@ static int game_battle_item_rival1(struct battle_s *bt, int itemi, int a2)
                     SETMAX(v20, 0);
                 }
                 /*59099*/
-                v12 = v20 * v10 * 20;
+                w = v20 * v10 * 20;
             } else {
                 /*590c1*/
                 if ((v8 > 0) && (v28 > 0)) {
-                    v12 = 3;
+                    w = 3;
                 } else {
                     /*590e1*/
-                    v12 = ((v28 - repair) * v10) / b2->hp1;
+                    w = ((v28 - repair) * v10) / b2->hp1;
                 }
                 /*59124*/
-                SETMAX(v12, 0);
+                SETMAX(w, 0);
                 if (v28 > 0) {
-                    SETMAX(v12, 3);
+                    SETMAX(w, 3);
                 }
-                if ((v12 == 1) && (i != 0/*planet*/)) {
-                    v12 = 2;
+                if ((w == 1) && (i != 0/*planet*/)) {
+                    w = 2;
                 }
             }
             /*5917c*/
             if ((v10 <= 0) && (v28 > 0)) {
-                v12 = (i == 0/*planet*/) ? 1 : 2;
+                w = (i == 0/*planet*/) ? 1 : 2;
             }
-            if ((i == 0/*planet*/) && (v12 > 0)) {
+            if ((i == 0/*planet*/) && (w > 0)) {
                 int dist;
                 dist = util_math_dist_maxabs(b->sx, b->sy, b2->sx, b2->sy);
-                v12 += (10 - dist) * 750;
+                w += (10 - dist) * 750;
             }
             /*59221*/
-            if ((i == 0/*planet*/) && (v12 == 1)) {
+            if ((i == 0/*planet*/) && (w == 1)) {
                 for (int j = 0; j < WEAPON_SLOT_NUM; ++j) {
                     const struct shiptech_weap_s *w = &(tbl_shiptech_weap[b->wpn[j].t]);
                     if ((w->is_bio) && (b->wpn[j].numshots != 0)) {
                         v28 = w->damagemax - bt->antidote;
                         if (v28 > 0) {
-                            v12 += v28 * b->wpn[j].n * 100;
+                            w += v28 * b->wpn[j].n * 100;
                         }
                     }
                 }
             }
             /*59306*/
-            if (v12 > v1c) {
+            if (w > v1c) {
                 rival = i;
-                v1c = v12;
+                v1c = w;
                 bt->bases_using_mirv = (tbl_shiptech_weap[bt->item[0/*planet*/].wpn[0].t].nummiss > 1);
             }
         }
