@@ -213,7 +213,11 @@ void game_battle_prepare(struct battle_s *bt, int party_r, int party_l, uint8_t 
     struct game_s *g = bt->g;
     const planet_t *p = &(g->planet[planet_i]);
     shipparsed_t sp[1];
-    memset(bt, 0, sizeof(*bt));
+    {
+        bool t = bt->flag_human_att;
+        memset(bt, 0, sizeof(*bt));
+        bt->flag_human_att = t;
+    }
     bt->g = g;
     bt->s[SIDE_R].party = party_r;
     bt->s[SIDE_L].party = party_l;
