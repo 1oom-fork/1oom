@@ -78,15 +78,15 @@ uint8_t game_planet_get_random(struct game_s *g, player_id_t owner)
     }
 }
 
-void game_planet_adjust_percent(struct game_s *g, player_id_t owner, int a0, uint8_t percent, int a2)
+void game_planet_adjust_percent(struct game_s *g, player_id_t owner, int a0, uint8_t percent, int growth)
 {
     for (int i = 0; i < g->galaxy_stars; ++i) {
         planet_t *p = &(g->planet[i]);
         if (p->owner == owner) {
             if (0
-              || (a2 == 0)
-              || ((a2 == 1) && (p->growth > PLANET_GROWTH_HOSTILE))
-              || ((a2 == 2) && (p->growth == PLANET_GROWTH_HOSTILE))
+              || (growth == 0)
+              || ((growth == 1) && (p->growth > PLANET_GROWTH_HOSTILE))
+              || ((growth == 2) && (p->growth == PLANET_GROWTH_HOSTILE))
             ) {
                 int sum, v;
                 sum = p->slider[PLANET_SLIDER_SHIP] + p->slider[PLANET_SLIDER_TECH];
