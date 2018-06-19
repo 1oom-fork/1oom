@@ -26,7 +26,6 @@
 #include "uidefs.h"
 #include "uidelay.h"
 #include "uidraw.h"
-#include "uigmap.h"
 #include "uiobj.h"
 #include "uipal.h"
 #include "uisound.h"
