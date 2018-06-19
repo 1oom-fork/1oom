@@ -2008,7 +2008,7 @@ void game_battle_area_setup(struct battle_s *bt)
             bt->area[zy][zx] = 0;
         }
     }
-    if (b->missile != 0) {
+    if (b->missile == 0) {
         bt->turn_done = false;
     }
     ui_battle_area_setup(bt);
