@@ -362,6 +362,11 @@ void game_update_tech_util(struct game_s *g)
         e->have_adv_soil_enrich = BOOLVEC_TBL_IS1(tbl_techcompl, TECH_FIELD_PLANETOLOGY, 30);
         e->have_atmos_terra = BOOLVEC_TBL_IS1(tbl_techcompl, TECH_FIELD_PLANETOLOGY, 22);
         e->have_soil_enrich = BOOLVEC_TBL_IS1(tbl_techcompl, TECH_FIELD_PLANETOLOGY, 16);
+        if (e->race == RACE_SILICOID) {
+            e->have_adv_soil_enrich = false;
+            e->have_atmos_terra = false;
+            e->have_soil_enrich = false;
+        }
         if (BOOLVEC_TBL_IS1(tbl_techcompl, TECH_FIELD_PLANETOLOGY, 42)) {
             e->inc_pop_cost = 5;
         } else if (BOOLVEC_TBL_IS1(tbl_techcompl, TECH_FIELD_PLANETOLOGY, 21)) {
