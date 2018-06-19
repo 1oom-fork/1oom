@@ -48,6 +48,11 @@ stargate_redir_fix : 0..1, 0
     way was also bugged; redirecting a fleet to a valid Star Gate use situation
     did not end up in the fleet using the Star Gates.
 
+trans_redir_fix : 0..1, 0
+  - Fix transport redirection bug/cheat.
+    In MOO1 transports can be redirected (given Hyperspace Communications) to
+    unexplored. reserve-fuel-needing and no-colony-for destinations.
+
 event_roll : 0..2147483647, 512
   - Special event probability. Bigger number means events are less likely.
     Zero means events are disabled.
