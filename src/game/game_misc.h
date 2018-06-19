@@ -24,5 +24,6 @@ extern int game_get_pop_growth_for_eco(const struct game_s *g, int planet_i, int
 extern void game_print_prod_of_total(const struct game_s *g, player_id_t pi, int prod, char *buf);
 extern bool game_xy_is_in_nebula(const struct game_s *g, int x, int y);
 extern int game_calc_eta(const struct game_s *g, int speed, int x0, int y0, int x1, int y1);
+extern bool game_transport_dest_ok(const struct game_s *g, const planet_t *p, player_id_t api);
 
 #endif
