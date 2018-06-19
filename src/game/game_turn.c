@@ -212,72 +212,70 @@ static void game_turn_build_eco(struct game_s *g)
                 p->waste = p->max_pop2 - 10;
             }
             SETMAX(p->waste, 0);
-            if (e->race != RACE_SILICOID) {
-                if ((ecoprod > 0) && e->have_atmos_terra && (p->growth == PLANET_GROWTH_HOSTILE)) {
-                    p->bc_to_ecoproj += ecoprod;
-                    if (p->bc_to_ecoproj >= game_num_atmos_cost) {
-                        int v;
-                        if (p->type < PLANET_TYPE_DEAD) {
-                            v = 20;
-                        } else if (p->type < PLANET_TYPE_BARREN) {
-                            v = 10;
-                        } else {
-                            v = 0;
-                        }
-                        /* WASBUG max_pop += moved from outside if (bc >= cost) */
-                        p->type = PLANET_TYPE_MINIMAL;
-                        p->max_pop2 += v;
-                        p->max_pop1 += v;
-                        p->max_pop3 += v;
-                        p->growth = PLANET_GROWTH_NORMAL;
-                        ecoprod = p->bc_to_ecoproj - game_num_atmos_cost;
-                        p->bc_to_ecoproj -= game_num_atmos_cost;
-                        game_add_planet_to_eco_finished(g, i, owner);
+            if ((ecoprod > 0) && e->have_atmos_terra && (p->growth == PLANET_GROWTH_HOSTILE)) {
+                p->bc_to_ecoproj += ecoprod;
+                if (p->bc_to_ecoproj >= game_num_atmos_cost) {
+                    int v;
+                    if (p->type < PLANET_TYPE_DEAD) {
+                        v = 20;
+                    } else if (p->type < PLANET_TYPE_BARREN) {
+                        v = 10;
                     } else {
-                        ecoprod = 0;
+                        v = 0;
                     }
+                    /* WASBUG max_pop += moved from outside if (bc >= cost) */
+                    p->type = PLANET_TYPE_MINIMAL;
+                    p->max_pop2 += v;
+                    p->max_pop1 += v;
+                    p->max_pop3 += v;
+                    p->growth = PLANET_GROWTH_NORMAL;
+                    ecoprod = p->bc_to_ecoproj - game_num_atmos_cost;
+                    p->bc_to_ecoproj -= game_num_atmos_cost;
+                    game_add_planet_to_eco_finished(g, i, owner);
+                } else {
+                    ecoprod = 0;
                 }
-                if ((ecoprod > 0) && e->have_soil_enrich && (p->growth == PLANET_GROWTH_NORMAL)) {
-                    p->bc_to_ecoproj += ecoprod;
-                    if (p->bc_to_ecoproj > game_num_soil_cost) {
-                        int v;
-                        p->growth = PLANET_GROWTH_FERTILE;
-                        v = (p->max_pop1 / 20) * 5;
-                        if ((p->max_pop1 / 20) % 5) {
-                            v += 5;
-                        }
-                        SETMAX(v, 5);
-                        p->max_pop2 = p->max_pop1 + v;
-                        p->max_pop3 += v;
-                        SETMIN(p->max_pop3, (e->have_terraform_n + p->max_pop2));
-                        SETMIN(p->max_pop3, game_num_max_pop);
-                        ecoprod = p->bc_to_ecoproj - game_num_soil_cost;
-                        p->bc_to_ecoproj -= game_num_soil_cost; /* BUG cost was not removed */
-                        game_add_planet_to_eco_finished(g, i, owner);
-                    } else {
-                        ecoprod = 0;
+            }
+            if ((ecoprod > 0) && e->have_soil_enrich && (p->growth == PLANET_GROWTH_NORMAL)) {
+                p->bc_to_ecoproj += ecoprod;
+                if (p->bc_to_ecoproj > game_num_soil_cost) {
+                    int v;
+                    p->growth = PLANET_GROWTH_FERTILE;
+                    v = (p->max_pop1 / 20) * 5;
+                    if ((p->max_pop1 / 20) % 5) {
+                        v += 5;
                     }
+                    SETMAX(v, 5);
+                    p->max_pop2 = p->max_pop1 + v;
+                    p->max_pop3 += v;
+                    SETMIN(p->max_pop3, (e->have_terraform_n + p->max_pop2));
+                    SETMIN(p->max_pop3, game_num_max_pop);
+                    ecoprod = p->bc_to_ecoproj - game_num_soil_cost;
+                    p->bc_to_ecoproj -= game_num_soil_cost; /* BUG cost was not removed */
+                    game_add_planet_to_eco_finished(g, i, owner);
+                } else {
+                    ecoprod = 0;
                 }
-                if ((ecoprod > 0) && e->have_adv_soil_enrich && (p->growth < PLANET_GROWTH_GAIA) && (p->growth > PLANET_GROWTH_HOSTILE)) {
-                    p->bc_to_ecoproj += ecoprod;
-                    if (p->bc_to_ecoproj > game_num_adv_soil_cost) {
-                        int v;
-                        p->growth = PLANET_GROWTH_GAIA;
-                        v = (p->max_pop1 / 10) * 5;
-                        if ((p->max_pop1 / 10) % 5) {
-                            v += 5;
-                        }
-                        SETMAX(v, 5);
-                        p->max_pop2 = p->max_pop1 + v;
-                        p->max_pop3 += v;
-                        SETMIN(p->max_pop3, (e->have_terraform_n + p->max_pop2));
-                        SETMIN(p->max_pop3, game_num_max_pop);
-                        ecoprod = p->bc_to_ecoproj - game_num_adv_soil_cost;
-                        p->bc_to_ecoproj -= game_num_adv_soil_cost; /* BUG cost was not removed */
-                        game_add_planet_to_eco_finished(g, i, owner);
-                    } else {
-                        ecoprod = 0;
+            }
+            if ((ecoprod > 0) && e->have_adv_soil_enrich && (p->growth < PLANET_GROWTH_GAIA) && (p->growth > PLANET_GROWTH_HOSTILE)) {
+                p->bc_to_ecoproj += ecoprod;
+                if (p->bc_to_ecoproj > game_num_adv_soil_cost) {
+                    int v;
+                    p->growth = PLANET_GROWTH_GAIA;
+                    v = (p->max_pop1 / 10) * 5;
+                    if ((p->max_pop1 / 10) % 5) {
+                        v += 5;
                     }
+                    SETMAX(v, 5);
+                    p->max_pop2 = p->max_pop1 + v;
+                    p->max_pop3 += v;
+                    SETMIN(p->max_pop3, (e->have_terraform_n + p->max_pop2));
+                    SETMIN(p->max_pop3, game_num_max_pop);
+                    ecoprod = p->bc_to_ecoproj - game_num_adv_soil_cost;
+                    p->bc_to_ecoproj -= game_num_adv_soil_cost; /* BUG cost was not removed */
+                    game_add_planet_to_eco_finished(g, i, owner);
+                } else {
+                    ecoprod = 0;
                 }
             }
             if ((ecoprod > 0) && ((p->max_pop3 - p->max_pop2) < e->have_terraform_n) && (p->max_pop3 < game_num_max_pop)) {
