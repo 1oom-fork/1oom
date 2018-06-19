@@ -161,5 +161,6 @@ extern void ui_starmap_draw_planetinfo(const struct game_s *g, player_id_t api, 
 extern void ui_starmap_draw_planetinfo_2(const struct game_s *g, int p1, int p2, int planet_i);
 extern int ui_starmap_newship_next(const struct game_s *g, player_id_t pi, int i);
 extern int ui_starmap_newship_prev(const struct game_s *g, player_id_t pi, int i);
+extern int ui_starmap_enemy_incoming(const struct game_s *g, player_id_t pi, int i, bool next);
 
 #endif
