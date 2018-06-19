@@ -775,6 +775,33 @@ int ui_starmap_newship_prev(const struct game_s *g, player_id_t pi, int i)
     return i;
 }
 
+int ui_starmap_enemy_incoming(const struct game_s *g, player_id_t pi, int i, bool next)
+{
+    int t = i;
+    do {
+        if (next) {
+            i = (i + 1) % g->galaxy_stars;
+        } else {
+            if (--i < 0) { i = g->galaxy_stars - 1; }
+        }
+        if (g->planet[i].owner == pi) {
+           for (int j = 0; j < g->enroute_num; ++j) {
+               const fleet_enroute_t *r = &(g->enroute[j]);
+               if (BOOLVEC_IS1(r->visible, pi) && (r->owner != pi) && (r->dest == i)) {
+                    return i;
+                }
+            }
+            for (int j = 0; j < g->transport_num; ++j) {
+                const transport_t *r = &(g->transport[j]);
+                if (BOOLVEC_IS1(r->visible, pi) && (r->owner != pi) && (r->dest == i)) {
+                    return i;
+                }
+            }
+        }
+    } while (i != t);
+    return i;
+}
+
 void ui_starmap_scroll(const struct game_s *g, int scrollx, int scrolly)
 {
     int x, y;
