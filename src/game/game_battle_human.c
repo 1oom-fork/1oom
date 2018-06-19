@@ -1888,6 +1888,7 @@ void game_battle_area_setup(struct battle_s *bt)
         }
     }
     if (b->actman > 0) {
+        bt->turn_done = false;
         for (int sy = 0; sy < BATTLE_AREA_H; ++sy) {
             for (int sx = 0; sx < BATTLE_AREA_W; ++sx) {
                 if ((b->subspace == 1) || (b->actman >= util_math_dist_maxabs(b->sx, b->sy, sx, sy))) {
