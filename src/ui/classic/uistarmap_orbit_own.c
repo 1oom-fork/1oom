@@ -241,61 +241,12 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
             /* flag_have_colony_lbx = false */
             flag_done = true;
             ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
-        } else if ((oi1 == oi_f8) && g->eto[active_player].have_ia_scanner) {
-            bool found;
+        } else if (((oi1 == oi_f8) || (oi1 == oi_f9)) && g->eto[active_player].have_ia_scanner) {
             int i, pi;
-            i = pi = d.from;
-            found = false;
             ui_sound_play_sfx_24();
-            do {
-                i = (i + 1) % g->galaxy_stars;
-                if (g->planet[i].owner == active_player) {
-                    for (int j = 0; !found && (j < g->enroute_num); ++j) {
-                        fleet_enroute_t *r = &(g->enroute[i]);
-                        if (BOOLVEC_IS1(r->visible, active_player) && (r->owner != active_player) && (r->dest == pi)) {
-                            found = true;
-                        }
-                    }
-                    for (int j = 0; !found && (j < g->transport_num); ++j) {
-                        transport_t *r = &(g->transport[i]);
-                        if (BOOLVEC_IS1(r->visible, active_player) && (r->owner != active_player) && (r->dest == pi)) {
-                            found = true;
-                        }
-                    }
-                }
-            } while (!found && (i != pi));
-            if (found) {
-                g->planet_focus_i[active_player] = i;
-                ui_starmap_set_pos_focus(g, active_player);
-                d.from = i;
-                /* flag_have_colony_lbx = false */
-                flag_done = true;
-                ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
-            }
-        } else if ((oi1 == oi_f9) && g->eto[active_player].have_ia_scanner) {
-            bool found;
-            int i, pi;
-            i = pi = d.from;
-            found = false;
-            ui_sound_play_sfx_24();
-            do {
-                if (--i < 0) { i = g->galaxy_stars - 1; }
-                if (g->planet[i].owner == active_player) {
-                    for (int j = 0; !found && (j < g->enroute_num); ++j) {
-                        fleet_enroute_t *r = &(g->enroute[i]);
-                        if (BOOLVEC_IS1(r->visible, active_player) && (r->owner != active_player) && (r->dest == pi)) {
-                            found = true;
-                        }
-                    }
-                    for (int j = 0; !found && (j < g->transport_num); ++j) {
-                        transport_t *r = &(g->transport[i]);
-                        if (BOOLVEC_IS1(r->visible, active_player) && (r->owner != active_player) && (r->dest == pi)) {
-                            found = true;
-                        }
-                    }
-                }
-            } while (!found && (i != pi));
-            if (found) {
+            pi = g->planet_focus_i[active_player];
+            i = ui_starmap_enemy_incoming(g, active_player, pi, (oi1 == oi_f8));
+            if (i != pi) {
                 g->planet_focus_i[active_player] = i;
                 ui_starmap_set_pos_focus(g, active_player);
                 d.from = i;
