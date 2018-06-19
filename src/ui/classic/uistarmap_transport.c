@@ -60,14 +60,18 @@ static void ui_starmap_transport_draw_cb(void *vptr)
         const planet_t *pd = &(g->planet[r->dest]);
         uint8_t *gfx;
         int x0, y0, x1, y1, dist;
+        bool dest_ok = true;
         x1 = (pt->x - ui_data.starmap.x) * 2 + 8;
         y1 = (pt->y - ui_data.starmap.y) * 2 + 8;
         lbxgfx_draw_frame_offs(x1, y1, ui_data.gfx.starmap.planbord, STARMAP_LIMITS, UI_SCREEN_W, starmap_scale);
         x0 = (r->x - ui_data.starmap.x) * 2 + 8;
         y0 = (r->y - ui_data.starmap.y) * 2 + 8;
+        if ((r->owner == d->api) && (d->ts.can_move != NO_MOVE)) {
+            dest_ok = game_transport_dest_ok(g, pt, d->api);
+        }
         {
             const uint8_t *ctbl;
-            ctbl = (pt->within_frange[d->api] != 0) ? colortbl_line_hmm1 : colortbl_line_enroute;
+            ctbl = dest_ok ? colortbl_line_hmm1 : colortbl_line_enroute;
             ui_draw_line_limit_ctbl(x0 + 4, y0 + 1, x1 + 6, y1 + 6, ctbl, 5, ui_data.starmap.line_anim_phase, starmap_scale);
         }
         gfx = ui_data.gfx.starmap.smaltran[e->banner];
@@ -91,6 +95,9 @@ static void ui_starmap_transport_draw_cb(void *vptr)
             sprintf(buf, "%s %i %s", game_str_sm_eta, eta, (eta == 1) ? game_str_sm_turn : game_str_sm_turns);
             lbxfont_select_set_12_4(0, 0, 0, 0);
             lbxfont_print_str_center(268, 32, buf, UI_SCREEN_W, ui_scale);
+        }
+        if (!dest_ok) {
+            d->ts.in_frange = false;
         }
     } else {
         /*6a51c*/
@@ -124,7 +131,6 @@ static void ui_starmap_transport_draw_cb(void *vptr)
     if ((r->owner == d->api) && (d->ts.can_move != NO_MOVE) && (!d->ts.in_frange)) {
         lbxgfx_set_new_frame(ui_data.gfx.starmap.reloc_bu_accept, 1);
         lbxgfx_draw_frame(271, 163, ui_data.gfx.starmap.reloc_bu_accept, UI_SCREEN_W, ui_scale);
-
     }
     ui_draw_set_stars_xoffs(&d->ts.ds, false);
 }
@@ -292,7 +298,7 @@ void ui_starmap_transport(struct game_s *g, player_id_t active_player)
             ui_starmap_fill_oi_tbl_stars(&d);
             if ((r->owner == active_player) && (d.ts.can_move != NO_MOVE)) {
                 oi_cancel = uiobj_add_t0(227, 163, "", ui_data.gfx.starmap.reloc_bu_cancel, MOO_KEY_ESCAPE);
-                if (p->within_frange[active_player] != 0) {
+                if (game_transport_dest_ok(g, p, active_player)) {
                     oi_accept = uiobj_add_t0(271, 163, "", ui_data.gfx.starmap.reloc_bu_accept, MOO_KEY_SPACE);
                 }
             }
