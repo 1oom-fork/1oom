@@ -95,7 +95,7 @@ uint8_t game_planet_get_random(struct game_s *g, player_id_t owner)
     }
 }
 
-void game_planet_adjust_percent(struct game_s *g, player_id_t owner, int a0, uint8_t percent, int growth)
+void game_planet_adjust_percent(struct game_s *g, player_id_t owner, planet_slider_i_t si, uint8_t percent, int growth)
 {
     for (int i = 0; i < g->galaxy_stars; ++i) {
         planet_t *p = &(g->planet[i]);
@@ -107,25 +107,25 @@ void game_planet_adjust_percent(struct game_s *g, player_id_t owner, int a0, uin
             ) {
                 int sum, v;
                 sum = p->slider[PLANET_SLIDER_SHIP] + p->slider[PLANET_SLIDER_TECH];
-                if (a0 != 2) {
+                if (si != PLANET_SLIDER_DEF) {
                     sum += p->slider[PLANET_SLIDER_DEF];
                 }
-                if (a0 != 0) {
+                if (si != PLANET_SLIDER_IND) {
                     sum += p->slider[PLANET_SLIDER_IND];
                 }
                 v = (sum * percent) / 100;
                 p->slider[PLANET_SLIDER_SHIP] = (p->slider[PLANET_SLIDER_SHIP] * (100 - percent)) / 100;
-                if (a0 == 2) {
+                if (si == PLANET_SLIDER_DEF) {
                     p->slider[PLANET_SLIDER_DEF] += v;
                 } else {
                     p->slider[PLANET_SLIDER_DEF] = (p->slider[PLANET_SLIDER_DEF] * (100 - percent)) / 100;
                 }
-                if (a0 == 0) {
+                if (si == PLANET_SLIDER_IND) {
                     p->slider[PLANET_SLIDER_IND] += v;
                 } else {
                     p->slider[PLANET_SLIDER_IND] = (p->slider[PLANET_SLIDER_IND] * (100 - percent)) / 100;
                 }
-                if (a0 == 3) {
+                if (si == PLANET_SLIDER_ECO) {
                     p->slider[PLANET_SLIDER_ECO] += v;
                 }
                 p->slider[PLANET_SLIDER_TECH] = 100 - p->slider[PLANET_SLIDER_SHIP] - p->slider[PLANET_SLIDER_ECO] - p->slider[PLANET_SLIDER_DEF] - p->slider[PLANET_SLIDER_IND];
