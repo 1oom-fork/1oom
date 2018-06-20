@@ -244,13 +244,14 @@ void ui_tech(struct game_s *g, player_id_t active_player)
 {
     struct tech_data_s d;
     bool flag_done = false;
-    int16_t oi_ok, oi_up, oi_down, oi_equals,
+    int16_t oi_ok, oi_up, oi_down, oi_equals, oi_wheel,
             oi_tbl_lock[TECH_FIELD_NUM],
             oi_tbl_plus[TECH_FIELD_NUM],
             oi_tbl_minus[TECH_FIELD_NUM],
             oi_tbl_field[TECH_FIELD_NUM],
             oi_tbl_techname[TECH_ON_SCREEN]
             ;
+    int16_t scroll = 0;
     techdata_t *t = &(g->eto[active_player].tech);
 
     d.g = g;
@@ -265,6 +266,7 @@ void ui_tech(struct game_s *g, player_id_t active_player)
         oi_up = UIOBJI_INVALID; \
         oi_down = UIOBJI_INVALID; \
         oi_equals = UIOBJI_INVALID; \
+        oi_wheel = UIOBJI_INVALID; \
         UIOBJI_SET_TBL5_INVALID(oi_tbl_lock, oi_tbl_plus, oi_tbl_minus, oi_tbl_field, d.oi_tbl_slider); \
         UIOBJI_SET_TBL_INVALID(oi_tbl_techname); \
     } while (0)
@@ -295,6 +297,9 @@ void ui_tech(struct game_s *g, player_id_t active_player)
         } else if (oi == oi_down) {
             ui_sound_play_sfx_24();
             d.pos += TECH_SCROLL_NUM;
+        } else if (oi == oi_wheel) {
+            d.pos += scroll;
+            scroll = 0;
         }
         for (int i = 0; i < TECH_FIELD_NUM; ++i) {
             if (oi == oi_tbl_field[i]) {
@@ -388,6 +393,9 @@ void ui_tech(struct game_s *g, player_id_t active_player)
                 if ((i + d.pos) < d.num) {
                     oi_tbl_techname[i] = uiobj_add_mousearea(9, i * 7 + 37, 160, i * 7 + 43, MOO_KEY_UNKNOWN);
                 }
+            }
+            if (d.num >= TECH_ON_SCREEN) {
+                oi_wheel = uiobj_add_mousewheel(0, 0, 167, 199, &scroll);
             }
             ui_draw_finish();
             ui_delay_ticks_or_click(2);
