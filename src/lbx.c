@@ -391,6 +391,23 @@ void lbxfile_item_release_file(lbxfile_e file_id)
     lbxfile_close(file_id);
 }
 
+bool lbxfile_exists(lbxfile_e file_id)
+{
+    if (lbxtbl[file_id].mode != LBX_MODE_NONE) {
+        return true;
+    } else {
+        FILE *fd = NULL;
+        bool found;
+        fd = lbxfile_try_fopen(os_get_path_data(), lbxinfo[file_id].filename);
+        found = (fd != NULL);
+        if (fd) {
+            fclose(fd);
+            fd = NULL;
+        }
+        return found;
+    }
+}
+
 const char *lbxfile_name(lbxfile_e file_id)
 {
     return lbxinfo[file_id].filename;

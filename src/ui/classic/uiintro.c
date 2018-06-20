@@ -26,6 +26,20 @@
 
 /* -------------------------------------------------------------------------- */
 
+static bool check_intro_files(void)
+{
+    const lbxfile_e tbl[3] = { LBXFILE_INTRO, LBXFILE_INTRO2, LBXFILE_INTROSND };
+    for (int i = 0; i < 3; ++i) {
+        if (!lbxfile_exists(tbl[i])) {
+            log_warning("skipping intro due to missing %s\n", lbxfile_name(tbl[i]));
+            return false;
+        }
+    }
+    return true;
+}
+
+/* -------------------------------------------------------------------------- */
+
 void ui_play_intro(void)
 {
     int16_t oi_skip;
@@ -35,6 +49,10 @@ void ui_play_intro(void)
     uint8_t *intro_sfx3;
     uint8_t *intro_sfx5;
     uint8_t *intro_gfx = 0, *old_gfx = 0;
+
+    if (!check_intro_files()) {
+        return;
+    }
 
     ui_palette_fadeout_14_14_2();
     lbxpal_select(0, -1, 0);
