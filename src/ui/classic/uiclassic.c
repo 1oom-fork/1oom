@@ -25,9 +25,27 @@
 
 /* -------------------------------------------------------------------------- */
 
+#define UI_ICON_MAX 147
+static int ui_icon = 146/*guardian*/;
+
+/* -------------------------------------------------------------------------- */
+
+static bool check_ui_icon(void *var)
+{
+    int v = (int)(intptr_t)var;
+    if ((v >= 0) && (v < UI_ICON_MAX)) {
+        return true;
+    } else {
+        log_error("invalid ui_icon %i, must be 0 <= N < %i\n", v, UI_ICON_MAX);
+        return false;
+    }
+}
+
 const struct cfg_items_s ui_cfg_items[] = {
     CFG_ITEM_BOOL("uiextra", &ui_extra_enabled),
     CFG_ITEM_BOOL("uifixbugs", &ui_fixbugs_enabled),
+    CFG_ITEM_COMMENT("0..146"),
+    CFG_ITEM_INT("uiicon", &ui_icon, check_ui_icon),
     CFG_ITEM_END
 };
 
@@ -291,7 +309,7 @@ static int set_ui_icon(void)
 {
     struct gfx_aux_s *aux = &ui_data.aux.ship_p1;
     uint8_t *gfx, *pal;
-    gfx = ui_data.gfx.ships[0x48 * 2 + 2];
+    gfx = ui_data.gfx.ships[ui_icon];
     pal = lbxfile_item_get(LBXFILE_FONTS, 2);
     memcpy(lbxpal_palette, pal, 256 * 3);
     gfx_aux_draw_frame_to(gfx, aux);
