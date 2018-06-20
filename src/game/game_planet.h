@@ -88,6 +88,11 @@ typedef enum {
 
 #define PLANET_NAME_LEN 12
 
+typedef enum {
+    PLANET_EXTRAS_GOVERNOR = 0,
+    PLANET_EXTRAS_NUM
+} planet_extras_t;
+
 typedef struct planet_s {
     char name[PLANET_NAME_LEN];
     uint16_t x;
@@ -139,6 +144,7 @@ typedef struct planet_s {
     planet_unrest_t unrest;
     bool unrest_reported;
     BOOLVEC_DECLARE(finished, FINISHED_NUM);
+    BOOLVEC_DECLARE(extras, PLANET_EXTRAS_NUM);
     /* remaining variables used only during game_turn_process */
     uint16_t inbound[PLAYER_NUM];
     uint16_t total_inbound[PLAYER_NUM];
@@ -156,5 +162,6 @@ extern void game_planet_adjust_percent(struct game_s *g, player_id_t owner, plan
 extern int game_planet_get_w1(const struct game_s *g, uint8_t planet_i);
 extern void game_planet_update_home(struct game_s *g);
 extern int game_planet_get_slider_text(const struct game_s *g, const planet_t *p, player_id_t player, planet_slider_i_t si, char *buf);
+extern void game_planet_govern(const struct game_s *g, planet_t *p);
 
 #endif

@@ -911,6 +911,8 @@ static void game_turn_explore(struct game_s *g)
                         if ((pli == g->evn.planet_orion_i) && game_num_news_orion) {
                             g->evn.have_orion_conquer = i + 1;
                         }
+                        /* stop governor for this planet */
+                        BOOLVEC_SET(p->extras, PLANET_EXTRAS_GOVERNOR, false);
                     }
                 }
             }
@@ -1901,5 +1903,13 @@ struct game_end_s game_turn_process(struct game_s *g)
     }
     game_remove_empty_fleets(g);
     game_planet_update_home(g);
+
+    /* governor */
+    for (int i = 0; i < g->galaxy_stars; ++i) {
+        planet_t *p = &(g->planet[i]);
+        if (p->owner != PLAYER_NONE && BOOLVEC_IS1(p->extras, PLANET_EXTRAS_GOVERNOR)) {
+            game_planet_govern(g, p);
+        }
+    }
     return game_end;
 }

@@ -121,7 +121,14 @@ static int game_save_encode_planet(uint8_t *buf, int pos, const planet_t *p, int
     SG_1OOM_EN_U16(p->rebels);
     SG_1OOM_EN_U8(p->unrest);
     SG_1OOM_EN_U8(p->unrest_reported);
+
+    ++version;  /* HACK ignore version 0 BV bug for next two BVs */
     SG_1OOM_EN_BV(p->finished, FINISHED_NUM);
+    SG_1OOM_EN_BV(p->extras, PLANET_EXTRAS_NUM);
+    --version;
+    if (version == 0) {
+        SG_1OOM_EN_DUMMY(4);
+    }
     return pos;
 }
 
@@ -172,7 +179,15 @@ static int game_save_decode_planet(const uint8_t *buf, int pos, planet_t *p, int
     SG_1OOM_DE_U16(p->rebels);
     SG_1OOM_DE_U8(p->unrest);
     SG_1OOM_DE_U8(p->unrest_reported);
+
+    ++version;  /* HACK ignore version 0 BV bug for next two BVs */
     SG_1OOM_DE_BV(p->finished, FINISHED_NUM);
+    SG_1OOM_DE_BV(p->extras, PLANET_EXTRAS_NUM);
+    --version;
+    if (version == 0) {
+        SG_1OOM_DE_DUMMY(4);
+    }
+
     return pos;
 }
 
