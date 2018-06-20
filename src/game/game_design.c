@@ -24,8 +24,8 @@
 static void game_get_random_shipnames(struct game_s *g, player_id_t player, char shipnames[SHIP_HULL_NUM][SHIP_NAME_LEN + 1])
 {
     BOOLVEC_DECLARE(name_unused, SHIP_NAME_NUM);
-    empiretechorbit_t *e = &(g->eto[player]);
-    shipresearch_t *srd = &(g->srd[player]);
+    const empiretechorbit_t *e = &(g->eto[player]);
+    const shipresearch_t *srd = &(g->srd[player]);
     char const * const *names = &game_str_tbl_ship_names[e->race * SHIP_NAME_NUM];
     for (int n = 0; n < SHIP_NAME_NUM; ++n) {
         BOOLVEC_SET1(name_unused, n);
@@ -80,22 +80,31 @@ static void game_design_look_add(struct game_design_s *gd, int ld)
 {
     shipdesign_t *sd = &(gd->sd);
     ship_hull_t hull = sd->hull;
-    int look = sd->look + ld;
+    int numlook = 0, look = sd->look + ld;
     int lookbase = SHIP_LOOK_PER_HULL * hull + gd->lookbase;
+    for (int i = 0; i < gd->sd_num; ++i) {
+        int l;
+        l = gd->tbl_shiplook[i];
+        if ((l >= lookbase) && (l < (lookbase + SHIP_LOOK_PER_HULL))) {
+            ++numlook;
+        }
+    }
     if (look < lookbase) {
         look = lookbase + SHIP_LOOK_PER_HULL - 1;
     } else if (look >= (lookbase + SHIP_LOOK_PER_HULL)) {
         look = lookbase;
     }
-    for (int i = 0; i < gd->sd_num; ++i) {
-        if (look == gd->tbl_shiplook[i]) {
-            look += ld;
-            if (look < lookbase) {
-                look = lookbase + SHIP_LOOK_PER_HULL - 1;
-            } else if (look >= (lookbase + SHIP_LOOK_PER_HULL)) {
-                look = lookbase;
+    if (numlook < SHIP_LOOK_PER_HULL) {
+        for (int i = 0; i < gd->sd_num; ++i) {
+            if (look == gd->tbl_shiplook[i]) {
+                look += ld;
+                if (look < lookbase) {
+                    look = lookbase + SHIP_LOOK_PER_HULL - 1;
+                } else if (look >= (lookbase + SHIP_LOOK_PER_HULL)) {
+                    look = lookbase;
+                }
+                i = -1;
             }
-            i = 0;
         }
     }
     sd->look = look;
@@ -160,7 +169,7 @@ static int game_design_calc_cost_item_do(struct game_design_s *gd, design_slot_t
 
 static void game_design_prepare_do(struct game_s *g, struct game_design_s *gd, player_id_t player, shipdesign_t *sd)
 {
-    empiretechorbit_t *e = &(g->eto[player]);
+    const empiretechorbit_t *e = &(g->eto[player]);
     gd->player_i = player;
     gd->sd_num = e->shipdesigns_num;
     game_get_random_shipnames(g, gd->player_i, gd->names);
@@ -176,27 +185,28 @@ static void game_design_prepare_do(struct game_s *g, struct game_design_s *gd, p
 
 void game_design_prepare(struct game_s *g, struct game_design_s *gd, player_id_t player, shipdesign_t *sd)
 {
-    empiretechorbit_t *e = &(g->eto[player]);
+    const empiretechorbit_t *e = &(g->eto[player]);
+    BOOLVEC_DECLARE(lookused, SHIP_LOOK_PER_BANNER);
+    BOOLVEC_CLEAR(lookused, SHIP_LOOK_PER_BANNER);
     game_design_prepare_do(g, gd, player, sd);
-    for (int i = 0; i < gd->sd_num; ++i) {
-        gd->tbl_shiplook[i] = g->srd[gd->player_i].design[i].look;
-    }
     gd->lookbase = e->banner * SHIP_LOOK_PER_BANNER;
+    for (int i = 0; i < gd->sd_num; ++i) {
+        uint8_t look;
+        look = g->srd[player].design[i].look;
+        gd->tbl_shiplook[i] = look;
+        BOOLVEC_SET1(lookused, look - gd->lookbase);
+    }
     /* from ui_design */
-    {
-        for (ship_hull_t hull = SHIP_HULL_SMALL; hull < SHIP_HULL_NUM; ++hull) {
-            uint8_t look, lookbase;
-            look = lookbase = SHIP_LOOK_PER_HULL * hull + gd->lookbase;
-            for (int i = 0; i < gd->sd_num; ++i) {
-                if (look == gd->tbl_shiplook[i]) {
-                    ++look;
-                    if (look >= (lookbase + SHIP_LOOK_PER_HULL)) {
-                        look = lookbase;
-                    }
-                }
+    for (ship_hull_t hull = SHIP_HULL_SMALL; hull < SHIP_HULL_NUM; ++hull) {
+        uint8_t look, lookbase;
+        look = lookbase = SHIP_LOOK_PER_HULL * hull;
+        for (int i = 0; i < SHIP_LOOK_PER_HULL; ++i) {
+            if (BOOLVEC_IS0(lookused, look + i)) {
+                look += i;
+                break;
             }
-            gd->tbl_shiplook_hull[hull] = look;
         }
+        gd->tbl_shiplook_hull[hull] = look + gd->lookbase;
     }
 }
 
@@ -428,6 +438,35 @@ void game_design_look_next(struct game_design_s *gd)
 void game_design_look_prev(struct game_design_s *gd)
 {
     game_design_look_add(gd, -1);
+}
+
+void game_design_look_fix(const struct game_s *g, player_id_t pi, shipdesign_t *sd)
+{
+    const empiretechorbit_t *e = &(g->eto[pi]);
+    bool need_fix = false;
+    int look = sd->look;
+    int lookbase = SHIP_LOOK_PER_HULL * sd->hull + e->banner * SHIP_LOOK_PER_BANNER;
+    BOOLVEC_DECLARE(lookused, SHIP_LOOK_PER_HULL);
+    BOOLVEC_CLEAR(lookused, SHIP_LOOK_PER_HULL);
+    for (int i = 0; i < e->shipdesigns_num; ++i) {
+        int l;
+        l = g->srd[pi].design[i].look;
+        if ((l >= lookbase) && (l < (lookbase + SHIP_LOOK_PER_HULL))) {
+            BOOLVEC_SET1(lookused, l - lookbase);
+            if (l == look) {
+                need_fix = true;
+            }
+        }
+    }
+    if (need_fix) {
+        for (int i = 0; i < SHIP_LOOK_PER_HULL; ++i) {
+            if (BOOLVEC_IS0(lookused, i)) {
+                look = lookbase + i;
+                break;
+            }
+        }
+        sd->look = look;
+    }
 }
 
 int game_design_build_tbl_fit_comp(struct game_s *g, struct game_design_s *gd, int8_t *buf)
