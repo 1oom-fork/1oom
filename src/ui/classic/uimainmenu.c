@@ -22,6 +22,7 @@
 #include "uiobj.h"
 #include "uipal.h"
 #include "uisound.h"
+#include "version.h"
 
 /* -------------------------------------------------------------------------- */
 
@@ -52,7 +53,13 @@ static void main_menu_draw_cb(void *vptr)
     ui_draw_erase_buf();
     ui_draw_copy_buf();
     lbxgfx_draw_frame(0, 0, d->gfx_vortex, UI_SCREEN_W);
-    lbxgfx_draw_frame(0, 0, d->gfx_title, UI_SCREEN_W);
+    if (!ui_extra_enabled) {
+        lbxgfx_draw_frame(0, 0, d->gfx_title, UI_SCREEN_W);
+    } else {
+        lbxgfx_draw_frame_offs(0, 0, d->gfx_title, 0, 0, UI_SCREEN_W - 1, 191, UI_SCREEN_W);
+        lbxfont_select(2, 7, 0, 0);
+        lbxfont_print_str_center(160, 193, "PROGRAM VERSION " PACKAGE_NAME " " VERSION_STR, UI_SCREEN_W);
+    }
     if (d->have_continue) {
         lbxfont_select(4, (d->selected == MAIN_MENU_ACT_CONTINUE_GAME) ? 3 : 2, 0, 0);
     } else {
