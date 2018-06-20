@@ -131,6 +131,9 @@ ui_turn_action_t ui_game_turn(struct game_s *g, int *load_game_i_ptr, int pi)
                         scrapi = ui_specs(g, pi);
                         sd_num = g->eto[pi].shipdesigns_num;
                         ok = (sd_num < NUM_SHIPDESIGNS);
+                        if (ok) {
+                            game_design_look_fix(g, pi, &gd.sd);
+                        }
                     }
                     if (ok) {
                         g->srd[pi].design[sd_num] = gd.sd;
