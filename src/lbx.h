@@ -57,6 +57,7 @@ extern uint8_t *lbxfile_item_get_with_len(lbxfile_e file_id, uint16_t entry_id, 
 extern void lbxfile_item_release(lbxfile_e file_id, uint8_t *ptr);
 extern void lbxfile_item_release_file(lbxfile_e file_id);
 
+extern bool lbxfile_exists(lbxfile_e file_id);
 extern const char *lbxfile_name(lbxfile_e file_id);
 extern lbxfile_e lbxfile_id(const char *filename);
 extern int lbxfile_type(lbxfile_e file_id);
