@@ -42,6 +42,7 @@ typedef enum {
     UIOBJ_TYPE_T9 = 9,
     UIOBJ_TYPE_TEXTLINE = 0xa,
     UIOBJ_TYPE_SCROLLAREA = 0xb,
+    UIOBJ_TYPE_WHEELAREA = 0xc
 } uiobj_type_t;
 
 typedef struct uiobj_s {
@@ -49,7 +50,7 @@ typedef struct uiobj_s {
     /*02*/ uint16_t y0;
     /*04*/ uint16_t x1;    /* inclusive */
     /*06*/ uint16_t y1;    /* inclusive */
-    /* 12 types
+    /* 13 types
         t0..3: buttons with gfx (and optional text) with different highlight conditions
         t1: toggle
         t2: set1
@@ -60,6 +61,7 @@ typedef struct uiobj_s {
         t8: altstr
         ta: text line
         tb: scroll area
+        tc: mouse wheel area
     */
     /*08*/ uint16_t type;
     /*1a*/ int16_t *vptr;
@@ -1352,7 +1354,7 @@ static int16_t uiobj_handle_input_sub0(void)
         uiobj_mouseoff = ui_cursor_mouseoff;
         for (int i = 1; i < uiobj_table_num; ++i) {
             p = &uiobj_tbl[i];
-            if ((p->type == UIOBJ_TYPE_SLIDER) && uiobj_is_at_xy(p, mx, my)) {
+            if (((p->type == UIOBJ_TYPE_SLIDER) || (p->type == UIOBJ_TYPE_WHEELAREA)) && uiobj_is_at_xy(p, mx, my)) {
                 oi = i;
                 break;
             }
@@ -1364,6 +1366,9 @@ static int16_t uiobj_handle_input_sub0(void)
                 } else {
                     uiobj_slider_minus(p, 1);
                 }
+                return oi;
+            } else if (p->type == UIOBJ_TYPE_WHEELAREA) {
+                *p->vptr += scroll;
                 return oi;
             }
         }
@@ -1822,6 +1827,19 @@ int16_t uiobj_add_mousearea_limited(uint16_t x0, uint16_t y0, uint16_t x1, uint1
     return uiobj_add_mousearea(x0, y0, x1, y1, key);
 }
 
+int16_t uiobj_add_mousewheel(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, int16_t *vptr)
+{
+    uiobj_t *p = &uiobj_tbl[uiobj_table_num];
+    p->x0 = x0;
+    p->y0 = y0;
+    p->x1 = x1;
+    p->y1 = y1;
+    p->type = UIOBJ_TYPE_WHEELAREA;
+    p->vptr = vptr;
+    p->key = MOO_KEY_UNKNOWN;
+    return UIOBJI_ALLOC();
+}
+
 int16_t uiobj_add_mousearea_all(mookey_t key)
 {
     uiobj_t *p = &uiobj_tbl[uiobj_table_num];
@@ -2033,7 +2051,7 @@ int16_t uiobj_select_from_list2(int x, int y, int w, const char *title, char con
     int h, dy, ty, linei = 0, itemi = 0, itemnum, itemoffs, foundi = 0;
     bool flag_done = false, flag_copy_buf = false, flag_found = false;
     uint16_t fonta4, fonta2b;
-    int16_t oi = 0, oi_title, oi_up, oi_dn, v18 = 0, upvar, dnvar, curval;
+    int16_t oi = 0, oi_title, oi_up, oi_dn, oi_wheel, v18 = 0, upvar, dnvar, curval, scroll = 0;
     char const * const *s = strtbl;
 
     uiobj_flag_select_list_active = true;
@@ -2095,6 +2113,7 @@ int16_t uiobj_select_from_list2(int x, int y, int w, const char *title, char con
     dnvar = (itemi >= itemnum) ? 1 : 0;
     oi_up = uiobj_add_t2(upx, upy, "", uplbx, &upvar, MOO_KEY_PAGEUP);
     oi_dn = uiobj_add_t2(dnx, dny, "", dnlbx, &dnvar, MOO_KEY_PAGEDOWN);
+    oi_wheel = uiobj_add_mousewheel(0, 0, 319, 199, &scroll);
 
     flag_done = false;
     curval = *selptr;
@@ -2119,6 +2138,19 @@ int16_t uiobj_select_from_list2(int x, int y, int w, const char *title, char con
                 i = itemnum - linenum;
                 SETMAX(i, 0);
             }
+            if (i >= itemnum) {
+                i = itemoffs;
+            }
+            itemoffs = i;
+            flag_rebuild = true;
+        } else if (oi == oi_wheel) {
+            int i;
+            i = itemoffs + scroll;
+            scroll = 0;
+            if ((i + linenum) > itemnum) {
+                i = itemnum - linenum;
+            }
+            SETMAX(i, 0);
             if (i >= itemnum) {
                 i = itemoffs;
             }
@@ -2182,6 +2214,7 @@ int16_t uiobj_select_from_list2(int x, int y, int w, const char *title, char con
             dnvar = (itemi >= itemnum) ? 1 : 0;
             oi_up = uiobj_add_t2(upx, upy, "", uplbx, &upvar, MOO_KEY_PAGEUP);
             oi_dn = uiobj_add_t2(dnx, dny, "", dnlbx, &dnvar, MOO_KEY_PAGEDOWN);
+            oi_wheel = uiobj_add_mousewheel(0, 0, 319, 199, &scroll);
         }
         if (uiobj_hmm8 != 0) {
             int oi2;

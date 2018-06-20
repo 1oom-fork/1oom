@@ -330,8 +330,9 @@ void ui_planets(struct game_s *g, player_id_t active_player)
 {
     struct planets_data_s d;
     bool flag_done = false, flag_trans;
-    int16_t oi_alt_moola, oi_up, oi_down, oi_ok, oi_trans, oi_minus, oi_plus, oi_tbl_planets[PLANETS_ON_SCREEN] /*, oi_slider*/;
+    int16_t oi_alt_moola, oi_up, oi_down, oi_wheel, oi_ok, oi_trans, oi_minus, oi_plus, oi_tbl_planets[PLANETS_ON_SCREEN] /*, oi_slider*/;
     uint8_t tbl_onscreen_planets[PLANETS_ON_SCREEN];
+    int16_t scroll = 0;
 
     load_pl_data(&d);
     uiobj_set_help_id(37);
@@ -357,6 +358,7 @@ again:
 
     oi_up = UIOBJI_INVALID;
     oi_down = UIOBJI_INVALID;
+    oi_wheel = UIOBJI_INVALID;
     oi_ok = UIOBJI_INVALID;
     oi_trans = UIOBJI_INVALID;
     oi_minus = UIOBJI_INVALID;
@@ -385,6 +387,9 @@ again:
         } else if (oi == oi_down) {
             ui_sound_play_sfx_24();
             d.pos += PLANETS_ON_SCREEN;
+        } else if (oi == oi_wheel) {
+            d.pos += scroll;
+            scroll = 0;
         }
         for (int i = 0; i < PLANETS_ON_SCREEN; ++i) {
             if (oi == oi_tbl_planets[i]) {
@@ -436,6 +441,7 @@ again:
                     oi_tbl_planets[i] = uiobj_add_mousearea(7, y0, 248, y1, MOO_KEY_UNKNOWN);
                 }
             }
+            oi_wheel = uiobj_add_mousewheel(0, 0, 319, 159, &scroll);
             oi_trans = UIOBJI_INVALID;
             if (!flag_trans) {
                 if (g->eto[active_player].reserve_bc != 0) {
