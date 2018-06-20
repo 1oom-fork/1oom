@@ -406,6 +406,7 @@ int main_do(void)
     lbxfont_init();
     lbxpal_select(0, -1, 0);
     lbxpal_update();
+    textcolor = lbxpal_find_closest(0x1f, 0x1f, 0x1f);
     drawscreen();
     hw_video_draw_buf();
     while (1) {
@@ -497,12 +498,7 @@ int main_do(void)
                 case MOO_KEY_9:
                     lbxpal_select((k & 0xff) - MOO_KEY_0, -1, 0);
                     lbxpal_update();
-                    break;
-                case MOO_KEY_t:
-                    ++textcolor;
-                    break;
-                case MOO_KEY_y:
-                    --textcolor;
+                    textcolor = lbxpal_find_closest(0x1f, 0x1f, 0x1f);
                     break;
                 case MOO_KEY_e:
                     if (in_lbx) {
@@ -541,6 +537,7 @@ int main_do(void)
                     have_mus = false;
                     /* hw_audio_music_release(0); */
                 }
+                textcolor = lbxpal_find_closest(0x1f, 0x1f, 0x1f);
             }
             drawscreen();
             hw_video_draw_buf();
