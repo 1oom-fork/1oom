@@ -32,7 +32,6 @@ General keys:
 - Up/Down/Pageup/Pagedn: move the cursor
 - Esc: back out
 - 0..9: set palette N
-- t/y: inc/dec text color
 - w/a/s/d: change x/y offset, rotation angle, ...
 - f: fade out music
 
