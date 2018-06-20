@@ -6,9 +6,9 @@ The code is divided into the following directories:
  * src/         - utility functions, tools
  *   game/      - game logic
  *   ui/        - UI implementations
- *    classic/  - the 1993 UI
- *    cmdline/  - experimental command line UI
- *    nop/      - dummy UI for tools
+ *     classic/ - the 1993 UI
+ *     cmdline/ - experimental command line UI
+ *     nop/     - dummy UI for tools
  *   hw/        - hardware abstraction
  *     sdl/     - libSDL
  *       1/     - libSDL 1.2.x
@@ -16,7 +16,7 @@ The code is divided into the following directories:
  *     alleg/   - Allegro
  *       4/     - Allegro 4.x
  *     nop/     - dummy HW for tools
- *   os/        - Operating System; file paths, time
+ *   os/        - Operating System; file paths
  *     unix/    - yay
  *     win32/   - boo
  *     msdos/   - wtf
@@ -73,6 +73,10 @@ The resulting binaries follow a "1oom_$UI_$HW" naming convention.
 - defines and enums are UPPERCASE with '_' for space
 
 - avoid global variables
+
+- declare functions / data which are not used outside the module as static
+
+- group static functions / data above others, separate with a /* --.. */ line
 
 - avoid memory allocations after game startup
 
@@ -146,6 +150,7 @@ An incomplete list of reasons for rejecting patches:
   * There is no reason to require Turing-complete dependencies, for example
     Python or Perl, to build this project.
     (No, Debian libsdl1.2-dev depending on python is not an excuse.)
+    (Neither is src/version.sh.)
     There is very little reason for tools (convert, ...) either.
     Limiting build deps benefits portability.
 
