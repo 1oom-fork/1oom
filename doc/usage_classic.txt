@@ -42,6 +42,7 @@ The following new UI features are always enabled/available:
 - In Tech screen Tab runs through tech fields
 - Clicking the portraits in Races screen brings Report page
 - Right-clicking on the ship image or Ships button cycles the other way
+- Ind slider no longer shows 0.N/y when at max factories
 
 The following new UI features are enabled by default:
 - (none at the moment)
