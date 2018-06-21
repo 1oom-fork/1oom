@@ -3800,7 +3800,7 @@ static void game_ai_classic_turn_diplo_p2(struct game_s *g)
                 /*16441*/
                 int16_t v, v2, dv2;
                 v = game_diplo_get_mood(g, p1, p2);
-                v2 = v + e2->trust[p1] + game_diplo_tbl_reldiff[e2->trait1];
+                v2 = v + e1->trust[p2] + game_diplo_tbl_reldiff[e2->trait1];
                 dv2 = e1->diplo_val[p2] * 2;
                 if ((v2 <= -100) || (v <= -100)) {
                     e1->diplo_type[p2] = 0;
@@ -3827,7 +3827,7 @@ static void game_ai_classic_turn_diplo_p2(struct game_s *g)
             if (e1->diplo_type[p2] == 0) {
                 game_ai_classic_diplo_wage_war(g, p1, p2);
             }
-            if ((e1->diplo_type[p2] == 2) && (!rnd_0_nm1(10, &g->seed))) {
+            if ((e1->diplo_type[p2] == 2) && rnd_0_nm1(10, &g->seed)) {
                 e1->diplo_type[p2] = 0;
             }
         }
