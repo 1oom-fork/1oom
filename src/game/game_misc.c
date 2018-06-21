@@ -547,6 +547,33 @@ void game_adjust_slider_group(int16_t *slidertbl, int slideri, int16_t value, in
     }
 }
 
+void game_equalize_slider_group(int16_t *slidertbl, int num, const uint16_t *locktbl)
+{
+    int total = 0;
+    int num_unlocked = 0;
+    for (int i = 0; i < num; ++i) {
+        if (!locktbl[i]) {
+            total += slidertbl[i];
+            ++num_unlocked;
+        }
+    }
+    if (num_unlocked > 0) {
+        int n = total / num_unlocked;
+        int o = total % num_unlocked;
+        for (int i = 0; i < num; ++i) {
+            if (!locktbl[i]) {
+                int v;
+                v = n;
+                if (o) {
+                    ++v;
+                    --o;
+                }
+                slidertbl[i] = v;
+            }
+        }
+    }
+}
+
 int game_get_min_dist(const struct game_s *g, player_id_t player_i, int planet_i)
 {
     int dist, mindist = 255;
