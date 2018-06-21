@@ -13,6 +13,7 @@
 #define BOOLVEC_SET0(_name_, _i_) do { int ti = (_i_); _name_[ti / 8] &= ~(1 << (ti & 7)); } while (0)
 #define BOOLVEC_SET1(_name_, _i_) do { int ti = (_i_); _name_[ti / 8] |=  (1 << (ti & 7)); } while (0)
 #define BOOLVEC_SET(_name_, _i_, _v_) do { int ti = (_i_); uint8_t *tp = &(_name_[ti / 8]); if ((_v_)) { *tp |= (1 << (ti & 7)); } else { *tp &= ~(1 << (ti & 7)); } } while (0)
+#define BOOLVEC_TOGGLE(_name_, _i_) do { int ti = (_i_); _name_[ti / 8] ^=  (1 << (ti & 7)); } while (0)
 #define BOOLVEC_IS0(_name_, _i_) ((_name_[(_i_) / 8] & (1 << ((_i_) & 7))) == 0)
 #define BOOLVEC_IS1(_name_, _i_) ((_name_[(_i_) / 8] & (1 << ((_i_) & 7))) != 0)
 #define BOOLVEC_IS_CLEAR(_name_, _fnum_) (((_fnum_) <= 8) ? ((_name_)[0] == 0) : (/*FIXME*/0))
