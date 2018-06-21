@@ -6,8 +6,8 @@ The code is divided into the following directories:
  * src/         - utility functions, tools
  *   game/      - game logic
  *   ui/        - UI implementations
- *    classic/  - the 1993 UI
- *    nop/      - dummy UI for tools
+ *     classic/ - the 1993 UI
+ *     nop/     - dummy UI for tools
  *   hw/        - hardware abstraction
  *     sdl/     - libSDL
  *       1/     - libSDL 1.2.x
@@ -32,11 +32,14 @@ The resulting binaries follow a "1oom_$UI_$HW" naming convention.
 
 - always add the { } braces to if, do, while, for statements
 
-- one space after if, do, while, for and return statements,
+- one space after a ',', if, do, while, for and return statements,
   no space after function name:
-    if (func(4) < 0) {
+    if (func(4, 5) < 0) {
         return (foo * 4) + 2;
     }
+
+- add spaces around +, -, *, /, =, == etc:
+    a = (22 + b * 4) / 7;
 
 - have the opening brace on the same line as the statement,
   unless the condition spills to multiple lines:
@@ -50,6 +53,12 @@ The resulting binaries follow a "1oom_$UI_$HW" naming convention.
         ...
     }
 
+- have the opening brace of a function in the next line:
+    int func(void)
+    {
+        ...
+    }
+
 - use C-style comments /* like here */
 
 - function and variable names are lowercase with '_' for space
@@ -57,6 +66,10 @@ The resulting binaries follow a "1oom_$UI_$HW" naming convention.
 - defines and enums are UPPERCASE with '_' for space
 
 - avoid global variables
+
+- declare functions / data which are not used outside the module as static
+
+- group static functions / data above others, separate with a /* --.. */ line
 
 - avoid memory allocations after game startup
 
