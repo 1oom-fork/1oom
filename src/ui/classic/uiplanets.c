@@ -349,7 +349,7 @@ again:
     for (int i = 0; i < g->galaxy_stars; ++i) {
         if (g->planet[i].owner == active_player) {
             if (i == g->planet_focus_i[active_player]) {
-                d.pos = i - 5;
+                d.pos = d.num - 5;  /* WASBUG MOO1 uses i - 5 */
                 d.selected = d.num - d.pos;
             }
             d.planets[d.num++] = i;
