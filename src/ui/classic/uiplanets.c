@@ -442,7 +442,7 @@ again:
                     oi_tbl_planets[i] = uiobj_add_mousearea(7, y0, 248, y1, MOO_KEY_UNKNOWN);
                 }
             }
-            oi_wheel = uiobj_add_mousewheel(0, 0, 319, 162, &scroll);
+            oi_wheel = uiobj_add_mousewheel(0, 0, 319, 159, &scroll);
             oi_trans = UIOBJI_INVALID;
             if (!flag_trans) {
                 if (g->eto[active_player].reserve_bc != 0) {
