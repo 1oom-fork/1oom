@@ -257,7 +257,7 @@ void ui_game_start(struct game_s *g)
     if (!ui_extra_enabled) {
         for (int pli = 0; pli < g->galaxy_stars; ++pli) {
             planet_t *p = &(g->planet[pli]);
-            BOOLVEC_SET(p->extras, PLANET_EXTRAS_GOVERNOR, false);
+            BOOLVEC_SET0(p->extras, PLANET_EXTRAS_GOVERNOR);
         }
     }
     /* HACK ensure the game starts with a wipe, fixing -new help gfx glitch  */

@@ -196,7 +196,7 @@ void game_planet_destroy(struct game_s *g, uint8_t planet_i, player_id_t attacke
     p->shield = 0;
     p->bc_to_shield = 0;
     /* stop governor for this planet */
-    BOOLVEC_SET(p->extras, PLANET_EXTRAS_GOVERNOR, false);
+    BOOLVEC_SET0(p->extras, PLANET_EXTRAS_GOVERNOR);
     for (int i = 0; i < g->galaxy_stars; ++i) {
         p = &(g->planet[i]);
         if (p->reloc == planet_i) {

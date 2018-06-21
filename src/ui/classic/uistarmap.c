@@ -574,7 +574,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             }
         } else if (oi1 == oi_governor) {
             /* invert the governor flag */
-            BOOLVEC_SET(p->extras, PLANET_EXTRAS_GOVERNOR, BOOLVEC_IS0(p->extras, PLANET_EXTRAS_GOVERNOR));
+            BOOLVEC_TOGGLE(p->extras, PLANET_EXTRAS_GOVERNOR);
             if (BOOLVEC_IS1(p->extras, PLANET_EXTRAS_GOVERNOR)) {
                 game_planet_govern(g, p);
             }

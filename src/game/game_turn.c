@@ -912,7 +912,7 @@ static void game_turn_explore(struct game_s *g)
                             g->evn.have_orion_conquer = i + 1;
                         }
                         /* stop governor for this planet */
-                        BOOLVEC_SET(p->extras, PLANET_EXTRAS_GOVERNOR, false);
+                        BOOLVEC_SET0(p->extras, PLANET_EXTRAS_GOVERNOR);
                     }
                 }
             }
