@@ -328,7 +328,7 @@ static void game_turn_update_trade(struct game_s *g)
                         e->trade_established_bc[j] = estbc;
                         e2->trade_established_bc[i] = estbc;
                     }
-                    v = (e->relation1[j] + 25) / 60;
+                    v = (rnd_1_n(200, &g->seed) + e->relation1[j] + 25) / 60;
                     SETMAX(v, 0);
                     ADDSATT(e->trade_percent[j], v, 100);
                     ADDSATT(e2->trade_percent[i], v, 100);
