@@ -330,7 +330,7 @@ int game_planet_get_slider_text(const struct game_s *g, uint8_t planet_i, player
                 if (prod.vthis != 0) {
                     int v20;
                     v20 = (prod.vthis * 10) / cost;
-                    if ((v20 / 10 + p->factories) > ((p->pop - p->trans_num) * p->pop_oper_fact)) {
+                    if ((v20 / 10 + p->factories) >= ((p->pop - p->trans_num) * p->pop_oper_fact)) {
                         if (p->pop_oper_fact < e->colonist_oper_factories) {
                             if (e->race != RACE_MEKLAR) {
                                 str = game_str_sm_refit;
