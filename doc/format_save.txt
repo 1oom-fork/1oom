@@ -118,7 +118,8 @@ c       name (ASCIIz)
 1       unrest: 1=unrest, 3=rebellion
 1       unrest reported (0/1)
 1       build finished (bitmask; bits: 0=factories, 1=eco1, 2=eco2, 3=stargate, 4=shield, 5=ship)
-5       (0, unused)
+1       extras (bitmask; bits: 0=governor)
+4       (0, unused)
 
 
 @PLAYERS * @STARS * Seen data

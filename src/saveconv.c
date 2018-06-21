@@ -1267,6 +1267,7 @@ static const struct game_intros_s game_intros_planet[] = {
     GAME_INTROS_VAL(planet_s, unrest),
     GAME_INTROS_VAL(planet_s, unrest_reported),
     GAME_INTROS_BV(planet_s, finished, FINISHED_NUM),
+    GAME_INTROS_BV(planet_s, extras, PLANET_EXTRAS_NUM),
     GAME_INTROS_END
 };
 
@@ -2115,6 +2116,7 @@ static int savetype_en_text(struct game_s *g, const char *fname)
         OUTLINE "unrest = %i\n", p->unrest);
         OUTLINE "unrest_reported = %i\n", p->unrest_reported);
         OUTLINE "finished = %s\n", savetype_en_bv(p->finished, FINISHED_NUM));
+        OUTLINE "extras = %s\n", savetype_en_bv(p->extras, PLANET_EXTRAS_NUM));
         text_dump_prefix_del(tp);
         OUTFLUSH();
     }
