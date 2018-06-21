@@ -26,7 +26,7 @@ The following new UI features are always enabled/available:
 - Local multiplayer (use -new or -uiextra to start a game)
 - Lowercase allowed in save names
 - Load Game screen uses numbers as hotkeys for slots
-- Mouse wheel can be used to adjust sliders
+- Mouse wheel can be used to adjust sliders and scroll lists
 
 The config file item "ui.uiextra" (set via the -uiextra command-line option)
 enables the following extra UI features:
@@ -34,3 +34,4 @@ enables the following extra UI features:
 - New Game screen allows setting opponent race/banner/names and AI/human flag
 - Summary of forces shown before ship combat
 - New Auto and Retreat buttons for space combat autoresolve
+- Pressing = on the Tech screen adjusts only the unlocked sliders
