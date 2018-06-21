@@ -28,6 +28,7 @@ The following new UI features are always enabled/available:
 - Load Game screen uses numbers as hotkeys for slots
 - Objects with hotkeys can be navigated to using cursor keys
 - Mouse wheel can be used to adjust sliders and scroll lists
+- Ind slider no longer shows 0.N/y when at max factories
 
 The config file item "ui.uiextra" (set via the -uiextra command-line option)
 enables the following extra UI features:
