@@ -31,6 +31,7 @@ The following new UI features are always enabled/available:
 - Objects with hotkeys can be navigated to using cursor keys
 - Mouse wheel can be used to adjust sliders and scroll lists
 - Clicking the portraits in Races screen brings Report page
+- Ind slider no longer shows 0.N/y when at max factories
 
 The config file item "ui.uiextra" (set via the -uiextra command-line option)
 enables the following extra UI features:
