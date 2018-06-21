@@ -190,8 +190,9 @@ int ui_fleet(struct game_s *g, player_id_t active_player)
 {
     struct fleet_data_s d;
     bool flag_done = false, flag_scrap = false;
-    int16_t oi_up, oi_down, oi_ok, oi_scrap, oi_view, oi_tbl_ship[NUM_SHIPDESIGNS], oi_tbl_line[FLEET_LINES];
+    int16_t oi_up, oi_down, oi_wheel, oi_ok, oi_scrap, oi_view, oi_tbl_ship[NUM_SHIPDESIGNS], oi_tbl_line[FLEET_LINES];
     int ret = -1;
+    int16_t scroll = 0;
 
     load_fl_data(&d);
 
@@ -210,6 +211,7 @@ int ui_fleet(struct game_s *g, player_id_t active_player)
     do { \
         oi_up = UIOBJI_INVALID; \
         oi_down = UIOBJI_INVALID; \
+        oi_wheel = UIOBJI_INVALID; \
         oi_ok = UIOBJI_INVALID; \
         oi_view = UIOBJI_INVALID; \
         oi_scrap = UIOBJI_INVALID; \
@@ -265,6 +267,10 @@ int ui_fleet(struct game_s *g, player_id_t active_player)
                 d.pos = d.num - FLEET_LINES;
             }
             SETMAX(d.pos, 0);
+        } else if (oi == oi_wheel) {
+            d.pos += scroll;
+            scroll = 0;
+            SETRANGE(d.pos, 0, d.num - FLEET_LINES);
         }
         for (int i = 0; i < d.lines; ++i) {
             if (oi == oi_tbl_line[i]) {
@@ -316,7 +322,9 @@ int ui_fleet(struct game_s *g, player_id_t active_player)
             for (int i = 0; i < d.lines; ++i) {
                 oi_tbl_line[i] = uiobj_add_mousearea(5, 15 + i * 33, 288, 44 + i * 33, MOO_KEY_UNKNOWN);
             }
-
+            if (d.num >= FLEET_LINES) {
+                oi_wheel = uiobj_add_mousewheel(0, 0, 319, 199, &scroll);
+            }
             ui_draw_finish();
             ui_delay_ticks_or_click(3);
         }
