@@ -28,7 +28,7 @@ The following new UI features are always enabled/available:
 - Local multiplayer (use -new or -uiextra to start a game)
 - Lowercase allowed in save names
 - Objects with hotkeys can be navigated to using cursor keys
-- Mouse wheel can be used to adjust sliders
+- Mouse wheel can be used to adjust sliders and scroll lists
 
 The following new UI features are enabled by default:
 - (none at the moment)
@@ -38,5 +38,6 @@ enables the following extra UI features:
 - New Game screen allows setting opponent race/banner/names and AI/human flag
 - Clicking the portraits in Races screen brings Report page
 - Report screen shows name of AI leaders, Map screen shows current year
+- Pressing = on the Tech screen adjusts only the unlocked sliders
 
 See doc/list_gamediff.txt for a list of differences in the game itself.
