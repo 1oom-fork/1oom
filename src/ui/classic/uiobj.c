@@ -163,7 +163,7 @@ int uiobj_maxy = 0;
 
 #ifdef FEATURE_MODEBUG
 #define DEBUGLEVEL_UIOBJ    1
-static void dump_uiobj_p(uiobj_t *p)
+static void dump_uiobj_p(const uiobj_t *p)
 {
     LOG_DEBUG((DEBUGLEVEL_UIOBJ, "i:%i xy:%i-%i,%i-%i s:%i t:%x key:%05x(%c) vptr:%i*:%i ", (p - uiobj_tbl), p->x0, p->x1, p->y0, p->y1, p->scale, p->type, p->key, (p->key >= 0x20 && p->key < 0x7e) ? p->key : '.', p->vptr ? 0 : 1, p->vptr ? *p->vptr : 0));
     switch (p->type) {
@@ -1119,11 +1119,14 @@ static int16_t uiobj_kbd_dir_key(int dirx, int diry)
 static int16_t uiobj_handle_kbd_find_alt(int16_t oi, uint32_t key)
 {
     const uiobj_t *p = &uiobj_tbl[oi];
+    mookey_t k = KBD_GET_KEY(key);
+    uint32_t kmod = KBD_GET_KEYMOD(key);
+    char c = ((k >= 0x20) && (k < 0x7e)) ? KBD_GET_CHAR(key) : 0;
     while (1
       && (oi != uiobj_table_num)
-      && (!((KBD_GET_KEYMOD(key) == p->key) && (p->type != 8)))
+      && (!((p->type != 8) && ((kmod == p->key) || (c && (c == p->key)))))
     ) {
-        if ((p->type == 8) && KBD_MOD_ONLY_ALT(key) && (KBD_GET_KEY(key) == p->key)) {
+        if ((p->type == 8) && KBD_MOD_ONLY_ALT(key) && (k == p->key)) {
             break;
         }
         ++oi;
@@ -1353,24 +1356,27 @@ static int16_t uiobj_handle_input_sub0(void)
     uiobj_mouseoff = ui_cursor_mouseoff;
     if (kbd_have_keypress()) {
         uint32_t key = uiobj_handle_kbd(&oi);
-        if (KBD_GET_KEY(key) == MOO_KEY_UNKNOWN) {
+        mookey_t k = KBD_GET_KEY(key);
+        uint32_t kmod = KBD_GET_KEYMOD(key);
+        char c = ((k >= 0x20) && (k < 0x7e)) ? KBD_GET_CHAR(key) : 0;
+        if (k == MOO_KEY_UNKNOWN) {
             return 0;
         }
         /* checks for F11 and F12 debug keys omitted */
-        if (KBD_GET_KEY(key) == MOO_KEY_F1) {
+        if (kmod == MOO_KEY_F1) {
             if (uiobj_help_id != -1) {
                 ui_help(uiobj_help_id);
             }
             return 0;
         }
-        if (KBD_GET_KEYMOD(key) == MOO_KEY_ESCAPE) {
+        if (kmod == MOO_KEY_ESCAPE) {
             return -1;
         }
         p = &uiobj_tbl[oi];
         if (p->type == 8) {
             return oi;
         }
-        if (KBD_GET_KEYMOD(key) == p->key) {
+        if ((kmod == p->key) || (c && (c == p->key))) {
             if (p->type == 6) {
                 return 0;
             }
@@ -1399,7 +1405,7 @@ static int16_t uiobj_handle_input_sub0(void)
             uiobj_hmm1_oi = -1;
             return oi;
         }
-        if (KBD_GET_KEY(key) == MOO_KEY_RETURN) {
+        if (k == MOO_KEY_RETURN) {
             oi = uiobj_find_obj_at_cursor();
             if (oi != 0) {
                 p = &uiobj_tbl[oi];
@@ -1434,12 +1440,12 @@ static int16_t uiobj_handle_input_sub0(void)
                 }
             }
         }
-        if ((KBD_GET_CHAR(key) == '+') || (KBD_GET_CHAR(key) == '-')) {
+        if ((c == '+') || (c == '-')) {
             oi = uiobj_find_obj_at_cursor();
             if (oi != 0) {
                 p = &uiobj_tbl[oi];
                 if (p->type == 6) {
-                    if (KBD_GET_CHAR(key) == '+') {
+                    if (c == '+') {
                         uiobj_slider_plus(p, 5);
                     } else {
                         uiobj_slider_minus(p, 5);
