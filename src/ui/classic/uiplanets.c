@@ -109,12 +109,11 @@ static void planets_draw_cb(void *vptr)
             p = &(g->planet[d->planets[pi]]);
             lbxfont_select(2, 0xb, 0, 0);
             lbxfont_print_num_right(17, y0, pi + 1, UI_SCREEN_W, ui_scale);
-            lbxfont_select(2, 0xd, 0, 0);
+            lbxfont_select(2, BOOLVEC_IS1(p->extras, PLANET_EXTRAS_GOVERNOR) ? 0xe : 0xd, 0, 0);
             lbxfont_print_str_normal(25, y0, p->name, UI_SCREEN_W, ui_scale);
             if (BOOLVEC_IS1(p->extras, PLANET_EXTRAS_GOVERNOR)) {
-                /* draw green box to highlight governor
-                   not sure how to make font letters green... */
-                ui_draw_filled_rect(25+40, y0+1, 25+40+1, y0+4, 0x71, ui_scale);
+                /* draw green box to highlight governor */
+                ui_draw_filled_rect(25 + 40, y0 + 1, 25 + 40 + 1, y0 + 4, 0x71, ui_scale);
             }
             lbxfont_select(2, 6, 0, 0);
             lbxfont_print_num_right(83, y0, p->pop, UI_SCREEN_W, ui_scale);
