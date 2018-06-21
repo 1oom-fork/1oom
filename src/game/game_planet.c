@@ -345,29 +345,26 @@ int game_planet_get_slider_text(const struct game_s *g, uint8_t planet_i, player
                 if ((vthis < adjwaste) || (vthis == 0)) {
                     str = (vthis < adjwaste) ? game_str_sm_ecowaste : game_str_sm_prodnone;
                 } else {
-                    if (e->race != RACE_SILICOID) {
-                        vthis -= adjwaste;
-                        SETMAX(vthis, 0);
-                        if ((vthis > 0) && (e->have_atmos_terra) && (p->growth == PLANET_GROWTH_HOSTILE)) {
-                            vthis -= game_num_atmos_cost - p->bc_to_ecoproj;
-                            if (vthis < 0) {
-                                flag_ecoproj = true;
-                                str = game_str_sm_ecoatmos;
-                            }
+                    SUBSAT0(vthis, adjwaste);
+                    if ((vthis > 0) && e->have_atmos_terra && (p->growth == PLANET_GROWTH_HOSTILE)) {
+                        vthis -= game_num_atmos_cost - p->bc_to_ecoproj;
+                        if (vthis < 0) {
+                            flag_ecoproj = true;
+                            str = game_str_sm_ecoatmos;
                         }
-                        if ((vthis > 0) && (e->have_soil_enrich) && (p->growth == PLANET_GROWTH_NORMAL)) {
-                            vthis -= game_num_soil_cost - p->bc_to_ecoproj;
-                            if (vthis < 0) {
-                                flag_ecoproj = true;
-                                str = game_str_sm_ecosoil;
-                            }
+                    }
+                    if ((vthis > 0) && e->have_soil_enrich && (p->growth == PLANET_GROWTH_NORMAL)) {
+                        vthis -= game_num_soil_cost - p->bc_to_ecoproj;
+                        if (vthis < 0) {
+                            flag_ecoproj = true;
+                            str = game_str_sm_ecosoil;
                         }
-                        if ((vthis > 0) && (e->have_adv_soil_enrich) && ((p->growth == PLANET_GROWTH_NORMAL) || (p->growth == PLANET_GROWTH_FERTILE))) {
-                            vthis -= game_num_adv_soil_cost - p->bc_to_ecoproj;
-                            if (vthis < 0) {
-                                flag_ecoproj = true;
-                                str = game_str_sm_ecogaia;
-                            }
+                    }
+                    if ((vthis > 0) && e->have_adv_soil_enrich && ((p->growth == PLANET_GROWTH_NORMAL) || (p->growth == PLANET_GROWTH_FERTILE))) {
+                       vthis -= game_num_adv_soil_cost - p->bc_to_ecoproj;
+                       if (vthis < 0) {
+                            flag_ecoproj = true;
+                            str = game_str_sm_ecogaia;
                         }
                     }
                     flag_tform = false;
