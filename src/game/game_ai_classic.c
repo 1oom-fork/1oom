@@ -1781,7 +1781,7 @@ static void game_ai_classic_turn_p3(struct game_s *g)
                         sl[PLANET_SLIDER_IND] = 10;
                     }
                     if (sl[PLANET_SLIDER_ECO] < 71) {
-                        sl[PLANET_SLIDER_IND] = 25;
+                        sl[PLANET_SLIDER_TECH] = 25;
                     }
                     if (p->pop < ((p->max_pop3 * 3) / 4)) {
                         sl[PLANET_SLIDER_IND] = 50;
