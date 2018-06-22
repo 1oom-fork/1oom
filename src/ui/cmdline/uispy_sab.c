@@ -110,14 +110,13 @@ ui_sabotage_t ui_spy_sabotage_ask(struct game_s *g, int spy, int target, uint8_t
 
 int ui_spy_sabotage_done(struct game_s *g, int pi, int spy, int target, ui_sabotage_t act, int other1, int other2, uint8_t planet, int snum)
 {
-    const empiretechorbit_t *e = &(g->eto[target]);
     const planet_t *p = &(g->planet[planet]);
     ui_switch_1(g, pi);
     printf("Sabotage | %s | ", p->name);
     if (spy == PLAYER_NONE) {
         printf("%s ", game_str_sb_unkn);
     } else {
-        printf("%s %s ", (spy == pi) ? game_str_sb_your : game_str_tbl_race[e->race], game_str_sb_spies);
+        printf("%s %s ", (spy == pi) ? game_str_sb_your : game_str_tbl_race[g->eto[spy].race], game_str_sb_spies);
     }
     if (snum > 0) {
         switch (act) {
