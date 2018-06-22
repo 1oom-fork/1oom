@@ -116,10 +116,10 @@ static uint16_t get_base_cost_mod_jammer(const struct game_s *g, int player_i, i
     return (tbl_shiptech_jammer[tech_i].cost[SHIP_HULL_LARGE] * mult) / 1000 + tbl_shiptech_jammer[tech_i].power[SHIP_HULL_LARGE] / 10;
 }
 
-static uint8_t find_best_tech_type(BOOLVEC_PTRPARAMI(tbl), int base, int step, int num)
+static uint8_t find_best_tech_type(BOOLVEC_PTRPARAMI(tbl), int base, int step, int last)
 {
     int best = 0;
-    for (int i = base; i < num; i += step) {
+    for (int i = base; i <= last; i += step) {
         if (BOOLVEC_IS1(tbl, i)) {
             best = i;
         }
@@ -337,11 +337,11 @@ uint8_t game_get_best_jammer(const struct game_s *g, player_id_t player_i, int t
 
 void game_update_tech_util(struct game_s *g)
 {
-    BOOLVEC_TBL_DECLARE(tbl_techcompl, TECH_FIELD_NUM, 50);
+    BOOLVEC_TBL_DECLARE(tbl_techcompl, TECH_FIELD_NUM, 50 + 1);
     for (player_id_t pi = PLAYER_0; pi < g->players; ++pi) {
         empiretechorbit_t *e = &(g->eto[pi]);
         uint8_t b, tech_i;
-        BOOLVEC_TBL_CLEAR(tbl_techcompl, TECH_FIELD_NUM, 50);
+        BOOLVEC_TBL_CLEAR(tbl_techcompl, TECH_FIELD_NUM, 50 + 1);
         for (tech_field_t field_i = TECH_FIELD_COMPUTER; field_i < TECH_FIELD_NUM; ++field_i) {
             uint8_t *p = g->srd[pi].researchcompleted[field_i];
             uint32_t len = e->tech.completed[field_i];
