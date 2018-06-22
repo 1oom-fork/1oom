@@ -105,8 +105,10 @@ static void planets_draw_cb(void *vptr)
             int y0;
             planet_t *p;
             const char *str;
+            uint8_t pli;
+            pli = d->planets[pi];
             y0 = 22 + i * 11;
-            p = &(g->planet[d->planets[pi]]);
+            p = &(g->planet[pli]);
             lbxfont_select(2, 0xb, 0, 0);
             lbxfont_print_num_right(17, y0, pi + 1, UI_SCREEN_W, ui_scale);
             lbxfont_select(2, BOOLVEC_IS1(p->extras, PLANET_EXTRAS_GOVERNOR) ? 0xe : 0xd, 0, 0);
@@ -149,19 +151,20 @@ static void planets_draw_cb(void *vptr)
             }
             lbxfont_print_num_right(214, y0, v, UI_SCREEN_W, ui_scale);
             str = NULL;
-            if (g->evn.have_plague && (g->evn.plague_planet_i == pi)) {
+            lbxfont_select(2, 0xb, 0, 0);
+            if (g->evn.have_plague && (g->evn.plague_planet_i == pli)) {
                 str = game_str_pl_plague;
-            } else if (g->evn.have_nova && (g->evn.nova_planet_i == pi)) {
+            } else if (g->evn.have_nova && (g->evn.nova_planet_i == pli)) {
                 str = game_str_pl_nova;
-            } else if (g->evn.have_comet && (g->evn.comet_planet_i == pi)) {
+            } else if (g->evn.have_comet && (g->evn.comet_planet_i == pli)) {
                 str = game_str_pl_comet;
-            } else if (g->evn.have_pirates && (g->evn.pirates_planet_i == pi)) {
+            } else if (g->evn.have_pirates && (g->evn.pirates_planet_i == pli)) {
                 str = game_str_pl_pirates;
             } else if (p->unrest == PLANET_UNREST_REBELLION) {
                 str = game_str_pl_rebellion;
             } else if (p->unrest == PLANET_UNREST_UNREST) {
                 str = game_str_pl_unrest;
-            } else if (g->evn.have_accident && (g->evn.accident_planet_i == pi)) {
+            } else if (g->evn.have_accident && (g->evn.accident_planet_i == pli)) {
                 str = game_str_pl_accident;
             } else {
                 lbxfont_select(2, 1, 0, 0);
