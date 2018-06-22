@@ -261,6 +261,7 @@ ui_sabotage_t ui_spy_sabotage_ask(struct game_s *g, int spy, int target, uint8_t
     ui_switch_1(g, spy);
     d.g = g;
     d.api = spy;
+    d.spy = spy;
     d.target = target;
     d.planet = PLANET_NONE;
     d.gmap = ui_gmap_basic_init(g, true);
@@ -352,7 +353,8 @@ int ui_spy_sabotage_done(struct game_s *g, int pi, int spy, int target, ui_sabot
     int other = PLAYER_NONE;
     ui_switch_1(g, pi);
     d.g = g;
-    d.api = spy;
+    d.api = pi;
+    d.spy = spy;
     d.target = target;
     d.other1 = other1;
     d.other2 = other2;
