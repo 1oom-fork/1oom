@@ -18,6 +18,7 @@ Much of this file is based on the readme from the unofficial v1.40m patch.
 - 8th stargate bug corrected (no ship maintenance overflow)
 
 - changes in Classic+ AI:
+    - first tech costs are calculated using the same formula as the rest
     - breaking a NAP / alliance no more positively contributes to your relations with the AIs
     - entering the general "threaten / break treaty" dialogue no more equals to a large temporary diplomatic penalty
     - cash tributes work as described in OSG instead of not at all
