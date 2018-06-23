@@ -22,13 +22,15 @@
 static const struct cfg_module_s {
     const char *str;
     const struct cfg_items_s *items;
+    bool const * const cond;
 } cfg_items_tbl[] = {
-    { "opt", opt_cfg_items },
-    { "game", game_cfg_items },
-    { "hw", hw_cfg_items },
-    { "hwx", hw_cfg_items_extra },
-    { "ui", ui_cfg_items },
-    { 0, 0 }
+    { "opt", opt_cfg_items, 0 },
+    { "opta", opt_cfg_items_audio, &ui_use_audio },
+    { "game", game_cfg_items, 0 },
+    { "hw", hw_cfg_items, 0 },
+    { "hwx", hw_cfg_items_extra, 0 },
+    { "ui", ui_cfg_items, 0 },
+    { 0, 0, 0 }
 };
 
 /* -------------------------------------------------------------------------- */
@@ -59,7 +61,7 @@ static int cfg_parse_line(char *line, int lnum)
     ival = *p ? (p + 1) : p;
     module = 0;
     for (const struct cfg_module_s *m = cfg_items_tbl; m->str; ++m) {
-        if (strcmp(m->str, line) == 0) {
+        if ((strcmp(m->str, line) == 0) && ((!m->cond) || *m->cond)) {
             module = m;
             break;
         }
@@ -68,6 +70,7 @@ static int cfg_parse_line(char *line, int lnum)
         log_error("Cfg: unknown module on line %i\n", lnum);
         return -1;
     }
+again:
     item = 0;
     for (const struct cfg_items_s *i = module->items; i->name; ++i) {
         if (strcmp(i->name, iname) == 0) {
@@ -76,6 +79,10 @@ static int cfg_parse_line(char *line, int lnum)
         }
     }
     if (!item) {
+        if (module->items == opt_cfg_items) { /* HACK handle audio option opt -> opta move */
+            ++module;
+            goto again;
+        }
         log_warning("Cfg: ignoring unknown item '%s.%s' on line %i\n", line, iname, lnum);
         return 0;
     }
@@ -190,6 +197,9 @@ int cfg_save(const char *filename)
         goto fail;
     }
     for (const struct cfg_module_s *module = cfg_items_tbl; module->str; ++module) {
+        if (module->cond && !(*module->cond)) {
+            continue;
+        }
         for (const struct cfg_items_s *item = module->items; item->name; ++item) {
             switch (item->type) {
                 case CFG_TYPE_INT:
