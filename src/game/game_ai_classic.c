@@ -1707,13 +1707,13 @@ static void game_ai_classic_turn_p3(struct game_s *g)
            }
         }
         if (--e->ai_p3_countdown <= 0) {
-            int tv0, tv1, tv2, tv3;
+            int w_ship, w_def, w_ind, w_eco;
             e->ai_p3_countdown = rnd_1_n(5, &g->seed) + 1;
             game_update_eco_on_waste(g, pi, true);
-            tv0 = ai_p3_tbl_hmm1[ti][0];
-            tv1 = tv0 + ai_p3_tbl_hmm1[ti][1];
-            tv2 = tv1 + ai_p3_tbl_hmm1[ti][2];
-            tv3 = tv2 + ai_p3_tbl_hmm1[ti][2];
+            w_ship = ai_p3_tbl_hmm1[ti][0];
+            w_def = w_ship + ai_p3_tbl_hmm1[ti][1];
+            w_ind = w_def + ai_p3_tbl_hmm1[ti][2];
+            w_eco = w_ind + ai_p3_tbl_hmm1[ti][2];
             for (int i = 0; i < g->galaxy_stars; ++i) {
                 planet_t *p = &(g->planet[i]);
                 if (p->owner == pi) {
@@ -1768,13 +1768,13 @@ static void game_ai_classic_turn_p3(struct game_s *g)
                         r2 = rnd_1_n(8, &g->seed) + 2;
                         SETMIN(r2, left);
                         left -= r2;
-                        if (r1 <= tv0) {
+                        if (r1 <= w_ship) {
                             sl[PLANET_SLIDER_SHIP] += r2;
-                        } else if (r1 <= tv1) {
+                        } else if (r1 <= w_def) {
                             sl[PLANET_SLIDER_DEF] += r2;
-                        } else if (r1 <= tv2) {
+                        } else if (r1 <= w_ind) {
                             sl[PLANET_SLIDER_IND] += r2;
-                        } else if (r1 <= tv3) {
+                        } else if (r1 <= w_eco) {
                             sl[PLANET_SLIDER_ECO] += r2;
                         } else {
                             sl[PLANET_SLIDER_TECH] += r2;
