@@ -36,6 +36,33 @@
 
 /* -------------------------------------------------------------------------- */
 
+static void game_ai_classic_new_game_tech(struct game_s *g)
+{
+    for (player_id_t pli = PLAYER_0; pli < g->players; ++pli) {
+        if (IS_HUMAN(g, pli)) {
+            continue;
+        }
+        for (tech_field_t field = TECH_FIELD_COMPUTER; field < TECH_FIELD_NUM; ++field) {
+            uint8_t tech;
+            uint8_t *rl;
+            rl = g->srd[pli].researchlist[field][0];
+            do {
+                tech = rl[rnd_0_nm1(3, &g->seed)];
+            } while (tech == 0);
+            if (g->ai_id == GAME_AI_CLASSICPLUS) {
+                game_tech_start_next(g, pli, field, tech);
+            } else {
+                empiretechorbit_t *e;
+                e = &g->eto[pli];
+                e->tech.project[field] = tech;
+                e->tech.cost[field] = tech * tech * 50;
+            }
+        }
+    }
+}
+
+/* -------------------------------------------------------------------------- */
+
 struct ai_turn_p1_s {
     bool have_colonizable;
     bool need_conquer;
@@ -4212,6 +4239,7 @@ static bool game_ai_classic_aud_later(struct audience_s *au)
 const struct game_ai_s game_ai_classic = {
     GAME_AI_CLASSIC,
     "Classic",
+    game_ai_classic_new_game_tech,
     game_ai_classic_turn_p1,
     game_ai_classic_turn_p2,
     game_ai_classic_turn_p3,
@@ -4246,6 +4274,7 @@ const struct game_ai_s game_ai_classic = {
 const struct game_ai_s game_ai_classicplus = {
     GAME_AI_CLASSICPLUS,
     "Classic+",
+    game_ai_classic_new_game_tech,
     game_ai_classic_turn_p1,
     game_ai_classic_turn_p2,
     game_ai_classic_turn_p3,
