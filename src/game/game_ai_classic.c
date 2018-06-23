@@ -1803,19 +1803,23 @@ static void game_ai_classic_turn_p3_sub1(struct game_s *g, player_id_t pi)
 
 static void game_ai_classic_turn_p3(struct game_s *g)
 {
-    static const int8_t ai_p3_tbl_hmm1[7][15] = {
-        { 1, 2, 4, 1, 5, 2, 2, 4, 2, 3, 3, 75, 10, 40, 20 },
-        { 4, 1, 2, 1, 5, 3, 1, 4, 2, 1, 5, 20, 0, 30, 30 },
-        { 2, 4, 1, 1, 5, 1, 1, 3, 5, 2, 4, 35, 5, 20, 20 },
-        { 1, 2, 3, 1, 6, 4, 2, 3, 2, 2, 3, 35, 5, 40, -10 },
-        { 1, 2, 4, 1, 5, 1, 5, 4, 1, 2, 3, 40, 5, 30, -50 },
-        { 1, 1, 2, 4, 5, 1, 2, 4, 1, 5, 3, 50, 10, 20, 10 },
-        { 4, 1, 1, 1, 6, 2, 2, 4, 2, 1, 5, 20, 5, 40, 50 }
+    /* AI p3 slider weights
+        [0..3] ship/def/ind/eco
+        [4..8] computer/construction/force field/planetology/propulsion
+    */
+    static const int8_t ai_p3_tbl_w[TRAIT2_NUM + 1/*war*/][9] = {
+        { 1, 2, 4, 1,  2, 2, 4, 2, 3 },
+        { 4, 1, 2, 1,  3, 1, 4, 2, 1 },
+        { 2, 4, 1, 1,  1, 1, 3, 5, 2 },
+        { 1, 2, 3, 1,  4, 2, 3, 2, 2 },
+        { 1, 2, 4, 1,  1, 5, 4, 1, 2 },
+        { 1, 1, 2, 4,  1, 2, 4, 1, 5 },
+        { 4, 1, 1, 1,  2, 2, 4, 2, 1 }  /* War */
     };
 
     for (player_id_t pi = PLAYER_0; pi < g->players; ++pi) {
         empiretechorbit_t *e = &(g->eto[pi]);
-        int ti;
+        trait2_t ti;
         race_t race;
         if (IS_HUMAN(g, pi)) {
             continue;
@@ -1825,17 +1829,17 @@ static void game_ai_classic_turn_p3(struct game_s *g)
         ti = e->trait2;
         for (player_id_t pi2 = PLAYER_0; pi2 < g->players; ++pi2) {
             if (e->treaty[pi2] >= TREATY_WAR) {
-                ti = 6;
+                ti = TRAIT2_NUM/*war*/;
            }
         }
         if (--e->ai_p3_countdown <= 0) {
-            int tv0, tv1, tv2, tv3;
+            int w_ship, w_def, w_ind, w_eco;
             e->ai_p3_countdown = rnd_1_n(5, &g->seed) + 1;
             game_update_eco_on_waste(g, pi, true);
-            tv0 = ai_p3_tbl_hmm1[ti][0];
-            tv1 = tv0 + ai_p3_tbl_hmm1[ti][1];
-            tv2 = tv1 + ai_p3_tbl_hmm1[ti][2];
-            tv3 = tv2 + ai_p3_tbl_hmm1[ti][2];
+            w_ship = ai_p3_tbl_w[ti][0];
+            w_def = w_ship + ai_p3_tbl_w[ti][1];
+            w_ind = w_def + ai_p3_tbl_w[ti][2];
+            w_eco = w_ind + ai_p3_tbl_w[ti][2];
             for (int i = 0; i < g->galaxy_stars; ++i) {
                 planet_t *p = &(g->planet[i]);
                 if (p->owner == pi) {
@@ -1890,13 +1894,13 @@ static void game_ai_classic_turn_p3(struct game_s *g)
                         r2 = rnd_1_n(8, &g->seed) + 2;
                         SETMIN(r2, left);
                         left -= r2;
-                        if (r1 <= tv0) {
+                        if (r1 <= w_ship) {
                             sl[PLANET_SLIDER_SHIP] += r2;
-                        } else if (r1 <= tv1) {
+                        } else if (r1 <= w_def) {
                             sl[PLANET_SLIDER_DEF] += r2;
-                        } else if (r1 <= tv2) {
+                        } else if (r1 <= w_ind) {
                             sl[PLANET_SLIDER_IND] += r2;
-                        } else if (r1 <= tv3) {
+                        } else if (r1 <= w_eco) {
                             sl[PLANET_SLIDER_ECO] += r2;
                         } else {
                             sl[PLANET_SLIDER_TECH] += r2;
@@ -1945,35 +1949,35 @@ static void game_ai_classic_turn_p3(struct game_s *g)
             if ((g->year < 30) && rnd_0_nm1(2, &g->seed)) {
                 sl[TECH_FIELD_PROPULSION] = 75;
             } else {
-                bool flag_hmm;
-                flag_hmm = !rnd_0_nm1(4, &g->seed);
-                if (((race == RACE_BULRATHI) || (race == RACE_MRRSHAN)) && flag_hmm) {
+                bool flag_focus_own;
+                flag_focus_own = !rnd_0_nm1(4, &g->seed);
+                if (((race == RACE_BULRATHI) || (race == RACE_MRRSHAN)) && flag_focus_own) {
                     sl[TECH_FIELD_WEAPON] = 75;
-                } else if ((race == RACE_DARLOK) && flag_hmm) {
+                } else if ((race == RACE_DARLOK) && flag_focus_own) {
                     sl[TECH_FIELD_COMPUTER] = 75;
-                } else if ((race == RACE_MEKLAR) && flag_hmm) {
+                } else if ((race == RACE_MEKLAR) && flag_focus_own) {
                     sl[rnd_0_nm1(2, &g->seed) ? TECH_FIELD_CONSTRUCTION : TECH_FIELD_PLANETOLOGY] = 75;
-                } else if ((race == RACE_ALKARI) && flag_hmm) {
+                } else if ((race == RACE_ALKARI) && flag_focus_own) {
                     sl[TECH_FIELD_PROPULSION] = 75;
-                } else if ((race == RACE_SAKKRA) && flag_hmm) {
+                } else if ((race == RACE_SAKKRA) && flag_focus_own) {
                     sl[TECH_FIELD_PLANETOLOGY] = 75;
                 } else {
-                    int r1, tv5, tv6, tv7, tv8, tv9;
+                    int r1, w_comp, w_cons, w_ff, w_plan, w_prop;
                     r1 = rnd_1_n(16, &g->seed);
-                    tv5 = ai_p3_tbl_hmm1[ti][5];
-                    tv6 = tv5 + ai_p3_tbl_hmm1[ti][6];
-                    tv7 = tv6 + ai_p3_tbl_hmm1[ti][7];
-                    tv9 = tv7 + ai_p3_tbl_hmm1[ti][9];
-                    tv8 = tv9 + ai_p3_tbl_hmm1[ti][8];
-                    if (r1 <= tv5) {
+                    w_comp = ai_p3_tbl_w[ti][4];
+                    w_cons = w_comp + ai_p3_tbl_w[ti][5];
+                    w_ff = w_cons + ai_p3_tbl_w[ti][6];
+                    w_prop = w_ff + ai_p3_tbl_w[ti][8];
+                    w_plan = w_prop + ai_p3_tbl_w[ti][7];
+                    if (r1 <= w_comp) {
                         sl[TECH_FIELD_COMPUTER] = 75;
-                    } else if (r1 <= tv6) {
+                    } else if (r1 <= w_cons) {
                         sl[TECH_FIELD_CONSTRUCTION] = 75;
-                    } else if (r1 <= tv7) {
+                    } else if (r1 <= w_ff) {
                         sl[TECH_FIELD_FORCE_FIELD] = 75;
-                    } else if (r1 <= tv9) {
+                    } else if (r1 <= w_prop) {
                         sl[TECH_FIELD_PROPULSION] = 75;
-                    } else if (r1 <= tv8) {
+                    } else if (r1 <= w_plan) {
                         sl[TECH_FIELD_PLANETOLOGY] = 75;
                     } else {
                         sl[TECH_FIELD_WEAPON] = 75;
