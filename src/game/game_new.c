@@ -6,6 +6,7 @@
 #include "game_new.h"
 #include "comp.h"
 #include "game.h"
+#include "game_ai.h"
 #include "game_aux.h"
 #include "game_num.h"
 #include "game_shipdesign.h"
@@ -1036,23 +1037,7 @@ static void game_generate_research(struct game_s *g, const uint8_t *rflag)
         }
     }
 
-    for (player_id_t pli = PLAYER_0; pli < g->players; ++pli) {
-        empiretechorbit_t *e;
-        shipresearch_t *srd;
-        if (IS_HUMAN(g, pli)) {
-            continue;
-        }
-        e = &g->eto[pli];
-        srd = &g->srd[pli];
-        for (tech_field_t field = TECH_FIELD_COMPUTER; field < TECH_FIELD_NUM; ++field) {
-            uint16_t v = 0;
-            while (v == 0) {
-                v = srd->researchlist[field][0][rnd_0_nm1(3, &g->seed)];
-            }
-            e->tech.project[field] = v;
-            e->tech.cost[field] = v * v * 50;
-        }
-    }
+    game_ai->new_game_tech(g);
 }
 
 static void game_generate_misc(struct game_s *g)
