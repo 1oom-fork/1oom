@@ -1698,7 +1698,7 @@ static void game_ai_classic_turn_p3(struct game_s *g)
 
     for (player_id_t pi = PLAYER_0; pi < g->players; ++pi) {
         empiretechorbit_t *e = &(g->eto[pi]);
-        int ti;
+        trait2_t ti;
         race_t race;
         if (IS_HUMAN(g, pi)) {
             continue;
@@ -1708,7 +1708,7 @@ static void game_ai_classic_turn_p3(struct game_s *g)
         ti = e->trait2;
         for (player_id_t pi2 = PLAYER_0; pi2 < g->players; ++pi2) {
             if (e->treaty[pi2] >= TREATY_WAR) {
-                ti = 6;
+                ti = TRAIT2_NUM/*war*/;
            }
         }
         if (--e->ai_p3_countdown <= 0) {
