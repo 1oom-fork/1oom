@@ -53,6 +53,10 @@ static bool opt_cfg_set_datapath(void *var)
 const struct cfg_items_s opt_cfg_items[] = {
     CFG_ITEM_STR("data_path", &opt_datapath, opt_cfg_set_datapath),
     CFG_ITEM_BOOL("mouse_warp_enabled", &opt_mouse_warp_enabled),
+    CFG_ITEM_END
+};
+
+const struct cfg_items_s opt_cfg_items_audio[] = {
     CFG_ITEM_BOOL("audio", &opt_audio_enabled),
     CFG_ITEM_BOOL("music", &opt_music_enabled),
     CFG_ITEM_BOOL("sfx", &opt_sfx_enabled),
