@@ -6,6 +6,7 @@
 #include "game_new.h"
 #include "comp.h"
 #include "game.h"
+#include "game_ai.h"
 #include "game_aux.h"
 #include "game_num.h"
 #include "game_shipdesign.h"
@@ -1039,23 +1040,7 @@ static void game_generate_research(struct game_s *g, const uint8_t *rflag)
         }
     }
 
-    for (player_id_t pli = PLAYER_0; pli < g->players; ++pli) {
-        empiretechorbit_t *e;
-        shipresearch_t *srd;
-        if (IS_HUMAN(g, pli)) {
-            continue;
-        }
-        e = &g->eto[pli];
-        srd = &g->srd[pli];
-        for (tech_field_t field = TECH_FIELD_COMPUTER; field < TECH_FIELD_NUM; ++field) {
-            uint16_t v = 0;
-            while (v == 0) {
-                v = srd->researchlist[field][0][rnd_0_nm1(3, &g->seed)];
-            }
-            e->tech.project[field] = v;
-            e->tech.cost[field] = v * v * 50;
-        }
-    }
+    game_ai->new_game_tech(g);
 }
 
 static void game_generate_misc(struct game_s *g)
@@ -1116,6 +1101,7 @@ int game_new(struct game_s *g, struct game_aux_s *gaux, struct game_new_options_
     }
     g->seed = g->galaxy_seed;
     g->ai_id = opt->ai_id;
+    game_ai = game_ais[g->ai_id];
     g->players = opt->players;
     g->difficulty = opt->difficulty;
     g->galaxy_size = opt->galaxy_size;
@@ -1150,7 +1136,7 @@ int game_new(struct game_s *g, struct game_aux_s *gaux, struct game_new_options_
                 va += m;
             }
         }
-        log_message("Game: new game %u:0x%x:%u:0x%x:%u\n", vo, vr, vb, g->galaxy_seed, va);
+        log_message("Game: new game -new %u:0x%x:%u:0x%x:%u -nga %u\n", vo, vr, vb, g->galaxy_seed, va, g->ai_id);
     }
     game_generate_galaxy(g);
     game_generate_planet_names(g);
