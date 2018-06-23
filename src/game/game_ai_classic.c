@@ -1835,22 +1835,22 @@ static void game_ai_classic_turn_p3(struct game_s *g)
                 } else if ((race == RACE_SAKKRA) && flag_hmm) {
                     sl[TECH_FIELD_PLANETOLOGY] = 75;
                 } else {
-                    int r1, tv5, tv6, tv7, tv8, tv9;
+                    int r1, w_comp, w_cons, w_ff, w_plan, w_prop;
                     r1 = rnd_1_n(16, &g->seed);
-                    tv5 = ai_p3_tbl_hmm1[ti][5];
-                    tv6 = tv5 + ai_p3_tbl_hmm1[ti][6];
-                    tv7 = tv6 + ai_p3_tbl_hmm1[ti][7];
-                    tv9 = tv7 + ai_p3_tbl_hmm1[ti][9];
-                    tv8 = tv9 + ai_p3_tbl_hmm1[ti][8];
-                    if (r1 <= tv5) {
+                    w_comp = ai_p3_tbl_hmm1[ti][5];
+                    w_cons = w_comp + ai_p3_tbl_hmm1[ti][6];
+                    w_ff = w_cons + ai_p3_tbl_hmm1[ti][7];
+                    w_prop = w_ff + ai_p3_tbl_hmm1[ti][9];
+                    w_plan = w_prop + ai_p3_tbl_hmm1[ti][8];
+                    if (r1 <= w_comp) {
                         sl[TECH_FIELD_COMPUTER] = 75;
-                    } else if (r1 <= tv6) {
+                    } else if (r1 <= w_cons) {
                         sl[TECH_FIELD_CONSTRUCTION] = 75;
-                    } else if (r1 <= tv7) {
+                    } else if (r1 <= w_ff) {
                         sl[TECH_FIELD_FORCE_FIELD] = 75;
-                    } else if (r1 <= tv9) {
+                    } else if (r1 <= w_prop) {
                         sl[TECH_FIELD_PROPULSION] = 75;
-                    } else if (r1 <= tv8) {
+                    } else if (r1 <= w_plan) {
                         sl[TECH_FIELD_PLANETOLOGY] = 75;
                     } else {
                         sl[TECH_FIELD_WEAPON] = 75;
