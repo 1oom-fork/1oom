@@ -1817,17 +1817,17 @@ static void game_ai_classic_turn_p3(struct game_s *g)
             if ((g->year < 30) && rnd_0_nm1(2, &g->seed)) {
                 sl[TECH_FIELD_PROPULSION] = 75;
             } else {
-                bool flag_hmm;
-                flag_hmm = !rnd_0_nm1(4, &g->seed);
-                if (((race == RACE_BULRATHI) || (race == RACE_MRRSHAN)) && flag_hmm) {
+                bool flag_focus_own;
+                flag_focus_own = !rnd_0_nm1(4, &g->seed);
+                if (((race == RACE_BULRATHI) || (race == RACE_MRRSHAN)) && flag_focus_own) {
                     sl[TECH_FIELD_WEAPON] = 75;
-                } else if ((race == RACE_DARLOK) && flag_hmm) {
+                } else if ((race == RACE_DARLOK) && flag_focus_own) {
                     sl[TECH_FIELD_COMPUTER] = 75;
-                } else if ((race == RACE_MEKLAR) && flag_hmm) {
+                } else if ((race == RACE_MEKLAR) && flag_focus_own) {
                     sl[rnd_0_nm1(2, &g->seed) ? TECH_FIELD_CONSTRUCTION : TECH_FIELD_PLANETOLOGY] = 75;
-                } else if ((race == RACE_ALKARI) && flag_hmm) {
+                } else if ((race == RACE_ALKARI) && flag_focus_own) {
                     sl[TECH_FIELD_PROPULSION] = 75;
-                } else if ((race == RACE_SAKKRA) && flag_hmm) {
+                } else if ((race == RACE_SAKKRA) && flag_focus_own) {
                     sl[TECH_FIELD_PLANETOLOGY] = 75;
                 } else {
                     int r1, w_comp, w_cons, w_ff, w_plan, w_prop;
