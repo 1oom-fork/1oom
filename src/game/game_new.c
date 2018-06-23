@@ -822,64 +822,9 @@ start_of_func:
         e->factory_adj_cost = 10;
         e->factory_cost = 10;
         e->have_engine = 1;
-        e->ai_p3_countdown = rnd_1_n(6, &g->seed) + 14;
-        e->ai_p2_countdown = rnd_1_n(10, &g->seed);
         e->colonist_oper_factories = 2;
-        e->tech.percent[TECH_FIELD_WEAPON] = 1;
-        e->tech.percent[TECH_FIELD_FORCE_FIELD] = 1;
-        e->tech.percent[TECH_FIELD_PLANETOLOGY] = 1;
-        e->tech.percent[TECH_FIELD_COMPUTER] = 1;
-        e->tech.percent[TECH_FIELD_PROPULSION] = 1;
-        e->tech.percent[TECH_FIELD_CONSTRUCTION] = 1;
-        if (IS_HUMAN(g, i)) {
-            e->tech.slider[TECH_FIELD_WEAPON] = 20;
-            e->tech.slider[TECH_FIELD_FORCE_FIELD] = 15;
-            e->tech.slider[TECH_FIELD_PLANETOLOGY] = 15;
-            e->tech.slider[TECH_FIELD_CONSTRUCTION] = 10;
-        } else {
-            e->tech.slider[TECH_FIELD_PLANETOLOGY] = 40;
-            e->tech.slider[TECH_FIELD_CONSTRUCTION] = 20;
-        }
-        e->tech.slider[TECH_FIELD_COMPUTER] = 20;
-        e->tech.slider[TECH_FIELD_PROPULSION] = 20;
-        if (IS_AI(g, i)) {
-            uint16_t n;
-            planet_t *p, *q;
-#if 1
-            /* BUG? MOO1 sets this way earlier if the function, leaving it to the home of last player */
-            homei = tblhome[i];
-#endif
-            q = &g->planet[homei];
-            n = 0;
-            for (int j = 0; j < g->galaxy_stars; ++j) {
-                p = &g->planet[j];
-                if (1
-                  && (p->type > PLANET_TYPE_MINIMAL - 1)
-                  && (util_math_dist_fast(p->x, p->y, q->x, q->y) <= 0x1e)
-                ) {
-                    ++n;
-                }
-            }
-            if (n > 1) {
-                q->slider[PLANET_SLIDER_SHIP] = 10;
-                q->slider[PLANET_SLIDER_DEF] = 0;
-                q->slider[PLANET_SLIDER_IND] = 90;
-                q->slider[PLANET_SLIDER_ECO] = 0;
-                q->slider[PLANET_SLIDER_TECH] = 0;
-            } else {
-                e->ai_p3_countdown = rnd_1_n(6, &g->seed) + 24;
-                q->slider[PLANET_SLIDER_SHIP] = 0;
-                q->slider[PLANET_SLIDER_DEF] = 0;
-                q->slider[PLANET_SLIDER_IND] = 60;
-                q->slider[PLANET_SLIDER_ECO] = 10;
-                q->slider[PLANET_SLIDER_TECH] = 40;
-                e->tech.slider[TECH_FIELD_WEAPON] = 0;
-                e->tech.slider[TECH_FIELD_FORCE_FIELD] = 0;
-                e->tech.slider[TECH_FIELD_PLANETOLOGY] = 0;
-                e->tech.slider[TECH_FIELD_CONSTRUCTION] = 0;
-                e->tech.slider[TECH_FIELD_COMPUTER] = 0;
-                e->tech.slider[TECH_FIELD_PROPULSION] = 100;
-            }
+        for (tech_field_t field = 0; field < TECH_FIELD_NUM; ++field) {
+            e->tech.percent[field] = 1;
         }
         {
             shipresearch_t *srd;
@@ -901,9 +846,16 @@ start_of_func:
             }
         }
         e->fuel_range = 3;
-        /* BUG? these shipi values are wrong, but fixed by first next turn */
-        e->shipi_colony = 1;
-        e->shipi_bomber = 4;
+        if (IS_AI(g, i)) {
+            game_ai->new_game_init(g, i, tblhome[i]);
+        } else {
+            e->tech.slider[TECH_FIELD_COMPUTER] = 20;
+            e->tech.slider[TECH_FIELD_CONSTRUCTION] = 10;
+            e->tech.slider[TECH_FIELD_FORCE_FIELD] = 15;
+            e->tech.slider[TECH_FIELD_PLANETOLOGY] = 15;
+            e->tech.slider[TECH_FIELD_PROPULSION] = 20;
+            e->tech.slider[TECH_FIELD_WEAPON] = 20;
+        }
     }
 }
 
