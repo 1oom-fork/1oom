@@ -17,6 +17,7 @@ typedef enum {
 
 struct game_ai_s {
     char const * const name;
+    void (*new_game_tech)(struct game_s *g);
     void (*turn_p1)(struct game_s *g);
     void (*turn_p2)(struct game_s *g);
     void (*turn_p3)(struct game_s *g);
