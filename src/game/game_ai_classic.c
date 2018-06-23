@@ -36,6 +36,54 @@
 
 /* -------------------------------------------------------------------------- */
 
+static void game_ai_classic_new_game_init(struct game_s *g, player_id_t player, uint8_t home)
+{
+    int n = 0;
+    planet_t *p = &g->planet[home];
+    empiretechorbit_t *e = &g->eto[player];
+    for (int i = 0; i < g->galaxy_stars; ++i) {
+        const planet_t *q;
+        q = &g->planet[i];
+        if (1
+          && (q->type > (PLANET_TYPE_MINIMAL - 1))
+          && (util_math_dist_fast(q->x, q->y, p->x, p->y) <= 30)
+        ) {
+            ++n;
+        }
+    }
+    e->ai_p3_countdown = rnd_1_n(6, &g->seed) + 14;
+    e->ai_p2_countdown = rnd_1_n(10, &g->seed);
+    if (n > 1) {
+        p->slider[PLANET_SLIDER_SHIP] = 10;
+        p->slider[PLANET_SLIDER_DEF] = 0;
+        p->slider[PLANET_SLIDER_IND] = 90;
+        p->slider[PLANET_SLIDER_ECO] = 0;
+        p->slider[PLANET_SLIDER_TECH] = 0;
+        e->tech.slider[TECH_FIELD_COMPUTER] = 20;
+        e->tech.slider[TECH_FIELD_CONSTRUCTION] = 20;
+        e->tech.slider[TECH_FIELD_FORCE_FIELD] = 0;
+        e->tech.slider[TECH_FIELD_PLANETOLOGY] = 40;
+        e->tech.slider[TECH_FIELD_PROPULSION] = 20;
+        e->tech.slider[TECH_FIELD_WEAPON] = 0;
+    } else {
+        e->ai_p3_countdown = rnd_1_n(6, &g->seed) + 24;
+        p->slider[PLANET_SLIDER_SHIP] = 0;
+        p->slider[PLANET_SLIDER_DEF] = 0;
+        p->slider[PLANET_SLIDER_IND] = 60;
+        p->slider[PLANET_SLIDER_ECO] = 10;
+        p->slider[PLANET_SLIDER_TECH] = 40;
+        e->tech.slider[TECH_FIELD_COMPUTER] = 0;
+        e->tech.slider[TECH_FIELD_CONSTRUCTION] = 0;
+        e->tech.slider[TECH_FIELD_FORCE_FIELD] = 0;
+        e->tech.slider[TECH_FIELD_PLANETOLOGY] = 0;
+        e->tech.slider[TECH_FIELD_PROPULSION] = 100;
+        e->tech.slider[TECH_FIELD_WEAPON] = 0;
+    }
+    /* XXX these shipi values are wrong, but fixed by first next turn */
+    e->shipi_colony = 4;
+    e->shipi_bomber = 1;
+}
+
 static void game_ai_classic_new_game_tech(struct game_s *g)
 {
     for (player_id_t pli = PLAYER_0; pli < g->players; ++pli) {
@@ -4239,6 +4287,7 @@ static bool game_ai_classic_aud_later(struct audience_s *au)
 const struct game_ai_s game_ai_classic = {
     GAME_AI_CLASSIC,
     "Classic",
+    game_ai_classic_new_game_init,
     game_ai_classic_new_game_tech,
     game_ai_classic_turn_p1,
     game_ai_classic_turn_p2,
@@ -4274,6 +4323,7 @@ const struct game_ai_s game_ai_classic = {
 const struct game_ai_s game_ai_classicplus = {
     GAME_AI_CLASSICPLUS,
     "Classic+",
+    game_ai_classic_new_game_init,
     game_ai_classic_new_game_tech,
     game_ai_classic_turn_p1,
     game_ai_classic_turn_p2,
