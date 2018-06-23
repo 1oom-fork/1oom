@@ -1707,19 +1707,23 @@ static void game_ai_classic_turn_p3_sub1(struct game_s *g, player_id_t pi)
 
 static void game_ai_classic_turn_p3(struct game_s *g)
 {
-    static const int8_t ai_p3_tbl_w[7][15] = {
-        { 1, 2, 4, 1, 5, 2, 2, 4, 2, 3, 3, 75, 10, 40, 20 },
-        { 4, 1, 2, 1, 5, 3, 1, 4, 2, 1, 5, 20, 0, 30, 30 },
-        { 2, 4, 1, 1, 5, 1, 1, 3, 5, 2, 4, 35, 5, 20, 20 },
-        { 1, 2, 3, 1, 6, 4, 2, 3, 2, 2, 3, 35, 5, 40, -10 },
-        { 1, 2, 4, 1, 5, 1, 5, 4, 1, 2, 3, 40, 5, 30, -50 },
-        { 1, 1, 2, 4, 5, 1, 2, 4, 1, 5, 3, 50, 10, 20, 10 },
-        { 4, 1, 1, 1, 6, 2, 2, 4, 2, 1, 5, 20, 5, 40, 50 }
+    /* AI p3 slider weights
+        [0..3] ship/def/ind/eco
+        [4..8] computer/construction/force field/planetology/propulsion
+    */
+    static const int8_t ai_p3_tbl_w[TRAIT2_NUM + 1/*war*/][9] = {
+        { 1, 2, 4, 1,  2, 2, 4, 2, 3 },
+        { 4, 1, 2, 1,  3, 1, 4, 2, 1 },
+        { 2, 4, 1, 1,  1, 1, 3, 5, 2 },
+        { 1, 2, 3, 1,  4, 2, 3, 2, 2 },
+        { 1, 2, 4, 1,  1, 5, 4, 1, 2 },
+        { 1, 1, 2, 4,  1, 2, 4, 1, 5 },
+        { 4, 1, 1, 1,  2, 2, 4, 2, 1 }  /* War */
     };
 
     for (player_id_t pi = PLAYER_0; pi < g->players; ++pi) {
         empiretechorbit_t *e = &(g->eto[pi]);
-        int ti;
+        trait2_t ti;
         race_t race;
         if (IS_HUMAN(g, pi)) {
             continue;
@@ -1729,7 +1733,7 @@ static void game_ai_classic_turn_p3(struct game_s *g)
         ti = e->trait2;
         for (player_id_t pi2 = PLAYER_0; pi2 < g->players; ++pi2) {
             if (e->treaty[pi2] >= TREATY_WAR) {
-                ti = 6;
+                ti = TRAIT2_NUM/*war*/;
            }
         }
         if (--e->ai_p3_countdown <= 0) {
@@ -1858,11 +1862,11 @@ static void game_ai_classic_turn_p3(struct game_s *g)
                 } else {
                     int r1, w_comp, w_cons, w_ff, w_plan, w_prop;
                     r1 = rnd_1_n(16, &g->seed);
-                    w_comp = ai_p3_tbl_w[ti][5];
-                    w_cons = w_comp + ai_p3_tbl_w[ti][6];
-                    w_ff = w_cons + ai_p3_tbl_w[ti][7];
-                    w_prop = w_ff + ai_p3_tbl_w[ti][9];
-                    w_plan = w_prop + ai_p3_tbl_w[ti][8];
+                    w_comp = ai_p3_tbl_w[ti][4];
+                    w_cons = w_comp + ai_p3_tbl_w[ti][5];
+                    w_ff = w_cons + ai_p3_tbl_w[ti][6];
+                    w_prop = w_ff + ai_p3_tbl_w[ti][8];
+                    w_plan = w_prop + ai_p3_tbl_w[ti][7];
                     if (r1 <= w_comp) {
                         sl[TECH_FIELD_COMPUTER] = 75;
                     } else if (r1 <= w_cons) {
