@@ -1678,7 +1678,7 @@ static void game_ai_classic_turn_p3_sub1(struct game_s *g, player_id_t pi)
 
 static void game_ai_classic_turn_p3(struct game_s *g)
 {
-    static const int8_t ai_p3_tbl_hmm1[7][15] = {
+    static const int8_t ai_p3_tbl_w[7][15] = {
         { 1, 2, 4, 1, 5, 2, 2, 4, 2, 3, 3, 75, 10, 40, 20 },
         { 4, 1, 2, 1, 5, 3, 1, 4, 2, 1, 5, 20, 0, 30, 30 },
         { 2, 4, 1, 1, 5, 1, 1, 3, 5, 2, 4, 35, 5, 20, 20 },
@@ -1707,10 +1707,10 @@ static void game_ai_classic_turn_p3(struct game_s *g)
             int w_ship, w_def, w_ind, w_eco;
             e->ai_p3_countdown = rnd_1_n(5, &g->seed) + 1;
             game_update_eco_on_waste(g, pi, true);
-            w_ship = ai_p3_tbl_hmm1[ti][0];
-            w_def = w_ship + ai_p3_tbl_hmm1[ti][1];
-            w_ind = w_def + ai_p3_tbl_hmm1[ti][2];
-            w_eco = w_ind + ai_p3_tbl_hmm1[ti][2];
+            w_ship = ai_p3_tbl_w[ti][0];
+            w_def = w_ship + ai_p3_tbl_w[ti][1];
+            w_ind = w_def + ai_p3_tbl_w[ti][2];
+            w_eco = w_ind + ai_p3_tbl_w[ti][2];
             for (int i = 0; i < g->galaxy_stars; ++i) {
                 planet_t *p = &(g->planet[i]);
                 if (p->owner == pi) {
@@ -1829,11 +1829,11 @@ static void game_ai_classic_turn_p3(struct game_s *g)
                 } else {
                     int r1, w_comp, w_cons, w_ff, w_plan, w_prop;
                     r1 = rnd_1_n(16, &g->seed);
-                    w_comp = ai_p3_tbl_hmm1[ti][5];
-                    w_cons = w_comp + ai_p3_tbl_hmm1[ti][6];
-                    w_ff = w_cons + ai_p3_tbl_hmm1[ti][7];
-                    w_prop = w_ff + ai_p3_tbl_hmm1[ti][9];
-                    w_plan = w_prop + ai_p3_tbl_hmm1[ti][8];
+                    w_comp = ai_p3_tbl_w[ti][5];
+                    w_cons = w_comp + ai_p3_tbl_w[ti][6];
+                    w_ff = w_cons + ai_p3_tbl_w[ti][7];
+                    w_prop = w_ff + ai_p3_tbl_w[ti][9];
+                    w_plan = w_prop + ai_p3_tbl_w[ti][8];
                     if (r1 <= w_comp) {
                         sl[TECH_FIELD_COMPUTER] = 75;
                     } else if (r1 <= w_cons) {
