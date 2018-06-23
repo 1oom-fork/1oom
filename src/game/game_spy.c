@@ -597,7 +597,7 @@ void game_spy_esp_human(struct game_s *g, struct spy_turn_s *st)
             uint8_t tech;
             tech = g->evn.stolen_tech[player][spy];
             if ((spy != player) && (tech != 0)) {
-                ui_spy_stolen(g, spy, player, g->evn.stolen_field[player][spy], tech);
+                ui_spy_stolen(g, player, spy, g->evn.stolen_field[player][spy], tech);
             }
         }
     }
