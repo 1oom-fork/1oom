@@ -601,12 +601,6 @@ static void game_battle_reset_specials(struct battle_s *bt)
             b->repulsor = 1;
         }
     }
-    for (int i = 0; i <= bt->items_num; ++i) {
-        b = &(bt->item[i]);
-        if (b->stasisby == itemi) {
-            b->stasisby = 0;
-        }
-    }
     b = &(bt->item[itemi]);
     if ((b->stasis > 0) || (b->pulsar > 0)) {
         bt->special_button = 1;
@@ -634,6 +628,13 @@ static void game_battle_reset_specials(struct battle_s *bt)
         return;
     }
     b->can_retaliate = true;
+    for (int i = 0; i <= bt->items_num; ++i) {
+        b = &(bt->item[i]);
+        if (b->stasisby == itemi) {
+            b->stasisby = 0;
+        }
+    }
+    b = &(bt->item[itemi]);
     if (b->warpdis == 2) {
         b->warpdis = 1;
     }
