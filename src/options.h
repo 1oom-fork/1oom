@@ -5,6 +5,7 @@
 #include "types.h"
 
 extern const struct cfg_items_s opt_cfg_items[];
+extern const struct cfg_items_s opt_cfg_items_audio[];
 
 #ifdef FEATURE_MODEBUG
 extern int opt_modebug;
