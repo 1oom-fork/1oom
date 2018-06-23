@@ -20,6 +20,7 @@ Much of this file is based on the readme from the unofficial v1.40m patch.
 - 8th stargate bug corrected (no ship maintenance overflow)
 
 - changes in Classic+ AI:
+    - first tech costs are calculated using the same formula as the rest
     - cash tributes work as described in OSG instead of not at all
     - AI checks the correct mood variable when asked for a peace treaty
     - AI huge, armored ships now cannot cause a negative overflow
