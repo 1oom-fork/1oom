@@ -558,6 +558,7 @@ static void ui_draw_finish_wipe_anim(void)
     }
     ui_cursor_store_bg0(moouse_x, moouse_y);
     hw_video_draw_buf();
+    ui_cursor_setup_area(1, &ui_cursor_area_tbl[0]);    /* HACK enable cursor for -nextturn */
 }
 
 void ui_draw_finish(void)
