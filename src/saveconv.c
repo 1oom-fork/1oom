@@ -2087,7 +2087,7 @@ static int savetype_en_text(struct game_s *g, const char *fname)
         OUTLINE "trans_num = %i\n", p->trans_num);
         OUTLINE "trans_dest = %i\n", p->trans_dest);
         OUTLINE "pop_tenths = %i\n", p->pop_tenths);
-        OUTLINE "pop_oper_fact = %i\n", p->pop);
+        OUTLINE "pop_oper_fact = %i\n", p->pop_oper_fact);
         OUTLINE "bc_to_refit = %i\n", p->bc_to_refit);
         OUTLINE "rebels = %i\n", p->rebels);
         OUTLINE "unrest = %i\n", p->unrest);
