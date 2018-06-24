@@ -316,6 +316,10 @@ int ui_init(void)
 
 int ui_late_init(void)
 {
+    if (!lbxfile_exists(LBXFILE_V11)) {
+        log_error("V11.LBX not found! Make sure that your MOO1 is updated to v1.3.\n");
+        return 1;
+    }
     mouse_set_limits(UI_SCREEN_W, UI_SCREEN_H);
     if (0
       || lbxfont_init()
