@@ -2461,7 +2461,7 @@ static int game_battle_item_rival1(struct battle_s *bt, int itemi, int a2)
             if ((v10 <= 0) && (v28 > 0)) {
                 w = (i == 0/*planet*/) ? 1 : 2;
             }
-            if ((i == 0/*planet*/) && (w > 0)) {
+            if ((itemi == 0/*planet*/) && (w > 0)) {
                 int dist;
                 dist = util_math_dist_maxabs(b->sx, b->sy, b2->sx, b2->sy);
                 w += (10 - dist) * 750;
