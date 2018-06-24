@@ -208,7 +208,7 @@ static void drawscreen_inlbx_data(const uint8_t *p, int len)
 
 static void drawscreen_inlbx(void)
 {
-    char linebuf[40 + 1];
+    char linebuf[256];
     if (cursor_i >= 19) {
         cursor_offs = cursor_i - 19;
     }
