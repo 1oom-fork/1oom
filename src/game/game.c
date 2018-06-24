@@ -409,7 +409,9 @@ int main_handle_option(const char *argv)
 int main_do(void)
 {
     struct game_end_s game_end = game_opt_end;
-    ui_late_init();
+    if (ui_late_init()) {
+        return 1;
+    }
     game_aux_init(&game_aux, &game);
     game_save_check_saves(game_aux.savenamebuf, game_aux.savenamebuflen);
     if ((game_opt_end.type != GAME_END_NONE) && (game_opt_end.varnum == 2)) {
