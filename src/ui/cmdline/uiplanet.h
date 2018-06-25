@@ -17,5 +17,6 @@ extern int ui_cmd_planet_slider_lock(struct game_s *g, int api, struct input_tok
 extern int ui_cmd_planet_build(struct game_s *g, int api, struct input_token_s *param, int num_param, void *var);
 extern int ui_cmd_planet_reloc(struct game_s *g, int api, struct input_token_s *param, int num_param, void *var);
 extern int ui_cmd_planet_trans(struct game_s *g, int api, struct input_token_s *param, int num_param, void *var);
+extern int ui_cmd_planet_reserve(struct game_s *g, int api, struct input_token_s *param, int num_param, void *var);
 
 #endif
