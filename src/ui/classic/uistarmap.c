@@ -6,6 +6,7 @@
 #include "comp.h"
 #include "game.h"
 #include "game_aux.h"
+#include "game_cheat.h"
 #include "game_fleet.h"
 #include "game_misc.h"
 #include "game_num.h"
@@ -354,17 +355,13 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             flag_done = true;
             ui_delay_1();
         } else if (oi1 == oi_alt_galaxy) {
-            ui_sound_play_sfx_24();
-            g->gaux->flag_cheat_galaxy = !g->gaux->flag_cheat_galaxy;
-            game_update_tech_util(g);
-            game_update_within_range(g);
-            game_update_visibility(g);
-            for (int i = 0; i < g->galaxy_stars; ++i) {
-                BOOLVEC_SET1(g->planet[i].explored, active_player);
+            if (game_cheat_galaxy(g, active_player)) {
+                ui_sound_play_sfx_24();
             }
         } else if (oi1 == oi_alt_events) {
-            ui_sound_play_sfx_24();
-            g->gaux->flag_cheat_events = !g->gaux->flag_cheat_events;
+            if (game_cheat_events(g, active_player)) {
+                ui_sound_play_sfx_24();
+            }
         } else if (oi1 == oi_f10) {
             game_save_do_save_i(GAME_SAVE_I_CONTINUE, "Continue", g);
         } else if (oi1 == oi_alt_p) {
