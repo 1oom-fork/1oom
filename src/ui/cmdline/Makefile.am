@@ -9,11 +9,15 @@ libuicmdline_a_SOURCES = \
     uiaudience.c \
     uibattle.c \
     uibomb.c \
+    uicheat.c \
+    uicheat.h \
     uicmdline.c \
     uicmds.c \
     uicmds.h \
     uidefs.h \
     uielection.c \
+    uiempire.c \
+    uiempire.h \
     uiending.c \
     uiexplore.c \
     uifleet.c \
@@ -40,4 +44,6 @@ libuicmdline_a_SOURCES = \
     uispy_esp.c \
     uispy_sab.c \
     uiswitch.c \
-    uiswitch.h
+    uiswitch.h \
+    uitech.c \
+    uitech.h

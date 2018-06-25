@@ -10,8 +10,10 @@
 #include "log.h"
 #include "save/save.h"
 #include "types.h"
+#include "uicheat.h"
 #include "uicmds.h"
 #include "uidefs.h"
+#include "uiempire.h"
 #include "uifleet.h"
 #include "uihelp.h"
 #include "uiinput.h"
@@ -19,6 +21,7 @@
 #include "uiplanet.h"
 #include "uiraces.h"
 #include "uiswitch.h"
+#include "uitech.h"
 #include "util.h"
 
 /* -------------------------------------------------------------------------- */
@@ -35,13 +38,24 @@ static const struct input_cmd_s cmds_turn[] = {
     { "n", NULL, "Next turn", 0, 0, 0, cmd_next, 0 },
     { "l", "[PLANET|*]", "Look", 0, 1, 0, ui_cmd_planet_look, 0 },
     { "g", "PLANET", "Go to planet", 1, 1, 0, ui_cmd_planet_go, 0 },
-    { "s", "SLIDER VALUE", "Set slider to value\nSLIDER is s, d, i, e or t\nVALUE can be +N or -N for relative adjustment", 2, 2, 0, ui_cmd_planet_slider, 0 },
-    { "sl", "SLIDER", "Toggle slider lock", 1, 1, 0, ui_cmd_planet_slider_lock, 0 },
+    { "s", "SLIDER VALUE", "Set planet slider\nSLIDER is s, d, i, e or t\nVALUE can be +N or -N for relative adjustment", 2, 2, 0, ui_cmd_planet_slider, 0 },
+    { "sl", "SLIDER", "Toggle planet slider lock", 1, 1, 0, ui_cmd_planet_slider_lock, 0 },
     { "b", "[SHIP]", "Select ship to build", 0, 1, 0, ui_cmd_planet_build, 0 },
     { "reloc", "[PLANET]", "Relocate built ships to", 0, 1, 0, ui_cmd_planet_reloc, 0 },
     { "trans", "[PLANET NUM]", "Transport troops to", 0, 2, 0, ui_cmd_planet_trans, 0 },
+    { "res", "[BC]", "Transfer reserves", 0, 1, 0, ui_cmd_planet_reserve, 0 },
     { "fs", "PLANET [NUM]*", "Send fleet to\nAll ships are sent if no NUM given", 1, 7, 0, ui_cmd_fleet_send, 0 },
+    { "t", "[FIELD]", "View technology\nFIELD is c, o, f, p, r or w\nShows sliders if no field given", 0, 1, 0, ui_cmd_tech_look, 0 },
+    { "ts", "FIELD VALUE", "Set tech slider to value\nVALUE can be +N or -N for relative adjustment", 2, 2, 0, ui_cmd_tech_slider, 0 },
+    { "tsl", "FIELD", "Toggle tech slider lock", 1, 1, 0, ui_cmd_tech_slider_lock, 0 },
+    { "t=", NULL, "Equalize tech sliders", 0, 0, 0, ui_cmd_tech_equals, 0 },
+    { "emp", NULL, "Empire overview", 0, 0, 0, ui_cmd_empire_look, 0 },
+    { "tax", "VALUE", "Set tax (tenths of percent)\nVALUE can be +N or -N for relative adjustment", 1, 1, 0, ui_cmd_empire_tax, 0 },
+    { "sec", "VALUE", "Set security spending (tenths of percent)\nVALUE can be +N or -N for relative adjustment", 1, 1, 0, ui_cmd_empire_security, 0 },
     { "aud", NULL, "Audience", 0, 0, 0, ui_cmd_audience, 0 },
+    { "galaxy", NULL, NULL, 0, 0, 0, ui_cmd_cheat_galaxy, 0 },
+    { "events", NULL, NULL, 0, 0, 0, ui_cmd_cheat_events, 0 },
+    { "moola", NULL, NULL, 0, 0, 0, ui_cmd_cheat_moola, 0 },
     { NULL, NULL, NULL, 0, 0, 0, NULL, 0 }
 };
 
