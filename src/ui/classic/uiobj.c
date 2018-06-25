@@ -1015,12 +1015,19 @@ static int16_t uiobj_kbd_dir_key(int dirx, int diry)
     }
 }
 
+static char uiobj_get_keychar(uint32_t key)
+{
+    mookey_t k = KBD_GET_KEY(key);
+    char c = ((k >= MOO_KEY_SPACE) && (k < MOO_KEY_a)) ? KBD_GET_CHAR(key) : 0;
+    return c;
+}
+
 static int16_t uiobj_handle_kbd_find_alt(int16_t oi, uint32_t key)
 {
     const uiobj_t *p = &uiobj_tbl[oi];
     mookey_t k = KBD_GET_KEY(key);
     uint32_t kmod = KBD_GET_KEYMOD(key);
-    char c = ((k >= 0x20) && (k < 0x7e)) ? KBD_GET_CHAR(key) : 0;
+    char c = uiobj_get_keychar(key);
     while (1
       && (oi != uiobj_table_num)
       && (!((p->type != UIOBJ_TYPE_ALTSTR) && ((kmod == p->key) || (c && (c == p->key)))))
@@ -1256,7 +1263,7 @@ static int16_t uiobj_handle_input_sub0(void)
         uint32_t key = uiobj_handle_kbd(&oi);
         mookey_t k = KBD_GET_KEY(key);
         uint32_t kmod = KBD_GET_KEYMOD(key);
-        char c = ((k >= 0x20) && (k < 0x7e)) ? KBD_GET_CHAR(key) : 0;
+        char c = uiobj_get_keychar(key);
         if (k == MOO_KEY_UNKNOWN) {
             return 0;
         }
