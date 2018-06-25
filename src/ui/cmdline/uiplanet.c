@@ -83,6 +83,10 @@ const char *ui_planet_str(struct game_s *g, int api, uint8_t planet_i, char *buf
 {
     const planet_t *p = &(g->planet[planet_i]);
     if (BOOLVEC_IS1(p->explored, api)) {
+        if ((p->owner == api) && (BOOLVEC_IS1(p->extras, PLANET_EXTRAS_GOVERNOR))) {
+            sprintf(buf, "*%s", p->name);
+            return buf;
+        }
         return p->name;
     } else {
         sprintf(buf, "#%c%i", game_str_tbl_sm_stinfo[p->star_type][0]/*HACK*/, planet_i);
@@ -147,7 +151,7 @@ void ui_planet_look(struct game_s *g, int api, uint8_t planet_i)
     const empiretechorbit_t *e = &(g->eto[api]);
     int dist = game_get_min_dist(g, api, planet_i);
     {
-        char buf[10];
+        char buf[16];
         printf("[%i] (%i,%i) %s: ", planet_i, p->x, p->y, ui_planet_str(g, api, planet_i, buf));
     }
     if (BOOLVEC_IS1(p->explored, api)) {
@@ -156,8 +160,7 @@ void ui_planet_look(struct game_s *g, int api, uint8_t planet_i)
         } else {
             player_id_t owner = p->owner;
             const char *str = NULL;
-            /* FIXME pop max to game_str when uiclassic has been fixed */
-            printf("%s, pop %i max", game_str_tbl_sm_pltype[p->type], p->max_pop3);
+            printf("%s, %s %i %s", game_str_tbl_sm_pltype[p->type], game_str_sm_pop, p->max_pop3, game_str_sm_max);
             if (p->special != PLANET_SPECIAL_NORMAL) {
                 printf(", %s", game_str_tbl_sm_pspecial[p->special]);
             }
@@ -201,7 +204,7 @@ void ui_planet_look(struct game_s *g, int api, uint8_t planet_i)
             } else {
                 char buf[10];
                 int v;
-                printf(", pop %i, bases %i, factories %i, prod %i (%i)\n", p->pop, p->missile_bases, p->factories, p->prod_after_maint, p->total_prod);
+                printf(", pop %i, bases %i, factories %i, prod %i (%i), waste %i\n", p->pop, p->missile_bases, p->factories, p->prod_after_maint, p->total_prod, p->waste);
                 v = game_planet_get_slider_text(g, p, api, PLANET_SLIDER_SHIP, buf);
                 printf("  - Build ");
                 if (p->buildship == BUILDSHIP_STARGATE) {
@@ -325,6 +328,19 @@ int ui_cmd_planet_slider_lock(struct game_s *g, int api, struct input_token_s *p
     return 0;
 }
 
+int ui_cmd_planet_govern(struct game_s *g, int api, struct input_token_s *param, int num_param, void *var)
+{
+    planet_t *p = &(g->planet[g->planet_focus_i[api]]);
+    if (p->owner != api) {
+        return -1;
+    }
+    BOOLVEC_TOGGLE(p->extras, PLANET_EXTRAS_GOVERNOR);
+    if (BOOLVEC_IS1(p->extras, PLANET_EXTRAS_GOVERNOR)) {
+        game_planet_govern(g, p);
+    }
+    return 0;
+}
+
 int ui_cmd_planet_build(struct game_s *g, int api, struct input_token_s *param, int num_param, void *var)
 {
     planet_t *p = &(g->planet[g->planet_focus_i[api]]);
@@ -435,5 +451,32 @@ int ui_cmd_planet_trans(struct game_s *g, int api, struct input_token_s *param, 
     }
     pf->trans_dest = pti;
     pf->trans_num = v;
+    return 0;
+}
+
+int ui_cmd_planet_reserve(struct game_s *g, int api, struct input_token_s *param, int num_param, void *var)
+{
+    planet_t *p = &(g->planet[g->planet_focus_i[api]]);
+    empiretechorbit_t *e = &(g->eto[api]);
+    int v;
+    if (p->owner != api) {
+        return -1;
+    }
+    if (num_param == 0) {
+        int prod = p->prod_after_maint - p->reserve;
+        SETMAX(prod, 0);
+        v = e->reserve_bc;
+        SETMIN(v, prod);
+    } else if (param[0].type == INPUT_TOKEN_NUMBER) {
+        v = param[0].data.num;
+        if (v > e->reserve_bc) {
+            return -1;
+        }
+    } else {
+        return -1;
+    }
+    p->reserve += v;
+    e->reserve_bc -= v;
+    game_update_production(g);
     return 0;
 }
