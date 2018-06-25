@@ -552,7 +552,7 @@ const char *game_tech_get_descr(const struct game_aux_s *gaux, tech_field_t fiel
     return buf;
 }
 
-int game_tech_current_research_percent1(struct empiretechorbit_s *e, tech_field_t field)
+int game_tech_current_research_percent1(const struct empiretechorbit_s *e, tech_field_t field)
 {
     uint32_t invest, cost;
     int slider, t1, t3, percent;
@@ -570,7 +570,7 @@ int game_tech_current_research_percent1(struct empiretechorbit_s *e, tech_field_
     return percent;
 }
 
-int game_tech_current_research_percent2(struct empiretechorbit_s *e, tech_field_t field)
+int game_tech_current_research_percent2(const struct empiretechorbit_s *e, tech_field_t field)
 {
     uint32_t invest, cost;
     int slider, t1, t3;
