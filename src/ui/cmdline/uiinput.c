@@ -221,6 +221,9 @@ int ui_input_tokenize(char *inputbuf, const struct input_cmd_s * const *cmdsptr)
     {
         char *p = inputbuf;
         p = skip_whitespace(p);
+        if (*p == '#') {
+            return 0;
+        }
         while ((*p != '\0') && (*p != '\n') && (*p != '\r')) {
             ui_data.input.tok[num].str = p;
             ui_data.input.tok[num].data.ptr = 0;

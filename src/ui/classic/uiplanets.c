@@ -5,6 +5,7 @@
 #include "uiplanets.h"
 #include "comp.h"
 #include "game.h"
+#include "game_cheat.h"
 #include "game_misc.h"
 #include "game_str.h"
 #include "hw.h"
@@ -338,7 +339,7 @@ void ui_planets(struct game_s *g, player_id_t active_player)
     uiobj_set_help_id(37);
 again:
     flag_trans = false;
-    game_update_production(g); /* this is needed for transfers and alt-moola */
+    game_update_production(g); /* this is needed for transfers */
 
     d.g = g;
     d.api = active_player;
@@ -406,8 +407,9 @@ again:
             }
         }
         if (oi == oi_alt_moola) {
-            ui_sound_play_sfx_24();
-            g->eto[active_player].reserve_bc += 100;
+            if (game_cheat_moola(g, active_player)) {
+                ui_sound_play_sfx_24();
+            }
         }
         if ((d.pos + PLANETS_ON_SCREEN) >= d.num) {
             d.pos = d.num - PLANETS_ON_SCREEN;
