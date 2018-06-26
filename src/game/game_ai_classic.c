@@ -2279,8 +2279,8 @@ static int game_ai_battle_rival(struct battle_s *bt, int itemi, int a2)
     for (int i = 0; i <= bt->items_num; ++i) {
         struct battle_item_s *b2 = &(bt->item[i]);
         if (((b->side + b2->side) == 1) && (b->num > 0)) { /* FIXME b2->num ? */
-            int v8, v10, w, v20, v28, repair;
-            v8 = game_ai_battle_incoming_missiles_dmg(bt, i);
+            int dmgmissile, v10, w, v20, v28, repair;
+            dmgmissile = game_ai_battle_incoming_missiles_dmg(bt, i);
             v10 = game_ai_battle_dmgmax(bt, i);
             v28 = game_ai_battle_dmggive(bt, itemi, i, a2);
             repair = (b2->repair * b2->hp2) / 100;
@@ -2300,7 +2300,7 @@ static int game_ai_battle_rival(struct battle_s *bt, int itemi, int a2)
             v20 = (b2->num * v28 - repair) / (b2->hp1 * 20);
             if (v20 > 0) {
                 int vt;
-                vt = b2->num - v8;
+                vt = b2->num - dmgmissile;
                 if (vt < v20) {
                     v20 = vt;
                     SETMAX(v20, 0);
@@ -2309,7 +2309,7 @@ static int game_ai_battle_rival(struct battle_s *bt, int itemi, int a2)
                 w = v20 * v10 * 20;
             } else {
                 /*590c1*/
-                if ((v8 > 0) && (v28 > 0)) {
+                if ((dmgmissile > 0) && (v28 > 0)) {
                     w = 3;
                 } else {
                     /*590e1*/
