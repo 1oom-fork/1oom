@@ -2306,7 +2306,9 @@ static int game_ai_battle_dmggive(struct battle_s *bt, int itemi1, int itemi2, i
         miss_chance_missile += 50;
     }
     SETRANGE(miss_chance_beam, 0, 95);
-    /* FIXME no SETRANGE for _missile ? */
+    if (bt->g->ai_id == GAME_AI_CLASSICPLUS) {
+        SETMIN(miss_chance_missile, 95);
+    }
     dist = util_math_dist_maxabs(b->sx, b->sy, bd->sx, bd->sy);
     for (int i = 0; i < num_weap; ++i) {
         const struct shiptech_weap_s *w = &(tbl_shiptech_weap[b->wpn[i].t]);
@@ -2336,16 +2338,28 @@ static int game_ai_battle_dmggive(struct battle_s *bt, int itemi1, int itemi2, i
         ) {
             if (w->damagemin == w->damagemax) {
                 /*584de*/
-                miss_chance_missile -= w->extraacc * 10; /* FIXME BUG? substracted for every weapon */
-                SETRANGE(miss_chance_missile, 0, 95);
-                dmg = ((100 - miss_chance_missile) / 5) * (w->damagemax - bd->absorb / absorbdiv);
+                int miss_chance;
+                miss_chance = miss_chance_missile - w->extraacc * 10;
+                SETRANGE(miss_chance, 0, 95);
+                if (bt->g->ai_id == GAME_AI_CLASSIC) {
+                    miss_chance_missile = miss_chance; /* WASBUG MOO1 substracts for every missile weapon */
+                }
+                dmg = ((100 - miss_chance) / 5) * (w->damagemax - bd->absorb / absorbdiv);
                 dmg /= damagediv;
                 dmg *= w->damagemul;
                 dmg *= w->nummiss;
             } else {
                 /*585ae*/
+                int miss_chance;
+                miss_chance = miss_chance_beam;
                 if (bd->absorb > w->damagemin) {
-                    miss_chance_beam += ((100 - miss_chance_beam) * (bd->absorb + 1 - w->damagemin)) / (w->damagemax + 1 - w->damagemin);
+                    miss_chance += ((100 - miss_chance) * (bd->absorb + 1 - w->damagemin)) / (w->damagemax + 1 - w->damagemin);
+                    if (bt->g->ai_id == GAME_AI_CLASSICPLUS) {
+                        SETMIN(miss_chance, 95);
+                    }
+                }
+                if (bt->g->ai_id == GAME_AI_CLASSIC) {
+                    miss_chance_beam = miss_chance; /* WASBUG MOO1 adds for every beam weapon */
                 }
                 /*5861e*/
                 if ((w->damagemax / damagediv) > (bd->absorb / absorbdiv)) {
@@ -2353,7 +2367,7 @@ static int game_ai_battle_dmggive(struct battle_s *bt, int itemi1, int itemi2, i
                     dmgmax = (w->damagemax / damagediv) - (bd->absorb / absorbdiv);
                     dmgmin = (w->damagemin > bd->absorb) ? (w->damagemin - bd->absorb) : 1; /* FIXME {damage,absorb}div? */
                     dmg = (dmgmax + dmgmin) / 2;
-                    dmg = ((100 - miss_chance_beam) * dmg) / 5;
+                    dmg = ((100 - miss_chance) * dmg) / 5;
                     dmg *= w->damagemul;
                 } else {
                     dmg = 0;
