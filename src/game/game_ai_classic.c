@@ -2025,7 +2025,7 @@ static int game_battle_get_absorbdiv(const struct battle_item_s *b, weapon_t wpn
     return v;
 }
 
-static int game_battle_missile_hmm1(const struct battle_s *bt, int missile_i)
+static int game_ai_battle_missile_dmg(const struct battle_s *bt, int missile_i)
 {
     const struct battle_missile_s *m = &(bt->missile[missile_i]);
     /*di*/const struct battle_item_s *b = &(bt->item[m->target]);
@@ -2068,7 +2068,7 @@ static int game_battle_missile_hmm2(const struct battle_s *bt, int itemi)
     for (int i = 0; i < bt->num_missile; ++i) {
         const struct battle_missile_s *m = &(bt->missile[i]);
         if (m->target == itemi) {
-            v += game_battle_missile_hmm1(bt, i) / hp;
+            v += game_ai_battle_missile_dmg(bt, i) / hp;
         }
     }
     return v;
@@ -2936,7 +2936,7 @@ static bool game_ai_classic_battle_ai_retreat(struct battle_s *bt)
             int s;
             s = bt->item[m->target].side;
             tbl_hmm1[m->source] += 2;
-            tbl_hmm3[s] += game_battle_missile_hmm1(bt, i) / (tbl_hmm1[m->source] + 1);
+            tbl_hmm3[s] += game_ai_battle_missile_dmg(bt, i) / (tbl_hmm1[m->source] + 1);
             tbl_hmm3[s] -= tbl_hmm2[m->target];
             tbl_hmm2[m->target] = 0;
         }
