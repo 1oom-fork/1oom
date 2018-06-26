@@ -12,6 +12,9 @@
 #include "types.h"
 #include "uicheat.h"
 #include "uicmds.h"
+#ifdef FEATURE_MODEBUG
+#include "uidebug.h"
+#endif /* FEATURE_MODEBUG */
 #include "uidefs.h"
 #include "uiempire.h"
 #include "uifleet.h"
@@ -63,6 +66,9 @@ static const struct input_cmd_s cmds_turn[] = {
 static const struct input_cmd_s * const cmdsptr_turn[] = {
     cmds_turn,
     ui_cmds_opts,
+#ifdef FEATURE_MODEBUG
+    ui_cmds_debug,
+#endif /* FEATURE_MODEBUG */
     NULL
 };
 

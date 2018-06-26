@@ -12,6 +12,7 @@
 #include "game_audience.h"
 #include "game_aux.h"
 #include "game_battle.h"
+#include "game_debug.h"
 #include "game_design.h"
 #include "game_diplo.h"
 #include "game_election.h"
@@ -1764,6 +1765,8 @@ struct game_end_s game_turn_process(struct game_s *g)
     game_turn_update_trade(g);
     game_spy_build(g);
     game_update_production(g);
+    game_debug_dump_sliders(g, false);
+    game_debug_dump_race_techs(g, false);
     game_turn_diplo_adjust(g);
     game_turn_build_def(g);
     game_turn_build_ship(g);
