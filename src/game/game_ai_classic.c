@@ -352,7 +352,7 @@ static shipcount_t game_ai_classic_turn_p1_spawn_colony_ship(struct game_s *g, s
         return 0;
     }
     planeti = ait->tbl_front_planet[rnd_0_nm1(ait->num_fronts, &g->seed)];
-    if (planeti == PLANET_NONE) {
+    if (planeti == PLANET_NONE) { /* never true? */
         return 0;
     }
     prod = (e->total_production_bc * 2) / 5;
@@ -2279,7 +2279,7 @@ static int game_ai_battle_rival(struct battle_s *bt, int itemi, int a2)
     int rival = -1, maxw = 0;
     for (int i = 0; i <= bt->items_num; ++i) {
         struct battle_item_s *b2 = &(bt->item[i]);
-        if (((b->side + b2->side) == 1) && (b->num > 0)) { /* FIXME b2->num ? */
+        if (((b->side + b2->side) == 1) && (b->num > 0)) {
             int dmgmissile, dmgmax, w, dmgmany, dmggive, repair;
             dmgmissile = game_ai_battle_incoming_missiles_dmg(bt, i);
             dmgmax = game_ai_battle_dmgmax(bt, i);
@@ -2292,7 +2292,6 @@ static int game_ai_battle_rival(struct battle_s *bt, int itemi, int a2)
                 dmgother = game_ai_battle_dmggive(bt, itemi, i, a2);
                 if (dmgother > dmggive) {
                     dmggive = dmgother;
-                    /* FIXME BUG? leaves wpnt swapped */
                 } else {
                     t = b->wpn[0].t; b->wpn[0].t = b->wpn[1].t; b->wpn[1].t = t;
                 }
@@ -2301,7 +2300,7 @@ static int game_ai_battle_rival(struct battle_s *bt, int itemi, int a2)
             dmgmany = (b->num * dmggive - repair) / (b2->hp1 * 20);
             if (dmgmany > 0) {
                 int vt;
-                vt = b2->num - dmgmissile;
+                vt = b2->num - dmgmissile;  /* FIMXE BUG? num - dmg? */
                 if (vt < dmgmany) {
                     dmgmany = vt;
                     SETMAX(dmgmany, 0);
@@ -2973,7 +2972,7 @@ static bool game_ai_classic_battle_ai_retreat(struct battle_s *bt)
         tbl_hmm4[s] += (b->hp1 * b->num * 7) / 10;
         j = game_ai_battle_rival(bt, 0/*planet*/, 1);
         if (j > 0) {
-            tbl_hmm3[s] += (game_ai_battle_dmggive(bt, 0, j, 1) * b->num * 7) / 10;
+            tbl_hmm3[s] += (game_ai_battle_dmggive(bt, 0/*planet*/, j, 1) * b->num * 7) / 10;
             tbl_hmm3[s] -= (tbl_hmm2[j] * 7) / 10;
             tbl_hmm2[j] = 0;
         }
