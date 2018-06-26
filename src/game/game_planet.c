@@ -28,13 +28,10 @@ static int tenths_2str(char *buf, int num)
 
 static void increment_slider(planet_t *p, int slideri)
 {
-    /* increment */
-    int v = p->slider[slideri] + 4;
-    SETMIN(v, 100);
-    p->slider[slideri] = v;
-    /* rebalance */
+    ADDSATT(p->slider[slideri], 1, 100);
     game_adjust_slider_group(p->slider, slideri, p->slider[slideri], PLANET_SLIDER_NUM, p->slider_lock);
 }
+
 static void set_slider(planet_t *p, int slideri, int16_t value)
 {
     /* set to given value. Don't check min/max, as we assume given value was already set and is valid */
@@ -518,7 +515,7 @@ int game_planet_get_slider_text(const struct game_s *g, const planet_t *p, playe
  * - Then set shipbuilding to minimum required to build stargate if technology is present.
  * - If all of the above are finished, do research
  *
- * This works by moving slider by 1 tick (4%) until desired results happen. Implemented
+ * This works by moving slider by 1 unit (1%) until desired results happen. Implemented
  * this way to avoid duplication of planet production logic.
  *
  */
