@@ -2141,7 +2141,7 @@ static int game_battle_item_weight2(struct battle_s *bt, int itemi)
     return v;
 }
 
-static int game_battle_item_weight3(struct battle_s *bt, int itemi1, int itemi2, int a2)
+static int game_ai_battle_dmggive(struct battle_s *bt, int itemi1, int itemi2, int a2)
 {
     struct battle_item_s *b = &(bt->item[itemi1]);
     /*si*/struct battle_item_s *bd = &(bt->item[itemi2]);
@@ -2277,13 +2277,13 @@ static int game_ai_battle_rival(struct battle_s *bt, int itemi, int a2)
             int v8, v10, w, v20, v28, repair;
             v8 = game_battle_missile_hmm2(bt, i);
             v10 = game_battle_item_weight2(bt, i);
-            v28 = game_battle_item_weight3(bt, itemi, i, a2);
+            v28 = game_ai_battle_dmggive(bt, itemi, i, a2);
             repair = (b2->repair * b2->hp2) / 100;
             if (itemi == 0/*planet*/) {
                 int v2a;
                 weapon_t t;
                 t = b->wpn[0].t; b->wpn[0].t = b->wpn[1].t; b->wpn[1].t = t;
-                v2a = game_battle_item_weight3(bt, itemi, i, a2);
+                v2a = game_ai_battle_dmggive(bt, itemi, i, a2);
                 if (v2a > v28) {
                     v28 = v2a;
                     /* FIXME BUG? leaves wpnt swapped */
@@ -2952,7 +2952,7 @@ static bool game_ai_classic_battle_ai_retreat(struct battle_s *bt)
             struct battle_item_s *b;
             b = &(bt->item[i]);
             tbl_hmm4[s] += b->hp1 * b->num;
-            tbl_hmm3[s] += game_battle_item_weight3(bt, i, j, 1) * b->num;
+            tbl_hmm3[s] += game_ai_battle_dmggive(bt, i, j, 1) * b->num;
             tbl_hmm3[s] -= tbl_hmm2[j];
             tbl_hmm2[j] = 0;
         } else {
@@ -2965,7 +2965,7 @@ static bool game_ai_classic_battle_ai_retreat(struct battle_s *bt)
         tbl_hmm4[s] += (b->hp1 * b->num * 7) / 10;
         j = game_ai_battle_rival(bt, 0/*planet*/, 1);
         if (j > 0) {
-            tbl_hmm3[s] += (game_battle_item_weight3(bt, 0, j, 1) * b->num * 7) / 10;
+            tbl_hmm3[s] += (game_ai_battle_dmggive(bt, 0, j, 1) * b->num * 7) / 10;
             tbl_hmm3[s] -= (tbl_hmm2[j] * 7) / 10;
             tbl_hmm2[j] = 0;
         }
