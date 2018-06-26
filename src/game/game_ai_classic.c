@@ -2160,7 +2160,7 @@ static int game_battle_get_absorbdiv(const struct battle_item_s *b, weapon_t wpn
     return v;
 }
 
-static int game_battle_missile_hmm1(const struct battle_s *bt, int missile_i)
+static int game_ai_battle_missile_dmg(const struct battle_s *bt, int missile_i)
 {
     const struct battle_missile_s *m = &(bt->missile[missile_i]);
     /*di*/const struct battle_item_s *b = &(bt->item[m->target]);
@@ -2193,7 +2193,7 @@ static int game_battle_missile_hmm1(const struct battle_s *bt, int missile_i)
     return damagepotential;
 }
 
-static int game_battle_missile_hmm2(const struct battle_s *bt, int itemi)
+static int game_ai_battle_incoming_missiles_dmg(const struct battle_s *bt, int itemi)
 {
     int v = 0, hp;
     if (itemi == 0/*plamet*/) {
@@ -2203,51 +2203,21 @@ static int game_battle_missile_hmm2(const struct battle_s *bt, int itemi)
     for (int i = 0; i < bt->num_missile; ++i) {
         const struct battle_missile_s *m = &(bt->missile[i]);
         if (m->target == itemi) {
-            v += game_battle_missile_hmm1(bt, i) / hp;
+            v += game_ai_battle_missile_dmg(bt, i) / hp;
         }
     }
     return v;
 }
 
-
-static int game_battle_item_weight2(struct battle_s *bt, int itemi)
+static int game_ai_battle_dmgmax(struct battle_s *bt, int itemi)
 {
     const struct battle_item_s *b = &(bt->item[itemi]);
     int v = 0, num_weap = (itemi == 0/*planet*/) ? 1 : 4;
     bool flag_planet_opponent = false;
-#if 1
+    /* XXX MOO1 has more calc here for an unused variable */
     if ((b->side + bt->item[0/*planet*/].side) == 1) {
         flag_planet_opponent = true;
     }
-#else
-    /* FIXME MOO1 does this, but v8 is unused */
-    int v8 = 0;
-    if (b->side == SIDE_L) {
-        if (bt->item[0/*planet*/].side == SIDE_R) {
-            flag_planet_opponent = true;
-            v8 = bt->item[0/*planet*/].absorb;
-        }
-        for (int i = bt->s[SIDE_L].items + 1; i <= bt->items_num; ++i) {
-            v8 += bt->item[i].absorb;
-        }
-        if ((bt->s[SIDE_R].items > 0) || flag_planet_opponent) {
-            v8 /= bt->s[SIDE_R].items + (flag_planet_opponent ? 1 : 0);
-        }
-    } else {
-        /*57f7b*/
-        if (bt->item[0/*planet*/].side == SIDE_L) {
-            flag_planet_opponent = true;
-            v8 = bt->item[0/*planet*/].absorb;
-        }
-        for (int i = 1; i <= bt->s[SIDE_L].items; ++i) {
-            v8 += bt->item[i].absorb;
-        }
-        if ((bt->s[SIDE_R].items > 0) || flag_planet_opponent) {
-            v8 /= bt->s[SIDE_R].items + (flag_planet_opponent ? 1 : 0);
-        }
-    }
-#endif
-    /*57fd0*/
     for (int i = 0; i < num_weap; ++i) {
         const struct shiptech_weap_s *w = &(tbl_shiptech_weap[b->wpn[i].t]);
         if (b->wpn[i].numshots != 0) {
@@ -2258,7 +2228,6 @@ static int game_battle_item_weight2(struct battle_s *bt, int itemi)
                     if (dmg > 0) {
                         v += dmg * b->wpn[i].n * w->numfire;
                     }
-                    /*580c7*/
                     if (w->is_bio) {
                         dmg = w->damagemax - bt->antidote;
                         if (dmg > 0) {
@@ -2267,7 +2236,6 @@ static int game_battle_item_weight2(struct battle_s *bt, int itemi)
                     }
                 }
             } else {
-                /*58167*/
                 v += w->damagemax * b->wpn[i].n * w->numfire;
             }
         }
@@ -2278,7 +2246,7 @@ static int game_battle_item_weight2(struct battle_s *bt, int itemi)
     return v;
 }
 
-static int game_battle_item_weight3(struct battle_s *bt, int itemi1, int itemi2, int a2)
+static int game_ai_battle_dmggive(struct battle_s *bt, int itemi1, int itemi2, int a2)
 {
     struct battle_item_s *b = &(bt->item[itemi1]);
     /*si*/struct battle_item_s *bd = &(bt->item[itemi2]);
@@ -2330,26 +2298,21 @@ static int game_battle_item_weight3(struct battle_s *bt, int itemi1, int itemi2,
                 dmg *= w->damagemul;
                 dmg *= w->nummiss;
             } else {
-                int v18, v1a;
                 /*585ae*/
                 if (bd->absorb > w->damagemin) {
                     miss_chance_beam += ((100 - miss_chance_beam) * (bd->absorb + 1 - w->damagemin)) / (w->damagemax + 1 - w->damagemin);
                 }
                 /*5861e*/
-                if (w->damagemin <= bd->absorb) {
-                    v18 = 1;
-                } else {
-                    v18 = w->damagemin - bd->absorb;
-                }
                 if ((w->damagemax / damagediv) > (bd->absorb / absorbdiv)) {
-                    v1a = (w->damagemax / damagediv) - (bd->absorb / absorbdiv);
+                    int dmgmin, dmgmax;
+                    dmgmax = (w->damagemax / damagediv) - (bd->absorb / absorbdiv);
+                    dmgmin = (w->damagemin > bd->absorb) ? (w->damagemin - bd->absorb) : 1; /* FIXME {damage,absorb}div? */
+                    dmg = (dmgmax + dmgmin) / 2;
+                    dmg = ((100 - miss_chance_beam) * dmg) / 5;
+                    dmg *= w->damagemul;
                 } else {
-                    v18 = 0;
-                    v1a = 0;
+                    dmg = 0;
                 }
-                dmg = (v1a + v18) / 2;
-                dmg = ((100 - miss_chance_beam) * dmg) / 5;
-                dmg *= w->damagemul;
             }
             /*58729*/
             if (w->is_bio && (b->wpn[i].numshots != 0)) {
@@ -2404,53 +2367,51 @@ static int game_battle_item_weight3(struct battle_s *bt, int itemi1, int itemi2,
     return v;
 }
 
-
-static int game_battle_item_rival1(struct battle_s *bt, int itemi, int a2)
+static int game_ai_battle_rival(struct battle_s *bt, int itemi, int a2)
 {
     /*di*/struct battle_item_s *b = &(bt->item[itemi]);
     int rival = -1, maxw = 0;
     for (int i = 0; i <= bt->items_num; ++i) {
         struct battle_item_s *b2 = &(bt->item[i]);
-        if (((b->side + b2->side) == 1) && (b->num > 0)) { /* FIXME b2->num ? */
-            int v8, v10, w, v20, v28, repair;
-            v8 = game_battle_missile_hmm2(bt, i);
-            v10 = game_battle_item_weight2(bt, i);
-            v28 = game_battle_item_weight3(bt, itemi, i, a2);
+        if (((b->side + b2->side) == 1) && (b->num > 0)) {
+            int dmgmissile, dmgmax, w, dmgmany, dmggive, repair;
+            dmgmissile = game_ai_battle_incoming_missiles_dmg(bt, i);
+            dmgmax = game_ai_battle_dmgmax(bt, i);
+            dmggive = game_ai_battle_dmggive(bt, itemi, i, a2);
             repair = (b2->repair * b2->hp2) / 100;
             if (itemi == 0/*planet*/) {
-                int v2a;
+                int dmgother;
                 weapon_t t;
                 t = b->wpn[0].t; b->wpn[0].t = b->wpn[1].t; b->wpn[1].t = t;
-                v2a = game_battle_item_weight3(bt, itemi, i, a2);
-                if (v2a > v28) {
-                    v28 = v2a;
-                    /* FIXME BUG? leaves wpnt swapped */
+                dmgother = game_ai_battle_dmggive(bt, itemi, i, a2);
+                if (dmgother > dmggive) {
+                    dmggive = dmgother;
                 } else {
                     t = b->wpn[0].t; b->wpn[0].t = b->wpn[1].t; b->wpn[1].t = t;
                 }
             }
             /*58fc7*/
-            v20 = (b2->num * v28 - repair) / (b2->hp1 * 20);
-            if (v20 > 0) {
+            dmgmany = (b->num * dmggive - repair) / (b2->hp1 * 20);
+            if (dmgmany > 0) {
                 int vt;
-                vt = b2->num - v8;
-                if (vt < v20) {
-                    v20 = vt;
-                    SETMAX(v20, 0);
+                vt = b2->num - dmgmissile;  /* FIMXE BUG? num - dmg? */
+                if (vt < dmgmany) {
+                    dmgmany = vt;
+                    SETMAX(dmgmany, 0);
                 }
                 /*59099*/
-                w = v20 * v10 * 20;
+                w = dmgmany * dmgmax * 20;
             } else {
                 /*590c1*/
-                if ((v8 > 0) && (v28 > 0)) {
+                if ((dmgmissile > 0) && (dmggive > 0)) {
                     w = 3;
                 } else {
                     /*590e1*/
-                    w = ((v28 - repair) * v10) / b2->hp1;
+                    w = ((dmggive - repair) * dmgmax) / b2->hp1;
                 }
                 /*59124*/
                 SETMAX(w, 0);
-                if (v28 > 0) {
+                if (dmggive > 0) {
                     SETMAX(w, 3);
                 }
                 if ((w == 1) && (i != 0/*planet*/)) {
@@ -2458,7 +2419,7 @@ static int game_battle_item_rival1(struct battle_s *bt, int itemi, int a2)
                 }
             }
             /*5917c*/
-            if ((v10 <= 0) && (v28 > 0)) {
+            if ((dmgmax <= 0) && (dmggive > 0)) {
                 w = (i == 0/*planet*/) ? 1 : 2;
             }
             if ((itemi == 0/*planet*/) && (w > 0)) {
@@ -2471,9 +2432,9 @@ static int game_battle_item_rival1(struct battle_s *bt, int itemi, int a2)
                 for (int j = 0; j < WEAPON_SLOT_NUM; ++j) {
                     const struct shiptech_weap_s *w = &(tbl_shiptech_weap[b->wpn[j].t]);
                     if ((w->is_bio) && (b->wpn[j].numshots != 0)) {
-                        v28 = w->damagemax - bt->antidote;
-                        if (v28 > 0) {
-                            w += v28 * b->wpn[j].n * 100;
+                        dmggive = w->damagemax - bt->antidote;
+                        if (dmggive > 0) {
+                            w += dmggive * b->wpn[j].n * 100;
                         }
                     }
                 }
@@ -2532,7 +2493,7 @@ static int game_battle_stasis_target(struct battle_s *bt)
             struct battle_item_s *bd = &(bt->item[i]);
             if ((b->side != bd->side) && (bd->stasisby == 0) && (bd->cloak != 1)) {
                 int v;
-                v = game_battle_item_weight2(bt, i) * bd->num;
+                v = game_ai_battle_dmgmax(bt, i) * bd->num;
                 if (v > vmax) {
                     vmax = v;
                     target_i = i;
@@ -2962,7 +2923,7 @@ static void game_ai_classic_battle_ai_turn(struct battle_s *bt)
     game_battle_area_setup(bt);    /* FIXME already done by caller */
     if (1
        && (b->side == SIDE_R)
-       && (game_battle_item_rival1(bt, itemi, 1) == -1)
+       && (game_ai_battle_rival(bt, itemi, 1) == -1)
        && game_battle_missile_none_fired_by(bt, itemi)
     ) {
         ++b->retreat;
@@ -2989,9 +2950,9 @@ static void game_ai_classic_battle_ai_turn(struct battle_s *bt)
     /*5a69e*/
     game_battle_area_setup(bt);
     if (1
-      && (game_battle_missile_hmm2(bt, itemi) > 0)
+      && (game_ai_battle_incoming_missiles_dmg(bt, itemi) > 0)
       && (target_i != -1) /* BUG used uninitialized if b->stasis == 0 */
-      && ((target_i = game_battle_item_rival1(bt, itemi, 0)) > -1)
+      && ((target_i = game_ai_battle_rival(bt, itemi, 0)) > -1)
     ) {
         if ((b->pulsar == 1) || (b->pulsar == 2)) {
             if (game_battle_pulsar_hmm2(bt, b->sx, b->sy) < 0) {
@@ -3010,7 +2971,7 @@ static void game_ai_classic_battle_ai_turn(struct battle_s *bt)
     if (b->retreat > 0) {
         target_i = -1;
     } else {
-        target_i = game_battle_item_rival1(bt, itemi, 2);
+        target_i = game_ai_battle_rival(bt, itemi, 2);
     }
     if (!bt->flag_cur_item_destroyed) {
         v4 = game_battle_ai_target1(bt, target_i);
@@ -3022,7 +2983,7 @@ static void game_ai_classic_battle_ai_turn(struct battle_s *bt)
                 bt->special_button = 0;
             }
         }
-        target_i = game_battle_item_rival1(bt, itemi, 0);
+        target_i = game_ai_battle_rival(bt, itemi, 0);
         if ((target_i != -1) && (itemi == 0/*planet*/) && (b->num > 0)) {
             int ii = (b->side == SIDE_R) ? 1 : (bt->s[SIDE_L].items + 1);
             if (bt->item[ii].side != b->side) {
@@ -3032,7 +2993,7 @@ static void game_ai_classic_battle_ai_turn(struct battle_s *bt)
         /*5a866*/
         loops = 0;
         while (target_i != -1) {
-            target_i = game_battle_item_rival1(bt, itemi, 0);
+            target_i = game_ai_battle_rival(bt, itemi, 0);
             ++loops;
             if ((b->cloak == 1) && (target_i != -1)) { /* WASBUG no test for -1 */
                 const struct battle_item_s *bd;
@@ -3079,7 +3040,7 @@ static bool game_ai_classic_battle_ai_retreat(struct battle_s *bt)
             int s;
             s = bt->item[m->target].side;
             tbl_hmm1[m->source] += 2;
-            tbl_hmm3[s] += game_battle_missile_hmm1(bt, i) / (tbl_hmm1[m->source] + 1);
+            tbl_hmm3[s] += game_ai_battle_missile_dmg(bt, i) / (tbl_hmm1[m->source] + 1);
             tbl_hmm3[s] -= tbl_hmm2[m->target];
             tbl_hmm2[m->target] = 0;
         }
@@ -3088,12 +3049,12 @@ static bool game_ai_classic_battle_ai_retreat(struct battle_s *bt)
     for (int i = 1; i <= bt->items_num; ++i) {
         int j, s;
         s = (i <= bt->s[SIDE_L].items) ? SIDE_R : SIDE_L;
-        j = game_battle_item_rival1(bt, i, 1);
+        j = game_ai_battle_rival(bt, i, 1);
         if (j >= 0) {
             struct battle_item_s *b;
             b = &(bt->item[i]);
             tbl_hmm4[s] += b->hp1 * b->num;
-            tbl_hmm3[s] += game_battle_item_weight3(bt, i, j, 1) * b->num;
+            tbl_hmm3[s] += game_ai_battle_dmggive(bt, i, j, 1) * b->num;
             tbl_hmm3[s] -= tbl_hmm2[j];
             tbl_hmm2[j] = 0;
         } else {
@@ -3105,9 +3066,9 @@ static bool game_ai_classic_battle_ai_retreat(struct battle_s *bt)
         struct battle_item_s *b = &(bt->item[0/*planet*/]);
         int j, s = (b->side == SIDE_L) ? SIDE_R : SIDE_L;
         tbl_hmm4[s] += (b->hp1 * b->num * 7) / 10;
-        j = game_battle_item_rival1(bt, 0/*planet*/, 1);
+        j = game_ai_battle_rival(bt, 0/*planet*/, 1);
         if (j > 0) {
-            tbl_hmm3[s] += (game_battle_item_weight3(bt, 0, j, 1) * b->num * 7) / 10;
+            tbl_hmm3[s] += (game_ai_battle_dmggive(bt, 0/*planet*/, j, 1) * b->num * 7) / 10;
             tbl_hmm3[s] -= (tbl_hmm2[j] * 7) / 10;
             tbl_hmm2[j] = 0;
         }
