@@ -2285,12 +2285,12 @@ static int game_ai_battle_rival(struct battle_s *bt, int itemi, int a2)
             dmggive = game_ai_battle_dmggive(bt, itemi, i, a2);
             repair = (b2->repair * b2->hp2) / 100;
             if (itemi == 0/*planet*/) {
-                int v2a;
+                int dmgother;
                 weapon_t t;
                 t = b->wpn[0].t; b->wpn[0].t = b->wpn[1].t; b->wpn[1].t = t;
-                v2a = game_ai_battle_dmggive(bt, itemi, i, a2);
-                if (v2a > dmggive) {
-                    dmggive = v2a;
+                dmgother = game_ai_battle_dmggive(bt, itemi, i, a2);
+                if (dmgother > dmggive) {
+                    dmggive = dmgother;
                     /* FIXME BUG? leaves wpnt swapped */
                 } else {
                     t = b->wpn[0].t; b->wpn[0].t = b->wpn[1].t; b->wpn[1].t = t;
