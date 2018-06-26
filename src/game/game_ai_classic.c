@@ -2272,7 +2272,7 @@ static int game_battle_item_weight3(struct battle_s *bt, int itemi1, int itemi2,
     return v;
 }
 
-static int game_battle_item_rival1(struct battle_s *bt, int itemi, int a2)
+static int game_ai_battle_rival(struct battle_s *bt, int itemi, int a2)
 {
     /*di*/struct battle_item_s *b = &(bt->item[itemi]);
     int rival = -1, maxw = 0;
@@ -2826,7 +2826,7 @@ static void game_ai_classic_battle_ai_turn(struct battle_s *bt)
     game_battle_area_setup(bt);    /* FIXME already done by caller */
     if (1
        && (b->side == SIDE_R)
-       && (game_battle_item_rival1(bt, itemi, 1) == -1)
+       && (game_ai_battle_rival(bt, itemi, 1) == -1)
        && game_battle_missile_none_fired_by(bt, itemi)
     ) {
         ++b->retreat;
@@ -2855,7 +2855,7 @@ static void game_ai_classic_battle_ai_turn(struct battle_s *bt)
     if (1
       && (game_battle_missile_hmm2(bt, itemi) > 0)
       && (target_i != -1) /* BUG used uninitialized if b->stasis == 0 */
-      && ((target_i = game_battle_item_rival1(bt, itemi, 0)) > -1)
+      && ((target_i = game_ai_battle_rival(bt, itemi, 0)) > -1)
     ) {
         if ((b->pulsar == 1) || (b->pulsar == 2)) {
             if (game_battle_pulsar_hmm2(bt, b->sx, b->sy) < 0) {
@@ -2874,7 +2874,7 @@ static void game_ai_classic_battle_ai_turn(struct battle_s *bt)
     if (b->retreat > 0) {
         target_i = -1;
     } else {
-        target_i = game_battle_item_rival1(bt, itemi, 2);
+        target_i = game_ai_battle_rival(bt, itemi, 2);
     }
     if (!bt->flag_cur_item_destroyed) {
         v4 = game_battle_ai_target1(bt, target_i);
@@ -2886,7 +2886,7 @@ static void game_ai_classic_battle_ai_turn(struct battle_s *bt)
                 bt->special_button = 0;
             }
         }
-        target_i = game_battle_item_rival1(bt, itemi, 0);
+        target_i = game_ai_battle_rival(bt, itemi, 0);
         if ((target_i != -1) && (itemi == 0/*planet*/) && (b->num > 0)) {
             int ii = (b->side == SIDE_R) ? 1 : (bt->s[SIDE_L].items + 1);
             if (bt->item[ii].side != b->side) {
@@ -2896,7 +2896,7 @@ static void game_ai_classic_battle_ai_turn(struct battle_s *bt)
         /*5a866*/
         loops = 0;
         while (target_i != -1) {
-            target_i = game_battle_item_rival1(bt, itemi, 0);
+            target_i = game_ai_battle_rival(bt, itemi, 0);
             ++loops;
             if ((b->cloak == 1) && (target_i != -1)) { /* WASBUG no test for -1 */
                 const struct battle_item_s *bd;
@@ -2952,7 +2952,7 @@ static bool game_ai_classic_battle_ai_retreat(struct battle_s *bt)
     for (int i = 1; i <= bt->items_num; ++i) {
         int j, s;
         s = (i <= bt->s[SIDE_L].items) ? SIDE_R : SIDE_L;
-        j = game_battle_item_rival1(bt, i, 1);
+        j = game_ai_battle_rival(bt, i, 1);
         if (j >= 0) {
             struct battle_item_s *b;
             b = &(bt->item[i]);
@@ -2968,7 +2968,7 @@ static bool game_ai_classic_battle_ai_retreat(struct battle_s *bt)
         struct battle_item_s *b = &(bt->item[0/*planet*/]);
         int j, s = (b->side == SIDE_L) ? SIDE_R : SIDE_L;
         tbl_hmm4[s] += (b->hp1 * b->num * 7) / 10;
-        j = game_battle_item_rival1(bt, 0/*planet*/, 1);
+        j = game_ai_battle_rival(bt, 0/*planet*/, 1);
         if (j > 0) {
             tbl_hmm3[s] += (game_battle_item_weight3(bt, 0, j, 1) * b->num * 7) / 10;
             tbl_hmm3[s] -= (tbl_hmm2[j] * 7) / 10;
