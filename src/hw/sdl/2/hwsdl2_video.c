@@ -35,9 +35,9 @@ static struct sdl_video_s {
     */
     SDL_Window *window;
     SDL_Renderer *renderer;
-    /* These are (1) the 320x200x8 paletted buffer that we copy the active buffer to,
-       (2) the 320x200x32 RGBA intermediate buffer that we blit the former buffer to,
-       (3) the intermediate 320x200 texture that we load the RGBA buffer to and that
+    /* These are (1) the bufw*bufh*8bpp paletted buffer that we copy the active buffer to,
+       (2) the bufw*bufh*32bpp RGBA intermediate buffer that we blit the former buffer to,
+       (3) the intermediate bufw*bufh texture that we load the RGBA buffer to and that
        we render into another texture (4) which is upscaled by an integer factor
        UPSCALE using "nearest" scaling and which in turn is finally rendered to screen
        using "linear" scaling.
