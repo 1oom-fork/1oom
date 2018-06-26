@@ -2059,7 +2059,7 @@ static int game_ai_battle_incoming_missiles_dmg(const struct battle_s *bt, int i
     return v;
 }
 
-static int game_battle_item_weight2(struct battle_s *bt, int itemi)
+static int game_ai_battle_dmgmax(struct battle_s *bt, int itemi)
 {
     const struct battle_item_s *b = &(bt->item[itemi]);
     int v = 0, num_weap = (itemi == 0/*planet*/) ? 1 : 4;
@@ -2258,7 +2258,7 @@ static int game_ai_battle_rival(struct battle_s *bt, int itemi, int a2)
         if (((b->side + b2->side) == 1) && (b->num > 0)) { /* FIXME b2->num ? */
             int v8, v10, w, v20, v28, repair;
             v8 = game_ai_battle_incoming_missiles_dmg(bt, i);
-            v10 = game_battle_item_weight2(bt, i);
+            v10 = game_ai_battle_dmgmax(bt, i);
             v28 = game_ai_battle_dmggive(bt, itemi, i, a2);
             repair = (b2->repair * b2->hp2) / 100;
             if (itemi == 0/*planet*/) {
@@ -2376,7 +2376,7 @@ static int game_battle_stasis_target(struct battle_s *bt)
             struct battle_item_s *bd = &(bt->item[i]);
             if ((b->side != bd->side) && (bd->stasisby == 0) && (bd->cloak != 1)) {
                 int v;
-                v = game_battle_item_weight2(bt, i) * bd->num;
+                v = game_ai_battle_dmgmax(bt, i) * bd->num;
                 if (v > vmax) {
                     vmax = v;
                     target_i = i;
