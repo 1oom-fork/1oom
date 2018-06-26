@@ -109,13 +109,12 @@ int hw_audio_init(void)
         int slice = get_slice_size();
         if (Mix_OpenAudio(opt_audiorate, AUDIO_S16SYS, 2, slice) < 0) {
             log_error("initialising SDL_mixer (%i Hz, slice %i): %s\n", opt_audiorate, slice, Mix_GetError());
-            return -1;
+            goto failnoclose;
         }
         Mix_QuerySpec(&audio_rate, &mixer_format, &mixer_channels);
         if (mixer_channels != 2) {
             log_error("SDL_mixer gave %i channels instead of 2\n", mixer_channels);
-            Mix_CloseAudio();
-            return -1;
+            goto fail;
         }
         if (audio_rate != opt_audiorate) {
             log_warning("SDL_mixer gave %i Hz instead of %i Hz\n", audio_rate, opt_audiorate);
@@ -136,8 +135,7 @@ int hw_audio_init(void)
         }
         if (hw_opt_sdlmixer_sf) {
             if (hw_audio_set_sdlmixer_sf(hw_opt_sdlmixer_sf) < 0) {
-                Mix_CloseAudio();
-                return -1;
+                goto fail;
             }
         }
         audio_initialized = true;
@@ -152,6 +150,11 @@ int hw_audio_init(void)
         }
     }
     return 0;
+fail:
+    Mix_CloseAudio();
+failnoclose:
+    log_error("Audio init failed! Run with -noaudio to play without sound.\n");
+    return -1;
 }
 
 void hw_audio_shutdown_pre(void)
