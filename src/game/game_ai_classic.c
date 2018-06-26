@@ -2226,26 +2226,21 @@ static int game_ai_battle_dmggive(struct battle_s *bt, int itemi1, int itemi2, i
                 dmg *= w->damagemul;
                 dmg *= w->nummiss;
             } else {
-                int dmgmin, dmgmax;
                 /*585ae*/
                 if (bd->absorb > w->damagemin) {
                     miss_chance_beam += ((100 - miss_chance_beam) * (bd->absorb + 1 - w->damagemin)) / (w->damagemax + 1 - w->damagemin);
                 }
                 /*5861e*/
-                if (w->damagemin <= bd->absorb) {
-                    dmgmin = 1;
-                } else {
-                    dmgmin = w->damagemin - bd->absorb;
-                }
                 if ((w->damagemax / damagediv) > (bd->absorb / absorbdiv)) {
+                    int dmgmin, dmgmax;
                     dmgmax = (w->damagemax / damagediv) - (bd->absorb / absorbdiv);
+                    dmgmin = (w->damagemin > bd->absorb) ? (w->damagemin - bd->absorb) : 1; /* FIXME {damage,absorb}div? */
+                    dmg = (dmgmax + dmgmin) / 2;
+                    dmg = ((100 - miss_chance_beam) * dmg) / 5;
+                    dmg *= w->damagemul;
                 } else {
-                    dmgmin = 0;
-                    dmgmax = 0;
+                    dmg = 0;
                 }
-                dmg = (dmgmax + dmgmin) / 2;
-                dmg = ((100 - miss_chance_beam) * dmg) / 5;
-                dmg *= w->damagemul;
             }
             /*58729*/
             if (w->is_bio && (b->wpn[i].numshots != 0)) {
