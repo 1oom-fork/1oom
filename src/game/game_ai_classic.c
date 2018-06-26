@@ -2058,7 +2058,7 @@ static int game_ai_battle_missile_dmg(const struct battle_s *bt, int missile_i)
     return damagepotential;
 }
 
-static int game_battle_missile_hmm2(const struct battle_s *bt, int itemi)
+static int game_ai_battle_incoming_missiles_dmg(const struct battle_s *bt, int itemi)
 {
     int v = 0, hp;
     if (itemi == 0/*plamet*/) {
@@ -2272,7 +2272,7 @@ static int game_ai_battle_rival(struct battle_s *bt, int itemi, int a2)
         struct battle_item_s *b2 = &(bt->item[i]);
         if (((b->side + b2->side) == 1) && (b->num > 0)) { /* FIXME b2->num ? */
             int v8, v10, w, v20, v28, repair;
-            v8 = game_battle_missile_hmm2(bt, i);
+            v8 = game_ai_battle_incoming_missiles_dmg(bt, i);
             v10 = game_battle_item_weight2(bt, i);
             v28 = game_ai_battle_dmggive(bt, itemi, i, a2);
             repair = (b2->repair * b2->hp2) / 100;
@@ -2845,7 +2845,7 @@ static void game_ai_classic_battle_ai_turn(struct battle_s *bt)
     /*5a69e*/
     game_battle_area_setup(bt);
     if (1
-      && (game_battle_missile_hmm2(bt, itemi) > 0)
+      && (game_ai_battle_incoming_missiles_dmg(bt, itemi) > 0)
       && (target_i != -1) /* BUG used uninitialized if b->stasis == 0 */
       && ((target_i = game_ai_battle_rival(bt, itemi, 0)) > -1)
     ) {
