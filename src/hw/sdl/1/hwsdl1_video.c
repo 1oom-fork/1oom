@@ -235,7 +235,13 @@ int hw_video_resize(int w, int h)
     log_message("SDL_SetVideoMode(%i, %i, %i, 0x%x)\n", actual_w, actual_h, 32, flags);
     video.screen = SDL_SetVideoMode(actual_w, actual_h, 32, flags);
     if (!video.screen) {
-        log_error("SDL_SetVideoMode failed!");
+        log_error("SDL_SetVideoMode failed!\n");
+        log_error("Resize %s failed. Run with -%s or set width/height with -%sw W -%sh H.\n",
+                hw_opt_fullscreen ? "fullscreen" : "window",
+                hw_opt_fullscreen ? "window" : "fs",
+                hw_opt_fullscreen ? "fs" : "win",
+                hw_opt_fullscreen ? "fs" : "win"
+                );
         goto fail;
     }
     set_viewport(video.hwrenderbuf->w, video.hwrenderbuf->h, actual_w, actual_h);
@@ -296,11 +302,12 @@ int hw_video_init(int w, int h)
         log_message("SDL_CreateRGBSurface(...)\n");
         video.hwrenderbuf = SDL_CreateRGBSurface(SDL_SWSURFACE, w, h, 32, rmask, gmask, bmask, amask);
         if (!video.hwrenderbuf) {
-            log_error("SDL_CreateRGBSurface failed!");
+            log_error("SDL_CreateRGBSurface failed!\n");
+            log_error("Run with -nogl to disable OpenGL.\n");
             return -1;
         }
         if ((video.hwrenderbuf->pitch % sizeof(Uint32)) != 0) {
-            log_warning("SDL renderbuf pitch mod %i == %i", sizeof(Uint32), video.hwrenderbuf->pitch);
+            log_warning("SDL renderbuf pitch mod %i == %i\n", sizeof(Uint32), video.hwrenderbuf->pitch);
         }
         i_hw_video.setmode = hw_video_resize;
         i_hw_video.render = video_render_gl_32bpp;
