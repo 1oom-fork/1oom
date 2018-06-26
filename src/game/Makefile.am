@@ -23,6 +23,8 @@ libgame_a_SOURCES = \
     game_battle_human.h \
     game_cheat.c \
     game_cheat.h \
+    game_debug.c \
+    game_debug.h \
     game_design.c \
     game_design.h \
     game_diplo.c \
