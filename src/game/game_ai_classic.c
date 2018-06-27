@@ -2581,33 +2581,32 @@ static void game_battle_ai_range_hmm1(struct battle_s *bt, int target_i)
     b->maxrange = -(MIN(si, t));
 }
 
-static int game_battle_ai_target1_sub2(struct battle_s *bt, int target_i)
+static int game_battle_ai_best_range(struct battle_s *bt, int target_i)
 {
     int itemi = bt->cur_item;
     const struct battle_item_s *b = &(bt->item[itemi]);
     const struct battle_item_s *bd = &(bt->item[target_i]);
-    int v4 = 1, damagediv = 1, weight1 = 0;
+    int bestrange = 1, damagediv = 1, weight1 = 0;
     if (target_i == 0/*planet*/) {
         return 1;
     }
     for (int i = 1; i < 10; ++i) {
         int weight;
         weight = 0;
-        if ((b->blackhole > 0) && (i > 1)) {
+        if ((b->blackhole > 0) && (i <= 1)) {
             weight += 2000;
         }
-        if ((b->stasis == 1) && (i > 1)) {
+        if ((b->stasis == 1) && (i <= 1)) {
             weight += 2000;
         }
-        if ((b->pulsar == 1) && (i > 1)) {
+        if ((b->pulsar == 1) && (i <= 1)) {
             int v;
             v = (6 - bd->absorb) * bd->num;
             if (v > 0) {
                 weight += v;
             }
         }
-        /*5aadf*/
-        if ((b->pulsar == 2) && (i > 1)) {
+        if ((b->pulsar == 2) && (i <= 1)) {
             int v;
             v = (16 - bd->absorb) * bd->num;
             if (v > 0) {
@@ -2641,19 +2640,19 @@ static int game_battle_ai_target1_sub2(struct battle_s *bt, int target_i)
             }
             range = (itemi == 0/*planet*/) ? 12 : 0;
             if ((w->damagemax != w->damagemin) && (!w->is_bomb)) {
-                range += b->extrarange;
+                range = b->extrarange;
             } else if (!w->is_bomb) {
                 game_battle_ai_range_hmm1(bt, target_i);
                 range = b->maxrange;
-                if (((w->range + range) >= i) && (b->wpn[j].numshots != 0) && ((!w->damagefade) || (i == 1))) {
-                    int dmg;
-                    dmg = (w->damagemax / damagediv - bd->absorb / absorbdiv) * w->damagemul * b->wpn[j].n * w->numfire;
-                    if (w->is_bio) {
-                        dmg = w->damagemax * 100;
-                    }
-                    SETMAX(dmg, 0);
-                    weight += dmg;
+            }
+            if (((w->range + range) >= i) && (b->wpn[j].numshots != 0) && ((!w->damagefade) || (i == 1))) {
+                int dmg;
+                dmg = (w->damagemax / damagediv - bd->absorb / absorbdiv) * w->damagemul * b->wpn[j].n * w->numfire;
+                if (w->is_bio) {
+                    dmg = w->damagemax * 100;
                 }
+                SETMAX(dmg, 0);
+                weight += dmg;
             }
         }
         if (i == 1) {
@@ -2666,18 +2665,17 @@ static int game_battle_ai_target1_sub2(struct battle_s *bt, int target_i)
             if (weight1 > weight) {
                 break;
             } else {
-                v4 = i;
+                bestrange = i;
             }
         } else {
-            /*5aeed*/
             if (((weight1 * 2) / (weight * 3)) <= 1) {
-                v4 = i;
+                bestrange = i;
             } else {
                 break;
             }
         }
     }
-    return v4;
+    return bestrange;
 }
 
 static int game_battle_pulsar_hmm2(struct battle_s *bt, int sx, int sy)
@@ -2709,7 +2707,7 @@ static int game_battle_pulsar_hmm2(struct battle_s *bt, int sx, int sy)
     return weight;
 }
 
-static int game_battle_ai_target1_sub3(struct battle_s *bt, int sx, int sy, int target_i, int a6)
+static int game_battle_ai_target1_sub3(struct battle_s *bt, int sx, int sy, int target_i, int bestrange)
 {
     int itemi = bt->cur_item;
     const struct battle_item_s *b = &(bt->item[itemi]);
@@ -2717,7 +2715,7 @@ static int game_battle_ai_target1_sub3(struct battle_s *bt, int sx, int sy, int 
     int si = 0, dist, len, tblx[20], tbly[20];
     dist = util_math_dist_maxabs(sx, sy, bd->sx, bd->sy);
     len = util_math_line_plot(sx, sy, bd->sx, bd->sy, tblx, tbly);
-    if (dist == a6) {
+    if (dist == bestrange) {
         si = 10;
     } else {
         si -= dist * 4;
@@ -2729,7 +2727,7 @@ static int game_battle_ai_target1_sub3(struct battle_s *bt, int sx, int sy, int 
         si -= 2;
     }
     if (bt->area[sy][sx] == (itemi + 10)) {
-        si += (dist == a6) ? 1 : -1;
+        si += (dist == bestrange) ? 1 : -1;
     }
     return si;
 }
@@ -2893,8 +2891,8 @@ static int game_battle_ai_target1(struct battle_s *bt, int target_i)
 {
     int itemi = bt->cur_item;
     struct battle_item_s *b = &(bt->item[itemi]);
-    int v2;
-    v2 = game_battle_ai_target1_sub2(bt, target_i);
+    int bestrange;
+    bestrange = game_battle_ai_best_range(bt, target_i);
     if ((b->actman > 0) || (b->subspace == 1)) {
         if ((target_i != -1) && (game_battle_ai_target1_sub1(bt) == 0)) {
             int vmax = -999, n = 1, i;
@@ -2904,7 +2902,7 @@ static int game_battle_ai_target1(struct battle_s *bt, int target_i)
                     if ((bt->area[sy][sx] == 1) || ((b->sx == sx) && (b->sy == sy))) {
                         int v;
                         /*5a3dc*/
-                        v = game_battle_ai_target1_sub3(bt, sx, sy, target_i, v2);
+                        v = game_battle_ai_target1_sub3(bt, sx, sy, target_i, bestrange);
                         if (v > vmax) {
                             n = 1;
                             tblxy[0] = BATTLE_XY_SET(sx, sy);
@@ -2928,7 +2926,7 @@ static int game_battle_ai_target1(struct battle_s *bt, int target_i)
             game_battle_ai_target1_sub5(bt);
         }
     }
-    return v2;
+    return bestrange;
 }
 
 static void game_ai_classic_battle_ai_turn(struct battle_s *bt)
