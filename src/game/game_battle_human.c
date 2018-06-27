@@ -305,9 +305,16 @@ static void game_battle_missile_hit(struct battle_s *bt, int missile_i, int targ
         if (b->cloak == 1) {
             misschance += 50;
         }
-        SETMIN(misschance, 95);
+        if (!game_num_bt_precap_tohit) {
+            SETMIN(misschance, 95);
+        }
         for (int i = 0; i < m->nummissiles; ++i) {
-            if ((misschance - w->extraacc * 10) <= rnd_1_n(100, &g->seed)) {
+            int chance;
+            chance = misschance - w->extraacc * 10;
+            if (game_num_bt_precap_tohit) {
+                SETMIN(chance, 95);
+            }
+            if (chance <= rnd_1_n(100, &g->seed)) {
                 if ((b->misshield - w->tech_i) < rnd_1_n(100, &g->seed)) {
                     int v;
                     v = MIN(damage, b->hp1);
@@ -1586,8 +1593,10 @@ bool game_battle_attack(struct battle_s *bt, int attacker_i, int target_i, bool 
         miss_chance_beam += 50;
         miss_chance_missile += 50;
     }
-    SETMIN(miss_chance_beam, 95);
-    SETMIN(miss_chance_missile, 95);
+    if (!game_num_bt_precap_tohit) {
+        SETMIN(miss_chance_beam, 95);
+        SETMIN(miss_chance_missile, 95);
+    }
     {
         bool flag_done1 = false;
         int killedbelowtarget = 0;
@@ -1624,12 +1633,12 @@ bool game_battle_attack(struct battle_s *bt, int attacker_i, int target_i, bool 
             }
             range += w->range;
             if ((range >= dist) && ((!w->is_bomb) || (target_i == 0/*planet*/))) {
-                /* FIXME BUG? each weapon reduces miss chance */
-                miss_chance_beam -= w->extraacc * 10;
-                miss_chance_missile -= w->extraacc * 10;
+                if (!game_num_bt_no_tohit_acc) { /* BUG? each weapon reduces miss chance */
+                    miss_chance_beam -= w->extraacc * 10;
+                    miss_chance_missile -= w->extraacc * 10;
+                }
                 if ((damagerange != 0) || w->is_bio) {
                     /*5755a*/
-                    int miss_chance;
                     ui_sound_play_sfx(w->sound);
                     if (w->is_bomb) {
                         if (w->is_bio) {
@@ -1663,6 +1672,7 @@ bool game_battle_attack(struct battle_s *bt, int attacker_i, int target_i, bool 
                     }
                     /*576d0*/
                     while ((b->wpn[i].numfire > 0) && ((bd->num > 0) || (target_i == 0/*planet*/))) {
+                        int miss_chance;
                         if (!w->is_bomb) {
                             ui_battle_draw_beam_attack(bt, attacker_i, target_i, i);
                         }
@@ -1675,6 +1685,12 @@ bool game_battle_attack(struct battle_s *bt, int attacker_i, int target_i, bool 
                             --b->wpn[i].numshots;
                         }
                         miss_chance = w->is_bomb ? miss_chance_missile : miss_chance_beam;
+                        if (game_num_bt_no_tohit_acc) {
+                            miss_chance -= w->extraacc * 10;
+                        }
+                        if (game_num_bt_precap_tohit) {
+                            SETMIN(miss_chance, 95);
+                        }
                         for (uint32_t j = 0; j < damagemul1; ++j) {
                             /*57755*/
                             int r, dmg;
