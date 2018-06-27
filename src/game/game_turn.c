@@ -193,8 +193,8 @@ static void game_turn_build_eco(struct game_s *g)
             if (p->unrest == PLANET_UNREST_REBELLION) {
                 p->waste = 0;
             }
+            ecorestore = (e->race != RACE_SILICOID) ? (p->waste / e->have_eco_restoration_n) : 0;
             p->waste += game_turn_build_eco_sub1(p->factories, e->colonist_oper_factories, p->pop, p->waste, p->max_pop2);
-            ecorestore = (e->race != RACE_SILICOID) ? e->have_eco_restoration_n : 0;
             ecoprod = (p->slider[PLANET_SLIDER_ECO] * p->prod_after_maint) / 100;
             if (e->race != RACE_SILICOID) {
                 if (ecorestore > ecoprod) {
@@ -328,7 +328,7 @@ static void game_turn_update_trade(struct game_s *g)
                         e->trade_established_bc[j] = estbc;
                         e2->trade_established_bc[i] = estbc;
                     }
-                    v = (e->relation1[j] + 25) / 60;
+                    v = (rnd_1_n(200, &g->seed) + e->relation1[j] + 25) / 60;
                     SETMAX(v, 0);
                     ADDSATT(e->trade_percent[j], v, 100);
                     ADDSATT(e2->trade_percent[i], v, 100);
@@ -516,7 +516,9 @@ static void game_turn_build_def(struct game_s *g)
                 }
                 if (newshield != p->shield) {
                     p->shield = newshield;
-                    game_add_planet_to_shield_finished(g, i, owner);
+                    if (newshield == g->eto[owner].have_planet_shield) {
+                        game_add_planet_to_shield_finished(g, i, owner);
+                    }
                 }
             }
         }
