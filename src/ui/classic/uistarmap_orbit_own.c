@@ -85,10 +85,11 @@ static void ui_starmap_orbit_own_draw_cb(void *vptr)
         } else {
             int speed = 20;
             for (int i = 0; i < d->oo.sn0.num; ++i) {
-                int st, en;
+                int st;
                 st = d->oo.sn0.type[i];
-                en = srd->design[st].engine;
-                SETMIN(speed, en);
+                if (d->oo.ships[st] > 0) {
+                    SETMIN(speed, srd->design[st].engine);
+                }
             }
             ++speed;
             if ((pt->owner == d->api) && (pf->owner == d->api) && pt->have_stargate && pf->have_stargate) {
@@ -257,14 +258,14 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
                 i = (i + 1) % g->galaxy_stars;
                 if (g->planet[i].owner == active_player) {
                     for (int j = 0; !found && (j < g->enroute_num); ++j) {
-                        fleet_enroute_t *r = &(g->enroute[i]);
-                        if (BOOLVEC_IS1(r->visible, active_player) && (r->owner != active_player) && (r->dest == pi)) {
+                        fleet_enroute_t *r = &(g->enroute[j]);
+                        if (BOOLVEC_IS1(r->visible, active_player) && (r->owner != active_player) && (r->dest == i)) {
                             found = true;
                         }
                     }
                     for (int j = 0; !found && (j < g->transport_num); ++j) {
-                        transport_t *r = &(g->transport[i]);
-                        if (BOOLVEC_IS1(r->visible, active_player) && (r->owner != active_player) && (r->dest == pi)) {
+                        transport_t *r = &(g->transport[j]);
+                        if (BOOLVEC_IS1(r->visible, active_player) && (r->owner != active_player) && (r->dest == i)) {
                             found = true;
                         }
                     }
@@ -288,14 +289,14 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
                 if (--i < 0) { i = g->galaxy_stars - 1; }
                 if (g->planet[i].owner == active_player) {
                     for (int j = 0; !found && (j < g->enroute_num); ++j) {
-                        fleet_enroute_t *r = &(g->enroute[i]);
-                        if (BOOLVEC_IS1(r->visible, active_player) && (r->owner != active_player) && (r->dest == pi)) {
+                        fleet_enroute_t *r = &(g->enroute[j]);
+                        if (BOOLVEC_IS1(r->visible, active_player) && (r->owner != active_player) && (r->dest == i)) {
                             found = true;
                         }
                     }
                     for (int j = 0; !found && (j < g->transport_num); ++j) {
-                        transport_t *r = &(g->transport[i]);
-                        if (BOOLVEC_IS1(r->visible, active_player) && (r->owner != active_player) && (r->dest == pi)) {
+                        transport_t *r = &(g->transport[j]);
+                        if (BOOLVEC_IS1(r->visible, active_player) && (r->owner != active_player) && (r->dest == i)) {
                             found = true;
                         }
                     }
