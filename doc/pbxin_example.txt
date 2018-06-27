@@ -69,7 +69,7 @@
 # See doc/list_pbxnum.txt for more information.
 
 
-# Use "1oom_pbxmake example_pbxin.txt example.pbx" to make the PBX file.
+# Use "1oom_pbxmake pbxin_example.txt example.pbx" to make the PBX file.
 # (...although first you need to provide the missing files or comment the lines out.)
 # Then "1oom_classic_sdl1 -file example.pbx" to try it out.
 # "1oom_lbxview_sdl1 -file example.pbx" also works for viewing the LBX replacements.
