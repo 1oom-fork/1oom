@@ -898,7 +898,7 @@ static void game_ai_classic_turn_p1_sub11(struct game_s *g, player_id_t pi)
             uint32_t v;
             planet_t *p;
             p = &(g->planet[i]);
-            p->slider[PLANET_SLIDER_SHIP] = p->slider[PLANET_SLIDER_DEF] + p->slider[PLANET_SLIDER_IND] + p->slider[PLANET_SLIDER_TECH];
+            p->slider[PLANET_SLIDER_SHIP] += p->slider[PLANET_SLIDER_DEF] + p->slider[PLANET_SLIDER_IND] + p->slider[PLANET_SLIDER_TECH];
             p->slider[PLANET_SLIDER_DEF] = 0;
             p->slider[PLANET_SLIDER_IND] = 0;
             p->slider[PLANET_SLIDER_TECH] = 0;
@@ -1718,7 +1718,7 @@ static void game_ai_classic_turn_p3(struct game_s *g)
                         sl[PLANET_SLIDER_IND] = 10;
                     }
                     if (sl[PLANET_SLIDER_ECO] < 71) {
-                        sl[PLANET_SLIDER_IND] = 25;
+                        sl[PLANET_SLIDER_TECH] = 25;
                     }
                     if (p->pop < ((p->max_pop3 * 3) / 4)) {
                         sl[PLANET_SLIDER_IND] = 50;
