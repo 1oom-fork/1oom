@@ -338,7 +338,8 @@ static shipcount_t game_ai_classic_turn_p1_spawn_colony_ship(struct game_s *g, s
     shipresearch_t *srd = &(g->srd[pi]);
     int shipi = e->shipi_colony;
     shipcount_t shipn = srd->shipcount[shipi];
-    int planeti, prod;
+    uint32_t prod;
+    uint8_t planeti;
     if (0
       || (ait->num_fronts == 0)
       || (shipi == -1)
@@ -651,7 +652,7 @@ static void game_ai_classic_turn_p1_send_attack(struct game_s *g, struct ai_turn
                                 e2 = &(g->eto[pi2]);
                                 for (int k = 0; k < e2->shipdesigns_num; ++k) {
                                     const shipdesign_t *sd = &(g->srd[pi2].design[k]);
-                                    weight += e2->orbit[i].ships[k] * game_num_tbl_hull_w[sd->hull];
+                                    weight += e2->orbit[pto].ships[k] * game_num_tbl_hull_w[sd->hull];
                                 }
                             }
                         }
@@ -731,7 +732,7 @@ static void game_ai_classic_turn_p1_send_defend(struct game_s *g, struct ai_turn
             }
             if ((pto != PLANET_NONE) && ((tbl_planet_threat[pto] * 5) / 3) < ait->tbl_force_own[i]) {
                 game_turn_fleet_send(g, ait, pi, i, pto);
-                tbl_planet_threat[pto] = 1600000000;
+                tbl_planet_threat[pto] = 100000000;
             }
         }
     }
@@ -907,7 +908,7 @@ static void game_ai_classic_turn_p1_build_defending_ships(struct game_s *g, play
             uint32_t v;
             planet_t *p;
             p = &(g->planet[i]);
-            p->slider[PLANET_SLIDER_SHIP] = p->slider[PLANET_SLIDER_DEF] + p->slider[PLANET_SLIDER_IND] + p->slider[PLANET_SLIDER_TECH];
+            p->slider[PLANET_SLIDER_SHIP] += p->slider[PLANET_SLIDER_DEF] + p->slider[PLANET_SLIDER_IND] + p->slider[PLANET_SLIDER_TECH];
             p->slider[PLANET_SLIDER_DEF] = 0;
             p->slider[PLANET_SLIDER_IND] = 0;
             p->slider[PLANET_SLIDER_TECH] = 0;
@@ -1728,7 +1729,7 @@ static void game_ai_classic_turn_p3(struct game_s *g)
                         sl[PLANET_SLIDER_IND] = 10;
                     }
                     if (sl[PLANET_SLIDER_ECO] < 71) {
-                        sl[PLANET_SLIDER_IND] = 25;
+                        sl[PLANET_SLIDER_TECH] = 25;
                     }
                     if (p->pop < ((p->max_pop3 * 3) / 4)) {
                         sl[PLANET_SLIDER_IND] = 50;
@@ -2026,7 +2027,7 @@ static int game_ai_battle_missile_dmg(const struct battle_s *bt, int missile_i)
 {
     const struct battle_missile_s *m = &(bt->missile[missile_i]);
     /*di*/const struct battle_item_s *b = &(bt->item[m->target]);
-    const struct battle_item_s *bs = &(bt->item[m->target]);
+    const struct battle_item_s *bs = &(bt->item[m->source]);
     const struct shiptech_weap_s *w = &(tbl_shiptech_weap[m->wpnt]);
     int damagepotential, damagediv = 1, /*si*/miss_chance, absorbdiv, damage;
     miss_chance = 50 - (bs->complevel - b->misdefense) * 10;
@@ -2285,7 +2286,7 @@ static int game_ai_battle_rival(struct battle_s *bt, int itemi, int a2)
                 }
             }
             /*58fc7*/
-            dmgmany = (b2->num * dmggive - repair) / (b2->hp1 * 20);
+            dmgmany = (b->num * dmggive - repair) / (b2->hp1 * 20);
             if (dmgmany > 0) {
                 int vt;
                 vt = b2->num - dmgmissile;
@@ -2514,7 +2515,7 @@ static int game_battle_ai_best_range(struct battle_s *bt, int target_i)
             }
             range = (itemi == 0/*planet*/) ? 12 : 0;
             if ((w->damagemax != w->damagemin) && (!w->is_bomb)) {
-                range += b->extrarange;
+                range = b->extrarange;
             } else if (!w->is_bomb) {
                 game_battle_ai_range_hmm1(bt, target_i);
                 range = b->maxrange;
@@ -3566,7 +3567,7 @@ static void game_ai_classic_turn_diplo_p2(struct game_s *g)
                 /*16441*/
                 int16_t v, v2, dv2;
                 v = game_diplo_get_mood(g, p1, p2);
-                v2 = v + e2->trust[p1] + game_diplo_tbl_reldiff[e2->trait1];
+                v2 = v + e1->trust[p2] + game_diplo_tbl_reldiff[e2->trait1];
                 dv2 = e1->diplo_val[p2] * 2;
                 if ((v2 <= -100) || (v <= -100)) {
                     e1->diplo_type[p2] = 0;
