@@ -575,7 +575,7 @@ static void uiobj_handle_hmm2(int i, uint16_t a2)
             } else {
                 int16_t char_h, gap_h;
                 gap_h = lbxfont_get_gap_h();
-                if (gap_h < 0) { ++char_h; }
+                if (gap_h < 0) { ++gap_h; }
                 gap_h /= 2;
                 if (gap_h == 0) {
                     gap_h = 1;
