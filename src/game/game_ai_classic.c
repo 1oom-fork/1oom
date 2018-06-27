@@ -1503,17 +1503,17 @@ static void game_ai_classic_turn_p2_do(struct game_s *g, player_id_t pi)
         if ((pi == p2) || !IS_HUMAN(g, p2) || (!IS_ALIVE(g, p2))) {
             continue;
         }
-    for (int i = 0; i < e2->shipdesigns_num; ++i) {
-        for (int j = 0; j < SPECIAL_SLOT_NUM; ++j) {
-            ship_special_t s = srd2->design[i].special[j];
-            if ((s == SHIP_SPECIAL_ENERGY_PULSAR) || (s == SHIP_SPECIAL_IONIC_PULSAR)) {
-                ait->have_pulsar = true;
-            }
-            if ((s == SHIP_SPECIAL_REPULSOR_BEAM) || (s == SHIP_SPECIAL_WARP_DISSIPATOR)) {
-                ait->have_repulwarp = true;
+        for (int i = 0; i < e2->shipdesigns_num; ++i) {
+            for (int j = 0; j < SPECIAL_SLOT_NUM; ++j) {
+                ship_special_t s = srd2->design[i].special[j];
+                if ((s == SHIP_SPECIAL_ENERGY_PULSAR) || (s == SHIP_SPECIAL_IONIC_PULSAR)) {
+                    ait->have_pulsar = true;
+                }
+                if ((s == SHIP_SPECIAL_REPULSOR_BEAM) || (s == SHIP_SPECIAL_WARP_DISSIPATOR)) {
+                    ait->have_repulwarp = true;
+                }
             }
         }
-    }
     }
     e->ai_p2_countdown = rnd_1_n(12, &g->seed) + 8;
     game_update_maint_costs(g);
@@ -2527,16 +2527,14 @@ static int game_battle_ai_best_range(struct battle_s *bt, int target_i)
                 game_battle_ai_range_hmm1(bt, target_i);
                 range = b->maxrange;
             }
-            {
-                if (((w->range + range) >= i) && (b->wpn[j].numshots != 0) && ((!w->damagefade) || (i == 1))) {
-                    int dmg;
-                    dmg = (w->damagemax / damagediv - bd->absorb / absorbdiv) * w->damagemul * b->wpn[j].n * w->numfire;
-                    if (w->is_bio) {
-                        dmg = w->damagemax * 100;
-                    }
-                    SETMAX(dmg, 0);
-                    weight += dmg;
+            if (((w->range + range) >= i) && (b->wpn[j].numshots != 0) && ((!w->damagefade) || (i == 1))) {
+                int dmg;
+                dmg = (w->damagemax / damagediv - bd->absorb / absorbdiv) * w->damagemul * b->wpn[j].n * w->numfire;
+                if (w->is_bio) {
+                    dmg = w->damagemax * 100;
                 }
+                SETMAX(dmg, 0);
+                weight += dmg;
             }
         }
         if (i == 1) {
