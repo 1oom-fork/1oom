@@ -3,7 +3,6 @@ DIST_SUBDIRS = ext
 docdir = $(prefix)/share/doc/1oom
 
 doc_DATA = \
-    example_pbxin.txt \
     format_gam.txt \
     format_lbx.txt \
     format_moo.txt \
@@ -12,6 +11,8 @@ doc_DATA = \
     lbxmd5.txt \
     list_gamediff.txt \
     list_pbxnum.txt \
+    pbxin_example.txt \
+    pbxin_fixbugs.txt \
     usage_classic.txt \
     usage_cmdline.txt \
     usage_common.txt \

@@ -48,7 +48,7 @@ cp src/1oom_pbxmake.exe $BINDISTDIR/1pbxmake.exe
 cp src/1oom_pbxdump.exe $BINDISTDIR/1pbxdump.exe
 cp src/1oom_saveconv.exe $BINDISTDIR/1savconv.exe
 
-for p in example format list usage
+for p in pbxin format list usage
 do
     for i in $TOPSRCDIR/doc/$p*.txt
     do
