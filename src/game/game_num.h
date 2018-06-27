@@ -6,6 +6,8 @@
 
 extern int game_num_bt_turn_max;
 extern bool game_num_bt_wait_no_reload;
+extern bool game_num_bt_precap_tohit;
+extern bool game_num_bt_no_tohit_acc;
 extern int game_num_stargate_cost;
 extern int game_num_weapon_list_max;
 extern unsigned int game_num_limit_ships;
