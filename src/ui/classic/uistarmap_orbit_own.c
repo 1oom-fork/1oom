@@ -85,10 +85,11 @@ static void ui_starmap_orbit_own_draw_cb(void *vptr)
         } else {
             int speed = 20;
             for (int i = 0; i < d->oo.sn0.num; ++i) {
-                int st, en;
+                int st;
                 st = d->oo.sn0.type[i];
-                en = srd->design[st].engine;
-                SETMIN(speed, en);
+                if (d->oo.ships[st] > 0) {
+                    SETMIN(speed, srd->design[st].engine);
+                }
             }
             ++speed;
             if ((pt->owner == d->api) && (pf->owner == d->api) && pt->have_stargate && pf->have_stargate) {
