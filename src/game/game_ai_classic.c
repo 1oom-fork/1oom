@@ -2460,7 +2460,7 @@ static void game_battle_ai_range_hmm1(struct battle_s *bt, int target_i)
     b->maxrange = -(MIN(si, t));
 }
 
-static int game_battle_ai_target1_sub2(struct battle_s *bt, int target_i)
+static int game_battle_ai_best_range(struct battle_s *bt, int target_i)
 {
     int itemi = bt->cur_item;
     const struct battle_item_s *b = &(bt->item[itemi]);
@@ -2771,7 +2771,7 @@ static int game_battle_ai_target1(struct battle_s *bt, int target_i)
     int itemi = bt->cur_item;
     struct battle_item_s *b = &(bt->item[itemi]);
     int v2;
-    v2 = game_battle_ai_target1_sub2(bt, target_i);
+    v2 = game_battle_ai_best_range(bt, target_i);
     if ((b->actman > 0) || (b->subspace == 1)) {
         if ((target_i != -1) && (game_battle_ai_target1_sub1(bt) == 0)) {
             int vmax = -999, n = 1, i;
