@@ -12,6 +12,17 @@ bt_wait_no_reload : 0..1, 0
     unlimited number of times. Automated repair also kicks in on every resume
     from wait.
 
+bt_precap_tohit : 0..1, 0
+  - Add To Hit bonus before capping defense to 95%.
+    MOO1 adds To Hit bonuses after capping defense. This results in high defense
+    being less effective against high tech missiles.
+
+bt_no_tohit_acc : 0..1, 0
+  - Do not accumulate To Hit bonuses.
+    MOO1 accumulates weapon To Hit bonuses while firing the four weapons slots.
+    This results in Hyper-X or better missiles or Megabolt Cannon in slots 1..3
+    affecting the accuracy of a beam weapon in slot 4.
+
 weapon_list_max : 0..64, 30
   - Max. number of weapons shown in the ship design weapon list.
 
