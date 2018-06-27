@@ -898,7 +898,7 @@ static void game_ai_classic_turn_p1_sub11(struct game_s *g, player_id_t pi)
             uint32_t v;
             planet_t *p;
             p = &(g->planet[i]);
-            p->slider[PLANET_SLIDER_SHIP] = p->slider[PLANET_SLIDER_DEF] + p->slider[PLANET_SLIDER_IND] + p->slider[PLANET_SLIDER_TECH];
+            p->slider[PLANET_SLIDER_SHIP] += p->slider[PLANET_SLIDER_DEF] + p->slider[PLANET_SLIDER_IND] + p->slider[PLANET_SLIDER_TECH];
             p->slider[PLANET_SLIDER_DEF] = 0;
             p->slider[PLANET_SLIDER_IND] = 0;
             p->slider[PLANET_SLIDER_TECH] = 0;
@@ -1718,7 +1718,7 @@ static void game_ai_classic_turn_p3(struct game_s *g)
                         sl[PLANET_SLIDER_IND] = 10;
                     }
                     if (sl[PLANET_SLIDER_ECO] < 71) {
-                        sl[PLANET_SLIDER_IND] = 25;
+                        sl[PLANET_SLIDER_TECH] = 25;
                     }
                     if (p->pop < ((p->max_pop3 * 3) / 4)) {
                         sl[PLANET_SLIDER_IND] = 50;
@@ -2508,7 +2508,7 @@ static int game_battle_ai_best_range(struct battle_s *bt, int target_i)
             }
             range = (itemi == 0/*planet*/) ? 12 : 0;
             if ((w->damagemax != w->damagemin) && (!w->is_bomb)) {
-                range += b->extrarange;
+                range = b->extrarange;
             } else if (!w->is_bomb) {
                 game_battle_ai_range_hmm1(bt, target_i);
                 range = b->maxrange;
@@ -3556,7 +3556,7 @@ static void game_ai_classic_turn_diplo_p2(struct game_s *g)
                 /*16441*/
                 int16_t v, v2, dv2;
                 v = game_diplo_get_mood(g, p1, p2);
-                v2 = v + e2->trust[p1] + game_diplo_tbl_reldiff[e2->trait1];
+                v2 = v + e1->trust[p2] + game_diplo_tbl_reldiff[e2->trait1];
                 dv2 = e1->diplo_val[p2] * 2;
                 if ((v2 <= -100) || (v <= -100)) {
                     e1->diplo_type[p2] = 0;
