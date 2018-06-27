@@ -147,9 +147,7 @@ void game_update_production(struct game_s *g)
             }
             {
                 uint32_t reserve = p->reserve;
-                if (v < reserve) {
-                    p->reserve = v;
-                }
+                SETMIN(reserve, v);
                 v += reserve;
             }
             if (p->unrest == PLANET_UNREST_REBELLION) {
