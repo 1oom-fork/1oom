@@ -2508,16 +2508,14 @@ static int game_battle_ai_best_range(struct battle_s *bt, int target_i)
                 game_battle_ai_range_hmm1(bt, target_i);
                 range = b->maxrange;
             }
-            {
-                if (((w->range + range) >= i) && (b->wpn[j].numshots != 0) && ((!w->damagefade) || (i == 1))) {
-                    int dmg;
-                    dmg = (w->damagemax / damagediv - bd->absorb / absorbdiv) * w->damagemul * b->wpn[j].n * w->numfire;
-                    if (w->is_bio) {
-                        dmg = w->damagemax * 100;
-                    }
-                    SETMAX(dmg, 0);
-                    weight += dmg;
+            if (((w->range + range) >= i) && (b->wpn[j].numshots != 0) && ((!w->damagefade) || (i == 1))) {
+                int dmg;
+                dmg = (w->damagemax / damagediv - bd->absorb / absorbdiv) * w->damagemul * b->wpn[j].n * w->numfire;
+                if (w->is_bio) {
+                    dmg = w->damagemax * 100;
                 }
+                SETMAX(dmg, 0);
+                weight += dmg;
             }
         }
         if (i == 1) {
