@@ -473,7 +473,7 @@ void game_diplo_battle_finish(struct game_s *g, int def, int att, int popdiff, u
         }
     }
     popdiff *= 5;
-    SETMAX(app_ai, 50);
+    SETMIN(app_ai, 50);
     biodamage *= 10;
     offense = MAX(popdiff, app_ai);
     SETMAX(offense, biodamage);
