@@ -191,6 +191,7 @@ void game_turn_ground(struct game_s *g)
                     gr->s[0].player = i;
                     gr->s[1].player = powner;
                     gr->planet_i = pli;
+                    gr->flag_swap = false;
                     if (IS_HUMAN(g, i) || IS_HUMAN(g, powner)) {
                         int t;
                         gr->flag_swap = true;
