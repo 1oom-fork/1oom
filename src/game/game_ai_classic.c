@@ -1007,7 +1007,11 @@ static void game_ai_classic_turn_p1_build_defending_ships(struct game_s *g, play
     BOOLVEC_CLEAR(tbl_incoming, PLANETS_MAX);
     for (int i = 0; i < g->enroute_num; ++i) {
         const fleet_enroute_t *r = &(g->enroute[i]);
-        if ((r->owner != pi) && (g->planet[r->dest].owner == pi)) {
+        if (1
+          && (r->owner != pi)
+          && ((g->ai_id == GAME_AI_CLASSIC) || (e->treaty[r->owner] != TREATY_ALLIANCE))
+          && (g->planet[r->dest].owner == pi)
+        ) {
             BOOLVEC_SET1(tbl_incoming, r->dest);
         }
     }
