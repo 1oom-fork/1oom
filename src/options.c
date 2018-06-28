@@ -266,6 +266,7 @@ static int options_parse_do(int argc, char **argv, bool early)
 
                 if (!o) {
                     log_error("unknown option '%s'\n", argv[i]);
+                    show_usage(NULL, NULL);
                     return -1;
                 }
 
