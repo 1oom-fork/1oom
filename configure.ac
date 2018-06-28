@@ -357,6 +357,7 @@ if test x"$enable_hwsdl2" != "xno"; then
     LIBS="$HW_SDL2_LIBS"
 
     dnl check for the SDL.h header
+    AS_UNSET(ac_cv_header_SDL_h)
     AC_CHECK_HEADERS(SDL.h,[AC_CHECK_LIB(SDL2, SDL_CreateTexture,
                      [],
                      [CFLAGS=$old_cflags; break],$EXTRA_SDL2_LIBS)],
