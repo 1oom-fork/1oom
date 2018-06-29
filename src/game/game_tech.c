@@ -116,10 +116,10 @@ static uint16_t get_base_cost_mod_jammer(const struct game_s *g, int player_i, i
     return (tbl_shiptech_jammer[tech_i].cost[SHIP_HULL_LARGE] * mult) / 1000 + tbl_shiptech_jammer[tech_i].power[SHIP_HULL_LARGE] / 10;
 }
 
-static uint8_t find_best_tech_type(BOOLVEC_PTRPARAMI(tbl), int base, int step, int num)
+static uint8_t find_best_tech_type(BOOLVEC_PTRPARAMI(tbl), int base, int step, int last)
 {
     int best = 0;
-    for (int i = base; i < num; i += step) {
+    for (int i = base; i <= last; i += step) {
         if (BOOLVEC_IS1(tbl, i)) {
             best = i;
         }
