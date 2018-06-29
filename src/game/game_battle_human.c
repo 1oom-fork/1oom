@@ -1474,6 +1474,9 @@ static battle_turn_start_t game_battle_with_human_do_sub2(struct battle_s *bt)
     if (bt->s[SIDE_R].race == RACE_NUM/*monster*/) {
         return BATTLE_TURN_CONTINUE;
     }
+    if (!bt->s[SIDE_R].flag_auto) {
+        return BATTLE_TURN_CONTINUE;
+    }
     if (game_ai->battle_ai_retreat(bt)) {
         return BATTLE_TURN_RETREAT;
     }
