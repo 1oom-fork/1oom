@@ -36,14 +36,15 @@ static struct sdl_video_s {
     SDL_Window *window;
     SDL_Renderer *renderer;
     /* These are (1) the bufw*bufh*8bpp paletted buffer that we copy the active buffer to,
-       (2) the bufw*bufh*32bpp RGBA intermediate buffer that we blit the former buffer to,
-       (3) the intermediate bufw*bufh texture that we load the RGBA buffer to and that
-       we render into another texture (4) which is upscaled by an integer factor
+       (2) the bufw*bufh intermediate buffer of the window/renderer's pixel format that
+       we blit the former buffer to,
+       (3) the intermediate bufw*bufh texture that we update with the intermediate's buffer data,
+       and that we render into another texture (4) which is upscaled by an integer factor
        UPSCALE using "nearest" scaling and which in turn is finally rendered to screen
        using "linear" scaling.
     */
     SDL_Surface *screen;
-    SDL_Surface *rgbabuffer;
+    SDL_Surface *interbuffer;
     SDL_Texture *texture;
     SDL_Texture *texture_upscaled;
 
@@ -203,13 +204,24 @@ static void video_update(void)
         video.palette_to_set = false;
     }
 
-    /* Blit from the paletted 8-bit screen buffer to the intermediate
-       32-bit RGBA buffer that we can load into the texture.
-    */
-    SDL_LowerBlit(video.screen, &video.blit_rect, video.rgbabuffer, &video.blit_rect);
+    /* Blit from the paletted 8-bit screen buffer to the intermediate buffer
+       that we can load into the texture.
+-   */
+    SDL_BlitSurface(video.screen, &video.blit_rect, video.interbuffer, &video.blit_rect);
 
-    /* Update the intermediate texture with the contents of the RGBA buffer. */
-    SDL_UpdateTexture(video.texture, NULL, video.rgbabuffer->pixels, video.rgbabuffer->pitch);
+    /* Update the intermediate texture with the contents of the intermediate buffer.*/
+    {
+        void *pixels;
+        int pitch;
+
+        if (SDL_LockTexture(video.texture, NULL, &pixels, &pitch) == 0) {
+            memcpy(pixels, video.interbuffer->pixels, pitch*video.bufh);
+            SDL_UnlockTexture(video.texture);
+        } else {
+            log_error("SDL_LockTexture(video.texture): %s\n", SDL_GetError());
+            exit(EXIT_FAILURE);
+        }
+    }
 
     /* Make sure the pillarboxes are kept clear each frame. */
     SDL_RenderClear(video.renderer);
@@ -385,20 +397,34 @@ static int video_sw_set(int w, int h)
     SDL_RenderClear(video.renderer);
     SDL_RenderPresent(video.renderer);
 
-    /* Create the 8-bit paletted and the 32-bit RGBA screenbuffer surfaces. */
+    /* Create the 8-bit paletted screenbuffer surface. */
     if (video.screen == NULL) {
         video.screen = SDL_CreateRGBSurface(0, video.bufw, video.bufh, 8, 0, 0, 0, 0);
         SDL_FillRect(video.screen, NULL, 0);
     }
-    /* Format of rgbabuffer must match the screen pixel format because we
-       import the surface data into the texture.
+    /* Format of interbuffer must match the screen pixel format
+       because we copy the surface data into the texture.
     */
-    if (video.rgbabuffer == NULL) {
+    if (video.interbuffer == NULL) {
         unsigned int rmask, gmask, bmask, amask;
-        int unused_bpp;
-        SDL_PixelFormatEnumToMasks(video.pixel_format, &unused_bpp, &rmask, &gmask, &bmask, &amask);
-        video.rgbabuffer = SDL_CreateRGBSurface(0, video.bufw, video.bufw, 32, rmask, gmask, bmask, amask);
-        SDL_FillRect(video.rgbabuffer, NULL, 0);
+        int bpp;
+        log_message("video.pixel_format: %s\n", SDL_GetPixelFormatName(video.pixel_format));
+        if (SDL_PixelFormatEnumToMasks(video.pixel_format, &bpp, &rmask, &gmask, &bmask, &amask)) {
+            log_message("SDL_PixelFormatEnumToMasks(%x) -> %d %x %x %x %x\n", video.pixel_format, bpp, rmask, gmask, bmask, amask);
+            if (bpp < 15) {
+                log_error("Unsupported bits per pixel: %d\n", bpp);
+                return -1;
+            }
+            video.interbuffer = SDL_CreateRGBSurface(0, video.bufw, video.bufw, bpp, rmask, gmask, bmask, amask);
+            if (video.interbuffer == NULL) {
+                log_message("SDL_CreateRGBSurface(): %s\n", SDL_GetError());
+                return -1;
+            }
+            SDL_FillRect(video.interbuffer, NULL, 0);
+        } else {
+            log_message("SDL_PixelFormatEnumToMasks(%x): %s\n", video.pixel_format, SDL_GetError());
+            return -1;
+        }
     }
     if (video.texture != NULL) {
         SDL_DestroyTexture(video.texture);
@@ -455,7 +481,7 @@ int hw_video_init(int w, int h)
     video.window = NULL;
     video.renderer = NULL;
     video.screen = NULL;
-    video.rgbabuffer = NULL;
+    video.interbuffer = NULL;
     video.texture = NULL;
     video.texture_upscaled = NULL;
     video.display = 0;
@@ -502,9 +528,9 @@ void hw_video_shutdown(void)
         SDL_FreeSurface(video.screen);
         video.screen = NULL;
     }
-    if (video.rgbabuffer) {
-        SDL_FreeSurface(video.rgbabuffer);
-        video.rgbabuffer = NULL;
+    if (video.interbuffer) {
+        SDL_FreeSurface(video.interbuffer);
+        video.interbuffer = NULL;
     }
     if (video.icon) {
         SDL_FreeSurface(video.icon);
