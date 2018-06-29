@@ -138,7 +138,7 @@ void ui_starmap_enroute(struct game_s *g, player_id_t active_player)
 
     d.en.can_move = g->eto[active_player].have_hyperspace_comm ? GOT_HYPERCOMM : NO_MOVE;
     for (int i = 0; i < g->galaxy_stars; ++i) {
-        planet_t *p;
+        const planet_t *p;
         p = &g->planet[i];
         if ((p->x == r->x) && (p->y == r->y)) {
             d.en.can_move = ON_PLANET;
