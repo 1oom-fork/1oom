@@ -42,9 +42,9 @@ The resulting binaries follow a "1oom_$UI_$HW" naming convention.
 
 - always add the { } braces to if, do, while, for statements
 
-- one space after if, do, while, for and return statements,
+- one space after a ',', if, do, while, for and return statements,
   no space after function name:
-    if (func(4) < 0) {
+    if (func(4, 5) < 0) {
         return (foo * 4) + 2;
     }
 
