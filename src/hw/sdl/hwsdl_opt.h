@@ -4,6 +4,7 @@
 #include "types.h"
 
 /* for SDL1 */
+extern int hw_opt_bpp;
 extern int hw_opt_gl_filter;
 
 #endif
