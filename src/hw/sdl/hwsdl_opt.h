@@ -12,6 +12,7 @@ extern int hw_opt_aspect;
 /* for SDL1 */
 extern bool hw_opt_use_gl;
 extern int hw_opt_gl_filter;
+extern int hw_opt_bpp;
 
 /* for SDL2 */
 extern bool hw_opt_force_sw;
