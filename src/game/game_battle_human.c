@@ -30,7 +30,7 @@ static void game_battle_with_human_init_sub1(struct battle_s *bt)
 {
     /* from ui_battle_do_sub1 */
     bt->items_num = bt->s[SIDE_L].items + bt->s[SIDE_R].items;
-    for (int i = 0; i < bt->items_num; ++i) {
+    for (int i = 0; i <= bt->items_num; ++i) {
         bool flag_no_missiles;
         flag_no_missiles = true;
         for (int j = 0; j < WEAPON_SLOT_NUM; ++j) {
@@ -2011,7 +2011,7 @@ void game_battle_area_setup(struct battle_s *bt)
             bt->area[zy][zx] = 0;
         }
     }
-    if (b->missile != 0) {
+    if (b->missile == 0) {
         bt->turn_done = false;
     }
     ui_battle_area_setup(bt);
