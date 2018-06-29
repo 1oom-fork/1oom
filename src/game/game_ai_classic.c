@@ -173,7 +173,7 @@ static void game_ai_classic_turn_p1_send_scout(struct game_s *g, struct ai_turn_
         }
     }
     for (int j = 0; j < g->enroute_num; ++j) {
-        fleet_enroute_t *r = &(g->enroute[j]);
+        const fleet_enroute_t *r = &(g->enroute[j]);
         if (r->owner == pi) {
             BOOLVEC_SET1(tbl_planet_ignore, r->dest);
         }
