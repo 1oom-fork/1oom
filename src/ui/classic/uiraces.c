@@ -199,7 +199,7 @@ static void races_draw_cb(void *vptr)
         lbxfont_print_str_normal(x + 60, y + 16, buf, UI_SCREEN_W);
         {
             int rel;
-            rel = e->relation1[pi];
+            rel = e->relation1[pi] / 2;
             SETRANGE(rel, -50, 50);
             lbxfont_select_set_12_4(0, 6, 0, 0);
             lbxfont_select(2, 0xd, 0, 0);
