@@ -42,7 +42,7 @@ static void ui_starmap_orbit_en_draw_cb(void *vptr)
         lbxgfx_draw_frame_offs(x, y, ui_data.gfx.starmap.shipbord, STARMAP_LIMITS, UI_SCREEN_W);
     }
     ui_draw_filled_rect(225, 8, 314, 180, 7);
-    lbxgfx_draw_frame(224, 5, ui_data.gfx.starmap.movextr2, UI_SCREEN_W);
+    lbxgfx_draw_frame(224, 4, ui_data.gfx.starmap.movextr2, UI_SCREEN_W);
     ui_draw_filled_rect(227, 8, 310, 39, 0);
     lbxgfx_set_frame_0(ui_data.gfx.starmap.scanner);
     for (int f = 0; f <= d->oe.frame_scanner; ++f) {
