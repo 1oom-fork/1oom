@@ -166,14 +166,14 @@ static void game_ai_classic_turn_p1_send_scout(struct game_s *g, struct ai_turn_
         if (0
           || BOOLVEC_IS1(p->explored, pi)
           || (!p->within_frange[pi])
-          || ((g->year >= 150) && (g->evn.planet_orion_i == i))
+          || ((g->year < 150) && (g->evn.planet_orion_i == i)) /* XXX Orion is unconditionally ignored below */
           || (ships > 0)
         ) {
             BOOLVEC_SET1(tbl_planet_ignore, i);
         }
     }
     for (int j = 0; j < g->enroute_num; ++j) {
-        fleet_enroute_t *r = &(g->enroute[j]);
+        const fleet_enroute_t *r = &(g->enroute[j]);
         if (r->owner == pi) {
             BOOLVEC_SET1(tbl_planet_ignore, r->dest);
         }
