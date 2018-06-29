@@ -5,6 +5,8 @@
 #include "game_debug.h"
 #include "comp.h"
 #include "game.h"
+#include "game_misc.h"
+#include "game_str.h"
 #include "log.h"
 #include "options.h"
 
@@ -57,6 +59,51 @@ void game_debug_dump_race_techs(struct game_s *g, bool force)
         for (tech_field_t f = 0; f < TECH_FIELD_NUM; ++f) {
             LOG_DEBUG((0, "  f:%i %%:%-2u p:%-2u d:%-2u s:%-3i inv:%u c:%u\n", f, t->percent[f], t->project[f], t->completed[f], t->slider[f], t->investment[f], t->cost[f]));
         }
+    }
+}
+
+void game_debug_dump_race_spending(struct game_s *g, bool force)
+{
+    if (!force) {
+        if (opt_modebug < 4) {
+            return;
+        }
+    } else {
+        game_update_total_research(g);
+        game_update_production(g);
+    }
+    for (int pi = 0; pi < g->players; ++pi) {
+        const empiretechorbit_t *e = &(g->eto[pi]);
+        uint32_t prod, v, r;
+        if (!IS_ALIVE(g, pi)) {
+            continue;
+        }
+        prod = e->total_production_bc;
+        LOG_DEBUG((0, "%s: p:%i %s", __func__, pi, game_str_tbl_race[e->race]));
+        LOG_DEBUG((0, " prod:%u", prod));
+        SETMAX(prod, 1);
+        v = e->total_research_bc;
+        r = (v * 1000) / prod;
+        LOG_DEBUG((0, " res:%u (%u.%u%%)", v, r / 10, r % 10));
+        v = 0;
+        for (player_id_t i = PLAYER_0; i < PLAYER_NUM; ++i) {
+            if (i != pi) {
+                v += e->spying[i];
+            }
+        }
+        r = (v * 1000) / prod;
+        LOG_DEBUG((0, " spy:%u (%u.%u%%)", v, r / 10, r % 10));
+        r = e->security;
+        LOG_DEBUG((0, " sec:%u.%u%%", r / 10, r % 10));
+        v = e->ship_maint_bc;
+        r = (v * 1000) / prod;
+        LOG_DEBUG((0, " ship:%u (%u.%u%%)", v, r / 10, r % 10));
+        v = e->bases_maint_bc;
+        r = (v * 1000) / prod;
+        LOG_DEBUG((0, " base:%u (%u.%u%%)", v, r / 10, r % 10));
+        r = e->tax;
+        LOG_DEBUG((0, " tax:%u.%u%%", r / 10, r % 10));
+        LOG_DEBUG((0, " reserve:%u\n", e->reserve_bc));
     }
 }
 
