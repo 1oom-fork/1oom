@@ -58,7 +58,7 @@ static void specs_draw_cb1(void *vptr)
     empiretechorbit_t *e = &(g->eto[d->api]);
     shipresearch_t *srd = &(g->srd[d->api]);
 
-    ui_draw_filled_rect(0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, 0x3a, ui_scale);
+    ui_draw_color_buf(0x3a);
     lbxgfx_draw_frame(0, 0, ui_data.gfx.starmap.viewship, UI_SCREEN_W, ui_scale);
 
     for (int si = 0; si < e->shipdesigns_num; ++si) {
@@ -130,7 +130,7 @@ static void specs_before_draw_cb(void *vptr)
 {
     struct specs_data_s *d = vptr;
     specs_draw_cb1(d);
-    lbxgfx_apply_colortable(0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, 0, UI_SCREEN_W, ui_scale);
+    lbxgfx_apply_colortable(0, 0, UI_VGA_W - 1, UI_VGA_H - 1, 0, UI_SCREEN_W, ui_scale);
     lbxgfx_draw_frame(67, 73, ui_data.gfx.starmap.dismiss, UI_SCREEN_W, ui_scale);
     lbxfont_select_set_12_1(3, 0, 0, 0);
     lbxfont_print_str_split(74, 83, 174, game_str_sp_before, 2, UI_SCREEN_W, UI_SCREEN_H, ui_scale);
@@ -209,7 +209,7 @@ void ui_specs_mustscrap(struct game_s *g, player_id_t active_player, int scrapi)
     uiobj_table_clear();
 
     ui_draw_copy_buf();
-    lbxgfx_apply_colortable(0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, 0, UI_SCREEN_W, ui_scale);
+    lbxgfx_apply_colortable(0, 0, UI_VGA_W - 1, UI_VGA_H - 1, 0, UI_SCREEN_W, ui_scale);
     hw_video_copy_back_to_page2();
 
     while (!flag_done) {
