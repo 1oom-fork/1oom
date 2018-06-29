@@ -314,7 +314,7 @@ static int hw_video_init_do(int w, int h)
         video.render = video_render_gl_32bpp;
         video.update = video_update_gl_32bpp;
         video.setpal = video_setpal_gl_32bpp;
-        if ((hw_opt_screen_winw != 0) && (hw_opt_screen_winh != 0)) {
+        if (hw_opt_check_screen_winwh(w, h) == 0) {
             w = hw_opt_screen_winw;
             h = hw_opt_screen_winh;
         }

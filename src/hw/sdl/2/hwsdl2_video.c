@@ -465,7 +465,7 @@ static int hw_video_init_do(int w, int h)
         video.actualh = (uint32_t)(video.blit_rect.h * 1000000) / hw_opt_aspect;
         SETMAX(h, video.actualh);
     }
-    if ((hw_opt_screen_winw != 0) && (hw_opt_screen_winh != 0)) {
+    if (hw_opt_check_screen_winwh(w, h) == 0) {
         w = hw_opt_screen_winw;
         h = hw_opt_screen_winh;
     }
