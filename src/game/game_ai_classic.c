@@ -96,7 +96,7 @@ static void game_ai_classic_turn_p1_send_scout(struct game_s *g, struct ai_turn_
         }
     }
     for (int j = 0; j < g->enroute_num; ++j) {
-        fleet_enroute_t *r = &(g->enroute[j]);
+        const fleet_enroute_t *r = &(g->enroute[j]);
         if (r->owner == pi) {
             BOOLVEC_SET1(tbl_planet_ignore, r->dest);
         }
@@ -441,7 +441,7 @@ static void game_ai_classic_turn_p1_send_colony_ships(struct game_s *g, struct a
         BOOLVEC_SET(tbl_planet_ignore, i, (p->owner != PLAYER_NONE) || (p->within_frange[pi] == 0));
     }
     for (int i = 0; i < g->enroute_num; ++i) {
-        fleet_enroute_t *r = &(g->enroute[i]);
+        const fleet_enroute_t *r = &(g->enroute[i]);
         if ((r->owner == pi) && (r->ships[si] > 0)) {
             BOOLVEC_SET1(tbl_planet_ignore, r->dest);
         }
@@ -942,9 +942,9 @@ static void game_ai_classic_turn_p1(struct game_s *g)
 {
     struct ai_turn_p1_s ait[1];
     for (player_id_t pi = PLAYER_0; pi < PLAYER_NUM; ++pi) {
-        empiretechorbit_t *e = &(g->eto[pi]);
+        const empiretechorbit_t *e = &(g->eto[pi]);
         for (int i = 0; i < e->shipdesigns_num; ++i) {
-            shipdesign_t *sd = &(g->srd[pi].design[i]);
+            const shipdesign_t *sd = &(g->srd[pi].design[i]);
             int v;
             v = 0;
             for (int j = 0; j < WEAPON_SLOT_NUM; ++j) {
