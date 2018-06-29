@@ -661,9 +661,9 @@ int game_get_tech_prod(int prod, int slider, race_t race, planet_special_t speci
     return MIN(v, 0x7fff);
 }
 
-void game_print_prod_of_total(struct game_s *g, int prod, char *buf)
+void game_print_prod_of_total(struct game_s *g, player_id_t pi, int prod, char *buf)
 {
-    int v = g->eto[PLAYER_0].total_production_bc;
+    int v = g->eto[pi].total_production_bc;
     if (v == 0) {
         strcpy(buf, "0%%");
     } else {
