@@ -51,6 +51,18 @@ static int hw_opt_set_sdlmixer_sf(char **argv, void *var)
 }
 #endif
 
+int hw_opt_check_screen_winwh(int minw, int minh)
+{
+    if ((hw_opt_screen_winw != 0) && (hw_opt_screen_winh != 0)) {
+        if ((hw_opt_screen_winw < minw) || (hw_opt_screen_winh < minh)) {
+            log_warning("ignoring too small configured resolution %ix%i < %ix%i\n", hw_opt_screen_winw, hw_opt_screen_winh, minw, minh);
+        } else {
+            return 0;
+        }
+    }
+    return -1;
+}
+
 /* -------------------------------------------------------------------------- */
 
 const struct cmdline_options_s hw_cmdline_options[] = {

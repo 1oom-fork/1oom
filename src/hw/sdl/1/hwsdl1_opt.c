@@ -8,6 +8,7 @@
 #include "hwsdl_audio.h"
 #include "lib.h"
 #include "options.h"
+#include "log.h"
 #include "types.h"
 
 /* -------------------------------------------------------------------------- */
