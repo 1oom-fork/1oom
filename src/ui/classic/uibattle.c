@@ -1736,7 +1736,7 @@ void ui_battle_draw_technull(const struct battle_s *bt, int attacker_i, int targ
         ui_battle_draw_arena(bt, target_i, 0);
         ui_battle_draw_bottom(bt);
         gfx_aux_draw_frame_to(gfx, &ui_data.aux.btemp);
-        gfx_aux_draw_frame_from_limit(x1, y1, &ui_data.aux.btemp, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
+        gfx_aux_draw_frame_from_limit(x2, y2, &ui_data.aux.btemp, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
         uiobj_finish_frame();
         ui_delay_ticks_or_click(2);
     }
