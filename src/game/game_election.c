@@ -198,7 +198,7 @@ void game_election(struct game_s *g)
     {
         int winner;
         for (winner = 0; winner < 2; ++winner) {
-            if ((((el->total_votes + 1) * 2) / 3) < el->got_votes[winner]) {
+            if ((((el->total_votes + 1) * 2) / 3) <= el->got_votes[winner]) {
                 break;
             }
         }
