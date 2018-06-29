@@ -366,7 +366,7 @@ void game_diplo_wage_war(struct game_s *g, player_id_t p1, player_id_t p2)
         } else {
             if (1
               && (!rnd_0_nm1(20, &g->seed))
-              && ((e1->trait2 == TRAIT2_MILITARIST) || (e1->trait2 == TRAIT2_EXPANSIONIST))
+              && ((e2->trait2 == TRAIT2_MILITARIST) || (e2->trait2 == TRAIT2_EXPANSIONIST))
               && (e2->trait1 != TRAIT1_HONORABLE)
               && (IS_AI(g, p1) || (g->evn.ceasefire[p1][p2] < 1))
             ) {
