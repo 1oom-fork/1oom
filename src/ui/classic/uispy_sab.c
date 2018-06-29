@@ -183,7 +183,7 @@ static void sabotage_done_draw_cb(void *vptr)
     if (d->spy == PLAYER_NONE) {
         pos = sprintf(buf, "%s ", game_str_sb_unkn);
     } else {
-        pos = sprintf(buf, "%s %s ", (d->spy == d->api) ? game_str_sb_your : game_str_tbl_race[e->race], game_str_sb_spies);
+        pos = sprintf(buf, "%s %s ", (d->spy == d->api) ? game_str_sb_your : game_str_tbl_race[g->eto[d->spy].race], game_str_sb_spies);
     }
     if (d->snum > 0) {
         switch (d->act) {
