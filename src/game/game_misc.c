@@ -70,7 +70,7 @@ void game_update_maint_costs(struct game_s *g)
         }
         totalcost = 0;
         for (int si = 0; si < NUM_SHIPDESIGNS; ++si) {
-            shipdesign_t *sd = &(srd->design[si]);
+            const shipdesign_t *sd = &(srd->design[si]);
             srd->shipcount[si] = tbl_ships[si];
             totalcost += tbl_ships[si] * sd->cost;
         }
@@ -80,7 +80,7 @@ void game_update_maint_costs(struct game_s *g)
         }
         bases = 0;
         for (int i = 0; i < g->galaxy_stars; ++i) {
-            planet_t *p = &(g->planet[i]);
+            const planet_t *p = &(g->planet[i]);
             if (p->owner == pi) {
                 if (p->have_stargate != 0) {
                     totalcost += 100;
