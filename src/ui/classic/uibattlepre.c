@@ -56,7 +56,7 @@ static void battle_pre_load_data(struct ui_battle_pre_data_s *d)
     }
     d->gfx_dfleet = lbxfile_item_get(LBXFILE_BACKGRND, 0x28 + id, 0);
     d->gfx_ufleet = lbxfile_item_get(LBXFILE_BACKGRND, 0x21 + iu, 0);
-    d->gmapctx = ui_gmap_basic_init(g, false);
+    d->gmapctx = ui_gmap_basic_init(g, true);
 }
 
 static void battle_pre_free_data(struct ui_battle_pre_data_s *d)

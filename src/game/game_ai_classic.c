@@ -90,7 +90,7 @@ static void game_ai_classic_turn_p1_send_scout(struct game_s *g, struct ai_turn_
         if (0
           || BOOLVEC_IS1(p->explored, pi)
           || (!p->within_frange[pi])
-          || ((g->year >= 150) && (g->evn.planet_orion_i == i))
+          || ((g->year < 150) && (g->evn.planet_orion_i == i)) /* XXX Orion is unconditionally ignored below */
           || (ships > 0)
         ) {
             BOOLVEC_SET1(tbl_planet_ignore, i);
@@ -331,7 +331,7 @@ static shipcount_t game_ai_classic_turn_p1_spawn_colony_ship(struct game_s *g, s
       || ((shipi = e->shipi_colony) == -1)
       || (e->total_production_bc == 0)
       || ((shipn = srd->shipcount[shipi]) > 3)
-      || ((planeti = ait->tbl_front_planet[rnd_0_nm1(ait->num_fronts, &g->seed)]) == -1)
+      || ((planeti = ait->tbl_front_planet[rnd_0_nm1(ait->num_fronts, &g->seed)]) == PLANET_NONE)
     ) {
         return 0;
     }
@@ -1572,7 +1572,7 @@ static void game_ai_classic_turn_p2_do(struct game_s *g, player_id_t pi)
         for (int j = 0; j < SPECIAL_SLOT_NUM; ++j) {
             ship_special_t s;
             s = ss[j];
-            if ((s >= SHIP_SPECIAL_STANDARD_COLONY_BASE) || (s <= SHIP_SPECIAL_RADIATED_COLONY_BASE)) {
+            if ((s >= SHIP_SPECIAL_STANDARD_COLONY_BASE) && (s <= SHIP_SPECIAL_RADIATED_COLONY_BASE)) {
                 e->shipi_colony = i;
             }
         }
@@ -1645,7 +1645,7 @@ static void game_ai_classic_turn_p3_sub1(struct game_s *g, player_id_t pi)
             if (e->treaty[pi2] >= TREATY_WAR) {
                 e->spymode_next[pi2] = SPYMODE_SABOTAGE;
             } else if (e->spymode_next[pi2] == SPYMODE_HIDE) { /* FIXME BUG always true */
-                if ((e->race == RACE_DARLOK) || rnd_0_nm1(0, &g->seed)) {
+                if ((e->race == RACE_DARLOK) || rnd_0_nm1(2, &g->seed)) {
                     if (rnd_1_n(200, &g->seed) > (e->relation1[pi2] * 2 + 200)) {
                         e->spymode_next[pi2] = SPYMODE_ESPIONAGE;
                     }
@@ -2154,7 +2154,7 @@ static int game_ai_battle_dmggive(struct battle_s *bt, int itemi1, int itemi2, i
         range = 0;
         if ((w->damagemin != w->damagemax) && (!w->is_bomb)) {
             range = b->extrarange;
-        } else if (b->maxrange > 0) {
+        } else if (b->maxrange < 0) {
             range = b->maxrange;
         }
         if (itemi1 == 0/*planet*/) {
@@ -2305,7 +2305,7 @@ static int game_ai_battle_rival(struct battle_s *bt, int itemi, int a2)
             if ((dmgmax <= 0) && (dmggive > 0)) {
                 w = (i == 0/*planet*/) ? 1 : 2;
             }
-            if ((i == 0/*planet*/) && (w > 0)) {
+            if ((itemi == 0/*planet*/) && (w > 0)) {
                 int dist;
                 dist = util_math_dist_maxabs(b->sx, b->sy, b2->sx, b2->sy);
                 w += (10 - dist) * 750;
@@ -2457,20 +2457,20 @@ static int game_battle_ai_best_range(struct battle_s *bt, int target_i)
     for (int i = 1; i < 10; ++i) {
         int weight;
         weight = 0;
-        if ((b->blackhole > 0) && (i > 1)) {
+        if ((b->blackhole > 0) && (i <= 1)) {
             weight += 2000;
         }
-        if ((b->stasis == 1) && (i > 1)) {
+        if ((b->stasis == 1) && (i <= 1)) {
             weight += 2000;
         }
-        if ((b->pulsar == 1) && (i > 1)) {
+        if ((b->pulsar == 1) && (i <= 1)) {
             int v;
             v = (6 - bd->absorb) * bd->num;
             if (v > 0) {
                 weight += v;
             }
         }
-        if ((b->pulsar == 2) && (i > 1)) {
+        if ((b->pulsar == 2) && (i <= 1)) {
             int v;
             v = (16 - bd->absorb) * bd->num;
             if (v > 0) {
@@ -2508,6 +2508,8 @@ static int game_battle_ai_best_range(struct battle_s *bt, int target_i)
             } else if (!w->is_bomb) {
                 game_battle_ai_range_hmm1(bt, target_i);
                 range = b->maxrange;
+            }
+            {
                 if (((w->range + range) >= i) && (b->wpn[j].numshots != 0) && ((!w->damagefade) || (i == 1))) {
                     int dmg;
                     dmg = (w->damagemax / damagediv - bd->absorb / absorbdiv) * w->damagemul * b->wpn[j].n * w->numfire;
@@ -3579,7 +3581,7 @@ static void game_ai_classic_turn_diplo_p2(struct game_s *g)
             if (e1->diplo_type[p2] == 0) {
                 game_diplo_wage_war(g, p1, p2);
             }
-            if ((e1->diplo_type[p2] == 2) && (!rnd_0_nm1(10, &g->seed))) {
+            if ((e1->diplo_type[p2] == 2) && rnd_0_nm1(10, &g->seed)) {
                 e1->diplo_type[p2] = 0;
             }
         }
