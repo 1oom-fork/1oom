@@ -21,6 +21,7 @@ static int ui_cmd_debug_cb_g_f(struct game_s *g, int api, struct input_token_s *
 const struct input_cmd_s ui_cmds_debug[] = {
     { "debug_slider", NULL, "", 0, 0, 0, ui_cmd_debug_cb_g_f, game_debug_dump_sliders },
     { "debug_race_techs", NULL, "", 0, 0, 0, ui_cmd_debug_cb_g_f, game_debug_dump_race_techs },
+    { "debug_race_spending", NULL, "", 0, 0, 0, ui_cmd_debug_cb_g_f, game_debug_dump_race_spending },
     { NULL, NULL, NULL, 0, 0, 0, NULL, 0 }
 };
 
