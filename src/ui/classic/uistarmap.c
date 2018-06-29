@@ -201,13 +201,13 @@ static void ui_starmap_do_help(struct starmap_data_s *d)
 
 /* -------------------------------------------------------------------------- */
 
-void ui_starmap_set_pos_focus(struct game_s *g, player_id_t active_player)
+void ui_starmap_set_pos_focus(const struct game_s *g, player_id_t active_player)
 {
-    planet_t *p = &g->planet[g->planet_focus_i[active_player]];
+    const planet_t *p = &g->planet[g->planet_focus_i[active_player]];
     ui_starmap_set_pos(g, p->x, p->y);
 }
 
-void ui_starmap_set_pos(struct game_s *g, int x, int y)
+void ui_starmap_set_pos(const struct game_s *g, int x, int y)
 {
     x -= 0x36;
     if (x < 0) {

@@ -17,7 +17,7 @@
 static bool game_send_fleet_do(struct game_s *g, player_id_t owner, uint8_t from, uint8_t dest, const shipcount_t ships[NUM_SHIPDESIGNS], const uint8_t shiptypes[NUM_SHIPDESIGNS], uint8_t numtypes)
 {
     fleet_enroute_t *r;
-    planet_t *pf, *pt;
+    const planet_t *pf, *pt;
     {
         bool found = false;
         for (int i = 0; i < numtypes; ++i) {
