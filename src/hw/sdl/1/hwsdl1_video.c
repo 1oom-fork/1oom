@@ -25,8 +25,14 @@ static struct sdl_video_s {
     SDL_Surface *screen;
 #ifdef HAVE_SDL1GL
     SDL_Surface *hwrenderbuf;
-    /* precalculated 32bit palette */
-    uint32_t pal32[256];
+    /* precalculated palette for used >8 bpp */
+    union {
+        uint8_t p8[256 * 3];
+        uint32_t p32[256];
+    } ppal;
+    int bpp;
+    int rgb_mode;
+    int rsize, gsize, bsize;
 #endif
     /* "best" video mode reported by SDL */
     struct {
@@ -74,6 +80,49 @@ static void video_setpal_8bpp(const uint8_t *pal, int first, int num)
 
 #ifdef HAVE_SDL1GL
 
+static void video_render_gl_24bpp(const uint8_t *buf)
+{
+    SDL_Surface *target = video.hwrenderbuf;
+    if (SDL_LockSurface(target) < 0) {
+        return;
+    }
+    int pitch_skip = (target->w * 3) - target->pitch;
+
+    uint8_t *p = (uint8_t *)target->pixels;
+    const uint8_t *q = buf;
+    int w = target->w;
+    int h = target->h;
+    for (int y = 0; y < h; ++y) {
+        for (int x = 0; x < w; ++x) {
+            uint8_t *c;
+            c = &(video.ppal.p8[*q++ * 3]);
+            *p++ = *c++;
+            *p++ = *c++;
+            *p++ = *c++;
+        }
+        p += pitch_skip;
+    }
+    SDL_UnlockSurface(target);
+}
+
+static void video_setpal_gl_24bpp(const uint8_t *pal, int f, int num)
+{
+    for (int i = 0; i < num; ++i) {
+        for (int j = 0; j < 3; ++j) {
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+            video.ppal.p8[(f + i) * 3 + 0] = vgapal_6bit_to_8bit(pal[i * 3 + 2]);
+            video.ppal.p8[(f + i) * 3 + 1] = vgapal_6bit_to_8bit(pal[i * 3 + 1]);
+            video.ppal.p8[(f + i) * 3 + 2] = vgapal_6bit_to_8bit(pal[i * 3 + 0]);
+#else
+            video.ppal.p8[(f + i) * 3 + 0] = vgapal_6bit_to_8bit(pal[i * 3 + 0]);
+            video.ppal.p8[(f + i) * 3 + 1] = vgapal_6bit_to_8bit(pal[i * 3 + 1]);
+            video.ppal.p8[(f + i) * 3 + 2] = vgapal_6bit_to_8bit(pal[i * 3 + 2]);
+#endif
+        }
+    }
+    hw_video_refresh();
+}
+
 static void video_render_gl_32bpp(const uint8_t *buf)
 {
     SDL_Surface *target = video.hwrenderbuf;
@@ -88,14 +137,14 @@ static void video_render_gl_32bpp(const uint8_t *buf)
     int h = target->h;
     for (int y = 0; y < h; ++y) {
         for (int x = 0; x < w; ++x) {
-            *p++ = video.pal32[*q++];
+            *p++ = video.ppal.p32[*q++];
         }
         p += pitch_skip;
     }
     SDL_UnlockSurface(target);
 }
 
-static void video_update_gl_32bpp(void)
+static void video_update_gl(void)
 {
     glClear(GL_COLOR_BUFFER_BIT);
     glDisable(GL_DEPTH_TEST);
@@ -108,7 +157,7 @@ static void video_update_gl_32bpp(void)
         glTexParameteri(GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_MAG_FILTER, filter);
         glTexParameteri(GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_MIN_FILTER, filter);
     }
-    glTexImage2D(GL_TEXTURE_RECTANGLE_ARB, 0, GL_RGBA, video.hwrenderbuf->w, video.hwrenderbuf->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, video.hwrenderbuf->pixels);
+    glTexImage2D(GL_TEXTURE_RECTANGLE_ARB, 0, video.rgb_mode, video.hwrenderbuf->w, video.hwrenderbuf->h, 0, video.rgb_mode, GL_UNSIGNED_BYTE, video.hwrenderbuf->pixels);
 
     glBegin(GL_QUADS);
 
@@ -137,19 +186,20 @@ static void video_setpal_gl_32bpp(const uint8_t *pal, int f, int num)
 {
     for (int i = 0; i < num; ++i) {
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
-        video.pal32[f + i] = (vgapal_6bit_to_8bit(pal[i * 3 + 0]) << 24)
-                           | (vgapal_6bit_to_8bit(pal[i * 3 + 1]) << 16)
-                           | (vgapal_6bit_to_8bit(pal[i * 3 + 2]) << 8)
-                           ;
+        video.ppal.p32[f + i] = (vgapal_6bit_to_8bit(pal[i * 3 + 0]) << 24)
+                              | (vgapal_6bit_to_8bit(pal[i * 3 + 1]) << 16)
+                              | (vgapal_6bit_to_8bit(pal[i * 3 + 2]) << 8)
+                              ;
 #else
-        video.pal32[f + i] = (vgapal_6bit_to_8bit(pal[i * 3 + 0]) << 0)
-                           | (vgapal_6bit_to_8bit(pal[i * 3 + 1]) << 8)
-                           | (vgapal_6bit_to_8bit(pal[i * 3 + 2]) << 16)
-                           ;
+        video.ppal.p32[f + i] = (vgapal_6bit_to_8bit(pal[i * 3 + 0]) << 0)
+                              | (vgapal_6bit_to_8bit(pal[i * 3 + 1]) << 8)
+                              | (vgapal_6bit_to_8bit(pal[i * 3 + 2]) << 16)
+                              ;
 #endif
     }
     hw_video_refresh();
 }
+
 #endif /* HAVE_SDL1GL */
 
 /* -------------------------------------------------------------------------- */
@@ -228,12 +278,12 @@ int hw_video_resize(int w, int h)
         hw_opt_screen_winh = actual_h = h;
     }
 
-    SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
-    SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
-    SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
+    SDL_GL_SetAttribute(SDL_GL_RED_SIZE, video.rsize);
+    SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, video.gsize);
+    SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, video.bsize);
 
-    log_message("SDL_SetVideoMode(%i, %i, %i, 0x%x)\n", actual_w, actual_h, 32, flags);
-    video.screen = SDL_SetVideoMode(actual_w, actual_h, 32, flags);
+    log_message("SDL_SetVideoMode(%i, %i, %i, 0x%x)\n", actual_w, actual_h, video.bpp, flags);
+    video.screen = SDL_SetVideoMode(actual_w, actual_h, video.bpp, flags);
     if (!video.screen) {
         log_error("SDL_SetVideoMode failed!\n");
         log_error("Resize %s failed. Run with -%s or set width/height with -%sw W -%sh H.\n",
@@ -294,14 +344,49 @@ int hw_video_init(int w, int h)
 #ifdef HAVE_SDL1GL
     else {
         bool find_resolution;
-        const Uint32
+        int texturebpp;
+        Uint32 rmask, gmask, bmask, amask;
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
-        rmask = 0xff000000, gmask = 0x00ff0000, bmask = 0x0000ff00, amask = 0x000000ff;
+        rmask = 0xff000000; gmask = 0x00ff0000; bmask = 0x0000ff00; amask = 0x000000ff;
 #else
-        rmask = 0x000000ff, gmask = 0x0000ff00, bmask = 0x00ff0000, amask = 0xff000000;
+        rmask = 0x000000ff; gmask = 0x0000ff00; bmask = 0x00ff0000; amask = 0xff000000;
 #endif
-        log_message("SDL_CreateRGBSurface(...)\n");
-        video.hwrenderbuf = SDL_CreateRGBSurface(SDL_SWSURFACE, w, h, 32, rmask, gmask, bmask, amask);
+        if (hw_opt_bpp != 0) {
+            video.bpp = hw_opt_bpp;
+        } else {
+            video.bpp = video.bestmode.bpp;
+        }
+        video.rsize = 8; video.gsize = 8; video.bsize = 8;
+        i_hw_video.render = video_render_gl_24bpp;
+        i_hw_video.setpal = video_setpal_gl_24bpp;
+        video.rgb_mode = GL_RGB;
+        texturebpp = 24;
+        switch (video.bpp) {
+            case 15:
+                video.rsize = 5; video.gsize = 5; video.bsize = 5;
+                amask = 0;
+                break;
+            case 16:
+                video.rsize = 5; video.gsize = 6; video.bsize = 5;
+                amask = 0;
+                break;
+            case 24:
+                amask = 0;
+                break;
+            case 32:
+                i_hw_video.render = video_render_gl_32bpp;
+                i_hw_video.setpal = video_setpal_gl_32bpp;
+                video.rgb_mode = GL_RGBA;
+                texturebpp = 32;
+                break;
+            default:
+                log_error("SDL: %ibpp is unsupported, choose another with -bpp N or use -nogl\n", video.bpp);
+                return -1;
+        }
+        i_hw_video.setmode = hw_video_resize;
+        i_hw_video.update = video_update_gl;
+        log_message("SDL_CreateRGBSurface(SDL_SWSURFACE, %i, %i, %i, 0x%x, 0x%x, 0x%x, 0x%x)\n", w, h, texturebpp, rmask, gmask, bmask, amask);
+        video.hwrenderbuf = SDL_CreateRGBSurface(SDL_SWSURFACE, w, h, texturebpp, rmask, gmask, bmask, amask);
         if (!video.hwrenderbuf) {
             log_error("SDL_CreateRGBSurface failed!\n");
             log_error("Run with -nogl to disable OpenGL.\n");
@@ -310,10 +395,6 @@ int hw_video_init(int w, int h)
         if ((video.hwrenderbuf->pitch % sizeof(Uint32)) != 0) {
             log_warning("SDL renderbuf pitch mod %i == %i\n", sizeof(Uint32), video.hwrenderbuf->pitch);
         }
-        i_hw_video.setmode = hw_video_resize;
-        i_hw_video.render = video_render_gl_32bpp;
-        i_hw_video.update = video_update_gl_32bpp;
-        i_hw_video.setpal = video_setpal_gl_32bpp;
         find_resolution = true;
         if ((hw_opt_screen_winw != 0) && (hw_opt_screen_winh != 0)) {
             if ((hw_opt_screen_winw < w) || (hw_opt_screen_winh < h)) {
