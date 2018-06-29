@@ -128,6 +128,7 @@ For SDL HWs:
 For SDL1 HW:
     -aspect ASPECT       Set aspect ratio (*1000000, 0 = off)
                            default = 833333, or (1000000 * 5)/6
+    -bpp BPP             Set bits/pixel (0 = autodetect)
     -filt FILTER         Set OpenGL filter (0 = nearest, 1 = linear)
 
 For SDL2 HW:
