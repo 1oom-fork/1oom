@@ -73,7 +73,7 @@ static void newships_draw_cb(void *vptr)
             lbxfont_print_str_center(x0 + 20, y0 + 33, sd->name, UI_SCREEN_W);
             ds.xoff1 = 0;
             ds.xoff2 = 0;
-            ui_draw_stars(x0, y0 + 2, i * 10, 30, &ds);
+            ui_draw_stars(x0, y0 + 2, i * 10, 40, &ds);
             gfx = ui_data.gfx.ships[sd->look];
             lbxgfx_set_frame_0(gfx);
             lbxgfx_draw_frame(x0 + 4, y0 + 3, gfx, UI_SCREEN_W);
