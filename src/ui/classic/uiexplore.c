@@ -77,12 +77,13 @@ static void explore_draw_planetinfo(const struct game_s *g, uint8_t planet)
             const char *s1, *s2, *s3;
             int i = p->special;
             if (i > PLANET_SPECIAL_NORMAL) {
+                if (i == PLANET_SPECIAL_4XTECH) {
+                    i = PLANET_SPECIAL_ARTIFACTS;
+                }
                 --i;
             }
             lbxfont_select_set_12_4(3, 0, 0, 0);
-            if (p->special != PLANET_SPECIAL_4XTECH) {
-                lbxfont_print_str_center(267, 96 + y, game_str_ex_ps1[i], UI_SCREEN_W);
-            }
+            lbxfont_print_str_center(267, 96 + y, game_str_ex_ps1[i], UI_SCREEN_W);
             lbxfont_select_set_12_4(2, 0xa, 0, 0);
             if ((p->special != PLANET_SPECIAL_ARTIFACTS) && (p->special != PLANET_SPECIAL_4XTECH)) {
                 i = p->special;
