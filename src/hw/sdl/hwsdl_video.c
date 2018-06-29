@@ -301,8 +301,12 @@ int hw_video_init(int w, int h)
             h = h * 6 / 5;
         }
         if ((opt_screen_winw != 0) && (opt_screen_winh != 0)) {
-            w = opt_screen_winw;
-            h = opt_screen_winh;
+            if ((opt_screen_winw < w) || (opt_screen_winh < h)) {
+                log_warning("ignoring too small configured resolution %ix%i < %ix%i\n", opt_screen_winw, opt_screen_winh, w, h);
+            } else {
+                w = opt_screen_winw;
+                h = opt_screen_winh;
+            }
         }
     }
 #endif
