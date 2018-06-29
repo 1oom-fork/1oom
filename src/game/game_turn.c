@@ -1767,6 +1767,7 @@ struct game_end_s game_turn_process(struct game_s *g)
     game_update_production(g);
     game_debug_dump_sliders(g, false);
     game_debug_dump_race_techs(g, false);
+    game_debug_dump_race_spending(g, false);
     game_turn_diplo_adjust(g);
     game_turn_build_def(g);
     game_turn_build_ship(g);
