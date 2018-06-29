@@ -293,6 +293,7 @@ int hw_video_init(int w, int h)
     }
 #ifdef HAVE_SDL1GL
     else {
+        bool find_resolution;
         const Uint32
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
         rmask = 0xff000000, gmask = 0x00ff0000, bmask = 0x0000ff00, amask = 0x000000ff;
@@ -313,10 +314,17 @@ int hw_video_init(int w, int h)
         i_hw_video.render = video_render_gl_32bpp;
         i_hw_video.update = video_update_gl_32bpp;
         i_hw_video.setpal = video_setpal_gl_32bpp;
+        find_resolution = true;
         if ((hw_opt_screen_winw != 0) && (hw_opt_screen_winh != 0)) {
-            w = hw_opt_screen_winw;
-            h = hw_opt_screen_winh;
-        } else {
+            if ((hw_opt_screen_winw < w) || (hw_opt_screen_winh < h)) {
+                log_warning("ignoring too small configured resolution %ix%i < %ix%i\n", hw_opt_screen_winw, hw_opt_screen_winh, w, h);
+            } else {
+                w = hw_opt_screen_winw;
+                h = hw_opt_screen_winh;
+                find_resolution = false;
+            }
+        }
+        if (find_resolution) {
             int bufw = w;
             int bufh = h;
             int scale = (video.bestmode.w - 50/*window borders*/) / bufw + 1;

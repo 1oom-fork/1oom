@@ -519,8 +519,12 @@ int hw_video_init(int w, int h)
         video.actualh = h;
     }
     if ((hw_opt_screen_winw != 0) && (hw_opt_screen_winh != 0)) {
-        w = hw_opt_screen_winw;
-        h = hw_opt_screen_winh;
+        if ((hw_opt_screen_winw < video.screen->w) || (hw_opt_screen_winh < video.actualh)) {
+            log_warning("ignoring too small configured resolution %ix%i < %ix%i\n", hw_opt_screen_winw, hw_opt_screen_winh, video.screen->w, video.actualh);
+        } else {
+            w = hw_opt_screen_winw;
+            h = hw_opt_screen_winh;
+        }
     }
     if (i_hw_video.setmode(w, h)) {
         return -1;
