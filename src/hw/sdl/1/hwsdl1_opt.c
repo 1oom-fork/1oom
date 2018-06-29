@@ -16,6 +16,7 @@
 #ifdef HAVE_OPENGL
 int hw_opt_use_gl = 1;
 int hw_opt_aspect = HW_DEFAULT_ASPECT;
+int hw_opt_bpp = 0;
 int hw_opt_gl_filter = 1;
 #endif
 
@@ -38,6 +39,9 @@ const struct cmdline_options_s hw_cmdline_options_extra[] = {
     { "-aspect", 1,
       options_set_int_var, (void *)&hw_opt_aspect,
       "ASPECT", "Set aspect ratio (*1000000, 0 = off)" },
+    { "-bpp", 1,
+      options_set_int_var, (void *)&hw_opt_bpp,
+      "BPP", "Set bits/pixel (0 = autodetect)" },
     { "-filt", 1,
       options_set_int_var, (void *)&hw_opt_gl_filter,
       "FILTER", "Set OpenGL filter (0 = nearest, 1 = linear)" },
