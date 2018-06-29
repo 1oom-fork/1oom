@@ -194,9 +194,9 @@ static void planets_draw_cb(void *vptr)
     }
 
     lbxfont_select(2, 6, 0, 0);
-    game_print_prod_of_total(g, e->ship_maint_bc, buf);
+    game_print_prod_of_total(g, d->api, e->ship_maint_bc, buf);
     lbxfont_print_str_right(59, 174, buf, UI_SCREEN_W);
-    game_print_prod_of_total(g, e->bases_maint_bc, buf);
+    game_print_prod_of_total(g, d->api, e->bases_maint_bc, buf);
     lbxfont_print_str_right(59, 185, buf, UI_SCREEN_W);
 
     v = 0;
