@@ -90,7 +90,7 @@ static void game_ai_classic_turn_p1_send_scout(struct game_s *g, struct ai_turn_
         if (1
           || BOOLVEC_IS1(p->explored, pi)
           || (!p->within_frange[pi])
-          || ((g->year >= 150) && (g->evn.planet_orion_i == i))
+          || ((g->year < 150) && (g->evn.planet_orion_i == i)) /* XXX Orion is unconditionally ignored below */
           || (ships > 0)
         ) {
             BOOLVEC_SET1(tbl_planet_ignore, i);
@@ -1647,7 +1647,7 @@ static void game_ai_classic_turn_p3_sub1(struct game_s *g, player_id_t pi)
             if (e->treaty[pi2] >= TREATY_WAR) {
                 e->spymode_next[pi2] = SPYMODE_SABOTAGE;
             } else if (e->spymode_next[pi2] == SPYMODE_HIDE) {
-                if ((e->race == RACE_DARLOK) || rnd_0_nm1(0, &g->seed)) {
+                if ((e->race == RACE_DARLOK) || rnd_0_nm1(2, &g->seed)) {
                     if (rnd_1_n(200, &g->seed) > (e->relation1[pi2] * 2 + 200)) {
                         e->spymode_next[pi2] = SPYMODE_ESPIONAGE;
                     }
@@ -2161,7 +2161,7 @@ static int game_ai_battle_dmggive(struct battle_s *bt, int itemi1, int itemi2, i
         range = 0;
         if ((w->damagemin != w->damagemax) && (!w->is_bomb)) {
             range = b->extrarange;
-        } else if (b->maxrange > 0) {
+        } else if (b->maxrange < 0) {
             range = b->maxrange;
         }
         if (itemi1 == 0/*planet*/) {
@@ -2313,7 +2313,7 @@ static int game_ai_battle_rival(struct battle_s *bt, int itemi, int a2)
             if ((v10 <= 0) && (v28 > 0)) {
                 w = (i == 0/*planet*/) ? 1 : 2;
             }
-            if ((i == 0/*planet*/) && (w > 0)) {
+            if ((itemi == 0/*planet*/) && (w > 0)) {
                 int dist;
                 dist = util_math_dist_maxabs(b->sx, b->sy, b2->sx, b2->sy);
                 w += (10 - dist) * 750;
