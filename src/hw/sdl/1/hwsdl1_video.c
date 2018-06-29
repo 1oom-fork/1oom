@@ -162,7 +162,7 @@ int hw_video_resize(int w, int h)
 #ifdef HAVE_OPENGL
     unsigned int new_w, new_h;
     unsigned int actual_w, actual_h;
-    int flags;
+    int flags, bpp, rsize, gsize, bsize;
 
     log_message("SDL: resize %ix%i (%s)\n", w, h, hw_opt_fullscreen ? "full" : "window");
 
@@ -193,13 +193,35 @@ int hw_video_resize(int w, int h)
         hw_opt_screen_winw = actual_w = new_w;
         hw_opt_screen_winh = actual_h = new_h;
     }
+    if (hw_opt_bpp == 0) {
+        bpp = video.bestmode.bpp;
+    } else {
+        bpp = hw_opt_bpp;
+    }
 
-    SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
-    SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
-    SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
+    switch (bpp) {
+    case 15:
+        rsize = 5;  gsize = 5;  bsize = 5;
+        break;
+    case 16:
+        rsize = 5;  gsize = 6;  bsize = 5;
+        break;
+    case 24:
+    case 32:
+        rsize = 8;  gsize = 8;  bsize = 8;
+        break;
+    default:
+        log_error("hwsdl: %d bpp mode is not supported!\n", bpp);
+        goto fail;
+        break;
+    }
 
-    log_message("SDL_SetVideoMode(%i, %i, %i, 0x%x)\n", actual_w, actual_h, 32, flags);
-    video.screen = SDL_SetVideoMode(actual_w, actual_h, 32, flags);
+    SDL_GL_SetAttribute(SDL_GL_RED_SIZE, rsize);
+    SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, gsize);
+    SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, bsize);
+
+    log_message("SDL_SetVideoMode(%i, %i, %i, 0x%x)\n", actual_w, actual_h, bpp, flags);
+    video.screen = SDL_SetVideoMode(actual_w, actual_h, bpp, flags);
     if (!video.screen) {
         log_error("SDL_SetVideoMode failed!\n");
         goto fail;
