@@ -684,7 +684,7 @@ void game_design_scrap(struct game_s *g, player_id_t player, int shipi, bool fla
         bs = p->buildship;
         if ((p->owner == player) && (bs != BUILDSHIP_STARGATE)) {
             if (bs == shipi) {
-                if ((player != PLAYER_0) || (!flag_for_new)) {
+                if (!IS_HUMAN(g, player) || (!flag_for_new)) {
                     p->buildship = 0;
                 } else {
                     p->buildship = e->shipdesigns_num - 1;
