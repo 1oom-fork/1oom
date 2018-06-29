@@ -147,7 +147,7 @@ int uiobj_maxy = UI_SCREEN_H - 1;
 
 #ifdef FEATURE_MODEBUG
 #define DEBUGLEVEL_UIOBJ    1
-static void dump_uiobj_p(uiobj_t *p)
+static void dump_uiobj_p(const uiobj_t *p)
 {
     LOG_DEBUG((DEBUGLEVEL_UIOBJ, "i:%i xy:%i-%i,%i-%i t:%x key:%05x(%c) helpid:%i vptr:%i*:%i ", (p - uiobj_tbl), p->x0, p->x1, p->y0, p->y1, p->type, p->key, (p->key >= 0x20 && p->key < 0x7e) ? p->key : '.', p->helpid, p->vptr ? 0 : 1, p->vptr ? *p->vptr : 0));
     switch (p->type) {

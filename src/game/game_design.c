@@ -24,8 +24,8 @@
 static void game_get_random_shipnames(struct game_s *g, player_id_t player, char shipnames[SHIP_HULL_NUM][SHIP_NAME_LEN + 1])
 {
     BOOLVEC_DECLARE(name_unused, SHIP_NAME_NUM);
-    empiretechorbit_t *e = &(g->eto[player]);
-    shipresearch_t *srd = &(g->srd[player]);
+    const empiretechorbit_t *e = &(g->eto[player]);
+    const shipresearch_t *srd = &(g->srd[player]);
     char const * const *names = &game_str_tbl_ship_names[e->race * SHIP_NAME_NUM];
     for (int n = 0; n < SHIP_NAME_NUM; ++n) {
         BOOLVEC_SET1(name_unused, n);
@@ -160,7 +160,7 @@ static int game_design_calc_cost_item_do(struct game_design_s *gd, design_slot_t
 
 static void game_design_prepare_do(struct game_s *g, struct game_design_s *gd, player_id_t player, shipdesign_t *sd)
 {
-    empiretechorbit_t *e = &(g->eto[player]);
+    const empiretechorbit_t *e = &(g->eto[player]);
     gd->player_i = player;
     gd->sd_num = e->shipdesigns_num;
     game_get_random_shipnames(g, gd->player_i, gd->names);
@@ -176,7 +176,7 @@ static void game_design_prepare_do(struct game_s *g, struct game_design_s *gd, p
 
 void game_design_prepare(struct game_s *g, struct game_design_s *gd, player_id_t player, shipdesign_t *sd)
 {
-    empiretechorbit_t *e = &(g->eto[player]);
+    const empiretechorbit_t *e = &(g->eto[player]);
     game_design_prepare_do(g, gd, player, sd);
     for (int i = 0; i < gd->sd_num; ++i) {
         gd->tbl_shiplook[i] = g->srd[gd->player_i].design[i].look;
