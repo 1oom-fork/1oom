@@ -106,10 +106,10 @@ static void planets_draw_cb(void *vptr)
             const char *str;
             uint8_t pli;
             pli = d->planets[pi];
-            y0 = 21 + i * 11;
+            y0 = 21 + i * 11 + 1;   /* di + 1 */
             p = &(g->planet[pli]);
             lbxfont_select(2, 0xb, 0, 0);
-            lbxfont_print_num_right(17, y0, pi);
+            lbxfont_print_num_right(17, y0, pi + 1);
             lbxfont_select(2, 0xd, 0, 0);
             lbxfont_print_str_normal(25, y0, p->name);
             lbxfont_select(2, 6, 0, 0);
@@ -127,7 +127,7 @@ static void planets_draw_cb(void *vptr)
                     c = '-';
                     gfx = ui_data.gfx.starmap.gr_arrow_d;
                 }
-                lbxgfx_draw_frame(92, y0, gfx);
+                lbxgfx_draw_frame(92, y0 - 1, gfx);
                 sprintf(buf, "%c%i", c, v);
                 lbxfont_print_str_right(111, y0, buf);
             }
@@ -146,6 +146,7 @@ static void planets_draw_cb(void *vptr)
             }
             lbxfont_print_num_right(214, y0, v);
             str = NULL;
+            lbxfont_select(2, 0xb, 0, 0);
             if (g->evn.have_plague && (g->evn.plague_planet_i == pli)) {
                 str = game_str_pl_plague;
             } else if (g->evn.have_nova && (g->evn.nova_planet_i == pli)) {
@@ -210,7 +211,7 @@ static void planets_draw_cb(void *vptr)
     lbxfont_print_str_right(116, 185, buf);
     sprintf(buf, "%i %s", e->total_trade_bc, game_str_bc);
     lbxfont_print_str_right(195, 174, buf);
-    sprintf(buf, "%i %s", e->total_production_bc / 10, game_str_bc);
+    sprintf(buf, "%i %s", e->total_production_bc, game_str_bc);
     lbxfont_print_str_right(195, 185, buf);
 
     lbxfont_select_set_12_1(5, 8, 0, 0);
