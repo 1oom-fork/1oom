@@ -549,7 +549,9 @@ void hw_video_shutdown(void)
 void hw_video_input_grab(bool grab)
 {
     SDL_SetWindowGrab(video.window, grab);
-    SDL_SetRelativeMouseMode(grab);
+    if (hw_opt_relmouse) {
+        SDL_SetRelativeMouseMode(grab);
+    }
 }
 
 int hw_icon_set(const uint8_t *data, const uint8_t *pal, int w, int h)
