@@ -6,5 +6,6 @@
 extern bool hw_mouse_enabled;
 
 extern void hw_mouse_buttons(int state);
+extern void hw_mouse_scroll(int scroll);
 
 #endif
