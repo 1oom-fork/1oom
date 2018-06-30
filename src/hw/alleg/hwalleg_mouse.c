@@ -30,3 +30,8 @@ void hw_mouse_buttons(int state)
         mouse_set_buttons_from_hw(b);
     }
 }
+
+void hw_mouse_scroll(int scroll)
+{
+    mouse_set_scroll_from_hw(scroll);
+}
