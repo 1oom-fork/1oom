@@ -14,6 +14,7 @@
 
 bool hw_opt_borderless = false;
 bool hw_opt_int_scaling = false;
+bool hw_opt_relmouse = true;
 bool hw_opt_vsync = true;
 
 /* -------------------------------------------------------------------------- */
@@ -31,6 +32,12 @@ const struct cmdline_options_s hw_cmdline_options[] = {
     { "-nointscaling", 0,
       options_disable_bool_var, (void *)&hw_opt_int_scaling,
       NULL, "Do not force integer scaling" },
+    { "-relmouse", 0,
+      options_enable_bool_var, (void *)&hw_opt_relmouse,
+      NULL, "Use relative mouse mode" },
+    { "-norelmouse", 0,
+      options_disable_bool_var, (void *)&hw_opt_relmouse,
+      NULL, "Do not use relative mouse mode" },
     { "-vsync", 0,
       options_enable_bool_var, &hw_opt_vsync,
       NULL, "Enable V-sync" },
