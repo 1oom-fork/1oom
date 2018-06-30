@@ -116,6 +116,7 @@ For some graphical UIs:
                            default = 1000000
 
 For SDL HWs:
+    -mousediv DIV        Set mouse movement divisor
     -sdlmixersf FILE.SF2 Set SDL_mixer soundfont
 
 For SDL1 HW:
