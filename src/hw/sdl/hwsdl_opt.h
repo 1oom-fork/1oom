@@ -18,5 +18,6 @@ extern int hw_opt_bpp;
 /* for SDL2 */
 extern bool hw_opt_force_sw;
 extern bool hw_opt_int_scaling;
+extern bool hw_opt_relmouse;
 
 #endif
