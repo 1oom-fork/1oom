@@ -125,6 +125,8 @@ For SDL2 HW:
     -noborderless        Disable borderless window
     -intscaling          Force integer scaling
     -nointscaling        Do not force integer scaling
+    -relmouse            Use relative mouse mode (default)
+    -norelmouse          Do not use relative mouse mode (for testing)
     -vsync               Enable V-sync
     -novsync             Disable V-sync
 
