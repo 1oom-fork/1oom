@@ -7,7 +7,7 @@ VERSION1OOM=$4
 
 if test x$GIT != "xno" && test -d $TOPSRCDIR/.git
     then
-    VERSIONSTR=`$GIT describe --tags`
+    VERSIONSTR=`$GIT -C $TOPSRCDIR describe --tags`
 else
     VERSIONSTR=$VERSION1OOM
 fi

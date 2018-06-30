@@ -66,7 +66,7 @@ dnl - git version
 
 USE_GIT="no"
 if test x"$GIT" != "x"; then
-    gitversion=`$GIT describe --tags`
+    gitversion=`$GIT -C $srcdir describe --tags`
     if test x"$gitversion" != "x"; then
         USE_GIT=$GIT
     fi
