@@ -3,6 +3,7 @@
 #include "hw.h"
 #include "hwsdl_mouse.h"
 #include "hwsdl_video.h"
+#include "hwsdl_opt.h"
 #include "mouse.h"
 #include "types.h"
 
@@ -10,6 +11,8 @@
 
 static int hw_mouse_w;
 static int hw_mouse_h;
+static int hw_mouse_dx_acc = 0;
+static int hw_mouse_dy_acc = 0;
 
 /* -------------------------------------------------------------------------- */
 
@@ -53,6 +56,17 @@ void hw_mouse_set_limits(int w, int h)
 void hw_mouse_move(int dx, int dy)
 {
     int x, y;
+    if (hw_opt_mousediv > 1) {
+        hw_mouse_dx_acc += dx;
+        dx = hw_mouse_dx_acc / hw_opt_mousediv;
+        hw_mouse_dx_acc = hw_mouse_dx_acc % hw_opt_mousediv;
+        hw_mouse_dy_acc += dy;
+        dy = hw_mouse_dy_acc / hw_opt_mousediv;
+        hw_mouse_dy_acc = hw_mouse_dy_acc % hw_opt_mousediv;
+        if ((dx == 0) && (dy == 0)) {
+            return;
+        }
+    }
     x = moouse_x + dx;
     if (x < 0) { x = 0; }
     if (x >= hw_mouse_w) { x = hw_mouse_w - 1; }
