@@ -540,7 +540,7 @@ void hw_mouse_grab(void)
         hw_mouse_enabled = true;
         SDL_ShowCursor(SDL_DISABLE);
         SDL_SetWindowGrab(video.window, true);
-        SDL_SetRelativeMouseMode(true);
+        SDL_SetRelativeMouseMode(hw_opt_relmouse);
     }
 }
 
