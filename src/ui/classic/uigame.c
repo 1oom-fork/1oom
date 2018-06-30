@@ -32,6 +32,7 @@
 #include "uiraces.h"
 #include "uispecs.h"
 #include "uistarmap.h"
+#include "uistarmap_common.h"
 #include "uistarview.h"
 #include "uiswitch.h"
 #include "uitech.h"
@@ -267,6 +268,7 @@ void ui_game_start(struct game_s *g)
     }
     /* HACK ensure the game starts with a wipe, fixing -new help gfx glitch  */
     ui_draw_finish_mode = 1;
+    ui_starmap_compute_scale(g);
 }
 
 void ui_game_end(struct game_s *g)
