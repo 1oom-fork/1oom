@@ -11,5 +11,6 @@ extern void hw_mouse_toggle_grab(void);
 
 extern void hw_mouse_move(int dx, int dy);
 extern void hw_mouse_buttons(int state);
+extern void hw_mouse_scroll(int scroll);
 
 #endif
