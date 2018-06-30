@@ -284,14 +284,16 @@ int hw_event_handle(void)
         poll_mouse();
     }
     {
-        static int prev_x = -1, prev_y;
-        int pos, x, y;
+        static int prev_x = -1, prev_y, prev_z;
+        int pos, x, y, z;
         pos = mouse_pos;
         x = ((unsigned int)pos) >> 16;
         y = pos & 0x0000ffff;
+        z = mouse_z;
         if (prev_x < 0) {
             prev_x = x;
             prev_y = y;
+            prev_z = z;
         }
         hw_mouse_move(x - prev_x, y - prev_y);
         if ((x <= 10) || (x >= (hw_mouse_w - 10)) || (y <= 10) || (y >= (hw_mouse_h - 10))) {
@@ -301,6 +303,10 @@ int hw_event_handle(void)
         }
         prev_x = x;
         prev_y = y;
+        if (prev_z != z) {
+            hw_mouse_scroll((prev_z < z) ? -1 : 1);
+            prev_z = z;
+        }
     }
     hw_mouse_buttons(mouse_b);
     /* rest(10) here would be nice for multitasking OSs,
