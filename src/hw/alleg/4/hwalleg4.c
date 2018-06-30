@@ -276,6 +276,18 @@ int hw_event_handle(void)
         poll_mouse();
     }
     mouse_set_xy_from_hw(mouse_x, mouse_y);
+    {
+        static int prev_z = -1;
+        int z;
+        z = mouse_z;
+        if (prev_z < 0) {
+            prev_z = z;
+        }
+        if (prev_z != z) {
+            hw_mouse_scroll((prev_z < z) ? -1 : 1);
+            prev_z = z;
+        }
+    }
     hw_mouse_buttons(mouse_b);
     return 0;
 }
