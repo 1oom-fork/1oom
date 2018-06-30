@@ -17,6 +17,7 @@
 
 bool hw_opt_borderless = false;
 bool hw_opt_int_scaling = false;
+bool hw_opt_relmouse = true;
 bool hw_opt_two_step_scaling = true;
 bool hw_opt_vsync = true;
 
@@ -29,6 +30,7 @@ bool hw_opt_vsync = true;
 const struct cfg_items_s hw_cfg_items_extra[] = {
     CFG_ITEM_BOOL("borderless", &hw_opt_borderless),
     CFG_ITEM_BOOL("int_scaling", &hw_opt_int_scaling),
+    CFG_ITEM_BOOL("relmouse", &hw_opt_relmouse),
     CFG_ITEM_BOOL("two_step_scaling", &hw_opt_two_step_scaling),
     CFG_ITEM_BOOL("vsync", &hw_opt_vsync),
     CFG_ITEM_END
@@ -49,6 +51,12 @@ const struct cmdline_options_s hw_cmdline_options_extra[] = {
     { "-nointscaling", 0,
       options_disable_bool_var, (void *)&hw_opt_int_scaling,
       NULL, "Do not force integer scaling" },
+    { "-relmouse", 0,
+      options_enable_bool_var, (void *)&hw_opt_relmouse,
+      NULL, "Use relative mouse mode (default)" },
+    { "-norelmouse", 0,
+      options_disable_bool_var, (void *)&hw_opt_relmouse,
+      NULL, "Do not use relative mouse mode (for testing)" },
     { "-twostep", 0,
       options_enable_bool_var, (void *)&hw_opt_two_step_scaling,
       NULL, "Allow two-step scaling" },
