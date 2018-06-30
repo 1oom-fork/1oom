@@ -501,7 +501,9 @@ void hw_video_shutdown(void)
 void hw_video_input_grab(bool grab)
 {
     SDL_SetWindowGrab(video.window, grab);
-    SDL_SetRelativeMouseMode(grab);
+    if (hw_opt_relmouse) {
+        SDL_SetRelativeMouseMode(grab);
+    }
 }
 
 void hw_video_position_cursor(int mx, int my)
