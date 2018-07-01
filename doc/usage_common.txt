@@ -176,7 +176,7 @@ For classic game UI:
 ----------
 
 Whenever a new game is started, the log displays a line such as:
-    Game: new game 621:0x5:4:0x3f5e5b32:1
+    Game: new game -new 621:0x5:4:0x3f5e5b32:1 -nga 0
 
 The alphanumeric jumble is a game seed. It can be given to -new to start
 a new game with the same galaxy and opponents.
@@ -250,3 +250,45 @@ Some examples:
           player 2 is (2) green (8) sakkra,
           player 3 is random
         * players 1 and 2 are human
+
+3.2. -nga
+----------
+
+The -nga command line parameters selects the AI type to use when starting
+a new game via -new. The values 0 and 1 correspond to Classic and Classic+,
+respectively.
+
+
+4. New features
+================
+
+4.1. Planetary governor
+------------------------
+
+The planetary governor is provided as an option for reducing micromanagement.
+It is enabled/disabled for each planet individually. In the classic UI this is
+done by clicking the planet name in the galaxy movement screen. The planet list
+highlights governed planets.
+
+The governor works as follows:
+- First, set ecology to minimum that avoids waste.
+- Then move industry slider until maximum or reserve achieved.
+- Then move ecology slider if can terraform or grow population until "clean" is achieved.
+- Then set defense to upgrade bases or build shield. Will not build new bases.
+- Then set shipbuilding to minimum required to build stargate if technology is present.
+- If all of the above are finished, do research.
+
+The governor adjusts the sliders at two times:
+- When enabling the governor by clicking the planet name.
+- After a turn, just before any "Planetary speding ratios may ..." messages.
+
+These rules some implications:
+- The governor can be overridden by adjusting the sliders manually; the
+  governor takes over again at the next turn.
+- Adjusting tax, spying, security or sending reserves is not reflected on the
+  sliders on the same turn. Disable/enable the governor to readjust for the
+  next turn.
+- The governor copes poorly with random events, especially plague.
+
+The governor is experimental feature and future versions may change the how it
+operates.
