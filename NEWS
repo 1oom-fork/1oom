@@ -1,9 +1,24 @@
+2018-07-01: v0.5 released
+    - support mouse wheel for lists, sliders and zooming
+    - add -uiextra for enabling extra UI features, notably:
+        * new New Game screen with opponent selection (including AI/player)
+    - SDL: support 15/16/24 bpp
+    - added documentation on differences to v1.3
+    - some improvements from the unofficial patch v1.40m have been implemented
+    - add Classic+ AI with small fixes, some from v1.40m
+    - about 100 bugs fixed, notably:
+        * the AI should now provide a worthy challenge
+        * space combat works as it should
+        * fixed many crashes
+    - added doc/pbxin_fixbugs.txt for optional bug fixes
+    - last and least: the "No Events" text overlay is implemented
+
 2018-06-05: v0.4 released
     - add -uiscale N for viewing more of the galaxy at once
     - local multiplayer is ready for testing (use -new to start)
     - 1oom_pbxdump as the counterpart to 1oom_pbxmake
     - bug genocide marches on, notably:
-    _ AI fleets disappearing when sent fixed
+    - AI fleets disappearing when sent fixed
     - AI ship design phase can no longer hang
     - MSDOS port should not crash at the slightest provocation
 
