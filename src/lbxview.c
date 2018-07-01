@@ -142,7 +142,11 @@ static void drawscreen_outlbx(void)
         sprintf(linebuf, "%x", i);
         drawstr(1 * 8, 8 + ((int)i) * 8, linebuf, textcolor, 0);
         drawstr(4 * 8, 8 + ((int)i) * 8, lbxfile_name(i), textcolor, 0);
-        sprintf(linebuf, "%u  %u", lbxfile_type(i), lbxfile_num_items(i));
+        if (lbxfile_exists(i)) {
+            sprintf(linebuf, "%u  %u", lbxfile_type(i), lbxfile_num_items(i));
+        } else {
+            sprintf(linebuf, "?  ?");
+        }
         drawstr(18 * 8, 8 + ((int)i) * 8, linebuf, textcolor, 0);
         drawchar(0, (cursor_i + 1) * 8, ' ', 0, textcolor);
     }
@@ -458,6 +462,14 @@ int main_handle_option(const char *argv)
     }
     switch (optn) {
         case 0:
+            if (v >= LBXFILE_NUM) {
+                log_error("invalid LBX file ID 0x%x\n", v);
+                return -1;
+            }
+            if (!lbxfile_exists(v)) {
+                log_error("file %s missing\n", lbxfile_name(v));
+                return -1;
+            }
             in_lbx = true;
             cur_lbx = v;
             cur_items = lbxfile_num_items(cur_lbx);
@@ -551,12 +563,14 @@ int main_do(void)
                     break;
                 case MOO_KEY_RETURN:
                     if (!in_lbx) {
-                        in_lbx = true;
-                        cur_lbx = cursor_i;
-                        cur_items = lbxfile_num_items(cur_lbx);
-                        cursor_i = 0;
-                        cursor_offs = 0;
-                        change_cur_ptr = true;
+                        if (lbxfile_exists(cursor_i)) {
+                            in_lbx = true;
+                            cur_lbx = cursor_i;
+                            cur_items = lbxfile_num_items(cur_lbx);
+                            cursor_i = 0;
+                            cursor_offs = 0;
+                            change_cur_ptr = true;
+                        }
                     } else {
                         if (lbxfile_type(cur_lbx) == LBX_TYPE_SOUND) {
                             do_lbx_sound(k);
