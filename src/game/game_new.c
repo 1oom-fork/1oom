@@ -876,18 +876,24 @@ static void game_generate_relation_etc(struct game_s *g)
     }
 }
 
-static bool game_generate_research_check_field(uint8_t (*rl)[TECH_TIER_NUM][3], tech_field_t field, const char *items)
+static bool game_generate_research_check_field(const uint8_t (*rl)[TECH_TIER_NUM][3], tech_field_t field, const uint8_t *rr)
 {
+    uint8_t rmask = 0, got = 0;
+    for (int i = 1; i < 50 + 1; ++i) {
+        rmask |= rr[i];
+    }
+    rmask &= ~(GAME_NG_TECH_NEVER | GAME_NG_TECH_ALWAYS);
+    if (!rmask) {
+        return true;
+    }
     for (int tier = 0; tier < TECH_TIER_NUM; ++tier) {
         for (int l = 0; l < 3; ++l) {
             uint8_t v;
             v = rl[field][tier][l];
-            if (v && strchr(items, v)) {
-                return true;
-            }
+            got |= rr[v];
         }
     }
-    return false;
+    return (rmask & got) == rmask;
 }
 
 static void game_generate_research(struct game_s *g, const uint8_t *rflag)
@@ -896,40 +902,34 @@ static void game_generate_research(struct game_s *g, const uint8_t *rflag)
     while (!flag_got_essentials) {
         flag_got_essentials = true;
         for (player_id_t pli = PLAYER_0; pli < g->players; ++pli) {
-            uint16_t rmax;
+            uint8_t rmax;
             uint8_t (*rl)[TECH_TIER_NUM][3];
+            race_t race;
+            race = g->eto[pli].race;
             rl = g->srd[pli].researchlist;
             rmax = (g->eto[pli].race == RACE_PSILON) ? 3 : 2;
             for (tech_field_t field = TECH_FIELD_COMPUTER; field < TECH_FIELD_NUM; ++field) {
+                const uint8_t *rr;
+                rr = game_num_ng_tech[race][field];
                 for (int tier = 0; tier < TECH_TIER_NUM; ++tier) {
+                    int num_taken;
+                    num_taken = 0;
                     for (int l = 0; l < 3; ++l) {
                         rl[field][tier][l] = 0;
                     }
-                }
-                for (int tier = 0; tier < TECH_TIER_NUM; ++tier) {
-                    uint16_t num_taken;
-                    num_taken = 0;
-                    for (int l = 0; l < 2/*?*/; ++l) {
-                        rl[field][tier][l] = 0;
-                    }
                     while (num_taken == 0) {
-                        for (int16_t ti = tier * 5 + 4; ti >= (tier * 5); --ti) {
+                        for (int ti = tier * 5 + 4; (ti >= (tier * 5)) && (num_taken < 3); --ti) {
+                            if (rr[ti + 1] & GAME_NG_TECH_ALWAYS) {
+                                rl[field][tier][num_taken++] = ti + 1;
+                            }
+                        }
+                        for (int ti = tier * 5 + 4; ti >= (tier * 5); --ti) {
                             bool flag_skip;
                             flag_skip = false;
-                            if (g->eto[pli].race == RACE_SILICOID) {
-                                ++ti;
-                                if ((field == TECH_FIELD_PLANETOLOGY)
-                                  && strchr("\x10\x16\x03\x06\x09\x0c\x0f\x12\x05\x0d\x22", ti)
-                                ) {
-                                    flag_skip = true;
-                                } else if ((field == TECH_FIELD_CONSTRUCTION)
-                                  && strchr("\x05\x0f\x19\x23\x2d", ti)
-                                ) {
-                                    flag_skip = true;
-                                }
-                                --ti;
-                            }
-                            if (rflag[field * 50 + ti] == 0) {
+                            if (0
+                              || (rr[ti + 1] & (GAME_NG_TECH_NEVER | GAME_NG_TECH_ALWAYS))
+                              || (rflag[field * 50 + ti] == 0)
+                            ) {
                                 flag_skip = true;
                             }
                             if ((!flag_skip) && (rnd_1_n(4, &g->seed) <= rmax) && (num_taken < 3)) {
@@ -951,25 +951,8 @@ static void game_generate_research(struct game_s *g, const uint8_t *rflag)
                         }
                     }
                 }
-                if (field == TECH_FIELD_COMPUTER) {
-                    if (!game_generate_research_check_field(rl, field, "\x08\x12\x1c\x26\x30")) {
-                        flag_got_essentials = false;
-                    }
-                }
-                if (field == TECH_FIELD_PROPULSION) {
-                    if (!game_generate_research_check_field(rl, field, "\x03\x05")) {
-                        flag_got_essentials = false;
-                    }
-                }
-                if (field == TECH_FIELD_PLANETOLOGY) {
-                    if (!game_generate_research_check_field(rl, field, "\x0c\x16\x20\x2a")) {
-                        flag_got_essentials = false;
-                    }
-                }
-                if (field == TECH_FIELD_WEAPON) {
-                    if (!game_generate_research_check_field(rl, field, "\x04\x08\x0b\x12\x1b\x22\x29\x2c")) {
-                        flag_got_essentials = false;
-                    }
+                if (!game_generate_research_check_field(rl, field, rr)) {
+                    flag_got_essentials = false;
                 }
             }
         }
