@@ -209,7 +209,7 @@ static void planets_draw_cb(void *vptr)
     lbxfont_print_str_right(116, 185, buf, UI_SCREEN_W);
     sprintf(buf, "%i %s", e->total_trade_bc, game_str_bc);
     lbxfont_print_str_right(195, 174, buf, UI_SCREEN_W);
-    sprintf(buf, "%i %s", e->total_production_bc / 10, game_str_bc);
+    sprintf(buf, "%i %s", e->total_production_bc, game_str_bc);
     lbxfont_print_str_right(195, 185, buf, UI_SCREEN_W);
 
     lbxfont_select_set_12_1(5, 8, 0, 0);
@@ -334,7 +334,7 @@ void ui_planets(struct game_s *g, player_id_t active_player)
     uiobj_set_help_id(37);
 again:
     flag_trans = false;
-    game_update_production(g); /* XXX this probably needed for alt-moola */
+    game_update_production(g); /* this is needed for transfers and alt-moola */
 
     d.g = g;
     d.api = active_player;

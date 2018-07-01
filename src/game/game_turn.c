@@ -335,7 +335,7 @@ static void game_turn_update_trade(struct game_s *g)
                         e->hmm288[j] = hmm;
                         e2->hmm288[i] = hmm;
                     }
-                    v = (e->relation1[j] + 25) / 60;
+                    v = (rnd_1_n(200, &g->seed) + e->relation1[j] + 25) / 60;
                     SETMAX(v, 0);
                     ADDSATT(e->trade_percent[j], v, 100);
                     ADDSATT(e2->trade_percent[i], v, 100);
@@ -523,7 +523,9 @@ static void game_turn_build_def(struct game_s *g)
                 }
                 if (newshield != p->shield) {
                     p->shield = newshield;
-                    game_add_planet_to_shield_finished(g, i, owner);
+                    if (newshield == g->eto[owner].have_planet_shield) {
+                        game_add_planet_to_shield_finished(g, i, owner);
+                    }
                 }
             }
         }
@@ -866,7 +868,7 @@ static void game_turn_explore(struct game_s *g, uint8_t *planetptr, player_id_t 
                 if ((!flag_visible) && e->have_adv_scanner) {
                     for (int pli2 = 0; pli2 < g->galaxy_stars; ++pli2) {
                         const planet_t *p2 = &(g->planet[pli2]);
-                        if ((p->owner == i) && (util_math_dist_fast(p->x, p->y, p2->x, p2->y) <= game_num_adv_scan_range)) {
+                        if ((p2->owner == i) && (util_math_dist_fast(p->x, p->y, p2->x, p2->y) <= game_num_adv_scan_range)) {
                             flag_visible = true;
                             break;
                         }
@@ -1747,6 +1749,7 @@ struct game_end_s game_turn_process(struct game_s *g)
     game_ai->turn_p1(g);
     game_ai->turn_p2(g);
     game_update_have_reserve_fuel(g);
+    game_ai->turn_p3(g);
     game_turn_init_z_finished(g);
     game_turn_send_transport(g);
     game_update_production(g);

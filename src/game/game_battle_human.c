@@ -2020,7 +2020,7 @@ void game_battle_area_setup(struct battle_s *bt)
             bt->area[zy][zx] = 0;
         }
     }
-    if (b->f85 != 0) {
+    if (b->f85 == 0) {
         bt->hmm30 = false;
     }
     ui_battle_area_setup(bt);

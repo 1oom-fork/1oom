@@ -90,14 +90,14 @@ static void game_ai_classic_turn_p1_send_scout(struct game_s *g, struct ai_turn_
         if (1
           || BOOLVEC_IS1(p->explored, pi)
           || (!p->within_frange[pi])
-          || ((g->year >= 150) && (g->evn.planet_orion_i == i))
+          || ((g->year < 150) && (g->evn.planet_orion_i == i)) /* XXX Orion is unconditionally ignored below */
           || (ships > 0)
         ) {
             BOOLVEC_SET1(tbl_planet_ignore, i);
         }
     }
     for (int j = 0; j < g->enroute_num; ++j) {
-        fleet_enroute_t *r = &(g->enroute[j]);
+        const fleet_enroute_t *r = &(g->enroute[j]);
         if (r->owner == pi) {
             BOOLVEC_SET1(tbl_planet_ignore, r->dest);
         }
@@ -898,7 +898,7 @@ static void game_ai_classic_turn_p1_sub11(struct game_s *g, player_id_t pi)
             uint32_t v;
             planet_t *p;
             p = &(g->planet[i]);
-            p->slider[PLANET_SLIDER_SHIP] = p->slider[PLANET_SLIDER_DEF] + p->slider[PLANET_SLIDER_IND] + p->slider[PLANET_SLIDER_TECH];
+            p->slider[PLANET_SLIDER_SHIP] += p->slider[PLANET_SLIDER_DEF] + p->slider[PLANET_SLIDER_IND] + p->slider[PLANET_SLIDER_TECH];
             p->slider[PLANET_SLIDER_DEF] = 0;
             p->slider[PLANET_SLIDER_IND] = 0;
             p->slider[PLANET_SLIDER_TECH] = 0;
@@ -1647,7 +1647,7 @@ static void game_ai_classic_turn_p3_sub1(struct game_s *g, player_id_t pi)
             if (e->treaty[pi2] >= TREATY_WAR) {
                 e->spymode_next[pi2] = SPYMODE_SABOTAGE;
             } else if (e->spymode_next[pi2] == SPYMODE_HIDE) {
-                if ((e->race == RACE_DARLOK) || rnd_0_nm1(0, &g->seed)) {
+                if ((e->race == RACE_DARLOK) || rnd_0_nm1(2, &g->seed)) {
                     if (rnd_1_n(200, &g->seed) > (e->relation1[pi2] * 2 + 200)) {
                         e->spymode_next[pi2] = SPYMODE_ESPIONAGE;
                     }
@@ -1718,7 +1718,7 @@ static void game_ai_classic_turn_p3(struct game_s *g)
                         sl[PLANET_SLIDER_IND] = 10;
                     }
                     if (sl[PLANET_SLIDER_ECO] < 71) {
-                        sl[PLANET_SLIDER_IND] = 25;
+                        sl[PLANET_SLIDER_TECH] = 25;
                     }
                     if (p->pop < ((p->max_pop3 * 3) / 4)) {
                         sl[PLANET_SLIDER_IND] = 50;

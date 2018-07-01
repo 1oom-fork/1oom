@@ -27,7 +27,7 @@
 static void game_ground_init(struct ground_s *gr)
 {
     struct game_s *g = gr->g;
-    char buf[0x32];
+    char buf[0x40];
     for (int i = 0; i < 2; ++i) {
         const empiretechorbit_t *e = &(g->eto[gr->s[i].player]);
         const shipresearch_t *srd = &(g->srd[gr->s[i].player]);
@@ -196,6 +196,7 @@ void game_turn_ground(struct game_s *g)
                     pop_planet = gr->s[1].pop2 = gr->s[1].pop1 = gr->flag_rebel ? p->rebels : p->pop;
                     gr->s[0].player = i;
                     gr->s[1].player = powner;
+                    gr->flag_swap = false;
                     gr->planet_i = pli;
                     if (IS_HUMAN(g, i) || IS_HUMAN(g, powner)) {
                         int t;
