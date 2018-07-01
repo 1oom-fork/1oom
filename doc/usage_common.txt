@@ -175,7 +175,7 @@ For classic game UI:
 ----------
 
 Whenever a new game is started, the log displays a line such as:
-    Game: new game 621:0x5:4:0x3f5e5b32:1
+    Game: new game -new 621:0x5:4:0x3f5e5b32:1 -nga 0
 
 The alphanumeric jumble is a game seed. It can be given to -new to start
 a new game with the same galaxy and opponents.
@@ -249,3 +249,10 @@ Some examples:
           player 2 is (2) green (8) sakkra,
           player 3 is random
         * players 1 and 2 are human
+
+3.2. -nga
+----------
+
+The -nga command line parameters selects the AI type to use when starting
+a new game via -new. The values 0 and 1 correspond to Classic and Classic+,
+respectively.
