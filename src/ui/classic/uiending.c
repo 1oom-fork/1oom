@@ -66,6 +66,20 @@ struct anim_winlose_funeral_s {
 
 /* -------------------------------------------------------------------------- */
 
+static bool check_lbx_file(void)
+{
+    if (!lbxfile_exists(LBXFILE_WINLOSE)) {
+        log_warning("skipping ending due to missing %s\n", lbxfile_name(LBXFILE_WINLOSE));
+        uiobj_table_clear();
+        uiobj_unset_callback();
+        ui_draw_erase_buf();
+        uiobj_finish_frame();
+        ui_draw_erase_buf();
+        return false;
+    }
+    return true;
+}
+
 static void ui_play_winlose_cb1(void *vptr)
 {
     struct anim_winlose_1_s *p = vptr;
@@ -189,6 +203,10 @@ static void ui_play_ending_good_or_tyrant(int race, const char *name, bool flag_
 
     if (ui_draw_finish_mode == 0) {
         ui_palette_fadeout_4_3_1();
+    }
+
+    if (!check_lbx_file()) {
+        return;
     }
 
     if (flag_good) {
@@ -419,6 +437,10 @@ void ui_play_ending_funeral(int banner_live, int banner_dead)
 
     ui_palette_fadeout_4_3_1();
 
+    if (!check_lbx_file()) {
+        return;
+    }
+
     wld.gfx_lose = lbxfile_item_get(LBXFILE_WINLOSE, 0);
     wld.gfx_flag = lbxfile_item_get(LBXFILE_WINLOSE, 1 + banner_live);
     wld.gfx_coffin = lbxfile_item_get(LBXFILE_WINLOSE, 7 + banner_dead);
@@ -472,6 +494,10 @@ void ui_play_ending_exile(const char *name)
 
     if (ui_draw_finish_mode == 0) {
         ui_palette_fadeout_4_3_1();
+    }
+
+    if (!check_lbx_file()) {
+        return;
     }
 
     lbxpal_select(8, -1, 0);
