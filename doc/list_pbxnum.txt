@@ -72,3 +72,13 @@ crystal_* : ?, ?
 amoeba_* : ?, ?
 guardian_* : ?, ?
   - The index of these space monster tables is the difficulty level.
+
+ngt_*_* : 0..255, ?
+  - New game research list limitations for each field and race.
+    Table index corresponds to tech level, for example ngt_we_meklar item 32
+    controls Gauss Autocannon research availability for Meklars.
+    The value 1 means the tech is never added, f.ex Silicoids & colony tech.
+    The value 2 means the tech is always added. (Unused by default.)
+    The bits 2..7 (values 4, 8, ...) are used for groups of essential techs;
+    the research list must contain at least one of the techs with a given
+    bit set. (Bit 2 / value 4 is the only one used by default.)
