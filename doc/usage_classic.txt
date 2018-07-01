@@ -39,7 +39,7 @@ The following new UI features are always enabled/available:
 - Load Game screen uses numbers as hotkeys for slots
 - Objects with hotkeys can be navigated to using cursor keys
 - Mouse wheel can be used to adjust sliders and scroll lists
-- In Tech screen Tab runs through tech fields
+- In Tech screen Tab runs through tech fields, 1-6 are for field slider minus
 - Clicking the portraits in Races screen brings Report page
 - Right-clicking on the ship image or Ships button cycles the other way
 - Ind slider no longer shows 0.N/y when at max factories
