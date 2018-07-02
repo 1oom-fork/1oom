@@ -25,6 +25,7 @@
 #include "uifleet.h"
 #include "uigmap.h"
 #include "uigameopts.h"
+#include "uigovern.h"
 #include "uiobj.h"
 #include "uipal.h"
 #include "uiplanets.h"
@@ -208,6 +209,10 @@ ui_turn_action_t ui_game_turn(struct game_s *g, int *load_game_i_ptr, int pi)
                 break;
             case UI_MAIN_LOOP_SPIES_CAUGHT:
                 ui_caught(g, pi);
+                ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
+                break;
+            case UI_MAIN_LOOP_GOVERN:
+                ui_govern(g, pi);
                 ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
                 break;
             case UI_MAIN_LOOP_NEXT_TURN:

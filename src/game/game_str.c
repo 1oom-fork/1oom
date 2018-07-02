@@ -428,6 +428,9 @@ const char *game_str_gm_mapkey = "Map Key";
 const char *game_str_bs_line1 = "How many missile";
 const char *game_str_bs_line2 = "bases to eliminate?";
 
+const char *game_str_gv_target = "How many missile bases to build here?";
+const char *game_str_gv_adjust = "Readjust all governed planets?";
+
 const char *game_str_tbl_te_field[TECH_FIELD_NUM] = {
     "Computer", "Construction", "Force Field", "Planetology", "Propulsion", "Weapon"
 };

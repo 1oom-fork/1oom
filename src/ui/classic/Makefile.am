@@ -39,6 +39,8 @@ libuiclassic_a_SOURCES = \
     uigameopts.h \
     uigmap.c \
     uigmap.h \
+    uigovern.c \
+    uigovern.h \
     uiground.c \
     uihelp.c \
     uihelp.h \
