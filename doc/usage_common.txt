@@ -270,23 +270,31 @@ It is enabled/disabled for each planet individually. In the classic UI this is
 done by clicking the planet name in the galaxy movement screen. The planet list
 highlights governed planets.
 
+The classic UI has a new governor screen which is accessed by right clicking on
+the planet name. The governor screen allows:
+- Setting a target amount of missile bases.
+- Readjusting all governed planets.
+
 The governor works as follows:
 - First, set ecology to minimum that avoids waste.
 - Then move industry slider until maximum or reserve achieved.
 - Then move ecology slider if can terraform or grow population until "clean" is achieved.
-- Then set defense to upgrade bases or build shield. Will not build new bases.
+- Then set defense to upgrade bases or build shield.
+- Then increase defense to build up to target amount of missile bases.
 - Then set shipbuilding to minimum required to build stargate if technology is present.
 - If all of the above are finished, do research.
 
-The governor adjusts the sliders at two times:
+The governor adjusts the sliders only at the following times:
 - When enabling the governor by clicking the planet name.
+- When readjusting all planets via the governor screen.
 - After a turn, just before any "Planetary speding ratios may ..." messages.
 
-These rules some implications:
+These rules have some implications:
 - The governor can be overridden by adjusting the sliders manually; the
   governor takes over again at the next turn.
 - Adjusting tax, spying, security or sending reserves is not reflected on the
-  sliders on the same turn. Disable/enable the governor to readjust for the
+  sliders on the same turn. Either disable/enable the governor for each affected
+  planet or use the governor screen to readjust all the governed planets for the
   next turn.
 - The governor copes poorly with random events, especially plague.
 

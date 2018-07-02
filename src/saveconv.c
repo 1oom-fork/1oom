@@ -1253,6 +1253,7 @@ static const struct game_intros_s game_intros_planet[] = {
     GAME_INTROS_VAL(planet_s, buildship),
     GAME_INTROS_VAL(planet_s, reloc),
     GAME_INTROS_VAL(planet_s, missile_bases),
+    GAME_INTROS_VAL(planet_s, target_bases),
     GAME_INTROS_VAL(planet_s, bc_to_base),
     GAME_INTROS_VAL(planet_s, bc_upgrade_base),
     GAME_INTROS_VAL(planet_s, have_stargate),
@@ -2102,6 +2103,7 @@ static int savetype_en_text(struct game_s *g, const char *fname)
         OUTLINE "buildship = %i\n", p->buildship);
         OUTLINE "reloc = %i\n", p->reloc);
         OUTLINE "missile_bases = %i\n", p->missile_bases);
+        OUTLINE "target_bases = %i\n", p->target_bases);
         OUTLINE "bc_to_base = %i\n", p->bc_to_base);
         OUTLINE "bc_upgrade_base = %i\n", p->bc_upgrade_base);
         OUTLINE "have_stargate = %i\n", p->have_stargate);

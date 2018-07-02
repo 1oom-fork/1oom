@@ -409,7 +409,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             }
             p->buildship = n;
         }
-        if ((oi1 == -1) && ((oi2 == d.sm.oi_ship) || (oi2 == oi_shippic))) {
+        if ((oi1 == UIOBJI_ESC) && ((oi2 == d.sm.oi_ship) || (oi2 == oi_shippic))) {
             int n;
             n = p->buildship - 1;
             if (n >= g->eto[active_player].shipdesigns_num) {
@@ -575,6 +575,10 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             if (BOOLVEC_IS1(p->extras, PLANET_EXTRAS_GOVERNOR)) {
                 game_planet_govern(g, p);
             }
+        } else if ((oi1 == UIOBJI_ESC) && (oi2 == oi_governor)) {
+            ui_data.ui_main_loop_action = UI_MAIN_LOOP_GOVERN;
+            flag_done = true;
+            ui_sound_play_sfx_24();
         }
         for (int i = 0; i < g->galaxy_stars; ++i) {
             if ((oi1 == d.oi_tbl_stars[i]) && !g->evn.build_finished_num[active_player]) {

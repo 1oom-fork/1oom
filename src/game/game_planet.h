@@ -127,6 +127,7 @@ typedef struct planet_s {
     uint8_t buildship; /* 0..NUM_SHIPDESIGNS-1 or BUILDSHIP_STARGATE */
     uint8_t reloc; /* planet i to relocate produced ships (== planet's own index if no relocation) */
     uint16_t missile_bases;
+    uint16_t target_bases;
     uint16_t bc_to_base;
     uint16_t bc_upgrade_base;
     bool have_stargate;
@@ -163,5 +164,6 @@ extern int game_planet_get_w1(const struct game_s *g, uint8_t planet_i);
 extern void game_planet_update_home(struct game_s *g);
 extern int game_planet_get_slider_text(const struct game_s *g, const planet_t *p, player_id_t player, planet_slider_i_t si, char *buf);
 extern void game_planet_govern(const struct game_s *g, planet_t *p);
+extern void game_planet_govern_all_owned_by(struct game_s *g, player_id_t owner);
 
 #endif

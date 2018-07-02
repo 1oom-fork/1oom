@@ -276,6 +276,8 @@ static const struct strtbl_s {
     DEFSTRITEM(gm_mapkey),
     DEFSTRITEM(bs_line1),
     DEFSTRITEM(bs_line2),
+    DEFSTRITEM(gv_target),
+    DEFSTRITEM(gv_adjust),
     DEFSTRITEMTBL(tbl_te_field),
     DEFSTRITEM(te_adv),
     DEFSTRITEM(te_tech),

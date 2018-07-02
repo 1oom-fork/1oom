@@ -204,7 +204,11 @@ void ui_planet_look(struct game_s *g, int api, uint8_t planet_i)
             } else {
                 char buf[10];
                 int v;
-                printf(", pop %i, bases %i, factories %i, prod %i (%i), waste %i\n", p->pop, p->missile_bases, p->factories, p->prod_after_maint, p->total_prod, p->waste);
+                printf(", pop %i, bases %i", p->pop, p->missile_bases);
+                if (p->target_bases) {
+                    printf(" (target %i)", p->target_bases);
+                }
+                printf(", factories %i, prod %i (%i), waste %i\n", p->factories, p->prod_after_maint, p->total_prod, p->waste);
                 v = game_planet_get_slider_text(g, p, api, PLANET_SLIDER_SHIP, buf);
                 printf("  - Build ");
                 if (p->buildship == BUILDSHIP_STARGATE) {
@@ -338,6 +342,40 @@ int ui_cmd_planet_govern(struct game_s *g, int api, struct input_token_s *param,
     if (BOOLVEC_IS1(p->extras, PLANET_EXTRAS_GOVERNOR)) {
         game_planet_govern(g, p);
     }
+    return 0;
+}
+
+int ui_cmd_planet_govern_readjust(struct game_s *g, int api, struct input_token_s *param, int num_param, void *var)
+{
+    planet_t *p = &(g->planet[g->planet_focus_i[api]]);
+    if ((p->owner == api) && BOOLVEC_IS1(p->extras, PLANET_EXTRAS_GOVERNOR)) {
+        game_planet_govern(g, p);
+    }
+    return 0;
+}
+
+int ui_cmd_planet_govern_readjust_all(struct game_s *g, int api, struct input_token_s *param, int num_param, void *var)
+{
+    game_planet_govern_all_owned_by(g, api);
+    return 0;
+}
+
+int ui_cmd_planet_govern_bases(struct game_s *g, int api, struct input_token_s *param, int num_param, void *var)
+{
+    int v;
+    planet_t *p = &(g->planet[g->planet_focus_i[api]]);
+    if (p->owner != api) {
+        return -1;
+    }
+    if (param[0].type == INPUT_TOKEN_NUMBER) {
+        v = param[0].data.num;
+    } else if (param[0].type == INPUT_TOKEN_RELNUMBER) {
+        v = p->target_bases + param[0].data.num;
+    } else {
+        return -1;
+    }
+    SETRANGE(v, 0, 0xffff);
+    p->target_bases = v;
     return 0;
 }
 

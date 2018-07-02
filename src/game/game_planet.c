@@ -40,13 +40,32 @@ static void set_slider(planet_t *p, int slideri, int16_t value)
     game_adjust_slider_group(p->slider, slideri, p->slider[slideri], PLANET_SLIDER_NUM, p->slider_lock);
 }
 
-static bool slider_text_equals(const struct game_s *g, planet_t *p, int slideri, const char *string)
+static bool slider_text_equals(const struct game_s *g, const planet_t *p, int slideri, const char *string)
 {
     char buf[64];
 
     game_planet_get_slider_text(g, p, p->owner, slideri, buf);
 
     return strcmp(string, buf) == 0;
+}
+
+static bool slider_text_num_grequ(const struct game_s *g, const planet_t *p, int slideri, int target)
+{
+    char buf[16];
+    char *q = &buf[0];
+    char c;
+    int v = 0;
+    game_planet_get_slider_text(g, p, p->owner, slideri, buf);
+    while (((c = *q++) >= '0') && (c <= '9')) {
+        v *= 10;
+        v += c - '0';
+    }
+    if ((v == 1) && (target == 1)) {
+        return true;
+    } else if (c == ' ') {
+        return false;
+    }
+    return (v >= target);
 }
 
 /* Move eco slider right until "WASTE" disappears */
@@ -132,13 +151,32 @@ static void move_def_min(const struct game_s *g, planet_t *p)
     }
 }
 
+/* If planet has less than target bases, move DEF until "n/Y" (where n >= target - bases) appears. */
+static void move_def_bases(const struct game_s *g, planet_t *p)
+{
+    int left_to_build = p->target_bases - p->missile_bases;
+    if (left_to_build > 0) {
+        int slideri = PLANET_SLIDER_DEF;
+        int previous_allocation;
+        do {
+            if (slider_text_num_grequ(g, p, slideri, left_to_build)) {
+                break;
+            }
+            previous_allocation = p->slider[slideri];
+            increment_slider(p, slideri);
+        } while (previous_allocation != p->slider[slideri]);
+    }
+}
+
 /* Move ship slider right until "1 Y" appears. Then stop moving it */
 static void move_ship_1(const struct game_s *g, planet_t *p)
 {
     int slideri = PLANET_SLIDER_SHIP;
     int previous_allocation = p->slider[slideri];
+    char buf[16];
+    sprintf(buf, "1 %s", game_str_sm_prod_y);
     do {
-        if (slider_text_equals(g, p, slideri, "1 Y")) {
+        if (slider_text_equals(g, p, slideri, buf)) {
             break;
         }
 
@@ -184,6 +222,7 @@ void game_planet_destroy(struct game_s *g, uint8_t planet_i, player_id_t attacke
     p->slider[PLANET_SLIDER_IND] = 100;
     p->reloc = planet_i;
     p->missile_bases = 0;
+    p->target_bases = 0;
     p->bc_upgrade_base = 0;
     p->bc_to_base = 0;
     p->trans_num = 0;
@@ -511,7 +550,8 @@ int game_planet_get_slider_text(const struct game_s *g, const planet_t *p, playe
  * - First, set ecology to minimum that avoids waste.
  * - Then move industry slider until maximum or reserve achieved.
  * - Then move ecology slider if can terraform or grow population until "clean" is achieved.
- * - Then set defense to upgrade bases or build shield. Will not build new bases.
+ * - Then set defense to upgrade bases or build shield.
+ * - Then increase defense to build up to target amount of missile bases.
  * - Then set shipbuilding to minimum required to build stargate if technology is present.
  * - If all of the above are finished, do research
  *
@@ -548,9 +588,11 @@ void game_planet_govern(const struct game_s *g, planet_t *p)
     p->slider_lock[PLANET_SLIDER_ECO] = false;
     move_eco_max(g, p);
     p->slider_lock[PLANET_SLIDER_ECO] = true;
-    /* For defense, since we don't have a limit to missile base number, only do upgrades/shields.
+    /* For defense, first do upgrades/shields.
        Click right until we get a number, if we get a number, move back */
     move_def_min(g, p);
+    /* Build enough missile bases to reach target amount */
+    move_def_bases(g, p);
     if (e->have_stargates && !p->have_stargate) {
         /* Lock def not to use it up for stargate construction */
         p->slider_lock[PLANET_SLIDER_DEF] = true;
@@ -563,4 +605,14 @@ void game_planet_govern(const struct game_s *g, planet_t *p)
     }
     /* at the end of govern, keep only eco slider locked to allow easy one-turn manual tweaks */
     p->slider_lock[PLANET_SLIDER_IND] = false;
+}
+
+void game_planet_govern_all_owned_by(struct game_s *g, player_id_t owner)
+{
+    for (int i = 0; i < g->galaxy_stars; ++i) {
+        planet_t *p = &(g->planet[i]);
+        if ((p->owner == owner) && BOOLVEC_IS1(p->extras, PLANET_EXTRAS_GOVERNOR)) {
+            game_planet_govern(g, p);
+        }
+    }
 }
