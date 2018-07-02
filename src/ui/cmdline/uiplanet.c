@@ -200,7 +200,8 @@ void ui_planet_look(struct game_s *g, int api, uint8_t planet_i)
             } else {
                 char buf[10];
                 int v;
-                printf(", pop %i, bases %i, factories %i, prod %i (%i), waste %i\n", p->pop, p->missile_bases, p->factories, p->prod_after_maint, p->total_prod, p->waste);
+                printf(", pop %i, bases %i", p->pop, p->missile_bases);
+                printf(", factories %i, prod %i (%i), waste %i\n", p->factories, p->prod_after_maint, p->total_prod, p->waste);
                 v = game_planet_get_slider_text(g, p, api, PLANET_SLIDER_SHIP, buf);
                 printf("  - Build ");
                 if (p->buildship == BUILDSHIP_STARGATE) {
