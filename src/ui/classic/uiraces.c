@@ -166,10 +166,10 @@ static void races_draw_cb(void *vptr)
                 if (spyprod == 0) {
                     strcpy(buf, game_str_st_none);
                 } else {
-                    int v4, v5;
-                    v4 = spycost - spyspend;
-                    v5 = v4 / spyprod;
-                    if (v4 % spyprod) {
+                    int left, v5;
+                    left = spycost - spyspend;
+                    v5 = left / spyprod;
+                    if (left % spyprod) {
                         ++v5;
                     }
                     sprintf(buf, "%i %s", v5, game_str_y);
