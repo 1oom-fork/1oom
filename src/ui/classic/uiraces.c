@@ -134,7 +134,7 @@ static void races_draw_cb(void *vptr)
         lbxfont_select(5, 6, 0, 0);
         lbxfont_print_str_center(x + 29, y + 51, game_str_tbl_races[g->eto[pi].race], UI_SCREEN_W);
         {
-            int spying, spyprod, spyspend, spies, v3;
+            int spying, spyprod, spyspend, spies, spycost;
             spying = e->spying[pi];
             ui_draw_filled_rect(x + 103, y + 44, x + 128, y + 47, 0);
             lbxfont_select(2, 0, 0, 0);
@@ -142,9 +142,9 @@ static void races_draw_cb(void *vptr)
             spyprod = (e->total_production_bc * spying) / 1000;
             spyspend = spyprod + e->spyfund[pi];
             spies = e->spies[pi];
-            v3 = spies * e->tech.percent[TECH_FIELD_COMPUTER] + 25;
+            spycost = spies * e->tech.percent[TECH_FIELD_COMPUTER] + 25;
             if (e->race == RACE_DARLOK) {
-               v3 /= 2;
+               spycost /= 2;
             }
             if (spying != 0) {
                 ui_draw_slider(x + 103, y + 45, x + 102 + spying / 4, 0x73);
@@ -155,11 +155,11 @@ static void races_draw_cb(void *vptr)
                 sprintf(buf, "%i %s", spies, (spies == 1) ? game_str_ra_spy : game_str_ra_spies);
             }
             lbxfont_print_str_right(x + 91, y + 44, buf, UI_SCREEN_W);
-            if (v3 <= spyspend) {
+            if (spycost <= spyspend) {
                 spies = 0;
-                while (v3 <= spyspend) {
+                while (spycost <= spyspend) {
                     ++spies;
-                    spyspend -= v3;
+                    spyspend -= spycost;
                 }
                 sprintf(buf, "%i%c%s", spies, (spies == 1) ? ' ' : '/', game_str_y);
             } else {
@@ -167,7 +167,7 @@ static void races_draw_cb(void *vptr)
                     strcpy(buf, game_str_st_none);
                 } else {
                     int v4, v5;
-                    v4 = v3 - spyspend;
+                    v4 = spycost - spyspend;
                     v5 = v4 / spyprod;
                     if (v4 % spyprod) {
                         ++v5;
