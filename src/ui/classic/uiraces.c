@@ -166,13 +166,13 @@ static void races_draw_cb(void *vptr)
                 if (spyprod == 0) {
                     strcpy(buf, game_str_st_none);
                 } else {
-                    int left, v5;
+                    int left, years;
                     left = spycost - spyspend;
-                    v5 = left / spyprod;
+                    years = left / spyprod;
                     if (left % spyprod) {
-                        ++v5;
+                        ++years;
                     }
-                    sprintf(buf, "%i %s", v5, game_str_y);
+                    sprintf(buf, "%i %s", years, game_str_y);
                 }
             }
             lbxfont_print_str_right(x + 153, y + 44, buf, UI_SCREEN_W);
