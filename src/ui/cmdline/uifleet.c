@@ -11,6 +11,7 @@
 #include "game_misc.h"
 #include "game_str.h"
 #include "uidefs.h"
+#include "uiinput.h"
 #include "uiplanet.h"
 #include "util.h"
 
@@ -97,6 +98,63 @@ int ui_cmd_fleet_send(struct game_s *g, int api, struct input_token_s *param, in
     {
         const uint8_t shiptypes[NUM_SHIPDESIGNS] = { 0, 1, 2, 3, 4, 5 };
         game_send_fleet_from_orbit(g, api, pfi, pti, ships, shiptypes, NUM_SHIPDESIGNS);
+    }
+    return 0;
+}
+
+int ui_cmd_fleet_scrap(struct game_s *g, int api, struct input_token_s *param, int num_param, void *var)
+{
+    const empiretechorbit_t *e = &(g->eto[api]);
+    const shipresearch_t *srd = &(g->srd[api]);
+    int n = -1;
+    if (e->shipdesigns_num <= 1) {
+        return -1;
+    }
+    if (num_param == 0) {
+        struct input_list_s rl_in[] = {
+            { 0, "1", NULL, NULL },
+            { 1, "2", NULL, NULL },
+            { 2, "3", NULL, NULL },
+            { 3, "4", NULL, NULL },
+            { 4, "5", NULL, NULL },
+            { 5, "6", NULL, NULL },
+            { 0, NULL, NULL, NULL },
+            { 0, NULL, NULL, NULL }
+        };
+        int i;
+        for (i = 0; i < e->shipdesigns_num; ++i) {
+            rl_in[i].display = srd->design[i].name;
+        }
+        rl_in[i].value = -1;
+        rl_in[i].key = "Q";
+        rl_in[i].str = "q";
+        rl_in[i].display = "(quit)";
+        ++i;
+        rl_in[i].value = 0;
+        rl_in[i].key = NULL;
+        rl_in[i].str = NULL;
+        rl_in[i].display = NULL;
+        n = ui_input_list("Scrap", "> ", rl_in);
+    } else {
+        if (param->type == INPUT_TOKEN_NUMBER) {
+            n = param->data.num;
+            if ((n < 1) || (n > e->shipdesigns_num)) {
+                return -1;
+            }
+        } else {
+            for (int i = 0; i < e->shipdesigns_num; ++i) {
+                if (strcasecmp(srd->design[i].name, param->str) == 0) {
+                    n = i;
+                    break;
+                }
+            }
+            if (n == -1) {
+                return -1;
+            }
+        }
+    }
+    if ((n >= 0) && (n < e->shipdesigns_num)) {
+        game_design_scrap(g, api, n, var != NULL);
     }
     return 0;
 }
