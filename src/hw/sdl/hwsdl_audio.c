@@ -203,8 +203,11 @@ int hw_audio_music_init(int mus_index, const uint8_t *data_in, uint32_t len_in)
         log_error("SDLA: failed to init music %i\n", mus_index);
         return -1;
     }
-
-    m->music = Mix_LoadMUSType_RW(SDL_RWFromMem(data, len), m->sdlmtype, 0);
+    {
+        SDL_RWops *rw = SDL_RWFromConstMem(data, len);
+        m->music = Mix_LoadMUSType_RW(rw, m->sdlmtype, 0);
+        SDL_RWclose(rw);
+    }
     lib_free(buf);
     if (!m->music) {
         log_error("SDLA: Mix_LoadMUSType_RW failed on music %i (type %i)\n", mus_index, m->type);
