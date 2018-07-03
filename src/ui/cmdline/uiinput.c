@@ -29,29 +29,6 @@ const struct input_list_s il_yes_no[] = {
 
 /* -------------------------------------------------------------------------- */
 
-static bool match_input(const char *in, const char *key, const char *str)
-{
-    int len = strlen(in);
-    if (len == 0) {
-        return false;
-    }
-    if (key && (in[1] == 0) && (tolower(in[0]) == tolower(key[0]))) {
-        return true;
-    }
-    if (str) {
-        int i;
-        for (i = 0; (i < len) && str[i]; ++i) {
-            if (str[i] != tolower(in[i])) {
-                return false;
-            }
-        }
-        if (str[i] == 0) {
-            return true;
-        }
-    }
-    return false;
-}
-
 static char *skip_whitespace(char *str)
 {
     char c = *str;
@@ -90,6 +67,29 @@ static char *skip_and_end_token(char *str)
 
 
 /* -------------------------------------------------------------------------- */
+
+bool ui_input_match_input(const char *in, const char *key, const char *str)
+{
+    int len = strlen(in);
+    if (len == 0) {
+        return false;
+    }
+    if (key && (in[1] == 0) && (tolower(in[0]) == tolower(key[0]))) {
+        return true;
+    }
+    if (str) {
+        int i;
+        for (i = 0; (i < len) && str[i]; ++i) {
+            if (str[i] != tolower(in[i])) {
+                return false;
+            }
+        }
+        if (str[i] == 0) {
+            return true;
+        }
+    }
+    return false;
+}
 
 void ui_input_wait_enter(void)
 {
@@ -190,7 +190,7 @@ int ui_input_list(const char *title, const char *prompt, const struct input_list
         l = list;
         i = 0;
         while ((l->str) || (l->key)) {
-            if (match_input(in, l->key, l->str ? l->str : shortcuts[i])) {
+            if (ui_input_match_input(in, l->key, l->str ? l->str : shortcuts[i])) {
                 for (int j = 0; j < num_shortcuts; ++j) {
                     lib_free(shortcuts[j]);
                 }
