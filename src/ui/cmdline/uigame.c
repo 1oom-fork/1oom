@@ -14,12 +14,14 @@
 #include "uicmds.h"
 #include "uidefs.h"
 #include "uiempire.h"
+#include "uiempirestats.h"
 #include "uifleet.h"
 #include "uihelp.h"
 #include "uiinput.h"
 #include "uiload.h"
 #include "uiplanet.h"
 #include "uiraces.h"
+#include "uispecs.h"
 #include "uiswitch.h"
 #include "uitech.h"
 #include "util.h"
@@ -45,12 +47,17 @@ static const struct input_cmd_s cmds_turn[] = {
     { "trans", "[PLANET NUM]", "Transport troops to", 0, 2, 0, ui_cmd_planet_trans, 0 },
     { "res", "[BC]", "Transfer reserves", 0, 1, 0, ui_cmd_planet_reserve, 0 },
     { "fs", "PLANET [NUM]*", "Send fleet to\nAll ships are sent if no NUM given", 1, 7, 0, ui_cmd_fleet_send, 0 },
+    { "scrap", "[SHIP]", "Scrap ship", 0, 1, 0, ui_cmd_fleet_scrap, 0 },
+    { "specs", "[SHIP]", "Show fleet specs", 0, 1, 0, ui_cmd_fleet_specs, 0 },
     { "t", "[FIELD]", "View technology\nFIELD is c, o, f, p, r or w\nShows sliders if no field given", 0, 1, 0, ui_cmd_tech_look, 0 },
     { "ts", "FIELD VALUE", "Set tech slider to value\nVALUE can be +N or -N for relative adjustment", 2, 2, 0, ui_cmd_tech_slider, 0 },
     { "tsl", "FIELD", "Toggle tech slider lock", 1, 1, 0, ui_cmd_tech_slider_lock, 0 },
     { "t=", NULL, "Equalize tech sliders", 0, 0, 0, ui_cmd_tech_equals, 0 },
     { "emp", NULL, "Empire overview", 0, 0, 0, ui_cmd_empire_look, 0 },
     { "tax", "VALUE", "Set tax (tenths of percent)\nVALUE can be +N or -N for relative adjustment", 1, 1, 0, ui_cmd_empire_tax, 0 },
+    { "races", NULL, "Show races", 0, 0, 0, ui_cmd_races, 0 },
+    { "stats", NULL, "Show stats", 0, 0, 0, ui_cmd_empirestats, 0 },
+    { "spy", "RACE VALUE|MODE", "Set spy spending (tenths of percent) or mode (Hide, Esp., Sabotage)\nVALUE can be +N or -N for relative adjustment", 2, 2, 0, ui_cmd_spy, 0 },
     { "sec", "VALUE", "Set security spending (tenths of percent)\nVALUE can be +N or -N for relative adjustment", 1, 1, 0, ui_cmd_empire_security, 0 },
     { "aud", NULL, "Audience", 0, 0, 0, ui_cmd_audience, 0 },
     { "galaxy", NULL, NULL, 0, 0, 0, ui_cmd_cheat_galaxy, 0 },

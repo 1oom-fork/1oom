@@ -3,9 +3,7 @@
 #include <stdio.h>
 
 #include "uiempirestatus.h"
-#include "comp.h"
 #include "game.h"
-#include "game_misc.h"
 #include "game_stat.h"
 #include "game_str.h"
 #include "kbd.h"
@@ -24,9 +22,7 @@
 struct empirestatus_data_s {
     struct game_s *g;
     uint8_t *gfx;
-    player_id_t api;
-    int num;
-    uint8_t tbl_ei[PLAYER_NUM];
+    struct game_stats_s st;
 };
 
 static void empirestatus_data_load(struct empirestatus_data_s *d)
@@ -42,10 +38,9 @@ static void empirestatus_data_free(struct empirestatus_data_s *d)
 static void empirestatus_draw_cb(void *vptr)
 {
     struct empirestatus_data_s *d = vptr;
-    struct game_s *g = d->g;
+    const struct game_s *g = d->g;
+    const struct game_stats_s *st = &(d->st);
     char buf[0x40];
-    uint8_t tbl_stat[6][PLAYER_NUM];
-    int tbl_sum[PLAYER_NUM];
 
     ui_draw_color_buf(0x3a);
     lbxgfx_draw_frame(0, 0, d->gfx, UI_SCREEN_W, ui_scale);
@@ -56,58 +51,19 @@ static void empirestatus_draw_cb(void *vptr)
     sprintf(buf, "%s: %i", game_str_year, g->year + YEAR_BASE);
     lbxfont_print_str_normal(15, 11, buf, UI_SCREEN_W, ui_scale);
 
-    for (int i = 0; i < d->num; ++i) {
-        tbl_sum[i] = 0;
-    }
-    for (int s = 0; s < 5; ++s) {
-        for (int i = 0; i < d->num; ++i) {
-            player_id_t pi;
-            int v;
-            pi = d->tbl_ei[i];
-            switch (s) {
-                case 0:
-                    v = game_stat_fleet(g, pi);
-                    break;
-                case 1:
-                    v = game_stat_tech(g, pi) / 3;
-                    break;
-                case 2:
-                    v = game_stat_prod(g, pi);
-                    break;
-                case 3:
-                    v = game_stat_pop(g, pi);
-                    break;
-                case 4:
-                    v = game_stat_planets(g, pi);
-                    break;
-            }
-            SETRANGE(v, 0, 100);
-            tbl_stat[s][i] = v;
-            tbl_sum[i] += v;
-        }
-    }
-    {
-        int maxstats = 0;
-        for (int i = 0; i < d->num; ++i) {
-            SETMAX(maxstats, tbl_sum[i]);
-        }
-        for (int i = 0; i < d->num; ++i) {
-            tbl_stat[5][i] = maxstats ? ((tbl_sum[i] * 100) / maxstats) : 100;
-        }
-    }
     lbxfont_select(2, 6, 0, 0);
     for (int s = 0; s < 6; ++s) {
-        for (int i = 0; i < d->num; ++i) {
+        for (int i = 0; i < st->num; ++i) {
             player_id_t pi;
             const empiretechorbit_t *e;
             int x, y;
             uint8_t v;
             x = (s / 3) * 156 + 11;
             y = (s % 3) * 57 + i * 7 + 38;
-            pi = d->tbl_ei[i];
+            pi = st->p[i];
             e = (&g->eto[pi]);
             lbxfont_print_str_normal(x, y, game_str_tbl_race[e->race], UI_SCREEN_W, ui_scale);
-            v = tbl_stat[s][i];
+            v = st->v[s][i];
             if (v) {
                 ui_draw_filled_rect(x + 35, y + 1, x + 34 + v, y + 2, tbl_banner_color2[e->banner], ui_scale);
                 if (v > 1) {
@@ -120,26 +76,15 @@ static void empirestatus_draw_cb(void *vptr)
 
 /* -------------------------------------------------------------------------- */
 
-void ui_empirestatus(struct game_s *g, player_id_t active_player)
+void ui_empirestatus(struct game_s *g, player_id_t api)
 {
     struct empirestatus_data_s d;
     bool flag_done = false;
 
     empirestatus_data_load(&d);
     d.g = g;
-    d.api = active_player;
 
-    game_update_production(g);
-    game_update_empire_within_range(g);
-    game_update_maint_costs(g);
-
-    d.num = 1;
-    d.tbl_ei[0] = active_player;
-    for (player_id_t pi = PLAYER_0; pi < g->players; ++pi) {
-        if ((pi != active_player) && BOOLVEC_IS1(g->eto[active_player].within_frange, pi)) {
-            d.tbl_ei[d.num++] = pi;
-        }
-    }
+    game_stats_all(g, api, &(d.st));
 
     uiobj_table_clear();
     uiobj_set_help_id(15);
