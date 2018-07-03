@@ -18,6 +18,8 @@ libuicmdline_a_SOURCES = \
     uielection.c \
     uiempire.c \
     uiempire.h \
+    uiempirestats.c \
+    uiempirestats.h \
     uiending.c \
     uiexplore.c \
     uifleet.c \
@@ -41,6 +43,8 @@ libuicmdline_a_SOURCES = \
     uiraces.h \
     uisave.c \
     uisave.h \
+    uispecs.c \
+    uispecs.h \
     uispy_esp.c \
     uispy_sab.c \
     uiswitch.c \
