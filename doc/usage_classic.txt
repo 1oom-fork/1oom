@@ -52,6 +52,7 @@ enables the following extra UI features:
 - Continue and Undo saves can be chosen in the Load Game screen
 - New Game screen allows setting opponent race/banner/names and AI/human flag
 - Report screen shows name of AI leaders, Map screen shows current year
+- Sending fewer than all ships does not deselect the orbit fleet
 - Planetary governor can be enabled or disabled by clicking on planet name in
   the galaxy movement screen
 - Right clicking on planet name in the galaxy movement screen opens a governor
