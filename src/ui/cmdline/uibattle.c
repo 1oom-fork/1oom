@@ -130,28 +130,35 @@ static void ui_battle_draw_reach(const struct battle_s *bt, int itemi)
 
 /* -------------------------------------------------------------------------- */
 
-void ui_battle_init(struct battle_s *bt)
+bool ui_battle_init(struct battle_s *bt)
 {
     struct game_s *g = bt->g;
     const planet_t *p = &(g->planet[bt->planet_i]);
     int party_u = bt->s[SIDE_L].party, party_d = bt->s[SIDE_R].party;
+    char *buf = ui_data.strbuf;
+    const char *s1, *s2, *s3;
     ui_switch_2(bt->g, party_u, party_d);
-    printf("%s | %s | ", game_str_bp_scombat, p->name);
     if (party_d >= PLAYER_NUM) {
-        fputs(game_str_tbl_mon_names[party_d - PLAYER_NUM], stdout);
+        s1 = game_str_tbl_mon_names[party_d - PLAYER_NUM];
     } else {
         race_t race = g->eto[bt->flag_human_att ? party_u : party_d].race;
-        fputs(game_str_tbl_races[race], stdout);
+        s1 = game_str_tbl_races[race];
     }
-    putchar(' ');
-    fputs((party_d >= PLAYER_NUM) ? game_str_bp_attack : game_str_bp_attacks, stdout);
-    putchar(' ');
+    s2 = (party_d >= PLAYER_NUM) ? game_str_bp_attack : game_str_bp_attacks;
     {
         race_t race = g->eto[bt->flag_human_att ? party_d : party_u].race;
-        fputs(game_str_tbl_races[race], stdout);
+        s3 = game_str_tbl_races[race];
     }
-    putchar('\n');
-    ui_input_wait_enter();
+    sprintf(buf, "%s | %s | %s %s %s", game_str_bp_scombat, p->name, s1, s2, s3);
+    {
+        const struct input_list_s cl_cont_auto[] = {
+            { 1, "C", NULL, "Continue" },
+            { 0, "A", NULL, "Autoresolve" },
+            { 0, NULL, NULL, NULL }
+        };
+        int v = ui_input_list(buf, "> ", cl_cont_auto);
+        return (v == 1);
+    }
 }
 
 void ui_battle_shutdown(struct battle_s *bt, bool colony_destroyed)

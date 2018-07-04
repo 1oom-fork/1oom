@@ -260,3 +260,10 @@ respectively.
 
 4. New features
 ================
+
+4.1. Space combat autoresolve
+------------------------------
+
+The space combat autoresolve is provided as an option for skipping battles.
+The battle is fought as if the player(s) pressed Auto right after starting
+combat.
