@@ -1489,7 +1489,7 @@ static int16_t uiobj_handle_input_sub0(void)
                 return oi;
             } else if (p->type == 0xb) {
                 uint8_t z = *p->tb.zptr;
-                if (scroll > 0) {
+                if (scroll < 0) {
                     if (z < p->tb.zmax) {
                         ++z;
                     } else {
