@@ -108,10 +108,13 @@ static void ui_starmap_enroute_draw_cb(void *vptr)
         lbxfont_select(2, 0xa, 0, 0);
         lbxfont_print_str_center(x + 19, y + 29, sd[st].name, UI_SCREEN_W);
     }
-    if ((r->owner == d->api) && (d->en.can_move != NO_MOVE) && (!d->en.in_frange)) {
+    if (1
+      && (r->owner == d->api)
+      && (d->en.can_move != NO_MOVE)
+      && ((!d->en.in_frange) || (game_num_retreat_redir_fix && (d->en.can_move != GOT_HYPERCOMM) && (pto == d->en.pon)))
+    ) {
         lbxgfx_set_new_frame(ui_data.gfx.starmap.reloc_bu_accept, 1);
         lbxgfx_draw_frame(271, 163, ui_data.gfx.starmap.reloc_bu_accept, UI_SCREEN_W);
-
     }
     if (!d->anim_delay) {
         if (ui_data.starmap.scanner_delay == 0) {
@@ -145,7 +148,9 @@ void ui_starmap_enroute(struct game_s *g, player_id_t active_player)
         const planet_t *p;
         p = &g->planet[i];
         if ((p->x == r->x) && (p->y == r->y)) {
-            d.en.can_move = ON_PLANET;
+            if (d.en.can_move == NO_MOVE) {
+                d.en.can_move = ON_PLANET;
+            }
             d.en.pon = i;
             break;
         }
@@ -312,7 +317,7 @@ do_accept:
             ui_starmap_fill_oi_tbl_stars(&d);
             if ((r->owner == active_player) && (d.en.can_move != NO_MOVE)) {
                 oi_cancel = uiobj_add_t0(227, 163, "", ui_data.gfx.starmap.reloc_bu_cancel, MOO_KEY_ESCAPE);
-                if (d.en.in_frange) {
+                if (d.en.in_frange && ((!game_num_retreat_redir_fix) || (d.en.can_move == GOT_HYPERCOMM) || (g->planet_focus_i[active_player] != d.en.pon))) {
                     oi_accept = uiobj_add_t0(271, 163, "", ui_data.gfx.starmap.reloc_bu_accept, MOO_KEY_SPACE);
                 }
             }
