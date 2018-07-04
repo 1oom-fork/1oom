@@ -46,6 +46,7 @@ static void game_turn_limit_ships(struct game_s *g)
         for (int si = 0; si < NUM_SHIPDESIGNS; ++si) {
             SETMIN(r->ships[si], game_num_limit_ships);
         }
+        r->retreat = false;
     }
     for (int i = 0; i < g->galaxy_stars; ++i) {
         for (player_id_t j = PLAYER_0; j < g->players; ++j) {
