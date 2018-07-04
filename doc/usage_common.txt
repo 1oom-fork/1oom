@@ -256,3 +256,14 @@ Some examples:
 The -nga command line parameters selects the AI type to use when starting
 a new game via -new. The values 0 and 1 correspond to Classic and Classic+,
 respectively.
+
+
+4. New features
+================
+
+4.1. Space combat autoresolve
+------------------------------
+
+The space combat autoresolve is provided as an option for skipping battles.
+The battle is fought as if the player(s) pressed Auto right after starting
+combat.
