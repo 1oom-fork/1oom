@@ -218,6 +218,7 @@ void ui_starmap_enroute(struct game_s *g, player_id_t active_player)
             flag_done = true;
             ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
         } else if (oi1 == oi_accept) {
+do_accept:
             ui_sound_play_sfx_24();
             if (p->within_frange[active_player] != 0) {
                 game_fleet_redirect(g, r, d.en.pon, g->planet_focus_i[active_player]);
@@ -264,6 +265,10 @@ void ui_starmap_enroute(struct game_s *g, player_id_t active_player)
         ui_starmap_handle_oi_ctrl(&d, oi1);
         for (int i = 0; i < g->galaxy_stars; ++i) {
             if (oi1 == d.oi_tbl_stars[i]) {
+                if (ui_extra_enabled && (oi_accept != UIOBJI_INVALID) && (g->planet_focus_i[active_player] == i)) {
+                    oi1 = oi_accept;
+                    goto do_accept;
+                }
                 g->planet_focus_i[active_player] = i;
                 if ((r->owner != active_player) || (d.en.can_move == NO_MOVE)) {
                     d.en.from = i;
