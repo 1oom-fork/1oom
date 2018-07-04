@@ -598,7 +598,7 @@ void ui_newtech(struct game_s *g, int pi)
         }
     }
     if (d.flag_music) {
-        hw_audio_music_fadeout();
+        ui_sound_stop_music();
     }
     if (flag_copybuf) {
         vgabuf_copy_back_from_page3();
