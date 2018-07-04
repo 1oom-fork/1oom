@@ -30,3 +30,4 @@
 #4,weapon_list_max,0,64
 #4,retreat_redir_fix,0,1
 #4,monster_rest_att,0,1
+#4,eco_slider_slack,0,0
