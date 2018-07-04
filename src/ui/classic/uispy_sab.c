@@ -339,7 +339,7 @@ ui_sabotage_t ui_spy_sabotage_ask(struct game_s *g, int spy, int target, uint8_t
     }
     uiobj_unset_callback();
     uiobj_table_clear();
-    hw_audio_music_fadeout();
+    ui_sound_stop_music();
     sabotage_free_data(&d);
     *planetptr = d.planet;
     return action;
@@ -403,7 +403,7 @@ int ui_spy_sabotage_done(struct game_s *g, int pi, int spy, int target, ui_sabot
     }
     uiobj_unset_callback();
     uiobj_table_clear();
-    hw_audio_music_fadeout();
+    ui_sound_stop_music();
     sabotage_free_data(&d);
     return other;
 }
