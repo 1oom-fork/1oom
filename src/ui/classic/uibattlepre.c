@@ -111,11 +111,13 @@ static void ui_battle_pre_draw_cb(void *vptr)
     lbxfont_print_str_center(267, 130, buf, UI_SCREEN_W);
 }
 
-void ui_battle_pre(struct game_s *g, int party_u, int party_d, uint8_t planet_i, bool flag_human_att, bool hide_other)
+/* -------------------------------------------------------------------------- */
+
+bool ui_battle_pre(struct game_s *g, int party_u, int party_d, uint8_t planet_i, bool flag_human_att, bool hide_other)
 {
     struct ui_battle_pre_data_s d[1];
-    int16_t oi_cont = UIOBJI_INVALID;
-    bool flag_done = false;
+    int16_t oi_cont = UIOBJI_INVALID, oi_auto = UIOBJI_INVALID;
+    bool flag_done = false, flag_cont;
     d->g = g;
     d->party_u = party_u;
     d->party_d = party_d;
@@ -131,6 +133,9 @@ void ui_battle_pre(struct game_s *g, int party_u, int party_d, uint8_t planet_i,
     }
     uiobj_table_clear();
     oi_cont = uiobj_add_t0(227, 163, "", d->gfx_contbutt, MOO_KEY_c);
+    if (ui_extra_enabled) {
+        oi_auto = uiobj_add_t0(260, 152, "", ui_data.gfx.space.autob, MOO_KEY_a);
+    }
     uiobj_set_focus(oi_cont);
     uiobj_set_callback_and_delay(ui_battle_pre_draw_cb, &d, 4);
     while (!flag_done) {
@@ -139,6 +144,12 @@ void ui_battle_pre(struct game_s *g, int party_u, int party_d, uint8_t planet_i,
         oi = uiobj_handle_input_cond();
         if (oi == oi_cont) {
             ui_sound_play_sfx_24();
+            flag_cont = true;
+            flag_done = true;
+        }
+        if (oi == oi_auto) {
+            ui_sound_play_sfx_24();
+            flag_cont = false;
             flag_done = true;
         }
         if (!flag_done) {
@@ -150,4 +161,5 @@ void ui_battle_pre(struct game_s *g, int party_u, int party_d, uint8_t planet_i,
     uiobj_table_clear();
     uiobj_unset_callback();
     battle_pre_free_data(d);
+    return flag_cont;
 }
