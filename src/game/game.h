@@ -14,6 +14,7 @@ typedef struct fleet_enroute_s {
     uint16_t y;
     uint8_t dest;   /* planet index */
     uint8_t speed;
+    bool retreat;
     BOOLVEC_DECLARE(visible, PLAYER_NUM);
     shipcount_t ships[NUM_SHIPDESIGNS];
 } fleet_enroute_t;
