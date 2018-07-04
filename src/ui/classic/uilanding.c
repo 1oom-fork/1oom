@@ -144,7 +144,7 @@ void ui_landing(struct game_s *g, player_id_t pi, uint8_t planet_i)
             }
         }
     }
-    hw_audio_music_fadeout();
+    ui_sound_stop_music();
     ui_palette_fadeout_a_f_1();
     lbxpal_select(0, -1, 0);
     lbxpal_build_colortables();
