@@ -233,6 +233,7 @@ static int video_sw_set(int w, int h)
         log_error("SDL_SetVideoMode failed: %s\n", SDL_GetError());
         return -1;
     }
+    hw_mouse_set_scale(w, h);
     return 0;
 }
 
@@ -291,6 +292,7 @@ int hw_video_resize(int w, int h)
     if (hw_opt_fullscreen) {
         hw_mouse_grab();
     }
+    hw_mouse_set_scale(actual_w, actual_h);
     return 0;
     fail:
     return -1;
