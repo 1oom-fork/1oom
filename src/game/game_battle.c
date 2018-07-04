@@ -152,7 +152,7 @@ static void game_battle_post(struct game_s *g, player_id_t loser, int winner, ui
             }
         }
         if ((dest != PLANET_NONE) /*&& (numtypes > 0)*/) {
-            game_send_fleet_from_orbit(g, loser, from, dest, ships, shiptypes, numtypes);
+            game_send_fleet_retreat(g, loser, from, dest, ships, shiptypes, numtypes);
         }
         for (int i = 0; i < NUM_SHIPDESIGNS; ++i) {
             o->ships[i] = 0;
