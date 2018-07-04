@@ -254,6 +254,7 @@ void ui_starmap_trans(struct game_s *g, player_id_t active_player)
             p->trans_dest = olddest;
             ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
         } else if (oi1 == oi_accept) {
+do_accept:
             ui_sound_play_sfx_24();
             flag_done = true;
             if (BOOLVEC_IS1(pt->explored, active_player) && (pt->within_frange[active_player] == 1)) {
@@ -279,6 +280,10 @@ void ui_starmap_trans(struct game_s *g, player_id_t active_player)
         ui_starmap_handle_oi_ctrl(&d, oi1);
         for (int i = 0; i < g->galaxy_stars; ++i) {
             if (oi1 == d.oi_tbl_stars[i]) {
+                if (ui_extra_enabled && (oi_accept != UIOBJI_INVALID) && (g->planet_focus_i[active_player] == i)) {
+                    oi1 = oi_accept;
+                    goto do_accept;
+                }
                 d.tr.other = true;
                 g->planet_focus_i[active_player] = i;
                 ui_sound_play_sfx_24();
