@@ -36,6 +36,7 @@ extern bool game_num_orbital_weap_4;
 extern bool game_num_combat_trans_fix;
 extern bool game_num_stargate_redir_fix;
 extern bool game_num_trans_redir_fix;
+extern bool game_num_retreat_redir_fix;
 extern uint8_t game_num_tbl_hull_w[4];
 extern uint8_t game_num_tech_costmuld[DIFFICULTY_NUM];
 extern uint8_t game_num_tech_costmulr[RACE_NUM][TECH_FIELD_NUM];
