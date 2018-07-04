@@ -1658,7 +1658,9 @@ static void game_turn_finished_slider(struct game_s *g)
                             p->slider[PLANET_SLIDER_IND] += p->slider[PLANET_SLIDER_ECO] - w;
                         }
                         p->slider[PLANET_SLIDER_ECO] = w;
-                        game_add_planet_to_build_finished(g, pli, pi, FINISHED_POPMAX);
+                        if (p->pop > p->pop_prev) {
+                            game_add_planet_to_build_finished(g, pli, pi, FINISHED_POPMAX);
+                        }
                     }
                 }
             }
