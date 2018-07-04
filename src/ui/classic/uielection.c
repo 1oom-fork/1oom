@@ -274,7 +274,7 @@ bool ui_election_accept(struct election_s *el, int player_i)
 void ui_election_end(struct election_s *el)
 {
     struct election_data_s *d = el->uictx;
-    hw_audio_music_fadeout();
+    ui_sound_stop_music();
     ui_palette_fadeout_a_f_1();
     ui_draw_finish_mode = 2;
     hw_video_copy_back_from_page3();
