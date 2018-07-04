@@ -788,7 +788,7 @@ static void ui_battle_draw_colony_destroyed_cb(void *vptr)
 
 /* -------------------------------------------------------------------------- */
 
-void ui_battle_init(struct battle_s *bt)
+bool ui_battle_init(struct battle_s *bt)
 {
     static struct ui_battle_data_s ctx; /* HACK */
     int party_human = bt->s[SIDE_L].party, party_opp = bt->s[SIDE_R].party;
@@ -800,7 +800,9 @@ void ui_battle_init(struct battle_s *bt)
         ui_switch_2(bt->g, party_human, party_opp);
     }
     ui_sound_play_music(8);
-    ui_battle_pre(bt->g, party_human, party_opp, bt->planet_i, bt->flag_human_att, ctx.show_switch);
+    if (!ui_battle_pre(bt->g, party_human, party_opp, bt->planet_i, bt->flag_human_att, ctx.show_switch)) {
+        return false;
+    }
 
     /* ui_battle_do_sub1: */
     uiobj_set_callback_and_delay(ui_battle_draw_cb, bt, 2);
@@ -818,6 +820,7 @@ void ui_battle_init(struct battle_s *bt)
         const planet_t *p = &(bt->g->planet[bt->planet_i]);
         ui_battle_transition_to(p->x, p->y, 10 * 3); /* FIXME BUG? x,y not in screen coords */
     }
+    return true;
 }
 
 void ui_battle_shutdown(struct battle_s *bt, bool colony_destroyed)
@@ -825,7 +828,7 @@ void ui_battle_shutdown(struct battle_s *bt, bool colony_destroyed)
     /*struct ui_battle_data_s *d = bt->uictx;*/
     ui_cursor_setup_area(1, &ui_cursor_area_tbl[0]);
     uiobj_set_help_id(-1);
-    if (colony_destroyed) {
+    if (colony_destroyed && (!bt->autoresolve)) {
         bool flag_done = false;
         uiobj_set_callback_and_delay(ui_battle_draw_colony_destroyed_cb, 0, 1);
         ui_draw_copy_buf();
@@ -846,8 +849,10 @@ void ui_battle_shutdown(struct battle_s *bt, bool colony_destroyed)
     uiobj_unset_callback();
     uiobj_table_clear();
     ui_sound_stop_music();
-    ui_palette_fadeout_a_f_1();
-    ui_draw_finish_mode = 2;
+    if (!bt->autoresolve) {
+        ui_palette_fadeout_a_f_1();
+        ui_draw_finish_mode = 2;
+    }
 }
 
 void ui_battle_draw_planetinfo(const struct battle_s *bt, bool side_r)
