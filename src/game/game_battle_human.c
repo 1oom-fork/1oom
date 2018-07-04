@@ -327,7 +327,7 @@ static void game_battle_missile_hit(struct battle_s *bt, int missile_i, int targ
         }
         hploss = (totaldamage + b->hploss) % b->hp1;    /* FIXME should be hploss + b->hploss % hp1 ? */
         b->hploss = hploss;
-        if (flag_hit_misshield) {
+        if (flag_hit_misshield && (!bt->autoresolve)) {
             ui_battle_draw_misshield(bt, target_i, target_x, target_y, missile_i);
         }
         m->target = MISSILE_TARGET_NONE;
@@ -343,7 +343,7 @@ static void game_battle_missile_hit(struct battle_s *bt, int missile_i, int targ
             int num = b->num - num_destroyed;
             SETMAX(num, 0);
             b->num = num;
-            if (totaldamage > 0) {
+            if ((totaldamage > 0) && (!bt->autoresolve)) {
                 ui_battle_draw_damage(bt, target_i, target_x, target_y, totaldamage);
             }
             if (num == 0) {
@@ -428,11 +428,15 @@ static void game_battle_missile_move(struct battle_s *bt, int missile_i, int tar
             if (n == 0) {
                 m->target = -1;
             }
-            ui_battle_draw_explos_small(bt, mx - 4, my - 4);
+            if (!bt->autoresolve) {
+                ui_battle_draw_explos_small(bt, mx - 4, my - 4);
+            }
         }
     }
     if (m->nummissiles > 0) {
-        ui_battle_draw_missile(bt, missile_i, mx, my, target_x_hit, target_y_hit);
+        if (!bt->autoresolve) {
+            ui_battle_draw_missile(bt, missile_i, mx, my, target_x_hit, target_y_hit);
+        }
         {   /* from ui_battle_draw_missile */
             const struct shiptech_weap_s *w = &(tbl_shiptech_weap[m->wpnt]);
             if (w->misstype == 4) {
@@ -482,7 +486,9 @@ static void game_battle_item_finish(struct battle_s *bt, bool flag_quick)
                 flag_done = false;
             }
         }
-        ui_battle_draw_basic(bt);
+        if (!bt->autoresolve) {
+            ui_battle_draw_basic(bt);
+        }
     }
     game_battle_missile_remove_unused(bt);
 }
@@ -873,7 +879,9 @@ static void game_battle_pulsar(struct battle_s *bt, int attacker_i, int ptype)
             dmgtbl[i] = game_battle_pulsar_get_dmg(bt, i, v);
         }
     }
-    ui_battle_draw_pulsar(bt, attacker_i, ptype, dmgtbl);
+    if (!bt->autoresolve) {
+        ui_battle_draw_pulsar(bt, attacker_i, ptype, dmgtbl);
+    }
 }
 
 static bool game_battle_special(struct battle_s *bt, int attacker_i, int target_i, int dist, int *killedbelowtargetptr)
@@ -882,7 +890,7 @@ static bool game_battle_special(struct battle_s *bt, int attacker_i, int target_
     /*si*/struct battle_item_s *bd = &(bt->item[target_i]);
     bool flag_use_stasis = true;
     if (b->cloak != 0) {
-        if (b->cloak == 1) {
+        if ((b->cloak == 1) && (!bt->autoresolve)) {
             ui_battle_draw_cloaking(bt, 20, 100, -1, -1);
         }
         b->cloak = 3;
@@ -905,8 +913,10 @@ static bool game_battle_special(struct battle_s *bt, int attacker_i, int target_
         b->stasis = 3;
         if ((bd->side == SIDE_L) || (bt->s[SIDE_R].race != RACE_NUM/*monster*/)) {
             bt->special_button = 0;
-            ui_sound_play_sfx(0x15);
-            ui_battle_draw_stasis(bt, attacker_i, target_i);
+            if (!bt->autoresolve) {
+                ui_sound_play_sfx(0x15);
+                ui_battle_draw_stasis(bt, attacker_i, target_i);
+            }
             /* FIXME BUG? shooting target with stasis removes missiles coming for it? */
             for (int i = 0; i < bt->num_missile; ++i) {
                 struct battle_missile_s *m = &(bt->missile[i]);
@@ -927,28 +937,32 @@ static bool game_battle_special(struct battle_s *bt, int attacker_i, int target_
         if ((bd->side == SIDE_L) || (bt->s[SIDE_R].race != RACE_NUM/*monster*/)) {
             switch (b->stream) {
                 case 1:
-                    ui_sound_play_sfx(0x16);
                     v = b->num / 2 + 20;
                     SETMIN(v, 50);
                     v = (bd->hp1 * v + 99) / 100;
                     SUBSAT0(bd->hp1, v);
                     damage = bd->num * v;
-                    ui_battle_draw_stream1(bt, attacker_i, target_i);
-                    if (damage > 0) {
-                        ui_battle_draw_damage(bt, target_i, bd->sx * 32, bd->sy * 24, damage);
+                    if (!bt->autoresolve) {
+                        ui_sound_play_sfx(0x16);
+                        ui_battle_draw_stream1(bt, attacker_i, target_i);
+                        if (damage > 0) {
+                            ui_battle_draw_damage(bt, target_i, bd->sx * 32, bd->sy * 24, damage);
+                        }
                     }
                     b->stream = 3;
                     break;
                 case 2:
-                    ui_sound_play_sfx(0x18);
                     v = b->num / 2 + 40;
                     SETMIN(v, 75);
                     v = (bd->hp1 * v + 99) / 100;
                     SUBSAT0(bd->hp1, v);
                     damage = bd->num * v;
-                    ui_battle_draw_stream2(bt, attacker_i, target_i);
-                    if (damage > 0) {
-                        ui_battle_draw_damage(bt, target_i, bd->sx * 32, bd->sy * 24, damage);
+                    if (!bt->autoresolve) {
+                        ui_sound_play_sfx(0x18);
+                        ui_battle_draw_stream2(bt, attacker_i, target_i);
+                        if (damage > 0) {
+                            ui_battle_draw_damage(bt, target_i, bd->sx * 32, bd->sy * 24, damage);
+                        }
                     }
                     b->stream = 4;
                     break;
@@ -979,7 +993,9 @@ static bool game_battle_special(struct battle_s *bt, int attacker_i, int target_
         switch (b->pulsar) {
             case 1:
             case 2:
-                ui_sound_play_sfx(0x20);
+                if (!bt->autoresolve) {
+                    ui_sound_play_sfx(0x20);
+                }
                 game_battle_pulsar(bt, attacker_i, b->pulsar - 1);
                 b->pulsar += 2;
                 break;
@@ -1029,8 +1045,10 @@ static bool game_battle_special(struct battle_s *bt, int attacker_i, int target_
             bi = &(bt->item[t]);
             if ((bi->side == SIDE_L) || (bt->s[SIDE_R].race != RACE_NUM/*monster*/)) {
                 int v;
-                ui_sound_play_sfx(0x09);
-                ui_battle_draw_bomb_attack(bt, attacker_i, t, UI_BATTLE_BOMB_WARPDIS);
+                if (!bt->autoresolve) {
+                    ui_sound_play_sfx(0x09);
+                    ui_battle_draw_bomb_attack(bt, attacker_i, t, UI_BATTLE_BOMB_WARPDIS);
+                }
                 b->warpdis = 2;
                 v = rnd_0_nm1(2, &bt->g->seed);
                 bi->unman += v;
@@ -1054,8 +1072,10 @@ static bool game_battle_special(struct battle_s *bt, int attacker_i, int target_
     if ((b->blackhole == 1) && (dist <= 1)) {
         if ((bd->side == SIDE_L) || (bt->s[SIDE_R].race != RACE_NUM/*monster*/)) {
             int v;
-            ui_sound_play_sfx(0x1d);
-            ui_battle_draw_blackhole(bt, attacker_i, target_i);
+            if (!bt->autoresolve) {
+                ui_sound_play_sfx(0x1d);
+                ui_battle_draw_blackhole(bt, attacker_i, target_i);
+            }
             v = rnd_1_n(75, &bt->g->seed) + 25;
             v -= bd->absorb * 2;
             if (v > 0) {
@@ -1089,8 +1109,10 @@ static bool game_battle_special(struct battle_s *bt, int attacker_i, int target_
             v = bd->misdefense - rnd_1_n(3, &bt->g->seed) - rnd_1_n(3, &bt->g->seed);
             SETMAX(v, bd->defense);
             bd->misdefense = v;
-            ui_sound_play_sfx(0x0e);
-            ui_battle_draw_technull(bt, attacker_i, target_i);
+            if (!bt->autoresolve) {
+                ui_sound_play_sfx(0x0e);
+                ui_battle_draw_technull(bt, attacker_i, target_i);
+            }
             b->technull = 2;
         } else {
             /*5687f*/
@@ -1104,7 +1126,9 @@ static void game_battle_repulse_do(struct battle_s *bt, int target_i, int sx, in
 {
     struct battle_item_s *b = &(bt->item[attacker_i]);
     struct battle_item_s *bd = &(bt->item[target_i]);
-    ui_battle_draw_repulse(bt, attacker_i, target_i, sx, sy);
+    if (!bt->autoresolve) {
+        ui_battle_draw_repulse(bt, attacker_i, target_i, sx, sy);
+    }
     b->repulsor = 2;
     bd->sx = sx;
     bd->sy = sy;
@@ -1186,11 +1210,15 @@ static void game_battle_with_human_do_turn_ai(struct battle_s *bt)
 {
     int itemi = bt->cur_item;
     struct battle_item_s *b = &(bt->item[itemi]);
-    ui_battle_ai_pre(bt);
+    if (!bt->autoresolve) {
+        ui_battle_ai_pre(bt);
+    }
     b->maxrange = game_battle_get_weap_maxrange(bt);
     if (b->retreat >= 2) {
         bt->s[b->side].tbl_ships[b->shiptbli] = b->num;
-        ui_battle_draw_retreat(bt);
+        if (!bt->autoresolve) {
+            ui_battle_draw_retreat(bt);
+        }
         game_battle_item_destroy(bt, itemi);
     } else {
         /*5a547*/
@@ -1208,7 +1236,7 @@ static void game_battle_with_human_do_turn_ai(struct battle_s *bt)
         }
     }
     /*5a96e*/
-    if (ui_battle_ai_post(bt)) {
+    if ((!bt->autoresolve) && ui_battle_ai_post(bt)) {
         for (battle_side_i_t i = SIDE_L; i <= SIDE_R; ++i) {
             if (bt->s[i].flag_human) {
                 bt->s[i].flag_auto = 0;
@@ -1216,7 +1244,9 @@ static void game_battle_with_human_do_turn_ai(struct battle_s *bt)
         }
     }
     if ((b->cloak == 2) && (b->stasisby == 0)) {
-        ui_battle_draw_cloaking(bt, 100, 20, -1, -1);
+        if (!bt->autoresolve) {
+            ui_battle_draw_cloaking(bt, 100, 20, -1, -1);
+        }
         b->cloak = 1;
     }
 }
@@ -1261,14 +1291,16 @@ static void game_battle_with_human_do_sub3(struct battle_s *bt)
             bt->has_attacked = false;
             game_battle_reset_specials(bt);
             game_battle_area_setup(bt);
-            if (/*(b->num > 0) &&*/ (b->side != SIDE_NONE)) {
+            if (/*(b->num > 0) &&*/ (b->side != SIDE_NONE) && (!bt->autoresolve)) {
                 ui_battle_draw_basic(bt);
             }
             /*4ebbf*/
             flag_turn_done = false;
             while (!flag_turn_done) {
                 ui_battle_action_t act;
-                ui_battle_turn_pre(bt);
+                if (!bt->autoresolve) {
+                    ui_battle_turn_pre(bt);
+                }
                 {
                     bool flag_no_missiles;
                     flag_no_missiles = true;    /* BUG? uninitialized in MOO1 if b->missile == -1 */
@@ -1426,7 +1458,9 @@ static void game_battle_with_human_do_sub3(struct battle_s *bt)
                     }
                 }
                 /*4f15f*/
-                ui_battle_turn_post(bt);
+                if (!bt->autoresolve) {
+                    ui_battle_turn_post(bt);
+                }
             }
             /*4f172*/
             if (!bt->flag_cur_item_destroyed) {
@@ -1637,7 +1671,9 @@ bool game_battle_attack(struct battle_s *bt, int attacker_i, int target_i, bool 
                 if ((damagerange != 0) || w->is_bio) {
                     /*5755a*/
                     int miss_chance;
-                    ui_sound_play_sfx(w->sound);
+                    if (!bt->autoresolve) {
+                        ui_sound_play_sfx(w->sound);
+                    }
                     if (w->is_bomb) {
                         if (w->is_bio) {
                             int dmgsum;
@@ -1655,7 +1691,9 @@ bool game_battle_attack(struct battle_s *bt, int attacker_i, int target_i, bool 
                             }
                             bt->biodamage += dmgsum;
                         }
-                        ui_battle_draw_bomb_attack(bt, attacker_i, target_i, w->is_bio ? UI_BATTLE_BOMB_BIO : UI_BATTLE_BOMB_BOMB);
+                        if (!bt->autoresolve) {
+                            ui_battle_draw_bomb_attack(bt, attacker_i, target_i, w->is_bio ? UI_BATTLE_BOMB_BIO : UI_BATTLE_BOMB_BOMB);
+                        }
                     }
                     /*5761d*/
                     damagediv = 1;
@@ -1670,7 +1708,7 @@ bool game_battle_attack(struct battle_s *bt, int attacker_i, int target_i, bool 
                     }
                     /*576d0*/
                     while ((b->wpn[i].numfire > 0) && ((bd->num > 0) || (target_i == 0/*planet*/))) {
-                        if (!w->is_bomb) {
+                        if ((!w->is_bomb) && (!bt->autoresolve)) {
                             ui_battle_draw_beam_attack(bt, attacker_i, target_i, i);
                         }
                         /*576f1*/
@@ -1729,12 +1767,14 @@ bool game_battle_attack(struct battle_s *bt, int attacker_i, int target_i, bool 
                         /*579e0*/
                     }
                     /*57a19*/
-                    if (damage2 > 0) {
+                    if ((damage2 > 0) && (!bt->autoresolve)) {
                         ui_battle_draw_damage(bt, target_i, bd->sx * 32, bd->sy * 24, damage2);
                     }
                 } else if ((!retaliate) && (bt->item[bt->cur_item].missile != 0)) {  /* FIXME BUG? should be [attacker_i] */
                     /*57a85*/
-                    ui_sound_play_sfx(w->sound);
+                    if (!bt->autoresolve) {
+                        ui_sound_play_sfx(w->sound);
+                    }
                     if (w->misstype >= 1) {
                         --b->wpn[i].numfire;
                     }
@@ -1793,7 +1833,7 @@ void game_battle_item_move(struct battle_s *bt, int itemi, int sx, int sy)
     struct battle_item_s *b = &(bt->item[itemi]);
     bt->num_repulsed = false;
     if (b->subspace == 1) {
-        if ((b->sx != sx) || (b->sy != sy)) {
+        if (((b->sx != sx) || (b->sy != sy)) && (!bt->autoresolve)) {
             ui_battle_draw_cloaking(bt, (b->cloak == 1) ? 30 : 100, 0, sx, sy);
         }
         b->sx = sx;
@@ -1825,10 +1865,12 @@ void game_battle_item_move(struct battle_s *bt, int itemi, int sx, int sy)
             for (int f = 0; f < stepdiv; ++f) {
                 x += vx;
                 y += vy;
-                ui_battle_draw_arena(bt, itemi, 2);
-                ui_battle_draw_bottom(bt);
-                b->selected = 2/*moving*/;
-                ui_battle_draw_item(bt, itemi, x, y);
+                if (!bt->autoresolve) {
+                    ui_battle_draw_arena(bt, itemi, 2);
+                    ui_battle_draw_bottom(bt);
+                    b->selected = 2/*moving*/;
+                    ui_battle_draw_item(bt, itemi, x, y);
+                }
                 b->selected = 1;
                 for (int j = 0; j < bt->num_missile; ++j) {
                     struct battle_missile_s *m = &(bt->missile[j]);
@@ -1846,7 +1888,9 @@ void game_battle_item_move(struct battle_s *bt, int itemi, int sx, int sy)
                         }
                     }
                 }
-                ui_battle_draw_finish(bt);
+                if (!bt->autoresolve) {
+                    ui_battle_draw_finish(bt);
+                }
                 if (bt->flag_cur_item_destroyed || bt->num_repulsed) {
                     break;
                 }
@@ -2020,7 +2064,9 @@ void game_battle_area_setup(struct battle_s *bt)
     if (b->missile == 0) {
         bt->turn_done = false;
     }
-    ui_battle_area_setup(bt);
+    if (!bt->autoresolve) {
+        ui_battle_area_setup(bt);
+    }
 }
 
 
@@ -2030,7 +2076,13 @@ bool game_battle_with_human(struct battle_s *bt)
     battle_side_i_t winner;
     game_battle_with_human_init(bt);
     game_update_visibility(bt->g);
-    ui_battle_init(bt);
+    if (ui_battle_init(bt)) {
+        bt->autoresolve = false;
+    } else {
+        bt->autoresolve = true;
+        bt->s[SIDE_L].flag_auto = true;
+        bt->s[SIDE_R].flag_auto = true;
+    }
     winner = game_battle_with_human_do(bt);
     p->pop = bt->pop;
     p->factories = bt->fact;

@@ -31,3 +31,4 @@ The following new UI features are always enabled/available:
 The config file item "ui.uiextra" (set via the -uiextra command-line option)
 enables the following extra UI features:
 - New Game screen allows setting opponent race/banner/names and AI/human flag
+- New Auto button for space combat autoresolve
