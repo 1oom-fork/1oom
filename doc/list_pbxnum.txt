@@ -13,6 +13,31 @@ monster_rest_att : 0..1, 0
     In MOO1 it is impossible to attack a space crystal or amoeba after the
     turn it has reached a planet.
 
+combat_trans_fix : 0..1, 0
+  - Make Combat Transporters work as intended.
+    In MOO1 Combat Transporters only work if the planet owner has Sub-Space
+    Interdictor, and using 25% roll followed by 50% roll if the first one
+    failed. Enabling the fix makes it behave as OSG describes; chance is 50%/25%
+    depending on Interdictor.
+
+stargate_redir_fix : 0..1, 0
+  - Fix Star Gate fleet redirection bug/cheat.
+    In MOO1 a fleet sent via Star Gate can be redirected to any other planet
+    and the flight will take only 1 turn regardless of destination. The other
+    way was also bugged; redirecting a fleet to a valid Star Gate use situation
+    did not end up in the fleet using the Star Gates.
+
+trans_redir_fix : 0..1, 0
+  - Fix transport redirection bug/cheat.
+    In MOO1 transports can be redirected (given Hyperspace Communications) to
+    unexplored. reserve-fuel-needing and no-colony-for destinations.
+
+retreat_redir_fix : 0..1, 0
+  - Fix retreating fleet redirection back to battle bug/cheat.
+    In MOO1 fleets retreating from battle can be redirected to fight again the
+    next turn. This fix disables redirecting back to the planet the fleet just
+    retreated from unless Hyperspace Communications is available.
+
 event_roll : 0..2147483647, 512
   - Special event probability. Bigger number means events are less likely.
     Zero means events are disabled.
