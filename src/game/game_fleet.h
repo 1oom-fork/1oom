@@ -11,6 +11,7 @@ struct fleet_enroute_s;
 #define FLEET_SPEED_STARGATE    35
 
 extern bool game_send_fleet_from_orbit(struct game_s *g, player_id_t owner, uint8_t from, uint8_t dest, const shipcount_t ships[NUM_SHIPDESIGNS], const uint8_t shiptypes[NUM_SHIPDESIGNS], uint8_t numtypes);
+extern bool game_send_fleet_retreat(struct game_s *g, player_id_t owner, uint8_t from, uint8_t dest, const shipcount_t ships[NUM_SHIPDESIGNS], const uint8_t shiptypes[NUM_SHIPDESIGNS], uint8_t numtypes);
 extern bool game_send_fleet_reloc(struct game_s *g, player_id_t owner, uint8_t from, uint8_t dest, uint8_t si, shipcount_t shipnum);
 extern bool game_send_transport(struct game_s *g, struct planet_s *p);
 extern void game_remove_empty_fleets(struct game_s *g);
