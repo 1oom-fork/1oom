@@ -250,6 +250,7 @@ static void game_ai_classic_turn_p1_send_scout(struct game_s *g, struct ai_turn_
                     r->x = p2->x;
                     r->y = p2->y;
                     r->speed = g->srd[pi].design[shipi].engine + 1;
+                    r->retreat = false;
                     for (int k = 0; k < NUM_SHIPDESIGNS; ++k) {
                         r->ships[k] = 0;
                     }
