@@ -149,6 +149,7 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
             ;
     uint16_t scrollx = 0, scrolly = 0;
     struct starmap_data_s d;
+    const fleet_orbit_t *r;
     const shipcount_t *os;
     const uint8_t shiptypes[NUM_SHIPDESIGNS] = { 0, 1, 2, 3, 4, 5 };
 
@@ -156,7 +157,15 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
     d.api = active_player;
     d.anim_delay = 0;
     d.oo.from = g->planet_focus_i[active_player];
-    os = &(g->eto[active_player].orbit[d.oo.from].ships[0]);
+
+    r = &(g->eto[active_player].orbit[d.oo.from]);
+
+    if (BOOLVEC_IS_CLEAR(r->visible, PLAYER_NUM)) {
+        ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
+        return;
+    }
+
+    os = &(r->ships[0]);
     for (int i = 0; i < NUM_SHIPDESIGNS; ++i) {
         d.oo.ships[i] = os[i];
     }
@@ -365,12 +374,19 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
             ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
         } else if (oi1 == oi_accept) {
             ui_sound_play_sfx_24();
-            flag_done = true;
             if (ui_starmap_orbit_own_in_frange(&d)) {
                 game_send_fleet_from_orbit(g, active_player, d.oo.from, g->planet_focus_i[active_player], d.oo.ships, shiptypes, 6);
                 game_update_visibility(g);
             }
-            ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
+            if ((!ui_extra_enabled) || BOOLVEC_IS_CLEAR(r->visible, PLAYER_NUM)) {
+                flag_done = true;
+                ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
+            } else {
+                ui_starmap_sn0_setup(&d.oo.sn0, NUM_SHIPDESIGNS, os);
+                for (int i = 0; i < NUM_SHIPDESIGNS; ++i) {
+                    SETMIN(d.oo.ships[i], os[i]);
+                }
+            }
         } else if (oi1 == oi_scroll) {
             ui_starmap_scroll(g, scrollx, scrolly);
         }
