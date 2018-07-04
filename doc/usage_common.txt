@@ -131,7 +131,9 @@ For SDL2 HW:
     -intscaling          Force integer scaling
     -nointscaling        Do not force integer scaling
     -relmouse            Use relative mouse mode (default)
-    -norelmouse          Do not use relative mouse mode (for testing)
+    -norelmouse          Do not use relative mouse mode
+                         Relative mouse mode is needed for normal operation.
+                         Disable it at your own risk!
 
 For all game UIs:
     -dumpstr             Dump strings in PBXIN format

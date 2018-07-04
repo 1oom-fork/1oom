@@ -52,6 +52,6 @@ const struct cmdline_options_s hw_cmdline_options_extra[] = {
       NULL, "Use relative mouse mode (default)" },
     { "-norelmouse", 0,
       options_disable_bool_var, (void *)&hw_opt_relmouse,
-      NULL, "Do not use relative mouse mode (for testing)" },
+      NULL, "Do not use relative mouse mode\nRelative mouse mode is needed for normal operation.\nDisable it at your own risk!" },
     { NULL, 0, NULL, NULL, NULL, NULL }
 };
