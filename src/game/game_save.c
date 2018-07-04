@@ -170,7 +170,13 @@ static int game_save_encode_enroute(uint8_t *buf, int pos, const fleet_enroute_t
     SG_1OOM_EN_U16(r->x);
     SG_1OOM_EN_U16(r->y);
     SG_1OOM_EN_U8(r->dest);
-    SG_1OOM_EN_U8(r->speed);
+    {
+        uint8_t v = r->speed;
+        if (r->retreat) {
+            v |= 0x80;
+        }
+        SG_1OOM_EN_U8(v);
+    }
     SG_1OOM_EN_TBL_U16(r->ships, NUM_SHIPDESIGNS);
     return pos;
 }
@@ -181,7 +187,12 @@ static int game_save_decode_enroute(const uint8_t *buf, int pos, fleet_enroute_t
     SG_1OOM_DE_U16(r->x);
     SG_1OOM_DE_U16(r->y);
     SG_1OOM_DE_U8(r->dest);
-    SG_1OOM_DE_U8(r->speed);
+    {
+        uint8_t v;
+        SG_1OOM_DE_U8(v);
+        r->speed = v & 0x7f;
+        r->retreat = ((v & 0x80) != 0);
+    }
     SG_1OOM_DE_TBL_U16(r->ships, NUM_SHIPDESIGNS);
     return pos;
 }
