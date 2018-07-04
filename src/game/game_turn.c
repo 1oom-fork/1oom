@@ -45,6 +45,7 @@ static void game_turn_limit_ships(struct game_s *g)
         for (int si = 0; si < NUM_SHIPDESIGNS; ++si) {
             SETMIN(r->ships[si], game_num_limit_ships);
         }
+        r->retreat = false;
     }
     for (int i = 0; i < g->galaxy_stars; ++i) {
         for (player_id_t j = PLAYER_0; j < g->players; ++j) {
@@ -735,7 +736,7 @@ static void game_turn_move_ships(struct game_s *g)
                         p = &(g->planet[r->dest]);
                         x1 = p->x;
                         y1 = p->y;
-                        if (r->speed == 35) {
+                        if (r->speed == FLEET_SPEED_STARGATE) {
                             x = x1;
                             y = y1;
                         } else {
@@ -759,7 +760,7 @@ static void game_turn_move_ships(struct game_s *g)
                         p = &(g->planet[r->dest]);
                         x1 = p->x;
                         y1 = p->y;
-                        if (r->speed == 35) {
+                        if (r->speed == FLEET_SPEED_STARGATE) {
                             x = x1;
                             y = y1;
                         } else {
