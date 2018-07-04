@@ -260,3 +260,14 @@ Some examples:
           player 2 is (2) green (8) sakkra,
           player 3 is random
         * players 1 and 2 are human
+
+
+4. New features
+================
+
+4.1. Space combat autoresolve
+------------------------------
+
+The space combat autoresolve is provided as an option for skipping battles.
+The battle is fought as if the player(s) pressed Auto right after starting
+combat.
