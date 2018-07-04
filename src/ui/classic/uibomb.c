@@ -216,7 +216,7 @@ bool ui_bomb_ask(struct game_s *g, int pi, uint8_t planet_i, int pop_inbound)
     }
     uiobj_unset_callback();
     uiobj_table_clear();
-    hw_audio_music_fadeout();
+    ui_sound_stop_music();
     bomb_free_data(&d);
     return flag_do_bomb;
 }
@@ -255,6 +255,6 @@ void ui_bomb_show(struct game_s *g, int attacker_i, int owner_i, uint8_t planet_
     }
     uiobj_unset_callback();
     uiobj_table_clear();
-    hw_audio_music_fadeout();
+    ui_sound_stop_music();
     bomb_free_data(&d);
 }
