@@ -372,6 +372,7 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
             flag_done = true;
             ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
         } else if (oi1 == oi_accept) {
+do_accept:
             ui_sound_play_sfx_24();
             if (ui_starmap_orbit_own_in_frange(&d)) {
                 game_send_fleet_from_orbit(g, active_player, d.from, g->planet_focus_i[active_player], d.ss.ships, shiptypes, 6);
@@ -393,6 +394,10 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
         ui_starmap_handle_oi_ctrl(&d, oi1);
         for (int i = 0; i < g->galaxy_stars; ++i) {
             if (oi1 == d.oi_tbl_stars[i]) {
+                if (ui_extra_enabled && (oi_accept != UIOBJI_INVALID) && (g->planet_focus_i[active_player] == i)) {
+                    oi1 = oi_accept;
+                    goto do_accept;
+                }
                 g->planet_focus_i[active_player] = i;
                 ui_sound_play_sfx_24();
                 break;
