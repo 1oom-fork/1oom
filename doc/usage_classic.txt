@@ -58,6 +58,7 @@ enables the following extra UI features:
   the galaxy movement screen
 - Right clicking on planet name in the galaxy movement screen opens a governor
   screen for setting target missile base amount or readjusting all planets
+- New Auto button for space combat autoresolve
 - Pressing = on the Tech screen adjusts only the unlocked sliders
 
 See doc/list_gamediff.txt for a list of differences in the game itself.

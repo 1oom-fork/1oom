@@ -302,3 +302,10 @@ These rules have some implications:
 
 The governor is experimental feature and future versions may change the how it
 operates.
+
+4.2. Space combat autoresolve
+------------------------------
+
+The space combat autoresolve is provided as an option for skipping battles.
+The battle is fought as if the player(s) pressed Auto right after starting
+combat.
