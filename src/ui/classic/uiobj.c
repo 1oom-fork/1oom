@@ -1720,8 +1720,8 @@ void uiobj_set_focus_forced(int16_t uiobji)
 {
     uiobj_t *p = &uiobj_tbl[uiobji];
     int x, y;
-    x = smidx(p);
-    y = smidy(p);
+    x = scmidx(p);
+    y = scmidy(p);
     if ((y < 0) || (y >= UI_SCREEN_H) || (x < 0) || (x >= UI_SCREEN_W)) {
         return;
     }
