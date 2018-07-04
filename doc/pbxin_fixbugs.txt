@@ -1,9 +1,10 @@
-# This is a PBXIN file. It enables all the optional MOO1 bug fixes.
+# This is a PBXIN file.
+# It enables most of the optional MOO1 bug fixes.
 # Use "1oom_pbxmake pbxin_fixbugs.txt fixbugs.pbx" to make the PBX file.
 # Then "1oom_classic_sdl1 -file fixbugs.pbx" to use it.
 
 0,"Fix MOO1 bugs"
-1,"Enables all optional MOO1 bug fixes.\nAlso gives Guardian Advanced Damage Control on impossible."
+1,"Enables most of the optional MOO1 bug fixes.\nAlso gives Guardian Advanced Damage Control on impossible."
 
 # Give Guardian Advance Damage Control on impossible.
 # MOO1 has Automated Repair (but shows ADC) on hard and nothing on impossible.
@@ -24,3 +25,8 @@
 4,combat_trans_fix,0,1
 4,stargate_redir_fix,0,1
 4,trans_redir_fix,0,1
+
+# Disabled fixes. Remove the # in front of 4 to enable.
+#4,weapon_list_max,0,64
+#4,retreat_redir_fix,0,1
+#4,monster_rest_att,0,1
