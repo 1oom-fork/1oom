@@ -845,7 +845,7 @@ void ui_battle_shutdown(struct battle_s *bt, bool colony_destroyed)
     /*128c7*/
     uiobj_unset_callback();
     uiobj_table_clear();
-    hw_audio_music_fadeout();
+    ui_sound_stop_music();
     ui_palette_fadeout_a_f_1();
     ui_draw_finish_mode = 2;
 }

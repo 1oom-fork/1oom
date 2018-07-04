@@ -343,7 +343,7 @@ void ui_news(struct game_s *g, struct news_s *ns)
         flag_fade = false;
     }
     ui_data.news.flag_also = true;
-    hw_audio_music_fadeout();
+    ui_sound_stop_music();
     uiobj_unset_callback();
     uiobj_table_clear();
 }

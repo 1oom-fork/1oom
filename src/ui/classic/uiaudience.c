@@ -410,7 +410,7 @@ void ui_audience_end(struct audience_s *au)
     struct audience_data_s *d = au->uictx;
     uiobj_unset_callback();
     uiobj_table_clear();
-    hw_audio_music_fadeout();
+    ui_sound_stop_music();
     ui_palette_fadeout_a_f_1();
     ui_draw_finish_mode = 2;
     lbxpal_select(0, -1, 0);

@@ -310,7 +310,7 @@ void ui_ground(struct ground_s *gr)
         }
         ui_delay_ticks_or_click(2);
     }
-    hw_audio_music_fadeout();
+    ui_sound_stop_music();
     ui_palette_fadeout_a_f_1();
     lbxpal_select(0, -1, 0);
     lbxpal_build_colortables();
