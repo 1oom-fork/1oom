@@ -137,7 +137,7 @@ sz      description
 2       x
 2       y
 1       destination as planetary index number
-1       speed
+1       bits 6..0: speed, bit 7: retreat
 6*2     number of ships
 
 

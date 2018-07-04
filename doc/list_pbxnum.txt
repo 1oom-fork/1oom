@@ -64,6 +64,12 @@ trans_redir_fix : 0..1, 0
     In MOO1 transports can be redirected (given Hyperspace Communications) to
     unexplored. reserve-fuel-needing and no-colony-for destinations.
 
+retreat_redir_fix : 0..1, 0
+  - Fix retreating fleet redirection back to battle bug/cheat.
+    In MOO1 fleets retreating from battle can be redirected to fight again the
+    next turn. This fix disables redirecting back to the planet the fleet just
+    retreated from unless Hyperspace Communications is available.
+
 event_roll : 0..2147483647, 512
   - Special event probability. Bigger number means events are less likely.
     Zero means events are disabled.
