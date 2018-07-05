@@ -216,7 +216,7 @@ uint8_t game_tech_player_best_tech(const struct game_s *g, int field_i, int tech
     return tech_best;
 }
 
-uint8_t game_tech_player_best_engine(const struct game_s *g, int player_i)
+int game_tech_player_best_engine(const struct game_s *g, int player_i)
 {
     return game_tech_player_best_tech(g, TECH_FIELD_PROPULSION, 0, 6, 50, player_i) + 3;
 }
