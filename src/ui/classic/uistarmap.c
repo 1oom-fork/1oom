@@ -637,7 +637,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             }
             STARMAP_UIOBJ_FILL_FX();
             if ((p->owner == active_player) && p->missile_bases) {
-                oi_b = uiobj_add_inputkey(MOO_KEY_b);
+                oi_b = uiobj_add_mousearea(272, 59, 312, 67, MOO_KEY_b);
             }
             oi_c = uiobj_add_inputkey(MOO_KEY_c);
             ui_starmap_add_oi_bottom_buttons(&d);
