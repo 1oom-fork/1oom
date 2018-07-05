@@ -2128,15 +2128,21 @@ static bool game_ai_classic_battle_ai_ai_resolve_do(struct battle_s *bt)
             }
         }
     }
-    switch (bt->planet_side) {  /* BUG? MOO1 seems to switch (ui_main_loop_action) ??? */
+    if (g->ai_id == GAME_AI_CLASSIC) {
+        /* WASBUG MOO1 uses ui_main_loop_action for the switch variable below;
+           since it is UI_MAIN_LOOP_NEXT_TURN (== 8) at this point, bt->bases is unaffected.
+        */
+        return r_won;
+    }
+    switch (bt->planet_side) {
         case SIDE_NONE:
             bt->bases = 0;
             break;
         case SIDE_L:
-            bt->bases = (bt->bases * wl2) / wl;
+            bt->bases = wl ? ((bt->bases * wl2) / wl) : 0;
             break;
         case SIDE_R:
-            bt->bases = (bt->bases * wr2) / wr;
+            bt->bases = wr ? ((bt->bases * wr2) / wr) : 0;
             break;
     }
     /* BUG? MOO1 passes pointers to pop1 and factories but does not touch them */
