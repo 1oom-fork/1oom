@@ -28,7 +28,7 @@ bool ui_bomb_ask(struct game_s *g, int pi, uint8_t planet_i, int pop_inbound)
     return (v == 1);
 }
 
-void ui_bomb_show(struct game_s *g, int attacker_i, int owner_i, uint8_t planet_i, int popdmg, int factdmg, bool play_music)
+void ui_bomb_show(struct game_s *g, int pi, int attacker_i, int owner_i, uint8_t planet_i, int popdmg, int factdmg, bool play_music, bool hide_other)
 {
     const planet_t *p = &(g->planet[planet_i]);
     printf("%s : %s %s. ", p->name, game_str_sm_obomb1, game_str_sm_obomb2);
