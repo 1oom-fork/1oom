@@ -32,6 +32,7 @@ struct bomb_data_s {
     player_id_t api;
     player_id_t owner;
     uint8_t planet;
+    bool hide_other;
     int pop_inbound;
     int popdmg;
     int factdmg;
@@ -136,7 +137,11 @@ static void bomb_show_draw_cb(void *vptr)
     ui_draw_line1(227, 57, 227, 160, 0);
     ui_draw_line1(227, 57, 310, 57, 0);
     ui_draw_line1(310, 57, 310, 160, 0);
-    ui_gmap_basic_draw_frame(d->gmap, d->api);
+    if (d->hide_other) {
+        ui_gmap_basic_draw_only(d->gmap, d->planet);
+    } else {
+        ui_gmap_basic_draw_frame(d->gmap, d->api);
+    }
     ui_gmap_draw_planet_border(g, d->planet);
     lbxfont_select_set_12_4(3, 0xa, 0, 0);
     lbxfont_print_str_center(267, 60, game_str_sm_obomb1, UI_SCREEN_W);
@@ -220,13 +225,14 @@ bool ui_bomb_ask(struct game_s *g, int pi, uint8_t planet_i, int pop_inbound)
     return flag_do_bomb;
 }
 
-void ui_bomb_show(struct game_s *g, int attacker_i, int owner_i, uint8_t planet_i, int popdmg, int factdmg, bool play_music)
+void ui_bomb_show(struct game_s *g, int pi, int attacker_i, int owner_i, uint8_t planet_i, int popdmg, int factdmg, bool play_music, bool hide_other)
 {
     struct bomb_data_s d;
     bool flag_done = false;
     ui_switch_2(g, attacker_i, owner_i);
     d.g = g;
-    d.api = attacker_i;
+    d.api = pi;
+    d.hide_other = hide_other;
     d.owner = owner_i;
     d.planet = planet_i;
     d.popdmg = popdmg;
