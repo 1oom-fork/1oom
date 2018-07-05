@@ -1122,7 +1122,11 @@ static void game_turn_bomb(struct game_s *g)
                         game_planet_destroy(g, pli, i);
                     }
                     if (IS_HUMAN(g, i) || IS_HUMAN(g, owner)) {
-                        ui_bomb_show(g, i, owner, pli, popdmg, factdmg, flag_play_music);
+                        player_id_t human;
+                        bool hide_other;
+                        human = IS_HUMAN(g, i) ? i : owner;
+                        hide_other = (IS_HUMAN(g, i) && IS_HUMAN(g, owner));
+                        ui_bomb_show(g, human, i, owner, pli, popdmg, factdmg, flag_play_music, hide_other);
                     }
                     if ((p->pop == 0) && IS_HUMAN(g, i)) {
                         int dv;
