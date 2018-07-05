@@ -912,9 +912,10 @@ static void game_ai_classic_turn_p1_trans_en(struct game_s *g, struct ai_turn_p1
         ) {
             const shipcount_t *s;
             s = &(e->orbit[i].ships[0]);
-            for (int j = 0; (j < e->shipdesigns_num) && !have_orbit; ++j) {
+            for (int j = 0; j < e->shipdesigns_num; ++j) {
                 if (s[j]) {
                     have_orbit = true;
+                    break;
                 }
             }
         }
@@ -949,7 +950,7 @@ static void game_ai_classic_turn_p1_trans_en(struct game_s *g, struct ai_turn_p1
                 pf = &(g->planet[pfrom]);
                 pf->trans_num = pf->pop / 2;
                 pf->trans_dest = i;
-                BOOLVEC_SET0(tbl_trans_from, i);
+                BOOLVEC_SET0(tbl_trans_from, pfrom);
             }
         }
     }
@@ -965,7 +966,7 @@ static void game_ai_classic_turn_p1_trans_own(struct game_s *g, struct ai_turn_p
         BOOLVEC_SET0(tbl_trans_to, i);
         BOOLVEC_SET0(tbl_trans_from, i);
         if (p->owner == pi) {
-            if ((p->pop < (p->max_pop3 / 3)) || (p->unrest != PLANET_UNREST_REBELLION)) {
+            if ((p->pop < (p->max_pop3 / 3)) || (p->unrest == PLANET_UNREST_REBELLION)) {
                 BOOLVEC_SET1(tbl_trans_to, i);
             }
             if (p->pop > ((p->max_pop3 * 3) / 4)) {
