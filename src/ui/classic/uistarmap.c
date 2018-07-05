@@ -225,9 +225,9 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
     bool flag_done = false;
     int16_t oi_b, oi_c, oi_scroll, oi_starview1, oi_starview2, oi_shippic, oi_finished, oi_equals,
             oi_f2, oi_f3, oi_f4, oi_f5, oi_f6, oi_f7, oi_f8, oi_f9, oi_f10,
-            oi_alt_galaxy, oi_alt_m, oi_alt_c, oi_alt_p, oi_alt_r, oi_alt_events, oi_governor
+            oi_alt_galaxy, oi_alt_m, oi_alt_c, oi_alt_p, oi_alt_r, oi_alt_events, oi_governor, oi_wheelname
             ;
-    int16_t scrollx = 0, scrolly = 0;
+    int16_t scrollx = 0, scrolly = 0, scrollname = 0;
     uint8_t scrollz = starmap_scale;
     struct starmap_data_s d;
 
@@ -255,6 +255,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
         oi_finished = UIOBJI_INVALID; \
         oi_equals = UIOBJI_INVALID; \
         oi_governor = UIOBJI_INVALID; \
+        oi_wheelname = UIOBJI_INVALID; \
         d.sm.oi_ship = UIOBJI_INVALID; \
         d.sm.oi_reloc = UIOBJI_INVALID; \
         d.sm.oi_trans = UIOBJI_INVALID; \
@@ -579,6 +580,18 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             ui_data.ui_main_loop_action = UI_MAIN_LOOP_GOVERN;
             flag_done = true;
             ui_sound_play_sfx_24();
+        } else if (oi1 == oi_wheelname) {
+            int i;
+            i = g->planet_focus_i[active_player];
+            i += scrollname;
+            scrollname = 0;
+            if (i < 0) {
+                i = g->galaxy_stars - 1;
+            } else if (i >= g->galaxy_stars) {
+                i = 0;
+            }
+            g->planet_focus_i[active_player] = i;
+            p = &(g->planet[i]);
         }
         for (int i = 0; i < g->galaxy_stars; ++i) {
             if ((oi1 == d.oi_tbl_stars[i]) && !g->evn.build_finished_num[active_player]) {
@@ -638,6 +651,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
                     oi_governor = uiobj_add_mousearea(227, 8, 310, 20, MOO_KEY_UNKNOWN);
                 }
             }
+            oi_wheelname = uiobj_add_mousewheel(227, 8, 310, 20, &scrollname);
             ui_starmap_fill_oi_tbls(&d);
             {
                 int x0, y0;
