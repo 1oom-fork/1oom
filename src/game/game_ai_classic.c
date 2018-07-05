@@ -3008,7 +3008,7 @@ static void game_ai_classic_battle_ai_turn(struct battle_s *bt)
             }
         }
         target_i = game_ai_battle_rival(bt, itemi, 0);
-        if ((target_i != -1) && (itemi == 0/*planet*/) && (b->num > 0)) {
+        if ((target_i == -1) && (itemi == 0/*planet*/) && (b->num > 0)) {
             int ii = (b->side == SIDE_R) ? 1 : (bt->s[SIDE_L].items + 1);
             if (bt->item[ii].side != b->side) {
                 game_battle_attack(bt, itemi, ii, false);
