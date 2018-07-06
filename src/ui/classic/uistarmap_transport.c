@@ -66,7 +66,7 @@ static void ui_starmap_transport_draw_cb(void *vptr)
         y0 = (r->y - ui_data.starmap.y) * 2 + 8;
         {
             const uint8_t *ctbl;
-            ctbl = (pt->within_frange[d->api] != 0) ? colortbl_line_hmm1 : colortbl_line_enroute;
+            ctbl = (pt->within_frange[d->api] != 0) ? colortbl_line_hmm1 : colortbl_line_red;
             ui_draw_line_limit_ctbl(x0 + 4, y0 + 1, x1 + 6, y1 + 6, ctbl, 5, ui_data.starmap.line_anim_phase);
         }
         gfx = ui_data.gfx.starmap.smaltran[e->banner];

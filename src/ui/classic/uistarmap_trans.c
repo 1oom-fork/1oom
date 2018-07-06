@@ -75,7 +75,7 @@ static void ui_starmap_trans_draw_cb(void *vptr)
           || (pt->owner == PLAYER_NONE)
           || (pt->type < g->eto[d->api].have_colony_for)
         ) {
-            ctbl = colortbl_line_enroute;
+            ctbl = colortbl_line_red;
         } else {
             ctbl = colortbl_line_hmm1;
         }
