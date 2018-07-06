@@ -470,7 +470,7 @@ do_accept:
             uiobj_table_clear();
             UIOBJ_CLEAR_LOCAL();
             STARMAP_UIOBJ_FILL_FX();
-            ui_starmap_fill_oi_tbls(&d);
+            ui_starmap_fill_oi_tbls(&d, true);
             ui_starmap_fill_oi_tbl_stars(&d);
             oi_cancel = uiobj_add_t0(227, 180, "", ui_data.gfx.starmap.reloc_bu_cancel, MOO_KEY_ESCAPE);
             if (ui_starmap_orbit_own_in_frange(&d) && d.oo.shiptypenon0numsel) {
