@@ -1374,7 +1374,7 @@ static int16_t uiobj_handle_input_sub0(void)
         }
         if (oi != 0) {
             if (p->type == UIOBJ_TYPE_SLIDER) {
-                if (scroll > 0) {
+                if ((scroll > 0) != ui_mwi_slider) {
                     uiobj_slider_plus(p, 1);
                 } else {
                     uiobj_slider_minus(p, 1);
