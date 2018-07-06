@@ -618,7 +618,6 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             if ((oi1 == d.oi_tbl_stars[i]) && !g->evn.build_finished_num[active_player]) {
                 g->planet_focus_i[active_player] = i;
                 p = &(g->planet[i]);
-                ui_starmap_set_pos_focus(g, active_player);
                 ui_sound_play_sfx_24();
                 break;
             }
