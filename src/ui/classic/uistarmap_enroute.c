@@ -66,7 +66,11 @@ static void ui_starmap_enroute_draw_cb(void *vptr)
         lbxgfx_draw_frame_offs(x1, y1, ui_data.gfx.starmap.planbord, STARMAP_LIMITS, UI_SCREEN_W, starmap_scale);
         x0 = (r->x - ui_data.starmap.x) * 2 + 8;
         y0 = (r->y - ui_data.starmap.y) * 2 + 8;
-        ui_draw_line_limit_ctbl(x0 + 4, y0 + 1, x1 + 6, y1 + 6, colortbl_line_hmm1, 5, ui_data.starmap.line_anim_phase, starmap_scale);
+        {
+            const uint8_t *ctbl;
+            ctbl = ((r->owner == d->api) && (d->en.can_move != NO_MOVE) && (!d->en.in_frange)) ? colortbl_line_red : colortbl_line_green;
+            ui_draw_line_limit_ctbl(x0 + 4, y0 + 1, x1 + 6, y1 + 6, ctbl, 5, ui_data.starmap.line_anim_phase, starmap_scale);
+        }
         gfx = ui_data.gfx.starmap.smalship[e->banner];
         if (pd->x < r->x) {
             lbxgfx_set_new_frame(gfx, 1);
