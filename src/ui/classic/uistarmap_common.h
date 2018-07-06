@@ -152,7 +152,7 @@ struct starmap_data_s {
     } while (0)
 
 extern const uint8_t colortbl_textbox[5];
-extern const uint8_t colortbl_line_enroute[5];
+extern const uint8_t colortbl_line_red[5];
 extern const uint8_t colortbl_line_reloc[5];
 extern const uint8_t colortbl_line_hmm1[5];
 
