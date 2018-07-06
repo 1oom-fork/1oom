@@ -32,6 +32,7 @@ static void game_battle_item_from_parsed(struct battle_item_s *b, const shippars
     memset(b, 0, sizeof(*b));
     COPY_PROP(b, sp, look);
     strcpy(b->name, sp->name);
+    COPY_PROP(b, sp, hull);
     for (int i = 0; i < SPECIAL_SLOT_NUM; ++i) {
         b->special[i] = sp->special[i];
     }
