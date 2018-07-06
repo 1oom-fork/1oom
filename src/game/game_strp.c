@@ -342,6 +342,7 @@ static const struct strtbl_s {
     DEFSTRITEM(bp_scombat),
     DEFSTRITEM(bp_attack),
     DEFSTRITEM(bp_attacks),
+    DEFSTRITEM(bp_won),
     DEFSTRITEM(bt_auto_move),
     DEFSTRITEM(bt_pop),
     DEFSTRITEM(bt_ind),
