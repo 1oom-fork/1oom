@@ -170,6 +170,8 @@ For all game UIs:
 For classic game UI:
     -uiextra             Enable UI extras
     -nouiextra           Disable UI extras
+    -mwislider           Invert mouse wheel for sliders
+    -nomwislider         Do not invert mouse wheel for sliders
 
 3.1. -new
 ----------
