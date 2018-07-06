@@ -63,10 +63,10 @@ static void ui_starmap_orbit_own_draw_cb(void *vptr)
         y0 = (pf->y - ui_data.starmap.y) * 2 + 8;
         /* FIXME update outside draw */
         if ((pt->within_frange[d->api] == 1) || ((pt->within_frange[d->api] == 2) && d->oo.sn0.have_reserve_fuel)) {
-            ctbl = colortbl_line_hmm1;
+            ctbl = colortbl_line_green;
             d->oo.in_frange = true;
         } else {
-            ctbl = colortbl_line_enroute;
+            ctbl = colortbl_line_red;
             d->oo.in_frange = false;
         }
         ui_draw_line_limit_ctbl(x0 + 3, y0 + 1, x1 + 6, y1 + 6, ctbl, 5, ui_data.starmap.line_anim_phase, starmap_scale);

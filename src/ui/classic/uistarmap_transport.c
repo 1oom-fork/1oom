@@ -71,7 +71,7 @@ static void ui_starmap_transport_draw_cb(void *vptr)
         }
         {
             const uint8_t *ctbl;
-            ctbl = dest_ok ? colortbl_line_hmm1 : colortbl_line_enroute;
+            ctbl = dest_ok ? colortbl_line_green : colortbl_line_red;
             ui_draw_line_limit_ctbl(x0 + 4, y0 + 1, x1 + 6, y1 + 6, ctbl, 5, ui_data.starmap.line_anim_phase, starmap_scale);
         }
         gfx = ui_data.gfx.starmap.smaltran[e->banner];
