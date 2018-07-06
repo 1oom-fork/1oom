@@ -42,6 +42,7 @@ enables the following extra UI features:
 - Fleet deployment shows the amount of available ships
 - Sending fewer than all ships does not deselect the orbit fleet
 - Clicking a selected destination star again works as Accept for fleet send etc
+- Summary of forces shown before ship combat
 - New Auto button for space combat autoresolve
 - Pressing = on the Tech screen adjusts only the unlocked sliders
 
