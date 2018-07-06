@@ -414,7 +414,6 @@ void ui_starmap_trans(struct game_s *g, player_id_t active_player)
             if (oi1 == d.oi_tbl_stars[i]) {
                 d.tr.other = true;
                 g->planet_focus_i[active_player] = i;
-                ui_starmap_set_pos_focus(g, active_player);
                 ui_sound_play_sfx_24();
                 break;
             }
