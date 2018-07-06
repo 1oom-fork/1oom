@@ -46,6 +46,8 @@ const struct cfg_items_s ui_cfg_items[] = {
     CFG_ITEM_BOOL("uifixbugs", &ui_fixbugs_enabled),
     CFG_ITEM_COMMENT("0..146"),
     CFG_ITEM_INT("uiicon", &ui_icon, check_ui_icon),
+    CFG_ITEM_COMMENT("Invert mouse wheel for sliders"),
+    CFG_ITEM_BOOL("mwislider", &ui_mwi_slider),
     CFG_ITEM_END
 };
 
@@ -62,6 +64,12 @@ const struct cmdline_options_s ui_cmdline_options[] = {
     { "-nouifixbugs", 0,
       options_disable_bool_var, (void *)&ui_fixbugs_enabled,
       NULL, "Disable UI bug fixes" },
+    { "-mwislider", 0,
+      options_enable_bool_var, (void *)&ui_mwi_slider,
+      NULL, "Invert mouse wheel for sliders" },
+    { "-nomwislider", 0,
+      options_disable_bool_var, (void *)&ui_mwi_slider,
+      NULL, "Do not invert mouse wheel for sliders" },
     { NULL, 0, NULL, NULL, NULL, NULL }
 };
 
@@ -73,6 +81,7 @@ struct ui_data_s ui_data = { 0 };
 
 bool ui_extra_enabled = false;
 bool ui_fixbugs_enabled = false;
+bool ui_mwi_slider = false;
 
 bool ui_use_audio = true;
 
