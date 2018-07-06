@@ -113,7 +113,7 @@ static void ui_starmap_enroute_draw_cb(void *vptr)
             lbxgfx_draw_frame(x, y, gfx, UI_SCREEN_W);
         }
         lbxfont_select(0, 0xd, 0, 0);
-        lbxfont_print_num_right(x + 35, y + 19, d->ss.sn0.ships[st], UI_SCREEN_W);
+        lbxfont_print_num_right(x + 35, y + 19, d->ss.sn0.ships[i], UI_SCREEN_W);
         lbxfont_select(2, 0xa, 0, 0);
         lbxfont_print_str_center(x + 19, y + 29, sd[st].name, UI_SCREEN_W);
     }
