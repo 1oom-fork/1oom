@@ -242,7 +242,9 @@ do_accept:
                     goto do_accept;
                 }
                 g->planet_focus_i[active_player] = i;
-                ui_starmap_set_pos_focus(g, active_player);
+                if (!ui_extra_enabled) {
+                    ui_starmap_set_pos_focus(g, active_player);
+                }
                 ui_sound_play_sfx_24();
                 break;
             }
