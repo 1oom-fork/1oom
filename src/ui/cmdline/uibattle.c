@@ -128,6 +128,42 @@ static void ui_battle_draw_reach(const struct battle_s *bt, int itemi)
     }
 }
 
+
+static void ui_battle_prepost(const struct battle_s *bt, int winner)
+{
+    int side_l = bt->flag_human_att ? SIDE_L : SIDE_R;
+    shipsum_t force[2][SHIP_HULL_NUM];
+    shipsum_t bases = 0;
+    memset(force, 0, sizeof(force));
+    for (int i = 0; i <= bt->items_num; ++i) {
+        const struct battle_item_s *b = &(bt->item[i]);
+        if (b->side != SIDE_NONE) {
+            if (i == 0/*planet*/) {
+                bases = b->num;
+            } else {
+                force[b->side][b->hull] += b->num;
+            }
+        }
+    }
+    for (int i = 0; i < SHIP_HULL_NUM; ++i) {
+        printf("- %5u %s %u\n", force[side_l][i], game_str_tbl_st_hull[i], force[side_l ^ 1][i]);
+    }
+    if (bases) {
+        printf("- %s %u\n", game_str_sb_bases, bases);
+    }
+    if (winner != SIDE_NONE) {
+        int party_winner = (winner != SIDE_NONE) ? bt->s[winner].party : -1;
+        const char *str;
+        if (party_winner >= PLAYER_NUM) {
+            str = game_str_tbl_mon_names[party_winner - PLAYER_NUM];
+        } else {
+            race_t race = bt->g->eto[party_winner].race;
+            str = game_str_tbl_races[race];
+        }
+        printf("%s %s\n", str, game_str_bp_won);
+    }
+}
+
 /* -------------------------------------------------------------------------- */
 
 bool ui_battle_init(struct battle_s *bt)
@@ -135,7 +171,6 @@ bool ui_battle_init(struct battle_s *bt)
     struct game_s *g = bt->g;
     const planet_t *p = &(g->planet[bt->planet_i]);
     int party_u = bt->s[SIDE_L].party, party_d = bt->s[SIDE_R].party;
-    char *buf = ui_data.strbuf;
     const char *s1, *s2, *s3;
     ui_switch_2(bt->g, party_u, party_d);
     if (party_d >= PLAYER_NUM) {
@@ -144,25 +179,28 @@ bool ui_battle_init(struct battle_s *bt)
         race_t race = g->eto[bt->flag_human_att ? party_u : party_d].race;
         s1 = game_str_tbl_races[race];
     }
-    s2 = (party_d >= PLAYER_NUM) ? game_str_bp_attack : game_str_bp_attacks;
+    s2 = (party_d >= PLAYER_NUM) ? game_str_bp_attacks : game_str_bp_attack;
     {
         race_t race = g->eto[bt->flag_human_att ? party_d : party_u].race;
         s3 = game_str_tbl_races[race];
     }
-    sprintf(buf, "%s | %s | %s %s %s", game_str_bp_scombat, p->name, s1, s2, s3);
+    printf("%s | %s | %s %s %s\n", game_str_bp_scombat, p->name, s1, s2, s3);
+    ui_battle_prepost(bt, SIDE_NONE);
     {
         const struct input_list_s cl_cont_auto[] = {
             { 1, "C", NULL, "Continue" },
             { 0, "A", NULL, "Autoresolve" },
             { 0, NULL, NULL, NULL }
         };
-        int v = ui_input_list(buf, "> ", cl_cont_auto);
+        int v = ui_input_list("Fight?", "> ", cl_cont_auto);
         return (v == 1);
     }
+
 }
 
-void ui_battle_shutdown(struct battle_s *bt, bool colony_destroyed)
+void ui_battle_shutdown(struct battle_s *bt, bool colony_destroyed, int winner)
 {
+    ui_battle_prepost(bt, winner);
     ui_switch_wait(bt->g);
 }
 
