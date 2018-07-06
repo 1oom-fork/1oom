@@ -736,15 +736,16 @@ void ui_starmap_fill_oi_ctrl(struct starmap_data_s *d)
 
 void ui_starmap_sn0_setup(struct shipnon0_s *sn0, int sd_num, const shipcount_t *ships)
 {
-    sn0->num = 0;
+    int num = 0;
     for (int i = 0; i < sd_num; ++i) {
         shipcount_t n;
         n = ships[i];
-        sn0->ships[i] = n;
+        sn0->ships[num] = n;
         if (n) {
-            sn0->type[sn0->num++] = i;
+            sn0->type[num++] = i;
         }
     }
+    sn0->num = num;
 }
 
 void ui_starmap_update_reserve_fuel(struct game_s *g, struct shipnon0_s *sn0, const shipcount_t *ships, player_id_t pi)
