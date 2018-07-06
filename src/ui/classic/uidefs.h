@@ -248,5 +248,6 @@ struct ui_data_s {
 
 extern struct ui_data_s ui_data;
 extern bool ui_extra_enabled;
+extern bool ui_mwi_slider;
 
 #endif
