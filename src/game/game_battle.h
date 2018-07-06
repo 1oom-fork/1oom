@@ -22,6 +22,7 @@ struct battle_item_s {
     ship_special_t special[SPECIAL_SLOT_NUM];
     uint16_t hp1;
     uint16_t hp2;
+    ship_hull_t hull;
     uint8_t man;
     int8_t defense;
     int8_t misdefense;
