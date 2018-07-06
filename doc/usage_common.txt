@@ -184,6 +184,8 @@ For classic game UI:
     -nouiextra           Disable UI extras
     -uifixbugs           Enable UI bug fixes
     -nouifixbugs         Disable UI bug fixes
+    -mwislider           Invert mouse wheel for sliders
+    -nomwislider         Do not invert mouse wheel for sliders
 
 3.1. -new
 ----------
