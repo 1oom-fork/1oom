@@ -609,7 +609,7 @@ void ui_starmap_add_oi_bottom_buttons(struct starmap_data_s *d)
     d->oi_next_turn = uiobj_add_mousearea(258, 181, 314, 194, MOO_KEY_n);
 }
 
-void ui_starmap_fill_oi_tbls(struct starmap_data_s *d)
+void ui_starmap_fill_oi_tbls(struct starmap_data_s *d, bool add_enroute)
 {
     const struct game_s *g = d->g;
     int x = ui_data.starmap.x;
@@ -644,12 +644,14 @@ void ui_starmap_fill_oi_tbls(struct starmap_data_s *d)
             }
         }
     }
-    for (int i = 0; i < g->enroute_num; ++i) {
-        const fleet_enroute_t *r = &(g->enroute[i]);
-        if (BOOLVEC_IS1(r->visible, d->api)) {
-            int x0 = (r->x - x) * 2 + 8;
-            int y0 = (r->y - y) * 2 + 8;
-            d->oi_tbl_enroute[i] = uiobj_add_mousearea_limited(x0, y0, x0 + 8, y0 + 4, MOO_KEY_UNKNOWN);
+    if (add_enroute) {
+        for (int i = 0; i < g->enroute_num; ++i) {
+            const fleet_enroute_t *r = &(g->enroute[i]);
+            if (BOOLVEC_IS1(r->visible, d->api)) {
+                int x0 = (r->x - x) * 2 + 8;
+                int y0 = (r->y - y) * 2 + 8;
+                d->oi_tbl_enroute[i] = uiobj_add_mousearea_limited(x0, y0, x0 + 8, y0 + 4, MOO_KEY_UNKNOWN);
+            }
         }
     }
     for (int i = 0; i < g->transport_num; ++i) {

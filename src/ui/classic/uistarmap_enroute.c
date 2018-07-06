@@ -131,6 +131,29 @@ static void ui_starmap_enroute_draw_cb(void *vptr)
     ui_draw_set_stars_xoffs(false);
 }
 
+static void ui_starmap_enroute_fill_oi_enroute(struct starmap_data_s *d, player_id_t api, BOOLVEC_PTRPARAMI(selected))
+{
+    struct game_s *g = d->g;
+    int x = ui_data.starmap.x;
+    int y = ui_data.starmap.y;
+    for (int i = 0; i < g->enroute_num; ++i) {
+        const fleet_enroute_t *r = &(g->enroute[i]);
+        if (BOOLVEC_IS1(r->visible, api) && BOOLVEC_IS0(selected, i)) {
+            int x0 = (r->x - x) * 2 + 8;
+            int y0 = (r->y - y) * 2 + 8;
+            d->oi_tbl_enroute[i] = uiobj_add_mousearea_limited(x0, y0, x0 + 8, y0 + 4, MOO_KEY_UNKNOWN);
+        }
+    }
+    for (int i = 0; i < g->enroute_num; ++i) {
+        const fleet_enroute_t *r = &(g->enroute[i]);
+        if (BOOLVEC_IS1(r->visible, api) && BOOLVEC_IS1(selected, i)) {
+            int x0 = (r->x - x) * 2 + 8;
+            int y0 = (r->y - y) * 2 + 8;
+            d->oi_tbl_enroute[i] = uiobj_add_mousearea_limited(x0, y0, x0 + 8, y0 + 4, MOO_KEY_UNKNOWN);
+        }
+    }
+}
+
 /* -------------------------------------------------------------------------- */
 
 void ui_starmap_enroute(struct game_s *g, player_id_t active_player)
@@ -139,12 +162,18 @@ void ui_starmap_enroute(struct game_s *g, player_id_t active_player)
     int16_t oi_scroll, oi_cancel, oi_accept;
     uint16_t scrollx = 0, scrolly = 0;
     struct starmap_data_s d;
-    fleet_enroute_t *r = &(g->enroute[ui_data.starmap.fleet_selected]);
+    fleet_enroute_t *r;
+    BOOLVEC_DECLARE(selected, FLEET_ENROUTE_MAX);
 
     d.g = g;
     d.api = active_player;
     d.anim_delay = 0;
 
+start_again:
+    BOOLVEC_CLEAR(selected, FLEET_ENROUTE_MAX);
+next_selected:
+    r = &(g->enroute[ui_data.starmap.fleet_selected]);
+    BOOLVEC_SET1(selected, ui_data.starmap.fleet_selected);
     d.en.can_move = g->eto[active_player].have_hyperspace_comm ? GOT_HYPERCOMM : NO_MOVE;
     d.en.pon = PLANET_NONE;
     for (int i = 0; i < g->galaxy_stars; ++i) {
@@ -232,16 +261,18 @@ do_accept:
             }
             ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
         }
-        if ((r->owner != active_player) || (d.en.can_move == NO_MOVE)) {
-            for (int i = 0; i < g->enroute_num; ++i) {
-                if (oi1 == d.oi_tbl_enroute[i]) {
-                    ui_data.starmap.fleet_selected = i;
-                    ui_data.ui_main_loop_action = UI_MAIN_LOOP_ENROUTE_SEL;
-                    ui_sound_play_sfx_24();
-                    flag_done = true;
-                    break;
+        for (int i = 0; i < g->enroute_num; ++i) {
+            if (oi1 == d.oi_tbl_enroute[i]) {
+                ui_data.starmap.fleet_selected = i;
+                ui_sound_play_sfx_24();
+                if (BOOLVEC_IS1(selected, i)) {
+                    goto start_again;
+                } else {
+                    goto next_selected;
                 }
             }
+        }
+        if ((r->owner != active_player) || (d.en.can_move == NO_MOVE)) {
             for (int i = 0; i < g->transport_num; ++i) {
                 if (oi1 == d.oi_tbl_transport[i]) {
                     ui_data.starmap.fleet_selected = i;
@@ -306,7 +337,8 @@ do_accept:
             ui_starmap_enroute_draw_cb(&d);
             uiobj_table_clear();
             UIOBJ_CLEAR_LOCAL();
-            ui_starmap_fill_oi_tbls(&d);
+            ui_starmap_fill_oi_tbls(&d, false);
+            ui_starmap_enroute_fill_oi_enroute(&d, active_player, selected);
             ui_starmap_fill_oi_tbl_stars(&d);
             if ((r->owner == active_player) && (d.en.can_move != NO_MOVE)) {
                 oi_cancel = uiobj_add_t0(227, 163, "", ui_data.gfx.starmap.reloc_bu_cancel, MOO_KEY_ESCAPE);
