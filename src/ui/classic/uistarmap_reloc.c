@@ -286,7 +286,6 @@ void ui_starmap_reloc(struct game_s *g, player_id_t active_player)
         for (int i = 0; i < g->galaxy_stars; ++i) {
             if (oi1 == d.oi_tbl_stars[i]) {
                 g->planet_focus_i[active_player] = i;
-                ui_starmap_set_pos_focus(g, active_player);
                 ui_sound_play_sfx_24();
                 break;
             }
