@@ -2097,6 +2097,6 @@ bool game_battle_with_human(struct battle_s *bt)
     p->factories = bt->fact;
     bt->bases = bt->item[0/*planet*/].num;
     game_battle_finish(bt);
-    ui_battle_shutdown(bt, (bt->planet_side != SIDE_NONE) && (p->owner == PLAYER_NONE));
+    ui_battle_shutdown(bt, (bt->planet_side != SIDE_NONE) && (p->owner == PLAYER_NONE), winner);
     return winner == SIDE_R;
 }
