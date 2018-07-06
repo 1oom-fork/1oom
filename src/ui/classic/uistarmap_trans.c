@@ -77,7 +77,7 @@ static void ui_starmap_trans_draw_cb(void *vptr)
         ) {
             ctbl = colortbl_line_red;
         } else {
-            ctbl = colortbl_line_hmm1;
+            ctbl = colortbl_line_green;
         }
         ui_draw_line_limit_ctbl(x0 + 6, y0 + 6, x1, y1, ctbl, 5, ui_data.starmap.line_anim_phase);
     }

@@ -154,7 +154,7 @@ struct starmap_data_s {
 extern const uint8_t colortbl_textbox[5];
 extern const uint8_t colortbl_line_red[5];
 extern const uint8_t colortbl_line_reloc[5];
-extern const uint8_t colortbl_line_hmm1[5];
+extern const uint8_t colortbl_line_green[5];
 
 extern void ui_starmap_fill_oi_ctrl(struct starmap_data_s *d);
 extern void ui_starmap_clear_oi_ctrl(struct starmap_data_s *d);
