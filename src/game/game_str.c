@@ -514,6 +514,7 @@ const char *game_str_sc_caught = "Spies Caught  Yours  Theirs";
 const char *game_str_bp_scombat = "Space Combat";
 const char *game_str_bp_attack = "attack";
 const char *game_str_bp_attacks = "attacks";
+const char *game_str_bp_won = "won";
 const char *game_str_bt_auto_move = "AUTO MOVE";
 const char *game_str_bt_pop = "POPULATION";
 const char *game_str_bt_ind = "INDUSTRY";
