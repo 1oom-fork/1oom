@@ -38,7 +38,7 @@ static void ui_starmap_reloc_draw_cb(void *vptr)
         int x1, y1;
         x1 = (pt->x - ui_data.starmap.x) * 2 + 14;
         y1 = (pt->y - ui_data.starmap.y) * 2 + 14;
-        ui_draw_line_limit_ctbl(x0 + 6, y0 + 6, x1, y1, colortbl_line_hmm1, 5, ui_data.starmap.line_anim_phase);
+        ui_draw_line_limit_ctbl(x0 + 6, y0 + 6, x1, y1, colortbl_line_green, 5, ui_data.starmap.line_anim_phase);
     }
     lbxgfx_draw_frame_offs(x0, y0, ui_data.gfx.starmap.planbord, STARMAP_LIMITS, UI_SCREEN_W);
     lbxgfx_draw_frame(222, 80, ui_data.gfx.starmap.relocate, UI_SCREEN_W);
