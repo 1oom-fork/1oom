@@ -27,7 +27,7 @@
 /* -------------------------------------------------------------------------- */
 
 const uint8_t colortbl_textbox[5] = { 0x18, 0x17, 0x16, 0x15, 0x14 };
-const uint8_t colortbl_line_enroute[5] = { 0x44, 0x43, 0x42, 0x41, 0x40 };
+const uint8_t colortbl_line_red[5] = { 0x44, 0x43, 0x42, 0x41, 0x40 };
 const uint8_t colortbl_line_reloc[5] = { 0x14, 0x15, 0x16, 0x17, 0x18 };
 const uint8_t colortbl_line_hmm1[5] = { 0xb0, 0xb1, 0xb2, 0xb3, 0xb4 };
 
@@ -640,7 +640,7 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
             }
             p = &g->planet[g->planet_focus_i[d->api]];
             if (g->eto[d->api].have_ia_scanner && (p->owner == d->api) && (r->owner != d->api) && (r->dest == g->planet_focus_i[d->api])) {
-                ui_draw_line_limit_ctbl(tx + 5, ty + 2, (p->x - x) * 2 + 14, (p->y - y) * 2 + 14, colortbl_line_enroute, 5, ui_data.starmap.line_anim_phase);
+                ui_draw_line_limit_ctbl(tx + 5, ty + 2, (p->x - x) * 2 + 14, (p->y - y) * 2 + 14, colortbl_line_red, 5, ui_data.starmap.line_anim_phase);
             }
             lbxgfx_draw_frame_offs(tx, ty, gfx, STARMAP_LIMITS, UI_SCREEN_W);
         }
@@ -659,7 +659,7 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
             }
             p = &g->planet[g->planet_focus_i[d->api]];
             if (g->eto[d->api].have_ia_scanner && (p->owner == d->api) && (r->owner != d->api) && (r->dest == g->planet_focus_i[d->api])) {
-                ui_draw_line_limit_ctbl(tx + 5, ty + 2, (p->x - x) * 2 + 14, (p->y - y) * 2 + 14, colortbl_line_enroute, 5, ui_data.starmap.line_anim_phase);
+                ui_draw_line_limit_ctbl(tx + 5, ty + 2, (p->x - x) * 2 + 14, (p->y - y) * 2 + 14, colortbl_line_red, 5, ui_data.starmap.line_anim_phase);
             }
             lbxgfx_draw_frame_offs(tx, ty, gfx, STARMAP_LIMITS, UI_SCREEN_W);
         }

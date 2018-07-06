@@ -65,7 +65,7 @@ static void ui_starmap_orbit_own_draw_cb(void *vptr)
             ctbl = colortbl_line_hmm1;
             d->oo.in_frange = true;
         } else {
-            ctbl = colortbl_line_enroute;
+            ctbl = colortbl_line_red;
             d->oo.in_frange = false;
         }
         ui_draw_line_limit_ctbl(x0 + 3, y0 + 1, x1 + 6, y1 + 6, ctbl, 5, ui_data.starmap.line_anim_phase);
