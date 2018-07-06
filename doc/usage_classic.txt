@@ -33,6 +33,7 @@ The config file item "ui.uiextra" (set via the -uiextra command-line option)
 enables the following extra UI features:
 - Continue and Undo saves can be chosen in the Load Game screen
 - New Game screen allows setting opponent race/banner/names and AI/human flag
+- Summary of forces shown before ship combat
 - New Auto button for space combat autoresolve
 
 The config file item "ui.uifixbugs" (set via the -uifixbugs command-line option)
