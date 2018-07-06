@@ -29,4 +29,5 @@ The following new UI features are always enabled/available:
 
 Extra UI features:
 - New Game screen allows setting opponent race/banner/names and AI/human flag
+- Summary of forces shown before ship combat
 - New Auto button for space combat autoresolve

@@ -90,7 +90,7 @@ typedef enum {
 } ui_battle_bomb_t;
 
 extern bool ui_battle_init(struct battle_s *bt);
-extern void ui_battle_shutdown(struct battle_s *bt, bool colony_destroyed);
+extern void ui_battle_shutdown(struct battle_s *bt, bool colony_destroyed, int winner);
 
 extern void ui_battle_draw_misshield(const struct battle_s *bt, int target_i, int target_x, int target_y, int missile_i);
 extern void ui_battle_draw_damage(const struct battle_s *bt, int target_i, int target_x, int target_y, uint32_t damage);

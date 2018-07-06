@@ -328,6 +328,7 @@ extern const char *game_str_sc_caught;
 extern const char *game_str_bp_scombat;
 extern const char *game_str_bp_attack;
 extern const char *game_str_bp_attacks;
+extern const char *game_str_bp_won;
 extern const char *game_str_bt_auto_move;
 extern const char *game_str_bt_pop;
 extern const char *game_str_bt_ind;
