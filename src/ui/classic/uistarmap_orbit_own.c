@@ -517,7 +517,7 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
             UIOBJ_CLEAR_LOCAL();
             STARMAP_UIOBJ_FILL_FX();
             /* uiobj_set_limits(STARMAP_LIMITS); */
-            ui_starmap_fill_oi_tbls(&d);
+            ui_starmap_fill_oi_tbls(&d, true);
             ui_starmap_fill_oi_tbl_stars(&d);
             oi_cancel = uiobj_add_t0(227, 180, "", ui_data.gfx.starmap.reloc_bu_cancel, MOO_KEY_ESCAPE);
             if (ui_starmap_orbit_own_in_frange(&d) && d.ss.shiptypenon0numsel) {
