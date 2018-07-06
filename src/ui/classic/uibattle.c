@@ -791,16 +791,15 @@ static void ui_battle_draw_colony_destroyed_cb(void *vptr)
 bool ui_battle_init(struct battle_s *bt)
 {
     static struct ui_battle_data_s ctx; /* HACK */
-    int party_human = bt->s[SIDE_L].party, party_opp = bt->s[SIDE_R].party;
     memset(&ctx, 0, sizeof(ctx));
     bt->uictx = &ctx;
     ctx.bt = bt;
     ctx.show_switch = (bt->g->gaux->local_players > 1);
     if (ctx.show_switch) {
-        ui_switch_2(bt->g, party_human, party_opp);
+        ui_switch_2(bt->g, bt->s[SIDE_L].party, bt->s[SIDE_R].party);
     }
     ui_sound_play_music(8);
-    if (!ui_battle_pre(bt->g, party_human, party_opp, bt->planet_i, bt->flag_human_att, ctx.show_switch)) {
+    if (!ui_battle_pre(bt->g, bt, ctx.show_switch, SIDE_NONE)) {
         return false;
     }
 
@@ -824,9 +823,9 @@ bool ui_battle_init(struct battle_s *bt)
     return true;
 }
 
-void ui_battle_shutdown(struct battle_s *bt, bool colony_destroyed)
+void ui_battle_shutdown(struct battle_s *bt, bool colony_destroyed, int winner)
 {
-    /*struct ui_battle_data_s *d = bt->uictx;*/
+    struct ui_battle_data_s *d = bt->uictx;
     ui_cursor_setup_area(1, &ui_cursor_area_tbl[0]);
     uiobj_set_help_id(-1);
     if (colony_destroyed && (!bt->autoresolve)) {
@@ -849,6 +848,9 @@ void ui_battle_shutdown(struct battle_s *bt, bool colony_destroyed)
     /*128c7*/
     uiobj_unset_callback();
     uiobj_table_clear();
+    if (bt->autoresolve) {
+        ui_battle_pre(bt->g, bt, d->show_switch, winner);
+    }
     hw_audio_music_fadeout();
     if (!bt->autoresolve) {
         ui_palette_fadeout_a_f_1();
