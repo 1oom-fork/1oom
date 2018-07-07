@@ -153,8 +153,10 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
             oi_tbl_p[NUM_SHIPDESIGNS],
             oi_tbl_m[NUM_SHIPDESIGNS],
             oi_tbl_a[NUM_SHIPDESIGNS],
-            oi_tbl_n[NUM_SHIPDESIGNS]
+            oi_tbl_n[NUM_SHIPDESIGNS],
+            oi_tbl_s[NUM_SHIPDESIGNS]
             ;
+    int16_t scrollship = 0;
     uint16_t scrollx = 0, scrolly = 0;
     struct starmap_data_s d;
     const fleet_orbit_t *r;
@@ -187,7 +189,7 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
         STARMAP_UIOBJ_CLEAR_FX(); \
         oi_accept = UIOBJI_INVALID; \
         oi_cancel = UIOBJI_INVALID; \
-        UIOBJI_SET_TBL4_INVALID(oi_tbl_p, oi_tbl_m, oi_tbl_a, oi_tbl_n); \
+        UIOBJI_SET_TBL5_INVALID(oi_tbl_p, oi_tbl_m, oi_tbl_a, oi_tbl_n, oi_tbl_s); \
     } while (0)
 
     UIOBJ_CLEAR_LOCAL();
@@ -418,19 +420,28 @@ do_accept:
             si = d.oo.sn0.type[i];
             per10num = os[si] / 10;
             SETMAX(per10num, 1);
-            if (oi1 == oi_tbl_p[i]) {
+            if ((oi1 == oi_tbl_p[i]) || ((oi1 == oi_tbl_s[i]) && ((scrollship > 0) != ui_mwi_counter))) {
                 shipcount_t t;
                 t = d.oo.ships[si] + per10num;
                 SETMIN(t, os[si]);
                 d.oo.ships[si] = t;
-                ui_sound_play_sfx_24();
+                if (scrollship) {
+                    scrollship = 0;
+                } else {
+                    ui_sound_play_sfx_24();
+                }
                 break;
-            } else if (oi1 == oi_tbl_m[i]) {
+            } else if ((oi1 == oi_tbl_m[i]) || ((oi1 == oi_tbl_s[i]) && ((scrollship < 0) != ui_mwi_counter))) {
                 shipcount_t t;
                 t = d.oo.ships[si];
                 t = (t < per10num) ? 0 : (t - per10num);
                 d.oo.ships[si] = t;
                 ui_sound_play_sfx_24();
+                if (scrollship) {
+                    scrollship = 0;
+                } else {
+                    ui_sound_play_sfx_24();
+                }
                 break;
             } else if (oi1 == oi_tbl_a[i]) {
                 d.oo.ships[si] = os[si];
@@ -484,6 +495,7 @@ do_accept:
                 oi_tbl_m[i] = uiobj_add_t0(277, 35 + i * 26, "", ui_data.gfx.starmap.move_but_m, MOO_KEY_UNKNOWN);
                 oi_tbl_a[i] = uiobj_add_t0(299, 35 + i * 26, "", ui_data.gfx.starmap.move_but_a, MOO_KEY_UNKNOWN);
                 oi_tbl_n[i] = uiobj_add_t0(265, 35 + i * 26, "", ui_data.gfx.starmap.move_but_n, MOO_KEY_UNKNOWN);
+                oi_tbl_s[i] = uiobj_add_mousewheel(227, 22 + i * 26, 319, 46 + i * 26, &scrollship);
             }
             ui_starmap_add_oi_bottom_buttons(&d);
             d.oi_tech = UIOBJI_INVALID;
