@@ -150,5 +150,6 @@ struct battle_s {
 extern void game_battle_prepare(struct battle_s *bt, int party_r, int party_l, uint8_t planet_i);
 extern void game_battle_finish(struct battle_s *bt);
 extern void game_battle_handle_all(struct game_s *g);
+extern void game_battle_count_hulls(const struct battle_s *bt, shipsum_t force[2][SHIP_HULL_NUM]);
 
 #endif
