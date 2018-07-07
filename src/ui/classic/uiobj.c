@@ -1329,10 +1329,13 @@ static int16_t uiobj_handle_input_sub0(void)
         }
         if (oi != 0) {
             if (p->type == UIOBJ_TYPE_SLIDER) {
-                if ((scroll > 0) != ui_mwi_slider) {
-                    uiobj_slider_plus(p, 1);
+                if (ui_mwi_slider) {
+                    scroll = -scroll;
+                }
+                if (scroll > 0) {
+                    uiobj_slider_plus(p, scroll);
                 } else {
-                    uiobj_slider_minus(p, 1);
+                    uiobj_slider_minus(p, -scroll);
                 }
                 return oi;
             } else if (p->type == UIOBJ_TYPE_WHEELAREA) {
