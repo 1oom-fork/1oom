@@ -133,23 +133,12 @@ static void ui_battle_prepost(const struct battle_s *bt, int winner)
 {
     int side_l = bt->flag_human_att ? SIDE_L : SIDE_R;
     shipsum_t force[2][SHIP_HULL_NUM];
-    shipsum_t bases = 0;
-    memset(force, 0, sizeof(force));
-    for (int i = 0; i <= bt->items_num; ++i) {
-        const struct battle_item_s *b = &(bt->item[i]);
-        if (b->side != SIDE_NONE) {
-            if (i == 0/*planet*/) {
-                bases = b->num;
-            } else {
-                force[b->side][b->hull] += b->num;
-            }
-        }
-    }
+    game_battle_count_hulls(bt, force);
     for (int i = 0; i < SHIP_HULL_NUM; ++i) {
         printf("- %5u %s %u\n", force[side_l][i], game_str_tbl_st_hull[i], force[side_l ^ 1][i]);
     }
-    if (bases) {
-        printf("- %s %u\n", game_str_sb_bases, bases);
+    if (bt->bases) {
+        printf("- %s %u\n", game_str_sb_bases, bt->bases);
     }
     if (winner != SIDE_NONE) {
         int party_winner = (winner != SIDE_NONE) ? bt->s[winner].party : -1;
