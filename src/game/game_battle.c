@@ -432,3 +432,30 @@ void game_battle_finish(struct battle_s *bt)
     }
     game_diplo_battle_finish(g, bt->s[SIDE_L].party, bt->s[SIDE_R].party, bt->pop - p->pop, bt->s[SIDE_L].apparent_force, bt->biodamage, bt->s[SIDE_R].apparent_force, bt->planet_i);
 }
+
+void game_battle_count_hulls(const struct battle_s *bt, shipsum_t force[2][SHIP_HULL_NUM])
+{
+    const struct game_s *g = bt->g;
+    for (int s = 0; s < 2; ++s) {
+        int party = bt->s[s].party;
+        for (ship_hull_t h = 0; h < SHIP_HULL_NUM; ++h) {
+            force[s][h] = 0;
+        }
+        if (party < PLAYER_NUM) {
+            const shipcount_t *ships;
+            const shipdesign_t *sd;
+            sd = &(g->srd[party].design[0]);
+            ships = &(g->eto[party].orbit[bt->planet_i].ships[0]);
+            for (int i = 0; i < NUM_SHIPDESIGNS; ++i) {
+                shipcount_t n;
+                n = ships[i];
+                if (n) {
+                    force[s][sd[i].hull] += n;
+                }
+            }
+        } else {
+            const struct battle_item_s *b = &(bt->item[bt->s[SIDE_L].items + 1]);
+            force[s][b->hull] += b->num;
+        }
+    }
+}
