@@ -401,6 +401,7 @@ do_accept:
                 for (int i = 0; i < NUM_SHIPDESIGNS; ++i) {
                     SETMIN(d.oo.ships[i], os[i]);
                 }
+                g->planet_focus_i[active_player] = d.oo.from;
             }
         } else if (oi1 == oi_scroll) {
             int x, y;
