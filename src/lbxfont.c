@@ -19,8 +19,8 @@
 static uint8_t *lbxfontdata = 0;
 
 static uint8_t lbxfont_temp_color = 0;
-static uint16_t lbxfont_temp_x = 0;
-static uint16_t lbxfont_temp_y = 0;
+static int16_t lbxfont_temp_x = 0;
+static int16_t lbxfont_temp_y = 0;
 static uint16_t lbxfont_hmm4 = 0;
 static uint8_t lbxfont_current_fontnum = 0;
 static uint8_t lbxfont_current_fonta2 = 0;
