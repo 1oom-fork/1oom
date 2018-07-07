@@ -172,16 +172,8 @@ bool ui_battle_pre(struct game_s *g, const struct battle_s *bt, bool hide_other,
         g->planet_focus_i[party_d] = bt->planet_i;
     }
     if (ui_extra_enabled) {
-        for (int i = 0; i <= bt->items_num; ++i) {
-            const struct battle_item_s *b = &(bt->item[i]);
-            if (b->side != SIDE_NONE) {
-                if (i == 0/*planet*/) {
-                    d->bases = b->num;
-                } else {
-                    d->force[b->side][b->hull] += b->num;
-                }
-            }
-        }
+        d->bases = bt->bases;
+        game_battle_count_hulls(bt, d->force);
     }
     uiobj_table_clear();
     oi_cont = uiobj_add_t0(227, 163, "", d->gfx_contbutt, MOO_KEY_c);
