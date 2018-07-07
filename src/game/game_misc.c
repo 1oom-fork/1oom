@@ -233,7 +233,7 @@ void game_update_eco_on_waste(struct game_s *g, int player_i, bool a4)
         planet_t *p = &(g->planet[i]);
         if (p->owner == player_i) {
             uint16_t v, fact, waste, prod;
-            int8_t left;
+            int16_t left;
             fact = p->factories;
             v = e->colonist_oper_factories * p->pop;
             SETMIN(fact, v);
