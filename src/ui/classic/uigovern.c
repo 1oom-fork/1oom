@@ -54,8 +54,9 @@ void ui_govern(struct game_s *g, player_id_t pi)
 {
     struct govern_data_s d;
     bool flag_done = false;
-    int16_t oi_cancel, oi_accept, oi_p, oi_m, oi_p10, oi_m10, oi_adjust;
+    int16_t oi_cancel, oi_accept, oi_p, oi_m, oi_p10, oi_m10, oi_adjust, oi_wheel;
     const int x = 56, y = 10;
+    int16_t scroll = 0;
     planet_t *p = &(g->planet[g->planet_focus_i[pi]]);
 
     ui_draw_copy_buf();
@@ -71,6 +72,7 @@ void ui_govern(struct game_s *g, player_id_t pi)
     oi_cancel = uiobj_add_t0(x + 10, y + 41, "", ui_data.gfx.starmap.reloc_bu_cancel, MOO_KEY_ESCAPE);
     oi_accept = uiobj_add_t0(x + 66, y + 41, "", ui_data.gfx.starmap.reloc_bu_accept, MOO_KEY_SPACE);
     oi_adjust = uiobj_add_t0(x + 66, y + 145, "", ui_data.gfx.screens.tech_but_ok, MOO_KEY_o);
+    oi_wheel = uiobj_add_mousewheel(x, y, x + 115, y + 59, &scroll);
 
     uiobj_set_callback_and_delay(govern_draw_cb, &d, 1);
 
@@ -89,6 +91,16 @@ void ui_govern(struct game_s *g, player_id_t pi)
             ui_sound_play_sfx_24();
             game_planet_govern_all_owned_by(g, pi);
             flag_done = true;
+        } else if (oi == oi_wheel) {
+            if (ui_mwi_counter) {
+                scroll = -scroll;
+            }
+            if (scroll < 0) {
+                SUBSAT0(d.target, -scroll);
+            } else {
+                ADDSATT(d.target, scroll, 0xffff);
+            }
+            scroll = 0;
         } else if (oi == oi_m) {
             SUBSAT0(d.target, 1);
         } else if (oi == oi_m10) {
@@ -101,7 +113,7 @@ void ui_govern(struct game_s *g, player_id_t pi)
         if (!flag_done) {
             govern_draw_cb(&d);
             ui_draw_finish();
-            ui_delay_ticks_or_click(3);
+            ui_delay_ticks_or_click(1);
         }
     }
 
