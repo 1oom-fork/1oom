@@ -397,6 +397,7 @@ do_accept:
                 for (int i = 0; i < NUM_SHIPDESIGNS; ++i) {
                     SETMIN(d.ships[i], os[i]);
                 }
+                g->planet_focus_i[active_player] = d.from;
             }
         } else if (oi1 == oi_scroll) {
             ui_starmap_scroll(g, scrollx, scrolly);
