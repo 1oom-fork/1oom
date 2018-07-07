@@ -223,7 +223,7 @@ void game_update_total_research(struct game_s *g)
     }
 }
 
-void game_update_eco_on_waste(struct game_s *g, int player_i, bool a4)
+void game_update_eco_on_waste(struct game_s *g, int player_i, bool force_adjust)
 {
     empiretechorbit_t *e = &(g->eto[player_i]);
     if (e->race == RACE_SILICOID) {
@@ -245,7 +245,7 @@ void game_update_eco_on_waste(struct game_s *g, int player_i, bool a4)
             }
             v = (waste * 100 + prod - 1) / prod;
             SETRANGE(v, 0, 100);
-            if ((p->slider[PLANET_SLIDER_ECO] < v) || a4) { /* TODO ??? */
+            if ((p->slider[PLANET_SLIDER_ECO] < v) || force_adjust) {
                 left = 100 - (v - p->slider[PLANET_SLIDER_ECO]);
                 p->slider[PLANET_SLIDER_ECO] = v;
                 p->slider[PLANET_SLIDER_SHIP] = (p->slider[PLANET_SLIDER_SHIP] * left) / 100;
