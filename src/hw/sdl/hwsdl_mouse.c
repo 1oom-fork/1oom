@@ -59,14 +59,8 @@ void hw_mouse_set_limits(int w, int h)
 void hw_mouse_set_scale(int w, int h)
 {
     hw_mouse_sx = w / hw_mouse_w;
-    if (hw_opt_mousediv > 1) {
-        hw_mouse_sx /= hw_opt_mousediv;
-    }
     SETMAX(hw_mouse_sx, 1);
     hw_mouse_sy = h / hw_mouse_h;
-    if (hw_opt_mousediv > 1) {
-        hw_mouse_sy /= hw_opt_mousediv;
-    }
     SETMAX(hw_mouse_sy, 1);
 }
 
