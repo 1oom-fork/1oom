@@ -29,7 +29,7 @@ The following new UI features are always enabled/available:
 - Lowercase allowed in save names
 - Load Game screen uses numbers as hotkeys for slots
 - Objects with hotkeys can be navigated to using cursor keys
-- Mouse wheel can be used to adjust sliders and scroll lists
+- Mouse wheel can be used to scroll lists and adjust many things
 - Clicking the portraits in Races screen brings Report page
 - Ind slider no longer shows 0.N/y when at max factories
 - Bases can be scrapped by clicking on the Bases text
