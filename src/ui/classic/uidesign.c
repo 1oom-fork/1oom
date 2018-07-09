@@ -38,12 +38,14 @@ struct ui_design_data_s {
     int16_t oi_tbl_weap[WEAPON_SLOT_NUM];
     int16_t oi_tbl_weap_up[WEAPON_SLOT_NUM];    /* + 1 */
     int16_t oi_tbl_weap_dn[WEAPON_SLOT_NUM];    /* + 2 */
+    int16_t oi_tbl_weap_n_scroll[WEAPON_SLOT_NUM];
     int16_t oi_cancel;
     int16_t oi_build;
     int16_t oi_clear;
     int16_t oi_name;
     int16_t oi_idn;
     int16_t oi_iup;
+    int16_t oi_iscroll;
     int16_t oi_man;
     int16_t oi_comp;
     int16_t oi_jammer;
@@ -53,6 +55,7 @@ struct ui_design_data_s {
     int16_t oi_tbl_spec[SPECIAL_SLOT_NUM];
     int16_t oi_tbl_hull[SHIP_HULL_NUM];
     int16_t oi_icon;
+    int16_t scroll;
 };
 
 static const uint8_t colortbls_sd[] = {
@@ -257,6 +260,7 @@ static void design_clear_ois(struct ui_design_data_s *u)
         u->oi_tbl_weap[i] = UIOBJI_INVALID;
         u->oi_tbl_weap_up[i] = UIOBJI_INVALID;
         u->oi_tbl_weap_dn[i] = UIOBJI_INVALID;
+        u->oi_tbl_weap_n_scroll[i] = UIOBJI_INVALID;
     }
     u->oi_cancel = UIOBJI_INVALID;
     u->oi_build = UIOBJI_INVALID;
@@ -264,6 +268,7 @@ static void design_clear_ois(struct ui_design_data_s *u)
     u->oi_name = UIOBJI_INVALID;
     u->oi_idn = UIOBJI_INVALID;
     u->oi_iup = UIOBJI_INVALID;
+    u->oi_iscroll = UIOBJI_INVALID;
     u->oi_man = UIOBJI_INVALID;
     u->oi_comp = UIOBJI_INVALID;
     u->oi_jammer = UIOBJI_INVALID;
@@ -277,6 +282,7 @@ static void design_clear_ois(struct ui_design_data_s *u)
         u->oi_tbl_hull[i] = UIOBJI_INVALID;
     }
     u->oi_icon = UIOBJI_INVALID;
+    u->scroll = 0;
 }
 
 static void design_init_ois(struct ui_design_data_s *u)
@@ -286,6 +292,7 @@ static void design_init_ois(struct ui_design_data_s *u)
     u->oi_iup = uiobj_add_t0(143, 162, "", ui_data.gfx.design.icon_up, MOO_KEY_UNKNOWN);
     u->oi_idn = uiobj_add_t0(143, 179, "", ui_data.gfx.design.icon_dn, MOO_KEY_UNKNOWN);
     u->oi_icon = uiobj_add_mousearea(89, 161, 128, 192, MOO_KEY_UNKNOWN);
+    u->oi_iscroll = uiobj_add_mousewheel(89, 161, 150, 192, &u->scroll);
     lbxfont_select(2, 6, 0, 3);
     u->oi_cancel = uiobj_add_t0(282, 150, game_str_sd_cancel, ui_data.gfx.design.blank, MOO_KEY_ESCAPE);
     u->oi_build = uiobj_add_t0(282, 182, game_str_sd_build, ui_data.gfx.design.blank, MOO_KEY_b);
@@ -309,10 +316,12 @@ static void design_init_ois(struct ui_design_data_s *u)
         u->oi_tbl_weap_dn[i] = uiobj_add_t2(59, i * 10 + 74, "", ui_data.gfx.design.count_dn, &d->flag_tbl_weap_dn[i], MOO_KEY_UNKNOWN);
         u->oi_tbl_weap_up[i] = uiobj_add_t2(59, i * 10 + 69, "", ui_data.gfx.design.count_up, &d->flag_tbl_weap_up[i], MOO_KEY_UNKNOWN);
         u->oi_tbl_weap[i] = uiobj_add_mousearea(16, i * 10 + 70, 305, i * 10 + 77, MOO_KEY_UNKNOWN);
+        u->oi_tbl_weap_n_scroll[i] = uiobj_add_mousewheel(59, i * 10 + 69, 80, i * 10 + 77, &u->scroll);
     }
     for (int i = 0; i < SPECIAL_SLOT_NUM; ++i) {
         u->oi_tbl_spec[i] = uiobj_add_mousearea(17, 115 + i * 10, 305, 123 + i * 10, MOO_KEY_UNKNOWN);
     }
+    u->scroll = 0;
 }
 
 struct xy_s {
@@ -1121,6 +1130,7 @@ bool ui_design(struct game_s *g, struct game_design_s *gd, player_id_t active_pl
     while (!flag_done) {
         int16_t oi;
         ui_delay_prepare();
+        u.scroll = 0;
         oi = uiobj_handle_input_cond();
         if (oi == u.oi_name) {
             ui_sound_play_sfx_24();
@@ -1154,7 +1164,10 @@ bool ui_design(struct game_s *g, struct game_design_s *gd, player_id_t active_pl
             }
         }
         for (int i = 0; i < WEAPON_SLOT_NUM; ++i) {
-            if ((oi == u.oi_tbl_weap_up[i]) && (sd->wpnn[i] < 99)) {
+            if (1
+              && (sd->wpnn[i] < 99)
+              && ((oi == u.oi_tbl_weap_up[i]) || ((oi == u.oi_tbl_weap_n_scroll[i]) && ((u.scroll > 0) != ui_mwi_counter)))
+            ) {
                 int space;
                 ui_sound_play_sfx_24();
                 ++sd->wpnn[i];
@@ -1168,7 +1181,10 @@ bool ui_design(struct game_s *g, struct game_design_s *gd, player_id_t active_pl
                     game_design_update_engines(sd);
                 }
                 break;
-            } else if ((oi == u.oi_tbl_weap_dn[i]) && (sd->wpnn[i] > 0)) {
+            } else if (1
+              && (sd->wpnn[i] > 0)
+              && ((oi == u.oi_tbl_weap_dn[i]) || ((oi == u.oi_tbl_weap_n_scroll[i]) && ((u.scroll < 0) != ui_mwi_counter)))
+            ) {
                 ui_sound_play_sfx_24();
                 --sd->wpnn[i];
                 game_design_update_haveflags(&d);
@@ -1180,10 +1196,10 @@ bool ui_design(struct game_s *g, struct game_design_s *gd, player_id_t active_pl
                 break;
             }
         }
-        if ((oi == u.oi_iup) || (oi == u.oi_icon)) {
+        if ((oi == u.oi_iup) || (oi == u.oi_icon) || ((oi == u.oi_iscroll) && (u.scroll < 0))) {
             ui_sound_play_sfx_24();
             game_design_look_next(gd);
-        } else if (oi == u.oi_idn) {
+        } else if ((oi == u.oi_idn) || ((oi == u.oi_iscroll) && (u.scroll > 0))) {
             ui_sound_play_sfx_24();
             game_design_look_prev(gd);
         } else if (oi == u.oi_armor) {
