@@ -113,7 +113,6 @@ For SDL HWs:
                            default = 833333, or (1000000 * 5)/6
     -forcesw             Force software rendering
     -noforcesw           Do not force software rendering
-    -mousediv DIV        Set mouse movement divisor
     -sdlmixersf FILE.SF2 Set SDL_mixer soundfont
 
 For SDL1 HW:
