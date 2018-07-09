@@ -106,7 +106,11 @@ static void ui_battle_pre_draw_cb(void *vptr)
         strcpy(buf, game_str_tbl_races[race]);
     }
     if (ui_extra_enabled) {
-        lbxfont_print_str_normal(230, 80, buf, UI_SCREEN_W);
+        if (d->flag_human_att) {
+            lbxfont_print_str_normal(230, 80, buf, UI_SCREEN_W);
+        } else {
+            lbxfont_print_str_right(308, 80, buf, UI_SCREEN_W);
+        }
     } else {
         lbxfont_print_str_center(267, 100, buf, UI_SCREEN_W);
     }
@@ -116,22 +120,30 @@ static void ui_battle_pre_draw_cb(void *vptr)
         strcpy(buf, game_str_tbl_races[race]);
     }
     if (ui_extra_enabled) {
-        lbxfont_print_str_right(308, 100, buf, UI_SCREEN_W);
+        if (d->flag_human_att) {
+            lbxfont_print_str_right(308, 100, buf, UI_SCREEN_W);
+        } else {
+            lbxfont_print_str_normal(230, 100, buf, UI_SCREEN_W);
+        }
     } else {
         lbxfont_print_str_center(267, 130, buf, UI_SCREEN_W);
     }
     if (ui_extra_enabled) {
         int y = 112;
-        int side_l = d->flag_human_att ? SIDE_L : SIDE_R;
         lbxfont_select(0, 0x2, 0, 0);
         for (int i = 0; i < SHIP_HULL_NUM; ++i, y += 8) {
-            lbxfont_print_num_normal(230, y, d->force[side_l][i], UI_SCREEN_W);
-            lbxfont_print_num_right(308, y, d->force[side_l ^ 1][i], UI_SCREEN_W);
+            lbxfont_print_num_normal(230, y, d->force[SIDE_L][i], UI_SCREEN_W);
+            lbxfont_print_num_right(308, y, d->force[SIDE_R][i], UI_SCREEN_W);
             lbxfont_print_str_center(269, y, game_str_tbl_st_hull[i], UI_SCREEN_W);
         }
         if (d->bases) {
-            lbxfont_print_num_right(308, y, d->bases, UI_SCREEN_W);
-            lbxfont_print_str_normal(230, y, game_str_bt_bases, UI_SCREEN_W);
+            if (d->flag_human_att) {
+                lbxfont_print_num_right(308, y, d->bases, UI_SCREEN_W);
+                lbxfont_print_str_normal(230, y, game_str_bt_bases, UI_SCREEN_W);
+            } else {
+                lbxfont_print_num_normal(230, y, d->bases, UI_SCREEN_W);
+                lbxfont_print_str_right(308, y, game_str_bt_bases, UI_SCREEN_W);
+            }
         }
         if (d->party_winner >= 0) {
             const char *str;
