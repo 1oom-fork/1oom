@@ -232,8 +232,10 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
     bool flag_done = false;
     int16_t oi_b, oi_c, oi_scroll, oi_starview1, oi_starview2, oi_shippic, oi_finished, oi_equals,
             oi_f2, oi_f3, oi_f4, oi_f5, oi_f6, oi_f7, oi_f8, oi_f9, oi_f10,
-            oi_alt_galaxy, oi_alt_m, oi_alt_c, oi_alt_p, oi_alt_r, oi_alt_events
+            oi_alt_galaxy, oi_alt_m, oi_alt_c, oi_alt_p, oi_alt_r, oi_alt_events,
+            oi_wheelshippic
             ;
+    int16_t scrollmisc = 0;
     int16_t scrollx = 0, scrolly = 0;
     struct starmap_data_s d;
 
@@ -260,6 +262,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
         oi_shippic = UIOBJI_INVALID; \
         oi_finished = UIOBJI_INVALID; \
         oi_equals = UIOBJI_INVALID; \
+        oi_wheelshippic = UIOBJI_INVALID; \
         d.sm.oi_ship = UIOBJI_INVALID; \
         d.sm.oi_reloc = UIOBJI_INVALID; \
         d.sm.oi_trans = UIOBJI_INVALID; \
@@ -282,6 +285,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
         int16_t oi1, oi2;
         p = &g->planet[g->planet_focus_i[active_player]];
         uiobj_set_help_id((p->owner == active_player) ? 0 : 3);
+        scrollmisc = 0;
         oi1 = uiobj_handle_input_cond();
         oi2 = uiobj_at_cursor();
         ui_delay_prepare();
@@ -396,7 +400,10 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
                 }
             }
         }
-        if ((oi1 == d.sm.oi_ship) || (oi1 == oi_shippic)) {
+        if (0
+          || (oi1 == d.sm.oi_ship) || (oi1 == oi_shippic)
+          || ((oi1 == oi_wheelshippic) && (scrollmisc < 0))
+        ) {
             int n;
             ui_sound_play_sfx_24();
             n = p->buildship + 1;
@@ -407,6 +414,20 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
                     n = BUILDSHIP_STARGATE;
                 } else {
                     n = 0;
+                }
+            }
+            p->buildship = n;
+        }
+        if ((oi1 == oi_wheelshippic) && (scrollmisc > 0)) {
+            int n;
+            n = p->buildship - 1;
+            if (n >= g->eto[active_player].shipdesigns_num) {
+                n = g->eto[active_player].shipdesigns_num - 1;
+            } else if (n < 0) {
+                if (g->eto[active_player].have_stargates && !p->have_stargate) {
+                    n = BUILDSHIP_STARGATE;
+                } else {
+                    n = g->eto[active_player].shipdesigns_num - 1;
                 }
             }
             p->buildship = n;
@@ -644,6 +665,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             if (p->owner == active_player) {
                 oi_starview2 = uiobj_add_mousearea(227, 24, 310, 53, MOO_KEY_UNKNOWN);
                 oi_shippic = uiobj_add_mousearea(228, 139, 275, 175, MOO_KEY_UNKNOWN);
+                oi_wheelshippic = uiobj_add_mousewheel(228, 139, 275, 175, &scrollmisc);
             }
             ui_starmap_fill_oi_tbls(&d);
             {
