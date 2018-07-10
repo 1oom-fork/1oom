@@ -337,6 +337,19 @@ static int video_sw_set(int w, int h)
             window_flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
         }
     }
+    {
+        int real_w = w, real_h = h;
+        if (window_flags & SDL_WINDOW_FULLSCREEN_DESKTOP) {
+            SDL_Rect bounds;
+            if (SDL_GetDisplayBounds(video.display, &bounds) < 0) {
+                log_warning("SDL2: Failed to read display bounds for display #%d!\n", video.display);
+            } else {
+                real_w = bounds.w;
+                real_h = bounds.h;
+            }
+        }
+        hw_mouse_set_scale(real_w, real_h);
+    }
     /* Create window and renderer contexts. We leave the window position "undefined".
        If "window_flags" contains the fullscreen flag (see above), then w and h are ignored.
     */
@@ -445,7 +458,6 @@ static int video_sw_set(int w, int h)
 
     /* Initially create the upscaled texture for rendering to screen */
     video_create_upscaled_texture(true);
-    hw_mouse_set_scale(w, h);
     return 0;
 }
 
