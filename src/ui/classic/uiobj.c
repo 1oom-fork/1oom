@@ -111,14 +111,13 @@ typedef struct uiobj_s {
 
 static uint16_t uiobj_table_num = 0;
 static uint16_t uiobj_table_num_old = 0;
-static int16_t uiobj_hmm1_oi = -1;
+static int16_t uiobj_focus_oi = -1;
 static int16_t uiobj_clicked_oi = 0;
 static int uiobj_xoff = 1;
 static int uiobj_yoff = -1;
-static uint16_t uiobj_hmm3_fonta4 = 0;
 static int16_t uiobj_mouseoff = 0;
 static int16_t uiobj_handle_downcount = 0;
-static uint16_t uiobj_kbd_hmm1 = 0;
+static int16_t uiobj_kbd_alt_oi = 0;
 static uint16_t uiobj_delay = 2;
 static int16_t uiobj_help_id = -1;
 static bool uiobj_flag_select_list_active = false;
@@ -345,7 +344,7 @@ static bool uiobj_textinput_do(uiobj_t *p, int w, char *buf, int buflen, bool al
         char c;
         while (!(kbd_have_keypress() || flag_mouse_button)) {
             hw_event_handle();
-            if ((1/*mouse_flag_initialized*/) && (mouse_buttons || (mouse_getclear_hmm4() != 0))) {
+            if ((1/*mouse_flag_initialized*/) && (mouse_buttons || (mouse_getclear_click_hw() != 0))) {
                 flag_mouse_button = true;
                 break;
             } else {
@@ -472,9 +471,9 @@ static bool uiobj_textinput_do(uiobj_t *p, int w, char *buf, int buflen, bool al
         }
     }
     /* TODO ui_cursor_erase0(); */
-    uiobj_hmm1_oi = -1;
-    mouse_getclear_hmm4();
-    mouse_getclear_hmm5();
+    uiobj_focus_oi = -1;
+    mouse_getclear_click_hw();
+    mouse_getclear_click_sw();
     return flag_quit;
 }
 
@@ -554,11 +553,11 @@ static inline void uiobj_handle_hmm1_sub1(int i)
             uiobj_handle_t03_cond(p, *p->vptr != p->t0.z18);
             break;
         case 0xa:
-            lbxfont_select(p->ta.fontnum, p->ta.fonta2, uiobj_hmm3_fonta4, 0);
+            lbxfont_select(p->ta.fontnum, p->ta.fonta2, 0, 0);
             if (*p->vptr != p->ta.z18) {
                 if (!p->ta.z12) {
                     /* ?? what is the point in this second call? */
-                    lbxfont_select(p->ta.fontnum, p->ta.fonta2b, uiobj_hmm3_fonta4, 0);
+                    lbxfont_select(p->ta.fontnum, p->ta.fonta2b, 0, 0);
                 }
                 /*19ca3*/
                 lbxfont_print_str_normal(p->x0, p->y0 + 1, p->ta.str, UI_SCREEN_W);
@@ -577,7 +576,7 @@ static inline void uiobj_handle_hmm1_sub1(int i)
             }
             break;
         case 4:
-            if (uiobj_hmm1_oi != i) {
+            if (uiobj_focus_oi != i) {
                 lbxfont_select(p->t4.fontnum, p->t4.fonta2, p->t4.fonta4, 0);
                 ui_draw_filled_rect(p->x0, p->y0, p->x1, p->y1, p->t4.rectcolor);
                 if (!p->t4.align_right) {
@@ -631,12 +630,12 @@ static void uiobj_handle_hmm2(int i, uint16_t a2)
             } else if (p->ta.z12) {
                 *p->vptr = p->ta.z18;
             }
-            lbxfont_select(p->ta.fontnum, p->ta.fonta2, uiobj_hmm3_fonta4, 0);
+            lbxfont_select(p->ta.fontnum, p->ta.fonta2, 0, 0);
             if (*p->vptr != p->ta.z18) {
                 if (p->ta.z12) {
                     lbxfont_print_str_normal(p->x0, p->y0, p->ta.str, UI_SCREEN_W);
                 } else {
-                    lbxfont_select(p->ta.fontnum, p->ta.fonta2b, uiobj_hmm3_fonta4, 0);
+                    lbxfont_select(p->ta.fontnum, p->ta.fonta2b, 0, 0);
                     lbxfont_print_str_normal(p->x0, p->y0 + 1, p->ta.str, UI_SCREEN_W);
                     lbxfont_select_subcolors_0();
                 }
@@ -1103,17 +1102,17 @@ static uint32_t uiobj_handle_kbd(int16_t *oiptr)
         LOG_DEBUG((0, "%s: got 0 key 0x%x\n", __func__, KBD_GET_KEY(key), key));
     }
 #endif
-    if (uiobj_kbd_hmm1 >= uiobj_table_num) {
-        uiobj_kbd_hmm1 = 0;
+    if (uiobj_kbd_alt_oi >= uiobj_table_num) {
+        uiobj_kbd_alt_oi = 0;
     }
-    oi = uiobj_kbd_hmm1 + 1;
+    oi = uiobj_kbd_alt_oi + 1;
     oi = uiobj_handle_kbd_find_alt(oi, key);
     p = &uiobj_tbl[oi];
     if (oi == uiobj_table_num) {
         oi = uiobj_handle_kbd_find_alt(1, key);
         p = &uiobj_tbl[oi];
     }
-    uiobj_kbd_hmm1 = oi;
+    uiobj_kbd_alt_oi = oi;
     flag_reset_alt_str = true;
     if (oi < uiobj_table_num) {
         *oiptr = oi;
@@ -1208,24 +1207,24 @@ static void uiobj_cursor_redraw_hmm2(int16_t oi, int mx, int my)
     if ((mx < 0) || (mx >= UI_SCREEN_W) || (my < 0) || (my >= UI_SCREEN_H)) {
         return;
     }
-    uiobj_t *p = &uiobj_tbl[oi];
     if (1/*mouse_flag_initialized*/) {
-        if (uiobj_hmm1_oi != oi) {
+        uiobj_t *p = &uiobj_tbl[oi];
+        if (uiobj_focus_oi != oi) {
             ui_cursor_erase0();
-            if (uiobj_hmm1_oi != -1) {
-                uiobj_t *q = &uiobj_tbl[uiobj_hmm1_oi];
-                /*if (uiobj_hmm1_oi != oi) {  redundant, checked above */
+            if (uiobj_focus_oi != -1) {
+                uiobj_t *q = &uiobj_tbl[uiobj_focus_oi];
+                /*if (uiobj_focus_oi != oi) {  redundant, checked above */
                 if ((q->type != 3) || (p->type == 3)) {
                     if (q->type == 0xa) {
                         if ((p->type == 0xa) && p->ta.z12) {
-                            uiobj_handle_hmm2(uiobj_hmm1_oi, 0);
+                            uiobj_handle_hmm2(uiobj_focus_oi, 0);
                         }
                     } else {
-                        uiobj_handle_hmm2(uiobj_hmm1_oi, 0);
+                        uiobj_handle_hmm2(uiobj_focus_oi, 0);
                     }
                 }
             }
-            uiobj_hmm1_oi = oi;
+            uiobj_focus_oi = oi;
             uiobj_handle_hmm2(oi, 1);
             if (p->type == 4) {
                 mx = moouse_x;
@@ -1235,7 +1234,6 @@ static void uiobj_cursor_redraw_hmm2(int16_t oi, int mx, int my)
             ui_cursor_draw0(mx, my);
             mouse_set_xy(mx, my);
         }
-        /*1b083*/
     } else {
         /*don't care*/
     }
@@ -1308,7 +1306,7 @@ static int16_t uiobj_handle_input_sub0(void)
     int16_t oi = 0;
     uiobj_t *p, *q;
     int mx = moouse_x, my = moouse_y, mb;
-    uiobj_hmm1_oi = -1;
+    uiobj_focus_oi = -1;
     uiobj_clicked_oi = 0;
     uiobj_mouseoff = ui_cursor_mouseoff;
     if (kbd_have_keypress()) {
@@ -1354,7 +1352,7 @@ static int16_t uiobj_handle_input_sub0(void)
                 }
             }
             uiobj_finish_callback_delay_1();
-            uiobj_hmm1_oi = -1;
+            uiobj_focus_oi = -1;
             return oi;
         }
         if (k == MOO_KEY_RETURN) {
@@ -1378,14 +1376,14 @@ static int16_t uiobj_handle_input_sub0(void)
                 if (uiobj_flag_skip_delay == 0) {
                     uiobj_finish_callback_delay_1();
                 }
-                uiobj_hmm1_oi = -1;
+                uiobj_focus_oi = -1;
                 return oi;
             } else {
                 if (uiobj_flag_select_list_active) {
                     for (oi = 1; oi < uiobj_table_num; ++oi) {
                         p = &uiobj_tbl[oi];
                         if ((p->type == 0xa) && (*p->vptr == p->ta.z18) && p->ta.z12) {
-                            uiobj_hmm1_oi = -1;
+                            uiobj_focus_oi = -1;
                             return oi;
                         }
                     }
@@ -1402,18 +1400,18 @@ static int16_t uiobj_handle_input_sub0(void)
                     } else {
                         uiobj_slider_minus(p, 5);
                     }
-                    uiobj_hmm1_oi = -1;
+                    uiobj_focus_oi = -1;
                     return oi;
                 }
             }
         }
-        uiobj_hmm1_oi = -1;
+        uiobj_focus_oi = -1;
         return 0;
     }
     if (mouse_scroll) {
         int scroll = mouse_scroll;
         mouse_scroll = 0;
-        uiobj_hmm1_oi = -1;
+        uiobj_focus_oi = -1;
         oi = 0;
         ui_cursor_update_gfx_i(mx, my);
         uiobj_mouseoff = ui_cursor_mouseoff;
@@ -1440,13 +1438,13 @@ static int16_t uiobj_handle_input_sub0(void)
         return 0;
     }
     if (mouse_buttons == 0) {
-        if (!mouse_getclear_hmm4()) {
+        if (!mouse_getclear_click_hw()) {
             return 0;
         }
         mb = mouse_click_buttons;
         if (mb == MOUSE_BUTTON_MASK_RIGHT) {
-            mouse_getclear_hmm4();
-            mouse_getclear_hmm5();
+            mouse_getclear_click_hw();
+            mouse_getclear_click_sw();
             return -1;
         } else {
             mx = mouse_click_x;
@@ -1469,9 +1467,9 @@ static int16_t uiobj_handle_input_sub0(void)
                 uiobj_cursor_redraw_hmm2(oi, mx, my);
                 uiobj_finish_callback_delay_1();
             }
-            uiobj_hmm1_oi = -1;
+            uiobj_focus_oi = -1;
             if (oi != 0) {
-                mouse_getclear_hmm5();
+                mouse_getclear_click_sw();
             }
             {
                 uiobj_clicked_oi = oi;
@@ -1488,8 +1486,8 @@ static int16_t uiobj_handle_input_sub0(void)
             while ((mb = mouse_buttons) == MOUSE_BUTTON_MASK_RIGHT) {
                 uiobj_finish_callback_delay_1();
             }
-            mouse_getclear_hmm4();
-            mouse_getclear_hmm5();
+            mouse_getclear_click_hw();
+            mouse_getclear_click_sw();
             return -1;
         }
         while (mouse_buttons != 0) {
@@ -1498,26 +1496,26 @@ static int16_t uiobj_handle_input_sub0(void)
             uiobj_mouseoff = ui_cursor_mouseoff;
             oi = uiobj_find_obj_at_cursor();
             if (oi == 0) {
-                if (uiobj_hmm1_oi != -1) {
-                    p = &uiobj_tbl[uiobj_hmm1_oi];
+                if (uiobj_focus_oi != -1) {
+                    p = &uiobj_tbl[uiobj_focus_oi];
                     if (p->type == 6) {
                         uiobj_do_callback();
                     }
                     if ((p->type != 3) && (p->type != 0xa)) {
                         ui_cursor_erase0();
-                        uiobj_handle_hmm2(uiobj_hmm1_oi, 0);
+                        uiobj_handle_hmm2(uiobj_focus_oi, 0);
                         ui_cursor_store_bg0(mx, my);
                         ui_cursor_draw0(mx, my);
                         mouse_set_xy(mx, my);
                     }
-                    uiobj_hmm1_oi = -1;
+                    uiobj_focus_oi = -1;
                 }
                 mouse_set_click_xy(mx, my);
                 break;
             }
-            q = &uiobj_tbl[uiobj_hmm1_oi];
+            q = &uiobj_tbl[uiobj_focus_oi];
             p = &uiobj_tbl[oi];
-            if ((oi != uiobj_hmm1_oi) && (p->type != 4)) {
+            if ((oi != uiobj_focus_oi) && (p->type != 4)) {
                 if (q->type == 6) {
                     uiobj_do_callback();
                 }
@@ -1537,8 +1535,8 @@ static int16_t uiobj_handle_input_sub0(void)
         }
         uiobj_clicked_oi = 0;
         if (oi != 0) {
-            mouse_getclear_hmm4();
-            mouse_getclear_hmm5();
+            mouse_getclear_click_hw();
+            mouse_getclear_click_sw();
             switch (p->type) {
                 case 2:
                     if (*p->vptr == 0) {
@@ -1558,7 +1556,7 @@ static int16_t uiobj_handle_input_sub0(void)
                     break;
             }
         }
-        uiobj_hmm1_oi = -1;
+        uiobj_focus_oi = -1;
         if (mb == MOUSE_BUTTON_MASK_RIGHT) {
             return -oi;
         } else {
@@ -1597,14 +1595,14 @@ static void uiobj_add_t03_do(uint16_t x, uint16_t y, const char *str, uint8_t *l
 void uiobj_table_clear(void)
 {
     uiobj_table_num = 1;
-    uiobj_hmm1_oi = -1;
+    uiobj_focus_oi = -1;
     uiobj_clicked_oi = 0;
 }
 
 void uiobj_table_set_last(int16_t oi)
 {
     uiobj_table_num = oi + 1;
-    uiobj_hmm1_oi = -1;
+    uiobj_focus_oi = -1;
 }
 
 void uiobj_table_num_store(void)
@@ -1626,7 +1624,7 @@ void uiobj_handle_hmm1(void)
 {
     for (int i = 1; i < uiobj_table_num; ++i) {
         uiobj_t *p = &uiobj_tbl[i];
-        if ((i == uiobj_hmm1_oi) && (p->type != 4)) {
+        if ((i == uiobj_focus_oi) && (p->type != 4)) {
             uiobj_handle_hmm2(i, 1);
         } else {
             uiobj_handle_hmm1_sub1(i);
@@ -1674,8 +1672,8 @@ void uiobj_finish_frame(void)
 void uiobj_set_downcount(int16_t v)
 {
     uiobj_handle_downcount = v;
-    mouse_getclear_hmm4();
-    mouse_getclear_hmm5();
+    mouse_getclear_click_hw();
+    mouse_getclear_click_sw();
 }
 
 void uiobj_set_xyoff(int xoff, int yoff)
@@ -2086,8 +2084,8 @@ int16_t uiobj_select_from_list1(int x, int y, int w, const char *title, char con
     }
     uiobj_table_clear();
     uiobj_flag_select_list_active = false;
-    mouse_getclear_hmm4();
-    mouse_getclear_hmm5();
+    mouse_getclear_click_hw();
+    mouse_getclear_click_sw();
     if (oi < 0) {
         return -1;
     }
@@ -2294,8 +2292,8 @@ int16_t uiobj_select_from_list2(int x, int y, int w, const char *title, char con
     uiobj_table_clear();
     uiobj_flag_select_list_active = false;
     uiobj_flag_select_list_multipage = false;
-    mouse_getclear_hmm4();
-    mouse_getclear_hmm5();
+    mouse_getclear_click_hw();
+    mouse_getclear_click_sw();
     if (oi < 0) {
         *selptr = curval;
         return -1;
@@ -2313,13 +2311,13 @@ bool uiobj_read_str(int x, int y, int w, char *buf, int buflen, uint8_t rcolor, 
         while (mouse_buttons) {
             hw_event_handle();
         }
-        mouse_getclear_hmm4();
-        mouse_getclear_hmm5();
+        mouse_getclear_click_hw();
+        mouse_getclear_click_sw();
     }
     uiobj_set_downcount(1);
     {
         int16_t oi = uiobj_add_textinput(x, y, w, buf, buflen, rcolor, alignr, false, ctbl, MOO_KEY_UNKNOWN);
-        uiobj_hmm1_oi = oi;
+        uiobj_focus_oi = oi;
         p = &uiobj_tbl[oi];
     }
     flag_quit = uiobj_textinput_do(p, w, buf, buflen, true, false);
@@ -2343,14 +2341,14 @@ void uiobj_input_wait(void)
     bool got_any = false, got_mb = false;
     uiobj_input_flush();
     while (!got_any) {
-        if (mouse_buttons || mouse_getclear_hmm4()) {
+        if (mouse_buttons || mouse_getclear_click_hw()) {
             got_any = true;
             got_mb = true;
         }
         if (kbd_have_keypress()) {
             kbd_get_keypress();
             got_any = true;
-            mouse_getclear_hmm4();
+            mouse_getclear_click_hw();
         }
         uiobj_finish_callback_delay_hmm5();
     }
@@ -2359,6 +2357,6 @@ void uiobj_input_wait(void)
             uiobj_finish_callback_delay_hmm5();
         }
     }
-    mouse_getclear_hmm4();
-    mouse_getclear_hmm5();
+    mouse_getclear_click_hw();
+    mouse_getclear_click_sw();
 }
