@@ -23,16 +23,6 @@
 
 /* -------------------------------------------------------------------------- */
 
-static void ui_starmap_draw_hmm5(void)
-{
-    ui_draw_filled_rect(227, 73, 310, 83, 4, ui_scale);
-    ui_draw_filled_rect(228, 74, 309, 83, 7, ui_scale);
-    ui_draw_line1(226, 79, 226, 83, 0xfd, ui_scale);
-    ui_draw_line1(225, 79, 225, 83, 0xfc, ui_scale);
-    ui_draw_line1(312, 77, 312, 82, 0xfc, ui_scale);
-    ui_draw_line1(311, 79, 311, 84, 0xfd, ui_scale);
-}
-
 static void ui_starmap_trans_draw_cb(void *vptr)
 {
     struct starmap_data_s *d = vptr;
@@ -48,22 +38,17 @@ static void ui_starmap_trans_draw_cb(void *vptr)
     y0 = (pf->y - ui_data.starmap.y) * 2 + 8;
     if (pt->owner == d->api) {
         lbxgfx_draw_frame(222, 80, ui_data.gfx.starmap.relocate, UI_SCREEN_W, ui_scale);
-        if (pt->unrest == PLANET_UNREST_REBELLION) {
-            ui_starmap_draw_hmm5();
-        }
+        /* if (pt->unrest == PLANET_UNREST_REBELLION) {} never true, trans button disabled in uistarmap.c */
     } else {
-        /*72f20*/
         lbxgfx_draw_frame_offs(222, 80, ui_data.gfx.starmap.relocate, 0, 83, 310, 199, UI_SCREEN_W, ui_scale);
         if (BOOLVEC_IS0(pt->explored, d->api)) {
             ui_draw_filled_rect(227, 57, 310, 159, 0, ui_scale);
             lbxgfx_draw_frame_offs(224, 5, ui_data.gfx.starmap.unexplor, 227, 57, 310, 159, UI_SCREEN_W, ui_scale);
         } else {
-            /*72fa9*/
             ui_draw_filled_rect(227, 73, 310, 159, 7, ui_scale);
             ui_draw_box1(227, 73, 310, 159, 4, 4, ui_scale);
         }
     }
-    /*72fe5*/
     lbxgfx_draw_frame_offs(x0, y0, ui_data.gfx.starmap.planbord, STARMAP_LIMITS, UI_SCREEN_W, starmap_scale);
     lbxgfx_set_new_frame(ui_data.gfx.starmap.reloc_bu_accept, 1);
     lbxgfx_draw_frame(271, 163, ui_data.gfx.starmap.reloc_bu_accept, UI_SCREEN_W, ui_scale);
@@ -85,7 +70,6 @@ static void ui_starmap_trans_draw_cb(void *vptr)
         }
         ui_draw_line_limit_ctbl(x0 + 6, y0 + 6, x1, y1, ctbl, 5, ui_data.starmap.line_anim_phase, starmap_scale);
     }
-    /*7317e*/
     if (d->tr.from != g->planet_focus_i[d->api]) {
         if (pt->within_frange[d->api] != 1) {
             int mindist = game_get_min_dist(g, d->api, g->planet_focus_i[d->api]);
@@ -119,18 +103,16 @@ static void ui_starmap_trans_draw_cb(void *vptr)
                 eta = game_calc_eta(g, engine, pf->x, pf->y, pt->x, pt->y);
                 sprintf(buf, "%s %i %s", game_str_sm_eta, eta, (eta == 1) ? game_str_sm_turn : game_str_sm_turns);
             }
-            /*734e1*/
             lbxfont_select(0, 0, 0, 0);
             lbxfont_print_str_center(268, 149, buf, UI_SCREEN_W, ui_scale);
             lbxgfx_draw_frame(230, 123, ui_data.gfx.starmap.tran_bar, UI_SCREEN_W, ui_scale);
             lbxfont_select(0, 6, 0, 0);
-            if (pt->owner != PLAYER_NONE) {/* FIXME BUG MOO1 tests for == PLAYER_NONE, reading from eto offs 0xcc */
+            if (pt->owner != PLAYER_NONE) {/* WASBUG MOO1 tests for == PLAYER_NONE, reading from eto offs 0xcc */
                 treaty = g->eto[d->api].treaty[pt->owner];
             }
             if ((treaty == TREATY_NONAGGRESSION) || (treaty == TREATY_ALLIANCE)) {
                 lbxfont_print_str_split(228, 105, 84, game_str_sm_trwarna, 2, UI_SCREEN_W, UI_SCREEN_H, ui_scale);
             } else {
-                /*73571*/
                 int v = 0;
                 if (pf->owner == pt->owner) {
                     v = pt->pop;
@@ -146,12 +128,10 @@ static void ui_starmap_trans_draw_cb(void *vptr)
                         lbxfont_print_str_split(228, 101, 80, buf, 2, UI_SCREEN_W, UI_SCREEN_H, ui_scale);
                     }
                 } else {
-                    /*7366f*/
                     const char *s = (pt->owner == pf->owner) ? game_str_sm_trchnum1 : game_str_sm_trchnum2;
                     lbxfont_print_str_split(228, 105, 84, s, 2, UI_SCREEN_W, UI_SCREEN_H, ui_scale);
                 }
             }
-            /*73699*/
             lbxfont_select_set_12_1(0, 1, 0, 0);
             lbxfont_print_num_right(273, 137, d->tr.num, UI_SCREEN_W, ui_scale);
             ui_draw_filled_rect(258, 127, 299, 129, 0x2f, ui_scale);
@@ -160,11 +140,9 @@ static void ui_starmap_trans_draw_cb(void *vptr)
             }
         }
     } else {
-        /*73704*/
         lbxfont_select(0, 6, 0, 0);
         lbxfont_print_str_split(229, 110, 80, game_str_sm_seltr, 2, UI_SCREEN_W, UI_SCREEN_H, ui_scale);
     }
-    /*7372e*/
     lbxfont_select_set_12_1(5, 5, 0, 0);
     {
         int y;
