@@ -121,7 +121,7 @@ static int uiobj_yoff = -1;
 static uint16_t uiobj_hmm3_fonta4 = 0;
 static int16_t uiobj_mouseoff = 0;
 static int16_t uiobj_handle_downcount = 0;
-static uint16_t uiobj_kbd_hmm1 = 0;
+static int16_t uiobj_kbd_alt_oi = 0;
 static uint16_t uiobj_delay = 2;
 static int16_t uiobj_help_id = 0;
 static int16_t uiobj_hmm8 = 1;
@@ -1092,10 +1092,10 @@ static uint32_t uiobj_handle_kbd(int16_t *oiptr)
         LOG_DEBUG((0, "%s: got 0 key 0x%x\n", KBD_GET_KEY(key), key));
     }
 #endif
-    if (uiobj_kbd_hmm1 >= uiobj_table_num) {
-        uiobj_kbd_hmm1 = 0;
+    if (uiobj_kbd_alt_oi >= uiobj_table_num) {
+        uiobj_kbd_alt_oi = 0;
     }
-    oi = uiobj_kbd_hmm1 + 1;
+    oi = uiobj_kbd_alt_oi + 1;
     p = &uiobj_tbl[oi];
     /*key = ucase(key)*/
     goto loc_14417;
@@ -1141,7 +1141,7 @@ static uint32_t uiobj_handle_kbd(int16_t *oiptr)
         goto loc_14455;
     }
     loc_144cf:
-    uiobj_kbd_hmm1 = oi;
+    uiobj_kbd_alt_oi = oi;
     v4 = 1;
     if (oi < uiobj_table_num) {
         *oiptr = oi;
