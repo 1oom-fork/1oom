@@ -858,3 +858,12 @@ void ui_starmap_scroll(const struct game_s *g, int scrollx, int scrolly, uint8_t
         ui_starmap_set_pos_focus(g, g->active_player);
     }
 }
+
+/* compute maximum starmap_scale such that map is as big as possible and not clipped */
+void ui_starmap_compute_scale(const struct game_s *g)
+{
+    int x = ((222 / 2 * ui_scale) / g->galaxy_maxx);
+    int y = ((178 / 2 * ui_scale) / g->galaxy_maxy);
+    starmap_scale = MIN(x, y);
+    SETRANGE(starmap_scale, 1, ui_scale);
+}
