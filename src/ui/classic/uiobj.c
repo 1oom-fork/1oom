@@ -139,10 +139,9 @@ static int16_t uiobj_mouseoff = 0;
 static int16_t uiobj_handle_downcount = 0;
 static uint16_t uiobj_kbd_hmm1 = 0;
 static uint16_t uiobj_delay = 2;
-static uint16_t uiobj_hmm6 = 0;
 static int16_t uiobj_help_id = -1;
-static int16_t uiobj_hmm8 = 1;
-static bool uiobj_hmm9 = false;
+static bool uiobj_flag_select_list_active = false;
+static bool uiobj_flag_select_list_multipage = false;
 static int16_t uiobj_kbd_movey = -1;
 static bool uiobj_flag_skip_delay = false;
 
@@ -707,7 +706,7 @@ static void uiobj_handle_hmm2(int i, uint16_t a2)
     }
 }
 
-static int16_t uiobj_kbd_dir_key_dy(int diry)
+static int16_t uiobj_kbd_dir_key_dy_list(int diry)
 {
     int16_t oi2 = uiobj_at_cursor();
     int16_t oi = oi2;
@@ -720,8 +719,7 @@ static int16_t uiobj_kbd_dir_key_dy(int diry)
                 }
             }
             if (!((oi < (uiobj_table_num - 1)) && (uiobj_tbl[oi].type == 0xa))) {
-                if (uiobj_hmm9) {
-                    /*goto loc_18cd3;*/
+                if (uiobj_flag_select_list_multipage) {
                     oi = oi2;
                     uiobj_kbd_movey = 1;
                 } else {
@@ -734,20 +732,13 @@ static int16_t uiobj_kbd_dir_key_dy(int diry)
                     }
                     if (oi >= uiobj_table_num) {
                         oi = oi2;
-                    } else {
-                        /*loc_18cd3:*/
-                        oi = oi2;
-                        uiobj_kbd_movey = 1;
                     }
                 }
             }
-            /*loc_18cdb: goto loc_18d98;*/
         } else {
-            /*18cde*/
-            if (uiobj_hmm9 && (oi != 1)) {
+            if (uiobj_flag_select_list_multipage && (oi == 1)) {
                 uiobj_kbd_movey = -1;
                 oi = 1;
-                /*goto loc_18d98;*/
             } else {
                 if (oi > 1) {
                     --oi;
@@ -761,10 +752,9 @@ static int16_t uiobj_kbd_dir_key_dy(int diry)
                     --oi;
                 }
                 if (oi <= 0) {
-                    if (uiobj_hmm9) {
+                    if (uiobj_flag_select_list_multipage) {
                         uiobj_kbd_movey = -1;
                         oi = 1;
-                        /*goto loc_18d98;*/
                     } else {
                         oi = uiobj_table_num - 1 - 1;
                         while (oi && /*not tested in MOO1!*/(uiobj_tbl[oi].type == 0xa) && uiobj_tbl[oi].ta.z12) {
@@ -776,14 +766,11 @@ static int16_t uiobj_kbd_dir_key_dy(int diry)
                         if (oi == 0) {
                             oi = oi2;
                         }
-                        /*goto loc_18d98;*/
                     }
-                    /*loc_18d98;*/
                 }
             }
         }
     } else {
-        /*18d9b*/
         p = &uiobj_tbl[1];
         if (p->vptr && (*p->vptr >= 0)) {
             oi2 = *p->vptr + 1;
@@ -798,7 +785,7 @@ static int16_t uiobj_kbd_dir_key_dy(int diry)
                     }
                 }
                 if (!((oi < uiobj_table_num) && (uiobj_tbl[oi].type == 0xa))) {
-                    if (uiobj_hmm9) {
+                    if (uiobj_flag_select_list_multipage) {
                         uiobj_kbd_movey = 1;
                     } else if (oi < uiobj_table_num) {
                         oi = 1;
@@ -811,8 +798,7 @@ static int16_t uiobj_kbd_dir_key_dy(int diry)
                     }
                 }
             } else {
-                /*18e65*/
-                if ((oi == 1) && uiobj_hmm9) {
+                if ((oi == 1) && uiobj_flag_select_list_multipage) {
                     uiobj_kbd_movey = -1;
                 } else {
                     if (oi <= 1) {
@@ -834,10 +820,7 @@ static int16_t uiobj_kbd_dir_key_dy(int diry)
                     }
                 }
             }
-            /*18ed3*/
-            /*goto 18f0d;*/
         } else {
-            /*18ed5*/
             for (oi = 1; oi < uiobj_table_num; ++oi) {
                 if (/*not tested in MOO1!*/(uiobj_tbl[oi].type == 0xa) && uiobj_tbl[oi].ta.z12) {
                     break;
@@ -848,7 +831,6 @@ static int16_t uiobj_kbd_dir_key_dy(int diry)
             }
         }
     }
-    /*18f0d*/
     if ((oi < 0) || (oi >= uiobj_table_num)) {
         oi = 0;
     }
@@ -866,7 +848,9 @@ static int16_t uiobj_kbd_dir_key_dy(int diry)
             ui_cursor_draw0(mouse_stored_x, mouse_stored_y);
             /* TODO hw_redraw */
             mouse_set_xy(mouse_stored_x, mouse_stored_y);
-            /* TODO *p->vprt = p->z18; */
+            if (p->type == 0xa) {
+                *p->vptr = p->ta.z18;
+            }
         }
     }
     return oi;
@@ -1058,8 +1042,8 @@ static int16_t uiobj_kbd_dir_key_dxdy(int dirx, int diry, int16_t oi2, int mx, i
 
 static int16_t uiobj_kbd_dir_key(int dirx, int diry)
 {
-    if ((uiobj_hmm6 != 0) && (diry != 0)) {
-        return uiobj_kbd_dir_key_dy(diry);
+    if (uiobj_flag_select_list_active && (diry != 0)) {
+        return uiobj_kbd_dir_key_dy_list(diry);
     } else {
         int mx, my;
         int16_t oi, oi2;
@@ -1436,7 +1420,7 @@ static int16_t uiobj_handle_input_sub0(void)
                 uiobj_hmm1_oi = -1;
                 return oi;
             } else {
-                if (uiobj_hmm6 != 0) {
+                if (uiobj_flag_select_list_active) {
                     for (oi = 1; oi < uiobj_table_num; ++oi) {
                         p = &uiobj_tbl[oi];
                         if ((p->type == 0xa) && (*p->vptr == p->ta.z18) && p->ta.z12) {
@@ -1795,11 +1779,6 @@ void uiobj_set_help_id(int16_t v)
     uiobj_help_id = v;
 }
 
-void uiobj_set_hmm8_0(void)
-{
-    uiobj_hmm8 = 0;
-}
-
 int16_t uiobj_get_clicked_oi(void)
 {
     return uiobj_clicked_oi;
@@ -2091,7 +2070,7 @@ void uiobj_ta_set_val_1(int16_t oi)
     }
 }
 
-int16_t uiobj_select_from_list1(int x, int y, int w, const char *title, char const * const *strtbl, int16_t *selptr, const bool *condtbl, uint16_t subtype, uint8_t *sp0p, uint16_t sp0v, uint16_t sp1, uint16_t sp2, uint16_t sp3)
+int16_t uiobj_select_from_list1(int x, int y, int w, const char *title, char const * const *strtbl, int16_t *selptr, const bool *condtbl, uint16_t subtype, uint8_t *sp0p, uint16_t sp0v, uint16_t sp1, uint16_t sp2, uint16_t sp3, bool update_at_cursor)
 {
     int h, dy, ty = y, di = -1;
     bool flag_done = false, toz12, flag_copy_buf = false;
@@ -2099,7 +2078,7 @@ int16_t uiobj_select_from_list1(int x, int y, int w, const char *title, char con
     int16_t oi = 0, oi_title, v18 = 0;
     char const * const *s = strtbl;
 
-    uiobj_hmm6 = 1;
+    uiobj_flag_select_list_active = true;
     uiobj_set_downcount(1);
     uiobj_table_clear();
     h = lbxfont_get_height();
@@ -2156,7 +2135,7 @@ int16_t uiobj_select_from_list1(int x, int y, int w, const char *title, char con
             break;
         }
         uiobj_do_callback();
-        if (uiobj_hmm8 != 0) {
+        if (update_at_cursor) {
             int oi2;
             oi2 = uiobj_at_cursor();
             if (oi2 > 0) {
@@ -2172,8 +2151,7 @@ int16_t uiobj_select_from_list1(int x, int y, int w, const char *title, char con
         ui_delay_ticks_or_click(uiobj_delay);
     }
     uiobj_table_clear();
-    uiobj_hmm6 = 0;
-    uiobj_hmm8 = 1;
+    uiobj_flag_select_list_active = false;
     mouse_getclear_hmm4();
     mouse_getclear_hmm5();
     if (oi < 0) {
@@ -2182,7 +2160,7 @@ int16_t uiobj_select_from_list1(int x, int y, int w, const char *title, char con
     return oi - 1;
 }
 
-int16_t uiobj_select_from_list2(int x, int y, int w, const char *title, char const * const *strtbl, int16_t *selptr, const bool *condtbl, int linenum, int upx, int upy, uint8_t *uplbx, int dnx, int dny, uint8_t *dnlbx, uint16_t subtype, uint8_t *sp0p, uint16_t sp0v, uint16_t sp1, uint16_t sp2, uint16_t sp3)
+int16_t uiobj_select_from_list2(int x, int y, int w, const char *title, char const * const *strtbl, int16_t *selptr, const bool *condtbl, int linenum, int upx, int upy, uint8_t *uplbx, int dnx, int dny, uint8_t *dnlbx, uint16_t subtype, uint8_t *sp0p, uint16_t sp0v, uint16_t sp1, uint16_t sp2, uint16_t sp3, bool update_at_cursor)
 {
     int h, dy, ty, linei = 0, itemi = 0, itemnum, itemoffs, foundi = 0;
     bool flag_done = false, flag_copy_buf = false, flag_found = false;
@@ -2190,8 +2168,8 @@ int16_t uiobj_select_from_list2(int x, int y, int w, const char *title, char con
     int16_t oi = 0, oi_title, oi_up, oi_dn, oi_wheel, v18 = 0, upvar, dnvar, curval, scroll = 0;
     char const * const *s = strtbl;
 
-    uiobj_hmm6 = 1;
-    uiobj_hmm9 = 1;
+    uiobj_flag_select_list_active = true;
+    uiobj_flag_select_list_multipage = true;
     uiobj_kbd_movey = 0;
     fonta4 = lbxfont_get_current_fonta4();
     fonta2b = lbxfont_get_current_fonta2b();
@@ -2321,21 +2299,31 @@ int16_t uiobj_select_from_list2(int x, int y, int w, const char *title, char con
             itemoffs = i;
             flag_rebuild = true;
         }
-        uiobj_kbd_movey = 0;
         if (flag_rebuild) {
             uiobj_table_clear();
             lbxfont_select(lbxfont_get_current_fontnum(), lbxfont_get_current_fonta2(), fonta2b, 0);
             *selptr = -1;
-            if ((!condtbl) || condtbl[itemoffs]) {
-                *selptr = itemoffs;
-            } else {
-                int i = itemoffs;
-                while (i <= (itemoffs + linenum)) {
-                    if ((!condtbl) || condtbl[i]) {
-                        *selptr = i;
-                        break;
+            if (uiobj_kbd_movey == 1) {
+                if ((!condtbl) || condtbl[itemoffs + linenum - 1]) {
+                    *selptr = itemoffs + linenum - 1;
+                } else {
+                    for (int i = itemoffs + linenum - 1; i > 0; --i) {
+                        if ((!condtbl) || condtbl[i]) {
+                            *selptr = i;
+                            break;
+                        }
                     }
-                    ++i;
+                }
+            } else {
+                if ((!condtbl) || condtbl[itemoffs]) {
+                    *selptr = itemoffs;
+                } else {
+                    for (int i = itemoffs; i < (itemoffs + linenum); ++i) {
+                        if ((!condtbl) || condtbl[i]) {
+                            *selptr = i;
+                            break;
+                        }
+                    }
                 }
             }
             s = &strtbl[itemoffs];
@@ -2352,7 +2340,8 @@ int16_t uiobj_select_from_list2(int x, int y, int w, const char *title, char con
             oi_dn = uiobj_add_t2(dnx, dny, "", dnlbx, &dnvar, MOO_KEY_PAGEDOWN);
             oi_wheel = uiobj_add_mousewheel(0, 0, 319, 199, &scroll);
         }
-        if (uiobj_hmm8 != 0) {
+        uiobj_kbd_movey = 0;
+        if (update_at_cursor) {
             int oi2;
             oi2 = uiobj_at_cursor();
             if (oi2 > 0) {
@@ -2369,9 +2358,8 @@ int16_t uiobj_select_from_list2(int x, int y, int w, const char *title, char con
         ui_delay_ticks_or_click(uiobj_delay);
     }
     uiobj_table_clear();
-    uiobj_hmm6 = 0;
-    uiobj_hmm8 = 1;
-    uiobj_hmm9 = 0;
+    uiobj_flag_select_list_active = false;
+    uiobj_flag_select_list_multipage = false;
     mouse_getclear_hmm4();
     mouse_getclear_hmm5();
     if (oi < 0) {
