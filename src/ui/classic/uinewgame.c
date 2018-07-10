@@ -132,7 +132,7 @@ static int16_t ui_new_game_choose_race(struct game_new_options_s *newopts, struc
     uiobj_set_callback_and_delay(new_game_draw_race_cb, d, 2);
     uiobj_table_clear();
     lbxfont_select(5, 0xf, 0, 0);
-    race = uiobj_select_from_list1(0xa, 0xa, 0x32, game_str_ng_choose_race, (char const * const *)d->str_tbl_2space_race, &d->selected, 0, 0xf, 0, 2, 0, 0, 0);
+    race = uiobj_select_from_list1(0xa, 0xa, 0x32, game_str_ng_choose_race, (char const * const *)d->str_tbl_2space_race, &d->selected, 0, 0xf, 0, 2, 0, 0, 0, true);
     if (race == -1) {
         ui_sound_play_sfx_06();
         return -1;
@@ -176,7 +176,7 @@ static int16_t ui_new_game_choose_banner(struct game_new_options_s *newopts, str
     uiobj_table_clear();
     uiobj_set_callback_and_delay(new_game_draw_banner_cb, d, 2);
     lbxfont_select(5, 0xf, 0, 0);
-    banner = uiobj_select_from_list1(0xa, 0xa, 0x32, game_str_ng_choose_banner, (char const * const *)d->str_tbl_2space_banner, &d->selected, 0, 0xf, 0, 2, 0, 0, 0);
+    banner = uiobj_select_from_list1(0xa, 0xa, 0x32, game_str_ng_choose_banner, (char const * const *)d->str_tbl_2space_banner, &d->selected, 0, 0xf, 0, 2, 0, 0, 0, true);
     if (banner == -1) {
         ui_sound_play_sfx_06();
         return -1;
