@@ -2929,13 +2929,13 @@ static void game_ai_classic_battle_ai_turn(struct battle_s *bt)
 
 static bool game_ai_classic_battle_ai_retreat(struct battle_s *bt)
 {
-    int tbl_hmm1[BATTLE_ITEM_MAX];
+    int missile[BATTLE_ITEM_MAX];
     int tbl_hmm2[BATTLE_ITEM_MAX];
     int tbl_hmm3[2] = { 0, 0 };
     int tbl_hmm4[2] = { 0, 0 };
     for (int i = 0; i < BATTLE_ITEM_MAX; ++i) {
         const struct battle_item_s *b = &(bt->item[i]);
-        tbl_hmm1[i] = 0;
+        missile[i] = 0;
         tbl_hmm2[i] = (b->hp1 * b->repair) / 5;
     }
     for (int i = 0; i < bt->num_missile; ++i) {
@@ -2943,8 +2943,8 @@ static bool game_ai_classic_battle_ai_retreat(struct battle_s *bt)
         if (m->target != MISSILE_TARGET_NONE) {
             int s;
             s = bt->item[m->target].side;
-            tbl_hmm1[m->source] += 2;
-            tbl_hmm3[s] += game_ai_battle_missile_dmg(bt, i) / (tbl_hmm1[m->source] + 1);
+            missile[m->source] += 2;
+            tbl_hmm3[s] += game_ai_battle_missile_dmg(bt, i) / (missile[m->source] + 1);
             tbl_hmm3[s] -= tbl_hmm2[m->target];
             tbl_hmm2[m->target] = 0;
         }
