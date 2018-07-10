@@ -609,7 +609,7 @@ static void uiobj_handle_hmm2(int i, uint16_t a2)
     }
 }
 
-static int16_t uiobj_kbd_dir_key_dy(int diry)
+static int16_t uiobj_kbd_dir_key_dy_list(int diry)
 {
     int16_t oi2 = uiobj_at_cursor();
     int16_t oi = oi2;
@@ -948,7 +948,7 @@ static int16_t uiobj_kbd_dir_key_dxdy(int dirx, int diry, int16_t oi2, int mx, i
 static int16_t uiobj_kbd_dir_key(int dirx, int diry)
 {
     if (uiobj_flag_select_list_active && (diry != 0)) {
-        return uiobj_kbd_dir_key_dy(diry);
+        return uiobj_kbd_dir_key_dy_list(diry);
     } else {
         int mx, my;
         int16_t oi, oi2;
