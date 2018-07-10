@@ -9,8 +9,8 @@
 
 /* ------------------------------------------------------------------------- */
 
-static bool mouse_hmm4 = false;
-static bool mouse_hmm5 = false;
+static bool mouse_have_click_hw = false;
+static bool mouse_have_click_sw = false;
 
 static int moo_mouse_x = 0;
 static int moo_mouse_y = 0;
@@ -59,8 +59,8 @@ void mouse_set_buttons_from_hw(int buttons)
         mouse_click_buttons = buttons;
         moo_mouse_click_x = moo_mouse_x;
         moo_mouse_click_y = moo_mouse_y;
-        mouse_hmm4 = true;
-        mouse_hmm5 = true;
+        mouse_have_click_hw = true;
+        mouse_have_click_sw = true;
     }
 }
 
@@ -72,7 +72,7 @@ void mouse_set_xy(int mx, int my)
 
 void mouse_set_click_xy(int mx, int my)
 {
-    mouse_hmm5 = true;
+    mouse_have_click_sw = true;
     moo_mouse_click_x = mx;
     moo_mouse_click_y = my;
 }
@@ -99,14 +99,14 @@ int mouse_get_click_y(void)
 
 bool mouse_getclear_click_hw(void)
 {
-    bool r = mouse_hmm4;
-    mouse_hmm4 = false;
+    bool r = mouse_have_click_hw;
+    mouse_have_click_hw = false;
     return r;
 }
 
 bool mouse_getclear_click_sw(void)
 {
-    bool r = mouse_hmm5;
-    mouse_hmm5 = false;
+    bool r = mouse_have_click_sw;
+    mouse_have_click_sw = false;
     return r;
 }
