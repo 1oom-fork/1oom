@@ -121,7 +121,7 @@ static int uiobj_yoff = -1;
 static uint16_t uiobj_hmm3_fonta4 = 0;
 static int16_t uiobj_mouseoff = 0;
 static int16_t uiobj_handle_downcount = 0;
-static uint16_t uiobj_kbd_hmm1 = 0;
+static int16_t uiobj_kbd_alt_oi = 0;
 static uint16_t uiobj_delay = 2;
 static int16_t uiobj_help_id = -1;
 static int16_t uiobj_hmm8 = 1;
@@ -1015,16 +1015,16 @@ static uint32_t uiobj_handle_kbd(int16_t *oiptr)
     uint32_t key = kbd_get_keypress();
     int16_t /*si*/oi, /*di*/oi2;
     bool flag_reset_alt_str;
-    if (uiobj_kbd_hmm1 >= uiobj_table_num) {
-        uiobj_kbd_hmm1 = 0;
+    if (uiobj_kbd_alt_oi >= uiobj_table_num) {
+        uiobj_kbd_alt_oi = 0;
     }
-    oi = uiobj_kbd_hmm1 + 1;
+    oi = uiobj_kbd_alt_oi + 1;
     oi = uiobj_handle_kbd_find_alt(oi, key);
     /*key = ucase(key)*/
     if (oi == uiobj_table_num) {
         oi = uiobj_handle_kbd_find_alt(1, key);
     }
-    uiobj_kbd_hmm1 = oi;
+    uiobj_kbd_alt_oi = oi;
     flag_reset_alt_str = true;
     if (oi < uiobj_table_num) {
         uiobj_t *p = &uiobj_tbl[oi];
