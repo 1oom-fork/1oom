@@ -23,7 +23,7 @@ extern int mouse_get_x(void);
 extern int mouse_get_y(void);
 extern int mouse_get_click_x(void);
 extern int mouse_get_click_y(void);
-extern bool mouse_getclear_hmm4(void);
-extern bool mouse_getclear_hmm5(void);
+extern bool mouse_getclear_click_hw(void);
+extern bool mouse_getclear_click_sw(void);
 
 #endif
