@@ -22,16 +22,6 @@
 
 /* -------------------------------------------------------------------------- */
 
-static void ui_starmap_draw_hmm5(void)
-{
-    ui_draw_filled_rect(227, 73, 310, 83, 4);
-    ui_draw_filled_rect(228, 74, 309, 83, 7);
-    ui_draw_line1(226, 79, 226, 83, 0xfd);
-    ui_draw_line1(225, 79, 225, 83, 0xfc);
-    ui_draw_line1(312, 77, 312, 82, 0xfc);
-    ui_draw_line1(311, 79, 311, 84, 0xfd);
-}
-
 static void ui_starmap_trans_draw_cb(void *vptr)
 {
     struct starmap_data_s *d = vptr;
@@ -46,9 +36,7 @@ static void ui_starmap_trans_draw_cb(void *vptr)
     y0 = (pf->y - ui_data.starmap.y) * 2 + 8;
     if (pt->owner == d->api) {
         lbxgfx_draw_frame(222, 80, ui_data.gfx.starmap.relocate, UI_SCREEN_W);
-        if (pt->unrest == PLANET_UNREST_REBELLION) {
-            ui_starmap_draw_hmm5();
-        }
+        /* if (pt->unrest == PLANET_UNREST_REBELLION) {} never true, trans button disabled in uistarmap.c */
     } else {
         lbxgfx_draw_frame_offs(222, 80, ui_data.gfx.starmap.relocate, 0, 83, 310, 199, UI_SCREEN_W);
         if (BOOLVEC_IS0(pt->explored, d->api)) {
@@ -117,7 +105,7 @@ static void ui_starmap_trans_draw_cb(void *vptr)
             lbxfont_print_str_center(268, 149, buf, UI_SCREEN_W);
             lbxgfx_draw_frame(230, 123, ui_data.gfx.starmap.tran_bar, UI_SCREEN_W);
             lbxfont_select(0, 6, 0, 0);
-            if (pt->owner != PLAYER_NONE) {/* FIXME BUG MOO1 tests for == PLAYER_NONE, reading from eto offs 0xcc */
+            if (pt->owner != PLAYER_NONE) {/* WASBUG MOO1 tests for == PLAYER_NONE, reading from eto offs 0xcc */
                 treaty = g->eto[d->api].treaty[pt->owner];
             }
             if ((treaty == TREATY_NONAGGRESSION) || (treaty == TREATY_ALLIANCE)) {
