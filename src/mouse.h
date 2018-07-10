@@ -20,7 +20,7 @@ extern void mouse_set_buttons_from_hw(int buttons);
 extern void mouse_set_click_xy(int mx, int my);
 extern void mouse_set_xy(int mx, int my);
 
-extern bool mouse_getclear_hmm4(void);
-extern bool mouse_getclear_hmm5(void);
+extern bool mouse_getclear_click_hw(void);
+extern bool mouse_getclear_click_sw(void);
 
 #endif

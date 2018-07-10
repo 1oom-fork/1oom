@@ -52,14 +52,14 @@ void mouse_set_click_xy(int mx, int my)
     mouse_click_y = my;
 }
 
-bool mouse_getclear_hmm4(void)
+bool mouse_getclear_click_hw(void)
 {
     bool r = mouse_hmm4;
     mouse_hmm4 = false;
     return r;
 }
 
-bool mouse_getclear_hmm5(void)
+bool mouse_getclear_click_sw(void)
 {
     bool r = mouse_hmm5;
     mouse_hmm5 = false;
