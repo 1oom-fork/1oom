@@ -17,10 +17,6 @@ typedef enum { SIDE_L, SIDE_R, SIDE_NONE } battle_side_i_t; /* FIXME SIDE_NONE i
 struct battle_item_s {
     uint8_t *gfx;
     char name[SHIP_NAME_LEN];
-    uint16_t f10;
-    uint16_t f12;
-    uint16_t f14;
-    uint16_t f16;
     uint8_t shiptbli;
     int8_t complevel;
     ship_special_t special[SPECIAL_SLOT_NUM];

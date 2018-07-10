@@ -132,7 +132,6 @@ static uiobj_id_t uiobj_focus_oi = UIOBJI_ESC;
 static uiobj_id_t uiobj_clicked_oi = UIOBJI_NONE;
 static int uiobj_xoff = 1;
 static int uiobj_yoff = -1;
-static uint16_t uiobj_hmm3_fonta4 = 0;
 static int16_t uiobj_mouseoff = 0;
 static int16_t uiobj_handle_downcount = 0;
 static uiobj_id_t uiobj_kbd_alt_oi = UIOBJI_NONE;
@@ -506,11 +505,11 @@ static inline void uiobj_handle_objects_sub1(uiobj_id_t oi)
             uiobj_handle_t03_cond(p, *p->vptr != p->t0.z18);
             break;
         case UIOBJ_TYPE_TEXTLINE:
-            lbxfont_select(p->ta.fontnum, p->ta.fonta2, uiobj_hmm3_fonta4, 0);
+            lbxfont_select(p->ta.fontnum, p->ta.fonta2, 0, 0);
             if (*p->vptr != p->ta.z18) {
                 if (!p->ta.z12) {
                     /* ?? what is the point in this second call? */
-                    lbxfont_select(p->ta.fontnum, p->ta.fonta2b, uiobj_hmm3_fonta4, 0);
+                    lbxfont_select(p->ta.fontnum, p->ta.fonta2b, 0, 0);
                 }
                 /*19ca3*/
                 lbxfont_print_str_normal(p->x0, p->y0 + 1, p->ta.str);
@@ -583,12 +582,12 @@ static void uiobj_handle_click(uiobj_id_t oi, bool in_focus)
             } else if (p->ta.z12) {
                 *p->vptr = p->ta.z18;
             }
-            lbxfont_select(p->ta.fontnum, p->ta.fonta2, uiobj_hmm3_fonta4, 0);
+            lbxfont_select(p->ta.fontnum, p->ta.fonta2, 0, 0);
             if (*p->vptr != p->ta.z18) {
                 if (p->ta.z12) {
                     lbxfont_print_str_normal(p->x0, p->y0, p->ta.str);
                 } else {
-                    lbxfont_select(p->ta.fontnum, p->ta.fonta2b, uiobj_hmm3_fonta4, 0);
+                    lbxfont_select(p->ta.fontnum, p->ta.fonta2b, 0, 0);
                     lbxfont_print_str_normal(p->x0, p->y0 + 1, p->ta.str);
                     lbxfont_select_subcolors_0();
                 }
