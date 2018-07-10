@@ -5,6 +5,7 @@
 #include "hwsdl_mouse.h"
 #include "hwsdl_video.h"
 #include "hwsdl_opt.h"
+#include "log.h"
 #include "mouse.h"
 #include "types.h"
 
@@ -62,6 +63,7 @@ void hw_mouse_set_scale(int w, int h)
     SETMAX(hw_mouse_sx, 1);
     hw_mouse_sy = h / hw_mouse_h;
     SETMAX(hw_mouse_sy, 1);
+    log_message("SDL: mouse scale %ix%i -> %i,%i\n", w, h, hw_mouse_sx, hw_mouse_sy);
 }
 
 void hw_mouse_move(int dx, int dy)
