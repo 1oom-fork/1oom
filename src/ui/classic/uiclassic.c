@@ -263,7 +263,6 @@ static void init_gfx(void)
     gfx_aux_setup_wh(&ui_data.aux.ship_overlay, 34, 26);
     gfx_aux_setup_wh(&ui_data.aux.btemp, 38, 30);
 
-    /* load musics 5..8, TODO? */
     ui_data.gfx.initialized = true;
 }
 
@@ -379,6 +378,10 @@ int ui_late_init(void)
     }
     ui_data.music_i = -1;
     init_gfx();
+    ui_data.have_help = lbxfile_exists(LBXFILE_HELP);
+    if (!ui_data.have_help) {
+        log_warning("Help disabled due to missing %s\n", lbxfile_name(LBXFILE_HELP));
+    }
     uiobj_table_clear();
     return 0;
 }
