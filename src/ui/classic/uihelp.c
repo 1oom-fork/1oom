@@ -125,7 +125,7 @@ void ui_help(int help_index)
     uint8_t ctbl[5], c0, c1, c3, c4, c5, c8;
     uint8_t *helplbx;
     LOG_DEBUG((DEBUGLEVEL_HELPUI, "%s: %i\n", __func__, help_index));
-    if (help_index < 0) {
+    if ((help_index < 0) || (!ui_data.have_help)) {
         return;
     }
     for (int i = 0; i < 5; ++i) {
