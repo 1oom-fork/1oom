@@ -116,7 +116,7 @@ typedef struct uiobj_s {
 
 static uint16_t uiobj_table_num = 0;
 static uint16_t uiobj_table_num_old = 0;
-static int16_t uiobj_hmm1_oi = -1;
+static int16_t uiobj_focus_oi = -1;
 static int16_t uiobj_clicked_oi = 0;
 static int uiobj_xoff = 1;
 static int uiobj_yoff = -1;
@@ -409,7 +409,7 @@ static void uiobj_handle_t4_sub1(uiobj_t *p)
         mouse_getclear_click_sw();
     }
     /* TODO ui_cursor_erase0(); */
-    uiobj_hmm1_oi = -1;
+    uiobj_focus_oi = -1;
 }
 
 static void uiobj_handle_t6_slider_input(uiobj_t *p)
@@ -509,7 +509,7 @@ static inline void uiobj_handle_hmm1_sub1(int i)
             }
             break;
         case 4:
-            if (uiobj_hmm1_oi != i) {
+            if (uiobj_focus_oi != i) {
                 lbxfont_select(p->t4.fontnum, p->t4.fonta2, p->t4.fonta4, 0);
                 ui_draw_filled_rect(p->x0, p->y0, p->x1, p->y1, p->t4.rectcolor);
                 if (!p->t4.align_right) {
@@ -1133,22 +1133,22 @@ static void uiobj_cursor_redraw_hmm2(int16_t oi, int mx, int my)
     }
     if (1/*mouse_flag_initialized*/) {
         uiobj_t *p = &uiobj_tbl[oi];
-        if (uiobj_hmm1_oi != oi) {
+        if (uiobj_focus_oi != oi) {
             ui_cursor_erase0();
-            if (uiobj_hmm1_oi != -1) {
-                uiobj_t *q = &uiobj_tbl[uiobj_hmm1_oi];
-                /*if (uiobj_hmm1_oi != oi) {  redundant, checked above */
+            if (uiobj_focus_oi != -1) {
+                uiobj_t *q = &uiobj_tbl[uiobj_focus_oi];
+                /*if (uiobj_focus_oi != oi) {  redundant, checked above */
                 if ((q->type != 3) || (p->type == 3)) {
                     if (q->type == 0xa) {
                         if ((p->type == 0xa) && p->ta.z12) {
-                            uiobj_handle_hmm2(uiobj_hmm1_oi, 0);
+                            uiobj_handle_hmm2(uiobj_focus_oi, 0);
                         }
                     } else {
-                        uiobj_handle_hmm2(uiobj_hmm1_oi, 0);
+                        uiobj_handle_hmm2(uiobj_focus_oi, 0);
                     }
                 }
             }
-            uiobj_hmm1_oi = oi;
+            uiobj_focus_oi = oi;
             uiobj_handle_hmm2(oi, 1);
             if (p->type == 4) {
                 mx = mouse_x;
@@ -1230,7 +1230,7 @@ static int16_t uiobj_handle_input_sub0(void)
     int16_t oi = 0;
     uiobj_t *p, *q;
     int mx = mouse_x, my = mouse_y, mb;
-    uiobj_hmm1_oi = -1;
+    uiobj_focus_oi = -1;
     uiobj_clicked_oi = 0;
     uiobj_mouseoff = ui_cursor_mouseoff;
     if (kbd_have_keypress()) {
@@ -1277,12 +1277,12 @@ static int16_t uiobj_handle_input_sub0(void)
                         *p->vptr = 1;
                     }
                 } else if (p->type == 9) {
-                    uiobj_hmm1_oi = -1;
+                    uiobj_focus_oi = -1;
                     return p->t9.uiobji;
                 }
             }
             uiobj_finish_callback_delay_1();
-            uiobj_hmm1_oi = -1;
+            uiobj_focus_oi = -1;
             return oi;
         }
         if (KBD_GET_KEY(key) == MOO_KEY_RETURN) {
@@ -1303,20 +1303,20 @@ static int16_t uiobj_handle_input_sub0(void)
                         *p->vptr = 1;
                     }
                 } else if (p->type == 9) {
-                    uiobj_hmm1_oi = -1;
+                    uiobj_focus_oi = -1;
                     return p->t9.uiobji;
                 }
                 if (uiobj_flag_skip_delay == 0) {
                     uiobj_finish_callback_delay_1();
                 }
-                uiobj_hmm1_oi = -1;
+                uiobj_focus_oi = -1;
                 return oi;
             } else {
                 if (uiobj_flag_select_list_active) {
                     for (oi = 1; oi < uiobj_table_num; ++oi) {
                         p = &uiobj_tbl[oi];
                         if ((p->type == 0xa) && (*p->vptr == p->ta.z18) && p->ta.z12) {
-                            uiobj_hmm1_oi = -1;
+                            uiobj_focus_oi = -1;
                             return oi;
                         }
                     }
@@ -1333,15 +1333,15 @@ static int16_t uiobj_handle_input_sub0(void)
                     } else {
                         uiobj_slider_minus(p);
                     }
-                    uiobj_hmm1_oi = -1;
+                    uiobj_focus_oi = -1;
                     return oi;
                 } else {
-                    uiobj_hmm1_oi = -1;
+                    uiobj_focus_oi = -1;
                     return 0;
                 }
             }
         }
-        uiobj_hmm1_oi = -1;
+        uiobj_focus_oi = -1;
         return 0;
     }
     if (mouse_buttons == 0) {
@@ -1374,7 +1374,7 @@ static int16_t uiobj_handle_input_sub0(void)
                 uiobj_cursor_redraw_hmm2(oi, mx, my);
                 uiobj_finish_callback_delay_1();
             }
-            uiobj_hmm1_oi = -1;
+            uiobj_focus_oi = -1;
             if (oi != 0) {
                 mouse_getclear_click_sw();
             }
@@ -1406,26 +1406,26 @@ static int16_t uiobj_handle_input_sub0(void)
             uiobj_mouseoff = ui_cursor_mouseoff;
             oi = uiobj_find_obj_at_cursor();
             if (oi == 0) {
-                if (uiobj_hmm1_oi != -1) {
-                    p = &uiobj_tbl[uiobj_hmm1_oi];
+                if (uiobj_focus_oi != -1) {
+                    p = &uiobj_tbl[uiobj_focus_oi];
                     if (p->type == 6) {
                         uiobj_do_callback();
                     }
                     if ((p->type != 3) && (p->type != 0xa)) {
                         ui_cursor_erase0();
-                        uiobj_handle_hmm2(uiobj_hmm1_oi, 0);
+                        uiobj_handle_hmm2(uiobj_focus_oi, 0);
                         ui_cursor_store_bg0(mx, my);
                         ui_cursor_draw0(mx, my);
                         mouse_set_xy(mx, my);
                     }
-                    uiobj_hmm1_oi = -1;
+                    uiobj_focus_oi = -1;
                 }
                 mouse_set_click_xy(mx, my);
                 break;
             }
-            q = &uiobj_tbl[uiobj_hmm1_oi];
+            q = &uiobj_tbl[uiobj_focus_oi];
             p = &uiobj_tbl[oi];
-            if ((oi != uiobj_hmm1_oi) && (p->type != 4)) {
+            if ((oi != uiobj_focus_oi) && (p->type != 4)) {
                 if (q->type == 6) {
                     uiobj_do_callback();
                 }
@@ -1455,7 +1455,7 @@ static int16_t uiobj_handle_input_sub0(void)
                     break;
                 case 9:
                     if (mb != MOUSE_BUTTON_MASK_RIGHT) {
-                        uiobj_hmm1_oi = -1;
+                        uiobj_focus_oi = -1;
                         p = &uiobj_tbl[oi];
                         return p->t9.uiobji;
                     }
@@ -1473,7 +1473,7 @@ static int16_t uiobj_handle_input_sub0(void)
                     break;
             }
         }
-        uiobj_hmm1_oi = -1;
+        uiobj_focus_oi = -1;
         if (mb == MOUSE_BUTTON_MASK_RIGHT) {
             return -oi;
         } else {
@@ -1505,14 +1505,14 @@ static void uiobj_add_t03_do(uint16_t x, uint16_t y, const char *str, uint8_t *l
 void uiobj_table_clear(void)
 {
     uiobj_table_num = 1;
-    uiobj_hmm1_oi = -1;
+    uiobj_focus_oi = -1;
     uiobj_clicked_oi = 0;
 }
 
 void uiobj_table_set_last(int16_t oi)
 {
     uiobj_table_num = oi + 1;
-    uiobj_hmm1_oi = -1;
+    uiobj_focus_oi = -1;
 }
 
 void uiobj_table_num_store(void)
@@ -1534,7 +1534,7 @@ void uiobj_handle_hmm1(void)
 {
     for (int i = 1; i < uiobj_table_num; ++i) {
         uiobj_t *p = &uiobj_tbl[i];
-        if ((i == uiobj_hmm1_oi) && (p->type != 4)) {
+        if ((i == uiobj_focus_oi) && (p->type != 4)) {
             uiobj_handle_hmm2(i, 1);
         } else {
             uiobj_handle_hmm1_sub1(i);
@@ -2213,7 +2213,7 @@ bool uiobj_read_str(int x, int y, int w, char *buf, int buflen, uint8_t rcolor, 
     uiobj_set_downcount(1);
     {
         int16_t oi = uiobj_add_textinput(x, y, w, buf, buflen, rcolor, alignr, z1e, ctbl, MOO_KEY_UNKNOWN, helpid);
-        uiobj_hmm1_oi = oi;
+        uiobj_focus_oi = oi;
         p = &uiobj_tbl[oi];
     }
     fonth = lbxfont_get_height();
@@ -2360,7 +2360,7 @@ bool uiobj_read_str(int x, int y, int w, char *buf, int buflen, uint8_t rcolor, 
         }
     }
     /* TODO ui_cursor_erase0(); */
-    uiobj_hmm1_oi = -1;
+    uiobj_focus_oi = -1;
     uiobj_table_clear();
     mouse_getclear_click_hw();
     mouse_getclear_click_sw();
