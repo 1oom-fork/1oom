@@ -33,9 +33,20 @@ static const struct cfg_module_s {
     { 0, 0, 0 }
 };
 
+struct cfg_parse_s {
+    const struct cfg_module_s *module;
+    const struct cfg_items_s *item;
+};
+
 /* -------------------------------------------------------------------------- */
 
-static int cfg_parse_line(char *line, int lnum)
+static void cfg_parse_init(struct cfg_parse_s *ctx)
+{
+    ctx->module = 0;
+    ctx->item = 0;
+}
+
+static int cfg_parse_line(char *line, int lnum, struct cfg_parse_s *ctx)
 {
     const struct cfg_module_s *module;
     const struct cfg_items_s *item;
@@ -59,32 +70,52 @@ static int cfg_parse_line(char *line, int lnum)
     *p = '\0';
     p += 2;
     ival = *p ? (p + 1) : p;
-    module = 0;
-    for (const struct cfg_module_s *m = cfg_items_tbl; m->str; ++m) {
-        if ((strcmp(m->str, line) == 0) && ((!m->cond) || *m->cond)) {
-            module = m;
-            break;
+    if (1
+      && ctx->module && ctx->module->str
+      && ctx->item && ctx->item->name
+      && (strcmp(ctx->module->str, line) == 0)
+      && (strcmp(ctx->item->name, iname) == 0)
+    ) {
+        module = ctx->module;
+        item = ctx->item;
+    } else {
+        module = 0;
+        for (const struct cfg_module_s *m = cfg_items_tbl; m->str; ++m) {
+            if ((strcmp(m->str, line) == 0) && ((!m->cond) || *m->cond)) {
+                module = m;
+                break;
+            }
         }
-    }
-    if (!module) {
-        log_error("Cfg: unknown module on line %i\n", lnum);
-        return -1;
-    }
+        if (!module) {
+            log_error("Cfg: unknown module on line %i\n", lnum);
+            return -1;
+        }
 again:
-    item = 0;
-    for (const struct cfg_items_s *i = module->items; i->name; ++i) {
-        if (strcmp(i->name, iname) == 0) {
-            item = i;
-            break;
+        item = 0;
+        for (const struct cfg_items_s *i = module->items; i->name; ++i) {
+            if (strcmp(i->name, iname) == 0) {
+                item = i;
+                break;
+            }
+        }
+        if (!item) {
+            if (module->items == opt_cfg_items) { /* HACK handle audio option opt -> opta move */
+                ++module;
+                goto again;
+            }
+            log_warning("Cfg: ignoring unknown item '%s.%s' on line %i\n", line, iname, lnum);
+            return 0;
         }
     }
-    if (!item) {
-        if (module->items == opt_cfg_items) { /* HACK handle audio option opt -> opta move */
-            ++module;
-            goto again;
+    ctx->module = module;
+    {
+        const struct cfg_items_s *i;
+        for (i = item + 1; i->name && (i->type == CFG_TYPE_COMMENT); ++i);
+        if (!i->name) {
+            ++ctx->module;
+            i = ctx->module->items;
         }
-        log_warning("Cfg: ignoring unknown item '%s.%s' on line %i\n", line, iname, lnum);
-        return 0;
+        ctx->item = i;
     }
     switch (item->type) {
         case CFG_TYPE_INT:
@@ -159,18 +190,20 @@ int cfg_load(const char *filename)
     FILE *fd;
     char buf[BUFSIZE];
     int len, lnum = 0;
+    struct cfg_parse_s ctx[1];
     log_message("Cfg: loading configuration from '%s'\n", filename);
     fd = fopen(filename, "r");
     if (!fd) {
         log_error("Cfg: failed to open file '%s'\n", filename);
         return -1;
     }
+    cfg_parse_init(ctx);
     while ((len = util_get_line(buf, BUFSIZE, fd)) >= 0) {
         ++lnum;
         if ((len == 0) || (buf[0] == '#')) {
             continue;
         }
-        if (cfg_parse_line(buf, lnum) < 0) {
+        if (cfg_parse_line(buf, lnum, ctx) < 0) {
             fclose(fd);
             return -1;
         }
