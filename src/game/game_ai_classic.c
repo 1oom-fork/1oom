@@ -3059,7 +3059,8 @@ static bool game_ai_classic_battle_ai_retreat(struct battle_s *bt)
 {
     int missile[BATTLE_ITEM_MAX];
     int repair[BATTLE_ITEM_MAX];
-    int dmg[2] = { 0/*v12*/, 0/*ve*/ }, hp[2] = { 0/*va*/, 0/*v6*/ };
+    int dmg[2] = { 0, 0 };
+    int hp[2] = { 0, 0 };
     for (int i = 0; i < BATTLE_ITEM_MAX; ++i) {
         const struct battle_item_s *b = &(bt->item[i]);
         missile[i] = 0;
@@ -3083,18 +3084,18 @@ static bool game_ai_classic_battle_ai_retreat(struct battle_s *bt)
         if (j >= 0) {
             const struct battle_item_s *b;
             b = &(bt->item[i]);
-            hp[s] += b->hp1 * b->num;
+            hp[s ^ 1] += b->hp1 * b->num;
             dmg[s] += game_ai_battle_dmggive(bt, i, j, 1) * b->num;
             dmg[s] -= repair[j];
             repair[j] = 0;
         } else {
-            ++hp[s];
+            ++hp[s ^ 1];
         }
     }
     if (bt->item[0/*planet*/].num > 0) {
         const struct battle_item_s *b = &(bt->item[0/*planet*/]);
         int j, s = (b->side == SIDE_L) ? SIDE_R : SIDE_L;
-        hp[s] += (b->hp1 * b->num * 7) / 10;
+        hp[s ^ 1] += (b->hp1 * b->num * 7) / 10;
         j = game_ai_battle_rival(bt, 0/*planet*/, 1);
         if (j > 0) {
             dmg[s] += (game_ai_battle_dmggive(bt, 0/*planet*/, j, 1) * b->num * 7) / 10;
@@ -3102,16 +3103,10 @@ static bool game_ai_classic_battle_ai_retreat(struct battle_s *bt)
             repair[j] = 0;
         }
     }
-    if ((hp[SIDE_R] == 0) && (dmg[SIDE_L] == 0)) {
-        dmg[SIDE_L] = 1;
-    }
-    if ((hp[SIDE_L] == 0) && (dmg[SIDE_R] == 0)) {
-        dmg[SIDE_R] = 1;
-    }
-    if (hp[SIDE_R] == 0) {
+    if (hp[SIDE_L] == 0) {
         return false;
     }
-    if (hp[SIDE_L] == 0) {
+    if (hp[SIDE_R] == 0) {
         return false;
     }
     if (dmg[SIDE_L] == 0) {
@@ -3131,7 +3126,7 @@ static bool game_ai_classic_battle_ai_retreat(struct battle_s *bt)
                 break;
         }
         v += rnd_1_n(15, &bt->g->seed);
-        if (((dmg[SIDE_R] * 100) / hp[SIDE_L]) > ((v * dmg[SIDE_L] * 100) / hp[SIDE_R])) {
+        if (((dmg[SIDE_R] * 100) / hp[SIDE_R]) > ((v * dmg[SIDE_L] * 100) / hp[SIDE_L])) {
             return true;
         }
     }
