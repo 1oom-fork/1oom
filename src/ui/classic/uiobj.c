@@ -283,7 +283,7 @@ static void uiobj_handle_t4_sub1(uiobj_t *p)
         bool flag_ok;
         while (!(kbd_have_keypress() || flag_mouse_button)) {
             hw_event_handle();
-            if ((1/*mouse_flag_initialized*/) && (mouse_buttons || (mouse_getclear_hmm4() != 0))) {
+            if ((1/*mouse_flag_initialized*/) && (mouse_buttons || (mouse_getclear_click_hw() != 0))) {
                 flag_mouse_button = true;
                 break;
             } else {
@@ -405,8 +405,8 @@ static void uiobj_handle_t4_sub1(uiobj_t *p)
         while (mouse_buttons) {
             hw_event_handle();
         }
-        mouse_getclear_hmm4();
-        mouse_getclear_hmm5();
+        mouse_getclear_click_hw();
+        mouse_getclear_click_sw();
     }
     /* TODO ui_cursor_erase0(); */
     uiobj_hmm1_oi = -1;
@@ -1352,13 +1352,13 @@ static int16_t uiobj_handle_input_sub0(void)
         return 0;
     }
     if (mouse_buttons == 0) {
-        if (!mouse_getclear_hmm4()) {
+        if (!mouse_getclear_click_hw()) {
             return 0;
         }
         mb = mouse_click_buttons;
         if (mb == MOUSE_BUTTON_MASK_RIGHT) {
-            mouse_getclear_hmm4();
-            mouse_getclear_hmm5();
+            mouse_getclear_click_hw();
+            mouse_getclear_click_sw();
             return -1;
         } else {
             mx = mouse_click_x;
@@ -1383,7 +1383,7 @@ static int16_t uiobj_handle_input_sub0(void)
             }
             uiobj_hmm1_oi = -1;
             if (oi != 0) {
-                mouse_getclear_hmm5();
+                mouse_getclear_click_sw();
             }
             if (p->type == 9) {
                 p = &uiobj_tbl[oi];
@@ -1403,8 +1403,8 @@ static int16_t uiobj_handle_input_sub0(void)
             while ((mb = mouse_buttons) == MOUSE_BUTTON_MASK_RIGHT) {
                 uiobj_finish_callback_delay_1();
             }
-            mouse_getclear_hmm4();
-            mouse_getclear_hmm5();
+            mouse_getclear_click_hw();
+            mouse_getclear_click_sw();
             return -1;
         }
         while (mouse_buttons != 0) {
@@ -1452,8 +1452,8 @@ static int16_t uiobj_handle_input_sub0(void)
         }
         uiobj_clicked_oi = 0;
         if (oi != 0) {
-            mouse_getclear_hmm4();
-            mouse_getclear_hmm5();
+            mouse_getclear_click_hw();
+            mouse_getclear_click_sw();
             switch (p->type) {
                 case 2:
                     if (*p->vptr == 0) {
@@ -1589,8 +1589,8 @@ void uiobj_finish_frame(void)
 void uiobj_set_downcount(int16_t v)
 {
     uiobj_handle_downcount = v;
-    mouse_getclear_hmm4();
-    mouse_getclear_hmm5();
+    mouse_getclear_click_hw();
+    mouse_getclear_click_sw();
 }
 
 void uiobj_set_xyoff(int xoff, int yoff)
@@ -2008,8 +2008,8 @@ int16_t uiobj_select_from_list1(int x, int y, int w, const char *title, char con
     uiobj_table_clear();
     uiobj_flag_select_list_active = false;
     uiobj_hmm8 = 1;
-    mouse_getclear_hmm4();
-    mouse_getclear_hmm5();
+    mouse_getclear_click_hw();
+    mouse_getclear_click_sw();
     if (oi < 0) {
         return -1;
     }
@@ -2191,8 +2191,8 @@ int16_t uiobj_select_from_list2(int x, int y, int w, const char *title, char con
     uiobj_flag_select_list_active = false;
     uiobj_hmm8 = 1;
     uiobj_flag_select_list_multipage = false;
-    mouse_getclear_hmm4();
-    mouse_getclear_hmm5();
+    mouse_getclear_click_hw();
+    mouse_getclear_click_sw();
     if (oi < 0) {
         *selptr = curval;
         return -1;
@@ -2214,8 +2214,8 @@ bool uiobj_read_str(int x, int y, int w, char *buf, int buflen, uint8_t rcolor, 
         while (mouse_buttons) {
             hw_event_handle();
         }
-        mouse_getclear_hmm4();
-        mouse_getclear_hmm5();
+        mouse_getclear_click_hw();
+        mouse_getclear_click_sw();
     }
     uiobj_set_downcount(1);
     {
@@ -2241,7 +2241,7 @@ bool uiobj_read_str(int x, int y, int w, char *buf, int buflen, uint8_t rcolor, 
         bool flag_ok;
         char c;
         while (!kbd_have_keypress() && !flag_done) {
-            if ((1/*mouse_flag_initialized*/) && (mouse_buttons || mouse_getclear_hmm4())) {
+            if ((1/*mouse_flag_initialized*/) && (mouse_buttons || mouse_getclear_click_hw())) {
                 flag_done = true;
                 break;
             }
@@ -2369,8 +2369,8 @@ bool uiobj_read_str(int x, int y, int w, char *buf, int buflen, uint8_t rcolor, 
     /* TODO ui_cursor_erase0(); */
     uiobj_hmm1_oi = -1;
     uiobj_table_clear();
-    mouse_getclear_hmm4();
-    mouse_getclear_hmm5();
+    mouse_getclear_click_hw();
+    mouse_getclear_click_sw();
     return !flag_quit;
 }
 
@@ -2390,14 +2390,14 @@ void uiobj_input_wait(void)
     bool got_any = false, got_mb = false;
     uiobj_input_flush();
     while (!got_any) {
-        if (mouse_buttons || mouse_getclear_hmm4()) {
+        if (mouse_buttons || mouse_getclear_click_hw()) {
             got_any = true;
             got_mb = true;
         }
         if (kbd_have_keypress()) {
             kbd_get_keypress();
             got_any = true;
-            mouse_getclear_hmm4();
+            mouse_getclear_click_hw();
         }
         uiobj_finish_callback_delay_hmm5();
     }
@@ -2406,6 +2406,6 @@ void uiobj_input_wait(void)
             uiobj_finish_callback_delay_hmm5();
         }
     }
-    mouse_getclear_hmm4();
-    mouse_getclear_hmm5();
+    mouse_getclear_click_hw();
+    mouse_getclear_click_sw();
 }
