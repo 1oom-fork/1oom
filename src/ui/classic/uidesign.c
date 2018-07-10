@@ -360,7 +360,6 @@ static struct xy_s ui_design_draw_selbox(int xpos, int xoff1, int xoff2, int xof
     hw_video_copy_back_to_page2();
 
     lbxfont_select(2, 0, 4, 0xe);
-    uiobj_set_hmm8_0();
 
     xy.x = x0;
     xy.y = y0;
@@ -435,7 +434,7 @@ static void ui_design_sel_comp(struct design_data_s *d)
         int listi;
         struct xy_s xy;
         xy = ui_design_draw_selbox(xpos, 130, 125, -30, n + 2, game_str_sd_comps);
-        listi = uiobj_select_from_list1(xy.x + 14, xy.y + 20, xpos + 103, titlebuf, lineptr, &curcomp, flag_tbl_enable, 1, 0, 0x60, 0, 0, 0);
+        listi = uiobj_select_from_list1(xy.x + 14, xy.y + 20, xpos + 103, titlebuf, lineptr, &curcomp, flag_tbl_enable, 1, 0, 0x60, 0, 0, 0, false);
         if (listi < 0) {
             sd->comp = actcomp;
         } else {
@@ -513,7 +512,7 @@ static void ui_design_sel_shield(struct design_data_s *d)
         int listi;
         struct xy_s xy;
         xy = ui_design_draw_selbox(xpos, 130, 125, -30, n + 2, game_str_sd_shields);
-        listi = uiobj_select_from_list1(xy.x + 14, xy.y + 20, xpos + 103, titlebuf, lineptr, &curshield, flag_tbl_enable, 1, 0, 0x60, 0, 0, 0);
+        listi = uiobj_select_from_list1(xy.x + 14, xy.y + 20, xpos + 103, titlebuf, lineptr, &curshield, flag_tbl_enable, 1, 0, 0x60, 0, 0, 0, false);
         if (listi < 0) {
             sd->shield = actshield;
         } else {
@@ -591,7 +590,7 @@ static void ui_design_sel_jammer(struct design_data_s *d)
         int listi;
         struct xy_s xy;
         xy = ui_design_draw_selbox(xpos, 130, 125, -30, n + 2, game_str_sd_ecm2);
-        listi = uiobj_select_from_list1(xy.x + 14, xy.y + 20, xpos + 103, titlebuf, lineptr, &curjammer, flag_tbl_enable, 1, 0, 0x60, 0, 0, 0);
+        listi = uiobj_select_from_list1(xy.x + 14, xy.y + 20, xpos + 103, titlebuf, lineptr, &curjammer, flag_tbl_enable, 1, 0, 0x60, 0, 0, 0, false);
         if (listi < 0) {
             sd->jammer = actjammer;
         } else {
@@ -657,7 +656,7 @@ static void ui_design_sel_armor(struct design_data_s *d)
         int listi;
         struct xy_s xy;
         xy = ui_design_draw_selbox(xpos, 90, 85, -70, n + 2, game_str_sd_armor2);
-        listi = uiobj_select_from_list1(xy.x + 14, xy.y + 20, xpos + 62, titlebuf, lineptr, &curarmor, flag_tbl_enable, 1, 0, 0x60, 0, 0, 0);
+        listi = uiobj_select_from_list1(xy.x + 14, xy.y + 20, xpos + 62, titlebuf, lineptr, &curarmor, flag_tbl_enable, 1, 0, 0x60, 0, 0, 0, false);
         if (listi < 0) {
             sd->armor = actarmor;
         } else {
@@ -732,7 +731,7 @@ static void ui_design_sel_engine(struct design_data_s *d)
         int listi;
         struct xy_s xy;
         xy = ui_design_draw_selbox(xpos, 155, 145, -7, n + 2, game_str_sd_engs);
-        listi = uiobj_select_from_list1(xy.x + 14, xy.y + 20, xpos + 124, titlebuf, lineptr, &curengine, flag_tbl_enable, 1, 0, 0x60, 0, 0, 0);
+        listi = uiobj_select_from_list1(xy.x + 14, xy.y + 20, xpos + 124, titlebuf, lineptr, &curengine, flag_tbl_enable, 1, 0, 0x60, 0, 0, 0, false);
         if (listi < 0) {
             sd->engine = actengine;
         } else {
@@ -811,7 +810,7 @@ static void ui_design_sel_man(struct design_data_s *d)
         int listi;
         struct xy_s xy;
         xy = ui_design_draw_selbox(xpos, 150, 138, -15, n + 2, game_str_sd_man2);
-        listi = uiobj_select_from_list1(xy.x + 14, xy.y + 20, xpos + 117, titlebuf, lineptr, &curman, flag_tbl_enable, 1, 0, 0x60, 0, 0, 0);
+        listi = uiobj_select_from_list1(xy.x + 14, xy.y + 20, xpos + 117, titlebuf, lineptr, &curman, flag_tbl_enable, 1, 0, 0x60, 0, 0, 0, false);
         if (listi < 0) {
             sd->man = actman;
         } else {
@@ -937,9 +936,9 @@ static void ui_design_sel_weapon(struct design_data_s *d, int wslot)
         SETMIN(n, 18);
         xy = ui_design_draw_selbox(xpos, 160, 160, 0, n + 2, game_str_sd_weaps);
         if (numlines < 18) {
-            listi = uiobj_select_from_list1(xy.x + 14, xy.y + 20, xpos + 131, titlebuf, lineptr, &curweap, flag_tbl_enable, 1, 0, 0x60, 0, 0, 0);
+            listi = uiobj_select_from_list1(xy.x + 14, xy.y + 20, xpos + 131, titlebuf, lineptr, &curweap, flag_tbl_enable, 1, 0, 0x60, 0, 0, 0, false);
         } else {
-            listi = uiobj_select_from_list2(xy.x + 14, xy.y + 20, xpos + 131, titlebuf, lineptr, &curweap, flag_tbl_enable, 18, 312, 19, ui_data.gfx.design.popscrol_u, 313, 183, ui_data.gfx.design.popscrol_d, 1, 0, 0x60, 0, 0, 0);
+            listi = uiobj_select_from_list2(xy.x + 14, xy.y + 20, xpos + 131, titlebuf, lineptr, &curweap, flag_tbl_enable, 18, 312, 19, ui_data.gfx.design.popscrol_u, 313, 183, ui_data.gfx.design.popscrol_d, 1, 0, 0x60, 0, 0, 0, false);
         }
         if (listi < 0) {
             sd->wpnt[wslot] = actwpnt;
@@ -1033,9 +1032,9 @@ static void ui_design_sel_special(struct design_data_s *d, int sslot)
         SETMIN(n, 18);
         xy = ui_design_draw_selbox(xpos, 150, 152, -54, n + 2, game_str_sd_specs);
         if (numlines < 18) {
-            listi = uiobj_select_from_list1(xy.x + 14, xy.y + 20, xpos + 81, titlebuf, lineptr, &curspec, flag_tbl_enable, 1, 0, 0x60, 0, 0, 0);
+            listi = uiobj_select_from_list1(xy.x + 14, xy.y + 20, xpos + 81, titlebuf, lineptr, &curspec, flag_tbl_enable, 1, 0, 0x60, 0, 0, 0, false);
         } else {
-            listi = uiobj_select_from_list2(xy.x + 14, xy.y + 20, xpos + 81, titlebuf, lineptr, &curspec, flag_tbl_enable, 18, 312, 19, ui_data.gfx.design.popscrol_u, 313, 183, ui_data.gfx.design.popscrol_d, 1, 0, 0x60, 0, 0, 0);
+            listi = uiobj_select_from_list2(xy.x + 14, xy.y + 20, xpos + 81, titlebuf, lineptr, &curspec, flag_tbl_enable, 18, 312, 19, ui_data.gfx.design.popscrol_u, 313, 183, ui_data.gfx.design.popscrol_d, 1, 0, 0x60, 0, 0, 0, false);
         }
         if (listi < 0) {
             sd->special[sslot] = actspec;
