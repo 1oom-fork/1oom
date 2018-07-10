@@ -754,7 +754,9 @@ static int16_t uiobj_kbd_dir_key_dy(int diry)
             ui_cursor_draw0(mouse_stored_x, mouse_stored_y);
             /* TODO hw_redraw */
             mouse_set_xy(mouse_stored_x, mouse_stored_y);
-            /* TODO *p->vprt = p->z18; */
+            if (p->type == 0xa) {
+                *p->vptr = p->ta.z18;
+            }
         }
     }
     return oi;
