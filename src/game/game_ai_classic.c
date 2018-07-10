@@ -2925,13 +2925,13 @@ static void game_ai_classic_battle_ai_turn(struct battle_s *bt)
 static bool game_ai_classic_battle_ai_retreat(struct battle_s *bt)
 {
     int missile[BATTLE_ITEM_MAX];
-    int tbl_hmm2[BATTLE_ITEM_MAX];
+    int repair[BATTLE_ITEM_MAX];
     int tbl_hmm3[2] = { 0, 0 };
     int tbl_hmm4[2] = { 0, 0 };
     for (int i = 0; i < BATTLE_ITEM_MAX; ++i) {
         const struct battle_item_s *b = &(bt->item[i]);
         missile[i] = 0;
-        tbl_hmm2[i] = (b->hp1 * b->repair) / 5;
+        repair[i] = (b->hp1 * b->repair) / 5;
     }
     for (int i = 0; i < bt->num_missile; ++i) {
         const struct battle_missile_s *m = &(bt->missile[i]);
@@ -2940,8 +2940,8 @@ static bool game_ai_classic_battle_ai_retreat(struct battle_s *bt)
             s = bt->item[m->target].side;
             missile[m->source] += 2;
             tbl_hmm3[s] += game_ai_battle_missile_dmg(bt, i) / (missile[m->source] + 1);
-            tbl_hmm3[s] -= tbl_hmm2[m->target];
-            tbl_hmm2[m->target] = 0;
+            tbl_hmm3[s] -= repair[m->target];
+            repair[m->target] = 0;
         }
     }
     for (int i = 1; i <= bt->items_num; ++i) {
@@ -2953,8 +2953,8 @@ static bool game_ai_classic_battle_ai_retreat(struct battle_s *bt)
             b = &(bt->item[i]);
             tbl_hmm4[s] += b->hp1 * b->num;
             tbl_hmm3[s] += game_ai_battle_dmggive(bt, i, j, 1) * b->num;
-            tbl_hmm3[s] -= tbl_hmm2[j];
-            tbl_hmm2[j] = 0;
+            tbl_hmm3[s] -= repair[j];
+            repair[j] = 0;
         } else {
             ++tbl_hmm4[s];
         }
@@ -2966,8 +2966,8 @@ static bool game_ai_classic_battle_ai_retreat(struct battle_s *bt)
         j = game_ai_battle_rival(bt, 0/*planet*/, 1);
         if (j > 0) {
             tbl_hmm3[s] += (game_ai_battle_dmggive(bt, 0/*planet*/, j, 1) * b->num * 7) / 10;
-            tbl_hmm3[s] -= (tbl_hmm2[j] * 7) / 10;
-            tbl_hmm2[j] = 0;
+            tbl_hmm3[s] -= (repair[j] * 7) / 10;
+            repair[j] = 0;
         }
     }
     if ((tbl_hmm4[SIDE_R] == 0) && (tbl_hmm3[SIDE_L] == 0)) {
