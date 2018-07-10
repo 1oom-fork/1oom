@@ -2922,7 +2922,7 @@ static bool game_ai_classic_battle_ai_retreat(struct battle_s *bt)
 {
     int missile[BATTLE_ITEM_MAX];
     int repair[BATTLE_ITEM_MAX];
-    int tbl_hmm3[2] = { 0, 0 };
+    int dmg[2] = { 0, 0 };
     int tbl_hmm4[2] = { 0, 0 };
     for (int i = 0; i < BATTLE_ITEM_MAX; ++i) {
         const struct battle_item_s *b = &(bt->item[i]);
@@ -2935,8 +2935,8 @@ static bool game_ai_classic_battle_ai_retreat(struct battle_s *bt)
             int s;
             s = bt->item[m->target].side;
             missile[m->source] += 2;
-            tbl_hmm3[s] += game_ai_battle_missile_dmg(bt, i) / (missile[m->source] + 1);
-            tbl_hmm3[s] -= repair[m->target];
+            dmg[s] += game_ai_battle_missile_dmg(bt, i) / (missile[m->source] + 1);
+            dmg[s] -= repair[m->target];
             repair[m->target] = 0;
         }
     }
@@ -2948,8 +2948,8 @@ static bool game_ai_classic_battle_ai_retreat(struct battle_s *bt)
             struct battle_item_s *b;
             b = &(bt->item[i]);
             tbl_hmm4[s] += b->hp1 * b->num;
-            tbl_hmm3[s] += game_ai_battle_dmggive(bt, i, j, 1) * b->num;
-            tbl_hmm3[s] -= repair[j];
+            dmg[s] += game_ai_battle_dmggive(bt, i, j, 1) * b->num;
+            dmg[s] -= repair[j];
             repair[j] = 0;
         } else {
             ++tbl_hmm4[s];
@@ -2961,16 +2961,16 @@ static bool game_ai_classic_battle_ai_retreat(struct battle_s *bt)
         tbl_hmm4[s] += (b->hp1 * b->num * 7) / 10;
         j = game_ai_battle_rival(bt, 0/*planet*/, 1);
         if (j > 0) {
-            tbl_hmm3[s] += (game_ai_battle_dmggive(bt, 0/*planet*/, j, 1) * b->num * 7) / 10;
-            tbl_hmm3[s] -= (repair[j] * 7) / 10;
+            dmg[s] += (game_ai_battle_dmggive(bt, 0/*planet*/, j, 1) * b->num * 7) / 10;
+            dmg[s] -= (repair[j] * 7) / 10;
             repair[j] = 0;
         }
     }
-    if ((tbl_hmm4[SIDE_R] == 0) && (tbl_hmm3[SIDE_L] == 0)) {
-        tbl_hmm3[SIDE_L] = 1;
+    if ((tbl_hmm4[SIDE_R] == 0) && (dmg[SIDE_L] == 0)) {
+        dmg[SIDE_L] = 1;
     }
-    if ((tbl_hmm4[SIDE_L] == 0) && (tbl_hmm3[SIDE_R] == 0)) {
-        tbl_hmm3[SIDE_R] = 1;
+    if ((tbl_hmm4[SIDE_L] == 0) && (dmg[SIDE_R] == 0)) {
+        dmg[SIDE_R] = 1;
     }
     if (tbl_hmm4[SIDE_R] == 0) {
         return false;
@@ -2978,7 +2978,7 @@ static bool game_ai_classic_battle_ai_retreat(struct battle_s *bt)
     if (tbl_hmm4[SIDE_L] == 0) {
         return false;
     }
-    if (tbl_hmm3[SIDE_L] == 0) {
+    if (dmg[SIDE_L] == 0) {
         return true;
     }
     {
@@ -2995,7 +2995,7 @@ static bool game_ai_classic_battle_ai_retreat(struct battle_s *bt)
                 break;
         }
         v += rnd_1_n(15, &bt->g->seed);
-        if (((tbl_hmm3[SIDE_R] * 100) / tbl_hmm4[SIDE_L]) > ((v * tbl_hmm3[SIDE_L] * 100) / tbl_hmm4[SIDE_R])) {
+        if (((dmg[SIDE_R] * 100) / tbl_hmm4[SIDE_L]) > ((v * dmg[SIDE_L] * 100) / tbl_hmm4[SIDE_R])) {
             return true;
         }
     }
