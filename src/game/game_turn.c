@@ -66,7 +66,7 @@ static void game_turn_countdown_ceasefire(struct game_s *g)
     }
 }
 
-static void game_turn_update_pp_hmm1(struct game_s *g)
+static void game_turn_update_mood_blunder(struct game_s *g)
 {
     for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         empiretechorbit_t *e = &(g->eto[i]);
@@ -1738,7 +1738,7 @@ struct game_end_s game_turn_process(struct game_s *g)
 #endif
     game_turn_countdown_ceasefire(g);
     /* temp_turn_hmm3 = 0; */
-    game_turn_update_pp_hmm1(g);
+    game_turn_update_mood_blunder(g);
     game_update_have_reserve_fuel(g);
     game_ai->turn_p1(g);
     game_ai->turn_p2(g);
