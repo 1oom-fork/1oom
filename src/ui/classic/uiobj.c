@@ -125,9 +125,9 @@ static int16_t uiobj_mouseoff = 0;
 static int16_t uiobj_handle_downcount = 0;
 static uint16_t uiobj_kbd_hmm1 = 0;
 static uint16_t uiobj_delay = 2;
-static uint16_t uiobj_hmm6 = 0;
 static int16_t uiobj_help_id = -1;
 static int16_t uiobj_hmm8 = 1;
+static bool uiobj_flag_select_list_active = false;
 static bool uiobj_flag_select_list_multipage = false;
 static int16_t uiobj_kbd_movey = -1;
 static bool uiobj_flag_skip_delay = false;
@@ -945,7 +945,7 @@ static int16_t uiobj_kbd_dir_key_dxdy(int dirx, int diry, int16_t oi2, int mx, i
 
 static int16_t uiobj_kbd_dir_key(int dirx, int diry)
 {
-    if ((uiobj_hmm6 != 0) && (diry != 0)) {
+    if (uiobj_flag_select_list_active && (diry != 0)) {
         return uiobj_kbd_dir_key_dy(diry);
     } else {
         int mx, my;
@@ -1310,7 +1310,7 @@ static int16_t uiobj_handle_input_sub0(void)
                 uiobj_hmm1_oi = -1;
                 return oi;
             } else {
-                if (uiobj_hmm6 != 0) {
+                if (uiobj_flag_select_list_active) {
                     for (oi = 1; oi < uiobj_table_num; ++oi) {
                         p = &uiobj_tbl[oi];
                         if ((p->type == 0xa) && (*p->vptr == p->ta.z18) && p->ta.z12) {
@@ -1924,7 +1924,7 @@ int16_t uiobj_select_from_list1(int x, int y, int w, const char *title, char con
     int16_t oi = 0, oi_title, v18 = 0;
     char const * const *s = strtbl;
 
-    uiobj_hmm6 = 1;
+    uiobj_flag_select_list_active = true;
     uiobj_set_downcount(1);
     uiobj_table_clear();
     h = lbxfont_get_height();
@@ -1997,7 +1997,7 @@ int16_t uiobj_select_from_list1(int x, int y, int w, const char *title, char con
         ui_delay_ticks_or_click(uiobj_delay);
     }
     uiobj_table_clear();
-    uiobj_hmm6 = 0;
+    uiobj_flag_select_list_active = false;
     uiobj_hmm8 = 1;
     mouse_getclear_hmm4();
     mouse_getclear_hmm5();
@@ -2015,7 +2015,7 @@ int16_t uiobj_select_from_list2(int x, int y, int w, const char *title, char con
     int16_t oi = 0, oi_title, oi_up, oi_dn, v18 = 0, upvar, dnvar, curval;
     char const * const *s = strtbl;
 
-    uiobj_hmm6 = 1;
+    uiobj_flag_select_list_active = true;
     uiobj_flag_select_list_multipage = true;
     uiobj_kbd_movey = 0;
     fonta4 = lbxfont_get_current_fonta4();
@@ -2179,7 +2179,7 @@ int16_t uiobj_select_from_list2(int x, int y, int w, const char *title, char con
         ui_delay_ticks_or_click(uiobj_delay);
     }
     uiobj_table_clear();
-    uiobj_hmm6 = 0;
+    uiobj_flag_select_list_active = false;
     uiobj_hmm8 = 1;
     uiobj_flag_select_list_multipage = false;
     mouse_getclear_hmm4();
