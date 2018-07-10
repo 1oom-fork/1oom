@@ -30,7 +30,6 @@ extern void uiobj_set_limits(int minx, int miny, int maxx, int maxy);
 extern void uiobj_set_limits_all(void);
 extern void uiobj_set_focus(int16_t uiobji);
 extern void uiobj_set_help_id(int16_t v);
-extern void uiobj_set_hmm8_0(void);
 extern int16_t uiobj_get_clicked_oi(void);
 extern void uiobj_set_skip_delay(bool v);
 
@@ -58,8 +57,8 @@ extern void uiobj_dec_y1(int16_t oi);
 extern void uiobj_ta_set_val_0(int16_t oi);
 extern void uiobj_ta_set_val_1(int16_t oi);
 
-extern int16_t uiobj_select_from_list1(int x, int y, int w, const char *title, char const * const *strtbl, int16_t *selptr, const bool *condtbl, uint16_t subtype, uint8_t *sp0p, uint16_t sp0v, uint16_t sp1, uint16_t sp2, uint16_t sp3);
-extern int16_t uiobj_select_from_list2(int x, int y, int w, const char *title, char const * const *strtbl, int16_t *selptr, const bool *condtbl, int linenum, int upx, int upy, uint8_t *uplbx, int dnx, int dny, uint8_t *dnlbx, uint16_t subtype, uint8_t *sp0p, uint16_t sp0v, uint16_t sp1, uint16_t sp2, uint16_t sp3);
+extern int16_t uiobj_select_from_list1(int x, int y, int w, const char *title, char const * const *strtbl, int16_t *selptr, const bool *condtbl, uint16_t subtype, uint8_t *sp0p, uint16_t sp0v, uint16_t sp1, uint16_t sp2, uint16_t sp3, bool update_at_cursor);
+extern int16_t uiobj_select_from_list2(int x, int y, int w, const char *title, char const * const *strtbl, int16_t *selptr, const bool *condtbl, int linenum, int upx, int upy, uint8_t *uplbx, int dnx, int dny, uint8_t *dnlbx, uint16_t subtype, uint8_t *sp0p, uint16_t sp0v, uint16_t sp1, uint16_t sp2, uint16_t sp3, bool update_at_cursor);
 extern bool uiobj_read_str(int x, int y, int w, char *buf, int buflen, uint8_t rcolor, bool alignr, const uint8_t *ctbl);
 
 extern void uiobj_input_flush(void);

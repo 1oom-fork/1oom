@@ -120,7 +120,7 @@ static void ui_starmap_trans_draw_cb(void *vptr)
             lbxfont_print_str_center(268, 149, buf, UI_SCREEN_W);
             lbxgfx_draw_frame(230, 123, ui_data.gfx.starmap.tran_bar, UI_SCREEN_W);
             lbxfont_select(0, 6, 0, 0);
-            if (pt->owner != PLAYER_NONE) {/* FIXME BUG MOO1 tests for == PLAYER_NONE, reading from eto offs 0xcc */
+            if (pt->owner != PLAYER_NONE) {/* WASBUG MOO1 tests for == PLAYER_NONE, reading from eto offs 0xcc */
                 treaty = g->eto[d->api].treaty[pt->owner];
             }
             if ((treaty == TREATY_NONAGGRESSION) || (treaty == TREATY_ALLIANCE)) {
