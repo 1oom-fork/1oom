@@ -136,7 +136,6 @@ static int16_t uiobj_handle_downcount = 0;
 static int16_t uiobj_kbd_alt_oi = 0;
 static uint16_t uiobj_delay = 2;
 static int16_t uiobj_help_id = -1;
-static int16_t uiobj_hmm8 = 1;
 static bool uiobj_flag_select_list_active = false;
 static bool uiobj_flag_select_list_multipage = false;
 static int16_t uiobj_kbd_movey = -1;
@@ -645,9 +644,6 @@ static int16_t uiobj_kbd_dir_key_dy_list(int diry)
                     }
                     if (oi >= uiobj_table_num) {
                         oi = oi2;
-                    } else {
-                        oi = oi2;
-                        uiobj_kbd_movey = 1;
                     }
                 }
             }
@@ -1654,11 +1650,6 @@ void uiobj_set_help_id(int16_t v)
     uiobj_help_id = v;
 }
 
-void uiobj_set_hmm8_0(void)
-{
-    uiobj_hmm8 = 0;
-}
-
 int16_t uiobj_get_clicked_oi(void)
 {
     return uiobj_clicked_oi;
@@ -1971,7 +1962,7 @@ void uiobj_ta_set_val_1(int16_t oi)
     }
 }
 
-int16_t uiobj_select_from_list1(int x, int y, int w, const char *title, char const * const *strtbl, int16_t *selptr, const bool *condtbl, uint16_t subtype, uint8_t *sp0p, uint16_t sp0v, uint16_t sp1, uint16_t sp2, uint16_t sp3)
+int16_t uiobj_select_from_list1(int x, int y, int w, const char *title, char const * const *strtbl, int16_t *selptr, const bool *condtbl, uint16_t subtype, uint8_t *sp0p, uint16_t sp0v, uint16_t sp1, uint16_t sp2, uint16_t sp3, bool update_at_cursor)
 {
     int h, dy, ty = y, di = -1;
     bool flag_done = false, toz12, flag_copy_buf = false;
@@ -2036,7 +2027,7 @@ int16_t uiobj_select_from_list1(int x, int y, int w, const char *title, char con
             break;
         }
         uiobj_do_callback();
-        if (uiobj_hmm8 != 0) {
+        if (update_at_cursor) {
             int oi2;
             oi2 = uiobj_at_cursor();
             if (oi2 > 0) {
@@ -2053,7 +2044,6 @@ int16_t uiobj_select_from_list1(int x, int y, int w, const char *title, char con
     }
     uiobj_table_clear();
     uiobj_flag_select_list_active = false;
-    uiobj_hmm8 = 1;
     mouse_getclear_click_hw();
     mouse_getclear_click_sw();
     if (oi < 0) {
@@ -2062,7 +2052,7 @@ int16_t uiobj_select_from_list1(int x, int y, int w, const char *title, char con
     return oi - 1;
 }
 
-int16_t uiobj_select_from_list2(int x, int y, int w, const char *title, char const * const *strtbl, int16_t *selptr, const bool *condtbl, int linenum, int upx, int upy, uint8_t *uplbx, int dnx, int dny, uint8_t *dnlbx, uint16_t subtype, uint8_t *sp0p, uint16_t sp0v, uint16_t sp1, uint16_t sp2, uint16_t sp3)
+int16_t uiobj_select_from_list2(int x, int y, int w, const char *title, char const * const *strtbl, int16_t *selptr, const bool *condtbl, int linenum, int upx, int upy, uint8_t *uplbx, int dnx, int dny, uint8_t *dnlbx, uint16_t subtype, uint8_t *sp0p, uint16_t sp0v, uint16_t sp1, uint16_t sp2, uint16_t sp3, bool update_at_cursor)
 {
     int h, dy, ty, linei = 0, itemi = 0, itemnum, itemoffs, foundi = 0;
     bool flag_done = false, flag_copy_buf = false, flag_found = false;
@@ -2201,21 +2191,31 @@ int16_t uiobj_select_from_list2(int x, int y, int w, const char *title, char con
             itemoffs = i;
             flag_rebuild = true;
         }
-        uiobj_kbd_movey = 0;
         if (flag_rebuild) {
             uiobj_table_clear();
             lbxfont_select(lbxfont_get_current_fontnum(), lbxfont_get_current_fonta2(), fonta2b, 0);
             *selptr = -1;
-            if ((!condtbl) || condtbl[itemoffs]) {
-                *selptr = itemoffs;
-            } else {
-                int i = itemoffs;
-                while (i <= (itemoffs + linenum)) {
-                    if ((!condtbl) || condtbl[i]) {
-                        *selptr = i;
-                        break;
+            if (uiobj_kbd_movey == 1) {
+                if ((!condtbl) || condtbl[itemoffs + linenum - 1]) {
+                    *selptr = itemoffs + linenum - 1;
+                } else {
+                    for (int i = itemoffs + linenum - 1; i > 0; --i) {
+                        if ((!condtbl) || condtbl[i]) {
+                            *selptr = i;
+                            break;
+                        }
                     }
-                    ++i;
+                }
+            } else {
+                if ((!condtbl) || condtbl[itemoffs]) {
+                    *selptr = itemoffs;
+                } else {
+                    for (int i = itemoffs; i < (itemoffs + linenum); ++i) {
+                        if ((!condtbl) || condtbl[i]) {
+                            *selptr = i;
+                            break;
+                        }
+                    }
                 }
             }
             s = &strtbl[itemoffs];
@@ -2232,7 +2232,8 @@ int16_t uiobj_select_from_list2(int x, int y, int w, const char *title, char con
             oi_dn = uiobj_add_t2(dnx, dny, "", dnlbx, &dnvar, MOO_KEY_PAGEDOWN);
             oi_wheel = uiobj_add_mousewheel(0, 0, 319, 199, &scroll);
         }
-        if (uiobj_hmm8 != 0) {
+        uiobj_kbd_movey = 0;
+        if (update_at_cursor) {
             int oi2;
             oi2 = uiobj_at_cursor();
             if (oi2 > 0) {
@@ -2250,7 +2251,6 @@ int16_t uiobj_select_from_list2(int x, int y, int w, const char *title, char con
     }
     uiobj_table_clear();
     uiobj_flag_select_list_active = false;
-    uiobj_hmm8 = 1;
     uiobj_flag_select_list_multipage = false;
     mouse_getclear_click_hw();
     mouse_getclear_click_sw();
