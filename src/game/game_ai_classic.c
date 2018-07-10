@@ -3112,12 +3112,6 @@ static bool game_ai_classic_battle_ai_retreat(struct battle_s *bt)
             repair[j] = 0;
         }
     }
-    if ((hp[SIDE_L] == 0) && (dmg[SIDE_L] == 0)) {
-        dmg[SIDE_L] = 1;
-    }
-    if ((hp[SIDE_R] == 0) && (dmg[SIDE_R] == 0)) {
-        dmg[SIDE_R] = 1;
-    }
     if (hp[SIDE_L] == 0) {
         return false;
     }
