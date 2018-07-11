@@ -44,6 +44,7 @@ extern bool game_num_retreat_redir_fix;
 extern bool game_num_waste_adjust_fix;
 extern uint8_t game_num_tbl_hull_w[4];
 extern uint8_t game_num_tech_costmuld[DIFFICULTY_NUM];
+extern uint8_t game_num_tech_costmula[DIFFICULTY_NUM];
 extern uint8_t game_num_tech_costmulr[RACE_NUM][TECH_FIELD_NUM];
 #define GAME_NG_TECH_NEVER  (1 << 0)
 #define GAME_NG_TECH_ALWAYS (1 << 1)
