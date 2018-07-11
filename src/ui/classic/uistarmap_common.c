@@ -165,10 +165,18 @@ static void ui_starmap_draw_sliders_and_prod(struct starmap_data_s *d)
     lbxfont_print_str_right(x, 105, buf, UI_SCREEN_W);
     {
         int v;
-        v = game_planet_get_slider_text(g, g->planet_focus_i[d->api], d->api, PLANET_SLIDER_ECO, buf);
+        v = game_planet_get_slider_text_eco(g, g->planet_focus_i[d->api], d->api, ui_extra_enabled, buf);
         lbxfont_print_str_right(x, 116, buf, UI_SCREEN_W);
         if (v >= 0) {
-            sprintf(buf, "+%i", v);
+            if (ui_extra_enabled) {
+                if (v < 100) {
+                    sprintf(buf, "%i.%i", v / 10, v % 10); /* "+0.X" does not fit the box */
+                } else {
+                    sprintf(buf, "+%i", v / 10);
+                }
+            } else {
+                sprintf(buf, "+%i", v);
+            }
             lbxfont_print_str_right(297, 116, buf, UI_SCREEN_W);
         }
     }
