@@ -357,87 +357,7 @@ int game_planet_get_slider_text(const struct game_s *g, uint8_t planet_i, player
             }
             break;
         case PLANET_SLIDER_ECO:
-            {
-                const char *str = NULL;
-                int vthis, factoper, waste, adjwaste;
-                bool flag_tform = false, flag_ecoproj = false;
-                vthis = (p->prod_after_maint * p->slider[PLANET_SLIDER_ECO]) / 100;
-                factoper = (p->pop - p->trans_num) * e->colonist_oper_factories;
-                SETMIN(factoper, p->factories);
-                waste = (factoper * e->ind_waste_scale) / 10;
-                if (e->race == RACE_SILICOID) {
-                    adjwaste = 0;
-                } else {
-                    adjwaste = (waste + p->waste) / e->have_eco_restoration_n;
-                }
-                if ((vthis < adjwaste) || (vthis == 0)) {
-                    str = (vthis < adjwaste) ? game_str_sm_ecowaste : game_str_sm_prodnone;
-                } else {
-                    SUBSAT0(vthis, adjwaste);
-                    if ((vthis > 0) && e->have_atmos_terra && (p->growth == PLANET_GROWTH_HOSTILE)) {
-                        vthis -= game_num_atmos_cost - p->bc_to_ecoproj;
-                        if (vthis < 0) {
-                            flag_ecoproj = true;
-                            str = game_str_sm_ecoatmos;
-                        }
-                    }
-                    if ((vthis > 0) && e->have_soil_enrich && (p->growth == PLANET_GROWTH_NORMAL)) {
-                        vthis -= game_num_soil_cost - p->bc_to_ecoproj;
-                        if (vthis < 0) {
-                            flag_ecoproj = true;
-                            str = game_str_sm_ecosoil;
-                        }
-                    }
-                    if ((vthis > 0) && e->have_adv_soil_enrich && ((p->growth == PLANET_GROWTH_NORMAL) || (p->growth == PLANET_GROWTH_FERTILE))) {
-                       vthis -= game_num_adv_soil_cost - p->bc_to_ecoproj;
-                       if (vthis < 0) {
-                            flag_ecoproj = true;
-                            str = game_str_sm_ecogaia;
-                        }
-                    }
-                    flag_tform = false;
-                    if (vthis > 0) {
-                        if (p->max_pop3 < game_num_max_pop) {
-                            adjwaste = (p->max_pop2 + (e->have_terraform_n - p->max_pop3)) * e->terraform_cost_per_inc;
-                        } else {
-                            adjwaste = 0;
-                        }
-                        if (vthis < adjwaste) {
-                            str = game_str_sm_ecotform;
-                        } else {
-                            int growth, growth2;
-                            if (adjwaste > 0) {
-                                flag_tform = true;
-                            }
-                            vthis -= adjwaste;
-                            growth = game_get_pop_growth_max(g, planet_i, p->max_pop3) + p->pop_tenths;
-                            if (((p->pop - p->trans_num) + (growth / 10)) > p->max_pop3) {
-                                growth = (p->max_pop3 - (p->pop - p->trans_num)) * 10;
-                            }
-                            growth2 = game_get_pop_growth_for_eco(g, planet_i, vthis) + growth;
-                            if (((p->pop - p->trans_num) + (growth2 / 10)) > p->max_pop3) {
-                                growth2 = (p->max_pop3 - (p->pop - p->trans_num)) * 10;
-                            }
-                            growth = growth2 / 10 - growth / 10;
-                            if (growth <= 0) {
-                                str = flag_tform ? game_str_sm_ecotform : game_str_sm_ecoclean;
-                            } else {
-                                retval = growth;
-                                str = game_str_sm_ecopop;
-                            }
-                        }
-                    } else {
-                        if ((flag_ecoproj == false) && (e->race != RACE_SILICOID)) {
-                            str = game_str_sm_ecoclean;
-                        }
-                    }
-                }
-                if (str) {
-                    strcpy(buf, str);
-                } else {
-                    *buf = '\0';
-                }
-            }
+            retval = game_planet_get_slider_text_eco(g, planet_i, player, false, buf);
             break;
         case PLANET_SLIDER_TECH:
             {
@@ -449,6 +369,104 @@ int game_planet_get_slider_text(const struct game_s *g, uint8_t planet_i, player
         default:
             *buf = '\0';
             break;
+    }
+    return retval;
+}
+
+int game_planet_get_slider_text_eco(const struct game_s *g, uint8_t planet_i, player_id_t player, bool flag_tenths, char *buf)
+{
+    const planet_t *p = &(g->planet[planet_i]);
+    const empiretechorbit_t *e = &(g->eto[player]);
+    int retval = -1;
+    const char *str = NULL;
+    int vthis, factoper, waste, adjwaste;
+    bool flag_tform = false, flag_ecoproj = false;
+    vthis = (p->prod_after_maint * p->slider[PLANET_SLIDER_ECO]) / 100;
+    factoper = (p->pop - p->trans_num) * e->colonist_oper_factories;
+    SETMIN(factoper, p->factories);
+    waste = (factoper * e->ind_waste_scale) / 10;
+    if (e->race == RACE_SILICOID) {
+        adjwaste = 0;
+    } else {
+        adjwaste = (waste + p->waste) / e->have_eco_restoration_n;
+    }
+    if ((vthis < adjwaste) || (vthis == 0)) {
+        str = (vthis < adjwaste) ? game_str_sm_ecowaste : game_str_sm_prodnone;
+    } else {
+        SUBSAT0(vthis, adjwaste);
+        if ((vthis > 0) && e->have_atmos_terra && (p->growth == PLANET_GROWTH_HOSTILE)) {
+            vthis -= game_num_atmos_cost - p->bc_to_ecoproj;
+            if (vthis < 0) {
+                flag_ecoproj = true;
+                str = game_str_sm_ecoatmos;
+            }
+        }
+        if ((vthis > 0) && e->have_soil_enrich && (p->growth == PLANET_GROWTH_NORMAL)) {
+            vthis -= game_num_soil_cost - p->bc_to_ecoproj;
+            if (vthis < 0) {
+                flag_ecoproj = true;
+                str = game_str_sm_ecosoil;
+            }
+        }
+        if ((vthis > 0) && e->have_adv_soil_enrich && ((p->growth == PLANET_GROWTH_NORMAL) || (p->growth == PLANET_GROWTH_FERTILE))) {
+           vthis -= game_num_adv_soil_cost - p->bc_to_ecoproj;
+           if (vthis < 0) {
+                flag_ecoproj = true;
+                str = game_str_sm_ecogaia;
+            }
+        }
+        flag_tform = false;
+        if (vthis > 0) {
+            if (p->max_pop3 < game_num_max_pop) {
+                adjwaste = (p->max_pop2 + (e->have_terraform_n - p->max_pop3)) * e->terraform_cost_per_inc;
+            } else {
+                adjwaste = 0;
+            }
+            if (vthis < adjwaste) {
+                str = game_str_sm_ecotform;
+            } else {
+                int growth, growth2;
+                if (adjwaste > 0) {
+                    flag_tform = true;
+                }
+                vthis -= adjwaste;
+                growth = game_get_pop_growth_max(g, planet_i, p->max_pop3) + p->pop_tenths;
+                if (!flag_tenths) {
+                    if (((p->pop - p->trans_num) + (growth / 10)) > p->max_pop3) {
+                        growth = (p->max_pop3 - (p->pop - p->trans_num)) * 10;
+                    }
+                    growth2 = game_get_pop_growth_for_eco(g, planet_i, vthis) + growth;
+                    if (((p->pop - p->trans_num) + (growth2 / 10)) > p->max_pop3) {
+                        growth2 = (p->max_pop3 - (p->pop - p->trans_num)) * 10;
+                    }
+                    growth = growth2 / 10 - growth / 10;
+                } else {
+                    if (((p->pop - p->trans_num) * 10 + growth) > (p->max_pop3 * 10)) {
+                        growth = (p->max_pop3 - (p->pop - p->trans_num)) * 10 + p->pop_tenths;
+                    }
+                    growth2 = game_get_pop_growth_for_eco(g, planet_i, vthis) + growth;
+                    if (((p->pop - p->trans_num) * 10 + growth2) > (p->max_pop3 * 10)) {
+                        growth2 = (p->max_pop3 - (p->pop - p->trans_num)) * 10 + p->pop_tenths;
+                    }
+                    growth = growth2 - growth;
+                }
+                if (growth <= 0) {
+                    str = flag_tform ? game_str_sm_ecotform : game_str_sm_ecoclean;
+                } else {
+                    retval = growth;
+                    str = game_str_sm_ecopop;
+                }
+            }
+        } else {
+            if ((flag_ecoproj == false) && (e->race != RACE_SILICOID)) {
+                str = game_str_sm_ecoclean;
+            }
+        }
+    }
+    if (str) {
+        strcpy(buf, str);
+    } else {
+        *buf = '\0';
     }
     return retval;
 }
