@@ -213,10 +213,14 @@ void ui_planet_look(struct game_s *g, int api, uint8_t planet_i)
                 printf("  - Slider %c DEF %3i  %s\n", p->slider_lock[PLANET_SLIDER_DEF] ? '*' : ' ', p->slider[PLANET_SLIDER_DEF], buf);
                 game_planet_get_slider_text(g, p, api, PLANET_SLIDER_IND, buf);
                 printf("  - Slider %c IND %3i  %s\n", p->slider_lock[PLANET_SLIDER_IND] ? '*' : ' ', p->slider[PLANET_SLIDER_IND], buf);
-                v = game_planet_get_slider_text(g, p, api, PLANET_SLIDER_ECO, buf);
+                v = game_planet_get_slider_text_eco(g, p, api, true, buf);
                 printf("  - Slider %c ECO %3i  ", p->slider_lock[PLANET_SLIDER_ECO] ? '*' : ' ', p->slider[PLANET_SLIDER_ECO]);
                 if (v >= 0) {
-                    printf("+%i ", v);
+                    if (v < 100) {
+                        printf("+%i.%i ", v / 10, v % 10);
+                    } else {
+                        printf("+%i ", v / 10);
+                    }
                 }
                 printf("%s\n", buf);
                 game_planet_get_slider_text(g, p, api, PLANET_SLIDER_TECH, buf);
