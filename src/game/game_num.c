@@ -47,6 +47,7 @@ uint16_t game_num_base_hp[BASE_HP_TBL_NUM] = { 50, 75, 100, 125, 150, 175, 200 }
 uint16_t game_num_pshield_cost[PSHIELD_NUM] = { 0, 500, 1000, 1500, 2000 };
 
 uint8_t game_num_tech_costmuld[DIFFICULTY_NUM] = { 20, 25, 30, 35, 40 };
+uint8_t game_num_tech_costmula[DIFFICULTY_NUM] = { 20, 20, 20, 20, 20 };
 
 uint8_t game_num_tech_costmulr[RACE_NUM][TECH_FIELD_NUM] = {
     { 100, 100, 60, 80, 80, 100 },
