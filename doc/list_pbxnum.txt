@@ -63,6 +63,15 @@ eco_slider_slack : 0..255, 7
     Reducing the value to 0 eliminates extraneous eco spending after population
     maximum has been reached.
 
+tech_costmuld : 0..255, ?
+  - Research discovery base cost difficulty multiplier for human players.
+
+tech_costmula : 0..255, ?
+  - Research discovery base cost difficulty multiplier for AI players.
+
+tcostm_* : 0..255, ?
+  - Research discovery base cost racial modifier.
+
 event_roll : 0..2147483647, 512
   - Special event probability. Bigger number means events are less likely.
     Zero means events are disabled.
