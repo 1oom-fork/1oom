@@ -155,5 +155,6 @@ extern void game_planet_adjust_percent(struct game_s *g, player_id_t owner, plan
 extern int game_planet_get_w1(const struct game_s *g, uint8_t planet_i);
 extern void game_planet_update_home(struct game_s *g);
 extern int game_planet_get_slider_text(const struct game_s *g, uint8_t planet_i, player_id_t player, planet_slider_i_t si, char *buf);
+extern int game_planet_get_slider_text_eco(const struct game_s *g, uint8_t planet_i, player_id_t player, bool flag_tenths, char *buf);
 
 #endif
