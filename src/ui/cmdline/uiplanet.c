@@ -224,10 +224,14 @@ void ui_planet_look(const struct game_s *g, player_id_t api, uint8_t planet_i, b
                     printf("  - Slider %c DEF %3i  %s\n", p->slider_lock[PLANET_SLIDER_DEF] ? '*' : ' ', p->slider[PLANET_SLIDER_DEF], buf);
                     game_planet_get_slider_text(g, planet_i, api, PLANET_SLIDER_IND, buf);
                     printf("  - Slider %c IND %3i  %s\n", p->slider_lock[PLANET_SLIDER_IND] ? '*' : ' ', p->slider[PLANET_SLIDER_IND], buf);
-                    v = game_planet_get_slider_text(g, planet_i, api, PLANET_SLIDER_ECO, buf);
+                    v = game_planet_get_slider_text_eco(g, planet_i, api, true, buf);
                     printf("  - Slider %c ECO %3i  ", p->slider_lock[PLANET_SLIDER_ECO] ? '*' : ' ', p->slider[PLANET_SLIDER_ECO]);
                     if (v >= 0) {
-                        printf("+%i ", v);
+                        if (v < 100) {
+                            printf("+%i.%i ", v / 10, v % 10);
+                        } else {
+                            printf("+%i ", v / 10);
+                        }
                     }
                     printf("%s\n", buf);
                     v = game_get_tech_prod(p->prod_after_maint, p->slider[PLANET_SLIDER_TECH], g->eto[api].race, p->special);
