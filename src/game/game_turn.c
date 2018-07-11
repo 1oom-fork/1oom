@@ -183,7 +183,7 @@ static void game_turn_build_eco(struct game_s *g)
         owner = p->owner;
         p->pop_prev = (owner != PLAYER_NONE) ? p->pop : 0;
         if ((owner != PLAYER_NONE) && (p->type != PLANET_TYPE_NOT_HABITABLE) && (p->pop != 0)) {
-            empiretechorbit_t *e;
+            const empiretechorbit_t *e;
             int ecorestore, ecoprod;
             e = &(g->eto[owner]);
             {
@@ -192,7 +192,7 @@ static void game_turn_build_eco(struct game_s *g)
                 v = p->pop * e->colonist_oper_factories;
                 SETMIN(fact, v);
                 waste = (fact * e->ind_waste_scale) / 10;
-                p->waste += ((100 - ((waste * 100) / p->max_pop2)) * waste) / 100;
+                p->waste += ((100 - ((p->waste * 100) / p->max_pop2)) * waste) / 100;
             }
             if (p->unrest == PLANET_UNREST_REBELLION) {
                 p->waste = 0;
@@ -202,7 +202,7 @@ static void game_turn_build_eco(struct game_s *g)
             ecoprod = (p->slider[PLANET_SLIDER_ECO] * p->prod_after_maint) / 100;
             if (e->race != RACE_SILICOID) {
                 if (ecorestore > ecoprod) {
-                    p->waste -= ecorestore * ecoprod;
+                    p->waste -= e->have_eco_restoration_n * ecoprod;
                     ecoprod = 0;
                 } else {
                     ecoprod -= ecorestore;
