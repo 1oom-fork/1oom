@@ -189,6 +189,7 @@ static const struct numtbl_s {
     DEFNUMITEML(eco_slider_slack, NUMTYPE_U8, 0, 0xff),
     DEFNUMITEMLTBLL(tbl_hull_w, NUMTYPE_U8, 0, 0xff),
     DEFNUMITEMLTBLL(tech_costmuld, NUMTYPE_U8, 0, 0xff),
+    DEFNUMITEMLTBLL(tech_costmula, NUMTYPE_U8, 0, 0xff),
     DEFNUMITEMLTBL(tcostm_human, game_num_tech_costmulr[RACE_HUMAN], NUMTYPE_U8, 0, 0xff),
     DEFNUMITEMLTBL(tcostm_mrrshan, game_num_tech_costmulr[RACE_MRRSHAN], NUMTYPE_U8, 0, 0xff),
     DEFNUMITEMLTBL(tcostm_silicoid, game_num_tech_costmulr[RACE_SILICOID], NUMTYPE_U8, 0, 0xff),
