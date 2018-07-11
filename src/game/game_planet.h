@@ -158,6 +158,7 @@ extern int game_get_tech_prod(int prod, int slider, race_t race, planet_special_
 extern void game_planet_update_home(struct game_s *g);
 extern const char *game_planet_get_finished_text(const struct game_s *g, const planet_t *p, planet_finished_t type, char *buf);
 extern int game_planet_get_slider_text(const struct game_s *g, uint8_t planet_i, player_id_t player, planet_slider_i_t si, char *buf);
+extern int game_planet_get_slider_text_eco(const struct game_s *g, uint8_t planet_i, player_id_t player, bool flag_tenths, char *buf);
 
 struct planet_prod_s {
     int vthis;

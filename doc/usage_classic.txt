@@ -33,6 +33,7 @@ enables the following extra UI features:
 - Clicking the portraits in Races screen brings Report page
 - Report screen shows name of AI leaders, Map screen shows current year
 - Sending fewer than all ships does not deselect the orbit fleet
+- Eco slider shows fractional population growth if growth is less than 10
 - Summary of forces shown before ship combat
 - New Auto and Retreat buttons for space combat autoresolve
 
