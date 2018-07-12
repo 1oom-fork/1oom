@@ -9,6 +9,7 @@ extern int hw_opt_screen_fsh;
 extern char *hw_opt_sdlmixer_sf;
 extern int hw_opt_aspect;
 extern int hw_opt_force_sw;
+extern int hw_opt_mousespd;
 
 /* for SDL1 */
 extern int hw_opt_gl_filter;
