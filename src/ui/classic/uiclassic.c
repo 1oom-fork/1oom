@@ -288,7 +288,7 @@ static void init_gfx(void)
 
     gfx_aux_setup_wh(&ui_data.aux.screen, UI_SCREEN_W, UI_SCREEN_H);
     gfx_aux_setup_wh(&ui_data.aux.ship_overlay, 34, 26);
-    gfx_aux_setup_wh(&ui_data.aux.btemp, 38, 30);
+    gfx_aux_setup_wh(&ui_data.aux.btemp, 50, 40);
 
     ui_data.gfx.initialized = true;
 }
