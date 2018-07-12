@@ -511,13 +511,16 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
         lbxfont_print_str_center_limit(tx + 2, ty + 5, game_str_sm_amoeba, STARMAP_LIMITS, UI_SCREEN_W, starmap_scale);
     }
     for (int pi = 0; pi < g->galaxy_stars; ++pi) {
-        planet_t *p = &g->planet[pi];
-        if (BOOLVEC_IS1(p->within_srange, d->api)) {
+        const planet_t *p = &g->planet[pi];
+        if (BOOLVEC_IS1(p->within_srange, d->api) || BOOLVEC_IS1(g->eto[d->api].orbit[pi].visible, d->api)) {
             player_id_t tblorbit[PLAYER_NUM];
             player_id_t num;
             num = 0;
             for (player_id_t i = PLAYER_0; i < g->players; ++i) {
-                empiretechorbit_t *e = &g->eto[i];
+                const empiretechorbit_t *e = &g->eto[i];
+                if (BOOLVEC_IS0(p->within_srange, d->api) && (i != d->api)) {
+                    continue;
+                }
                 for (int j = 0; j < e->shipdesigns_num; ++j) {
                     if (e->orbit[pi].ships[j]) {
                         tblorbit[num++] = i;
@@ -640,12 +643,15 @@ void ui_starmap_fill_oi_tbls(struct starmap_data_s *d, bool add_enroute)
     }
     for (int i = 0; i < g->galaxy_stars; ++i) {
         const planet_t *p = &(g->planet[i]);
-        if (BOOLVEC_IS1(p->within_srange, d->api)) {
+        if (BOOLVEC_IS1(p->within_srange, d->api) || BOOLVEC_IS1(g->eto[d->api].orbit[i].visible, d->api)) {
             int numorbits, x0, y0;
             player_id_t tblpl[PLAYER_NUM];
             numorbits = 0;
             for (int j = 0; j < g->players; ++j) {
                 const fleet_orbit_t *r = &(g->eto[j].orbit[i]);
+                if (BOOLVEC_IS0(p->within_srange, d->api) && (j != d->api)) {
+                    continue;
+                }
                 for (int k = 0; k < g->eto[j].shipdesigns_num; ++k) {
                     if (r->ships[k]) {
                         tblpl[numorbits++] = j;
