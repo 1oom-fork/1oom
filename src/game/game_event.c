@@ -863,11 +863,8 @@ bool game_event_run(struct game_s *g, struct game_end_s *ge)
                     break;
                 case 3:
                     if (flag_new_dest) {
-                        ns.subtype = 3;
+                        ns.subtype = flag_colony ? 3 : -1;
                         m->exists = 2;
-                        if (!flag_colony) {
-                            ns.subtype = -1;
-                        }
                     } else {
                         ns.subtype = (m->killer == PLAYER_NONE) ? 2 : 1;
                     }
