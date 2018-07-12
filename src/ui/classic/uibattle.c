@@ -454,16 +454,16 @@ static void ui_battle_transition_to(int px, int py, int steps)
 #endif
 }
 
-static void ui_battle_draw_beam_line(int fx, int fy, int tx, int ty, int a8, int aa, uint8_t v24, const uint8_t *ctbl)
+static void ui_battle_draw_beam_line(int fx, int fy, int tx, int ty, int d0, int d1, uint8_t v24, const uint8_t *ctbl)
 {
     int dist, x0, y0, x1, y1;
     dist = util_math_dist_fast(fx, fy, tx, ty);
     x0 = fx;
     y0 = fy;
-    util_math_go_line_dist(&x0, &y0, tx, ty, (a8 * dist) / 100);
+    util_math_go_line_dist(&x0, &y0, tx, ty, (d0 * dist) / 100);
     x1 = x0;
     y1 = y0;
-    util_math_go_line_dist(&x1, &y1, tx, ty, (aa * dist) / 100);
+    util_math_go_line_dist(&x1, &y1, tx, ty, (d1 * dist) / 100);
     if ((v24 == 1) || (v24 == 3) || (v24 == 5)) {
         ui_draw_line1(x0, y0, x1, y1, ctbl[0]);
     } else {
