@@ -61,6 +61,18 @@ You can also specify your own path by passing the command-line
 argument "-user <path>" when running 1oom. Note that unlike "-data"
 the setting is not saved in the configuration file.
 
+2.2. What is not saved
+-----------------------
+
+Most options set via command-line arguments are saved to the configuration
+file (if any). The notable exceptions are:
+
+    -c          Config filename in the config file? Too meta
+    -cro        Can not write "do not write config" to config
+    -user       Config file is in user directory
+    -(no)log    Log is opened before reading config
+    -file
+
 
 3. Command-line arguments
 ==========================
@@ -76,7 +88,7 @@ For all:
     -data PATH           Set data directory
     -log FILE.TXT        Set log filename
     -nolog               Do not create a log file
-    -file FILE.PBX       Add LBX patch file (.PBX)
+    -file FILE.PBX       Add PBX file
 
 For UIs with audio support:
     -audio               Enable audio
@@ -259,6 +271,13 @@ Some examples:
 The -nga command line parameters selects the AI type to use when starting
 a new game via -new. The values 0 and 1 correspond to Classic and Classic+,
 respectively.
+
+3.3. -file
+-----------
+
+Unlike Doom, the "-file" part needs to added for each PBX file.
+Like Doom, the given PBX filenames are not stored anywhere and must be given
+with -file whenever the PBX files are to be used.
 
 
 4. New features
