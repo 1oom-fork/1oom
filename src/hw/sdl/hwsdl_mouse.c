@@ -11,8 +11,8 @@
 
 /* -------------------------------------------------------------------------- */
 
-static int hw_mouse_w;
-static int hw_mouse_h;
+static int hw_mouse_game_w;
+static int hw_mouse_game_h;
 static int hw_mouse_dx_acc = 0;
 static int hw_mouse_dy_acc = 0;
 static int hw_mouse_sx = 1;
@@ -53,29 +53,33 @@ void hw_mouse_toggle_grab(void)
 
 void hw_mouse_set_limits(int w, int h)
 {
-    hw_mouse_w = w;
-    hw_mouse_h = h;
+    hw_mouse_game_w = w;
+    hw_mouse_game_h = h;
 }
 
 void hw_mouse_set_scale(int w, int h)
 {
-    hw_mouse_sx = w / hw_mouse_w;
-    SETMAX(hw_mouse_sx, 1);
-    hw_mouse_sy = h / hw_mouse_h;
-    SETMAX(hw_mouse_sy, 1);
-    log_message("SDL: mouse scale %ix%i -> %i,%i\n", w, h, hw_mouse_sx, hw_mouse_sy);
+    int v;
+    v = w / hw_mouse_game_w;
+    SETMAX(v, 1);
+    v *= 100;
+    hw_mouse_sx = v;
+    v = h / hw_mouse_game_h;
+    SETMAX(v, 1);
+    v *= 100;
+    hw_mouse_sy = v;
 }
 
 void hw_mouse_move(int dx, int dy)
 {
     int x, y;
-    if (hw_mouse_sx > 1) {
-        hw_mouse_dx_acc += dx;
+    {
+        hw_mouse_dx_acc += dx * hw_opt_mousespd;
         dx = hw_mouse_dx_acc / hw_mouse_sx;
         hw_mouse_dx_acc = hw_mouse_dx_acc % hw_mouse_sx;
     }
-    if (hw_mouse_sy > 1) {
-        hw_mouse_dy_acc += dy;
+    {
+        hw_mouse_dy_acc += dy * hw_opt_mousespd;
         dy = hw_mouse_dy_acc / hw_mouse_sy;
         hw_mouse_dy_acc = hw_mouse_dy_acc % hw_mouse_sy;
     }
@@ -83,11 +87,9 @@ void hw_mouse_move(int dx, int dy)
         return;
     }
     x = moouse_x + dx;
-    if (x < 0) { x = 0; }
-    if (x >= hw_mouse_w) { x = hw_mouse_w - 1; }
+    SETRANGE(x, 0, hw_mouse_game_w - 1);
     y = moouse_y + dy;
-    if (y < 0) { y = 0; }
-    if (y >= hw_mouse_h) { y = hw_mouse_h - 1; }
+    SETRANGE(y, 0, hw_mouse_game_h - 1);
     mouse_set_xy_from_hw(x, y);
 }
 
