@@ -207,7 +207,7 @@ static const struct cmdline_options_s cmdline_options_lbx[] = {
 static const struct cmdline_options_s cmdline_options_pbxfile[] = {
     { "-file", 1,
       options_add_patchfile, NULL,
-      "FILE.PBX", "Add LBX patch file (.PBX)" },
+      "FILE.PBX", "Add PBX file" },
     { NULL, 0, NULL, NULL, NULL, NULL }
 };
 
