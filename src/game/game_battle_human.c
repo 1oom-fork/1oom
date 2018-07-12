@@ -922,11 +922,7 @@ static bool game_battle_special(struct battle_s *bt, int attacker_i, int target_
                     v = b->num / 2 + 20;
                     SETMIN(v, 50);
                     v = (b->hp1 * v + 99) / 100;
-                    if (b->hp1 < v) {
-                        b->hp1 -= v;
-                    } else {
-                        b->hp1 = 0;
-                    }
+                    SUBSAT0(b->hp1, v);
                     damage = b->num * v;
                     ui_battle_draw_stream1(bt, attacker_i, target_i);
                     if (damage > 0) {
@@ -939,11 +935,7 @@ static bool game_battle_special(struct battle_s *bt, int attacker_i, int target_
                     v = b->num / 2 + 40;
                     SETMIN(v, 75);
                     v = (b->hp1 * v + 99) / 100;
-                    if (b->hp1 < v) {
-                        b->hp1 -= v;
-                    } else {
-                        b->hp1 = 0;
-                    }
+                    SUBSAT0(b->hp1, v);
                     damage = b->num * v;
                     ui_battle_draw_stream2(bt, attacker_i, target_i);
                     if (damage > 0) {
@@ -1921,11 +1913,7 @@ void game_battle_area_setup(struct battle_s *bt)
                         bool is_missile;
                         const struct shiptech_weap_s *w;
                         w = &(tbl_shiptech_weap[b->wpn[i].t]);
-                        if ((w->damagemax == w->damagemin) && (!w->is_bomb) && (w->misstype == 0)) {
-                            is_missile = true;
-                        } else {
-                            is_missile = false;
-                        }
+                        is_missile = ((w->damagemax == w->damagemin) && (!w->is_bomb) && (w->misstype == 0));
                         if ((b->actman > 0) || ((w->range >= dist) && (b->wpn[i].numfire > 0) && (b->wpn[i].numshots != 0))) {
                             bt->turn_done = false;
                         }
