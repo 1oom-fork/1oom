@@ -125,6 +125,7 @@ For SDL HWs:
                            default = 833333, or (1000000 * 5)/6
     -forcesw             Force software rendering
     -noforcesw           Do not force software rendering
+    -mousespd SPEED      Set mouse speed (default = 100)
     -sdlmixersf FILE.SF2 Set SDL_mixer soundfont
 
 For SDL1 HW:
