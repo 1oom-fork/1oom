@@ -174,7 +174,6 @@ static void ui_battle_draw_focusinfo(const struct battle_s *bt)
             pos = sprintf(buf, "%i/", ha);
             if (h1 < h2) {
                 buf[pos++] = 2;
-                buf[pos++] = 0;
             }
             sprintf(&buf[pos], "%i", h1);
             lbxfont_print_str_right(92, 194, buf, UI_SCREEN_W);
