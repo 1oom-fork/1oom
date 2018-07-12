@@ -61,6 +61,17 @@ You can also specify your own path by passing the command-line
 argument "-user <path>" when running 1oom. Note that unlike "-data"
 the setting is not saved in the configuration file.
 
+2.2. What is not saved
+-----------------------
+
+Most options set via command-line arguments are saved to the configuration
+file (if any). The notable exceptions are:
+
+    -c          Config filename in the config file? Too meta
+    -cro        Can not write "do not write config" to config
+    -user       Config file is in user directory
+    -(no)log    Log is opened before reading config
+
 
 3. Command-line arguments
 ==========================
