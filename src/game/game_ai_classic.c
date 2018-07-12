@@ -103,10 +103,7 @@ static void game_ai_classic_turn_p1_send_scout(struct game_s *g, struct ai_turn_
         }
     }
     ait->have_colonizable = false;
-    ait->need_conquer = true;
-    if (rnd_1_n(8 - g->difficulty, &g->seed) > 1) {
-        ait->need_conquer = false;
-    }
+    ait->need_conquer = !rnd_0_nm1(8 - g->difficulty, &g->seed);
     for (int i = 0; i < g->galaxy_stars; ++i) {
         const planet_t *p = &(g->planet[i]);
         if (p->owner == PLAYER_NONE) {
@@ -1150,7 +1147,7 @@ static int find_havebuf_item(const int8_t *tbl, int num)
             --num;
         }
     }
-    return i ? i - 1 : 0;
+    return i ? (i - 1) : 0;
 }
 
 static int game_ai_classic_design_ship_get_item(struct game_s *g, int num, int chance)
@@ -2205,11 +2202,7 @@ static int game_ai_battle_dmggive(struct battle_s *bt, int itemi1, int itemi2, i
                     miss_chance_beam += ((100 - miss_chance_beam) * (bd->absorb + 1 - w->damagemin)) / (w->damagemax + 1 - w->damagemin);
                 }
                 /*5861e*/
-                if (w->damagemin <= bd->absorb) {
-                    dmgmin = 1;
-                } else {
-                    dmgmin = w->damagemin - bd->absorb;
-                }
+                dmgmin = (w->damagemin > bd->absorb) ? (w->damagemin - bd->absorb) : 1;
                 if ((w->damagemax / damagediv) > (bd->absorb / absorbdiv)) {
                     dmgmax = (w->damagemax / damagediv) - (bd->absorb / absorbdiv);
                 } else {
