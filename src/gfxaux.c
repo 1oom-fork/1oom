@@ -45,7 +45,7 @@ static void gfx_aux_scale_up(struct gfx_aux_s *aux, int xscale, int yscale)
     w = (w * xscale) / 100;
     h = (h * yscale) / 100;
     if ((w * h) > aux->size) {
-        LOG_DEBUG((1, "%s: realloc aux %ix%i == %i > %i (current %ix%i)\n", w, h, w * h, aux->size, aux->w, aux->h));
+        LOG_DEBUG((1, "%s: realloc aux %ix%i == %i > %i (current %ix%i)\n", __func__, w, h, w * h, aux->size, aux->w, aux->h));
         aux->data = lib_realloc(aux->data, w * h);
     }
     aux->w = w;

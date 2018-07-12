@@ -940,13 +940,9 @@ static bool game_battle_special(struct battle_s *bt, int attacker_i, int target_
                 case 1:
                     v = b->num / 2 + 20;
                     SETMIN(v, 50);
-                    v = (b->hp1 * v + 99) / 100;
-                    if (b->hp1 < v) {
-                        b->hp1 -= v;
-                    } else {
-                        b->hp1 = 0;
-                    }
-                    damage = b->num * v;
+                    v = (bd->hp1 * v + 99) / 100;
+                    SUBSAT0(bd->hp1, v);
+                    damage = bd->num * v;
                     if (!bt->autoresolve) {
                         ui_sound_play_sfx(0x16);
                         ui_battle_draw_stream1(bt, attacker_i, target_i);
@@ -959,13 +955,9 @@ static bool game_battle_special(struct battle_s *bt, int attacker_i, int target_
                 case 2:
                     v = b->num / 2 + 40;
                     SETMIN(v, 75);
-                    v = (b->hp1 * v + 99) / 100;
-                    if (b->hp1 < v) {
-                        b->hp1 -= v;
-                    } else {
-                        b->hp1 = 0;
-                    }
-                    damage = b->num * v;
+                    v = (bd->hp1 * v + 99) / 100;
+                    SUBSAT0(bd->hp1, v);
+                    damage = bd->num * v;
                     if (!bt->autoresolve) {
                         ui_sound_play_sfx(0x18);
                         ui_battle_draw_stream2(bt, attacker_i, target_i);
