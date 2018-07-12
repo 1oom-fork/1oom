@@ -906,16 +906,12 @@ static void game_turn_explore(struct game_s *g, uint8_t *planetptr, player_id_t 
                             }
                         }
                     }
-                    if (best_colonize == 200) {
-                        best_colonize = 0;
-                    }
-                    if (p->owner != PLAYER_NONE) {
-                        best_colonize = 0;
-                    }
-                    if (p->type == PLANET_TYPE_NOT_HABITABLE) {
-                        best_colonize = 0;
-                    }
-                    if (p->type < best_colonize) {
+                    if (0
+                      || (best_colonize == 200)
+                      || (p->owner != PLAYER_NONE)
+                      || (p->type == PLANET_TYPE_NOT_HABITABLE)
+                      || (p->type < best_colonize)
+                    ) {
                         best_colonize = 0;
                     }
                     was_explored = BOOLVEC_IS1(p->explored, i);
