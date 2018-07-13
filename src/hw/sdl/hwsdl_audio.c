@@ -321,7 +321,7 @@ void hw_audio_music_stop(void)
     }
 }
 
-void hw_audio_music_volume(int volume)
+bool hw_audio_music_volume(int volume)
 {
     if (volume < 0) {
         volume = 0;
@@ -336,6 +336,7 @@ void hw_audio_music_volume(int volume)
         log_message("SDLA: music volume %i\n", volume);
         opt_music_volume = volume;
     }
+    return true;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -580,7 +581,7 @@ void hw_audio_sfx_stop(void)
     }
 }
 
-void hw_audio_sfx_volume(int volume)
+bool hw_audio_sfx_volume(int volume)
 {
     if (volume < 0) {
         volume = 0;
@@ -595,6 +596,7 @@ void hw_audio_sfx_volume(int volume)
         log_message("SDLA: sfx volume %i\n", volume);
         opt_sfx_volume = volume;
     }
+    return true;
 }
 
 #else /* !HAVE_SDLMIXER */
@@ -633,8 +635,9 @@ void hw_audio_music_fadeout(void)
 void hw_audio_music_stop(void)
 {
 }
-void hw_audio_music_volume(int volume/*0..128*/)
+bool hw_audio_music_volume(int volume/*0..128*/)
 {
+    return true;
 }
 int hw_audio_sfx_batch_start(int sfx_index_max)
 {
@@ -661,7 +664,8 @@ void hw_audio_sfx_play(int sfx_index)
 void hw_audio_sfx_stop(void)
 {
 }
-void hw_audio_sfx_volume(int volume/*0..128*/)
+bool hw_audio_sfx_volume(int volume/*0..128*/)
 {
+    return true;
 }
 #endif /* HAVE_SDLMIXER */
