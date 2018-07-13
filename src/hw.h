@@ -54,7 +54,7 @@ extern void hw_audio_music_release(int mus_index);
 extern void hw_audio_music_play(int mus_index);
 extern void hw_audio_music_fadeout(void);
 extern void hw_audio_music_stop(void);
-extern void hw_audio_music_volume(int volume/*0..128*/);
+extern bool hw_audio_music_volume(int volume/*0..128*/);
 
 extern int hw_audio_sfx_batch_start(int sfx_index_max);
 extern int hw_audio_sfx_batch_end(void);
@@ -62,7 +62,7 @@ extern int hw_audio_sfx_init(int sfx_index, const uint8_t *data, uint32_t len);
 extern void hw_audio_sfx_release(int sfx_index);
 extern void hw_audio_sfx_play(int sfx_index);
 extern void hw_audio_sfx_stop(void);
-extern void hw_audio_sfx_volume(int volume/*0..128*/);
+extern bool hw_audio_sfx_volume(int volume/*0..128*/);
 
 extern uint32_t hw_get_time_us(void);
 
