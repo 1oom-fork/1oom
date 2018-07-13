@@ -1,18 +1,6 @@
-/* already included by includer */
-#if 0
-#include "config.h"
-
-#include <stdio.h>
-
-#include "hw.h"
-#include "hwsdl_opt.h"
-#include "options.h"
-#include "types.h"
-#endif
+/* includes already added by X/hwsdlX_opt.c which includes this */
 
 /* -------------------------------------------------------------------------- */
-
-#define HW_DEFAULT_ASPECT   833333
 
 bool hw_opt_fullscreen = HW_DEFAULT_FULLSCREEN;
 int hw_opt_screen_winw = 0;
@@ -44,6 +32,23 @@ const struct cfg_items_s hw_cfg_items[] = {
     CFG_ITEM_INT("aspect", &hw_opt_aspect, 0),
 #endif
     CFG_ITEM_END
+};
+
+/* -------------------------------------------------------------------------- */
+
+static bool hw_uiopt_cb_mousespd(void)
+{
+    hw_opt_mousespd = 100;
+    return true;
+}
+
+/* -------------------------------------------------------------------------- */
+
+const struct uiopt_s hw_uiopts[] = {
+    UIOPT_ITEM_BOOL("Fullscreen", hw_opt_fullscreen, hw_video_toggle_fullscreen),
+    UIOPT_ITEM_FUNC("Mouse spd", hw_uiopt_cb_mousespd),
+    UIOPT_ITEM_SLIDER_INT(hw_opt_mousespd, 1, 200),
+    UIOPT_ITEM_END
 };
 
 /* -------------------------------------------------------------------------- */

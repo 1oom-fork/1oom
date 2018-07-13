@@ -20,6 +20,12 @@ const struct cfg_items_s hw_cfg_items[] = {
 
 /* -------------------------------------------------------------------------- */
 
+const struct uiopt_s hw_uiopts[] = {
+    UIOPT_ITEM_END
+};
+
+/* -------------------------------------------------------------------------- */
+
 const struct cmdline_options_s hw_cmdline_options[] = {
     { NULL, 0, NULL, NULL, NULL, NULL }
 };

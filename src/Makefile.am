@@ -69,6 +69,7 @@ util_sources = \
     rnd.h \
     types.h \
     ui.h \
+    uiopt.h \
     util.c \
     util.h \
     util_cstr.c \
@@ -82,7 +83,8 @@ audio_sources = \
     fmt_mus.c \
     fmt_mus.h \
     fmt_sfx.c \
-    fmt_sfx.h
+    fmt_sfx.h \
+    uiopt.c
 
 pic_sources = \
     fmt_pic.c \

@@ -6,6 +6,7 @@
 #include "cfg.h"
 #include "hwsdl_opt.h"
 #include "hwsdl_audio.h"
+#include "hwsdl_video.h"
 #include "lib.h"
 #include "options.h"
 #include "types.h"
@@ -30,6 +31,10 @@ const struct cfg_items_s hw_cfg_items_extra[] = {
     CFG_ITEM_BOOL("int_scaling", &hw_opt_int_scaling),
     CFG_ITEM_BOOL("relmouse", &hw_opt_relmouse),
     CFG_ITEM_END
+};
+
+const struct uiopt_s hw_uiopts_extra[] = {
+    UIOPT_ITEM_END
 };
 
 #include "hwsdl_opt.c"

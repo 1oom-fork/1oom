@@ -6,6 +6,7 @@
 #include "cfg.h"
 #include "options.h"
 #include "types.h"
+#include "uiopt.h"
 
 extern const char *idstr_hw;
 
@@ -18,6 +19,9 @@ extern const struct cmdline_options_s hw_cmdline_options_extra[];
 
 extern const struct cfg_items_s hw_cfg_items[];
 extern const struct cfg_items_s hw_cfg_items_extra[];
+
+extern const struct uiopt_s hw_uiopts[];
+extern const struct uiopt_s hw_uiopts_extra[];
 
 extern void hw_log_message(const char *msg);
 extern void hw_log_warning(const char *msg);
@@ -57,7 +61,7 @@ extern void hw_audio_music_release(int mus_index);
 extern void hw_audio_music_play(int mus_index);
 extern void hw_audio_music_fadeout(void);
 extern void hw_audio_music_stop(void);
-extern void hw_audio_music_volume(int volume/*0..128*/);
+extern bool hw_audio_music_volume(int volume/*0..128*/);
 
 extern int hw_audio_sfx_batch_start(int sfx_index_max);
 extern int hw_audio_sfx_batch_end(void);
@@ -65,7 +69,7 @@ extern int hw_audio_sfx_init(int sfx_index, const uint8_t *data, uint32_t len);
 extern void hw_audio_sfx_release(int sfx_index);
 extern void hw_audio_sfx_play(int sfx_index);
 extern void hw_audio_sfx_stop(void);
-extern void hw_audio_sfx_volume(int volume/*0..128*/);
+extern bool hw_audio_sfx_volume(int volume/*0..128*/);
 
 extern uint32_t hw_get_time_us(void);
 

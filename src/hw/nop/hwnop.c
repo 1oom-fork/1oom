@@ -7,6 +7,7 @@
 #include "main.h"
 #include "options.h"
 #include "types.h"
+#include "uiopt.h"
 
 /* -------------------------------------------------------------------------- */
 
@@ -16,6 +17,14 @@ const struct cmdline_options_s hw_cmdline_options[] = {
 
 const struct cmdline_options_s hw_cmdline_options_extra[] = {
     { NULL, 0, NULL, NULL, NULL, NULL }
+};
+
+const struct uiopt_s hw_uiopts[] = {
+    UIOPT_ITEM_END
+};
+
+const struct uiopt_s hw_uiopts_extra[] = {
+    UIOPT_ITEM_END
 };
 
 const struct cfg_items_s hw_cfg_items[] = {

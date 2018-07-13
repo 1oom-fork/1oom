@@ -1,6 +1,8 @@
 #ifndef INC_1OOM_HWSDL_OPT_H
 #define INC_1OOM_HWSDL_OPT_H
 
+#define HW_DEFAULT_ASPECT   833333
+
 extern bool hw_opt_fullscreen;
 extern int hw_opt_screen_winw;
 extern int hw_opt_screen_winh;
