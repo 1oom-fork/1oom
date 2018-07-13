@@ -465,7 +465,7 @@ int hw_video_resize(int w, int h)
     return 0;
 }
 
-int hw_video_toggle_fullscreen(void)
+bool hw_video_toggle_fullscreen(void)
 {
     unsigned int flags = 0;
 
@@ -483,7 +483,7 @@ int hw_video_toggle_fullscreen(void)
     if (!hw_opt_fullscreen) {
         hw_video_resize(0, 0);
     }
-    return 0;
+    return true;
 }
 
 int hw_video_init(int w, int h)
