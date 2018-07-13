@@ -322,7 +322,7 @@ do_accept:
               && (pt->type >= g->eto[active_player].have_colony_for)
             ) {
                 oi_accept = uiobj_add_t0(271, 163, "", ui_data.gfx.starmap.reloc_bu_accept, MOO_KEY_SPACE);
-                uiobj_add_slider(258, 124, 0, trans_max, 0, trans_max, 41, 8, &d.tr.num, MOO_KEY_UNKNOWN);
+                uiobj_add_slider(258, 124, 0, trans_max, 41, 8, &d.tr.num, MOO_KEY_UNKNOWN);
                 oi_minus = uiobj_add_mousearea(252, 124, 256, 131, MOO_KEY_MINUS);
                 oi_plus = uiobj_add_mousearea(301, 124, 305, 131, MOO_KEY_PLUS);
             }
