@@ -303,6 +303,21 @@ static void video_get_window_position(int *x, int *y, int w, int h)
     }
 }
 
+static void video_window_destroy(void)
+{
+    if (video.renderer) {
+        SDL_DestroyRenderer(video.renderer);
+        video.renderer = NULL;
+        video.texture = NULL;
+        video.texture_upscaled = NULL;
+    }
+    if (video.window) {
+        hw_mouse_ungrab();
+        SDL_DestroyWindow(video.window);
+        video.window = NULL;
+    }
+}
+
 static int video_sw_set(int w, int h)
 {
     int x, y;
@@ -459,6 +474,15 @@ static int video_sw_set(int w, int h)
     return 0;
 }
 
+static void hw_video_update_actual_h(void)
+{
+    if (hw_opt_aspect_ratio_correct) {
+        video.actualh = video.bufh * 6 / 5;
+    } else {
+        video.actualh = video.bufh;
+    }
+}
+
 /* -------------------------------------------------------------------------- */
 
 int hw_video_get_window_id(void)
@@ -494,6 +518,16 @@ bool hw_video_toggle_fullscreen(void)
     return true;
 }
 
+bool hw_video_update_aspect(void)
+{
+    hw_video_update_actual_h();
+    video_window_destroy();
+    if (video_sw_set(hw_opt_screen_winw, hw_opt_screen_winh) != 0) {
+        return false;
+    }
+    return true;
+}
+
 int hw_video_init(int w, int h)
 {
     video.buf = vgabuf_get_front();
@@ -517,12 +551,8 @@ int hw_video_init(int w, int h)
     video.blit_rect.y = 0;
     video.blit_rect.w = video.bufw;
     video.blit_rect.h = video.bufh;
-    if (hw_opt_aspect_ratio_correct) {
-        video.actualh = video.bufh * 6 / 5;
-        h = video.actualh;
-    } else {
-        video.actualh = video.bufh;
-    }
+    hw_video_update_actual_h();
+    h = video.actualh;
     if ((hw_opt_screen_winw != 0) && (hw_opt_screen_winh != 0)) {
         w = hw_opt_screen_winw;
         h = hw_opt_screen_winh;
@@ -540,16 +570,7 @@ int hw_video_init(int w, int h)
 
 void hw_video_shutdown(void)
 {
-    if (video.renderer) {
-        SDL_DestroyRenderer(video.renderer);
-        video.renderer = NULL;
-        video.texture = NULL;
-        video.texture_upscaled = NULL;
-    }
-    if (video.window) {
-        SDL_DestroyWindow(video.window);
-        video.window = NULL;
-    }
+    video_window_destroy();
     if (video.screen) {
         SDL_FreeSurface(video.screen);
         video.screen = NULL;

@@ -27,6 +27,35 @@ int hw_opt_bpp = 0;
 
 /* -------------------------------------------------------------------------- */
 
+#ifdef HAVE_SDL1GL
+static const char *hw_uiopt_cb_aspect_get(void)
+{
+    if (hw_opt_aspect == 833333) {
+        return "VGA";
+    } else if (hw_opt_aspect == 1000000) {
+        return "1:1";
+    } else if (hw_opt_aspect == 0) {
+        return "Off";
+    } else {
+        return "Custom";
+    }
+}
+
+static bool hw_uiopt_cb_aspect_next(void)
+{
+    if (hw_opt_aspect == 833333) {
+        hw_opt_aspect = 1000000;
+    } else if (hw_opt_aspect == 1000000) {
+        hw_opt_aspect = 0;
+    } else {
+        hw_opt_aspect = 833333;
+    }
+    return hw_video_update_aspect();
+}
+#endif /* HAVE_SDL1GL */
+
+/* -------------------------------------------------------------------------- */
+
 const struct cfg_items_s hw_cfg_items_extra[] = {
 #ifdef HAVE_SDL1GL
     CFG_ITEM_INT("aspect", &hw_opt_aspect, 0),
