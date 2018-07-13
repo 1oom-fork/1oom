@@ -6,7 +6,9 @@
 #include "cfg.h"
 #include "hwsdl_opt.h"
 #include "hwsdl_audio.h"
+#include "hwsdl_video.h"
 #include "lib.h"
+#include "log.h"
 #include "options.h"
 #include "types.h"
 
@@ -19,11 +21,29 @@ bool hw_opt_use_gl = true;
 int hw_opt_gl_filter = 1;
 int hw_opt_bpp = 0;
 #define HAVE_SDLX_ASPECT
+#define HAVE_SDLX_ASPECT_OFF
 #endif /* HAVE_SDL1GL */
 
 #ifdef HAVE_SDL1MIXER
 #define HAVE_SDLMIXER
 #endif /* HAVE_SDLMIXER1 */
+
+/* -------------------------------------------------------------------------- */
+
+#ifdef HAVE_SDL1GL
+static const char *hw_gl_filter_str[2] = { "Nearest", "Linear" };
+
+static const char *hw_uiopts_filter_get(void)
+{
+    return hw_gl_filter_str[hw_opt_gl_filter];
+}
+
+static bool hw_uiopts_filter_next(void)
+{
+    hw_opt_gl_filter = (hw_opt_gl_filter + 1) % 2;
+    return true;
+}
+#endif /* HAVE_SDL1GL */
 
 /* -------------------------------------------------------------------------- */
 
