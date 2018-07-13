@@ -82,7 +82,7 @@ void ui_basescrap(struct game_s *g, player_id_t active_player)
     uiobj_table_clear();
     oi_cancel = uiobj_add_t0(x + 10, y + 47, "", ui_data.gfx.starmap.reloc_bu_cancel, MOO_KEY_ESCAPE);
     oi_accept = uiobj_add_t0(x + 66, y + 47, "", ui_data.gfx.starmap.reloc_bu_accept, MOO_KEY_SPACE);
-    /*oi_slider =*/ uiobj_add_slider(x + 14, y + 35, 0, 100, 0, 100, 50, 9, &d.slider_var, MOO_KEY_UNKNOWN);
+    /*oi_slider =*/ uiobj_add_slider(x + 14, y + 35, 0, 100, 50, 9, &d.slider_var, MOO_KEY_UNKNOWN);
     oi_minus = uiobj_add_mousearea(x + 10, y + 33, x + 12, y + 41, MOO_KEY_UNKNOWN);
     oi_plus = uiobj_add_mousearea(x + 66, y + 33, x + 70, y + 41, MOO_KEY_UNKNOWN);
 
