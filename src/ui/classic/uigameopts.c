@@ -161,7 +161,7 @@ static bool gameopts_new_add(struct gameopts_data_s *d, const struct uiopt_s *u)
                 y -= 7;
                 o->u = u;
                 o->value = *u->ts.value_ptr;
-                o->oi = uiobj_add_slider(247, y, u->ts.vmin, u->ts.vmax, u->ts.vmin, u->ts.vmax, 40, 5, &o->value, MOO_KEY_UNKNOWN);
+                o->oi = uiobj_add_slider(247, y, u->ts.vmin, u->ts.vmax, 40, 5, &o->value, MOO_KEY_UNKNOWN);
                 ++num;
                 ++o;
                 o->u = u;
