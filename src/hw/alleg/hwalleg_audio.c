@@ -196,7 +196,7 @@ void hw_audio_music_stop(void)
     }
 }
 
-void hw_audio_music_volume(int volume)
+bool hw_audio_music_volume(int volume)
 {
     if (volume < 0) {
         volume = 0;
@@ -211,6 +211,7 @@ void hw_audio_music_volume(int volume)
         log_message("Audio: music volume %i\n", volume);
         opt_music_volume = volume;
     }
+    return true;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -325,7 +326,7 @@ void hw_audio_sfx_stop(void)
     }
 }
 
-void hw_audio_sfx_volume(int volume)
+bool hw_audio_sfx_volume(int volume)
 {
     if (volume < 0) {
         volume = 0;
@@ -340,4 +341,5 @@ void hw_audio_sfx_volume(int volume)
         log_message("Audio: sfx volume %i\n", volume);
         opt_sfx_volume = volume;
     }
+    return true;
 }
