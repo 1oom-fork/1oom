@@ -73,8 +73,6 @@ typedef struct uiobj_s {
             /*22*/ const uint8_t *colortbl;
         } t4;
         struct {
-            /*16*/ uint16_t fmin;
-            /*18*/ uint16_t fmax;
             /*1c*/ uint16_t vmin;
             /*1e*/ uint16_t vmax;
         } t6;
@@ -178,7 +176,7 @@ static void dump_uiobj_p(const uiobj_t *p)
             LOG_DEBUG((DEBUGLEVEL_UIOBJ, "?\n"));
             break;
         case 6:
-            LOG_DEBUG((DEBUGLEVEL_UIOBJ, "f:%i-%i p:%p v:%i-%i\n", p->t6.fmin, p->t6.fmax, p->vptr, p->t6.vmin, p->t6.vmax));
+            LOG_DEBUG((DEBUGLEVEL_UIOBJ, "p:%p v:%i-%i\n", p->vptr, p->t6.vmin, p->t6.vmax));
             break;
         case 7:
             LOG_DEBUG((DEBUGLEVEL_UIOBJ, "\n"));
@@ -536,12 +534,8 @@ static void uiobj_handle_t6_slider_input(uiobj_t *p)
     } else {
         sliderval = p->t6.vmin + slideroff;
     }
-    if (p->t6.fmin > sliderval) {
-        sliderval = p->t6.fmin;
-    }
-    if (p->t6.fmax < sliderval) {
-        sliderval = p->t6.fmax;
-    }
+    SETMAX(sliderval, p->t6.vmin);
+    SETMIN(sliderval, p->t6.vmax);
     *p->vptr = sliderval;
 }
 
@@ -623,12 +617,8 @@ static inline void uiobj_handle_hmm1_sub1(int i)
         case 6:
             {
                 uint16_t v = *p->vptr;
-                if (p->t6.fmin > v) {
-                    v = p->t6.fmin;
-                }
-                if (p->t6.fmax < v) {
-                    v = p->t6.fmax;
-                }
+                SETMAX(v, p->t6.vmin);
+                SETMIN(v, p->t6.vmax);
                 *p->vptr = v;
             }
             break;
@@ -1311,9 +1301,7 @@ static void uiobj_slider_plus(uiobj_t *p, int adj)
         newval = p->t6.vmax;
     }
     value = newval;
-    if (p->t6.fmax < value) {
-        value = p->t6.fmax;
-    }
+    SETMIN(value, p->t6.vmax);
     *p->vptr = value;
 }
 
@@ -1329,9 +1317,7 @@ static void uiobj_slider_minus(uiobj_t *p, int adj)
         newval = p->t6.vmin;
     }
     value = newval;
-    if (p->t6.fmin > value) {
-        value = p->t6.fmin;
-    }
+    SETMAX(value, p->t6.vmin);
     *p->vptr = value;
 }
 
@@ -1916,14 +1902,12 @@ int16_t uiobj_add_textinput(int x, int y, int w, char *buf, uint16_t buflen, uin
     return UIOBJI_ALLOC();
 }
 
-int16_t uiobj_add_slider(uint16_t x0, uint16_t y0, uint16_t vmin, uint16_t vmax, uint16_t fmin, uint16_t fmax, uint16_t w, uint16_t h, int16_t *vptr, mookey_t key)
+int16_t uiobj_add_slider(uint16_t x0, uint16_t y0, uint16_t vmin, uint16_t vmax, uint16_t w, uint16_t h, int16_t *vptr, mookey_t key)
 {
     uiobj_t *p = &uiobj_tbl[uiobj_table_num];
     uiobj_add_set_xys(p, x0, y0, x0 + w, y0 + h, ui_scale);
     p->t6.vmin = vmin;
     p->t6.vmax = vmax;
-    p->t6.fmin = fmin;
-    p->t6.fmax = fmax;
     p->type = 6;
     p->vptr = vptr;
     p->key = key;
