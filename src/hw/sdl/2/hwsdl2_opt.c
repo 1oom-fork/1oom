@@ -6,6 +6,7 @@
 #include "cfg.h"
 #include "hwsdl_opt.h"
 #include "hwsdl_audio.h"
+#include "hwsdl_video.h"
 #include "lib.h"
 #include "options.h"
 #include "types.h"
