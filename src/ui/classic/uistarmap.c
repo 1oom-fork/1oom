@@ -77,7 +77,7 @@ static void ui_starmap_fill_oi_slider(struct starmap_data_s *d)
             int y0;
             y0 = 81 + i * 11;
             if (!p->slider_lock[i]) {
-                d->sm.oi_tbl_slider[i] = uiobj_add_slider(253, y0 + 3, 0, 100, 0, 100, 25, 9, &p->slider[i], MOO_KEY_UNKNOWN);
+                d->sm.oi_tbl_slider[i] = uiobj_add_slider(253, y0 + 3, 0, 100, 25, 9, &p->slider[i], MOO_KEY_UNKNOWN);
                 d->sm.oi_tbl_slider_minus[i] = uiobj_add_mousearea(247, y0 + 1, 251, y0 + 8, MOO_KEY_UNKNOWN);
                 d->sm.oi_tbl_slider_plus[i] = uiobj_add_mousearea(280, y0 + 1, 283, y0 + 8, MOO_KEY_UNKNOWN);
             }

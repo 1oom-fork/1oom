@@ -376,7 +376,7 @@ void ui_tech(struct game_s *g, player_id_t active_player)
                 if (!t->slider_lock[i]) {
                     oi_tbl_minus[i] = uiobj_add_mousearea(223, y, 226, y + 8, MOO_KEY_UNKNOWN);
                     oi_tbl_plus[i] = uiobj_add_mousearea(279, y, 283, y + 8, MOO_KEY_UNKNOWN);
-                    d.oi_tbl_slider[i] = uiobj_add_slider(227, y, 0, 100, 0, 100, 50, 9, &t->slider[i], MOO_KEY_UNKNOWN);
+                    d.oi_tbl_slider[i] = uiobj_add_slider(227, y, 0, 100, 50, 9, &t->slider[i], MOO_KEY_UNKNOWN);
                 }
             }
             for (int i = 0; i < TECH_ON_SCREEN; ++i) {
