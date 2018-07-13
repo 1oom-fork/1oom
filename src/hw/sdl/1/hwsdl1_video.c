@@ -46,6 +46,7 @@ static struct sdl_video_s {
     int bpp;
     int rgb_mode;
     int rsize, gsize, bsize;
+    int actual_w, actual_h;
 #endif
     /* "best" video mode reported by SDL */
     struct {
@@ -205,15 +206,14 @@ static void set_viewport(unsigned int src_w, unsigned int src_h, unsigned int de
         double aspect = ((double)(hw_opt_aspect)) / 1000000.;
         if (dest_w * src_h < src_w * aspect * dest_h) {
             dest_y = dest_h;
-            dest_h = (unsigned int)(dest_w * src_h / (src_w * aspect));
+            dest_h = (unsigned int)((dest_w * src_h + src_w * aspect / 2) / (src_w * aspect));
             dest_y = (dest_y - dest_h) / 2;
         } else {
             dest_x = dest_w;
-            dest_w = (unsigned int)(dest_h * src_w * aspect / src_h);
+            dest_w = (unsigned int)((dest_h * src_w * aspect + src_h / 2) / src_h);
             dest_x = (dest_x - dest_w) / 2;
         }
     }
-
     glViewport(dest_x, dest_y, dest_w, dest_h);
 }
 #endif /* HAVE_SDL1GL */
@@ -293,6 +293,8 @@ int hw_video_resize(int w, int h)
         hw_mouse_grab();
     }
     hw_mouse_set_scale(actual_w, actual_h);
+    video.actual_w = actual_w;
+    video.actual_h = actual_h;
     return 0;
     fail:
     return -1;
@@ -322,6 +324,13 @@ bool hw_video_toggle_fullscreen(void)
     }
     return true;
 }
+
+#ifdef HAVE_SDL1GL
+bool hw_video_update_aspect(void)
+{
+    return (hw_video_resize(video.actual_w, video.actual_h) == 0);
+}
+#endif
 
 int hw_video_init(int w, int h)
 {

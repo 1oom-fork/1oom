@@ -461,6 +461,15 @@ static int video_sw_set(int w, int h)
     return 0;
 }
 
+static void hw_video_update_actual_h(void)
+{
+    if (!hw_opt_aspect) {
+        video.actualh = video.bufh;
+    } else {
+        video.actualh = (uint32_t)(video.bufh * 1000000) / hw_opt_aspect;
+    }
+}
+
 /* -------------------------------------------------------------------------- */
 
 int hw_video_get_window_id(void)
@@ -481,6 +490,16 @@ bool hw_video_toggle_fullscreen(void)
     video_window_destroy();
     if (video_sw_set(hw_opt_screen_winw, hw_opt_screen_winh) != 0) {
         hw_opt_fullscreen = !hw_opt_fullscreen; /* restore the setting for the config file */
+        return false;
+    }
+    return true;
+}
+
+bool hw_video_update_aspect(void)
+{
+    hw_video_update_actual_h();
+    video_window_destroy();
+    if (video_sw_set(hw_opt_screen_winw, hw_opt_screen_winh) != 0) {
         return false;
     }
     return true;
@@ -509,12 +528,8 @@ int hw_video_init(int w, int h)
     video.blit_rect.y = 0;
     video.blit_rect.w = video.bufw;
     video.blit_rect.h = video.bufh;
-    if (!hw_opt_aspect) {
-        video.actualh = video.bufh;
-    } else {
-        video.actualh = (uint32_t)(video.bufh * 1000000) / hw_opt_aspect;
-        SETMAX(h, video.actualh);
-    }
+    hw_video_update_actual_h();
+    SETMAX(h, video.actualh);
     if ((hw_opt_screen_winw != 0) && (hw_opt_screen_winh != 0)) {
         w = hw_opt_screen_winw;
         h = hw_opt_screen_winh;
