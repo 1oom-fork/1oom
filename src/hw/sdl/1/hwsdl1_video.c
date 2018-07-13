@@ -213,11 +213,11 @@ static void set_viewport(unsigned int src_w, unsigned int src_h, unsigned int de
         double aspect = ((double)(hw_opt_aspect)) / 1000000.;
         if (dest_w * src_h < src_w * aspect * dest_h) {
             dest_y = dest_h;
-            dest_h = (unsigned int)(dest_w * src_h / (src_w * aspect));
+            dest_h = (unsigned int)((dest_w * src_h + src_w * aspect / 2) / (src_w * aspect));
             dest_y = (dest_y - dest_h) / 2;
         } else {
             dest_x = dest_w;
-            dest_w = (unsigned int)(dest_h * src_w * aspect / src_h);
+            dest_w = (unsigned int)((dest_h * src_w * aspect + src_h / 2) / src_h);
             dest_x = (dest_x - dest_w) / 2;
         }
     }
