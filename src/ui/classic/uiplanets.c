@@ -282,7 +282,7 @@ static void ui_planets_transfer(struct planets_data_s *d)
     uiobj_table_clear();
     oi_cancel = uiobj_add_t0(x + 10, y + 47, "", ui_data.gfx.starmap.reloc_bu_cancel, MOO_KEY_LEFT); /* FIXME key == "\x01xb" ?? */
     oi_accept = uiobj_add_t0(x + 66, y + 47, "", ui_data.gfx.starmap.reloc_bu_accept, MOO_KEY_SPACE);
-    /*oi_slider =*/ uiobj_add_slider(x + 14, y + 35, 0, 100, 0, 100, 50, 9, &d->amount_trans, MOO_KEY_UNKNOWN);
+    /*oi_slider =*/ uiobj_add_slider(x + 14, y + 35, 0, 100, 50, 9, &d->amount_trans, MOO_KEY_UNKNOWN);
     oi_minus = uiobj_add_mousearea(x + 10, y + 33, x + 12, y + 41, MOO_KEY_UNKNOWN);
     oi_plus = uiobj_add_mousearea(x + 66, y + 33, x + 70, y + 41, MOO_KEY_UNKNOWN);
     oi_equals = uiobj_add_inputkey(MOO_KEY_EQUALS);
@@ -449,7 +449,7 @@ again:
                 if (g->eto[active_player].reserve_bc != 0) {
                     oi_trans = uiobj_add_t0(209, 181, "", d.gfx_but_trans, MOO_KEY_t);
                 }
-                /*oi_slider =*/ uiobj_add_slider(213, 160, 0, 200, 0, 200, 32, 9, &g->eto[active_player].tax, MOO_KEY_UNKNOWN);
+                /*oi_slider =*/ uiobj_add_slider(213, 160, 0, 200, 32, 9, &g->eto[active_player].tax, MOO_KEY_UNKNOWN);
                 oi_minus = uiobj_add_mousearea(208, 157, 211, 165, MOO_KEY_UNKNOWN);
                 oi_plus = uiobj_add_mousearea(247, 157, 251, 165, MOO_KEY_UNKNOWN);
             } else {

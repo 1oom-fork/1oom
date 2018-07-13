@@ -404,7 +404,7 @@ int ui_races(struct game_s *g, player_id_t api)
                 oi_status = uiobj_add_t0(165, 180, "", ui_data.gfx.screens.races_bu.status, MOO_KEY_s);
                 oi_ok = uiobj_add_t0(290, 180, "", ui_data.gfx.screens.races_bu.ok, MOO_KEY_o);
                 if (d.num > 0) {
-                    uiobj_add_slider(238, 141, 0, 200, 0, 200, 45, 9, &e->security, MOO_KEY_UNKNOWN);
+                    uiobj_add_slider(238, 141, 0, 200, 45, 9, &e->security, MOO_KEY_UNKNOWN);
                     oi_sec_minus = uiobj_add_mousearea(233, 139, 236, 147, MOO_KEY_UNKNOWN);
                     oi_sec_plus = uiobj_add_mousearea(285, 139, 289, 147, MOO_KEY_UNKNOWN);
                 } else {
@@ -416,7 +416,7 @@ int ui_races(struct game_s *g, player_id_t api)
                     x = (i / 3) * 157;
                     y = (i % 3) * 64;
                     pi = d.tbl_ei[i];
-                    oi_tbl_spying[i] = uiobj_add_slider(x + 103, y + 44, 0, 100, 0, 100, 25, 9, &e->spying[pi], MOO_KEY_UNKNOWN);
+                    oi_tbl_spying[i] = uiobj_add_slider(x + 103, y + 44, 0, 100, 25, 9, &e->spying[pi], MOO_KEY_UNKNOWN);
                     oi_tbl_spy_minus[i] = uiobj_add_mousearea(x + 97, y + 42, x + 100, y + 50, MOO_KEY_UNKNOWN);
                     oi_tbl_spy_plus[i] = uiobj_add_mousearea(x + 130, y + 42, x + 134, y + 50, MOO_KEY_UNKNOWN);
                 }
