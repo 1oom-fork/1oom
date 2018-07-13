@@ -475,15 +475,15 @@ int hw_video_resize(int w, int h)
     return 0;
 }
 
-int hw_video_toggle_fullscreen(void)
+bool hw_video_toggle_fullscreen(void)
 {
     hw_opt_fullscreen = !hw_opt_fullscreen;
     video_window_destroy();
     if (video_sw_set(hw_opt_screen_winw, hw_opt_screen_winh) != 0) {
         hw_opt_fullscreen = !hw_opt_fullscreen; /* restore the setting for the config file */
-        return -1;
+        return false;
     }
-    return 0;
+    return true;
 }
 
 int hw_video_init(int w, int h)
