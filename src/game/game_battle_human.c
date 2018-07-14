@@ -1323,7 +1323,11 @@ static void game_battle_with_human_do_sub3(struct battle_s *bt)
                 bt->flag_cur_item_destroyed = false;
                 bt->num_repulsed = 0;
                 if (bt->s[b->side].flag_auto || (b->retreat > 0)) {
-                    game_battle_with_human_do_turn_ai(bt);
+                    if (bt->s[b->side].flag_human && bt->autoretreat && (b->retreat == 0)) {
+                        b->retreat = 1;
+                    } else {
+                        game_battle_with_human_do_turn_ai(bt);
+                    }
                     flag_turn_done = true;
                     game_battle_item_done(bt);
                 } else {
@@ -2074,12 +2078,16 @@ bool game_battle_with_human(struct battle_s *bt)
 {
     planet_t *p = &(bt->g->planet[bt->planet_i]);
     battle_side_i_t winner;
+    ui_battle_autoresolve_t ar;
     game_battle_with_human_init(bt);
     game_update_visibility(bt->g);
-    if (ui_battle_init(bt)) {
+    ar = ui_battle_init(bt);
+    if (ar == UI_BATTLE_AUTORESOLVE_OFF) {
         bt->autoresolve = false;
+        bt->autoretreat = false;
     } else {
         bt->autoresolve = true;
+        bt->autoretreat = (ar == UI_BATTLE_AUTORESOLVE_RETREAT);
         bt->s[SIDE_L].flag_auto = true;
         bt->s[SIDE_R].flag_auto = true;
     }
