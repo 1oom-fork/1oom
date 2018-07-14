@@ -162,11 +162,12 @@ static void ui_battle_pre_draw_cb(void *vptr)
 
 /* -------------------------------------------------------------------------- */
 
-bool ui_battle_pre(struct game_s *g, const struct battle_s *bt, bool hide_other, int winner)
+ui_battle_autoresolve_t ui_battle_pre(struct game_s *g, const struct battle_s *bt, bool hide_other, int winner)
 {
     struct ui_battle_pre_data_s d[1];
-    int16_t oi_cont = UIOBJI_INVALID, oi_auto = UIOBJI_INVALID;
-    bool flag_done = false, flag_cont;
+    int16_t oi_cont = UIOBJI_INVALID, oi_auto = UIOBJI_INVALID, oi_retreat = UIOBJI_INVALID;
+    bool flag_done = false;
+    ui_battle_autoresolve_t ret;
     int party_u = bt->s[SIDE_L].party, party_d = bt->s[SIDE_R].party;
     memset(d, 0, sizeof(*d));
     d->g = g;
@@ -190,7 +191,8 @@ bool ui_battle_pre(struct game_s *g, const struct battle_s *bt, bool hide_other,
     uiobj_table_clear();
     oi_cont = uiobj_add_t0(227, 163, "", d->gfx_contbutt, MOO_KEY_c);
     if (ui_extra_enabled && (winner == SIDE_NONE)) {
-        oi_auto = uiobj_add_t0(260, 152, "", ui_data.gfx.space.autob, MOO_KEY_a);
+        oi_auto = uiobj_add_t0(250, 152, "", ui_data.gfx.space.autob, MOO_KEY_a);
+        oi_retreat = uiobj_add_t0(270, 152, "", ui_data.gfx.space.retreat, MOO_KEY_r);
     }
     uiobj_set_focus(oi_cont);
     uiobj_set_callback_and_delay(ui_battle_pre_draw_cb, &d, 4);
@@ -200,12 +202,15 @@ bool ui_battle_pre(struct game_s *g, const struct battle_s *bt, bool hide_other,
         oi = uiobj_handle_input_cond();
         if (oi == oi_cont) {
             ui_sound_play_sfx_24();
-            flag_cont = true;
+            ret = UI_BATTLE_AUTORESOLVE_OFF;
             flag_done = true;
-        }
-        if (oi == oi_auto) {
+        } else if (oi == oi_auto) {
             ui_sound_play_sfx_24();
-            flag_cont = false;
+            ret = UI_BATTLE_AUTORESOLVE_AUTO;
+            flag_done = true;
+        } else if (oi == oi_retreat) {
+            ui_sound_play_sfx_24();
+            ret = UI_BATTLE_AUTORESOLVE_RETREAT;
             flag_done = true;
         }
         if (!flag_done) {
@@ -217,5 +222,5 @@ bool ui_battle_pre(struct game_s *g, const struct battle_s *bt, bool hide_other,
     uiobj_table_clear();
     uiobj_unset_callback();
     battle_pre_free_data(d);
-    return flag_cont;
+    return ret;
 }
