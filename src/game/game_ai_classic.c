@@ -1654,7 +1654,7 @@ static void game_ai_classic_turn_p2_do(struct game_s *g, player_id_t pi)
         for (int j = 0; j < SPECIAL_SLOT_NUM; ++j) {
             ship_special_t s;
             s = ss[j];
-            if ((s >= SHIP_SPECIAL_STANDARD_COLONY_BASE) || (s <= SHIP_SPECIAL_RADIATED_COLONY_BASE)) {
+            if ((s >= SHIP_SPECIAL_STANDARD_COLONY_BASE) && (s <= SHIP_SPECIAL_RADIATED_COLONY_BASE)) {
                 e->shipi_colony = i;
             }
         }
