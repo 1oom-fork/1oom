@@ -25,6 +25,8 @@ Much of this file is based on the readme from the unofficial v1.40m patch.
     - AI checks the correct mood variable when asked for a peace treaty
     - AI huge, armored ships now cannot cause a negative overflow
     - 4th colony ship curse removed
+    - ignore journey length for closest in-range colony ship
+    - do not try to send one colony ship to multiple destinations
     - AI clears his spies' missions when succesfully threatened
     - a small issue concerning the change in AI defense and ship production when too many MBases on a planet has been corrected
     - battle AI miss chance accumulation fixed; AI is less/more optimistic about missile/beam weapon damage
