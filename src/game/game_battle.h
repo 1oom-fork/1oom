@@ -113,6 +113,7 @@ struct battle_s {
     uint16_t biodamage;
     struct battle_side_s s[2];
     bool autoresolve;
+    bool autoretreat;
     bool has_attacked;
     bool bases_using_mirv;
     bool turn_done;
