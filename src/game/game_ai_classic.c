@@ -597,11 +597,16 @@ static void game_ai_classic_turn_p1_send_colony_ships(struct game_s *g, struct a
         if (mini != PLANET_NONE) {
             const planet_t *p2;
             p2 = &(g->planet[mini]);
-            if (util_math_dist_fast(p->x, p->y, p2->x, p2->y) < range) {
+            if ((g->ai_id == GAME_AI_CLASSICPLUS) || (util_math_dist_fast(p->x, p->y, p2->x, p2->y) <= range)) {
                 if (g->enroute_num >= FLEET_ENROUTE_AI_MAX) {
                     log_warning("fleet enroute table (size %i/%i) too large for AI fleet (%i)!\n", g->enroute_num, FLEET_ENROUTE_MAX, FLEET_ENROUTE_AI_MAX);
                 } else {
                     game_turn_fleet_send(g, ait, pi, mini, pli);
+                    if (g->ai_id == GAME_AI_CLASSICPLUS) {
+                        /* WASBUG MOO1 does not update the local copy and may try to send multiple
+                           colony ship fleets from the same planet */
+                        tbl_orbit[mini] = e->orbit[mini].ships[si];
+                    }
                 }
             }
         }
