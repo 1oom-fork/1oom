@@ -153,7 +153,7 @@ static void ui_battle_prepost(const struct battle_s *bt, int winner)
 
 /* -------------------------------------------------------------------------- */
 
-bool ui_battle_init(struct battle_s *bt)
+ui_battle_autoresolve_t ui_battle_init(struct battle_s *bt)
 {
     struct game_s *g = bt->g;
     const planet_t *p = &(g->planet[bt->planet_i]);
@@ -175,12 +175,12 @@ bool ui_battle_init(struct battle_s *bt)
     ui_battle_prepost(bt, SIDE_NONE);
     {
         const struct input_list_s cl_cont_auto[] = {
-            { 1, "C", NULL, "Continue" },
-            { 0, "A", NULL, "Autoresolve" },
+            { UI_BATTLE_AUTORESOLVE_OFF, "C", NULL, "Continue" },
+            { UI_BATTLE_AUTORESOLVE_AUTO, "A", NULL, "Autoresolve" },
+            { UI_BATTLE_AUTORESOLVE_RETREAT, "R", NULL, "Retreat" },
             { 0, NULL, NULL, NULL }
         };
-        int v = ui_input_list("Fight?", "> ", cl_cont_auto);
-        return (v == 1);
+        return ui_input_list("Fight?", "> ", cl_cont_auto);
     }
 
 }
