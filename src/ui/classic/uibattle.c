@@ -787,7 +787,7 @@ static void ui_battle_draw_colony_destroyed_cb(void *vptr)
 
 /* -------------------------------------------------------------------------- */
 
-bool ui_battle_init(struct battle_s *bt)
+ui_battle_autoresolve_t ui_battle_init(struct battle_s *bt)
 {
     static struct ui_battle_data_s ctx; /* HACK */
     memset(&ctx, 0, sizeof(ctx));
@@ -798,10 +798,12 @@ bool ui_battle_init(struct battle_s *bt)
         ui_switch_2(bt->g, bt->s[SIDE_L].party, bt->s[SIDE_R].party);
     }
     ui_sound_play_music(8);
-    if (!ui_battle_pre(bt->g, bt, ctx.show_switch, SIDE_NONE)) {
-        return false;
+    {
+        ui_battle_autoresolve_t ar = ui_battle_pre(bt->g, bt, ctx.show_switch, SIDE_NONE);
+        if (ar != UI_BATTLE_AUTORESOLVE_OFF) {
+            return ar;
+        }
     }
-
     /* ui_battle_do_sub1: */
     uiobj_set_callback_and_delay(ui_battle_draw_cb, bt, 2);
     ctx.cursor[0].cursor_i = 1;
@@ -818,7 +820,7 @@ bool ui_battle_init(struct battle_s *bt)
         const planet_t *p = &(bt->g->planet[bt->planet_i]);
         ui_battle_transition_to(p->x, p->y, 10 * 3); /* FIXME BUG? x,y not in screen coords */
     }
-    return true;
+    return UI_BATTLE_AUTORESOLVE_OFF;
 }
 
 void ui_battle_shutdown(struct battle_s *bt, bool colony_destroyed, int winner)

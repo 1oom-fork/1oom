@@ -84,12 +84,18 @@ struct battle_s;
 typedef uint8_t ui_battle_action_t;
 
 typedef enum {
+    UI_BATTLE_AUTORESOLVE_OFF,
+    UI_BATTLE_AUTORESOLVE_AUTO,
+    UI_BATTLE_AUTORESOLVE_RETREAT
+} ui_battle_autoresolve_t;
+
+typedef enum {
     UI_BATTLE_BOMB_BOMB,
     UI_BATTLE_BOMB_BIO,
     UI_BATTLE_BOMB_WARPDIS
 } ui_battle_bomb_t;
 
-extern bool ui_battle_init(struct battle_s *bt);
+extern ui_battle_autoresolve_t ui_battle_init(struct battle_s *bt);
 extern void ui_battle_shutdown(struct battle_s *bt, bool colony_destroyed, int winner);
 
 extern void ui_battle_draw_misshield(const struct battle_s *bt, int target_i, int target_x, int target_y, int missile_i);
