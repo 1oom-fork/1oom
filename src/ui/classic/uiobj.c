@@ -1014,8 +1014,13 @@ static int16_t uiobj_kbd_dir_key(int dirx, int diry)
 static char uiobj_get_keychar(uint32_t key)
 {
     mookey_t k = KBD_GET_KEY(key);
-    char c = ((k >= MOO_KEY_SPACE) && (k < MOO_KEY_a)) ? KBD_GET_CHAR(key) : 0;
-    return c;
+    if (0
+      || ((k >= MOO_KEY_SPACE) && (k < MOO_KEY_a))
+      || ((k >= MOO_KEY_KP0) && (k <= MOO_KEY_KP_EQUALS))
+    ) {
+        return KBD_GET_CHAR(key);
+    }
+    return 0;
 }
 
 static int16_t uiobj_handle_kbd_find_alt(int16_t oi, uint32_t key)
