@@ -2,6 +2,10 @@
 
 /* -------------------------------------------------------------------------- */
 
+#define HW_MOUSE_SPEED_MAX  200
+
+/* -------------------------------------------------------------------------- */
+
 bool hw_opt_fullscreen = HW_DEFAULT_FULLSCREEN;
 int hw_opt_screen_winw = 0;
 int hw_opt_screen_winh = 0;
@@ -18,13 +22,24 @@ char *hw_opt_sdlmixer_sf = NULL;
 
 /* -------------------------------------------------------------------------- */
 
+static bool check_mouse_speed(void *var)
+{
+    int v = (int)(intptr_t)var;
+    if ((v > 0) && (v <= HW_MOUSE_SPEED_MAX)) {
+        return true;
+    } else {
+        log_error("invalid mousespd %i, must be 0 < N <= %i\n", v, HW_MOUSE_SPEED_MAX);
+        return false;
+    }
+}
+
 const struct cfg_items_s hw_cfg_items[] = {
     CFG_ITEM_BOOL("fs", &hw_opt_fullscreen),
     CFG_ITEM_INT("winw", &hw_opt_screen_winw, 0),
     CFG_ITEM_INT("winh", &hw_opt_screen_winh, 0),
     CFG_ITEM_INT("fsw", &hw_opt_screen_fsw, 0),
     CFG_ITEM_INT("fsh", &hw_opt_screen_fsh, 0),
-    CFG_ITEM_INT("mousespd", &hw_opt_mousespd, 0),
+    CFG_ITEM_INT("mousespd", &hw_opt_mousespd, check_mouse_speed),
 #ifdef HAVE_SDLMIXER
     CFG_ITEM_STR("sdlmixersf", &hw_opt_sdlmixer_sf, 0),
 #endif
@@ -42,12 +57,50 @@ static bool hw_uiopt_cb_mousespd(void)
     return true;
 }
 
+#ifdef HAVE_SDLX_ASPECT
+static const char *hw_uiopt_cb_aspect_get(void)
+{
+    if (hw_opt_aspect == HW_DEFAULT_ASPECT) {
+        return "VGA";
+    } else if (hw_opt_aspect == 1000000) {
+        return "1:1";
+#ifdef HAVE_SDLX_ASPECT_OFF
+    } else if (hw_opt_aspect == 0) {
+        return "Off";
+#endif
+    } else {
+        return "Custom";
+    }
+}
+
+static bool hw_uiopt_cb_aspect_next(void)
+{
+    if (hw_opt_aspect == HW_DEFAULT_ASPECT) {
+        hw_opt_aspect = 1000000;
+    } else {
+#ifdef HAVE_SDLX_ASPECT_OFF
+        if (hw_opt_aspect == 1000000) {
+            hw_opt_aspect = 0;
+        } else {
+            hw_opt_aspect = HW_DEFAULT_ASPECT;
+        }
+#else
+        hw_opt_aspect = HW_DEFAULT_ASPECT;
+#endif
+    }
+    return hw_video_update_aspect();
+}
+#endif /* HAVE_SDLX_ASPECT */
+
 /* -------------------------------------------------------------------------- */
 
 const struct uiopt_s hw_uiopts[] = {
-    UIOPT_ITEM_BOOL("Fullscreen", hw_opt_fullscreen, hw_video_toggle_fullscreen),
     UIOPT_ITEM_FUNC("Mouse spd", hw_uiopt_cb_mousespd),
-    UIOPT_ITEM_SLIDER_INT(hw_opt_mousespd, 1, 200),
+    UIOPT_ITEM_SLIDER_INT(hw_opt_mousespd, 1, HW_MOUSE_SPEED_MAX),
+    UIOPT_ITEM_BOOL("Fullscreen", hw_opt_fullscreen, hw_video_toggle_fullscreen),
+#ifdef HAVE_SDLX_ASPECT
+    UIOPT_ITEM_CYCLE("Aspect", hw_uiopt_cb_aspect_get, hw_uiopt_cb_aspect_next),
+#endif /* HAVE_SDLX_ASPECT */
     UIOPT_ITEM_END
 };
 
@@ -62,6 +115,16 @@ static int hw_opt_set_sdlmixer_sf(char **argv, void *var)
 #endif
 
 /* -------------------------------------------------------------------------- */
+
+static int hw_options_set_mousespd(char **argv, void *var)
+{
+    int v = atoi(argv[1]);
+    if (check_mouse_speed((void *)(intptr_t)v)) {
+        hw_opt_mousespd = v;
+        return 0;
+    }
+    return -1;
+}
 
 const struct cmdline_options_s hw_cmdline_options[] = {
     { "-fs", 0,
@@ -83,7 +146,7 @@ const struct cmdline_options_s hw_cmdline_options[] = {
       options_set_int_var, (void *)&hw_opt_screen_fsh,
       "HEIGHT", "Set fullscreen height" },
     { "-mousespd", 1,
-      options_set_int_var, (void *)&hw_opt_mousespd,
+      hw_options_set_mousespd, 0,
       "SPEED", "Set mouse speed (default = 100)" },
 #ifdef HAVE_SDLMIXER
     { "-sdlmixersf", 1,

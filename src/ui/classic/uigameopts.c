@@ -27,6 +27,26 @@
 
 /* -------------------------------------------------------------------------- */
 
+static bool ui_opt_toggle_mwi_slider(void)
+{
+    ui_mwi_slider = !ui_mwi_slider;
+    return true;
+}
+
+static bool ui_opt_toggle_mwi_counter(void)
+{
+    ui_mwi_counter = !ui_mwi_counter;
+    return true;
+}
+
+static const struct uiopt_s ui_uiopts[] = {
+    UIOPT_ITEM_BOOL("Invert wheel slider", ui_mwi_slider, ui_opt_toggle_mwi_slider),
+    UIOPT_ITEM_BOOL("Invert wheel counter", ui_mwi_counter, ui_opt_toggle_mwi_counter),
+    UIOPT_ITEM_END
+};
+
+/* -------------------------------------------------------------------------- */
+
 #define NEWOPTS_MAX 30
 
 struct gameopts_new_s {
@@ -211,6 +231,7 @@ gameopts_act_t ui_gameopts(struct game_s *g, int *load_game_i_ptr)
     d.newopts = newopts;
     if (ui_extra_enabled) {
         gameopts_new_add(&d, uiopts_audio);
+        gameopts_new_add(&d, ui_uiopts);
         gameopts_new_add(&d, hw_uiopts);
         gameopts_new_add(&d, hw_uiopts_extra);
     }
