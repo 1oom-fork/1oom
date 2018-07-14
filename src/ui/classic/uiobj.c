@@ -1003,8 +1003,13 @@ static int16_t uiobj_kbd_dir_key(int dirx, int diry)
 static char uiobj_get_keychar(uint32_t key)
 {
     mookey_t k = KBD_GET_KEY(key);
-    char c = ((k >= MOO_KEY_SPACE) && (k < MOO_KEY_a)) ? KBD_GET_CHAR(key) : 0;
-    return c;
+    if (0
+      || ((k >= MOO_KEY_SPACE) && (k < MOO_KEY_a))
+      || ((k >= MOO_KEY_KP0) && (k <= MOO_KEY_KP_EQUALS))
+    ) {
+        return KBD_GET_CHAR(key);
+    }
+    return 0;
 }
 
 static int16_t uiobj_handle_kbd_find_alt(int16_t oi, uint32_t key)
@@ -1286,7 +1291,7 @@ static int16_t uiobj_handle_input_sub0(void)
             uiobj_focus_oi = -1;
             return oi;
         }
-        if (k == MOO_KEY_RETURN) {
+        if ((k == MOO_KEY_RETURN) || (k == MOO_KEY_KP_ENTER)) {
             oi = uiobj_find_obj_at_cursor();
             if (oi != 0) {
                 p = &uiobj_tbl[oi];
