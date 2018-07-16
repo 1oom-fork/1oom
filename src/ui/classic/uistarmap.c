@@ -648,7 +648,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
                 oi_starview2 = uiobj_add_mousearea(227, 24, 310, 53, MOO_KEY_UNKNOWN);
                 oi_shippic = uiobj_add_mousearea(228, 139, 275, 175, MOO_KEY_UNKNOWN);
             }
-            ui_starmap_fill_oi_tbls(&d, true);
+            ui_starmap_fill_oi_tbls(&d);
             {
                 int x0, y0;
                 x0 = (p->x - ui_data.starmap.x) * 2 + 6;
