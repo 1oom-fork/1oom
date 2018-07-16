@@ -57,6 +57,8 @@ ui_turn_action_t ui_game_turn(struct game_s *g, int *load_game_i_ptr, int pi)
         ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
         ui_starmap_set_pos_focus(g, pi);
     }
+    BOOLVEC_CLEAR(ui_data.starmap.select_prio_fleet, FLEET_ENROUTE_MAX);
+    BOOLVEC_CLEAR(ui_data.starmap.select_prio_trans, TRANSPORT_MAX);
     while (1) {
         ui_cursor_setup_area(1, &ui_cursor_area_tbl[0]);
         if (g->evn.build_finished_num[pi] > 0) {
@@ -93,10 +95,20 @@ ui_turn_action_t ui_game_turn(struct game_s *g, int *load_game_i_ptr, int pi)
                 ui_starmap_orbit_en(g, pi);
                 break;
             case UI_MAIN_LOOP_TRANSPORT_SEL:
+                if (BOOLVEC_IS1(ui_data.starmap.select_prio_trans, ui_data.starmap.fleet_selected)) {
+                    BOOLVEC_CLEAR(ui_data.starmap.select_prio_fleet, FLEET_ENROUTE_MAX);
+                    BOOLVEC_CLEAR(ui_data.starmap.select_prio_trans, TRANSPORT_MAX);
+                }
+                BOOLVEC_SET1(ui_data.starmap.select_prio_trans, ui_data.starmap.fleet_selected);
                 ui_cursor_setup_area(2, &ui_cursor_area_tbl[3]);
                 ui_starmap_transport(g, pi);
                 break;
             case UI_MAIN_LOOP_ENROUTE_SEL:
+                if (BOOLVEC_IS1(ui_data.starmap.select_prio_fleet, ui_data.starmap.fleet_selected)) {
+                    BOOLVEC_CLEAR(ui_data.starmap.select_prio_fleet, FLEET_ENROUTE_MAX);
+                    BOOLVEC_CLEAR(ui_data.starmap.select_prio_trans, TRANSPORT_MAX);
+                }
+                BOOLVEC_SET1(ui_data.starmap.select_prio_fleet, ui_data.starmap.fleet_selected);
                 ui_cursor_setup_area(2, &ui_cursor_area_tbl[3]);
                 ui_starmap_enroute(g, pi);
                 break;
