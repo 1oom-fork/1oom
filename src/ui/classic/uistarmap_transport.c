@@ -290,7 +290,7 @@ void ui_starmap_transport(struct game_s *g, player_id_t active_player)
             ui_starmap_transport_draw_cb(&d);
             uiobj_table_clear();
             UIOBJ_CLEAR_LOCAL();
-            ui_starmap_fill_oi_tbls(&d, true);
+            ui_starmap_fill_oi_tbls(&d);
             ui_starmap_fill_oi_tbl_stars(&d);
             if ((r->owner == active_player) && (d.ts.can_move != NO_MOVE)) {
                 oi_cancel = uiobj_add_t0(227, 163, "", ui_data.gfx.starmap.reloc_bu_cancel, MOO_KEY_ESCAPE);
