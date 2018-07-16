@@ -16,6 +16,7 @@
 #include "uidebug.h"
 #endif /* FEATURE_MODEBUG */
 #include "uidefs.h"
+#include "uidesign.h"
 #include "uiempire.h"
 #include "uiempirestats.h"
 #include "uifleet.h"
@@ -54,6 +55,7 @@ static const struct input_cmd_s cmds_turn[] = {
     { "trans", "[PLANET NUM]", "Transport troops to", 0, 2, 0, ui_cmd_planet_trans, 0 },
     { "res", "[BC]", "Transfer reserves", 0, 1, 0, ui_cmd_planet_reserve, 0 },
     { "fs", "PLANET [NUM]*", "Send fleet to\nAll ships are sent if no NUM given", 1, 7, 0, ui_cmd_fleet_send, 0 },
+    { "des", NULL, "Ship design", 0, 0, 0, ui_cmd_design, 0 },
     { "scrap", "[SHIP]", "Scrap ship", 0, 1, 0, ui_cmd_fleet_scrap, 0 },
     { "specs", "[SHIP]", "Show fleet specs", 0, 1, 0, ui_cmd_fleet_specs, 0 },
     { "t", "[FIELD]", "View technology\nFIELD is c, o, f, p, r or w\nShows sliders if no field given", 0, 1, 0, ui_cmd_tech_look, 0 },
