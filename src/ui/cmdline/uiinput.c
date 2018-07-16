@@ -65,7 +65,6 @@ static char *skip_and_end_token(char *str)
     return str;
 }
 
-
 /* -------------------------------------------------------------------------- */
 
 bool ui_input_match_input(const char *in, const char *key, const char *str)
@@ -143,22 +142,30 @@ char *ui_input_line_len_trim(const char *prompt, int maxlen)
 
 int ui_input_list(const char *title, const char *prompt, const struct input_list_s *list)
 {
+    const struct input_list_dyn_s listdyn = { list, 0, 0, 0 };
+    return ui_input_list_dynamic(title, prompt, &listdyn);
+}
+
+int ui_input_list_dynamic(const char *title, const char *prompt, const struct input_list_dyn_s *ld)
+{
     const struct input_list_s *l;
     char *in;
     int num_shortcuts = 0;
     char **shortcuts = NULL;
+    const struct input_list_s *list = ld->list;
 
     l = list;
-    while (l->display) {
+    while (ld->get_display ? ld->get_display(ld->ctx, l) : l->display) {
         ++num_shortcuts;
         ++l;
     }
     shortcuts = lib_malloc(num_shortcuts * sizeof(char *));
     l = list;
     for (int i = 0; i < num_shortcuts; ++i, ++l) {
-        const char *s = l->display;
+        const char *s;
         char *p;
         char c;
+        s = ld->get_display ? ld->get_display(ld->ctx, l) : l->display;
         if (*s == '(') { ++s; }
         p = shortcuts[i] = lib_stralloc(s);
         while ((c = *p) != '\0') {
@@ -178,6 +185,16 @@ int ui_input_list(const char *title, const char *prompt, const struct input_list
                     break;
                 }
             }
+            if (is_unique && (len == 1)) {
+                char c;
+                c = toupper(shortcuts[i][0]);
+                for (int j = 0; j < num_shortcuts; ++j) {
+                    if ((i != j) && list[j].key && (list[j].key[0] == c)) {
+                        is_unique = false;
+                        break;
+                    }
+                }
+            }
         }
         shortcuts[i][len] = '\0';
     }
@@ -186,13 +203,29 @@ int ui_input_list(const char *title, const char *prompt, const struct input_list
         int i;
         putchar('\n');
         if (title) {
-            fputs(title, stdout);
-            putchar('\n');
+            puts(title);
         }
         l = list;
         while ((l->str) || (l->key)) {
-            if (l->display) {
-                fprintf(stdout, "  %s) %s\n", l->key, l->display);
+            const char *s;
+            bool is_ok;
+            if (ld->get_display) {
+                s = ld->get_display(ld->ctx, l);
+                is_ok = ld->is_ok(ld->ctx, l);
+            } else {
+                s = l->display;
+                is_ok = true;
+            }
+            if (s) {
+                printf("  %s) ", l->key);
+                if (!is_ok) {
+                    putchar('(');
+                }
+                fputs(s, stdout);
+                if (!is_ok) {
+                    putchar(')');
+                }
+                putchar('\n');
             }
             ++l;
         }
@@ -201,6 +234,9 @@ int ui_input_list(const char *title, const char *prompt, const struct input_list
         i = 0;
         while ((l->str) || (l->key)) {
             if (ui_input_match_input(in, l->key, l->str ? l->str : shortcuts[i])) {
+                if (ld->is_ok && (!ld->is_ok(ld->ctx, l))) {
+                    break;
+                }
                 for (int j = 0; j < num_shortcuts; ++j) {
                     lib_free(shortcuts[j]);
                 }
@@ -210,7 +246,7 @@ int ui_input_list(const char *title, const char *prompt, const struct input_list
             ++l;
             ++i;
         }
-        fputs("???\n", stdout);
+        puts("???");
     }
 }
 
@@ -246,6 +282,8 @@ int ui_input_tokenize(char *inputbuf, const struct input_cmd_s * const *cmdsptr)
                 ui_data.input.tok[i].type = ((p[0] == '+') || (p[0] == '-')) ? INPUT_TOKEN_RELNUMBER : INPUT_TOKEN_NUMBER;
                 ui_data.input.tok[i].data.num = v;
             }
+        } else {
+            ui_data.input.tok[i].str = p + 1;
         }
         LOG_DEBUG((DEBUGLEVEL_INPUT, "%s: tok %i t %i '%s' %i\n", __func__, i, ui_data.input.tok[i].type, ui_data.input.tok[i].str, ui_data.input.tok[i].data.num));
     }
@@ -253,9 +291,6 @@ int ui_input_tokenize(char *inputbuf, const struct input_cmd_s * const *cmdsptr)
         const struct input_cmd_s *cmds;
         const char *p;
         p = ui_data.input.tok[0].str;
-        if (p[0] == '"') {
-            ++p;
-        }
         while ((cmds = *cmdsptr++) != NULL) {
             while (cmds->str_cmd) {
                 if (cmds->handle && (strcmp(cmds->str_cmd, p) == 0)) {
