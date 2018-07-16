@@ -228,6 +228,8 @@ struct ui_data_s {
         struct gfx_aux_s star_aux;
         int fleet_selected;
         int orbit_player;
+        BOOLVEC_DECLARE(select_prio_fleet, FLEET_ENROUTE_MAX);
+        BOOLVEC_DECLARE(select_prio_trans, TRANSPORT_MAX);
     } starmap;
     struct {
         struct gfx_aux_s screen;
