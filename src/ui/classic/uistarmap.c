@@ -642,7 +642,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
                 oi_wheelshippic = uiobj_add_mousewheel(228, 139, 275, 175, &scrollmisc);
             }
             oi_wheelname = uiobj_add_mousewheel(227, 8, 310, 20, &scrollmisc);
-            ui_starmap_fill_oi_tbls(&d, true);
+            ui_starmap_fill_oi_tbls(&d);
             {
                 int x0, y0;
                 x0 = (p->x - ui_data.starmap.x) * 2 + 6;
