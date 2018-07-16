@@ -15,6 +15,8 @@ libuicmdline_a_SOURCES = \
     uicmds.c \
     uicmds.h \
     uidefs.h \
+    uidesign.c \
+    uidesign.h \
     uielection.c \
     uiempire.c \
     uiempire.h \
