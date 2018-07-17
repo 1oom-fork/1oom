@@ -15,6 +15,7 @@
 #include "uidefs.h"
 #include "uidesign.h"
 #include "uiempire.h"
+#include "uiempirereport.h"
 #include "uiempirestats.h"
 #include "uifleet.h"
 #include "uihelp.h"
@@ -61,6 +62,7 @@ static const struct input_cmd_s cmds_turn[] = {
     { "stats", NULL, "Show stats", 0, 0, 0, ui_cmd_empirestats, 0 },
     { "spy", "RACE VALUE|MODE", "Set spy spending (tenths of percent) or mode (Hide, Esp., Sabotage)\nVALUE can be +N or -N for relative adjustment", 2, 2, 0, ui_cmd_spy, 0 },
     { "sec", "VALUE", "Set security spending (tenths of percent)\nVALUE can be +N or -N for relative adjustment", 1, 1, 0, ui_cmd_empire_security, 0 },
+    { "rep", NULL, "Show report", 0, 0, 0, ui_cmd_empirereport, 0 },
     { "aud", NULL, "Audience", 0, 0, 0, ui_cmd_audience, 0 },
     { "galaxy", NULL, NULL, 0, 0, 0, ui_cmd_cheat_galaxy, 0 },
     { "events", NULL, NULL, 0, 0, 0, ui_cmd_cheat_events, 0 },
