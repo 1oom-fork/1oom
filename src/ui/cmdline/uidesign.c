@@ -104,6 +104,14 @@ static int cmd_look(struct game_s *g, int api, struct input_token_s *param, int 
     return 0;
 }
 
+static int cmd_clear(struct game_s *g, int api, struct input_token_s *param, int num_param, void *var)
+{
+    struct design_data_s *d = var;
+    struct game_design_s *gd = d->gd;
+    game_design_clear(gd);
+    return 0;
+}
+
 /* -------------------------------------------------------------------------- */
 
 struct sel_shiptech_s {
@@ -141,20 +149,20 @@ static void sel_build_il(struct input_list_s *il, bool *flag_enable, const int8_
         il[n].value = -2/*prev*/;
         il[n].key = "Y";
         il[n].str = 0;
-        il[n].display = 0;
+        il[n].display = "(prev)";
         ++n;
     }
     if (i <= havelast) {
         il[n].value = -3/*next*/;
         il[n].key = "Z";
         il[n].str = 0;
-        il[n].display = 0;
+        il[n].display = "(next)";
         ++n;
     }
     il[n].value = -1;
     il[n].key = "Q";
     il[n].str = 0;
-    il[n].display = 0;
+    il[n].display = "(quit)";
     ++n;
     il[n].value = -4;
     il[n].key = 0;
@@ -177,7 +185,7 @@ static const char *sel_comp_get_display(void *ctx, const struct input_list_s *l)
     shipdesign_t *sd = &(gd->sd);
     int i = l->value, space, cost, space2, power, cost2, sizei;
     if (i < 0) {
-        return (i == -1) ? "(quit)" : 0;
+        return l->display;
     }
     sd->comp = 0;
     game_design_update_engines(sd);
@@ -226,7 +234,7 @@ static const char *sel_shield_get_display(void *ctx, const struct input_list_s *
     shipdesign_t *sd = &(gd->sd);
     int i = l->value, space, cost, space2, power, cost2, sizei;
     if (i < 0) {
-        return (i == -1) ? "(quit)" : 0;
+        return l->display;
     }
     sd->shield = 0;
     game_design_update_engines(sd);
@@ -324,7 +332,7 @@ static const char *sel_armor_get_display(void *ctx, const struct input_list_s *l
     shipdesign_t *sd = &(gd->sd);
     int i = l->value, cost2, sizei;
     if (i < 0) {
-        return (i == -1) ? "(quit)" : 0;
+        return l->display;
     }
     sd->armor = i;
     game_design_update_engines(sd);
@@ -365,7 +373,7 @@ static const char *sel_engine_get_display(void *ctx, const struct input_list_s *
     shipdesign_t *sd = &(gd->sd);
     int i = l->value, cost2, sizei, sizet, ne;
     if (i < 0) {
-        return (i == -1) ? "(quit)" : 0;
+        return l->display;
     }
     sd->engine = i;
     game_design_update_engines(sd);
@@ -411,7 +419,7 @@ static const char *sel_man_get_display(void *ctx, const struct input_list_s *l)
     shipdesign_t *sd = &(gd->sd);
     int i = l->value, powperwarp, space, cost, space2, spacet, cost2;
     if (i < 0) {
-        return (i == -1) ? "(quit)" : 0;
+        return l->display;
     }
     sd->man = 0;
     game_design_update_engines(sd);
@@ -469,14 +477,7 @@ static const char *sel_wpnt_get_display(void *ctx, const struct input_list_s *l)
     shipdesign_t *sd = &(gd->sd);
     int i = l->value, wslot = sel->slot, space, cost, space2, power, cost2, sizei, dmin, dmax, bufpos;
     if (i < 0) {
-        if (i == -1) {
-            return "(quit)";
-        } else if (i == -2/*prev*/) {
-            return "(prev)";
-        } else if (i == -3/*next*/) {
-            return "(next)";
-        }
-        return 0;
+        return l->display;
     }
     if (i == 0) {
         return *tbl_shiptech_weap[0].nameptr;
@@ -620,7 +621,7 @@ static const char *sel_spec_get_display(void *ctx, const struct input_list_s *l)
     shipdesign_t *sd = &(gd->sd);
     int i = l->value, sslot = sel->slot, space, cost, space2, power, cost2, sizei;
     if (i < 0) {
-        return (i == -1) ? "(quit)" : 0;
+        return l->display;
     }
     sd->special[sslot] = 0;
     game_design_update_engines(sd);
@@ -680,7 +681,7 @@ static const char *sel_hull_get_display(void *ctx, const struct input_list_s *l)
     struct sel_shiptech_s *sel = ctx;
     int i = l->value;
     if (i < 0) {
-        return (i == -1) ? "(quit)" : 0;
+        return l->display;
     }
     sprintf(ui_data.strbuf, "%s%s", (i == sel->oldv) ? "*" : "", *tbl_shiptech_hull[i].nameptr);
     return ui_data.strbuf;
@@ -751,6 +752,7 @@ static const struct input_cmd_s cmds_design[] = {
     { "q", NULL, "Cancel", 0, 0, 0, cmd_exit, (void *)1/*cancel*/ },
     { "b", NULL, "Build", 0, 0, 0, cmd_exit, (void *)2/*ok*/ },
     { "l", NULL, "Look", 0, 0, 0, cmd_look, 0 },
+    { "clear", NULL, "Clear", 0, 0, 0, cmd_clear, 0 },
     { "c", NULL, "Computer", 0, 0, 0, cmd_sel_comp, 0 },
     { "s", NULL, "Shield", 0, 0, 0, cmd_sel_shield, 0 },
     { "j", NULL, "Ecm", 0, 0, 0, cmd_sel_jammer, 0 },
