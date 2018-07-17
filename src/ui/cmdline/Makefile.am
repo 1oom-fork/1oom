@@ -20,6 +20,8 @@ libuicmdline_a_SOURCES = \
     uielection.c \
     uiempire.c \
     uiempire.h \
+    uiempirereport.c \
+    uiempirereport.h \
     uiempirestats.c \
     uiempirestats.h \
     uiending.c \
