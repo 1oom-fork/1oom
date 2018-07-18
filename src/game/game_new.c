@@ -918,12 +918,12 @@ static void game_generate_research(struct game_s *g, const uint8_t *rflag)
                         rl[field][tier][l] = 0;
                     }
                     while (num_taken == 0) {
-                        for (int ti = tier * 5 + 4; (ti > (tier * 5)) && (num_taken < 3); --ti) {
+                        for (int ti = tier * 5 + 4; (ti >= (tier * 5)) && (num_taken < 3); --ti) {
                             if (rr[ti + 1] & GAME_NG_TECH_ALWAYS) {
                                 rl[field][tier][num_taken++] = ti + 1;
                             }
                         }
-                        for (int ti = tier * 5 + 4; ti > (tier * 5); --ti) {
+                        for (int ti = tier * 5 + 4; ti >= (tier * 5); --ti) {
                             bool flag_skip;
                             flag_skip = false;
                             if (0
