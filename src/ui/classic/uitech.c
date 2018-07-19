@@ -146,7 +146,7 @@ static void tech_draw_cb(void *vptr)
         int y;
         y = 21 * i + 24;
         ui_draw_filled_rect(227, y, 277, y + 3, 0x2f);
-        if (t->slider) {
+        if (t->slider[i]) {
             ui_draw_slider(227, y + 1, 226 + t->slider[i] / 2, t->slider_lock[i] ? 0x22 : 0x73);
         }
         lbxfont_select(0, 6, 0, 0);
