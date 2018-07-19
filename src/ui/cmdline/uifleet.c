@@ -28,7 +28,11 @@ int ui_cmd_fleet_send(struct game_s *g, int api, struct input_token_s *param, in
     shipcount_t ships[NUM_SHIPDESIGNS];
     pti = ui_planet_from_param(g, api, param);
     if (pti == PLANET_NONE) {
-        printf("Unknown destination\n");
+        puts("Unknown destination");
+        return -1;
+    }
+    if (pti == pfi) {
+        puts("Not sending fleet to planet it is orbiting");
         return -1;
     }
     pt = &(g->planet[pti]);
@@ -45,11 +49,11 @@ int ui_cmd_fleet_send(struct game_s *g, int api, struct input_token_s *param, in
             ships[i] = 0;
         }
         if (!any_ships) {
-            printf("No ships on orbit\n");
+            puts("No ships on orbit");
             return -1;
         }
     }
-    {
+    if (num_param > 1) {
         int i;
         for (i = 0; (i < e->shipdesigns_num) && (i < (num_param - 1)); ++i) {
             shipcount_t n;
@@ -64,7 +68,7 @@ int ui_cmd_fleet_send(struct game_s *g, int api, struct input_token_s *param, in
             }
             ships[i] = n;
         }
-        for (; i < e->shipdesigns_num; ++i) {
+        for (; i < NUM_SHIPDESIGNS; ++i) {
             ships[i] = 0;
         }
     }
@@ -77,7 +81,7 @@ int ui_cmd_fleet_send(struct game_s *g, int api, struct input_token_s *param, in
             }
         }
         if (!any_ships) {
-            printf("Not sending empty fleet\n");
+            puts("Not sending empty fleet");
             return -1;
         }
     }
@@ -91,7 +95,7 @@ int ui_cmd_fleet_send(struct game_s *g, int api, struct input_token_s *param, in
             }
         }
         if (!((pt->within_frange[api] == 1) || ((pt->within_frange[api] == 2) && have_reserve_fuel))) {
-            printf("Out of range\n");
+            puts("Out of range");
             return -1;
         }
     }
