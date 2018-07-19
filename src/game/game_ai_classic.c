@@ -830,7 +830,7 @@ static void game_ai_classic_turn_p1_sub9(struct game_s *g, struct ai_turn_p1_s *
                 pf = &(g->planet[pfrom]);
                 pf->trans_num = pf->pop / 2;
                 pf->trans_dest = i;
-                BOOLVEC_SET0(tbl_trans_from, i);
+                BOOLVEC_SET0(tbl_trans_from, pfrom);
             }
         }
     }
