@@ -160,6 +160,7 @@ static void races_draw_cb(void *vptr)
                 while (spycost <= spyspend) {
                     ++spies;
                     spyspend -= spycost;
+                    spycost *= 2;
                 }
                 sprintf(buf, "%i%c%s", spies, (spies == 1) ? ' ' : '/', game_str_y);
             } else {

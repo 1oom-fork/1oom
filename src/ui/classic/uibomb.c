@@ -223,7 +223,7 @@ void ui_bomb_show(struct game_s *g, int attacker_i, int owner_i, uint8_t planet_
     struct bomb_data_s d;
     bool flag_done = false;
     d.g = g;
-    d.api = attacker_i;
+    d.api = PLAYER_0;   /* FIXME multiplayer */
     d.owner = owner_i;
     d.planet = planet_i;
     d.popdmg = popdmg;
