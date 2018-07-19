@@ -842,7 +842,7 @@ static void game_ai_classic_turn_p1_trans_en(struct game_s *g, struct ai_turn_p1
                 pf = &(g->planet[pfrom]);
                 pf->trans_num = pf->pop / 2;
                 pf->trans_dest = i;
-                BOOLVEC_SET0(tbl_trans_from, i);
+                BOOLVEC_SET0(tbl_trans_from, pfrom);
             }
         }
     }
@@ -2947,18 +2947,18 @@ static bool game_ai_classic_battle_ai_retreat(struct battle_s *bt)
         if (j >= 0) {
             struct battle_item_s *b;
             b = &(bt->item[i]);
-            hp[s] += b->hp1 * b->num;
+            hp[s ^ 1] += b->hp1 * b->num;
             dmg[s] += game_ai_battle_dmggive(bt, i, j, 1) * b->num;
             dmg[s] -= repair[j];
             repair[j] = 0;
         } else {
-            ++hp[s];
+            ++hp[s ^ 1];
         }
     }
     if (bt->item[0/*planet*/].num > 0) {
         struct battle_item_s *b = &(bt->item[0/*planet*/]);
         int j, s = (b->side == SIDE_L) ? SIDE_R : SIDE_L;
-        hp[s] += (b->hp1 * b->num * 7) / 10;
+        hp[s ^ 1] += (b->hp1 * b->num * 7) / 10;
         j = game_ai_battle_rival(bt, 0/*planet*/, 1);
         if (j > 0) {
             dmg[s] += (game_ai_battle_dmggive(bt, 0/*planet*/, j, 1) * b->num * 7) / 10;
