@@ -59,6 +59,7 @@ static void game_battle_item_from_parsed(struct battle_item_s *b, const shippars
     COPY_BOOL_TO_INT(b, warpdis, WARPDIS);
     COPY_BOOL_TO_INT(b, technull, TECHNULL);
     COPY_BOOL_TO_INT(b, repulsor, REPULSOR);
+    COPY_BOOL_TO_INT(b, cloak, CLOAK);
 }
 
 static void game_battle_item_add(struct battle_s *bt, const shipparsed_t *sp, battle_side_i_t side)
