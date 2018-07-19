@@ -61,14 +61,7 @@ static void ui_starmap_orbit_own_draw_cb(void *vptr)
         lbxgfx_draw_frame_offs(x1, y1, ui_data.gfx.starmap.planbord, STARMAP_LIMITS, UI_SCREEN_W, starmap_scale);
         x0 = (pf->x - ui_data.starmap.x) * 2 + 26;
         y0 = (pf->y - ui_data.starmap.y) * 2 + 8;
-        /* FIXME update outside draw */
-        if ((pt->within_frange[d->api] == 1) || ((pt->within_frange[d->api] == 2) && d->oo.sn0.have_reserve_fuel)) {
-            ctbl = colortbl_line_green;
-            d->oo.in_frange = true;
-        } else {
-            ctbl = colortbl_line_red;
-            d->oo.in_frange = false;
-        }
+        ctbl = d->oo.in_frange ? colortbl_line_green : colortbl_line_red;
         ui_draw_line_limit_ctbl(x0 + 3, y0 + 1, x1 + 6, y1 + 6, ctbl, 5, ui_data.starmap.line_anim_phase, starmap_scale);
         gfx = ui_data.gfx.starmap.smalship[g->eto[d->api].banner];
         lbxgfx_set_frame_0(gfx);
@@ -406,6 +399,7 @@ do_accept:
                     SETMIN(d.oo.ships[i], os[i]);
                 }
                 g->planet_focus_i[active_player] = d.oo.from;
+                p = &(g->planet[d.oo.from]);
             }
         } else if (oi1 == oi_scroll) {
             ui_starmap_scroll(g, scrollx, scrolly, scrollz);
@@ -469,6 +463,14 @@ do_accept:
             }
         }
         if (!flag_done) {
+            if (1
+              && (g->planet_focus_i[active_player] != d.oo.from)
+              && ((p->within_frange[active_player] == 1) || ((p->within_frange[active_player] == 2) && d.oo.sn0.have_reserve_fuel))
+            ) {
+                d.oo.in_frange = true;
+            } else {
+                d.oo.in_frange = false;
+            }
             d.bottom_highlight = -1;
             if (oi2 == d.oi_gameopts) {
                 d.bottom_highlight = 0;
