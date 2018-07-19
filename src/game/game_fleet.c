@@ -117,6 +117,9 @@ static bool game_send_fleet_from_orbit_do(struct game_s *g, player_id_t owner, u
 
 bool game_send_fleet_from_orbit(struct game_s *g, player_id_t owner, uint8_t from, uint8_t dest, const shipcount_t ships[NUM_SHIPDESIGNS], const uint8_t shiptypes[NUM_SHIPDESIGNS], uint8_t numtypes)
 {
+    if (dest == from) {
+        return false;
+    }
     return game_send_fleet_from_orbit_do(g, owner, from, dest, ships, shiptypes, numtypes, false);
 }
 
