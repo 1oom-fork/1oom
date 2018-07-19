@@ -298,7 +298,7 @@ static void game_battle_missile_hit(struct battle_s *bt, int missile_i, int targ
         bool flag_hit_misshield = false;
         uint32_t totalhp = b->hp1 * b->num - hploss;
         misschance = 50 - (bs->complevel - b->misdefense) * 10;
-        if (b->sbmask & (1 << SHIP_SPECIAL_BOOL_CLOAK)) {
+        if (b->cloak == 1) {
             misschance += 50;
         }
         SETMIN(misschance, 95);
@@ -921,9 +921,9 @@ static bool game_battle_special(struct battle_s *bt, int attacker_i, int target_
                     ui_sound_play_sfx(0x16);
                     v = b->num / 2 + 20;
                     SETMIN(v, 50);
-                    v = (b->hp1 * v + 99) / 100;
-                    SUBSAT0(b->hp1, v);
-                    damage = b->num * v;
+                    v = (bd->hp1 * v + 99) / 100;
+                    SUBSAT0(bd->hp1, v);
+                    damage = bd->num * v;
                     ui_battle_draw_stream1(bt, attacker_i, target_i);
                     if (damage > 0) {
                         ui_battle_draw_damage(bt, target_i, bd->sx * 32, bd->sy * 24, damage);
@@ -934,9 +934,9 @@ static bool game_battle_special(struct battle_s *bt, int attacker_i, int target_
                     ui_sound_play_sfx(0x18);
                     v = b->num / 2 + 40;
                     SETMIN(v, 75);
-                    v = (b->hp1 * v + 99) / 100;
-                    SUBSAT0(b->hp1, v);
-                    damage = b->num * v;
+                    v = (bd->hp1 * v + 99) / 100;
+                    SUBSAT0(bd->hp1, v);
+                    damage = bd->num * v;
                     ui_battle_draw_stream2(bt, attacker_i, target_i);
                     if (damage > 0) {
                         ui_battle_draw_damage(bt, target_i, bd->sx * 32, bd->sy * 24, damage);
