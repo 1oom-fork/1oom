@@ -2423,7 +2423,7 @@ static int game_battle_ai_missile_evade(const struct battle_s *bt)
     for (int i = 0; (i < bt->num_missile) && (evade <= 1); ++i) {
         const struct battle_missile_s *m = &(bt->missile[i]);
         if (m->target == itemi) {
-            int roomx, dangerdist, v8, dist, sx;
+            int roomx, dangerdist, movex, dist, sx;
             sx = m->x / 32;
             if (b->subspace == 1) {
                 roomx = 9 - sx;
@@ -2436,16 +2436,16 @@ static int game_battle_ai_missile_evade(const struct battle_s *bt)
                     roomx = b->sx;
                 }
             }
-            v8 = (b->man - b->unman) * m->fuel;
-            if ((v8 <= roomx) || (b->subspace == 1)) {
-                v8 = roomx;
+            movex = (b->man - b->unman) * m->fuel;
+            if ((movex <= roomx) || (b->subspace == 1)) {
+                movex = roomx;
             }
             dist = util_math_dist_fast(b->sx * 32 + 16, b->sy * 24 + 12, m->x, m->y);
             dangerdist = tbl_shiptech_weap[m->wpnt].dtbl[0] * m->fuel + 13;
             if (dist > dangerdist) {
                 evade = 1;
             }
-            dist += v8 * 32 - 18;
+            dist += movex * 32 - 18;
             if ((rnd_1_n(3, &bt->g->seed) < bt->g->difficulty) && (dist > dangerdist)) {
                 evade = 2;
             }
