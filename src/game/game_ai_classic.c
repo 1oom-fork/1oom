@@ -2537,47 +2537,46 @@ static int game_battle_stasis_target(struct battle_s *bt)
     return target_i;
 }
 
-static int game_battle_ai_target1_sub1(const struct battle_s *bt)
+static int game_battle_ai_missile_evade(const struct battle_s *bt)
 {
     int itemi = bt->cur_item;
     const struct battle_item_s *b = &(bt->item[itemi]);
-    int vc = 0;
+    int evade = 0;
     if (b->unman == b->man) {
         return 0;
     }
-    for (int i = 0; (i < bt->num_missile) && (vc <= 1); ++i) {
+    for (int i = 0; (i < bt->num_missile) && (evade <= 1); ++i) {
         const struct battle_missile_s *m = &(bt->missile[i]);
         if (m->target == itemi) {
-            int v6, dangerdist, v8, dist, sx;
+            int roomx, dangerdist, movex, dist, sx;
             sx = m->x / 32;
             if (b->subspace == 1) {
-                v6 = 9 - sx;
-                SETMAX(v6, sx);
+                roomx = 9 - sx;
+                SETMAX(roomx, sx);
             } else {
                 sx -= b->sx;
                 if (sx < 0) {
-                    v6 = 9 - b->sx;
+                    roomx = 9 - b->sx;
                 } else /*if (sx > 0)*/ { /* WASBUG this was if > 0 and the == 0 case was unhandled */
-                    v6 = b->sx;
+                    roomx = b->sx;
                 }
             }
-            /*59b21*/
-            v8 = (b->man - b->unman) * m->fuel;
-            if ((v8 <= v6) || (b->subspace == 1)) {
-                v8 = v6;
+            movex = (b->man - b->unman) * m->fuel;
+            if ((movex > roomx) || (b->subspace == 1)) {
+                movex = roomx;
             }
             dist = util_math_dist_fast(b->sx * 32 + 16, b->sy * 24 + 12, m->x, m->y);
             dangerdist = tbl_shiptech_weap[m->wpnt].dtbl[0] * m->fuel + 13;
             if (dist > dangerdist) {
-                vc = 1;
+                evade = 1;
             }
-            dist += v8 * 32 - 18;
+            dist += movex * 32 - 18;
             if ((rnd_1_n(3, &bt->g->seed) < bt->g->difficulty) && (dist > dangerdist)) {
-                vc = 2;
+                evade = 2;
             }
         }
     }
-    return vc;
+    return evade;
 }
 
 static void game_battle_ai_range_hmm1(struct battle_s *bt, int target_i)
@@ -2749,12 +2748,13 @@ static void game_battle_ai_target1_sub4(struct battle_s *bt)
 {
     int itemi = bt->cur_item;
     struct battle_item_s *b = &(bt->item[itemi]);
-    int dist = 0, mindist, n = 0, v4 = 0;
+    int dist = 0, mindist, n = 0, oppdist;
     uint8_t tblxy[10];
     if (b->unman == b->man) {
         return;
     }
     if (b->subspace == 1) {
+        oppdist = 0;
         for (int sy = 0; sy < BATTLE_AREA_H; ++sy) {
             for (int sx = 0; sx < BATTLE_AREA_W; ++sx) {
                 if (bt->area[sy][sx] == 1) {
@@ -2766,11 +2766,11 @@ static void game_battle_ai_target1_sub4(struct battle_s *bt)
                             SETMIN(mindist, dist);
                         }
                     }
-                    if (v4 <= mindist) {
-                        if (v4 < dist) {
+                    if (oppdist <= mindist) {
+                        if (oppdist < dist) {
                             n = 0;
                         }
-                        v4 = dist;
+                        oppdist = dist;
                         tblxy[n++] = BATTLE_XY_SET(sx, sy);
                         SETMIN(n, TBLLEN(tblxy) - 1); /* WASBUG? not limited in MOO1 */
                     }
@@ -2781,12 +2781,12 @@ static void game_battle_ai_target1_sub4(struct battle_s *bt)
         game_battle_item_move(bt, itemi, BATTLE_XY_GET_X(tblxy[0]), BATTLE_XY_GET_Y(tblxy[0]));
     } else {
         /*59d85*/
-        v4 = 10;
+        oppdist = 10;
         for (int i = 0; i <= bt->items_num; ++i) {
             const struct battle_item_s *bd = &(bt->item[i]);
             if ((b->side + bd->side) == 1) {
                 dist = util_math_dist_maxabs(b->sx, b->sy, bd->sx, bd->sy);
-                SETMIN(v4, dist);
+                SETMIN(oppdist, dist);
             }
         }
         while (b->actman > 0) {
@@ -2808,8 +2808,8 @@ static void game_battle_ai_target1_sub4(struct battle_s *bt)
                                 SETMIN(mindist, dist);
                             }
                         }
-                        if (v4 < mindist) {
-                            v4 = mindist;
+                        if (mindist > oppdist) {
+                            oppdist = mindist;
                             n = 1;
                             tblxy[0] = BATTLE_XY_SET(sx, sy);
                         }
@@ -2829,7 +2829,7 @@ static void game_battle_ai_target1_sub5(struct battle_s *bt)
 {
     int itemi = bt->cur_item;
     struct battle_item_s *b = &(bt->item[itemi]);
-    int dist = 0, mindist = 10, n = 0, v4 = 0;
+    int dist = 0, mindist = 10, n = 0, missdist = 0;
     uint8_t tblxy[1];
     if (b->unman == b->man) {
         return;
@@ -2846,9 +2846,9 @@ static void game_battle_ai_target1_sub5(struct battle_s *bt)
                             SETMIN(mindist, dist);
                         }
                     }
-                    if (v4 < mindist) {
+                    if (missdist < mindist) {
                         tblxy[0] = BATTLE_XY_SET(sx, sy);
-                        v4 = dist; /* FIXME BUG? should be mindist ? */
+                        missdist = dist; /* FIXME BUG? should be mindist ? */
                     }
                 }
             }
@@ -2857,12 +2857,12 @@ static void game_battle_ai_target1_sub5(struct battle_s *bt)
     } else {
         /*5a0d8*/
         while (b->actman > 0) {
-            v4 = 10;
+            missdist = 10;
             for (int i = 0; i < bt->num_missile; ++i) {
                 const struct battle_missile_s *m = &(bt->missile[i]);
                 if ((m->target == itemi) && (m->fuel < 8)) {
                     dist = util_math_dist_maxabs(b->sx, b->sy, m->x / 32, m->y / 24);
-                    SETMIN(v4, dist);
+                    SETMIN(missdist, dist);
                 }
             }
             n = 0;
@@ -2883,8 +2883,8 @@ static void game_battle_ai_target1_sub5(struct battle_s *bt)
                                 SETMIN(mindist, dist);
                             }
                         }
-                        if (v4 < mindist) {
-                            v4 = mindist;
+                        if (mindist > missdist) {
+                            missdist = mindist;
                             n = 1;
                             tblxy[0] = BATTLE_XY_SET(sx, sy);
                         }
@@ -2907,7 +2907,7 @@ static int game_battle_ai_target1(struct battle_s *bt, int target_i)
     int bestrange;
     bestrange = game_battle_ai_best_range(bt, target_i);
     if ((b->actman > 0) || (b->subspace == 1)) {
-        if ((target_i != -1) && (game_battle_ai_target1_sub1(bt) == 0)) {
+        if ((target_i != -1) && (game_battle_ai_missile_evade(bt) == 0)) {
             int vmax = -999, n = 1, i;
             uint8_t tblxy[20];
             for (int sy = 0; sy < BATTLE_AREA_H; ++sy) {
