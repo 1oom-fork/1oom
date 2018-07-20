@@ -1790,7 +1790,7 @@ void game_battle_item_move(struct battle_s *bt, int itemi, int sx, int sy)
         b->actman = 0;
         b->subspace = 2;
     } else {
-        bool flag_quick = bt->s[SIDE_L].flag_auto && bt->s[SIDE_L].flag_auto;
+        bool flag_quick = bt->s[SIDE_L].flag_auto && bt->s[SIDE_R].flag_auto;
         int x, y, stepdiv = flag_quick ? 2 : 8;
         uint8_t route[BATTLE_ROUTE_LEN];
         x = b->sx * 32;
