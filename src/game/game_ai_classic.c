@@ -2620,12 +2620,13 @@ static void game_battle_ai_target1_sub4(struct battle_s *bt)
 {
     int itemi = bt->cur_item;
     struct battle_item_s *b = &(bt->item[itemi]);
-    int dist = 0, mindist, n = 0, v4 = 0;
+    int dist = 0, mindist, n = 0, oppdist;
     uint8_t tblxy[10];
     if (b->unman == b->man) {
         return;
     }
     if (b->subspace == 1) {
+        oppdist = 0;
         for (int sy = 0; sy < BATTLE_AREA_H; ++sy) {
             for (int sx = 0; sx < BATTLE_AREA_W; ++sx) {
                 if (bt->area[sy][sx] == 1) {
@@ -2637,11 +2638,11 @@ static void game_battle_ai_target1_sub4(struct battle_s *bt)
                             SETMIN(mindist, dist);
                         }
                     }
-                    if (v4 <= mindist) {
-                        if (v4 < dist) {
+                    if (oppdist <= mindist) {
+                        if (oppdist < dist) {
                             n = 0;
                         }
-                        v4 = dist;
+                        oppdist = dist;
                         tblxy[n++] = BATTLE_XY_SET(sx, sy);
                         SETMIN(n, TBLLEN(tblxy) - 1); /* WASBUG? not limited in MOO1 */
                     }
@@ -2652,12 +2653,12 @@ static void game_battle_ai_target1_sub4(struct battle_s *bt)
         game_battle_item_move(bt, itemi, BATTLE_XY_GET_X(tblxy[0]), BATTLE_XY_GET_Y(tblxy[0]));
     } else {
         /*59d85*/
-        v4 = 10;
+        oppdist = 10;
         for (int i = 0; i <= bt->items_num; ++i) {
             const struct battle_item_s *bd = &(bt->item[i]);
             if ((b->side + bd->side) == 1) {
                 dist = util_math_dist_maxabs(b->sx, b->sy, bd->sx, bd->sy);
-                SETMIN(v4, dist);
+                SETMIN(oppdist, dist);
             }
         }
         while (b->actman > 0) {
@@ -2679,8 +2680,8 @@ static void game_battle_ai_target1_sub4(struct battle_s *bt)
                                 SETMIN(mindist, dist);
                             }
                         }
-                        if (v4 < mindist) {
-                            v4 = mindist;
+                        if (mindist > oppdist) {
+                            oppdist = mindist;
                             n = 1;
                             tblxy[0] = BATTLE_XY_SET(sx, sy);
                         }
