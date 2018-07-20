@@ -676,7 +676,7 @@ static void game_battle_reset_specials(struct battle_s *bt)
             b->hploss = v;
         }
     }
-    if (b->cloak == 1) {
+    if (b->cloak > 1) {
         b->cloak = 2;
     }
 }
