@@ -2411,11 +2411,11 @@ static int game_battle_ai_missile_evade(const struct battle_s *bt)
 {
     int itemi = bt->cur_item;
     const struct battle_item_s *b = &(bt->item[itemi]);
-    int vc = 0;
+    int evade = 0;
     if (b->unman == b->man) {
         return 0;
     }
-    for (int i = 0; (i < bt->num_missile) && (vc <= 1); ++i) {
+    for (int i = 0; (i < bt->num_missile) && (evade <= 1); ++i) {
         const struct battle_missile_s *m = &(bt->missile[i]);
         if (m->target == itemi) {
             int v6, dangerdist, v8, dist, sx;
@@ -2438,15 +2438,15 @@ static int game_battle_ai_missile_evade(const struct battle_s *bt)
             dist = util_math_dist_fast(b->sx * 32 + 16, b->sy * 24 + 12, m->x, m->y);
             dangerdist = tbl_shiptech_weap[m->wpnt].dtbl[0] * m->fuel + 13;
             if (dist > dangerdist) {
-                vc = 1;
+                evade = 1;
             }
             dist += v8 * 32 - 18;
             if ((rnd_1_n(3, &bt->g->seed) < bt->g->difficulty) && (dist > dangerdist)) {
-                vc = 2;
+                evade = 2;
             }
         }
     }
-    return vc;
+    return evade;
 }
 
 static void game_battle_ai_range_hmm1(struct battle_s *bt, int target_i)
