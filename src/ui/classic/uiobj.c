@@ -196,16 +196,18 @@ static int smidtexty(const uiobj_t *p)
 
 static inline bool uiobj_is_at_xy(const uiobj_t *p, int x, int y)
 {
+    uint8_t scale;
     if (p->x0 == UIOBJ_OFFSCREEN) {
         return false;
     }
     x += uiobj_mouseoff;
     y += uiobj_mouseoff;
+    scale = p->scale;
     if (0
-      || (x < (p->x0 * p->scale))
-      || (x > (p->x1 * p->scale))
-      || (y < (p->y0 * p->scale))
-      || (y > (p->y1 * p->scale))
+      || (x < (p->x0 * scale))
+      || (x > (p->x1 * scale + scale - 1))
+      || (y < (p->y0 * scale))
+      || (y > (p->y1 * scale + scale - 1))
     ) {
         return false;
     }
