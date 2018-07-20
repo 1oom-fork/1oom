@@ -3099,9 +3099,9 @@ static void game_ai_classic_battle_ai_turn(struct battle_s *bt)
 static bool game_ai_classic_battle_ai_retreat(struct battle_s *bt)
 {
     int missile[BATTLE_ITEM_MAX];
-    int repair[BATTLE_ITEM_MAX];
-    int dmg[2] = { 0, 0 };
-    int hp[2] = { 0, 0 };
+    uint32_t repair[BATTLE_ITEM_MAX];
+    int64_t dmg[2] = { 0, 0 };
+    uint32_t hp[2] = { 0, 0 };
     for (int i = 0; i < BATTLE_ITEM_MAX; ++i) {
         const struct battle_item_s *b = &(bt->item[i]);
         missile[i] = 0;
@@ -3155,6 +3155,7 @@ static bool game_ai_classic_battle_ai_retreat(struct battle_s *bt)
     }
     {
         int v;
+        int64_t w[2];
         v = (5 - bt->g->difficulty) * 5 + 5;
         switch (bt->item[0/*planet*/].side) {
             case SIDE_L:
@@ -3167,7 +3168,14 @@ static bool game_ai_classic_battle_ai_retreat(struct battle_s *bt)
                 break;
         }
         v += rnd_1_n(15, &bt->g->seed);
-        if (((dmg[SIDE_R] * 100) / hp[SIDE_R]) > ((v * dmg[SIDE_L] * 100) / hp[SIDE_L])) {
+        if (bt->g->ai_id == GAME_AI_CLASSICPLUS) {
+            w[SIDE_R] = (dmg[SIDE_R] * 100) / hp[SIDE_R];
+            w[SIDE_L] = (dmg[SIDE_L] * 100 * v) / hp[SIDE_L];
+        } else { /* WASBUG MOO1 uses 32b vars which can overflow on extreme cases */
+            w[SIDE_R] = (int32_t)((((int32_t)dmg[SIDE_R]) * 100) / hp[SIDE_R]);
+            w[SIDE_L] = (int32_t)((((int32_t)dmg[SIDE_L]) * 100 * v) / hp[SIDE_L]);
+        }
+        if (w[SIDE_R] > w[SIDE_L]) {
             return true;
         }
     }
