@@ -2007,8 +2007,8 @@ static int savetype_en_text(struct game_s *g, const char *fname)
     OUTLINE "players = %i\n", g->players);
     OUTLINE "is_ai = %s\n", savetype_en_bv(g->is_ai, g->players));
     OUTLINE "active_player = %i\n", g->active_player);
-    OUTLINE "difficulty = %i // %s\n", g->difficulty, game_str_tbl_diffic[g->difficulty]);
-    OUTLINE "galaxy_size = %i // %s\n", g->galaxy_size, game_str_tbl_gsize[g->galaxy_size]);
+    OUTLINE "difficulty = %i\n", g->difficulty);
+    OUTLINE "galaxy_size = %i\n", g->galaxy_size);
     OUTLINE "galaxy_w = %i\n", g->galaxy_w);
     OUTLINE "galaxy_h = %i\n", g->galaxy_h);
     OUTLINE "galaxy_stars = %i\n", g->galaxy_stars);
@@ -2016,7 +2016,7 @@ static int savetype_en_text(struct game_s *g, const char *fname)
     OUTLINE "galaxy_maxy = %i\n", g->galaxy_maxy);
     OUTLINE "galaxy_seed = 0x%x\n", g->galaxy_seed);
     OUTLINE "seed = 0x%x\n", g->seed);
-    OUTLINE "year = %i // %i\n", g->year, g->year + YEAR_BASE);
+    OUTLINE "year = %i\n", g->year);
     OUTLINE "enroute_num = %i\n", g->enroute_num);
     OUTLINE "transport_num = %i\n", g->transport_num);
     OUTLINE "end = %i\n", g->end);
@@ -2063,11 +2063,11 @@ static int savetype_en_text(struct game_s *g, const char *fname)
         OUTLINE "max_pop1 = %i\n", p->max_pop1);
         OUTLINE "max_pop2 = %i\n", p->max_pop2);
         OUTLINE "max_pop3 = %i\n", p->max_pop3);
-        OUTLINE "type = %i // %s\n", p->type, game_str_tbl_sm_pltype[p->type]);
+        OUTLINE "type = %i\n", p->type);
         OUTLINE "battlebg = %i\n", p->battlebg);
         OUTLINE "infogfx = %i\n", p->infogfx);
-        OUTLINE "growth = %i // %s\n", p->growth, game_str_tbl_sm_pgrowth[p->growth]);
-        OUTLINE "special = %i // %s\n", p->special, game_str_tbl_sm_pspecial[p->special]);
+        OUTLINE "growth = %i\n", p->growth);
+        OUTLINE "special = %i\n", p->special);
         OUTLINE "owner = %i\n", p->owner);
         OUTLINE "prev_owner = %i\n", p->prev_owner);
         OUTLINE "claim = %i\n", p->claim);
@@ -2124,10 +2124,10 @@ static int savetype_en_text(struct game_s *g, const char *fname)
     for (int pl = 0; pl < g->players; ++pl) {
         const empiretechorbit_t *e = &(g->eto[pl]);
         text_dump_prefix_add_tbl(tp, "eto", ".", pl);
-        OUTLINE "race = %i // %s\n", e->race, game_str_tbl_race[e->race]);
-        OUTLINE "banner = %i // %s\n", e->banner, game_str_tbl_banner[e->banner]);
-        OUTLINE "trait1 = %i // %s\n", e->trait1, game_str_tbl_trait1[e->trait1]);
-        OUTLINE "trait2 = %i // %s\n", e->trait2, game_str_tbl_trait2[e->trait2]);
+        OUTLINE "race = %i\n", e->race);
+        OUTLINE "banner = %i\n", e->banner);
+        OUTLINE "trait1 = %i\n", e->trait1);
+        OUTLINE "trait2 = %i\n", e->trait2);
         OUTLINE "ai_p3_countdown = %i\n", e->ai_p3_countdown);
         OUTLINE "ai_p2_countdown = %i\n", e->ai_p2_countdown);
         OUTLINE "within_frange = %s\n", savetype_en_bv(e->within_frange, g->players));
@@ -2239,7 +2239,7 @@ static int savetype_en_text(struct game_s *g, const char *fname)
     {
         const gameevents_t *ev = &(g->evn);
         text_dump_prefix_add(tp, "evn", ".");
-        OUTLINE "year = %i // %i\n", ev->year, ev->year + YEAR_BASE);
+        OUTLINE "year = %i\n", ev->year);
         OUTLINE "done = %s\n", savetype_en_bv(ev->done, GAME_EVENT_TBL_NUM));
         OUTLINE "have_plague = %i\n", ev->have_plague);
         OUTLINE "plague_player = %i\n", ev->plague_player);
