@@ -1889,6 +1889,7 @@ fail:
 #define OUTLINE OUTPRE(); OUTADD
 #define OUTLINEI(_name_, _var_) OUTPRE(); OUTADD "%s = %i\n", _name_, _var_)
 #define OUTLINEX(_name_, _var_) OUTPRE(); OUTADD "%s = 0x%x\n", _name_, _var_)
+#define OUTLINES(_name_, _var_) OUTPRE(); OUTADD "%s = \"%s\"\n", _name_, _var_)
 #define OUTTBL(_name_, _num_, _var_) \
     do { \
         OUTADD "%s[] = { ", _name_); \
@@ -1960,7 +1961,7 @@ static const char *savetype_en_bv(const BOOLVEC_PTRPARAMI(bv), int len)
 
 static void savetype_en_text_sd(const shipdesign_t *sd, struct text_dump_prefix_s *tp)
 {
-    OUTLINE "name = \"%s\"\n", sd->name);
+    OUTLINES("name", sd->name);
     OUTLINEI("cost", sd->cost);
     OUTLINEI("space", sd->space);
     OUTLINEI("hull", sd->hull);
@@ -1998,7 +1999,7 @@ static int savetype_en_text(struct game_s *g, const char *fname)
         return -1;
     }
     text_dump_prefix_init(tp);
-    OUTLINE "savename = \"%s\"\n", savename);
+    OUTLINES("savename", savename);
     text_dump_prefix_add(tp, "g", "->");
     OUTLINEI("players", g->players);
     OUTLINE "is_ai = %s\n", savetype_en_bv(g->is_ai, g->players));
@@ -2049,7 +2050,7 @@ static int savetype_en_text(struct game_s *g, const char *fname)
     for (int i = 0; i < g->galaxy_stars; ++i) {
         const planet_t *p = &(g->planet[i]);
         text_dump_prefix_add_tbl(tp, "planet", ".", i);
-        OUTLINE "name = \"%s\"\n", p->name);
+        OUTLINES("name", p->name);
         OUTLINEI("x", p->x);
         OUTLINEI("y", p->y);
         OUTLINEI("star_type", p->star_type);
