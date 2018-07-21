@@ -1888,6 +1888,7 @@ fail:
 #define OUTPRE()    OUTADD "%s", tp->buf)
 #define OUTLINE OUTPRE(); OUTADD
 #define OUTLINEI(_name_, _var_) OUTPRE(); OUTADD "%s = %i\n", _name_, _var_)
+#define OUTLINEX(_name_, _var_) OUTPRE(); OUTADD "%s = 0x%x\n", _name_, _var_)
 #define OUTTBL(_name_, _num_, _var_) \
     do { \
         OUTADD "%s[] = { ", _name_); \
@@ -2009,8 +2010,8 @@ static int savetype_en_text(struct game_s *g, const char *fname)
     OUTLINEI("galaxy_stars", g->galaxy_stars);
     OUTLINEI("galaxy_maxx", g->galaxy_maxx);
     OUTLINEI("galaxy_maxy", g->galaxy_maxy);
-    OUTLINE "galaxy_seed = 0x%x\n", g->galaxy_seed);
-    OUTLINE "seed = 0x%x\n", g->seed);
+    OUTLINEX("galaxy_seed", g->galaxy_seed);
+    OUTLINEX("seed", g->seed);
     OUTLINEI("year", g->year);
     OUTLINEI("enroute_num", g->enroute_num);
     OUTLINEI("transport_num", g->transport_num);
