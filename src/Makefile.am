@@ -89,6 +89,7 @@ common_libs = @OS_LIBS@
 save_lib = $(top_builddir)/src/save/libsave.a
 game_lib = $(top_builddir)/src/game/libgame.a
 gamemain_lib = $(top_builddir)/src/game/libgamemain.a
+gamesaveconv_lib = $(top_builddir)/src/game/libgamesaveconv.a
 
 uicmdline_lib = $(top_builddir)/src/ui/cmdline/libuicmdline.a
 hwnop_lib = $(top_builddir)/src/hw/nop/libhwnop.a
@@ -121,7 +122,7 @@ hwsdl2_lib = $(top_builddir)/src/hw/sdl/2/libhwsdl2.a
 1oom_lbxview_sdl2_LDADD = $(1oom_lbxview_sdl2_libs) @HW_SDL2_LIBS@ @EXTRA_SDL2_LIBS@ @SAMPLERATE_LIBS@
 1oom_lbxview_sdl2_DEPENDENCIES = $(1oom_lbxview_sdl2_libs)
 
-1oom_saveconv_libs = $(game_lib) $(save_lib) $(hwnop_lib) $(uinop_lib) $(common_libs)
+1oom_saveconv_libs = $(gamesaveconv_lib) $(save_lib) $(hwnop_lib) $(uinop_lib) $(common_libs)
 1oom_saveconv_SOURCES = saveconv.c lib.c log.c options.c util.c
 1oom_saveconv_LDADD = $(1oom_saveconv_libs)
 1oom_saveconv_DEPENDENCIES = $(1oom_saveconv_libs)
@@ -140,3 +141,5 @@ libgame:
 	(cd game && $(MAKE) libgame.a)
 libgamemain:
 	(cd game && $(MAKE) libgamemain.a)
+libgamesaveconv:
+	(cd game && $(MAKE) libgamesaveconv.a)
