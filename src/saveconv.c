@@ -1920,9 +1920,7 @@ int saveconv_en_text(struct game_s *g, const char *fname)
     for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         OUTLINE "emperor_names[%i] = \"%s\"\n", i, g->emperor_names[i]);
     }
-    for (player_id_t i = PLAYER_0; i < g->players; ++i) {
-        OUTLINE "planet_focus_i[%i] = %i\n", i, g->planet_focus_i[i]);
-    }
+    OUTLINETBL("planet_focus_i", g->players, g->planet_focus_i);
     OUTFLUSH();
     for (int i = 0; i < g->galaxy_stars; ++i) {
         const planet_t *p = &(g->planet[i]);
@@ -1954,8 +1952,8 @@ int saveconv_en_text(struct game_s *g, const char *fname)
         OUTLINEI("pop", p->pop);
         OUTLINEI("pop_prev", p->pop_prev);
         OUTLINEI("factories", p->factories);
-        OUTLINE "slider[] = { %i, %i, %i, %i, %i }\n", p->slider[0], p->slider[1], p->slider[2], p->slider[3], p->slider[4]);
-        OUTLINE "slider_lock[] = { %i, %i, %i, %i, %i }\n", p->slider_lock[0], p->slider_lock[1], p->slider_lock[2], p->slider_lock[3], p->slider_lock[4]);
+        OUTLINETBL("slider", PLANET_SLIDER_NUM, p->slider);
+        OUTLINETBL("slider_lock", PLANET_SLIDER_NUM, p->slider_lock);
         OUTLINEI("buildship", p->buildship);
         OUTLINEI("reloc", p->reloc);
         OUTLINEI("missile_bases", p->missile_bases);
@@ -1985,14 +1983,16 @@ int saveconv_en_text(struct game_s *g, const char *fname)
     }
     for (int i = 0; i < g->enroute_num; ++i) {
         const fleet_enroute_t *r = &(g->enroute[i]);
-        OUTLINE "enroute[%i] = { .owner = %i, .x = %i, .y = %i, .dest = %i, .speed = %i", i, r->owner, r->x, r->y, r->dest, r->speed);
-        OUTADD ", .ships[] = { %i, %i, %i, %i, %i, %i } }\n", r->ships[0], r->ships[1], r->ships[2], r->ships[3], r->ships[4], r->ships[5]);
+        OUTLINE "enroute");
+        OUTADD "[%i] = { .owner = %i, .x = %i, .y = %i, .dest = %i, .speed = %i, ", i, r->owner, r->x, r->y, r->dest, r->speed);
+        OUTADD ".ships[] = { %i, %i, %i, %i, %i, %i } }\n", r->ships[0], r->ships[1], r->ships[2], r->ships[3], r->ships[4], r->ships[5]);
     }
     OUTFLUSH();
     for (int i = 0; i < g->transport_num; ++i) {
         const transport_t *r = &(g->transport[i]);
-        OUTLINE "transport[%i] = { .owner = %i, .x = %i, .y = %i, .dest = %i, .speed = %i", i, r->owner, r->x, r->y, r->dest, r->speed);
-        OUTADD ", .pop = %i }\n", r->pop);
+        OUTLINE "transport");
+        OUTADD "[%i] = { .owner = %i, .x = %i, .y = %i, .dest = %i, .speed = %i, ", i, r->owner, r->x, r->y, r->dest, r->speed);
+        OUTADD ".pop = %i }\n", r->pop);
     }
     OUTFLUSH();
     for (player_id_t pl = PLAYER_0; pl < g->players; ++pl) {
@@ -2162,7 +2162,9 @@ int saveconv_en_text(struct game_s *g, const char *fname)
         }
         for (player_id_t pl = PLAYER_0; pl < g->players; ++pl) {
             if (IS_HUMAN(g, pl)) {
-                OUTLINE "help_shown[%i] = %s\n", pl, savetype_en_bv(ev->help_shown[pl], HELP_SHOWN_NUM));
+                text_dump_prefix_add_tbl(tp, "help_shown", "", pl);
+                OUTLINEBV("", ev->help_shown[pl], HELP_SHOWN_NUM);
+                text_dump_prefix_del(tp);
             }
         }
         OUTLINETBL("build_finished_num", g->players, ev->build_finished_num);
