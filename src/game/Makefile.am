@@ -61,6 +61,7 @@ libgame_a_SOURCES = \
     game_stat.c \
     game_stat.h \
     game_str.c \
+    game_str_shipnames.c \
     game_str.h \
     game_strp.c \
     game_strp.h \
@@ -74,6 +75,5 @@ libgame_a_SOURCES = \
 libgamesaveconv_a_SOURCES = \
     game_save.c \
     game_save.h \
-    game_str.c \
+    game_str_shipnames.c \
     game_str.h
-
