@@ -1890,6 +1890,7 @@ fail:
 #define OUTLINEI(_name_, _var_) OUTPRE(); OUTADD "%s = %i\n", _name_, _var_)
 #define OUTLINEX(_name_, _var_) OUTPRE(); OUTADD "%s = 0x%x\n", _name_, _var_)
 #define OUTLINES(_name_, _var_) OUTPRE(); OUTADD "%s = \"%s\"\n", _name_, _var_)
+#define OUTLINEBV(_name_, _var_, _num_) OUTPRE(); OUTADD "%s = %s\n", _name_, savetype_en_bv(_var_, _num_))
 #define OUTTBL(_name_, _num_, _var_) \
     do { \
         OUTADD "%s[] = { ", _name_); \
@@ -2002,7 +2003,7 @@ static int savetype_en_text(struct game_s *g, const char *fname)
     OUTLINES("savename", savename);
     text_dump_prefix_add(tp, "g", "->");
     OUTLINEI("players", g->players);
-    OUTLINE "is_ai = %s\n", savetype_en_bv(g->is_ai, g->players));
+    OUTLINEBV("is_ai", g->is_ai, g->players);
     OUTLINEI("active_player", g->active_player);
     OUTLINEI("difficulty", g->difficulty);
     OUTLINEI("galaxy_size", g->galaxy_size);
@@ -2069,7 +2070,7 @@ static int savetype_en_text(struct game_s *g, const char *fname)
         OUTLINEI("prev_owner", p->prev_owner);
         OUTLINEI("claim", p->claim);
         OUTLINEI("waste", p->waste);
-        OUTLINE "explored = %s\n", savetype_en_bv(p->explored, g->players));
+        OUTLINEBV("explored", p->explored, g->players);
         OUTLINEI("bc_to_ecoproj", p->bc_to_ecoproj);
         OUTLINEI("bc_to_ship", p->bc_to_ship);
         OUTLINEI("bc_to_factory", p->bc_to_factory);
@@ -2095,7 +2096,7 @@ static int savetype_en_text(struct game_s *g, const char *fname)
         OUTLINEI("rebels", p->rebels);
         OUTLINEI("unrest", p->unrest);
         OUTLINEI("unrest_reported", p->unrest_reported);
-        OUTLINE "finished = %s\n", savetype_en_bv(p->finished, FINISHED_NUM));
+        OUTLINEBV("finished", p->finished, FINISHED_NUM);
         text_dump_prefix_del(tp);
         OUTFLUSH();
     }
@@ -2127,7 +2128,7 @@ static int savetype_en_text(struct game_s *g, const char *fname)
         OUTLINEI("trait2", e->trait2);
         OUTLINEI("ai_p3_countdown", e->ai_p3_countdown);
         OUTLINEI("ai_p2_countdown", e->ai_p2_countdown);
-        OUTLINE "within_frange = %s\n", savetype_en_bv(e->within_frange, g->players));
+        OUTLINEBV("within_frange", e->within_frange, g->players);
         OUTLINETBL("relation1", g->players, e->relation1);
         OUTLINETBL("relation2", g->players, e->relation2);
         OUTLINETBL("diplo_type", g->players, e->diplo_type);
@@ -2237,7 +2238,7 @@ static int savetype_en_text(struct game_s *g, const char *fname)
         const gameevents_t *ev = &(g->evn);
         text_dump_prefix_add(tp, "evn", ".");
         OUTLINEI("year", ev->year);
-        OUTLINE "done = %s\n", savetype_en_bv(ev->done, GAME_EVENT_TBL_NUM));
+        OUTLINEBV("done", ev->done, GAME_EVENT_TBL_NUM);
         OUTLINEI("have_plague", ev->have_plague);
         OUTLINEI("plague_player", ev->plague_player);
         OUTLINEI("plague_planet_i", ev->plague_planet_i);
