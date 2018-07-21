@@ -3,7 +3,7 @@ AM_CPPFLAGS = \
     -I$(top_srcdir)/src \
     -I$(top_srcdir)/src/save
 
-noinst_LIBRARIES = libgame.a libgamemain.a
+noinst_LIBRARIES = libgame.a libgamemain.a libgamesaveconv.a
 
 libgamemain_a_SOURCES = \
     game.c
@@ -58,6 +58,7 @@ libgame_a_SOURCES = \
     game_stat.c \
     game_stat.h \
     game_str.c \
+    game_str_shipnames.c \
     game_str.h \
     game_tech.c \
     game_tech.h \
@@ -67,3 +68,7 @@ libgame_a_SOURCES = \
     game_types.h \
     game_util.c \
     game_util.h
+
+libgamesaveconv_a_SOURCES = \
+    game_str_shipnames.c \
+    game_str.h
