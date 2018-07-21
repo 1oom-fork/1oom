@@ -92,6 +92,7 @@ common_libs = @OS_LIBS@
 save_lib = $(top_builddir)/src/save/libsave.a
 game_lib = $(top_builddir)/src/game/libgame.a
 gamemain_lib = $(top_builddir)/src/game/libgamemain.a
+gamesaveconv_lib = $(top_builddir)/src/game/libgamesaveconv.a
 hwnop_lib = $(top_builddir)/src/hw/nop/libhwnop.a
 
 uiclassic_lib = $(top_builddir)/src/ui/classic/libuiclassic.a
@@ -129,7 +130,7 @@ hwalleg4_lib = $(top_builddir)/src/hw/alleg/4/libhwalleg4.a
 1oom_lbxview_alleg4_LDADD = $(1oom_lbxview_alleg4_libs) @HW_ALLEG4_LIBS@ @EXTRA_ALLEG4_LIBS@ @SAMPLERATE_LIBS@
 1oom_lbxview_alleg4_DEPENDENCIES = $(1oom_lbxview_alleg4_libs)
 
-1oom_saveconv_libs = $(game_lib) $(save_lib) $(hwnop_lib) $(uinop_lib) $(common_libs)
+1oom_saveconv_libs = $(save_lib) $(gamesaveconv_lib) $(hwnop_lib) $(uinop_lib) $(common_libs)
 1oom_saveconv_SOURCES = saveconv.c lib.c log.c options.c util.c
 1oom_saveconv_LDADD = $(1oom_saveconv_libs)
 1oom_saveconv_DEPENDENCIES = $(1oom_saveconv_libs)
@@ -148,3 +149,5 @@ libgame:
 	(cd game && $(MAKE) libgame.a)
 libgamemain:
 	(cd game && $(MAKE) libgamemain.a)
+libgamesaveconv:
+	(cd game && $(MAKE) libgamesaveconv.a)
