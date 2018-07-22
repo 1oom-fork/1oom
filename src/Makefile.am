@@ -16,7 +16,7 @@ endif
 endif
 
 if COMPILE_TOOLS
-bin_PROGRAMS += 1oom_pbxdump 1oom_pbxmake 1oom_gfxconv 1oom_saveconv
+bin_PROGRAMS += 1oom_pbxdump 1oom_pbxmake 1oom_gfxconv 1oom_saveconv 1oom_lbxedit
 if COMPILE_TOOLS_SDL1
 bin_PROGRAMS += 1oom_lbxview_sdl1
 endif
@@ -160,6 +160,11 @@ hwalleg4_lib = $(top_builddir)/src/hw/alleg/4/libhwalleg4.a
 1oom_lbxview_alleg4_SOURCES = lbxview.c $(audio_sources) $(gui_sources) $(util_sources) $(pic_sources)
 1oom_lbxview_alleg4_LDADD = $(1oom_lbxview_alleg4_libs) @HW_ALLEG4_LIBS@ @EXTRA_ALLEG4_LIBS@ @SAMPLERATE_LIBS@
 1oom_lbxview_alleg4_DEPENDENCIES = $(1oom_lbxview_alleg4_libs)
+
+1oom_lbxedit_libs = $(hwnop_lib) $(common_libs)
+1oom_lbxedit_SOURCES = lbxedit.c util.c util_cstr.c lib.c log.c
+1oom_lbxedit_LDADD = $(1oom_lbxedit_libs)
+1oom_lbxedit_DEPENDENCIES = $(1oom_lbxedit_libs)
 
 1oom_pbxdump_libs = $(hwnop_lib) $(common_libs)
 1oom_pbxdump_SOURCES = pbxdump.c pbx.c util.c lib.c log.c
