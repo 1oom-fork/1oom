@@ -58,6 +58,7 @@ See INSTALL and HACKING for more information.
 - 1oom_classic_*    (the 1993 UI)
 - 1oom_cmdline      (proof of concept textual UI)
 - 1oom_lbxview_*    (for viewing LBX files)
+- 1oom_lbxedit      (for editing LBX files)
 - 1oom_pbxmake      (for creating PBX files)
 - 1oom_pbxdump      (for dumping PBX files)
 - 1oom_gfxconv      (for converting GFX for use in PBX files)
