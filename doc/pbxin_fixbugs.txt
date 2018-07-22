@@ -15,6 +15,13 @@
 4,guardian_special2,3,16,26
 4,guardian_repair,4,30
 
+# The amount of engines and thus costs of the starting ship designs are wrong.
+4,startship_engines,0,2,27,110,85,100
+4,startship_cost,0,8,14,74,65,570
+
+# The 2500 factories limit is too low for Meklars.
+4,max_factories,0,2700
+
 # See doc/list_pbxnum.txt for description of the rest of the fixes.
 4,bt_wait_no_reload,0,1
 4,bt_precap_tohit,0,1
