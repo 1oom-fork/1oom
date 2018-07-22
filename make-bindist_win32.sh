@@ -21,7 +21,7 @@ done
 
 if [ -e $TOPSRCDIR/.git ]
     then
-    VERSIONSTR=`git describe --tags`
+    VERSIONSTR=`git -C $TOPSRCDIR describe --tags`
 else
     VERSIONSTR=vUnknown
 fi
