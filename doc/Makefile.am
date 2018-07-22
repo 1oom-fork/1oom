@@ -13,6 +13,7 @@ doc_DATA = \
     usage_cmdline.txt \
     usage_common.txt \
     usage_gfxconv.txt \
+    usage_lbxedit.txt \
     usage_lbxview.txt \
     usage_pbxdump.txt \
     usage_pbxmake.txt \

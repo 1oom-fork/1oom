@@ -8,7 +8,7 @@ STRIP=$1
 TOPSRCDIR=$2
 ZIPKIND=$3
 
-EXECUTABLES="1oom_classic_alleg4 1oom_cmdline 1oom_gfxconv 1oom_lbxview_alleg4 1oom_pbxdump 1oom_pbxmake 1oom_saveconv"
+EXECUTABLES="1oom_classic_alleg4 1oom_cmdline 1oom_gfxconv 1oom_lbxedit 1oom_lbxview_alleg4 1oom_pbxdump 1oom_pbxmake 1oom_saveconv"
 
 for i in $EXECUTABLES
 do
@@ -44,6 +44,7 @@ cp src/1oom_classic_alleg4.exe $BINDISTDIR/1classic.exe
 cp src/1oom_cmdline.exe $BINDISTDIR/1cmdline.exe
 cp src/1oom_gfxconv.exe $BINDISTDIR/1gfxconv.exe
 cp src/1oom_lbxview_alleg4.exe $BINDISTDIR/1lbxview.exe
+cp src/1oom_lbxedit.exe $BINDISTDIR/1lbxedit.exe
 cp src/1oom_pbxmake.exe $BINDISTDIR/1pbxmake.exe
 cp src/1oom_pbxdump.exe $BINDISTDIR/1pbxdump.exe
 cp src/1oom_saveconv.exe $BINDISTDIR/1savconv.exe
