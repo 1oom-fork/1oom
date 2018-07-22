@@ -11,6 +11,7 @@
 #include "os.h"
 #include "types.h"
 #include "util.h"
+#include "util_cstr.h"
 
 /* -------------------------------------------------------------------------- */
 
@@ -101,85 +102,6 @@ fail:
     }
     return flag_ok;
 #undef BUFSIZE
-}
-
-static inline int parse_hex_char(char c)
-{
-    int val;
-    if ((c >= '0') && (c <= '9')) {
-        val = c - '0';
-    } else if ((c >= 'A') && (c <= 'F')) {
-        val = c - 'A' + 10;
-    } else if ((c >= 'a') && (c <= 'f')) {
-        val = c - 'a' + 10;
-    } else {
-        val = -1;
-    }
-    return val;
-}
-
-static inline int parse_hex_2char(char *p)
-{
-    uint8_t val;
-    int t;
-    t = parse_hex_char(p[0]);
-    if (t < 0) {
-        return t;
-    }
-    val = t << 4;
-    t = parse_hex_char(p[1]);
-    if (t < 0) {
-        return t;
-    }
-    val |= t;
-    return val;
-}
-
-static bool convert_cstr(char *p, uint32_t *len_out)
-{
-    uint32_t len = 0;
-    char *q = p;
-    char c;
-    ++p;
-    while ((c = *p++) != '"') {
-        if (c == '\\') {
-            c = *p++;
-            switch (c) {
-                case '"':
-                case '\\':
-                    break;
-                case 'n':
-                    c = '\n';
-                    break;
-                case 'r':
-                    c = '\r';
-                    break;
-                case 'x':
-                    {
-                        int val;
-                        val = parse_hex_2char(p);
-                        if (val < 0) {
-                            fprintf(stderr, "invalid hex escape\n");
-                            return false;
-                        }
-                        c = val;
-                        p += 2;
-                    }
-                    break;
-                default:
-                    fprintf(stderr, "unhandled escape char 0x%02x\n", c);
-                    return false;
-            }
-        } else if ((c < 0x20) || (c > 0x7e)) {
-            fprintf(stderr, "invalid char 0x%02x\n", c);
-            return false;
-        }
-        *q++ = c;
-        ++len;
-    }
-    *q = '\0';
-    *len_out = len;
-    return true;
 }
 
 static bool isnl(char c)
@@ -333,7 +255,7 @@ static int make_pbx(const char *filename_in, const char *filename_out)
             if (n->fname[0] == '"') {
                 n->param_type = PARAM_DATA_STR;
                 fullname = NULL;
-                if (!convert_cstr(n->fname, &flen)) {
+                if (util_cstr_parse(n->fname, n->fname, &flen) < 0) {
                     return 4;
                 }
             } else if ((numtbl = util_parse_numbers(n->fname, SEP_CHAR, &numnum)) != NULL) {
