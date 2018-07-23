@@ -288,38 +288,6 @@ static int skipws(const char *str, int i, int len)
     return i;
 }
 
-static inline int parse_hex_char(char c)
-{
-    int val;
-    if ((c >= '0') && (c <= '9')) {
-        val = c - '0';
-    } else if ((c >= 'A') && (c <= 'F')) {
-        val = c - 'A' + 10;
-    } else if ((c >= 'a') && (c <= 'f')) {
-        val = c - 'a' + 10;
-    } else {
-        val = -1;
-    }
-    return val;
-}
-
-static inline int parse_hex_2char(char *p)
-{
-    uint8_t val;
-    int t;
-    t = parse_hex_char(p[0]);
-    if (t < 0) {
-        return t;
-    }
-    val = t << 4;
-    t = parse_hex_char(p[1]);
-    if (t < 0) {
-        return t;
-    }
-    val |= t;
-    return val;
-}
-
 static int lbxedit_parsedesc(char *str, int i, int len, char *dst)
 {
     uint32_t dlen;
