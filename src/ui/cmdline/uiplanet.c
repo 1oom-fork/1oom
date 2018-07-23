@@ -79,7 +79,7 @@ planet_slider_i_t ui_planet_slider_from_param(struct input_token_s *param)
 
 /* -------------------------------------------------------------------------- */
 
-const char *ui_planet_str(struct game_s *g, int api, uint8_t planet_i, char *buf)
+const char *ui_planet_str(const struct game_s *g, int api, uint8_t planet_i, char *buf)
 {
     const planet_t *p = &(g->planet[planet_i]);
     if (BOOLVEC_IS1(p->explored, api)) {
