@@ -256,27 +256,27 @@ int game_design_calc_space_item(struct game_design_s *gd, design_slot_t slot, in
         case DESIGN_SLOT_ENGINE:
             tm = gd->percent[TECH_FIELD_PROPULSION] - tbl_shiptech_engine[i].tech_i;
             SETRANGE(tm, 0, 50);
-            space = (tbl_shiptech_engine[i].space * tbl_tech_mul_hmm2[tm]) / 100;
+            space = (tbl_shiptech_engine[i].space * tech_reduce_25percent_per_10pts[tm]) / 100;
             break;
         case DESIGN_SLOT_COMP:
             tm = gd->percent[TECH_FIELD_COMPUTER] - tbl_shiptech_comp[i].tech_i;
             SETRANGE(tm, 0, 50);
-            space = (tbl_shiptech_comp[i].space[sd->hull] * tbl_tech_mul_hmm2[tm]) / 100;
+            space = (tbl_shiptech_comp[i].space[sd->hull] * tech_reduce_25percent_per_10pts[tm]) / 100;
             break;
         case DESIGN_SLOT_JAMMER:
             tm = gd->percent[TECH_FIELD_COMPUTER] - tbl_shiptech_jammer[i].tech_i;
             SETRANGE(tm, 0, 50);
-            space = (tbl_shiptech_jammer[i].space[sd->hull] * tbl_tech_mul_hmm2[tm]) / 100;
+            space = (tbl_shiptech_jammer[i].space[sd->hull] * tech_reduce_25percent_per_10pts[tm]) / 100;
             break;
         case DESIGN_SLOT_SHIELD:
             tm = gd->percent[TECH_FIELD_FORCE_FIELD] - tbl_shiptech_shield[i].tech_i;
             SETRANGE(tm, 0, 50);
-            space = (tbl_shiptech_shield[i].space[sd->hull] * tbl_tech_mul_hmm2[tm]) / 100;
+            space = (tbl_shiptech_shield[i].space[sd->hull] * tech_reduce_25percent_per_10pts[tm]) / 100;
             break;
         case DESIGN_SLOT_ARMOR:
             tm = gd->percent[TECH_FIELD_CONSTRUCTION] - tbl_shiptech_armor[i].tech_i;
             SETRANGE(tm, 0, 50);
-            space = (tbl_shiptech_armor[i].space[sd->hull] * tbl_tech_mul_hmm2[tm]) / 100;
+            space = (tbl_shiptech_armor[i].space[sd->hull] * tech_reduce_25percent_per_10pts[tm]) / 100;
             break;
         case DESIGN_SLOT_SPECIAL1:
         case DESIGN_SLOT_SPECIAL2:
@@ -286,7 +286,7 @@ int game_design_calc_space_item(struct game_design_s *gd, design_slot_t slot, in
                 fi = tbl_shiptech_special[i].field;
                 tm = gd->percent[fi] - tbl_shiptech_special[i].tech_i;
                 SETRANGE(tm, 0, 50);
-                space = (tbl_shiptech_special[i].space[sd->hull] * tbl_tech_mul_hmm2[tm]) / 100;
+                space = (tbl_shiptech_special[i].space[sd->hull] * tech_reduce_25percent_per_10pts[tm]) / 100;
             }
             break;
         default:
