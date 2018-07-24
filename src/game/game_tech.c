@@ -20,7 +20,7 @@
 
 /* -------------------------------------------------------------------------- */
 
-const uint8_t tbl_tech_mul_hmm1[] = {
+const uint8_t tech_reduce_50percent_per_10pts[] = {
     0, 100, 93, 87, 81, 76, 71, 66, 62, 58, 54, 50, 47, 44, 41, 38,
     35, 33, 31, 29, 27, 25, 23, 22, 20, 19, 18, 16, 15, 14, 13, 13,
     12, 11, 10, 9, 9, 8, 8, 7, 7, 6, 6, 5, 5, 5, 4, 4, 4, 4
@@ -59,7 +59,7 @@ static uint16_t get_base_cost_mod_armor(const struct game_s *g, int player_i, in
         --tech_i;
     }
     if (percent < 50) {
-        mult = tbl_tech_mul_hmm1[percent];
+        mult = tech_reduce_50percent_per_10pts[percent];
     } else {
         mult = 3;
     }
@@ -70,7 +70,7 @@ static uint16_t get_base_cost_mod_weap(const struct game_s *g, int tech_i, int p
 {
     uint16_t mult;
     if (percent < 50) {
-        mult = tbl_tech_mul_hmm1[percent] * 9;
+        mult = tech_reduce_50percent_per_10pts[percent] * 9;
     } else {
         mult = 3 * 9;
     }
@@ -81,7 +81,7 @@ static uint16_t get_base_cost_mod_shield(const struct game_s *g, int tech_i, int
 {
     uint16_t mult;
     if (percent < 50) {
-        mult = tbl_tech_mul_hmm1[percent];
+        mult = tech_reduce_50percent_per_10pts[percent];
     } else {
         mult = 3;
     }
@@ -92,7 +92,7 @@ static uint16_t get_base_cost_mod_comp(const struct game_s *g, int tech_i, int p
 {
     uint16_t mult;
     if (percent < 50) {
-        mult = tbl_tech_mul_hmm1[percent];
+        mult = tech_reduce_50percent_per_10pts[percent];
     } else {
         mult = 3;
     }
@@ -109,7 +109,7 @@ static uint16_t get_base_cost_mod_jammer(const struct game_s *g, int player_i, i
         }
     }
     if (percent < 50) {
-        mult = tbl_tech_mul_hmm1[percent];
+        mult = tech_reduce_50percent_per_10pts[percent];
     } else {
         mult = 3;
     }
