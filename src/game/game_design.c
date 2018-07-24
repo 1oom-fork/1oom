@@ -114,32 +114,32 @@ static int game_design_calc_cost_item_do(struct game_design_s *gd, design_slot_t
             tm = tbl_shiptech_weap[i].is_bio ? gd->percent[TECH_FIELD_PLANETOLOGY] : gd->percent[TECH_FIELD_WEAPON];
             tm -= tbl_shiptech_weap[i].tech_i;
             SETRANGE(tm, 0, 50);
-            cost = (tbl_shiptech_weap[i].cost * tbl_tech_mul_hmm1[tm + 1]) / 100;
+            cost = (tbl_shiptech_weap[i].cost * tech_reduce_50percent_per_10pts[tm + 1]) / 100;
             break;
         case DESIGN_SLOT_ENGINE:
             tm = gd->percent[TECH_FIELD_PROPULSION] - tbl_shiptech_engine[i].tech_i;
             SETRANGE(tm, 0, 50);
-            cost = (tbl_shiptech_engine[i].cost * tbl_tech_mul_hmm1[tm + 1]) / 100;
+            cost = (tbl_shiptech_engine[i].cost * tech_reduce_50percent_per_10pts[tm + 1]) / 100;
             break;
         case DESIGN_SLOT_COMP:
             tm = gd->percent[TECH_FIELD_COMPUTER] - tbl_shiptech_comp[i].tech_i;
             SETRANGE(tm, 0, 50);
-            cost = (tbl_shiptech_comp[i].cost[sd->hull] * tbl_tech_mul_hmm1[tm + 1]) / 100;
+            cost = (tbl_shiptech_comp[i].cost[sd->hull] * tech_reduce_50percent_per_10pts[tm + 1]) / 100;
             break;
         case DESIGN_SLOT_JAMMER:
             tm = gd->percent[TECH_FIELD_COMPUTER] - tbl_shiptech_jammer[i].tech_i;
             SETRANGE(tm, 0, 50);
-            cost = (tbl_shiptech_jammer[i].cost[sd->hull] * tbl_tech_mul_hmm1[tm + 1]) / 100;
+            cost = (tbl_shiptech_jammer[i].cost[sd->hull] * tech_reduce_50percent_per_10pts[tm + 1]) / 100;
             break;
         case DESIGN_SLOT_SHIELD:
             tm = gd->percent[TECH_FIELD_FORCE_FIELD] - tbl_shiptech_shield[i].tech_i;
             SETRANGE(tm, 0, 50);
-            cost = (tbl_shiptech_shield[i].cost[sd->hull] * tbl_tech_mul_hmm1[tm + 1]) / 100;
+            cost = (tbl_shiptech_shield[i].cost[sd->hull] * tech_reduce_50percent_per_10pts[tm + 1]) / 100;
             break;
         case DESIGN_SLOT_ARMOR:
             tm = gd->percent[TECH_FIELD_CONSTRUCTION] - tbl_shiptech_armor[i].tech_i;
             SETRANGE(tm, 0, 50);
-            cost = (tbl_shiptech_armor[i].cost[sd->hull] * tbl_tech_mul_hmm1[tm + 1]) / 100;
+            cost = (tbl_shiptech_armor[i].cost[sd->hull] * tech_reduce_50percent_per_10pts[tm + 1]) / 100;
             break;
         case DESIGN_SLOT_SPECIAL1:
         case DESIGN_SLOT_SPECIAL2:
@@ -149,7 +149,7 @@ static int game_design_calc_cost_item_do(struct game_design_s *gd, design_slot_t
                 fi = tbl_shiptech_special[i].field;
                 tm = gd->percent[fi] - tbl_shiptech_special[i].tech_i;
                 SETRANGE(tm, 0, 50);
-                cost = (tbl_shiptech_special[i].cost[sd->hull] * tbl_tech_mul_hmm1[tm + 1]) / 100;
+                cost = (tbl_shiptech_special[i].cost[sd->hull] * tech_reduce_50percent_per_10pts[tm + 1]) / 100;
             }
             break;
         default:
@@ -251,7 +251,7 @@ int game_design_calc_space_item(struct game_design_s *gd, design_slot_t slot, in
             tm = tbl_shiptech_weap[i].is_bio ? gd->percent[TECH_FIELD_PLANETOLOGY] : gd->percent[TECH_FIELD_WEAPON];
             tm -= tbl_shiptech_weap[i].tech_i;
             SETRANGE(tm, 0, 50);
-            space = (tbl_shiptech_weap[i].space * tbl_tech_mul_hmm1[tm + 1]) / 100;    /* BUG? others use tbl_..._hmm2 */
+            space = (tbl_shiptech_weap[i].space * tech_reduce_50percent_per_10pts[tm + 1]) / 100;    /* BUG? others use tbl_..._hmm2 */
             break;
         case DESIGN_SLOT_ENGINE:
             tm = gd->percent[TECH_FIELD_PROPULSION] - tbl_shiptech_engine[i].tech_i;
