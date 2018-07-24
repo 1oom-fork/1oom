@@ -10,8 +10,8 @@ struct game_s;
 struct game_aux_s;
 struct empiretechorbit_s;
 
-extern const uint8_t tbl_tech_mul_hmm1[];
-extern const uint8_t tbl_tech_mul_hmm2[];
+extern const uint8_t tech_reduce_50percent_per_10pts[];
+extern const uint8_t tech_reduce_25percent_per_10pts[];
 
 extern uint8_t game_tech_player_has_tech(const struct game_s *g, int field_i, int tech_i, int player_i);
 extern uint8_t game_tech_player_best_tech(const struct game_s *g, int field_i, int tech_i_base, int tech_i_step, int tech_i_max, int player_i);
