@@ -8,20 +8,21 @@
 
 /* ------------------------------------------------------------------------- */
 
-static const uint8_t tbl_math_hmm1[] = {
+/* floor(0x100 * tan((2 * PI * (i + FIRST)) / 360)) */
+static const uint8_t tbl_math_tan_0[] = {
     0x00,0x04,0x08,0x0d,0x11,0x16,0x1a,0x1f,0x23,0x28,0x2d,0x31,0x36,0x3b,0x3f,0x44,0x49,0x4e,0x53,0x58,0x5d,0x62
 };
 
-static const uint8_t tbl_math_hmm2[] = {
+static const uint8_t tbl_math_tan_22[] = {
     0x67,0x6c,0x71,0x77,0x7c,0x82,0x88,0x8d,0x93,0x99,0x9f,0xa6,0xac,0xb3,0xb9,0xc0,0xc8,0xcf,0xd6,0xde,0xe6,0xee,0xf7
 };
 
-static const uint16_t tbl_math_hmm3[] = {
+static const uint16_t tbl_math_tan_45[] = {
     0x0100,0x0109,0x0112,0x011c,0x0126,0x0131,0x013c,0x0147,0x0153,0x0160,0x016d,0x017b,0x018a,0x0199,0x01aa,0x01bb,
     0x01cd,0x01e1,0x01f6,0x020c,0x0224,0x023e
 };
 
-static const uint16_t tbl_math_hmm4[] = {
+static const uint16_t tbl_math_tan_67[] = {
     0x025b,0x0279,0x029a,0x02bf,0x02e7,0x0313,0x0345,0x037c,0x03bb,0x0402,0x0454,0x04b4,0x0525,0x05ab,0x0650,0x071d,
     0x0825,0x0983,0x0b6e,0x0e4d,0x1315,0x1ca3,0x394d
 };
@@ -59,7 +60,7 @@ static int calc_angle_do(unsigned int dx, unsigned int dy)
         if (slope >= 0x67) {
             angle = 22;
             for (int i = 0; i < 0x17; ++i) {
-                if (slope < tbl_math_hmm2[i]) {
+                if (slope < tbl_math_tan_22[i]) {
                     goto out2;
                 }
                 ++angle;
@@ -70,7 +71,7 @@ static int calc_angle_do(unsigned int dx, unsigned int dy)
         } else {
             angle = 0;
             for (int i = 0; i < 0x16; ++i) {
-                if (slope < tbl_math_hmm1[i]) {
+                if (slope < tbl_math_tan_0[i]) {
                     goto out1;
                 }
                 ++angle;
@@ -83,7 +84,7 @@ static int calc_angle_do(unsigned int dx, unsigned int dy)
         if (slope >= 0x258) {
             angle = 0;
             for (int i = 0; i < 0x17; ++i) {
-                if (slope < tbl_math_hmm4[i]) {
+                if (slope < tbl_math_tan_67[i]) {
                     goto out4;
                 }
                 ++angle;
@@ -95,7 +96,7 @@ static int calc_angle_do(unsigned int dx, unsigned int dy)
         } else {
             angle = 0;
             for (int i = 0; i < 0x16; ++i) {
-                if (slope < tbl_math_hmm3[i]) {
+                if (slope < tbl_math_tan_45[i]) {
                     goto out3;
                 }
                 ++angle;
