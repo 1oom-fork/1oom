@@ -4,7 +4,7 @@
 
 #include "uiobj.h"
 #include "comp.h"
-#include "game.h"   /* only for UIOBJ_MAX */
+#include "game_types.h" /* only for UIOBJ_MAX */
 #include "hw.h"
 #include "kbd.h"
 #include "lbxfont.h"
