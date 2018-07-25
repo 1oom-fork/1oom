@@ -261,7 +261,7 @@ int game_design_calc_space_item(struct game_design_s *gd, design_slot_t slot, in
             tm = tbl_shiptech_weap[i].is_bio ? gd->percent[TECH_FIELD_PLANETOLOGY] : gd->percent[TECH_FIELD_WEAPON];
             tm -= tbl_shiptech_weap[i].tech_i;
             SETRANGE(tm, 0, 50);
-            space = (tbl_shiptech_weap[i].space * tech_reduce_50percent_per_10pts[tm + 1]) / 100;    /* BUG? others use tbl_..._hmm2 */
+            space = (tbl_shiptech_weap[i].space * tech_reduce_50percent_per_10pts[tm + 1]) / 100;
             break;
         case DESIGN_SLOT_ENGINE:
             tm = gd->percent[TECH_FIELD_PROPULSION] - tbl_shiptech_engine[i].tech_i;
