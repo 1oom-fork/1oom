@@ -2960,7 +2960,7 @@ static bool game_ai_classic_battle_ai_retreat(struct battle_s *bt)
         s = (i <= bt->s[SIDE_L].items) ? SIDE_R : SIDE_L;
         j = game_ai_battle_rival(bt, i, 1);
         if (j >= 0) {
-            struct battle_item_s *b;
+            const struct battle_item_s *b;
             b = &(bt->item[i]);
             hp[s ^ 1] += b->hp1 * b->num;
             dmg[s] += game_ai_battle_dmggive(bt, i, j, 1) * b->num;
@@ -2971,7 +2971,7 @@ static bool game_ai_classic_battle_ai_retreat(struct battle_s *bt)
         }
     }
     if (bt->item[0/*planet*/].num > 0) {
-        struct battle_item_s *b = &(bt->item[0/*planet*/]);
+        const struct battle_item_s *b = &(bt->item[0/*planet*/]);
         int j, s = (b->side == SIDE_L) ? SIDE_R : SIDE_L;
         hp[s ^ 1] += (b->hp1 * b->num * 7) / 10;
         j = game_ai_battle_rival(bt, 0/*planet*/, 1);

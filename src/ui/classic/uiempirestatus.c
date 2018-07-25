@@ -42,7 +42,7 @@ static void empirestatus_data_free(struct empirestatus_data_s *d)
 static void empirestatus_draw_cb(void *vptr)
 {
     struct empirestatus_data_s *d = vptr;
-    struct game_s *g = d->g;
+    const struct game_s *g = d->g;
     char buf[0x40];
     uint8_t tbl_stat[6][PLAYER_NUM];
     int tbl_sum[PLAYER_NUM];
