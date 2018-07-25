@@ -144,7 +144,6 @@ typedef struct planet_s {
     player_id_t artifact_looter;
 } planet_t;
 
-#define PLANETS_MAX 108
 #define PLANET_NONE 255
 
 struct game_s;
