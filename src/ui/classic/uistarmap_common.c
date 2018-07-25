@@ -715,13 +715,13 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
         ui_starmap_print_str_center(tx + 2, ty + 5, game_str_sm_amoeba);
     }
     for (int pi = 0; pi < g->galaxy_stars; ++pi) {
-        planet_t *p = &g->planet[pi];
+        const planet_t *p = &g->planet[pi];
         if (BOOLVEC_IS1(p->within_srange, d->api)) {
             player_id_t tblorbit[PLAYER_NUM];
             player_id_t num;
             num = 0;
             for (player_id_t i = PLAYER_0; i < g->players; ++i) {
-                empiretechorbit_t *e = &g->eto[i];
+                const empiretechorbit_t *e = &g->eto[i];
                 for (int j = 0; j < e->shipdesigns_num; ++j) {
                     if (e->orbit[pi].ships[j]) {
                         tblorbit[num++] = i;
@@ -830,7 +830,7 @@ void ui_starmap_add_oi_bottom_buttons(struct starmap_data_s *d)
 
 void ui_starmap_fill_oi_tbls(struct starmap_data_s *d)
 {
-    struct game_s *g = d->g;
+    const struct game_s *g = d->g;
     int x = ui_data.starmap.x;
     int y = ui_data.starmap.y;
     ui_starmap_set_limits();
@@ -842,13 +842,13 @@ void ui_starmap_fill_oi_tbls(struct starmap_data_s *d)
         }
     }
     for (int i = 0; i < g->galaxy_stars; ++i) {
-        planet_t *p = &(g->planet[i]);
+        const planet_t *p = &(g->planet[i]);
         if (BOOLVEC_IS1(p->within_srange, d->api)) {
             int numorbits, x0, y0;
             player_id_t tblpl[PLAYER_NUM];
             numorbits = 0;
             for (int j = 0; j < g->players; ++j) {
-                fleet_orbit_t *r = &(g->eto[j].orbit[i]);
+                const fleet_orbit_t *r = &(g->eto[j].orbit[i]);
                 for (int k = 0; k < g->eto[j].shipdesigns_num; ++k) {
                     if (r->ships[k]) {
                         tblpl[numorbits++] = j;
@@ -865,7 +865,7 @@ void ui_starmap_fill_oi_tbls(struct starmap_data_s *d)
     }
     for (int i = 0; i < g->enroute_num; ++i) {
         if (ENROUTE_IS_VISIBLE(g, i, d->api)) {
-            fleet_enroute_t *r = &(g->enroute[i]);
+            const fleet_enroute_t *r = &(g->enroute[i]);
             int x0 = (r->x - x) * 2 + 8;
             int y0 = (r->y - y) * 2 + 8;
             d->oi_tbl_enroute[i] = uiobj_add_mousearea_limited(x0, y0, x0 + 8, y0 + 4, MOO_KEY_UNKNOWN, -1);
@@ -873,7 +873,7 @@ void ui_starmap_fill_oi_tbls(struct starmap_data_s *d)
     }
     for (int i = 0; i < g->transport_num; ++i) {
         if (TRANSPORT_IS_VISIBLE(g, i, d->api)) {
-            transport_t *r = &(g->transport[i]);
+            const transport_t *r = &(g->transport[i]);
             int x0 = (r->x - x) * 2 + 8;
             int y0 = (r->y - y) * 2 + 8;
             d->oi_tbl_transport[i] = uiobj_add_mousearea_limited(x0, y0, x0 + 8, y0 + 4, MOO_KEY_UNKNOWN, -1);
