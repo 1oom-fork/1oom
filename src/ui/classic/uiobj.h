@@ -20,7 +20,6 @@ extern void uiobj_table_clear(void);
 extern void uiobj_table_set_last(int16_t oi);
 extern void uiobj_table_num_store(void);
 extern void uiobj_table_num_restore(void);
-extern void uiobj_handle_objects(void);
 extern int16_t uiobj_handle_input_cond(void);
 
 extern void uiobj_finish_frame(void);
