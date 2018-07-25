@@ -2430,7 +2430,10 @@ static int game_battle_ai_missile_evade(const struct battle_s *bt)
     return evade;
 }
 
-static void game_battle_ai_range_hmm1(struct battle_s *bt, int target_i)
+/*
+ * Tries to approximate by how much enemy ship can increase distance in 2 turns.
+ */
+static void get_possible_distance_increase(struct battle_s *bt, int target_i)
 {
     struct battle_item_s *b = &(bt->item[bt->cur_item]);
     const struct battle_item_s *bd = &(bt->item[target_i]);
@@ -2505,7 +2508,7 @@ static int game_battle_ai_best_range(struct battle_s *bt, int target_i)
             if ((w->damagemax != w->damagemin) && (!w->is_bomb)) {
                 range = b->extrarange;
             } else if (!w->is_bomb) {
-                game_battle_ai_range_hmm1(bt, target_i);
+                get_possible_distance_increase(bt, target_i);
                 range = b->maxrange;
             }
             if (((w->range + range) >= i) && (b->wpn[j].numshots != 0) && ((!w->damagefade) || (i == 1))) {
@@ -2826,7 +2829,7 @@ static void game_ai_classic_battle_ai_turn(struct battle_s *bt)
             if (!bt->flag_cur_item_destroyed) {
                 const struct battle_item_s *bd = &(bt->item[target_i]);
                 if (util_math_dist_maxabs(b->sx, b->sy, bd->sx, bd->sy) <= 1) {
-                    game_battle_ai_range_hmm1(bt, target_i);
+                    get_possible_distance_increase(bt, target_i);
                     game_battle_attack(bt, itemi, target_i, false);
                 }
             }
@@ -2845,7 +2848,7 @@ static void game_ai_classic_battle_ai_turn(struct battle_s *bt)
             }
         }
         /*5a72a*/
-        game_battle_ai_range_hmm1(bt, target_i);
+        get_possible_distance_increase(bt, target_i);
         game_battle_attack(bt, itemi, target_i, false);
     }
     /*5a740*/
@@ -2892,7 +2895,7 @@ static void game_ai_classic_battle_ai_turn(struct battle_s *bt)
             }
             /*5a8e1*/
             if (target_i > -1) {
-                game_battle_ai_range_hmm1(bt, target_i);
+                get_possible_distance_increase(bt, target_i);
                 game_battle_attack(bt, itemi, target_i, false);
             }
             if (loops > 200) {  /* FIXME MOO1 does not need this but it does have the loop counter */
