@@ -26,6 +26,7 @@
 #include "uispecs.h"
 #include "uiswitch.h"
 #include "uitech.h"
+#include "uiview.h"
 #include "util.h"
 
 /* -------------------------------------------------------------------------- */
@@ -40,7 +41,8 @@ static const struct input_cmd_s * const cmdsptr_turn[3];
 static const struct input_cmd_s cmds_turn[] = {
     { "?", NULL, "Help", 0, 0, 0, ui_cmd_help, (void *)cmdsptr_turn },
     { "n", NULL, "Next turn", 0, 0, 0, cmd_next, 0 },
-    { "l", "[PLANET|*]", "Look", 0, 1, 0, ui_cmd_planet_look, 0 },
+    { "v", "[RANGE] [+DIST] [FILTERS]", "View galaxy up to RANGE and or DIST from planet\nFILTERS: Planet, Fleet, Transport,\n         mY, Opponent,\n         Unexplored, eXplored,\n         uNcolonized, Colonized", 0, 3, 0, ui_cmd_view, 0 },
+    { "l", "[PLANET|*]", "Look at planet", 0, 1, 0, ui_cmd_planet_look, 0 },
     { "g", "PLANET", "Go to planet", 1, 1, 0, ui_cmd_planet_go, 0 },
     { "s", "SLIDER VALUE", "Set planet slider\nSLIDER is s, d, i, e or t\nVALUE can be +N or -N for relative adjustment", 2, 2, 0, ui_cmd_planet_slider, 0 },
     { "sl", "SLIDER", "Toggle planet slider lock", 1, 1, 0, ui_cmd_planet_slider_lock, 0 },
