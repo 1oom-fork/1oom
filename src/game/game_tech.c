@@ -162,7 +162,7 @@ uint8_t game_tech_player_has_tech(const struct game_s *g, int field_i, int tech_
     return find_byte_in_tbl(tech_i, p, len);
 }
 
-uint8_t game_tech_player_best_tech(struct game_s *g, int field_i, int tech_i_base, int tech_i_step, int tech_i_max, int player_i)
+uint8_t game_tech_player_best_tech(const struct game_s *g, int field_i, int tech_i_base, int tech_i_step, int tech_i_max, int player_i)
 {
     uint8_t tech_best = 0;
     for (int tech_i = (tech_i_base >= 2) ? tech_i_base : tech_i_step; tech_i < tech_i_max; tech_i += tech_i_step) {
@@ -173,7 +173,7 @@ uint8_t game_tech_player_best_tech(struct game_s *g, int field_i, int tech_i_bas
     return tech_best;
 }
 
-uint8_t game_tech_player_best_engine(struct game_s *g, int player_i)
+uint8_t game_tech_player_best_engine(const struct game_s *g, int player_i)
 {
     return game_tech_player_best_tech(g, TECH_FIELD_PROPULSION, 0, 6, 50, player_i) + 3;
 }
