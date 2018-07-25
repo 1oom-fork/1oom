@@ -31,26 +31,69 @@ static uint8_t get_fleet_planet_on(const struct game_s *g, const fleet_enroute_t
     return PLANET_NONE;
 }
 
-static void print_fleet_enroute(const struct game_s *g, int api, const fleet_enroute_t *r, uint8_t pon)
+static void ui_fleet_print_fleet_orbit(const struct game_s *g, int api, uint8_t planet_i, int pi)
+{
+    const fleet_orbit_t *r = &(g->eto[pi].orbit[planet_i]);
+    if (BOOLVEC_IS1(r->visible, api)) {
+        char buf[80];
+        char pname[20];
+        const planet_t *p;
+        p = &(g->planet[planet_i]);
+        sprintf(buf, "%s [%i] (%i,%i) %s", game_str_fl_inorbit, planet_i, p->x, p->y, ui_planet_str(g, api, planet_i, pname));
+        printf("%-40s", buf);
+        for (int k = 0; k < NUM_SHIPDESIGNS; ++k) {
+            printf(" %5i", r->ships[k]);
+        }
+        if (pi != api) {
+            printf("  %s", game_str_tbl_race[g->eto[pi].race]);
+        }
+        putchar('\n');
+    }
+}
+
+/* -------------------------------------------------------------------------- */
+
+void ui_fleet_print_fleets_orbit(const struct game_s *g, int api, uint8_t planet_i, bool show_my, bool show_opp)
+{
+    if (show_my) {
+        ui_fleet_print_fleet_orbit(g, api, planet_i, api);
+    }
+    if (show_opp) {
+        for (int i = 0; i < g->players; ++i) {
+            const fleet_orbit_t *r = &(g->eto[i].orbit[planet_i]);
+            if ((i == api) || BOOLVEC_IS0(r->visible, api)) {
+                continue;
+            }
+            ui_fleet_print_fleet_orbit(g, api, planet_i, i);
+        }
+    }
+}
+
+void ui_fleet_print_fleet_enroute(const struct game_s *g, int api, const fleet_enroute_t *r, uint8_t pon)
 {
     char buf[80];
     char pname[20];
-    const empiretechorbit_t *e = &(g->eto[api]);
-    int eta, sd_num = e->shipdesigns_num;
     const planet_t *p = &(g->planet[r->dest]);
     sprintf(buf, "#F%i (%i,%i) %s [%i] %s", (int)(r - g->enroute), r->x, r->y, game_str_fl_moving, r->dest, ui_planet_str(g, api, r->dest, pname));
     printf("%-40s", buf);
-    for (int k = 0; k < sd_num; ++k) {
+    for (int k = 0; k < NUM_SHIPDESIGNS; ++k) {
         printf(" %5i", r->ships[k]);
     }
-    if (pon == PLANET_NONE) {
-        pon = get_fleet_planet_on(g, r);
+    if ((r->owner == api) || g->eto[api].have_ia_scanner) {
+        int eta;
+        if (pon == PLANET_NONE) {
+            pon = get_fleet_planet_on(g, r);
+        }
+        eta = game_calc_eta(g, game_fleet_get_speed(g, r, pon, r->dest), p->x, p->y, r->x, r->y);
+        printf("  %s %i %s", game_str_sm_eta, eta, (eta == 1) ? game_str_sm_turn : game_str_sm_turns);
     }
-    eta = game_calc_eta(g, game_fleet_get_speed(g, r, pon, r->dest), p->x, p->y, r->x, r->y);
-    printf("  %s %i %s\n", game_str_sm_eta, eta, (eta == 1) ? game_str_sm_turn : game_str_sm_turns);
+    if (r->owner != api) {
+        printf("  %s", game_str_tbl_race[g->eto[r->owner].race]);
+    }
+    putchar('\n');
 }
 
-static void print_transport_enroute(const struct game_s *g, int api, const transport_t *r)
+void ui_fleet_print_transport_enroute(const struct game_s *g, int api, const transport_t *r)
 {
     char buf[80];
     char pname[20];
@@ -64,45 +107,23 @@ static void print_transport_enroute(const struct game_s *g, int api, const trans
     printf("  %s %i %s\n", game_str_sm_eta, eta, (eta == 1) ? game_str_sm_turn : game_str_sm_turns);
 }
 
-/* -------------------------------------------------------------------------- */
-
 int ui_cmd_fleet_list(struct game_s *g, int api, struct input_token_s *param, int num_param, void *var)
 {
-    char buf[80];
-    const empiretechorbit_t *e = &(g->eto[api]);
-    int sd_num = e->shipdesigns_num;
     {
+        const empiretechorbit_t *e = &(g->eto[api]);
         const shipdesign_t *sd = &(g->srd[api].design[0]);
-        for (int j = 0; j < sd_num; ++j) {
+        for (int j = 0; j < e->shipdesigns_num; ++j) {
             printf("%c %s", (j == 0) ? '-' : ',', sd[j].name);
         }
         putchar('\n');
     }
     for (int i = 0; i < g->galaxy_stars; ++i) {
-        const fleet_orbit_t *r = &(e->orbit[i]);
-        for (int j = 0; j < sd_num; ++j) {
-            if (r->ships[j] != 0) {
-                const planet_t *p;
-                p = &(g->planet[i]);
-                sprintf(buf, "%s [%i] (%i,%i) %s", game_str_fl_inorbit, i, p->x, p->y, p->name);
-                printf("%-40s", buf);
-                for (int k = 0; k < sd_num; ++k) {
-                    printf(" %5i", r->ships[k]);
-                }
-                putchar('\n');
-                break;
-            }
-        }
+        ui_fleet_print_fleet_orbit(g, api, i, api);
     }
     for (int i = 0; i < g->enroute_num; ++i) {
         const fleet_enroute_t *r = &(g->enroute[i]);
-        if (r->owner == api) {
-            for (int j = 0; j < sd_num; ++j) {
-                if (r->ships[j] != 0) {
-                    print_fleet_enroute(g, api, r, PLANET_NONE);
-                    break;
-                }
-            }
+        if ((r->owner == api) && BOOLVEC_IS1(r->visible, api)) {
+            ui_fleet_print_fleet_enroute(g, api, r, PLANET_NONE);
         }
     }
     return 0;
@@ -121,7 +142,7 @@ int ui_cmd_fleet_redir(struct game_s *g, int api, struct input_token_s *param, i
                         uint8_t pon;
                         pon = get_fleet_planet_on(g, r);
                         if (e->have_hyperspace_comm || (pon != PLANET_NONE)) {
-                            print_fleet_enroute(g, api, r, pon);
+                            ui_fleet_print_fleet_enroute(g, api, r, pon);
                         }
                         break;
                     }
@@ -132,7 +153,7 @@ int ui_cmd_fleet_redir(struct game_s *g, int api, struct input_token_s *param, i
             for (int i = 0; i < g->transport_num; ++i) {
                 const transport_t *r = &(g->transport[i]);
                 if (r->owner == api) {
-                    print_transport_enroute(g, api, r);
+                    ui_fleet_print_transport_enroute(g, api, r);
                 }
             }
         }
