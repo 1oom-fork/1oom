@@ -53,4 +53,6 @@ libuicmdline_a_SOURCES = \
     uiswitch.c \
     uiswitch.h \
     uitech.c \
-    uitech.h
+    uitech.h \
+    uiview.c \
+    uiview.h
