@@ -21,7 +21,7 @@ bool ui_explore(struct game_s *g, int pi, uint8_t planet_i, bool by_scanner, boo
             printf("%s %s %s\n", game_str_ex_scout, game_str_ex_explore, game_str_ex_starsys);
         }
     }
-    ui_planet_look(g, pi, planet_i);
+    ui_planet_look(g, pi, planet_i, true);
     if (flag_colony_ship) {
         char buf[0x80];
         int v;

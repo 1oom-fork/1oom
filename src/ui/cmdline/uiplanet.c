@@ -84,6 +84,12 @@ const char *ui_planet_str(const struct game_s *g, player_id_t api, uint8_t plane
     const planet_t *p = &(g->planet[planet_i]);
     if (BOOLVEC_IS1(p->explored, api)) {
         return p->name;
+    } else if ((p->owner != PLAYER_NONE) && (0
+      || BOOLVEC_IS1(p->within_srange, api)
+      || (p->within_frange[api] == 1)
+      || (planet_i == g->evn.planet_orion_i)
+    )) {
+        return p->name;
     } else {
         sprintf(buf, "#%c%i", game_str_tbl_sm_stinfo[p->star_type][0]/*HACK*/, planet_i);
         return buf;
@@ -141,7 +147,7 @@ uint8_t ui_planet_from_param(struct game_s *g, player_id_t api, struct input_tok
     return PLANET_NONE;
 }
 
-void ui_planet_look(struct game_s *g, player_id_t api, uint8_t planet_i)
+void ui_planet_look(const struct game_s *g, player_id_t api, uint8_t planet_i, bool show_full)
 {
     const planet_t *p = &(g->planet[planet_i]);
     const empiretechorbit_t *e = &(g->eto[api]);
@@ -198,47 +204,57 @@ void ui_planet_look(struct game_s *g, player_id_t api, uint8_t planet_i)
                 }
                 printf(". %s %s. Pop %i, bases %i. %s %i %s\n", game_str_tbl_race[g->eto[owner].race], game_str_sm_colony, pop, bases, game_str_sm_range, dist, (dist == 1) ? game_str_sm_parsec : game_str_sm_parsecs);
             } else {
-                char buf[10];
-                int v;
                 printf(", pop %i, bases %i, factories %i, prod %i (%i), waste %i\n", p->pop, p->missile_bases, p->factories, p->prod_after_maint, p->total_prod, p->waste);
-                v = game_planet_get_slider_text(g, planet_i, api, PLANET_SLIDER_SHIP, buf);
-                printf("  - Build ");
-                if (p->buildship == BUILDSHIP_STARGATE) {
-                    printf("%s\n", game_str_sm_stargate);
-                } else {
-                    printf("%i %s\n", v, g->srd[api].design[p->buildship].name);
-                }
-                printf("  - Slider %cSHIP %3i  %s\n", p->slider_lock[PLANET_SLIDER_SHIP] ? '*' : ' ', p->slider[PLANET_SLIDER_SHIP], buf);
-                game_planet_get_slider_text(g, planet_i, api, PLANET_SLIDER_DEF, buf);
-                printf("  - Slider %c DEF %3i  %s\n", p->slider_lock[PLANET_SLIDER_DEF] ? '*' : ' ', p->slider[PLANET_SLIDER_DEF], buf);
-                game_planet_get_slider_text(g, planet_i, api, PLANET_SLIDER_IND, buf);
-                printf("  - Slider %c IND %3i  %s\n", p->slider_lock[PLANET_SLIDER_IND] ? '*' : ' ', p->slider[PLANET_SLIDER_IND], buf);
-                v = game_planet_get_slider_text(g, planet_i, api, PLANET_SLIDER_ECO, buf);
-                printf("  - Slider %c ECO %3i  ", p->slider_lock[PLANET_SLIDER_ECO] ? '*' : ' ', p->slider[PLANET_SLIDER_ECO]);
-                if (v >= 0) {
-                    printf("+%i ", v);
-                }
-                printf("%s\n", buf);
-                v = game_get_tech_prod(p->prod_after_maint, p->slider[PLANET_SLIDER_TECH], g->eto[api].race, p->special);
-                printf("  - Slider %cTECH %3i  %i RP\n", p->slider_lock[PLANET_SLIDER_TECH] ? '*' : ' ', p->slider[PLANET_SLIDER_TECH], v);
-                if (p->reloc != planet_i) {
-                    printf("  - Reloc to %s\n", g->planet[p->reloc].name);
-                }
-                if ((p->trans_num != 0) && (p->trans_dest != PLANET_NONE)) {
-                    const planet_t *pt = &(g->planet[p->trans_dest]);
-                    printf("  - Transport %i to %s", p->trans_num, pt->name);
-                    if (p->have_stargate && pt->have_stargate && (p->owner == pt->owner)) {
-                        printf(" via %s.\n", game_str_sm_stargate);
+                if (show_full) {
+                    char buf[10];
+                    int v;
+                    v = game_planet_get_slider_text(g, planet_i, api, PLANET_SLIDER_SHIP, buf);
+                    printf("  - Build ");
+                    if (p->buildship == BUILDSHIP_STARGATE) {
+                        printf("%s\n", game_str_sm_stargate);
                     } else {
-                        int eta, engine = e->have_engine;
-                        eta = game_calc_eta(g, engine, p->x, p->y, pt->x, pt->y);
-                        printf(". %s %i %s.\n", game_str_sm_eta, eta, (eta == 1) ? game_str_sm_turn : game_str_sm_turns);
+                        printf("%i %s\n", v, g->srd[api].design[p->buildship].name);
+                    }
+                    printf("  - Slider %cSHIP %3i  %s\n", p->slider_lock[PLANET_SLIDER_SHIP] ? '*' : ' ', p->slider[PLANET_SLIDER_SHIP], buf);
+                    game_planet_get_slider_text(g, planet_i, api, PLANET_SLIDER_DEF, buf);
+                    printf("  - Slider %c DEF %3i  %s\n", p->slider_lock[PLANET_SLIDER_DEF] ? '*' : ' ', p->slider[PLANET_SLIDER_DEF], buf);
+                    game_planet_get_slider_text(g, planet_i, api, PLANET_SLIDER_IND, buf);
+                    printf("  - Slider %c IND %3i  %s\n", p->slider_lock[PLANET_SLIDER_IND] ? '*' : ' ', p->slider[PLANET_SLIDER_IND], buf);
+                    v = game_planet_get_slider_text(g, planet_i, api, PLANET_SLIDER_ECO, buf);
+                    printf("  - Slider %c ECO %3i  ", p->slider_lock[PLANET_SLIDER_ECO] ? '*' : ' ', p->slider[PLANET_SLIDER_ECO]);
+                    if (v >= 0) {
+                        printf("+%i ", v);
+                    }
+                    printf("%s\n", buf);
+                    v = game_get_tech_prod(p->prod_after_maint, p->slider[PLANET_SLIDER_TECH], g->eto[api].race, p->special);
+                    printf("  - Slider %cTECH %3i  %i RP\n", p->slider_lock[PLANET_SLIDER_TECH] ? '*' : ' ', p->slider[PLANET_SLIDER_TECH], v);
+                    if (p->reloc != planet_i) {
+                        printf("  - Reloc to %s\n", g->planet[p->reloc].name);
+                    }
+                    if ((p->trans_num != 0) && (p->trans_dest != PLANET_NONE)) {
+                        const planet_t *pt = &(g->planet[p->trans_dest]);
+                        printf("  - Transport %i to %s", p->trans_num, pt->name);
+                        if (p->have_stargate && pt->have_stargate && (p->owner == pt->owner)) {
+                            printf(" via %s.\n", game_str_sm_stargate);
+                        } else {
+                            int eta, engine = e->have_engine;
+                            eta = game_calc_eta(g, engine, p->x, p->y, pt->x, pt->y);
+                            printf(". %s %i %s.\n", game_str_sm_eta, eta, (eta == 1) ? game_str_sm_turn : game_str_sm_turns);
+                        }
                     }
                 }
             }
         }
     } else {
-        printf("%s. %s %i %s\n", game_str_sm_unexplored, game_str_sm_range, dist, (dist == 1) ? game_str_sm_parsec : game_str_sm_parsecs);
+        printf("%s. %s %i %s.", game_str_sm_unexplored, game_str_sm_range, dist, (dist == 1) ? game_str_sm_parsec : game_str_sm_parsecs);
+        if ((p->owner != PLAYER_NONE) && (0
+          || BOOLVEC_IS1(p->within_srange, api)
+          || (p->within_frange[api] == 1)
+          || (planet_i == g->evn.planet_orion_i)
+        )) {
+            printf(" %s %s", game_str_tbl_race[g->eto[p->owner].race], game_str_sm_colony);
+        }
+        putchar('\n');
     }
     ui_planet_print_orbit_if_visible(g, api, planet_i, api);
     for (player_id_t pi = PLAYER_0; pi < g->players; ++pi) {
@@ -261,7 +277,7 @@ int ui_cmd_planet_look(struct game_s *g, player_id_t api, struct input_token_s *
             if (param->str[0] == '*') {
                 if (param->str[1] == '\0') {
                     for (pi = 0; pi < g->galaxy_stars; ++pi) {
-                        ui_planet_look(g, api, pi);
+                        ui_planet_look(g, api, pi, true);
                     }
                     return 0;
                 }
@@ -269,7 +285,7 @@ int ui_cmd_planet_look(struct game_s *g, player_id_t api, struct input_token_s *
         }
     }
     if (pi != PLANET_NONE) {
-        ui_planet_look(g, api, pi);
+        ui_planet_look(g, api, pi, true);
         return 0;
     } else {
         return -1;
