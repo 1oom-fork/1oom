@@ -2541,7 +2541,12 @@ static int game_battle_ai_best_range(struct battle_s *bt, int target_i)
     return bestrange;
 }
 
-static int game_battle_pulsar_hmm2(struct battle_s *bt, int sx, int sy)
+/*
+ * Evaluate position (sx, sy) in case ship has pulsar.
+ * If position is next to friendly ship that can't absorb pulsar damage devaluate it.
+ * If position is next to enemy ship that can't absorb pulsar damage add value to it.
+ */
+static int eval_pos_for_pulsar_use(struct battle_s *bt, int sx, int sy)
 {
     struct battle_item_s *b = &(bt->item[bt->cur_item]);
     int ndiv, rbase, weight = 0, dmg;
@@ -2584,7 +2589,7 @@ static int game_battle_ai_target1_sub3(struct battle_s *bt, int sx, int sy, int 
         si -= dist * 4;
     }
     if ((b->pulsar == 1) || (b->pulsar == 2)) {
-        si += game_battle_pulsar_hmm2(bt, sx, sy);
+        si += eval_pos_for_pulsar_use(bt, sx, sy);
     }
     if (game_battle_area_check_line_ok(bt, tblx, tbly, len) < 1) {
         si -= 2;
@@ -2835,7 +2840,7 @@ static void game_ai_classic_battle_ai_turn(struct battle_s *bt)
       && ((target_i = game_ai_battle_rival(bt, itemi, 0)) > -1)
     ) {
         if ((b->pulsar == 1) || (b->pulsar == 2)) {
-            if (game_battle_pulsar_hmm2(bt, b->sx, b->sy) < 0) {
+            if (eval_pos_for_pulsar_use(bt, b->sx, b->sy) < 0) {
                 bt->special_button = 0;
             }
         }
@@ -2859,7 +2864,7 @@ static void game_ai_classic_battle_ai_turn(struct battle_s *bt)
     if (!bt->flag_cur_item_destroyed) {
         int loops;
         if ((b->pulsar == 1) || (b->pulsar == 2)) {
-            if (game_battle_pulsar_hmm2(bt, b->sx, b->sy) < 0) {
+            if (eval_pos_for_pulsar_use(bt, b->sx, b->sy) < 0) {
                 bt->special_button = 0;
             }
         }
