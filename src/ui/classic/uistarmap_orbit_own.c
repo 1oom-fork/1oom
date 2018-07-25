@@ -150,7 +150,7 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
             ;
     uint16_t scrollx = 0, scrolly = 0;
     struct starmap_data_s d;
-    shipcount_t *os;
+    const shipcount_t *os;
     const uint8_t shiptypes[NUM_SHIPDESIGNS] = { 0, 1, 2, 3, 4, 5 };
 
     d.g = g;
