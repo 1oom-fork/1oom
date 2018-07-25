@@ -1191,7 +1191,7 @@ static void uiobj_finish_callback_delay_1(void)
     uiobj_finish_callback_delay_p(1);
 }
 
-static void uiobj_finish_callback_delay_hmm5(void)
+static void uiobj_finish_callback_delay_stored(void)
 {
     uiobj_finish_callback_delay_p(uiobj_delay);
 }
@@ -1443,7 +1443,7 @@ static int16_t uiobj_handle_input_sub0(void)
                 break;
             }
             if (mouse_buttons != 0) {
-                uiobj_finish_callback_delay_hmm5();
+                uiobj_finish_callback_delay_stored();
             }
         }
         q = &uiobj_tbl[uiobj_clicked_oi];
@@ -2381,7 +2381,7 @@ void uiobj_input_flush(void)
         kbd_get_keypress();
     }
     while (mouse_buttons) {
-        uiobj_finish_callback_delay_hmm5();
+        uiobj_finish_callback_delay_stored();
     }
 }
 
@@ -2399,11 +2399,11 @@ void uiobj_input_wait(void)
             got_any = true;
             mouse_getclear_click_hw();
         }
-        uiobj_finish_callback_delay_hmm5();
+        uiobj_finish_callback_delay_stored();
     }
     if (got_mb) {
         while (mouse_buttons) {
-            uiobj_finish_callback_delay_hmm5();
+            uiobj_finish_callback_delay_stored();
         }
     }
     mouse_getclear_click_hw();
