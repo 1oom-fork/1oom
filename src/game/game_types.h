@@ -152,4 +152,11 @@ typedef uint32_t shipsum_t;
 
 #define TECH_SPY_MAX    6
 
+#define FLEET_ENROUTE_AI_MAX    208
+#define FLEET_ENROUTE_MAX   260
+
+#define TRANSPORT_MAX   100
+
+#define PLANETS_MAX 108
+
 #endif
