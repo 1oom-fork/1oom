@@ -629,21 +629,21 @@ static inline void uiobj_handle_hmm1_sub1(int i)
     }
 }
 
-static void uiobj_handle_hmm2(int i, uint16_t a2)
+static void uiobj_handle_hmm2(int i, bool in_focus)
 {
     uiobj_t *p = &uiobj_tbl[i];
     switch (p->type) {
         case 0:
-            uiobj_handle_t03_cond(p, a2 == 0);
+            uiobj_handle_t03_cond(p, !in_focus);
             break;
         case 1:
-            uiobj_handle_t03_cond(p, (a2 == 0) || (*p->vptr == 1));
+            uiobj_handle_t03_cond(p, (!in_focus) || (*p->vptr == 1));
             break;
         case 2:
-            uiobj_handle_t03_cond(p, (a2 == 0) && (*p->vptr == 0));
+            uiobj_handle_t03_cond(p, (!in_focus) && (*p->vptr == 0));
             break;
         case 3:
-            if (a2 == 0) {
+            if (!in_focus) {
                 *p->vptr = UIOBJI_INVALID; /* TODO or other 0xfc18? */
             } else {
                 *p->vptr = p->t0.z18;
@@ -651,7 +651,7 @@ static void uiobj_handle_hmm2(int i, uint16_t a2)
             uiobj_handle_t03_cond(p, *p->vptr != p->t0.z18);
             break;
         case 0xa:
-            if (a2 == 0) {
+            if (!in_focus) {
                 *p->vptr = 0;
             } else if (p->ta.z12) {
                 *p->vptr = p->ta.z18;
@@ -679,13 +679,13 @@ static void uiobj_handle_hmm2(int i, uint16_t a2)
             }
             break;
         case 0xb:
-            if (a2 == 1) {
+            if (in_focus) {
                 *p->tb.xptr = (moouse_x - p->x0) / p->tb.xdiv;
                 *p->tb.yptr = (moouse_y - p->y0) / p->tb.ydiv;
             }
             break;
         case 6:
-            if (a2 == 1) {
+            if (in_focus) {
                 uiobj_handle_t6_slider_input(p);
             }
             break;
@@ -1248,15 +1248,15 @@ static void uiobj_cursor_redraw_hmm2(int16_t oi, int mx, int my)
                 if ((q->type != 3) || (p->type == 3)) {
                     if (q->type == 0xa) {
                         if ((p->type == 0xa) && p->ta.z12) {
-                            uiobj_handle_hmm2(uiobj_focus_oi, 0);
+                            uiobj_handle_hmm2(uiobj_focus_oi, false);
                         }
                     } else {
-                        uiobj_handle_hmm2(uiobj_focus_oi, 0);
+                        uiobj_handle_hmm2(uiobj_focus_oi, false);
                     }
                 }
             }
             uiobj_focus_oi = oi;
-            uiobj_handle_hmm2(oi, 1);
+            uiobj_handle_hmm2(oi, true);
             if (p->type == 4) {
                 mx = moouse_x;
                 my = moouse_y;
@@ -1291,7 +1291,7 @@ static void uiobj_finish_callback_delay_1(void)
     uiobj_finish_callback_delay_p(1);
 }
 
-static void uiobj_finish_callback_delay_hmm5(void)
+static void uiobj_finish_callback_delay_stored(void)
 {
     uiobj_finish_callback_delay_p(uiobj_delay);
 }
@@ -1557,7 +1557,7 @@ static int16_t uiobj_handle_input_sub0(void)
                     }
                     if ((p->type != 3) && (p->type != 0xa)) {
                         ui_cursor_erase0();
-                        uiobj_handle_hmm2(uiobj_focus_oi, 0);
+                        uiobj_handle_hmm2(uiobj_focus_oi, false);
                         ui_cursor_store_bg0(mx, my);
                         ui_cursor_draw0(mx, my);
                         mouse_set_xy(mx, my);
@@ -1580,7 +1580,7 @@ static int16_t uiobj_handle_input_sub0(void)
                 break;
             }
             if (mouse_buttons != 0) {
-                uiobj_finish_callback_delay_hmm5();
+                uiobj_finish_callback_delay_stored();
             }
         }
         q = &uiobj_tbl[uiobj_clicked_oi];
@@ -1651,6 +1651,18 @@ static void uiobj_add_t03_do(uint16_t x, uint16_t y, const char *str, uint8_t *l
     p->key = key;
 }
 
+static void uiobj_handle_hmm1(void)
+{
+    for (int i = 1; i < uiobj_table_num; ++i) {
+        uiobj_t *p = &uiobj_tbl[i];
+        if ((i == uiobj_focus_oi) && (p->type != 4)) {
+            uiobj_handle_hmm2(i, true);
+        } else {
+            uiobj_handle_hmm1_sub1(i);
+        }
+    }
+}
+
 /* -------------------------------------------------------------------------- */
 
 void uiobj_table_clear(void)
@@ -1678,18 +1690,6 @@ void uiobj_table_num_restore(void)
     uiobj_table_num = uiobj_table_num_old;
     if (uiobj_callback) {
         uiobj_flag_have_cb = true;
-    }
-}
-
-void uiobj_handle_hmm1(void)
-{
-    for (int i = 1; i < uiobj_table_num; ++i) {
-        uiobj_t *p = &uiobj_tbl[i];
-        if ((i == uiobj_focus_oi) && (p->type != 4)) {
-            uiobj_handle_hmm2(i, 1);
-        } else {
-            uiobj_handle_hmm1_sub1(i);
-        }
     }
 }
 
@@ -2389,7 +2389,7 @@ void uiobj_input_flush(void)
         kbd_get_keypress();
     }
     while (mouse_buttons) {
-        uiobj_finish_callback_delay_hmm5();
+        uiobj_finish_callback_delay_stored();
     }
 }
 
@@ -2412,11 +2412,11 @@ void uiobj_input_wait(void)
                 mouse_getclear_click_hw();
             }
         }
-        uiobj_finish_callback_delay_hmm5();
+        uiobj_finish_callback_delay_stored();
     }
     if (got_mb) {
         while (mouse_buttons) {
-            uiobj_finish_callback_delay_hmm5();
+            uiobj_finish_callback_delay_stored();
         }
     }
     mouse_getclear_click_hw();
