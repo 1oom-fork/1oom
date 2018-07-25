@@ -536,21 +536,21 @@ static inline void uiobj_handle_hmm1_sub1(int i)
     }
 }
 
-static void uiobj_handle_hmm2(int i, uint16_t a2)
+static void uiobj_handle_hmm2(int i, bool in_focus)
 {
     uiobj_t *p = &uiobj_tbl[i];
     switch (p->type) {
         case 0:
-            uiobj_handle_t03_cond(p, a2 == 0);
+            uiobj_handle_t03_cond(p, !in_focus);
             break;
         case 1:
-            uiobj_handle_t03_cond(p, (a2 == 0) || (*p->vptr == 1));
+            uiobj_handle_t03_cond(p, (!in_focus) || (*p->vptr == 1));
             break;
         case 2:
-            uiobj_handle_t03_cond(p, (a2 == 0) && (*p->vptr == 0));
+            uiobj_handle_t03_cond(p, (!in_focus) && (*p->vptr == 0));
             break;
         case 3:
-            if (a2 == 0) {
+            if (!in_focus) {
                 *p->vptr = UIOBJI_INVALID; /* TODO or other 0xfc18? */
             } else {
                 *p->vptr = p->t0.z18;
@@ -558,7 +558,7 @@ static void uiobj_handle_hmm2(int i, uint16_t a2)
             uiobj_handle_t03_cond(p, *p->vptr != p->t0.z18);
             break;
         case 0xa:
-            if (a2 == 0) {
+            if (!in_focus) {
                 *p->vptr = 0;
             } else if (p->ta.z12) {
                 *p->vptr = p->ta.z18;
@@ -586,18 +586,18 @@ static void uiobj_handle_hmm2(int i, uint16_t a2)
             }
             break;
         case 0xb:
-            if (a2 == 1) {
+            if (in_focus) {
                 *p->tb.xptr = (mouse_x - p->x0) / p->tb.xdiv;
                 *p->tb.yptr = (mouse_y - p->y0) / p->tb.ydiv;
             }
             break;
         case 6:
-            if (a2 == 1) {
+            if (in_focus) {
                 uiobj_handle_t6_slider_input(p);
             }
             break;
         case 9:
-            if (a2 == 1) {
+            if (in_focus) {
                 *p->vptr = p->t9.z18;
             }
             break;
@@ -1148,15 +1148,15 @@ static void uiobj_cursor_redraw_hmm2(int16_t oi, int mx, int my)
                 if ((q->type != 3) || (p->type == 3)) {
                     if (q->type == 0xa) {
                         if ((p->type == 0xa) && p->ta.z12) {
-                            uiobj_handle_hmm2(uiobj_focus_oi, 0);
+                            uiobj_handle_hmm2(uiobj_focus_oi, false);
                         }
                     } else {
-                        uiobj_handle_hmm2(uiobj_focus_oi, 0);
+                        uiobj_handle_hmm2(uiobj_focus_oi, false);
                     }
                 }
             }
             uiobj_focus_oi = oi;
-            uiobj_handle_hmm2(oi, 1);
+            uiobj_handle_hmm2(oi, true);
             if (p->type == 4) {
                 mx = mouse_x;
                 my = mouse_y;
@@ -1420,7 +1420,7 @@ static int16_t uiobj_handle_input_sub0(void)
                     }
                     if ((p->type != 3) && (p->type != 0xa)) {
                         ui_cursor_erase0();
-                        uiobj_handle_hmm2(uiobj_focus_oi, 0);
+                        uiobj_handle_hmm2(uiobj_focus_oi, false);
                         ui_cursor_store_bg0(mx, my);
                         ui_cursor_draw0(mx, my);
                         mouse_set_xy(mx, my);
@@ -1542,7 +1542,7 @@ void uiobj_handle_hmm1(void)
     for (int i = 1; i < uiobj_table_num; ++i) {
         uiobj_t *p = &uiobj_tbl[i];
         if ((i == uiobj_focus_oi) && (p->type != 4)) {
-            uiobj_handle_hmm2(i, 1);
+            uiobj_handle_hmm2(i, true);
         } else {
             uiobj_handle_hmm1_sub1(i);
         }
