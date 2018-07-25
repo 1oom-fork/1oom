@@ -604,7 +604,7 @@ void game_equalize_slider_group(int16_t *slidertbl, int num, const uint16_t *loc
     }
 }
 
-int game_get_min_dist(struct game_s *g, int player_i, int planet_i)
+int game_get_min_dist(const struct game_s *g, int player_i, int planet_i)
 {
     int dist, mindist = 255;
     for (int i = 0; i < g->galaxy_stars; ++i) {
