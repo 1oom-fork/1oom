@@ -179,7 +179,7 @@ static void game_turn_build_eco(struct game_s *g)
         owner = p->owner;
         p->pop_prev = (owner != PLAYER_NONE) ? p->pop : 0;
         if ((owner != PLAYER_NONE) && (p->type != PLANET_TYPE_NOT_HABITABLE) && (p->pop != 0)) {
-            empiretechorbit_t *e;
+            const empiretechorbit_t *e;
             int ecorestore, ecoprod;
             e = &(g->eto[owner]);
             {
