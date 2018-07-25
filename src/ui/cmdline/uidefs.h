@@ -2,6 +2,8 @@
 #define INC_1OOM_UIDEFS_H
 
 #include "boolvec.h"
+#include "game_fleet.h"
+#include "game_planet.h"
 #include "game_types.h"
 #include "types.h"
 
@@ -46,6 +48,9 @@ struct ui_data_s {
     struct {
         char screen[8 * 3][10 * 4 + 7];
     } battle;
+    struct {
+        uint32_t item[PLANETS_MAX + FLEET_ENROUTE_MAX + TRANSPORT_MAX];
+    } view;
     BOOLVEC_DECLARE(players_viewing, PLAYER_NUM);
     char strbuf[1024];
 };
