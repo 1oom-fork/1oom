@@ -1510,6 +1510,18 @@ static void uiobj_add_t03_do(uint16_t x, uint16_t y, const char *str, uint8_t *l
     p->key = key;
 }
 
+static void uiobj_handle_objects(void)
+{
+    for (int i = 1; i < uiobj_table_num; ++i) {
+        uiobj_t *p = &uiobj_tbl[i];
+        if ((i == uiobj_focus_oi) && (p->type != UIOBJ_TYPE_TEXTINPUT)) {
+            uiobj_handle_click(i, true);
+        } else {
+            uiobj_handle_objects_sub1(i);
+        }
+    }
+}
+
 /* -------------------------------------------------------------------------- */
 
 void uiobj_table_clear(void)
@@ -1537,18 +1549,6 @@ void uiobj_table_num_restore(void)
     uiobj_table_num = uiobj_table_num_old;
     if (uiobj_callback) {
         uiobj_flag_have_cb = true;
-    }
-}
-
-void uiobj_handle_objects(void)
-{
-    for (int i = 1; i < uiobj_table_num; ++i) {
-        uiobj_t *p = &uiobj_tbl[i];
-        if ((i == uiobj_focus_oi) && (p->type != UIOBJ_TYPE_TEXTINPUT)) {
-            uiobj_handle_click(i, true);
-        } else {
-            uiobj_handle_objects_sub1(i);
-        }
     }
 }
 
