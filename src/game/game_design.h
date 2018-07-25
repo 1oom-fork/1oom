@@ -39,7 +39,7 @@ struct game_aux_s;
 extern void game_design_prepare(struct game_s *g, struct game_design_s *gd, player_id_t player, shipdesign_t *sd);
 extern void game_design_prepare_ai(struct game_s *g, struct game_design_s *gd, player_id_t player, ship_hull_t hull, uint8_t look);
 extern void game_design_update_engines(shipdesign_t *sd);
-extern int game_design_get_hull_space(struct game_design_s *gd);
+extern int game_design_get_hull_space(const struct game_design_s *gd);
 extern int game_design_calc_space(struct game_design_s *gd);
 extern int game_design_calc_space_item(struct game_design_s *gd, design_slot_t slot, int itemi);
 extern int game_design_calc_cost(struct game_design_s *gd);

@@ -232,7 +232,7 @@ void game_design_update_engines(shipdesign_t *sd)
     sd->engines = engines;
 }
 
-int game_design_get_hull_space(struct game_design_s *gd)
+int game_design_get_hull_space(const struct game_design_s *gd)
 {
     /* MOO1 also has some additional variable here, but it is always 0 */
     int space = tbl_shiptech_hull[gd->sd.hull].space;
