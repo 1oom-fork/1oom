@@ -28,7 +28,7 @@ static int cmd_look_sab(struct game_s *g, int api, struct input_token_s *param, 
     for (uint8_t i = 0; i < g->galaxy_stars; ++i) {
         const planet_t *p = &(g->planet[i]);
         if (p->owner == sabdata->target) {
-            ui_planet_look(g, api, i);
+            ui_planet_look(g, api, i, true);
         }
     }
     return 0;
