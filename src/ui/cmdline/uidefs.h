@@ -47,9 +47,7 @@ struct ui_data_s {
         char screen[8 * 3][10 * 4 + 7];
     } battle;
     struct {
-        uint32_t filter;
         uint32_t item[PLANETS_MAX + FLEET_ENROUTE_MAX + TRANSPORT_MAX];
-        int num;
     } view;
     BOOLVEC_DECLARE(players_viewing, PLAYER_NUM);
     char strbuf[1024];
