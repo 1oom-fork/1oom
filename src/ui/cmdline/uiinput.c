@@ -2,6 +2,7 @@
 
 #include <ctype.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #ifdef HAVE_READLINE
 #include <readline/readline.h>
@@ -103,6 +104,9 @@ char *ui_input_line(const char *prompt)
     line = readline(prompt);
     if ((line != 0) && (*line != 0)) {
         add_history(line);
+    } else if (line == NULL) {
+        log_message("(end of input)\n");
+        exit(0);
     }
     return line;
 }
@@ -122,7 +126,8 @@ char *ui_input_line(const char *prompt)
         *p = 0;
         return line;
     } else {
-        return NULL;
+        log_message("(end of input)\n");
+        exit(0);
     }
 }
 #endif
