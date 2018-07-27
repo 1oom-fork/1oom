@@ -31,6 +31,7 @@ struct picanim_s {
 struct animopts_s {
     bool fmt1;
     bool indep;
+    int num_frames;
     int loop_frame;
     int extra_start_frame;
     int pal_first;
@@ -62,7 +63,7 @@ static void gfx_pa_add_byte(struct picanim_s *pa, uint8_t b)
 
 static int gfx_convert(const char *filename_out, const char **filenames_in, int num_in, struct animopts_s *opts)
 {
-    struct picanim_s *picanim = lib_malloc(sizeof(struct picanim_s) * num_in);
+    struct picanim_s *picanim = lib_malloc(sizeof(struct picanim_s) * opts->num_frames);
     uint8_t *bufdiff = NULL;
     uint8_t *hdr = NULL;
     FILE *fd = NULL;
@@ -81,14 +82,21 @@ static int gfx_convert(const char *filename_out, const char **filenames_in, int 
             goto fail;
         }
     }
+    for (int frame = num_in; frame < opts->num_frames; ++frame) {
+        struct picanim_s *pa = &(picanim[frame]);
+        pa->filename = "(none)";
+    }
     bufdiff = lib_malloc(w * h);
-    for (int frame = 0; frame < num_in; ++frame) {
+    for (int frame = 0; frame < opts->num_frames; ++frame) {
         struct picanim_s *pa = &(picanim[frame]);
         if ((frame == 0) || (opts->indep) || (frame == opts->extra_start_frame)) {
             for (int i = 0; i < (w * h); ++i) {
                 bufdiff[i] = (pa->pic.pix[i] != 0);
             }
             gfx_pa_add_byte(pa, 1);
+        } else if (frame >= num_in) {
+            memset(bufdiff, 0, w * h);
+            gfx_pa_add_byte(pa, 0);
         } else {
             for (int i = 0; i < (w * h); ++i) {
                 bufdiff[i] = (picanim[frame - 1].pic.pix[i] != pa->pic.pix[i]);
@@ -194,7 +202,7 @@ static int gfx_convert(const char *filename_out, const char **filenames_in, int 
     }
     {
         int paloffs = 0, offs;
-        hdrlen = 0x12 + 4 * (num_in + 1);
+        hdrlen = 0x12 + 4 * (opts->num_frames + 1);
         if (opts->pal_num) {
             paloffs = hdrlen;
             hdrlen += 8 + 3 * opts->pal_num;
@@ -202,11 +210,11 @@ static int gfx_convert(const char *filename_out, const char **filenames_in, int 
         hdr = lib_malloc(hdrlen);
         SET_LE_16(&(hdr[0]), w);
         SET_LE_16(&(hdr[2]), h);
-        SET_LE_16(&(hdr[6]), num_in);
+        SET_LE_16(&(hdr[6]), opts->num_frames);
         {
             int loop_frame = opts->loop_frame;
-            if (loop_frame >= num_in) {
-                loop_frame = num_in;
+            if (loop_frame >= opts->num_frames) {
+                loop_frame = opts->num_frames;
             }
             SET_LE_16(&(hdr[8]), loop_frame);
         }
@@ -214,11 +222,11 @@ static int gfx_convert(const char *filename_out, const char **filenames_in, int 
         hdr[0x10] = opts->indep ? 1 : 0;
         hdr[0x11] = opts->fmt1 ? 1 : 0;
         offs = hdrlen;
-        for (int frame = 0; frame < num_in; ++frame) {
+        for (int frame = 0; frame < opts->num_frames; ++frame) {
             SET_LE_32(&(hdr[0x12 + 4 * frame]), offs);
             offs += picanim[frame].len;
         }
-        SET_LE_32(&(hdr[0x12 + 4 * num_in]), offs);
+        SET_LE_32(&(hdr[0x12 + 4 * opts->num_frames]), offs);
         if (opts->pal_num) {
             SET_LE_16(&(hdr[paloffs + 0]), paloffs + 8);
             SET_LE_16(&(hdr[paloffs + 2]), opts->pal_first);
@@ -234,7 +242,7 @@ static int gfx_convert(const char *filename_out, const char **filenames_in, int 
         log_error("creating file '%s'\n", filename_out);
         goto fail;
     }
-    for (int frame = 0; frame < num_in; ++frame) {
+    for (int frame = 0; frame < opts->num_frames; ++frame) {
         struct picanim_s *pa = &(picanim[frame]);
         if (fwrite(pa->buf, pa->len, 1, fd) != 1) {
             log_error("writing file '%s'\n", filename_out);
@@ -247,7 +255,7 @@ fail:
         fclose(fd);
         fd = NULL;
     }
-    for (int frame = 0; frame < num_in; ++frame) {
+    for (int frame = 0; frame < opts->num_frames; ++frame) {
         fmt_pic_free(&(picanim[frame].pic));
         lib_free(picanim[frame].buf);
         picanim[frame].buf = NULL;
@@ -300,12 +308,13 @@ static int gfx_dump(const char *filename)
 static void show_usage(void)
 {
     fprintf(stderr, "Usage:\n"
-                    "    1oom_gfxconv [OPTIONS] OUT.BIN IN.PCX [INn.PCX]*\n"
+                    "    1oom_gfxconv [OPTIONS] OUT.BIN IN.PCX|=WxHcC [INn.PCX]*\n"
                     "    1oom_gfxconv -d IN.BIN\n"
                     "Options:\n"
                     "    -f       Make format 1 binary (only council.lbx item 1)\n"
                     "    -i       All independent frames (winlose.lbx items 1-...)\n"
                     "    -e N     Extra independent frame (embassy.lbx items 2-...)\n"
+                    "    -n N     Set number of frames (default N = number of input files)\n"
                     "    -l N     Set loop frame\n"
                     "    -p F N   Include palette ; First, Number of colors\n"
                     "    -d       Dump converted file for debugging\n"
@@ -316,7 +325,7 @@ static void show_usage(void)
 
 int main_1oom(int argc, char **argv)
 {
-    struct animopts_s opts = { false, false, 0, 0, 0, 0 };
+    struct animopts_s opts = { false, false, 0, 0, 0, 0, 0 };
     int i;
     bool mode_dump = false;
     i = 1;
@@ -339,6 +348,14 @@ int main_1oom(int argc, char **argv)
                 break;
             case 'i':
                 opts.indep = true;
+                break;
+            case 'n':
+                ++i;
+                if ((i == argc) || (!util_parse_number(argv[i], &v))) {
+                    show_usage();
+                    return 1;
+                }
+                opts.num_frames = v;
                 break;
             case 'e':
                 ++i;
@@ -388,6 +405,11 @@ int main_1oom(int argc, char **argv)
         if (num_in < 1) {
             show_usage();
             return 1;
+        }
+        if (opts.num_frames == 0) {
+            opts.num_frames = num_in;
+        } else if (opts.num_frames < num_in) {
+            num_in = opts.num_frames;
         }
         return gfx_convert(filename_out, (const char **)&argv[i], num_in, &opts);
     }
