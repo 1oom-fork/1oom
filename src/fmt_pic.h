@@ -5,6 +5,7 @@
 
 typedef enum {
     PIC_TYPE_UNKNOWN = 0,
+    PIC_TYPE_EQUALDEF,
     PIC_TYPE_PCX
 } pic_type_t;
 
