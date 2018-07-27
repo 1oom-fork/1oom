@@ -1,6 +1,7 @@
 #include "config.h"
 
 #include <stdio.h>
+#include <string.h>
 
 #include "fmt_pic.h"
 #include "bits.h"
@@ -145,8 +146,60 @@ static bool fmt_pic_pcx_encode(struct pic_s *pic)
     return true;
 }
 
+static bool fmt_pic_equaldef_decode(struct pic_s *pic)
+{
+    const char *p = (const char *)pic->coded + 1;
+    char c;
+    int v, w, h;
+    v = 0;
+    while ((c = *p++) != 'x') {
+        if ((c >= '0') && (c <= '9')) {
+            v *= 10;
+            v += c - '0';
+        } else {
+            break;
+        }
+    }
+    if (c != 'x') {
+        return false;
+    }
+    pic->w = w = v;
+    v = 0;
+    while ((c = *p++) != 'c') {
+        if ((c >= '0') && (c <= '9')) {
+            v *= 10;
+            v += c - '0';
+        } else {
+            break;
+        }
+    }
+    if (c != 'c') {
+        return false;
+    }
+    pic->h = h = v;
+    v = 0;
+    while ((c = *p++) != '\0') {
+        if ((c >= '0') && (c <= '9')) {
+            v *= 10;
+            v += c - '0';
+        } else {
+            break;
+        }
+    }
+    if (c != '\0') {
+        return false;
+    }
+    pic->pix = lib_malloc(w * h);
+    memset(pic->pix, v, w * h);
+    pic->pal = NULL;
+    return true;
+}
+
 static pic_type_t fmt_pic_detect(const uint8_t *data, uint32_t len)
 {
+    if ((len == 0) && (data[0] == '=')) {
+        return PIC_TYPE_EQUALDEF;
+    }
     if (len < 32) {
         return PIC_TYPE_UNKNOWN;
     }
@@ -164,6 +217,9 @@ static bool fmt_pic_decode(struct pic_s *pic)
     if ((type == PIC_TYPE_PCX) && fmt_pic_pcx_decode(pic)) {
         pic->type = PIC_TYPE_PCX;
         return true;
+    } else  if ((type == PIC_TYPE_EQUALDEF) && fmt_pic_equaldef_decode(pic)) {
+        pic->type = PIC_TYPE_EQUALDEF;
+        return true;
     }
     return false;
 }
@@ -177,6 +233,11 @@ bool fmt_pic_load(const char *filename, struct pic_s *pic)
     uint8_t *buf;
     bool res = false;
     int len, l;
+    if (filename[0] == '=') {
+        len = 0;
+        buf = (uint8_t *)lib_stralloc(filename);
+        goto ready;
+    }
     buf = lib_malloc(128);
     if (0
       || ((fd = fopen(filename, "rb")) == 0)
@@ -199,6 +260,7 @@ bool fmt_pic_load(const char *filename, struct pic_s *pic)
         goto fail;
     }
     len += l;
+ready:
     pic->len = len;
     pic->coded = buf;
     if (!fmt_pic_decode(pic)) {
