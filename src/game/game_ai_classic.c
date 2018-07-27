@@ -3483,6 +3483,39 @@ static void game_ai_classic_turn_diplo_p1_sub1(struct game_s *g)
     }
 }
 
+static int game_ai_classic_turn_diplo_p1_get_ai_trade_tech(struct game_s *g, player_id_t p1, player_id_t p2, tech_field_t *fieldptr, uint8_t *techptr)
+{
+    struct spy_esp_s s;
+    tech_field_t field = 0;
+    uint8_t tech = 0;
+    int num, r;
+    s.target = p1;
+    s.spy = p2;
+    r = rnd_1_n(3, &g->seed);
+    num = game_spy_esp_sub2(g, &s, r);
+    /* WASBUG
+       MOO1 does field = s.tbl_field[0] and tech = s.tbl_tech2[0] but neither is set by game_spy_esp_sub2.
+       MOO1 uses global variables for the tables; the values are from some previous spy call (possibly ground combat tech steal).
+    */
+    if (num > 0) {
+        int i;
+        i = (g->year ^ r) % num; /* "random" value without advancing the rng */
+        for (tech_field_t f = 0; f < TECH_FIELD_NUM; ++f) {
+            int n;
+            n = s.tbl_num[f];
+            if (i < n) {
+                field = f;
+                tech = s.tbl_techi[f][i];
+                break;
+            }
+            i -= n;
+        }
+    }
+    *fieldptr = field;
+    *techptr = tech;
+    return num;
+}
+
 static void game_ai_classic_turn_diplo_p1(struct game_s *g)
 {
     for (player_id_t p1 = PLAYER_0; p1 < g->players; ++p1) {
@@ -3513,20 +3546,11 @@ static void game_ai_classic_turn_diplo_p1(struct game_s *g)
                     game_diplo_set_treaty(g, p1, p2, TREATY_NONAGGRESSION);
                 } else {
                     if ((e1->mood_tech[p2] + 80) < v) {
-                        struct spy_esp_s s;
                         tech_field_t field[2];
                         int num[2];
                         uint8_t tech[2];
-                        s.target = p1;
-                        s.spy = p2;
-                        num[0] = game_spy_esp_sub2(g, &s, rnd_1_n(3, &g->seed));
-                        field[0] = s.tbl_field[0];
-                        tech[0] = s.tbl_tech2[0];
-                        s.target = p2;
-                        s.spy = p1;
-                        num[1] = game_spy_esp_sub2(g, &s, rnd_1_n(3, &g->seed));
-                        field[1] = s.tbl_field[0];
-                        tech[1] = s.tbl_tech2[0];
+                        num[0] = game_ai_classic_turn_diplo_p1_get_ai_trade_tech(g, p1, p2, &field[0], &tech[0]);
+                        num[1] = game_ai_classic_turn_diplo_p1_get_ai_trade_tech(g, p2, p1, &field[1], &tech[1]);
                         if ((num[0] > 0) && (num[1] > 0)) {
                             game_tech_get_new(g, p2, field[0], tech[0], TECHSOURCE_TRADE, 0, 0, false);
                             game_tech_get_new(g, p1, field[1], tech[1], TECHSOURCE_TRADE, 0, 0, false);
