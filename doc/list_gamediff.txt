@@ -10,6 +10,7 @@ Much of this file is based on the readme from the unofficial v1.40m patch.
 - fixed "bug" where on a given year only one scouted artifact planets gave new tech
 - the number of build finished messages per turn is no longer limited to 10 per category
 - fixed weird behaviour when space monsters attack colonized Orion
+- fixed AI-AI tech trades where the tech was not owned by either party
 
 - annoying bug / cheat when a fleet with bioweapons automatically bombed an enemy planet while orbiting is gone for good
 - entering the general "threaten / break treaty" dialogue no more equals to a large temporary diplomatic penalty
