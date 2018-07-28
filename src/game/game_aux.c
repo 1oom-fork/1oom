@@ -121,7 +121,7 @@ uint8_t game_aux_get_firing_param_x(const struct game_aux_s *gaux, uint8_t look,
     if (!dir) {
         if (a2 == 1) {
             return f[2];
-        } else if (a2 == 1) {
+        } else if (a2 == 2) {
             return f[4];
         } else /*if (a2 == 3)*/ {
             return f[0];
@@ -129,7 +129,7 @@ uint8_t game_aux_get_firing_param_x(const struct game_aux_s *gaux, uint8_t look,
     } else {
         if (a2 == 1) {
             return f[8];
-        } else if (a2 == 1) {
+        } else if (a2 == 2) {
             return f[10];
         } else /*if (a2 == 3)*/ {
             return f[6];
@@ -143,7 +143,7 @@ uint8_t game_aux_get_firing_param_y(const struct game_aux_s *gaux, uint8_t look,
     if (!dir) {
         if (a2 == 1) {
             return f[3];
-        } else if (a2 == 1) {
+        } else if (a2 == 2) {
             return f[5];
         } else /*if (a2 == 3)*/ {
             return f[1];
@@ -151,7 +151,7 @@ uint8_t game_aux_get_firing_param_y(const struct game_aux_s *gaux, uint8_t look,
     } else {
         if (a2 == 1) {
             return f[9];
-        } else if (a2 == 1) {
+        } else if (a2 == 2) {
             return f[11];
         } else /*if (a2 == 3)*/ {
             return f[7];
