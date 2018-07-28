@@ -960,7 +960,7 @@ static void game_generate_research(struct game_s *g, const uint8_t *rflag)
                         rl[field][tier][l] = 0;
                     }
                     while (num_taken == 0) {
-                        for (int16_t ti = tier * 5 + 4; ti > (tier * 5); --ti) {
+                        for (int16_t ti = tier * 5 + 4; ti >= (tier * 5); --ti) {
                             bool flag_skip;
                             flag_skip = false;
                             if (g->eto[pli].race == RACE_SILICOID) {
