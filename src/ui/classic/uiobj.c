@@ -642,7 +642,7 @@ static int16_t uiobj_kbd_dir_key_dy_list(int diry)
                 }
             }
         } else {
-            if (uiobj_flag_select_list_multipage && (oi != 1)) {
+            if (uiobj_flag_select_list_multipage && (oi == 1)) {
                 uiobj_kbd_movey = -1;
                 oi = 1;
             } else {
