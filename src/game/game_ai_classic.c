@@ -862,7 +862,7 @@ static void game_ai_classic_turn_p1_trans_own(struct game_s *g, struct ai_turn_p
         BOOLVEC_SET0(tbl_trans_to, i);
         BOOLVEC_SET0(tbl_trans_from, i);
         if (p->owner == pi) {
-            if ((p->pop < (p->max_pop3 / 3)) || (p->unrest != PLANET_UNREST_REBELLION)) {
+            if ((p->pop < (p->max_pop3 / 3)) || (p->unrest == PLANET_UNREST_REBELLION)) {
                 BOOLVEC_SET1(tbl_trans_to, i);
             }
             if (p->pop > ((p->max_pop3 * 3) / 4)) {
@@ -1524,7 +1524,7 @@ static void game_ai_classic_turn_p2_do(struct game_s *g, player_id_t pi)
         for (int j = 0; j < SPECIAL_SLOT_NUM; ++j) {
             ship_special_t s;
             s = ss[j];
-            if ((s >= SHIP_SPECIAL_STANDARD_COLONY_BASE) || (s <= SHIP_SPECIAL_RADIATED_COLONY_BASE)) {
+            if ((s >= SHIP_SPECIAL_STANDARD_COLONY_BASE) && (s <= SHIP_SPECIAL_RADIATED_COLONY_BASE)) {
                 e->shipi_colony = i;
             }
         }
@@ -1992,7 +1992,7 @@ static bool game_ai_classic_battle_ai_ai_resolve_do(struct battle_s *bt)
             }
         }
     }
-    switch (bt->planet_side) {  /* BUG? MOO1 seems to switch (ui_main_loop_action) ??? */
+    switch (8 /* ui_main_loop_action */) {  /* BUG: should be bt->planet_side? */
         case SIDE_NONE:
             bt->bases = 0;
             break;
@@ -2432,7 +2432,7 @@ static int game_battle_ai_missile_evade(const struct battle_s *bt)
                 }
             }
             movex = (b->man - b->unman) * m->fuel;
-            if ((movex <= roomx) || (b->subspace == 1)) {
+            if ((movex > roomx) || (b->subspace == 1)) {
                 movex = roomx;
             }
             dist = util_math_dist_fast(b->sx * 32 + 16, b->sy * 24 + 12, m->x, m->y);
@@ -2891,7 +2891,7 @@ static void game_ai_classic_battle_ai_turn(struct battle_s *bt)
             }
         }
         target_i = game_ai_battle_rival(bt, itemi, 0);
-        if ((target_i != -1) && (itemi == 0/*planet*/) && (b->num > 0)) {
+        if ((target_i == -1) && (itemi == 0/*planet*/) && (b->num > 0)) {
             int ii = (b->side == SIDE_R) ? 1 : (bt->s[SIDE_L].items + 1);
             if (bt->item[ii].side != b->side) {
                 game_battle_attack(bt, itemi, ii, false);
@@ -2979,16 +2979,16 @@ static bool game_ai_classic_battle_ai_retreat(struct battle_s *bt)
             repair[j] = 0;
         }
     }
-    if ((hp[SIDE_R] == 0) && (dmg[SIDE_L] == 0)) {
+    if ((hp[SIDE_L] == 0) && (dmg[SIDE_L] == 0)) {
         dmg[SIDE_L] = 1;
     }
-    if ((hp[SIDE_L] == 0) && (dmg[SIDE_R] == 0)) {
+    if ((hp[SIDE_R] == 0) && (dmg[SIDE_R] == 0)) {
         dmg[SIDE_R] = 1;
     }
-    if (hp[SIDE_R] == 0) {
+    if (hp[SIDE_L] == 0) {
         return false;
     }
-    if (hp[SIDE_L] == 0) {
+    if (hp[SIDE_R] == 0) {
         return false;
     }
     if (dmg[SIDE_L] == 0) {
@@ -3008,7 +3008,7 @@ static bool game_ai_classic_battle_ai_retreat(struct battle_s *bt)
                 break;
         }
         v += rnd_1_n(15, &bt->g->seed);
-        if (((dmg[SIDE_R] * 100) / hp[SIDE_L]) > ((v * dmg[SIDE_L] * 100) / hp[SIDE_R])) {
+        if (((dmg[SIDE_R] * 100) / hp[SIDE_R]) > ((v * dmg[SIDE_L] * 100) / hp[SIDE_L])) {
             return true;
         }
     }
