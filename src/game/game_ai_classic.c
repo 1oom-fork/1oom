@@ -846,7 +846,7 @@ static void game_ai_classic_turn_p1_sub10(struct game_s *g, struct ai_turn_p1_s 
         BOOLVEC_SET0(tbl_trans_to, i);
         BOOLVEC_SET0(tbl_trans_from, i);
         if (p->owner == pi) {
-            if ((p->pop < (p->max_pop3 / 3)) || (p->unrest != PLANET_UNREST_REBELLION)) {
+            if ((p->pop < (p->max_pop3 / 3)) || (p->unrest == PLANET_UNREST_REBELLION)) {
                 BOOLVEC_SET1(tbl_trans_to, i);
             }
             if (p->pop > ((p->max_pop3 * 3) / 4)) {
@@ -1508,7 +1508,7 @@ static void game_ai_classic_turn_p2_do(struct game_s *g, player_id_t pi)
         for (int j = 0; j < SHIP_SPECIAL_NUM; ++j) {
             ship_special_t s;
             s = ss[j];
-            if ((s >= SHIP_SPECIAL_STANDARD_COLONY_BASE) || (s <= SHIP_SPECIAL_RADIATED_COLONY_BASE)) {
+            if ((s >= SHIP_SPECIAL_STANDARD_COLONY_BASE) && (s <= SHIP_SPECIAL_RADIATED_COLONY_BASE)) {
                 e->shipi_colony = i;
             }
         }
@@ -2874,7 +2874,7 @@ static void game_ai_classic_battle_ai_turn(struct battle_s *bt)
             }
         }
         target_i = game_ai_battle_rival(bt, itemi, 0);
-        if ((target_i != -1) && (itemi == 0/*planet*/) && (b->num > 0)) {
+        if ((target_i == -1) && (itemi == 0/*planet*/) && (b->num > 0)) {
             int ii = (b->side == SIDE_R) ? 1 : (bt->s[SIDE_L].items + 1);
             if (bt->item[ii].side != b->side) {
                 game_battle_attack(bt, itemi, ii, 0);
