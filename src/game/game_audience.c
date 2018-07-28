@@ -677,7 +677,7 @@ static void audience_menu_treaty(struct audience_s *au)
         condtbl[3] = false;
     }
     war_num = 0;
-    for (player_id_t i = PLAYER_NUM; i < g->players; ++i) {
+    for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         if ((i != ph) && (i != pa) && (ea->treaty[i] < TREATY_WAR)) {
             war_tbl[war_num++] = i;
         }
@@ -686,8 +686,8 @@ static void audience_menu_treaty(struct audience_s *au)
         condtbl[3] = false;
     }
     all_num = 0;
-    for (player_id_t i = PLAYER_NUM; i < g->players; ++i) {
-        if ((i != ph) && (i != pa) && (ea->treaty[i] == TREATY_ALLIANCE)) {
+    for (player_id_t i = PLAYER_0; i < g->players; ++i) {
+        if ((i != ph) && (i != pa) && ((ea->treaty[i] == TREATY_ALLIANCE) || (game_num_aud_ask_break_nap && (ea->treaty[i] == TREATY_NONAGGRESSION)))) {
             all_tbl[all_num++] = i;
         }
     }
