@@ -660,7 +660,7 @@ static void game_battle_reset_specials(struct battle_s *bt)
             b->missile = 1;
         }
     }
-    if (b->cloak == 1) {
+    if (b->cloak > 1) {
         b->cloak = 2;
     }
 }
