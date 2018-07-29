@@ -1213,6 +1213,9 @@ static void uiobj_slider_plus(uiobj_t *p, int adj)
     int newval = ((value - vmin) * 100) / vdiff + adj;
     if (newval <= 100) {
         newval = (newval * vdiff) / 100 + vmin;
+        if (newval == value) {
+            ++newval;
+        }
     } else {
         newval = p->t6.vmax;
     }
