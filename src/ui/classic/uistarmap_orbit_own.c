@@ -109,7 +109,8 @@ static void ui_starmap_orbit_own_draw_cb(void *vptr)
         }
     } else {
         if (d->oo.sn0.num < 6) {
-           lbxfont_print_str_split(230, 159, 80, game_str_sm_chdest, 2, UI_SCREEN_W, UI_SCREEN_H);
+            lbxfont_select_set_12_4(2, 0xe, 0, 0);
+            lbxfont_print_str_split(230, 159, 80, game_str_sm_chdest, 2, UI_SCREEN_W, UI_SCREEN_H);
         }
     }
     for (int i = 0; i < d->oo.sn0.num; ++i) {
@@ -431,7 +432,6 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
             if ((oi1 == d.oi_tbl_stars[i]) && !g->evn.build_finished_num[active_player]) {
                 g->planet_focus_i[active_player] = i;
                 p = &(g->planet[i]);
-                ui_starmap_set_pos_focus(g, active_player);
                 ui_sound_play_sfx_24();
                 break;
             }

@@ -1508,7 +1508,7 @@ static void game_ai_classic_turn_p2_do(struct game_s *g, player_id_t pi)
         for (int j = 0; j < SHIP_SPECIAL_NUM; ++j) {
             ship_special_t s;
             s = ss[j];
-            if ((s >= SHIP_SPECIAL_STANDARD_COLONY_BASE) || (s <= SHIP_SPECIAL_RADIATED_COLONY_BASE)) {
+            if ((s >= SHIP_SPECIAL_STANDARD_COLONY_BASE) && (s <= SHIP_SPECIAL_RADIATED_COLONY_BASE)) {
                 e->shipi_colony = i;
             }
         }
@@ -2875,7 +2875,7 @@ static void game_ai_classic_battle_ai_turn(struct battle_s *bt)
             }
         }
         target_i = game_battle_item_rival1(bt, itemi, 0);
-        if ((target_i != -1) && (itemi == 0/*planet*/) && (b->num > 0)) {
+        if ((target_i == -1) && (itemi == 0/*planet*/) && (b->num > 0)) {
             int ii = (b->side == SIDE_R) ? 1 : (bt->s[SIDE_L].items + 1);
             if (bt->item[ii].side != b->side) {
                 game_battle_attack(bt, itemi, ii, 0);

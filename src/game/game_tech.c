@@ -613,7 +613,7 @@ int game_tech_get_next_techs(const struct game_s *g, player_id_t player, tech_fi
     if (len == 1) {
         maxtier = 1;
     } else {
-        maxtier = tmax / 5 + 2;
+        maxtier = (tmax - 1) / 5 + 2;
         SETMIN(maxtier, 10);
     }
     num = 0;

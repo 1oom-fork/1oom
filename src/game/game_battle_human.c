@@ -297,7 +297,7 @@ static void game_battle_missile_hit(struct battle_s *bt, int missile_i, int targ
         bool flag_hit_misshield = false;
         uint32_t totalhp = b->hp1 * b->num - hploss;
         misschance = 50 - (bs->complevel - b->misdefense) * 10;
-        if (b->sbmask & (1 << SHIP_SPECIAL_BOOL_CLOAK)) {
+        if (b->cloak == 1) {
             misschance += 50;
         }
         SETMIN(misschance, 95);
@@ -660,7 +660,7 @@ static void game_battle_reset_specials(struct battle_s *bt)
             b->f85 = 1;
         }
     }
-    if (b->cloak == 1) {
+    if (b->cloak > 1) {
         b->cloak = 2;
     }
 }
