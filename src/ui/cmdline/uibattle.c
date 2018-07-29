@@ -93,6 +93,7 @@ static const struct input_cmd_s cmds_battle[] = {
     { "a", NULL, "Auto", 0, 0, 0, ui_cmd_dummy_ret, (void *)UI_BATTLE_ACT_AUTO },
     { "r", NULL, "Retreat", 0, 0, 0, ui_cmd_dummy_ret, (void *)UI_BATTLE_ACT_RETREAT },
     { "s", NULL, "Scan", 0, 0, 0, ui_cmd_dummy_ret, (void *)UI_BATTLE_ACT_SCAN },
+    { "p", NULL, "Planet", 0, 0, 0, ui_cmd_dummy_ret, (void *)UI_BATTLE_ACT_PLANET },
     { "l", NULL, "Look area, highlight clickable", 0, 0, 0, cmd_battle_look, 0 },
     { NULL, NULL, NULL, 0, 0, 0, NULL, 0 }
 };
@@ -151,6 +152,20 @@ static void ui_battle_prepost(const struct battle_s *bt, int winner)
     }
 }
 
+static void ui_battle_draw_scan_weap(const struct battle_item_s *b, int wi, char *buf)
+{
+    if (b->wpn[wi].n != 0) {
+        const struct shiptech_weap_s *w = &(tbl_shiptech_weap[b->wpn[wi].t]);
+        int pos;
+        pos = sprintf(buf, "%i x %s", b->wpn[wi].n, *w->nameptr);
+        if (b->wpn[wi].numshots >= 0) {
+            sprintf(&buf[pos], " (x %i)", b->wpn[wi].numshots);
+        }
+    } else {
+        buf[0] = 0;
+    }
+}
+
 /* -------------------------------------------------------------------------- */
 
 ui_battle_autoresolve_t ui_battle_init(struct battle_s *bt)
@@ -193,10 +208,77 @@ void ui_battle_shutdown(struct battle_s *bt, bool colony_destroyed, int winner)
 
 void ui_battle_draw_planetinfo(const struct battle_s *bt, bool side_r)
 {
+    const struct battle_item_s *b = &(bt->item[0/*planet*/]);
+    if (b->side == SIDE_NONE) {
+        return;
+    }
+    printf("%s, %s %i, %s %i\n", b->name, game_str_bt_pop, bt->pop, game_str_bt_ind, bt->fact);
+    if (bt->s[bt->item[bt->cur_item].side].flag_have_scan || (side_r == (b->side == SIDE_R))) {
+        printf("%s:\n", game_str_bt_bases);
+        if (bt->have_subspace_int) {
+            printf("- %s\n", game_str_bt_subint);
+        }
+        {
+            const struct shiptech_weap_s *w = &(tbl_shiptech_weap[b->wpn[0].t]);
+            if ((!bt->s[b->side].flag_base_missile) && (w->nummiss == 1)) {
+                w = &(tbl_shiptech_weap[b->wpn[1].t]);
+            }
+            printf("- 3 %s %s\n", *w->nameptr, game_str_bt_launch);
+        }
+        printf("- bdef %i, mdef %i, att %i, hits %i, dam %i, shield %i\n", b->defense, b->misdefense, b->complevel, b->hp1, b->hploss, b->absorb);
+    }
 }
+
 void ui_battle_draw_scan(const struct battle_s *bt, bool side_r)
 {
+    battle_side_i_t scan_side = side_r ? SIDE_R : SIDE_L;
+    int itembase, itemnum;
+    itembase = (scan_side == SIDE_L) ? 1 : (bt->s[SIDE_L].items + 1);
+    itemnum = bt->s[scan_side].items;
+    for (int i = 0; i < itemnum; ++i) {
+        const struct battle_item_s *b = &(bt->item[itembase + i]);
+        char gfx[3][5];
+        char buf0[40];
+        char buf1[40];
+        {
+            int tgfx;
+            tgfx = (int)(intptr_t)(b->gfx);
+            if (b->side == SIDE_R) {
+                tgfx += 4;
+            }
+            for (int dy = 0; dy < 3; ++dy) {
+                for (int dx = 0; dx <= 4; ++dx) {
+                    gfx[dy][dx] = battlegfx[tgfx][dy][dx];
+                }
+            }
+        }
+        gfx[0][((b->side == SIDE_R) ? 0 : 3)] = '1' + b->shiptbli;
+        if (b->num > 0) {
+            char buf[8];
+            if (b->num >= 1000) {
+                sprintf(buf, "%ik", b->num / 1000);
+            } else {
+                sprintf(buf, "%i", b->num);
+            }
+            for (int j = 0; buf[j]; ++j) {
+                gfx[2][j + 1] = buf[j];
+            }
+        }
+        sprintf(buf0, "%s", b->name);
+        ui_battle_draw_scan_weap(b, 0, buf1);
+        printf("%-30s %-30s %s\n", buf0, buf1, game_str_tbl_st_specsh[b->special[0]]);
+        sprintf(buf0, "%s  bdef %i, mdef %i, att %i", gfx[0], b->defense, b->misdefense, b->complevel);
+        ui_battle_draw_scan_weap(b, 1, buf1);
+        printf("%-30s %-30s %s\n", buf0, buf1, b->special[1] ? game_str_tbl_st_specsh[b->special[1]] : "");
+        sprintf(buf0, "%s  hits %i, dmg %i", gfx[1], b->hp1, b->hploss);
+        ui_battle_draw_scan_weap(b, 2, buf1);
+        printf("%-30s %-30s %s\n", buf0, buf1, b->special[2] ? game_str_tbl_st_specsh[b->special[2]] : "");
+        sprintf(buf0, "%s  shield %i, speed %i", gfx[2], b->absorb, b->man - b->unman);
+        ui_battle_draw_scan_weap(b, 3, buf1);
+        printf("%-30s %-30s\n", buf0, buf1);
+    }
 }
+
 void ui_battle_draw_misshield(const struct battle_s *bt, int target_i, int target_x, int target_y, int missile_i)
 {
 }
@@ -259,6 +341,16 @@ void ui_battle_draw_arena(const struct battle_s *bt, int itemi, int dmode)
         if ((l % 3) == 1) {
             ui_data.battle.screen[l][1] = '1' + (l / 3);
         }
+    }
+    for (int i = 1; i <= bt->items_num; ++i) {
+        const struct battle_item_s *b;
+        b = &(bt->item[i]);
+        int l;
+        l = (b->side == SIDE_L) ? 0 : 12;
+        l += b->shiptbli * 2;
+        sprintf(&ui_data.battle.screen[l][3 + BATTLE_AREA_W * 4 + 2], " %i%c %i/%i\n", b->shiptbli + 1, (b->side == SIDE_L) ? '>' : '<', b->hp1 - b->hploss, b->hp1);
+        ++l;
+        sprintf(&ui_data.battle.screen[l][3 + BATTLE_AREA_W * 4 + 2], " %s\n", b->name);
     }
     for (int i = 0; i <= bt->items_num; ++i) {
         if ((i != itemi) || (dmode == 0/*normal*/)) {
