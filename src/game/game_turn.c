@@ -1914,8 +1914,6 @@ struct game_end_s game_turn_process(struct game_s *g)
     }
     game_remove_empty_fleets(g);
     game_planet_update_home(g);
-
-    /* governor */
     for (int i = 0; i < g->galaxy_stars; ++i) {
         planet_t *p = &(g->planet[i]);
         if (p->owner != PLAYER_NONE && BOOLVEC_IS1(p->extras, PLANET_EXTRAS_GOVERNOR)) {

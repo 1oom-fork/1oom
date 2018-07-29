@@ -42,5 +42,4 @@ This is the "to do" for 1oom.
   - OS MIDI backends.
 
 * UI classic:
-  - Add UI elements for sound/music volume, full screen, aspect ratio, ...
   - Add joystick/gamepad support
