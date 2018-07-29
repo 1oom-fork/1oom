@@ -2658,7 +2658,7 @@ static int game_battle_ai_best_range(struct battle_s *bt, int target_i)
             if ((w->damagemax != w->damagemin) && (!w->is_bomb)) {
                 range = b->extrarange;
             } else if (!w->is_bomb) {
-                /* if missle (or no weapon but it doesn't matter) */
+                /* if missile (or no weapon but it doesn't matter) */
                 get_possible_distance_increase(bt, target_i);
                 range = b->maxrange;
             }
