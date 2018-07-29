@@ -5,7 +5,7 @@
 1oom is a Master of Orion (1993) game engine recreation.
 1oom is Free Software (GPLv2), see COPYING.
 
-This project is in an early state and is missing the following:
+This project is nearing v1.0 but is missing the following:
 
 - testing
 - polish
@@ -97,6 +97,8 @@ for the music format info.
 
 Thanks to CivFanatics forum user sargon0 for partial save game format info in
 http://forums.civfanatics.com/threads/moo-save-file-layout.275055/
+
+Thanks to those who contributed code or ideas.
 
 This README is based on the OpenXcom one, except s/folder/directory/g like a
 civilized person.
