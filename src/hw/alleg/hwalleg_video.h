@@ -7,5 +7,6 @@ extern void hw_video_shutdown(void);
 extern void hw_video_update(void);
 extern void hw_video_refresh(int front);
 extern void hw_video_input_grab(bool grab);
+extern void hw_video_screenshot(void);
 
 #endif

@@ -102,7 +102,6 @@ void os_set_path_data(const char *path)
     data_path = lib_stralloc(path);
 }
 
-
 const char *os_get_path_user(void)
 {
     if (user_path == NULL) {
@@ -175,4 +174,14 @@ const char *os_get_fname_log(char *buf)
         return buf;
     }
     return "1oom_log.txt";
+}
+
+const char *os_get_fname_screenshot(char *buf, const char *extension)
+{
+    char *fmt = lib_malloc(FSDEV_PATH_MAX);
+    sprintf(fmt, "%s/1oom_pic_%%03i.%s", os_get_path_user(), extension);
+    util_get_fname_unused(buf, fmt, 999);
+    lib_free(fmt);
+    fmt = NULL;
+    return buf;
 }

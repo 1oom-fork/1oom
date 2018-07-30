@@ -15,6 +15,7 @@ New hoykeys:
 - Ctrl-Esc to quit (without saving)
 - Ctrl-Plus/Minus to adjust sfx volume
 - Ctrl-Shift-Plus/Minus to adjust music volume
+- Ctrl-F5 saves a screenshot
 - Alt-Enter to toggle full screen mode
 
 Unlike the original, 1oom does not autosave the "continue game" (save slot 7)

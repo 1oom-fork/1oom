@@ -9,6 +9,9 @@ static bool hw_kbd_check_hotkey(uint32_t key, uint32_t smod)
             hw_mouse_toggle_grab();
             return true;
 #endif
+        } else if ((key >> 8) == KEY_F5) {
+            hw_video_screenshot();
+            return true;
         } else if ((key >> 8) == KEY_PLUS_PAD) {
             if (smod & KB_SHIFT_FLAG) {
                 hw_audio_music_volume(opt_music_volume + 4);

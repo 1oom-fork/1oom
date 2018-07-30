@@ -124,3 +124,13 @@ const char *os_get_fname_log(char *buf)
     }
     return "1oom_log.txt";
 }
+
+const char *os_get_fname_screenshot(char *buf, const char *extension)
+{
+    char *fmt = lib_malloc(FSDEV_PATH_MAX);
+    sprintf(fmt, "%s/1oom_pic_%%03i.%s", os_get_path_user(), extension);
+    util_get_fname_unused(buf, fmt, 999);
+    lib_free(fmt);
+    fmt = NULL;
+    return buf;
+}

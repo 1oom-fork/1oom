@@ -53,6 +53,10 @@ uint8_t *hw_video_get_buf_front(void)
 uint8_t *hw_video_draw_buf(void)
 {
     hw_video_refresh(0);
+    if (video.flag_screenshot) {
+        video.flag_screenshot = false;
+        screenshot_save(video.buf[video.bufi], video.pal, video.bufw, video.bufh);
+    }
     video.bufi ^= 1;
     return video.buf[video.bufi];
 }
@@ -90,4 +94,9 @@ void hw_video_copy_back_to_page3(void)
 void hw_video_copy_back_from_page3(void)
 {
     memcpy(video.buf[video.bufi], video.buf[3], video.bufw * video.bufh);
+}
+
+void hw_video_screenshot(void)
+{
+    video.flag_screenshot = true;
 }

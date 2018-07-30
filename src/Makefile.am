@@ -86,6 +86,10 @@ audio_sources = \
     fmt_sfx.h \
     uiopt.c
 
+screenshot_sources = \
+    screenshot.c \
+    screenshot.h
+
 pic_sources = \
     fmt_pic.c \
     fmt_pic.h
@@ -120,35 +124,35 @@ hwnop_lib = $(top_builddir)/src/hw/nop/libhwnop.a
 uiclassic_lib = $(top_builddir)/src/ui/classic/libuiclassic.a
 hwsdl1_lib = $(top_builddir)/src/hw/sdl/1/libhwsdl1.a
 1oom_classic_sdl1_libs = $(gamemain_lib) $(game_lib) $(uiclassic_lib) $(game_lib) $(hwsdl1_lib) $(common_libs)
-1oom_classic_sdl1_SOURCES = $(audio_sources) $(util_sources)
+1oom_classic_sdl1_SOURCES = $(audio_sources) $(util_sources) $(screenshot_sources) $(pic_sources)
 1oom_classic_sdl1_LDADD = $(1oom_classic_sdl1_libs) @HW_SDL1_LIBS@ @EXTRA_SDL1_LIBS@ @SAMPLERATE_LIBS@
 1oom_classic_sdl1_DEPENDENCIES = $(1oom_classic_sdl1_libs)
 
 uinop_lib = $(top_builddir)/src/ui/nop/libuinop.a
 1oom_lbxview_sdl1_libs = $(hwsdl1_lib) $(uinop_lib) $(common_libs)
-1oom_lbxview_sdl1_SOURCES = lbxview.c $(audio_sources) $(util_sources) $(pic_sources)
+1oom_lbxview_sdl1_SOURCES = lbxview.c $(audio_sources) $(util_sources) $(screenshot_sources) $(pic_sources)
 1oom_lbxview_sdl1_LDADD = $(1oom_lbxview_sdl1_libs) @HW_SDL1_LIBS@ @EXTRA_SDL1_LIBS@ @SAMPLERATE_LIBS@
 1oom_lbxview_sdl1_DEPENDENCIES = $(1oom_lbxview_sdl1_libs)
 
 hwsdl2_lib = $(top_builddir)/src/hw/sdl/2/libhwsdl2.a
 1oom_classic_sdl2_libs = $(gamemain_lib) $(game_lib) $(uiclassic_lib) $(game_lib) $(hwsdl2_lib) $(common_libs)
-1oom_classic_sdl2_SOURCES = $(audio_sources) $(util_sources)
+1oom_classic_sdl2_SOURCES = $(audio_sources) $(util_sources) $(screenshot_sources) $(pic_sources)
 1oom_classic_sdl2_LDADD = $(1oom_classic_sdl2_libs) @HW_SDL2_LIBS@ @EXTRA_SDL2_LIBS@ @SAMPLERATE_LIBS@
 1oom_classic_sdl2_DEPENDENCIES = $(1oom_classic_sdl2_libs)
 
 1oom_lbxview_sdl2_libs = $(hwsdl2_lib) $(uinop_lib) $(common_libs)
-1oom_lbxview_sdl2_SOURCES = lbxview.c $(audio_sources) $(util_sources) $(pic_sources)
+1oom_lbxview_sdl2_SOURCES = lbxview.c $(audio_sources) $(util_sources) $(screenshot_sources) $(pic_sources)
 1oom_lbxview_sdl2_LDADD = $(1oom_lbxview_sdl2_libs) @HW_SDL2_LIBS@ @EXTRA_SDL2_LIBS@ @SAMPLERATE_LIBS@
 1oom_lbxview_sdl2_DEPENDENCIES = $(1oom_lbxview_sdl2_libs)
 
 hwalleg4_lib = $(top_builddir)/src/hw/alleg/4/libhwalleg4.a
 1oom_classic_alleg4_libs = $(gamemain_lib) $(game_lib) $(uiclassic_lib) $(game_lib) $(hwalleg4_lib) $(common_libs)
-1oom_classic_alleg4_SOURCES = $(audio_sources) $(util_sources)
+1oom_classic_alleg4_SOURCES = $(audio_sources) $(util_sources) $(screenshot_sources) $(pic_sources)
 1oom_classic_alleg4_LDADD = $(1oom_classic_alleg4_libs) @HW_ALLEG4_LIBS@ @EXTRA_ALLEG4_LIBS@ @SAMPLERATE_LIBS@
 1oom_classic_alleg4_DEPENDENCIES = $(1oom_classic_alleg4_libs)
 
 1oom_lbxview_alleg4_libs = $(hwalleg4_lib) $(uinop_lib) $(common_libs)
-1oom_lbxview_alleg4_SOURCES = lbxview.c $(audio_sources) $(util_sources) $(pic_sources)
+1oom_lbxview_alleg4_SOURCES = lbxview.c $(audio_sources) $(util_sources) $(screenshot_sources) $(pic_sources)
 1oom_lbxview_alleg4_LDADD = $(1oom_lbxview_alleg4_libs) @HW_ALLEG4_LIBS@ @EXTRA_ALLEG4_LIBS@ @SAMPLERATE_LIBS@
 1oom_lbxview_alleg4_DEPENDENCIES = $(1oom_lbxview_alleg4_libs)
 

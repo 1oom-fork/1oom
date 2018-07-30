@@ -12,6 +12,7 @@
 #include "hwalleg_opt.h"
 #include "lib.h"
 #include "log.h"
+#include "screenshot.h"
 
 /* -------------------------------------------------------------------------- */
 
@@ -34,6 +35,8 @@ static struct alleg_video_s {
     /* palette as set by UI, 6bpp */
     uint8_t pal[256 * 3];
     RGB color[256];
+
+    bool flag_screenshot;
 } video = { 0 };
 
 /* -------------------------------------------------------------------------- */
@@ -71,6 +74,7 @@ int hw_video_init(int w, int h)
 {
     video.bufw = w;
     video.bufh = h;
+    video.flag_screenshot = false;
     video.render = video_render_8bpp;
     video.update = video_update_8bpp;
     video.setpal = video_setpal_8bpp;

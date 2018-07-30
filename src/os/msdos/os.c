@@ -136,3 +136,11 @@ const char *os_get_fname_log(char *buf)
     }
     return "1oom_log.txt";
 }
+
+const char *os_get_fname_screenshot(char *buf, const char *extension)
+{
+    char fmt[16];
+    sprintf(fmt, "1oomp%%03i.%s", extension);
+    util_get_fname_unused(buf, fmt, 999);
+    return buf;
+}

@@ -170,6 +170,23 @@ void util_fname_split(const char *path, char **dir_out, char **name_out)
     }
 }
 
+int util_get_fname_unused(char *buf, const char *fmt, int maxnum)
+{
+    int n = 0;
+    while (n <= maxnum) {
+        FILE *fd;
+        sprintf(buf, fmt, n);
+        if ((fd = fopen(buf, "rb")) == NULL) {
+            return 0;
+        }
+        fclose(fd);
+        fd = NULL;
+        ++n;
+    }
+    /* The filename with maxnum is in buf. */
+    return 1;
+}
+
 /* Write the first `size' bytes of `src' into a newly created file `name'.
    If `name' already exists, it is replaced by the new one.  Returns 0 on
    success, -1 on failure.  */
