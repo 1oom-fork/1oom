@@ -36,6 +36,9 @@ static void ui_tech_look_sliders(const struct game_s *g, int api)
             int complpercent;
             complpercent = game_tech_current_research_percent2(g, api, f);
             if (complpercent > 0) {
+                if (complpercent < 10) {
+                    putchar(' ');
+                }
                 printf("%i%%", complpercent);
             } else {
                 #define LIGHTBULB_CHARS 8
@@ -43,12 +46,17 @@ static void ui_tech_look_sliders(const struct game_s *g, int api)
                 int pos;
                 complpercent = game_tech_current_research_percent1(g, api, f);
                 pos = (complpercent * LIGHTBULB_CHARS) / 100;
+                putchar(' ');
                 putchar(lightbulb[pos]);
+                putchar(' ');
             }
+            putchar(' ');
+            putchar(game_tech_current_research_has_max_bonus(g, api, f) ? 'X' : ' ');
         } else {
             fputs(game_str_te_max, stdout);
         }
         if (t->project[f]) {
+            putchar(' ');
             putchar(' ');
             game_tech_get_name(g->gaux, f, t->project[f], ui_data.strbuf);
             fputs(ui_data.strbuf, stdout);

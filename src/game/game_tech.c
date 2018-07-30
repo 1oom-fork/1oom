@@ -715,6 +715,22 @@ int game_tech_current_research_percent2(const struct game_s *g, player_id_t play
     }
 }
 
+bool game_tech_current_research_has_max_bonus(const struct game_s *g, player_id_t player_i, tech_field_t field)
+{
+    const empiretechorbit_t *e = &(g->eto[player_i]);
+    uint32_t invest, cost;
+    int slider, t1, t3;
+    cost = e->tech.cost[field];
+    slider = e->tech.slider[field];
+    if ((cost == 0) || (slider == 0)) {
+        return false;
+    }
+    invest = e->tech.investment[field];
+    t1 = (invest * 3) / 20;
+    t3 = (slider * e->total_research_bc) / 100;
+    return (t1 <= (t3 * 2));
+}
+
 void game_tech_get_new(struct game_s *g, player_id_t player, tech_field_t field, uint8_t tech, techsource_t source, int a8, player_id_t stolen_from, bool flag_frame)
 {
     empiretechorbit_t *e = &(g->eto[player]);
