@@ -523,7 +523,7 @@ const char *game_tech_get_name(const struct game_aux_s *gaux, tech_field_t field
     } else if (tech == -1) {
         strcpy(buf, game_str_tbl_st_weap[WEAPON_NUCLEAR_BOMB - 1]);
     } else if (tech > 50) {
-        sprintf(buf, "%s %s %s %s", game_str_te_adv, game_str_tbl_te_field[field], game_str_te_tech, game_str_tbl_roman[tech / 5]);
+        sprintf(buf, "%s %s %s %s", game_str_te_adv, game_str_tbl_te_field[field], game_str_te_tech, game_str_tbl_roman[(tech - 50) / 5]);
     } else {
         const uint8_t *p = RESEARCH_D0_PTR(gaux, field, tech);
         if (p[0] != 0xff) {
