@@ -225,6 +225,9 @@ static void tech_draw_cb(void *vptr)
                 lbxgfx_draw_frame_offs(287, y, ui_data.gfx.screens.litebulb_on, UI_SCREEN_W);
                 uiobj_set_limits_all();
             }
+            if (ui_extra_enabled) {
+                ui_draw_filled_rect(311, y + 4, 312, y + 6, game_tech_current_research_has_max_bonus(g, d->api, i) ? 0x44 : 0x00);
+            }
         } else {
             lbxfont_select_set_12_1(2, 0xd, 0, 0);
             lbxfont_print_str_right(295, y + 3, game_str_te_max, UI_SCREEN_W);
