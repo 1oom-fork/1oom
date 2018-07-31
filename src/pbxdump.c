@@ -37,6 +37,10 @@ void lbxfile_add_patch(lbxfile_e file_id, uint16_t i, uint8_t *data, uint32_t le
 {
 }
 
+void lbxfile_add_overwrite(lbxfile_e file_id, uint16_t i, uint32_t itemoffs, uint8_t *data, uint32_t len, const char *patchfilename)
+{
+}
+
 /* -------------------------------------------------------------------------- */
 
 struct pbxdump_s {
@@ -161,6 +165,20 @@ static int pbx_cb_lbxp(void *ctx, const char *filename, int pbxi, const char *id
     return pbx_dump_textish(ctx, filename, pbxi, (const char *)data, len, pbxtext, suffix);
 }
 
+static int pbx_cb_lbxo(void *ctx, const char *filename, int pbxi, const char *id, uint16_t itemi, uint8_t *data, uint32_t len, uint32_t itemoffs)
+{
+    char pbxtext[32];
+    char suffix[40];
+    char *p = suffix;
+    *p++ = '_';
+    for (const char *q = id; *q != '.';) {
+        *p++ = *q++;
+    }
+    sprintf(p, "_%03u.bin", itemi);
+    sprintf(pbxtext, "5,%s,%u,0x%x", id, itemi, itemoffs);
+    return pbx_dump_textish(ctx, filename, pbxi, (const char *)data, len, pbxtext, suffix);
+}
+
 static bool pbx_cb_strp(void *ctx, const char *filename, int pbxi, const char *id, const char *patchstr, int itemi, uint32_t len)
 {
     char pbxtext[32];
@@ -196,6 +214,7 @@ static int dump_pbx(const char *filename, const char *prefix_in, bool flag_write
     cbs.name = pbx_cb_name;
     cbs.desc = pbx_cb_desc;
     cbs.lbxp = pbx_cb_lbxp;
+    cbs.lbxo = pbx_cb_lbxo;
     cbs.strp = pbx_cb_strp;
     cbs.nump = pbx_cb_nump;
     ctx.flag_write = flag_write;
