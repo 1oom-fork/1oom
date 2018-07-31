@@ -94,7 +94,7 @@ static void newtech_draw_cb1(void *vptr)
     struct newtech_data_s *d = vptr;
     struct game_s *g = d->g;
     empiretechorbit_t *e = &(g->eto[d->api]);
-    char buf[RESEARCH_DESCR_LEN];
+    char *buf = ui_data.strbuf;
     vgabuf_copy_back_from_page2();
     {
         int frame = lbxgfx_get_frame(d->gfx_spies);
