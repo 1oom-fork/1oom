@@ -33,12 +33,11 @@ extern int lbxfont_get_char_w(char c);
 extern int lbxfont_calc_str_width(const char *str);
 extern int lbxfont_calc_split_str_h(int maxw, const char *str);
 
-extern uint16_t lbxfont_plotchar(char c, uint8_t *buf, uint16_t pitch, int scale);
-
 extern int lbxfont_print_str_normal(int x, int y, const char *str, uint16_t pitch, int scale);
 extern int lbxfont_print_str_center(int x, int y, const char *str, uint16_t pitch, int scale);
 extern int lbxfont_print_str_right(int x, int y, const char *str, uint16_t pitch, int scale);
 extern void lbxfont_print_str_split(int x, int y, int maxw, const char *str, int type, uint16_t pitch, uint16_t maxy, int scale);
+extern void lbxfont_print_str_split_safe(int x, int y, int maxw, const char *str, int type, uint16_t pitch, int maxy, int scale);
 extern int lbxfont_print_str_normal_limit(int x, int y, const char *str, int lx0, int ly0, int lx1, int ly1, uint16_t pitch, int scale);
 extern int lbxfont_print_str_center_limit(int x, int y, const char *str, int lx0, int ly0, int lx1, int ly1, uint16_t pitch, int scale);
 extern int lbxfont_print_str_center_limit_unconst(int x, int y, const char *str, int lx0, int ly0, int lx1, int ly1, uint16_t pitch, int scale);
