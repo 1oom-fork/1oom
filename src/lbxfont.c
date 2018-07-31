@@ -41,10 +41,100 @@ typedef struct split_str_s {
 
 /* -------------------------------------------------------------------------- */
 
-static int lbxfont_print_char_ret_x(int x, int y, char c, uint16_t pitch, int scale)
+static uint16_t lbxfont_plotchar_1x(char c, int maxh, uint8_t *buf, uint16_t pitch)
+{
+    uint8_t char_w = lbxfontdata[0x4a + c];
+    uint16_t gap_w = lbxfontdata[0x48];
+    uint16_t w = char_w + gap_w;
+    int hleft = maxh;
+
+    uint16_t si = GET_LE_16(&lbxfontdata[0xaa + c * 2]);
+    uint8_t *p = &lbxfontdata[si];
+    uint8_t *q = buf;
+
+    while (char_w) {
+        uint8_t b, h, col;
+        b = *p++;
+        if (!(b & 0x80)) {
+            h = (b >> 4);
+            col = lbxfontdata[b & 0xf];
+            do {
+                if (hleft > 0) {
+                    *q = col;
+                    q += pitch;
+                    --hleft;
+                }
+            } while (--h);
+        } else if (b & 0x7f) {
+            hleft -= (b & 0x7f);
+            q += (b & 0x7f) * pitch;
+        } else {
+            ++buf;
+            q = buf;
+            hleft = maxh;
+            --char_w;
+        }
+    }
+    return w;
+}
+
+static uint16_t lbxfont_plotchar_nx(char c, int maxh, uint8_t *buf, uint16_t pitch, int scale)
+{
+    uint8_t char_w = lbxfontdata[0x4a + c];
+    uint16_t gap_w = lbxfontdata[0x48];
+    uint16_t w = char_w + gap_w;
+    int hleft = maxh;
+
+    uint16_t si = GET_LE_16(&lbxfontdata[0xaa + c * 2]);
+    uint8_t *p = &lbxfontdata[si];
+    uint8_t *q = buf;
+
+    while (char_w) {
+        uint8_t b, h, col;
+        b = *p++;
+        if (!(b & 0x80)) {
+            h = (b >> 4);
+            col = lbxfontdata[b & 0xf];
+            do {
+                if (hleft > 0) {
+                    q = gfxscale_draw_pixel(q, col, pitch, scale);
+                    --hleft;
+                }
+            } while (--h);
+        } else if (b & 0x7f) {
+            hleft -= (b & 0x7f);
+            q += (b & 0x7f) * pitch * scale;
+        } else {
+            buf += scale;
+            q = buf;
+            hleft = maxh;
+            --char_w;
+        }
+    }
+    return w;
+}
+
+static uint16_t lbxfont_plotchar(char c, int maxh, uint8_t *buf, uint16_t pitch, int scale)
+{
+    if (c < 0x20) {
+        return 0;
+    }
+    c -= 0x20;
+    if (scale == 1) {
+        return lbxfont_plotchar_1x(c, maxh, buf, pitch);
+    } else {
+        return lbxfont_plotchar_nx(c, maxh, buf, pitch, scale);
+    }
+}
+
+static int lbxfont_print_char_ret_x(int x, int y, char c, int maxy, uint16_t pitch, int scale)
 {
     uint8_t *p = hw_video_get_buf() + (y * pitch + x) * scale;
-    return x + lbxfont_plotchar(c, p, pitch, scale);
+    int maxh = maxy ? (maxy - y) : 100;
+    if (maxy && (y >= maxy)) {
+        return x;
+    }
+    return x + lbxfont_plotchar(c, maxh, p, pitch, scale);
 }
 
 static void lbxfont_plotchar_limit(int x, int y, char c, int xskip, int char_w, int yskip, int char_h, uint16_t pitch, int scale)
@@ -137,17 +227,20 @@ static int lbxfont_print_char_ret_x_limit(int x, int y, char c, int lx0, int ly0
         lbxfont_plotchar_limit(x, y, c, xskip, char_w, yskip, h, pitch, scale);
         return x1;
     } else {
-        x = lbxfont_print_char_ret_x(x, y, c + 0x20, pitch, scale);
+        x = lbxfont_print_char_ret_x(x, y, c + 0x20, 0, pitch, scale);
     }
     return x;
 }
 
-static int lbxfont_print_str_do(int x, int y, const char *str, bool change_color, int w, uint16_t pitch, int scale)
+static int lbxfont_print_str_do(int x, int y, const char *str, bool change_color, int w, int maxy, uint16_t pitch, int scale)
 {
     uint16_t i, v8 = 0, va = 0, vc = 0;
     char c;
     lbxfont_temp_x = x;
     lbxfont_temp_y = y;
+    if (maxy && (y >= maxy)) {
+        return x;
+    }
     if (w != 0) {
         uint16_t num_space = 0;
         i = 0;
@@ -202,7 +295,7 @@ static int lbxfont_print_str_do(int x, int y, const char *str, bool change_color
             case 0x15:
                 return lbxfont_temp_x;
             default:
-                lbxfont_temp_x = lbxfont_print_char_ret_x(lbxfont_temp_x, lbxfont_temp_y, c, pitch, scale);
+                lbxfont_temp_x = lbxfont_print_char_ret_x(lbxfont_temp_x, lbxfont_temp_y, c, maxy, pitch, scale);
                 if ((w != 0) && (c == ' ')) {
                     lbxfont_temp_x += vc;
                     if (v8 < va) {
@@ -268,7 +361,7 @@ static int lbxfont_print_str_limit_do(int x, int y, const char *str, bool change
     return lbxfont_temp_x;
 }
 
-static int lbxfont_print_str_normal_do(int x, int y, const char *str, int w, uint16_t pitch, int scale)
+static int lbxfont_print_str_normal_do(int x, int y, const char *str, int w, int maxy, uint16_t pitch, int scale)
 {
     uint16_t v2;
     v2 = lbxfontdata[0x12];
@@ -277,39 +370,39 @@ static int lbxfont_print_str_normal_do(int x, int y, const char *str, int w, uin
             lbxfontdata[i] = lbxfont_temp_color;
         }
         if (v2 != 2) {
-            lbxfont_print_str_do(x + 1, y + 1, str, false, w, pitch, scale);
-            lbxfont_print_str_do(x, y + 1, str, false, w, pitch, scale);
-            lbxfont_print_str_do(x + 1, y, str, false, w, pitch, scale);
+            lbxfont_print_str_do(x + 1, y + 1, str, false, w, maxy, pitch, scale);
+            lbxfont_print_str_do(x, y + 1, str, false, w, maxy, pitch, scale);
+            lbxfont_print_str_do(x + 1, y, str, false, w, maxy, pitch, scale);
         }
         if ((v2 != 1) && (v2 != 3)) {
-            lbxfont_print_str_do(x - 1, y, str, false, w, pitch, scale);
-            lbxfont_print_str_do(x - 1, y - 1, str, false, w, pitch, scale);
-            lbxfont_print_str_do(x, y - 1, str, false, w, pitch, scale);
+            lbxfont_print_str_do(x - 1, y, str, false, w, maxy, pitch, scale);
+            lbxfont_print_str_do(x - 1, y - 1, str, false, w, maxy, pitch, scale);
+            lbxfont_print_str_do(x, y - 1, str, false, w, maxy, pitch, scale);
         }
         if ((v2 == 3) || (v2 == 5)) {
-            lbxfont_print_str_do(x + 2, y + 2, str, false, w, pitch, scale);
-            lbxfont_print_str_do(x + 1, y + 2, str, false, w, pitch, scale);
-            lbxfont_print_str_do(x + 2, y + 1, str, false, w, pitch, scale);
+            lbxfont_print_str_do(x + 2, y + 2, str, false, w, maxy, pitch, scale);
+            lbxfont_print_str_do(x + 1, y + 2, str, false, w, maxy, pitch, scale);
+            lbxfont_print_str_do(x + 2, y + 1, str, false, w, maxy, pitch, scale);
         }
         if (v2 > 3) {
-            lbxfont_print_str_do(x + 1, y - 1, str, false, w, pitch, scale);
-            lbxfont_print_str_do(x - 1, y + 1, str, false, w, pitch, scale);
+            lbxfont_print_str_do(x + 1, y - 1, str, false, w, maxy, pitch, scale);
+            lbxfont_print_str_do(x - 1, y + 1, str, false, w, maxy, pitch, scale);
         }
         if (v2 == 5) {
-            lbxfont_print_str_do(x + 2, y, str, false, w, pitch, scale);
-            lbxfont_print_str_do(x, y + 2, str, false, w, pitch, scale);
+            lbxfont_print_str_do(x + 2, y, str, false, w, maxy, pitch, scale);
+            lbxfont_print_str_do(x, y + 2, str, false, w, maxy, pitch, scale);
         }
         lbxfont_select_subcolors(lbxfontdata[0x13]);
     }
-    return lbxfont_print_str_do(x, y, str, true, w, pitch, scale);
+    return lbxfont_print_str_do(x, y, str, true, w, maxy, pitch, scale);
 }
 
-static int lbxfont_print_str_normal_do_w0(int x, int y, const char *str, int w, uint16_t pitch, int scale)
+static int lbxfont_print_str_normal_do_w0(int x, int y, const char *str, int w, int maxy, uint16_t pitch, int scale)
 {
     if (w < 0) {
         w = 0;
     }
-    return lbxfont_print_str_normal_do(x, y, str, w, pitch, scale);
+    return lbxfont_print_str_normal_do(x, y, str, w, maxy, pitch, scale);
 }
 
 static void lbxfont_split_str(int x, int y, int maxw, const char *str, split_str_t *s, uint16_t maxy)
@@ -391,67 +484,6 @@ static void lbxfont_split_str(int x, int y, int maxw, const char *str, split_str
             ty += line_h;
         }
     }
-}
-
-static uint16_t lbxfont_plotchar_1x(char c, uint8_t *buf, uint16_t pitch)
-{
-    uint8_t char_w = lbxfontdata[0x4a + c];
-    uint16_t gap_w = lbxfontdata[0x48];
-    uint16_t w = char_w + gap_w;
-
-    uint16_t si = GET_LE_16(&lbxfontdata[0xaa + c * 2]);
-    uint8_t *p = &lbxfontdata[si];
-    uint8_t *q = buf;
-
-    while (char_w) {
-        uint8_t b, h, col;
-        b = *p++;
-        if (!(b & 0x80)) {
-            h = (b >> 4);
-            col = lbxfontdata[b & 0xf];
-            do {
-                *q = col;
-                q += pitch;
-            } while (--h);
-        } else if (b & 0x7f) {
-            q += (b & 0x7f) * pitch;
-        } else {
-            ++buf;
-            q = buf;
-            --char_w;
-        }
-    }
-    return w;
-}
-
-static uint16_t lbxfont_plotchar_nx(char c, uint8_t *buf, uint16_t pitch, int scale)
-{
-    uint8_t char_w = lbxfontdata[0x4a + c];
-    uint16_t gap_w = lbxfontdata[0x48];
-    uint16_t w = char_w + gap_w;
-
-    uint16_t si = GET_LE_16(&lbxfontdata[0xaa + c * 2]);
-    uint8_t *p = &lbxfontdata[si];
-    uint8_t *q = buf;
-
-    while (char_w) {
-        uint8_t b, h, col;
-        b = *p++;
-        if (!(b & 0x80)) {
-            h = (b >> 4);
-            col = lbxfontdata[b & 0xf];
-            do {
-                q = gfxscale_draw_pixel(q, col, pitch, scale);
-            } while (--h);
-        } else if (b & 0x7f) {
-            q += (b & 0x7f) * pitch * scale;
-        } else {
-            buf += scale;
-            q = buf;
-            --char_w;
-        }
-    }
-    return w;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -594,19 +626,6 @@ void lbxfont_set_14_24(uint8_t color1, uint8_t color2)
     }
 }
 
-uint16_t lbxfont_plotchar(char c, uint8_t *buf, uint16_t pitch, int scale)
-{
-    if (c < 0x20) {
-        return 0;
-    }
-    c -= 0x20;
-    if (scale == 1) {
-        return lbxfont_plotchar_1x(c, buf, pitch);
-    } else {
-        return lbxfont_plotchar_nx(c, buf, pitch, scale);
-    }
-}
-
 void lbxfont_set_space_w(int w)
 {
     lbxfontdata[0x4a] = w;
@@ -656,7 +675,7 @@ int lbxfont_calc_split_str_h(int maxw, const char *str)
 
 int lbxfont_print_str_normal(int x, int y, const char *str, uint16_t pitch, int scale)
 {
-    return lbxfont_print_str_normal_do(x, y, str, 0, pitch, scale);
+    return lbxfont_print_str_normal_do(x, y, str, 0, 0, pitch, scale);
 }
 
 int lbxfont_print_str_center(int x, int y, const char *str, uint16_t pitch, int scale)
@@ -669,6 +688,23 @@ int lbxfont_print_str_right(int x, int y, const char *str, uint16_t pitch, int s
 {
     int w = lbxfont_calc_str_width(str) - 1;
     return lbxfont_print_str_normal(x - w, y, str, pitch, scale);
+}
+
+int lbxfont_print_str_normal_safe(int x, int y, const char *str, int maxy, uint16_t pitch, int scale)
+{
+    return lbxfont_print_str_normal_do(x, y, str, 0, maxy, pitch, scale);
+}
+
+int lbxfont_print_str_center_safe(int x, int y, const char *str, int maxy, uint16_t pitch, int scale)
+{
+    int w = lbxfont_calc_str_width(str);
+    return lbxfont_print_str_normal_safe(x - w / 2, y, str, maxy, pitch, scale);
+}
+
+int lbxfont_print_str_right_safe(int x, int y, const char *str, int maxy, uint16_t pitch, int scale)
+{
+    int w = lbxfont_calc_str_width(str) - 1;
+    return lbxfont_print_str_normal_safe(x - w, y, str, maxy, pitch, scale);
 }
 
 int lbxfont_print_str_normal_limit(int x, int y, const char *str, int lx0, int ly0, int lx1, int ly1, uint16_t pitch, int scale)
@@ -737,9 +773,37 @@ void lbxfont_print_str_split(int x, int y, int maxw, const char *str, int type, 
                 break;
             case 3:
                 if (i != (s.num - 1)) {
-                    lbxfont_print_str_normal_do_w0(s.x0[i], s.y[i], &s.buf[s.i[i]], s.x1[i] - s.x0[i], pitch, scale);
+                    lbxfont_print_str_normal_do_w0(s.x0[i], s.y[i], &s.buf[s.i[i]], s.x1[i] - s.x0[i], 0, pitch, scale);
                 } else {
                     lbxfont_print_str_normal(s.x0[i], s.y[i], &s.buf[s.i[i]], pitch, scale);
+                }
+                break;
+            default:
+                break;
+        }
+    }
+}
+
+void lbxfont_print_str_split_safe(int x, int y, int maxw, const char *str, int type, uint16_t pitch, int maxy, int scale)
+{
+    split_str_t s;
+    lbxfont_split_str(x, y, maxw, str, &s, maxy);
+    for (int i = 0; i < s.num; ++i) {
+        switch (type) {
+            case 0:
+                lbxfont_print_str_normal_safe(s.x0[i], s.y[i], &s.buf[s.i[i]], maxy, pitch, scale);
+                break;
+            case 1:
+                lbxfont_print_str_right_safe(s.x1[i], s.y[i], &s.buf[s.i[i]], maxy, pitch, scale);
+                break;
+            case 2:
+                lbxfont_print_str_center_safe((s.x0[i] + s.x1[i]) / 2, s.y[i], &s.buf[s.i[i]], maxy, pitch, scale);
+                break;
+            case 3:
+                if (i != (s.num - 1)) {
+                    lbxfont_print_str_normal_do_w0(s.x0[i], s.y[i], &s.buf[s.i[i]], s.x1[i] - s.x0[i], maxy, pitch, scale);
+                } else {
+                    lbxfont_print_str_normal_safe(s.x0[i], s.y[i], &s.buf[s.i[i]], maxy, pitch, scale);
                 }
                 break;
             default:
