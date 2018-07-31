@@ -22,6 +22,7 @@ struct lbxpatch_s {
     struct lbxpatch_s *next;
     uint8_t *data;
     uint32_t len;
+    uint32_t offs;
     uint16_t i;
 };
 
@@ -39,6 +40,7 @@ struct lbx_s {
     uint8_t *data;
     int num_in_use;
     struct lbxpatch_s *patches;
+    struct lbxpatch_s *overwrites;
 };
 
 static const struct {
@@ -270,24 +272,54 @@ static uint8_t *lbxfile_get_patch(struct lbx_s *lbx, uint16_t i, uint32_t *len_p
     return NULL;
 }
 
+static bool lbxfile_apply_overwrites(struct lbx_s *lbx, uint16_t i, uint8_t *data, uint32_t len, const char *lbxname)
+{
+    struct lbxpatch_s *p;
+    if (!lbx) {
+        return false;
+    }
+    p = lbx->overwrites;
+    while (p) {
+        if (p->i == i) {
+            if ((p->offs >= len) || ((p->offs + p->len) > len)) {
+                log_fatal_and_die("LBX: PBX overwrite for %s item %i offs 0x%x len 0x%x exceeds item len 0x%x!\n", lbxname, i, p->offs, p->len, len);
+                return false;
+            }
+            memcpy(&data[p->offs], p->data, p->len);
+        }
+        p = p->next;
+    }
+    return true;
+}
+
 static uint8_t *lbxfile_item_get_do(lbxfile_e file_id, uint16_t entry_id, uint32_t *len_ptr)
 {
     uint8_t *p = NULL;
+    struct lbx_s *lbx = &lbxtbl[file_id];
+    uint32_t len;
 
-    p = lbxfile_get_patch(&lbxtbl[file_id], entry_id, len_ptr);
+    p = lbxfile_get_patch(lbx, entry_id, &len);
 
     if (p == NULL) {
-        if (lbxtbl[file_id].mode == LBX_MODE_NONE) {
+        if (lbx->mode == LBX_MODE_NONE) {
             if (lbxfile_load(file_id)) {
                 goto fail;
             }
         }
 
-        p = lbx_extract(&lbxtbl[file_id], entry_id, len_ptr, lbxinfo[file_id].filename);
+        p = lbx_extract(lbx, entry_id, &len, lbxinfo[file_id].filename);
 
         if (p == NULL) {
             goto fail;
         }
+    }
+
+    if (!lbxfile_apply_overwrites(lbx, entry_id, p, len, lbxinfo[file_id].filename)) {
+        goto fail;
+    }
+
+    if (len_ptr) {
+        *len_ptr = len;
     }
 
     ++lbxtbl[file_id].num_in_use;
@@ -297,14 +329,9 @@ fail:
     return NULL;
 }
 
-static void lbxfile_shutdown_patches(struct lbx_s *lbx)
+static void lbxfile_shutdown_patch_list(struct lbxpatch_s *p)
 {
-    struct lbxpatch_s *p, *pn;
-    if (!lbx) {
-        return;
-    }
-    p = lbx->patches;
-    lbx->patches = NULL;
+    struct lbxpatch_s *pn;
     while (p) {
         pn = p->next;
         p->next = NULL;
@@ -313,6 +340,20 @@ static void lbxfile_shutdown_patches(struct lbx_s *lbx)
         lib_free(p);
         p = pn;
     }
+}
+
+static void lbxfile_shutdown_patches(struct lbx_s *lbx)
+{
+    struct lbxpatch_s *p;
+    if (!lbx) {
+        return;
+    }
+    p = lbx->patches;
+    lbx->patches = NULL;
+    lbxfile_shutdown_patch_list(p);
+    p = lbx->overwrites;
+    lbx->overwrites = NULL;
+    lbxfile_shutdown_patch_list(p);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -531,5 +572,29 @@ void lbxfile_add_patch(lbxfile_e file_id, uint16_t i, uint8_t *data, uint32_t le
             q->next = pnew;
             pnew->next = p;
         }
+    }
+}
+
+void lbxfile_add_overwrite(lbxfile_e file_id, uint16_t i, uint32_t itemoffs, uint8_t *data, uint32_t len, const char *patchfilename)
+{
+    struct lbxpatch_s *p, *pnew, *q = NULL;
+    struct lbx_s *lbx = &lbxtbl[file_id];
+    pnew = lib_malloc(sizeof(struct lbxpatch_s));
+    pnew->next = NULL;
+    pnew->data = data;
+    pnew->len = len;
+    pnew->offs = itemoffs;
+    pnew->i = i;
+    p = lbx->overwrites;
+    while (p && (i >= p->i)) {
+        q = p;
+        p = p->next;
+    }
+    if (!q) {
+        lbx->overwrites = pnew;
+        pnew->next = p;
+    } else {
+        q->next = pnew;
+        pnew->next = p;
     }
 }
