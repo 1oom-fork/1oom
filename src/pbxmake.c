@@ -25,6 +25,8 @@ struct patch_item_s {
     struct patch_item_s *next;
     uint16_t itemtype;
     uint16_t itemindex;
+    uint32_t itemoffs;
+    bool add_offset;
     const char *itemid;
     enum {
         PARAM_FILENAME,
@@ -170,11 +172,12 @@ static int make_pbx(const char *filename_in, const char *filename_out)
             }
         } else {
             struct patch_item_s *n;
-            int positemtype, positemid, positemindex, posparam;
+            int positemtype, positemid, positemindex, positemoffs, posparam;
             uint32_t v, flen;
-            bool need_index, need_id;
+            bool need_index, need_id, need_offs;
             pbx_item_type_t pbxitype;
             uint16_t item_index;
+            uint32_t item_offs;
             const char *itemid;
             int32_t *numtbl;
             int numnum;
@@ -189,11 +192,12 @@ static int make_pbx(const char *filename_in, const char *filename_out)
             }
 
             switch (v) {
-                case 0: pbxitype = PBX_ITEM_TYPE_NAME; need_index = false; need_id = false; itemid = "PBX NAME"; break;
-                case 1: pbxitype = PBX_ITEM_TYPE_DESC; need_index = false; need_id = false; itemid = "PBX DESC"; break;
-                case 2: pbxitype = PBX_ITEM_TYPE_LBXP; need_index = true; need_id = true; itemid = NULL; break;
-                case 3: pbxitype = PBX_ITEM_TYPE_STRP; need_index = true; need_id = true; itemid = NULL; break;
-                case 4: pbxitype = PBX_ITEM_TYPE_NUMP; need_index = true; need_id = true; itemid = NULL; break;
+                case 0: pbxitype = PBX_ITEM_TYPE_NAME; need_index = false; need_id = false; need_offs = false; itemid = "PBX NAME"; break;
+                case 1: pbxitype = PBX_ITEM_TYPE_DESC; need_index = false; need_id = false; need_offs = false; itemid = "PBX DESC"; break;
+                case 2: pbxitype = PBX_ITEM_TYPE_LBXP; need_index = true; need_id = true; need_offs = false; itemid = NULL; break;
+                case 3: pbxitype = PBX_ITEM_TYPE_STRP; need_index = true; need_id = true; need_offs = false; itemid = NULL; break;
+                case 4: pbxitype = PBX_ITEM_TYPE_NUMP; need_index = true; need_id = true; need_offs = false; itemid = NULL; break;
+                case 5: pbxitype = PBX_ITEM_TYPE_LBXO; need_index = true; need_id = true; need_offs = true; itemid = NULL; break;
                 default:
                     log_error("error: invalid type number %u at %i\n", v, positemtype);
                     return 3;
@@ -228,6 +232,21 @@ static int make_pbx(const char *filename_in, const char *filename_out)
                 item_index = 0;
             }
 
+            if (need_offs) {
+                positemoffs = i;
+                if ((i = findsep(listfiledata, i, len)) < 0) {
+                    return 3;
+                }
+                util_trim_whitespace(&listfiledata[positemoffs]);
+                if (!util_parse_number(&listfiledata[positemoffs], &v)) {
+                    log_error("error: invalid number '%s' at %i\n", &listfiledata[positemoffs], i);
+                    return 3;
+                }
+                item_offs = v;
+            } else {
+                item_offs = 0;
+            }
+
             posparam = i;
             while ((i < len) && !isnl(listfiledata[i])) {
                 ++i;
@@ -249,6 +268,8 @@ static int make_pbx(const char *filename_in, const char *filename_out)
             n->itemtype = pbxitype;
             n->itemid = itemid;
             n->itemindex = item_index;
+            n->itemoffs = item_offs;
+            n->add_offset = need_offs;
             n->next = NULL;
             n->fname = &listfiledata[posparam];
 
@@ -297,7 +318,7 @@ static int make_pbx(const char *filename_in, const char *filename_out)
 
     if (num_patches) {
         const uint8_t pad[3] = { 0, 0, 0 };
-        uint8_t buf[PBX_ITEM_HEADER_LEN];
+        uint8_t buf[PBX_ITEM_HEADER_LEN + 4];
         FILE *fd;
         struct patch_item_s *p, *q;
         uint32_t offs = PBX_HEADER_LEN + (num_patches + 1) * 4;
@@ -305,6 +326,9 @@ static int make_pbx(const char *filename_in, const char *filename_out)
         while (p) {
             p->offs = offs;
             offs += PBX_ITEM_HEADER_LEN + p->len + p->pad;
+            if (p->add_offset) {
+                offs += 4;
+            }
             p = p->next;
         }
         len = offs;
@@ -341,13 +365,21 @@ static int make_pbx(const char *filename_in, const char *filename_out)
         p = patches;
         i = 0;
         while (p) {
+            uint32_t hlen, tlen;
             memset(buf, 0, sizeof(buf));
-            SET_LE_32(&buf[PBX_OFFS_ITEM_LEN], p->len);
+            hlen = PBX_ITEM_HEADER_LEN;
+            tlen = p->len;
+            if (p->add_offset) {
+                hlen += 4;
+                tlen += 4;
+                SET_LE_32(&buf[PBX_OFFS_ITEM_OFFS], p->itemoffs);
+            }
+            SET_LE_32(&buf[PBX_OFFS_ITEM_LEN], tlen);
             SET_LE_16(&buf[PBX_OFFS_ITEM_TYPE], p->itemtype);
             SET_LE_16(&buf[PBX_OFFS_ITEM_INDEX], p->itemindex);
             strcpy((char *)&buf[PBX_OFFS_ITEM_ID], p->itemid);
             if (0
-              || (fwrite(buf, PBX_ITEM_HEADER_LEN, 1, fd) != 1)
+              || (fwrite(buf, hlen, 1, fd) != 1)
               || ((p->param_type == PARAM_FILENAME) && (!copy_file(p->fullname, p->len, fd)))
               || ((p->param_type == PARAM_DATA_STR) && (fwrite(p->fname, p->len, 1, fd) != 1))
               || ((p->param_type == PARAM_DATA_NUM) && (fwrite(p->fullname, p->len, 1, fd) != 1))
@@ -357,10 +389,10 @@ static int make_pbx(const char *filename_in, const char *filename_out)
                 fclose(fd);
                 return 3;
             }
-            log_message("%i offs 0x%x: type %i '%s' index %i %s '%s' len %i+%i+%i\n",
-                         i, p->offs, p->itemtype, p->itemid, p->itemindex,
+            log_message("%i offs 0x%x: type %i '%s' index %i offset 0x%x %s '%s' len %i+%i+%i+%i\n",
+                         i, p->offs, p->itemtype, p->itemid, p->itemindex, p->itemoffs,
                          (p->param_type == PARAM_FILENAME) ? "file" : "data",
-                         p->fname, PBX_ITEM_HEADER_LEN, p->len, p->pad
+                         p->fname, PBX_ITEM_HEADER_LEN, p->add_offset ? 4 : 0, p->len, p->pad
                        );
             p = p->next;
             ++i;
@@ -394,6 +426,7 @@ int main_1oom(int argc, char **argv)
                         "0,\"pbx name\"\n"
                         "1,\"pbx description\"\n"
                         "2,filename.lbx,itemnumber,replacementfile.bin\n"
+                        "5,filename.lbx,itemnumber,offset,partialdata.bin\n"
                         "3,string_id,itemnumber,\"new text\"\n"
                         "4,number_id,itemnumber,value[,value]*\n"
                );
