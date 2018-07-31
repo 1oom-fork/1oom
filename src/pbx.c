@@ -38,6 +38,18 @@ static int pbx_cb_lbxp(void *ctx, const char *filename, int pbxi, const char *id
     }
 }
 
+static int pbx_cb_lbxo(void *ctx, const char *filename, int pbxi, const char *id, uint16_t itemi, uint8_t *data, uint32_t len, uint32_t itemoffs)
+{
+    lbxfile_e lbxf = lbxfile_id(id);
+    if (lbxf < LBXFILE_NUM) {
+        lbxfile_add_overwrite(lbxf, itemi, itemoffs, data, len, filename);
+        return 1;
+    } else {
+        log_error("patch file '%s' item %i base filename '%s' not recognized!\n", filename, pbxi, id);
+        return -1;
+    }
+}
+
 static bool pbx_cb_strp(void *ctx, const char *filename, int pbxi, const char *id, const char *patchstr, int itemi, uint32_t len)
 {
     if (!game_str_patch(id, patchstr, itemi)) {
@@ -61,7 +73,7 @@ static bool pbx_cb_nump(void *ctx, const char *filename, int pbxi, const char *i
 int pbx_add_file(const char *filename, struct pbx_add_cbs *cbs_in, void *ctx)
 {
     FILE *fd;
-    uint8_t buf[PBX_ITEM_HEADER_LEN];
+    uint8_t buf[PBX_ITEM_HEADER_LEN + 4];
     uint32_t version;
     uint32_t items;
     uint8_t *data = NULL;
@@ -73,6 +85,7 @@ int pbx_add_file(const char *filename, struct pbx_add_cbs *cbs_in, void *ctx)
     cbs.lbxp = (cbs_in && cbs_in->lbxp) ? cbs_in->lbxp : pbx_cb_lbxp;
     cbs.strp = (cbs_in && cbs_in->strp) ? cbs_in->strp : pbx_cb_strp;
     cbs.nump = (cbs_in && cbs_in->nump) ? cbs_in->nump : pbx_cb_nump;
+    cbs.lbxo = (cbs_in && cbs_in->lbxo) ? cbs_in->lbxo : pbx_cb_lbxo;
 
     log_message("PBX: applying patch file '%s'\n", filename);
 
@@ -96,7 +109,7 @@ int pbx_add_file(const char *filename, struct pbx_add_cbs *cbs_in, void *ctx)
         goto fail;
     }
     for (int i = 0; i < items; ++i) {
-        uint32_t offs, len;
+        uint32_t offs, len, itemoffs;
         uint16_t type, itemi;
         const char *id;
         int ri;
@@ -121,6 +134,19 @@ int pbx_add_file(const char *filename, struct pbx_add_cbs *cbs_in, void *ctx)
         type = GET_LE_16(&(buf[PBX_OFFS_ITEM_TYPE]));
         itemi = GET_LE_16(&(buf[PBX_OFFS_ITEM_INDEX]));
         id = (const char *)&(buf[PBX_OFFS_ITEM_ID]);
+        switch (type) {
+            case PBX_ITEM_TYPE_LBXO:
+                if (fread(&(buf[PBX_OFFS_ITEM_OFFS]), 4, 1, fd) < 1) {
+                    log_error("reading item %i offset (len %i) of file '%s'!\n", i, len, filename);
+                    goto fail;
+                }
+                itemoffs = GET_LE_32(&(buf[PBX_OFFS_ITEM_OFFS]));
+                len -= 4;
+                break;
+            default:
+                itemoffs = 0;
+                break;
+        }
         data = lib_malloc(len);
         if (fread(data, len, 1, fd) < 1) {
             log_error("reading item %i data (len %i) of file '%s'!\n", i, len, filename);
@@ -145,6 +171,14 @@ int pbx_add_file(const char *filename, struct pbx_add_cbs *cbs_in, void *ctx)
                 break;
             case PBX_ITEM_TYPE_LBXP:
                 ri = cbs.lbxp(ctx, filename, i, id, itemi, data, len);
+                if (ri > 0) {
+                    data = NULL;
+                } else if (ri < 0) {
+                    goto fail;
+                }
+                break;
+            case PBX_ITEM_TYPE_LBXO:
+                ri = cbs.lbxo(ctx, filename, i, id, itemi, data, len, itemoffs);
                 if (ri > 0) {
                     data = NULL;
                 } else if (ri < 0) {
