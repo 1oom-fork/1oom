@@ -8,9 +8,10 @@
 # The format of the non-comment lines is:
 # 0,"pbx name"
 # 1,pbx_description.txt
-# 2,filename.lbx,itemnumber,replacementfile.bin"
+# 2,filename.lbx,itemnumber,replacementfile.bin
+# 5,filename.lbx,itemnumber,offset,partialdata.bin
 # 3,string_id,itemnumber,"new text"
-# 4,number_id,itemnumber,value[,value]*"
+# 4,number_id,itemnumber,value[,value]*
 
 # Type 0 item is the PBX name. One per PBX, one line only. Keep it 7-bit ASCII.
 0,"Example PBX file"
@@ -40,6 +41,18 @@
 # Tip: hex numbers are supported. Unfortunately, so are octal; 012 == 10 == 0xa.
 # Currently supported music formats: MIDI, XMID (used in MOO1 and MOM), FLAC, Ogg Vorbis
 # Currently supported sound formats: WAV, VOC
+
+
+# Type 5 is LBX partial overwrite.
+# Whenever the game (or UI) asks for the item "itemnumber" in the LBX file,
+# the data from the LBX file (or LBX patch) will have the bytes at "offset"
+# overwritten with the given data. The LBX file itself is untouched.
+
+# Replace "Lasitus" with "Lazarus"
+5,names.lbx,0,0x56,"zar"
+# Replace "Prrsha" with "Mrrsha"
+5,names.lbx,0,0x7c,"M"
+# Note that the offsets are from the beginning of the item, not the file.
 
 
 # Type 3 is a string replacement.
