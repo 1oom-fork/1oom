@@ -90,7 +90,7 @@ static void newtech_draw_cb1(void *vptr)
 {
     struct newtech_data_s *d = vptr;
     struct game_s *g = d->g;
-    char buf[RESEARCH_DESCR_LEN];
+    char *buf = ui_data.strbuf;
     hw_video_copy_back_from_page2();
     {
         int frame = lbxgfx_get_frame(d->gfx_spies);
@@ -121,8 +121,13 @@ static void newtech_draw_cb1(void *vptr)
         game_tech_get_descr(d->g->gaux, d->nt.field, d->nt.tech, buf, UI_STRBUF_SIZE);
         lbxfont_select_set_12_5(4, 0xf, 0, 0);
         strh = lbxfont_calc_split_str_h(305, buf);
+        /* BUG?
+           Some lowercase letters extend past the screen, for example 'p' in the Hyper-X msg.
+           On DOS/v1.3 this only overwrites unused VRAM. y <= 148 would be OK.
+           We use _safe to limit printing to max y.
+        */
         y = (strh >= 36) ? 150 : 160;
-        lbxfont_print_str_split(9, y, 305, buf, 3, UI_SCREEN_W, UI_SCREEN_H, ui_scale);
+        lbxfont_print_str_split_safe(9, y, 305, buf, 3, UI_SCREEN_W, UI_VGA_H, ui_scale);
     }
     if (d->nt.frame) {
         /*ui_newtech_draw_frame:*/
