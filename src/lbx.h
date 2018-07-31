@@ -67,5 +67,6 @@ extern int lbxfile_item_len(lbxfile_e file_id, uint16_t entry_id);
 extern int lbxfile_item_offs(lbxfile_e file_id, uint16_t entry_id);
 
 extern void lbxfile_add_patch(lbxfile_e file_id, uint16_t i, uint8_t *data, uint32_t len, const char *patchfilename);
+extern void lbxfile_add_overwrite(lbxfile_e file_id, uint16_t i, uint32_t itemoffs, uint8_t *data, uint32_t len, const char *patchfilename);
 
 #endif
