@@ -41,6 +41,8 @@ enables the following extra UI features:
 - Eco slider shows fractional population growth if growth is less than 10
 - Summary of forces shown before ship combat
 - New Auto and Retreat buttons for space combat autoresolve
+- After running through the Next turn phase and messages the game recenters on
+  your last planet of choice
 
 The config file item "ui.uifixbugs" (set via the -uifixbugs command-line option)
 enables the following UI bug fixes:
