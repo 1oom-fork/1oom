@@ -208,6 +208,34 @@ void game_planet_update_home(struct game_s *g)
     }
 }
 
+const char *game_planet_get_finished_text(const struct game_s *g, const planet_t *p, planet_finished_t type, char *buf)
+{
+    int num;
+    switch (type) {
+        case FINISHED_FACT:
+            num = p->max_pop3 * g->eto[p->owner].colonist_oper_factories;
+            sprintf(buf, "%s %s %s %i %s. %s", p->name, game_str_sm_hasreached, game_str_sm_indmaxof, num, game_str_sm_factories, game_str_sm_extrares);
+            break;
+        case FINISHED_POPMAX:
+            num = p->max_pop3;
+            sprintf(buf, "%s %s %s %i %s. %s", p->name, game_str_sm_hasreached, game_str_sm_popmaxof, num, game_str_sm_colonists, game_str_sm_extrares);
+            break;
+        case FINISHED_SOILATMOS:
+            sprintf(buf, "%s %s %s %s %s%s.", p->name, game_str_sm_hasterraf, game_str_tbl_sm_terraf[p->growth - 1], game_str_sm_envwith, game_str_tbl_sm_envmore[p->growth - 1], game_str_sm_stdgrow);
+            break;
+        case FINISHED_STARGATE:
+            sprintf(buf, "%s %s.", p->name, game_str_sm_hasfsgate);
+            break;
+        case FINISHED_SHIELD:
+            sprintf(buf, "%s %s %s %s.", p->name, game_str_sm_hasfshield, game_str_tbl_roman[p->shield], game_str_sm_planshield);
+            break;
+        default:
+            buf[0] = '\0';
+            break;
+    }
+    return buf;
+}
+
 int game_planet_get_slider_text(const struct game_s *g, uint8_t planet_i, player_id_t player, planet_slider_i_t si, char *buf)
 {
     const planet_t *p = &(g->planet[planet_i]);
