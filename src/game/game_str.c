@@ -231,6 +231,7 @@ const char *game_str_sm_extrares = " The extra spent was placed in the planetary
 const char *game_str_sm_popmaxof = "population maximum of";
 const char *game_str_sm_colonists = "colonists";
 const char *game_str_sm_hasterraf = "has been terraformed to a";
+const char *game_str_sm_new = "new";
 const char *game_str_tbl_sm_terraf[3] = {
     "normal", "fertile", "gaia"
 };
@@ -734,3 +735,12 @@ const char *game_str_wl_exile_4 = " Master of Orion...";
 const char *game_str_gnn_end_good = "And that's the way it is...";
 const char *game_str_gnn_end_tyrant = "Oh well, another millenium serving under a ruthless tyrant...";
 const char *game_str_gnn_also = "Also in the news...";
+
+const char *game_str_mf_title = "Show messages:";
+const char *game_str_tbl_mf[FINISHED_NUM] = {
+    "Max factories",  "Max population", "Better growth", "Stargate", "Shield", "", "Terraformed"
+};
+
+const char *game_str_tbl_xtramenu[XTRAMENU_NUM] = {
+    "Scrap bases", "Caught spies", "Governor settings", "Message filter", "Cancel"
+};

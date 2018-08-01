@@ -537,7 +537,8 @@ static int game_save_encode_evn(uint8_t *buf, int pos, const gameevents_t *ev, i
     SG_1OOM_EN_TBL_TBL_U16(ev->ceasefire, pnum, pnum);
     for (int i = 0; i < pnum; ++i) {
         SG_1OOM_EN_BV(ev->help_shown[i], HELP_SHOWN_NUM);
-        SG_1OOM_EN_DUMMY(14);
+        SG_1OOM_EN_BV(ev->msg_filter[i], FINISHED_NUM);
+        SG_1OOM_EN_DUMMY(13);
     }
     SG_1OOM_EN_TBL_U16(ev->build_finished_num, pnum);
     SG_1OOM_EN_TBL_U8(ev->voted, pnum);
@@ -584,7 +585,8 @@ static int game_save_decode_evn(const uint8_t *buf, int pos, gameevents_t *ev, i
     SG_1OOM_DE_TBL_TBL_U16(ev->ceasefire, pnum, pnum);
     for (int i = 0; i < pnum; ++i) {
         SG_1OOM_DE_BV(ev->help_shown[i], HELP_SHOWN_NUM);
-        SG_1OOM_DE_DUMMY(14);
+        SG_1OOM_DE_BV(ev->msg_filter[i], FINISHED_NUM);
+        SG_1OOM_DE_DUMMY(13);
     }
     SG_1OOM_DE_TBL_U16(ev->build_finished_num, pnum);
     SG_1OOM_DE_TBL_U8(ev->voted, pnum);
@@ -781,6 +783,13 @@ static int game_save_decode(const uint8_t *buf, int buflen, struct game_s *g, ui
             }
         }
     }
+    /* generate message filter if needed */
+    for (player_id_t i = PLAYER_0; i < g->players; ++i) {
+        if (IS_HUMAN(g, i) && BOOLVEC_IS_CLEAR(g->evn.msg_filter[i], FINISHED_NUM)) { /* the SHIP bit is always 1 */
+            g->evn.msg_filter[i][0] = FINISHED_DEFAULT_FILTER;
+        }
+    }
+
     g->guardian_killer = PLAYER_NONE;
     return 0;
 }

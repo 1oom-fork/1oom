@@ -55,8 +55,8 @@ static void ui_starmap_remove_build_finished(struct game_s *g, player_id_t api, 
     int num = g->evn.build_finished_num[api];
     if (num) {
         g->evn.build_finished_num[api] = --num;
-        for (planet_finished_t i = 0; i < FINISHED_SHIP; ++i) {
-            if (BOOLVEC_IS1(p->finished, i)) {
+        for (planet_finished_t i = 0; i < FINISHED_NUM; ++i) {
+            if ((i != FINISHED_SHIP) && BOOLVEC_IS1(p->finished, i)) {
                 BOOLVEC_SET0(p->finished, i);
                 break;
             }
@@ -226,7 +226,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
     int16_t oi_b, oi_c, oi_scroll, oi_starview1, oi_starview2, oi_shippic, oi_finished, oi_equals,
             oi_f2, oi_f3, oi_f4, oi_f5, oi_f6, oi_f7, oi_f8, oi_f9, oi_f10,
             oi_alt_galaxy, oi_alt_m, oi_alt_c, oi_alt_p, oi_alt_r, oi_alt_events,
-            oi_governor, oi_wheelname, oi_wheelshippic
+            oi_governor, oi_wheelname, oi_wheelshippic, oi_xtramenu
             ;
     int16_t scrollx = 0, scrolly = 0, scrollmisc = 0;
     uint8_t scrollz = starmap_scale;
@@ -258,6 +258,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
         oi_governor = UIOBJI_INVALID; \
         oi_wheelname = UIOBJI_INVALID; \
         oi_wheelshippic = UIOBJI_INVALID; \
+        oi_xtramenu = UIOBJI_INVALID; \
         d.sm.oi_ship = UIOBJI_INVALID; \
         d.sm.oi_reloc = UIOBJI_INVALID; \
         d.sm.oi_trans = UIOBJI_INVALID; \
@@ -589,6 +590,10 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             ui_data.ui_main_loop_action = UI_MAIN_LOOP_GOVERN;
             flag_done = true;
             ui_sound_play_sfx_24();
+        } else if (oi1 == oi_xtramenu) {
+            ui_data.ui_main_loop_action = UI_MAIN_LOOP_XTRAMENU;
+            flag_done = true;
+            ui_sound_play_sfx_24();
         } else if (oi1 == oi_wheelname) {
             int i;
             i = g->planet_focus_i[active_player];
@@ -659,6 +664,9 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
                 if (ui_extra_enabled) {
                     oi_governor = uiobj_add_mousearea(227, 8, 310, 20, MOO_KEY_UNKNOWN);
                 }
+            }
+            if (ui_extra_enabled) {
+                oi_xtramenu = uiobj_add_mousearea(0, 195, 5, 199, MOO_KEY_UNKNOWN);
             }
             oi_wheelname = uiobj_add_mousewheel(227, 8, 310, 20, &scrollmisc);
             ui_starmap_fill_oi_tbls(&d);

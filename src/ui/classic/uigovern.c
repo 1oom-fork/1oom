@@ -20,7 +20,6 @@
 #include "uidefs.h"
 #include "uidraw.h"
 #include "uiobj.h"
-#include "uipal.h"
 #include "uisound.h"
 
 /* -------------------------------------------------------------------------- */

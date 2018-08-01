@@ -656,6 +656,7 @@ static int savetype_de_moo13(struct game_s *g, const char *fname)
         M13_GET_TBL_16(ev->spies_caught[PLAYER_0], evb + 0x1fe);
         M13_GET_TBL_16(ev->ceasefire[PLAYER_0], evb + 0x28e);
         M13_GET_TBL_BVN_8(ev->help_shown[PLAYER_0], evb + 0x2e2, 16);
+        ev->msg_filter[PLAYER_0][0] = FINISHED_DEFAULT_FILTER;
         /* TODO build_finished ; is it even possible to save before clicking them away? */
         M13_GET_TBL_16_OWNER(ev->voted, evb + 0x320);
         M13_GET_16(ev->best_ecorestore[PLAYER_0], evb + 0x32c);
@@ -1456,6 +1457,11 @@ static const struct game_intros_s game_intros_help_shown[] = {
     GAME_INTROS_END
 };
 
+static const struct game_intros_s game_intros_msg_filter[] = {
+    { "", GAME_INTROS_T_BV, 0, FINISHED_NUM, 1, 0 },
+    GAME_INTROS_END
+};
+
 static const struct game_intros_s game_intros_evn[] = {
     GAME_INTROS_VAL(gameevents_s, year),
     GAME_INTROS_BV(gameevents_s, done, GAME_EVENT_TBL_NUM),
@@ -1489,6 +1495,7 @@ static const struct game_intros_s game_intros_evn[] = {
     GAME_INTROS_SUB(gameevents_s, spies_caught, game_intros_spies_caught),
     GAME_INTROS_SUB(gameevents_s, ceasefire, game_intros_ceasefire),
     GAME_INTROS_SUB(gameevents_s, help_shown, game_intros_help_shown),
+    GAME_INTROS_SUB(gameevents_s, msg_filter, game_intros_msg_filter),
     GAME_INTROS_TBL(gameevents_s, build_finished_num),
     GAME_INTROS_TBL(gameevents_s, voted),
     GAME_INTROS_TBL(gameevents_s, best_ecorestore),
@@ -2314,6 +2321,9 @@ static int savetype_en_text(struct game_s *g, const char *fname)
             if (IS_HUMAN(g, pl)) {
                 text_dump_prefix_add_tbl(tp, "help_shown", "", pl);
                 OUTLINEBV("", ev->help_shown[pl], HELP_SHOWN_NUM);
+                text_dump_prefix_del(tp);
+                text_dump_prefix_add_tbl(tp, "msg_filter", "", pl);
+                OUTLINEBV("", ev->msg_filter[pl], FINISHED_NUM);
                 text_dump_prefix_del(tp);
             }
         }

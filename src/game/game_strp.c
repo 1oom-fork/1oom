@@ -124,6 +124,7 @@ static const struct strtbl_s {
     DEFSTRITEM(sm_popmaxof),
     DEFSTRITEM(sm_colonists),
     DEFSTRITEM(sm_hasterraf),
+    DEFSTRITEM(sm_new),
     DEFSTRITEMTBL(tbl_sm_terraf),
     DEFSTRITEM(sm_envwith),
     DEFSTRITEMTBL(tbl_sm_envmore),
@@ -520,6 +521,9 @@ static const struct strtbl_s {
     DEFSTRITEM(gnn_end_good),
     DEFSTRITEM(gnn_end_tyrant),
     DEFSTRITEM(gnn_also),
+    DEFSTRITEM(mf_title),
+    DEFSTRITEMTBL(tbl_mf),
+    DEFSTRITEMTBL(tbl_xtramenu),
     DEFSTREND
 };
 

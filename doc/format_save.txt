@@ -117,7 +117,7 @@ c       name (ASCIIz)
 2       rebels (0..actual pop)
 1       unrest: 1=unrest, 3=rebellion
 1       unrest reported (0/1)
-1       build finished (bitmask; bits: 0=factories, 1=eco1, 2=eco2, 3=stargate, 4=shield, 5=ship)
+1       build finished (bitmask; bits: 0=factories, 1=pop max, 2=atmos/soil, 3=stargate, 4=shield, 5=ship, 6=terraform)
 1       extras (bitmask; bits: 0=governor)
 2       target amount of missile bases for governor
 2       (0, unused)
@@ -298,7 +298,11 @@ N*1     home planet (0..107, 255 means player is dead)
 N*6*4   number of new ships
 N*N*2   number of caught spies
 N*N*2   ceasefire (years)
-N*10    help shown (bitmask of 16 bits) + 14 unused bytes
+N*10    tables for each player:
+        sz  description
+        2   help shown (bitmask of 16 bits)
+        1   message filter (bitmask: bits same as in star data build finished, bit 5 is 1 for human players)
+        13  unused bytes
 N*2     build finished num
 N*1     voted for (0..5, 6)
 N*1     best eco restore

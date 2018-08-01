@@ -986,6 +986,7 @@ static void game_generate_misc(struct game_s *g)
             e->hated[pli2] = PLAYER_NONE;
             e->mutual_enemy[pli2] = PLAYER_NONE;
         }
+        g->evn.msg_filter[pli][0] = IS_HUMAN(g, pli) ? FINISHED_DEFAULT_FILTER : 0;
     }
 }
 

@@ -338,11 +338,15 @@ const char *game_planet_get_finished_text(const struct game_s *g, const planet_t
             num = p->max_pop3 * g->eto[p->owner].colonist_oper_factories;
             sprintf(buf, "%s %s %s %i %s. %s", p->name, game_str_sm_hasreached, game_str_sm_indmaxof, num, game_str_sm_factories, game_str_sm_extrares);
             break;
-        case FINISHED_ECO1:
+        case FINISHED_POPMAX:
             num = p->max_pop3;
             sprintf(buf, "%s %s %s %i %s. %s", p->name, game_str_sm_hasreached, game_str_sm_popmaxof, num, game_str_sm_colonists, game_str_sm_extrares);
             break;
-        case FINISHED_ECO2:
+        case FINISHED_TERRAF:
+            num = p->max_pop3;
+            sprintf(buf, "%s %s %s %s %i %s.", p->name, game_str_sm_hasterraf, game_str_sm_new, game_str_sm_popmaxof, num, game_str_sm_colonists);
+            break;
+        case FINISHED_SOILATMOS:
             sprintf(buf, "%s %s %s %s %s%s.", p->name, game_str_sm_hasterraf, game_str_tbl_sm_terraf[p->growth - 1], game_str_sm_envwith, game_str_tbl_sm_envmore[p->growth - 1], game_str_sm_stdgrow);
             break;
         case FINISHED_STARGATE:

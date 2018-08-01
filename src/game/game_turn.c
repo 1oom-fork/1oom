@@ -172,7 +172,12 @@ static int game_turn_build_eco_sub1(int fact, int colonist_oper_fact, int pop1, 
 
 static inline void game_add_planet_to_eco_finished(struct game_s *g, uint8_t pli, player_id_t owner)
 {
-    BOOLVEC_SET1(g->planet[pli].finished, FINISHED_ECO2);
+    BOOLVEC_SET1(g->planet[pli].finished, FINISHED_SOILATMOS);
+}
+
+static inline void game_add_planet_to_terraf_finished(struct game_s *g, uint8_t pli, player_id_t owner)
+{
+    BOOLVEC_SET1(g->planet[pli].finished, FINISHED_TERRAF);
 }
 
 static void game_turn_build_eco(struct game_s *g)
@@ -289,6 +294,7 @@ static void game_turn_build_eco(struct game_s *g)
                 if (tmax < (p->max_pop3 + v)) {
                     ecoprod -= (tmax - p->max_pop3) * e->terraform_cost_per_inc;
                     p->max_pop3 = tmax;
+                    game_add_planet_to_terraf_finished(g, i, owner);
                 } else {
                     p->max_pop3 += v;
                     ecoprod = 0;
@@ -631,8 +637,12 @@ static void game_turn_reserve(struct game_s *g)
 static inline void game_add_planet_to_build_finished(struct game_s *g, uint8_t pli, player_id_t owner, uint8_t type)
 {
     planet_t *p = &(g->planet[pli]);
-    BOOLVEC_SET1(p->finished, type);
-    ++g->evn.build_finished_num[owner];
+    if (BOOLVEC_TBL_IS1(g->evn.msg_filter, owner, type)) {
+        BOOLVEC_SET1(p->finished, type);
+        ++g->evn.build_finished_num[owner];
+    } else {
+        BOOLVEC_SET0(p->finished, type);
+    }
 }
 
 static void game_turn_build_ind(struct game_s *g)
@@ -1602,7 +1612,7 @@ static void game_turn_finished_slider(struct game_s *g)
             continue;
         }
         e = &(g->eto[pi]);
-        if (BOOLVEC_IS1(p->finished, FINISHED_ECO2)) {
+        if (BOOLVEC_IS1(p->finished, FINISHED_SOILATMOS)) {
             int v;
             v = game_planet_get_w1(g, pli);
             if (p->factories >= (p->pop * e->colonist_oper_factories)) {
@@ -1611,7 +1621,7 @@ static void game_turn_finished_slider(struct game_s *g)
                 p->slider[PLANET_SLIDER_IND] += p->slider[PLANET_SLIDER_ECO] - v;
             }
             p->slider[PLANET_SLIDER_ECO] = v;
-            game_add_planet_to_build_finished(g, pli, pi, FINISHED_ECO2);
+            game_add_planet_to_build_finished(g, pli, pi, FINISHED_SOILATMOS);
         }
         if (1
           && (p->pop >= p->max_pop3)
@@ -1655,7 +1665,7 @@ static void game_turn_finished_slider(struct game_s *g)
                         }
                         p->slider[PLANET_SLIDER_ECO] = w;
                         if (p->pop > p->pop_prev) {
-                            game_add_planet_to_build_finished(g, pli, pi, FINISHED_ECO1);
+                            game_add_planet_to_build_finished(g, pli, pi, FINISHED_POPMAX);
                         }
                     }
                 }
@@ -1671,6 +1681,9 @@ static void game_turn_finished_slider(struct game_s *g)
                     p->slider[PLANET_SLIDER_ECO] = 0;
                 }
             }
+        }
+        if (BOOLVEC_IS1(p->finished, FINISHED_TERRAF)) {
+            game_add_planet_to_build_finished(g, pli, pi, FINISHED_TERRAF);
         }
         if (BOOLVEC_IS1(p->finished, FINISHED_SHIELD)) {
             p->slider[PLANET_SLIDER_TECH] += p->slider[PLANET_SLIDER_DEF];

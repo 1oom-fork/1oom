@@ -50,6 +50,8 @@ libuiclassic_a_SOURCES = \
     uiload.c \
     uiload.h \
     uimainmenu.c \
+    uimsgfilter.c \
+    uimsgfilter.h \
     uinewgame.c \
     uinewgame.h \
     uinews.c \
@@ -88,4 +90,6 @@ libuiclassic_a_SOURCES = \
     uiswitch.h \
     uitech.c \
     uitech.h \
-    uiturn.c
+    uiturn.c \
+    uixtramenu.c \
+    uixtramenu.h

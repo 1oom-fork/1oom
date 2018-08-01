@@ -107,6 +107,7 @@ extern const char *game_str_sm_extrares;
 extern const char *game_str_sm_popmaxof;
 extern const char *game_str_sm_colonists;
 extern const char *game_str_sm_hasterraf;
+extern const char *game_str_sm_new;
 extern const char *game_str_tbl_sm_terraf[3];
 extern const char *game_str_sm_envwith;
 extern const char *game_str_tbl_sm_envmore[3];
@@ -508,5 +509,9 @@ extern const char *game_str_wl_exile_4;
 extern const char *game_str_gnn_end_good;
 extern const char *game_str_gnn_end_tyrant;
 extern const char *game_str_gnn_also;
+extern const char *game_str_mf_title;
+extern const char *game_str_tbl_mf[FINISHED_NUM];
+#define XTRAMENU_NUM    5
+extern const char *game_str_tbl_xtramenu[XTRAMENU_NUM];
 
 #endif

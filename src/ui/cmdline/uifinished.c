@@ -5,6 +5,7 @@
 #include "uifinished.h"
 #include "game.h"
 #include "game_planet.h"
+#include "game_str.h"
 #include "uidefs.h"
 
 /* -------------------------------------------------------------------------- */
@@ -25,4 +26,32 @@ void ui_finished_print_all(struct game_s *g, int api)
             }
         }
     }
+}
+
+int ui_cmd_msg_filter(struct game_s *g, int api, struct input_token_s *param, int num_param, void *var)
+{
+    const char msgchars[FINISHED_NUM] = "fpgsh t";
+    if (num_param == 0) {
+        puts(game_str_mf_title);
+        for (planet_finished_t type = 0; type < FINISHED_NUM; ++type) {
+            if (type != FINISHED_SHIP) {
+                printf("%c %c %s\n", msgchars[type], BOOLVEC_TBL_IS1(g->evn.msg_filter, api, type) ? '+' : '-', game_str_tbl_mf[type]);
+            }
+        }
+    } else {
+        const char *p = param->str;
+        char c;
+        while ((c = *p++) != '\0') {
+            planet_finished_t type;
+            const char *q;
+            q = strchr(msgchars, c);
+            if ((!q) || (c == ' ')) {
+                printf("Invalid filter char '%c'\n", c);
+                return -1;
+            }
+            type = q - msgchars;
+            BOOLVEC_TBL_TOGGLE(g->evn.msg_filter, api, type);
+        }
+    }
+    return 0;
 }

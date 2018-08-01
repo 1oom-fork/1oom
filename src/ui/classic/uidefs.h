@@ -44,6 +44,8 @@ typedef enum {
     UI_MAIN_LOOP_SCRAP_BASES, /*16*/
     UI_MAIN_LOOP_SPIES_CAUGHT, /*17*/
     UI_MAIN_LOOP_GOVERN,
+    UI_MAIN_LOOP_MSGFILTER,
+    UI_MAIN_LOOP_XTRAMENU,
     UI_MAIN_LOOP_NUM
 } ui_main_loop_action_t;
 

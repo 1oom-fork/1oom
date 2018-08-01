@@ -26,6 +26,7 @@
 #include "uigmap.h"
 #include "uigameopts.h"
 #include "uigovern.h"
+#include "uimsgfilter.h"
 #include "uiobj.h"
 #include "uipal.h"
 #include "uiplanets.h"
@@ -35,6 +36,7 @@
 #include "uistarview.h"
 #include "uiswitch.h"
 #include "uitech.h"
+#include "uixtramenu.h"
 
 /* -------------------------------------------------------------------------- */
 
@@ -227,6 +229,13 @@ ui_turn_action_t ui_game_turn(struct game_s *g, int *load_game_i_ptr, int pi)
                 ui_govern(g, pi);
                 ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
                 break;
+            case UI_MAIN_LOOP_MSGFILTER:
+                ui_msg_filter(g, pi);
+                ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
+                break;
+            case UI_MAIN_LOOP_XTRAMENU:
+                ui_data.ui_main_loop_action = ui_xtramenu(g, pi);
+                break;
             case UI_MAIN_LOOP_NEXT_TURN:
                 ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
                 ui_data.news.flag_also = false;
@@ -270,11 +279,16 @@ void ui_game_start(struct game_s *g)
         }
     }
     BOOLVEC_CLEAR(ui_data.players_viewing, PLAYER_NUM);
-    /* turn of governor if ui_extra is disabled */
+    /* turn of governor and set default msg filter if ui_extra is disabled */
     if (!ui_extra_enabled) {
         for (int pli = 0; pli < g->galaxy_stars; ++pli) {
             planet_t *p = &(g->planet[pli]);
             BOOLVEC_SET0(p->extras, PLANET_EXTRAS_GOVERNOR);
+        }
+        for (int i = 0; i < g->players; ++i) {
+            if (IS_HUMAN(g, i)) {
+                g->evn.msg_filter[i][0] = FINISHED_DEFAULT_FILTER;
+            }
         }
     }
     /* HACK ensure the game starts with a wipe, fixing -new help gfx glitch  */
