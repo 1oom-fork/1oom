@@ -27,6 +27,8 @@ libuicmdline_a_SOURCES = \
     uiempirestats.h \
     uiending.c \
     uiexplore.c \
+    uifinished.c \
+    uifinished.h \
     uifleet.c \
     uifleet.h \
     uigame.c \
