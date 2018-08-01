@@ -48,5 +48,7 @@ enables the following extra UI features:
 - New Auto and Retreat buttons for space combat autoresolve
 - Pressing = on the Tech screen adjusts only the unlocked sliders
 - Tech screen has lights showing when you reach max research bonus
+- After running through the Next turn phase and messages the game recenters on
+  your last planet of choice
 
 See doc/list_gamediff.txt for a list of differences in the game itself.
