@@ -78,8 +78,8 @@ typedef enum {
 
 typedef enum {
     FINISHED_FACT, /*0*/
-    FINISHED_ECO1, /*1*/
-    FINISHED_ECO2, /*2*/
+    FINISHED_POPMAX, /*1*/
+    FINISHED_SOILATMOS, /*2*/
     FINISHED_STARGATE, /*3*/
     FINISHED_SHIELD, /*4*/
     FINISHED_SHIP, /*5*/
