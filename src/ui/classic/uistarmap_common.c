@@ -188,34 +188,13 @@ static void ui_starmap_draw_textbox_finished(const struct game_s *g, player_id_t
 {
     const planet_t *p = &g->planet[pi];
     char *buf = ui_data.strbuf;
-    int num;
     planet_finished_t i;
     for (i = 0; i < FINISHED_NUM; ++i) {
         if (BOOLVEC_IS1(p->finished, i)) {
             break;
         }
     }
-    switch (i) {
-        case FINISHED_FACT:
-            num = p->max_pop3 * g->eto[p->owner].colonist_oper_factories;
-            sprintf(buf, "%s %s %s %i %s. %s", p->name, game_str_sm_hasreached, game_str_sm_indmaxof, num, game_str_sm_factories, game_str_sm_extrares);
-            break;
-        case FINISHED_POPMAX:
-            num = p->max_pop3;
-            sprintf(buf, "%s %s %s %i %s. %s", p->name, game_str_sm_hasreached, game_str_sm_popmaxof, num, game_str_sm_colonists, game_str_sm_extrares);
-            break;
-        case FINISHED_SOILATMOS:
-            sprintf(buf, "%s %s %s %s %s%s.", p->name, game_str_sm_hasterraf, game_str_tbl_sm_terraf[p->growth - 1], game_str_sm_envwith, game_str_tbl_sm_envmore[p->growth - 1], game_str_sm_stdgrow);
-            break;
-        case FINISHED_STARGATE:
-            sprintf(buf, "%s %s.", p->name, game_str_sm_hasfsgate);
-            break;
-        case FINISHED_SHIELD:
-            sprintf(buf, "%s %s %s %s.", p->name, game_str_sm_hasfshield, game_str_tbl_roman[p->shield], game_str_sm_planshield);
-            break;
-        default:
-            break;
-    }
+    game_planet_get_finished_text(g, p, i, buf);
     ui_draw_textbox_2str("", buf, 54);
     ui_draw_textbox_2str("", game_str_sm_planratio, 110);
 }
