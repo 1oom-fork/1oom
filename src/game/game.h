@@ -249,6 +249,7 @@ typedef struct gameevents_s {
     player_id_t sabotage_spy[PLAYER_NUM][PLAYER_NUM]; /* [victim][spy] */
     uint8_t ceasefire[PLAYER_NUM][PLAYER_NUM]; /* [human][ai] */
     BOOLVEC_TBL_DECLARE(help_shown, PLAYER_NUM, HELP_SHOWN_NUM);
+    BOOLVEC_TBL_DECLARE(msg_filter, PLAYER_NUM, FINISHED_NUM);
     uint16_t build_finished_num[PLAYER_NUM];
     player_id_t voted[PLAYER_NUM];
     uint8_t best_ecorestore[PLAYER_NUM];

@@ -76,6 +76,7 @@ static const struct input_cmd_s cmds_turn[] = {
     { "sec", "VALUE", "Set security spending (tenths of percent)\nVALUE can be +N or -N for relative adjustment", 1, 1, 0, ui_cmd_empire_security, 0 },
     { "rep", NULL, "Show report", 0, 0, 0, ui_cmd_empirereport, 0 },
     { "aud", NULL, "Audience", 0, 0, 0, ui_cmd_audience, 0 },
+    { "mft", "[MSGTYPE]", "Show/toggle message filters", 0, 1, 0, ui_cmd_msg_filter, 0 },
     { "galaxy", NULL, NULL, 0, 0, 0, ui_cmd_cheat_galaxy, 0 },
     { "events", NULL, NULL, 0, 0, 0, ui_cmd_cheat_events, 0 },
     { "moola", NULL, NULL, 0, 0, 0, ui_cmd_cheat_moola, 0 },

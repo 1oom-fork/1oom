@@ -78,14 +78,16 @@ typedef enum {
 
 typedef enum {
     FINISHED_FACT, /*0*/
-    FINISHED_ECO1, /*1*/
-    FINISHED_ECO2, /*2*/
+    FINISHED_POPMAX, /*1*/
+    FINISHED_SOILATMOS, /*2*/
     FINISHED_STARGATE, /*3*/
     FINISHED_SHIELD, /*4*/
     FINISHED_SHIP, /*5*/
+    FINISHED_TERRAF, /*6*/
     FINISHED_NUM
 } planet_finished_t;
 
+#define FINISHED_DEFAULT_FILTER (((1 << FINISHED_NUM) - 1) & ~(1 << FINISHED_TERRAF))
 #define PLANET_NAME_LEN 12
 
 typedef enum {

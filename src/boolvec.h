@@ -26,6 +26,7 @@
 #define BOOLVEC_TBL_SET0(_name_, _tnum_, _i_) BOOLVEC_SET0(_name_[_tnum_], _i_)
 #define BOOLVEC_TBL_SET1(_name_, _tnum_, _i_) BOOLVEC_SET1(_name_[_tnum_], _i_)
 #define BOOLVEC_TBL_SET(_name_, _tnum_, _i_) BOOLVEC_SET(_name_[_tnum_], _i_)
+#define BOOLVEC_TBL_TOGGLE(_name_, _tnum_, _i_) BOOLVEC_TOGGLE(_name_[_tnum_], _i_)
 #define BOOLVEC_TBL_IS0(_name_, _tnum_, _i_) BOOLVEC_IS0(_name_[_tnum_], _i_)
 #define BOOLVEC_TBL_IS1(_name_, _tnum_, _i_) BOOLVEC_IS1(_name_[_tnum_], _i_)
 
