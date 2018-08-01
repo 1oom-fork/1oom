@@ -58,6 +58,7 @@ ui_turn_action_t ui_game_turn(struct game_s *g, int *load_game_i_ptr, int pi)
         ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
         ui_starmap_set_pos_focus(g, pi);
     }
+    ui_data.start_planet_focus_i = g->planet_focus_i[pi];
     game_turn_start_messages(g, pi);
     BOOLVEC_CLEAR(ui_data.starmap.select_prio_fleet, FLEET_ENROUTE_MAX);
     BOOLVEC_CLEAR(ui_data.starmap.select_prio_trans, TRANSPORT_MAX);

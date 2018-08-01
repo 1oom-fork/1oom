@@ -50,7 +50,7 @@ static void ui_starmap_draw_cb1(void *vptr)
     }
 }
 
-static void ui_starmap_remove_build_finished(struct game_s *g, player_id_t api, planet_t *p)
+static bool ui_starmap_remove_build_finished(struct game_s *g, player_id_t api, planet_t *p)
 {
     int num = g->evn.build_finished_num[api];
     if (num) {
@@ -61,7 +61,11 @@ static void ui_starmap_remove_build_finished(struct game_s *g, player_id_t api, 
                 break;
             }
         }
+        if (!num) {
+            return true;
+        }
     }
+    return false;
 }
 
 static void ui_starmap_fill_oi_slider(struct starmap_data_s *d, planet_t *p)
@@ -354,7 +358,12 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             ui_data.starmap.flag_show_grid = !ui_data.starmap.flag_show_grid;
             ui_sound_play_sfx_24();
         } else if ((oi1 == oi_finished) || ((oi1 == UIOBJI_ESC) && (oi_finished != UIOBJI_INVALID))) {
-            ui_starmap_remove_build_finished(g, active_player, p);
+            if (ui_starmap_remove_build_finished(g, active_player, p)) {
+                if (ui_extra_enabled) {
+                    g->planet_focus_i[active_player] = ui_data.start_planet_focus_i;
+                    ui_starmap_set_pos_focus(g, active_player);
+                }
+            }
             ui_sound_play_sfx_24();
             flag_done = true;
             ui_delay_1();
