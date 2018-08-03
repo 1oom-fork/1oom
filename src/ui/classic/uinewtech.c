@@ -186,9 +186,12 @@ static void newtech_choose_next_draw_cb(void *vptr)
     yo = ((d->num_next > 10) ? 8 : 9) * d->num_next + 8;
     SETMAX(yo, 30);
     ui_draw_filled_rect(x, y, x + 165, y + yo + 12, 0xf9);
-    /*limits(0, y, 319, y + yo - 1)*/
     lbxgfx_draw_frame_offs(x, y, d->gfx_pulldown_u, 0, y, UI_SCREEN_W - 1, y + yo - 1, UI_SCREEN_W);
-    lbxgfx_draw_frame(x, y + yo, d->gfx_pulldown_d, UI_SCREEN_W);
+    /* WASBUG
+       MOO1 does not limit the bottom part which will go below screen with enough techs to choose from.
+       On DOS/v1.3 this only overwrite unused VRAM. We must the the _offs version.
+    */
+    lbxgfx_draw_frame_offs(x, y + yo, d->gfx_pulldown_d, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
     sprintf(buf, "%s %s", game_str_tbl_te_field[d->nt.field], game_str_te_techno);
     lbxfont_select(5, 0xe, 0, 0);
     lbxfont_print_str_center(x + 85, y + 5, buf, UI_SCREEN_W);
