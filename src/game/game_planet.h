@@ -92,6 +92,8 @@ typedef enum {
 
 typedef enum {
     PLANET_EXTRAS_GOVERNOR = 0,
+    PLANET_EXTRAS_GOV_SPEND_REST_SHIP, /*1*/
+    PLANET_EXTRAS_GOV_SPEND_REST_IND, /*2*/
     PLANET_EXTRAS_NUM
 } planet_extras_t;
 

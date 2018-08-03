@@ -22,6 +22,7 @@
 #include "uiempirestats.h"
 #include "uifinished.h"
 #include "uifleet.h"
+#include "uigovern.h"
 #include "uihelp.h"
 #include "uiinput.h"
 #include "uiload.h"
@@ -51,10 +52,14 @@ static const struct input_cmd_s cmds_turn[] = {
     { "s", "SLIDER VALUE", "Set planet slider\nSLIDER is s, d, i, e or t\nVALUE can be +N or -N for relative adjustment", 2, 2, 0, ui_cmd_planet_slider, 0 },
     { "sl", "SLIDER", "Toggle planet slider lock", 1, 1, 0, ui_cmd_planet_slider_lock, 0 },
     { "b", "[SHIP]", "Select ship to build", 0, 1, 0, ui_cmd_planet_build, 0 },
-    { "gov", NULL, "Toggle planetary governor", 0, 0, 0, ui_cmd_planet_govern, 0 },
-    { "regov", NULL, "Readjust governed planet", 0, 0, 0, ui_cmd_planet_govern_readjust, 0 },
-    { "regovall", NULL, "Readjust all governed planets", 0, 0, 0, ui_cmd_planet_govern_readjust_all, 0 },
-    { "tb", "VALUE", "Target amount of missile bases", 1, 1, 0, ui_cmd_planet_govern_bases, 0 },
+    { "gov", NULL, "Toggle planetary governor", 0, 0, 0, ui_cmd_govern_toggle, 0 },
+    { "regov", NULL, "Readjust governed planet", 0, 0, 0, ui_cmd_govern_readjust, 0 },
+    { "regovall", NULL, "Readjust all governed planets", 0, 0, 0, ui_cmd_govern_readjust_all, 0 },
+    { "tb", "VALUE", "Target amount of missile bases", 1, 1, 0, ui_cmd_govern_bases, 0 },
+    { "govr", NULL, "Choose where to spend rest of production", 0, 0, 0, ui_cmd_govern_rest, 0 },
+    { "govsg", NULL, "Toggle if governor is allowed to build stargates", 0, 0, 0, ui_cmd_govern_sg_toggle, 0 },
+    { "gove", NULL, "Choose universal ecology mode", 0, 0, 0, ui_cmd_govern_eco_mode, 0 },
+    { "govo", NULL, "Show governor options", 0, 0, 0, ui_cmd_govern_opts, 0 },
     { "reloc", "[PLANET]", "Relocate built ships to", 0, 1, 0, ui_cmd_planet_reloc, 0 },
     { "trans", "[PLANET NUM]", "Transport troops to", 0, 2, 0, ui_cmd_planet_trans, 0 },
     { "res", "[BC]", "Transfer reserves", 0, 1, 0, ui_cmd_planet_reserve, 0 },

@@ -923,8 +923,9 @@ static void game_turn_explore(struct game_s *g)
                         if ((pli == g->evn.planet_orion_i) && game_num_news_orion) {
                             g->evn.have_orion_conquer = i + 1;
                         }
-                        /* stop governor for this planet */
                         BOOLVEC_SET0(p->extras, PLANET_EXTRAS_GOVERNOR);
+                        BOOLVEC_SET0(p->extras, PLANET_EXTRAS_GOV_SPEND_REST_SHIP);
+                        BOOLVEC_SET0(p->extras, PLANET_EXTRAS_GOV_SPEND_REST_IND);
                     }
                 }
             }

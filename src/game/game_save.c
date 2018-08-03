@@ -538,7 +538,15 @@ static int game_save_encode_evn(uint8_t *buf, int pos, const gameevents_t *ev, i
     for (int i = 0; i < pnum; ++i) {
         SG_1OOM_EN_BV(ev->help_shown[i], HELP_SHOWN_NUM);
         SG_1OOM_EN_BV(ev->msg_filter[i], FINISHED_NUM);
-        SG_1OOM_EN_DUMMY(13);
+        {
+            uint8_t v;
+            v = ev->gov_eco_mode[i];
+            if (BOOLVEC_IS1(ev->gov_no_stargates, i)) {
+                v |= 0x80;
+            }
+            SG_1OOM_EN_U8(v);
+        }
+        SG_1OOM_EN_DUMMY(12);
     }
     SG_1OOM_EN_TBL_U16(ev->build_finished_num, pnum);
     SG_1OOM_EN_TBL_U8(ev->voted, pnum);
@@ -586,7 +594,13 @@ static int game_save_decode_evn(const uint8_t *buf, int pos, gameevents_t *ev, i
     for (int i = 0; i < pnum; ++i) {
         SG_1OOM_DE_BV(ev->help_shown[i], HELP_SHOWN_NUM);
         SG_1OOM_DE_BV(ev->msg_filter[i], FINISHED_NUM);
-        SG_1OOM_DE_DUMMY(13);
+        {
+            uint8_t v;
+            SG_1OOM_DE_U8(v);
+            ev->gov_eco_mode[i] = v & 7;
+            BOOLVEC_SET(ev->gov_no_stargates, i, (v & 0x80) != 0);
+        }
+        SG_1OOM_DE_DUMMY(12);
     }
     SG_1OOM_DE_TBL_U16(ev->build_finished_num, pnum);
     SG_1OOM_DE_TBL_U8(ev->voted, pnum);

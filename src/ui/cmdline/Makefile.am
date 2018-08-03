@@ -33,6 +33,8 @@ libuicmdline_a_SOURCES = \
     uifleet.h \
     uigame.c \
     uigmap.c \
+    uigovern.c \
+    uigovern.h \
     uiground.c \
     uihelp.c \
     uihelp.h \

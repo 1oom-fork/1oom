@@ -298,16 +298,29 @@ highlights governed planets.
 The classic UI has a new governor screen which is accessed by right clicking on
 the planet name. The governor screen allows:
 - Setting a target amount of missile bases.
+- Choosing where to spend remaining points: research, ships or reserve.
+- Allowing the governors to build stargates.
+- Setting the universal ecology mode:
+    - grow population before spending of defense
+    - grow population before last step
+    - never use resources to grow population
+    - do not decrease ecology spending
+    - do not touch ecology spending
 - Readjusting all governed planets.
 
 The governor works as follows:
-- First, set ecology to minimum that avoids waste.
+- First, remember the old ecology slider position.
+- Then if mode is not "don't touch", set ecology to minimum that avoids waste.
+- Then if mode is "don't decrease" and old value was larger, restore it.
 - Then move industry slider until maximum or reserve achieved.
-- Then move ecology slider if can terraform or grow population until "clean" is achieved.
+- Then if mode is not "do not touch", set ecology to terraform.
+- Then if mode is "grow before defense", set ecology to grow population.
 - Then set defense to upgrade bases or build shield.
 - Then increase defense to build up to target amount of missile bases.
-- Then set shipbuilding to minimum required to build stargate if technology is present.
-- If all of the above are finished, do research.
+- Then if technology is present and governor is allowed to build stargates,
+  set shipbuilding to minimum required to build one.
+- Then if mode is "grow before last", set ecology to grow population.
+- If all of the above are finished, do research, ship building or reserve.
 
 The governor adjusts the sliders only at the following times:
 - When enabling the governor by clicking the planet name.
@@ -317,10 +330,10 @@ The governor adjusts the sliders only at the following times:
 These rules have some implications:
 - The governor can be overridden by adjusting the sliders manually; the
   governor takes over again at the next turn.
-- Adjusting tax, spying, security or sending reserves is not reflected on the
-  sliders on the same turn. Either disable/enable the governor for each affected
-  planet or use the governor screen to readjust all the governed planets for the
-  next turn.
+- Adjusting governor settings, tax, spying, security or sending reserves is not
+  reflected on the sliders on the same turn. Either disable/enable the governor
+  for each affected planet or use the governor screen to readjust all the
+  governed planets for the next turn.
 - The governor copes poorly with random events, especially plague.
 
 The governor is experimental feature and future versions may change the how it
