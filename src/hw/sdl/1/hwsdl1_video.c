@@ -28,6 +28,9 @@ static struct sdl_video_s {
     SDL_Surface *hwrenderbuf;
 #endif
     void (*render)(int bufi);
+#ifdef FEATURE_MODEBUG
+    void (*render_do)(int bufi);
+#endif
     void (*update)(void);
     void (*setpal)(uint8_t *pal, int first, int num);
 
@@ -58,6 +61,22 @@ static struct sdl_video_s {
 } video = { 0 };
 
 /* -------------------------------------------------------------------------- */
+
+#ifdef FEATURE_MODEBUG
+static void video_render_debug_overflow(int bufi)
+{
+    const uint32_t *p = (const uint32_t *)&(video.buf[bufi][video.bufw * video.bufh]);
+    int num = (video.bufw * 2) / sizeof(uint32_t);
+    while (num--) {
+        if ((*p++ != 0x55555555)) {
+            LOG_DEBUG((0, "BUG: video buffer overflow\n"));
+            video.render = video.render_do;
+            break;
+        }
+    }
+    video.render_do(bufi);
+}
+#endif
 
 static void video_render_8bpp(int bufi)
 {
@@ -475,8 +494,17 @@ int hw_video_init(int w, int h)
     }
 #endif
 
+#ifdef FEATURE_MODEBUG
+    video.render_do = video.render;
+    video.render = video_render_debug_overflow;
+#endif
     for (int i = 0; i < NUM_VIDEOBUF; ++i) {
+#ifdef FEATURE_MODEBUG
+        video.buf[i] = lib_malloc(video.bufw * (video.bufh + 2));
+        memset(&(video.buf[i][video.bufw * video.bufh]), 0x55, video.bufw * 2);
+#else
         video.buf[i] = lib_malloc(video.bufw * video.bufh);
+#endif
     }
     video.bufi = 0;
     memset(video.pal, 0, sizeof(video.pal));
