@@ -352,53 +352,6 @@ int ui_cmd_planet_slider_lock(struct game_s *g, int api, struct input_token_s *p
     return 0;
 }
 
-int ui_cmd_planet_govern(struct game_s *g, int api, struct input_token_s *param, int num_param, void *var)
-{
-    planet_t *p = &(g->planet[g->planet_focus_i[api]]);
-    if (p->owner != api) {
-        return -1;
-    }
-    BOOLVEC_TOGGLE(p->extras, PLANET_EXTRAS_GOVERNOR);
-    if (BOOLVEC_IS1(p->extras, PLANET_EXTRAS_GOVERNOR)) {
-        game_planet_govern(g, p);
-    }
-    return 0;
-}
-
-int ui_cmd_planet_govern_readjust(struct game_s *g, int api, struct input_token_s *param, int num_param, void *var)
-{
-    planet_t *p = &(g->planet[g->planet_focus_i[api]]);
-    if ((p->owner == api) && BOOLVEC_IS1(p->extras, PLANET_EXTRAS_GOVERNOR)) {
-        game_planet_govern(g, p);
-    }
-    return 0;
-}
-
-int ui_cmd_planet_govern_readjust_all(struct game_s *g, int api, struct input_token_s *param, int num_param, void *var)
-{
-    game_planet_govern_all_owned_by(g, api);
-    return 0;
-}
-
-int ui_cmd_planet_govern_bases(struct game_s *g, int api, struct input_token_s *param, int num_param, void *var)
-{
-    int v;
-    planet_t *p = &(g->planet[g->planet_focus_i[api]]);
-    if (p->owner != api) {
-        return -1;
-    }
-    if (param[0].type == INPUT_TOKEN_NUMBER) {
-        v = param[0].data.num;
-    } else if (param[0].type == INPUT_TOKEN_RELNUMBER) {
-        v = p->target_bases + param[0].data.num;
-    } else {
-        return -1;
-    }
-    SETRANGE(v, 0, 0xffff);
-    p->target_bases = v;
-    return 0;
-}
-
 int ui_cmd_planet_build(struct game_s *g, int api, struct input_token_s *param, int num_param, void *var)
 {
     planet_t *p = &(g->planet[g->planet_focus_i[api]]);

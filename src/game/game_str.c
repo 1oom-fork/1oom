@@ -418,6 +418,21 @@ const char *game_str_bs_line2 = "bases to eliminate?";
 
 const char *game_str_gv_target = "How many missile bases to build here?";
 const char *game_str_gv_adjust = "Readjust all governed planets?";
+const char *game_str_gv_thispl = "This planet";
+const char *game_str_gv_rest = "Spend rest on";
+const char *game_str_tbl_gv_rest[3] = {
+    "research", "ships", "reserve"
+};
+const char *game_str_gv_allpl = "All planets";
+const char *game_str_gv_starg = "Build stargates";
+const char *game_str_gv_ecom = "Eco mode";
+const char *game_str_tbl_gv_ecom[GOVERNOR_ECO_MODE_NUM] = {
+    "Grow pop before Def",
+    "Grow pop before last",
+    "Never grow pop",
+    "Do not decrease Eco",
+    "Do not touch Eco"
+};
 
 const char *game_str_tbl_te_field[TECH_FIELD_NUM] = {
     "Computer", "Construction", "Force Field", "Planetology", "Propulsion", "Weapon"

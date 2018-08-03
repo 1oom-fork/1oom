@@ -151,8 +151,6 @@ void game_ground_finish(struct ground_s *gr)
             p->pop = gr->s[0].pop1;
             p->bc_to_refit = 0;
             p->pop_oper_fact = 1;
-            /* stop governor for this planet */
-            BOOLVEC_SET0(p->extras, PLANET_EXTRAS_GOVERNOR);
         }
     } else {
         /*7b794*/

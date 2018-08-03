@@ -25,25 +25,59 @@
 /* -------------------------------------------------------------------------- */
 
 struct govern_data_s {
+    int spend_rest;
+    governor_eco_mode_t eco_mode;
     uint16_t target;
+    bool allow_stargates;
+    bool my_planet;
 };
 
 static void govern_draw_cb(void *vptr)
 {
     struct govern_data_s *d = vptr;
-    {
+    if (d->my_planet) {
         const int x = 56, y = 10;
-        ui_draw_filled_rect(x, y, x + 115, y + 59, 0x06, ui_scale);
+        ui_draw_filled_rect(x, y, x + 160, y + 30, 0x06, ui_scale);
         lbxfont_select(0, 0xd, 0, 0);
-        lbxfont_print_str_split(x + 10, y + 5, 105, game_str_gv_target, 0, UI_SCREEN_W, UI_SCREEN_H, ui_scale);
+        lbxfont_print_str_split(x + 5, y + 5, 145, game_str_gv_target, 0, UI_SCREEN_W, UI_SCREEN_H, ui_scale);
         lbxfont_select(2, 6, 0, 0);
-        lbxfont_print_num_right(x + 83, y + 28, d->target, UI_SCREEN_W, ui_scale);
+        lbxfont_print_num_right(x + 73, y + 18, d->target, UI_SCREEN_W, ui_scale);
+    }
+    if (d->my_planet) {
+        const int x = 56;
+        int y = 45;
+        ui_draw_filled_rect(x, y, x + 160, y + 25, 0x06, ui_scale);
+        lbxfont_select(0, 0xd, 0, 0);
+        y += 5;
+        lbxfont_print_str_normal(x + 5, y, game_str_gv_thispl, UI_SCREEN_W, ui_scale);
+        lbxfont_select(0, 0x0, 0, 0);
+        sprintf(ui_data.strbuf, "%s %s", game_str_gv_rest, game_str_tbl_gv_rest[d->spend_rest]);
+        y += 10;
+        lbxfont_print_str_normal(x + 5, y, ui_data.strbuf, UI_SCREEN_W, ui_scale);
     }
     {
-        const int x = 56, y = 130;
-        ui_draw_filled_rect(x, y, x + 115, y + 40, 0x06, ui_scale);
+        const int x = 56;
+        int y = 120;
+        ui_draw_filled_rect(x, y, x + 160, y + 33, 0x06, ui_scale);
         lbxfont_select(0, 0xd, 0, 0);
-        lbxfont_print_str_split(x + 10, y + 5, 105, game_str_gv_adjust, 0, UI_SCREEN_W, UI_SCREEN_H, ui_scale);
+        y += 5;
+        lbxfont_print_str_normal(x + 5, y, game_str_gv_allpl, UI_SCREEN_W, ui_scale);
+        y += 10;
+        ui_draw_filled_rect(x + 5, y + 1, x + 8, y + 4, 0x01, ui_scale);
+        if (d->allow_stargates) {
+            ui_draw_filled_rect(x + 6, y + 2, x + 7, y + 3, 0x44, ui_scale);
+        }
+        lbxfont_select(0, 0x0, 0, 0);
+        lbxfont_print_str_normal(x + 11, y, game_str_gv_starg, UI_SCREEN_W, ui_scale);
+        y += 8;
+        sprintf(ui_data.strbuf, "%s: %s", game_str_gv_ecom, game_str_tbl_gv_ecom[d->eco_mode]);
+        lbxfont_print_str_normal(x + 5, y, ui_data.strbuf, UI_SCREEN_W, ui_scale);
+    }
+    {
+        const int x = 56, y = 160;
+        ui_draw_filled_rect(x, y, x + 160, y + 14, 0x06, ui_scale);
+        lbxfont_select(0, 0xd, 0, 0);
+        lbxfont_print_str_split(x + 5, y + 5, 155, game_str_gv_adjust, 0, UI_SCREEN_W, UI_SCREEN_H, ui_scale);
     }
 }
 
@@ -53,25 +87,54 @@ void ui_govern(struct game_s *g, player_id_t pi)
 {
     struct govern_data_s d;
     bool flag_done = false;
-    int16_t oi_cancel, oi_accept, oi_p, oi_m, oi_p10, oi_m10, oi_adjust, oi_wheel;
-    const int x = 56, y = 10;
+    int16_t oi_cancel, oi_accept, oi_p, oi_m, oi_p10, oi_m10, oi_adjust, oi_wheel, oi_spend, oi_sg, oi_ecom;
+    const int x = 56;
+    int y = 10;
     int16_t scroll = 0;
     planet_t *p = &(g->planet[g->planet_focus_i[pi]]);
 
     ui_draw_copy_buf();
     uiobj_finish_frame();
-    d.target = p->target_bases;
+    d.my_planet = (p->owner == pi);
+    if (d.my_planet) {
+        d.target = p->target_bases;
+        d.spend_rest = (p->extras[0] >> 1) & 3;
+    } else {
+        d.target = 0;
+        d.spend_rest = 0;
+    }
+    d.eco_mode = g->evn.gov_eco_mode[pi];
+    d.allow_stargates = BOOLVEC_IS0(g->evn.gov_no_stargates, pi);
     ui_cursor_setup_area(1, &ui_cursor_area_tbl[0]);
 
     uiobj_table_clear();
-    oi_p = uiobj_add_t0(x + 20 + 23, y + 25, "", ui_data.gfx.starmap.move_but_p, MOO_KEY_UNKNOWN);
-    oi_m = uiobj_add_t0(x + 20 + 12, y + 25, "", ui_data.gfx.starmap.move_but_m, MOO_KEY_UNKNOWN);
-    oi_p10 = uiobj_add_t0(x + 20 + 34, y + 25, "", ui_data.gfx.starmap.move_but_a, MOO_KEY_UNKNOWN);
-    oi_m10 = uiobj_add_t0(x + 20, y + 25, "", ui_data.gfx.starmap.move_but_n, MOO_KEY_UNKNOWN);
-    oi_cancel = uiobj_add_t0(x + 10, y + 41, "", ui_data.gfx.starmap.reloc_bu_cancel, MOO_KEY_ESCAPE);
-    oi_accept = uiobj_add_t0(x + 66, y + 41, "", ui_data.gfx.starmap.reloc_bu_accept, MOO_KEY_SPACE);
-    oi_adjust = uiobj_add_t0(x + 66, y + 145, "", ui_data.gfx.screens.tech_but_ok, MOO_KEY_o);
-    oi_wheel = uiobj_add_mousewheel(x, y, x + 115, y + 59, &scroll);
+    if (d.my_planet) {
+        oi_p = uiobj_add_t0(x + 5 + 23, y + 15, "", ui_data.gfx.starmap.move_but_p, MOO_KEY_UNKNOWN);
+        oi_m = uiobj_add_t0(x + 5 + 12, y + 15, "", ui_data.gfx.starmap.move_but_m, MOO_KEY_UNKNOWN);
+        oi_p10 = uiobj_add_t0(x + 5 + 34, y + 15, "", ui_data.gfx.starmap.move_but_a, MOO_KEY_UNKNOWN);
+        oi_m10 = uiobj_add_t0(x + 5, y + 15, "", ui_data.gfx.starmap.move_but_n, MOO_KEY_UNKNOWN);
+        oi_cancel = uiobj_add_t0(x + 78, y + 14, "", ui_data.gfx.starmap.reloc_bu_cancel, MOO_KEY_ESCAPE);
+        oi_accept = uiobj_add_t0(x + 116, y + 14, "", ui_data.gfx.starmap.reloc_bu_accept, MOO_KEY_SPACE);
+    } else {
+        oi_p = UIOBJI_INVALID;
+        oi_m = UIOBJI_INVALID;
+        oi_p10 = UIOBJI_INVALID;
+        oi_m10 = UIOBJI_INVALID;
+        oi_cancel = UIOBJI_INVALID;
+        oi_accept = UIOBJI_INVALID;
+    }
+    oi_adjust = uiobj_add_t0(x + 123, y + 151, "", ui_data.gfx.screens.tech_but_ok, MOO_KEY_o);
+    oi_wheel = uiobj_add_mousewheel(x, y, x + 80, y + 30, &scroll);
+    y = 45 + 15;
+    if (d.my_planet) {
+        oi_spend = uiobj_add_mousearea(x, y, x + 160, y + 8, MOO_KEY_r);
+    } else {
+        oi_spend = UIOBJI_INVALID;
+    }
+    y = 120 + 15;
+    oi_sg = uiobj_add_mousearea(x, y, x + 160, y + 8, MOO_KEY_s);
+    y += 8;
+    oi_ecom = uiobj_add_mousearea(x, y, x + 160, y + 8, MOO_KEY_e);
 
     uiobj_set_callback_and_delay(govern_draw_cb, &d, 1);
 
@@ -108,6 +171,16 @@ void ui_govern(struct game_s *g, player_id_t pi)
             ADDSATT(d.target, 1, 0xffff);
         } else if (oi == oi_p10) {
             ADDSATT(d.target, 10, 0xffff);
+        } else if (oi == oi_spend) {
+            d.spend_rest = (d.spend_rest + 1) % 3;
+            BOOLVEC_SET(p->extras, PLANET_EXTRAS_GOV_SPEND_REST_SHIP, ((d.spend_rest & 1) != 0));
+            BOOLVEC_SET(p->extras, PLANET_EXTRAS_GOV_SPEND_REST_IND, ((d.spend_rest & 2) != 0));
+        } else if (oi == oi_sg) {
+            BOOLVEC_SET(g->evn.gov_no_stargates, pi, d.allow_stargates);
+            d.allow_stargates = !d.allow_stargates;
+        } else if (oi == oi_ecom) {
+            d.eco_mode = (d.eco_mode + 1) % GOVERNOR_ECO_MODE_NUM;
+            g->evn.gov_eco_mode[pi] = d.eco_mode;
         }
         if (!flag_done) {
             govern_draw_cb(&d);

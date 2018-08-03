@@ -143,6 +143,15 @@ typedef enum game_end_type_e {
     GAME_END_QUIT
 } game_end_type_t;
 
+typedef enum {
+    GOVERNOR_ECO_MODE_GROW_BEFORE_DEF = 0,
+    GOVERNOR_ECO_MODE_GROW_BEFORE_LAST, /*1*/
+    GOVERNOR_ECO_MODE_NEVER_GROW, /*2*/
+    GOVERNOR_ECO_MODE_DO_NOT_DECREASE, /*3*/
+    GOVERNOR_ECO_MODE_DO_NOT_TOUCH, /*4*/
+    GOVERNOR_ECO_MODE_NUM
+} governor_eco_mode_t;
+
 typedef uint16_t shipcount_t;
 typedef uint32_t shipsum_t;
 

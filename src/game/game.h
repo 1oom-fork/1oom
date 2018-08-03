@@ -251,6 +251,8 @@ typedef struct gameevents_s {
     BOOLVEC_TBL_DECLARE(help_shown, PLAYER_NUM, HELP_SHOWN_NUM);
     BOOLVEC_TBL_DECLARE(msg_filter, PLAYER_NUM, FINISHED_NUM);
     uint16_t build_finished_num[PLAYER_NUM];
+    governor_eco_mode_t gov_eco_mode[PLAYER_NUM];
+    BOOLVEC_DECLARE(gov_no_stargates, PLAYER_NUM);
     player_id_t voted[PLAYER_NUM];
     uint8_t best_ecorestore[PLAYER_NUM];
     uint8_t best_wastereduce[PLAYER_NUM];

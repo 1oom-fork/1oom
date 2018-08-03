@@ -1496,6 +1496,8 @@ static const struct game_intros_s game_intros_evn[] = {
     GAME_INTROS_SUB(gameevents_s, ceasefire, game_intros_ceasefire),
     GAME_INTROS_SUB(gameevents_s, help_shown, game_intros_help_shown),
     GAME_INTROS_SUB(gameevents_s, msg_filter, game_intros_msg_filter),
+    GAME_INTROS_TBL(gameevents_s, gov_eco_mode),
+    GAME_INTROS_BV(gameevents_s, gov_no_stargates, PLAYER_NUM),
     GAME_INTROS_TBL(gameevents_s, build_finished_num),
     GAME_INTROS_TBL(gameevents_s, voted),
     GAME_INTROS_TBL(gameevents_s, best_ecorestore),
@@ -2327,6 +2329,8 @@ static int savetype_en_text(struct game_s *g, const char *fname)
                 text_dump_prefix_del(tp);
             }
         }
+        OUTLINETBL("gov_eco_mode", g->players, ev->gov_eco_mode);
+        OUTLINEBV("gov_no_stargates", ev->gov_no_stargates, g->players);
         OUTLINETBL("build_finished_num", g->players, ev->build_finished_num);
         OUTLINETBL("voted", g->players, ev->voted);
         OUTLINETBL("best_ecorestore", g->players, ev->best_ecorestore);
