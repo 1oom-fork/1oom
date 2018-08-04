@@ -370,7 +370,7 @@ again:
         oi_tbl_planets[i] = UIOBJI_INVALID;
     }
 
-    uiobj_set_callback_and_delay(planets_draw_cb, &d, 2);
+    uiobj_set_callback_and_delay(planets_draw_cb, &d, 1);
 
     uiobj_table_clear();
     oi_alt_moola = uiobj_add_alt_str("moola");
@@ -459,7 +459,7 @@ again:
             }
             planets_draw_cb(&d); /* FIXME not needed in original */
             ui_draw_finish();
-            ui_delay_ticks_or_click(2);
+            ui_delay_ticks_or_click(1);
         }
     }
 
