@@ -536,7 +536,7 @@ static inline void uiobj_handle_hmm1_sub1(int i)
     }
 }
 
-static void uiobj_handle_hmm2(int i, bool in_focus)
+static void uiobj_handle_click(int i, bool in_focus)
 {
     uiobj_t *p = &uiobj_tbl[i];
     switch (p->type) {
@@ -1148,15 +1148,15 @@ static void uiobj_cursor_redraw_hmm2(int16_t oi, int mx, int my)
                 if ((q->type != 3) || (p->type == 3)) {
                     if (q->type == 0xa) {
                         if ((p->type == 0xa) && p->ta.z12) {
-                            uiobj_handle_hmm2(uiobj_focus_oi, false);
+                            uiobj_handle_click(uiobj_focus_oi, false);
                         }
                     } else {
-                        uiobj_handle_hmm2(uiobj_focus_oi, false);
+                        uiobj_handle_click(uiobj_focus_oi, false);
                     }
                 }
             }
             uiobj_focus_oi = oi;
-            uiobj_handle_hmm2(oi, true);
+            uiobj_handle_click(oi, true);
             if (p->type == 4) {
                 mx = mouse_x;
                 my = mouse_y;
@@ -1420,7 +1420,7 @@ static int16_t uiobj_handle_input_sub0(void)
                     }
                     if ((p->type != 3) && (p->type != 0xa)) {
                         ui_cursor_erase0();
-                        uiobj_handle_hmm2(uiobj_focus_oi, false);
+                        uiobj_handle_click(uiobj_focus_oi, false);
                         ui_cursor_store_bg0(mx, my);
                         ui_cursor_draw0(mx, my);
                         mouse_set_xy(mx, my);
@@ -1542,7 +1542,7 @@ void uiobj_handle_hmm1(void)
     for (int i = 1; i < uiobj_table_num; ++i) {
         uiobj_t *p = &uiobj_tbl[i];
         if ((i == uiobj_focus_oi) && (p->type != 4)) {
-            uiobj_handle_hmm2(i, true);
+            uiobj_handle_click(i, true);
         } else {
             uiobj_handle_hmm1_sub1(i);
         }
