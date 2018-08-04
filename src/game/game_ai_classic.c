@@ -235,12 +235,12 @@ static void game_ai_classic_turn_p1_front(struct game_s *g, struct ai_turn_p1_s 
     bestspeed = game_tech_player_best_engine(g, pi) * 10 + 10;
     ait->num_fronts = 0;
     /* unused
-    BOOLVEC_DECLARE(tbl_planet_hmm1, PLANETS_MAX);
-    BOOLVEC_CLEAR(tbl_planet_hmm1, PLANETS_MAX);
+    BOOLVEC_DECLARE(tbl_own_transport_dest, PLANETS_MAX);
+    BOOLVEC_CLEAR(tbl_own_transport_dest, PLANETS_MAX);
     for (int i = 0; i < g->transport_num; ++i) {
-        transport_t *r = &(g->transport[j]);
+        const transport_t *r = &(g->transport[j]);
         if (r->owner == pi) {
-            BOOLVEC_SET1(tbl_planet_hmm1, r->dest);
+            BOOLVEC_SET1(tbl_own_transport_dest, r->dest);
         }
     }
     */
@@ -1157,7 +1157,7 @@ static int find_havebuf_item(const int8_t *tbl, int num)
             --num;
         }
     }
-    return i ? i - 1 : 0;
+    return i ? (i - 1) : 0;
 }
 
 static int game_ai_classic_design_ship_get_item(struct game_s *g, int num, int chance)
@@ -2735,8 +2735,8 @@ static void game_battle_ai_target1_sub5(struct battle_s *bt)
 {
     int itemi = bt->cur_item;
     struct battle_item_s *b = &(bt->item[itemi]);
-    int dist = 0, mindist = 10, n = 0, missdist = 0;
-    uint8_t xy;
+    int dist = 0, mindist = 10, missdist = 0;
+    uint8_t xy = BATTLE_XY_INVALID;
     if (b->unman == b->man) {
         return;
     }
@@ -2759,6 +2759,10 @@ static void game_battle_ai_target1_sub5(struct battle_s *bt)
                 }
             }
         }
+        if (xy == BATTLE_XY_INVALID) {
+            log_warning("BUG: subspace destination not found\n");
+            xy = BATTLE_XY_SET(b->sx, b->sy);
+        }
         game_battle_item_move(bt, itemi, BATTLE_XY_GET_X(xy), BATTLE_XY_GET_Y(xy));
     } else {
         /*5a0d8*/
@@ -2771,7 +2775,7 @@ static void game_battle_ai_target1_sub5(struct battle_s *bt)
                     SETMIN(missdist, dist);
                 }
             }
-            n = 0;
+            xy = BATTLE_XY_INVALID;
             for (int sx = b->sx - 1; sx <= (b->sx + 1); ++sx) {
                 if ((sx < 0) || (sx >= BATTLE_AREA_W)) {
                     continue;
@@ -2791,13 +2795,12 @@ static void game_battle_ai_target1_sub5(struct battle_s *bt)
                         }
                         if (mindist > missdist) {
                             missdist = mindist;
-                            n = 1;
                             xy = BATTLE_XY_SET(sx, sy);
                         }
                     }
                 }
             }
-            if (n > 0) {
+            if (xy != BATTLE_XY_INVALID) {
                 game_battle_item_move(bt, itemi, BATTLE_XY_GET_X(xy), BATTLE_XY_GET_Y(xy));
             } else {
                 b->actman = 0;
