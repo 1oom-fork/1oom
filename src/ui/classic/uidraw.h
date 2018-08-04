@@ -15,7 +15,7 @@ extern const uint8_t tbl_banner_color2[BANNER_NUM];
 extern const uint8_t tbl_banner_fontparam[BANNER_NUM];
 
 extern void ui_draw_copy_buf(void);
-extern void ui_draw_box_fill(int x0, int y0, int x1, int y1, const uint8_t *colorptr, uint8_t color0, uint16_t colorhalf, uint16_t ac, uint8_t ae);
+extern void ui_draw_box_fill(int x0, int y0, int x1, int y1, const uint8_t *colorptr, uint8_t color0, uint16_t colorhalf, uint16_t ac, uint8_t colorpos);
 extern void ui_draw_box_grain(int x0, int y0, int x1, int y1, uint8_t color0, uint8_t color1, uint8_t ae);
 extern void ui_draw_text_overlay(int x, int y, const char *str);
 extern void ui_draw_finish(void);
