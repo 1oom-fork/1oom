@@ -1128,7 +1128,7 @@ static uint32_t uiobj_handle_kbd(int16_t *oiptr)
     return key;
 }
 
-static void uiobj_cursor_redraw_hmm2(int16_t oi, int mx, int my)
+static void uiobj_click_obj(int16_t oi, int mx, int my)
 {
     if ((mx < 0) || (mx >= UI_SCREEN_W) || (my < 0) || (my >= UI_SCREEN_H)) {
         return;
@@ -1267,7 +1267,7 @@ static int16_t uiobj_handle_input_sub0(void)
             if (oi != 0) {
                 mx = p->x0 + (p->x1 - p->x0) / 2;
                 my = p->y0 + (p->y1 - p->y0) / 2;
-                uiobj_cursor_redraw_hmm2(oi, mx, my);
+                uiobj_click_obj(oi, mx, my);
                 if (p->type == 1) {
                     if (*p->vptr == 0) {
                         *p->vptr = 1;
@@ -1292,7 +1292,7 @@ static int16_t uiobj_handle_input_sub0(void)
             if (oi != 0) {
                 p = &uiobj_tbl[oi];
                 if (p->type != 6) {
-                    uiobj_cursor_redraw_hmm2(oi, mx, my);
+                    uiobj_click_obj(oi, mx, my);
                 }
                 if (p->type == 1) {
                     if (*p->vptr == 0) {
@@ -1373,7 +1373,7 @@ static int16_t uiobj_handle_input_sub0(void)
             p = &uiobj_tbl[oi];
             if (oi != 0) {
                 uiobj_clicked_oi = oi;
-                uiobj_cursor_redraw_hmm2(oi, mx, my);
+                uiobj_click_obj(oi, mx, my);
                 uiobj_finish_callback_delay_1();
             }
             uiobj_focus_oi = -1;
@@ -1431,7 +1431,7 @@ static int16_t uiobj_handle_input_sub0(void)
                 if (q->type == 6) {
                     uiobj_do_callback();
                 }
-                uiobj_cursor_redraw_hmm2(oi, mx, my);
+                uiobj_click_obj(oi, mx, my);
             }
             uiobj_clicked_oi = oi;
             if (uiobj_flag_skip_delay != 0) {
@@ -1470,7 +1470,7 @@ static int16_t uiobj_handle_input_sub0(void)
                     }
                     break;
                 case 4:
-                    uiobj_cursor_redraw_hmm2(oi, mx, my);
+                    uiobj_click_obj(oi, mx, my);
                 default:
                     break;
             }
