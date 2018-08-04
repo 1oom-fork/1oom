@@ -250,7 +250,7 @@ static void drawscreen_inlbx(void)
                 lbxgfx_get_w(p), lbxgfx_get_h(p),
                 frame, lbxgfx_get_frames(p), lbxgfx_get_frames2(p),
                 lbxgfx_get_frameclearflag(p, frame) ? 'c' : '-',
-                lbxgfx_get_ehandle(p), lbxgfx_get_epage(p), lbxgfx_get_hmm0c(p),
+                lbxgfx_get_ehandle(p), lbxgfx_get_epage(p), lbxgfx_get_offs0c(p),
                 lbxgfx_get_indep(p), lbxgfx_get_format(p), cur_xoff, cur_yoff
                );
         drawstr(0, 200 + 8 * 1, linebuf, textcolor, 0);
