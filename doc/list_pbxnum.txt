@@ -23,6 +23,12 @@ bt_no_tohit_acc : 0..1, 0
     This results in Hyper-X or better missiles or Megabolt Cannon in slots 1..3
     affecting the accuracy of a beam weapon in slot 4.
 
+bt_oracle_fix : 0..1, 0
+  - Fix the Oracle Interface.
+    In MOO1 the Oracle Interface does nothing to the target's shields. The AI
+    does take the target's (!) Oracle shield into account in damage esimates,
+    including those related to missiles.
+
 weapon_list_max : 0..64, 30
   - Max. number of weapons shown in the ship design weapon list.
 
