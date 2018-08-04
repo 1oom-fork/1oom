@@ -166,7 +166,7 @@ static int smidy(const uiobj_t *p)
     return p->y0 + (p->y1 - p->y0) / 2;
 }
 
-static int smidyhmm2(const uiobj_t *p)
+static int smidtexty(const uiobj_t *p)
 {
     return smidy(p) - hmmdiv2(lbxfont_get_height());
 }
@@ -187,7 +187,7 @@ static void uiobj_handle_t03_cond(uiobj_t *p, bool cond)
         lbxgfx_set_frame_0(p->t0.lbxdata);
         lbxgfx_draw_frame(p->x0, p->y0, p->t0.lbxdata, UI_SCREEN_W);
         lbxfont_select(p->t0.fontnum, p->t0.fonta2, 0, 0);
-        lbxfont_print_str_center(smidx(p), smidyhmm2(p), p->t0.str, UI_SCREEN_W);
+        lbxfont_print_str_center(smidx(p), smidtexty(p), p->t0.str, UI_SCREEN_W);
     } else {
         if (p->t0.indep == 0) {
             lbxgfx_set_frame_0(p->t0.lbxdata);
@@ -197,7 +197,7 @@ static void uiobj_handle_t03_cond(uiobj_t *p, bool cond)
         }
         lbxgfx_draw_frame(p->x0, p->y0, p->t0.lbxdata, UI_SCREEN_W);
         lbxfont_select(p->t0.fontnum, p->t0.fonta2, 0, 0);
-        lbxfont_print_str_center(smidx(p) + uiobj_xoff, smidyhmm2(p) + uiobj_yoff, p->t0.str, UI_SCREEN_W);
+        lbxfont_print_str_center(smidx(p) + uiobj_xoff, smidtexty(p) + uiobj_yoff, p->t0.str, UI_SCREEN_W);
     }
 }
 
