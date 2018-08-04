@@ -1668,8 +1668,14 @@ bool game_battle_attack(struct battle_s *bt, int attacker_i, int target_i, bool 
                 }
                 if ((damagerange != 0) || w->is_bio) {
                     /*5755a*/
+                    int absorbdiv;
                     if (!bt->autoresolve) {
                         ui_sound_play_sfx(w->sound);
+                    }
+                    if (w->is_bomb) {
+                        absorbdiv = (w->halveshield ? 2 : 1);
+                    } else {
+                        absorbdiv = game_battle_get_absorbdiv(b, w, false);
                     }
                     if (w->is_bomb) {
                         if (w->is_bio) {
@@ -1734,7 +1740,7 @@ bool game_battle_attack(struct battle_s *bt, int attacker_i, int target_i, bool 
                                 dmg = (dmg + 1) / 2;
                                 dmg += w->damagemin;
                                 dmg /= damagediv;
-                                dmg -= bd->absorb / (w->halveshield ? 2 : 1);
+                                dmg -= bd->absorb / absorbdiv;
                                 dmg *= w->damagemul;
                                 dmg *= damagemul2;
                                 if ((bd->sbmask & (1 << SHIP_SPECIAL_BOOL_DISP)) && (rnd_1_n(100, &bt->g->seed) < 35)) {
@@ -2073,6 +2079,19 @@ void game_battle_area_setup(struct battle_s *bt)
     }
 }
 
+int game_battle_get_absorbdiv(const struct battle_item_s *b, const struct shiptech_weap_s *w, bool force_oracle_check)
+{
+    int v = 1;
+    if ((force_oracle_check || game_num_bt_oracle_fix) && (b->sbmask & (1 << SHIP_SPECIAL_BOOL_ORACLE))) {
+        /* XXX we do not check if w is a beam weapon as this is called by buggy-like-v1.3 AI code for missiles */
+        v = 2;
+    }
+    v += w->halveshield ? 1 : 0;
+    if (v == 3) {
+        v = 4;
+    }
+    return v;
+}
 
 bool game_battle_with_human(struct battle_s *bt)
 {
