@@ -157,6 +157,7 @@ static const struct numtbl_s {
     DEFNUMITEML(bt_wait_no_reload, NUMTYPE_BOOL, 0, 1),
     DEFNUMITEML(bt_precap_tohit, NUMTYPE_BOOL, 0, 1),
     DEFNUMITEML(bt_no_tohit_acc, NUMTYPE_BOOL, 0, 1),
+    DEFNUMITEML(bt_oracle_fix, NUMTYPE_BOOL, 0, 1),
     DEFNUMITEML(stargate_cost, NUMTYPE_S, 1, 0xffff),
     DEFNUMITEML(stargate_maint, NUMTYPE_S, 1, 0xffff),
     DEFNUMITEML(weapon_list_max, NUMTYPE_S, 0, WEAPON_NUM),
