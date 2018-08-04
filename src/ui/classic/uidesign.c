@@ -68,7 +68,7 @@ static const uint8_t colortbls_sd[] = {
     /*padding*/ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 };
 
-static uint8_t const * const colortbl_sd_hmm1 = &colortbls_sd[0x00];
+static uint8_t const * const colortbl_sd_textinput = &colortbls_sd[0x00];
 static uint8_t const * const colortbl_sd_bc = &colortbls_sd[0x0a];
 static uint8_t const * const colortbl_sd_b6 = &colortbls_sd[0x0d];
 static uint8_t const * const colortbl_sd_bf = &colortbls_sd[0x10];
@@ -298,7 +298,7 @@ static void design_init_ois(struct ui_design_data_s *u)
     u->oi_build = uiobj_add_t0(282, 182, game_str_sd_build, ui_data.gfx.design.blank, MOO_KEY_b);
     u->oi_clear = uiobj_add_t0(282, 166, game_str_sd_clear, ui_data.gfx.design.blank, MOO_KEY_c);
     lbxfont_select(0, 0, 5, 3);
-    u->oi_name = uiobj_add_textinput(214, 151, 56, d->gd->sd.name, SHIP_NAME_LEN - 1, 1, true, false, colortbl_sd_hmm1, MOO_KEY_UNKNOWN);
+    u->oi_name = uiobj_add_textinput(214, 151, 56, d->gd->sd.name, SHIP_NAME_LEN - 1, 1, true, false, colortbl_sd_textinput, MOO_KEY_UNKNOWN);
     uiobj_dec_y1(u->oi_name);
     SETMIN(d->gd->sd.man, d->gd->sd.engine);
     u->oi_man = uiobj_add_mousearea(167, 45, 305, 52, MOO_KEY_UNKNOWN);
@@ -1110,8 +1110,6 @@ bool ui_design(struct game_s *g, struct game_design_s *gd, player_id_t active_pl
     d.gd = gd;
     d.api = active_player;
     u.d = &d;
-
-    /* design_hmma6 = a6; always 0 */
 
     design_clear_ois(&u);
 

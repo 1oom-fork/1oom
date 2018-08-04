@@ -35,7 +35,7 @@
 
 /* -------------------------------------------------------------------------- */
 
-static void ui_help_draw(const char *str0, const char *str1, int x, int y, int w, int ltype, int lx1, int ly1, const uint8_t *ctbl, uint8_t c0, uint8_t c1, uint8_t c2, uint8_t c3, uint8_t c4, uint8_t c5, uint8_t c6, int colorpos)
+static void ui_help_draw(const char *str0, const char *str1, int x, int y, int w, int ltype, int lx1, int ly1, const uint8_t *ctbl, uint8_t c0, uint8_t c1, uint8_t c2, uint8_t c3, uint8_t c4, uint8_t c5, uint8_t c6, uint8_t colorpos)
 {
     int x1, y1;
     LOG_DEBUG((DEBUGLEVEL_HELPUI, "%s: cp:%i (%i,%i) w:%i lt:%i lx:%i ly:%i '%s' '%s'\n", __func__, colorpos, x, y, w, ltype, lx1, ly1, str0, str1));

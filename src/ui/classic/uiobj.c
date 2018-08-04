@@ -155,13 +155,6 @@ int uiobj_maxy = UI_SCREEN_H - 1;
 
 #define UIOBJI_ALLOC()  uiobj_table_num++
 
-static inline int16_t hmmdiv2(int16_t v)
-{
-    --v;
-    if (v < 0) { ++v; }
-    return v / 2;
-}
-
 static int smidx(const uiobj_t *p)
 {
     return p->x0 + (p->x1 - p->x0) / 2;
@@ -174,7 +167,13 @@ static int smidy(const uiobj_t *p)
 
 static int smidtexty(const uiobj_t *p)
 {
-    return smidy(p) - hmmdiv2(lbxfont_get_height());
+    int16_t v = lbxfont_get_height();
+    --v;
+    if (v < 0) {
+        ++v;
+    }
+    v /= 2;
+    return smidy(p) - v;
 }
 
 static inline bool uiobj_is_at_xy(const uiobj_t *p, int x, int y)
