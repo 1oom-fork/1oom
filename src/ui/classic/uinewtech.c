@@ -579,7 +579,6 @@ void ui_newtech(struct game_s *g, int pi)
                 hw_video_copy_back_to_page3();
             }
             if (d.cur_source == -1) {
-                /*soundsys_hmm3?*/
                 ui_draw_erase_buf();
                 d.gfx_lab = lbxfile_item_get(LBXFILE_TECHNO, 0);
                 lbxgfx_draw_frame(0, 0, d.gfx_lab, UI_SCREEN_W);
