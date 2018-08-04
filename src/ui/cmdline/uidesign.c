@@ -44,7 +44,7 @@ static int cmd_look(struct game_s *g, int api, struct input_token_s *param, int 
         for (int i = 0; i < SPECIAL_SLOT_NUM; ++i) {
             v |= tbl_shiptech_special[sd->special[i]].boolmask;
         }
-        v = tbl_shiptech_comp[sd->comp].level + (v & (1 << SHIP_SPECIAL_BOOL_SCANNER)) ? 1 : 0;
+        v = tbl_shiptech_comp[sd->comp].level + ((v & (1 << SHIP_SPECIAL_BOOL_SCANNER)) ? 1 : 0);
         printf("%c%s: %s, %s %u\n", d->flag_disable_comp ? '-' : ' ', game_str_sd_comp, *tbl_shiptech_comp[sd->comp].nameptr, game_str_sd_att, v);
     }
     {
