@@ -35,10 +35,10 @@
 
 /* -------------------------------------------------------------------------- */
 
-static void ui_help_draw(const char *str0, const char *str1, int x, int y, int w, int ltype, int lx1, int ly1, const uint8_t *ctbl, uint8_t c0, uint8_t c1, uint8_t c2, uint8_t c3, uint8_t c4, uint8_t c5, uint8_t c6, int hmmz)
+static void ui_help_draw(const char *str0, const char *str1, int x, int y, int w, int ltype, int lx1, int ly1, const uint8_t *ctbl, uint8_t c0, uint8_t c1, uint8_t c2, uint8_t c3, uint8_t c4, uint8_t c5, uint8_t c6, int colorpos)
 {
     int x1, y1;
-    LOG_DEBUG((DEBUGLEVEL_HELPUI, "%s: z:%i (%i,%i) w:%i lt:%i lx:%i ly:%i '%s' '%s'\n", __func__, hmmz, x, y, w, ltype, lx1, ly1, str0, str1));
+    LOG_DEBUG((DEBUGLEVEL_HELPUI, "%s: cp:%i (%i,%i) w:%i lt:%i lx:%i ly:%i '%s' '%s'\n", __func__, colorpos, x, y, w, ltype, lx1, ly1, str0, str1));
     if (str1[0] == '\0') {
         return;
     }
@@ -47,7 +47,7 @@ static void ui_help_draw(const char *str0, const char *str1, int x, int y, int w
     if (str0[0] != '\0') {
         y1 += lbxfont_get_height() + 4;
     }
-    ui_draw_box_fill(x, y, x1, y1, ctbl, 0, 5, 1, hmmz);
+    ui_draw_box_fill(x, y, x1, y1, ctbl, 0, 5, 1, colorpos);
     if (ltype != 0) {
         if ((lx1 >= x) && (lx1 <= x1)) {
             int lx0, ly0;
