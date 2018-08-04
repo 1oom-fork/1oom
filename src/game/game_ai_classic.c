@@ -2164,25 +2164,13 @@ static bool game_ai_classic_battle_ai_ai_resolve(struct battle_s *bt)
 
 /* -------------------------------------------------------------------------- */
 
-static int game_battle_get_absorbdiv(const struct battle_item_s *b, weapon_t wpnt)
-{
-    const struct shiptech_weap_s *w = &(tbl_shiptech_weap[wpnt]);
-    int v;
-    v = (b->sbmask & (1 << SHIP_SPECIAL_BOOL_ORACLE)) ? 2 : 1;
-    v += w->halveshield ? 1 : 0;
-    if (v == 3) {
-        v = 4;
-    }
-    return v;
-}
-
 static int game_ai_battle_missile_dmg(const struct battle_s *bt, int missile_i)
 {
     const struct battle_missile_s *m = &(bt->missile[missile_i]);
     /*di*/const struct battle_item_s *b = &(bt->item[m->target]);
     const struct battle_item_s *bs = &(bt->item[m->source]);
     const struct shiptech_weap_s *w = &(tbl_shiptech_weap[m->wpnt]);
-    int damagepotential, damagediv = 1, /*si*/miss_chance, absorbdiv, damage;
+    int damagepotential, damagediv = 1, /*si*/miss_chance, damage;
     miss_chance = 50 - (bs->complevel - b->misdefense) * 10;
     if (b->cloak == 1) {
         miss_chance += 50;
@@ -2192,10 +2180,15 @@ static int game_ai_battle_missile_dmg(const struct battle_s *bt, int missile_i)
     if ((m->target == 0/*planet*/) && (!w->is_bomb) && (w->misstype > 0)) {
         damagediv = 2;
     }
-    absorbdiv = game_battle_get_absorbdiv(b, m->wpnt); /* FIXME BUG? checks target's oracle */
     damage = w->damagemax / damagediv;
-    damage -= b->absorb;
-    damage /= absorbdiv;    /* FIXME ??? */
+    if (bt->g->ai_id == GAME_AI_CLASSIC) {
+        int absorbdiv = game_battle_get_absorbdiv(b, w, true); /* WASBUG checks target's Oracle */
+        /* WASBUG should be damage -= b->absorb / absorbdiv; if Oracle worked for missiles */
+        damage -= b->absorb;
+        damage /= absorbdiv;
+    } else {
+        damage -= b->absorb;    /* missiles are not affected by Oracle */
+    }
     damage *= w->damagemul;
     SETMIN(damage, b->hp1);
     damage *= m->damagemul2;
@@ -2311,7 +2304,11 @@ static int game_ai_battle_dmggive(struct battle_s *bt, int itemi1, int itemi2, i
     for (int i = 0; i < num_weap; ++i) {
         const struct shiptech_weap_s *w = &(tbl_shiptech_weap[b->wpn[i].t]);
         int absorbdiv, range;
-        absorbdiv = game_battle_get_absorbdiv(bd, b->wpn[i].t); /* FIXME BUG? checks target's oracle */
+        if (bt->g->ai_id == GAME_AI_CLASSIC) {
+            absorbdiv = game_battle_get_absorbdiv(bd, w, true); /* WASBUG checks target's oracle */
+        } else {
+            absorbdiv = game_battle_get_absorbdiv(b, w, false);
+        }
         if (itemi2 == 0/*planet*/) {
             if ((!w->is_bomb) && ((w->misstype > 0) || (w->damagemin != w->damagemax))) {
                 damagediv = 2;
@@ -2363,7 +2360,12 @@ static int game_ai_battle_dmggive(struct battle_s *bt, int itemi1, int itemi2, i
                 if ((w->damagemax / damagediv) > (bd->absorb / absorbdiv)) {
                     int dmgmin, dmgmax;
                     dmgmax = (w->damagemax / damagediv) - (bd->absorb / absorbdiv);
-                    dmgmin = (w->damagemin > bd->absorb) ? (w->damagemin - bd->absorb) : 1; /* FIXME {damage,absorb}div? */
+                    if (bt->g->ai_id == GAME_AI_CLASSIC) {
+                        dmgmin = (w->damagemin > bd->absorb) ? (w->damagemin - bd->absorb) : 1; /* WASBUG {damage,absorb}div? */
+                    } else {
+                        dmgmin = (w->damagemin / damagediv) - (bd->absorb / absorbdiv);
+                        SETMAX(dmgmin, 1);
+                    }
                     dmg = (dmgmax + dmgmin) / 2;
                     dmg = ((100 - miss_chance) * dmg) / 5;
                     dmg *= w->damagemul;
@@ -2671,7 +2673,15 @@ static int game_battle_ai_best_range(struct battle_s *bt, int target_i)
         for (int j = 0; j < WEAPON_SLOT_NUM; ++j) {
             const struct shiptech_weap_s *w = &(tbl_shiptech_weap[b->wpn[j].t]);
             int absorbdiv, range;
-            absorbdiv = game_battle_get_absorbdiv(bd, b->wpn[j].t); /* FIXME BUG? checks target's oracle */
+            if (bt->g->ai_id == GAME_AI_CLASSIC) {
+                absorbdiv = game_battle_get_absorbdiv(bd, w, true); /* WASBUG checks target's oracle */
+            } else {
+                if (w->damagemin != w->damagemax) {
+                    absorbdiv = game_battle_get_absorbdiv(b, w, false);
+                } else {
+                    absorbdiv = 1;
+                }
+            }
             if (target_i == 0/*planet*/) {
                 if ((!w->is_bomb) && ((w->misstype > 0) || (w->damagemin != w->damagemax))) {
                     damagediv = 2;
