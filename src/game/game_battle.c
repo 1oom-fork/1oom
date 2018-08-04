@@ -209,6 +209,18 @@ static void game_battle_prepare_add_ships(struct battle_s *bt, battle_side_i_t s
 
 /* -------------------------------------------------------------------------- */
 
+int game_battle_get_absorbdiv(const struct battle_item_s *b, weapon_t wpnt)
+{
+    const struct shiptech_weap_s *w = &(tbl_shiptech_weap[wpnt]);
+    int v;
+    v = (b->sbmask & (1 << SHIP_SPECIAL_BOOL_ORACLE)) ? 2 : 1;
+    v += w->halveshield ? 1 : 0;
+    if (v == 3) {
+        v = 4;
+    }
+    return v;
+}
+
 void game_battle_prepare(struct battle_s *bt, int party_r, int party_l, uint8_t planet_i)
 {
     struct game_s *g = bt->g;
