@@ -468,7 +468,7 @@ static void uiobj_handle_ta_sub1(int x0, int y0, int x1, int y1, uint16_t subtyp
     }
 }
 
-/* not a function in MOO1 but part of uiobj_handle_hmm1 */
+/* not a function in MOO1 but part of uiobj_handle_objects */
 static inline void uiobj_handle_hmm1_sub1(int i)
 {
     uiobj_t *p = &uiobj_tbl[i];
@@ -1530,7 +1530,7 @@ void uiobj_table_num_restore(void)
     }
 }
 
-void uiobj_handle_hmm1(void)
+void uiobj_handle_objects(void)
 {
     for (int i = 1; i < uiobj_table_num; ++i) {
         uiobj_t *p = &uiobj_tbl[i];
@@ -1564,7 +1564,7 @@ void uiobj_finish_frame(void)
     int mx, my;
     mx = mouse_x;
     my = mouse_y;
-    uiobj_handle_hmm1();
+    uiobj_handle_objects();
     ui_cursor_update_gfx_i(mx, my);
     ui_cursor_store_bg1(mx, my);
     ui_cursor_draw1(mx, my);
