@@ -250,7 +250,7 @@ static bool ui_new_game_hname(struct game_new_options_s *newopts, struct new_gam
 static bool ui_new_game_racebannernames(struct game_new_options_s *newopts, struct new_game_data_s *d)
 {
     d->pi = PLAYER_0;
-    /* orion.exe inits game->hmm02 and game_new:researchflag here for whatever reason */
+    /* orion.exe inits game->offs02 and game_new:researchflag here for whatever reason */
     uiobj_table_clear();
     ui_palette_fadeout_19_19_1();
     d->fadein = true;
