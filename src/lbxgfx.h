@@ -22,7 +22,7 @@
 #define lbxgfx_get_paldataoffs(_data_) GET_LE_16(&((_data_)[lbxgfx_get_paloffs(_data_)+0x00]))
 #define lbxgfx_get_palfirst(_data_) GET_LE_16(&((_data_)[lbxgfx_get_paloffs(_data_)+0x02]))
 #define lbxgfx_get_palnum(_data_) GET_LE_16(&((_data_)[lbxgfx_get_paloffs(_data_)+0x04]))
-#define lbxgfx_get_palhmm06(_data_) GET_LE_16(&((_data_)[lbxgfx_get_paloffs(_data_)+0x06]))
+#define lbxgfx_get_paloffs06(_data_) GET_LE_16(&((_data_)[lbxgfx_get_paloffs(_data_)+0x06]))
 #define lbxgfx_get_palptr(_data_) ((_data_) + lbxgfx_get_paldataoffs(_data_))
 #define lbxgfx_get_frameoffs0(_data_, _frame_) (GET_LE_32(&((_data_)[0x12 + 4 * (_frame_)])))
 #define lbxgfx_get_frameoffs1(_data_, _frame_) (GET_LE_32(&((_data_)[0x16 + 4 * (_frame_)])))
