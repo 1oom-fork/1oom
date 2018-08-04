@@ -26,7 +26,7 @@ const uint8_t tbl_banner_fontparam[BANNER_NUM] = { 1, 0xe, 0xc, 5, 0, 0xd };
 
 static const uint8_t colortbl_textbox[5] = { 0x18, 0x17, 0x16, 0x15, 0x14 };
 
-static const uint8_t tbl_color_hmm3[0x100] = {
+static const uint8_t tbl_color_grain[0x100] = {
     0x29,0x24,0x3f,0x05,0x62,0x6d,0x57,0x2f,0x53,0x11,0x4a,0x72,0x72,0x3c,0x6a,0x6c,
     0x33,0x27,0x5c,0x3d,0x08,0x0d,0x3f,0x1a,0x25,0x5f,0x0e,0x1d,0x07,0x38,0x48,0x5f,
     0x33,0x13,0x4e,0x49,0x44,0x3c,0x0c,0x27,0x20,0x04,0x5b,0x7e,0x0a,0x39,0x26,0x20,
@@ -437,7 +437,7 @@ void ui_draw_box_fill(int x0, int y0, int x1, int y1, const uint8_t *colorptr, u
         for (int y = 0; y < h; ++y) {
             uint8_t c;
             vy += ystep;
-            c = (((((uint16_t)tbl_color_hmm3[ae++]) << 1) + vy) >> 8) & 0x3f;
+            c = (((((uint16_t)tbl_color_grain[ae++]) << 1) + vy) >> 8) & 0x3f;
             while (c >= colornum) {
                 c -= colornum;
             }
@@ -501,7 +501,7 @@ void ui_draw_box_grain(int x0, int y0, int x1, int y1, uint8_t color0, uint8_t c
                     p[xa] = color0;
                 }
             }
-            m = tbl_color_hmm3[bl] & ah;
+            m = tbl_color_grain[bl] & ah;
             for (int xa = 0; xa < 4; ++xa, m >>= 1) {
                 if (m & 0x1) {
                     p[xa] = color1;
@@ -524,7 +524,7 @@ void ui_draw_box_grain(int x0, int y0, int x1, int y1, uint8_t color0, uint8_t c
                     p[xa] = color0;
                 }
             }
-            m = tbl_color_hmm3[bl] & ah;
+            m = tbl_color_grain[bl] & ah;
             for (int xa = 0; xa < 4; ++xa, m >>= 1) {
                 if (m & 0x1) {
                     p[xa] = color1;
@@ -553,7 +553,7 @@ void ui_draw_box_grain(int x0, int y0, int x1, int y1, uint8_t color0, uint8_t c
                 p[2] = color0;
                 p[3] = color0;
 
-                m = tbl_color_hmm3[bl] & 0xf;
+                m = tbl_color_grain[bl] & 0xf;
                 for (int xa = 0; xa < 4; ++xa, m >>= 1) {
                     if (m & 0x1) {
                         p[xa] = color1;
