@@ -14,7 +14,7 @@
 #define lbxgfx_get_ehandle(_data_) ((_data_)[0x0a])
 #define lbxgfx_get_epage(_data_) ((_data_)[0x0b])
 #define lbxgfx_set_epage(_data_, _v_) ((_data_)[0x0b] = (_v_))
-#define lbxgfx_get_hmm0c(_data_) GET_LE_16(&((_data_)[0x0c]))
+#define lbxgfx_get_offs0c(_data_) GET_LE_16(&((_data_)[0x0c]))
 #define lbxgfx_get_paloffs(_data_) GET_LE_16(&((_data_)[0x0e]))
 #define lbxgfx_has_palette(_data_) (lbxgfx_get_paloffs(_data_) != 0)
 #define lbxgfx_get_indep(_data_) ((_data_)[0x10])
