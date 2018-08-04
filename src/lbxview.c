@@ -258,7 +258,7 @@ static void drawscreen_inlbx(void)
             sprintf(linebuf, "pal o:%x do:%x f:%i n:%i (%02x)",
                     lbxgfx_get_paloffs(p),
                     lbxgfx_get_paldataoffs(p), lbxgfx_get_palfirst(p),
-                    lbxgfx_get_palnum(p), lbxgfx_get_palhmm06(p)
+                    lbxgfx_get_palnum(p), lbxgfx_get_paloffs06(p)
                    );
             drawstr(0, 200 + 8 * 2, linebuf, textcolor, 0);
         }
