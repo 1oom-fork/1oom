@@ -2022,18 +2022,6 @@ static bool game_ai_classic_battle_ai_ai_resolve(struct battle_s *bt)
 
 /* -------------------------------------------------------------------------- */
 
-static int game_battle_get_absorbdiv(const struct battle_item_s *b, weapon_t wpnt)
-{
-    const struct shiptech_weap_s *w = &(tbl_shiptech_weap[wpnt]);
-    int v;
-    v = (b->sbmask & (1 << SHIP_SPECIAL_BOOL_ORACLE)) ? 2 : 1;
-    v += w->halveshield ? 1 : 0;
-    if (v == 3) {
-        v = 4;
-    }
-    return v;
-}
-
 static int game_ai_battle_missile_dmg(const struct battle_s *bt, int missile_i)
 {
     const struct battle_missile_s *m = &(bt->missile[missile_i]);

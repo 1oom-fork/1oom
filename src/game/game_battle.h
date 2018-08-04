@@ -149,6 +149,7 @@ struct battle_s {
     int8_t area[BATTLE_AREA_H][BATTLE_AREA_W];
 };
 
+extern int game_battle_get_absorbdiv(const struct battle_item_s *b, weapon_t wpnt);
 extern void game_battle_prepare(struct battle_s *bt, int party_r, int party_l, uint8_t planet_i);
 extern void game_battle_finish(struct battle_s *bt);
 extern void game_battle_handle_all(struct game_s *g);
