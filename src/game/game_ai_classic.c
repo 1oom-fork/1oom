@@ -237,12 +237,12 @@ static void game_ai_classic_turn_p1_front(struct game_s *g, struct ai_turn_p1_s 
     bestspeed = game_tech_player_best_engine(g, pi) * 10 + 10;
     ait->num_fronts = 0;
     /* unused
-    BOOLVEC_DECLARE(tbl_planet_hmm1, PLANETS_MAX);
-    BOOLVEC_CLEAR(tbl_planet_hmm1, PLANETS_MAX);
+    BOOLVEC_DECLARE(tbl_own_transport_dest, PLANETS_MAX);
+    BOOLVEC_CLEAR(tbl_own_transport_dest, PLANETS_MAX);
     for (int i = 0; i < g->transport_num; ++i) {
         transport_t *r = &(g->transport[j]);
         if (r->owner == pi) {
-            BOOLVEC_SET1(tbl_planet_hmm1, r->dest);
+            BOOLVEC_SET1(tbl_own_transport_dest, r->dest);
         }
     }
     */
