@@ -614,58 +614,58 @@ void ui_draw_finish(void)
 
 void ui_draw_stars(int x, int y, int xoff1, int xoff2, struct draw_stars_s *s)
 {
-    const int tbl_hmm1_x[16] = { 2, 6, 30, 34, 48, 74, 88, 96, 99, 103, 119, 123, 136, 137, 152, 159 };
-    const int tbl_hmm1_y[16] = { 15, 2, 16, 24, 19, 4, 11, 23, 22, 10, 21, 11, 4, 12, 22, 10 };
-    const int tbl_hmm2_x[23] = { 0, 6, 11, 33, 36, 46, 52, 67, 84, 86, 91, 95, 98, 103, 107, 112, 123, 125, 139, 142, 148, 151, 159 };
-    const int tbl_hmm2_y[23] = { 22, 8, 18, 19, 3, 18, 7, 24, 14, 17, 11, 1, 13, 15, 5, 6, 19, 1, 13, 10, 6, 23, 13 };
+    const int sx1[16] = { 2, 6, 30, 34, 48, 74, 88, 96, 99, 103, 119, 123, 136, 137, 152, 159 };
+    const int sy1[16] = { 15, 2, 16, 24, 19, 4, 11, 23, 22, 10, 21, 11, 4, 12, 22, 10 };
+    const int sx2[23] = { 0, 6, 11, 33, 36, 46, 52, 67, 84, 86, 91, 95, 98, 103, 107, 112, 123, 125, 139, 142, 148, 151, 159 };
+    const int sy2[23] = { 22, 8, 18, 19, 3, 18, 7, 24, 14, 17, 11, 1, 13, 15, 5, 6, 19, 1, 13, 10, 6, 23, 13 };
     int xo1, xo2;
     xo1 = (s->xoff1 + xoff1) % (UI_SCREEN_W / 2);
     xo2 = (s->xoff2 + xoff1 * 2) % (UI_SCREEN_W / 2);
     if (((UI_SCREEN_W / 2) - xoff2) > xo1) {
         int tx = xo1 + xoff2;
         for (int i = 0; i < 16; ++i) {
-            int sx = tbl_hmm1_x[i];
+            int sx = sx1[i];
             if ((sx >= xo1) && (sx < tx)) {
-                ui_draw_pixel(sx - xo1 + x, tbl_hmm1_y[i] + y, 4);
+                ui_draw_pixel(sx - xo1 + x, sy1[i] + y, 4);
             }
         }
     } else {
         int tx;
         for (int i = 0; i < 16; ++i) {
-            int sx = tbl_hmm1_x[i];
+            int sx = sx1[i];
             if (sx >= xo1) {
-                ui_draw_pixel(sx - xo1 + x, tbl_hmm1_y[i] + y, 4);
+                ui_draw_pixel(sx - xo1 + x, sy1[i] + y, 4);
             }
         }
         tx = (xo1 + xoff2) % (UI_SCREEN_W / 2);
         for (int i = 0; i < 16; ++i) {
-            int sx = tbl_hmm1_x[i];
+            int sx = sx1[i];
             if (sx < tx) {
-                ui_draw_pixel(sx - xo1 + x + 160, tbl_hmm1_y[i] + y, 4);
+                ui_draw_pixel(sx - xo1 + x + 160, sy1[i] + y, 4);
             }
         }
     }
     if (((UI_SCREEN_W / 2) - xoff2) > xo2) {
         int tx = xo2 + xoff2;
         for (int i = 0; i < 23; ++i) {
-            int sx = tbl_hmm2_x[i];
+            int sx = sx2[i];
             if ((sx >= xo2) && (sx < tx)) {
-                ui_draw_pixel(sx - xo2 + x, tbl_hmm2_y[i] + y, 6);
+                ui_draw_pixel(sx - xo2 + x, sy2[i] + y, 6);
             }
         }
     } else {
         int tx;
         for (int i = 0; i < 23; ++i) {
-            int sx = tbl_hmm2_x[i];
+            int sx = sx2[i];
             if (sx >= xo2) {
-                ui_draw_pixel(sx - xo2 + x, tbl_hmm2_y[i] + y, 6);
+                ui_draw_pixel(sx - xo2 + x, sy2[i] + y, 6);
             }
         }
         tx = (xo2 + xoff2) % (UI_SCREEN_W / 2);
         for (int i = 0; i < 23; ++i) {
-            int sx = tbl_hmm2_x[i];
+            int sx = sx2[i];
             if (sx < tx) {
-                ui_draw_pixel(sx - xo2 + x + 160, tbl_hmm2_y[i] + y, 6);
+                ui_draw_pixel(sx - xo2 + x + 160, sy2[i] + y, 6);
             }
         }
     }
