@@ -2689,7 +2689,7 @@ static void game_battle_ai_target1_sub5(struct battle_s *bt)
     int itemi = bt->cur_item;
     struct battle_item_s *b = &(bt->item[itemi]);
     int dist = 0, mindist = 10, n = 0, missdist = 0;
-    uint8_t tblxy[1];
+    uint8_t xy;
     if (b->unman == b->man) {
         return;
     }
@@ -2706,13 +2706,13 @@ static void game_battle_ai_target1_sub5(struct battle_s *bt)
                         }
                     }
                     if (missdist < mindist) {
-                        tblxy[0] = BATTLE_XY_SET(sx, sy);
+                        xy = BATTLE_XY_SET(sx, sy);
                         missdist = dist; /* FIXME BUG? should be mindist ? */
                     }
                 }
             }
         }
-        game_battle_item_move(bt, itemi, BATTLE_XY_GET_X(tblxy[0]), BATTLE_XY_GET_Y(tblxy[0]));
+        game_battle_item_move(bt, itemi, BATTLE_XY_GET_X(xy), BATTLE_XY_GET_Y(xy));
     } else {
         /*5a0d8*/
         while (b->actman > 0) {
@@ -2745,13 +2745,13 @@ static void game_battle_ai_target1_sub5(struct battle_s *bt)
                         if (mindist > missdist) {
                             missdist = mindist;
                             n = 1;
-                            tblxy[0] = BATTLE_XY_SET(sx, sy);
+                            xy = BATTLE_XY_SET(sx, sy);
                         }
                     }
                 }
             }
             if (n > 0) {
-                game_battle_item_move(bt, itemi, BATTLE_XY_GET_X(tblxy[0]), BATTLE_XY_GET_Y(tblxy[0]));
+                game_battle_item_move(bt, itemi, BATTLE_XY_GET_X(xy), BATTLE_XY_GET_Y(xy));
             } else {
                 b->actman = 0;
             }
