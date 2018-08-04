@@ -469,7 +469,7 @@ static void uiobj_handle_ta_sub1(int x0, int y0, int x1, int y1, uint16_t subtyp
 }
 
 /* not a function in MOO1 but part of uiobj_handle_objects */
-static inline void uiobj_handle_hmm1_sub1(int i)
+static inline void uiobj_handle_objects_sub1(int i)
 {
     uiobj_t *p = &uiobj_tbl[i];
     switch (p->type) {
@@ -1537,7 +1537,7 @@ void uiobj_handle_objects(void)
         if ((i == uiobj_focus_oi) && (p->type != 4)) {
             uiobj_handle_click(i, true);
         } else {
-            uiobj_handle_hmm1_sub1(i);
+            uiobj_handle_objects_sub1(i);
         }
     }
 }
