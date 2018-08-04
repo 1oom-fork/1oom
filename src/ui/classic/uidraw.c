@@ -407,12 +407,12 @@ void ui_draw_box2(int x0, int y0, int x1, int y1, uint8_t color1, uint8_t color2
     ui_draw_box1(x0, y0, x1, y1, color2, color4, scale);
 }
 
-void ui_draw_box_fill(int x0, int y0, int x1, int y1, const uint8_t *colorptr, uint8_t color0, uint16_t colorhalf, uint16_t ac, uint8_t ae, int scale)
+void ui_draw_box_fill(int x0, int y0, int x1, int y1, const uint8_t *colorptr, uint8_t color0, uint16_t colorhalf, uint16_t ac, uint8_t colorpos, int scale)
 {
     uint8_t *s = hw_video_get_buf() + (y0 * UI_SCREEN_W + x0) * scale;
     uint16_t xstep, ystep, vx, vy, h, w, colornum;
     colornum = colorhalf << 1;
-    /*v12 = ae & 0xff;*/
+    /*v12 = colorpos & 0xff;*/
     ui_draw_box_fill_sub1(colorhalf, colorptr, color0);
     w = x1 - x0 + 1;
     xstep = (colorhalf * 0x80 * ac) / w;
@@ -427,7 +427,7 @@ void ui_draw_box_fill(int x0, int y0, int x1, int y1, const uint8_t *colorptr, u
         for (int y = 0; y < h; ++y) {
             uint8_t c;
             vy += ystep;
-            c = (((((uint16_t)tbl_color_grain[ae++]) << 1) + vy) >> 8) & 0x3f;
+            c = (((((uint16_t)tbl_color_grain[colorpos++]) << 1) + vy) >> 8) & 0x3f;
             while (c >= colornum) {
                 c -= colornum;
             }
@@ -645,58 +645,58 @@ void ui_draw_finish(void)
 
 void ui_draw_stars(int x, int y, int xoff1, int xoff2, struct draw_stars_s *s, int scale)
 {
-    const int tbl_hmm1_x[16] = { 2, 6, 30, 34, 48, 74, 88, 96, 99, 103, 119, 123, 136, 137, 152, 159 };
-    const int tbl_hmm1_y[16] = { 15, 2, 16, 24, 19, 4, 11, 23, 22, 10, 21, 11, 4, 12, 22, 10 };
-    const int tbl_hmm2_x[23] = { 0, 6, 11, 33, 36, 46, 52, 67, 84, 86, 91, 95, 98, 103, 107, 112, 123, 125, 139, 142, 148, 151, 159 };
-    const int tbl_hmm2_y[23] = { 22, 8, 18, 19, 3, 18, 7, 24, 14, 17, 11, 1, 13, 15, 5, 6, 19, 1, 13, 10, 6, 23, 13 };
+    const int sx1[16] = { 2, 6, 30, 34, 48, 74, 88, 96, 99, 103, 119, 123, 136, 137, 152, 159 };
+    const int sy1[16] = { 15, 2, 16, 24, 19, 4, 11, 23, 22, 10, 21, 11, 4, 12, 22, 10 };
+    const int sx2[23] = { 0, 6, 11, 33, 36, 46, 52, 67, 84, 86, 91, 95, 98, 103, 107, 112, 123, 125, 139, 142, 148, 151, 159 };
+    const int sy2[23] = { 22, 8, 18, 19, 3, 18, 7, 24, 14, 17, 11, 1, 13, 15, 5, 6, 19, 1, 13, 10, 6, 23, 13 };
     int xo1, xo2;
     xo1 = (s->xoff1 + xoff1) % (320 / 2);
     xo2 = (s->xoff2 + xoff1 * 2) % (320 / 2);
     if (((UI_SCREEN_W / 2) - xoff2) > xo1) {
         int tx = xo1 + xoff2;
         for (int i = 0; i < 16; ++i) {
-            int sx = tbl_hmm1_x[i];
+            int sx = sx1[i];
             if ((sx >= xo1) && (sx < tx)) {
-                ui_draw_pixel(sx - xo1 + x, tbl_hmm1_y[i] + y, 4, scale);
+                ui_draw_pixel(sx - xo1 + x, sy1[i] + y, 4, scale);
             }
         }
     } else {
         int tx;
         for (int i = 0; i < 16; ++i) {
-            int sx = tbl_hmm1_x[i];
+            int sx = sx1[i];
             if (sx >= xo1) {
-                ui_draw_pixel(sx - xo1 + x, tbl_hmm1_y[i] + y, 4, scale);
+                ui_draw_pixel(sx - xo1 + x, sy1[i] + y, 4, scale);
             }
         }
         tx = (xo1 + xoff2) % (320 / 2);
         for (int i = 0; i < 16; ++i) {
-            int sx = tbl_hmm1_x[i];
+            int sx = sx1[i];
             if (sx < tx) {
-                ui_draw_pixel(sx - xo1 + x + 160, tbl_hmm1_y[i] + y, 4, scale);
+                ui_draw_pixel(sx - xo1 + x + 160, sy1[i] + y, 4, scale);
             }
         }
     }
     if (((320 / 2) - xoff2) > xo2) {
         int tx = xo2 + xoff2;
         for (int i = 0; i < 23; ++i) {
-            int sx = tbl_hmm2_x[i];
+            int sx = sx2[i];
             if ((sx >= xo2) && (sx < tx)) {
-                ui_draw_pixel(sx - xo2 + x, tbl_hmm2_y[i] + y, 6, scale);
+                ui_draw_pixel(sx - xo2 + x, sy2[i] + y, 6, scale);
             }
         }
     } else {
         int tx;
         for (int i = 0; i < 23; ++i) {
-            int sx = tbl_hmm2_x[i];
+            int sx = sx2[i];
             if (sx >= xo2) {
-                ui_draw_pixel(sx - xo2 + x, tbl_hmm2_y[i] + y, 6, scale);
+                ui_draw_pixel(sx - xo2 + x, sy2[i] + y, 6, scale);
             }
         }
         tx = (xo2 + xoff2) % (320 / 2);
         for (int i = 0; i < 23; ++i) {
-            int sx = tbl_hmm2_x[i];
+            int sx = sx2[i];
             if (sx < tx) {
-                ui_draw_pixel(sx - xo2 + x + 160, tbl_hmm2_y[i] + y, 6, scale);
+                ui_draw_pixel(sx - xo2 + x + 160, sy2[i] + y, 6, scale);
             }
         }
     }
