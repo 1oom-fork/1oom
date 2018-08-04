@@ -418,12 +418,12 @@ void ui_draw_copy_line(int x0, int y0, int x1, int y1, bool flag_hmm)
     }
 }
 
-void ui_draw_box_fill(int x0, int y0, int x1, int y1, const uint8_t *colorptr, uint8_t color0, uint16_t colorhalf, uint16_t ac, uint8_t ae)
+void ui_draw_box_fill(int x0, int y0, int x1, int y1, const uint8_t *colorptr, uint8_t color0, uint16_t colorhalf, uint16_t ac, uint8_t colorpos)
 {
     uint8_t *s = hw_video_get_buf() + y0 * UI_SCREEN_W + x0;
     uint16_t xstep, ystep, vx, vy, h, w, colornum;
     colornum = colorhalf << 1;
-    /*v12 = ae & 0xff;*/
+    /*v12 = colorpos & 0xff;*/
     ui_draw_box_fill_sub1(colorhalf, colorptr, color0);
     w = x1 - x0 + 1;
     xstep = (colorhalf * 0x80 * ac) / w;
@@ -437,7 +437,7 @@ void ui_draw_box_fill(int x0, int y0, int x1, int y1, const uint8_t *colorptr, u
         for (int y = 0; y < h; ++y) {
             uint8_t c;
             vy += ystep;
-            c = (((((uint16_t)tbl_color_grain[ae++]) << 1) + vy) >> 8) & 0x3f;
+            c = (((((uint16_t)tbl_color_grain[colorpos++]) << 1) + vy) >> 8) & 0x3f;
             while (c >= colornum) {
                 c -= colornum;
             }
