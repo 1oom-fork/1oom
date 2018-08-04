@@ -193,17 +193,6 @@ void ui_draw_erase_buf(void)
 void ui_draw_copy_buf(void)
 {
     hw_video_copy_buf();
-/*
-    if (ui_cursor_gfx_i != 0) {
-        int mx = moouse_x, my = moouse_y;
-        ui_cursor_update_gfx_i(mx, my);
-        ui_cursor_erase0();
-        ui_cursor_store_bg0(mx, my);
-        ui_cursor_update_gfx_i(mx, my);
-        ui_cursor_draw0(mx, my);
-        mouse_set_xy(mx, my);
-    }
-*/
 }
 
 void ui_draw_color_buf(uint8_t color)
