@@ -139,7 +139,7 @@ static void move_eco_grow_pop(const struct game_s *g, planet_t *p)
     do {
         char buf[10];
         previous_allocation = p->slider[slideri];
-        plus_pop = game_planet_get_slider_text_eco(g, p, player, false, buf);
+        plus_pop = game_planet_get_slider_text_eco(g, p, player, true, buf);
         if (plus_pop > old_plus_pop) {
             old_plus_pop = plus_pop;
             last_inc_pos = previous_allocation;
