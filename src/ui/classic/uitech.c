@@ -283,7 +283,7 @@ void ui_tech(struct game_s *g, player_id_t active_player)
     d.selected = d.num - 1 - d.pos;
 
     uiobj_set_help_id(13);
-    uiobj_set_callback_and_delay(tech_draw_cb, &d, 2);
+    uiobj_set_callback_and_delay(tech_draw_cb, &d, 1);
 
     uiobj_table_clear();
 
@@ -401,7 +401,7 @@ void ui_tech(struct game_s *g, player_id_t active_player)
                 oi_wheel = uiobj_add_mousewheel(0, 0, 167, 199, &scroll);
             }
             ui_draw_finish();
-            ui_delay_ticks_or_click(2);
+            ui_delay_ticks_or_click(1);
         }
     }
 
