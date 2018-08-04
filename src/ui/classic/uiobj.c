@@ -208,13 +208,6 @@ static int16_t uiobj_alloc_check(void)
 #define UIOBJI_ALLOC()  uiobj_table_num++
 #endif
 
-static inline int16_t hmmdiv2(int16_t v)
-{
-    --v;
-    if (v < 0) { ++v; }
-    return v / 2;
-}
-
 static int smidx(const uiobj_t *p)
 {
     return p->x0 + (p->x1 - p->x0) / 2;
@@ -235,9 +228,15 @@ static int scmidy(const uiobj_t *p)
     return (p->y0 + (p->y1 - p->y0) / 2) * p->scale;
 }
 
-static int smidyhmm2(const uiobj_t *p)
+static int smidtexty(const uiobj_t *p)
 {
-    return smidy(p) - hmmdiv2(lbxfont_get_height());
+    int16_t v = lbxfont_get_height();
+    --v;
+    if (v < 0) {
+        ++v;
+    }
+    v /= 2;
+    return smidy(p) - v;
 }
 
 static inline bool uiobj_is_at_xy(const uiobj_t *p, int x, int y)
@@ -267,7 +266,7 @@ static void uiobj_handle_t03_cond(uiobj_t *p, bool cond)
         lbxgfx_set_frame_0(p->t0.lbxdata);
         lbxgfx_draw_frame(p->x0, p->y0, p->t0.lbxdata, UI_SCREEN_W, p->scale);
         lbxfont_select(p->t0.fontnum, p->t0.fonta2, 0, 0);
-        lbxfont_print_str_center(smidx(p), smidyhmm2(p), p->t0.str, UI_SCREEN_W, p->scale);
+        lbxfont_print_str_center(smidx(p), smidtexty(p), p->t0.str, UI_SCREEN_W, p->scale);
     } else {
         if (p->t0.indep == 0) {
             lbxgfx_set_frame_0(p->t0.lbxdata);
@@ -277,7 +276,7 @@ static void uiobj_handle_t03_cond(uiobj_t *p, bool cond)
         }
         lbxgfx_draw_frame(p->x0, p->y0, p->t0.lbxdata, UI_SCREEN_W, p->scale);
         lbxfont_select(p->t0.fontnum, p->t0.fonta2, 0, 0);
-        lbxfont_print_str_center(smidx(p) + uiobj_xoff, smidyhmm2(p) + uiobj_yoff, p->t0.str, UI_SCREEN_W, p->scale);
+        lbxfont_print_str_center(smidx(p) + uiobj_xoff, smidtexty(p) + uiobj_yoff, p->t0.str, UI_SCREEN_W, p->scale);
     }
 }
 
