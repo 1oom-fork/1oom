@@ -242,7 +242,7 @@ static void drawscreen_inlbx(void)
                 lbxgfx_get_w(p), lbxgfx_get_h(p),
                 frame, lbxgfx_get_frames(p), lbxgfx_get_frames2(p),
                 lbxgfx_get_frameclearflag(p, frame) ? 'c' : '-',
-                lbxgfx_get_ehandle(p), lbxgfx_get_epage(p), lbxgfx_get_hmm0c(p),
+                lbxgfx_get_ehandle(p), lbxgfx_get_epage(p), lbxgfx_get_offs0c(p),
                 lbxgfx_get_indep(p), lbxgfx_get_format(p), cur_xoff, cur_yoff
                );
         drawstr(0, 200 + 8 * 1, linebuf, textcolor, 0);
@@ -250,7 +250,7 @@ static void drawscreen_inlbx(void)
             sprintf(linebuf, "pal o:%x do:%x f:%i n:%i (%02x)",
                     lbxgfx_get_paloffs(p),
                     lbxgfx_get_paldataoffs(p), lbxgfx_get_palfirst(p),
-                    lbxgfx_get_palnum(p), lbxgfx_get_palhmm06(p)
+                    lbxgfx_get_palnum(p), lbxgfx_get_paloffs06(p)
                    );
             drawstr(0, 200 + 8 * 2, linebuf, textcolor, 0);
         }
