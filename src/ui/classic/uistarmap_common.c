@@ -207,6 +207,29 @@ static void ui_starmap_draw_textbox_finished(const struct game_s *g, player_id_t
     ui_draw_textbox_2str("", game_str_sm_planratio, 110);
 }
 
+static void ui_starmap_add_oi_enroute(struct starmap_data_s *d, bool want_prio)
+{
+    const struct game_s *g = d->g;
+    int x = ui_data.starmap.x;
+    int y = ui_data.starmap.y;
+    for (int i = 0; i < g->enroute_num; ++i) {
+        const fleet_enroute_t *r = &(g->enroute[i]);
+        if (BOOLVEC_IS1(r->visible, d->api) && (BOOLVEC_IS1(ui_data.starmap.select_prio_fleet, i) == want_prio)) {
+            int x0 = (r->x - x) * 2 + 8;
+            int y0 = (r->y - y) * 2 + 8;
+            d->oi_tbl_enroute[i] = uiobj_add_mousearea_limited(x0, y0, x0 + 8, y0 + 4, MOO_KEY_UNKNOWN);
+        }
+    }
+    for (int i = 0; i < g->transport_num; ++i) {
+        const transport_t *r = &(g->transport[i]);
+        if (BOOLVEC_IS1(r->visible, d->api) && (BOOLVEC_IS1(ui_data.starmap.select_prio_trans, i) == want_prio)) {
+            int x0 = (r->x - x) * 2 + 8;
+            int y0 = (r->y - y) * 2 + 8;
+            d->oi_tbl_transport[i] = uiobj_add_mousearea_limited(x0, y0, x0 + 8, y0 + 4, MOO_KEY_UNKNOWN);
+        }
+    }
+}
+
 /* -------------------------------------------------------------------------- */
 
 void ui_starmap_draw_basic(struct starmap_data_s *d)
@@ -597,6 +620,7 @@ void ui_starmap_fill_oi_tbls(struct starmap_data_s *d)
     uiobj_set_limits(STARMAP_LIMITS);
     UIOBJI_SET_TBL_INVALID(d->oi_tbl_enroute);
     UIOBJI_SET_TBL_INVALID(d->oi_tbl_transport);
+    ui_starmap_add_oi_enroute(d, false);
     for (int i = 0; i < g->galaxy_stars; ++i) {
         for (player_id_t j = PLAYER_0; j < g->players; ++j) {
             d->oi_tbl_pl_stars[j][i] = UIOBJI_INVALID;
@@ -624,26 +648,7 @@ void ui_starmap_fill_oi_tbls(struct starmap_data_s *d)
             }
         }
     }
-    for (int prio = 0; prio < 2; ++prio) {
-        bool want_prio;
-        want_prio = (prio == 1);
-        for (int i = 0; i < g->enroute_num; ++i) {
-            const fleet_enroute_t *r = &(g->enroute[i]);
-            if (BOOLVEC_IS1(r->visible, d->api) && (BOOLVEC_IS1(ui_data.starmap.select_prio_fleet, i) == want_prio)) {
-                int x0 = (r->x - x) * 2 + 8;
-                int y0 = (r->y - y) * 2 + 8;
-                d->oi_tbl_enroute[i] = uiobj_add_mousearea_limited(x0, y0, x0 + 8, y0 + 4, MOO_KEY_UNKNOWN);
-            }
-        }
-        for (int i = 0; i < g->transport_num; ++i) {
-            const transport_t *r = &(g->transport[i]);
-            if (BOOLVEC_IS1(r->visible, d->api) && (BOOLVEC_IS1(ui_data.starmap.select_prio_trans, i) == want_prio)) {
-                int x0 = (r->x - x) * 2 + 8;
-                int y0 = (r->y - y) * 2 + 8;
-                d->oi_tbl_transport[i] = uiobj_add_mousearea_limited(x0, y0, x0 + 8, y0 + 4, MOO_KEY_UNKNOWN);
-            }
-        }
-    }
+    ui_starmap_add_oi_enroute(d, true);
 }
 
 void ui_starmap_fill_oi_tbl_stars(struct starmap_data_s *d)
