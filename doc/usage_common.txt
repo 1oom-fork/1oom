@@ -61,8 +61,8 @@ You can also specify your own path by passing the command-line
 argument "-user <path>" when running 1oom. Note that unlike "-data"
 the setting is not saved in the configuration file.
 
-2.2. What is saved
--------------------
+2.2. What is not saved
+-----------------------
 
 Most options set via command-line arguments are saved to the configuration
 file (if any). The notable exceptions are:
@@ -288,6 +288,9 @@ with -file whenever the PBX files are to be used.
 4. New features
 ================
 
+All the features discussed here need to be enabled in the classic UI with the
+config file item "ui.uiextra" (set via the -uiextra command-line option).
+
 4.1. Planetary governor
 ------------------------
 
@@ -335,10 +338,9 @@ These rules have some implications:
   reflected on the sliders on the same turn. Either disable/enable the governor
   for each affected planet or use the governor screen to readjust all the
   governed planets for the next turn.
+- The "don't" modes still get the same automatic ecology adjustments as the
+  non-governed planets.
 - The governor copes poorly with random events, especially plague.
-
-The governor is experimental feature and future versions may change the how it
-operates.
 
 4.2. Space combat autoresolve
 ------------------------------
