@@ -29,6 +29,7 @@ static int game_opt_load_game = 0;
 static const char *game_opt_load_fname = 0;
 static bool game_opt_undo_enabled = true;
 static bool game_opt_next_turn = false;
+static bool game_opt_save_quit = false;
 
 static struct game_end_s game_opt_end = { GAME_END_NONE, 0, 0, 0, 0 };
 static struct game_new_options_s game_opt_new = GAME_NEW_OPTS_DEFAULT;
@@ -314,6 +315,9 @@ const struct cmdline_options_s main_cmdline_options[] = {
     { "-nextturn", 0,
       options_enable_bool_var, (void *)&game_opt_next_turn,
       NULL, "Go directly to next turn" },
+    { "-savequit", 0,
+      options_enable_bool_var, (void *)&game_opt_save_quit,
+      NULL, "Save and quit" },
     { 0, 0, 0, 0, 0, 0 }
 };
 
@@ -481,12 +485,17 @@ int main_do(void)
                     game_opt_next_turn = false;
                     break;
                 }
+                if (game_opt_save_quit) {
+                    game_opt_save_quit = false;
+                    goto turn_act_quit;
+                }
                 switch (ui_game_turn(&game, &load_game_i, game.active_player)) {
                     case UI_TURN_ACT_LOAD_GAME:
                         main_menu_action = MAIN_MENU_ACT_LOAD_GAME;
                         ui_game_end(&game);
                         goto main_menu_load_game;
                     case UI_TURN_ACT_QUIT_GAME:
+                        turn_act_quit:
                         if (game_save_do_save_i(GAME_SAVE_I_CONTINUE, "Continue", &game)) {
                             log_error("Game: could create continue save\n");
                         }
