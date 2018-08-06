@@ -294,11 +294,11 @@ uint8_t game_get_best_jammer(const struct game_s *g, player_id_t player_i, int t
 
 void game_update_tech_util(struct game_s *g)
 {
-    BOOLVEC_TBL_DECLARE(tbl_techcompl, TECH_FIELD_NUM, 50);
+    BOOLVEC_TBL_DECLARE(tbl_techcompl, TECH_FIELD_NUM, 0x96);
     for (player_id_t pi = PLAYER_0; pi < g->players; ++pi) {
         empiretechorbit_t *e = &(g->eto[pi]);
         uint8_t b, tech_i;
-        BOOLVEC_TBL_CLEAR(tbl_techcompl, TECH_FIELD_NUM, 50);
+        BOOLVEC_TBL_CLEAR(tbl_techcompl, TECH_FIELD_NUM, 0x96); /* NOTE: MOO1 clears 41h */
         for (tech_field_t field_i = TECH_FIELD_COMPUTER; field_i < TECH_FIELD_NUM; ++field_i) {
             uint8_t *p = g->srd[pi].researchcompleted[field_i];
             uint32_t len = e->tech.completed[field_i];
@@ -804,8 +804,8 @@ void game_tech_get_artifact_loot(struct game_s *g, uint8_t planet, player_id_t p
 void game_tech_final_war_share(struct game_s *g)
 {
     for (tech_field_t field_i = TECH_FIELD_COMPUTER; field_i < TECH_FIELD_NUM; ++field_i) {
-        BOOLVEC_DECLARE(tbl_techcompl, 60);
-        BOOLVEC_CLEAR(tbl_techcompl, 60);
+        BOOLVEC_DECLARE(tbl_techcompl, 0x96);
+        BOOLVEC_CLEAR(tbl_techcompl, 0x96); /* NOTE: MOO1 clears 60 */
         for (player_id_t pi = PLAYER_0; pi < g->players; ++pi) {
             if (IS_AI(g, pi)) {
                 uint8_t *p = g->srd[pi].researchcompleted[field_i];
