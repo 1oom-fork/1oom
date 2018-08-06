@@ -88,10 +88,14 @@ ui_turn_action_t ui_game_turn(struct game_s *g, int *load_game_i_ptr, int pi)
                 ui_starmap_trans(g, pi);
                 break;
             case UI_MAIN_LOOP_ORBIT_OWN_SEL:
+                BOOLVEC_CLEAR(ui_data.starmap.select_prio_fleet, FLEET_ENROUTE_MAX);
+                BOOLVEC_CLEAR(ui_data.starmap.select_prio_trans, TRANSPORT_MAX);
                 ui_cursor_setup_area(2, &ui_cursor_area_tbl[3]);
                 ui_starmap_orbit_own(g, pi);
                 break;
             case UI_MAIN_LOOP_ORBIT_EN_SEL:
+                BOOLVEC_CLEAR(ui_data.starmap.select_prio_fleet, FLEET_ENROUTE_MAX);
+                BOOLVEC_CLEAR(ui_data.starmap.select_prio_trans, TRANSPORT_MAX);
                 ui_cursor_setup_area(2, &ui_cursor_area_tbl[3]);
                 ui_starmap_orbit_en(g, pi);
                 break;
