@@ -4,7 +4,7 @@
 # Then "1oom_classic_sdl1 -file fixbugs.pbx" to use it.
 
 0,"Fix MOO1 bugs"
-1,"Enables most of the optional MOO1 bug fixes.\nAlso gives Guardian Advanced Damage Control on impossible."
+1,"Enables most of the optional MOO1 bug fixes.\nAlso tweaks some clearly bug-like things such as Guardian ADC and starting ship costs."
 
 # Give Guardian Advance Damage Control on impossible.
 # MOO1 has Automated Repair (but shows ADC) on hard and nothing on impossible.
@@ -21,6 +21,12 @@
 
 # The 2500 factories limit is too low for Meklars.
 4,max_factories,0,2700
+
+# Silicoids have most of the tech useless to them not appear in their research tree.
+# However, Advanced Eco Restoration and Advanced Soil Enrichment can still appear.
+# This must be an oversight.
+4,ngt_pl_silicoid,24,1
+4,ngt_pl_silicoid,30,1
 
 # See doc/list_pbxnum.txt for description of the rest of the fixes.
 4,bt_wait_no_reload,0,1
