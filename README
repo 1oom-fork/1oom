@@ -77,7 +77,16 @@ See doc/usage_* for more documentation.
 Some ports have shorter filenames due to filesystem limitations.
 
 
-5. Acknowledgements
+5. Abbreviations
+=================
+
+The following abbreviations appear in the documentation and code:
+
+- MOO1: Master of Orion 1 as represented by the v1.3 DOS binaries
+- OSG: The Official Strategy Guide (ISBN 1-55958-507-2)
+
+
+6. Acknowledgements
 ====================
 
 Original game by Simtex Software, published 1993 by MicroProse.
