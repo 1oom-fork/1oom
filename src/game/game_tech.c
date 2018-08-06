@@ -347,7 +347,9 @@ void game_update_tech_util(struct game_s *g)
             uint32_t len = e->tech.completed[field_i];
             while (len--) {
                 tech_i = *p++;
-                BOOLVEC_TBL_SET1(tbl_techcompl, field_i, tech_i);
+                if (tech_i <= 50) {
+                    BOOLVEC_TBL_SET1(tbl_techcompl, field_i, tech_i);
+                }
             }
         }
         e->have_colony_for = PLANET_TYPE_MINIMAL;
