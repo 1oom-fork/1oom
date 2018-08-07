@@ -312,9 +312,14 @@ int main_do(void)
         return 0;
     }
     fname = fnames[0];
-    if ((util_parse_number(fname, &v)) && (v >= 1) && (v <= NUM_ALL_SAVES)) {
-        game_save_get_slot_fname(gaux.savenamebuf, gaux.savenamebuflen, v - 1);
-        fname = gaux.savenamebuf;
+    if (util_parse_number(fname, &v)) {
+        if ((v >= 1) && (v <= NUM_ALL_SAVES)) {
+            game_save_get_slot_fname(gaux.savenamebuf, gaux.savenamebuflen, v - 1);
+            fname = gaux.savenamebuf;
+        } else if ((v >= 2300) && (v <= 9999)) {
+            game_save_get_year_fname(gaux.savenamebuf, gaux.savenamebuflen, v);
+            fname = gaux.savenamebuf;
+        }
     }
     res = savetype[savetypei].decode(&game, fname);
     if (res < 0) {
@@ -336,9 +341,14 @@ int main_do(void)
             log_error("output filename missing\n");
             return 1;
         }
-    } else if ((util_parse_number(fname, &v)) && (v >= 1) && (v <= NUM_ALL_SAVES)) {
-        game_save_get_slot_fname(gaux.savenamebuf, gaux.savenamebuflen, v - 1);
-        fname = gaux.savenamebuf;
+    } else if (util_parse_number(fname, &v)) {
+        if ((v >= 1) && (v <= NUM_ALL_SAVES)) {
+            game_save_get_slot_fname(gaux.savenamebuf, gaux.savenamebuflen, v - 1);
+            fname = gaux.savenamebuf;
+        } else if ((v >= 2300) && (v <= 9999)) {
+            game_save_get_year_fname(gaux.savenamebuf, gaux.savenamebuflen, v);
+            fname = gaux.savenamebuf;
+        }
     }
     log_message("saveconv: encode type '%s' file '%s'\n", savetype[savetypeo].name, fname ? fname : "(null)");
     if (savename[0] == '\0') {
