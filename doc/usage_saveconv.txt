@@ -23,6 +23,7 @@ Options:
     -n NAME        Set save name
 
 If a filename is a number from 1 to 8, it is interpreted as 1oom save number N.
+If it is number from 2300 to 9999, it is interpreted as 1oom yearly save YYYY.
 
 1oom save format 0 is described in doc/format_save.txt.
 MOO1 v1.3 save format is described in doc/format_gam.txt.
@@ -49,6 +50,9 @@ Examples:
 
     1oom_saveconv -o 1 7 6
         - copy 1oom save 7 to 6
+
+    1oom_saveconv -o 1 2325 2
+        - copy 1oom yearly save 2325 to slot 2
 
     1oom_saveconv -cmoo -n "foo bar" -o m SAVE1.GAM SAVE2.GAM
         - copy SAVE1.GAM SAVE2.GAM
