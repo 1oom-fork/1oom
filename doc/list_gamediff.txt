@@ -5,6 +5,7 @@ See doc/usage_classic.txt for UI differences.
 Much of this file is based on the readme from the unofficial v1.40m patch.
 
 - the game makes an undo save (slot 8) on every next turn click, run with -noundo if you do not want this
+- the game makes yearly saves on (1oom_save_YYYY.bin) every next turn click, if allowed to with -yearsave
 - fleets can not be sent to the planet they are orbiting (redirecting departing fleets back to orbit is still possible)
 - multiple fleets sent to same destination on the same turn are combined if they have the same speed
 - fixed "bug" where on a given year only one scouted artifact planets gave new tech
