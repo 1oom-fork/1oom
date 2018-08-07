@@ -903,8 +903,24 @@ int game_save_get_slot_fname(char *buf, int buflen, int i)
     const char *path = os_get_path_user();
     char namebuf[16];
     int res;
-    if (!os_get_fname_save(namebuf, i + 1)) {
+    if (!os_get_fname_save_slot(namebuf, i + 1)) {
         sprintf(namebuf, "1oom_save%i.bin", i + 1);
+    }
+    res = util_concat_buf(buf, buflen, path, FSDEV_DIR_SEP_STR, namebuf, NULL);
+    if (res < 0) {
+        log_error("Save: BUG: save name buffer too small by %i bytes\n", -res);
+        return -1;
+    }
+    return 0;
+}
+
+int game_save_get_year_fname(char *buf, int buflen, int year)
+{
+    const char *path = os_get_path_user();
+    char namebuf[32];
+    int res;
+    if (!os_get_fname_save_year(namebuf, year)) {
+        sprintf(namebuf, "1oom_save_%i.bin", year);
     }
     res = util_concat_buf(buf, buflen, path, FSDEV_DIR_SEP_STR, namebuf, NULL);
     if (res < 0) {
@@ -960,5 +976,31 @@ int game_save_do_save_i(int savei, const char *savename, const struct game_s *g)
     }
     game_save_get_slot_fname(filename, g->gaux->savenamebuflen, savei);
     res = game_save_do_save_do(filename, savename, g, savei, GAME_SAVE_VERSION);
+    return res;
+}
+
+int game_save_do_load_year(int year, char *savename, struct game_s *g)
+{
+    int res;
+    char *filename = g->gaux->savenamebuf;
+    game_save_get_year_fname(filename, g->gaux->savenamebuflen, year);
+    res = game_save_do_load_do(filename, g, -1, savename);
+    return res;
+}
+
+int game_save_do_save_year(const char *savename, const struct game_s *g)
+{
+    int res;
+    char *filename = g->gaux->savenamebuf;
+    char buf[SAVE_NAME_LEN];
+    if (os_make_path_user()) {
+        log_error("Save: failed to create user path '%s'\n", os_get_path_user());
+    }
+    game_save_get_year_fname(filename, g->gaux->savenamebuflen, g->year + YEAR_BASE);
+    if (!savename) {
+        sprintf(buf, "Year %i", g->year + YEAR_BASE);
+        savename = buf;
+    }
+    res = game_save_do_save_do(filename, savename, g, -1, GAME_SAVE_VERSION);
     return res;
 }
