@@ -33,6 +33,7 @@ static bool game_opt_continue = false;
 static int game_opt_load_game = 0;
 static const char *game_opt_load_fname = 0;
 static bool game_opt_undo_enabled = true;
+static bool game_opt_year_save_enabled = false;
 static bool game_opt_next_turn = false;
 static bool game_opt_save_quit = false;
 
@@ -298,8 +299,12 @@ static int game_opt_set_new_ai(char **argv, void *var)
 
 static int game_opt_do_load(char **argv, void *var)
 {
-    if ((argv[1][1] == 0) && (argv[1][0] >= '1') && (argv[1][0] <= '8')) {
-        game_opt_load_game = argv[1][0] - '0';
+    uint32_t v = 0;
+    if (1
+      && util_parse_number(argv[1], &v)
+      && (((v >= 1) && (v <= NUM_ALL_SAVES)) || ((v >= 2300) && (v <= 9999)))
+    ) {
+        game_opt_load_game = v;
         game_opt_load_fname = 0;
         log_message("Game: load game %i\n", game_opt_load_game);
     } else {
@@ -377,7 +382,7 @@ const struct cmdline_options_s main_cmdline_options[] = {
       "AITYPE", "Set new game AI type (0..1)" },
     { "-load", 1,
       game_opt_do_load, 0,
-      "SAVE", "Load game (1..8 or filename)\n1..6 are regular save slots\n7 is continue game\n8 is undo" },
+      "SAVE", "Load game (1..8, 2300.. or filename)\n1..6 are regular save slots\n7 is continue game\n8 is undo\n2300 and over are yearly saves" },
     { "-continue", 0,
       game_opt_do_continue, 0,
       NULL, "Continue game" },
@@ -387,6 +392,12 @@ const struct cmdline_options_s main_cmdline_options[] = {
     { "-noundo", 0,
       options_disable_bool_var, (void *)&game_opt_undo_enabled,
       NULL, "Disable undo saves" },
+    { "-yearsave", 0,
+      options_enable_bool_var, (void *)&game_opt_year_save_enabled,
+      NULL, "Enable yearly saves" },
+    { "-noyearsave", 0,
+      options_disable_bool_var, (void *)&game_opt_year_save_enabled,
+      NULL, "Disable yearly saves" },
     { "-skipintro", 0,
       options_enable_bool_var, (void *)&game_opt_skip_intro_always,
       NULL, "Skip intro" },
@@ -429,6 +440,7 @@ static bool game_cfg_check_new_game_opts(void *val)
 
 const struct cfg_items_s game_cfg_items[] = {
     CFG_ITEM_BOOL("undo", &game_opt_undo_enabled),
+    CFG_ITEM_BOOL("yearsave", &game_opt_year_save_enabled),
     CFG_ITEM_BOOL("skipintro", &game_opt_skip_intro_always),
     CFG_ITEM_COMMENT("PLAYERS*100+GALAXYSIZE*10+DIFFICULTY"),
     CFG_ITEM_COMMENT(" 2..6, 0..3 = small..huge, 0..4 = simple..impossible"),
@@ -547,9 +559,12 @@ int main_do(void)
             game_opt_load_fname = 0;
             goto main_menu_start_game;
         } else if (game_opt_load_game) {
-            load_game_i = game_opt_load_game - 1;
+            load_game_i = game_opt_load_game;
+            if (load_game_i < 2300) {
+                --load_game_i;
+            }
             game_opt_load_game = 0;
-            if (game_save_tbl_have_save[load_game_i]) {
+            if ((load_game_i >= 2300) || game_save_tbl_have_save[load_game_i]) {
                 goto main_menu_load_game;
             } else {
                 log_warning("Game: direct load game %i failed due to missing savegame\n", load_game_i + 1);
@@ -580,7 +595,10 @@ int main_do(void)
                 break;
             case MAIN_MENU_ACT_LOAD_GAME:
                 main_menu_load_game:
-                if (game_save_do_load_i(load_game_i, &game)) {
+                if (0
+                  || ((load_game_i < NUM_ALL_SAVES) && game_save_do_load_i(load_game_i, &game))
+                  || ((load_game_i >= 2300) && game_save_do_load_year(load_game_i, 0, &game))
+                ) {
                     log_fatal_and_die("Game: could not load save %i\n", load_game_i);
                 }
                 break;
@@ -628,6 +646,9 @@ int main_do(void)
                     case UI_TURN_ACT_NEXT_TURN:
                         if (game_opt_undo_enabled && game_save_do_save_i(GAME_SAVE_I_UNDO, "Undo", &game)) {
                             log_error("Game: failed to create undo save\n");
+                        }
+                        if (game_opt_year_save_enabled && game_save_do_save_year(NULL, &game)) {
+                            log_error("Game: could create year save\n");
                         }
                         break;
                 }
