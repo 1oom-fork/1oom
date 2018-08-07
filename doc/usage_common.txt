@@ -170,9 +170,12 @@ For all game UIs:
                          1..6 are regular save slots
                          7 is continue game
                          8 is undo
+                         2300 and over are yearly saves
     -continue            Continue game
     -undo                Enable undo saves
     -noundo              Disable undo saves
+    -yearsave            Enable yearly saves
+    -noyearsave          Disable yearly saves
     -skipintro           Skip intro
     -noskipintro         Do not skip intro
     -nextturn            Go directly to next turn (for reproducing bugs)
