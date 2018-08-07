@@ -305,8 +305,12 @@ int main_do(void)
         return 0;
     }
     fname = fnames[0];
-    if ((util_parse_number(fname, &v)) && (v >= 1) && (v <= NUM_ALL_SAVES)) {
-        fname = libsave_select_slot_fname(v - 1);
+    if (util_parse_number(fname, &v)) {
+        if ((v >= 1) && (v <= NUM_ALL_SAVES)) {
+            fname = libsave_select_slot_fname(v - 1);
+        } else if ((v >= 2300) && (v <= 9999)) {
+            fname = libsave_select_year_fname(v);
+        }
     }
     res = savetype[savetypei].decode(&game, fname);
     if (res < 0) {
@@ -328,8 +332,12 @@ int main_do(void)
             log_error("output filename missing\n");
             return 1;
         }
-    } else if ((util_parse_number(fname, &v)) && (v >= 1) && (v <= NUM_ALL_SAVES)) {
-        fname = libsave_select_slot_fname(v - 1);
+    } else if (util_parse_number(fname, &v)) {
+        if ((v >= 1) && (v <= NUM_ALL_SAVES)) {
+            fname = libsave_select_slot_fname(v - 1);
+        } else if ((v >= 2300) && (v <= 9999)) {
+            fname = libsave_select_year_fname(v);
+        }
     }
     log_message("saveconv: encode type '%s' file '%s'\n", savetype[savetypeo].name, fname ? fname : "(null)");
     if (savename[0] == '\0') {

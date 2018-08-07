@@ -19,6 +19,7 @@ extern uint8_t *libsave_get_savebuf(void);
 
 extern void *game_save_open_check_header(const char *filename, int i, bool update_table, char *savename, uint32_t *versionptr);
 extern const char *libsave_select_slot_fname(int i);
+extern const char *libsave_select_year_fname(int year);
 extern int libsave_check_saves(void);
 
 struct game_s;
@@ -26,5 +27,7 @@ extern int game_save_do_load_fname(const char *filename, char *savename, struct 
 extern int game_save_do_save_fname(const char *filename, const char *savename, const struct game_s *g, uint32_t version);
 extern int game_save_do_load_i(int savei/*0..NUM_ALL_SAVES-1*/, struct game_s *g);
 extern int game_save_do_save_i(int savei/*0..NUM_ALL_SAVES-1*/, const char *savename, const struct game_s *g);
+extern int game_save_do_load_year(int year, char *savename, struct game_s *g);
+extern int game_save_do_save_year(const char *savename, const struct game_s *g);
 
 #endif

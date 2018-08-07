@@ -58,8 +58,12 @@ int ui_cmd_load(struct game_s *g, int api, struct input_token_s *param, int num_
         return ui_load_game();
     } else {
         int v;
-        if (util_parse_signed_number(param->str, &v) && (v >= 1) && (v <= NUM_ALL_SAVES)) {
-            return v - 1;
+        if (util_parse_signed_number(param->str, &v)) {
+            if ((v >= 1) && (v <= NUM_ALL_SAVES)) {
+                return v - 1;
+            } else if ((v >= 2300) && (v <= 9999)) {
+                return v;
+            }
         }
     }
     return -1;
