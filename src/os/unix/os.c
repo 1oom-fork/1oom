@@ -158,7 +158,12 @@ int os_make_path_for(const char *filename)
     return res;
 }
 
-const char *os_get_fname_save(char *buf, int savei/*1..9*/)
+const char *os_get_fname_save_slot(char *buf, int savei/*1..9*/)
+{
+    return NULL;
+}
+
+const char *os_get_fname_save_year(char *buf, int year/*2300..*/)
 {
     return NULL;
 }
