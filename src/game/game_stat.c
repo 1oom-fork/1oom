@@ -87,13 +87,13 @@ void game_stats_all(struct game_s *g, player_id_t api, struct game_stats_s *d)
     int sum[PLAYER_NUM];
 
     game_update_production(g);
-    game_update_empire_within_range(g);
+    game_update_empire_contact(g);
     game_update_maint_costs(g);
 
     d->num = 1;
     d->p[0] = api;
     for (player_id_t pi = PLAYER_0; pi < g->players; ++pi) {
-        if ((pi != api) && BOOLVEC_IS1(g->eto[api].within_frange, pi)) {
+        if ((pi != api) && BOOLVEC_IS1(g->eto[api].contact, pi)) {
             d->p[d->num++] = pi;
         }
     }

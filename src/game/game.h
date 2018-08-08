@@ -64,7 +64,7 @@ typedef struct empiretechorbit_s {
     trait2_t trait2;
     int8_t ai_p3_countdown;
     int8_t ai_p2_countdown;
-    BOOLVEC_DECLARE(within_frange, PLAYER_NUM);
+    BOOLVEC_DECLARE(contact, PLAYER_NUM);
     int16_t relation1[PLAYER_NUM];
     int16_t relation2[PLAYER_NUM];
     uint8_t diplo_type[PLAYER_NUM];

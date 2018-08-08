@@ -105,7 +105,7 @@ static void ui_cmd_view_do(const struct game_s *g, player_id_t api, uint32_t fil
             } else {
                 player_id_t owner;
                 owner = p->owner;
-                if (BOOLVEC_IS0(p->within_srange, api) && ((owner == PLAYER_NONE) || BOOLVEC_IS0(g->eto[api].within_frange, owner))) {
+                if (BOOLVEC_IS0(p->within_srange, api) && ((owner == PLAYER_NONE) || BOOLVEC_IS0(g->eto[api].contact, owner))) {
                     owner = g->seen[api][i].owner;
                 }
                 if (owner == PLAYER_NONE) {

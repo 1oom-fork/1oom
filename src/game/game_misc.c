@@ -101,7 +101,7 @@ void game_update_production(struct game_s *g)
     for (player_id_t pi = PLAYER_0; pi < g->players; ++pi) {
         empiretechorbit_t *e = &(g->eto[pi]);
         for (player_id_t pi2 = PLAYER_0; pi2 < g->players; ++pi2) {
-            if ((pi == pi2) || BOOLVEC_IS0(e->within_frange, pi2)) {
+            if ((pi == pi2) || BOOLVEC_IS0(e->contact, pi2)) {
                 e->spying[pi2] = 0;
             }
         }
@@ -415,7 +415,7 @@ void game_update_within_range(struct game_s *g)
     }
 }
 
-void game_update_empire_within_range(struct game_s *g)
+void game_update_empire_contact(struct game_s *g)
 {
     uint8_t tbl_pnum[PLAYER_NUM];
     uint8_t tbl_planet[PLAYER_NUM][PLANETS_MAX];
@@ -444,11 +444,11 @@ void game_update_empire_within_range(struct game_s *g)
                 }
             }
             if (mindist <= frange) {
-                BOOLVEC_SET1(e1->within_frange, pi2);
-                BOOLVEC_SET1(e2->within_frange, pi1);
+                BOOLVEC_SET1(e1->contact, pi2);
+                BOOLVEC_SET1(e2->contact, pi1);
             } else {
-                BOOLVEC_SET0(e1->within_frange, pi2);
-                BOOLVEC_SET0(e2->within_frange, pi1);
+                BOOLVEC_SET0(e1->contact, pi2);
+                BOOLVEC_SET0(e2->contact, pi1);
             }
         }
     }
