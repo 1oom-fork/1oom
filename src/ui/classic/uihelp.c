@@ -172,7 +172,7 @@ void ui_help(int help_index)
                     GET_LE_16(&p[HELP_OFFS_LTTBL + i * 2 + 4]),
                     GET_LE_16(&p[HELP_OFFS_LXTBL + i * 2 + 4]),
                     GET_LE_16(&p[HELP_OFFS_LYTBL + i * 2 + 4]),
-                    ctbl, c3, c4, c5, c3, c4, c8, c0, i + 10040
+                    ctbl, c3, c4, c5, c3, c4, c8, c0, (i + 10040) & 0xff
                     );
             }
         } else {
@@ -183,7 +183,7 @@ void ui_help(int help_index)
                     GET_LE_16(&p[HELP_OFFS_LTTBL + 2]),
                     GET_LE_16(&p[HELP_OFFS_LXTBL + 2]),
                     GET_LE_16(&p[HELP_OFFS_LYTBL + 2]),
-                    ctbl, c3, c4, c5, c3, c4, c8, c0, 10040
+                    ctbl, c3, c4, c5, c3, c4, c8, c0, 10040 & 0xff
                     );
         }
         lbxfont_select(old_fontnum, old_fonta2, 0, 0);
