@@ -15,7 +15,7 @@ extern void game_update_total_research(struct game_s *g);
 extern void game_update_eco_on_waste(struct game_s *g, int player_i, bool force_adjust);
 extern void game_update_seen_by_orbit(struct game_s *g, player_id_t pi);
 extern void game_update_within_range(struct game_s *g);
-extern void game_update_empire_within_range(struct game_s *g);
+extern void game_update_empire_contact(struct game_s *g);
 extern void game_update_visibility(struct game_s *g);
 extern void game_adjust_slider_group(int16_t *slidertbl, int slideri, int16_t value, int num, const uint16_t *locktbl);
 extern void game_equalize_slider_group(int16_t *slidertbl, int num, const uint16_t *locktbl);
