@@ -339,7 +339,7 @@ int game_planet_get_slider_text_eco(const struct game_s *g, uint8_t planet_i, pl
     int retval = -1;
     const char *str = NULL;
     int vthis, factoper, waste, adjwaste;
-    bool flag_tform = false, flag_ecoproj = false;
+    bool flag_ecoproj = false;
     vthis = (p->prod_after_maint * p->slider[PLANET_SLIDER_ECO]) / 100;
     factoper = (p->pop - p->trans_num) * e->colonist_oper_factories;
     SETMIN(factoper, p->factories);
@@ -374,7 +374,6 @@ int game_planet_get_slider_text_eco(const struct game_s *g, uint8_t planet_i, pl
                 str = game_str_sm_ecogaia;
             }
         }
-        flag_tform = false;
         if (vthis > 0) {
             if (p->max_pop3 < game_num_max_pop) {
                 adjwaste = (p->max_pop2 + (e->have_terraform_n - p->max_pop3)) * e->terraform_cost_per_inc;
@@ -384,28 +383,34 @@ int game_planet_get_slider_text_eco(const struct game_s *g, uint8_t planet_i, pl
             if (vthis < adjwaste) {
                 str = game_str_sm_ecotform;
             } else {
-                int growth, growth2;
+                int growth, growth2, max_pop;
+                bool flag_tform = false;
+                max_pop = p->max_pop3;
                 if (adjwaste > 0) {
-                    flag_tform = true;
+                    if (vthis < adjwaste) {
+                        flag_tform = true;
+                    } else if (flag_tenths) {   /* keep same +N as MOO1 for developing planets on -nouiextra */
+                        max_pop = p->max_pop2 + e->have_terraform_n;
+                    }
                 }
                 vthis -= adjwaste;
-                growth = game_get_pop_growth_max(g, planet_i, p->max_pop3) + p->pop_tenths;
+                growth = game_get_pop_growth_max(g, planet_i, max_pop) + p->pop_tenths;
                 if (!flag_tenths) {
-                    if (((p->pop - p->trans_num) + (growth / 10)) > p->max_pop3) {
-                        growth = (p->max_pop3 - (p->pop - p->trans_num)) * 10;
+                    if (((p->pop - p->trans_num) + (growth / 10)) > max_pop) {
+                        growth = (max_pop - (p->pop - p->trans_num)) * 10;
                     }
                     growth2 = game_get_pop_growth_for_eco(g, planet_i, vthis) + growth;
-                    if (((p->pop - p->trans_num) + (growth2 / 10)) > p->max_pop3) {
-                        growth2 = (p->max_pop3 - (p->pop - p->trans_num)) * 10;
+                    if (((p->pop - p->trans_num) + (growth2 / 10)) > max_pop) {
+                        growth2 = (max_pop - (p->pop - p->trans_num)) * 10;
                     }
                     growth = growth2 / 10 - growth / 10;
                 } else {
-                    if (((p->pop - p->trans_num) * 10 + growth) > (p->max_pop3 * 10)) {
-                        growth = (p->max_pop3 - (p->pop - p->trans_num)) * 10 + p->pop_tenths;
+                    if (((p->pop - p->trans_num) * 10 + growth) > (max_pop * 10)) {
+                        growth = (max_pop - (p->pop - p->trans_num)) * 10 + p->pop_tenths;
                     }
                     growth2 = game_get_pop_growth_for_eco(g, planet_i, vthis) + growth;
-                    if (((p->pop - p->trans_num) * 10 + growth2) > (p->max_pop3 * 10)) {
-                        growth2 = (p->max_pop3 - (p->pop - p->trans_num)) * 10 + p->pop_tenths;
+                    if (((p->pop - p->trans_num) * 10 + growth2) > (max_pop * 10)) {
+                        growth2 = (max_pop - (p->pop - p->trans_num)) * 10 + p->pop_tenths;
                     }
                     growth = growth2 - growth;
                 }
