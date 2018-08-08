@@ -73,7 +73,7 @@ static player_id_t game_event_new_get_trader(const struct game_s *g, player_id_t
     const empiretechorbit_t *e = &(g->eto[player]);
     player_id_t trader = PLAYER_NONE;
     for (player_id_t i = PLAYER_0; i < g->players; ++i) {
-        if ((i != player) && BOOLVEC_IS1(e->within_frange, i) && (e->trade_bc[i] != 0)) {
+        if ((i != player) && BOOLVEC_IS1(e->contact, i) && (e->trade_bc[i] != 0)) {
             trader = i;
         }
     }
@@ -1091,7 +1091,7 @@ bool game_event_run(struct game_s *g, struct game_end_s *ge)
             any_in_range = IS_HUMAN(g, player);
             for (player_id_t i = PLAYER_0; (i < g->players) && (!any_in_range); ++i) {
                 empiretechorbit_t *e2 = &(g->eto[i]);
-                if (IS_HUMAN(g, i) && BOOLVEC_IS1(e2->within_frange, player) && IS_ALIVE(g, i)) {
+                if (IS_HUMAN(g, i) && BOOLVEC_IS1(e2->contact, player) && IS_ALIVE(g, i)) {
                     any_in_range = true;
                 }
             }
