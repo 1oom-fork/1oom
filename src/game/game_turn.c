@@ -1767,7 +1767,7 @@ struct game_end_s game_turn_process(struct game_s *g)
     game_end.type = GAME_END_NONE;
     game_turn_limit_ships(g);
     for (player_id_t i = PLAYER_0; i < g->players; ++i) {
-        BOOLVEC_TBL_COPY1(old_contact, g->eto[i].within_frange, i, PLAYER_NUM);
+        BOOLVEC_TBL_COPY1(old_contact, g->eto[i].contact, i, PLAYER_NUM);
         old_focus[i] = g->planet_focus_i[i];
     }
     if ((g->year > 40) && (!rnd_0_nm1(30, &g->seed)) && (copyprot_status == 0)) {

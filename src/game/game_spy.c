@@ -254,7 +254,7 @@ static void game_spy_espionage(struct game_s *g, player_id_t spy, player_id_t ta
                     player_id_t pi;
                     int n = 0;
                     for (pi = PLAYER_0; pi < g->players; ++pi) {
-                        if ((pi != target) && IS_HUMAN(g, pi) && IS_ALIVE(g, pi) && BOOLVEC_IS1(et->within_frange, pi)) {
+                        if ((pi != target) && IS_HUMAN(g, pi) && IS_ALIVE(g, pi) && BOOLVEC_IS1(et->contact, pi)) {
                             scapegoat[n++] = pi;
                         }
                     }
@@ -683,7 +683,7 @@ void game_spy_sab_human(struct game_s *g)
                         const empiretechorbit_t *et;
                         et = &(g->eto[target]);
                         for (player_id_t i = PLAYER_0; (i < g->players) && (other2 == PLAYER_NONE); ++i) {
-                            if ((i != player) && BOOLVEC_IS1(et->within_frange, i)) {
+                            if ((i != player) && BOOLVEC_IS1(et->contact, i)) {
                                 if (other1 == PLAYER_NONE) {
                                     other1 = i;
                                 } else {
