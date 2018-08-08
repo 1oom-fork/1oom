@@ -415,11 +415,11 @@ void game_update_empire_contact(struct game_s *g)
                 }
             }
             if (mindist <= frange) {
-                BOOLVEC_SET1(e1->within_frange, pi2);
-                BOOLVEC_SET1(e2->within_frange, pi1);
+                BOOLVEC_SET1(e1->contact, pi2);
+                BOOLVEC_SET1(e2->contact, pi1);
             } else {
-                BOOLVEC_SET0(e1->within_frange, pi2);
-                BOOLVEC_SET0(e2->within_frange, pi1);
+                BOOLVEC_SET0(e1->contact, pi2);
+                BOOLVEC_SET0(e2->contact, pi1);
             }
         }
     }
