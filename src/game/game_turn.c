@@ -1488,7 +1488,7 @@ static bool game_turn_check_end(struct game_s *g, struct game_end_s *ge)
 
 static void game_turn_update_have_met(struct game_s *g)
 {
-    game_update_empire_within_range(g);
+    game_update_empire_contact(g);
     for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         empiretechorbit_t *e = &(g->eto[i]);
         if (!IS_HUMAN(g, i)) {
