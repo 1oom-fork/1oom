@@ -313,7 +313,7 @@ static void game_turn_update_trade(struct game_s *g)
             uint16_t bc;
             bc = e->trade_bc[j];
             if (bc != 0) {
-                if (BOOLVEC_IS0(e->within_frange, j)) {
+                if (BOOLVEC_IS0(e->contact, j)) {
                     e->trade_bc[j] = 0;
                     e->trade_percent[j] = 0;
                     e->trade_established_bc[j] = 0;
@@ -402,7 +402,7 @@ static void game_turn_diplo_adjust(struct game_s *g)
                     if (IS_HUMAN(g, j)) {
                         continue;
                     }
-                    if (BOOLVEC_IS1(e->within_frange, j) && (e->treaty[j] == TREATY_ALLIANCE)) {
+                    if (BOOLVEC_IS1(e->contact, j) && (e->treaty[j] == TREATY_ALLIANCE)) {
                         game_diplo_act(g, v, i, j, 12, 0, 0);
                     }
                 }
@@ -1521,14 +1521,14 @@ static bool game_turn_check_end(struct game_s *g, struct game_end_s *ge)
 
 static void game_turn_update_have_met(struct game_s *g)
 {
-    game_update_empire_within_range(g);
+    game_update_empire_contact(g);
     for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         empiretechorbit_t *e = &(g->eto[i]);
         if (!IS_HUMAN(g, i)) {
             continue;
         }
         for (player_id_t j = PLAYER_0; j < g->players; ++j) {
-            if ((i != j) && (!e->have_met[j]) && BOOLVEC_IS1(e->within_frange, j)) {
+            if ((i != j) && (!e->have_met[j]) && BOOLVEC_IS1(e->contact, j)) {
                 e->have_met[j] = 1;
                 e->treaty[j] = TREATY_NONE;
                 g->eto[j].treaty[i] = TREATY_NONE;
@@ -1559,7 +1559,7 @@ static void game_turn_contact_broken(struct game_s *g, player_id_t pi, const BOO
 {
     empiretechorbit_t *e = &(g->eto[pi]);
     for (player_id_t i = PLAYER_0; i < g->players; ++i) {
-        if ((i != pi) && IS_ALIVE(g, i) && BOOLVEC_IS0(e->within_frange, i) && BOOLVEC_IS1(bv, i)) {
+        if ((i != pi) && IS_ALIVE(g, i) && BOOLVEC_IS0(e->contact, i) && BOOLVEC_IS1(bv, i)) {
             empiretechorbit_t *e2 = &(g->eto[i]);
             e->mood_trade[i] = 0;
             e->trade_bc[i] = 0;
@@ -1590,7 +1590,7 @@ static void game_turn_update_seen(struct game_s *g)
                 g->seen[pi][i].pop = p->pop;
                 g->seen[pi][i].bases = p->missile_bases;
                 g->seen[pi][i].factories = p->factories;
-            } else if ((p->owner != PLAYER_NONE) && BOOLVEC_IS1(g->eto[pi].within_frange, p->owner)) {
+            } else if ((p->owner != PLAYER_NONE) && BOOLVEC_IS1(g->eto[pi].contact, p->owner)) {
                 g->seen[pi][i].owner = p->owner;
             }
         }
@@ -1768,13 +1768,13 @@ static void game_turn_update_final_war(struct game_s *g)
 struct game_end_s game_turn_process(struct game_s *g)
 {
     struct game_end_s game_end;
-    BOOLVEC_TBL_DECLARE(old_within_frange, PLAYER_NUM, PLAYER_NUM);
+    BOOLVEC_TBL_DECLARE(old_contact, PLAYER_NUM, PLAYER_NUM);
     uint8_t old_focus[PLAYER_NUM];
     int num_alive = 0, num_colony = 0;
     game_end.type = GAME_END_NONE;
     game_turn_limit_ships(g);
     for (int i = 0; i < g->players; ++i) {
-        BOOLVEC_TBL_COPY1(old_within_frange, g->eto[i].within_frange, i, PLAYER_NUM);
+        BOOLVEC_TBL_COPY1(old_contact, g->eto[i].contact, i, PLAYER_NUM);
         old_focus[i] = g->planet_focus_i[i];
     }
     if ((g->year > 40) && (!rnd_0_nm1(30, &g->seed)) && (copyprot_status == 0)) {
@@ -1895,7 +1895,7 @@ struct game_end_s game_turn_process(struct game_s *g)
     }
     for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         /* TODO set flag in g->eto[i] to delay to player turn? */
-        game_turn_contact_broken(g, i, BOOLVEC_TBL_PTRPARAMM(old_within_frange, i));
+        game_turn_contact_broken(g, i, BOOLVEC_TBL_PTRPARAMM(old_contact, i));
     }
     game_fleet_unrefuel(g);
     game_update_production(g);
