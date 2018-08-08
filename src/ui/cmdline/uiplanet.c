@@ -187,7 +187,7 @@ void ui_planet_look(const struct game_s *g, int api, uint8_t planet_i, bool show
             if (str) {
                 printf(", %s", str);
             }
-            if (BOOLVEC_IS0(p->within_srange, api) && ((owner == PLAYER_NONE) || BOOLVEC_IS0(e->within_frange, owner))) {
+            if (BOOLVEC_IS0(p->within_srange, api) && ((owner == PLAYER_NONE) || BOOLVEC_IS0(e->contact, owner))) {
                 owner = g->seen[api][planet_i].owner;
             }
             if (owner == PLAYER_NONE) {
