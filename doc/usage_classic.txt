@@ -26,6 +26,7 @@ The following new UI features are always enabled/available:
 - Local multiplayer (use -new or -uiextra to start a game)
 - Lowercase allowed in save names
 - Mouse wheel can be used to scroll lists and adjust many things
+- Eco slider shows Clean/+N Pop past T-Form on a full planet
 - Bases can be scrapped by clicking on the Bases text
 - Clicking cycles selection of overlapping fleets
 
