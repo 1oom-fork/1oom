@@ -1601,7 +1601,7 @@ static void game_turn_update_seen(struct game_s *g)
                 g->seen[pi][i].pop = p->pop;
                 g->seen[pi][i].bases = p->missile_bases;
                 g->seen[pi][i].factories = p->factories;
-            } else if ((p->owner != PLAYER_NONE) && BOOLVEC_IS1(g->eto[pi].within_frange, p->owner)) {
+            } else if ((p->owner != PLAYER_NONE) && BOOLVEC_IS1(g->eto[pi].contact, p->owner)) {
                 g->seen[pi][i].owner = p->owner;
             }
         }
@@ -1785,7 +1785,7 @@ struct game_end_s game_turn_process(struct game_s *g)
     game_end.type = GAME_END_NONE;
     game_turn_limit_ships(g);
     for (player_id_t i = PLAYER_0; i < g->players; ++i) {
-        BOOLVEC_TBL_COPY1(old_contact, g->eto[i].within_frange, i, PLAYER_NUM);
+        BOOLVEC_TBL_COPY1(old_contact, g->eto[i].contact, i, PLAYER_NUM);
         old_focus[i] = g->planet_focus_i[i];
     }
     if ((g->year > 40) && (!rnd_0_nm1(30, &g->seed)) && (copyprot_status == 0)) {
