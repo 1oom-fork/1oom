@@ -162,7 +162,7 @@ void ui_empirereport(struct game_s *g, player_id_t active_player, player_id_t pi
     d.pi = pi;
 
     game_update_production(g);
-    game_update_empire_within_range(g);
+    game_update_empire_contact(g);
     game_update_maint_costs(g);
 
     uiobj_table_clear();
