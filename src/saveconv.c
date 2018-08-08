@@ -368,7 +368,7 @@ int saveconv_de_moo13(struct game_s *g, const char *fname)
         M13_GET_8(e->trait2, eb + 0x006);
         M13_GET_16(e->ai_p3_countdown, eb + 0x008);
         M13_GET_16(e->ai_p2_countdown, eb + 0x00a);
-        M13_GET_TBL_BV_16(e->within_frange, eb + 0x00c);
+        M13_GET_TBL_BV_16(e->contact, eb + 0x00c);
         M13_GET_TBL_16(e->relation1, eb + 0x018);
         M13_GET_TBL_16(e->relation2, eb + 0x024);
         M13_GET_TBL_16(e->diplo_type, eb + 0x030);
@@ -813,7 +813,7 @@ int saveconv_en_moo13(struct game_s *g, const char *fname)
         M13_SET_8(e->trait2, eb + 0x006);
         M13_SET_16(e->ai_p3_countdown, eb + 0x008);
         M13_SET_16(e->ai_p2_countdown, eb + 0x00a);
-        M13_SET_TBL_BV_16(e->within_frange, eb + 0x00c);
+        M13_SET_TBL_BV_16(e->contact, eb + 0x00c);
         M13_SET_TBL_16(e->relation1, eb + 0x018);
         M13_SET_TBL_16(e->relation2, eb + 0x024);
         M13_SET_TBL_16(e->diplo_type, eb + 0x030);
@@ -1183,7 +1183,7 @@ static const struct game_intros_s game_intros_eto[] = {
     GAME_INTROS_VAL(empiretechorbit_s, trait2),
     GAME_INTROS_VAL(empiretechorbit_s, ai_p3_countdown),
     GAME_INTROS_VAL(empiretechorbit_s, ai_p2_countdown),
-    GAME_INTROS_BV(empiretechorbit_s, within_frange, PLAYER_NUM),
+    GAME_INTROS_BV(empiretechorbit_s, contact, PLAYER_NUM),
     GAME_INTROS_TBL(empiretechorbit_s, relation1),
     GAME_INTROS_TBL(empiretechorbit_s, relation2),
     GAME_INTROS_TBL(empiretechorbit_s, diplo_type),
@@ -2004,7 +2004,7 @@ int saveconv_en_text(struct game_s *g, const char *fname)
         OUTLINEI("trait2", e->trait2);
         OUTLINEI("ai_p3_countdown", e->ai_p3_countdown);
         OUTLINEI("ai_p2_countdown", e->ai_p2_countdown);
-        OUTLINEBV("within_frange", e->within_frange, g->players);
+        OUTLINEBV("contact", e->contact, g->players);
         OUTLINETBL("relation1", g->players, e->relation1);
         OUTLINETBL("relation2", g->players, e->relation2);
         OUTLINETBL("diplo_type", g->players, e->diplo_type);
