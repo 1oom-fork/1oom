@@ -448,7 +448,7 @@ static const struct game_intros_s game_intros_eto[] = {
     GAME_INTROS_VAL(empiretechorbit_s, trait2),
     GAME_INTROS_VAL(empiretechorbit_s, ai_p3_countdown),
     GAME_INTROS_VAL(empiretechorbit_s, ai_p2_countdown),
-    GAME_INTROS_BV(empiretechorbit_s, within_frange, PLAYER_NUM),
+    GAME_INTROS_BV(empiretechorbit_s, contact, PLAYER_NUM),
     GAME_INTROS_TBL(empiretechorbit_s, relation1),
     GAME_INTROS_TBL(empiretechorbit_s, relation2),
     GAME_INTROS_TBL(empiretechorbit_s, diplo_type),
@@ -1266,7 +1266,7 @@ static int savetype_en_text(const struct game_s *g, const char *fname)
         OUTLINEI("trait2", e->trait2);
         OUTLINEI("ai_p3_countdown", e->ai_p3_countdown);
         OUTLINEI("ai_p2_countdown", e->ai_p2_countdown);
-        OUTLINEBV("within_frange", e->within_frange, g->players);
+        OUTLINEBV("contact", e->contact, g->players);
         OUTLINETBL("relation1", g->players, e->relation1);
         OUTLINETBL("relation2", g->players, e->relation2);
         OUTLINETBL("diplo_type", g->players, e->diplo_type);
