@@ -130,7 +130,7 @@ void ui_empirestatus(struct game_s *g, player_id_t active_player)
     d.api = active_player;
 
     game_update_production(g);
-    game_update_empire_within_range(g);
+    game_update_empire_contact(g);
     game_update_maint_costs(g);
 
     d.num = 1;
