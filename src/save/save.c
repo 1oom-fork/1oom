@@ -274,7 +274,7 @@ static int game_save_encode_eto(uint8_t *buf, int pos, const empiretechorbit_t *
     SG_1OOM_EN_U8(e->trait2);
     SG_1OOM_EN_U8(e->ai_p3_countdown);
     SG_1OOM_EN_U8(e->ai_p2_countdown);
-    SG_1OOM_EN_BV(e->within_frange, PLAYER_NUM);
+    SG_1OOM_EN_BV(e->contact, PLAYER_NUM);
     SG_1OOM_EN_DUMMY(5);
     SG_1OOM_EN_TBL_U16(e->relation1, pnum);
     SG_1OOM_EN_TBL_U16(e->relation2, pnum);
@@ -338,7 +338,7 @@ static int game_save_decode_eto(const uint8_t *buf, int pos, empiretechorbit_t *
     SG_1OOM_DE_U8(e->trait2);
     SG_1OOM_DE_U8(e->ai_p3_countdown);
     SG_1OOM_DE_U8(e->ai_p2_countdown);
-    SG_1OOM_DE_BV(e->within_frange, PLAYER_NUM);
+    SG_1OOM_DE_BV(e->contact, PLAYER_NUM);
     SG_1OOM_DE_DUMMY(5);
     SG_1OOM_DE_TBL_U16(e->relation1, pnum);
     SG_1OOM_DE_TBL_U16(e->relation2, pnum);

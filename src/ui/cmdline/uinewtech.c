@@ -281,7 +281,7 @@ void ui_newtech(struct game_s *g, int pi)
             d.other1 = PLAYER_NONE;
             d.other2 = PLAYER_NONE;
             for (int i = 0; (i < g->players) && (d.other2 == PLAYER_NONE); ++i) {
-                if ((i != pi) && BOOLVEC_IS1(et->within_frange, i)) {
+                if ((i != pi) && BOOLVEC_IS1(et->contact, i)) {
                     if (d.other1 == PLAYER_NONE) {
                         d.other1 = i;
                     } else {
