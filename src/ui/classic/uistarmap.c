@@ -105,7 +105,7 @@ static void ui_starmap_do_help(struct game_s *g, player_id_t api)
         ui_help(0x00);
         return;
     }
-    if (BOOLVEC_TBL_IS0(g->evn.help_shown, api, 2) && ((e->within_frange[0] & (~(1 << api))) != 0)) {
+    if (BOOLVEC_TBL_IS0(g->evn.help_shown, api, 2) && ((e->contact[0] & (~(1 << api))) != 0)) {
         BOOLVEC_TBL_SET1(g->evn.help_shown, api, 2);
         ui_help(0x13);
         return;
