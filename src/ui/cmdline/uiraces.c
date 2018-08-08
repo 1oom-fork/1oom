@@ -85,7 +85,7 @@ int ui_cmd_audience(struct game_s *g, int api, struct input_token_s *param, int 
         return 0;
     }
     for (player_id_t pi = PLAYER_0; pi < g->players; ++pi) {
-        if ((pi != api) && BOOLVEC_IS1(e->within_frange, pi) && IS_ALIVE(g, pi)) {
+        if ((pi != api) && BOOLVEC_IS1(e->contact, pi) && IS_ALIVE(g, pi)) {
             if (!game_diplo_is_gone(g, api, pi)) {
                 rl_in[num].value = pi;
                 rl_in[num].display = game_str_tbl_race[g->eto[pi].race];
@@ -118,7 +118,7 @@ int ui_cmd_races(struct game_s *g, int api, struct input_token_s *param, int num
 {
     const empiretechorbit_t *e = &(g->eto[api]);
     for (player_id_t pi = PLAYER_0; pi < g->players; ++pi) {
-        if ((pi != api) && BOOLVEC_IS1(e->within_frange, pi) && IS_ALIVE(g, pi)) {
+        if ((pi != api) && BOOLVEC_IS1(e->contact, pi) && IS_ALIVE(g, pi)) {
             const empiretechorbit_t *eo = &(g->eto[pi]);
             printf("- %s, %s", game_str_tbl_race[eo->race], g->emperor_names[pi]);
             {

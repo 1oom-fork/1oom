@@ -249,7 +249,7 @@ void ui_starmap_draw_basic(struct starmap_data_s *d)
     } else {
         player_id_t owner = p->owner;
         int pi = g->planet_focus_i[d->api];
-        if (BOOLVEC_IS0(p->within_srange, d->api) && ((owner == PLAYER_NONE) || BOOLVEC_IS0(g->eto[d->api].within_frange, owner))) {
+        if (BOOLVEC_IS0(p->within_srange, d->api) && ((owner == PLAYER_NONE) || BOOLVEC_IS0(g->eto[d->api].contact, owner))) {
             owner = g->seen[d->api][pi].owner;
         }
         if (owner == PLAYER_NONE) {
@@ -425,7 +425,7 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
             if (do_print || (pi == g->evn.planet_orion_i)) {
                 do_print = true;
                 lbxfont_select(2, tbl_banner_fontparam[g->eto[p->owner].banner], 0, 0);
-            } else if (BOOLVEC_IS1(g->eto[d->api].within_frange, p->owner) || (p->within_frange[d->api] == 1)) {
+            } else if (BOOLVEC_IS1(g->eto[d->api].contact, p->owner) || (p->within_frange[d->api] == 1)) {
                 do_print = true;
                 lbxfont_select(2, 0, 0, 0);
                 lbxfont_set_color0(tbl_banner_color[g->eto[p->owner].banner]);
