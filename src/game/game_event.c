@@ -1090,7 +1090,7 @@ bool game_event_run(struct game_s *g, struct game_end_s *ge)
             any_in_range = IS_HUMAN(g, player);
             for (player_id_t i = PLAYER_0; (i < g->players) && (!any_in_range); ++i) {
                 empiretechorbit_t *e2 = &(g->eto[i]);
-                if (IS_HUMAN(g, i) && BOOLVEC_IS1(e2->within_frange, player) && IS_ALIVE(g, i)) {
+                if (IS_HUMAN(g, i) && BOOLVEC_IS1(e2->contact, player) && IS_ALIVE(g, i)) {
                     any_in_range = true;
                 }
             }

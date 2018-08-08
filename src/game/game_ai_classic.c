@@ -1034,7 +1034,7 @@ static void game_ai_classic_turn_p1(struct game_s *g)
             }
             if ((num_planets / 2) < num_developing_planets) {
                 for (player_id_t pi2 = PLAYER_0; pi2 < g->players; ++pi2) {
-                    if (IS_HUMAN(g, pi2) && BOOLVEC_IS1(g->eto[pi2].within_frange, pi)) {
+                    if (IS_HUMAN(g, pi2) && BOOLVEC_IS1(g->eto[pi2].contact, pi)) {
                         flag_send_colony = false;
                         break;
                     }
@@ -3276,7 +3276,7 @@ static void game_ai_classic_diplo_wage_war(struct game_s *g, player_id_t p1, pla
     } else {
         empiretechorbit_t *e1 = &(g->eto[p1]);
         empiretechorbit_t *e2 = &(g->eto[p2]);
-        if ((e1->treaty[p2] >= TREATY_WAR) || BOOLVEC_IS0(e1->within_frange, p2) || (!IS_ALIVE(g, p1))) {
+        if ((e1->treaty[p2] >= TREATY_WAR) || BOOLVEC_IS0(e1->contact, p2) || (!IS_ALIVE(g, p1))) {
             return;
         }
         if (1
