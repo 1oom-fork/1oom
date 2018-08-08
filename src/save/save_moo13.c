@@ -297,7 +297,7 @@ static int libsave_moo13_de_do(uint8_t *buf, struct game_s *g)
         M13_GET_8(e->trait2, eb + 0x006);
         M13_GET_16(e->ai_p3_countdown, eb + 0x008);
         M13_GET_16(e->ai_p2_countdown, eb + 0x00a);
-        M13_GET_TBL_BV_16(e->within_frange, eb + 0x00c);
+        M13_GET_TBL_BV_16(e->contact, eb + 0x00c);
         M13_GET_TBL_16(e->relation1, eb + 0x018);
         M13_GET_TBL_16(e->relation2, eb + 0x024);
         M13_GET_TBL_16(e->diplo_type, eb + 0x030);
@@ -713,7 +713,7 @@ static int libsave_moo13_en_do(uint8_t *buf, const struct game_s *g)
         M13_SET_8(e->trait2, eb + 0x006);
         M13_SET_16(e->ai_p3_countdown, eb + 0x008);
         M13_SET_16(e->ai_p2_countdown, eb + 0x00a);
-        M13_SET_TBL_BV_16(e->within_frange, eb + 0x00c);
+        M13_SET_TBL_BV_16(e->contact, eb + 0x00c);
         M13_SET_TBL_16(e->relation1, eb + 0x018);
         M13_SET_TBL_16(e->relation2, eb + 0x024);
         M13_SET_TBL_16(e->diplo_type, eb + 0x030);
