@@ -1722,7 +1722,7 @@ static void game_turn_update_final_war(struct game_s *g)
 struct game_end_s game_turn_process(struct game_s *g)
 {
     struct game_end_s game_end;
-    BOOLVEC_TBL_DECLARE(old_within_frange, PLAYER_NUM, PLAYER_NUM);
+    BOOLVEC_TBL_DECLARE(old_contact, PLAYER_NUM, PLAYER_NUM);
     uint8_t old_focus[PLAYER_NUM];
     int num_alive = 0, num_colony = 0;
     uint8_t artifact_planet = PLANET_NONE;
@@ -1730,7 +1730,7 @@ struct game_end_s game_turn_process(struct game_s *g)
     game_end.type = GAME_END_NONE;
     game_turn_limit_ships(g);
     for (int i = 0; i < g->players; ++i) {
-        BOOLVEC_TBL_COPY1(old_within_frange, g->eto[i].within_frange, i, PLAYER_NUM);
+        BOOLVEC_TBL_COPY1(old_contact, g->eto[i].within_frange, i, PLAYER_NUM);
         old_focus[i] = g->planet_focus_i[i];
     }
 #if 0
@@ -1846,7 +1846,7 @@ struct game_end_s game_turn_process(struct game_s *g)
     }
     for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         /* TODO set flag in g->eto[i] to delay to player turn? */
-        game_turn_contact_broken(g, i, BOOLVEC_TBL_PTRPARAMM(old_within_frange, i));
+        game_turn_contact_broken(g, i, BOOLVEC_TBL_PTRPARAMM(old_contact, i));
     }
     game_fleet_unrefuel(g);
     game_update_production(g);
