@@ -257,11 +257,11 @@ int ui_races(struct game_s *g, player_id_t api)
     races_data_load(&d);
 
     game_update_production(g);
-    game_update_empire_within_range(g);
+    game_update_empire_contact(g);
 
     d.num = 0;
     for (player_id_t pi = PLAYER_0; pi < g->players; ++pi) {
-        if ((pi != api) && BOOLVEC_IS1(e->within_frange, pi) && IS_ALIVE(g, pi)) {
+        if ((pi != api) && BOOLVEC_IS1(e->contact, pi) && IS_ALIVE(g, pi)) {
             d.tbl_ei[d.num++] = pi;
         } else {
             e->spying[pi] = 0;
