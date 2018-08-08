@@ -386,7 +386,7 @@ void game_update_within_range(struct game_s *g)
     }
 }
 
-void game_update_empire_within_range(struct game_s *g)
+void game_update_empire_contact(struct game_s *g)
 {
     uint8_t tbl_pnum[PLAYER_NUM];
     uint8_t tbl_planet[PLAYER_NUM][PLANETS_MAX];
