@@ -954,7 +954,7 @@ int game_save_get_slot_fname(char *buf, int buflen, int i)
 int game_save_get_year_fname(char *buf, int buflen, int year)
 {
     const char *path = os_get_path_user();
-    char namebuf[16];
+    char namebuf[32];
     int res;
     if (!os_get_fname_save_year(namebuf, year)) {
         sprintf(namebuf, "1oom_save_%i.bin", year);
