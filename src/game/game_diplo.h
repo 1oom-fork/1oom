@@ -17,6 +17,7 @@ extern void game_diplo_battle_finish(struct game_s *g, int def, int att, int pop
 extern void game_diplo_set_treaty(struct game_s *g, player_id_t pi1, player_id_t pi2, treaty_t treaty);
 extern void game_diplo_set_trade(struct game_s *g, player_id_t pi1, player_id_t pi2, int bc);
 extern void game_diplo_stop_war(struct game_s *g, player_id_t pi1, player_id_t pi2);
+extern void game_diplo_esp_frame(struct game_s *g, player_id_t framed, player_id_t victim);
 extern void game_diplo_limit_mood_treaty(struct game_s *g);
 extern void game_diplo_mood_relax(struct game_s *g);
 extern int16_t game_diplo_get_mood(struct game_s *g, player_id_t p1, player_id_t p2);

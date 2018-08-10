@@ -270,6 +270,10 @@ void ui_game_start(struct game_s *g)
         }
     }
     BOOLVEC_CLEAR(ui_data.players_viewing, PLAYER_NUM);
+    for (int pli = 0; pli < g->galaxy_stars; ++pli) {
+        ui_data.star_frame[pli] = g->planet[pli].frame;
+    }
+    ui_data.seed = g->seed;
 }
 
 void ui_game_end(struct game_s *g)

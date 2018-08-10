@@ -1,6 +1,13 @@
 This is an incomplete list of PBX number replacements.
+Run with -dumpnum for the full list without explanations.
 
 (name : range, default)
+
+deterministic : 0..1, 1
+  - Game is deterministic. Given the same input, the outcome
+    remains the same. Reloading a save and clicking Next turn will not get rid
+    of a nasty event. Setting this number to 0 makes sitting idle churn the
+    random number generator for producing different results.
 
 bt_turn_max : 1..65535, 50
   - The number of battle turns before a forced retreat.

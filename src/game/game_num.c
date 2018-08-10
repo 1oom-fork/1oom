@@ -6,6 +6,7 @@
 
 /* -------------------------------------------------------------------------- */
 
+bool game_num_deterministic = false;
 int game_num_bt_turn_max = 50;
 bool game_num_bt_wait_no_reload = false;
 bool game_num_bt_precap_tohit = false;

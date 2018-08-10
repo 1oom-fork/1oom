@@ -240,10 +240,7 @@ again:
             puts(game_str_nt_frame);
             frame = ui_input_list(game_str_nt_victim, "> ", rl_in);
             if (frame >= 0) {
-                int v;
-                /* TODO move to game/ */
-                v = -(rnd_1_n(12, &g->seed) + rnd_1_n(12, &g->seed));
-                game_diplo_act(g, v, frame, d->nt.v08, 5, 0, 0);
+                game_diplo_esp_frame(g, frame, d->nt.v08);
             }
         }
         if (flag_dialog) {
