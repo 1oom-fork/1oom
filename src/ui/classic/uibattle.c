@@ -940,7 +940,7 @@ void ui_battle_draw_scan(const struct battle_s *bt, bool side_r)
 
 void ui_battle_draw_item(const struct battle_s *bt, int itemi, int x, int y)
 {
-    struct ui_battle_data_s *d = bt->uictx;
+    const struct ui_battle_data_s *d = bt->uictx;
     struct game_s *g = bt->g;
     const struct battle_item_s *b;
     int xoff, yoff;

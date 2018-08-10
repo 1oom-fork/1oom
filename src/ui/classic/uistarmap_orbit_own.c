@@ -28,9 +28,9 @@
 static void ui_starmap_orbit_own_draw_cb(void *vptr)
 {
     struct starmap_data_s *d = vptr;
-    struct game_s *g = d->g;
-    planet_t *pf = &g->planet[d->oo.from];
-    planet_t *pt = &g->planet[g->planet_focus_i[d->api]];
+    const struct game_s *g = d->g;
+    const planet_t *pf = &g->planet[d->oo.from];
+    const planet_t *pt = &g->planet[g->planet_focus_i[d->api]];
     char buf[0x80];
 
     ui_starmap_draw_starmap(d);
