@@ -31,12 +31,17 @@
 
 #define GMAP_LIMITS  7, 7, 230, 191
 
-struct gmap_data_s {
+struct gmap_blink_data_s {
     struct game_s *g;
-    player_id_t api;
-    int16_t mode;
     uint8_t planet_i;
     int countdown;
+};
+
+struct gmap_data_s {
+    const struct game_s *g;
+    struct gmap_blink_data_s b;
+    player_id_t api;
+    int16_t mode;
     uint8_t *gfx_mapview;
     uint8_t *gfx_but_col;
     uint8_t *gfx_but_env;
@@ -46,8 +51,7 @@ struct gmap_data_s {
 
 struct gmap_basic_data_s {
     struct game_s *g;
-    uint8_t planet_i;
-    int countdown;
+    struct gmap_blink_data_s b;
     bool show_switch;
 };
 
@@ -69,10 +73,21 @@ static void gmap_free_data(struct gmap_data_s *d)
     lbxfile_item_release(LBXFILE_STARMAP, d->gfx_but_ok);
 }
 
+static void gmap_blink_step(struct gmap_blink_data_s *b)
+{
+    if (b->countdown < 0) {
+        struct game_s *g = b->g;
+        b->planet_i = rnd_0_nm1(g->galaxy_stars, &ui_data.seed);
+        b->countdown = 3;
+    } else {
+        --b->countdown;
+    }
+}
+
 static void gmap_draw_cb(void *vptr)
 {
     struct gmap_data_s *d = vptr;
-    struct game_s *g = d->g;
+    const struct game_s *g = d->g;
     player_id_t tbl_races[PLAYER_NUM];
     int racesnum = 1;
 
@@ -156,8 +171,8 @@ static void gmap_draw_cb(void *vptr)
         y = (p->y * 185) / g->galaxy_maxy + 7;
         if (BOOLVEC_IS1(p->explored, d->api) || (d->mode == 0)) {
             gfx = ui_data.gfx.starmap.smstars[p->star_type];
-            if ((d->planet_i == i) && (d->countdown > 0)) {
-                lbxgfx_set_new_frame(gfx, d->countdown);
+            if ((d->b.planet_i == i) && (d->b.countdown > 0)) {
+                lbxgfx_set_new_frame(gfx, d->b.countdown);
             } else {
                 lbxgfx_set_frame_0(gfx);
             }
@@ -294,13 +309,7 @@ static void gmap_draw_cb(void *vptr)
         lbxfont_print_str_normal(250, 88, game_str_gm_mapkey, UI_SCREEN_W);
     }
     lbxfont_set_temp_color(0x00);
-
-    if (d->countdown < 0) {
-        d->planet_i = rnd_0_nm1(g->galaxy_stars, &g->seed);
-        d->countdown = 3;
-    } else {
-        --d->countdown;
-    }
+    gmap_blink_step(&(d->b));
     {
         int x, y;
         x = (ui_data.starmap.x * 224) / g->galaxy_maxx + 7;
@@ -328,8 +337,8 @@ static void ui_gmap_basic_draw_galaxy(struct gmap_basic_data_s *d)
         x = (p->x * 215) / g->galaxy_maxx + 6;
         y = (p->y * 171) / g->galaxy_maxy + 6;
         gfx = ui_data.gfx.starmap.smstars[p->star_type];
-        if ((d->planet_i == i) && (d->countdown > 0)) {
-            lbxgfx_set_new_frame(gfx, d->countdown);
+        if ((d->b.planet_i == i) && (d->b.countdown > 0)) {
+            lbxgfx_set_new_frame(gfx, d->b.countdown);
         } else {
             lbxgfx_set_frame_0(gfx);
         }
@@ -349,8 +358,9 @@ bool ui_gmap(struct game_s *g, player_id_t active_player)
     d.g = g;
     d.api = active_player;
     d.mode = 0;
-    d.countdown = -1;
-    d.planet_i = 0;
+    d.b.g = g;
+    d.b.countdown = -1;
+    d.b.planet_i = 0;
 
     uiobj_table_clear();
 
@@ -406,8 +416,9 @@ void *ui_gmap_basic_init(struct game_s *g, bool show_player_switch)
 {
     static struct gmap_basic_data_s ctx; /* HACK */
     ctx.g = g;
-    ctx.countdown = -1;
-    ctx.planet_i = 0;
+    ctx.b.g = g;
+    ctx.b.countdown = -1;
+    ctx.b.planet_i = 0;
     ctx.show_switch = show_player_switch;
     if (!show_player_switch) {
         ui_draw_copy_buf();
@@ -441,7 +452,7 @@ void ui_gmap_basic_start_frame(void *ctx, int pi)
 void ui_gmap_basic_draw_frame(void *ctx, int pi/*player_i*/)
 {
     struct gmap_basic_data_s *d = ctx;
-    struct game_s *g = d->g;
+    const struct game_s *g = d->g;
     ui_gmap_basic_draw_galaxy(d);
     if (pi >= 0) {
         for (int i = 0; i < g->enroute_num; ++i) {
@@ -505,18 +516,13 @@ void ui_gmap_basic_draw_frame(void *ctx, int pi/*player_i*/)
             }
         }
     }
-    if (d->countdown < 0) {
-        d->planet_i = rnd_0_nm1(g->galaxy_stars, &g->seed);
-        d->countdown = 3;
-    } else {
-        --d->countdown;
-    }
+    gmap_blink_step(&(d->b));
 }
 
 void ui_gmap_basic_draw_only(void *ctx, int pi/*planet_i*/)
 {
     struct gmap_basic_data_s *d = ctx;
-    struct game_s *g = d->g;
+    const struct game_s *g = d->g;
     ui_gmap_basic_draw_galaxy(d);
     {
         const planet_t *p = &(g->planet[pi]);
@@ -554,12 +560,7 @@ void ui_gmap_basic_draw_only(void *ctx, int pi/*planet_i*/)
             }
         }
     }
-    if (d->countdown < 0) {
-        d->planet_i = rnd_0_nm1(g->galaxy_stars, &g->seed);
-        d->countdown = 3;
-    } else {
-        --d->countdown;
-    }
+    gmap_blink_step(&(d->b));
 }
 
 void ui_gmap_basic_finish_frame(void *ctx, int pi)
