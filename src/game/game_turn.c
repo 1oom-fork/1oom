@@ -693,10 +693,11 @@ static void game_turn_build_ind(struct game_s *g)
     }
 }
 
-static void game_turn_move_ships(struct game_s *g)
+static int game_turn_move_ships(struct game_s *g)
 {
     void *ctx;
     bool local_multiplayer = g->gaux->local_players > 1, move_back = false;
+    int rng_steps = 0, rng_countdown = -1;
     ctx = ui_gmap_basic_init(g, local_multiplayer);
     if (local_multiplayer) {
         memcpy(g->gaux->move_temp->enroute, g->enroute, g->enroute_num * sizeof(fleet_enroute_t));
@@ -792,6 +793,12 @@ static void game_turn_move_ships(struct game_s *g)
             }
             ui_gmap_basic_draw_frame(ctx, g->active_player);
             ui_gmap_basic_finish_frame(ctx, g->active_player);
+            if (rng_countdown < 0) {
+                ++rng_steps;
+                rng_countdown = 3;
+            } else {
+                --rng_countdown;
+            }
         }
         move_back = local_multiplayer;
     }
@@ -815,6 +822,7 @@ static void game_turn_move_ships(struct game_s *g)
         }
     }
     game_update_visibility(g);
+    return rng_steps;
 }
 
 #if 0
@@ -1765,7 +1773,7 @@ static void game_turn_update_final_war(struct game_s *g)
 
 /* -------------------------------------------------------------------------- */
 
-struct game_end_s game_turn_process(struct game_s *g)
+struct game_end_s game_turn_process(struct game_s *g, bool fix_old_save_rng)
 {
     struct game_end_s game_end;
     BOOLVEC_TBL_DECLARE(old_contact, PLAYER_NUM, PLAYER_NUM);
@@ -1802,7 +1810,18 @@ struct game_end_s game_turn_process(struct game_s *g)
     game_turn_build_ship(g);
     game_turn_reserve(g);
     game_turn_build_ind(g);
-    game_turn_move_ships(g);
+    {
+        int rng_steps;
+        rng_steps = game_turn_move_ships(g);
+        if (fix_old_save_rng && rng_steps) {
+            bool v = game_num_deterministic;
+            game_num_deterministic = false;
+            while (rng_steps--) {
+                game_rng_step(g);
+            }
+            game_num_deterministic = v;
+        }
+    }
     game_turn_limit_ships(g);
     game_remove_empty_fleets(g);
     game_spy_report(g);
