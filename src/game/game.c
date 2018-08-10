@@ -34,6 +34,7 @@ static const char *game_opt_load_fname = 0;
 static bool game_opt_undo_enabled = true;
 static bool game_opt_year_save_enabled = false;
 static bool game_opt_next_turn = false;
+static bool game_opt_fix_old_save_rng = false;
 static bool game_opt_save_quit = false;
 
 static struct game_end_s game_opt_end = { GAME_END_NONE, 0, 0, 0, 0 };
@@ -400,6 +401,9 @@ const struct cmdline_options_s main_cmdline_options[] = {
     { "-nextturn", 0,
       options_enable_bool_var, (void *)&game_opt_next_turn,
       NULL, "Go directly to next turn (for reproducing bugs)" },
+    { "-oldsaverng", 0,
+      options_enable_bool_var, (void *)&game_opt_fix_old_save_rng,
+      NULL, "Fix RNG for old saves (for reproducing bugs)" },
     { "-savequit", 0,
       options_enable_bool_var, (void *)&game_opt_save_quit,
       NULL, "Save and quit (for debugging)" },
@@ -601,8 +605,8 @@ int main_do(void)
         }
         main_menu_start_game:
         game_aux_start(&game_aux, &game);
-        ui_game_start(&game);
         game_start(&game);
+        ui_game_start(&game);
         game_end.type = GAME_END_NONE;
         while ((game_end.type == GAME_END_NONE) || (game_end.type == GAME_END_FINAL_WAR)) {
             for (; ((game_end.type == GAME_END_NONE) || (game_end.type == GAME_END_FINAL_WAR)) && (game.active_player < game.players); ++game.active_player) {
@@ -640,7 +644,8 @@ int main_do(void)
                 }
             }
             if (game_end.type != GAME_END_QUIT) {
-                game_end = game_turn_process(&game);
+                game_end = game_turn_process(&game, game_opt_fix_old_save_rng);
+                game_opt_fix_old_save_rng = false;
             }
             game.active_player = PLAYER_0;
         }
