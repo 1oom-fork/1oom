@@ -4,6 +4,7 @@
 #include "game_types.h"
 #include "types.h"
 
+extern bool game_num_deterministic;
 extern int game_num_bt_turn_max;
 extern bool game_num_bt_wait_no_reload;
 extern bool game_num_bt_precap_tohit;
