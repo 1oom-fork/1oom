@@ -95,10 +95,8 @@ static void ui_starmap_fill_oi_slider(struct starmap_data_s *d)
     }
 }
 
-static void ui_starmap_do_help(struct starmap_data_s *d)
+static void ui_starmap_do_help(struct game_s *g, player_id_t api)
 {
-    struct game_s *g = d->g;
-    player_id_t api = d->api;
     const empiretechorbit_t *e = &(g->eto[api]);
     const shipresearch_t *srd = &(g->srd[api]);
     const planet_t *p = &(g->planet[g->evn.home[api]]);
@@ -707,7 +705,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             }
             ui_draw_finish();
             if (g->difficulty < DIFFICULTY_AVERAGE) {
-                ui_starmap_do_help(&d);
+                ui_starmap_do_help(g, active_player);
             }
             ui_delay_ticks_or_click(STARMAP_DELAY);
         }
