@@ -384,6 +384,13 @@ void game_diplo_stop_war(struct game_s *g, player_id_t p1, player_id_t p2)
     }
 }
 
+void game_diplo_esp_frame(struct game_s *g, player_id_t framed, player_id_t victim)
+{
+    int v;
+    v = -(rnd_1_n(12, &g->seed) + rnd_1_n(12, &g->seed));
+    game_diplo_act(g, v, framed, victim, 5, 0, 0);
+}
+
 void game_diplo_limit_mood_treaty(struct game_s *g)
 {
     for (player_id_t p1 = PLAYER_0; p1 < g->players; ++p1) {

@@ -586,8 +586,8 @@ int main_do(void)
         }
         main_menu_start_game:
         game_aux_start(&game_aux, &game);
-        ui_game_start(&game);
         game_start(&game);
+        ui_game_start(&game);
         game_end.type = GAME_END_NONE;
         while ((game_end.type == GAME_END_NONE) || (game_end.type == GAME_END_FINAL_WAR)) {
             for (; ((game_end.type == GAME_END_NONE) || (game_end.type == GAME_END_FINAL_WAR)) && (game.active_player < game.players); ++game.active_player) {
