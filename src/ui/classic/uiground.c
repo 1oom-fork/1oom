@@ -269,7 +269,7 @@ void ui_ground(struct ground_s *gr)
         if (!flag_done) {
             if (--downcount == 0) {
                 ui_sound_play_sfx(0x02);
-                downcount = rnd_0_nm1(3, &gr->g->seed) + 2;
+                downcount = rnd_0_nm1(3, &ui_data.seed) + 2;
             }
             ground_draw_cb1(&d);
             ui_draw_finish();
