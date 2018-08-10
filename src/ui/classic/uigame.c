@@ -279,12 +279,16 @@ void ui_game_start(struct game_s *g)
     ui_palette_set_n();
     ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
     for (int i = 0; i < g->players; ++i) {
-        if (BOOLVEC_IS0(g->is_ai, i)) {
+        if (IS_HUMAN(g, i)) {
             ui_starmap_set_pos_focus(g, i);
             break;
         }
     }
     BOOLVEC_CLEAR(ui_data.players_viewing, PLAYER_NUM);
+    for (int pli = 0; pli < g->galaxy_stars; ++pli) {
+        ui_data.star_frame[pli] = g->planet[pli].frame;
+    }
+    ui_data.seed = g->seed;
     /* turn of governor and set default msg filter if ui_extra is disabled */
     if (!ui_extra_enabled) {
         for (int pli = 0; pli < g->galaxy_stars; ++pli) {
