@@ -240,7 +240,7 @@ static void game_ai_classic_turn_p1_front(struct game_s *g, struct ai_turn_p1_s 
     BOOLVEC_DECLARE(tbl_own_transport_dest, PLANETS_MAX);
     BOOLVEC_CLEAR(tbl_own_transport_dest, PLANETS_MAX);
     for (int i = 0; i < g->transport_num; ++i) {
-        transport_t *r = &(g->transport[j]);
+        const transport_t *r = &(g->transport[j]);
         if (r->owner == pi) {
             BOOLVEC_SET1(tbl_own_transport_dest, r->dest);
         }

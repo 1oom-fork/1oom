@@ -85,7 +85,7 @@ static void ground_draw_item(int popi, int popnum, uint8_t *gfx, bool is_right, 
 static void ground_draw_cb1(void *vptr)
 {
     struct ground_data_s *d = vptr;
-    struct ground_s *gr = d->gr;
+    const struct ground_s *gr = d->gr;
     const struct game_s *g = d->gr->g;
     const char *strrace[2];
     char buf[0x80];
