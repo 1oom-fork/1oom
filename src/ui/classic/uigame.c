@@ -243,7 +243,7 @@ void ui_game_start(struct game_s *g)
     ui_palette_set_n();
     ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
     for (int i = 0; i < g->players; ++i) {
-        if (BOOLVEC_IS0(g->is_ai, i)) {
+        if (IS_HUMAN(g, i)) {
             ui_starmap_set_pos_focus(g, i);
             break;
         }
