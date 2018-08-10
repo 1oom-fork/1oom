@@ -9,6 +9,7 @@
 #include "game_aux.h"
 #include "game_battle.h"
 #include "game_battle_human.h"
+#include "game_misc.h"
 #include "game_shiptech.h"
 #include "game_str.h"
 #include "gfxaux.h"
@@ -512,8 +513,8 @@ static void ui_battle_draw_beam_attack_do1(const struct battle_s *bt, int *fx, i
             }
             ui_battle_draw_bottom(bt);
             if (w->numfire > 1) {
-                xo = rnd_1_n(3, &bt->g->seed) - 2;
-                yo = rnd_1_n(3, &bt->g->seed) - 2;
+                xo = rnd_1_n(3, &ui_data.seed) - 2;
+                yo = rnd_1_n(3, &ui_data.seed) - 2;
             } else {
                 xo = 0;
                 yo = 0;
@@ -947,12 +948,8 @@ void ui_battle_draw_scan(const struct battle_s *bt, bool side_r)
 void ui_battle_draw_item(const struct battle_s *bt, int itemi, int x, int y)
 {
     const struct ui_battle_data_s *d = bt->uictx;
-    struct game_s *g = bt->g;
     const struct battle_item_s *b;
-    int xoff, yoff;
     b = &(bt->item[itemi]);
-    xoff = rnd_0_nm1(5, &g->seed) - 2;
-    yoff = rnd_0_nm1(5, &g->seed) - 2;
     if (b->selected && (!bt->s[b->side].flag_auto)) {
         if (b->selected != 2/*moving*/) {
             uint8_t *gfx;
@@ -982,7 +979,7 @@ void ui_battle_draw_item(const struct battle_s *bt, int itemi, int x, int y)
     }
     gfx_aux_setup_wh(&ui_data.aux.btemp, 34, 26);
     if (b->cloak == 1) {
-        gfx_aux_draw_cloak(&ui_data.aux.ship_p1, 30, rnd_1_n(1000, &g->seed));
+        gfx_aux_draw_cloak(&ui_data.aux.ship_p1, 30, rnd_1_n(1000, &ui_data.seed));
     }
     if (b->unman > 0) {
         int v = (b->unman * 100) / b->man;
@@ -1020,6 +1017,9 @@ void ui_battle_draw_item(const struct battle_s *bt, int itemi, int x, int y)
     {
         int xa = x, ya = y;
         if (b->sbmask & (1 << SHIP_SPECIAL_BOOL_DISP)) {
+            int xoff, yoff;
+            xoff = rnd_0_nm1(5, &ui_data.seed) - 2;
+            yoff = rnd_0_nm1(5, &ui_data.seed) - 2;
             xa += xoff;
             ya += yoff;
         }
@@ -1842,7 +1842,7 @@ void ui_battle_draw_cloaking(const struct battle_s *bt, int from, int to, int sx
         if (b->side != SIDE_L) {
             gfx_aux_flipx(&ui_data.aux.btemp);
         }
-        gfx_aux_draw_cloak(&ui_data.aux.btemp, i, rnd_1_n(1000, &bt->g->seed));
+        gfx_aux_draw_cloak(&ui_data.aux.btemp, i, rnd_1_n(1000, &ui_data.seed));
         gfx_aux_draw_frame_from_limit(b->sx * 32 + 1, b->sy * 24 + 1, &ui_data.aux.btemp, UI_SCREEN_W);
         if (sx >= 0) {
             lbxgfx_set_frame_0(b->gfx);
@@ -1850,7 +1850,7 @@ void ui_battle_draw_cloaking(const struct battle_s *bt, int from, int to, int sx
             if (b->side != SIDE_L) {
                 gfx_aux_flipx(&ui_data.aux.btemp);
             }
-            gfx_aux_draw_cloak(&ui_data.aux.btemp, from - i, rnd_1_n(1000, &bt->g->seed));
+            gfx_aux_draw_cloak(&ui_data.aux.btemp, from - i, rnd_1_n(1000, &ui_data.seed));
             gfx_aux_draw_frame_from_limit(sx * 32 + 1, sy * 24 + 1, &ui_data.aux.btemp, UI_SCREEN_W);
         }
         uiobj_finish_frame();
@@ -1980,6 +1980,7 @@ ui_battle_action_t ui_battle_turn(const struct battle_s *bt)
             }
         }
     }
+    game_rng_step(bt->g);
     return UI_BATTLE_ACT_NONE;
 }
 

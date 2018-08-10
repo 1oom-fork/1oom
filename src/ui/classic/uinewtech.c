@@ -457,11 +457,9 @@ again:
                 flag_done = true;
             }
             if ((oi == oi_o1) || (oi == oi_o2)) {
-                int v;
                 flag_done = true;
                 ui_sound_play_sfx_24();
-                v = -(rnd_1_n(12, &g->seed) + rnd_1_n(12, &g->seed));
-                game_diplo_act(g, v, (oi == oi_o1) ? d->other1 : d->other2, d->nt.stolen_from, 5, 0, 0);
+                game_diplo_esp_frame(g, (oi == oi_o1) ? d->other1 : d->other2, d->nt.stolen_from);
             }
             newtech_draw_cb1(d);
             ui_draw_finish();
