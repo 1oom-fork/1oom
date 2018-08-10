@@ -13,6 +13,7 @@
 #include "game_str.h"
 #include "game_tech.h"
 #include "log.h"
+#include "rnd.h"
 #include "types.h"
 #include "util_math.h"
 
@@ -687,5 +688,13 @@ bool game_transport_dest_ok(const struct game_s *g, const planet_t *p, player_id
             && (p->type >= g->eto[pi].have_colony_for)
             && (p->owner != PLAYER_NONE)
             ;
+    }
+}
+
+void game_rng_step(struct game_s *g)
+{
+    /* TODO disable for multiplayer */
+    if (!game_num_deterministic) {
+        rnd_0_nm1(2, &g->seed);
     }
 }

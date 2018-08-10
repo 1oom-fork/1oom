@@ -64,10 +64,9 @@ static void ui_starmap_remove_build_finished(struct game_s *g, player_id_t api, 
     }
 }
 
-static void ui_starmap_fill_oi_slider(struct starmap_data_s *d)
+static void ui_starmap_fill_oi_slider(struct starmap_data_s *d, planet_t *p)
 {
-    struct game_s *g = d->g;
-    planet_t *p = &(g->planet[g->planet_focus_i[d->api]]);
+    const struct game_s *g = d->g;
     d->sm.oi_ship = UIOBJI_INVALID;
     d->sm.oi_reloc = UIOBJI_INVALID;
     d->sm.oi_trans = UIOBJI_INVALID;
@@ -365,10 +364,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
         } else if (oi1 == oi_f10) {
             game_save_do_save_i(GAME_SAVE_I_CONTINUE, "Continue", g);
         } else if (oi1 == oi_alt_p) {
-            for (player_id_t i = PLAYER_0; i < g->players; ++i) {
-                g->eto[i].trait2 = rnd_0_nm1(6, &g->seed);
-                g->eto[i].trait1 = rnd_0_nm1(6, &g->seed);
-            }
+            game_cheat_traits(g, active_player);
         }
         for (int i = 0; i < g->enroute_num; ++i) {
             if (oi1 == d.oi_tbl_enroute[i]) {
@@ -657,7 +653,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
                 oi_starview1 = uiobj_add_mousearea_limited(x0, y0, x0 + 16, y0 + 16, MOO_KEY_UNKNOWN);
             }
             ui_starmap_fill_oi_tbl_stars(&d);
-            ui_starmap_fill_oi_slider(&d);
+            ui_starmap_fill_oi_slider(&d, p);
             oi_scroll = uiobj_add_tb(6, 6, 2, 2, 108, 86, &scrollx, &scrolly);
             ui_starmap_fill_oi_ctrl(&d);
             if (1) {
@@ -690,6 +686,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             if (g->difficulty < DIFFICULTY_AVERAGE) {
                 ui_starmap_do_help(g, active_player);
             }
+            game_rng_step(g);
             ui_delay_ticks_or_click(STARMAP_DELAY);
         }
     }
