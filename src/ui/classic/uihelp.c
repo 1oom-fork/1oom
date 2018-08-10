@@ -4,6 +4,7 @@
 
 #include "uihelp.h"
 #include "bits.h"
+#include "game_str.h"
 #include "hw.h"
 #include "lbx.h"
 #include "lbxfont.h"
@@ -33,9 +34,21 @@
 #define HELP_ITEM_SIZE  0x5f8
 #define HELP_STBL_SIZE  70
 
+#define HELP_EXTRA_BASE 0x40
+
+struct ui_help_screen_s {
+    const char **strp;
+    int x, y, w, ltype, lx1, ly1, next;
+};
+
+static const struct ui_help_screen_s ui_help_extra[] = {
+    { &game_str_xh_govern, 120, 10, 100, 1, 230, 15, HELP_EXTRA_BASE + 1 },
+    { &game_str_xh_xtra, 20, 160, 100, 1, 3, 196, 0 }
+};
+
 /* -------------------------------------------------------------------------- */
 
-static void ui_help_draw(const char *str0, const char *str1, int x, int y, int w, int ltype, int lx1, int ly1, const uint8_t *ctbl, uint8_t c0, uint8_t c1, uint8_t c2, uint8_t c3, uint8_t c4, uint8_t c5, uint8_t c6, uint8_t colorpos)
+static void ui_help_draw(const char *str0, const char *str1, int x, int y, int w, int ltype, int lx1, int ly1, const uint8_t *ctbl, uint8_t c0, uint8_t c1, uint8_t c2, uint8_t c5, uint8_t c6, uint8_t colorpos)
 {
     int x1, y1;
     LOG_DEBUG((DEBUGLEVEL_HELPUI, "%s: cp:%i (%i,%i) w:%i lt:%i lx:%i ly:%i '%s' '%s'\n", __func__, colorpos, x, y, w, ltype, lx1, ly1, str0, str1));
@@ -100,8 +113,8 @@ static void ui_help_draw(const char *str0, const char *str1, int x, int y, int w
         }
     }
     /*2e3d4*/
-    ui_draw_box2(x, y, x1, y1, c0, c1, c2, c3, ui_scale);
-    ui_draw_pixel(x, y, c4, ui_scale);
+    ui_draw_box2(x, y, x1, y1, c0, c1, c2, c0, ui_scale);
+    ui_draw_pixel(x, y, c1, ui_scale);
     ui_draw_pixel(x + 1, y + 1, c5, ui_scale);
     ui_draw_pixel(x + 2, y + 1, c5, ui_scale);
     ui_draw_pixel(x + 1, y + 2, c5, ui_scale);
@@ -118,12 +131,59 @@ static void ui_help_draw(const char *str0, const char *str1, int x, int y, int w
     lbxfont_print_str_split(x + 6, y + 6, w - 12, str1, 0, UI_SCREEN_W, UI_SCREEN_H, ui_scale);
 }
 
+static void ui_help_draw_str0(const uint8_t *p, const uint8_t *ctbl, uint8_t c0, uint8_t c1, uint8_t c2, uint8_t c5, uint8_t c6, uint8_t colorpos)
+{
+    ui_help_draw((const char *)&p[HELP_OFFS_STR0], (const char *)&p[HELP_OFFS_STR1],
+                GET_LE_16(&p[HELP_OFFS_XTBL]),
+                GET_LE_16(&p[HELP_OFFS_YTBL]),
+                GET_LE_16(&p[HELP_OFFS_WTBL]),
+                GET_LE_16(&p[HELP_OFFS_LTTBL]),
+                GET_LE_16(&p[HELP_OFFS_LXTBL]),
+                GET_LE_16(&p[HELP_OFFS_LYTBL]),
+                ctbl, c0, c1, c2, c5, c6, colorpos
+                );
+}
+
+static void ui_help_draw_stri(const uint8_t *p, const uint8_t *ctbl, uint8_t c0, uint8_t c1, uint8_t c2, uint8_t c5, uint8_t c6, int i)
+{
+    ui_help_draw("", (const char *)&p[HELP_OFFS_STBL + i * HELP_STBL_SIZE],
+                GET_LE_16(&p[HELP_OFFS_XTBL + i * 2 + 4]),
+                GET_LE_16(&p[HELP_OFFS_YTBL + i * 2 + 4]),
+                GET_LE_16(&p[HELP_OFFS_WTBL + i * 2 + 4]),
+                GET_LE_16(&p[HELP_OFFS_LTTBL + i * 2 + 4]),
+                GET_LE_16(&p[HELP_OFFS_LXTBL + i * 2 + 4]),
+                GET_LE_16(&p[HELP_OFFS_LYTBL + i * 2 + 4]),
+                ctbl, c0, c1, c2, c5, c6, (i + 10040) & 0xff
+                );
+}
+
+static void ui_help_draw_str2(const uint8_t *p, const uint8_t *ctbl, uint8_t c0, uint8_t c1, uint8_t c2, uint8_t c5, uint8_t c6, uint8_t colorpos)
+{
+    ui_help_draw((const char *)&p[HELP_OFFS_STR2], (const char *)&p[HELP_OFFS_STR3],
+                GET_LE_16(&p[HELP_OFFS_XTBL + 2]),
+                GET_LE_16(&p[HELP_OFFS_YTBL + 2]),
+                GET_LE_16(&p[HELP_OFFS_WTBL + 2]),
+                GET_LE_16(&p[HELP_OFFS_LTTBL + 2]),
+                GET_LE_16(&p[HELP_OFFS_LXTBL + 2]),
+                GET_LE_16(&p[HELP_OFFS_LYTBL + 2]),
+                ctbl, c0, c1, c2, c5, c6, colorpos
+                );
+}
+
+static void ui_help_draw_strx(const struct ui_help_screen_s *q, const uint8_t *ctbl, uint8_t c0, uint8_t c1, uint8_t c2, uint8_t c5, uint8_t c6, int i)
+{
+    ui_help_draw("", *(q->strp), q->x, q->y, q->w, q->ltype, q->lx1, q->ly1,
+                ctbl, c0, c1, c2, c5, c6, (i + 10040) & 0xff
+                );
+}
+
 /* -------------------------------------------------------------------------- */
 
 void ui_help(int help_index)
 {
     uint8_t ctbl[5], c0, c1, c3, c4, c5, c8;
     uint8_t *helplbx;
+    int help_override = -1;
     LOG_DEBUG((DEBUGLEVEL_HELPUI, "%s: %i\n", __func__, help_index));
     if ((help_index < 0) || (!ui_data.have_help)) {
         return;
@@ -147,44 +207,34 @@ void ui_help(int help_index)
     do {
         const uint8_t *p;
         uint8_t old_fontnum, old_fonta2;
+        LOG_DEBUG((DEBUGLEVEL_HELPUI, "%s: id %i\n", __func__, help_index));
         old_fontnum = lbxfont_get_current_fontnum();
         old_fonta2 = lbxfont_get_current_fonta2();
         /* old_vgabuf_seg = vgabuf_seg; */
         lbxfont_select(0, 0, 0, 0);
         lbxfont_set_gap_h(3);
         lbxfont_set_14_24(c1, c0);
-        p = &(helplbx[4 + HELP_ITEM_SIZE * help_index]);
-        ui_help_draw((const char *)&p[HELP_OFFS_STR0], (const char *)&p[HELP_OFFS_STR1],
-                    GET_LE_16(&p[HELP_OFFS_XTBL]),
-                    GET_LE_16(&p[HELP_OFFS_YTBL]),
-                    GET_LE_16(&p[HELP_OFFS_WTBL]),
-                    GET_LE_16(&p[HELP_OFFS_LTTBL]),
-                    GET_LE_16(&p[HELP_OFFS_LXTBL]),
-                    GET_LE_16(&p[HELP_OFFS_LYTBL]),
-                    ctbl, c3, c4, c5, c3, c4, c8, c0, 1
-                    );
-        if (GET_LE_16(&p[HELP_OFFS_10]) < 3) {
-            for (int i = 0; i < 9; ++i) {
-                ui_help_draw("", (const char *)&p[HELP_OFFS_STBL + i * HELP_STBL_SIZE],
-                    GET_LE_16(&p[HELP_OFFS_XTBL + i * 2 + 4]),
-                    GET_LE_16(&p[HELP_OFFS_YTBL + i * 2 + 4]),
-                    GET_LE_16(&p[HELP_OFFS_WTBL + i * 2 + 4]),
-                    GET_LE_16(&p[HELP_OFFS_LTTBL + i * 2 + 4]),
-                    GET_LE_16(&p[HELP_OFFS_LXTBL + i * 2 + 4]),
-                    GET_LE_16(&p[HELP_OFFS_LYTBL + i * 2 + 4]),
-                    ctbl, c3, c4, c5, c3, c4, c8, c0, (i + 10040) & 0xff
-                    );
+        if (help_index < HELP_EXTRA_BASE) {
+            p = &(helplbx[4 + HELP_ITEM_SIZE * help_index]);
+            ui_help_draw_str0(p, ctbl, c3, c4, c5, c8, c0, 1);
+            if (GET_LE_16(&p[HELP_OFFS_10]) < 3) {
+                for (int i = 0; i < 9; ++i) {
+                    ui_help_draw_stri(p, ctbl, c3, c4, c5, c8, c0, i);
+                }
+            } else {
+                ui_help_draw_str2(p, ctbl, c3, c4, c5, c8, c0, 10040 & 0xff);
             }
         } else {
-            ui_help_draw((const char *)&p[HELP_OFFS_STR2], (const char *)&p[HELP_OFFS_STR3],
-                    GET_LE_16(&p[HELP_OFFS_XTBL + 2]),
-                    GET_LE_16(&p[HELP_OFFS_YTBL + 2]),
-                    GET_LE_16(&p[HELP_OFFS_WTBL + 2]),
-                    GET_LE_16(&p[HELP_OFFS_LTTBL + 2]),
-                    GET_LE_16(&p[HELP_OFFS_LXTBL + 2]),
-                    GET_LE_16(&p[HELP_OFFS_LYTBL + 2]),
-                    ctbl, c3, c4, c5, c3, c4, c8, c0, 10040 & 0xff
-                    );
+            int i = 0;
+            while (help_index >= HELP_EXTRA_BASE) {
+                const struct ui_help_screen_s *q;
+                q = &(ui_help_extra[help_index - HELP_EXTRA_BASE]);
+                ui_help_draw_strx(q, ctbl, c3, c4, c5, c8, c0, i);
+                ++i;
+                help_index = q->next;
+            }
+            help_index = help_override;
+            p = &(helplbx[4 + HELP_ITEM_SIZE * help_index]);
         }
         lbxfont_select(old_fontnum, old_fonta2, 0, 0);
         /* vgabuf_seg = old_vgabuf_seg; */
@@ -192,7 +242,17 @@ void ui_help(int help_index)
         ui_draw_copy_buf();
         uiobj_input_wait();
         hw_video_copy_back_from_page3();
-        help_index = GET_LE_16(&p[HELP_OFFS_NEXT]);
+        if (ui_extra_enabled) {
+            if ((help_index == 4) && (help_index != help_override)) {
+                help_override = help_index;
+                help_index = HELP_EXTRA_BASE;
+            } else {
+                help_override = -1;
+                help_index = GET_LE_16(&p[HELP_OFFS_NEXT]);
+            }
+        } else {
+            help_index = GET_LE_16(&p[HELP_OFFS_NEXT]);
+        }
     } while (help_index != 0);
     uiobj_table_num_restore();
     lbxfile_item_release(LBXFILE_HELP, helplbx);
