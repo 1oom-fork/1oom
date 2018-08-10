@@ -50,6 +50,7 @@ typedef enum {
 } ui_main_loop_action_t;
 
 struct ui_data_s {
+    uint32_t seed;
     uint8_t *sfx[NUM_SOUNDS];
     uint8_t *mus;
     int music_i;
@@ -246,6 +247,7 @@ struct ui_data_s {
     struct {
         bool flag_also;
     } news;
+    uint8_t star_frame[PLANETS_MAX];
     ui_main_loop_action_t ui_main_loop_action;
     ui_main_loop_action_t ui_main_loop_action_prev;
     ui_main_loop_action_t ui_main_loop_action_next;
