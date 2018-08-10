@@ -6,6 +6,7 @@
 #include "game_aux.h"
 #include "game_misc.h"
 #include "game_tech.h"
+#include "rnd.h"
 
 /* -------------------------------------------------------------------------- */
 /* TODO disable for multiplayer and return false */
@@ -33,5 +34,14 @@ bool game_cheat_moola(struct game_s *g, player_id_t pi)
     empiretechorbit_t *e = &(g->eto[pi]);
     e->reserve_bc += 100;
     game_update_production(g);
+    return true;
+}
+
+bool game_cheat_traits(struct game_s *g, player_id_t pi)
+{
+    for (player_id_t i = PLAYER_0; i < g->players; ++i) {
+        g->eto[i].trait2 = rnd_0_nm1(TRAIT2_NUM, &g->seed);
+        g->eto[i].trait1 = rnd_0_nm1(TRAIT1_NUM, &g->seed);
+    }
     return true;
 }

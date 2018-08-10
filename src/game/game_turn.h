@@ -2,6 +2,7 @@
 #define INC_1OOM_GAME_TURN_H
 
 #include "game_end.h"
+#include "types.h"
 
 struct game_s;
 
