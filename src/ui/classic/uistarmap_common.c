@@ -101,7 +101,7 @@ static void ui_starmap_draw_planetinfo_do(const struct game_s *g, player_id_t ap
 
 static void ui_starmap_draw_range_parsec(struct starmap_data_s *d, int y)
 {
-    struct game_s *g = d->g;
+    const struct game_s *g = d->g;
     int dist = game_get_min_dist(g, d->api, g->planet_focus_i[d->api]);
     char buf[64];
     sprintf(buf, "%s %i %s", game_str_sm_range, dist, (dist == 1) ? game_str_sm_parsec : game_str_sm_parsecs);
@@ -121,8 +121,8 @@ static int tenths_2str(char *buf, int num)
 
 static void ui_starmap_draw_sliders_and_prod(struct starmap_data_s *d)
 {
-    struct game_s *g = d->g;
-    planet_t *p = &g->planet[g->planet_focus_i[d->api]];
+    const struct game_s *g = d->g;
+    const planet_t *p = &g->planet[g->planet_focus_i[d->api]];
     int x = 311;
     char buf[64];
 
@@ -151,7 +151,7 @@ static void ui_starmap_draw_sliders_and_prod(struct starmap_data_s *d)
         lbxgfx_draw_frame(229, 141, ui_data.gfx.starmap.stargate, UI_SCREEN_W);
         lbxfont_print_str_center(251, 169, game_str_sm_stargate, UI_SCREEN_W);
     } else {
-        shipdesign_t *sd = &g->srd[d->api].design[p->buildship];
+        const shipdesign_t *sd = &g->srd[d->api].design[p->buildship];
         uint8_t *gfx = ui_data.gfx.ships[sd->look];
         lbxgfx_set_frame_0(gfx);
         lbxgfx_draw_frame(236, 142, gfx, UI_SCREEN_W);
@@ -160,7 +160,7 @@ static void ui_starmap_draw_sliders_and_prod(struct starmap_data_s *d)
 
     lbxfont_select(2, 6, 0, 0);
     {
-        shipdesign_t *sd;
+        const shipdesign_t *sd;
         int vthis, vtotal, cost;
         vthis = game_adjust_prod_by_special((p->prod_after_maint * p->slider[PLANET_SLIDER_SHIP]) / 100, p->special);
         vtotal = vthis + p->bc_to_ship;
@@ -368,9 +368,9 @@ static void ui_starmap_draw_sliders_and_prod(struct starmap_data_s *d)
     }
 }
 
-static void ui_starmap_draw_textbox_finished(struct game_s *g, player_id_t api, int pi)
+static void ui_starmap_draw_textbox_finished(const struct game_s *g, player_id_t api, int pi)
 {
-    planet_t *p = &g->planet[pi];
+    const planet_t *p = &g->planet[pi];
     char *buf = ui_data.strbuf;
     int num;
     planet_finished_t i;
@@ -409,8 +409,8 @@ static void ui_starmap_draw_textbox_finished(struct game_s *g, player_id_t api, 
 
 void ui_starmap_draw_basic(struct starmap_data_s *d)
 {
-    struct game_s *g = d->g;
-    planet_t *p = &g->planet[g->planet_focus_i[d->api]];
+    const struct game_s *g = d->g;
+    const planet_t *p = &g->planet[g->planet_focus_i[d->api]];
 
     ui_starmap_draw_starmap(d);
     ui_starmap_draw_button_text(d, true);
@@ -557,9 +557,9 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
         }
     }
     for (int pi = 0; pi < g->galaxy_stars; ++pi) {
-        planet_t *p = &g->planet[pi];
+        const planet_t *p = &g->planet[pi];
         if ((p->owner == d->api) && (p->reloc != pi)) {
-            planet_t *p2 = &g->planet[p->reloc];
+            const planet_t *p2 = &g->planet[p->reloc];
             int x0, y0, x1, y1;
             x0 = (p->x - x) * 2 + 14;
             x1 = (p2->x - x) * 2 + 14;
@@ -617,7 +617,7 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
       && (ui_data.ui_main_loop_action != UI_MAIN_LOOP_ENROUTE_SEL)
       && (ui_data.ui_main_loop_action != UI_MAIN_LOOP_ORBIT_EN_SEL)
     ) {
-        planet_t *p = &g->planet[g->planet_focus_i[d->api]];
+        const planet_t *p = &g->planet[g->planet_focus_i[d->api]];
         tx = (p->x - x) * 2 + 8;
         ty = (p->y - y) * 2 + 8;
         lbxgfx_draw_frame_offs(tx, ty, ui_data.gfx.starmap.planbord, STARMAP_LIMITS, UI_SCREEN_W);
@@ -628,10 +628,10 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
         }
     }
     for (int i = 0; i < g->enroute_num; ++i) {
-        fleet_enroute_t *r = &g->enroute[i];
+        const fleet_enroute_t *r = &g->enroute[i];
         if (BOOLVEC_IS1(r->visible, d->api)) {
             uint8_t *gfx = ui_data.gfx.starmap.smalship[g->eto[r->owner].banner];
-            planet_t *p = &g->planet[r->dest];
+            const planet_t *p = &g->planet[r->dest];
             tx = (r->x - x) * 2 + 8;
             ty = (r->y - y) * 2 + 8;
             if (p->x < r->x) {
@@ -647,10 +647,10 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
         }
     }
     for (int i = 0; i < g->transport_num; ++i) {
-        transport_t *r = &g->transport[i];
+        const transport_t *r = &g->transport[i];
         if (BOOLVEC_IS1(r->visible, d->api)) {
             uint8_t *gfx = ui_data.gfx.starmap.smaltran[g->eto[r->owner].banner];
-            planet_t *p = &g->planet[r->dest];
+            const planet_t *p = &g->planet[r->dest];
             tx = (r->x - x) * 2 + 8;
             ty = (r->y - y) * 2 + 8;
             if (p->x < r->x) {
@@ -734,7 +734,7 @@ void ui_starmap_handle_oi_ctrl(struct starmap_data_s *d, int16_t oi)
 {
 #define XSTEP   0x1b
 #define YSTEP   0x15
-    struct game_s *g = d->g;
+    const struct game_s *g = d->g;
     bool changed = false;
     int x, y;
     if (g->evn.build_finished_num[d->api]) {
@@ -848,12 +848,12 @@ void ui_starmap_fill_oi_tbls(struct starmap_data_s *d)
 
 void ui_starmap_fill_oi_tbl_stars(struct starmap_data_s *d)
 {
-    struct game_s *g = d->g;
+    const struct game_s *g = d->g;
     int x = ui_data.starmap.x;
     int y = ui_data.starmap.y;
     uiobj_set_limits(STARMAP_LIMITS);
     for (int i = 0; i < g->galaxy_stars; ++i) {
-        planet_t *p = &(g->planet[i]);
+        const planet_t *p = &(g->planet[i]);
         int x0, y0;
         x0 = (p->x - x) * 2 + 8;
         y0 = (p->y - y) * 2 + 8;
@@ -863,12 +863,12 @@ void ui_starmap_fill_oi_tbl_stars(struct starmap_data_s *d)
 
 void ui_starmap_fill_oi_tbl_stars_own(struct starmap_data_s *d, player_id_t owner)
 {
-    struct game_s *g = d->g;
+    const struct game_s *g = d->g;
     int x = ui_data.starmap.x;
     int y = ui_data.starmap.y;
     uiobj_set_limits(STARMAP_LIMITS);
     for (int i = 0; i < g->galaxy_stars; ++i) {
-        planet_t *p = &(g->planet[i]);
+        const planet_t *p = &(g->planet[i]);
         if (p->owner == owner) {
             int x0, y0;
             x0 = (p->x - x) * 2 + 8;

@@ -214,7 +214,7 @@ static void gmap_draw_cb(void *vptr)
         case 0:
             lbxfont_select(0, 6, 0, 0);
             for (int i = 0; i < racesnum; ++i) {
-                empiretechorbit_t *e;
+                const empiretechorbit_t *e;
                 e = &(g->eto[tbl_races[i]]);
                 lbxgfx_draw_frame(245, 105 + 10 * i, ui_data.gfx.starmap.smalflag[e->banner], UI_SCREEN_W);
                 lbxfont_print_str_normal(260, 105 + 10 * i, game_str_tbl_race[e->race], UI_SCREEN_W);
@@ -307,7 +307,7 @@ static void gmap_draw_cb(void *vptr)
 
 static void ui_gmap_basic_draw_galaxy(struct gmap_basic_data_s *d)
 {
-    struct game_s *g = d->g;
+    const struct game_s *g = d->g;
     ui_draw_filled_rect(6, 6, 221, 177, 0);
     /*uiobj_set_limits(6, 6, 221, 177);*/
     lbxgfx_draw_frame_offs(0, 0, ui_data.gfx.starmap.sky, 6, 6, 221, 177, UI_SCREEN_W);
