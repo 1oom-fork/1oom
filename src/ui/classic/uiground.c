@@ -86,7 +86,7 @@ static void ground_draw_item(int popi, int popnum, uint8_t *gfx, bool is_right, 
 static void ground_draw_cb1(void *vptr)
 {
     struct ground_data_s *d = vptr;
-    struct ground_s *gr = d->gr;
+    const struct ground_s *gr = d->gr;
     const struct game_s *g = d->gr->g;
     const char *strrace[2];
     char buf[0x80];
@@ -269,7 +269,7 @@ void ui_ground(struct ground_s *gr)
         if (!flag_done) {
             if (--downcount == 0) {
                 ui_sound_play_sfx(0x02);
-                downcount = rnd_0_nm1(3, &gr->g->seed) + 2;
+                downcount = rnd_0_nm1(3, &ui_data.seed) + 2;
             }
             ground_draw_cb1(&d);
             ui_draw_finish();
