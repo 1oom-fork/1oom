@@ -29,7 +29,7 @@ struct shipnon0_s {
 typedef enum { NO_MOVE, GOT_HYPERCOMM, ON_PLANET } can_move_t;
 
 struct starmap_data_s {
-    struct game_s *g;
+    struct game_s *g; /* FIXME non-const only for ui_starmap_draw_cb1 */
     player_id_t api;
     int bottom_highlight;
     int anim_delay;
