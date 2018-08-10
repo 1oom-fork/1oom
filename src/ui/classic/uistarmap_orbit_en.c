@@ -28,7 +28,7 @@
 static void ui_starmap_orbit_en_draw_cb(void *vptr)
 {
     struct starmap_data_s *d = vptr;
-    struct game_s *g = d->g;
+    const struct game_s *g = d->g;
     const planet_t *p = &g->planet[d->oe.from];
     const empiretechorbit_t *e = &(g->eto[d->oe.player]);
     char buf[0x80];

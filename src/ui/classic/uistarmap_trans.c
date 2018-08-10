@@ -36,9 +36,9 @@ static void ui_starmap_draw_hmm5(void)
 static void ui_starmap_trans_draw_cb(void *vptr)
 {
     struct starmap_data_s *d = vptr;
-    struct game_s *g = d->g;
-    planet_t *pf = &g->planet[d->tr.from];
-    planet_t *pt = &g->planet[g->planet_focus_i[d->api]];
+    const struct game_s *g = d->g;
+    const planet_t *pf = &g->planet[d->tr.from];
+    const planet_t *pt = &g->planet[g->planet_focus_i[d->api]];
     char buf[0x80];
     int x0, y0, trans_max = pf->pop / 2;
     uiobj_set_help_id(17);
