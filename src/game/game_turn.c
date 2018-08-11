@@ -1334,7 +1334,7 @@ static void game_turn_transport(struct game_s *g)
             }
             /*e2a4*/
             if (pop3 <= 0) {
-                if (IS_HUMAN(g, owner) || IS_HUMAN(g, p->owner)) {
+                if (IS_HUMAN(g, owner) || ((p->owner != PLAYER_NONE) && IS_HUMAN(g, p->owner))) {
                     char *buf = ui_get_strbuf();
                     const char *s;
                     if ((g->gaux->local_players == 1) && IS_HUMAN(g, owner)) {
