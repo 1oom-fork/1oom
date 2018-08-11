@@ -750,21 +750,23 @@ bool game_xy_is_in_nebula(const struct game_s *g, int x, int y)
 
 int game_calc_eta(const struct game_s *g, int speed, int x0, int y0, int x1, int y1)
 {
-    int x, y, num = 0, v;
+    int x, y, num = 0;
     x = x0;
     y = y0;
     while ((x != x1) || (y != y1)) {
+        int v;
+        bool first;
         v = speed;
+        first = true;
         do {
-            util_math_go_line_dist(&x, &y, x1, y1, 5);
+            if (first || (!game_xy_is_in_nebula(g, x, y))) {
+                util_math_go_line_dist(&x, &y, x1, y1, 5);
+            }
             if ((x != x1) || (y != y1)) {
                 util_math_go_line_dist(&x, &y, x1, y1, 6);
             }
-            if (game_xy_is_in_nebula(g, x, y)) {
-                v = 0;
-            } else {
-                --v;
-            }
+            first = false;
+            --v;
         } while (v > 0);
         ++num;
     }
