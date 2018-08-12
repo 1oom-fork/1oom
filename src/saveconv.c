@@ -541,8 +541,11 @@ static int savetype_de_moo13(struct game_s *g, const char *fname)
         M13_GET_TBL_16(e->offer_field, eb + 0x1d4);
         M13_GET_TBL_16(e->offer_tech, eb + 0x1e0);
         M13_GET_TBL_16(e->offer_bc, eb + 0x1ec);
-        M13_GET_TBL_16_HATED(e->hated, eb + 0x21c);
-        M13_GET_TBL_16_HATED(e->mutual_enemy, eb + 0x228);
+        M13_GET_TBL_16_HATED(e->attack_bounty, eb + 0x21c);
+        M13_GET_TBL_16_HATED(e->bounty_collect, eb + 0x228);
+        M13_GET_TBL_16(e->attack_gift_field, eb + 0x234);
+        M13_GET_TBL_16(e->attack_gift_tech, eb + 0x240);
+        M13_GET_TBL_16(e->attack_gift_bc, eb + 0x24c);
         M13_GET_TBL_16(e->hatred, eb + 0x270);
         M13_GET_TBL_16(e->have_met, eb + 0x27c);
         M13_GET_TBL_16(e->trade_established_bc, eb + 0x288);
@@ -985,8 +988,11 @@ static int savetype_en_moo13(struct game_s *g, const char *fname)
         M13_SET_TBL_16(e->offer_field, eb + 0x1d4);
         M13_SET_TBL_16(e->offer_tech, eb + 0x1e0);
         M13_SET_TBL_16(e->offer_bc, eb + 0x1ec);
-        M13_SET_TBL_16_HATED(e->hated, eb + 0x21c);
-        M13_SET_TBL_16_HATED(e->mutual_enemy, eb + 0x228);
+        M13_SET_TBL_16_HATED(e->attack_bounty, eb + 0x21c);
+        M13_SET_TBL_16_HATED(e->bounty_collect, eb + 0x228);
+        M13_SET_TBL_16(e->attack_gift_field, eb + 0x234);
+        M13_SET_TBL_16(e->attack_gift_tech, eb + 0x240);
+        M13_SET_TBL_16(e->attack_gift_bc, eb + 0x24c);
         M13_SET_TBL_16(e->hatred, eb + 0x270);
         M13_SET_TBL_16(e->have_met, eb + 0x27c);
         M13_SET_TBL_16(e->trade_established_bc, eb + 0x288);
@@ -1354,8 +1360,11 @@ static const struct game_intros_s game_intros_eto[] = {
     GAME_INTROS_TBL(empiretechorbit_s, offer_field),
     GAME_INTROS_TBL(empiretechorbit_s, offer_tech),
     GAME_INTROS_TBL(empiretechorbit_s, offer_bc),
-    GAME_INTROS_TBL(empiretechorbit_s, hated),
-    GAME_INTROS_TBL(empiretechorbit_s, mutual_enemy),
+    GAME_INTROS_TBL(empiretechorbit_s, attack_bounty),
+    GAME_INTROS_TBL(empiretechorbit_s, bounty_collect),
+    GAME_INTROS_TBL(empiretechorbit_s, attack_gift_field),
+    GAME_INTROS_TBL(empiretechorbit_s, attack_gift_tech),
+    GAME_INTROS_TBL(empiretechorbit_s, attack_gift_bc),
     GAME_INTROS_TBL(empiretechorbit_s, hatred),
     GAME_INTROS_TBL(empiretechorbit_s, have_met),
     GAME_INTROS_TBL(empiretechorbit_s, trade_established_bc),
@@ -2173,8 +2182,11 @@ static int savetype_en_text(struct game_s *g, const char *fname)
         OUTLINETBL("offer_field", g->players, e->offer_field);
         OUTLINETBL("offer_tech", g->players, e->offer_tech);
         OUTLINETBL("offer_bc", g->players, e->offer_bc);
-        OUTLINETBL("hated", g->players, e->hated);
-        OUTLINETBL("mutual_enemy", g->players, e->mutual_enemy);
+        OUTLINETBL("attack_bounty", g->players, e->attack_bounty);
+        OUTLINETBL("bounty_collect", g->players, e->bounty_collect);
+        OUTLINETBL("attack_gift_field", g->players, e->attack_gift_field);
+        OUTLINETBL("attack_gift_tech", g->players, e->attack_gift_tech);
+        OUTLINETBL("attack_gift_bc", g->players, e->attack_gift_bc);
         OUTLINETBL("hatred", g->players, e->hatred);
         OUTLINETBL("have_met", g->players, e->have_met);
         OUTLINETBL("trade_established_bc", g->players, e->trade_established_bc);
