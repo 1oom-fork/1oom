@@ -298,17 +298,23 @@ void ui_audience_show1(struct audience_s *au)
 
 void ui_audience_show2(struct audience_s *au)
 {
+    struct audience_data_s *d = au->uictx;
     int16_t oi = 0;
-    ui_audience_play_music(au->uictx, au->musi); /* side effect of game_audience_get_str1() */
-    uiobj_set_callback_and_delay(ui_audience_draw_cb2, au->uictx, 1);
+    ui_audience_play_music(d, au->musi); /* side effect of game_audience_get_str1() */
+    uiobj_set_callback_and_delay(ui_audience_draw_cb2, d, 1);
     uiobj_set_downcount(1);
     uiobj_table_clear();
     uiobj_add_mousearea_all(MOO_KEY_UNKNOWN);
     while (oi == 0) {
         ui_delay_prepare();
         oi = uiobj_handle_input_cond();
-        ui_delay_ticks_or_click(1);
+        if (oi == 0) {
+            ui_audience_draw_cb2(d);
+            ui_draw_finish();
+            ui_delay_ticks_or_click(1);
+        }
     }
+    uiobj_table_clear();
 }
 
 void ui_audience_show3(struct audience_s *au)
