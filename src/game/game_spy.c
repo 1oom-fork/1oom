@@ -452,6 +452,8 @@ void game_spy_turn(struct game_s *g, struct spy_turn_s *st)
             g->evn.spies_caught[i][j] = 0;
             g->evn.stolen_field[j][i] = 0;
             g->evn.stolen_field[i][j] = 0;
+            g->evn.stolen_tech[j][i] = 0;
+            g->evn.stolen_tech[i][j] = 0;
             g->evn.stolen_spy[j][i] = 0;
             g->evn.stolen_spy[i][j] = 0;
             g->evn.spied_num[j][i] = 0;
