@@ -46,6 +46,7 @@ typedef struct techdata_s {
 
 #define TECH_TIER_NUM   10
 #define TECH_PER_FIELD  60
+#define TECH_MAX_LEVEL  100
 
 typedef struct shipresearch_s {
     shipdesign_t design[NUM_SHIPDESIGNS];
