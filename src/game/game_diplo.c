@@ -177,8 +177,8 @@ void game_diplo_break_treaty(struct game_s *g, player_id_t pi/*breaker*/, player
     }
     e->treaty[pi2] = TREATY_NONE;
     e2->treaty[pi] = TREATY_NONE;
-    e->hated[pi2] = PLAYER_NONE;
-    e2->hated[pi] = PLAYER_NONE;
+    e->attack_bounty[pi2] = PLAYER_NONE;
+    e2->attack_bounty[pi] = PLAYER_NONE;
     e->mood_treaty[pi2] = -200;
     e->mood_trade[pi2] = -200;
     e->mood_tech[pi2] = -200;
@@ -238,8 +238,8 @@ void game_diplo_break_trade(struct game_s *g, player_id_t pi, player_id_t pi2)
     e2->trade_established_bc[pi] = 0;
     e->trade_percent[pi2] = 0;
     e2->trade_percent[pi] = 0;
-    e->hated[pi2] = PLAYER_NONE;
-    e2->hated[pi] = PLAYER_NONE;
+    e->attack_bounty[pi2] = PLAYER_NONE;
+    e2->attack_bounty[pi] = PLAYER_NONE;
     SETMAX(e->relation1[pi2], -100);
     e2->relation1[pi] = e->relation1[pi2];
     if (e->treaty[pi2] >= TREATY_WAR) {
@@ -323,10 +323,10 @@ void game_diplo_battle_finish(struct game_s *g, int def, int att, int popdiff, u
         for (player_id_t i = PLAYER_0; i < g->players; ++i) {
             if (1
               && (i != side_z) && (i != side_ai) && IS_AI(g, i)
-              && ((ea->treaty[i] >= TREATY_WAR) || (ez->mutual_enemy[i] == side_ai))
+              && ((ea->treaty[i] >= TREATY_WAR) || (ez->bounty_collect[i] == side_ai)) /* FIXME BUG? should be attack_bounty? */
             ) {
-                if (ez->hated[i] == side_ai) {
-                    ez->mutual_enemy[i] = i;
+                if (ez->attack_bounty[i] == side_ai) {
+                    ez->bounty_collect[i] = i;
                 } else if (game_planet_get_random(g, side_ai) == PLANET_NONE) {
                     game_diplo_act(g, offense, side_z, i, 3, planet_i, 0);
                 }
