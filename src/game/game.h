@@ -70,11 +70,11 @@ typedef struct empiretechorbit_s {
     uint16_t offer_bc[PLAYER_NUM];
     player_id_t au_ally_attacker[PLAYER_NUM];
     player_id_t au_ask_break_treaty[PLAYER_NUM];
-    player_id_t hated[PLAYER_NUM];
-    player_id_t mutual_enemy[PLAYER_NUM];
-    tech_field_t au_attack_gift_field[PLAYER_NUM];
-    uint8_t au_attack_gift_tech[PLAYER_NUM];
-    int16_t au_attack_gift_bc[PLAYER_NUM];
+    player_id_t attack_bounty[PLAYER_NUM];
+    player_id_t bounty_collect[PLAYER_NUM];
+    tech_field_t attack_gift_field[PLAYER_NUM];
+    uint8_t attack_gift_tech[PLAYER_NUM];
+    int16_t attack_gift_bc[PLAYER_NUM];
     int16_t hatred[PLAYER_NUM];
     uint16_t have_met[PLAYER_NUM]; /* 0, 1, 2 */
     uint16_t trade_established_bc[PLAYER_NUM];
