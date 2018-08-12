@@ -187,8 +187,8 @@ N*1     AI next spy mode: 0=hide, 1=espionage, 2=sabotage
 N*1     incentive offer tech field
 N*1     incentive offer tech
 N*2     incentive offer BC
-N*2     hated player (0..5, 6)
-N*2     mutual enemy (0..5, 6)
+N*2     if bit 0 is 0: attack gift BC ; if bit 0 is 1: bits: 15..8=tech, 4..1=field
+N*2     bits 11..8: attack bounty on player (0..5, 6) ; bits 3..0: bounty collect (0..5, 6)
 N*2     hatred
 N*2     have met (0=no, 1=just, 2=introduced)
 N*2     established trade BC

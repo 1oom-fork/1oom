@@ -182,11 +182,11 @@ fc      2*6 AI next spy mode: 0=hide, 1=espionage, 2=sabotage
 1f8     2*6 audience; attacker of ally
 204     2*6 audience; ask break treaty with
 210     2*6 ?
-21c     2*6 hated party
-228     2*6 mutual enemy
-234     2*6 audience; attack gift tech field
-240     2*6 audience; attack gift tech
-24c     2*6 audience; attack gift BC
+21c     2*6 attack bounty on player
+228     2*6 bounty collect for player (0/1)
+234     2*6 attack gift tech field
+240     2*6 attack gift tech
+24c     2*6 attack gift BC
 258     2*6 ?
 264     2*6 ?
 270     2*6 hatred
