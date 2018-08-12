@@ -127,9 +127,9 @@ static void game_turn_update_mood_blunder(struct game_s *g)
         for (player_id_t j = PLAYER_0; j < g->players; ++j) {
             e->diplo_val[j] = 0;
             e->diplo_type[j] = 0;
-            if (e->mutual_enemy[j] != PLAYER_NONE) {
-                e->hated[j] = PLAYER_NONE;
-                e->mutual_enemy[j] = PLAYER_NONE;
+            if (e->bounty_collect[j] != PLAYER_NONE) {
+                e->attack_bounty[j] = PLAYER_NONE;
+                e->bounty_collect[j] = PLAYER_NONE;
             }
             e->au_tech_trade_num[j] = 0;
             e->offer_tech[j] = 0;
