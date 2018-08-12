@@ -62,7 +62,7 @@ static int game_audience_print_tech(struct game_s *g, tech_field_t field, uint8_
     len = strlen(buf);
     buf[len++] = ' ';
     if (add_str) {
-        len += sprintf(buf, "%s.", game_str_au_tech);
+        len += sprintf(&buf[len], "%s.", game_str_au_tech);
     } else {
         buf[len] = '\0';
     }
