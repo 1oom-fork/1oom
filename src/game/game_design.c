@@ -356,9 +356,13 @@ int game_design_calc_space(struct game_design_s *gd)
 int game_design_calc_cost_item(struct game_design_s *gd, design_slot_t slot, int i)
 {
     int cost = game_design_calc_cost_item_do(gd, slot, i);
-    SETMAX(cost, 5);
+    if ((cost < 5) && (i != 0)) {
+        cost = 5;
+    }
     cost = (cost + 5) / 10;
-    SETMAX(cost, 1);
+    if ((cost < 1) && (i != 0)) {
+        cost = 1;
+    }
     return cost;
 }
 
