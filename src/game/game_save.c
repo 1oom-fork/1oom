@@ -288,8 +288,35 @@ static int game_save_encode_eto(uint8_t *buf, int pos, const empiretechorbit_t *
     SG_1OOM_EN_TBL_U8(e->offer_field, pnum);
     SG_1OOM_EN_TBL_U8(e->offer_tech, pnum);
     SG_1OOM_EN_TBL_U16(e->offer_bc, pnum);
-    SG_1OOM_EN_TBL_U16(e->hated, pnum);
-    SG_1OOM_EN_TBL_U16(e->mutual_enemy, pnum);
+    {
+        /* HACK Fit 5 tables into 2 while not breaking old versions. */
+        uint16_t tbl[PLAYER_NUM];
+        for (player_id_t i = pnum; i < PLAYER_NUM; ++i) {
+            tbl[i] = 0; /* keep compiler happy */
+        }
+        /* Old attack_bounty. The attack_gift_* are irrelevant if attack_bounty is PLAYER_NONE. */
+        for (player_id_t i = 0; i < pnum; ++i) {
+            uint16_t v;
+            if (e->attack_gift_bc[i] != 0) {
+                v = e->attack_gift_bc[i]; /* multiple of 50, always even */
+            } else if (e->attack_gift_tech[i] != 0) {
+                v = (((uint16_t)e->attack_gift_tech[i]) << 8) | (e->attack_gift_field[i] << 1) | 1;
+            } else {
+                v = 0;
+            }
+            tbl[i] = v;
+        }
+        SG_1OOM_EN_TBL_U16(tbl, pnum);
+        /* Old bounty_collect.
+           attack_bounty[0] is never 0, and thus tbl[0] is never PLAYER_NONE (but typically (PLAYER_NONE << 8) | PLAYER_NONE).
+           bounty_collect[0] is always PLAYER_NONE.
+           Old code reading this to bounty_collect will get != PLAYER_NONE and reset attack_bounty on next turn.
+        */
+        for (player_id_t i = 0; i < pnum; ++i) {
+            tbl[i] = (((uint16_t)e->attack_bounty[i]) << 8) | e->bounty_collect[i];
+        }
+        SG_1OOM_EN_TBL_U16(tbl, pnum);
+    }
     SG_1OOM_EN_TBL_U16(e->hatred, pnum);
     SG_1OOM_EN_TBL_U16(e->have_met, pnum);
     SG_1OOM_EN_TBL_U16(e->trade_established_bc, pnum);
@@ -352,8 +379,36 @@ static int game_save_decode_eto(const uint8_t *buf, int pos, empiretechorbit_t *
     SG_1OOM_DE_TBL_U8(e->offer_field, pnum);
     SG_1OOM_DE_TBL_U8(e->offer_tech, pnum);
     SG_1OOM_DE_TBL_U16(e->offer_bc, pnum);
-    SG_1OOM_DE_TBL_U16(e->hated, pnum);
-    SG_1OOM_DE_TBL_U16(e->mutual_enemy, pnum);
+    {
+        uint16_t ab[PLAYER_NUM];
+        uint16_t bc[PLAYER_NUM];
+        for (player_id_t i = pnum; i < PLAYER_NUM; ++i) {   /* keep compiler happy */
+            ab[i] = 0;
+            bc[i] = 0;
+        }
+        SG_1OOM_DE_TBL_U16(ab, pnum);
+        SG_1OOM_DE_TBL_U16(bc, pnum);
+        if (bc[0] != PLAYER_NONE) { /* New save, demangle the data. */
+            for (player_id_t i = 0; i < pnum; ++i) {
+                uint16_t v;
+                v = bc[i];
+                e->attack_bounty[i] = (v >> 8) & 0xf;
+                e->bounty_collect[i] = v & 0xf;
+                v = ab[i];
+                if (v & 1) {
+                    e->attack_gift_tech[i] = (v >> 8) & 0xff;
+                    e->attack_gift_field[i] = (v >> 1) & 0xf;
+                } else {
+                    e->attack_gift_bc[i] = v;
+                }
+            }
+        } else { /* Old save, simply copy the tables. */
+            for (player_id_t i = 0; i < pnum; ++i) {
+                e->attack_bounty[i] = ab[i];
+                e->bounty_collect[i] = bc[i];
+            }
+        }
+    }
     SG_1OOM_DE_TBL_U16(e->hatred, pnum);
     SG_1OOM_DE_TBL_U16(e->have_met, pnum);
     SG_1OOM_DE_TBL_U16(e->trade_established_bc, pnum);

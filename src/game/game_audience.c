@@ -56,7 +56,7 @@ static int game_audience_print_tech(struct game_s *g, tech_field_t field, uint8_
     len = strlen(buf);
     buf[len++] = ' ';
     if (add_str) {
-        len += sprintf(buf, "%s.", game_str_au_tech);
+        len += sprintf(&buf[len], "%s.", game_str_au_tech);
     } else {
         buf[len] = '\0';
     }
@@ -160,7 +160,7 @@ static const char *game_audience_get_str1(struct audience_s *au)
                         s = game_str_tbl_race[g->eto[eh->diplo_p2[pa]].race];
                         break;
                     case 8:
-                        s = game_str_tbl_race[g->eto[eh->hated[pa]].race];
+                        s = game_str_tbl_race[g->eto[eh->attack_bounty[pa]].race];
                         break;
                     case 0xc:
                         s = game_str_tbl_race[g->eto[eh->au_ask_break_treaty[pa]].race];
@@ -187,10 +187,10 @@ static const char *game_audience_get_str1(struct audience_s *au)
                         s = game_str_tbl_race[g->eto[au->pwar].race];
                         break;
                     case 0xd:
-                        if (eh->au_attack_gift_bc[pa] != 0) {
-                            len = sprintf(buf, "%i %s.", eh->au_attack_gift_bc[pa], game_str_bc);
+                        if (eh->attack_gift_bc[pa] != 0) {
+                            len = sprintf(buf, "%i %s.", eh->attack_gift_bc[pa], game_str_bc);
                         } else {
-                            len = game_audience_print_tech(g, eh->au_attack_gift_field[pa], eh->au_attack_gift_tech[pa], buf, true);
+                            len = game_audience_print_tech(g, eh->attack_gift_field[pa], eh->attack_gift_tech[pa], buf, true);
                         }
                         break;
                     case 0xe:
@@ -278,6 +278,9 @@ static int16_t game_audience_sub3(struct audience_s *au)
                 /*game_audience_get_str1(au);*/ /* FIXME why again? */
             }
             break;
+        case 28:
+        case 58:
+            break;
         default:
             LOG_DEBUG((1, "%s: BUG unhandled dtype %u\n", __func__, au->dtype));
             break;
@@ -286,10 +289,11 @@ static int16_t game_audience_sub3(struct audience_s *au)
     if ((au->dtype == 28) || (au->dtype == 58) || (au->dtype == 29)) {
         ui_audience_show2(au);
         selected = 1;
-        au->dtype = 29;
-        strcpy(au->buf, game_str_au_inxchng);
-        au->condtbl = 0;
-        selected = ui_audience_ask2a(au);
+        if (au->dtype == 29) {
+            strcpy(au->buf, game_str_au_inxchng);
+            au->condtbl = 0;
+            selected = ui_audience_ask2a(au);
+        }
     } else {
         /*62346*/
         au->condtbl = 0;
@@ -1220,6 +1224,12 @@ static void game_audience_do(struct audience_s *au)
                 /*60761*/
                 if (au->dtype == 29) {
                     game_tech_get_new(g, ph, eh->au_tech_trade_field[pa][selected], eh->au_tech_trade_tech[pa][selected], 4, pa, 0, false);
+                }
+                if ((au->dtype == 58) && game_num_aud_bounty_give) {    /* WASBUG MOO1 never gives the bounty */
+                    eh->reserve_bc += eh->attack_gift_bc[pa];
+                    if (eh->attack_gift_tech[pa] != 0) {
+                        game_tech_get_new(g, ph, eh->attack_gift_field[pa], eh->attack_gift_tech[pa], 4, pa, 0, false);
+                    }
                 }
             }
             /*607a9*/
