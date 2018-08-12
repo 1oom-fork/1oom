@@ -558,8 +558,7 @@ int game_design_build_tbl_fit_engine(struct game_s *g, struct game_design_s *gd,
     shipdesign_t *sd = &(gd->sd);
     ship_engine_t actengine = sd->engine;
     int last = 0;
-    buf[0] = 1/*HAVE*/;
-    for (int i = 1; i < SHIP_ENGINE_NUM; ++i) {
+    for (int i = 0; i < SHIP_ENGINE_NUM; ++i) {
         if (game_tech_player_has_tech(g, TECH_FIELD_PROPULSION, tbl_shiptech_engine[i].tech_i, gd->player_i)) {
             sd->engine = i;
             game_design_update_engines(sd);
