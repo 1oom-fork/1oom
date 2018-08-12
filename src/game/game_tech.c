@@ -23,7 +23,7 @@
 const uint8_t tech_reduce_50percent_per_10pts[] = {
     0, 100, 93, 87, 81, 76, 71, 66, 62, 58, 54, 50, 47, 44, 41, 38,
     35, 33, 31, 29, 27, 25, 23, 22, 20, 19, 18, 16, 15, 14, 13, 13,
-    12, 11, 10, 9, 9, 8, 8, 7, 7, 6, 6, 5, 5, 5, 4, 4, 4, 4
+    12, 11, 10, 9, 9, 8, 8, 7, 7, 6, 6, 5, 5, 5, 4, 4, 4, 4, 3, 3
 };
 
 const uint8_t tech_reduce_25percent_per_10pts[] = {
@@ -475,7 +475,7 @@ void game_tech_get_name(const struct game_aux_s *gaux, tech_field_t field, int t
     } else if (tech == -1) {
         strcpy(buf, game_str_tbl_st_weap[WEAPON_NUCLEAR_BOMB - 1]);
     } else if (tech > 50) {
-        sprintf(buf, "%s %s %s %s", game_str_te_adv, game_str_tbl_te_field[field], game_str_te_tech, game_str_tbl_roman[tech / 5]);
+        sprintf(buf, "%s %s %s %s", game_str_te_adv, game_str_tbl_te_field[field], game_str_te_tech, game_str_tbl_roman[(tech - 50) / 5]);
     } else {
         const uint8_t *p = &(gaux->research.d0[(field * 50 + tech - 1) * 6]);
         if (p[0] != 0xff) {
