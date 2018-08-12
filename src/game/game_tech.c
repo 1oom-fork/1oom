@@ -155,10 +155,10 @@ static void game_tech_ai_tech_next(struct game_s *g, player_id_t player, tech_fi
 
 static void game_tech_share(struct game_s *g, tech_field_t f, bool accepted, bool from_dead)
 {
-    player_id_t tbl_source[TECH_PER_FIELD];
+    player_id_t tbl_source[TECH_MAX_LEVEL + 1];
     uint8_t maxtech = 0;
-    BOOLVEC_DECLARE(tbl_techcompl, TECH_PER_FIELD);
-    BOOLVEC_CLEAR(tbl_techcompl, TECH_PER_FIELD);
+    BOOLVEC_DECLARE(tbl_techcompl, TECH_MAX_LEVEL + 1);
+    BOOLVEC_CLEAR(tbl_techcompl, TECH_MAX_LEVEL + 1);
     for (player_id_t pi = PLAYER_0; pi < g->players; ++pi) {
         if ((BOOLVEC_IS0(g->refuse, pi) == accepted) && (from_dead || IS_ALIVE(g, pi))) {   /* BUG MOO1 takes tech also from dead races */
             uint8_t *p = g->srd[pi].researchcompleted[f];
