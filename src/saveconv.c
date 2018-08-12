@@ -491,8 +491,11 @@ static const struct game_intros_s game_intros_eto[] = {
     GAME_INTROS_TBL(empiretechorbit_s, offer_field),
     GAME_INTROS_TBL(empiretechorbit_s, offer_tech),
     GAME_INTROS_TBL(empiretechorbit_s, offer_bc),
-    GAME_INTROS_TBL(empiretechorbit_s, hated),
-    GAME_INTROS_TBL(empiretechorbit_s, mutual_enemy),
+    GAME_INTROS_TBL(empiretechorbit_s, attack_bounty),
+    GAME_INTROS_TBL(empiretechorbit_s, bounty_collect),
+    GAME_INTROS_TBL(empiretechorbit_s, attack_gift_field),
+    GAME_INTROS_TBL(empiretechorbit_s, attack_gift_tech),
+    GAME_INTROS_TBL(empiretechorbit_s, attack_gift_bc),
     GAME_INTROS_TBL(empiretechorbit_s, hatred),
     GAME_INTROS_TBL(empiretechorbit_s, have_met),
     GAME_INTROS_TBL(empiretechorbit_s, trade_established_bc),
@@ -1311,8 +1314,11 @@ static int savetype_en_text(const struct game_s *g, const char *fname)
         OUTLINETBL("offer_field", g->players, e->offer_field);
         OUTLINETBL("offer_tech", g->players, e->offer_tech);
         OUTLINETBL("offer_bc", g->players, e->offer_bc);
-        OUTLINETBL("hated", g->players, e->hated);
-        OUTLINETBL("mutual_enemy", g->players, e->mutual_enemy);
+        OUTLINETBL("attack_bounty", g->players, e->attack_bounty);
+        OUTLINETBL("bounty_collect", g->players, e->bounty_collect);
+        OUTLINETBL("attack_gift_field", g->players, e->attack_gift_field);
+        OUTLINETBL("attack_gift_tech", g->players, e->attack_gift_tech);
+        OUTLINETBL("attack_gift_bc", g->players, e->attack_gift_bc);
         OUTLINETBL("hatred", g->players, e->hatred);
         OUTLINETBL("have_met", g->players, e->have_met);
         OUTLINETBL("trade_established_bc", g->players, e->trade_established_bc);

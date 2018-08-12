@@ -3373,7 +3373,7 @@ static void game_ai_classic_turn_diplo_p2_sub1(struct game_s *g, player_id_t p1,
                 pa = p3;
             }
         }
-        if ((pa != PLAYER_NONE) && (!rnd_0_nm1(10, &g->seed)) && (e1->hated[p2] == PLAYER_NONE)) {
+        if ((pa != PLAYER_NONE) && (!rnd_0_nm1(10, &g->seed)) && (e1->attack_bounty[p2] == PLAYER_NONE)) {
             struct spy_esp_s s[1];
             int num, bc;
             s->spy = p1;
@@ -3388,11 +3388,11 @@ static void game_ai_classic_turn_diplo_p2_sub1(struct game_s *g, player_id_t p1,
             if ((bc != 0) || (num != 0)) {
                 v4 = 4;
                 e1->diplo_type[p2] = 28;
-                e1->hated[p2] = pa;
-                e1->au_attack_gift_field[p2] = s->tbl_field[0];
-                e1->au_attack_gift_tech[p2] = s->tbl_tech2[0];
-                e1->au_attack_gift_bc[p2] = bc;
-                e1->mutual_enemy[p2] = PLAYER_NONE;
+                e1->attack_bounty[p2] = pa;
+                e1->attack_gift_field[p2] = s->tbl_field[0];
+                e1->attack_gift_tech[p2] = s->tbl_tech2[0];
+                e1->attack_gift_bc[p2] = bc;
+                e1->bounty_collect[p2] = PLAYER_NONE;
             }
         }
     }
@@ -3593,7 +3593,7 @@ static void game_ai_classic_turn_diplo_p2(struct game_s *g)
             } else if (e1->have_met[p2] == 1) {
                 e1->have_met[p2] = 2;
                 e1->diplo_type[p2] = e2->trait1 + 14;
-            } else if (e1->mutual_enemy[p2] != PLAYER_NONE) {
+            } else if (e1->bounty_collect[p2] != PLAYER_NONE) {
                 e1->diplo_type[p2] = 58;
             } else if ((e1->diplo_type[p2] == 13) || (e1->diplo_type[p2] == 32) || (e1->diplo_type[p2] == 61) || (e1->diplo_type[p2] == 60)) {
                 /*v8 = 0; unused */

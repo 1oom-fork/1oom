@@ -1063,8 +1063,8 @@ static void game_generate_misc(struct game_s *g)
         empiretechorbit_t *e;
         e = &g->eto[pli];
         for (player_id_t pli2 = PLAYER_0; pli2 < g->players; ++pli2) {
-            e->hated[pli2] = PLAYER_NONE;
-            e->mutual_enemy[pli2] = PLAYER_NONE;
+            e->attack_bounty[pli2] = PLAYER_NONE;
+            e->bounty_collect[pli2] = PLAYER_NONE;
         }
     }
 }

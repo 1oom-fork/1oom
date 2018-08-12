@@ -307,8 +307,11 @@ static int libsave_moo13_de_do(uint8_t *buf, struct game_s *g)
         M13_GET_TBL_16(e->offer_field, eb + 0x1d4);
         M13_GET_TBL_16(e->offer_tech, eb + 0x1e0);
         M13_GET_TBL_16(e->offer_bc, eb + 0x1ec);
-        M13_GET_TBL_16_HATED(e->hated, eb + 0x21c);
-        M13_GET_TBL_16_HATED(e->mutual_enemy, eb + 0x228);
+        M13_GET_TBL_16_HATED(e->attack_bounty, eb + 0x21c);
+        M13_GET_TBL_16_HATED(e->bounty_collect, eb + 0x228);
+        M13_GET_TBL_16(e->attack_gift_field, eb + 0x234);
+        M13_GET_TBL_16(e->attack_gift_tech, eb + 0x240);
+        M13_GET_TBL_16(e->attack_gift_bc, eb + 0x24c);
         M13_GET_TBL_16(e->hatred, eb + 0x270);
         M13_GET_TBL_16(e->have_met, eb + 0x27c);
         M13_GET_TBL_16(e->trade_established_bc, eb + 0x288);
@@ -723,8 +726,11 @@ static int libsave_moo13_en_do(uint8_t *buf, const struct game_s *g)
         M13_SET_TBL_16(e->offer_field, eb + 0x1d4);
         M13_SET_TBL_16(e->offer_tech, eb + 0x1e0);
         M13_SET_TBL_16(e->offer_bc, eb + 0x1ec);
-        M13_SET_TBL_16_HATED(e->hated, eb + 0x21c);
-        M13_SET_TBL_16_HATED(e->mutual_enemy, eb + 0x228);
+        M13_SET_TBL_16_HATED(e->attack_bounty, eb + 0x21c);
+        M13_SET_TBL_16_HATED(e->bounty_collect, eb + 0x228);
+        M13_SET_TBL_16(e->attack_gift_field, eb + 0x234);
+        M13_SET_TBL_16(e->attack_gift_tech, eb + 0x240);
+        M13_SET_TBL_16(e->attack_gift_bc, eb + 0x24c);
         M13_SET_TBL_16(e->hatred, eb + 0x270);
         M13_SET_TBL_16(e->have_met, eb + 0x27c);
         M13_SET_TBL_16(e->trade_established_bc, eb + 0x288);

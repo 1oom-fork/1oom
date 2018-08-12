@@ -34,6 +34,7 @@ int game_num_eco_slider_slack = 7;
 int game_num_race_bonus_alkari = 3;
 int game_num_race_bonus_bulrathi = 25;
 int game_num_race_bonus_mrrshan = 4;
+bool game_num_aud_bounty_give = false;
 
 uint8_t game_num_tbl_hull_w[4] = { 1, 5, 25, 125 };
 
