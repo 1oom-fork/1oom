@@ -3356,23 +3356,23 @@ static void game_ai_classic_turn_diplo_p2_sub1(struct game_s *g, player_id_t p1,
         }
         if ((pa != PLAYER_NONE) && (!rnd_0_nm1(10, &g->seed)) && (e1->hated[p2] == PLAYER_NONE)) {
             struct spy_esp_s s[1];
-            int num, ve;
+            int num, bc;
             s->spy = p1;
             s->target = p2;
             num = game_spy_esp_sub1(g, s, 0, 2);
             /*game_spy_esp_get_random(g, s, &field, &tech); unused */
-            ve = 0;
+            bc = 0;
             if (num == 0) {
-                ve = (((rnd_1_n(3, &g->seed) + 1) * g->year) / 50) * 50;
+                bc = (((rnd_1_n(3, &g->seed) + 1) * g->year) / 50) * 50;
                 s->tbl_tech2[0] = 0;
             }
-            if ((ve != 0) || (num != 0)) {
+            if ((bc != 0) || (num != 0)) {
                 v4 = 4;
                 e1->diplo_type[p2] = 28;
                 e1->hated[p2] = pa;
                 e1->au_attack_gift_field[p2] = s->tbl_field[0];
                 e1->au_attack_gift_tech[p2] = s->tbl_tech2[0];
-                e1->au_attack_gift_bc[p2] = ve;
+                e1->au_attack_gift_bc[p2] = bc;
                 e1->mutual_enemy[p2] = PLAYER_NONE;
             }
         }
