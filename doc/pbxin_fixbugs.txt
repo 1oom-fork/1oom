@@ -34,6 +34,7 @@
 4,bt_no_tohit_acc,0,1
 4,bt_oracle_fix,0,1
 4,news_orion,0,1
+4,aud_bounty_give,0,1
 4,orbital_weap_any,0,1
 4,orbital_weap_4,0,1
 4,combat_trans_fix,0,1
