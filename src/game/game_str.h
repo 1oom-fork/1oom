@@ -520,7 +520,5 @@ extern const char *game_str_mf_title;
 extern const char *game_str_tbl_mf[FINISHED_NUM];
 #define XTRAMENU_NUM    5
 extern const char *game_str_tbl_xtramenu[XTRAMENU_NUM];
-extern const char *game_str_xh_govern;
-extern const char *game_str_xh_xtra;
 
 #endif
