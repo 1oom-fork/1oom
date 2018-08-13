@@ -258,7 +258,8 @@ Event data (N = @PLAYERS)
 sz      description
 2       year of last event
 3       event has happened (bitmask of 20 bits)
-17      (0, unused)
+1       diplo message subtype (-1..13)
+16      (0, unused)
 1       have plague (0..3)
 1       plague player
 1       plague planet
