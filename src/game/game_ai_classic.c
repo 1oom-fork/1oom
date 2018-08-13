@@ -3605,7 +3605,15 @@ static void game_ai_classic_turn_diplo_p1(struct game_s *g)
                 if (!(rnd_0_nm1(20, &g->seed))) {
                     game_diplo_act(g, rnd_1_n(5, &g->seed), p1, p2, 1, 0, 0);
                 }
-                if ((e1->treaty[p2] == TREATY_WAR) && ((g->gaux->diplo_d0_rval + e1->mood_peace[p2]) > 100)) { /* BUG? use of a global, unsaved and possible unset diplo val seems wrong */
+                /* WASBUG
+                   MOO1 uses the last audience message variant index (diplo_msg_subtype, -1..13) in place of v.
+                   This is weird, nondeterministic (in MOO1) and unworkable for multiplayer.
+                   Whether v is what was intended is unknown, but it makes a whole lot more sense.
+                */
+                if (g->ai_id == GAME_AI_CLASSIC) {
+                    v = g->evn.diplo_msg_subtype;
+                }
+                if ((e1->treaty[p2] == TREATY_WAR) && ((v + e1->mood_peace[p2]) > 100)) {
                     game_diplo_stop_war(g, p1, p2);
                 }
                 game_diplo_annoy(g, p1, p2, 3);
