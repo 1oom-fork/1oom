@@ -89,7 +89,7 @@ static const char *game_audience_get_str1(struct audience_s *au)
         flag_framed = true;
         --dtype;
     }
-    if (g->gaux->diplo_d0_rval == -1) {
+    if (g->evn.diplo_msg_subtype == -1) {
         const char *msg;
         char *buf = au->buf;
         {
@@ -98,7 +98,7 @@ static const char *game_audience_get_str1(struct audience_s *au)
                 --v;
                 SETMAX(v, 0);
             }
-            g->gaux->diplo_d0_rval = v;
+            g->evn.diplo_msg_subtype = v;
             msg = DIPLOMAT_MSG_PTR(g->gaux, v, dtype);
         }
         for (int i = 0; (i < DIPLOMAT_MSG_LEN) && (msg[i] != 0); ++i) {
@@ -336,7 +336,7 @@ static bool game_audience_sub2(struct audience_s *au)
     }
     au->dtype = 27;
     eh->au_ask_break_treaty[pa] = pf;
-    g->gaux->diplo_d0_rval = -1;
+    g->evn.diplo_msg_subtype = -1;
     if (game_audience_sub3(au) != 0) {
         /* ea->relation1[ph] -= rnd_1_n(6, &g->seed) + 6; SETMAX(ea->relation1[ph], -100); BUG? useless */
         ea->relation1[ph] = -100;
@@ -360,7 +360,7 @@ static void game_audience_set_dtype(struct audience_s *au, uint8_t dtype, int a2
         }
     }
     au->dtype = dtype;
-    g->gaux->diplo_d0_rval = -1;
+    g->evn.diplo_msg_subtype = -1;
     game_audience_get_str1(au);
     ui_audience_show3(au);
 }
@@ -380,7 +380,7 @@ static int game_audience_mp_ask_accept(struct audience_s *au, aud_mp_ask_t atype
     player_id_t pa = au->pa;
     char *buf = au->buf;
     int16_t selected = 0;
-    g->gaux->diplo_d0_rval = -1;
+    g->evn.diplo_msg_subtype = -1;
     buf += sprintf(buf, "\x02(%s)\x01", g->emperor_names[pa]);
     switch (atype) {
         case AUD_MP_ASK_NAP:
@@ -493,7 +493,7 @@ static bool game_audiece_mp_sweeten_tech(struct audience_s *au, tech_field_t *fi
 {
     struct game_s *g = au->g;
     player_id_t pa = au->pa;
-    g->gaux->diplo_d0_rval = -1;
+    g->evn.diplo_msg_subtype = -1;
     sprintf(au->buf, "\x02(%s)\x01", g->emperor_names[pa]);
     while (1) {
         int16_t selected;
@@ -551,7 +551,7 @@ static bool game_audiece_mp_sweeten_bc(struct audience_s *au, int *bcptr)
         bctbl[3] = (((4 * reserve) / 5) / 20) * 20;
         bctbl[4] = reserve;
     }
-    g->gaux->diplo_d0_rval = -1;
+    g->evn.diplo_msg_subtype = -1;
     sprintf(au->buf, "\x02(%s)\x01", g->emperor_names[pa]);
     for (int i = 0; i < bcnum; ++i) {
         int len;
@@ -1188,7 +1188,7 @@ static void game_audience_do(struct audience_s *au)
     empiretechorbit_t *ea = &(g->eto[pa]);
     int16_t selected;
     if ((au->mode == 0) || (au->mode == 1) || (au->mode == 2)) {
-        g->gaux->diplo_d0_rval = -1;
+        g->evn.diplo_msg_subtype = -1;
         game_audience_get_str1(au);
         ui_audience_show1(au);
     }
@@ -1197,7 +1197,7 @@ static void game_audience_do(struct audience_s *au)
             selected = 1;  /* FIXME BUG? used below for dtype == 76 if !game_audience_sub2() */
             if (game_audience_sub2(au)) {
                 au->dtype = au->dtype_next;
-                g->gaux->diplo_d0_rval = -1;
+                g->evn.diplo_msg_subtype = -1;
                 if ((selected = game_audience_sub3(au)) == 0) {
                     if (au->dtype == 24) {
                         game_diplo_set_treaty(g, ph, pa, TREATY_NONAGGRESSION);
@@ -1291,7 +1291,7 @@ void game_audience(struct game_s *g, player_id_t ph, player_id_t pa)
     if (au->dtype == 0) {
         game_audience_start_human(au);
     }
-    g->gaux->diplo_d0_rval = -1;
+    g->evn.diplo_msg_subtype = -1;
     if (((au->dtype >= 24) && (au->dtype <= 30)) || (au->dtype == 58) || (au->dtype == 76)) {
         au->dtype_next = au->dtype;
         au->dtype = 22;
