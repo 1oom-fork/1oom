@@ -58,7 +58,6 @@ struct game_aux_s {
     bool flag_cheat_galaxy;
     bool flag_cheat_events;
     bool initialized;
-    int16_t diplo_d0_rval;
 };
 
 extern int game_aux_init(struct game_aux_s *gaux, struct game_s *g);

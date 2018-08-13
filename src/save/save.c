@@ -567,7 +567,8 @@ static int game_save_encode_evn(uint8_t *buf, int pos, const gameevents_t *ev, u
 {
     SG_1OOM_EN_U16(ev->year);
     SG_1OOM_EN_BV(ev->done, GAME_EVENT_TBL_NUM);
-    SG_1OOM_EN_DUMMY(17);
+    SG_1OOM_EN_U8(ev->diplo_msg_subtype);
+    SG_1OOM_EN_DUMMY(16);
     SG_1OOM_EN_U8(ev->have_plague);
     SG_1OOM_EN_U8(ev->plague_player);
     SG_1OOM_EN_U8(ev->plague_planet_i);
@@ -614,7 +615,8 @@ static int game_save_decode_evn(const uint8_t *buf, int pos, gameevents_t *ev, u
 {
     SG_1OOM_DE_U16(ev->year);
     SG_1OOM_DE_BV(ev->done, GAME_EVENT_TBL_NUM);
-    SG_1OOM_DE_DUMMY(17);
+    SG_1OOM_DE_U8(ev->diplo_msg_subtype);
+    SG_1OOM_DE_DUMMY(16);
     SG_1OOM_DE_U8(ev->have_plague);
     SG_1OOM_DE_U8(ev->plague_player);
     SG_1OOM_DE_U8(ev->plague_planet_i);
