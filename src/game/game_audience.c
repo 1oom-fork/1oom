@@ -944,10 +944,14 @@ static void audience_menu_tribute(struct audience_s *au)
         game_audience_set_dtype(au, 1, 3);
     } else {
         struct spy_esp_s s[1];
-        int hmm1 = 0; /* FIXME BUG = diplo_p2_sub1_zhmm4[bcnum]; uninitialized, wrong index */
         s->spy = pa;
         s->target = ph;
-        if (game_spy_esp_sub1(g, s, hmm1, 0) > 0) {
+        /* WASBUG
+           MOO1 does game_spy_esp_sub1(g, s, tav[i], 0) where tav is a global table also used by audience_menu_tech and i is bcnum.
+           If the tech menu is never visited or the table is not filled up to bcnum then the value is 0.
+           Values larger than 0 only filter out tech of lesser worth, and who would not want to use those as bribes?
+        */
+        if (game_spy_esp_sub1(g, s, 0, 0) > 0) {
             int i;
             cbuf = &(au->buf[AUDIENCE_CBUF_POS]);
             for (i = 0; (i < 4) && (i < s->tnum); ++i) {

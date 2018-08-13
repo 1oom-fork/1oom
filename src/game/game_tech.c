@@ -21,17 +21,22 @@
 
 #define RESEARCH_D0_PTR(ga_, f_, t_)   ((const uint8_t *)&((ga_)->research.d0[((f_) * 50 + (t_) - 1) * 6]))
 
-const uint8_t tech_reduce_50percent_per_10pts[] = {
-    0, 100, 93, 87, 81, 76, 71, 66, 62, 58, 54, 50, 47, 44, 41, 38,
-    35, 33, 31, 29, 27, 25, 23, 22, 20, 19, 18, 16, 15, 14, 13, 13,
-    12, 11, 10, 9, 9, 8, 8, 7, 7, 6, 6, 5, 5, 5, 4, 4, 4, 4, 3, 3
+const uint8_t tech_reduce_50percent_per_10pts[51] = {
+    100, 93, 87, 81, 76, 71, 66, 62, 58, 54,
+    50, 47, 44, 41, 38, 35, 33, 31, 29, 27,
+    25, 23, 22, 20, 19, 18, 16, 15, 14, 13,
+    13, 12, 11, 10, 9, 9, 8, 8, 7, 7,
+    6, 6, 5, 5, 5, 4, 4, 4, 4, 3,
+    3
 };
 
-const uint8_t tech_reduce_25percent_per_10pts[] = {
-    100, 97, 94, 92, 89, 87, 84, 82, 79, 77, 75, 73, 71, 69, 67, 65,
-    63, 61, 60, 58, 56, 55, 53, 52, 50, 49, 47, 46, 45, 43, 42, 41,
-    40, 39, 38, 37, 36, 35, 34, 33, 32, 31, 30, 29, 28, 27, 27, 26,
-    25, 24, 24
+const uint8_t tech_reduce_25percent_per_10pts[51] = {
+    100, 97, 94, 92, 89, 87, 84, 82, 79, 77,
+    75, 73, 71, 69, 67, 65, 63, 61, 60, 58,
+    56, 55, 53, 52, 50, 49, 47, 46, 45, 43,
+    42, 41, 40, 39, 38, 37, 36, 35, 34, 33,
+    32, 31, 30, 29, 28, 27, 27, 26, 25, 24,
+    24
 };
 
 /* -------------------------------------------------------------------------- */
@@ -47,6 +52,12 @@ static uint8_t find_byte_in_tbl(uint8_t b, const uint8_t *tbl, uint32_t len)
     return 0;
 }
 
+static uint8_t get_tech_reduce_50(uint8_t percent/*1..100*/)
+{
+    SETMIN(percent, 50);
+    return tech_reduce_50percent_per_10pts[percent - 1];
+}
+
 static uint16_t get_base_cost_mod_armor(const struct game_s *g, int player_i, int percent)
 {
     uint16_t tech_i = 0;
@@ -59,44 +70,25 @@ static uint16_t get_base_cost_mod_armor(const struct game_s *g, int player_i, in
     if (tech_i) {
         --tech_i;
     }
-    if (percent < 50) {
-        mult = tech_reduce_50percent_per_10pts[percent];
-    } else {
-        mult = 3;
-    }
+    mult = get_tech_reduce_50(percent);
     return ((tbl_shiptech_armor[tech_i].cost[SHIP_HULL_LARGE] + tbl_shiptech_hull[SHIP_HULL_LARGE].cost) * mult) / 1500;
 }
 
 static uint16_t get_base_cost_mod_weap(const struct game_s *g, int tech_i, int percent)
 {
-    uint16_t mult;
-    if (percent < 50) {
-        mult = tech_reduce_50percent_per_10pts[percent] * 9;
-    } else {
-        mult = 3 * 9;
-    }
+    uint16_t mult = get_tech_reduce_50(percent) * 9;
     return (tbl_shiptech_weap[tech_i].cost * mult) / 1000;
 }
 
 static uint16_t get_base_cost_mod_shield(const struct game_s *g, int tech_i, int percent)
 {
-    uint16_t mult;
-    if (percent < 50) {
-        mult = tech_reduce_50percent_per_10pts[percent];
-    } else {
-        mult = 3;
-    }
+    uint16_t mult = get_tech_reduce_50(percent);
     return (tbl_shiptech_shield[tech_i].cost[SHIP_HULL_LARGE] * mult) / 1000 + tbl_shiptech_shield[tech_i].power[SHIP_HULL_LARGE] / 10;
 }
 
 static uint16_t get_base_cost_mod_comp(const struct game_s *g, int tech_i, int percent)
 {
-    uint16_t mult;
-    if (percent < 50) {
-        mult = tech_reduce_50percent_per_10pts[percent];
-    } else {
-        mult = 3;
-    }
+    uint16_t mult = get_tech_reduce_50(percent);
     return (tbl_shiptech_comp[tech_i].cost[SHIP_HULL_LARGE] * mult) / 1000 + tbl_shiptech_comp[tech_i].power[SHIP_HULL_LARGE] / 10;
 }
 
@@ -109,11 +101,7 @@ static uint16_t get_base_cost_mod_jammer(const struct game_s *g, int player_i, i
             tech_i = i;
         }
     }
-    if (percent < 50) {
-        mult = tech_reduce_50percent_per_10pts[percent];
-    } else {
-        mult = 3;
-    }
+    mult = get_tech_reduce_50(percent);
     return (tbl_shiptech_jammer[tech_i].cost[SHIP_HULL_LARGE] * mult) / 1000 + tbl_shiptech_jammer[tech_i].power[SHIP_HULL_LARGE] / 10;
 }
 
