@@ -1466,6 +1466,7 @@ static const struct game_intros_s game_intros_help_shown[] = {
 static const struct game_intros_s game_intros_evn[] = {
     GAME_INTROS_VAL(gameevents_s, year),
     GAME_INTROS_BV(gameevents_s, done, GAME_EVENT_TBL_NUM),
+    GAME_INTROS_VAL(gameevents_s, diplo_msg_subtype),
     GAME_INTROS_VAL(gameevents_s, have_plague),
     GAME_INTROS_VAL(gameevents_s, plague_player),
     GAME_INTROS_VAL(gameevents_s, plague_planet_i),
@@ -2272,6 +2273,7 @@ static int savetype_en_text(struct game_s *g, const char *fname)
         text_dump_prefix_add(tp, "evn", ".");
         OUTLINEI("year", ev->year);
         OUTLINEBV("done", ev->done, GAME_EVENT_TBL_NUM);
+        OUTLINEI("diplo_msg_subtype", ev->diplo_msg_subtype);
         OUTLINEI("have_plague", ev->have_plague);
         OUTLINEI("plague_player", ev->plague_player);
         OUTLINEI("plague_planet_i", ev->plague_planet_i);

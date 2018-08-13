@@ -178,5 +178,4 @@ void game_aux_start(struct game_aux_s *gaux, struct game_s *g)
     if ((n > 1) && !gaux->move_temp) {
         gaux->move_temp = lib_malloc(sizeof(*gaux->move_temp));
     }
-    gaux->diplo_d0_rval = 0;
 }
