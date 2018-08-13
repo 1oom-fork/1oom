@@ -163,6 +163,7 @@ typedef struct newtechs_s {
 typedef struct gameevents_s {
     uint16_t year;
     BOOLVEC_DECLARE(done, GAME_EVENT_TBL_NUM);
+    int8_t diplo_msg_subtype; /* -1..13 */
     uint8_t have_plague;    /* 0..3 */
     player_id_t plague_player;
     uint8_t plague_planet_i;
