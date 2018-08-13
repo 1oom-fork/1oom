@@ -759,6 +759,3 @@ const char *game_str_tbl_mf[FINISHED_NUM] = {
 const char *game_str_tbl_xtramenu[XTRAMENU_NUM] = {
     "Scrap bases", "Caught spies", "Governor settings", "Message filter", "Cancel"
 };
-
-const char *game_str_xh_govern = "Left click to toggle governor, right for options";
-const char *game_str_xh_xtra = "Extra menu";

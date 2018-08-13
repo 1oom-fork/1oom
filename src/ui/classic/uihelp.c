@@ -4,7 +4,6 @@
 
 #include "uihelp.h"
 #include "bits.h"
-#include "game_str.h"
 #include "hw.h"
 #include "lbx.h"
 #include "lbxfont.h"
@@ -33,18 +32,6 @@
 #define HELP_OFFS_NEXT  0x5f6
 #define HELP_ITEM_SIZE  0x5f8
 #define HELP_STBL_SIZE  70
-
-#define HELP_EXTRA_BASE 0x40
-
-struct ui_help_screen_s {
-    const char **strp;
-    int x, y, w, ltype, lx1, ly1, next;
-};
-
-static const struct ui_help_screen_s ui_help_extra[] = {
-    { &game_str_xh_govern, 120, 10, 100, 1, 230, 15, HELP_EXTRA_BASE + 1 },
-    { &game_str_xh_xtra, 20, 160, 100, 1, 3, 196, 0 }
-};
 
 /* -------------------------------------------------------------------------- */
 
@@ -170,20 +157,12 @@ static void ui_help_draw_str2(const uint8_t *p, const uint8_t *ctbl, uint8_t c0,
                 );
 }
 
-static void ui_help_draw_strx(const struct ui_help_screen_s *q, const uint8_t *ctbl, uint8_t c0, uint8_t c1, uint8_t c2, uint8_t c5, uint8_t c6, int i)
-{
-    ui_help_draw("", *(q->strp), q->x, q->y, q->w, q->ltype, q->lx1, q->ly1,
-                ctbl, c0, c1, c2, c5, c6, (i + 10040) & 0xff
-                );
-}
-
 /* -------------------------------------------------------------------------- */
 
 void ui_help(int help_index)
 {
     uint8_t ctbl[5], c0, c1, c3, c4, c5, c8;
     uint8_t *helplbx;
-    int help_override = -1;
     LOG_DEBUG((DEBUGLEVEL_HELPUI, "%s: %i\n", __func__, help_index));
     if ((help_index < 0) || (!ui_data.have_help)) {
         return;
@@ -214,27 +193,14 @@ void ui_help(int help_index)
         lbxfont_select(0, 0, 0, 0);
         lbxfont_set_gap_h(3);
         lbxfont_set_14_24(c1, c0);
-        if (help_index < HELP_EXTRA_BASE) {
-            p = &(helplbx[4 + HELP_ITEM_SIZE * help_index]);
-            ui_help_draw_str0(p, ctbl, c3, c4, c5, c8, c0, 1);
-            if (GET_LE_16(&p[HELP_OFFS_10]) < 3) {
-                for (int i = 0; i < 9; ++i) {
-                    ui_help_draw_stri(p, ctbl, c3, c4, c5, c8, c0, i);
-                }
-            } else {
-                ui_help_draw_str2(p, ctbl, c3, c4, c5, c8, c0, 10040 & 0xff);
+        p = &(helplbx[4 + HELP_ITEM_SIZE * help_index]);
+        ui_help_draw_str0(p, ctbl, c3, c4, c5, c8, c0, 1);
+        if (GET_LE_16(&p[HELP_OFFS_10]) < 3) {
+            for (int i = 0; i < 9; ++i) {
+                ui_help_draw_stri(p, ctbl, c3, c4, c5, c8, c0, i);
             }
         } else {
-            int i = 0;
-            while (help_index >= HELP_EXTRA_BASE) {
-                const struct ui_help_screen_s *q;
-                q = &(ui_help_extra[help_index - HELP_EXTRA_BASE]);
-                ui_help_draw_strx(q, ctbl, c3, c4, c5, c8, c0, i);
-                ++i;
-                help_index = q->next;
-            }
-            help_index = help_override;
-            p = &(helplbx[4 + HELP_ITEM_SIZE * help_index]);
+            ui_help_draw_str2(p, ctbl, c3, c4, c5, c8, c0, 10040 & 0xff);
         }
         lbxfont_select(old_fontnum, old_fonta2, 0, 0);
         /* vgabuf_seg = old_vgabuf_seg; */
@@ -242,17 +208,7 @@ void ui_help(int help_index)
         ui_draw_copy_buf();
         uiobj_input_wait();
         hw_video_copy_back_from_page3();
-        if (ui_extra_enabled) {
-            if ((help_index == 4) && (help_index != help_override)) {
-                help_override = help_index;
-                help_index = HELP_EXTRA_BASE;
-            } else {
-                help_override = -1;
-                help_index = GET_LE_16(&p[HELP_OFFS_NEXT]);
-            }
-        } else {
-            help_index = GET_LE_16(&p[HELP_OFFS_NEXT]);
-        }
+        help_index = GET_LE_16(&p[HELP_OFFS_NEXT]);
     } while (help_index != 0);
     uiobj_table_num_restore();
     lbxfile_item_release(LBXFILE_HELP, helplbx);

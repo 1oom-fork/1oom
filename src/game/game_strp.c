@@ -531,8 +531,6 @@ static const struct strtbl_s {
     DEFSTRITEM(mf_title),
     DEFSTRITEMTBL(tbl_mf),
     DEFSTRITEMTBL(tbl_xtramenu),
-    DEFSTRITEM(xh_govern),
-    DEFSTRITEM(xh_xtra),
     DEFSTREND
 };
 
