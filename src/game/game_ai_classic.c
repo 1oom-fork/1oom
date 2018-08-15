@@ -3034,7 +3034,7 @@ static bool game_ai_classic_bomb(struct game_s *g, player_id_t player, uint8_t p
 {
     bool flag_do_bomb;
     const planet_t *p = &(g->planet[planet]);
-    if (g->eto[player].race != RACE_BULRATHI) {
+    if (g->eto[player].race == RACE_BULRATHI) {
         pop_inbound += pop_inbound / 5;
     }
     flag_do_bomb = (p->pop > pop_inbound);
