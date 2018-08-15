@@ -368,7 +368,7 @@ static void game_generate_planets(struct game_s *g)
             star_type_t star_type;
             int16_t di;
             star_type = p->star_type;
-            if (p->type <= PLANET_TYPE_DESERT) {
+            if (p->type >= PLANET_TYPE_STEPPE) {
                 di = rnd_1_n(0x14, &g->seed);
                 if (star_type == STAR_TYPE_RED) { di -= 4; } else if (star_type == STAR_TYPE_GREEN) { di -= 2; }
                 if (di <= 2) {

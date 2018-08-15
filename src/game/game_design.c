@@ -346,9 +346,13 @@ int game_design_calc_space(struct game_design_s *gd)
 int game_design_calc_cost_item(struct game_design_s *gd, design_slot_t slot, int i)
 {
     int cost = game_design_calc_cost_item_do(gd, slot, i);
-    SETMAX(cost, 5);
+    if ((cost < 5) && (i != 0)) {
+        cost = 5;
+    }
     cost = (cost + 5) / 10;
-    SETMAX(cost, 1);
+    if ((cost < 1) && (i != 0)) {
+        cost = 1;
+    }
     return cost;
 }
 
@@ -520,7 +524,7 @@ int game_design_build_tbl_fit_engine(struct game_s *g, struct game_design_s *gd,
     ship_engine_t actengine = sd->engine;
     int last = 0;
     buf[0] = 1/*HAVE*/;
-    for (int i = 1; i < SHIP_ENGINE_NUM; ++i) {
+    for (int i = 0; i < SHIP_ENGINE_NUM; ++i) {
         if (game_tech_player_has_tech(g, TECH_FIELD_PROPULSION, tbl_shiptech_engine[i].tech_i, gd->player_i)) {
             sd->engine = i;
             game_design_update_engines(sd);
