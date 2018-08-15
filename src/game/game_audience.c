@@ -292,10 +292,11 @@ static int16_t game_audience_sub3(struct audience_s *au)
     if ((au->dtype == 28) || (au->dtype == 58) || (au->dtype == 29)) {
         ui_audience_show2(au);
         selected = 1;
-        au->dtype = 29;
-        strcpy(au->buf, game_str_au_inxchng);
-        au->condtbl = 0;
-        selected = ui_audience_ask2a(au);
+        if (au->dtype == 29) {
+            strcpy(au->buf, game_str_au_inxchng);
+            au->condtbl = 0;
+            selected = ui_audience_ask2a(au);
+        }
     } else {
         /*62346*/
         au->condtbl = 0;
