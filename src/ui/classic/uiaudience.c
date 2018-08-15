@@ -236,7 +236,7 @@ static int16_t ui_audience_ask_do(struct audience_s *au, int y, void (*draw_cb)(
     uiobj_set_callback_and_delay(draw_cb, au->uictx, 1);
     uiobj_set_downcount(1);
     lbxfont_select(0, 2, 3, 0);
-    selected = uiobj_select_from_list1(38, y, 245, "", au->strtbl, &selected, au->condtbl, 0xf, 0, 0xb, 0, 0, 0, true);
+    selected = uiobj_select_from_list1(38, y, 245, "", au->strtbl, &selected, au->condtbl, 0xf, 0xb, true);
     return selected;
 }
 
