@@ -148,7 +148,7 @@ int ui_cmd_races(struct game_s *g, int api, struct input_token_s *param, int num
                 printf(", %i.%i%%, ", spying / 10, spying % 10);
                 spyprod = (e->total_production_bc * spying) / 1000;
                 spyspend = spyprod + e->spyfund[pi];
-                spycost = spies * e->tech.percent[TECH_FIELD_COMPUTER] * 2 + 25;
+                spycost = e->tech.percent[TECH_FIELD_COMPUTER] * 2 + 25;
                 if (e->race == RACE_DARLOK) {
                     spycost /= 2;
                 }
