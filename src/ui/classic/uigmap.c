@@ -319,7 +319,28 @@ static void gmap_draw_cb(void *vptr)
     lbxfont_print_str_normal(250, 88, game_str_gm_mapkey, UI_SCREEN_W, ui_scale);
     lbxfont_set_temp_color(0x00);
     gmap_blink_step(&(d->b));
-    {
+    if (ui_scale > 1) {
+        const uint8_t ctblf[5] = { 0xbd, 0xbc, 0xbb, 0xba, 0xb9 };
+        const uint8_t ctblb[5] = { 0xba, 0xbb, 0xbc, 0xbd, 0xb9 };
+        int x0, y0, x1, y1, pos;
+        x0 = (ui_data.starmap.x * 224) / g->galaxy_maxx + 7;
+        SETMAX(x0, 7);
+        y0 = (ui_data.starmap.y * 185) / g->galaxy_maxy + 7;
+        SETMAX(y0, 7);
+        x1 = ((ui_data.starmap.x + ((108 * ui_scale) / starmap_scale)) * 224) / g->galaxy_maxx + 7;
+        SETMIN(x1, 230);
+        y1 = ((ui_data.starmap.y + ((86 * ui_scale) / starmap_scale)) * 185) / g->galaxy_maxy + 7;
+        SETMIN(y1, 192);
+        pos = d->b.countdown + 1;
+        ui_draw_line_ctbl(x0, y0, x0 + 4, y0, ctblf, 5, pos, ui_scale);
+        ui_draw_line_ctbl(x0, y0, x0, y0 + 4, ctblf, 5, pos, ui_scale);
+        ui_draw_line_ctbl(x1 - 1, y0, x1 - 4, y0, ctblb, 5, 4 - pos, ui_scale);
+        ui_draw_line_ctbl(x1, y0, x1, y0 + 4, ctblf, 5, pos, ui_scale);
+        ui_draw_line_ctbl(x0, y1, x0 + 4, y1, ctblf, 5, pos, ui_scale);
+        ui_draw_line_ctbl(x0, y1, x0, y1 - 4, ctblf, 5, pos, ui_scale);
+        ui_draw_line_ctbl(x1 - 1, y1, x1 - 4, y1, ctblb, 5, 4 - pos, ui_scale);
+        ui_draw_line_ctbl(x1, y1, x1, y1 - 4, ctblf, 5, pos, ui_scale);
+    } else {
         int x, y;
         x = (ui_data.starmap.x * 224) / g->galaxy_maxx + 7;
         y = (ui_data.starmap.y * 185) / g->galaxy_maxy + 7;
