@@ -69,23 +69,23 @@ typedef struct uiobj_s {
     /*24*/ uint32_t key;
     union {
         struct {
-            /*0c*/ uint16_t fontnum; /* t1..3? */
-            /*0e*/ uint16_t fonta2; /* t1..3? */
             /*16*/ const char *str;
-            /*18*/ int16_t z18; /* t3:uiobji? */
-            /*1c*/ bool indep;  /* from lbxgfx offs 0x10 */
             /*20*/ uint8_t *lbxdata;
+            /*18*/ int16_t z18; /* t3:uiobji? */
+            /*0c*/ uint8_t fontnum; /* t1..3? */
+            /*0e*/ uint8_t fonta2; /* t1..3? */
+            /*1c*/ bool indep;  /* from lbxgfx offs 0x10 */
         } t0; /* t{0..3} */
         struct {
-            /*0c*/ uint16_t fontnum;
-            /*0e*/ uint16_t fonta2;
-            /*14*/ uint16_t fonta4;
             /*16*/ char *buf;
+            /*22*/ const uint8_t *colortbl;
+            /*20*/ uint16_t buflen;
+            /*0c*/ uint8_t fontnum;
+            /*0e*/ uint8_t fonta2;
+            /*14*/ uint8_t fonta4;
             /*1a*/ uint8_t rectcolor;
             /*1c*/ bool align_right;
             /*..*/ bool allow_lcase;
-            /*20*/ uint16_t buflen;
-            /*22*/ const uint8_t *colortbl;
         } t4;
         struct {
             /*1c*/ uint16_t vmin;
@@ -97,20 +97,14 @@ typedef struct uiobj_s {
             /*1a*/ uint16_t len;
         } t8;
         struct {
-            /*0c*/ uint16_t fontnum;
-            /*0e*/ uint16_t fonta2;
-            /*10*/ uint16_t subtype;
-            /*12*/ bool z12;
-            /*14*/ uint16_t fonta2b;
             /*16*/ const char *str;
             /*18*/ int16_t z18;
-            /*1c..22 are subtype specific parameters */
-            /*1c: used as offs and value, determined by "z < 0x100"! adding extra var here for sanity */
-            /*1c*/ uint8_t *sp0p;
-            /*1c*/ uint16_t sp0v;
-            /*1e*/ uint16_t sp1;
-            /*20*/ uint16_t sp2;
-            /*22*/ uint16_t sp3;
+            /*0c*/ uint8_t fontnum;
+            /*0e*/ uint8_t fonta2;
+            /*14*/ uint8_t fonta2b;
+            /*10*/ uint8_t subtype; /* 0, 1, 0xf */
+            /*1c*/ uint8_t sp0v;
+            /*12*/ bool z12;
         } ta;
         struct {
             /*18*/ uint16_t xdiv;
@@ -442,23 +436,14 @@ static void uiobj_handle_t6_slider_input(uiobj_t *p)
     *p->vptr = sliderval;
 }
 
-static void uiobj_handle_ta_sub1(int x0, int y0, int x1, int y1, uint16_t subtype, uint8_t *p0p, uint16_t p0v, uint16_t p1, uint16_t p2, uint16_t p3)
+static void uiobj_handle_ta_sub1(int x0, int y0, int x1, int y1, uint8_t subtype, uint8_t p0v)
 {
     switch (subtype) {
         case 1:
             ui_draw_filled_rect(x0, y0, x1, y1, p0v);
             break;
-        case 3:
-            p0v = 0;
-            /* fall through */
         case 0xf:
             lbxgfx_apply_colortable(x0, y0, x1, y1, p0v, UI_SCREEN_W);
-            break;
-        case 7:
-            ui_draw_box_fill(x0, y0, x1, y1, p0p, p0v, p1, p2, p3);
-            break;
-        case 0xd:
-            ui_draw_box_grain(x0, y0, x1, y1, p0v, p1, p3);
             break;
         default:
             break;
@@ -501,7 +486,7 @@ static inline void uiobj_handle_objects_sub1(int i)
                 }
                 char_h = lbxfont_get_height();
                 /*19ce2*/
-                uiobj_handle_ta_sub1(p->x0 - 1, p->y0 - gap_h + 1, p->x1, p->y0 + char_h + 1, p->ta.subtype, p->ta.sp0p, p->ta.sp0v, p->ta.sp1, p->ta.sp2, p->ta.sp3);
+                uiobj_handle_ta_sub1(p->x0 - 1, p->y0 - gap_h + 1, p->x1, p->y0 + char_h + 1, p->ta.subtype, p->ta.sp0v);
                 lbxfont_print_str_normal(p->x0, p->y0 + 1, p->ta.str, UI_SCREEN_W);
             }
             break;
@@ -574,7 +559,7 @@ static void uiobj_handle_click(int i, bool in_focus)
                     gap_h = 1;
                 }
                 char_h = lbxfont_get_height();
-                uiobj_handle_ta_sub1(p->x0 - 1, p->y0 - gap_h + 1, p->x1, p->y0 + char_h + 1, p->ta.subtype, p->ta.sp0p, p->ta.sp0v, p->ta.sp1, p->ta.sp2, p->ta.sp3);
+                uiobj_handle_ta_sub1(p->x0 - 1, p->y0 - gap_h + 1, p->x1, p->y0 + char_h + 1, p->ta.subtype, p->ta.sp0v);
                 lbxfont_print_str_normal(p->x0, p->y0 + 1, p->ta.str, UI_SCREEN_W);
             }
             break;
@@ -1837,7 +1822,7 @@ int16_t uiobj_add_alt_str(const char *str)
     return UIOBJI_ALLOC();
 }
 
-int16_t uiobj_add_ta(uint16_t x, uint16_t y, uint16_t w, const char *str, bool z12, int16_t *vptr, int16_t z18, uint16_t subtype, uint8_t *sp0p, uint16_t sp0v, uint16_t sp1, uint16_t sp2, uint16_t sp3, mookey_t key)
+int16_t uiobj_add_ta(uint16_t x, uint16_t y, uint16_t w, const char *str, bool z12, int16_t *vptr, int16_t z18, uint8_t subtype, uint8_t sp0v, mookey_t key)
 {
     uiobj_t *p = &uiobj_tbl[uiobj_table_num];
     p->x0 = x;
@@ -1851,11 +1836,7 @@ int16_t uiobj_add_ta(uint16_t x, uint16_t y, uint16_t w, const char *str, bool z
     p->ta.z12 = z12;
     p->ta.str = str;
     p->ta.subtype = subtype;
-    p->ta.sp0p = sp0p;
     p->ta.sp0v = sp0v;
-    p->ta.sp1 = sp1;
-    p->ta.sp2 = sp2;
-    p->ta.sp3 = sp3;
     p->type = UIOBJ_TYPE_TEXTLINE;
     p->vptr = vptr;
     p->key = key;
@@ -1900,7 +1881,7 @@ void uiobj_ta_set_val_1(int16_t oi)
     }
 }
 
-int16_t uiobj_select_from_list1(int x, int y, int w, const char *title, char const * const *strtbl, int16_t *selptr, const bool *condtbl, uint16_t subtype, uint8_t *sp0p, uint16_t sp0v, uint16_t sp1, uint16_t sp2, uint16_t sp3, bool update_at_cursor)
+int16_t uiobj_select_from_list1(int x, int y, int w, const char *title, char const * const *strtbl, int16_t *selptr, const bool *condtbl, uint8_t subtype, uint8_t sp0v, bool update_at_cursor)
 {
     int h, dy, ty = y, di = -1;
     bool flag_done = false, toz12, flag_copy_buf = false;
@@ -1932,14 +1913,14 @@ int16_t uiobj_select_from_list1(int x, int y, int w, const char *title, char con
         } else {
             toz12 = condtbl[itemi];
         }
-        uiobj_add_ta(x, ty, w, *s, toz12, selptr, itemi, subtype, sp0p, sp0v, sp1, sp2, sp3, MOO_KEY_UNKNOWN);
+        uiobj_add_ta(x, ty, w, *s, toz12, selptr, itemi, subtype, sp0v, MOO_KEY_UNKNOWN);
         ++itemi;
         ++s;
     }
 
     v6 = itemi;
     lbxfont_select(lbxfont_get_current_fontnum(), lbxfont_get_current_fonta2(), lbxfont_get_current_fonta4(), 0);
-    oi_title = uiobj_add_ta(x, y, w, title, false, &v18, 1, 0, 0, 0, 0, 0, 0, MOO_KEY_UNKNOWN);
+    oi_title = uiobj_add_ta(x, y, w, title, false, &v18, 1, 0, 0, MOO_KEY_UNKNOWN);
 
     if ((*selptr < 0) || (*selptr >= v6) || (*selptr < di)) {
         if ((di >= 0) && (di < v6)) {
@@ -1990,7 +1971,7 @@ int16_t uiobj_select_from_list1(int x, int y, int w, const char *title, char con
     return oi - 1;
 }
 
-int16_t uiobj_select_from_list2(int x, int y, int w, const char *title, char const * const *strtbl, int16_t *selptr, const bool *condtbl, int linenum, int upx, int upy, uint8_t *uplbx, int dnx, int dny, uint8_t *dnlbx, uint16_t subtype, uint8_t *sp0p, uint16_t sp0v, uint16_t sp1, uint16_t sp2, uint16_t sp3, bool update_at_cursor)
+int16_t uiobj_select_from_list2(int x, int y, int w, const char *title, char const * const *strtbl, int16_t *selptr, const bool *condtbl, int linenum, int upx, int upy, uint8_t *uplbx, int dnx, int dny, uint8_t *dnlbx, uint8_t subtype, uint8_t sp0v, bool update_at_cursor)
 {
     int h, dy, ty, linei = 0, itemi = 0, itemnum, itemoffs, foundi = 0;
     bool flag_done = false, flag_copy_buf = false, flag_found = false;
@@ -2039,7 +2020,7 @@ int16_t uiobj_select_from_list2(int x, int y, int w, const char *title, char con
     }
     s = &strtbl[itemoffs];
     for (itemi = itemoffs; (itemi < itemnum) && (linei < linenum); ++itemi, ++linei, ++s, ty += dy) {
-        uiobj_add_ta(x, ty, w, *s, (!condtbl) || condtbl[itemi], selptr, itemi, subtype, sp0p, sp0v, sp1, sp2, sp3, MOO_KEY_UNKNOWN);
+        uiobj_add_ta(x, ty, w, *s, (!condtbl) || condtbl[itemi], selptr, itemi, subtype, sp0v, MOO_KEY_UNKNOWN);
     }
 
     if ((*selptr < 0) || (*selptr >= itemnum)) {
@@ -2051,7 +2032,7 @@ int16_t uiobj_select_from_list2(int x, int y, int w, const char *title, char con
     }
 
     lbxfont_select(lbxfont_get_current_fontnum(), lbxfont_get_current_fonta2(), fonta4, 0);
-    oi_title = uiobj_add_ta(x, y, w, title, false, &v18, 1, 0, 0, 0, 0, 0, 0, MOO_KEY_UNKNOWN);
+    oi_title = uiobj_add_ta(x, y, w, title, false, &v18, 1, 0, 0, MOO_KEY_UNKNOWN);
 
     upvar = (itemoffs == 0) ? 1 : 0;
     dnvar = (itemi >= itemnum) ? 1 : 0;
@@ -2160,10 +2141,10 @@ int16_t uiobj_select_from_list2(int x, int y, int w, const char *title, char con
             linei = 0;
             ty = y + dy;
             for (itemi = itemoffs; (itemi < itemnum) && (linei < linenum); ++itemi, ++linei, ++s, ty += dy) {
-                uiobj_add_ta(x, ty, w, *s, (!condtbl) || condtbl[itemi], selptr, itemi, subtype, sp0p, sp0v, sp1, sp2, sp3, MOO_KEY_UNKNOWN);
+                uiobj_add_ta(x, ty, w, *s, (!condtbl) || condtbl[itemi], selptr, itemi, subtype, sp0v, MOO_KEY_UNKNOWN);
             }
             lbxfont_select(lbxfont_get_current_fontnum(), lbxfont_get_current_fonta2(), fonta4, 0);
-            oi_title = uiobj_add_ta(x, y, w, title, false, &v18, 1, 0, 0, 0, 0, 0, 0, MOO_KEY_UNKNOWN);
+            oi_title = uiobj_add_ta(x, y, w, title, false, &v18, 1, 0, 0, MOO_KEY_UNKNOWN);
             upvar = (itemoffs == 0) ? 1 : 0;
             dnvar = (itemi >= itemnum) ? 1 : 0;
             oi_up = uiobj_add_t2(upx, upy, "", uplbx, &upvar, MOO_KEY_PAGEUP);
