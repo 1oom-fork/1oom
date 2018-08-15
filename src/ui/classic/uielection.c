@@ -207,9 +207,9 @@ int ui_election_vote(struct election_s *el, int player_i)
     oi_c1 = uiobj_add_mousearea(150, 169, 190, 177, MOO_KEY_UNKNOWN);
     oi_c2 = uiobj_add_mousearea(150, 179, 190, 187, MOO_KEY_UNKNOWN);
     /*oi_ca =*/ uiobj_add_mousearea(150, 189, 190, 197, MOO_KEY_UNKNOWN);
-    uiobj_add_ta(150, 169, 40, cnamebuf[0], false, &choice, 1, 0, 0, 0, 0, 0, 0, MOO_KEY_UNKNOWN);
-    uiobj_add_ta(150, 179, 40, cnamebuf[1], false, &choice, 2, 0, 0, 0, 0, 0, 0, MOO_KEY_UNKNOWN);
-    uiobj_add_ta(150, 189, 40, cnamebuf[2], false, &choice, 0, 0, 0, 0, 0, 0, 0, MOO_KEY_UNKNOWN);
+    uiobj_add_ta(150, 169, 40, cnamebuf[0], false, &choice, 1, 0, 0, MOO_KEY_UNKNOWN);
+    uiobj_add_ta(150, 179, 40, cnamebuf[1], false, &choice, 2, 0, 0, MOO_KEY_UNKNOWN);
+    uiobj_add_ta(150, 189, 40, cnamebuf[2], false, &choice, 0, 0, 0, MOO_KEY_UNKNOWN);
     while (!flag_done) {
         ui_delay_prepare();
         oi = uiobj_handle_input_cond();
@@ -247,8 +247,8 @@ bool ui_election_accept(struct election_s *el, int player_i)
     lbxfont_select(3, 1, 0, 0);
     oi_y = uiobj_add_mousearea(160, y, 200, y + 8, MOO_KEY_y);
     oi_n = uiobj_add_mousearea(160, y + 10, 200, y + 18, MOO_KEY_n);
-    uiobj_add_ta(160, y, 40, buf[0], false, &choice, 1, 0, 0, 0, 0, 0, 0, MOO_KEY_UNKNOWN);
-    uiobj_add_ta(160, y + 10, 40, buf[1], false, &choice, 0, 0, 0, 0, 0, 0, 0, MOO_KEY_UNKNOWN);
+    uiobj_add_ta(160, y, 40, buf[0], false, &choice, 1, 0, 0, MOO_KEY_UNKNOWN);
+    uiobj_add_ta(160, y + 10, 40, buf[1], false, &choice, 0, 0, 0, MOO_KEY_UNKNOWN);
     while (!flag_done) {
         int16_t oi;
         ui_delay_prepare();

@@ -233,7 +233,7 @@ static void ui_newtech_choose_next(struct newtech_data_s *d)
     ui_draw_finish();
     lbxfont_select(0, 0, 0, 0);
     lbxfont_set_gap_h(di - 6);
-    /*sel = */uiobj_select_from_list1(156, 41, 148, "", nptr, &d->selected, cond, 1, 0, 0x60, 0, 0, 0, true);
+    /*sel = */uiobj_select_from_list1(156, 41, 148, "", nptr, &d->selected, cond, 1, 0x60, true);
     ui_sound_play_sfx_24();
     ui_delay_prepare();
     game_tech_start_next(d->g, d->api, d->nt.field, d->tbl_tech[d->selected]);
