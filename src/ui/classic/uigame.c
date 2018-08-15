@@ -69,7 +69,14 @@ ui_turn_action_t ui_game_turn(struct game_s *g, int *load_game_i_ptr, int pi)
                     break;
                 }
             }
-            g->planet_focus_i[pi] = pli;
+            if (pli < g->galaxy_stars) {
+                g->planet_focus_i[pi] = pli;
+            } else {
+                g->evn.build_finished_num[pi] = 0;
+                if (ui_extra_enabled) {
+                    g->planet_focus_i[pi] = ui_data.start_planet_focus_i;
+                }
+            }
             ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
             ui_starmap_set_pos_focus(g, pi);
         }
