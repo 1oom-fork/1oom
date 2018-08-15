@@ -142,7 +142,7 @@ static void races_draw_cb(void *vptr)
             spyprod = (e->total_production_bc * spying) / 1000;
             spyspend = spyprod + e->spyfund[pi];
             spies = e->spies[pi];
-            spycost = spies * e->tech.percent[TECH_FIELD_COMPUTER] + 25;
+            spycost = spies * e->tech.percent[TECH_FIELD_COMPUTER] * 2 + 25;
             if (e->race == RACE_DARLOK) {
                spycost /= 2;
             }
