@@ -174,7 +174,7 @@ static player_id_t game_spy_frame_random(struct game_s *g, player_id_t spy, play
     player_id_t tbl_scapegoat[PLAYER_NUM];
     int n = 0;
     for (player_id_t i = 0; i < PLAYER_NUM; ++i) {
-        if ((i != spy) && (i != target) && (et->within_frange[i] != 0)) {
+        if ((i != spy) && (i != target) && BOOLVEC_IS1(et->within_frange, i)) {
             tbl_scapegoat[n++] = i;
         }
     }
@@ -660,7 +660,7 @@ void game_spy_sab_human(struct game_s *g)
                         const empiretechorbit_t *et;
                         et = &(g->eto[target]);
                         for (int i = 0; (i < g->players) && (other2 == PLAYER_NONE); ++i) {
-                            if ((i != player) && et->within_frange[i]) {
+                            if ((i != player) && BOOLVEC_IS1(et->within_frange, i)) {
                                 if (other1 == PLAYER_NONE) {
                                     other1 = i;
                                 } else {
