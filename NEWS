@@ -1,3 +1,14 @@
+2018-08-17: v0.7 released
+    - game is deterministic by default
+    - new -yearsave option for yearly saves (1oom_save_YYYY.bin)
+    - new -uiextra UI features:
+        * 1.40m-like research bonus lights
+    - about 30 bugs fixed, notably:
+        * many memory corruption crashes fixed (C is fun)
+        * ETA is now correct
+        * spy cost in Races screen matches actual costs
+    - doc/pbxin_fixbugs.txt expanded, including fix for Oracle Interface
+
 2018-07-29: v0.6 released
     - fix mouse handling on large resolutions, replace -mousediv with -mousespd
     - extend mouse wheel support for counts, add options for inverting
