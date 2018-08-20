@@ -38,14 +38,14 @@ e       2   offset to palette (or 0 if none)
 frame data
 
 offset  sz  description
-0       1   if 0: overlay on previous frame ; 1: clear buffer
+0       1   (unused) if 0: overlay on previous frame ; 1: clear buffer
 1..     ?   columnwise pixel data
             - 0xff: skip this column
             - 0x00: uncompressed:
                 - total_len
                     - part_len, skip_pixels, pixel*part_len
                         - v=geti(); puto(v, 1);
-            - 0x80: uncompressed:
+            - 0x80: compressed:
                 - total_len
                     - part_len, skip_pixels, compressed_data*part_len
                         - v=geti(); if (v>223) { len=v-223; v=geti(); } else { len=1; } ; puto(v, len);
@@ -86,8 +86,8 @@ offset  sz  description
 14      16  font colors 0 (palette indices, copied runtime from active palette), same as offset 0
 24      16  font colors 1 (copied runtime from active palette)
 34      16  font colors 2 (copied runtime from active palette)
-44      2   (copied runtime from selected font, offset 0x10 + offset 0x46)
-46      2   (copied runtime from selected font from offset 0x18a + active_font * 2)
+44      2   line height (copied runtime from selected font, offset 0x10 + offset 0x46)
+46      2   gap height (copied runtime from selected font from offset 0x18a + active_font * 2)
 48      2   gap width (copied runtime from selected font from offset 0x17a + active_font * 2)
 4a      0x60    character c-0x20 width (copied runtime from selected font from offset 0x19a + active_font * 0x60)
 aa      0xc0    character c-0x20 data offset (copied runtime from selected font from offset 0x49a + active_font * 0xc0)
@@ -102,7 +102,7 @@ fonts.lbx entries 2..12: the palettes (size 0x1560)
 offset  sz  description
 0       256*3   RGB palette values (6bpp per item)
 300     16*16   palette indices for fonts
-400     256?    ?
+400     256     ? (unused)
 500     0x1000  cursor data: 16*16 pix * 16 cursors, columnwise
 1500    4*0x18  color table generation parameters : r g b percent
 
@@ -237,6 +237,7 @@ offset  sz  description
 
 
 music data (XMI) http://www.shikadi.net/wiki/modding/index.php?title=XMI_Format&oldid=6874
+
 offset  sz  description
 0       16  0xaf 0xde 0x01 0x00 .. ("deaf 1"?)
 10      4   "FORM"
@@ -263,4 +264,4 @@ offset  sz  description
             - delta times are series of 0x7f bytes, with the time as sum of them
             - note off events are missing!
             - note on events have 3rd parameter byte that indicates duration
-                - can be multibyte; duration is sum of "byte & 0x7f"s
+                - can be multibyte; duration is concatenation of "byte & 0x7f"s
