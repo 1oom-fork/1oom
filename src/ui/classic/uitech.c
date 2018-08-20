@@ -207,10 +207,11 @@ static void tech_draw_cb(void *vptr)
     }
 
     for (int i = 0; i < TECH_FIELD_NUM; ++i) {
-        int y, complpercent;
+        int y;
         y = 21 * i + 21;
-        complpercent = game_tech_current_research_percent2(g, d->api, i);
-        if (complpercent < 99) {
+        if ((t->percent[i] < 99) || (t->project[i] != 0)) { /* WASBUG MOO1 has no project check and shows MAX early */
+            int complpercent;
+            complpercent = game_tech_current_research_percent2(g, d->api, i);
             if (complpercent > 0) {
                 sprintf(buf, "%i%%", complpercent);
                 lbxfont_select_set_12_1(2, 0xd, 0, 0);

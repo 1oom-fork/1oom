@@ -655,6 +655,20 @@ void game_tech_get_new(struct game_s *g, player_id_t player, tech_field_t field,
     }
 }
 
+bool game_tech_can_choose(const struct game_s *g, player_id_t player, tech_field_t field)
+{
+    const empiretechorbit_t *e = &(g->eto[player]);
+    uint8_t dummy[TECH_NEXT_MAX];
+    if ((e->tech.investment[field] == 0) || (e->tech.project[field] != 0)) {
+        return false;
+    }
+    if (e->tech.percent[field] < 99) {
+        return true;
+    }
+    /* WASBUG? MOO1 stops giving tech to research when reaching level 99 */
+    return (game_tech_get_next_techs(g, player, field, dummy) != 0);
+}
+
 int game_tech_get_next_techs(const struct game_s *g, player_id_t player, tech_field_t field, uint8_t *tbl)
 {
     const uint8_t *rc = g->srd[player].researchcompleted[field];
@@ -692,8 +706,26 @@ int game_tech_get_next_techs(const struct game_s *g, player_id_t player, tech_fi
             }
         }
     }
-    if ((num == 0) && (tmax < 100)) {
-        tbl[num++] = (tmax <= 50) ? 55 : (tmax + 5);
+    if (num == 0) {
+        if (tmax <= 50) {
+            tmax = 55;
+        } else {
+            tmax += 5;
+            SETMIN(tmax, 100);
+        }
+        for (uint8_t t = 55; t <= tmax; t += 5) {
+            bool have;
+            have = false;
+            for (int i = len - 1; i >= 0; --i) {
+                if (rc[i] == t) {
+                    have = true;
+                    break;
+                }
+            }
+            if ((!have) && (num < TECH_NEXT_MAX)) {
+                tbl[num++] = t;
+            }
+        }
     }
     return num;
 }
