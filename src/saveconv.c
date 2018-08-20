@@ -554,8 +554,8 @@ static int savetype_de_moo13(struct game_s *g, const char *fname)
             ob = eb + 0x3a2 + j * 0x18;
             M13_GET_TBL_16(r->ships, ob + 0x0c);
         }
-        M13_GET_TBL_16(e->spyreportfield[PLAYER_0], eb + 0xdc2);
-        M13_GET_16(e->spyreportyear[PLAYER_0], eb + 0xdce);
+        M13_GET_TBL_16(g->eto[PLAYER_0].spyreportfield[i], eb + 0xdc2);
+        M13_GET_16(g->eto[PLAYER_0].spyreportyear[i], eb + 0xdce);
         M13_GET_16(e->shipi_colony, eb + 0xdd0);
         M13_GET_16(e->shipi_bomber, eb + 0xdd2);
     }
@@ -1000,8 +1000,8 @@ static int savetype_en_moo13(struct game_s *g, const char *fname)
             ob = eb + 0x3a2 + j * 0x18;
             M13_SET_TBL_16(r->ships, ob + 0x0c);
         }
-        M13_SET_TBL_16(e->spyreportfield[PLAYER_0], eb + 0xdc2);
-        M13_SET_16(e->spyreportfield[PLAYER_0][i], eb + 0xdce);
+        M13_SET_TBL_16(g->eto[PLAYER_0].spyreportfield[i], eb + 0xdc2);
+        M13_SET_16(g->eto[PLAYER_0].spyreportyear[i], eb + 0xdce);
         M13_SET_16(e->shipi_colony, eb + 0xdd0);
         M13_SET_16(e->shipi_bomber, eb + 0xdd2);
     }
