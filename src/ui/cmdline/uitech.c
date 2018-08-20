@@ -31,10 +31,10 @@ static void ui_tech_look_sliders(const struct game_s *g, int api)
     const empiretechorbit_t *e = &(g->eto[api]);
     const techdata_t *t = &(e->tech);
     for (tech_field_t f = 0; f < TECH_FIELD_NUM; ++f) {
-        int complpercent;
         printf("%c%c %12s: %3i ", t->slider_lock[f] ? '*' : ' ', slchars[f], game_str_tbl_te_field[f], t->slider[f]);
-        complpercent = game_tech_current_research_percent2(g, api, f);
-        if (complpercent < 99) {
+        if ((t->percent[f] < 99) || (t->project[f] != 0)) {
+            int complpercent;
+            complpercent = game_tech_current_research_percent2(g, api, f);
             if (complpercent > 0) {
                 printf("%i%%", complpercent);
             } else {
