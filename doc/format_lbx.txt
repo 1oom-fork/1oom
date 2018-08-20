@@ -264,4 +264,4 @@ offset  sz  description
             - delta times are series of 0x7f bytes, with the time as sum of them
             - note off events are missing!
             - note on events have 3rd parameter byte that indicates duration
-                - can be multibyte; duration is sum of "byte & 0x7f"s
+                - can be multibyte; duration is concatenation of "byte & 0x7f"s
