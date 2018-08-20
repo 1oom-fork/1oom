@@ -96,16 +96,19 @@ static bool xmid_add_pending_noteoff(struct noteoffs_s *s, const uint8_t *data, 
 
 static uint32_t xmid_encode_delta_time(uint8_t *buf, uint32_t delta_time)
 {
-    uint32_t len_event = 0;
-    do {
-        uint8_t c = delta_time & 0x7f;
-        delta_time >>= 7;
-        if (delta_time) {
-            c |= 0x80;
+    uint32_t len_event = 0, v = delta_time & 0x7f;
+    while ((delta_time >>= 7) != 0) {
+        v <<= 8;
+        v |= (delta_time & 0x7f) | 0x80;
+    }
+    while (1) {
+        buf[len_event++] = (uint8_t)(v & 0xff);
+        if (v & 0x80) {
+            v >>= 8;
+        } else {
+            return len_event;
         }
-        buf[len_event++] = c;
-    } while (delta_time);
-    return len_event;
+    }
 }
 
 static int xmid_convert_evnt(const uint8_t *data_in, uint32_t len_in, const uint8_t *timbre_tbl, uint16_t timbre_num, uint8_t *p, bool *tune_loops)
@@ -130,13 +133,15 @@ static int xmid_convert_evnt(const uint8_t *data_in, uint32_t len_in, const uint
             case 0x90:
                 delta_time = 0;
                 skip_extra_bytes = 1;
-
-                while ((data_in[2 + skip_extra_bytes] & 0x80)) {
-                    delta_time += data_in[2 + skip_extra_bytes] & 0x7f;
-                    ++skip_extra_bytes;
+                {
+                    uint8_t b;
+                    while (((b = data_in[2 + skip_extra_bytes]) & 0x80) != 0) {
+                        delta_time |= b & 0x7f;
+                        delta_time <<= 7;
+                        ++skip_extra_bytes;
+                    }
+                    delta_time |= b;
                 }
-                delta_time += data_in[2 + skip_extra_bytes];
-
                 if (!xmid_add_pending_noteoff(s, data_in, t_now, delta_time)) {
                     goto fail;
                 }
@@ -281,7 +286,7 @@ static int xmid_convert_evnt(const uint8_t *data_in, uint32_t len_in, const uint
         }
 
         if (end_found) {
-            /* last event, add remaining noteoffs (none on any MOO1 music files) */
+            /* last event, add remaining noteoffs */
             LOG_DEBUG((DEBUGLEVEL_FMTMUS, "XMID: %i noteoffs at end, max %i noteoffs, total %i noteons\n", s->num, s->max, noteons));
             while (s->top) {
                 for (int i = 0; i < 3; ++i) {
