@@ -263,7 +263,6 @@ again:
 void ui_newtech(struct game_s *g, int pi)
 {
     struct newtech_data_s d;
-    empiretechorbit_t *e = &(g->eto[pi]);
     bool flag_switch = false;
 
     d.g = g;
@@ -303,11 +302,7 @@ void ui_newtech(struct game_s *g, int pi)
     }
 
     for (tech_field_t field = 0; field < TECH_FIELD_NUM; ++field) {
-        if (1
-          && (e->tech.investment[field] != 0)
-          && (e->tech.project[field] == 0)
-          && (e->tech.percent[field] < 99)
-        ) {
+        if (game_tech_can_choose(g, pi, field)) {
             if (!flag_switch) {
                 flag_switch = true;
                 ui_switch_1(g, pi);
