@@ -24,7 +24,7 @@ static void show_empire_report(const struct game_s *g, player_id_t api, player_i
     char *buf = ui_data.strbuf;
     printf("Report: %s, %s, %s %s. %s ", game_str_tbl_races[e->race], g->emperor_names[pi], game_str_tbl_trait1[e->trait1], game_str_tbl_trait2[e->trait2], game_str_re_reportis);
     {
-        int reportage = g->year - eapi->spyreportyear[pi];
+        int reportage = g->year - eapi->spyreportyear[pi] - 1;
         if (reportage < 2) {
             fputs(game_str_re_current, stdout);
         } else {
