@@ -522,9 +522,9 @@ static int savetype_de_moo13(struct game_s *g, const char *fname)
             }
         }
         for (tech_field_t j = TECH_FIELD_COMPUTER; j < TECH_FIELD_NUM; ++j) {
-            M13_GET_16(e->spyreportfield[PLAYER_0][j], eb + 0xdc2 + j * 2);
+            M13_GET_16(g->eto[PLAYER_0].spyreportfield[i][j], eb + 0xdc2 + j * 2);
         }
-        M13_GET_16(e->spyreportyear[PLAYER_0], eb + 0xdce);
+        M13_GET_16(g->eto[PLAYER_0].spyreportyear[i], eb + 0xdce);
         M13_GET_16(e->shipi_colony, eb + 0xdd0);
         M13_GET_16(e->shipi_bomber, eb + 0xdd2);
     }
@@ -967,9 +967,9 @@ static int savetype_en_moo13(struct game_s *g, const char *fname)
             }
         }
         for (tech_field_t j = TECH_FIELD_COMPUTER; j < TECH_FIELD_NUM; ++j) {
-            M13_SET_16(e->spyreportfield[PLAYER_0][j], eb + 0xdc2 + j * 2);
+            M13_SET_16(g->eto[PLAYER_0].spyreportfield[i][j], eb + 0xdc2 + j * 2);
         }
-        M13_SET_16(e->spyreportfield[PLAYER_0][i], eb + 0xdce);
+        M13_SET_16(g->eto[PLAYER_0].spyreportyear[i], eb + 0xdce);
         M13_SET_16(e->shipi_colony, eb + 0xdd0);
         M13_SET_16(e->shipi_bomber, eb + 0xdd2);
     }
