@@ -466,16 +466,16 @@ bool game_check_coord_is_visible(const struct game_s *g, player_id_t pi, int ran
             return true;
         }
     }
-    range = (range - 30) / 20;  /* 0..3 */
+    range = (range - 30) / 2;  /* 0, 10, 20, 30 */
     for (int i = 0; i < g->galaxy_stars; ++i) {
         const planet_t *p = &(g->planet[i]);
-        uint32_t snum;
-        snum = 0;
-        for (int j = 0; (j < e->shipdesigns_num) && !snum; ++j) {
-            snum += e->orbit[i].ships[j];
-        }
-        if (snum && (util_math_dist_fast(x, y, p->x, p->y) <= range)) {
-            return true;
+        for (int j = 0; j < e->shipdesigns_num; ++j) {
+            if (e->orbit[i].ships[j]) {
+                if ((util_math_dist_fast(x, y, p->x, p->y) <= range)) {
+                    return true;
+                }
+                break;
+            }
         }
     }
     for (int ei = 0; ei < g->enroute_num; ++ei) {
