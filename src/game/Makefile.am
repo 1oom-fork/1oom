@@ -70,6 +70,8 @@ libgame_a_SOURCES = \
     game_techtypes.h \
     game_turn.c \
     game_turn.h \
+    game_turn_start.c \
+    game_turn_start.h \
     game_types.h
 
 libgamesaveconv_a_SOURCES = \
