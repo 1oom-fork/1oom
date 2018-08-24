@@ -146,6 +146,11 @@ static void game_turn_init_z_finished(struct game_s *g)
     for (int i = 0; i < g->galaxy_stars; ++i) {
         planet_t *p = &(g->planet[i]);
         BOOLVEC_CLEAR(p->finished, FINISHED_NUM);
+        BOOLVEC_CLEAR(p->unrefuel, PLAYER_NUM);
+    }
+    for (int i = 0; i < g->players; ++i) {
+        empiretechorbit_t *e = &(g->eto[i]);
+        BOOLVEC_CLEAR(e->contact_broken, PLAYER_NUM);
     }
     memset(g->evn.build_finished_num, 0, sizeof(g->evn.build_finished_num));
 }
@@ -1573,16 +1578,12 @@ static void game_turn_contact_broken(struct game_s *g, player_id_t pi, const BOO
             e->trade_bc[i] = 0;
             e->trade_percent[i] = 0;
             e->spymode[i] = SPYMODE_HIDE;
+            BOOLVEC_SET1(e->contact_broken, i);
             e2->mood_trade[pi] = 0;
             e2->trade_bc[pi] = 0;
             e2->trade_percent[pi] = 0;
             e2->spymode[pi] = SPYMODE_HIDE;
-            if (IS_HUMAN(g, pi)) {
-                char buf[0x80];
-                /* TODO ui_sound_music_stop(); */
-                sprintf(buf, "%s %s %s", game_str_tr_cont1, game_str_tbl_race[e2->race], game_str_tr_cont2);
-                ui_turn_msg(g, pi, buf);
-            }
+            BOOLVEC_SET1(e2->contact_broken, pi);
         }
     }
 }
@@ -1600,25 +1601,6 @@ static void game_turn_update_seen(struct game_s *g)
                 g->seen[pi][i].factories = p->factories;
             } else if ((p->owner != PLAYER_NONE) && BOOLVEC_IS1(g->eto[pi].contact, p->owner)) {
                 g->seen[pi][i].owner = p->owner;
-            }
-        }
-    }
-}
-
-static void game_turn_show_newships(struct game_s *g)
-{
-    for (player_id_t pi = PLAYER_0; pi < g->players; ++pi) {
-        if (IS_HUMAN(g, pi)) {
-            bool any_new;
-            any_new = false;
-            for (int si = 0; si < NUM_SHIPDESIGNS; ++si) {
-                if (g->evn.new_ships[pi][si] != 0) {
-                    any_new = true;
-                    break;
-                }
-            }
-            if (any_new) {
-                ui_newships(g, pi);
             }
         }
     }
@@ -1913,7 +1895,6 @@ struct game_end_s game_turn_process(struct game_s *g, bool fix_old_save_rng)
         return game_end;
     }
     for (player_id_t i = PLAYER_0; i < g->players; ++i) {
-        /* TODO set flag in g->eto[i] to delay to player turn? */
         game_turn_contact_broken(g, i, BOOLVEC_TBL_PTRPARAMM(old_contact, i));
     }
     game_fleet_unrefuel(g);
@@ -1927,15 +1908,17 @@ struct game_end_s game_turn_process(struct game_s *g, bool fix_old_save_rng)
     game_turn_update_seen(g);
     game_diplo_mood_relax(g);
     for (int i = 0; i < g->players; ++i) {
-        g->planet_focus_i[i] = old_focus[i];
+        g->planet_focus_i[i] = old_focus[i]; /* FIXME should not be needed anymore */
     }
     ++g->year;
     if (copyprot_status == 1) {
         ui_copyprotection_lose(g, &game_end);
         return game_end;
     }
-    game_turn_show_newships(g);
-    /* TODO autosave */
+#if 0
+    game_turn_show_newships(g); /* handled in game_turn_start_messages */
+#endif
+    /* MOO1 autosaves here every 5 turns */
     game_update_tech_util(g);
     for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         empiretechorbit_t *e = &(g->eto[i]);

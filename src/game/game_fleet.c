@@ -237,7 +237,7 @@ void game_fleet_unrefuel(struct game_s *g)
         const shipresearch_t *srd = &(g->srd[pi]);
         empiretechorbit_t *e = &(g->eto[pi]);
         for (uint8_t pli = 0; pli < g->galaxy_stars; ++pli) {
-            const planet_t *p = &(g->planet[pli]);
+            planet_t *p = &(g->planet[pli]);
             uint8_t wr;
             wr = p->within_frange[pi];
             if (wr != 1) {
@@ -253,16 +253,8 @@ void game_fleet_unrefuel(struct game_s *g)
                         r->ships[si] = 0;
                     }
                 }
-                if (unfueled && IS_HUMAN(g, pi)) {
-                    char *buf, *b, *q;
-                    buf = b = ui_get_strbuf();
-                    b += sprintf(buf, "%s ", game_str_tr_fuel1);
-                    q = b;
-                    b += sprintf(b, "%s", p->name);
-                    util_str_tolower(q + 1);
-                    sprintf(b, " %s", game_str_tr_fuel2);
-                    g->planet_focus_i[pi] = pli;
-                    ui_turn_msg(g, pi, buf);
+                if (unfueled) {
+                    BOOLVEC_SET1(p->unrefuel, pi);
                 }
             }
         }

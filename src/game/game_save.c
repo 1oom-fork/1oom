@@ -100,7 +100,8 @@ static int game_save_encode_planet(uint8_t *buf, int pos, const planet_t *p, int
     SG_1OOM_EN_U8(p->trans_dest);
     SG_1OOM_EN_U8(p->pop_tenths);
     SG_1OOM_EN_BV(p->explored, PLAYER_NUM);
-    SG_1OOM_EN_DUMMY(5);
+    SG_1OOM_EN_BV(p->unrefuel, PLAYER_NUM);
+    SG_1OOM_EN_DUMMY(4);
     SG_1OOM_EN_U8(p->pop_oper_fact);
     SG_1OOM_EN_U16(p->bc_to_refit);
     SG_1OOM_EN_U16(p->rebels);
@@ -153,7 +154,8 @@ static int game_save_decode_planet(const uint8_t *buf, int pos, planet_t *p, int
     SG_1OOM_DE_U8(p->trans_dest);
     SG_1OOM_DE_U8(p->pop_tenths);
     SG_1OOM_DE_BV(p->explored, PLAYER_NUM);
-    SG_1OOM_DE_DUMMY(5);
+    SG_1OOM_DE_BV(p->unrefuel, PLAYER_NUM);
+    SG_1OOM_DE_DUMMY(4);
     SG_1OOM_DE_U8(p->pop_oper_fact);
     SG_1OOM_DE_U16(p->bc_to_refit);
     SG_1OOM_DE_U16(p->rebels);
@@ -265,7 +267,8 @@ static int game_save_encode_eto(uint8_t *buf, int pos, const empiretechorbit_t *
     SG_1OOM_EN_U8(e->ai_p3_countdown);
     SG_1OOM_EN_U8(e->ai_p2_countdown);
     SG_1OOM_EN_BV(e->contact, PLAYER_NUM);
-    SG_1OOM_EN_DUMMY(5);
+    SG_1OOM_EN_BV(e->contact_broken, PLAYER_NUM);
+    SG_1OOM_EN_DUMMY(4);
     SG_1OOM_EN_TBL_U16(e->relation1, pnum);
     SG_1OOM_EN_TBL_U16(e->relation2, pnum);
     SG_1OOM_EN_TBL_U8(e->diplo_type, pnum);
@@ -356,7 +359,8 @@ static int game_save_decode_eto(const uint8_t *buf, int pos, empiretechorbit_t *
     SG_1OOM_DE_U8(e->ai_p3_countdown);
     SG_1OOM_DE_U8(e->ai_p2_countdown);
     SG_1OOM_DE_BV(e->contact, PLAYER_NUM);
-    SG_1OOM_DE_DUMMY(5);
+    SG_1OOM_DE_BV(e->contact_broken, PLAYER_NUM);
+    SG_1OOM_DE_DUMMY(4);
     SG_1OOM_DE_TBL_U16(e->relation1, pnum);
     SG_1OOM_DE_TBL_U16(e->relation2, pnum);
     SG_1OOM_DE_TBL_U8(e->diplo_type, pnum);
