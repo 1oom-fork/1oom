@@ -6,6 +6,7 @@
 #include "ui.h"
 #include "game.h"
 #include "game_shipdesign.h"
+#include "game_turn_start.h"
 #include "lib.h"
 #include "log.h"
 #include "save/save.h"
@@ -87,6 +88,7 @@ static const struct input_cmd_s * const cmdsptr_turn[3] = {
 ui_turn_action_t ui_game_turn(struct game_s *g, int *load_game_i_ptr, int pi)
 {
     ui_switch_1_opts(g, pi);
+    game_turn_start_messages(g, pi);
     ui_finished_print_all(g, pi);
     while (1) {
         char *input;
