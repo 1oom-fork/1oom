@@ -1099,6 +1099,7 @@ static const struct game_intros_s game_intros_planet[] = {
     GAME_INTROS_VAL(planet_s, claim),
     GAME_INTROS_VAL(planet_s, waste),
     GAME_INTROS_BV(planet_s, explored, PLAYER_NUM),
+    GAME_INTROS_BV(planet_s, unrefuel, PLAYER_NUM),
     GAME_INTROS_VAL(planet_s, bc_to_ecoproj),
     GAME_INTROS_VAL(planet_s, bc_to_ship),
     GAME_INTROS_VAL(planet_s, bc_to_factory),
@@ -1190,6 +1191,7 @@ static const struct game_intros_s game_intros_eto[] = {
     GAME_INTROS_VAL(empiretechorbit_s, ai_p3_countdown),
     GAME_INTROS_VAL(empiretechorbit_s, ai_p2_countdown),
     GAME_INTROS_BV(empiretechorbit_s, contact, PLAYER_NUM),
+    GAME_INTROS_BV(empiretechorbit_s, contact_broken, PLAYER_NUM),
     GAME_INTROS_TBL(empiretechorbit_s, relation1),
     GAME_INTROS_TBL(empiretechorbit_s, relation2),
     GAME_INTROS_TBL(empiretechorbit_s, diplo_type),
@@ -1955,6 +1957,7 @@ int saveconv_en_text(struct game_s *g, const char *fname)
         OUTLINEI("claim", p->claim);
         OUTLINEI("waste", p->waste);
         OUTLINEBV("explored", p->explored, g->players);
+        OUTLINEBV("unrefuel", p->unrefuel, g->players);
         OUTLINEI("bc_to_ecoproj", p->bc_to_ecoproj);
         OUTLINEI("bc_to_ship", p->bc_to_ship);
         OUTLINEI("bc_to_factory", p->bc_to_factory);
@@ -2015,6 +2018,7 @@ int saveconv_en_text(struct game_s *g, const char *fname)
         OUTLINEI("ai_p3_countdown", e->ai_p3_countdown);
         OUTLINEI("ai_p2_countdown", e->ai_p2_countdown);
         OUTLINEBV("contact", e->contact, g->players);
+        OUTLINEBV("contact_broken", e->contact_broken, g->players);
         OUTLINETBL("relation1", g->players, e->relation1);
         OUTLINETBL("relation2", g->players, e->relation2);
         OUTLINETBL("diplo_type", g->players, e->diplo_type);
