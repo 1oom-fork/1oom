@@ -137,6 +137,7 @@ typedef struct planet_s {
     int16_t rebels;
     planet_unrest_t unrest;
     bool unrest_reported;
+    BOOLVEC_DECLARE(unrefuel, PLAYER_NUM);
     BOOLVEC_DECLARE(finished, FINISHED_NUM);
     /* remaining variables used only during game_turn_process */
     uint16_t inbound[PLAYER_NUM];

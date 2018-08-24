@@ -113,7 +113,8 @@ c       name (ASCIIz)
 1       transport destination (planet index)
 1       population tenths
 1       explored by player (bitmask)
-5       (0, unused)
+1       player fleet unrefueled (bitmask)
+4       (0, unused)
 1       a colonist operates N factories
 2       BC towards industy refit
 2       rebels (0..actual pop)
@@ -163,8 +164,9 @@ sz      description
 1       trait2 (0..5)
 1       AI turn p3 countdown (0..6)
 1       AI turn p2 countdown (0..20)
-1       empire within fuel range (bitmask)
-5       (0, unused)
+1       in contact with empire (bitmask)
+1       contact broken with empire (bitmask)
+4       (0, unused)
 N*2     relation1
 N*2     relation2
 N*1     diplo type: ...
@@ -224,13 +226,13 @@ N*2     spy report year
 @PLAYERS * Ship/research data (S = @SHIPDNUM)
 
 sz      description
-S*28    number of ship designs * Ship design: $SHIPDESIGN
+S*29    number of ship designs * Ship design: $SHIPDESIGN
         sz  description
         c   name
         2   cost
         2   space
         1   hull (0..3)
-        1   look (0..152?)
+        1   look (0..146)
         4*1 weapon type (0..63)
         4*1 weapon num
         1   engine (0..8)
@@ -241,7 +243,7 @@ S*28    number of ship designs * Ship design: $SHIPDESIGN
         1   computer (0..11)
         1   armor (0..13)
         1   speed (0..8?)
-        1   hit points
+        2   hit points
 6*a*3   limited research list (data is tech ID)
 6*3c    completed research (data is tech ID; table length is @TECHCOMPL)
 6*1     (0, unused)
@@ -252,7 +254,7 @@ S*28    number of ship designs * Ship design: $SHIPDESIGN
 @PLAYERS * Current ship design
 
 sz      description
-28      Ship design (see $SHIPDESIGN above)
+29      Ship design (see $SHIPDESIGN above)
 
 
 Event data (N = @PLAYERS)
