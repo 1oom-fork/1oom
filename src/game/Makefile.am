@@ -31,6 +31,7 @@ libgame_a_SOURCES = \
     game_election.c \
     game_election.h \
     game_end.h \
+    game_endecode.h \
     game_event.c \
     game_event.h \
     game_fix.c \
