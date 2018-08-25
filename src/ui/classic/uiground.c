@@ -34,7 +34,8 @@
 /* -------------------------------------------------------------------------- */
 
 struct ground_data_s {
-    struct ground_s *gr;
+    const struct game_s *g;
+    const struct ground_s *gr;
     struct landing_data_s l;
     uint8_t *gfx_s[2];
     uint8_t *gfx_death;
@@ -43,7 +44,7 @@ struct ground_data_s {
 
 static void ground_prepare(struct ground_data_s *d)
 {
-    const struct game_s *g = d->gr->g;
+    const struct game_s *g = d->g;
     hw_video_copy_back_from_page3();
     lbxgfx_set_new_frame(d->l.gfx_transprt, 39);
     gfx_aux_draw_frame_to(d->l.gfx_transprt, &ui_data.aux.screen);
@@ -86,8 +87,8 @@ static void ground_draw_item(int popi, int popnum, uint8_t *gfx, bool is_right, 
 static void ground_draw_cb1(void *vptr)
 {
     struct ground_data_s *d = vptr;
+    const struct game_s *g = d->g;
     const struct ground_s *gr = d->gr;
-    const struct game_s *g = d->gr->g;
     const char *strrace[2];
     char buf[0x80];
     for (int i = 0; i < 2; ++i) {
@@ -186,7 +187,7 @@ static void ground_draw_cb1(void *vptr)
                     if (gr->flag_swap == gr->s[0].human) {
                         lbxfont_print_str_center(160, 40, game_str_gr_tsteal, UI_SCREEN_W);
                         for (int i = 0; i < gr->techchance; ++i) {
-                            game_tech_get_name(g->gaux, gr->steal->tbl_field[i], gr->steal->tbl_tech2[i], buf);
+                            game_tech_get_name(g->gaux, gr->got[i].field, gr->got[i].tech, buf);
                             lbxfont_print_str_center(160, 60 + 15 * i, buf, UI_SCREEN_W);
                         }
                     } else {
@@ -208,15 +209,16 @@ static void ground_draw_cb1(void *vptr)
 
 /* -------------------------------------------------------------------------- */
 
-void ui_ground(struct ground_s *gr)
+void ui_ground(struct game_s *g, struct ground_s *gr)
 {
     struct ground_data_s d;
     bool flag_done = false;
     int downcount = 4;
-    ui_switch_2(gr->g, gr->s[0].player, gr->s[1].player);
+    ui_switch_2(g, gr->s[0].player, gr->s[1].player);
     memset(&d, 0, sizeof(d));
+    d.g = g;
     d.gr = gr;
-    d.l.g = gr->g;
+    d.l.g = g;
     d.l.api = PLAYER_0; /* for gfx_walk banner which is unused here */
     d.l.planet = gr->planet_i;
     d.l.colonize = false;
@@ -279,23 +281,8 @@ void ui_ground(struct ground_s *gr)
     while ((gr->s[0].pop1 != 0) && (gr->s[1].pop1 != 0)) {
         game_ground_kill(gr);
     }
-    if (gr->flag_swap) {
-        int t;
-        t = gr->s[0].pop2; gr->s[0].pop2 = gr->s[1].pop2; gr->s[1].pop2 = t;
-        t = gr->s[0].pop1; gr->s[0].pop1 = gr->s[1].pop1; gr->s[1].pop1 = t;
-        t = gr->s[0].player; gr->s[0].player = gr->s[1].player; gr->s[1].player = t;
-        ui_sound_play_music((gr->s[0].pop1 != 0) ? 0xb : 0xc);
-    } else {
-        ui_sound_play_music((gr->s[0].pop1 != 0) ? 0xc : 0xb);
-    }
-    game_ground_finish(gr);
+    ui_sound_play_music((gr->s[0].pop1 != 0) ? 0xc : 0xb);
     d.flag_over = true;
-    if (gr->flag_swap) {
-        int t;
-        t = gr->s[0].pop2; gr->s[0].pop2 = gr->s[1].pop2; gr->s[1].pop2 = t;
-        t = gr->s[0].pop1; gr->s[0].pop1 = gr->s[1].pop1; gr->s[1].pop1 = t;
-        t = gr->s[0].player; gr->s[0].player = gr->s[1].player; gr->s[1].player = t;
-    }
     flag_done = false;
     while (!flag_done) {
         int16_t oi;
