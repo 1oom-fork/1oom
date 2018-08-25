@@ -27,6 +27,7 @@ struct game_ai_s {
     bool (*battle_ai_retreat)(struct battle_s *bt); /* true if retreat all */
     uint8_t (*tech_next)(struct game_s *g, player_id_t player, tech_field_t field, uint8_t *tbl, int num);
     bool (*bomb)(struct game_s *g, player_id_t player, uint8_t planet, int pop_inbound);
+    void (*ground)(struct game_s *g, player_id_t def, player_id_t att, uint8_t planet, int pop_killed, bool owner_changed);
     void (*plague)(struct game_s *g, uint8_t planet);
     void (*nova)(struct game_s *g, uint8_t planet);
     void (*comet)(struct game_s *g, uint8_t planet);

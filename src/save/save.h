@@ -15,6 +15,7 @@ extern char game_save_tbl_name[NUM_ALL_SAVES][SAVE_NAME_LEN];
 
 extern void libsave_init(void);
 extern void libsave_shutdown(void);
+extern uint8_t *libsave_get_savebuf(void);
 
 extern void *game_save_open_check_header(const char *filename, int i, bool update_table, char *savename);
 extern const char *libsave_select_slot_fname(int i);
