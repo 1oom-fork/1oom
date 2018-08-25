@@ -150,7 +150,7 @@ extern void ui_bomb_show(struct game_s *g, int pi, int attacker_i, int owner_i, 
 extern void ui_turn_msg(struct game_s *g, int pi, const char *str);
 
 struct ground_s;
-extern void ui_ground(struct ground_s *gr);
+extern void ui_ground(struct game_s *g, struct ground_s *gr);
 
 struct news_s;
 extern void ui_news_start(void);
