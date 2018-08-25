@@ -28,11 +28,10 @@ static void ui_ground_print_troops(struct ground_s *gr, const char **strrace)
 
 /* -------------------------------------------------------------------------- */
 
-void ui_ground(struct ground_s *gr)
+void ui_ground(struct game_s *g, struct ground_s *gr)
 {
-    const struct game_s *g = gr->g;
     const char *strrace[2];
-    ui_switch_2(gr->g, gr->s[0].player, gr->s[1].player);
+    ui_switch_2(g, gr->s[0].player, gr->s[1].player);
     for (int i = 0; i < 2; ++i) {
         strrace[i] = game_str_tbl_race[g->eto[gr->s[i].player].race];
     }
@@ -52,19 +51,6 @@ void ui_ground(struct ground_s *gr)
         game_ground_kill(gr);
     }
     ui_ground_print_troops(gr, strrace);
-    if (gr->flag_swap) {
-        int t;
-        t = gr->s[0].pop2; gr->s[0].pop2 = gr->s[1].pop2; gr->s[1].pop2 = t;
-        t = gr->s[0].pop1; gr->s[0].pop1 = gr->s[1].pop1; gr->s[1].pop1 = t;
-        t = gr->s[0].player; gr->s[0].player = gr->s[1].player; gr->s[1].player = t;
-    }
-    game_ground_finish(gr);
-    if (gr->flag_swap) {
-        int t;
-        t = gr->s[0].pop2; gr->s[0].pop2 = gr->s[1].pop2; gr->s[1].pop2 = t;
-        t = gr->s[0].pop1; gr->s[0].pop1 = gr->s[1].pop1; gr->s[1].pop1 = t;
-        t = gr->s[0].player; gr->s[0].player = gr->s[1].player; gr->s[1].player = t;
-    }
     {
         int pop = gr->s[gr->flag_swap ? 1 : 0].pop1;
         fputs("Ground | ", stdout);
@@ -98,12 +84,12 @@ void ui_ground(struct ground_s *gr)
                 printf("%i %s\n", gr->fact, game_str_gr_fcapt);
             }
             if (gr->techchance > 0) {
+                fputs("Ground | ", stdout);
                 if (gr->flag_swap == gr->s[0].human) {
-                    fputs("Ground | ", stdout);
                     fputs(game_str_gr_tsteal, stdout);
                     for (int i = 0; i < gr->techchance; ++i) {
                         char buf[0x80];
-                        game_tech_get_name(g->gaux, gr->steal->tbl_field[i], gr->steal->tbl_tech2[i], buf);
+                        game_tech_get_name(g->gaux, gr->got[i].field, gr->got[i].tech, buf);
                         printf("%s %s", (i > 0) ? "," : ":", buf);
                     }
                 } else {
@@ -113,5 +99,5 @@ void ui_ground(struct ground_s *gr)
             }
         }
     }
-    ui_switch_wait(gr->g);
+    ui_switch_wait(g);
 }
