@@ -154,7 +154,7 @@ extern void ui_turn_pre(const struct game_s *g);
 extern void ui_turn_msg(struct game_s *g, int pi, const char *str);
 
 struct ground_s;
-extern void ui_ground(struct ground_s *gr);
+extern void ui_ground(struct game_s *g, struct ground_s *gr);
 
 struct news_s;
 extern void ui_news_start(void);
