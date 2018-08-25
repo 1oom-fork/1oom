@@ -1840,7 +1840,11 @@ struct game_end_s game_turn_process(struct game_s *g, bool fix_old_save_rng)
     game_turn_explore(g);
     game_turn_bomb(g);
     game_turn_transport(g);
-    game_turn_ground(g);
+    {
+        const uint8_t *grdata;
+        grdata = game_turn_ground_resolve_all(g);
+        game_turn_ground_show_all(g, grdata);
+    }
     game_turn_coup(g);
     if (game_turn_check_end(g, &game_end)) {
         return game_end;
