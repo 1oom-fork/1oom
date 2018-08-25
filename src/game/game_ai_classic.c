@@ -3206,6 +3206,32 @@ static bool game_ai_classic_bomb(struct game_s *g, player_id_t player, uint8_t p
 
 /* -------------------------------------------------------------------------- */
 
+static void game_ai_classic_ground(struct game_s *g, player_id_t def, player_id_t att, uint8_t planet, int pop_killed, bool owner_changed)
+{
+    if (IS_HUMAN(g, def)) {
+        return;
+    }
+    if (IS_AI(g, att)) {
+        /*e996*/
+        pop_killed = 1; /* FIXME BUG? AI-AI ground diplo always sees 1 pop killed */
+        /*e9c4*/
+        game_diplo_act(g, -((rnd_1_n(4, &g->seed) + 4) * pop_killed), att, def, 0xa, planet, 0);
+    } else if (owner_changed && IS_HUMAN(g, att)) {
+        if (g->eto[att].treaty[def] < TREATY_WAR) {
+            game_diplo_act(g, -50 - rnd_1_n(50, &g->seed), att, def, 0xd, planet, 0);
+            game_diplo_start_war(g, def, att);
+        } else {
+            /*e93f*/
+            game_diplo_act(g, -50 - rnd_1_n(50, &g->seed), att, def, 0xa, planet, 0);
+        }
+    } else {
+        /*e969*/
+        game_diplo_act(g, -((rnd_1_n(5, &g->seed) + 5) * pop_killed), att, def, 0xa, planet, 0);
+    }
+}
+
+/* -------------------------------------------------------------------------- */
+
 static void game_ai_classic_add_reserve(struct game_s *g, planet_t *p)
 {
     empiretechorbit_t *e = &(g->eto[p->owner]);
@@ -4361,6 +4387,7 @@ const struct game_ai_s game_ai_classic = {
     game_ai_classic_battle_ai_retreat,
     game_ai_classic_tech_next,
     game_ai_classic_bomb,
+    game_ai_classic_ground,
     game_ai_classic_crank_tech, /* plague */
     game_ai_classic_crank_tech, /* nova */
     game_ai_classic_crank_ship, /* comet */

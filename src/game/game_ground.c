@@ -4,11 +4,13 @@
 #include <string.h>
 
 #include "game_ground.h"
+#include "bits.h"
 #include "boolvec.h"
 #include "comp.h"
 #include "game.h"
+#include "game_ai.h"
 #include "game_aux.h"
-#include "game_diplo.h"
+#include "game_endecode.h"
 #include "game_misc.h"
 #include "game_num.h"
 #include "game_shiptech.h"
@@ -24,10 +26,13 @@
 
 /* -------------------------------------------------------------------------- */
 
-static void game_ground_init(struct ground_s *gr)
+static void game_ground_resolve_init(struct game_s *g, struct ground_s *gr)
 {
-    struct game_s *g = gr->g;
-    char buf[0x40];
+    gr->seed = g->seed;
+    {
+        const planet_t *p = &(g->planet[gr->planet_i]);
+        gr->fact = p->factories;
+    }
     for (int i = 0; i < 2; ++i) {
         const empiretechorbit_t *e = &(g->eto[gr->s[i].player]);
         const shipresearch_t *srd = &(g->srd[gr->s[i].player]);
@@ -35,9 +40,8 @@ static void game_ground_init(struct ground_s *gr)
         uint8_t bestarmor, bestsuit, bestshield, bestweap, besti;
         gr->s[i].human = IS_HUMAN(g, gr->s[i].player);
         gr->s[i].force = 0;
-        gr->s[i].strnum = 1;
         bestarmor = 0;
-        bestsuit = 0;
+        bestsuit = besti = 0;
         rc = &(srd->researchcompleted[TECH_FIELD_CONSTRUCTION][0]);
         for (int j = 0; j < e->tech.completed[TECH_FIELD_CONSTRUCTION]; ++j) {
             uint8_t tier;
@@ -52,16 +56,9 @@ static void game_ground_init(struct ground_s *gr)
             }
         }
         gr->s[i].force += bestarmor * 5 + bestsuit * 10;
-        strcpy(buf, *tbl_shiptech_armor[bestarmor * 2].nameptr);
-        util_str_tolower(&buf[1]);
-        sprintf(gr->s[i].str[0], "%s ", buf);
-        if (bestsuit == 0) {
-            strcat(gr->s[i].str[0], game_str_gr_carmor);
-        } else {
-            game_tech_get_name(g->gaux, TECH_FIELD_CONSTRUCTION, besti, buf);
-            strcat(gr->s[i].str[0], buf);
-        }
-        bestshield = 0;
+        gr->s[i].armori = bestarmor;
+        gr->s[i].suiti = besti;
+        bestshield = besti = 0;
         rc = &(srd->researchcompleted[TECH_FIELD_FORCE_FIELD][0]);
         for (int j = 0; j < e->tech.completed[TECH_FIELD_FORCE_FIELD]; ++j) {
             uint8_t tier;
@@ -73,12 +70,11 @@ static void game_ground_init(struct ground_s *gr)
                 besti = rc[j];
             }
         }
+        gr->s[i].shieldi = besti;
         if (bestshield != 0) {
             gr->s[i].force += bestshield * 10;
-            game_tech_get_name(g->gaux, TECH_FIELD_FORCE_FIELD, besti, gr->s[i].str[1]);
-            gr->s[i].strnum = 2;
         }
-        bestweap = 0;
+        bestweap = besti = 0;
         rc = &(srd->researchcompleted[TECH_FIELD_WEAPON][0]);
         for (int j = 0; j < e->tech.completed[TECH_FIELD_WEAPON]; ++j) {
             uint8_t tier;
@@ -90,41 +86,140 @@ static void game_ground_init(struct ground_s *gr)
                 besti = rc[j];
             }
         }
+        gr->s[i].weapi = besti;
         if (bestweap != 0) {
             if (bestweap > 2) {
                 ++bestweap;
             }
             gr->s[i].force += bestweap * 5;
-            game_tech_get_name(g->gaux, TECH_FIELD_WEAPON, besti, gr->s[i].str[gr->s[i].strnum++]);
         }
         if (e->race == RACE_BULRATHI) {
             gr->s[i].force += game_num_race_bonus_bulrathi;
         }
     }
     gr->s[gr->flag_swap ? 0 : 1].force += 5;
-}
-
-/* -------------------------------------------------------------------------- */
-
-void game_ground_kill(struct ground_s *gr)
-{
-    int v1, v2, death;
-    v1 = rnd_1_n(100, &gr->g->seed) + gr->s[0].force;
-    v2 = rnd_1_n(100, &gr->g->seed) + gr->s[1].force;
-    if (v1 <= v2) {
-        death = 0;
-    } else {
-        death = 1;
+    for (int i = 0; i < TECH_SPY_MAX; ++i) {
+        gr->got[i].tech = 0;
+        gr->got[i].field = 0;
     }
-    gr->death = death;
-    --gr->s[death].pop1;
 }
 
-void game_ground_finish(struct ground_s *gr)
+static void game_ground_show_init(struct game_s *g, struct ground_s *gr)
 {
-    planet_t *p = &(gr->g->planet[gr->planet_i]);
-    struct game_s *g = gr->g;
-    struct spy_esp_s *s = gr->steal;
+    for (int i = 0; i < 2; ++i) {
+        char strbuf[0x40];
+        uint8_t besti;
+        gr->s[i].human = IS_HUMAN(g, gr->s[i].player);
+        gr->s[i].pop2 = gr->s[i].pop1;
+        gr->s[i].strnum = 1;
+        strcpy(strbuf, *tbl_shiptech_armor[gr->s[i].armori * 2].nameptr);
+        util_str_tolower(&strbuf[1]);
+        sprintf(gr->s[i].str[0], "%s ", strbuf);
+        besti = gr->s[i].suiti;
+        if (besti == 0) {
+            strcat(gr->s[i].str[0], game_str_gr_carmor);
+        } else {
+            game_tech_get_name(g->gaux, TECH_FIELD_CONSTRUCTION, besti, strbuf);
+            strcat(gr->s[i].str[0], strbuf);
+        }
+        besti = gr->s[i].shieldi;
+        if (besti != 0) {
+            game_tech_get_name(g->gaux, TECH_FIELD_FORCE_FIELD, besti, gr->s[i].str[1]);
+            gr->s[i].strnum = 2;
+        }
+        besti = gr->s[i].weapi;
+        if (besti != 0) {
+            game_tech_get_name(g->gaux, TECH_FIELD_WEAPON, besti, gr->s[i].str[gr->s[i].strnum++]);
+        }
+    }
+}
+
+static int game_ground_encode_start(const struct ground_s *gr, uint8_t *buf, int pos)
+{
+    SG_1OOM_EN_U8(gr->planet_i);
+    SG_1OOM_EN_U8(gr->s[0].player);
+    SG_1OOM_EN_U8(gr->s[1].player);
+    SG_1OOM_EN_U8(gr->flag_swap | (gr->flag_rebel ? 2 : 0));
+    SG_1OOM_EN_U32(gr->seed);
+    SG_1OOM_EN_U16(gr->inbound);
+    SG_1OOM_EN_U16(gr->total_inbound);
+    SG_1OOM_EN_U16(gr->fact);
+    for (int i = 0; i < 2; ++i) {
+        SG_1OOM_EN_U16(gr->s[i].force);
+        SG_1OOM_EN_U16(gr->s[i].pop1);
+        SG_1OOM_EN_U8(gr->s[i].armori);
+        SG_1OOM_EN_U8(gr->s[i].suiti);
+        SG_1OOM_EN_U8(gr->s[i].shieldi);
+        SG_1OOM_EN_U8(gr->s[i].weapi);
+    }
+    return pos;
+}
+
+static int game_ground_encode_end(const struct ground_s *gr, uint8_t *buf, int pos)
+{
+    for (int i = 0; i < TECH_SPY_MAX; ++i) {
+        SG_1OOM_EN_U8(gr->got[i].tech);
+        SG_1OOM_EN_U8(gr->got[i].field);
+    }
+    return pos;
+}
+
+static int game_ground_decode(struct ground_s *gr, const uint8_t *buf, int pos)
+{
+    {
+        uint8_t v;
+        SG_1OOM_DE_U8(v);
+        if (v == 0xff) {
+            return 0;
+        }
+        gr->planet_i = v;
+    }
+    SG_1OOM_DE_U8(gr->s[0].player);
+    SG_1OOM_DE_U8(gr->s[1].player);
+    {
+        uint8_t v;
+        SG_1OOM_DE_U8(v);
+        gr->flag_swap = (v & 1) != 0;
+        gr->flag_rebel = (v & 2) != 0;
+    }
+    SG_1OOM_DE_U32(gr->seed);
+    SG_1OOM_DE_U16(gr->inbound);
+    SG_1OOM_DE_U16(gr->total_inbound);
+    SG_1OOM_DE_U16(gr->fact);
+    for (int i = 0; i < 2; ++i) {
+        SG_1OOM_DE_U16(gr->s[i].force);
+        SG_1OOM_DE_U16(gr->s[i].pop1);
+        SG_1OOM_DE_U8(gr->s[i].armori);
+        SG_1OOM_DE_U8(gr->s[i].suiti);
+        SG_1OOM_DE_U8(gr->s[i].shieldi);
+        SG_1OOM_DE_U8(gr->s[i].weapi);
+    }
+    {
+        int num = 0;
+        for (int i = 0; i < TECH_SPY_MAX; ++i) {
+            uint8_t t;
+            SG_1OOM_DE_U8(t);
+            gr->got[i].tech = t;
+            if (t != 0) {
+                ++num;
+            }
+            SG_1OOM_DE_U8(gr->got[i].field);
+        }
+        gr->techchance = num;
+    }
+    return pos;
+}
+
+static inline uint8_t *game_ground_get_buf(struct game_s *g)
+{
+    return g->gaux->savebuf;    /* unused during turn processing, large enough for ground data */
+}
+
+static void game_ground_finish(struct game_s *g, struct ground_s *gr)
+{
+    planet_t *p = &(g->planet[gr->planet_i]);
+    struct spy_esp_s s[1];
+    g->seed = gr->seed;
     gr->techchance = 0;
     if (gr->s[0].pop1 > 0) {
         if (gr->flag_rebel) {
@@ -133,7 +228,7 @@ void game_ground_finish(struct ground_s *gr)
             p->rebels = 0;
         } else {
             int fact, chance, num;
-            gr->fact = fact = p->factories;
+            fact = gr->fact;
             chance = 0;
             for (int i = 0; i < fact; ++i) {
                 if (!rnd_0_nm1(50, &g->seed)) {
@@ -147,6 +242,8 @@ void game_ground_finish(struct ground_s *gr)
             SETMIN(num, chance);
             s->tnum = num;
             for (int i = 0; i < num; ++i) {
+                gr->got[i].tech = s->tbl_tech2[i];
+                gr->got[i].field = s->tbl_field[i];
                 game_tech_get_new(g, gr->s[0].player, s->tbl_field[i], s->tbl_tech2[i], TECHSOURCE_FOUND, gr->planet_i, gr->s[1].player, false);
             }
             gr->techchance = num;
@@ -169,24 +266,34 @@ void game_ground_finish(struct ground_s *gr)
     SETMIN(p->pop, p->max_pop3);
 }
 
-void game_turn_ground(struct game_s *g)
+/* -------------------------------------------------------------------------- */
+
+void game_ground_kill(struct ground_s *gr)
+{
+    int v1, v2, death;
+    v1 = rnd_1_n(100, &gr->seed) + gr->s[0].force;
+    v2 = rnd_1_n(100, &gr->seed) + gr->s[1].force;
+    if (v1 <= v2) {
+        death = 0;
+    } else {
+        death = 1;
+    }
+    gr->death = death;
+    --gr->s[death].pop1;
+}
+
+const uint8_t *game_turn_ground_resolve_all(struct game_s *g)
 {
     struct ground_s gr[1];
-    struct spy_esp_s steal;
-    gr->g = g;
-    gr->steal = &steal;
+    uint8_t *buf = game_ground_get_buf(g);
+    int pos = 0;
+    gr->seed = g->seed;
     for (int pli = 0; pli < g->galaxy_stars; ++pli) {
         planet_t *p = &(g->planet[pli]);
         player_id_t powner;
-        uint16_t inbound[PLAYER_NUM];
         powner = p->owner;
         for (player_id_t i = PLAYER_0; i < g->players; ++i) {
-            inbound[i] = p->inbound[i];
-        }
-        for (player_id_t i = PLAYER_0; i < g->players; ++i) {
             if ((i != powner) || (p->unrest == PLANET_UNREST_REBELLION)) {
-                powner = p->owner;  /* FIXME redundant */
-                p->inbound[i] = inbound[i]; /* FIXME why ? */
                 if ((powner != PLAYER_NONE) && (p->inbound[i] > 0)) {
                     int pop_planet;
                     gr->flag_rebel = (p->unrest == PLANET_UNREST_REBELLION) && IS_HUMAN(g, i) && (p->owner == i);
@@ -205,52 +312,44 @@ void game_turn_ground(struct game_s *g)
                         t = gr->s[0].pop1; gr->s[0].pop1 = gr->s[1].pop1; gr->s[1].pop1 = t;
                         t = gr->s[0].player; gr->s[0].player = gr->s[1].player; gr->s[1].player = t;
                     }
-                    game_ground_init(gr);
+                    game_ground_resolve_init(g, gr);
                     if ((gr->s[0].pop1 != 0) && (gr->s[1].pop1 != 0)) {
                         if (gr->s[0].human || gr->s[1].human) {
-                            /*e8a1*/
-                            ui_ground(gr);
-                            if (gr->flag_swap) {
-                                int t;
-                                t = gr->s[0].pop1; gr->s[0].pop1 = gr->s[1].pop1; gr->s[1].pop1 = t;
-                                t = gr->s[0].player; gr->s[0].player = gr->s[1].player; gr->s[1].player = t;
-                            }
-                            /*e8cb*/
-                            pop_planet -= gr->s[1].pop1;
-                            SETMAX(pop_planet, 1);
-                            if ((p->owner != powner) && IS_HUMAN(g, gr->s[0].player)) {
-                                if (g->eto[gr->s[0].player].treaty[gr->s[1].player] < TREATY_WAR) {
-                                    game_diplo_act(g, -50 - rnd_1_n(50, &g->seed), gr->s[0].player, gr->s[1].player, 0xd, pli, 0);
-                                    game_diplo_start_war(g, gr->s[1].player, gr->s[0].player);
-                                } else {
-                                    /*e93f*/
-                                    game_diplo_act(g, -50 - rnd_1_n(50, &g->seed), gr->s[0].player, gr->s[1].player, 0xa, pli, 0);
-                                }
-                            } else {
-                                /*e969*/
-                                game_diplo_act(g, -((rnd_1_n(5, &g->seed) + 5) * pop_planet), gr->s[0].player, gr->s[1].player, 0xa, pli, 0);
-                            }
-                        } else {
-                            /*e996*/
-                            pop_planet -= gr->s[1].pop1;
-                            SETMAX(pop_planet, 1);
-                            while ((gr->s[0].pop1 != 0) && (gr->s[1].pop1 != 0)) {
-                                game_ground_kill(gr);
-                            }
-                            game_ground_finish(gr);
-                            /*e9c4*/
-                            game_diplo_act(g, -((rnd_1_n(4, &g->seed) + 4) * pop_planet), gr->s[0].player, gr->s[1].player, 0xa, pli, 0);
-#if 0
-                            if (gr->s[0].human) {   /* FIXME no test on MOO1, never true */
-                                ui_newtech(g, gr->s[0].player); /* FIXME why is this here? only AI present */
-                            }
-                            g->evn.newtech[gr->s[0].player].num = 0;
-#endif
+                            pos = game_ground_encode_start(gr, buf, pos);
                         }
+                        while ((gr->s[0].pop1 != 0) && (gr->s[1].pop1 != 0)) {
+                            game_ground_kill(gr);
+                        }
+                        if (gr->flag_swap) {
+                            int t;
+                            t = gr->s[0].pop1; gr->s[0].pop1 = gr->s[1].pop1; gr->s[1].pop1 = t;
+                            t = gr->s[0].player; gr->s[0].player = gr->s[1].player; gr->s[1].player = t;
+                        }
+                        game_ground_finish(g, gr);
+                        if (gr->s[0].human || gr->s[1].human) {
+                            pos = game_ground_encode_end(gr, buf, pos);
+                        }
+                        pop_planet -= gr->s[1].pop1;
+                        SETMAX(pop_planet, 1);
+                        game_ai->ground(g, gr->s[1].player, gr->s[0].player, pli, pop_planet, (p->owner != powner));
                     }
                 }
                 powner = p->owner;
             }
         }
     }
+    SG_1OOM_EN_U8(0xff);
+    return buf;
+}
+
+int game_turn_ground_show_all(struct game_s *g, const uint8_t *buf)
+{
+    struct ground_s gr[1];
+    int pos = 0;
+    /* TODO reorder for minimum player switching */
+    while ((pos = game_ground_decode(gr, buf, pos)) > 0) {
+        game_ground_show_init(g, gr);
+        ui_ground(g, gr);
+    }
+    return (pos == 0) ? 0 : -1;
 }
