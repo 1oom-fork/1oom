@@ -53,6 +53,7 @@ static const struct input_cmd_s cmds_turn[] = {
     { "s", "SLIDER VALUE", "Set planet slider\nSLIDER is s, d, i, e or t\nVALUE can be +N or -N for relative adjustment", 2, 2, 0, ui_cmd_planet_slider, 0 },
     { "sl", "SLIDER", "Toggle planet slider lock", 1, 1, 0, ui_cmd_planet_slider_lock, 0 },
     { "b", "[SHIP]", "Select ship to build", 0, 1, 0, ui_cmd_planet_build, 0 },
+    { "bscrap", "VALUE", "Scrap missile bases", 1, 1, 0, ui_cmd_planet_scrap_bases, 0 },
     { "gov", NULL, "Toggle planetary governor", 0, 0, 0, ui_cmd_govern_toggle, 0 },
     { "regov", NULL, "Readjust governed planet", 0, 0, 0, ui_cmd_govern_readjust, 0 },
     { "regovall", NULL, "Readjust all governed planets", 0, 0, 0, ui_cmd_govern_readjust_all, 0 },
