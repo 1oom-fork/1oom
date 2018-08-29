@@ -260,7 +260,6 @@ again:
 void ui_newtech(struct game_s *g, int pi)
 {
     struct newtech_data_s d;
-    empiretechorbit_t *e = &(g->eto[pi]);
     bool flag_switch = false;
 
     d.g = g;
