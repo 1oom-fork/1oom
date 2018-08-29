@@ -10,6 +10,7 @@
 #include "game_misc.h"
 #include "game_planet.h"
 #include "game_str.h"
+#include "game_tech.h"
 #include "uidefs.h"
 #include "util.h"
 
@@ -477,5 +478,25 @@ int ui_cmd_planet_reserve(struct game_s *g, player_id_t api, struct input_token_
     p->reserve += v;
     e->reserve_bc -= v;
     game_update_production(g);
+    return 0;
+}
+
+int ui_cmd_planet_scrap_bases(struct game_s *g, player_id_t api, struct input_token_s *param, int num_param, void *var)
+{
+    planet_t *p = &(g->planet[g->planet_focus_i[api]]);
+    int v;
+    if (p->owner != api) {
+        return -1;
+    }
+    if (param[0].type == INPUT_TOKEN_NUMBER) {
+        v = param[0].data.num;
+        if (v > p->missile_bases) {
+            return -1;
+        }
+    } else {
+        return -1;
+    }
+    p->missile_bases -= v;
+    g->eto[api].reserve_bc += (v * game_get_base_cost(g, api)) / 4;
     return 0;
 }
