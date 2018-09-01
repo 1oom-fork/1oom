@@ -34,6 +34,8 @@ struct noteoffs_s {
     noteoff_t tbl[NOTEOFFBUFSIZE];  /* noteoff events */
 };
 
+#define XMID_TICKSPERQ  55
+
 /* -------------------------------------------------------------------------- */
 
 static noteoff_t *xmid_find_free_noteoff(struct noteoffs_s *s)
@@ -204,7 +206,8 @@ static int xmid_convert_evnt(const uint8_t *data_in, uint32_t len_in, const uint
                 goto fail;
             case 0xc0:
                 len_event = 2;
-                if (opt_xmid_banks) {
+#ifdef XMID_USE_BANKS
+                {
                     int ti;
                     uint8_t patch;
                     uint8_t bank = 0;
@@ -226,6 +229,7 @@ static int xmid_convert_evnt(const uint8_t *data_in, uint32_t len_in, const uint
                         LOG_DEBUG((DEBUGLEVEL_FMTMUS, "XMID: TIMB no bank for patch 0x%02x\n", patch));
                     }
                 }
+#endif /*XMID_USE_BANKS*/
                 break;
             case 0xd0:
                 len_event = 2;
@@ -386,13 +390,12 @@ bool fmt_mus_convert_xmid(const uint8_t *data_in, uint32_t len_in, uint8_t **dat
             /*00*/ 'M', 'T', 'h', 'd',
             /*04*/ 0, 0, 0, 6,
             /*08*/ 0, 0, 0, 1,
-            /*0c*/ 0, 0, /* ticks per quarter note, big endian */
+            /*0c*/ (XMID_TICKSPERQ >> 8) & 0xff, XMID_TICKSPERQ & 0xff,
             /*0e*/ 'M', 'T', 'r', 'k'
             /*12*/ /* length, big endian */
         };
         memcpy(data, hdr, sizeof(hdr));
     }
-    SET_BE_16(&data[0x0c], opt_xmid_ticksperq);
 
     len = xmid_convert_evnt(data_in, len_evnt, timbre_tbl, timbre_num, &data[HDR_MIDI_LEN], tune_loops);
     LOG_DEBUG((DEBUGLEVEL_FMTMUS, "XMID: lene %i len %i (%f) %s\n", len_evnt, len, (double)len / (double)len_evnt, *tune_loops ? "loop" : "once"));
