@@ -39,9 +39,6 @@ int opt_music_volume = 64;
 int opt_sfx_volume = 100;
 int opt_audiorate = 48000;
 int opt_audioslice_ms = 50;
-int opt_xmid_ticksperq = 55;
-int opt_xmid_tempo = 0;
-bool opt_xmid_banks = false;
 #ifdef HAVE_SAMPLERATE
 bool opt_use_libsamplerate = true;
 int opt_libsamplerate_scale = 65;
@@ -71,9 +68,6 @@ const struct cfg_items_s opt_cfg_items_audio[] = {
     CFG_ITEM_INT("sfx_volume", &opt_sfx_volume, 0),
     CFG_ITEM_INT("audiorate", &opt_audiorate, 0),
     CFG_ITEM_INT("audioslice_ms", &opt_audioslice_ms, 0),
-    CFG_ITEM_INT("xmid_ticksperq", &opt_xmid_ticksperq, 0),
-    CFG_ITEM_INT("xmid_tempo", &opt_xmid_tempo, 0),
-    CFG_ITEM_BOOL("xmid_banks", &opt_xmid_banks),
 #ifdef HAVE_SAMPLERATE
     CFG_ITEM_BOOL("use_libsamplerate", &opt_use_libsamplerate),
     CFG_ITEM_INT("libsamplerate_scale", &opt_libsamplerate_scale, 0),
@@ -254,18 +248,6 @@ static const struct cmdline_options_s cmdline_options_audio[] = {
     { "-audioms", 1,
       options_set_int_var, (void *)&opt_audioslice_ms,
       "MS", "Set max audio slice size (ms)" },
-    { "-xmidtpq", 1,
-      options_set_int_var, (void *)&opt_xmid_ticksperq,
-      "TICKS", "Set XMID conversion ticks/quarter note" },
-    { "-xmidtempo", 1,
-      options_set_int_var, (void *)&opt_xmid_tempo,
-      "TEMPO", "Set XMID conversion tempo (0 = drop, 1 = keep)" },
-    { "-xmidbanks", 0,
-      options_enable_bool_var, (void *)&opt_xmid_banks,
-      NULL, "Enable XMID bank changes" },
-    { "-noxmidbanks", 0,
-      options_disable_bool_var, (void *)&opt_xmid_banks,
-      NULL, "Disable XMID bank changes" },
 #ifdef HAVE_SAMPLERATE
     { "-libsr", 0,
       options_enable_bool_var, (void *)&opt_use_libsamplerate,
