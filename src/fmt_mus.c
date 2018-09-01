@@ -18,8 +18,8 @@
 #define HDR_MIDI_LEN    0x16
 
 typedef struct noteoff_s {
-    int16_t next;   /* next event, sorted by time */
     uint32_t t;     /* time of event */
+    int16_t next;   /* next event, sorted by time */
     uint8_t ch;     /* 0 if unused, otherwise 0x8Z whe Z is channel */
     uint8_t note;
 } noteoff_t;
@@ -28,11 +28,11 @@ typedef struct noteoff_s {
 #define NOTEOFFBUFSIZE  32
 
 struct noteoffs_s {
-    int pos;        /* position of (likely) free tbl entry */
-    int num;        /* number of pending events */
-    int max;        /* max. number of pending events */
     noteoff_t tbl[NOTEOFFBUFSIZE];  /* noteoff events */
     int16_t top;    /* noteoff with nearest time */
+    int16_t pos;    /* position of (likely) free tbl entry */
+    int8_t num;     /* number of pending events */
+    int8_t max;     /* max. number of pending events */
 };
 
 #define XMID_TICKSPERQ  55
