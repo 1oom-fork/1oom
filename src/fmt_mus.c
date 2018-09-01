@@ -34,6 +34,8 @@ struct noteoffs_s {
     noteoff_t tbl[NOTEOFFBUFSIZE];  /* noteoff events */
 };
 
+#define XMID_TICKSPERQ  55
+
 /* -------------------------------------------------------------------------- */
 
 static noteoff_t *xmid_find_free_noteoff(struct noteoffs_s *s)
@@ -393,7 +395,7 @@ bool fmt_mus_convert_xmid(const uint8_t *data_in, uint32_t len_in, uint8_t **dat
         };
         memcpy(data, hdr, sizeof(hdr));
     }
-    SET_BE_16(&data[0x0c], opt_xmid_ticksperq);
+    SET_BE_16(&data[0x0c], XMID_TICKSPERQ);
 
     len = xmid_convert_evnt(data_in, len_evnt, timbre_tbl, timbre_num, &data[HDR_MIDI_LEN], tune_loops);
     LOG_DEBUG((DEBUGLEVEL_FMTMUS, "XMID: lene %i len %i (%f) %s\n", len_evnt, len, (double)len / (double)len_evnt, *tune_loops ? "loop" : "once"));
