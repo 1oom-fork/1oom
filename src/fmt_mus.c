@@ -122,9 +122,11 @@ static int xmid_convert_evnt(const uint8_t *data_in, uint32_t len_in, const uint
     while ((len_in > 0) && (!end_found)) {
         uint32_t len_event, len_delta_time, delta_time, add_extra_bytes, skip_extra_bytes;
         uint8_t buf_delta_time[4];
-        uint8_t buf_extra[4];
+        uint8_t buf_extra[6];
+        bool extra_allow_delay;
 
         is_delta_time = false;
+        extra_allow_delay = false;
         add_extra_bytes = 0;
         skip_extra_bytes = 0;
         len_delta_time = 0;
@@ -243,6 +245,34 @@ static int xmid_convert_evnt(const uint8_t *data_in, uint32_t len_in, const uint
                         len_event = 3 + data_in[2];
                         if (data_in[1] == 0x2f) {
                             end_found = true;
+                        } else if (data_in[1] == 0x51) {
+                            uint32_t tempo;
+                            tempo = GET_BE_24(&data_in[3]);
+                            LOG_DEBUG((DEBUGLEVEL_FMTMUS, "XMID: tempo %u event after %i notes\n", tempo, noteons));
+                            if (opt_xmid_tempo == 0) {
+                                LOG_DEBUG((DEBUGLEVEL_FMTMUS, "XMID: replacing tempo %u event with a dummy event\n", tempo));
+                                /* FIXME HACK replace with dummy event as dropping may end up with two delays in row */
+                                buf_extra[0] = 0xff;
+                                buf_extra[1] = 0x06;
+                                buf_extra[2] = 0x01;
+                                buf_extra[3] = '!';
+                                add_extra_bytes = 4;
+                                skip_extra_bytes = len_event;
+                                len_event = 0;
+                                extra_allow_delay = true;
+                            } else if (opt_xmid_tempo == 1) {
+                                LOG_DEBUG((DEBUGLEVEL_FMTMUS, "XMID: keeping tempo %u event\n", tempo));
+                            } else if (opt_xmid_tempo != tempo) {
+                                LOG_DEBUG((DEBUGLEVEL_FMTMUS, "XMID: changing tempo %u to %i\n", tempo, opt_xmid_tempo));
+                                buf_extra[0] = data_in[0];
+                                buf_extra[1] = data_in[1];
+                                buf_extra[2] = data_in[2];
+                                SET_BE_24(&buf_extra[3], opt_xmid_tempo);
+                                add_extra_bytes = 6;
+                                skip_extra_bytes = len_event;
+                                len_event = 0;
+                                extra_allow_delay = true;
+                            }
                         }
                         break;
                     default:
@@ -280,7 +310,7 @@ static int xmid_convert_evnt(const uint8_t *data_in, uint32_t len_in, const uint
                 break;
         }
 
-        if (!is_delta_time && !last_was_delta_time && (len_event > 0)) {
+        if (!is_delta_time && !last_was_delta_time && ((len_event > 0) || extra_allow_delay)) {
             *p++ = 0;
             ++len_out;
         }
