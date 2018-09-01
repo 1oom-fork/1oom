@@ -207,7 +207,8 @@ static int xmid_convert_evnt(const uint8_t *data_in, uint32_t len_in, const uint
                 goto fail;
             case 0xc0:
                 len_event = 2;
-                if (opt_xmid_banks) {
+#ifdef XMID_USE_BANKS
+                {
                     int ti;
                     uint8_t patch;
                     uint8_t bank = 0;
@@ -229,6 +230,7 @@ static int xmid_convert_evnt(const uint8_t *data_in, uint32_t len_in, const uint
                         LOG_DEBUG((DEBUGLEVEL_FMTMUS, "XMID: TIMB no bank for patch 0x%02x\n", patch));
                     }
                 }
+#endif /*XMID_USE_BANKS*/
                 break;
             case 0xd0:
                 len_event = 2;
