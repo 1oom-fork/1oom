@@ -323,9 +323,9 @@ static int xmid_convert_evnt(const uint8_t *data_in, uint32_t len_in, const uint
             *p++ = c;
         }
 
-        while (skip_extra_bytes--) {
-            ++data_in;
-            --len_in;
+        if (skip_extra_bytes) {
+            data_in += skip_extra_bytes;
+            len_in -= skip_extra_bytes;
         }
 
         len_out += len_event + len_delta_time + add_extra_bytes;
