@@ -18,7 +18,7 @@
 #define HDR_MIDI_LEN    0x16
 
 typedef struct noteoff_s {
-    struct noteoff_s *next; /* next event, sorted by time */
+    int16_t next;   /* next event, sorted by time */
     uint32_t t;     /* time of event */
     uint8_t ch;     /* 0 if unused, otherwise 0x8Z whe Z is channel */
     uint8_t note;
@@ -28,11 +28,11 @@ typedef struct noteoff_s {
 #define NOTEOFFBUFSIZE  32
 
 struct noteoffs_s {
-    noteoff_t *top; /* noteoff with nearest time */
     int pos;        /* position of (likely) free tbl entry */
     int num;        /* number of pending events */
     int max;        /* max. number of pending events */
     noteoff_t tbl[NOTEOFFBUFSIZE];  /* noteoff events */
+    int16_t top;    /* noteoff with nearest time */
 };
 
 #define XMID_TICKSPERQ  55
@@ -66,27 +66,27 @@ static bool xmid_add_pending_noteoff(struct noteoffs_s *s, const uint8_t *data, 
         return false;
     }
     n = &(s->tbl[i]);
-    n->next = NULL;
+    n->next = -1;
     n->t = t;
     n->ch = data[0] & 0x8f; /* 9x -> 8x */
     n->note = data[1];
 
-    if (!s->top) {
-        s->top = n;
+    if (s->top < 0) {
+        s->top = i;
     } else {
-        noteoff_t *p, *q;
-        p = s->top;
-        q = NULL;
-        while (p && (t >= p->t)) {
-            q = p;
-            p = p->next;
+        int j, k;
+        j = s->top;
+        k = -1;
+        while ((j >= 0) && (t >= s->tbl[j].t)) {
+            k = j;
+            j = s->tbl[j].next;
         }
-        if (!q) {
+        if (k < 0) {
             n->next = s->top;
-            s->top = n;
+            s->top = i;
         } else {
-            q->next = n;
-            n->next = p;
+            s->tbl[k].next = i;
+            s->tbl[i].next = j;
         }
     }
     if (++s->num > s->max) {
@@ -120,6 +120,7 @@ static int xmid_convert_evnt(const uint8_t *data_in, uint32_t len_in, const uint
     uint32_t len_out = 0, t_now = 0;
     bool is_delta_time, last_was_delta_time = false, end_found = false;
     *tune_loops = false;
+    s->top = -1;
 
     while ((len_in > 0) && (!end_found)) {
         uint32_t len_event, len_delta_time, delta_time, add_extra_bytes, skip_extra_bytes;
@@ -260,21 +261,22 @@ static int xmid_convert_evnt(const uint8_t *data_in, uint32_t len_in, const uint
                     delta_time += *data_in++;
                     --len_in;
                 }
-                while (s->top && ((t_now + delta_time) >= s->top->t)) {
-                    uint32_t delay_noff = s->top->t - t_now;
+                while ((s->top >= 0) && ((t_now + delta_time) >= s->tbl[s->top].t)) {
+                    noteoff_t *n = &(s->tbl[s->top]);
+                    uint32_t delay_noff = n->t - t_now;
                     len_delta_time = xmid_encode_delta_time(buf_delta_time, delay_noff);
                     for (int i = 0; i < len_delta_time; ++i) {
                         *p++ = buf_delta_time[i];
                     }
                     len_out += len_delta_time;
-                    *p++ = s->top->ch;
-                    *p++ = s->top->note;
+                    *p++ = n->ch;
+                    *p++ = n->note;
                     *p++ = 0x00;
                     len_out += 3;
                     delta_time -= delay_noff;
                     t_now += delay_noff;
-                    s->top->ch = 0;
-                    s->top = s->top->next;
+                    n->ch = 0;
+                    s->top = n->next;
                     --s->num;
                 }
                 t_now += delta_time;
@@ -291,14 +293,15 @@ static int xmid_convert_evnt(const uint8_t *data_in, uint32_t len_in, const uint
         if (end_found) {
             /* last event, add remaining noteoffs */
             LOG_DEBUG((DEBUGLEVEL_FMTMUS, "XMID: %i noteoffs at end, max %i noteoffs, total %i noteons\n", s->num, s->max, noteons));
-            while (s->top) {
-                *p++ = s->top->ch;
-                *p++ = s->top->note;
+            while (s->top >= 0) {
+                noteoff_t *n = &(s->tbl[s->top]);
+                *p++ = n->ch;
+                *p++ = n->note;
                 *p++ = 0x00;
                 *p++ = 0;
                 len_out += 4;
-                s->top->ch = 0;
-                s->top = s->top->next;
+                n->ch = 0;
+                s->top = n->next;
             }
             s->num = 0;
         }
