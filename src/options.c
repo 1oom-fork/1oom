@@ -25,8 +25,6 @@ int opt_music_volume = 64;
 int opt_sfx_volume = 100;
 int opt_audiorate = 48000;
 int opt_audioslice_ms = 50;
-int opt_xmid_ticksperq = 55;
-int opt_xmid_banks = 0;
 #ifdef HAVE_SAMPLERATE
 bool opt_use_libsamplerate = true;
 int opt_libsamplerate_scale = 65;
