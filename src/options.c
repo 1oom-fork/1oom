@@ -26,7 +26,6 @@ int opt_music_volume = 64;
 int opt_sfx_volume = 100;
 int opt_audiorate = 48000;
 int opt_audioslice_ms = 50;
-int opt_xmid_banks = 0;
 #ifdef HAVE_SAMPLERATE
 int opt_use_libsamplerate = 1;
 int opt_libsamplerate_scale = 65;
@@ -155,12 +154,6 @@ static const struct cmdline_options_s cmdline_options_audio[] = {
     { "-audioms", 1,
       options_set_int_var, (void *)&opt_audioslice_ms,
       "MS", "Set max audio slice size (ms)" },
-    { "-xmidbanks", 0,
-      options_enable_var, (void *)&opt_xmid_banks,
-      NULL, "Enable XMID bank changes" },
-    { "-noxmidbanks", 0,
-      options_disable_var, (void *)&opt_xmid_banks,
-      NULL, "Disable XMID bank changes" },
 #ifdef HAVE_SAMPLERATE
     { "-libsr", 0,
       options_enable_var, (void *)&opt_use_libsamplerate,
