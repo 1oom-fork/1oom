@@ -136,15 +136,16 @@ static int xmid_convert_evnt(const uint8_t *data_in, uint32_t len_in, const uint
         switch (*data_in & 0xf0) {
             case 0x90: {
                 uint32_t dt_off;
+                uint8_t b;
                 dt_off = 0;
                 skip_extra_bytes = 1;
 
-                while ((data_in[2 + skip_extra_bytes] & 0x80)) {
-                    dt_off += data_in[2 + skip_extra_bytes] & 0x7f;
+                while (((b = data_in[2 + skip_extra_bytes]) & 0x80) != 0) {
+                    dt_off |= b & 0x7f;
                     dt_off <<= 7;
                     ++skip_extra_bytes;
                 }
-                dt_off += data_in[2 + skip_extra_bytes];
+                dt_off |= b;
 
                 if (!xmid_add_pending_noteoff(&s, data_in, t_now, dt_off)) {
                     goto fail;
@@ -323,9 +324,9 @@ static int xmid_convert_evnt(const uint8_t *data_in, uint32_t len_in, const uint
             *p++ = c;
         }
 
-        while (skip_extra_bytes--) {
-            ++data_in;
-            --len_in;
+        if (skip_extra_bytes) {
+            data_in += skip_extra_bytes;
+            len_in -= skip_extra_bytes;
         }
 
         len_out += len_event + len_delta_time + add_extra_bytes;
