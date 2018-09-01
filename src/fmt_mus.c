@@ -18,8 +18,8 @@
 #define HDR_MIDI_LEN    0x16
 
 typedef struct noteoff_s {
-    int16_t next;   /* next event, sorted by time */
     uint32_t t;     /* time of event */
+    int16_t next;    /* next event, sorted by time */
     uint8_t ch;     /* 0 if unused, otherwise 0x8Z whe Z is channel */
     uint8_t note;
 } noteoff_t;
@@ -28,14 +28,14 @@ typedef struct noteoff_s {
 #define NOTEOFFBUFSIZE  32
 
 struct noteoffs_s {
-    int pos;        /* position of (likely) free tbl entry */
-    int num;        /* number of pending events */
-    int max;        /* max. number of pending events */
     noteoff_t tbl[NOTEOFFBUFSIZE];  /* noteoff events */
     int16_t top;    /* noteoff with nearest time */
+    int16_t pos;    /* position of (likely) free tbl entry */
+    int8_t num; /* number of pending events */
+    int8_t max; /* max. number of pending events */
 };
 
-#define XMID_TICKSPERQ  55
+#define XMID_TICKSPERQ  60
 
 /* -------------------------------------------------------------------------- */
 
@@ -117,41 +117,40 @@ static int xmid_convert_evnt(const uint8_t *data_in, uint32_t len_in, const uint
 {
     struct noteoffs_s s;
     int rc = -1, noteons = 0, looppoint = -1;
-    uint32_t len_out = 0, t_now = 0;
-    bool is_delta_time, last_was_delta_time = false, end_found = false;
+    uint32_t len_out = 0, t_now = 0, delta_time = 0;
+    bool end_found = false;
     *tune_loops = false;
     memset(&s, 0, sizeof(s));
     s.top = -1;
 
     while ((len_in > 0) && (!end_found)) {
-        uint32_t len_event, len_delta_time, delta_time, add_extra_bytes, skip_extra_bytes;
-        uint8_t buf_delta_time[4];
+        uint32_t len_event, add_extra_bytes, skip_extra_bytes;
         uint8_t buf_extra[4];
+        bool add_event;
 
-        is_delta_time = false;
+        add_event = true;
         add_extra_bytes = 0;
         skip_extra_bytes = 0;
-        len_delta_time = 0;
 
         switch (*data_in & 0xf0) {
-            case 0x90:
-                delta_time = 0;
+            case 0x90: {
+                uint32_t dt_off;
+                uint8_t b;
+                dt_off = 0;
                 skip_extra_bytes = 1;
-
-                while ((data_in[2 + skip_extra_bytes] & 0x80)) {
-                    delta_time += data_in[2 + skip_extra_bytes] & 0x7f;
-                    delta_time <<= 7;
+                while (((b = data_in[2 + skip_extra_bytes]) & 0x80) != 0) {
+                    dt_off |= b & 0x7f;
+                    dt_off <<= 7;
                     ++skip_extra_bytes;
                 }
-                delta_time += data_in[2 + skip_extra_bytes];
-
-                if (!xmid_add_pending_noteoff(&s, data_in, t_now, delta_time)) {
+                dt_off |= b;
+                if (!xmid_add_pending_noteoff(&s, data_in, t_now + delta_time, dt_off)) {
                     goto fail;
                 }
                 ++noteons;
                 len_event = 3;
                 break;
-
+            }
             case 0xb0:
                 len_event = 3;
                 {
@@ -163,7 +162,7 @@ static int xmid_convert_evnt(const uint8_t *data_in, uint32_t len_in, const uint
                       || ((c >= 0x6e) && (c <= 0x78))
                     ) {
                         LOG_DEBUG((DEBUGLEVEL_FMTMUS, "XMID: dropping unhandled AIL CC event %02x %02x %02x, notes %i\n", *data_in, c, data_in[2], noteons));
-                        is_delta_time = last_was_delta_time;
+                        add_event = false;
                         len_event = 0;
                         skip_extra_bytes = 3;
                     }
@@ -187,6 +186,7 @@ static int xmid_convert_evnt(const uint8_t *data_in, uint32_t len_in, const uint
                             }
                             len_event = 0;
                             end_found = true;
+                            add_event = true;
                             buf_extra[0] = 0xff;
                             buf_extra[1] = 0x2f;
                             buf_extra[2] = 0x00;
@@ -247,6 +247,10 @@ static int xmid_convert_evnt(const uint8_t *data_in, uint32_t len_in, const uint
                         len_event = 3 + data_in[2];
                         if (data_in[1] == 0x2f) {
                             end_found = true;
+                        } else if (data_in[1] == 0x51) {
+                            /* MOO1 seems to ignore the set tempo events as not dropping them results in wrong tempo in f.ex tune 0xA */
+                            add_event = false;
+                            skip_extra_bytes = len_event;
                         }
                         break;
                     default:
@@ -255,79 +259,78 @@ static int xmid_convert_evnt(const uint8_t *data_in, uint32_t len_in, const uint
                 }
                 break;
             default:    /* 0x00..0x7f */
-                is_delta_time = true;
-                delta_time = 0;
+                add_event = false;
                 while (!(*data_in & 0x80)) {
                     delta_time += *data_in++;
                     --len_in;
                 }
-                while ((s.top >= 0) && ((t_now + delta_time) >= s.tbl[s.top].t)) {
-                    noteoff_t *n = &(s.tbl[s.top]);
-                    uint32_t delay_noff = n->t - t_now;
-                    len_delta_time = xmid_encode_delta_time(buf_delta_time, delay_noff);
-                    for (int i = 0; i < len_delta_time; ++i) {
-                        *p++ = buf_delta_time[i];
-                    }
-                    len_out += len_delta_time;
-                    *p++ = n->ch;
-                    *p++ = n->note;
-                    *p++ = 0x00;
-                    len_out += 3;
-                    delta_time -= delay_noff;
-                    t_now += delay_noff;
-                    n->ch = 0;
-                    s.top = n->next;
-                    --s.num;
-                }
-                t_now += delta_time;
-                len_delta_time = xmid_encode_delta_time(buf_delta_time, delta_time);
-                len_event = 0;
                 break;
         }
 
-        if (!is_delta_time && !last_was_delta_time && (len_event > 0)) {
-            *p++ = 0;
-            ++len_out;
-        }
+        if (add_event) {
+            uint32_t len_delta_time;
+            uint8_t buf_delta_time[4];
 
-        if (end_found) {
-            /* last event, add remaining noteoffs */
-            LOG_DEBUG((DEBUGLEVEL_FMTMUS, "XMID: %i noteoffs at end, max %i noteoffs, total %i noteons\n", s->num, s->max, noteons));
-            while (s.top >= 0) {
+            while ((s.top >= 0) && ((t_now + delta_time) >= s.tbl[s.top].t)) {
                 noteoff_t *n = &(s.tbl[s.top]);
+                uint32_t delay_noff = n->t - t_now;
+                len_delta_time = xmid_encode_delta_time(buf_delta_time, delay_noff);
+                for (int i = 0; i < len_delta_time; ++i) {
+                    *p++ = buf_delta_time[i];
+                }
+                len_out += len_delta_time;
                 *p++ = n->ch;
                 *p++ = n->note;
                 *p++ = 0x00;
-                *p++ = 0;
-                len_out += 4;
+                len_out += 3;
+                delta_time -= delay_noff;
+                t_now += delay_noff;
                 n->ch = 0;
                 s.top = n->next;
+                --s.num;
             }
-            s.num = 0;
+            t_now += delta_time;
+            len_delta_time = xmid_encode_delta_time(buf_delta_time, delta_time);
+            delta_time = 0;
+
+            for (int i = 0; i < len_delta_time; ++i) {
+                *p++ = buf_delta_time[i];
+            }
+
+            if (end_found) {
+                /* last event, add remaining noteoffs */
+                LOG_DEBUG((DEBUGLEVEL_FMTMUS, "XMID: %i noteoffs at end, max %i noteoffs, total %i noteons\n", s->num, s->max, noteons));
+                while (s.top >= 0) {
+                    noteoff_t *n = &(s.tbl[s.top]);
+                    *p++ = n->ch;
+                    *p++ = n->note;
+                    *p++ = 0x00;
+                    *p++ = 0;
+                    len_out += 4;
+                    n->ch = 0;
+                    s.top = n->next;
+                }
+                s.num = 0;
+            }
+
+            for (int i = 0; i < add_extra_bytes; ++i) {
+                *p++ = buf_extra[i];
+            }
+
+            for (int i = 0; i < len_event; ++i) {
+                uint8_t c;
+                c = *data_in++;
+                --len_in;
+                *p++ = c;
+            }
+
+            len_out += len_event + len_delta_time + add_extra_bytes;
         }
 
-        for (int i = 0; i < len_delta_time; ++i) {
-            *p++ = buf_delta_time[i];
+        if (skip_extra_bytes) {
+            data_in += skip_extra_bytes;
+            len_in -= skip_extra_bytes;
         }
-
-        for (int i = 0; i < add_extra_bytes; ++i) {
-            *p++ = buf_extra[i];
-        }
-
-        for (int i = 0; i < len_event; ++i) {
-            uint8_t c;
-            c = *data_in++;
-            --len_in;
-            *p++ = c;
-        }
-
-        while (skip_extra_bytes--) {
-            ++data_in;
-            --len_in;
-        }
-
-        len_out += len_event + len_delta_time + add_extra_bytes;
-        last_was_delta_time = is_delta_time;
     }
 
     rc = len_out;
