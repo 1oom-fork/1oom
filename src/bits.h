@@ -41,5 +41,7 @@
 #define SET_BE_32(_p_,_v_) (((uint8_t *)(_p_))[3] = ((_v_) & 0xffu), ((uint8_t *)(_p_))[2] = (((_v_) >> 8) & 0xffu), ((uint8_t *)(_p_))[1] = (((_v_) >> 16) & 0xffu), ((uint8_t *)(_p_))[0] = (((_v_) >> 24) & 0xffu))
 #define GET_BE_32(_p_) (((uint32_t)GET_BE_16((_p_) + 2)) | (((uint32_t)GET_BE_16((_p_))) << 16))
 #endif
+#define SET_BE_24(_p_, _v_) (((uint8_t *)(_p_))[2] = ((_v_) & 0xffu), ((uint8_t *)(_p_))[1] = (((_v_) >> 8) & 0xffu), ((uint8_t *)(_p_))[0] = (((_v_) >> 16) & 0xffu))
+#define GET_BE_24(_p_) ((((uint32_t)GET_BE_16((_p_))) << 8) | ((uint32_t)*(((uint8_t const *)(_p_)) + 2)))
 
 #endif
