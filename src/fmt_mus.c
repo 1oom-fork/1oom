@@ -293,35 +293,37 @@ static int xmid_convert_evnt(const uint8_t *data_in, uint32_t len_in, const uint
             ++len_out;
         }
 
-        if (end_found) {
-            /* last event, add remaining noteoffs */
-            LOG_DEBUG((DEBUGLEVEL_FMTMUS, "XMID: %i noteoffs at end, max %i noteoffs, total %i noteons\n", s->num, s->max, noteons));
-            while (s.top >= 0) {
-                noteoff_t *n = &(s.tbl[s.top]);
-                *p++ = n->ch;
-                *p++ = n->note;
-                *p++ = 0x00;
-                *p++ = 0;
-                len_out += 4;
-                n->ch = 0;
-                s.top = n->next;
+        {
+            if (end_found) {
+                /* last event, add remaining noteoffs */
+                LOG_DEBUG((DEBUGLEVEL_FMTMUS, "XMID: %i noteoffs at end, max %i noteoffs, total %i noteons\n", s->num, s->max, noteons));
+                while (s.top >= 0) {
+                    noteoff_t *n = &(s.tbl[s.top]);
+                    *p++ = n->ch;
+                    *p++ = n->note;
+                    *p++ = 0x00;
+                    *p++ = 0;
+                    len_out += 4;
+                    n->ch = 0;
+                    s.top = n->next;
+                }
+                s.num = 0;
             }
-            s.num = 0;
-        }
 
-        for (int i = 0; i < len_delta_time; ++i) {
-            *p++ = buf_delta_time[i];
-        }
+            for (int i = 0; i < len_delta_time; ++i) {
+                *p++ = buf_delta_time[i];
+            }
 
-        for (int i = 0; i < add_extra_bytes; ++i) {
-            *p++ = buf_extra[i];
-        }
+            for (int i = 0; i < add_extra_bytes; ++i) {
+                *p++ = buf_extra[i];
+            }
 
-        for (int i = 0; i < len_event; ++i) {
-            uint8_t c;
-            c = *data_in++;
-            --len_in;
-            *p++ = c;
+            for (int i = 0; i < len_event; ++i) {
+                uint8_t c;
+                c = *data_in++;
+                --len_in;
+                *p++ = c;
+            }
         }
 
         if (skip_extra_bytes) {
