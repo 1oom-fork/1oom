@@ -38,33 +38,33 @@ struct noteoffs_s {
 
 /* -------------------------------------------------------------------------- */
 
-static noteoff_t *xmid_find_free_noteoff(struct noteoffs_s *s)
+static int xmid_find_free_noteoff(struct noteoffs_s *s)
 {
     int i = s->pos;
     int num = NOTEOFFBUFSIZE;
-    noteoff_t *n;
     while (num) {
-        n = &s->tbl[i];
         if (++i == NOTEOFFBUFSIZE) {
             i = 0;
         }
-        if (n->buf[0] == 0) {
+        if (s->tbl[i].buf[0] == 0) {
             s->pos = i;
-            return n;
+            return i;
         }
         --num;
     }
-    return NULL;
+    return -1;
 }
 
 static bool xmid_add_pending_noteoff(struct noteoffs_s *s, const uint8_t *data, uint32_t t_now, uint32_t duration)
 {
     uint32_t t = t_now + duration;
-    noteoff_t *n = xmid_find_free_noteoff(s);
-    if (!n) {
+    int i = xmid_find_free_noteoff(s);
+    noteoff_t *n;
+    if (i < 0) {
         log_error("XMID: BUG noteoff tbl full!\n");
         return false;
     }
+    n = &(s->tbl[i]);
     n->next = NULL;
     n->t = t;
     n->buf[0] = data[0] & 0x8f; /* 9x -> 8x */
