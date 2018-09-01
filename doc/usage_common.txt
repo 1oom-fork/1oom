@@ -103,10 +103,6 @@ For UIs with audio support:
     -sfxvol VOLUME       Set SFX volume (0..128)
     -audiohz HZ          Set audio sample rate (Hz)
     -audioms MS          Set max audio slice size (ms)
-    -xmidtpq TICKS       Set XMID conversion ticks/quarter note
-    -xmidtempo TEMPO     Set XMID conversion tempo (0 = drop, 1 = keep)
-    -xmidbanks           Enable XMID bank changes
-    -noxmidbanks         Disable XMID bank changes
 
 For UIs with audio support if libsamplerate is available:
     -libsr               Use libsamplerate
