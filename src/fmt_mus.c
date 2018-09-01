@@ -20,7 +20,8 @@
 typedef struct noteoff_s {
     struct noteoff_s *next; /* next event, sorted by time */
     uint32_t t;     /* time of event */
-    uint8_t buf[3]; /* first byte is 0 if unused, otherwise 0x8Z 0xNN 0x00 */
+    uint8_t ch;     /* 0 if unused, otherwise 0x8Z whe Z is channel */
+    uint8_t note;
 } noteoff_t;
 
 /* MOO1 has max. 15 pending noteoffs */
@@ -46,7 +47,7 @@ static int xmid_find_free_noteoff(struct noteoffs_s *s)
         if (++i == NOTEOFFBUFSIZE) {
             i = 0;
         }
-        if (s->tbl[i].buf[0] == 0) {
+        if (s->tbl[i].ch == 0) {
             s->pos = i;
             return i;
         }
@@ -67,9 +68,8 @@ static bool xmid_add_pending_noteoff(struct noteoffs_s *s, const uint8_t *data, 
     n = &(s->tbl[i]);
     n->next = NULL;
     n->t = t;
-    n->buf[0] = data[0] & 0x8f; /* 9x -> 8x */
-    n->buf[1] = data[1];
-    n->buf[2] = 0;
+    n->ch = data[0] & 0x8f; /* 9x -> 8x */
+    n->note = data[1];
 
     if (!s->top) {
         s->top = n;
@@ -267,13 +267,13 @@ static int xmid_convert_evnt(const uint8_t *data_in, uint32_t len_in, const uint
                         *p++ = buf_delta_time[i];
                     }
                     len_out += len_delta_time;
-                    for (int i = 0; i < 3; ++i) {
-                        *p++ = s->top->buf[i];
-                    }
+                    *p++ = s->top->ch;
+                    *p++ = s->top->note;
+                    *p++ = 0x00;
                     len_out += 3;
                     delta_time -= delay_noff;
                     t_now += delay_noff;
-                    s->top->buf[0] = 0;
+                    s->top->ch = 0;
                     s->top = s->top->next;
                     --s->num;
                 }
@@ -292,12 +292,12 @@ static int xmid_convert_evnt(const uint8_t *data_in, uint32_t len_in, const uint
             /* last event, add remaining noteoffs */
             LOG_DEBUG((DEBUGLEVEL_FMTMUS, "XMID: %i noteoffs at end, max %i noteoffs, total %i noteons\n", s->num, s->max, noteons));
             while (s->top) {
-                for (int i = 0; i < 3; ++i) {
-                    *p++ = s->top->buf[i];
-                }
+                *p++ = s->top->ch;
+                *p++ = s->top->note;
+                *p++ = 0x00;
                 *p++ = 0;
                 len_out += 4;
-                s->top->buf[0] = 0;
+                s->top->ch = 0;
                 s->top = s->top->next;
             }
             s->num = 0;
