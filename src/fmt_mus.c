@@ -115,12 +115,13 @@ static uint32_t xmid_encode_delta_time(uint8_t *buf, uint32_t delta_time)
 
 static int xmid_convert_evnt(const uint8_t *data_in, uint32_t len_in, const uint8_t *timbre_tbl, uint16_t timbre_num, uint8_t *p, bool *tune_loops)
 {
-    struct noteoffs_s *s = lib_malloc(sizeof(struct noteoffs_s));
+    struct noteoffs_s s;
     int rc = -1, noteons = 0, looppoint = -1;
     uint32_t len_out = 0, t_now = 0;
     bool is_delta_time, last_was_delta_time = false, end_found = false;
     *tune_loops = false;
-    s->top = -1;
+    memset(&s, 0, sizeof(s));
+    s.top = -1;
 
     while ((len_in > 0) && (!end_found)) {
         uint32_t len_event, len_delta_time, delta_time, add_extra_bytes, skip_extra_bytes;
@@ -144,7 +145,7 @@ static int xmid_convert_evnt(const uint8_t *data_in, uint32_t len_in, const uint
                 }
                 delta_time += data_in[2 + skip_extra_bytes];
 
-                if (!xmid_add_pending_noteoff(s, data_in, t_now, delta_time)) {
+                if (!xmid_add_pending_noteoff(&s, data_in, t_now, delta_time)) {
                     goto fail;
                 }
                 ++noteons;
@@ -261,8 +262,8 @@ static int xmid_convert_evnt(const uint8_t *data_in, uint32_t len_in, const uint
                     delta_time += *data_in++;
                     --len_in;
                 }
-                while ((s->top >= 0) && ((t_now + delta_time) >= s->tbl[s->top].t)) {
-                    noteoff_t *n = &(s->tbl[s->top]);
+                while ((s.top >= 0) && ((t_now + delta_time) >= s.tbl[s.top].t)) {
+                    noteoff_t *n = &(s.tbl[s.top]);
                     uint32_t delay_noff = n->t - t_now;
                     len_delta_time = xmid_encode_delta_time(buf_delta_time, delay_noff);
                     for (int i = 0; i < len_delta_time; ++i) {
@@ -276,8 +277,8 @@ static int xmid_convert_evnt(const uint8_t *data_in, uint32_t len_in, const uint
                     delta_time -= delay_noff;
                     t_now += delay_noff;
                     n->ch = 0;
-                    s->top = n->next;
-                    --s->num;
+                    s.top = n->next;
+                    --s.num;
                 }
                 t_now += delta_time;
                 len_delta_time = xmid_encode_delta_time(buf_delta_time, delta_time);
@@ -293,17 +294,17 @@ static int xmid_convert_evnt(const uint8_t *data_in, uint32_t len_in, const uint
         if (end_found) {
             /* last event, add remaining noteoffs */
             LOG_DEBUG((DEBUGLEVEL_FMTMUS, "XMID: %i noteoffs at end, max %i noteoffs, total %i noteons\n", s->num, s->max, noteons));
-            while (s->top >= 0) {
-                noteoff_t *n = &(s->tbl[s->top]);
+            while (s.top >= 0) {
+                noteoff_t *n = &(s.tbl[s.top]);
                 *p++ = n->ch;
                 *p++ = n->note;
                 *p++ = 0x00;
                 *p++ = 0;
                 len_out += 4;
                 n->ch = 0;
-                s->top = n->next;
+                s.top = n->next;
             }
-            s->num = 0;
+            s.num = 0;
         }
 
         for (int i = 0; i < len_delta_time; ++i) {
@@ -332,7 +333,6 @@ static int xmid_convert_evnt(const uint8_t *data_in, uint32_t len_in, const uint
 
     rc = len_out;
 fail:
-    lib_free(s);
     return rc;
 }
 
