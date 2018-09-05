@@ -60,7 +60,7 @@ static void empirereport_draw_cb(void *vptr)
     lbxfont_print_str_center(40, 81, game_str_tbl_trait2[e->trait2], UI_SCREEN_W);
     lbxfont_print_str_center(40, 101, game_str_re_reportis, UI_SCREEN_W);
     {
-        int reportage = g->year - e->spyreportyear[d->api];
+        int reportage = g->year - g->eto[d->api].spyreportyear[d->pi] - 1;
         if (reportage < 2) {
             sprintf(buf, "%s", game_str_re_current);
         } else {

@@ -492,7 +492,7 @@ const char *game_tech_get_descr(const struct game_aux_s *gaux, tech_field_t fiel
     if (tech == 0) {
         buf[0] = '\0';
     } else if (tech > 50) {
-        sprintf(buf, "%s %s %s.", game_str_te_genimp, game_str_tbl_te_field[field], game_str_te_techno2);
+        sprintf(buf, "%s%s %s.", game_str_te_genimp, game_str_tbl_te_field[field], game_str_te_techno2);
     } else if (tech == -2) {
         strcpy(buf, game_str_te_nmis);
     } else if (tech == -1) {
