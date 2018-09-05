@@ -1,3 +1,12 @@
+2018-09-06: MOO turns 25, v0.8 released
+    - click again to accept for transport redirection
+    - all Advanced Technology are available for research
+    - multiplayer player switching reduced
+    - fix several music bugs
+    - fix ship visibility during movement
+    - fix ship scanner range
+    - a handful of small fixes
+
 2018-08-17: v0.7 released
     - game is deterministic by default
     - new -yearsave option for yearly saves (1oom_save_YYYY.bin)
