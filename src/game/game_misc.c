@@ -433,7 +433,7 @@ bool game_check_coord_is_visible(const struct game_s *g, player_id_t pi, int ran
             return true;
         }
     }
-    range = (range - 30) / 20;  /* 0..3 */
+    range = (range - 30) / 2;  /* 0, 10, 20, 30 */
     for (int i = 0; i < g->galaxy_stars; ++i) {
         const planet_t *p = &(g->planet[i]);
         uint32_t snum;

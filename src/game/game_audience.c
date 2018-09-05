@@ -971,8 +971,8 @@ static void audience_menu_tech(struct audience_s *au)
                     n = s->tnum;
                     thnum[total_thnum] = n;
                     for (int j = 0; j < n; ++j) {
-                        thf[i][j] = s->tbl_field[j];
-                        tht[i][j] = s->tbl_tech2[j];
+                        thf[total_thnum][j] = s->tbl_field[j];
+                        tht[total_thnum][j] = s->tbl_tech2[j];
                     }
                     thaf[total_thnum] = taf[i];
                     that[total_thnum] = tat[i];
