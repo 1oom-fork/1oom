@@ -3,10 +3,6 @@ This is the "to do" for 1oom.
 1. Roadmap
 ===========
 
-* v0.8:
-  - OS implementations for Unix (Linux) and Windows work.
-  - SDL1 HW implementation works.
-
 * v0.9:
   - The game is tested and debugged to have no glaringly obvious conversion
     bugs such as crashes. Original MOO1 bugs can remain.
