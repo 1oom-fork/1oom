@@ -22,6 +22,7 @@ const struct input_cmd_s ui_cmds_debug[] = {
     { "debug_slider", NULL, "", 0, 0, 0, ui_cmd_debug_cb_g_f, game_debug_dump_sliders },
     { "debug_race_techs", NULL, "", 0, 0, 0, ui_cmd_debug_cb_g_f, game_debug_dump_race_techs },
     { "debug_race_spending", NULL, "", 0, 0, 0, ui_cmd_debug_cb_g_f, game_debug_dump_race_spending },
+    { "debug_race_waste", NULL, "", 0, 0, 0, ui_cmd_debug_cb_g_f, game_debug_dump_race_waste },
     { NULL, NULL, NULL, 0, 0, 0, NULL, 0 }
 };
 
