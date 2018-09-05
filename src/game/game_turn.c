@@ -719,6 +719,7 @@ static void game_turn_move_ships(struct game_s *g)
         ui_gmap_basic_start_player(ctx, g->active_player);
         for (int frame = 0; (frame < 20) && flag_more; ++frame) {
             bool odd_frame;
+            game_update_visibility(g);
             odd_frame = frame & 1;
             ui_gmap_basic_start_frame(ctx, g->active_player);
             flag_more = false;
