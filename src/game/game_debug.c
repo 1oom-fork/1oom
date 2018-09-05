@@ -107,4 +107,43 @@ void game_debug_dump_race_spending(struct game_s *g, bool force)
     }
 }
 
+void game_debug_dump_race_waste(struct game_s *g, bool force)
+{
+    if (!force) {
+        if (opt_modebug < 4) {
+            return;
+        }
+    }
+    for (int pi = 0; pi < g->players; ++pi) {
+        int num_planets, no_waste, no_fact, sum_waste;
+        if (!IS_ALIVE(g, pi)) {
+            continue;
+        }
+        num_planets = 0;
+        no_waste = 0;
+        no_fact = 0;
+        sum_waste = 0;
+        for (int i = 0; i < g->galaxy_stars; ++i) {
+            const planet_t *p = &(g->planet[i]);
+            if (p->owner == pi) {
+                ++num_planets;
+                if (p->waste == 0) {
+                    ++no_waste;
+                    if (p->factories == 0) {
+                        ++no_fact;
+                    }
+                } else {
+                    sum_waste += (((int)p->waste) * 1000) / p->max_pop2;
+                }
+            }
+        }
+        if (num_planets > no_fact) {
+            sum_waste /= num_planets - no_fact;
+        } else {
+            sum_waste /= num_planets;
+        }
+        LOG_DEBUG((0, "%s: p:%i no waste:%i/%i, no fact:%i, avg:%u.%u%%\n", __func__, pi, no_waste, num_planets, no_fact, sum_waste / 10, sum_waste % 10));
+    }
+}
+
 #endif /* FEATURE_MODEBUG */
