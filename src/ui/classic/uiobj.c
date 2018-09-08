@@ -516,7 +516,7 @@ static void uiobj_handle_t4_sub1(uiobj_t *p)
 static void uiobj_handle_t6_slider_input(uiobj_t *p)
 {
     /* p->type == 6 */
-    uint16_t sliderval, slideroff, di;
+    int16_t sliderval, slideroff, di;
     di = moouse_x + uiobj_mouseoff;
     slideroff = ((p->t6.vmax - p->t6.vmin) * (di - p->x0 * p->scale)) / ((p->x1 - p->x0) * p->scale);
     if (p->x1 * p->scale <= di) {
@@ -666,9 +666,8 @@ static void uiobj_handle_click(int i, bool in_focus)
             }
             break;
         case 6:
-            if (in_focus) {
-                uiobj_handle_t6_slider_input(p);
-            }
+            /* MOO1 checks for in_focus here which makes dragging the slider to min/max needlessly hard */
+            uiobj_handle_t6_slider_input(p);
             break;
         case 4:
             uiobj_handle_t4_sub1(p);
