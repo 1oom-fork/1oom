@@ -288,7 +288,8 @@ with -file whenever the PBX files are to be used.
 ================
 
 All the features discussed here need to be enabled in the classic UI with the
-config file item "ui.uiextra" (set via the -uiextra command-line option).
+config file item "ui.uiextra" set via the -uiextra command-line option or
+by pressing Alt-X in the main menu.
 
 4.1. Planetary governor
 ------------------------

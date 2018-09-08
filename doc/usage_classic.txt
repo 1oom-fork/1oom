@@ -48,11 +48,8 @@ The following new UI features are always enabled/available:
 - Bases can be scrapped by clicking on the Bases text
 - Clicking cycles selection of overlapping fleets
 
-The following new UI features are enabled by default:
-- (none at the moment)
-
 The config file item "ui.uiextra" (set via the -uiextra command-line option)
-enables the following extra UI features:
+or pressing Alt-X in the main menu enables the following extra UI features:
 - Continue and Undo saves can be chosen in the Load Game screen
 - New Game screen allows setting opponent race/banner/names and AI/human flag
 - Report screen shows name of AI leaders, Map screen shows current year
