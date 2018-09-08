@@ -31,6 +31,7 @@ struct main_menu_data_s {
     int selected;
     bool have_continue;
     bool have_loadgame;
+    bool fix_version;
     uint8_t *gfx_vortex;
     uint8_t *gfx_title;
 };
@@ -52,6 +53,10 @@ static void main_menu_draw_cb(void *vptr)
     struct main_menu_data_s *d = vptr;
     ui_draw_erase_buf();
     ui_draw_copy_buf();
+    if (d->fix_version) {
+        d->fix_version = false;
+        lbxgfx_set_frame_0(d->gfx_vortex);
+    }
     lbxgfx_draw_frame(0, 0, d->gfx_vortex, UI_SCREEN_W, ui_scale);
     if (!ui_extra_enabled) {
         lbxgfx_draw_frame(0, 0, d->gfx_title, UI_SCREEN_W, ui_scale);
@@ -83,7 +88,7 @@ static main_menu_action_t main_menu_do(struct main_menu_data_s *d)
 {
     int16_t oi_n, oi_l, oi_c, oi_q;
     int16_t oi_newgame, oi_continue, oi_loadgame, oi_quit;
-    int16_t oi_tutor, cursor_at;
+    int16_t oi_tutor, oi_extra, cursor_at;
     bool flag_done = false, flag_fadein = false;
 
     d->frame = 0;
@@ -100,6 +105,7 @@ static main_menu_action_t main_menu_do(struct main_menu_data_s *d)
     uiobj_finish_frame();
 
     oi_tutor = uiobj_add_alt_str("tutor");
+    oi_extra = uiobj_add_alt_str("x");
     d->have_continue = game_save_tbl_have_save[GAME_SAVE_I_CONTINUE];
     if (d->have_continue) {
         oi_continue = uiobj_add_mousearea(0x3c, 0x7f, 0x104, 0x8e, MOO_KEY_UNKNOWN);
@@ -131,6 +137,7 @@ static main_menu_action_t main_menu_do(struct main_menu_data_s *d)
     oi_q = uiobj_add_inputkey(MOO_KEY_q);
     uiobj_set_focus(oi_newgame);
     d->selected = -1;
+    d->fix_version = false;
     cursor_at = abs(uiobj_at_cursor());
     if (cursor_at == oi_continue) {
         d->selected = MAIN_MENU_ACT_CONTINUE_GAME;
@@ -171,6 +178,10 @@ static main_menu_action_t main_menu_do(struct main_menu_data_s *d)
             d->selected = MAIN_MENU_ACT_QUIT_GAME;
         } else if (oi1 == oi_tutor) {
             d->selected = MAIN_MENU_ACT_TUTOR;
+        } else if (oi1 == oi_extra) {
+            ui_extra_enabled = !ui_extra_enabled;
+            d->fix_version = true;
+            flag_done = false;
         }
         if (flag_done) {
             ui_sound_play_sfx_24();
