@@ -389,11 +389,7 @@ static int make_pbx(const char *filename_in, const char *filename_out)
                 fclose(fd);
                 return 3;
             }
-            log_message("%i offs 0x%x: type %i '%s' index %i offset 0x%x %s '%s' len %i+%i+%i+%i\n",
-                         i, p->offs, p->itemtype, p->itemid, p->itemindex, p->itemoffs,
-                         (p->param_type == PARAM_FILENAME) ? "file" : "data",
-                         p->fname, PBX_ITEM_HEADER_LEN, p->add_offset ? 4 : 0, p->len, p->pad
-                       );
+            LOG_DEBUG((0, "%i offs 0x%x: type %i '%s' index %i offset 0x%x %s '%s' len %i+%i+%i+%i\n", i, p->offs, p->itemtype, p->itemid, p->itemindex, p->itemoffs, (p->param_type == PARAM_FILENAME) ? "file" : "data", p->fname, PBX_ITEM_HEADER_LEN, p->add_offset ? 4 : 0, p->len, p->pad));
             p = p->next;
             ++i;
         }
