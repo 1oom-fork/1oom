@@ -274,7 +274,7 @@ int hw_audio_music_init(int mus_index, const uint8_t *data_in, uint32_t len_in)
     }
     lib_free(buf);
     if (!m->music) {
-        log_error("SDLA: Mix_LoadMUSType_RW failed on music %i (type %i)\n", mus_index, m->type);
+        log_error("SDLA: Mix_LoadMUSType_RW failed on music %i (type %i): %s\n", mus_index, m->type, Mix_GetError());
         m->type = MUS_TYPE_UNKNOWN;
         m->sdlmtype = MUS_NONE;
         return -1;
