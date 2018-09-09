@@ -94,6 +94,14 @@ retreat_redir_fix : 0..1, 0
     next turn. This fix disables redirecting back to the planet the fleet just
     retreated from unless Hyperspace Communications is available.
 
+waste_calc_fix : 0..1, 0
+  - Fix waste calculation.
+    MOO1 adds waste twice: first using a perfectly sensible formula and then
+    a baffling one. The waste elimination cost is calculated in between.
+    The second amount added is often negative due to the waste amount not
+    being limited. This is why Silicoid planets end up with 0 waste. Other
+    races only see the effect when setting the Eco slider below Clean.
+
 waste_adjust_fix : 0..1, 0
   - Fix waste elimination slider autoadjustment.
     In MOO1 the sum of sliders can exceed 100 due to weird math in the waste
