@@ -166,15 +166,6 @@ static void game_turn_send_transport(struct game_s *g)
     }
 }
 
-static int game_turn_build_eco_sub1(int fact, int colonist_oper_fact, int pop1, int waste, int max_pop2)
-{
-    int v;
-    v = pop1 * colonist_oper_fact;
-    SETMIN(fact, v);
-    v = (fact * colonist_oper_fact) / 10;
-    return ((100 - ((waste * 100) / max_pop2)) * v) / 100;
-}
-
 static inline void game_add_planet_to_eco_finished(struct game_s *g, uint8_t pli, player_id_t owner)
 {
     BOOLVEC_SET1(g->planet[pli].finished, FINISHED_SOILATMOS);
@@ -194,21 +185,35 @@ static void game_turn_build_eco(struct game_s *g)
         p->pop_prev = (owner != PLAYER_NONE) ? p->pop : 0;
         if ((owner != PLAYER_NONE) && (p->type != PLANET_TYPE_NOT_HABITABLE) && (p->pop != 0)) {
             const empiretechorbit_t *e;
-            int ecorestore, ecoprod;
+            int ecorestore, ecoprod, operating_factories;
             e = &(g->eto[owner]);
+            operating_factories = p->pop * e->colonist_oper_factories;
+            SETMIN(operating_factories, p->factories);
             {
-                int v, fact, waste;
-                fact = p->factories;
-                v = p->pop * e->colonist_oper_factories;
-                SETMIN(fact, v);
-                waste = (fact * e->ind_waste_scale) / 10;
-                p->waste += ((100 - ((p->waste * 100) / p->max_pop2)) * waste) / 100;
+                int v;
+                v = (operating_factories * e->ind_waste_scale) / 10;
+                v = ((100 - ((p->waste * 100) / p->max_pop2)) * v) / 100;
+                p->waste += v;
             }
             if (p->unrest == PLANET_UNREST_REBELLION) {
                 p->waste = 0;
             }
             ecorestore = (e->race != RACE_SILICOID) ? (p->waste / e->have_eco_restoration_n) : 0;
-            p->waste += game_turn_build_eco_sub1(p->factories, e->colonist_oper_factories, p->pop, p->waste, p->max_pop2);
+            if (!game_num_waste_calc_fix) {
+                /* WASBUG
+                   MOO1 adds waste twice using two separate pieces of code.
+                   The first time (see above) is as described in OSG.
+                   The second time (see below, from game_turn_build_eco_sub1) has several issues:
+                   - p->pop * e->colonist_oper_factories * e->colonist_oper_factories / 10 makes no sense
+                   - since p->waste is not limited at this point, the value added can be negative, leading to Silicoid planets with 0 waste
+                   - the cost of eco restoration is already calculated; as the slider is typically set to Clean (ecorestore <= ecoprod) the point is mostly moot
+                   Speculation: Someone added the above working code and forgot to remove this broken code.
+                */
+                int v;
+                v = (operating_factories * e->colonist_oper_factories) / 10; /* WASBUG this makes no sense */
+                v = ((100 - ((p->waste * 100) / p->max_pop2)) * v) / 100; /* WASBUG p->waste can be > p->max_pop2 here */
+                p->waste += v;
+            }
             ecoprod = (p->slider[PLANET_SLIDER_ECO] * p->prod_after_maint) / 100;
             if (e->race != RACE_SILICOID) {
                 if (ecorestore > ecoprod) {
