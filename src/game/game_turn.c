@@ -169,6 +169,18 @@ static void game_turn_send_transport(struct game_s *g)
 
 static int game_turn_build_eco_sub1(int fact, int colonist_oper_fact, int pop1, int waste, int max_pop2)
 {
+    if (game_num_waste_calc_fix) {
+        /* WASBUG
+           MOO1 adds waste twice using two separate pieces of code.
+           The first time (see above) is as described in OSG.
+           The second time (see below, from game_turn_build_eco_sub1) has several issues:
+           - p->pop * e->colonist_oper_factories * e->colonist_oper_factories / 10 makes no sense
+           - since p->waste is not limited at this point, the value added can be negative, leading to Silicoid planets with 0 waste
+           - the cost of eco restoration is already calculated; as the slider is typically set to Clean (ecorestore <= ecoprod) the point is mostly moot
+           Speculation: Someone added the above working code and forgot to remove this broken code.
+        */
+        return 0;
+    }
     int v;
     v = pop1 * colonist_oper_fact;
     SETMIN(fact, v);
