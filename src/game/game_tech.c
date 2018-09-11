@@ -126,7 +126,7 @@ static uint8_t find_best_tech_type(BOOLVEC_PTRPARAMI(tbl), int base, int step, i
     return (uint8_t)best;
 }
 
-static void game_tech_add_newtech(struct game_s *g, player_id_t player, tech_field_t field, uint8_t tech, uint8_t source, int a8, player_id_t stolen_from, bool frame)
+static void game_tech_add_newtech(struct game_s *g, player_id_t player, tech_field_t field, uint8_t tech, techsource_t source, int a8, player_id_t stolen_from, bool frame)
 {
     newtechs_t *nts = &(g->evn.newtech[player]);
     int num = nts->num;
@@ -544,7 +544,7 @@ int game_tech_current_research_percent2(struct empiretechorbit_s *e, tech_field_
     }
 }
 
-void game_tech_get_new(struct game_s *g, player_id_t player, tech_field_t field, uint8_t tech, uint8_t source, int a8, player_id_t stolen_from, bool flag_frame)
+void game_tech_get_new(struct game_s *g, player_id_t player, tech_field_t field, uint8_t tech, techsource_t source, int a8, player_id_t stolen_from, bool flag_frame)
 {
     empiretechorbit_t *e = &(g->eto[player]);
     shipresearch_t *srd = &(g->srd[player]);
@@ -713,7 +713,7 @@ void game_tech_research(struct game_s *g)
                     int v;
                     v = ((invest - cost) * 250) / cost;
                     if (rnd_1_n(500, &g->seed) <= v) {
-                        game_tech_get_new(g, player, field, td->project[field], 0, game_planet_get_random(g, player), 0, false);
+                        game_tech_get_new(g, player, field, td->project[field], TECHSOURCE_RESEARCH, game_planet_get_random(g, player), 0, false);
                     }
                 }
             } else {
@@ -729,7 +729,7 @@ void game_tech_get_orion_loot(struct game_s *g, player_id_t player)
     empiretechorbit_t *e = &(g->eto[player]);
     techdata_t *td = &(e->tech);
     uint8_t percent[TECH_FIELD_NUM];
-    game_tech_get_new(g, player, TECH_FIELD_WEAPON, TECH_WEAP_DEATH_RAY, 2, -PLANETS_MAX, 0, false);    /* HACK */
+    game_tech_get_new(g, player, TECH_FIELD_WEAPON, TECH_WEAP_DEATH_RAY, TECHSOURCE_FOUND, -PLANETS_MAX, 0, false);    /* HACK */
     for (tech_field_t f = 0; f < TECH_FIELD_NUM; ++f) {
         percent[f] = MIN(td->percent[f] + 25, 50);
     }
@@ -753,7 +753,7 @@ void game_tech_get_orion_loot(struct game_s *g, player_id_t player)
                     }
                 }
                 if (!have_tech) {
-                    game_tech_get_new(g, player, field, tech, 2, NEWTECH_V06_ORION, 0, false);
+                    game_tech_get_new(g, player, field, tech, TECHSOURCE_FOUND, NEWTECH_V06_ORION, 0, false);
                     break;
                 }
             }
@@ -792,7 +792,7 @@ void game_tech_get_artifact_loot(struct game_s *g, uint8_t planet, player_id_t p
                     }
                 }
                 if (!have_tech) {
-                    game_tech_get_new(g, player, field, tech, 2, -(planet + 1), 0, false);  /* HACK */
+                    game_tech_get_new(g, player, field, tech, TECHSOURCE_FOUND, -(planet + 1), 0, false);  /* HACK */
                     break;
                 }
             }
