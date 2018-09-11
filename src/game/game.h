@@ -174,7 +174,7 @@ typedef struct newtech_s {
     uint8_t tech;
     uint8_t source; /* 0..4(..5?) */
     int8_t v06;    /* 4: race_t giver  2: NEWTECH_V06_ORION or planet_i ruins or -(planet_i+1) artifact */
-    uint8_t v08;   /* race_t stolen_from? */
+    player_id_t stolen_from;
     bool frame;
 } newtech_t;
 
