@@ -136,7 +136,7 @@ static void game_tech_add_newtech(struct game_s *g, player_id_t player, tech_fie
         nt->tech = tech;
         nt->source = source;
         nt->v06 = a8;
-        nt->v08 = stolen_from;
+        nt->stolen_from = stolen_from;
         nt->frame = frame;
         nts->num = num + 1;
     }
