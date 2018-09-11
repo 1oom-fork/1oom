@@ -245,10 +245,10 @@ static void game_spy_espionage(struct game_s *g, player_id_t spy, player_id_t ta
                     g->evn.stolen_spy[target][spy] = game_spy_frame_random(g, spy, target);
                 }
                 /*81fa7*/
-                game_tech_get_new(g, spy, s->tbl_field[0], s->tbl_tech2[0], TECHSOURCE_AI_SPY, 0, 0, false);
+                game_tech_get_new(g, spy, s->tbl_field[0], s->tbl_tech2[0], TECHSOURCE_AI_SPY, 0, PLAYER_NONE, false);
             } else {
                 /*8207f*/
-                game_tech_get_new(g, spy, s->tbl_field[0], s->tbl_tech2[0], TECHSOURCE_AI_SPY, 0, 0, false);
+                game_tech_get_new(g, spy, s->tbl_field[0], s->tbl_tech2[0], TECHSOURCE_AI_SPY, 0, PLAYER_NONE, false);
                 if (flag_frame && (rnd_0_nm1(2, &g->seed) == 0)) {
                     player_id_t scapegoat[PLAYER_NUM];
                     player_id_t pi;

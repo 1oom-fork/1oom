@@ -3608,8 +3608,8 @@ static void game_ai_classic_turn_diplo_p1(struct game_s *g)
                         num[0] = game_ai_classic_turn_diplo_p1_get_ai_trade_tech(g, p1, p2, &field[0], &tech[0]);
                         num[1] = game_ai_classic_turn_diplo_p1_get_ai_trade_tech(g, p2, p1, &field[1], &tech[1]);
                         if ((num[0] > 0) && (num[1] > 0)) {
-                            game_tech_get_new(g, p2, field[0], tech[0], TECHSOURCE_TRADE, 0, 0, false);
-                            game_tech_get_new(g, p1, field[1], tech[1], TECHSOURCE_TRADE, 0, 0, false);
+                            game_tech_get_new(g, p2, field[0], tech[0], TECHSOURCE_TRADE, 0, PLAYER_NONE, false);
+                            game_tech_get_new(g, p1, field[1], tech[1], TECHSOURCE_TRADE, 0, PLAYER_NONE, false);
                         }
                     } else if (v > 70) {
                         int v1, v2;
@@ -4204,7 +4204,7 @@ static uint8_t game_ai_classic_aud_threaten(struct audience_s *au)
             if (game_spy_esp_sub1(g, s, 0, 1) > 0) {
                 au->tribute_field = s->tbl_field[0];
                 au->tribute_tech = s->tbl_tech2[0];
-                game_tech_get_new(g, ph, au->tribute_field, au->tribute_tech, TECHSOURCE_TRADE, pa, 0, false);   /* WASBUG? pa was 0 */
+                game_tech_get_new(g, ph, au->tribute_field, au->tribute_tech, TECHSOURCE_TRADE, pa, PLAYER_NONE, false); /* WASBUG? pa was 0 */
             }
         } else if (v >= 200) {
             int bc;
