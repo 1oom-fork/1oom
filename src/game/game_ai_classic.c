@@ -3243,8 +3243,8 @@ static void game_ai_classic_turn_diplo_p1(struct game_s *g)
                         field[1] = s.tbl_field[0];
                         tech[1] = s.tbl_tech2[0];
                         if ((num[0] > 0) && (num[1] > 0)) {
-                            game_tech_get_new(g, p2, field[0], tech[0], 4, 0, 0, false);
-                            game_tech_get_new(g, p1, field[1], tech[1], 4, 0, 0, false);
+                            game_tech_get_new(g, p2, field[0], tech[0], TECHSOURCE_TRADE, 0, 0, false);
+                            game_tech_get_new(g, p1, field[1], tech[1], TECHSOURCE_TRADE, 0, 0, false);
                         }
                     } else if (v > 70) {
                         int v1, v2;
