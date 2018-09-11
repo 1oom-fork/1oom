@@ -143,6 +143,16 @@ typedef enum game_end_type_e {
     GAME_END_QUIT
 } game_end_type_t;
 
+typedef enum {
+    TECHSOURCE_RESEARCH = 0,
+    TECHSOURCE_SPY, /*1*/
+    TECHSOURCE_FOUND, /*2*/
+    TECHSOURCE_AI_SPY, /*3*/
+    TECHSOURCE_TRADE /*4*/
+} techsource_t;
+
+#define TECHSOURCE_CHOOSE   TECHSOURCE_AI_SPY
+
 typedef uint16_t shipcount_t;
 typedef uint16_t shipsum_t;
 
