@@ -218,6 +218,7 @@ void ui_starmap_trans(struct game_s *g, player_id_t active_player)
         ui_delay_prepare();
         pt = &(g->planet[g->planet_focus_i[active_player]]);
         p->trans_dest = g->planet_focus_i[active_player];
+        ui_starmap_handle_scrollkeys(&d, oi1);
         if (oi1 == d.oi_gameopts) {
             ui_data.ui_main_loop_action = UI_MAIN_LOOP_GAMEOPTS;
             flag_done = true;

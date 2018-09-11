@@ -230,6 +230,29 @@ static void ui_starmap_add_oi_enroute(struct starmap_data_s *d, bool want_prio)
     }
 }
 
+static int ui_starmap_scrollkey_accel(int zh)
+{
+    int v = zh;
+    if (zh < 0) {
+        v = -v;
+    }
+    if (v > 64) {
+        v = 5;
+    } if (v > 32) {
+        v = 4;
+    } else if (v > 16) {
+        v = 3;
+    } else if (v > 4) {
+        v = 2;
+    } else {
+        v = 1;
+    }
+    if (zh < 0) {
+        v = -v;
+    }
+    return v;
+}
+
 /* -------------------------------------------------------------------------- */
 
 void ui_starmap_draw_basic(struct starmap_data_s *d)
@@ -607,6 +630,66 @@ void ui_starmap_handle_oi_ctrl(struct starmap_data_s *d, int16_t oi)
     }
 #undef XSTEP
 #undef YSTEP
+}
+
+void ui_starmap_handle_scrollkeys(struct starmap_data_s *d, int16_t oi)
+{
+    const struct game_s *g = d->g;
+    int x, y, xh, yh;
+    if (oi != 0) {
+        ui_data.starmap.xhold = 0;
+        ui_data.starmap.yhold = 0;
+        return;
+    }
+    if (g->evn.build_finished_num[d->api]) {
+        return;
+    }
+    x = ui_data.starmap.x;
+    y = ui_data.starmap.y;
+    xh = ui_data.starmap.xhold;
+    yh = ui_data.starmap.yhold;
+    if (kbd_is_pressed(MOO_KEY_u, 0, MOO_MOD_SHIFT | MOO_MOD_ALT | MOO_MOD_CTRL)) {
+        if (yh > 0) {
+            yh = 0;
+        }
+        --yh;
+    } else if (kbd_is_pressed(MOO_KEY_j, 0, MOO_MOD_SHIFT | MOO_MOD_ALT | MOO_MOD_CTRL)) {
+        if (yh < 0) {
+            yh = 0;
+        }
+        ++yh;
+    } else {
+        yh = 0;
+    }
+    if (yh) {
+        y += ui_starmap_scrollkey_accel(yh);
+    }
+    if (kbd_is_pressed(MOO_KEY_h, 0, MOO_MOD_SHIFT | MOO_MOD_ALT | MOO_MOD_CTRL)) {
+        if (xh > 0) {
+            xh = 0;
+        }
+        --xh;
+    } else if (kbd_is_pressed(MOO_KEY_k, 0, MOO_MOD_SHIFT | MOO_MOD_ALT | MOO_MOD_CTRL)) {
+        if (xh < 0) {
+            xh = 0;
+        }
+        ++xh;
+    } else {
+        xh = 0;
+    }
+    if (xh) {
+        x += ui_starmap_scrollkey_accel(xh);
+    }
+    if (xh || yh) {
+        SETRANGE(x, 0, g->galaxy_maxx - 0x6c);
+        SETRANGE(y, 0, g->galaxy_maxy - 0x56);
+        ui_data.starmap.x2 = x;
+        ui_data.starmap.y2 = y;
+        ui_data.starmap.x = x;
+        ui_data.starmap.y = y;
+    }
+    ui_data.starmap.xhold = xh;
+    ui_data.starmap.yhold = yh;
 }
 
 void ui_starmap_add_oi_bottom_buttons(struct starmap_data_s *d)
