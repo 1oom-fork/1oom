@@ -93,7 +93,6 @@ static void newtech_draw_cb1(void *vptr)
 {
     struct newtech_data_s *d = vptr;
     struct game_s *g = d->g;
-    empiretechorbit_t *e = &(g->eto[d->api]);
     char *buf = ui_data.strbuf;
     vgabuf_copy_back_from_page2();
     {
@@ -106,31 +105,7 @@ static void newtech_draw_cb1(void *vptr)
             lbxgfx_set_new_frame(d->gfx_spies, frame);
         }
     }
-    switch (d->nt.source) {
-        case TECHSOURCE_RESEARCH:
-            sprintf(buf, "%s %s %s %s", game_str_tbl_race[e->race], game_str_nt_achieve, game_str_tbl_te_field[d->nt.field], game_str_nt_break);
-            break;
-        case TECHSOURCE_SPY:
-            sprintf(buf, "%s %s %s", game_str_tbl_race[e->race], game_str_nt_infil, g->planet[d->nt.v06].name);
-            break;
-        case TECHSOURCE_FOUND:
-            if (d->nt.v06 == NEWTECH_V06_ORION) {
-                strcpy(buf, game_str_nt_orion);
-            } else if (d->nt.v06 >= 0) {    /* WASBUG > 0 vs. scout case with planet 0 */
-                sprintf(buf, "%s %s %s", game_str_nt_ruins, g->planet[d->nt.v06].name, game_str_nt_discover);
-            } else {
-                sprintf(buf, "%s %s %s", game_str_nt_scouts, g->planet[-(d->nt.v06 + 1)].name, game_str_nt_discover);
-            }
-            break;
-        case TECHSOURCE_CHOOSE:
-            strcpy(buf, game_str_nt_choose);
-            break;
-        case TECHSOURCE_TRADE:
-            sprintf(buf, "%s %s %s %s", game_str_tbl_race[g->eto[d->nt.v06].race], game_str_nt_reveal, game_str_tbl_te_field[d->nt.field], game_str_nt_secrets);
-            break;
-        default:
-            break;
-    }
+    game_tech_get_newtech_msg(g, d->api, &(d->nt), buf);
     lbxfont_select_set_12_4(5, 5, 0, 0);
     lbxfont_print_str_center(161, 7, buf, UI_SCREEN_W);
     if (d->nt.source != TECHSOURCE_CHOOSE) {
@@ -290,16 +265,6 @@ static void newtech_adjust_draw_cb(void *vptr)
         default:
             break;
     }
-#if 0   /* FIXME does not seem to be needed, the buttons draw themselves */
-    if (d->dialog_type != 0) {
-        x += 10;
-        for (int i = 0; i < 4; ++i, x += 32) {
-            lbxgfx_set_frame_0(d->gfx_robo_but);
-            lbxgfx_draw_frame(x, y + 60, d->gfx_robo_but, UI_SCREEN_W);
-            lbxfont_print_str_center(x + 12, y + 64, game_str_tbl_nt_adj[i], UI_SCREEN_W);
-        }
-    }
-#endif
 }
 
 static void ui_newtech_adjust(struct newtech_data_s *d)
