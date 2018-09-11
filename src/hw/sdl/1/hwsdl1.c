@@ -172,6 +172,16 @@ static void build_key_xlat(void)
     key_xlat[SDLK_UNDO] = MOO_KEY_UNDO;
 }
 
+static inline uint32_t mod_xlat(SDLMod smod)
+{
+    uint32_t mod = 0;
+    if (smod & KMOD_SHIFT) { mod |= MOO_MOD_SHIFT; }
+    if (smod & KMOD_ALT) { mod |= MOO_MOD_ALT; }
+    if (smod & KMOD_CTRL) { mod |= MOO_MOD_CTRL; }
+    if (smod & KMOD_META) { mod |= MOO_MOD_META; }
+    return mod;
+}
+
 /* -------------------------------------------------------------------------- */
 
 #define SDL1or2Key  SDLKey
@@ -233,24 +243,27 @@ int hw_event_handle(void)
         switch (e.type) {
             case SDL_KEYDOWN:
                 {
-                    uint16_t c = e.key.keysym.unicode;
+                    uint16_t c;
+                    SDLMod smod;
+                    c = e.key.keysym.unicode;
+                    smod = e.key.keysym.mod;
                     if (((c & 0xff80) == 0) && ((c & 0x7f) != 0)) {
                         c &= 0x7f;
                     } else {
                         c = 0;
                     }
-                    SDLMod smod = e.key.keysym.mod;
                     if (!(hw_kbd_check_hotkey(e.key.keysym.sym, smod, c))) {
-                        uint32_t mod = 0;
-                        if (smod & KMOD_SHIFT) { mod |= MOO_MOD_SHIFT; }
-                        if (smod & KMOD_ALT) { mod |= MOO_MOD_ALT; }
-                        if (smod & KMOD_CTRL) { mod |= MOO_MOD_CTRL; }
-                        if (smod & KMOD_META) { mod |= MOO_MOD_META; }
-                        kbd_add_keypress(key_xlat[e.key.keysym.sym], mod, c);
+                        mookey_t key;
+                        uint32_t mod;
+                        key = key_xlat[e.key.keysym.sym];
+                        mod = mod_xlat(smod);
+                        kbd_add_keypress(key, mod, c);
+                        kbd_set_pressed(key, mod, true);
                     }
                 }
                 break;
             case SDL_KEYUP:
+                kbd_set_pressed(key_xlat[e.key.keysym.sym], mod_xlat(e.key.keysym.mod), false);
                 break;
             case SDL_MOUSEMOTION:
                 if (hw_mouse_enabled) {
