@@ -460,7 +460,7 @@ again:
                 flag_done = true;
                 ui_sound_play_sfx_24();
                 v = -(rnd_1_n(12, &g->seed) + rnd_1_n(12, &g->seed));
-                game_diplo_act(g, v, (oi == oi_o1) ? d->other1 : d->other2, d->nt.v08, 5, 0, 0);
+                game_diplo_act(g, v, (oi == oi_o1) ? d->other1 : d->other2, d->nt.stolen_from, 5, 0, 0);
             }
             newtech_draw_cb1(d);
             ui_draw_finish();
@@ -543,11 +543,10 @@ void ui_newtech(struct game_s *g, int pi)
             d.gfx_spies = lbxfile_item_get(LBXFILE_SPIES, v, 0);
         }
         d.music_i = newtech_music_tbl[d.nt.source];
-        /* XXX temp_spy_steal_target = nt->v08; */
         /* FIXME move below to game/ */
         if (d.nt.frame) {
             const empiretechorbit_t *et;
-            et = &(g->eto[d.nt.v08]);
+            et = &(g->eto[d.nt.stolen_from]);
             d.other1 = PLAYER_NONE;
             d.other2 = PLAYER_NONE;
             for (int i = 0; (i < g->players) && (d.other2 == PLAYER_NONE); ++i) {
