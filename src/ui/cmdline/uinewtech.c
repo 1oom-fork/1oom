@@ -35,34 +35,10 @@ struct newtech_data_s {
 static void ui_newtech_print1(struct newtech_data_s *d)
 {
     const struct game_s *g = d->g;
-    const empiretechorbit_t *e = &(g->eto[d->api]);
-    switch (d->nt.source) {
-        case 0:
-            printf("%s %s %s %s\n", game_str_tbl_race[e->race], game_str_nt_achieve, game_str_tbl_te_field[d->nt.field], game_str_nt_break);
-            break;
-        case 1:
-            printf("%s %s %s\n", game_str_tbl_race[e->race], game_str_nt_infil, g->planet[d->nt.v06].name);
-            break;
-        case 2:
-            if (d->nt.v06 == NEWTECH_V06_ORION) {
-                puts(game_str_nt_orion);
-            } else if (d->nt.v06 >= 0) {    /* WASBUG > 0 vs. scout case with planet 0 */
-                printf("%s %s %s\n", game_str_nt_ruins, g->planet[d->nt.v06].name, game_str_nt_discover);
-            } else {
-                printf("%s %s %s\n", game_str_nt_scouts, g->planet[-(d->nt.v06 + 1)].name, game_str_nt_discover);
-            }
-            break;
-        case 3:
-            break;
-        case 4:
-            printf("%s %s %s %s\n", game_str_tbl_race[g->eto[d->nt.v06].race], game_str_nt_reveal, game_str_tbl_te_field[d->nt.field], game_str_nt_secrets);
-            break;
-        default:
-            break;
-    }
-    if (d->nt.source != 3) {
-        puts(game_tech_get_name(d->g->gaux, d->nt.field, d->nt.tech, ui_data.strbuf));
-        puts(game_tech_get_descr(d->g->gaux, d->nt.field, d->nt.tech, ui_data.strbuf));
+    puts(game_tech_get_newtech_msg(g, d->api, &(d->nt), ui_data.strbuf));
+    if (d->nt.source != TECHSOURCE_CHOOSE) {
+        puts(game_tech_get_name(g->gaux, d->nt.field, d->nt.tech, ui_data.strbuf));
+        puts(game_tech_get_descr(g->gaux, d->nt.field, d->nt.tech, ui_data.strbuf));
     }
 }
 
@@ -222,7 +198,7 @@ again:
             return;
         }
         d->nt.frame = false;
-        d->nt.source = 3;
+        d->nt.source = TECHSOURCE_CHOOSE;
         ui_newtech_choose_next(d);
     } else {
         if (d->nt.frame) {
@@ -240,7 +216,7 @@ again:
             puts(game_str_nt_frame);
             frame = ui_input_list(game_str_nt_victim, "> ", rl_in);
             if (frame >= 0) {
-                game_diplo_esp_frame(g, frame, d->nt.v08);
+                game_diplo_esp_frame(g, frame, d->nt.stolen_from);
             }
         }
         if (flag_dialog) {
@@ -279,7 +255,7 @@ void ui_newtech(struct game_s *g, int pi)
         /* FIXME move below to game/ */
         if (d.nt.frame) {
             const empiretechorbit_t *et;
-            et = &(g->eto[d.nt.v08]);
+            et = &(g->eto[d.nt.stolen_from]);
             d.other1 = PLAYER_NONE;
             d.other2 = PLAYER_NONE;
             for (int i = 0; (i < g->players) && (d.other2 == PLAYER_NONE); ++i) {
@@ -291,7 +267,7 @@ void ui_newtech(struct game_s *g, int pi)
                     }
                 }
             }
-            if ((d.other2 == PLAYER_NONE) || (d.nt.source != 1)) {
+            if ((d.other2 == PLAYER_NONE) || (d.nt.source != TECHSOURCE_SPY)) {
                 d.nt.frame = false;
             }
         }
@@ -306,7 +282,7 @@ void ui_newtech(struct game_s *g, int pi)
             }
             d.nt.field = field;
             d.nt.tech = 0;
-            d.nt.source = 3;
+            d.nt.source = TECHSOURCE_CHOOSE;
             d.flag_choose_next = true;
             d.nt.frame = false;
             ui_newtech_do(&d);

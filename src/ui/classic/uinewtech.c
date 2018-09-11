@@ -92,7 +92,6 @@ static void newtech_draw_cb1(void *vptr)
 {
     struct newtech_data_s *d = vptr;
     struct game_s *g = d->g;
-    empiretechorbit_t *e = &(g->eto[d->api]);
     char *buf = ui_data.strbuf;
     hw_video_copy_back_from_page2();
     {
@@ -105,34 +104,10 @@ static void newtech_draw_cb1(void *vptr)
             lbxgfx_set_new_frame(d->gfx_spies, frame);
         }
     }
-    switch (d->nt.source) {
-        case 0:
-            sprintf(buf, "%s %s %s %s", game_str_tbl_race[e->race], game_str_nt_achieve, game_str_tbl_te_field[d->nt.field], game_str_nt_break);
-            break;
-        case 1:
-            sprintf(buf, "%s %s %s", game_str_tbl_race[e->race], game_str_nt_infil, g->planet[d->nt.v06].name);
-            break;
-        case 2:
-            if (d->nt.v06 == NEWTECH_V06_ORION) {
-                strcpy(buf, game_str_nt_orion);
-            } else if (d->nt.v06 >= 0) {    /* WASBUG > 0 vs. scout case with planet 0 */
-                sprintf(buf, "%s %s %s", game_str_nt_ruins, g->planet[d->nt.v06].name, game_str_nt_discover);
-            } else {
-                sprintf(buf, "%s %s %s", game_str_nt_scouts, g->planet[-(d->nt.v06 + 1)].name, game_str_nt_discover);
-            }
-            break;
-        case 3:
-            strcpy(buf, game_str_nt_choose);
-            break;
-        case 4:
-            sprintf(buf, "%s %s %s %s", game_str_tbl_race[g->eto[d->nt.v06].race], game_str_nt_reveal, game_str_tbl_te_field[d->nt.field], game_str_nt_secrets);
-            break;
-        default:
-            break;
-    }
+    game_tech_get_newtech_msg(g, d->api, &(d->nt), buf);
     lbxfont_select_set_12_4(5, 5, 0, 0);
     lbxfont_print_str_center(161, 7, buf, UI_SCREEN_W, ui_scale);
-    if (d->nt.source != 3) {
+    if (d->nt.source != TECHSOURCE_CHOOSE) {
         int strh, y;
         char *p, c;
         game_tech_get_name(d->g->gaux, d->nt.field, d->nt.tech, buf);
@@ -155,7 +130,6 @@ static void newtech_draw_cb1(void *vptr)
         y = (strh >= 36) ? 150 : 160;
         lbxfont_print_str_split(9, y, 305, buf, 3, UI_SCREEN_W, UI_SCREEN_H, ui_scale);
     }
-    /*152ea*/
     if (d->nt.frame) {
         /*ui_newtech_draw_frame:*/
         ui_draw_filled_rect(31, 62, 202, 125, 0xfb, ui_scale);
@@ -182,7 +156,7 @@ static void newtech_choose_next_draw_cb(void *vptr)
     char buf[RESEARCH_DESCR_LEN + 20];
     int x = 145, y = 30, yo, pos;
     uint8_t tech = d->tbl_tech[d->selected];
-    d->nt.source = 3;
+    d->nt.source = TECHSOURCE_CHOOSE;
     newtech_draw_cb1(d);
     yo = ((d->num_next > 10) ? 8 : 9) * d->num_next + 8;
     SETMAX(yo, 30);
@@ -289,16 +263,6 @@ static void newtech_adjust_draw_cb(void *vptr)
         default:
             break;
     }
-#if 0   /* FIXME does not seem to be needed, the buttons draw themselves */
-    if (d->dialog_type != 0) {
-        x += 10;
-        for (int i = 0; i < 4; ++i, x += 32) {
-            lbxgfx_set_frame_0(d->gfx_robo_but);
-            lbxgfx_draw_frame(x, y + 60, d->gfx_robo_but, UI_SCREEN_W, ui_scale);
-            lbxfont_print_str_center(x + 12, y + 64, game_str_tbl_nt_adj[i], UI_SCREEN_W, ui_scale);
-        }
-    }
-#endif
 }
 
 static void ui_newtech_adjust(struct newtech_data_s *d)
@@ -315,7 +279,6 @@ static void ui_newtech_adjust(struct newtech_data_s *d)
         oi_y = uiobj_add_t0(x + 83, y + 60, "", ui_data.gfx.starmap.scrapbut_yes, MOO_KEY_y);
         oi_n = uiobj_add_t0(x + 18, y + 60, "", ui_data.gfx.starmap.scrapbut_no, MOO_KEY_n);
     } else {
-        /*15b13*/
         lbxfont_select(2, 6, 0, 0);
         oi_n = uiobj_add_t0(x + 10, y + 60, game_str_tbl_nt_adj[0], d->gfx_robo_but, MOO_KEY_n);
         oi_tbl[0] = uiobj_add_t0(x + 42, y + 60, game_str_tbl_nt_adj[1], d->gfx_robo_but, MOO_KEY_2);
@@ -323,7 +286,6 @@ static void ui_newtech_adjust(struct newtech_data_s *d)
         oi_tbl[2] = uiobj_add_t0(x + 106, y + 60, game_str_tbl_nt_adj[3], d->gfx_robo_but, MOO_KEY_7);
 
     }
-    /*15bc6*/
     while (!flag_done) {
         int16_t oi;
         ui_delay_prepare();
@@ -365,16 +327,14 @@ static void ui_newtech_do(struct newtech_data_s *d)
     uint8_t tech = d->nt.tech;
     bool flag_dialog;
     if (d->cur_source != d->nt.source) {
-        if ((d->nt.source <= 2) || (d->cur_source != 0)) {
+        if ((d->nt.source <= TECHSOURCE_FOUND) || (d->cur_source != 0)) {
             int m;
-            m = ((d->nt.source == 0) || (d->nt.source > 2)) ? d->music_i : newtech_music_tbl[d->nt.source];
+            m = ((d->nt.source == TECHSOURCE_RESEARCH) || (d->nt.source > TECHSOURCE_CHOOSE)) ? d->music_i : newtech_music_tbl[d->nt.source];
             ui_sound_play_music(m);
         }
-        /*148b9*/
         d->flag_music = true;
         d->cur_source = d->nt.source;
     }
-    /*148bf*/
     flag_dialog = false;
     if (tech < 51) {
         flag_dialog = false;
@@ -423,24 +383,21 @@ static void ui_newtech_do(struct newtech_data_s *d)
             d->dialog_type = 3;
         }
     }
-    /*14a44*/
     if ((ui_draw_finish_mode == 0) && d->flag_fadeout) {
         ui_palette_fadeout_a_f_1();
         ui_draw_finish_mode = 2;
     }
     d->flag_fadeout = false;
 again:
-    /*14a69*/
     if (d->flag_choose_next) {
         d->num_next = game_tech_get_next_techs(g, d->api, d->nt.field, d->tech_next);
         if (d->num_next == 0) {
             return;
         }
         d->nt.frame = false;
-        d->nt.source = 3;
+        d->nt.source = TECHSOURCE_CHOOSE;
         ui_newtech_choose_next(d);
     } else {
-        /*14aa7*/
         bool flag_done;
         int16_t oi_ok, oi_o1, oi_o2;
         oi_ok = UIOBJI_INVALID;
@@ -465,7 +422,7 @@ again:
             if ((oi == oi_o1) || (oi == oi_o2)) {
                 flag_done = true;
                 ui_sound_play_sfx_24();
-                game_diplo_esp_frame(g, (oi == oi_o1) ? d->other1 : d->other2, d->nt.v08);
+                game_diplo_esp_frame(g, (oi == oi_o1) ? d->other1 : d->other2, d->nt.stolen_from);
             }
             newtech_draw_cb1(d);
             ui_draw_finish();
@@ -519,7 +476,7 @@ void ui_newtech(struct game_s *g, int pi)
             d.flag_is_current = true;
         }
         ui_draw_erase_buf();
-        d.gfx_lab = lbxfile_item_get(LBXFILE_TECHNO, (d.nt.source != 4) ? d.nt.source : 0);
+        d.gfx_lab = lbxfile_item_get(LBXFILE_TECHNO, (d.nt.source != TECHSOURCE_TRADE) ? d.nt.source : 0);
         lbxgfx_draw_frame(0, 0, d.gfx_lab, UI_SCREEN_W, ui_scale);
         {
             int v;
@@ -537,7 +494,7 @@ void ui_newtech(struct game_s *g, int pi)
         hw_video_copy_back_to_page2();
         {
             int v;
-            if (d.nt.source == 4) {
+            if (d.nt.source == TECHSOURCE_TRADE) {
                 v = g->eto[d.nt.v06].race;
             } else {
                 v = d.nt.source * 10 + e->race;
@@ -548,11 +505,10 @@ void ui_newtech(struct game_s *g, int pi)
             d.gfx_spies = lbxfile_item_get(LBXFILE_SPIES, v);
         }
         d.music_i = newtech_music_tbl[d.nt.source];
-        /* XXX temp_spy_steal_target = nt->v08; */
         /* FIXME move below to game/ */
         if (d.nt.frame) {
             const empiretechorbit_t *et;
-            et = &(g->eto[d.nt.v08]);
+            et = &(g->eto[d.nt.stolen_from]);
             d.other1 = PLAYER_NONE;
             d.other2 = PLAYER_NONE;
             for (int i = 0; (i < g->players) && (d.other2 == PLAYER_NONE); ++i) {
@@ -564,16 +520,14 @@ void ui_newtech(struct game_s *g, int pi)
                     }
                 }
             }
-            if ((d.other2 == PLAYER_NONE) || (d.nt.source != 1)) {
+            if ((d.other2 == PLAYER_NONE) || (d.nt.source != TECHSOURCE_SPY)) {
                 d.nt.frame = false;
             }
         }
-        /*146fb*/
         ui_newtech_do(&d);
         lbxfile_item_release(LBXFILE_TECHNO, d.gfx_lab);
         lbxfile_item_release(LBXFILE_TECHNO, d.gfx_tech);
     }
-    /*1470f*/
     for (tech_field_t field = 0; field < TECH_FIELD_NUM; ++field) {
         if (game_tech_can_choose(g, pi, field)) {
             if (!flag_copybuf) {
@@ -594,10 +548,9 @@ void ui_newtech(struct game_s *g, int pi)
                 d.gfx_spies = lbxfile_item_get(LBXFILE_SPIES, e->race);
                 d.music_i = newtech_music_tbl[0];
             }
-            /*14809*/
             d.nt.field = field;
             d.nt.tech = 0;
-            d.nt.source = 3;
+            d.nt.source = TECHSOURCE_CHOOSE;
             d.flag_choose_next = true;
             d.nt.frame = false;
             ui_newtech_do(&d);
