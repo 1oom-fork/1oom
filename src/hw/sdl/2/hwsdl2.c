@@ -177,6 +177,15 @@ static void build_key_xlat(void)
     key_xlat_scan[SDLK_TBLI_FROM_SCAN(SDLK_UNDO)] = MOO_KEY_UNDO;
 }
 
+static inline uint32_t mod_xlat(SDL_Keymod smod)
+{
+    uint32_t mod = 0;
+    if (smod & KMOD_SHIFT) { mod |= MOO_MOD_SHIFT; }
+    if (smod & KMOD_ALT) { mod |= MOO_MOD_ALT; }
+    if (smod & KMOD_CTRL) { mod |= MOO_MOD_CTRL; }
+    return mod;
+}
+
 static bool hw_textinput_active = false;
 
 /* -------------------------------------------------------------------------- */
@@ -275,10 +284,7 @@ int hw_event_handle(void)
                     c = 0;
                     if (!(hw_kbd_check_hotkey(sym, smod, c))) {
                         mookey_t key;
-                        uint32_t mod = 0;
-                        if (smod & KMOD_SHIFT) { mod |= MOO_MOD_SHIFT; }
-                        if (smod & KMOD_ALT) { mod |= MOO_MOD_ALT; }
-                        if (smod & KMOD_CTRL) { mod |= MOO_MOD_CTRL; }
+                        uint32_t mod;
                         if (sym & SDLK_SCANCODE_MASK) {
                             key = key_xlat_scan[SDLK_TBLI_FROM_SCAN(sym)];
                             c = 0;
@@ -287,24 +293,39 @@ int hw_event_handle(void)
                             c = (char)sym; /* TODO SDL 2 */
                             /* ignore ASCII range when expecting SDL_TEXTINPUT */
                             if (hw_textinput_active && ((key >= MOO_KEY_SPACE) && (key <= MOO_KEY_z))) {
-                                key = MOO_KEY_UNKNOWN;
+                                key = MOO_KEY_LAST;
                             }
                         }
-                        if (key != MOO_KEY_UNKNOWN) {
+                        mod = mod_xlat(smod);
+                        if ((key != MOO_KEY_UNKNOWN) && (key < MOO_KEY_LAST)) {
                             kbd_add_keypress(key, mod, c);
                         }
+                        kbd_set_pressed(key, mod, true);
                     }
                 }
                 break;
+            case SDL_KEYUP:
+                {
+                    SDL_Keycode sym;
+                    SDL_Keymod smod;
+                    mookey_t key;
+                    sym = e.key.keysym.sym;
+                    smod = e.key.keysym.mod;
+                    if (sym & SDLK_SCANCODE_MASK) {
+                        key = key_xlat_scan[SDLK_TBLI_FROM_SCAN(sym)];
+                    } else {
+                        key = key_xlat_key[sym];
+                    }
+                    kbd_set_pressed(key, mod_xlat(smod), false);
+                }
+                break;
             case SDL_TEXTINPUT:
-                if (e.text.text[0] != 0) {
+                if (hw_textinput_active && (e.text.text[0] != 0)) {
                     char c = e.text.text[0];
                     SDL_StopTextInput();
                     SDL_StartTextInput();
                     kbd_add_keypress(MOO_KEY_UNKNOWN, 0, c);
                 }
-                break;
-            case SDL_KEYUP:
                 break;
             case SDL_MOUSEMOTION:
                 if (!hw_opt_relmouse && hw_mouse_enabled) {
