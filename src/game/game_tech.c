@@ -178,7 +178,7 @@ static void game_tech_share(struct game_s *g, tech_field_t f, bool accepted, boo
         } else {
             for (uint8_t tech_i = 0; (tech_i <= maxtech) && (g->evn.newtech[pi].num < NEWTECH_MAX); ++tech_i) {
                 if (BOOLVEC_IS1(tbl_techcompl, tech_i) && (!game_tech_player_has_tech(g, f, tech_i, pi))) {
-                    game_tech_get_new(g, pi, f, tech_i, TECHSOURCE_TRADE, tbl_source[tech_i], 0, false);
+                    game_tech_get_new(g, pi, f, tech_i, TECHSOURCE_TRADE, tbl_source[tech_i], PLAYER_NONE, false);
                 }
             }
         }
@@ -557,6 +557,38 @@ const char *game_tech_get_descr(const struct game_aux_s *gaux, tech_field_t fiel
     return buf;
 }
 
+const char *game_tech_get_newtech_msg(const struct game_s *g, player_id_t pi, struct newtech_s *nt, char *buf)
+{
+    race_t race = g->eto[pi].race;
+    switch (nt->source) {
+        case TECHSOURCE_RESEARCH:
+            sprintf(buf, "%s %s %s %s", game_str_tbl_race[race], game_str_nt_achieve, game_str_tbl_te_field[nt->field], game_str_nt_break);
+            break;
+        case TECHSOURCE_SPY:
+            sprintf(buf, "%s %s %s", game_str_tbl_race[race], game_str_nt_infil, g->planet[nt->v06].name);
+            break;
+        case TECHSOURCE_FOUND:
+            if (nt->v06 == NEWTECH_V06_ORION) {
+                strcpy(buf, game_str_nt_orion);
+            } else if (nt->v06 >= 0) {  /* WASBUG > 0 vs. scout case with planet 0 */
+                sprintf(buf, "%s %s %s", game_str_nt_ruins, g->planet[nt->v06].name, game_str_nt_discover);
+            } else {
+                sprintf(buf, "%s %s %s", game_str_nt_scouts, g->planet[-(nt->v06 + 1)].name, game_str_nt_discover);
+            }
+            break;
+        case TECHSOURCE_CHOOSE:
+            strcpy(buf, game_str_nt_choose);
+            break;
+        case TECHSOURCE_TRADE:
+            sprintf(buf, "%s %s %s %s", game_str_tbl_race[g->eto[nt->v06].race], game_str_nt_reveal, game_str_tbl_te_field[nt->field], game_str_nt_secrets);
+            break;
+        default:
+            buf[0] = '\0';
+            break;
+    }
+    return buf;
+}
+
 int game_tech_current_research_percent1(const struct game_s *g, player_id_t player_i, tech_field_t field)
 {
     const empiretechorbit_t *e = &(g->eto[player_i]);
@@ -801,7 +833,7 @@ void game_tech_research(struct game_s *g)
                     int v;
                     v = ((invest - cost) * 250) / cost;
                     if (rnd_1_n(500, &g->seed) <= v) {
-                        game_tech_get_new(g, player, field, td->project[field], TECHSOURCE_RESEARCH, game_planet_get_random(g, player), 0, false);
+                        game_tech_get_new(g, player, field, td->project[field], TECHSOURCE_RESEARCH, game_planet_get_random(g, player), PLAYER_NONE, false);
                     }
                 }
             } else {
@@ -817,7 +849,7 @@ void game_tech_get_orion_loot(struct game_s *g, player_id_t player)
     empiretechorbit_t *e = &(g->eto[player]);
     techdata_t *td = &(e->tech);
     uint8_t percent[TECH_FIELD_NUM];
-    game_tech_get_new(g, player, TECH_FIELD_WEAPON, TECH_WEAP_DEATH_RAY, TECHSOURCE_FOUND, -PLANETS_MAX, 0, false);    /* HACK */
+    game_tech_get_new(g, player, TECH_FIELD_WEAPON, TECH_WEAP_DEATH_RAY, TECHSOURCE_FOUND, -PLANETS_MAX, PLAYER_NONE, false);
     for (tech_field_t f = 0; f < TECH_FIELD_NUM; ++f) {
         percent[f] = MIN(td->percent[f] + 25, 50);
     }
@@ -841,7 +873,7 @@ void game_tech_get_orion_loot(struct game_s *g, player_id_t player)
                     }
                 }
                 if (!have_tech) {
-                    game_tech_get_new(g, player, field, tech, TECHSOURCE_FOUND, NEWTECH_V06_ORION, 0, false);
+                    game_tech_get_new(g, player, field, tech, TECHSOURCE_FOUND, NEWTECH_V06_ORION, PLAYER_NONE, false);
                     break;
                 }
             }
@@ -880,7 +912,7 @@ void game_tech_get_artifact_loot(struct game_s *g, uint8_t planet, player_id_t p
                     }
                 }
                 if (!have_tech) {
-                    game_tech_get_new(g, player, field, tech, TECHSOURCE_FOUND, -(planet + 1), 0, false);  /* HACK */
+                    game_tech_get_new(g, player, field, tech, TECHSOURCE_FOUND, -(planet + 1), PLAYER_NONE, false);
                     break;
                 }
             }
