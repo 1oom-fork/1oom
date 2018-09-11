@@ -496,7 +496,7 @@ static int game_audience_sweeten(struct audience_s *au, int a0)
         return 1;
     }
     if (!flag_bc) {
-        game_tech_get_new(g, pa, field, tech, 4, ph, 0, false);
+        game_tech_get_new(g, pa, field, tech, TECHSOURCE_TRADE, ph, 0, false);
     } else {
         eh->reserve_bc -= bc;
         ea->reserve_bc += bc;
@@ -772,7 +772,7 @@ static void audience_menu_threat(struct audience_s *au)
                         if (game_spy_esp_sub1(g, s, 0, 1) > 0) {
                             au->tribute_field = s->tbl_field[0];
                             au->tribute_tech = s->tbl_tech2[0];
-                            game_tech_get_new(g, ph, au->tribute_field, au->tribute_tech, 4, pa, 0, false);   /* WASBUG? pa was 0 */
+                            game_tech_get_new(g, ph, au->tribute_field, au->tribute_tech, TECHSOURCE_TRADE, pa, 0, false);   /* WASBUG? pa was 0 */
                         }
                     } else if (v >= 200) {
                         int bc;
@@ -889,7 +889,7 @@ static void audience_menu_tribute(struct audience_s *au)
             selected = ui_audience_ask4(au);
             if ((selected != -1) && (selected < s->tnum) && (selected < 4)) {
                 int v;
-                game_tech_get_new(g, pa, s->tbl_field[selected], s->tbl_tech2[selected], 4, ph, 0, false);
+                game_tech_get_new(g, pa, s->tbl_field[selected], s->tbl_tech2[selected], TECHSOURCE_TRADE, ph, 0, false);
                 if (eh->relation1[pa] < 0) {
                     v = 20;
                 } else {
@@ -1019,8 +1019,8 @@ static void audience_menu_tech(struct audience_s *au)
                     selected = ui_audience_ask4(au);
                     if ((selected != -1) && (selected < i)) {
                         g->evn.newtech[ph].num = 0;
-                        game_tech_get_new(g, ph, gotf, gott, 4, pa, 0, false);
-                        game_tech_get_new(g, pa, thf[selected2][selected], tht[selected2][selected], 4, pa, 0, false); /* FIXME BUG? last pa should be ph? */
+                        game_tech_get_new(g, ph, gotf, gott, TECHSOURCE_TRADE, pa, 0, false);
+                        game_tech_get_new(g, pa, thf[selected2][selected], tht[selected2][selected], TECHSOURCE_TRADE, pa, 0, false); /* FIXME BUG? last pa should be ph? */
                         if (g->evn.newtech[ph].num != 0) {
                             ui_audience_newtech(au);
                         }
@@ -1158,7 +1158,7 @@ static void game_audience_do(struct audience_s *au)
                     if ((au->dtype == 24) || (au->dtype == 25) || (au->dtype == 26) || (au->dtype == 30)) { /* FIXME 76? */
                         eh->reserve_bc += eh->offer_bc[pa];
                         if (eh->offer_tech[pa] != 0) {
-                            game_tech_get_new(g, ph, eh->offer_field[pa], eh->offer_tech[pa], 4, pa, 0, false);
+                            game_tech_get_new(g, ph, eh->offer_field[pa], eh->offer_tech[pa], TECHSOURCE_TRADE, pa, 0, false);
                         }
                     }
                 } else {
@@ -1169,7 +1169,7 @@ static void game_audience_do(struct audience_s *au)
                 }
                 /*60761*/
                 if (au->dtype == 29) {
-                    game_tech_get_new(g, ph, eh->au_tech_trade_field[pa][selected], eh->au_tech_trade_tech[pa][selected], 4, pa, 0, false);
+                    game_tech_get_new(g, ph, eh->au_tech_trade_field[pa][selected], eh->au_tech_trade_tech[pa][selected], TECHSOURCE_TRADE, pa, 0, false);
                 }
             }
             /*607a9*/
