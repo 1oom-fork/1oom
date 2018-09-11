@@ -35,31 +35,7 @@ struct newtech_data_s {
 static void ui_newtech_print1(struct newtech_data_s *d)
 {
     const struct game_s *g = d->g;
-    const empiretechorbit_t *e = &(g->eto[d->api]);
-    switch (d->nt.source) {
-        case TECHSOURCE_RESEARCH:
-            printf("%s %s %s %s\n", game_str_tbl_race[e->race], game_str_nt_achieve, game_str_tbl_te_field[d->nt.field], game_str_nt_break);
-            break;
-        case TECHSOURCE_SPY:
-            printf("%s %s %s\n", game_str_tbl_race[e->race], game_str_nt_infil, g->planet[d->nt.v06].name);
-            break;
-        case TECHSOURCE_FOUND:
-            if (d->nt.v06 == NEWTECH_V06_ORION) {
-                puts(game_str_nt_orion);
-            } else if (d->nt.v06 >= 0) {    /* WASBUG > 0 vs. scout case with planet 0 */
-                printf("%s %s %s\n", game_str_nt_ruins, g->planet[d->nt.v06].name, game_str_nt_discover);
-            } else {
-                printf("%s %s %s\n", game_str_nt_scouts, g->planet[-(d->nt.v06 + 1)].name, game_str_nt_discover);
-            }
-            break;
-        case TECHSOURCE_CHOOSE:
-            break;
-        case TECHSOURCE_TRADE:
-            printf("%s %s %s %s\n", game_str_tbl_race[g->eto[d->nt.v06].race], game_str_nt_reveal, game_str_tbl_te_field[d->nt.field], game_str_nt_secrets);
-            break;
-        default:
-            break;
-    }
+    puts(game_tech_get_newtech_msg(g, d->api, &(d->nt), ui_data.strbuf));
     if (d->nt.source != TECHSOURCE_CHOOSE) {
         puts(game_tech_get_name(g->gaux, d->nt.field, d->nt.tech, ui_data.strbuf));
         puts(game_tech_get_descr(g->gaux, d->nt.field, d->nt.tech, ui_data.strbuf));
