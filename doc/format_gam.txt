@@ -359,9 +359,9 @@ ec      2   coup player (-1, 0..5)
 ee      2   new tech num
 f0      2*15    new tech field
 10e     2*15    new tech tech index
-12c     2*15    new tech source (0..4)
+12c     2*15    new tech source (0=research, 1=spy, 2=found, 3=choose/AI spy, 4=trade)
 14a     2*15    new tech val1 : giver race or source planet ruins (>0) or artifact planet (<0) or -1000 for Orion
-168     2*15    new tech val2 : race stolen from?
+168     2*15    new tech val2 : race stolen from
 186     2*15    new tech can frame (0/1)
 1a4     2*6 new ships
 1f2     2*6 spies caught (my)
