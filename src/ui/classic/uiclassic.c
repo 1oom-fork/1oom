@@ -10,6 +10,7 @@
 #include "game_shiptech.h"  /* for sounds used */
 #include "gfxaux.h"
 #include "hw.h"
+#include "kbd.h"
 #include "lbx.h"
 #include "lbxfont.h"
 #include "lbxgfx.h"
@@ -419,6 +420,7 @@ int ui_late_init(void)
         log_warning("Help disabled due to missing %s\n", lbxfile_name(LBXFILE_HELP));
     }
     uiobj_table_clear();
+    kbd_clear();
     return 0;
 }
 
