@@ -126,7 +126,7 @@ static uint8_t find_best_tech_type(BOOLVEC_PTRPARAMI(tbl), int base, int step, i
     return (uint8_t)best;
 }
 
-static void game_tech_add_newtech(struct game_s *g, player_id_t player, tech_field_t field, uint8_t tech, uint8_t source, int a8, int aa, bool frame)
+static void game_tech_add_newtech(struct game_s *g, player_id_t player, tech_field_t field, uint8_t tech, uint8_t source, int a8, player_id_t stolen_from, bool frame)
 {
     newtechs_t *nts = &(g->evn.newtech[player]);
     int num = nts->num;
@@ -136,7 +136,7 @@ static void game_tech_add_newtech(struct game_s *g, player_id_t player, tech_fie
         nt->tech = tech;
         nt->source = source;
         nt->v06 = a8;
-        nt->v08 = aa;
+        nt->v08 = stolen_from;
         nt->frame = frame;
         nts->num = num + 1;
     }
@@ -544,7 +544,7 @@ int game_tech_current_research_percent2(struct empiretechorbit_s *e, tech_field_
     }
 }
 
-void game_tech_get_new(struct game_s *g, player_id_t player, tech_field_t field, uint8_t tech, uint8_t source, int a8, int aa, bool flag_frame)
+void game_tech_get_new(struct game_s *g, player_id_t player, tech_field_t field, uint8_t tech, uint8_t source, int a8, player_id_t stolen_from, bool flag_frame)
 {
     empiretechorbit_t *e = &(g->eto[player]);
     shipresearch_t *srd = &(g->srd[player]);
@@ -563,7 +563,7 @@ void game_tech_get_new(struct game_s *g, player_id_t player, tech_field_t field,
             if (IS_HUMAN(g, player)) {
                 e->tech.project[field] = 0;
                 if (source == 4) {
-                    game_tech_add_newtech(g, player, field, tech, source, a8, aa, flag_frame);
+                    game_tech_add_newtech(g, player, field, tech, source, a8, stolen_from, flag_frame);
                 }
             } else {
                 /*6374b*/
@@ -586,7 +586,7 @@ void game_tech_get_new(struct game_s *g, player_id_t player, tech_field_t field,
             }
         }
         if (IS_HUMAN(g, player)) {
-            game_tech_add_newtech(g, player, field, tech, source, a8, aa, flag_frame);
+            game_tech_add_newtech(g, player, field, tech, source, a8, stolen_from, flag_frame);
         }
         /*63899*/
         if (e->tech.project[field] == tech) {
