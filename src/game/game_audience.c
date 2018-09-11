@@ -622,7 +622,7 @@ static int game_audience_sweeten(struct audience_s *au, int a0)
         return 1;
     }
     if (!flag_bc) {
-        game_tech_get_new(g, pa, field, tech, 4, ph, 0, false);
+        game_tech_get_new(g, pa, field, tech, TECHSOURCE_TRADE, ph, PLAYER_NONE, false);
     } else {
         eh->reserve_bc -= bc;
         ea->reserve_bc += bc;
@@ -966,7 +966,7 @@ static void audience_menu_tribute(struct audience_s *au)
             au->condtbl = 0;
             selected = ui_audience_ask4(au);
             if ((selected != -1) && (selected < s->tnum) && (selected < 4)) {
-                game_tech_get_new(g, pa, s->tbl_field[selected], s->tbl_tech2[selected], 4, ph, 0, false);
+                game_tech_get_new(g, pa, s->tbl_field[selected], s->tbl_tech2[selected], TECHSOURCE_TRADE, ph, PLAYER_NONE, false);
                 if (IS_AI(g, pa)) {
                     game_ai->aud_tribute_tech(au, selected, s->tbl_field[selected], s->tbl_tech2[selected]);
                 } else {
@@ -1071,8 +1071,8 @@ static void audience_menu_tech(struct audience_s *au)
                     if ((selected != -1) && (selected < i)) {
                         g->evn.newtech[ph].num = 0;
                         g->evn.newtech[pa].num = 0;
-                        game_tech_get_new(g, ph, gotf, gott, 4, pa, 0, false);
-                        game_tech_get_new(g, pa, thf[selected2][selected], tht[selected2][selected], 4, ph, 0, false); /* WASBUG last ph was pa */
+                        game_tech_get_new(g, ph, gotf, gott, TECHSOURCE_TRADE, pa, PLAYER_NONE, false);
+                        game_tech_get_new(g, pa, thf[selected2][selected], tht[selected2][selected], TECHSOURCE_TRADE, ph, PLAYER_NONE, false); /* WASBUG last ph was pa */
                         if (g->evn.newtech[ph].num != 0) {
                             if (IS_HUMAN(g, pa) && (g->evn.newtech[pa].num != 0)) {
                                 ui_audience_newtech(au, PLAYER_NONE);
@@ -1216,7 +1216,7 @@ static void game_audience_do(struct audience_s *au)
                     if ((au->dtype == 24) || (au->dtype == 25) || (au->dtype == 26) || (au->dtype == 30)) { /* FIXME 76? */
                         eh->reserve_bc += eh->offer_bc[pa];
                         if (eh->offer_tech[pa] != 0) {
-                            game_tech_get_new(g, ph, eh->offer_field[pa], eh->offer_tech[pa], 4, pa, 0, false);
+                            game_tech_get_new(g, ph, eh->offer_field[pa], eh->offer_tech[pa], TECHSOURCE_TRADE, pa, PLAYER_NONE, false);
                         }
                     }
                 } else {
@@ -1227,12 +1227,12 @@ static void game_audience_do(struct audience_s *au)
                 }
                 /*60761*/
                 if (au->dtype == 29) {
-                    game_tech_get_new(g, ph, eh->au_tech_trade_field[pa][selected], eh->au_tech_trade_tech[pa][selected], 4, pa, 0, false);
+                    game_tech_get_new(g, ph, eh->au_tech_trade_field[pa][selected], eh->au_tech_trade_tech[pa][selected], TECHSOURCE_TRADE, pa, PLAYER_NONE, false);
                 }
                 if ((au->dtype == 58) && game_num_aud_bounty_give) {    /* WASBUG MOO1 never gives the bounty */
                     eh->reserve_bc += eh->attack_gift_bc[pa];
                     if (eh->attack_gift_tech[pa] != 0) {
-                        game_tech_get_new(g, ph, eh->attack_gift_field[pa], eh->attack_gift_tech[pa], 4, pa, 0, false);
+                        game_tech_get_new(g, ph, eh->attack_gift_field[pa], eh->attack_gift_tech[pa], TECHSOURCE_TRADE, pa, PLAYER_NONE, false);
                     }
                 }
             }
