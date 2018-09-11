@@ -206,8 +206,11 @@ typedef enum {
 #define KBD_MOD_ONLY_CTRL(_k_)  (KBD_GET_MOD(_k_) == MOO_MOD_CTRL)
 #define KBD_MOD_ONLY_ALT(_k_)   ((((_k_) & (MOO_MOD_ALT | MOO_MOD_META)) != 0) && (((_k_) & (MOO_MOD_SHIFT | MOO_MOD_CTRL)) == 0))
 
+extern void kbd_clear(void);
 extern void kbd_add_keypress(mookey_t key, uint32_t mod, char c);
 extern bool kbd_have_keypress(void);
 extern uint32_t kbd_get_keypress(void);
+extern void kbd_set_pressed(mookey_t key, uint32_t mod, bool pressed);
+extern bool kbd_is_pressed(mookey_t key, uint32_t modon, uint32_t modoff);
 
 #endif
