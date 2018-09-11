@@ -64,6 +64,8 @@ ui_turn_action_t ui_game_turn(struct game_s *g, int *load_game_i_ptr, int pi)
     BOOLVEC_CLEAR(ui_data.starmap.select_prio_trans, TRANSPORT_MAX);
     while (1) {
         ui_cursor_setup_area(1, &ui_cursor_area_tbl[0]);
+        ui_data.starmap.xhold = 0;
+        ui_data.starmap.yhold = 0;
         if (g->evn.build_finished_num[pi] > 0) {
             uint8_t pli;
             for (pli = 0; pli < g->galaxy_stars; ++pli) {
