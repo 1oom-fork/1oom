@@ -105,13 +105,13 @@ static void newtech_draw_cb1(void *vptr)
         }
     }
     switch (d->nt.source) {
-        case 0:
+        case TECHSOURCE_RESEARCH:
             sprintf(buf, "%s %s %s %s", game_str_tbl_race[e->race], game_str_nt_achieve, game_str_tbl_te_field[d->nt.field], game_str_nt_break);
             break;
-        case 1:
+        case TECHSOURCE_SPY:
             sprintf(buf, "%s %s %s", game_str_tbl_race[e->race], game_str_nt_infil, g->planet[d->nt.v06].name);
             break;
-        case 2:
+        case TECHSOURCE_FOUND:
             if (d->nt.v06 == NEWTECH_V06_ORION) {
                 strcpy(buf, game_str_nt_orion);
             } else if (d->nt.v06 >= 0) {    /* WASBUG > 0 vs. scout case with planet 0 */
@@ -120,10 +120,10 @@ static void newtech_draw_cb1(void *vptr)
                 sprintf(buf, "%s %s %s", game_str_nt_scouts, g->planet[-(d->nt.v06 + 1)].name, game_str_nt_discover);
             }
             break;
-        case 3:
+        case TECHSOURCE_CHOOSE:
             strcpy(buf, game_str_nt_choose);
             break;
-        case 4:
+        case TECHSOURCE_TRADE:
             sprintf(buf, "%s %s %s %s", game_str_tbl_race[g->eto[d->nt.v06].race], game_str_nt_reveal, game_str_tbl_te_field[d->nt.field], game_str_nt_secrets);
             break;
         default:
@@ -131,7 +131,7 @@ static void newtech_draw_cb1(void *vptr)
     }
     lbxfont_select_set_12_4(5, 5, 0, 0);
     lbxfont_print_str_center(161, 7, buf, UI_SCREEN_W);
-    if (d->nt.source != 3) {
+    if (d->nt.source != TECHSOURCE_CHOOSE) {
         int strh, y;
         char *p, c;
         game_tech_get_name(d->g->gaux, d->nt.field, d->nt.tech, buf);
@@ -176,7 +176,7 @@ static void newtech_choose_next_draw_cb(void *vptr)
     char buf[RESEARCH_DESCR_LEN + 20];
     int x = 145, y = 30, yo, pos;
     uint8_t tech = d->tbl_tech[d->selected];
-    d->nt.source = 3;
+    d->nt.source = TECHSOURCE_CHOOSE;
     newtech_draw_cb1(d);
     yo = ((d->num_next > 10) ? 8 : 9) * d->num_next + 8;
     SETMAX(yo, 30);
@@ -354,9 +354,9 @@ static void ui_newtech_do(struct newtech_data_s *d)
     uint8_t tech = d->nt.tech;
     bool flag_dialog;
     if (d->cur_source != d->nt.source) {
-        if ((d->nt.source <= 2) || (d->cur_source != 0)) {
+        if ((d->nt.source <= TECHSOURCE_FOUND) || (d->cur_source != TECHSOURCE_RESEARCH)) {
             int m;
-            m = ((d->nt.source == 0) || (d->nt.source > 2)) ? d->music_i : newtech_music_tbl[d->nt.source];
+            m = ((d->nt.source == TECHSOURCE_RESEARCH) || (d->nt.source > TECHSOURCE_FOUND)) ? d->music_i : newtech_music_tbl[d->nt.source];
             ui_sound_play_music(m);
         }
         d->flag_music = true;
@@ -423,7 +423,7 @@ again:
             return;
         }
         d->nt.frame = false;
-        d->nt.source = 3;
+        d->nt.source = TECHSOURCE_CHOOSE;
         ui_newtech_choose_next(d);
     } else {
         bool flag_done;
@@ -506,7 +506,7 @@ void ui_newtech(struct game_s *g, int pi)
             d.flag_is_current = true;
         }
         ui_draw_erase_buf();
-        d.gfx_lab = lbxfile_item_get(LBXFILE_TECHNO, (d.nt.source != 4) ? d.nt.source : 0, 0);
+        d.gfx_lab = lbxfile_item_get(LBXFILE_TECHNO, (d.nt.source != TECHSOURCE_TRADE) ? d.nt.source : 0, 0);
         lbxgfx_draw_frame(0, 0, d.gfx_lab, UI_SCREEN_W);
         {
             int v;
@@ -524,7 +524,7 @@ void ui_newtech(struct game_s *g, int pi)
         hw_video_copy_back_to_page2();
         {
             int v;
-            if (d.nt.source == 4) {
+            if (d.nt.source == TECHSOURCE_TRADE) {
                 v = g->eto[d.nt.v06].race;
             } else {
                 v = d.nt.source * 10 + e->race;
@@ -550,7 +550,7 @@ void ui_newtech(struct game_s *g, int pi)
                     }
                 }
             }
-            if ((d.other2 == PLAYER_NONE) || (d.nt.source != 1)) {
+            if ((d.other2 == PLAYER_NONE) || (d.nt.source != TECHSOURCE_SPY)) {
                 d.nt.frame = false;
             }
         }
@@ -584,7 +584,7 @@ void ui_newtech(struct game_s *g, int pi)
             }
             d.nt.field = field;
             d.nt.tech = 0;
-            d.nt.source = 3;
+            d.nt.source = TECHSOURCE_CHOOSE;
             d.flag_choose_next = true;
             d.nt.frame = false;
             ui_newtech_do(&d);
