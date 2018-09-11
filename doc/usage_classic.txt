@@ -35,6 +35,7 @@ The following new UI features are always enabled/available:
 - Eco slider shows Clean/+N Pop past T-Form on a full planet
 - Bases can be scrapped by clicking on the Bases text
 - Clicking cycles selection of overlapping fleets
+- The keys UHJK scroll the galaxy movement screen map
 
 The config file item "ui.uiextra" (set via the -uiextra command-line option)
 enables the following extra UI features:
