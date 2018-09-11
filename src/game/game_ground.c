@@ -238,7 +238,7 @@ static void game_ground_finish(struct game_s *g, struct ground_s *gr)
             for (int i = 0; i < num; ++i) {
                 gr->got[i].tech = s->tbl_tech2[i];
                 gr->got[i].field = s->tbl_field[i];
-                game_tech_get_new(g, gr->s[0].player, s->tbl_field[i], s->tbl_tech2[i], 2, gr->planet_i, gr->s[1].player, false);
+                game_tech_get_new(g, gr->s[0].player, s->tbl_field[i], s->tbl_tech2[i], TECHSOURCE_FOUND, gr->planet_i, gr->s[1].player, false);
             }
             gr->techchance = num;
             game_planet_destroy(g, gr->planet_i, gr->s[0].player);
