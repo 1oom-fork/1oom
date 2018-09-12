@@ -34,19 +34,19 @@
 static void ui_starmap_draw_cb1(void *vptr)
 {
     struct starmap_data_s *d = vptr;
+    ui_starmap_draw_basic(d);
+    if (d->g->gaux->flag_cheat_events) {
+        ui_draw_text_overlay(0, 0, game_str_no_events);
+    }
+}
+
+static void ui_starmap_planet_slider_cb(void *ctx, uint8_t i, int16_t value)
+{
+    struct starmap_data_s *d = ctx;
     struct game_s *g = d->g;
     planet_t *p = &g->planet[g->planet_focus_i[d->api]];
-
-    int16_t oi2 = uiobj_get_clicked_oi();
-    for (planet_slider_i_t i = PLANET_SLIDER_SHIP; i < PLANET_SLIDER_NUM; ++i) {
-        if ((oi2 == d->sm.oi_tbl_slider[i]) && (p->slider_lock[i] == 0)) {
-            game_adjust_slider_group(p->slider, i, p->slider[i], PLANET_SLIDER_NUM, p->slider_lock);
-        }
-    }
-
-    ui_starmap_draw_basic(d);
-    if (g->gaux->flag_cheat_events) {
-        ui_draw_text_overlay(0, 0, game_str_no_events);
+    if (!p->slider_lock[i]) {
+        game_adjust_slider_group(p->slider, i, p->slider[i], PLANET_SLIDER_NUM, p->slider_lock);
     }
 }
 
@@ -74,13 +74,13 @@ static void ui_starmap_fill_oi_slider(struct starmap_data_s *d, planet_t *p)
     d->sm.oi_ship = UIOBJI_INVALID;
     d->sm.oi_reloc = UIOBJI_INVALID;
     d->sm.oi_trans = UIOBJI_INVALID;
-    UIOBJI_SET_TBL4_INVALID(d->sm.oi_tbl_slider, d->sm.oi_tbl_slider_lock, d->sm.oi_tbl_slider_minus, d->sm.oi_tbl_slider_plus);
+    UIOBJI_SET_TBL3_INVALID(d->sm.oi_tbl_slider_lock, d->sm.oi_tbl_slider_minus, d->sm.oi_tbl_slider_plus);
     if ((p->owner == d->api) && (p->unrest != PLANET_UNREST_REBELLION)) {
         for (planet_slider_i_t i = PLANET_SLIDER_SHIP; i < PLANET_SLIDER_NUM; ++i) {
             int y0;
             y0 = 81 + i * 11;
             if (!p->slider_lock[i]) {
-                d->sm.oi_tbl_slider[i] = uiobj_add_slider(253, y0 + 3, 0, 100, 25, 9, &p->slider[i], MOO_KEY_UNKNOWN);
+                uiobj_add_slider_func(253, y0 + 3, 0, 100, 25, 9, &p->slider[i], ui_starmap_planet_slider_cb, d, i);
                 d->sm.oi_tbl_slider_minus[i] = uiobj_add_mousearea(247, y0 + 1, 251, y0 + 8, MOO_KEY_UNKNOWN);
                 d->sm.oi_tbl_slider_plus[i] = uiobj_add_mousearea(280, y0 + 1, 283, y0 + 8, MOO_KEY_UNKNOWN);
             }
@@ -270,7 +270,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
         d.sm.oi_ship = UIOBJI_INVALID; \
         d.sm.oi_reloc = UIOBJI_INVALID; \
         d.sm.oi_trans = UIOBJI_INVALID; \
-        UIOBJI_SET_TBL4_INVALID(d.sm.oi_tbl_slider, d.sm.oi_tbl_slider_lock, d.sm.oi_tbl_slider_minus, d.sm.oi_tbl_slider_plus); \
+        UIOBJI_SET_TBL3_INVALID(d.sm.oi_tbl_slider_lock, d.sm.oi_tbl_slider_minus, d.sm.oi_tbl_slider_plus); \
     } while (0)
 
     UIOBJ_CLEAR_LOCAL();
@@ -448,9 +448,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             } else if (!p->slider_lock[i]) {
                 bool do_adj;
                 do_adj = false;
-                if (oi1 == d.sm.oi_tbl_slider[i]) {
-                    do_adj = true;
-                } else if (oi1 == d.sm.oi_tbl_slider_minus[i]) {
+                if (oi1 == d.sm.oi_tbl_slider_minus[i]) {
                     ui_sound_play_sfx_24();
                     int v = p->slider[i] - 4;
                     SETMAX(v, 0);
