@@ -336,28 +336,37 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
     const struct game_s *g = d->g;
     int x, y, tx, ty;
     {
-        int v;
+        int v, step;
+        step = STARMAP_SCROLLSTEP;
         v = ui_data.starmap.x2;
         x = ui_data.starmap.x;
         if (v != x) {
-            if (v < x) {
-                x -= STARMAP_SCROLLSTEP;
-                SETMAX(x, v);
+            if (step == 0) {
+                x = v;
             } else {
-                x += STARMAP_SCROLLSTEP;
-                SETMIN(x, v);
+                if (v < x) {
+                    x -= STARMAP_SCROLLSTEP;
+                    SETMAX(x, v);
+                } else {
+                    x += STARMAP_SCROLLSTEP;
+                    SETMIN(x, v);
+                }
             }
             ui_data.starmap.x = x;
         }
         v = ui_data.starmap.y2;
         y = ui_data.starmap.y;
         if (v != y) {
-            if (v < y) {
-                y -= STARMAP_SCROLLSTEP;
-                SETMAX(y, v);
+            if (step == 0) {
+                y = v;
             } else {
-                y += STARMAP_SCROLLSTEP;
-                SETMIN(y, v);
+                if (v < y) {
+                    y -= STARMAP_SCROLLSTEP;
+                    SETMAX(y, v);
+                } else {
+                    y += STARMAP_SCROLLSTEP;
+                    SETMIN(y, v);
+                }
             }
             ui_data.starmap.y = y;
         }
