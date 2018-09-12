@@ -8,6 +8,8 @@
 #include "gfxaux.h"
 #include "types.h"
 
+#define UI_SCROLL_SPEED_MAX 10
+
 #define UI_SCREEN_W 320
 #define UI_SCREEN_H 200
 
@@ -258,5 +260,6 @@ extern struct ui_data_s ui_data;
 extern bool ui_extra_enabled;
 extern bool ui_mwi_slider;
 extern bool ui_mwi_counter;
+extern int ui_sm_scroll_speed;
 
 #endif
