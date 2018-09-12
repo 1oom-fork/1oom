@@ -14,7 +14,7 @@
 #else
 #define STARMAP_DELAY 1
 #define STARMAP_ANIM_DELAY 3
-#define STARMAP_SCROLLSTEP 3
+#define STARMAP_SCROLLSTEP  ui_sm_scroll_speed
 #endif
 
 #define STARMAP_LIMITS  6, 6, 222 - 1, 178 - 1
