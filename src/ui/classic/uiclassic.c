@@ -54,6 +54,17 @@ static bool check_ui_icon(void *var)
     }
 }
 
+static bool check_ui_sm_scroll_speed(void *var)
+{
+    int v = (int)(intptr_t)var;
+    if ((v >= 0) && (v <= UI_SCROLL_SPEED_MAX)) {
+        return true;
+    } else {
+        log_error("invalid ui_sm_scroll_speed %i, must be 0 <= N <= %i\n", v, UI_SCROLL_SPEED_MAX);
+        return false;
+    }
+}
+
 const struct cfg_items_s ui_cfg_items[] = {
     CFG_ITEM_INT("uiscale", &ui_scale, check_ui_scale),
     CFG_ITEM_BOOL("uiextra", &ui_extra_enabled),
@@ -63,6 +74,8 @@ const struct cfg_items_s ui_cfg_items[] = {
     CFG_ITEM_BOOL("mwislider", &ui_mwi_slider),
     CFG_ITEM_COMMENT("Invert mouse wheel for counters"),
     CFG_ITEM_BOOL("mwicounter", &ui_mwi_counter),
+    CFG_ITEM_COMMENT("Starmap scroll speed (1..10, 0 = instant)"),
+    CFG_ITEM_INT("sm_scroll_speed", &ui_sm_scroll_speed, check_ui_sm_scroll_speed),
     CFG_ITEM_END
 };
 
@@ -76,6 +89,15 @@ static int ui_options_set_scale(char **argv, void *var)
     return -1;
 }
 
+static int ui_options_set_scroll_speed(char **argv, void *var)
+{
+    int v = atoi(argv[1]);
+    if (check_ui_sm_scroll_speed((void *)(intptr_t)v)) {
+        ui_sm_scroll_speed = v;
+        return 0;
+    }
+    return -1;
+}
 
 const struct cmdline_options_s ui_cmdline_options[] = {
     { "-uiscale", 1,
@@ -99,6 +121,9 @@ const struct cmdline_options_s ui_cmdline_options[] = {
     { "-nomwicounter", 0,
       options_disable_bool_var, (void *)&ui_mwi_counter,
       NULL, "Do not invert mouse wheel for counters" },
+    { "-uismscroll", 1,
+      ui_options_set_scroll_speed, 0,
+      "SPEED", "Starmap scroll speed (1..10, 0 = instant)" },
     { NULL, 0, NULL, NULL, NULL, NULL }
 };
 
@@ -115,6 +140,7 @@ int starmap_scale = 0;
 bool ui_extra_enabled = false;
 bool ui_mwi_slider = false;
 bool ui_mwi_counter = false;
+int ui_sm_scroll_speed = 3;
 
 bool ui_use_audio = true;
 
