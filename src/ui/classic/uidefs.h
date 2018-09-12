@@ -9,6 +9,7 @@
 #include "types.h"
 
 #define UI_SCALE_MAX    10
+#define UI_SCROLL_SPEED_MAX 10
 
 #define UI_VGA_W    320
 #define UI_VGA_H    200
@@ -268,5 +269,6 @@ extern int ui_screen_h;
 extern bool ui_extra_enabled;
 extern bool ui_mwi_slider;
 extern bool ui_mwi_counter;
+extern int ui_sm_scroll_speed;
 
 #endif
