@@ -25,6 +25,7 @@ An incorrect answer in the copy protection dialog does not delete save slot 7.
 
 The following new UI features are always enabled/available:
 - Smoother galaxy movement screen scrolling
+- Galaxy movement screen scrolling speed is adjustable (-uismscroll)
 - Random race / banner
 - Local multiplayer (use -new or -uiextra to start a game)
 - Lowercase allowed in save names
