@@ -14,7 +14,7 @@
 #else
 #define STARMAP_DELAY 1
 #define STARMAP_ANIM_DELAY 3
-#define STARMAP_SCROLLSTEP 3
+#define STARMAP_SCROLLSTEP  ui_sm_scroll_speed
 #endif
 
 #define STARMAP_LIM_INIT()  const int slx0 = (6 * ui_scale) / starmap_scale, sly0 = (6 * ui_scale) / starmap_scale, slx1 = (222 * ui_scale) / starmap_scale - 1, sly1 = (178 * ui_scale) / starmap_scale - 1
