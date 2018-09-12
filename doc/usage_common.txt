@@ -193,6 +193,7 @@ For classic game UI:
     -nomwislider         Do not invert mouse wheel for sliders
     -mwicounter          Invert mouse wheel for counters
     -nomwicounter        Do not invert mouse wheel for counters
+    -uismscroll SPEED    Starmap scroll speed (1..10, 0 = instant)
 
 3.1. -new
 ----------
