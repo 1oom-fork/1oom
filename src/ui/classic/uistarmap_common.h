@@ -69,7 +69,6 @@ struct starmap_data_s {
         int16_t oi_ship;
         int16_t oi_reloc;
         int16_t oi_trans;
-        int16_t oi_tbl_slider[PLANET_SLIDER_NUM];
         int16_t oi_tbl_slider_lock[PLANET_SLIDER_NUM];
         int16_t oi_tbl_slider_minus[PLANET_SLIDER_NUM];
         int16_t oi_tbl_slider_plus[PLANET_SLIDER_NUM];

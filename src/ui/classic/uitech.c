@@ -35,7 +35,6 @@ struct tech_data_s {
     player_id_t api;
     uint8_t *gfx;
     int8_t completed[TECH_PER_FIELD + 3];
-    int16_t oi_tbl_slider[TECH_FIELD_NUM];
     tech_field_t field;
     int num;
     int pos;
@@ -76,22 +75,24 @@ static void ui_tech_build_completed(struct tech_data_s *d)
     d->num = num;
 }
 
-static void tech_draw_cb(void *vptr)
+static void tech_slider_cb(void *ctx, uint8_t i, int16_t value)
 {
-    struct tech_data_s *d = vptr;
+    struct tech_data_s *d = ctx;
     struct game_s *g = d->g;
     empiretechorbit_t *e = &(g->eto[d->api]);
     techdata_t *t = &(e->tech);
-    int16_t oi;
-    char buf[0xe0];
-
-    game_update_total_research(g);
-    oi = uiobj_get_clicked_oi();
-    for (int i = 0; i < TECH_FIELD_NUM; ++i) {
-        if ((oi == d->oi_tbl_slider[i]) && (!t->slider_lock[i])) {
-            game_adjust_slider_group(t->slider, i, t->slider[i], TECH_FIELD_NUM, t->slider_lock);
-        }
+    if (!t->slider_lock[i]) {
+        game_adjust_slider_group(t->slider, i, t->slider[i], TECH_FIELD_NUM, t->slider_lock);
     }
+}
+
+static void tech_draw_cb(void *vptr)
+{
+    struct tech_data_s *d = vptr;
+    const struct game_s *g = d->g;
+    const empiretechorbit_t *e = &(g->eto[d->api]);
+    const techdata_t *t = &(e->tech);
+    char buf[0xe0];
 
     ui_draw_filled_rect(UI_SCREEN_LIMITS, 0x3a);
     ui_draw_filled_rect(3, 150, 275, 196, 0x5b);
@@ -259,6 +260,7 @@ void ui_tech(struct game_s *g, player_id_t active_player)
     tech_load_data(&d);
 
     game_update_production(g);
+    game_update_total_research(g);
 
 #define UIOBJ_CLEAR_LOCAL() \
     do { \
@@ -267,7 +269,7 @@ void ui_tech(struct game_s *g, player_id_t active_player)
         oi_down = UIOBJI_INVALID; \
         oi_equals = UIOBJI_INVALID; \
         oi_wheel = UIOBJI_INVALID; \
-        UIOBJI_SET_TBL5_INVALID(oi_tbl_lock, oi_tbl_plus, oi_tbl_minus, oi_tbl_field, d.oi_tbl_slider); \
+        UIOBJI_SET_TBL4_INVALID(oi_tbl_lock, oi_tbl_plus, oi_tbl_minus, oi_tbl_field); \
         UIOBJI_SET_TBL_INVALID(oi_tbl_techname); \
     } while (0)
 
@@ -328,8 +330,6 @@ void ui_tech(struct game_s *g, player_id_t active_player)
                 SETMIN(v, 100);
                 t->slider[i] = v;
                 game_adjust_slider_group(t->slider, i, v, TECH_FIELD_NUM, t->slider_lock);
-            } else if ((oi == d.oi_tbl_slider[i]) && (!t->slider_lock[i])) {
-                game_adjust_slider_group(t->slider, i, t->slider[i], TECH_FIELD_NUM, t->slider_lock);
             }
         }
         for (int i = 0; i < TECH_ON_SCREEN; ++i) {
@@ -382,7 +382,7 @@ void ui_tech(struct game_s *g, player_id_t active_player)
                 if (!t->slider_lock[i]) {
                     oi_tbl_minus[i] = uiobj_add_mousearea(223, y, 226, y + 8, MOO_KEY_UNKNOWN);
                     oi_tbl_plus[i] = uiobj_add_mousearea(279, y, 283, y + 8, MOO_KEY_UNKNOWN);
-                    d.oi_tbl_slider[i] = uiobj_add_slider(227, y, 0, 100, 50, 9, &t->slider[i], MOO_KEY_UNKNOWN);
+                    uiobj_add_slider_func(227, y, 0, 100, 50, 9, &t->slider[i], tech_slider_cb, &d, i);
                 }
             }
             for (int i = 0; i < TECH_ON_SCREEN; ++i) {

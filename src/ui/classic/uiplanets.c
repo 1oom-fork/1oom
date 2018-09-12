@@ -253,7 +253,7 @@ static void ui_planets_transfer(struct planets_data_s *d)
 {
     struct game_s *g = d->g;
     planet_t *p = &(g->planet[d->planet_i]);
-    int16_t oi_cancel, oi_accept, oi_minus, oi_plus, oi_equals /*, oi_slider*/;
+    int16_t oi_cancel, oi_accept, oi_minus, oi_plus, oi_equals;
     int prod, allreserve, v;
     const int x = 100, y = 50;
     bool flag_done = false;
@@ -282,7 +282,7 @@ static void ui_planets_transfer(struct planets_data_s *d)
     uiobj_table_clear();
     oi_cancel = uiobj_add_t0(x + 10, y + 47, "", ui_data.gfx.starmap.reloc_bu_cancel, MOO_KEY_LEFT); /* FIXME key == "\x01xb" ?? */
     oi_accept = uiobj_add_t0(x + 66, y + 47, "", ui_data.gfx.starmap.reloc_bu_accept, MOO_KEY_SPACE);
-    /*oi_slider =*/ uiobj_add_slider(x + 14, y + 35, 0, 100, 50, 9, &d->amount_trans, MOO_KEY_UNKNOWN);
+    uiobj_add_slider_int(x + 14, y + 35, 0, 100, 50, 9, &d->amount_trans);
     oi_minus = uiobj_add_mousearea(x + 10, y + 33, x + 12, y + 41, MOO_KEY_UNKNOWN);
     oi_plus = uiobj_add_mousearea(x + 66, y + 33, x + 70, y + 41, MOO_KEY_UNKNOWN);
     oi_equals = uiobj_add_inputkey(MOO_KEY_EQUALS);
@@ -331,7 +331,7 @@ void ui_planets(struct game_s *g, player_id_t active_player)
 {
     struct planets_data_s d;
     bool flag_done = false, flag_trans;
-    int16_t oi_alt_moola, oi_up, oi_down, oi_wheel, oi_ok, oi_trans, oi_minus, oi_plus, oi_tbl_planets[PLANETS_ON_SCREEN] /*, oi_slider*/;
+    int16_t oi_alt_moola, oi_up, oi_down, oi_wheel, oi_ok, oi_trans, oi_minus, oi_plus, oi_tbl_planets[PLANETS_ON_SCREEN];
     uint8_t tbl_onscreen_planets[PLANETS_ON_SCREEN];
     int16_t scroll = 0;
 
@@ -364,7 +364,6 @@ again:
     oi_trans = UIOBJI_INVALID;
     oi_minus = UIOBJI_INVALID;
     oi_plus = UIOBJI_INVALID;
-    /*oi_slider = UIOBJI_INVALID;*/
     for (int i = 0; i < PLANETS_ON_SCREEN; ++i) {
         tbl_onscreen_planets[i] = 0;
         oi_tbl_planets[i] = UIOBJI_INVALID;
@@ -449,13 +448,12 @@ again:
                 if (g->eto[active_player].reserve_bc != 0) {
                     oi_trans = uiobj_add_t0(209, 181, "", d.gfx_but_trans, MOO_KEY_t);
                 }
-                /*oi_slider =*/ uiobj_add_slider(213, 160, 0, 200, 32, 9, &g->eto[active_player].tax, MOO_KEY_UNKNOWN);
+                uiobj_add_slider_int(213, 160, 0, 200, 32, 9, &g->eto[active_player].tax);
                 oi_minus = uiobj_add_mousearea(208, 157, 211, 165, MOO_KEY_UNKNOWN);
                 oi_plus = uiobj_add_mousearea(247, 157, 251, 165, MOO_KEY_UNKNOWN);
             } else {
                 oi_minus = UIOBJI_INVALID;
                 oi_plus = UIOBJI_INVALID;
-                /*oi_slider = UIOBJI_INVALID;*/
             }
             planets_draw_cb(&d); /* FIXME not needed in original */
             ui_draw_finish();

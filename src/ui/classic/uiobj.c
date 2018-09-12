@@ -88,8 +88,11 @@ typedef struct uiobj_s {
             /*..*/ bool allow_lcase;
         } t4;
         struct {
+            /*..*/ void (*cb)(void *ctx, uint8_t slideri, int16_t value);
+            /*..*/ void *ctx;
             /*1c*/ uint16_t vmin;
             /*1e*/ uint16_t vmax;
+            /*..*/ uint8_t slideri;
         } t6;
         struct {
             /*16*/ const char *str;
@@ -434,6 +437,9 @@ static void uiobj_handle_t6_slider_input(uiobj_t *p)
     SETMAX(sliderval, p->t6.vmin);
     SETMIN(sliderval, p->t6.vmax);
     *p->vptr = sliderval;
+    if (p->t6.cb) {
+        p->t6.cb(p->t6.ctx, p->t6.slideri, sliderval);
+    }
 }
 
 static void uiobj_handle_ta_sub1(int x0, int y0, int x1, int y1, uint8_t subtype, uint8_t p0v)
@@ -1175,6 +1181,9 @@ static void uiobj_slider_plus(uiobj_t *p, int adj)
     value = newval;
     SETMIN(value, p->t6.vmax);
     *p->vptr = value;
+    if (p->t6.cb) {
+        p->t6.cb(p->t6.ctx, p->t6.slideri, value);
+    }
 }
 
 static void uiobj_slider_minus(uiobj_t *p, int adj)
@@ -1191,6 +1200,9 @@ static void uiobj_slider_minus(uiobj_t *p, int adj)
     value = newval;
     SETMAX(value, p->t6.vmin);
     *p->vptr = value;
+    if (p->t6.cb) {
+        p->t6.cb(p->t6.ctx, p->t6.slideri, value);
+    }
 }
 
 static int16_t uiobj_handle_input_sub0(void)
@@ -1729,7 +1741,7 @@ int16_t uiobj_add_textinput(int x, int y, int w, char *buf, uint16_t buflen, uin
     return UIOBJI_ALLOC();
 }
 
-int16_t uiobj_add_slider(uint16_t x0, uint16_t y0, uint16_t vmin, uint16_t vmax, uint16_t w, uint16_t h, int16_t *vptr, mookey_t key)
+int16_t uiobj_add_slider_int(uint16_t x0, uint16_t y0, uint16_t vmin, uint16_t vmax, uint16_t w, uint16_t h, int16_t *vptr)
 {
     uiobj_t *p = &uiobj_tbl[uiobj_table_num];
     p->x0 = x0;
@@ -1739,8 +1751,29 @@ int16_t uiobj_add_slider(uint16_t x0, uint16_t y0, uint16_t vmin, uint16_t vmax,
     p->t6.vmin = vmin;
     p->t6.vmax = vmax;
     p->type = UIOBJ_TYPE_SLIDER;
+    p->key = MOO_KEY_UNKNOWN;
     p->vptr = vptr;
-    p->key = key;
+    p->t6.cb = 0;
+    p->t6.ctx = 0;
+    p->t6.slideri = 0;
+    return UIOBJI_ALLOC();
+}
+
+int16_t uiobj_add_slider_func(uint16_t x0, uint16_t y0, uint16_t vmin, uint16_t vmax, uint16_t w, uint16_t h, int16_t *vptr, void (*cb)(void *ctx, uint8_t slideri, int16_t value), void *ctx, uint8_t slideri)
+{
+    uiobj_t *p = &uiobj_tbl[uiobj_table_num];
+    p->x0 = x0;
+    p->y0 = y0;
+    p->x1 = x0 + w;
+    p->y1 = y0 + h;
+    p->t6.vmin = vmin;
+    p->t6.vmax = vmax;
+    p->type = UIOBJ_TYPE_SLIDER;
+    p->key = MOO_KEY_UNKNOWN;
+    p->vptr = vptr;
+    p->t6.cb = cb;
+    p->t6.ctx = ctx;
+    p->t6.slideri = slideri;
     return UIOBJI_ALLOC();
 }
 
