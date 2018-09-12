@@ -39,9 +39,17 @@ static bool ui_opt_toggle_mwi_counter(void)
     return true;
 }
 
+static bool ui_opt_cb_scrollspd(void)
+{
+    ui_sm_scroll_speed = 3;
+    return true;
+}
+
 static const struct uiopt_s ui_uiopts[] = {
     UIOPT_ITEM_BOOL("Invert wheel slider", ui_mwi_slider, ui_opt_toggle_mwi_slider),
     UIOPT_ITEM_BOOL("Invert wheel counter", ui_mwi_counter, ui_opt_toggle_mwi_counter),
+    UIOPT_ITEM_FUNC("Scroll spd", ui_opt_cb_scrollspd),
+    UIOPT_ITEM_SLIDER_INT(ui_sm_scroll_speed, 0, UI_SCROLL_SPEED_MAX),
     UIOPT_ITEM_END
 };
 
@@ -97,6 +105,7 @@ static void gameopts_draw_cb(void *vptr)
     if (d->num_newopts) {
         const struct gameopts_new_s *o = d->newopts;
         int x = 203, y = 51;
+        int16_t oi2 = uiobj_get_clicked_oi();
         ui_draw_filled_rect(203, 50, 292, 127, 0x00, ui_scale);
         ui_draw_filled_rect(213, 35, 278, 48, 0x1e, ui_scale); /* hide "Sound" */
         lbxfont_select(0, 1, 0, 0);
@@ -129,6 +138,14 @@ static void gameopts_draw_cb(void *vptr)
                 case UIOPT_TYPE_SLIDER_INT:
                     {
                         int v;
+                        if (oi2 == o->oi) {
+                            /* update slider value in case button is released outside slider and oi1 is never set to o->oi */
+                            if (u->type == UIOPT_TYPE_SLIDER_CALL) {
+                                u->ts.set(o->value);
+                            } else {
+                                *u->ts.value_ptr = o->value;
+                            }
+                        }
                         y -= 7;
                         v = o->value;
                         if (v > 0) {
@@ -169,7 +186,7 @@ static bool gameopts_new_add(struct gameopts_data_s *d, const struct uiopt_s *u)
                 o->u = u;
                 {
                     int x1;
-                    x1 = ((u[1].type == UIOPT_TYPE_SLIDER_CALL) || (u[1].type == UIOPT_TYPE_SLIDER_INT)) ? 242 : 292;
+                    x1 = ((u[1].type == UIOPT_TYPE_SLIDER_CALL) || (u[1].type == UIOPT_TYPE_SLIDER_INT)) ? 222 : 292;
                     o->oi = uiobj_add_mousearea(203, y, x1, y + 6, MOO_KEY_UNKNOWN);
                 }
                 break;
