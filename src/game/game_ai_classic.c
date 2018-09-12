@@ -1741,8 +1741,8 @@ static void game_ai_classic_turn_p2_do(struct game_s *g, player_id_t pi)
                 tbl_year[i] = 0;
             }
         }
-        for (int i = 0; i < NUM_SHIPDESIGNS - 1; ++i) {
-            for (int j = 0; j < NUM_SHIPDESIGNS - 1; ++j) {
+        for (int j = 0; j < NUM_SHIPDESIGNS - 1; ++j) {
+            for (int i = 0; i < NUM_SHIPDESIGNS - 1; ++i) {
                 uint16_t y1, y;
                 y1 = tbl_year[i + 1];
                 y = tbl_year[i];
