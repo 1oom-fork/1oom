@@ -97,6 +97,18 @@ static void free_go_data(struct gameopts_data_s *d)
     lbxfile_item_release(LBXFILE_VORTEX, d->gfx_music);
 }
 
+static void gameopts_slider_cb(void *ctx, uint8_t slideri, int16_t value)
+{
+    struct gameopts_data_s *d = ctx;
+    const struct gameopts_new_s *o = &(d->newopts[slideri]);
+    const struct uiopt_s *u = o->u;
+    if (u->type == UIOPT_TYPE_SLIDER_CALL) {
+        u->ts.set(o->value);
+    } else {
+        *u->ts.value_ptr = o->value;
+    }
+}
+
 static void gameopts_draw_cb(void *vptr)
 {
     struct gameopts_data_s *d = vptr;
@@ -105,7 +117,6 @@ static void gameopts_draw_cb(void *vptr)
     if (d->num_newopts) {
         const struct gameopts_new_s *o = d->newopts;
         int x = 203, y = 51;
-        int16_t oi2 = uiobj_get_clicked_oi();
         ui_draw_filled_rect(203, 50, 292, 127, 0x00, ui_scale);
         ui_draw_filled_rect(213, 35, 278, 48, 0x1e, ui_scale); /* hide "Sound" */
         lbxfont_select(0, 1, 0, 0);
@@ -138,14 +149,6 @@ static void gameopts_draw_cb(void *vptr)
                 case UIOPT_TYPE_SLIDER_INT:
                     {
                         int v;
-                        if (oi2 == o->oi) {
-                            /* update slider value in case button is released outside slider and oi1 is never set to o->oi */
-                            if (u->type == UIOPT_TYPE_SLIDER_CALL) {
-                                u->ts.set(o->value);
-                            } else {
-                                *u->ts.value_ptr = o->value;
-                            }
-                        }
                         y -= 7;
                         v = o->value;
                         if (v > 0) {
@@ -198,7 +201,7 @@ static bool gameopts_new_add(struct gameopts_data_s *d, const struct uiopt_s *u)
                 y -= 7;
                 o->u = u;
                 o->value = *u->ts.value_ptr;
-                o->oi = uiobj_add_slider(247, y, u->ts.vmin, u->ts.vmax, 40, 5, &o->value, MOO_KEY_UNKNOWN);
+                o->oi = uiobj_add_slider_func(247, y, u->ts.vmin, u->ts.vmax, 40, 5, &o->value, gameopts_slider_cb, d, num);
                 ++num;
                 ++o;
                 o->u = u;
