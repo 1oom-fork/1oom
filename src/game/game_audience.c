@@ -970,6 +970,7 @@ static void audience_menu_tribute(struct audience_s *au)
                 if (IS_AI(g, pa)) {
                     game_ai->aud_tribute_tech(au, selected, s->tbl_field[selected], s->tbl_tech2[selected]);
                 } else {
+                    game_tech_finish_new(au->g, pa);
                     ui_audience_newtech(au, pa);
                 }
                 eh->tribute_field[pa] = s->tbl_field[selected];
@@ -1075,11 +1076,15 @@ static void audience_menu_tech(struct audience_s *au)
                         game_tech_get_new(g, pa, thf[selected2][selected], tht[selected2][selected], TECHSOURCE_TRADE, ph, PLAYER_NONE, false); /* WASBUG last ph was pa */
                         if (g->evn.newtech[ph].num != 0) {
                             if (IS_HUMAN(g, pa) && (g->evn.newtech[pa].num != 0)) {
+                                game_tech_finish_new(au->g, pa);
+                                game_tech_finish_new(au->g, ph);
                                 ui_audience_newtech(au, PLAYER_NONE);
                             } else {
+                                game_tech_finish_new(au->g, ph);
                                 ui_audience_newtech(au, ph);
                             }
                         } else if (IS_HUMAN(g, pa) && (g->evn.newtech[pa].num != 0)) {
+                            game_tech_finish_new(au->g, pa);
                             ui_audience_newtech(au, pa);
                         }
                     }
