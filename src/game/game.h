@@ -174,13 +174,21 @@ typedef struct newtech_s {
     int8_t v06;    /* 4: race_t giver  2: NEWTECH_V06_ORION or planet_i ruins or -(planet_i+1) artifact */
     player_id_t stolen_from;
     bool frame;
+    player_id_t other1;
+    player_id_t other2;
 } newtech_t;
+
+typedef struct nexttech_s {
+    uint8_t num;
+    uint8_t tech[TECH_NEXT_MAX];
+} nexttech_t;
 
 #define NEWTECH_V06_ORION   PLANETS_MAX
 
 typedef struct newtechs_s {
     uint8_t num;
     newtech_t d[NEWTECH_MAX];
+    nexttech_t next[TECH_FIELD_NUM];
 } newtechs_t;
 
 #define GAME_EVENT_TBL_NUM  20
