@@ -54,8 +54,6 @@ struct newtech_data_s {
     bool flag_music;
     bool flag_is_current;
     bool flag_choose_next;
-    player_id_t other1;
-    player_id_t other2;
     uint8_t tech_next[TECH_NEXT_MAX];
     int num_next;
     int16_t selected;
@@ -136,12 +134,12 @@ static void newtech_draw_cb1(void *vptr)
         ui_draw_filled_rect(37, 68, 196, 91, 0x04);
         lbxgfx_draw_frame(31, 62, d->gfx_framing, UI_SCREEN_W);
         ui_draw_filled_rect(50, 106, 110, 120, 0x00);
-        ui_draw_filled_rect(51, 107, 109, 119, tbl_banner_color2[g->eto[d->other1].banner]);
+        ui_draw_filled_rect(51, 107, 109, 119, tbl_banner_color2[g->eto[d->nt.other1].banner]);
         ui_draw_filled_rect(122, 106, 183, 120, 0x00);
-        ui_draw_filled_rect(123, 107, 182, 119, tbl_banner_color2[g->eto[d->other2].banner]);
+        ui_draw_filled_rect(123, 107, 182, 119, tbl_banner_color2[g->eto[d->nt.other2].banner]);
         lbxfont_select(5, 6, 0, 0);
-        lbxfont_print_str_center(80, 110, game_str_tbl_races[g->eto[d->other1].race], UI_SCREEN_W);
-        lbxfont_print_str_center(152, 110, game_str_tbl_races[g->eto[d->other2].race], UI_SCREEN_W);
+        lbxfont_print_str_center(80, 110, game_str_tbl_races[g->eto[d->nt.other1].race], UI_SCREEN_W);
+        lbxfont_print_str_center(152, 110, game_str_tbl_races[g->eto[d->nt.other2].race], UI_SCREEN_W);
         lbxfont_select(5, 0, 0, 0);
         lbxfont_set_gap_h(2);
         lbxfont_print_str_split(40, 70, 154, game_str_nt_frame, 3, UI_SCREEN_W, UI_SCREEN_H);
@@ -390,10 +388,12 @@ static void ui_newtech_do(struct newtech_data_s *d)
     d->flag_fadeout = false;
 again:
     if (d->flag_choose_next) {
-        d->num_next = game_tech_get_next_techs(g, d->api, d->nt.field, d->tech_next);
+        nexttech_t *xt = &(g->evn.newtech[d->api].next[d->nt.field]);
+        d->num_next = xt->num;
         if (d->num_next == 0) {
             return;
         }
+        memcpy(d->tech_next, xt->tech, d->num_next);
         d->nt.frame = false;
         d->nt.source = TECHSOURCE_CHOOSE;
         ui_newtech_choose_next(d);
@@ -422,7 +422,7 @@ again:
             if ((oi == oi_o1) || (oi == oi_o2)) {
                 flag_done = true;
                 ui_sound_play_sfx_24();
-                game_diplo_esp_frame(g, (oi == oi_o1) ? d->other1 : d->other2, d->nt.stolen_from);
+                game_diplo_esp_frame(g, (oi == oi_o1) ? d->nt.other1 : d->nt.other2, d->nt.stolen_from);
             }
             newtech_draw_cb1(d);
             ui_draw_finish();
@@ -505,25 +505,6 @@ void ui_newtech(struct game_s *g, int pi)
             d.gfx_spies = lbxfile_item_get(LBXFILE_SPIES, v);
         }
         d.music_i = newtech_music_tbl[d.nt.source];
-        /* FIXME move below to game/ */
-        if (d.nt.frame) {
-            const empiretechorbit_t *et;
-            et = &(g->eto[d.nt.stolen_from]);
-            d.other1 = PLAYER_NONE;
-            d.other2 = PLAYER_NONE;
-            for (int i = 0; (i < g->players) && (d.other2 == PLAYER_NONE); ++i) {
-                if ((i != pi) && BOOLVEC_IS1(et->contact, i)) {
-                    if (d.other1 == PLAYER_NONE) {
-                        d.other1 = i;
-                    } else {
-                        d.other2 = i;
-                    }
-                }
-            }
-            if ((d.other2 == PLAYER_NONE) || (d.nt.source != TECHSOURCE_SPY)) {
-                d.nt.frame = false;
-            }
-        }
         ui_newtech_do(&d);
         lbxfile_item_release(LBXFILE_TECHNO, d.gfx_lab);
         lbxfile_item_release(LBXFILE_TECHNO, d.gfx_tech);

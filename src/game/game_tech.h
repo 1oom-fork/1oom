@@ -4,8 +4,6 @@
 #include "game_types.h"
 #include "types.h"
 
-#define TECH_NEXT_MAX   12
-
 struct game_s;
 struct game_aux_s;
 struct newtech_s;
@@ -30,8 +28,8 @@ extern int game_tech_current_research_percent1(const struct game_s *g, player_id
 extern int game_tech_current_research_percent2(const struct game_s *g, player_id_t player_i, tech_field_t field);
 extern bool game_tech_current_research_has_max_bonus(const struct game_s *g, player_id_t player_i, tech_field_t field);
 extern void game_tech_get_new(struct game_s *g, player_id_t player, tech_field_t field, uint8_t tech, techsource_t source, int a8, player_id_t stolen_from, bool flag_frame);
+extern void game_tech_finish_new(struct game_s *g, player_id_t player);
 extern bool game_tech_can_choose(const struct game_s *g, player_id_t player, tech_field_t field);
-extern int game_tech_get_next_techs(const struct game_s *g, player_id_t player, tech_field_t field, uint8_t *tbl);
 extern uint32_t game_tech_get_next_rp(const struct game_s *g, player_id_t player, tech_field_t field, uint8_t tech);
 extern void game_tech_start_next(struct game_s *g, player_id_t player, tech_field_t field, uint8_t tech);
 extern int game_tech_get_field_percent(const struct game_s *g, player_id_t player, tech_field_t field);

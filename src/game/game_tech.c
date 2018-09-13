@@ -126,15 +126,98 @@ static void game_tech_add_newtech(struct game_s *g, player_id_t player, tech_fie
         nt->source = source;
         nt->v06 = a8;
         nt->stolen_from = stolen_from;
+        nt->other1 = PLAYER_NONE;
+        nt->other2 = PLAYER_NONE;
+        if (source != TECHSOURCE_SPY) {
+            frame = false;
+        }
+        if (frame) {
+            const empiretechorbit_t *et;
+            et = &(g->eto[stolen_from]);
+            for (player_id_t i = 0; (i < g->players) && (nt->other2 == PLAYER_NONE); ++i) {
+                if ((i != player) && BOOLVEC_IS1(et->contact, i)) {
+                    if (nt->other1 == PLAYER_NONE) {
+                        nt->other1 = i;
+                    } else {
+                        nt->other2 = i;
+                    }
+                }
+            }
+            if (nt->other2 == PLAYER_NONE) {
+                nt->other1 = PLAYER_NONE;
+                frame = false;
+            }
+        }
         nt->frame = frame;
         nts->num = num + 1;
     }
 }
 
+static uint8_t game_tech_get_next_techs(const struct game_s *g, player_id_t player, tech_field_t field, uint8_t *tbl)
+{
+    const uint8_t *rc = g->srd[player].researchcompleted[field];
+    int num, maxtier, len = g->eto[player].tech.completed[field];
+    const uint8_t (*rl)[3] = g->srd[player].researchlist[field];
+    uint8_t tmax = 0;
+    for (int i = 0; i < len; ++i) {
+        uint8_t t;
+        t = rc[i];
+        SETMAX(tmax, t);
+    }
+    if (len == 1) {
+        maxtier = 1;
+    } else {
+        maxtier = (tmax - 1) / 5 + 2;
+        SETMIN(maxtier, 10);
+    }
+    num = 0;
+    for (int tier = 0; tier < maxtier; ++tier) {
+        for (int l = 0; l < 3; ++l) {
+            uint8_t t;
+            t = rl[tier][l];
+            if (t != 0) {
+                bool have;
+                have = false;
+                for (int i = 0; i < len; ++i) {
+                    if (rc[i] == t) {
+                        have = true;
+                        break;
+                    }
+                }
+                if ((!have) && (num < TECH_NEXT_MAX)) {
+                    tbl[num++] = t;
+                }
+            }
+        }
+    }
+    if (num == 0) {
+        if (tmax <= 50) {
+            tmax = 55;
+        } else {
+            tmax += 5;
+            SETMIN(tmax, 100);
+        }
+        for (uint8_t t = 55; t <= tmax; t += 5) {
+            bool have;
+            have = false;
+            for (int i = len - 1; i >= 0; --i) {
+                if (rc[i] == t) {
+                    have = true;
+                    break;
+                }
+            }
+            if ((!have) && (num < TECH_NEXT_MAX)) {
+                tbl[num++] = t;
+            }
+        }
+    }
+    return num;
+}
+
 static void game_tech_ai_tech_next(struct game_s *g, player_id_t player, tech_field_t field)
 {
     uint8_t tbl[TECH_NEXT_MAX];
-    int num = game_tech_get_next_techs(g, player, field, tbl);
+    uint8_t num = game_tech_get_next_techs(g, player, field, tbl);
     if (num != 0) {
         uint8_t tech = game_ai->tech_next(g, player, field, tbl, num);
         game_tech_start_next(g, player, field, tech);
@@ -687,79 +770,34 @@ void game_tech_get_new(struct game_s *g, player_id_t player, tech_field_t field,
     }
 }
 
-bool game_tech_can_choose(const struct game_s *g, player_id_t player, tech_field_t field)
+void game_tech_finish_new(struct game_s *g, player_id_t pi)
 {
-    const empiretechorbit_t *e = &(g->eto[player]);
-    uint8_t dummy[TECH_NEXT_MAX];
-    if ((e->tech.investment[field] == 0) || (e->tech.project[field] != 0)) {
-        return false;
+    empiretechorbit_t *e = &(g->eto[pi]);
+    BOOLVEC_DECLARE(can_choose, TECH_FIELD_NUM);
+    BOOLVEC_CLEAR(can_choose, TECH_FIELD_NUM);
+    for (int i = 0; i < g->evn.newtech[pi].num; ++i) {
+        newtech_t *nt = &(g->evn.newtech[pi].d[i]);
+        if (e->tech.project[nt->field] == nt->tech) {
+            BOOLVEC_SET1(can_choose, nt->field);
+        }
     }
-    if (e->tech.percent[field] < 99) {
-        return true;
+    for (tech_field_t field = 0; field < TECH_FIELD_NUM; ++field) {
+        nexttech_t *xt = &(g->evn.newtech[pi].next[field]);
+        if ((e->tech.project[field] == 0) && (e->tech.investment[field] > 0)) {
+            BOOLVEC_SET1(can_choose, field);
+        }
+        memset(xt->tech, 0, sizeof(xt->tech));
+        if (BOOLVEC_IS1(can_choose, field)) {
+            xt->num = game_tech_get_next_techs(g, pi, field, xt->tech);
+        } else {
+            xt->num = 0;
+        }
     }
-    /* WASBUG? MOO1 stops giving tech to research when reaching level 99 */
-    return (game_tech_get_next_techs(g, player, field, dummy) != 0);
 }
 
-int game_tech_get_next_techs(const struct game_s *g, player_id_t player, tech_field_t field, uint8_t *tbl)
+bool game_tech_can_choose(const struct game_s *g, player_id_t player, tech_field_t field)
 {
-    const uint8_t *rc = g->srd[player].researchcompleted[field];
-    int num, maxtier, len = g->eto[player].tech.completed[field];
-    const uint8_t (*rl)[3] = g->srd[player].researchlist[field];
-    uint8_t tmax = 0;
-    for (int i = 0; i < len; ++i) {
-        uint8_t t;
-        t = rc[i];
-        SETMAX(tmax, t);
-    }
-    if (len == 1) {
-        maxtier = 1;
-    } else {
-        maxtier = (tmax - 1) / 5 + 2;
-        SETMIN(maxtier, 10);
-    }
-    num = 0;
-    for (int tier = 0; tier < maxtier; ++tier) {
-        for (int l = 0; l < 3; ++l) {
-            uint8_t t;
-            t = rl[tier][l];
-            if (t != 0) {
-                bool have;
-                have = false;
-                for (int i = 0; i < len; ++i) {
-                    if (rc[i] == t) {
-                        have = true;
-                        break;
-                    }
-                }
-                if ((!have) && (num < TECH_NEXT_MAX)) {
-                    tbl[num++] = t;
-                }
-            }
-        }
-    }
-    if (num == 0) {
-        if (tmax <= 50) {
-            tmax = 55;
-        } else {
-            tmax += 5;
-            SETMIN(tmax, 100);
-        }
-        for (uint8_t t = 55; t <= tmax; t += 5) {
-            bool have;
-            have = false;
-            for (int i = len - 1; i >= 0; --i) {
-                if (rc[i] == t) {
-                    have = true;
-                    break;
-                }
-            }
-            if ((!have) && (num < TECH_NEXT_MAX)) {
-                tbl[num++] = t;
-            }
-        }
-    }
-    return num;
+    return (g->evn.newtech[player].next[field].num != 0);
 }
 
 uint32_t game_tech_get_next_rp(const struct game_s *g, player_id_t player, tech_field_t field, uint8_t tech)
@@ -786,6 +824,7 @@ void game_tech_start_next(struct game_s *g, player_id_t player, tech_field_t fie
     }
     td->project[field] = tech;
     td->cost[field] = game_tech_get_next_rp(g, player, field, tech);
+    g->evn.newtech[player].next[field].num = 0;
 }
 
 int game_tech_get_field_percent(const struct game_s *g, player_id_t player, tech_field_t field)
