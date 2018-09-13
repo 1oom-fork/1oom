@@ -597,6 +597,7 @@ void game_spy_esp_human(struct game_s *g, struct spy_turn_s *st)
                         if (!framed) {
                             game_diplo_act(g, -g->evn.spied_spy[target][spy], spy, target, 4, 0, field);
                         }
+                        game_tech_finish_new(g, spy);
                         ui_newtech(g, spy);
                         g->evn.newtech[spy].num = 0;
                     }
