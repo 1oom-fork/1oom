@@ -1541,6 +1541,7 @@ static void game_turn_audiences(struct game_s *g)
                 e->diplo_type[pa] = 0;
             }
         }
+        game_tech_finish_new(g, ph);
         ui_newtech(g, ph);
     }
 }
@@ -1708,6 +1709,7 @@ static void game_turn_update_final_war(struct game_s *g)
     game_tech_final_war_share(g);
     for (player_id_t i = 0; i < g->players; ++i) {
         if (IS_HUMAN(g, i)) {
+            game_tech_finish_new(g, i);
             ui_newtech(g, i);
         }
     }
@@ -1803,6 +1805,7 @@ struct game_end_s game_turn_process(struct game_s *g, bool fix_old_save_rng)
     game_tech_research(g);
     for (int i = 0; i < g->players; ++i) {
         if (IS_HUMAN(g, i)) {
+            game_tech_finish_new(g, i);
             ui_newtech(g, i);
         }
     }
@@ -1839,6 +1842,7 @@ struct game_end_s game_turn_process(struct game_s *g, bool fix_old_save_rng)
     }
     for (int i = 0; i < g->players; ++i) {
         if (IS_HUMAN(g, i)) {
+            game_tech_finish_new(g, i);
             ui_newtech(g, i);
         }
         g->evn.newtech[i].num = 0;
