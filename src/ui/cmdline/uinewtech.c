@@ -24,8 +24,6 @@ struct newtech_data_s {
     uint8_t dialog_type;
     bool flag_is_current;
     bool flag_choose_next;
-    player_id_t other1;
-    player_id_t other2;
     uint8_t tech_next[TECH_NEXT_MAX];
     int num_next;
 };
@@ -193,10 +191,12 @@ static void ui_newtech_do(struct newtech_data_s *d)
     ui_newtech_print1(d);
 again:
     if (d->flag_choose_next) {
-        d->num_next = game_tech_get_next_techs(g, d->api, d->nt.field, d->tech_next);
+        nexttech_t *xt = &(g->evn.newtech[d->api].next[d->nt.field]);
+        d->num_next = xt->num;
         if (d->num_next == 0) {
             return;
         }
+        memcpy(d->tech_next, xt->tech, d->num_next);
         d->nt.frame = false;
         d->nt.source = TECHSOURCE_CHOOSE;
         ui_newtech_choose_next(d);
@@ -209,10 +209,10 @@ again:
                 { 0, NULL, NULL, NULL }
             };
             int frame;
-            rl_in[0].value = d->other1;
-            rl_in[0].display = game_str_tbl_races[g->eto[d->other1].race];
-            rl_in[1].value = d->other2;
-            rl_in[1].display = game_str_tbl_races[g->eto[d->other2].race];
+            rl_in[0].value = d->nt.other1;
+            rl_in[0].display = game_str_tbl_races[g->eto[d->nt.other1].race];
+            rl_in[1].value = d->nt.other2;
+            rl_in[1].display = game_str_tbl_races[g->eto[d->nt.other2].race];
             puts(game_str_nt_frame);
             frame = ui_input_list(game_str_nt_victim, "> ", rl_in);
             if (frame >= 0) {
@@ -251,25 +251,6 @@ void ui_newtech(struct game_s *g, int pi)
         d.flag_choose_next = false;
         if (g->eto[pi].tech.project[d.nt.field] == d.nt.tech) {
             d.flag_is_current = true;
-        }
-        /* FIXME move below to game/ */
-        if (d.nt.frame) {
-            const empiretechorbit_t *et;
-            et = &(g->eto[d.nt.stolen_from]);
-            d.other1 = PLAYER_NONE;
-            d.other2 = PLAYER_NONE;
-            for (int i = 0; (i < g->players) && (d.other2 == PLAYER_NONE); ++i) {
-                if ((i != pi) && BOOLVEC_IS1(et->contact, i)) {
-                    if (d.other1 == PLAYER_NONE) {
-                        d.other1 = i;
-                    } else {
-                        d.other2 = i;
-                    }
-                }
-            }
-            if ((d.other2 == PLAYER_NONE) || (d.nt.source != TECHSOURCE_SPY)) {
-                d.nt.frame = false;
-            }
         }
         ui_newtech_do(&d);
     }
