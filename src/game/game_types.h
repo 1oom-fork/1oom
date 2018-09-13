@@ -161,6 +161,7 @@ typedef uint32_t shipsum_t;
 #define BUILDSHIP_STARGATE NUM_SHIPDESIGNS
 
 #define TECH_SPY_MAX    6
+#define TECH_NEXT_MAX   12
 
 #define FLEET_ENROUTE_AI_MAX    208
 #define FLEET_ENROUTE_MAX   260
