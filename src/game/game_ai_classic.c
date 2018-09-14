@@ -1382,9 +1382,7 @@ static void game_ai_classic_design_ship_base(struct game_s *g, struct ai_turn_p2
         const int tbl_chance[SHIP_HULL_NUM] = { 1, 2, 4, 8 };
         int v;
         v = game_design_build_tbl_fit_armor(g, &ait->gd, tbl_have);
-        if ((rnd_1_n(100, &g->seed) > tbl_chance[hull]) && ((v & 1) == 1)) {
-            /* NOP */
-        } else {
+        if (rnd_1_n(100, &g->seed) > tbl_chance[hull]) {
             v &= ~1;
         }
         sd->armor = v;
