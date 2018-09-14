@@ -2111,25 +2111,22 @@ static bool game_ai_classic_battle_ai_ai_resolve_do(struct battle_s *bt)
     SETMAX(wl2, 0);
     SETMAX(wr2, 0);
     r_won = wr2 > 0;
-    if (bt->s[SIDE_L].party < PLAYER_NUM) {
-        if (wl == 0) {
-            for (int i = 0; i < NUM_SHIPDESIGNS; ++i) {
-                bt->s[SIDE_L].tbl_ships[i] = 0;
-            }
-        } else {
-            for (int i = 0; i < NUM_SHIPDESIGNS; ++i) {
-                bt->s[SIDE_L].tbl_ships[i] = (bt->s[SIDE_L].tbl_ships[i] * wl2) / wl;
-            }
-        }
-    }
-    if (bt->s[SIDE_R].party < PLAYER_NUM) {
-        if (wr == 0) {
-            for (int i = 0; i < NUM_SHIPDESIGNS; ++i) {
-                bt->s[SIDE_R].tbl_ships[i] = 0;
-            }
-        } else {
-            for (int i = 0; i < NUM_SHIPDESIGNS; ++i) {
-                bt->s[SIDE_R].tbl_ships[i] = (bt->s[SIDE_R].tbl_ships[i] * wr2) / wr;
+    for (battle_side_i_t s = SIDE_L; s <= SIDE_R; ++s) {
+        if (bt->s[s].party < PLAYER_NUM) {
+            int ws2, ws;
+            ws2 = (s == SIDE_L) ? wl2 : wr2;
+            ws = (s == SIDE_L) ? wl : wr;
+            if (ws == 0) {
+                for (int i = 0; i < NUM_SHIPDESIGNS; ++i) {
+                    bt->s[s].tbl_ships[i] = 0;
+                }
+            } else {
+                for (int i = 0; i < NUM_SHIPDESIGNS; ++i) {
+                    /* WASBUG MOO1 uses 32bit math which results in negative overflows with large ws2,
+                       giving negative ship counts which get limited to 32000 later.
+                    */
+                    bt->s[s].tbl_ships[i] = (((uint64_t)bt->s[s].tbl_ships[i]) * ws2) / ws;
+                }
             }
         }
     }
