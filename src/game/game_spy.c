@@ -224,6 +224,7 @@ static void game_spy_espionage(struct game_s *g, player_id_t spy, player_id_t ta
         game_spy_esp_sub5(s, rmax);
         SETMIN(spied, s->tnum);
         if (s->tnum > 0) {
+            g->evn.stolen_spy[target][spy] = flag_any_caught ? spy : PLAYER_NONE;
             if (IS_HUMAN(g, spy)) {
                 /*81fd3*/
                 int v = 0;
@@ -240,7 +241,6 @@ static void game_spy_espionage(struct game_s *g, player_id_t spy, player_id_t ta
                 /*81f35*/
                 g->evn.stolen_field[target][spy] = s->tbl_field[0];
                 g->evn.stolen_tech[target][spy] = s->tbl_tech2[0];
-                g->evn.stolen_spy[target][spy] = flag_any_caught ? spy : PLAYER_NONE;
                 if (flag_frame) {
                     g->evn.stolen_spy[target][spy] = game_spy_frame_random(g, spy, target);
                 }
@@ -285,6 +285,7 @@ static void game_spy_sabotage(struct game_s *g, player_id_t spy, player_id_t tar
     pl = game_planet_get_random(g, target); /* WASBUG? used a function that returned 0 on no planets */
     if ((v8 > 0) && (pl != PLANET_NONE)) {
         planet_t *p = &(g->planet[pl]);
+        g->evn.sabotage_spy[target][spy] = rcaught ? spy : PLAYER_NONE;
         if (IS_HUMAN(g, spy)) {
             /*82431*/
             g->evn.sabotage_num[target][spy] = v8;
@@ -315,7 +316,6 @@ static void game_spy_sabotage(struct game_s *g, player_id_t spy, player_id_t tar
                     g->evn.sabotage_is_bases[target][spy] = flag_bases;
                     g->evn.sabotage_planet[target][spy] = pl;
                     g->evn.sabotage_num[target][spy] = v8;
-                    g->evn.sabotage_spy[target][spy] = rcaught ? spy : PLAYER_NONE;
                     if (flag_frame) {
                         g->evn.sabotage_spy[target][spy] = game_spy_frame_random(g, spy, target);
                     }
@@ -594,6 +594,8 @@ void game_spy_esp_human(struct game_s *g, struct spy_turn_s *st)
                         uint8_t planet;
                         planet = game_planet_get_random(g, target);
                         framed = (g->evn.spied_spy[target][spy] == -1);
+                        g->evn.stolen_field[target][spy] = field;
+                        g->evn.stolen_tech[target][spy] = tbl_tech[field];
                         game_tech_get_new(g, spy, field, tbl_tech[field], TECHSOURCE_SPY, planet, target, framed);
                         if (!framed) {
                             game_diplo_act(g, -g->evn.spied_spy[target][spy], spy, target, 4, 0, field);
@@ -607,15 +609,34 @@ void game_spy_esp_human(struct game_s *g, struct spy_turn_s *st)
         }
     }
     for (player_id_t player = PLAYER_0; player < g->players; ++player) {
+        uint16_t tbl[PLAYER_NUM];
+        int n;
         if (IS_AI(g, player)) {
             continue;
         }
+        n = 0;
         for (player_id_t spy = PLAYER_0; spy < g->players; ++spy) {
             uint8_t tech;
             tech = g->evn.stolen_tech[player][spy];
             if ((spy != player) && (tech != 0)) {
-                ui_spy_stolen(g, player, spy, g->evn.stolen_field[player][spy], tech);
+                tbl[n++] = ((((uint16_t)g->evn.stolen_spy[player][spy])) << 12) | ((((uint16_t)g->evn.stolen_field[player][spy])) << 8) | tech;
             }
+        }
+        for (int loops = 0; loops < n; ++loops) {
+            for (int i = 0; i < n - 1; ++i) {
+                uint16_t v0, v1;
+                v0 = tbl[i];
+                v1 = tbl[i + 1];
+                if (v0 > v1) {
+                    tbl[i + 1] = v0;
+                    tbl[i] = v1;
+                }
+            }
+        }
+        for (int i = 0; i < n; ++i) {
+            uint16_t v;
+            v = tbl[i];
+            ui_spy_stolen(g, player, (v >> 12) & 7, (v >> 8) & 7, v & 0xff);
         }
     }
 }
