@@ -342,6 +342,7 @@ extern const char *game_str_es_youresp2;
 extern const char *game_str_es_youresp3;
 extern const char *game_str_es_thesp1;
 extern const char *game_str_es_thesp2;
+extern const char *game_str_es_unkn;
 extern const char *game_str_sb_choose;
 extern const char *game_str_sb_lastrep;
 extern const char *game_str_sb_pop;

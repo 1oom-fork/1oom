@@ -68,9 +68,13 @@ int ui_spy_steal(struct game_s *g, int spy, int target, uint8_t flags_field)
 
 void ui_spy_stolen(struct game_s *g, int pi, int spy, int field, uint8_t tech)
 {
-    const empiretechorbit_t *e = &(g->eto[spy]);
-    const char *s = game_str_tbl_race[e->race];
+    const char *s;
     char buf[0x80];
+    if (spy != PLAYER_NONE) {
+        s = game_str_tbl_race[g->eto[spy].race];
+    } else {
+        s = game_str_es_unkn;
+    }
     ui_switch_1(g, pi);
     printf("%s %s | %s %s %s\n", s, game_str_es_thesp1, s, game_str_es_thesp2, game_tech_get_name(g->gaux, field, tech, buf));
     ui_switch_wait(g);

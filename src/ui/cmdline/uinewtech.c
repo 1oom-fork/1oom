@@ -216,6 +216,7 @@ again:
             puts(game_str_nt_frame);
             frame = ui_input_list(game_str_nt_victim, "> ", rl_in);
             if (frame >= 0) {
+                g->evn.stolen_spy[d->nt.stolen_from][d->api] = frame;
                 game_diplo_esp_frame(g, frame, d->nt.stolen_from);
             }
         }
