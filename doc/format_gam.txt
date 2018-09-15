@@ -144,8 +144,8 @@ c       2*6 ship counts for 6 ship types
 
 empire data (0xdd4)
 offset  sz  description
-0       2   race
-2       2   banner
+0       2   race (0=human, 1=mrrshan, 2=silicoid, 3=sakkra, 4=psilon, 5=alkari, 6=klackon, 7=bulrathi, 8=meklar, 9=darlok)
+2       2   banner (0=blue, 1=green, 2=purple, 3=red, 4=white, 5=yellow)
 4       2   trait1 (0..5)
 6       2   trait2 (0..5)
 8       2   AI turn p3 countdown (0..6)
