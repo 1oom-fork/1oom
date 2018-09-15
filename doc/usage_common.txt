@@ -330,7 +330,7 @@ The governor works as follows:
 The governor adjusts the sliders only at the following times:
 - When enabling the governor by clicking the planet name.
 - When readjusting all planets via the governor screen.
-- After a turn, just before any "Planetary speding ratios may ..." messages.
+- After a turn, just before any "Planetary spending ratios may ..." messages.
 
 These rules have some implications:
 - The governor can be overridden by adjusting the sliders manually; the
