@@ -524,6 +524,7 @@ const char *game_str_es_youresp2 = "BASE";
 const char *game_str_es_youresp3 = "CHOOSE THE TYPE OF TECHNOLOGY TO STEAL";
 const char *game_str_es_thesp1 = "Espionage";
 const char *game_str_es_thesp2 = "spies steal the plans for:";
+const char *game_str_es_unkn = "Unknown";
 
 const char *game_str_sb_choose = "Choose target for sabotage";
 const char *game_str_sb_lastrep = "Last Report:";
