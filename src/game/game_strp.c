@@ -356,6 +356,7 @@ static const struct strtbl_s {
     DEFSTRITEM(es_youresp3),
     DEFSTRITEM(es_thesp1),
     DEFSTRITEM(es_thesp2),
+    DEFSTRITEM(es_unkn),
     DEFSTRITEM(sb_choose),
     DEFSTRITEM(sb_lastrep),
     DEFSTRITEM(sb_pop),
