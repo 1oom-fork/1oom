@@ -422,9 +422,11 @@ again:
                 flag_done = true;
             }
             if ((oi == oi_o1) || (oi == oi_o2)) {
+                player_id_t framed = (oi == oi_o1) ? d->nt.other1 : d->nt.other2;
                 flag_done = true;
                 ui_sound_play_sfx_24();
-                game_diplo_esp_frame(g, (oi == oi_o1) ? d->nt.other1 : d->nt.other2, d->nt.stolen_from);
+                g->evn.stolen_spy[d->nt.stolen_from][d->api] = framed;
+                game_diplo_esp_frame(g, framed, d->nt.stolen_from);
             }
             newtech_draw_cb1(d);
             ui_draw_finish();
