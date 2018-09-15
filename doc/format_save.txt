@@ -153,8 +153,8 @@ sz      description
 @PLAYERS * Empire/tech/orbit data (N = @PLAYERS)
 
 sz      description
-1       race
-1       banner
+1       race (0=human, 1=mrrshan, 2=silicoid, 3=sakkra, 4=psilon, 5=alkari, 6=klackon, 7=bulrathi, 8=meklar, 9=darlok)
+1       banner (0=blue, 1=green, 2=purple, 3=red, 4=white, 5=yellow)
 1       trait1 (0..5)
 1       trait2 (0..5)
 1       AI turn p3 countdown (0..6)
