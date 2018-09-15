@@ -14,6 +14,7 @@ Much of this file is based on the readme from the unofficial v1.40m patch.
 - fixed weird behaviour when space monsters attack colonized Orion
 - fixed AI-AI tech trades where the tech was not owned by either party
 - all Advanced Technology are available for research
+- espionage messages can show the framed or unknown race instead of always leaking the actual spy
 
 - ETA calculations take nebulas into account correctly
 - annoying bug / cheat when a fleet with bioweapons automatically bombed an enemy planet while orbiting is gone for good
