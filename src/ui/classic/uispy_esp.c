@@ -114,17 +114,26 @@ static void stolen_draw_cb(void *vptr)
 {
     struct stolen_data_s *d = vptr;
     const struct game_s *g = d->g;
-    const empiretechorbit_t *e = &(g->eto[d->spy]);
+    const char *s;
+    uint8_t fontparam;
     char buf[0x80];
+    if (d->spy != PLAYER_NONE) {
+        const empiretechorbit_t *e = &(g->eto[d->spy]);
+        s = game_str_tbl_race[e->race];
+        fontparam = tbl_banner_fontparam[e->banner];
+    } else {
+        s = game_str_es_unkn;
+        fontparam = 2;
+    }
     vgabuf_copy_back_from_page2();
     ui_gmap_basic_draw_frame(d->gmap, d->api);
     ui_draw_filled_rect(31, 62, 202, 103, 0x36);
     lbxgfx_draw_frame(31, 62, d->gfx, UI_SCREEN_W);
-    sprintf(buf, "%s %s", game_str_tbl_race[e->race], game_str_es_thesp1);
-    lbxfont_select_set_12_1(5, tbl_banner_fontparam[e->banner], 0, 0);
+    sprintf(buf, "%s %s", s, game_str_es_thesp1);
+    lbxfont_select_set_12_1(5, fontparam, 0, 0);
     lbxfont_print_str_center(116, 70, buf, UI_SCREEN_W);
     lbxfont_select(0, 0, 0, 0);
-    sprintf(buf, "%s %s ", game_str_tbl_race[e->race], game_str_es_thesp2);
+    sprintf(buf, "%s %s ", s, game_str_es_thesp2);
     lbxfont_print_str_center(118, 84, buf, UI_SCREEN_W);
     game_tech_get_name(g->gaux, d->field, d->tech, buf);
     lbxfont_print_str_center(118, 94, buf, UI_SCREEN_W);
