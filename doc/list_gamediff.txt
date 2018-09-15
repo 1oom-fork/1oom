@@ -12,6 +12,7 @@ Much of this file is based on the readme from the unofficial v1.40m patch.
 - the number of build finished messages per turn is no longer limited to 10 per category
 - fixed weird behaviour when space monsters attack colonized Orion
 - all Advanced Technology are available for research
+- espionage messages can show the framed or unknown race instead of always leaking the actual spy
 
 - ETA calculations take nebulas into account correctly
 - annoying bug / cheat when a fleet with bioweapons automatically bombed an enemy planet while orbiting is gone for good
