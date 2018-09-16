@@ -32,6 +32,7 @@
 #include "uipal.h"
 #include "uiplanets.h"
 #include "uiraces.h"
+#include "uisearch.h"
 #include "uispecs.h"
 #include "uistarmap.h"
 #include "uistarmap_common.h"
