@@ -20,6 +20,7 @@
 #include "uidefs.h"
 #include "uidelay.h"
 #include "uiobj.h"
+#include "uisearch.h"
 #include "uisound.h"
 #include "uistarmap_common.h"
 
@@ -148,7 +149,7 @@ static void ui_starmap_orbit_own_draw_cb(void *vptr)
 void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
 {
     bool flag_done = false;
-    int16_t oi_scroll, oi_cancel, oi_accept,
+    int16_t oi_scroll, oi_cancel, oi_accept, oi_search,
             oi_f2, oi_f3, oi_f4, oi_f5, oi_f6, oi_f7, oi_f8, oi_f9, oi_f10,
             oi_tbl_p[NUM_SHIPDESIGNS],
             oi_tbl_m[NUM_SHIPDESIGNS],
@@ -236,6 +237,9 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
             ui_data.ui_main_loop_action = UI_MAIN_LOOP_NEXT_TURN;
             flag_done = true;
             ui_sound_play_sfx_24();
+        } else if (oi1 == oi_search) {
+            ui_sound_play_sfx_24();
+            ui_search_set_pos(g, active_player);
         } else if (oi1 == oi_f2) {
             int i;
             i = d.oo.from;
@@ -490,6 +494,7 @@ do_accept:
                 oi_accept = uiobj_add_t0(271, 180, "", ui_data.gfx.starmap.reloc_bu_accept, MOO_KEY_SPACE);
             }
             oi_scroll = uiobj_add_tb(6, 6, 2, 2, 108, 86, &scrollx, &scrolly);
+            oi_search = uiobj_add_inputkey(MOO_KEY_SLASH);
             ui_starmap_fill_oi_ctrl(&d);
             for (int i = 0; i < d.oo.sn0.num; ++i) {
                 oi_tbl_p[i] = uiobj_add_t0(288, 35 + i * 26, "", ui_data.gfx.starmap.move_but_p, MOO_KEY_UNKNOWN);
