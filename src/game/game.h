@@ -258,27 +258,12 @@ typedef struct seen_s {
 struct game_aux_s;
 
 struct game_s {
-    planet_t planet[PLANETS_MAX];
-    fleet_enroute_t enroute[FLEET_ENROUTE_MAX];
-    transport_t transport[TRANSPORT_MAX];
-    empiretechorbit_t eto[PLAYER_NUM];
-    shipresearch_t srd[PLAYER_NUM];
-    gameevents_t evn;
-    char emperor_names[PLAYER_NUM][EMPEROR_NAME_LEN];
     uint16_t enroute_num;
     uint16_t transport_num;
     uint16_t year;  /* init to 1 */
-    uint8_t nebula_num;        /* 0..4 */
-    uint8_t nebula_type[NEBULA_MAX];    /* 0..9 */
-    uint16_t nebula_x[NEBULA_MAX];
-    uint16_t nebula_y[NEBULA_MAX];
-    uint16_t nebula_x0[NEBULA_MAX][4];
-    uint16_t nebula_x1[NEBULA_MAX][4];
-    uint16_t nebula_y0[NEBULA_MAX][4];
-    uint16_t nebula_y1[NEBULA_MAX][4];
     uint8_t players;
-    BOOLVEC_DECLARE(is_ai, PLAYER_NUM);
     uint8_t ai_id;
+    BOOLVEC_DECLARE(is_ai, PLAYER_NUM);
     player_id_t active_player;
     difficulty_t difficulty;
     galaxy_size_t galaxy_size;
@@ -287,16 +272,31 @@ struct game_s {
     uint8_t galaxy_stars;  /* w*h */
     uint16_t galaxy_maxx;
     uint16_t galaxy_maxy;
-    uint8_t planet_focus_i[PLAYER_NUM];
-    seen_t seen[PLAYER_NUM][PLANETS_MAX];
-    shipdesign_t current_design[PLAYER_NUM];
+    uint32_t seed;   /* current random seed */
+    uint32_t galaxy_seed; /* seed of generated galaxy */
     game_end_type_t end;
     player_id_t winner;
     player_id_t guardian_killer;
     bool election_held;
     BOOLVEC_DECLARE(refuse, PLAYER_NUM);
-    uint32_t seed;   /* current random seed */
-    uint32_t galaxy_seed; /* seed of generated galaxy */
+    uint8_t planet_focus_i[PLAYER_NUM];
+    uint8_t nebula_num;        /* 0..4 */
+    uint8_t nebula_type[NEBULA_MAX];    /* 0..9 */
+    uint16_t nebula_x[NEBULA_MAX];
+    uint16_t nebula_y[NEBULA_MAX];
+    uint16_t nebula_x0[NEBULA_MAX][4];
+    uint16_t nebula_x1[NEBULA_MAX][4];
+    uint16_t nebula_y0[NEBULA_MAX][4];
+    uint16_t nebula_y1[NEBULA_MAX][4];
+    planet_t planet[PLANETS_MAX];
+    fleet_enroute_t enroute[FLEET_ENROUTE_MAX];
+    transport_t transport[TRANSPORT_MAX];
+    empiretechorbit_t eto[PLAYER_NUM];
+    shipresearch_t srd[PLAYER_NUM];
+    gameevents_t evn;
+    char emperor_names[PLAYER_NUM][EMPEROR_NAME_LEN];
+    seen_t seen[PLAYER_NUM][PLANETS_MAX];
+    shipdesign_t current_design[PLAYER_NUM];
     struct game_aux_s *gaux;
 };
 
