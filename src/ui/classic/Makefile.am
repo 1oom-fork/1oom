@@ -66,6 +66,8 @@ libuiclassic_a_SOURCES = \
     uiraces.h \
     uisave.c \
     uisave.h \
+    uisearch.c \
+    uisearch.h \
     uisound.c \
     uisound.h \
     uispecs.c \
