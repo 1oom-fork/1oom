@@ -109,10 +109,10 @@ typedef struct uiobj_s {
             /*12*/ bool z12;
         } ta;
         struct {
+            /*1c*/ int16_t *xptr;
+            /*1e*/ int16_t *yptr;
             /*18*/ uint16_t xdiv;
             /*1a*/ uint16_t ydiv;
-            /*1c*/ uint16_t *xptr;
-            /*1e*/ uint16_t *yptr;
         } tb;
     };
 } uiobj_t;
