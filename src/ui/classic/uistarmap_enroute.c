@@ -19,6 +19,7 @@
 #include "uidefs.h"
 #include "uidelay.h"
 #include "uiobj.h"
+#include "uisearch.h"
 #include "uisound.h"
 #include "uistarmap_common.h"
 #include "util.h"
@@ -140,7 +141,7 @@ static void ui_starmap_enroute_draw_cb(void *vptr)
 void ui_starmap_enroute(struct game_s *g, player_id_t active_player)
 {
     bool flag_done = false;
-    int16_t oi_scroll, oi_cancel, oi_accept;
+    int16_t oi_scroll, oi_cancel, oi_accept, oi_search;
     uint16_t scrollx = 0, scrolly = 0;
     struct starmap_data_s d;
     fleet_enroute_t *r;
@@ -225,6 +226,15 @@ void ui_starmap_enroute(struct game_s *g, player_id_t active_player)
             ui_data.ui_main_loop_action = UI_MAIN_LOOP_NEXT_TURN;
             flag_done = true;
             ui_sound_play_sfx_24();
+        } else if (oi1 == oi_search) {
+            ui_sound_play_sfx_24();
+            if (ui_search_set_pos(g, active_player)) {
+                if ((r->owner != active_player) || (d.en.can_move == NO_MOVE)) {
+                    d.en.from = g->planet_focus_i[active_player];
+                    flag_done = true;
+                    ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
+                }
+            }
         } else if ((oi1 == oi_cancel) || (oi1 == UIOBJI_ESC)) {
             ui_sound_play_sfx_06();
             flag_done = true;
@@ -320,6 +330,7 @@ do_accept:
                 }
             }
             oi_scroll = uiobj_add_tb(6, 6, 2, 2, 108, 86, &scrollx, &scrolly);
+            oi_search = uiobj_add_inputkey(MOO_KEY_SLASH);
             ui_starmap_fill_oi_ctrl(&d);
             ui_starmap_add_oi_bottom_buttons(&d);
             ui_draw_finish();
