@@ -108,6 +108,7 @@ struct starmap_data_s {
                 d.oi_tbl_pl_stars[j][i] = UIOBJI_INVALID; \
             } \
         } \
+        oi_search = UIOBJI_INVALID; \
         oi_scroll = UIOBJI_INVALID; \
         ui_starmap_clear_oi_ctrl(&d); \
     } while (0)
