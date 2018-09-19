@@ -608,7 +608,7 @@ void hw_audio_sfx_volume(int volume)
 int hw_audio_init(void)
 {
     if (opt_audio_enabled) {
-        log_warning("SDLA: no audio due to missing SDL_mixer!\n");
+        log_warning("SDLA: no audio since this build was made with SDL_mixer explicitly disabled!\n");
     }
     return 0;
 }
