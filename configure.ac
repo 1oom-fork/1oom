@@ -9,7 +9,10 @@ AC_ARG_ENABLE(tools, AS_HELP_STRING([--disable-tools], [disables extra tools]))
 AC_ARG_ENABLE(uiclassic, AS_HELP_STRING([--disable-uiclassic], [disables classic UI]))
 AC_ARG_ENABLE(uicmdline, AS_HELP_STRING([--disable-uicmdline], [disables cmdline UI]))
 AC_ARG_ENABLE(hwsdl1, AS_HELP_STRING([--enable-hwsdl1], [enables SDL1 HW]))
+AC_ARG_ENABLE(hwsdl1audio, AS_HELP_STRING([--disable-hwsdl1audio], [disables SDL1 HW audio support]))
+AC_ARG_ENABLE(hwsdl1gl, AS_HELP_STRING([--disable-hwsdl1gl], [disables SDL1 HW OpenGL support]))
 AC_ARG_ENABLE(hwsdl2, AS_HELP_STRING([--disable-hwsdl2], [disables SDL2 HW]))
+AC_ARG_ENABLE(hwsdl2audio, AS_HELP_STRING([--disable-hwsdl2audio], [disables SDL2 HW audio support]))
 AC_ARG_ENABLE(hwalleg4, AS_HELP_STRING([--disable-hwalleg4], [disables Allegro 4 HW]))
 
 AC_CONFIG_SRCDIR([src/main.c])
@@ -220,68 +223,72 @@ if test x"$enable_hwsdl1" == "xyes"; then
         AM_CONDITIONAL(COMPILE_HW_SDL, true)
         have_sdl1=yes
 
-        dnl check for SDL_mixer
-        AC_MSG_CHECKING(for the SDL_mixer library)
+        if test x"$enable_hwsdl1audio" != "xno"; then
+            dnl check for SDL_mixer
+            AC_MSG_CHECKING(for the SDL_mixer library)
 
-        old_sdl_libs="$HW_SDL1_LIBS"
-        if test x"$SDL1MIXER_LIBS" != "x"; then
-            HW_SDL1_LIBS="$HW_SDL1_LIBS $SDL1MIXER_LIBS"
-        elif $pkg_config --exists SDL_mixer; then
-            HW_SDL1_LIBS="`$pkg_config --libs SDL_mixer`"
-        else
-            HW_SDL1_LIBS="$HW_SDL1_LIBS -lSDL_mixer"
-        fi
-        LIBS="$old_LIBS $HW_SDL1_LIBS"
-
-        AC_TRY_LINK([#include "SDL_mixer.h"],
-                    [Mix_LoadMUS(0)],
-                    [AC_MSG_RESULT(yes);
-                     have_sdl1mixer=yes],
-                    [AC_MSG_RESULT(no);
-                     HW_SDL1_LIBS="$old_sdl_libs"])
-
-        LIBS="$old_LIBS"
-
-        if test x"$have_sdl1mixer" = "xyes"; then
-            AC_DEFINE(HAVE_SDL1MIXER,,[Enable SDL_mixer])
-        else
-            AC_MSG_WARN([SDL_mixer not found, audio disabled!])
-        fi
-
-        dnl check for OpenGL libs
-        AC_MSG_CHECKING(for the OpenGL library)
-
-        old_sdl_libs="$HW_SDL1_LIBS"
-        HW_SDL1_LIBS="$HW_SDL1_LIBS -lGL"
-        LIBS="$old_LIBS $HW_SDL1_LIBS"
-
-        AC_TRY_LINK([#include <SDL_opengl.h>],
-                    [glViewport(1,2,3,4)],
-                    [AC_MSG_RESULT(yes);
-                     have_sdl1gl_lib=yes],
-                    [AC_MSG_RESULT(no);
-                     HW_SDL1_LIBS="$old_sdl_libs"])
-
-        LIBS="$old_LIBS"
-
-        if test x"$have_sdl1gl_lib" != "xyes"; then
-            AC_MSG_CHECKING(whether we can use the opengl32 library)
             old_sdl_libs="$HW_SDL1_LIBS"
-            HW_SDL1_LIBS="$HW_SDL1_LIBS -lopengl32"
-            LIBS="$LIBS $HW_SDL1_LIBS"
+            if test x"$SDL1MIXER_LIBS" != "x"; then
+                HW_SDL1_LIBS="$HW_SDL1_LIBS $SDL1MIXER_LIBS"
+            elif $pkg_config --exists SDL_mixer; then
+                HW_SDL1_LIBS="`$pkg_config --libs SDL_mixer`"
+            else
+                HW_SDL1_LIBS="$HW_SDL1_LIBS -lSDL_mixer"
+            fi
+            LIBS="$old_LIBS $HW_SDL1_LIBS"
+
+            AC_TRY_LINK([#include "SDL_mixer.h"],
+                        [Mix_LoadMUS(0)],
+                        [AC_MSG_RESULT(yes);
+                         have_sdl1mixer=yes],
+                        [AC_MSG_RESULT(no);
+                         HW_SDL1_LIBS="$old_sdl_libs"])
+
+            LIBS="$old_LIBS"
+
+            if test x"$have_sdl1mixer" = "xyes"; then
+                AC_DEFINE(HAVE_SDL1MIXER,,[Enable SDL_mixer])
+            else
+                AC_MSG_ERROR([SDL_mixer not found! Either install it or use --disable-hwsdl1audio to disable audio for the SDL1 binaries.])
+            fi
+        fi
+
+        if test x"$enable_hwsdl1gl" != "xno"; then
+            dnl check for OpenGL libs
+            AC_MSG_CHECKING(for the OpenGL library)
+
+            old_sdl_libs="$HW_SDL1_LIBS"
+            HW_SDL1_LIBS="$HW_SDL1_LIBS -lGL"
+            LIBS="$old_LIBS $HW_SDL1_LIBS"
+
             AC_TRY_LINK([#include "SDL_opengl.h"],
                         [glViewport(1,2,3,4)],
                         [AC_MSG_RESULT(yes);
                          have_sdl1gl_lib=yes],
                         [AC_MSG_RESULT(no);
                          HW_SDL1_LIBS="$old_sdl_libs"])
-            LIBS="$old_LIBS"
-        fi
 
-        if test x"$have_sdl1gl_lib" = "xyes"; then
-            AC_DEFINE(HAVE_SDL1GL,,[Enable SDL1 OpenGL])
-        else
-            AC_MSG_WARN([SDL1 OpenGL not available, graphics resizing disabled!])
+            LIBS="$old_LIBS"
+
+            if test x"$have_sdl1gl_lib" != "xyes"; then
+                AC_MSG_CHECKING(whether we can use the opengl32 library)
+                old_sdl_libs="$HW_SDL1_LIBS"
+                HW_SDL1_LIBS="$HW_SDL1_LIBS -lopengl32"
+                LIBS="$LIBS $HW_SDL1_LIBS"
+                AC_TRY_LINK([#include "SDL_opengl.h"],
+                            [glViewport(1,2,3,4)],
+                            [AC_MSG_RESULT(yes);
+                             have_sdl1gl_lib=yes],
+                            [AC_MSG_RESULT(no);
+                             HW_SDL1_LIBS="$old_sdl_libs"])
+                LIBS="$old_LIBS"
+            fi
+
+            if test x"$have_sdl1gl_lib" = "xyes"; then
+                AC_DEFINE(HAVE_SDL1GL,,[Enable SDL1 OpenGL])
+            else
+                AC_MSG_ERROR([SDL1 OpenGL not available! Either fix it or use --disable-hwsdl1gl to disable graphics resizing for the SDL1 binaries.])
+            fi
         fi
 
         AC_MSG_CHECKING(for the SDLmain library)
@@ -380,32 +387,35 @@ if test x"$enable_hwsdl2" != "xno"; then
         AM_CONDITIONAL(COMPILE_HW_SDL, true)
         have_sdl2=yes
 
-        dnl check for SDL2_mixer
-        AC_MSG_CHECKING(for the SDL2_mixer library)
+        if test x"$enable_hwsdl2audio" != "xno"; then
+            dnl check for SDL2_mixer
+            AC_MSG_CHECKING(for the SDL2_mixer library)
 
-        old_sdl_libs="$HW_SDL2_LIBS"
-        if test x"$SDL2MIXER_LIBS" != "x"; then
-            HW_SDL2_LIBS="$HW_SDL2_LIBS $SDL2MIXER_LIBS"
-        elif $pkg_config --exists SDL2_mixer; then
-            HW_SDL2_LIBS="`$pkg_config --libs SDL2_mixer`"
-        else
-            HW_SDL2_LIBS="$HW_SDL2_LIBS -lSDL2_mixer"
-        fi
-        LIBS="$old_LIBS $HW_SDL2_LIBS"
+            old_sdl_libs="$HW_SDL2_LIBS"
+            if test x"$SDL2MIXER_LIBS" != "x"; then
+                HW_SDL2_LIBS="$HW_SDL2_LIBS $SDL2MIXER_LIBS"
+            elif $pkg_config --exists SDL2_mixer; then
+                HW_SDL2_LIBS="`$pkg_config --libs SDL2_mixer`"
+            else
+                HW_SDL2_LIBS="$HW_SDL2_LIBS -lSDL2_mixer"
+            fi
+            LIBS="$old_LIBS $HW_SDL2_LIBS"
 
-        AC_TRY_LINK([#include "SDL_mixer.h"],
-                    [Mix_LoadMUS(0)],
-                    [AC_MSG_RESULT(yes);
-                     have_sdl2mixer=yes],
-                    [AC_MSG_RESULT(no);
-                     HW_SDL2_LIBS="$old_sdl_libs"])
+            AS_UNSET(ac_cv_header_SDL_mixer_h)
+            AC_TRY_LINK([#include "SDL_mixer.h"],
+                        [Mix_LoadMUS(0)],
+                        [AC_MSG_RESULT(yes);
+                         have_sdl2mixer=yes],
+                        [AC_MSG_RESULT(no);
+                         HW_SDL2_LIBS="$old_sdl_libs"])
 
-        LIBS="$old_LIBS"
+            LIBS="$old_LIBS"
 
-        if test x"$have_sdl2mixer" = "xyes"; then
-            AC_DEFINE(HAVE_SDL2MIXER,,[Enable SDL2_mixer])
-        else
-            AC_MSG_WARN([SDL2_mixer not found, audio disabled!])
+            if test x"$have_sdl2mixer" = "xyes"; then
+                AC_DEFINE(HAVE_SDL2MIXER,,[Enable SDL2_mixer])
+            else
+                AC_MSG_ERROR([SDL2_mixer not found! Either install it or use --disable-hwsdl2audio to disable audio for the SDL2 binaries.])
+            fi
         fi
 
         AC_MSG_CHECKING(for the SDL2main library)
