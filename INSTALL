@@ -18,8 +18,14 @@ The configuration options:
                             (do not build 1oom_cmdline)
     --disable-hwsdl1        disables SDL1 HW
                             (do not build 1oom_*_sdl1)
+    --disable-hwsdl1audio   disables SDL1 HW audio support
+                            (no audio for 1oom_*_sdl1)
+    --disable-hwsdl1gl      disables SDL1 HW OpenGL support
+                            (no graphics resizing for 1oom_*_sdl1)
     --disable-hwsdl2        disables SDL2 HW
                             (do not build 1oom_*_sdl2)
+    --disable-hwsdl2audio   disables SDL2 HW audio support
+                            (no audio for 1oom_*_sdl2)
     --disable-hwalleg4      disables Allegro 4 HW
                             (do not build 1oom_*_alleg4)
 
