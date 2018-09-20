@@ -155,15 +155,14 @@ static int xmid_convert_evnt(const uint8_t *data_in, uint32_t len_in, const uint
             case 0xb0:
                 len_event = 3;
                 {
-                    uint8_t c, b;
+                    uint8_t c;
                     c = data_in[1];
-                    b = data_in[2];
                     if (0
                       || ((c >= 0x20) && (c <= 0x2e))
                       || ((c >= 0x3a) && (c <= 0x3f))
                       || ((c >= 0x6e) && (c <= 0x78))
                     ) {
-                        LOG_DEBUG((DEBUGLEVEL_FMTMUS, "XMID: dropping unhandled AIL CC event %02x %02x %02x, notes %i\n", *data_in, c, b, noteons));
+                        LOG_DEBUG((DEBUGLEVEL_FMTMUS, "XMID: dropping unhandled AIL CC event %02x %02x %02x, notes %i\n", *data_in, c, data_in[2], noteons));
                         is_delta_time = last_was_delta_time;
                         len_event = 0;
                         skip_extra_bytes = 3;
