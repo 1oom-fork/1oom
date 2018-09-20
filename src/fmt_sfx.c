@@ -218,7 +218,11 @@ static struct sfx_conv_s fmt_sfx_convert_voc(const uint8_t *data_in, uint32_t le
                     cursize = newsize;
                     q = &data[res.num * 2/*stereo*/];
                 }
-                /* TODO check/handle ctype!=0 and stereo */
+                /* TODO handle ctype!=0 and stereo */
+                if ((ctype != 0/*8-bit*/)) {
+                    log_error("VOC: non-8-bit compression type %u unimpl\n", ctype);
+                    goto fail;
+                }
                 res.num += block_size;
                 while (block_size--) {
                     int16_t s;
