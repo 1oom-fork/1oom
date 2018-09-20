@@ -167,7 +167,7 @@ static struct sfx_conv_s fmt_sfx_convert_voc(const uint8_t *data_in, uint32_t le
     cursize = len_in * 2/*16b*/ * 2/*stereo*/;
     q = data = lib_malloc(cursize);
     while (len_in) {
-        uint8_t b, block_type, ctype = 0, stereo = 0, sr;
+        uint8_t block_type, ctype = 0, stereo = 0, sr;
         uint32_t block_size, newrate;
         block_type = *p++;
         --len_in;
@@ -254,8 +254,7 @@ static struct sfx_conv_s fmt_sfx_convert_voc(const uint8_t *data_in, uint32_t le
                 break;
             case 0x04:  /* Marker */
                 {
-                    uint16_t marker;
-                    marker = GET_LE_16(p);
+                    IF_DEBUG(uint16_t marker; marker = GET_LE_16(p);)
                     p += 2;
                     len_in -= 2;
                     LOG_DEBUG((DEBUGLEVEL_FMTSFX, " marker %i at %i\n", marker, p - data_in));
@@ -268,8 +267,7 @@ static struct sfx_conv_s fmt_sfx_convert_voc(const uint8_t *data_in, uint32_t le
                 break;
             case 0x06:  /* Repeat */
                 {
-                    uint16_t repeatnum;
-                    repeatnum = GET_LE_16(p);
+                    IF_DEBUG(uint16_t repeatnum; repeatnum = GET_LE_16(p);)
                     p += 2;
                     len_in -= 2;
                     LOG_DEBUG((DEBUGLEVEL_FMTSFX, " repeat %i\n", repeatnum));
@@ -283,10 +281,12 @@ static struct sfx_conv_s fmt_sfx_convert_voc(const uint8_t *data_in, uint32_t le
             case 0x08:  /* Extended */
                 {
                     uint16_t tc;
+                    IF_DEBUG(uint8_t pack;)
                     tc = GET_LE_16(p);
                     p += 2;
                     len_in -= 2;
-                    b = *p++;
+                    IF_DEBUG(pack = *p;)
+                    ++p;
                     --len_in;
                     stereo = *p++;
                     --len_in;
@@ -296,7 +296,7 @@ static struct sfx_conv_s fmt_sfx_convert_voc(const uint8_t *data_in, uint32_t le
                         goto fail;
                     }
                     res.samplerate = newrate;
-                    LOG_DEBUG((DEBUGLEVEL_FMTSFX, "tc %i->%iHz pack:%02x st:%02x\n", tc, newrate, b, stereo));
+                    LOG_DEBUG((DEBUGLEVEL_FMTSFX, "tc %i->%iHz pack:%02x st:%02x\n", tc, newrate, pack, stereo));
                 }
                 break;
             default:
