@@ -1359,7 +1359,7 @@ static void game_turn_transport(struct game_s *g)
                     /*e5a6*/
                     if (g->eto[owner].treaty[p->owner] != TREATY_ALLIANCE) {
                         ADDSATT(p->inbound[owner], pop3, game_num_max_inbound);
-                        p->total_inbound[owner] += pop3;
+                        p->total_inbound[owner] += pop2;
                     }
                 }
             }
