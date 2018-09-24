@@ -84,6 +84,11 @@ retreat_redir_fix : 0..1, 0
     next turn. This fix disables redirecting back to the planet the fleet just
     retreated from unless Hyperspace Communications is available.
 
+first_tech_rp_fix : 0..1, 0
+  - Fix RP stagnation before starting first tech project.
+    Investing 1 RP to start the first project in a field is not enough due to
+    the 10% stagnation rounding it down to 0.
+
 waste_calc_fix : 0..1, 0
   - Fix waste calculation.
     MOO1 adds waste twice: first using a perfectly sensible formula and then
