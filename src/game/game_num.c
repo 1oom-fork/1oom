@@ -46,6 +46,7 @@ bool game_num_combat_trans_fix = false;
 bool game_num_stargate_redir_fix = false;
 bool game_num_trans_redir_fix = false;
 bool game_num_retreat_redir_fix = false;
+bool game_num_first_tech_rp_fix = false;
 bool game_num_waste_calc_fix = false;
 bool game_num_waste_adjust_fix = false;
 bool game_num_doom_stack_fix = true;
