@@ -189,6 +189,7 @@ static const struct numtbl_s {
     DEFNUMITEML(stargate_redir_fix, NUMTYPE_BOOL, 0, 1),
     DEFNUMITEML(trans_redir_fix, NUMTYPE_BOOL, 0, 1),
     DEFNUMITEML(retreat_redir_fix, NUMTYPE_BOOL, 0, 1),
+    DEFNUMITEML(first_tech_rp_fix, NUMTYPE_BOOL, 0, 1),
     DEFNUMITEML(waste_calc_fix, NUMTYPE_BOOL, 0, 1),
     DEFNUMITEML(waste_adjust_fix, NUMTYPE_BOOL, 0, 1),
     DEFNUMITEML(doom_stack_fix, NUMTYPE_BOOL, 0, 1),
