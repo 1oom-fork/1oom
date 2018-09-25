@@ -32,6 +32,8 @@ Much of this file is based on the readme from the unofficial v1.40m patch.
     - AI huge, armored ships now cannot cause a negative overflow
     - 4th colony ship curse removed
     - AI clears his spies' missions when succesfully threatened
+    - AI does not blame both parties for breaking a treaty
+    - a war sparked by capturing or destroying a colony is considered to be started by the attacker
     - a small issue concerning the change in AI defense and ship production when too many MBases on a planet has been corrected
     - battle AI miss chance accumulation fixed; AI is less/more optimistic about missile/beam weapon damage
     - AI does not go into panic ship building mode on planets with incoming allied fleets
