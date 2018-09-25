@@ -143,6 +143,18 @@ council_years : 0..32767, 25
   - Number of years between Galactic Council meetings.
     Zero means the Council never gathers.
 
+trait1_* : 0..5, ?
+  - Starting personality type table for each race.
+    The type is chosen randomly from the table when stating a new game.
+    The values are: 0 = Xenophobix, 1 = Ruthless, 2 = Aggressive,
+    3 = Erratic, 4 = Honorable, 5 = Pacifistic.
+
+trait2_* : 0..5, ?
+  - Starting racial objective table for each race.
+    The objective is chosen randomly from the table when stating a new game.
+    The values are: 0 = Diplomat, 1 = Militarist, 2 = Expansionist,
+    3 = Technologist, 4 = Industrialist, 5 = Ecologist.
+
 crystal_* : ?, ?
 amoeba_* : ?, ?
 guardian_* : ?, ?
