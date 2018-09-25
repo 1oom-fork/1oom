@@ -1168,7 +1168,7 @@ static void game_turn_bomb(struct game_s *g)
                     if ((p->pop == 0) && IS_HUMAN(g, i)) {
                         int dv;
                         if (ea->treaty[owner] < TREATY_WAR) {
-                            game_diplo_start_war(g, owner, i);
+                            game_diplo_start_war_swap(g, owner, i);
                             dv = 13;
                         } else {
                             dv = 10;
