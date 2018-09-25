@@ -209,14 +209,14 @@ void game_diplo_act(struct game_s *g, int dv, player_id_t pi, player_id_t pi2, i
 
 void game_diplo_break_treaty(struct game_s *g, player_id_t breaker, player_id_t victim)
 {
-    empiretechorbit_t *eb, *e2;
+    empiretechorbit_t *eb, *ev;
     int v2;
     if ((breaker >= PLAYER_NUM) || (victim >= PLAYER_NUM)) {
         return;
     }
     eb = &(g->eto[breaker]);
-    e2 = &(g->eto[victim]);
-    if (e2->treaty[breaker] >= TREATY_WAR) {
+    ev = &(g->eto[victim]);
+    if (ev->treaty[breaker] >= TREATY_WAR) {
         return;
     }
     v2 = 0;
@@ -235,29 +235,29 @@ void game_diplo_break_treaty(struct game_s *g, player_id_t breaker, player_id_t 
         v -= v2;
         SETMAX(v, -100);
         eb->relation2[victim] = v;
-        e2->relation2[breaker] = v;
+        ev->relation2[breaker] = v;
     }
     if (v2 != 0) {
         int v;
         eb->broken_treaty[victim] = eb->treaty[victim];
-        e2->broken_treaty[breaker] = eb->treaty[victim];
+        ev->broken_treaty[breaker] = eb->treaty[victim];
         v = eb->relation1[victim] - rnd_1_n(20, &g->seed);
         SETMAX(v, -100);
         eb->relation1[victim] = v;
-        e2->relation2[breaker] = v;
+        ev->relation2[breaker] = v;
     }
     eb->treaty[victim] = TREATY_NONE;
-    e2->treaty[breaker] = TREATY_NONE;
+    ev->treaty[breaker] = TREATY_NONE;
     eb->hated[victim] = PLAYER_NONE;
-    e2->hated[breaker] = PLAYER_NONE;
+    ev->hated[breaker] = PLAYER_NONE;
     eb->mood_treaty[victim] = -200;
     eb->mood_trade[victim] = -200;
     eb->mood_tech[victim] = -200;
     eb->mood_peace[victim] = -200;
-    e2->mood_treaty[breaker] = -200;
-    e2->mood_trade[breaker] = -200;
-    e2->mood_tech[breaker] = -200;
-    e2->mood_peace[breaker] = -200;
+    ev->mood_treaty[breaker] = -200;
+    ev->mood_trade[breaker] = -200;
+    ev->mood_tech[breaker] = -200;
+    ev->mood_peace[breaker] = -200;
 }
 
 void game_diplo_start_war(struct game_s *g, player_id_t pi, player_id_t pi2)
