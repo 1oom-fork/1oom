@@ -96,9 +96,9 @@ retreat_redir_fix : 0..1, 0
     retreated from unless Hyperspace Communications is available.
 
 first_tech_rp_fix : 0..1, 0
-  - Fix RP requirement for starting first tech project.
+  - Fix RP stagnation before starting first tech project.
     Investing 1 RP to start the first project in a field is not enough due to
-    the 90% stagnation rounding it down to 0.
+    the 10% stagnation rounding it down to 0.
 
 waste_calc_fix : 0..1, 0
   - Fix waste calculation.
@@ -130,6 +130,18 @@ tcostm_* : 0..255, ?
 event_roll : 0..2147483647, 512
   - Special event probability. Bigger number means events are less likely.
     Zero means events are disabled.
+
+trait1_* : 0..5, ?
+  - Starting personality type table for each race.
+    The type is chosen randomly from the table when stating a new game.
+    The values are: 0 = Xenophobix, 1 = Ruthless, 2 = Aggressive,
+    3 = Erratic, 4 = Honorable, 5 = Pacifistic.
+
+trait2_* : 0..5, ?
+  - Starting racial objective table for each race.
+    The objective is chosen randomly from the table when stating a new game.
+    The values are: 0 = Diplomat, 1 = Militarist, 2 = Expansionist,
+    3 = Technologist, 4 = Industrialist, 5 = Ecologist.
 
 crystal_* : ?, ?
 amoeba_* : ?, ?
