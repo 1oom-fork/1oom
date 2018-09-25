@@ -3229,7 +3229,7 @@ static void game_ai_classic_ground(struct game_s *g, player_id_t def, player_id_
     } else if (owner_changed && IS_HUMAN(g, att)) {
         if (g->eto[att].treaty[def] < TREATY_WAR) {
             game_diplo_act(g, -50 - rnd_1_n(50, &g->seed), att, def, 0xd, planet, 0);
-            game_diplo_start_war(g, def, att);
+            game_diplo_start_war_swap(g, def, att);
         } else {
             /*e93f*/
             game_diplo_act(g, -50 - rnd_1_n(50, &g->seed), att, def, 0xa, planet, 0);
