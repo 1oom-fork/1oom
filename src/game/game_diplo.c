@@ -5,6 +5,7 @@
 #include "game_diplo.h"
 #include "comp.h"
 #include "game.h"
+#include "game_ai.h"
 #include "game_num.h"
 #include "game_planet.h"
 #include "game_spy.h"
@@ -136,57 +137,60 @@ void game_diplo_act(struct game_s *g, int dv, player_id_t pi, player_id_t pi2, i
     e->relation1[pi2] = e2->relation1[pi];
 }
 
-void game_diplo_break_treaty(struct game_s *g, player_id_t pi/*breaker*/, player_id_t pi2)
+void game_diplo_break_treaty(struct game_s *g, player_id_t breaker, player_id_t victim)
 {
-    empiretechorbit_t *e, *e2;
-    int v2;
-    if ((pi >= PLAYER_NUM) || (pi2 >= PLAYER_NUM)) {
+    empiretechorbit_t *eb, *ev;
+    int w;
+    if ((breaker >= PLAYER_NUM) || (victim >= PLAYER_NUM)) {
         return;
     }
-    e = &(g->eto[pi]);
-    e2 = &(g->eto[pi2]);
-    if (e2->treaty[pi] >= TREATY_WAR) {
+    eb = &(g->eto[breaker]);
+    ev = &(g->eto[victim]);
+    if (ev->treaty[breaker] >= TREATY_WAR) {
         return;
     }
-    v2 = 0;
-    if (e->treaty[pi2] == TREATY_NONAGGRESSION) {
-        v2 = 10;
+    w = 0;
+    if (eb->treaty[victim] == TREATY_NONAGGRESSION) {
+        w = 10;
     }
-    if (e->treaty[pi2] == TREATY_ALLIANCE) {
-        v2 = 20;
+    if (eb->treaty[victim] == TREATY_ALLIANCE) {
+        w = 20;
     }
-    if (e->trait1 == TRAIT1_HONORABLE) {
-        v2 *= 2;
+    if (eb->trait1 == TRAIT1_HONORABLE) {
+        w *= 2;
     }
-    e->trust[pi2] -= v2;
-    if (e->treaty[pi2] == TREATY_ALLIANCE) {
-        int v = e->relation2[pi2];
-        v -= v2;
+    eb->trust[victim] -= w;
+    if (eb->treaty[victim] == TREATY_ALLIANCE) {
+        int v = eb->relation2[victim];
+        v -= w;
         SETMAX(v, -100);
-        e->relation2[pi2] = v;
-        e2->relation2[pi] = v;
+        eb->relation2[victim] = v;
+        ev->relation2[breaker] = v;
     }
-    if (v2 != 0) {
+    if (w != 0) {
         int v;
-        e->broken_treaty[pi2] = e->treaty[pi2];
-        e2->broken_treaty[pi] = e->treaty[pi2];
-        v = e->relation1[pi2] - rnd_1_n(20, &g->seed);
+        eb->broken_treaty[victim] = eb->treaty[victim];
+        if (g->ai_id == GAME_AI_CLASSIC) {
+            /* WASBUG MOO1 blames both parties for breaking treaties */
+            ev->broken_treaty[breaker] = eb->treaty[victim];
+        }
+        v = eb->relation1[victim] - rnd_1_n(20, &g->seed);
         SETMAX(v, -100);
-        e->relation1[pi2] = v;
-        e2->relation2[pi] = v;
+        eb->relation1[victim] = v;
+        ev->relation1[breaker] = v;
     }
-    e->treaty[pi2] = TREATY_NONE;
-    e2->treaty[pi] = TREATY_NONE;
-    e->attack_bounty[pi2] = PLAYER_NONE;
-    e2->attack_bounty[pi] = PLAYER_NONE;
-    e->mood_treaty[pi2] = -200;
-    e->mood_trade[pi2] = -200;
-    e->mood_tech[pi2] = -200;
-    e->mood_peace[pi2] = -200;
-    e2->mood_treaty[pi] = -200;
-    e2->mood_trade[pi] = -200;
-    e2->mood_tech[pi] = -200;
-    e2->mood_peace[pi] = -200;
+    eb->treaty[victim] = TREATY_NONE;
+    ev->treaty[breaker] = TREATY_NONE;
+    eb->attack_bounty[victim] = PLAYER_NONE;
+    ev->attack_bounty[breaker] = PLAYER_NONE;
+    eb->mood_treaty[victim] = -200;
+    eb->mood_trade[victim] = -200;
+    eb->mood_tech[victim] = -200;
+    eb->mood_peace[victim] = -200;
+    ev->mood_treaty[breaker] = -200;
+    ev->mood_trade[breaker] = -200;
+    ev->mood_tech[breaker] = -200;
+    ev->mood_peace[breaker] = -200;
 }
 
 void game_diplo_start_war(struct game_s *g, player_id_t pi, player_id_t pi2)
@@ -222,6 +226,15 @@ void game_diplo_start_war(struct game_s *g, player_id_t pi, player_id_t pi2)
     e2->mood_trade[pi] = -200;
     e2->mood_tech[pi] = -200;
     e2->mood_peace[pi] = -130;
+}
+
+void game_diplo_start_war_swap(struct game_s *g, player_id_t pi, player_id_t pi2)
+{
+    if (g->ai_id != GAME_AI_CLASSIC) {
+        /* WASBUG? game_diplo_start_war is called in a few places using odd order of parameters */
+        player_id_t t = pi; pi = pi2; pi2 = t;
+    }
+    game_diplo_start_war(g, pi, pi2);
 }
 
 void game_diplo_break_trade(struct game_s *g, player_id_t pi, player_id_t pi2)
