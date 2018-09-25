@@ -130,6 +130,18 @@ event_roll : 0..2147483647, 512
   - Special event probability. Bigger number means events are less likely.
     Zero means events are disabled.
 
+trait1_* : 0..5, ?
+  - Starting personality type table for each race.
+    The type is chosen randomly from the table when stating a new game.
+    The values are: 0 = Xenophobix, 1 = Ruthless, 2 = Aggressive,
+    3 = Erratic, 4 = Honorable, 5 = Pacifistic.
+
+trait2_* : 0..5, ?
+  - Starting racial objective table for each race.
+    The objective is chosen randomly from the table when stating a new game.
+    The values are: 0 = Diplomat, 1 = Militarist, 2 = Expansionist,
+    3 = Technologist, 4 = Industrialist, 5 = Ecologist.
+
 crystal_* : ?, ?
 amoeba_* : ?, ?
 guardian_* : ?, ?
