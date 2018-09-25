@@ -209,51 +209,51 @@ void game_diplo_act(struct game_s *g, int dv, player_id_t pi, player_id_t pi2, i
 
 void game_diplo_break_treaty(struct game_s *g, player_id_t breaker, player_id_t victim)
 {
-    empiretechorbit_t *e, *e2;
+    empiretechorbit_t *eb, *e2;
     int v2;
     if ((breaker >= PLAYER_NUM) || (victim >= PLAYER_NUM)) {
         return;
     }
-    e = &(g->eto[breaker]);
+    eb = &(g->eto[breaker]);
     e2 = &(g->eto[victim]);
     if (e2->treaty[breaker] >= TREATY_WAR) {
         return;
     }
     v2 = 0;
-    if (e->treaty[victim] == TREATY_NONAGGRESSION) {
+    if (eb->treaty[victim] == TREATY_NONAGGRESSION) {
         v2 = -10;
     }
-    if (e->treaty[victim] == TREATY_ALLIANCE) {
+    if (eb->treaty[victim] == TREATY_ALLIANCE) {
         v2 = -20;
     }
-    if (e->trait1 == TRAIT1_HONORABLE) {
+    if (eb->trait1 == TRAIT1_HONORABLE) {
         v2 *= 2;
     }
-    e->trust[victim] -= v2;
-    if (e->treaty[victim] == TREATY_ALLIANCE) {
-        int v = e->relation2[victim];
+    eb->trust[victim] -= v2;
+    if (eb->treaty[victim] == TREATY_ALLIANCE) {
+        int v = eb->relation2[victim];
         v -= v2;
         SETMAX(v, -100);
-        e->relation2[victim] = v;
+        eb->relation2[victim] = v;
         e2->relation2[breaker] = v;
     }
     if (v2 != 0) {
         int v;
-        e->broken_treaty[victim] = e->treaty[victim];
-        e2->broken_treaty[breaker] = e->treaty[victim];
-        v = e->relation1[victim] - rnd_1_n(20, &g->seed);
+        eb->broken_treaty[victim] = eb->treaty[victim];
+        e2->broken_treaty[breaker] = eb->treaty[victim];
+        v = eb->relation1[victim] - rnd_1_n(20, &g->seed);
         SETMAX(v, -100);
-        e->relation1[victim] = v;
+        eb->relation1[victim] = v;
         e2->relation2[breaker] = v;
     }
-    e->treaty[victim] = TREATY_NONE;
+    eb->treaty[victim] = TREATY_NONE;
     e2->treaty[breaker] = TREATY_NONE;
-    e->hated[victim] = PLAYER_NONE;
+    eb->hated[victim] = PLAYER_NONE;
     e2->hated[breaker] = PLAYER_NONE;
-    e->mood_treaty[victim] = -200;
-    e->mood_trade[victim] = -200;
-    e->mood_tech[victim] = -200;
-    e->mood_peace[victim] = -200;
+    eb->mood_treaty[victim] = -200;
+    eb->mood_trade[victim] = -200;
+    eb->mood_tech[victim] = -200;
+    eb->mood_peace[victim] = -200;
     e2->mood_treaty[breaker] = -200;
     e2->mood_trade[breaker] = -200;
     e2->mood_tech[breaker] = -200;
