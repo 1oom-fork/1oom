@@ -9,8 +9,9 @@ struct game_s;
 extern const int16_t game_diplo_tbl_reldiff[6];
 
 extern void game_diplo_act(struct game_s *g, int dv, player_id_t pi, player_id_t pi2, int dtype, uint8_t pli1, int16_t dp2);
-extern void game_diplo_break_treaty(struct game_s *g, player_id_t pi, player_id_t pi2);
+extern void game_diplo_break_treaty(struct game_s *g, player_id_t breaker, player_id_t victim);
 extern void game_diplo_start_war(struct game_s *g, player_id_t pi1, player_id_t pi2);
+extern void game_diplo_start_war_swap(struct game_s *g, player_id_t pi1, player_id_t pi2);
 extern void game_diplo_break_trade(struct game_s *g, player_id_t pi/*breaker*/, player_id_t pi2);
 extern void game_diplo_annoy(struct game_s *g, player_id_t pi1, player_id_t pi2, int n);
 extern void game_diplo_battle_finish(struct game_s *g, int def, int att, int popdiff, uint32_t app_def, uint16_t biodamage, uint32_t app_att, uint8_t planet_i);
