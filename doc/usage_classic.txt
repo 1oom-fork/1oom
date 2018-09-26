@@ -77,5 +77,7 @@ enables the following extra UI features:
 - Completing terraforming generates a message (which is filtered by default)
 - After running through the Next turn phase and messages the game recenters on
   your last planet of choice
+- Clicking on #, Name, etc on Planets screen sorts the list
+- Clicking on Station or ship names on Fleet screen sorts the list
 
 See doc/list_gamediff.txt for a list of differences in the game itself.
