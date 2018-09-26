@@ -348,7 +348,7 @@ ui_sabotage_t ui_spy_sabotage_ask(struct game_s *g, int spy, int target, uint8_t
 int ui_spy_sabotage_done(struct game_s *g, int pi, int spy, int target, ui_sabotage_t act, int other1, int other2, uint8_t planet, int snum)
 {
     struct sabotage_data_s d;
-    int16_t oi_cont, oi_other1, oi_other2;
+    int16_t oi_cont, oi_cont2, oi_other1, oi_other2;
     bool flag_done = false;
     int other = PLAYER_NONE;
     ui_switch_1(g, pi);
@@ -370,10 +370,12 @@ int ui_spy_sabotage_done(struct game_s *g, int pi, int spy, int target, ui_sabot
     lbxgfx_set_frame_0(d.gfx_ind_expl);
     uiobj_table_clear();
     oi_cont = UIOBJI_INVALID;
+    oi_cont2 = UIOBJI_INVALID;
     oi_other1 = UIOBJI_INVALID;
     oi_other2 = UIOBJI_INVALID;
     if (other2 == PLAYER_NONE) {
         oi_cont = uiobj_add_t0(227, 163, "", d.gfx_contbutt, MOO_KEY_c);
+        oi_cont2 = uiobj_add_inputkey(MOO_KEY_SPACE);
     } else {
         oi_other1 = uiobj_add_mousearea(50, 106, 110, 120, MOO_KEY_UNKNOWN);
         oi_other2 = uiobj_add_mousearea(122, 106, 183, 120, MOO_KEY_UNKNOWN);
@@ -383,7 +385,7 @@ int ui_spy_sabotage_done(struct game_s *g, int pi, int spy, int target, ui_sabot
         int16_t oi;
         ui_delay_prepare();
         oi = uiobj_handle_input_cond();
-        if ((oi == UIOBJI_ESC) || (oi == oi_cont)) {
+        if ((oi == UIOBJI_ESC) || (oi == oi_cont) || (oi == oi_cont2)) {
             ui_sound_play_sfx_24();
             flag_done = true;
         }
