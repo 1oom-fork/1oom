@@ -39,6 +39,7 @@ Much of this file is based on the readme from the unofficial v1.40m patch.
     - AI does not blame both parties for breaking a treaty
     - a war sparked by capturing or destroying a colony is considered to be started by the attacker
     - a small issue concerning the change in AI defense and ship production when too many MBases on a planet has been corrected
+    - Alkari and Mrrshan bonus for AI-AI combat corrected to reflect their race bonus
     - battle AI miss chance accumulation fixed; AI is less/more optimistic about missile/beam weapon damage
     - battle AI checks shield halving properly, does not check for target's Oracle or any Oracle for missiles
     - battle AI will not retreat due to doom stack damage estimate overflow
