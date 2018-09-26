@@ -242,6 +242,7 @@ void ui_bomb_show(struct game_s *g, int pi, int attacker_i, int owner_i, uint8_t
     uiobj_set_callback_and_delay(bomb_show_draw_cb, &d, 4);
     uiobj_table_clear();
     uiobj_add_t0(227, 164, "", d.gfx_contbutt, MOO_KEY_c);
+    uiobj_add_inputkey(MOO_KEY_SPACE);
     if (g->planet[planet_i].owner == PLAYER_NONE) {
         ui_sound_play_music(0xe);
     } else if (play_music) {

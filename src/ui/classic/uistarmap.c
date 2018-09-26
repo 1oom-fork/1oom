@@ -632,7 +632,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             oi_c = uiobj_add_inputkey(MOO_KEY_c);
             ui_starmap_add_oi_bottom_buttons(&d);
             if (g->evn.build_finished_num[active_player]) {
-                oi_finished = uiobj_add_mousearea(6, 6, 225, 180, MOO_KEY_UNKNOWN);
+                oi_finished = uiobj_add_mousearea(6, 6, 225, 180, MOO_KEY_SPACE);
             }
             if (p->owner == active_player) {
                 oi_starview2 = uiobj_add_mousearea(227, 24, 310, 53, MOO_KEY_UNKNOWN);
