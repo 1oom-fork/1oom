@@ -54,6 +54,8 @@ enables the following extra UI features:
 - Tech screen has lights showing when you reach max research bonus
 - After running through the Next turn phase and messages the game recenters on
   your last planet of choice
+- Clicking on #, Name, etc on Planets screen sorts the list
+- Clicking on Station or ship names on Fleet screen sorts the list
 
 The config file item "ui.uifixbugs" (set via the -uifixbugs command-line option)
 enables the following UI bug fixes:
