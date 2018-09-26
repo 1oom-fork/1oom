@@ -101,7 +101,7 @@ void ui_newships(struct game_s *g, int pi)
     newships_load_data(&d);
     uiobj_set_callback_and_delay(newships_draw_cb, &d, 4);
     uiobj_table_clear();
-    uiobj_add_mousearea_all(MOO_KEY_UNKNOWN);
+    uiobj_add_mousearea_all(MOO_KEY_SPACE);
     while (!flag_done) {
         int16_t oi;
         ui_delay_prepare();

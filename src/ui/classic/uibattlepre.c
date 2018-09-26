@@ -165,7 +165,7 @@ static void ui_battle_pre_draw_cb(void *vptr)
 ui_battle_autoresolve_t ui_battle_pre(struct game_s *g, const struct battle_s *bt, bool hide_other, int winner)
 {
     struct ui_battle_pre_data_s d[1];
-    int16_t oi_cont = UIOBJI_INVALID, oi_auto = UIOBJI_INVALID, oi_retreat = UIOBJI_INVALID;
+    int16_t oi_cont = UIOBJI_INVALID, oi_cont2 = UIOBJI_INVALID, oi_auto = UIOBJI_INVALID, oi_retreat = UIOBJI_INVALID;
     bool flag_done = false;
     ui_battle_autoresolve_t ret;
     int party_u = bt->s[SIDE_L].party, party_d = bt->s[SIDE_R].party;
@@ -190,6 +190,7 @@ ui_battle_autoresolve_t ui_battle_pre(struct game_s *g, const struct battle_s *b
     }
     uiobj_table_clear();
     oi_cont = uiobj_add_t0(227, 163, "", d->gfx_contbutt, MOO_KEY_c);
+    oi_cont2 = uiobj_add_inputkey(MOO_KEY_SPACE);
     if (ui_extra_enabled && (winner == SIDE_NONE)) {
         oi_auto = uiobj_add_t0(250, 152, "", ui_data.gfx.space.autob, MOO_KEY_a);
         oi_retreat = uiobj_add_t0(270, 152, "", ui_data.gfx.space.retreat, MOO_KEY_r);
@@ -200,7 +201,7 @@ ui_battle_autoresolve_t ui_battle_pre(struct game_s *g, const struct battle_s *b
         int16_t oi;
         ui_delay_prepare();
         oi = uiobj_handle_input_cond();
-        if (oi == oi_cont) {
+        if ((oi == oi_cont) || (oi == oi_cont2)) {
             ui_sound_play_sfx_24();
             ret = UI_BATTLE_AUTORESOLVE_OFF;
             flag_done = true;
