@@ -1192,6 +1192,9 @@ static void uiobj_slider_plus(uiobj_t *p, int adj)
     value = newval;
     SETMIN(value, p->t6.vmax);
     *p->vptr = value;
+    if (p->t6.cb) {
+        p->t6.cb(p->t6.ctx, p->t6.slideri, value);
+    }
 }
 
 static void uiobj_slider_minus(uiobj_t *p, int adj)
@@ -1208,6 +1211,9 @@ static void uiobj_slider_minus(uiobj_t *p, int adj)
     value = newval;
     SETMAX(value, p->t6.vmin);
     *p->vptr = value;
+    if (p->t6.cb) {
+        p->t6.cb(p->t6.ctx, p->t6.slideri, value);
+    }
 }
 
 static int16_t uiobj_handle_input_sub0(void)
