@@ -13,7 +13,6 @@ extern const uint8_t tech_reduce_25percent_per_10pts[51];
 
 extern uint8_t game_tech_player_has_tech(const struct game_s *g, int field_i, int tech_i, int player_i);
 extern uint8_t game_tech_player_best_tech(const struct game_s *g, int field_i, int tech_i_base, int tech_i_step, int tech_i_max, int player_i);
-extern int game_tech_player_best_engine(const struct game_s *g, int player_i);
 extern uint16_t game_get_base_cost(const struct game_s *g, int player_i);
 extern uint8_t game_get_base_weapon(const struct game_s *g, player_id_t player_i, int tech_i);
 extern uint8_t game_get_base_weapon_2(const struct game_s *g, player_id_t player_i, int tech_i, uint8_t weap1);
