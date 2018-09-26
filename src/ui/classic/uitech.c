@@ -392,7 +392,7 @@ void ui_tech(struct game_s *g, player_id_t active_player)
                 oi_tbl_lock[i] = uiobj_add_mousearea(168, y, 218, y + 8, MOO_KEY_UNKNOWN);
                 if (!t->slider_lock[i]) {
                     oi_tbl_minus[i] = uiobj_add_mousearea(223, y, 226, y + 8, MOO_KEY_1 + i);
-                    oi_tbl_plus[i] = uiobj_add_mousearea(279, y, 283, y + 8, MOO_KEY_UNKNOWN);
+                    oi_tbl_plus[i] = uiobj_add_mousearea(279, y, 283, y + 8, MOO_KEY_a + i);
                     uiobj_add_slider_func(227, y, 0, 100, 50, 9, &t->slider[i], tech_slider_cb, &d, i);
                 }
             }

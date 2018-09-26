@@ -34,7 +34,7 @@ static const struct xtramenu_s {
     { MOO_KEY_c, UI_MAIN_LOOP_SPIES_CAUGHT },
     { MOO_KEY_g, UI_MAIN_LOOP_GOVERN },
     { MOO_KEY_m, UI_MAIN_LOOP_MSGFILTER },
-    { MOO_KEY_UNKNOWN, UI_MAIN_LOOP_STARMAP }
+    { MOO_KEY_SPACE, UI_MAIN_LOOP_STARMAP }
 };
 
 static void xtramenu_draw_cb(void *vptr)
