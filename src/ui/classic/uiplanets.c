@@ -62,8 +62,8 @@ static void free_pl_data(struct planets_data_s *d)
 static void planets_draw_cb(void *vptr)
 {
     struct planets_data_s *d = vptr;
-    struct game_s *g = d->g;
-    empiretechorbit_t *e = &(g->eto[d->api]);
+    const struct game_s *g = d->g;
+    const empiretechorbit_t *e = &(g->eto[d->api]);
     char buf[64];
     int v;
 
@@ -103,7 +103,7 @@ static void planets_draw_cb(void *vptr)
         pi = d->pos + i;
         if (pi < d->num) {
             int y0;
-            planet_t *p;
+            const planet_t *p;
             const char *str;
             uint8_t pli;
             pli = d->planets[pi];
