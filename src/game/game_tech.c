@@ -287,11 +287,6 @@ uint8_t game_tech_player_best_tech(const struct game_s *g, int field_i, int tech
     return tech_best;
 }
 
-int game_tech_player_best_engine(const struct game_s *g, int player_i)
-{
-    return game_tech_player_best_tech(g, TECH_FIELD_PROPULSION, 0, 6, 50, player_i) + 3;
-}
-
 uint16_t game_get_base_cost(const struct game_s *g, int player_i)
 {
     const uint8_t *p = g->eto[player_i].tech.percent;
