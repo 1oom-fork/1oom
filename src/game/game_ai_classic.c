@@ -141,6 +141,14 @@ struct ai_turn_p2_s {
 
 /* -------------------------------------------------------------------------- */
 
+static int game_ai_best_speed(const struct game_s *g, player_id_t player_i)
+{
+    /* FIXME: The name of the function does not correctly reflect its meaning.
+       Misunderstanding of the meaning of this function was the cause of errors.
+    */
+    return game_tech_player_best_tech(g, TECH_FIELD_PROPULSION, 0, 6, 50, player_i) + 3;
+}
+
 static void game_ai_classic_turn_p1_send_scout(struct game_s *g, struct ai_turn_p1_s *ait, player_id_t pi)
 {
     empiretechorbit_t *e = &(g->eto[pi]);
@@ -308,7 +316,7 @@ static void game_ai_classic_turn_p1_front(struct game_s *g, struct ai_turn_p1_s 
     empiretechorbit_t *e = &(g->eto[pi]);
     int bestspeed;
     int tbl_x[PLAYER_NUM], tbl_y[PLAYER_NUM];
-    bestspeed = game_tech_player_best_engine(g, pi) * 10 + 10;
+    bestspeed = game_ai_best_speed(g, pi) * 10 + 10;
     ait->num_fronts = 0;
     /* unused
     BOOLVEC_DECLARE(tbl_own_transport_dest, PLANETS_MAX);
@@ -777,7 +785,7 @@ static void game_ai_classic_turn_p1_send_attack(struct game_s *g, struct ai_turn
 
 static void game_ai_classic_turn_p1_send_defend(struct game_s *g, struct ai_turn_p1_s *ait, player_id_t pi)
 {
-    int bestspeed = game_tech_player_best_engine(g, pi) * 30 + 20;
+    int bestspeed = game_ai_best_speed(g, pi) * 30 + 20;
     uint8_t tbl_shipw[PLAYER_NUM][NUM_SHIPDESIGNS];
     uint64_t tbl_planet_threat[PLANETS_MAX];
     uint8_t tbl_defend[PLANETS_MAX];
@@ -852,7 +860,7 @@ static void game_ai_classic_turn_p1_send_defend(struct game_s *g, struct ai_turn
 
 static void game_ai_classic_turn_p1_send_idle(struct game_s *g, struct ai_turn_p1_s *ait, player_id_t pi)
 {
-    int bestspeed = game_tech_player_best_engine(g, pi) * 20 + 20;
+    int bestspeed = game_ai_best_speed(g, pi) * 20 + 20;
     for (int i = 0; i < ait->num_fronts; ++i) {
         ait->tbl_force_own[ait->tbl_front_planet[i]] = 0;
     }
@@ -901,7 +909,7 @@ static void game_ai_classic_turn_p1_send_idle(struct game_s *g, struct ai_turn_p
 
 static void game_ai_classic_turn_p1_trans_en(struct game_s *g, struct ai_turn_p1_s *ait, player_id_t pi)
 {
-    int bestspeed = game_tech_player_best_engine(g, pi) * 30 + 30;
+    int bestspeed = game_ai_best_speed(g, pi) * 30 + 30;
     empiretechorbit_t *e = &(g->eto[pi]);
     BOOLVEC_DECLARE(tbl_trans_from, PLANETS_MAX); /* NOTE overwrites ait->tbl_planet_own_i */
     BOOLVEC_DECLARE(tbl_trans_to, PLANETS_MAX);
@@ -962,7 +970,7 @@ static void game_ai_classic_turn_p1_trans_en(struct game_s *g, struct ai_turn_p1
 
 static void game_ai_classic_turn_p1_trans_own(struct game_s *g, struct ai_turn_p1_s *ait, player_id_t pi)
 {
-    int bestspeed = game_tech_player_best_engine(g, pi) * 20 + 20;
+    int bestspeed = game_ai_best_speed(g, pi) * 20 + 20;
     BOOLVEC_DECLARE(tbl_trans_from, PLANETS_MAX);
     BOOLVEC_DECLARE(tbl_trans_to, PLANETS_MAX);
     for (int i = 0; i < g->galaxy_stars; ++i) {
