@@ -57,8 +57,8 @@ static void free_fl_data(struct fleet_data_s *d)
 static void fleet_draw_cb(void *vptr)
 {
     struct fleet_data_s *d = vptr;
-    struct game_s *g = d->g;
-    empiretechorbit_t *e = &(g->eto[d->api]);
+    const struct game_s *g = d->g;
+    const empiretechorbit_t *e = &(g->eto[d->api]);
     int num;
 
     vgabuf_fill(0x3a);
@@ -77,15 +77,15 @@ static void fleet_draw_cb(void *vptr)
     SETMIN(num, 5);
 
     for (int i = 0; i < e->shipdesigns_num; ++i) {
-        shipdesign_t *sd = &(g->srd[d->api].design[i]);
+        const shipdesign_t *sd = &(g->srd[d->api].design[i]);
         int x0;
         x0 = 44 * i + 48;
         lbxfont_select(2, 0xd, 0, 0);
         lbxfont_print_str_center(x0 + 19, 6, sd->name);
     }
     for (int i = 0; i < num; ++i) {
-        planet_t *p;
-        uint16_t *s;
+        const planet_t *p;
+        const uint16_t *s;
         int x0 = 5, y0, pi, fi;
         y0 = 33 * i + 17;
         fi = i + d->pos;
@@ -111,7 +111,7 @@ static void fleet_draw_cb(void *vptr)
         }
         s = (BOOLVEC_IS1(d->is_enroute, fi)) ? g->enroute[d->enroute[fi]].ships : e->orbit[pi].ships;
         for (int j = 0; j < e->shipdesigns_num; ++j) {
-            shipdesign_t *sd = &(g->srd[d->api].design[j]);
+            const shipdesign_t *sd = &(g->srd[d->api].design[j]);
             int ships;
             ships = s[j];
             if (ships) {
@@ -151,11 +151,11 @@ static void fleet_draw_cb(void *vptr)
 
 static void ui_fleet_sub(struct fleet_data_s *d)
 {
-    struct game_s *g = d->g;
-    empiretechorbit_t *e = &(g->eto[d->api]);
+    const struct game_s *g = d->g;
+    const empiretechorbit_t *e = &(g->eto[d->api]);
     int num = 0, sd_num = e->shipdesigns_num;
     for (int i = 0; i < g->galaxy_stars; ++i) {
-        fleet_orbit_t *r = &(e->orbit[i]);
+        const fleet_orbit_t *r = &(e->orbit[i]);
         for (int j = 0; j < sd_num; ++j) {
             if (r->ships[j] != 0) {
                 d->planet[num] = i;
@@ -166,7 +166,7 @@ static void ui_fleet_sub(struct fleet_data_s *d)
         }
     }
     for (int i = 0; i < g->enroute_num; ++i) {
-        fleet_enroute_t *r = &(g->enroute[i]);
+        const fleet_enroute_t *r = &(g->enroute[i]);
         if (r->owner == d->api) {
             for (int j = 0; j < sd_num; ++j) {
                 if (r->ships[j] != 0) {
