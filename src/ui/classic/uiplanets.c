@@ -1,6 +1,7 @@
 #include "config.h"
 
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "uiplanets.h"
 #include "comp.h"
@@ -36,8 +37,8 @@ struct planets_data_s {
     int num;
     int16_t amount_trans;
     int planet_i;
+    int order_i;
     struct game_s *g;
-    uint8_t planets[PLANETS_MAX];
     uint8_t *gfx_report;
     uint8_t *gfx_but_trans;
     uint8_t *gfx_but_ok;
@@ -60,6 +61,48 @@ static void free_pl_data(struct planets_data_s *d)
     lbxfile_item_release(LBXFILE_BACKGRND, d->gfx_transfer);
 }
 
+static const char *planets_get_notes_str(const struct game_s *g, uint8_t pli, bool *flag_normal_ptr, char *buf)
+{
+    const planet_t *p = &(g->planet[pli]);
+    const char *str = NULL;
+    bool flag_normal = false;
+    if (g->evn.have_plague && (g->evn.plague_planet_i == pli)) {
+        str = game_str_pl_plague;
+    } else if (g->evn.have_nova && (g->evn.nova_planet_i == pli)) {
+        str = game_str_pl_nova;
+    } else if (g->evn.have_comet && (g->evn.comet_planet_i == pli)) {
+        str = game_str_pl_comet;
+    } else if (g->evn.have_pirates && (g->evn.pirates_planet_i == pli)) {
+        str = game_str_pl_pirates;
+    } else if (p->unrest == PLANET_UNREST_REBELLION) {
+        str = game_str_pl_rebellion;
+    } else if (p->unrest == PLANET_UNREST_UNREST) {
+        str = game_str_pl_unrest;
+    } else if (g->evn.have_accident && (g->evn.accident_planet_i == pli)) {
+        str = game_str_pl_accident;
+    } else {
+        flag_normal = true;
+        if (p->special != PLANET_SPECIAL_NORMAL) {
+            str = game_str_tbl_sm_pspecial[p->special];
+        } else if (p->growth != PLANET_GROWTH_NORMAL) {
+            str = game_str_tbl_sm_pgrowth[p->growth];
+        }
+        if (p->have_stargate) {
+            if (str) {
+                strcpy(buf, str);
+                strcat(buf, " *");
+                str = buf;
+             } else {
+                 str = game_str_sm_stargate;
+             }
+        }
+    }
+    if (flag_normal_ptr) {
+        *flag_normal_ptr = flag_normal;
+    }
+    return str;
+}
+
 static void planets_draw_cb(void *vptr)
 {
     struct planets_data_s *d = vptr;
@@ -72,7 +115,7 @@ static void planets_draw_cb(void *vptr)
     for (int i = 0; i < PLANETS_ON_SCREEN; ++i) {
         int pi;
         pi = d->pos + i;
-        if ((pi < d->num) && (d->planets[pi] == g->planet_focus_i[d->api])) {
+        if ((pi < d->num) && (ui_data.sorted.index[pi] == g->planet_focus_i[d->api])) {
             int y0, y1;
             y0 = 21 + i * 11;
             y1 = y0 + 6;
@@ -107,11 +150,11 @@ static void planets_draw_cb(void *vptr)
             const planet_t *p;
             const char *str;
             uint8_t pli;
-            pli = d->planets[pi];
+            pli = ui_data.sorted.value[ui_data.sorted.index[pi]];
             y0 = 21 + i * 11 + 1;   /* di + 1 */
             p = &(g->planet[pli]);
             lbxfont_select(2, 0xb, 0, 0);
-            lbxfont_print_num_right(17, y0, pi + 1, UI_SCREEN_W);
+            lbxfont_print_num_right(17, y0, ui_data.sorted.index[pi] + 1, UI_SCREEN_W);
             lbxfont_select(2, 0xd, 0, 0);
             lbxfont_print_str_normal(25, y0, p->name, UI_SCREEN_W);
             lbxfont_select(2, 6, 0, 0);
@@ -147,41 +190,16 @@ static void planets_draw_cb(void *vptr)
                 v = p->total_prod;
             }
             lbxfont_print_num_right(214, y0, v, UI_SCREEN_W);
-            str = NULL;
             lbxfont_select(2, 0xb, 0, 0);
-            if (g->evn.have_plague && (g->evn.plague_planet_i == pli)) {
-                str = game_str_pl_plague;
-            } else if (g->evn.have_nova && (g->evn.nova_planet_i == pli)) {
-                str = game_str_pl_nova;
-            } else if (g->evn.have_comet && (g->evn.comet_planet_i == pli)) {
-                str = game_str_pl_comet;
-            } else if (g->evn.have_pirates && (g->evn.pirates_planet_i == pli)) {
-                str = game_str_pl_pirates;
-            } else if (p->unrest == PLANET_UNREST_REBELLION) {
-                str = game_str_pl_rebellion;
-            } else if (p->unrest == PLANET_UNREST_UNREST) {
-                str = game_str_pl_unrest;
-            } else if (g->evn.have_accident && (g->evn.accident_planet_i == pli)) {
-                str = game_str_pl_accident;
-            } else {
-                lbxfont_select(2, 1, 0, 0);
-                if (p->special != PLANET_SPECIAL_NORMAL) {
-                    str = game_str_tbl_sm_pspecial[p->special];
-                } else if (p->growth != PLANET_GROWTH_NORMAL) {
-                    str = game_str_tbl_sm_pgrowth[p->growth];
+            {
+                bool flag_normal;
+                str = planets_get_notes_str(g, pli, &flag_normal, buf);
+                if (flag_normal) {
+                    lbxfont_select(2, 1, 0, 0);
                 }
-                if (p->have_stargate) {
-                    if (str) {
-                        strcpy(buf, str);
-                        strcat(buf, " *");
-                        str = buf;
-                    } else {
-                        str = game_str_sm_stargate;
-                    }
+                if (str) {
+                    lbxfont_print_str_normal(268, y0, str, UI_SCREEN_W);
                 }
-            }
-            if (str) {
-                lbxfont_print_str_normal(268, y0, str, UI_SCREEN_W);
             }
             if (p->slider[PLANET_SLIDER_SHIP] > 0) {
                 if (p->buildship == BUILDSHIP_STARGATE) {
@@ -220,6 +238,7 @@ static void planets_draw_cb(void *vptr)
     lbxfont_print_str_center(66, 161, game_str_pl_spending, UI_SCREEN_W);
     lbxfont_print_str_center(163, 161, game_str_pl_tincome, UI_SCREEN_W);
 }
+
 
 static void planets_transfer_draw_cb(void *vptr)
 {
@@ -327,11 +346,217 @@ static void ui_planets_transfer(struct planets_data_s *d)
 
 /* -------------------------------------------------------------------------- */
 
+enum {
+    UI_SORT_INDEX = 0,
+    UI_SORT_NAME,
+    UI_SORT_POP,
+    UI_SORT_GROWTH,
+    UI_SORT_FACT,
+    UI_SORT_SHIELD,
+    UI_SORT_BASE,
+    UI_SORT_WASTE,
+    UI_SORT_PROD,
+    UI_SORT_DOCK,
+    UI_SORT_NOTES,
+    UI_SORT_NUM
+};
+
+#define UI_SORT_SETUP() \
+    const struct game_s *g = ui_data.sorted.g; \
+    uint16_t i0 = *((uint16_t const *)ptr0); \
+    uint16_t i1 = *((uint16_t const *)ptr1); \
+    uint8_t pli0 = ui_data.sorted.value[i0]; \
+    uint8_t pli1 = ui_data.sorted.value[i1]; \
+    const planet_t *p0 = &(g->planet[pli0]); \
+    const planet_t *p1 = &(g->planet[pli1])
+
+#define UI_SORT_CMP_VALUE(_v0_, _v1_) (((_v0_) != (_v1_)) ? ((_v0_) - (_v1_)) : (i1 - i0))
+#define UI_SORT_CMP_VARIABLE(_var_) UI_SORT_CMP_VALUE(p0->_var_, p1->_var_)
+
+static int planets_sort_inc_index(const void *ptr0, const void *ptr1)
+{
+    uint16_t i0 = *((uint16_t const *)ptr0);
+    uint16_t i1 = *((uint16_t const *)ptr1);
+    return i0 - i1;
+}
+
+static int planets_sort_dec_index(const void *ptr0, const void *ptr1)
+{
+    return planets_sort_inc_index(ptr1, ptr0);
+}
+
+static int planets_sort_inc_name(const void *ptr0, const void *ptr1)
+{
+    UI_SORT_SETUP();
+    return strcmp(p0->name, p1->name);
+}
+
+static int planets_sort_dec_name(const void *ptr0, const void *ptr1)
+{
+    return planets_sort_inc_name(ptr1, ptr0);
+}
+
+static int planets_sort_inc_pop(const void *ptr0, const void *ptr1)
+{
+    UI_SORT_SETUP();
+    return UI_SORT_CMP_VARIABLE(pop);
+}
+
+static int planets_sort_dec_pop(const void *ptr0, const void *ptr1)
+{
+    return planets_sort_inc_pop(ptr1, ptr0);
+}
+
+static int planets_sort_inc_growth(const void *ptr0, const void *ptr1)
+{
+    UI_SORT_SETUP();
+    int v0 = p0->pop - p0->pop_prev;
+    int v1 = p1->pop - p1->pop_prev;
+    return UI_SORT_CMP_VALUE(v0, v1);
+}
+
+static int planets_sort_dec_growth(const void *ptr0, const void *ptr1)
+{
+    return planets_sort_inc_growth(ptr1, ptr0);
+}
+
+static int planets_sort_inc_fact(const void *ptr0, const void *ptr1)
+{
+    UI_SORT_SETUP();
+    return UI_SORT_CMP_VARIABLE(factories);
+}
+
+static int planets_sort_dec_fact(const void *ptr0, const void *ptr1)
+{
+    return planets_sort_inc_fact(ptr1, ptr0);
+}
+
+static int planets_sort_inc_shield(const void *ptr0, const void *ptr1)
+{
+    UI_SORT_SETUP();
+    return UI_SORT_CMP_VARIABLE(shield);
+}
+
+static int planets_sort_dec_shield(const void *ptr0, const void *ptr1)
+{
+    return planets_sort_inc_shield(ptr1, ptr0);
+}
+
+static int planets_sort_inc_base(const void *ptr0, const void *ptr1)
+{
+    UI_SORT_SETUP();
+    return UI_SORT_CMP_VARIABLE(missile_bases);
+}
+
+static int planets_sort_dec_base(const void *ptr0, const void *ptr1)
+{
+    return planets_sort_inc_base(ptr1, ptr0);
+}
+
+static int planets_sort_inc_waste(const void *ptr0, const void *ptr1)
+{
+    UI_SORT_SETUP();
+    return UI_SORT_CMP_VARIABLE(waste);
+}
+
+static int planets_sort_dec_waste(const void *ptr0, const void *ptr1)
+{
+    return planets_sort_inc_waste(ptr1, ptr0);
+}
+
+static int planets_sort_inc_prod(const void *ptr0, const void *ptr1)
+{
+    UI_SORT_SETUP();
+    int v0 = (p0->unrest == PLANET_UNREST_REBELLION) ? 0 : p0->total_prod;
+    int v1 = (p1->unrest == PLANET_UNREST_REBELLION) ? 0 : p1->total_prod;
+    return UI_SORT_CMP_VALUE(v0, v1);
+}
+
+static int planets_sort_dec_prod(const void *ptr0, const void *ptr1)
+{
+    return planets_sort_inc_prod(ptr1, ptr0);
+}
+
+static int planets_sort_inc_dock(const void *ptr0, const void *ptr1)
+{
+    UI_SORT_SETUP();
+    int v0 = (p0->slider[PLANET_SLIDER_SHIP] > 0) ? p0->buildship : -1;
+    int v1 = (p1->slider[PLANET_SLIDER_SHIP] > 0) ? p1->buildship : -1;
+    return UI_SORT_CMP_VALUE(v0, v1);
+}
+
+static int planets_sort_dec_dock(const void *ptr0, const void *ptr1)
+{
+    return planets_sort_inc_dock(ptr1, ptr0);
+}
+
+static int planets_sort_inc_notes(const void *ptr0, const void *ptr1)
+{
+    const struct game_s *g = ui_data.sorted.g;
+    uint16_t i0 = *((uint16_t const *)ptr0);
+    uint16_t i1 = *((uint16_t const *)ptr1);
+    uint8_t pli0 = ui_data.sorted.value[i0];
+    uint8_t pli1 = ui_data.sorted.value[i1];
+    char buf0[64];
+    char buf1[64];
+    const char *s0 = planets_get_notes_str(g, pli0, 0, buf0);
+    const char *s1 = planets_get_notes_str(g, pli1, 0, buf1);
+    int d;
+    if ((!s0) && (!s1)) {
+        d = i0 - i1;
+    } else if ((!s0) && s1) {
+        d = -1;
+    } else if ((!s1) && s0) {
+        d = 1;
+    } else {
+        d = strcmp(planets_get_notes_str(g, pli0, 0, buf0), planets_get_notes_str(g, pli1, 0, buf1));
+        if (d == 0) {
+            d = i0 - i1;
+        }
+    }
+    return d;
+}
+
+static int planets_sort_dec_notes(const void *ptr0, const void *ptr1)
+{
+    return planets_sort_inc_notes(ptr1, ptr0);
+}
+
+typedef int sort_cb_t(const void *, const void *);
+
+static sort_cb_t * const sort_cb_tbl[UI_SORT_NUM * 2] = {
+    planets_sort_inc_index,
+    planets_sort_dec_index,
+    planets_sort_inc_name,
+    planets_sort_dec_name,
+    planets_sort_dec_pop,
+    planets_sort_inc_pop,
+    planets_sort_dec_growth,
+    planets_sort_inc_growth,
+    planets_sort_dec_fact,
+    planets_sort_inc_fact,
+    planets_sort_dec_shield,
+    planets_sort_inc_shield,
+    planets_sort_dec_base,
+    planets_sort_inc_base,
+    planets_sort_dec_waste,
+    planets_sort_inc_waste,
+    planets_sort_dec_prod,
+    planets_sort_inc_prod,
+    planets_sort_dec_dock,
+    planets_sort_inc_dock,
+    planets_sort_dec_notes,
+    planets_sort_inc_notes
+};
+
+/* -------------------------------------------------------------------------- */
+
 void ui_planets(struct game_s *g, player_id_t active_player)
 {
     struct planets_data_s d;
     bool flag_done = false, flag_trans;
     int16_t oi_alt_moola, oi_up, oi_down, oi_wheel, oi_ok, oi_trans, oi_minus, oi_plus, oi_tbl_planets[PLANETS_ON_SCREEN];
+    int16_t oi_sort[UI_SORT_NUM];
     uint8_t tbl_onscreen_planets[PLANETS_ON_SCREEN];
     int16_t scroll = 0;
 
@@ -344,16 +569,19 @@ again:
     d.g = g;
     d.api = active_player;
     d.selected = -1;
+    d.order_i = 0;
     d.pos = 0;
     d.num = 0;
 
+    ui_data.sorted.g = g;
     for (int i = 0; i < g->galaxy_stars; ++i) {
         if (g->planet[i].owner == active_player) {
             if (i == g->planet_focus_i[active_player]) {
                 d.pos = i - 5;
                 d.selected = d.num - d.pos;
             }
-            d.planets[d.num++] = i;
+            ui_data.sorted.index[d.num] = d.num;
+            ui_data.sorted.value[d.num++] = i;
         }
     }
 
@@ -368,6 +596,7 @@ again:
         tbl_onscreen_planets[i] = 0;
         oi_tbl_planets[i] = UIOBJI_INVALID;
     }
+    UIOBJI_SET_TBL_INVALID(oi_sort);
 
     uiobj_set_callback_and_delay(planets_draw_cb, &d, 2);
 
@@ -426,6 +655,17 @@ again:
             ui_sound_play_sfx_24();
             flag_trans = true;
         }
+        for (int i = 0; i < UI_SORT_NUM; ++i) {
+            if (oi == oi_sort[i]) {
+                int v;
+                v = i * 2;
+                if (v == d.order_i) {
+                    ++v;
+                }
+                d.order_i = v;
+                qsort(ui_data.sorted.index, d.num, sizeof(ui_data.sorted.index[0]), sort_cb_tbl[d.order_i]);
+            }
+        }
         ui_cursor_setup_area(1, &ui_cursor_area_tbl[flag_trans ? 9 : 0]);
         if (!flag_done) {
             uiobj_table_set_last(oi_alt_moola);
@@ -436,10 +676,18 @@ again:
                 int pi, y0, y1;
                 pi = i + d.pos;
                 if (pi < d.num) {
-                    tbl_onscreen_planets[i] = d.planets[pi];
+                    tbl_onscreen_planets[i] = ui_data.sorted.value[ui_data.sorted.index[pi]];
                     y0 = 21 + i * 11;
                     y1 = y0 + 8;
                     oi_tbl_planets[i] = uiobj_add_mousearea(7, y0, 248, y1, MOO_KEY_UNKNOWN);
+                }
+            }
+            if (ui_extra_enabled) {
+                const int x0[UI_SORT_NUM] = {  8, 23, 71,  87, 117, 138, 155, 176, 194, 220, 267 };
+                const int x1[UI_SORT_NUM] = { 20, 67, 86, 113, 134, 151, 172, 192, 216, 262, 310 };
+                const int y0 = 8, y1 = 16;
+                for (int i = 0; i < UI_SORT_NUM; ++i) {
+                    oi_sort[i] = uiobj_add_mousearea(x0[i], y0, x1[i], y1, MOO_KEY_UNKNOWN);
                 }
             }
             oi_wheel = uiobj_add_mousewheel(0, 0, 319, 159, &scroll);
