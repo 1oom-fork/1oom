@@ -2080,7 +2080,7 @@ static void game_ai_classic_battle_ai_ai_get_weights(const struct game_s *g, pla
         tbl[i] += e->tech.percent[TECH_FIELD_CONSTRUCTION] / 2;
         if ((e->race == RACE_MRRSHAN) || (e->race == RACE_ALKARI)) {
             /* FIXME: game_num_race_bonus */
-            tbl[i] += 15;
+            tbl[i] += ((g->ai_id == GAME_AI_CLASSIC) ? 15 : 20);
         }
         tbl[i] *= game_num_tbl_hull_w[sd->hull];
     }
