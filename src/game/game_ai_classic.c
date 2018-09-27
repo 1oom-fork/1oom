@@ -3248,7 +3248,12 @@ static bool game_ai_classic_bomb(struct game_s *g, player_id_t player, uint8_t p
     const planet_t *p = &(g->planet[planet]);
     if (g->eto[player].race == RACE_BULRATHI) {
         /* FIXME: game_num_race_bonus_bulrathi */
-        pop_inbound += pop_inbound / 5;
+        if (g->ai_id == GAME_AI_CLASSICPLUS) {
+            /* OSG states 2.15:1 average kill:death ratio for +20 (+Bulrathi -Defense) advantage */
+            pop_inbound = (pop_inbound * 215) / 100;
+        } else {
+            pop_inbound += pop_inbound / 5;
+        }
     }
     flag_do_bomb = (p->pop > pop_inbound);
     if (IS_HUMAN(g, p->owner)) {
