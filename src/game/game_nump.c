@@ -185,6 +185,7 @@ static const struct numtbl_s {
     DEFNUMITEML(monster_rest_att, NUMTYPE_BOOL, 0, 1),
     DEFNUMITEML(orbital_weap_any, NUMTYPE_BOOL, 0, 1),
     DEFNUMITEML(orbital_weap_4, NUMTYPE_BOOL, 0, 1),
+    DEFNUMITEML(orbital_torpedo, NUMTYPE_BOOL, 0, 1),
     DEFNUMITEML(combat_trans_fix, NUMTYPE_BOOL, 0, 1),
     DEFNUMITEML(stargate_redir_fix, NUMTYPE_BOOL, 0, 1),
     DEFNUMITEML(trans_redir_fix, NUMTYPE_BOOL, 0, 1),

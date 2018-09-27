@@ -38,6 +38,7 @@ bool game_num_aud_bounty_give = false;
 bool game_num_monster_rest_att = false;
 bool game_num_orbital_weap_any = false;
 bool game_num_orbital_weap_4 = false;
+bool game_num_orbital_torpedo = false;
 bool game_num_combat_trans_fix = false;
 bool game_num_stargate_redir_fix = false;
 bool game_num_trans_redir_fix = false;

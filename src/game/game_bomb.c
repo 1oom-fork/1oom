@@ -73,7 +73,7 @@ static void game_turn_bomb_damage(struct game_s *g, uint8_t pli, player_id_t att
                         }
                     }
                 } else {
-                    if (w->misstype == 0) {
+                    if (game_num_orbital_torpedo == (w->misstype != 0)) { /* WASBUG damage halving for torpedo affected missiles instead */
                         dmgmax /= 2;
                     }
                     dmgmax *= w->nummiss;
