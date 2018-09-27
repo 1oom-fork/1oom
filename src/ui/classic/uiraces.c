@@ -238,7 +238,7 @@ int ui_races(struct game_s *g, player_id_t api)
 {
     struct races_data_s d;
     bool flag_done = false;
-    int16_t oi_ok, oi_audience, oi_report, oi_status, oi_sec_minus, oi_sec_plus,
+    int16_t oi_ok, oi_ok2, oi_audience, oi_report, oi_status, oi_sec_minus, oi_sec_plus,
             oi_tbl_oppon[PLAYER_NUM - 1],
             oi_tbl_spy_minus[PLAYER_NUM - 1],
             oi_tbl_spy_plus[PLAYER_NUM - 1]
@@ -271,6 +271,7 @@ int ui_races(struct game_s *g, player_id_t api)
 #define UIOBJ_CLEAR_LOCAL() \
     do { \
         oi_ok = UIOBJI_INVALID; \
+        oi_ok2 = UIOBJI_INVALID; \
         oi_audience = UIOBJI_INVALID; \
         oi_report = UIOBJI_INVALID; \
         oi_status = UIOBJI_INVALID; \
@@ -291,7 +292,7 @@ int ui_races(struct game_s *g, player_id_t api)
         ui_cursor_setup_area(1, &ui_cursor_area_tbl[d.cursor_mode ? 8 : 0]);
         oi = uiobj_handle_input_cond();
         ui_delay_prepare();
-        if ((oi == oi_ok) || ((oi == UIOBJI_ESC) && !d.cursor_mode)) {
+        if ((oi == oi_ok) || (oi == oi_ok2) || ((oi == UIOBJI_ESC) && !d.cursor_mode)) {
             ui_sound_play_sfx_24();
             flag_done = true;
             ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
@@ -397,6 +398,7 @@ int ui_races(struct game_s *g, player_id_t api)
             if (d.cursor_mode == 0) {
                 oi_status = uiobj_add_t0(165, 180, "", ui_data.gfx.screens.races_bu.status, MOO_KEY_s);
                 oi_ok = uiobj_add_t0(290, 180, "", ui_data.gfx.screens.races_bu.ok, MOO_KEY_o);
+                oi_ok2 = uiobj_add_inputkey(MOO_KEY_SPACE);
                 if (d.num > 0) {
                     uiobj_add_slider_int(238, 141, 0, 200, 45, 9, &e->security);
                     oi_sec_minus = uiobj_add_mousearea(233, 139, 236, 147, MOO_KEY_UNKNOWN);
