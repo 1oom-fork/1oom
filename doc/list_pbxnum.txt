@@ -69,6 +69,10 @@ orbital_weap_4 : 0..1, 0
   - Allow orbital bombardment with weapon in slot 4.
     In MOO1 the weapon in slot 4 is not used in orbital bombardment.
 
+orbital_torpedo : 0..1, 0
+  - Fix orbital bombardment missile/torpedo damage halving.
+    In MOO1 the missile damage is halved but torpedo damage is untouched.
+
 combat_trans_fix : 0..1, 0
   - Make Combat Transporters work as intended.
     In MOO1 Combat Transporters only work if the planet owner has Sub-Space
