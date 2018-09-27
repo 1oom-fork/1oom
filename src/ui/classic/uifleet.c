@@ -312,18 +312,18 @@ static sort_cb_t * const sort_cb_tbl[UI_SORT_NUM * 2] = {
     fleet_sort_dec_index,
     fleet_sort_inc_station,
     fleet_sort_dec_station,
-    fleet_sort_inc_ship0,
     fleet_sort_dec_ship0,
-    fleet_sort_inc_ship1,
+    fleet_sort_inc_ship0,
     fleet_sort_dec_ship1,
-    fleet_sort_inc_ship2,
+    fleet_sort_inc_ship1,
     fleet_sort_dec_ship2,
-    fleet_sort_inc_ship3,
+    fleet_sort_inc_ship2,
     fleet_sort_dec_ship3,
-    fleet_sort_inc_ship4,
+    fleet_sort_inc_ship3,
     fleet_sort_dec_ship4,
-    fleet_sort_inc_ship5,
-    fleet_sort_dec_ship5
+    fleet_sort_inc_ship4,
+    fleet_sort_dec_ship5,
+    fleet_sort_inc_ship5
 };
 
 /* -------------------------------------------------------------------------- */
