@@ -2167,10 +2167,10 @@ static bool game_ai_classic_battle_ai_ai_resolve_do(struct battle_s *bt)
             bt->bases = 0;
             break;
         case SIDE_L:
-            bt->bases = wl ? ((bt->bases * wl2) / wl) : 0;
+            bt->bases = wl ? ((bt->bases * (uint64_t)wl2) / wl) : 0;
             break;
         case SIDE_R:
-            bt->bases = wr ? ((bt->bases * wr2) / wr) : 0;
+            bt->bases = wr ? ((bt->bases * (uint64_t)wr2) / wr) : 0;
             break;
         default:
             break;
