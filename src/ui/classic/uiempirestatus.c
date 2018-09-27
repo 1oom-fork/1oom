@@ -100,7 +100,7 @@ void ui_empirestatus(struct game_s *g, player_id_t api)
         if (!flag_done) {
             empirestatus_draw_cb(&d);
             uiobj_table_clear();
-            uiobj_add_mousearea(UI_SCREEN_LIMITS, MOO_KEY_UNKNOWN);
+            uiobj_add_mousearea(UI_SCREEN_LIMITS, MOO_KEY_SPACE);
             ui_draw_finish();
             ui_delay_ticks_or_click(1);
         }

@@ -233,7 +233,7 @@ static void ui_play_ending_good_or_tyrant(int race, const char *name, bool flag_
     ui_sound_play_music(2);
 
     uiobj_table_clear();
-    oi_skip = uiobj_add_mousearea(UI_SCREEN_LIMITS, MOO_KEY_UNKNOWN);
+    oi_skip = uiobj_add_mousearea(UI_SCREEN_LIMITS, MOO_KEY_SPACE);
     uiobj_set_downcount(3);
     uiobj_set_callback_and_delay(ui_play_winlose_cb1, &wld1, 3);
 
@@ -452,7 +452,7 @@ void ui_play_ending_funeral(int banner_live, int banner_dead)
     ui_cursor_setup_area(1, &ui_cursor_area_all_i0);
 
     uiobj_table_clear();
-    oi_skip = uiobj_add_mousearea(UI_SCREEN_LIMITS, MOO_KEY_UNKNOWN);
+    oi_skip = uiobj_add_mousearea(UI_SCREEN_LIMITS, MOO_KEY_SPACE);
     uiobj_set_downcount(3);
     uiobj_set_callback_and_delay(ui_play_winlose_funeral_cb, &wld, 4);
 
@@ -508,7 +508,7 @@ void ui_play_ending_exile(const char *name)
     ui_sound_play_music(3);
 
     uiobj_table_clear();
-    oi_skip = uiobj_add_mousearea(UI_SCREEN_LIMITS, MOO_KEY_UNKNOWN);
+    oi_skip = uiobj_add_mousearea(UI_SCREEN_LIMITS, MOO_KEY_SPACE);
     uiobj_set_downcount(3);
     uiobj_set_callback_and_delay(ui_play_winlose_exile_cb, &wld, 3);
 

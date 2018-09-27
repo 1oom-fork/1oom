@@ -409,7 +409,7 @@ again:
         uiobj_set_callback_and_delay(newtech_draw_cb1, d, 1);
         uiobj_table_clear();
         if (!d->nt.frame) {
-            oi_ok = uiobj_add_mousearea(UI_SCREEN_LIMITS, MOO_KEY_UNKNOWN);
+            oi_ok = uiobj_add_mousearea(UI_SCREEN_LIMITS, MOO_KEY_SPACE);
         } else {
             oi_o1 = uiobj_add_mousearea(50, 106, 110, 120, MOO_KEY_UNKNOWN);
             oi_o2 = uiobj_add_mousearea(122, 106, 183, 120, MOO_KEY_UNKNOWN);
