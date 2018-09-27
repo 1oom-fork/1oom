@@ -294,7 +294,7 @@ static void design_init_ois(struct ui_design_data_s *u)
     u->oi_icon = uiobj_add_mousearea(89, 161, 128, 192, MOO_KEY_UNKNOWN);
     u->oi_iscroll = uiobj_add_mousewheel(89, 161, 150, 192, &u->scroll);
     lbxfont_select(2, 6, 0, 3);
-    u->oi_cancel = uiobj_add_t0(282, 150, game_str_sd_cancel, ui_data.gfx.design.blank, MOO_KEY_ESCAPE);
+    u->oi_cancel = uiobj_add_t0(282, 150, game_str_sd_cancel, ui_data.gfx.design.blank, MOO_KEY_SPACE);
     u->oi_build = uiobj_add_t0(282, 182, game_str_sd_build, ui_data.gfx.design.blank, MOO_KEY_b);
     u->oi_clear = uiobj_add_t0(282, 166, game_str_sd_clear, ui_data.gfx.design.blank, MOO_KEY_c);
     lbxfont_select(0, 0, 5, 3);
