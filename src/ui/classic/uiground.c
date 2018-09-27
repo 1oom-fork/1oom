@@ -236,7 +236,7 @@ void ui_ground(struct game_s *g, struct ground_s *gr)
     ui_draw_finish_mode = 2;
     uiobj_set_callback_and_delay(ground_draw_cb1, &d, 2);
     uiobj_table_clear();
-    uiobj_add_mousearea(UI_SCREEN_LIMITS, MOO_KEY_UNKNOWN);
+    uiobj_add_mousearea(UI_SCREEN_LIMITS, MOO_KEY_SPACE);
     uiobj_set_downcount(3);
     while ((!flag_done) && (d.l.frame < 50)) {
         int16_t oi;
@@ -255,7 +255,7 @@ void ui_ground(struct game_s *g, struct ground_s *gr)
     ground_prepare(&d);
     /*7b442*/
     uiobj_table_clear();
-    uiobj_add_mousearea(UI_SCREEN_LIMITS, MOO_KEY_UNKNOWN);
+    uiobj_add_mousearea(UI_SCREEN_LIMITS, MOO_KEY_SPACE);
     ui_sound_play_music(0x26);
     flag_done = false;
     while ((!flag_done) && (gr->s[0].pop1 != 0) && (gr->s[1].pop1 != 0)) {
