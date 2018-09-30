@@ -176,7 +176,6 @@ For all game UIs:
     -skipintro           Skip intro
     -noskipintro         Do not skip intro
     -nextturn            Go directly to next turn (for reproducing bugs)
-    -oldsaverng          Fix RNG for old saves (for reproducing bugs)
     YOMAMA               Skip intro this time
     s                    Continue game
 
