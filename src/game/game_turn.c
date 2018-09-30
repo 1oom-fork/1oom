@@ -17,6 +17,7 @@
 #include "game_election.h"
 #include "game_end.h"
 #include "game_event.h"
+#include "game_fix.h"
 #include "game_fleet.h"
 #include "game_ground.h"
 #include "game_misc.h"
@@ -955,8 +956,10 @@ static void game_turn_bomb_damage(struct game_s *g, uint8_t pli, player_id_t att
     memset(tbl, 0, sizeof(tbl));
     for (int i = 0; i < ea->shipdesigns_num; ++i) {
         const shipdesign_t *sd = &(g->srd[attacker].design[i]);
-        SETMAX(maxcomp, sd->comp);
-        for (int j = 0; j < (WEAPON_SLOT_NUM - 1); ++j) { /* FIXME BUG -1 */
+        if (!game_fix_orbital_comp || (ea->orbit[pli].ships[i] != 0)) {
+            SETMAX(maxcomp, sd->comp);
+        }
+        for (int j = 0; j < (game_fix_orbital_weap_4 ? WEAPON_SLOT_NUM : (WEAPON_SLOT_NUM - 1)); ++j) {
             weapon_t wpnt = sd->wpnt[j];
             uint32_t v;
             v = ea->orbit[pli].ships[i] * sd->wpnn[j];
@@ -973,7 +976,7 @@ static void game_turn_bomb_damage(struct game_s *g, uint8_t pli, player_id_t att
     }
     complevel = (maxcomp - 1) * 2 + 6;
     SETRANGE(complevel, 1, 20);
-    for (int i = 0; i < WEAPON_CRYSTAL_RAY; ++i) {  /* FIXME BUG? excludes death ray and amoeba stream too */
+    for (int i = 0; i < (game_fix_orbital_weap_any ? WEAPON_NUM : WEAPON_CRYSTAL_RAY); ++i) {
         uint32_t vcur = tbl[i];
         if (vcur != 0) {
             const struct shiptech_weap_s *w = &(tbl_shiptech_weap[i]);
@@ -1000,7 +1003,7 @@ static void game_turn_bomb_damage(struct game_s *g, uint8_t pli, player_id_t att
                         }
                     }
                 } else {
-                    if (w->misstype == 0) {
+                    if (!game_fix_orbital_torpedo == (w->misstype == 0)) {
                         dmgmax /= 2;
                     }
                     dmgmax *= w->nummiss;
@@ -1199,7 +1202,7 @@ static int game_turn_transport_shoot(struct game_s *g, uint8_t planet_i, player_
     }
     complevel = (bestcomp - speed) * 2 + 12;
     SETRANGE(complevel, 1, 20);
-    for (int i = 0; i < WEAPON_CRYSTAL_RAY; ++i) {  /* FIXME BUG? excludes death ray and amoeba stream too */
+    for (int i = 0; i < (game_fix_orbital_weap_any ? WEAPON_NUM : WEAPON_CRYSTAL_RAY); ++i) {
         uint32_t vcur = tbl[i];
         if (vcur != 0) {
             const struct shiptech_weap_s *w = &(tbl_shiptech_weap[i]);
