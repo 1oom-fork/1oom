@@ -392,7 +392,7 @@ int ui_races(struct game_s *g, player_id_t api)
                     } else {
                         x1 = x + 157;
                     }
-                    oi_tbl_oppon[i] = uiobj_add_mousearea(x + 4, y + 5, x1, y + 66, MOO_KEY_UNKNOWN);
+                    oi_tbl_oppon[i] = uiobj_add_mousearea(x + 4, y + 5, x1, y + 66, MOO_KEY_1 + i);
                 }
             }
             if (d.cursor_mode == 0) {
