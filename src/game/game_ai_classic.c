@@ -4176,7 +4176,15 @@ static int game_ai_classic_aud_treaty_declare_war(struct audience_s *au)
     if ((eh->treaty[pa] == TREATY_ALLIANCE) && (eh->treaty[au->pstartwar] == TREATY_WAR)) {
         si = (!rnd_0_nm1(8, &g->seed)) ? 2 : 3;
     } else {
-        si = game_ai_classic_aud_check_mood(au, ea->relation1[au->pstartwar] + 150, 0);
+        int v = ea->relation1[au->pstartwar] + 150;
+        if (g->ai_id != GAME_AI_CLASSIC) {
+            /* WASBUG?
+               MOO1 contains the treaty * 30 code but the result is unused.
+               OSG states that either NAP or alliance changes that 150 to 250 but there is no such code.
+            */
+            v += ea->treaty[au->pstartwar] * 30;
+        }
+        si = game_ai_classic_aud_check_mood(au, v, 0);
     }
     return si;
 }
