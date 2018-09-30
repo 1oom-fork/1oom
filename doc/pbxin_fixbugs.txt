@@ -39,6 +39,7 @@
 4,orbital_weap_any,0,1
 4,orbital_weap_4,0,1
 4,orbital_torpedo,0,1
+4,orbital_comp_fix,0,1
 4,combat_trans_fix,0,1
 4,stargate_redir_fix,0,1
 4,trans_redir_fix,0,1
