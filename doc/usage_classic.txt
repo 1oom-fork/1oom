@@ -33,6 +33,7 @@ The following new UI features are always enabled/available:
 - Mouse wheel can be used to scroll lists and adjust many things
 - Space bar works as a generic dismiss message key (Continue, ...)
 - Clicking the portraits in Races screen brings Report page
+- In Races screen the keys 1-5 correspond to clicking the portraits
 - Ind slider no longer shows 0.N/y when at max factories
 - Eco slider shows Clean/+N Pop past T-Form on a full planet
 - Bases can be scrapped by clicking on the Bases text
