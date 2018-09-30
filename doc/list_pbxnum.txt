@@ -73,6 +73,11 @@ orbital_torpedo : 0..1, 0
   - Fix orbital bombardment missile/torpedo damage halving.
     In MOO1 the missile damage is halved but torpedo damage is untouched.
 
+orbital_comp_fix : 0..1, 0
+  - Fix orbital bombardment undeserved battle computer bonus.
+    In MOO1 the bonus is given for the best battle computer in any ship design
+    regardless of if any such ships are present in the fleet in orbit.
+
 combat_trans_fix : 0..1, 0
   - Make Combat Transporters work as intended.
     In MOO1 Combat Transporters only work if the planet owner has Sub-Space
