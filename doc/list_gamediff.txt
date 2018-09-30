@@ -35,6 +35,7 @@ Much of this file is based on the readme from the unofficial v1.40m patch.
     - 4th colony ship curse removed
     - ignore journey length for closest in-range colony ship
     - do not try to send one colony ship to multiple destinations
+    - AIs now actually take their treaties in consideration when asked to declare war on their allies
     - AI clears his spies' missions when succesfully threatened
     - AI does not blame both parties for breaking a treaty
     - a war sparked by capturing or destroying a colony is considered to be started by the attacker
