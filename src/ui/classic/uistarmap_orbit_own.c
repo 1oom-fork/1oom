@@ -426,6 +426,9 @@ do_accept:
             ui_starmap_scroll(g, scrollx, scrolly, scrollz);
         }
         ui_starmap_handle_oi_ctrl(&d, oi1);
+        if (ui_starmap_handle_tag(&d, oi1, false) != PLANET_NONE) {
+            p = &(g->planet[g->planet_focus_i[active_player]]);
+        }
         for (int i = 0; i < g->galaxy_stars; ++i) {
             if ((oi1 == d.oi_tbl_stars[i]) && !g->evn.build_finished_num[active_player]) {
                 if (ui_extra_enabled && (oi_accept != UIOBJI_INVALID) && (g->planet_focus_i[active_player] == i)) {

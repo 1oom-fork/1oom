@@ -20,6 +20,8 @@
 #define NUM_SOUNDS  0x29
 #define NUM_MUSICS  0x28
 
+#define PLANET_TAG_NUM  9
+
 typedef enum {
     UI_MAIN_LOOP_STARMAP = 0,
     UI_MAIN_LOOP_GAMEOPTS,  /*1*/
@@ -240,6 +242,7 @@ struct ui_data_s {
         int orbit_player;
         BOOLVEC_DECLARE(select_prio_fleet, FLEET_ENROUTE_MAX);
         BOOLVEC_DECLARE(select_prio_trans, TRANSPORT_MAX);
+        uint8_t tag[PLAYER_NUM][PLANET_TAG_NUM];
     } starmap;
     struct {
         struct gfx_aux_s screen;

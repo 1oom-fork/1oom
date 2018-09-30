@@ -349,6 +349,7 @@ static void init_gfx(void)
     gfx_aux_setup_wh(&ui_data.aux.ship_overlay, 34, 26);
     gfx_aux_setup_wh(&ui_data.aux.btemp, 50, 40);
 
+    memset(ui_data.starmap.tag, PLANET_NONE, sizeof(ui_data.starmap.tag));
     ui_data.gfx.initialized = true;
 }
 

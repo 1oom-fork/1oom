@@ -469,6 +469,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             ui_starmap_scroll(g, scrollx, scrolly, scrollz);
         }
         ui_starmap_handle_oi_ctrl(&d, oi1);
+        ui_starmap_handle_tag(&d, oi1, true);
         if (oi1 == oi_f2) {
             int i;
             i = g->planet_focus_i[active_player];

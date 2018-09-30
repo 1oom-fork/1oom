@@ -710,6 +710,29 @@ void ui_starmap_handle_scrollkeys(struct starmap_data_s *d, int16_t oi)
     ui_data.starmap.yhold = yh;
 }
 
+uint8_t ui_starmap_handle_tag(struct starmap_data_s *d, int16_t oi, bool flag_set_focus)
+{
+    for (int i = 0; i < PLANET_TAG_NUM; ++i) {
+        if (oi == d->oi_tag_set[i]) {
+            ui_data.starmap.tag[d->api][i] = d->g->planet_focus_i[d->api];
+            break;
+        }
+        if (oi == d->oi_tag_get[i]) {
+            uint8_t pli;
+            pli = ui_data.starmap.tag[d->api][i];
+            if (pli < d->g->galaxy_stars) {
+                d->g->planet_focus_i[d->api] = pli;
+                if (flag_set_focus) {
+                    ui_starmap_set_pos_focus(d->g, d->api);
+                }
+                return pli;
+            }
+            break;
+        }
+    }
+    return PLANET_NONE;
+}
+
 void ui_starmap_add_oi_bottom_buttons(struct starmap_data_s *d)
 {
     d->oi_gameopts = uiobj_add_mousearea(5, 181, 36, 194, MOO_KEY_g);
@@ -813,6 +836,8 @@ void ui_starmap_clear_oi_ctrl(struct starmap_data_s *d)
     d->oi_ctrl_down = UIOBJI_INVALID;
     d->oi_ctrl_d2 = UIOBJI_INVALID;
     d->oi_ctrl_dr = UIOBJI_INVALID;
+    UIOBJI_SET_TBL_INVALID(d->oi_tag_set);
+    UIOBJI_SET_TBL_INVALID(d->oi_tag_get);
 }
 
 void ui_starmap_fill_oi_ctrl(struct starmap_data_s *d)
@@ -837,6 +862,10 @@ void ui_starmap_fill_oi_ctrl(struct starmap_data_s *d)
         d->oi_ctrl_d2 = uiobj_add_inputkey(MOO_KEY_KP2 | MOO_MOD_CTRL);
     }
     d->oi_ctrl_dr = uiobj_add_inputkey(MOO_KEY_KP3 | MOO_MOD_CTRL);
+    for (int i = 0; i < PLANET_TAG_NUM; ++i) {
+        d->oi_tag_set[i] = uiobj_add_inputkey((MOO_KEY_1 + i) | MOO_MOD_CTRL);
+        d->oi_tag_get[i] = uiobj_add_inputkey((MOO_KEY_1 + i));
+    }
 }
 
 void ui_starmap_sn0_setup(struct shipnon0_s *sn0, int sd_num, const shipcount_t *ships)

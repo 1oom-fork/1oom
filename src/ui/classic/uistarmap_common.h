@@ -3,6 +3,7 @@
 
 #include "game.h"
 #include "types.h"
+#include "uidefs.h"
 #include "uidraw.h"
 #include "uiobj.h"
 
@@ -56,6 +57,8 @@ struct starmap_data_s {
     int16_t oi_ctrl_down;
     int16_t oi_ctrl_d2;
     int16_t oi_ctrl_dr;
+    int16_t oi_tag_set[PLANET_TAG_NUM];
+    int16_t oi_tag_get[PLANET_TAG_NUM];
     int16_t oi_tbl_enroute[FLEET_ENROUTE_MAX];
     int16_t oi_tbl_transport[TRANSPORT_MAX];
     int16_t oi_tbl_pl_stars[PLAYER_NUM][PLANETS_MAX];
@@ -167,6 +170,7 @@ extern void ui_starmap_fill_oi_tbl_stars_own(struct starmap_data_s *d, player_id
 extern void ui_starmap_add_oi_bottom_buttons(struct starmap_data_s *d);
 extern void ui_starmap_handle_oi_ctrl(struct starmap_data_s *d, int16_t oi);
 extern void ui_starmap_handle_scrollkeys(struct starmap_data_s *d, int16_t oi);
+extern uint8_t ui_starmap_handle_tag(struct starmap_data_s *d, int16_t oi, bool flag_set_focus);
 extern void ui_starmap_draw_basic(struct starmap_data_s *d);
 extern void ui_starmap_draw_starmap(struct starmap_data_s *d);
 extern void ui_starmap_draw_button_text(struct starmap_data_s *d, bool highlight);
