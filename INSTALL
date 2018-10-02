@@ -6,6 +6,7 @@
 ===========
 
 The configuration options:
+    --enable-static         enable static builds (experimental)
     --enable-modebug        add debugging options
     --without-readline      do not try to use the readline library
                             (used by 1oom_cmdline)
