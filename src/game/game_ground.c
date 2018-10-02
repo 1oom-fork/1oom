@@ -123,7 +123,7 @@ void game_ground_finish(struct ground_s *gr)
     if (gr->s[0].pop1 > 0) {
         if (gr->flag_rebel) {
             p->unrest = PLANET_UNREST_RESOLVED;
-            p->pop -= p->rebels;
+            p->pop = p->pop - p->rebels + gr->s[0].pop1;
             p->rebels = 0;
         } else {
             int fact, chance, num;
