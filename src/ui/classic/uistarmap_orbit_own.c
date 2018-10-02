@@ -328,7 +328,6 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
             int i;
             i = ui_starmap_newship_next(g, active_player, d.oo.from);
             g->planet_focus_i[active_player] = i;
-            p = &(g->planet[i]);
             ui_starmap_set_pos_focus(g, active_player);
             d.oo.from = i;
             ui_sound_play_sfx_24();
@@ -342,7 +341,6 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
             int i;
             i = ui_starmap_newship_prev(g, active_player, d.oo.from);
             g->planet_focus_i[active_player] = i;
-            p = &(g->planet[i]);
             ui_starmap_set_pos_focus(g, active_player);
             d.oo.from = i;
             ui_sound_play_sfx_24();
@@ -404,20 +402,18 @@ do_accept:
                     SETMIN(d.oo.ships[i], os[i]);
                 }
                 g->planet_focus_i[active_player] = d.oo.from;
-                p = &(g->planet[d.oo.from]);
             }
         } else if (oi1 == oi_scroll) {
             ui_starmap_scroll(g, scrollx, scrolly, scrollz);
         }
         ui_starmap_handle_oi_ctrl(&d, oi1);
         for (int i = 0; i < g->galaxy_stars; ++i) {
-            if ((oi1 == d.oi_tbl_stars[i]) && !g->evn.build_finished_num[active_player]) {
+            if (oi1 == d.oi_tbl_stars[i]) {
                 if (ui_extra_enabled && (oi_accept != UIOBJI_INVALID) && (g->planet_focus_i[active_player] == i)) {
                     oi1 = oi_accept;
                     goto do_accept;
                 }
                 g->planet_focus_i[active_player] = i;
-                p = &(g->planet[i]);
                 ui_sound_play_sfx_24();
                 break;
             }
@@ -468,6 +464,7 @@ do_accept:
             }
         }
         if (!flag_done) {
+            p = &g->planet[g->planet_focus_i[active_player]];
             if (1
               && (g->planet_focus_i[active_player] != d.oo.from)
               && ((p->within_frange[active_player] == 1) || ((p->within_frange[active_player] == 2) && d.oo.sn0.have_reserve_fuel))
