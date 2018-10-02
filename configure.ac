@@ -1,5 +1,6 @@
 AC_INIT([1oom], [0.1])
 
+AC_ARG_ENABLE(static, AS_HELP_STRING([--enable-static], [enable static builds]))
 AC_ARG_ENABLE(modebug, AS_HELP_STRING([--enable-modebug], [add debugging options]))
 AC_ARG_WITH(samplerate, AS_HELP_STRING([--without-samplerate], [do not try to use libsamplerate]))
 AC_ARG_ENABLE(tools, AS_HELP_STRING([--disable-tools], [disables extra tools]))
@@ -70,6 +71,10 @@ AC_CHECK_HEADERS([wtypes.h winnt.h], [is_win32=yes; AC_DEFINE(IS_WINDOWS,, [Comp
 
 dnl - optional features
 
+if test x"$enable_static" = "xyes"; then
+    LDFLAGS="$LDFLAGS -static"
+fi
+
 if test x"$enable_modebug" = "xyes"; then
     AC_DEFINE(FEATURE_MODEBUG,,[Add debugging options.])
 fi
@@ -119,10 +124,18 @@ if test x"$enable_hwsdl1" != "xno"; then
         HW_SDL1_LIBS="$SDL1_LIBS"
     elif test x"$sdl_config" != "xno"; then
         HW_SDL1_CFLAGS="$CFLAGS `$sdl_config --cflags`"
-        HW_SDL1_LIBS="`$sdl_config --libs`"
+        if test x"$enable_static" = "xyes"; then
+            HW_SDL1_LIBS="`$sdl_config --static-libs`"
+        else
+            HW_SDL1_LIBS="`$sdl_config --libs`"
+        fi
     elif $pkg_config --exists sdl; then
         HW_SDL1_CFLAGS="$CFLAGS `$pkg_config --cflags sdl`"
-        HW_SDL1_LIBS="`$pkg_config --libs sdl`"
+        if test x"$enable_static" = "xyes"; then
+            HW_SDL1_LIBS="`$pkg_config --static --libs sdl`"
+        else
+            HW_SDL1_LIBS="`$pkg_config --libs sdl`"
+        fi
     else
         HW_SDL1_LIBS="-lSDL"
     fi
@@ -151,7 +164,11 @@ if test x"$enable_hwsdl1" != "xno"; then
         if test x"$SDL1MIXER_LIBS" != "x"; then
             HW_SDL1_LIBS="$HW_SDL1_LIBS $SDL1MIXER_LIBS"
         elif $pkg_config --exists SDL_mixer; then
-            HW_SDL1_LIBS="`$pkg_config --libs SDL_mixer`"
+            if test x"$enable_static" = "xyes"; then
+                HW_SDL1_LIBS="`$pkg_config --static --libs SDL_mixer`"
+            else
+                HW_SDL1_LIBS="`$pkg_config --libs SDL_mixer`"
+            fi
         else
             HW_SDL1_LIBS="$HW_SDL1_LIBS -lSDL_mixer"
         fi
