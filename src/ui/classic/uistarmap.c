@@ -456,7 +456,6 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
                 if (--i < 0) { i = g->galaxy_stars - 1; }
             } while (g->planet[i].owner != active_player);
             g->planet_focus_i[active_player] = i;
-            p = &(g->planet[i]);
             ui_starmap_set_pos_focus(g, active_player);
             ui_sound_play_sfx_24();
         } else if (oi1 == oi_f3) {
@@ -466,7 +465,6 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
                 i = (i + 1) % g->galaxy_stars;
             } while (g->planet[i].owner != active_player);
             g->planet_focus_i[active_player] = i;
-            p = &(g->planet[i]);
             ui_starmap_set_pos_focus(g, active_player);
             ui_sound_play_sfx_24();
         } else if (oi1 == oi_alt_c) {
@@ -492,7 +490,6 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             int i;
             i = ui_starmap_newship_next(g, active_player, g->planet_focus_i[active_player]);
             g->planet_focus_i[active_player] = i;
-            p = &(g->planet[i]);
             ui_starmap_set_pos_focus(g, active_player);
             ui_sound_play_sfx_24();
             if (BOOLVEC_IS1(g->eto[active_player].orbit[i].visible, active_player)) {
@@ -504,7 +501,6 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             int i;
             i = ui_starmap_newship_prev(g, active_player, g->planet_focus_i[active_player]);
             g->planet_focus_i[active_player] = i;
-            p = &(g->planet[i]);
             ui_starmap_set_pos_focus(g, active_player);
             ui_sound_play_sfx_24();
             if (BOOLVEC_IS1(g->eto[active_player].orbit[i].visible, active_player)) {
@@ -519,7 +515,6 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             i = ui_starmap_enemy_incoming(g, active_player, pi, (oi1 == oi_f8));
             if (i != pi) {
                 g->planet_focus_i[active_player] = i;
-                p = &(g->planet[i]);
                 ui_starmap_set_pos_focus(g, active_player);
             }
         } else if (oi1 == oi_f4) {
@@ -538,7 +533,6 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             } while ((!found) && (i != pi));
             if (found) {
                 g->planet_focus_i[active_player] = i;
-                p = &(g->planet[i]);
                 ui_starmap_set_pos_focus(g, active_player);
                 ui_sound_play_sfx_24();
                 ui_data.starmap.orbit_player = active_player;
@@ -561,7 +555,6 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             } while ((!found) && (i != pi));
             if (found) {
                 g->planet_focus_i[active_player] = i;
-                p = &(g->planet[i]);
                 ui_starmap_set_pos_focus(g, active_player);
                 ui_sound_play_sfx_24();
                 ui_data.starmap.orbit_player = active_player;
@@ -572,11 +565,11 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
         for (int i = 0; i < g->galaxy_stars; ++i) {
             if ((oi1 == d.oi_tbl_stars[i]) && !g->evn.build_finished_num[active_player]) {
                 g->planet_focus_i[active_player] = i;
-                p = &(g->planet[i]);
                 ui_sound_play_sfx_24();
                 break;
             }
         }
+        p = &(g->planet[g->planet_focus_i[active_player]]);
         d.bottom_highlight = -1;
         if (oi2 == d.oi_gameopts) {
             d.bottom_highlight = 0;
