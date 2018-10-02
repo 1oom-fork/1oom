@@ -244,7 +244,7 @@ void game_diplo_break_treaty(struct game_s *g, player_id_t breaker, player_id_t 
         v = eb->relation1[victim] - rnd_1_n(20, &g->seed);
         SETMAX(v, -100);
         eb->relation1[victim] = v;
-        ev->relation2[breaker] = v;
+        ev->relation1[breaker] = v;
     }
     eb->treaty[victim] = TREATY_NONE;
     ev->treaty[breaker] = TREATY_NONE;
