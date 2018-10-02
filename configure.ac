@@ -1,6 +1,7 @@
 AC_INIT([1oom], [0.1])
 VERSION_1OOM=v0.1
 
+AC_ARG_ENABLE(static, AS_HELP_STRING([--enable-static], [enable static builds]))
 AC_ARG_ENABLE(modebug, AS_HELP_STRING([--enable-modebug], [add debugging options]))
 AC_ARG_WITH(readline, AS_HELP_STRING([--without-readline], [do not try to use the readline library]))
 AC_ARG_WITH(samplerate, AS_HELP_STRING([--without-samplerate], [do not try to use libsamplerate]))
@@ -101,6 +102,10 @@ fi
 
 dnl - optional features
 
+if test x"$enable_static" = "xyes"; then
+    LDFLAGS="$LDFLAGS -static"
+fi
+
 if test x"$enable_modebug" = "xyes"; then
     AC_DEFINE(FEATURE_MODEBUG,,[Add debugging options.])
 fi
@@ -189,10 +194,18 @@ if test x"$enable_hwsdl1" != "xno"; then
         HW_SDL1_LIBS="$SDL1_LIBS"
     elif test x"$sdl_config" != "xno"; then
         HW_SDL1_CFLAGS="$CFLAGS `$sdl_config --cflags`"
-        HW_SDL1_LIBS="`$sdl_config --libs`"
+        if test x"$enable_static" = "xyes"; then
+            HW_SDL1_LIBS="`$sdl_config --static-libs`"
+        else
+            HW_SDL1_LIBS="`$sdl_config --libs`"
+        fi
     elif $pkg_config --exists sdl; then
         HW_SDL1_CFLAGS="$CFLAGS `$pkg_config --cflags sdl`"
-        HW_SDL1_LIBS="`$pkg_config --libs sdl`"
+        if test x"$enable_static" = "xyes"; then
+            HW_SDL1_LIBS="`$pkg_config --static --libs sdl`"
+        else
+            HW_SDL1_LIBS="`$pkg_config --libs sdl`"
+        fi
     else
         HW_SDL1_LIBS="-lSDL"
     fi
@@ -223,7 +236,11 @@ if test x"$enable_hwsdl1" != "xno"; then
             if test x"$SDL1MIXER_LIBS" != "x"; then
                 HW_SDL1_LIBS="$HW_SDL1_LIBS $SDL1MIXER_LIBS"
             elif $pkg_config --exists SDL_mixer; then
-                HW_SDL1_LIBS="`$pkg_config --libs SDL_mixer`"
+                if test x"$enable_static" = "xyes"; then
+                    HW_SDL1_LIBS="`$pkg_config --static --libs SDL_mixer`"
+                else
+                    HW_SDL1_LIBS="`$pkg_config --libs SDL_mixer`"
+                fi
             else
                 HW_SDL1_LIBS="$HW_SDL1_LIBS -lSDL_mixer"
             fi
@@ -352,10 +369,18 @@ if test x"$enable_hwsdl2" != "xno"; then
         HW_SDL2_LIBS="$SDL2_LIBS"
     elif test x"$sdl2_config" != "xno"; then
         HW_SDL2_CFLAGS="$CFLAGS `$sdl2_config --cflags`"
-        HW_SDL2_LIBS="`$sdl2_config --libs`"
+        if test x"$enable_static" = "xyes"; then
+            HW_SDL2_LIBS="`$sdl2_config --static-libs`"
+        else
+            HW_SDL2_LIBS="`$sdl2_config --libs`"
+        fi
     elif $pkg_config --exists sdl2; then
         HW_SDL2_CFLAGS="$CFLAGS `$pkg_config --cflags sdl2`"
-        HW_SDL2_LIBS="`$pkg_config --libs sdl2`"
+        if test x"$enable_static" = "xyes"; then
+            HW_SDL2_LIBS="`$pkg_config --static --libs sdl2`"
+        else
+            HW_SDL2_LIBS="`$pkg_config --libs sdl2`"
+        fi
     else
         HW_SDL2_LIBS="-lSDL2"
     fi
@@ -387,7 +412,11 @@ if test x"$enable_hwsdl2" != "xno"; then
             if test x"$SDL2MIXER_LIBS" != "x"; then
                 HW_SDL2_LIBS="$HW_SDL2_LIBS $SDL2MIXER_LIBS"
             elif $pkg_config --exists SDL2_mixer; then
-                HW_SDL2_LIBS="`$pkg_config --libs SDL2_mixer`"
+                if test x"$enable_static" = "xyes"; then
+                    HW_SDL2_LIBS="`$pkg_config --static-libs SDL2_mixer`"
+                else
+                    HW_SDL2_LIBS="`$pkg_config --libs SDL2_mixer`"
+                fi
             else
                 HW_SDL2_LIBS="$HW_SDL2_LIBS -lSDL2_mixer"
             fi
