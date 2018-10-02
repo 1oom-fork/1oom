@@ -3629,7 +3629,7 @@ static void game_ai_classic_turn_diplo_p1(struct game_s *g)
                 }
                 if (((v + e1->mood_treaty[p2]) > 150) && (e1->treaty[p2] != TREATY_ALLIANCE)) {
                     game_diplo_set_treaty(g, p1, p2, TREATY_ALLIANCE);
-                } else if (((v + e1->mood_treaty[p2]) > 150) && (e1->treaty[p2] != TREATY_NONAGGRESSION)) {
+                } else if (((v + e1->mood_treaty[p2]) > 150) && (e1->treaty[p2] != TREATY_NONAGGRESSION)) { /* BUG ignores Alliance, results in NAP/Alliance oscillation */
                     game_diplo_set_treaty(g, p1, p2, TREATY_NONAGGRESSION);
                 } else {
                     if ((e1->mood_tech[p2] + 80) < v) {
