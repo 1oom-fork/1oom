@@ -358,7 +358,6 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
             int i;
             i = ui_starmap_newship_next(g, active_player, d.oo.from);
             g->planet_focus_i[active_player] = i;
-            p = &(g->planet[i]);
             ui_starmap_set_pos_focus(g, active_player);
             d.oo.from = i;
             ui_sound_play_sfx_24();
@@ -368,7 +367,6 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
             int i;
             i = ui_starmap_newship_prev(g, active_player, d.oo.from);
             g->planet_focus_i[active_player] = i;
-            p = &(g->planet[i]);
             ui_starmap_set_pos_focus(g, active_player);
             d.oo.from = i;
             ui_sound_play_sfx_24();
@@ -431,7 +429,6 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
         for (int i = 0; i < g->galaxy_stars; ++i) {
             if ((oi1 == d.oi_tbl_stars[i]) && !g->evn.build_finished_num[active_player]) {
                 g->planet_focus_i[active_player] = i;
-                p = &(g->planet[i]);
                 ui_sound_play_sfx_24();
                 break;
             }
