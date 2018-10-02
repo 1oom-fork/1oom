@@ -286,6 +286,8 @@ do_accept:
             }
         }
         if (!flag_done) {
+            pt = &(g->planet[g->planet_focus_i[active_player]]);
+            p->trans_dest = g->planet_focus_i[active_player];
             d.bottom_highlight = -1;
             if (oi2 == d.oi_gameopts) {
                 d.bottom_highlight = 0;
