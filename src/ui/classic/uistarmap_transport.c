@@ -171,9 +171,7 @@ void ui_starmap_transport(struct game_s *g, player_id_t active_player)
     uiobj_set_callback_and_delay(ui_starmap_transport_draw_cb, &d, STARMAP_DELAY);
 
     while (!flag_done) {
-        planet_t *p;
         int16_t oi1, oi2;
-        p = &g->planet[g->planet_focus_i[active_player]];
         oi1 = uiobj_handle_input_cond();
         oi2 = uiobj_at_cursor();
         ui_delay_prepare();
@@ -226,7 +224,7 @@ void ui_starmap_transport(struct game_s *g, player_id_t active_player)
         } else if (oi1 == oi_accept) {
 do_accept:
             ui_sound_play_sfx_24();
-            if (p->within_frange[active_player] != 0) { /* FIXME allows redirecting no nonexplored planets */
+            if (g->planet[g->planet_focus_i[active_player]].within_frange[active_player] != 0) { /* FIXME allows redirecting no nonexplored planets */
                 r->dest = g->planet_focus_i[active_player];
                 flag_done = true;
             }
@@ -310,7 +308,7 @@ do_accept:
             ui_starmap_fill_oi_tbl_stars(&d);
             if ((r->owner == active_player) && (d.ts.can_move != NO_MOVE)) {
                 oi_cancel = uiobj_add_t0(227, 163, "", ui_data.gfx.starmap.reloc_bu_cancel, MOO_KEY_ESCAPE);
-                if (game_transport_dest_ok(g, p, active_player)) {
+                if (game_transport_dest_ok(g, &(g->planet[g->planet_focus_i[active_player]]), active_player)) {
                     oi_accept = uiobj_add_t0(271, 163, "", ui_data.gfx.starmap.reloc_bu_accept, MOO_KEY_SPACE);
                 }
             }
