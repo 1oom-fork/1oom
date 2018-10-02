@@ -3,11 +3,6 @@ This is the "to do" for 1oom.
 1. Roadmap
 ===========
 
-* v0.9:
-  - The game is tested and debugged to have no glaringly obvious conversion
-    bugs such as crashes. Original MOO1 bugs can remain.
-  - A rudimentary cmdline UI exists.
-
 * v1.0:
   - The game is reasonably bug-free. Original MOO1 bugs can remain.
   - OS implementation for at least Unix (Linux) and Windows.
@@ -17,8 +12,10 @@ This is the "to do" for 1oom.
 * v1.1 .. v1.4:
   - Skipped to avoid confusion.
 
-* v2.0:
+* v1.5:
   - Network multiplayer.
+
+* v2.0:
   - Original MOO1 bugs fixed.
   - Alternative AI with less bugs and more difficulty.
 
