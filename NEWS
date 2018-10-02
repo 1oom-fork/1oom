@@ -1,3 +1,18 @@
+2018-10-03: v0.9 released
+    - map scroll speed is adjustable
+    - Planets and Fleet screen lists sortable by name/count/bases/etc
+    - keys!
+        * UHJK scroll the map
+        * / to search for a planet by name
+        * space bar for Continue/dismiss/OK/etc
+        * 1-5 as portrait click on Races
+    - almost 20 bugs fixed, notably:
+        * a cause for the infamous 32000 doom stacks indentified and fixed
+        * AI scrapped wrong ship designs resulting in obsolete fleets
+        * AI II armor bias fixed, resulting in overall better ship designs
+        * all but a few of the 1.40m fixes are now implemented
+    - doc/pbxin_fixbugs.txt expanded, including fix for waste calculation
+
 2018-09-06: MOO turns 25, v0.8 released
     - click again to accept for transport redirection
     - all Advanced Technology are available for research
