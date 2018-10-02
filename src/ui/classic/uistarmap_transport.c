@@ -270,6 +270,7 @@ void ui_starmap_transport(struct game_s *g, player_id_t active_player)
             }
         }
         if (!flag_done) {
+            p = &g->planet[g->planet_focus_i[active_player]];
             d.bottom_highlight = -1;
             if (oi2 == d.oi_gameopts) {
                 d.bottom_highlight = 0;
