@@ -676,7 +676,7 @@ again:
                 int pi, y0, y1;
                 pi = i + d.pos;
                 if (pi < d.num) {
-                    tbl_onscreen_planets[i] = ui_data.sorted.index[pi];
+                    tbl_onscreen_planets[i] = ui_data.sorted.value[ui_data.sorted.index[pi]];
                     y0 = 21 + i * 11;
                     y1 = y0 + 8;
                     oi_tbl_planets[i] = uiobj_add_mousearea(7, y0, 248, y1, MOO_KEY_UNKNOWN);
