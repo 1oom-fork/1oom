@@ -161,7 +161,7 @@ void ui_election_show(struct election_s *el)
     bool flag_done = false;
     d->count = 0;
     uiobj_table_clear();
-    uiobj_add_mousearea(UI_SCREEN_LIMITS, MOO_KEY_UNKNOWN);
+    uiobj_add_mousearea(UI_SCREEN_LIMITS, MOO_KEY_SPACE);
     uiobj_set_downcount(1);
     while (!flag_done) {
         int16_t oi;
@@ -206,9 +206,9 @@ int ui_election_vote(struct election_s *el, int player_i)
     lib_sprintf(cnamebuf[2], 0x20, "%s %s", game_str_el_bull, game_str_el_abs);
     uiobj_table_clear();
     lbxfont_select(3, 1, 0, 0);
-    oi_c1 = uiobj_add_mousearea(150, 169, 190, 177, MOO_KEY_UNKNOWN);
-    oi_c2 = uiobj_add_mousearea(150, 179, 190, 187, MOO_KEY_UNKNOWN);
-    /*oi_ca =*/ uiobj_add_mousearea(150, 189, 190, 197, MOO_KEY_UNKNOWN);
+    oi_c1 = uiobj_add_mousearea(150, 169, 190, 177, MOO_KEY_1);
+    oi_c2 = uiobj_add_mousearea(150, 179, 190, 187, MOO_KEY_2);
+    /*oi_ca =*/ uiobj_add_mousearea(150, 189, 190, 197, MOO_KEY_0);
     uiobj_add_ta(150, 169, 40, cnamebuf[0], false, &choice, 1, 0, 0, MOO_KEY_UNKNOWN);
     uiobj_add_ta(150, 179, 40, cnamebuf[1], false, &choice, 2, 0, 0, MOO_KEY_UNKNOWN);
     uiobj_add_ta(150, 189, 40, cnamebuf[2], false, &choice, 0, 0, 0, MOO_KEY_UNKNOWN);
