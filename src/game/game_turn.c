@@ -1526,6 +1526,9 @@ static void game_turn_audiences(struct game_s *g)
 static void game_turn_contact_broken(struct game_s *g, player_id_t pi, const BOOLVEC_PTRPARAMI(bv))
 {
     empiretechorbit_t *e = &(g->eto[pi]);
+    if (!IS_ALIVE(g, pi)) {
+        return;
+    }
     for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         if ((i != pi) && IS_ALIVE(g, i) && BOOLVEC_IS0(e->within_frange, i) && BOOLVEC_IS1(bv, i)) {
             empiretechorbit_t *e2 = &(g->eto[i]);
