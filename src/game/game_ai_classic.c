@@ -1748,6 +1748,9 @@ static void game_ai_classic_turn_p2(struct game_s *g)
         if (IS_HUMAN(g, pi)) {
             continue;
         }
+        if (!IS_ALIVE(g, pi)) {
+            continue;
+        }
         if (--g->eto[pi].ai_p2_countdown <= 0) {
             game_ai_classic_turn_p2_do(g, pi);
         }
