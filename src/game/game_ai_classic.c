@@ -1515,6 +1515,7 @@ static void game_ai_classic_design_ship(struct game_s *g, struct ai_turn_p2_s *a
 {
     shipdesign_t *sd = &(ait->gd.sd);
     empiretechorbit_t *e = &(g->eto[pi]);
+    bool temp_repulwarp = ait->have_repulwarp;
     int loops = 0;
 again:
     if (++loops >= 100000) {
@@ -1553,7 +1554,18 @@ again:
         sd->cost = game_design_calc_cost(&ait->gd);
     }
     if (sd->wpnn[0] == 0) {
-        log_fatal_and_die("BUG: %s loops2\n", __func__);
+        if (ait->have_repulwarp) {
+            log_warning("%s: failure to design against repulsor/warpdis (hull %i)\n", __func__, ait->hull);
+            if (ait->hull == SHIP_HULL_SMALL) {
+                log_warning("%s: trying again\n", __func__);
+            } else {
+                ait->have_repulwarp = false;
+                log_warning("%s: relaxing 1 rng limit\n", __func__);
+            }
+            goto again;
+        } else {
+            log_fatal_and_die("BUG: %s loops2\n", __func__);
+        }
     }
     {
         bool flag_again, is_missile;
@@ -1580,6 +1592,7 @@ again:
         }
     }
     game_design_add(g, pi, sd, false);
+    ait->have_repulwarp = temp_repulwarp;
 }
 
 static void game_ai_classic_turn_p2_do(struct game_s *g, player_id_t pi)
