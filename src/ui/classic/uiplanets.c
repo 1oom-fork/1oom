@@ -562,9 +562,6 @@ void ui_planets(struct game_s *g, player_id_t active_player)
 
     load_pl_data(&d);
     uiobj_set_help_id(37);
-again:
-    flag_trans = false;
-    game_update_production(g); /* this is needed for transfers */
 
     d.g = g;
     d.api = active_player;
@@ -584,6 +581,10 @@ again:
             ui_data.sorted.value[d.num++] = i;
         }
     }
+
+again:
+    flag_trans = false;
+    game_update_production(g); /* this is needed for correct shown production after transfers */
 
     oi_up = UIOBJI_INVALID;
     oi_down = UIOBJI_INVALID;
