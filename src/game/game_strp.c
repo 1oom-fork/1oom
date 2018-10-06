@@ -134,6 +134,7 @@ static const struct strtbl_s {
     DEFSTRITEM(sm_planratio),
     DEFSTRITEM(sm_fleetdep),
     DEFSTRITEM(sm_destoor),
+    DEFSTRITEM(sm_destoor2),
     DEFSTRITEM(sm_parsfromcc),
     DEFSTRITEM(sm_eta),
     DEFSTRITEM(sm_turn),
