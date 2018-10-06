@@ -32,10 +32,10 @@
 
 struct planets_data_s {
     player_id_t api;
-    int selected;
     int pos;
     int num;
     int16_t amount_trans;
+    uint8_t focus_i;
     int planet_i;
     int order_i;
     struct game_s *g;
@@ -115,7 +115,7 @@ static void planets_draw_cb(void *vptr)
     for (int i = 0; i < PLANETS_ON_SCREEN; ++i) {
         int pi;
         pi = d->pos + i;
-        if ((pi < d->num) && (ui_data.sorted.index[pi] == g->planet_focus_i[d->api])) {
+        if ((pi < d->num) && (ui_data.sorted.value[ui_data.sorted.index[pi]] == d->focus_i)) {
             int y0, y1;
             y0 = 21 + i * 11;
             y1 = y0 + 6;
@@ -565,7 +565,7 @@ void ui_planets(struct game_s *g, player_id_t active_player)
 
     d.g = g;
     d.api = active_player;
-    d.selected = -1;
+    d.focus_i = g->planet_focus_i[active_player];
     d.order_i = 0;
     d.pos = 0;
     d.num = 0;
@@ -573,9 +573,8 @@ void ui_planets(struct game_s *g, player_id_t active_player)
     ui_data.sorted.g = g;
     for (int i = 0; i < g->galaxy_stars; ++i) {
         if (g->planet[i].owner == active_player) {
-            if (i == g->planet_focus_i[active_player]) {
+            if (i == d.focus_i) {
                 d.pos = d.num - 5;  /* WASBUG MOO1 uses i - 5 */
-                d.selected = d.num - d.pos;
             }
             ui_data.sorted.index[d.num] = d.num;
             ui_data.sorted.value[d.num++] = i;
