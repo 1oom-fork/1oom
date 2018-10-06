@@ -154,15 +154,17 @@ static void video_render(const uint8_t *buf)
 */
 static void video_adjust_window_size(int *wptr, int *hptr)
 {
-    int w = *wptr, h = *hptr;
-    if ((w * video.actualh) <= (h * video.blit_rect.w)) {
-        /* We round up window_height if the ratio is not exact; this leaves the result stable. */
-        h = (w * video.actualh + video.blit_rect.w - 1) / video.blit_rect.w;
-    } else {
-        w = (h * video.blit_rect.w) / video.actualh;
+    if (hw_opt_aspect != 0) {
+        int w = *wptr, h = *hptr;
+        if ((w * video.actualh) <= (h * video.blit_rect.w)) {
+            /* We round up window_height if the ratio is not exact; this leaves the result stable. */
+            h = (w * video.actualh + video.blit_rect.w - 1) / video.blit_rect.w;
+        } else {
+            w = (h * video.blit_rect.w) / video.actualh;
+        }
+        *wptr = w;
+        *hptr = h;
     }
-    *wptr = w;
-    *hptr = h;
 }
 
 static void video_update(void)
@@ -197,7 +199,7 @@ static void video_update(void)
 
     /* Blit from the paletted 8-bit screen buffer to the intermediate buffer
        that we can load into the texture.
--   */
+    */
     SDL_BlitSurface(video.screen, &video.blit_rect, video.interbuffer, &video.blit_rect);
 
     /* Update the intermediate texture with the contents of the intermediate buffer.*/
@@ -372,11 +374,16 @@ static int video_sw_set(int w, int h)
         log_error("SDL2: Error creating renderer for screen window: %s\n", SDL_GetError());
         return -1;
     }
-    /* Important: Set the "logical size" of the rendering context. At the same
-       time this also defines the aspect ratio that is preserved while scaling
-       and stretching the texture into the window.
-    */
-    SDL_RenderSetLogicalSize(video.renderer, video.blit_rect.w, video.actualh);
+    if (hw_opt_aspect != 0) {
+        /* Important: Set the "logical size" of the rendering context. At the same
+           time this also defines the aspect ratio that is preserved while scaling
+           and stretching the texture into the window.
+        */
+        SDL_RenderSetLogicalSize(video.renderer, video.blit_rect.w, video.actualh);
+    } else {
+        /* Use full window. */
+        SDL_RenderSetViewport(video.renderer, NULL);
+    }
 
     /* Force integer scales for resolution-independent rendering. */
 #if SDL_VERSION_ATLEAST(2, 0, 5)
