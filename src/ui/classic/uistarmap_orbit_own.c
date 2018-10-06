@@ -100,7 +100,7 @@ static void ui_starmap_orbit_own_draw_cb(void *vptr)
                 buf[0] = '\0';
             }
             lbxfont_select_set_12_4(0, 0, 0, 0);
-            if (d->oo.sn0.num >= 6) {
+            if (d->oo.sn0.num >= NUM_SHIPDESIGNS) {
                 ui_draw_filled_rect(228, 9, 309, 17, 7);
                 lbxfont_print_str_center(268, 11, buf, UI_SCREEN_W);
             } else {
@@ -108,7 +108,7 @@ static void ui_starmap_orbit_own_draw_cb(void *vptr)
             }
         }
     } else {
-        if (d->oo.sn0.num < 6) {
+        if (d->oo.sn0.num < NUM_SHIPDESIGNS) {
             lbxfont_select_set_12_4(2, 0xe, 0, 0);
             lbxfont_print_str_split(230, 159, 80, game_str_sm_chdest, 2, UI_SCREEN_W, UI_SCREEN_H);
         }
