@@ -257,6 +257,7 @@ const char *game_str_sm_planratio = " Planetary spending ratios may be changed a
 
 const char *game_str_sm_fleetdep = "FLEET DEPLOYMENT";
 const char *game_str_sm_destoor = "DESTINATION IS OUT OF RANGE,";
+const char *game_str_sm_destoor2 = "OUT OF RANGE";
 const char *game_str_sm_parsfromcc = "PARSECS FROM CLOSEST COLONY";
 const char *game_str_sm_eta = "ETA";
 const char *game_str_sm_turn = "TURN";
