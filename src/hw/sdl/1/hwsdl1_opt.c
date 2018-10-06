@@ -21,7 +21,6 @@ bool hw_opt_use_gl = true;
 int hw_opt_gl_filter = 1;
 int hw_opt_bpp = 0;
 #define HAVE_SDLX_ASPECT
-#define HAVE_SDLX_ASPECT_OFF
 #endif /* HAVE_SDL1GL */
 
 #ifdef HAVE_SDL1MIXER

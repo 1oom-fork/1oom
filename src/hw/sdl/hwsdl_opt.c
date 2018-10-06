@@ -58,10 +58,8 @@ static const char *hw_uiopt_cb_aspect_get(void)
         return "VGA";
     } else if (hw_opt_aspect == 1000000) {
         return "1:1";
-#ifdef HAVE_SDLX_ASPECT_OFF
     } else if (hw_opt_aspect == 0) {
         return "Off";
-#endif
     } else {
         return "Custom";
     }
@@ -71,16 +69,10 @@ static bool hw_uiopt_cb_aspect_next(void)
 {
     if (hw_opt_aspect == HW_DEFAULT_ASPECT) {
         hw_opt_aspect = 1000000;
+    } else if (hw_opt_aspect == 1000000) {
+        hw_opt_aspect = 0;
     } else {
-#ifdef HAVE_SDLX_ASPECT_OFF
-        if (hw_opt_aspect == 1000000) {
-            hw_opt_aspect = 0;
-        } else {
-            hw_opt_aspect = HW_DEFAULT_ASPECT;
-        }
-#else
         hw_opt_aspect = HW_DEFAULT_ASPECT;
-#endif
     }
     return hw_video_update_aspect();
 }
