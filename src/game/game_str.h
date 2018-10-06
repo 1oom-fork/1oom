@@ -118,6 +118,7 @@ extern const char *game_str_sm_planshield;
 extern const char *game_str_sm_planratio;
 extern const char *game_str_sm_fleetdep;
 extern const char *game_str_sm_destoor;
+extern const char *game_str_sm_destoor2;
 extern const char *game_str_sm_parsfromcc;
 extern const char *game_str_sm_eta;
 extern const char *game_str_sm_turn;
