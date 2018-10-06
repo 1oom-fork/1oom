@@ -68,13 +68,15 @@ static void ui_starmap_orbit_own_draw_cb(void *vptr)
         lbxgfx_set_frame_0(gfx);
         lbxgfx_draw_frame_offs(x0, y0, gfx, STARMAP_LIMITS, UI_SCREEN_W, starmap_scale);
         if (!d->oo.in_frange) {
-            if (d->oo.sn0.num < 7) { /* FIXME ?? always true */
+            if (d->oo.sn0.num < NUM_SHIPDESIGNS) { /* WASBUG MOO1 compares to 7, resulting in text below last ship */
                 sprintf(buf, "%s %i %s", game_str_sm_destoor, dist, game_str_sm_parsfromcc);
                 lbxfont_select(2, 0, 0, 0);
                 lbxfont_set_gap_h(2);
                 lbxfont_print_str_split(228, 156, 81, buf, 2, UI_SCREEN_W, UI_SCREEN_H, ui_scale);
             } else {
-                /* dont care */
+                sprintf(buf, "%s (%i)", game_str_sm_destoor2, dist);
+                ui_draw_filled_rect(228, 9, 309, 17, 7, ui_scale);
+                lbxfont_print_str_center(268, 11, buf, UI_SCREEN_W, ui_scale);
             }
         } else {
             if ((pt->owner == d->api) && (pf->owner == d->api) && pt->have_stargate && pf->have_stargate) {
@@ -96,7 +98,7 @@ static void ui_starmap_orbit_own_draw_cb(void *vptr)
                 buf[0] = '\0';
             }
             lbxfont_select_set_12_4(0, 0, 0, 0);
-            if (d->oo.sn0.num >= 6) {
+            if (d->oo.sn0.num >= NUM_SHIPDESIGNS) {
                 ui_draw_filled_rect(228, 9, 309, 17, 7, ui_scale);
                 lbxfont_print_str_center(268, 11, buf, UI_SCREEN_W, ui_scale);
             } else {
@@ -104,7 +106,7 @@ static void ui_starmap_orbit_own_draw_cb(void *vptr)
             }
         }
     } else {
-        if (d->oo.sn0.num < 6) {
+        if (d->oo.sn0.num < NUM_SHIPDESIGNS) {
             lbxfont_select_set_12_4(2, 0xe, 0, 0);
             lbxfont_print_str_split(230, 159, 80, game_str_sm_chdest, 2, UI_SCREEN_W, UI_SCREEN_H, ui_scale);
         }
