@@ -163,15 +163,17 @@ static void video_render(int bufi)
 */
 static void video_adjust_window_size(int *wptr, int *hptr)
 {
-    int w = *wptr, h = *hptr;
-    if ((w * video.actualh) <= (h * video.bufw)) {
-        /* We round up window_height if the ratio is not exact; this leaves the result stable. */
-        h = (w * video.actualh + video.bufw - 1) / video.bufw;
-    } else {
-        w = (h * video.bufw) / video.actualh;
+    if (hw_opt_aspect != 0) {
+        int w = *wptr, h = *hptr;
+        if ((w * video.actualh) <= (h * video.bufw)) {
+            /* We round up window_height if the ratio is not exact; this leaves the result stable. */
+            h = (w * video.actualh + video.bufw - 1) / video.bufw;
+        } else {
+            w = (h * video.bufw) / video.actualh;
+        }
+        *wptr = w;
+        *hptr = h;
     }
-    *wptr = w;
-    *hptr = h;
 }
 
 static void video_update(void)
@@ -206,7 +208,7 @@ static void video_update(void)
 
     /* Blit from the paletted 8-bit screen buffer to the intermediate buffer
        that we can load into the texture.
--   */
+    */
     SDL_BlitSurface(video.screen, &video.blit_rect, video.interbuffer, &video.blit_rect);
 
     /* Update the intermediate texture with the contents of the intermediate buffer.*/
@@ -392,11 +394,16 @@ static int video_sw_set(int w, int h)
         log_error("SDL2: Error creating renderer for screen window: %s\n", SDL_GetError());
         return -1;
     }
-    /* Important: Set the "logical size" of the rendering context. At the same
-       time this also defines the aspect ratio that is preserved while scaling
-       and stretching the texture into the window.
-    */
-    SDL_RenderSetLogicalSize(video.renderer, video.bufw, video.actualh);
+    if (hw_opt_aspect != 0) {
+        /* Important: Set the "logical size" of the rendering context. At the same
+           time this also defines the aspect ratio that is preserved while scaling
+           and stretching the texture into the window.
+        */
+        SDL_RenderSetLogicalSize(video.renderer, video.bufw, video.actualh);
+    } else {
+        /* Use full window. */
+        SDL_RenderSetViewport(video.renderer, NULL);
+    }
 
     /* Force integer scales for resolution-independent rendering. */
 #if SDL_VERSION_ATLEAST(2, 0, 5)
@@ -428,7 +435,7 @@ static int video_sw_set(int w, int h)
                 log_error("Unsupported bits per pixel: %d\n", bpp);
                 return -1;
             }
-            video.interbuffer = SDL_CreateRGBSurface(0, video.bufw, video.bufw, bpp, rmask, gmask, bmask, amask);
+            video.interbuffer = SDL_CreateRGBSurface(0, video.bufw, video.bufh, bpp, rmask, gmask, bmask, amask);
             if (video.interbuffer == NULL) {
                 log_message("SDL_CreateRGBSurface(): %s\n", SDL_GetError());
                 return -1;
