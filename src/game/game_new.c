@@ -88,6 +88,7 @@ static const uint8_t tbl_nebula_data[NEBULA_TYPE_NUM][4][4] = {
 };
 
 /* index to planets.lbx + 1 */
+/* index to starview.lbx - 6 */
 static const uint8_t tbl_planet_type_infogfx[PLANET_TYPE_NUM - 1][6] = {
     { 0x01, 0x01, 0x01, 0x01, 0x01, 0x01 },
     { 0x05, 0x05, 0x14, 0x14, 0x22, 0x22 },
