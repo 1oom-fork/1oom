@@ -249,6 +249,7 @@ int ui_races(struct game_s *g, player_id_t api)
     d.g = g;
     d.api = api;
     races_data_load(&d);
+    lbxgfx_apply_palette(d.gfx);
 
     game_update_production(g);
     game_update_empire_contact(g);
