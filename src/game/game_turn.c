@@ -878,6 +878,7 @@ static void game_turn_explore(struct game_s *g, uint8_t *planetptr, player_id_t 
                 if (flag_visible) {
                     bool first, flag_colony_ship, was_explored;
                     int best_colonize, best_colonyship = 0;
+                    /* FIXME artifacts disappearing due to scanning a planet is weird */
                     first = BOOLVEC_IS_CLEAR(p->explored, PLAYER_NUM);
                     if ((p->special == PLANET_SPECIAL_ARTIFACTS) && (!by_scanner) && first) {
                         /* FIXME BUG only 1 artifact landing per turn */
