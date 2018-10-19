@@ -126,8 +126,10 @@ gameopts_act_t ui_gameopts(struct game_s *g, int *load_game_i_ptr)
         }
     }
 
-    ui_palette_fadeout_a_f_1();
-    lbxpal_select(0, -1, 0);
+    if (ret != GAMEOPTS_QUIT) {
+        ui_palette_fadeout_a_f_1();
+        lbxpal_select(0, -1, 0);
+    }
     ui_draw_finish_mode = 2;
 
     uiobj_unset_callback();

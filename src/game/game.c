@@ -614,7 +614,6 @@ int main_do(void)
                     break;
                 }
                 if (game_opt_save_quit) {
-                    game_opt_save_quit = false;
                     goto turn_act_quit;
                 }
                 switch (ui_game_turn(&game, &load_game_i, game.active_player)) {
@@ -649,7 +648,11 @@ int main_do(void)
         switch (game_end.type) {
             case GAME_END_QUIT:
                 log_message("Game: quit (ingame)\n");
-                goto done;
+                if (game_opt_save_quit) {
+                    game_opt_save_quit = false;
+                    goto done;
+                }
+                break;
             case GAME_END_NONE:
             case GAME_END_FINAL_WAR:
                 break;
