@@ -607,7 +607,7 @@ int main_do(void)
         switch (game_end.type) {
             case GAME_END_QUIT:
                 log_message("Game: quit (ingame)\n");
-                goto done;
+                break;
             case GAME_END_NONE:
             case GAME_END_FINAL_WAR:
                 break;
