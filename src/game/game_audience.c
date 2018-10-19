@@ -1306,4 +1306,5 @@ void game_audience(struct game_s *g, player_id_t ph, player_id_t pa)
     if (au->dtype == 32) {
         game_diplo_break_treaty(g, pa, ph);
     }
+    game_update_tech_util(g);   /* WASBUG save/load does this */
 }
