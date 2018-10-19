@@ -1381,6 +1381,9 @@ static void game_turn_update_seen(struct game_s *g)
             }
         }
     }
+    for (player_id_t pi = PLAYER_0; pi < g->players; ++pi) {
+        game_update_seen_by_orbit(g, pi);   /* WASBUG save/load does this */
+    }
 }
 
 static void game_turn_finished_slider(struct game_s *g)
