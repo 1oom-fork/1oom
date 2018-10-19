@@ -138,7 +138,7 @@ static void ui_starmap_draw_sliders_and_prod(struct starmap_data_s *d)
 
     lbxfont_select(2, 0xa, 0, 0);
     if (p->buildship == BUILDSHIP_STARGATE) {
-        ui_draw_filled_rect(229, 141, 274, 116, 0, ui_scale);
+        ui_draw_filled_rect(229, 141, 274, 166, 0, ui_scale);
         lbxgfx_draw_frame(229, 141, ui_data.gfx.starmap.stargate, UI_SCREEN_W, ui_scale);
         lbxfont_print_str_center(251, 169, game_str_sm_stargate, UI_SCREEN_W, ui_scale);
     } else {
