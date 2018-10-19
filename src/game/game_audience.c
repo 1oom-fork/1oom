@@ -11,6 +11,7 @@
 #include "game_ai.h"
 #include "game_aux.h"
 #include "game_diplo.h"
+#include "game_misc.h"
 #include "game_num.h"
 #include "game_spy.h"
 #include "game_str.h"
@@ -1309,4 +1310,8 @@ void game_audience(struct game_s *g, player_id_t ph, player_id_t pa)
     if (au->dtype == 32) {
         game_diplo_break_treaty(g, pa, ph);
     }
+    /* WASBUG save/load does these */
+    game_update_tech_util(g);
+    game_update_within_range(g);
+    game_update_visibility(g);
 }
