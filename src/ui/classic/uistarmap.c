@@ -664,7 +664,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
                 }
             }
             if (ui_extra_enabled) {
-                oi_xtramenu = uiobj_add_mousearea(0, 195, 5, 199, MOO_KEY_UNKNOWN);
+                oi_xtramenu = uiobj_add_mousearea(0, 195, 5, 199, MOO_KEY_e);
             }
             oi_wheelname = uiobj_add_mousewheel(227, 8, 310, 20, &scrollmisc);
             ui_starmap_fill_oi_tbls(&d);
