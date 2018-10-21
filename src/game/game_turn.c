@@ -1393,7 +1393,18 @@ static void game_turn_update_seen(struct game_s *g)
     for (uint8_t i = 0; i < g->galaxy_stars; ++i) {
         const planet_t *p = &(g->planet[i]);
         for (player_id_t pi = PLAYER_0; pi < g->players; ++pi) {
-            if (BOOLVEC_IS1(p->within_srange, pi)) {
+            bool can_see;
+            can_see = (BOOLVEC_IS1(p->within_srange, pi) || (p->owner == pi));
+            if (!can_see) { /* WASBUG handled only on game load (game_update_seen_by_orbit) */
+                const shipcount_t *os = &(g->eto[pi].orbit[i].ships[0]);
+                for (int j = 0; j < NUM_SHIPDESIGNS; ++j) {
+                    if (os[j] != 0) {
+                        can_see = true;
+                        break;
+                    }
+                }
+            }
+            if (can_see) {
                 g->seen[pi][i].owner = p->owner;
                 g->seen[pi][i].pop = p->pop;
                 g->seen[pi][i].bases = p->missile_bases;
