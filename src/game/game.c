@@ -59,10 +59,6 @@ static void game_start(struct game_s *g)
     game_ai = game_ais[g->ai_id];
     game_update_production(g);
     game_update_tech_util(g);
-    for (int i = 0; i < g->players; ++i) {
-        game_update_eco_on_waste(g, i, false);
-        game_update_seen_by_orbit(g, i);
-    }
     game_update_within_range(g);
     game_update_visibility(g);
     game_update_have_reserve_fuel(g);
