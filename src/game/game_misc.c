@@ -298,28 +298,6 @@ void game_update_eco_on_waste(struct game_s *g, int player_i, bool force_adjust)
     }
 }
 
-void game_update_seen_by_orbit(struct game_s *g, player_id_t pi)
-{
-    empiretechorbit_t *e = &(g->eto[pi]);
-    for (int i = 0; i < g->galaxy_stars; ++i) {
-        planet_t *p = &(g->planet[i]);
-        bool in_orbit;
-        in_orbit = false;
-        for (int j = 0; j < e->shipdesigns_num; ++j) {
-            if (e->orbit[i].ships[j] != 0) {
-                in_orbit = true;
-                break;
-            }
-        }
-        if ((p->owner == pi) || in_orbit) {
-            g->seen[pi][i].owner = p->owner;
-            g->seen[pi][i].pop = p->pop;
-            g->seen[pi][i].bases = p->missile_bases;
-            g->seen[pi][i].factories = p->factories;
-        }
-    }
-}
-
 void game_update_within_range(struct game_s *g)
 {
     for (player_id_t pi = PLAYER_0; pi < g->players; ++pi) {
