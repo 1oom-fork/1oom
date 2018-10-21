@@ -5,6 +5,7 @@
 #include "uixtramenu.h"
 #include "comp.h"
 #include "game.h"
+#include "game_misc.h"
 #include "game_planet.h"
 #include "game_str.h"
 #include "hw.h"
@@ -26,15 +27,22 @@
 #define XTRAMENU_POS_X  10
 #define XTRAMENU_POS_Y  (160 - (XTRAMENU_NUM * 8))
 
+static void xtramenu_eco_readjust(struct game_s *g, player_id_t pi)
+{
+    game_update_eco_on_waste(g, pi, false);
+}
+
 static const struct xtramenu_s {
     mookey_t key;
     ui_main_loop_action_t act;
+    void (*cb)(struct game_s *g, player_id_t pi);
 } xtramenu[XTRAMENU_NUM] = {
-    { MOO_KEY_b, UI_MAIN_LOOP_SCRAP_BASES },
-    { MOO_KEY_c, UI_MAIN_LOOP_SPIES_CAUGHT },
-    { MOO_KEY_g, UI_MAIN_LOOP_GOVERN },
-    { MOO_KEY_m, UI_MAIN_LOOP_MSGFILTER },
-    { MOO_KEY_SPACE, UI_MAIN_LOOP_STARMAP }
+    { MOO_KEY_b, UI_MAIN_LOOP_SCRAP_BASES, 0 },
+    { MOO_KEY_c, UI_MAIN_LOOP_SPIES_CAUGHT, 0 },
+    { MOO_KEY_g, UI_MAIN_LOOP_GOVERN, 0 },
+    { MOO_KEY_m, UI_MAIN_LOOP_MSGFILTER, 0 },
+    { MOO_KEY_r, UI_MAIN_LOOP_STARMAP, xtramenu_eco_readjust },
+    { MOO_KEY_SPACE, UI_MAIN_LOOP_STARMAP, 0 }
 };
 
 static void xtramenu_draw_cb(void *vptr)
@@ -51,7 +59,7 @@ static void xtramenu_draw_cb(void *vptr)
 
 /* -------------------------------------------------------------------------- */
 
-ui_main_loop_action_t ui_xtramenu(const struct game_s *g, player_id_t pi)
+ui_main_loop_action_t ui_xtramenu(struct game_s *g, player_id_t pi)
 {
     bool flag_done = false;
     ui_main_loop_action_t act = UI_MAIN_LOOP_STARMAP;
@@ -87,6 +95,9 @@ ui_main_loop_action_t ui_xtramenu(const struct game_s *g, player_id_t pi)
                 ui_sound_play_sfx_24();
                 flag_done = true;
                 act = xtramenu[i].act;
+                if (xtramenu[i].cb) {
+                    xtramenu[i].cb(g, pi);
+                }
                 break;
             }
         }
