@@ -378,7 +378,7 @@ void game_update_within_range(struct game_s *g)
             }
             if (!snum) {
                 for (player_id_t pi2 = PLAYER_0; pi2 < PLAYER_NUM; ++pi2) {
-                    BOOLVEC_SET0(g->eto[pi2].orbit[i].visible, 0);  /* BUG? should clear all bits for nonexisting fleet */
+                    BOOLVEC_CLEAR(g->eto[pi2].orbit[i].visible, PLAYER_NUM); /* WASBUG? only cleared bit 0 */
                 }
             } else {
                 BOOLVEC_SET1(p->within_srange, pi);
