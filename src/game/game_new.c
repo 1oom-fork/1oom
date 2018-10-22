@@ -8,9 +8,11 @@
 #include "game.h"
 #include "game_ai.h"
 #include "game_aux.h"
+#include "game_misc.h"
 #include "game_num.h"
 #include "game_shipdesign.h"
 #include "game_str.h"
+#include "game_tech.h"
 #include "game_techtypes.h"
 #include "lbx.h"
 #include "lib.h"
@@ -993,6 +995,20 @@ static void game_generate_misc(struct game_s *g)
     }
 }
 
+static void game_generate_load(struct game_s *g)
+{
+    /* MOO1 does these when loading a game; moved here to maintain slider state after save/load */
+    game_update_production(g);
+    game_update_tech_util(g);
+    for (player_id_t pli = PLAYER_0; pli < g->players; ++pli) {
+        game_update_eco_on_waste(g, pli, false);
+        game_update_seen_by_orbit(g, pli);
+    }
+    game_update_within_range(g);
+    game_update_visibility(g);
+    game_update_have_reserve_fuel(g);
+}
+
 static void game_generate_emperor_names(struct game_s *g, const uint8_t *namedata)
 {
     for (player_id_t pli = PLAYER_0; pli < g->players; ++pli) {
@@ -1080,6 +1096,7 @@ int game_new(struct game_s *g, struct game_aux_s *gaux, struct game_new_options_
     game_generate_relation_etc(g);
     game_generate_research(g, researchflag);
     game_generate_misc(g);
+    game_generate_load(g);
     for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         char *b;
         const char *str;
