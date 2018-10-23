@@ -64,6 +64,12 @@ static void game_start(struct game_s *g)
     game_update_have_reserve_fuel(g);
 }
 
+static void game_stop(struct game_s *g)
+{
+    g->gaux->flag_cheat_galaxy = false;
+    g->gaux->flag_cheat_events = false;
+}
+
 static void game_set_opts_from_value(struct game_new_options_s *go, int v)
 {
     int v2;
@@ -654,6 +660,7 @@ int main_do(void)
                 break;
         }
         game_end.type = GAME_END_NONE;
+        game_stop(&game);
     }
 
 done:
