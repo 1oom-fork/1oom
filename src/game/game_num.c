@@ -27,6 +27,11 @@ int game_num_max_bomb_dmg = 100000;
 int game_num_max_bio_dmg = 10000;
 int game_num_max_trans_dmg = 32000;
 int game_num_event_roll = 512;
+int game_num_council_years = 25;
+int game_num_eco_slider_slack = 7;
+int game_num_race_bonus_alkari = 3;
+int game_num_race_bonus_bulrathi = 25;
+int game_num_race_bonus_mrrshan = 4;
 
 uint8_t game_num_tbl_hull_w[4] = { 1, 5, 25, 125 };
 
