@@ -1903,6 +1903,7 @@ static void game_ai_classic_battle_ai_ai_get_weights(const struct game_s *g, pla
         tbl[i] += sd->special[2] * 2;
         tbl[i] += e->tech.percent[TECH_FIELD_CONSTRUCTION] / 2;
         if ((e->race == RACE_MRRSHAN) || (e->race == RACE_ALKARI)) {
+            /* FIXME: game_num_race_bonus */
             tbl[i] += 15;
         }
         tbl[i] *= game_num_tbl_hull_w[sd->hull];
@@ -3035,6 +3036,7 @@ static bool game_ai_classic_bomb(struct game_s *g, player_id_t player, uint8_t p
     bool flag_do_bomb;
     const planet_t *p = &(g->planet[planet]);
     if (g->eto[player].race == RACE_BULRATHI) {
+        /* FIXME: game_num_race_bonus_bulrathi */
         pop_inbound += pop_inbound / 5;
     }
     flag_do_bomb = (p->pop > pop_inbound);

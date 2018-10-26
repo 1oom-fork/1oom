@@ -1651,7 +1651,7 @@ static void game_turn_finished_slider(struct game_s *g)
                   || ((game_get_pop_growth_for_eco(g, pli, v) / 10) > 0)
                   || ((p->slider[PLANET_SLIDER_ECO] != 0) && (e->race == RACE_SILICOID))
                 ) {
-                    if ((p->pop > p->pop_prev) || (p->slider[PLANET_SLIDER_ECO] > (w + 7))) {
+                    if ((p->pop > p->pop_prev) || (p->slider[PLANET_SLIDER_ECO] > (w + game_num_eco_slider_slack))) {
                         if (p->factories >= (p->pop * e->colonist_oper_factories)) {
                             p->slider[PLANET_SLIDER_TECH] += p->slider[PLANET_SLIDER_ECO] - w;
                         } else {
@@ -1835,7 +1835,8 @@ struct game_end_s game_turn_process(struct game_s *g)
         }
     }
     if (1
-      && (((g->year % 25) == 0) || (!g->election_held))
+      && (game_num_council_years != 0)
+      && (((g->year % game_num_council_years) == 0) || (!g->election_held))
       && (num_alive > 2)
       && (((g->galaxy_stars * 2) / 3) <= num_colony)
       && (g->end == GAME_END_NONE)
