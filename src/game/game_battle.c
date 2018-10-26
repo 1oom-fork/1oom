@@ -11,6 +11,7 @@
 #include "game_battle_human.h"
 #include "game_diplo.h"
 #include "game_fleet.h"
+#include "game_num.h"
 #include "game_parsed.h"
 #include "game_str.h"
 #include "log.h"
@@ -186,11 +187,11 @@ static void game_battle_prepare_add_ships(struct battle_s *bt, battle_side_i_t s
             bt->s[side].tbl_shiptype[num_types] = i;
             game_parsed_from_design(sp, &sd[i], s);
             if (bt->s[side].race == RACE_MRRSHAN) {
-                sp->complevel += 4;
+                sp->complevel += game_num_race_bonus_mrrshan;
             }
             if (bt->s[side].race == RACE_ALKARI) {
-                sp->defense += 3;
-                sp->misdefense += 3;
+                sp->defense += game_num_race_bonus_alkari;
+                sp->misdefense += game_num_race_bonus_alkari;
             }
             if (flag_shield_disable) {
                 sp->pshield = 0;
