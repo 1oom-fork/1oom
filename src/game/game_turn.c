@@ -1681,7 +1681,8 @@ struct game_end_s game_turn_process(struct game_s *g)
         }
     }
     if (1
-      && (((g->year % 25) == 0) || (!g->election_held))
+      && (game_num_council_years != 0)
+      && (((g->year % game_num_council_years) == 0) || (!g->election_held))
       && (num_alive > 2)
       && (((g->galaxy_stars * 2) / 3) <= num_colony)
       && (g->end == GAME_END_NONE)
