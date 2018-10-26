@@ -139,6 +139,10 @@ event_roll : 0..2147483647, 512
   - Special event probability. Bigger number means events are less likely.
     Zero means events are disabled.
 
+council_years : 0..32767, 25
+  - Number of years between Galactic Council meetings.
+    Zero means the Council never gathers.
+
 trait1_* : 0..5, ?
   - Starting personality type table for each race.
     The type is chosen randomly from the table when stating a new game.

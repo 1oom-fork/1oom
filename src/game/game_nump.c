@@ -179,6 +179,7 @@ static const struct numtbl_s {
     DEFNUMITEML(max_ship_maint, NUMTYPE_S, 1, 0x7fffffff),
     DEFNUMITEML(max_tribute_bc, NUMTYPE_S, 1, 0x7fffffff),
     DEFNUMITEML(event_roll, NUMTYPE_S, 0, 0x7fffffff),
+    DEFNUMITEML(council_years, NUMTYPE_S, 0, 0x7fff),
     DEFNUMITEML(news_orion, NUMTYPE_BOOL, 0, 1),
     DEFNUMITEML(aud_ask_break_nap, NUMTYPE_BOOL, 0, 1),
     DEFNUMITEML(aud_bounty_give, NUMTYPE_BOOL, 0, 1),
