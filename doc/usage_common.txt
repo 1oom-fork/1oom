@@ -313,6 +313,7 @@ the planet name. The governor screen allows:
     - do not decrease ecology spending
     - do not touch ecology spending
 - Readjusting all governed planets.
+- Applying the spend remaining choice to all planets.
 
 The governor works as follows:
 - First, remember the old ecology slider position.
