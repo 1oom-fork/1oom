@@ -34,4 +34,7 @@ extern void ui_draw_stars(int x, int y, int xoff1, int xoff2, struct draw_stars_
 extern void ui_draw_set_stars_xoffs(struct draw_stars_s *s, bool flag_right);
 extern void ui_draw_textbox_2str(const char *str1, const char *str2, int y0, int scale);
 
+struct planet_s;
+extern uint8_t ui_draw_govern_color(const struct planet_s *p, player_id_t pi);
+
 #endif
