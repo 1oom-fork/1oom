@@ -122,9 +122,12 @@ static void ui_starmap_draw_sliders_and_prod(struct starmap_data_s *d)
     }
 
     lbxgfx_draw_frame(224, 5, ui_data.gfx.starmap.yourplnt, UI_SCREEN_W, ui_scale);
-    /* highlight governor with a green border */
-    if (BOOLVEC_IS1(p->extras, PLANET_EXTRAS_GOVERNOR)) {
-        ui_draw_box1(227, 8, 310, 20, 0x71, 0x71, ui_scale);
+    {
+        /* highlight governor with a border; use a color based on mode */
+        uint8_t c = ui_draw_govern_color(p, d->api);
+        if (c != 0) {
+            ui_draw_box1(227, 8, 310, 20, c, c, ui_scale);
+        }
     }
     lbxfont_select(2, 0xd, 0xe, 0);
     sprintf(buf, "%i \x02(%i)\x01", p->prod_after_maint, p->total_prod);
