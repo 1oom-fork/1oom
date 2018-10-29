@@ -32,6 +32,30 @@ static void xtramenu_eco_readjust(struct game_s *g, player_id_t pi)
     game_update_eco_on_waste(g, pi, false);
 }
 
+static void xtramenu_ship_everywhere(struct game_s *g, player_id_t pi)
+{
+    uint8_t si;
+    {
+        planet_t *p = &(g->planet[g->planet_focus_i[pi]]);
+        if (p->owner != pi) {
+            return;
+        }
+        si = p->buildship;
+    }
+    for (uint8_t i = 0; i < g->galaxy_stars; ++i) {
+        planet_t *p = &(g->planet[i]);
+        if (p->owner == pi) {
+            if (si == BUILDSHIP_STARGATE) {
+                if (!p->have_stargate) {
+                    p->buildship = BUILDSHIP_STARGATE;
+                }
+            } else {
+                p->buildship = si;
+            }
+        }
+    }
+}
+
 static const struct xtramenu_s {
     mookey_t key;
     ui_main_loop_action_t act;
@@ -42,6 +66,7 @@ static const struct xtramenu_s {
     { MOO_KEY_g, UI_MAIN_LOOP_GOVERN, 0 },
     { MOO_KEY_m, UI_MAIN_LOOP_MSGFILTER, 0 },
     { MOO_KEY_r, UI_MAIN_LOOP_STARMAP, xtramenu_eco_readjust },
+    { MOO_KEY_s, UI_MAIN_LOOP_STARMAP, xtramenu_ship_everywhere },
     { MOO_KEY_SPACE, UI_MAIN_LOOP_STARMAP, 0 }
 };
 
