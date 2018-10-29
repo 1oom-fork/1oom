@@ -263,6 +263,7 @@ extern const char *game_str_bs_line1;
 extern const char *game_str_bs_line2;
 extern const char *game_str_gv_target;
 extern const char *game_str_gv_adjust;
+extern const char *game_str_gv_resta;
 extern const char *game_str_gv_thispl;
 extern const char *game_str_gv_rest;
 extern const char *game_str_tbl_gv_rest[3];

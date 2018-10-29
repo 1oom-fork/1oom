@@ -280,6 +280,7 @@ static const struct strtbl_s {
     DEFSTRITEM(bs_line2),
     DEFSTRITEM(gv_target),
     DEFSTRITEM(gv_adjust),
+    DEFSTRITEM(gv_resta),
     DEFSTRITEM(gv_thispl),
     DEFSTRITEM(gv_rest),
     DEFSTRITEMTBL(tbl_gv_rest),
