@@ -76,6 +76,7 @@ or pressing Alt-X in the main menu enables the following extra UI features:
 - Tech screen has lights showing when you reach max research bonus
 - Pressing E or clicking the bottom left corner near Game opens an extra menu
 - Eco readjustment for Clean can be done via the extra menu
+- The ship production selection can be set everywhere via the extra menu
 - "X has finished ..." messages can be filtered via the extra menu
 - Completing terraforming generates a message (which is filtered by default)
 - After running through the Next turn phase and messages the game recenters on
