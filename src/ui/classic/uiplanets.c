@@ -157,9 +157,12 @@ static void planets_draw_cb(void *vptr)
             lbxfont_print_num_right(17, y0, ui_data.sorted.index[pi] + 1, UI_SCREEN_W, ui_scale);
             lbxfont_select(2, BOOLVEC_IS1(p->extras, PLANET_EXTRAS_GOVERNOR) ? 0xe : 0xd, 0, 0);
             lbxfont_print_str_normal(25, y0, p->name, UI_SCREEN_W, ui_scale);
-            if (BOOLVEC_IS1(p->extras, PLANET_EXTRAS_GOVERNOR)) {
-                /* draw green box to highlight governor */
-                ui_draw_filled_rect(25 + 40, y0 + 1, 25 + 40 + 1, y0 + 4, 0x71, ui_scale);
+            {
+                /* draw box to highlight governor; use a color based on mode */
+                uint8_t c = ui_draw_govern_color(p, d->api);
+                if (c != 0) {
+                    ui_draw_filled_rect(25 + 40, y0 + 1, 25 + 40 + 1, y0 + 4, c, ui_scale);
+                }
             }
             lbxfont_select(2, 6, 0, 0);
             lbxfont_print_num_right(83, y0, p->pop, UI_SCREEN_W, ui_scale);
@@ -353,6 +356,7 @@ static void ui_planets_transfer(struct planets_data_s *d)
 enum {
     UI_SORT_INDEX = 0,
     UI_SORT_NAME,
+    UI_SORT_GOVERN,
     UI_SORT_POP,
     UI_SORT_GROWTH,
     UI_SORT_FACT,
@@ -398,6 +402,19 @@ static int planets_sort_inc_name(const void *ptr0, const void *ptr1)
 static int planets_sort_dec_name(const void *ptr0, const void *ptr1)
 {
     return planets_sort_inc_name(ptr1, ptr0);
+}
+
+static int planets_sort_inc_govern(const void *ptr0, const void *ptr1)
+{
+    UI_SORT_SETUP();
+    uint8_t v0 = ui_draw_govern_color(p0, p0->owner);
+    uint8_t v1 = ui_draw_govern_color(p1, p1->owner);
+    return UI_SORT_CMP_VALUE(v0, v1);
+}
+
+static int planets_sort_dec_govern(const void *ptr0, const void *ptr1)
+{
+    return planets_sort_inc_govern(ptr1, ptr0);
 }
 
 static int planets_sort_inc_pop(const void *ptr0, const void *ptr1)
@@ -533,6 +550,8 @@ static sort_cb_t * const sort_cb_tbl[UI_SORT_NUM * 2] = {
     planets_sort_dec_index,
     planets_sort_inc_name,
     planets_sort_dec_name,
+    planets_sort_inc_govern,
+    planets_sort_dec_govern,
     planets_sort_dec_pop,
     planets_sort_inc_pop,
     planets_sort_dec_growth,
@@ -687,8 +706,8 @@ again:
                 }
             }
             if (ui_extra_enabled) {
-                const int x0[UI_SORT_NUM] = {  8, 23, 71,  87, 117, 138, 155, 176, 194, 220, 267 };
-                const int x1[UI_SORT_NUM] = { 20, 67, 86, 113, 134, 151, 172, 192, 216, 262, 310 };
+                const int x0[UI_SORT_NUM] = {  8, 23, 61, 71,  87, 117, 138, 155, 176, 194, 220, 267 };
+                const int x1[UI_SORT_NUM] = { 20, 60, 67, 86, 113, 134, 151, 172, 192, 216, 262, 310 };
                 const int y0 = 8, y1 = 16;
                 for (int i = 0; i < UI_SORT_NUM; ++i) {
                     oi_sort[i] = uiobj_add_mousearea(x0[i], y0, x1[i], y1, MOO_KEY_UNKNOWN);

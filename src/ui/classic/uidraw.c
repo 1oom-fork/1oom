@@ -732,3 +732,17 @@ void ui_draw_textbox_2str(const char *str1, const char *str2, int y0, int scale)
     }
     lbxfont_print_str_split(x0 + 4, y0 + 4, w - 8, str2, 2, UI_SCREEN_W, UI_SCREEN_H, scale);
 }
+
+uint8_t ui_draw_govern_color(const struct planet_s *p, player_id_t pi)
+{
+    if ((p->owner != pi) || BOOLVEC_IS0(p->extras, PLANET_EXTRAS_GOVERNOR)) {
+        return 0;
+    }
+    if (BOOLVEC_IS1(p->extras, PLANET_EXTRAS_GOV_SPEND_REST_SHIP)) {
+        return 0x55;
+    } else if (BOOLVEC_IS1(p->extras, PLANET_EXTRAS_GOV_SPEND_REST_IND)) {
+        return 0x46;
+    } else {
+        return 0x71;
+    }
+}
