@@ -418,7 +418,8 @@ const char *game_str_bs_line1 = "How many missile";
 const char *game_str_bs_line2 = "bases to eliminate?";
 
 const char *game_str_gv_target = "How many missile bases to build here?";
-const char *game_str_gv_adjust = "Readjust all governed planets?";
+const char *game_str_gv_adjust = "Readjust all governed planets";
+const char *game_str_gv_resta = "All planets spend rest on";
 const char *game_str_gv_thispl = "This planet";
 const char *game_str_gv_rest = "Spend rest on";
 const char *game_str_tbl_gv_rest[3] = {
