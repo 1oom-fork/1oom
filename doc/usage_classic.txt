@@ -47,6 +47,7 @@ enables the following extra UI features:
 - Summary of forces shown before ship combat
 - New Auto and Retreat buttons for space combat autoresolve
 - Tech screen has lights showing when you reach max research bonus
+- Clicking on the Tech screen lights sets the slider to bonus limit
 - After running through the Next turn phase and messages the game recenters on
   your last planet of choice
 
