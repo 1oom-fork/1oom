@@ -70,10 +70,11 @@ or pressing Alt-X in the main menu enables the following extra UI features:
 - New Auto and Retreat buttons for space combat autoresolve
 - Pressing = on the Tech screen adjusts only the unlocked sliders
 - Tech screen has lights showing when you reach max research bonus
-- Pressing E or clicking the bottom left corner near Game opens an extra menu
-- Eco readjustment for Clean can be done via the extra menu
-- The ship production selection can be set everywhere via the extra menu
-- "X has finished ..." messages can be filtered via the extra menu
+- Pressing E or clicking the bottom left corner near Game opens an extra menu:
+    - Eco readjustment for Clean as save/reload used to do in v1.3
+    - The ship production selection can be set everywhere
+    - Relocation can be (un)set for all planets
+    - "X has finished ..." messages can be filtered
 - Completing terraforming generates a message (which is filtered by default)
 - After running through the Next turn phase and messages the game recenters on
   your last planet of choice

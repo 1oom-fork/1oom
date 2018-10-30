@@ -760,5 +760,14 @@ const char *game_str_tbl_mf[FINISHED_NUM] = {
 };
 
 const char *game_str_tbl_xtramenu[XTRAMENU_NUM] = {
-    "Scrap bases", "Caught spies", "Governor settings", "Message filter", "Readjust Eco", "Select ship everywhere", "Cancel"
+    "Scrap bases",
+    "Caught spies",
+    "Governor settings",
+    "Message filter",
+    "Readjust Eco",
+    "Select ship everywhere",
+    "Relocate relocated",
+    "Relocate all",
+    "Unrelocate all",
+    "Cancel"
 };
