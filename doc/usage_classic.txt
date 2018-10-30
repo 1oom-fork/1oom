@@ -70,6 +70,7 @@ or pressing Alt-X in the main menu enables the following extra UI features:
 - New Auto and Retreat buttons for space combat autoresolve
 - Pressing = on the Tech screen adjusts only the unlocked sliders
 - Tech screen has lights showing when you reach max research bonus
+- Clicking on the Tech screen lights sets the slider to bonus limit
 - Pressing E or clicking the bottom left corner near Game opens an extra menu:
     - Eco readjustment for Clean as save/reload used to do in v1.3
     - The ship production selection can be set everywhere
