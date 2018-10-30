@@ -26,6 +26,7 @@ extern const char *game_tech_get_newtech_msg(const struct game_s *g, player_id_t
 extern int game_tech_current_research_percent1(const struct game_s *g, player_id_t player_i, tech_field_t field);
 extern int game_tech_current_research_percent2(const struct game_s *g, player_id_t player_i, tech_field_t field);
 extern bool game_tech_current_research_has_max_bonus(const struct game_s *g, player_id_t player_i, tech_field_t field);
+extern void game_tech_set_to_max_bonus(struct game_s *g, player_id_t player_i, tech_field_t field);
 extern void game_tech_get_new(struct game_s *g, player_id_t player, tech_field_t field, uint8_t tech, techsource_t source, int a8, player_id_t stolen_from, bool flag_frame);
 extern void game_tech_finish_new(struct game_s *g, player_id_t player);
 extern bool game_tech_can_choose(const struct game_s *g, player_id_t player, tech_field_t field);
