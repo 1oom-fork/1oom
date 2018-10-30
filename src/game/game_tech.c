@@ -9,6 +9,7 @@
 #include "game.h"
 #include "game_ai.h"
 #include "game_aux.h"
+#include "game_misc.h"
 #include "game_num.h"
 #include "game_shiptech.h"
 #include "game_str.h"
@@ -724,6 +725,23 @@ bool game_tech_current_research_has_max_bonus(const struct game_s *g, player_id_
     t1 = (invest * 3) / 20;
     t3 = (slider * e->total_research_bc) / 100;
     return (t1 <= (t3 * 2));
+}
+
+void game_tech_set_to_max_bonus(struct game_s *g, player_id_t player_i, tech_field_t field)
+{
+    empiretechorbit_t *e = &(g->eto[player_i]);
+    bool has_bonus, had_bonus = game_tech_current_research_has_max_bonus(g, player_i, field);
+    techdata_t *t = &(e->tech);
+    int16_t prev, v = t->slider[field];
+    do {
+        prev = v;
+        v += had_bonus ? -1 : 1;
+        SETRANGE(v, 0, 100);
+        t->slider[field] = v;
+        game_adjust_slider_group(t->slider, field, v, TECH_FIELD_NUM, t->slider_lock);
+        has_bonus = game_tech_current_research_has_max_bonus(g, player_i, field);
+        v = t->slider[field];
+    } while ((has_bonus == had_bonus) && (v != prev));
 }
 
 void game_tech_get_new(struct game_s *g, player_id_t player, tech_field_t field, uint8_t tech, techsource_t source, int a8, player_id_t stolen_from, bool flag_frame)
