@@ -25,7 +25,9 @@
 /* -------------------------------------------------------------------------- */
 
 #define XTRAMENU_POS_X  10
-#define XTRAMENU_POS_Y  (160 - (XTRAMENU_NUM * 8))
+#define XTRAMENU_POS_Y  (170 - (XTRAMENU_NUM * 8))
+
+/* -------------------------------------------------------------------------- */
 
 static void xtramenu_eco_readjust(struct game_s *g, player_id_t pi)
 {
@@ -56,6 +58,46 @@ static void xtramenu_ship_everywhere(struct game_s *g, player_id_t pi)
     }
 }
 
+static void xtramenu_reloc_reloc(struct game_s *g, player_id_t pi)
+{
+    uint8_t target = g->planet_focus_i[pi];
+    if (g->planet[target].owner != pi) {
+        return;
+    }
+    for (int i = 0; i < g->galaxy_stars; ++i) {
+        planet_t *p = &(g->planet[i]);
+        if ((p->owner == pi) && (p->reloc != i)) {
+            p->reloc = target;
+        }
+    }
+}
+
+static void xtramenu_reloc_all(struct game_s *g, player_id_t pi)
+{
+    uint8_t target = g->planet_focus_i[pi];
+    if (g->planet[target].owner != pi) {
+        return;
+    }
+    for (int i = 0; i < g->galaxy_stars; ++i) {
+        planet_t *p = &(g->planet[i]);
+        if (p->owner == pi) {
+            p->reloc = target;
+        }
+    }
+}
+
+static void xtramenu_reloc_un(struct game_s *g, player_id_t pi)
+{
+    for (int i = 0; i < g->galaxy_stars; ++i) {
+        planet_t *p = &(g->planet[i]);
+        if (p->owner == pi) {
+            p->reloc = i;
+        }
+    }
+}
+
+/* -------------------------------------------------------------------------- */
+
 static const struct xtramenu_s {
     mookey_t key;
     ui_main_loop_action_t act;
@@ -67,14 +109,19 @@ static const struct xtramenu_s {
     { MOO_KEY_m, UI_MAIN_LOOP_MSGFILTER, 0 },
     { MOO_KEY_r, UI_MAIN_LOOP_STARMAP, xtramenu_eco_readjust },
     { MOO_KEY_s, UI_MAIN_LOOP_STARMAP, xtramenu_ship_everywhere },
+    { MOO_KEY_l, UI_MAIN_LOOP_STARMAP, xtramenu_reloc_reloc },
+    { MOO_KEY_a, UI_MAIN_LOOP_STARMAP, xtramenu_reloc_all },
+    { MOO_KEY_u, UI_MAIN_LOOP_STARMAP, xtramenu_reloc_un },
     { MOO_KEY_SPACE, UI_MAIN_LOOP_STARMAP, 0 }
 };
+
+/* -------------------------------------------------------------------------- */
 
 static void xtramenu_draw_cb(void *vptr)
 {
     const int x = XTRAMENU_POS_X, y = XTRAMENU_POS_Y;
     int y0 = y + 5;
-    ui_draw_filled_rect(x, y, x + 100, y + 10 + XTRAMENU_NUM * 8, 0x06, ui_scale);
+    ui_draw_filled_rect(x, y, x + 100, y + 5 + XTRAMENU_NUM * 8, 0x06, ui_scale);
     lbxfont_select(0, 0, 0, 0);
     for (int i = 0; i < XTRAMENU_NUM; ++i) {
         lbxfont_print_str_normal(x + 10, y0, game_str_tbl_xtramenu[i], UI_SCREEN_W, ui_scale);
