@@ -28,6 +28,14 @@ struct govern_data_s {
     int spend_rest;
     governor_eco_mode_t eco_mode;
     uint16_t target;
+    enum {
+        UI_GV_HIGHLIGHT_NONE,
+        UI_GV_HIGHLIGHT_ECO_MODE,
+        UI_GV_HIGHLIGHT_STARGATE,
+        UI_GV_HIGHLIGHT_ADJUST,
+        UI_GV_HIGHLIGHT_SPENDTHIS,
+        UI_GV_HIGHLIGHT_SPENDALL
+    } highlight;
     bool allow_stargates;
     bool my_planet;
 };
@@ -50,7 +58,7 @@ static void govern_draw_cb(void *vptr)
         lbxfont_select(0, 0xd, 0, 0);
         y += 5;
         lbxfont_print_str_normal(x + 5, y, game_str_gv_thispl, UI_SCREEN_W, ui_scale);
-        lbxfont_select(0, 0x0, 0, 0);
+        lbxfont_select(0, (d->highlight == UI_GV_HIGHLIGHT_SPENDTHIS) ? 0x1 : 0x0, 0, 0);
         sprintf(ui_data.strbuf, "%s %s", game_str_gv_rest, game_str_tbl_gv_rest[d->spend_rest]);
         y += 10;
         lbxfont_print_str_normal(x + 5, y, ui_data.strbuf, UI_SCREEN_W, ui_scale);
@@ -67,18 +75,20 @@ static void govern_draw_cb(void *vptr)
         if (d->allow_stargates) {
             ui_draw_filled_rect(x + 6, y + 2, x + 7, y + 3, 0x44, ui_scale);
         }
-        lbxfont_select(0, 0x0, 0, 0);
+        lbxfont_select(0, (d->highlight == UI_GV_HIGHLIGHT_STARGATE) ? 0x1 : 0x0, 0, 0);
         lbxfont_print_str_normal(x + 11, y, game_str_gv_starg, UI_SCREEN_W, ui_scale);
         y += 8;
         sprintf(ui_data.strbuf, "%s: %s", game_str_gv_ecom, game_str_tbl_gv_ecom[d->eco_mode]);
+        lbxfont_select(0, (d->highlight == UI_GV_HIGHLIGHT_ECO_MODE) ? 0x1 : 0x0, 0, 0);
         lbxfont_print_str_normal(x + 5, y, ui_data.strbuf, UI_SCREEN_W, ui_scale);
     }
     {
         const int x = 56, y = 150;
         ui_draw_filled_rect(x, y, x + 160, y + 22, 0x06, ui_scale);
-        lbxfont_select(0, 0x0, 0, 0);
+        lbxfont_select(0, (d->highlight == UI_GV_HIGHLIGHT_ADJUST) ? 0x1 : 0x0, 0, 0);
         lbxfont_print_str_normal(x + 5, y + 5, game_str_gv_adjust, UI_SCREEN_W, ui_scale);
         sprintf(ui_data.strbuf, "%s %s", game_str_gv_resta, game_str_tbl_gv_rest[d->spend_rest]);
+        lbxfont_select(0, (d->highlight == UI_GV_HIGHLIGHT_SPENDALL) ? 0x1 : 0x0, 0, 0);
         lbxfont_print_str_normal(x + 5, y + 13, ui_data.strbuf, UI_SCREEN_W, ui_scale);
     }
 }
@@ -128,24 +138,42 @@ void ui_govern(struct game_s *g, player_id_t pi)
     oi_wheel = uiobj_add_mousewheel(x, y, x + 80, y + 30, &scroll);
     y = 45 + 15;
     if (d.my_planet) {
-        oi_spendthis = uiobj_add_mousearea(x, y, x + 160, y + 8, MOO_KEY_r);
+        oi_spendthis = uiobj_add_mousearea(x, y, x + 160, y + 7, MOO_KEY_r);
     } else {
         oi_spendthis = UIOBJI_INVALID;
     }
     y = 110 + 15;
-    oi_sg = uiobj_add_mousearea(x, y, x + 160, y + 8, MOO_KEY_s);
+    oi_sg = uiobj_add_mousearea(x, y, x + 160, y + 7, MOO_KEY_s);
     y += 8;
-    oi_ecom = uiobj_add_mousearea(x, y, x + 160, y + 8, MOO_KEY_e);
+    oi_ecom = uiobj_add_mousearea(x, y, x + 160, y + 7, MOO_KEY_e);
     y = 150 + 5;
-    oi_adjust = uiobj_add_mousearea(x, y, x + 160, y + 8, MOO_KEY_o);
+    oi_adjust = uiobj_add_mousearea(x, y, x + 160, y + 7, MOO_KEY_o);
     y += 8;
-    oi_spendall = uiobj_add_mousearea(x, y, x + 160, y + 8, MOO_KEY_v);
+    oi_spendall = uiobj_add_mousearea(x, y, x + 160, y + 7, MOO_KEY_v);
 
     uiobj_set_callback_and_delay(govern_draw_cb, &d, 1);
 
     while (!flag_done) {
         int16_t oi;
         oi = uiobj_handle_input_cond();
+        {
+            int16_t oi2;
+            oi2 = uiobj_at_cursor();
+            d.highlight = UI_GV_HIGHLIGHT_NONE;
+            if (oi2 != UIOBJI_INVALID) {
+                if (oi2 == oi_ecom) {
+                    d.highlight = UI_GV_HIGHLIGHT_ECO_MODE;
+                } else if (oi2 == oi_sg) {
+                    d.highlight = UI_GV_HIGHLIGHT_STARGATE;
+                } else if (oi2 == oi_adjust) {
+                    d.highlight = UI_GV_HIGHLIGHT_ADJUST;
+                } else if (oi2 == oi_spendthis)  {
+                    d.highlight = UI_GV_HIGHLIGHT_SPENDTHIS;
+                } else if (oi2 == oi_spendall)  {
+                    d.highlight = UI_GV_HIGHLIGHT_SPENDALL;
+                }
+            }
+        }
         ui_delay_prepare();
         if ((oi == oi_cancel) || (oi == UIOBJI_ESC)) {
             ui_sound_play_sfx_06();

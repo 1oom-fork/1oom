@@ -117,13 +117,18 @@ static const struct xtramenu_s {
 
 /* -------------------------------------------------------------------------- */
 
+struct xtramenu_draw_s {
+    int highlight;
+};
+
 static void xtramenu_draw_cb(void *vptr)
 {
+    struct xtramenu_draw_s *d = vptr;
     const int x = XTRAMENU_POS_X, y = XTRAMENU_POS_Y;
     int y0 = y + 5;
     ui_draw_filled_rect(x, y, x + 100, y + 5 + XTRAMENU_NUM * 8, 0x06, ui_scale);
-    lbxfont_select(0, 0, 0, 0);
     for (int i = 0; i < XTRAMENU_NUM; ++i) {
+        lbxfont_select(0, (d->highlight == i) ? 0x1 : 0x0 , 0, 0);
         lbxfont_print_str_normal(x + 10, y0, game_str_tbl_xtramenu[i], UI_SCREEN_W, ui_scale);
         y0 += 8;
     }
@@ -137,6 +142,9 @@ ui_main_loop_action_t ui_xtramenu(struct game_s *g, player_id_t pi)
     ui_main_loop_action_t act = UI_MAIN_LOOP_STARMAP;
     int16_t oi_tbl[XTRAMENU_NUM];
     const int x = XTRAMENU_POS_X, y = XTRAMENU_POS_Y;
+    struct xtramenu_draw_s d;
+
+    d.highlight = -1;
 
     ui_draw_copy_buf();
     hw_video_copy_back_to_page2();
@@ -152,17 +160,22 @@ ui_main_loop_action_t ui_xtramenu(struct game_s *g, player_id_t pi)
         }
     }
 
-    uiobj_set_callback_and_delay(xtramenu_draw_cb, 0, 1);
+    uiobj_set_callback_and_delay(xtramenu_draw_cb, &d, 1);
 
     while (!flag_done) {
-        int16_t oi;
+        int16_t oi, oi2;
         oi = uiobj_handle_input_cond();
+        oi2 = uiobj_at_cursor();
         ui_delay_prepare();
         if (oi == UIOBJI_ESC) {
             ui_sound_play_sfx_06();
             flag_done = true;
         }
+        d.highlight = -1;
         for (int i = 0; i < XTRAMENU_NUM; ++i) {
+            if (oi2 == oi_tbl[i]) {
+                d.highlight = i;
+            }
             if (oi == oi_tbl[i]) {
                 ui_sound_play_sfx_24();
                 flag_done = true;
@@ -174,7 +187,7 @@ ui_main_loop_action_t ui_xtramenu(struct game_s *g, player_id_t pi)
             }
         }
         if (!flag_done) {
-            xtramenu_draw_cb(0);
+            xtramenu_draw_cb(&d);
             ui_draw_finish();
             ui_delay_ticks_or_click(1);
         }
