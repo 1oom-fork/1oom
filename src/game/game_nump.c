@@ -195,6 +195,7 @@ static const struct numtbl_s {
     DEFNUMITEML(first_tech_rp_fix, NUMTYPE_BOOL, 0, 1),
     DEFNUMITEML(waste_calc_fix, NUMTYPE_BOOL, 0, 1),
     DEFNUMITEML(waste_adjust_fix, NUMTYPE_BOOL, 0, 1),
+    DEFNUMITEML(doom_stack_fix, NUMTYPE_BOOL, 0, 1),
     DEFNUMITEML(eco_slider_slack, NUMTYPE_U8, 0, 0xff),
     DEFNUMITEMLTBLL(tbl_hull_w, NUMTYPE_U8, 0, 0xff),
     DEFNUMITEMLTBLL(tech_costmuld, NUMTYPE_U8, 0, 0xff),
