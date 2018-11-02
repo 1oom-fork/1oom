@@ -47,7 +47,7 @@ static void basescrap_draw_cb1(void *vptr)
     struct basescrap_data_s *d = vptr;
     struct game_s *g = d->g;
     const int x = 56, y = 50;
-    planet_t *p = &(g->planet[g->planet_focus_i[d->api]]);
+    const planet_t *p = &(g->planet[g->planet_focus_i[d->api]]);
     lbxgfx_draw_frame(x, y, d->gfx, UI_SCREEN_W);
     ui_draw_filled_rect(x + 14, y + 35, x + 64, y + 38, 0x2f);
     if (d->slider_var > 0) {
