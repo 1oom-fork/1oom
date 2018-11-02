@@ -102,6 +102,12 @@ eco_slider_slack : 0..255, 7
     Reducing the value to 0 eliminates extraneous eco spending after population
     maximum has been reached.
 
+doom_stack_fix : 0..1, 1
+  - Fix negative/32000 ship doom stack bug.
+    In MOO1 overflows in AI-AI battles can result in 32000 ship doom stacks.
+    This bug is fixed by default but can be disabled for those who actually
+    prefer the added challenge.
+
 tech_costmuld : 0..255, ?
   - Research discovery base cost difficulty multiplier for human players.
 
