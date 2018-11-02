@@ -2142,10 +2142,14 @@ static bool game_ai_classic_battle_ai_ai_resolve_do(struct battle_s *bt)
                 }
             } else {
                 for (int i = 0; i < NUM_SHIPDESIGNS; ++i) {
-                    /* WASBUG MOO1 uses 32bit math which results in negative overflows with large ws2,
-                       giving negative ship counts which get limited to 32000 later.
-                    */
-                    bt->s[s].tbl_ships[i] = (((uint64_t)bt->s[s].tbl_ships[i]) * ws2) / ws;
+                    if (game_num_doom_stack_fix) {
+                        bt->s[s].tbl_ships[i] = (((uint64_t)bt->s[s].tbl_ships[i]) * ws2) / ws;
+                    } else {
+                        /* WASBUG MOO1 uses 32bit math which results in negative overflows with large ws2,
+                           giving negative ship counts which get limited to 32000 later.
+                        */
+                        bt->s[s].tbl_ships[i] = (bt->s[s].tbl_ships[i] * ws2) / ws;
+                    }
                 }
             }
         }
