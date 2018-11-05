@@ -180,7 +180,7 @@ static void ui_play_winlose_cb3(void *vptr)
 
 static void ui_play_ending_good_or_tyrant(int race, const char *name, bool flag_good)
 {
-    int16_t uiobji_now, uiobji_ma;
+    int16_t uiobji_ma;
     bool flag_skip = false;
     struct anim_winlose_1_s wld1;
     struct anim_winlose_2_s wld2;
@@ -218,14 +218,13 @@ static void ui_play_ending_good_or_tyrant(int race, const char *name, bool flag_
     uiobj_set_downcount(3);
     uiobj_set_callback_and_delay(ui_play_winlose_cb1, &wld1, 3);
 
-    uiobji_now = 0;
-
     wld1.frame = 0;
 
     while ((wld1.frame < 0x96) && (!flag_skip)) {
+        int16_t oi;
         ui_delay_prepare();
-        uiobji_now = uiobj_handle_input_cond();
-        if ((uiobji_now == uiobji_ma) || (uiobji_now == UIOBJI_ESC)) {
+        oi = uiobj_handle_input_cond();
+        if ((oi == uiobji_ma) || (oi == UIOBJI_ESC)) {
             flag_skip = true;
             break;
         } else {
@@ -253,9 +252,10 @@ static void ui_play_ending_good_or_tyrant(int race, const char *name, bool flag_
     uiobj_set_callback_and_delay(ui_play_winlose_cb2, &wld2, 3);
 
     while ((wld2.frame < 0x14) && (!flag_skip)) {
+        int16_t oi;
         ui_delay_prepare();
-        uiobji_now = uiobj_handle_input_cond();
-        if ((uiobji_now == uiobji_ma) || (uiobji_now == UIOBJI_ESC)) {
+        oi = uiobj_handle_input_cond();
+        if ((oi == uiobji_ma) || (oi == UIOBJI_ESC)) {
             flag_skip = true;
             break;
         } else {
@@ -278,9 +278,10 @@ static void ui_play_ending_good_or_tyrant(int race, const char *name, bool flag_
     lbxpal_set_update_range(0, 255);
 
     while ((wld3.frame < 0x50) && (!flag_skip)) {
+        int16_t oi;
         ui_delay_prepare();
-        uiobji_now = uiobj_handle_input_cond();
-        if ((uiobji_now == uiobji_ma) || (uiobji_now == UIOBJI_ESC)) {
+        oi = uiobj_handle_input_cond();
+        if ((oi == uiobji_ma) || (oi == UIOBJI_ESC)) {
             flag_skip = true;
             break;
         } else {
@@ -402,7 +403,7 @@ void ui_play_ending_tyrant(int race, const char *name)
 
 void ui_play_ending_funeral(int banner_live, int banner_dead)
 {
-    int16_t uiobji_now, uiobji_ma;
+    int16_t uiobji_ma;
     struct anim_winlose_funeral_s wld;
 
     ui_draw_finish_mode = 2;
@@ -424,13 +425,13 @@ void ui_play_ending_funeral(int banner_live, int banner_dead)
     uiobj_set_downcount(3);
     uiobj_set_callback_and_delay(ui_play_winlose_funeral_cb, &wld, 4);
 
-    uiobji_now = 0;
     wld.frame = 0;
     while (wld.frame < 0xba) {
+        int16_t oi;
         ui_delay_prepare();
-        uiobji_now = uiobj_handle_input_cond();
+        oi = uiobj_handle_input_cond();
         ui_play_winlose_funeral_cb(&wld);
-        if (uiobji_now == uiobji_ma) {
+        if (oi == uiobji_ma) {
             wld.frame = 0x2710;
         }
         ++wld.frame;
@@ -456,7 +457,7 @@ void ui_play_ending_funeral(int banner_live, int banner_dead)
 
 void ui_play_ending_exile(const char *name)
 {
-    int16_t uiobji_now, uiobji_ma;
+    int16_t uiobji_ma;
     bool flag_skip = false;
     struct anim_winlose_exile_s wld;
 
@@ -476,13 +477,13 @@ void ui_play_ending_exile(const char *name)
     uiobj_set_downcount(3);
     uiobj_set_callback_and_delay(ui_play_winlose_exile_cb, &wld, 3);
 
-    uiobji_now = 0;
     wld.frame = 0;
 
     while ((wld.frame < 0x17c) && (!flag_skip)) {
+        int16_t oi;
         ui_delay_prepare();
-        uiobji_now = uiobj_handle_input_cond();
-        if ((uiobji_now == uiobji_ma) || (uiobji_now == UIOBJI_ESC)) {
+        oi = uiobj_handle_input_cond();
+        if ((oi == uiobji_ma) || (oi == UIOBJI_ESC)) {
             flag_skip = true;
             break;
         } else {
