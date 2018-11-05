@@ -194,7 +194,7 @@ static void ui_play_winlose_cb3(void *vptr)
 
 static void ui_play_ending_good_or_tyrant(int race, const char *name, bool flag_good)
 {
-    int16_t uiobji_now, uiobji_ma;
+    int16_t oi_skip;
     bool flag_skip = false;
     struct anim_winlose_1_s wld1;
     struct anim_winlose_2_s wld2;
@@ -232,18 +232,17 @@ static void ui_play_ending_good_or_tyrant(int race, const char *name, bool flag_
     ui_sound_play_music(2);
 
     uiobj_table_clear();
-    uiobji_ma = uiobj_add_mousearea_all(MOO_KEY_UNKNOWN);
+    oi_skip = uiobj_add_mousearea_all(MOO_KEY_SPACE);
     uiobj_set_downcount(3);
     uiobj_set_callback_and_delay(ui_play_winlose_cb1, &wld1, 3);
 
-    uiobji_now = 0;
-
     wld1.frame = 0;
 
-    while ((wld1.frame < 0x96) && (!flag_skip)) {
+    while ((wld1.frame < 150) && (!flag_skip)) {
+        int16_t oi;
         ui_delay_prepare();
-        uiobji_now = uiobj_handle_input_cond();
-        if ((uiobji_now == uiobji_ma) || (uiobji_now == UIOBJI_ESC)) {
+        oi = uiobj_handle_input_cond();
+        if ((oi == oi_skip) || (oi == UIOBJI_ESC)) {
             flag_skip = true;
             break;
         } else {
@@ -265,56 +264,61 @@ static void ui_play_ending_good_or_tyrant(int race, const char *name, bool flag_
     lbxfile_item_release(LBXFILE_WINLOSE, wld1.gfx_ships);
     lbxfile_item_release(LBXFILE_WINLOSE, wld1.gfx_stars);
 
-    wld2.gfx_winning2 = lbxfile_item_get(LBXFILE_WINLOSE, 0x1f);
-    wld2.frame = 0;
+    if (!flag_skip) {
+        wld2.gfx_winning2 = lbxfile_item_get(LBXFILE_WINLOSE, 0x1f);
+        wld2.frame = 0;
 
-    uiobj_set_callback_and_delay(ui_play_winlose_cb2, &wld2, 3);
+        uiobj_set_callback_and_delay(ui_play_winlose_cb2, &wld2, 3);
 
-    while ((wld2.frame < 0x14) && (!flag_skip)) {
-        ui_delay_prepare();
-        uiobji_now = uiobj_handle_input_cond();
-        if ((uiobji_now == uiobji_ma) || (uiobji_now == UIOBJI_ESC)) {
-            flag_skip = true;
-            break;
-        } else {
-            ui_play_winlose_cb2(&wld2);
-            uiobj_finish_frame();
-            if (wld2.frame == 1) {
-                ui_palette_fadein_5f_5_1();
+        while ((wld2.frame < 0x14) && (!flag_skip)) {
+            int16_t oi;
+            ui_delay_prepare();
+            oi = uiobj_handle_input_cond();
+            if ((oi == oi_skip) || (oi == UIOBJI_ESC)) {
+                flag_skip = true;
+                break;
+            } else {
+                ui_play_winlose_cb2(&wld2);
+                uiobj_finish_frame();
+                if (wld2.frame == 1) {
+                    ui_palette_fadein_5f_5_1();
+                }
+                ui_delay_ticks_or_click(3);
             }
-            ui_delay_ticks_or_click(3);
         }
+        ui_palette_fadeout_5_5_1();
+        lbxfile_item_release(LBXFILE_WINLOSE, wld2.gfx_winning2);
     }
 
-    ui_palette_fadeout_5_5_1();
+    if (!flag_skip) {
+        wld3.gfx_winlast = lbxfile_item_get(LBXFILE_WINLOSE, 0x21);
+        wld3.frame = 0;
 
-    wld3.gfx_winlast = lbxfile_item_get(LBXFILE_WINLOSE, 0x21);
-    wld3.frame = 0;
+        uiobj_set_callback_and_delay(ui_play_winlose_cb3, &wld3, 3);
+        lbxpal_select(8, -1, 0);
+        lbxpal_set_update_range(0, 255);
 
-    uiobj_set_callback_and_delay(ui_play_winlose_cb3, &wld3, 3);
-    lbxpal_select(8, -1, 0);
-    lbxpal_set_update_range(0, 255);
-
-    while ((wld3.frame < 0x50) && (!flag_skip)) {
-        ui_delay_prepare();
-        uiobji_now = uiobj_handle_input_cond();
-        if ((uiobji_now == uiobji_ma) || (uiobji_now == UIOBJI_ESC)) {
-            flag_skip = true;
-            break;
-        } else {
-            ui_play_winlose_cb3(&wld3);
-            uiobj_finish_frame();
-            if (wld3.frame == 1) {
-                ui_palette_fadein_4b_19_1();
+        while ((wld3.frame < 0x50) && (!flag_skip)) {
+            int16_t oi;
+            ui_delay_prepare();
+            oi = uiobj_handle_input_cond();
+            if ((oi == oi_skip) || (oi == UIOBJI_ESC)) {
+                flag_skip = true;
+                break;
+            } else {
+                ui_play_winlose_cb3(&wld3);
+                uiobj_finish_frame();
+                if (wld3.frame == 1) {
+                    ui_palette_fadein_4b_19_1();
+                }
+                ui_delay_ticks_or_click(3);
             }
-            ui_delay_ticks_or_click(3);
         }
+        ui_palette_fadeout_5_5_1();
+        lbxfile_item_release(LBXFILE_WINLOSE, wld3.gfx_winlast);
     }
 
     lbxfile_item_release(LBXFILE_WINLOSE, wld3.gfx_winface);
-    lbxfile_item_release(LBXFILE_WINLOSE, wld3.gfx_winlast);
-
-    ui_palette_fadeout_5_5_1();
 
     ui_sound_stop_music();
 
@@ -420,7 +424,7 @@ void ui_play_ending_tyrant(int race, const char *name)
 
 void ui_play_ending_funeral(int banner_live, int banner_dead)
 {
-    int16_t uiobji_now, uiobji_ma;
+    int16_t oi_skip;
     struct anim_winlose_funeral_s wld;
 
     ui_draw_finish_mode = 2;
@@ -442,17 +446,17 @@ void ui_play_ending_funeral(int banner_live, int banner_dead)
     ui_cursor_setup_area(1, &ui_cursor_area_all_i0);
 
     uiobj_table_clear();
-    uiobji_ma = uiobj_add_mousearea_all(MOO_KEY_UNKNOWN);
+    oi_skip = uiobj_add_mousearea_all(MOO_KEY_SPACE);
     uiobj_set_downcount(3);
     uiobj_set_callback_and_delay(ui_play_winlose_funeral_cb, &wld, 4);
 
-    uiobji_now = 0;
     wld.frame = 0;
     while (wld.frame < 0xba) {
+        int16_t oi;
         ui_delay_prepare();
-        uiobji_now = uiobj_handle_input_cond();
+        oi = uiobj_handle_input_cond();
         ui_play_winlose_funeral_cb(&wld);
-        if (uiobji_now == uiobji_ma) {
+        if ((oi == oi_skip) || (oi == UIOBJI_ESC)) {
             wld.frame = 0x2710;
         }
         ++wld.frame;
@@ -478,7 +482,7 @@ void ui_play_ending_funeral(int banner_live, int banner_dead)
 
 void ui_play_ending_exile(const char *name)
 {
-    int16_t uiobji_now, uiobji_ma;
+    int16_t oi_skip;
     bool flag_skip = false;
     struct anim_winlose_exile_s wld;
 
@@ -498,17 +502,16 @@ void ui_play_ending_exile(const char *name)
     ui_sound_play_music(3);
 
     uiobj_table_clear();
-    uiobji_ma = uiobj_add_mousearea_all(MOO_KEY_UNKNOWN);
+    oi_skip = uiobj_add_mousearea_all(MOO_KEY_SPACE);
     uiobj_set_downcount(3);
     uiobj_set_callback_and_delay(ui_play_winlose_exile_cb, &wld, 3);
-
-    uiobji_now = 0;
     wld.frame = 0;
 
     while ((wld.frame < 0x17c) && (!flag_skip)) {
+        int16_t oi;
         ui_delay_prepare();
-        uiobji_now = uiobj_handle_input_cond();
-        if ((uiobji_now == uiobji_ma) || (uiobji_now == UIOBJI_ESC)) {
+        oi = uiobj_handle_input_cond();
+        if ((oi == oi_skip) || (oi == UIOBJI_ESC)) {
             flag_skip = true;
             break;
         } else {
