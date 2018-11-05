@@ -180,7 +180,7 @@ static void ui_play_winlose_cb3(void *vptr)
 
 static void ui_play_ending_good_or_tyrant(int race, const char *name, bool flag_good)
 {
-    int16_t uiobji_ma;
+    int16_t oi_skip;
     bool flag_skip = false;
     struct anim_winlose_1_s wld1;
     struct anim_winlose_2_s wld2;
@@ -214,7 +214,7 @@ static void ui_play_ending_good_or_tyrant(int race, const char *name, bool flag_
     ui_sound_play_music(2);
 
     uiobj_table_clear();
-    uiobji_ma = uiobj_add_mousearea(0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, MOO_KEY_UNKNOWN, -1);
+    oi_skip = uiobj_add_mousearea(0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, MOO_KEY_UNKNOWN, -1);
     uiobj_set_downcount(3);
     uiobj_set_callback_and_delay(ui_play_winlose_cb1, &wld1, 3);
 
@@ -224,7 +224,7 @@ static void ui_play_ending_good_or_tyrant(int race, const char *name, bool flag_
         int16_t oi;
         ui_delay_prepare();
         oi = uiobj_handle_input_cond();
-        if ((oi == uiobji_ma) || (oi == UIOBJI_ESC)) {
+        if ((oi == oi_skip) || (oi == UIOBJI_ESC)) {
             flag_skip = true;
             break;
         } else {
@@ -255,7 +255,7 @@ static void ui_play_ending_good_or_tyrant(int race, const char *name, bool flag_
         int16_t oi;
         ui_delay_prepare();
         oi = uiobj_handle_input_cond();
-        if ((oi == uiobji_ma) || (oi == UIOBJI_ESC)) {
+        if ((oi == oi_skip) || (oi == UIOBJI_ESC)) {
             flag_skip = true;
             break;
         } else {
@@ -281,7 +281,7 @@ static void ui_play_ending_good_or_tyrant(int race, const char *name, bool flag_
         int16_t oi;
         ui_delay_prepare();
         oi = uiobj_handle_input_cond();
-        if ((oi == uiobji_ma) || (oi == UIOBJI_ESC)) {
+        if ((oi == oi_skip) || (oi == UIOBJI_ESC)) {
             flag_skip = true;
             break;
         } else {
@@ -403,7 +403,7 @@ void ui_play_ending_tyrant(int race, const char *name)
 
 void ui_play_ending_funeral(int banner_live, int banner_dead)
 {
-    int16_t uiobji_ma;
+    int16_t oi_skip;
     struct anim_winlose_funeral_s wld;
 
     ui_draw_finish_mode = 2;
@@ -421,7 +421,7 @@ void ui_play_ending_funeral(int banner_live, int banner_dead)
     ui_cursor_setup_area(1, &ui_cursor_area_all_i0);
 
     uiobj_table_clear();
-    uiobji_ma = uiobj_add_mousearea(0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, MOO_KEY_UNKNOWN, -1);
+    oi_skip = uiobj_add_mousearea(0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, MOO_KEY_UNKNOWN, -1);
     uiobj_set_downcount(3);
     uiobj_set_callback_and_delay(ui_play_winlose_funeral_cb, &wld, 4);
 
@@ -431,7 +431,7 @@ void ui_play_ending_funeral(int banner_live, int banner_dead)
         ui_delay_prepare();
         oi = uiobj_handle_input_cond();
         ui_play_winlose_funeral_cb(&wld);
-        if (oi == uiobji_ma) {
+        if (oi == oi_skip) {
             wld.frame = 0x2710;
         }
         ++wld.frame;
@@ -457,7 +457,7 @@ void ui_play_ending_funeral(int banner_live, int banner_dead)
 
 void ui_play_ending_exile(const char *name)
 {
-    int16_t uiobji_ma;
+    int16_t oi_skip;
     bool flag_skip = false;
     struct anim_winlose_exile_s wld;
 
@@ -473,7 +473,7 @@ void ui_play_ending_exile(const char *name)
     ui_sound_play_music(3);
 
     uiobj_table_clear();
-    uiobji_ma = uiobj_add_mousearea(0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, MOO_KEY_UNKNOWN, -1);
+    oi_skip = uiobj_add_mousearea(0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, MOO_KEY_UNKNOWN, -1);
     uiobj_set_downcount(3);
     uiobj_set_callback_and_delay(ui_play_winlose_exile_cb, &wld, 3);
 
@@ -483,7 +483,7 @@ void ui_play_ending_exile(const char *name)
         int16_t oi;
         ui_delay_prepare();
         oi = uiobj_handle_input_cond();
-        if ((oi == uiobji_ma) || (oi == UIOBJI_ESC)) {
+        if ((oi == oi_skip) || (oi == UIOBJI_ESC)) {
             flag_skip = true;
             break;
         } else {
