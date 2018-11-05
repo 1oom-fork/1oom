@@ -77,7 +77,7 @@ static void newships_draw_cb(void *vptr)
             gfx = ui_data.gfx.ships[sd->look];
             lbxgfx_set_frame_0(gfx);
             lbxgfx_draw_frame(x0 + 4, y0 + 3, gfx, UI_SCREEN_W);
-            lbxfont_select(0, 0, 0, 0);
+            lbxfont_select(0, 0xd, 0, 0);
             lbxfont_print_num_right(x0 + 36, y0 + 23, n, UI_SCREEN_W);
         }
     }
