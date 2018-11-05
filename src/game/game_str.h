@@ -253,6 +253,7 @@ extern const char *game_str_gm_gmap;
 extern const char *game_str_gm_mapkey;
 extern const char *game_str_bs_line1;
 extern const char *game_str_bs_line2;
+extern const char *game_str_bs_bases;
 extern const char *game_str_tbl_te_field[TECH_FIELD_NUM];
 extern const char *game_str_te_adv;
 extern const char *game_str_te_tech;
