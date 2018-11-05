@@ -71,13 +71,11 @@ static void newships_draw_cb(void *vptr)
             ui_draw_line1(x0, y0 + 30, x0 + 39, y0 + 30, 0x5c);
             lbxfont_select(2, 0, 0, 0);
             lbxfont_print_str_center(x0 + 20, y0 + 33, sd->name, UI_SCREEN_W);
-            ds.xoff1 = 0;
-            ds.xoff2 = 0;
             ui_draw_stars(x0, y0 + 2, i * 10, 40, &ds);
             gfx = ui_data.gfx.ships[sd->look];
             lbxgfx_set_frame_0(gfx);
             lbxgfx_draw_frame(x0 + 4, y0 + 3, gfx, UI_SCREEN_W);
-            lbxfont_select(0, 0, 0, 0);
+            lbxfont_select(0, 0xd, 0, 0);
             lbxfont_print_num_right(x0 + 36, y0 + 23, n, UI_SCREEN_W);
         }
     }
