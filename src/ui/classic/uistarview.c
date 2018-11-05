@@ -149,6 +149,7 @@ static void starview_draw_cb(void *vptr)
         lbxfont_print_str_right(284, 169, game_str_sv_waste);
         lbxfont_print_str_right(284, 179, game_str_sv_pop);
         lbxfont_print_str_right(284, 189, game_str_sv_growth);
+        lbxfont_select(0, 0xd, 0, 0);
         lbxfont_print_num_right(308, 149, p->max_pop3);
         lbxfont_print_num_right(308, 159, s->factories);
         lbxfont_print_num_right(308, 169, p->waste);
