@@ -130,8 +130,8 @@ static void sabotage_draw_cb(void *vptr)
         const planet_t *p = &(g->planet[i]);
         if (p->owner == d->target) {
             int x, y;
-            x = (p->x * 215) / g->galaxy_maxx + 5;
-            y = (p->y * 171) / g->galaxy_maxy + 5;
+            x = (p->x * 215) / g->galaxy_maxx + 5 + 3;
+            y = (p->y * 171) / g->galaxy_maxy + 5 - 2;
             lbxgfx_draw_frame(x, y, ui_data.gfx.starmap.smalflag[e->banner], UI_SCREEN_W);
         }
     }
