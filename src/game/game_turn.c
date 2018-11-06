@@ -745,10 +745,12 @@ static void game_turn_move_ships(struct game_s *g)
             for (int i = 0; i < g->enroute_num; ++i) {
                 fleet_enroute_t *r = &(g->enroute[i]);
                 if ((r->speed * 2) > frame) {
+                    bool in_nebula;
                     int x, y;
                     x = r->x;
                     y = r->y;
-                    if (odd_frame || (!game_xy_is_in_nebula(g, x, y)) || (frame == 0)) {
+                    in_nebula = (odd_frame || (frame == 0)) ? false : game_xy_is_in_nebula(g, x, y);
+                    if (odd_frame || (frame == 0) || (!in_nebula)) {
                         int x1, y1;
                         const planet_t *p;
                         p = &(g->planet[r->dest]);
@@ -763,16 +765,20 @@ static void game_turn_move_ships(struct game_s *g)
                         }
                         r->x = x;
                         r->y = y;
+                    } else if (in_nebula) {
+                        flag_more = true;   /* WASBUG MOO1 stopped nebula movement early if no transports or faster ships enroute */
                     }
                 }
             }
             for (int i = 0; i < g->transport_num; ++i) {
                 transport_t *r = &(g->transport[i]);
                 if ((r->speed * 2) > frame) {
+                    bool in_nebula;
                     int x, y;
                     x = r->x;
                     y = r->y;
-                    if ((!odd_frame) || (!game_xy_is_in_nebula(g, x, y))) {
+                    in_nebula = (!odd_frame) ? false : game_xy_is_in_nebula(g, x, y);
+                    if ((!odd_frame) || (!in_nebula)) {
                         int x1, y1;
                         const planet_t *p;
                         p = &(g->planet[r->dest]);
@@ -787,6 +793,8 @@ static void game_turn_move_ships(struct game_s *g)
                         }
                         r->x = x;
                         r->y = y;
+                    } else if (in_nebula) {
+                        flag_more = true;   /* WASBUG MOO1 stopped nebula movement early if no fleets or faster ships enroute */
                     }
                 }
             }
