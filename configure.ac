@@ -1,4 +1,4 @@
-AC_INIT([1oom], [0.9])
+AC_INIT([1oom], [1.0])
 
 AC_ARG_ENABLE(static, AS_HELP_STRING([--enable-static], [enable static builds]))
 AC_ARG_ENABLE(modebug, AS_HELP_STRING([--enable-modebug], [add debugging options]))
