@@ -148,9 +148,7 @@ void game_update_production(struct game_s *g)
             }
             {
                 uint32_t reserve = p->reserve;
-                if (v < reserve) {
-                    p->reserve = v;
-                }
+                SETMIN(reserve, v);
                 v += reserve;
             }
             if (p->unrest == PLANET_UNREST_REBELLION) {
@@ -438,7 +436,7 @@ bool game_check_coord_is_visible(struct game_s *g, player_id_t pi, int range, in
             return true;
         }
     }
-    range = (range - 30) / 20;  /* 0..3 */
+    range = (range - 30) / 2;  /* 0, 10, 20, 30 */
     for (int i = 0; i < g->galaxy_stars; ++i) {
         planet_t *p = &(g->planet[i]);
         uint32_t snum;

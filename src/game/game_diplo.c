@@ -244,7 +244,7 @@ void game_diplo_break_treaty(struct game_s *g, player_id_t pi, player_id_t pi2)
         v = e->relation1[pi2] - rnd_1_n(20, &g->seed);
         SETMAX(v, -100);
         e->relation1[pi2] = v;
-        e2->relation2[pi] = v;
+        e2->relation1[pi] = v;
     }
     e->treaty[pi2] = TREATY_NONE;
     e2->treaty[pi] = TREATY_NONE;
@@ -472,7 +472,7 @@ void game_diplo_battle_finish(struct game_s *g, int def, int att, int popdiff, u
         }
     }
     popdiff *= 5;
-    SETMAX(app_ai, 50);
+    SETMIN(app_ai, 50);
     biodamage *= 10;
     offense = MAX(popdiff, app_ai);
     SETMAX(offense, biodamage);
