@@ -593,7 +593,7 @@ static int savetype_de_moo13(struct game_s *g, const char *fname)
         }
         for (player_id_t i = PLAYER_0; i < PLAYER_NUM; ++i) {
             M13_GET_16(ev->spies_caught[PLAYER_0][i], evb + 0x1fe + i * 2);
-            M13_GET_16(ev->hmm28e[PLAYER_0][i], evb + 0x28e + i * 2); /* FIXME check index order */
+            M13_GET_16(ev->hmm28e[PLAYER_0][i], evb + 0x28e + i * 2);
         }
         M13_GET_TBL_BVN_8(ev->help_shown[PLAYER_0], evb + 0x2e2, 16);
         /* TODO build_finished ; is it even possible to save before clicking them away? */
@@ -1039,7 +1039,7 @@ static int savetype_en_moo13(struct game_s *g, const char *fname)
         }
         for (player_id_t i = PLAYER_0; i < PLAYER_NUM; ++i) {
             M13_SET_16(ev->spies_caught[PLAYER_0][i], evb + 0x1fe + i * 2);
-            M13_SET_16(ev->hmm28e[PLAYER_0][i], evb + 0x28e + i * 2); /* FIXME check index order */
+            M13_SET_16(ev->hmm28e[PLAYER_0][i], evb + 0x28e + i * 2);
         }
         M13_SET_TBL_BVN_8(ev->help_shown[PLAYER_0], evb + 0x2e2, 16);
         /* TODO build_finished ; is it even possible to save before clicking them away? */
