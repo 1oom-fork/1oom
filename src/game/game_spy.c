@@ -386,6 +386,8 @@ int game_spy_esp_sub2(struct game_s *g, struct spy_esp_s *s, int a4)
 
 void game_spy_build(struct game_s *g)
 {
+    /* BUG? MOO1 does not reset spycost between target players and spies become
+       disproportionately more expensive for each subsequent opponent. */
     for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         empiretechorbit_t *e = &(g->eto[i]);
         int spycost;
