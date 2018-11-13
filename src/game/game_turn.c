@@ -17,6 +17,7 @@
 #include "game_election.h"
 #include "game_end.h"
 #include "game_event.h"
+#include "game_fix.h"
 #include "game_fleet.h"
 #include "game_ground.h"
 #include "game_misc.h"
@@ -681,7 +682,7 @@ static void game_turn_build_ind(struct game_s *g)
             }
             e->reserve_bc += (v * cost) / 2;
             fact += num;
-            SETMIN(fact, game_num_max_factories);
+            SETMIN(fact, game_fix_max_factories ? game_num_max_factories_1_3a : game_num_max_factories);
             p->factories = fact;
             if ((fact != factold) && (fact >= (p->max_pop3 * e->colonist_oper_factories))) {
                 if (IS_HUMAN(g, owner) && (p->slider[PLANET_SLIDER_IND] > 0)) {
@@ -956,7 +957,9 @@ static void game_turn_bomb_damage(struct game_s *g, uint8_t pli, player_id_t att
     memset(tbl, 0, sizeof(tbl));
     for (int i = 0; i < ea->shipdesigns_num; ++i) {
         const shipdesign_t *sd = &(g->srd[attacker].design[i]);
-        SETMAX(maxcomp, sd->comp);
+        if (!game_fix_orbital_comp || (ea->orbit[pli].ships[i] != 0)) {
+            SETMAX(maxcomp, sd->comp);
+        }
         for (int j = 0; j < (WEAPON_SLOT_NUM - 1); ++j) {
             /* BUG? the weapon in slot 4 is not used in orbital bombardment. */
             weapon_t wpnt = sd->wpnt[j];
@@ -975,7 +978,7 @@ static void game_turn_bomb_damage(struct game_s *g, uint8_t pli, player_id_t att
     }
     complevel = (maxcomp - 1) * 2 + 6;
     SETRANGE(complevel, 1, 20);
-    for (int i = 0; i < WEAPON_CRYSTAL_RAY; ++i) {  /* FIXME BUG? excludes death ray and amoeba stream too */
+    for (int i = 0; i < (game_fix_orbital_weap_any ? WEAPON_NUM : WEAPON_CRYSTAL_RAY); ++i) {
         uint32_t vcur = tbl[i];
         if (vcur != 0) {
             const struct shiptech_weap_s *w = &(tbl_shiptech_weap[i]);
@@ -1002,7 +1005,7 @@ static void game_turn_bomb_damage(struct game_s *g, uint8_t pli, player_id_t att
                         }
                     }
                 } else {
-                    if (w->misstype == 0) {
+                    if (!game_fix_orbital_torpedo == (w->misstype == 0)) {
                         dmgmax /= 2;
                     }
                     dmgmax *= w->nummiss;
@@ -1201,7 +1204,7 @@ static int game_turn_transport_shoot(struct game_s *g, uint8_t planet_i, player_
     }
     complevel = (bestcomp - speed) * 2 + 12;
     SETRANGE(complevel, 1, 20);
-    for (int i = 0; i < WEAPON_CRYSTAL_RAY; ++i) {  /* FIXME BUG? excludes death ray and amoeba stream too */
+    for (int i = 0; i < (game_fix_orbital_weap_any ? WEAPON_NUM : WEAPON_CRYSTAL_RAY); ++i) {
         uint32_t vcur = tbl[i];
         if (vcur != 0) {
             const struct shiptech_weap_s *w = &(tbl_shiptech_weap[i]);
@@ -1666,9 +1669,9 @@ static void game_turn_finished_slider(struct game_s *g)
             game_add_planet_to_build_finished(g, pli, pi, FINISHED_SHIELD);
         }
         if (BOOLVEC_IS1(p->finished, FINISHED_STARGATE)) {
-            /* WASBUG MOO1 has DEF, not SHIP */
-            p->slider[PLANET_SLIDER_TECH] += p->slider[PLANET_SLIDER_SHIP];
-            p->slider[PLANET_SLIDER_SHIP] = 0;
+            planet_slider_i_t si = game_fix_sg_finished ? PLANET_SLIDER_SHIP : PLANET_SLIDER_DEF;
+            p->slider[PLANET_SLIDER_TECH] += p->slider[si];
+            p->slider[si] = 0;
             game_add_planet_to_build_finished(g, pli, pi, FINISHED_STARGATE);
         }
     }

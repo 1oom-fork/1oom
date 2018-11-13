@@ -11,6 +11,7 @@ extern int game_num_limit_ships;
 extern int game_num_limit_ships_all;
 extern int game_num_max_pop;
 extern int game_num_max_factories;
+extern int game_num_max_factories_1_3a;
 extern int game_num_max_inbound;
 extern int game_num_atmos_cost;
 extern int game_num_soil_cost;

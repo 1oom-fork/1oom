@@ -5,6 +5,7 @@
 #include "game.h"
 #include "game_aux.h"
 #include "game_diplo.h"
+#include "game_fix.h"
 #include "game_misc.h"
 #include "game_tech.h"
 #include "game_techtypes.h"
@@ -390,19 +391,22 @@ void game_spy_build(struct game_s *g)
 {
     for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         empiretechorbit_t *e = &(g->eto[i]);
-        int spycost;
-        spycost = e->tech.percent[TECH_FIELD_COMPUTER] * 2 + 25;
+        int spycost, spycost_next;
+        spycost_next = spycost = e->tech.percent[TECH_FIELD_COMPUTER] * 2 + 25;
         if (e->race == RACE_DARLOK) {
             spycost /= 2;
         }
         for (player_id_t j = PLAYER_0; j < g->players; ++j) {
             if ((i != j) && (e->spying[j] != 0)) {
                 int spyfund;
+                if (game_fix_spy_cost) {
+                    spycost_next = spycost;
+                }
                 spyfund = (e->total_production_bc * e->spying[j]) / 1000 + e->spyfund[j];
-                while (spyfund >= spycost) {
+                while (spyfund >= spycost_next) {
                     ++e->spies[j];
-                    spyfund -= spycost;
-                    spycost *= 2;
+                    spyfund -= spycost_next;
+                    spycost_next *= 2;
                 }
                 e->spyfund[j] = spyfund;
             }
