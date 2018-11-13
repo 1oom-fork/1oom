@@ -31,6 +31,8 @@ libuiclassic_a_SOURCES = \
     uiempirestatus.h \
     uiending.c \
     uiexplore.c \
+    uifix.c \
+    uifix.h \
     uifleet.c \
     uifleet.h \
     uigame.c \
