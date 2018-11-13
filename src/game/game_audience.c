@@ -870,7 +870,6 @@ static void audience_menu_tribute(struct audience_s *au)
         /* FIXME BUG? eh->relation1[pa] = ea->relation1[ph]; is missing */
         game_audience_sub4(au, 1, 3);
     } else {
-        /*65da2*/
         struct spy_esp_s s[1];
         int hmm1 = 0; /* FIXME BUG = diplo_p2_sub1_zhmm4[bcnum]; uninitialized, wrong index */
         s->spy = pa;
