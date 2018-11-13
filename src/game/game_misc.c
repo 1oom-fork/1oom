@@ -351,7 +351,7 @@ void game_update_within_range(struct game_s *g)
                 BOOLVEC_SET(p->within_srange, pi, (mindist2 <= srange));
 #if 0   /* buggy and pointless code */
                 if (BOOLVER_IS1(p->within_srange, pi) && (srange2 > 0)) {
-                    mindist1 = 0x2710;
+                    mindist1 = 10000;
                     for (j = 0; (j < g->enroute_num) && (mindist1 > srange2); ++j) {
                         if (g->enroute[j].owner == pi) {
                             dist = util_math_dist_fast(g->enroute[j].x, g->enroute[j].y, p->x, p->y);
