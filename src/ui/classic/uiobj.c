@@ -1076,6 +1076,20 @@ static int16_t uiobj_kbd_dir_key(int dirx, int diry)
     }
 }
 
+static int16_t uiobj_handle_kbd_find_alt(int16_t oi, uint32_t key)
+{
+    const uiobj_t *p = &uiobj_tbl[oi];
+    while (1
+      && (oi != uiobj_table_num)
+      && ((KBD_GET_KEYMOD(key) != p->key) || (p->type == 8))
+      && ((p->type != 8) || !KBD_MOD_ONLY_ALT(key) || (KBD_GET_KEY(key) != p->key))
+    ) {
+        ++oi;
+        p = &uiobj_tbl[oi];
+    }
+    return oi;
+}
+
 static uint32_t uiobj_handle_kbd(int16_t *oiptr)
 {
     uint32_t key = kbd_get_keypress();
@@ -1091,48 +1105,13 @@ static uint32_t uiobj_handle_kbd(int16_t *oiptr)
         uiobj_kbd_hmm1 = 0;
     }
     oi = uiobj_kbd_hmm1 + 1;
+    oi = uiobj_handle_kbd_find_alt(oi, key);
     p = &uiobj_tbl[oi];
     /*key = ucase(key)*/
-    goto loc_14417;
-    loc_143cd:
-    if ((p->type == 8) && KBD_MOD_ONLY_ALT(key) && (KBD_GET_KEY(key) == p->key)) {
-        goto loc_14447;
-    }
-    ++oi;
-    p = &uiobj_tbl[oi];
-    loc_14417:
-    if (KBD_GET_KEYMOD(key) == p->key) {
-        if (p->type != 8) {
-            goto loc_14447;
-        }
-    }
-    if (oi != uiobj_table_num) {
-        goto loc_143cd;
-    }
-    loc_14447:
     if (oi == uiobj_table_num) {
-        oi = 1;
+        oi = uiobj_handle_kbd_find_alt(1, key);
         p = &uiobj_tbl[oi];
-        goto loc_1449f;
-    } else {
-        goto loc_144cf;
     }
-    loc_14455:
-    if ((p->type == 8) && KBD_MOD_ONLY_ALT(key) && (KBD_GET_KEY(key) == p->key)) {
-        goto loc_144cf;
-    }
-    ++oi;
-    p = &uiobj_tbl[oi];
-    loc_1449f:
-    if (KBD_GET_KEYMOD(key) == p->key) {
-        if (p->type != 8) {
-            goto loc_144cf;
-        }
-    }
-    if (oi != uiobj_table_num) {
-        goto loc_14455;
-    }
-    loc_144cf:
     uiobj_kbd_hmm1 = oi;
     v4 = 1;
     if (oi < uiobj_table_num) {
@@ -1174,41 +1153,40 @@ static uint32_t uiobj_handle_kbd(int16_t *oiptr)
             case MOO_KEY_LEFT:
             case MOO_KEY_KP4:
                 dirx = -1;
-                loc_14704:
-                if (KBD_GET_MOD(key) == 0) {
-                    oi2 = uiobj_kbd_dir_key(dirx, diry);
-                }
                 break;
             case MOO_KEY_RIGHT:
             case MOO_KEY_KP6:
                 dirx = 1;
-                goto loc_14704;
+                break;
             case MOO_KEY_UP:
             case MOO_KEY_KP8:
                 diry = -1;
-                goto loc_14704;
+                break;
             case MOO_KEY_DOWN:
             case MOO_KEY_KP2:
                 diry = 1;
-                goto loc_14704;
+                break;
             case MOO_KEY_KP7:
                 dirx = -1;
                 diry = -1;
-                goto loc_14704;
+                break;
             case MOO_KEY_KP9:
                 dirx = 1;
                 diry = -1;
-                goto loc_14704;
+                break;
             case MOO_KEY_KP1:
                 dirx = -1;
                 diry = 1;
-                goto loc_14704;
+                break;
             case MOO_KEY_KP3:
                 dirx = 1;
                 diry = 1;
-                goto loc_14704;
+                break;
             default:
                 break;
+        }
+        if ((dirx || diry) && (KBD_GET_MOD(key) == 0)) {
+            oi2 = uiobj_kbd_dir_key(dirx, diry);
         }
         *oiptr = oi2;
     }
@@ -1334,7 +1312,6 @@ static int16_t uiobj_handle_input_sub0(void)
     if (kbd_have_keypress()) {
         uint32_t key = uiobj_handle_kbd(&oi);
         if (KBD_GET_KEY(key) == MOO_KEY_UNKNOWN) {
-            loc_13640:
             return 0;
         }
         /* checks for F11 and F12 debug keys omitted */
@@ -1351,11 +1328,9 @@ static int16_t uiobj_handle_input_sub0(void)
         }
         if (KBD_GET_KEYMOD(key) == p->key) {
             if (p->type == 6) {
-                goto loc_13640;
+                return 0;
             }
-            if (oi == 0) {
-                goto loc_13896;
-            }
+            if (oi != 0) {
             mx = p->x0 + (p->x1 - p->x0) / 2;
             my = p->y0 + (p->y1 - p->y0) / 2;
             uiobj_cursor_redraw_hmm2(oi, mx, my);
@@ -1373,7 +1348,7 @@ static int16_t uiobj_handle_input_sub0(void)
                 uiobj_hmm1_oi = -1;
                 return p->t9.uiobji;
             }
-            loc_13896:
+            }
             uiobj_finish_callback_delay_1();
             uiobj_hmm1_oi = -1;
             return oi;
@@ -1397,18 +1372,20 @@ static int16_t uiobj_handle_input_sub0(void)
                     }
                 } else if (p->type == 9) {
                     uiobj_hmm1_oi = -1;
-                    goto loc_13e11;
+                    return p->t9.uiobji;
                 }
                 if (uiobj_flag_skip_delay == 0) {
                     uiobj_finish_callback_delay_1();
                 }
-                goto loc_13a42;
+                uiobj_hmm1_oi = -1;
+                return oi;
             } else {
                 if (uiobj_hmm6 != 0) {
                     for (oi = 1; oi < uiobj_table_num; ++oi) {
                         p = &uiobj_tbl[oi];
                         if ((p->type == 0xa) && (*p->vptr == p->ta.z18) && p->ta.z12) {
-                            goto loc_13a42;
+                            uiobj_hmm1_oi = -1;
+                            return oi;
                         }
                     }
                 }
@@ -1424,7 +1401,6 @@ static int16_t uiobj_handle_input_sub0(void)
                     } else {
                         uiobj_slider_minus(p);
                     }
-                    loc_13a42:
                     uiobj_hmm1_oi = -1;
                     return oi;
                 } else {
@@ -1434,15 +1410,14 @@ static int16_t uiobj_handle_input_sub0(void)
             }
         }
         uiobj_hmm1_oi = -1;
-        goto loc_13640;
+        return 0;
     }
     if (mouse_buttons == 0) {
         if (!mouse_getclear_hmm4()) {
-            goto loc_13640;
+            return 0;
         }
         mb = mouse_click_buttons;
         if (mb == MOUSE_BUTTON_MASK_RIGHT) {
-            loc_13a99:
             mouse_getclear_hmm4();
             mouse_getclear_hmm5();
             return -1;
@@ -1472,13 +1447,14 @@ static int16_t uiobj_handle_input_sub0(void)
                 mouse_getclear_hmm5();
             }
             if (p->type == 9) {
-                goto loc_13e0e;
+                p = &uiobj_tbl[oi];
+                return p->t9.uiobji;
             } else {
                 uiobj_hmm2_oi = oi;
                 if (mb == MOUSE_BUTTON_MASK_RIGHT) {
-                    goto loc_13e8e;
+                    return -oi;
                 } else {
-                    goto loc_13e98;
+                    return oi;
                 }
             }
         }
@@ -1488,7 +1464,9 @@ static int16_t uiobj_handle_input_sub0(void)
             while ((mb = mouse_buttons) == MOUSE_BUTTON_MASK_RIGHT) {
                 uiobj_finish_callback_delay_1();
             }
-            goto loc_13a99;
+            mouse_getclear_hmm4();
+            mouse_getclear_hmm5();
+            return -1;
         }
         while (mouse_buttons != 0) {
             mx = mouse_x;
@@ -1546,9 +1524,7 @@ static int16_t uiobj_handle_input_sub0(void)
                 case 9:
                     if (mb != MOUSE_BUTTON_MASK_RIGHT) {
                         uiobj_hmm1_oi = -1;
-                        loc_13e0e:
                         p = &uiobj_tbl[oi];
-                        loc_13e11:
                         return p->t9.uiobji;
                     }
                     return -1;
@@ -1567,10 +1543,8 @@ static int16_t uiobj_handle_input_sub0(void)
         }
         uiobj_hmm1_oi = -1;
         if (mb == MOUSE_BUTTON_MASK_RIGHT) {
-            loc_13e8e:
             return -oi;
         } else {
-            loc_13e98:
             return oi;
         }
     }
