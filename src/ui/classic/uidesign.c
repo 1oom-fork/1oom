@@ -253,7 +253,7 @@ static void design_draw_cb(void *vptr)
         for (int i = 0; i < SPECIAL_SLOT_NUM; ++i) {
             v |= tbl_shiptech_special[sd->special[i]].boolmask;
         }
-        v = tbl_shiptech_comp[sd->comp].level + (v & (1 << SHIP_SPECIAL_BOOL_SCANNER)) ? 1 : 0;
+        v = tbl_shiptech_comp[sd->comp].level + ((v & (1 << SHIP_SPECIAL_BOOL_SCANNER)) ? 1 : 0);
         lbxfont_print_num_right(155, 22, v, UI_SCREEN_W);
     }
 

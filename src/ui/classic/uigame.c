@@ -241,9 +241,10 @@ void ui_game_start(struct game_s *g)
     /* HACK fix wrong palette after new game */
     lbxpal_set_update_range(248, 255);
     ui_palette_set_n();
+    ui_draw_finish_mode = 1;
     ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
     for (int i = 0; i < g->players; ++i) {
-        if (BOOLVEC_IS0(g->is_ai, i)) {
+        if (IS_HUMAN(g, i)) {
             ui_starmap_set_pos_focus(g, i);
             break;
         }

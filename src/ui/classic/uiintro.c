@@ -36,6 +36,7 @@ void ui_play_intro(void)
     uint8_t *intro_sfx5;
     uint8_t *intro_gfx = 0, *old_gfx = 0;
 
+    ui_palette_fadeout_14_14_2();
     lbxpal_select(0, -1, 0);
     ui_draw_erase_buf();
     lbxfont_select(5, 1, 0, 0);
