@@ -761,7 +761,6 @@ static void audience_menu_threat(struct audience_s *au)
                         dtype = 69;
                     }
                 } else {
-                    /*651f2*/
                     eh->spymode_next[pa] = SPYMODE_HIDE;    /* FIXME BUG? should be ea->..[ph] */
                     eh->spymode[pa] = SPYMODE_HIDE;         /* FIXME BUG? should be ea->..[ph] */
                     g->evn.hmm28e[ph][pa] = rnd_1_n(15, &g->seed) + 5;  /* FIXME check index order */
@@ -870,7 +869,6 @@ static void audience_menu_tribute(struct audience_s *au)
         /* FIXME BUG? eh->relation1[pa] = ea->relation1[ph]; is missing */
         game_audience_sub4(au, 1, 3);
     } else {
-        /*65da2*/
         struct spy_esp_s s[1];
         int hmm1 = 0; /* FIXME BUG = diplo_p2_sub1_zhmm4[bcnum]; uninitialized, wrong index */
         s->spy = pa;

@@ -936,7 +936,6 @@ static void game_turn_explore(struct game_s *g, uint8_t *planetptr, player_id_t 
                             }
                         }
                     } else {
-                        /*c763*/
                         if (best_colonize != 0) {
                             p->owner = i;
                             p->pop = 2;
@@ -1005,7 +1004,6 @@ static void game_turn_bomb_damage(struct game_s *g, uint8_t pli, player_id_t att
                         }
                     }
                 } else {
-                    /*dcbb*/
                     if (w->misstype == 0) {
                         dmgmax /= 2;
                     }
