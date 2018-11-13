@@ -337,7 +337,7 @@ void ui_planets(struct game_s *g, player_id_t active_player)
     uiobj_set_help_id(37);
 again:
     flag_trans = false;
-    game_update_production(g); /* XXX this probably needed for alt-moola */
+    game_update_production(g); /* this is needed for transfers and alt-moola */
 
     d.g = g;
     d.api = active_player;

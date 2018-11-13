@@ -251,7 +251,8 @@ static void game_ai_classic_turn_p1_front(struct game_s *g, struct ai_turn_p1_s 
         if (1
           && (pi != pi2)
           && BOOLVEC_IS1(e->within_frange, pi2)
-          && (IS_HUMAN(g, pi)/*never?*/ || (g->end == GAME_END_NONE))
+          && (IS_HUMAN(g, pi) || (g->end == GAME_END_NONE))
+        /* BUG IS_HUMAN(g, pi) is never true, but (g, pi2) could be and makes more sense */
         ) {
             int v8, vc;
             ait->tbl_front_relation[ait->num_fronts] = 0;
@@ -344,7 +345,7 @@ static shipcount_t game_ai_classic_turn_p1_spawn_colony_ship(struct game_s *g, s
     uint32_t prod;
     uint8_t planeti;
     if (0
-      || (ait->num_fronts == 0)
+      || (ait->num_fronts == 0) /* never true? */
       || (shipi == -1)
       || (e->total_production_bc == 0)
       || (shipn > 3)
@@ -352,7 +353,7 @@ static shipcount_t game_ai_classic_turn_p1_spawn_colony_ship(struct game_s *g, s
         return 0;
     }
     planeti = ait->tbl_front_planet[rnd_0_nm1(ait->num_fronts, &g->seed)];
-    if (planeti == PLANET_NONE) {
+    if (planeti == PLANET_NONE) { /* never true? */
         return 0;
     }
     prod = (e->total_production_bc * 2) / 5;
@@ -460,7 +461,7 @@ static void game_ai_classic_turn_p1_send_colony_ships(struct game_s *g, struct a
         }
     }
     if (e->race == RACE_SILICOID) {
-        can_colonize = 0/*any*/;    /* BUG? does this make silicoids send colony ships to non-habitable stars? */
+        can_colonize = 0/*any*/;    /* this doesnt make silicoids send colony ships to non-habitable stars */
     }
     for (int i = 0; i < g->galaxy_stars; ++i) {
         const planet_t *p = &(g->planet[i]);
@@ -506,6 +507,8 @@ static void game_ai_classic_turn_p1_send_colony_ships(struct game_s *g, struct a
                     log_warning("fleet enroute table (size %i/%i) too large for AI fleet (%i)!\n", g->enroute_num, FLEET_ENROUTE_MAX, FLEET_ENROUTE_AI_MAX);
                 } else {
                     game_turn_fleet_send(g, ait, pi, mini, pli);
+                    /* BUG? MOO1 does not update tbl_orbit and may try to send multiple
+                       colony ship fleets from the same planet */
                 }
             }
         }
@@ -1687,14 +1690,18 @@ static void game_ai_classic_turn_p3_sub1(struct game_s *g, player_id_t pi)
 
 static void game_ai_classic_turn_p3(struct game_s *g)
 {
-    static const int8_t ai_p3_tbl_w[7][15] = {
+    /* AI p3 slider weights
+        [0..3] ship/def/ind/eco
+        [5..9] computer/construction/force field/planetology/propulsion
+    */
+    static const int8_t ai_p3_tbl_w[TRAIT2_NUM + 1/*war*/][15] = {
         { 1, 2, 4, 1, 5, 2, 2, 4, 2, 3, 3, 75, 10, 40, 20 },
         { 4, 1, 2, 1, 5, 3, 1, 4, 2, 1, 5, 20, 0, 30, 30 },
         { 2, 4, 1, 1, 5, 1, 1, 3, 5, 2, 4, 35, 5, 20, 20 },
         { 1, 2, 3, 1, 6, 4, 2, 3, 2, 2, 3, 35, 5, 40, -10 },
         { 1, 2, 4, 1, 5, 1, 5, 4, 1, 2, 3, 40, 5, 30, -50 },
         { 1, 1, 2, 4, 5, 1, 2, 4, 1, 5, 3, 50, 10, 20, 10 },
-        { 4, 1, 1, 1, 6, 2, 2, 4, 2, 1, 5, 20, 5, 40, 50 }
+        { 4, 1, 1, 1, 6, 2, 2, 4, 2, 1, 5, 20, 5, 40, 50 }  /* War */
     };
 
     for (player_id_t pi = PLAYER_0; pi < g->players; ++pi) {
@@ -2206,7 +2213,7 @@ static int game_ai_battle_dmggive(struct battle_s *bt, int itemi1, int itemi2, i
                     miss_chance_beam += ((100 - miss_chance_beam) * (bd->absorb + 1 - w->damagemin)) / (w->damagemax + 1 - w->damagemin);
                 }
                 /*5861e*/
-                dmgmin = (w->damagemin > bd->absorb) ? (w->damagemin - bd->absorb) : 1;
+                dmgmin = (w->damagemin > bd->absorb) ? (w->damagemin - bd->absorb) : 1; /* FIXME {damage,absorb}div? */
                 if ((w->damagemax / damagediv) > (bd->absorb / absorbdiv)) {
                     dmgmax = (w->damagemax / damagediv) - (bd->absorb / absorbdiv);
                 } else {
@@ -2276,7 +2283,7 @@ static int game_ai_battle_rival(struct battle_s *bt, int itemi, int a2)
     int rival = -1, maxw = 0;
     for (int i = 0; i <= bt->items_num; ++i) {
         struct battle_item_s *b2 = &(bt->item[i]);
-        if (((b->side + b2->side) == 1) && (b->num > 0)) { /* FIXME b2->num ? */
+        if (((b->side + b2->side) == 1) && (b->num > 0)) {
             int dmgmissile, dmgmax, w, dmgmany, dmggive, repair;
             dmgmissile = game_ai_battle_incoming_missiles_dmg(bt, i);
             dmgmax = game_ai_battle_dmgmax(bt, i);
@@ -2289,7 +2296,6 @@ static int game_ai_battle_rival(struct battle_s *bt, int itemi, int a2)
                 dmgother = game_ai_battle_dmggive(bt, itemi, i, a2);
                 if (dmgother > dmggive) {
                     dmggive = dmgother;
-                    /* FIXME BUG? leaves wpnt swapped */
                 } else {
                     t = b->wpn[0].t; b->wpn[0].t = b->wpn[1].t; b->wpn[1].t = t;
                 }
@@ -2298,7 +2304,7 @@ static int game_ai_battle_rival(struct battle_s *bt, int itemi, int a2)
             dmgmany = (b->num * dmggive - repair) / (b2->hp1 * 20);
             if (dmgmany > 0) {
                 int vt;
-                vt = b2->num - dmgmissile;
+                vt = b2->num - dmgmissile;  /* FIMXE BUG? num - dmg? */
                 if (vt < dmgmany) {
                     dmgmany = vt;
                     SETMAX(dmgmany, 0);
@@ -3228,7 +3234,7 @@ static void game_ai_classic_turn_diplo_p1(struct game_s *g)
                 }
                 if (((v + e1->mood_treaty[p2]) > 150) && (e1->treaty[p2] != TREATY_ALLIANCE)) {
                     game_diplo_set_treaty(g, p1, p2, TREATY_ALLIANCE);
-                } else if (((v + e1->mood_treaty[p2]) > 150) && (e1->treaty[p2] != TREATY_NONAGGRESSION)) {
+                } else if (((v + e1->mood_treaty[p2]) > 150) && (e1->treaty[p2] != TREATY_NONAGGRESSION)) { /* BUG ignores Alliance, results in NAP/Alliance oscillation */
                     game_diplo_set_treaty(g, p1, p2, TREATY_NONAGGRESSION);
                 } else {
                     if ((e1->mood_tech[p2] + 80) < v) {
