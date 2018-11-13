@@ -31,4 +31,31 @@ MOO1 does not reset spycost between target players and spies become
 disproportionately more expensive for each subsequent opponent. */
 extern bool game_fix_spy_cost;
 
+/* Continue sending colony ships when there are more than three of them.
+In MOO1, 4th colony ship disables sending colony ships. */
+extern bool game_ai_fix_4th_colony_curse;
+
+/* Entering the general "threaten / break treaty" dialogue no more equals
+to a penalty of -100 to all temporary diplomatic. */
+extern bool game_ai_fix_cancelled_threat;
+
+/* The AI intentionally aggressive fleet positioning during the final war
+now actually works. */
+extern bool game_ai_fix_final_war_fronts;
+
+/* Use correct formula for first tech cost.
+In MOO1, AI ​​uses a fixed formula that makes early technologies too
+expensive and does not take racial bonuses into account. */
+extern bool game_ai_fix_first_tech_cost;
+
+/* Fix ship slider accumulation.
+In MOO1, at some point ship slider starts doubling.
+This bug radically changes the game balance. */
+extern bool game_ai_fix_ship_slider;
+
+/* Fix threatened AI spy hiding.
+In MOO1, when a threat is successful,
+it is the player's spies that hide, not the AI. */
+extern bool game_ai_fix_spy_hiding;
+
 #endif
