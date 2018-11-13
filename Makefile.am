@@ -7,7 +7,7 @@ bindistzip:
 	$(SHELL) @BINDIST_SCRIPT@ $(STRIP) $(top_srcdir) zip
 
 EXTRA_DIST = \
-    AUTHORS CODE_OF_CONDUCT COPYING HACKING INSTALL NEWS PHILOSOPHY README TODO \
+    AUTHORS CODE_OF_CONDUCT COPYING HACKING INSTALL NEWS PHILOSOPHY README \
     make-bindist_install.sh \
     make-bindist_msdos.sh \
     make-bindist_win32.sh \
