@@ -821,7 +821,7 @@ static void game_turn_move_ships(struct game_s *g)
 #if 0
 static void game_turn_unrest_hmm1(struct game_s *g)
 {
-    /* TODO remove ; this does nothing except churn the rng! */
+    /* this does nothing except churn the rng! */
     int tbl1[PLAYER_NUM], tbl2[PLAYER_NUM];
     for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         tbl1[i] = 0;
@@ -936,7 +936,6 @@ static void game_turn_explore(struct game_s *g, uint8_t *planetptr, player_id_t 
                             }
                         }
                     } else {
-                        /*c763*/
                         if (best_colonize != 0) {
                             p->owner = i;
                             p->pop = 2;
@@ -1005,7 +1004,6 @@ static void game_turn_bomb_damage(struct game_s *g, uint8_t pli, player_id_t att
                         }
                     }
                 } else {
-                    /*dcbb*/
                     if (w->misstype == 0) {
                         dmgmax /= 2;
                     }
@@ -1837,7 +1835,6 @@ struct game_end_s game_turn_process(struct game_s *g)
         game_election(g);
         g->election_held = true;
     }
-    /*94a3*/
     if (game_turn_check_end(g, &game_end)) {
         return game_end;
     }

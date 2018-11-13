@@ -216,7 +216,7 @@ ui_turn_action_t ui_game_turn(struct game_s *g, int *load_game_i_ptr, int pi)
                 ui_data.news.flag_also = false;
                 return UI_TURN_ACT_NEXT_TURN;
             default:
-                LOG_DEBUG((3, "%s: unimpl 0x%x\n", __func__, ui_data.ui_main_loop_action));
+                LOG_DEBUG((3, "%s: invalid action 0x%x\n", __func__, ui_data.ui_main_loop_action));
                 ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
                 break;
         }

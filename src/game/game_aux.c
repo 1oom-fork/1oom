@@ -62,16 +62,6 @@ int game_aux_init(struct game_aux_s *gaux, struct game_s *g)
     gaux->research.descr = (char *)t + 4;
     /* TODO check num/size*/
 
-#ifdef FEATURE_MODEBUG
-    for (int f = 0; f < 6; ++f) {
-        for (int t = 0; t < 50; ++t) {
-            const uint8_t *p;
-            p = RESEARCH_D0_PTR(gaux, f, t);
-            LOG_DEBUG((5, "%i %2i: %02x %02x %02x '%s'\n", f, t, p[0], p[1], p[2], (p[0] != 0xff) ? &gaux->research.names[GET_LE_16(&p[4])] : ""));
-        }
-    }
-#endif
-
     t = lbxfile_item_get(LBXFILE_DIPLOMAT, 1, 0);
     check_lbx_t5(t, "diplomat", DIPLOMAT_MSG_NUM, DIPLOMAT_MSG_LEN);
     gaux->diplomat.msg = (const char *)(t + 4);
@@ -83,26 +73,6 @@ int game_aux_init(struct game_aux_s *gaux, struct game_s *g)
         gaux->diplomat.d0[i] = GET_LE_16(t); /* all values < 0x10 */
     }
     lbxfile_item_release(LBXFILE_DIPLOMAT, data);
-
-#ifdef FEATURE_MODEBUG
-    for (int dtype = 0; dtype < DIPLOMAT_D0_NUM; ++dtype) {
-        for (int v = 0; v < gaux->diplomat.d0[dtype]; ++v) {
-            const char *msg;
-            msg = DIPLOMAT_MSG_PTR(g->gaux, v, dtype);
-#if 1
-            if (dtype == 68) {
-                LOG_DEBUG((5, "diplo msg v %i dt %i '%s'\n", v, dtype, msg));
-            }
-#else
-            for (int i = 0; (i < DIPLOMAT_MSG_LEN) && (msg[i] != 0); ++i) {
-                if (msg[i] == (char)0x92) {
-                    LOG_DEBUG((5, "diplo msg v %i dt %i '%s'\n", v, dtype, msg));
-                }
-            }
-#endif
-        }
-    }
-#endif
 
     data = t = lbxfile_item_get(LBXFILE_FIRING, 0, 0);
     check_lbx_t5(data, "firing", NUM_SHIPLOOKS, 0x1c);

@@ -771,11 +771,11 @@ bool game_event_run(struct game_s *g, struct game_end_s *ge)
             ns.type = GAME_NEWS_REBELLION;
             ns.subtype = 0;
             ns.num1 = p->rebels;
-            {   /* FIXME this is a buggy mess */
+            {
                 int n;
                 n = 0;
                 for (player_id_t i = PLAYER_0; i < g->players; ++i) {
-                    const planet_t *p2 = &(g->planet[i]);    /* BUG indexing planet tbl with player index */
+                    const planet_t *p2 = &(g->planet[i]);
                     if ((p2->owner == player) && (p2->unrest == PLANET_UNREST_REBELLION)) {
                         ++n;
                     }
@@ -977,7 +977,6 @@ bool game_event_run(struct game_s *g, struct game_end_s *ge)
         ui_news(g, &ns);
         any_news = true;
     }
-    /*10fa3*/
     if (g->evn.have_e17 && BOOLVEC_IS0(g->evn.done, 17)) {
         player_id_t player = g->evn.have_e17 - 1;
         empiretechorbit_t *e = &(g->eto[player]);
@@ -1035,7 +1034,6 @@ bool game_event_run(struct game_s *g, struct game_end_s *ge)
                         }
                     }
                 }
-                /*1117e*/
                 g->evn.home[i] = PLANET_NONE;
                 game_remove_player_fleets(g, i);
             }

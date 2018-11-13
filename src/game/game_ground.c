@@ -74,7 +74,6 @@ static void game_ground_init(struct ground_s *gr)
             game_tech_get_name(g->gaux, TECH_FIELD_FORCE_FIELD, besti, gr->s[i].str[1]);
             gr->s[i].strnum = 2;
         }
-        /*7ab37*/
         bestweap = 0;
         rc = &(srd->researchcompleted[TECH_FIELD_WEAPON][0]);
         for (int j = 0; j < e->tech.completed[TECH_FIELD_WEAPON]; ++j) {
@@ -127,7 +126,6 @@ void game_ground_finish(struct ground_s *gr)
             p->pop -= p->rebels;
             p->rebels = 0;
         } else {
-            /*7b68b*/
             int fact, chance, num;
             gr->fact = fact = p->factories;
             chance = 0;
@@ -153,18 +151,15 @@ void game_ground_finish(struct ground_s *gr)
             p->pop_oper_fact = 1;
         }
     } else {
-        /*7b794*/
         if (gr->flag_rebel) {
             p->rebels = gr->s[1].pop1;
             if (p->rebels == 0) {
                 p->unrest = PLANET_UNREST_RESOLVED;
             }
         } else {
-            /*7b7de*/
             p->pop = gr->s[1].pop1;
         }
     }
-    /*7b841*/
     SETMIN(p->pop, p->max_pop3);
 }
 
@@ -187,7 +182,6 @@ void game_turn_ground(struct game_s *g)
                 powner = p->owner;  /* FIXME redundant */
                 p->inbound[i] = inbound[i]; /* FIXME why ? */
                 if ((powner != PLAYER_NONE) && (p->inbound[i] > 0)) {
-                    /*e74e*/
                     int pop_planet;
                     gr->flag_rebel = (p->unrest == PLANET_UNREST_REBELLION) && IS_HUMAN(g, i) && (p->owner == i);
                     gr->inbound = p->inbound[i];
@@ -204,7 +198,6 @@ void game_turn_ground(struct game_s *g)
                         t = gr->s[0].pop1; gr->s[0].pop1 = gr->s[1].pop1; gr->s[1].pop1 = t;
                         t = gr->s[0].player; gr->s[0].player = gr->s[1].player; gr->s[1].player = t;
                     }
-                    /*e877*/
                     game_ground_init(gr);
                     if ((gr->s[0].pop1 != 0) && (gr->s[1].pop1 != 0)) {
                         if (gr->s[0].human || gr->s[1].human) {
@@ -249,7 +242,6 @@ void game_turn_ground(struct game_s *g)
                         }
                     }
                 }
-                /*e9fc*/
                 powner = p->owner;
             }
         }
