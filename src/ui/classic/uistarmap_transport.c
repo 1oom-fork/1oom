@@ -122,8 +122,8 @@ static void ui_starmap_transport_draw_cb(void *vptr)
     d->ts.frame_ship = (d->ts.frame_ship + 1) % 5;
     if ((r->owner == d->api) && (d->ts.can_move != NO_MOVE) && (!d->ts.in_frange)) {
         lbxgfx_set_new_frame(ui_data.gfx.starmap.reloc_bu_accept, 1);
-        lbxgfx_draw_frame(271, 163, ui_data.gfx.starmap.reloc_bu_accept);
 
+        lbxgfx_draw_frame(271, 163, ui_data.gfx.starmap.reloc_bu_accept);
     }
     ui_draw_set_stars_xoffs(&d->ts.ds, false);
 }
