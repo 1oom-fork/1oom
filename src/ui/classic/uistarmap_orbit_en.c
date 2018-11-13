@@ -42,7 +42,7 @@ static void ui_starmap_orbit_en_draw_cb(void *vptr)
         lbxgfx_draw_frame_offs(x, y, ui_data.gfx.starmap.shipbord, 6, 6, 221, 177, UI_SCREEN_W);
     }
     ui_draw_filled_rect(225, 8, 314, 180, 7);
-    lbxgfx_draw_frame(224, 5, ui_data.gfx.starmap.movextr2, UI_SCREEN_W);
+    lbxgfx_draw_frame(224, 4, ui_data.gfx.starmap.movextr2, UI_SCREEN_W);
     ui_draw_filled_rect(227, 8, 310, 39, 0);
     lbxgfx_set_frame_0(ui_data.gfx.starmap.scanner);
     for (int f = 0; f <= d->oe.frame_scanner; ++f) {
@@ -213,9 +213,8 @@ void ui_starmap_orbit_en(struct game_s *g, player_id_t active_player)
         }
         ui_starmap_handle_oi_ctrl(&d, oi1);
         for (int i = 0; i < g->galaxy_stars; ++i) {
-            if ((oi1 == d.oi_tbl_stars[i]) && !g->evn.build_finished_num[active_player]) {
+            if (oi1 == d.oi_tbl_stars[i]) {
                 g->planet_focus_i[active_player] = i;
-                ui_starmap_set_pos_focus(g, active_player);
                 ui_sound_play_sfx_24();
                 ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
                 flag_done = true;

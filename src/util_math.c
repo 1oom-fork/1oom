@@ -312,7 +312,7 @@ int util_math_line_plot(int x0, int y0, int x1, int y1, int *tblx, int *tbly)
             x0 += dirx;
             zerr += slope;
             if (zerr >= 0x10000) {
-                y0 += dirx;
+                y0 += diry;
             }
             zerr &= 0xffff;
             tblx[len] = x0;

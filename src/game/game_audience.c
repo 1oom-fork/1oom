@@ -62,7 +62,7 @@ static int game_audience_print_tech(struct game_s *g, tech_field_t field, uint8_
     len = strlen(buf);
     buf[len++] = ' ';
     if (add_str) {
-        len += sprintf(buf, "%s.", game_str_au_tech);
+        len += sprintf(&buf[len], "%s.", game_str_au_tech);
     } else {
         buf[len] = '\0';
     }
@@ -292,10 +292,11 @@ static int16_t game_audience_sub3(struct audience_s *au)
     if ((au->dtype == 28) || (au->dtype == 58) || (au->dtype == 29)) {
         ui_audience_show2(au);
         selected = 1;
-        au->dtype = 29;
-        strcpy(au->buf, game_str_au_inxchng);
-        au->condtbl = 0;
-        selected = ui_audience_ask2a(au);
+        if (au->dtype == 29) {
+            strcpy(au->buf, game_str_au_inxchng);
+            au->condtbl = 0;
+            selected = ui_audience_ask2a(au);
+        }
     } else {
         /*62346*/
         au->condtbl = 0;
@@ -554,7 +555,7 @@ static void audience_menu_treaty(struct audience_s *au)
         condtbl[3] = false;
     }
     war_num = 0;
-    for (player_id_t i = PLAYER_NUM; i < g->players; ++i) {
+    for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         if ((i != ph) && (i != pa) && (ea->treaty[i] < TREATY_WAR)) {
             war_tbl[war_num++] = i;
         }
@@ -563,7 +564,7 @@ static void audience_menu_treaty(struct audience_s *au)
         condtbl[3] = false;
     }
     all_num = 0;
-    for (player_id_t i = PLAYER_NUM; i < g->players; ++i) {
+    for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         if ((i != ph) && (i != pa) && (ea->treaty[i] == TREATY_ALLIANCE)) {
             all_tbl[all_num++] = i;
         }
@@ -975,8 +976,8 @@ static void audience_menu_tech(struct audience_s *au)
                     n = s->tnum;
                     thnum[total_thnum] = n;
                     for (int j = 0; j < n; ++j) {
-                        thf[i][j] = s->tbl_field[j];
-                        tht[i][j] = s->tbl_tech2[j];
+                        thf[total_thnum][j] = s->tbl_field[j];
+                        tht[total_thnum][j] = s->tbl_tech2[j];
                     }
                     thaf[total_thnum] = taf[i];
                     that[total_thnum] = tat[i];
@@ -1021,7 +1022,7 @@ static void audience_menu_tech(struct audience_s *au)
                     strcpy(au->buf, game_str_au_whatrad);
                     au->condtbl = 0;
                     selected = ui_audience_ask4(au);
-                    if ((selected != 1) && (selected < i)) {
+                    if ((selected != -1) && (selected < i)) {
                         g->evn.newtech[ph].num = 0;
                         game_tech_get_new(g, ph, gotf, gott, 4, pa, 0, false);
                         game_tech_get_new(g, pa, thf[selected2][selected], tht[selected2][selected], 4, pa, 0, false); /* FIXME BUG? last pa should be ph? */

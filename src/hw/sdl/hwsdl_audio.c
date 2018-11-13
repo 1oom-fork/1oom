@@ -166,7 +166,7 @@ int hw_audio_music_init(int mus_index, const uint8_t *data_in, uint32_t len_in)
     m = &mustbl[mus_index];
 
     if (m->type != MUS_TYPE_UNKNOWN) {
-        hw_audio_sfx_release(mus_index);
+        hw_audio_music_release(mus_index);
     }
 
     m->type = fmt_mus_detect(data_in, len_in);
@@ -207,7 +207,7 @@ int hw_audio_music_init(int mus_index, const uint8_t *data_in, uint32_t len_in)
     m->music = Mix_LoadMUSType_RW(SDL_RWFromMem(data, len), m->sdlmtype, 0);
     lib_free(buf);
     if (!m->music) {
-        log_error("SDLA: Mix_LoadMUSType_RW failed on music %i (type %i)\n", mus_index, m->type);
+        log_error("SDLA: Mix_LoadMUSType_RW failed on music %i (type %i): %s\n", mus_index, m->type, Mix_GetError());
         m->type = MUS_TYPE_UNKNOWN;
         m->sdlmtype = MUS_NONE;
         return -1;
@@ -362,7 +362,7 @@ void hw_audio_sfx_volume(int volume)
 int hw_audio_init(void)
 {
     if (opt_audio_enabled) {
-        log_warning("SDLA: no audio due to missing SDL_mixer");
+        log_warning("SDLA: no audio due to missing SDL_mixer\n");
     }
     return 0;
 }

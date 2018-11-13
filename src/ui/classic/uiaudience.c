@@ -61,7 +61,7 @@ static void audience_load_data(struct audience_data_s *d)
         lbxfile_item_release(LBXFILE_EMBASSY, gfx);
     }
     d->gfx_race = lbxfile_item_get(LBXFILE_EMBASSY, 0x2 + ra, 0);
-    d->gfx_emperor = lbxfile_item_get(LBXFILE_EMBASSY, 0xc + g->eto[d->au->ph].race, 0);
+    d->gfx_emperor = lbxfile_item_get(LBXFILE_EMBASSY, 0xc + g->eto[d->au->ph].banner, 0);
     d->music_0 = tbl_audience_music[ra];
     d->music_1 = tbl_audience_music[ra] + 1;
 }

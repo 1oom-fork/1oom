@@ -160,7 +160,7 @@ static main_menu_action_t main_menu_do(struct main_menu_data_s *d)
             d->selected = MAIN_MENU_ACT_LOAD_GAME;
         } else if (oi1 == oi_n) {
             d->selected = MAIN_MENU_ACT_NEW_GAME;
-        } else if ((oi1 == oi_q) || (oi1 == -1)) {
+        } else if (oi1 == oi_q) {
             d->selected = MAIN_MENU_ACT_QUIT_GAME;
         } else if (oi1 == oi_tutor) {
             d->selected = MAIN_MENU_ACT_TUTOR;

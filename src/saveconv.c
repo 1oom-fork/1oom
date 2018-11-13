@@ -601,7 +601,7 @@ static int savetype_de_moo13(struct game_s *g, const char *fname)
         M13_GET_8(ev->planet_orion_i, evb + 0x09c);
         M13_GET_8(ev->have_guardian, evb + 0x09e);
         M13_GET_TBL_16(ev->home, evb + 0x0a0);
-        M13_GET_8(ev->report_stars, evb + 0x09e);
+        M13_GET_8(ev->report_stars, evb + 0x0ac);
         M13_GET_TBL_16(ev->new_ships[PLAYER_0], evb + 0x1a4);
         for (int i = 1; i < g->players; ++i) {
             M13_GET_16(ev->spies_caught[i][PLAYER_0], evb + 0x1f2 + i * 2);
@@ -1048,7 +1048,7 @@ static int savetype_en_moo13(struct game_s *g, const char *fname)
         M13_SET_8(ev->planet_orion_i, evb + 0x09c);
         M13_SET_8(ev->have_guardian, evb + 0x09e);
         M13_SET_TBL_16(ev->home, evb + 0x0a0);
-        M13_SET_8(ev->report_stars, evb + 0x09e);
+        M13_SET_8(ev->report_stars, evb + 0x0ac);
         M13_SET_TBL_16(ev->new_ships[PLAYER_0], evb + 0x1a4);
         for (int i = 1; i < g->players; ++i) {
             M13_SET_16(ev->spies_caught[i][PLAYER_0], evb + 0x1f2 + i * 2);
@@ -1336,7 +1336,7 @@ static int savetype_en_text(struct game_s *g, const char *fname)
             OUTLINE "trans_num = %i\n", p->trans_num);
             OUTLINE "trans_dest = %i\n", p->trans_dest);
             OUTLINE "pop_tenths = %i\n", p->pop_tenths);
-            OUTLINE "pop_oper_fact = %i\n", p->pop);
+            OUTLINE "pop_oper_fact = %i\n", p->pop_oper_fact);
             OUTLINE "bc_to_refit = %i\n", p->bc_to_refit);
             OUTLINE "rebels = %i\n", p->rebels);
             OUTLINE "unrest = %i\n", p->unrest);

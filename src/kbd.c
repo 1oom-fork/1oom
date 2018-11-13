@@ -35,9 +35,9 @@ bool kbd_have_keypress(void)
     return kbd.full || (kbd.head != kbd.tail);
 }
 
-mookey_t kbd_get_keypress(void)
+uint32_t kbd_get_keypress(void)
 {
-    mookey_t key = MOO_KEY_UNKNOWN;
+    uint32_t key = MOO_KEY_UNKNOWN;
     if (kbd_have_keypress()) {
         key = kbd.buf[kbd.tail];
         if (++kbd.tail == KBD_BUFSIZE) { kbd.tail = 0; }

@@ -128,6 +128,7 @@ static int lbxfont_print_char_ret_x_limit(int x, int y, char c, int lx0, int ly0
         }
         if (y < ly0) {
             yskip = ly0 - y;
+            y = ly0;
         } else {
             yskip = 0;
         }
