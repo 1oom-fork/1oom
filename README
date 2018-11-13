@@ -2,7 +2,7 @@
 # 1oom #
 ########
 
-1oom is a clone of the classic DOS game "Master of Orion" (MicroProse, 1993).
+1oom is a Master of Orion (1993) game engine recreation.
 1oom is Free Software (GPLv2), see COPYING.
 
 
@@ -79,7 +79,16 @@ Ctrl-Shift-Plus/Minus to adjust music volume.
 Otherwise it controls like the original.
 
 
-5. Acknowledgements
+5. Abbreviations
+=================
+
+The following abbreviations appear in the documentation and code:
+
+- MOO1: Master of Orion 1 as represented by the v1.3 DOS binaries
+- OSG: The Official Strategy Guide (ISBN 1-55958-507-2)
+
+
+6. Acknowledgements
 ====================
 
 Original game by Simtex Software, published 1993 by MicroProse.
@@ -90,9 +99,17 @@ major inspiration in starting this project. Unfortunately the goon writes
 parenthesis without the leading space(such as here) like a retard, making the
 Le'ts Play [sic] a painful read.
 
+Ideas and text snippets have been taken from kyrub's unofficial patch 1.40m
+Readme. Thanks for the patch.
+
 Thanks to
 http://www.shikadi.net/wiki/modding/index.php?title=XMI_Format&oldid=6874
 for the music format info.
+
+Thanks to CivFanatics forum user sargon0 for partial save game format info in
+http://forums.civfanatics.com/threads/moo-save-file-layout.275055/
+
+Thanks to those who contributed code, ideas or bug reports.
 
 This README is based on the OpenXcom one, except s/folder/directory/g like a
 civilized person.
