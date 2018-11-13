@@ -708,7 +708,6 @@ void game_tech_research(struct game_s *g)
             td->percent[field] = game_tech_get_field_percent(g, player, field);
             cost = td->cost[field];
             if ((cost != 0) && (slider != 0) && (total_research != 0)) {
-                /*7dd2*/
                 if (cost < invest) {
                     int v;
                     v = ((invest - cost) * 250) / cost;
@@ -717,7 +716,6 @@ void game_tech_research(struct game_s *g)
                     }
                 }
             } else {
-                /*7eb2*/
                 td->investment[field] = (invest * 9) / 10;
             }
         }
