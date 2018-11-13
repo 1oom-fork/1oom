@@ -98,9 +98,7 @@ static FILE *lbxfile_try_fopen(const char *path, const char *filename)
         lib_free(fname);
         fname = NULL;
     }
-    if (fd) {
-        return fd;
-    } else {
+    if (!fd) {
         char buf[32];
         const char *p = filename;
         char *q = buf;
@@ -117,8 +115,7 @@ static FILE *lbxfile_try_fopen(const char *path, const char *filename)
             fname = NULL;
         }
     }
-
-    return NULL;
+    return fd;
 }
 
 static int lbxfile_open(struct lbx_s *p, const char *filename)

@@ -851,9 +851,9 @@ bool game_event_run(struct game_s *g, struct game_end_s *ge)
                         }
                     }
                 }
+            } else {
+                --m->counter;
             }
-            /*10712*/
-            --m->counter;
             switch (m->exists) {
                 case 1:
                     ns.subtype = 0;
