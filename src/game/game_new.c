@@ -7,9 +7,11 @@
 #include "comp.h"
 #include "game.h"
 #include "game_aux.h"
+#include "game_fix.h"
 #include "game_num.h"
 #include "game_shipdesign.h"
 #include "game_str.h"
+#include "game_tech.h"
 #include "game_techtypes.h"
 #include "lbx.h"
 #include "lib.h"
@@ -1049,8 +1051,12 @@ static void game_generate_research(struct game_s *g, const uint8_t *rflag)
             while (v == 0) {
                 v = srd->researchlist[field][0][rnd_0_nm1(3, &g->seed)];
             }
-            e->tech.project[field] = v;
-            e->tech.cost[field] = v * v * 50;
+            if (game_ai_fix_first_tech_cost) {
+                game_tech_start_next(g, pli, field, v);
+            } else {
+                e->tech.project[field] = v;
+                e->tech.cost[field] = v * v * 50;
+            }
         }
     }
 }

@@ -20,6 +20,7 @@
 #include "game_design.h"
 #include "game_diplo.h"
 #include "game_election.h"
+#include "game_fix.h"
 #include "game_fleet.h"
 #include "game_misc.h"
 #include "game_num.h"
@@ -348,13 +349,15 @@ static shipcount_t game_ai_classic_turn_p1_spawn_colony_ship(struct game_s *g, s
       || (ait->num_fronts == 0) /* never true? */
       || (shipi == -1)
       || (e->total_production_bc == 0)
-      || (shipn > 3)
     ) {
         return 0;
     }
     planeti = ait->tbl_front_planet[rnd_0_nm1(ait->num_fronts, &g->seed)];
     if (planeti == PLANET_NONE) { /* never true? */
         return 0;
+    }
+    if (shipn > 3) {
+        return (game_ai_fix_4th_colony_curse ? shipn : 0);
     }
     prod = (e->total_production_bc * 2) / 5;
     SETRANGE(prod, 1, 500);
@@ -1813,7 +1816,11 @@ static void game_ai_classic_turn_p3(struct game_s *g)
                   && ((p->missile_bases * 3) >= (p->pop / (5 - g->difficulty)))
                   && (p->shield >= e->have_planet_shield)
                 ) {
-                    sl[PLANET_SLIDER_SHIP] += sl[PLANET_SLIDER_SHIP];   /* BUG? should be += DEF ? */
+                    if (game_ai_fix_ship_slider) {
+                        sl[PLANET_SLIDER_SHIP] += sl[PLANET_SLIDER_DEF];
+                    } else {
+                        sl[PLANET_SLIDER_SHIP] += sl[PLANET_SLIDER_SHIP];
+                    }
                     sl[PLANET_SLIDER_DEF] = 0;
                 }
             }

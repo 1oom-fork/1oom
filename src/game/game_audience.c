@@ -13,6 +13,7 @@
 #include "game_ai.h"
 #include "game_aux.h"
 #include "game_diplo.h"
+#include "game_fix.h"
 #include "game_spy.h"
 #include "game_str.h"
 #include "game_tech.h"
@@ -761,8 +762,13 @@ static void audience_menu_threat(struct audience_s *au)
                         dtype = 69;
                     }
                 } else {
-                    eh->spymode_next[pa] = SPYMODE_HIDE;    /* FIXME BUG? should be ea->..[ph] */
-                    eh->spymode[pa] = SPYMODE_HIDE;         /* FIXME BUG? should be ea->..[ph] */
+                    if (game_ai_fix_spy_hiding) {
+                        ea->spymode_next[ph] = SPYMODE_HIDE;
+                        ea->spymode[ph] = SPYMODE_HIDE;
+                    } else {
+                        eh->spymode_next[pa] = SPYMODE_HIDE;
+                        eh->spymode[pa] = SPYMODE_HIDE;
+                    }
                     g->evn.ceasefire[ph][pa] = rnd_1_n(15, &g->seed) + 5;
                     dtype = 70;
                     if (v >= 275) {
