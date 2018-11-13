@@ -211,7 +211,7 @@ static void tech_draw_cb(void *vptr)
         int y, complpercent;
         y = 21 * i + 21;
         complpercent = game_tech_current_research_percent2(e, i);
-        if (e->tech.percent[i] < 99) {
+        if (e->tech.percent[i] < 99) { /* BUG? MOO1 has no project check and shows MAX early */
             if (complpercent > 0) {
                 sprintf(buf, "%i%%", complpercent);
                 lbxfont_select_set_12_1(2, 0xd, 0, 0);
