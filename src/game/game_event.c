@@ -156,7 +156,7 @@ void game_event_new(struct game_s *g)
     const empiretechorbit_t *e;
     uint8_t planet;
     planet_t *p;
-    if (g->gaux->flag_cheat_events) {
+    if (g->gaux->flag_cheat_events || (game_num_event_roll == 0)) {
         g->evn.have_plague = 0;
         g->evn.have_quake = false;
         g->evn.have_nova = 0;

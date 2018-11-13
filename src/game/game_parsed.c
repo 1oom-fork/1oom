@@ -255,7 +255,7 @@ void game_parsed_from_planet(shipparsed_t *sp, const struct game_s *g, const str
     sp->comp = e->base_comp + 1;
     sp->complevel = sp->comp;
     if (e->race == RACE_MRRSHAN) {
-        sp->complevel += 4;
+        sp->complevel += game_num_race_bonus_mrrshan;
     }
     sp->shield = e->base_shield;
     sp->absorb = tbl_shiptech_shield[e->base_shield].absorb;
