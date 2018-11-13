@@ -19,11 +19,12 @@ The code is divided into the following directories:
 
 Some facts:
  * main is in hw/ (due to SDL)
- * os/ known nothing about game/, ui/ or hw/
- * hw/ known nothing about game/ or ui/
- * game/ known nothing about hw/
+ * os/ knows nothing about game/, ui/ or hw/
+ * hw/ knows nothing about game/ or ui/
+ * game/ knows nothing about hw/
  * ui/ is known via src/ui.h
  * hw/ is known via src/hw.h
+ * os/ is known via src/os.h
  * src/ knows game via the very narrow src/gameapi.h
    (the exception is saveconv.c)
  * ui/ knows all about game/
@@ -37,9 +38,9 @@ The resulting binaries follow a "1oom_$UI_$HW" naming convention.
 
 - always add the { } braces to if, do, while, for statements
 
-- one space after if, do, while, for and return statements,
+- one space after a ',', if, do, while, for and return statements,
   no space after function name:
-    if (func(4) < 0) {
+    if (func(4, 5) < 0) {
         return (foo * 4) + 2;
     }
 
