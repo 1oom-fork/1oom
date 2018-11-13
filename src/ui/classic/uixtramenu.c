@@ -51,7 +51,7 @@ static void xtramenu_ship_everywhere(struct game_s *g, player_id_t pi)
                 if (!p->have_stargate) {
                     p->buildship = BUILDSHIP_STARGATE;
                 }
-            } else if (p->buildship != BUILDSHIP_STARGATE) {
+            } else {
                 p->buildship = si;
             }
         }
