@@ -23,8 +23,14 @@ extern int game_num_max_bio_dmg;
 extern int game_num_max_trans_dmg;
 extern unsigned int game_num_max_ship_maint;
 extern int game_num_event_roll;
+extern int game_num_council_years;
+extern int game_num_eco_slider_slack;
+extern int game_num_race_bonus_alkari;
+extern int game_num_race_bonus_bulrathi;
+extern int game_num_race_bonus_mrrshan;
 extern uint8_t game_num_tbl_hull_w[4];
 extern uint8_t game_num_tech_costmuld[DIFFICULTY_NUM];
+extern uint8_t game_num_tech_costmula[DIFFICULTY_NUM];
 extern uint8_t game_num_tech_costmulr[RACE_NUM][TECH_FIELD_NUM];
 #define BASE_HP_TBL_NUM 7
 extern uint16_t game_num_base_hp[BASE_HP_TBL_NUM];
