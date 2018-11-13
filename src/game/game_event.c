@@ -977,7 +977,6 @@ bool game_event_run(struct game_s *g, struct game_end_s *ge)
         ui_news(g, &ns);
         any_news = true;
     }
-    /*10fa3*/
     if (g->evn.have_e17 && BOOLVEC_IS0(g->evn.done, 17)) {
         player_id_t player = g->evn.have_e17 - 1;
         empiretechorbit_t *e = &(g->eto[player]);
@@ -1035,7 +1034,6 @@ bool game_event_run(struct game_s *g, struct game_end_s *ge)
                         }
                     }
                 }
-                /*1117e*/
                 g->evn.home[i] = PLANET_NONE;
                 game_remove_player_fleets(g, i);
             }
