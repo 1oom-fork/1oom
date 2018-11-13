@@ -26,7 +26,6 @@
 #include "uidefs.h"
 #include "uidelay.h"
 #include "uidraw.h"
-#include "uigmap.h"
 #include "uiobj.h"
 #include "uipal.h"
 #include "uisound.h"
@@ -1809,7 +1808,6 @@ void ui_battle_draw_repulse(const struct battle_s *bt, int attacker_i, int targe
         ui_delay_ticks_or_click(2);
     }
     /* MOO1 sets bd->sx,sy here, we avoid modifying bt in ui/ */
-    LOG_DEBUG((3, "%s: s: (%i, %i) t: (%i, %i)\n", __func__, sx * 32, sy * 24, tx, ty));
     for (int i = 0; i < numsteps; ++i) {
         ui_delay_prepare();
         ui_battle_draw_arena(bt, target_i, 1);

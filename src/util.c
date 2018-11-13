@@ -54,7 +54,7 @@ char *util_concat(const char *s, ...)
 int util_concat_buf(char *buf, int buflen, ...)
 {
     const char *arg;
-    char *newp, *ptr;
+    char *ptr;
     int num_args;
     size_t arg_len[UTIL_CONCAT_MAX_ARGS], tot_len = 0, len = 0;
     int i;

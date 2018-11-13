@@ -31,7 +31,6 @@ int opt_use_libsamplerate = 1;
 int opt_libsamplerate_scale = 65;
 int opt_libsamplerate_mode = 1;
 #endif
-const char *opt_configfilename;
 
 /* -------------------------------------------------------------------------- */
 
@@ -92,11 +91,6 @@ static const struct cmdline_options_s cmdline_options_early[] = {
     { "-?", 0,
       show_usage, NULL,
       NULL, "Show command line options" },
-/*
-    { "-c", 1,
-      options_set_str_var, (void *)&opt_configfilename,
-      "FILE.TXT", "Set config filename" },
-*/
 #ifdef FEATURE_MODEBUG
     { "-modebug", 1,
       options_set_int_var, (void *)&opt_modebug,
