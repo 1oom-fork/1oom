@@ -289,14 +289,14 @@ void ui_starmap_trans(struct game_s *g, player_id_t active_player)
                 i = (i + 1) % g->galaxy_stars;
                 if (g->planet[i].owner == active_player) {
                     for (int j = 0; !found && (j < g->enroute_num); ++j) {
-                        fleet_enroute_t *r = &(g->enroute[i]);
-                        if (BOOLVEC_IS1(r->visible, active_player) && (r->owner != active_player) && (r->dest == pi)) {
+                        fleet_enroute_t *r = &(g->enroute[j]);
+                        if (BOOLVEC_IS1(r->visible, active_player) && (r->owner != active_player) && (r->dest == i)) {
                             found = true;
                         }
                     }
                     for (int j = 0; !found && (j < g->transport_num); ++j) {
-                        transport_t *r = &(g->transport[i]);
-                        if (BOOLVEC_IS1(r->visible, active_player) && (r->owner != active_player) && (r->dest == pi)) {
+                        transport_t *r = &(g->transport[j]);
+                        if (BOOLVEC_IS1(r->visible, active_player) && (r->owner != active_player) && (r->dest == i)) {
                             found = true;
                         }
                     }
@@ -316,14 +316,14 @@ void ui_starmap_trans(struct game_s *g, player_id_t active_player)
                 if (--i < 0) { i = g->galaxy_stars - 1; }
                 if (g->planet[i].owner == active_player) {
                     for (int j = 0; !found && (j < g->enroute_num); ++j) {
-                        fleet_enroute_t *r = &(g->enroute[i]);
-                        if (BOOLVEC_IS1(r->visible, active_player) && (r->owner != active_player) && (r->dest == pi)) {
+                        fleet_enroute_t *r = &(g->enroute[j]);
+                        if (BOOLVEC_IS1(r->visible, active_player) && (r->owner != active_player) && (r->dest == i)) {
                             found = true;
                         }
                     }
                     for (int j = 0; !found && (j < g->transport_num); ++j) {
-                        transport_t *r = &(g->transport[i]);
-                        if (BOOLVEC_IS1(r->visible, active_player) && (r->owner != active_player) && (r->dest == pi)) {
+                        transport_t *r = &(g->transport[j]);
+                        if (BOOLVEC_IS1(r->visible, active_player) && (r->owner != active_player) && (r->dest == i)) {
                             found = true;
                         }
                     }
@@ -424,7 +424,6 @@ void ui_starmap_trans(struct game_s *g, player_id_t active_player)
             if (oi1 == d.oi_tbl_stars[i]) {
                 d.tr.other = true;
                 g->planet_focus_i[active_player] = i;
-                ui_starmap_set_pos_focus(g, active_player);
                 ui_sound_play_sfx_24();
                 break;
             }

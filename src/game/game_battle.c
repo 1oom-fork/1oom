@@ -39,6 +39,7 @@ static void game_battle_item_from_parsed(struct battle_item_s *b, const shippars
     COPY_PROP(b, sp, look);
     COPY_PROP(b, sp, pulsar);
     COPY_PROP(b, sp, stream);
+    COPY_PROP(b, sp, pshield);
     COPY_PROP(b, sp, sbmask);
     COPY_PROP(b, sp, extrarange);
     COPY_PROP(b, sp, num);
@@ -109,12 +110,14 @@ static void game_battle_post(struct game_s *g, int loser, int winner, uint8_t fr
         mi = loser - PLAYER_NUM;
         switch (mi) {
             case MONSTER_CRYSTAL:
-                g->evn.crystal.exists = false;
-                g->evn.crystal.killer = winner;
+                if (g->evn.crystal.exists) {
+                    g->evn.crystal.killer = winner;
+                }
                 break;
             case MONSTER_AMOEBA:
-                g->evn.amoeba.exists = false;
-                g->evn.amoeba.killer = winner;
+                if (g->evn.amoeba.exists) {
+                    g->evn.amoeba.killer = winner;
+                }
                 break;
             case MONSTER_GUARDIAN:
                 g->evn.have_guardian = false;

@@ -174,7 +174,7 @@ static player_id_t game_spy_frame_random(struct game_s *g, player_id_t spy, play
     player_id_t tbl_scapegoat[PLAYER_NUM];
     int n = 0;
     for (player_id_t i = 0; i < PLAYER_NUM; ++i) {
-        if ((i != spy) && (i != target) && (et->within_frange[i] != 0)) {
+        if ((i != spy) && (i != target) && BOOLVEC_IS1(et->within_frange, i)) {
             tbl_scapegoat[n++] = i;
         }
     }
@@ -390,6 +390,7 @@ void game_spy_build(struct game_s *g)
                 while (spyfund >= spycost) {
                     ++e->spies[j];
                     spyfund -= spycost;
+                    spycost *= 2;
                 }
                 e->spyfund[j] = spyfund;
             }
@@ -439,6 +440,8 @@ void game_spy_turn(struct game_s *g, struct spy_turn_s *st)
             g->evn.spies_caught[i][j] = 0;
             g->evn.stolen_field[j][i] = 0;
             g->evn.stolen_field[i][j] = 0;
+            g->evn.stolen_tech[j][i] = 0;
+            g->evn.stolen_tech[i][j] = 0;
             g->evn.stolen_spy[j][i] = 0;
             g->evn.stolen_spy[i][j] = 0;
             g->evn.spied_num[j][i] = 0;
@@ -570,7 +573,7 @@ void game_spy_esp_human(struct game_s *g, struct spy_turn_s *st)
                         uint8_t planet;
                         planet = game_planet_get_random(g, target);
                         framed = (g->evn.spied_spy[target][spy] == -1);
-                        game_tech_get_new(g, spy, target, tbl_tech[field], 1, planet, target, framed);
+                        game_tech_get_new(g, spy, field, tbl_tech[field], 1, planet, target, framed);
                         if (!framed) {
                             game_diplo_act(g, -g->evn.spied_spy[target][spy], spy, target, 4, 0, target);
                         }
@@ -589,7 +592,7 @@ void game_spy_esp_human(struct game_s *g, struct spy_turn_s *st)
             uint8_t tech;
             tech = g->evn.stolen_tech[player][spy];
             if ((spy != player) && (tech != 0)) {
-                ui_spy_stolen(g, spy, player, g->evn.stolen_field[player][spy], tech);
+                ui_spy_stolen(g, player, spy, g->evn.stolen_field[player][spy], tech);
             }
         }
     }
@@ -659,7 +662,7 @@ void game_spy_sab_human(struct game_s *g)
                         const empiretechorbit_t *et;
                         et = &(g->eto[target]);
                         for (int i = 0; (i < g->players) && (other2 == PLAYER_NONE); ++i) {
-                            if ((i != player) && et->within_frange[i]) {
+                            if ((i != player) && BOOLVEC_IS1(et->within_frange, i)) {
                                 if (other1 == PLAYER_NONE) {
                                     other1 = i;
                                 } else {
