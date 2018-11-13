@@ -21,6 +21,7 @@
 #include "uidelay.h"
 #include "uidefs.h"
 #include "uidraw.h"
+#include "uifix.h"
 #include "uiobj.h"
 #include "uipal.h"
 #include "uisound.h"
@@ -142,7 +143,11 @@ static void races_draw_cb(void *vptr)
             spyprod = (e->total_production_bc * spying) / 1000;
             spyspend = spyprod + e->spyfund[pi];
             spies = e->spies[pi];
-            spycost = spies * e->tech.percent[TECH_FIELD_COMPUTER] * 2 + 25;
+            spycost = e->tech.percent[TECH_FIELD_COMPUTER] * 2;
+            if (!ui_fix_spy_cost) {
+                spycost *= spies;
+            }
+            spycost += 25;
             if (e->race == RACE_DARLOK) {
                spycost /= 2;
             }
