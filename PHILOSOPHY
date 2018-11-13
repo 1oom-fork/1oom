@@ -25,8 +25,7 @@ of compatibility:
 
  * Master of Orion v1.3.
 
-Compatibility with older versions of the DOS binaries or newer hacked
-binaries are out of scope.
+Compatibility with older versions of the DOS binaries is out of scope.
 
 # Compatibility
 
@@ -54,20 +53,14 @@ examples of situations where changes are considered acceptable:
 
  2. Supporting obsolete technology is not a goal: it’s considered
     acceptable that 1oom does not support every type of hardware
-    from 1993. However, Chocolate Doom should aim to recreate
-    the functionality in a modern way. Examples of technologies that
-    aren’t supported are:
+    from 1993. However, 1oom should aim to recreate the functionality
+    in a modern way. Examples of technologies that aren’t supported are:
 
     - No MS-DOS version.
 
 A good litmus test of when it’s acceptable to break from Vanilla
 behavior is to ask the question: “Although this is Vanilla behavior,
 is there anyone who would want this?”
-
-For example, emulating Vanilla bugs like the visplane overflow bug is
-something that is useful for people making Vanilla format maps. On the
-other hand, painstakingly emulating Vanilla Doom by starting with no
-sound or music by default is not helpful to anyone.
 
 # New features
 
