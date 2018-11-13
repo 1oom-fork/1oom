@@ -16,8 +16,8 @@ The code is divided into the following directories:
 
 Some facts:
  * main is in hw/ (due to SDL)
- * hw/ known nothing about game/ or ui/
- * game/ known nothing about hw/
+ * hw/ knows nothing about game/ or ui/
+ * game/ knows nothing about hw/
  * ui/ is known via src/ui.h
  * hw/ is known via src/hw.h
  * src/ knows game via the very narrow src/gameapi.h

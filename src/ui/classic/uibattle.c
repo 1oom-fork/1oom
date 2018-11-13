@@ -174,9 +174,8 @@ static void ui_battle_draw_focusinfo(const struct battle_s *bt)
             pos = sprintf(buf, "%i/", ha);
             if (h1 < h2) {
                 buf[pos++] = 2;
-                buf[pos++] = 0;
             }
-            sprintf(&buf[pos], "%i", h2);
+            sprintf(&buf[pos], "%i", h1);
             lbxfont_print_str_right(92, 194, buf, UI_SCREEN_W);
         }
     }
@@ -457,13 +456,13 @@ static void ui_battle_transition_to(int px, int py, int steps)
 static void ui_battle_draw_beam_line(int fx, int fy, int tx, int ty, int a8, int aa, uint8_t v24, const uint8_t *ctbl)
 {
     int dist, x0, y0, x1, y1;
-    dist = (a8 * util_math_dist_fast(fx, fy, tx, ty)) / 100;
+    dist = util_math_dist_fast(fx, fy, tx, ty);
     x0 = fx;
     y0 = fy;
-    util_math_go_line_dist(&x0, &y0, tx, ty, dist);
+    util_math_go_line_dist(&x0, &y0, tx, ty, (a8 * dist) / 100);
     x1 = x0;
     y1 = y0;
-    util_math_go_line_dist(&x1, &y1, tx, ty, dist);
+    util_math_go_line_dist(&x1, &y1, tx, ty, (aa * dist) / 100);
     if ((v24 == 1) || (v24 == 3) || (v24 == 5)) {
         ui_draw_line1(x0, y0, x1, y1, ctbl[0]);
     } else {
@@ -1736,7 +1735,7 @@ void ui_battle_draw_technull(const struct battle_s *bt, int attacker_i, int targ
         ui_battle_draw_arena(bt, target_i, 0);
         ui_battle_draw_bottom(bt);
         gfx_aux_draw_frame_to(gfx, &ui_data.aux.btemp);
-        gfx_aux_draw_frame_from_limit(x1, y1, &ui_data.aux.btemp, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
+        gfx_aux_draw_frame_from_limit(x2, y2, &ui_data.aux.btemp, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
         uiobj_finish_frame();
         ui_delay_ticks_or_click(2);
     }
