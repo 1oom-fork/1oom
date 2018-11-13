@@ -5,7 +5,6 @@
 #include "uibasescrap.h"
 #include "comp.h"
 #include "game.h"
-//#include "game_misc.h"
 #include "game_str.h"
 #include "game_tech.h"
 #include "kbd.h"

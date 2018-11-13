@@ -91,9 +91,7 @@ Systems, processors and libraries. Bear this in mind when writing code.
 
 Each hardware abstraction library will have its own directory in hw/.
 Any and all of these must be buildable with one configure and produce
-differently named binaries. This means that a SDL2 version would
-add hw/sdl/2/ and produce 1oom_classic_sdl2 in addition the current
-binaries (unless disabled with configure --disable-sdl1hw).
+differently named binaries.
 
 Do not use the `long` type (its size differs across platforms; use
 `int` or `int64_t` depending on which you want).

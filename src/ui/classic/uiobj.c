@@ -106,23 +106,6 @@ typedef struct uiobj_s {
             /*1c*/ uint16_t *xptr;
             /*1e*/ uint16_t *yptr;
         } tb;
-#if 0
-        struct {
-            /*0a*/ int16_t z0a;
-            /*0c*/ uint16_t z0c;
-            /*0e*/ uint16_t z0e;
-            /*10*/ uint16_t z10;
-            /*12*/ uint16_t z12;
-            /*14*/ uint16_t z14;
-            /*16*/ uint16_t z16;
-            /*18*/ uint16_t z18;
-            /*1a*/ uint16_t z1a; /* always uint16_t* except t4? */
-            /*1c*/ uint16_t z1c;
-            /*1e*/ uint16_t z1e;
-            /*20*/ uint16_t z20;
-            /*22*/ uint16_t z22;
-        } tx;
-#endif
     };
 } uiobj_t;
 
