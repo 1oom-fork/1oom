@@ -342,7 +342,6 @@ static void lbxfont_split_str(int x, int y, int maxw, const char *str, split_str
                     x0 = lbxfont_tbl_split_hmm2[z];
                 }
             }
-            /*aa15*/
             if (x0 >= x1) {
                 v12 = 1;
             }
@@ -399,7 +398,6 @@ static void lbxfont_split_str(int x, int y, int maxw, const char *str, split_str
                 }
             }
         }
-        /*abf7*/
         if ((x + maxw - 1) > x1) {
             v1c = x1 + 1;
         } else {

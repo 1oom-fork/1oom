@@ -761,7 +761,6 @@ static void audience_menu_threat(struct audience_s *au)
                         dtype = 69;
                     }
                 } else {
-                    /*651f2*/
                     eh->spymode_next[pa] = SPYMODE_HIDE;    /* FIXME BUG? should be ea->..[ph] */
                     eh->spymode[pa] = SPYMODE_HIDE;         /* FIXME BUG? should be ea->..[ph] */
                     g->evn.hmm28e[ph][pa] = rnd_1_n(15, &g->seed) + 5;  /* FIXME check index order */
@@ -870,7 +869,6 @@ static void audience_menu_tribute(struct audience_s *au)
         /* FIXME BUG? eh->relation1[pa] = ea->relation1[ph]; is missing */
         game_audience_sub4(au, 1, 3);
     } else {
-        /*65da2*/
         struct spy_esp_s s[1];
         int hmm1 = 0; /* FIXME BUG = diplo_p2_sub1_zhmm4[bcnum]; uninitialized, wrong index */
         s->spy = pa;
@@ -1037,7 +1035,6 @@ static void audience_menu_tech(struct audience_s *au)
             game_audience_sub4(au, 75, 3);
         }
     }
-    /*65a21*/
     game_diplo_hmm5(g, ph, pa);
     game_diplo_hmm5(g, ph, pa);
     game_diplo_hmm5(g, ph, pa);
@@ -1083,7 +1080,6 @@ static void audience_menu_main(struct audience_s *au)
                 au->bctbl[2] = cur_trade + 75;
                 au->bctbl[3] = cur_trade + 100;
             } else {
-                /*641b0*/
                 au->num_bc = AUDIENCE_BC_MAX;
                 au->bctbl[0] = want_trade / 5 + cur_trade;
                 au->bctbl[1] = (((want_trade * 2) / 5) / 25) * 25 + cur_trade;
@@ -1092,12 +1088,10 @@ static void audience_menu_main(struct audience_s *au)
                 au->bctbl[4] = want_trade + cur_trade;
             }
         }
-        /*64256*/
         if (game_diplo_get_relation_hmm1(g, ph, pa) < -100) {
             game_audience_sub4(au, 74, 3);
             break;
         }
-        /*64277*/
         strcpy(au->buf, game_str_au_howmay);
         for (int i = 0; i < 6; ++i) {
             au->strtbl[i] = game_str_au_opts1[i];
