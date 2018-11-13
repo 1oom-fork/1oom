@@ -92,7 +92,7 @@ static void game_ground_init(struct ground_s *gr)
             game_tech_get_name(g->gaux, TECH_FIELD_WEAPON, besti, gr->s[i].str[gr->s[i].strnum++]);
         }
         if (e->race == RACE_BULRATHI) {
-            gr->s[i].force += 25;
+            gr->s[i].force += game_num_race_bonus_bulrathi;
         }
     }
     gr->s[gr->flag_swap ? 0 : 1].force += 5;
