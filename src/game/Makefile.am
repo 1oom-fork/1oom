@@ -30,6 +30,8 @@ libgame_a_SOURCES = \
     game_end.h \
     game_event.c \
     game_event.h \
+    game_fix.c \
+    game_fix.h \
     game_fleet.c \
     game_fleet.h \
     game_ground.c \

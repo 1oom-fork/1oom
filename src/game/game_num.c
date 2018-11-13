@@ -16,6 +16,7 @@ int game_num_limit_ships = 32000;
 int game_num_limit_ships_all = 32000;
 int game_num_max_pop = 300;
 int game_num_max_factories = 2500;
+int game_num_max_factories_1_3a = 2700;
 int game_num_max_inbound = 300;
 int game_num_atmos_cost = 200;
 int game_num_soil_cost = 150;
