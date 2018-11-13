@@ -637,7 +637,6 @@ static void game_battle_reset_specials(struct battle_s *bt)
             b->hploss = v;
         }
     }
-    /*4f54f*/
     for (int i = 0; i <= bt->items_num; ++i) {
         b = &(bt->item[i]);
         if (b->stasisby == itemi) {
@@ -756,7 +755,6 @@ static void game_battle_item_move_find_route(struct battle_s *bt, uint8_t *route
         game_battle_set_route_from_tbl(route, tblx, tbly, len);
     } else {
         int minlen = 999, minlen2 = 999, dirlen = len;
-        /*52d07*/
         for (int sy2 = 0; sy2 < BATTLE_AREA_H; ++sy2) {
             for (int sx2 = 0; sx2 < BATTLE_AREA_W; ++sx2) {
                 len = util_math_line_plot(b->sx, b->sy, sx2, sy2, tblx, tbly);
@@ -778,7 +776,6 @@ static void game_battle_item_move_find_route(struct battle_s *bt, uint8_t *route
                                 game_battle_extend_route_from_tbl(route, tblx, tbly, len3);
                             }
                         } else {
-                            /*52e91*/
                             for (int sy3 = 0; sy3 < BATTLE_AREA_H; ++sy3) {
                                 for (int sx3 = 0; sx3 < BATTLE_AREA_W; ++sx3) {
                                     if ((sx3 != sx2) || (sy3 != sy2)) {
@@ -813,7 +810,6 @@ static void game_battle_item_move_find_route(struct battle_s *bt, uint8_t *route
             }
         }
     }
-    /*return minlen2; BUG set to void retval on len==1 case */
 }
 
 static uint32_t game_battle_pulsar_get_dmg(struct battle_s *bt, int target_i, int v)
@@ -1293,7 +1289,6 @@ static void game_battle_with_human_do_sub3(struct battle_s *bt)
                 bt->flag_cur_item_destroyed = false;
                 bt->num_repulsed = 0;
                 if (bt->s[b->side].flag_auto || (b->retreat > 0)) {   /* FIXME multiplayer */
-                    /*4ecd1*/
                     game_battle_with_human_do_turn_ai(bt);
                     flag_turn_done = true;
                     game_battle_item_done(bt);
@@ -2023,15 +2018,6 @@ void game_battle_area_setup(struct battle_s *bt)
     if (b->f85 != 0) {
         bt->hmm30 = false;
     }
-#if 0 //def FEATURE_MODEBUG
-    LOG_DEBUG((3, "area. actman %i (%i - %i)\n", b->actman, b->man, b->unman));
-    for (int zy = 0; zy < BATTLE_AREA_H; ++zy) {
-        for (int zx = 0; zx < BATTLE_AREA_W; ++zx) {
-            LOG_DEBUG((3, "%i\t", bt->area[zy][zx]));
-        }
-        LOG_DEBUG((3, "\n"));
-    }
-#endif
     ui_battle_area_setup(bt);
 }
 
