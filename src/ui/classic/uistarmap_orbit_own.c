@@ -19,6 +19,7 @@
 #include "uidraw.h"
 #include "uidefs.h"
 #include "uidelay.h"
+#include "uifix.h"
 #include "uiobj.h"
 #include "uisound.h"
 #include "uistarmap_common.h"
@@ -74,7 +75,7 @@ static void ui_starmap_orbit_own_draw_cb(void *vptr)
         lbxgfx_set_frame_0(gfx);
         ui_starmap_draw_frame(x0, y0, gfx);
         if (!d->oo.in_frange) {
-            if (d->oo.sn0.num < 7) { /* FIXME ?? always true */
+            if (d->oo.sn0.num < (ui_fix_starmap_oor_msg ? 6 : 7)) {
                 sprintf(buf, "%s %i %s", game_str_sm_destoor, dist, game_str_sm_parsfromcc);
                 lbxfont_select(2, 0, 0, 0);
                 lbxfont_set_gap_h(2);
