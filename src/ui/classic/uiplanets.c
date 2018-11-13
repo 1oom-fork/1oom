@@ -20,6 +20,7 @@
 #include "uidelay.h"
 #include "uidefs.h"
 #include "uidraw.h"
+#include "uifix.h"
 #include "uiobj.h"
 #include "uipal.h"
 #include "uisound.h"
@@ -348,7 +349,7 @@ again:
     for (int i = 0; i < g->galaxy_stars; ++i) {
         if (g->planet[i].owner == active_player) {
             if (i == g->planet_focus_i[active_player]) {
-                d.pos = i - 5;
+                d.pos = (ui_fix_planet_list_pos ? d.num : i) - 5;
                 d.selected = d.num - d.pos;
             }
             d.planets[d.num++] = i;
