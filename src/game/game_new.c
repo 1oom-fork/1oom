@@ -368,7 +368,7 @@ static void game_generate_planets(struct game_s *g)
             star_type_t star_type;
             int16_t di;
             star_type = p->star_type;
-            if (p->type <= PLANET_TYPE_DESERT) {
+            if (p->type >= PLANET_TYPE_STEPPE) {
                 di = rnd_1_n(0x14, &g->seed);
                 if (star_type == STAR_TYPE_RED) { di -= 4; } else if (star_type == STAR_TYPE_GREEN) { di -= 2; }
                 if (di <= 2) {
@@ -1129,6 +1129,7 @@ int game_new(struct game_s *g, struct game_aux_s *gaux, struct game_new_options_
             for (int t = 0; t < 50; ++t) {
                 researchflag[f * 50 + t] = (rawdata[(f * 50 + t) * 6] != 0xff) ? 1 : 0;
             }
+            researchflag[f * 50] = 0;
         }
     }
     researchflag[TECH_FIELD_WEAPON * 50 + (TECH_WEAP_DEATH_RAY - 1)] = 0;
@@ -1145,7 +1146,7 @@ int game_new(struct game_s *g, struct game_aux_s *gaux, struct game_new_options_
                 va += m;
             }
         }
-        log_message("Game: new game %u:0x%x:%u:0x%x:%u\n", vo, vr, vb, g->galaxy_seed, va);
+        log_message("Game: new game -new %u:0x%x:%u:0x%x:%u\n", vo, vr, vb, g->galaxy_seed, va);
     }
     game_generate_galaxy(g);
     game_generate_planet_names(g);

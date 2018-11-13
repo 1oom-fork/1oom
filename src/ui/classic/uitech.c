@@ -142,7 +142,7 @@ static void tech_draw_cb(void *vptr)
         int y;
         y = 21 * i + 24;
         ui_draw_filled_rect(227, y, 277, y + 3, 0x2f);
-        if (t->slider) {
+        if (t->slider[i]) {
             ui_draw_line_3h(227, y + 1, 226 + t->slider[i] / 2, t->slider_lock[i] ? 0x22 : 0x73);
         }
         lbxfont_select(0, 6, 0, 0);
@@ -207,7 +207,7 @@ static void tech_draw_cb(void *vptr)
         int y, complpercent;
         y = 21 * i + 21;
         complpercent = game_tech_current_research_percent2(e, i);
-        if (complpercent < 99) {
+        if (e->tech.percent[i] < 99) {
             if (complpercent > 0) {
                 sprintf(buf, "%i%%", complpercent);
                 lbxfont_select_set_12_1(2, 0xd, 0, 0);
