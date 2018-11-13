@@ -122,7 +122,7 @@ static int16_t uiobj_handle_downcount = 0;
 static uint16_t uiobj_kbd_hmm1 = 0;
 static uint16_t uiobj_hmm5_delay = 2;
 static uint16_t uiobj_hmm6 = 0;
-static int16_t uiobj_help_id = 0;
+static int16_t uiobj_help_id = -1;
 static int16_t uiobj_hmm8 = 1;
 static bool uiobj_hmm9 = false;
 static int16_t uiobj_kbd_movey = -1;
@@ -487,7 +487,7 @@ static void uiobj_handle_t4_sub1(uiobj_t *p)
     }
     /*loc_15fae:*/
     strcpy(p->t4.buf, strbuf);
-    if (vc == 0) /*&& (mouse_flag_initialized)*/ {
+    if (vc) /*&& (mouse_flag_initialized)*/ {
         while (mouse_buttons) {
             hw_event_handle();
         }
@@ -1033,7 +1033,7 @@ static int16_t uiobj_kbd_dir_key_dxdy(int dirx, int diry, int16_t oi2, int mx, i
                 if ((dx == 0) || (dy == 0)) {
                     slope = UIOBJ_OFFSCREEN;
                 }
-                if ((slope >= 0) && /* FIXME not like MOO1 */(slope < 0x69)) {
+                if ((slope >= 34) && (slope <= 105)) {
                     dist = (dx * dx) + (dy * dy);
                     if (dist < mind) {
                         mind = dist;
@@ -1970,7 +1970,7 @@ int16_t uiobj_add_mousearea_all(mookey_t key, int16_t aa)
     return uiobj_add_mousearea(0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, key, aa);
 }
 
-int16_t uiobj_add_inputkey(mookey_t key)
+int16_t uiobj_add_inputkey(uint32_t key)
 {
     uiobj_t *p = &uiobj_tbl[uiobj_table_num];
     p->x0 = UIOBJ_OFFSCREEN;

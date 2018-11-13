@@ -116,10 +116,10 @@ static uint16_t get_base_cost_mod_jammer(struct game_s *g, int player_i, int per
     return (tbl_shiptech_jammer[tech_i].cost[SHIP_HULL_LARGE] * mult) / 1000 + tbl_shiptech_jammer[tech_i].power[SHIP_HULL_LARGE] / 10;
 }
 
-static uint8_t find_best_tech_type(BOOLVEC_PTRPARAMI(tbl), int base, int step, int num)
+static uint8_t find_best_tech_type(BOOLVEC_PTRPARAMI(tbl), int base, int step, int last)
 {
     int best = 0;
-    for (int i = base; i < num; i += step) {
+    for (int i = base; i <= last; i += step) {
         if (BOOLVEC_IS1(tbl, i)) {
             best = i;
         }
@@ -492,7 +492,7 @@ void game_tech_get_descr(const struct game_aux_s *gaux, tech_field_t field, int 
     if (tech == 0) {
         buf[0] = '\0';
     } else if (tech > 50) {
-        sprintf(buf, "%s %s %s.", game_str_te_genimp, game_str_tbl_te_field[field], game_str_te_techno2);
+        sprintf(buf, "%s%s %s.", game_str_te_genimp, game_str_tbl_te_field[field], game_str_te_techno2);
     } else if (tech == -2) {
         strcpy(buf, game_str_te_nmis);
     } else if (tech == -1) {
@@ -613,7 +613,7 @@ int game_tech_get_next_techs(const struct game_s *g, player_id_t player, tech_fi
     if (len == 1) {
         maxtier = 1;
     } else {
-        maxtier = tmax / 5 + 2;
+        maxtier = (tmax - 1) / 5 + 2;
         SETMIN(maxtier, 10);
     }
     num = 0;

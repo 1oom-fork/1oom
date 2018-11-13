@@ -109,12 +109,14 @@ static void game_battle_post(struct game_s *g, int loser, int winner, uint8_t fr
         mi = loser - PLAYER_NUM;
         switch (mi) {
             case MONSTER_CRYSTAL:
-                g->evn.crystal.exists = false;
-                g->evn.crystal.killer = winner;
+                if (g->evn.crystal.exists) {
+                    g->evn.crystal.killer = winner;
+                }
                 break;
             case MONSTER_AMOEBA:
-                g->evn.amoeba.exists = false;
-                g->evn.amoeba.killer = winner;
+                if (g->evn.amoeba.exists) {
+                    g->evn.amoeba.killer = winner;
+                }
                 break;
             case MONSTER_GUARDIAN:
                 g->evn.have_guardian = false;

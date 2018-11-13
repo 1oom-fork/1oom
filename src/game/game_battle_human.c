@@ -737,7 +737,7 @@ static void game_battle_extend_route_from_tbl(uint8_t *route, int *tblx, int *tb
     for (pos = 0; route[pos] != BATTLE_XY_INVALID; ++pos) {
         /*nop*/
     }
-    for (int i = pos; (i + len) > pos; ++i) {
+    for (int i = pos; i < (pos + len); ++i) {
         int j;
         j = i - pos;
         route[i] = BATTLE_XY_SET(tblx[j], tbly[j]);
@@ -762,8 +762,8 @@ static void game_battle_item_move_find_route(struct battle_s *bt, uint8_t *route
                 len = util_math_line_plot(b->sx, b->sy, sx2, sy2, tblx, tbly);
                 if ((game_battle_area_check_line_ok(bt, tblx, tbly, len) == 1) && (b->man >= len)) {
                     int tblx2[BATTLE_ROUTE_LEN], tbly2[BATTLE_ROUTE_LEN], len2;
-                    memcpy(tblx2, tblx, len);
-                    memcpy(tbly2, tbly, len);
+                    memcpy(tblx2, tblx, len * sizeof(int));
+                    memcpy(tbly2, tbly, len * sizeof(int));
                     len2 = util_math_get_route_len(b->sx, b->sy, tblx, tbly, len);
                     if (len2 <= minlen) {
                         int len3;
@@ -786,8 +786,8 @@ static void game_battle_item_move_find_route(struct battle_s *bt, uint8_t *route
                                         len3 = util_math_line_plot(sx2, sy2, sx3, sy3, tblx, tbly);
                                         if ((game_battle_area_check_line_ok(bt, tblx, tbly, len3) == 1) && (b->man >= (dirlen + len3))) {
                                             int tblx3[BATTLE_ROUTE_LEN], tbly3[BATTLE_ROUTE_LEN], len4, len42;
-                                            memcpy(tblx3, tblx, len3);
-                                            memcpy(tbly3, tbly, len3);
+                                            memcpy(tblx3, tblx, len3 * sizeof(int));
+                                            memcpy(tbly3, tbly, len3 * sizeof(int));
                                             len42 = util_math_get_route_len(tblx2[dirlen - 1], tbly2[dirlen - 1], tblx, tbly, len3);
                                             if ((len42 + len2) < minlen) {
                                                 int len5;
@@ -1192,7 +1192,7 @@ static void game_battle_with_human_do_turn_ai(struct battle_s *bt)
     struct battle_item_s *b = &(bt->item[itemi]);
     ui_battle_ai_pre(bt);
     b->maxrange = game_battle_get_weap_maxrange(bt);
-    if (b->retreat == 2) {
+    if (b->retreat >= 2) {
         bt->s[b->side].tbl_ships[b->shiptbli] = b->num;
         ui_battle_draw_retreat(bt);
         game_battle_item_destroy(bt, itemi);
@@ -1896,6 +1896,7 @@ void game_battle_area_setup(struct battle_s *bt)
         }
     }
     if (b->actman > 0) {
+        bt->hmm30 = false;
         for (int sy = 0; sy < BATTLE_AREA_H; ++sy) {
             for (int sx = 0; sx < BATTLE_AREA_W; ++sx) {
                 if ((b->subspace == 1) || (b->actman >= util_math_dist_maxabs(b->sx, b->sy, sx, sy))) {
@@ -2046,6 +2047,7 @@ bool game_battle_with_human(struct battle_s *bt)
     winner = game_battle_with_human_do(bt);
     p->pop = bt->pop;
     p->factories = bt->fact;
+    bt->bases = bt->item[0/*planet*/].num;
     game_battle_finish(bt);
     ui_battle_shutdown(bt, (bt->planet_side != SIDE_NONE) && (p->owner == PLAYER_NONE));
     return winner == SIDE_R;
