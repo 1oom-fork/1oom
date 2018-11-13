@@ -16,6 +16,7 @@
 #include "uidefs.h"
 #include "uidelay.h"
 #include "uidraw.h"
+#include "uifix.h"
 #include "uihelp.h"
 #include "uipal.h"
 
@@ -764,7 +765,16 @@ static int16_t uiobj_kbd_dir_key_dy_list(int diry)
 
 static inline bool uiobj_kbd_dir_obj_ok(const uiobj_t *p)
 {
-    return ((p->type < 0xb) && (p->key == MOO_KEY_UNKNOWN) && ((p->type != 0xa) || p->ta.z12));
+    if (ui_qol_cursor_nav_all_obj) {
+        if (p->x0 == UIOBJ_OFFSCREEN) {
+            return false;
+        }
+    } else {
+        if (p->key != MOO_KEY_UNKNOWN) {
+            return false;
+        }
+    }
+    return ((p->type < 0xb) && ((p->type != 0xa) || p->ta.z12));
 }
 
 static int16_t uiobj_kbd_dir_key_dxdy(int dirx, int diry, int16_t oi2, int mx, int my)
