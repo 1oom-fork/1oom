@@ -238,7 +238,10 @@ void ui_game_start(struct game_s *g)
 
     lbxpal_select(0, -1, 0);
     lbxpal_build_colortables();
-    /* HACK fix wrong palette after new game */
+    /* HACK Fix wrong palette after new game via main menu.
+       MOO1 goes from orion.exe to starmap.exe in between and the palette is initialized before coming here.
+       We only need to set the update flags of this range.
+    */
     lbxpal_set_update_range(248, 255);
     ui_palette_set_n();
     ui_draw_finish_mode = 1;
