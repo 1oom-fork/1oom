@@ -1,0 +1,12 @@
+#include "config.h"
+
+#include "game_fix.h"
+
+/* -------------------------------------------------------------------------- */
+
+bool game_fix_broken_garbage = false;
+bool game_fix_max_factories = false;
+bool game_fix_orbital_weap_any = false;
+bool game_fix_orbital_torpedo = false;
+bool game_fix_orbital_comp = false;
+bool game_fix_sg_finished = false;
