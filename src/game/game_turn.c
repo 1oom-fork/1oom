@@ -877,6 +877,7 @@ static void game_turn_explore(struct game_s *g, uint8_t *planetptr, player_id_t 
                 if (flag_visible) {
                     bool first, flag_colony_ship, was_explored;
                     int best_colonize, best_colonyship = 0;
+                    /* FIXME artifacts disappearing due to scanning a planet is weird */
                     first = BOOLVEC_IS_CLEAR(p->explored, PLAYER_NUM);
                     if ((p->special == PLANET_SPECIAL_ARTIFACTS) && (!by_scanner) && first) {
                         /* FIXME BUG only 1 artifact landing per turn */
@@ -956,7 +957,8 @@ static void game_turn_bomb_damage(struct game_s *g, uint8_t pli, player_id_t att
     for (int i = 0; i < ea->shipdesigns_num; ++i) {
         const shipdesign_t *sd = &(g->srd[attacker].design[i]);
         SETMAX(maxcomp, sd->comp);
-        for (int j = 0; j < (WEAPON_SLOT_NUM - 1); ++j) { /* FIXME BUG -1 */
+        for (int j = 0; j < (WEAPON_SLOT_NUM - 1); ++j) {
+            /* BUG? the weapon in slot 4 is not used in orbital bombardment. */
             weapon_t wpnt = sd->wpnt[j];
             uint32_t v;
             v = ea->orbit[pli].ships[i] * sd->wpnn[j];
