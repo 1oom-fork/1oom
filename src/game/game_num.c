@@ -28,6 +28,11 @@ int game_num_max_bio_dmg = 10000;
 int game_num_max_trans_dmg = 32000;
 unsigned int game_num_max_ship_maint = 32000;
 int game_num_event_roll = 512;
+int game_num_council_years = 25;
+int game_num_eco_slider_slack = 7;
+int game_num_race_bonus_alkari = 3;
+int game_num_race_bonus_bulrathi = 25;
+int game_num_race_bonus_mrrshan = 4;
 
 uint8_t game_num_tbl_hull_w[4] = { 1, 5, 25, 125 };
 
@@ -35,6 +40,7 @@ uint16_t game_num_base_hp[BASE_HP_TBL_NUM] = { 50, 75, 100, 125, 150, 175, 200 }
 uint16_t game_num_pshield_cost[PSHIELD_NUM] = { 0, 500, 1000, 1500, 2000 };
 
 uint8_t game_num_tech_costmuld[DIFFICULTY_NUM] = { 20, 25, 30, 35, 40 };
+uint8_t game_num_tech_costmula[DIFFICULTY_NUM] = { 20, 20, 20, 20, 20 };
 
 uint8_t game_num_tech_costmulr[RACE_NUM][TECH_FIELD_NUM] = {
     { 100, 100, 60, 80, 80, 100 },
