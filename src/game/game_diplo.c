@@ -349,7 +349,6 @@ void game_diplo_hmm6(struct game_s *g, player_id_t p1, player_id_t p2)
             }
         }
     } else {
-        /*16611*/
         empiretechorbit_t *e1 = &(g->eto[p1]);
         empiretechorbit_t *e2 = &(g->eto[p2]);
         if ((e1->treaty[p2] >= TREATY_WAR) || BOOLVEC_IS0(e1->within_frange, p2) || (g->evn.home[p1] == PLANET_NONE)) {
@@ -518,10 +517,8 @@ void game_diplo_set_trade(struct game_s *g, player_id_t p1, player_id_t p2, int 
     if (e1->hmm288[p2] < bc) {
         v = ((e1->trade_percent[p2] * e1->hmm288[p2]) - (bc * 30)) / (e1->hmm288[p2] + bc);
     } else {
-        /*6288f*/
         v = e1->trade_percent[p2];
     }
-    /*628a2*/
     SETMIN(v, 100);
     e1->trade_bc[p2] = bc;
     e1->hmm288[p2] = bc;

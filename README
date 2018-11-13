@@ -5,27 +5,15 @@
 1oom is a clone of the classic DOS game "Master of Orion" (MicroProse, 1993).
 1oom is Free Software (GPLv2), see COPYING.
 
-This project is in a very early state and is missing the following:
-
-- help dialog
-- testing
-- documentation
-- polish
-
 
 1. Installation
 ================
 
 1oom requires a copy of the Master of Orion (v1.3) LBX files.
 
-The LBX file can be in a different directory as the executable.
-You can also specify your own path by passing the command-line
-argument "-data <path>" when running 1oom.
-
 1.1. Windows
 -------------
 
-1oom will only check the directory of the executable.
 Simply copy the EXE and DLLs (if any) to your MOO1 directory.
 
 1.2 Linux
@@ -39,7 +27,8 @@ http://www.libsdl.org
 http://www.libsdl.org/projects/SDL_mixer/
 
 Also recommended:
-- libsamplerate
+
+- libsamplerate:
 http://www.mega-nerd.com/libsamplerate/
 
 Check your distribution's package manager or the library
@@ -83,7 +72,7 @@ options in one of the following paths:
 3. Development
 ===============
 
-See INSTALL for more information.
+See INSTALL and HACKING for more information.
 
 
 4. Executables

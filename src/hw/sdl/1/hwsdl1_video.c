@@ -203,7 +203,6 @@ static void set_viewport(unsigned int src_w, unsigned int src_h, unsigned int de
             dest_x = (dest_x - dest_w) / 2;
         }
     }
-
     glViewport(dest_x, dest_y, dest_w, dest_h);
 }
 #endif /* HAVE_OPENGL */
@@ -213,7 +212,6 @@ static void set_viewport(unsigned int src_w, unsigned int src_h, unsigned int de
 int hw_video_resize(int w, int h)
 {
 #ifdef HAVE_OPENGL
-    unsigned int new_w, new_h;
     unsigned int actual_w, actual_h;
     int flags;
 
@@ -228,9 +226,6 @@ int hw_video_resize(int w, int h)
         h = video.bufh;
     }
 
-    new_w = w;
-    new_h = h;
-
     flags = SDL_OPENGL | SDL_RESIZABLE;
 
     if (hw_opt_fullscreen) {
@@ -243,8 +238,8 @@ int hw_video_resize(int w, int h)
             actual_h = video.bestmode.h;
         }
     } else {
-        hw_opt_screen_winw = actual_w = new_w;
-        hw_opt_screen_winh = actual_h = new_h;
+        hw_opt_screen_winw = actual_w = w;
+        hw_opt_screen_winh = actual_h = h;
     }
 
     SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);

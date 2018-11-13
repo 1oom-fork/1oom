@@ -63,7 +63,6 @@ static bool xmid_add_pending_noteoff(struct noteoffs_s *s, const uint8_t *data, 
         log_error("XMID: BUG noteoff tbl full!\n");
         return false;
     }
-
     n->next = NULL;
     n->t = t;
     n->buf[0] = data[0] & 0x8f; /* 9x -> 8x */

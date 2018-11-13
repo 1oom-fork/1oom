@@ -21,9 +21,6 @@
 
 /* -------------------------------------------------------------------------- */
 
-/*#define TEST_BATTLE*/
-/*#define TEST_GROUND*/
-
 #define EMPEROR_NAMES_PER_RACE  6
 #define EMPEROR_NAME_LBX_LEN    20
 
@@ -893,27 +890,11 @@ start_of_func:
                 *sd = tbl_startship[j];
                 strcpy(sd->name, game_str_tbl_stship_names[j]);
                 sd->look += e->banner * SHIP_LOOK_PER_BANNER;
-#ifdef TEST_BATTLE
-                for (int k = 0; k < 4; ++k) {
-                    if (sd->wpnt[k] != 0) {
-                        sd->wpnn[k] += 15;
-                    }
-                }
-                if (j == 3) {
-                    sd->special[0] = SHIP_SPECIAL_BLACK_HOLE_GENERATOR;
-                    //sd->special[1] = SHIP_SPECIAL_SUB_SPACE_TELEPORTER;
-                }
-#endif
             }
             memcpy(&g->current_design[i], &srd->design[0], sizeof(shipdesign_t));
             for (int j = 0; j < NUM_SHIPDESIGNS; ++j) {
                 shipcount_t n;
                 n = startfleet_ships[j];
-#ifdef TEST_BATTLE
-                if ((i == 0) && (j > 0) && (j < 4)) {
-                    n += 3;
-                }
-#endif
                 e->orbit[tblhome[i]].ships[j] = n;
                 srd->shipcount[j] = n;
             }
@@ -923,48 +904,6 @@ start_of_func:
         e->shipi_colony = 4;
         e->shipi_bomber = 1;
     }
-#ifdef TEST_BATTLE
-    {
-        fleet_enroute_t *r;
-        uint8_t homei = tblhome[0];
-        const planet_t *p = &g->planet[homei];
-        r = &(g->enroute[g->enroute_num]);
-        r->ships[0] = 1;
-        r->ships[1] = 4;
-        r->ships[2] = 4;
-        r->ships[3] = 4;
-        r->ships[4] = 0;
-        r->ships[5] = 0;
-        r->dest = homei;
-        r->x = p->x - 2;
-        r->y = p->y;
-        r->speed = 3;
-        r->owner = PLAYER_1;
-        BOOLVEC_CLEAR(r->visible, PLAYER_NUM);
-        BOOLVEC_SET1(r->visible, PLAYER_0);
-        BOOLVEC_SET1(r->visible, PLAYER_1);
-        ++g->enroute_num;
-    }
-    g->planet[tblhome[0]].missile_bases = 2;
-#endif
-#ifdef TEST_GROUND
-    {
-        transport_t *r;
-        uint8_t homei = tblhome[0];
-        const planet_t *p = &g->planet[homei];
-        r = &(g->transport[g->transport_num]);
-        r->pop = 40;
-        r->dest = homei;
-        r->x = p->x - 2;
-        r->y = p->y;
-        r->speed = 3;
-        r->owner = PLAYER_1;
-        BOOLVEC_CLEAR(r->visible, PLAYER_NUM);
-        BOOLVEC_SET1(r->visible, PLAYER_0);
-        BOOLVEC_SET1(r->visible, PLAYER_1);
-        ++g->transport_num;
-    }
-#endif
 }
 
 static void game_generate_relation_etc(struct game_s *g)
