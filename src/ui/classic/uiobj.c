@@ -106,23 +106,6 @@ typedef struct uiobj_s {
             /*1c*/ uint16_t *xptr;
             /*1e*/ uint16_t *yptr;
         } tb;
-#if 0
-        struct {
-            /*0a*/ int16_t z0a;
-            /*0c*/ uint16_t z0c;
-            /*0e*/ uint16_t z0e;
-            /*10*/ uint16_t z10;
-            /*12*/ uint16_t z12;
-            /*14*/ uint16_t z14;
-            /*16*/ uint16_t z16;
-            /*18*/ uint16_t z18;
-            /*1a*/ uint16_t z1a; /* always uint16_t* except t4? */
-            /*1c*/ uint16_t z1c;
-            /*1e*/ uint16_t z1e;
-            /*20*/ uint16_t z20;
-            /*22*/ uint16_t z22;
-        } tx;
-#endif
     };
 } uiobj_t;
 
@@ -789,7 +772,6 @@ static int16_t uiobj_kbd_dir_key_dy(int diry)
             }
         }
     } else {
-        /*18d9b*/
         p = &uiobj_tbl[1];
         if (p->vptr && (*p->vptr >= 0)) {
             oi2 = *p->vptr + 1;
@@ -817,7 +799,6 @@ static int16_t uiobj_kbd_dir_key_dy(int diry)
                     }
                 }
             } else {
-                /*18e65*/
                 if ((oi == 1) && uiobj_hmm9) {
                     uiobj_kbd_movey = -1;
                 } else {
@@ -840,10 +821,8 @@ static int16_t uiobj_kbd_dir_key_dy(int diry)
                     }
                 }
             }
-            /*18ed3*/
             /*goto 18f0d;*/
         } else {
-            /*18ed5*/
             for (oi = 1; oi < uiobj_table_num; ++oi) {
                 if (/*not tested in MOO1!*/(uiobj_tbl[oi].type == 0xa) && uiobj_tbl[oi].ta.z12) {
                     break;
@@ -854,7 +833,6 @@ static int16_t uiobj_kbd_dir_key_dy(int diry)
             }
         }
     }
-    /*18f0d*/
     if ((oi < 0) || (oi >= uiobj_table_num)) {
         oi = 0;
     }
@@ -921,7 +899,6 @@ static int16_t uiobj_kbd_dir_key_dxdy(int dirx, int diry, int16_t oi2, int mx, i
                 }
             }
         }
-        /*14a4a*/
         if (oi == oi2) {
             for (int i = 1; i < uiobj_table_num; ++i) {
                 if (i == oi2) {
@@ -959,7 +936,6 @@ static int16_t uiobj_kbd_dir_key_dxdy(int dirx, int diry, int16_t oi2, int mx, i
             }
         }
     }
-    /*14c95*/
     if ((dirx != 0) && (diry == 0)) {
         for (int i = 1; i < uiobj_table_num; ++i) {
             if (i == oi2) {
@@ -982,7 +958,6 @@ static int16_t uiobj_kbd_dir_key_dxdy(int dirx, int diry, int16_t oi2, int mx, i
                 }
             }
         }
-        /*14e6a*/
         if (oi == oi2) {
             for (int i = 1; i < uiobj_table_num; ++i) {
                 if (i == oi2) {
@@ -1020,7 +995,6 @@ static int16_t uiobj_kbd_dir_key_dxdy(int dirx, int diry, int16_t oi2, int mx, i
             }
         }
     }
-    /*150ba*/
     if ((dirx != 0) && (diry != 0)) {
         for (int i = 1; i < uiobj_table_num; ++i) {
             if (i == oi2) {
@@ -1038,15 +1012,12 @@ static int16_t uiobj_kbd_dir_key_dxdy(int dirx, int diry, int16_t oi2, int mx, i
                     slope = UIOBJ_OFFSCREEN;
                     continue;
                 }
-                /* FIMXE the rest of the function is probably wrong */
                 if ((dx >= dy) && (dy != 0)) {
                     slope = (dx * 100) / dy;
                 }
-                /*15265*/
                 if ((dy > dx) && (dx != 0)) {
                     slope = (dy * 100) / dx;
                 }
-                /*15292*/
                 if ((dx == 0) || (dy == 0)) {
                     slope = UIOBJ_OFFSCREEN;
                 }
@@ -1060,8 +1031,6 @@ static int16_t uiobj_kbd_dir_key_dxdy(int dirx, int diry, int16_t oi2, int mx, i
             }
         }
     }
-    /*1531b merged to above*/
-    /*1557a*/
     return oi;
 }
 
@@ -1316,7 +1285,6 @@ static void uiobj_cursor_redraw_hmm2(int16_t oi, int mx, int my)
             ui_cursor_draw0(mx, my);
             mouse_set_xy(mx, my);
         }
-        /*1b083*/
     } else {
         /*don't care*/
     }

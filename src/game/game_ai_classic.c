@@ -2934,7 +2934,6 @@ static bool game_ai_classic_battle_ai_retreat(struct battle_s *bt)
             tbl_hmm2[m->target] = 0;
         }
     }
-    /*59574*/
     for (int i = 1; i <= bt->items_num; ++i) {
         int j, s;
         s = (i <= bt->s[SIDE_L].items) ? SIDE_R : SIDE_L;
@@ -2950,7 +2949,6 @@ static bool game_ai_classic_battle_ai_retreat(struct battle_s *bt)
             ++tbl_hmm4[s];
         }
     }
-    /*596d5*/
     if (bt->item[0/*planet*/].num > 0) {
         struct battle_item_s *b = &(bt->item[0/*planet*/]);
         int j, s = (b->side == SIDE_L) ? SIDE_R : SIDE_L;
@@ -2962,7 +2960,6 @@ static bool game_ai_classic_battle_ai_retreat(struct battle_s *bt)
             tbl_hmm2[j] = 0;
         }
     }
-    /*598a6*/
     if ((tbl_hmm4[SIDE_R] == 0) && (tbl_hmm3[SIDE_L] == 0)) {
         tbl_hmm3[SIDE_L] = 1;
     }
@@ -2972,7 +2969,6 @@ static bool game_ai_classic_battle_ai_retreat(struct battle_s *bt)
     if (tbl_hmm4[SIDE_R] == 0) {
         return false;
     }
-    /*598e8*/
     if (tbl_hmm4[SIDE_L] == 0) {
         return false;
     }
