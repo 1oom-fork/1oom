@@ -717,6 +717,7 @@ void game_tech_research(struct game_s *g)
                     }
                 }
             } else {
+                /* BUG? 1 RP for first tech rounded down to 0. */
                 td->investment[field] = (invest * 9) / 10;
             }
         }

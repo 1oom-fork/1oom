@@ -147,6 +147,10 @@ static void newtech_draw_cb1(void *vptr)
         game_tech_get_descr(d->g->gaux, d->nt.field, d->nt.tech, buf);
         lbxfont_select_set_12_5(4, 0xf, 0, 0);
         strh = lbxfont_calc_split_str_h(305, buf);
+        /* BUG?
+           Some lowercase letters extend past the screen, for example 'p' in the Hyper-X msg.
+           On DOS/v1.3 this only overwrites unused VRAM. y <= 148 would be OK.
+        */
         y = (strh >= 36) ? 150 : 160;
         lbxfont_print_str_split(9, y, 305, buf, 3);
     }
@@ -184,6 +188,10 @@ static void newtech_choose_next_draw_cb(void *vptr)
     vgabuf_limits_set(0, y, VGABUF_W - 1, y + yo - 1);
     lbxgfx_draw_frame_offs(x, y, d->gfx_pulldown_u);
     lbxgfx_draw_frame(x, y + yo, d->gfx_pulldown_d);
+    /* WARNING
+       MOO1 does not limit the bottom part which will go below screen with enough techs to choose from.
+       On DOS/v1.3 this only overwrite unused VRAM. We must use the _offs version or solid VRAM.
+    */
     sprintf(buf, "%s %s", game_str_tbl_te_field[d->nt.field], game_str_te_techno);
     lbxfont_select(5, 0xe, 0, 0);
     lbxfont_print_str_center(x + 85, y + 5, buf);
@@ -562,7 +570,7 @@ void ui_newtech(struct game_s *g, int pi)
         if (1
           && (e->tech.investment[field] != 0)
           && (e->tech.project[field] == 0)
-          && (e->tech.percent[field] < 99)
+          && (e->tech.percent[field] < 99) /* BUG? MOO1 stops giving tech to research when reaching level 99 */
         ) {
             if (!flag_copybuf) {
                 flag_copybuf = true;

@@ -258,9 +258,9 @@ offset  sz      description
 198     12*12   ship name list
 228     3*10*6  Limited Research List; 3 bytes per tier, 10 tiers per field, 6 fields
 2dc     60*6    completed research; 60 bytes per field (see tech data offs 54 above for number active)
-444     2*6     have reserve fuel
+444     2*6     have reserve fuel (redundant)
 450     2*6     year of the design (AI only)
-45c     2*6     total ship count
+45c     2*6     total ship count (redundant)
 
 
 ship design (0x44)
