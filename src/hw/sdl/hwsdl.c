@@ -169,7 +169,6 @@ static bool hw_kbd_check_hotkey(SDLKey key, SDLMod smod, char c)
 #endif
         }
     }
-
     return false;
 }
 
