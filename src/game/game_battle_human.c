@@ -532,7 +532,7 @@ static int game_battle_get_priority(const struct battle_item_s *b, race_t race)
         prio += b->subspace * 1000;
     }
     if (race == RACE_ALKARI) {
-        prio += 3;
+        prio += game_num_race_bonus_alkari;
     }
     return prio;
 }
