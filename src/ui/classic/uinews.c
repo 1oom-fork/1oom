@@ -212,7 +212,6 @@ void ui_news(struct game_s *g, struct news_s *ns)
         }
         flag_hmm = false;
     }
-    /*7df17*/
     game_news_get_msg(g, ns, ui_data.strbuf);
     d.str = ui_data.strbuf;
 
