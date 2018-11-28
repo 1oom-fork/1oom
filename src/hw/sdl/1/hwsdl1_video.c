@@ -98,7 +98,7 @@ static void video_update_8bpp(void)
 static void video_setpal_8bpp(uint8_t *pal, int first, int num)
 {
     SDL_Color color[256];
-    memcpy(&video.pal[first * 3], pal, num * 3);
+    memmove(&video.pal[first * 3], pal, num * 3);
     for (int i = first; i < (first + num); ++i) {
         color[i].r = *pal++ << 2;
         color[i].g = *pal++ << 2;
