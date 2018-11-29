@@ -44,11 +44,16 @@ static void game_ai_classic_new_game_init(struct game_s *g, player_id_t player, 
     for (int i = 0; i < g->galaxy_stars; ++i) {
         const planet_t *q;
         q = &g->planet[i];
-        if (1
-          && (p->type > PLANET_TYPE_MINIMAL)
-          && (util_math_dist_fast(q->x, q->y, p->x, p->y) <= 30)
-        ) {
-            ++n;
+        /* WASBUG: 1OOM v1.0 counted number of planets within distance 30 of
+           home, each time checking if the home planet is better than minimal.
+           This probably should count number of colonizable planets instead.
+         */
+        if (util_math_dist_fast(q->x, q->y, p->x, p->y) <= 30) {
+            if (0
+                || ((g->ai_id == GAME_AI_CLASSIC) && (p->type > PLANET_TYPE_MINIMAL))
+                || ((g->ai_id != GAME_AI_CLASSIC) && (q->type >= PLANET_TYPE_MINIMAL))) {
+                ++n;
+            }
         }
     }
     e->ai_p3_countdown = rnd_1_n(6, &g->seed) + 14;
