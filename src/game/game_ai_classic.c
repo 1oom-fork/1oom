@@ -2068,6 +2068,7 @@ static void game_ai_classic_battle_ai_ai_get_weights(const struct game_s *g, pla
             tbl[i] += ((g->ai_id == GAME_AI_CLASSIC) ? 15 : 20);
         }
         tbl[i] *= game_num_tbl_hull_w[sd->hull];
+        sd++;
     }
 }
 
