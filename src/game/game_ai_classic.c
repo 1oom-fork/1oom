@@ -2054,6 +2054,36 @@ static void game_ai_classic_turn_p3(struct game_s *g)
     }
 }
 
+/* The classic AI cheats with production. This function returns a boosted version
+   of a planet's production. It also takes a player parameter, which is unused
+   at the moment, but intended so future (non-cheating) AI implementations can be
+   pitted against the classical cheating ones.
+*/
+uint32_t game_ai_classic_production_boost(const struct game_s *g, player_id_t player, uint32_t prod)
+{
+    uint32_t v = prod;
+
+    switch (g->difficulty) {
+    case DIFFICULTY_SIMPLE:
+        if (g->ai_id != GAME_AI_CLASSIC) v = (prod << 2) / 5;
+        break;
+    case DIFFICULTY_EASY:
+    default:
+        if (g->ai_id == GAME_AI_CLASSIC) v = (prod << 2) / 5;
+        break;
+    case DIFFICULTY_AVERAGE:
+        v += prod / 4;
+        break;
+    case DIFFICULTY_HARD:
+        v += prod / 2;
+        break;
+    case DIFFICULTY_IMPOSSIBLE:
+        v += prod;
+        break;
+    }
+    return v;
+}
+
 /* -------------------------------------------------------------------------- */
 
 static void game_ai_classic_battle_ai_ai_get_weights(const struct game_s *g, player_id_t pi, int *tbl)
@@ -4409,6 +4439,7 @@ const struct game_ai_s game_ai_classic = {
     game_ai_classic_turn_p1,
     game_ai_classic_turn_p2,
     game_ai_classic_turn_p3,
+    game_ai_classic_production_boost,
     game_ai_classic_battle_ai_ai_resolve,
     game_ai_classic_battle_ai_turn,
     game_ai_classic_battle_ai_retreat,
@@ -4446,6 +4477,7 @@ const struct game_ai_s game_ai_classicplus = {
     game_ai_classic_turn_p1,
     game_ai_classic_turn_p2,
     game_ai_classic_turn_p3,
+    game_ai_classic_production_boost,
     game_ai_classic_battle_ai_ai_resolve,
     game_ai_classic_battle_ai_turn,
     game_ai_classic_battle_ai_retreat,

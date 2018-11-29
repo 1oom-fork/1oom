@@ -7,6 +7,7 @@
 #include "boolvec.h"
 #include "comp.h"
 #include "game.h"
+#include "game_ai.h"
 #include "game_aux.h"
 #include "game_num.h"
 #include "game_shiptech.h"
@@ -128,24 +129,8 @@ void game_update_production(struct game_s *g)
                 }
                 v = factories + extra;
             }
-            if (BOOLVEC_IS1(g->is_ai, owner)) {
-                switch (g->difficulty) {    /* TODO BUG? simple has larger v than easy */
-                    case DIFFICULTY_EASY:
-                        v = (v << 2) / 5;
-                        break;
-                    case DIFFICULTY_AVERAGE:
-                        v += v / 4;
-                        break;
-                    case DIFFICULTY_HARD:
-                        v += v / 2;
-                        break;
-                    case DIFFICULTY_IMPOSSIBLE:
-                        v += v;
-                        break;
-                    default:
-                        break;
-                }
-            }
+            /* AI given a chance to cheat with production */
+            if (IS_AI(g, owner)) v = game_ai->production_boost(g, owner, v);
             {
                 uint32_t reserve;
                 reserve = p->reserve;
