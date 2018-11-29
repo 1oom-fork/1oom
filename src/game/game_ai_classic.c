@@ -2068,6 +2068,8 @@ static void game_ai_classic_battle_ai_ai_get_weights(const struct game_s *g, pla
             tbl[i] += ((g->ai_id == GAME_AI_CLASSIC) ? 15 : 20);
         }
         tbl[i] *= game_num_tbl_hull_w[sd->hull];
+        /* Using design[0] for all ships must be a bug - either in MOO1 or 1OOM v1.0 */
+        if (g->ai_id != GAME_AI_CLASSIC) sd++;
     }
 }
 
