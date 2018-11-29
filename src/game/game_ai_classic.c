@@ -45,7 +45,7 @@ static void game_ai_classic_new_game_init(struct game_s *g, player_id_t player, 
         const planet_t *q;
         q = &g->planet[i];
         if (1
-          && (p->type > PLANET_TYPE_MINIMAL)
+          && (q->type > (PLANET_TYPE_MINIMAL - 1))
           && (util_math_dist_fast(q->x, q->y, p->x, p->y) <= 30)
         ) {
             ++n;
