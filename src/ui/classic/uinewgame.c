@@ -274,6 +274,9 @@ static bool ui_new_game_racebannernames(struct game_new_options_s *newopts, stru
 
 /* -------------------------------------------------------------------------- */
 
+#define PORTRAITBOX_TOP_MARGIN 20
+#define PORTRAITBOX_H 46
+
 static void new_game_draw_extra_cb(void *vptr)
 {
     struct new_game_data_s *d = vptr;
@@ -282,7 +285,7 @@ static void new_game_draw_extra_cb(void *vptr)
     lbxfont_select(5, 0, 0, 0);
     for (player_id_t i = 0; i < d->newopts->players; ++i) {
         int x0 = 4 + (i / 3) * 160;
-        int y0 = 20 + (i % 3) * 50;
+        int y0 = PORTRAITBOX_TOP_MARGIN + (i % 3) * PORTRAITBOX_H;
         if (newopts->pdata[i].race < RACE_NUM) {
             lbxgfx_draw_frame(x0 + 1, y0 + 1, d->gfx_portrait[newopts->pdata[i].race], UI_SCREEN_W, ui_scale);
         }
@@ -298,7 +301,9 @@ static void new_game_draw_extra_cb(void *vptr)
     if (!d->have_human) {
         lbxfont_print_str_center(160, 2, game_str_ng_allai, UI_SCREEN_W, ui_scale);
     }
-    lbxfont_print_str_normal(103, 165, game_ais[d->newopts->ai_id]->name, UI_SCREEN_W, ui_scale);
+    lbxfont_print_str_normal(103, 155, game_ais[d->newopts->ai_id]->name, UI_SCREEN_W, ui_scale);
+    lbxfont_select(0, 0, 0, 0);
+    lbxfont_print_str_normal(103, 167, game_ais[d->newopts->ai_id]->description, UI_SCREEN_W, ui_scale);
     if (++d->frame >= 10) {
         d->frame = 0;
     }
@@ -330,17 +335,16 @@ static bool ui_new_game_extra(struct game_new_options_s *newopts, struct new_gam
     hw_video_copy_back_from_page3();
     for (int i = 0; i < newopts->players; ++i) {
         int x0 = 4 + (i / 3) * 160;
-        int y0 = 20 + (i % 3) * 50;
+        int y0 = 20 + (i % 3) * PORTRAITBOX_H;
         ui_draw_box1(x0, y0, x0 + 41, y0 + 35, 0x9b, 0x9b, ui_scale);
         ui_draw_filled_rect(x0 + 43, y0, x0 + 43 + 41, y0 + 35, 0, ui_scale);
         ui_draw_box1(x0 + 43, y0, x0 + 43 + 41, y0 + 35, 0x9b, 0x9b, ui_scale);
     }
     lbxfont_select(5, 0, 0, 0);
-    lbxfont_print_str_right(100 - 3, 165, game_str_ng_ai, UI_SCREEN_W, ui_scale);
+    lbxfont_print_str_right(100 - 3, 155, game_str_ng_ai, UI_SCREEN_W, ui_scale);
     lbxfont_print_str_normal(100, 165, ":", UI_SCREEN_W, ui_scale);
     lbxfont_print_str_center(40, 180, game_str_ng_cancel, UI_SCREEN_W, ui_scale);
     lbxfont_print_str_center(260, 180, game_str_ng_ok, UI_SCREEN_W, ui_scale);
-
     hw_video_copy_back_to_page3();
 
 #define MAKE_UIOBJS() \
@@ -348,10 +352,10 @@ static bool ui_new_game_extra(struct game_new_options_s *newopts, struct new_gam
         uiobj_table_clear(); \
         oi_cancel = uiobj_add_mousearea(0, 170, 80, 199, MOO_KEY_ESCAPE); \
         oi_ok = uiobj_add_mousearea(220, 170, 300, 199, MOO_KEY_SPACE); \
-        oi_ai_id = uiobj_add_mousearea(100 - 3, 165, 150, 177, MOO_KEY_a); \
+        oi_ai_id = uiobj_add_mousearea(100 - 3, 155, 150, 167, MOO_KEY_a); \
         for (int i = 0; i < newopts->players; ++i) { \
             int x0 = 4 + (i / 3) * 160; \
-            int y0 = 20 + (i % 3) * 50; \
+            int y0 = PORTRAITBOX_TOP_MARGIN + (i % 3) * PORTRAITBOX_H; \
             oi_race[i] = uiobj_add_mousearea(x0, y0, x0 + 41, y0 + 35, MOO_KEY_UNKNOWN); \
             oi_banner[i] = uiobj_add_mousearea(x0 + 43, y0, x0 + 43 + 41, y0 + 35, MOO_KEY_UNKNOWN); \
             oi_pname[i] = uiobj_add_mousearea(x0 + 43 + 41 + 2, y0 + 2, x0 + 43 + 41 + 2 + 60, y0 + 2 + 10, MOO_KEY_UNKNOWN); \
@@ -448,9 +452,11 @@ static bool ui_new_game_extra(struct game_new_options_s *newopts, struct new_gam
     }
 
 #undef MAKE_UIOBJS
-
     return flag_ok;
 }
+
+#undef PORTRAITBOX_H
+#undef PORTRAITBOX_TOP_MARGIN
 
 /* -------------------------------------------------------------------------- */
 
