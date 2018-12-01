@@ -357,7 +357,10 @@ static void game_ai_classic_turn_p1_front(struct game_s *g, struct ai_turn_p1_s 
     if (ait->num_fronts == 0) {
         tbl_x[ait->num_fronts] = ait->tbl_xcenter[pi];
         tbl_y[ait->num_fronts] = ait->tbl_ycenter[pi];
-        ++ait->num_fronts;
+        /* WASBUG: tbs_front_relation could be used uninitialized when there was no real front.
+           In case of no real fronts, initialize the dummy front with a peaceful relation
+        */
+        ait->tbl_front_relation[ait->num_fronts++] = 80;
     }
     for (int i = 0; i < ait->num_fronts; ++i) {
         ait->tbl_front_planet[i] = game_ai_classic_turn_p1_front_find_planet(g, ait, pi, tbl_x[i], tbl_y[i]);
