@@ -817,7 +817,7 @@ uint32_t game_tech_get_next_rp(const struct game_s *g, player_id_t player, tech_
     cost = tech * tech;
     cost *= game_num_tech_costmulr[g->eto[player].race][field];
     if (IS_AI(g, player)) {
-        cost *= game_num_tech_costmula[g->difficulty];
+        cost *= game_ai->tech_cost(g, player);
         cost /= 100;
     } else {
         cost *= game_num_tech_costmuld[g->difficulty];

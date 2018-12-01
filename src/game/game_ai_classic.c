@@ -2089,6 +2089,16 @@ uint32_t game_ai_classic_production_boost(const struct game_s *g, player_id_t pl
 
 /* -------------------------------------------------------------------------- */
 
+/* The classic AI has the same tech costs as the human has on the easiest level.
+   The cost for humans is: game_num_tech_costmuld[difficulty], and for classical
+   AIs game_num_tech_costmula[g->difficulty].
+*/
+uint8_t game_ai_classic_tech_cost(const struct game_s *g, player_id_t player) {
+   return game_num_tech_costmula[g->difficulty];
+}
+
+/* -------------------------------------------------------------------------- */
+
 static void game_ai_classic_battle_ai_ai_get_weights(const struct game_s *g, player_id_t pi, int *tbl)
 {
     const shipdesign_t *sd = &(g->srd[pi].design[0]);
@@ -4443,6 +4453,7 @@ const struct game_ai_s game_ai_classic = {
     game_ai_classic_turn_p2,
     game_ai_classic_turn_p3,
     game_ai_classic_production_boost,
+    game_ai_classic_tech_cost,
     game_ai_classic_battle_ai_ai_resolve,
     game_ai_classic_battle_ai_turn,
     game_ai_classic_battle_ai_retreat,
@@ -4481,6 +4492,7 @@ const struct game_ai_s game_ai_classicplus = {
     game_ai_classic_turn_p2,
     game_ai_classic_turn_p3,
     game_ai_classic_production_boost,
+    game_ai_classic_tech_cost,
     game_ai_classic_battle_ai_ai_resolve,
     game_ai_classic_battle_ai_turn,
     game_ai_classic_battle_ai_retreat,
