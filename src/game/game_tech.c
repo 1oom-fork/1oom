@@ -299,23 +299,8 @@ uint16_t game_get_base_cost(const struct game_s *g, int player_i)
     cost += get_base_cost_mod_comp(g, e->base_comp, p[TECH_FIELD_COMPUTER]);
     cost += get_base_cost_mod_jammer(g, player_i, p[TECH_FIELD_COMPUTER]);
     cost = (cost * 3) / 5;
-    if (BOOLVEC_IS1(g->is_ai, player_i)) {
-        switch (g->difficulty) {
-            case 1:
-                cost = (cost * 9) / 10;
-                break;
-            case 2:
-                cost = (cost * 8) / 10;
-                break;
-            case 3:
-                cost = (cost * 7) / 10;
-                break;
-            case 4:
-                cost /= 2;
-                break;
-            default:
-                break;
-        }
+    if (IS_AI(g, player_i)) {
+       cost = game_ai->base_cost_reduce(g, player_i, cost);
     }
     if (cost < 50) {
         cost = 50;
