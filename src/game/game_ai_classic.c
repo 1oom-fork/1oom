@@ -4469,6 +4469,7 @@ static bool game_ai_classic_aud_later(struct audience_s *au)
 const struct game_ai_s game_ai_classic = {
     GAME_AI_CLASSIC,
     "Classic",
+    "Original AI, bugs included",
     game_ai_classic_new_game_init,
     game_ai_classic_new_game_tech,
     game_ai_classic_turn_p1,
@@ -4509,6 +4510,7 @@ const struct game_ai_s game_ai_classic = {
 const struct game_ai_s game_ai_classicplus = {
     GAME_AI_CLASSICPLUS,
     "Classic+",
+    "Original AI, with bugfixes and minor tweaks",
     game_ai_classic_new_game_init,
     game_ai_classic_new_game_tech,
     game_ai_classic_turn_p1,
