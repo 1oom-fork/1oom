@@ -2094,6 +2094,28 @@ uint8_t game_ai_classic_tech_cost(const struct game_s *g, player_id_t player) {
 
 /* -------------------------------------------------------------------------- */
 
+uint16_t game_ai_classic_base_cost(const struct game_s *g, player_id_t player, uint16_t cost) {
+   switch (g->difficulty) {
+   case DIFFICULTY_EASY:
+      cost = (cost * 9) / 10;
+      break;
+   case DIFFICULTY_AVERAGE:
+      cost = (cost * 8) / 10;
+      break;
+   case DIFFICULTY_HARD:
+      cost = (cost * 7) / 10;
+      break;
+   case DIFFICULTY_IMPOSSIBLE:
+      cost /= 2;
+   case DIFFICULTY_SIMPLE:
+   default:
+      break;
+   }
+   return cost;
+}
+
+/* -------------------------------------------------------------------------- */
+
 static void game_ai_classic_battle_ai_ai_get_weights(const struct game_s *g, player_id_t pi, int *tbl)
 {
     const shipdesign_t *sd = &(g->srd[pi].design[0]);
@@ -4448,6 +4470,7 @@ const struct game_ai_s game_ai_classic = {
     game_ai_classic_turn_p3,
     game_ai_classic_production_boost,
     game_ai_classic_tech_cost,
+    game_ai_classic_base_cost,
     game_ai_classic_battle_ai_ai_resolve,
     game_ai_classic_battle_ai_turn,
     game_ai_classic_battle_ai_retreat,
@@ -4487,6 +4510,7 @@ const struct game_ai_s game_ai_classicplus = {
     game_ai_classic_turn_p3,
     game_ai_classic_production_boost,
     game_ai_classic_tech_cost,
+    game_ai_classic_base_cost,
     game_ai_classic_battle_ai_ai_resolve,
     game_ai_classic_battle_ai_turn,
     game_ai_classic_battle_ai_retreat,
