@@ -25,6 +25,7 @@ struct game_ai_s {
     void (*turn_p3)(struct game_s *g);
     uint32_t (*production_boost)(const struct game_s *g, player_id_t player, uint32_t prod); /* How much AI cheats with production */
     uint8_t (*tech_cost)(const struct game_s *g, player_id_t player); /* How much research costs for the AI */
+    uint16_t (*base_cost_reduce)(const struct game_s *g, player_id_t player, uint16_t cost); /* Cheat with base cost */
     bool (*battle_ai_ai_resolve)(struct battle_s *bt); /* true if right side won */
     void (*battle_ai_turn)(struct battle_s *bt);
     bool (*battle_ai_retreat)(struct battle_s *bt); /* true if retreat all */
