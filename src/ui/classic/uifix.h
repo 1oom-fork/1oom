@@ -12,6 +12,9 @@ extern bool ui_fix_slider_text_ind;
 /* Fix displayed spy production to match actual. */
 extern bool ui_fix_spy_cost;
 
+/* Fix graphics bug with brighter stars drawn further away than dimmer ones. */
+extern bool ui_fix_starmap_background;
+
 /* Fix out of range msg with 6 ships. */
 extern bool ui_fix_starmap_oor_msg;
 
