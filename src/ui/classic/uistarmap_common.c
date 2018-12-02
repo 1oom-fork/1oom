@@ -267,6 +267,14 @@ static int ui_starmap_scrollkey_accel(int zh)
     return v;
 }
 
+static inline void ui_starmap_draw_starback(uint8_t *gfx, int x, int y)
+{
+    lbxgfx_draw_frame_offs(x, y, gfx, 6, 6, 221, 177, UI_SCREEN_W);
+    lbxgfx_draw_frame_offs(x + 320, y, gfx, 6, 6, 221, 177, UI_SCREEN_W);
+    lbxgfx_draw_frame_offs(x, y + 200, gfx, 6, 6, 221, 177, UI_SCREEN_W);
+    lbxgfx_draw_frame_offs(x + 320, y + 200, gfx, 6, 6, 221, 177, UI_SCREEN_W);
+}
+
 /* -------------------------------------------------------------------------- */
 
 void ui_starmap_draw_basic(struct starmap_data_s *d)
@@ -396,14 +404,13 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
         y0 = (-y / 4) + 6;
         x1 = ((-x + 1) / 2) + 6;
         y1 = ((-y + 1) / 2) + 6;
-        lbxgfx_draw_frame_offs(x0, y0, ui_data.gfx.starmap.starback, 6, 6, 221, 177, UI_SCREEN_W);
-        lbxgfx_draw_frame_offs(x0 + 320, y0, ui_data.gfx.starmap.starback, 6, 6, 221, 177, UI_SCREEN_W);
-        lbxgfx_draw_frame_offs(x0, y0 + 200, ui_data.gfx.starmap.starback, 6, 6, 221, 177, UI_SCREEN_W);
-        lbxgfx_draw_frame_offs(x0 + 320, y0 + 200, ui_data.gfx.starmap.starback, 6, 6, 221, 177, UI_SCREEN_W);
-        lbxgfx_draw_frame_offs(x1, y1, ui_data.gfx.starmap.starbak2, 6, 6, 221, 177, UI_SCREEN_W);
-        lbxgfx_draw_frame_offs(x1 + 320, y1, ui_data.gfx.starmap.starbak2, 6, 6, 221, 177, UI_SCREEN_W);
-        lbxgfx_draw_frame_offs(x1, y1 + 200, ui_data.gfx.starmap.starbak2, 6, 6, 221, 177, UI_SCREEN_W);
-        lbxgfx_draw_frame_offs(x1 + 320, y1 + 200, ui_data.gfx.starmap.starbak2, 6, 6, 221, 177, UI_SCREEN_W);
+        if (ui_extra_enabled) {
+            ui_starmap_draw_starback(ui_data.gfx.starmap.starbak2, x0, y0);
+            ui_starmap_draw_starback(ui_data.gfx.starmap.starback, x1, y1);
+        } else {
+            ui_starmap_draw_starback(ui_data.gfx.starmap.starback, x0, y0);
+            ui_starmap_draw_starback(ui_data.gfx.starmap.starbak2, x1, y1);
+        }
     }
     for (int i = 0; i < g->nebula_num; ++i) {
         int tx, ty;
