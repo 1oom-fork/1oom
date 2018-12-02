@@ -826,7 +826,7 @@ static void ui_design_sel_weapon(struct design_data_s *d, int wslot)
     bool flag_tbl_enable[WEAPON_NUM];
     weapon_t tbl_weapon[WEAPON_NUM];
     int xpos, xpos2, n = 0, numlines = 0;
-    int16_t curweap;
+    int16_t curweap = 0;
     char titlebuf[0x80];
     char linebuf[WEAPON_NUM * 0x58];
     const char *lineptr[WEAPON_NUM + 1];
