@@ -167,9 +167,9 @@ static void game_turn_send_transport(struct game_s *g)
     }
 }
 
-static inline void game_add_planet_to_eco_finished(struct game_s *g, uint8_t pli, player_id_t owner)
+static inline void game_add_planet_to_eco_finished(struct planet_s *p)
 {
-    BOOLVEC_SET1(g->planet[pli].finished, FINISHED_ECO2);
+    BOOLVEC_SET1(p->finished, FINISHED_ECO2);
 }
 
 static void game_turn_build_eco(struct game_s *g)
@@ -244,7 +244,7 @@ static void game_turn_build_eco(struct game_s *g)
                     p->growth = PLANET_GROWTH_NORMAL;
                     ecoprod = p->bc_to_ecoproj - game_num_atmos_cost;
                     p->bc_to_ecoproj -= game_num_atmos_cost;
-                    game_add_planet_to_eco_finished(g, i, owner);
+                    game_add_planet_to_eco_finished(p);
                 } else {
                     ecoprod = 0;
                 }
@@ -266,7 +266,7 @@ static void game_turn_build_eco(struct game_s *g)
                     SETMIN(p->max_pop3, game_num_max_pop);
                     ecoprod = p->bc_to_ecoproj - game_num_soil_cost;
                     p->bc_to_ecoproj -= game_num_soil_cost; /* BUG cost was not removed */
-                    game_add_planet_to_eco_finished(g, i, owner);
+                    game_add_planet_to_eco_finished(p);
                 } else {
                     ecoprod = 0;
                 }
@@ -288,7 +288,7 @@ static void game_turn_build_eco(struct game_s *g)
                     SETMIN(p->max_pop3, game_num_max_pop);
                     ecoprod = p->bc_to_ecoproj - game_num_adv_soil_cost;
                     p->bc_to_ecoproj -= game_num_adv_soil_cost; /* BUG cost was not removed */
-                    game_add_planet_to_eco_finished(g, i, owner);
+                    game_add_planet_to_eco_finished(p);
                 } else {
                     ecoprod = 0;
                 }
