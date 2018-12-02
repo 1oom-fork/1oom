@@ -150,7 +150,7 @@ static void tech_draw_cb(void *vptr)
             ui_draw_line_3h(227, y + 1, 226 + t->slider[i] / 2, t->slider_lock[i] ? 0x22 : 0x73);
         }
         lbxfont_select(0, 6, 0, 0);
-        lbxfont_set_color_c_n(0x26, 5);
+        lbxfont_set_color_c_n((ui_extra_enabled && game_tech_current_research_has_max_bonus(e, i)) ? 0x41 : 0x26, 5);
         lbxfont_print_num_right(307, y, t->percent[i], UI_SCREEN_W);
     }
 
@@ -224,9 +224,6 @@ static void tech_draw_cb(void *vptr)
                 y0 = y + (8 - (complpercent * 4) / 50);
                 y1 = y + 7;
                 lbxgfx_draw_frame_offs(287, y, ui_data.gfx.screens.litebulb_on, 0, y0, UI_SCREEN_W - 1, y1, UI_SCREEN_W);
-            }
-            if (ui_extra_enabled) {
-                ui_draw_filled_rect(311, y + 4, 312, y + 6, game_tech_current_research_has_max_bonus(e, i) ? 0x44 : 0x00);
             }
         } else {
             lbxfont_select_set_12_1(2, 0xd, 0, 0);
@@ -384,7 +381,7 @@ void ui_tech(struct game_s *g, player_id_t active_player)
                 y = i * 21 + 22;
                 oi_tbl_lock[i] = uiobj_add_mousearea(168, y, 218, y + 8, MOO_KEY_UNKNOWN);
                 if (ui_extra_enabled) {
-                    oi_tbl_bonus[i] = uiobj_add_mousearea(310, y, 314, y + 8, MOO_KEY_UNKNOWN);
+                    oi_tbl_bonus[i] = uiobj_add_mousearea(298, y, 309, y + 8, MOO_KEY_UNKNOWN);
                 }
                 if (!t->slider_lock[i]) {
                     oi_tbl_minus[i] = uiobj_add_mousearea(223, y, 226, y + 8, MOO_KEY_UNKNOWN);
