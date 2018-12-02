@@ -21,6 +21,7 @@
 #include "uidraw.h"
 #include "uidefs.h"
 #include "uidelay.h"
+#include "uifix.h"
 #include "uiobj.h"
 #include "uisound.h"
 
@@ -519,19 +520,22 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
     lbxgfx_draw_frame(0, 0, ui_data.gfx.starmap.mainview, UI_SCREEN_W);
     uiobj_set_limits(STARMAP_LIMITS);
     {
+        uint8_t *gfx;
         int x0, y0, x1, y1;
         x0 = (-x / 4) + 6;
         y0 = (-y / 4) + 6;
         x1 = ((-x + 1) / 2) + 6;
         y1 = ((-y + 1) / 2) + 6;
-        lbxgfx_draw_frame_offs(x0, y0, ui_data.gfx.starmap.starback, STARMAP_LIMITS, UI_SCREEN_W);
-        lbxgfx_draw_frame_offs(x0 + 320, y0, ui_data.gfx.starmap.starback, STARMAP_LIMITS, UI_SCREEN_W);
-        lbxgfx_draw_frame_offs(x0, y0 + 200, ui_data.gfx.starmap.starback, STARMAP_LIMITS, UI_SCREEN_W);
-        lbxgfx_draw_frame_offs(x0 + 320, y0 + 200, ui_data.gfx.starmap.starback, STARMAP_LIMITS, UI_SCREEN_W);
-        lbxgfx_draw_frame_offs(x1, y1, ui_data.gfx.starmap.starbak2, STARMAP_LIMITS, UI_SCREEN_W);
-        lbxgfx_draw_frame_offs(x1 + 320, y1, ui_data.gfx.starmap.starbak2, STARMAP_LIMITS, UI_SCREEN_W);
-        lbxgfx_draw_frame_offs(x1, y1 + 200, ui_data.gfx.starmap.starbak2, STARMAP_LIMITS, UI_SCREEN_W);
-        lbxgfx_draw_frame_offs(x1 + 320, y1 + 200, ui_data.gfx.starmap.starbak2, STARMAP_LIMITS, UI_SCREEN_W);
+        gfx = ui_fix_starmap_background ? ui_data.gfx.starmap.starbak2 : ui_data.gfx.starmap.starback;
+        lbxgfx_draw_frame_offs(x0, y0, gfx, STARMAP_LIMITS, UI_SCREEN_W);
+        lbxgfx_draw_frame_offs(x0 + 320, y0, gfx, STARMAP_LIMITS, UI_SCREEN_W);
+        lbxgfx_draw_frame_offs(x0, y0 + 200, gfx, STARMAP_LIMITS, UI_SCREEN_W);
+        lbxgfx_draw_frame_offs(x0 + 320, y0 + 200, gfx, STARMAP_LIMITS, UI_SCREEN_W);
+        gfx = ui_fix_starmap_background ? ui_data.gfx.starmap.starback : ui_data.gfx.starmap.starbak2;
+        lbxgfx_draw_frame_offs(x1, y1, gfx, STARMAP_LIMITS, UI_SCREEN_W);
+        lbxgfx_draw_frame_offs(x1 + 320, y1, gfx, STARMAP_LIMITS, UI_SCREEN_W);
+        lbxgfx_draw_frame_offs(x1, y1 + 200, gfx, STARMAP_LIMITS, UI_SCREEN_W);
+        lbxgfx_draw_frame_offs(x1 + 320, y1 + 200, gfx, STARMAP_LIMITS, UI_SCREEN_W);
     }
     for (int i = 0; i < g->nebula_num; ++i) {
         int tx, ty;
