@@ -57,5 +57,6 @@ or pressing Alt-X in the main menu enables the following extra UI features:
   your last planet of choice
 - Clicking on #, Name, etc on Planets screen sorts the list
 - Clicking on Station or ship names on Fleet screen sorts the list
+- Fixed graphics bug with brighter stars drawn further away than dimmer ones
 
 See doc/list_gamediff.txt for a list of differences in the game itself.
