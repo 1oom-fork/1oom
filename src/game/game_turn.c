@@ -177,14 +177,12 @@ static inline void game_add_planet_to_terraf_finished(struct planet_s *p)
     BOOLVEC_SET1(p->finished, FINISHED_TERRAF);
 }
 
-static void game_turn_build_eco(struct game_s *g)
-{
-    for (int i = 0; i < g->galaxy_stars; ++i) {
-        planet_t *p = &(g->planet[i]);
+static void game_planet_build_eco_do(const struct game_s *g, struct planet_s *p) {
+    if ((p->type != PLANET_TYPE_NOT_HABITABLE) && (p->pop != 0)) {
         player_id_t owner;
         owner = p->owner;
         p->pop_prev = (owner != PLAYER_NONE) ? p->pop : 0;
-        if ((owner != PLAYER_NONE) && (p->type != PLANET_TYPE_NOT_HABITABLE) && (p->pop != 0)) {
+        if (owner != PLAYER_NONE) {
             const empiretechorbit_t *e;
             int ecorestore, ecoprod, operating_factories;
             e = &(g->eto[owner]);
@@ -321,6 +319,14 @@ static void game_turn_build_eco(struct game_s *g)
             }
             SETRANGE(p->pop, 0, p->max_pop3);
         }
+    }
+}
+
+static void game_turn_build_eco(struct game_s *g)
+{
+    for (int i = 0; i < g->galaxy_stars; ++i) {
+        planet_t *p = &(g->planet[i]);
+        game_planet_build_eco_do(g, p);
     }
 }
 
