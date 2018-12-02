@@ -4,4 +4,6 @@
 
 /* -------------------------------------------------------------------------- */
 
+bool ui_fix_starmap_background = false;
+
 bool ui_qol_cursor_nav_all_obj = false;
