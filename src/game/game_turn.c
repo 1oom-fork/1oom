@@ -1555,6 +1555,18 @@ static void game_turn_update_final_war(struct game_s *g)
 
 /* -------------------------------------------------------------------------- */
 
+void game_turn_ai_do(struct game_s *g) {
+    /* Clump together AI turn_pX() calls.
+       Trying to merge these loops causes different behaviour for original AI
+     */
+    for (player_id_t pi = PLAYER_0; pi < g->players; ++pi) game_ai->turn_p1(g, pi);
+    for (player_id_t pi = PLAYER_0; pi < g->players; ++pi) game_ai->turn_p2(g, pi);
+    game_update_have_reserve_fuel(g);
+    for (player_id_t pi = PLAYER_0; pi < g->players; ++pi) game_ai->turn_p3(g, pi);
+}
+
+/* -------------------------------------------------------------------------- */
+
 struct game_end_s game_turn_process(struct game_s *g)
 {
     struct game_end_s game_end;
@@ -1575,10 +1587,7 @@ struct game_end_s game_turn_process(struct game_s *g)
     game_turn_countdown_ceasefire(g);
     game_turn_update_mood_blunder(g);
     game_update_have_reserve_fuel(g);
-    game_ai->turn_p1(g);
-    game_ai->turn_p2(g);
-    game_update_have_reserve_fuel(g);
-    game_ai->turn_p3(g);
+    game_turn_ai_do(g);
     game_turn_init_z_finished(g);
     game_turn_send_transport(g);
     game_update_production(g);
