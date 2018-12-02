@@ -389,8 +389,13 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
         y0 = (-y / 4) + 6;
         x1 = ((-x + 1) / 2) + 6;
         y1 = ((-y + 1) / 2) + 6;
-        ui_starmap_draw_starback(ui_data.gfx.starmap.starback, x0, y0);
-        ui_starmap_draw_starback(ui_data.gfx.starmap.starbak2, x1, y1);
+        if (ui_extra_enabled) {
+            ui_starmap_draw_starback(ui_data.gfx.starmap.starbak2, x0, y0);
+            ui_starmap_draw_starback(ui_data.gfx.starmap.starback, x1, y1);
+        } else {
+            ui_starmap_draw_starback(ui_data.gfx.starmap.starback, x0, y0);
+            ui_starmap_draw_starback(ui_data.gfx.starmap.starbak2, x1, y1);
+        }
     }
     for (int i = 0; i < g->nebula_num; ++i) {
         int tx, ty;
