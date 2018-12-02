@@ -10,8 +10,10 @@ struct election_s;
 struct audience_s;
 
 typedef enum {
+    GAME_AI_NONE = -1,
     GAME_AI_CLASSIC = 0,
     GAME_AI_CLASSICPLUS, /*1*/
+    GAME_AI_STUB, /* Should not be visible when creating games? */
     GAME_AI_NUM
 } game_ai_id_t;
 

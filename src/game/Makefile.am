@@ -13,6 +13,8 @@ libgame_a_SOURCES = \
     game_ai.h \
     game_ai_classic.c \
     game_ai_classic.h \
+    game_ai_stub.c \
+    game_ai_stub.h \
     game_audience.c \
     game_audience.h \
     game_aux.c \
