@@ -57,3 +57,6 @@ enables the following extra UI features:
 The config file item "ui.uifixbugs" (set via the -uifixbugs command-line option)
 enables the following UI bug fixes:
 - Pressing = on the Tech screen adjusts only the unlocked sliders
+- Fixed graphics bug with brighter stars drawn further away than dimmer ones
+
+See doc/list_gamediff.txt for a list of differences in the game itself.
