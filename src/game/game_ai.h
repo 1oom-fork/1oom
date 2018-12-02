@@ -17,6 +17,9 @@ typedef enum {
     GAME_AI_NUM
 } game_ai_id_t;
 
+/* When an unspecified AI needs to deal with something */
+#define GAME_AI_DEFAULT GAME_AI_CLASSICPLUS
+
 struct game_ai_s {
     game_ai_id_t id;
     char const * const name;

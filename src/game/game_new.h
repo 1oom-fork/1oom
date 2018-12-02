@@ -20,7 +20,7 @@ struct game_new_options_s {
 
 #define GAME_NEW_OPTS_DEFAULT \
     { \
-        0, GALAXY_SIZE_SMALL, DIFFICULTY_SIMPLE, 0, 2, \
+        0, GALAXY_SIZE_SMALL, DIFFICULTY_SIMPLE, GAME_AI_DEFAULT, 2, \
         { \
             { "", "", RACE_RANDOM, BANNER_RANDOM, false }, \
             { "", "", RACE_RANDOM, BANNER_RANDOM, true }, \
