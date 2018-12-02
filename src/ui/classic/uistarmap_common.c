@@ -560,19 +560,22 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
     lbxgfx_draw_frame(0, 0, ui_data.gfx.starmap.mainview);
     ui_starmap_set_limits();
     {
+        uint8_t *gfx;
         int x0, y0, x1, y1;
         x0 = (-x / 4) + 6;
         y0 = (-y / 4) + 6;
         x1 = ((-x + 1) / 2) + 6;
         y1 = ((-y + 1) / 2) + 6;
-        ui_starmap_draw_frame(x0, y0, ui_data.gfx.starmap.starback);
-        ui_starmap_draw_frame(x0 + 320, y0, ui_data.gfx.starmap.starback);
-        ui_starmap_draw_frame(x0, y0 + 200, ui_data.gfx.starmap.starback);
-        ui_starmap_draw_frame(x0 + 320, y0 + 200, ui_data.gfx.starmap.starback);
-        ui_starmap_draw_frame(x1, y1, ui_data.gfx.starmap.starbak2);
-        ui_starmap_draw_frame(x1 + 320, y1, ui_data.gfx.starmap.starbak2);
-        ui_starmap_draw_frame(x1, y1 + 200, ui_data.gfx.starmap.starbak2);
-        ui_starmap_draw_frame(x1 + 320, y1 + 200, ui_data.gfx.starmap.starbak2);
+        gfx = ui_fix_starmap_background ? ui_data.gfx.starmap.starbak2 : ui_data.gfx.starmap.starback;
+        ui_starmap_draw_frame(x0, y0, gfx);
+        ui_starmap_draw_frame(x0 + 320, y0, gfx);
+        ui_starmap_draw_frame(x0, y0 + 200, gfx);
+        ui_starmap_draw_frame(x0 + 320, y0 + 200, gfx);
+        gfx = ui_fix_starmap_background ? ui_data.gfx.starmap.starback : ui_data.gfx.starmap.starbak2;
+        ui_starmap_draw_frame(x1, y1, gfx);
+        ui_starmap_draw_frame(x1 + 320, y1, gfx);
+        ui_starmap_draw_frame(x1, y1 + 200, gfx);
+        ui_starmap_draw_frame(x1 + 320, y1 + 200, gfx);
     }
     for (int i = 0; i < g->nebula_num; ++i) {
         int tx, ty;
