@@ -20,7 +20,7 @@ struct game_ai_s {
     char const * const name;
     char const * const description;
     void (*new_game_init)(struct game_s *g, player_id_t player, uint8_t home);
-    void (*new_game_tech)(struct game_s *g);
+    void (*new_game_tech)(struct game_s *g, player_id_t pi);
     void (*turn_p1)(struct game_s *g, player_id_t pi);
     void (*turn_p2)(struct game_s *g, player_id_t pi);
     void (*turn_p3)(struct game_s *g, player_id_t pi);

@@ -975,7 +975,9 @@ static void game_generate_research(struct game_s *g, const uint8_t *rflag)
         }
     }
 
-    game_ai->new_game_tech(g);
+    for (player_id_t pli = PLAYER_0; pli < g->players; ++pli) {
+        game_ai->new_game_tech(g, pli);
+    }
 }
 
 static void game_generate_misc(struct game_s *g)

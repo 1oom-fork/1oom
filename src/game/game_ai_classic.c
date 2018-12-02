@@ -89,12 +89,9 @@ static void game_ai_classic_new_game_init(struct game_s *g, player_id_t player, 
     e->shipi_bomber = 1;
 }
 
-static void game_ai_classic_new_game_tech(struct game_s *g)
+static void game_ai_classic_new_game_tech(struct game_s *g, player_id_t pli)
 {
-    for (player_id_t pli = PLAYER_0; pli < g->players; ++pli) {
-        if (IS_HUMAN(g, pli)) {
-            continue;
-        }
+    if (!IS_HUMAN(g, pli)) {
         for (tech_field_t field = TECH_FIELD_COMPUTER; field < TECH_FIELD_NUM; ++field) {
             uint8_t tech;
             uint8_t *rl;
