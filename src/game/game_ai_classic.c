@@ -117,6 +117,7 @@ static void game_ai_classic_new_game_tech(struct game_s *g)
 /* -------------------------------------------------------------------------- */
 
 struct ai_turn_p1_s {
+    uint16_t last_update_year;
     bool have_colonizable;
     bool need_conquer;
     uint32_t tbl_shipthreat[PLAYER_NUM + 1][NUM_SHIPDESIGNS];
@@ -1075,10 +1076,11 @@ static void game_ai_classic_turn_p1_tax(struct game_s *g, player_id_t pi)
     g->eto[pi].tax = (g->year >= 20) ? (rnd_1_n(10, &g->seed) + g->difficulty + 2) : 0;
 }
 
-static void game_ai_classic_turn_p1(struct game_s *g)
+
+static void game_ai_classic_turn_p1(struct game_s *g, player_id_t pi)
 {
-    struct ai_turn_p1_s ait[1];
-    for (player_id_t pi = PLAYER_0; pi < PLAYER_NUM; ++pi) {
+    static struct ai_turn_p1_s ait[1] = { 0 };
+    for (player_id_t pi = PLAYER_0; ait->last_update_year < g->year && pi < PLAYER_NUM; ++pi) {
         const empiretechorbit_t *e = &(g->eto[pi]);
         const shipdesign_t *sd = &(g->srd[pi].design[0]);
         for (int i = 0; i < e->shipdesigns_num; ++i) {
@@ -1154,12 +1156,10 @@ static void game_ai_classic_turn_p1(struct game_s *g)
             }
         }
     }
-    for (player_id_t pi = PLAYER_0; pi < g->players; ++pi) {
-        bool flag_send_colony;
-        if (IS_HUMAN(g, pi)) {
-            continue;
-        }
-        flag_send_colony = true;
+    ait->last_update_year = g->year;
+
+    if (!IS_HUMAN(g, pi)) {
+        bool flag_send_colony = true;
         if (g->eto[pi].trait2 != TRAIT2_EXPANSIONIST) {
             int num_planets, num_developing_planets;
             num_planets = 0;
@@ -1800,13 +1800,11 @@ static void game_ai_classic_turn_p2_do(struct game_s *g, player_id_t pi)
     }
 }
 
-static void game_ai_classic_turn_p2(struct game_s *g)
+static void game_ai_classic_turn_p2(struct game_s *g, player_id_t pi)
 {
-    for (player_id_t pi = PLAYER_0; pi < g->players; ++pi) {
-        if (IS_AI(g, pi) && IS_ALIVE(g, pi)) {
-            if (--g->eto[pi].ai_p2_countdown <= 0) {
-                game_ai_classic_turn_p2_do(g, pi);
-            }
+    if (IS_AI(g, pi) && IS_ALIVE(g, pi)) {
+        if (--g->eto[pi].ai_p2_countdown <= 0) {
+            game_ai_classic_turn_p2_do(g, pi);
         }
     }
 }
@@ -1840,7 +1838,7 @@ static void game_ai_classic_turn_p3_sub1(struct game_s *g, player_id_t pi)
     }
 }
 
-static void game_ai_classic_turn_p3(struct game_s *g)
+static void game_ai_classic_turn_p3(struct game_s *g, player_id_t pi)
 {
     /* AI p3 slider weights
         [0..3] ship/def/ind/eco
@@ -1856,13 +1854,10 @@ static void game_ai_classic_turn_p3(struct game_s *g)
         { 4, 1, 1, 1,  2, 2, 4, 2, 1 }  /* War */
     };
 
-    for (player_id_t pi = PLAYER_0; pi < g->players; ++pi) {
+    if (!IS_HUMAN(g, pi)) {
         empiretechorbit_t *e = &(g->eto[pi]);
         trait2_t ti;
         race_t race;
-        if (IS_HUMAN(g, pi)) {
-            continue;
-        }
         race = e->race;
         /* BUG this was inside the if (--countdown) and ti is used later outside it */
         ti = e->trait2;

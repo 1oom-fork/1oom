@@ -21,9 +21,9 @@ struct game_ai_s {
     char const * const description;
     void (*new_game_init)(struct game_s *g, player_id_t player, uint8_t home);
     void (*new_game_tech)(struct game_s *g);
-    void (*turn_p1)(struct game_s *g);
-    void (*turn_p2)(struct game_s *g);
-    void (*turn_p3)(struct game_s *g);
+    void (*turn_p1)(struct game_s *g, player_id_t pi);
+    void (*turn_p2)(struct game_s *g, player_id_t pi);
+    void (*turn_p3)(struct game_s *g, player_id_t pi);
     uint32_t (*production_boost)(const struct game_s *g, player_id_t player, uint32_t prod); /* How much AI cheats with production */
     uint8_t (*tech_cost)(const struct game_s *g, player_id_t player); /* How much research costs for the AI */
     uint16_t (*base_cost_reduce)(const struct game_s *g, player_id_t player, uint16_t cost); /* Cheat with base cost */
