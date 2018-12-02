@@ -21,4 +21,7 @@ extern bool ui_fix_starmap_oor_msg;
 /* Allow navigation through objects with assigned hotkeys using the cursor keys. */
 extern bool ui_qol_cursor_nav_all_obj;
 
+/* Map screen shows current year. */
+extern bool ui_qol_gmap_year;
+
 #endif
