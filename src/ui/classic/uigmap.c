@@ -20,6 +20,7 @@
 #include "uidelay.h"
 #include "uidefs.h"
 #include "uidraw.h"
+#include "uifix.h"
 #include "uiobj.h"
 #include "uipal.h"
 #include "uisound.h"
@@ -139,6 +140,11 @@ static void gmap_draw_cb(void *vptr)
             gfx = ui_data.gfx.starmap.tinytran[g->eto[r->owner].banner];
             ui_gmap_draw_frame(x, y, gfx);
         }
+    }
+
+    if (ui_qol_gmap_year) {
+        lbxfont_select_set_12_4(5, 5, 0, 0);
+        lbxfont_print_num_normal(10, 9, g->year + YEAR_BASE);
     }
 
     for (int i = 0; i < g->galaxy_stars; ++i) {
