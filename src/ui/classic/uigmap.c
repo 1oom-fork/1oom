@@ -134,6 +134,16 @@ static void gmap_draw_cb(void *vptr)
         }
     }
 
+    if (ui_extra_enabled) {
+        char buf[32];
+        sprintf(buf, "Year %i", g->year+2299);
+        lbxfont_select(0, 6, 0, 0);
+        lbxfont_set_color_c_n(0, 5);
+        lbxfont_print_str_normal(9, 9, buf, UI_SCREEN_W);
+        lbxfont_set_color_c_n(194, 5);
+        lbxfont_print_str_normal(8, 8, buf, UI_SCREEN_W);
+    }
+
     for (int i = 0; i < g->galaxy_stars; ++i) {
         const planet_t *p = &(g->planet[i]);
         if (BOOLVEC_IS1(p->within_srange, d->api)) {
@@ -303,11 +313,7 @@ static void gmap_draw_cb(void *vptr)
     lbxfont_set_temp_color(0x2b);
     lbxfont_select_set_12_4(4, 0xf, 0, 0);
     lbxfont_print_str_normal(242, 8, game_str_gm_gmap, UI_SCREEN_W);
-    if (ui_extra_enabled) {
-        lbxfont_print_num_normal(250, 88, g->year + YEAR_BASE, UI_SCREEN_W);
-    } else {
-        lbxfont_print_str_normal(250, 88, game_str_gm_mapkey, UI_SCREEN_W);
-    }
+    lbxfont_print_str_normal(250, 88, game_str_gm_mapkey, UI_SCREEN_W);
     lbxfont_set_temp_color(0x00);
     gmap_blink_step(&(d->b));
     {
