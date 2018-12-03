@@ -77,9 +77,12 @@ static void video_setpal_8bpp(uint8_t *pal, int first, int num)
 {
     SDL_Color color[256];
     for (int i = first; i < (first + num); ++i) {
-        color[i].r = *pal++ << 2;
-        color[i].g = *pal++ << 2;
-        color[i].b = *pal++ << 2;
+        color[i].r = (*pal << 2) | ((*pal >> 4) & 3);
+        pal++;
+        color[i].g = (*pal << 2) | ((*pal >> 4) & 3);
+        pal++;
+        color[i].b = (*pal << 2) | ((*pal >> 4) & 3);
+        pal++;
     }
     SDL_SetColors(video.screen, &color[first], first, num);
     video_update_8bpp();
@@ -110,13 +113,13 @@ static void video_setpal_gl_24bpp(uint8_t *pal, int f, int num)
     for (int i = 0; i < num; ++i) {
         for (int j = 0; j < 3; ++j) {
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
-            video.ppal.p8[(f + i) * 3 + 0] = pal[i * 3 + 2] << 2;
-            video.ppal.p8[(f + i) * 3 + 1] = pal[i * 3 + 1] << 2;
-            video.ppal.p8[(f + i) * 3 + 2] = pal[i * 3 + 0] << 2;
+            video.ppal.p8[(f + i) * 3 + 0] = (pal[i * 3 + 2] << 2) | ((pal[i * 3 + 2] >> 4) & 3);
+            video.ppal.p8[(f + i) * 3 + 1] = (pal[i * 3 + 1] << 2) | ((pal[i * 3 + 1] >> 4) & 3);
+            video.ppal.p8[(f + i) * 3 + 2] = (pal[i * 3 + 0] << 2) | ((pal[i * 3 + 0] >> 4) & 3);
 #else
-            video.ppal.p8[(f + i) * 3 + 0] = pal[i * 3 + 0] << 2;
-            video.ppal.p8[(f + i) * 3 + 1] = pal[i * 3 + 1] << 2;
-            video.ppal.p8[(f + i) * 3 + 2] = pal[i * 3 + 2] << 2;
+            video.ppal.p8[(f + i) * 3 + 0] = (pal[i * 3 + 0] << 2) | ((pal[i * 3 + 0] >> 4) & 3);
+            video.ppal.p8[(f + i) * 3 + 1] = (pal[i * 3 + 1] << 2) | ((pal[i * 3 + 1] >> 4) & 3);
+            video.ppal.p8[(f + i) * 3 + 2] = (pal[i * 3 + 2] << 2) | ((pal[i * 3 + 2] >> 4) & 3);
 #endif
         }
     }
