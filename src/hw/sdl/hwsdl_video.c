@@ -65,9 +65,9 @@ static void video_setpal_8bpp(const uint8_t *pal, int first, int num)
 {
     SDL_Color color[256];
     for (int i = first; i < (first + num); ++i) {
-        color[i].r = *pal++ << 2;
-        color[i].g = *pal++ << 2;
-        color[i].b = *pal++ << 2;
+        color[i].r = vgapal_6bit_to_8bit(*pal++);
+        color[i].g = vgapal_6bit_to_8bit(*pal++);
+        color[i].b = vgapal_6bit_to_8bit(*pal++);
     }
     SDL_SetColors(video.source[0], &color[first], first, num);
     SDL_SetColors(video.source[1], &color[first], first, num);
@@ -128,9 +128,9 @@ static void video_setpal_gl_32bpp(const uint8_t *pal, int f, int num)
 {
     SDL_Color color[256];
     for (int i = f; i < (f + num); ++i) {
-        color[i].r = *pal++ << 2;
-        color[i].g = *pal++ << 2;
-        color[i].b = *pal++ << 2;
+        color[i].r = vgapal_6bit_to_8bit(*pal++);
+        color[i].g = vgapal_6bit_to_8bit(*pal++);
+        color[i].b = vgapal_6bit_to_8bit(*pal++);
     }
     SDL_SetColors(video.source[0], &color[f], f, num);
     SDL_SetColors(video.source[1], &color[f], f, num);
@@ -372,9 +372,9 @@ int hw_icon_set(const uint8_t *data, const uint8_t *pal, int w, int h)
         p += icon->pitch;
     }
     for (int i = 0; i < 256; ++i) {
-        color[i].r = *pal++ << 2;
-        color[i].g = *pal++ << 2;
-        color[i].b = *pal++ << 2;
+        color[i].r = vgapal_6bit_to_8bit(*pal++);
+        color[i].g = vgapal_6bit_to_8bit(*pal++);
+        color[i].b = vgapal_6bit_to_8bit(*pal++);
     }
     SDL_SetColors(icon, color, 0, maxb + 1);
     SDL_WM_SetIcon(icon, mask);
