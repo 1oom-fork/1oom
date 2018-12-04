@@ -248,7 +248,7 @@ static void game_generate_planets(struct game_s *g)
                     if ((r > 0xc) && (r < 0x10)) { t = PLANET_TYPE_ARID; }
                     if ((r > 0xf) && (r < 0x12)) { t = PLANET_TYPE_OCEAN; }
                     if ((r > 0x11) && (r < 0x14)) { t = PLANET_TYPE_JUNGLE; }
-                    if (r > 0x14) { t = PLANET_TYPE_TERRAN; }
+                    if (r >= 0x14) { t = PLANET_TYPE_TERRAN; }
                     break;
                 case STAR_TYPE_GREEN:
                     /*if (r < 2) { t = PLANET_TYPE_NOT_HABITABLE; }*/
