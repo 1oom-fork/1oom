@@ -13,6 +13,9 @@ endif
 if COMPILE_UICLASSIC_ALLEG4
 bin_PROGRAMS += 1oom_classic_alleg4
 endif
+if COMPILE_UICLASSIC_X11
+bin_PROGRAMS += 1oom_classic_x11
+endif
 endif
 
 if COMPILE_TOOLS
@@ -159,6 +162,12 @@ hwalleg4_lib = $(top_builddir)/src/hw/alleg/4/libhwalleg4.a
 1oom_lbxview_alleg4_SOURCES = lbxview.c $(audio_sources) $(util_sources) $(ui_sources) $(pic_sources)
 1oom_lbxview_alleg4_LDADD = $(1oom_lbxview_alleg4_libs) @HW_ALLEG4_LIBS@ @EXTRA_ALLEG4_LIBS@ @SAMPLERATE_LIBS@
 1oom_lbxview_alleg4_DEPENDENCIES = $(1oom_lbxview_alleg4_libs)
+
+hwx11_lib = $(top_builddir)/src/hw/x11/libx11.a
+1oom_classic_x11_libs = $(gamemain_lib) $(game_lib) $(uiclassic_lib) $(game_lib) $(uiclassic_lib) $(hwx11_lib) $(common_libs)
+1oom_classic_x11_SOURCES = $(util_sources) $(ui_sources) $(pic_sources)
+1oom_classic_x11_LDADD = $(1oom_classic_x11_libs) @HW_X11_LIBS@ @EXTRA_X11_LIBS@ 
+1oom_classic_x11_DEPENDENCIES = $(1oom_classic_x11_libs)
 
 1oom_lbxedit_libs = $(hwnop_lib) $(common_libs)
 1oom_lbxedit_SOURCES = lbxedit.c util.c util_cstr.c lib.c log.c

@@ -14,6 +14,7 @@ AC_ARG_ENABLE(hwsdl1gl, AS_HELP_STRING([--disable-hwsdl1gl], [disables SDL1 HW O
 AC_ARG_ENABLE(hwsdl2, AS_HELP_STRING([--disable-hwsdl2], [disables SDL2 HW]))
 AC_ARG_ENABLE(hwsdl2audio, AS_HELP_STRING([--disable-hwsdl2audio], [disables SDL2 HW audio support]))
 AC_ARG_ENABLE(hwalleg4, AS_HELP_STRING([--disable-hwalleg4], [disables Allegro 4 HW]))
+AC_ARG_ENABLE(hwx11, AS_HELP_STRING([--disable-hwx11], [disables Xorg HW]))
 
 AC_CONFIG_SRCDIR([src/main.c])
 AC_CONFIG_AUX_DIR([build-aux])
@@ -512,6 +513,31 @@ if test x"$enable_hwalleg4" != "xno"; then
 fi
 AC_SUBST(HW_ALLEG4_LIBS)
 
+dnl - X11 interface, no need to check, X11 presence is part of autotools system requirements
+
+AM_CONDITIONAL(COMPILE_HW_X11, false)
+HW_X11_CFLAGS=
+HW_X11_LIBS=
+if test x"$enable_hwx11" != "xno"; then
+    old_LIBS="$LIBS"
+	AC_DEFINE(USE_X11,,[Enable Xorg HW support.])
+    AC_MSG_CHECKING(for Xorg)
+    AM_CONDITIONAL(COMPILE_HW_X11, true)
+    HW_X11_LIBS="-lX11 -lXext"
+    AC_MSG_RESULT(yes)
+    if ( uname -m | grep -Eq 'x86_64|i686|amd64' ); then
+        HW_X11_CFLAGS="-msse2 -ftree-vectorize"
+	have_simd=yes
+    fi
+    if ( uname -m | grep -Eq 'armv[7-8]' ); then
+        HW_X11_CFLAGS="-mfpu=neon -ftree-vectorize"
+	have_simd=yes
+    fi
+    have_x11=yes
+    LIBS="$old_LIBS"
+fi
+AC_SUBST(HW_X11_LIBS)
+AC_SUBST(HW_X11_CFLAGS)
 
 dnl - setup the system-specific object files
 
@@ -569,11 +595,18 @@ if test x"$enable_uiclassic" != "xno"; then
     else
         AM_CONDITIONAL(COMPILE_UICLASSIC_ALLEG4, false)
     fi
+    if test x"$have_x11" = "xyes"; then
+        AM_CONDITIONAL(COMPILE_UICLASSIC_X11, true)
+        have_classic_hw=yes
+    else
+        AM_CONDITIONAL(COMPILE_UICLASSIC_X11, false)
+    fi
 else
     AM_CONDITIONAL(COMPILE_UICLASSIC, false)
     AM_CONDITIONAL(COMPILE_UICLASSIC_SDL1, false)
     AM_CONDITIONAL(COMPILE_UICLASSIC_SDL2, false)
     AM_CONDITIONAL(COMPILE_UICLASSIC_ALLEG4, false)
+    AM_CONDITIONAL(COMPILE_UICLASSIC_X11, false)
 fi
 
 if test x"$enable_tools" != "xno"; then
@@ -593,11 +626,13 @@ if test x"$enable_tools" != "xno"; then
     else
         AM_CONDITIONAL(COMPILE_TOOLS_ALLEG4, false)
     fi
+    AM_CONDITIONAL(COMPILE_TOOLS_X11, false)
 else
     AM_CONDITIONAL(COMPILE_TOOLS, false)
     AM_CONDITIONAL(COMPILE_TOOLS_SDL1, false)
     AM_CONDITIONAL(COMPILE_TOOLS_SDL2, false)
     AM_CONDITIONAL(COMPILE_TOOLS_ALLEG4, false)
+    AM_CONDITIONAL(COMPILE_TOOLS_X11, false)
 fi
 
 if test x"$enable_uiclassic" != "xno" -a x"$have_classic_hw" != "xyes"; then
@@ -611,6 +646,7 @@ AC_SUBST(HAVE_READLINE)
 AC_SUBST(EXTRA_SDL1_LIBS)
 AC_SUBST(EXTRA_SDL2_LIBS)
 AC_SUBST(EXTRA_ALLEG4_LIBS)
+AC_SUBST(EXTRA_X11_LIBS)
 AC_SUBST(OS_INCLUDES)
 AC_SUBST(OS_LIBS)
 AC_SUBST(OS_DIR)
@@ -637,5 +673,6 @@ AC_CONFIG_FILES([Makefile
                  src/hw/sdl/2/Makefile
                  src/hw/alleg/Makefile
                  src/hw/alleg/4/Makefile
+                 src/hw/x11/Makefile
                 ])
 AC_OUTPUT
