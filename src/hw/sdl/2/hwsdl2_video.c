@@ -63,7 +63,7 @@ static struct sdl_video_s {
 
     void (*render)(void);
     void (*update)(void);
-    void (*setpal)(uint8_t *pal, int first, int num);
+    void (*setpal)(const uint8_t *pal, int first, int num);
 
     uint8_t *buf;
     int bufw;
@@ -238,7 +238,7 @@ static void video_update(void)
     SDL_RenderPresent(video.renderer);
 }
 
-static void video_setpal(uint8_t *pal, int first, int num)
+static void video_setpal(const uint8_t *pal, int first, int num)
 {
     for (int i = first; i < (first + num); ++i) {
         video.color[i].r = vgapal_6bit_to_8bit(*pal++);
