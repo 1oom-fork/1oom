@@ -28,7 +28,7 @@ static struct sdl_video_s {
 #endif
     void (*render)(int bufi);
     void (*update)(void);
-    void (*setpal)(uint8_t *pal, int first, int num);
+    void (*setpal)(const uint8_t *pal, int first, int num);
 
     /* buffers used by UI */
     uint8_t *buf[NUM_VIDEOBUF];
@@ -74,7 +74,7 @@ static void video_update_8bpp(void)
     SDL_UpdateRect(video.screen, 0, 0, video.screen->w, video.screen->h);
 }
 
-static void video_setpal_8bpp(uint8_t *pal, int first, int num)
+static void video_setpal_8bpp(const uint8_t *pal, int first, int num)
 {
     SDL_Color color[256];
     memcpy(&video.pal[first * 3], pal, num * 3);
@@ -115,7 +115,7 @@ static void video_render_gl_24bpp(int bufi)
     }
 }
 
-static void video_setpal_gl_24bpp(uint8_t *pal, int f, int num)
+static void video_setpal_gl_24bpp(const uint8_t *pal, int f, int num)
 {
     memcpy(&video.pal[f * 3], pal, num * 3);
     for (int i = 0; i < num; ++i) {
@@ -211,7 +211,7 @@ static void video_update_gl(void)
     SDL_GL_SwapBuffers();
 }
 
-static void video_setpal_gl_32bpp(uint8_t *pal, int f, int num)
+static void video_setpal_gl_32bpp(const uint8_t *pal, int f, int num)
 {
     memcpy(&video.pal[f * 3], pal, num * 3);
     for (int i = 0; i < num; ++i) {
