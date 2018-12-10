@@ -24,7 +24,7 @@ static struct alleg_video_s {
 
     void (*render)(int bufi);
     void (*update)(void);
-    void (*setpal)(uint8_t *pal, int first, int num);
+    void (*setpal)(const uint8_t *pal, int first, int num);
 
     /* buffers used by UI */
     uint8_t *buf[NUM_VIDEOBUF];
@@ -53,7 +53,7 @@ static void video_update_8bpp(void)
     blit(video.bm, screen, 0, 0, 0, 0, video.bufw, video.bufh);
 }
 
-static void video_setpal_8bpp(uint8_t *pal, int first, int num)
+static void video_setpal_8bpp(const uint8_t *pal, int first, int num)
 {
     for (int i = first; i < (first + num); ++i) {
         video.color[i].r = *pal++;
