@@ -65,7 +65,7 @@ static struct sdl_video_s {
 
     void (*render)(int bufi);
     void (*update)(void);
-    void (*setpal)(uint8_t *pal, int first, int num);
+    void (*setpal)(const uint8_t *pal, int first, int num);
 
     /* buffers used by UI */
     uint8_t *buf[NUM_VIDEOBUF];
@@ -242,7 +242,7 @@ static void video_update(void)
     SDL_RenderPresent(video.renderer);
 }
 
-static void video_setpal(uint8_t *pal, int first, int num)
+static void video_setpal(const uint8_t *pal, int first, int num)
 {
     for (int i = first; i < (first + num); ++i) {
         video.color[i].r = *pal++ << 2;
