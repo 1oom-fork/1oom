@@ -20,7 +20,7 @@ void hw_video_update(void)
     video.update();
 }
 
-void hw_video_set_palette(uint8_t *pal, int first, int num)
+void hw_video_set_palette(const uint8_t *pal, int first, int num)
 {
     video.setpal(pal, first, num);
 }
