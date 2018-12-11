@@ -86,3 +86,13 @@ uint8_t *hw_video_get_buf(void)
 {
     return 0;
 }
+
+bool hw_audio_sfx_volume(int volume)
+{
+    return true;
+}
+
+bool hw_audio_music_volume(int volume)
+{
+    return true;
+}
