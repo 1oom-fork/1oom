@@ -50,7 +50,7 @@ void hw_shutdown(void)
 {
 }
 
-uint32_t hw_get_time_us(void)
+int64_t hw_get_time_us(void)
 {
     return os_get_time_us();
 }

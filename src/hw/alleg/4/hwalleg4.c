@@ -177,7 +177,7 @@ static void build_key_xlat(void)
 
 /* -------------------------------------------------------------------------- */
 
-volatile uint32_t hw_timer_count = 0;
+volatile int64_t hw_timer_count = 0;
 
 static void hw_timer_tick(void)
 {
@@ -292,7 +292,7 @@ int hw_event_handle(void)
     return 0;
 }
 
-uint32_t hw_get_time_us(void)
+int64_t hw_get_time_us(void)
 {
     return hw_timer_count * 1000;
 }
