@@ -13,7 +13,7 @@
 #define DELAY_EVENT_HANDLE_LIMIT    12500
 #define DELAY_MOUSE_UPDATE_LIMIT    20000
 
-static uint32_t delay_start;
+static int64_t delay_start;
 
 static bool ui_delay_enabled = true;
 
@@ -33,19 +33,17 @@ bool ui_delay_us_or_click(uint32_t delay)
 {
     bool pressed = false;
     int mx = moo_mouse_x, my = moo_mouse_y;
-    uint32_t mouse_time = hw_get_time_us();
+    int64_t mouse_time = hw_get_time_us();
     hw_event_handle();
     if (!ui_delay_enabled) {
         return false;
     }
     while (1) {
-        uint32_t now, diff;
+        int64_t diff;
+        int64_t now;
         now = hw_get_time_us();
-        if (now < delay_start) {
-            return false;
-        }
         diff = now - delay_start;
-        if (diff >= delay) {
+        if ((diff < 0) || (diff >= (int64_t)delay)) {
             return false;
         }
         if (diff < DELAY_EVENT_HANDLE_LIMIT) {

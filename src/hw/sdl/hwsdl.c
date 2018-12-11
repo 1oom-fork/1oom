@@ -37,7 +37,7 @@ static bool hw_kbd_check_hotkey(SDL1or2Key key, SDL1or2Mod smod, char c)
 
 /* -------------------------------------------------------------------------- */
 
-uint32_t hw_get_time_us(void)
+int64_t hw_get_time_us(void)
 {
     return SDL_GetTicks() * 1000;
 }
