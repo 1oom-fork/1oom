@@ -288,7 +288,7 @@ static void gmap_draw_cb(void *vptr)
             lbxfont_print_str_normal(240, 119, game_str_tbl_sm_pspecial[4], UI_SCREEN_W, ui_scale);
             lbxfont_print_str_normal(240, 127, game_str_tbl_sm_pspecial[5], UI_SCREEN_W, ui_scale);
             lbxfont_select_set_12_1(2, 0xe, 0, 0);
-            lbxfont_print_str_normal(240, 135, game_str_tbl_sm_pspecial[1], UI_SCREEN_W, ui_scale);
+            lbxfont_print_str_normal(240, 135, game_str_tbl_sm_pspecial[3], UI_SCREEN_W, ui_scale);
             lbxfont_print_str_normal(240, 143, game_str_tbl_gm_spec[6], UI_SCREEN_W, ui_scale);
             lbxfont_select(2, 6, 0, 0);
             lbxfont_print_str_normal(295, 103, game_str_gm_prod, UI_SCREEN_W, ui_scale);
