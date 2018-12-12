@@ -261,6 +261,7 @@ int hw_event_handle(void) {
             if (e.type == KeyPress) {
                 if (c > 0) kbd_add_keypress(c, modifiers, ascii[0]);
                 kbd_set_pressed(c, modifiers, true);
+                if (c == 27 && (modifiers & MOO_MOD_CTRL)) exit(0);
             } else
                 kbd_set_pressed(c, modifiers, false);
             break;
