@@ -22,7 +22,9 @@ See doc/usage_common.txt if you prefer to use a separate directory.
 1.2 Unix (Linux)
 -----------------
 
-1oom requires the following libraries:
+At a minimum, 1oom requires an X server, such as Xorg.
+
+It is recommended to have SDL installed
 
 - SDL (libsdl1.2 or libsdl2):
 http://www.libsdl.org
@@ -33,6 +35,8 @@ Also recommended:
 
 - libsamplerate:
 http://www.mega-nerd.com/libsamplerate/
+
+The SDL version will include game audio and allow full screen mode.
 
 Check your distribution's package manager or the library
 website on how to install them.
@@ -63,6 +67,7 @@ See INSTALL and HACKING for more information.
 - 1oom_pbxdump      (for dumping PBX files)
 - 1oom_gfxconv      (for converting GFX for use in PBX files)
 - 1oom_saveconv     (for converting save game files)
+- 1oom_*_x11        (using X11)
 - 1oom_*_sdl1       (using SDL 1.2.x)
 - 1oom_*_sdl2       (using SDL 2.x)
 - 1oom_*_alleg4     (using Allegro 4.x)
