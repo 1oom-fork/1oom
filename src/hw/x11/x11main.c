@@ -33,16 +33,23 @@ static XShmSegmentInfo shminfo;
 
 #define MOO_WIDTH 320
 #define MOO_HEIGHT 200
+#define SCALE 5
 /* Buffers 0-3 are for drawing; 4 is a copy of last frame, 5 updated pixels */
 static uint8_t moobuf[6][MOO_HEIGHT][MOO_WIDTH] __attribute__((aligned(16)));
 static uint32_t palette_scaled[256] = { 0 };    /* 8-bit ARGB */
 static unsigned char palette_raw[3*256];        /* With 6-bit RGB components */
-static int bufi = 0, scale = 4;                 /* TODO: set by cmd line arg */
+static uint64_t palette_b0g0r[256];
+static int bufi = 0;
 static int minpal = 767, maxpal = 0;            /* Palette change boundaries */
 static uint32_t *screenbuf = NULL;              /* Pointer to graphics memory*/
 static long *icondata = NULL;                   /* Icon, if set */
+const uint64_t interp_patterns[4] = {           /* When to interpolate */
+    0xffffdffffef70a03ULL,
+    0xffebf3f0f080c084ULL,
+    0x8787c10000000000ULL,
+    0x0f03062731130301ULL };
 
-/* -- Variables required by HW ABI ------------------------------------------ */
+/* -- Variables required by HW API ------------------------------------------ */
 
 const char *idstr_hw = "x11";
 const struct cmdline_options_s hw_cmdline_options[] = { { NULL, 0, NULL, NULL, NULL, NULL } };
@@ -52,7 +59,7 @@ const struct uiopt_s hw_uiopts_extra[] = { UIOPT_ITEM_END };
 const struct cfg_items_s hw_cfg_items[] = { CFG_ITEM_END };
 const struct cfg_items_s hw_cfg_items_extra[] = { CFG_ITEM_END };
 
-/* -- HW ABI Audio functions, dummies since X11 does not do audio ----------- */
+/* -- HW API Audio functions, dummies since X11 does not do audio ----------- */
 
 void hw_audio_shutdown(void) { }
 int  hw_audio_init(void) { return 0; }
@@ -70,7 +77,7 @@ void hw_audio_sfx_release(int ix) { }
 void hw_audio_sfx_stop(void) { }
 bool hw_audio_sfx_volume(int volume) { return true; }
 
-/* -- Misc functions mandated by HW ABI ------------------------------------- */
+/* -- Misc functions mandated by HW API ------------------------------------- */
 
 void hw_log_message(const char *msg) { fputs(msg, stdout); }
 void hw_log_warning(const char *msg) { fputs(msg, stderr); }
@@ -82,7 +89,7 @@ int  hw_early_init(void) { return 0; }
 int64_t hw_get_time_us(void) {
     struct timeval tv;
     gettimeofday(&tv, NULL);
-    return (int64_t)tv.tv_usec + 1000000 * (int64_t)tv.tv_sec;
+    return (int64_t)tv.tv_usec + 1000000LL * (int64_t)tv.tv_sec;
 }
 
 /* -- Real code starts here ------------------------------------------------- */
@@ -100,8 +107,26 @@ static void hide_cursor(void) {	/* Hide the X11 mouse cursor when in 1oom win */
     XFreeCursor(dpy, no_ptr);
 }
 
-/* Invalidate all pixels: meaning repaint them all next paint() */
-static void invalidate_all(void) { memset(moobuf[5], 1, sizeof(moobuf[5])); }
+/* A B0G0R is a 64-bit RGB value in BGR order with 16-bit RGB components 
+   and 4 dont care (zero) bits inbetween */
+#define B0G0R_MASK    0x0ffff0ffff0ffff0ULL
+#define B0G0R_REDPREC 0x0ffe00ffe00ffe00ULL
+#define B0G0R_INT     0x0ff000ff000ff000ULL
+#define B0G0R_SIGN    0x0800008000080000ULL
+#define B0G0R_ONE     0x0000100001000010ULL
+#define B0G0R_MAX     0x1000010000100000ULL
+#define B0G0R_MAGIC   0x0100000010000001ULL
+
+static inline __attribute__((const)) uint64_t rgb_to_b0g0r(uint32_t rgb) {
+    register uint64_t b0g0r = (rgb * B0G0R_MAGIC >> 4u) & B0G0R_INT;
+    return b0g0r;
+}
+
+static inline __attribute__((const)) uint32_t b0g0r_to_rgb(uint64_t b0g0r) {
+    register uint64_t temp = b0g0r & B0G0R_INT;
+    register uint32_t rgb = (temp << 4u) + (temp >> 24u) + (temp >> 52u);
+    return rgb;
+}
 
 /* Invalidate all pixels of certain colours */
 static void invalidate_palrange(uint8_t min, uint8_t max) {
@@ -114,21 +139,82 @@ static void invalidate_palrange(uint8_t min, uint8_t max) {
 }
 
 /* Convert 6-bit RGB palette to 8-bit */
-static void convert_palette(const unsigned char *const palette) {
-    for (int i = 0; i < 256; i++) {
+static void convert_palette(const unsigned char *const restrict palette, int min, int max) {
+    for (int i = min; i <= max; i++) {
         unsigned char b = (palette[i*3 + 0] << 2) + (palette[i*3 + 0] >> 4);
         unsigned char g = (palette[i*3 + 1] << 2) + (palette[i*3 + 1] >> 4);
         unsigned char r = (palette[i*3 + 2] << 2) + (palette[i*3 + 2] >> 4);
         palette_scaled[i] = r + (g << 8) + (b << 16);
+        palette_b0g0r[i] = rgb_to_b0g0r(palette_scaled[i]);
     }
+}
+
+/* Returns interpolation delta b0g0r (vector) */
+static inline __attribute__((const)) uint64_t linear_interp5(uint64_t start, uint64_t stop) {
+    start &= B0G0R_MASK;
+    stop &= B0G0R_MASK;
+
+    /* Calculate difference vector d */
+    uint64_t d = B0G0R_MAX + stop - start;
+
+    /* Flip all components of d to positive (absolute differences) */
+    uint64_t signmask = (d & B0G0R_MAX) ^ B0G0R_MAX;
+    signmask = (signmask >> 12u) * 0xffe;
+    d &= B0G0R_REDPREC;
+    d ^= signmask;
+
+    unsigned char reg = (d >> 38) & 3;
+    unsigned char u = ((d >> 17) & 7) | ((d >> 54) & 0x38);
+    /* Check which algorithm to use: nearest neighbour or linear interpolation */
+    if (d & 0x0e0000c0000e0000 && (!((interp_patterns[reg] >> u) & 1))) {
+        d = 0ULL;
+    } else {
+        /* Divide all bogor components with 5 - using reciprocal multiplication of absolute differences */
+        d = ((d >> 8u) * 0x332 >> 4u) & 0x03ff003ff003ff00;
+        /* Flip signs back of those that were negative */
+        d ^= signmask;
+        /* There probably is no need to use these tricks ... but it was fun to code :-) */
+    }
+    return d;
+}
+
+static inline void linear_interp5_wrapper(unsigned char c0, unsigned char c1, uint64_t *restrict table) {
+    uint64_t b0 = palette_b0g0r[c0];
+    uint64_t b1 = palette_b0g0r[c1];
+    uint64_t delta = linear_interp5(b0, b1);
+
+    if (delta) { /* A zero delta flags that no smoothing should be done */
+        table[0] = b0;
+        table[1] = b0 += delta;
+        table[2] = b0 += delta;
+        table[3] = b0 += delta;
+        table[4] = b0 += delta;
+    } else {
+        table[2] = table[1] = table[0] = b0;
+        table[3] = (b0+b1) >> 1;
+        table[4] = b1;
+    }
+}
+
+static inline void nearest_neighbour(int x, int y, int toshow) {
+    unsigned char c00 = moobuf[toshow][y][x];
+    for (int j=0; j<SCALE; j++) {
+        uint32_t *ptr = &screenbuf[(SCALE*y + j)*sizex + SCALE*x];
+        for (int i=0; i<SCALE; i++) {
+            *ptr++ = palette_scaled[c00];
+        }
+    }
+    moobuf[5][y][x] = 0;
+    moobuf[4][y][x] = c00;
 }
 
 /* Main paint method, where the graphics actually happen */
 static void hw_video_paint(int toshow) {
-    int xcur, ycur;
+    uint64_t left_b0g0r[SCALE]; /* only scale first are used */
+    uint64_t right_b0g0r[SCALE]; /* only scale first are used */
 
     if (maxpal >= minpal) invalidate_palrange(minpal/3, maxpal/3);
-    convert_palette(palette_raw);
+    convert_palette(palette_raw, minpal/3, maxpal/3);
     minpal = 768; maxpal = 0;
 
     /* Buf 5 tracks which pixels need update, buf 4 is a copy of last frame */
@@ -139,29 +225,76 @@ static void hw_video_paint(int toshow) {
                 moobuf[5][y][x] |= moobuf[4][y][x] ^ moobuf[toshow][y][x];
             }
         }
-    }
-    /* Could be taken out when scale is hard coded */
-    ycur = sizey/scale < MOO_HEIGHT ? sizey/scale : MOO_HEIGHT;
-    xcur = sizex/scale < MOO_WIDTH ? sizex/scale : MOO_WIDTH;
-    for (int y=0; y<ycur; y++) {
-        for (int x=0; x<xcur; x++) {
-            if (moobuf[5][y][x]) {
-                unsigned char c = moobuf[toshow][y][x];
-                for (int j=0; j<scale; j++) {
-                    for (int i=0; i<scale; i++) {
-                        screenbuf[(scale*y + j)*sizex + scale*x + i] = palette_scaled[c];
-                    }
-                }
-                moobuf[5][y][x] = 0;
-                moobuf[4][y][x] = c;
+
+        for (int y=0; y<MOO_HEIGHT; y++) {
+            for (int x=0; x<MOO_WIDTH; x+=sizeof(uint64_t)) {
+                *(uint64_t *)&moobuf[5][y][x] |= *(uint64_t *)&moobuf[5][y][x+1];
+            }
+        }
+
+        for (int y=0; y<MOO_HEIGHT-1; y++) {
+            for (int x=0; x<MOO_WIDTH; x+=sizeof(uint64_t)) {
+                *(uint64_t *)&moobuf[5][y][x] |= *(uint64_t *)&moobuf[5][y+1][x];
             }
         }
     }
+
+    for (int y=0; y<MOO_HEIGHT-1; y++) {
+        register uint64_t *left, *right;
+        bool left_recalced = false; /* silly optimization */
+        for (int x=0; x<MOO_WIDTH-1; x++) {
+            if (moobuf[5][y][x]) {
+                unsigned char c00 = moobuf[toshow][y][x];
+                unsigned char c01 = moobuf[toshow][y][x+1];
+                unsigned char c10 = moobuf[toshow][y+1][x];
+                unsigned char c11 = moobuf[toshow][y+1][x+1];
+                if (left_recalced) { /* reuse edge when possible */
+                    register uint64_t *temp = left;
+                    left = right;
+                    right = temp;
+                } else {
+                    left = left_b0g0r;
+                    right = right_b0g0r;
+                    linear_interp5_wrapper(c00, c10, left);
+                }
+                linear_interp5_wrapper(c01, c11, right);
+                left_recalced = true;
+                /* j is row within magnified pixel */
+                for (int j=0; j<SCALE; j++) {
+                    uint64_t delta = linear_interp5(left[j], right[j]);
+                    uint32_t *ptr = &screenbuf[(SCALE*y + j)*sizex + SCALE*x];
+                    /* unroll columns within magnified pixel*/
+                    if (delta) {
+                        uint64_t col = left[j];
+                        *ptr++ = b0g0r_to_rgb(col);
+                        *ptr++ = b0g0r_to_rgb(col += delta);
+                        *ptr++ = b0g0r_to_rgb(col += delta);
+                        *ptr++ = b0g0r_to_rgb(col += delta);
+                        *ptr = b0g0r_to_rgb(col += delta);
+                    } else {
+                        uint32_t a = b0g0r_to_rgb(left[j]);
+                        uint32_t b = b0g0r_to_rgb(right[j]);
+                        *ptr++ = a;
+                        *ptr++ = a;
+                        *ptr++ = a;
+                        *ptr++ = ((a & 0xfefeff) + (b & 0xfefeff)) >> 1;
+                        *ptr = b;
+                    }
+                }
+                moobuf[5][y][x] = 0;
+                moobuf[4][y][x] = c00;
+            } else
+                left_recalced = false;
+        }
+        if (moobuf[5][y][MOO_WIDTH-1]) nearest_neighbour(MOO_WIDTH-1, y, toshow);
+    }
+    for (int x=0; x<MOO_WIDTH; x++) if (moobuf[5][MOO_HEIGHT-1][x]) nearest_neighbour(x, MOO_HEIGHT-1, toshow);
+
     XShmPutImage(dpy, mainwin, gc, shared_image, 0, 0, 0, 0, sizex, sizey, false);
     XFlush(dpy);
 }
 
-/* -- HW graphics ABI functions -------------------------------------------- */
+/* -- HW graphics API functions -------------------------------------------- */
 
 void hw_video_set_palette(const uint8_t *pal, const int first, const int num) {
     memmove(&palette_raw[first*3], pal, num*3);
@@ -208,7 +341,7 @@ int hw_icon_set(const uint8_t *data, const uint8_t *pal, int w, int h) {
     icondata[0] = w;
     icondata[1] = h;
     hw_video_set_palette(pal, 0, 256);
-    convert_palette(pal);
+    convert_palette(pal, 0, 255);
     for (int i=0; i<w*h; i++) icondata[i+2] = palette_scaled[data[i]] | 0xff000000;
     return 0;
 }
@@ -243,7 +376,7 @@ static void create_screen_buffer(void) {
 /* Event pump */
 int hw_event_handle(void) {
     XEvent e;
-    int key, button, modifiers;
+    int button, modifiers;
     static unsigned char buttonstate = 0;
     char ascii[4], c;
     int updminx = MOO_WIDTH, updmaxx = 0, updminy = MOO_HEIGHT, updmaxy = 0;
@@ -254,7 +387,6 @@ int hw_event_handle(void) {
         case KeyPress:
         case KeyRelease:
             modifiers = 0;
-            key = e.xkey.keycode;
             if (e.xkey.state & ControlMask) modifiers |= MOO_MOD_CTRL;
             if (e.xkey.state & ShiftMask) modifiers |= MOO_MOD_SHIFT;
             if (e.xkey.state & Mod1Mask) modifiers |= MOO_MOD_ALT;
@@ -269,7 +401,7 @@ int hw_event_handle(void) {
                 kbd_set_pressed(c, modifiers, false);
             break;
         case MotionNotify:
-            mouse_set_xy_from_hw(e.xmotion.x / scale, e.xmotion.y / scale);
+            mouse_set_xy_from_hw(e.xmotion.x / SCALE, e.xmotion.y / SCALE);
             break;
         case ButtonRelease:
             button = e.xbutton.button;
@@ -284,10 +416,10 @@ int hw_event_handle(void) {
             mouse_set_buttons_from_hw(buttonstate);
             break;
         case Expose:
-            if (updminx > e.xexpose.x/scale) updminx = e.xexpose.x/scale;
-            if (updminy > e.xexpose.y/scale) updminy = e.xexpose.y/scale;
-            if (updmaxx < (e.xexpose.x + e.xexpose.width + scale-1)/scale) updmaxx = (e.xexpose.x + e.xexpose.width + scale-1)/scale;
-            if (updmaxy < (e.xexpose.y + e.xexpose.height + scale-1)/scale) updmaxy = (e.xexpose.y + e.xexpose.height + scale-1)/scale;
+            if (updminx > e.xexpose.x/SCALE) updminx = e.xexpose.x/SCALE;
+            if (updminy > e.xexpose.y/SCALE) updminy = e.xexpose.y/SCALE;
+            if (updmaxx < (e.xexpose.x + e.xexpose.width + SCALE-1)/SCALE) updmaxx = (e.xexpose.x + e.xexpose.width + SCALE-1)/SCALE;
+            if (updmaxy < (e.xexpose.y + e.xexpose.height + SCALE-1)/SCALE) updmaxy = (e.xexpose.y + e.xexpose.height + SCALE-1)/SCALE;
             if (e.xexpose.count == 0) { /* No more expose events queued, invalidate rectangle */
                 for (int y = updminy; y < updmaxy; y++) {
                     for (int x = updminx; x < updmaxx; x++) {
@@ -335,7 +467,7 @@ int create_window(int width, int height) {
 }
 
 int hw_video_init(int w, int h) {
-    create_window(scale*MOO_WIDTH, scale*MOO_HEIGHT);
+    create_window(SCALE*MOO_WIDTH, SCALE*MOO_HEIGHT);
     return 0;
 }
 
@@ -349,5 +481,5 @@ int hw_init(void) {
 }
 
 int main(int argc, char **argv) {
-   return main_1oom(argc, argv);
+    return main_1oom(argc, argv);
 }
