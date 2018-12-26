@@ -262,7 +262,7 @@ static void gmap_draw_cb(void *vptr)
             lbxfont_print_str_normal(240, 119, game_str_tbl_sm_pspecial[4], UI_SCREEN_W);
             lbxfont_print_str_normal(240, 127, game_str_tbl_sm_pspecial[5], UI_SCREEN_W);
             lbxfont_select_set_12_1(2, 0xe, 0, 0);
-            lbxfont_print_str_normal(240, 135, game_str_tbl_sm_pspecial[1], UI_SCREEN_W);
+            lbxfont_print_str_normal(240, 135, game_str_tbl_sm_pspecial[3], UI_SCREEN_W);
             lbxfont_print_str_normal(240, 143, game_str_tbl_gm_spec[6], UI_SCREEN_W);
             lbxfont_select(2, 6, 0, 0);
             lbxfont_print_str_normal(295, 103, game_str_gm_prod, UI_SCREEN_W);
@@ -271,15 +271,15 @@ static void gmap_draw_cb(void *vptr)
             lbxfont_print_str_normal(295, 127, game_str_gm_prod, UI_SCREEN_W);
             lbxfont_print_str_normal(295, 135, game_str_gm_tech, UI_SCREEN_W);
             lbxfont_print_str_normal(295, 143, game_str_gm_tech, UI_SCREEN_W);
-            lbxfont_print_str_right(295, 103, game_str_gm_1_3, UI_SCREEN_W);
-            lbxfont_print_str_right(295, 111, game_str_gm_1_2, UI_SCREEN_W);
-            lbxfont_print_str_right(295, 119, game_str_gm_2x, UI_SCREEN_W);
-            lbxfont_print_str_right(295, 127, game_str_gm_3x, UI_SCREEN_W);
-            lbxfont_print_str_right(295, 135, game_str_gm_2x, UI_SCREEN_W);
-            lbxfont_print_str_right(295, 143, game_str_gm_4x, UI_SCREEN_W);
-            lbxfont_print_str_center(272, 152, game_str_gm_prodb1, UI_SCREEN_W);
-            lbxfont_print_str_center(272, 159, game_str_gm_prodb2, UI_SCREEN_W);
-            lbxfont_print_str_center(272, 166, game_str_gm_prodb3, UI_SCREEN_W);
+            lbxfont_print_str_right(291, 103, game_str_gm_1_3, UI_SCREEN_W);
+            lbxfont_print_str_right(291, 111, game_str_gm_1_2, UI_SCREEN_W);
+            lbxfont_print_str_right(291, 119, game_str_gm_2x, UI_SCREEN_W);
+            lbxfont_print_str_right(291, 127, game_str_gm_3x, UI_SCREEN_W);
+            lbxfont_print_str_right(291, 135, game_str_gm_2x, UI_SCREEN_W);
+            lbxfont_print_str_right(291, 143, game_str_gm_4x, UI_SCREEN_W);
+            lbxfont_print_str_center(275, 152, game_str_gm_prodb1, UI_SCREEN_W);
+            lbxfont_print_str_center(275, 159, game_str_gm_prodb2, UI_SCREEN_W);
+            lbxfont_print_str_center(275, 166, game_str_gm_prodb3, UI_SCREEN_W);
             break;
         default:
             break;
