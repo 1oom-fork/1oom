@@ -218,7 +218,7 @@ static void starview_draw_cb(void *vptr)
             sprintf(buf, "%s:", game_str_sv_pg1[i]);
             lbxfont_select_set_12_4(5, 0xd, 0, 0);
             lbxfont_print_str_normal(8, y0, buf, UI_SCREEN_W);
-            sprintf(buf, "%s %s", game_str_sv_popgr, game_str_sv_pg1[i]);
+            sprintf(buf, "%s %s", game_str_sv_popgr, game_str_sv_pg2[i]);
             lbxfont_select_set_12_4(5, 0xa, 0, 0);
             lbxfont_print_str_split(80, y0, 110, buf, 0, UI_SCREEN_W, UI_SCREEN_H);
         }
