@@ -38,7 +38,7 @@ static void ui_starmap_draw_planetinfo_do(const struct game_s *g, player_id_t ap
 {
     const planet_t *p = &g->planet[planet_i];
     if (explored) {
-        lbxfont_select(4, 0xf, 0, 0);
+        lbxfont_select_set_12_4(4, 0xf, 0, 0);
         lbxfont_print_str_center(269, 10, p->name, UI_SCREEN_W);
         if (p->type == PLANET_TYPE_NOT_HABITABLE) {
             lbxfont_select(0, 0xe, 0, 0);
