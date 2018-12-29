@@ -706,7 +706,7 @@ bool game_tech_current_research_has_max_bonus(const struct empiretechorbit_s *e,
     invest = e->tech.investment[field];
     t1 = (invest * 3) / 20;
     t3 = (slider * e->total_research_bc) / 100;
-    return (t1 <= (t3 * 2));
+    return (t1 <= (t3 * 2) && t3 > 0);
 }
 
 void game_tech_set_to_max_bonus(struct empiretechorbit_s *e, tech_field_t field)
