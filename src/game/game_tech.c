@@ -724,7 +724,7 @@ bool game_tech_current_research_has_max_bonus(const struct game_s *g, player_id_
     invest = e->tech.investment[field];
     t1 = (invest * 3) / 20;
     t3 = (slider * e->total_research_bc) / 100;
-    return (t1 <= (t3 * 2));
+    return (t1 <= (t3 * 2) && t3 > 0);
 }
 
 void game_tech_set_to_max_bonus(struct game_s *g, player_id_t player_i, tech_field_t field)
