@@ -268,6 +268,7 @@ int hw_event_handle(void)
 
     while (SDL_PollEvent(&e)) {
         switch (e.type) {
+            uint32_t mod;
             case SDL_KEYDOWN:
                 {
                     SDL_Keycode sym;
@@ -278,7 +279,6 @@ int hw_event_handle(void)
                     c = 0;
                     if (!(hw_kbd_check_hotkey(sym, smod, c))) {
                         mookey_t key;
-                        uint32_t mod;
                         if (sym & SDLK_SCANCODE_MASK) {
                             key = key_xlat_scan[SDLK_TBLI_FROM_SCAN(sym)];
                             c = 0;
@@ -291,6 +291,7 @@ int hw_event_handle(void)
                             }
                         }
                         mod = mod_xlat(smod);
+                        if (sym == SDLK_LCTRL || sym == SDLK_RCTRL) mod |= MOO_MOD_CTRL;
                         if ((key != MOO_KEY_UNKNOWN) && (key < MOO_KEY_LAST)) {
                             kbd_add_keypress(key, mod, c);
                         }
@@ -305,12 +306,14 @@ int hw_event_handle(void)
                     mookey_t key;
                     sym = e.key.keysym.sym;
                     smod = e.key.keysym.mod;
+                    mod = mod_xlat(smod);
+                    if (sym == SDLK_LCTRL || sym == SDLK_RCTRL) mod &= ~MOO_MOD_CTRL;
                     if (sym & SDLK_SCANCODE_MASK) {
                         key = key_xlat_scan[SDLK_TBLI_FROM_SCAN(sym)];
                     } else {
                         key = key_xlat_key[sym];
                     }
-                    kbd_set_pressed(key, mod_xlat(smod), false);
+                    kbd_set_pressed(key, mod, false);
                 }
                 break;
             case SDL_TEXTINPUT:
