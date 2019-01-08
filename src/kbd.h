@@ -212,5 +212,6 @@ extern bool kbd_have_keypress(void);
 extern uint32_t kbd_get_keypress(void);
 extern void kbd_set_pressed(mookey_t key, uint32_t mod, bool pressed);
 extern bool kbd_is_pressed(mookey_t key, uint32_t modon, uint32_t modoff);
+extern bool kbd_is_modifier(uint32_t mod);
 
 #endif
