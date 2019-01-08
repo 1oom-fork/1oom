@@ -240,6 +240,7 @@ int hw_event_handle(void)
 
     while (SDL_PollEvent(&e)) {
         switch (e.type) {
+            uint32_t mod;
             case SDL_KEYDOWN:
                 {
                     uint16_t c;
@@ -253,16 +254,18 @@ int hw_event_handle(void)
                     }
                     if (!(hw_kbd_check_hotkey(e.key.keysym.sym, smod, c))) {
                         mookey_t key;
-                        uint32_t mod;
                         key = key_xlat[e.key.keysym.sym];
                         mod = mod_xlat(smod);
+                        if (e.key.keysym.sym == SDLK_LCTRL || e.key.keysym.sym == SDLK_RCTRL) mod |= MOO_MOD_CTRL;
                         kbd_add_keypress(key, mod, c);
                         kbd_set_pressed(key, mod, true);
                     }
                 }
                 break;
             case SDL_KEYUP:
-                kbd_set_pressed(key_xlat[e.key.keysym.sym], mod_xlat(e.key.keysym.mod), false);
+                mod = mod_xlat(e.key.keysym.mod);
+                if (e.key.keysym.sym == SDLK_LCTRL || e.key.keysym.sym == SDLK_RCTRL) mod &= ~MOO_MOD_CTRL;
+                kbd_set_pressed(key_xlat[e.key.keysym.sym], mod, false);
                 break;
             case SDL_MOUSEMOTION:
                 if (hw_mouse_enabled) {
