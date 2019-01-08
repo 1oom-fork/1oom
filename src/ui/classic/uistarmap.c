@@ -450,17 +450,19 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
                 p->slider_lock[i] = !p->slider_lock[i];
                 ui_sound_play_sfx_24();
             } else if (!p->slider_lock[i]) {
-                bool do_adj;
-                do_adj = false;
+                bool do_adj = false;
+                int v;
                 if (oi1 == d.sm.oi_tbl_slider_minus[i]) {
                     ui_sound_play_sfx_24();
-                    int v = p->slider[i] - 4;
+                    if (kbd_is_modifier(MOO_MOD_CTRL)) v = p->slider[i] - 1;
+                    else v = p->slider[i] - 4;
                     SETMAX(v, 0);
                     p->slider[i] = v;
                     do_adj = true;
                 } else if (oi1 == d.sm.oi_tbl_slider_plus[i]) {
                     ui_sound_play_sfx_24();
-                    int v = p->slider[i] + 4;
+                    if (kbd_is_modifier(MOO_MOD_CTRL)) v = p->slider[i] + 1;
+                    else v = p->slider[i] + 4;
                     SETMIN(v, 100);
                     p->slider[i] = v;
                     do_adj = true;
