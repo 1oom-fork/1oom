@@ -17,6 +17,7 @@
 #include <X11/X.h>
 #include <X11/Xatom.h>
 #include <X11/Xutil.h>
+#include <X11/XKBlib.h>
 #include <X11/extensions/XShm.h>
 
 /* -- X11 variables --------------------------------------------------------- */
@@ -373,6 +374,7 @@ static void create_screen_buffer(void) {
 /* Event pump */
 int hw_event_handle(void) {
     XEvent e;
+    KeySym ks;
     int button, modifiers;
     static unsigned char buttonstate = 0;
     char ascii[4], c;
@@ -384,7 +386,8 @@ int hw_event_handle(void) {
         case KeyPress:
         case KeyRelease:
             modifiers = 0;
-            if (e.xkey.state & ControlMask) modifiers |= MOO_MOD_CTRL;
+            ks = XkbKeycodeToKeysym(dpy, e.xkey.keycode, 0, 0);
+            if ((e.type == KeyPress) && ((e.xkey.state & ControlMask) || (ks == XK_Control_L) || (ks == XK_Control_R))) modifiers = MOO_MOD_CTRL;
             if (e.xkey.state & ShiftMask) modifiers |= MOO_MOD_SHIFT;
             if (e.xkey.state & Mod1Mask) modifiers |= MOO_MOD_ALT;
             XLookupString(&e.xkey, ascii, 4, NULL, NULL);
