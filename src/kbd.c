@@ -73,3 +73,5 @@ bool kbd_is_pressed(mookey_t key, uint32_t modon, uint32_t modoff)
 {
     return (((kbd.mod & modon) == modon) && ((kbd.mod & modoff) == 0) && BOOLVEC_IS1(kbd.pressed, key));
 }
+
+bool kbd_is_modifier(uint32_t mod) { return kbd.mod & mod; }
