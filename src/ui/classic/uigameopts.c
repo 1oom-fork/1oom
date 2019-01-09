@@ -103,9 +103,9 @@ static void gameopts_slider_cb(void *ctx, uint8_t slideri, int16_t value)
     const struct gameopts_new_s *o = &(d->newopts[slideri]);
     const struct uiopt_s *u = o->u;
     if (u->type == UIOPT_TYPE_SLIDER_CALL) {
-        u->ts.set(o->value);
+        u->u.ts.set(o->value);
     } else {
-        *u->ts.value_ptr = o->value;
+        *u->u.ts.value_ptr = o->value;
     }
 }
 
@@ -136,13 +136,13 @@ static void gameopts_draw_cb(void *vptr)
                     if (str) {
                         xoff = 6;
                         ui_draw_box1(x, y, x + 4, y + 4, 0x40, 0x40, ui_scale);
-                        if (*u->tb.value_ro_ptr) {
+                        if (*u->u.tb.value_ro_ptr) {
                             ui_draw_filled_rect(x + 1, y + 1, x + 3, y + 3, 0x1c, ui_scale);
                         }
                     }
                     break;
                 case UIOPT_TYPE_CYCLE:
-                    sprintf(ui_data.strbuf, "%s: %s", u->str, u->tc.get());
+                    sprintf(ui_data.strbuf, "%s: %s", u->str, u->u.tc.get());
                     str = ui_data.strbuf;
                     break;
                 case UIOPT_TYPE_SLIDER_CALL:
@@ -152,7 +152,7 @@ static void gameopts_draw_cb(void *vptr)
                         y -= 7;
                         v = o->value;
                         if (v > 0) {
-                            ui_draw_slider(x + 44, y + 1, (v * 40) / (u->ts.vmax - u->ts.vmin), 1, 0, 0x08, ui_scale);
+                            ui_draw_slider(x + 44, y + 1, (v * 40) / (u->u.ts.vmax - u->u.ts.vmin), 1, 0, 0x08, ui_scale);
                         }
                         lbxfont_print_str_normal(289, y, ">", UI_SCREEN_W, ui_scale);
                         str = "<";
@@ -200,8 +200,8 @@ static bool gameopts_new_add(struct gameopts_data_s *d, const struct uiopt_s *u)
                 }
                 y -= 7;
                 o->u = u;
-                o->value = *u->ts.value_ptr;
-                o->oi = uiobj_add_slider_func(247, y, u->ts.vmin, u->ts.vmax, 40, 5, &o->value, gameopts_slider_cb, d, num);
+                o->value = *u->u.ts.value_ptr;
+                o->oi = uiobj_add_slider_func(247, y, u->u.ts.vmin, u->u.ts.vmax, 40, 5, &o->value, gameopts_slider_cb, d, num);
                 ++num;
                 ++o;
                 o->u = u;
@@ -309,44 +309,44 @@ gameopts_act_t ui_gameopts(struct game_s *g, int *load_game_i_ptr)
                     u = o->u;
                     switch (u->type) {
                         case UIOPT_TYPE_FUNC:
-                            if (u->tf.cb) {
-                                u->tf.cb();
+                            if (u->u.tf.cb) {
+                                u->u.tf.cb();
                                 if (i < (d.num_newopts - 2)) {
                                     ++o;
                                     u = o->u;
                                     if ((u->type == UIOPT_TYPE_SLIDER_CALL) || (u->type == UIOPT_TYPE_SLIDER_INT)) {
-                                        o->value = *u->ts.value_ptr;
+                                        o->value = *u->u.ts.value_ptr;
                                     }
                                 }
                             }
                             break;
                         case UIOPT_TYPE_BOOL:
-                            u->tb.toggle();
+                            u->u.tb.toggle();
                             break;
                         case UIOPT_TYPE_CYCLE:
-                            u->tc.next();
+                            u->u.tc.next();
                             break;
                         case UIOPT_TYPE_SLIDER_CALL:
                         case UIOPT_TYPE_SLIDER_INT:
                             /* ois: slider, -, + */
                             if (!((i < (d.num_newopts - 2)) && (u == o[1].u) && (u == o[2].u))) {
                                 int v, n;
-                                n = (u->ts.vmax - u->ts.vmin) / 20;
+                                n = (u->u.ts.vmax - u->u.ts.vmin) / 20;
                                 SETMAX(n, 1);
-                                v = *u->ts.value_ptr;
+                                v = *u->u.ts.value_ptr;
                                 if ((i < (d.num_newopts - 1)) && (u == o[1].u)) {
                                     --o;
-                                    SUBSATT(v, n, u->ts.vmin);
+                                    SUBSATT(v, n, u->u.ts.vmin);
                                 } else {
                                     o -= 2;
-                                    ADDSATT(v, n, u->ts.vmax);
+                                    ADDSATT(v, n, u->u.ts.vmax);
                                 }
                                 o->value = v;
                             } /* else { slider, o->value already updated by uiobj.c } */
                             if (u->type == UIOPT_TYPE_SLIDER_CALL) {
-                                u->ts.set(o->value);
+                                u->u.ts.set(o->value);
                             } else {
-                                *u->ts.value_ptr = o->value;
+                                *u->u.ts.value_ptr = o->value;
                             }
                             break;
                         default:

@@ -30,14 +30,14 @@ struct uiopt_s {
             int * const value_ptr;
             int16_t vmin, vmax;
         } ts;
-    };
+    } u;
 };
 
-#define UIOPT_ITEM_FUNC(_n_, _f_)   { _n_, UIOPT_TYPE_FUNC, .tf = { _f_ } }
-#define UIOPT_ITEM_BOOL(_n_, _v_, _s_)  { _n_, UIOPT_TYPE_BOOL, .tb = { _s_, &(_v_) } }
-#define UIOPT_ITEM_CYCLE(_n_, _g_, _s_)  { _n_, UIOPT_TYPE_CYCLE, .tc = { _s_, _g_ } }
-#define UIOPT_ITEM_SLIDER_CALL(_v_, _s_, _v0_, _v1_) { 0, UIOPT_TYPE_SLIDER_CALL, .ts = { _s_, &(_v_), _v0_, _v1_ } }
-#define UIOPT_ITEM_SLIDER_INT(_v_, _v0_, _v1_) { 0, UIOPT_TYPE_SLIDER_INT, .ts = { 0, &(_v_), _v0_, _v1_ } }
+#define UIOPT_ITEM_FUNC(_n_, _f_)   { _n_, UIOPT_TYPE_FUNC, .u.tf = { _f_ } }
+#define UIOPT_ITEM_BOOL(_n_, _v_, _s_)  { _n_, UIOPT_TYPE_BOOL, .u.tb = { _s_, &(_v_) } }
+#define UIOPT_ITEM_CYCLE(_n_, _g_, _s_)  { _n_, UIOPT_TYPE_CYCLE, .u.tc = { _s_, _g_ } }
+#define UIOPT_ITEM_SLIDER_CALL(_v_, _s_, _v0_, _v1_) { 0, UIOPT_TYPE_SLIDER_CALL, .u.ts = { _s_, &(_v_), _v0_, _v1_ } }
+#define UIOPT_ITEM_SLIDER_INT(_v_, _v0_, _v1_) { 0, UIOPT_TYPE_SLIDER_INT, .u.ts = { 0, &(_v_), _v0_, _v1_ } }
 #define UIOPT_ITEM_END  { 0, UIOPT_TYPE_NONE }
 
 extern const struct uiopt_s uiopts_audio[];
