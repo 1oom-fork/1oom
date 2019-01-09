@@ -1835,7 +1835,10 @@ int16_t uiobj_add_inputkey(uint32_t key)
 int16_t uiobj_add_alt_str(const char *str)
 {
     uiobj_t *p = &uiobj_tbl[uiobj_table_num];
-    int len = strnlen(str, 0x1e);
+    int len = 0;
+    while ((str[len] != 0) && (len < 0x1e)) {
+        ++len;
+    }
     p->x0 = UIOBJ_OFFSCREEN;
     p->y0 = UIOBJ_OFFSCREEN;
     p->x1 = UIOBJ_OFFSCREEN;
