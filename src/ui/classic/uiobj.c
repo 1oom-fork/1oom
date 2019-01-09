@@ -1949,13 +1949,13 @@ int16_t uiobj_add_inputkey(uint32_t key)
 int16_t uiobj_add_alt_str(const char *str)
 {
     uiobj_t *p = &uiobj_tbl[uiobj_table_num];
-    int len = strnlen(str, 0x1e);
+    int len = strlen(str);
     uiobj_add_set_xys_offscreen(p);
     p->type = 8;
     p->vptr = 0;
     p->t8.str = str;
     p->t8.pos = 0;
-    p->t8.len = len;
+    p->t8.len = MIN(len, 0x1e);
     {
         char b = *str;
         if ((b >= 'a') && (b <= 'z')) {
