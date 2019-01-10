@@ -259,7 +259,7 @@ struct shiptech_weap_s tbl_shiptech_weap[WEAPON_NUM] = {
         2, { 0xd1, 0xd2, 0xd3, 0xd4, 0xd5, 0xd6, 0xd7 },
         0x0, 1
     },
-    { /* STINGER MISSLE */
+    { /* STINGER MISSILE */
         &game_str_tbl_st_weap[24], &game_str_tbl_st_weapx[24],
         15, 15, 9,
         3, false, false, false,
@@ -269,7 +269,7 @@ struct shiptech_weap_s tbl_shiptech_weap[WEAPON_NUM] = {
         2, { 0x90, 0x0, 0x0, 0x5, 0x64, 0x0, 0x0 },
         0x8, 1
     },
-    { /* STINGER MISSLE */
+    { /* STINGER MISSILE */
         &game_str_tbl_st_weap[25], &game_str_tbl_st_weapx[25],
         15, 15, 7,
         3, false, false, false,
@@ -399,7 +399,7 @@ struct shiptech_weap_s tbl_shiptech_weap[WEAPON_NUM] = {
         1, { 0xbe, 0xbd, 0xbc, 0xbb, 0xba, 0xb9, 0xb8 },
         0x1, 0
     },
-    { /* PULSON MISSLE */
+    { /* PULSON MISSILE */
         &game_str_tbl_st_weap[38], &game_str_tbl_st_weapx[38],
         20, 20, 10,
         4, false, false, false,
@@ -409,7 +409,7 @@ struct shiptech_weap_s tbl_shiptech_weap[WEAPON_NUM] = {
         2, { 0xa0, 0x0, 0x0, 0x4, 0xa0, 0x0, 0x0 },
         0x8, 1
     },
-    { /* PULSON MISSLE */
+    { /* PULSON MISSILE */
         &game_str_tbl_st_weap[39], &game_str_tbl_st_weapx[39],
         20, 20, 8,
         4, false, false, false,
@@ -529,7 +529,7 @@ struct shiptech_weap_s tbl_shiptech_weap[WEAPON_NUM] = {
         2, { 0xa0, 0x0, 0x0, 0x4, 0x8c, 0x0, 0x0 },
         0x11, 1
     },
-    { /* ZEON MISSLE */
+    { /* ZEON MISSILE */
         &game_str_tbl_st_weap[51], &game_str_tbl_st_weapx[51],
         30, 30, 9,
         6, false, false, false,
@@ -539,7 +539,7 @@ struct shiptech_weap_s tbl_shiptech_weap[WEAPON_NUM] = {
         2, { 0xc0, 0x0, 0x0, 0x5, 0x64, 0x0, 0x0 },
         0x8, 1
     },
-    { /* ZEON MISSLE */
+    { /* ZEON MISSILE */
         &game_str_tbl_st_weap[52], &game_str_tbl_st_weapx[52],
         30, 30, 7,
         6, false, false, false,
