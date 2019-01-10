@@ -101,10 +101,10 @@ const char *game_str_tbl_st_weap[WEAPON_NUM - 1] = {
     "NUCLEAR BOMB", "LASER", "NUCLEAR MISSILE", "NUCLEAR MISSILE", "HEAVY LASER", "HYPER-V ROCKET", "HYPER-V ROCKET", "GATLING LASER",
     "NEUTRON PELLET GUN", "HYPER-X ROCKET", "HYPER-X ROCKET", "FUSION BOMB", "ION CANNON", "HEAVY ION CANNON", "SCATTER PACK V", "SCATTER PACK V",
     "DEATH SPORES", "MASS DRIVER", "MERCULITE MISSILE", "MERCULITE MISSILE", "NEUTRON BLASTER", "HEAVY BLAST CANNON", "ANTI-MATTER BOMB", "GRAVITON BEAM",
-    "STINGER MISSLE", "STINGER MISSLE", "HARD BEAM", "FUSION BEAM", "HEAVY FUSION BEAM", "OMEGA-V BOMB", "ANTI-MATTER TORP", "MEGABOLT CANNON",
-    "PHASOR", "HEAVY PHASOR", "SCATTER PACK VII", "SCATTER PACK VII", "DOOM VIRUS", "AUTO BLASTER", "PULSON MISSLE", "PULSON MISSLE",
+    "STINGER MISSILE", "STINGER MISSILE", "HARD BEAM", "FUSION BEAM", "HEAVY FUSION BEAM", "OMEGA-V BOMB", "ANTI-MATTER TORP", "MEGABOLT CANNON",
+    "PHASOR", "HEAVY PHASOR", "SCATTER PACK VII", "SCATTER PACK VII", "DOOM VIRUS", "AUTO BLASTER", "PULSON MISSILE", "PULSON MISSILE",
     "TACHYON BEAM", "GAUSS AUTOCANON", "PARTICLE BEAM", "HERCULAR MISSILE", "HERCULAR MISSILE", "PLASMA CANNON", "DISRUPTOR", "PULSE PHASOR",
-    "NEUTRONIUM BOMB", "BIO TERMINATOR", "HELLFIRE TORPEDO", "ZEON MISSLE", "ZEON MISSLE", "PROTON TORPEDO", "SCATTER PACK X", "SCATTER PACK X",
+    "NEUTRONIUM BOMB", "BIO TERMINATOR", "HELLFIRE TORPEDO", "ZEON MISSILE", "ZEON MISSILE", "PROTON TORPEDO", "SCATTER PACK X", "SCATTER PACK X",
     "TRI-FOCUS PLASMA", "STELLAR CONVERTER", "MAULER DEVICE", "PLASMA TORPEDO", "CRYSTAL RAY", "DEATH RAY", "AMEOBA STREAM"
 };
 
@@ -438,7 +438,7 @@ const char *game_str_te_tech = "Tech";
 const char *game_str_te_techno = "Technology";
 const char *game_str_te_techno2 = "technology";
 const char *game_str_te_genimp = "General improvements of existing";
-const char *game_str_te_nmis = "Missles tipped with nuclear warheads that explode for 4 points of damage and move at a speed of 2.";
+const char *game_str_te_nmis = "Missiles tipped with nuclear warheads that explode for 4 points of damage and move at a speed of 2.";
 const char *game_str_te_nbomb = "Bombs that explode for 3-12 points of damage on ground targets only.";
 const char *game_str_te_scrange = "SCANNER RANGE";
 const char *game_str_te_rctrl = "Robot Controls";
