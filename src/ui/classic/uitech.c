@@ -388,7 +388,7 @@ void ui_tech(struct game_s *g, player_id_t active_player)
                 y = i * 21 + 22;
                 oi_tbl_lock[i] = uiobj_add_mousearea(168, y, 218, y + 8, MOO_KEY_UNKNOWN);
                 if (ui_extra_enabled) {
-                    oi_tbl_bonus[i] = uiobj_add_mousearea(310, y, 314, y + 8, MOO_KEY_UNKNOWN);
+                    oi_tbl_bonus[i] = uiobj_add_mousearea(298, y, 309, y + 8, MOO_KEY_UNKNOWN);
                 }
                 if (!t->slider_lock[i]) {
                     oi_tbl_minus[i] = uiobj_add_mousearea(223, y, 226, y + 8, MOO_KEY_UNKNOWN);
