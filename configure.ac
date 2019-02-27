@@ -14,7 +14,7 @@ AC_ARG_ENABLE(hwsdl1gl, AS_HELP_STRING([--disable-hwsdl1gl], [disables SDL1 HW O
 AC_ARG_ENABLE(hwsdl2, AS_HELP_STRING([--disable-hwsdl2], [disables SDL2 HW]))
 AC_ARG_ENABLE(hwsdl2audio, AS_HELP_STRING([--disable-hwsdl2audio], [disables SDL2 HW audio support]))
 AC_ARG_ENABLE(hwalleg4, AS_HELP_STRING([--disable-hwalleg4], [disables Allegro 4 HW]))
-AC_ARG_ENABLE(hwx11, AS_HELP_STRING([--disable-x11], [disables Xorg HW]))
+AC_ARG_ENABLE(hwx11, AS_HELP_STRING([--disable-hwx11], [disables Xorg HW]))
 
 AC_CONFIG_SRCDIR([src/main.c])
 AC_CONFIG_AUX_DIR([build-aux])
@@ -514,7 +514,7 @@ dnl - X11 interface, no need to check, X11 presence is part of autotools system 
 AM_CONDITIONAL(COMPILE_HW_X11, false)
 HW_X11_CFLAGS=
 HW_X11_LIBS=
-if test x"$enable_x11" != "xno"; then
+if test x"$enable_hwx11" != "xno"; then
     old_LIBS="$LIBS"
 	AC_DEFINE(USE_X11,,[Enable Xorg HW support.])
     AC_MSG_CHECKING(for Xorg)
