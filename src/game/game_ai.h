@@ -12,10 +12,11 @@ struct audience_s;
 typedef enum {
     GAME_AI_NONE = -1,
     GAME_AI_CLASSIC = 0,
-    GAME_AI_CLASSICPLUS, /*1*/
-    GAME_AI_MUXER,
-    GAME_AI_STUB, /* Should not be visible when creating games? */
-    GAME_AI_NUM
+    GAME_AI_CLASSICPLUS, /* 1 */
+    GAME_AI_MUXER,       /* 2 */
+    GAME_AI_STUB,        /* 3 */
+    GAME_AI_NUM,         /* 4 */
+    GAME_AI_NUM_VISIBLE = 2 /* Show only Classic and Classic+ */
 } game_ai_id_t;
 
 /* When an unspecified AI needs to deal with something */

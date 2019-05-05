@@ -393,7 +393,7 @@ static bool ui_new_game_extra(struct game_new_options_s *newopts, struct new_gam
                 flag_done = true;
             }
         } else if (oi == oi_ai_id) {
-            d->newopts->ai_id = (d->newopts->ai_id + 1) % GAME_AI_NUM;
+            d->newopts->ai_id = (d->newopts->ai_id + 1) % GAME_AI_NUM_VISIBLE;
         }
         for (int i = 0; i < newopts->players; ++i) {
             if (oi == oi_race[i]) {
