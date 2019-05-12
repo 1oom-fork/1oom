@@ -231,6 +231,11 @@ void game_event_new(struct game_s *g)
           || ((type == GAME_EVENT_COMET) && (g->year < 100))
           || ((type == GAME_EVENT_PIRATES) && (game_event_new_get_trader(g, player) == PLAYER_NONE))
           || (((type == GAME_EVENT_ACCIDENT) || (type == GAME_EVENT_PLAGUE)) && (e->race == RACE_SILICOID))
+          /* The OSG claims that the industrial accident event only happens on
+           * planets with at least 30 factories. This is not true for MOO 1.3,
+           * but we optionally check for it if accident_chk_factories is set in
+           * a pbx file. */
+          || ((type == GAME_EVENT_ACCIDENT) && game_num_accident_chk_factories && (p->factories < 30))
           || ((type == GAME_EVENT_ENVIRO) && (p->type < PLANET_TYPE_MINIMAL))
           || ((type == GAME_EVENT_ENVIRO) && ((p->growth >= PLANET_GROWTH_FERTILE) || (p->special > PLANET_SPECIAL_NORMAL)))
           || ((type == GAME_EVENT_RICH) && (p->special > PLANET_SPECIAL_NORMAL))
