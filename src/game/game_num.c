@@ -32,6 +32,7 @@ int game_num_max_trans_dmg = 32000;
 int game_num_max_ship_maint = 32000;
 int game_num_max_tribute_bc = 32000;
 int game_num_event_roll = 512;
+bool game_num_accident_chk_factories = false;
 int game_num_council_years = 25;
 int game_num_eco_slider_slack = 7;
 int game_num_race_bonus_alkari = 3;
