@@ -1338,7 +1338,16 @@ static void game_ai_classic_design_ship_base(struct game_s *g, struct ai_turn_p2
         int v;
         v = game_design_build_tbl_fit_engine(g, &ait->gd, tbl_have);
         v = count_havebuf_items(tbl_have, v);
-        v = game_ai_classic_design_ship_get_item(g, v, 60);
+        if (g->ai_id == GAME_AI_CLASSIC || v < 2) {
+            v = game_ai_classic_design_ship_get_item(g, v, 60);
+        } else {
+            if (v > 2) {
+                int best = find_havebuf_item(tbl_have, v);
+                int next = find_havebuf_item(tbl_have, v - 1);
+                if (next > 1 && best - next < 3)
+                    v = game_ai_classic_design_ship_get_item(g, v, 45 + (best - next)*15);
+            } /* else v = v; */
+        }
         sd->engine = find_havebuf_item(tbl_have, v);
     }
     space = game_ai_classic_design_update_engines_space(&ait->gd) / 3;
