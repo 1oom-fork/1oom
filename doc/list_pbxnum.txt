@@ -145,6 +145,12 @@ event_roll : 0..2147483647, 512
   - Special event probability. Bigger number means events are less likely.
     Zero means events are disabled.
 
+accident_chk_factories : 0..1, 0
+  - Only apply the industrial accident events to colonies with some industry.
+    If this is set to 1, the industrial accident event happens only to colonies
+    with at least 30 factories, as described in the OSG. If it is set to 0, it
+    can happen to any colony, as is actually the case in MOO 1.3.
+
 council_years : 0..32767, 25
   - Number of years between Galactic Council meetings.
     Zero means the Council never gathers.
