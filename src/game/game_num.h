@@ -30,6 +30,7 @@ extern int game_num_max_trans_dmg;
 extern int game_num_max_ship_maint;
 extern int game_num_max_tribute_bc;
 extern int game_num_event_roll;
+extern bool game_num_accident_chk_factories;
 extern int game_num_council_years;
 extern int game_num_eco_slider_slack;
 extern int game_num_race_bonus_alkari;
