@@ -29,7 +29,7 @@ The configuration options:
                             (no audio for 1oom_*_sdl2)
     --disable-hwalleg4      disables Allegro 4 HW
                             (do not build 1oom_*_alleg4)
-    --disable-x11           disables X11 HW
+    --disable-hwx11         disables X11 HW
                             (do not build 1oom_classic_x11)
 
 Parameters for configure:
