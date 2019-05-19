@@ -2176,7 +2176,7 @@ int16_t uiobj_select_from_list2(int x, int y, int w, const char *title, char con
     oi_title = uiobj_add_ta(x, y, w, title, false, &v18, 1, 0, 0, MOO_KEY_UNKNOWN);
 
     upvar = (itemoffs == 0) ? 1 : 0;
-    dnvar = (itemi < itemnum) ? 1 : 0;
+    dnvar = (itemi == itemnum) ? 1 : 0;
     oi_up = uiobj_add_t2(upx, upy, "", uplbx, &upvar, MOO_KEY_PAGEUP);
     oi_dn = uiobj_add_t2(dnx, dny, "", dnlbx, &dnvar, MOO_KEY_PAGEDOWN);
     oi_wheel = uiobj_add_mousewheel(0, 0, 319, 199, &scroll);
@@ -2287,7 +2287,7 @@ int16_t uiobj_select_from_list2(int x, int y, int w, const char *title, char con
             lbxfont_select(lbxfont_get_current_fontnum(), lbxfont_get_current_fonta2(), fonta4, 0);
             oi_title = uiobj_add_ta(x, y, w, title, false, &v18, 1, 0, 0, MOO_KEY_UNKNOWN);
             upvar = (itemoffs == 0) ? 1 : 0;
-            dnvar = (itemi < itemnum) ? 1 : 0;
+            dnvar = (itemi == itemnum) ? 1 : 0;
             oi_up = uiobj_add_t2(upx, upy, "", uplbx, &upvar, MOO_KEY_PAGEUP);
             oi_dn = uiobj_add_t2(dnx, dny, "", dnlbx, &dnvar, MOO_KEY_PAGEDOWN);
             oi_wheel = uiobj_add_mousewheel(0, 0, 319, 199, &scroll);
