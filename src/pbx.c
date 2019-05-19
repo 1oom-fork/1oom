@@ -15,13 +15,24 @@
 
 /* -------------------------------------------------------------------------- */
 
-static int pbx_cb_name(void *ctx, const char *filename, int pbxi, char *str, uint32_t len)
+static char *str_from_buf(const void *buf, uint32_t buf_size)
 {
+    size_t str_size = (size_t)buf_size + 1;
+    char *str = lib_malloc(str_size);
+    memcpy(str, buf, buf_size);
+    /* lib_malloc zeros the buffer, so the string is '\0'-terminated. */
+    return str;
+}
+
+static int pbx_cb_name(void *ctx, const char *filename, int pbxi, char *data, uint32_t len)
+{
+    char *str = str_from_buf(data, len);
     log_message("PBX: name '%s'\n", str);
+    lib_free(str);
     return 0;
 }
 
-static int pbx_cb_desc(void *ctx, const char *filename, int pbxi, char *str, uint32_t len)
+static int pbx_cb_desc(void *ctx, const char *filename, int pbxi, char *data, uint32_t len)
 {
     /* ignore */
     return 0;
@@ -51,12 +62,15 @@ static int pbx_cb_lbxo(void *ctx, const char *filename, int pbxi, const char *id
     }
 }
 
-static bool pbx_cb_strp(void *ctx, const char *filename, int pbxi, const char *id, const char *patchstr, int itemi, uint32_t len)
+static bool pbx_cb_strp(void *ctx, const char *filename, int pbxi, const char *id, const char *patchstr_data, int itemi, uint32_t len)
 {
+    char *patchstr = str_from_buf(patchstr_data, len);
     if (!game_str_patch(id, patchstr, itemi)) {
         log_error("patch file '%s' item %i strid '%s' (%i) invalid!\n", filename, pbxi, id, itemi);
+        lib_free(patchstr);
         return false;
     }
+    lib_free(patchstr);
     return true;
 }
 
@@ -77,6 +91,7 @@ int pbx_add_file(const char *filename, struct pbx_add_cbs *cbs_in, void *ctx)
     uint8_t buf[PBX_ITEM_HEADER_LEN + 4];
     uint32_t version;
     uint32_t items;
+    char *id = NULL;
     uint8_t *data = NULL;
     int res = -1;
     struct pbx_add_cbs cbs;
@@ -112,7 +127,6 @@ int pbx_add_file(const char *filename, struct pbx_add_cbs *cbs_in, void *ctx)
     for (int i = 0; i < items; ++i) {
         uint32_t offs, len, itemoffs;
         uint16_t type, itemi;
-        const char *id;
         int ri;
         if (fseek(fd, PBX_HEADER_LEN + i * 4, SEEK_SET)) {
             log_error("problem seeking to item %i offs %i\n", i, PBX_HEADER_LEN + i * 4);
@@ -134,7 +148,7 @@ int pbx_add_file(const char *filename, struct pbx_add_cbs *cbs_in, void *ctx)
         len = GET_LE_32(&(buf[PBX_OFFS_ITEM_LEN]));
         type = GET_LE_16(&(buf[PBX_OFFS_ITEM_TYPE]));
         itemi = GET_LE_16(&(buf[PBX_OFFS_ITEM_INDEX]));
-        id = (const char *)&(buf[PBX_OFFS_ITEM_ID]);
+        id = str_from_buf((const void *)&(buf[PBX_OFFS_ITEM_ID]), PBX_ITEM_ID_LEN);
         switch (type) {
             case PBX_ITEM_TYPE_LBXO:
                 if (fread(&(buf[PBX_OFFS_ITEM_OFFS]), 4, 1, fd) < 1) {
@@ -155,7 +169,7 @@ int pbx_add_file(const char *filename, struct pbx_add_cbs *cbs_in, void *ctx)
         }
         switch (type) {
             case PBX_ITEM_TYPE_NAME:
-                ri = cbs.name(ctx, filename, i, (char *)data, len);
+                ri = cbs.name(ctx, filename, i, data, len);
                 if (ri > 0) {
                     data = NULL;
                 } else if (ri < 0) {
@@ -163,7 +177,7 @@ int pbx_add_file(const char *filename, struct pbx_add_cbs *cbs_in, void *ctx)
                 }
                 break;
             case PBX_ITEM_TYPE_DESC:
-                ri = cbs.desc(ctx, filename, i, (char *)data, len);
+                ri = cbs.desc(ctx, filename, i, data, len);
                 if (ri > 0) {
                     data = NULL;
                 } else if (ri < 0) {
@@ -214,11 +228,17 @@ int pbx_add_file(const char *filename, struct pbx_add_cbs *cbs_in, void *ctx)
                 log_error("patch file '%s' item %i type %i not recognized!\n", filename, i, type);
                 goto fail;
         }
+        lib_free(id);
+        id = NULL;
         lib_free(data);
         data = NULL;
     }
     res = 0;
 fail:
+    if (id) {
+        lib_free(id);
+        id = NULL;
+    }
     if (data) {
         lib_free(data);
         data = NULL;
