@@ -152,6 +152,7 @@ static void ui_battle_pre_draw_cb(void *vptr)
             } else {
                 race_t race = g->eto[d->party_winner].race;
                 str = game_str_tbl_races[race];
+                lbxfont_set_color0(tbl_banner_color[g->eto[d->party_winner].banner]);
             }
             sprintf(buf, "%s %s", str, game_str_bp_won);
             y += 8;
