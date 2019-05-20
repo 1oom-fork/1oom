@@ -130,7 +130,8 @@ static void ui_battle_pre_draw_cb(void *vptr)
     }
     if (ui_extra_enabled) {
         int y = 112;
-        lbxfont_select(0, 0x2, 0, 0);
+        lbxfont_set_temp_color(0x0);
+        lbxfont_select_set_12_4(0, 0x2, 0, 0);
         for (int i = 0; i < SHIP_HULL_NUM; ++i, y += 8) {
             lbxfont_print_num_normal(230, y, d->force[SIDE_L][i], UI_SCREEN_W);
             lbxfont_print_num_right(308, y, d->force[SIDE_R][i], UI_SCREEN_W);
@@ -153,6 +154,7 @@ static void ui_battle_pre_draw_cb(void *vptr)
                 race_t race = g->eto[d->party_winner].race;
                 str = game_str_tbl_races[race];
                 lbxfont_set_color0(tbl_banner_color[g->eto[d->party_winner].banner]);
+                lbxfont_select_set_12_4(0, tbl_banner_fontparam[g->eto[d->party_winner].banner], 0, 0);
             }
             sprintf(buf, "%s %s", str, game_str_bp_won);
             y += 8;
