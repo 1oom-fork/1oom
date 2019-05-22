@@ -245,7 +245,7 @@ static void game_turn_build_eco(struct game_s *g)
                         if ((p->max_pop1 / 20) % 5) {
                             v += 5;
                         }
-                        SETMIN(v, 5);
+                        SETMAX(v, 5);
                         p->max_pop1 += v;
                         p->max_pop2 += v;
                         p->max_pop3 += v;
@@ -267,7 +267,7 @@ static void game_turn_build_eco(struct game_s *g)
                         if ((p->max_pop1 / 10) % 5) {
                             v += 5;
                         }
-                        SETMIN(v, 5);
+                        SETMAX(v, 5);
                         p->max_pop1 += v;
                         p->max_pop2 += v;
                         p->max_pop3 += v;
