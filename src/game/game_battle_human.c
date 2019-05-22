@@ -409,10 +409,10 @@ static void game_battle_missile_move(struct battle_s *bt, int missile_i, int tar
             for (int i = 0; i < bt->num_rocks; ++i) {
                 struct battle_rock_s *r = &(bt->rock[i]);
                 if (1
-                  && ((r->sx * 32 + 2) >= mx0)
-                  && ((r->sx * 32 + 30) < mx0)
-                  && ((r->sy * 24 + 2) >= my0)
-                  && ((r->sy * 24 + 22) < my0)
+                  && ((r->sx * 32 + 2) <= mx0)
+                  && ((r->sx * 32 + 30) >= mx0)
+                  && ((r->sy * 24 + 2) <= my0)
+                  && ((r->sy * 24 + 22) >= my0)
                 ) {
                     collisions += game_battle_missile_rock_collide(bt, m);
                 }
