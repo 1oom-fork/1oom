@@ -1,0 +1,107 @@
+Because of the large number of message types in diplomat.lbx, they are
+documented here instead of in format_lbx.txt.
+
+The different message types and numbers of variations are, in order:
+
+EMPTY:            0 variations (all-0 block)
+Accept tribute:  10 variations
+
+Praise - ongoing trade:       9 variations
+Praise - enemy-of-my-enemy:   5 variations
+
+# Warnings before declaring war
+Warning - spying:             6 variations
+EMPTY:                        0 variations
+Warning - sabotage:           8 variations
+EMPTY:                        0 variations
+Warning - military buildup:   9 variations
+Warning - destroyed ships:   12 variations
+Warning - attacked colony:   12 variations
+Warning - bioweapons:         7 variations
+Warning - stop expanding:     6 variations
+
+War - warning ignored:   14 variations
+
+# First contact messages for different leader personalities.
+# Not sure if the order is completely right.
+First contact - Xenophobic:   4 variations
+First contact - Ruthless:     4 variations
+First contact - Aggressive:   4 variations
+First contact - Erratic:      4 variations
+First contact - Pacifist:     4 variations
+First contact - Honrable:     5 variations
+
+Ambassador unavailable (war):     4 variations
+Ambassador unavailable (peace):   5 variations
+
+Friendly greeting:     4 variations
+Unfriendly greeting:   5 variations
+
+Propose NAP:                            4 variations
+Propose alliance:                       5 variations
+Propose trade:                          3 variations
+Break alliance with other:              4 variations
+Offer bounty:                           5 variations
+Offer tech trade:                       4 variations
+Offer peace:                            6 variations
+Reject deal:                            9 variations
+Break treaty (war of expansion):        5 variations
+
+# The diplomat rejects a deal due to bad behavior by the player
+Reject deal - past treaties broken:     5 variations
+Reject deal - spying:                   5 variations
+Reject deal - sabotage:                 5 variations
+Reject deal - military buildup:         5 variations
+Reject deal - destroyed ships:          5 variations
+Reject deal - attacked colony:          5 variations
+Reject deal - bioweapons:               5 variations
+
+# Threatening to break treaties because of ...
+Threat - sppying:            6 variations
+Threat - sabotaging:         5 variations
+Threat - military buildup:   5 variations
+Threat - destroyed ships:    5 variations
+Threat - attacked colony:    5 variations
+Threat - bioweapons:         5 variations
+
+# Actually breaking treaties because of ...
+Break - sppying:            4 variations
+EMPTY:                      0 variations
+Break - sabotaging:         5 variations
+EMPTY:                      0 variations
+Break - military buildup:   5 variations
+Break - destroyed ships:    5 variations
+Break - attacked colony:    5 variations
+Break - bioweapons:         6 variations
+
+Give bounty:   5 variations
+
+# More war declarations
+War - final war:   9 variations
+War - other:       6 variations
+War - erratic:     7 variations
+
+# Accepting deals
+Accept - NAP:                         5 variations
+Accept - alliance:                    5 variations
+Accept - trade:                       5 variations
+Accept - peace:                       5 variations
+Accept - because of tribute:          4 variations
+Accept - declare war on other:        6 variations
+Accept - break alliance with other:   5 variations
+
+Ignore threat:                               7 variations
+Cave to threat - stop frontier war/spying:   5 variations
+Cave to threat - give tribute:               5 variations
+Cave to threat - give tech tribute:          5 variations
+
+Player broke treaty:   6 variations
+Ambassador recalled:   9 variations
+No tech wanted:        6 variations
+
+Request to honor alliance:                   2 variations
+Player refused request to honor alliance:    4 variations
+Player accepted request to honor alliance:   6 variations
+
+Warning - council vote:  11 variations
+Praise - council vote:    8 variations
