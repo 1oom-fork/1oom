@@ -109,20 +109,21 @@ static const char *game_audience_get_str1(struct audience_s *au)
                 const char *s;
                 int len = 0;
                 s = 0;
+                /* Fill in placeholders in the diplomat message. */
                 switch (c & 0x7f) {
-                    case 0:
+                    case 0:  /* Player race */
                         s = game_str_tbl_race[eh->race];
                         break;
-                    case 1:
+                    case 1:  /* AI race */
                         s = game_str_tbl_race[ea->race];
                         break;
-                    case 0x16:
+                    case 0x16:  /* "a" or "an" */
                         s = (strchr("aeiou", tolower(game_str_tbl_race[ea->race][0])) != NULL) ? "n" : "";
                         break;
-                    case 2:
+                    case 2:  /* "factories" or "bases" (sabotage) */
                         s = (!eh->diplo_p2[pa]) ? game_str_au_facts : game_str_au_bases;
                         break;
-                    case 0xb:
+                    case 0xb:  /* Current treaty */
                         if (eh->treaty[pa] == TREATY_ALLIANCE) {
                             s = game_str_au_allian;
                         } else if (eh->treaty[pa] == TREATY_NONAGGRESSION) {
@@ -133,21 +134,21 @@ static const char *game_audience_get_str1(struct audience_s *au)
                             s = game_str_au_treaty;
                         }
                         break;
-                    case 0x17:
-                        if (eh->broken_treaty[pa] == TREATY_ALLIANCE) {
+                    case 0x17:  /* Broken treaty (by AI) */
+                        if (ea->broken_treaty[ph] == TREATY_ALLIANCE) {
                             s = game_str_au_allian;
-                        } else if (eh->broken_treaty[pa] == TREATY_NONAGGRESSION) {
+                        } else if (ea->broken_treaty[ph] == TREATY_NONAGGRESSION) {
                             s = game_str_au_nonagg;
-                        } else if (eh->broken_treaty[pa] == TREATY_NONE) {
+                        } else if (ea->broken_treaty[ph] == TREATY_NONE) {
                             s = game_str_au_tradea;
                         } else {
                             s = game_str_au_treaty;
                         }
                         break;
-                    case 3:
+                    case 3:  /* Player name */
                         s = g->emperor_names[ph];
                         break;
-                    case 9:
+                    case 9:  /* AI leader name */
                         s = g->emperor_names[pa];
                         break;
                     case 4:
