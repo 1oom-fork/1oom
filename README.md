@@ -1,23 +1,22 @@
-########
-# 1oom #
-########
+1oom
+====
 
 1oom is a Master of Orion (1993) game engine recreation.
 1oom is Free Software (GPLv2), see COPYING.
 
 
-1. Installation
-================
+Installation
+============
 
 1oom requires a copy of the Master of Orion (v1.3) LBX files.
 
-1.1. Windows
--------------
+Windows
+-------
 
 Simply copy the EXE and DLLs (if any) to your MOO1 directory.
 
-1.2 Linux
-----------
+Linux
+-----
 
 1oom requires the following libraries:
 
@@ -35,14 +34,14 @@ Check your distribution's package manager or the library
 website on how to install them.
 
 
-2. Configuration
-=================
+Configuration
+=============
 
 1oom is configured via command-line arguments or editing the
 configuration file.
 
-2.1. User Directory
---------------------
+User Directory
+--------------
 
 1oom creates a User directory with all the user savegames and
 options in one of the following paths:
@@ -52,14 +51,14 @@ options in one of the following paths:
 - ~/.config/1oom (Linux)
 
 
-3. Development
-===============
+Development
+===========
 
 See INSTALL and HACKING for more information.
 
 
-4. Executables
-===============
+Executables
+===========
 
 1oom consists of a few executables:
 
@@ -69,8 +68,8 @@ See INSTALL and HACKING for more information.
 
 See doc/ for more documentation.
 
-4.1. 1oom_classic_sdl1
------------------------
+1oom_classic_sdl1
+-----------------
 
 Middle click or Ctrl-F10 to grab/ungrab input.
 Ctrl-Esc to quit (without saving).
@@ -79,8 +78,8 @@ Ctrl-Shift-Plus/Minus to adjust music volume.
 Otherwise it controls like the original.
 
 
-5. Abbreviations
-=================
+Abbreviations
+=============
 
 The following abbreviations appear in the documentation and code:
 
@@ -88,16 +87,11 @@ The following abbreviations appear in the documentation and code:
 - OSG: The Official Strategy Guide (ISBN 1-55958-507-2)
 
 
-6. Acknowledgements
-====================
+Acknowledgements
+================
 
 Original game by Simtex Software, published 1993 by MicroProse.
-Thanks for the great game and fuckings for not releasing the source code.
-
-Thanks to Something Awful forum user Thotimx for the MOO1 LP which was a
-major inspiration in starting this project. Unfortunately the goon writes
-parenthesis without the leading space(such as here) like a retard, making the
-Le'ts Play [sic] a painful read.
+Thanks for the great game.
 
 Ideas and text snippets have been taken from kyrub's unofficial patch 1.40m
 Readme. Thanks for the patch.
@@ -110,9 +104,6 @@ Thanks to CivFanatics forum user sargon0 for partial save game format info in
 http://forums.civfanatics.com/threads/moo-save-file-layout.275055/
 
 Thanks to those who contributed code, ideas or bug reports.
-
-This README is based on the OpenXcom one, except s/folder/directory/g like a
-civilized person.
 
 Some code has been pilfered from Chocolate Doom and VICE.
 
