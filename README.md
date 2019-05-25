@@ -1,23 +1,22 @@
-########
-# 1oom #
-########
+1oom
+====
 
 1oom is a Master of Orion (1993) game engine recreation.
 1oom is Free Software (GPLv2), see COPYING.
 
 
-1. Installation
-================
+Installation
+============
 
 1oom requires a copy of the Master of Orion (v1.3) LBX files.
 
-1.1. Windows
--------------
+Windows
+-------
 
 Simply copy the EXE and DLLs (if any) to your MOO1 directory.
 
-1.2 Unix (Linux)
-----------------
+Unix (Linux)
+------------
 
 1oom requires the following libraries:
 
@@ -35,30 +34,31 @@ Check your distribution's package manager or the library
 website on how to install them.
 
 
-2. Configuration
-=================
+Configuration
+=============
 
 See CONFIGURATION.
 
 
-3. Development
-===============
+Development
+===========
 
 See INSTALL and HACKING for more information.
 
 
-4. Controls
-===========
+Controls
+========
 
-Middle click or Ctrl-F10 to grab/ungrab input.
-Ctrl-Esc to quit (without saving).
-Ctrl-Plus/Minus to adjust sfx volume.
-Ctrl-Shift-Plus/Minus to adjust music volume.
+- Middle click or Ctrl-F10 to grab/ungrab input.
+- Ctrl-Esc to quit (without saving).
+- Ctrl-Plus/Minus to adjust sfx volume.
+- Ctrl-Shift-Plus/Minus to adjust music volume.
+
 Otherwise it controls like the original.
 
 
-5. Abbreviations
-=================
+Abbreviations
+=============
 
 The following abbreviations appear in the documentation and code:
 
@@ -66,8 +66,8 @@ The following abbreviations appear in the documentation and code:
 - OSG: The Official Strategy Guide (ISBN 1-55958-507-2)
 
 
-6. Acknowledgements
-====================
+Acknowledgements
+================
 
 Original game by Simtex Software, published 1993 by MicroProse.
 
