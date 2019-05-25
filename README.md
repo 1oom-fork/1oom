@@ -90,20 +90,30 @@ The following abbreviations appear in the documentation and code:
 Acknowledgements
 ================
 
-Original game by Simtex Software, published 1993 by MicroProse.
+Most of the credit for this software belongs to the progammer who authored
+[1oom v1.0](https://kilgoretroutmaskreplicant.gitlab.io/plain-html)
+under the pseudonym Kilgore Trout Mask Replicant. Thank you for
+creating this and publishing it free and open source!
+
+The original game Master of Orion was developed  by Simtex Software and
+published 1993 by MicroProse. Thanks for the great game!
+
+Thanks to Alan Emrich and Tom Hughes for documenting the game mechanics and AI
+decision making in great detail in the official strategy guide.
 
 Ideas and text snippets have been taken from kyrub's unofficial patch 1.40m
 Readme. Thanks for the patch.
 
-Thanks to
-http://www.shikadi.net/wiki/modding/index.php?title=XMI_Format&oldid=6874
-for the music format info.
+Thanks to [shikadi.net](https://www.shikadi.net) for documenting the
+[music format](https://moddingwiki.shikadi.net/wiki/XMI_Format).
 
-Thanks to CivFanatics forum user sargon0 for partial save game format info in
-http://forums.civfanatics.com/threads/moo-save-file-layout.275055/
+Thanks to [CivFanatics forum](https://forums.civfanatics.com) user sargon0 for [partial save game format info](
+https://forums.civfanatics.com/threads/moo-save-file-layout.275055/).
 
 Thanks to those who contributed code, ideas or bug reports.
 
-Some code has been pilfered from Chocolate Doom and VICE.
+Some code has been pilfered from
+[Chocolate Doom](https://github.com/chocolate-doom/chocolate-doom)
+and [VICE](https://vice-emu.sourceforge.io/).
 
-HACKING and PHILOSOPHY are based on Chocolate Doom.
+[HACKING](HACKING) and [PHILOSOPHY](PHILOSOPHY) are based on Chocolate Doom.
