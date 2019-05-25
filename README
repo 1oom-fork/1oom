@@ -85,19 +85,10 @@ Otherwise it controls like the original.
 ====================
 
 Original game by Simtex Software, published 1993 by MicroProse.
-Thanks for the great game and fuckings for not releasing the source code.
-
-Thanks to Something Awful forum user Thotimx for the MOO1 LP which was a
-major inspiration in starting this project. Unfortunately the goon writes
-parenthesis without the leading space(such as here) like a retard, making the
-Le'ts Play [sic] a painful read.
 
 Thanks to
 http://www.shikadi.net/wiki/modding/index.php?title=XMI_Format&oldid=6874
 for the music format info.
-
-This README is based on the OpenXcom one, except s/folder/directory/g like a
-civilized person.
 
 Some code has been pilfered from Chocolate Doom and VICE.
 
