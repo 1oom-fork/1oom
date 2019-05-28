@@ -241,8 +241,8 @@ static void game_planet_build_eco_do(const struct game_s *g, struct planet_s *p)
                     }
                     /* WASBUG max_pop += moved from outside if (bc >= cost) */
                     p->type = PLANET_TYPE_MINIMAL;
-                    p->max_pop2 += v;
                     p->max_pop1 += v;
+                    p->max_pop2 += v;
                     p->max_pop3 += v;
                     p->growth = PLANET_GROWTH_NORMAL;
                     ecoprod = p->bc_to_ecoproj - game_num_atmos_cost;
@@ -256,15 +256,16 @@ static void game_planet_build_eco_do(const struct game_s *g, struct planet_s *p)
                 p->bc_to_ecoproj += ecoprod;
                 if (p->bc_to_ecoproj > game_num_soil_cost) {
                     int v;
+                    int16_t new_max_pop2;
                     p->growth = PLANET_GROWTH_FERTILE;
                     v = (p->max_pop1 / 20) * 5;
                     if ((p->max_pop1 / 20) % 5) {
                         v += 5;
                     }
                     SETMAX(v, 5);
-                    p->max_pop1 += v;
-                    p->max_pop2 += v;
-                    p->max_pop3 += v;
+                    new_max_pop2 = p->max_pop1 + v;
+                    p->max_pop2 = new_max_pop2;
+                    p->max_pop3 += new_max_pop2 - p->max_pop2;
                     SETMIN(p->max_pop3, (e->have_terraform_n + p->max_pop2));
                     SETMIN(p->max_pop3, game_num_max_pop);
                     ecoprod = p->bc_to_ecoproj - game_num_soil_cost;
@@ -278,15 +279,16 @@ static void game_planet_build_eco_do(const struct game_s *g, struct planet_s *p)
                 p->bc_to_ecoproj += ecoprod;
                 if (p->bc_to_ecoproj > game_num_adv_soil_cost) {
                     int v;
+                    int16_t new_max_pop2;
                     p->growth = PLANET_GROWTH_GAIA;
                     v = (p->max_pop1 / 10) * 5;
                     if ((p->max_pop1 / 10) % 5) {
                         v += 5;
                     }
                     SETMAX(v, 5);
-                    p->max_pop1 += v;
-                    p->max_pop2 += v;
-                    p->max_pop3 += v;
+                    new_max_pop2 = p->max_pop1 + v;
+                    p->max_pop2 = new_max_pop2;
+                    p->max_pop3 += new_max_pop2 - p->max_pop2;
                     SETMIN(p->max_pop3, (e->have_terraform_n + p->max_pop2));
                     SETMIN(p->max_pop3, game_num_max_pop);
                     ecoprod = p->bc_to_ecoproj - game_num_adv_soil_cost;
