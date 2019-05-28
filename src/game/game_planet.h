@@ -96,9 +96,9 @@ typedef struct planet_s {
     uint8_t look;   /* 0, 6 */
     uint8_t frame;  /* 0..49 */
     planet_rocks_t rocks;
-    int16_t max_pop1;
-    int16_t max_pop2;
-    int16_t max_pop3;
+    int16_t max_pop1;  /* Base size */
+    int16_t max_pop2;  /* Size adjusted by soil enrichment tech */
+    int16_t max_pop3;  /* Maximum population */
     planet_type_t type;
     uint8_t battlebg;   /* 0..4 ; 0 implies planet is in nebula */
     uint8_t infogfx;    /* index to planets.lbx */
