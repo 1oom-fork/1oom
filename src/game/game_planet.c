@@ -339,7 +339,7 @@ int game_planet_get_slider_text_eco(const struct game_s *g, uint8_t planet_i, pl
     const empiretechorbit_t *e = &(g->eto[player]);
     int retval = -1;
     const char *str = NULL;
-    int vthis, factoper, waste, adjwaste;
+    int vthis, factoper, waste, adjwaste, tform_cost;
     bool flag_ecoproj = false;
     vthis = (p->prod_after_maint * p->slider[PLANET_SLIDER_ECO]) / 100;
     factoper = (p->pop - p->trans_num) * e->colonist_oper_factories;
@@ -377,24 +377,29 @@ int game_planet_get_slider_text_eco(const struct game_s *g, uint8_t planet_i, pl
         }
         if (vthis > 0) {
             if (p->max_pop3 < game_num_max_pop) {
-                adjwaste = (p->max_pop2 + (e->have_terraform_n - p->max_pop3)) * e->terraform_cost_per_inc;
+                /* WASBUG In MOO 1.3, if you conquered a planet from a race
+                 * with more advanced terraforming than you, a negative
+                 * terraforming cost would be calculated here. This affected
+                 * the displayed pop growth estimate but not actual growth. */
+                tform_cost = (p->max_pop2 + (e->have_terraform_n - p->max_pop3)) * e->terraform_cost_per_inc;
+                SETMAX(tform_cost, 0);
             } else {
-                adjwaste = 0;
+                tform_cost = 0;
             }
-            if (vthis < adjwaste) {
+            if (vthis < tform_cost) {
                 str = game_str_sm_ecotform;
             } else {
                 int growth, growth2, max_pop;
                 bool flag_tform = false;
                 max_pop = p->max_pop3;
-                if (adjwaste > 0) {
-                    if (vthis < adjwaste) {
+                if (tform_cost > 0) {
+                    if (vthis < tform_cost) {
                         flag_tform = true;
                     } else if (flag_tenths) {   /* keep same +N as MOO1 for developing planets on -nouiextra */
                         max_pop = p->max_pop2 + e->have_terraform_n;
                     }
                 }
-                vthis -= adjwaste;
+                vthis -= tform_cost;
                 growth = game_get_pop_growth_max(g, planet_i, max_pop) + p->pop_tenths;
                 if (!flag_tenths) {
                     if (((p->pop - p->trans_num) + (growth / 10)) > max_pop) {
