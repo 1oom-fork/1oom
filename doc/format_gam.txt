@@ -65,9 +65,9 @@ e       2   ypos
 14      2   frame (0..49)
 16      2   hmm16 (0..4?)
 18      2   rocks: 0=0, 1=1..4, 2=5..7
-1a      2   max pop1 (base?)
-1c      2   max pop2 (base?)
-1e      2   max pop3 (actual?)
+1a      2   max pop1 (base size)
+1c      2   max pop2 (base size modified by soil enrichment tech)
+1e      2   max pop3 (actual population maximum)
 20      2   type: 0=not habitable, 2=toxic, 3=inferno, 4=dead, 7=minimal, 8=desert, 9=steppe, 0xa=arid, 0xb=ocean, 0xd=terran
 22      2   battle background (0..4): index to space.lbx (+0x1a), 0 implies planet is in nebula
 24      2   infogfx: index to planets.lbx
