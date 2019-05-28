@@ -189,6 +189,68 @@ static int game_turn_build_eco_sub1(int fact, int colonist_oper_fact, int pop1, 
     return ((100 - ((waste * 100) / max_pop2)) * v) / 100;
 }
 
+/* Max. population values: Each planet has three max_pop variables which are
+ * affected by the ECO projects in different ways.
+ *
+ * The base size, max_pop1, is the size of the planet at the start of the game.
+ * It is used to determine the increase in max. population from (advanced) soil
+ * enrichment; max_pop1 itself is increased only when applying atmospheric
+ * terraforming to some types of hostile planets.
+ *
+ * max_pop2 is max_pop1 modified by (advanced) soil enrichment. Note that for
+ * planets that are Fertile or Gaia at the start of the game,
+ * max_pop1 == max_pop2. They are only different when the planets were made
+ * Fertile or Gaia by a player (human or AI).
+ *
+ * max_pop3 is the actual population maximum. It equals max_pop2 modified by
+ * terraforming and/or by bioweapon damage.
+ */
+static void game_turn_atmos_tform(struct planet_s *p) {
+    int max_pop_increase;
+    if (p->type < PLANET_TYPE_DEAD) {
+        max_pop_increase = 20;
+    } else if (p->type < PLANET_TYPE_BARREN) {
+        max_pop_increase = 10;
+    } else {
+        max_pop_increase = 0;
+    }
+    /* WASBUG max_pop += moved from outside if (bc >= cost) */
+    p->type = PLANET_TYPE_MINIMAL;
+    p->max_pop1 += max_pop_increase;
+    p->max_pop2 += max_pop_increase;
+    p->max_pop3 += max_pop_increase;
+    p->growth = PLANET_GROWTH_NORMAL;
+}
+
+static void game_turn_soil_enrich(struct planet_s *p, int best_tform, bool advanced) {
+    int max_pop_increase = 0;
+    int16_t old_max_pop2 = 0;
+    p->growth = advanced ? PLANET_GROWTH_GAIA : PLANET_GROWTH_FERTILE;
+    if (advanced) {
+        max_pop_increase = (p->max_pop1 / 10) * 5;
+        /* BUG? If we want to calculate 50% of the base size, rounded up
+        * to the next multiple of 5, we'd check if p->max_pop1 % 10 != 0
+        * below. Instead, we add an additional +5 unless the base size is
+        * in the range 50-59 or 100-109. Penalizing these specific sizes
+        * seems weird and arbitrary. */
+        if ((p->max_pop1 / 10) % 5) {
+            max_pop_increase += 5;
+        }
+    } else {
+        max_pop_increase = (p->max_pop1 / 20) * 5;
+        /* BUG? See above. */
+        if ((p->max_pop1 / 20) % 5) {
+            max_pop_increase += 5;
+        }
+    }
+    SETMAX(max_pop_increase, 5);
+    old_max_pop2 = p->max_pop2;
+    p->max_pop2 = p->max_pop1 + max_pop_increase;
+    p->max_pop3 += p->max_pop2 - old_max_pop2;
+    SETMIN(p->max_pop3, (best_tform + p->max_pop2));
+    SETMIN(p->max_pop3, game_num_max_pop);
+}
+
 static inline void game_add_planet_to_eco_finished(struct game_s *g, uint8_t pli, player_id_t owner)
 {
     BOOLVEC_SET1(g->planet[pli].finished, FINISHED_SOILATMOS);
@@ -236,20 +298,7 @@ static void game_turn_build_eco(struct game_s *g)
             if ((ecoprod > 0) && e->have_atmos_terra && (p->growth == PLANET_GROWTH_HOSTILE)) {
                 p->bc_to_ecoproj += ecoprod;
                 if (p->bc_to_ecoproj >= game_num_atmos_cost) {
-                    int v;
-                    if (p->type < PLANET_TYPE_DEAD) {
-                        v = 20;
-                    } else if (p->type < PLANET_TYPE_BARREN) {
-                        v = 10;
-                    } else {
-                        v = 0;
-                    }
-                    /* WASBUG max_pop += moved from outside if (bc >= cost) */
-                    p->type = PLANET_TYPE_MINIMAL;
-                    p->max_pop2 += v;
-                    p->max_pop1 += v;
-                    p->max_pop3 += v;
-                    p->growth = PLANET_GROWTH_NORMAL;
+                    game_turn_atmos_tform(p);
                     ecoprod = p->bc_to_ecoproj - game_num_atmos_cost;
                     p->bc_to_ecoproj -= game_num_atmos_cost;
                     game_add_planet_to_eco_finished(g, i, owner);
@@ -260,17 +309,7 @@ static void game_turn_build_eco(struct game_s *g)
             if ((ecoprod > 0) && e->have_soil_enrich && (p->growth == PLANET_GROWTH_NORMAL)) {
                 p->bc_to_ecoproj += ecoprod;
                 if (p->bc_to_ecoproj > game_num_soil_cost) {
-                    int v;
-                    p->growth = PLANET_GROWTH_FERTILE;
-                    v = (p->max_pop1 / 20) * 5;
-                    if ((p->max_pop1 / 20) % 5) {
-                        v += 5;
-                    }
-                    SETMAX(v, 5);
-                    p->max_pop2 = p->max_pop1 + v;
-                    p->max_pop3 += v;
-                    SETMIN(p->max_pop3, (e->have_terraform_n + p->max_pop2));
-                    SETMIN(p->max_pop3, game_num_max_pop);
+                    game_turn_soil_enrich(p, (int)e->have_terraform_n, false);
                     ecoprod = p->bc_to_ecoproj - game_num_soil_cost;
                     p->bc_to_ecoproj -= game_num_soil_cost; /* BUG cost was not removed */
                     game_add_planet_to_eco_finished(g, i, owner);
@@ -281,17 +320,7 @@ static void game_turn_build_eco(struct game_s *g)
             if ((ecoprod > 0) && e->have_adv_soil_enrich && (p->growth < PLANET_GROWTH_GAIA) && (p->growth > PLANET_GROWTH_HOSTILE)) {
                 p->bc_to_ecoproj += ecoprod;
                 if (p->bc_to_ecoproj > game_num_adv_soil_cost) {
-                    int v;
-                    p->growth = PLANET_GROWTH_GAIA;
-                    v = (p->max_pop1 / 10) * 5;
-                    if ((p->max_pop1 / 10) % 5) {
-                        v += 5;
-                    }
-                    SETMAX(v, 5);
-                    p->max_pop2 = p->max_pop1 + v;
-                    p->max_pop3 += v;
-                    SETMIN(p->max_pop3, (e->have_terraform_n + p->max_pop2));
-                    SETMIN(p->max_pop3, game_num_max_pop);
+                    game_turn_soil_enrich(p, (int)e->have_terraform_n, true);
                     ecoprod = p->bc_to_ecoproj - game_num_adv_soil_cost;
                     p->bc_to_ecoproj -= game_num_adv_soil_cost; /* BUG cost was not removed */
                     game_add_planet_to_eco_finished(g, i, owner);
