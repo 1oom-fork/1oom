@@ -76,9 +76,9 @@ c       name (ASCIIz)
 1       look (0, 6)
 1       frame (0..49)
 1       rocks: 0=0. 1=1..4, 2=5..7
-2       max pop1 (base?)
-2       max pop2 (base?)
-2       max pop3 (actual?)
+2       max pop1 (base size)
+2       max pop2 (base size modified by soil enrichment tech)
+2       max pop3 (actual population maximum)
 1       planet type: 0=not habitable, 1=radiated, 2=toxic, 3=inferno, 4=dead, 5=tundra, 6=barren, 7=minimal, 8=desert, 9=steppe, a=arid, b=ocean, c=jungle, d=terran, e=gaia
 1       battle background (0..4): index to space.lbx (+0x1a), 0 implies planet is in nebula
 1       infogfx: index to planets.lbx
