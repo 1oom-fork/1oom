@@ -49,6 +49,7 @@ extern bool game_num_waste_calc_fix;
 extern bool game_num_waste_adjust_fix;
 extern bool game_num_doom_stack_fix;
 extern uint8_t game_num_eco_slider_slack;
+extern bool game_num_reset_tform_to_max;
 extern uint8_t game_num_tbl_hull_w[4];
 extern uint8_t game_num_tech_costmuld[DIFFICULTY_NUM];
 extern uint8_t game_num_tech_costmula[DIFFICULTY_NUM];
