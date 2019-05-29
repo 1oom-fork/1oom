@@ -246,7 +246,14 @@ static void game_turn_soil_enrich(struct planet_s *p, int best_tform, bool advan
     old_max_pop2 = p->max_pop2;
     p->max_pop2 = p->max_pop1 + max_pop_increase;
     p->max_pop3 += p->max_pop2 - old_max_pop2;
-    SETMIN(p->max_pop3, (best_tform + p->max_pop2));
+    if (game_num_reset_tform_to_max) {
+        /* BUG? Having p->max_pop3 > (best_tform + p->max_pop2) seems
+         * only possible when conquering a planet from a race with better
+         * terraforming tech. Is it intended that the player loses the
+         * more advanced terraforming here, or is this a sanity check
+         * with unintended consequences? */
+        SETMIN(p->max_pop3, (best_tform + p->max_pop2));
+    }
     SETMIN(p->max_pop3, game_num_max_pop);
 }
 
