@@ -126,6 +126,13 @@ eco_slider_slack : 0..255, 7
     Reducing the value to 0 eliminates extraneous eco spending after population
     maximum has been reached.
 
+reset_tform_to_max : 0..1, 1
+  - Reset terraforming to the player's maximum when finishing soil enrichment.
+    If this value is 1 (the default), when the soil enrichment project is
+    completed on a planet that has been terraformed to a higher level than
+    the player has available, the terraforming is reset to the players
+    maximum. If the value is 0, the alien terraforming is kept.
+
 doom_stack_fix : 0..1, 1
   - Fix negative/32000 ship doom stack bug.
     In MOO1 overflows in AI-AI battles can result in 32000 ship doom stacks.
