@@ -53,6 +53,7 @@ bool game_num_trans_redir_fix = false;
 bool game_num_retreat_redir_fix = false;
 bool game_num_waste_calc_fix = false;
 bool game_num_doom_stack_fix = false;
+bool game_num_reset_tform_to_max = true;
 
 uint8_t game_num_tbl_hull_w[4] = { 1, 5, 25, 125 };
 
