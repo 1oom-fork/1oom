@@ -1652,7 +1652,7 @@ static void game_ai_classic_turn_p2_do(struct game_s *g, player_id_t pi)
     ait->have_pulsar = false;
     ait->have_repulwarp = false;
     for (player_id_t p2 = PLAYER_0; p2 < g->players; ++p2) {
-        const const shipdesign_t *sd2;
+        const shipdesign_t *sd2;
         int sn;
         if (IS_AI(g, p2) || (!IS_ALIVE(g, p2))) {
             continue;
