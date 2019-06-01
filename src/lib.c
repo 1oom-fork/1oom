@@ -1,6 +1,7 @@
 #include "config.h"
 
 #include <ctype.h>
+#include <errno.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -57,4 +58,72 @@ char *lib_stralloc(const char *str)
 
     memcpy(ptr, str, size);
     return ptr;
+}
+
+char *lib_strcpy(char *dst, const char *src, size_t dst_bufsize)
+{
+    if (strlen(src) >= dst_bufsize) {
+        log_fatal_and_die("lib_strcpy: destination buffer too small\n");
+    }
+    return strcpy(dst, src);
+}
+
+/* strbuild_*: build up strings piece by piece, checking the buffer size. */
+
+static void strbuild_fatal_too_small(struct strbuild_s *str)
+{
+    log_fatal_and_die("string buffer too small for: \"%s...\"\n", str->str_start);
+}
+
+struct strbuild_s strbuild_init(char *buf, size_t bufsize)
+{
+    if (bufsize > 0) {
+        buf[0] = '\0';
+    }
+    struct strbuild_s output = { buf, buf, bufsize };
+    return output;
+}
+
+/* Return the string being built and start a new one after it. */
+const char *strbuild_finish(struct strbuild_s *str)
+{
+    const char *old_str = str->str_start;
+    if (str->remaining > 0) {
+        *++(str->str_end) = '\0';
+        str->remaining -= 1;
+    }
+    str->str_start = str->str_end;
+    /* If str->remaining was 0, we will log_fatal_and_die when anything
+     * more is written to this string. */
+    return old_str;
+}
+
+void strbuild_append_char(struct strbuild_s *str, char c)
+{
+    if (str->remaining > 0) {
+        *str->str_end++ = c;
+        *str->str_end = '\0';
+        str->remaining -= 1;
+    }
+    else {
+        strbuild_fatal_too_small(str);
+    }
+}
+
+/* Print text at the end of the current string. */
+void strbuild_catf(struct strbuild_s *str, const char *fmt, ...)
+{
+    va_list args;
+    va_start(args, fmt);
+    int bytes_added = vsnprintf(str->str_end, str->remaining, fmt, args);
+    if (bytes_added < 0) {
+        /* Error */
+        log_fatal_and_die("str_catf: vsnprintf: %s", strerror(errno));
+    }
+    else if (bytes_added >= str->remaining) {
+        /* Truncated */
+        strbuild_fatal_too_small(str);
+    }
+    str->str_end += bytes_added;
+    str->remaining -= bytes_added;
 }
