@@ -641,11 +641,6 @@ const char *game_str_au_amreca = "(ambassador recalled)";
 const char *game_str_au_tech = "tech";
 const char *game_str_au_framed = "(you were framed)";
 const char *game_str_au_bull = "[";
-const char *game_str_au_accept = "Accept";
-const char *game_str_au_reject = "Reject";
-const char *game_str_au_agree = "Agree";
-const char *game_str_au_forget = "Forget It";
-const char *game_str_au_forget2 = "Forget_it";
 const char *game_str_au_inxchng = "In exchange you will receive:";
 const char *game_str_au_whatif1 = "What if we were to also offer";
 const char *game_str_au_whatif2 = "as an incentive";
@@ -670,7 +665,7 @@ const char *game_str_au_techn = "[ Technology";
 const char *game_str_au_nextp = "[ Next page";
 const char *game_str_au_back = "[ Back";
 
-const char *game_str_au_opts1[6] = {
+const char *game_str_au_opts_main[6] = {
     "[ Propose Treaty",
     "[ Form Trade Agreement",
     "[ Threaten/Break Treaty and Trade",
@@ -678,7 +673,7 @@ const char *game_str_au_opts1[6] = {
     "[ Exchange Technology",
     "[ Good Bye"
 };
-const char *game_str_au_opts2[6] = {
+const char *game_str_au_opts_treaty[6] = {
     "[ Non-Aggression Pact",
     "[ Alliance",
     "[ Peace Treaty",
@@ -686,11 +681,15 @@ const char *game_str_au_opts2[6] = {
     "[ Break Alliance With Another Race",
     "[ Forget It"
 };
-const char *game_str_au_opts3[2] = {
+const char *game_str_au_opts_agree[2] = {
     "[ Agree",
     "[ Forget It"
 };
-const char *game_str_au_opts4[5] = {
+const char *game_str_au_opts_accept[2] = {
+    "[ Accept",
+    "[ Reject"
+};
+const char *game_str_au_opts_threaten[5] = {
     "[ Break Non-Aggression Pact",
     "[ Break Alliance",
     "[ Break Trade Agreement",

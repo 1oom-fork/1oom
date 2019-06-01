@@ -232,7 +232,7 @@ static void ui_audience_draw_cb4(void *vptr)    /* FIXME combine with cb3 and/or
 static int16_t ui_audience_ask_do(struct audience_s *au, int y, void (*draw_cb)(void *vptr))
 {
     int16_t selected = 0;
-    ui_audience_play_music(au->uictx, au->musi); /* side effect of game_audience_get_str1() */
+    ui_audience_play_music(au->uictx, au->musi); /* side effect of game_audience_get_diplo_msg() */
     uiobj_set_callback_and_delay(draw_cb, au->uictx, 1);
     uiobj_set_downcount(1);
     lbxfont_select(0, 2, 3, 0);
@@ -271,7 +271,7 @@ void ui_audience_show1(struct audience_s *au)
     struct audience_data_s *d = au->uictx;
     bool flag_done = false;
     int16_t oi_ma = UIOBJI_INVALID;
-    ui_audience_play_music(au->uictx, au->musi); /* side effect of game_audience_get_str1() */
+    ui_audience_play_music(au->uictx, au->musi); /* side effect of game_audience_get_diplo_msg() */
     uiobj_set_callback_and_delay(ui_audience_draw_cb1, d, 1);
     uiobj_set_downcount(1);
     uiobj_table_clear();
@@ -300,7 +300,7 @@ void ui_audience_show2(struct audience_s *au)
 {
     struct audience_data_s *d = au->uictx;
     int16_t oi = 0;
-    ui_audience_play_music(d, au->musi); /* side effect of game_audience_get_str1() */
+    ui_audience_play_music(d, au->musi); /* side effect of game_audience_get_diplo_msg() */
     uiobj_set_callback_and_delay(ui_audience_draw_cb2, d, 1);
     uiobj_set_downcount(1);
     uiobj_table_clear();
@@ -321,7 +321,7 @@ void ui_audience_show3(struct audience_s *au)
 {
     struct audience_data_s *d = au->uictx;
     bool flag_done = false;
-    ui_audience_play_music(au->uictx, au->musi); /* side effect of game_audience_get_str1() */
+    ui_audience_play_music(au->uictx, au->musi); /* side effect of game_audience_get_diplo_msg() */
     uiobj_set_callback_and_delay(ui_audience_draw_cb3, d, 1);
     uiobj_set_downcount(1);
     uiobj_table_clear();
