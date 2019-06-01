@@ -6,6 +6,7 @@
 #include "game_planet.h"
 #include "game_types.h"
 #include "gfxaux.h"
+#include "ui.h"
 #include "types.h"
 
 #define UI_SCROLL_SPEED_MAX 10
@@ -258,7 +259,7 @@ struct ui_data_s {
     bool flag_scrap_for_new_design;
     bool have_help;
     BOOLVEC_DECLARE(players_viewing, PLAYER_NUM);
-    char strbuf[1024];
+    char strbuf[UI_STRBUF_SIZE];
 };
 
 extern struct ui_data_s ui_data;
