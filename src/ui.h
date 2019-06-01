@@ -19,6 +19,7 @@ extern bool ui_use_audio;
 extern const struct cmdline_options_s ui_cmdline_options[];
 extern const struct cfg_items_s ui_cfg_items[];
 
+#define UI_STRBUF_SIZE 1024
 extern char *ui_get_strbuf(void);
 
 extern void ui_play_intro(void);
