@@ -63,7 +63,7 @@ struct game_ai_s {
     bool (*aud_later)(struct audience_s *au);
 };
 
-extern struct game_ai_s const *game_ai;
-extern const struct game_ai_s const *game_ais[GAME_AI_NUM];
+extern const struct game_ai_s *game_ai;
+extern const struct game_ai_s *const game_ais[GAME_AI_NUM];
 
 #endif
