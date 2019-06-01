@@ -16,6 +16,7 @@
 #include "game_spy.h"
 #include "game_str.h"
 #include "game_tech.h"
+#include "lib.h"
 #include "log.h"
 #include "rnd.h"
 #include "ui.h"
@@ -24,14 +25,59 @@
 
 #define DEBUGLEVEL_AUDIENCE 3
 
+static void game_audience_clear_strtbl(struct audience_s *au)
+{
+    for (int i = 0; i < AUDIENCE_STR_MAX; ++i) {
+        au->strtbl[i] = NULL;
+    }
+}
+
+/* Prepare a menu with options for the player; condtbl indicates which options
+ * are active. As a shortcut, if it is NULL, all options are active. The menu
+ * can be presented to the player using the ui_audience_ask* functions. */
+static void game_audience_choice(struct audience_s *au, const char *query, const char **options, const bool *condtbl, uint8_t num_entries)
+{
+    int i;
+    au->buf = query;
+    if (num_entries >= AUDIENCE_STR_MAX) {
+        log_fatal_and_die("Too many strings in au->strtbl\n");
+    }
+    for (i = 0; i < num_entries; ++i) {
+        au->strtbl[i] = options[i];
+    }
+    au->strtbl[i] = NULL;
+    au->condtbl = condtbl;
+}
+
+static void game_audience_tech_choice(struct audience_s *au, const char *query, tech_field_t *fields, uint8_t *techs, int num_techs, bool forget_it_opt)
+{
+    struct strbuild_s strbuild = strbuild_init(au->strtbl_buf, AUDIENCE_STRTBL_BUFSIZE);
+    int num_entries = forget_it_opt ? num_techs + 1 : num_techs;
+    char tech_name[64];
+    au->buf = query;
+    if (num_entries >= AUDIENCE_STR_MAX) {
+        log_fatal_and_die("Too many strings in au->strtbl\n");
+    }
+
+    int i;
+    for (i = 0; i < num_techs; i++) {
+        game_tech_get_name(au->g->gaux, fields[i], techs[i], tech_name);
+        strbuild_catf(&strbuild, "%s %s", game_str_au_bull, tech_name);
+        au->strtbl[i] = strbuild_finish(&strbuild);
+    }
+    if (forget_it_opt) {
+        au->strtbl[i++] = game_str_au_opts_agree[1];  /* "Forget It" */
+    }
+    au->strtbl[i] = NULL;
+    au->condtbl = NULL;
+}
+
 static void game_audience_prepare(struct audience_s *au, player_id_t ph, player_id_t pa)
 {
-    au->buf = ui_get_strbuf();
+    au->buf = NULL;
     au->ph = ph;
     au->pa = pa;
-    for (int i = 0; i < AUDIENCE_STR_MAX; ++i) {
-        au->strtbl[i] = 0;
-    }
+    game_audience_clear_strtbl(au);
     au->gfxi = 0;
     au->musi = 0;
     au->dtype_next = 0;
@@ -39,295 +85,353 @@ static void game_audience_prepare(struct audience_s *au, player_id_t ph, player_
 
 static void game_audience_start_human(struct audience_s *au)
 {
-    struct game_s *g = au->g;
-    player_id_t pa = au->pa;
-    if (IS_AI(g, pa)) {
-        game_ai->aud_start_human(au);
-    } else {
-        /* TODO multiplayer */
-        au->dtype = 22;
-        au->mode = 0;
-    }
+    game_ai->aud_start_human(au);
 }
 
-static int game_audience_print_tech(struct game_s *g, tech_field_t field, uint8_t tech, char *buf, bool add_str)
+static void game_audience_str_append_offer(struct strbuild_s *strbuild, const struct game_s *g, tech_field_t field, uint8_t tech, uint16_t bc)
 {
-    int len;
-    game_tech_get_name(g->gaux, field, tech, buf);
-    len = strlen(buf);
-    buf[len++] = ' ';
-    if (add_str) {
-        len += sprintf(&buf[len], "%s.", game_str_au_tech);
-    } else {
-        buf[len] = '\0';
-    }
-    return len;
-}
-
-static void game_audience_str_append_offer(const struct game_s *g, char *buf, tech_field_t field, uint8_t tech, uint16_t bc)
-{
-    buf += strlen(buf);
-    *buf++ = ' ';
-    *buf = 0;
+    strbuild_append_char(strbuild, ' ');
     if (tech != 0) {
-        game_tech_get_name(g->gaux, field, tech, buf);
-        buf += strlen(buf);
-        sprintf(buf, " %s", game_str_au_tech);
+        char techname[64];
+        game_tech_get_name(g->gaux, field, tech, techname);
+        strbuild_catf(strbuild, "%s", techname);
+        strbuild_catf(strbuild, " %s", game_str_au_tech);
     } else if (bc != 0) {
-        sprintf(buf, "%u %s", bc, game_str_bc);
+        strbuild_catf(strbuild, "%u %s", bc, game_str_bc);
     }
 }
 
-static const char *game_audience_get_str1(struct audience_s *au)
+static void game_audience_append_tech(struct strbuild_s *str, struct game_s *g, tech_field_t field, uint8_t tech)
+{
+    char tech_name[64];
+    game_tech_get_name(g->gaux, field, tech, tech_name);
+    strbuild_catf(str, "%s", tech_name);
+}
+
+static void audience_build_diplo_msg(struct audience_s *au, bool framed)
 {
     struct game_s *g = au->g;
     uint8_t dtype = au->dtype;
     player_id_t ph = au->ph, pa = au->pa;
     empiretechorbit_t *eh = &(g->eto[ph]);
     empiretechorbit_t *ea = &(g->eto[pa]);
-    bool flag_framed = false;
-    if ((dtype == 5) || (dtype == 7) || (dtype == 35) || (dtype == 37) || (dtype == 43) || (dtype == 45) || (dtype == 51) || (dtype == 53)) {
-        flag_framed = true;
-        --dtype;
+    const char *msg;
+    struct strbuild_s strbuild = strbuild_init(au->diplo_msg, AUDIENCE_DIPLO_MSG_SIZE);
+
+    /* Randomly select a varation of the message type. */
+    int v = rnd_0_nm1(g->gaux->diplomat.d0[dtype], &g->seed);
+    if (g->players == 2) {
+        --v;
+        SETMAX(v, 0);
     }
-    if (g->evn.diplo_msg_subtype == -1) {
-        const char *msg;
-        char *buf = au->buf;
-        {
-            int v = rnd_0_nm1(g->gaux->diplomat.d0[dtype], &g->seed);
-            if (g->players == 2) {
-                --v;
-                SETMAX(v, 0);
+    g->evn.diplo_msg_subtype = v;
+    msg = DIPLOMAT_MSG_PTR(g->gaux, v, dtype);
+
+    /* Fill in placeholders in the message. */
+    for (int i = 0; (i < DIPLOMAT_MSG_LEN) && (msg[i] != 0); ++i) {
+        char c;
+        c = msg[i];
+        if (c & 0x80) {
+            const char *s;
+            const char *field;
+            s = NULL;
+            switch (c & 0x7f) {
+                case 0:  /* Player race */
+                    s = game_str_tbl_race[eh->race];
+                    break;
+                case 1:  /* AI race */
+                    s = game_str_tbl_race[ea->race];
+                    break;
+                case 0x16:  /* "a" or "an" */
+                    s = (strchr("aeiou", tolower(game_str_tbl_race[ea->race][0])) != NULL) ? "n" : "";
+                    break;
+                case 2:  /* "factories" or "bases" (sabotage) */
+                    s = (!eh->diplo_p2[pa]) ? game_str_au_facts : game_str_au_bases;
+                    break;
+                case 0xb:  /* Current treaty */
+                    if (eh->treaty[pa] == TREATY_ALLIANCE) {
+                        s = game_str_au_allian;
+                    } else if (eh->treaty[pa] == TREATY_NONAGGRESSION) {
+                        s = game_str_au_nonagg;
+                    } else if (eh->trade_bc[pa] != 0) {
+                        s = game_str_au_tradea;
+                    } else {
+                        s = game_str_au_treaty;
+                    }
+                    break;
+                case 0x17:  /* Broken treaty (by AI) */
+                    if (ea->broken_treaty[ph] == TREATY_ALLIANCE) {
+                        s = game_str_au_allian;
+                    } else if (ea->broken_treaty[ph] == TREATY_NONAGGRESSION) {
+                        s = game_str_au_nonagg;
+                    } else if (ea->broken_treaty[ph] == TREATY_NONE) {
+                        s = game_str_au_tradea;
+                    } else {
+                        s = game_str_au_treaty;
+                    }
+                    break;
+                case 3:  /* Player name */
+                    s = g->emperor_names[ph];
+                    break;
+                case 9:  /* AI leader name */
+                    s = g->emperor_names[pa];
+                    break;
+                case 4:
+                    field = game_str_tbl_te_field[eh->diplo_p2[pa]];
+                    while (*field != '\0') {
+                        strbuild_append_char(&strbuild, tolower(*field++));
+                    }
+                    /* WASBUG MOO1 printed "force Field" */
+                    break;
+                case 5:
+                    s = g->planet[eh->diplo_p1[pa]].name;
+                    break;
+                case 6:
+                    s = game_str_tbl_race[g->eto[eh->diplo_p2[pa]].race];
+                    break;
+                case 8:
+                    s = game_str_tbl_race[g->eto[eh->attack_bounty[pa]].race];
+                    break;
+                case 0xc:
+                    s = game_str_tbl_race[g->eto[eh->au_ask_break_treaty[pa]].race];
+                    break;
+                case 0xf:
+                    strbuild_catf(&strbuild, "%i", g->year + YEAR_BASE);
+                    break;
+                case 0x13:
+                    strbuild_catf(&strbuild, "%i", au->tribute_bc);
+                    break;
+                case 7:
+                    strbuild_catf(&strbuild, "%u", eh->au_want_trade[pa]);
+                    break;
+                case 0x15:
+                    strbuild_catf(&strbuild, "%u", eh->trade_bc[pa]);
+                    break;
+                case 0xa:
+                    strbuild_catf(&strbuild, "\x02 %s\x01", game_str_au_amreca);
+                    break;
+                case 0x11:
+                    s = game_str_tbl_race[g->eto[au->pstartwar].race];
+                    break;
+                case 0x12:
+                    s = game_str_tbl_race[g->eto[au->pwar].race];
+                    break;
+                case 0xd:
+                    if (eh->attack_gift_bc[pa] != 0) {
+                        strbuild_catf(&strbuild, "%i %s.", eh->attack_gift_bc[pa], game_str_bc);
+                    } else {
+                        game_audience_append_tech(&strbuild, g, eh->attack_gift_field[pa], eh->attack_gift_tech[pa]);
+                        strbuild_catf(&strbuild, " %s.", game_str_au_tech);
+                    }
+                    break;
+                case 0xe:
+                    game_audience_append_tech(&strbuild, g, eh->au_want_field[pa], eh->au_want_tech[pa]);
+                    strbuild_catf(&strbuild, " %s.", game_str_au_tech);
+                    break;
+                case 0x10:
+                    game_audience_append_tech(&strbuild, g, au->tribute_field, au->tribute_tech);
+                    break;
+                case 0x14:
+                    game_audience_append_tech(&strbuild, g, au->tribute_field, au->tribute_tech);
+                    strbuild_catf(&strbuild, " %s.", game_str_au_tech);
+                    break;
+                default:
+                    strbuild_append_char(&strbuild, c);
+                    break;
             }
-            g->evn.diplo_msg_subtype = v;
-            msg = DIPLOMAT_MSG_PTR(g->gaux, v, dtype);
-        }
-        for (int i = 0; (i < DIPLOMAT_MSG_LEN) && (msg[i] != 0); ++i) {
-            char c;
-            c = msg[i];
-            if (c & 0x80) {
-                const char *s;
-                int len = 0;
-                s = 0;
-                /* Fill in placeholders in the diplomat message. */
-                switch (c & 0x7f) {
-                    case 0:  /* Player race */
-                        s = game_str_tbl_race[eh->race];
-                        break;
-                    case 1:  /* AI race */
-                        s = game_str_tbl_race[ea->race];
-                        break;
-                    case 0x16:  /* "a" or "an" */
-                        s = (strchr("aeiou", tolower(game_str_tbl_race[ea->race][0])) != NULL) ? "n" : "";
-                        break;
-                    case 2:  /* "factories" or "bases" (sabotage) */
-                        s = (!eh->diplo_p2[pa]) ? game_str_au_facts : game_str_au_bases;
-                        break;
-                    case 0xb:  /* Current treaty */
-                        if (eh->treaty[pa] == TREATY_ALLIANCE) {
-                            s = game_str_au_allian;
-                        } else if (eh->treaty[pa] == TREATY_NONAGGRESSION) {
-                            s = game_str_au_nonagg;
-                        } else if (eh->trade_bc[pa] != 0) {
-                            s = game_str_au_tradea;
-                        } else {
-                            s = game_str_au_treaty;
-                        }
-                        break;
-                    case 0x17:  /* Broken treaty (by AI) */
-                        if (ea->broken_treaty[ph] == TREATY_ALLIANCE) {
-                            s = game_str_au_allian;
-                        } else if (ea->broken_treaty[ph] == TREATY_NONAGGRESSION) {
-                            s = game_str_au_nonagg;
-                        } else if (ea->broken_treaty[ph] == TREATY_NONE) {
-                            s = game_str_au_tradea;
-                        } else {
-                            s = game_str_au_treaty;
-                        }
-                        break;
-                    case 3:  /* Player name */
-                        s = g->emperor_names[ph];
-                        break;
-                    case 9:  /* AI leader name */
-                        s = g->emperor_names[pa];
-                        break;
-                    case 4:
-                        len = sprintf(buf, "%s", game_str_tbl_te_field[eh->diplo_p2[pa]]);
-                        buf[0] = tolower(buf[0]);   /* FIXME BUG? this leaves "force Field" */
-                        break;
-                    case 5:
-                        s = g->planet[eh->diplo_p1[pa]].name;
-                        break;
-                    case 6:
-                        s = game_str_tbl_race[g->eto[eh->diplo_p2[pa]].race];
-                        break;
-                    case 8:
-                        s = game_str_tbl_race[g->eto[eh->attack_bounty[pa]].race];
-                        break;
-                    case 0xc:
-                        s = game_str_tbl_race[g->eto[eh->au_ask_break_treaty[pa]].race];
-                        break;
-                    case 0xf:
-                        len = sprintf(buf, "%i", g->year + YEAR_BASE);
-                        break;
-                    case 0x13:
-                        len = sprintf(buf, "%i", au->tribute_bc);
-                        break;
-                    case 7:
-                        len = sprintf(buf, "%u", eh->au_want_trade[pa]);
-                        break;
-                    case 0x15:
-                        len = sprintf(buf, "%u", eh->trade_bc[pa]);
-                        break;
-                    case 0xa:
-                        len = sprintf(buf, "\x02 %s\x01", game_str_au_amreca);
-                        break;
-                    case 0x11:
-                        s = game_str_tbl_race[g->eto[au->pstartwar].race];
-                        break;
-                    case 0x12:
-                        s = game_str_tbl_race[g->eto[au->pwar].race];
-                        break;
-                    case 0xd:
-                        if (eh->attack_gift_bc[pa] != 0) {
-                            len = sprintf(buf, "%i %s.", eh->attack_gift_bc[pa], game_str_bc);
-                        } else {
-                            len = game_audience_print_tech(g, eh->attack_gift_field[pa], eh->attack_gift_tech[pa], buf, true);
-                        }
-                        break;
-                    case 0xe:
-                        len = game_audience_print_tech(g, eh->au_want_field[pa], eh->au_want_tech[pa], buf, true);
-                        break;
-                    case 0x10:
-                        len = game_audience_print_tech(g, au->tribute_field, au->tribute_tech, buf, false);
-                        break;
-                    case 0x14:
-                        len = game_audience_print_tech(g, au->tribute_field, au->tribute_tech, buf, true);
-                        break;
-                    default:
-                        *buf = c;
-                        len = 1;
-                        break;
-                }
-                if (s) {
-                    len = sprintf(buf, "%s", s);
-                }
-                buf += len;
-            } else {
-                *buf++ = c;
+            if (s) {
+                strbuild_catf(&strbuild, "%s", s);
             }
+        } else {
+            strbuild_append_char(&strbuild, c);
         }
-        *buf = 0;
-        if (flag_framed) {
-            buf += sprintf(buf, "\x02 %s\x01", game_str_au_framed);
-        }
-        au->gfxi = DIPLOMAT_MSG_GFX(msg);
-        au->musi = DIPLOMAT_MSG_MUS(msg);
-        strcpy(&au->buf[AUDIENCE_BUF2_POS], au->buf);
-    } else {
-        strcpy(au->buf, &au->buf[AUDIENCE_BUF2_POS]);
     }
-    return au->buf;
+    if (framed) {
+        strbuild_catf(&strbuild, "\x02 %s\x01", game_str_au_framed);
+    }
+    au->gfxi = DIPLOMAT_MSG_GFX(msg);
+    au->musi = DIPLOMAT_MSG_MUS(msg);
 }
 
-static int16_t game_audience_sub3(struct audience_s *au)
+/* Build the diplomat message if necessary and set it to be displayed. */
+static void game_audience_get_diplo_msg(struct audience_s *au)
 {
     struct game_s *g = au->g;
-    char *cbuf = &(au->buf[AUDIENCE_CBUF_POS]);
-    player_id_t ph = au->ph, pa = au->pa;
-    empiretechorbit_t *eh = &(g->eto[ph]);
-    int len;
-    int16_t selected = 0, seldef;
-    game_audience_get_str1(au);
-    cbuf[0] = '0';
-    for (int i = 0; i < AUDIENCE_STR_MAX; ++i) {
-        au->strtbl[i] = 0;
+    uint8_t dtype = au->dtype;
+    bool framed = false;
+    if ((dtype == 5) || (dtype == 7) || (dtype == 35) || (dtype == 37) || (dtype == 43) || (dtype == 45) || (dtype == 51) || (dtype == 53)) {
+        framed = true;
+        au->dtype -= 1;
     }
-    switch (au->dtype) {
-        case 24:
-        case 25:
-        case 26:
-        case 30:
-        case 76:
-            au->strtbl[0] = cbuf;
-            len = sprintf(cbuf, "%s %s", game_str_au_bull, game_str_au_accept);
-            cbuf += len + 1;
-            au->strtbl[1] = cbuf;
-            len = sprintf(cbuf, "%s %s", game_str_au_bull, game_str_au_reject);
-            selected = 1;
-            break;
-        case 27:
-            au->strtbl[0] = cbuf;
-            len = sprintf(cbuf, "%s %s", game_str_au_bull, game_str_au_agree);
-            cbuf += len + 1;
-            au->strtbl[1] = cbuf;
-            len = sprintf(cbuf, "%s %s", game_str_au_bull, game_str_au_forget);
-            selected = 1;
-            break;
-        case 29:
-            {
-                int i;
-                for (i = 0; (i < 4) && (i < eh->au_tech_trade_num[pa]); ++i) {
-                    au->strtbl[i] = cbuf;
-                    len = sprintf(cbuf, "%s ", game_str_au_bull);
-                    cbuf += len;
-                    game_tech_get_name(g->gaux, eh->au_tech_trade_field[pa][i], eh->au_tech_trade_tech[pa][i], cbuf);
-                    cbuf += strlen(cbuf) + 1;
-                }
-                au->strtbl[i] = cbuf;
-                sprintf(cbuf, "%s %s", game_str_au_bull, game_str_au_forget2);
-                selected = i;
-                /*game_audience_get_str1(au);*/ /* FIXME why again? */
-            }
-            break;
-        case 28:
-        case 58:
-            break;
-        default:
-            LOG_DEBUG((1, "%s: BUG unhandled dtype %u\n", __func__, au->dtype));
-            break;
+    if (g->evn.diplo_msg_subtype == -1) {
+        audience_build_diplo_msg(au, framed);  /* Sets diplo_msg_subtype. */
     }
-    seldef = selected;
-    if ((au->dtype == 28) || (au->dtype == 58) || (au->dtype == 29)) {
-        ui_audience_show2(au);
-        selected = 1;
-        if (au->dtype == 29) {
-            strcpy(au->buf, game_str_au_inxchng);
-            au->condtbl = 0;
-            selected = ui_audience_ask2a(au);
-        }
-    } else {
-        /*62346*/
-        au->condtbl = 0;
-        selected = ui_audience_ask2b(au);
-        if (((selected == 1) || (selected == -1)) && ((eh->offer_tech[pa] != 0) || (eh->offer_bc[pa] != 0))) {
-            bool flag_qtype = (!rnd_0_nm1(2, &g->seed));
-            strcpy(au->buf, flag_qtype ? game_str_au_whatif1 : game_str_au_perrec1);
-            game_audience_str_append_offer(g, au->buf, eh->offer_field[pa], eh->offer_tech[pa], eh->offer_bc[pa]);
-            if (flag_qtype) {
-                int l;
-                l = strlen(au->buf);
-                au->buf[l++] = ' ';
-                strcpy(&au->buf[l], game_str_au_whatif2);
-            }
-            strcat(au->buf, game_str_au_ques);
-            au->condtbl = 0;
-            selected = ui_audience_ask2b(au);
-        }
-    }
-    /*624eb*/
-    if (selected == -1) {
-        selected = seldef;
-    }
-    return selected;
+    au->buf = au->diplo_msg;
 }
 
-static bool game_audience_sub2(struct audience_s *au)
+static void game_audience_ai_offers_bounty(struct audience_s *au)
+{
+    ui_audience_show2(au);
+}
+
+static void game_audience_ai_pays_bounty(struct audience_s *au)
+{
+    struct game_s *g = au->g;
+    player_id_t ph = au->ph, pa = au->pa;
+    empiretechorbit_t *eh = &(g->eto[ph]);
+
+    ui_audience_show2(au);
+    if (game_num_aud_bounty_give) {  /* WASBUG MOO1 never gives the bounty */
+        eh->reserve_bc += eh->attack_gift_bc[pa];
+        if (eh->attack_gift_tech[pa] != 0) {
+            game_tech_get_new(g, ph, eh->attack_gift_field[pa], eh->attack_gift_tech[pa], TECHSOURCE_TRADE, pa, PLAYER_NONE, false);
+        }
+    }
+}
+
+static void game_audience_set_dtype(struct audience_s *au, uint8_t dtype, int a2)
+{
+    struct game_s *g = au->g;
+    au->dtype = game_ai->aud_get_dtype(au, dtype, a2);
+    g->evn.diplo_msg_subtype = -1;
+    game_audience_get_diplo_msg(au);
+    ui_audience_show3(au);
+}
+
+static void game_audience_ai_offers_tech_trade(struct audience_s *au)
+{
+    struct game_s *g = au->g;
+    player_id_t ph = au->ph, pa = au->pa;
+    empiretechorbit_t *eh = &(g->eto[ph]);
+    int num_techs = MIN(eh->au_tech_trade_num[pa], 4);
+    int16_t selected = -1, default_selected = num_techs + 1;
+
+    ui_audience_show2(au);
+    game_audience_tech_choice(au, game_str_au_inxchng, eh->au_tech_trade_field[pa], eh->au_tech_trade_tech[pa], num_techs, true);
+    selected = ui_audience_ask2a(au);
+    selected = (selected != -1) ? selected : default_selected;
+    game_tech_get_new(g, ph, eh->au_tech_trade_field[pa][selected], eh->au_tech_trade_tech[pa][selected], TECHSOURCE_TRADE, pa, PLAYER_NONE, false);
+    /* WASBUG? 1oom v1.0 did not give a tech to the AI. Not sure if this bug
+     * was present in MOO1 or introduced in 1oom. */
+    game_tech_get_new(g, pa, eh->au_want_field[pa], eh->au_want_tech[pa], TECHSOURCE_TRADE, pa, PLAYER_NONE, false);
+}
+
+static void game_audience_ai_breaks_alliance(struct audience_s *au)
+{
+    game_diplo_break_treaty(au->g, au->pa, au->ph);
+    au->mode = 6;
+    game_audience_set_dtype(au, 77, 3);
+}
+
+static bool game_audience_ai_offers_treaty(struct audience_s *au)
+{
+    struct game_s *g = au->g;
+    player_id_t ph = au->ph, pa = au->pa;
+    uint8_t dtype = au->dtype;
+    empiretechorbit_t *eh = &(g->eto[ph]);
+    empiretechorbit_t *ea = &(g->eto[pa]);
+    int16_t selected = -1;
+
+    game_audience_clear_strtbl(au);
+    if (dtype == 27) {
+        game_audience_choice(au, au->diplo_msg, game_str_au_opts_agree, NULL, 2);
+    }
+    else {
+        game_audience_choice(au, au->diplo_msg, game_str_au_opts_accept, NULL, 2);
+    }
+    selected = ui_audience_ask2b(au);
+    /* If the player refuses, the AI may offer to sweeten the deal. */
+    if (((selected == 1) || (selected == -1)) && ((eh->offer_tech[pa] != 0) || (eh->offer_bc[pa] != 0))) {
+        struct strbuild_s strbuild = strbuild_init(au->diplo_msg, AUDIENCE_DIPLO_MSG_SIZE);
+        bool flag_qtype = (!rnd_0_nm1(2, &g->seed));
+        strbuild_catf(&strbuild, "%s", flag_qtype ? game_str_au_whatif1 : game_str_au_perrec1);
+        game_audience_str_append_offer(&strbuild, g, eh->offer_field[pa], eh->offer_tech[pa], eh->offer_bc[pa]);
+        if (flag_qtype) {
+            strbuild_catf(&strbuild, " %s", game_str_au_whatif2);
+        }
+        strbuild_catf(&strbuild, "%s", game_str_au_ques);
+        au->buf = au->diplo_msg;
+        /* We still have accept/reject or agree/forget-it in au->strtbl. */
+        selected = ui_audience_ask2b(au);
+    }
+    if (selected == 0) {  /* Player accepted. */
+        switch (au->dtype) {
+            case 24:
+                game_diplo_set_treaty(g, ph, pa, TREATY_NONAGGRESSION);
+                break;
+            case 25:
+                game_diplo_set_treaty(g, ph, pa, TREATY_ALLIANCE);
+                break;
+            case 26:
+                game_diplo_set_trade(g, ph, pa, eh->au_want_trade[pa]);
+                break;
+            case 27:  /* Player breaks alliance with the AI's enemy. */
+                game_diplo_break_treaty(g, ph, eh->au_ask_break_treaty[pa]);
+                break;
+            case 30:
+                game_diplo_stop_war(g, ph, pa);
+                if (eh->relation1[pa] < 80) {
+                    eh->relation1[pa] += 20;
+                    ea->relation1[ph] = eh->relation1[pa];
+                }
+                game_diplo_annoy(g, ph, pa, 2);
+                break;
+            case 76:  /* Player joins their ally's war. */
+                game_diplo_start_war(g, ph, au->pwar);
+                au->mode = 6;
+                game_audience_set_dtype(au, 78, 3);
+                break;
+            default:
+                log_fatal_and_die("%s: BUG unhandled dtype %u\n", __func__, au->dtype);
+                break;
+        }
+        /* BUG? Give the deal-sweetener. Note that this happens even if the
+         * player didn't refuse at first and thus didn't see the sweetener.
+         * This may silently add some money to the player's reserve. */
+
+        /* BUG? AI doesn't give a deal-sweetener for honoring your alliance.
+         * That makes some sense, but can it ever happen that the AI offers
+         * a sweetener and doesn't give it? */
+        if (dtype != 76) {
+            eh->reserve_bc += eh->offer_bc[pa];
+            /* BUG? AI doesn't lose money? */
+            if (eh->offer_tech[pa] != 0) {
+                game_tech_get_new(g, ph, eh->offer_field[pa], eh->offer_tech[pa], TECHSOURCE_TRADE, pa, PLAYER_NONE, false);
+            }
+        }
+    }
+    else {  /* Player refused. */
+        switch (dtype) {
+            case 27:  /* Player didn't break alliance with the AI's enemy. */
+                /* ea->relation1[ph] -= rnd_1_n(6, &g->seed) + 6; SETMAX(ea->relation1[ph], -100); BUG? useless */
+                ea->relation1[ph] = -100;
+                eh->relation1[pa] = -100;
+                break;
+            case 76:  /* Player did not honor their alliance. */
+                game_audience_ai_breaks_alliance(au);
+                break;
+            default:
+                break;
+        }
+    }
+    return selected == 0;
+}
+
+/* If the AI wants to offer a deal to the player, but the player is
+ * allied with one of its war enemies, it asks the player to break the
+ * alliance and does not make the offer if they refuse.
+ *
+ * The function returns true if either
+ *   - the player is not allied with an enemy of the AI, or
+ *   - the player chose to break the alliance
+ * and false otherwise. */
+static bool game_audience_check_alliances(struct audience_s *au)
 {
     struct game_s *g = au->g;
     player_id_t ph = au->ph, pa = au->pa, pf = PLAYER_NONE;
     empiretechorbit_t *eh = &(g->eto[ph]);
     empiretechorbit_t *ea = &(g->eto[pa]);
+    bool retval;
     for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         if ((i != ph) && (i != pa) && (ea->treaty[i] >= TREATY_WAR) && (eh->treaty[i] == TREATY_ALLIANCE)) {
             pf = i;
@@ -339,237 +443,20 @@ static bool game_audience_sub2(struct audience_s *au)
     au->dtype = 27;
     eh->au_ask_break_treaty[pa] = pf;
     g->evn.diplo_msg_subtype = -1;
-    if (game_audience_sub3(au) != 0) {
-        /* ea->relation1[ph] -= rnd_1_n(6, &g->seed) + 6; SETMAX(ea->relation1[ph], -100); BUG? useless */
-        ea->relation1[ph] = -100;
-        eh->relation1[pa] = -100;
-        return false;
-    } else {
-        game_diplo_break_treaty(g, ph, pf);
-        return true;
+    game_audience_get_diplo_msg(au);
+    /* Note: The below game_audience_ai_offers_treaty call is for asking the
+     * player to break the alliance. The main offer will be made in
+     * game_audience_do. */
+    retval = game_audience_ai_offers_treaty(au);
+    if ((au->dtype_next == 76) && !retval) {
+        /* The AI is allied with the player and was going to ask them to join
+         * a war against an enemy. But the player also has an alliance with one
+         * of the AI's enemies and refused to break it, so the AI now cancels
+         * the alliance with the player. In the grimdark future of the 23rd
+         * century, you can't be friends with everyone. */
+        game_audience_ai_breaks_alliance(au);
     }
-}
-
-static void game_audience_set_dtype(struct audience_s *au, uint8_t dtype, int a2)
-{
-    struct game_s *g = au->g;
-    if (IS_AI(g, au->pa)) {
-        dtype = game_ai->aud_get_dtype(au, dtype, a2);
-    } else {
-        /* TODO */
-        if ((a2 >= 0) && (a2 <= 2)) {
-            dtype = 31;
-        }
-    }
-    au->dtype = dtype;
-    g->evn.diplo_msg_subtype = -1;
-    game_audience_get_str1(au);
-    ui_audience_show3(au);
-}
-
-typedef enum {
-    AUD_MP_ASK_NAP,
-    AUD_MP_ASK_ALLIANCE,
-    AUD_MP_ASK_PEACE,
-    AUD_MP_ASK_WAR,
-    AUD_MP_ASK_BREAK,
-    AUD_MP_ASK_TRADE
-} aud_mp_ask_t;
-
-static int game_audience_mp_ask_accept(struct audience_s *au, aud_mp_ask_t atype)
-{
-    struct game_s *g = au->g;
-    player_id_t pa = au->pa;
-    char *buf = au->buf;
-    int16_t selected = 0;
-    g->evn.diplo_msg_subtype = -1;
-    buf += sprintf(buf, "\x02(%s)\x01", g->emperor_names[pa]);
-    switch (atype) {
-        case AUD_MP_ASK_NAP:
-            buf += sprintf(buf, " %s?", &game_str_au_opts2[0][2]);
-            break;
-        case AUD_MP_ASK_ALLIANCE:
-            buf += sprintf(buf, " %s?", &game_str_au_opts2[1][2]);
-            break;
-        case AUD_MP_ASK_PEACE:
-            buf += sprintf(buf, " %s?", &game_str_au_opts2[2][2]);
-            break;
-        case AUD_MP_ASK_WAR:
-            /* TODO */
-            break;
-        case AUD_MP_ASK_BREAK:
-            /* TODO */
-            break;
-        case AUD_MP_ASK_TRADE:
-            buf += sprintf(buf, " %s %i %s?", game_str_au_tradea, au->new_trade_bc, game_str_au_bcpery);
-            break;
-    }
-    for (int i = 0; i < 4; ++i) {
-        au->strtbl[i] = game_str_au_optsmp1[i];
-    }
-    au->strtbl[4] = 0;
-    if (atype == AUD_MP_ASK_TRADE) {
-        au->strtbl[2] = 0;
-    }
-    au->condtbl = 0;
-    selected = ui_audience_ask4(au);
-    if ((selected == -1) || (selected == 1)) {
-        return 0;
-    } else if (selected == 0) {
-        return 3;
-    } else if (selected == 2) {
-        return 2;
-    } else {
-        return 1;
-    }
-}
-
-static int game_audiece_mp_sweeten_tech_field(struct audience_s *au, tech_field_t f)
-{
-    struct game_s *g = au->g;
-    player_id_t ph = au->ph, pa = au->pa;
-    const empiretechorbit_t *eh = &(g->eto[ph]);
-    const empiretechorbit_t *ea = &(g->eto[pa]);
-    uint8_t num = 0, pos = 0;
-    uint8_t techtbl[TECH_PER_FIELD + 2];
-    {
-        const shipresearch_t *srd = &(g->srd[ph]);
-        const uint8_t *rct = &(srd->researchcompleted[f][0]);
-        uint16_t tc = eh->tech.completed[f];
-        uint8_t rf = ea->spyreportfield[ph][f];
-        for (int i = 0; i < tc; ++i) {
-            uint8_t rc;
-            rc = rct[i];
-            if (rc <= rf) {
-                if (!game_tech_player_has_tech(g, f, rc, pa)) {
-                    techtbl[num++] = rc;
-                }
-            }
-        }
-    }
-    /* HACK */
-    techtbl[num++] = 0xfe/*back*/;
-    techtbl[num++] = 0xff/*forget*/;
-    while (1) {
-        int16_t selected;
-        int i;
-        char *cbuf;
-        cbuf = &(au->buf[AUDIENCE_CBUF_POS]);
-        for (i = 0; (i < 5) && ((i + pos) < num); ++i) {
-            char buf[0x60];
-            int len;
-            uint8_t v;
-            au->strtbl[i] = cbuf;
-            v = techtbl[i + pos];
-            if (v == 0xfe/*back*/) {
-                len = sprintf(cbuf, "%s", game_str_au_back);
-            } else if (v == 0xff/*forget*/) {
-                len = sprintf(cbuf, "%s", game_str_au_optsmp1[1]);
-            } else {
-                len = sprintf(cbuf, "%s %s", game_str_au_bull, game_tech_get_name(g->gaux, f, v, buf));
-            }
-            cbuf += len + 1;
-        }
-        if ((i + pos) < num) {
-            au->strtbl[i++] = game_str_au_nextp;
-        }
-        au->strtbl[i] = 0;
-        au->condtbl = 0;
-        selected = ui_audience_ask4(au);
-        if (selected < 0) {
-            return -1;
-        } else {
-            uint8_t v = techtbl[selected + pos];
-            if (v == 0xfe/*back*/) {
-                return 0;
-            } else if (v == 0xff/*forget*/) {
-                return -1;
-            } else {
-                return v;
-            }
-        }
-    }
-}
-
-static bool game_audiece_mp_sweeten_tech(struct audience_s *au, tech_field_t *fieldptr, uint8_t *techptr)
-{
-    struct game_s *g = au->g;
-    player_id_t pa = au->pa;
-    g->evn.diplo_msg_subtype = -1;
-    sprintf(au->buf, "\x02(%s)\x01", g->emperor_names[pa]);
-    while (1) {
-        int16_t selected;
-        char *cbuf;
-        cbuf = &(au->buf[AUDIENCE_CBUF_POS]);
-        for (tech_field_t f = 0; f < TECH_FIELD_NUM; ++f) {
-            int len;
-            au->strtbl[f] = cbuf;
-            len = sprintf(cbuf, "%s %s", game_str_au_bull, game_str_tbl_te_field[f]);
-            cbuf += len + 1;
-        }
-        au->strtbl[TECH_FIELD_NUM] = 0;
-        au->condtbl = 0;
-        selected = ui_audience_ask4(au);
-        if (selected == -1) {
-            return false;
-        } else {
-            int res;
-            res = game_audiece_mp_sweeten_tech_field(au, selected);
-            if (res > 0) {
-                *fieldptr = selected;
-                *techptr = res;
-                return true;
-            } else if (res < 0) {
-                return false;
-            }
-        }
-    }
-}
-
-static bool game_audiece_mp_sweeten_bc(struct audience_s *au, int *bcptr)
-{
-    struct game_s *g = au->g;
-    player_id_t ph = au->ph, pa = au->pa;
-    empiretechorbit_t *eh = &(g->eto[ph]);
-    int16_t selected = 0;
-    uint8_t bcnum;
-    uint32_t reserve = eh->reserve_bc;
-    uint16_t bctbl[5];
-    char *cbuf = &(au->buf[AUDIENCE_CBUF_POS]);
-    SETMIN(reserve, game_num_max_tribute_bc);
-    reserve = ((reserve) / 20) * 20;
-    if (reserve < 100) {
-        bcnum = reserve / 20;
-        bctbl[0] = 20;
-        bctbl[1] = 40;
-        bctbl[2] = 60;
-        bctbl[3] = 80;
-        bctbl[4] = 100;
-    } else {
-        bcnum = 5;
-        bctbl[0] = ((reserve / 5) / 20) * 20;
-        bctbl[1] = (((2 * reserve) / 5) / 20) * 20;
-        bctbl[2] = (((3 * reserve) / 5) / 20) * 20;
-        bctbl[3] = (((4 * reserve) / 5) / 20) * 20;
-        bctbl[4] = reserve;
-    }
-    g->evn.diplo_msg_subtype = -1;
-    sprintf(au->buf, "\x02(%s)\x01", g->emperor_names[pa]);
-    for (int i = 0; i < bcnum; ++i) {
-        int len;
-        au->strtbl[i] = cbuf;
-        len = sprintf(cbuf, "%s %i %s", game_str_au_bull, bctbl[i], game_str_bc);
-        cbuf += len + 1;
-    }
-    au->strtbl[bcnum] = game_str_au_optsmp1[1];
-    au->strtbl[bcnum + 1] = 0;
-    au->condtbl = 0;
-    selected = ui_audience_ask4(au);
-    if ((selected >= 0) && (selected < bcnum)) {
-        *bcptr = bctbl[selected];
-        return true;
-    }
-    return false;
+    return retval;
 }
 
 static int game_audience_sweeten(struct audience_s *au, int a0)
@@ -581,23 +468,12 @@ static int game_audience_sweeten(struct audience_s *au, int a0)
     int bc = 0;
     tech_field_t field = 0;
     uint8_t tech = 0;
-    char buf[0x60];
     bool flag_bc;
     int16_t selected = 0;
-    if (IS_AI(g, pa)) {
-        if (!game_ai->aud_sweeten(au, &bc, &field, &tech)) {
-            return 0;
-        }
-    } else {
-        if (a0 == 1) {
-            if (!game_audiece_mp_sweeten_tech(au, &field, &tech)) {
-                return 0;
-            }
-        } else {
-            if (!game_audiece_mp_sweeten_bc(au, &bc)) {
-                return 0;
-            }
-        }
+    char query[320];
+    struct strbuild_s strbuild;
+    if (!game_ai->aud_sweeten(au, &bc, &field, &tech)) {
+        return 0;
     }
     if ((bc == 0) && (tech == 0)) {
         return 0;
@@ -608,17 +484,17 @@ static int game_audience_sweeten(struct audience_s *au, int a0)
         tech = 0;
         flag_bc = true;
     }
-    buf[0] = 0;
-    game_audience_str_append_offer(g, buf, field, tech, bc);
+    strbuild = strbuild_init(query, sizeof(query));
     if (!rnd_0_nm1(2, &g->seed)) {
-        sprintf(au->buf, "%s%s %s", game_str_au_perthr1, buf, game_str_au_perthr2);
+        strbuild_catf(&strbuild, "%s", game_str_au_perthr1);
+        game_audience_str_append_offer(&strbuild, g, field, tech, bc);
+        strbuild_catf(&strbuild, " %s", game_str_au_perthr2);
     } else {
-        sprintf(au->buf, "%s%s %s", game_str_au_alsoof1, buf, game_str_au_alsoof2);
+        strbuild_catf(&strbuild, "%s", game_str_au_alsoof1);
+        game_audience_str_append_offer(&strbuild, g, field, tech, bc);
+        strbuild_catf(&strbuild, " %s", game_str_au_alsoof2);
     }
-    au->strtbl[0] = game_str_au_opts3[0];
-    au->strtbl[1] = game_str_au_opts3[1];
-    au->strtbl[2] = 0;
-    au->condtbl = 0;
+    game_audience_choice(au, query, game_str_au_opts_agree, NULL, 2);
     selected = ui_audience_ask3(au);
     if ((selected == -1) || (selected == 1)) {
         return 1;
@@ -635,19 +511,17 @@ static int game_audience_sweeten(struct audience_s *au, int a0)
 static player_id_t audience_menu_race(struct audience_s *au, player_id_t *rtbl, uint8_t rnum, const char *titlestr)
 {
     struct game_s *g = au->g;
-    char *cbuf = &(au->buf[AUDIENCE_CBUF_POS]);
+    struct strbuild_s strtbl_build = strbuild_init(au->strtbl_buf, AUDIENCE_STRTBL_BUFSIZE);
     int16_t selected = 0;
     for (int i = 0; i < rnum; ++i) {
         empiretechorbit_t *e = &(g->eto[rtbl[i]]);
-        int len;
-        au->strtbl[i] = cbuf;
-        len = sprintf(cbuf, "%s %s", game_str_au_bull, game_str_tbl_races[e->race]);
-        cbuf += len + 1;
+        strbuild_catf(&strtbl_build, "%s %s", game_str_au_bull, game_str_tbl_races[e->race]);
+        au->strtbl[i] = strbuild_finish(&strtbl_build);
     }
-    au->strtbl[rnum] = game_str_au_opts3[1];
-    au->strtbl[rnum + 1] = 0;
-    strcpy(au->buf, titlestr);
-    au->condtbl = 0;
+    au->strtbl[rnum] = game_str_au_opts_agree[1];  /* "Forget It" */
+    au->strtbl[rnum + 1] = NULL;
+    au->buf = titlestr;
+    au->condtbl = NULL;
     selected = ui_audience_ask4(au);
     if ((selected >= 0) && (selected < rnum)) {
         return rtbl[selected];
@@ -669,7 +543,6 @@ static void audience_menu_treaty(struct audience_s *au)
     for (int i = 0; i < TBLLEN(condtbl); ++i) {
         condtbl[i] = true;
     }
-    strcpy(au->buf, game_str_au_youprte);
     if (eh->treaty[pa] != TREATY_NONE) {
         condtbl[0] = false;
     }
@@ -700,19 +573,11 @@ static void audience_menu_treaty(struct audience_s *au)
     if (all_num == 0) {
         condtbl[4] = false;
     }
-    for (int i = 0; i < 6; ++i) {
-        au->strtbl[i] = game_str_au_opts2[i];
-    }
-    au->strtbl[6] = 0;
-    au->condtbl = condtbl;
+    game_audience_choice(au, game_str_au_youprte, game_str_au_opts_treaty, condtbl, 6);
     selected = ui_audience_ask4(au);
     switch (selected) {
         case 0: /* Non-Aggression Pact */
-            if (IS_AI(g, pa)) {
-                si = game_ai->aud_treaty_nap(au);
-            } else {
-                si = game_audience_mp_ask_accept(au, AUD_MP_ASK_NAP);
-            }
+            si = game_ai->aud_treaty_nap(au);
             if ((si == 1) || (si == 2)) {
                 si = game_audience_sweeten(au, si);
             }
@@ -722,11 +587,7 @@ static void audience_menu_treaty(struct audience_s *au)
             dtype = 62;
             break;
         case 1: /* Alliance */
-            if (IS_AI(g, pa)) {
-                si = game_ai->aud_treaty_alliance(au);
-            } else {
-                si = game_audience_mp_ask_accept(au, AUD_MP_ASK_ALLIANCE);
-            }
+            si = game_ai->aud_treaty_alliance(au);
             if ((si == 1) || (si == 2)) {
                 si = game_audience_sweeten(au, si);
             }
@@ -736,11 +597,7 @@ static void audience_menu_treaty(struct audience_s *au)
             dtype = 63;
             break;
         case 2: /* Peace Treaty */
-            if (IS_AI(g, pa)) {
-                si = game_ai->aud_treaty_peace(au);
-            } else {
-                si = game_audience_mp_ask_accept(au, AUD_MP_ASK_PEACE);
-            }
+            si = game_ai->aud_treaty_peace(au);
             if ((si == 1) || (si == 2)) {
                 si = game_audience_sweeten(au, si);
             }
@@ -754,11 +611,7 @@ static void audience_menu_treaty(struct audience_s *au)
             dtype = 67;
             au->pstartwar = audience_menu_race(au, war_tbl, war_num, game_str_au_whowar);
             if (au->pstartwar != PLAYER_NONE) {
-                if (IS_AI(g, pa)) {
-                    si = game_ai->aud_treaty_declare_war(au);
-                } else {
-                    si = game_audience_mp_ask_accept(au, AUD_MP_ASK_WAR);
-                }
+                si = game_ai->aud_treaty_declare_war(au);
                 if ((si == 1) || (si == 2)) {
                     si = game_audience_sweeten(au, si);
                 }
@@ -773,11 +626,7 @@ static void audience_menu_treaty(struct audience_s *au)
             dtype = 68;
             au->pwar = audience_menu_race(au, all_tbl, all_num, game_str_au_whobrk);
             if (au->pwar != PLAYER_NONE) {
-                if (IS_AI(g, pa)) {
-                    si = game_ai->aud_treaty_break_alliance(au);
-                } else {
-                    si = game_audience_mp_ask_accept(au, AUD_MP_ASK_BREAK);
-                }
+                si = game_ai->aud_treaty_break_alliance(au);
                 if ((si == 1) || (si == 2)) {
                     si = game_audience_sweeten(au, si);
                 }
@@ -806,27 +655,22 @@ static void audience_menu_trade(struct audience_s *au)
     player_id_t ph = au->ph, pa = au->pa;
     empiretechorbit_t *eh = &(g->eto[ph]);
     int16_t selected = 0;
-    char *cbuf = &(au->buf[AUDIENCE_CBUF_POS]);
+    struct strbuild_s str = strbuild_init(au->strtbl_buf, AUDIENCE_STRTBL_BUFSIZE);
+    au->buf = game_str_au_youprta;
     for (int i = 0; i < AUDIENCE_BC_MAX; ++i) {
-        int len;
-        au->strtbl[i] = cbuf;
-        len = sprintf(cbuf, "%s %i %s", game_str_au_bull, au->bctbl[i], game_str_au_bcpery);
-        cbuf += len + 1;
+        strbuild_catf(&str, "%s %i %s", game_str_au_bull, au->bctbl[i], game_str_au_bcpery);
+        au->strtbl[i] = strbuild_finish(&str);
     }
-    au->strtbl[au->num_bc] = game_str_au_opts3[1];
-    au->strtbl[au->num_bc + 1] = 0;
-    au->condtbl = 0;
+    au->strtbl[au->num_bc] = game_str_au_opts_agree[1];  /* "Forget It" */
+    au->strtbl[au->num_bc + 1] = NULL;
+    au->condtbl = NULL;
     selected = ui_audience_ask4(au);
     game_diplo_annoy(g, ph, pa, 1);
     eh->mood_trade[pa] -= rnd_1_n(30, &g->seed);
     if ((selected != -1) && (selected != au->num_bc)) {
         int si;
         au->new_trade_bc = au->bctbl[selected];
-        if (IS_AI(g, pa)) {
-            si = game_ai->aud_trade(au);
-        } else {
-            si = game_audience_mp_ask_accept(au, AUD_MP_ASK_TRADE);
-        }
+        si = game_ai->aud_trade(au);
         if (si < 3) {
             si = 0;
         } else {
@@ -847,7 +691,6 @@ static void audience_menu_threat(struct audience_s *au)
     for (int i = 0; i < TBLLEN(condtbl); ++i) {
         condtbl[i] = true;
     }
-    strcpy(au->buf, game_str_au_youract);
     if (eh->treaty[pa] != TREATY_NONAGGRESSION) {
         condtbl[0] = false;
     }
@@ -857,10 +700,7 @@ static void audience_menu_threat(struct audience_s *au)
     if (eh->trade_bc[pa] == 0) {
         condtbl[2] = false;
     }
-    for (int i = 0; i < 5; ++i) {
-        au->strtbl[i] = game_str_au_opts4[i];
-    }
-    au->strtbl[5] = 0;
+    game_audience_choice(au, game_str_au_youract, game_str_au_opts_threaten, condtbl, 5);
     au->condtbl = condtbl;
     selected = ui_audience_ask4(au);
     switch (selected) {
@@ -877,12 +717,7 @@ static void audience_menu_threat(struct audience_s *au)
             break;
         case 3: /* Threaten To Attack */
             selected = 0;
-            if (IS_AI(g, pa)) {
-                dtype = game_ai->aud_threaten(au);
-            } else {
-                /* TODO */
-                dtype = 73;
-            }
+            dtype = game_ai->aud_threaten(au);
             break;
         default:
             break;
@@ -903,7 +738,8 @@ static void audience_menu_tribute(struct audience_s *au)
     uint8_t bcnum;
     uint32_t reserve = eh->reserve_bc;
     uint16_t bctbl[4];
-    char *cbuf = &(au->buf[AUDIENCE_CBUF_POS]);
+    struct strbuild_s strtbl_build = strbuild_init(au->strtbl_buf, AUDIENCE_STRTBL_BUFSIZE);
+    au->buf = game_str_au_whattr;
     SETMIN(reserve, game_num_max_tribute_bc);
     reserve = ((reserve) / 25) * 25;
     if (reserve < 100) {
@@ -919,16 +755,13 @@ static void audience_menu_tribute(struct audience_s *au)
         bctbl[2] = (((3 * reserve) / 4) / 25) * 25;
         bctbl[3] = reserve;
     }
-    strcpy(au->buf, game_str_au_whattr);
     for (int i = 0; i < bcnum; ++i) {
-        int len;
-        au->strtbl[i] = cbuf;
-        len = sprintf(cbuf, "%s %i %s", game_str_au_bull, bctbl[i], game_str_bc);
-        cbuf += len + 1;
+        strbuild_catf(&strtbl_build, "%s %i %s", game_str_au_bull, bctbl[i], game_str_bc);
+        au->strtbl[i] = strbuild_finish(&strtbl_build);
     }
     au->strtbl[bcnum] = game_str_au_techn;
-    au->strtbl[bcnum + 1] = 0;
-    au->condtbl = 0;
+    au->strtbl[bcnum + 1] = NULL;
+    au->condtbl = NULL;
     selected = ui_audience_ask4(au);
     if (selected == -1) {
         return;
@@ -936,11 +769,7 @@ static void audience_menu_tribute(struct audience_s *au)
     if (selected < bcnum) {
         eh->reserve_bc -= bctbl[selected];
         ea->reserve_bc += bctbl[selected];
-        if (IS_AI(g, pa)) {
-            game_ai->aud_tribute_bc(au, selected, bctbl[selected]);
-        } else {
-            /* TODO */
-        }
+        game_ai->aud_tribute_bc(au, selected, bctbl[selected]);
         game_audience_set_dtype(au, 1, 3);
     } else {
         struct spy_esp_s s[1];
@@ -952,29 +781,12 @@ static void audience_menu_tribute(struct audience_s *au)
            Values larger than 0 only filter out tech of lesser worth, and who would not want to use those as bribes?
         */
         if (game_spy_esp_sub1(g, s, 0, 0) > 0) {
-            int i;
-            cbuf = &(au->buf[AUDIENCE_CBUF_POS]);
-            for (i = 0; (i < 4) && (i < s->tnum); ++i) {
-                int len;
-                au->strtbl[i] = cbuf;
-                len = sprintf(cbuf, "%s ", game_str_au_bull);
-                cbuf += len;
-                game_tech_get_name(g->gaux, s->tbl_field[i], s->tbl_tech2[i], cbuf);
-                cbuf += strlen(cbuf) + 1;
-            }
-            au->strtbl[i++] = game_str_au_opts3[1];
-            au->strtbl[i] = 0;
-            strcpy(au->buf, game_str_au_whattr);
-            au->condtbl = 0;
+            int num_techs = MIN(s->tnum, 4);
+            game_audience_tech_choice(au, game_str_au_whattr, s->tbl_field, s->tbl_tech2, num_techs, true);
             selected = ui_audience_ask4(au);
             if ((selected != -1) && (selected < s->tnum) && (selected < 4)) {
                 game_tech_get_new(g, pa, s->tbl_field[selected], s->tbl_tech2[selected], TECHSOURCE_TRADE, ph, PLAYER_NONE, false);
-                if (IS_AI(g, pa)) {
-                    game_ai->aud_tribute_tech(au, selected, s->tbl_field[selected], s->tbl_tech2[selected]);
-                } else {
-                    game_tech_finish_new(au->g, pa);
-                    ui_audience_newtech(au, pa);
-                }
+                game_ai->aud_tribute_tech(au, selected, s->tbl_field[selected], s->tbl_tech2[selected]);
                 eh->tribute_field[pa] = s->tbl_field[selected];
                 eh->tribute_tech[pa] = s->tbl_tech2[selected];
                 game_audience_set_dtype(au, 1, 3);
@@ -990,13 +802,7 @@ static void audience_menu_tech(struct audience_s *au)
     struct game_s *g = au->g;
     player_id_t ph = au->ph, pa = au->pa;
     empiretechorbit_t *eh = &(g->eto[ph]);
-    int v;
-    if (IS_AI(g, pa)) {
-        v = game_ai->aud_tech_scale(au);
-    } else {
-        /* TODO */
-        v = 75;
-    }
+    int v = game_ai->aud_tech_scale(au);
     {
         struct spy_esp_s s[1];
         tech_field_t taf[TECH_SPY_MAX]; /* diplo_p2_sub1_field */
@@ -1036,42 +842,20 @@ static void audience_menu_tech(struct audience_s *au)
             /*6568e*/
             if (total_thnum > 0) {
                 int16_t selected = 0;
-                int i;
-                char *cbuf = &(au->buf[AUDIENCE_CBUF_POS]);
+                int num_techs = MIN(total_thnum, 5);
                 game_diplo_annoy(g, ph, pa, 1);
                 eh->mood_tech[pa] -= rnd_1_n(50, &g->seed) + 20;
-                for (i = 0; (i < 5) && (i < total_thnum); ++i) {
-                    int len;
-                    au->strtbl[i] = cbuf;
-                    len = sprintf(cbuf, "%s ", game_str_au_bull);
-                    cbuf += len;
-                    game_tech_get_name(g->gaux, thaf[i], that[i], cbuf);
-                    cbuf += strlen(cbuf) + 1;
-                }
-                /*65724*/
-                au->strtbl[i] = 0;
-                strcpy(au->buf, game_str_au_whatech);
-                au->condtbl = 0;
+                game_audience_tech_choice(au, game_str_au_whatech, thaf, that, num_techs, false);
                 selected = ui_audience_ask4(au);
+                /*65724*/
                 if (selected != -1) {
                     tech_field_t gotf = thaf[selected];
                     uint8_t gott = that[selected];
-                    int selected2 = selected, n = thnum[selected];
-                    cbuf = &(au->buf[AUDIENCE_CBUF_POS]);
-                    for (i = 0; (i < 4) && (i < n); ++i) {
-                        int len;
-                        au->strtbl[i] = cbuf;
-                        len = sprintf(cbuf, "%s ", game_str_au_bull);
-                        cbuf += len;
-                        game_tech_get_name(g->gaux, thf[selected2][i], tht[selected2][i], cbuf);
-                        cbuf += strlen(cbuf) + 1;
-                    }
-                    au->strtbl[i] = game_str_au_opts3[1];
-                    au->strtbl[i + 1] = 0;
-                    strcpy(au->buf, game_str_au_whatrad);
-                    au->condtbl = 0;
+                    int selected2 = selected;
+                    int num_techs = MIN(thnum[selected2], 4);
+                    game_audience_tech_choice(au, game_str_au_whatrad, thf[selected2], tht[selected2], num_techs, true);
                     selected = ui_audience_ask4(au);
-                    if ((selected != -1) && (selected < i)) {
+                    if ((selected != -1) && (selected < num_techs)) {
                         g->evn.newtech[ph].num = 0;
                         g->evn.newtech[pa].num = 0;
                         game_tech_get_new(g, ph, gotf, gott, TECHSOURCE_TRADE, pa, PLAYER_NONE, false);
@@ -1149,16 +933,11 @@ static void audience_menu_main(struct audience_s *au)
                 au->bctbl[4] = want_trade + cur_trade;
             }
         }
-        if (IS_AI(g, pa) && game_ai->aud_later(au)) {
+        if (game_ai->aud_later(au)) {
             game_audience_set_dtype(au, 74, 3);
             break;
         }
-        strcpy(au->buf, game_str_au_howmay);
-        for (int i = 0; i < 6; ++i) {
-            au->strtbl[i] = game_str_au_opts1[i];
-        }
-        au->strtbl[6] = 0;
-        au->condtbl = condtbl;
+        game_audience_choice(au, game_str_au_howmay, game_str_au_opts_main, condtbl, 6);
         selected = ui_audience_ask4(au);
         switch (selected) {
             case 0: /* Propose Treaty */
@@ -1190,60 +969,40 @@ static void game_audience_do(struct audience_s *au)
     struct game_s *g = au->g;
     player_id_t ph = au->ph, pa = au->pa;
     empiretechorbit_t *eh = &(g->eto[ph]);
-    empiretechorbit_t *ea = &(g->eto[pa]);
-    int16_t selected;
     if ((au->mode >= 0) && (au->mode <= 2)) {
+        /* Greeting */
         g->evn.diplo_msg_subtype = -1;
-        game_audience_get_str1(au);
+        game_audience_get_diplo_msg(au);
         ui_audience_show1(au);
     }
     switch (au->mode) {
-        case 2:
-            selected = 1;  /* FIXME BUG? used below for dtype == 76 if !game_audience_sub2() */
-            if (game_audience_sub2(au)) {
+        case 2:  /* AI initiated audience. */
+            if (game_audience_check_alliances(au)) {
                 au->dtype = au->dtype_next;
                 g->evn.diplo_msg_subtype = -1;
-                if ((selected = game_audience_sub3(au)) == 0) {
-                    if (au->dtype == 24) {
-                        game_diplo_set_treaty(g, ph, pa, TREATY_NONAGGRESSION);
-                    } else if (au->dtype == 25) {
-                        game_diplo_set_treaty(g, ph, pa, TREATY_ALLIANCE);
-                    } else if (au->dtype == 26) {
-                        game_diplo_set_trade(g, ph, pa, eh->au_want_trade[pa]);
-                    } else if (au->dtype == 30) {
-                        game_diplo_stop_war(g, ph, pa);
-                        if (eh->relation1[pa] < 80) {
-                            eh->relation1[pa] += 20;
-                            ea->relation1[ph] = eh->relation1[pa];
-                        }
-                        game_diplo_annoy(g, ph, pa, 2);
-                    } else if (au->dtype == 76) {
-                        game_diplo_start_war(g, ph, au->pwar);
-                    }
-                    if ((au->dtype == 24) || (au->dtype == 25) || (au->dtype == 26) || (au->dtype == 30)) { /* FIXME 76? */
-                        eh->reserve_bc += eh->offer_bc[pa];
-                        if (eh->offer_tech[pa] != 0) {
-                            game_tech_get_new(g, ph, eh->offer_field[pa], eh->offer_tech[pa], TECHSOURCE_TRADE, pa, PLAYER_NONE, false);
-                        }
-                    }
-                } else {
-                    /*6074c*/
-                    if (au->dtype == 76) {
-                        game_diplo_break_treaty(g, pa, ph);
-                    }
-                }
-                /*60761*/
-                if (au->dtype == 29) {
-                    game_tech_get_new(g, ph, eh->au_tech_trade_field[pa][selected], eh->au_tech_trade_tech[pa][selected], TECHSOURCE_TRADE, pa, PLAYER_NONE, false);
-                }
-                if ((au->dtype == 58) && game_num_aud_bounty_give) {    /* WASBUG MOO1 never gives the bounty */
-                    eh->reserve_bc += eh->attack_gift_bc[pa];
-                    if (eh->attack_gift_tech[pa] != 0) {
-                        game_tech_get_new(g, ph, eh->attack_gift_field[pa], eh->attack_gift_tech[pa], TECHSOURCE_TRADE, pa, PLAYER_NONE, false);
-                    }
+                game_audience_get_diplo_msg(au);
+                switch (au->dtype) {
+                    case 28:
+                        game_audience_ai_offers_bounty(au);
+                        break;
+                    case 58:
+                        game_audience_ai_pays_bounty(au);
+                        break;
+                    case 29:
+                        game_audience_ai_offers_tech_trade(au);
+                        break;
+                    default:
+                        game_audience_ai_offers_treaty(au);
+                        break;
                 }
             }
             /*607a9*/
+            /* After offering a deal, the AI becomes less likely to accept or
+             * propose similar deals in the near future, independent of the
+             * player's response. This even happens when the player didn't see
+             * the actual offer because they're allied with one of the AI's
+             * enemies, so we cannot do it in the game_audience_ai_offers_*
+             * functions. */
             game_diplo_annoy(g, ph, pa, 1);
             if ((au->dtype == 24) || (au->dtype == 25)) {
                 eh->mood_treaty[pa] -= rnd_1_n(30, &g->seed) + 20;
@@ -1257,19 +1016,12 @@ static void game_audience_do(struct audience_s *au)
             if (au->dtype == 29) {
                 eh->mood_tech[pa] -= rnd_1_n(30, &g->seed) + 20;
             }
-            if (au->dtype == 76) {
-                au->dtype = (selected != 0) ? 77 : 78;
-                au->mode = 6;
-                game_audience_set_dtype(au, au->dtype, 3);
-            }
             break;
-        case 6:
+        case 6:  /* Single message from the AI, no player response. */
             game_audience_set_dtype(au, au->dtype, 3);
             break;
-        case 0:
+        case 0:  /* Player initiated audience. */
             audience_menu_main(au);
-            break;
-        case 1:
             break;
         default:
             break;

@@ -3,6 +3,7 @@
 
 #include "boolvec.h"
 #include "game_types.h"
+#include "ui.h"
 #include "types.h"
 
 #define UI_INPUT_TOKEN_MAX  32
@@ -50,7 +51,7 @@ struct ui_data_s {
         uint32_t item[PLANETS_MAX + FLEET_ENROUTE_MAX + TRANSPORT_MAX];
     } view;
     BOOLVEC_DECLARE(players_viewing, PLAYER_NUM);
-    char strbuf[1024];
+    char strbuf[UI_STRBUF_SIZE];
 };
 
 extern struct ui_data_s ui_data;
