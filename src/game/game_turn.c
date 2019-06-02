@@ -306,7 +306,10 @@ static void game_turn_build_eco(struct game_s *g)
                 if (p->bc_to_ecoproj >= game_num_atmos_cost) {
                     game_turn_atmos_tform(p);
                     ecoprod = p->bc_to_ecoproj - game_num_atmos_cost;
-                    p->bc_to_ecoproj -= game_num_atmos_cost;
+                    p->bc_to_ecoproj = 0;
+                    /* WASBUG MOO1 did p->bc_to_ecoproj -= game_num_atmos_cost
+                     * instead which allowed double-spending of credits if
+                     * p->bc_to_ecoproj > game_num_atmos_cost. */
                     game_add_planet_to_eco_finished(g, i, owner);
                 } else {
                     ecoprod = 0;
@@ -317,7 +320,11 @@ static void game_turn_build_eco(struct game_s *g)
                 if (p->bc_to_ecoproj > game_num_soil_cost) {
                     game_turn_soil_enrich(p, (int)e->have_terraform_n, false);
                     ecoprod = p->bc_to_ecoproj - game_num_soil_cost;
-                    p->bc_to_ecoproj -= game_num_soil_cost; /* BUG cost was not removed */
+                    /* p->bc_to_ecoproj carries over as partial progress
+                     * towards advanced soil enrichment. */
+                    SETMIN(p->bc_to_ecoproj, game_num_soil_cost);
+                    /* WASBUG MOO1 did not do the SETMIN, allowing
+                     * double-spending again. */
                     game_add_planet_to_eco_finished(g, i, owner);
                 } else {
                     ecoprod = 0;
@@ -328,7 +335,10 @@ static void game_turn_build_eco(struct game_s *g)
                 if (p->bc_to_ecoproj > game_num_adv_soil_cost) {
                     game_turn_soil_enrich(p, (int)e->have_terraform_n, true);
                     ecoprod = p->bc_to_ecoproj - game_num_adv_soil_cost;
-                    p->bc_to_ecoproj -= game_num_adv_soil_cost; /* BUG cost was not removed */
+                    p->bc_to_ecoproj = 0;
+                    /* WASBUG MOO1 did not reset p->bc_to_ecoproj to 0, but
+                     * the planet may become hostile due to a random event and
+                     * then this variable becomes relevant again. */
                     game_add_planet_to_eco_finished(g, i, owner);
                 } else {
                     ecoprod = 0;
