@@ -203,7 +203,7 @@ static void game_turn_atmos_tform(struct planet_s *p) {
 static void game_turn_soil_enrich(struct planet_s *p, int best_tform, bool advanced) {
     int max_pop_increase = 0;
     int16_t old_max_pop2 = 0;
-    p->growth = PLANET_GROWTH_FERTILE;
+    p->growth = advanced ? PLANET_GROWTH_GAIA : PLANET_GROWTH_FERTILE;
     if (advanced) {
         max_pop_increase = (p->max_pop1 / 10) * 5;
         /* BUG? If we want to calculate 50% of the base size, rounded up
