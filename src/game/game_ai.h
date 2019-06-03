@@ -27,6 +27,6 @@ struct game_ai_s {
     void (*turn_diplo_p2)(struct game_s *g);
 };
 
-extern struct game_ai_s const *game_ai;
+extern const struct game_ai_s *game_ai;
 
 #endif
