@@ -206,7 +206,7 @@ int ui_cmd_fleet_redir(struct game_s *g, int api, struct input_token_s *param, i
             } else if (p->within_frange[api] == 2) {
                 in_range = true;
                 for (int k = 0; k < e->shipdesigns_num; ++k) {
-                    if (r->ships[k] && (!g->srd[api].have_reserve_fuel)) {
+                    if (r->ships[k] && (!g->srd[api].have_reserve_fuel[k])) {
                         in_range = false;
                         break;
                     }
