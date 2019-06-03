@@ -43,7 +43,7 @@ static bool check_intro_files(void)
 void ui_play_intro(void)
 {
     int16_t uiobji_now, uiobji_ma;
-    uint16_t frame;
+    uint16_t frame = 0;
     bool flag_skip, flag_fadein;
     uint8_t *intro_sfx1;
     uint8_t *intro_sfx3;
@@ -97,7 +97,6 @@ void ui_play_intro(void)
         intro_gfx = lbxfile_item_get(LBXFILE_INTRO, 0);
         old_gfx = intro_gfx;
         ui_palette_fadeout_14_14_2();
-        frame = 0;
     }
 
     while ((frame < 0x73) && (!flag_skip)) {
