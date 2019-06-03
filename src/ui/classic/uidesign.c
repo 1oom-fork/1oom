@@ -745,7 +745,7 @@ static void ui_design_sel_jammer(struct design_data_s *d)
     char linebuf[SHIP_JAMMER_NUM * 0x50];
     const char *lineptr[SHIP_SHIELD_NUM + 1];
     shipdesign_t *sd = &(d->gd->sd);
-    ship_shield_t actjammer = sd->jammer;
+    ship_jammer_t actjammer = sd->jammer;
 
     lbxfont_select(2, 0, 4, 0xe);
 
@@ -816,14 +816,14 @@ static void ui_design_sel_armor(struct design_data_s *d)
 {
     int8_t havebuf[SHIP_ARMOR_NUM];
     bool flag_tbl_enable[SHIP_ARMOR_NUM];
-    ship_jammer_t tbl_armor[SHIP_ARMOR_NUM];
+    ship_armor_t tbl_armor[SHIP_ARMOR_NUM];
     int xpos, n = 0;
     int16_t curarmor;
     char titlebuf[0x80];
     char linebuf[SHIP_ARMOR_NUM * 0x50];
     const char *lineptr[SHIP_ARMOR_NUM + 1];
     shipdesign_t *sd = &(d->gd->sd);
-    ship_shield_t actarmor = sd->armor;
+    ship_armor_t actarmor = sd->armor;
 
     lbxfont_select(2, 0, 4, 0xe);
 
