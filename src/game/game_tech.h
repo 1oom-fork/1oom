@@ -20,9 +20,9 @@ extern uint8_t game_get_best_shield(struct game_s *g, player_id_t player_i, int 
 extern uint8_t game_get_best_comp(struct game_s *g, player_id_t player_i, int tech_i);
 extern uint8_t game_get_best_jammer(const struct game_s *g, player_id_t player_i, int tech_i);
 extern void game_update_tech_util(struct game_s *g);
-extern const char *game_tech_get_name(const struct game_aux_s *gaux, tech_field_t field, int tech, char *buf);
-extern const char *game_tech_get_descr(const struct game_aux_s *gaux, tech_field_t field, int tech, char *buf);
-extern const char *game_tech_get_newtech_msg(const struct game_s *g, player_id_t pi, struct newtech_s *nt, char *buf);
+extern const char *game_tech_get_name(const struct game_aux_s *gaux, tech_field_t field, int tech, char *buf, size_t bufsize);
+extern const char *game_tech_get_descr(const struct game_aux_s *gaux, tech_field_t field, int tech, char *buf, size_t bufsize);
+extern const char *game_tech_get_newtech_msg(const struct game_s *g, player_id_t pi, struct newtech_s *nt, char *buf, size_t bufsize);
 extern int game_tech_current_research_percent1(const struct game_s *g, player_id_t player_i, tech_field_t field);
 extern int game_tech_current_research_percent2(const struct game_s *g, player_id_t player_i, tech_field_t field);
 extern bool game_tech_current_research_has_max_bonus(const struct game_s *g, player_id_t player_i, tech_field_t field);
