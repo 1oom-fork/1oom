@@ -33,10 +33,10 @@ struct newtech_data_s {
 static void ui_newtech_print1(struct newtech_data_s *d)
 {
     const struct game_s *g = d->g;
-    puts(game_tech_get_newtech_msg(g, d->api, &(d->nt), ui_data.strbuf));
+    puts(game_tech_get_newtech_msg(g, d->api, &(d->nt), ui_data.strbuf, UI_STRBUF_SIZE));
     if (d->nt.source != TECHSOURCE_CHOOSE) {
-        puts(game_tech_get_name(g->gaux, d->nt.field, d->nt.tech, ui_data.strbuf));
-        puts(game_tech_get_descr(g->gaux, d->nt.field, d->nt.tech, ui_data.strbuf));
+        puts(game_tech_get_name(g->gaux, d->nt.field, d->nt.tech, ui_data.strbuf, UI_STRBUF_SIZE));
+        puts(game_tech_get_descr(g->gaux, d->nt.field, d->nt.tech, ui_data.strbuf, UI_STRBUF_SIZE));
     }
 }
 
@@ -62,7 +62,7 @@ static void ui_newtech_choose_next(struct newtech_data_s *d)
     for (i = 0; i < d->num_next; ++i) {
         uint8_t tech;
         tech = d->tech_next[i];
-        game_tech_get_name(d->g->gaux, d->nt.field, tech, tname[i]);
+        game_tech_get_name(d->g->gaux, d->nt.field, tech, tname[i], 35);
         rl_in[i].value = tech;
         rl_in[i].display = tname[i];
     }
