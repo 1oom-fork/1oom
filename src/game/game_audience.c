@@ -61,7 +61,7 @@ static void game_audience_tech_choice(struct audience_s *au, const char *query, 
 
     int i;
     for (i = 0; i < num_techs; i++) {
-        game_tech_get_name(au->g->gaux, fields[i], techs[i], tech_name);
+        game_tech_get_name(au->g->gaux, fields[i], techs[i], tech_name, sizeof(tech_name));
         strbuild_catf(&strbuild, "%s %s", game_str_au_bull, tech_name);
         au->strtbl[i] = strbuild_finish(&strbuild);
     }
@@ -92,9 +92,9 @@ static void game_audience_str_append_offer(struct strbuild_s *strbuild, const st
 {
     strbuild_append_char(strbuild, ' ');
     if (tech != 0) {
-        char techname[64];
-        game_tech_get_name(g->gaux, field, tech, techname);
-        strbuild_catf(strbuild, "%s", techname);
+        char tech_name[64];
+        game_tech_get_name(g->gaux, field, tech, tech_name, sizeof(tech_name));
+        strbuild_catf(strbuild, "%s", tech_name);
         strbuild_catf(strbuild, " %s", game_str_au_tech);
     } else if (bc != 0) {
         strbuild_catf(strbuild, "%u %s", bc, game_str_bc);
@@ -104,7 +104,7 @@ static void game_audience_str_append_offer(struct strbuild_s *strbuild, const st
 static void game_audience_append_tech(struct strbuild_s *str, struct game_s *g, tech_field_t field, uint8_t tech)
 {
     char tech_name[64];
-    game_tech_get_name(g->gaux, field, tech, tech_name);
+    game_tech_get_name(g->gaux, field, tech, tech_name, sizeof(tech_name));
     strbuild_catf(str, "%s", tech_name);
 }
 
