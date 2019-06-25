@@ -103,13 +103,13 @@ static void newtech_draw_cb1(void *vptr)
             lbxgfx_set_new_frame(d->gfx_spies, frame);
         }
     }
-    game_tech_get_newtech_msg(g, d->api, &(d->nt), buf);
+    game_tech_get_newtech_msg(g, d->api, &(d->nt), buf, UI_STRBUF_SIZE);
     lbxfont_select_set_12_4(5, 5, 0, 0);
     lbxfont_print_str_center(161, 7, buf, UI_SCREEN_W);
     if (d->nt.source != TECHSOURCE_CHOOSE) {
         int strh, y;
         char *p, c;
-        game_tech_get_name(d->g->gaux, d->nt.field, d->nt.tech, buf);
+        game_tech_get_name(d->g->gaux, d->nt.field, d->nt.tech, buf, UI_STRBUF_SIZE);
         p = buf;
         while ((c = *p) != 0) {
             if (islower(c)) {
@@ -119,7 +119,7 @@ static void newtech_draw_cb1(void *vptr)
         }
         lbxfont_select_set_12_4(5, 8, 0, 0);
         lbxfont_print_str_center(160, 32, buf, UI_SCREEN_W);
-        game_tech_get_descr(d->g->gaux, d->nt.field, d->nt.tech, buf);
+        game_tech_get_descr(d->g->gaux, d->nt.field, d->nt.tech, buf, UI_STRBUF_SIZE);
         lbxfont_select_set_12_5(4, 0xf, 0, 0);
         strh = lbxfont_calc_split_str_h(305, buf);
         /* BUG?
@@ -171,7 +171,7 @@ static void newtech_choose_next_draw_cb(void *vptr)
     lbxfont_select(5, 0xe, 0, 0);
     lbxfont_print_str_center(x + 85, y + 5, buf, UI_SCREEN_W);
     lbxfont_select_set_12_1(0, 0, 0xe, 0);
-    game_tech_get_descr(d->g->gaux, d->nt.field, tech, buf);
+    game_tech_get_descr(d->g->gaux, d->nt.field, tech, buf, sizeof(buf));
     pos = strlen(buf);
     sprintf(&buf[pos], " \x02(%u %s)\x1", game_tech_get_next_rp(d->g, d->api, d->nt.field, tech), game_str_te_rp);
     lbxfont_print_str_split(151, y + yo + 18, 156, buf, 0, UI_SCREEN_W, UI_SCREEN_H);
@@ -190,7 +190,7 @@ static void ui_newtech_choose_next(struct newtech_data_s *d)
         uint8_t tech;
         tech = d->tech_next[i];
         d->tbl_tech[i] = tech; /* WASBUG overwrites flag_copybuf, flag_dialog and d->tech_next */
-        game_tech_get_name(d->g->gaux, d->nt.field, tech, tname[i]);
+        game_tech_get_name(d->g->gaux, d->nt.field, tech, tname[i], 35);
         nptr[i] = tname[i];
     }
     nptr[d->num_next] = 0;

@@ -50,7 +50,7 @@ static void ui_tech_look_sliders(const struct game_s *g, int api)
         }
         if (t->project[f]) {
             putchar(' ');
-            game_tech_get_name(g->gaux, f, t->project[f], ui_data.strbuf);
+            game_tech_get_name(g->gaux, f, t->project[f], ui_data.strbuf, UI_STRBUF_SIZE);
             fputs(ui_data.strbuf, stdout);
         }
         putchar('\n');
@@ -80,11 +80,11 @@ static void ui_tech_look_field(const struct game_s *g, int api, tech_field_t f)
     }
     puts(game_str_tbl_te_field[f]);
     for (int i = 0; i < num; ++i) {
-        game_tech_get_name(g->gaux, f, completed[i], ui_data.strbuf);
+        game_tech_get_name(g->gaux, f, completed[i], ui_data.strbuf, UI_STRBUF_SIZE);
         printf("- ");
         fputs(ui_data.strbuf, stdout);
         printf(": ");
-        game_tech_get_descr(g->gaux, f, completed[i], ui_data.strbuf);
+        game_tech_get_descr(g->gaux, f, completed[i], ui_data.strbuf, UI_STRBUF_SIZE);
         puts(ui_data.strbuf);
     }
 }

@@ -4,6 +4,8 @@
 #include "game_types.h"
 #include "types.h"
 
+#define GAME_GROUND_STRBUF_SIZE 64
+
 struct game_s;
 
 struct ground_side_s {
@@ -14,7 +16,7 @@ struct ground_side_s {
     int pop2;
     uint8_t armori, suiti, shieldi, weapi;
     int strnum;
-    char str[3][0x40];
+    char str[3][GAME_GROUND_STRBUF_SIZE];
 };
 
 struct ground_s {

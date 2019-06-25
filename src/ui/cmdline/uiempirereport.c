@@ -86,7 +86,7 @@ static void show_empire_report(const struct game_s *g, player_id_t api, player_i
         for (int i = 0; i < num; ++i) {
             uint8_t rc;
             rc = rct[first + i];
-            game_tech_get_name(g->gaux, f, rc, buf);
+            game_tech_get_name(g->gaux, f, rc, buf, UI_STRBUF_SIZE);
             putchar(game_tech_player_has_tech(g, f, rc, api) ? '-' : '!');
             putchar(' ');
             puts(buf);
