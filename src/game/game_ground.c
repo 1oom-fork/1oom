@@ -108,7 +108,7 @@ static void game_ground_resolve_init(struct game_s *g, struct ground_s *gr)
 static void game_ground_show_init(struct game_s *g, struct ground_s *gr)
 {
     for (int i = 0; i < 2; ++i) {
-        char strbuf[0x40];
+        char strbuf[GAME_GROUND_STRBUF_SIZE];
         uint8_t besti;
         gr->s[i].human = IS_HUMAN(g, gr->s[i].player);
         gr->s[i].pop2 = gr->s[i].pop1;
@@ -120,17 +120,17 @@ static void game_ground_show_init(struct game_s *g, struct ground_s *gr)
         if (besti == 0) {
             strcat(gr->s[i].str[0], game_str_gr_carmor);
         } else {
-            game_tech_get_name(g->gaux, TECH_FIELD_CONSTRUCTION, besti, strbuf);
+            game_tech_get_name(g->gaux, TECH_FIELD_CONSTRUCTION, besti, strbuf, GAME_GROUND_STRBUF_SIZE);
             strcat(gr->s[i].str[0], strbuf);
         }
         besti = gr->s[i].shieldi;
         if (besti != 0) {
-            game_tech_get_name(g->gaux, TECH_FIELD_FORCE_FIELD, besti, gr->s[i].str[1]);
+            game_tech_get_name(g->gaux, TECH_FIELD_FORCE_FIELD, besti, gr->s[i].str[1], GAME_GROUND_STRBUF_SIZE);
             gr->s[i].strnum = 2;
         }
         besti = gr->s[i].weapi;
         if (besti != 0) {
-            game_tech_get_name(g->gaux, TECH_FIELD_WEAPON, besti, gr->s[i].str[gr->s[i].strnum++]);
+            game_tech_get_name(g->gaux, TECH_FIELD_WEAPON, besti, gr->s[i].str[gr->s[i].strnum++], GAME_GROUND_STRBUF_SIZE);
         }
     }
 }

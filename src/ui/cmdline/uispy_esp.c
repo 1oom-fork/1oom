@@ -76,6 +76,6 @@ void ui_spy_stolen(struct game_s *g, int pi, int spy, int field, uint8_t tech)
         s = game_str_es_unkn;
     }
     ui_switch_1(g, pi);
-    printf("%s %s | %s %s %s\n", s, game_str_es_thesp1, s, game_str_es_thesp2, game_tech_get_name(g->gaux, field, tech, buf));
+    printf("%s %s | %s %s %s\n", s, game_str_es_thesp1, s, game_str_es_thesp2, game_tech_get_name(g->gaux, field, tech, buf, sizeof(buf)));
     ui_switch_wait(g);
 }
