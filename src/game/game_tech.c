@@ -14,6 +14,7 @@
 #include "game_shiptech.h"
 #include "game_str.h"
 #include "game_techtypes.h"
+#include "lib.h"
 #include "log.h"
 #include "rnd.h"
 #include "types.h"
@@ -581,21 +582,21 @@ void game_update_tech_util(struct game_s *g)
     }
 }
 
-const char *game_tech_get_name(const struct game_aux_s *gaux, tech_field_t field, int tech, char *buf)
+const char *game_tech_get_name(const struct game_aux_s *gaux, tech_field_t field, int tech, char *buf, size_t bufsize)
 {
     if (tech == 0) {
-        sprintf(buf, "%s %s", game_str_tbl_te_field[field], game_str_te_techno);
+        lib_sprintf(buf, bufsize, "%s %s", game_str_tbl_te_field[field], game_str_te_techno);
     } else if (tech == -2) {
-        strcpy(buf, game_str_tbl_st_weap[WEAPON_NUCLEAR_MISSILE_2 - 1]);
+        lib_strcpy(buf, game_str_tbl_st_weap[WEAPON_NUCLEAR_MISSILE_2 - 1], bufsize);
     } else if (tech == -1) {
-        strcpy(buf, game_str_tbl_st_weap[WEAPON_NUCLEAR_BOMB - 1]);
+        lib_strcpy(buf, game_str_tbl_st_weap[WEAPON_NUCLEAR_BOMB - 1], bufsize);
     } else if (tech > 50) {
-        sprintf(buf, "%s %s %s %s", game_str_te_adv, game_str_tbl_te_field[field], game_str_te_tech, game_str_tbl_roman[(tech - 50) / 5]);
+        lib_sprintf(buf, bufsize, "%s %s %s %s", game_str_te_adv, game_str_tbl_te_field[field], game_str_te_tech, game_str_tbl_roman[(tech - 50) / 5]);
     } else {
         const uint8_t *p = RESEARCH_D0_PTR(gaux, field, tech);
         if (p[0] != 0xff) {
             int offs = GET_LE_16(&p[4]);
-            strcpy(buf, &(gaux->research.names[offs]));
+            lib_strcpy(buf, &(gaux->research.names[offs]), bufsize);
         } else {
             buf[0] = '\0';
         }
@@ -603,46 +604,46 @@ const char *game_tech_get_name(const struct game_aux_s *gaux, tech_field_t field
     return buf;
 }
 
-const char *game_tech_get_descr(const struct game_aux_s *gaux, tech_field_t field, int tech, char *buf)
+const char *game_tech_get_descr(const struct game_aux_s *gaux, tech_field_t field, int tech, char *buf, size_t bufsize)
 {
     if (tech == 0) {
         buf[0] = '\0';
     } else if (tech > 50) {
-        sprintf(buf, "%s %s %s.", game_str_te_genimp, game_str_tbl_te_field[field], game_str_te_techno2);
+        lib_sprintf(buf, bufsize, "%s %s %s.", game_str_te_genimp, game_str_tbl_te_field[field], game_str_te_techno2);
     } else if (tech == -2) {
-        strcpy(buf, game_str_te_nmis);
+        lib_strcpy(buf, game_str_te_nmis, bufsize);
     } else if (tech == -1) {
-        strcpy(buf, game_str_te_nbomb);
+        lib_strcpy(buf, game_str_te_nbomb, bufsize);
     } else {
-        strcpy(buf, &(gaux->research.descr[(field * 50 + tech - 1) * RESEARCH_DESCR_LEN]));
+        lib_strcpy(buf, &(gaux->research.descr[(field * 50 + tech - 1) * RESEARCH_DESCR_LEN]), bufsize);
     }
     return buf;
 }
 
-const char *game_tech_get_newtech_msg(const struct game_s *g, player_id_t pi, struct newtech_s *nt, char *buf)
+const char *game_tech_get_newtech_msg(const struct game_s *g, player_id_t pi, struct newtech_s *nt, char *buf, size_t bufsize)
 {
     race_t race = g->eto[pi].race;
     switch (nt->source) {
         case TECHSOURCE_RESEARCH:
-            sprintf(buf, "%s %s %s %s", game_str_tbl_race[race], game_str_nt_achieve, game_str_tbl_te_field[nt->field], game_str_nt_break);
+            lib_sprintf(buf, bufsize, "%s %s %s %s", game_str_tbl_race[race], game_str_nt_achieve, game_str_tbl_te_field[nt->field], game_str_nt_break);
             break;
         case TECHSOURCE_SPY:
-            sprintf(buf, "%s %s %s", game_str_tbl_race[race], game_str_nt_infil, g->planet[nt->v06].name);
+            lib_sprintf(buf, bufsize, "%s %s %s", game_str_tbl_race[race], game_str_nt_infil, g->planet[nt->v06].name);
             break;
         case TECHSOURCE_FOUND:
             if (nt->v06 == NEWTECH_V06_ORION) {
-                strcpy(buf, game_str_nt_orion);
+                lib_strcpy(buf, game_str_nt_orion, bufsize);
             } else if (nt->v06 >= 0) {  /* WASBUG > 0 vs. scout case with planet 0 */
-                sprintf(buf, "%s %s %s", game_str_nt_ruins, g->planet[nt->v06].name, game_str_nt_discover);
+                lib_sprintf(buf, bufsize, "%s %s %s", game_str_nt_ruins, g->planet[nt->v06].name, game_str_nt_discover);
             } else {
-                sprintf(buf, "%s %s %s", game_str_nt_scouts, g->planet[-(nt->v06 + 1)].name, game_str_nt_discover);
+                lib_sprintf(buf, bufsize, "%s %s %s", game_str_nt_scouts, g->planet[-(nt->v06 + 1)].name, game_str_nt_discover);
             }
             break;
         case TECHSOURCE_CHOOSE:
-            strcpy(buf, game_str_nt_choose);
+            lib_strcpy(buf, game_str_nt_choose, bufsize);
             break;
         case TECHSOURCE_TRADE:
-            sprintf(buf, "%s %s %s %s", game_str_tbl_race[g->eto[nt->v06].race], game_str_nt_reveal, game_str_tbl_te_field[nt->field], game_str_nt_secrets);
+            lib_sprintf(buf, bufsize, "%s %s %s %s", game_str_tbl_race[g->eto[nt->v06].race], game_str_nt_reveal, game_str_tbl_te_field[nt->field], game_str_nt_secrets);
             break;
         default:
             buf[0] = '\0';

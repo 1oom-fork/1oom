@@ -128,11 +128,11 @@ static void tech_draw_cb(void *vptr)
                 a2 = 1;
             }
             lbxfont_select(2, a2, 0, 0);
-            game_tech_get_name(g->gaux, d->field, d->completed[i + d->pos], buf);
+            game_tech_get_name(g->gaux, d->field, d->completed[i + d->pos], buf, sizeof(buf));
             lbxfont_print_str_normal(9, 37 + i * 7, buf, UI_SCREEN_W);
         }
     }
-    game_tech_get_descr(g->gaux, d->field, d->completed[d->selected + d->pos], buf);
+    game_tech_get_descr(g->gaux, d->field, d->completed[d->selected + d->pos], buf, sizeof(buf));
     lbxfont_select(5, 6, 0, 0);
     lbxfont_set_gap_h(1);
     lbxfont_print_str_split(10, 155, 260, buf, 0, UI_SCREEN_W, UI_SCREEN_H);

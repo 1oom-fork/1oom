@@ -187,7 +187,7 @@ static void ground_draw_cb1(void *vptr)
                     if (gr->flag_swap == gr->s[0].human) {
                         lbxfont_print_str_center(160, 40, game_str_gr_tsteal, UI_SCREEN_W);
                         for (int i = 0; i < gr->techchance; ++i) {
-                            game_tech_get_name(g->gaux, gr->got[i].field, gr->got[i].tech, buf);
+                            game_tech_get_name(g->gaux, gr->got[i].field, gr->got[i].tech, buf, sizeof(buf));
                             lbxfont_print_str_center(160, 60 + 15 * i, buf, UI_SCREEN_W);
                         }
                     } else {
