@@ -130,7 +130,7 @@ static void empirereport_draw_cb(void *vptr)
         for (int i = 0; i < num; ++i) {
             uint8_t rc;
             rc = rct[first + i];
-            game_tech_get_name(g->gaux, f, rc, buf);
+            game_tech_get_name(g->gaux, f, rc, buf, sizeof(buf));
             lbxfont_select(2, game_tech_player_has_tech(g, f, rc, d->api) ? 0xa : 0, 0, 0);
             if ((rc <= 50) && (RESEARCH_D0_PTR(g->gaux, f, rc)[0] == 13)) {
                 int j, pos_space;
