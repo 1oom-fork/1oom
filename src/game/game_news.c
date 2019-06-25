@@ -67,7 +67,10 @@ void game_news_get_msg(const struct game_s *g, struct news_s *ns, char *buf)
                     buf += len;
                     break;
                 case 7:
-                    game_tech_get_name(g->gaux, ns->num2 / 50, ns->num2 % 50, buf);
+                    /* TODO The buffer size of 64 is just to get the code to
+                     * compile. This whole function needs to be rewritten with
+                     * the strbuild_* functions. */
+                    game_tech_get_name(g->gaux, ns->num2 / 50, ns->num2 % 50, buf, 64);
                     len = strlen(buf);
                     buf += len;
                     break;

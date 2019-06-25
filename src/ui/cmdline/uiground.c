@@ -89,7 +89,7 @@ void ui_ground(struct game_s *g, struct ground_s *gr)
                     fputs(game_str_gr_tsteal, stdout);
                     for (int i = 0; i < gr->techchance; ++i) {
                         char buf[0x80];
-                        game_tech_get_name(g->gaux, gr->got[i].field, gr->got[i].tech, buf);
+                        game_tech_get_name(g->gaux, gr->got[i].field, gr->got[i].tech, buf, sizeof(buf));
                         printf("%s %s", (i > 0) ? "," : ":", buf);
                     }
                 } else {
