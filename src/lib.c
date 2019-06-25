@@ -63,9 +63,25 @@ char *lib_stralloc(const char *str)
 char *lib_strcpy(char *dst, const char *src, size_t dst_bufsize)
 {
     if (strlen(src) >= dst_bufsize) {
-        log_fatal_and_die("lib_strcpy: destination buffer too small\n");
+        log_fatal_and_die("lib_strcpy: destination buffer too small, need %lu, have %lu\n", strlen(src), dst_bufsize);
     }
     return strcpy(dst, src);
+}
+
+void lib_sprintf(char *buf, size_t bufsize, const char *fmt, ...)
+{
+    va_list args;
+    int bytes_to_print;
+    va_start(args, fmt);
+    bytes_to_print = vsnprintf(buf, bufsize, fmt, args);
+    if (bytes_to_print < 0) {
+        /* Error */
+        log_fatal_and_die("str_catf: vsnprintf: %s", strerror(errno));
+    }
+    else if (bytes_to_print >= bufsize) {
+        /* Truncated */
+        log_fatal_and_die("lib_sprintf: buffer too small, need %d, have %lu", bytes_to_print, bufsize);
+    }
 }
 
 /* strbuild_*: build up strings piece by piece, checking the buffer size. */
