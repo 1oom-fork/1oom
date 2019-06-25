@@ -135,7 +135,7 @@ static void stolen_draw_cb(void *vptr)
     lbxfont_select(0, 0, 0, 0);
     sprintf(buf, "%s %s ", s, game_str_es_thesp2);
     lbxfont_print_str_center(118, 84, buf, UI_SCREEN_W);
-    game_tech_get_name(g->gaux, d->field, d->tech, buf);
+    game_tech_get_name(g->gaux, d->field, d->tech, buf, sizeof(buf));
     lbxfont_print_str_center(118, 94, buf, UI_SCREEN_W);
 }
 

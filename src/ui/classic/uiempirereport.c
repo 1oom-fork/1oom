@@ -131,7 +131,7 @@ static void empirereport_draw_cb(void *vptr)
             uint8_t rc;
             tech_group_t group;
             rc = rct[first + i];
-            game_tech_get_name(g->gaux, f, rc, buf);
+            game_tech_get_name(g->gaux, f, rc, buf, sizeof(buf));
             lbxfont_select(2, game_tech_player_has_tech(g, f, rc, d->api) ? 0xa : 0, 0, 0);
             group = game_tech_get_group(g->gaux, f, rc);
             if ((rc <= 50) && (group == TECH_GROUP_CONTROLLED_ENVIRONMENT)) {
