@@ -10,91 +10,79 @@
 #include "game_stat.h"
 #include "game_str.h"
 #include "game_tech.h"
-#include "log.h"
+#include "lib.h"
 #include "types.h"
 
 /* -------------------------------------------------------------------------- */
 
 /* -------------------------------------------------------------------------- */
 
-void game_news_get_msg(const struct game_s *g, struct news_s *ns, char *buf)
+void game_news_get_msg(const struct game_s *g, struct news_s *ns, char *buf, size_t buf_size)
 {
     const char *msg = EVENTMSG_PTR(g->gaux, ns->type, ns->subtype);
+    struct strbuild_s strbuild = strbuild_init(buf, buf_size);
     for (int i = 0; (i < EVENTMSG_LEN) && (msg[i] != 0); ++i) {
         char c;
         c = msg[i];
+        /* Fill in placeholders. */
         if (c & 0x80) {
-            int len;
+            char techname[64];
             switch (c & 0x7f) {
                 case 0:
-                    len = sprintf(buf, "%s", g->planet[ns->planet_i].name);
-                    buf += len;
+                    strbuild_catf(&strbuild, "%s", g->planet[ns->planet_i].name);
                     break;
                 case 1:
-                    len = sprintf(buf, "%i", ns->num1);
-                    buf += len;
+                    strbuild_catf(&strbuild, "%i", ns->num1);
                     break;
                 case 2:
-                    len = sprintf(buf, "%i", ns->num2);
-                    buf += len;
+                    strbuild_catf(&strbuild, "%i", ns->num2);
                     break;
                 case 3:
                     if (ns->num1 != 1) {
-                        *buf++ = 's';
+                        strbuild_append_char(&strbuild, 's');
                     }
                     break;
                 case 0xe:
                     if ((ns->num1 == 2) || (ns->num1 == 3)) {
-                        *buf++ = 'n';
+                        strbuild_append_char(&strbuild, 'n');
                     }
-                    *buf++ = ' ';
+                    strbuild_append_char(&strbuild, ' ');
                     break;
                 case 0xd:
                     if (ns->num1 == 1) {
-                        *buf++ = 's';
+                        strbuild_append_char(&strbuild, 's');
                     }
                     break;
                 case 4:
-                    len = sprintf(buf, "%s", game_str_tbl_race[ns->race]);
-                    buf += len;
+                    strbuild_catf(&strbuild, "%s", game_str_tbl_race[ns->race]);
                     break;
                 case 5:
-                    len = sprintf(buf, "%s", game_str_tbl_race[g->eto[ns->num2].race]);
-                    buf += len;
+                    strbuild_catf(&strbuild, "%s", game_str_tbl_race[g->eto[ns->num2].race]);
                     break;
                 case 6:
-                    len = sprintf(buf, "%s", game_str_tbl_te_field[ns->num1]);
-                    buf += len;
+                    strbuild_catf(&strbuild, "%s", game_str_tbl_te_field[ns->num1]);
                     break;
                 case 7:
-                    /* TODO The buffer size of 64 is just to get the code to
-                     * compile. This whole function needs to be rewritten with
-                     * the strbuild_* functions. */
-                    game_tech_get_name(g->gaux, ns->num2 / 50, ns->num2 % 50, buf, 64);
-                    len = strlen(buf);
-                    buf += len;
+                    game_tech_get_name(g->gaux, ns->num2 / 50, ns->num2 % 50, techname, sizeof(techname));
+                    strbuild_catf(&strbuild, "%s", techname);
                     break;
                 case 8:
-                    len = sprintf(buf, "%s", game_str_tbl_trait1[ns->num1]);
-                    buf += len;
+                    strbuild_catf(&strbuild, "%s", game_str_tbl_trait1[ns->num1]);
                     break;
                 case 9:
-                    len = sprintf(buf, "%s", game_str_tbl_trait2[ns->num2]);
-                    buf += len;
+                    strbuild_catf(&strbuild, "%s", game_str_tbl_trait2[ns->num2]);
                     break;
                 case 0xc:
-                    len = sprintf(buf, "%s", g->emperor_names[ns->num1]);
-                    buf += len;
+                    strbuild_catf(&strbuild, "%s", g->emperor_names[ns->num1]);
                     break;
                 default:
-                    *buf++ = c;
+                    strbuild_append_char(&strbuild, c);
                     break;
             }
         } else {
-            *buf++ = c;
+            strbuild_append_char(&strbuild, c);
         }
     }
-    *buf = 0;
     if (ns->type == GAME_NEWS_STATS) {
         int num = 0;
         int tbl_player[PLAYER_NUM];
