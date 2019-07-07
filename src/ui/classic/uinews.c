@@ -316,7 +316,7 @@ void ui_news(struct game_s *g, struct news_s *ns)
         }
         flag_fade = false;
     }
-    game_news_get_msg(g, ns, ui_data.strbuf);
+    game_news_get_msg(g, ns, ui_data.strbuf, UI_STRBUF_SIZE);
     d.str = ui_data.strbuf;
 
     news_load_data(ns->type);
