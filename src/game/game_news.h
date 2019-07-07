@@ -43,6 +43,6 @@ struct news_s {
 };
 
 struct game_s;
-extern void game_news_get_msg(const struct game_s *g, struct news_s *ns, char *buf);
+extern void game_news_get_msg(const struct game_s *g, struct news_s *ns, char *buf, size_t buf_size);
 
 #endif
