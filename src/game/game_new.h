@@ -36,8 +36,8 @@ struct game_aux_s;
 extern int game_new(struct game_s *g, struct game_aux_s *gaux, struct game_new_options_s *opt);
 extern int game_new_tutor(struct game_s *g, struct game_aux_s *gaux);
 
-extern void game_new_generate_emperor_name(race_t race, char *buf);
-extern void game_new_generate_home_name(race_t race, char *buf);
+extern void game_new_generate_emperor_name(race_t race, char *buf, size_t bufsize);
+extern void game_new_generate_home_name(race_t race, char *buf, size_t bufsize);
 
 extern void game_new_generate_other_emperor_name(struct game_s *g, player_id_t player);
 
