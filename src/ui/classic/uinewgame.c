@@ -202,7 +202,7 @@ static bool ui_new_game_pname(struct game_new_options_s *newopts, struct new_gam
     while (!flag_ok) {
         lbxfont_select(5, 0xf, 0xf, 0xf);
         if (flag_generate) {
-            game_new_generate_emperor_name(d->newopts->pdata[d->pi].race, buf);
+            game_new_generate_emperor_name(d->newopts->pdata[d->pi].race, buf, sizeof(buf));
         }
         if (!uiobj_read_str(0xf, 0x16, 0x41, buf, 0xb/*len*/, 0, 0, tbl_cursor_color)) {
             return false;
@@ -232,7 +232,7 @@ static bool ui_new_game_hname(struct game_new_options_s *newopts, struct new_gam
     while (!flag_ok) {
         lbxfont_select(5, 0xf, 0xf, 0xf);
         if (flag_generate) {
-            game_new_generate_home_name(d->newopts->pdata[d->pi].race, buf);
+            game_new_generate_home_name(d->newopts->pdata[d->pi].race, buf, sizeof(buf));
         }
         if (!uiobj_read_str(0xf, 0x16, 0x32, buf, PLANET_NAME_LEN, 0, 0, tbl_cursor_color)) {
             return false;
@@ -315,8 +315,8 @@ static bool ui_new_game_extra(struct game_new_options_s *newopts, struct new_gam
     newopts->pdata[PLAYER_0].race = RACE_HUMAN;
     newopts->pdata[PLAYER_0].banner = BANNER_BLUE;
     d->have_human = true;
-    game_new_generate_emperor_name(newopts->pdata[PLAYER_0].race, newopts->pdata[PLAYER_0].playername);
-    game_new_generate_home_name(newopts->pdata[PLAYER_0].race, newopts->pdata[PLAYER_0].homename);
+    game_new_generate_emperor_name(newopts->pdata[PLAYER_0].race, newopts->pdata[PLAYER_0].playername, EMPEROR_NAME_LEN);
+    game_new_generate_home_name(newopts->pdata[PLAYER_0].race, newopts->pdata[PLAYER_0].homename, PLANET_NAME_LEN);
     uiobj_table_clear();
     ui_palette_fadeout_19_19_1();
     d->fadein = true;
@@ -400,8 +400,8 @@ static bool ui_new_game_extra(struct game_new_options_s *newopts, struct new_gam
                 new_race = newopts->pdata[i].race;
                 if (new_race != old_race) {
                     if (new_race < RACE_NUM) {
-                        game_new_generate_emperor_name(new_race, newopts->pdata[i].playername);
-                        game_new_generate_home_name(new_race, newopts->pdata[i].homename);
+                        game_new_generate_emperor_name(new_race, newopts->pdata[i].playername, EMPEROR_NAME_LEN);
+                        game_new_generate_home_name(new_race, newopts->pdata[i].homename, PLANET_NAME_LEN);
                     } else {
                         newopts->pdata[i].playername[0] = '\0';
                         newopts->pdata[i].homename[0] = '\0';
