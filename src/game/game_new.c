@@ -581,9 +581,9 @@ static void game_generate_planet_names(struct game_s *g)
             j = rnd_0_nm1(PLANETS_MAX, &g->seed);
         } while (BOOLVEC_IS1(in_use, j));
         BOOLVEC_SET1(in_use, j);
-        strcpy(g->planet[i].name, game_str_tbl_planet_names[j]);
+        lib_strcpy(g->planet[i].name, game_str_tbl_planet_names[j], PLANET_NAME_LEN);
     }
-    strcpy(g->planet[g->evn.planet_orion_i].name, game_str_planet_name_orion);
+    lib_strcpy(g->planet[g->evn.planet_orion_i].name, game_str_planet_name_orion, PLANET_NAME_LEN);
 }
 
 static void game_generate_race_banner(struct game_s *g)
@@ -807,7 +807,7 @@ start_of_func:
                 break;
         }
         p->pop_prev = p->pop;
-        game_new_generate_home_name(g->eto[i].race, p->name);
+        game_new_generate_home_name(g->eto[i].race, p->name, PLANET_NAME_LEN);
     }
     for (int j = 0; j < g->galaxy_stars; ++j) {
         player_id_t owner;
@@ -836,7 +836,7 @@ start_of_func:
             e->shipdesigns_num = startship_num;
             for (int j = 0; j < startship_num; ++j, ++sd) {
                 *sd = tbl_startship[j];
-                strcpy(sd->name, game_str_tbl_stship_names[j]);
+                lib_strcpy(sd->name, game_str_tbl_stship_names[j], SHIP_NAME_LEN);
                 sd->look += e->banner * SHIP_LOOK_PER_BANNER;
             }
             memcpy(&g->current_design[i], &srd->design[0], sizeof(shipdesign_t));
@@ -1018,7 +1018,7 @@ static void game_generate_emperor_names(struct game_s *g, const uint8_t *namedat
             const char *str;
             bool flag_name_used;
             str = (const char *)&namedata[4 + (base + rnd_0_nm1(EMPEROR_NAMES_PER_RACE, &g->seed)) * EMPEROR_NAME_LBX_LEN];
-            strcpy(buf, str);
+            lib_strcpy(buf, str, sizeof(buf));
             util_trim_whitespace(buf); /* fix "Zygot  " */
             flag_name_used = false;
             for (player_id_t i = PLAYER_0; i < g->players; ++i) {
@@ -1028,7 +1028,7 @@ static void game_generate_emperor_names(struct game_s *g, const uint8_t *namedat
                 }
             }
             if (!flag_name_used) {
-                strcpy(g->emperor_names[pli], buf);
+                lib_strcpy(g->emperor_names[pli], buf, EMPEROR_NAME_LEN);
                 break;
             }
         }
@@ -1097,14 +1097,12 @@ int game_new(struct game_s *g, struct game_aux_s *gaux, struct game_new_options_
         const char *str;
         str = opt->pdata[i].playername;
         b = g->emperor_names[i];
-        strncpy(b, str, EMPEROR_NAME_LEN);
-        b[EMPEROR_NAME_LEN - 1] = '\0';
+        lib_strcpy(b, str, EMPEROR_NAME_LEN);
         util_trim_whitespace(b);
         str = opt->pdata[i].homename;
         if (*str != '\0') {
             b = g->planet[g->planet_focus_i[i]].name;
-            strncpy(b, str, PLANET_NAME_LEN);
-            b[PLANET_NAME_LEN - 1] = '\0';
+            lib_strcpy(b, str, PLANET_NAME_LEN);
             util_trim_whitespace(b);
         }
     }
@@ -1125,32 +1123,32 @@ int game_new_tutor(struct game_s *g, struct game_aux_s *gaux)
     opt.difficulty = DIFFICULTY_SIMPLE;
     opt.pdata[PLAYER_0].race = RACE_KLACKON;
     opt.pdata[PLAYER_0].banner = BANNER_WHITE;
-    strcpy(opt.pdata[PLAYER_0].playername, "Mr Tutor");
-    strcpy(opt.pdata[PLAYER_0].homename, "SOL");
+    lib_strcpy(opt.pdata[PLAYER_0].playername, "Mr Tutor", EMPEROR_NAME_LEN);
+    lib_strcpy(opt.pdata[PLAYER_0].homename, "SOL", PLANET_NAME_LEN);
     opt.galaxy_seed = 0xfda3f;
     return game_new(g, gaux, &opt);
 }
 
-void game_new_generate_emperor_name(race_t race, char *buf)
+void game_new_generate_emperor_name(race_t race, char *buf, size_t bufsize)
 {
     if (race == RACE_RANDOM) {
-        strcpy(buf, game_str_rndempname);
+        lib_strcpy(buf, game_str_rndempname, bufsize);
     } else {
         uint32_t seed = rnd_get_new_seed();
         uint8_t *namedata = lbxfile_item_get(LBXFILE_NAMES, 0);
         int base = race * EMPEROR_NAMES_PER_RACE;
         const char *str = (const char *)&namedata[4 + (base + rnd_0_nm1(EMPEROR_NAMES_PER_RACE, &seed)) * EMPEROR_NAME_LBX_LEN];
         /* TODO check if in use for the case of forced same races */
-        strcpy(buf, str);
+        lib_strcpy(buf, str, bufsize);
         util_trim_whitespace(buf); /* fix "Zygot  " */
         lbxfile_item_release(LBXFILE_NAMES, namedata);
     }
 }
 
-void game_new_generate_home_name(race_t race, char *buf)
+void game_new_generate_home_name(race_t race, char *buf, size_t bufsize)
 {
     /* TODO check if in use for the case of forced same races */
-    strcpy(buf, game_str_tbl_home_names[race]);
+    lib_strcpy(buf, game_str_tbl_home_names[race], bufsize);
 }
 
 void game_new_generate_other_emperor_name(struct game_s *g, player_id_t player)
@@ -1162,7 +1160,7 @@ void game_new_generate_other_emperor_name(struct game_s *g, player_id_t player)
         char buf[EMPEROR_NAME_LBX_LEN + 1];
         bool flag_in_use;
         str = (const char *)&namedata[4 + (base + rnd_0_nm1(EMPEROR_NAMES_PER_RACE, &g->seed)) * EMPEROR_NAME_LBX_LEN];
-        strcpy(buf, str);
+        lib_strcpy(buf, str, sizeof(buf));
         util_trim_whitespace(buf); /* fix "Zygot  " */
         flag_in_use = true;
         for (player_id_t i = PLAYER_0; i < g->players; ++i) {
@@ -1172,7 +1170,7 @@ void game_new_generate_other_emperor_name(struct game_s *g, player_id_t player)
             }
         }
         if (!flag_in_use) {
-            strcpy(g->emperor_names[player], buf);
+            lib_strcpy(g->emperor_names[player], buf, EMPEROR_NAME_LEN);
             break;
         }
     }
