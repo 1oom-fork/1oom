@@ -69,7 +69,7 @@ static int ui_new_game_pname(struct game_new_options_s *newopts, player_id_t pi)
     if (p[0] == '\0') {
         race_t race = newopts->pdata[pi].race;
         if (race < RACE_NUM) {
-            game_new_generate_emperor_name(race, newopts->pdata[pi].playername);
+            game_new_generate_emperor_name(race, newopts->pdata[pi].playername, EMPEROR_NAME_LEN);
         } else {
             newopts->pdata[pi].playername[0] = '\0';
         }
@@ -87,7 +87,7 @@ static int ui_new_game_hname(struct game_new_options_s *newopts, player_id_t pi)
     if (p[0] == '\0') {
         race_t race = newopts->pdata[pi].race;
         if (race < RACE_NUM) {
-            game_new_generate_home_name(race, newopts->pdata[pi].homename);
+            game_new_generate_home_name(race, newopts->pdata[pi].homename, PLANET_NAME_LEN);
         } else {
             newopts->pdata[pi].homename[0] = '\0';
         }
@@ -172,8 +172,8 @@ static int cmd_race(struct game_s *g, int api, struct input_token_s *param, int 
     new_race = newopts->pdata[n].race;
     if (new_race != old_race) {
         if (new_race < RACE_NUM) {
-            game_new_generate_emperor_name(new_race, newopts->pdata[n].playername);
-            game_new_generate_home_name(new_race, newopts->pdata[n].homename);
+            game_new_generate_emperor_name(new_race, newopts->pdata[n].playername, EMPEROR_NAME_LEN);
+            game_new_generate_home_name(new_race, newopts->pdata[n].homename, PLANET_NAME_LEN);
         } else {
             newopts->pdata[n].playername[0] = '\0';
             newopts->pdata[n].homename[0] = '\0';
