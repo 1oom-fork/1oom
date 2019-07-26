@@ -11,19 +11,18 @@
 #include "game_num.h"
 #include "game_str.h"
 #include "game_tech.h"
+#include "lib.h"
 #include "rnd.h"
 #include "types.h"
 
 /* -------------------------------------------------------------------------- */
 
-static int tenths_2str(char *buf, int num)
+static void tenths_2str(struct strbuild_s *str, int num)
 {
-    int pos;
-    pos = sprintf(buf, "%i", num / 10);
+    strbuild_catf(str, "%i", num / 10);
     if ((num < 100) && ((num % 10) != 0)) {
-        pos += sprintf(&buf[pos], ".%i", num % 10);
+        strbuild_catf(str, ".%i", num % 10);
     }
-    return pos;
 }
 
 static void increment_slider(planet_t *p, int slideri)
@@ -43,7 +42,7 @@ static void set_slider(planet_t *p, int slideri, int16_t value)
 static bool slider_text_equals(const struct game_s *g, const planet_t *p, int slideri, const char *string)
 {
     char buf[64];
-    game_planet_get_slider_text(g, p, p->owner, slideri, buf);
+    game_planet_get_slider_text(g, p, p->owner, slideri, buf, sizeof(buf));
     return strcmp(string, buf) == 0;
 }
 
@@ -53,7 +52,7 @@ static bool slider_text_num_grequ(const struct game_s *g, const planet_t *p, int
     char *q = &buf[0];
     char c;
     int v = 0;
-    game_planet_get_slider_text(g, p, p->owner, slideri, buf);
+    game_planet_get_slider_text(g, p, p->owner, slideri, buf, sizeof(buf));
     while (((c = *q++) >= '0') && (c <= '9')) {
         v *= 10;
         v += c - '0';
@@ -139,7 +138,7 @@ static void move_eco_grow_pop(const struct game_s *g, planet_t *p)
     do {
         char buf[10];
         previous_allocation = p->slider[slideri];
-        plus_pop = game_planet_get_slider_text_eco(g, p, player, true, buf);
+        plus_pop = game_planet_get_slider_text_eco(g, p, player, true, buf, sizeof(buf));
         if (plus_pop > old_plus_pop) {
             old_plus_pop = plus_pop;
             last_inc_pos = previous_allocation;
@@ -202,7 +201,7 @@ static void move_ship_1(const struct game_s *g, planet_t *p)
     int slideri = PLANET_SLIDER_SHIP;
     int previous_allocation = p->slider[slideri];
     char buf[16];
-    sprintf(buf, "1 %s", game_str_sm_prod_y);
+    lib_sprintf(buf, sizeof(buf), "1 %s", game_str_sm_prod_y);
     do {
         if (slider_text_equals(g, p, slideri, buf)) {
             break;
@@ -360,39 +359,39 @@ void game_planet_update_home(struct game_s *g)
     }
 }
 
-const char *game_planet_get_finished_text(const struct game_s *g, const planet_t *p, planet_finished_t type, char *buf)
+const char *game_planet_get_finished_text(const struct game_s *g, const planet_t *p, planet_finished_t type, char *buf, size_t bufsize)
 {
     int num;
     switch (type) {
         case FINISHED_FACT:
             num = p->max_pop3 * g->eto[p->owner].colonist_oper_factories;
-            sprintf(buf, "%s %s %s %i %s. %s", p->name, game_str_sm_hasreached, game_str_sm_indmaxof, num, game_str_sm_factories, game_str_sm_extrares);
+            lib_sprintf(buf, bufsize, "%s %s %s %i %s. %s", p->name, game_str_sm_hasreached, game_str_sm_indmaxof, num, game_str_sm_factories, game_str_sm_extrares);
             break;
         case FINISHED_POPMAX:
             num = p->max_pop3;
-            sprintf(buf, "%s %s %s %i %s. %s", p->name, game_str_sm_hasreached, game_str_sm_popmaxof, num, game_str_sm_colonists, game_str_sm_extrares);
+            lib_sprintf(buf, bufsize, "%s %s %s %i %s. %s", p->name, game_str_sm_hasreached, game_str_sm_popmaxof, num, game_str_sm_colonists, game_str_sm_extrares);
             break;
         case FINISHED_TERRAF:
             num = p->max_pop3;
-            sprintf(buf, "%s %s %s %s %i %s.", p->name, game_str_sm_hasterraf, game_str_sm_new, game_str_sm_popmaxof, num, game_str_sm_colonists);
+            lib_sprintf(buf, bufsize, "%s %s %s %s %i %s.", p->name, game_str_sm_hasterraf, game_str_sm_new, game_str_sm_popmaxof, num, game_str_sm_colonists);
             break;
         case FINISHED_SOILATMOS:
-            sprintf(buf, "%s %s %s %s %s%s.", p->name, game_str_sm_hasterraf, game_str_tbl_sm_terraf[p->growth - 1], game_str_sm_envwith, game_str_tbl_sm_envmore[p->growth - 1], game_str_sm_stdgrow);
+            lib_sprintf(buf, bufsize, "%s %s %s %s %s%s.", p->name, game_str_sm_hasterraf, game_str_tbl_sm_terraf[p->growth - 1], game_str_sm_envwith, game_str_tbl_sm_envmore[p->growth - 1], game_str_sm_stdgrow);
             break;
         case FINISHED_STARGATE:
-            sprintf(buf, "%s %s.", p->name, game_str_sm_hasfsgate);
+            lib_sprintf(buf, bufsize, "%s %s.", p->name, game_str_sm_hasfsgate);
             break;
         case FINISHED_SHIELD:
-            sprintf(buf, "%s %s %s %s.", p->name, game_str_sm_hasfshield, game_str_tbl_roman[p->shield], game_str_sm_planshield);
+            lib_sprintf(buf, bufsize, "%s %s %s %s.", p->name, game_str_sm_hasfshield, game_str_tbl_roman[p->shield], game_str_sm_planshield);
             break;
         default:
-            sprintf(buf, "BUG: invalid finished tyoe %i at '%s'", type, p->name);
+            lib_sprintf(buf, bufsize, "BUG: invalid finished tyoe %i at '%s'", type, p->name);
             break;
     }
     return buf;
 }
 
-int game_planet_get_slider_text(const struct game_s *g, const planet_t *p, player_id_t player, planet_slider_i_t si, char *buf)
+int game_planet_get_slider_text(const struct game_s *g, const planet_t *p, player_id_t player, planet_slider_i_t si, char *buf, size_t bufsize)
 {
     const empiretechorbit_t *e = &(g->eto[player]);
     int retval = -1;
@@ -409,7 +408,7 @@ int game_planet_get_slider_text(const struct game_s *g, const planet_t *p, playe
                 }
                 if ((vtotal < cost) || (p->buildship == BUILDSHIP_STARGATE)) {
                     if (vthis < 1) {
-                        strcpy(buf, game_str_sm_prodnone);
+                        lib_strcpy(buf, game_str_sm_prodnone, bufsize);
                         retval = 0;
                     } else {
                         int num = 0, over;
@@ -419,7 +418,7 @@ int game_planet_get_slider_text(const struct game_s *g, const planet_t *p, playe
                             ++num;
                         }
                         SETMAX(num, 1);
-                        sprintf(buf, "%i %s", num, game_str_sm_prod_y);
+                        lib_sprintf(buf, bufsize, "%i %s", num, game_str_sm_prod_y);
                         if (p->buildship != BUILDSHIP_STARGATE) {
                             retval = 1;
                         }
@@ -429,7 +428,7 @@ int game_planet_get_slider_text(const struct game_s *g, const planet_t *p, playe
                     /* TODO this adjusted sd->cost directly! */
                     SETMAX(cost, 1);
                     num = vtotal / cost;
-                    sprintf(buf, "1 %s", game_str_sm_prod_y);
+                    lib_sprintf(buf, bufsize, "1 %s", game_str_sm_prod_y);
                     retval = num;
                 }
             }
@@ -442,9 +441,9 @@ int game_planet_get_slider_text(const struct game_s *g, const planet_t *p, playe
                 vtotal = vthis + p->bc_to_base;
                 v8 = p->bc_upgrade_base;
                 if (vthis == 0) {
-                    strcpy(buf, game_str_sm_prodnone);
+                    lib_strcpy(buf, game_str_sm_prodnone, bufsize);
                 } else if (vtotal <= v8) {
-                    strcpy(buf, game_str_sm_defupg);
+                    lib_strcpy(buf, game_str_sm_defupg, bufsize);
                 } else {
                     vtotal -= v8;
                     SETMAX(vtotal, 0);
@@ -454,7 +453,7 @@ int game_planet_get_slider_text(const struct game_s *g, const planet_t *p, playe
                     }
                     SETMAX(va, 0);
                     if (vtotal <= va) {
-                        strcpy(buf, game_str_sm_defshld);
+                        lib_strcpy(buf, game_str_sm_defshld, bufsize);
                     } else {
                         int num, over;
                         vtotal -= va;
@@ -466,10 +465,10 @@ int game_planet_get_slider_text(const struct game_s *g, const planet_t *p, playe
                                 over -= vthis;
                                 ++num;
                             }
-                            sprintf(buf, "%i %s", num, game_str_sm_prod_y);
+                            lib_sprintf(buf, bufsize, "%i %s", num, game_str_sm_prod_y);
                         } else {
                             num = vtotal / cost;
-                            sprintf(buf, "%i/%s", num, game_str_sm_prod_y);
+                            lib_sprintf(buf, bufsize, "%i/%s", num, game_str_sm_prod_y);
                         }
                     }
                 }
@@ -477,7 +476,7 @@ int game_planet_get_slider_text(const struct game_s *g, const planet_t *p, playe
             break;
         case PLANET_SLIDER_IND:
             {
-                const char *str = 0;
+                const char *str = NULL;
                 int vthis, cost;
                 cost = e->factory_adj_cost;
                 vthis = game_adjust_prod_by_special((p->prod_after_maint * p->slider[PLANET_SLIDER_IND]) / 100, p->special);
@@ -489,8 +488,9 @@ int game_planet_get_slider_text(const struct game_s *g, const planet_t *p, playe
                             if (e->race != RACE_MEKLAR) {
                                 str = game_str_sm_refit;
                             } else {
-                                int pos = tenths_2str(buf, v20);
-                                sprintf(&buf[pos], "/%s", game_str_sm_prod_y);
+                                struct strbuild_s strbuild = strbuild_init(buf, bufsize);
+                                tenths_2str(&strbuild, v20);
+                                strbuild_catf(&strbuild, "/%s", game_str_sm_prod_y);
                             }
                         } else {
                             str = game_str_sm_indres;
@@ -499,24 +499,25 @@ int game_planet_get_slider_text(const struct game_s *g, const planet_t *p, playe
                             }
                         }
                     } else {
-                        int pos = tenths_2str(buf, v20);
-                        sprintf(&buf[pos], "/%s", game_str_sm_prod_y);
+                        struct strbuild_s strbuild = strbuild_init(buf, bufsize);
+                        tenths_2str(&strbuild, v20);
+                        strbuild_catf(&strbuild, "/%s", game_str_sm_prod_y);
                     }
                 } else {
                     str = game_str_sm_prodnone;
                 }
                 if (str) {
-                    strcpy(buf, str);
+                    lib_strcpy(buf, str, bufsize);
                 }
             }
             break;
         case PLANET_SLIDER_ECO:
-            retval = game_planet_get_slider_text_eco(g, p, player, false, buf);
+            retval = game_planet_get_slider_text_eco(g, p, player, false, buf, bufsize);
             break;
         case PLANET_SLIDER_TECH:
             {
                 int v = game_get_tech_prod(p->prod_after_maint, p->slider[PLANET_SLIDER_TECH], e->race, p->special);
-                sprintf(buf, "%i", v);
+                lib_sprintf(buf, bufsize, "%i", v);
                 retval = v;
             }
             break;
@@ -527,7 +528,7 @@ int game_planet_get_slider_text(const struct game_s *g, const planet_t *p, playe
     return retval;
 }
 
-int game_planet_get_slider_text_eco(const struct game_s *g, const planet_t *p, player_id_t player, bool flag_tenths, char *buf)
+int game_planet_get_slider_text_eco(const struct game_s *g, const planet_t *p, player_id_t player, bool flag_tenths, char *buf, size_t bufsize)
 {
     const empiretechorbit_t *e = &(g->eto[player]);
     int retval = -1;
@@ -627,9 +628,7 @@ int game_planet_get_slider_text_eco(const struct game_s *g, const planet_t *p, p
         }
     }
     if (str) {
-        strcpy(buf, str);
-    } else {
-        *buf = '\0';
+        lib_strcpy(buf, str, bufsize);
     }
     return retval;
 }
