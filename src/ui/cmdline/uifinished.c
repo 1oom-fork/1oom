@@ -5,6 +5,7 @@
 #include "uifinished.h"
 #include "game.h"
 #include "game_planet.h"
+#include "ui.h"
 #include "uidefs.h"
 
 /* -------------------------------------------------------------------------- */
@@ -19,7 +20,7 @@ void ui_finished_print_all(struct game_s *g, int api)
                 for (planet_finished_t type = 0; type < FINISHED_NUM; ++type) {
                     if ((type != FINISHED_SHIP) && BOOLVEC_IS1(p->finished, type)) {
                         BOOLVEC_SET0(p->finished, type);
-                        printf("- %s\n", game_planet_get_finished_text(g, p, type, ui_data.strbuf));
+                        printf("- %s\n", game_planet_get_finished_text(g, p, type, ui_data.strbuf, UI_STRBUF_SIZE));
                     }
                 }
             }
