@@ -17,6 +17,7 @@
 #include "log.h"
 #include "rnd.h"
 #include "types.h"
+#include "ui.h"
 #include "uicursor.h"
 #include "uidraw.h"
 #include "uidefs.h"
@@ -152,7 +153,7 @@ static void ui_starmap_draw_sliders_and_prod(struct starmap_data_s *d)
     lbxfont_select(2, 6, 0, 0);
     {
         int v;
-        v = game_planet_get_slider_text(g, p, d->api, PLANET_SLIDER_SHIP, buf);
+        v = game_planet_get_slider_text(g, p, d->api, PLANET_SLIDER_SHIP, buf, sizeof(buf));
         lbxfont_print_str_right(x, 83, buf, UI_SCREEN_W);
         lbxfont_select(0, 0xd, 0, 0);
         if (v >= 0) {
@@ -160,13 +161,13 @@ static void ui_starmap_draw_sliders_and_prod(struct starmap_data_s *d)
         }
     }
     lbxfont_select(2, 6, 0, 0);
-    game_planet_get_slider_text(g, p, d->api, PLANET_SLIDER_DEF, buf);
+    game_planet_get_slider_text(g, p, d->api, PLANET_SLIDER_DEF, buf, sizeof(buf));
     lbxfont_print_str_right(x, 94, buf, UI_SCREEN_W);
-    game_planet_get_slider_text(g, p, d->api, PLANET_SLIDER_IND, buf);
+    game_planet_get_slider_text(g, p, d->api, PLANET_SLIDER_IND, buf, sizeof(buf));
     lbxfont_print_str_right(x, 105, buf, UI_SCREEN_W);
     {
         int v;
-        v = game_planet_get_slider_text_eco(g, p, d->api, ui_extra_enabled, buf);
+        v = game_planet_get_slider_text_eco(g, p, d->api, ui_extra_enabled, buf, sizeof(buf));
         lbxfont_print_str_right(x, 116, buf, UI_SCREEN_W);
         if (v >= 0) {
             if (ui_extra_enabled) {
@@ -183,7 +184,7 @@ static void ui_starmap_draw_sliders_and_prod(struct starmap_data_s *d)
     }
     {
         int v;
-        v = game_planet_get_slider_text(g, p, d->api, PLANET_SLIDER_TECH, buf);
+        v = game_planet_get_slider_text(g, p, d->api, PLANET_SLIDER_TECH, buf, sizeof(buf));
         if (v > 9999) {
             ui_draw_filled_rect(288, 127, 312, 132, 7);
         } else {
@@ -203,7 +204,7 @@ static void ui_starmap_draw_textbox_finished(const struct game_s *g, player_id_t
             break;
         }
     }
-    game_planet_get_finished_text(g, p, i, buf);
+    game_planet_get_finished_text(g, p, i, buf, UI_STRBUF_SIZE);
     ui_draw_textbox_2str("", buf, 54);
     ui_draw_textbox_2str("", game_str_sm_planratio, 110);
 }
