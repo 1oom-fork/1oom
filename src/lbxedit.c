@@ -218,9 +218,9 @@ static int lbxedit_do_dump(struct lbxedit_s *ctx, const char *filename_lbx, cons
         uint32_t len;
         len = p->len;
         if (len == 0) {
-            sprintf(buf, "0");
+            lib_sprintf(buf, sizeof(buf), "0");
         } else {
-            sprintf(buf, "%s_%03i.bin", prefix_file, i);
+            lib_sprintf(buf, sizeof(buf), "%s_%03i.bin", prefix_file, i);
         }
         if (0
           || (fprintf(fd, "# %i 0x%x..0x%x (0x%x)\n", i, p->start, p->start + len, len) < 0)
@@ -231,7 +231,7 @@ static int lbxedit_do_dump(struct lbxedit_s *ctx, const char *filename_lbx, cons
             goto fail;
         }
         if (flag_write && len) {
-            sprintf(buf, "%s_%03i.bin", prefix, i);
+            lib_sprintf(buf, sizeof(buf), "%s_%03i.bin", prefix, i);
             if (util_file_save(buf, p->data, len) < 0) {
                 log_error("writing '%s'!\n", buf);
                 goto fail;

@@ -668,7 +668,7 @@ int lbxfont_print_str_center_limit(int x, int y, const char *str, int lx0, int l
 int lbxfont_print_str_center_limit_unconst(int x, int y, const char *str, int lx0, int ly0, int lx1, int ly1, uint16_t pitch)
 {
     char buf[1024];
-    strcpy(buf, str);
+    lib_strcpy(buf, str, sizeof(buf));
     return lbxfont_print_str_center_limit(x, y, buf, lx0, ly0, lx1, ly1, pitch);
 }
 
