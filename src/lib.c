@@ -63,9 +63,22 @@ char *lib_stralloc(const char *str)
 char *lib_strcpy(char *dst, const char *src, size_t dst_bufsize)
 {
     if (strlen(src) >= dst_bufsize) {
-        log_fatal_and_die("lib_strcpy: destination buffer too small, need %lu, have %lu\n", strlen(src), dst_bufsize);
+        log_fatal_and_die("lib_strcpy: destination buffer too small, need %lu, have %lu\n", strlen(src) + 1, dst_bufsize);
     }
     return strcpy(dst, src);
+}
+
+char *lib_strcat(char *dst, const char *src, size_t dst_bufsize)
+{
+    size_t combined_len = strlen(src) + strlen(dst);
+    /* Check for wrap-around. */
+    if (combined_len < strlen(src)) {
+        log_fatal_and_die("lib_strcat: Combined string length too large.");
+    }
+    if (combined_len >= dst_bufsize) {
+        log_fatal_and_die("lib_strcat: destination buffer too small, need %lu, have %lu\n", combined_len + 1, dst_bufsize);
+    }
+    return strcat(dst, src);
 }
 
 void lib_sprintf(char *buf, size_t bufsize, const char *fmt, ...)
@@ -76,7 +89,7 @@ void lib_sprintf(char *buf, size_t bufsize, const char *fmt, ...)
     bytes_to_print = vsnprintf(buf, bufsize, fmt, args);
     if (bytes_to_print < 0) {
         /* Error */
-        log_fatal_and_die("str_catf: vsnprintf: %s", strerror(errno));
+        log_fatal_and_die("lib_sprintf: vsnprintf: %s", strerror(errno));
     }
     else if (bytes_to_print >= bufsize) {
         /* Truncated */
