@@ -107,7 +107,7 @@ int ui_search(struct game_s *g, player_id_t pi)
         const uint8_t ctbl[8] = { 0x34, 0x34, 0x34, 0x34, 0x34, 0x34, 0x34, 0x34 };
         lbxfont_select(0, 0, 0, 0);
         if (uiobj_read_str(x + 2, y + 2, 90, buf, PLANET_NAME_LEN - 1, 0, false, ctbl)) {
-            util_trim_whitespace(buf);
+            util_trim_whitespace(buf, sizeof(buf));
             if (buf[0] != 0) {
                 pli = search_planet(g, pi, buf);
             }
