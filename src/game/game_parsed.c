@@ -1,7 +1,5 @@
 #include "config.h"
 
-#include <string.h>
-
 #include "game_parsed.h"
 #include "comp.h"
 #include "game.h"
@@ -11,6 +9,7 @@
 #include "game_shiptech.h"
 #include "game_tech.h"
 #include "game_techtypes.h"
+#include "lib.h"
 #include "types.h"
 
 /* -------------------------------------------------------------------------- */
@@ -210,7 +209,7 @@ static uint8_t get_best_armor(const struct game_s *g, player_id_t owner)
 void game_parsed_from_design(shipparsed_t *sp, const shipdesign_t *sd, int num)
 {
     uint8_t extraman;
-    strcpy(sp->name, sd->name);
+    lib_strcpy(sp->name, sd->name, SHIP_NAME_LEN);
     COPY_PROP(sp, sd, hull);
     COPY_PROP(sp, sd, comp);
     COPY_PROP(sp, sd, jammer);
@@ -251,7 +250,7 @@ void game_parsed_from_planet(shipparsed_t *sp, const struct game_s *g, const str
 {
     const empiretechorbit_t *e = &(g->eto[p->owner]);
     memset(sp, 0, sizeof(*sp));
-    strcpy(sp->name, p->name);
+    lib_strcpy(sp->name, p->name, SHIP_NAME_LEN);
     sp->comp = e->base_comp + 1;
     sp->complevel = sp->comp;
     if (e->race == RACE_MRRSHAN) {
