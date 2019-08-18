@@ -436,7 +436,7 @@ int ui_cmd_planet_trans(struct game_s *g, int api, struct input_token_s *param, 
             int pos;
             pos = sprintf(buf, "%s ", game_str_sm_trcontr1);
             sprintf(&buf[pos], "%s ", game_str_tbl_sm_pltype[pt->type]);
-            util_str_tolower(&buf[pos]);
+            util_str_tolower(&buf[pos], sizeof(buf));
             printf("%s %s\n", buf, game_str_sm_trcontr2);
             return -1;
         } else if (pt->owner == PLAYER_NONE) {
