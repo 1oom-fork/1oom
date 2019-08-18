@@ -224,29 +224,27 @@ fail:
     return NULL;
 }
 
-void util_trim_whitespace(char *buf)
+void util_trim_whitespace(char *buf, size_t bufsize)
 {
     int i;
     for (i = 0; ((buf[i] == ' ') || (buf[i] == '\t')); ++i);
     if (i > 0) {
-        strcpy(buf, &buf[i]);
+        lib_strcpy(buf, &buf[i], bufsize);
     }
-    for (i = 0; buf[i] != '\0'; ++i);
+    for (i = 0; i < bufsize && buf[i] != '\0'; ++i);
     --i;
     for (; (i >= 0) && (((buf[i] == ' ') || (buf[i] == '\t'))); --i) {
-        buf[i] = 0;
+        buf[i] = '\0';
     }
 }
 
-void util_str_tolower(char *buf)
+void util_str_tolower(char *buf, size_t bufsize)
 {
     char c;
-    while ((c = *buf) != 0) {
-        if (isupper(c)) {
-            c = tolower(c);
-            *buf = c;
-        }
-        ++buf;
+    char *buf_end = buf + bufsize;
+    while (buf != buf_end && (c = *buf) != '\0') {
+        /* tolower leaves characters that aren't upper-case letters unchanged. */
+        *buf++ = tolower(c);
     }
 }
 
