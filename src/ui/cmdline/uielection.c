@@ -26,11 +26,11 @@ void ui_election_show(struct election_s *el)
         char vbuf[0x20];
         uint16_t n;
         n = el->got_votes[0];
-        printf("%s %s, ", game_election_print_votes(n, vbuf), g->emperor_names[el->candidate[0]]);
+        printf("%s %s, ", game_election_print_votes(n, vbuf, sizeof(vbuf)), g->emperor_names[el->candidate[0]]);
         n = el->got_votes[1];
-        printf("%s %s, ", game_election_print_votes(n, vbuf), g->emperor_names[el->candidate[1]]);
+        printf("%s %s, ", game_election_print_votes(n, vbuf, sizeof(vbuf)), g->emperor_names[el->candidate[1]]);
         n = el->total_votes;
-        printf("%s %s | ", game_election_print_votes(n, vbuf), game_str_el_total);
+        printf("%s %s | ", game_election_print_votes(n, vbuf, sizeof(vbuf)), game_str_el_total);
     }
     if (el->cur_i != PLAYER_NONE) {
         printf("(%s) | ", game_str_tbl_race[g->eto[el->tbl_ei[el->cur_i]].race]);
