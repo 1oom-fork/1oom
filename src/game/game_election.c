@@ -95,7 +95,7 @@ static void game_election_accept(struct election_s *el)
         if (el->first_human == el->last_human) {
             el->str = game_str_el_accept;
         } else {
-            sprintf(el->buf, "(%s) %s", g->emperor_names[ph], game_str_el_accept);
+            lib_sprintf(el->buf, UI_STRBUF_SIZE, "(%s) %s", g->emperor_names[ph], game_str_el_accept);
             el->str = el->buf;
         }
         if (!ui_election_accept(el, ph)) {
@@ -128,11 +128,11 @@ static void game_election_accept(struct election_s *el)
             }
         }
         {
-            int pos;
-            pos = sprintf(el->buf, "%s", game_str_el_sobeit);
+            struct strbuild_s str = strbuild_init(el->buf, UI_STRBUF_SIZE);
+            strbuild_catf(&str, "%s", game_str_el_sobeit);
             if (g->end == GAME_END_WON_GOOD) {
                 g->winner = el->candidate[1];
-                sprintf(&el->buf[pos], " %s %s %s", game_str_el_emperor, g->emperor_names[g->winner], game_str_el_isnow);
+                strbuild_catf(&str, " %s %s %s", game_str_el_emperor, g->emperor_names[g->winner], game_str_el_isnow);
             }
         }
         game_tech_final_war_share(g);
@@ -145,12 +145,12 @@ static void game_election_accept(struct election_s *el)
 
 /* -------------------------------------------------------------------------- */
 
-const char *game_election_print_votes(uint16_t n, char *buf)
+const char *game_election_print_votes(uint16_t n, char *buf, size_t bufsize)
 {
     if (n == 0) {
-        sprintf(buf, "%s %s", game_str_el_no, game_str_el_votes);
+        lib_sprintf(buf, bufsize, "%s %s", game_str_el_no, game_str_el_votes);
     } else {
-        sprintf(buf, "%i %s", n, (n == 1) ? game_str_el_vote : game_str_el_votes);
+        lib_sprintf(buf, bufsize, "%i %s", n, (n == 1) ? game_str_el_vote : game_str_el_votes);
     }
     return buf;
 }
@@ -165,7 +165,7 @@ void game_election(struct game_s *g)
     ui_election_start(el);
     el->ui_delay = 3;
     ui_election_show(el);
-    sprintf(el->buf, "%s %s %s %s %s %s %s %s %s %s",
+    lib_sprintf(el->buf, UI_STRBUF_SIZE, "%s %s %s %s %s %s %s %s %s %s",
             game_str_el_emperor, g->emperor_names[el->candidate[0]], game_str_el_ofthe, game_str_tbl_races[g->eto[el->candidate[0]].race],
             game_str_el_and,
             game_str_el_emperor, g->emperor_names[el->candidate[1]], game_str_el_ofthe, game_str_tbl_races[g->eto[el->candidate[1]].race],
@@ -187,7 +187,7 @@ void game_election(struct game_s *g)
         if (IS_AI(g, player)) {
             votefor = game_ai->vote(el, player);
         } else {
-            sprintf(el->buf, "%s (%s%s", g->emperor_names[player], game_election_print_votes(n, vbuf), game_str_el_dots);
+            lib_sprintf(el->buf, UI_STRBUF_SIZE, "%s (%s%s", g->emperor_names[player], game_election_print_votes(n, vbuf, sizeof(vbuf)), game_str_el_dots);
             el->str = el->buf;
             votefor = ui_election_vote(el, player);
         }
@@ -195,9 +195,9 @@ void game_election(struct game_s *g)
             votefor = 0;
         }
         if (votefor == 0) {
-            sprintf(el->buf, "%s %s %s%s%s",
+            lib_sprintf(el->buf, UI_STRBUF_SIZE, "%s %s %s%s%s",
                     game_str_el_abs1, game_str_tbl_races[g->eto[player].race], game_str_el_abs2,
-                    game_election_print_votes(n, vbuf), game_str_el_dots
+                    game_election_print_votes(n, vbuf, sizeof(vbuf)), game_str_el_dots
                    );
             g->evn.voted[player] = PLAYER_NONE;
             game_diplo_act(g, -6, player, el->candidate[1], 0, 0, 0);
@@ -205,7 +205,7 @@ void game_election(struct game_s *g)
         } else {
             player_id_t pfor;
             pfor = el->candidate[votefor - 1];
-            sprintf(el->buf, "%i %s %s %s, %s %s %s",
+            lib_sprintf(el->buf, UI_STRBUF_SIZE, "%i %s %s %s, %s %s %s",
                     n, (n == 1) ? game_str_el_vote : game_str_el_votes, game_str_el_for,
                     g->emperor_names[pfor], game_str_el_emperor, game_str_el_ofthe,
                     game_str_tbl_races[g->eto[pfor].race]
@@ -229,10 +229,10 @@ void game_election(struct game_s *g)
         n = el->tbl_votes[player];
         if (g->gaux->local_players > 1) {
             el->cur_i = el->num;
-            sprintf(el->buf, "%s (%s%s", g->emperor_names[player], game_election_print_votes(n, vbuf), game_str_el_dots);
+            lib_sprintf(el->buf, UI_STRBUF_SIZE, "%s (%s%s", g->emperor_names[player], game_election_print_votes(n, vbuf, sizeof(vbuf)), game_str_el_dots);
         } else {
             el->cur_i = PLAYER_NONE;
-            sprintf(el->buf, "%s%s%s", game_str_el_your, game_election_print_votes(n, vbuf), game_str_el_dots);
+            lib_sprintf(el->buf, UI_STRBUF_SIZE, "%s%s%s", game_str_el_your, game_election_print_votes(n, vbuf, sizeof(vbuf)), game_str_el_dots);
         }
         el->str = el->buf;
         votefor = ui_election_vote(el, player);
@@ -267,7 +267,7 @@ void game_election(struct game_s *g)
         }
         if (winner < 2) {
             g->winner = el->candidate[winner];
-            sprintf(el->buf, "%s %i%s %s %s %s %s",
+            lib_sprintf(el->buf, UI_STRBUF_SIZE, "%s %i%s %s %s %s %s",
                     game_str_el_chose1, g->year + YEAR_BASE, game_str_el_chose2,
                     g->emperor_names[g->winner], game_str_el_ofthe, game_str_tbl_races[g->eto[g->winner].race],
                     game_str_el_chose3 /* WASBUG MOO1 has the last period missing if second candidate won */
