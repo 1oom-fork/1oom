@@ -727,7 +727,7 @@ static int cmd_set_name(struct game_s *g, int api, struct input_token_s *param, 
         int len;
         strncpy(name, param[0].str, BUFLEN - 1);
         name[BUFLEN - 1] = '\0';
-        util_trim_whitespace(name);
+        util_trim_whitespace(name, sizeof(name));
         len = strlen(name);
         if (len >= SHIP_NAME_LEN) {
             printf("Name too long!\n");

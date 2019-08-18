@@ -1023,7 +1023,7 @@ static void game_generate_emperor_names(struct game_s *g, const uint8_t *namedat
             bool flag_name_used;
             str = (const char *)&namedata[4 + (base + rnd_0_nm1(EMPEROR_NAMES_PER_RACE, &g->seed)) * EMPEROR_NAME_LBX_LEN];
             lib_strcpy(buf, str, sizeof(buf));
-            util_trim_whitespace(buf); /* fix "Zygot  " */
+            util_trim_whitespace(buf, sizeof(buf)); /* fix "Zygot  " */
             flag_name_used = false;
             for (player_id_t i = PLAYER_0; i < g->players; ++i) {
                 if (strcasecmp(buf, g->emperor_names[i]) == 0) {
@@ -1103,12 +1103,12 @@ int game_new(struct game_s *g, struct game_aux_s *gaux, struct game_new_options_
         str = opt->pdata[i].playername;
         b = g->emperor_names[i];
         lib_strcpy(b, str, EMPEROR_NAME_LEN);
-        util_trim_whitespace(b);
+        util_trim_whitespace(b, EMPEROR_NAME_LEN);
         str = opt->pdata[i].homename;
         if (*str != '\0') {
             b = g->planet[g->planet_focus_i[i]].name;
             lib_strcpy(b, str, PLANET_NAME_LEN);
-            util_trim_whitespace(b);
+            util_trim_whitespace(b, PLANET_NAME_LEN);
         }
     }
     {
@@ -1145,7 +1145,7 @@ void game_new_generate_emperor_name(race_t race, char *buf, size_t bufsize)
         const char *str = (const char *)&namedata[4 + (base + rnd_0_nm1(EMPEROR_NAMES_PER_RACE, &seed)) * EMPEROR_NAME_LBX_LEN];
         /* TODO check if in use for the case of forced same races */
         lib_strcpy(buf, str, bufsize);
-        util_trim_whitespace(buf); /* fix "Zygot  " */
+        util_trim_whitespace(buf, bufsize); /* fix "Zygot  " */
         lbxfile_item_release(LBXFILE_NAMES, namedata);
     }
 }
@@ -1166,7 +1166,7 @@ void game_new_generate_other_emperor_name(struct game_s *g, player_id_t player)
         bool flag_in_use;
         str = (const char *)&namedata[4 + (base + rnd_0_nm1(EMPEROR_NAMES_PER_RACE, &g->seed)) * EMPEROR_NAME_LBX_LEN];
         lib_strcpy(buf, str, sizeof(buf));
-        util_trim_whitespace(buf); /* fix "Zygot  " */
+        util_trim_whitespace(buf, sizeof(buf)); /* fix "Zygot  " */
         flag_in_use = true;
         for (int i = 0; i < g->players; ++i) {
             if (strcasecmp(g->emperor_names[i], buf) == 0) {
