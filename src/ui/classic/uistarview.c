@@ -99,7 +99,7 @@ static void starview_draw_cb(void *vptr)
     lbxfont_print_str_center(170, 2, p->name, UI_SCREEN_W);
     lbxfont_select(3, 0xb, 0, 0);
     strcpy(buf, game_str_tbl_sm_pltype[p->type]);
-    util_str_tolower(buf);
+    util_str_tolower(buf, sizeof(buf));
     if (p->type != PLANET_TYPE_NOT_HABITABLE) {
         int l;
         l = strlen(buf);
