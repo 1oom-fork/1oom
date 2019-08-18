@@ -11,6 +11,7 @@
 #include "game_diplo.h"
 #include "game_str.h"
 #include "game_tech.h"
+#include "lib.h"
 #include "ui.h"
 
 /* -------------------------------------------------------------------------- */
