@@ -28,6 +28,7 @@
 #include "game_stat.h"
 #include "game_str.h"
 #include "game_tech.h"
+#include "lib.h"
 #include "log.h"
 #include "rnd.h"
 #include "types.h"
@@ -1211,14 +1212,14 @@ static void game_turn_transport(struct game_s *g)
                     } else {
                         s = game_str_tbl_race[g->eto[owner].race];
                     }
-                    sprintf(buf, "%s %s %s %s", s, game_str_sm_traad1, g->planet[dest].name, game_str_sm_traad2);
+                    lib_sprintf(buf, UI_STRBUF_SIZE, "%s %s %s %s", s, game_str_sm_traad1, g->planet[dest].name, game_str_sm_traad2);
                     ui_turn_msg(g, IS_HUMAN(g, owner) ? owner : p->owner, buf);
                 }
             } else if (p->owner == PLAYER_NONE) {
                 /*e36d*/
                 if (IS_HUMAN(g, owner)) {
                     char *buf = ui_get_strbuf();
-                    sprintf(buf, "%s %s %s", game_str_sm_trbdb1, g->planet[dest].name, game_str_sm_trbdb2);
+                    lib_sprintf(buf, UI_STRBUF_SIZE, "%s %s %s", game_str_sm_trbdb1, g->planet[dest].name, game_str_sm_trbdb2);
                     ui_turn_msg(g, owner, buf);
                 }
             } else {
