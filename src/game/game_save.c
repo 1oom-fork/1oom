@@ -958,7 +958,7 @@ int game_save_get_slot_fname(char *buf, int buflen, int i)
     char namebuf[16];
     int res;
     if (!os_get_fname_save_slot(namebuf, i + 1)) {
-        sprintf(namebuf, "1oom_save%i.bin", i + 1);
+        lib_sprintf(namebuf, sizeof(namebuf), "1oom_save%i.bin", i + 1);
     }
     res = util_concat_buf(buf, buflen, path, FSDEV_DIR_SEP_STR, namebuf, NULL);
     if (res < 0) {
@@ -974,7 +974,7 @@ int game_save_get_year_fname(char *buf, int buflen, int year)
     char namebuf[32];
     int res;
     if (!os_get_fname_save_year(namebuf, year)) {
-        sprintf(namebuf, "1oom_save_%i.bin", year);
+        lib_sprintf(namebuf, sizeof(namebuf), "1oom_save_%i.bin", year);
     }
     res = util_concat_buf(buf, buflen, path, FSDEV_DIR_SEP_STR, namebuf, NULL);
     if (res < 0) {
@@ -1052,7 +1052,7 @@ int game_save_do_save_year(const char *savename, const struct game_s *g)
     }
     game_save_get_year_fname(filename, g->gaux->savenamebuflen, g->year + YEAR_BASE);
     if (!savename) {
-        sprintf(buf, "Year %i", g->year + YEAR_BASE);
+        lib_sprintf(buf, sizeof(buf), "Year %i", g->year + YEAR_BASE);
         savename = buf;
     }
     res = game_save_do_save_do(filename, savename, g, -1, GAME_SAVE_VERSION);

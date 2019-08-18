@@ -8,6 +8,7 @@ extern void *lib_realloc(void *p, size_t size);
 extern void lib_free(void *ptr);
 extern char *lib_stralloc(const char *str);
 extern char *lib_strcpy(char *dst, const char *src, size_t dst_bufsize);
+extern char *lib_strcat(char *dst, const char *src, size_t dst_bufsize);
 extern void lib_sprintf(char *buf, size_t bufsize, const char *fmt, ...);
 
 /* strbuild_*: build up strings piece by piece, checking the buffer size. */

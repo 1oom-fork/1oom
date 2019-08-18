@@ -13,6 +13,7 @@
 #include "game_str.h"
 #include "game_tech.h"
 #include "game_util.h"
+#include "lib.h"
 #include "log.h"
 #include "rnd.h"
 #include "types.h"
@@ -72,7 +73,7 @@ static void game_get_random_shipnames(struct game_s *g, player_id_t player, char
         if ((namei >= 0) && (namei < SHIP_NAME_NUM)) {
             BOOLVEC_SET0(name_unused, namei);
         }
-        strcpy(shipnames[i], names[namei]); /* TODO weird that the strcpy is not inside the previous if */
+        lib_strcpy(shipnames[i], names[namei], SHIP_NAME_LEN + 1); /* TODO weird that the strcpy is not inside the previous if */
     }
 }
 
@@ -216,7 +217,7 @@ void game_design_prepare_ai(struct game_s *g, struct game_design_s *gd, player_i
     game_design_prepare_do(g, gd, player, 0);
     sd->hull = hull;
     sd->look = look;
-    strcpy(sd->name, gd->names[hull]);
+    lib_strcpy(sd->name, gd->names[hull], SHIP_NAME_LEN);
     game_design_update_engines(sd);
     sd->space = game_design_calc_space(gd);
     sd->cost = game_design_calc_cost(gd);
@@ -424,11 +425,11 @@ void game_design_clear(struct game_design_s *gd)
     char name[SHIP_NAME_LEN + 1];
     uint8_t look = sd->look;
     ship_hull_t hull = sd->hull;
-    strcpy(name, sd->name);
+    lib_strcpy(name, sd->name, sizeof(name));
     memset(sd, 0, sizeof(shipdesign_t));
     sd->look = look;
     sd->hull = hull;
-    strcpy(sd->name, name);
+    lib_strcpy(sd->name, name, SHIP_NAME_LEN);
     game_design_update_engines(sd);
     sd->space = game_design_calc_space(gd);
     sd->cost = game_design_calc_cost(gd);
