@@ -1140,7 +1140,7 @@ bool ui_design(struct game_s *g, struct game_design_s *gd, player_id_t active_pl
         oi = uiobj_handle_input_cond();
         if (oi == u.oi_name) {
             ui_sound_play_sfx_24();
-            util_trim_whitespace(sd->name);
+            util_trim_whitespace(sd->name, SHIP_NAME_LEN);
             if (sd->name[0] == '\0') {
                 strcpy(sd->name, gd->names[sd->hull]);
             }

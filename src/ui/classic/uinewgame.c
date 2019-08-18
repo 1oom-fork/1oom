@@ -207,7 +207,7 @@ static bool ui_new_game_pname(struct game_new_options_s *newopts, struct new_gam
         if (!uiobj_read_str(0xf, 0x16, 0x41, buf, 0xb/*len*/, 0, 0, tbl_cursor_color)) {
             return false;
         }
-        util_trim_whitespace(buf);
+        util_trim_whitespace(buf, sizeof(buf));
         flag_ok = buf[0] != '\0';
         flag_generate = true;
     }
@@ -237,7 +237,7 @@ static bool ui_new_game_hname(struct game_new_options_s *newopts, struct new_gam
         if (!uiobj_read_str(0xf, 0x16, 0x32, buf, PLANET_NAME_LEN, 0, 0, tbl_cursor_color)) {
             return false;
         }
-        util_trim_whitespace(buf);
+        util_trim_whitespace(buf, sizeof(buf));
         flag_ok = buf[0] != '\0';
         flag_generate = true;
     }

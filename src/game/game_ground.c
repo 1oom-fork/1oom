@@ -114,7 +114,7 @@ static void game_ground_show_init(struct game_s *g, struct ground_s *gr)
         gr->s[i].pop2 = gr->s[i].pop1;
         gr->s[i].strnum = 1;
         lib_strcpy(strbuf, *tbl_shiptech_armor[gr->s[i].armori * 2].nameptr, sizeof(strbuf));
-        util_str_tolower(&strbuf[1]);
+        util_str_tolower(&strbuf[1], sizeof(strbuf) - 1);
         lib_sprintf(gr->s[i].str[0], GAME_GROUND_STRBUF_SIZE, "%s ", strbuf);
         besti = gr->s[i].suiti;
         if (besti == 0) {
