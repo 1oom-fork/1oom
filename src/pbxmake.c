@@ -208,7 +208,7 @@ static int make_pbx(const char *filename_in, const char *filename_out)
                 if ((i = findsep(listfiledata, i, len)) < 0) {
                     return 3;
                 }
-                util_trim_whitespace(&listfiledata[positemid]);
+                util_trim_whitespace(&listfiledata[positemid], len - positemid);
                 itemid = &listfiledata[positemid];
                 ilen = strlen(itemid);
                 if (ilen > PBX_ITEM_ID_LEN) {
@@ -222,7 +222,7 @@ static int make_pbx(const char *filename_in, const char *filename_out)
                 if ((i = findsep(listfiledata, i, len)) < 0) {
                     return 3;
                 }
-                util_trim_whitespace(&listfiledata[positemindex]);
+                util_trim_whitespace(&listfiledata[positemindex], len - positemindex);
                 if (!util_parse_number(&listfiledata[positemindex], &v)) {
                     log_error("error: invalid number '%s' at %i\n", &listfiledata[positemindex], i);
                     return 3;
@@ -237,7 +237,7 @@ static int make_pbx(const char *filename_in, const char *filename_out)
                 if ((i = findsep(listfiledata, i, len)) < 0) {
                     return 3;
                 }
-                util_trim_whitespace(&listfiledata[positemoffs]);
+                util_trim_whitespace(&listfiledata[positemoffs], len - positemoffs);
                 if (!util_parse_number(&listfiledata[positemoffs], &v)) {
                     log_error("error: invalid number '%s' at %i\n", &listfiledata[positemoffs], i);
                     return 3;
@@ -257,7 +257,7 @@ static int make_pbx(const char *filename_in, const char *filename_out)
             }
             listfiledata[i] = '\0';
             ++i;
-            util_trim_whitespace(&listfiledata[posparam]);
+            util_trim_whitespace(&listfiledata[posparam], len - posparam);
 
             if (fullname) {
                 lib_free(fullname);

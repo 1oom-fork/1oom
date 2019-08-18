@@ -137,7 +137,7 @@ char *ui_input_line_len_trim(const char *prompt, int maxlen)
     char *line;
     int len;
     line = ui_input_line(prompt);
-    util_trim_whitespace(line);
+    util_trim_whitespace(line, 1024);
     len = strlen(line);
     if (len > maxlen) {
         line[maxlen - 1] = 0;
