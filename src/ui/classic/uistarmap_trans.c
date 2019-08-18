@@ -86,7 +86,7 @@ static void ui_starmap_trans_draw_cb(void *vptr)
             lbxfont_set_gap_h(1);
             pos = sprintf(buf, "%s ", game_str_sm_trcontr1);
             sprintf(&buf[pos], "%s ", game_str_tbl_sm_pltype[pt->type]);
-            util_str_tolower(&buf[pos]);
+            util_str_tolower(&buf[pos], sizeof(buf) - pos);
             strcat(&buf[pos], game_str_sm_trcontr2);
             lbxfont_print_str_split(228, 111, 82, buf, 2, UI_SCREEN_W, UI_SCREEN_H);
         } else if (pt->owner == PLAYER_NONE) {
