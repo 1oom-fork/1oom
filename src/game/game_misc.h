@@ -22,7 +22,7 @@ extern void game_equalize_slider_group(int16_t *slidertbl, int num, const uint16
 extern int game_get_min_dist(const struct game_s *g, player_id_t player_i, int planet_i);
 extern int game_get_pop_growth_max(const struct game_s *g, int planet_i, int max_pop3);
 extern int game_get_pop_growth_for_eco(const struct game_s *g, int planet_i, int eco);
-extern void game_print_prod_of_total(const struct game_s *g, player_id_t pi, int prod, char *buf);
+extern void game_print_prod_of_total(const struct game_s *g, player_id_t pi, int prod, char *buf, size_t bufsize);
 extern bool game_xy_is_in_nebula(const struct game_s *g, int x, int y);
 extern int game_calc_eta(const struct game_s *g, int speed, int x0, int y0, int x1, int y1);
 extern bool game_transport_dest_ok(const struct game_s *g, const planet_t *p, player_id_t api);
