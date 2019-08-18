@@ -29,6 +29,7 @@
 #include "game_spy.h"
 #include "game_str.h"
 #include "game_tech.h"
+#include "lib.h"
 #include "log.h"
 #include "rnd.h"
 #include "types.h"
@@ -1593,7 +1594,7 @@ again:
         game_design_set_hp(sd);
         game_design_compact_slots(sd);
         if (ait->shiptype == 0/*colony*/) {
-            strcpy(sd->name, game_str_ai_colonyship);
+            lib_strcpy(sd->name, game_str_ai_colonyship, SHIP_NAME_LEN);
             if (sd->wpnn[0] == 0) {
                 sd->wpnt[0] = WEAPON_LASER;
                 sd->wpnn[0] = 1;
