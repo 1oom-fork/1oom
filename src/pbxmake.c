@@ -377,7 +377,7 @@ static int make_pbx(const char *filename_in, const char *filename_out)
             SET_LE_32(&buf[PBX_OFFS_ITEM_LEN], tlen);
             SET_LE_16(&buf[PBX_OFFS_ITEM_TYPE], p->itemtype);
             SET_LE_16(&buf[PBX_OFFS_ITEM_INDEX], p->itemindex);
-            strcpy((char *)&buf[PBX_OFFS_ITEM_ID], p->itemid);
+            lib_strcpy((char *)&buf[PBX_OFFS_ITEM_ID], p->itemid, sizeof(buf) - PBX_OFFS_ITEM_ID);
             if (0
               || (fwrite(buf, hlen, 1, fd) != 1)
               || ((p->param_type == PARAM_FILENAME) && (!copy_file(p->fullname, p->len, fd)))
