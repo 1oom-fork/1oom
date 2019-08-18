@@ -23,7 +23,7 @@ struct election_s {
     int ui_delay;
 };
 
-extern const char *game_election_print_votes(uint16_t n, char *buf);
+extern const char *game_election_print_votes(uint16_t n, char *buf, size_t bufsize);
 extern void game_election(struct game_s *g);
 
 #endif
