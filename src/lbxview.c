@@ -107,13 +107,13 @@ static void drawscreen_outlbx(void)
     char linebuf[40 + 1];
     for (lbxfile_e i = 0; i < LBXFILE_NUM; ++i) {
         drawstr(0, 0, " #  Filename    Type Items", textcolor, 0);
-        sprintf(linebuf, "%x", i);
+        lib_sprintf(linebuf, sizeof(linebuf), "%x", i);
         drawstr(1 * 8, 8 + ((int)i) * 8, linebuf, textcolor, 0);
         drawstr(4 * 8, 8 + ((int)i) * 8, lbxfile_name(i), textcolor, 0);
         if (lbxfile_exists(i)) {
-            sprintf(linebuf, "%u  %u", lbxfile_type(i), lbxfile_num_items(i));
+            lib_sprintf(linebuf, sizeof(linebuf), "%u  %u", lbxfile_type(i), lbxfile_num_items(i));
         } else {
-            sprintf(linebuf, "?  ?");
+            lib_sprintf(linebuf, sizeof(linebuf), "?  ?");
         }
         drawstr(18 * 8, 8 + ((int)i) * 8, linebuf, textcolor, 0);
         drawchar(0, (cursor_i + 1) * 8, ' ', 0, textcolor);
@@ -131,7 +131,7 @@ static void drawscreen_outlbx(void)
     }
     lbxfont_select(5, 1, 0, 0);
     lbxfont_print_str_normal(0, 300, "Loading Master of Orion...", 320);
-    sprintf(linebuf, "key 0x%x %c", cur_key, cur_key & 0xff);
+    lib_sprintf(linebuf, sizeof(linebuf), "key 0x%x %c", cur_key, cur_key & 0xff);
     drawstr(0, 320, linebuf, textcolor, 0);
 }
 
@@ -188,7 +188,7 @@ static void drawscreen_inlbx_data(const uint8_t *p, int len)
         SETMAX(pos, 0);
     }
     len -= pos;
-    sprintf(linebuf, "pos:%i (%x) len:%i", pos, pos, len);
+    lib_sprintf(linebuf, sizeof(linebuf), "pos:%i (%x) len:%i", pos, pos, len);
     drawstr(0, 200 + 8 * 2, linebuf, textcolor, 0);
     SETMIN(len, 40 * 25);
     drawstrlen(0, 0, (const char *)&p[pos], len, textcolor, 0);
@@ -209,7 +209,7 @@ static void drawscreen_inlbx(void)
         if (j >= cur_items) {
             break;
         }
-        sprintf(linebuf, "%2x ", j);
+        lib_sprintf(linebuf, sizeof(linebuf), "%2x ", j);
         const char *name = lbxfile_item_name(cur_lbx, j);
         for (int k = 0; k < 32; ++k) {
             linebuf[3 + k] = name[k] ? name[k] : ' ';
@@ -222,7 +222,7 @@ static void drawscreen_inlbx(void)
         uint32_t offs, len;
         offs = lbxfile_item_offs(cur_lbx, cursor_i);
         len = lbxfile_item_len(cur_lbx, cursor_i);
-        sprintf(linebuf, "offs:%x:.%x len:%x (%i)", offs, offs+len, len, len);
+        lib_sprintf(linebuf, sizeof(linebuf), "offs:%x:.%x len:%x (%i)", offs, offs+len, len, len);
         drawstr(0, 200 + 8 * 0, linebuf, textcolor, 0);
     }
     if (lbxfile_type(cur_lbx) == LBX_TYPE_GFX) {
@@ -254,7 +254,7 @@ static void drawscreen_inlbx(void)
         } else {
             lbxgfx_set_frame(p, frame);
         }
-        sprintf(linebuf, "%ix%i f:%i/%i(%i)%c (%x)(%x)(%x) if:%i fmt:%i | %i %i",
+        lib_sprintf(linebuf, sizeof(linebuf), "%ix%i f:%i/%i(%i)%c (%x)(%x)(%x) if:%i fmt:%i | %i %i",
                 lbxgfx_get_w(p), lbxgfx_get_h(p),
                 frame, lbxgfx_get_frames(p), lbxgfx_get_frames2(p),
                 lbxgfx_get_frameclearflag(p, frame) ? 'c' : '-',
@@ -263,7 +263,7 @@ static void drawscreen_inlbx(void)
                );
         drawstr(0, 200 + 8 * 1, linebuf, textcolor, 0);
         if (lbxgfx_has_palette(p)) {
-            sprintf(linebuf, "pal o:%x do:%x f:%i n:%i (%02x)",
+            lib_sprintf(linebuf, sizeof(linebuf), "pal o:%x do:%x f:%i n:%i (%02x)",
                     lbxgfx_get_paloffs(p),
                     lbxgfx_get_paldataoffs(p), lbxgfx_get_palfirst(p),
                     lbxgfx_get_palnum(p), lbxgfx_get_paloffs06(p)
@@ -278,7 +278,7 @@ static void drawscreen_inlbx(void)
         size = GET_LE_16(p + 2);
         view = cur_xoff;
         SETRANGE(view, 0, num - 1);
-        sprintf(linebuf, "num:%i sz:%x v:%i", num, size, view);
+        lib_sprintf(linebuf, sizeof(linebuf), "num:%i sz:%x v:%i", num, size, view);
         drawstr(0, 200 + 8 * 1, linebuf, textcolor, 0);
         p = cur_ptr + 4 + view * size;
         drawscreen_inlbx_data(p, size);
@@ -358,7 +358,7 @@ static void do_lbx_gfx(uint32_t k)
         } else if (KBD_MOD_ONLY_CTRL(k)) {
             char bufname[16];
             int frames = lbxgfx_get_frames(cur_ptr);
-            strcpy(bufname, lbxfile_name(cur_lbx));
+            lib_strcpy(bufname, lbxfile_name(cur_lbx), sizeof(bufname));
             {
                 char *p;
                 p = strchr(bufname, '.');
@@ -370,7 +370,7 @@ static void do_lbx_gfx(uint32_t k)
             for (int f = 0; f < frames; ++f) {
                 char fname[32];
                 lbxgfx_draw_frame(0, 0, cur_ptr, UI_SCREEN_W);
-                sprintf(fname, "z_%s_%02x_%03i.pcx", bufname, cursor_i, f);
+                lib_sprintf(fname, sizeof(fname), "z_%s_%02x_%03i.pcx", bufname, cursor_i, f);
                 fmt_pic_save(fname, &pic);
             }
         }
@@ -544,8 +544,8 @@ int main_do(void)
                         char bufname[16];
                         char bufnum[4];
                         char *p, *name;
-                        sprintf(bufnum, "%02x", cursor_i);
-                        strcpy(bufname, lbxfile_name(cur_lbx));
+                        lib_sprintf(bufnum, sizeof(bufnum), "%02x", cursor_i);
+                        lib_strcpy(bufname, lbxfile_name(cur_lbx), sizeof(bufname));
                         p = strchr(bufname, '.');
                         if (p) { *p = 0; }
                         name = util_concat("z_", bufname, "_", bufnum, ".bin", NULL);
