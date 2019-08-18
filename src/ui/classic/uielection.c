@@ -117,13 +117,13 @@ static void ui_election_draw_cb(void *vptr)
         uint16_t n;
         lbxfont_select(3, 1, 0, 0);
         n = el->got_votes[0];
-        sprintf(buf, "%s %s", game_election_print_votes(n, vbuf), g->emperor_names[el->candidate[0]]);
+        sprintf(buf, "%s %s", game_election_print_votes(n, vbuf, sizeof(vbuf)), g->emperor_names[el->candidate[0]]);
         lbxfont_print_str_normal(10, 10, buf, UI_SCREEN_W);
         n = el->got_votes[1];
-        sprintf(buf, "%s %s", game_election_print_votes(n, vbuf), g->emperor_names[el->candidate[1]]);
+        sprintf(buf, "%s %s", game_election_print_votes(n, vbuf, sizeof(vbuf)), g->emperor_names[el->candidate[1]]);
         lbxfont_print_str_right(310, 10, buf, UI_SCREEN_W);
         n = el->total_votes;
-        sprintf(buf, "%s %s", game_election_print_votes(n, vbuf), game_str_el_total);
+        sprintf(buf, "%s %s", game_election_print_votes(n, vbuf, sizeof(vbuf)), game_str_el_total);
         lbxfont_print_str_center(160, 10, buf, UI_SCREEN_W);
     }
 }
