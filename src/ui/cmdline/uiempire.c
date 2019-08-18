@@ -34,9 +34,9 @@ int ui_cmd_empire_look(struct game_s *g, int api, struct input_token_s *param, i
     char buf[64];
     printf("%s, %s\n", game_str_tbl_races[e->race], g->emperor_names[api]);
     printf("- %s: ", game_str_pl_spending);
-    game_print_prod_of_total(g, api, e->ship_maint_bc, buf);
+    game_print_prod_of_total(g, api, e->ship_maint_bc, buf, sizeof(buf));
     printf("Ships %s", buf);
-    game_print_prod_of_total(g, api, e->bases_maint_bc, buf);
+    game_print_prod_of_total(g, api, e->bases_maint_bc, buf, sizeof(buf));
     printf(", Bases %s", buf);
     {
         int v = 0;
