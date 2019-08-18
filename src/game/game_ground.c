@@ -17,6 +17,7 @@
 #include "game_spy.h"
 #include "game_str.h"
 #include "game_tech.h"
+#include "lib.h"
 #include "log.h"
 #include "rnd.h"
 #include "types.h"
@@ -112,15 +113,15 @@ static void game_ground_show_init(struct game_s *g, struct ground_s *gr)
         gr->s[i].human = IS_HUMAN(g, gr->s[i].player);
         gr->s[i].pop2 = gr->s[i].pop1;
         gr->s[i].strnum = 1;
-        strcpy(strbuf, *tbl_shiptech_armor[gr->s[i].armori * 2].nameptr);
+        lib_strcpy(strbuf, *tbl_shiptech_armor[gr->s[i].armori * 2].nameptr, sizeof(strbuf));
         util_str_tolower(&strbuf[1]);
-        sprintf(gr->s[i].str[0], "%s ", strbuf);
+        lib_sprintf(gr->s[i].str[0], GAME_GROUND_STRBUF_SIZE, "%s ", strbuf);
         besti = gr->s[i].suiti;
         if (besti == 0) {
-            strcat(gr->s[i].str[0], game_str_gr_carmor);
+            lib_strcat(gr->s[i].str[0], game_str_gr_carmor, GAME_GROUND_STRBUF_SIZE);
         } else {
             game_tech_get_name(g->gaux, TECH_FIELD_CONSTRUCTION, besti, strbuf, GAME_GROUND_STRBUF_SIZE);
-            strcat(gr->s[i].str[0], strbuf);
+            lib_strcat(gr->s[i].str[0], strbuf, GAME_GROUND_STRBUF_SIZE);
         }
         besti = gr->s[i].shieldi;
         if (besti != 0) {
