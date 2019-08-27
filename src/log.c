@@ -82,7 +82,7 @@ void log_message(const char* format, ...)
     va_list ap;
 
     va_start(ap, format);
-    vsprintf(msgbuf, format, ap);
+    vsnprintf(msgbuf, MAX_MSG_LEN, format, ap);
     va_end(ap);
 
     log_message_direct(msgbuf);
@@ -93,10 +93,10 @@ void log_warning(const char *format, ...)
     va_list ap;
     int len;
 
-    len = sprintf(msgbuf, "warning: ");
+    len = snprintf(msgbuf, MAX_MSG_LEN, "warning: ");
 
     va_start(ap, format);
-    len = vsprintf(&msgbuf[len], format, ap);
+    vsnprintf(&msgbuf[len], MAX_MSG_LEN - len, format, ap);
     va_end(ap);
 
     log_warning_direct(msgbuf);
@@ -107,10 +107,10 @@ void log_error(const char *format, ...)
     va_list ap;
     int len;
 
-    len = sprintf(msgbuf, "error: ");
+    len = snprintf(msgbuf, MAX_MSG_LEN, "error: ");
 
     va_start(ap, format);
-    len = vsprintf(&msgbuf[len], format, ap);
+    vsnprintf(&msgbuf[len], MAX_MSG_LEN - len, format, ap);
     va_end(ap);
 
     log_error_direct(msgbuf);
@@ -121,10 +121,10 @@ void log_fatal_and_die(const char *format, ...)
     va_list ap;
     int len;
 
-    len = sprintf(msgbuf, "FATAL: ");
+    len = snprintf(msgbuf, MAX_MSG_LEN, "FATAL: ");
 
     va_start(ap, format);
-    len = vsprintf(&msgbuf[len], format, ap);
+    vsnprintf(&msgbuf[len], MAX_MSG_LEN - len, format, ap);
     va_end(ap);
 
     log_error_direct(msgbuf);
@@ -143,7 +143,7 @@ void log_debug(int level, const char *format, ...)
     }
 
     va_start(ap, format);
-    vsprintf(dbgmsgbuf, format, ap);
+    vsnprintf(dbgmsgbuf, MAX_MSG_LEN, format, ap);
     va_end(ap);
 
     fflush(stdout);
