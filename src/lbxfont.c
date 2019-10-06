@@ -705,28 +705,28 @@ void lbxfont_print_str_split(int x, int y, int maxw, const char *str, int type, 
 int lbxfont_print_num_normal(int x, int y, int num, uint16_t pitch)
 {
     char buf[16];
-    sprintf(buf, "%i", num);
+    lib_sprintf(buf, sizeof(buf), "%i", num);
     return lbxfont_print_str_normal(x, y, buf, pitch);
 }
 
 int lbxfont_print_num_center(int x, int y, int num, uint16_t pitch)
 {
     char buf[16];
-    sprintf(buf, "%i", num);
+    lib_sprintf(buf, sizeof(buf), "%i", num);
     return lbxfont_print_str_center(x, y, buf, pitch);
 }
 
 int lbxfont_print_num_right(int x, int y, int num, uint16_t pitch)
 {
     char buf[16];
-    sprintf(buf, "%i", num);
+    lib_sprintf(buf, sizeof(buf), "%i", num);
     return lbxfont_print_str_right(x, y, buf, pitch);
 }
 
 int lbxfont_print_range_right(int x, int y, int num0, int num1, uint16_t pitch)
 {
     char buf[32];
-    sprintf(buf, "%i-%i", num0, num1);
+    lib_sprintf(buf, sizeof(buf), "%i-%i", num0, num1);
     return lbxfont_print_str_right(x, y, buf, pitch);
 }
 
