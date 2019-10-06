@@ -170,12 +170,12 @@ void util_fname_split(const char *path, char **dir_out, char **name_out)
     }
 }
 
-int util_get_fname_unused(char *buf, const char *fmt, int maxnum)
+int util_get_fname_unused(char *buf, size_t bufsize, const char *fmt, int maxnum)
 {
     int n = 0;
     while (n <= maxnum) {
         FILE *fd;
-        sprintf(buf, fmt, n);
+        lib_sprintf(buf, bufsize, fmt, n);
         if ((fd = fopen(buf, "rb")) == NULL) {
             return 0;
         }

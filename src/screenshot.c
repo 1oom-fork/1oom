@@ -21,7 +21,7 @@ bool screenshot_save(const uint8_t *screen, const uint8_t *pal, int w, int h)
     char *fname = lib_malloc(FSDEV_PATH_MAX);
     struct pic_s pic;
     bool res;
-    os_get_fname_screenshot(fname, "pcx");
+    os_get_fname_screenshot(fname, FSDEV_PATH_MAX, "pcx");
     pic.type = PIC_TYPE_PCX;
     pic.w = w;
     pic.h = h;

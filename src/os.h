@@ -30,6 +30,6 @@ extern const char *os_get_fname_save_slot(char *buf, int savei/*1..9*/);
 extern const char *os_get_fname_save_year(char *buf, int year/*2300..*/);
 extern const char *os_get_fname_cfg(char *buf, const char *gamestr, const char *uistr, const char *hwstr);
 extern const char *os_get_fname_log(char *buf);
-extern const char *os_get_fname_screenshot(char *buf, const char *extension);
+extern const char *os_get_fname_screenshot(char *buf, size_t bufsize, const char *extension);
 
 #endif
