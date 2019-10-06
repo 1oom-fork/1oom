@@ -277,13 +277,13 @@ static void show_options(const struct cmdline_options_s *opts, int lmax)
     int i = 0;
     char fmt1[16];
     char fmt2[16];
-    sprintf(fmt1, "    %%-%is ", lmax);
-    sprintf(fmt2, "%%s\n%%-%is", lmax + 5);
+    lib_sprintf(fmt1, sizeof(fmt1), "    %%-%is ", lmax);
+    lib_sprintf(fmt2, sizeof(fmt2), "%%s\n%%-%is", lmax + 5);
     while (opts[i].str != NULL) {
         char buf[128];
         if (opts[i].str_help) {
             const char *p, *q;
-            sprintf(buf, "%s %s", opts[i].str, opts[i].str_param ? opts[i].str_param : "");
+            lib_sprintf(buf, sizeof(buf), "%s %s", opts[i].str, opts[i].str_param ? opts[i].str_param : "");
             log_message(fmt1, buf);
             p = opts[i].str_help;
             while ((q = strchr(p, '\n')) != NULL) {
