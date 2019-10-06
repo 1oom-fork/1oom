@@ -160,8 +160,8 @@ static int pbx_cb_lbxp(void *ctx, const char *filename, int pbxi, const char *id
     for (const char *q = id; *q != '.';) {
         *p++ = *q++;
     }
-    sprintf(p, "_%03u.bin", itemi);
-    sprintf(pbxtext, "2,%s,%u", id, itemi);
+    lib_sprintf(p, sizeof(suffix), "_%03u.bin", itemi);
+    lib_sprintf(pbxtext, sizeof(pbxtext), "2,%s,%u", id, itemi);
     return pbx_dump_textish(ctx, filename, pbxi, (const char *)data, len, pbxtext, suffix);
 }
 
@@ -174,8 +174,8 @@ static int pbx_cb_lbxo(void *ctx, const char *filename, int pbxi, const char *id
     for (const char *q = id; *q != '.';) {
         *p++ = *q++;
     }
-    sprintf(p, "_%03u.bin", itemi);
-    sprintf(pbxtext, "5,%s,%u,0x%x", id, itemi, itemoffs);
+    lib_sprintf(p, sizeof(suffix), "_%03u.bin", itemi);
+    lib_sprintf(pbxtext, sizeof(pbxtext), "5,%s,%u,0x%x", id, itemi, itemoffs);
     return pbx_dump_textish(ctx, filename, pbxi, (const char *)data, len, pbxtext, suffix);
 }
 
@@ -183,8 +183,8 @@ static bool pbx_cb_strp(void *ctx, const char *filename, int pbxi, const char *i
 {
     char pbxtext[32];
     char suffix[40];
-    sprintf(pbxtext, "3,%s,%i", id, itemi);
-    sprintf(suffix, "_%s_%i.txt", id, itemi);
+    lib_sprintf(pbxtext, sizeof(pbxtext), "3,%s,%i", id, itemi);
+    lib_sprintf(suffix, sizeof(suffix), "_%s_%i.txt", id, itemi);
     return (pbx_dump_textish(ctx, filename, pbxi, patchstr, len, pbxtext, suffix) == 0);
 }
 
