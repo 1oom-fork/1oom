@@ -81,7 +81,7 @@ char *lib_strcat(char *dst, const char *src, size_t dst_bufsize)
     return strcat(dst, src);
 }
 
-void lib_sprintf(char *buf, size_t bufsize, const char *fmt, ...)
+int lib_sprintf(char *buf, size_t bufsize, const char *fmt, ...)
 {
     va_list args;
     int bytes_to_print;
@@ -95,6 +95,7 @@ void lib_sprintf(char *buf, size_t bufsize, const char *fmt, ...)
         /* Truncated */
         log_fatal_and_die("lib_sprintf: buffer too small, need %d, have %lu", bytes_to_print, bufsize);
     }
+    return bytes_to_print;
 }
 
 /* strbuild_*: build up strings piece by piece, checking the buffer size. */
