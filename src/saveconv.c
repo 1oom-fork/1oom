@@ -50,6 +50,8 @@ static int save2len = 0;
 static FILE *save2fd = 0;
 static const char *save2fname = 0;
 
+#define SAVE2BUF_SIZE 0x10000
+
 typedef enum {
     SAVETYPE_SMART = 0,
     SAVETYPE_MOO13,
@@ -708,8 +710,7 @@ static int savetype_de_moo13(struct game_s *g, const char *fname)
                 }
             }
             if (found) {
-                strncpy(savename, (const char *)&cmoobuf[0x22 + 20 * (savei - 1)], SAVE_NAME_LEN);
-                savename[SAVE_NAME_LEN - 1] = '\0';
+                lib_strcpy(savename, (const char *)&cmoobuf[0x22 + 20 * (savei - 1)], SAVE_NAME_LEN);
                 LOG_DEBUG((1, "found '%s' slot %i '%s'\n", tryname, savei, savename));
             }
             if (fullname) {
@@ -720,7 +721,7 @@ static int savetype_de_moo13(struct game_s *g, const char *fname)
         lib_free(fnam);
         lib_free(dir);
         if ((savename[0] == 0) && (savei >= 1) && (savei <= 7)) {
-            sprintf(savename, "v1.3 SAVE%i.GAM", savei);
+            lib_sprintf(savename, SAVE_NAME_LEN, "v1.3 SAVE%i.GAM", savei);
             LOG_DEBUG((1, "generated '%s' -> '%s'\n", fname, savename));
         }
     }
@@ -1914,7 +1915,7 @@ fail:
     return -1;
 }
 
-#define OUTADD  save2len += sprintf((char *)&save2buf[save2len],
+#define OUTADD  save2len += lib_sprintf((char *)&save2buf[save2len], SAVE2BUF_SIZE - save2len,
 #define OUTPRE()    OUTADD "%s", tp->buf)
 #define OUTLINE OUTPRE(); OUTADD
 #define OUTLINEI(_name_, _var_) OUTPRE(); OUTADD "%s = %i\n", _name_, _var_)
@@ -1956,15 +1957,20 @@ static void text_dump_prefix_add(struct text_dump_prefix_s *tp, const char *str,
 {
     int num, pos;
     num = tp->num++;
+    if (num >= 10) {
+        log_fatal_and_die("test_dump_prefix_add: too many entries.");
+    }
     pos = tp->pos[num];
-    pos += sprintf(&(tp->buf[pos]), "%s%s", str, sep);
-    tp->pos[num + 1] = pos;
+    pos += lib_sprintf(&(tp->buf[pos]), 128 - pos, "%s%s", str, sep);
+    if (num <= 8) {
+        tp->pos[num + 1] = pos;
+    }
 }
 
 static void text_dump_prefix_add_tbl(struct text_dump_prefix_s *tp, const char *str, const char *sep, int index)
 {
     char buf[128];
-    sprintf(buf, "%s[%i]", str, index);
+    lib_sprintf(buf, sizeof(buf), "%s[%i]", str, index);
     text_dump_prefix_add(tp, buf, sep);
 }
 
@@ -2489,7 +2495,7 @@ static int main_early_init(void)
     gaux->savenamebuf = lib_malloc(gaux->savenamebuflen);
     gaux->savebuflen = sizeof(struct game_s) + 64;
     gaux->savebuf = lib_malloc(gaux->savebuflen);
-    save2buf = lib_malloc(0x10000);
+    save2buf = lib_malloc(SAVE2BUF_SIZE);
     return 0;
 }
 
@@ -2561,7 +2567,7 @@ int main_do(void)
     }
     log_message("saveconv: encode type '%s' file '%s'\n", savetype[savetypeo].name, fname ? fname : "(null)");
     if (savename[0] == '\0') {
-        strcpy(savename, "saveconv");
+        lib_strcpy(savename, "saveconv", SAVE_NAME_LEN);
     }
     res = savetype[savetypeo].encode(gameptr, fname);
     if (res < 0) {
