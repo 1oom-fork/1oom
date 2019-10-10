@@ -352,7 +352,7 @@ int main_do(void)
     }
     log_message("saveconv: encode type '%s' file '%s'\n", savetype[savetypeo].name, fname ? fname : "(null)");
     if (savename[0] == '\0') {
-        strcpy(savename, "saveconv");
+        lib_strcpy(savename, "saveconv", SAVE_NAME_LEN);
     }
     res = savetype[savetypeo].encode(&game, fname);
     if (res < 0) {
