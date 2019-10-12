@@ -365,6 +365,11 @@ int ui_cmd_planet_build(struct game_s *g, player_id_t api, struct input_token_s 
         /* TODO handle param */
         return -1;
     }
+    if (p->buildship == BUILDSHIP_STARGATE) {
+        printf("Building %s\n", game_str_sm_stargate);
+    } else {
+        printf("Building %s\n", g->srd[api].design[p->buildship].name);
+    }
     return 0;
 }
 
