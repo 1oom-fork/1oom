@@ -26,10 +26,10 @@ extern int os_make_path(const char *path);
 extern int os_make_path_user(void);
 extern int os_make_path_for(const char *filename);
 
-extern const char *os_get_fname_save_slot(char *buf, int savei/*1..9*/);
-extern const char *os_get_fname_save_year(char *buf, int year/*2300..*/);
-extern const char *os_get_fname_cfg(char *buf, const char *gamestr, const char *uistr, const char *hwstr);
-extern const char *os_get_fname_log(char *buf);
+extern const char *os_get_fname_save_slot(char *buf, size_t bufsize, int savei/*1..9*/);
+extern const char *os_get_fname_save_year(char *buf, size_t bufsize, int year/*2300..*/);
+extern const char *os_get_fname_cfg(char *buf, size_t bufsize, const char *gamestr, const char *uistr, const char *hwstr);
+extern const char *os_get_fname_log(char *buf, size_t bufsize);
 
 extern uint32_t os_get_time_us(void);
 

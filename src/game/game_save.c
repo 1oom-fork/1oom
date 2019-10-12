@@ -957,7 +957,7 @@ int game_save_get_slot_fname(char *buf, int buflen, int i)
     const char *path = os_get_path_user();
     char namebuf[16];
     int res;
-    if (!os_get_fname_save_slot(namebuf, i + 1)) {
+    if (!os_get_fname_save_slot(namebuf, sizeof(namebuf), i + 1)) {
         lib_sprintf(namebuf, sizeof(namebuf), "1oom_save%i.bin", i + 1);
     }
     res = util_concat_buf(buf, buflen, path, FSDEV_DIR_SEP_STR, namebuf, NULL);
@@ -973,7 +973,7 @@ int game_save_get_year_fname(char *buf, int buflen, int year)
     const char *path = os_get_path_user();
     char namebuf[32];
     int res;
-    if (!os_get_fname_save_year(namebuf, year)) {
+    if (!os_get_fname_save_year(namebuf, sizeof(namebuf), year)) {
         lib_sprintf(namebuf, sizeof(namebuf), "1oom_save_%i.bin", year);
     }
     res = util_concat_buf(buf, buflen, path, FSDEV_DIR_SEP_STR, namebuf, NULL);
