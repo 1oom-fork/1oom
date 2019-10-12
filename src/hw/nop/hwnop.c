@@ -1,7 +1,7 @@
 #include "config.h"
 
 #include <stdio.h>
-
+#include <sys/time.h>
 #include "hw.h"
 #include "cfg.h"
 #include "main.h"
@@ -66,5 +66,7 @@ void hw_log_error(const char *msg)
 
 int64_t hw_get_time_us(void)
 {
-    return 0;
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
+    return (int64_t)tv.tv_usec + 1000000ll * (int64_t)tv.tv_sec;
 }
