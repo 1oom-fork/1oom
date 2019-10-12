@@ -177,7 +177,7 @@ char *cfg_cfgname(void)
     const char *path = os_get_path_user();
     char namebuf[128];
     char *s;
-    if (!os_get_fname_cfg(namebuf, idstr_main, idstr_ui, idstr_hw)) {
+    if (!os_get_fname_cfg(namebuf, sizeof(namebuf), idstr_main, idstr_ui, idstr_hw)) {
         lib_sprintf(namebuf, sizeof(namebuf), "1oom_config_%s_%s_%s.txt", idstr_main, idstr_ui, idstr_hw);
     }
     s = util_concat(path, FSDEV_DIR_SEP_STR, namebuf, NULL);
