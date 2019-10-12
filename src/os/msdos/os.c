@@ -108,19 +108,19 @@ int os_make_path_for(const char *filename)
     return res;
 }
 
-const char *os_get_fname_save_slot(char *buf, int savei/*1..9*/)
+const char *os_get_fname_save_slot(char *buf, size_t bufsize, int savei/*1..9*/)
 {
-    sprintf(buf, "1oomsav%i.bin", savei);
+    lib_sprintf(buf, bufsize, "1oomsav%i.bin", savei);
     return buf;
 }
 
-const char *os_get_fname_save_year(char *buf, int year/*2300..*/)
+const char *os_get_fname_save_year(char *buf, size_t bufsize, int year/*2300..*/)
 {
-    sprintf(buf, "1oom%i.bin", year);
+    lib_sprintf(buf, bufsize, "1oom%i.bin", year);
     return buf;
 }
 
-const char *os_get_fname_cfg(char *buf, const char *gamestr, const char *uistr, const char *hwstr)
+const char *os_get_fname_cfg(char *buf, size_t bufsize, const char *gamestr, const char *uistr, const char *hwstr)
 {
     const char *s;
     if (strcmp(gamestr, "game") == 0) {
@@ -128,16 +128,16 @@ const char *os_get_fname_cfg(char *buf, const char *gamestr, const char *uistr, 
     } else {
         s = gamestr;
     }
-    sprintf(buf, "1%s", s);
+    lib_sprintf(buf, bufsize, "1%s", s);
     buf[8] = '\0';
-    strcat(buf, ".cfg");
+    lib_strcat(buf, ".cfg", bufsize);
     return buf;
 }
 
-const char *os_get_fname_log(char *buf)
+const char *os_get_fname_log(char *buf, size_t bufsize)
 {
     if (buf) {
-        strcpy(buf, "1oom_log.txt");
+        lib_strcpy(buf, "1oom_log.txt", bufsize);
         return buf;
     }
     return "1oom_log.txt";
@@ -146,7 +146,7 @@ const char *os_get_fname_log(char *buf)
 const char *os_get_fname_screenshot(char *buf, size_t bufsize, const char *extension)
 {
     char fmt[16];
-    sprintf(fmt, "1oomp%%03i.%s", extension);
+    lib_sprintf(fmt, sizeof(fmt), "1oomp%%03i.%s", extension);
     util_get_fname_unused(buf, bufsize, fmt, 999);
     return buf;
 }

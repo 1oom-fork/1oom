@@ -106,25 +106,25 @@ int os_make_path_for(const char *filename)
     return res;
 }
 
-const char *os_get_fname_save_slot(char *buf, int savei/*1..9*/)
+const char *os_get_fname_save_slot(char *buf, size_t bufsize, int savei/*1..9*/)
 {
     return NULL;
 }
 
-const char *os_get_fname_save_year(char *buf, int year/*2300..*/)
+const char *os_get_fname_save_year(char *buf, size_t bufsize, int year/*2300..*/)
 {
     return NULL;
 }
 
-const char *os_get_fname_cfg(char *buf, const char *gamestr, const char *uistr, const char *hwstr)
+const char *os_get_fname_cfg(char *buf, size_t bufsize, const char *gamestr, const char *uistr, const char *hwstr)
 {
     return NULL;
 }
 
-const char *os_get_fname_log(char *buf)
+const char *os_get_fname_log(char *buf, size_t bufsize)
 {
     if (buf) {
-        strcpy(buf, "1oom_log.txt");
+        lib_strcpy(buf, "1oom_log.txt", bufsize);
         return buf;
     }
     return "1oom_log.txt";
@@ -133,7 +133,7 @@ const char *os_get_fname_log(char *buf)
 const char *os_get_fname_screenshot(char *buf, size_t bufsize, const char *extension)
 {
     char *fmt = lib_malloc(FSDEV_PATH_MAX);
-    sprintf(fmt, "%s/1oom_pic_%%03i.%s", os_get_path_user(), extension);
+    lib_sprintf(fmt, FSDEV_PATH_MAX, "%s/1oom_pic_%%03i.%s", os_get_path_user(), extension);
     util_get_fname_unused(buf, bufsize, fmt, 999);
     lib_free(fmt);
     fmt = NULL;
