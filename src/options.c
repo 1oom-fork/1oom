@@ -415,7 +415,7 @@ int options_parse_early(int argc, char **argv)
             filename = opt_logfilename_in;
         } else {
             char namebuf[128];
-            if (os_get_fname_log(namebuf)) {
+            if (os_get_fname_log(namebuf, sizeof(namebuf))) {
                 const char *path = os_get_path_user();
                 filename = filenamea = util_concat(path, FSDEV_DIR_SEP_STR, namebuf, NULL);
             }
