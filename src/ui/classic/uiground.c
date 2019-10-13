@@ -103,22 +103,22 @@ static void ground_draw_cb1(void *vptr)
         gfx_aux_draw_frame_to(d->l.gfx_transprt, &ui_data.aux.screen);
         gfx_aux_draw_frame_from_limit(0, y, &ui_data.aux.screen, UI_SCREEN_W);
         if (!gr->flag_rebel) {
-            sprintf(buf, "%i %s %i %s %s", gr->inbound, game_str_gr_outof, gr->total_inbound, strrace[gr->flag_swap ? 1 : 0], game_str_gr_transs);
+            lib_sprintf(buf, sizeof(buf), "%i %s %i %s %s", gr->inbound, game_str_gr_outof, gr->total_inbound, strrace[gr->flag_swap ? 1 : 0], game_str_gr_transs);
         } else {
             /*7b9a8*/
-            sprintf(buf, "%i %s", gr->inbound, game_str_gr_reclaim);
+            lib_sprintf(buf, sizeof(buf), "%i %s", gr->inbound, game_str_gr_reclaim);
         }
         /*7b9bf*/
         lbxfont_select_set_12_4(4, 0x5, 0, 0);
         lbxfont_print_str_center(160, 5, buf, UI_SCREEN_W);
         if (!gr->flag_rebel) {
-            sprintf(buf, "%s %s %s", game_str_gr_penetr, strrace[gr->flag_swap ? 0 : 1], game_str_gr_defenss);
+            lib_sprintf(buf, sizeof(buf), "%s %s %s", game_str_gr_penetr, strrace[gr->flag_swap ? 0 : 1], game_str_gr_defenss);
             lbxfont_print_str_center(160, 17, buf, UI_SCREEN_W);
         }
     } else {
         /*7ba55*/
         lbxfont_select_set_12_4(4, 0x5, 0, 0);
-        sprintf(buf, "%s %s", strrace[1], game_str_gr_troops);
+        lib_sprintf(buf, sizeof(buf), "%s %s", strrace[1], game_str_gr_troops);
         lbxfont_print_str_normal(30, 146, buf, UI_SCREEN_W);
         lbxfont_print_num_normal(10, 146, gr->s[1].pop1, UI_SCREEN_W);
         ui_draw_filled_rect(164, 155, 281, 157, 0);
@@ -131,7 +131,7 @@ static void ground_draw_cb1(void *vptr)
             ground_draw_item(i, gr->s[1].pop2, d->gfx_s[1], false, 0);
         }
         lbxfont_select_set_12_4(4, 0x5, 0, 0);
-        sprintf(buf, "%s %s", gr->flag_rebel ? game_str_gr_rebel : strrace[0], game_str_gr_troops);
+        lib_sprintf(buf, sizeof(buf), "%s %s", gr->flag_rebel ? game_str_gr_rebel : strrace[0], game_str_gr_troops);
         lbxfont_print_str_normal(190, 146, buf, UI_SCREEN_W);
         lbxfont_print_num_normal(170, 146, gr->s[0].pop1, UI_SCREEN_W);
         ui_draw_filled_rect(4, 155, 121, 157, 0);
@@ -145,19 +145,20 @@ static void ground_draw_cb1(void *vptr)
         }
         lbxfont_select_set_12_4(4, 0x5, 0, 0);
         if ((gr->s[0].pop1 != 0) && (gr->s[1].pop1 != 0)) {
-            sprintf(buf, "%s %s", game_str_gr_gcon, g->planet[gr->planet_i].name);
+            lib_sprintf(buf, sizeof(buf), "%s %s", game_str_gr_gcon, g->planet[gr->planet_i].name);
             lbxfont_print_str_center(160, 5, buf, UI_SCREEN_W);
         } else if (d->flag_over) {
             /*7bccd*/
-            int pos, pop = gr->s[gr->flag_swap ? 1 : 0].pop1;
+            int pop = gr->s[gr->flag_swap ? 1 : 0].pop1;
+            struct strbuild_s strbuild = strbuild_init(buf, sizeof(buf));
             if (pop != 0) {
                 if (!gr->flag_swap) {
-                    pos = sprintf(buf, "%s%s ", strrace[0], game_str_gr_scapt);
+                    strbuild_catf(&strbuild, "%s%s ", strrace[0], game_str_gr_scapt);
                 } else {
                     if (gr->flag_rebel) {
-                        pos = sprintf(buf, "%s ", game_str_gr_itroops);
+                        strbuild_catf(&strbuild, "%s ", game_str_gr_itroops);
                     } else {
-                        pos = sprintf(buf, "%s%s ", strrace[1], game_str_gr_scapt);
+                        strbuild_catf(&strbuild, "%s%s ", strrace[1], game_str_gr_scapt);
                     }
                 }
             } else {
@@ -173,15 +174,15 @@ static void ground_draw_cb1(void *vptr)
                     }
                 }
                 /*7bdb1*/
-                pos = sprintf(buf, "%s%s ", s, game_str_gr_succd);
+                strbuild_catf(&strbuild, "%s%s ", s, game_str_gr_succd);
             }
             /*7bdc0*/
-            sprintf(&buf[pos], "%s", g->planet[gr->planet_i].name);
+            strbuild_catf(&strbuild, "%s", g->planet[gr->planet_i].name);
             lbxfont_print_str_center(160, 5, buf, UI_SCREEN_W);
             if ((pop > 0) && (!gr->flag_rebel)) {
                 /*7be16*/
                 if (gr->fact > 0) {
-                    sprintf(buf, "%i %s", gr->fact, game_str_gr_fcapt);
+                    lib_sprintf(buf, sizeof(buf), "%i %s", gr->fact, game_str_gr_fcapt);
                     lbxfont_print_str_center(160, 25, buf, UI_SCREEN_W);
                 }
                 /*7be54*/
