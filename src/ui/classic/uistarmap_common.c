@@ -106,7 +106,7 @@ static void ui_starmap_draw_range_parsec(struct starmap_data_s *d, int y)
     const struct game_s *g = d->g;
     int dist = game_get_min_dist(g, d->api, g->planet_focus_i[d->api]);
     char buf[64];
-    sprintf(buf, "%s %i %s", game_str_sm_range, dist, (dist == 1) ? game_str_sm_parsec : game_str_sm_parsecs);
+    lib_sprintf(buf, sizeof(buf), "%s %i %s", game_str_sm_range, dist, (dist == 1) ? game_str_sm_parsec : game_str_sm_parsecs);
     lbxfont_select_set_12_4(0, 4, 0, 0);
     lbxfont_print_str_center(269, y, buf, UI_SCREEN_W);
 }
@@ -124,7 +124,7 @@ static void ui_starmap_draw_sliders_and_prod(struct starmap_data_s *d)
 
     lbxgfx_draw_frame(224, 5, ui_data.gfx.starmap.yourplnt, UI_SCREEN_W);
     lbxfont_select(2, 0xd, 0xe, 0);
-    sprintf(buf, "%i \x02(%i)\x01", p->prod_after_maint, p->total_prod);
+    lib_sprintf(buf, sizeof(buf), "%i \x02(%i)\x01", p->prod_after_maint, p->total_prod);
     lbxfont_print_str_right(x, 72, buf, UI_SCREEN_W);
     lbxfont_select(2, 0xd, 0, 0);
     lbxfont_print_num_right(265, 61, p->pop, UI_SCREEN_W);
@@ -172,12 +172,12 @@ static void ui_starmap_draw_sliders_and_prod(struct starmap_data_s *d)
         if (v >= 0) {
             if (ui_extra_enabled) {
                 if (v < 100) {
-                    sprintf(buf, "%i.%i", v / 10, v % 10); /* "+0.X" does not fit the box */
+                    lib_sprintf(buf, sizeof(buf), "%i.%i", v / 10, v % 10); /* "+0.X" does not fit the box */
                 } else {
-                    sprintf(buf, "+%i", v / 10);
+                    lib_sprintf(buf, sizeof(buf), "+%i", v / 10);
                 }
             } else {
-                sprintf(buf, "+%i", v);
+                lib_sprintf(buf, sizeof(buf), "+%i", v);
             }
             lbxfont_print_str_right(297, 116, buf, UI_SCREEN_W);
         }
@@ -289,7 +289,7 @@ void ui_starmap_draw_basic(struct starmap_data_s *d)
             ui_data.gfx.colonies.current = ui_data.gfx.colonies.d[p->type * 2 + 1];
             lbxgfx_draw_frame(227, 73, ui_data.gfx.colonies.current, UI_SCREEN_W);
             ui_draw_box1(227, 73, 310, 174, 0, 0);
-            sprintf(buf, "%s %s", game_str_tbl_race[g->eto[owner].race], game_str_sm_colony);
+            lib_sprintf(buf, sizeof(buf), "%s %s", game_str_tbl_race[g->eto[owner].race], game_str_sm_colony);
             if (BOOLVEC_IS1(p->within_srange, d->api)) {
                 lbxfont_select_set_12_4(5, tbl_banner_fontparam[g->eto[owner].banner], 0, 0);
                 lbxfont_print_str_center(270, 84, buf, UI_SCREEN_W);

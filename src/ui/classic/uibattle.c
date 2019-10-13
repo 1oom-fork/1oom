@@ -172,11 +172,11 @@ static void ui_battle_draw_focusinfo(const struct battle_s *bt)
         if (b->num > 0) {
             char buf[32];
             int h1 = b->hp1, h2 = b->hp2, ha = h1 - b->hploss, pos;
-            pos = sprintf(buf, "%i/", ha);
+            pos = lib_sprintf(buf, sizeof(buf), "%i/", ha);
             if (h1 < h2) {
                 buf[pos++] = 2;
             }
-            sprintf(&buf[pos], "%i", h1);
+            lib_sprintf(&buf[pos], sizeof(buf) - pos, "%i", h1);
             lbxfont_print_str_right(92, 194, buf, UI_SCREEN_W);
         }
     }
@@ -906,7 +906,7 @@ void ui_battle_draw_planetinfo(const struct battle_s *bt, bool side_r)
             if ((!bt->s[b->side].flag_base_missile) && (w->nummiss == 1)) {
                 w = &(tbl_shiptech_weap[b->wpn[1].t]);
             }
-            sprintf(buf, "3 %s %s", *w->nameptr, game_str_bt_launch);
+            lib_sprintf(buf, sizeof(buf), "3 %s %s", *w->nameptr, game_str_bt_launch);
             lbxfont_print_str_normal(x + 10, y + 71, buf, UI_SCREEN_W);
         }
         lbxfont_select(2, 0xb, 0, 0);

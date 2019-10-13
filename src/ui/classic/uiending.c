@@ -106,8 +106,8 @@ static void ui_play_winlose_cb1(void *vptr)
     }
     if ((f > 0xa) && (f < 0x46)) {
         char buf[100];
-        strcpy(buf, game_str_wl_won_1);
-        strcat(buf, p->name);
+        lib_strcpy(buf, game_str_wl_won_1, sizeof(buf));
+        lib_strcat(buf, p->name, sizeof(buf));
         lbxfont_print_str_normal(5, 10, buf, UI_SCREEN_W);
         lbxfont_print_str_normal(5, 0x19, game_str_wl_won_2, UI_SCREEN_W);
     }
@@ -183,9 +183,9 @@ static void ui_play_winlose_cb3(void *vptr)
             lbxfont_print_str_normal(10, 0x19, p->str2, UI_SCREEN_W);
         } else {
             char buf[0x48];
-            strcpy(buf, p->str2);
-            strcat(buf, p->name);
-            strcat(buf, p->str3);
+            lib_strcpy(buf, p->str2, sizeof(buf));
+            lib_strcat(buf, p->name, sizeof(buf));
+            lib_strcat(buf, p->str3, sizeof(buf));
             lbxfont_print_str_normal(10, 0x19, buf, UI_SCREEN_W);
             lbxfont_print_str_normal(10, 0x28, p->str4, UI_SCREEN_W);
         }
@@ -366,8 +366,8 @@ static void ui_play_winlose_exile_cb(void *vptr)
     }
     if ((f > 0x14) && (f < 0x8c)) {
         char buf[100];
-        strcpy(buf, game_str_wl_exile_1);
-        strcat(buf, p->name);
+        lib_strcpy(buf, game_str_wl_exile_1, sizeof(buf));
+        lib_strcat(buf, p->name, sizeof(buf));
         lbxfont_print_str_normal(0, 0xa, buf, UI_SCREEN_W);
         lbxfont_print_str_normal(0, 0x19, game_str_wl_exile_2, UI_SCREEN_W);
     }

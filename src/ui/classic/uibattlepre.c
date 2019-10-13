@@ -100,10 +100,10 @@ static void ui_battle_pre_draw_cb(void *vptr)
     lbxfont_select_set_12_4(3, 0, 0, 0);
     lbxfont_print_str_center(267, 64, game_str_bp_scombat, UI_SCREEN_W);
     if (d->party_d >= PLAYER_NUM) {
-        strcpy(buf, game_str_tbl_mon_names[d->party_d - PLAYER_NUM]);
+        lib_strcpy(buf, game_str_tbl_mon_names[d->party_d - PLAYER_NUM], sizeof(buf));
     } else {
         race_t race = g->eto[d->flag_human_att ? d->party_u : d->party_d].race;
-        strcpy(buf, game_str_tbl_races[race]);
+        lib_strcpy(buf, game_str_tbl_races[race], sizeof(buf));
     }
     if (ui_extra_enabled) {
         if (d->flag_human_att) {
@@ -117,7 +117,7 @@ static void ui_battle_pre_draw_cb(void *vptr)
     lbxfont_print_str_center(267, ui_extra_enabled ? 90 : 115, (d->party_d >= PLAYER_NUM) ? game_str_bp_attacks : game_str_bp_attack, UI_SCREEN_W);
     {
         race_t race = g->eto[d->flag_human_att ? d->party_d : d->party_u].race;
-        strcpy(buf, game_str_tbl_races[race]);
+        lib_strcpy(buf, game_str_tbl_races[race], sizeof(buf));
     }
     if (ui_extra_enabled) {
         if (d->flag_human_att) {
@@ -156,7 +156,7 @@ static void ui_battle_pre_draw_cb(void *vptr)
                 lbxfont_set_color0(tbl_banner_color[g->eto[d->party_winner].banner]);
                 lbxfont_select_set_12_4(0, tbl_banner_fontparam[g->eto[d->party_winner].banner], 0, 0);
             }
-            sprintf(buf, "%s %s", str, game_str_bp_won);
+            lib_sprintf(buf, sizeof(buf), "%s %s", str, game_str_bp_won);
             y += 8;
             lbxfont_print_str_center(267, y, buf, UI_SCREEN_W);
         }

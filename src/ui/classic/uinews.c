@@ -95,7 +95,7 @@ static void ui_news_cb1(void *vptr)
             int x, y;
             x = 48 + (i / 3) * 122;
             y = 157 + (i % 3) * 10;
-            sprintf(buf, "%i.", i + 1);
+            lib_sprintf(buf, sizeof(buf), "%i.", i + 1);
             lbxfont_print_str_right(x, y, buf, UI_SCREEN_W);
             lbxfont_print_str_normal(x + 7, y, d->ns->stats[i], UI_SCREEN_W);
         }
