@@ -61,7 +61,7 @@ static void free_pl_data(struct planets_data_s *d)
     lbxfile_item_release(LBXFILE_BACKGRND, d->gfx_transfer);
 }
 
-static const char *planets_get_notes_str(const struct game_s *g, uint8_t pli, bool *flag_normal_ptr, char *buf)
+static const char *planets_get_notes_str(const struct game_s *g, uint8_t pli, bool *flag_normal_ptr, char *buf, size_t bufsize)
 {
     const planet_t *p = &(g->planet[pli]);
     const char *str = NULL;
@@ -89,8 +89,8 @@ static const char *planets_get_notes_str(const struct game_s *g, uint8_t pli, bo
         }
         if (p->have_stargate) {
             if (str) {
-                strcpy(buf, str);
-                strcat(buf, " *");
+                lib_strcpy(buf, str, bufsize);
+                lib_strcat(buf, " *", bufsize);
                 str = buf;
              } else {
                  str = game_str_sm_stargate;
@@ -136,7 +136,7 @@ static void planets_draw_cb(void *vptr)
     lbxfont_print_str_normal(210, 170, game_str_pl_reserve, UI_SCREEN_W);
     lbxfont_select(2, 6, 0, 0);
     v = (e->tax * e->total_production_bc) / 2000;
-    sprintf(buf, "+%i", v);
+    lib_sprintf(buf, sizeof(buf), "+%i", v);
     lbxfont_print_str_right(272, 159, buf, UI_SCREEN_W);
     lbxfont_print_str_normal(276, 159, game_str_bc, UI_SCREEN_W);
     lbxfont_print_str_normal(276, 170, game_str_bc, UI_SCREEN_W);
@@ -173,7 +173,7 @@ static void planets_draw_cb(void *vptr)
                     gfx = ui_data.gfx.starmap.gr_arrow_d;
                 }
                 lbxgfx_draw_frame(92, y0 - 1, gfx, UI_SCREEN_W);
-                sprintf(buf, "%c%i", c, v);
+                lib_sprintf(buf, sizeof(buf), "%c%i", c, v);
                 lbxfont_print_str_right(111, y0, buf, UI_SCREEN_W);
             }
             lbxfont_print_str_right(149, y0, game_str_tbl_roman[p->shield], UI_SCREEN_W);
@@ -193,7 +193,7 @@ static void planets_draw_cb(void *vptr)
             lbxfont_select(2, 0xb, 0, 0);
             {
                 bool flag_normal;
-                str = planets_get_notes_str(g, pli, &flag_normal, buf);
+                str = planets_get_notes_str(g, pli, &flag_normal, buf, sizeof(buf));
                 if (flag_normal) {
                     lbxfont_select(2, 1, 0, 0);
                 }
@@ -224,14 +224,14 @@ static void planets_draw_cb(void *vptr)
             v += e->spying[i];
         }
     }
-    sprintf(buf, "%i.%i%%", v / 10, v % 10);
+    lib_sprintf(buf, sizeof(buf), "%i.%i%%", v / 10, v % 10);
     lbxfont_print_str_right(116, 174, buf, UI_SCREEN_W);
     v = e->security;
-    sprintf(buf, "%i.%i%%", v / 10, v % 10);
+    lib_sprintf(buf, sizeof(buf), "%i.%i%%", v / 10, v % 10);
     lbxfont_print_str_right(116, 185, buf, UI_SCREEN_W);
-    sprintf(buf, "%i %s", e->total_trade_bc, game_str_bc);
+    lib_sprintf(buf, sizeof(buf), "%i %s", e->total_trade_bc, game_str_bc);
     lbxfont_print_str_right(195, 174, buf, UI_SCREEN_W);
-    sprintf(buf, "%i %s", e->total_production_bc, game_str_bc);
+    lib_sprintf(buf, sizeof(buf), "%i %s", e->total_production_bc, game_str_bc);
     lbxfont_print_str_right(195, 185, buf, UI_SCREEN_W);
 
     lbxfont_select_set_12_1(5, 8, 0, 0);
@@ -255,7 +255,7 @@ static void planets_transfer_draw_cb(void *vptr)
     if (d->amount_trans > 0) {
         ui_draw_slider(x + 14, y + 35, x + 13 + d->amount_trans / 2, 0x74);
     }
-    sprintf(buf, "%s %s", game_str_pl_resto, p->name);
+    lib_sprintf(buf, sizeof(buf), "%s %s", game_str_pl_resto, p->name);
     lbxfont_select(0, 0xd, 0, 0);
     lbxfont_print_str_center(x + 57, y + 11, game_str_pl_transof, UI_SCREEN_W);
     lbxfont_print_str_center(x + 57, y + 20, buf, UI_SCREEN_W);
@@ -499,8 +499,8 @@ static int planets_sort_inc_notes(const void *ptr0, const void *ptr1)
     uint8_t pli1 = ui_data.sorted.value[i1];
     char buf0[64];
     char buf1[64];
-    const char *s0 = planets_get_notes_str(g, pli0, 0, buf0);
-    const char *s1 = planets_get_notes_str(g, pli1, 0, buf1);
+    const char *s0 = planets_get_notes_str(g, pli0, 0, buf0, sizeof(buf0));
+    const char *s1 = planets_get_notes_str(g, pli1, 0, buf1, sizeof(buf1));
     int d;
     if ((!s0) && (!s1)) {
         d = i0 - i1;
@@ -509,7 +509,7 @@ static int planets_sort_inc_notes(const void *ptr0, const void *ptr1)
     } else if ((!s1) && s0) {
         d = 1;
     } else {
-        d = strcmp(planets_get_notes_str(g, pli0, 0, buf0), planets_get_notes_str(g, pli1, 0, buf1));
+        d = strcmp(planets_get_notes_str(g, pli0, 0, buf0, sizeof(buf0)), planets_get_notes_str(g, pli1, 0, buf1, sizeof(buf1)));
         if (d == 0) {
             d = i0 - i1;
         }

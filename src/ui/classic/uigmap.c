@@ -136,7 +136,7 @@ static void gmap_draw_cb(void *vptr)
 
     if (ui_extra_enabled) {
         char buf[32];
-        sprintf(buf, "Year %i", g->year+2299);
+        lib_sprintf(buf, sizeof(buf), "Year %i", g->year+2299);
         lbxfont_select(0, 6, 0, 0);
         lbxfont_set_color_c_n(0, 5);
         lbxfont_print_str_normal(9, 9, buf, UI_SCREEN_W);
