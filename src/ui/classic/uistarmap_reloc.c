@@ -10,6 +10,7 @@
 #include "kbd.h"
 #include "lbxgfx.h"
 #include "lbxfont.h"
+#include "lib.h"
 #include "log.h"
 #include "types.h"
 #include "uidraw.h"
@@ -47,11 +48,11 @@ static void ui_starmap_reloc_draw_cb(void *vptr)
     lbxfont_print_str_split(229, 105, 80, game_str_sm_sreloc2, 2, UI_SCREEN_W, UI_SCREEN_H);
     if (g->planet_focus_i[d->api] != d->rl.from) {
         if (pf->have_stargate && pt->have_stargate) {
-            strcpy(buf, game_str_sm_stargate);
+            lib_strcpy(buf, game_str_sm_stargate, sizeof(buf));
         } else {
             int eta;
             eta = game_calc_eta(g, g->srd[d->api].design[pf->buildship].engine + 1, pf->x, pf->y, pt->x, pt->y);
-            sprintf(buf, "%s %i %s", game_str_sm_delay, eta, (eta == 1) ? game_str_sm_turn : game_str_sm_turns);
+            lib_sprintf(buf, sizeof(buf), "%s %i %s", game_str_sm_delay, eta, (eta == 1) ? game_str_sm_turn : game_str_sm_turns);
         }
         lbxfont_select(0, 0, 0, 0);
         lbxfont_print_str_center(268, 149, buf, UI_SCREEN_W);

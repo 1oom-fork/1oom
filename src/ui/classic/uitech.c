@@ -113,7 +113,7 @@ static void tech_draw_cb(void *vptr)
     lbxgfx_draw_frame(7, 36, ui_data.gfx.screens.techback, UI_SCREEN_W);
     lbxgfx_draw_frame(0, 0, d->gfx, UI_SCREEN_W);
 
-    sprintf(buf, "%i %s", e->total_research_bc, game_str_bc);
+    lib_sprintf(buf, sizeof(buf), "%i %s", e->total_research_bc, game_str_bc);
     lbxfont_select(2, 6, 0, 0);
     lbxfont_print_str_right(309, 169, buf, UI_SCREEN_W);
 
@@ -155,7 +155,7 @@ static void tech_draw_cb(void *vptr)
     }
 
     lbxfont_select(2, 6, 0, 0);
-    sprintf(buf, "%s %i, %s %i/%s", game_str_te_scrange, e->scanner_range, game_str_te_rctrl, e->colonist_oper_factories, game_str_te_col);
+    lib_sprintf(buf, sizeof(buf), "%s %i, %s %i/%s", game_str_te_scrange, e->scanner_range, game_str_te_rctrl, e->colonist_oper_factories, game_str_te_col);
     lbxfont_print_str_normal(168, 33, buf, UI_SCREEN_W);
     {
         uint8_t groundcmbonus = 0, groundcmbonus2 = 0;
@@ -171,7 +171,7 @@ static void tech_draw_cb(void *vptr)
             }
         }
         groundcmbonus += groundcmbonus2;
-        sprintf(buf, "%s %i, %s +%i%%", game_str_te_fwaste, e->ind_waste_scale, game_str_te_gcombat, groundcmbonus);
+        lib_sprintf(buf, sizeof(buf), "%s %i, %s +%i%%", game_str_te_fwaste, e->ind_waste_scale, game_str_te_gcombat, groundcmbonus);
         lbxfont_print_str_normal(168, 54, buf, UI_SCREEN_W);
     }
     {
@@ -185,12 +185,12 @@ static void tech_draw_cb(void *vptr)
                 groundcmbonus = p[1] * 10;
             }
         }
-        sprintf(buf, "%s +%i%%", game_str_te_gcombat, groundcmbonus);
+        lib_sprintf(buf, sizeof(buf), "%s +%i%%", game_str_te_gcombat, groundcmbonus);
         lbxfont_print_str_normal(168, 75, buf, UI_SCREEN_W);
     }
-    sprintf(buf, "%s +%i, %s %i/%s", game_str_te_tform, e->have_terraform_n, game_str_te_wasteel, e->have_eco_restoration_n, game_str_bc);
+    lib_sprintf(buf, sizeof(buf), "%s +%i, %s %i/%s", game_str_te_tform, e->have_terraform_n, game_str_te_wasteel, e->have_eco_restoration_n, game_str_bc);
     lbxfont_print_str_normal(168, 96, buf, UI_SCREEN_W);
-    sprintf(buf, "%s %i %s", game_str_te_shrange, e->fuel_range, game_str_sm_parsecs2);
+    lib_sprintf(buf, sizeof(buf), "%s %i %s", game_str_te_shrange, e->fuel_range, game_str_sm_parsecs2);
     lbxfont_print_str_normal(168, 117, buf, UI_SCREEN_W);
     {
         uint8_t groundcmbonus = 0;
@@ -203,7 +203,7 @@ static void tech_draw_cb(void *vptr)
                 groundcmbonus = p[1] * 5;
             }
         }
-        sprintf(buf, "%s +%i%%", game_str_te_gcombat, groundcmbonus);
+        lib_sprintf(buf, sizeof(buf), "%s +%i%%", game_str_te_gcombat, groundcmbonus);
         lbxfont_print_str_normal(168, 138, buf, UI_SCREEN_W);
     }
 
@@ -214,7 +214,7 @@ static void tech_draw_cb(void *vptr)
             int complpercent;
             complpercent = game_tech_current_research_percent2(g, d->api, i);
             if (complpercent > 0) {
-                sprintf(buf, "%i%%", complpercent);
+                lib_sprintf(buf, sizeof(buf), "%i%%", complpercent);
                 lbxfont_select_set_12_1(2, 0xd, 0, 0);
                 lbxfont_print_str_right(295, y + 3, buf, UI_SCREEN_W);
             } else {

@@ -86,7 +86,7 @@ static void races_draw_cb(void *vptr)
         if (e->race == RACE_DARLOK) {
             v += 20;
         }
-        sprintf(buf, "+%i%%", v);
+        lib_sprintf(buf, sizeof(buf), "+%i%%", v);
         lbxfont_select(2, 0xb, 0, 0);
         lbxfont_set_color_c_n(0x26, 5);
         lbxfont_print_str_right(309, 141, buf, UI_SCREEN_W);
@@ -98,22 +98,19 @@ static void races_draw_cb(void *vptr)
     lbxfont_print_str_normal(167, 157, game_str_ra_secline2, UI_SCREEN_W);
     {
         int sumalloc = e->security;
-        int len;
-        char *p = buf;
+        struct strbuild_s strbuild = strbuild_init(buf, sizeof(buf));
         for (int i = 0; i < d->num; ++i) {
             player_id_t pi;
             pi = d->tbl_ei[i];
             sumalloc += e->spying[pi];
         }
-        len = sprintf(p, "%s: ", game_str_ra_alloc);
-        p += len;
+        strbuild_catf(&strbuild, "%s: ", game_str_ra_alloc);
         if (sumalloc == 0) {
-            *p++ = '0';
+            strbuild_append_char(&strbuild, '0');
         } else {
-            len = sprintf(p, "%i.%i", sumalloc / 10, sumalloc % 10);
-            p += len;
+            strbuild_catf(&strbuild, "%i.%i", sumalloc / 10, sumalloc % 10);
         }
-        sprintf(p, "%% %s", game_str_ra_planres);
+        strbuild_catf(&strbuild, "%% %s", game_str_ra_planres);
         lbxfont_select(2, 0, 0, 0);
         lbxfont_print_str_normal(167, 170, buf, UI_SCREEN_W);
     }
@@ -150,9 +147,9 @@ static void races_draw_cb(void *vptr)
                 ui_draw_slider(x + 103, y + 45, x + 102 + spying / 4, 0x73);
             }
             if (spies == 0) {
-                strcpy(buf, game_str_ra_nospies);
+                lib_strcpy(buf, game_str_ra_nospies, sizeof(buf));
             } else {
-                sprintf(buf, "%i %s", spies, (spies == 1) ? game_str_ra_spy : game_str_ra_spies);
+                lib_sprintf(buf, sizeof(buf), "%i %s", spies, (spies == 1) ? game_str_ra_spy : game_str_ra_spies);
             }
             lbxfont_select(2, 6, 0, 0);
             lbxfont_print_str_right(x + 91, y + 44, buf, UI_SCREEN_W);
@@ -163,10 +160,10 @@ static void races_draw_cb(void *vptr)
                     spyspend -= spycost;
                     spycost *= 2;
                 }
-                sprintf(buf, "%i%c%s", spies, (spies == 1) ? ' ' : '/', game_str_y);
+                lib_sprintf(buf, sizeof(buf), "%i%c%s", spies, (spies == 1) ? ' ' : '/', game_str_y);
             } else {
                 if (spyprod == 0) {
-                    strcpy(buf, game_str_st_none);
+                    lib_strcpy(buf, game_str_st_none, sizeof(buf));
                 } else {
                     int left, years;
                     left = spycost - spyspend;
@@ -174,7 +171,7 @@ static void races_draw_cb(void *vptr)
                     if (left % spyprod) {
                         ++years;
                     }
-                    sprintf(buf, "%i %s", years, game_str_y);
+                    lib_sprintf(buf, sizeof(buf), "%i %s", years, game_str_y);
                 }
             }
             lbxfont_print_str_right(x + 153, y + 44, buf, UI_SCREEN_W);
@@ -190,9 +187,9 @@ static void races_draw_cb(void *vptr)
             lbxfont_print_str_normal(x + 60, y + 9, str, UI_SCREEN_W);
         }
         if (e->trade_bc[pi] != 0) {
-            sprintf(buf, "%s: %i %s%s", game_str_ra_trade, e->trade_bc[pi], game_str_bc, game_str_year0);
+            lib_sprintf(buf, sizeof(buf), "%s: %i %s%s", game_str_ra_trade, e->trade_bc[pi], game_str_bc, game_str_year0);
         } else {
-            strcpy(buf, game_str_ra_notrade);
+            lib_strcpy(buf, game_str_ra_notrade, sizeof(buf));
         }
         lbxfont_select(0, 6, 0, 0);
         lbxfont_print_str_normal(x + 61, y + 17, buf, UI_SCREEN_W);
