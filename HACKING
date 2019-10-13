@@ -83,6 +83,11 @@ The resulting binaries follow a "1oom_$UI_$HW" naming convention.
 
 - avoid memory allocations after game startup
 
+Do not use unsafe string functions like strcpy, strcat and sprintf. 1oom pbx
+files may redefine most in-game strings, and besides, it's good practice.
+There are replacement functions in src/lib.c which take an additional buffer
+size argument and crash instead of overflowing the buffer.
+
 Avoid declaring variables after the start of scope:
     if (foo) {
         int this_is_ok;
