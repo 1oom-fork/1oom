@@ -8,6 +8,7 @@
 #include "game_design.h"
 #include "game_shiptech.h"
 #include "game_str.h"
+#include "lib.h"
 #include "log.h"
 #include "types.h"
 #include "uicmds.h"
@@ -197,7 +198,7 @@ static const char *sel_comp_get_display(void *ctx, const struct input_list_s *l)
     power = tbl_shiptech_comp[i].power[sd->hull];
     cost2 = game_design_calc_cost(gd) - cost;
     sizei = game_design_calc_space_item(gd, DESIGN_SLOT_COMP, i);
-    sprintf(ui_data.strbuf, "%s%s, %s %i, %s %i, %s %i, %s %i", (i == sel->oldv) ? "*" : "", *tbl_shiptech_comp[i].nameptr, game_str_sd_cost, cost2, game_str_sd_size, sizei, game_str_sd_power, power, game_str_sd_space, space2);
+    lib_sprintf(ui_data.strbuf, UI_STRBUF_SIZE, "%s%s, %s %i, %s %i, %s %i, %s %i", (i == sel->oldv) ? "*" : "", *tbl_shiptech_comp[i].nameptr, game_str_sd_cost, cost2, game_str_sd_size, sizei, game_str_sd_power, power, game_str_sd_space, space2);
     return ui_data.strbuf;
 }
 
@@ -246,7 +247,7 @@ static const char *sel_shield_get_display(void *ctx, const struct input_list_s *
     power = tbl_shiptech_shield[i].power[sd->hull];
     cost2 = game_design_calc_cost(gd) - cost;
     sizei = game_design_calc_space_item(gd, DESIGN_SLOT_SHIELD, i);
-    sprintf(ui_data.strbuf, "%s%s, %s %i, %s %i, %s %i, %s %i", (i == sel->oldv) ? "*" : "", *tbl_shiptech_shield[i].nameptr, game_str_sd_cost, cost2, game_str_sd_size, sizei, game_str_sd_power, power, game_str_sd_space, space2);
+    lib_sprintf(ui_data.strbuf, UI_STRBUF_SIZE, "%s%s, %s %i, %s %i, %s %i, %s %i", (i == sel->oldv) ? "*" : "", *tbl_shiptech_shield[i].nameptr, game_str_sd_cost, cost2, game_str_sd_size, sizei, game_str_sd_power, power, game_str_sd_space, space2);
     return ui_data.strbuf;
 }
 
@@ -295,7 +296,7 @@ static const char *sel_jammer_get_display(void *ctx, const struct input_list_s *
     power = tbl_shiptech_jammer[i].power[sd->hull];
     cost2 = game_design_calc_cost(gd) - cost;
     sizei = game_design_calc_space_item(gd, DESIGN_SLOT_JAMMER, i);
-    sprintf(ui_data.strbuf, "%s%s, %s %i, %s %i, %s %i, %s %i", (i == sel->oldv) ? "*" : "", *tbl_shiptech_jammer[i].nameptr, game_str_sd_cost, cost2, game_str_sd_size, sizei, game_str_sd_power, power, game_str_sd_space, space2);
+    lib_sprintf(ui_data.strbuf, UI_STRBUF_SIZE, "%s%s, %s %i, %s %i, %s %i, %s %i", (i == sel->oldv) ? "*" : "", *tbl_shiptech_jammer[i].nameptr, game_str_sd_cost, cost2, game_str_sd_size, sizei, game_str_sd_power, power, game_str_sd_space, space2);
     return ui_data.strbuf;
 }
 
@@ -338,7 +339,7 @@ static const char *sel_armor_get_display(void *ctx, const struct input_list_s *l
     game_design_update_engines(sd);
     cost2 = game_design_calc_cost_item(d->gd, DESIGN_SLOT_ARMOR, i);
     sizei = game_design_calc_space_item(d->gd, DESIGN_SLOT_ARMOR, i);
-    sprintf(ui_data.strbuf, "%s%s, %s %i, %s %i", (i == sel->oldv) ? "*" : "", *tbl_shiptech_armor[i].nameptr, game_str_sd_cost, cost2, game_str_sd_size, sizei);
+    lib_sprintf(ui_data.strbuf, UI_STRBUF_SIZE, "%s%s, %s %i, %s %i", (i == sel->oldv) ? "*" : "", *tbl_shiptech_armor[i].nameptr, game_str_sd_cost, cost2, game_str_sd_size, sizei);
     return ui_data.strbuf;
 }
 
@@ -382,7 +383,7 @@ static const char *sel_engine_get_display(void *ctx, const struct input_list_s *
     sizet = (sizei * ne) / 10;
     cost2 = game_design_calc_cost_item(d->gd, DESIGN_SLOT_ENGINE, i);
     sizei = game_design_calc_space_item(gd, DESIGN_SLOT_JAMMER, i);
-    sprintf(ui_data.strbuf, "%s%s, %s %i, %s %i, %s %i.%i, %s %i", (i == sel->oldv) ? "*" : "", *tbl_shiptech_engine[i].nameptr, game_str_sd_cost, cost2, game_str_sd_size, sizei, game_str_sd_numengs, ne / 10, ne % 10, game_str_sd_space, sizet);
+    lib_sprintf(ui_data.strbuf, UI_STRBUF_SIZE, "%s%s, %s %i, %s %i, %s %i.%i, %s %i", (i == sel->oldv) ? "*" : "", *tbl_shiptech_engine[i].nameptr, game_str_sd_cost, cost2, game_str_sd_size, sizei, game_str_sd_numengs, ne / 10, ne % 10, game_str_sd_space, sizet);
     return ui_data.strbuf;
 }
 
@@ -436,7 +437,7 @@ static const char *sel_man_get_display(void *ctx, const struct input_list_s *l)
     SETMAX(powperwarp, 1);
     cost2 = game_design_calc_cost(d->gd) - cost;
     SETMAX(cost2, 1);
-    sprintf(ui_data.strbuf, "%s%s %s, %s %i, %s %i, %s %i, %s %i", (i == sel->oldv) ? "*" : "", game_str_sd_class, game_str_tbl_roman[i + 1], game_str_sd_speed, (i + 3) / 2, game_str_sd_cost, cost2, game_str_sd_power, powperwarp, game_str_sd_space, space2);
+    lib_sprintf(ui_data.strbuf, UI_STRBUF_SIZE, "%s%s %s, %s %i, %s %i, %s %i, %s %i", (i == sel->oldv) ? "*" : "", game_str_sd_class, game_str_tbl_roman[i + 1], game_str_sd_speed, (i + 3) / 2, game_str_sd_cost, cost2, game_str_sd_power, powperwarp, game_str_sd_space, space2);
     return ui_data.strbuf;
 }
 
@@ -475,7 +476,7 @@ static const char *sel_wpnt_get_display(void *ctx, const struct input_list_s *l)
     struct design_data_s *d = sel->d;
     struct game_design_s *gd = d->gd;
     shipdesign_t *sd = &(gd->sd);
-    int i = l->value, wslot = sel->slot, space, cost, space2, power, cost2, sizei, dmin, dmax, bufpos;
+    int i = l->value, wslot = sel->slot, space, cost, space2, power, cost2, sizei, dmin, dmax;
     if (i < 0) {
         return l->display;
     }
@@ -496,15 +497,17 @@ static const char *sel_wpnt_get_display(void *ctx, const struct input_list_s *l)
     sizei = game_design_calc_space_item(gd, DESIGN_SLOT_WEAPON1, i);
     dmin = tbl_shiptech_weap[i].damagemin;
     dmax = tbl_shiptech_weap[i].damagemax;
-    bufpos = sprintf(ui_data.strbuf, "%s%i x %s", (i == sel->oldv) ? "*" : "", sel->havebuf[i], *tbl_shiptech_weap[i].nameptr);
+
+    struct strbuild_s str = strbuild_init(ui_data.strbuf, UI_STRBUF_SIZE);
+    strbuild_catf(&str, "%s%i x %s", (i == sel->oldv) ? "*" : "", sel->havebuf[i], *tbl_shiptech_weap[i].nameptr);
     if (**tbl_shiptech_weap[i].extratextptr != ' ') {
-        bufpos += sprintf(&ui_data.strbuf[bufpos], ": %s", *tbl_shiptech_weap[i].extratextptr);
+        strbuild_catf(&str, ": %s", *tbl_shiptech_weap[i].extratextptr);
     }
-    bufpos += sprintf(&ui_data.strbuf[bufpos], ", %s %i", game_str_sd_dmg, dmin);
+    strbuild_catf(&str, ", %s %i", game_str_sd_dmg, dmin);
     if (dmin != dmax) {
-        bufpos += sprintf(&ui_data.strbuf[bufpos], "-%i", dmax);
+        strbuild_catf(&str, "-%i", dmax);
     }
-    sprintf(&ui_data.strbuf[bufpos], ", %s %i, %s %i, %s %i, %s %i", game_str_sd_cost, cost2, game_str_sd_size, sizei, game_str_sd_power, power, game_str_sd_space, space2);
+    strbuild_catf(&str, ", %s %i, %s %i, %s %i, %s %i", game_str_sd_cost, cost2, game_str_sd_size, sizei, game_str_sd_power, power, game_str_sd_space, space2);
     return ui_data.strbuf;
 }
 
@@ -633,7 +636,7 @@ static const char *sel_spec_get_display(void *ctx, const struct input_list_s *l)
     power = tbl_shiptech_special[i].power[sd->hull];
     cost2 = game_design_calc_cost(gd) - cost;
     sizei = game_design_calc_space_item(gd, DESIGN_SLOT_SPECIAL1, i);
-    sprintf(ui_data.strbuf, "%s%s: %s, %s %i, %s %i, %s %i, %s %i", (i == sel->oldv) ? "*" : "", *tbl_shiptech_special[i].nameptr, *tbl_shiptech_special[i].extratextptr, game_str_sd_cost, cost2, game_str_sd_size, sizei, game_str_sd_power, power, game_str_sd_space, space2);
+    lib_sprintf(ui_data.strbuf, UI_STRBUF_SIZE, "%s%s: %s, %s %i, %s %i, %s %i, %s %i", (i == sel->oldv) ? "*" : "", *tbl_shiptech_special[i].nameptr, *tbl_shiptech_special[i].extratextptr, game_str_sd_cost, cost2, game_str_sd_size, sizei, game_str_sd_power, power, game_str_sd_space, space2);
     return ui_data.strbuf;
 }
 
@@ -683,7 +686,7 @@ static const char *sel_hull_get_display(void *ctx, const struct input_list_s *l)
     if (i < 0) {
         return l->display;
     }
-    sprintf(ui_data.strbuf, "%s%s", (i == sel->oldv) ? "*" : "", *tbl_shiptech_hull[i].nameptr);
+    lib_sprintf(ui_data.strbuf, UI_STRBUF_SIZE, "%s%s", (i == sel->oldv) ? "*" : "", *tbl_shiptech_hull[i].nameptr);
     return ui_data.strbuf;
 }
 
@@ -738,7 +741,7 @@ static int cmd_set_name(struct game_s *g, int api, struct input_token_s *param, 
 #undef BUFLEN
     }
     if (sd->name[0] == '\0') {
-        strcpy(sd->name, gd->names[sd->hull]);
+        lib_strcpy(sd->name, gd->names[sd->hull], SHIP_NAME_LEN);
     }
     return 0;
 }
@@ -788,7 +791,7 @@ static bool ui_design(struct game_s *g, struct game_design_s *gd, player_id_t pi
     d.gd = gd;
     d.api = pi;
     game_design_init_maxtech_haveflags(&d);
-    strcpy(sd->name, gd->names[sd->hull]);
+    lib_strcpy(sd->name, gd->names[sd->hull], SHIP_NAME_LEN);
     cmd_look(g, pi, 0, 0, &d);
     while (1) {
         char *input;
