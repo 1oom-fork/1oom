@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "lib.h"
 #include "uihelp.h"
 #include "uidefs.h"
 
@@ -39,8 +40,8 @@ static void show_cmds(const struct input_cmd_s * const *cmdsptr, int lmax)
     char fmt1[16];
     char fmt2[16];
     const struct input_cmd_s *cmds;
-    sprintf(fmt1, "    %%-%is ", lmax);
-    sprintf(fmt2, "%%s\n%%-%is", lmax + 5);
+    lib_sprintf(fmt1, sizeof(fmt1), "    %%-%is ", lmax);
+    lib_sprintf(fmt2, sizeof(fmt2), "%%s\n%%-%is", lmax + 5);
     while ((cmds = *cmdsptr++) != NULL) {
         int i;
         i = 0;
@@ -48,7 +49,7 @@ static void show_cmds(const struct input_cmd_s * const *cmdsptr, int lmax)
             char buf[128];
             if (cmds[i].str_help) {
                 const char *p, *q;
-                sprintf(buf, "%s %s", cmds[i].str_cmd, cmds[i].str_param ? cmds[i].str_param : "");
+                lib_sprintf(buf, sizeof(buf), "%s %s", cmds[i].str_cmd, cmds[i].str_param ? cmds[i].str_param : "");
                 printf(fmt1, buf);
                 p = cmds[i].str_help;
                 while ((q = strchr(p, '\n')) != NULL) {
