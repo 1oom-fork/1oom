@@ -36,15 +36,15 @@ struct specs_data_s {
     int scrapi;
 };
 
-static void specs_print_weap(weapon_t wi, uint8_t wn, char *buf1, char *buf2)
+static void specs_print_weap(weapon_t wi, uint8_t wn, char *buf1, size_t buf1_size, char *buf2, size_t buf2_size)
 {
-    strcpy(buf1, *tbl_shiptech_weap[wi].nameptr);
+    lib_strcpy(buf1, *tbl_shiptech_weap[wi].nameptr, buf1_size);
     /* FIXME make plural form somehow modifiable */
     if ((wn != 1) && (wi != WEAPON_DEATH_SPORES)) {
-        strcat(buf1, "s");
+        lib_strcat(buf1, "s", buf1_size);
     }
     if (tbl_shiptech_weap[wi].numshots > 0) {
-        sprintf(buf2, "%i", tbl_shiptech_weap[wi].numshots);
+        lib_sprintf(buf2, buf2_size, "%i", tbl_shiptech_weap[wi].numshots);
     } else {
         buf2[0] = '\0';
     }
@@ -93,7 +93,7 @@ static void specs_draw_cb1(void *vptr)
                 char buf1[64];
                 char buf2[12];
                 lbxfont_print_num_right(176, y + 3 + wi * 7, sp.wpnn[wi], UI_SCREEN_W);
-                specs_print_weap(sp.wpnt[wi], sp.wpnn[wi], buf1, buf2);
+                specs_print_weap(sp.wpnt[wi], sp.wpnn[wi], buf1, sizeof(buf1), buf2, sizeof(buf2));
                 lbxfont_print_str_normal(180, y + 3 + wi * 7, buf1, UI_SCREEN_W);
                 if (buf2[0] != '\0') {
                     lbxfont_print_str_right(250, y + 3 + wi * 7, buf2, UI_SCREEN_W);

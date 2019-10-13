@@ -69,7 +69,7 @@ int ui_save_game(struct game_s *g)
     load_sg_data(&d);
 
     for (int i = 0; i < NUM_SAVES; ++i) {
-        strcpy(d.tbl_savename[i], game_save_tbl_name[i]);
+        lib_strcpy(d.tbl_savename[i], game_save_tbl_name[i], SAVE_NAME_LEN + 10);
     }
 
     ui_draw_erase_buf();

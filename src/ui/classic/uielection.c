@@ -117,13 +117,13 @@ static void ui_election_draw_cb(void *vptr)
         uint16_t n;
         lbxfont_select(3, 1, 0, 0);
         n = el->got_votes[0];
-        sprintf(buf, "%s %s", game_election_print_votes(n, vbuf, sizeof(vbuf)), g->emperor_names[el->candidate[0]]);
+        lib_sprintf(buf, sizeof(buf), "%s %s", game_election_print_votes(n, vbuf, sizeof(vbuf)), g->emperor_names[el->candidate[0]]);
         lbxfont_print_str_normal(10, 10, buf, UI_SCREEN_W);
         n = el->got_votes[1];
-        sprintf(buf, "%s %s", game_election_print_votes(n, vbuf, sizeof(vbuf)), g->emperor_names[el->candidate[1]]);
+        lib_sprintf(buf, sizeof(buf), "%s %s", game_election_print_votes(n, vbuf, sizeof(vbuf)), g->emperor_names[el->candidate[1]]);
         lbxfont_print_str_right(310, 10, buf, UI_SCREEN_W);
         n = el->total_votes;
-        sprintf(buf, "%s %s", game_election_print_votes(n, vbuf, sizeof(vbuf)), game_str_el_total);
+        lib_sprintf(buf, sizeof(buf), "%s %s", game_election_print_votes(n, vbuf, sizeof(vbuf)), game_str_el_total);
         lbxfont_print_str_center(160, 10, buf, UI_SCREEN_W);
     }
 }
@@ -199,9 +199,9 @@ int ui_election_vote(struct election_s *el, int player_i)
     for (int i = 0; i < 2; ++i) {
         player_id_t pi;
         pi = el->candidate[i];
-        sprintf(cnamebuf[i], "%s %s", game_str_el_bull, (pi == player_i) ? game_str_el_self : g->emperor_names[pi]);
+        lib_sprintf(cnamebuf[i], 0x20, "%s %s", game_str_el_bull, (pi == player_i) ? game_str_el_self : g->emperor_names[pi]);
     }
-    sprintf(cnamebuf[2], "%s %s", game_str_el_bull, game_str_el_abs);
+    lib_sprintf(cnamebuf[2], 0x20, "%s %s", game_str_el_bull, game_str_el_abs);
     uiobj_table_clear();
     lbxfont_select(3, 1, 0, 0);
     oi_c1 = uiobj_add_mousearea(150, 169, 190, 177, MOO_KEY_1);
@@ -237,8 +237,8 @@ bool ui_election_accept(struct election_s *el, int player_i)
     char buf[2][0x20];
     int16_t oi_y, oi_n, choice = -1, y = 169;
     bool flag_done = false, flag_accept = false;
-    sprintf(buf[0], "%s %s", game_str_el_bull, game_str_el_yes);
-    sprintf(buf[1], "%s %s", game_str_el_bull, game_str_el_no2);
+    lib_sprintf(buf[0], 0x20, "%s %s", game_str_el_bull, game_str_el_yes);
+    lib_sprintf(buf[1], 0x20, "%s %s", game_str_el_bull, game_str_el_no2);
     uiobj_table_clear();
     lbxfont_select_set_12_1(3, 0, 0, 0);
     if (lbxfont_calc_str_width(el->str) >= (160 - 10)) {

@@ -55,7 +55,7 @@ static void landing_draw_cb1(void *vptr)
         lbxfont_print_str_normal(124, 84, game_str_la_colony, UI_SCREEN_W);
         /*uiobj_handle_ta_sub1(120, 80, 180, 90, 0); does nothing */
     }
-    sprintf(buf, "%s %i %s %s%s", game_str_la_inyear, g->year + YEAR_BASE, game_str_la_the, game_str_tbl_race[g->eto[d->api].race], game_str_la_formnew);
+    lib_sprintf(buf, sizeof(buf), "%s %i %s %s%s", game_str_la_inyear, g->year + YEAR_BASE, game_str_la_the, game_str_tbl_race[g->eto[d->api].race], game_str_la_formnew);
     lbxfont_select_set_12_4(4, 0x5, 0, 0);
     lbxfont_print_str_center(160, 5, buf, UI_SCREEN_W);
     if (++d->frame == (0x41 + 100)) {
@@ -135,12 +135,12 @@ void ui_landing(struct game_s *g, player_id_t pi, uint8_t planet_i)
     if (d.planet != g->evn.planet_orion_i) {
         const uint8_t ctbl[8] = { 0x34, 0x34, 0x34, 0x34, 0x34, 0x34, 0x34, 0x34 };
         char buf[PLANET_NAME_LEN];
-        strcpy(buf, g->planet[planet_i].name);
+        lib_strcpy(buf, g->planet[planet_i].name, sizeof(buf));
         lbxfont_select(5, 0xf, 0xf, 0);
         if (uiobj_read_str(125, 97, 65, buf, PLANET_NAME_LEN - 1, 0, false, ctbl)) {
             util_trim_whitespace(buf, sizeof(buf));
             if (buf[0] != 0) {
-                strcpy(g->planet[planet_i].name, buf);
+                lib_strcpy(g->planet[planet_i].name, buf, PLANET_NAME_LEN);
             }
         }
     }

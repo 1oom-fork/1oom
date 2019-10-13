@@ -10,6 +10,7 @@
 #include "kbd.h"
 #include "lbxgfx.h"
 #include "lbxfont.h"
+#include "lib.h"
 #include "log.h"
 #include "types.h"
 #include "uidraw.h"
@@ -75,7 +76,7 @@ static void ui_starmap_trans_draw_cb(void *vptr)
             lbxfont_select_set_12_1(0, 0xe, 5, 0);
             lbxfont_set_gap_h(1);
             lbxfont_print_str_split(228, 94, 82, game_str_sm_notrange, 2, UI_SCREEN_W, UI_SCREEN_H);
-            sprintf(buf, "%s %i %s %i %s", game_str_sm_notrange1, mindist, game_str_sm_notrange2, g->eto[d->api].fuel_range, game_str_sm_notrange3);
+            lib_sprintf(buf, sizeof(buf), "%s %i %s %i %s", game_str_sm_notrange1, mindist, game_str_sm_notrange2, g->eto[d->api].fuel_range, game_str_sm_notrange3);
             lbxfont_print_str_split(229, 125, 80, game_str_sm_seltr, 2, UI_SCREEN_W, UI_SCREEN_H);
         } else if (BOOLVEC_IS0(pt->explored, d->api)) {
             lbxfont_select(0, 0xe, 0, 0);
@@ -84,10 +85,10 @@ static void ui_starmap_trans_draw_cb(void *vptr)
             int pos;
             lbxfont_select(0, 6, 0, 0);
             lbxfont_set_gap_h(1);
-            pos = sprintf(buf, "%s ", game_str_sm_trcontr1);
-            sprintf(&buf[pos], "%s ", game_str_tbl_sm_pltype[pt->type]);
+            pos = lib_sprintf(buf, sizeof(buf), "%s ", game_str_sm_trcontr1);
+            lib_sprintf(&buf[pos], sizeof(buf) - pos, "%s ", game_str_tbl_sm_pltype[pt->type]);
             util_str_tolower(&buf[pos], sizeof(buf) - pos);
-            strcat(&buf[pos], game_str_sm_trcontr2);
+            lib_strcat(&buf[pos], game_str_sm_trcontr2, sizeof(buf) - pos);
             lbxfont_print_str_split(228, 111, 82, buf, 2, UI_SCREEN_W, UI_SCREEN_H);
         } else if (pt->owner == PLAYER_NONE) {
             lbxfont_select(0, 0xe, 0, 0);
@@ -96,11 +97,11 @@ static void ui_starmap_trans_draw_cb(void *vptr)
             treaty_t treaty = TREATY_NONE;
             uiobj_set_help_id(1);
             if (pf->have_stargate && pt->have_stargate && (pf->owner == pt->owner)) {
-                strcpy(buf, game_str_sm_stargate);
+                lib_strcpy(buf, game_str_sm_stargate, sizeof(buf));
             } else {
                 int eta, engine = g->eto[d->api].have_engine;
                 eta = game_calc_eta(g, engine, pf->x, pf->y, pt->x, pt->y);
-                sprintf(buf, "%s %i %s", game_str_sm_eta, eta, (eta == 1) ? game_str_sm_turn : game_str_sm_turns);
+                lib_sprintf(buf, sizeof(buf), "%s %i %s", game_str_sm_eta, eta, (eta == 1) ? game_str_sm_turn : game_str_sm_turns);
             }
             lbxfont_select(0, 0, 0, 0);
             lbxfont_print_str_center(268, 149, buf, UI_SCREEN_W);
@@ -123,7 +124,7 @@ static void ui_starmap_trans_draw_cb(void *vptr)
                     }
                     if (d->tr.blink) {
                         lbxfont_select(0, 5, 0, 0);
-                        sprintf(buf, "%s %i %s", game_str_sm_trwarnm1, pt->max_pop3, game_str_sm_trwarnm2);
+                        lib_sprintf(buf, sizeof(buf), "%s %i %s", game_str_sm_trwarnm1, pt->max_pop3, game_str_sm_trwarnm2);
                         lbxfont_print_str_split(228, 101, 80, buf, 2, UI_SCREEN_W, UI_SCREEN_H);
                     }
                 } else {
