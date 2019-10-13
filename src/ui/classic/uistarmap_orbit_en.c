@@ -13,6 +13,7 @@
 #include "kbd.h"
 #include "lbxgfx.h"
 #include "lbxfont.h"
+#include "lib.h"
 #include "log.h"
 #include "types.h"
 #include "uicursor.h"
@@ -48,7 +49,7 @@ static void ui_starmap_orbit_en_draw_cb(void *vptr)
     for (int f = 0; f <= ui_data.starmap.frame_scanner; ++f) {
         lbxgfx_draw_frame(227, 8, ui_data.gfx.starmap.scanner, UI_SCREEN_W);
     }
-    sprintf(buf, "%s %s", game_str_tbl_race[e->race], game_str_sm_fleet);
+    lib_sprintf(buf, sizeof(buf), "%s %s", game_str_tbl_race[e->race], game_str_sm_fleet);
     lbxfont_select_set_12_4(5, tbl_banner_fontparam[e->banner], 0, 0);
     lbxfont_print_str_center(267, 10, buf, UI_SCREEN_W);
     lbxfont_select_set_12_4(0, 0, 0, 0);

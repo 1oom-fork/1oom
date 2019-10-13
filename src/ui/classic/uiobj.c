@@ -11,6 +11,7 @@
 #include "lbxfont.h"
 #include "lbxgfx.h"
 #include "log.h"
+#include "lib.h"
 #include "mouse.h"
 #include "types.h"
 #include "uicursor.h"
@@ -206,7 +207,7 @@ static void uiobj_handle_t4_sub2(uiobj_t *p, uint16_t len, uint16_t a4, const ch
     int16_t si, va;
     si = a4;
     ui_delay_prepare();
-    strcpy(strbuf, str);
+    lib_strcpy(strbuf, str, sizeof(strbuf));
     uiobj_do_callback();
     /*ve = p->x1 - p->x0;*/
     lbxfont_select(p->t4.fontnum, p->t4.fonta2, p->t4.fonta4, 0);
@@ -256,7 +257,7 @@ static bool uiobj_textinput_do(uiobj_t *p, int w, char *buf, int buflen, bool al
 
     hw_textinput_start();
 
-    strcpy(strbuf, buf);
+    lib_strcpy(strbuf, buf, sizeof(strbuf));
     len = strlen(strbuf);
     if (lbxfont_calc_str_width(strbuf) > w) {
         if (len != 0) {
@@ -269,7 +270,7 @@ static bool uiobj_textinput_do(uiobj_t *p, int w, char *buf, int buflen, bool al
         pos = buflen;
     }
     if (copy_truncated) {
-        strcpy(buf, strbuf);
+        lib_strcpy(buf, strbuf, (size_t)buflen);
     }
     fonth = lbxfont_get_height();
     uiobj_handle_t4_sub2(p, pos, animpos, strbuf);
@@ -400,7 +401,7 @@ static bool uiobj_textinput_do(uiobj_t *p, int w, char *buf, int buflen, bool al
         uiobj_handle_t4_sub2(p, pos, animpos, strbuf);
     }
     hw_textinput_stop();
-    strcpy(buf, strbuf);
+    lib_strcpy(buf, strbuf, (size_t)buflen);
     if (flag_mouse_button) /*&& (mouse_flag_initialized)*/ {
         while (mouse_buttons) {
             hw_event_handle();
