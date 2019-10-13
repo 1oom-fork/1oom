@@ -6,6 +6,7 @@
 #include "game.h"
 #include "game_aux.h"
 #include "game_str.h"
+#include "lib.h"
 #include "types.h"
 #include "uidefs.h"
 #include "uiinput.h"
@@ -25,7 +26,7 @@ bool ui_bomb_ask(struct game_s *g, int pi, uint8_t planet_i, int pop_inbound)
         printf(", %i %s", pop_inbound, (pop_inbound == 1) ? game_str_sm_trinb1 : game_str_sm_trinb1s);
     }
     putchar('\n');
-    sprintf(buf, "%s %s", game_str_sm_bomb1, game_str_sm_bomb2);
+    lib_sprintf(buf, sizeof(buf), "%s %s", game_str_sm_bomb1, game_str_sm_bomb2);
     v = ui_input_list(buf, "> ", il_yes_no);
     return (v == 1);
 }

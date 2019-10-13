@@ -7,6 +7,7 @@
 #include "game.h"
 #include "game_str.h"
 #include "game_tech.h"
+#include "lib.h"
 #include "uiinput.h"
 #include "uiswitch.h"
 
@@ -30,7 +31,7 @@ int ui_spy_steal(struct game_s *g, int spy, int target, uint8_t flags_field)
         char rbuf[0x20], *p, c;
         const empiretechorbit_t *e = &(g->eto[target]);
         bool usean = false;
-        strcpy(rbuf, game_str_tbl_race[e->race]);
+        lib_strcpy(rbuf, game_str_tbl_race[e->race], sizeof(rbuf));
         p = rbuf;
         while ((c = *p) != 0) {
             if (islower(c)) {
