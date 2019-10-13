@@ -32,7 +32,7 @@ int ui_cmd_empirestats(struct game_s *g, int api, struct input_token_s *param, i
         len = strlen(game_str_tbl_race[e->race]);
         SETMAX(maxlen, len);
     }
-    sprintf(fmt, "%%-%is", maxlen);
+    lib_sprintf(fmt, sizeof(fmt), "%%-%is", maxlen);
     printf(fmt, "");
     puts("   Fleet Tech  Prod  Pop Planets Total");
     for (int i = 0; i < st->num; ++i) {
