@@ -13,6 +13,7 @@
 #include "kbd.h"
 #include "lbxgfx.h"
 #include "lbxfont.h"
+#include "lib.h"
 #include "log.h"
 #include "types.h"
 #include "uicursor.h"
@@ -74,18 +75,18 @@ static void ui_starmap_orbit_own_draw_cb(void *vptr)
         lbxgfx_draw_frame_offs(x0, y0, gfx, STARMAP_LIMITS, UI_SCREEN_W);
         if (!ui_starmap_orbit_own_in_frange(d)) {
             if (d->oo.sn0.num < NUM_SHIPDESIGNS) { /* WASBUG MOO1 compares to 7, resulting in text below last ship */
-                sprintf(buf, "%s %i %s", game_str_sm_destoor, dist, game_str_sm_parsfromcc);
+                lib_sprintf(buf, sizeof(buf), "%s %i %s", game_str_sm_destoor, dist, game_str_sm_parsfromcc);
                 lbxfont_select(2, 0, 0, 0);
                 lbxfont_set_gap_h(2);
                 lbxfont_print_str_split(228, 156, 81, buf, 2, UI_SCREEN_W, UI_SCREEN_H);
             } else {
-                sprintf(buf, "%s (%i)", game_str_sm_destoor2, dist);
+                lib_sprintf(buf, sizeof(buf), "%s (%i)", game_str_sm_destoor2, dist);
                 ui_draw_filled_rect(228, 9, 309, 17, 7);
                 lbxfont_print_str_center(268, 11, buf, UI_SCREEN_W);
             }
         } else {
             if ((pt->owner == d->api) && (pf->owner == d->api) && pt->have_stargate && pf->have_stargate) {
-                strcpy(buf, game_str_sm_stargate);
+                lib_strcpy(buf, game_str_sm_stargate, sizeof(buf));
             } else if (d->oo.shiptypenon0numsel > 0) {
                 const shipdesign_t *sd = &(g->srd[d->api].design[0]);
                 int eta, speed = 20;
@@ -98,7 +99,7 @@ static void ui_starmap_orbit_own_draw_cb(void *vptr)
                 }
                 ++speed;
                 eta = game_calc_eta(g, speed, pt->x, pt->y, pf->x, pf->y);
-                sprintf(buf, "%s %i %s", game_str_sm_eta, eta, (eta == 1) ? game_str_sm_turn : game_str_sm_turns);
+                lib_sprintf(buf, sizeof(buf), "%s %i %s", game_str_sm_eta, eta, (eta == 1) ? game_str_sm_turn : game_str_sm_turns);
             } else {
                 buf[0] = '\0';
             }
