@@ -12,6 +12,7 @@
 #include "game_misc.h"
 #include "game_num.h"
 #include "game_str.h"
+#include "lib.h"
 #include "uidefs.h"
 #include "uiinput.h"
 #include "uiplanet.h"
@@ -39,7 +40,7 @@ static void ui_fleet_print_fleet_orbit(const struct game_s *g, int api, uint8_t 
         char pname[20];
         const planet_t *p;
         p = &(g->planet[planet_i]);
-        sprintf(buf, "%s [%i] (%i,%i) %s", game_str_fl_inorbit, planet_i, p->x, p->y, ui_planet_str(g, api, planet_i, pname));
+        lib_sprintf(buf, sizeof(buf), "%s [%i] (%i,%i) %s", game_str_fl_inorbit, planet_i, p->x, p->y, ui_planet_str(g, api, planet_i, pname, sizeof(pname)));
         printf("%-40s", buf);
         for (int k = 0; k < NUM_SHIPDESIGNS; ++k) {
             printf(" %5i", r->ships[k]);
@@ -74,7 +75,7 @@ void ui_fleet_print_fleet_enroute(const struct game_s *g, int api, const fleet_e
     char buf[80];
     char pname[20];
     const planet_t *p = &(g->planet[r->dest]);
-    sprintf(buf, "#F%i (%i,%i) %s [%i] %s", (int)(r - g->enroute), r->x, r->y, game_str_fl_moving, r->dest, ui_planet_str(g, api, r->dest, pname));
+    lib_sprintf(buf, sizeof(buf), "#F%i (%i,%i) %s [%i] %s", (int)(r - g->enroute), r->x, r->y, game_str_fl_moving, r->dest, ui_planet_str(g, api, r->dest, pname, sizeof(pname)));
     printf("%-40s", buf);
     for (int k = 0; k < NUM_SHIPDESIGNS; ++k) {
         printf(" %5i", r->ships[k]);
@@ -100,7 +101,7 @@ void ui_fleet_print_transport_enroute(const struct game_s *g, int api, const tra
     const empiretechorbit_t *e = &(g->eto[api]);
     int eta;
     const planet_t *p = &(g->planet[r->dest]);
-    sprintf(buf, "#T%i (%i,%i) %s [%i] %s", (int)(r - g->transport), r->x, r->y, game_str_fl_moving, r->dest, ui_planet_str(g, api, r->dest, pname));
+    lib_sprintf(buf, sizeof(buf), "#T%i (%i,%i) %s [%i] %s", (int)(r - g->transport), r->x, r->y, game_str_fl_moving, r->dest, ui_planet_str(g, api, r->dest, pname, sizeof(pname)));
     printf("%-40s", buf);
     printf(" %5i", r->pop);
     eta = game_calc_eta(g, e->have_engine, p->x, p->y, r->x, r->y);

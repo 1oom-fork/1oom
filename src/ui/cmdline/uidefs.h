@@ -41,13 +41,15 @@ struct input_token_s {
     } type;
 };
 
+#define BATTLE_SCREEN_HEIGHT (8 * 3)
+#define BATTLE_SCREEN_WIDTH (10 * 4 + 7 + 20)
 struct ui_data_s {
     struct {
         struct input_token_s tok[UI_INPUT_TOKEN_MAX];
         int num;
     } input;
     struct {
-        char screen[8 * 3][10 * 4 + 7 + 20];
+        char screen[BATTLE_SCREEN_HEIGHT][BATTLE_SCREEN_WIDTH];
     } battle;
     struct {
         uint32_t item[PLANETS_MAX + FLEET_ENROUTE_MAX + TRANSPORT_MAX];

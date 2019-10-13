@@ -93,7 +93,7 @@ ui_turn_action_t ui_game_turn(struct game_s *g, int *load_game_i_ptr, int pi)
     while (1) {
         char *input;
         char prompt[80], buf_planet_name[PLANET_NAME_LEN];
-        sprintf(prompt, "%s | %i | %s > ", g->emperor_names[pi], g->year + YEAR_BASE, ui_planet_str(g, pi, g->planet_focus_i[pi], buf_planet_name));
+        lib_sprintf(prompt, sizeof(prompt), "%s | %i | %s > ", g->emperor_names[pi], g->year + YEAR_BASE, ui_planet_str(g, pi, g->planet_focus_i[pi], buf_planet_name, sizeof(buf_planet_name)));
         input = ui_input_line(prompt);
         if ((ui_input_tokenize(input, cmdsptr_turn) == 0) && (ui_data.input.num > 0)) {
             if (ui_data.input.tok[0].type == INPUT_TOKEN_COMMAND) {
