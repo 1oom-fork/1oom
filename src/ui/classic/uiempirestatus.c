@@ -11,6 +11,7 @@
 #include "lbxfont.h"
 #include "lbxgfx.h"
 #include "lbxpal.h"
+#include "lib.h"
 #include "types.h"
 #include "uidelay.h"
 #include "uidefs.h"
@@ -48,7 +49,7 @@ static void empirestatus_draw_cb(void *vptr)
     lbxfont_select_set_12_4(4, 0xf, 0, 0);
     lbxfont_print_str_center(160, 9, game_str_ra_stats, UI_SCREEN_W, ui_scale);
     lbxfont_select_set_12_4(5, 5, 0, 0);
-    sprintf(buf, "%s: %i", game_str_year, g->year + YEAR_BASE);
+    lib_sprintf(buf, sizeof(buf), "%s: %i", game_str_year, g->year + YEAR_BASE);
     lbxfont_print_str_normal(15, 11, buf, UI_SCREEN_W, ui_scale);
 
     lbxfont_select(2, 6, 0, 0);
