@@ -11,6 +11,7 @@
 #include "game_planet.h"
 #include "game_str.h"
 #include "game_tech.h"
+#include "lib.h"
 #include "uidefs.h"
 #include "util.h"
 
@@ -80,7 +81,7 @@ planet_slider_i_t ui_planet_slider_from_param(struct input_token_s *param)
 
 /* -------------------------------------------------------------------------- */
 
-const char *ui_planet_str(const struct game_s *g, int api, uint8_t planet_i, char *buf)
+const char *ui_planet_str(const struct game_s *g, int api, uint8_t planet_i, char *buf, size_t bufsize)
 {
     const planet_t *p = &(g->planet[planet_i]);
     if (BOOLVEC_IS1(p->explored, api)) {
@@ -92,7 +93,7 @@ const char *ui_planet_str(const struct game_s *g, int api, uint8_t planet_i, cha
     )) {
         return p->name;
     } else {
-        sprintf(buf, "#%c%i", game_str_tbl_sm_stinfo[p->star_type][0]/*HACK*/, planet_i);
+        lib_sprintf(buf, bufsize, "#%c%i", game_str_tbl_sm_stinfo[p->star_type][0]/*HACK*/, planet_i);
         return buf;
     }
 }
@@ -155,7 +156,7 @@ void ui_planet_look(const struct game_s *g, int api, uint8_t planet_i, bool show
     int dist = game_get_min_dist(g, api, planet_i);
     {
         char buf[16];
-        printf("[%i] (%i,%i) %s: ", planet_i, p->x, p->y, ui_planet_str(g, api, planet_i, buf));
+        printf("[%i] (%i,%i) %s: ", planet_i, p->x, p->y, ui_planet_str(g, api, planet_i, buf, sizeof(buf)));
     }
     if (BOOLVEC_IS1(p->explored, api)) {
         if (p->type == PLANET_TYPE_NOT_HABITABLE) {
@@ -434,8 +435,8 @@ int ui_cmd_planet_trans(struct game_s *g, int api, struct input_token_s *param, 
             return -1;
         } else if (pt->type < e->have_colony_for) {
             int pos;
-            pos = sprintf(buf, "%s ", game_str_sm_trcontr1);
-            sprintf(&buf[pos], "%s ", game_str_tbl_sm_pltype[pt->type]);
+            pos = lib_sprintf(buf, sizeof(buf), "%s ", game_str_sm_trcontr1);
+            lib_sprintf(&buf[pos], sizeof(buf) - pos, "%s ", game_str_tbl_sm_pltype[pt->type]);
             util_str_tolower(&buf[pos], sizeof(buf));
             printf("%s %s\n", buf, game_str_sm_trcontr2);
             return -1;
@@ -444,11 +445,11 @@ int ui_cmd_planet_trans(struct game_s *g, int api, struct input_token_s *param, 
             return -1;
         } else {
             if (pf->have_stargate && pt->have_stargate && (pf->owner == pt->owner)) {
-                strcpy(buf, game_str_sm_stargate);
+                lib_strcpy(buf, game_str_sm_stargate, sizeof(buf));
             } else {
                 int eta, engine = e->have_engine;
                 eta = game_calc_eta(g, engine, pf->x, pf->y, pt->x, pt->y);
-                sprintf(buf, "%s %i %s", game_str_sm_eta, eta, (eta == 1) ? game_str_sm_turn : game_str_sm_turns);
+                lib_sprintf(buf, sizeof(buf), "%s %i %s", game_str_sm_eta, eta, (eta == 1) ? game_str_sm_turn : game_str_sm_turns);
             }
             puts(buf);
         }
