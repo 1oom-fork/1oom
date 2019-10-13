@@ -55,7 +55,7 @@ static void newships_draw_cb(void *vptr)
     lbxgfx_draw_frame(x, y, d->gfx_newship, UI_SCREEN_W);
     lbxfont_select(5, 6, 0, 0);
     lbxfont_set_color_c_n(0x49, 5);
-    sprintf(buf, "%s%i", game_str_year, g->year + YEAR_BASE);
+    lib_sprintf(buf, sizeof(buf), "%s%i", game_str_year, g->year + YEAR_BASE);
     lbxfont_print_str_center(x + 76, y + 9, buf, UI_SCREEN_W);
     for (int i = 0; i < NUM_SHIPDESIGNS; ++i) {
         shipsum_t n;

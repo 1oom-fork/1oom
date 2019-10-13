@@ -15,6 +15,7 @@
 #include "lbxfont.h"
 #include "lbxgfx.h"
 #include "lbxpal.h"
+#include "lib.h"
 #include "types.h"
 #include "uidelay.h"
 #include "uidefs.h"
@@ -65,9 +66,9 @@ static void empirereport_draw_cb(void *vptr)
     {
         int reportage = g->year - g->eto[d->api].spyreportyear[d->pi] - 1;
         if (reportage < 2) {
-            sprintf(buf, "%s", game_str_re_current);
+            lib_sprintf(buf, sizeof(buf), "%s", game_str_re_current);
         } else {
-            sprintf(buf, "%i %s", reportage, game_str_re_yearsold);
+            lib_sprintf(buf, sizeof(buf), "%i %s", reportage, game_str_re_yearsold);
         }
         lbxfont_print_str_center(40, 108, buf, UI_SCREEN_W);
     }
@@ -142,7 +143,7 @@ static void empirereport_draw_cb(void *vptr)
                     }
                     ++j;
                 }
-                sprintf(&buf[pos_space], " %s", game_str_re_environ);
+                lib_sprintf(&buf[pos_space], sizeof(buf) - pos_space, " %s", game_str_re_environ);
             }
             lbxfont_print_str_normal(85 + (f & 1) * 120, 16 + (f / 2) * 65 + i * 6, buf, UI_SCREEN_W);
         }
