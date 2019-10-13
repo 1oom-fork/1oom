@@ -156,8 +156,8 @@ static void sabotage_done_draw_cb(void *vptr)
     const struct game_s *g = d->g;
     const empiretechorbit_t *e = &(g->eto[d->target]);
     const planet_t *p = &(g->planet[d->planet]);
-    int pos;
     char *buf = ui_data.strbuf;
+    struct strbuild_s strbuild = strbuild_init(buf, UI_STRBUF_SIZE);
     hw_video_copy_back_from_page2();
     ui_draw_filled_rect(222, 4, 314, 179, 0);
     lbxgfx_draw_frame(222, 4, d->gfx_saboback, UI_SCREEN_W);
@@ -182,45 +182,45 @@ static void sabotage_done_draw_cb(void *vptr)
     lbxfont_select(5, 6, 0, 0);
     lbxfont_print_str_center(269, 60, game_str_tbl_races[e->race], UI_SCREEN_W);
     if (d->spy == PLAYER_NONE) {
-        pos = sprintf(buf, "%s ", game_str_sb_unkn);
+        strbuild_catf(&strbuild, "%s ", game_str_sb_unkn);
     } else {
-        pos = sprintf(buf, "%s %s ", (d->spy == d->api) ? game_str_sb_your : game_str_tbl_race[g->eto[d->spy].race], game_str_sb_spies);
+        strbuild_catf(&strbuild, "%s %s ", (d->spy == d->api) ? game_str_sb_your : game_str_tbl_race[g->eto[d->spy].race], game_str_sb_spies);
     }
     if (d->snum > 0) {
         switch (d->act) {
             default:
             case UI_SABOTAGE_FACT: /*0*/
-                sprintf(&buf[pos], "%s %i %s", game_str_sb_destr, d->snum, (d->snum == 1) ? game_str_sb_fact2 : game_str_sb_facts);
+                strbuild_catf(&strbuild, "%s %i %s", game_str_sb_destr, d->snum, (d->snum == 1) ? game_str_sb_fact2 : game_str_sb_facts);
                 break;
             case UI_SABOTAGE_BASES: /*1*/
-                sprintf(&buf[pos], "%s %i %s", game_str_sb_destr, d->snum, (d->snum == 1) ? game_str_sb_mbase : game_str_sb_mbases);
+                strbuild_catf(&strbuild, "%s %i %s", game_str_sb_destr, d->snum, (d->snum == 1) ? game_str_sb_mbase : game_str_sb_mbases);
                 break;
             case UI_SABOTAGE_REVOLT: /*2*/
                 if (p->unrest == PLANET_UNREST_REBELLION) {
-                    sprintf(&buf[pos], "%s", game_str_sb_increv);
+                    strbuild_catf(&strbuild, "%s", game_str_sb_increv);
                 } else {
                     int v = (p->pop == 0) ? 0 : ((p->rebels * 100) / p->pop);
-                    sprintf(&buf[pos], "%s %i %s %i%%.", game_str_sb_inc1, d->snum, game_str_sb_inc2, v);
+                    strbuild_catf(&strbuild, "%s %i %s %i%%.", game_str_sb_inc1, d->snum, game_str_sb_inc2, v);
                 }
                 break;
         }
     } else {
         /*6da9e*/
-        sprintf(&buf[pos], "%s", game_str_sb_failed);
+        strbuild_catf(&strbuild, "%s", game_str_sb_failed);
         switch (d->act) {
             default:
             case UI_SABOTAGE_FACT: /*0*/
                 if (p->factories == 0) {
-                    sprintf(buf, "%s", game_str_sb_nofact);
+                    lib_sprintf(buf, UI_STRBUF_SIZE, "%s", game_str_sb_nofact);
                 }
                 break;
             case UI_SABOTAGE_BASES: /*1*/
                 if (p->missile_bases == 0) {
-                    sprintf(buf, "%s", game_str_sb_nobases);
+                    lib_sprintf(buf, UI_STRBUF_SIZE, "%s", game_str_sb_nobases);
                 }
                 break;
             case UI_SABOTAGE_REVOLT: /*2*/
-                strcat(buf, game_str_sb_noinc); /* FIXME never happens? */
+                lib_strcat(buf, game_str_sb_noinc, UI_STRBUF_SIZE); /* FIXME never happens? */
                 break;
         }
     }
