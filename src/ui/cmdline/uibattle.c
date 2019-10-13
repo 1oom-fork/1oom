@@ -8,6 +8,7 @@
 #include "game_battle.h"
 #include "game_battle_human.h"
 #include "game_str.h"
+#include "lib.h"
 #include "uicmds.h"
 #include "uidefs.h"
 #include "uihelp.h"
@@ -152,14 +153,14 @@ static void ui_battle_prepost(const struct battle_s *bt, int winner)
     }
 }
 
-static void ui_battle_draw_scan_weap(const struct battle_item_s *b, int wi, char *buf)
+static void ui_battle_draw_scan_weap(const struct battle_item_s *b, int wi, char *buf, size_t bufsize)
 {
     if (b->wpn[wi].n != 0) {
         const struct shiptech_weap_s *w = &(tbl_shiptech_weap[b->wpn[wi].t]);
-        int pos;
-        pos = sprintf(buf, "%i x %s", b->wpn[wi].n, *w->nameptr);
+        struct strbuild_s str = strbuild_init(buf, bufsize);
+        strbuild_catf(&str, "%i x %s", b->wpn[wi].n, *w->nameptr);
         if (b->wpn[wi].numshots >= 0) {
-            sprintf(&buf[pos], " (x %i)", b->wpn[wi].numshots);
+            strbuild_catf(&str, " (x %i)", b->wpn[wi].numshots);
         }
     } else {
         buf[0] = 0;
@@ -256,25 +257,25 @@ void ui_battle_draw_scan(const struct battle_s *bt, bool side_r)
         if (b->num > 0) {
             char buf[8];
             if (b->num >= 1000) {
-                sprintf(buf, "%ik", b->num / 1000);
+                lib_sprintf(buf, sizeof(buf), "%ik", b->num / 1000);
             } else {
-                sprintf(buf, "%i", b->num);
+                lib_sprintf(buf, sizeof(buf), "%i", b->num);
             }
             for (int j = 0; buf[j]; ++j) {
                 gfx[2][j + 1] = buf[j];
             }
         }
-        sprintf(buf0, "%s", b->name);
-        ui_battle_draw_scan_weap(b, 0, buf1);
+        lib_sprintf(buf0, sizeof(buf0), "%s", b->name);
+        ui_battle_draw_scan_weap(b, 0, buf1, sizeof(buf1));
         printf("%-30s %-30s %s\n", buf0, buf1, game_str_tbl_st_specsh[b->special[0]]);
-        sprintf(buf0, "%s  bdef %i, mdef %i, att %i", gfx[0], b->defense, b->misdefense, b->complevel);
-        ui_battle_draw_scan_weap(b, 1, buf1);
+        lib_sprintf(buf0, sizeof(buf0), "%s  bdef %i, mdef %i, att %i", gfx[0], b->defense, b->misdefense, b->complevel);
+        ui_battle_draw_scan_weap(b, 1, buf1, sizeof(buf1));
         printf("%-30s %-30s %s\n", buf0, buf1, b->special[1] ? game_str_tbl_st_specsh[b->special[1]] : "");
-        sprintf(buf0, "%s  hits %i, dmg %i", gfx[1], b->hp1, b->hploss);
-        ui_battle_draw_scan_weap(b, 2, buf1);
+        lib_sprintf(buf0, sizeof(buf0), "%s  hits %i, dmg %i", gfx[1], b->hp1, b->hploss);
+        ui_battle_draw_scan_weap(b, 2, buf1, sizeof(buf1));
         printf("%-30s %-30s %s\n", buf0, buf1, b->special[2] ? game_str_tbl_st_specsh[b->special[2]] : "");
-        sprintf(buf0, "%s  shield %i, speed %i", gfx[2], b->absorb, b->man - b->unman);
-        ui_battle_draw_scan_weap(b, 3, buf1);
+        lib_sprintf(buf0, sizeof(buf0), "%s  shield %i, speed %i", gfx[2], b->absorb, b->man - b->unman);
+        ui_battle_draw_scan_weap(b, 3, buf1, sizeof(buf1));
         printf("%-30s %-30s\n", buf0, buf1);
     }
 }
@@ -290,11 +291,11 @@ void ui_battle_draw_damage(const struct battle_s *bt, int target_i, int target_x
     ui_battle_draw_arena(bt, target_i, 1);
     ui_battle_draw_item(bt, target_i, target_x, target_y);
     if (damage > 1000000) {
-        sprintf(buf, "!%iM", damage / 1000000);
+        lib_sprintf(buf, sizeof(buf), "!%iM", damage / 1000000);
     } else if (damage > 1000) {
-        sprintf(buf, "!%ik", damage / 1000);
+        lib_sprintf(buf, sizeof(buf), "!%ik", damage / 1000);
     } else {
-        sprintf(buf, "!%i", damage);
+        lib_sprintf(buf, sizeof(buf), "!%i", damage);
     }
     tx = (target_x * 4) / 32 + 3;
     ty = (target_y * 3) / 24;
@@ -344,13 +345,14 @@ void ui_battle_draw_arena(const struct battle_s *bt, int itemi, int dmode)
     }
     for (int i = 1; i <= bt->items_num; ++i) {
         const struct battle_item_s *b;
+        size_t battle_screen_write_pos = 3 + BATTLE_AREA_W * 4 + 2;
         b = &(bt->item[i]);
         int l;
         l = (b->side == SIDE_L) ? 0 : 12;
         l += b->shiptbli * 2;
-        sprintf(&ui_data.battle.screen[l][3 + BATTLE_AREA_W * 4 + 2], " %i%c %i/%i\n", b->shiptbli + 1, (b->side == SIDE_L) ? '>' : '<', b->hp1 - b->hploss, b->hp1);
+        lib_sprintf(&ui_data.battle.screen[l][battle_screen_write_pos], BATTLE_SCREEN_WIDTH - battle_screen_write_pos, " %i%c %i/%i\n", b->shiptbli + 1, (b->side == SIDE_L) ? '>' : '<', b->hp1 - b->hploss, b->hp1);
         ++l;
-        sprintf(&ui_data.battle.screen[l][3 + BATTLE_AREA_W * 4 + 2], " %s\n", b->name);
+        lib_sprintf(&ui_data.battle.screen[l][battle_screen_write_pos], BATTLE_SCREEN_WIDTH - battle_screen_write_pos, " %s\n", b->name);
     }
     for (int i = 0; i <= bt->items_num; ++i) {
         if ((i != itemi) || (dmode == 0/*normal*/)) {
@@ -424,9 +426,9 @@ void ui_battle_draw_item(const struct battle_s *bt, int itemi, int x, int y)
     if (b->num > 0) {
         char buf[8];
         if (b->num >= 1000) {
-            sprintf(buf, "%ik", b->num / 1000);
+            lib_sprintf(buf, sizeof(buf), "%ik", b->num / 1000);
         } else {
-            sprintf(buf, "%i", b->num);
+            lib_sprintf(buf, sizeof(buf), "%i", b->num);
         }
         for (int i = 0; buf[i]; ++i) {
             ui_data.battle.screen[ty + 2][tx + i + 1] = buf[i];
@@ -517,7 +519,7 @@ ui_battle_action_t ui_battle_turn(const struct battle_s *bt)
     ) {
         return UI_BATTLE_ACT_DONE;
     }
-    sprintf(prompt, "%s > ", bt->g->emperor_names[bt->s[b->side].party]);
+    lib_sprintf(prompt, sizeof(prompt), "%s > ", bt->g->emperor_names[bt->s[b->side].party]);
     while (1) {
         char *input;
         input = ui_input_line(prompt);

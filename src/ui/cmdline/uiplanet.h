@@ -6,7 +6,7 @@
 struct game_s;
 struct input_token_s;
 
-extern const char *ui_planet_str(const struct game_s *g, int api, uint8_t planet_i, char *buf);
+extern const char *ui_planet_str(const struct game_s *g, int api, uint8_t planet_i, char *buf, size_t bufsize);
 extern uint8_t ui_planet_from_param(struct game_s *g, int api, struct input_token_s *param);
 extern void ui_planet_look(const struct game_s *g, int api, uint8_t planet_i, bool show_full);
 
