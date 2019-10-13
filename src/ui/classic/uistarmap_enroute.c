@@ -12,6 +12,7 @@
 #include "kbd.h"
 #include "lbxgfx.h"
 #include "lbxfont.h"
+#include "lib.h"
 #include "log.h"
 #include "types.h"
 #include "uicursor.h"
@@ -60,7 +61,7 @@ static void ui_starmap_enroute_draw_cb(void *vptr)
     for (int f = 0; f <= d->en.frame_scanner; ++f) {
         lbxgfx_draw_frame(227, 8, ui_data.gfx.starmap.scanner, UI_SCREEN_W);
     }
-    sprintf(buf, "%s %s", game_str_tbl_race[e->race], game_str_sm_fleet);
+    lib_sprintf(buf, sizeof(buf), "%s %s", game_str_tbl_race[e->race], game_str_sm_fleet);
     lbxfont_select_set_12_4(5, tbl_banner_fontparam[e->banner], 0, 0);
     lbxfont_print_str_center(267, 10, buf, UI_SCREEN_W);
     if ((r->owner == d->api) || (g->eto[d->api].have_ia_scanner)) {
@@ -87,13 +88,13 @@ static void ui_starmap_enroute_draw_cb(void *vptr)
         dist = game_get_min_dist(g, r->owner, g->planet_focus_i[d->api]);
         if ((r->owner == d->api) && (d->en.can_move != NO_MOVE) && !ui_starmap_enroute_in_frange(d)) {
             /* FIXME use proper positioning for varying str length */
-            sprintf(buf, "  %s   %i %s.", game_str_sm_outsr, dist - e->fuel_range, game_str_sm_parsecs2);
+            lib_sprintf(buf, sizeof(buf), "  %s   %i %s.", game_str_sm_outsr, dist - e->fuel_range, game_str_sm_parsecs2);
             lbxfont_select_set_12_4(2, 0, 0, 0);
             lbxfont_set_gap_h(2);
             lbxfont_print_str_split(230, 26, 80, buf, 2, UI_SCREEN_W, UI_SCREEN_H);
         } else {
             int eta = game_calc_eta(g, game_fleet_get_speed(g, r, d->en.pon, pto), pt->x, pt->y, r->x, r->y);
-            sprintf(buf, "%s %i %s", game_str_sm_eta, eta, (eta == 1) ? game_str_sm_turn : game_str_sm_turns);
+            lib_sprintf(buf, sizeof(buf), "%s %i %s", game_str_sm_eta, eta, (eta == 1) ? game_str_sm_turn : game_str_sm_turns);
             lbxfont_select_set_12_4(0, 0, 0, 0);
             lbxfont_print_str_center(268, 32, buf, UI_SCREEN_W);
         }
