@@ -142,7 +142,7 @@ static void gameopts_draw_cb(void *vptr)
                     }
                     break;
                 case UIOPT_TYPE_CYCLE:
-                    sprintf(ui_data.strbuf, "%s: %s", u->str, u->u.tc.get());
+                    lib_sprintf(ui_data.strbuf, UI_STRBUF_SIZE, "%s: %s", u->str, u->u.tc.get());
                     str = ui_data.strbuf;
                     break;
                 case UIOPT_TYPE_SLIDER_CALL:

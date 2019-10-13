@@ -59,7 +59,7 @@ static void govern_draw_cb(void *vptr)
         y += 5;
         lbxfont_print_str_normal(x + 5, y, game_str_gv_thispl, UI_SCREEN_W, ui_scale);
         lbxfont_select(0, (d->highlight == UI_GV_HIGHLIGHT_SPENDTHIS) ? 0x1 : 0x0, 0, 0);
-        sprintf(ui_data.strbuf, "%s %s", game_str_gv_rest, game_str_tbl_gv_rest[d->spend_rest]);
+        lib_sprintf(ui_data.strbuf, UI_STRBUF_SIZE, "%s %s", game_str_gv_rest, game_str_tbl_gv_rest[d->spend_rest]);
         y += 10;
         lbxfont_print_str_normal(x + 5, y, ui_data.strbuf, UI_SCREEN_W, ui_scale);
     }
@@ -78,7 +78,7 @@ static void govern_draw_cb(void *vptr)
         lbxfont_select(0, (d->highlight == UI_GV_HIGHLIGHT_STARGATE) ? 0x1 : 0x0, 0, 0);
         lbxfont_print_str_normal(x + 11, y, game_str_gv_starg, UI_SCREEN_W, ui_scale);
         y += 8;
-        sprintf(ui_data.strbuf, "%s: %s", game_str_gv_ecom, game_str_tbl_gv_ecom[d->eco_mode]);
+        lib_sprintf(ui_data.strbuf, UI_STRBUF_SIZE, "%s: %s", game_str_gv_ecom, game_str_tbl_gv_ecom[d->eco_mode]);
         lbxfont_select(0, (d->highlight == UI_GV_HIGHLIGHT_ECO_MODE) ? 0x1 : 0x0, 0, 0);
         lbxfont_print_str_normal(x + 5, y, ui_data.strbuf, UI_SCREEN_W, ui_scale);
     }
@@ -87,7 +87,7 @@ static void govern_draw_cb(void *vptr)
         ui_draw_filled_rect(x, y, x + 160, y + 22, 0x06, ui_scale);
         lbxfont_select(0, (d->highlight == UI_GV_HIGHLIGHT_ADJUST) ? 0x1 : 0x0, 0, 0);
         lbxfont_print_str_normal(x + 5, y + 5, game_str_gv_adjust, UI_SCREEN_W, ui_scale);
-        sprintf(ui_data.strbuf, "%s %s", game_str_gv_resta, game_str_tbl_gv_rest[d->spend_rest]);
+        lib_sprintf(ui_data.strbuf, UI_STRBUF_SIZE, "%s %s", game_str_gv_resta, game_str_tbl_gv_rest[d->spend_rest]);
         lbxfont_select(0, (d->highlight == UI_GV_HIGHLIGHT_SPENDALL) ? 0x1 : 0x0, 0, 0);
         lbxfont_print_str_normal(x + 5, y + 13, ui_data.strbuf, UI_SCREEN_W, ui_scale);
     }
