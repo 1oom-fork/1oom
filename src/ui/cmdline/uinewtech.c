@@ -10,6 +10,7 @@
 #include "game_str.h"
 #include "game_tech.h"
 #include "game_techtypes.h"
+#include "lib.h"
 #include "rnd.h"
 #include "uidefs.h"
 #include "uiinput.h"
@@ -74,37 +75,37 @@ static void ui_newtech_choose_next(struct newtech_data_s *d)
     game_tech_start_next(d->g, d->api, d->nt.field, i);
 }
 
-static void newtech_adjust_draw_typestr(char *buf, const char *str1, const char *str2)
+static void newtech_adjust_draw_typestr(char *buf, size_t bufsize, const char *str1, const char *str2)
 {
-    strcat(buf, game_str_nt_inc);
-    strcat(buf, str1);
+    lib_strcat(buf, game_str_nt_inc, bufsize);
+    lib_strcat(buf, str1, bufsize);
     if (str2) {
-        strcat(buf, str2);
+        lib_strcat(buf, str2, bufsize);
     }
 }
 
 static void ui_newtech_adjust(struct newtech_data_s *d)
 {
     char *buf = ui_data.strbuf;
-    strcpy(buf, game_str_nt_doyou);
+    lib_strcpy(buf, game_str_nt_doyou, UI_STRBUF_SIZE);
     switch (d->dialog_type) {
         case 0:
-            strcat(buf, game_str_nt_redueco);
+            lib_strcat(buf, game_str_nt_redueco, UI_STRBUF_SIZE);
             break;
         case 1:
-            newtech_adjust_draw_typestr(buf, game_str_nt_ind, 0);
+            newtech_adjust_draw_typestr(buf, UI_STRBUF_SIZE, game_str_nt_ind, 0);
             break;
         case 2:
-            newtech_adjust_draw_typestr(buf, game_str_nt_ecoall, game_str_nt_terra);
+            newtech_adjust_draw_typestr(buf, UI_STRBUF_SIZE, game_str_nt_ecoall, game_str_nt_terra);
             break;
         case 3:
-            newtech_adjust_draw_typestr(buf, game_str_nt_def, 0);
+            newtech_adjust_draw_typestr(buf, UI_STRBUF_SIZE, game_str_nt_def, 0);
             break;
         case 4:
-            newtech_adjust_draw_typestr(buf, game_str_nt_ecostd, game_str_nt_terra);
+            newtech_adjust_draw_typestr(buf, UI_STRBUF_SIZE, game_str_nt_ecostd, game_str_nt_terra);
             break;
         case 5:
-            newtech_adjust_draw_typestr(buf, game_str_nt_ecohost, game_str_nt_terra);
+            newtech_adjust_draw_typestr(buf, UI_STRBUF_SIZE, game_str_nt_ecohost, game_str_nt_terra);
             break;
         default:
             break;
