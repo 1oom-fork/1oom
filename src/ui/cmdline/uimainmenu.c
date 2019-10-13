@@ -7,6 +7,7 @@
 #include "game_ai.h"
 #include "game_new.h"
 #include "game_str.h"
+#include "lib.h"
 #include "types.h"
 #include "uidefs.h"
 #include "uihelp.h"
@@ -74,7 +75,7 @@ static int ui_new_game_pname(struct game_new_options_s *newopts, player_id_t pi)
             newopts->pdata[pi].playername[0] = '\0';
         }
     } else {
-        strcpy(newopts->pdata[pi].playername, p);
+        lib_strcpy(newopts->pdata[pi].playername, p, EMPEROR_NAME_LEN);
     }
     return 0;
 }
@@ -92,7 +93,7 @@ static int ui_new_game_hname(struct game_new_options_s *newopts, player_id_t pi)
             newopts->pdata[pi].homename[0] = '\0';
         }
     } else {
-        strcpy(newopts->pdata[pi].homename, p);
+        lib_strcpy(newopts->pdata[pi].homename, p, PLANET_NAME_LEN);
     }
     return 0;
 }
