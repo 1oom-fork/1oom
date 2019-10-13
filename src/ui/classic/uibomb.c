@@ -100,7 +100,7 @@ static void bomb_ask_draw_cb(void *vptr)
     ui_starmap_draw_planetinfo_2(g, d->api, d->api, d->planet);
     bomb_draw_anim(d->gfx_bombard, false);
     lbxfont_select_set_12_4(5, tbl_banner_fontparam[e->banner], 0, 0);
-    sprintf(buf, "%s %s", game_str_tbl_race[e->race], game_str_sm_colony);
+    lib_sprintf(buf, sizeof(buf), "%s %s", game_str_tbl_race[e->race], game_str_sm_colony);
     lbxfont_print_str_center(270, 84, buf, UI_SCREEN_W);
     lbxfont_select_set_12_4(3, 0xa, 0, 0);
     lbxfont_print_str_center(268, 60, game_str_sm_bomb1, UI_SCREEN_W);
@@ -115,7 +115,7 @@ static void bomb_ask_draw_cb(void *vptr)
     lbxfont_print_num_right(305, 125, p->factories, UI_SCREEN_W);
     if (d->pop_inbound) {
         lbxfont_select_set_12_4(0, 0x0, 0, 0);
-        sprintf(buf, "%i %s", d->pop_inbound, (d->pop_inbound == 1) ? game_str_sm_trinb1 : game_str_sm_trinb1s);
+        lib_sprintf(buf, sizeof(buf), "%i %s", d->pop_inbound, (d->pop_inbound == 1) ? game_str_sm_trinb1 : game_str_sm_trinb1s);
         lbxfont_print_str_center(268, 140, buf, UI_SCREEN_W);
         lbxfont_print_str_center(268, 148, game_str_sm_trinb2, UI_SCREEN_W);
     }
@@ -154,7 +154,7 @@ static void bomb_show_draw_cb(void *vptr)
         } else {
             s = game_str_tbl_race[e->race];
         }
-        sprintf(buf, "%s %s", s, game_str_sm_colony);
+        lib_sprintf(buf, sizeof(buf), "%s %s", s, game_str_sm_colony);
     }
     lbxfont_print_str_center(270, 84, buf, UI_SCREEN_W);
     if (p->owner == PLAYER_NONE) {
@@ -170,12 +170,12 @@ static void bomb_show_draw_cb(void *vptr)
         /*d7af*/
         lbxfont_select_set_12_4(0, 0x0, 0, 0);
         if (d->popdmg) {
-            sprintf(buf, "%i %s", d->popdmg, game_str_sm_bkill1);
+            lib_sprintf(buf, sizeof(buf), "%i %s", d->popdmg, game_str_sm_bkill1);
             lbxfont_print_str_center(267, 120, buf, UI_SCREEN_W);
             lbxfont_print_str_center(267, 127, game_str_sm_bkill2, UI_SCREEN_W);
         }
         if (d->factdmg) {
-            sprintf(buf, "%i %s", d->factdmg, (d->factdmg == 1) ? game_str_sm_bfact1 : game_str_sm_bfact1s);
+            lib_sprintf(buf, sizeof(buf), "%i %s", d->factdmg, (d->factdmg == 1) ? game_str_sm_bfact1 : game_str_sm_bfact1s);
             lbxfont_print_str_center(267, 140, buf, UI_SCREEN_W);
             lbxfont_print_str_center(267, 147, game_str_sm_bfact2, UI_SCREEN_W);
         }
