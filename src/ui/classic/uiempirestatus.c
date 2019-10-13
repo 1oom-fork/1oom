@@ -11,6 +11,7 @@
 #include "lbxfont.h"
 #include "lbxgfx.h"
 #include "lbxpal.h"
+#include "lib.h"
 #include "types.h"
 #include "uidelay.h"
 #include "uidefs.h"
