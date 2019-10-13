@@ -226,7 +226,7 @@ static void design_draw_cb(void *vptr)
     }
     if (sd->shield) {
         uint8_t v = tbl_shiptech_shield[sd->shield].absorb;
-        sprintf(buf, "%s %i %s", game_str_sd_absorbs, v, (v == 1) ? game_str_sd_hit : game_str_sd_hits);
+        lib_sprintf(buf, sizeof(buf), "%s %i %s", game_str_sd_absorbs, v, (v == 1) ? game_str_sd_hit : game_str_sd_hits);
         lbxfont_print_str_normal(101, 34, buf, UI_SCREEN_W);
     }
     lbxfont_print_str_normal(101, 46, game_str_sd_misdef, UI_SCREEN_W);
@@ -376,13 +376,14 @@ static void ui_design_sel_comp(struct design_data_s *d)
     char titlebuf[0x80];
     char linebuf[SHIP_COMP_NUM * 0x50];
     const char *lineptr[SHIP_COMP_NUM + 1];
+    struct strbuild_s line_builder = strbuild_init(linebuf, sizeof(linebuf));
     shipdesign_t *sd = &(d->gd->sd);
     ship_comp_t actcomp = sd->comp;
 
     lbxfont_select(2, 0, 4, 0xe);
 
     {
-        int havelast, space, cost, bufpos = 0;
+        int havelast, space, cost;
         char s1[3] = "\x1dX";
         char s2[3] = "\x1dX";
         char s3[3] = "\x1dX";
@@ -407,9 +408,10 @@ static void ui_design_sel_comp(struct design_data_s *d)
         cost = game_design_calc_cost(d->gd);
         havelast = game_design_build_tbl_fit_comp(d->g, d->gd, havebuf);
 
+        /* game_design_build_tbl_fit_comp ensures that havelast < SHIP_COMP_NUM. */
         for (int i = 0; i <= havelast; ++i) {
             if (havebuf[i] >= 0) {
-                int space2, power, cost2, sizei, len;
+                int space2, power, cost2, sizei;
                 flag_tbl_enable[n] = (havebuf[i] > 0);
                 if (i == actcomp) {
                     curcomp = n;
@@ -421,14 +423,12 @@ static void ui_design_sel_comp(struct design_data_s *d)
                 power = tbl_shiptech_comp[i].power[sd->hull];
                 cost2 = game_design_calc_cost(d->gd) - cost;
                 sizei = game_design_calc_space_item(d->gd, DESIGN_SLOT_COMP, i);
-                len = sprintf(&linebuf[bufpos], "%s%s%i%s%i%s%i%s%i", *tbl_shiptech_comp[i].nameptr, s1, cost2, s2, sizei, s3, power, s4, space2);
-                lineptr[n] = &linebuf[bufpos];
-                bufpos += len + 1;
-                ++n;
+                strbuild_catf(&line_builder, "%s%s%i%s%i%s%i%s%i", *tbl_shiptech_comp[i].nameptr, s1, cost2, s2, sizei, s3, power, s4, space2);
+                lineptr[n++] = strbuild_finish(&line_builder);
             }
         }
-        lineptr[n] = 0;
-        sprintf(titlebuf, "%s%s%s%s%s%s%s%s%s", game_str_sd_comptype, s1, game_str_sd_cost, s2, game_str_sd_size, s3, game_str_sd_power, s4, game_str_sd_space);
+        lineptr[n] = NULL;
+        lib_sprintf(titlebuf, sizeof(titlebuf), "%s%s%s%s%s%s%s%s%s", game_str_sd_comptype, s1, game_str_sd_cost, s2, game_str_sd_size, s3, game_str_sd_power, s4, game_str_sd_space);
     }
     {
         int listi;
@@ -454,13 +454,14 @@ static void ui_design_sel_shield(struct design_data_s *d)
     char titlebuf[0x80];
     char linebuf[SHIP_SHIELD_NUM * 0x50];
     const char *lineptr[SHIP_SHIELD_NUM + 1];
+    struct strbuild_s line_builder = strbuild_init(linebuf, sizeof(linebuf));
     shipdesign_t *sd = &(d->gd->sd);
     ship_shield_t actshield = sd->shield;
 
     lbxfont_select(2, 0, 4, 0xe);
 
     {
-        int havelast, space, cost, bufpos = 0;
+        int havelast, space, cost;
         char s1[3] = "\x1dX";
         char s2[3] = "\x1dX";
         char s3[3] = "\x1dX";
@@ -485,9 +486,10 @@ static void ui_design_sel_shield(struct design_data_s *d)
         cost = game_design_calc_cost(d->gd);
         havelast = game_design_build_tbl_fit_shield(d->g, d->gd, havebuf);
 
+        /* game_design_build_tbl_fit_shield ensures that havelast < SHIP_SHIELD_NUM. */
         for (int i = 0; i <= havelast; ++i) {
             if (havebuf[i] >= 0) {
-                int space2, power, cost2, sizei, len;
+                int space2, power, cost2, sizei;
                 flag_tbl_enable[n] = (havebuf[i] > 0);
                 if (i == actshield) {
                     curshield = n;
@@ -499,14 +501,12 @@ static void ui_design_sel_shield(struct design_data_s *d)
                 power = tbl_shiptech_shield[i].power[sd->hull];
                 cost2 = game_design_calc_cost(d->gd) - cost;
                 sizei = game_design_calc_space_item(d->gd, DESIGN_SLOT_SHIELD, i);
-                len = sprintf(&linebuf[bufpos], "%s%s%i%s%i%s%i%s%i", *tbl_shiptech_shield[i].nameptr, s1, cost2, s2, sizei, s3, power, s4, space2);
-                lineptr[n] = &linebuf[bufpos];
-                bufpos += len + 1;
-                ++n;
+                strbuild_catf(&line_builder, "%s%s%i%s%i%s%i%s%i", *tbl_shiptech_shield[i].nameptr, s1, cost2, s2, sizei, s3, power, s4, space2);
+                lineptr[n++] = strbuild_finish(&line_builder);
             }
         }
-        lineptr[n] = 0;
-        sprintf(titlebuf, "%s%s%s%s%s%s%s%s%s", game_str_sd_shieldtype, s1, game_str_sd_cost, s2, game_str_sd_size, s3, game_str_sd_power, s4, game_str_sd_space);
+        lineptr[n] = NULL;
+        lib_sprintf(titlebuf, sizeof(titlebuf), "%s%s%s%s%s%s%s%s%s", game_str_sd_shieldtype, s1, game_str_sd_cost, s2, game_str_sd_size, s3, game_str_sd_power, s4, game_str_sd_space);
     }
     {
         int listi;
@@ -532,13 +532,14 @@ static void ui_design_sel_jammer(struct design_data_s *d)
     char titlebuf[0x80];
     char linebuf[SHIP_JAMMER_NUM * 0x50];
     const char *lineptr[SHIP_SHIELD_NUM + 1];
+    struct strbuild_s line_builder = strbuild_init(linebuf, sizeof(linebuf));
     shipdesign_t *sd = &(d->gd->sd);
     ship_jammer_t actjammer = sd->jammer;
 
     lbxfont_select(2, 0, 4, 0xe);
 
     {
-        int havelast, space, cost, bufpos = 0;
+        int havelast, space, cost;
         char s1[3] = "\x1dX";
         char s2[3] = "\x1dX";
         char s3[3] = "\x1dX";
@@ -563,9 +564,10 @@ static void ui_design_sel_jammer(struct design_data_s *d)
         cost = game_design_calc_cost(d->gd);
         havelast = game_design_build_tbl_fit_jammer(d->g, d->gd, havebuf);
 
+        /* game_design_build_tbl_fit_jammer ensures that havelast < SHIP_JAMMER_NUM. */
         for (int i = 0; i <= havelast; ++i) {
             if (havebuf[i] >= 0) {
-                int space2, power, cost2, sizei, len;
+                int space2, power, cost2, sizei;
                 flag_tbl_enable[n] = (havebuf[i] > 0);
                 if (i == actjammer) {
                     curjammer = n;
@@ -577,14 +579,12 @@ static void ui_design_sel_jammer(struct design_data_s *d)
                 power = tbl_shiptech_jammer[i].power[sd->hull];
                 cost2 = game_design_calc_cost(d->gd) - cost;
                 sizei = game_design_calc_space_item(d->gd, DESIGN_SLOT_JAMMER, i);
-                len = sprintf(&linebuf[bufpos], "%s%s%i%s%i%s%i%s%i", *tbl_shiptech_jammer[i].nameptr, s1, cost2, s2, sizei, s3, power, s4, space2);
-                lineptr[n] = &linebuf[bufpos];
-                bufpos += len + 1;
-                ++n;
+                strbuild_catf(&line_builder, "%s%s%i%s%i%s%i%s%i", *tbl_shiptech_jammer[i].nameptr, s1, cost2, s2, sizei, s3, power, s4, space2);
+                lineptr[n++] = strbuild_finish(&line_builder);
             }
         }
-        lineptr[n] = 0;
-        sprintf(titlebuf, "%s%s%s%s%s%s%s%s%s", game_str_sd_ecmtype, s1, game_str_sd_cost, s2, game_str_sd_size, s3, game_str_sd_power, s4, game_str_sd_space);
+        lineptr[n] = NULL;
+        lib_sprintf(titlebuf, sizeof(titlebuf), "%s%s%s%s%s%s%s%s%s", game_str_sd_ecmtype, s1, game_str_sd_cost, s2, game_str_sd_size, s3, game_str_sd_power, s4, game_str_sd_space);
     }
     {
         int listi;
@@ -610,13 +610,14 @@ static void ui_design_sel_armor(struct design_data_s *d)
     char titlebuf[0x80];
     char linebuf[SHIP_ARMOR_NUM * 0x50];
     const char *lineptr[SHIP_ARMOR_NUM + 1];
+    struct strbuild_s line_builder = strbuild_init(linebuf, sizeof(linebuf));
     shipdesign_t *sd = &(d->gd->sd);
     ship_armor_t actarmor = sd->armor;
 
     lbxfont_select(2, 0, 4, 0xe);
 
     {
-        int havelast, bufpos = 0;
+        int havelast;
         char s1[3] = "\x1dX";
         char s2[3] = "\x1dX";
 
@@ -631,9 +632,11 @@ static void ui_design_sel_armor(struct design_data_s *d)
         s2[1] = (char)(xpos + 50);
 
         havelast = game_design_build_tbl_fit_armor(d->g, d->gd, havebuf);
+
+        /* game_design_build_tbl_fit_armor ensures that havelast < SHIP_ARMOR_NUM. */
         for (int i = 0; i <= havelast; ++i) {
             if (havebuf[i] >= 0) {
-                int cost2, sizei, len;
+                int cost2, sizei;
                 flag_tbl_enable[n] = (havebuf[i] > 0);
                 if (i == actarmor) {
                     curarmor = n;
@@ -643,14 +646,12 @@ static void ui_design_sel_armor(struct design_data_s *d)
                 game_design_update_engines(sd);
                 cost2 = game_design_calc_cost_item(d->gd, DESIGN_SLOT_ARMOR, i);
                 sizei = game_design_calc_space_item(d->gd, DESIGN_SLOT_ARMOR, i);
-                len = sprintf(&linebuf[bufpos], "%s%s%i%s%i", *tbl_shiptech_armor[i].nameptr, s1, cost2, s2, sizei);
-                lineptr[n] = &linebuf[bufpos];
-                bufpos += len + 1;
-                ++n;
+                strbuild_catf(&line_builder, "%s%s%i%s%i", *tbl_shiptech_armor[i].nameptr, s1, cost2, s2, sizei);
+                lineptr[n++] = strbuild_finish(&line_builder);
             }
         }
-        lineptr[n] = 0;
-        sprintf(titlebuf, "%s%s%s%s%s", game_str_sd_armortype, s1, game_str_sd_cost, s2, game_str_sd_size);
+        lineptr[n] = NULL;
+        lib_sprintf(titlebuf, sizeof(titlebuf), "%s%s%s%s%s", game_str_sd_armortype, s1, game_str_sd_cost, s2, game_str_sd_size);
     }
     {
         int listi;
@@ -676,13 +677,14 @@ static void ui_design_sel_engine(struct design_data_s *d)
     char titlebuf[0x80];
     char linebuf[SHIP_ENGINE_NUM * 0x50];
     const char *lineptr[SHIP_ENGINE_NUM + 1];
+    struct strbuild_s line_builder = strbuild_init(linebuf, sizeof(linebuf));
     shipdesign_t *sd = &(d->gd->sd);
     ship_engine_t actengine = sd->engine;
 
     lbxfont_select(2, 0, 4, 0xe);
 
     {
-        int havelast, bufpos = 0;
+        int havelast;
         char s1[3] = "\x1dX";
         char s2[3] = "\x1dX";
         char s3[3] = "\x1dX";
@@ -704,9 +706,10 @@ static void ui_design_sel_engine(struct design_data_s *d)
         game_design_update_engines(sd);
         havelast = game_design_build_tbl_fit_engine(d->g, d->gd, havebuf);
 
+        /* game_design_build_tbl_fit_engine ensures that havelast < SHIP_ENGINE_NUM. */
         for (int i = 0; i <= havelast; ++i) {
             if (havebuf[i] >= 0) {
-                int cost2, sizei, sizet, ne, len;
+                int cost2, sizei, sizet, ne;
                 flag_tbl_enable[n] = (havebuf[i] > 0);
                 if (i == actengine) {
                     curengine = n;
@@ -718,14 +721,12 @@ static void ui_design_sel_engine(struct design_data_s *d)
                 sizei = game_design_calc_space_item(d->gd, DESIGN_SLOT_ENGINE, i);
                 sizet = (sizei * ne) / 10;
                 cost2 = game_design_calc_cost_item(d->gd, DESIGN_SLOT_ENGINE, i);
-                len = sprintf(&linebuf[bufpos], "%s%s%i%s%i%s%i.%i%s%i", *tbl_shiptech_engine[i].nameptr, s1, cost2, s2, sizei, s3, ne / 10, ne % 10, s4, sizet);
-                lineptr[n] = &linebuf[bufpos];
-                bufpos += len + 1;
-                ++n;
+                strbuild_catf(&line_builder, "%s%s%i%s%i%s%i.%i%s%i", *tbl_shiptech_engine[i].nameptr, s1, cost2, s2, sizei, s3, ne / 10, ne % 10, s4, sizet);
+                lineptr[n++] = strbuild_finish(&line_builder);
             }
         }
-        lineptr[n] = 0;
-        sprintf(titlebuf, "%s%s%s%s%s%s%s%s%s", game_str_sd_engtype, s1, game_str_sd_cost, s2, game_str_sd_size, s3, game_str_sd_numengs, s4, game_str_sd_space);
+        lineptr[n] = NULL;
+        lib_sprintf(titlebuf, sizeof(titlebuf), "%s%s%s%s%s%s%s%s%s", game_str_sd_engtype, s1, game_str_sd_cost, s2, game_str_sd_size, s3, game_str_sd_numengs, s4, game_str_sd_space);
     }
     {
         int listi;
@@ -749,13 +750,14 @@ static void ui_design_sel_man(struct design_data_s *d)
     char titlebuf[0x80];
     char linebuf[SHIP_ENGINE_NUM * 0x50];
     const char *lineptr[SHIP_ENGINE_NUM + 1];
+    struct strbuild_s line_builder = strbuild_init(linebuf, sizeof(linebuf));
     shipdesign_t *sd = &(d->gd->sd);
     ship_engine_t actman = sd->man;
 
     lbxfont_select(2, 0, 4, 0xe);
 
     {
-        int havelast = sd->engine, bufpos = 0, powperwarp, space, cost;
+        int havelast = sd->engine, powperwarp, space, cost;
         char s1[3] = "\x1dX";
         char s2[3] = "\x1dX";
         char s3[3] = "\x1dX";
@@ -764,7 +766,7 @@ static void ui_design_sel_man(struct design_data_s *d)
         xpos = 0;
         for (int i = 0; i <= havelast; ++i) {
             int w;
-            sprintf(linebuf, "%s %s", game_str_sd_class, game_str_tbl_roman[i + 1]);
+            lib_sprintf(linebuf, sizeof(linebuf), "%s %s", game_str_sd_class, game_str_tbl_roman[i + 1]);
             w = lbxfont_calc_str_width(linebuf);
             SETMAX(xpos, w);
         }
@@ -784,7 +786,7 @@ static void ui_design_sel_man(struct design_data_s *d)
         cost = game_design_calc_cost(d->gd);
 
         for (int i = 0; i <= havelast; ++i) {
-            int cost2, space2, spacet, len;
+            int cost2, space2, spacet;
             sd->man = i;
             game_design_update_engines(sd);
             spacet = game_design_calc_space(d->gd);
@@ -798,13 +800,11 @@ static void ui_design_sel_man(struct design_data_s *d)
             SETMAX(powperwarp, 1);
             cost2 = game_design_calc_cost(d->gd) - cost;
             SETMAX(cost2, 1);
-            len = sprintf(&linebuf[bufpos], "%s %s%s%i%s%i%s%i%s%i", game_str_sd_class, game_str_tbl_roman[i + 1], s1, (i + 3) / 2, s2, cost2, s3, powperwarp, s4, space2);
-            lineptr[n] = &linebuf[bufpos];
-            bufpos += len + 1;
-            ++n;
+            strbuild_catf(&line_builder, "%s %s%s%i%s%i%s%i%s%i", game_str_sd_class, game_str_tbl_roman[i + 1], s1, (i + 3) / 2, s2, cost2, s3, powperwarp, s4, space2);
+            lineptr[n++] = strbuild_finish(&line_builder);
         }
-        lineptr[n] = 0;
-        sprintf(titlebuf, "%s%s%s%s%s%s%s%s%s", game_str_sd_man1, s1, game_str_sd_speed, s2, game_str_sd_cost, s3, game_str_sd_power, s4, game_str_sd_space);
+        lineptr[n] = NULL;
+        lib_sprintf(titlebuf, sizeof(titlebuf), "%s%s%s%s%s%s%s%s%s", game_str_sd_man1, s1, game_str_sd_speed, s2, game_str_sd_cost, s3, game_str_sd_power, s4, game_str_sd_space);
     }
     {
         int listi;
@@ -830,6 +830,7 @@ static void ui_design_sel_weapon(struct design_data_s *d, int wslot)
     char titlebuf[0x80];
     char linebuf[WEAPON_NUM * 0x58];
     const char *lineptr[WEAPON_NUM + 1];
+    struct strbuild_s line_builder = strbuild_init(linebuf, sizeof(linebuf));
     shipdesign_t *sd = &(d->gd->sd);
     weapon_t actwpnt = sd->wpnt[wslot];
     uint8_t actwpnn = sd->wpnn[wslot];
@@ -837,7 +838,7 @@ static void ui_design_sel_weapon(struct design_data_s *d, int wslot)
     lbxfont_select(2, 0, 4, 0xe);
 
     {
-        int havelast, bufpos = 0, space, cost;
+        int havelast, space, cost;
         char s1[3] = "\x1dX";
         char s2[3] = "\x1dX";
         char s3[3] = "\x1dX";
@@ -889,9 +890,11 @@ static void ui_design_sel_weapon(struct design_data_s *d, int wslot)
                 firsti = 0;
                 i = 0;
             }
+
+            /* game_design_build_tbl_fit_weapon ensures that havelast < WEAPON_NUM. */
             while (i <= havelast) {
                 if (havebuf[i] >= 0) {
-                    int space2, cost2, power, sizei, len, dmin, dmax;
+                    int space2, cost2, power, sizei, dmin, dmax;
                     ++numlines;
                     sd->wpnt[wslot] = i;
                     sd->wpnn[wslot] = 1;
@@ -910,16 +913,12 @@ static void ui_design_sel_weapon(struct design_data_s *d, int wslot)
                     sizei = game_design_calc_space_item(d->gd, DESIGN_SLOT_WEAPON1, i);
                     dmin = tbl_shiptech_weap[i].damagemin;
                     dmax = tbl_shiptech_weap[i].damagemax;
-                    lineptr[n] = &linebuf[bufpos];
-                    len = sprintf(&linebuf[bufpos], "%i%s%s%s%s%s%i", havebuf[i], s1, *tbl_shiptech_weap[i].nameptr, s2, *tbl_shiptech_weap[i].extratextptr, s3, dmin);
-                    bufpos += len;
+                    strbuild_catf(&line_builder, "%i%s%s%s%s%s%i", havebuf[i], s1, *tbl_shiptech_weap[i].nameptr, s2, *tbl_shiptech_weap[i].extratextptr, s3, dmin);
                     if (dmin != dmax) {
-                        len = sprintf(&linebuf[bufpos], "-%i", dmax);
-                        bufpos += len;
+                        strbuild_catf(&line_builder, "-%i", dmax);
                     }
-                    len = sprintf(&linebuf[bufpos], "%s%i%s%i%s%i%s      %i", s4, cost2, s5, sizei, s6, power, s7, space2);
-                    bufpos += len + 1;
-                    ++n;
+                    strbuild_catf(&line_builder, "%s%i%s%i%s%i%s      %i", s4, cost2, s5, sizei, s6, power, s7, space2);
+                    lineptr[n++] = strbuild_finish(&line_builder);
                 }
                 ++i;
                 if ((firsti > 0) && (i == 1)) {
@@ -928,7 +927,7 @@ static void ui_design_sel_weapon(struct design_data_s *d, int wslot)
             }
         }
         lineptr[n] = 0;
-        sprintf(titlebuf, "%s %s%s%s%s%s%s%s%s%s%s%s%s      %s", game_str_sd_max, game_str_sd_weapname, s2, game_str_sd_descr, s3, game_str_sd_dmg, s4, game_str_sd_cost, s5, game_str_sd_size, s6, game_str_sd_power, s7, game_str_sd_space);
+        lib_sprintf(titlebuf, sizeof(titlebuf), "%s %s%s%s%s%s%s%s%s%s%s%s%s      %s", game_str_sd_max, game_str_sd_weapname, s2, game_str_sd_descr, s3, game_str_sd_dmg, s4, game_str_sd_cost, s5, game_str_sd_size, s6, game_str_sd_power, s7, game_str_sd_space);
     }
     {
         int listi;
@@ -965,13 +964,14 @@ static void ui_design_sel_special(struct design_data_s *d, int sslot)
     char titlebuf[0x80];
     char linebuf[SHIP_SPECIAL_NUM * 0x5d];
     const char *lineptr[SHIP_SPECIAL_NUM + 1];
+    struct strbuild_s line_builder = strbuild_init(linebuf, sizeof(linebuf));
     shipdesign_t *sd = &(d->gd->sd);
     ship_special_t actspec = sd->special[sslot];
 
     lbxfont_select(2, 0, 4, 0xe);
 
     {
-        int havelast, bufpos = 0, space, cost;
+        int havelast, space, cost;
         char s1[3] = "\x1dX";
         char s2[3] = "\x1dX";
         char s3[3] = "\x1dX";
@@ -1000,9 +1000,10 @@ static void ui_design_sel_special(struct design_data_s *d, int sslot)
         cost = game_design_calc_cost(d->gd);
         havelast = game_design_build_tbl_fit_special(d->g, d->gd, havebuf, sslot);
 
+        /* game_design_build_tbl_fit_special ensures that havelast < SHIP_SPECIAL_NUM. */
         for (int i = 0; i <= havelast; ++i) {
             if (havebuf[i] >= 0) {
-                int space2, cost2, power, sizei, len;
+                int space2, cost2, power, sizei;
                 ++numlines;
                 sd->special[sslot] = i;
                 game_design_update_engines(sd);
@@ -1015,16 +1016,13 @@ static void ui_design_sel_special(struct design_data_s *d, int sslot)
                 power = tbl_shiptech_special[i].power[sd->hull];
                 cost2 = game_design_calc_cost(d->gd) - cost;
                 sizei = game_design_calc_space_item(d->gd, DESIGN_SLOT_SPECIAL1, i);
-                lineptr[n] = &linebuf[bufpos];
-                len = sprintf(&linebuf[bufpos], "%s%s%s%s", *tbl_shiptech_special[i].nameptr, s1, *tbl_shiptech_special[i].extratextptr, s2);
-                bufpos += len;
-                len = sprintf(&linebuf[bufpos], "%i%s%i%s    %i%s           %i", cost2, s3, sizei, s4, power, s5, space2);
-                bufpos += len + 1;
-                ++n;
+                strbuild_catf(&line_builder, "%s%s%s%s", *tbl_shiptech_special[i].nameptr, s1, *tbl_shiptech_special[i].extratextptr, s2);
+                strbuild_catf(&line_builder, "%i%s%i%s    %i%s           %i", cost2, s3, sizei, s4, power, s5, space2);
+                lineptr[n++] = strbuild_finish(&line_builder);
             }
         }
-        lineptr[n] = 0;
-        sprintf(titlebuf, "%s%s%s%s%s%s%s%s    %s%s           %s", game_str_sd_specname, s1, game_str_sd_descr, s2, game_str_sd_cost, s3, game_str_sd_size, s4, game_str_sd_power, s5, game_str_sd_space);
+        lineptr[n] = NULL;
+        lib_sprintf(titlebuf, sizeof(titlebuf), "%s%s%s%s%s%s%s%s    %s%s           %s", game_str_sd_specname, s1, game_str_sd_descr, s2, game_str_sd_cost, s3, game_str_sd_size, s4, game_str_sd_power, s5, game_str_sd_space);
     }
     {
         int listi;
@@ -1133,12 +1131,12 @@ bool ui_design(struct game_s *g, struct game_design_s *gd, player_id_t active_pl
             ui_sound_play_sfx_24();
             util_trim_whitespace(sd->name, SHIP_NAME_LEN);
             if (sd->name[0] == '\0') {
-                strcpy(sd->name, gd->names[sd->hull]);
+                lib_strcpy(sd->name, gd->names[sd->hull], SHIP_NAME_LEN);
             }
             flag_name = true;
         }
         if (!flag_name) {
-            strcpy(sd->name, gd->names[sd->hull]);
+            lib_strcpy(sd->name, gd->names[sd->hull], SHIP_NAME_LEN);
         }
         if ((oi == u.oi_cancel) || (oi == UIOBJI_ESC)) {
             ui_sound_play_sfx_06();
