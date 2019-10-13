@@ -57,9 +57,9 @@ static void steal_draw_cb(void *vptr)
     {
         char rbuf[0x20], *p, c;
         bool usean = false;
-        strcpy(rbuf, game_str_tbl_race[e->race]);
+        lib_strcpy(rbuf, game_str_tbl_race[e->race], sizeof(rbuf));
         p = rbuf;
-        while ((c = *p) != 0) {
+        while ((c = *p) != '\0') {
             if (islower(c)) {
                 c = toupper(c);
                 *p = c;
@@ -69,7 +69,7 @@ static void steal_draw_cb(void *vptr)
             }
             ++p;
         }
-        sprintf(buf, "%s%s %s %s", game_str_es_youresp1, usean ? "N" : "", rbuf, game_str_es_youresp2);
+        lib_sprintf(buf, sizeof(buf), "%s%s %s %s", game_str_es_youresp1, usean ? "N" : "", rbuf, game_str_es_youresp2);
     }
     lbxfont_select_set_12_1(0, 8, 0, 0);
     lbxfont_print_str_center(118, 30, buf, UI_SCREEN_W);
@@ -129,11 +129,11 @@ static void stolen_draw_cb(void *vptr)
     ui_gmap_basic_draw_frame(d->gmap, d->api);
     ui_draw_filled_rect(31, 62, 202, 103, 0x36);
     lbxgfx_draw_frame(31, 62, d->gfx, UI_SCREEN_W);
-    sprintf(buf, "%s %s", s, game_str_es_thesp1);
+    lib_sprintf(buf, sizeof(buf), "%s %s", s, game_str_es_thesp1);
     lbxfont_select_set_12_1(5, fontparam, 0, 0);
     lbxfont_print_str_center(116, 70, buf, UI_SCREEN_W);
     lbxfont_select(0, 0, 0, 0);
-    sprintf(buf, "%s %s ", s, game_str_es_thesp2);
+    lib_sprintf(buf, sizeof(buf), "%s %s ", s, game_str_es_thesp2);
     lbxfont_print_str_center(118, 84, buf, UI_SCREEN_W);
     game_tech_get_name(g->gaux, d->field, d->tech, buf, sizeof(buf));
     lbxfont_print_str_center(118, 94, buf, UI_SCREEN_W);
