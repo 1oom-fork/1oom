@@ -167,13 +167,13 @@ static void newtech_choose_next_draw_cb(void *vptr)
        MOO1 does not limit the bottom part which will go below screen with enough techs to choose from.
        On DOS/v1.3 this only overwrite unused VRAM. We must use the _offs version or solid VRAM.
     */
-    sprintf(buf, "%s %s", game_str_tbl_te_field[d->nt.field], game_str_te_techno);
+    lib_sprintf(buf, sizeof(buf), "%s %s", game_str_tbl_te_field[d->nt.field], game_str_te_techno);
     lbxfont_select(5, 0xe, 0, 0);
     lbxfont_print_str_center(x + 85, y + 5, buf, UI_SCREEN_W);
     lbxfont_select_set_12_1(0, 0, 0xe, 0);
     game_tech_get_descr(d->g->gaux, d->nt.field, tech, buf, sizeof(buf));
     pos = strlen(buf);
-    sprintf(&buf[pos], " \x02(%u %s)\x1", game_tech_get_next_rp(d->g, d->api, d->nt.field, tech), game_str_te_rp);
+    lib_sprintf(&buf[pos], sizeof(buf) - pos, " \x02(%u %s)\x1", game_tech_get_next_rp(d->g, d->api, d->nt.field, tech), game_str_te_rp);
     lbxfont_print_str_split(151, y + yo + 18, 156, buf, 0, UI_SCREEN_W, UI_SCREEN_H);
 }
 
@@ -216,12 +216,12 @@ static void ui_newtech_choose_next(struct newtech_data_s *d)
     uiobj_unset_callback();
 }
 
-static void newtech_adjust_draw_typestr(char *buf, const char *str1, const char *str2, int x, int y, int we)
+static void newtech_adjust_draw_typestr(char *buf, size_t bufsize, const char *str1, const char *str2, int x, int y, int we)
 {
-    strcat(buf, game_str_nt_inc);
-    strcat(buf, str1);
+    lib_strcat(buf, game_str_nt_inc, bufsize);
+    lib_strcat(buf, str1, bufsize);
     if (str2) {
-        strcat(buf, str2);
+        lib_strcat(buf, str2, bufsize);
     }
     lbxfont_print_str_split(x + 15, y + 16, 110 + we, buf, 3, UI_SCREEN_W, UI_SCREEN_H);
 }
@@ -235,10 +235,10 @@ static void newtech_adjust_draw_cb(void *vptr)
     ui_draw_filled_rect(x, y, x + 135, y + 80, 0xf9);
     lbxgfx_draw_frame(x, y, (d->dialog_type == 0) ? d->gfx_eco_chng2 : d->gfx_eco_chng4, UI_SCREEN_W);
     lbxfont_select_set_12_1(0, 0, 0, 0);
-    strcpy(buf, game_str_nt_doyou);
+    lib_strcpy(buf, game_str_nt_doyou, sizeof(buf));
     switch (d->dialog_type) {
         case 0:
-            strcat(buf, game_str_nt_redueco);
+            lib_strcat(buf, game_str_nt_redueco, sizeof(buf));
             lbxfont_print_str_split(x + 15, y + 11, 110, buf, 3, UI_SCREEN_W, UI_SCREEN_H);
             lbxgfx_set_frame_0(ui_data.gfx.starmap.scrapbut_yes);
             lbxgfx_set_frame_0(ui_data.gfx.starmap.scrapbut_no);
@@ -246,19 +246,19 @@ static void newtech_adjust_draw_cb(void *vptr)
             lbxgfx_draw_frame(x + 18, y + 60, ui_data.gfx.starmap.scrapbut_no, UI_SCREEN_W);
             break;
         case 1:
-            newtech_adjust_draw_typestr(buf, game_str_nt_ind, 0, x, y, 0);
+            newtech_adjust_draw_typestr(buf, sizeof(buf), game_str_nt_ind, 0, x, y, 0);
             break;
         case 2:
-            newtech_adjust_draw_typestr(buf, game_str_nt_ecoall, game_str_nt_terra, x, y, 0);
+            newtech_adjust_draw_typestr(buf, sizeof(buf), game_str_nt_ecoall, game_str_nt_terra, x, y, 0);
             break;
         case 3:
-            newtech_adjust_draw_typestr(buf, game_str_nt_def, 0, x, y - 5, 0);
+            newtech_adjust_draw_typestr(buf, sizeof(buf), game_str_nt_def, 0, x, y - 5, 0);
             break;
         case 4:
-            newtech_adjust_draw_typestr(buf, game_str_nt_ecostd, game_str_nt_terra, x - 1, y - 5, 2);
+            newtech_adjust_draw_typestr(buf, sizeof(buf), game_str_nt_ecostd, game_str_nt_terra, x - 1, y - 5, 2);
             break;
         case 5:
-            newtech_adjust_draw_typestr(buf, game_str_nt_ecohost, game_str_nt_terra, x - 1, y - 5, 2);
+            newtech_adjust_draw_typestr(buf, sizeof(buf), game_str_nt_ecohost, game_str_nt_terra, x - 1, y - 5, 2);
             break;
         default:
             break;
