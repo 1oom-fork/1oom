@@ -114,7 +114,8 @@ struct strbuild_s strbuild_init(char *buf, size_t bufsize)
     return output;
 }
 
-/* Return the string being built and start a new one after it. */
+/* Return the string being built and start a new one after it, storing multiple
+ * strings in the same buffer. */
 const char *strbuild_finish(struct strbuild_s *str)
 {
     const char *old_str = str->str_start;
