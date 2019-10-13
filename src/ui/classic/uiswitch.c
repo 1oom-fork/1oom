@@ -12,6 +12,7 @@
 #include "lbxfont.h"
 #include "lbxgfx.h"
 #include "lbxpal.h"
+#include "lib.h"
 #include "types.h"
 #include "ui.h"
 #include "uicursor.h"
@@ -55,7 +56,7 @@ static void switch_draw_cb(void *vptr)
         e = &(g->eto[pi]);
         color = tbl_banner_fontparam[e->banner];
         lbxfont_select(3, color, 0, 0);
-        sprintf(buf, "%s %i", game_str_player, pi + 1);
+        lib_sprintf(buf, sizeof(buf), "%s %i", game_str_player, pi + 1);
         lbxfont_print_str_normal(230, i * 24 + 32, buf, UI_SCREEN_W);
         lbxfont_select(0, color, 0, 0);
         lbxfont_print_str_normal(230, i * 24 + 32 + 10, g->emperor_names[pi], UI_SCREEN_W);
