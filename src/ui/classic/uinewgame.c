@@ -192,7 +192,7 @@ static bool ui_new_game_pname(struct game_new_options_s *newopts, struct new_gam
     bool flag_ok;
 
     if (!flag_generate) {
-        strcpy(buf, newopts->pdata[d->pi].playername);
+        lib_strcpy(buf, newopts->pdata[d->pi].playername, sizeof(buf));
         flag_generate = (buf[0] == '\0');
     }
     uiobj_set_callback_and_delay(new_game_draw_banner_cb, d, 2);
@@ -211,7 +211,7 @@ static bool ui_new_game_pname(struct game_new_options_s *newopts, struct new_gam
         flag_ok = buf[0] != '\0';
         flag_generate = true;
     }
-    strcpy(newopts->pdata[d->pi].playername, buf);
+    lib_strcpy(newopts->pdata[d->pi].playername, buf, EMPEROR_NAME_LEN);
     ui_sound_play_sfx_24();
     return true;
 }
@@ -222,7 +222,7 @@ static bool ui_new_game_hname(struct game_new_options_s *newopts, struct new_gam
     bool flag_ok;
 
     if (!flag_generate) {
-        strcpy(buf, newopts->pdata[d->pi].homename);
+        lib_strcpy(buf, newopts->pdata[d->pi].homename, sizeof(buf));
         flag_generate = (buf[0] == '\0');
     }
     uiobj_set_callback_and_delay(new_game_draw_banner_cb, d, 2);
@@ -241,7 +241,7 @@ static bool ui_new_game_hname(struct game_new_options_s *newopts, struct new_gam
         flag_ok = buf[0] != '\0';
         flag_generate = true;
     }
-    strcpy(newopts->pdata[d->pi].homename, buf);
+    lib_strcpy(newopts->pdata[d->pi].homename, buf, PLANET_NAME_LEN);
     ui_sound_play_sfx_24();
 
     lbxfont_select(5, 1, 0xf, 0xf);
