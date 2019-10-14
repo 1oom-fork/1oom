@@ -272,7 +272,7 @@ static void ui_planets_transfer(struct planets_data_s *d)
 {
     struct game_s *g = d->g;
     planet_t *p = &(g->planet[d->planet_i]);
-    int16_t oi_cancel, oi_accept, oi_minus, oi_plus, oi_equals;
+    int16_t oi_cancel, oi_accept, oi_minus, oi_plus, oi_equals, oi_hash;
     int prod, allreserve, v;
     const int x = 100, y = 50;
     bool flag_done = false;
@@ -305,6 +305,7 @@ static void ui_planets_transfer(struct planets_data_s *d)
     oi_minus = uiobj_add_mousearea(x + 10, y + 33, x + 12, y + 41, MOO_KEY_UNKNOWN);
     oi_plus = uiobj_add_mousearea(x + 66, y + 33, x + 70, y + 41, MOO_KEY_UNKNOWN);
     oi_equals = uiobj_add_inputkey(MOO_KEY_EQUALS);
+    oi_hash = uiobj_add_inputkey(MOO_KEY_HASH);
 
     uiobj_set_callback_and_delay(planets_transfer_draw_cb, d, 1);
 
@@ -331,7 +332,7 @@ static void ui_planets_transfer(struct planets_data_s *d)
             ui_sound_play_sfx_24();
             d->amount_trans += 2;
             SETMIN(d->amount_trans, 100);
-        } else if (oi == oi_equals) {
+        } else if (oi == oi_equals || oi == oi_hash) {
             ui_sound_play_sfx_24();
             d->amount_trans = v;
             SETRANGE(d->amount_trans, 0, 100);
