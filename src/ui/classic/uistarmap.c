@@ -225,7 +225,7 @@ void ui_starmap_set_pos(const struct game_s *g, int x, int y)
 void ui_starmap_do(struct game_s *g, player_id_t active_player)
 {
     bool flag_done = false;
-    int16_t oi_b, oi_c, oi_scroll, oi_starview1, oi_starview2, oi_shippic, oi_finished, oi_equals,
+    int16_t oi_b, oi_c, oi_scroll, oi_starview1, oi_starview2, oi_shippic, oi_finished, oi_equals, oi_hash,
             oi_f2, oi_f3, oi_f4, oi_f5, oi_f6, oi_f7, oi_f8, oi_f9, oi_f10,
             oi_alt_galaxy, oi_alt_m, oi_alt_c, oi_alt_p, oi_alt_r, oi_alt_events,
             oi_governor, oi_wheelname, oi_wheelshippic, oi_xtramenu, oi_search
@@ -257,6 +257,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
         oi_shippic = UIOBJI_INVALID; \
         oi_finished = UIOBJI_INVALID; \
         oi_equals = UIOBJI_INVALID; \
+        oi_hash = UIOBJI_INVALID; \
         oi_governor = UIOBJI_INVALID; \
         oi_wheelname = UIOBJI_INVALID; \
         oi_wheelshippic = UIOBJI_INVALID; \
@@ -493,7 +494,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
         } else if (oi1 == oi_alt_c) {
             ui_starmap_set_pos_focus(g, active_player);
             ui_sound_play_sfx_24();
-        } else if (oi1 == oi_equals) {
+        } else if (oi1 == oi_equals || oi1 == oi_hash) {
             if (p->prod_after_maint < p->reserve) {
                 ui_sound_play_sfx_06();
             } else {
@@ -639,6 +640,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             UIOBJ_CLEAR_LOCAL();
             if (p->owner == active_player) {
                 oi_equals = uiobj_add_inputkey(MOO_KEY_EQUALS);
+                oi_hash = uiobj_add_inputkey(MOO_KEY_HASH);
             }
             oi_f2 = uiobj_add_inputkey(MOO_KEY_F2);
             oi_f3 = uiobj_add_inputkey(MOO_KEY_F3);
