@@ -14,7 +14,7 @@
 
 bool hw_opt_borderless = false;
 bool hw_opt_int_scaling = false;
-bool hw_opt_relmouse = true;
+bool hw_opt_relmouse = false;
 bool hw_opt_vsync = true;
 
 /* -------------------------------------------------------------------------- */
