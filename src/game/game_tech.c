@@ -695,6 +695,20 @@ bool game_tech_current_research_has_max_bonus(const struct empiretechorbit_s *e,
     return (t1 <= (t3 * 2) && t3 > 0);
 }
 
+int64_t game_tech_current_research_time_score(const struct empiretechorbit_s *e, tech_field_t field)
+{
+    int64_t s;
+    int64_t f = game_tech_current_research_percent1(e, field);
+    if (f<100) {
+        s = 122l*f;
+    } else if (!game_tech_current_research_has_max_bonus(e, field)) {
+        s = (f-100l)*(f-100l);
+    } else {
+        s = (2*f-100l)*(2*f-100l);
+    }
+    return s*e->tech.cost[field];
+}
+
 void game_tech_set_to_max_bonus(struct empiretechorbit_s *e, tech_field_t field)
 {
     bool has_bonus, had_bonus = game_tech_current_research_has_max_bonus(e, field);
@@ -709,6 +723,54 @@ void game_tech_set_to_max_bonus(struct empiretechorbit_s *e, tech_field_t field)
         has_bonus = game_tech_current_research_has_max_bonus(e, field);
         v = t->slider[field];
     } while ((has_bonus == had_bonus) && (v != prev));
+}
+
+void game_tech_set_to_min(struct empiretechorbit_s *e) {
+    techdata_t *t = &(e->tech);
+    for (int i = 0; i < TECH_FIELD_NUM; ++i) t->slider[i] = e->tech.investment[i] ? 1 : 0;
+    int s = 100 - TECH_FIELD_NUM, old_s = 100;
+    while (s && s < old_s) {
+        old_s = s;
+        for (int i = 0; i < TECH_FIELD_NUM && s; ++i) {
+            if (game_tech_current_research_has_max_bonus(e, i)) continue;
+            if (game_tech_current_research_percent1(e, i) > 100) continue;
+            --s; ++t->slider[i];
+        }
+    }
+    old_s = 100;
+    while (s && s < old_s) {
+        old_s = s;
+        for (int i = 0; i < TECH_FIELD_NUM && s; ++i) {
+            if (game_tech_current_research_has_max_bonus(e, i)) continue;
+            --s; ++t->slider[i];
+        }
+    }
+    t->slider[TECH_FIELD_NUM-1] += s;
+}
+
+void game_tech_set_to_opt(struct empiretechorbit_s *e) {
+    techdata_t *t = &(e->tech);
+    for (int i = 0; i < TECH_FIELD_NUM; ++i) t->slider[i] = 1;
+    int s = 100 - TECH_FIELD_NUM, old_s = 100;
+    while (s && s < old_s) {
+        old_s = s;
+        for (int i = 0; i < TECH_FIELD_NUM && s; ++i) {
+            if (game_tech_current_research_has_max_bonus(e, i)) continue;
+            if (game_tech_current_research_percent1(e, i) > 100) continue;
+            --s; ++t->slider[i];
+        }
+    }
+    if (s) {
+        long sc[TECH_FIELD_NUM];
+        for (int i = 0; i < TECH_FIELD_NUM; ++i)
+            sc[i] = game_tech_current_research_time_score(e, i);
+        while (s--) {
+            int min_i = 0;
+            for (int i = 1; i < TECH_FIELD_NUM && s; ++i) if (sc[i] < sc[min_i]) min_i = i;
+            ++t->slider[min_i];
+            sc[min_i] = game_tech_current_research_time_score(e, min_i);
+        }
+    }
 }
 
 void game_tech_get_new(struct game_s *g, player_id_t player, tech_field_t field, uint8_t tech, techsource_t source, int a8, player_id_t stolen_from, bool flag_frame)
@@ -822,6 +884,17 @@ void game_tech_start_next(struct game_s *g, player_id_t player, tech_field_t fie
     td->project[field] = tech;
     td->cost[field] = game_tech_get_next_rp(g, player, field, tech);
     g->evn.newtech[player].next[field].num = 0;
+}
+
+int game_tech_get_field_top_tech(const struct game_s *g, player_id_t player, tech_field_t field)
+{
+    const uint8_t *rc = g->srd[player].researchcompleted[field];
+    int len = g->eto[player].tech.completed[field];
+    uint8_t tmax = 0;
+    for (int i = 0; i < len; ++i) {
+        SETMAX(tmax, rc[i]);
+    }
+    return tmax;
 }
 
 int game_tech_get_field_percent(const struct game_s *g, player_id_t player, tech_field_t field)

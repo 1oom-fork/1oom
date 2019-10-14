@@ -168,75 +168,6 @@ static void game_turn_send_transport(struct game_s *g)
     }
 }
 
-/* Max. population values: Each planet has three max_pop variables which are
- * affected by the ECO projects in different ways.
- *
- * The base size, max_pop1, is the size of the planet at the start of the game.
- * It is used to determine the increase in max. population from (advanced) soil
- * enrichment; max_pop1 itself is increased only when applying atmospheric
- * terraforming to some types of hostile planets.
- *
- * max_pop2 is max_pop1 modified by (advanced) soil enrichment. Note that for
- * planets that are Fertile or Gaia at the start of the game,
- * max_pop1 == max_pop2. They are only different when the planets were made
- * Fertile or Gaia by a player (human or AI).
- *
- * max_pop3 is the actual population maximum. It equals max_pop2 modified by
- * terraforming and/or by bioweapon damage.
- */
-static void game_turn_atmos_tform(struct planet_s *p) {
-    int max_pop_increase;
-    if (p->type < PLANET_TYPE_DEAD) {
-        max_pop_increase = 20;
-    } else if (p->type < PLANET_TYPE_BARREN) {
-        max_pop_increase = 10;
-    } else {
-        max_pop_increase = 0;
-    }
-    /* WASBUG max_pop += moved from outside if (bc >= cost) */
-    p->type = PLANET_TYPE_MINIMAL;
-    p->max_pop1 += max_pop_increase;
-    p->max_pop2 += max_pop_increase;
-    p->max_pop3 += max_pop_increase;
-    p->growth = PLANET_GROWTH_NORMAL;
-}
-
-static void game_turn_soil_enrich(struct planet_s *p, int best_tform, bool advanced) {
-    int max_pop_increase = 0;
-    int16_t old_max_pop2 = 0;
-    p->growth = advanced ? PLANET_GROWTH_GAIA : PLANET_GROWTH_FERTILE;
-    if (advanced) {
-        max_pop_increase = (p->max_pop1 / 10) * 5;
-        /* BUG? If we want to calculate 50% of the base size, rounded up
-        * to the next multiple of 5, we'd check if p->max_pop1 % 10 != 0
-        * below. Instead, we add an additional +5 unless the base size is
-        * in the range 50-59 or 100-109. Penalizing these specific sizes
-        * seems weird and arbitrary. */
-        if ((p->max_pop1 / 10) % 5) {
-            max_pop_increase += 5;
-        }
-    } else {
-        max_pop_increase = (p->max_pop1 / 20) * 5;
-        /* BUG? See above. */
-        if ((p->max_pop1 / 20) % 5) {
-            max_pop_increase += 5;
-        }
-    }
-    SETMAX(max_pop_increase, 5);
-    old_max_pop2 = p->max_pop2;
-    p->max_pop2 = p->max_pop1 + max_pop_increase;
-    p->max_pop3 += p->max_pop2 - old_max_pop2;
-    if (game_num_reset_tform_to_max) {
-        /* BUG? Having p->max_pop3 > (best_tform + p->max_pop2) seems
-         * only possible when conquering a planet from a race with better
-         * terraforming tech. Is it intended that the player loses the
-         * more advanced terraforming here, or is this a sanity check
-         * with unintended consequences? */
-        SETMIN(p->max_pop3, (best_tform + p->max_pop2));
-    }
-    SETMIN(p->max_pop3, game_num_max_pop);
-}
-
 static inline void game_add_planet_to_eco_finished(struct planet_s *p)
 {
     BOOLVEC_SET1(p->finished, FINISHED_SOILATMOS);
@@ -301,7 +232,7 @@ static void game_planet_build_eco_do(const struct game_s *g, struct planet_s *p)
             if ((ecoprod > 0) && e->have_atmos_terra && (p->growth == PLANET_GROWTH_HOSTILE)) {
                 p->bc_to_ecoproj += ecoprod;
                 if (p->bc_to_ecoproj >= game_num_atmos_cost) {
-                    game_turn_atmos_tform(p);
+                    game_atmos_tform(p);
                     ecoprod = p->bc_to_ecoproj - game_num_atmos_cost;
                     p->bc_to_ecoproj = 0;
                     /* WASBUG MOO1 did p->bc_to_ecoproj -= game_num_atmos_cost
@@ -315,7 +246,7 @@ static void game_planet_build_eco_do(const struct game_s *g, struct planet_s *p)
             if ((ecoprod > 0) && e->have_soil_enrich && (p->growth == PLANET_GROWTH_NORMAL)) {
                 p->bc_to_ecoproj += ecoprod;
                 if (p->bc_to_ecoproj > game_num_soil_cost) {
-                    game_turn_soil_enrich(p, (int)e->have_terraform_n, false);
+                    game_soil_enrich(p, (int)e->have_terraform_n, false);
                     ecoprod = p->bc_to_ecoproj - game_num_soil_cost;
                     /* p->bc_to_ecoproj carries over as partial progress
                      * towards advanced soil enrichment. */
@@ -330,7 +261,7 @@ static void game_planet_build_eco_do(const struct game_s *g, struct planet_s *p)
             if ((ecoprod > 0) && e->have_adv_soil_enrich && (p->growth < PLANET_GROWTH_GAIA) && (p->growth > PLANET_GROWTH_HOSTILE)) {
                 p->bc_to_ecoproj += ecoprod;
                 if (p->bc_to_ecoproj > game_num_adv_soil_cost) {
-                    game_turn_soil_enrich(p, (int)e->have_terraform_n, true);
+                    game_soil_enrich(p, (int)e->have_terraform_n, true);
                     ecoprod = p->bc_to_ecoproj - game_num_adv_soil_cost;
                     p->bc_to_ecoproj = 0;
                     /* WASBUG MOO1 did not reset p->bc_to_ecoproj to 0, but
@@ -699,7 +630,10 @@ static void game_turn_reserve(struct game_s *g)
 static inline void game_add_planet_to_build_finished(struct game_s *g, uint8_t pli, player_id_t owner, uint8_t type)
 {
     planet_t *p = &(g->planet[pli]);
-    if (BOOLVEC_TBL_IS1(g->evn.msg_filter, owner, type)) {
+    if (1
+      && BOOLVEC_TBL_IS1(g->evn.msg_filter, owner, type)
+      && (BOOLVEC_IS0(p->extras, PLANET_EXTRAS_GOVERNOR) || BOOLVEC_TBL_IS1(g->evn.msg_filter, owner, FINISHED_GOVERNOR))
+    ) {
         BOOLVEC_SET1(p->finished, type);
         ++g->evn.build_finished_num[owner];
     } else {
@@ -726,7 +660,7 @@ static void game_turn_build_ind(struct game_s *g)
             bonus = (e->race == RACE_MEKLAR) ? 2 : 0;
             v = e->colonist_oper_factories - p->pop_oper_fact - bonus;
             if (v > 0) {
-                v = v * (e->factory_cost / 2);
+                v *= (e->factory_cost / 2);
             } else {
                 v = 0;
             }
@@ -1807,6 +1741,12 @@ struct game_end_s game_turn_process(struct game_s *g)
         if (p->owner != PLAYER_NONE && BOOLVEC_IS1(p->extras, PLANET_EXTRAS_GOVERNOR)) {
             game_planet_govern(g, p);
         }
+    }
+    game_update_total_research(g);
+    for (player_id_t i = PLAYER_0; i < g->players; ++i) {
+        empiretechorbit_t *e = &(g->eto[i]);
+        if (g->evn.gov_eco_mode[i] & GOVERNOR_ECO_MODE_AUTO_TECH)
+            game_tech_set_to_opt(e);
     }
     return game_end;
 }

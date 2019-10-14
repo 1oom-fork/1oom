@@ -123,6 +123,9 @@ static void ui_starmap_draw_sliders_and_prod(struct starmap_data_s *d)
     for (planet_slider_i_t i = PLANET_SLIDER_SHIP; i < PLANET_SLIDER_NUM; ++i) {
         ui_draw_filled_rect(227, 81 + 11 * i, 244, 90 + 11 * i, p->slider_lock[i] ? 0x22 : 0, ui_scale);
     }
+    if (ui_draw_govern_color(p, d->api) && BOOLVEC_IS1(p->extras, PLANET_EXTRAS_GOV_BOOST_BUILD)) {
+        ui_draw_filled_rect( 228, 71, 312, 77, BOOLVEC_IS1(p->extras, PLANET_EXTRAS_GOV_BOOST_PROD) ? 0x81 : 0xc3, ui_scale);
+    }
 
     lbxgfx_draw_frame(224, 5, ui_data.gfx.starmap.yourplnt, UI_SCREEN_W, ui_scale);
     {
@@ -132,11 +135,12 @@ static void ui_starmap_draw_sliders_and_prod(struct starmap_data_s *d)
             ui_draw_box1(227, 8, 310, 20, c, c, ui_scale);
         }
     }
-    lbxfont_select(2, 0xd, 0xe, 0);
+    lbxfont_select(2, !p->reserve ? 0xe : p->reserve<p->prod_after_maint/2 ? 0xb : 0x0, 0xe, 0);
     lib_sprintf(buf, sizeof(buf), "%i \x02(%i)\x01", p->prod_after_maint, p->total_prod);
     lbxfont_print_str_right(x, 72, buf, UI_SCREEN_W, ui_scale);
     lbxfont_select(2, 0xd, 0, 0);
     lbxfont_print_num_right(265, 61, p->pop, UI_SCREEN_W, ui_scale);
+    lbxfont_select(2, p->missile_bases < p->target_bases ? 0xb : 0xd, 0, 0);
     lbxfont_print_num_right(x, 61, p->missile_bases, UI_SCREEN_W, ui_scale);
 
     for (planet_slider_i_t i = PLANET_SLIDER_SHIP; i < PLANET_SLIDER_NUM; ++i) {
@@ -200,6 +204,29 @@ static void ui_starmap_draw_sliders_and_prod(struct starmap_data_s *d)
             x -= 9;
         }
         lbxfont_print_str_right(x, 127, buf, UI_SCREEN_W, ui_scale);
+    }
+    if (d->gov_highlight) {
+            if (d->gov_highlight == 5) {
+            uint8_t const gov_boost_col[3] = { 0x00, 0xc4, 0x82 };
+            int i = 0;
+            if (BOOLVEC_IS1(p->extras, PLANET_EXTRAS_GOV_BOOST_BUILD)) ++i;
+            if (BOOLVEC_IS1(p->extras, PLANET_EXTRAS_GOV_BOOST_PROD)) ++i;
+            ui_draw_filled_rect( 228, 71, 312, 77, gov_boost_col[i], ui_scale);
+            lbxfont_select(2, 0, 0, 0);
+            lbxfont_print_str_center( 270, 72, game_str_tbl_gv_reserve_alt[i], UI_SCREEN_W, ui_scale);
+        } else if (d->gov_highlight == 4) {
+            ui_draw_filled_rect( 273, 60, 312, 66, 0x46, ui_scale);
+            lbxfont_select(2, 0, 0, 0);
+            int t = p->target_bases;
+            SETMAX(t, p-> missile_bases);
+            lbxfont_print_str_normal(275, 61, "gov", UI_SCREEN_W, ui_scale);
+            lbxfont_print_num_right(311, 61, t, UI_SCREEN_W, ui_scale);
+        } else {
+            uint8_t const gov_col[4] = { 0, 0x55, 0x46, 0x71 };
+            ui_draw_filled_rect( 288, 60+22*d->gov_highlight, 312, 66+22*d->gov_highlight, gov_col[d->gov_highlight], ui_scale);
+            lbxfont_select(2, 0, 0, 0);
+            lbxfont_print_str_center(300, 61+22*d->gov_highlight, "gov", UI_SCREEN_W, ui_scale);
+        }
     }
 }
 
@@ -411,6 +438,21 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
         tx = (g->nebula_x[i] - x) * 2 + 7;
         ty = (g->nebula_y[i] - y) * 2 + 7;
         lbxgfx_draw_frame_offs(tx, ty, ui_data.gfx.starmap.nebula[i], STARMAP_LIMITS, UI_SCREEN_W, starmap_scale);
+        if (0) { /* code for drawing the nebula bounding boxes in the starmap */
+            for (int j = 0; j < 4; ++j) {
+                int x0, x1, y0, y1;
+                x0 = 2 * (g->nebula_x0[i][j] - x) + 6;
+                x1 = 2 * (g->nebula_x1[i][j] - x) + 8;
+                y0 = 2 * (g->nebula_y0[i][j] - y) + 6;
+                y1 = 2 * (g->nebula_y1[i][j] - y) + 8;
+                ui_draw_line_limit(tx - 2, ty, tx + 2, ty, 4, starmap_scale);
+                ui_draw_line_limit(tx, ty - 2, tx, ty + 2, 4, starmap_scale);
+                ui_draw_line_limit(x0, y0, x1, y0, 4, starmap_scale);
+                ui_draw_line_limit(x0, y1, x1, y1, 4, starmap_scale);
+                ui_draw_line_limit(x0, y0, x0, y1, 4, starmap_scale);
+                ui_draw_line_limit(x1, y0, x1, y1, 4, starmap_scale);
+            }
+        }
     }
     if (ui_data.starmap.flag_show_grid) {
         int x0, y0, x1, y1;
@@ -581,6 +623,18 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
                 ty = (p->y - y) * 2 + i * 6 + 8;
                 lbxgfx_draw_frame_offs(tx, ty, gfx, STARMAP_LIMITS, UI_SCREEN_W, starmap_scale);
             }
+        }
+    }
+    if (d->dist_i >= 0) {
+        int j = g->planet_focus_i[d->api];
+        const planet_t *p = &g->planet[d->dist_i], *q = &g->planet[j];
+        int px = 2 * (p->x - x) + 14, py = 2 * (p->y - y) + 14;
+        int qx = 2 * (q->x - x) + 14, qy = 2 * (q->y - y) + 14;
+        if ( !(px<slx0 || px>slx1 || py<sly0 || py>sly1 || qx<slx0 || qx>slx1 || qy<sly0 || qy>sly1) ) {
+            ui_draw_line1(px, py, qx, qy, 0x06, starmap_scale);
+            lbxfont_select(0, 0, 0, 0);
+            int l = g->gaux->star_dist[j][d->dist_i];
+            lbxfont_print_num_center( (px + qx) / 2, (py + qy) / 2 - 2, l, UI_SCREEN_W, starmap_scale);
         }
     }
 }

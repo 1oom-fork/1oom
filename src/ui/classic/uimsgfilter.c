@@ -33,7 +33,7 @@ static void msgfilter_draw_cb(void *vptr)
     struct msgfilter_data_s *d = vptr;
     const int x = 56, y = 10;
     int y0 = y + 15;
-    ui_draw_filled_rect(x, y, x + 100, y + 80, 0x06, ui_scale);
+    ui_draw_filled_rect(x, y, x + 100, y + 88, 0x06, ui_scale);
     lbxfont_select(0, 0xd, 0, 0);
     lbxfont_print_str_normal(x + 10, y + 5, game_str_mf_title, UI_SCREEN_W, ui_scale);
     lbxfont_select(0, 0, 0, 0);
@@ -76,8 +76,8 @@ void ui_msg_filter(struct game_s *g, player_id_t pi)
             }
         }
     }
-    oi_cancel = uiobj_add_t0(x + 10, y + 64, "", ui_data.gfx.starmap.reloc_bu_cancel, MOO_KEY_ESCAPE);
-    oi_accept = uiobj_add_t0(x + 56, y + 64, "", ui_data.gfx.starmap.reloc_bu_accept, MOO_KEY_SPACE);
+    oi_cancel = uiobj_add_t0(x + 10, y + 72, "", ui_data.gfx.starmap.reloc_bu_cancel, MOO_KEY_ESCAPE);
+    oi_accept = uiobj_add_t0(x + 56, y + 72, "", ui_data.gfx.starmap.reloc_bu_accept, MOO_KEY_SPACE);
 
     uiobj_set_callback_and_delay(msgfilter_draw_cb, &d, 1);
 

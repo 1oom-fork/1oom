@@ -225,7 +225,7 @@ void ui_starmap_set_pos(const struct game_s *g, int x, int y)
 void ui_starmap_do(struct game_s *g, player_id_t active_player)
 {
     bool flag_done = false;
-    int16_t oi_b, oi_c, oi_scroll, oi_starview1, oi_starview2, oi_shippic, oi_finished, oi_equals,
+    int16_t oi_b, oi_c, oi_scroll, oi_starview1, oi_starview2, oi_shippic, oi_finished, oi_equals, oi_hash,
             oi_f2, oi_f3, oi_f4, oi_f5, oi_f6, oi_f7, oi_f8, oi_f9, oi_f10,
             oi_alt_galaxy, oi_alt_m, oi_alt_c, oi_alt_p, oi_alt_r, oi_alt_events,
             oi_governor, oi_wheelname, oi_wheelshippic, oi_xtramenu, oi_search
@@ -237,6 +237,8 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
     d.g = g;
     d.api = active_player;
     d.anim_delay = 0;
+    d.bottom_highlight = d.dist_i = -1;
+    d.gov_highlight = 0;
 
     ui_delay_1();
     ui_sound_stop_music();  /* or fade? */
@@ -257,6 +259,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
         oi_shippic = UIOBJI_INVALID; \
         oi_finished = UIOBJI_INVALID; \
         oi_equals = UIOBJI_INVALID; \
+        oi_hash = UIOBJI_INVALID; \
         oi_governor = UIOBJI_INVALID; \
         oi_wheelname = UIOBJI_INVALID; \
         oi_wheelshippic = UIOBJI_INVALID; \
@@ -265,6 +268,12 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
         d.sm.oi_reloc = UIOBJI_INVALID; \
         d.sm.oi_trans = UIOBJI_INVALID; \
         UIOBJI_SET_TBL3_INVALID(d.sm.oi_tbl_slider_lock, d.sm.oi_tbl_slider_minus, d.sm.oi_tbl_slider_plus); \
+        d.sm.oi_gov_ship = UIOBJI_INVALID; \
+        d.sm.oi_gov_reserve = UIOBJI_INVALID; \
+        d.sm.oi_gov_tech = UIOBJI_INVALID; \
+        d.sm.oi_gov_bases = UIOBJI_INVALID; \
+        d.sm.oi_gov_wheel_bases = UIOBJI_INVALID; \
+        d.sm.oi_gov_boost = UIOBJI_INVALID; \
     } while (0)
 
     UIOBJ_CLEAR_LOCAL();
@@ -377,7 +386,63 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
         } else if (oi1 == oi_search) {
             ui_sound_play_sfx_24();
             ui_search_set_pos(g, active_player);
+        } else if (oi1 == d.sm.oi_gov_ship) {
+            ui_sound_play_sfx_24();
+            BOOLVEC_SET1(p->extras, PLANET_EXTRAS_GOVERNOR);
+            BOOLVEC_SET1(p->extras, PLANET_EXTRAS_GOV_SPEND_REST_SHIP);
+            BOOLVEC_SET0(p->extras, PLANET_EXTRAS_GOV_SPEND_REST_IND);
+            game_planet_govern(g, p);
+        } else if (oi1 == d.sm.oi_gov_reserve) {
+            ui_sound_play_sfx_24();
+            BOOLVEC_SET1(p->extras, PLANET_EXTRAS_GOVERNOR);
+            BOOLVEC_SET0(p->extras, PLANET_EXTRAS_GOV_SPEND_REST_SHIP);
+            BOOLVEC_SET1(p->extras, PLANET_EXTRAS_GOV_SPEND_REST_IND);
+            game_planet_govern(g, p);
+        } else if (oi1 == d.sm.oi_gov_tech) {
+            ui_sound_play_sfx_24();
+            BOOLVEC_SET1(p->extras, PLANET_EXTRAS_GOVERNOR);
+            BOOLVEC_SET0(p->extras, PLANET_EXTRAS_GOV_SPEND_REST_SHIP);
+            BOOLVEC_SET0(p->extras, PLANET_EXTRAS_GOV_SPEND_REST_IND);
+            game_planet_govern(g, p);
+        } else if (oi1 == d.sm.oi_gov_bases || (oi1 == d.sm.oi_gov_wheel_bases && scrollmisc > 0)) {
+            if (BOOLVEC_IS1(p->extras, PLANET_EXTRAS_GOVERNOR)) {
+                ui_sound_play_sfx_24();
+                int t = p->target_bases;
+                SETMAX(t, p->missile_bases);
+                ++t;
+                SETMIN(t, 250);
+                if (t != p->target_bases) {
+                    ui_sound_play_sfx_24();
+                    p->target_bases = t;
+                    game_planet_govern(g, p);
+                }
+            }
+        } else if (oi1 == d.sm.oi_gov_wheel_bases && scrollmisc < 0) {
+            if (BOOLVEC_IS1(p->extras, PLANET_EXTRAS_GOVERNOR)) {
+                int t = p->target_bases;
+                --t;
+                SETMAX(t, p->missile_bases);
+                if (t != p->target_bases) {
+                    ui_sound_play_sfx_24();
+                    p->target_bases = t;
+                    game_planet_govern(g, p);
+                }
+            }
+        } else if (oi1 == d.sm.oi_gov_boost) {
+            BOOLVEC_SET1(p->extras, PLANET_EXTRAS_GOVERNOR);
+            if (BOOLVEC_IS1(p->extras, PLANET_EXTRAS_GOV_BOOST_PROD)) {
+                BOOLVEC_SET0(p->extras, PLANET_EXTRAS_GOV_BOOST_BUILD);
+                BOOLVEC_SET0(p->extras, PLANET_EXTRAS_GOV_BOOST_PROD);
+            } else if (BOOLVEC_IS1(p->extras, PLANET_EXTRAS_GOV_BOOST_BUILD)) {
+                BOOLVEC_SET1(p->extras, PLANET_EXTRAS_GOV_BOOST_BUILD);
+                BOOLVEC_SET1(p->extras, PLANET_EXTRAS_GOV_BOOST_PROD);
+            } else {
+                BOOLVEC_SET1(p->extras, PLANET_EXTRAS_GOV_BOOST_BUILD);
+                BOOLVEC_SET0(p->extras, PLANET_EXTRAS_GOV_BOOST_PROD);
+            }
+            game_planet_govern(g, p);
         }
+
         for (int i = 0; i < g->enroute_num; ++i) {
             if (oi1 == d.oi_tbl_enroute[i]) {
                 ui_data.starmap.fleet_selected = i;
@@ -493,7 +558,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
         } else if (oi1 == oi_alt_c) {
             ui_starmap_set_pos_focus(g, active_player);
             ui_sound_play_sfx_24();
-        } else if (oi1 == oi_equals) {
+        } else if (oi1 == oi_equals || oi1 == oi_hash) {
             if (p->prod_after_maint < p->reserve) {
                 ui_sound_play_sfx_06();
             } else {
@@ -614,8 +679,19 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
                 break;
             }
         }
+
+        d.bottom_highlight = d.dist_i = -1;
+        d.gov_highlight = 0;
+
+        for (int i = 0; i < g->galaxy_stars; ++i) {
+            if ((oi2 == d.oi_tbl_stars[i]) && !g->evn.build_finished_num[active_player]) {
+                if (i == g->planet_focus_i[active_player]) break;
+                d.dist_i=i;
+                break;
+            }
+        }
+
         p = &(g->planet[g->planet_focus_i[active_player]]);
-        d.bottom_highlight = -1;
         if (oi2 == d.oi_gameopts) {
             d.bottom_highlight = 0;
         } else if (oi2 == d.oi_design) {
@@ -632,6 +708,16 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             d.bottom_highlight = 6;
         } else if (oi2 == d.oi_next_turn) {
             d.bottom_highlight = 7;
+        } else if (oi2 == d.sm.oi_gov_ship) {
+            d.gov_highlight = 1;
+        } else if (oi2 == d.sm.oi_gov_reserve) {
+            d.gov_highlight = 2;
+        } else if (oi2 == d.sm.oi_gov_tech) {
+            d.gov_highlight = 3;
+        } else if (oi2 == d.sm.oi_gov_bases) {
+            if (BOOLVEC_IS1(p->extras, PLANET_EXTRAS_GOVERNOR)) d.gov_highlight = 4;
+        } else if (oi2 == d.sm.oi_gov_boost) {
+            d.gov_highlight = 5;
         }
         if (!flag_done) {
             ui_starmap_draw_cb1(&d);
@@ -639,6 +725,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             UIOBJ_CLEAR_LOCAL();
             if (p->owner == active_player) {
                 oi_equals = uiobj_add_inputkey(MOO_KEY_EQUALS);
+                oi_hash = uiobj_add_inputkey(MOO_KEY_HASH);
             }
             oi_f2 = uiobj_add_inputkey(MOO_KEY_F2);
             oi_f3 = uiobj_add_inputkey(MOO_KEY_F3);
@@ -650,7 +737,8 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             oi_f9 = uiobj_add_inputkey(MOO_KEY_F9);
             oi_f10 = uiobj_add_inputkey(MOO_KEY_F10);
             if ((p->owner == active_player) && p->missile_bases) {
-                oi_b = uiobj_add_mousearea(272, 59, 312, 67, MOO_KEY_b);
+                /* oi_b = uiobj_add_mousearea(272, 59, 312, 67, MOO_KEY_b); */
+                oi_b = uiobj_add_inputkey(MOO_KEY_b);
             }
             oi_c = uiobj_add_inputkey(MOO_KEY_c);
             ui_starmap_add_oi_bottom_buttons(&d);
@@ -663,6 +751,12 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
                 oi_wheelshippic = uiobj_add_mousewheel(228, 139, 275, 175, &scrollmisc);
                 if (ui_extra_enabled) {
                     oi_governor = uiobj_add_mousearea(227, 8, 310, 20, MOO_KEY_UNKNOWN);
+                    d.sm.oi_gov_ship = uiobj_add_mousearea( 288, 82, 312, 88, MOO_KEY_UNKNOWN );
+                    d.sm.oi_gov_reserve = uiobj_add_mousearea( 288, 104, 312, 110, MOO_KEY_UNKNOWN );
+                    d.sm.oi_gov_tech = uiobj_add_mousearea( 288, 126, 312, 132, MOO_KEY_UNKNOWN );
+                    d.sm.oi_gov_bases = uiobj_add_mousearea( 273, 60, 312, 66, MOO_KEY_UNKNOWN );
+                    d.sm.oi_gov_wheel_bases = uiobj_add_mousewheel( 273, 60, 312, 66, &scrollmisc);
+                    d.sm.oi_gov_boost = uiobj_add_mousearea( 226, 71, 312, 77, MOO_KEY_UNKNOWN );
                 }
             }
             if (ui_extra_enabled) {

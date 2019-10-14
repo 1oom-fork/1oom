@@ -146,7 +146,7 @@ static void game_generate_planets(struct game_s *g)
                   && (p->y >= g->nebula_y0[k][j]) && (p->y <= g->nebula_y1[k][j])
                 ) {
                     in_nebula = true;
-                    /* could break out here */
+                    break;
                 }
             }
         }
@@ -260,11 +260,11 @@ static void game_generate_planets(struct game_s *g)
                     break;
                 case PLANET_TYPE_DEAD:
                 case PLANET_TYPE_TUNDRA:
-                    a = rnd_1_n(7, &g->seed) * 5 + 0xf;
+                    a = rnd_1_n(7, &g->seed) * 5 + 15;
                     break;
                 case PLANET_TYPE_BARREN:
                 case PLANET_TYPE_MINIMAL:
-                    a = rnd_1_n(5, &g->seed) * 5 + 0x19;
+                    a = rnd_1_n(5, &g->seed) * 5 + 25;
                     break;
                 /*
                 case PLANET_TYPE_DESERT:
@@ -273,13 +273,13 @@ static void game_generate_planets(struct game_s *g)
                 case PLANET_TYPE_OCEAN:
                 */
                 default:
-                    a = rnd_1_n(4, &g->seed) * 5 + (((int)(p->type)) - (int)PLANET_TYPE_DESERT) * 0xa + 0x1e;
+                    a = rnd_1_n(4, &g->seed) * 5 + (((int)(p->type)) - (int)PLANET_TYPE_DESERT) * 10 + 30;
                     break;
                 case PLANET_TYPE_JUNGLE:
-                    a = rnd_1_n(4, &g->seed) * 5 + 0x46;
+                    a = rnd_1_n(4, &g->seed) * 5 + 70;
                     break;
                 case PLANET_TYPE_TERRAN:
-                    a = rnd_1_n(4, &g->seed) * 5 + 0x50;
+                    a = rnd_1_n(4, &g->seed) * 5 + 80;
                     break;
             }
             p->max_pop2 = a;
@@ -363,12 +363,8 @@ static void game_generate_planets(struct game_s *g)
         if (p->type < PLANET_TYPE_MINIMAL) {
             p->growth = PLANET_GROWTH_HOSTILE;
         } else if ((p->type > PLANET_TYPE_DESERT) && (rnd_1_n(12, &g->seed) == 1)) {
-            uint16_t v;
-            p->growth = PLANET_GROWTH_FERTILE;
-            v = p->max_pop2 + (p->max_pop2 / 20) * 5;
-            p->max_pop2 = v;
-            p->max_pop3 = v;
-            p->max_pop1 = v;
+            game_soil_enrich(p, 0, 0);
+            p->max_pop2 = p->max_pop1;
         }
         p->owner = PLAYER_NONE;
         p->prev_owner = PLAYER_NONE;
@@ -934,6 +930,7 @@ static void game_generate_misc(struct game_s *g)
             e->bounty_collect[pli2] = PLAYER_NONE;
         }
         g->evn.msg_filter[pli][0] = IS_HUMAN(g, pli) ? FINISHED_DEFAULT_FILTER : 0;
+        BOOLVEC_SET1(g->evn.gov_no_stargates, pli);
     }
 }
 

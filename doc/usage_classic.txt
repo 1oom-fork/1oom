@@ -51,7 +51,6 @@ The following new UI features are always enabled/available:
 - Right-clicking on the ship image or Ships button cycles the other way
 - Ind slider no longer shows 0.N/y when at max factories
 - Eco slider shows Clean/+N Pop past T-Form on a full planet
-- Bases can be scrapped by clicking on the Bases text
 - Clicking cycles selection of overlapping fleets
 - The keys UHJK scroll the galaxy movement screen map
 - Planets can be searched for by pressing the / key
@@ -67,16 +66,39 @@ or pressing Alt-X in the main menu enables the following extra UI features:
 - Fleet deployment shows the amount of available ships
 - Sending fewer than all ships does not deselect the orbit fleet
 - Clicking a selected destination star again works as Accept for fleet send etc
+- Hovering over a planet draws a ruler with the distance in parsec from the
+  currently selected planet if is in the screen.
 - Planetary governor can be enabled or disabled by clicking on planet name in
-  the galaxy movement screen
+  the galaxy movement screen, setting reserve speding mode (see below) or by
+  clicking on the respective amount fields (right of the slider) for Ships, Ind
+  or Tech. The latter also sets the governor  production focus for the planet.
 - Right clicking on planet name in the galaxy movement screen opens a governor
-  screen for setting target missile base amount or readjusting all planets
+  screen for all governor related local and global settings. The latter include
+  Eco mode, buildup mode and whether to build stargates. All local settings
+  are also reachable directly over the planet interface.
+- Clicking on the planetary production field activates the governor and cycles
+  through the reserve spending modes for the planet. The modes are "no reserve"
+  (never), "buildup" (only during buildup) and "production" (always; useful for
+  Ultra Rich or Artifacts planets).
+- When a planet is governed, clicking on or mouse wheeling over the bases field
+  allow to increase or adjust the target bases amount.
 - Eco slider shows fractional population growth if growth is less than 10
 - Summary of forces shown before ship combat
+- The plantary production field indicates whether the planet currently receives
+  reserve spending (yellow = none, red = partial, while = full). The same
+  colors are also used in the Planets screen.
+- Clicking on the production field in the Planets screen resets the allocated
+  reserve to zero or (when it is already zero) directly opens the reserve
+  transfer dialog.
+- Nebuals planets show "NEB" in their shields field. 
 - New Auto and Retreat buttons for space combat autoresolve
-- Pressing = on the Tech screen adjusts only the unlocked sliders
+- Pressing = or # on the Tech screen adjusts only the unlocked sliders
 - Tech screen has lights showing when you reach max research bonus
 - Clicking on the Tech screen lights sets the slider to bonus limit
+- Tech bonus amount is shown in the slider background
+- Tech screen has additional buttons to equalize spending (= or #), set to
+  minimum for bonus (m) and for optimum allocation (o). The latter can be
+  automated by clicking the level/auto button (t) in the upper right corner.
 - Pressing E or clicking the bottom left corner near Game opens an extra menu:
     - Eco readjustment for Clean as save/reload used to do in v1.3
     - The ship production selection can be set everywhere
@@ -87,6 +109,7 @@ or pressing Alt-X in the main menu enables the following extra UI features:
   your last planet of choice
 - Clicking on #, Name, etc on Planets screen sorts the list
 - Clicking on Station or ship names on Fleet screen sorts the list
+- The = key can be substitued by the # key (useful for some non-US keyboards)
 
 Additional game options are settable with uiextra in the New Game screen.
 The options are tied to the save file, cannot be altered and can be inspected 

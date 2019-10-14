@@ -26,14 +26,18 @@
 
 struct govern_data_s {
     int spend_rest;
+    int reserve;
     governor_eco_mode_t eco_mode;
+    int buildup;
     uint16_t target;
     enum {
         UI_GV_HIGHLIGHT_NONE,
         UI_GV_HIGHLIGHT_ECO_MODE,
+        UI_GV_HIGHLIGHT_BUILDUP,
         UI_GV_HIGHLIGHT_STARGATE,
         UI_GV_HIGHLIGHT_ADJUST,
         UI_GV_HIGHLIGHT_SPENDTHIS,
+        UI_GV_HIGHLIGHT_RESERVE,
         UI_GV_HIGHLIGHT_SPENDALL
     } highlight;
     bool allow_stargates;
@@ -54,7 +58,7 @@ static void govern_draw_cb(void *vptr)
     if (d->my_planet) {
         const int x = 56;
         int y = 45;
-        ui_draw_filled_rect(x, y, x + 160, y + 25, 0x06, ui_scale);
+        ui_draw_filled_rect(x, y, x + 160, y + 35, 0x06, ui_scale);
         lbxfont_select(0, 0xd, 0, 0);
         y += 5;
         lbxfont_print_str_normal(x + 5, y, game_str_gv_thispl, UI_SCREEN_W, ui_scale);
@@ -62,11 +66,16 @@ static void govern_draw_cb(void *vptr)
         lib_sprintf(ui_data.strbuf, UI_STRBUF_SIZE, "%s %s", game_str_gv_rest, game_str_tbl_gv_rest[d->spend_rest]);
         y += 10;
         lbxfont_print_str_normal(x + 5, y, ui_data.strbuf, UI_SCREEN_W, ui_scale);
+
+        lbxfont_select(0, (d->highlight == UI_GV_HIGHLIGHT_RESERVE) ? 0x1 : 0x0, 0, 0);
+        sprintf(ui_data.strbuf, "%s: %s", game_str_gv_reserve, game_str_tbl_gv_reserve[d->reserve]);
+        y += 8;
+        lbxfont_print_str_normal(x + 5, y, ui_data.strbuf, UI_SCREEN_W, ui_scale);
     }
     {
         const int x = 56;
-        int y = 110;
-        ui_draw_filled_rect(x, y, x + 160, y + 33, 0x06, ui_scale);
+        int y = 102;
+        ui_draw_filled_rect(x, y, x + 160, y + 41, 0x06, ui_scale);
         lbxfont_select(0, 0xd, 0, 0);
         y += 5;
         lbxfont_print_str_normal(x + 5, y, game_str_gv_allpl, UI_SCREEN_W, ui_scale);
@@ -80,6 +89,10 @@ static void govern_draw_cb(void *vptr)
         y += 8;
         lib_sprintf(ui_data.strbuf, UI_STRBUF_SIZE, "%s: %s", game_str_gv_ecom, game_str_tbl_gv_ecom[d->eco_mode]);
         lbxfont_select(0, (d->highlight == UI_GV_HIGHLIGHT_ECO_MODE) ? 0x1 : 0x0, 0, 0);
+        lbxfont_print_str_normal(x + 5, y, ui_data.strbuf, UI_SCREEN_W, ui_scale);
+        y += 8;
+        sprintf(ui_data.strbuf, "%s: %s", game_str_gv_buildup, game_str_tbl_gv_buildup[d->buildup]);
+        lbxfont_select(0, (d->highlight == UI_GV_HIGHLIGHT_BUILDUP) ? 0x1 : 0x0, 0, 0);
         lbxfont_print_str_normal(x + 5, y, ui_data.strbuf, UI_SCREEN_W, ui_scale);
     }
     {
@@ -99,7 +112,8 @@ void ui_govern(struct game_s *g, player_id_t pi)
 {
     struct govern_data_s d;
     bool flag_done = false;
-    int16_t oi_cancel, oi_accept, oi_p, oi_m, oi_p10, oi_m10, oi_adjust, oi_wheel, oi_spendthis, oi_sg, oi_ecom, oi_spendall;
+    int16_t oi_cancel, oi_accept, oi_p, oi_m, oi_p10, oi_m10, oi_adjust, oi_wheel, 
+            oi_spendthis, oi_sg, oi_ecom, oi_spendall, oi_reserve, oi_buildup;
     const int x = 56;
     int y = 10;
     int16_t scroll = 0;
@@ -111,11 +125,16 @@ void ui_govern(struct game_s *g, player_id_t pi)
     if (d.my_planet) {
         d.target = p->target_bases;
         d.spend_rest = (p->extras[0] >> 1) & 3;
+        d.reserve = BOOLVEC_IS1(p->extras, PLANET_EXTRAS_GOV_BOOST_BUILD) +
+                    BOOLVEC_IS1(p->extras, PLANET_EXTRAS_GOV_BOOST_PROD);
     } else {
         d.target = 0;
         d.spend_rest = 0;
+        d.reserve = 0;
     }
-    d.eco_mode = g->evn.gov_eco_mode[pi];
+    d.eco_mode = (g->evn.gov_eco_mode[pi] & GOVERNOR_ECO_MODE_MASK);
+    d.buildup = ((g->evn.gov_eco_mode[pi] & GOVERNOR_BUILDUP_MIL) != 0) +
+                 ((g->evn.gov_eco_mode[pi] & GOVERNOR_BUILDUP_FULL) != 0);
     d.allow_stargates = BOOLVEC_IS0(g->evn.gov_no_stargates, pi);
     ui_cursor_setup_area(1, &ui_cursor_area_tbl[0]);
 
@@ -139,13 +158,18 @@ void ui_govern(struct game_s *g, player_id_t pi)
     y = 45 + 15;
     if (d.my_planet) {
         oi_spendthis = uiobj_add_mousearea(x, y, x + 160, y + 7, MOO_KEY_r);
+        y += 8;
+        oi_reserve = uiobj_add_mousearea(x, y, x + 160, y + 7, MOO_KEY_UNKNOWN);
     } else {
         oi_spendthis = UIOBJI_INVALID;
+        oi_reserve = UIOBJI_INVALID;
     }
-    y = 110 + 15;
+    y = 102 + 15;
     oi_sg = uiobj_add_mousearea(x, y, x + 160, y + 7, MOO_KEY_s);
     y += 8;
     oi_ecom = uiobj_add_mousearea(x, y, x + 160, y + 7, MOO_KEY_e);
+    y += 8;
+    oi_buildup = uiobj_add_mousearea(x, y, x + 160, y + 7, MOO_KEY_UNKNOWN);
     y = 150 + 5;
     oi_adjust = uiobj_add_mousearea(x, y, x + 160, y + 7, MOO_KEY_o);
     y += 8;
@@ -171,6 +195,10 @@ void ui_govern(struct game_s *g, player_id_t pi)
                     d.highlight = UI_GV_HIGHLIGHT_SPENDTHIS;
                 } else if (oi2 == oi_spendall)  {
                     d.highlight = UI_GV_HIGHLIGHT_SPENDALL;
+                } else if (oi2 == oi_reserve)  {
+                    d.highlight = UI_GV_HIGHLIGHT_RESERVE;
+                } else if (oi2 == oi_buildup)  {
+                    d.highlight = UI_GV_HIGHLIGHT_BUILDUP;
                 }
             }
         }
@@ -208,6 +236,10 @@ void ui_govern(struct game_s *g, player_id_t pi)
             d.spend_rest = (d.spend_rest + 1) % 3;
             BOOLVEC_SET(p->extras, PLANET_EXTRAS_GOV_SPEND_REST_SHIP, ((d.spend_rest & 1) != 0));
             BOOLVEC_SET(p->extras, PLANET_EXTRAS_GOV_SPEND_REST_IND, ((d.spend_rest & 2) != 0));
+        } else if (oi == oi_reserve) {
+            d.reserve = (d.reserve + 1) % 3;
+            BOOLVEC_SET(p->extras, PLANET_EXTRAS_GOV_BOOST_BUILD, d.reserve >= 1);
+            BOOLVEC_SET(p->extras, PLANET_EXTRAS_GOV_BOOST_PROD, d.reserve >= 2);
         } else if (oi == oi_spendall) {
             ui_sound_play_sfx_24();
             for (uint8_t i = 0; i < g->galaxy_stars; ++i) {
@@ -223,7 +255,12 @@ void ui_govern(struct game_s *g, player_id_t pi)
             d.allow_stargates = !d.allow_stargates;
         } else if (oi == oi_ecom) {
             d.eco_mode = (d.eco_mode + 1) % GOVERNOR_ECO_MODE_NUM;
-            g->evn.gov_eco_mode[pi] = d.eco_mode;
+            g->evn.gov_eco_mode[pi] &= ~GOVERNOR_ECO_MODE_MASK;
+            g->evn.gov_eco_mode[pi] |= d.eco_mode;
+        } else if (oi == oi_buildup) {
+            d.buildup = (d.buildup + 1) % 3;
+            if (d.buildup >= 1) { g->evn.gov_eco_mode[pi] |= GOVERNOR_BUILDUP_MIL; } else { g->evn.gov_eco_mode[pi] &= ~GOVERNOR_BUILDUP_MIL; }
+            if (d.buildup >= 2) { g->evn.gov_eco_mode[pi] |= GOVERNOR_BUILDUP_FULL; } else { g->evn.gov_eco_mode[pi] &= ~GOVERNOR_BUILDUP_FULL; }
         }
         if (!flag_done) {
             govern_draw_cb(&d);
