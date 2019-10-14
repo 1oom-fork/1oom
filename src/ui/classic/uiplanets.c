@@ -176,8 +176,13 @@ static void planets_draw_cb(void *vptr)
                 sprintf(buf, "%c%i", c, v);
                 lbxfont_print_str_right(111, y0, buf, UI_SCREEN_W);
             }
-            lbxfont_print_str_right(149, y0, game_str_tbl_roman[p->shield], UI_SCREEN_W);
-            /*lbxfont_select(2, 6, 0, 0);*/
+            if (ui_extra_enabled && p->battlebg == 0) {
+                lbxfont_select(2, 1, 0, 0);
+                lbxfont_print_str_right(149, y0, "neb", UI_SCREEN_W);
+            } else {
+                lbxfont_print_str_right(149, y0, game_str_tbl_roman[p->shield], UI_SCREEN_W);
+            }
+            lbxfont_select(2, 6, 0, 0);
             lbxfont_print_num_right(132, y0, p->factories, UI_SCREEN_W);
             lbxfont_print_num_right(170, y0, p->missile_bases, UI_SCREEN_W);
             if (p->waste) {
