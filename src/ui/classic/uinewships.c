@@ -99,6 +99,7 @@ void ui_newships(struct game_s *g, int pi)
     d.sm.api = pi;
     d.sm.anim_delay = 0;
     d.sm.bottom_highlight = -1;
+    d.sm.sm.dist_i = PLANET_NONE;
     d.ds.xoff1 = 0;
     d.ds.xoff2 = 0;
     newships_load_data(&d);

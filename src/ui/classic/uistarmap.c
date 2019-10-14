@@ -237,6 +237,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
     d.g = g;
     d.api = active_player;
     d.anim_delay = 0;
+    d.sm.dist_i = PLANET_NONE;
 
     ui_delay_1();
     ui_sound_stop_music();  /* or fade? */
@@ -613,6 +614,17 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
                 g->planet_focus_i[active_player] = i;
                 ui_sound_play_sfx_24();
                 break;
+            }
+        }
+        d.sm.dist_i = PLANET_NONE;
+        if (!g->evn.build_finished_num[active_player]) {
+            for (int i = 0; i < g->galaxy_stars; ++i) {
+                if (oi2 == d.oi_tbl_stars[i]) {
+                    if (i != g->planet_focus_i[active_player]) {
+                        d.sm.dist_i = i;
+                    }
+                    break;
+                }
             }
         }
         p = &(g->planet[g->planet_focus_i[active_player]]);

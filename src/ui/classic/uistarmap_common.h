@@ -70,6 +70,7 @@ struct starmap_data_s {
             int16_t oi_tbl_slider_lock[PLANET_SLIDER_NUM];
             int16_t oi_tbl_slider_minus[PLANET_SLIDER_NUM];
             int16_t oi_tbl_slider_plus[PLANET_SLIDER_NUM];
+            uint8_t dist_i;
         } sm;   /* starmap_do */
         struct {
             uint8_t from;
