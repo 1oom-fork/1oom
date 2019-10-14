@@ -20,6 +20,7 @@
 #include "kbd.h"
 #include "log.h"
 #include "main.h"
+#include "mouse.h"
 #include "options.h"
 #include "types.h"
 
@@ -272,6 +273,17 @@ int hw_event_handle(void)
                 break;
             case SDL_KEYUP:
                 break;
+            case SDL_MOUSEMOTION:
+                if (!hw_opt_relmouse && hw_mouse_enabled) {
+                    int x, y;
+                    x = e.motion.x;
+                    y = e.motion.y;
+                    if (hw_opt_aspect_ratio_correct) {
+                        y = (y * 5 + 5) / 6;
+                    }
+                    mouse_set_xy_from_hw(x, y);
+                }
+                break;
             case SDL_MOUSEBUTTONDOWN:
             case SDL_MOUSEBUTTONUP:
                 hw_mouse_button((int)(e.button.button), (e.button.state == SDL_PRESSED));
@@ -288,7 +300,7 @@ int hw_event_handle(void)
         }
     }
 
-    {
+    if (hw_opt_relmouse) {
         int x, y;
         SDL_GetRelativeMouseState(&x, &y);
         if ((x != 0) || (y != 0)) {
