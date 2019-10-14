@@ -134,11 +134,13 @@ static void ui_starmap_orbit_own_draw_cb(void *vptr)
         {
             int y;
             y = 40 + i * 26;
-            if (ui_extra_enabled) {
-                lbxfont_print_num_right(258, y, d->oo.sn0.ships[i], UI_SCREEN_W);
-                y = 24 + i * 26;
-            }
             lbxfont_print_num_right(258, y, d->oo.ships[st], UI_SCREEN_W);
+            if (ui_extra_enabled) {
+                y = 24 + i * 26;
+                lbxfont_select(0, 0x7, 0, 0);
+                lbxfont_print_num_right(258, y, d->oo.sn0.ships[i], UI_SCREEN_W);
+                lbxfont_select(0, 0xd, 0, 0);
+            }
         }
         lbxfont_select_set_12_1(2, 0, 0, 0);
         lbxfont_print_str_center(287, 25 + i * 26, sd[st].name, UI_SCREEN_W);
