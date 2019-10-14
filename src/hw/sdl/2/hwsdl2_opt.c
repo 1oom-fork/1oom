@@ -2,6 +2,8 @@
 
 #include <stdio.h>
 
+#include <SDL.h>
+
 #include "hw.h"
 #include "hwsdl_opt.h"
 #include "hwsdl_audio.h"
@@ -16,7 +18,7 @@
 bool hw_opt_aspect_ratio_correct = true;
 bool hw_opt_borderless = false;
 bool hw_opt_int_scaling = false;
-bool hw_opt_relmouse = true;
+bool hw_opt_relmouse = false;
 bool hw_opt_vsync = true;
 
 #ifdef HAVE_SDL2MIXER

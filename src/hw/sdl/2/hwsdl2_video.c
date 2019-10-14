@@ -506,7 +506,24 @@ void hw_video_input_grab(bool grab)
 
 void hw_video_position_cursor(int mx, int my)
 {
-    /* Not implemented */
+#if SDL_VERSION_ATLEAST(2, 0, 18)
+    if (!hw_opt_relmouse && hw_mouse_enabled) {
+        int x, y;
+        float xcheck, ycheck;
+        if (hw_opt_aspect_ratio_correct) {
+            my = my * 6 / 5;
+        }
+        SDL_RenderLogicalToWindow(video.renderer, mx, my, &x, &y);
+        SDL_RenderWindowToLogical(video.renderer, x, y, &xcheck, &ycheck);
+        if (mx > xcheck) {
+            ++x;
+        }
+        if (my > ycheck) {
+            ++y;
+        }
+        SDL_WarpMouseInWindow(video.window, x, y);
+    }
+#endif
 }
 
 #include "hw_video.c"
