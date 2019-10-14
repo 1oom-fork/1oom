@@ -170,6 +170,8 @@ void ui_starmap_trans(struct game_s *g, player_id_t active_player)
     d.g = g;
     d.api = active_player;
     d.anim_delay = 0;
+    d.bottom_highlight = d.dist_i = -1;
+    d.gov_highlight = 0;
     d.tr.blink = false;
     {
         uint8_t pi = g->planet_focus_i[active_player];
@@ -349,6 +351,14 @@ do_accept:
             }
             if (d.tr.from == g->planet_focus_i[active_player]) {
                 p->trans_num = 0;
+            }
+            if (p->trans_num && p->owner != PLAYER_NONE) {
+                game_update_production(g);
+                if(BOOLVEC_IS1(p->extras, PLANET_EXTRAS_GOVERNOR)) {
+                    game_planet_govern(g, p);
+                } else {
+                    game_planet_move_eco_min(g, p);
+                }
             }
             ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
         } else if (oi1 == oi_minus) {

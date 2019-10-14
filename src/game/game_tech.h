@@ -27,12 +27,16 @@ extern const char *game_tech_get_newtech_msg(const struct game_s *g, player_id_t
 extern int game_tech_current_research_percent1(const struct empiretechorbit_s *e, tech_field_t field);
 extern int game_tech_current_research_percent2(const struct empiretechorbit_s *e, tech_field_t field);
 extern bool game_tech_current_research_has_max_bonus(const struct empiretechorbit_s *e, tech_field_t field);
+extern int64_t game_tech_current_research_time_score(const struct empiretechorbit_s *e, tech_field_t field);
 extern void game_tech_set_to_max_bonus(struct empiretechorbit_s *e, tech_field_t field);
+extern void game_tech_set_to_min(struct empiretechorbit_s *e);
+extern void game_tech_set_to_opt(struct empiretechorbit_s *e);
 extern void game_tech_get_new(struct game_s *g, player_id_t player, tech_field_t field, uint8_t tech, techsource_t source, int a8, player_id_t stolen_from, bool flag_frame);
 extern void game_tech_finish_new(struct game_s *g, player_id_t player);
 extern bool game_tech_can_choose(const struct game_s *g, player_id_t player, tech_field_t field);
 extern uint32_t game_tech_get_next_rp(const struct game_s *g, player_id_t player, tech_field_t field, uint8_t tech);
 extern void game_tech_start_next(struct game_s *g, player_id_t player, tech_field_t field, uint8_t tech);
+extern int game_tech_get_field_top_tech(const struct game_s *g, player_id_t player, tech_field_t field);
 extern int game_tech_get_field_percent(const struct game_s *g, player_id_t player, tech_field_t field);
 extern void game_tech_research(struct game_s *g);
 extern void game_tech_get_orion_loot(struct game_s *g, player_id_t player);

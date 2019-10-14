@@ -36,6 +36,8 @@ struct starmap_data_s {
     player_id_t api;
     int bottom_highlight;
     int anim_delay;
+    int dist_i;
+    int gov_highlight;
     int16_t oi_gameopts;
     int16_t oi_design;
     int16_t oi_fleet;
@@ -70,6 +72,12 @@ struct starmap_data_s {
             int16_t oi_tbl_slider_lock[PLANET_SLIDER_NUM];
             int16_t oi_tbl_slider_minus[PLANET_SLIDER_NUM];
             int16_t oi_tbl_slider_plus[PLANET_SLIDER_NUM];
+            int16_t oi_gov_ship;
+            int16_t oi_gov_reserve;
+            int16_t oi_gov_tech;
+            int16_t oi_gov_bases;
+            int16_t oi_gov_wheel_bases;
+            int16_t oi_gov_boost;
         } sm;   /* starmap_do */
         struct {
             uint8_t from;

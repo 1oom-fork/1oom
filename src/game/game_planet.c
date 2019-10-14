@@ -65,20 +65,6 @@ static bool slider_text_num_grequ(const struct game_s *g, const planet_t *p, int
     return (v >= target);
 }
 
-/* Move eco slider right until "WASTE" disappears */
-static void move_eco_min(const struct game_s *g, planet_t *p)
-{
-    int slideri = PLANET_SLIDER_ECO;
-    int previous_allocation;
-    do {
-        if (!slider_text_equals(g, p, slideri, game_str_sm_ecowaste)) {
-            break;
-        }
-        previous_allocation = p->slider[slideri];
-        increment_slider(p, slideri);
-    } while (previous_allocation != p->slider[slideri]);
-}
-
 /* Move industry slider right until "RESERVE" appears. Then move 1 tick back */
 static void move_ind_max(const struct game_s *g, planet_t *p)
 {
@@ -214,6 +200,20 @@ static void move_ship_1(const struct game_s *g, planet_t *p)
 
 /* -------------------------------------------------------------------------- */
 
+/* Move eco slider right until "WASTE" disappears */
+void game_planet_move_eco_min(const struct game_s *g, planet_t *p)
+{
+    int slideri = PLANET_SLIDER_ECO;
+    int previous_allocation;
+    do {
+        if (!slider_text_equals(g, p, slideri, game_str_sm_ecowaste)) {
+            break;
+        }
+        previous_allocation = p->slider[slideri];
+        increment_slider(p, slideri);
+    } while (previous_allocation != p->slider[slideri]);
+}
+
 void game_planet_destroy(struct game_s *g, uint8_t planet_i, player_id_t attacker)
 {
     planet_t *p = &(g->planet[planet_i]);
@@ -262,6 +262,8 @@ void game_planet_destroy(struct game_s *g, uint8_t planet_i, player_id_t attacke
     BOOLVEC_SET0(p->extras, PLANET_EXTRAS_GOVERNOR);
     BOOLVEC_SET0(p->extras, PLANET_EXTRAS_GOV_SPEND_REST_SHIP);
     BOOLVEC_SET0(p->extras, PLANET_EXTRAS_GOV_SPEND_REST_IND);
+    BOOLVEC_SET0(p->extras, PLANET_EXTRAS_GOV_BOOST_BUILD);
+    BOOLVEC_SET0(p->extras, PLANET_EXTRAS_GOV_BOOST_PROD);
     for (int i = 0; i < g->galaxy_stars; ++i) {
         p = &(g->planet[i]);
         if (p->reloc == planet_i) {
@@ -548,26 +550,40 @@ int game_planet_get_slider_text_eco(const struct game_s *g, const planet_t *p, p
     if ((vthis < adjwaste) || (vthis == 0)) {
         str = (vthis < adjwaste) ? game_str_sm_ecowaste : game_str_sm_prodnone;
     } else {
+        int growth = p->growth;
+        int bc_to_ecoproj = p->bc_to_ecoproj;
         SUBSAT0(vthis, adjwaste);
-        if ((vthis > 0) && e->have_atmos_terra && (p->growth == PLANET_GROWTH_HOSTILE)) {
-            vthis -= game_num_atmos_cost - p->bc_to_ecoproj;
+        if ((vthis > 0) && e->have_atmos_terra && (growth == PLANET_GROWTH_HOSTILE)) {
+            vthis -= game_num_atmos_cost - bc_to_ecoproj;
             if (vthis < 0) {
                 flag_ecoproj = true;
                 str = game_str_sm_ecoatmos;
+            } else {
+                growth = PLANET_GROWTH_NORMAL;
+                bc_to_ecoproj = 0;
             }
         }
-        if ((vthis > 0) && e->have_soil_enrich && (p->growth == PLANET_GROWTH_NORMAL)) {
-            vthis -= game_num_soil_cost - p->bc_to_ecoproj;
+        if ((vthis > 0) && e->have_soil_enrich && (growth == PLANET_GROWTH_NORMAL)) {
+            vthis -= game_num_soil_cost - bc_to_ecoproj;
             if (vthis < 0) {
                 flag_ecoproj = true;
                 str = game_str_sm_ecosoil;
+            } else {
+                growth = PLANET_GROWTH_FERTILE;
+                bc_to_ecoproj = game_num_soil_cost;
             }
         }
-        if ((vthis > 0) && e->have_adv_soil_enrich && ((p->growth == PLANET_GROWTH_NORMAL) || (p->growth == PLANET_GROWTH_FERTILE))) {
+        if ((vthis > 0) && e->have_adv_soil_enrich && ((growth == PLANET_GROWTH_NORMAL) || (growth == PLANET_GROWTH_FERTILE))) {
+           /* obsolete as current solution uses bc_to_ecoproj to carry over from soil to adv. soil
+            * int adv_soil_cost = game_num_adv_soil_cost;
+            * if (growth == PLANET_GROWTH_FERTILE || e->have_soil_enrich) adv_soil_cost -= game_num_soil_cost; */
            vthis -= game_num_adv_soil_cost - p->bc_to_ecoproj;
            if (vthis < 0) {
                 flag_ecoproj = true;
                 str = game_str_sm_ecogaia;
+            } else {
+                growth = PLANET_GROWTH_GAIA;
+                bc_to_ecoproj = 0;
             }
         }
         if (vthis > 0) {
@@ -635,6 +651,41 @@ int game_planet_get_slider_text_eco(const struct game_s *g, const planet_t *p, p
 }
 
 /**
+ * Return BSs which have been transferred from the reserve.
+ * If this is nozero, the caller needs to call game_update_production(g)
+ * before using planet production values.
+ *
+ */
+int game_planet_govern_reserve(struct game_s *g, planet_t *p)
+{
+    player_id_t player = p->owner;
+    if (0
+      || p->reserve >= p->prod_after_maint/2
+      || BOOLVEC_IS0(p->extras, PLANET_EXTRAS_GOV_BOOST_BUILD)
+      || !g->eto[player].reserve_bc
+    ) {
+      game_planet_govern_sliders(g,p);
+      return 0;
+    }
+    if (BOOLVEC_IS0(p->extras, PLANET_EXTRAS_GOV_BOOST_PROD)) {
+        int pperc = game_planet_govern_sliders(g,p);
+        if (pperc) return 0;
+        int mil = ((g->evn.gov_eco_mode[player] & GOVERNOR_BUILDUP_MIL) != 0);
+        int full = ((g->evn.gov_eco_mode[player] & GOVERNOR_BUILDUP_FULL) != 0);
+        if (p->missile_bases >= p->target_bases) mil = 0;
+        if (p->special > PLANET_SPECIAL_NORMAL) full = 1;
+        if (!mil && !full && game_get_maxprod(g, p) < 2 * (p->total_prod - p->reserve)) return 0;
+    }
+    int prod = p->prod_after_maint - p->reserve;
+    SETMAX(prod, 0);
+    int v = prod - p->reserve;
+    SETRANGE(v,0,g->eto[player].reserve_bc);
+    g->eto[player].reserve_bc -= v;
+    p->reserve += v;
+    return v;
+}
+
+/**
  * Govern the colony.
  * - First, remember the old ecology slider position.
  * - Then if mode is not "don't touch", set ecology to minimum that avoids waste.
@@ -651,14 +702,17 @@ int game_planet_get_slider_text_eco(const struct game_s *g, const planet_t *p, p
  * This works by moving slider by 1 unit (1%) until desired results happen. Implemented
  * this way to avoid duplication of planet production logic.
  *
+ * The function returns percentage allocated for research, ship building or reserve.
+ *
  */
-void game_planet_govern(const struct game_s *g, planet_t *p)
+int game_planet_govern_sliders(const struct game_s *g, planet_t *p)
 {
     player_id_t player = p->owner;
     const empiretechorbit_t *e = &(g->eto[player]);
-    governor_eco_mode_t eco_mode = g->evn.gov_eco_mode[player];
+    governor_eco_mode_t eco_mode = (g->evn.gov_eco_mode[player] & GOVERNOR_ECO_MODE_MASK);
     int old_eco = p->slider[PLANET_SLIDER_ECO];
     SETMIN(old_eco, 100);
+
     /* unlock all sliders and clear spending */
     for (planet_slider_i_t i = 0; i < PLANET_SLIDER_NUM; ++i) {
         p->slider_lock[i] = false;
@@ -672,7 +726,7 @@ void game_planet_govern(const struct game_s *g, planet_t *p)
         /* all goes to research */
         p->slider[PLANET_SLIDER_TECH] = 100;
         /* set eco to minimum, keep increasing until "WASTE" disappears */
-        move_eco_min(g, p);
+        game_planet_move_eco_min(g, p);
     }
     if ((eco_mode == GOVERNOR_ECO_MODE_DO_NOT_DECREASE) && (p->slider[PLANET_SLIDER_ECO] < old_eco)) {
         set_slider(p, PLANET_SLIDER_ECO, old_eco);
@@ -691,11 +745,14 @@ void game_planet_govern(const struct game_s *g, planet_t *p)
         move_eco_grow_pop(g, p);
     }
     p->slider_lock[PLANET_SLIDER_ECO] = true;
-    /* For defense, first do upgrades/shields.
-       Click right until we get a number, if we get a number, move back */
-    move_def_min(g, p);
-    /* Build enough missile bases to reach target amount */
-    move_def_bases(g, p);
+    /* build shields only if at least a single base has been ordered */
+    if (p->target_bases) {
+        /* For defense, first do upgrades/shields.
+           Click right until we get a number, if we get a number, move back */
+        move_def_min(g, p);
+        /* Build enough missile bases to reach target amount */
+        move_def_bases(g, p);
+    }
     p->slider_lock[PLANET_SLIDER_DEF] = true;
     if (e->have_stargates && !p->have_stargate && BOOLVEC_IS0(g->evn.gov_no_stargates, player)) {
         /* build stargate */
@@ -710,6 +767,7 @@ void game_planet_govern(const struct game_s *g, planet_t *p)
         move_eco_grow_pop(g, p);
         p->slider_lock[PLANET_SLIDER_ECO] = true;
     }
+    int pperc = p->slider[PLANET_SLIDER_TECH];
     /* Spend the rest on research, ship building or reserve. */
     if (p->slider[PLANET_SLIDER_TECH] != 0) {
         planet_slider_i_t slideri = PLANET_SLIDER_TECH;
@@ -731,6 +789,23 @@ void game_planet_govern(const struct game_s *g, planet_t *p)
     } else {
         p->slider_lock[PLANET_SLIDER_IND] = false;
     }
+    return pperc;
+}
+
+/* g cannot be const b/c of game_update_production(g) */
+void game_planet_govern(struct game_s *g, planet_t *p)
+{
+    player_id_t player = p->owner;
+    int v = game_planet_govern_reserve(g,p);
+    if (v) {
+        game_update_production(g);
+        int pperc = game_planet_govern_sliders(g,p);
+        if (!pperc || BOOLVEC_IS1(p->extras, PLANET_EXTRAS_GOV_BOOST_PROD)) return;
+        g->eto[player].reserve_bc += v;
+        p->reserve -= v;
+        game_update_production(g);
+        game_planet_govern_sliders(g,p);
+    }
 }
 
 void game_planet_govern_all_owned_by(struct game_s *g, player_id_t owner)
@@ -742,3 +817,4 @@ void game_planet_govern_all_owned_by(struct game_s *g, player_id_t owner)
         }
     }
 }
+

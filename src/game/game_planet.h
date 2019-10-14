@@ -84,6 +84,7 @@ typedef enum {
     FINISHED_SHIELD, /*4*/
     FINISHED_SHIP, /*5*/
     FINISHED_TERRAF, /*6*/
+    FINISHED_GOVERNOR, /*7*/
     FINISHED_NUM
 } planet_finished_t;
 
@@ -93,7 +94,9 @@ typedef enum {
 typedef enum {
     PLANET_EXTRAS_GOVERNOR = 0,
     PLANET_EXTRAS_GOV_SPEND_REST_SHIP, /*1*/
-    PLANET_EXTRAS_GOV_SPEND_REST_IND, /*2*/
+    PLANET_EXTRAS_GOV_SPEND_REST_IND,  /*2*/
+    PLANET_EXTRAS_GOV_BOOST_BUILD,     /*3*/
+    PLANET_EXTRAS_GOV_BOOST_PROD,      /*4*/
     PLANET_EXTRAS_NUM
 } planet_extras_t;
 
@@ -161,6 +164,7 @@ typedef struct planet_s {
 
 struct game_s;
 
+extern void game_planet_move_eco_min(const struct game_s *g, planet_t *p);
 extern void game_planet_destroy(struct game_s *g, uint8_t planet_i, player_id_t attacker);
 extern uint8_t game_planet_get_random(struct game_s *g, player_id_t owner);
 extern void game_planet_adjust_percent(struct game_s *g, player_id_t owner, planet_slider_i_t si, uint8_t percent, int growth);
@@ -169,7 +173,9 @@ extern void game_planet_update_home(struct game_s *g);
 extern const char *game_planet_get_finished_text(const struct game_s *g, const planet_t *p, planet_finished_t type, char *buf, size_t bufsize);
 extern int game_planet_get_slider_text(const struct game_s *g, const planet_t *p, player_id_t player, planet_slider_i_t si, char *buf, size_t bufsize);
 extern int game_planet_get_slider_text_eco(const struct game_s *g, const planet_t *p, player_id_t player, bool flag_tenths, char *buf, size_t bufsize);
-extern void game_planet_govern(const struct game_s *g, planet_t *p);
+extern int game_planet_govern_reserve(struct game_s *g, planet_t *p);
+extern int game_planet_govern_sliders(const struct game_s *g, planet_t *p);
+extern void game_planet_govern(struct game_s *g, planet_t *p);
 extern void game_planet_govern_all_owned_by(struct game_s *g, player_id_t owner);
 
 #endif

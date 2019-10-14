@@ -95,7 +95,8 @@ static void tech_draw_cb(void *vptr)
     char buf[0xe0];
 
     ui_draw_color_buf(0x3a);
-    ui_draw_filled_rect(3, 150, 275, 196, 0x5b, ui_scale);
+    ui_draw_filled_rect(3, 150, 275, 196, 0x00, ui_scale); /* revert to moo 1.3 look, old bg was 0x5b */
+
     ui_draw_filled_rect(5, 4, 53, 15, (d->field == 0) ? 0x89 : 0xc0, ui_scale);
     ui_draw_filled_rect(55, 4, 108, 15, (d->field == 1) ? 0x89 : 0xc0, ui_scale);
     ui_draw_filled_rect(109, 4, 161, 16, (d->field == 2) ? 0x89 : 0xc0, ui_scale);
@@ -114,7 +115,7 @@ static void tech_draw_cb(void *vptr)
     lbxgfx_draw_frame(0, 0, d->gfx, UI_SCREEN_W, ui_scale);
 
     lib_sprintf(buf, sizeof(buf), "%i %s", e->total_research_bc, game_str_bc);
-    lbxfont_select(2, 6, 0, 0);
+    lbxfont_select(2, 9, 0, 0);
     lbxfont_print_str_right(309, 169, buf, UI_SCREEN_W, ui_scale);
 
     for (int i = 0; i < TECH_ON_SCREEN; ++i) {
@@ -132,10 +133,16 @@ static void tech_draw_cb(void *vptr)
             lbxfont_print_str_normal(9, 37 + i * 7, buf, UI_SCREEN_W, ui_scale);
         }
     }
+    
     game_tech_get_descr(g->gaux, d->field, d->completed[d->selected + d->pos], buf, sizeof(buf));
-    lbxfont_select(5, 6, 0, 0);
+    /* A matter of taste, but I _very_ much prefer the original moov1.3 look. 
+     * Should we make this patchable via some game_nump.c flag?
+     * lbxfont_select(5, 6, 0, 0);
+     * lbxfont_set_gap_h(1);
+     * lbxfont_print_str_split(10, 155, 260, buf, 0, UI_SCREEN_W, UI_SCREEN_H, ui_scale); */
+    lbxfont_select(0, 0xa, 0, 0); 
     lbxfont_set_gap_h(1);
-    lbxfont_print_str_split(10, 155, 260, buf, 0, UI_SCREEN_W, UI_SCREEN_H, ui_scale);
+    lbxfont_print_str_split(14, 160, 252, buf, 0, UI_SCREEN_W, UI_SCREEN_H, ui_scale);
 
     lbxgfx_set_new_frame(ui_data.gfx.screens.tech_but_up, 1);
     lbxgfx_set_new_frame(ui_data.gfx.screens.tech_but_down, 1);
@@ -146,11 +153,17 @@ static void tech_draw_cb(void *vptr)
         int y;
         y = 21 * i + 24;
         ui_draw_filled_rect(227, y, 277, y + 3, 0x2f, ui_scale);
+        if (ui_extra_enabled && e->total_research_bc && e->tech.investment[i] && ((t->percent[i] < 99) || (t->project[i] != 0))) {
+            int slider=75*e->tech.investment[i]/e->total_research_bc;
+            SETMIN(slider,1000);
+            if (slider >= 10) ui_draw_slider4(227, y, slider, 20, -1, 0x6e, ui_scale);
+        }
         if (t->slider[i]) {
             ui_draw_slider(227, y + 1, t->slider[i], 2, -1, t->slider_lock[i] ? 0x22 : 0x73, ui_scale);
         }
         lbxfont_select(0, 6, 0, 0);
-        lbxfont_set_color_c_n(ui_extra_enabled && game_tech_current_research_has_max_bonus(e, i) ? 0x41 : 0x26, 5); /* 0x44 too bright */
+        /* cols changed to fit with auto button, was 0x41 : 0x26 */
+        lbxfont_set_color_c_n(ui_extra_enabled && game_tech_current_research_has_max_bonus(e, i) ? 0x24 : 0x27, 5);
         lbxfont_print_num_right(307, y, t->percent[i], UI_SCREEN_W, ui_scale);
     }
 
@@ -230,6 +243,24 @@ static void tech_draw_cb(void *vptr)
             lbxfont_print_str_right(295, y + 3, game_str_te_max, UI_SCREEN_W, ui_scale);
         }
     }
+    if (ui_extra_enabled) {
+        lbxfont_select(0, 2, 0, 0);
+        for (int i = 0; i < 3; ++i) {
+            const char *lab[3] = { "equ", "min", "opt" };
+            int x0 = 240 + 25 * i, x1 = x0 + 20;
+            ui_draw_filled_rect(x0, 138, x1, 145, 0x5d, ui_scale);
+            ui_draw_line1(x0, 138, x0, 145, 0x5b, ui_scale);
+            ui_draw_line1(x1, 138, x1, 145, 0x2b, ui_scale);
+            ui_draw_line1(x0, 138, x1, 138, 0x2b, ui_scale);
+            ui_draw_line1(x0, 145, x1, 145, 0x5b, ui_scale);
+            lbxfont_print_str_normal(x0+5, 139, lab[i], UI_SCREEN_W, ui_scale);
+        }
+        if (g->evn.gov_eco_mode[d->api] & GOVERNOR_ECO_MODE_AUTO_TECH) {
+            ui_draw_filled_rect(287, 10, 309, 16, 0x5d, ui_scale);
+            lbxfont_select(2, 11, 0, 0);
+            lbxfont_print_str_center(298, 11, "AUTO", UI_SCREEN_W, ui_scale);
+        }
+    }
 }
 
 /* -------------------------------------------------------------------------- */
@@ -239,6 +270,7 @@ void ui_tech(struct game_s *g, player_id_t active_player)
     struct tech_data_s d;
     bool flag_done = false;
     int16_t oi_ok, oi_up, oi_down, oi_equals, oi_tab, oi_wheel,
+            oi_equ, oi_min, oi_opt, oi_auto,
             oi_tbl_lock[TECH_FIELD_NUM],
             oi_tbl_plus[TECH_FIELD_NUM],
             oi_tbl_minus[TECH_FIELD_NUM],
@@ -264,6 +296,10 @@ void ui_tech(struct game_s *g, player_id_t active_player)
         oi_equals = UIOBJI_INVALID; \
         oi_tab = UIOBJI_INVALID; \
         oi_wheel = UIOBJI_INVALID; \
+        oi_equ = UIOBJI_INVALID; \
+        oi_min = UIOBJI_INVALID; \
+        oi_opt = UIOBJI_INVALID; \
+        oi_auto = UIOBJI_INVALID; \
         UIOBJI_SET_TBL5_INVALID(oi_tbl_lock, oi_tbl_plus, oi_tbl_minus, oi_tbl_bonus, oi_tbl_field); \
         UIOBJI_SET_TBL_INVALID(oi_tbl_techname); \
     } while (0)
@@ -335,7 +371,7 @@ void ui_tech(struct game_s *g, player_id_t active_player)
                 d.selected = i;
             }
         }
-        if (oi == oi_equals) {
+        if (oi == oi_equals || oi == oi_equ) {
             ui_sound_play_sfx_24();
             if (ui_extra_enabled) {
                 game_equalize_slider_group(t->slider, TECH_FIELD_NUM, t->slider_lock);
@@ -347,6 +383,17 @@ void ui_tech(struct game_s *g, player_id_t active_player)
                 t->slider[4] = 17;
                 t->slider[5] = 17;
             }
+        } else if (oi == oi_min) {
+            ui_sound_play_sfx_24();
+            game_tech_set_to_min(&(g->eto[active_player]));
+        } else if (oi == oi_opt) {
+            ui_sound_play_sfx_24();
+            game_tech_set_to_opt(&(g->eto[active_player]));
+        } else if (oi == oi_auto) {
+            ui_sound_play_sfx_24();
+            g->evn.gov_eco_mode[active_player] ^= GOVERNOR_ECO_MODE_AUTO_TECH;
+            if (g->evn.gov_eco_mode[active_player] & GOVERNOR_ECO_MODE_AUTO_TECH)
+                game_tech_set_to_opt(&(g->eto[active_player]));
         } else if (oi == oi_tab) {
             ui_sound_play_sfx_24();
             d.field = (d.field + 1) % TECH_FIELD_NUM;
@@ -387,6 +434,13 @@ void ui_tech(struct game_s *g, player_id_t active_player)
             oi_tbl_field[5] = uiobj_add_mousearea(109, 19, 161, 31, MOO_KEY_UNKNOWN);
             oi_equals = uiobj_add_inputkey(MOO_KEY_EQUALS);
             oi_tab = uiobj_add_inputkey(MOO_KEY_TAB);
+            if (ui_extra_enabled) {
+                oi_equ = uiobj_add_mousearea(240, 138, 260, 145, MOO_KEY_HASH);
+                oi_min = uiobj_add_mousearea(265, 138, 285, 145, MOO_KEY_m);
+                oi_opt = uiobj_add_mousearea(290, 138, 310, 145, MOO_KEY_o);
+                oi_auto = uiobj_add_mousearea(286, 9, 310, 17, MOO_KEY_t);
+            }
+
             for (int i = 0; i < TECH_FIELD_NUM; ++i) {
                 int y;
                 y = i * 21 + 22;

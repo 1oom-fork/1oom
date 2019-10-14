@@ -632,7 +632,10 @@ static void game_turn_reserve(struct game_s *g)
 static inline void game_add_planet_to_build_finished(struct game_s *g, uint8_t pli, player_id_t owner, uint8_t type)
 {
     planet_t *p = &(g->planet[pli]);
-    if (BOOLVEC_TBL_IS1(g->evn.msg_filter, owner, type)) {
+    if (1
+      && BOOLVEC_TBL_IS1(g->evn.msg_filter, owner, type)
+      && (BOOLVEC_IS0(p->extras, PLANET_EXTRAS_GOVERNOR) || BOOLVEC_TBL_IS1(g->evn.msg_filter, owner, FINISHED_GOVERNOR))
+    ) {
         BOOLVEC_SET1(p->finished, type);
         ++g->evn.build_finished_num[owner];
     } else {
@@ -1747,6 +1750,12 @@ struct game_end_s game_turn_process(struct game_s *g)
         if (p->owner != PLAYER_NONE && BOOLVEC_IS1(p->extras, PLANET_EXTRAS_GOVERNOR)) {
             game_planet_govern(g, p);
         }
+    }
+    game_update_total_research(g);
+    for (player_id_t i = PLAYER_0; i < g->players; ++i) {
+        empiretechorbit_t *e = &(g->eto[i]);
+        if (g->evn.gov_eco_mode[i] & GOVERNOR_ECO_MODE_AUTO_TECH)
+            game_tech_set_to_opt(e);
     }
     return game_end;
 }

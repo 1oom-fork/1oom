@@ -164,7 +164,7 @@ static void planets_draw_cb(void *vptr)
                     ui_draw_filled_rect(25 + 40, y0 + 1, 25 + 40 + 1, y0 + 4, c, ui_scale);
                 }
             }
-            lbxfont_select(2, 6, 0, 0);
+            lbxfont_select(2, 6, 11, 0);
             lbxfont_print_num_right(83, y0, p->pop, UI_SCREEN_W, ui_scale);
             if (p->pop != p->pop_prev) {
                 int v;
@@ -183,14 +183,19 @@ static void planets_draw_cb(void *vptr)
                 lib_sprintf(buf, sizeof(buf), "%c%i", c, v);
                 lbxfont_print_str_right(111, y0, buf, UI_SCREEN_W, ui_scale);
             }
-            lbxfont_print_str_right(149, y0, game_str_tbl_roman[p->shield], UI_SCREEN_W, ui_scale);
+            if (ui_extra_enabled && p->battlebg == 0)
+                lbxfont_print_str_right(149, y0, "\x2neb\x1", UI_SCREEN_W, ui_scale);
+            else
+                lbxfont_print_str_right(149, y0, game_str_tbl_roman[p->shield], UI_SCREEN_W, ui_scale);
             /*lbxfont_select(2, 6, 0, 0);*/
             lbxfont_print_num_right(132, y0, p->factories, UI_SCREEN_W, ui_scale);
+            lbxfont_select(2, ui_extra_enabled && p->missile_bases < p->target_bases ? 11 : 6, 0, 0);
             lbxfont_print_num_right(170, y0, p->missile_bases, UI_SCREEN_W, ui_scale);
+            lbxfont_select(2, 6, 0, 0);
             if (p->waste) {
                 lbxfont_print_num_right(189, y0, p->waste, UI_SCREEN_W, ui_scale);
             }
-            lbxfont_select(0, 0xe, 0, 0);
+            lbxfont_select(0, !ui_extra_enabled || !p->reserve ? 0xe : p->reserve<p->prod_after_maint/2 ? 0xb : 0x0, 0, 0);
             if (p->unrest == PLANET_UNREST_REBELLION) {
                 v = 0;
             } else {
@@ -279,7 +284,7 @@ static void ui_planets_transfer(struct planets_data_s *d)
 {
     struct game_s *g = d->g;
     planet_t *p = &(g->planet[d->planet_i]);
-    int16_t oi_cancel, oi_accept, oi_minus, oi_plus, oi_equals;
+    int16_t oi_cancel, oi_accept, oi_minus, oi_plus, oi_equals, oi_hash;
     int prod, allreserve, v;
     const int x = 100, y = 50;
     bool flag_done = false;
@@ -302,7 +307,7 @@ static void ui_planets_transfer(struct planets_data_s *d)
     allreserve = g->eto[d->api].reserve_bc;
     v = allreserve;
     if (v != 0) {
-        v = (prod * 100) / v;
+        v = (prod * 100 + v - 1) / v;
     }
 
     uiobj_table_clear();
@@ -312,6 +317,7 @@ static void ui_planets_transfer(struct planets_data_s *d)
     oi_minus = uiobj_add_mousearea(x + 10, y + 33, x + 12, y + 41, MOO_KEY_UNKNOWN);
     oi_plus = uiobj_add_mousearea(x + 66, y + 33, x + 70, y + 41, MOO_KEY_UNKNOWN);
     oi_equals = uiobj_add_inputkey(MOO_KEY_EQUALS);
+    oi_hash = uiobj_add_inputkey(MOO_KEY_HASH);
 
     uiobj_set_callback_and_delay(planets_transfer_draw_cb, d, 1);
 
@@ -338,7 +344,7 @@ static void ui_planets_transfer(struct planets_data_s *d)
             ui_sound_play_sfx_24();
             d->amount_trans += 2;
             SETMIN(d->amount_trans, 100);
-        } else if (oi == oi_equals) {
+        } else if (oi == oi_equals || oi == oi_hash) {
             ui_sound_play_sfx_24();
             d->amount_trans = v;
             SETRANGE(d->amount_trans, 0, 100);
@@ -578,7 +584,8 @@ void ui_planets(struct game_s *g, player_id_t active_player)
 {
     struct planets_data_s d;
     bool flag_done = false, flag_trans;
-    int16_t oi_alt_moola, oi_up, oi_down, oi_wheel, oi_ok, oi_trans, oi_minus, oi_plus, oi_tbl_planets[PLANETS_ON_SCREEN];
+    int16_t oi_alt_moola, oi_up, oi_down, oi_wheel, oi_ok, oi_trans, oi_minus, oi_plus, 
+            oi_tbl_planets[PLANETS_ON_SCREEN], oi_tbl_prod[PLANETS_ON_SCREEN], oi_tbl_dock[PLANETS_ON_SCREEN];
     int16_t oi_sort[UI_SORT_NUM];
     uint8_t tbl_onscreen_planets[PLANETS_ON_SCREEN];
     int16_t scroll = 0;
@@ -618,6 +625,8 @@ again:
     for (int i = 0; i < PLANETS_ON_SCREEN; ++i) {
         tbl_onscreen_planets[i] = 0;
         oi_tbl_planets[i] = UIOBJI_INVALID;
+        oi_tbl_prod[i] = UIOBJI_INVALID;
+        oi_tbl_dock[i] = UIOBJI_INVALID;
     }
     UIOBJI_SET_TBL_INVALID(oi_sort);
 
@@ -644,7 +653,7 @@ again:
             scroll = 0;
         }
         for (int i = 0; i < PLANETS_ON_SCREEN; ++i) {
-            if (oi == oi_tbl_planets[i]) {
+            if (oi == oi_tbl_planets[i] || flag_trans && (oi == oi_tbl_prod[i] || oi == oi_tbl_dock[i])) {
                 ui_sound_play_sfx_24();
                 if (!flag_trans) {
                     g->planet_focus_i[active_player] = tbl_onscreen_planets[i];
@@ -655,6 +664,34 @@ again:
                     ui_cursor_setup_area(1, &ui_cursor_area_tbl[0]);
                     goto again;
                 }
+            } else if( oi == oi_tbl_prod[i] && !flag_trans) {
+                planet_t *p = g->planet + tbl_onscreen_planets[i];
+                ui_sound_play_sfx_24();
+                if (p->reserve) {
+                    g->eto[active_player].reserve_bc += p->reserve;
+                    p->reserve = 0;
+                } else {
+                    flag_trans = 1;
+                    d.planet_i = tbl_onscreen_planets[i];
+                    ui_planets_transfer(&d);
+                    ui_cursor_setup_area(1, &ui_cursor_area_tbl[0]);
+                }
+                goto again;
+            } else if( oi == oi_tbl_dock[i] && !flag_trans) {
+                planet_t *p = g->planet + tbl_onscreen_planets[i];
+                int n;
+                ui_sound_play_sfx_24();
+                n = p->buildship + 1;
+                if (n >= g->eto[active_player].shipdesigns_num) {
+                    if (n >= (NUM_SHIPDESIGNS + 1)) {
+                        n = 0;
+                    } else if (g->eto[active_player].have_stargates && !p->have_stargate) {
+                        n = BUILDSHIP_STARGATE;
+                    } else {
+                        n = 0;
+                    }
+                }
+                p->buildship = n;
             }
         }
         if (oi == oi_alt_moola) {
@@ -702,7 +739,9 @@ again:
                     tbl_onscreen_planets[i] = ui_data.sorted.value[ui_data.sorted.index[pi]];
                     y0 = 21 + i * 11;
                     y1 = y0 + 8;
-                    oi_tbl_planets[i] = uiobj_add_mousearea(7, y0, 248, y1, MOO_KEY_UNKNOWN);
+                    oi_tbl_planets[i] = uiobj_add_mousearea(7, y0, 190, y1, MOO_KEY_UNKNOWN);
+                    oi_tbl_prod[i] = uiobj_add_mousearea(195, y0, 215, y1, MOO_KEY_UNKNOWN);
+                    oi_tbl_dock[i] = uiobj_add_mousearea(220, y0, 262, y1, MOO_KEY_UNKNOWN);
                 }
             }
             if (ui_extra_enabled) {

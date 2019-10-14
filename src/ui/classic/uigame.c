@@ -89,6 +89,7 @@ ui_turn_action_t ui_game_turn(struct game_s *g, int *load_game_i_ptr, int pi)
             ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
             ui_starmap_set_pos_focus(g, pi);
         }
+
         ui_data.flag_scrap_for_new_design = false;
         switch (ui_data.ui_main_loop_action) {
             case UI_MAIN_LOOP_STARMAP:
@@ -301,7 +302,7 @@ void ui_game_start(struct game_s *g)
         ui_data.star_frame[pli] = g->planet[pli].frame;
     }
     ui_data.seed = g->seed;
-    /* turn of governor and set default msg filter if ui_extra is disabled */
+    /* turn off governor and set default msg filter if ui_extra is disabled */
     if (!ui_extra_enabled) {
         for (int pli = 0; pli < g->galaxy_stars; ++pli) {
             planet_t *p = &(g->planet[pli]);

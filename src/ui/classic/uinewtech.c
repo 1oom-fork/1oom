@@ -178,18 +178,22 @@ static void newtech_choose_next_draw_cb(void *vptr)
 
 static void ui_newtech_choose_next(struct newtech_data_s *d)
 {
-    char tname[TECH_NEXT_MAX][35];
+    char tname[TECH_NEXT_MAX][40];
     const char *nptr[TECH_NEXT_MAX + 1];
     bool cond[TECH_NEXT_MAX + 1];
     int di = (d->num_next > 10) ? 8 : 9;
     for (int i = 0; i < (TECH_NEXT_MAX + 1); ++i) {
         cond[i] = true;
     }
+    int top_tier = game_tech_get_field_top_tech(d->g, d->api, d->nt.field);
+    if (top_tier == 1) top_tier = 0;
+    top_tier = (top_tier + 4) / 5 * 5;
     for (int i = 0; i < d->num_next; ++i) {
         uint8_t tech;
         tech = d->tech_next[i];
         d->tbl_tech[i] = tech; /* WASBUG overwrites flag_copybuf, flag_dialog and d->tech_next */
-        game_tech_get_name(d->g->gaux, d->nt.field, tech, tname[i], 35);
+        tname[i][0] = '\x02';  /* a dirty hack to flag techs which advance the tree */
+        game_tech_get_name(d->g->gaux, d->nt.field, tech, tname[i] + (tech > top_tier), 39);
         nptr[i] = tname[i];
     }
     nptr[d->num_next] = 0;
@@ -197,7 +201,7 @@ static void ui_newtech_choose_next(struct newtech_data_s *d)
     uiobj_table_clear();
     d->selected = 0;
     newtech_choose_next_draw_cb(d);
-    lbxfont_select(0, 0, 0, 0);
+    lbxfont_select(0, 2, 0, 0);
     lbxfont_set_gap_h(di - 6);
     ui_draw_filled_rect(155, 49, 304, 56, 0x60, ui_scale);
     for (int i = 0; i < d->num_next; ++i) {
@@ -205,7 +209,7 @@ static void ui_newtech_choose_next(struct newtech_data_s *d)
     }
     lbxfont_select_set_12_1(0, 0, 0, 0);
     ui_draw_finish();
-    lbxfont_select(0, 0, 0, 0);
+    lbxfont_select(0, 2, 0, 0);
     lbxfont_set_gap_h(di - 6);
     /*sel = */uiobj_select_from_list1(156, 41, 148, "", nptr, &d->selected, cond, 1, 0x60, true);
     ui_sound_play_sfx_24();

@@ -427,6 +427,13 @@ const char *game_str_gv_rest = "Spend rest on";
 const char *game_str_tbl_gv_rest[3] = {
     "research", "ships", "reserve"
 };
+const char *game_str_gv_reserve = "Reserve boost";
+const char *game_str_tbl_gv_reserve[3] = {
+    "none", "only for buildup", "always"
+};
+const char *game_str_tbl_gv_reserve_alt[3] = {
+    "no reserve", "reserve buildup", "reserve production"
+};
 const char *game_str_gv_allpl = "All planets";
 const char *game_str_gv_starg = "Build stargates";
 const char *game_str_gv_ecom = "Eco mode";
@@ -436,6 +443,12 @@ const char *game_str_tbl_gv_ecom[GOVERNOR_ECO_MODE_NUM] = {
     "Never grow pop",
     "Do not decrease Eco",
     "Do not touch Eco"
+};
+const char *game_str_gv_buildup = "Boost mode";
+const char *game_str_tbl_gv_buildup[3] = {
+    "economic (to 1/2 capacity)", 
+    "military (until bases are up)",
+    "complete"
 };
 
 const char *game_str_tbl_te_field[TECH_FIELD_NUM] = {
@@ -757,7 +770,7 @@ const char *game_str_gnn_also = "Also in the news...";
 
 const char *game_str_mf_title = "Show messages:";
 const char *game_str_tbl_mf[FINISHED_NUM] = {
-    "Max factories",  "Max population", "Better growth", "Stargate", "Shield", "", "Terraformed"
+    "Max factories",  "Max population", "Better growth", "Stargate", "Shield", "", "Terraformed", "for governed Planets"
 };
 
 const char *game_str_tbl_xtramenu[XTRAMENU_NUM] = {

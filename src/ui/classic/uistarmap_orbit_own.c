@@ -130,11 +130,13 @@ static void ui_starmap_orbit_own_draw_cb(void *vptr)
         {
             int y;
             y = 40 + i * 26;
-            if (ui_extra_enabled) {
-                lbxfont_print_num_right(258, y, d->oo.sn0.ships[i], UI_SCREEN_W, ui_scale);
-                y = 24 + i * 26;
-            }
             lbxfont_print_num_right(258, y, d->oo.ships[st], UI_SCREEN_W, ui_scale);
+            if (ui_extra_enabled) {
+                y = 24 + i * 26;
+                lbxfont_select(0, 0x7, 0, 0);
+                lbxfont_print_num_right(258, y, d->oo.sn0.ships[i], UI_SCREEN_W, ui_scale);
+                lbxfont_select(0, 0xd, 0, 0);
+            }
         }
         lbxfont_select_set_12_1(2, 0, 0, 0);
         lbxfont_print_str_center(287, 25 + i * 26, sd[st].name, UI_SCREEN_W, ui_scale);
@@ -166,6 +168,8 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
     d.g = g;
     d.api = active_player;
     d.anim_delay = 0;
+    d.bottom_highlight = d.dist_i = -1;
+    d.gov_highlight = 0;
     d.oo.from = g->planet_focus_i[active_player];
 
     r = &(g->eto[active_player].orbit[d.oo.from]);

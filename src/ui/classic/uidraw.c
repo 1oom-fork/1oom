@@ -381,6 +381,20 @@ void ui_draw_slider(int x, int y, int w, int wdiv, int xoff, uint8_t color, int 
     ui_draw_filled_rect(x, y, x1, y1, color, 1);
 }
 
+void ui_draw_slider4(int x, int y, int w, int wdiv, int xoff, uint8_t color, int scale)
+{
+    int y1, x1;
+    x1 = x * scale + xoff + (w * scale) / wdiv;
+    x *= scale;
+    y *= scale;
+    y1 = y + 3 * scale + scale - 1;
+    if (x1 < x) {
+        int t;
+        t = x1; x1 = x; x = t;
+    }
+    ui_draw_filled_rect(x, y, x1, y1, color, 1);
+}
+
 void ui_draw_box1(int x0, int y0, int x1, int y1, uint8_t color1, uint8_t color2, int scale)
 {
     ui_draw_line1(x0, y0, x1, y0, color1, scale);
