@@ -575,6 +575,16 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
             }
         }
     }
+    if (ui_extra_enabled && ui_data.ui_main_loop_action == UI_MAIN_LOOP_STARMAP && d->dist_i != PLANET_NONE) {
+        int j = g->planet_focus_i[d->api];
+        const planet_t *p = &g->planet[d->dist_i], *q = &g->planet[j];
+        int px = 2 * (p->x - x) + 14, py = 2 * (p->y - y) + 14;
+        int qx = 2 * (q->x - x) + 14, qy = 2 * (q->y - y) + 14;
+        ui_draw_line_limit(px, py, qx, qy, 0x06, starmap_scale);
+        lbxfont_select(0, 0, 0, 0);
+        int l = g->gaux->star_dist[j][d->dist_i];
+        lbxfont_print_num_center_limit( (px + qx) / 2, (py + qy) / 2 - 2, l, STARMAP_TEXT_LIMITS, UI_SCREEN_W, starmap_scale);
+    }
 }
 
 void ui_starmap_draw_button_text(struct starmap_data_s *d, bool highlight)
