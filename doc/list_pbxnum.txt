@@ -133,6 +133,12 @@ reset_tform_to_max : 0..1, 1
     the player has available, the terraforming is reset to the players
     maximum. If the value is 0, the alien terraforming is kept.
 
+soil_rounding_fix : 0..1, 0
+  - Fix incorrect rounding up with soil enrichment
+    In older versions of 1oom and probably in MOO1 instead of rounding up to
+    the next multiple of 5, the game adds an additional +5 unless the base size
+    is in the range 50-59 or 100-109.
+
 doom_stack_fix : 0..1, 1
   - Fix negative/32000 ship doom stack bug.
     In MOO1 overflows in AI-AI battles can result in 32000 ship doom stacks.
