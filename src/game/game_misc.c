@@ -820,11 +820,17 @@ void game_turn_soil_enrich(struct planet_s *p, int best_tform, bool advanced) {
         if ((p->max_pop1 / 10) % 5) {
             max_pop_increase += 5;
         }
+        if (game_num_soil_rounding_fix) {
+            max_pop_increase = ((p->max_pop1 + 9) / 10) * 5;
+        }
     } else {
         max_pop_increase = (p->max_pop1 / 20) * 5;
         /* BUG? See above. */
         if ((p->max_pop1 / 20) % 5) {
             max_pop_increase += 5;
+        }
+        if (game_num_soil_rounding_fix) {
+            max_pop_increase = ((p->max_pop1 + 19) / 20) * 5;
         }
     }
     SETMAX(max_pop_increase, 5);
