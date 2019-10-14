@@ -721,6 +721,13 @@ int lbxfont_print_num_right(int x, int y, int num, uint16_t pitch)
     return lbxfont_print_str_right(x, y, buf, pitch);
 }
 
+int lbxfont_print_num_center_limit(int x, int y, int num, int lx0, int ly0, int lx1, int ly1, uint16_t pitch)
+{
+    char buf[16];
+    lib_sprintf(buf, sizeof(buf), "%i", num);
+    return lbxfont_print_str_center_limit(x, y, buf, lx0, ly0, lx1, ly1, pitch);
+}
+
 int lbxfont_print_range_right(int x, int y, int num0, int num1, uint16_t pitch)
 {
     char buf[32];
