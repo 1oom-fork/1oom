@@ -28,5 +28,7 @@ extern int game_calc_eta_ship(const struct game_s *g, int speed, int x0, int y0,
 extern int game_calc_eta_trans(const struct game_s *g, int speed, int x0, int y0, int x1, int y1);
 extern bool game_transport_dest_ok(const struct game_s *g, const planet_t *p, player_id_t api);
 extern void game_rng_step(struct game_s *g);
+extern void game_turn_atmos_tform(struct planet_s *p);
+extern void game_turn_soil_enrich(struct planet_s *p, int best_tform, bool advanced);
 
 #endif
