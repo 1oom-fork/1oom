@@ -916,23 +916,14 @@ bool game_event_run(struct game_s *g, struct game_end_s *ge)
         planet_t *p = &(g->planet[pli]);
         player_id_t player = p->owner;
         empiretechorbit_t *e = 0;
-        int v, terraf = 0;
+        int terraf = 0;
         if (player != PLAYER_NONE) {
             e = &(g->eto[player]);
             terraf = e->have_terraform_n;
         }
         ns.planet_i = pli;
         ns.race = (player != PLAYER_NONE) ? e->race : RACE_HUMAN; /* WASBUG MOO1 does not check for none, taking race from eto[-1] */
-        p->growth = PLANET_GROWTH_FERTILE;
-        v = (p->max_pop1 / 20) * 5;
-        if ((p->max_pop1 / 20) % 5) {
-            v += 5;
-        }
-        SETMAX(v, 5);
-        p->max_pop2 = p->max_pop1 + v;
-        p->max_pop3 += v;
-        SETMIN(p->max_pop3, p->max_pop2 + terraf);
-        SETMIN(p->max_pop3, game_num_max_pop);
+        game_turn_soil_enrich(p, terraf, 0);
         g->evn.have_enviro = false;
         ns.type = GAME_NEWS_ENVIRO;
         ns.subtype = IS_HUMAN(g, player) ? 0 : 4;
