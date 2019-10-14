@@ -13,6 +13,8 @@
 
 static int hw_mouse_game_w;
 static int hw_mouse_game_h;
+static int hw_mouse_range_w;
+static int hw_mouse_range_h;
 static int hw_mouse_dx_acc = 0;
 static int hw_mouse_dy_acc = 0;
 static int hw_mouse_sx = 1;
@@ -20,41 +22,43 @@ static int hw_mouse_sy = 1;
 
 /* -------------------------------------------------------------------------- */
 
-bool hw_mouse_enabled = false;
+bool hw_mouse_enabled = true;
+bool hw_mouse_grabbed = false;
 
 /* -------------------------------------------------------------------------- */
 
 void hw_mouse_grab(void)
 {
-    if (!hw_mouse_enabled) {
-        hw_mouse_enabled = true;
-        SDL_ShowCursor(SDL_DISABLE);
+    if (!hw_mouse_grabbed) {
+        hw_mouse_grabbed = true;
         hw_video_input_grab(true);
     }
 }
 
 void hw_mouse_ungrab(void)
 {
-    if (hw_mouse_enabled) {
-        hw_mouse_enabled = false;
-        SDL_ShowCursor(SDL_ENABLE);
+    if (hw_mouse_grabbed) {
+        hw_mouse_grabbed = false;
         hw_video_input_grab(false);
     }
 }
 
 void hw_mouse_toggle_grab(void)
 {
-    if (hw_mouse_enabled) {
-        hw_mouse_ungrab();
-    } else {
-        hw_mouse_grab();
-    }
+    hw_mouse_grabbed = !hw_mouse_grabbed;
+    hw_video_input_grab(hw_mouse_grabbed);
 }
 
 void hw_mouse_set_limits(int w, int h)
 {
     hw_mouse_game_w = w;
     hw_mouse_game_h = h;
+}
+
+void hw_mouse_set_range(int w, int h)
+{
+    hw_mouse_range_w = w;
+    hw_mouse_range_h = h;
 }
 
 void hw_mouse_set_scale(int w, int h)
@@ -89,6 +93,15 @@ void hw_mouse_move(int dx, int dy)
     x = moouse_x + dx;
     SETRANGE(x, 0, hw_mouse_game_w - 1);
     y = moouse_y + dy;
+    SETRANGE(y, 0, hw_mouse_game_h - 1);
+    mouse_set_xy_from_hw(x, y);
+}
+
+void hw_mouse_set_xy(int x, int y)
+{
+    if (hw_mouse_range_w && hw_mouse_range_w != hw_mouse_game_w) x = x * hw_mouse_game_w / hw_mouse_range_w;
+    if (hw_mouse_range_h && hw_mouse_range_h != hw_mouse_game_h) y = y * hw_mouse_game_h / hw_mouse_range_h;
+    SETRANGE(x, 0, hw_mouse_game_w - 1);
     SETRANGE(y, 0, hw_mouse_game_h - 1);
     mouse_set_xy_from_hw(x, y);
 }
