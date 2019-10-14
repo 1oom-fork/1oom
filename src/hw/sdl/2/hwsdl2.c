@@ -236,7 +236,7 @@ int hw_init(void)
         return 12;
     }
     build_key_xlat();
-    SDL_EventState(SDL_MOUSEMOTION, SDL_IGNORE);
+    SDL_ShowCursor(SDL_DISABLE);
     return 0;
 }
 
@@ -324,6 +324,9 @@ int hw_event_handle(void)
                     kbd_add_keypress(MOO_KEY_UNKNOWN, 0, c);
                 }
                 break;
+            case SDL_MOUSEMOTION:
+                hw_mouse_set_xy(e.motion.x,e.motion.y);
+                break;
             case SDL_MOUSEBUTTONDOWN:
             case SDL_MOUSEBUTTONUP:
                 hw_mouse_button((int)(e.button.button), (e.button.state == SDL_PRESSED));
@@ -345,14 +348,6 @@ int hw_event_handle(void)
                 break;
         }
     }
-    if (hw_mouse_enabled) {
-        int x, y;
-        SDL_GetRelativeMouseState(&x, &y);
-        if ((x != 0) || (y != 0)) {
-            hw_mouse_move(x, y);
-        }
-    }
-
     if (hw_audio_check_process()) {
         exit(EXIT_FAILURE);
     }

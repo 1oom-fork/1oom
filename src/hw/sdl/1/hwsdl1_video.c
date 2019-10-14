@@ -292,6 +292,7 @@ static int video_sw_set(int w, int h)
         return -1;
     }
     hw_mouse_set_scale(w, h);
+    hw_mouse_set_range(w, h);
     return 0;
 }
 
@@ -309,7 +310,7 @@ int hw_video_resize(int w, int h)
         return 0;
     }
 
-    if ((w < 0) || (h < 0)) {
+    if ((w <= 0) || (h <= 0)) {
         w = video.bufw;
         h = video.bufh;
     }
@@ -349,8 +350,11 @@ int hw_video_resize(int w, int h)
     set_viewport(video.bufw, video.bufh, actual_w, actual_h);
     if (hw_opt_fullscreen) {
         hw_mouse_grab();
+    } else {
+        hw_mouse_ungrab();
     }
     hw_mouse_set_scale(actual_w, actual_h);
+    hw_mouse_set_range(actual_w, actual_h);
     video.actual_w = actual_w;
     video.actual_h = actual_h;
     return 0;
@@ -393,6 +397,7 @@ bool hw_video_update_aspect(void)
 int hw_video_init(int w, int h)
 {
     hw_mouse_set_limits(w, h);
+    hw_mouse_set_range(w, h);
     video.bufw = w;
     video.bufh = h;
     video.flag_screenshot = false;
