@@ -380,6 +380,28 @@ static int video_sw_set(int w, int h)
     return 0;
 }
 
+static void video_position_cursor(int mx, int my)
+{
+#if SDL_VERSION_ATLEAST(2, 0, 18)
+    if (!hw_opt_relmouse && hw_mouse_enabled) {
+        int x, y;
+        float xcheck, ycheck;
+        if (opt_aspect_ratio_correct) {
+            my = my * 6 / 5;
+        }
+        SDL_RenderLogicalToWindow(video.renderer, mx, my, &x, &y);
+        SDL_RenderWindowToLogical(video.renderer, x, y, &xcheck, &ycheck);
+        if (mx > xcheck) {
+            ++x;
+        }
+        if (my > ycheck) {
+            ++y;
+        }
+        SDL_WarpMouseInWindow(video.window, x, y);
+    }
+#endif
+}
+
 /* -------------------------------------------------------------------------- */
 
 unsigned int hw_video_get_window_id(void)
@@ -432,6 +454,7 @@ int hw_video_init(int w, int h)
     i_hw_video.render = video_render;
     i_hw_video.update = video_update;
     i_hw_video.setpal = video_setpal;
+    i_hw_video.position_cursor = video_position_cursor;
 
     /* Create the 8-bit paletted surface. */
     video.screen = SDL_CreateRGBSurfaceFrom(vgabuf_get_front(), w, h, 8, w, 0, 0, 0, 0);
