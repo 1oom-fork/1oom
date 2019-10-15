@@ -325,6 +325,7 @@ struct game_s {
     seen_t seen[PLAYER_NUM][PLANETS_MAX];
     shipdesign_t current_design[PLAYER_NUM];
     struct game_aux_s *gaux;
+    uint8_t xoptions;
 };
 
 #define IS_AI(_g_, _i_) BOOLVEC_IS1((_g_)->is_ai, (_i_))

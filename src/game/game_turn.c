@@ -1563,6 +1563,7 @@ struct game_end_s game_turn_process(struct game_s *g)
     uint8_t old_focus[PLAYER_NUM];
     int num_alive = 0, num_colony = 0;
     game_end.type = GAME_END_NONE;
+    int gopt;
     game_turn_limit_ships(g);
     for (int i = 0; i < g->players; ++i) {
         BOOLVEC_TBL_COPY1(old_contact, g->eto[i].contact, i, PLAYER_NUM);
@@ -1672,12 +1673,17 @@ struct game_end_s game_turn_process(struct game_s *g)
             ++num_alive;
         }
     }
+    gopt = (g->xoptions & XOPTION_COUNCIL_MASK);
     if (1
       && (game_num_council_years != 0)
+      && gopt != XOPTION_COUNCIL_OFF
+      && gopt != XOPTION_COUNCIL_OFF
       && (((g->year % game_num_council_years) == 0) || (!g->election_held))
       && (num_alive > 2)
       && (((g->galaxy_stars * 2) / 3) <= num_colony)
+      && (gopt != XOPTION_COUNCIL_3_4 || (((g->galaxy_stars * 3) / 4) <= num_colony))
       && (g->end == GAME_END_NONE)
+      && (gopt != XOPTION_COUNCIL_ORION || g->evn.have_orion_conquer)
     ) {
         game_election(g);
         g->election_held = true;
