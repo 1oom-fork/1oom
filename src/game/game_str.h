@@ -522,4 +522,13 @@ extern const char *game_str_tbl_mf[FINISHED_NUM];
 #define XTRAMENU_NUM    10
 extern const char *game_str_tbl_xtramenu[XTRAMENU_NUM];
 
+extern const char *game_str_opt_event;
+extern const char *game_str_opt_council;
+extern const char *game_str_opt_guardian;
+extern const char *game_str_opt_rules;
+extern const char *game_str_tbl_opt_event[XOPTION_EVENTS_NUM];
+extern const char *game_str_tbl_opt_council[XOPTION_COUNCIL_NUM];
+extern const char *game_str_tbl_opt_guardian[XOPTION_GUARDIAN_NUM];
+extern const char *game_str_tbl_opt_rules[XOPTION_RULES_NUM];
+
 #endif

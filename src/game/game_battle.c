@@ -252,6 +252,16 @@ void game_battle_prepare(struct battle_s *bt, int party_r, int party_l, uint8_t 
         monster_id_t mi;
         mi = party_r - PLAYER_NUM;
         memcpy(sp, &tbl_monster[mi][g->difficulty], sizeof(*sp));
+        if (mi == MONSTER_GUARDIAN && (g->xoptions & XOPTION_GUARDIAN_WEAK)) {
+          sp->special[0] = SHIP_SPECIAL_HIGH_ENERGY_FOCUS;
+          sp->special[1] = 0;
+          sp->special[2] = SHIP_SPECIAL_LIGHTNING_SHIELD;
+          sp->wpnn[0] = 10 * g->difficulty + (g->difficulty==0 ? 5 : 0);
+          sp->wpnn[2] = 5 * (1+g->difficulty);
+          sp->wpnn[3] = 2 * (2+g->difficulty);
+          sp->defense = sp->misdefense = 3 + g->difficulty;
+          sp->repair = 0;
+        }
         strncpy(sp->name, game_str_tbl_monsh_names[mi], SHIP_NAME_LEN);
         sp->name[SHIP_NAME_LEN - 1] = 0;
         game_battle_item_add(bt, sp, SIDE_R);
