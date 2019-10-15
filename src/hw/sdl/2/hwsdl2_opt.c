@@ -19,7 +19,6 @@
 
 bool hw_opt_force_sw = false;
 bool hw_opt_int_scaling = false;
-bool hw_opt_relmouse = true;
 
 #ifdef HAVE_SDL2MIXER
 #define HAVE_SDLMIXER
@@ -30,7 +29,6 @@ bool hw_opt_relmouse = true;
 const struct cfg_items_s hw_cfg_items_extra[] = {
     CFG_ITEM_BOOL("force_sw", &hw_opt_force_sw),
     CFG_ITEM_BOOL("int_scaling", &hw_opt_int_scaling),
-    CFG_ITEM_BOOL("relmouse", &hw_opt_relmouse),
     CFG_ITEM_END
 };
 
@@ -53,11 +51,5 @@ const struct cmdline_options_s hw_cmdline_options_extra[] = {
     { "-nointscaling", 0,
       options_disable_bool_var, (void *)&hw_opt_int_scaling,
       NULL, "Do not force integer scaling" },
-    { "-relmouse", 0,
-      options_enable_bool_var, (void *)&hw_opt_relmouse,
-      NULL, "Use relative mouse mode (default)" },
-    { "-norelmouse", 0,
-      options_disable_bool_var, (void *)&hw_opt_relmouse,
-      NULL, "Do not use relative mouse mode\nRelative mouse mode is needed for normal operation.\nDisable it at your own risk!" },
     { NULL, 0, NULL, NULL, NULL, NULL }
 };

@@ -18,6 +18,7 @@ int mouse_stored_y = 0;
 int mouse_click_x = 0;
 int mouse_click_y = 0;
 int mouse_click_buttons = 0;
+bool mouse_disable_set_xy = false;
 
 /* ------------------------------------------------------------------------- */
 
@@ -47,8 +48,10 @@ void mouse_set_scroll_from_hw(int scroll)
 
 void mouse_set_xy(int mx, int my)
 {
-    moouse_x = mx;
-    moouse_y = my;
+    if (!mouse_disable_set_xy) {
+        moouse_x = mx;
+        moouse_y = my;
+    }
 }
 
 void mouse_set_click_xy(int mx, int my)

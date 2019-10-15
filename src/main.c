@@ -31,6 +31,8 @@ static int main_early_init(void)
     return 0;
 }
 
+/* BUG? config file options are read at this point, command line options are not - this is insane 
+ * all options should be parsed at this point, else why have main_early_init() in the first place */
 static int main_init(void)
 {
     if (0

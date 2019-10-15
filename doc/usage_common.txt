@@ -127,6 +127,11 @@ For some graphical UIs:
 For SDL HWs:
     -mousespd SPEED      Set mouse speed (default = 100)
     -sdlmixersf FILE.SF2 Set SDL_mixer soundfont
+    -relmouse            Use relative mouse mode (default)
+    -norelmouse          Do not use relative mouse mode
+                         Allows playing in windowed mode without mouse capture.
+                         Disables forced mouse moves (keypad, some dialogs) and
+                         in-game mouse settings.
 
 For SDL1 HW:
     -gl                  Enable OpenGL
@@ -139,10 +144,6 @@ For SDL2 HW:
     -noforcesw           Do not force software rendering
     -intscaling          Force integer scaling
     -nointscaling        Do not force integer scaling
-    -relmouse            Use relative mouse mode (default)
-    -norelmouse          Do not use relative mouse mode
-                         Relative mouse mode is needed for normal operation.
-                         Disable it at your own risk!
 
 For all game UIs:
     -dumpstr             Dump strings in PBXIN format

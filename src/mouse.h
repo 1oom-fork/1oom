@@ -16,6 +16,7 @@ extern int mouse_stored_y;
 extern int mouse_click_x;
 extern int mouse_click_y;
 extern int mouse_click_buttons;
+extern bool mouse_disable_set_xy;
 
 extern void mouse_set_xy_from_hw(int mx, int my);
 extern void mouse_set_buttons_from_hw(int buttons);

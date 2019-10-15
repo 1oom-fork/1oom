@@ -215,7 +215,6 @@ int hw_init(void)
     SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
     SDL_EnableUNICODE(1);
     build_key_xlat();
-    SDL_ShowCursor(SDL_DISABLE);
     return 0;
 }
 
@@ -269,7 +268,13 @@ int hw_event_handle(void)
                 kbd_set_pressed(key_xlat[e.key.keysym.sym], mod, false);
                 break;
             case SDL_MOUSEMOTION:
-                hw_mouse_set_xy(e.motion.x,e.motion.y);
+                if (hw_mouse_enabled) {
+                    if (hw_opt_relmouse) {
+                        hw_mouse_move((int)(e.motion.xrel), (int)(e.motion.yrel));
+                    } else {
+                        hw_mouse_set_xy(e.motion.x,e.motion.y);
+                    }
+                }
                 break;
             case SDL_MOUSEBUTTONDOWN:
             case SDL_MOUSEBUTTONUP:
