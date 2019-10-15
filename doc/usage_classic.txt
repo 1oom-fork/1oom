@@ -38,6 +38,7 @@ The following new UI features are always enabled/available:
 - Random race / banner
 - Local multiplayer (use -new or -uiextra to start a game)
 - Lowercase allowed in save names
+- Game options screen allow to inspect additional game options (see below)
 - Load Game screen uses numbers as hotkeys for slots
 - Objects with hotkeys can be navigated to using cursor keys
 - Mouse wheel can be used to scroll lists and adjust many things
@@ -60,6 +61,7 @@ The config file item "ui.uiextra" (set via the -uiextra command-line option)
 or pressing Alt-X in the main menu enables the following extra UI features:
 - Continue and Undo saves can be chosen in the Load Game screen
 - New Game screen allows setting opponent race/banner/names and AI/human flag
+  and provides additional game options (see below)
 - Game options screen Silent/FX Only/Music is replaced with more options
 - Report screen shows name of AI leaders, Map screen shows current year
 - Fleet deployment shows the amount of available ships
@@ -86,5 +88,18 @@ or pressing Alt-X in the main menu enables the following extra UI features:
   your last planet of choice
 - Clicking on #, Name, etc on Planets screen sorts the list
 - Clicking on Station or ship names on Fleet screen sorts the list
+
+Additional game options are settable with uiextra in the New Game screen.
+The options are tied to the save file, cannot be altered and can be inspected 
+(even without uiextra) in the Game options screen:
+
+- AI: Classic or Classic+
+- Events: all, none, late (year 2400+), good (only Rich/Fertile/Merchant/Derelict)
+- Council: 2/3, 3/4 (of planets settled), Orion (when Orion is settled), none
+- Guardian: normal, weak (less weapons, less DEF, no ARS/ADC)
+- Rules: pbx, fix bugs (as in fixbugs.pbx), MOO v1.3 (enjoy your doom stacks)
+
+The settings override pbx-patches and are put in effect at game creation/load time.
+Old saves default to Classic, all, 2/3, normal, pbx (i.e. pbx patches get honored).
 
 See doc/list_gamediff.txt for a list of differences in the game itself.

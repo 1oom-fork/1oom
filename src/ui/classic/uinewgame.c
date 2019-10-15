@@ -26,6 +26,7 @@
 #include "uipal.h"
 #include "uisound.h"
 #include "util.h"
+#include "pbx.h"
 
 /* -------------------------------------------------------------------------- */
 
@@ -327,6 +328,10 @@ static bool ui_new_game_extra(struct game_new_options_s *newopts, struct new_gam
 
     newopts->pdata[PLAYER_0].race = RACE_HUMAN;
     newopts->pdata[PLAYER_0].banner = BANNER_BLUE;
+    /* if no pbx patches have been loaded, default to XOPTION_RULES_FIX */
+    if (!pbx_num_patches) {
+        newopts->rules = 1;
+    }
     d->have_human = true;
     game_new_generate_emperor_name(newopts->pdata[PLAYER_0].race, newopts->pdata[PLAYER_0].playername, EMPEROR_NAME_LEN);
     game_new_generate_home_name(newopts->pdata[PLAYER_0].race, newopts->pdata[PLAYER_0].homename, PLANET_NAME_LEN);
@@ -361,9 +366,6 @@ static bool ui_new_game_extra(struct game_new_options_s *newopts, struct new_gam
     lbxfont_print_str_normal(280, 165, ":", UI_SCREEN_W, ui_scale);
 
     lbxfont_select(5, 0, 0, 0);
-    /*
-     * lbxfont_print_str_right(100 - 3, 155, game_str_ng_ai, UI_SCREEN_W, ui_scale);
-     * lbxfont_print_str_normal(100, 165, ":", UI_SCREEN_W, ui_scale); */
     lbxfont_print_str_center(40, 180, game_str_ng_cancel, UI_SCREEN_W, ui_scale);
     lbxfont_print_str_center(260, 180, game_str_ng_ok, UI_SCREEN_W, ui_scale);
     hw_video_copy_back_to_page3();
@@ -378,7 +380,6 @@ static bool ui_new_game_extra(struct game_new_options_s *newopts, struct new_gam
         oi_council  = uiobj_add_mousearea(125, 165, 180, 177, MOO_KEY_a); \
         oi_guardian = uiobj_add_mousearea(190, 165, 245, 177, MOO_KEY_a); \
         oi_rules    = uiobj_add_mousearea(255, 165, 310, 177, MOO_KEY_a); \
-        /* oi_ai_id = uiobj_add_mousearea(100 - 3, 155, 150, 167, MOO_KEY_a); */ \
         for (int i = 0; i < newopts->players; ++i) { \
             int x0 = 4 + (i / 3) * 160; \
             int y0 = PORTRAITBOX_TOP_MARGIN + (i % 3) * PORTRAITBOX_H; \
@@ -427,8 +428,7 @@ static bool ui_new_game_extra(struct game_new_options_s *newopts, struct new_gam
         } else if (oi == oi_guardian) {
             d->newopts->guardian = (d->newopts->guardian + 1) % XOPTION_GUARDIAN_NUM;
         } else if (oi == oi_rules) {
-            /* currently not implemented, so pbx it is */
-            d->newopts->rules = (d->newopts->rules + 1) % 1; /* XOPTION_RULES_NUM; */
+            d->newopts->rules = (d->newopts->rules + 1) % XOPTION_RULES_NUM;
         }
         for (int i = 0; i < newopts->players; ++i) {
             if (oi == oi_race[i]) {

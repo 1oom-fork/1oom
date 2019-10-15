@@ -1028,7 +1028,6 @@ int game_new(struct game_s *g, struct game_aux_s *gaux, struct game_new_options_
         }
         log_message("Game: new game -new %u:0x%x:%u:0x%x:%u -nga %u\n", vo, vr, vb, g->galaxy_seed, va, g->ai_id);
     }
-    g->xoptions = opt->events | opt->council << 2 | opt->guardian << 4 | opt->rules << 5;
     game_generate_galaxy(g);
     game_generate_planet_names(g);
     game_generate_home_etc(g);
@@ -1056,13 +1055,14 @@ int game_new(struct game_s *g, struct game_aux_s *gaux, struct game_new_options_
         lbxfile_item_release(LBXFILE_NAMES, namedata);
     }
     g->active_player = PLAYER_0;
-    if( (g->xoptions&3) == XOPTION_EVENTS_NONE ) {
+    g->xoptions = opt->events | opt->council << 2 | opt->guardian << 4 | opt->rules << 5;
+    if( (g->xoptions & XOPTION_EVENTS_MASK) == XOPTION_EVENTS_NONE ) {
       g->evn.done[0] = 0xfe;
       g->evn.done[1] = 0xff;
       g->evn.done[2] = 0x01;
-    } else if( (g->xoptions&3) == XOPTION_EVENTS_LATE ) {
+    } else if( (g->xoptions & XOPTION_EVENTS_MASK) == XOPTION_EVENTS_LATE ) {
       g->evn.year = 100;
-    } else if( (g->xoptions&3) == XOPTION_EVENTS_GOOD ) {
+    } else if( (g->xoptions & XOPTION_EVENTS_MASK) == XOPTION_EVENTS_GOOD ) {
       g->evn.done[0] = 0xfe;
       g->evn.done[1] = 0x1d;
       g->evn.done[2] = 0x01;

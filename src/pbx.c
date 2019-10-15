@@ -85,6 +85,8 @@ static bool pbx_cb_nump(void *ctx, const char *filename, int pbxi, const char *i
 
 /* -------------------------------------------------------------------------- */
 
+int pbx_num_patches = 0;
+
 int pbx_add_file(const char *filename, struct pbx_add_cbs *cbs_in, void *ctx)
 {
     FILE *fd;
@@ -96,6 +98,7 @@ int pbx_add_file(const char *filename, struct pbx_add_cbs *cbs_in, void *ctx)
     int res = -1;
     struct pbx_add_cbs cbs;
 
+    ++pbx_num_patches;
     cbs.name = (cbs_in && cbs_in->name) ? cbs_in->name : pbx_cb_name;
     cbs.desc = (cbs_in && cbs_in->desc) ? cbs_in->desc : pbx_cb_desc;
     cbs.lbxp = (cbs_in && cbs_in->lbxp) ? cbs_in->lbxp : pbx_cb_lbxp;
