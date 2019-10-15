@@ -9,6 +9,9 @@
 #include "os.h"
 #include "types.h"
 #include "util_math.h"
+#include "game_num.h"
+#include "game_parsed.h"
+#include "game_shipdesign.h"
 
 /* -------------------------------------------------------------------------- */
 
@@ -177,5 +180,99 @@ void game_aux_start(struct game_aux_s *gaux, struct game_s *g)
     gaux->local_players = n;
     if ((n > 1) && !gaux->move_temp) {
         gaux->move_temp = lib_malloc(sizeof(*gaux->move_temp));
+    }
+    game_aux_set_rules(g->xoptions);
+}
+
+void game_aux_set_rules(uint8_t xopt)
+{
+    xopt &= XOPTION_RULES_MASK;
+
+    if (xopt == XOPTION_RULES_FIX) {
+        tbl_monster[MONSTER_GUARDIAN][3].special[1] = 16;
+        tbl_monster[MONSTER_GUARDIAN][4].special[1] = 26;
+        tbl_monster[MONSTER_GUARDIAN][4].repair = 30;
+        tbl_startship[0].engines = 2;
+        tbl_startship[1].engines = 27;
+        tbl_startship[2].engines = 110;
+        tbl_startship[3].engines = 85;
+        tbl_startship[4].engines = 100;
+        tbl_startship[0].cost = 8;
+        tbl_startship[1].cost = 14;
+        tbl_startship[2].cost = 74;
+        tbl_startship[3].cost = 65;
+        tbl_startship[4].cost = 570;
+        game_num_ng_tech[RACE_SILICOID][TECH_FIELD_PLANETOLOGY][24] = 1;
+        game_num_ng_tech[RACE_SILICOID][TECH_FIELD_PLANETOLOGY][30] = 1;
+        game_num_max_factories = 2700;
+        game_num_accident_chk_factories = true;
+        game_num_bt_wait_no_reload = true;
+        game_num_bt_precap_tohit = true;
+        game_num_bt_no_tohit_acc = true;
+        game_num_bt_oracle_fix = true;
+        game_num_news_orion = true;
+        game_num_weapon_list_max = 64;
+        game_num_aud_bounty_give = true;
+        game_num_monster_rest_att = true;
+        game_num_orbital_weap_any = true;
+        game_num_orbital_weap_4 = true;
+        game_num_orbital_torpedo = true;
+        game_num_orbital_comp_fix = true;
+        game_num_combat_trans_fix = true;
+        game_num_stargate_redir_fix = true;
+        game_num_trans_redir_fix = true;
+        game_num_first_tech_rp_fix = true;
+        game_num_waste_calc_fix = true;
+        game_num_waste_adjust_fix = true;
+        game_num_eco_slider_slack = 0;
+        game_num_reset_tform_to_max = false;
+        game_num_soil_rounding_fix = true;
+        /*  we do not touch those as in fixbugs.pbx
+         *  game_num_aud_ask_break_nap = false;
+         *  game_num_retreat_redir_fix = false;
+         *  game_num_doom_stack_fix = true;       */
+    } else if (xopt == XOPTION_RULES_V13) {
+        tbl_monster[MONSTER_GUARDIAN][3].special[1] = 26;
+        tbl_monster[MONSTER_GUARDIAN][4].special[1] = 0;
+        tbl_monster[MONSTER_GUARDIAN][4].repair = 0;
+        tbl_startship[0].engines = 10;
+        tbl_startship[1].engines = 30;
+        tbl_startship[2].engines = 115;
+        tbl_startship[3].engines = 90;
+        tbl_startship[4].engines = 205;
+        tbl_startship[0].cost = 10;
+        tbl_startship[1].cost = 15;
+        tbl_startship[2].cost = 66;
+        tbl_startship[3].cost = 86;
+        tbl_startship[4].cost = 591;
+        game_num_ng_tech[RACE_SILICOID][TECH_FIELD_PLANETOLOGY][24] = 0;
+        game_num_ng_tech[RACE_SILICOID][TECH_FIELD_PLANETOLOGY][30] = 0;
+        game_num_max_factories = 2500;
+        game_num_accident_chk_factories = false;
+        game_num_bt_wait_no_reload = false;
+        game_num_bt_precap_tohit = false;
+        game_num_bt_no_tohit_acc = false;
+        game_num_bt_oracle_fix = false;
+        game_num_news_orion = false;
+        game_num_weapon_list_max = 30;
+        game_num_aud_bounty_give = false;
+        game_num_monster_rest_att = false;
+        game_num_orbital_weap_any = false;
+        game_num_orbital_weap_4 = false;
+        game_num_orbital_torpedo = false;
+        game_num_orbital_comp_fix = false;
+        game_num_combat_trans_fix = false;
+        game_num_stargate_redir_fix = false;
+        game_num_trans_redir_fix = false;
+        game_num_first_tech_rp_fix = false;
+        game_num_waste_calc_fix = false;
+        game_num_waste_adjust_fix = false;
+        game_num_eco_slider_slack = 7;
+        game_num_reset_tform_to_max = true;
+        game_num_soil_rounding_fix = false;
+        /* we do set those, otherwise the option would be redundant */
+        game_num_aud_ask_break_nap = false;
+        game_num_retreat_redir_fix = false;
+        game_num_doom_stack_fix = false;    /* you asked for it, you got it! */
     }
 }
