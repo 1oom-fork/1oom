@@ -22,31 +22,59 @@ static int hw_mouse_sy = 1;
 
 /* -------------------------------------------------------------------------- */
 
-bool hw_mouse_enabled = true;
+bool hw_mouse_enabled = false;
 bool hw_mouse_grabbed = false;
 
 /* -------------------------------------------------------------------------- */
 
-void hw_mouse_grab(void)
+void hw_mouse_disable_sw_jumps(void)
 {
-    if (!hw_mouse_grabbed) {
-        hw_mouse_grabbed = true;
-        hw_video_input_grab(true);
-    }
+    mouse_disable_set_xy = true;
 }
 
+void hw_mouse_grab(void)
+{
+    hw_mouse_grabbed = true;
+    if (!hw_mouse_enabled) {
+        hw_mouse_enabled = true;
+        SDL_ShowCursor(SDL_DISABLE);
+    }
+    hw_video_input_grab(true);
+}
+
+/* with absolute coordinates, we do not need to disable input into 1oom */
 void hw_mouse_ungrab(void)
 {
-    if (hw_mouse_grabbed) {
-        hw_mouse_grabbed = false;
-        hw_video_input_grab(false);
+    hw_mouse_grabbed = false;
+    if (hw_opt_relmouse && hw_mouse_enabled) {
+        hw_mouse_enabled = false;
+        SDL_ShowCursor(SDL_ENABLE);
     }
+    hw_video_input_grab(false);
 }
 
 void hw_mouse_toggle_grab(void)
 {
-    hw_mouse_grabbed = !hw_mouse_grabbed;
-    hw_video_input_grab(hw_mouse_grabbed);
+    if (hw_mouse_grabbed) {
+        hw_mouse_ungrab();
+    } else {
+        hw_mouse_grab();
+    }
+}
+
+void hw_mouse_init()
+{
+    if (hw_opt_relmouse) {
+        hw_mouse_enabled = false;
+        SDL_ShowCursor(SDL_ENABLE);
+        log_message("using relative mouse\n");
+    } else {
+        hw_mouse_enabled = true;
+        SDL_ShowCursor(SDL_DISABLE);
+        hw_mouse_disable_sw_jumps();
+        log_message("using absolute mouse\n");
+    }
+    hw_mouse_ungrab();
 }
 
 void hw_mouse_set_limits(int w, int h)

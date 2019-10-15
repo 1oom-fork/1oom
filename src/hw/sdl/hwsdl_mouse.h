@@ -6,10 +6,12 @@
 extern bool hw_mouse_enabled;
 extern bool hw_mouse_grabbed;
 
+extern void hw_mouse_disable_sw_jumps(void);
 extern void hw_mouse_grab(void);
 extern void hw_mouse_ungrab(void);
 extern void hw_mouse_toggle_grab(void);
 
+extern void hw_mouse_init();
 extern void hw_mouse_set_limits(int w, int h);
 extern void hw_mouse_set_range(int w, int h);
 extern void hw_mouse_set_scale(int w, int h);

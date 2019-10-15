@@ -12,6 +12,7 @@ int hw_opt_screen_winh = 0;
 int hw_opt_screen_fsw = 0;
 int hw_opt_screen_fsh = 0;
 int hw_opt_mousespd = 100;
+bool hw_opt_relmouse = true;
 #ifdef FEATURE_MODEBUG
 int hw_opt_overlay_pal = 0;
 #endif
@@ -40,6 +41,7 @@ const struct cfg_items_s hw_cfg_items[] = {
     CFG_ITEM_INT("fsw", &hw_opt_screen_fsw, 0),
     CFG_ITEM_INT("fsh", &hw_opt_screen_fsh, 0),
     CFG_ITEM_INT("mousespd", &hw_opt_mousespd, check_mouse_speed),
+    CFG_ITEM_BOOL("relmouse", &hw_opt_relmouse),
 #ifdef HAVE_SDLMIXER
     CFG_ITEM_STR("sdlmixersf", &hw_opt_sdlmixer_sf, 0),
 #endif
@@ -140,6 +142,12 @@ const struct cmdline_options_s hw_cmdline_options[] = {
     { "-mousespd", 1,
       hw_options_set_mousespd, 0,
       "SPEED", "Set mouse speed (default = 100)" },
+    { "-relmouse", 0,
+      options_enable_bool_var, (void *)&hw_opt_relmouse,
+      NULL, "Use relative mouse mode (default)" },
+    { "-norelmouse", 0,
+      options_disable_bool_var, (void *)&hw_opt_relmouse,
+      NULL, "Do not use relative mouse mode\nAllows playing in windowed mode without mouse capture.\nDisables forced mouse moves and mouse settings." },
 #ifdef HAVE_SDLMIXER
     { "-sdlmixersf", 1,
       hw_opt_set_sdlmixer_sf, NULL,

@@ -11,6 +11,7 @@ extern int hw_opt_screen_fsh;
 extern char *hw_opt_sdlmixer_sf;
 extern int hw_opt_aspect;
 extern int hw_opt_mousespd;
+extern bool hw_opt_relmouse;
 
 /* debug */
 extern int hw_opt_overlay_pal;
@@ -23,6 +24,5 @@ extern int hw_opt_bpp;
 /* for SDL2 */
 extern bool hw_opt_force_sw;
 extern bool hw_opt_int_scaling;
-extern bool hw_opt_relmouse;
 
 #endif

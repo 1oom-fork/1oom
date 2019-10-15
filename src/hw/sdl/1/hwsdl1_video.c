@@ -398,6 +398,7 @@ int hw_video_init(int w, int h)
 {
     hw_mouse_set_limits(w, h);
     hw_mouse_set_range(w, h);
+    hw_mouse_init();
     video.bufw = w;
     video.bufh = h;
     video.flag_screenshot = false;
