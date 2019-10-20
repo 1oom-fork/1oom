@@ -760,7 +760,9 @@ bool game_event_run(struct game_s *g, struct game_end_s *ge)
             field = ftbl[fi];
             tier = e->tech.percent[field] / 5;
             for (int i = 0; (i < (tier + 2)) && (i < TECH_TIER_NUM); ++i) {
-                game_tech_get_new(g, player, field, rl[field][i][0], TECHSOURCE_RESEARCH, 0, ns.race, false); /* BUG? ns.race makes no sense but is unused */
+                /* WASBUG MOO1 used ns.race in the 7th argument which is nonsensical, but
+                 * irrelevant in the case of TECHSOURCE_RESEARCH. */
+                game_tech_get_new(g, player, field, rl[field][i][0], TECHSOURCE_RESEARCH, 0, 0, false);
             }
         }
         ns.subtype = 0;
