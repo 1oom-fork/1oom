@@ -8,6 +8,7 @@
 #include <string.h>
 #include <unistd.h>
 
+#include "game_nebula.h"
 #include "game_save.h"
 #include "bits.h"
 #include "game.h"
@@ -35,6 +36,44 @@ bool game_save_tbl_have_save[NUM_ALL_SAVES];
 char game_save_tbl_name[NUM_ALL_SAVES][SAVE_NAME_LEN];
 
 /* -------------------------------------------------------------------------- */
+
+/*
+ * HACK: Nebula types are not stored in the save file format, but can be inferred
+ * from the bounding boxes.
+ */
+static bool game_save_nebula_match(uint16_t x, uint16_t y, const uint16_t *x0, const uint16_t *y0, const uint16_t *x1, const uint16_t *y1, const uint8_t nebula_data[4][4]) {
+    for (int i = 0; i < 4; ++i) {
+        if (x0[i] != x + nebula_data[0][i]) {
+            return false;
+        }
+        if (y0[i] != y + nebula_data[1][i]) {
+            return false;
+        }
+        if (x1[i] != x + nebula_data[2][i]) {
+            return false;
+        }
+        if (y1[i] != y + nebula_data[3][i]) {
+            return false;
+        }
+    }
+    return true;
+}
+
+static int game_save_infer_nebula_type(const struct game_s *g, uint32_t index)
+{
+    uint16_t x  = g->nebula_x[index];
+    uint16_t y  = g->nebula_y[index];
+    const uint16_t *x0 = g->nebula_x0[index];
+    const uint16_t *y0 = g->nebula_y0[index];
+    const uint16_t *x1 = g->nebula_x1[index];
+    const uint16_t *y1 = g->nebula_y1[index];
+    for (int t = 0; t < NEBULA_TYPE_NUM; ++t) {
+        if (game_save_nebula_match(x, y, x0, y0, x1, y1, tbl_nebula_data[t])) {
+            return t;
+        }
+    }
+    return -1;
+}
 
 static int game_save_encode_planet(uint8_t *buf, int pos, const planet_t *p, int pnum, uint32_t version)
 {
@@ -750,6 +789,14 @@ static int game_save_decode(const uint8_t *buf, int buflen, struct game_s *g, ui
     SG_1OOM_DE_TBL_TBL_U16(g->nebula_x1, g->nebula_num, 4);
     SG_1OOM_DE_TBL_TBL_U16(g->nebula_y0, g->nebula_num, 4);
     SG_1OOM_DE_TBL_TBL_U16(g->nebula_y1, g->nebula_num, 4);
+    for (int i = 0; i < g->nebula_num; ++i) {
+        g->nebula_type[i] = game_save_infer_nebula_type(g, i);
+        if (g->nebula_type[i] < 0) {
+            log_error("Save: unknown nebula type for nebula %i\n", i);
+            return -1;
+        }
+    }
+
     SG_1OOM_DE_TBL_TBL_U8(g->emperor_names, g->players, EMPEROR_NAME_LEN);
     SG_1OOM_DE_TBL_U8(g->planet_focus_i, g->players);
     for (int i = 0; i < g->galaxy_stars; ++i) {
