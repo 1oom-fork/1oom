@@ -41,6 +41,8 @@ libgame_a_SOURCES = \
     game_ground.h \
     game_misc.c \
     game_misc.h \
+    game_nebula.c \
+    game_nebula.h \
     game_new.c \
     game_new.h \
     game_news.c \
@@ -78,6 +80,8 @@ libgame_a_SOURCES = \
     game_types.h
 
 libgamesaveconv_a_SOURCES = \
+    game_nebula.c \
+    game_nebula.h \
     game_save.c \
     game_save.h \
     game_str_shipnames.c \
