@@ -1,6 +1,7 @@
 #ifndef INC_1OOM_GAME_MISC_H
 #define INC_1OOM_GAME_MISC_H
 
+#include "game.h"
 #include "game_planet.h"
 #include "game_types.h"
 #include "types.h"
