@@ -124,6 +124,10 @@ static void ui_new_game_display(struct game_new_options_s *newopts)
     if (!have_human(newopts)) {
         puts(game_str_ng_allai);
     }
+    printf("%s: %s\n",game_str_opt_event, game_str_tbl_opt_event[newopts->events]);
+    printf("%s: %s\n", game_str_opt_council, game_str_tbl_opt_council[newopts->council]);
+    printf("%s: %s\n", game_str_opt_guardian, game_str_tbl_opt_guardian[newopts->guardian]);
+    printf("%s: %s\n", game_str_opt_rules, game_str_tbl_opt_rules[newopts->rules]);
 }
 
 static int cmd_exit(struct game_s *g, int api, struct input_token_s *param, int num_param, void *var)
@@ -239,7 +243,7 @@ static bool ui_new_game_extra(struct game_new_options_s *newopts)
         { "r", "[PLAYER]", "Race", 1, 1, 0, cmd_race, 0 },
         { "b", "[PLAYER]", "Banner", 1, 1, 0, cmd_choose, ui_new_game_choose_banner },
         { "n", "[PLAYER]", "Emperor name", 1, 1, 0, cmd_choose, ui_new_game_pname },
-        { "h", "[PLAYER]", "Home word name", 1, 1, 0, cmd_choose, ui_new_game_hname },
+        { "h", "[PLAYER]", "Home world name", 1, 1, 0, cmd_choose, ui_new_game_hname },
         { NULL, NULL, NULL, 0, 0, 0, NULL, 0 }
     };
 
@@ -306,6 +310,39 @@ static bool ui_new_game(struct game_new_options_s *newopts)
         { 0, NULL, NULL, NULL },
     };
 
+    struct input_list_s ng_council_in[] = {
+        {0, "1", NULL, game_str_tbl_opt_council[0] },
+        {1, "2", NULL, game_str_tbl_opt_council[1] },
+        {2, "3", NULL, game_str_tbl_opt_council[2] },
+        {3, "4", NULL, game_str_tbl_opt_council[3] },
+        { -1, "Q", NULL, "(quit)" },
+        { 0, NULL, NULL, NULL },
+    };
+
+    struct input_list_s ng_guardian_in[] = {
+        {0, "1", NULL, game_str_tbl_opt_guardian[0] },
+        {1, "2", NULL, game_str_tbl_opt_guardian[1] },
+        { -1, "Q", NULL, "(quit)" },
+        { 0, NULL, NULL, NULL },
+    };
+
+    struct input_list_s ng_events_in[] = {
+        {0, "1", NULL, game_str_tbl_opt_event[0] },
+        {1, "2", NULL, game_str_tbl_opt_event[1] },
+        {2, "3", NULL, game_str_tbl_opt_event[2] },
+        {3, "4", NULL, game_str_tbl_opt_event[3] },
+        { -1, "Q", NULL, "(quit)" },
+        { 0, NULL, NULL, NULL },
+    };
+
+    struct input_list_s ng_rules_in[] = {
+        {0, "1", NULL, game_str_tbl_opt_rules[0] },
+        {1, "2", NULL, game_str_tbl_opt_rules[1] },
+        {2, "3", NULL, game_str_tbl_opt_rules[2] },
+        { -1, "Q", NULL, "(quit)" },
+        { 0, NULL, NULL, NULL },
+    };
+
     if ((v = ui_input_list("Galaxy size", "> ", ng_galaxy_in)) < 0) {
         return false;
     }
@@ -324,6 +361,22 @@ static bool ui_new_game(struct game_new_options_s *newopts)
     if (ui_new_game_choose_banner(newopts, PLAYER_0) < 0) {
         return false;
     }
+    if ((v = ui_input_list("Council", "> ", ng_council_in)) < 0) {
+        return false;
+    }
+    newopts->council = v;
+    if ((v = ui_input_list("Events", "> ", ng_events_in)) < 0) {
+        return false;
+    }
+    newopts->events = v;
+    if ((v = ui_input_list("Guardian", "> ", ng_guardian_in)) < 0) {
+        return false;
+    }
+    newopts->guardian = v;
+    if ((v = ui_input_list("Rules", "> ", ng_rules_in)) < 0) {
+        return false;
+    }
+    newopts->rules = v;
     ui_new_game_pname(newopts, PLAYER_0);
     ui_new_game_hname(newopts, PLAYER_0);
     return ui_new_game_extra(newopts);
