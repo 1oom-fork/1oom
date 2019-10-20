@@ -277,7 +277,6 @@ typedef struct seen_s {
 
 #define EMPEROR_NAME_LEN    15
 #define NEBULA_MAX  4
-#define NEBULA_TYPE_NUM 10
 #define YEAR_BASE   2299
 
 struct game_aux_s;
