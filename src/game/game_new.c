@@ -364,7 +364,7 @@ static void game_generate_planets(struct game_s *g)
             p->growth = PLANET_GROWTH_HOSTILE;
         } else if ((p->type > PLANET_TYPE_DESERT) && (rnd_1_n(12, &g->seed) == 1)) {
             game_soil_enrich(p, 0, 0);
-            p->max_pop2 = p->max_pop1;
+            p->max_pop1 = p->max_pop2;
         }
         p->owner = PLAYER_NONE;
         p->prev_owner = PLAYER_NONE;

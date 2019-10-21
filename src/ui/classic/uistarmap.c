@@ -407,9 +407,8 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
         } else if (oi1 == d.sm.oi_gov_bases || (oi1 == d.sm.oi_gov_wheel_bases && scrollmisc > 0)) {
             if (BOOLVEC_IS1(p->extras, PLANET_EXTRAS_GOVERNOR)) {
                 ui_sound_play_sfx_24();
-                int t = p->target_bases;
+                int t = p->target_bases + 1;
                 SETMAX(t, p->missile_bases);
-                ++t;
                 SETMIN(t, 250);
                 if (t != p->target_bases) {
                     ui_sound_play_sfx_24();
@@ -418,9 +417,10 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
                 }
             }
         } else if (oi1 == d.sm.oi_gov_wheel_bases && scrollmisc < 0) {
-            if (BOOLVEC_IS1(p->extras, PLANET_EXTRAS_GOVERNOR)) {
+            if (BOOLVEC_IS1(p->extras, PLANET_EXTRAS_GOVERNOR) && p->target_bases) {
                 int t = p->target_bases;
                 --t;
+                if (t < p->missile_bases) t = 0;
                 SETMAX(t, p->missile_bases);
                 if (t != p->target_bases) {
                     ui_sound_play_sfx_24();
@@ -429,18 +429,19 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
                 }
             }
         } else if (oi1 == d.sm.oi_gov_boost) {
-            BOOLVEC_SET1(p->extras, PLANET_EXTRAS_GOVERNOR);
-            if (BOOLVEC_IS1(p->extras, PLANET_EXTRAS_GOV_BOOST_PROD)) {
-                BOOLVEC_SET0(p->extras, PLANET_EXTRAS_GOV_BOOST_BUILD);
-                BOOLVEC_SET0(p->extras, PLANET_EXTRAS_GOV_BOOST_PROD);
-            } else if (BOOLVEC_IS1(p->extras, PLANET_EXTRAS_GOV_BOOST_BUILD)) {
-                BOOLVEC_SET1(p->extras, PLANET_EXTRAS_GOV_BOOST_BUILD);
-                BOOLVEC_SET1(p->extras, PLANET_EXTRAS_GOV_BOOST_PROD);
-            } else {
-                BOOLVEC_SET1(p->extras, PLANET_EXTRAS_GOV_BOOST_BUILD);
-                BOOLVEC_SET0(p->extras, PLANET_EXTRAS_GOV_BOOST_PROD);
+            if (BOOLVEC_IS1(p->extras, PLANET_EXTRAS_GOVERNOR)) {
+                if (BOOLVEC_IS1(p->extras, PLANET_EXTRAS_GOV_BOOST_PROD)) {
+                    BOOLVEC_SET0(p->extras, PLANET_EXTRAS_GOV_BOOST_BUILD);
+                    BOOLVEC_SET0(p->extras, PLANET_EXTRAS_GOV_BOOST_PROD);
+                } else if (BOOLVEC_IS1(p->extras, PLANET_EXTRAS_GOV_BOOST_BUILD)) {
+                    BOOLVEC_SET1(p->extras, PLANET_EXTRAS_GOV_BOOST_BUILD);
+                    BOOLVEC_SET1(p->extras, PLANET_EXTRAS_GOV_BOOST_PROD);
+                } else {
+                    BOOLVEC_SET1(p->extras, PLANET_EXTRAS_GOV_BOOST_BUILD);
+                    BOOLVEC_SET0(p->extras, PLANET_EXTRAS_GOV_BOOST_PROD);
+                }
+                game_planet_govern(g, p);
             }
-            game_planet_govern(g, p);
         }
 
         for (int i = 0; i < g->enroute_num; ++i) {

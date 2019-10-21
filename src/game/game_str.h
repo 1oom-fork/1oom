@@ -271,7 +271,6 @@ extern const char *game_str_gv_rest;
 extern const char *game_str_tbl_gv_rest[3];
 extern const char *game_str_gv_reserve;
 extern const char *game_str_tbl_gv_reserve[3];
-extern const char *game_str_tbl_gv_reserve_alt[3];
 extern const char *game_str_gv_allpl;
 extern const char *game_str_gv_starg;
 extern const char *game_str_gv_ecom;

@@ -650,7 +650,7 @@ int game_planet_get_slider_text_eco(const struct game_s *g, const planet_t *p, p
 }
 
 /**
- * Return BSs which have been transferred from the reserve.
+ * Return BCs which have been transferred from the reserve.
  * If this is nozero, the caller needs to call game_update_production(g)
  * before using planet production values.
  *
@@ -663,8 +663,8 @@ int game_planet_govern_reserve(struct game_s *g, planet_t *p)
       || BOOLVEC_IS0(p->extras, PLANET_EXTRAS_GOV_BOOST_BUILD)
       || !g->eto[player].reserve_bc
     ) {
-      game_planet_govern_sliders(g,p);
-      return 0;
+        game_planet_govern_sliders(g,p);
+        return 0;
     }
     if (BOOLVEC_IS0(p->extras, PLANET_EXTRAS_GOV_BOOST_PROD)) {
         int pperc = game_planet_govern_sliders(g,p);
@@ -710,6 +710,7 @@ int game_planet_govern_sliders(const struct game_s *g, planet_t *p)
     const empiretechorbit_t *e = &(g->eto[player]);
     governor_eco_mode_t eco_mode = (g->evn.gov_eco_mode[player] & GOVERNOR_ECO_MODE_MASK);
     int old_eco = p->slider[PLANET_SLIDER_ECO];
+    int old_tech = p->slider[PLANET_SLIDER_TECH], min_tech;
     SETMIN(old_eco, 100);
 
     /* unlock all sliders and clear spending */
@@ -731,6 +732,24 @@ int game_planet_govern_sliders(const struct game_s *g, planet_t *p)
         set_slider(p, PLANET_SLIDER_ECO, old_eco);
     }
     p->slider_lock[PLANET_SLIDER_ECO] = true;
+
+    /* Don't set tech all down to zero on active research planets */
+    min_tech = p->slider[PLANET_SLIDER_TECH] / 4;
+    SETRANGE(min_tech, 12, 24);
+    SETMIN(min_tech, p->slider[PLANET_SLIDER_TECH]);
+    if (1
+      && min_tech
+      && old_tech >= 12
+      && BOOLVEC_IS0(p->extras, PLANET_EXTRAS_GOV_SPEND_REST_SHIP)
+      && BOOLVEC_IS0(p->extras, PLANET_EXTRAS_GOV_SPEND_REST_IND)
+    ) {
+        p->slider[PLANET_SLIDER_TECH] -= min_tech;
+        p->slider[PLANET_SLIDER_SHIP] += min_tech;
+        p->slider_lock[PLANET_SLIDER_SHIP] = true;
+    } else {
+        min_tech = 0;
+    }
+
     /* Add maximum industry if factories would actually get used, until we get MAX or RESERVE */
     move_ind_max(g, p);
     p->slider_lock[PLANET_SLIDER_IND] = true;
@@ -744,6 +763,7 @@ int game_planet_govern_sliders(const struct game_s *g, planet_t *p)
         move_eco_grow_pop(g, p);
     }
     p->slider_lock[PLANET_SLIDER_ECO] = true;
+
     /* build shields only if at least a single base has been ordered */
     if (p->target_bases) {
         /* For defense, first do upgrades/shields.
@@ -752,6 +772,9 @@ int game_planet_govern_sliders(const struct game_s *g, planet_t *p)
         /* Build enough missile bases to reach target amount */
         move_def_bases(g, p);
     }
+    p->slider[PLANET_SLIDER_SHIP] -= min_tech;
+    p->slider[PLANET_SLIDER_DEF] += min_tech;
+    p->slider_lock[PLANET_SLIDER_SHIP] = false;
     p->slider_lock[PLANET_SLIDER_DEF] = true;
     if (e->have_stargates && !p->have_stargate && BOOLVEC_IS0(g->evn.gov_no_stargates, player)) {
         /* build stargate */
@@ -766,8 +789,11 @@ int game_planet_govern_sliders(const struct game_s *g, planet_t *p)
         move_eco_grow_pop(g, p);
         p->slider_lock[PLANET_SLIDER_ECO] = true;
     }
-    int pperc = p->slider[PLANET_SLIDER_TECH];
+    p->slider[PLANET_SLIDER_DEF] -= min_tech;
+    p->slider[PLANET_SLIDER_TECH] += min_tech;
+
     /* Spend the rest on research, ship building or reserve. */
+    int pperc = p->slider[PLANET_SLIDER_TECH];
     if (p->slider[PLANET_SLIDER_TECH] != 0) {
         planet_slider_i_t slideri = PLANET_SLIDER_TECH;
         if (BOOLVEC_IS1(p->extras, PLANET_EXTRAS_GOV_SPEND_REST_SHIP)) {
@@ -780,6 +806,7 @@ int game_planet_govern_sliders(const struct game_s *g, planet_t *p)
             p->slider[PLANET_SLIDER_TECH] = 0;
         }
     }
+
     /* at the end of govern, keep only eco or ind slider locked to allow easy one-turn manual tweaks */
     p->slider_lock[PLANET_SLIDER_SHIP] = false;
     p->slider_lock[PLANET_SLIDER_DEF] = false;

@@ -43,6 +43,10 @@ static void ui_starmap_draw_planetinfo_do(const struct game_s *g, player_id_t ap
         lbxfont_set_temp_color(0x0);
         lbxfont_select_set_12_4(4, 0xf, 0, 0);
         lbxfont_print_str_center(269, 10, p->name, UI_SCREEN_W, ui_scale);
+        /* stars in nebulas get a purple instead of a red frame */
+        if (ui_extra_enabled && p->battlebg==0) {
+            ui_draw_box1(228, 25, 309, 52, 0xd3, 0xd3, ui_scale);
+        }
         if (p->type == PLANET_TYPE_NOT_HABITABLE) {
             lbxfont_select(0, 0xe, 0, 0);
             lbxfont_print_str_center(269, 32, game_str_sm_nohabit, UI_SCREEN_W, ui_scale);
@@ -119,29 +123,49 @@ static void ui_starmap_draw_sliders_and_prod(struct starmap_data_s *d)
     const planet_t *p = &g->planet[g->planet_focus_i[d->api]];
     int x = 311;
     char buf[64];
+    int gvcol = ui_draw_govern_color(p, d->api);
 
     for (planet_slider_i_t i = PLANET_SLIDER_SHIP; i < PLANET_SLIDER_NUM; ++i) {
         ui_draw_filled_rect(227, 81 + 11 * i, 244, 90 + 11 * i, p->slider_lock[i] ? 0x22 : 0, ui_scale);
     }
-    if (ui_draw_govern_color(p, d->api) && BOOLVEC_IS1(p->extras, PLANET_EXTRAS_GOV_BOOST_BUILD)) {
+    if (gvcol && BOOLVEC_IS1(p->extras, PLANET_EXTRAS_GOV_BOOST_BUILD)) {
         ui_draw_filled_rect( 228, 71, 312, 77, BOOLVEC_IS1(p->extras, PLANET_EXTRAS_GOV_BOOST_PROD) ? 0x81 : 0xc3, ui_scale);
     }
-
     lbxgfx_draw_frame(224, 5, ui_data.gfx.starmap.yourplnt, UI_SCREEN_W, ui_scale);
-    {
+    if (gvcol) {
         /* highlight governor with a border; use a color based on mode */
-        uint8_t c = ui_draw_govern_color(p, d->api);
-        if (c != 0) {
-            ui_draw_box1(227, 8, 310, 20, c, c, ui_scale);
-        }
+        ui_draw_box1(227, 8, 310, 20, gvcol, gvcol, ui_scale);
     }
-    lbxfont_select(2, !p->reserve ? 0xe : p->reserve<p->prod_after_maint/2 ? 0xb : 0x0, 0xe, 0);
-    lib_sprintf(buf, sizeof(buf), "%i \x02(%i)\x01", p->prod_after_maint, p->total_prod);
-    lbxfont_print_str_right(x, 72, buf, UI_SCREEN_W, ui_scale);
+    if (gvcol &&  d->gov_highlight) {
+        uint8_t const gov_boost_col[3] = { 0x00, 0xc3, 0x81 };
+        int i = 0;
+        if (BOOLVEC_IS1(p->extras, PLANET_EXTRAS_GOV_BOOST_BUILD)) ++i;
+        if (BOOLVEC_IS1(p->extras, PLANET_EXTRAS_GOV_BOOST_PROD)) ++i;
+        ui_draw_line1( 273, 61, 312, 61, d->gov_highlight == 4 ? 5 : 251, ui_scale);
+        ui_draw_filled_rect( 273, 62, 312, 66, d->gov_highlight == 4 ? 5 : 7, ui_scale);
+        ui_draw_line1( 228, 72, 312, 72, d->gov_highlight == 5 ? 5 : 251, ui_scale);
+        ui_draw_filled_rect( 228, 73, 312, 77, d->gov_highlight == 5 ? 5 : 7, ui_scale);
+        lbxfont_select(2, 0, 0, 0);
+        lbxfont_print_str_normal( 274, 61, "Plan", UI_SCREEN_W, ui_scale);
+        lbxfont_print_str_normal( 229, 72, "Reserve boost", UI_SCREEN_W, ui_scale);
+        if (p->target_bases) {
+            lbxfont_select(2, p->missile_bases < p->target_bases ? 0xb : 0xd, 0, 0);
+            lbxfont_print_num_right(x, 61, p->target_bases, UI_SCREEN_W, ui_scale);
+        } else {
+            lbxfont_select(2, 6, 0, 0);
+            lbxfont_print_str_right(x, 61, "none", UI_SCREEN_W, ui_scale);
+        }
+        lbxfont_set_color0(gov_boost_col[i]);
+        lbxfont_print_str_right(x, 72, game_str_tbl_gv_reserve[i], UI_SCREEN_W, ui_scale); 
+    } else {
+        lbxfont_select(2, !ui_extra_enabled || !p->reserve ? 0xd : p->reserve<p->prod_after_maint/2 ? 0xb : 0x0, 0xe, 0);
+        lib_sprintf(buf, sizeof(buf), "%i \x02(%i)\x01", p->prod_after_maint, p->total_prod);
+        lbxfont_print_str_right(x, 72, buf, UI_SCREEN_W, ui_scale);
+        lbxfont_select(2, ui_extra_enabled && p->missile_bases < p->target_bases ? 0xb : 0xd, 0, 0);
+        lbxfont_print_num_right(x, 61, p->missile_bases, UI_SCREEN_W, ui_scale);
+    }
     lbxfont_select(2, 0xd, 0, 0);
     lbxfont_print_num_right(265, 61, p->pop, UI_SCREEN_W, ui_scale);
-    lbxfont_select(2, p->missile_bases < p->target_bases ? 0xb : 0xd, 0, 0);
-    lbxfont_print_num_right(x, 61, p->missile_bases, UI_SCREEN_W, ui_scale);
 
     for (planet_slider_i_t i = PLANET_SLIDER_SHIP; i < PLANET_SLIDER_NUM; ++i) {
         ui_draw_filled_rect(253, 84 + 11 * i, 278, 84 + 11 * i + 3, 0x2f, ui_scale);
@@ -205,28 +229,11 @@ static void ui_starmap_draw_sliders_and_prod(struct starmap_data_s *d)
         }
         lbxfont_print_str_right(x, 127, buf, UI_SCREEN_W, ui_scale);
     }
-    if (d->gov_highlight) {
-            if (d->gov_highlight == 5) {
-            uint8_t const gov_boost_col[3] = { 0x00, 0xc4, 0x82 };
-            int i = 0;
-            if (BOOLVEC_IS1(p->extras, PLANET_EXTRAS_GOV_BOOST_BUILD)) ++i;
-            if (BOOLVEC_IS1(p->extras, PLANET_EXTRAS_GOV_BOOST_PROD)) ++i;
-            ui_draw_filled_rect( 228, 71, 312, 77, gov_boost_col[i], ui_scale);
-            lbxfont_select(2, 0, 0, 0);
-            lbxfont_print_str_center( 270, 72, game_str_tbl_gv_reserve_alt[i], UI_SCREEN_W, ui_scale);
-        } else if (d->gov_highlight == 4) {
-            ui_draw_filled_rect( 273, 60, 312, 66, 0x46, ui_scale);
-            lbxfont_select(2, 0, 0, 0);
-            int t = p->target_bases;
-            SETMAX(t, p-> missile_bases);
-            lbxfont_print_str_normal(275, 61, "gov", UI_SCREEN_W, ui_scale);
-            lbxfont_print_num_right(311, 61, t, UI_SCREEN_W, ui_scale);
-        } else {
-            uint8_t const gov_col[4] = { 0, 0x55, 0x46, 0x71 };
-            ui_draw_filled_rect( 288, 60+22*d->gov_highlight, 312, 66+22*d->gov_highlight, gov_col[d->gov_highlight], ui_scale);
-            lbxfont_select(2, 0, 0, 0);
-            lbxfont_print_str_center(300, 61+22*d->gov_highlight, "gov", UI_SCREEN_W, ui_scale);
-        }
+    if (d->gov_highlight >=1 && d->gov_highlight<=3) {
+        uint8_t const gov_col[4] = { 0, 0x55, 0x46, 0x71 };
+        ui_draw_filled_rect( 288, 60+22*d->gov_highlight, 312, 66+22*d->gov_highlight, gov_col[d->gov_highlight], ui_scale);
+        lbxfont_select(2, 0, 0, 0);
+        lbxfont_print_str_center(300, 61+22*d->gov_highlight, "gov", UI_SCREEN_W, ui_scale);
     }
 }
 

@@ -429,10 +429,7 @@ const char *game_str_tbl_gv_rest[3] = {
 };
 const char *game_str_gv_reserve = "Reserve boost";
 const char *game_str_tbl_gv_reserve[3] = {
-    "none", "only for buildup", "always"
-};
-const char *game_str_tbl_gv_reserve_alt[3] = {
-    "no reserve", "reserve buildup", "reserve production"
+    "none", "buildup", "always"
 };
 const char *game_str_gv_allpl = "All planets";
 const char *game_str_gv_starg = "Build stargates";
