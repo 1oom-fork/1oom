@@ -24,4 +24,7 @@ extern bool ui_qol_cursor_nav_all_obj;
 /* Map screen shows current year. */
 extern bool ui_qol_gmap_year;
 
+/* Stars in nebulas get a purple instead of a red frame */
+extern bool ui_qol_starmap_planet_neb;
+
 #endif
