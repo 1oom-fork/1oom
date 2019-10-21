@@ -12,3 +12,4 @@ bool ui_fix_starmap_oor_msg = false;
 
 bool ui_qol_cursor_nav_all_obj = false;
 bool ui_qol_gmap_year = false;
+bool ui_qol_starmap_planet_neb = false;
