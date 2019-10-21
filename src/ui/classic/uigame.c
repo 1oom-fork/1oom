@@ -311,6 +311,7 @@ void ui_game_start(struct game_s *g)
         for (int i = 0; i < g->players; ++i) {
             if (IS_HUMAN(g, i)) {
                 g->evn.msg_filter[i][0] = FINISHED_DEFAULT_FILTER;
+                g->evn.gov_eco_mode[i] &= ~GOVERNOR_ECO_MODE_AUTO_TECH;
             }
         }
     }
