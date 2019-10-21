@@ -40,6 +40,9 @@ static void ui_starmap_draw_planetinfo_do(const struct game_s *g, player_id_t ap
     if (explored) {
         lbxfont_select_set_12_4(4, 0xf, 0, 0);
         lbxfont_print_str_center(269, 10, p->name, UI_SCREEN_W);
+        if (ui_qol_starmap_planet_neb && (p->battlebg == 0)) {
+            ui_draw_box1(228, 25, 309, 52, 0xd3, 0xd3);
+        }
         if (p->type == PLANET_TYPE_NOT_HABITABLE) {
             lbxfont_select(0, 0xe, 0, 0);
             lbxfont_print_str_center(269, 32, game_str_sm_nohabit, UI_SCREEN_W);
