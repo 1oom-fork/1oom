@@ -49,7 +49,8 @@ enables the following extra UI features:
 - Clicking a selected destination star again works as Accept for fleet send etc
 - Eco slider shows fractional population growth if growth is less than 10
 - Summary of forces shown before ship combat
-- Nebula planets show "NEB" in their shields field
+- Nebula planets show "NEB" in their shields field and have a purple instead
+  of a red frame around their picture
 - New Auto and Retreat buttons for space combat autoresolve
 - Tech screen has lights showing when you reach max research bonus
 - Clicking on the Tech screen lights sets the slider to bonus limit
