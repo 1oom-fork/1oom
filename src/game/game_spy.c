@@ -330,7 +330,7 @@ static void game_spy_sabotage(struct game_s *g, player_id_t spy, player_id_t tar
 
 /* -------------------------------------------------------------------------- */
 
-int game_spy_esp_sub1(struct game_s *g, struct spy_esp_s *s, int a4, int a6)
+int game_spy_esp_sub1(struct game_s *g, struct spy_esp_s *s, int minval, int a6)
 {
     s->tnum = 0;
     game_spy_esp_sub2(g, s, a6);
@@ -350,7 +350,7 @@ int game_spy_esp_sub1(struct game_s *g, struct spy_esp_s *s, int a4, int a6)
                 }
             }
             value = game_spy_esp_get_value(g, s, field, techi);
-            if ((value == 0) || (value < a4)) {
+            if ((value == 0) || (value < minval)) {
                 have_tech = true;
             }
             if (!have_tech) {
