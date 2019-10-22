@@ -233,7 +233,7 @@ static void game_ground_finish(struct game_s *g, struct ground_s *gr)
             gr->techchance = chance;
             s->target = gr->s[1].player;
             s->spy = gr->s[0].player;
-            num = game_spy_esp_sub1(g, s, 0, 0);
+            num = game_spy_select_random_techs(g, s);
             SETMIN(num, chance);
             s->tnum = num;
             for (int i = 0; i < num; ++i) {

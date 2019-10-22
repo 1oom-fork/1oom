@@ -778,11 +778,11 @@ static void audience_menu_tribute(struct audience_s *au)
         s->spy = pa;
         s->target = ph;
         /* WASBUG
-           MOO1 does game_spy_esp_sub1(g, s, tav[i], 0) where tav is a global table also used by audience_menu_tech and i is bcnum.
+           MOO1 does game_spy_select_useful_techs(g, s, tav[i], 0) where tav is a global table also used by audience_menu_tech and i is bcnum.
            If the tech menu is never visited or the table is not filled up to bcnum then the value is 0.
            Values larger than 0 only filter out tech of lesser worth, and who would not want to use those as bribes?
         */
-        if (game_spy_esp_sub1(g, s, 0, 0) > 0) {
+        if (game_spy_select_useful_techs(g, s, 0, 0) > 0) {
             int num_techs = MIN(s->tnum, 4);
             game_audience_tech_choice(au, game_str_au_whattr, s->tbl_field, s->tbl_tech2, num_techs, true);
             selected = ui_audience_ask4(au);
@@ -817,7 +817,7 @@ static void audience_menu_tech(struct audience_s *au)
         int tanum, thnum[TECH_SPY_MAX], total_thnum;
         s->spy = ph;
         s->target = pa;
-        if (game_spy_esp_sub1(g, s, 0, 1) > 0) {
+        if (game_spy_select_useful_techs(g, s, 0, 1) > 0) {
             tanum = s->tnum;
             for (int i = 0; i < tanum; ++i) {
                 taf[i] = s->tbl_field[i];
@@ -828,7 +828,7 @@ static void audience_menu_tech(struct audience_s *au)
             s->target = ph;
             total_thnum = 0;
             for (int i = 0; i < tanum; ++i) {
-                if (game_spy_esp_sub1(g, s, tav[i], 0) > 0) {
+                if (game_spy_select_useful_techs(g, s, tav[i], 0) > 0) {
                     int n;
                     n = s->tnum;
                     thnum[total_thnum] = n;
@@ -909,7 +909,7 @@ static void audience_menu_main(struct audience_s *au)
             struct spy_esp_s s[1];
             s->spy = pa;
             s->target = ph;
-            if ((eh->reserve_bc < 25) && (game_spy_esp_sub1(g, s, 0, 0) == 0)) {
+            if ((eh->reserve_bc < 25) && (game_spy_select_useful_techs(g, s, 0, 0) == 0)) {
                 condtbl[3] = false;
             }
         }
