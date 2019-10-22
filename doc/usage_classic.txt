@@ -90,7 +90,7 @@ or pressing Alt-X in the main menu enables the following extra UI features:
 - Clicking on the production field in the Planets screen resets the allocated
   reserve to zero or (when it is already zero) directly opens the reserve
   transfer dialog.
-- Nebuals planets show "NEB" in their shields field and have a purple instead
+- Nebula planets show "NEB" in their shields field and have a purple instead
   of a red frame around their picture
 - New Auto and Retreat buttons for space combat autoresolve
 - Pressing = or # on the Tech screen adjusts only the unlocked sliders

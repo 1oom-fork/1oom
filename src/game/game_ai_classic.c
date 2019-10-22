@@ -3643,9 +3643,9 @@ static int game_ai_classic_turn_diplo_p1_get_ai_trade_tech(struct game_s *g, pla
     s.target = p1;
     s.spy = p2;
     r = rnd_1_n(3, &g->seed);
-    num = game_spy_esp_sub2(g, &s, r);
+    num = game_spy_sift_useful_techs(g, &s, r);
     /* WASBUG
-       MOO1 does field = s.tbl_field[0] and tech = s.tbl_tech2[0] but neither is set by game_spy_esp_sub2.
+       MOO1 does field = s.tbl_field[0] and tech = s.tbl_tech2[0] but neither is set by game_spy_sift_useful_techs.
        MOO1 uses global variables for the tables; the values are from some previous spy call (possibly ground combat tech steal).
     */
     if (num > 0) {
@@ -3825,7 +3825,7 @@ static void game_ai_classic_turn_diplo_p2_sub1(struct game_s *g, player_id_t p1,
             int num, bc;
             s->spy = p1;
             s->target = p2;
-            num = game_spy_esp_sub1(g, s, 0, 2);
+            num = game_spy_select_useful_techs(g, s, 0, 2);
             /*game_spy_esp_get_random(g, s, &field, &tech); unused */
             bc = 0;
             if (num == 0) {
@@ -3868,7 +3868,7 @@ static void game_ai_classic_turn_diplo_p2_sub1(struct game_s *g, player_id_t p1,
             SETMIN(v14, 50);
             s->spy = p2;
             s->target = p1;
-            num = game_spy_esp_sub1(g, s, 0, 0);
+            num = game_spy_select_useful_techs(g, s, 0, 0);
             if (num > 0) {
                 bool found;
                 tech_field_t zfield;
@@ -3879,7 +3879,7 @@ static void game_ai_classic_turn_diplo_p2_sub1(struct game_s *g, player_id_t p1,
                 zvalue = (s->tbl_value[0] * 100) / v14;
                 s->spy = p1;
                 s->target = p2;
-                num = game_spy_esp_sub1(g, s, zvalue, 1);
+                num = game_spy_select_useful_techs(g, s, zvalue, 1);
                 found = false;
                 for (int i = 0; i < num; ++i) {
                     if (s->tbl_value[i] <= zvalue) {
@@ -3929,7 +3929,7 @@ static void game_ai_classic_turn_diplo_p2_sub1(struct game_s *g, player_id_t p1,
             struct spy_esp_s s[1];
             s->spy = p1;
             s->target = p2;
-            if (game_spy_esp_sub1(g, s, 0, 2) > 0) {
+            if (game_spy_select_useful_techs(g, s, 0, 2) > 0) {
                 e1->offer_field[p2] = s->tbl_field[0];
                 e1->offer_tech[p2] = s->tbl_tech2[0];
             }
@@ -4002,7 +4002,7 @@ static void game_ai_classic_turn_diplo_p2_sub3(struct game_s *g, player_id_t p1,
                 struct spy_esp_s s[1];
                 s->spy = p1;
                 s->target = p2;
-                if (game_spy_esp_sub1(g, s, 0, 2) > 0) {
+                if (game_spy_select_useful_techs(g, s, 0, 2) > 0) {
                     e1->offer_field[p2] = s->tbl_field[0];
                     e1->offer_tech[p2] = s->tbl_tech2[0];
                 }
@@ -4253,7 +4253,7 @@ static bool game_ai_classic_aud_sweeten(struct audience_s *au, int *bcptr, tech_
         struct spy_esp_s s[1];
         s->spy = pa;
         s->target = ph;
-        if (game_spy_esp_sub1(g, s, g->year, 1) > 0) {
+        if (game_spy_select_useful_techs(g, s, g->year, 1) > 0) {
             field = s->tbl_field[0];
             tech = s->tbl_tech2[0];
         } else {
@@ -4308,7 +4308,7 @@ static uint8_t game_ai_classic_aud_threaten(struct audience_s *au)
             struct spy_esp_s s[1];
             s->spy = ph;
             s->target = pa;
-            if (game_spy_esp_sub1(g, s, 0, 1) > 0) {
+            if (game_spy_select_useful_techs(g, s, 0, 1) > 0) {
                 au->tribute_field = s->tbl_field[0];
                 au->tribute_tech = s->tbl_tech2[0];
                 game_tech_get_new(g, ph, au->tribute_field, au->tribute_tech, TECHSOURCE_TRADE, pa, PLAYER_NONE, false); /* WASBUG? pa was 0 */
