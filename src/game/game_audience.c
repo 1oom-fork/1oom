@@ -463,7 +463,7 @@ static int game_audience_sweeten(struct audience_s *au, int a0)
         struct spy_esp_s s[1];
         s->spy = pa;
         s->target = ph;
-        if (game_spy_esp_sub1(g, s, g->year, 1) > 0) {
+        if (game_spy_select_useful_techs(g, s, g->year, 1) > 0) {
             field = s->tbl_field[0];
             tech = s->tbl_tech2[0];
         } else {
@@ -773,7 +773,7 @@ static void audience_menu_threat(struct audience_s *au)
                         struct spy_esp_s s[1];
                         s->spy = ph;
                         s->target = pa;
-                        if (game_spy_esp_sub1(g, s, 0, 1) > 0) {
+                        if (game_spy_select_useful_techs(g, s, 0, 1) > 0) {
                             au->tribute_field = s->tbl_field[0];
                             au->tribute_tech = s->tbl_tech2[0];
                             game_tech_get_new(g, ph, au->tribute_field, au->tribute_tech, TECHSOURCE_TRADE, pa, 0, false);   /* WASBUG? pa was 0 */
@@ -877,7 +877,7 @@ static void audience_menu_tribute(struct audience_s *au)
         int hmm1 = 0; /* FIXME BUG = diplo_p2_sub1_zhmm4[bcnum]; uninitialized, wrong index */
         s->spy = pa;
         s->target = ph;
-        if (game_spy_esp_sub1(g, s, hmm1, 0) > 0) {
+        if (game_spy_select_useful_techs(g, s, hmm1, 0) > 0) {
             int i;
             cbuf = &(au->buf[AUDIENCE_CBUF_POS]);
             for (i = 0; (i < 4) && (i < s->tnum); ++i) {
@@ -961,7 +961,7 @@ static void audience_menu_tech(struct audience_s *au)
         int tanum, thnum[TECH_SPY_MAX], total_thnum;
         s->spy = ph;
         s->target = pa;
-        if (game_spy_esp_sub1(g, s, 0, 1) > 0) {
+        if (game_spy_select_useful_techs(g, s, 0, 1) > 0) {
             tanum = s->tnum;
             for (int i = 0; i < tanum; ++i) {
                 taf[i] = s->tbl_field[i];
@@ -972,7 +972,7 @@ static void audience_menu_tech(struct audience_s *au)
             s->target = ph;
             total_thnum = 0;
             for (int i = 0; i < tanum; ++i) {
-                if (game_spy_esp_sub1(g, s, tav[i], 0) > 0) {
+                if (game_spy_select_useful_techs(g, s, tav[i], 0) > 0) {
                     int n;
                     n = s->tnum;
                     thnum[total_thnum] = n;
@@ -1064,7 +1064,7 @@ static void audience_menu_main(struct audience_s *au)
             struct spy_esp_s s[1];
             s->spy = pa;
             s->target = ph;
-            if ((eh->reserve_bc < 25) && (game_spy_esp_sub1(g, s, 0, 0) == 0)) {
+            if ((eh->reserve_bc < 25) && (game_spy_select_useful_techs(g, s, 0, 0) == 0)) {
                 condtbl[3] = false;
             }
         }

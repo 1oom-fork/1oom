@@ -3361,7 +3361,7 @@ static void game_ai_classic_turn_diplo_p2_sub1(struct game_s *g, player_id_t p1,
             int num, bc;
             s->spy = p1;
             s->target = p2;
-            num = game_spy_esp_sub1(g, s, 0, 2);
+            num = game_spy_select_useful_techs(g, s, 0, 2);
             /*game_spy_esp_get_random(g, s, &field, &tech); unused */
             bc = 0;
             if (num == 0) {
@@ -3404,7 +3404,7 @@ static void game_ai_classic_turn_diplo_p2_sub1(struct game_s *g, player_id_t p1,
             SETMIN(v14, 50);
             s->spy = p2;
             s->target = p1;
-            num = game_spy_esp_sub1(g, s, 0, 0);
+            num = game_spy_select_useful_techs(g, s, 0, 0);
             if (num > 0) {
                 bool found;
                 tech_field_t zfield;
@@ -3415,7 +3415,7 @@ static void game_ai_classic_turn_diplo_p2_sub1(struct game_s *g, player_id_t p1,
                 zvalue = (s->tbl_value[0] * 100) / v14;
                 s->spy = p1;
                 s->target = p2;
-                num = game_spy_esp_sub1(g, s, zvalue, 1);
+                num = game_spy_select_useful_techs(g, s, zvalue, 1);
                 found = false;
                 for (int i = 0; i < num; ++i) {
                     if (s->tbl_value[i] <= zvalue) {
@@ -3465,7 +3465,7 @@ static void game_ai_classic_turn_diplo_p2_sub1(struct game_s *g, player_id_t p1,
             struct spy_esp_s s[1];
             s->spy = p1;
             s->target = p2;
-            if (game_spy_esp_sub1(g, s, 0, 2) > 0) {
+            if (game_spy_select_useful_techs(g, s, 0, 2) > 0) {
                 e1->offer_field[p2] = s->tbl_field[0];
                 e1->offer_tech[p2] = s->tbl_tech2[0];
             }
@@ -3538,7 +3538,7 @@ static void game_ai_classic_turn_diplo_p2_sub3(struct game_s *g, player_id_t p1,
                 struct spy_esp_s s[1];
                 s->spy = p1;
                 s->target = p2;
-                if (game_spy_esp_sub1(g, s, 0, 2) > 0) {
+                if (game_spy_select_useful_techs(g, s, 0, 2) > 0) {
                     e1->offer_field[p2] = s->tbl_field[0];
                     e1->offer_tech[p2] = s->tbl_tech2[0];
                 }

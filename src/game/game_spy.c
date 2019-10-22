@@ -197,7 +197,7 @@ static void game_spy_espionage(struct game_s *g, player_id_t spy, player_id_t ta
     if (spies > 0) {
         s->target = target;
         s->spy = spy;
-        game_spy_esp_sub1(g, s, 0, 0);
+        game_spy_select_useful_techs(g, s, 0, 0);
         /*81f0a*/
         game_spy_esp_sub5(s, rmax);
         SETMIN(spied, s->tnum);
@@ -330,7 +330,7 @@ static void game_spy_sabotage(struct game_s *g, player_id_t spy, player_id_t tar
 
 /* -------------------------------------------------------------------------- */
 
-int game_spy_esp_sub1(struct game_s *g, struct spy_esp_s *s, int minval, int a6)
+int game_spy_select_useful_techs(struct game_s *g, struct spy_esp_s *s, int minval, int a6)
 {
     s->tnum = 0;
     game_spy_sift_useful_techs(g, s, a6);
@@ -566,7 +566,7 @@ void game_spy_esp_human(struct game_s *g, struct spy_turn_s *st)
                 }
                 for (int loops = 0; loops < 5; ++loops) {
                     int num;
-                    num = game_spy_esp_sub1(g, s, 0, 0);
+                    num = game_spy_select_useful_techs(g, s, 0, 0);
                     game_spy_esp_sub5(s, st->tbl_rmax[target][spy]);
                     for (int i = 0; i < num; ++i) {
                         int field;
