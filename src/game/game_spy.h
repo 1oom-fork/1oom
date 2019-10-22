@@ -21,7 +21,7 @@ struct spy_esp_s {
 struct game_s;
 
 extern int game_spy_esp_sub1(struct game_s *g, struct spy_esp_s *s, int minval, int a6);
-extern int game_spy_esp_sub2(struct game_s *g, struct spy_esp_s *s, int a4);
+extern int game_spy_sift_useful_techs(struct game_s *g, struct spy_esp_s *s, int a4);
 extern void game_spy_build(struct game_s *g);
 extern void game_spy_report(struct game_s *g);
 extern void game_spy_turn(struct game_s *g, struct spy_turn_s *st);

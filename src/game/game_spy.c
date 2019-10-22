@@ -333,7 +333,7 @@ static void game_spy_sabotage(struct game_s *g, player_id_t spy, player_id_t tar
 int game_spy_esp_sub1(struct game_s *g, struct spy_esp_s *s, int minval, int a6)
 {
     s->tnum = 0;
-    game_spy_esp_sub2(g, s, a6);
+    game_spy_sift_useful_techs(g, s, a6);
     for (int loops = 0; (loops < 500) && (s->tnum < TECH_SPY_MAX); ++loops) {
         tech_field_t field;
         field = rnd_0_nm1(TECH_FIELD_NUM, &g->seed);
@@ -366,7 +366,7 @@ int game_spy_esp_sub1(struct game_s *g, struct spy_esp_s *s, int minval, int a6)
     return s->tnum;
 }
 
-int game_spy_esp_sub2(struct game_s *g, struct spy_esp_s *s, int a4)
+int game_spy_sift_useful_techs(struct game_s *g, struct spy_esp_s *s, int a4)
 {
     const empiretechorbit_t *es = &(g->eto[s->spy]);
     const empiretechorbit_t *et = &(g->eto[s->target]);
