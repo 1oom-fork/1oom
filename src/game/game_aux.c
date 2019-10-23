@@ -171,6 +171,7 @@ void game_aux_start(struct game_aux_s *gaux, struct game_s *g)
 {
     int n = 0;
     g->gaux = gaux;
+    game_aux_set_rules(g->xoptions);
     init_star_dist(gaux, g);
     for (int i = 0; i < g->players; ++i) {
         if (BOOLVEC_IS0(g->is_ai, i)) {
@@ -181,7 +182,6 @@ void game_aux_start(struct game_aux_s *gaux, struct game_s *g)
     if ((n > 1) && !gaux->move_temp) {
         gaux->move_temp = lib_malloc(sizeof(*gaux->move_temp));
     }
-    game_aux_set_rules(g->xoptions);
 }
 
 void game_aux_set_rules(uint8_t xopt)
