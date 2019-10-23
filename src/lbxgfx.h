@@ -29,9 +29,13 @@
 #define lbxgfx_get_frameptr(_data_, _frame_) ((_data_) + lbxgfx_get_frameoffs0((_data_), (_frame_)))
 #define lbxgfx_get_frameclearflag(_data_, _frame_) (*lbxgfx_get_frameptr((_data_), (_frame_)))
 
+#define LBXGFX_SLD 16
+#define LBXGFX_SCALE (1 << LBXGFX_SLD)
+
 extern void lbxgfx_draw_frame(int x, int y, uint8_t *data, uint16_t pitch, int scale);
 extern void lbxgfx_draw_frame_pal(int x, int y, uint8_t *data, uint16_t pitch, int scale);
 extern void lbxgfx_draw_frame_offs(int x, int y, uint8_t *data, int lx0, int ly0, int lx1, int ly1, uint16_t pitch, int scale);
+extern void lbxgfx_draw_frame_scale(int x, int y, int sx, int sy, uint8_t *data, uint16_t pitch, int scale);
 extern void lbxgfx_draw_frame_do(uint8_t *p, uint8_t *data, uint16_t pitch, int scale);
 
 extern void lbxgfx_set_new_frame(uint8_t *data, uint16_t newframe);

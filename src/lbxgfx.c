@@ -110,6 +110,81 @@ static void lbxgfx_draw_pixels_fmt0_scale(uint8_t *pixbuf, uint16_t w, uint8_t *
     }
 }
 
+static void lbxgfx_draw_pixels_fmt0_scale2(uint8_t *pixbuf, uint16_t w, int sx, int sy, uint8_t *data, uint16_t pitch, int scale)
+{
+    uint8_t *q;
+    uint8_t b, /*dh*/mode, /*dl*/len_total, len_run;
+    int32_t x = 0, y = 0, d;
+    while (w--) {
+        if((x += sx) < 0) {
+            b = *data++;
+            if (b != 0xff) {
+                b = *data++;
+                data += b;
+            }
+            continue;
+        } else {
+          x -= LBXGFX_SCALE;
+        }
+        q = pixbuf;
+        pixbuf += scale;
+        b = *data++;
+        if (b == 0xff) { /* skip column */
+            continue;
+        }
+        y = 0;
+        mode = b;
+        len_total = *data++;
+        if ((mode & 0x80) == 0) { /* regular data */
+            do {
+                len_run = *data++;
+                y += sy * *data++;
+                d = (y + LBXGFX_SCALE) >> LBXGFX_SLD;
+                y -= d * LBXGFX_SCALE;
+                q += d * pitch * scale;
+                len_total -= len_run + 2;
+                do {
+                    b = *data++;
+                    if((y += sy) >= 0) {
+                        q = gfxscale_draw_pixel(q, b, pitch, scale);
+                        y -= LBXGFX_SCALE;
+                    }
+                } while (--len_run);
+            } while (len_total >= 1);
+        } else {    /* compressed data */
+            do {
+                len_run = *data++;
+                y += sy * *data++;
+                d = (y + LBXGFX_SCALE) >> LBXGFX_SLD;
+                y -= d * LBXGFX_SCALE;
+                q += d * pitch * scale;
+                len_total -= len_run + 2;
+                do {
+                    b = *data++;
+                    if (b > 0xdf) { /* b-0xdf pixels, same color */
+                        uint8_t len_compr;
+                        len_compr = b - 0xdf;
+                        --len_run;
+                        b = *data++;
+                        while (len_compr) {
+                            if((y += sy) >= 0) {
+                                q = gfxscale_draw_pixel(q, b, pitch, scale);
+                                y -= LBXGFX_SCALE;
+                            }
+                            --len_compr;
+                        }
+                    } else {
+                        if((y += sy) >= 0) {
+                            q = gfxscale_draw_pixel(q, b, pitch, scale);
+                            y -= LBXGFX_SCALE;
+                        }
+                    }
+                } while (--len_run);
+            } while (len_total >= 1);
+        }
+    }
+}
+
 static void lbxgfx_draw_pixels_offs_fmt0(int x0, int y0, int w, int h, int xskip, int yskip, uint8_t *data, uint16_t pitch)
 {
     /* FIXME this an unreadable goto mess */
@@ -737,4 +812,26 @@ void lbxgfx_apply_palette(uint8_t *data)
         int num = lbxgfx_get_palnum(data);
         lbxpal_set_palette(p, first, num);
     }
+}
+
+/* draws a scaled down (sx, sy <= LBXGFX_SCALE) version of a fmt0 lbx-frame */
+void lbxgfx_draw_frame_scale(int x, int y, int sx, int sy, uint8_t *data, uint16_t pitch, int scale)
+{
+    uint8_t *p = hw_video_get_buf() + (y * pitch + x) * scale;
+    uint16_t frame, next_frame, w;
+    uint8_t *frameptr;
+    w = lbxgfx_get_w(data);
+    frame = lbxgfx_get_frame(data);
+    frameptr = lbxgfx_get_frameptr(data, frame) + 1;
+    if (lbxgfx_get_format(data) != 0) {
+        log_error("lbxgfx_draw_shrinked_frame: unsupported format.\n");
+        return;
+    }
+    lbxgfx_draw_pixels_fmt0_scale2(p, w, sx, sy, frameptr, pitch, scale);
+    next_frame = frame + 1;
+    lbxgfx_set_frame(data, next_frame);
+    if (next_frame >= lbxgfx_get_frames(data)) {
+        next_frame = lbxgfx_get_frames2(data);
+    }
+    lbxgfx_set_frame(data, next_frame);
 }
