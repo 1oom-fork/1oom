@@ -235,7 +235,6 @@ static void init_gfx(void)
 {
     for (int i = 0; i < NEBULA_MAX; ++i) {
         ui_data.gfx.starmap.nebula[i] = NULL;
-        ui_data.gfx.starmap.smnebula[i] = NULL;
     }
     ui_data.gfx.starmap.mainview = lbxfile_item_get(LBXFILE_STARMAP, 0);
     ui_data.gfx.starmap.starback = lbxfile_item_get(LBXFILE_STARMAP, 1);
@@ -262,12 +261,6 @@ static void init_gfx(void)
     }
     ui_data.gfx.starmap.stargate = lbxfile_item_get(LBXFILE_STARMAP, 0x2d);
     ui_data.gfx.starmap.smallstr = lbxfile_item_get(LBXFILE_STARMAP, 0x2e);
-    for (int i = 0; i < 0xa; ++i) {
-        ui_data.gfx.starmap.smneb[i] = lbxfile_item_get(LBXFILE_STARMAP, 0x35 + i);
-    }
-    for (int i = 0; i < 0x1e; ++i) {
-        ui_data.gfx.starmap.smneb[0xa + i] = lbxfile_item_get(LBXFILE_NEBULA, i);
-    }
     ui_data.gfx.starmap.relocate = lbxfile_item_get(LBXFILE_STARMAP, 0x3f);
     ui_data.gfx.starmap.reloc_bu_cancel = lbxfile_item_get(LBXFILE_STARMAP, 0x40);
     ui_data.gfx.starmap.reloc_bu_accept = lbxfile_item_get(LBXFILE_STARMAP, 0x41);

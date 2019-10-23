@@ -106,9 +106,12 @@ static void gmap_draw_cb(void *vptr)
 
     for (int i = 0; i < g->nebula_num; ++i) {
         int x, y;
+        int sx, sy;
         x = (g->nebula_x[i] * 224) / g->galaxy_maxx + 7;
         y = (g->nebula_y[i] * 185) / g->galaxy_maxy + 7;
-        lbxgfx_draw_frame_offs(x, y, ui_data.gfx.starmap.smnebula[i], GMAP_LIMITS, UI_SCREEN_W, ui_scale);
+        sx = 224 * LBXGFX_SCALE / (2 * g->galaxy_maxx);
+        sy = 185 * LBXGFX_SCALE / (2 * g->galaxy_maxy);
+        lbxgfx_draw_frame_scale(x, y, sx, sy, ui_data.gfx.starmap.nebula[i], UI_SCREEN_W, ui_scale);
     }
 
     for (int i = 0; i < g->enroute_num; ++i) {
@@ -352,9 +355,12 @@ static void ui_gmap_basic_draw_galaxy(struct gmap_basic_data_s *d)
     lbxgfx_draw_frame_offs(0, 0, ui_data.gfx.starmap.sky, 6, 6, 221, 177, UI_SCREEN_W, ui_scale);
     for (int i = 0; i < g->nebula_num; ++i) {
         int x, y;
+        int sx, sy;
         x = (g->nebula_x[i] * 215) / g->galaxy_maxx + 6;
         y = (g->nebula_y[i] * 171) / g->galaxy_maxy + 6;
-        lbxgfx_draw_frame_offs(x, y, ui_data.gfx.starmap.smnebula[i], 6, 6, 221, 177, UI_SCREEN_W, ui_scale);
+        sx = 215 * LBXGFX_SCALE / (2 * g->galaxy_maxx);
+        sy = 171 * LBXGFX_SCALE / (2 * g->galaxy_maxy);
+        lbxgfx_draw_frame_scale(x, y, sx, sy, ui_data.gfx.starmap.nebula[i], UI_SCREEN_W, ui_scale);
     }
     for (int i = 0; i < g->galaxy_stars; ++i) {
         const planet_t *p = &(g->planet[i]);
