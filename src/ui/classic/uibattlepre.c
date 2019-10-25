@@ -87,7 +87,7 @@ static void ui_battle_pre_draw_cb(void *vptr)
     } else {
         ui_gmap_basic_draw_frame(d->gmapctx, d->party_u);
     }
-    ui_gmap_draw_planet_border(g, d->planet_i);
+    ui_gmap_draw_planet_border(d->gmapctx, g, d->planet_i);
     ui_starmap_draw_planetinfo_2(g, d->party_u, d->party_d, d->planet_i);
     if (p->owner != PLAYER_NONE) {
         uint8_t *gfx;

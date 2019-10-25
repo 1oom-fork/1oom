@@ -820,6 +820,10 @@ void lbxgfx_draw_frame_scale(int x, int y, int sx, int sy, uint8_t *data, uint16
     uint8_t *p = hw_video_get_buf() + (y * pitch + x) * scale;
     uint16_t frame, next_frame, w;
     uint8_t *frameptr;
+    if (sx == LBXGFX_SCALE && sy == LBXGFX_SCALE) {
+        lbxgfx_draw_frame_do(p, data, pitch, scale);
+        return;
+    }
     w = lbxgfx_get_w(data);
     frame = lbxgfx_get_frame(data);
     frameptr = lbxgfx_get_frameptr(data, frame) + 1;

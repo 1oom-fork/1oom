@@ -125,7 +125,7 @@ static void explore_draw_cb(void *vptr)
     ui_draw_line1(310, 57, 310, 160, 0, ui_scale);
     /*game_update_visibility();*/
     ui_gmap_basic_draw_frame(d->gmap, d->api);
-    ui_gmap_draw_planet_border(g, d->planet);
+    ui_gmap_draw_planet_border(d->gmap, g, d->planet);
     lbxfont_select_set_12_1(3, 0xa, 0, 0);
     if (!d->colony_ship) {
         if (d->by_scanner) {

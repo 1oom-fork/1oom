@@ -497,7 +497,6 @@ void ui_shutdown(void)
         gfx_aux_free(&ui_data.aux.btemp);
         memset(&ui_data.aux, 0, sizeof(ui_data.aux));
         lbxfile_item_release_file(LBXFILE_STARMAP);
-        lbxfile_item_release_file(LBXFILE_NEBULA);
         lbxfile_item_release_file(LBXFILE_SHIPS);
         lbxfile_item_release_file(LBXFILE_SHIPS2);
         lbxfile_item_release_file(LBXFILE_SCREENS);

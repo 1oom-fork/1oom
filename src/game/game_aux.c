@@ -187,7 +187,6 @@ void game_aux_start(struct game_aux_s *gaux, struct game_s *g)
 void game_aux_set_rules(uint8_t xopt)
 {
     xopt &= XOPTION_RULES_MASK;
-
     if (xopt == XOPTION_RULES_FIX) {
         tbl_monster[MONSTER_GUARDIAN][3].special[1] = 16;
         tbl_monster[MONSTER_GUARDIAN][4].special[1] = 26;

@@ -107,7 +107,7 @@ static void bomb_ask_draw_cb(void *vptr)
     lbxfont_print_str_center(268, 69, game_str_sm_bomb2, UI_SCREEN_W, ui_scale);
     /*game_update_visibility(g);*/
     ui_gmap_basic_draw_frame(d->gmap, d->api);
-    ui_gmap_draw_planet_border(g, d->planet);
+    ui_gmap_draw_planet_border(d->gmap, g, d->planet);
     lbxfont_select_set_12_4(0, 0xa, 0, 0);
     lbxfont_print_str_normal(230, 115, game_str_sb_pop, UI_SCREEN_W, ui_scale);
     lbxfont_print_num_right(305, 115, p->pop, UI_SCREEN_W, ui_scale);
@@ -142,7 +142,7 @@ static void bomb_show_draw_cb(void *vptr)
     } else {
         ui_gmap_basic_draw_frame(d->gmap, d->api);
     }
-    ui_gmap_draw_planet_border(g, d->planet);
+    ui_gmap_draw_planet_border(d->gmap, g, d->planet);
     lbxfont_select_set_12_4(3, 0xa, 0, 0);
     lbxfont_print_str_center(267, 60, game_str_sm_obomb1, UI_SCREEN_W, ui_scale);
     lbxfont_print_str_center(267, 69, game_str_sm_obomb2, UI_SCREEN_W, ui_scale);

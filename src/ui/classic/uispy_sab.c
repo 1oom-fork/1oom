@@ -126,7 +126,7 @@ static void sabotage_draw_cb(void *vptr)
         lbxfont_print_str_normal(230, 136, game_str_sb_bases, UI_SCREEN_W, ui_scale);
         lbxfont_print_num_right(305, 136, bases, UI_SCREEN_W, ui_scale);
     }
-    ui_gmap_draw_planet_border(g, d->planet);
+    ui_gmap_draw_planet_border(d->gmap, g, d->planet);
     for (int i = 0; i < g->galaxy_stars; ++i) {
         const planet_t *p = &(g->planet[i]);
         if (p->owner == d->target) {
@@ -228,7 +228,7 @@ static void sabotage_done_draw_cb(void *vptr)
     lbxfont_select_set_12_4(5, 5, 0, 0);
     lbxfont_print_str_split(228, 118, 84, buf, 2, UI_SCREEN_W, UI_SCREEN_H, ui_scale);
     ui_gmap_basic_draw_frame(d->gmap, d->api);
-    ui_gmap_draw_planet_border(g, d->planet);
+    ui_gmap_draw_planet_border(d->gmap, g, d->planet);
     lbxgfx_set_new_frame(d->gfx_contbutt, 1);
     lbxgfx_draw_frame(227, 163, d->gfx_contbutt, UI_SCREEN_W, ui_scale);
     if (d->other2 != PLAYER_NONE) {

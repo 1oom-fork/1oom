@@ -88,13 +88,13 @@ static const char *planets_get_notes_str(const struct game_s *g, uint8_t pli, bo
             str = game_str_tbl_sm_pgrowth[p->growth];
         }
         if (p->have_stargate) {
-            if (str) {
+            if (str && buf) {
                 lib_strcpy(buf, str, bufsize);
                 lib_strcat(buf, " *", bufsize);
                 str = buf;
-             } else {
-                 str = game_str_sm_stargate;
-             }
+            } else {
+                str = game_str_sm_stargate;
+            }
         }
     }
     if (flag_normal_ptr) {
