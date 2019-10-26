@@ -259,7 +259,10 @@ static void gmap_draw_cb(void *vptr)
         uint8_t *gfx;
         int x = SX1(p->x);
         int y = SY1(p->y);
-        if ((d->mode > 0) && BOOLVEC_IS1(p->explored, d->api) || (d->mode == 0) && (p->type || !gmap_extra_info)) {
+        if (0
+          || ((d->mode > 0) && BOOLVEC_IS1(p->explored, d->api))
+          || ((d->mode == 0) && (p->type || !gmap_extra_info || BOOLVEC_IS0(p->explored, d->api)))
+        ) {
             gfx = ui_data.gfx.starmap.smstars[p->star_type];
             if ((d->b.planet_i == i) && (d->b.countdown > 0)) {
                 lbxgfx_set_new_frame(gfx, d->b.countdown);
