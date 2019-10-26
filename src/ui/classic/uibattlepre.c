@@ -89,14 +89,7 @@ static void ui_battle_pre_draw_cb(void *vptr)
     }
     ui_gmap_draw_planet_border(d->gmapctx, g, d->planet_i);
     ui_starmap_draw_planetinfo_2(g, d->party_u, d->party_d, d->planet_i);
-    if (p->owner != PLAYER_NONE) {
-        uint8_t *gfx;
-        int x, y;
-        x = (p->x * 215) / g->galaxy_maxx + 5;
-        y = (p->y * 171) / g->galaxy_maxy + 5;
-        gfx = ui_data.gfx.starmap.smalflag[g->eto[p->owner].banner];
-        lbxgfx_draw_frame(x + 3, y - 2, gfx, UI_SCREEN_W, ui_scale);
-    }
+    ui_gmap_draw_planet_flag(d->gmapctx, g, d->planet_i);
     lbxfont_select_set_12_4(3, 0, 0, 0);
     lbxfont_print_str_center(267, 64, game_str_bp_scombat, UI_SCREEN_W, ui_scale);
     if (d->party_d >= PLAYER_NUM) {

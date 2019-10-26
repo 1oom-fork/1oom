@@ -130,10 +130,7 @@ static void sabotage_draw_cb(void *vptr)
     for (int i = 0; i < g->galaxy_stars; ++i) {
         const planet_t *p = &(g->planet[i]);
         if (p->owner == d->target) {
-            int x, y;
-            x = (p->x * 215) / g->galaxy_maxx + 5 + 3;
-            y = (p->y * 171) / g->galaxy_maxy + 5 - 2;
-            lbxgfx_draw_frame(x, y, ui_data.gfx.starmap.smalflag[e->banner], UI_SCREEN_W, ui_scale);
+            ui_gmap_draw_planet_flag(d->gmap, g, i);
         }
     }
 }
@@ -325,10 +322,7 @@ ui_sabotage_t ui_spy_sabotage_ask(struct game_s *g, int spy, int target, uint8_t
         for (int i = 0; i < g->galaxy_stars; ++i) {
             const planet_t *p = &(g->planet[i]);
             if (p->owner == target) {
-                int x, y;
-                x = (p->x * 215) / g->galaxy_maxx + 5;
-                y = (p->y * 171) / g->galaxy_maxy + 5;
-                oi_planet[i] = uiobj_add_mousearea(x - 1, y - 1, x + 7, y + 7, MOO_KEY_UNKNOWN);
+                oi_planet[i] = ui_gmap_add_planet_mousearea(d.gmap, g, i); 
             } else {
                 oi_planet[i] = UIOBJI_INVALID;
             }

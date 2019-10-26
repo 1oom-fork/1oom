@@ -721,3 +721,30 @@ void ui_gmap_draw_planet_border(void *ctx,const struct game_s *g, uint8_t planet
     y = SY2(p->y) - 1;
     lbxgfx_draw_frame_offs(x , y , ui_data.gfx.starmap.slanbord, GMAP_LIMITS, UI_SCREEN_W, s->scale);
 }
+
+void ui_gmap_draw_planet_flag(void *ctx,const struct game_s *g, uint8_t planet_i)
+{
+    struct gmap_basic_data_s *d = ctx;
+    const struct gmap_scale_data_s *s = &d->s;
+    const planet_t *p = &(g->planet[planet_i]);
+    uint8_t *gfx;
+    int x, y;
+    if (p->owner != PLAYER_NONE) {
+        uint8_t *gfx = ui_data.gfx.starmap.smalflag[g->eto[p->owner].banner];
+        x = SX2(p->x) + 2;
+        y = SY2(p->y) - 3;
+        lbxgfx_draw_frame_offs(x , y , gfx, GMAP_LIMITS, UI_SCREEN_W, s->scale);
+    }
+}
+
+int16_t ui_gmap_add_planet_mousearea(void *ctx, const struct game_s *g, uint8_t planet_i)
+{
+    struct gmap_basic_data_s *d = ctx;
+    const struct gmap_scale_data_s *s = &d->s;
+    const planet_t *p = &(g->planet[planet_i]);
+    int x, y;
+    x = UX2(p->x);
+    y = UY2(p->y);
+    /* use same mouse area as in galaxy map */
+    return uiobj_add_mousearea(x , y , x + 4, y + 4, MOO_KEY_UNKNOWN);
+}
