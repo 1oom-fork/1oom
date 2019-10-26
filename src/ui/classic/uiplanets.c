@@ -61,48 +61,6 @@ static void free_pl_data(struct planets_data_s *d)
     lbxfile_item_release(LBXFILE_BACKGRND, d->gfx_transfer);
 }
 
-static const char *planets_get_notes_str(const struct game_s *g, uint8_t pli, bool *flag_normal_ptr, char *buf, size_t bufsize)
-{
-    const planet_t *p = &(g->planet[pli]);
-    const char *str = NULL;
-    bool flag_normal = false;
-    if (g->evn.have_plague && (g->evn.plague_planet_i == pli)) {
-        str = game_str_pl_plague;
-    } else if (g->evn.have_nova && (g->evn.nova_planet_i == pli)) {
-        str = game_str_pl_nova;
-    } else if (g->evn.have_comet && (g->evn.comet_planet_i == pli)) {
-        str = game_str_pl_comet;
-    } else if (g->evn.have_pirates && (g->evn.pirates_planet_i == pli)) {
-        str = game_str_pl_pirates;
-    } else if (p->unrest == PLANET_UNREST_REBELLION) {
-        str = game_str_pl_rebellion;
-    } else if (p->unrest == PLANET_UNREST_UNREST) {
-        str = game_str_pl_unrest;
-    } else if (g->evn.have_accident && (g->evn.accident_planet_i == pli)) {
-        str = game_str_pl_accident;
-    } else {
-        flag_normal = true;
-        if (p->special != PLANET_SPECIAL_NORMAL) {
-            str = game_str_tbl_sm_pspecial[p->special];
-        } else if (p->growth != PLANET_GROWTH_NORMAL) {
-            str = game_str_tbl_sm_pgrowth[p->growth];
-        }
-        if (p->have_stargate) {
-            if (str && buf) {
-                lib_strcpy(buf, str, bufsize);
-                lib_strcat(buf, " *", bufsize);
-                str = buf;
-            } else {
-                str = game_str_sm_stargate;
-            }
-        }
-    }
-    if (flag_normal_ptr) {
-        *flag_normal_ptr = flag_normal;
-    }
-    return str;
-}
-
 static void planets_draw_cb(void *vptr)
 {
     struct planets_data_s *d = vptr;
@@ -579,6 +537,48 @@ static sort_cb_t * const sort_cb_tbl[UI_SORT_NUM * 2] = {
 };
 
 /* -------------------------------------------------------------------------- */
+
+const char *planets_get_notes_str(const struct game_s *g, uint8_t pli, bool *flag_normal_ptr, char *buf, size_t bufsize)
+{
+    const planet_t *p = &(g->planet[pli]);
+    const char *str = NULL;
+    bool flag_normal = false;
+    if (g->evn.have_plague && (g->evn.plague_planet_i == pli)) {
+        str = game_str_pl_plague;
+    } else if (g->evn.have_nova && (g->evn.nova_planet_i == pli)) {
+        str = game_str_pl_nova;
+    } else if (g->evn.have_comet && (g->evn.comet_planet_i == pli)) {
+        str = game_str_pl_comet;
+    } else if (g->evn.have_pirates && (g->evn.pirates_planet_i == pli)) {
+        str = game_str_pl_pirates;
+    } else if (p->unrest == PLANET_UNREST_REBELLION) {
+        str = game_str_pl_rebellion;
+    } else if (p->unrest == PLANET_UNREST_UNREST) {
+        str = game_str_pl_unrest;
+    } else if (g->evn.have_accident && (g->evn.accident_planet_i == pli)) {
+        str = game_str_pl_accident;
+    } else {
+        flag_normal = true;
+        if (p->special != PLANET_SPECIAL_NORMAL) {
+            str = game_str_tbl_sm_pspecial[p->special];
+        } else if (p->growth != PLANET_GROWTH_NORMAL) {
+            str = game_str_tbl_sm_pgrowth[p->growth];
+        }
+        if (p->have_stargate) {
+            if (str && buf) {
+                lib_strcpy(buf, str, bufsize);
+                lib_strcat(buf, " *", bufsize);
+                str = buf;
+            } else {
+                str = game_str_sm_stargate;
+            }
+        }
+    }
+    if (flag_normal_ptr) {
+        *flag_normal_ptr = flag_normal;
+    }
+    return str;
+}
 
 void ui_planets(struct game_s *g, player_id_t active_player)
 {

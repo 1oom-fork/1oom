@@ -11,15 +11,32 @@
 
 /* -------------------------------------------------------------------------- */
 
-int game_stat_fleet(const struct game_s *g, player_id_t pi)
+int game_weight_ships(const struct game_s *g, player_id_t pi, const shipcount_t *ships)
 {
     const empiretechorbit_t *e = &(g->eto[pi]);
     const shipresearch_t *srd = &(g->srd[pi]);
-    int v2, v4, va, ve = 0, sum;
-    sum = 0;
+    int sum = 0;
+    for (int i = 0; i < e->shipdesigns_num; ++i) {
+        sum += (int)ships[i] * game_num_tbl_hull_w[srd->design[i].hull];
+    }
+    return sum;
+}
+
+int game_weight_fleet(const struct game_s *g, player_id_t pi)
+{
+    const empiretechorbit_t *e = &(g->eto[pi]);
+    const shipresearch_t *srd = &(g->srd[pi]);
+    int sum = 0;
     for (int i = 0; i < e->shipdesigns_num; ++i) {
         sum += srd->shipcount[i] * game_num_tbl_hull_w[srd->design[i].hull];
     }
+    return sum;
+}
+
+int game_stat_fleet(const struct game_s *g, player_id_t pi)
+{
+    int sum = game_weight_fleet(g, pi);
+    int v2, v4, va, ve = 0;
     SETMIN(sum, 0x319750);
     v4 = 0;
     va = 125;

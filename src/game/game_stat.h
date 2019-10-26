@@ -5,6 +5,8 @@
 
 struct game_s;
 
+extern int game_weight_ships(const struct game_s *g, player_id_t pi, const shipcount_t *ships);
+extern int game_weight_fleet(const struct game_s *g, player_id_t pi);
 extern int game_stat_fleet(const struct game_s *g, player_id_t pi);
 extern int game_stat_tech(const struct game_s *g, player_id_t pi);
 extern int game_stat_prod(const struct game_s *g, player_id_t pi);

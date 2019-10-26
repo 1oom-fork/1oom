@@ -6,6 +6,7 @@
 #include "comp.h"
 #include "game.h"
 #include "game_misc.h"
+#include "game_stat.h"
 #include "game_str.h"
 #include "hw.h"
 #include "kbd.h"
@@ -25,6 +26,7 @@
 #include "uipal.h"
 #include "uisound.h"
 #include "uistarmap_common.h"
+#include "uiplanets.h"
 #include "uiswitch.h"
 
 /* -------------------------------------------------------------------------- */
@@ -70,6 +72,7 @@ struct gmap_basic_data_s {
 /* stubs for future UI options */
 static int gmap_min_scale = 1;
 static bool gmap_keep_aspect_ratio = true;
+static bool gmap_extra_info = true;
 
 static void gmap_init_scale(struct gmap_scale_data_s *s, const struct game_s *g, int w, int h, int bd) {
     s->xoffs = s->yoffs = 0;
@@ -114,7 +117,6 @@ static void gmap_init_scale(struct gmap_scale_data_s *s, const struct game_s *g,
     s->glx0 = s->gly0 = (bd * ui_scale + s->scale - 1) / s->scale; /* round up left and upper limit*/
     s->glx1 = (bd + w) * ui_scale / s->scale - 1;                  /* round down right and lower limit */
     s->gly1 = (bd + h) * ui_scale / s->scale - 1;
-    printf("gx=%d gy=%d  mx=%d my=%d  sx=%d sy=%d  sc=%d\n",g->galaxy_maxx,g->galaxy_maxy,s->xmax,s->ymax,s->sx,s->sy,s->scale);
 }
 
 static void gmap_load_data(struct gmap_data_s *d)
@@ -151,20 +153,31 @@ static void gmap_blink_step(struct gmap_blink_data_s *b)
 #define UX1(x) (224 * ((x) + s->xoffs) / s->xmax + 7)
 #define UY1(y) (185 * ((y) + s->yoffs) / s->ymax + 7)
 
+#define GM_TAG_PLAYER 15
+#define GM_TAG_NAME   16
+#define GM_TAG_EVENT  32
+#define GM_TAG_ATK    64
+#define GM_TAG_INV   128
+
 static void gmap_draw_cb(void *vptr)
 {
     struct gmap_data_s *d = vptr;
     const struct game_s *g = d->g;
     const struct gmap_scale_data_s *s = &d->s;
     player_id_t tbl_races[PLAYER_NUM];
+    uint8_t tbl_tags[PLANETS_MAX];
+    uint32_t tbl_fthres[PLAYER_NUM];
     int racesnum = 1;
 
     tbl_races[0] = d->api;
+    tbl_fthres[d->api] = game_weight_fleet(g, d->api);
     for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         if ((i != d->api) && IS_ALIVE(g, i)) {
             tbl_races[racesnum++] = i;
+            tbl_fthres[i] = (game_weight_fleet(g, i) + tbl_fthres[d->api]) / 10;
         }
     }
+    tbl_fthres[d->api] /= 5;
 
     uiobj_set_limits(GMAP_UI_LIMITS);
     ui_draw_erase_buf();
@@ -182,6 +195,10 @@ static void gmap_draw_cb(void *vptr)
         if (BOOLVEC_IS1(r->visible, d->api)) {
             uint8_t *gfx = ui_data.gfx.starmap.tinyship[g->eto[r->owner].banner];
             lbxgfx_draw_frame_offs(SX1(r->x), SY1(r->y), gfx, GMAP_LIMITS, UI_SCREEN_W, s->scale);
+            int w = game_weight_ships(g, r->owner, r->ships);
+            if (gmap_extra_info && w >= tbl_fthres[r->owner]) {
+                lbxgfx_draw_frame_offs(SX1(r->x)+1, SY1(r->y), gfx, GMAP_LIMITS, UI_SCREEN_W, s->scale);
+            }
         }
     }
 
@@ -207,32 +224,42 @@ static void gmap_draw_cb(void *vptr)
         const planet_t *p = &(g->planet[i]);
         if (BOOLVEC_IS1(p->within_srange, d->api)) {
             player_id_t tbl_have_orbit_owner[PLAYER_NUM];
+            bool tbl_have_orbit_sod[PLAYER_NUM];
             int have_orbit_num;
 
             have_orbit_num = 0;
             for (player_id_t j = PLAYER_0; j < g->players; ++j) {
                 const fleet_orbit_t *r = &(g->eto[j].orbit[i]);
-                for (int k = 0; k < g->eto[j].shipdesigns_num; ++k) {
-                    if (r->ships[k] != 0) {
-                        tbl_have_orbit_owner[have_orbit_num++] = j;
-                        break;
-                    }
+                int w = game_weight_ships(g, j, r->ships);
+                if (w) {
+                    tbl_have_orbit_sod[have_orbit_num] = (w >= tbl_fthres[j]);
+                    tbl_have_orbit_owner[have_orbit_num++] = j;
                 }
             }
 
             for (int j = 0; j < have_orbit_num; ++j) {
                 uint8_t *gfx = ui_data.gfx.starmap.tinyship[g->eto[tbl_have_orbit_owner[j]].banner];
                 lbxgfx_draw_frame_offs(SX1(p->x)+7, SY1(p->y) + 1 + 2 * j, gfx, GMAP_LIMITS, UI_SCREEN_W, s->scale);
+                if (gmap_extra_info && tbl_have_orbit_sod[j]) {
+                    lbxgfx_draw_frame_offs(SX1(p->x)+8, SY1(p->y) + 1 + 2 * j, gfx, GMAP_LIMITS, UI_SCREEN_W, s->scale);
+                }
             }
         }
+        tbl_tags[i] = 0;
     }
+    
+    for (int i = 0; i < PLAYER_NUM; ++i) {
+        int pi = g->evn.home[i];
+        if (pi != PLANET_NONE) tbl_tags[g->evn.home[i]] = GM_TAG_NAME;
+    }
+    tbl_tags[g->evn.planet_orion_i] = GM_TAG_NAME;
 
     for (int i = 0; i < g->galaxy_stars; ++i) {
         const planet_t *p = &(g->planet[i]);
         uint8_t *gfx;
         int x = SX1(p->x);
         int y = SY1(p->y);
-        if (BOOLVEC_IS1(p->explored, d->api) || (d->mode == 0)) {
+        if ((d->mode > 0) && BOOLVEC_IS1(p->explored, d->api) || (d->mode == 0) && (p->type || !gmap_extra_info)) {
             gfx = ui_data.gfx.starmap.smstars[p->star_type];
             if ((d->b.planet_i == i) && (d->b.countdown > 0)) {
                 lbxgfx_set_new_frame(gfx, d->b.countdown);
@@ -244,6 +271,30 @@ static void gmap_draw_cb(void *vptr)
             gfx = ui_data.gfx.starmap.smallstr;
             lbxgfx_set_frame_0(gfx);
             lbxgfx_draw_frame(x + 1, y + 1, gfx, UI_SCREEN_W, s->scale);
+        }
+        if (p->unrest == PLANET_UNREST_REBELLION) tbl_tags[i] = GM_TAG_EVENT;
+        if (p->unrest == PLANET_UNREST_UNREST) tbl_tags[i] = GM_TAG_EVENT;
+    }
+    if (g->evn.have_plague) tbl_tags[g->evn.plague_planet_i] = GM_TAG_EVENT;
+    if (g->evn.have_nova) tbl_tags[g->evn.nova_planet_i] = GM_TAG_EVENT;
+    if (g->evn.have_comet) tbl_tags[g->evn.comet_planet_i] = GM_TAG_EVENT;
+    if (g->evn.have_pirates) tbl_tags[g->evn.pirates_planet_i] = GM_TAG_EVENT;
+    if (g->evn.have_accident) tbl_tags[g->evn.accident_planet_i] = GM_TAG_EVENT;
+
+    if (g->eto[d->api].have_ia_scanner) {
+        for (int j = 0; j < g->enroute_num; ++j) {
+            const fleet_enroute_t *r = &(g->enroute[j]);
+            player_id_t pown = g->planet[r->dest].owner;
+            if (BOOLVEC_IS1(r->visible, d->api) && (pown != PLAYER_NONE) && (r->owner != pown)) {
+                tbl_tags[r->dest] = (r->owner | GM_TAG_ATK);
+            }
+        }
+        for (int j = 0; j < g->transport_num; ++j) {
+            const transport_t *r = &(g->transport[j]);
+            player_id_t pown = g->planet[r->dest].owner;
+            if (BOOLVEC_IS1(r->visible, d->api) && (pown != PLAYER_NONE) && (r->owner != pown)) {
+                tbl_tags[r->dest] = (r->owner | GM_TAG_INV);
+            }
         }
     }
 
@@ -259,6 +310,33 @@ static void gmap_draw_cb(void *vptr)
             lbxgfx_draw_frame(x + 2, y - 3, gfx, UI_SCREEN_W, s->scale);
         }
         switch (d->mode) {
+            case 0:
+                if (gmap_extra_info && tbl_tags[i] && p->owner != PLAYER_NONE) {
+                    if (0
+                      || BOOLVEC_IS1(p->explored, d->api)
+                      || BOOLVEC_IS1(p->within_srange, d->api)
+                      || BOOLVEC_IS1(g->eto[d->api].contact, p->owner)
+                      || (p->within_frange[d->api] == 1)
+                    ) {
+                        const char *str = 0;
+                        if (tbl_tags[i] & GM_TAG_NAME) {
+                            str = p->name;
+                            lbxfont_select(2, 7, 0, 0);
+                        } else if(tbl_tags[i] & GM_TAG_EVENT) {
+                            str = planets_get_notes_str(g, i, 0, 0, 0);
+                            lbxfont_select(2, 9, 0, 0);
+                        } else {
+                            int col = g->eto[tbl_tags[i] & GM_TAG_PLAYER].banner;
+                            str = (tbl_tags[i] & GM_TAG_ATK) ? "att" : "inv";
+                            lbxfont_select(0, 6, 0, 0);
+                            lbxfont_print_str_center_limit(x + 4, y + 8, str, GMAP_TEXT_LIMITS, UI_SCREEN_W, s->scale);
+                            lbxfont_select(0, tbl_banner_fontparam[col], 0, 0);
+                            if (p->owner != d->api) lbxfont_set_color0(tbl_banner_color[col]);
+                        }
+                        lbxfont_print_str_center_limit(x + 3, y + 7, str, GMAP_TEXT_LIMITS, UI_SCREEN_W, s->scale);
+                    }
+                }
+                break;
             case 1:
                 if (BOOLVEC_IS1(p->explored, d->api)) {
                     char buf[2] = { 0, 0 };
@@ -289,13 +367,15 @@ static void gmap_draw_cb(void *vptr)
     }
     switch (d->mode) {
         case 0:
-            lbxfont_select(0, 6, 0, 0);
+            lbxfont_select(0, 6, 11, 0);
             for (int i = 0; i < racesnum; ++i) {
                 const empiretechorbit_t *e;
                 e = &(g->eto[tbl_races[i]]);
-                lbxgfx_draw_frame(245, 105 + 10 * i, ui_data.gfx.starmap.smalflag[e->banner], UI_SCREEN_W, ui_scale);
+                lbxgfx_draw_frame(245, 104 + 10 * i, ui_data.gfx.starmap.smalflag[e->banner], UI_SCREEN_W, ui_scale);
                 lbxfont_print_str_normal(260, 105 + 10 * i, game_str_tbl_race[e->race], UI_SCREEN_W, ui_scale);
             }
+            lbxfont_print_str_normal(245, 165, "\002att\001ack", UI_SCREEN_W, ui_scale);
+            lbxfont_print_str_normal(280, 165, "\002inv\001asion", UI_SCREEN_W, ui_scale);
             break;
         case 1:
             for (int i = 0; i < 7; ++i) {
