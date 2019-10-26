@@ -41,15 +41,17 @@ static void game_spy_esp_sub3(struct game_s *g, struct spy_esp_s *s, tech_field_
         bool have_tech;
         techi = trc[i];
         p = RESEARCH_D0_PTR(g->gaux, field, techi);
-        b0 = p[0];
-        b1 = RESEARCH_D0_B1(p);
+        b0 = p[0];                /* tech group (0 for singular techs) */
+        b1 = RESEARCH_D0_B1(p);   /* tech index within group */
         have_tech = false;
+        /* check if spy already has the tech */
         for (int j = 0; j < slen; ++j) {
             if (src[j] == techi) {
                 have_tech = true;
                 break;
             }
         }
+        /* for tech groups where newer is strictly better, check if spy already has a better version */
         if (0
           || ((b0 >= 3) && (b0 <= 6))
           || (b0 == 10) || (b0 == 18) || (b0 == 21)
@@ -59,7 +61,7 @@ static void game_spy_esp_sub3(struct game_s *g, struct spy_esp_s *s, tech_field_
                 have_tech = true;
             }
         }
-        /*632ff*/
+        /* coids cannot trade 5: RWx, 13: landings, 14: xER  (632ff) */
         if ((g->eto[s->spy].race == RACE_SILICOID) && ((b0 == 5) || (b0 == 13) || (b0 == 14))) {
             have_tech = true;
         }
