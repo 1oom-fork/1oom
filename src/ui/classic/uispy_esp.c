@@ -146,7 +146,7 @@ int ui_spy_steal(struct game_s *g, int spy, int target, uint8_t flags_field)
     struct steal_data_s d;
     bool flag_done = false;
     int16_t oi_tbl_field[TECH_FIELD_NUM];
-    int16_t oi_report;
+    int16_t oi_report = UIOBJI_INVALID;
     int selected = -1;
 
     ui_switch_1(g, spy);
@@ -174,7 +174,7 @@ restart:
             oi_tbl_field[i] = UIOBJI_INVALID;
         }
     }
-    oi_report = uiobj_add_mousearea(18, 43, 210, 76, MOO_KEY_UNKNOWN);
+    if(ui_extra_enabled) oi_report = uiobj_add_mousearea(18, 43, 210, 76, MOO_KEY_UNKNOWN);
 
     uiobj_set_callback_and_delay(steal_draw_cb, &d, 4);
 
