@@ -69,7 +69,45 @@ The install step can still be done:
     make install
 
 
-3. Cross-compiling
+3. Compiling on Windows
+========================
+
+To compile 1oom, you need a GNU build environment. This guide uses MinGW to
+compile the SDL2 version of 1oom. There are other options you may use, like
+Cygwin, MinGW-w64 or MSYS2, but in that case, you're on your own.
+
+Download and install mingw-get-setup.exe from: https://osdn.net/projects/mingw/releases/
+
+This will install a graphical package manager. Ensure that you have the latest autoconf,
+automake and make versions available and also MSYS.
+
+Download the SDL2 development libarary for MinGW from:
+    https://www.libsdl.org/download-2.0.php
+
+Download the SDL2 mixer development library for MinGW from:
+    https://www.libsdl.org/projects/SDL_mixer/
+
+Then unzip the two archives you downloaded.
+
+Then, open a command prompt and run
+    C:\MinGW\msys\1.0\bin\sh
+
+which gives you a UNIX-style command prompt. First, add the MinGW binaries to
+your PATH:
+    PATH="/c/MinGW/bin:/c/MinGW/msys/1.0/bin:$PATH"
+
+Then, go to the directory where you extracted SDL2 and enter:
+    make native
+
+Do the same for SDL2 Mixer.
+
+You are now ready to configure and build 1oom as described in Section 2.
+
+To run 1oom, place the *32-bit* versions of SDL2.dll and SDL2_mixer.dll in the
+same directory as the binary.
+
+
+4. Cross-compiling
 ===================
 
 Something like this may work:
@@ -88,7 +126,7 @@ If the libraries are not found, try something like:
 
 Good luck!
 
-3.1. Unix to win32
+4.1. Unix to win32
 ===================
 
 This is a quick guide to make a cross compiler based on MXE: http://mxe.cc/
@@ -116,7 +154,7 @@ If you want to make distributable packages of .shared compiles:
 (the list may be incomplete; run the EXEs in wine and see the error messages)
 
 
-3.2. Unix to msdos
+4.2. Unix to msdos
 ===================
 
 This is a quick guide to cross compile a MSDOS binary.
@@ -153,7 +191,7 @@ Now to cross compile 1oom:
     ../configure --host=i586-pc-msdosdjgpp && make -j 3
 
 
-4. Building distributable packages
+5. Building distributable packages
 ===================================
 
 Build a tarball requiring no Autotools:
