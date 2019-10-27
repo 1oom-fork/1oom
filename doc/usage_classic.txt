@@ -52,6 +52,7 @@ enables the following extra UI features:
 - Clicking a selected destination star again works as Accept for fleet send etc
 - Eco slider shows fractional population growth if growth is less than 10
 - Summary of forces shown before ship combat
+- When espionage was successful, clicking on the race icon opens the spy report
 - Nebula planets show "NEB" in their shields field and have a purple instead
   of a red frame around their picture
 - New Auto and Retreat buttons for space combat autoresolve
