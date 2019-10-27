@@ -25,10 +25,16 @@ static void tenths_2str(struct strbuild_s *str, int num)
     }
 }
 
-static void increment_slider(planet_t *p, int slideri)
+/* unlocks slider temporarily; returns true if slider has actually been increased */
+static bool increment_slider(planet_t *p, int slideri)
 {
+    uint16_t lock = p->slider_lock[slideri];
+    int old_val = p->slider[slideri];
+    p->slider_lock[slideri] = 0;
     ADDSATT(p->slider[slideri], 1, 100);
     game_adjust_slider_group(p->slider, slideri, p->slider[slideri], PLANET_SLIDER_NUM, p->slider_lock);
+    p->slider_lock[slideri] = lock;
+    return p->slider[slideri] > old_val; 
 }
 
 static void set_slider(planet_t *p, int slideri, int16_t value)
@@ -92,7 +98,6 @@ static void move_eco_terraform(const struct game_s *g, planet_t *p)
     int slideri = PLANET_SLIDER_ECO;
     int original_allocation = p->slider[slideri];
     bool found = false;
-    int previous_allocation;
     do {
         if (slider_text_equals(g, p, slideri, game_str_sm_ecopop)) {
             break;
@@ -104,9 +109,7 @@ static void move_eco_terraform(const struct game_s *g, planet_t *p)
         } else {
             found = true;
         }
-        previous_allocation = p->slider[slideri];
-        increment_slider(p, slideri);
-    } while (previous_allocation != p->slider[slideri]);
+    } while (increment_slider(p, slideri));
 
     if (!found) {
         set_slider(p, slideri, original_allocation);
@@ -119,18 +122,15 @@ static void move_eco_grow_pop(const struct game_s *g, planet_t *p)
     const int slideri = PLANET_SLIDER_ECO;
     player_id_t player = p->owner;
     int original_allocation = p->slider[slideri];
-    int previous_allocation;
     int plus_pop, old_plus_pop = 0, last_inc_pos = original_allocation;
     do {
         char buf[10];
-        previous_allocation = p->slider[slideri];
         plus_pop = game_planet_get_slider_text_eco(g, p, player, true, buf, sizeof(buf));
         if (plus_pop > old_plus_pop) {
             old_plus_pop = plus_pop;
-            last_inc_pos = previous_allocation;
+            last_inc_pos = p->slider[slideri];
         }
-        increment_slider(p, slideri);
-    } while (previous_allocation != p->slider[slideri]);
+    } while (increment_slider(p, slideri));
 
     if (!old_plus_pop) {
         set_slider(p, slideri, original_allocation);
@@ -145,7 +145,6 @@ static void move_def_min(const struct game_s *g, planet_t *p)
     int slideri = PLANET_SLIDER_DEF;
     int original_allocation = p->slider[slideri];
     bool found = false;
-    int previous_allocation;
     do {
         if (slider_text_equals(g, p, slideri, game_str_sm_defupg) || slider_text_equals(g, p, slideri, game_str_sm_defshld)) {
             found = true;
@@ -155,9 +154,7 @@ static void move_def_min(const struct game_s *g, planet_t *p)
                 break;
             }
         }
-        previous_allocation = p->slider[slideri];
-        increment_slider(p, slideri);
-    } while (previous_allocation != p->slider[slideri]);
+    } while (increment_slider(p, slideri));
 
     if (!found) {
         set_slider(p, slideri, original_allocation);
@@ -170,14 +167,12 @@ static void move_def_bases(const struct game_s *g, planet_t *p)
     int left_to_build = p->target_bases - p->missile_bases;
     if (left_to_build > 0) {
         int slideri = PLANET_SLIDER_DEF;
-        int previous_allocation;
         do {
             if (slider_text_num_grequ(g, p, slideri, left_to_build)) {
                 break;
             }
-            previous_allocation = p->slider[slideri];
             increment_slider(p, slideri);
-        } while (previous_allocation != p->slider[slideri]);
+        } while (increment_slider(p, slideri));
     }
 }
 
@@ -185,17 +180,13 @@ static void move_def_bases(const struct game_s *g, planet_t *p)
 static void move_ship_1(const struct game_s *g, planet_t *p)
 {
     int slideri = PLANET_SLIDER_SHIP;
-    int previous_allocation = p->slider[slideri];
     char buf[16];
     lib_sprintf(buf, sizeof(buf), "1 %s", game_str_sm_prod_y);
     do {
         if (slider_text_equals(g, p, slideri, buf)) {
             break;
         }
-
-        previous_allocation = p->slider[slideri];
-        increment_slider(p, slideri);
-    } while (previous_allocation != p->slider[slideri]);
+    } while (increment_slider(p, slideri));
 }
 
 /* -------------------------------------------------------------------------- */
@@ -204,14 +195,11 @@ static void move_ship_1(const struct game_s *g, planet_t *p)
 void game_planet_move_eco_min(const struct game_s *g, planet_t *p)
 {
     int slideri = PLANET_SLIDER_ECO;
-    int previous_allocation;
     do {
         if (!slider_text_equals(g, p, slideri, game_str_sm_ecowaste)) {
             break;
         }
-        previous_allocation = p->slider[slideri];
-        increment_slider(p, slideri);
-    } while (previous_allocation != p->slider[slideri]);
+    } while (increment_slider(p, slideri));
 }
 
 void game_planet_destroy(struct game_s *g, uint8_t planet_i, player_id_t attacker)

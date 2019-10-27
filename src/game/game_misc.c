@@ -486,12 +486,23 @@ void game_update_visibility(struct game_s *g)
     }
 }
 
+/* FIXME: this code is a fragile mess (breaks when slideri is locked) and the interface is broken:
+ * makes no sense to pass value unless it is expected that sum_i slidertbl[i] == 100 and the 
+ * function moves the slider set from on consistent state to another. This is not the case as
+ * throughout the code, slidertbl[slideri] is already set to value by the caller and the slider
+ * set is usually an inconsistent state, the function is supposed to make consistent, even though 
+ * it is not always able to do so. In the later caser, it does not return an error value.
+ * For now, an error gets logged when called on a locked slider. A real fix needs a rewrite of
+ * all calling instances (mostly UI slider groups and internal governor logic). */
 void game_adjust_slider_group(int16_t *slidertbl, int slideri, int16_t value, int num, const uint16_t *locktbl)
 {
     bool have_unlocked = false;
     int first_unlocked_i = 0;
     int last_unlocked_i = 0;
     int left = 100;
+    if (locktbl[slideri]) {
+       log_error("game_adjust_slider_group: slider %d is locked.\n",slideri);
+    }
     for (int i = 0; i < num; ++i) {
         if (locktbl[i]) {
             left -= slidertbl[i];
@@ -524,6 +535,11 @@ void game_adjust_slider_group(int16_t *slidertbl, int slideri, int16_t value, in
             j = first_unlocked_i;
         }
         slidertbl[j] += left;
+    }
+    { /* debug code; can be deleted after the above issues are finally fixed */
+        int s = 0;
+        for (int i = 0; i < num; ++i) s += slidertbl[i];
+        if (s != 100) log_error("game_adjust_slider_group: total is %d %%\n", s);
     }
 }
 
