@@ -632,7 +632,7 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
             }
         }
     }
-    if (d->dist_i >= 0) {
+    if (ui_extra_enabled && d->dist_i >= 0) {
         int j = g->planet_focus_i[d->api];
         const planet_t *p = &g->planet[d->dist_i], *q = &g->planet[j];
         int px = 2 * (p->x - x) + 14, py = 2 * (p->y - y) + 14;
