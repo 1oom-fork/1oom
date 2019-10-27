@@ -91,11 +91,13 @@ int hw_audio_init(void)
             log_error("initialising SDL_mixer (%i Hz, slice %i): %s\n", opt_audiorate, slice, Mix_GetError());
             return -1;
         }
-        Mix_QuerySpec(&audio_rate, &mixer_format, &mixer_channels);
-        if (mixer_channels != 2) {
-            log_error("SDL_mixer gave %i channels instead of 2\n", mixer_channels);
+        if (Mix_QuerySpec(&audio_rate, &mixer_format, &mixer_channels) == 0) {
+            log_error("Failed to read SDL_mixer query spec");
             Mix_CloseAudio();
             return -1;
+        }
+        if (mixer_channels != 2) {
+            log_warning("SDL_mixer gave %i output channels instead of 2\n", mixer_channels);
         }
         if (audio_rate != opt_audiorate) {
             log_warning("SDL_mixer gave %i Hz instead of %i Hz\n", audio_rate, opt_audiorate);
