@@ -104,17 +104,19 @@ static Mix_MusicType mus_type_to_sdlm(mus_type_t type)
 int hw_audio_init(void)
 {
     if (opt_audio_enabled) {
-        int mixer_channels;
+        int num_output_channels;
         uint16_t mixer_format;
         int slice = get_slice_size();
         if (Mix_OpenAudio(opt_audiorate, AUDIO_S16SYS, 2, slice) < 0) {
             log_error("initialising SDL_mixer (%i Hz, slice %i): %s\n", opt_audiorate, slice, Mix_GetError());
             goto failnoclose;
         }
-        Mix_QuerySpec(&audio_rate, &mixer_format, &mixer_channels);
-        if (mixer_channels != 2) {
-            log_error("SDL_mixer gave %i channels instead of 2\n", mixer_channels);
+        if (Mix_QuerySpec(&audio_rate, &mixer_format, &num_output_channels) == 0) {
+            log_error("Failed to read SDL_mixer query spec");
             goto fail;
+        }
+        if (num_output_channels != 2) {
+            log_warning("SDL_mixer gave %i output channels instead of 2\n", num_output_channels);
         }
         if (audio_rate != opt_audiorate) {
             log_warning("SDL_mixer gave %i Hz instead of %i Hz\n", audio_rate, opt_audiorate);
