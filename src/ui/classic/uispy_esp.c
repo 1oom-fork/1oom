@@ -22,6 +22,7 @@
 #include "uiobj.h"
 #include "uisound.h"
 #include "uiswitch.h"
+#include "uiempirereport.h"
 
 /* -------------------------------------------------------------------------- */
 
@@ -146,6 +147,7 @@ int ui_spy_steal(struct game_s *g, int spy, int target, uint8_t flags_field)
     struct steal_data_s d;
     bool flag_done = false;
     int16_t oi_tbl_field[TECH_FIELD_NUM];
+    int16_t oi_report = UIOBJI_INVALID;
     int selected = -1;
 
     ui_switch_1(g, spy);
@@ -160,7 +162,7 @@ int ui_spy_steal(struct game_s *g, int spy, int target, uint8_t flags_field)
     d.flags_field = flags_field;
     d.gmap = ui_gmap_basic_init(g, true);
     steal_load_data(&d);
-
+restart:
     uiobj_table_clear();
 
     for (int i = 0; i < TECH_FIELD_NUM; ++i) {
@@ -173,6 +175,9 @@ int ui_spy_steal(struct game_s *g, int spy, int target, uint8_t flags_field)
             oi_tbl_field[i] = UIOBJI_INVALID;
         }
     }
+    if (ui_extra_enabled) {
+        oi_report = uiobj_add_mousearea(18, 43, 210, 76, MOO_KEY_UNKNOWN);
+    }
 
     uiobj_set_callback_and_delay(steal_draw_cb, &d, 4);
 
@@ -184,6 +189,9 @@ int ui_spy_steal(struct game_s *g, int spy, int target, uint8_t flags_field)
             ui_sound_play_sfx_24();
             selected = -1;
             flag_done = true;
+        } else if (oi == oi_report) {
+            ui_empirereport(g, spy, target);
+            goto restart;
         }
         for (int i = 0; i < TECH_FIELD_NUM; ++i) {
             if (oi == oi_tbl_field[i]) {
