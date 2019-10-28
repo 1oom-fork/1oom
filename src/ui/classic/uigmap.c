@@ -73,6 +73,7 @@ struct gmap_basic_data_s {
 static int gmap_min_scale = 1;
 static bool gmap_keep_aspect_ratio = true;
 static bool gmap_extra_info = true;
+static bool gmap_yellow_year = true;
 
 static void gmap_init_scale(struct gmap_scale_data_s *s, const struct game_s *g, int w, int h, int bd) {
     s->xoffs = s->yoffs = 0;
@@ -210,7 +211,7 @@ static void gmap_draw_cb(void *vptr)
         }
     }
 
-    if (ui_extra_enabled) {
+    if (ui_extra_enabled && !gmap_yellow_year) {
         char buf[32];
         lib_sprintf(buf, sizeof(buf), "Year %i", g->year+2299);
         lbxfont_select(0, 6, 0, 0);
@@ -377,8 +378,10 @@ static void gmap_draw_cb(void *vptr)
                 lbxgfx_draw_frame(245, 104 + 10 * i, ui_data.gfx.starmap.smalflag[e->banner], UI_SCREEN_W, ui_scale);
                 lbxfont_print_str_normal(260, 105 + 10 * i, game_str_tbl_race[e->race], UI_SCREEN_W, ui_scale);
             }
-            lbxfont_print_str_normal(245, 165, "\002att\001ack", UI_SCREEN_W, ui_scale);
-            lbxfont_print_str_normal(280, 165, "\002inv\001asion", UI_SCREEN_W, ui_scale);
+            if (gmap_extra_info && g->eto[d->api].have_ia_scanner) {
+                lbxfont_print_str_normal(245, 165, "\002att\001ack", UI_SCREEN_W, ui_scale);
+                lbxfont_print_str_normal(280, 165, "\002inv\001asion", UI_SCREEN_W, ui_scale);
+            }
             break;
         case 1:
             for (int i = 0; i < 7; ++i) {
@@ -448,7 +451,13 @@ static void gmap_draw_cb(void *vptr)
     lbxfont_set_temp_color(0x2b);
     lbxfont_select_set_12_4(4, 0xf, 0, 0);
     lbxfont_print_str_normal(242, 8, game_str_gm_gmap, UI_SCREEN_W, ui_scale);
-    lbxfont_print_str_normal(250, 88, game_str_gm_mapkey, UI_SCREEN_W, ui_scale);
+    if (ui_extra_enabled && gmap_yellow_year) {
+        char buf[16];
+        lib_sprintf(buf, sizeof(buf), "Year %d", g->year + YEAR_BASE);
+        lbxfont_print_str_normal(248, 89, buf, UI_SCREEN_W, ui_scale);
+    } else {
+        lbxfont_print_str_normal(250, 88, game_str_gm_mapkey, UI_SCREEN_W, ui_scale);
+    }
     lbxfont_set_temp_color(0x00);
     gmap_blink_step(&(d->b));
     if (ui_extra_enabled) {
@@ -517,6 +526,11 @@ bool ui_gmap(struct game_s *g, player_id_t active_player)
     bool flag_done = false, flag_do_focus = false;
     int16_t /*oi_col, oi_env, oi_min,*/ oi_ok, oi_tbl_planet[PLANETS_MAX];
 
+    if (!ui_extra_enabled) {
+        gmap_keep_aspect_ratio = false;
+        gmap_extra_info = false;
+        gmap_yellow_year = false;
+    }
     gmap_load_data(&d);
     gmap_init_scale(&d.s, g, 224, 185, 7);
     d.g = g;
@@ -730,7 +744,7 @@ void ui_gmap_draw_planet_flag(void *ctx,const struct game_s *g, uint8_t planet_i
     uint8_t *gfx;
     int x, y;
     if (p->owner != PLAYER_NONE) {
-        uint8_t *gfx = ui_data.gfx.starmap.smalflag[g->eto[p->owner].banner];
+        gfx = ui_data.gfx.starmap.smalflag[g->eto[p->owner].banner];
         x = SX2(p->x) + 2;
         y = SY2(p->y) - 3;
         lbxgfx_draw_frame_offs(x , y , gfx, GMAP_LIMITS, UI_SCREEN_W, s->scale);
