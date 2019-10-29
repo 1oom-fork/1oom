@@ -60,6 +60,8 @@ struct gmap_data_s {
     uint8_t *gfx_but_env;
     uint8_t *gfx_but_min;
     uint8_t *gfx_but_ok;
+    int hl_planet;
+    int hl_race;
 };
 
 struct gmap_basic_data_s {
@@ -209,8 +211,20 @@ static void gmap_draw_cb(void *vptr)
         const fleet_enroute_t *r = &(g->enroute[i]);
         if (BOOLVEC_IS1(r->visible, d->api)) {
             uint8_t *gfx = ui_data.gfx.starmap.tinyship[g->eto[r->owner].banner];
-            lbxgfx_draw_frame_offs(SX1(r->x), SY1(r->y), gfx, GMAP_LIMITS, UI_SCREEN_W, gmap_scale);
             int w = game_weight_ships(g, r->owner, r->ships);
+            if (d->mode == 0 && gmap_extra_info && g->eto[d->api].have_ia_scanner) {
+                const planet_t *p = &g->planet[r->dest];
+                int col = tbl_banner_color[g->eto[r->owner].banner];
+                if (0
+                  || (d->hl_planet == r->dest)
+                  || (d->hl_race >= 0 &&  tbl_races[d->hl_race] == r->owner)
+                  || (d->hl_planet < 0 && d->hl_race < 0 && p->owner == d->api && r->owner != d->api)
+                  || (d->hl_planet < 0 && d->hl_race < 0 && w >= tbl_fthres[r->owner])
+                ) {
+                    ui_draw_line1(SX1(r->x), SY1(r->y) + 1, SX1(p->x) + 3, SY1(p->y) + 3, col, gmap_scale);
+                }
+            }
+            lbxgfx_draw_frame_offs(SX1(r->x), SY1(r->y), gfx, GMAP_LIMITS, UI_SCREEN_W, gmap_scale);
             if (gmap_extra_info && w >= tbl_fthres[r->owner]) {
                 lbxgfx_draw_frame_offs(SX1(r->x)+1, SY1(r->y), gfx, GMAP_LIMITS, UI_SCREEN_W, gmap_scale);
             }
@@ -221,6 +235,17 @@ static void gmap_draw_cb(void *vptr)
         const transport_t *r = &(g->transport[i]);
         if (BOOLVEC_IS1(r->visible, d->api)) {
             uint8_t *gfx = ui_data.gfx.starmap.tinytran[g->eto[r->owner].banner];
+            if (d->mode == 0 && gmap_extra_info && g->eto[d->api].have_ia_scanner) {
+                const planet_t *p = &g->planet[r->dest];
+                int col = tbl_banner_color[g->eto[r->owner].banner];
+                if (0
+                  || (d->hl_planet == r->dest)
+                  || (d->hl_race >= 0 &&  tbl_races[d->hl_race] == r->owner)
+                  || (d->hl_planet < 0 && d->hl_race < 0 && p->owner == d->api && r->owner != d->api)
+                ) {
+                    ui_draw_line1(SX1(r->x), SY1(r->y) + 1, SX1(p->x) + 3, SY1(p->y) + 3, col, gmap_scale);
+                }
+            }
             lbxgfx_draw_frame_offs(SX1(r->x), SY1(r->y), gfx, GMAP_LIMITS, UI_SCREEN_W, gmap_scale);
         }
     }
@@ -316,6 +341,7 @@ static void gmap_draw_cb(void *vptr)
         }
     }
 
+    if (d->hl_planet >= 0) tbl_tags[d->hl_planet] = GM_TAG_NAME;
     for (int i = 0; i < g->galaxy_stars; ++i) {
         const planet_t *p = &(g->planet[i]);
         uint8_t *gfx;
@@ -329,7 +355,7 @@ static void gmap_draw_cb(void *vptr)
         }
         switch (d->mode) {
             case 0:
-                if (gmap_extra_info && tbl_tags[i] && p->owner != PLAYER_NONE) {
+                if (gmap_extra_info && tbl_tags[i]) {
                     if (0
                       || BOOLVEC_IS1(p->explored, d->api)
                       || BOOLVEC_IS1(p->within_srange, d->api)
@@ -339,7 +365,7 @@ static void gmap_draw_cb(void *vptr)
                         const char *str = 0;
                         if (tbl_tags[i] & GM_TAG_NAME) {
                             str = p->name;
-                            lbxfont_select(2, 7, 0, 0);
+                            lbxfont_select(2, d->hl_planet == i ? 4 : 7, 0, 0);
                         } else if(tbl_tags[i] & GM_TAG_EVENT) {
                             str = planets_get_notes_str(g, i, 0, 0, 0);
                             lbxfont_select(2, 9, 0, 0);
@@ -349,7 +375,7 @@ static void gmap_draw_cb(void *vptr)
                             lbxfont_select(0, 6, 0, 0);
                             lbxfont_print_str_center_limit(x + 4, y + 8, str, GMAP_TEXT_LIMITS, UI_SCREEN_W, gmap_scale);
                             lbxfont_select(0, tbl_banner_fontparam[col], 0, 0);
-                            if (p->owner != d->api) lbxfont_set_color0(tbl_banner_color[col]);
+                            lbxfont_select(0, p->owner == d->api ? 5 : 2, 0, 0);
                         }
                         lbxfont_print_str_center_limit(x + 3, y + 7, str, GMAP_TEXT_LIMITS, UI_SCREEN_W, gmap_scale);
                     }
@@ -385,15 +411,16 @@ static void gmap_draw_cb(void *vptr)
     }
     switch (d->mode) {
         case 0:
-            lbxfont_select(0, 6, 11, 0);
             for (int i = 0; i < racesnum; ++i) {
                 const empiretechorbit_t *e;
                 e = &(g->eto[tbl_races[i]]);
                 lbxgfx_draw_frame(245, 104 + 10 * i, ui_data.gfx.starmap.smalflag[e->banner], UI_SCREEN_W, ui_scale);
+                lbxfont_select(0, d->hl_race == i ? tbl_banner_fontparam[e->banner] : 6, 0, 0);
                 lbxfont_print_str_normal(260, 105 + 10 * i, game_str_tbl_race[e->race], UI_SCREEN_W, ui_scale);
             }
             if (ui_extra_enabled) {
                 if (gmap_extra_info) {
+                    lbxfont_select(0, 10, 0, 0);
                     if (g->eto[d->api].have_ia_scanner) {
                         lbxfont_print_str_normal(245, 165, "\002att\001ack", UI_SCREEN_W, ui_scale);
                         lbxfont_print_str_normal(280, 165, "\002inv\001asion", UI_SCREEN_W, ui_scale);
@@ -550,13 +577,15 @@ bool ui_gmap(struct game_s *g, player_id_t active_player)
     int16_t /*oi_col, oi_env, oi_min,*/ oi_ok, oi_tbl_planet[PLANETS_MAX];
     int16_t oi_ratio = UIOBJI_INVALID, oi_scale = UIOBJI_INVALID;
     int16_t oi_tactical = UIOBJI_INVALID, oi_year = UIOBJI_INVALID;
-    int16_t val_scale;
+    int16_t oi_tbl_race[PLAYER_NUM], dummy;
+    uint8_t val_scale;
 
     if (!ui_extra_enabled) {
         gmap_keep_aspect_ratio = false;
         gmap_extra_info = false;
         gmap_yellow_year = false;
     }
+    for (int i = 0; i < PLAYER_NUM; ++i) oi_tbl_race[i] = UIOBJI_INVALID;
     gmap_load_data(&d);
     gmap_init_scale(&d.s, g, 224, 185, 7);
     val_scale = gmap_scale;
@@ -566,6 +595,9 @@ bool ui_gmap(struct game_s *g, player_id_t active_player)
     d.b.g = g;
     d.b.countdown = -1;
     d.b.planet_i = 0;
+    d.hl_planet = -1;
+    d.hl_race = -1;
+    
 
     uiobj_table_clear();
 
@@ -574,27 +606,35 @@ bool ui_gmap(struct game_s *g, player_id_t active_player)
        oi_ratio = uiobj_add_mousearea(223, 185, 227, 189, MOO_KEY_r);
        oi_tactical = uiobj_add_mousearea(244, 164, 308, 170, MOO_KEY_t);
        oi_year = uiobj_add_mousearea(248, 88, 304, 98, MOO_KEY_y);
+       oi_tbl_race[0] = uiobj_add_mousearea(244, 104, 290, 112, MOO_KEY_UNKNOWN);
+       for (int i = PLAYER_0, j = 1; i < g->players; ++i) {
+           if ((i != d.api) && IS_ALIVE(g, i)) {
+               oi_tbl_race[j] = uiobj_add_mousearea(244, 104 + 10 * j, 308, 112 + 10 * j, MOO_KEY_UNKNOWN);
+               ++j;
+           }
+        }
     }
-    if (ui_scale > 1) oi_scale = uiobj_add_mousewheel(7, 7, 230, 191, &val_scale);
+
     /*oi_col =*/ uiobj_add_t3(246, 27, "", d.gfx_but_col, &(d.mode), 0, MOO_KEY_c);
     /*oi_env =*/ uiobj_add_t3(246, 47, "", d.gfx_but_env, &(d.mode), 1, MOO_KEY_e);
     /*oi_min =*/ uiobj_add_t3(246, 67, "", d.gfx_but_min, &(d.mode), 2, MOO_KEY_m);
     for (int i = 0; i < g->galaxy_stars; ++i) {
         const planet_t *p = &(g->planet[i]);
-        int x, y;
+        int x, y, d = 6 * gmap_scale / ui_scale + 2;
         x = UX1(p->x);
         y = UY1(p->y);
-        /* FIXME limits not set! ... but no need to limit anyway */
-        oi_tbl_planet[i] = uiobj_add_mousearea/*_limited*/(x, y, x + 4, y + 4, MOO_KEY_UNKNOWN);
+        oi_tbl_planet[i] = uiobj_add_mousearea(x, y, x + d, y + d, MOO_KEY_UNKNOWN);
     }
+    if (ui_scale > 1) oi_scale = uiobj_add_tb(7, 7, 224, 185, 1, 1, &dummy, &dummy, &val_scale, ui_scale);
 
     uiobj_set_help_id(9);
     uiobj_set_callback_and_delay(gmap_draw_cb, &d, 4);
     uiobj_set_downcount(1);
 
     while (!flag_done) {
-        int16_t oi;
+        int16_t oi, oi2;
         oi = uiobj_handle_input_cond();
+        oi2 = uiobj_at_cursor();
         ui_delay_prepare();
         if ((oi == oi_ok) || (oi == UIOBJI_ESC)) {
             flag_done = true;
@@ -615,12 +655,23 @@ bool ui_gmap(struct game_s *g, player_id_t active_player)
         if (oi != 0) {
             ui_sound_play_sfx_24();
         }
+        d.hl_planet = -1;
         for (int i = 0; i < g->galaxy_stars; ++i) {
             if (oi == oi_tbl_planet[i]) {
                 g->planet_focus_i[active_player] = i;
                 flag_do_focus = true;
                 flag_done = true;
                 break;
+            }
+            if (d.mode == 0 && gmap_extra_info && oi2 == oi_tbl_planet[i]) {
+                d.hl_planet = i;
+                break;
+            }
+        }
+        d.hl_race = -1;
+        for (int i = 0; i < g->players && oi_tbl_race[i] != UIOBJI_INVALID; ++i) {
+            if (d.mode == 0 && gmap_extra_info && oi2 == oi_tbl_race[i]) {
+                d.hl_race = i;
             }
         }
         if (!flag_done) {
