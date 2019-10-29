@@ -30,7 +30,7 @@ is an integer scaling factor for the whole UI except:
 - sliders
 The default value is 1 for that classic 320x200 feeling. Larger values allow
 more of the galaxy to be viewed without scrolling. Mouse wheel can be used
-to adjust the scaling of the galaxy movement screen map.
+to adjust the scaling of the galaxy movement screen as well as the galaxy map.
 
 The following new UI features are always enabled/available:
 - Smoother galaxy movement screen scrolling
@@ -112,18 +112,33 @@ or pressing Alt-X in the main menu enables the following extra UI features:
 - Clicking on #, Name, etc on Planets screen sorts the list
 - Clicking on Station or ship names on Fleet screen sorts the list
 - The = key can be substitued by the # key (useful for some non-US keyboards)
+- Galaxy Map shows a 5 pc scale for x- and -y diretion. Clicking on the origin 
+  or (r) toogles between correct aspect ration and maximum size
+- Clicking the top the Galaxy Map key or (y) toggles year display style
+- Clicking the bottom the Galaxy Map or (t) toggles tactical info (see below)
+
+The Galaxy Map tactical info option displays:
+- names of homeworlds and Orion (if known)
+- loactions of planetary events
+- large fleets with a larger icon
+- attacks and invasions (see below)
+  
+A fleet is large when its tonnage is at least 10% of the combined total of
+its owner's and the player's ships (no cheat as deductible from race stats).
+If improved or adv. scanners are available, attacks, invasions and large
+fleet movements are shown. Hovering over a race shows its scanned fleet
+movements and hovering over a planet shows all incoming fleets.
 
 Additional game options are settable with uiextra in the New Game screen.
 The options are tied to the save file, cannot be altered and can be inspected 
 (even without uiextra) in the Game options screen:
-
 - AI: Classic or Classic+
-- Events: all, none, late (year 2400+), good (only Rich/Fertile/Merchant/Derelict)
+- Events: all, none, late (year 2400+), good (Rich/Fertile/Merchant/Derelict)
 - Council: 2/3, 3/4 (of planets settled), Orion (when Orion is settled), none
 - Guardian: normal, weak (less weapons, less DEF, no ARS/ADC)
 - Rules: pbx, fix bugs (as in fixbugs.pbx), MOO v1.3 (enjoy your doom stacks)
 
-The settings override pbx-patches and are put in effect at game creation/load time.
-Old saves default to Classic, all, 2/3, normal, pbx (i.e. pbx patches get honored).
+Settings override pbx-patches and are put in effect at game creation/load time.
+Old saves default to Classic, all, 2/3, normal, pbx (only pbx patches).
 
 See doc/list_gamediff.txt for a list of differences in the game itself.
