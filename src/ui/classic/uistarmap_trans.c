@@ -353,11 +353,9 @@ do_accept:
                 p->trans_num = 0;
             }
             if (p->trans_num && p->owner != PLAYER_NONE) {
-                game_update_production(g);
                 if(BOOLVEC_IS1(p->extras, PLANET_EXTRAS_GOVERNOR)) {
+                    game_update_production(g);
                     game_planet_govern(g, p);
-                } else {
-                    game_planet_move_eco_min(g, p);
                 }
             }
             ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
