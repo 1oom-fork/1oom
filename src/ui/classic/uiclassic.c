@@ -137,6 +137,7 @@ int ui_screen_w = 0;
 int ui_screen_h = 0;
 int ui_scale = 0;
 int starmap_scale = 0;
+int gmap_scale = 0;
 bool ui_extra_enabled = false;
 bool ui_mwi_slider = false;
 bool ui_mwi_counter = false;

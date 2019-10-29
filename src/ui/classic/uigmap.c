@@ -70,9 +70,8 @@ struct gmap_basic_data_s {
 };
 
 /* stubs for future UI options */
-static int gmap_min_scale = 1;
 static bool gmap_keep_aspect_ratio = true;
-static bool gmap_extra_info = true;
+static bool gmap_extra_info = false;
 static bool gmap_yellow_year = true;
 
 static void gmap_init_scale(struct gmap_scale_data_s *s, const struct game_s *g, int w, int h, int bd) {
@@ -91,33 +90,31 @@ static void gmap_init_scale(struct gmap_scale_data_s *s, const struct game_s *g,
             s->xoffs = (s->xmax - g->galaxy_maxx) / 2;
         }
     }
-    /* the smaller interturn win size determines scale */
-    if (gmap_min_scale) {
-        s->scale = gmap_min_scale;
-        while (2 * s->scale * s->xmax < 215 * ui_scale) s->scale++;
-        while (2 * s->scale * s->ymax < 171 * ui_scale) s->scale++;
-        SETMIN(s->scale, ui_scale);
-    } else {
-        s->scale = ui_scale;
-    }
+    SETRANGE(gmap_scale, 0, ui_scale);
+    if (!gmap_scale) gmap_scale = starmap_scale;
+    if (!gmap_scale) gmap_scale = ui_scale;
+    /* the smaller interturn win size determines minimum scale */
+    while (2 * gmap_scale * s->xmax < 215 * ui_scale) gmap_scale++;
+    while (2 * gmap_scale * s->ymax < 171 * ui_scale) gmap_scale++;
+    SETMIN(gmap_scale, ui_scale);
     /* limit gmap to starmap resolution (20 px/pc); add margins if necessary */
-    if (2 * s->scale * s->xmax < w * ui_scale) {
-        s->xoffs += (w * ui_scale / s->scale - 2 * s->xmax + 2) / 4;
-        s->xmax = (w * ui_scale + s->scale) / (2 * s->scale);
+    if (2 * gmap_scale * s->xmax < w * ui_scale) {
+        s->xoffs += (w * ui_scale / gmap_scale - 2 * s->xmax + 2) / 4;
+        s->xmax = (w * ui_scale + gmap_scale) / (2 * gmap_scale);
         s->sx = LBXGFX_SCALE;
     }
-    if (2 * s->scale * s->ymax < h * ui_scale) {
-        s->yoffs += (h * ui_scale / s->scale - 2 * s->ymax + 2) / 4;
-        s->ymax = (h * ui_scale + s->scale) / (2 * s->scale);
+    if (2 * gmap_scale * s->ymax < h * ui_scale) {
+        s->yoffs += (h * ui_scale / gmap_scale - 2 * s->ymax + 2) / 4;
+        s->ymax = (h * ui_scale + gmap_scale) / (2 * gmap_scale);
         s->sy = LBXGFX_SCALE;
     }
-    if (!s->sx) s->sx = w * ui_scale * LBXGFX_SCALE / (2 * s->scale * s->xmax);
-    if (!s->sy) s->sy = h * ui_scale * LBXGFX_SCALE / (2 * s->scale * s->ymax);
+    if (!s->sx) s->sx = w * ui_scale * LBXGFX_SCALE / (2 * gmap_scale * s->xmax);
+    if (!s->sy) s->sy = h * ui_scale * LBXGFX_SCALE / (2 * gmap_scale * s->ymax);
     SETMIN(s->sx, LBXGFX_SCALE);
     SETMIN(s->sy, LBXGFX_SCALE);
-    s->glx0 = s->gly0 = (bd * ui_scale + s->scale - 1) / s->scale; /* round up left and upper limit*/
-    s->glx1 = (bd + w) * ui_scale / s->scale - 1;                  /* round down right and lower limit */
-    s->gly1 = (bd + h) * ui_scale / s->scale - 1;
+    s->glx0 = s->gly0 = (bd * ui_scale + gmap_scale - 1) / gmap_scale; /* round up left and upper limit*/
+    s->glx1 = (bd + w) * ui_scale / gmap_scale - 1;                    /* round down right and lower limit */
+    s->gly1 = (bd + h) * ui_scale / gmap_scale - 1;
 }
 
 static void gmap_load_data(struct gmap_data_s *d)
@@ -149,8 +146,8 @@ static void gmap_blink_step(struct gmap_blink_data_s *b)
     }
 }
 
-#define SX1(x) ((224 * ((x) + s->xoffs) / s->xmax + 7) * ui_scale / s->scale)
-#define SY1(y) ((185 * ((y) + s->yoffs) / s->ymax + 7) * ui_scale / s->scale)
+#define SX1(x) ((224 * ((x) + s->xoffs) / s->xmax + 7) * ui_scale / gmap_scale)
+#define SY1(y) ((185 * ((y) + s->yoffs) / s->ymax + 7) * ui_scale / gmap_scale)
 #define UX1(x) (224 * ((x) + s->xoffs) / s->xmax + 7)
 #define UY1(y) (185 * ((y) + s->yoffs) / s->ymax + 7)
 
@@ -188,17 +185,34 @@ static void gmap_draw_cb(void *vptr)
     for (int i = 0; i < g->nebula_num; ++i) {
         int x = g->nebula_x[i], y = g->nebula_y[i];
         uint8_t *gfx = ui_data.gfx.starmap.nebula[i];
-        lbxgfx_draw_frame_scale(SX1(x), SY1(y), s->sx, s->sy, gfx, UI_SCREEN_W, s->scale);
+        lbxgfx_draw_frame_scale(SX1(x), SY1(y), s->sx, s->sy, gfx, UI_SCREEN_W, gmap_scale);
+    }
+
+    if (ui_extra_enabled) {
+        int x0 = 225 * ui_scale / gmap_scale;
+        int y0 = 187 * ui_scale / gmap_scale;
+        int x5 = x0 - ((50 * s->sx) >> LBXGFX_SLD);
+        int y5 = y0 - ((50 * s->sy) >> LBXGFX_SLD);
+        int col = gmap_keep_aspect_ratio ? 0x44 : 0;
+        ui_draw_box1(x0 - 2, y0 - 2, x0 + 2, y0 + 2, 6, 4, gmap_scale);
+        ui_draw_line1(x0 -2, y0, x5, y0, 6, gmap_scale);
+        ui_draw_line1(x0, y0 - 2, x0, y5, 6, gmap_scale);
+        ui_draw_line1(x5, y0 + 1, x5, y0 -1, 6, gmap_scale);
+        ui_draw_line1(x0 + 1, y5, x0 - 1, y5, 6, gmap_scale);
+        ui_draw_filled_rect(x0 - 1, y0 - 1, x0 + 1, y0 + 1, col, gmap_scale);
+        lbxfont_select(0, 7, 0, 0);
+        lbxfont_print_str_center(x5 - 4, y0 - 2, "5", UI_SCREEN_W, gmap_scale);
+        lbxfont_print_str_center(x0, y5 - 7, "5", UI_SCREEN_W, gmap_scale);
     }
 
     for (int i = 0; i < g->enroute_num; ++i) {
         const fleet_enroute_t *r = &(g->enroute[i]);
         if (BOOLVEC_IS1(r->visible, d->api)) {
             uint8_t *gfx = ui_data.gfx.starmap.tinyship[g->eto[r->owner].banner];
-            lbxgfx_draw_frame_offs(SX1(r->x), SY1(r->y), gfx, GMAP_LIMITS, UI_SCREEN_W, s->scale);
+            lbxgfx_draw_frame_offs(SX1(r->x), SY1(r->y), gfx, GMAP_LIMITS, UI_SCREEN_W, gmap_scale);
             int w = game_weight_ships(g, r->owner, r->ships);
             if (gmap_extra_info && w >= tbl_fthres[r->owner]) {
-                lbxgfx_draw_frame_offs(SX1(r->x)+1, SY1(r->y), gfx, GMAP_LIMITS, UI_SCREEN_W, s->scale);
+                lbxgfx_draw_frame_offs(SX1(r->x)+1, SY1(r->y), gfx, GMAP_LIMITS, UI_SCREEN_W, gmap_scale);
             }
         }
     }
@@ -207,7 +221,7 @@ static void gmap_draw_cb(void *vptr)
         const transport_t *r = &(g->transport[i]);
         if (BOOLVEC_IS1(r->visible, d->api)) {
             uint8_t *gfx = ui_data.gfx.starmap.tinytran[g->eto[r->owner].banner];
-            lbxgfx_draw_frame_offs(SX1(r->x), SY1(r->y), gfx, GMAP_LIMITS, UI_SCREEN_W, s->scale);
+            lbxgfx_draw_frame_offs(SX1(r->x), SY1(r->y), gfx, GMAP_LIMITS, UI_SCREEN_W, gmap_scale);
         }
     }
 
@@ -240,9 +254,9 @@ static void gmap_draw_cb(void *vptr)
 
             for (int j = 0; j < have_orbit_num; ++j) {
                 uint8_t *gfx = ui_data.gfx.starmap.tinyship[g->eto[tbl_have_orbit_owner[j]].banner];
-                lbxgfx_draw_frame_offs(SX1(p->x)+7, SY1(p->y) + 1 + 2 * j, gfx, GMAP_LIMITS, UI_SCREEN_W, s->scale);
+                lbxgfx_draw_frame_offs(SX1(p->x)+7, SY1(p->y) + 1 + 2 * j, gfx, GMAP_LIMITS, UI_SCREEN_W, gmap_scale);
                 if (gmap_extra_info && tbl_have_orbit_sod[j]) {
-                    lbxgfx_draw_frame_offs(SX1(p->x)+8, SY1(p->y) + 1 + 2 * j, gfx, GMAP_LIMITS, UI_SCREEN_W, s->scale);
+                    lbxgfx_draw_frame_offs(SX1(p->x)+8, SY1(p->y) + 1 + 2 * j, gfx, GMAP_LIMITS, UI_SCREEN_W, gmap_scale);
                 }
             }
         }
@@ -270,11 +284,11 @@ static void gmap_draw_cb(void *vptr)
             } else {
                 lbxgfx_set_frame_0(gfx);
             }
-            lbxgfx_draw_frame(x, y, gfx, UI_SCREEN_W, s->scale);
+            lbxgfx_draw_frame(x, y, gfx, UI_SCREEN_W, gmap_scale);
         } else {
             gfx = ui_data.gfx.starmap.smallstr;
             lbxgfx_set_frame_0(gfx);
-            lbxgfx_draw_frame(x + 1, y + 1, gfx, UI_SCREEN_W, s->scale);
+            lbxgfx_draw_frame(x + 1, y + 1, gfx, UI_SCREEN_W, gmap_scale);
         }
         if (p->unrest == PLANET_UNREST_REBELLION) tbl_tags[i] = GM_TAG_EVENT;
         if (p->unrest == PLANET_UNREST_UNREST) tbl_tags[i] = GM_TAG_EVENT;
@@ -311,7 +325,7 @@ static void gmap_draw_cb(void *vptr)
         owner = (BOOLVEC_IS1(p->within_srange, d->api)) ? p->owner : g->seen[d->api][i].owner;
         if (owner != PLAYER_NONE) {
             gfx = ui_data.gfx.starmap.smalflag[g->eto[owner].banner];
-            lbxgfx_draw_frame(x + 2, y - 3, gfx, UI_SCREEN_W, s->scale);
+            lbxgfx_draw_frame(x + 2, y - 3, gfx, UI_SCREEN_W, gmap_scale);
         }
         switch (d->mode) {
             case 0:
@@ -333,11 +347,11 @@ static void gmap_draw_cb(void *vptr)
                             int col = g->eto[tbl_tags[i] & GM_TAG_PLAYER].banner;
                             str = (tbl_tags[i] & GM_TAG_ATK) ? "att" : "inv";
                             lbxfont_select(0, 6, 0, 0);
-                            lbxfont_print_str_center_limit(x + 4, y + 8, str, GMAP_TEXT_LIMITS, UI_SCREEN_W, s->scale);
+                            lbxfont_print_str_center_limit(x + 4, y + 8, str, GMAP_TEXT_LIMITS, UI_SCREEN_W, gmap_scale);
                             lbxfont_select(0, tbl_banner_fontparam[col], 0, 0);
                             if (p->owner != d->api) lbxfont_set_color0(tbl_banner_color[col]);
                         }
-                        lbxfont_print_str_center_limit(x + 3, y + 7, str, GMAP_TEXT_LIMITS, UI_SCREEN_W, s->scale);
+                        lbxfont_print_str_center_limit(x + 3, y + 7, str, GMAP_TEXT_LIMITS, UI_SCREEN_W, gmap_scale);
                     }
                 }
                 break;
@@ -349,7 +363,7 @@ static void gmap_draw_cb(void *vptr)
                     pt = (PLANET_TYPE_TERRAN - p->type);
                     SETMAX(pt, 0);
                     buf[0] = game_str_gm_tchar[pt];
-                    lbxfont_print_str_normal_limit(x + 7, y + 1, buf, GMAP_TEXT_LIMITS, UI_SCREEN_W, s->scale);
+                    lbxfont_print_str_normal_limit(x + 7, y + 1, buf, GMAP_TEXT_LIMITS, UI_SCREEN_W, gmap_scale);
                 }
                 break;
             case 2:
@@ -362,7 +376,7 @@ static void gmap_draw_cb(void *vptr)
                     if (p->special == PLANET_SPECIAL_4XTECH) {
                         lbxfont_select(2, 0xe, 0, 0);
                     }
-                    lbxfont_print_str_center_limit(x + 2, y + 7, game_str_tbl_gm_spec[p->special], GMAP_TEXT_LIMITS, UI_SCREEN_W, s->scale);
+                    lbxfont_print_str_center_limit(x + 2, y + 7, game_str_tbl_gm_spec[p->special], GMAP_TEXT_LIMITS, UI_SCREEN_W, gmap_scale);
                 }
                 break;
             default:
@@ -378,9 +392,18 @@ static void gmap_draw_cb(void *vptr)
                 lbxgfx_draw_frame(245, 104 + 10 * i, ui_data.gfx.starmap.smalflag[e->banner], UI_SCREEN_W, ui_scale);
                 lbxfont_print_str_normal(260, 105 + 10 * i, game_str_tbl_race[e->race], UI_SCREEN_W, ui_scale);
             }
-            if (gmap_extra_info && g->eto[d->api].have_ia_scanner) {
-                lbxfont_print_str_normal(245, 165, "\002att\001ack", UI_SCREEN_W, ui_scale);
-                lbxfont_print_str_normal(280, 165, "\002inv\001asion", UI_SCREEN_W, ui_scale);
+            if (ui_extra_enabled) {
+                if (gmap_extra_info) {
+                    if (g->eto[d->api].have_ia_scanner) {
+                        lbxfont_print_str_normal(245, 165, "\002att\001ack", UI_SCREEN_W, ui_scale);
+                        lbxfont_print_str_normal(280, 165, "\002inv\001asion", UI_SCREEN_W, ui_scale);
+                    } else {
+                        lbxfont_print_str_normal(245, 165, "\002no target scan", UI_SCREEN_W, ui_scale);
+                    }
+                } else {
+                    lbxfont_select(2, 10, 0, 0);
+                    lbxfont_print_str_normal(245, 165, "tactical info off", UI_SCREEN_W, ui_scale);
+                }
             }
             break;
         case 1:
@@ -471,14 +494,14 @@ static void gmap_draw_cb(void *vptr)
         y1 = SY1(ui_data.starmap.y + ((86 * ui_scale) / starmap_scale));
         SETMIN(y1, s->gly1);
         pos = d->b.countdown + 1;
-        ui_draw_line_ctbl(x0, y0, x0 + 4, y0, ctblf, 5, pos, s->scale);
-        ui_draw_line_ctbl(x0, y0, x0, y0 + 4, ctblf, 5, pos, s->scale);
-        ui_draw_line_ctbl(x1 - 1, y0, x1 - 4, y0, ctblb, 5, 4 - pos, s->scale);
-        ui_draw_line_ctbl(x1, y0, x1, y0 + 4, ctblf, 5, pos, s->scale);
-        ui_draw_line_ctbl(x0, y1, x0 + 4, y1, ctblf, 5, pos, s->scale);
-        ui_draw_line_ctbl(x0, y1, x0, y1 - 4, ctblf, 5, pos, s->scale);
-        ui_draw_line_ctbl(x1 - 1, y1, x1 - 4, y1, ctblb, 5, 4 - pos, s->scale);
-        ui_draw_line_ctbl(x1, y1, x1, y1 - 4, ctblf, 5, pos, s->scale);
+        ui_draw_line_ctbl(x0, y0, x0 + 4, y0, ctblf, 5, pos, gmap_scale);
+        ui_draw_line_ctbl(x0, y0, x0, y0 + 4, ctblf, 5, pos, gmap_scale);
+        ui_draw_line_ctbl(x1 - 1, y0, x1 - 4, y0, ctblb, 5, 4 - pos, gmap_scale);
+        ui_draw_line_ctbl(x1, y0, x1, y0 + 4, ctblf, 5, pos, gmap_scale);
+        ui_draw_line_ctbl(x0, y1, x0 + 4, y1, ctblf, 5, pos, gmap_scale);
+        ui_draw_line_ctbl(x0, y1, x0, y1 - 4, ctblf, 5, pos, gmap_scale);
+        ui_draw_line_ctbl(x1 - 1, y1, x1 - 4, y1, ctblb, 5, 4 - pos, gmap_scale);
+        ui_draw_line_ctbl(x1, y1, x1, y1 - 4, ctblf, 5, pos, gmap_scale);
     } else {
         int x, y;
         x = UX1(ui_data.starmap.x);
@@ -487,8 +510,8 @@ static void gmap_draw_cb(void *vptr)
     }
 }
 
-#define SX2(x) ((215 * ((x) + s->xoffs) / s->xmax + 6) * ui_scale / s->scale)
-#define SY2(y) ((171 * ((y) + s->yoffs) / s->ymax + 6) * ui_scale / s->scale)
+#define SX2(x) ((215 * ((x) + s->xoffs) / s->xmax + 6) * ui_scale / gmap_scale)
+#define SY2(y) ((171 * ((y) + s->yoffs) / s->ymax + 6) * ui_scale / gmap_scale)
 #define UX2(x) (215 * ((x) + s->xoffs) / s->xmax + 6)
 #define UY2(y) (171 * ((y) + s->yoffs) / s->ymax + 6)
 
@@ -502,7 +525,7 @@ static void ui_gmap_basic_draw_galaxy(struct gmap_basic_data_s *d)
     for (int i = 0; i < g->nebula_num; ++i) {
         int x = g->nebula_x[i], y = g->nebula_y[i];
         uint8_t *gfx = ui_data.gfx.starmap.nebula[i];
-        lbxgfx_draw_frame_scale(SX2(x), SY2(y), s->sx, s->sy, gfx, UI_SCREEN_W, s->scale);
+        lbxgfx_draw_frame_scale(SX2(x), SY2(y), s->sx, s->sy, gfx, UI_SCREEN_W, gmap_scale);
     }
     for (int i = 0; i < g->galaxy_stars; ++i) {
         const planet_t *p = &(g->planet[i]);
@@ -513,7 +536,7 @@ static void ui_gmap_basic_draw_galaxy(struct gmap_basic_data_s *d)
         } else {
             lbxgfx_set_frame_0(gfx);
         }
-        lbxgfx_draw_frame(SX2(p->x), SY2(p->y), gfx, UI_SCREEN_W, s->scale);
+        lbxgfx_draw_frame(SX2(p->x), SY2(p->y), gfx, UI_SCREEN_W, gmap_scale);
     }
 }
 
@@ -525,6 +548,9 @@ bool ui_gmap(struct game_s *g, player_id_t active_player)
     const struct gmap_scale_data_s *s = &d.s;
     bool flag_done = false, flag_do_focus = false;
     int16_t /*oi_col, oi_env, oi_min,*/ oi_ok, oi_tbl_planet[PLANETS_MAX];
+    int16_t oi_ratio = UIOBJI_INVALID, oi_scale = UIOBJI_INVALID;
+    int16_t oi_tactical = UIOBJI_INVALID, oi_year = UIOBJI_INVALID;
+    int16_t val_scale;
 
     if (!ui_extra_enabled) {
         gmap_keep_aspect_ratio = false;
@@ -533,6 +559,7 @@ bool ui_gmap(struct game_s *g, player_id_t active_player)
     }
     gmap_load_data(&d);
     gmap_init_scale(&d.s, g, 224, 185, 7);
+    val_scale = gmap_scale;
     d.g = g;
     d.api = active_player;
     d.mode = 0;
@@ -543,6 +570,12 @@ bool ui_gmap(struct game_s *g, player_id_t active_player)
     uiobj_table_clear();
 
     oi_ok = uiobj_add_t0(246, 181, "", d.gfx_but_ok, MOO_KEY_SPACE);
+    if (ui_extra_enabled) {
+       oi_ratio = uiobj_add_mousearea(223, 185, 227, 189, MOO_KEY_r);
+       oi_tactical = uiobj_add_mousearea(244, 164, 308, 170, MOO_KEY_t);
+       oi_year = uiobj_add_mousearea(248, 88, 304, 98, MOO_KEY_y);
+    }
+    if (ui_scale > 1) oi_scale = uiobj_add_mousewheel(7, 7, 230, 191, &val_scale);
     /*oi_col =*/ uiobj_add_t3(246, 27, "", d.gfx_but_col, &(d.mode), 0, MOO_KEY_c);
     /*oi_env =*/ uiobj_add_t3(246, 47, "", d.gfx_but_env, &(d.mode), 1, MOO_KEY_e);
     /*oi_min =*/ uiobj_add_t3(246, 67, "", d.gfx_but_min, &(d.mode), 2, MOO_KEY_m);
@@ -565,6 +598,19 @@ bool ui_gmap(struct game_s *g, player_id_t active_player)
         ui_delay_prepare();
         if ((oi == oi_ok) || (oi == UIOBJI_ESC)) {
             flag_done = true;
+        } else if(oi == oi_ratio) {
+            gmap_keep_aspect_ratio = !gmap_keep_aspect_ratio;
+            gmap_init_scale(&d.s, g, 224, 185, 7);
+        } else if(oi == oi_scale) {
+            gmap_scale = val_scale;
+            SETRANGE(gmap_scale, 1, ui_scale);
+            gmap_init_scale(&d.s, g, 224, 185, 7);
+            val_scale = gmap_scale;
+            oi = 0; /* no sound as in starmap */
+        } else if(oi == oi_tactical) {
+            gmap_extra_info = !gmap_extra_info;
+        } else if(oi == oi_year) {
+            gmap_yellow_year = !gmap_yellow_year;
         }
         if (oi != 0) {
             ui_sound_play_sfx_24();
@@ -639,14 +685,14 @@ void ui_gmap_basic_draw_frame(void *ctx, int pi/*player_i*/)
             const fleet_enroute_t *r = &(g->enroute[i]);
             if (BOOLVEC_IS1(r->visible, pi)) {
                 uint8_t *gfx = ui_data.gfx.starmap.tinyship[g->eto[r->owner].banner];
-                lbxgfx_draw_frame_offs(SX2(r->x), SY2(r->y), gfx, GMAP_LIMITS, UI_SCREEN_W, s->scale);
+                lbxgfx_draw_frame_offs(SX2(r->x), SY2(r->y), gfx, GMAP_LIMITS, UI_SCREEN_W, gmap_scale);
             }
         }
         for (int i = 0; i < g->transport_num; ++i) {
             const transport_t *r = &(g->transport[i]);
             if (BOOLVEC_IS1(r->visible, pi)) {
                 uint8_t *gfx = ui_data.gfx.starmap.tinytran[g->eto[r->owner].banner];
-                lbxgfx_draw_frame_offs(SX2(r->x), SY2(r->y), gfx, GMAP_LIMITS, UI_SCREEN_W, s->scale);
+                lbxgfx_draw_frame_offs(SX2(r->x), SY2(r->y), gfx, GMAP_LIMITS, UI_SCREEN_W, gmap_scale);
             }
         }
         for (int i = 0; i < g->galaxy_stars; ++i) {
@@ -666,7 +712,7 @@ void ui_gmap_basic_draw_frame(void *ctx, int pi/*player_i*/)
                 }
                 for (int j = 0; j < have_orbit_num; ++j) {
                     uint8_t *gfx = ui_data.gfx.starmap.tinyship[g->eto[tbl_have_orbit_owner[j]].banner];
-                    lbxgfx_draw_frame_offs(SX2(p->x) + 7, SY2(p->y) + 1 + 2 * j, gfx, GMAP_LIMITS, UI_SCREEN_W, s->scale);
+                    lbxgfx_draw_frame_offs(SX2(p->x) + 7, SY2(p->y) + 1 + 2 * j, gfx, GMAP_LIMITS, UI_SCREEN_W, gmap_scale);
                 }
             }
         }
@@ -704,7 +750,7 @@ void ui_gmap_basic_draw_only(void *ctx, int pi/*planet_i*/)
         }
         for (int j = 0; j < have_orbit_num; ++j) {
             uint8_t *gfx = ui_data.gfx.starmap.tinyship[g->eto[tbl_have_orbit_owner[j]].banner];
-            lbxgfx_draw_frame_offs(SX2(p->x) + 7, SY2(p->y) + 1 + 2 * j, gfx, GMAP_LIMITS, UI_SCREEN_W, s->scale);
+            lbxgfx_draw_frame_offs(SX2(p->x) + 7, SY2(p->y) + 1 + 2 * j, gfx, GMAP_LIMITS, UI_SCREEN_W, gmap_scale);
         }
         for (int i = 0; i < 2; ++i) {
             const monster_t *r;
@@ -733,7 +779,7 @@ void ui_gmap_draw_planet_border(void *ctx,const struct game_s *g, uint8_t planet
     int x, y;
     x = SX2(p->x) - 1;
     y = SY2(p->y) - 1;
-    lbxgfx_draw_frame_offs(x , y , ui_data.gfx.starmap.slanbord, GMAP_LIMITS, UI_SCREEN_W, s->scale);
+    lbxgfx_draw_frame_offs(x , y , ui_data.gfx.starmap.slanbord, GMAP_LIMITS, UI_SCREEN_W, gmap_scale);
 }
 
 void ui_gmap_draw_planet_flag(void *ctx,const struct game_s *g, uint8_t planet_i)
@@ -747,7 +793,7 @@ void ui_gmap_draw_planet_flag(void *ctx,const struct game_s *g, uint8_t planet_i
         gfx = ui_data.gfx.starmap.smalflag[g->eto[p->owner].banner];
         x = SX2(p->x) + 2;
         y = SY2(p->y) - 3;
-        lbxgfx_draw_frame_offs(x , y , gfx, GMAP_LIMITS, UI_SCREEN_W, s->scale);
+        lbxgfx_draw_frame_offs(x , y , gfx, GMAP_LIMITS, UI_SCREEN_W, gmap_scale);
     }
 }
 
