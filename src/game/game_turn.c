@@ -380,8 +380,13 @@ static void game_turn_diplo_adjust(struct game_s *g)
     }
     if ((g->year & 1) == 0) {
         uint8_t tbl_num_pp[PLAYER_NUM];
-        int gscale = ((g->galaxy_size + 1) * 3);
-        int gdiv = g->galaxy_size + 6 - g->difficulty;
+        /* compute diplo threshold from galaxy_stars instead of galaxy_size
+         * new formulas are equivalent for std. galaxies (24, 48, 70, 108).
+         * int gscale = ((g->galaxy_size + 1) * 3); 
+         * int gdiv = g->galaxy_size + 6 - g->difficulty; */
+        int n = g->galaxy_stars;
+        int gscale = n < 72 ? (n + 11) / 9 : (n + 20) / 10;
+        int gdiv = n / 30 + 6 - g->difficulty;
         for (player_id_t i = PLAYER_0; i < g->players; ++i) {
             tbl_num_pp[i] = 0;
         }
