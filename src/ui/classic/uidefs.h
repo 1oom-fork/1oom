@@ -61,7 +61,6 @@ struct ui_data_s {
     struct {
         struct {
             uint8_t *nebula[NEBULA_MAX];    /* varies based on game data */
-            uint8_t *bmap;      /* varies based on game data */
             /* every other gfx.* is the same for every game */
             uint8_t *mainview;
             uint8_t *starback;

@@ -510,7 +510,7 @@ static void gmap_draw_cb(void *vptr)
     }
     lbxfont_set_temp_color(0x00);
     gmap_blink_step(&(d->b));
-    if (ui_extra_enabled) {
+    {
         const uint8_t ctblf[5] = { 0xbd, 0xbc, 0xbb, 0xba, 0xb9 };
         const uint8_t ctblb[5] = { 0xba, 0xbb, 0xbc, 0xbd, 0xb9 };
         int x0, y0, x1, y1, pos;
@@ -529,11 +529,6 @@ static void gmap_draw_cb(void *vptr)
         ui_draw_line_ctbl(x0, y1, x0, y1 - 4, ctblf, 5, pos, gmap_scale);
         ui_draw_line_ctbl(x1 - 1, y1, x1 - 4, y1, ctblb, 5, 4 - pos, gmap_scale);
         ui_draw_line_ctbl(x1, y1, x1, y1 - 4, ctblf, 5, pos, gmap_scale);
-    } else {
-        int x, y;
-        x = UX1(ui_data.starmap.x);
-        y = UY1(ui_data.starmap.y);
-        lbxgfx_draw_frame(x, y, ui_data.gfx.starmap.bmap, UI_SCREEN_W, ui_scale);
     }
 }
 

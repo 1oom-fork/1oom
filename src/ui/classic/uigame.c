@@ -274,7 +274,6 @@ void ui_game_start(struct game_s *g)
     for (int i = 0; i < g->nebula_num; ++i) {
         ui_data.gfx.starmap.nebula[i] = lbxfile_item_get(LBXFILE_STARMAP, 0xf + g->nebula_type[i]);
     }
-    ui_data.gfx.starmap.bmap = lbxfile_item_get(LBXFILE_V11, 1 + g->galaxy_size);
 
     /* HACK remove visual glitch on load game */
     ui_draw_erase_buf();
@@ -327,6 +326,4 @@ void ui_game_end(struct game_s *g)
             ui_data.gfx.starmap.nebula[i] = NULL;
         }
     }
-    lbxfile_item_release(LBXFILE_V11, ui_data.gfx.starmap.bmap);
-    ui_data.gfx.starmap.bmap = NULL;
 }
