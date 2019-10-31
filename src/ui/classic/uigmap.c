@@ -212,7 +212,7 @@ static void gmap_draw_cb(void *vptr)
         if (BOOLVEC_IS1(r->visible, d->api)) {
             uint8_t *gfx = ui_data.gfx.starmap.tinyship[g->eto[r->owner].banner];
             int w = game_weight_ships(g, r->owner, r->ships);
-            if (d->mode == 0 && gmap_extra_info && g->eto[d->api].have_ia_scanner) {
+            if (d->mode == 0 && gmap_extra_info && (g->eto[d->api].have_ia_scanner || r->owner == d->api)) {
                 const planet_t *p = &g->planet[r->dest];
                 int col = tbl_banner_color[g->eto[r->owner].banner];
                 if (0
@@ -235,7 +235,7 @@ static void gmap_draw_cb(void *vptr)
         const transport_t *r = &(g->transport[i]);
         if (BOOLVEC_IS1(r->visible, d->api)) {
             uint8_t *gfx = ui_data.gfx.starmap.tinytran[g->eto[r->owner].banner];
-            if (d->mode == 0 && gmap_extra_info && g->eto[d->api].have_ia_scanner) {
+            if (d->mode == 0 && gmap_extra_info && (g->eto[d->api].have_ia_scanner || r->owner == d->api)) {
                 const planet_t *p = &g->planet[r->dest];
                 int col = tbl_banner_color[g->eto[r->owner].banner];
                 if (0
