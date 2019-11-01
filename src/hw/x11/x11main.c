@@ -352,13 +352,14 @@ int hw_icon_set(const uint8_t *data, const uint8_t *pal, int w, int h) {
 
 void hw_shutdown(void) {
     if (icondata != NULL) free(icondata);
-    XShmDetach(dpy, &shminfo);
-    XDestroyImage(shared_image);
-    shmdt(shminfo.shmaddr);
-    shmctl(shminfo.shmid, IPC_RMID, 0);
-    XDestroyWindow(dpy, mainwin);
-    XFreeGC(dpy, gc);
-    XCloseDisplay(dpy);
+    if (gc != NULL) {
+        XShmDetach(dpy, &shminfo);
+        XDestroyImage(shared_image);
+        shmdt(shminfo.shmaddr);
+        shmctl(shminfo.shmid, IPC_RMID, 0);
+        XDestroyWindow(dpy, mainwin);
+        XFreeGC(dpy, gc);
+    }
 }
 
 /* Obtain a pointer to window ARGB canvas */
