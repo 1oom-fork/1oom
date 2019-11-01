@@ -419,6 +419,12 @@ int hw_event_handle(void) {
                 break;
             case Button3:
                 mouse_set_buttons_from_hw(MOUSE_BUTTON_MASK_RIGHT);
+                break;
+            case Button4:
+                mouse_set_scroll_from_hw(-1);
+                break;
+            case Button5:
+                mouse_set_scroll_from_hw(1);
             default:
                 break;
 			}
