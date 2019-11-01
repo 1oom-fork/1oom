@@ -408,15 +408,20 @@ int hw_event_handle(void) {
             break;
         case ButtonRelease:
             button = e.xbutton.button;
-            if (button & Button1) buttonstate &= ~MOUSE_BUTTON_MASK_LEFT;
-            if (button & Button3) buttonstate &= ~MOUSE_BUTTON_MASK_RIGHT;
+            if (button == Button1) buttonstate &= ~MOUSE_BUTTON_MASK_LEFT;
+            if (button == Button3) buttonstate &= ~MOUSE_BUTTON_MASK_RIGHT;
             mouse_set_buttons_from_hw(buttonstate);
             break;
        case ButtonPress:
-            button = e.xbutton.button;
-            if (button & Button1) buttonstate |= MOUSE_BUTTON_MASK_LEFT;
-            if (button & Button3) buttonstate |= MOUSE_BUTTON_MASK_RIGHT;
-            mouse_set_buttons_from_hw(buttonstate);
+            switch(e.xbutton.button) {
+            case Button1:
+                mouse_set_buttons_from_hw(MOUSE_BUTTON_MASK_LEFT);
+                break;
+            case Button3:
+                mouse_set_buttons_from_hw(MOUSE_BUTTON_MASK_RIGHT);
+            default:
+                break;
+			}
             break;
         case Expose:
             if (updminx > e.xexpose.x/SCALE) updminx = e.xexpose.x/SCALE;
