@@ -1,5 +1,6 @@
 #include "config.h"
 
+#include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
@@ -128,6 +129,7 @@ void log_fatal_and_die(const char *format, ...)
     va_end(ap);
 
     log_error_direct(msgbuf);
+    raise(SIGINT);
     exit(EXIT_FAILURE);
 }
 
