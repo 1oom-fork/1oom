@@ -69,7 +69,7 @@ typedef struct uiobj_s {
             /*1a*/ uint8_t rectcolor;
             /*1c*/ bool align_right;
             /*1e*/ uint16_t z1e;    /* bool? */
-            /*20*/ uint16_t buflen;
+            /*20*/ uint16_t max_chars;
             /*22*/ const uint8_t *colortbl;
         } t4;
         struct {
@@ -251,7 +251,7 @@ static void uiobj_handle_t4_sub2(uiobj_t *p, uint16_t len, uint16_t a4, const ch
 
 static void uiobj_handle_t4_sub1(uiobj_t *p)
 {
-    uint16_t len, pos, buflen, w, fonth, animpos;
+    uint16_t len, pos, max_chars, w, fonth, animpos;
     mookey_t key = MOO_KEY_UNKNOWN;
     bool flag_mouse_button = false, flag_got_first = false;
     char strbuf[64];
@@ -262,7 +262,7 @@ static void uiobj_handle_t4_sub1(uiobj_t *p)
     }
 
     animpos = 0;
-    buflen = p->t4.buflen;
+    max_chars = p->t4.max_chars;
     w = p->x1 - p->x0;
     lbxfont_select(p->t4.fontnum, p->t4.fonta2, p->t4.fonta4, 0);
     strcpy(strbuf, p->t4.buf);
@@ -274,8 +274,8 @@ static void uiobj_handle_t4_sub1(uiobj_t *p)
         }
     }
     pos = len;
-    if (pos >= buflen) {
-        pos = buflen;
+    if (pos >= max_chars) {
+        pos = max_chars;
     }
     strcpy(p->t4.buf, strbuf);
     fonth = lbxfont_get_height();
@@ -344,13 +344,13 @@ static void uiobj_handle_t4_sub1(uiobj_t *p)
                 }
                 break;
             case MOO_KEY_RIGHT:
-                if ((pos < buflen) && (pos < len)) {
+                if ((pos < max_chars) && (pos < len)) {
                     ++pos;
                     animpos = 0;
                     if (pos >= len) {
                         strbuf[len] = ' ';
                         strbuf[len + 1] = '\0';
-                        if ((pos >= buflen) || (lbxfont_calc_str_width(strbuf) > w)) {
+                        if ((pos >= max_chars) || (lbxfont_calc_str_width(strbuf) > w)) {
                             --pos;
                         }
                         strbuf[len] = '\0';
@@ -373,7 +373,7 @@ static void uiobj_handle_t4_sub1(uiobj_t *p)
                     flag_got_first = true;
                     strbuf[len] = key;
                     strbuf[len + 1] = '\0';
-                    if ((len < buflen) && (lbxfont_calc_str_width(strbuf) <= w)) {
+                    if ((len < max_chars) && (lbxfont_calc_str_width(strbuf) <= w)) {
                         strbuf[len] = '\0';
                         if (pos < len) {
                             for (int i = len; i > pos; --i) {
@@ -387,7 +387,7 @@ static void uiobj_handle_t4_sub1(uiobj_t *p)
                             ++len;
                             strbuf[len] = ' ';
                             strbuf[len + 1] = '\0';
-                            if ((len < buflen) && (lbxfont_calc_str_width(strbuf) <= w)) {
+                            if ((len < max_chars) && (lbxfont_calc_str_width(strbuf) <= w)) {
                                 ++pos;
                             }
                         }
@@ -1757,7 +1757,7 @@ int16_t uiobj_add_t3(uint16_t x, uint16_t y, const char *str, uint8_t *lbxdata, 
     return UIOBJI_ALLOC();
 }
 
-int16_t uiobj_add_textinput(int x, int y, int w, char *buf, uint16_t buflen, uint8_t rcolor, bool alignr, uint16_t z1e, const uint8_t *colortbl, mookey_t key, int16_t helpid)
+int16_t uiobj_add_textinput(int x, int y, int w, char *buf, uint16_t max_chars, uint8_t rcolor, bool alignr, uint16_t z1e, const uint8_t *colortbl, mookey_t key, int16_t helpid)
 {
     uiobj_t *p = &uiobj_tbl[uiobj_table_num];
     p->x0 = x;
@@ -1767,7 +1767,7 @@ int16_t uiobj_add_textinput(int x, int y, int w, char *buf, uint16_t buflen, uin
     p->t4.fontnum = lbxfont_get_current_fontnum();
     p->t4.fonta2 = lbxfont_get_current_fonta2();
     p->t4.fonta4 = lbxfont_get_current_fonta2b();
-    p->t4.buflen = buflen;
+    p->t4.max_chars = max_chars;
     p->t4.buf = buf;
     p->t4.rectcolor = rcolor;
     p->t4.align_right = alignr;
@@ -2206,7 +2206,7 @@ int16_t uiobj_select_from_list2(int x, int y, int w, const char *title, char con
     return oi + itemoffs - 1;
 }
 
-bool uiobj_read_str(int x, int y, int w, char *buf, int buflen, uint8_t rcolor, bool alignr, uint16_t z1e, const uint8_t *ctbl, int16_t helpid)
+bool uiobj_read_str(int x, int y, int w, char *buf, int max_chars, uint8_t rcolor, bool alignr, uint16_t z1e, const uint8_t *ctbl, int16_t helpid)
 {
     char strbuf[64];
     uint16_t fonth, v4 = 0, vc = 0, va;
@@ -2225,7 +2225,7 @@ bool uiobj_read_str(int x, int y, int w, char *buf, int buflen, uint8_t rcolor, 
     }
     uiobj_set_downcount(1);
     {
-        int16_t oi = uiobj_add_textinput(x, y, w, buf, buflen, rcolor, alignr, z1e, ctbl, MOO_KEY_UNKNOWN, helpid);
+        int16_t oi = uiobj_add_textinput(x, y, w, buf, max_chars, rcolor, alignr, z1e, ctbl, MOO_KEY_UNKNOWN, helpid);
         uiobj_focus_oi = oi;
         p = &uiobj_tbl[oi];
     }
@@ -2237,8 +2237,8 @@ bool uiobj_read_str(int x, int y, int w, char *buf, int buflen, uint8_t rcolor, 
         si = 0;
     }
     di = si;
-    if (di > buflen) {
-        di = buflen;
+    if (di > max_chars) {
+        di = max_chars;
     }
     uiobj_handle_t4_sub2(p, di, vc, strbuf);
 
@@ -2305,13 +2305,13 @@ bool uiobj_read_str(int x, int y, int w, char *buf, int buflen, uint8_t rcolor, 
                 }
                 break;
             case MOO_KEY_RIGHT:
-                if ((di < buflen) && (di < si)) {
+                if ((di < max_chars) && (di < si)) {
                     ++di;
                     vc = 0;
                     if (di >= si) {
                         strbuf[si] = ' ';
                         strbuf[si + 1] = '\0';
-                        if ((di >= buflen) || (lbxfont_calc_str_width(strbuf) > w)) {
+                        if ((di >= max_chars) || (lbxfont_calc_str_width(strbuf) > w)) {
                             --di;
                         }
                         strbuf[si] = '\0';
@@ -2336,7 +2336,7 @@ bool uiobj_read_str(int x, int y, int w, char *buf, int buflen, uint8_t rcolor, 
                     v4 = 1;
                     strbuf[si] = c;
                     strbuf[si + 1] = '\0';
-                    if ((si < buflen) && (lbxfont_calc_str_width(strbuf) <= w)) {
+                    if ((si < max_chars) && (lbxfont_calc_str_width(strbuf) <= w)) {
                         strbuf[si] = '\0';
                         if (di < si) {
                             va = si;
@@ -2352,7 +2352,7 @@ bool uiobj_read_str(int x, int y, int w, char *buf, int buflen, uint8_t rcolor, 
                             ++si;
                             strbuf[si] = ' ';
                             strbuf[si + 1] = '\0';
-                            if ((si < buflen) && (lbxfont_calc_str_width(strbuf) <= w)) {
+                            if ((si < max_chars) && (lbxfont_calc_str_width(strbuf) <= w)) {
                                 ++di;
                             }
                         }
