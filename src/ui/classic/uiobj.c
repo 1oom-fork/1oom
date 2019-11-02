@@ -79,7 +79,7 @@ typedef struct uiobj_s {
         struct {
             /*16*/ char *buf;
             /*22*/ const uint8_t *colortbl;
-            /*20*/ uint16_t buflen;
+            /*20*/ uint16_t max_chars;
             /*0c*/ uint8_t fontnum;
             /*0e*/ uint8_t fonta2;
             /*14*/ uint8_t fonta4;
@@ -254,7 +254,7 @@ static void uiobj_handle_t4_sub2(uiobj_t *p, uint16_t len, uint16_t a4, const ch
     ui_delay_ticks_or_click(uiobj_delay);
 }
 
-static bool uiobj_textinput_do(uiobj_t *p, int w, char *buf, int buflen, bool allow_lcase, bool copy_truncated)
+static bool uiobj_textinput_do(uiobj_t *p, int w, char *buf, int max_chars, bool allow_lcase, bool copy_truncated)
 {
     char strbuf[64];
     int len, pos, fonth, animpos = 0;
@@ -272,11 +272,11 @@ static bool uiobj_textinput_do(uiobj_t *p, int w, char *buf, int buflen, bool al
         }
     }
     pos = len;
-    if (pos >= buflen) {
-        pos = buflen;
+    if (pos >= max_chars) {
+        pos = max_chars;
     }
     if (copy_truncated) {
-        lib_strcpy(buf, strbuf, (size_t)buflen);
+        lib_strcpy(buf, strbuf, (size_t)max_chars + 1);
     }
     fonth = lbxfont_get_height();
     uiobj_handle_t4_sub2(p, pos, animpos, strbuf);
@@ -344,13 +344,13 @@ static bool uiobj_textinput_do(uiobj_t *p, int w, char *buf, int buflen, bool al
                 }
                 break;
             case MOO_KEY_RIGHT:
-                if ((pos < buflen) && (pos < len)) {
+                if ((pos < max_chars) && (pos < len)) {
                     ++pos;
                     animpos = 0;
                     if (pos >= len) {
                         strbuf[len] = ' ';
                         strbuf[len + 1] = '\0';
-                        if ((pos >= buflen) || (lbxfont_calc_str_width(strbuf) > w)) {
+                        if ((pos >= max_chars) || (lbxfont_calc_str_width(strbuf) > w)) {
                             --pos;
                         }
                         strbuf[len] = '\0';
@@ -378,7 +378,7 @@ static bool uiobj_textinput_do(uiobj_t *p, int w, char *buf, int buflen, bool al
                     flag_got_first = true;
                     strbuf[len] = c;
                     strbuf[len + 1] = '\0';
-                    if ((len < buflen) && (lbxfont_calc_str_width(strbuf) <= w)) {
+                    if ((len < max_chars) && (lbxfont_calc_str_width(strbuf) <= w)) {
                         strbuf[len] = '\0';
                         if (pos < len) {
                             for (int i = len; i > pos; --i) {
@@ -392,7 +392,7 @@ static bool uiobj_textinput_do(uiobj_t *p, int w, char *buf, int buflen, bool al
                             ++len;
                             strbuf[len] = ' ';
                             strbuf[len + 1] = '\0';
-                            if ((len < buflen) && (lbxfont_calc_str_width(strbuf) <= w)) {
+                            if ((len < max_chars) && (lbxfont_calc_str_width(strbuf) <= w)) {
                                 ++pos;
                             }
                         }
@@ -407,7 +407,7 @@ static bool uiobj_textinput_do(uiobj_t *p, int w, char *buf, int buflen, bool al
         uiobj_handle_t4_sub2(p, pos, animpos, strbuf);
     }
     hw_textinput_stop();
-    lib_strcpy(buf, strbuf, (size_t)buflen);
+    lib_strcpy(buf, strbuf, (size_t)max_chars + 1);
     if (flag_mouse_button) /*&& (mouse_flag_initialized)*/ {
         while (mouse_buttons) {
             hw_event_handle();
@@ -429,7 +429,7 @@ static void uiobj_handle_t4_sub1(uiobj_t *p)
     }
     w = p->x1 - p->x0;
     lbxfont_select(p->t4.fontnum, p->t4.fonta2, p->t4.fonta4, 0);
-    uiobj_textinput_do(p, w, p->t4.buf, p->t4.buflen, p->t4.allow_lcase, true);
+    uiobj_textinput_do(p, w, p->t4.buf, p->t4.max_chars, p->t4.allow_lcase, true);
 }
 
 static void uiobj_handle_t6_slider_input(uiobj_t *p)
@@ -1729,7 +1729,7 @@ int16_t uiobj_add_t3(uint16_t x, uint16_t y, const char *str, uint8_t *lbxdata, 
     return UIOBJI_ALLOC();
 }
 
-int16_t uiobj_add_textinput(int x, int y, int w, char *buf, uint16_t buflen, uint8_t rcolor, bool alignr, bool allow_lcase, const uint8_t *colortbl, mookey_t key)
+int16_t uiobj_add_textinput(int x, int y, int w, char *buf, uint16_t max_chars, uint8_t rcolor, bool alignr, bool allow_lcase, const uint8_t *colortbl, mookey_t key)
 {
     uiobj_t *p = &uiobj_tbl[uiobj_table_num];
     p->x0 = x;
@@ -1739,7 +1739,7 @@ int16_t uiobj_add_textinput(int x, int y, int w, char *buf, uint16_t buflen, uin
     p->t4.fontnum = lbxfont_get_current_fontnum();
     p->t4.fonta2 = lbxfont_get_current_fonta2();
     p->t4.fonta4 = lbxfont_get_current_fonta2b();
-    p->t4.buflen = buflen;
+    p->t4.max_chars = max_chars;
     p->t4.buf = buf;
     p->t4.rectcolor = rcolor;
     p->t4.align_right = alignr;
@@ -2236,7 +2236,7 @@ int16_t uiobj_select_from_list2(int x, int y, int w, const char *title, char con
 }
 
 
-bool uiobj_read_str(int x, int y, int w, char *buf, int buflen, uint8_t rcolor, bool alignr, const uint8_t *ctbl)
+bool uiobj_read_str(int x, int y, int w, char *buf, int max_chars, uint8_t rcolor, bool alignr, const uint8_t *ctbl)
 {
     bool flag_quit = false;
     uiobj_t *p;
@@ -2250,11 +2250,11 @@ bool uiobj_read_str(int x, int y, int w, char *buf, int buflen, uint8_t rcolor, 
     }
     uiobj_set_downcount(1);
     {
-        int16_t oi = uiobj_add_textinput(x, y, w, buf, buflen, rcolor, alignr, false, ctbl, MOO_KEY_UNKNOWN);
+        int16_t oi = uiobj_add_textinput(x, y, w, buf, max_chars, rcolor, alignr, false, ctbl, MOO_KEY_UNKNOWN);
         uiobj_focus_oi = oi;
         p = &uiobj_tbl[oi];
     }
-    flag_quit = uiobj_textinput_do(p, w, buf, buflen, true, false);
+    flag_quit = uiobj_textinput_do(p, w, buf, max_chars, true, false);
     uiobj_table_clear();
     return !flag_quit;
 }
