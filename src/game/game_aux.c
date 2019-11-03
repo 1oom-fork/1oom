@@ -227,6 +227,7 @@ void game_aux_set_rules(uint8_t xopt)
         game_num_eco_slider_slack = 0;
         game_num_reset_tform_to_max = false;
         game_num_soil_rounding_fix = true;
+	game_num_hidden_child_labor = false;
         /*  we do not touch those as in fixbugs.pbx
          *  game_num_aud_ask_break_nap = false;
          *  game_num_retreat_redir_fix = false;
@@ -270,6 +271,7 @@ void game_aux_set_rules(uint8_t xopt)
         game_num_eco_slider_slack = 7;
         game_num_reset_tform_to_max = true;
         game_num_soil_rounding_fix = false;
+        game_num_hidden_child_labor = true;
         /* we do set those, otherwise the option would be redundant */
         game_num_aud_ask_break_nap = false;
         game_num_retreat_redir_fix = false;

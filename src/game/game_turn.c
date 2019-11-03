@@ -1582,7 +1582,9 @@ struct game_end_s game_turn_process(struct game_s *g)
     game_update_have_reserve_fuel(g);
     game_turn_update_trade(g);
     game_spy_build(g);
-    game_update_production(g);
+    if (game_num_hidden_child_labor) {
+        game_update_production(g);
+    }
     game_debug_dump_sliders(g, false);
     game_debug_dump_race_techs(g, false);
     game_debug_dump_race_spending(g, false);
