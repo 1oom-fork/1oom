@@ -88,4 +88,8 @@ or pressing Alt-X in the main menu enables the following extra UI features:
 - Clicking on #, Name, etc on Planets screen sorts the list
 - Clicking on Station or ship names on Fleet screen sorts the list
 
+Pressing Alt-X in the main menu also enables the following features:
+- Population scheduled for transport no longer contributes to production
+  ("game.planet_leaving_trans_fix")
+
 See doc/list_gamediff.txt for a list of differences in the game itself.
