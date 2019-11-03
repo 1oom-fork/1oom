@@ -113,8 +113,18 @@ void game_update_production(struct game_s *g)
         player_id_t owner = p->owner;
         if (owner != PLAYER_NONE) {
             empiretechorbit_t *e = &(g->eto[owner]);
+            int pop = p->pop;
             int v;
-            {
+            if (game_num_leaving_trans_fix) {
+                int rebels = p->rebels;
+                if (p->trans_num) {           /* see game_send_transport() */
+                    pop -= p->trans_num;
+                    SUBSAT0(rebels, p->trans_num / 2 + 1);
+                    SETMAX(pop, 1);
+                }
+                v = (pop - rebels) * e->colonist_oper_factories;
+                SETMAX(v, 0);
+            } else {
                 int popx = p->pop - p->rebels;
                 SETMAX(popx, 0);
                 v = popx * e->colonist_oper_factories;
@@ -123,7 +133,7 @@ void game_update_production(struct game_s *g)
                 uint16_t factories = p->factories;
                 int extra;
                 SETMIN(factories, v);
-                extra = (p->pop * (e->tech.percent[TECH_FIELD_PLANETOLOGY] * 3 + 50)) / 100;
+                extra = (pop * (e->tech.percent[TECH_FIELD_PLANETOLOGY] * 3 + 50)) / 100;
                 if (e->race == RACE_KLACKON) {
                     extra <<= 1;
                 }
