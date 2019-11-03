@@ -201,6 +201,7 @@ static const struct numtbl_s {
     DEFNUMITEML(reset_tform_to_max, NUMTYPE_BOOL, 0, 1),
     DEFNUMITEML(soil_rounding_fix, NUMTYPE_BOOL, 0, 1),
     DEFNUMITEML(leaving_trans_fix, NUMTYPE_BOOL, 0, 1),
+    DEFNUMITEML(hidden_child_labor_fix, NUMTYPE_BOOL, 0, 1),
     DEFNUMITEMLTBLL(tbl_hull_w, NUMTYPE_U8, 0, 0xff),
     DEFNUMITEMLTBLL(tech_costmuld, NUMTYPE_U8, 0, 0xff),
     DEFNUMITEMLTBLL(tech_costmula, NUMTYPE_U8, 0, 0xff),
