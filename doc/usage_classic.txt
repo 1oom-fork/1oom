@@ -84,6 +84,7 @@ or pressing Alt-X in the main menu enables the following extra UI features:
   allow to increase or adjust the target bases amount.
 - Eco slider shows fractional population growth if growth is less than 10
 - Summary of forces shown before ship combat
+- When espionage was successful, clicking on the race icon opens the spy report
 - The plantary production field indicates whether the planet currently receives
   reserve spending (yellow = none, red = partial, while = full). The same
   colors are also used in the Planets screen.
