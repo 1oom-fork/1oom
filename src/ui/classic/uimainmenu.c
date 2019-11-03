@@ -2,6 +2,7 @@
 
 #include "ui.h"
 #include "game.h"
+#include "game_misc.h"
 #include "game_save.h"
 #include "game_str.h"
 #include "hw.h"

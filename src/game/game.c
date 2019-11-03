@@ -440,6 +440,7 @@ const struct cfg_items_s game_cfg_items[] = {
     CFG_ITEM_COMMENT("PLAYERS*100+GALAXYSIZE*10+DIFFICULTY"),
     CFG_ITEM_COMMENT(" 2..6, 0..3 = small..huge, 0..4 = simple..impossible"),
     CFG_ITEM_INT("new_game_opts", &game_opt_new_value, game_cfg_check_new_game_opts),
+    CFG_ITEM_BOOL("planet_leaving_trans_fix", &game_planet_leaving_trans_fix),
     CFG_ITEM_END
 };
 
