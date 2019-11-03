@@ -120,6 +120,9 @@ soil_rounding_fix : 0..1, 0
     the next multiple of 5, the game adds an additional +5 unless the base size
     is in the range 50-59 or 100-109.
 
+leaving_trans_fix : 0..1, 0
+  - Population scheduled for transport no longer contributes to production.
+
 doom_stack_fix : 0..1, 1
   - Fix negative/32000 ship doom stack bug.
     In MOO1 overflows in AI-AI battles can result in 32000 ship doom stacks.
