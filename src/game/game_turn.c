@@ -1597,7 +1597,9 @@ struct game_end_s game_turn_process(struct game_s *g)
     game_update_have_reserve_fuel(g);
     game_turn_update_trade(g);
     game_spy_build(g);
-    game_update_production(g);
+    if (!game_num_hidden_child_labor_fix) {
+        game_update_production(g);
+    }
     game_turn_diplo_adjust(g);
     game_turn_build_def(g);
     game_turn_build_ship(g);
