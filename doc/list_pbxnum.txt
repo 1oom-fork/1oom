@@ -142,6 +142,11 @@ soil_rounding_fix : 0..1, 0
 leaving_trans_fix : 0..1, 0
   - Population scheduled for transport no longer contributes to production.
 
+hidden_child_labor_fix : 0..1, 0
+  - Do not update production for SHIP, DEF and IND spending after ECO spending
+    and pop growth. TECH spending is not affected and uses pre-growth values.
+    A value of 1 means the same production for all sliders.
+
 doom_stack_fix : 0..1, 1
   - Fix negative/32000 ship doom stack bug.
     In MOO1 overflows in AI-AI battles can result in 32000 ship doom stacks.
