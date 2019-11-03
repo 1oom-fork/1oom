@@ -22,6 +22,7 @@
 #include "uiobj.h"
 #include "uisound.h"
 #include "uiswitch.h"
+#include "uiempirereport.h"
 
 /* -------------------------------------------------------------------------- */
 
