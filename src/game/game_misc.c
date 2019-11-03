@@ -210,6 +210,8 @@ void game_update_production(struct game_s *g)
             if (p->owner == pi) {
                 int v;
                 v = (p->prod_after_maint * e->percent_prod_total_to_actual) / 100 - p->trans_num;
+                /* BUG: deducting transport cost takes no effect for actual production,
+                 * which happens after departure, but leads to wrong display for player. */
                 p->prod_after_maint = (v > 0) ? v : 0;
             }
         }
