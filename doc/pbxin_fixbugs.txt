@@ -53,6 +53,7 @@
 4,reset_tform_to_max,0,0
 4,soil_rounding_fix,0,1
 4,leaving_trans_fix,0,1
+4,hidden_child_labor_fix,0,1
 
 # Disabled fixes. Remove the # in front of 4 to enable.
 #4,aud_ask_break_nap,0,1
