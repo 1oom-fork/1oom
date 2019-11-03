@@ -9,6 +9,8 @@
 struct game_s;
 struct empiretechorbit_s;
 
+extern bool game_planet_leaving_trans_fix;
+
 extern void game_update_have_reserve_fuel(struct game_s *g);
 extern void game_update_maint_costs(struct game_s *g);
 extern void game_update_production(struct game_s *g);

@@ -7,6 +7,7 @@
 #include "bits.h"
 #include "comp.h"
 #include "font8x8_draw.h"
+#include "game_misc.h"
 #include "game_shiptech.h"  /* for sounds used */
 #include "gfxaux.h"
 #include "hw.h"
@@ -34,6 +35,7 @@ static int ui_icon = 146/*guardian*/;
 void ui_extra_toggle_preset(bool enabled)
 {
     ui_extra_enabled = enabled;
+    game_planet_leaving_trans_fix = enabled;
 }
 
 static bool check_ui_icon(void *var)
