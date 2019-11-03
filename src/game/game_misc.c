@@ -114,17 +114,25 @@ void game_update_production(struct game_s *g)
         player_id_t owner = p->owner;
         if (owner != PLAYER_NONE) {
             empiretechorbit_t *e = &(g->eto[owner]);
+            int popx = p->pop;
             int v;
+	    /* WASBUG changed to account for leaving transports */
             {
-                int popx = p->pop - p->rebels;
-                SETMAX(popx, 0);
-                v = popx * e->colonist_oper_factories;
+		int r = p->rebels;
+		int t = p->trans_num;
+		if (t) {           /* see game_send_transport() */
+		    popx -= t;
+		    SUBSAT0(r, t / 2 + 1);
+                    SETMAX(popx, 1);
+		}
+                v = (popx - r) * e->colonist_oper_factories;
+		SETMAX(v, 0);
             }
             {
                 uint16_t factories = p->factories;
                 int extra;
                 SETMIN(factories, v);
-                extra = (p->pop * (e->tech.percent[TECH_FIELD_PLANETOLOGY] * 3 + 50)) / 100;
+                extra = (popx * (e->tech.percent[TECH_FIELD_PLANETOLOGY] * 3 + 50)) / 100;
                 if (e->race == RACE_KLACKON) {
                     extra <<= 1;
                 }
@@ -185,7 +193,10 @@ void game_update_production(struct game_s *g)
             planet_t *p = &(g->planet[i]);
             if (p->owner == pi) {
                 int v;
-                v = (p->prod_after_maint * e->percent_prod_total_to_actual) / 100 - p->trans_num;
+                v = (p->prod_after_maint * e->percent_prod_total_to_actual) / 100;
+		/* WASBUG deducting transport cost takes no effect for actual production,
+		 * which happens after departure, but leads to wrong display for player.
+		 * v -= p->trans_num; */
                 p->prod_after_maint = (v > 0) ? v : 0;
             }
         }
