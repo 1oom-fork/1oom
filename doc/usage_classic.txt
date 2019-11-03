@@ -71,6 +71,7 @@ or pressing Alt-X in the main menu enables the following extra UI features:
   screen for setting target missile base amount or readjusting all planets
 - Eco slider shows fractional population growth if growth is less than 10
 - Summary of forces shown before ship combat
+- When espionage was successful, clicking on the race icon opens the spy report
 - New Auto and Retreat buttons for space combat autoresolve
 - Pressing = on the Tech screen adjusts only the unlocked sliders
 - Tech screen has lights showing when you reach max research bonus
