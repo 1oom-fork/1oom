@@ -558,6 +558,8 @@ static void game_turn_build_ship(struct game_s *g)
             uint8_t si;
             prod = game_adjust_prod_by_special((p->slider[PLANET_SLIDER_SHIP] * p->prod_after_maint) / 100, p->special);
             prod += p->bc_to_ship;
+	    /* BUG? A 1 BC bonus for having the slider > 0? Never heard of that one. 
+	     * Anyway, if you change this, don't forget to update game_planet_get_slider_text() */
             if (p->slider[PLANET_SLIDER_SHIP] > 0) {
                 ++prod;
             }
