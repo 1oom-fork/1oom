@@ -402,7 +402,8 @@ int game_planet_get_slider_text(const struct game_s *g, const planet_t *p, playe
             {
                 int vthis, vtotal, cost;
                 vthis = game_adjust_prod_by_special((p->prod_after_maint * p->slider[PLANET_SLIDER_SHIP]) / 100, p->special);
-                vtotal = vthis + p->bc_to_ship;
+                /* WASBUG game_turn_build_ship() gives 1 BC bonus if slider is nonzero */
+                vtotal = vthis + p->bc_to_ship + (p->slider[PLANET_SLIDER_SHIP] > 0);
                 if (p->buildship == BUILDSHIP_STARGATE) {
                     cost = game_num_stargate_cost;
                 } else {
