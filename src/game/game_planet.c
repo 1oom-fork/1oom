@@ -678,6 +678,7 @@ int game_planet_govern_reserve(struct game_s *g, planet_t *p)
  * - First, remember the old ecology slider position.
  * - Then if mode is not "don't touch", set ecology to minimum that avoids waste.
  * - Then if mode is "don't decrease" and old value was larger, restore it.
+ * - Reserve a minimum tech spending amount for active tech planets
  * - Then move industry slider until maximum or reserve achieved.
  * - Then if mode is not "do not touch", set ecology to terraform.
  * - Then if mode is "grow before defense", set ecology to grow population.
@@ -690,7 +691,7 @@ int game_planet_govern_reserve(struct game_s *g, planet_t *p)
  * This works by moving slider by 1 unit (1%) until desired results happen. Implemented
  * this way to avoid duplication of planet production logic.
  *
- * The function returns percentage allocated for research, ship building or reserve.
+ * The function returns percentage allocated for research (above minimum), ship building or reserve.
  *
  */
 int game_planet_govern_sliders(const struct game_s *g, planet_t *p)
@@ -804,21 +805,30 @@ int game_planet_govern_sliders(const struct game_s *g, planet_t *p)
     } else {
         p->slider_lock[PLANET_SLIDER_IND] = false;
     }
-    return pperc;
+    SETMIN(min_tech, pperc);
+    return pperc - min_tech;
 }
 
 /* g cannot be const b/c of game_update_production(g) */
 void game_planet_govern(struct game_s *g, planet_t *p)
 {
+    int old_tech = p->slider[PLANET_SLIDER_TECH];
     player_id_t player = p->owner;
     int v = game_planet_govern_reserve(g,p);
     if (v) {
         game_update_production(g);
         int pperc = game_planet_govern_sliders(g,p);
         if (!pperc || BOOLVEC_IS1(p->extras, PLANET_EXTRAS_GOV_BOOST_PROD)) return;
+        /* book back funds to avoid overspending into target production */
+        SETMIN(v, pperc * p->prod_after_maint / 100);
         g->eto[player].reserve_bc += v;
         p->reserve -= v;
         game_update_production(g);
+        /* need to restore tech slider to handle minimum tech spending correctly */
+        if (old_tech < p->slider[PLANET_SLIDER_TECH]) {
+            p->slider[PLANET_SLIDER_ECO] += p->slider[PLANET_SLIDER_TECH] - old_tech;
+            p->slider[PLANET_SLIDER_TECH] = old_tech;
+        }
         game_planet_govern_sliders(g,p);
     }
 }
