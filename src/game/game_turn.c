@@ -1745,11 +1745,8 @@ struct game_end_s game_turn_process(struct game_s *g)
     }
     game_remove_empty_fleets(g);
     game_planet_update_home(g);
-    for (int i = 0; i < g->galaxy_stars; ++i) {
-        planet_t *p = &(g->planet[i]);
-        if (p->owner != PLAYER_NONE && BOOLVEC_IS1(p->extras, PLANET_EXTRAS_GOVERNOR)) {
-            game_planet_govern(g, p);
-        }
+    for (player_id_t i = PLAYER_0; i < g->players; ++i) {
+        game_planet_govern_all_owned_by(g, i);
     }
     game_update_total_research(g);
     for (player_id_t i = PLAYER_0; i < g->players; ++i) {

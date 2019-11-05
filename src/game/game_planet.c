@@ -835,10 +835,14 @@ void game_planet_govern(struct game_s *g, planet_t *p)
 
 void game_planet_govern_all_owned_by(struct game_s *g, player_id_t owner)
 {
+    empiretechorbit_t *e = &(g->eto[owner]);
+restart:
     for (int i = 0; i < g->galaxy_stars; ++i) {
         planet_t *p = &(g->planet[i]);
         if ((p->owner == owner) && BOOLVEC_IS1(p->extras, PLANET_EXTRAS_GOVERNOR)) {
+            int perc = e->percent_prod_total_to_actual;
             game_planet_govern(g, p);
+            if (perc != e->percent_prod_total_to_actual) goto restart;
         }
     }
 }
