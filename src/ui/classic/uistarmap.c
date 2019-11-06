@@ -560,19 +560,22 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             ui_starmap_set_pos_focus(g, active_player);
             ui_sound_play_sfx_24();
         } else if (oi1 == oi_equals || oi1 == oi_hash) {
-            if (p->prod_after_maint < p->reserve) {
-                ui_sound_play_sfx_06();
-            } else {
-                int v = p->prod_after_maint;
-                if (v > g->eto[active_player].reserve_bc) {
-                    v = g->eto[active_player].reserve_bc;
+            if (2 * p->reserve >= p->prod_after_maint) {
+                if (ui_extra_enabled) {
+                    g->eto[active_player].reserve_bc += p->reserve;
+                    p->reserve = 0;
+                    ui_sound_play_sfx_24();
+                } else {
+                    ui_sound_play_sfx_06();
                 }
-                v -= p->reserve;
-                p->reserve = v;
+            } else {
+                int v = p->prod_after_maint - 2 * p->reserve;
+                SETMIN(v, g->eto[active_player].reserve_bc);
+                p->reserve += v;
                 g->eto[active_player].reserve_bc -= v;
-                p->total_prod += v;
                 ui_sound_play_sfx_24();
             }
+            game_update_production(g);
         } else if (oi1 == oi_f6) {
             int i;
             i = ui_starmap_newship_next(g, active_player, g->planet_focus_i[active_player]);

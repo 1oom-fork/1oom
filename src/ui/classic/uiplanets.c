@@ -195,7 +195,7 @@ static void planets_draw_cb(void *vptr)
             if (p->waste) {
                 lbxfont_print_num_right(189, y0, p->waste, UI_SCREEN_W, ui_scale);
             }
-            lbxfont_select(0, !ui_extra_enabled || !p->reserve ? 0xe : p->reserve<p->prod_after_maint/2 ? 0xb : 0x0, 0, 0);
+            lbxfont_select(0, !ui_extra_enabled || !p->reserve ? 0xe : 2 * p->reserve < p->prod_after_maint ? 0xb : 0x0, 0, 0);
             if (p->unrest == PLANET_UNREST_REBELLION) {
                 v = 0;
             } else {

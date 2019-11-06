@@ -660,7 +660,7 @@ int game_planet_govern_reserve(struct game_s *g, planet_t *p)
 {
     player_id_t player = p->owner;
     if (0
-      || p->reserve >= p->prod_after_maint/2
+      || 2 * p->reserve >= p->prod_after_maint
       || BOOLVEC_IS0(p->extras, PLANET_EXTRAS_GOV_BOOST_BUILD)
       || !g->eto[player].reserve_bc
     ) {
