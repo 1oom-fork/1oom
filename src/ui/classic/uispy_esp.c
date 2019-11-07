@@ -175,7 +175,9 @@ restart:
             oi_tbl_field[i] = UIOBJI_INVALID;
         }
     }
-    if(ui_extra_enabled) oi_report = uiobj_add_mousearea(18, 43, 210, 76, MOO_KEY_UNKNOWN);
+    if (ui_extra_enabled) {
+        oi_report = uiobj_add_mousearea(18, 43, 210, 76, MOO_KEY_UNKNOWN);
+    }
 
     uiobj_set_callback_and_delay(steal_draw_cb, &d, 4);
 
