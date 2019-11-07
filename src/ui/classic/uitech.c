@@ -95,7 +95,7 @@ static void tech_draw_cb(void *vptr)
     char buf[0xe0];
 
     ui_draw_color_buf(0x3a);
-    ui_draw_filled_rect(3, 150, 275, 196, 0x00, ui_scale); /* revert to moo 1.3 look, old bg was 0x5b */
+    ui_draw_filled_rect(3, 150, 275, 196, 0x5b, ui_scale); /* moo 1.3 look, kyrub's patch uses 0x00 instead of 0x5b */
 
     ui_draw_filled_rect(5, 4, 53, 15, (d->field == 0) ? 0x89 : 0xc0, ui_scale);
     ui_draw_filled_rect(55, 4, 108, 15, (d->field == 1) ? 0x89 : 0xc0, ui_scale);
@@ -115,7 +115,7 @@ static void tech_draw_cb(void *vptr)
     lbxgfx_draw_frame(0, 0, d->gfx, UI_SCREEN_W, ui_scale);
 
     lib_sprintf(buf, sizeof(buf), "%i %s", e->total_research_bc, game_str_bc);
-    lbxfont_select(2, 9, 0, 0);
+    lbxfont_select(2, 6, 0, 0); /* kyrub's patch uses 9 instead of 6. */
     lbxfont_print_str_right(309, 169, buf, UI_SCREEN_W, ui_scale);
 
     for (int i = 0; i < TECH_ON_SCREEN; ++i) {
@@ -133,16 +133,15 @@ static void tech_draw_cb(void *vptr)
             lbxfont_print_str_normal(9, 37 + i * 7, buf, UI_SCREEN_W, ui_scale);
         }
     }
-    
+
     game_tech_get_descr(g->gaux, d->field, d->completed[d->selected + d->pos], buf, sizeof(buf));
-    /* A matter of taste, but I _very_ much prefer the original moov1.3 look. 
-     * Should we make this patchable via some game_nump.c flag?
-     * lbxfont_select(5, 6, 0, 0);
-     * lbxfont_set_gap_h(1);
-     * lbxfont_print_str_split(10, 155, 260, buf, 0, UI_SCREEN_W, UI_SCREEN_H, ui_scale); */
-    lbxfont_select(0, 0xa, 0, 0); 
+    lbxfont_select(5, 6, 0, 0);
     lbxfont_set_gap_h(1);
-    lbxfont_print_str_split(14, 160, 252, buf, 0, UI_SCREEN_W, UI_SCREEN_H, ui_scale);
+    lbxfont_print_str_split(10, 155, 260, buf, 0, UI_SCREEN_W, UI_SCREEN_H, ui_scale);
+    /* If we want to use a kyrub-style look in uiextra or with some option, we should use:
+     * lbxfont_select(0, 0xa, 0, 0);
+     * lbxfont_set_gap_h(1);
+     * lbxfont_print_str_split(14, 160, 252, buf, 0, UI_SCREEN_W, UI_SCREEN_H, ui_scale); */
 
     lbxgfx_set_new_frame(ui_data.gfx.screens.tech_but_up, 1);
     lbxgfx_set_new_frame(ui_data.gfx.screens.tech_but_down, 1);

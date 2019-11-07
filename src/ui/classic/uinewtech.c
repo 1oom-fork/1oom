@@ -201,7 +201,7 @@ static void ui_newtech_choose_next(struct newtech_data_s *d)
     uiobj_table_clear();
     d->selected = 0;
     newtech_choose_next_draw_cb(d);
-    lbxfont_select(0, 2, 0, 0);
+    lbxfont_select(0, 0, 0, 0);
     lbxfont_set_gap_h(di - 6);
     ui_draw_filled_rect(155, 49, 304, 56, 0x60, ui_scale);
     for (int i = 0; i < d->num_next; ++i) {
@@ -209,7 +209,7 @@ static void ui_newtech_choose_next(struct newtech_data_s *d)
     }
     lbxfont_select_set_12_1(0, 0, 0, 0);
     ui_draw_finish();
-    lbxfont_select(0, 2, 0, 0);
+    lbxfont_select(0, 0, 0, 0);
     lbxfont_set_gap_h(di - 6);
     /*sel = */uiobj_select_from_list1(156, 41, 148, "", nptr, &d->selected, cond, 1, 0x60, true);
     ui_sound_play_sfx_24();
