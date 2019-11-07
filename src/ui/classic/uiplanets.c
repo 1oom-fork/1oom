@@ -164,7 +164,7 @@ static void planets_draw_cb(void *vptr)
                     ui_draw_filled_rect(25 + 40, y0 + 1, 25 + 40 + 1, y0 + 4, c, ui_scale);
                 }
             }
-            lbxfont_select(2, 6, 11, 0);
+            lbxfont_select(2, 6, 0, 0);
             lbxfont_print_num_right(83, y0, p->pop, UI_SCREEN_W, ui_scale);
             if (p->pop != p->pop_prev) {
                 int v;
