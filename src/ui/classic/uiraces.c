@@ -339,7 +339,7 @@ int ui_races(struct game_s *g, player_id_t api)
                 e->spying[d.tbl_ei[i]] = v;
             } else if (oi == oi_tbl_oppon[i]) {
                 ui_sound_play_sfx_24();
-                if ((d.cursor_mode == 4) || (d.cursor_mode == 0)) {
+                if ((d.cursor_mode == 4) || (ui_extra_enabled && (d.cursor_mode == 0))) {
                     flag_done = true;
                     ui_data.ui_main_loop_action = UI_MAIN_LOOP_EMPIREREPORT;
                     ret = d.tbl_ei[i];
