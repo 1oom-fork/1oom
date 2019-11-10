@@ -9,6 +9,7 @@
 #include "log.h"
 #include "options.h"
 #include "os.h"
+#include "pbx.h"
 #include "ui.h"
 #include "version.h"
 
@@ -76,6 +77,10 @@ int main_1oom(int argc, char **argv)
     if (lbxfile_find_dir()) {
         return 4;
     }
+    if (pbx_apply_queued_files()) {
+        return 5;
+    }
+
     log_message("USER: '%s'\n", os_get_path_user());
     main_startup_ok = true;
     options_finish();
