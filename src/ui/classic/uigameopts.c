@@ -25,9 +25,6 @@
 #include "uisave.h"
 #include "uisound.h"
 
-#include "game_ai.h"
-#include "game_str.h"
-
 /* -------------------------------------------------------------------------- */
 
 static bool ui_opt_toggle_mwi_slider(void)
@@ -69,7 +66,6 @@ struct gameopts_new_s {
 struct gameopts_data_s {
     int num_newopts, newopt_y;
     struct gameopts_new_s *newopts;
-    const struct game_s *g;
     uint8_t *gfx_game;
     uint8_t *gfx_save;
     uint8_t *gfx_load;
@@ -174,29 +170,6 @@ static void gameopts_draw_cb(void *vptr)
             ++o;
         }
     }
-
-    if (ui_extra_enabled) {
-        uint8_t xopt = d->g->xoptions;
-
-        lbxfont_select(0, 1, 0, 0);
-        lbxfont_print_str_right(20 - 3, 180, game_str_ng_ai, UI_SCREEN_W, ui_scale);
-        lbxfont_print_str_normal(20, 180, ":", UI_SCREEN_W, ui_scale);
-        lbxfont_print_str_right(90 - 3, 180, game_str_opt_event, UI_SCREEN_W, ui_scale);
-        lbxfont_print_str_normal(90, 180, ":", UI_SCREEN_W, ui_scale);
-        lbxfont_print_str_right(150 - 3, 180, game_str_opt_council, UI_SCREEN_W, ui_scale);
-        lbxfont_print_str_normal(150, 180, ":", UI_SCREEN_W, ui_scale);
-        lbxfont_print_str_right(220 - 3, 180, game_str_opt_guardian, UI_SCREEN_W, ui_scale);
-        lbxfont_print_str_normal(220, 180, ":", UI_SCREEN_W, ui_scale);
-        lbxfont_print_str_right(280 - 3, 180, game_str_opt_rules, UI_SCREEN_W, ui_scale);
-        lbxfont_print_str_normal(280, 180, ":", UI_SCREEN_W, ui_scale);
-
-        lbxfont_select(0, 2, 0, 0);
-        lbxfont_print_str_normal(23, 180, game_ais[d->g->ai_id]->name, UI_SCREEN_W, ui_scale);
-        lbxfont_print_str_normal(93, 180, game_str_tbl_opt_event[xopt & XOPTION_EVENTS_MASK], UI_SCREEN_W, ui_scale);
-        lbxfont_print_str_normal(153, 180, game_str_tbl_opt_council[(xopt & XOPTION_COUNCIL_MASK) >> 2], UI_SCREEN_W, ui_scale);
-        lbxfont_print_str_normal(223, 180, game_str_tbl_opt_guardian[(xopt & XOPTION_GUARDIAN_WEAK) >> 4], UI_SCREEN_W, ui_scale);
-        lbxfont_print_str_normal(283, 180, game_str_tbl_opt_rules[(xopt & XOPTION_RULES_MASK) >> 5], UI_SCREEN_W, ui_scale);
-    }
 }
 
 static bool gameopts_new_add(struct gameopts_data_s *d, const struct uiopt_s *u)
@@ -276,7 +249,6 @@ gameopts_act_t ui_gameopts(struct game_s *g, int *load_game_i_ptr)
 
     d.num_newopts = 0;
     d.newopts = newopts;
-    d.g = g;
     if (ui_extra_enabled) {
         gameopts_new_add(&d, uiopts_audio);
         gameopts_new_add(&d, ui_uiopts);

@@ -1057,17 +1057,6 @@ int game_new(struct game_s *g, struct game_aux_s *gaux, struct game_new_options_
         lbxfile_item_release(LBXFILE_NAMES, namedata);
     }
     g->active_player = PLAYER_0;
-    if( (g->xoptions & XOPTION_EVENTS_MASK) == XOPTION_EVENTS_NONE ) {
-      g->evn.done[0] = 0xfe;
-      g->evn.done[1] = 0xff;
-      g->evn.done[2] = 0x01;
-    } else if( (g->xoptions & XOPTION_EVENTS_MASK) == XOPTION_EVENTS_LATE ) {
-      g->evn.year = 100;
-    } else if( (g->xoptions & XOPTION_EVENTS_MASK) == XOPTION_EVENTS_GOOD ) {
-      g->evn.done[0] = 0xfe;
-      g->evn.done[1] = 0x1d;
-      g->evn.done[2] = 0x01;
-    }
     return 0;
 }
 

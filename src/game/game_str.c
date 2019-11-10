@@ -782,12 +782,3 @@ const char *game_str_tbl_xtramenu[XTRAMENU_NUM] = {
     "Unrelocate all",
     "Cancel"
 };
-
-const char *game_str_opt_event = "Events";
-const char *game_str_opt_council = "Council";
-const char *game_str_opt_guardian = "Guardian";
-const char *game_str_opt_rules = "Rules";
-const char *game_str_tbl_opt_event[XOPTION_EVENTS_NUM] = { "all", "none", "late", "good" };
-const char *game_str_tbl_opt_council[XOPTION_COUNCIL_NUM] = { "2/3", "3/4", "Orion", "off" };
-const char *game_str_tbl_opt_guardian[XOPTION_GUARDIAN_NUM] = { "normal", "weak" };
-const char *game_str_tbl_opt_rules[XOPTION_RULES_NUM] = { "pbx", "fix bugs", "moo v1.3" };
