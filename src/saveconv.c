@@ -2475,7 +2475,18 @@ const struct cmdline_options_s main_cmdline_options[] = {
 
 struct pbx_add_cbs;
 
+/* Dummy functions that are needed because some of the headers slip in pbx.h. */
 int pbx_add_file(const char *filename, struct pbx_add_cbs *cbs)
+{
+    return -1;
+}
+
+int pbx_queue_file(const char *filename)
+{
+    return -1;
+}
+
+int pbx_apply_queued_files(void)
 {
     return -1;
 }

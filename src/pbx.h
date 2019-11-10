@@ -36,5 +36,7 @@ struct pbx_add_cbs {  /* int callbacks return 1 if data is not to be freed */
 };
 
 extern int pbx_add_file(const char *filename, struct pbx_add_cbs *cbs, void *ctx);
+extern int pbx_queue_file(const char *filename);
+extern int pbx_apply_queued_files(void);
 
 #endif
