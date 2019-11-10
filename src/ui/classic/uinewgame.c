@@ -26,7 +26,6 @@
 #include "uipal.h"
 #include "uisound.h"
 #include "util.h"
-#include "pbx.h"
 
 /* -------------------------------------------------------------------------- */
 
@@ -320,10 +319,6 @@ static bool ui_new_game_extra(struct game_new_options_s *newopts, struct new_gam
 
     newopts->pdata[PLAYER_0].race = RACE_HUMAN;
     newopts->pdata[PLAYER_0].banner = BANNER_BLUE;
-    /* if no pbx patches have been loaded, default to XOPTION_RULES_FIX */
-    if (!pbx_num_patches) {
-        newopts->rules = 1;
-    }
     d->have_human = true;
     game_new_generate_emperor_name(newopts->pdata[PLAYER_0].race, newopts->pdata[PLAYER_0].playername, EMPEROR_NAME_LEN);
     game_new_generate_home_name(newopts->pdata[PLAYER_0].race, newopts->pdata[PLAYER_0].homename, PLANET_NAME_LEN);

@@ -984,8 +984,6 @@ int game_new(struct game_s *g, struct game_aux_s *gaux, struct game_new_options_
     uint8_t researchflag[6 * 50];
     memset(g, 0, sizeof(struct game_s));
     g->gaux = gaux;
-    g->xoptions = opt->events | opt->council << 2 | opt->guardian << 4 | opt->rules << 5;
-    game_aux_set_rules(g->xoptions);
     if (opt->galaxy_seed == 0) {
         g->galaxy_seed = rnd_get_new_seed();
     } else {

@@ -75,6 +75,6 @@ extern uint8_t game_aux_get_firing_param_y(const struct game_aux_s *gaux, uint8_
 
 struct game_s;
 extern void game_aux_start(struct game_aux_s *gaux, struct game_s *g);
-extern void game_aux_set_rules(uint8_t xopt);
+extern void game_aux_fixbugs(void);
 
 #endif
