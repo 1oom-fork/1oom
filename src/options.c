@@ -143,7 +143,11 @@ static int options_set_datadir(char **argv, void *var)
 
 static int options_add_patchfile(char **argv, void *var)
 {
-    return pbx_add_file(argv[1], NULL, NULL);
+    if (pbx_queue_file(argv[1]) < 0) {
+        log_error("too many patchfiles");
+        return -1;
+    }
+    return 0;
 }
 
 /* -------------------------------------------------------------------------- */
