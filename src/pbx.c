@@ -15,6 +15,12 @@
 
 /* -------------------------------------------------------------------------- */
 
+#define MAX_PATCHFILES 20
+static size_t num_patchfiles = 0;
+static const char *patchfiles[MAX_PATCHFILES] = { NULL };
+
+/* -------------------------------------------------------------------------- */
+
 static char *str_from_buf(const void *buf, uint32_t buf_size)
 {
     size_t str_size = (size_t)buf_size + 1;
@@ -248,4 +254,21 @@ fail:
         fd = NULL;
     }
     return res;
+}
+
+int pbx_queue_file(const char *filename) {
+    if (num_patchfiles < MAX_PATCHFILES) {
+        patchfiles[num_patchfiles++] = filename;
+        return 0;
+    }
+    return -1;
+}
+
+int pbx_apply_queued_files(void) {
+    for (int i = 0; i < num_patchfiles; ++i) {
+        if (pbx_add_file(patchfiles[i], NULL, NULL) < 0) {
+            return -1;
+        }
+    }
+    return 0;
 }
