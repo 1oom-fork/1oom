@@ -273,6 +273,16 @@ int pbx_add_file(const char *filename, struct pbx_add_cbs *cbs)
     return -1;
 }
 
+int pbx_queue_file(const char *filename)
+{
+    return -1;
+}
+
+int pbx_apply_queued_files(void)
+{
+    return -1;
+}
+
 /* -------------------------------------------------------------------------- */
 
 static struct game_s game;
