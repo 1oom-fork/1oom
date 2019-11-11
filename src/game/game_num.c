@@ -7,19 +7,18 @@
 /* -------------------------------------------------------------------------- */
 
 bool game_num_deterministic = true;
-/* bool game_num_deterministic = false; */
 int game_num_bt_turn_max = 50;
-bool game_num_bt_wait_no_reload = false;
-bool game_num_bt_precap_tohit = false;
-bool game_num_bt_no_tohit_acc = false;
-bool game_num_bt_oracle_fix = false;
+bool game_num_bt_wait_no_reload = true;
+bool game_num_bt_precap_tohit = true;
+bool game_num_bt_no_tohit_acc = true;
+bool game_num_bt_oracle_fix = true;
 int game_num_stargate_cost = 3000;
 int game_num_stargate_maint = 100;
-int game_num_weapon_list_max = 30;
+int game_num_weapon_list_max = 64;
 int game_num_limit_ships = 32000;
 int game_num_limit_ships_all = 32000;
 int game_num_max_pop = 300;
-int game_num_max_factories = 2500;
+int game_num_max_factories = 2700;
 int game_num_max_inbound = 300;
 int game_num_atmos_cost = 200;
 int game_num_soil_cost = 150;
@@ -33,28 +32,28 @@ int game_num_max_trans_dmg = 32000;
 int game_num_max_ship_maint = 32000;
 int game_num_max_tribute_bc = 32000;
 int game_num_event_roll = 512;
-bool game_num_accident_chk_factories = false;
+bool game_num_accident_chk_factories = true;
 int game_num_council_years = 25;
-bool game_num_news_orion = false;
-bool game_num_aud_ask_break_nap = false;
-bool game_num_aud_bounty_give = false;
-bool game_num_monster_rest_att = false;
-bool game_num_orbital_weap_any = false;
-bool game_num_orbital_weap_4 = false;
-bool game_num_orbital_torpedo = false;
-bool game_num_orbital_comp_fix = false;
-bool game_num_combat_trans_fix = false;
-bool game_num_stargate_redir_fix = false;
-bool game_num_trans_redir_fix = false;
-bool game_num_retreat_redir_fix = false;
-bool game_num_first_tech_rp_fix = false;
-bool game_num_waste_calc_fix = false;
-bool game_num_waste_adjust_fix = false;
+bool game_num_news_orion = true;
+bool game_num_aud_ask_break_nap = true;
+bool game_num_aud_bounty_give = true;
+bool game_num_monster_rest_att = true;
+bool game_num_orbital_weap_any = true;
+bool game_num_orbital_weap_4 = true;
+bool game_num_orbital_torpedo = true;
+bool game_num_orbital_comp_fix = true;
+bool game_num_combat_trans_fix = true;
+bool game_num_stargate_redir_fix = true;
+bool game_num_trans_redir_fix = true;
+bool game_num_retreat_redir_fix = true;
+bool game_num_first_tech_rp_fix = true;
+bool game_num_waste_calc_fix = true;
+bool game_num_waste_adjust_fix = true;
 bool game_num_doom_stack_fix = true;
-uint8_t game_num_eco_slider_slack = 7;
-bool game_num_reset_tform_to_max = true;
-bool game_num_soil_rounding_fix = false;
-bool game_num_hidden_child_labor = true;
+uint8_t game_num_eco_slider_slack = 0;
+bool game_num_reset_tform_to_max = false;
+bool game_num_soil_rounding_fix = true;
+bool game_num_hidden_child_labor = false;
 
 uint8_t game_num_tbl_hull_w[4] = { 1, 5, 25, 125 };
 
@@ -93,7 +92,7 @@ uint8_t game_num_ng_tech[RACE_NUM][TECH_FIELD_NUM][50 + 1] = {
         /*   1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 */
         { 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0 },
         GAME_NUMT_FF,
-        { 0, 0, 0, 1, 0, 1, 1, 0, 0, 1, 0, 0, 1, 1, 0, 1, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 1, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0 },
+        { 0, 0, 0, 1, 0, 1, 1, 0, 0, 1, 0, 0, 1, 1, 0, 1, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 4, 0, 1, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0 },
         GAME_NUMT_PR, GAME_NUMT_WE
     },
     { GAME_NUMT_CM, GAME_NUMT_CN, GAME_NUMT_FF, GAME_NUMT_PL, GAME_NUMT_PR, GAME_NUMT_WE },
