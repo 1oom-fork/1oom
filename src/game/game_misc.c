@@ -730,3 +730,143 @@ void game_rng_step(struct game_s *g)
         rnd_0_nm1(2, &g->seed);
     }
 }
+
+int game_get_maxpop(const struct game_s *g, const planet_t *p)
+{
+    player_id_t owner = p->owner;
+    const empiretechorbit_t *e = e = &(g->eto[owner]);
+    if (owner == PLAYER_NONE) return 0;
+    int type = p->type, growth = p->growth;
+    int v, p1 = p->max_pop1, p2 = p-> max_pop2;
+    if (e->have_atmos_terra && (p->growth == PLANET_GROWTH_HOSTILE)) {
+         if (type < PLANET_TYPE_DEAD) {
+             v = 20;
+         } else if (type < PLANET_TYPE_BARREN) {
+             v = 10;
+         } else {
+             v = 0;
+         }
+        type = PLANET_TYPE_MINIMAL;
+        p2 += v; p1 += v;
+        growth = PLANET_GROWTH_NORMAL;
+    }
+    if (e->have_soil_enrich && (growth == PLANET_GROWTH_NORMAL)) {
+        growth = PLANET_GROWTH_FERTILE;
+        if (game_num_soil_rounding_fix) {
+            v = ((p1 + 19) / 20) * 5;
+        } else {
+            v = (p1 / 20) * 5;
+            if ((p1 / 20) % 5) {
+                v += 5;
+            }
+        }
+        SETMAX(v, 5);
+        p2 = p1 + v;
+    }
+    if (e->have_adv_soil_enrich && (growth < PLANET_GROWTH_GAIA) && (growth > PLANET_GROWTH_HOSTILE)) {
+        growth = PLANET_GROWTH_GAIA;
+        if (game_num_soil_rounding_fix) {
+            v = ((p1 + 9) / 10) * 5;
+        } else {
+            v = (p1 / 10) * 5;
+            if ((p1 / 10) % 5) {
+                v += 5;
+            }
+        }
+        SETMAX(v, 5);
+        p2 = p1 + v;
+    }
+    v = p2 + e->have_terraform_n;
+    if (!game_num_reset_tform_to_max) SETMAX(v, p2 + p->max_pop3 - p->max_pop2);
+    SETMIN(v, game_num_max_pop);
+    return v;
+}
+
+int game_get_maxprod(const struct game_s *g, const planet_t *p)
+{
+    player_id_t owner = p->owner;
+    const empiretechorbit_t *e = e = &(g->eto[owner]);
+    int pop = game_get_maxpop(g, p);
+    int ind = pop * e->colonist_oper_factories;
+    int man = pop * (e->tech.percent[TECH_FIELD_PLANETOLOGY] * 3 + 50) / 100;
+    if (e->race == RACE_KLACKON) man <<= 1;
+    return ind + man;
+}
+
+/* Max. population values: Each planet has three max_pop variables which are
+ * affected by the ECO projects in different ways.
+ *
+ * The base size, max_pop1, is the size of the planet at the start of the game.
+ * It is used to determine the increase in max. population from (advanced) soil
+ * enrichment; max_pop1 itself is increased only when applying atmospheric
+ * terraforming to some types of hostile planets.
+ *
+ * max_pop2 is max_pop1 modified by (advanced) soil enrichment. Note that for
+ * planets that are Fertile or Gaia at the start of the game,
+ * max_pop1 == max_pop2. They are only different when the planets were made
+ * Fertile or Gaia by a player (human or AI).
+ *
+ * max_pop3 is the actual population maximum. It equals max_pop2 modified by
+ * terraforming and/or by bioweapon damage.
+ */
+void game_atmos_tform(struct planet_s *p) {
+    int max_pop_increase;
+    if (p->type < PLANET_TYPE_DEAD) {
+        max_pop_increase = 20;
+    } else if (p->type < PLANET_TYPE_BARREN) {
+        max_pop_increase = 10;
+    } else {
+        max_pop_increase = 0;
+    }
+    /* WASBUG max_pop += moved from outside if (bc >= cost) */
+    p->type = PLANET_TYPE_MINIMAL;
+    p->max_pop1 += max_pop_increase;
+    p->max_pop2 += max_pop_increase;
+    p->max_pop3 += max_pop_increase;
+    p->growth = PLANET_GROWTH_NORMAL;
+}
+
+void game_soil_enrich(struct planet_s *p, int best_tform, bool advanced) {
+    int max_pop_increase = 0;
+    int16_t old_max_pop2 = 0;
+    p->growth = advanced ? PLANET_GROWTH_GAIA : PLANET_GROWTH_FERTILE;
+    if (advanced) {
+        if (game_num_soil_rounding_fix) {
+            max_pop_increase = ((p->max_pop1 + 9) / 10) * 5;
+        } else {
+            max_pop_increase = (p->max_pop1 / 10) * 5;
+            /* BUG? If we want to calculate 50% of the base size, rounded up
+            * to the next multiple of 5, we'd check if p->max_pop1 % 10 != 0
+            * below. Instead, we add an additional +5 unless the base size is
+            * in the range 50-59 or 100-109. Penalizing these specific sizes
+            * seems weird and arbitrary. */
+            if ((p->max_pop1 / 10) % 5) {
+                max_pop_increase += 5;
+            }
+        }
+    } else {
+        if (game_num_soil_rounding_fix) {
+            max_pop_increase = ((p->max_pop1 + 19) / 20) * 5;
+        } else {
+            max_pop_increase = (p->max_pop1 / 20) * 5;
+            /* BUG? See above. */
+            if ((p->max_pop1 / 20) % 5) {
+                max_pop_increase += 5;
+            }
+        }
+    }
+    SETMAX(max_pop_increase, 5);
+    old_max_pop2 = p->max_pop2;
+    p->max_pop2 = p->max_pop1 + max_pop_increase;
+    p->max_pop3 += p->max_pop2 - old_max_pop2;
+    if (game_num_reset_tform_to_max) {
+        /* BUG? Having p->max_pop3 > (best_tform + p->max_pop2) seems
+         * only possible when conquering a planet from a race with better
+         * terraforming tech. Is it intended that the player loses the
+         * more advanced terraforming here, or is this a sanity check
+         * with unintended consequences? */
+        SETMIN(p->max_pop3, (best_tform + p->max_pop2));
+    }
+    SETMIN(p->max_pop3, game_num_max_pop);
+}
+
