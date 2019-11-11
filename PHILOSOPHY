@@ -1,7 +1,7 @@
 (Much of this text is stolen/edited from Chocolate Doom.)
 
 1oom has been designed around a careful and deliberate philosophy that
-attempts to recreate the original (“Vanilla”) DOS executables for
+attempts to recreate the original ('Vanilla') DOS executables for
 Master of Orion. This document describes some of that philosophy and
 the reasoning behind it.
 
@@ -11,19 +11,29 @@ This document is descriptive, not proscriptive.
 
 Ideally 1oom aims to recreate the behavior of the Vanilla binaries,
 but different aspects of Vanilla behavior are held to varying degrees
-of importance. It can be imagined as different “tiers”
+of importance. It can be imagined as different 'tiers'
 of compatibility:
 
  * The game and gameplay itself is of central importance. Here, the
    Vanilla behavior ought to be maintained as accurately as possible.
    This includes the look, feel and sound.
- * The surrounding aspects of the game that aren’t part of the central
-   gameplay experience can be extended as long as there’s a good
+ * The surrounding aspects of the game that aren't part of the central
+   gameplay experience can be extended as long as there's a good
    reason and Vanilla behavior is respected.
+ * "Quality of Life features" which do not affect central game mechanics
+   can be included (even unconditionally). They should however be
+   switchable if they considerably alter the "look and feel" of the game.
 
-“Vanilla” is defined as:
+'Vanilla' is defined as:
 
- * Master of Orion v1.3.
+ * Master of Orion v1.3
+
+In the case of obvious bugs and misfeatures
+
+ * the unofficial Master of Orion v1.4m (kyrub's patch) and
+ * the Official Strategy Guide (OSG)
+
+can serve serve as additional guidelines.
 
 Compatibility with older versions of the DOS binaries is out of scope.
 
@@ -34,12 +44,9 @@ Examples are:
 
  * Data file compatibility: the original data files (LBX) are used.
    No additional data files are required or provided.
- * Bug compatibility: the aim is to emulate compatibility of the
-   original game down to bugs that were present in the DOS
-   executables. Most bugs are fixed, but the AI behaviour is
-   maintained as closely as possible.
  * Savegame file compatibility: 1oom provides a tool to convert savegames
-   to/from Vanilla format.
+   from Vanilla format. While the other direction is currently supported
+   this may change in the future.
 
 # Exceptions
 
@@ -47,29 +54,33 @@ Examples are:
 examples of situations where changes are considered acceptable:
 
  1. Vanilla behavior can be broken that is harmful, eg. can damage the
-    player’s computer, or is just outright misleading. For example:
+    player's computer, or is just outright misleading. For example:
 
     - Vanilla has crashes that force the user to reboot the machine.
 
- 2. Supporting obsolete technology is not a goal: it’s considered
+ 2. Supporting obsolete technology is not a goal: it's considered
     acceptable that 1oom does not support every type of hardware
     from 1993. However, 1oom should aim to recreate the functionality
-    in a modern way. Examples of technologies that aren’t supported are:
+    in a modern way. Examples of technologies that aren't supported are:
 
     - No 286 version.
 
- 3. Fixes from the unofficial patch 1.40m which do not alter the Vanilla
-    behaviour much may be included unconditionally. Examples:
+ 3. No bug compatibility: While it used to be an explicit goals for the
+    original version (1oom v1.0), this fork does not cosider bug
+    compatibility a goal anymore. Fixes to bugs which might be considered
+    interesting features or variants by some can be made switchable.
 
-    - Psilon leader "Zygot  " name correction.
+ 4. Sane defaults: The default behavior should minimize the need for 
+    costumization for most users. When in doubt, a new feature should
+    be enabled and left for the user to switch off.
 
-A good litmus test of when it’s acceptable to break from Vanilla
-behavior is to ask the question: “Although this is Vanilla behavior,
-is there anyone who would want this?”
+A good litmus test of when it's acceptable to break from Vanilla
+behavior is to ask the question: 'Although this is Vanilla behavior,
+would most people who still play MOO really want this?'
 
 # New features
 
-While 1oom recreates the Vanilla behaviour, it also extends it:
+While 1oom recreates the Vanilla behavior, it also extends it:
 
  * The "classic" UI (1oom_classic_*) will always remain reasonably close to
    the one in the DOS binaries, but alternative UIs are within the scope.
@@ -79,9 +90,6 @@ While 1oom recreates the Vanilla behaviour, it also extends it:
    DOS binaries, but alternative AIs are within the scope.
  * The "Classic+" AI will always remain somewhat close to the one in the
    DOS binaries, but includes small fixes (some from the unofficial patch).
- * Doom-like file patching is supported via PBX files.
-   PBX files can be used for enabling fixes for Vanilla bugs.
- * Multiplayer! (only local for now)
 
 # Other philosophical aspects
 
