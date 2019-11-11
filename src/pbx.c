@@ -17,7 +17,7 @@
 
 #define MAX_PATCHFILES 20
 static size_t num_patchfiles = 0;
-static const char *patchfiles[MAX_PATCHFILES + 1] = { NULL };
+static const char *patchfiles[MAX_PATCHFILES] = { NULL };
 
 /* -------------------------------------------------------------------------- */
 

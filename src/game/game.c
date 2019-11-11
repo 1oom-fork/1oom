@@ -39,6 +39,10 @@ static bool game_opt_save_quit = false;
 static struct game_end_s game_opt_end = { GAME_END_NONE, 0, 0, 0, 0 };
 static struct game_new_options_s game_opt_new = GAME_NEW_OPTS_DEFAULT;
 
+#define NUM_RULESETS 2
+static const char *ruleset_names[NUM_RULESETS] = { "1.3", "fixbugs" };
+static const char *game_opt_ruleset = NULL;
+
 static int game_opt_new_value = 200;
 
 static struct game_s game;
@@ -86,6 +90,13 @@ static void game_set_opts_from_value(struct game_new_options_s *go, int v)
 static int game_get_opts_value(const struct game_s *g)
 {
     return g->difficulty + g->galaxy_size * 10 + g->players * 100;
+}
+
+void game_apply_ruleset(void)
+{
+    if (game_opt_ruleset && (strcmp(game_opt_ruleset, "fixbugs") == 0)) {
+        game_num_fixbugs();
+    }
 }
 
 /* -------------------------------------------------------------------------- */
@@ -324,6 +335,24 @@ static int game_opt_do_continue(char **argv, void *var)
     return 0;
 }
 
+static bool game_opt_validate_ruleset(void *ruleset)
+{
+    for (int i = 0; i < NUM_RULESETS; ++i) {
+        if (strcmp((const char *)ruleset, ruleset_names[i]) == 0) {
+            return true;
+        }
+    }
+    return false;
+}
+
+static int game_opt_set_ruleset(char **argv, void *var)
+{
+    if (game_opt_validate_ruleset(argv[1])) {
+        return options_set_str_var(argv, var);
+    }
+    return -1;
+}
+
 static int dump_strings(char **argv, void *var)
 {
     game_str_dump();
@@ -405,6 +434,9 @@ const struct cmdline_options_s main_cmdline_options[] = {
     { "-savequit", 0,
       options_enable_bool_var, (void *)&game_opt_save_quit,
       NULL, "Save and quit (for debugging)" },
+    { "-ruleset", 1,
+      game_opt_set_ruleset, &game_opt_ruleset,
+      "RULESET", "Choose a ruleset. Possible values:\n1.3 - like MOO v1.3 but with the worst bugs fixed\nfixbugs - fixes some more bugs and strange quirks" },
     { 0, 0, 0, 0, 0, 0 }
 };
 
@@ -440,6 +472,7 @@ const struct cfg_items_s game_cfg_items[] = {
     CFG_ITEM_COMMENT("PLAYERS*100+GALAXYSIZE*10+DIFFICULTY"),
     CFG_ITEM_COMMENT(" 2..6, 0..3 = small..huge, 0..4 = simple..impossible"),
     CFG_ITEM_INT("new_game_opts", &game_opt_new_value, game_cfg_check_new_game_opts),
+    CFG_ITEM_STR("ruleset", &game_opt_ruleset, game_opt_validate_ruleset),
     CFG_ITEM_END
 };
 

@@ -4,6 +4,7 @@
 #include <stdlib.h>
 
 #include "main.h"
+#include "gameapi.h"
 #include "hw.h"
 #include "lbx.h"
 #include "log.h"
@@ -78,6 +79,7 @@ int main_1oom(int argc, char **argv)
     if (lbxfile_find_dir()) {
         return 4;
     }
+    game_apply_ruleset();
     if (pbx_apply_queued_files()) {
         return 5;
     }
