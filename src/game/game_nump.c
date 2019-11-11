@@ -438,6 +438,52 @@ static const struct numtbl_s *find_match(const char *numid, int i, int num)
 
 /* -------------------------------------------------------------------------- */
 
+void game_num_fixbugs(void)
+{
+    /* This function must be kept in sync with doc/pbxin_fixbugs.txt */
+    tbl_monster[MONSTER_GUARDIAN][3].special[1] = 16;
+    tbl_monster[MONSTER_GUARDIAN][4].special[1] = 26;
+    tbl_monster[MONSTER_GUARDIAN][4].repair = 30;
+    tbl_startship[0].engines = 2;
+    tbl_startship[1].engines = 27;
+    tbl_startship[2].engines = 110;
+    tbl_startship[3].engines = 85;
+    tbl_startship[4].engines = 100;
+    tbl_startship[0].cost = 8;
+    tbl_startship[1].cost = 14;
+    tbl_startship[2].cost = 74;
+    tbl_startship[3].cost = 65;
+    tbl_startship[4].cost = 570;
+    game_num_ng_tech[RACE_SILICOID][TECH_FIELD_PLANETOLOGY][24] = 1;
+    game_num_ng_tech[RACE_SILICOID][TECH_FIELD_PLANETOLOGY][30] = 1;
+    game_num_max_factories = 2700;
+    game_num_accident_chk_factories = true;
+    game_num_bt_wait_no_reload = true;
+    game_num_bt_precap_tohit = true;
+    game_num_bt_no_tohit_acc = true;
+    game_num_bt_oracle_fix = true;
+    game_num_news_orion = true;
+    game_num_weapon_list_max = 64;
+    game_num_aud_bounty_give = true;
+    game_num_monster_rest_att = true;
+    game_num_orbital_weap_any = true;
+    game_num_orbital_weap_4 = true;
+    game_num_orbital_torpedo = true;
+    game_num_orbital_comp_fix = true;
+    game_num_combat_trans_fix = true;
+    game_num_stargate_redir_fix = true;
+    game_num_trans_redir_fix = true;
+    game_num_first_tech_rp_fix = true;
+    game_num_waste_calc_fix = true;
+    game_num_waste_adjust_fix = true;
+    game_num_eco_slider_slack = 0;
+    game_num_reset_tform_to_max = false;
+    game_num_soil_rounding_fix = true;
+    game_num_hidden_child_labor_fix = true;
+    /* The doomstack fix is on by default even in non-fixbugs mode and can only be
+     * disabled via a mod. */
+}
+
 bool game_num_patch(const char *numid, const int32_t *patchnums, int first, int num)
 {
     const struct numtbl_s *s = find_match(numid, first, num);
