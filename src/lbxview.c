@@ -54,6 +54,7 @@ const struct cfg_items_s game_cfg_items[] = {
     CFG_ITEM_END
 };
 
+/* Dummy functions because the headers pull in gameapi.h. */
 bool game_str_patch(const char *strid, const char *patchstr, int i)
 {
     /* ignore */
@@ -64,6 +65,11 @@ bool game_num_patch(const char *numid, int32_t *patchnums, int first, int num)
 {
     /* ignore */
     return true;
+}
+
+void game_apply_ruleset(void)
+{
+    /* ignore */
 }
 
 /* -------------------------------------------------------------------------- */
