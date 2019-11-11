@@ -12,7 +12,7 @@ int hw_opt_screen_winh = 0;
 int hw_opt_screen_fsw = 0;
 int hw_opt_screen_fsh = 0;
 int hw_opt_mousespd = 100;
-bool hw_opt_relmouse = true;
+bool hw_opt_relmouse = false;
 #ifdef FEATURE_MODEBUG
 int hw_opt_overlay_pal = 0;
 #endif

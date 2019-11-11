@@ -18,7 +18,7 @@
 
 #ifdef HAVE_SDL1GL
 bool hw_opt_use_gl = true;
-int hw_opt_gl_filter = 1;
+int hw_opt_gl_filter = 0;
 int hw_opt_bpp = 0;
 #define HAVE_SDLX_ASPECT
 #endif /* HAVE_SDL1GL */

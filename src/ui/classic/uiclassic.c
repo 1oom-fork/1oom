@@ -135,10 +135,10 @@ struct ui_data_s ui_data = { 0 };
 
 int ui_screen_w = 0;
 int ui_screen_h = 0;
-int ui_scale = 0;
+int ui_scale = 2;               /* was 0 */
 int starmap_scale = 0;
 int gmap_scale = 0;
-bool ui_extra_enabled = false;
+bool ui_extra_enabled = true;
 bool ui_mwi_slider = false;
 bool ui_mwi_counter = false;
 int ui_sm_scroll_speed = 3;
