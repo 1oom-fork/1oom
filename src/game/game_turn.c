@@ -955,13 +955,26 @@ static void game_turn_explore(struct game_s *g)
     }
 }
 
-static int game_turn_transport_shoot(struct game_s *g, uint8_t planet_i, player_id_t rowner, uint8_t speed, player_id_t attacker, int bases, weapon_t basewpnt)
+static int game_turn_transport_shoot(struct game_s *g, uint8_t planet_i, player_id_t rowner, uint16_t num_transports, uint8_t speed, player_id_t attacker, int bases, weapon_t basewpnt)
 {
     const planet_t *p = &(g->planet[planet_i]);
     const empiretechorbit_t *ea = &(g->eto[attacker]);
     const empiretechorbit_t *ed = &(g->eto[rowner]);
-    int totaldmg = 0, complevel, killed;
+    int totaldmg = 0, transport_hp, total_hp, complevel, killed;
     uint8_t bestcomp = 0, bestarmor = 0;
+    const uint8_t *rc = &(g->srd[rowner].researchcompleted[TECH_FIELD_CONSTRUCTION][0]);
+
+    /* Transports use the best armor that the owner has researched. */
+    for (int i = 0; i < ed->tech.completed[TECH_FIELD_CONSTRUCTION]; ++i) {
+        const uint8_t *r;
+        r = RESEARCH_D0_PTR(g->gaux, TECH_FIELD_CONSTRUCTION, rc[i]);
+        if (r[0] == 7) {
+            bestarmor = r[1];
+        }
+    }
+    transport_hp = ((bestarmor + 1) * 15);
+    total_hp = transport_hp * num_transports;
+
     uint32_t tbl[WEAPON_NUM];
     memset(tbl, 0, sizeof(tbl));
     tbl[basewpnt] = bases * 24;
@@ -1031,20 +1044,12 @@ static int game_turn_transport_shoot(struct game_s *g, uint8_t planet_i, player_
                     }
                 }
             }
-        }
-    }
-    /*7c521*/
-    {
-        const uint8_t *rc = &(g->srd[rowner].researchcompleted[TECH_FIELD_CONSTRUCTION][0]);
-        for (int i = 0; i < ed->tech.completed[TECH_FIELD_CONSTRUCTION]; ++i) {
-            const uint8_t *r;
-            r = RESEARCH_D0_PTR(g->gaux, TECH_FIELD_CONSTRUCTION, rc[i]);
-            if (r[0] == 7) {
-                bestarmor = r[1];
+            if (totaldmg >= total_hp) {
+                break;
             }
         }
     }
-    killed = totaldmg / ((bestarmor + 1) * 15);
+    killed = totaldmg / transport_hp;
     SETMIN(killed, 1000);
     for (monster_id_t i = MONSTER_CRYSTAL; i <= MONSTER_AMOEBA; ++i) {
         monster_t *m;
@@ -1086,7 +1091,7 @@ static void game_turn_transport(struct game_s *g)
                     empiretechorbit_t *e;
                     e = &(g->eto[j]);
                     if (j == p->owner) {
-                        pop3 -= game_turn_transport_shoot(g, dest, owner, r->speed, j, p->missile_bases, e->base_weapon);
+                        pop3 -= game_turn_transport_shoot(g, dest, owner, pop3, r->speed, j, p->missile_bases, e->base_weapon);
                     } else {
                         /*e102*/
                         bool any_ships;
@@ -1098,7 +1103,7 @@ static void game_turn_transport(struct game_s *g)
                             }
                         }
                         if (any_ships) {
-                            pop3 -= game_turn_transport_shoot(g, dest, owner, r->speed, j, 0, WEAPON_NONE);
+                            pop3 -= game_turn_transport_shoot(g, dest, owner, pop3, r->speed, j, 0, WEAPON_NONE);
                         }
                     }
                 }
