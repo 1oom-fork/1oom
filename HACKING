@@ -40,7 +40,17 @@ The resulting binaries follow a "1oom_$UI_$HW" naming convention.
 
 - no tabs, 4 spaces for indentation
 
-- always add the { } braces to if, do, while, for statements
+- always add the { } braces to if, do, while, for statements if
+  the statement is nested, has more than one part (if-else, do-while) 
+  or spans more than one line:
+    if (foo) {                     /* ok */
+        bar();
+    }
+    if (foo) bar();                /* ok */
+    if (foo)                       /* multiline, use braces */   
+        bar();
+    if (foo) while (bar) foobar(); /* nested, use braces */
+    if (foo) a(); else b();        /* 2 parts, use braces */
 
 - one space after a ',', if, do, while, for and return statements,
   no space after function name:
