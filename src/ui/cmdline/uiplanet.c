@@ -46,7 +46,7 @@ static void ui_planet_print_visible_fleets(const struct game_s *g, player_id_t a
     for (int i = 0; i < g->enroute_num; ++i) {
         const fleet_enroute_t *r = &(g->enroute[i]);
         if (BOOLVEC_IS1(r->visible, api) && (r->dest == planet_i) && ((r->owner == api) || e->have_ia_scanner)) {
-            printf("  - %s fleet ETA %i turns:", game_str_tbl_race[e->race], game_calc_eta(g, r->speed, p->x, p->y, r->x, r->y));
+            printf("  - %s fleet ETA %i turns:", game_str_tbl_race[e->race], game_calc_eta_ship(g, r->speed, p->x, p->y, r->x, r->y));
             for (int i = 0; i < NUM_SHIPDESIGNS; ++i) {
                 printf(" %5i", r->ships[i]);
             }
@@ -62,7 +62,7 @@ static void ui_planet_print_visible_transports(const struct game_s *g, player_id
     for (int i = 0; i < g->transport_num; ++i) {
         const transport_t *r = &(g->transport[i]);
         if (BOOLVEC_IS1(r->visible, api) && (r->dest == planet_i) && ((r->owner == api) || e->have_ia_scanner)) {
-            printf("  - %s transport %i ETA %i turns\n", game_str_tbl_race[e->race], r->pop, game_calc_eta(g, r->speed, p->x, p->y, r->x, r->y));
+            printf("  - %s transport %i ETA %i turns\n", game_str_tbl_race[e->race], r->pop, game_calc_eta_trans(g, r->speed, p->x, p->y, r->x, r->y));
         }
     }
 }
@@ -244,7 +244,7 @@ void ui_planet_look(const struct game_s *g, int api, uint8_t planet_i, bool show
                             printf(" via %s.\n", game_str_sm_stargate);
                         } else {
                             int eta, engine = e->have_engine;
-                            eta = game_calc_eta(g, engine, p->x, p->y, pt->x, pt->y);
+                            eta = game_calc_eta_trans(g, engine, p->x, p->y, pt->x, pt->y);
                             printf(". %s %i %s.\n", game_str_sm_eta, eta, (eta == 1) ? game_str_sm_turn : game_str_sm_turns);
                         }
                     }
@@ -453,7 +453,7 @@ int ui_cmd_planet_trans(struct game_s *g, int api, struct input_token_s *param, 
                 lib_strcpy(buf, game_str_sm_stargate, sizeof(buf));
             } else {
                 int eta, engine = e->have_engine;
-                eta = game_calc_eta(g, engine, pf->x, pf->y, pt->x, pt->y);
+                eta = game_calc_eta_trans(g, engine, pf->x, pf->y, pt->x, pt->y);
                 lib_sprintf(buf, sizeof(buf), "%s %i %s", game_str_sm_eta, eta, (eta == 1) ? game_str_sm_turn : game_str_sm_turns);
             }
             puts(buf);
