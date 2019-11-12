@@ -100,7 +100,7 @@ static void ui_starmap_trans_draw_cb(void *vptr)
                 lib_strcpy(buf, game_str_sm_stargate, sizeof(buf));
             } else {
                 int eta, engine = g->eto[d->api].have_engine;
-                eta = game_calc_eta(g, engine, pf->x, pf->y, pt->x, pt->y);
+                eta = game_calc_eta_trans(g, engine, pf->x, pf->y, pt->x, pt->y);
                 lib_sprintf(buf, sizeof(buf), "%s %i %s", game_str_sm_eta, eta, (eta == 1) ? game_str_sm_turn : game_str_sm_turns);
             }
             lbxfont_select(0, 0, 0, 0);
