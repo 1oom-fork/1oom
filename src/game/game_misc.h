@@ -27,7 +27,8 @@ extern int game_get_pop_growth_for_eco(const struct game_s *g, int planet_i, int
 extern int game_get_tech_prod(int prod, int slider, race_t race, planet_special_t special);
 extern void game_print_prod_of_total(const struct game_s *g, player_id_t pi, int prod, char *buf, size_t bufsize);
 extern bool game_xy_is_in_nebula(const struct game_s *g, int x, int y);
-extern int game_calc_eta(const struct game_s *g, int speed, int x0, int y0, int x1, int y1);
+extern int game_calc_eta_ship(const struct game_s *g, int speed, int x0, int y0, int x1, int y1);
+extern int game_calc_eta_trans(const struct game_s *g, int speed, int x0, int y0, int x1, int y1);
 extern bool game_transport_dest_ok(const struct game_s *g, const planet_t *p, player_id_t api);
 extern void game_rng_step(struct game_s *g);
 extern void game_turn_atmos_tform(struct planet_s *p);
