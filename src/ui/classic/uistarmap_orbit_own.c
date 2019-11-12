@@ -94,7 +94,7 @@ static void ui_starmap_orbit_own_draw_cb(void *vptr)
             if ((pt->owner == d->api) && (pf->owner == d->api) && pt->have_stargate && pf->have_stargate) {
                 strcpy(buf, game_str_sm_stargate);
             } else if (d->ss.shiptypenon0numsel > 0) {
-                int eta = game_calc_eta(g, speed, pt->x, pt->y, pf->x, pf->y);
+                int eta = game_calc_eta_ship(g, speed, pt->x, pt->y, pf->x, pf->y);
                 sprintf(buf, "%s %i %s", game_str_sm_eta, eta, (eta == 1) ? game_str_sm_turn : game_str_sm_turns);
             } else {
                 buf[0] = '\0';
