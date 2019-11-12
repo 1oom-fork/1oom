@@ -85,7 +85,7 @@ void ui_fleet_print_fleet_enroute(const struct game_s *g, int api, const fleet_e
         if (pon == PLANET_NONE) {
             pon = get_fleet_planet_on(g, r);
         }
-        eta = game_calc_eta(g, game_fleet_get_speed(g, r, pon, r->dest), p->x, p->y, r->x, r->y);
+        eta = game_calc_eta_ship(g, game_fleet_get_speed(g, r, pon, r->dest), p->x, p->y, r->x, r->y);
         printf("  %s %i %s", game_str_sm_eta, eta, (eta == 1) ? game_str_sm_turn : game_str_sm_turns);
     }
     if (r->owner != api) {
@@ -104,7 +104,7 @@ void ui_fleet_print_transport_enroute(const struct game_s *g, int api, const tra
     lib_sprintf(buf, sizeof(buf), "#T%i (%i,%i) %s [%i] %s", (int)(r - g->transport), r->x, r->y, game_str_fl_moving, r->dest, ui_planet_str(g, api, r->dest, pname, sizeof(pname)));
     printf("%-40s", buf);
     printf(" %5i", r->pop);
-    eta = game_calc_eta(g, e->have_engine, p->x, p->y, r->x, r->y);
+    eta = game_calc_eta_trans(g, e->have_engine, p->x, p->y, r->x, r->y);
     printf("  %s %i %s\n", game_str_sm_eta, eta, (eta == 1) ? game_str_sm_turn : game_str_sm_turns);
 }
 
