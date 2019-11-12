@@ -95,7 +95,7 @@ static void ui_starmap_orbit_own_draw_cb(void *vptr)
                     }
                 }
                 ++speed;
-                eta = game_calc_eta(g, speed, pt->x, pt->y, pf->x, pf->y);
+                eta = game_calc_eta_ship(g, speed, pt->x, pt->y, pf->x, pf->y);
                 sprintf(buf, "%s %i %s", game_str_sm_eta, eta, (eta == 1) ? game_str_sm_turn : game_str_sm_turns);
             } else {
                 buf[0] = '\0';
