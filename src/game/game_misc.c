@@ -761,7 +761,7 @@ bool game_xy_is_in_nebula(const struct game_s *g, int x, int y)
     return false;
 }
 
-int game_calc_eta(const struct game_s *g, int speed, int x0, int y0, int x1, int y1)
+int game_calc_eta_ship(const struct game_s *g, int speed, int x0, int y0, int x1, int y1)
 {
     int x, y, num = 0;
     x = x0;
@@ -772,13 +772,30 @@ int game_calc_eta(const struct game_s *g, int speed, int x0, int y0, int x1, int
         v = speed;
         first = true;
         do {
+            /* Inside nebulas, ships move on frame 0 and then on every odd frame. */
             if (first || (!game_xy_is_in_nebula(g, x, y))) {
                 util_math_go_line_dist(&x, &y, x1, y1, 5);
             }
-            if ((x != x1) || (y != y1)) {
+            util_math_go_line_dist(&x, &y, x1, y1, 6);
+            first = false;
+            --v;
+        } while (v > 0);
+        ++num;
+    }
+    return num;
+}
+
+int game_calc_eta_trans(const struct game_s *g, int speed, int x0, int y0, int x1, int y1)
+{
+    int x = x0, y = y0, num = 0;
+    while ((x != x1) || (y != y1)) {
+        int v = speed;
+        do {
+            /* Inside nebulas, transports move on every even frame. */
+            util_math_go_line_dist(&x, &y, x1, y1, 5);
+            if (!game_xy_is_in_nebula(g, x, y)) {
                 util_math_go_line_dist(&x, &y, x1, y1, 6);
             }
-            first = false;
             --v;
         } while (v > 0);
         ++num;

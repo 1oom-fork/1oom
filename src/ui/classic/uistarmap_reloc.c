@@ -51,7 +51,7 @@ static void ui_starmap_reloc_draw_cb(void *vptr)
             lib_strcpy(buf, game_str_sm_stargate, sizeof(buf));
         } else {
             int eta;
-            eta = game_calc_eta(g, g->srd[d->api].design[pf->buildship].engine + 1, pf->x, pf->y, pt->x, pt->y);
+            eta = game_calc_eta_ship(g, g->srd[d->api].design[pf->buildship].engine + 1, pf->x, pf->y, pt->x, pt->y);
             lib_sprintf(buf, sizeof(buf), "%s %i %s", game_str_sm_delay, eta, (eta == 1) ? game_str_sm_turn : game_str_sm_turns);
         }
         lbxfont_select(0, 0, 0, 0);
