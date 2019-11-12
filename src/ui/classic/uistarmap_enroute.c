@@ -93,7 +93,7 @@ static void ui_starmap_enroute_draw_cb(void *vptr)
             lbxfont_set_gap_h(2);
             lbxfont_print_str_split(230, 26, 80, buf, 2, UI_SCREEN_W, UI_SCREEN_H);
         } else {
-            int eta = game_calc_eta(g, game_fleet_get_speed(g, r, d->en.pon, pto), pt->x, pt->y, r->x, r->y);
+            int eta = game_calc_eta_ship(g, game_fleet_get_speed(g, r, d->en.pon, pto), pt->x, pt->y, r->x, r->y);
             lib_sprintf(buf, sizeof(buf), "%s %i %s", game_str_sm_eta, eta, (eta == 1) ? game_str_sm_turn : game_str_sm_turns);
             lbxfont_select_set_12_4(0, 0, 0, 0);
             lbxfont_print_str_center(268, 32, buf, UI_SCREEN_W);
