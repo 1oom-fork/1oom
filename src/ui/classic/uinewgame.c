@@ -38,6 +38,7 @@ struct new_game_data_s {
     struct game_new_options_s *newopts;
     int frame;
     bool fadein;
+    int section;
     int16_t selected;
     player_id_t pi;
     bool have_human;
@@ -283,48 +284,66 @@ static void new_game_draw_extra_cb(void *vptr)
     struct new_game_data_s *d = vptr;
     struct game_new_options_s *newopts = d->newopts;
     hw_video_copy_back_from_page3();
-    lbxfont_select(5, 0, 0, 0);
-    for (player_id_t i = 0; i < d->newopts->players; ++i) {
-        int x0 = 4 + (i / 3) * 160;
-        int y0 = PORTRAITBOX_TOP_MARGIN + (i % 3) * PORTRAITBOX_H;
-        if (newopts->pdata[i].race < RACE_NUM) {
-            lbxgfx_draw_frame(x0 + 1, y0 + 1, d->gfx_portrait[newopts->pdata[i].race], UI_SCREEN_W, ui_scale);
+    lbxfont_select(5, 0, 3, 0);
+    lbxfont_print_str_center(30, 180, game_str_ng_cancel, UI_SCREEN_W, ui_scale);
+    lbxfont_print_str_center(90, 180, "\x2Players\x1" + (d->section != 1), UI_SCREEN_W, ui_scale);
+    lbxfont_print_str_center(150, 180, "\x2Rules\x1" + (d->section != 2), UI_SCREEN_W, ui_scale);
+    lbxfont_print_str_center(210, 180, "\x2Galaxy\x1" + (d->section != 3), UI_SCREEN_W, ui_scale);
+    lbxfont_print_str_center(275, 180, game_str_ng_ok, UI_SCREEN_W, ui_scale);
+    if (d->section==1) { /* Players */
+        for (int i = 0; i < newopts->players; ++i) {
+            int x0 = 4 + (i / 3) * 160;
+            int y0 = 20 + (i % 3) * PORTRAITBOX_H;
+            ui_draw_box1(x0, y0, x0 + 41, y0 + 35, 0x9b, 0x9b, ui_scale);
+            ui_draw_filled_rect(x0 + 43, y0, x0 + 43 + 41, y0 + 35, 0, ui_scale);
+            ui_draw_box1(x0 + 43, y0, x0 + 43 + 41, y0 + 35, 0x9b, 0x9b, ui_scale);
         }
-        if (newopts->pdata[i].banner < BANNER_NUM) {
-            lbxgfx_set_new_frame(d->gfx_flag[newopts->pdata[i].banner], d->frame);
-            gfx_aux_draw_frame_to(d->gfx_flag[newopts->pdata[i].banner], &ui_data.aux.screen);
-            gfx_aux_draw_frame_from(x0 + 43 + 1, y0 + 1, &ui_data.aux.screen, UI_SCREEN_W, ui_scale);
+        lbxfont_select(5, 0, 0, 0);
+        for (player_id_t i = 0; i < d->newopts->players; ++i) {
+            int x0 = 4 + (i / 3) * 160;
+            int y0 = PORTRAITBOX_TOP_MARGIN + (i % 3) * PORTRAITBOX_H;
+            if (newopts->pdata[i].race < RACE_NUM) {
+                lbxgfx_draw_frame(x0 + 1, y0 + 1, d->gfx_portrait[newopts->pdata[i].race], UI_SCREEN_W, ui_scale);
+            }
+            if (newopts->pdata[i].banner < BANNER_NUM) {
+                lbxgfx_set_new_frame(d->gfx_flag[newopts->pdata[i].banner], d->frame);
+                gfx_aux_draw_frame_to(d->gfx_flag[newopts->pdata[i].banner], &ui_data.aux.screen);
+                gfx_aux_draw_frame_from(x0 + 43 + 1, y0 + 1, &ui_data.aux.screen, UI_SCREEN_W, ui_scale);
+            }
+            lbxfont_print_str_normal(x0 + 43 + 41 + 4, y0 + 2 , d->newopts->pdata[i].playername, UI_SCREEN_W, ui_scale);
+            lbxfont_print_str_normal(x0 + 43 + 41 + 4, y0 + 2 + 11, d->newopts->pdata[i].homename, UI_SCREEN_W, ui_scale);
+            lbxfont_print_str_normal(x0 + 43 + 41 + 4, y0 + 2 + 22, d->newopts->pdata[i].is_ai ? game_str_ng_computer : game_str_ng_player, UI_SCREEN_W, ui_scale);
         }
-        lbxfont_print_str_normal(x0 + 43 + 41 + 4, y0 + 2 , d->newopts->pdata[i].playername, UI_SCREEN_W, ui_scale);
-        lbxfont_print_str_normal(x0 + 43 + 41 + 4, y0 + 2 + 11, d->newopts->pdata[i].homename, UI_SCREEN_W, ui_scale);
-        lbxfont_print_str_normal(x0 + 43 + 41 + 4, y0 + 2 + 22, d->newopts->pdata[i].is_ai ? game_str_ng_computer : game_str_ng_player, UI_SCREEN_W, ui_scale);
-    }
-    if (!d->have_human) {
-        lbxfont_print_str_center(160, 2, game_str_ng_allai, UI_SCREEN_W, ui_scale);
-    }
-    lbxfont_select(0, 4, 0, 0);
-    lbxfont_print_str_normal(23, 165, game_ais[d->newopts->ai_id]->name, UI_SCREEN_W, ui_scale);
-    lbxfont_print_str_normal(93, 165, game_str_tbl_opt_event[d->newopts->events], UI_SCREEN_W, ui_scale);
-    lbxfont_print_str_normal(153, 165, game_str_tbl_opt_council[d->newopts->council], UI_SCREEN_W, ui_scale);
-    lbxfont_print_str_normal(223, 165, game_str_tbl_opt_guardian[d->newopts->guardian], UI_SCREEN_W, ui_scale);
-    lbxfont_print_str_normal(283, 165, game_str_tbl_opt_rules[d->newopts->rules], UI_SCREEN_W, ui_scale);
-    /* FIXME: no place to put AI description. original code:
-     * lbxfont_print_str_normal(103, 155, game_ais[d->newopts->ai_id]->name, UI_SCREEN_W, ui_scale);
-     * lbxfont_select(0, 0, 0, 0);
-     * lbxfont_print_str_normal(103, 167, game_ais[d->newopts->ai_id]->description, UI_SCREEN_W, ui_scale); */
-    if (++d->frame >= 10) {
-        d->frame = 0;
+        if (!d->have_human) {
+            lbxfont_print_str_center(160, 4, game_str_ng_allai, UI_SCREEN_W, ui_scale);
+        }
+        lbxfont_select(0, 0, 0, 0);
+        lbxfont_print_str_normal(50, 163, game_ais[d->newopts->ai_id]->name, UI_SCREEN_W, ui_scale);
+        lbxfont_select(0, 3, 0, 0);
+        lbxfont_print_str_normal(90, 163, game_ais[d->newopts->ai_id]->description, UI_SCREEN_W, ui_scale);
+        if (++d->frame >= 10) {
+            d->frame = 0;
+        }
+    } else if (d->section==2) { /* Rules */
+        lbxfont_select(5, 0, 0, 0);
+        lbxfont_print_str_center(160, 4, "Rules Options currently not implemented", UI_SCREEN_W, ui_scale);
+        lbxfont_select(0, 0, 0, 0);
+        for (int i = 0; i < 16; ++i) lbxfont_print_str_normal(50, 163, game_ais[d->newopts->ai_id]->name, UI_SCREEN_W, ui_scale);
+    } else { /* Galaxy */
+        lbxfont_select(5, 0, 0, 0);
+        lbxfont_print_str_center(160, 4, "Galaxy Options currently not implemented", UI_SCREEN_W, ui_scale);
     }
 }
 
 static bool ui_new_game_extra(struct game_new_options_s *newopts, struct new_game_data_s *d)
 {
     bool flag_done = false, flag_ok = false;
-    int16_t oi_cancel, oi_ok, oi_ai_id, oi_events, oi_council, oi_guardian, oi_rules,
+    int16_t oi_cancel, oi_ok, oi_players, oi_rules, oi_galaxy, oi_ai_id, 
             oi_race[PLAYER_NUM], oi_banner[PLAYER_NUM], oi_pname[PLAYER_NUM], oi_hname[PLAYER_NUM], oi_ai[PLAYER_NUM];
     d->pi = PLAYER_0;
     d->str_title = 0;
     d->frame = 0;
+    d->section = 1;
 
     newopts->pdata[PLAYER_0].race = RACE_HUMAN;
     newopts->pdata[PLAYER_0].banner = BANNER_BLUE;
@@ -343,65 +362,41 @@ static bool ui_new_game_extra(struct game_new_options_s *newopts, struct new_gam
     ui_draw_erase_buf();
     lbxgfx_draw_frame(0, 0, d->gfx_custom, UI_SCREEN_W, ui_scale);
     hw_video_copy_back_to_page3();
-    ui_draw_box1(0x5a, 0xa, 0x83, 0x2d, 0x9b, 0x9b, ui_scale);
     hw_video_copy_back_to_page2();
     hw_video_copy_back_from_page3();
-    for (int i = 0; i < newopts->players; ++i) {
-        int x0 = 4 + (i / 3) * 160;
-        int y0 = 20 + (i % 3) * PORTRAITBOX_H;
-        ui_draw_box1(x0, y0, x0 + 41, y0 + 35, 0x9b, 0x9b, ui_scale);
-        ui_draw_filled_rect(x0 + 43, y0, x0 + 43 + 41, y0 + 35, 0, ui_scale);
-        ui_draw_box1(x0 + 43, y0, x0 + 43 + 41, y0 + 35, 0x9b, 0x9b, ui_scale);
+
+restart:
+    uiobj_table_clear();
+    oi_cancel   = uiobj_add_mousearea(  0, 170,  55, 199, MOO_KEY_ESCAPE);
+    oi_players  = uiobj_add_mousearea( 65, 170, 115, 199, MOO_KEY_ESCAPE);
+    oi_rules    = uiobj_add_mousearea(125, 170, 175, 199, MOO_KEY_ESCAPE);
+    oi_galaxy   = uiobj_add_mousearea(185, 170, 235, 199, MOO_KEY_ESCAPE);
+    oi_ok       = uiobj_add_mousearea(245, 170, 300, 199, MOO_KEY_SPACE);
+    if (d->section==1) { 
+        oi_ai_id    = uiobj_add_mousearea( 45, 160,  90, 170, MOO_KEY_a);
+        for (int i = 0; i < newopts->players; ++i) {
+            int x0 = 4 + (i / 3) * 160;
+            int y0 = PORTRAITBOX_TOP_MARGIN + (i % 3) * PORTRAITBOX_H;
+            oi_race[i] = uiobj_add_mousearea(x0, y0, x0 + 41, y0 + 35, MOO_KEY_UNKNOWN);
+            oi_banner[i] = uiobj_add_mousearea(x0 + 43, y0, x0 + 43 + 41, y0 + 35, MOO_KEY_UNKNOWN);
+            oi_pname[i] = uiobj_add_mousearea(x0 + 43 + 41 + 2, y0 + 2, x0 + 43 + 41 + 2 + 60, y0 + 2 + 10, MOO_KEY_UNKNOWN);
+            oi_hname[i] = uiobj_add_mousearea(x0 + 43 + 41 + 2, y0 + 2 + 11, x0 + 43 + 41 + 2 + 60, y0 + 2 + 11 + 10, MOO_KEY_UNKNOWN);
+            oi_ai[i] = uiobj_add_mousearea(x0 + 43 + 41 + 2, y0 + 2 + 22, x0 + 43 + 41 + 2 + 60, y0 + 2 + 22 + 10, MOO_KEY_UNKNOWN);
+        }
+        for (int i = newopts->players; i < PLAYER_NUM; ++i) {
+            oi_race[i] = UIOBJI_INVALID;
+            oi_banner[i] = UIOBJI_INVALID;
+            oi_pname[i] = UIOBJI_INVALID;
+            oi_hname[i] = UIOBJI_INVALID;
+            oi_ai[i] = UIOBJI_INVALID;
+        }
+    } else if (d->section==2) { 
+    } else {
     }
-    lbxfont_select(0, 0, 0, 0);
-    lbxfont_print_str_right(20 - 3, 165, game_str_ng_ai, UI_SCREEN_W, ui_scale);
-    lbxfont_print_str_normal(20, 165, ":", UI_SCREEN_W, ui_scale);
-    lbxfont_print_str_right(90 - 3, 165, game_str_opt_event, UI_SCREEN_W, ui_scale);
-    lbxfont_print_str_normal(90, 165, ":", UI_SCREEN_W, ui_scale);
-    lbxfont_print_str_right(150 - 3, 165, game_str_opt_council, UI_SCREEN_W, ui_scale);
-    lbxfont_print_str_normal(150, 165, ":", UI_SCREEN_W, ui_scale);
-    lbxfont_print_str_right(220 - 3, 165, game_str_opt_guardian, UI_SCREEN_W, ui_scale);
-    lbxfont_print_str_normal(220, 165, ":", UI_SCREEN_W, ui_scale);
-    lbxfont_print_str_right(280 - 3, 165, game_str_opt_rules, UI_SCREEN_W, ui_scale);
-    lbxfont_print_str_normal(280, 165, ":", UI_SCREEN_W, ui_scale);
-
-    lbxfont_select(5, 0, 0, 0);
-    lbxfont_print_str_center(40, 180, game_str_ng_cancel, UI_SCREEN_W, ui_scale);
-    lbxfont_print_str_center(260, 180, game_str_ng_ok, UI_SCREEN_W, ui_scale);
-    hw_video_copy_back_to_page3();
-
-#define MAKE_UIOBJS() \
-    do { \
-        uiobj_table_clear(); \
-        oi_cancel = uiobj_add_mousearea(0, 170, 80, 199, MOO_KEY_ESCAPE); \
-        oi_ok = uiobj_add_mousearea(220, 170, 300, 199, MOO_KEY_SPACE); \
-        oi_ai_id    = uiobj_add_mousearea(  0, 165,  50, 177, MOO_KEY_a); \
-        oi_events   = uiobj_add_mousearea( 60, 165, 115, 177, MOO_KEY_a); \
-        oi_council  = uiobj_add_mousearea(125, 165, 180, 177, MOO_KEY_a); \
-        oi_guardian = uiobj_add_mousearea(190, 165, 245, 177, MOO_KEY_a); \
-        oi_rules    = uiobj_add_mousearea(255, 165, 310, 177, MOO_KEY_a); \
-        for (int i = 0; i < newopts->players; ++i) { \
-            int x0 = 4 + (i / 3) * 160; \
-            int y0 = PORTRAITBOX_TOP_MARGIN + (i % 3) * PORTRAITBOX_H; \
-            oi_race[i] = uiobj_add_mousearea(x0, y0, x0 + 41, y0 + 35, MOO_KEY_UNKNOWN); \
-            oi_banner[i] = uiobj_add_mousearea(x0 + 43, y0, x0 + 43 + 41, y0 + 35, MOO_KEY_UNKNOWN); \
-            oi_pname[i] = uiobj_add_mousearea(x0 + 43 + 41 + 2, y0 + 2, x0 + 43 + 41 + 2 + 60, y0 + 2 + 10, MOO_KEY_UNKNOWN); \
-            oi_hname[i] = uiobj_add_mousearea(x0 + 43 + 41 + 2, y0 + 2 + 11, x0 + 43 + 41 + 2 + 60, y0 + 2 + 11 + 10, MOO_KEY_UNKNOWN); \
-            oi_ai[i] = uiobj_add_mousearea(x0 + 43 + 41 + 2, y0 + 2 + 22, x0 + 43 + 41 + 2 + 60, y0 + 2 + 22 + 10, MOO_KEY_UNKNOWN); \
-        } \
-        for (int i = newopts->players; i < PLAYER_NUM; ++i) { \
-            oi_race[i] = UIOBJI_INVALID; \
-            oi_banner[i] = UIOBJI_INVALID; \
-            oi_pname[i] = UIOBJI_INVALID; \
-            oi_hname[i] = UIOBJI_INVALID; \
-            oi_ai[i] = UIOBJI_INVALID; \
-        } \
-    } while (0)
-
-    MAKE_UIOBJS();
 
     uiobj_set_callback_and_delay(new_game_draw_extra_cb, d, 2);
     uiobj_set_xyoff(1, 1);
+    new_game_draw_extra_cb(d);
 
     while (!flag_done) {
         int16_t oi;
@@ -419,16 +414,14 @@ static bool ui_new_game_extra(struct game_new_options_s *newopts, struct new_gam
                 flag_ok = true;
                 flag_done = true;
             }
+        } else if (oi == oi_players) {
+            d->section = 1;
+        } else if (oi == oi_rules) {
+            d->section = 2;
+        } else if (oi == oi_galaxy) {
+            d->section = 3;
         } else if (oi == oi_ai_id) {
             d->newopts->ai_id = (d->newopts->ai_id + 1) % GAME_AI_NUM_VISIBLE;
-        } else if (oi == oi_events) {
-            d->newopts->events = (d->newopts->events + 1) % XOPTION_EVENTS_NUM;
-        } else if (oi == oi_council) {
-            d->newopts->council = (d->newopts->council + 1) % XOPTION_COUNCIL_NUM;
-        } else if (oi == oi_guardian) {
-            d->newopts->guardian = (d->newopts->guardian + 1) % XOPTION_GUARDIAN_NUM;
-        } else if (oi == oi_rules) {
-            d->newopts->rules = (d->newopts->rules + 1) % XOPTION_RULES_NUM;
         }
         for (int i = 0; i < newopts->players; ++i) {
             if (oi == oi_race[i]) {
@@ -446,22 +439,22 @@ static bool ui_new_game_extra(struct game_new_options_s *newopts, struct new_gam
                         newopts->pdata[i].homename[0] = '\0';
                     }
                 }
-                uiobj_set_callback_and_delay(new_game_draw_extra_cb, d, 2);
+                goto restart;
             } else if (oi == oi_banner[i]) {
                 d->pi = i;
                 d->selected = newopts->pdata[i].banner;
                 ui_new_game_choose_banner(newopts, d);
-                uiobj_set_callback_and_delay(new_game_draw_extra_cb, d, 2);
+                goto restart;
             } else if (oi == oi_pname[i]) {
                 d->pi = i;
                 d->selected = newopts->pdata[i].banner;
                 ui_new_game_pname(newopts, d, false);
-                uiobj_set_callback_and_delay(new_game_draw_extra_cb, d, 2);
+                goto restart;
             } else if (oi == oi_hname[i]) {
                 d->pi = i;
                 d->selected = newopts->pdata[i].banner;
                 ui_new_game_hname(newopts, d, false);
-                uiobj_set_callback_and_delay(new_game_draw_extra_cb, d, 2);
+                goto restart;
             } else if (oi == oi_ai[i]) {
                 newopts->pdata[i].is_ai = !newopts->pdata[i].is_ai;
                 d->have_human = false;
@@ -473,11 +466,8 @@ static bool ui_new_game_extra(struct game_new_options_s *newopts, struct new_gam
                 }
             }
         }
-
+        
         new_game_draw_extra_cb(d);
-
-        MAKE_UIOBJS();
-
         uiobj_finish_frame();
         if (d->fadein) {
             d->fadein = false;
