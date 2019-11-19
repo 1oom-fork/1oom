@@ -1571,7 +1571,6 @@ struct game_end_s game_turn_process(struct game_s *g)
     uint8_t old_focus[PLAYER_NUM];
     int num_alive = 0, num_colony = 0;
     game_end.type = GAME_END_NONE;
-    int gopt;
     game_turn_limit_ships(g);
     for (int i = 0; i < g->players; ++i) {
         BOOLVEC_TBL_COPY1(old_contact, g->eto[i].contact, i, PLAYER_NUM);

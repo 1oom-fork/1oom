@@ -559,7 +559,13 @@ static void audience_menu_treaty(struct audience_s *au)
     }
     war_num = 0;
     for (player_id_t i = PLAYER_0; i < g->players; ++i) {
-        if ((i != ph) && (i != pa) && (ea->treaty[i] < TREATY_WAR)) {
+        if (1
+          && (i != ph)
+          && (i != pa)
+          && (ea->treaty[i] < TREATY_WAR)
+          && (g->opt.spec_war != 1 || eh->have_met[i])
+          && (g->opt.spec_war != 2 || eh->treaty[i] >= TREATY_WAR)
+        ) {
             war_tbl[war_num++] = i;
         }
     }
@@ -619,6 +625,9 @@ static void audience_menu_treaty(struct audience_s *au)
                 }
                 if (si == 3) {
                     game_diplo_start_war(g, pa, au->pstartwar);
+                    if (g->opt.spec_war) {
+                        game_diplo_start_war(g, ph, au->pstartwar);
+                    }
                 }
             } else {
                 selected = -1;

@@ -354,6 +354,9 @@ gameoptdescr_t gameopt_descr[GAMEOPTS] = {
   { 3, 0, "Retreat", { "may stay", "flee", "rearm" },
     "Retreating fleets: may stay in the system (default), flee (have to retreat to next friendly planet), rearm (flee if having spent ammo)"
   },
+  { 3, 0, "Spec Wars", { "allowed", "declare", "war only" },
+    "Asking for a Declaration of War on another Race is allowed (default), declares war if accepted or is only allowed when already at war with the target."
+  }
 };
 
 const char *idstr_main = "game";
