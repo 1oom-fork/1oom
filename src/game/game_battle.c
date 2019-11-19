@@ -108,7 +108,7 @@ static void game_battle_item_add(struct battle_s *bt, const shipparsed_t *sp, ba
     }
 }
 
-static void game_battle_post(struct game_s *g, int loser, int winner, uint8_t from)
+static void game_battle_post(struct game_s *g, int loser, int winner, uint8_t from, bool loser_spent_ammo)
 {
     if (loser >= PLAYER_NUM) {
         monster_id_t mi;
@@ -152,7 +152,11 @@ static void game_battle_post(struct game_s *g, int loser, int winner, uint8_t fr
             }
         }
         if ((dest != PLANET_NONE) /*&& (numtypes > 0)*/) {
-            game_send_fleet_retreat(g, loser, from, dest, ships, shiptypes, numtypes);
+            if (g->opt.retreat == 2 && !loser_spent_ammo) {
+                game_send_fleet_from_orbit(g, loser, from, dest, ships, shiptypes, numtypes);
+            } else {
+                game_send_fleet_retreat(g, loser, from, dest, ships, shiptypes, numtypes);
+            }
         }
         for (int i = 0; i < NUM_SHIPDESIGNS; ++i) {
             o->ships[i] = 0;
@@ -283,6 +287,7 @@ void game_battle_handle_all(struct game_s *g)
     struct battle_s bt[1];
     uint8_t monster_planet[MONSTER_NUM];
     bt->g = g;
+    bt->loser_spent_ammo = 0;
     for (monster_id_t i = 0; i < MONSTER_NUM; ++i) {
         monster_planet[i] = PLANET_NONE;
     }
@@ -376,14 +381,14 @@ void game_battle_handle_all(struct game_s *g)
                     }
                     /* _def won */
                     BOOLVEC_SET0(tbl_have_force, party_att);
-                    game_battle_post(g, party_att, party_def, pli);
+                    game_battle_post(g, party_att, party_def, pli, bt->loser_spent_ammo);
                 } else {
                     /* human player involved */
                     /*11926*/
                     /* BUG? first check not in MOO1, reads past table if monster */
                     if ((party_att < PLAYER_NUM) && IS_AI(g, party_att) && (g->evn.ceasefire[party_def][party_att] > 0)) {
                         BOOLVEC_SET0(tbl_have_force, party_att);
-                        game_battle_post(g, party_att, party_def, pli);
+                        game_battle_post(g, party_att, party_def, pli, 0);
                     } else {
                         /*1195f*/
                         int party_l, party_r;
@@ -403,7 +408,7 @@ void game_battle_handle_all(struct game_s *g)
                         }
                         /* _l won */
                         BOOLVEC_SET0(tbl_have_force, party_r);
-                        game_battle_post(g, party_r, party_l, pli);
+                        game_battle_post(g, party_r, party_l, pli, bt->loser_spent_ammo);
                         /*v14 = 1;*/
                     }
                 }

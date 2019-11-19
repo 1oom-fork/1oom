@@ -1725,6 +1725,7 @@ bool game_battle_attack(struct battle_s *bt, int attacker_i, int target_i, bool 
                         --b->wpn[i].numfire;
                         if (b->wpn[i].numshots > 0) {   /* BUG always dec'd on MOO1 */
                             --b->wpn[i].numshots;
+                            ++b->ammo_spent;
                         }
                         miss_chance = w->is_bomb ? miss_chance_missile : miss_chance_beam;
                         if (game_num_bt_no_tohit_acc) {
@@ -1795,7 +1796,10 @@ bool game_battle_attack(struct battle_s *bt, int attacker_i, int target_i, bool 
                         --b->wpn[1].numfire;
                     }
                     --b->wpn[i].numfire;
-                    --b->wpn[i].numshots;
+                    if (b->wpn[i].numshots > 0) {   /* BUG always dec'd on MOO1 */
+                        --b->wpn[i].numshots;
+                        ++b->ammo_spent;
+                    }
                     damagemul2 = 1;
                     damagemul1 = b->num * b->wpn[i].n;
                     while (damagemul1 > 1000) {
@@ -2119,5 +2123,11 @@ bool game_battle_with_human(struct battle_s *bt)
     bt->bases = bt->item[0/*planet*/].num;
     game_battle_finish(bt);
     ui_battle_shutdown(bt, (bt->planet_side != SIDE_NONE) && (p->owner == PLAYER_NONE), winner);
+    for (int i = 1; i <= bt->items_num; ++i) {
+        if (bt->item[i].side == 1 - winner && bt->item[i].ammo_spent) {
+            bt->loser_spent_ammo = true;
+            break;
+        }
+    }
     return winner == SIDE_R;
 }

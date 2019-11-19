@@ -351,8 +351,8 @@ gameoptdescr_t gameopt_descr[GAMEOPTS] = {
   { 3, 0, "Guardian", { "normal", "weak", "weaker" },
     "Guardian setting: normal (default), weak (less weapons and DEF, no ARS/ADC), weaker (also less shields and ATT)"
   },
-  { 3, 0, "Retreat", { "may stay", "flee", "RBO" },
-    "Retreating fleets: may stay in the system (default), flee (have to retreat to next friendly planet), RBO (flee if having spent ammo)"
+  { 3, 0, "Retreat", { "may stay", "flee", "rearm" },
+    "Retreating fleets: may stay in the system (default), flee (have to retreat to next friendly planet), rearm (flee if having spent ammo)"
   },
 };
 

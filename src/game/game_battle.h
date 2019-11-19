@@ -44,6 +44,7 @@ struct battle_item_s {
     int8_t repulsor;
     uint16_t sbmask;
     uint8_t retreat;
+    uint8_t ammo_spent;
     int8_t sx;  /* -1, 0..BATTLE_AREA_W - 1 */
     int8_t sy;  /* -1, 0..BATTLE_AREA_H - 1 */
     uint8_t selected;    /* 0, 1, 2=moving */
@@ -146,6 +147,7 @@ struct battle_s {
         30 + itemi : enemy item, in weapon range
     */
     int8_t area[BATTLE_AREA_H][BATTLE_AREA_W];
+    bool loser_spent_ammo;
 };
 
 extern void game_battle_prepare(struct battle_s *bt, int party_r, int party_l, uint8_t planet_i);
