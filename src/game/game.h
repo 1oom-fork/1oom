@@ -8,6 +8,28 @@
 #include "game_types.h"
 #include "types.h"
 
+typedef struct gameopts_s {
+    uint8_t lock;
+    uint8_t deterministic;
+    uint8_t council;
+    uint8_t guardian;
+    uint8_t retreat;
+} gameopts_t;
+
+#define GAMEOPTS sizeof(gameopts_t)
+#define GAMEOPTS_DEFAULTS { 0, 1, 0, 0, 0 }
+#define MAXOPTS 9
+
+typedef struct gameoptdescr_s {
+    int opts;
+    int dflt;
+    const char *name;
+    const char *opt[MAXOPTS];
+    const char *descr;
+} gameoptdescr_t;
+
+gameoptdescr_t gameopt_descr[GAMEOPTS];
+
 typedef struct fleet_enroute_s {
     player_id_t owner;
     uint16_t x;
@@ -325,7 +347,10 @@ struct game_s {
     seen_t seen[PLAYER_NUM][PLANETS_MAX];
     shipdesign_t current_design[PLAYER_NUM];
     struct game_aux_s *gaux;
-    uint8_t xoptions;
+    union {
+        gameopts_t opt;
+        uint8_t popt[GAMEOPTS];
+    };
 };
 
 #define IS_AI(_g_, _i_) BOOLVEC_IS1((_g_)->is_ai, (_i_))

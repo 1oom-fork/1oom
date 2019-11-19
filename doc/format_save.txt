@@ -4,19 +4,20 @@ All offsets and sizes are hex.
 All values are little endian unless otherwise noted.
 
 
-Save header (0x40 bytes)
+Save header (0x28 bytes)
 
 offset  sz      description
 0       8       magic header "1oomSAVE"
 8       4       version (== 0)
 c       4       (0, unused)
 10      14      save name
-24      1c      (0, unused)
-
+24      4       (0, unused)
 
 Save payload (? bytes)
 
 offset  sz      description
+28      1       number of game options
+29      17      game options (zero padded)
 40      1       number of players: @PLAYERS (2..6)
 41      1       player is AI (bitmask)
 42      1       player refused council ruling (bitmask)

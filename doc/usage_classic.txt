@@ -129,16 +129,9 @@ If improved or adv. scanners are available, attacks, invasions and large
 fleet movements are shown. Hovering over a race shows its scanned fleet
 movements and hovering over a planet shows all incoming fleets.
 
-Additional game options are settable with uiextra in the New Game screen.
-The options are tied to the save file, cannot be altered and can be inspected 
-(even without uiextra) in the Game options screen:
-- AI: Classic or Classic+
-- Events: all, none, late (year 2400+), good (Rich/Fertile/Merchant/Derelict)
-- Council: 2/3, 3/4 (of planets settled), Orion (when Orion is settled), none
-- Guardian: normal, weak (less weapons, less DEF, no ARS/ADC)
-- Rules: pbx, fix bugs (as in fixbugs.pbx), MOO v1.3 (enjoy your doom stacks)
-
-Settings override pbx-patches and are put in effect at game creation/load time.
-Old saves default to Classic, all, 2/3, normal, pbx (only pbx patches).
+Additional game options are settable with uiextra in the New Game screen
+under the Rules submenu. Hover over the option to get a description.
+The options are tied to the save file, and can be inspected and altered
+(unless locked) in the Game options screen.
 
 See doc/list_gamediff.txt for a list of differences in the game itself.

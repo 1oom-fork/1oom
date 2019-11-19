@@ -22,11 +22,12 @@
 
 /* -------------------------------------------------------------------------- */
 
-#define GAME_SAVE_HDR_SIZE  64
+#define GAME_SAVE_HDR_SIZE  40
 #define GAME_SAVE_MAGIC "1oomSAVE"
 #define GAME_SAVE_END   0x646e450a/*dnE\n*/
 #define GAME_SAVE_OFFS_VERSION  8
 #define GAME_SAVE_OFFS_NAME 16
+#define GAME_SAVE_OPTS_SIZE 23
 
 #define GAME_SAVE_VERSION   0
 
@@ -686,12 +687,15 @@ static int game_save_encode(uint8_t *buf, int buflen, const struct game_s *g, ui
         log_error("Save: BUG: encode expected len > %i, got %i\n", sizeof(*g), buflen);
         return -1;
     }
+    SG_1OOM_EN_U8(GAMEOPTS);
+    memset(&buf[pos], 0, GAME_SAVE_OPTS_SIZE);
+    memcpy(&buf[pos], g->popt, GAMEOPTS);
+    pos += GAME_SAVE_OPTS_SIZE;
     SG_1OOM_EN_U8(g->players);
     SG_1OOM_EN_BV(g->is_ai, PLAYER_NUM);
     SG_1OOM_EN_BV(g->refuse, PLAYER_NUM);
     SG_1OOM_EN_U8(g->ai_id);
-    SG_1OOM_EN_U8(g->xoptions);
-    SG_1OOM_EN_DUMMY(2);
+    SG_1OOM_EN_DUMMY(3);
     SG_1OOM_EN_U8(g->active_player);
     SG_1OOM_EN_U8(g->difficulty);
     SG_1OOM_EN_U8(g->galaxy_size);
@@ -752,6 +756,7 @@ static int game_save_encode(uint8_t *buf, int buflen, const struct game_s *g, ui
 static int game_save_decode(const uint8_t *buf, int buflen, struct game_s *g, uint32_t version)
 {
     int pos = 0;
+    uint8_t xopt, opts;
     if (buflen < 512) {
         log_error("Save: decode expected len > %i, got %i\n", 512, buflen);
         return -1;
@@ -762,6 +767,17 @@ static int game_save_decode(const uint8_t *buf, int buflen, struct game_s *g, ui
         memset(g, 0, sizeof(*g));
         g->gaux = ga;
     }
+    SG_1OOM_DE_U8(opts);
+    memcpy(g->popt, &buf[pos], GAMEOPTS);
+    if (opts > GAMEOPTS) {
+        log_warning("Save: save contains %d unknown game options. ignoring\n", opts - GAMEOPTS);
+    } else if (opts < GAMEOPTS) {
+        for (int i = opts; i < GAMEOPTS; ++i) {
+            g->popt[i] = gameopt_descr[i].dflt;
+        }
+    }
+    pos += GAME_SAVE_OPTS_SIZE;
+
     SG_1OOM_DE_U8(g->players);
     if ((g->players < 2) || (g->players > 6)) {
         log_error("Save: decode invalid number of players %i\n", g->players);
@@ -770,7 +786,7 @@ static int game_save_decode(const uint8_t *buf, int buflen, struct game_s *g, ui
     SG_1OOM_DE_BV(g->is_ai, PLAYER_NUM);
     SG_1OOM_DE_BV(g->refuse, PLAYER_NUM);
     SG_1OOM_DE_U8(g->ai_id);
-    SG_1OOM_DE_U8(g->xoptions);
+    SG_1OOM_DE_U8(xopt);
     SG_1OOM_DE_DUMMY(2);
     SG_1OOM_DE_U8(g->active_player);
     SG_1OOM_DE_U8(g->difficulty);
@@ -883,6 +899,17 @@ static int game_save_decode(const uint8_t *buf, int buflen, struct game_s *g, ui
     }
 
     g->guardian_killer = PLAYER_NONE;
+    if (xopt) {
+        if (opts) {
+            log_error("Save: old xoptions and new gameopt interface activated.\n");
+            return -1;
+        }
+        if (xopt & XOPTION_RULES_V13) {
+            log_warning("Save: moo v1.3 bugs ruleset no longer supported.\n");
+        }
+        g->opt.council = (xopt & XOPTION_COUNCIL_MASK) >> 2;
+        g->opt.guardian = (xopt & XOPTION_GUARDIAN_WEAK) >> 4;
+    }
     return 0;
 }
 

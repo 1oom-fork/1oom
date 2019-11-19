@@ -171,7 +171,7 @@ void game_aux_start(struct game_aux_s *gaux, struct game_s *g)
 {
     int n = 0;
     g->gaux = gaux;
-    game_aux_set_rules(g->xoptions);
+    /* game_aux_set_rules(g->xoptions); */
     init_star_dist(gaux, g);
     for (int i = 0; i < g->players; ++i) {
         if (BOOLVEC_IS0(g->is_ai, i)) {

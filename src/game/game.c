@@ -338,6 +338,24 @@ static int dump_numbers(char **argv, void *var)
 
 /* -------------------------------------------------------------------------- */
 
+gameoptdescr_t gameopt_descr[GAMEOPTS] = {
+  { 2, 0, "Rules", { "unlocked", "locked" },
+    "Locks rules so they cannot be changed in the Game menu and disables cheat codes."
+  },
+  { 3, 1, "RNG", { "random", "deterministic", "fixed" },
+    "RNG settings: random, deterministic (default), fixed (deterministic and reset to a fixed value after each player turn)"
+  },
+  { 4, 0, "Council", { "2/3", "3/4", "Orion", "none" },
+    "Galactic Council setting: 2/3 (default), 3/4 (after 3/4 of planets are settled), Orion (after Orion is settled), never"
+  },
+  { 3, 0, "Guardian", { "normal", "weak", "weaker" },
+    "Guardian setting: normal (default), weak (less weapons and DEF, no ARS/ADC), weaker (also less shields and ATT)"
+  },
+  { 3, 0, "Retreat", { "may stay", "flee", "RBO" },
+    "Retreating fleets: may stay in the system (default), flee (have to retreat to next friendly planet), RBO (flee if having spent ammo)"
+  },
+};
+
 const char *idstr_main = "game";
 
 bool main_use_lbx = true;

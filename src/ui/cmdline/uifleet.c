@@ -201,7 +201,7 @@ int ui_cmd_fleet_redir(struct game_s *g, int api, struct input_token_s *param, i
             if ((!e->have_hyperspace_comm) && (pon == PLANET_NONE)) {
                 return -1;
             }
-            if (game_num_retreat_redir_fix && r->retreat && (!e->have_hyperspace_comm) && (pon == dest)) {
+            if (g->opt.retreat && r->retreat && (!e->have_hyperspace_comm) && (pon == dest)) {
                 return -1;
             }
             in_range = false;

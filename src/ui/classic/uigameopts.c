@@ -70,6 +70,8 @@ struct gameopts_data_s {
     int num_newopts, newopt_y;
     struct gameopts_new_s *newopts;
     const struct game_s *g;
+    const char *descr;
+    int open_events;
     uint8_t *gfx_game;
     uint8_t *gfx_save;
     uint8_t *gfx_load;
@@ -116,6 +118,7 @@ static void gameopts_slider_cb(void *ctx, uint8_t slideri, int16_t value)
 static void gameopts_draw_cb(void *vptr)
 {
     struct gameopts_data_s *d = vptr;
+    const struct game_s *g = d->g;
     ui_draw_erase_buf();
     lbxgfx_draw_frame(0, 0, d->gfx_game, UI_SCREEN_W, ui_scale);
     if (d->num_newopts) {
@@ -176,26 +179,27 @@ static void gameopts_draw_cb(void *vptr)
     }
 
     lbxfont_select(0, 1, 0, 0);
-    lbxfont_print_str_right(20 - 3, 180, game_str_ng_ai, UI_SCREEN_W, ui_scale);
-    lbxfont_print_str_normal(20, 180, ":", UI_SCREEN_W, ui_scale);
-    lbxfont_print_str_right(90 - 3, 180, game_str_opt_event, UI_SCREEN_W, ui_scale);
-    lbxfont_print_str_normal(90, 180, ":", UI_SCREEN_W, ui_scale);
-    lbxfont_print_str_right(150 - 3, 180, game_str_opt_council, UI_SCREEN_W, ui_scale);
-    lbxfont_print_str_normal(150, 180, ":", UI_SCREEN_W, ui_scale);
-    lbxfont_print_str_right(220 - 3, 180, game_str_opt_guardian, UI_SCREEN_W, ui_scale);
-    lbxfont_print_str_normal(220, 180, ":", UI_SCREEN_W, ui_scale);
-    lbxfont_print_str_right(280 - 3, 180, game_str_opt_rules, UI_SCREEN_W, ui_scale);
-    lbxfont_print_str_normal(280, 180, ":", UI_SCREEN_W, ui_scale);
-
-    uint8_t xopt = d->g->xoptions;
-
-    lbxfont_select(0, 2, 0, 0);
-
-    lbxfont_print_str_normal(23, 180, game_ais[d->g->ai_id]->name, UI_SCREEN_W, ui_scale);
-    lbxfont_print_str_normal(93, 180, game_str_tbl_opt_event[xopt & XOPTION_EVENTS_MASK], UI_SCREEN_W, ui_scale);
-    lbxfont_print_str_normal(153, 180, game_str_tbl_opt_council[(xopt & XOPTION_COUNCIL_MASK) >> 2], UI_SCREEN_W, ui_scale);
-    lbxfont_print_str_normal(223, 180, game_str_tbl_opt_guardian[(xopt & XOPTION_GUARDIAN_WEAK) >> 4], UI_SCREEN_W, ui_scale);
-    lbxfont_print_str_normal(283, 180, game_str_tbl_opt_rules[(xopt & XOPTION_RULES_MASK) >> 5], UI_SCREEN_W, ui_scale);
+    {
+        char buf[64];
+        lib_sprintf(buf, sizeof(buf), "Year %i", g->year + YEAR_BASE);
+        lbxfont_print_str_normal(10, 160, buf, UI_SCREEN_W, ui_scale);
+        lib_sprintf(buf, sizeof(buf), "Level %s", game_str_tbl_diffic[g->difficulty]);
+        lbxfont_print_str_normal(10, 168, buf, UI_SCREEN_W, ui_scale);
+        lib_sprintf(buf, sizeof(buf), "%s Galaxy, %d stars", game_str_tbl_gsize[g->galaxy_size],g->galaxy_stars);
+        lbxfont_print_str_normal(10, 176, buf, UI_SCREEN_W, ui_scale);
+        lib_sprintf(buf, sizeof(buf), "%d Events after %d", d->open_events,g->evn.year + YEAR_BASE);
+        lbxfont_print_str_normal(10, 184, buf, UI_SCREEN_W, ui_scale);
+    }
+    for (int i = 0; i < GAMEOPTS; ++i) {
+        char buf[32];
+        lib_sprintf(buf, sizeof(buf), "\x2%s: %s\x1",gameopt_descr[i].name, gameopt_descr[i].opt[g->popt[i]]);
+        lbxfont_print_str_normal(10, 56 + 8 * i, buf + (g->popt[i] == gameopt_descr[i].dflt), UI_SCREEN_W, ui_scale);
+    }
+    if (d->descr) {
+        lbxfont_select(0, 2, 0, 0);
+        lbxfont_set_gap_h(1);
+        lbxfont_print_str_split(10, 10, 300, d->descr, 0, UI_SCREEN_W, UI_SCREEN_H, ui_scale);
+    }
 }
 
 static bool gameopts_new_add(struct gameopts_data_s *d, const struct uiopt_s *u)
@@ -260,9 +264,10 @@ gameopts_act_t ui_gameopts(struct game_s *g, int *load_game_i_ptr)
 {
     struct gameopts_data_s d;
     struct gameopts_new_s newopts[NEWOPTS_MAX];
-    bool flag_done = false;
+    bool flag_done = false, lock = g->opt.lock;
     gameopts_act_t ret = GAMEOPTS_DONE;
     int16_t oi_quit, oi_done, oi_load, oi_save, oi_silent, oi_fx, oi_music;
+    int16_t oi_option[GAMEOPTS];
     int16_t fxmusic = opt_music_enabled ? 2 : (opt_sfx_enabled ? 1 : 0);
 
     load_go_data(&d);
@@ -276,11 +281,16 @@ gameopts_act_t ui_gameopts(struct game_s *g, int *load_game_i_ptr)
     d.num_newopts = 0;
     d.newopts = newopts;
     d.g = g;
+    d.descr = NULL;
     if (ui_extra_enabled) {
         gameopts_new_add(&d, uiopts_audio);
         gameopts_new_add(&d, ui_uiopts);
         gameopts_new_add(&d, hw_uiopts);
         gameopts_new_add(&d, hw_uiopts_extra);
+    }
+    d.open_events = 0;
+    for (int i = 1; i < GAME_EVENT_NUM; ++i) { 
+        if (BOOLVEC_IS0(g->evn.done, i)) ++d.open_events;
     }
 
     oi_load = uiobj_add_t0(115, 81, "", d.gfx_load, MOO_KEY_l);
@@ -296,12 +306,16 @@ gameopts_act_t ui_gameopts(struct game_s *g, int *load_game_i_ptr)
         oi_music = UIOBJI_INVALID;
     }
     oi_done = uiobj_add_mousearea(173, 134, 226, 150, MOO_KEY_SPACE);
+    for (int i = 0; i < GAMEOPTS; ++i) {
+        oi_option[i] = uiobj_add_mousearea(10, 55 + 8 * i, 90, 61 + 8 * i, MOO_KEY_UNKNOWN);
+    }
     uiobj_set_downcount(1);
     uiobj_set_callback_and_delay(gameopts_draw_cb, &d, 2);
 
     while (!flag_done) {
-        int16_t oi;
+        int16_t oi, oi2;
         oi = uiobj_handle_input_cond();
+        oi2 = uiobj_at_cursor();
         ui_delay_prepare();
         if ((oi == UIOBJI_ESC) || (oi == oi_done)) {
             ui_sound_play_sfx_24();
@@ -382,6 +396,16 @@ gameopts_act_t ui_gameopts(struct game_s *g, int *load_game_i_ptr)
                     ui_sound_play_sfx_24();
                     break;
                 }
+            }
+        }
+        d.descr = NULL;
+        for (int i = 0; i < GAMEOPTS; ++i) {
+            if (!lock && oi == oi_option[i]) {
+                g->popt[i] += 1;
+                if (g->popt[i] >= gameopt_descr[i].opts) g->popt[i] = 0;
+            }
+            if (oi2 == oi_option[i]) {
+                d.descr = gameopt_descr[i].descr;
             }
         }
         if (!flag_done) {

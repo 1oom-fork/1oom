@@ -1681,17 +1681,15 @@ struct game_end_s game_turn_process(struct game_s *g)
             ++num_alive;
         }
     }
-    gopt = (g->xoptions & XOPTION_COUNCIL_MASK);
     if (1
       && (game_num_council_years != 0)
-      && gopt != XOPTION_COUNCIL_OFF
-      && gopt != XOPTION_COUNCIL_OFF
+      && g->opt.council != 3
       && (((g->year % game_num_council_years) == 0) || (!g->election_held))
       && (num_alive > 2)
       && (((g->galaxy_stars * 2) / 3) <= num_colony)
-      && (gopt != XOPTION_COUNCIL_3_4 || (((g->galaxy_stars * 3) / 4) <= num_colony))
+      && (g->opt.council != 1 || (((g->galaxy_stars * 3) / 4) <= num_colony))
       && (g->end == GAME_END_NONE)
-      && (gopt != XOPTION_COUNCIL_ORION || g->evn.have_orion_conquer)
+      && (g->opt.council != 2 || g->evn.have_orion_conquer)
     ) {
         game_election(g);
         g->election_held = true;

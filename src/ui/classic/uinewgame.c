@@ -39,6 +39,7 @@ struct new_game_data_s {
     int frame;
     bool fadein;
     int section;
+    const char *descr;
     int16_t selected;
     player_id_t pi;
     bool have_human;
@@ -325,10 +326,33 @@ static void new_game_draw_extra_cb(void *vptr)
             d->frame = 0;
         }
     } else if (d->section==2) { /* Rules */
+        const uint8_t *popt = d->newopts->popt;
         lbxfont_select(5, 0, 0, 0);
-        lbxfont_print_str_center(160, 4, "Rules Options currently not implemented", UI_SCREEN_W, ui_scale);
-        lbxfont_select(0, 0, 0, 0);
-        for (int i = 0; i < 16; ++i) lbxfont_print_str_normal(50, 163, game_ais[d->newopts->ai_id]->name, UI_SCREEN_W, ui_scale);
+        lbxfont_print_str_center(80, 5, "Rules", UI_SCREEN_W, ui_scale);
+        lbxfont_print_str_center(250, 5, "Events", UI_SCREEN_W, ui_scale);
+        lbxfont_print_str_right(150, 20, "default", UI_SCREEN_W, ui_scale);
+        lbxfont_print_str_right(150, 35, "RBO", UI_SCREEN_W, ui_scale);
+        lbxfont_print_str_right(300, 20, "default", UI_SCREEN_W, ui_scale);
+        lbxfont_print_str_right(300, 35, "good", UI_SCREEN_W, ui_scale);
+        lbxfont_print_str_right(300, 50, "off", UI_SCREEN_W, ui_scale);
+        lbxfont_print_num_right(300, 85, 2300 + d->newopts->evyear, UI_SCREEN_W, ui_scale);
+        lbxfont_select(0, 3, 0, 0);
+        lbxfont_print_str_right(300, 75, "\x2not before\x1", UI_SCREEN_W, ui_scale);
+        for (int i = 0; i < GAMEOPTS; ++i) {
+            char buf[32];
+            lib_sprintf(buf, sizeof(buf), "\x2%s: %s\x1",gameopt_descr[i].name, gameopt_descr[i].opt[popt[i]]);
+            lbxfont_print_str_normal(20, 20 + 8 * i, buf + (popt[i] == gameopt_descr[i].dflt), UI_SCREEN_W, ui_scale);
+        }
+        for (int i = 0; i < 16; ++i) {
+            lbxfont_select(0, d->newopts->evmask & (1 << i) ? 3 : 0, 0, 0);
+            lbxfont_print_str_normal(200, 20 + 8 * i, game_str_tbl_event[i], UI_SCREEN_W, ui_scale);
+        }
+        lbxfont_select(0, 1, 0, 0);
+        if (d->descr) {
+            lbxfont_select(0, 2, 0, 0);
+            lbxfont_set_gap_h(1);
+            lbxfont_print_str_split(20, 156, 285, d->descr, 0, UI_SCREEN_W, UI_SCREEN_H, ui_scale);
+        }
     } else { /* Galaxy */
         lbxfont_select(5, 0, 0, 0);
         lbxfont_print_str_center(160, 4, "Galaxy Options currently not implemented", UI_SCREEN_W, ui_scale);
@@ -338,8 +362,10 @@ static void new_game_draw_extra_cb(void *vptr)
 static bool ui_new_game_extra(struct game_new_options_s *newopts, struct new_game_data_s *d)
 {
     bool flag_done = false, flag_ok = false;
-    int16_t oi_cancel, oi_ok, oi_players, oi_rules, oi_galaxy, oi_ai_id, 
+    int16_t oi_cancel, oi_ok, oi_players, oi_rules, oi_galaxy, oi_ai_id,
+            oi_option[GAMEOPTS], oi_event[16], oi_optdef, oi_rbo, oi_evdef, oi_good, oi_evoff, oi_year,
             oi_race[PLAYER_NUM], oi_banner[PLAYER_NUM], oi_pname[PLAYER_NUM], oi_hname[PLAYER_NUM], oi_ai[PLAYER_NUM];
+    uint8_t *popt = d->newopts->popt;
     d->pi = PLAYER_0;
     d->str_title = 0;
     d->frame = 0;
@@ -347,10 +373,6 @@ static bool ui_new_game_extra(struct game_new_options_s *newopts, struct new_gam
 
     newopts->pdata[PLAYER_0].race = RACE_HUMAN;
     newopts->pdata[PLAYER_0].banner = BANNER_BLUE;
-    /* if no pbx patches have been loaded, default to XOPTION_RULES_FIX */
-    if (!pbx_num_patches) {
-        newopts->rules = 1;
-    }
     d->have_human = true;
     game_new_generate_emperor_name(newopts->pdata[PLAYER_0].race, newopts->pdata[PLAYER_0].playername, EMPEROR_NAME_LEN);
     game_new_generate_home_name(newopts->pdata[PLAYER_0].race, newopts->pdata[PLAYER_0].homename, PLANET_NAME_LEN);
@@ -366,12 +388,24 @@ static bool ui_new_game_extra(struct game_new_options_s *newopts, struct new_gam
     hw_video_copy_back_from_page3();
 
 restart:
+    d->descr = NULL;
     uiobj_table_clear();
     oi_cancel   = uiobj_add_mousearea(  0, 170,  55, 199, MOO_KEY_ESCAPE);
     oi_players  = uiobj_add_mousearea( 65, 170, 115, 199, MOO_KEY_ESCAPE);
     oi_rules    = uiobj_add_mousearea(125, 170, 175, 199, MOO_KEY_ESCAPE);
     oi_galaxy   = uiobj_add_mousearea(185, 170, 235, 199, MOO_KEY_ESCAPE);
     oi_ok       = uiobj_add_mousearea(245, 170, 300, 199, MOO_KEY_SPACE);
+    oi_ai_id = UIOBJI_INVALID;
+    for (int i = 0; i < PLAYER_NUM; ++i) {
+         oi_race[i] = UIOBJI_INVALID;
+         oi_banner[i] = UIOBJI_INVALID;
+         oi_pname[i] = UIOBJI_INVALID;
+         oi_hname[i] = UIOBJI_INVALID;
+         oi_ai[i] = UIOBJI_INVALID;
+    }
+    for (int i = 0; i < GAMEOPTS; ++i) oi_option[i] = UIOBJI_INVALID;
+    for (int i = 0; i < 16; ++i) oi_event[i] = UIOBJI_INVALID;
+    oi_optdef = oi_rbo = oi_evdef = oi_good = oi_evoff = oi_year = UIOBJI_INVALID;
     if (d->section==1) { 
         oi_ai_id    = uiobj_add_mousearea( 45, 160,  90, 170, MOO_KEY_a);
         for (int i = 0; i < newopts->players; ++i) {
@@ -390,7 +424,19 @@ restart:
             oi_hname[i] = UIOBJI_INVALID;
             oi_ai[i] = UIOBJI_INVALID;
         }
-    } else if (d->section==2) { 
+    } else if (d->section==2) {
+        for (int i = 0; i < GAMEOPTS; ++i) {
+            oi_option[i] = uiobj_add_mousearea(30, 19 + 8 * i, 110, 25 + 8 * i, MOO_KEY_UNKNOWN);
+        }
+        for (int i = 0; i < 16; ++i) {
+            oi_event[i] = uiobj_add_mousearea(200, 19 + 8 * i, 260, 25 + 8 * i, MOO_KEY_UNKNOWN);
+        }
+        oi_optdef = uiobj_add_mousearea(120, 20, 150, 30, MOO_KEY_UNKNOWN);
+        oi_rbo    = uiobj_add_mousearea(120, 35, 150, 45, MOO_KEY_UNKNOWN);
+        oi_evdef  = uiobj_add_mousearea(270, 20, 300, 30, MOO_KEY_UNKNOWN);
+        oi_good   = uiobj_add_mousearea(270, 35, 300, 45, MOO_KEY_UNKNOWN);
+        oi_evoff  = uiobj_add_mousearea(270, 50, 300, 60, MOO_KEY_UNKNOWN);
+        oi_year   = uiobj_add_mousearea(270, 75, 300, 95, MOO_KEY_UNKNOWN);
     } else {
     }
 
@@ -399,8 +445,10 @@ restart:
     new_game_draw_extra_cb(d);
 
     while (!flag_done) {
-        int16_t oi;
+        int16_t oi,oi2;
         oi = uiobj_handle_input_cond();
+        oi2 = uiobj_at_cursor();
+
         ui_delay_prepare();
         if ((oi != UIOBJI_ESC) && (oi != UIOBJI_NONE) && (oi != oi_cancel)) {
             ui_sound_play_sfx_24();
@@ -416,14 +464,34 @@ restart:
             }
         } else if (oi == oi_players) {
             d->section = 1;
+            goto restart;
         } else if (oi == oi_rules) {
             d->section = 2;
+            goto restart;
         } else if (oi == oi_galaxy) {
             d->section = 3;
+            goto restart;
         } else if (oi == oi_ai_id) {
             d->newopts->ai_id = (d->newopts->ai_id + 1) % GAME_AI_NUM_VISIBLE;
+        } else if (oi == oi_optdef) {
+            for (int i = 0; i < GAMEOPTS; ++i) popt[i] = gameopt_descr[i].dflt;
+        } else if (oi == oi_rbo) {
+            for (int i = 0; i < GAMEOPTS; ++i) popt[i] = gameopt_descr[i].dflt;
+            d->newopts->opt.retreat = 2;
+        } else if (oi == oi_evdef) {
+            d->newopts->evmask = 0;
+            d->newopts->evyear = 40;
+        } else if (oi == oi_good) {
+            d->newopts->evmask = 0x8eff;
+        } else if (oi == oi_evoff) {
+            d->newopts->evmask = 0xffff;
+        } else if (oi == oi_year) {
+            d->newopts->evyear += 60;
+            d->newopts->evyear -= d->newopts->evyear % 50;
+            if (d->newopts->evyear > 200) d->newopts->evyear = 40;
         }
-        for (int i = 0; i < newopts->players; ++i) {
+
+        for (int i = 0; d->section == 1 && i < newopts->players; ++i) {
             if (oi == oi_race[i]) {
                 race_t old_race, new_race;
                 old_race = newopts->pdata[i].race;
@@ -464,6 +532,22 @@ restart:
                         break;
                     }
                 }
+            }
+        }
+        d->descr = NULL;
+        for (int i = 0; d->section == 2 && i < GAMEOPTS; ++i) {
+            if (oi == oi_option[i]) {
+                popt[i] += 1;
+                if (popt[i] >= gameopt_descr[i].opts) popt[i] = 0;
+            }
+            if (oi2 == oi_option[i]) {
+                d->descr = gameopt_descr[i].descr;
+                break;
+            }
+        }
+        for (int i = 0; d->section == 2 && i < 16; ++i) {
+            if (oi == oi_event[i]) {
+                d->newopts->evmask ^= (1 << i);
             }
         }
         

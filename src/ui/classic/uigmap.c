@@ -252,7 +252,7 @@ static void gmap_draw_cb(void *vptr)
 
     if (ui_extra_enabled && !gmap_yellow_year) {
         char buf[32];
-        lib_sprintf(buf, sizeof(buf), "Year %i", g->year+2299);
+        lib_sprintf(buf, sizeof(buf), "Year %i", g->year + YEAR_BASE);
         lbxfont_select(0, 6, 0, 0);
         lbxfont_set_color_c_n(0, 5);
         lbxfont_print_str_normal(9, 9, buf, UI_SCREEN_W, ui_scale);
