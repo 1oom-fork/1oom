@@ -130,7 +130,7 @@ struct battle_s {
     uint16_t num_turn;
     bool have_subspace_int;
     uint8_t antidote;
-    struct battle_item_s item[BATTLE_ITEM_MAX];
+    struct battle_item_s item[BATTLE_ITEM_MAX]; /* order: planet (0), left items, right items */
     uint8_t prio_i;
     int16_t priority[BATTLE_ITEM_MAX];
     uint8_t num_rocks;

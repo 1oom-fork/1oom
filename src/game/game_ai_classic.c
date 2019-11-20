@@ -2351,12 +2351,12 @@ static int game_ai_battle_dmgmax(struct battle_s *bt, int itemi)
     return v;
 }
 
-static int game_ai_battle_dmggive(struct battle_s *bt, int itemi1, int itemi2, int a2)
+static int game_ai_battle_dmggive(struct battle_s *bt, int itemi1, int itemi2, int ignore_range)
 {
     struct battle_item_s *b = &(bt->item[itemi1]);
     /*si*/struct battle_item_s *bd = &(bt->item[itemi2]);
     int v = 0, num_weap = (itemi1 == 0/*planet*/) ? 1 : 4, miss_chance_beam, miss_chance_missile, dist, damagediv = 1, dmg;
-    if ((bd->stasisby > 0) && ((a2 == 0) || (a2 == 2))) {
+    if ((bd->stasisby > 0) && ((ignore_range == 0) || (ignore_range == 2))) {
         return 0;
     }
     miss_chance_beam = 50 - (b->complevel - bd->defense) * 10;
@@ -2397,8 +2397,8 @@ static int game_ai_battle_dmggive(struct battle_s *bt, int itemi1, int itemi2, i
         if (1
           && ((!w->is_bomb) || (itemi2 == 0/*planet*/))
           && (b->wpn[i].numshots != 0)
-          && (((w->range + range) >= dist) || (a2 > 0))
-          && ((b->wpn[i].numfire > 0) || (a2 > 0))
+          && (((w->range + range) >= dist) || (ignore_range > 0))
+          && ((b->wpn[i].numfire > 0) || (ignore_range > 0))
         ) {
             if (w->damagemin == w->damagemax) {
                 /*584de*/
@@ -2450,7 +2450,7 @@ static int game_ai_battle_dmggive(struct battle_s *bt, int itemi1, int itemi2, i
             if (dmg <= 0) {
                 dmg = ((w->damagemax / damagediv) > (bd->absorb / absorbdiv));
             }
-            if (a2 > 0) {
+            if (ignore_range > 0) {
                 v += b->wpn[i].n * dmg * w->numfire;
             } else {
                 /*5882d*/
@@ -2459,34 +2459,34 @@ static int game_ai_battle_dmggive(struct battle_s *bt, int itemi1, int itemi2, i
             /*58873*/
         }
     }
-    if ((b->warpdis == 1) && ((dist <= 3) || (a2 > 0)) && (itemi2 != 0/*planet*/) && (bd->unman < bd->man)) {
+    if ((b->warpdis == 1) && ((dist <= 3) || (ignore_range > 0)) && (itemi2 != 0/*planet*/) && (bd->unman < bd->man)) {
         v += 100;
     }
-    if ((b->blackhole == 1) && ((dist <= 1) || (a2 > 0))) {
+    if ((b->blackhole == 1) && ((dist <= 1) || (ignore_range > 0))) {
         v += 1000;
     }
-    if ((b->technull == 1) && ((dist <= 4) || (a2 > 0))) {
+    if ((b->technull == 1) && ((dist <= 4) || (ignore_range > 0))) {
         v += 500;
     }
-    if ((b->pulsar == 1) && (bt->special_button == 1) && ((dist <= 1) || (a2 > 0))) {
+    if ((b->pulsar == 1) && (bt->special_button == 1) && ((dist <= 1) || (ignore_range > 0))) {
         dmg = (5 - bd->absorb) * bd->num; /* FIXME BUG? should be b->num ? */
         if (dmg > 0) {
             v += dmg;
         }
     }
-    if ((b->pulsar == 2) && (bt->special_button == 1) && ((dist <= 1) || (a2 > 0))) {
+    if ((b->pulsar == 2) && (bt->special_button == 1) && ((dist <= 1) || (ignore_range > 0))) {
         dmg = (14 - bd->absorb) * bd->num; /* FIXME BUG? should be b->num ? */
         if (dmg > 0) {
             v += dmg;
         }
     }
-    if ((b->stream == 1) && ((dist <= 2) || (a2 > 0))) {
+    if ((b->stream == 1) && ((dist <= 2) || (ignore_range > 0))) {
         dmg = ((bd->hp1 * ((b->num / 2) + 20)) / 100) * bd->num;
         if (dmg > 0) {
             v += dmg;
         }
     }
-    if ((b->stream == 2) && ((dist <= 2) || (a2 > 0))) {
+    if ((b->stream == 2) && ((dist <= 2) || (ignore_range > 0))) {
         dmg = ((bd->hp1 * (b->num + 40)) / 100) * bd->num;
         if (dmg > 0) {
             v += dmg;
@@ -2495,7 +2495,7 @@ static int game_ai_battle_dmggive(struct battle_s *bt, int itemi1, int itemi2, i
     return v;
 }
 
-static int game_ai_battle_rival(struct battle_s *bt, int itemi, int a2)
+static int game_ai_battle_rival(struct battle_s *bt, int itemi, int ignore_range)
 {
     /*di*/struct battle_item_s *b = &(bt->item[itemi]);
     int rival = -1, maxw = 0;
@@ -2505,13 +2505,13 @@ static int game_ai_battle_rival(struct battle_s *bt, int itemi, int a2)
             int dmgmissile, dmgmax, w, dmgmany, dmggive, repair;
             dmgmissile = game_ai_battle_incoming_missiles_dmg(bt, i);
             dmgmax = game_ai_battle_dmgmax(bt, i);
-            dmggive = game_ai_battle_dmggive(bt, itemi, i, a2);
+            dmggive = game_ai_battle_dmggive(bt, itemi, i, ignore_range);
             repair = (b2->repair * b2->hp2) / 100;
             if (itemi == 0/*planet*/) {
                 int dmgother;
                 weapon_t t;
                 t = b->wpn[0].t; b->wpn[0].t = b->wpn[1].t; b->wpn[1].t = t;
-                dmgother = game_ai_battle_dmggive(bt, itemi, i, a2);
+                dmgother = game_ai_battle_dmggive(bt, itemi, i, ignore_range);
                 if (dmgother > dmggive) {
                     dmggive = dmgother;
                 } else {
@@ -2634,7 +2634,7 @@ static int game_battle_stasis_target(struct battle_s *bt)
     return target_i;
 }
 
-static int game_battle_ai_missile_evade(const struct battle_s *bt)
+static int game_battle_ai_missile_to_evade(const struct battle_s *bt)
 {
     int itemi = bt->cur_item;
     const struct battle_item_s *b = &(bt->item[itemi]);
@@ -2834,7 +2834,7 @@ static int eval_pos_for_pulsar_use(struct battle_s *bt, int sx, int sy)
     return weight;
 }
 
-static int game_battle_ai_target1_sub3(struct battle_s *bt, int sx, int sy, int target_i, int bestrange)
+static int game_battle_ai_eval_fire_position(struct battle_s *bt, int sx, int sy, int target_i, int bestrange)
 {
     int itemi = bt->cur_item;
     const struct battle_item_s *b = &(bt->item[itemi]);
@@ -2859,7 +2859,7 @@ static int game_battle_ai_target1_sub3(struct battle_s *bt, int sx, int sy, int 
     return si;
 }
 
-static void game_battle_ai_target1_sub4(struct battle_s *bt)
+static void game_battle_ai_disengage(struct battle_s *bt)
 {
     int itemi = bt->cur_item;
     struct battle_item_s *b = &(bt->item[itemi]);
@@ -2940,7 +2940,7 @@ static void game_battle_ai_target1_sub4(struct battle_s *bt)
     }
 }
 
-static void game_battle_ai_target1_sub5(struct battle_s *bt)
+static void game_battle_ai_evade_missiles(struct battle_s *bt)
 {
     int itemi = bt->cur_item;
     struct battle_item_s *b = &(bt->item[itemi]);
@@ -3025,7 +3025,7 @@ static int game_battle_ai_target1(struct battle_s *bt, int target_i)
     int bestrange;
     bestrange = game_battle_ai_best_range(bt, target_i);
     if ((b->actman > 0) || (b->subspace == 1)) {
-        if ((target_i != -1) && (game_battle_ai_missile_evade(bt) == 0)) {
+        if ((target_i != -1) && (game_battle_ai_missile_to_evade(bt) == 0)) {
             int vmax = -999, n = 1, i;
             uint8_t tblxy[20];
             for (int sy = 0; sy < BATTLE_AREA_H; ++sy) {
@@ -3033,7 +3033,7 @@ static int game_battle_ai_target1(struct battle_s *bt, int target_i)
                     if ((bt->area[sy][sx] == 1) || ((b->sx == sx) && (b->sy == sy))) {
                         int v;
                         /*5a3dc*/
-                        v = game_battle_ai_target1_sub3(bt, sx, sy, target_i, bestrange);
+                        v = game_battle_ai_eval_fire_position(bt, sx, sy, target_i, bestrange);
                         if (v > vmax) {
                             n = 1;
                             tblxy[0] = BATTLE_XY_SET(sx, sy);
@@ -3051,10 +3051,10 @@ static int game_battle_ai_target1(struct battle_s *bt, int target_i)
             }
         } else if (target_i == -1) {
             /*5a494*/
-            game_battle_ai_target1_sub4(bt);
+            game_battle_ai_disengage(bt);
         } else {
             /*5a4a0*/
-            game_battle_ai_target1_sub5(bt);
+            game_battle_ai_evade_missiles(bt);
         }
     }
     return bestrange;
@@ -3171,12 +3171,14 @@ static void game_ai_classic_battle_ai_turn(struct battle_s *bt)
 
 /* -------------------------------------------------------------------------- */
 
+/* decides whether SIDE_R played by the AI retreats at the beginning of a battle turn */
+
 static bool game_ai_classic_battle_ai_retreat(struct battle_s *bt)
 {
     int missile[BATTLE_ITEM_MAX];
     uint32_t repair[BATTLE_ITEM_MAX];
-    int64_t dmg[2] = { 0, 0 };
-    uint32_t hp[2] = { 0, 0 };
+    int64_t dmg[2] = { 0, 0 };  /* prospective damage sustained by side */
+    uint32_t hp[2] = { 0, 0 };  /* HPs of combatants of side */
     for (int i = 0; i < BATTLE_ITEM_MAX; ++i) {
         const struct battle_item_s *b = &(bt->item[i]);
         missile[i] = 0;
@@ -3195,7 +3197,7 @@ static bool game_ai_classic_battle_ai_retreat(struct battle_s *bt)
     }
     for (int i = 1; i <= bt->items_num; ++i) {
         int j, s;
-        s = (i <= bt->s[SIDE_L].items) ? SIDE_R : SIDE_L;
+        s = (i <= bt->s[SIDE_L].items) ? SIDE_R : SIDE_L; /* NOT the side of i but of target j */
         j = game_ai_battle_rival(bt, i, 1);
         if (j >= 0) {
             const struct battle_item_s *b;
@@ -3245,7 +3247,7 @@ static bool game_ai_classic_battle_ai_retreat(struct battle_s *bt)
         v += rnd_1_n(15, &bt->g->seed);
         if (bt->g->ai_id == GAME_AI_CLASSICPLUS) {
             w[SIDE_R] = (dmg[SIDE_R] * 100) / hp[SIDE_R];
-            w[SIDE_L] = (dmg[SIDE_L] * 100 * v) / hp[SIDE_L];
+            w[SIDE_L] = (dmg[SIDE_L] * 100 * v) / hp[SIDE_L]; /* BUG? (100 + v) makes more sense */
         } else { /* WASBUG MOO1 uses 32b vars which can overflow on extreme cases */
             w[SIDE_R] = (int32_t)((((int32_t)dmg[SIDE_R]) * 100) / hp[SIDE_R]);
             w[SIDE_L] = (int32_t)((((int32_t)dmg[SIDE_L]) * 100 * v) / hp[SIDE_L]);
