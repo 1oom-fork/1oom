@@ -2634,18 +2634,23 @@ static int game_battle_stasis_target(struct battle_s *bt)
     return target_i;
 }
 
-static int game_battle_ai_missile_to_evade(const struct battle_s *bt)
+static int game_battle_ai_missile_to_evade(const struct battle_s *bt, int target_i)
 {
     int itemi = bt->cur_item;
     const struct battle_item_s *b = &(bt->item[itemi]);
-    int evade = 0;
-    if (b->unman == b->man) {
-        return 0;
+    int evade = 0, dmgthres = 0;
+    bool yoyofix = (bt->g->opt.fix_bait_yoyo & 2);
+
+    if (b->unman == b->man) return 0;
+    if (yoyofix && bt->item[0].num > 0 && bt->item[0].side + b->side == 1 && target_i >= 0) {
+        dmgthres = game_ai_battle_dmggive(bt, 0, itemi, 1);
+        if (target_i == 0) dmgthres *= 2;
     }
     for (int i = 0; (i < bt->num_missile) && (evade <= 1); ++i) {
         const struct battle_missile_s *m = &(bt->missile[i]);
         if (m->target == itemi) {
             int roomx, dangerdist, movex, dist, sx;
+            if (yoyofix && game_ai_battle_missile_dmg(bt, i) <= dmgthres) continue;
             sx = m->x / 32;
             if (b->subspace == 1) {
                 roomx = 9 - sx;
@@ -3025,7 +3030,7 @@ static int game_battle_ai_target1(struct battle_s *bt, int target_i)
     int bestrange;
     bestrange = game_battle_ai_best_range(bt, target_i);
     if ((b->actman > 0) || (b->subspace == 1)) {
-        if ((target_i != -1) && (game_battle_ai_missile_to_evade(bt) == 0)) {
+        if ((target_i != -1) && (game_battle_ai_missile_to_evade(bt, target_i) == 0)) {
             int vmax = -999, n = 1, i;
             uint8_t tblxy[20];
             for (int sy = 0; sy < BATTLE_AREA_H; ++sy) {
@@ -3179,6 +3184,13 @@ static bool game_ai_classic_battle_ai_retreat(struct battle_s *bt)
     uint32_t repair[BATTLE_ITEM_MAX];
     int64_t dmg[2] = { 0, 0 };  /* prospective damage sustained by side */
     uint32_t hp[2] = { 0, 0 };  /* HPs of combatants of side */
+    if ((bt->g->opt.fix_bait_yoyo & 1) && bt->item[0].num > 0 && bt->item[0].side == SIDE_L) {
+        for (int i = bt->s[SIDE_L].items + 1; i <= bt->items_num; ++i) {
+            if (game_ai_battle_dmggive(bt, i, 0, 1)) goto consider_attack;
+        }
+        return true;
+    }
+consider_attack:
     for (int i = 0; i < BATTLE_ITEM_MAX; ++i) {
         const struct battle_item_s *b = &(bt->item[i]);
         missile[i] = 0;

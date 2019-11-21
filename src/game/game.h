@@ -15,10 +15,11 @@ typedef struct gameopts_s {
     uint8_t guardian;
     uint8_t retreat;
     uint8_t spec_war;
+    uint8_t fix_bait_yoyo;
 } gameopts_t;
 
 #define GAMEOPTS sizeof(gameopts_t)
-#define GAMEOPTS_DEFAULTS { 0, 1, 0, 0, 0, 0 }
+#define GAMEOPTS_DEFAULTS { 0, 1, 0, 0, 0, 0, 0 }
 #define MAXOPTS 9
 
 typedef struct gameoptdescr_s {

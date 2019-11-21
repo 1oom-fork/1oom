@@ -355,7 +355,10 @@ gameoptdescr_t gameopt_descr[GAMEOPTS] = {
     "Retreating fleets: may stay in the system (default), flee (have to retreat to next friendly planet), rearm (flee if having spent ammo)"
   },
   { 3, 0, "Spec Wars", { "allowed", "declare", "war only" },
-    "Asking for a Declaration of War on another Race is allowed (default), declares war if accepted or is only allowed when already at war with the target."
+    "Asking for a Declaration of War on another Race is allowed (default), declares war if accepted or is banned unless already at war with target."
+  },
+  { 4, 0, "AI", { "battle exploits", "no baiting", "no yoyo", "no bait/yoyo" },
+    "No baiting lets AI retreat if bases are untouchable. No yoyo will not evade ship missiles if stronger bases are present."
   }
 };
 

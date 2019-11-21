@@ -478,7 +478,8 @@ restart:
         } else if (oi == oi_rbo) {
             for (int i = 0; i < GAMEOPTS; ++i) popt[i] = gameopt_descr[i].dflt;
             d->newopts->opt.retreat = 2;
-            d->newopts->opt.spec_war = 2;
+            d->newopts->opt.spec_war = 1;
+            d->newopts->opt.fix_bait_yoyo = 3;
         } else if (oi == oi_evdef) {
             d->newopts->evmask = 0;
             d->newopts->evyear = 40;
