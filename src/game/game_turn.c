@@ -732,6 +732,10 @@ static void game_turn_move_ships(struct game_s *g)
         game_update_visibility(g);
         flag_more = true;
         ui_gmap_basic_start_player(ctx, g->active_player);
+        BOOLVEC_DECLARE(fleet_stopped, FLEET_ENROUTE_MAX);
+        BOOLVEC_CLEAR(fleet_stopped, FLEET_ENROUTE_MAX);
+        BOOLVEC_DECLARE(trans_stopped, TRANSPORT_MAX);
+        BOOLVEC_CLEAR(trans_stopped, TRANSPORT_MAX);
         for (int frame = 0; (frame < 20) && flag_more; ++frame) {
             bool odd_frame;
             game_update_visibility(g);
@@ -740,13 +744,13 @@ static void game_turn_move_ships(struct game_s *g)
             flag_more = false;
             for (int i = 0; i < g->enroute_num; ++i) {
                 fleet_enroute_t *r = &(g->enroute[i]);
-                if ((r->speed * 2) > frame) {
+                if ((r->speed * 2) > frame && BOOLVEC_IS0(fleet_stopped, i)) {
                     bool in_nebula;
                     int x, y;
                     x = r->x;
                     y = r->y;
-                    in_nebula = (odd_frame || (frame == 0)) ? false : game_xy_is_in_nebula(g, x, y);
-                    if (odd_frame || (frame == 0) || (!in_nebula)) {
+                    in_nebula = g->opt.nebula_speed == 0 && !odd_frame && frame != 0 && game_xy_is_in_nebula(g, x, y);
+                    if (odd_frame || frame == 0 || !in_nebula) {
                         int x1, y1;
                         const planet_t *p;
                         p = &(g->planet[r->dest]);
@@ -764,17 +768,20 @@ static void game_turn_move_ships(struct game_s *g)
                     } else if (in_nebula) {
                         flag_more = true;   /* WASBUG MOO1 stopped nebula movement early if no transports or faster ships enroute */
                     }
+                    if (g->opt.nebula_speed == 1 && odd_frame ||  g->opt.nebula_speed == 2) {
+                        if (game_xy_is_in_nebula(g, x, y)) BOOLVEC_SET1(fleet_stopped, i);
+                    }
                 }
             }
             for (int i = 0; i < g->transport_num; ++i) {
                 transport_t *r = &(g->transport[i]);
-                if ((r->speed * 2) > frame) {
+                if ((r->speed * 2) > frame && BOOLVEC_IS0(trans_stopped, i)) {
                     bool in_nebula;
                     int x, y;
                     x = r->x;
                     y = r->y;
-                    in_nebula = (!odd_frame) ? false : game_xy_is_in_nebula(g, x, y);
-                    if ((!odd_frame) || (!in_nebula)) {
+                    in_nebula = g->opt.nebula_speed == 0 && odd_frame && game_xy_is_in_nebula(g, x, y);
+                    if (!odd_frame || !in_nebula) {
                         int x1, y1;
                         const planet_t *p;
                         p = &(g->planet[r->dest]);
@@ -791,6 +798,9 @@ static void game_turn_move_ships(struct game_s *g)
                         r->y = y;
                     } else if (in_nebula) {
                         flag_more = true;   /* WASBUG MOO1 stopped nebula movement early if no fleets or faster ships enroute */
+                    }
+                    if (g->opt.nebula_speed == 1 && odd_frame ||  g->opt.nebula_speed == 2) {
+                        if (game_xy_is_in_nebula(g, x, y)) BOOLVEC_SET1(trans_stopped, i);
                     }
                 }
             }

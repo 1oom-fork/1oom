@@ -359,6 +359,9 @@ gameoptdescr_t gameopt_descr[GAMEOPTS] = {
   },
   { 4, 0, "AI", { "battle exploits", "no baiting", "no yoyo", "no bait/yoyo" },
     "No baiting lets AI retreat if bases are untouchable. No yoyo will not evade ship missiles if stronger bases are present."
+  },
+  { 4, 0, "Nebula speed", { "half", "warp 1", "step", "full" },
+    "Set nebula speed to half (default) like in MOO v1.3, to warp 1 as claimed in the OSG, to a single 1/2 parsec step or to full speed."
   }
 };
 

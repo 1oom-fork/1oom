@@ -715,6 +715,8 @@ bool game_xy_is_in_nebula(const struct game_s *g, int x, int y)
 int game_calc_eta_ship(const struct game_s *g, int speed, int x0, int y0, int x1, int y1)
 {
     int x, y, num = 0;
+    bool check_first = g->opt.nebula_speed == 2;
+    bool check_second = g->opt.nebula_speed == 1 || g->opt.nebula_speed == 2;
     x = x0;
     y = y0;
     while ((x != x1) || (y != y1)) {
@@ -724,10 +726,12 @@ int game_calc_eta_ship(const struct game_s *g, int speed, int x0, int y0, int x1
         first = true;
         do {
             /* Inside nebulas, ships move on frame 0 and then on every odd frame. */
-            if (first || (!game_xy_is_in_nebula(g, x, y))) {
+            if (g->opt.nebula_speed != 0 || first || !game_xy_is_in_nebula(g, x, y)) {
                 util_math_go_line_dist(&x, &y, x1, y1, 5);
             }
+            if (check_first && game_xy_is_in_nebula(g, x, y)) break;
             util_math_go_line_dist(&x, &y, x1, y1, 6);
+            if (check_second && game_xy_is_in_nebula(g, x, y)) break;
             first = false;
             --v;
         } while (v > 0);
@@ -739,14 +743,18 @@ int game_calc_eta_ship(const struct game_s *g, int speed, int x0, int y0, int x1
 int game_calc_eta_trans(const struct game_s *g, int speed, int x0, int y0, int x1, int y1)
 {
     int x = x0, y = y0, num = 0;
+    bool check_first = g->opt.nebula_speed == 2;
+    bool check_second = g->opt.nebula_speed == 1 || g->opt.nebula_speed == 2;
     while ((x != x1) || (y != y1)) {
         int v = speed;
         do {
             /* Inside nebulas, transports move on every even frame. */
             util_math_go_line_dist(&x, &y, x1, y1, 5);
-            if (!game_xy_is_in_nebula(g, x, y)) {
+            if (check_first && game_xy_is_in_nebula(g, x, y)) break;
+            if (g->opt.nebula_speed != 0 || !game_xy_is_in_nebula(g, x, y)) {
                 util_math_go_line_dist(&x, &y, x1, y1, 6);
             }
+            if (check_second && game_xy_is_in_nebula(g, x, y)) break;
             --v;
         } while (v > 0);
         ++num;
