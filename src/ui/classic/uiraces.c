@@ -178,6 +178,10 @@ static void races_draw_cb(void *vptr)
         {
             const char *str;
             str = game_str_tbl_ra_treaty[e->treaty[pi]];
+            if (g->opt.enforce_nap == 3 && !e->treaty[pi] && g->evn.ceasefire[d->api][pi] > 0) {
+                lib_sprintf(buf, sizeof(buf), "%d Year Truce", g->evn.ceasefire[d->api][pi]);
+                str = buf;
+            }
             ui_draw_filled_rect(x + 57, y + 8, x + 157, y + 22, 0x5b, ui_scale);
             lbxfont_select(0, 6, 0, 0);
             lbxfont_print_str_normal(x + 61, y + 10, str, UI_SCREEN_W, ui_scale);

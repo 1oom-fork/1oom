@@ -362,6 +362,9 @@ gameoptdescr_t gameopt_descr[GAMEOPTS] = {
   },
   { 4, 0, "Nebula speed", { "half", "warp 1", "step", "full" },
     "Set nebula speed to half (default) like in MOO v1.3, to warp 1 as claimed in the OSG, to a single 1/2 parsec step or to full speed."
+  },
+  { 4, 0, "Enforce NAP: ", { "no", "ships", "trans", "truce" },
+    "Non-Aggression Pact enforcement: none (default), return ships, return ships and transports, also show and enforce truces for AI and Player."
   }
 };
 

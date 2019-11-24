@@ -108,7 +108,7 @@ static void game_battle_item_add(struct battle_s *bt, const shipparsed_t *sp, ba
     }
 }
 
-static void game_battle_post(struct game_s *g, int loser, int winner, uint8_t from, bool loser_spent_ammo)
+static void game_battle_post(struct game_s *g, int loser, int winner, uint8_t from, bool retreat)
 {
     if (loser >= PLAYER_NUM) {
         monster_id_t mi;
@@ -152,10 +152,10 @@ static void game_battle_post(struct game_s *g, int loser, int winner, uint8_t fr
             }
         }
         if ((dest != PLANET_NONE) /*&& (numtypes > 0)*/) {
-            if (g->opt.retreat == 2 && !loser_spent_ammo) {
-                game_send_fleet_from_orbit(g, loser, from, dest, ships, shiptypes, numtypes);
-            } else {
+            if (retreat) {
                 game_send_fleet_retreat(g, loser, from, dest, ships, shiptypes, numtypes);
+            } else {
+                game_send_fleet_from_orbit(g, loser, from, dest, ships, shiptypes, numtypes);
             }
         }
         for (int i = 0; i < NUM_SHIPDESIGNS; ++i) {
@@ -371,6 +371,9 @@ void game_battle_handle_all(struct game_s *g)
                 /* TODO BUG? the scenario of owner dying to attacker and an alliance partner not doing anything
                    afterwards on the same turn could be fixed */
                 BOOLVEC_SET0(tbl_have_force, party_att);
+            } else if (g->opt.enforce_nap > 0 && party_att < PLAYER_NUM && e->treaty[party_att] == TREATY_NONAGGRESSION) {
+                BOOLVEC_SET0(tbl_have_force, party_att);
+                game_battle_post(g, party_att, party_def, pli, 0);
             } else {
                 if ((!PARTY_IS_HUMAN(g, party_def)) && (!PARTY_IS_HUMAN(g, party_att))) {
                     /* AI vs. AI (or monster) */
@@ -381,14 +384,14 @@ void game_battle_handle_all(struct game_s *g)
                     }
                     /* _def won */
                     BOOLVEC_SET0(tbl_have_force, party_att);
-                    game_battle_post(g, party_att, party_def, pli, bt->loser_spent_ammo);
+                    game_battle_post(g, party_att, party_def, pli, g->opt.retreat != 2 || bt->loser_spent_ammo);
                 } else {
                     /* human player involved */
                     /*11926*/
                     /* BUG? first check not in MOO1, reads past table if monster */
-                    if ((party_att < PLAYER_NUM) && IS_AI(g, party_att) && (g->evn.ceasefire[party_def][party_att] > 0)) {
+                    if ((party_att < PLAYER_NUM) && (IS_AI(g, party_att) || g->opt.enforce_nap == 3) && (g->evn.ceasefire[party_def][party_att] > 0)) {
                         BOOLVEC_SET0(tbl_have_force, party_att);
-                        game_battle_post(g, party_att, party_def, pli, 0);
+                        game_battle_post(g, party_att, party_def, pli, g->opt.retreat != 2);
                     } else {
                         /*1195f*/
                         int party_l, party_r;
@@ -408,7 +411,7 @@ void game_battle_handle_all(struct game_s *g)
                         }
                         /* _l won */
                         BOOLVEC_SET0(tbl_have_force, party_r);
-                        game_battle_post(g, party_r, party_l, pli, bt->loser_spent_ammo);
+                        game_battle_post(g, party_r, party_l, pli, g->opt.retreat != 2 || bt->loser_spent_ammo);
                         /*v14 = 1;*/
                     }
                 }

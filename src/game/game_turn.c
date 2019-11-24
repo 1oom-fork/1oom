@@ -1078,8 +1078,30 @@ static void game_turn_transport(struct game_s *g)
         p = &(g->planet[dest]);
         if ((r->x == p->x) && (r->y == p->y)) {
             int pop2, pop3;
-            player_id_t owner;
-            owner = r->owner;
+            player_id_t owner = r->owner;
+            treaty_t t = p->owner < g->players ? g->eto[owner].treaty[p->owner] : TREATY_NONE;
+            if (1
+              && g->opt.enforce_nap >= 2
+              && p->owner < g->players
+              && p->owner != owner
+              && (t == TREATY_NONAGGRESSION || t == TREATY_ALLIANCE || g->opt.enforce_nap == 3 && g->evn.ceasefire[owner][p->owner])
+            ) {
+                int mindist = 10000;
+                dest = PLANET_NONE;
+                for (int i = 0; i < g->galaxy_stars; ++i) {
+                    const planet_t *pt = &g->planet[i];
+                    if (pt->owner != owner) continue;
+                    int d = util_math_dist_fast(r->x, r->y, pt->x, pt->y);
+                    if (d < mindist) {
+                        mindist = d;
+                        dest = i;
+                    }
+                }
+                if (dest != PLANET_NONE) {
+                    r->dest = dest;
+                    continue;
+                }
+            }
             pop2 = pop3 = r->pop;
             for (int j = 0; j < g->players; ++j) {
                 treaty_t t;
