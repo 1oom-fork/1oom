@@ -678,6 +678,11 @@ int lbxfont_print_str_normal(int x, int y, const char *str, uint16_t pitch, int 
     return lbxfont_print_str_normal_do(x, y, str, 0, 0, pitch, scale);
 }
 
+int lbxfont_print_str_noborder(int x, int y, const char *str, uint16_t pitch, int scale)
+{
+    return lbxfont_print_str_do(x, y, str, true, 0, 0, pitch, scale);
+}
+
 int lbxfont_print_str_center(int x, int y, const char *str, uint16_t pitch, int scale)
 {
     int w = lbxfont_calc_str_width(str);

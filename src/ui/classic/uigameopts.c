@@ -115,17 +115,32 @@ static void gameopts_slider_cb(void *ctx, uint8_t slideri, int16_t value)
     }
 }
 
+static void gameopts_draw_title(int x, int y, const char *str)
+{
+    static const uint8_t font_col_tab[16] = { 57, 54, 51, 48, 45, 43, 42, 46, 52, 0, 0, 0,  0, 0, 0, 0 };
+    lbxfont_select_set_12_4(4, 0, 0, 0);
+    lbxfont_set_color_c_n(32, 9);
+    lbxfont_print_str_noborder(x + 1, y + 1, str, UI_SCREEN_W, ui_scale);
+    lbxfont_set_colors(font_col_tab);
+    lbxfont_print_str_noborder(x, y, str, UI_SCREEN_W, ui_scale);
+}
+
 static void gameopts_draw_cb(void *vptr)
 {
     struct gameopts_data_s *d = vptr;
     const struct game_s *g = d->g;
+    char buf[64];
     ui_draw_erase_buf();
     lbxgfx_draw_frame(0, 0, d->gfx_game, UI_SCREEN_W, ui_scale);
+    ui_draw_filled_rect(203, 50, 292, 127, 0x00, ui_scale);
+    ui_draw_filled_rect(130, 35, 170, 48, 0x1e, ui_scale); /* hide "Game" */
+    ui_draw_filled_rect(213, 35, 278, 48, 0x1e, ui_scale); /* hide "Sound" */
+    gameopts_draw_title(10, 37, "Rules");
+    gameopts_draw_title(140, 37, "Game");
+    gameopts_draw_title(226, 37, "Options");
     if (d->num_newopts) {
         const struct gameopts_new_s *o = d->newopts;
         int x = 203, y = 51;
-        ui_draw_filled_rect(203, 50, 292, 127, 0x00, ui_scale);
-        ui_draw_filled_rect(213, 35, 278, 48, 0x1e, ui_scale); /* hide "Sound" */
         lbxfont_select(0, 1, 0, 0);
         for (int i = 0; i < d->num_newopts; ++i) {
             const struct uiopt_s *u;
@@ -179,24 +194,23 @@ static void gameopts_draw_cb(void *vptr)
     }
 
     lbxfont_select(0, 1, 0, 0);
-    {
-        char buf[64];
-        lib_sprintf(buf, sizeof(buf), "Year %i", g->year + YEAR_BASE);
-        lbxfont_print_str_normal(10, 160, buf, UI_SCREEN_W, ui_scale);
-        lib_sprintf(buf, sizeof(buf), "Level %s", game_str_tbl_diffic[g->difficulty]);
-        lbxfont_print_str_normal(10, 168, buf, UI_SCREEN_W, ui_scale);
-        lib_sprintf(buf, sizeof(buf), "%s Galaxy, %d stars", game_str_tbl_gsize[g->galaxy_size],g->galaxy_stars);
-        lbxfont_print_str_normal(10, 176, buf, UI_SCREEN_W, ui_scale);
-        lib_sprintf(buf, sizeof(buf), "%d Events after %d", d->open_events,g->evn.year + YEAR_BASE);
-        lbxfont_print_str_normal(10, 184, buf, UI_SCREEN_W, ui_scale);
-    }
+    lbxfont_set_color_c_n(241, 4);
+    lib_sprintf(buf, sizeof(buf), "Year %i", g->year + YEAR_BASE);
+    lbxfont_print_str_normal(10, 160, buf, UI_SCREEN_W, ui_scale);
+    lib_sprintf(buf, sizeof(buf), "Level %s", game_str_tbl_diffic[g->difficulty]);
+    lbxfont_print_str_normal(10, 168, buf, UI_SCREEN_W, ui_scale);
+    lib_sprintf(buf, sizeof(buf), "%s Galaxy, %d stars", game_str_tbl_gsize[g->galaxy_size],g->galaxy_stars);
+    lbxfont_print_str_normal(10, 176, buf, UI_SCREEN_W, ui_scale);
+    lib_sprintf(buf, sizeof(buf), "%d Events after %d", d->open_events,g->evn.year + YEAR_BASE);
+    lbxfont_print_str_normal(10, 184, buf, UI_SCREEN_W, ui_scale);
+    lbxfont_select(0, 3, 0, 0);
     for (int i = 0; i < GAMEOPTS; ++i) {
-        char buf[32];
-        lib_sprintf(buf, sizeof(buf), "\x2%s: %s\x1",gameopt_descr[i].name, gameopt_descr[i].opt[g->popt[i]]);
-        lbxfont_print_str_normal(10, 56 + 8 * i, buf + (g->popt[i] == gameopt_descr[i].dflt), UI_SCREEN_W, ui_scale);
+        lbxfont_set_color_c_n(g->popt[i] == gameopt_descr[i].dflt ? 241 : 3, 4);
+        lib_sprintf(buf, sizeof(buf), "%s: %s",gameopt_descr[i].name, gameopt_descr[i].opt[g->popt[i]]);
+        lbxfont_print_str_normal(10, 56 + 8 * i, buf, UI_SCREEN_W, ui_scale);
     }
     if (d->descr) {
-        lbxfont_select(0, 2, 0, 0);
+        lbxfont_select(0, 0, 0, 0);
         lbxfont_set_gap_h(1);
         lbxfont_print_str_split(10, 10, 300, d->descr, 0, UI_SCREEN_W, UI_SCREEN_H, ui_scale);
     }

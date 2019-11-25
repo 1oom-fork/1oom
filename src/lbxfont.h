@@ -34,6 +34,7 @@ extern int lbxfont_calc_str_width(const char *str);
 extern int lbxfont_calc_split_str_h(int maxw, const char *str);
 
 extern int lbxfont_print_str_normal(int x, int y, const char *str, uint16_t pitch, int scale);
+extern int lbxfont_print_str_noborder(int x, int y, const char *str, uint16_t pitch, int scale);
 extern int lbxfont_print_str_center(int x, int y, const char *str, uint16_t pitch, int scale);
 extern int lbxfont_print_str_right(int x, int y, const char *str, uint16_t pitch, int scale);
 extern void lbxfont_print_str_split(int x, int y, int maxw, const char *str, int type, uint16_t pitch, uint16_t maxy, int scale);
