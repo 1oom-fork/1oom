@@ -547,7 +547,11 @@ do_accept:
             ui_starmap_fill_oi_tbls(&d);
             ui_starmap_fill_oi_tbl_stars(&d);
             oi_cancel = uiobj_add_t0(227, 180, "", ui_data.gfx.starmap.reloc_bu_cancel, MOO_KEY_ESCAPE);
-            if (d.oo.in_frange && d.oo.shiptypenon0numsel) {
+            if (1
+              && d.oo.in_frange 
+              && d.oo.shiptypenon0numsel
+              && game_fleet_dest_ok(g, &g->planet[g->planet_focus_i[active_player]], active_player)
+            ) {
                 oi_accept = uiobj_add_t0(271, 180, "", ui_data.gfx.starmap.reloc_bu_accept, MOO_KEY_SPACE);
             }
             oi_cycle = uiobj_add_inputkey(MOO_KEY_TAB);

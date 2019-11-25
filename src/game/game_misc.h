@@ -28,7 +28,8 @@ extern void game_print_prod_of_total(const struct game_s *g, player_id_t pi, int
 extern bool game_xy_is_in_nebula(const struct game_s *g, int x, int y);
 extern int game_calc_eta_ship(const struct game_s *g, int speed, int x0, int y0, int x1, int y1);
 extern int game_calc_eta_trans(const struct game_s *g, int speed, int x0, int y0, int x1, int y1);
-extern bool game_transport_dest_ok(const struct game_s *g, const planet_t *p, player_id_t api);
+extern bool game_transport_dest_ok(const struct game_s *g, const planet_t *p, player_id_t pi);
+extern bool game_fleet_dest_ok(const struct game_s *g, const planet_t *p, player_id_t pi);
 extern void game_rng_step(struct game_s *g);
 extern int game_get_maxpop(const struct game_s *g, const planet_t *p);
 extern int game_get_maxprod(const struct game_s *g, const planet_t *p);

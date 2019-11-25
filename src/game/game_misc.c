@@ -764,15 +764,26 @@ int game_calc_eta_trans(const struct game_s *g, int speed, int x0, int y0, int x
 
 bool game_transport_dest_ok(const struct game_s *g, const planet_t *p, player_id_t pi)
 {
-    if (!game_num_trans_redir_fix) {
-        return (p->within_frange[pi] != 0); /* WASBUG MOO1 allows redirection almost anywhere */
-    } else {
-        return (p->within_frange[pi] == 1)
-            && BOOLVEC_IS1(p->explored, pi)
-            && (p->type >= g->eto[pi].have_colony_for)
-            && (p->owner != PLAYER_NONE)
-            ;
+    /* removed !game_num_trans_redir_fix case */
+    const treaty_t *treaty = g->eto[pi].treaty;
+    if (p->owner == PLAYER_NONE || p->within_frange[pi] == 0) return false;
+    if (BOOLVEC_IS0(p->explored, pi) || p->type < g->eto[pi].have_colony_for) return false;
+    if (g->opt.enforce_nap >= 2 && pi != p->owner) {
+        if (treaty[p->owner] == TREATY_NONAGGRESSION || treaty[p->owner] == TREATY_ALLIANCE) return false;
+        if (g->opt.enforce_nap == 3 && g->evn.ceasefire[p->owner] > 0) return false;
     }
+    return true;
+}
+
+bool game_fleet_dest_ok(const struct game_s *g, const planet_t *p, player_id_t pi)
+{
+    const treaty_t *treaty = g->eto[pi].treaty;
+    if (g->opt.enforce_nap >= 1 && p->owner != PLAYER_NONE && pi != p->owner) {
+        if (treaty[p->owner] == TREATY_NONAGGRESSION) return false;
+        if (treaty[p->owner] == TREATY_ALLIANCE) return true;
+        if (g->opt.enforce_nap == 3 && g->evn.ceasefire[p->owner] > 0) return false;
+    }
+    return true;
 }
 
 void game_rng_step(struct game_s *g)

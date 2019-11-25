@@ -230,10 +230,12 @@ void ui_starmap_transport(struct game_s *g, player_id_t active_player)
             ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
         } else if (oi1 == oi_accept) {
 do_accept:
-            ui_sound_play_sfx_24();
-            if (g->planet[g->planet_focus_i[active_player]].within_frange[active_player] != 0) { /* FIXME allows redirecting no nonexplored planets */
+            if (game_transport_dest_ok(g, &(g->planet[g->planet_focus_i[active_player]]), active_player)) {
+                ui_sound_play_sfx_24();
                 r->dest = g->planet_focus_i[active_player];
                 flag_done = true;
+            } else {
+                ui_sound_play_sfx_06();
             }
             ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
         }

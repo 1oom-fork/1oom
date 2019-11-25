@@ -343,7 +343,7 @@ void ui_starmap_trans(struct game_s *g, player_id_t active_player)
 do_accept:
             ui_sound_play_sfx_24();
             flag_done = true;
-            if (BOOLVEC_IS1(pt->explored, active_player) && (pt->within_frange[active_player] == 1)) {
+            if (game_transport_dest_ok(g, pt, active_player)) {
                 p->trans_dest = g->planet_focus_i[active_player];
                 p->trans_num = d.tr.num;
             } else {
@@ -421,11 +421,7 @@ do_accept:
             oi_f10 = uiobj_add_inputkey(MOO_KEY_F10);
             ui_starmap_fill_oi_tbl_stars(&d);
             oi_cancel = uiobj_add_t0(227, 163, "", ui_data.gfx.starmap.reloc_bu_cancel, MOO_KEY_ESCAPE);
-            if ((d.tr.other) && (pt->owner != PLAYER_NONE)
-              && (pt->within_frange[active_player] == 1)
-              && BOOLVEC_IS1(pt->explored, active_player)
-              && (pt->type >= g->eto[active_player].have_colony_for)
-            ) {
+            if (d.tr.other && game_transport_dest_ok(g, pt, active_player)) {
                 oi_accept = uiobj_add_t0(271, 163, "", ui_data.gfx.starmap.reloc_bu_accept, MOO_KEY_SPACE);
                 uiobj_add_slider_int(258, 124, 0, trans_max, 41, 8, &d.tr.num);
                 oi_minus = uiobj_add_mousearea(252, 124, 256, 131, MOO_KEY_MINUS);
