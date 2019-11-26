@@ -280,10 +280,19 @@ static bool ui_new_game_racebannernames(struct game_new_options_s *newopts, stru
 #define PORTRAITBOX_TOP_MARGIN 20
 #define PORTRAITBOX_H 46
 
+static void new_game_print_shadow_right(int x, int y, uint8_t c1, uint8_t c2, const char *str)
+{
+    lbxfont_set_color_c_n(c2, 8);
+    lbxfont_print_str_right(x + 1, y + 1, str, UI_SCREEN_W, ui_scale);
+    lbxfont_set_color_c_n(c1, 8);
+    lbxfont_print_str_right(x, y, str, UI_SCREEN_W, ui_scale);
+}
+
 static void new_game_draw_extra_cb(void *vptr)
 {
     struct new_game_data_s *d = vptr;
     struct game_new_options_s *newopts = d->newopts;
+    char buf[64];
     hw_video_copy_back_from_page3();
     lbxfont_select(5, 0, 3, 0);
     lbxfont_print_str_center(30, 180, game_str_ng_cancel, UI_SCREEN_W, ui_scale);
@@ -330,27 +339,30 @@ static void new_game_draw_extra_cb(void *vptr)
         lbxfont_select(5, 0, 0, 0);
         lbxfont_print_str_center(80, 5, "Rules", UI_SCREEN_W, ui_scale);
         lbxfont_print_str_center(250, 5, "Events", UI_SCREEN_W, ui_scale);
-        lbxfont_print_str_right(150, 20, "default", UI_SCREEN_W, ui_scale);
-        lbxfont_print_str_right(150, 35, "RBO", UI_SCREEN_W, ui_scale);
-        lbxfont_print_str_right(300, 20, "default", UI_SCREEN_W, ui_scale);
-        lbxfont_print_str_right(300, 35, "good", UI_SCREEN_W, ui_scale);
-        lbxfont_print_str_right(300, 50, "off", UI_SCREEN_W, ui_scale);
+        new_game_print_shadow_right(150, 20, 71, 19, "default");
+        new_game_print_shadow_right(150, 35, 71, 19, "RBO");
+        new_game_print_shadow_right(300, 20, 208, 206, "default");
+        new_game_print_shadow_right(300, 35, 208, 206, "good");
+        new_game_print_shadow_right(300, 50, 208, 206, "off");
         lbxfont_print_num_right(300, 85, 2300 + d->newopts->evyear, UI_SCREEN_W, ui_scale);
-        lbxfont_select(0, 3, 0, 0);
-        lbxfont_print_str_right(300, 75, "\x2not before\x1", UI_SCREEN_W, ui_scale);
+        lbxfont_select(0, 0, 0, 0);
+        new_game_print_shadow_right(300, 75, 208, 206, "not before");
         for (int i = 0; i < GAMEOPTS; ++i) {
-            char buf[32];
-            lib_sprintf(buf, sizeof(buf), "\x2%s: %s\x1",gameopt_descr[i].name, gameopt_descr[i].opt[popt[i]]);
-            lbxfont_print_str_normal(20, 20 + 8 * i, buf + (popt[i] == gameopt_descr[i].dflt), UI_SCREEN_W, ui_scale);
+            lbxfont_set_color_c_n(popt[i] == gameopt_descr[i].dflt ? 19 : 71, 9);
+            lib_sprintf(buf, sizeof(buf), "%s: %s",gameopt_descr[i].name, gameopt_descr[i].opt[popt[i]]);
+            lbxfont_print_str_normal(20, 20 + 8 * i, buf, UI_SCREEN_W, ui_scale);
         }
         for (int i = 0; i < 16; ++i) {
-            lbxfont_select(0, d->newopts->evmask & (1 << i) ? 3 : 0, 0, 0);
-            lbxfont_print_str_normal(200, 20 + 8 * i, game_str_tbl_event[i], UI_SCREEN_W, ui_scale);
+            bool is_on = !(d->newopts->evmask & (1 << i));
+            lbxfont_set_color_c_n(is_on ? 208 : 207, 9);
+            lib_sprintf(buf, sizeof(buf), "%s: %s",game_str_tbl_event[i], is_on ? "on" : "off");
+            lbxfont_print_str_normal(200, 20 + 8 * i, buf, UI_SCREEN_W, ui_scale);
         }
-        lbxfont_select(0, 1, 0, 0);
         if (d->descr) {
-            lbxfont_select(0, 2, 0, 0);
             lbxfont_set_gap_h(1);
+            lbxfont_set_color_c_n(187, 8);
+            lbxfont_print_str_split(21, 157, 285, d->descr, 0, UI_SCREEN_W, UI_SCREEN_H, ui_scale);
+            lbxfont_set_color_c_n(166, 8);
             lbxfont_print_str_split(20, 156, 285, d->descr, 0, UI_SCREEN_W, UI_SCREEN_H, ui_scale);
         }
     } else { /* Galaxy */
