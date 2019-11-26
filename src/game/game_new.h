@@ -9,12 +9,6 @@ struct game_new_options_s {
     difficulty_t difficulty;
     uint8_t ai_id;
     uint8_t players;
-    union {
-        gameopts_t opt;
-        uint8_t popt[GAMEOPTS];
-    };
-    unsigned evmask;
-    unsigned evyear;
     struct {
         char playername[EMPEROR_NAME_LEN];
         char homename[PLANET_NAME_LEN];
@@ -27,8 +21,6 @@ struct game_new_options_s {
 #define GAME_NEW_OPTS_DEFAULT \
     { \
         0, GALAXY_SIZE_SMALL, DIFFICULTY_SIMPLE, GAME_AI_DEFAULT, 2, \
-        { GAMEOPTS_DEFAULTS }, \
-        0x0000, 40, \
         { \
             { "", "", RACE_RANDOM, BANNER_RANDOM, false }, \
             { "", "", RACE_RANDOM, BANNER_RANDOM, true }, \
@@ -41,8 +33,8 @@ struct game_new_options_s {
 
 struct game_aux_s;
 
-extern int game_new(struct game_s *g, struct game_aux_s *gaux, struct game_new_options_s *opt);
-extern int game_new_tutor(struct game_s *g, struct game_aux_s *gaux);
+extern int game_new(struct game_s *g, struct game_new_options_s *opt);
+extern int game_new_tutor(struct game_s *g);
 
 extern void game_new_generate_emperor_name(race_t race, char *buf, size_t bufsize);
 extern void game_new_generate_home_name(race_t race, char *buf, size_t bufsize);

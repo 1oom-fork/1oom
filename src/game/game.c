@@ -567,6 +567,12 @@ int main_do(void)
         main_menu_action_t main_menu_action;
         int load_game_i = 0;
 
+        memset(&game, 0, sizeof(struct game_s));
+        game.gaux = &game_aux;
+        game.evn.year = 40;
+        for (int i = 0; i < GAMEOPTS; ++i) {
+          game.popt[i] = gameopt_descr[i].dflt;
+        }
         if (game_opt_new_game) {
             game_opt_new_game = false;
             game_new_opts = game_opt_new;
@@ -601,16 +607,16 @@ int main_do(void)
             }
         } else {
             game_set_opts_from_value(&game_new_opts, game_opt_new_value);
-            main_menu_action = ui_main_menu(&game_new_opts, &load_game_i);
+            main_menu_action = ui_main_menu(&game, &game_new_opts, &load_game_i);
         }
         switch (main_menu_action) {
             case MAIN_MENU_ACT_NEW_GAME:
                 main_menu_new_game:
-                game_new(&game, &game_aux, &game_new_opts);
+                game_new(&game, &game_new_opts);
                 game_opt_new_value = game_get_opts_value(&game);
                 break;
             case MAIN_MENU_ACT_TUTOR:
-                game_new_tutor(&game, &game_aux);
+                game_new_tutor(&game);
                 break;
             case MAIN_MENU_ACT_LOAD_GAME:
                 main_menu_load_game:

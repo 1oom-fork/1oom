@@ -535,6 +535,6 @@ extern const char *game_str_tbl_opt_council[XOPTION_COUNCIL_NUM];
 extern const char *game_str_tbl_opt_guardian[XOPTION_GUARDIAN_NUM];
 extern const char *game_str_tbl_opt_rules[XOPTION_RULES_NUM];
 
-extern const char *game_str_tbl_event[16];
+extern const char *game_str_tbl_event[GAME_EVENT_NUM];
 
 #endif

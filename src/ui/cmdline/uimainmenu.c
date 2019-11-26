@@ -108,7 +108,7 @@ static bool have_human(const struct game_new_options_s *newopts)
     return false;
 }
 
-static void ui_new_game_display(struct game_new_options_s *newopts)
+static void ui_new_game_display(struct game_s *g, struct game_new_options_s *newopts)
 {
     for (int i = 0; i < newopts->players; ++i) {
         printf("%s %i: %s, %s", newopts->pdata[i].is_ai ? game_str_ng_computer : game_str_ng_player, i + 1, game_str_tbl_race[newopts->pdata[i].race], game_str_tbl_banner[newopts->pdata[i].banner]);
@@ -125,7 +125,7 @@ static void ui_new_game_display(struct game_new_options_s *newopts)
         puts(game_str_ng_allai);
     }
     for (int i = 0; i < GAMEOPTS; ++i) {
-        printf("%s: %s\n", gameopt_descr[i].name, gameopt_descr[i].opt[newopts->popt[i]]);
+        printf("%s: %s\n", gameopt_descr[i].name, gameopt_descr[i].opt[g->popt[i]]);
     }
 }
 
@@ -231,7 +231,7 @@ static int cmd_ai(struct game_s *g, int api, struct input_token_s *param, int nu
     return 0;
 }
 
-static bool ui_new_game_extra(struct game_new_options_s *newopts)
+static bool ui_new_game_extra(struct game_s *g, struct game_new_options_s *newopts)
 {
     struct input_cmd_s cmds_newgame[] = {
         { "?", NULL, "Help", 0, 0, 0, ui_cmd_help, 0 },
@@ -252,7 +252,7 @@ static bool ui_new_game_extra(struct game_new_options_s *newopts)
     };
 
     cmds_newgame[0].var = (void *)cmdsptr_newgame;
-    ui_new_game_display(newopts);
+    ui_new_game_display(g, newopts);
     while (1) {
         char *input;
         input = ui_input_line("> ");
@@ -269,14 +269,14 @@ static bool ui_new_game_extra(struct game_new_options_s *newopts)
                         return true;
                     }
                 } else {
-                    ui_new_game_display(newopts);
+                    ui_new_game_display(g, newopts);
                 }
             }
         }
     }
 }
 
-static bool ui_new_game(struct game_new_options_s *newopts)
+static bool ui_new_game(struct game_s *g, struct game_new_options_s *newopts)
 {
     int v;
 
@@ -348,16 +348,16 @@ static bool ui_new_game(struct game_new_options_s *newopts)
         ng_opts_in[j].display = NULL;
         v = ui_input_list(gameopt_descr[i].name, "> ", ng_opts_in);
         if (v < 0) return false;
-        newopts->popt[i] = v;
+        g->popt[i] = v;
     }
     ui_new_game_pname(newopts, PLAYER_0);
     ui_new_game_hname(newopts, PLAYER_0);
-    return ui_new_game_extra(newopts);
+    return ui_new_game_extra(g, newopts);
 }
 
 /* -------------------------------------------------------------------------- */
 
-main_menu_action_t ui_main_menu(struct game_new_options_s *newopts, int *load_game_i_ptr)
+main_menu_action_t ui_main_menu(struct game_s *g, struct game_new_options_s *newopts, int *load_game_i_ptr)
 {
     struct input_list_s main_menu_in[] = {
         { MAIN_MENU_ACT_CONTINUE_GAME, "C", NULL, game_str_mm_continue },
@@ -374,7 +374,7 @@ main_menu_action_t ui_main_menu(struct game_new_options_s *newopts, int *load_ga
         ret = ui_input_list("Main menu", "> ", main_menu_in);
         switch (ret) {
             case MAIN_MENU_ACT_NEW_GAME:
-                flag_done = ui_new_game(newopts);
+                flag_done = ui_new_game(g, newopts);
                 break;
             case MAIN_MENU_ACT_LOAD_GAME:
                 {

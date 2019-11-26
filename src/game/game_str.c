@@ -783,7 +783,8 @@ const char *game_str_tbl_xtramenu[XTRAMENU_NUM] = {
     "Cancel"
 };
 
-const char *game_str_tbl_event[] = {
+const char *game_str_tbl_event[GAME_EVENT_NUM] = {
+  "No Event",
   "Plague",
   "Quake",
   "Nova",

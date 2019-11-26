@@ -21,7 +21,6 @@ typedef struct gameopts_s {
 } gameopts_t;
 
 #define GAMEOPTS sizeof(gameopts_t)
-#define GAMEOPTS_DEFAULTS { 0, 1, 0, 0, 0, 0, 0, 0 }
 #define MAXOPTS 9
 
 typedef struct gameoptdescr_s {

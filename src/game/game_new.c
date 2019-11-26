@@ -979,16 +979,10 @@ static void game_generate_emperor_names(struct game_s *g, const uint8_t *namedat
 
 /* -------------------------------------------------------------------------- */
 
-int game_new(struct game_s *g, struct game_aux_s *gaux, struct game_new_options_s *opt)
+int game_new(struct game_s *g, struct game_new_options_s *opt)
 {
     uint8_t researchflag[6 * 50];
-    memset(g, 0, sizeof(struct game_s));
-    memcpy(&(g->opt),&(opt->opt),sizeof(opt->opt));
-    g->evn.done[0] = ((opt->evmask << 1)  & 0xff);
-    g->evn.done[1] = ((opt->evmask >> 7)  & 0xff);
-    g->evn.done[2] = ((opt->evmask >> 15) & 0xff);
-    g->evn.year = opt->evyear;
-    g->gaux = gaux;
+    struct game_aux_s *gaux = g->gaux; 
     if (opt->galaxy_seed == 0) {
         g->galaxy_seed = rnd_get_new_seed();
     } else {
@@ -1063,7 +1057,7 @@ int game_new(struct game_s *g, struct game_aux_s *gaux, struct game_new_options_
     return 0;
 }
 
-int game_new_tutor(struct game_s *g, struct game_aux_s *gaux)
+int game_new_tutor(struct game_s *g)
 {
     struct game_new_options_s opt = GAME_NEW_OPTS_DEFAULT;
     opt.galaxy_size = GALAXY_SIZE_MEDIUM;
@@ -1080,7 +1074,7 @@ int game_new_tutor(struct game_s *g, struct game_aux_s *gaux)
     lib_strcpy(opt.pdata[PLAYER_0].playername, "Mr Tutor", EMPEROR_NAME_LEN);
     lib_strcpy(opt.pdata[PLAYER_0].homename, "SOL", PLANET_NAME_LEN);
     opt.galaxy_seed = 0xdeadbeef; /* FIXME find value that gives an easy game */
-    return game_new(g, gaux, &opt);
+    return game_new(g, &opt);
 }
 
 void game_new_generate_emperor_name(race_t race, char *buf, size_t bufsize)

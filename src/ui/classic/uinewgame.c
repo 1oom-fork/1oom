@@ -35,6 +35,7 @@ static const uint8_t tbl_cursor_color[] = { 0x91, 0x91, 0x8d, 0x8d, 0x89, 0x89, 
 /* -------------------------------------------------------------------------- */
 
 struct new_game_data_s {
+    struct game_s *g;
     struct game_new_options_s *newopts;
     int frame;
     bool fadein;
@@ -335,7 +336,7 @@ static void new_game_draw_extra_cb(void *vptr)
             d->frame = 0;
         }
     } else if (d->section==2) { /* Rules */
-        const uint8_t *popt = d->newopts->popt;
+        const uint8_t *popt = d->g->popt;
         lbxfont_select(5, 0, 0, 0);
         lbxfont_print_str_center(80, 5, "Rules", UI_SCREEN_W, ui_scale);
         lbxfont_print_str_center(250, 5, "Events", UI_SCREEN_W, ui_scale);
@@ -344,7 +345,7 @@ static void new_game_draw_extra_cb(void *vptr)
         new_game_print_shadow_right(300, 20, 208, 206, "default");
         new_game_print_shadow_right(300, 35, 208, 206, "good");
         new_game_print_shadow_right(300, 50, 208, 206, "off");
-        lbxfont_print_num_right(300, 85, 2300 + d->newopts->evyear, UI_SCREEN_W, ui_scale);
+        lbxfont_print_num_right(300, 85, 2300 + d->g->evn.year, UI_SCREEN_W, ui_scale);
         lbxfont_select(0, 0, 0, 0);
         new_game_print_shadow_right(300, 75, 208, 206, "not before");
         for (int i = 0; i < GAMEOPTS; ++i) {
@@ -352,11 +353,11 @@ static void new_game_draw_extra_cb(void *vptr)
             lib_sprintf(buf, sizeof(buf), "%s: %s",gameopt_descr[i].name, gameopt_descr[i].opt[popt[i]]);
             lbxfont_print_str_normal(20, 20 + 8 * i, buf, UI_SCREEN_W, ui_scale);
         }
-        for (int i = 0; i < 16; ++i) {
-            bool is_on = !(d->newopts->evmask & (1 << i));
+        for (int i = 1; i < GAME_EVENT_NUM; ++i) {
+            bool is_on = BOOLVEC_IS0(d->g->evn.done, i);
             lbxfont_set_color_c_n(is_on ? 208 : 207, 9);
             lib_sprintf(buf, sizeof(buf), "%s: %s",game_str_tbl_event[i], is_on ? "on" : "off");
-            lbxfont_print_str_normal(200, 20 + 8 * i, buf, UI_SCREEN_W, ui_scale);
+            lbxfont_print_str_normal(200, 12 + 8 * i, buf, UI_SCREEN_W, ui_scale);
         }
         if (d->descr) {
             lbxfont_set_gap_h(1);
@@ -375,9 +376,9 @@ static bool ui_new_game_extra(struct game_new_options_s *newopts, struct new_gam
 {
     bool flag_done = false, flag_ok = false;
     int16_t oi_cancel, oi_ok, oi_players, oi_rules, oi_galaxy, oi_ai_id,
-            oi_option[GAMEOPTS], oi_event[16], oi_optdef, oi_rbo, oi_evdef, oi_good, oi_evoff, oi_year,
+            oi_option[GAMEOPTS], oi_event[GAME_EVENT_TBL_NUM], oi_optdef, oi_rbo, oi_evdef, oi_good, oi_evoff, oi_year,
             oi_race[PLAYER_NUM], oi_banner[PLAYER_NUM], oi_pname[PLAYER_NUM], oi_hname[PLAYER_NUM], oi_ai[PLAYER_NUM];
-    uint8_t *popt = d->newopts->popt;
+    uint8_t *popt = d->g->popt;
     d->pi = PLAYER_0;
     d->str_title = 0;
     d->frame = 0;
@@ -416,7 +417,7 @@ restart:
          oi_ai[i] = UIOBJI_INVALID;
     }
     for (int i = 0; i < GAMEOPTS; ++i) oi_option[i] = UIOBJI_INVALID;
-    for (int i = 0; i < 16; ++i) oi_event[i] = UIOBJI_INVALID;
+    for (int i = 0; i < GAME_EVENT_TBL_NUM; ++i) oi_event[i] = UIOBJI_INVALID;
     oi_optdef = oi_rbo = oi_evdef = oi_good = oi_evoff = oi_year = UIOBJI_INVALID;
     if (d->section==1) { 
         oi_ai_id    = uiobj_add_mousearea( 45, 160,  90, 170, MOO_KEY_a);
@@ -440,8 +441,8 @@ restart:
         for (int i = 0; i < GAMEOPTS; ++i) {
             oi_option[i] = uiobj_add_mousearea(30, 19 + 8 * i, 110, 25 + 8 * i, MOO_KEY_UNKNOWN);
         }
-        for (int i = 0; i < 16; ++i) {
-            oi_event[i] = uiobj_add_mousearea(200, 19 + 8 * i, 260, 25 + 8 * i, MOO_KEY_UNKNOWN);
+        for (int i = 1; i < GAME_EVENT_NUM; ++i) {
+            oi_event[i] = uiobj_add_mousearea(200, 11 + 8 * i, 260, 17 + 8 * i, MOO_KEY_UNKNOWN);
         }
         oi_optdef = uiobj_add_mousearea(120, 20, 150, 30, MOO_KEY_UNKNOWN);
         oi_rbo    = uiobj_add_mousearea(120, 35, 150, 45, MOO_KEY_UNKNOWN);
@@ -489,20 +490,24 @@ restart:
             for (int i = 0; i < GAMEOPTS; ++i) popt[i] = gameopt_descr[i].dflt;
         } else if (oi == oi_rbo) {
             for (int i = 0; i < GAMEOPTS; ++i) popt[i] = gameopt_descr[i].dflt;
-            d->newopts->opt.retreat = 2;
-            d->newopts->opt.spec_war = 1;
-            d->newopts->opt.fix_bait_yoyo = 3;
+            d->g->opt.retreat = 2;
+            d->g->opt.spec_war = 1;
+            d->g->opt.fix_bait_yoyo = 3;
         } else if (oi == oi_evdef) {
-            d->newopts->evmask = 0;
-            d->newopts->evyear = 40;
+            BOOLVEC_CLEAR(d->g->evn.done, GAME_EVENT_TBL_NUM);
+            d->g->evn.year = 40;
         } else if (oi == oi_good) {
-            d->newopts->evmask = 0x8eff;
+            for (int i = 1; i < GAME_EVENT_NUM; ++i) BOOLVEC_SET1(d->g->evn.done, i);
+            BOOLVEC_SET0(d->g->evn.done, GAME_EVENT_DERELICT);
+            BOOLVEC_SET0(d->g->evn.done, GAME_EVENT_ENVIRO);
+            BOOLVEC_SET0(d->g->evn.done, GAME_EVENT_RICH);
+            BOOLVEC_SET0(d->g->evn.done, GAME_EVENT_SUPPORT);
         } else if (oi == oi_evoff) {
-            d->newopts->evmask = 0xffff;
+            for (int i = 1; i < GAME_EVENT_NUM; ++i) BOOLVEC_SET1(d->g->evn.done, i);
         } else if (oi == oi_year) {
-            d->newopts->evyear += 60;
-            d->newopts->evyear -= d->newopts->evyear % 50;
-            if (d->newopts->evyear > 200) d->newopts->evyear = 40;
+            d->g->evn.year += 60;
+            d->g->evn.year -= d->g->evn.year % 50;
+            if (d->g->evn.year > 200) d->g->evn.year = 40;
         }
 
         for (int i = 0; d->section == 1 && i < newopts->players; ++i) {
@@ -559,9 +564,9 @@ restart:
                 break;
             }
         }
-        for (int i = 0; d->section == 2 && i < 16; ++i) {
+        for (int i = 1; d->section == 2 && i < GAME_EVENT_NUM; ++i) {
             if (oi == oi_event[i]) {
-                d->newopts->evmask ^= (1 << i);
+                BOOLVEC_TOGGLE(d->g->evn.done, i);
             }
         }
         
@@ -583,7 +588,7 @@ restart:
 
 /* -------------------------------------------------------------------------- */
 
-bool ui_new_game(struct game_new_options_s *newopts)
+bool ui_new_game(struct game_s *g, struct game_new_options_s *newopts)
 {
     struct new_game_data_s d;
     bool flag_done = false, flag_fadein = false, flag_ok = false;
@@ -591,6 +596,7 @@ bool ui_new_game(struct game_new_options_s *newopts)
     int16_t oi_gsize, oi_diffic, oi_oppon, oi_cancel, oi_ok;
     int16_t oi_esc, oi_d, oi_g, oi_o, oi_space;
 
+    d.g = g;
     d.newopts = newopts;
 
     gsize = newopts->galaxy_size;
