@@ -570,9 +570,9 @@ int main_do(void)
         memset(&game, 0, sizeof(struct game_s));
         game.gaux = &game_aux;
         game.evn.year = 40;
-        for (int i = 0; i < GAMEOPTS; ++i) {
-          game.popt[i] = gameopt_descr[i].dflt;
-        }
+        for (int i = 0; i < GAMEOPTS; ++i) game.popt[i] = gameopt_descr[i].dflt;
+        game.evn.planet_orion_i = PLANET_NONE;
+        for (int i = 0; i < PLAYER_NUM; ++i) game.evn.home[i] = PLANET_NONE;
         if (game_opt_new_game) {
             game_opt_new_game = false;
             game_new_opts = game_opt_new;

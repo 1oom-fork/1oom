@@ -62,7 +62,7 @@ static const int8_t tbl_orion_race_relation[RACE_NUM][RACE_NUM] = {
 
 /* -------------------------------------------------------------------------- */
 
-static void game_generate_planets(struct game_s *g)
+static void game_place_planets(struct game_s *g)
 {
     /* assumes the planet data is already 0'd by caller */
     uint16_t tblpx[PLANETS_MAX], tblpy[PLANETS_MAX];
@@ -88,297 +88,328 @@ static void game_generate_planets(struct game_s *g)
             tblpy[h * g->galaxy_w + w] = y;
         }
     }
-
     for (i = 0; i < g->galaxy_stars; ++i) {
-        bool in_nebula;
         planet_t *p;
 
         p = &g->planet[i];
         p->x = tblpx[i] + 4;
         p->y = tblpy[i] + 4;
+    }
+}
 
-        switch (rnd_0_nm1(0x14, &g->seed)) {
-            /*
-            case 0x00:
-            case 0x01:
-            case 0x02:
-            */
-            default:
-                p->star_type = STAR_TYPE_YELLOW;
-                break;
-            case 0x03:
-            case 0x04:
-            case 0x05:
-            case 0x06:
-            case 0x07:
-            case 0x08:
-                p->star_type = STAR_TYPE_RED;
-                break;
-            case 0x09:
-            case 0x0a:
-            case 0x0b:
-            case 0x0c:
-            case 0x0d:
-                p->star_type = STAR_TYPE_GREEN;
-                break;
-            case 0x0e:
-            case 0x0f:
-            case 0x10:
-                p->star_type = STAR_TYPE_BLUE;
-                break;
-            case 0x11:
-            case 0x12:
-                p->star_type = STAR_TYPE_WHITE;
-                break;
-            case 0x13:
-                p->star_type = STAR_TYPE_NEUTRON;
-                break;
-        }
+static void game_generate_planet(struct game_s *g, int i)
+{
+    bool in_nebula;
+    planet_t *p = &g->planet[i];
 
-        p->look = rnd_0_nm1(2, &g->seed) * 6;
-        p->frame = rnd_0_nm1(50, &g->seed);
-
-        in_nebula = false;
-        for (int k = 0; k < g->nebula_num; ++k) {
-            for (int j = 0; j < 4; ++j) {
-                if (1
-                  && (p->x >= g->nebula_x0[k][j]) && (p->x <= g->nebula_x1[k][j])
-                  && (p->y >= g->nebula_y0[k][j]) && (p->y <= g->nebula_y1[k][j])
-                ) {
-                    in_nebula = true;
-                    break;
-                }
-            }
-        }
-
-        {
-            planet_type_t t;
-            int16_t r;
-            t = PLANET_TYPE_NOT_HABITABLE;
-            r = rnd_1_n(20, &g->seed) - (in_nebula ? 4 : 0);
-            switch (p->star_type) {
-                case STAR_TYPE_YELLOW:
-                    /*if (r < -1) { t = PLANET_TYPE_NOT_HABITABLE; }*/
-                    if (r == -1) { t = PLANET_TYPE_RADIATED; }
-                    if (r == 0) { t = PLANET_TYPE_TOXIC; }
-                    if (r == 1) { t = PLANET_TYPE_INFERNO; }
-                    if (r == 2) { t = PLANET_TYPE_TUNDRA; }
-                    if (r == 3) { t = PLANET_TYPE_BARREN; }
-                    if (r == 4) { t = PLANET_TYPE_MINIMAL; }
-                    if (r == 5) { t = PLANET_TYPE_DESERT; }
-                    if (r == 6) { t = PLANET_TYPE_STEPPE; }
-                    if ((r > 6) && (r < 9)) { t = PLANET_TYPE_ARID; }
-                    if ((r > 8) && (r < 0xb)) { t = PLANET_TYPE_OCEAN; }
-                    if ((r > 0xa) && (r < 0xd)) { t = PLANET_TYPE_JUNGLE; }
-                    if (r > 0xc) { t = PLANET_TYPE_TERRAN; }
-                    break;
-                case STAR_TYPE_RED:
-                    /*if (r < 2) { t = PLANET_TYPE_NOT_HABITABLE; }*/
-                    if (r == 2) { t = PLANET_TYPE_RADIATED; }
-                    if (r == 3) { t = PLANET_TYPE_TOXIC; }
-                    if (r == 4) { t = PLANET_TYPE_INFERNO; }
-                    if (r == 5) { t = PLANET_TYPE_DEAD; }
-                    if (r == 6) { t = PLANET_TYPE_TUNDRA; }
-                    if (r == 7) { t = PLANET_TYPE_BARREN; }
-                    if (r == 8) { t = PLANET_TYPE_MINIMAL; }
-                    if ((r > 8) && (r < 0xb)) { t = PLANET_TYPE_DESERT; }
-                    if ((r > 0xa) && (r < 0xd)) { t = PLANET_TYPE_STEPPE; }
-                    if ((r > 0xc) && (r < 0x10)) { t = PLANET_TYPE_ARID; }
-                    if ((r > 0xf) && (r < 0x12)) { t = PLANET_TYPE_OCEAN; }
-                    if ((r > 0x11) && (r < 0x14)) { t = PLANET_TYPE_JUNGLE; }
-                    if (r >= 0x14) { t = PLANET_TYPE_TERRAN; }
-                    break;
-                case STAR_TYPE_GREEN:
-                    /*if (r < 2) { t = PLANET_TYPE_NOT_HABITABLE; }*/
-                    if (r == 2) { t = PLANET_TYPE_RADIATED; }
-                    if (r == 3) { t = PLANET_TYPE_TOXIC; }
-                    if (r == 4) { t = PLANET_TYPE_INFERNO; }
-                    if (r == 5) { t = PLANET_TYPE_DEAD; }
-                    if (r == 6) { t = PLANET_TYPE_TUNDRA; }
-                    if (r == 7) { t = PLANET_TYPE_BARREN; }
-                    if (r == 8) { t = PLANET_TYPE_MINIMAL; }
-                    if (r == 9) { t = PLANET_TYPE_DESERT; }
-                    if ((r > 9) && (r < 0xc)) { t = PLANET_TYPE_STEPPE; }
-                    if ((r > 0xb) && (r < 0xe)) { t = PLANET_TYPE_ARID; }
-                    if ((r > 0xd) && (r < 0x10)) { t = PLANET_TYPE_OCEAN; }
-                    if ((r > 0xf) && (r < 0x12)) { t = PLANET_TYPE_JUNGLE; }
-                    if (r > 0x11) { t = PLANET_TYPE_TERRAN; }
-                    break;
-                case STAR_TYPE_WHITE:
-                    /*if (r < 3) { t = PLANET_TYPE_NOT_HABITABLE; }*/
-                    if (r == 3) { t = PLANET_TYPE_RADIATED; }
-                    if ((r > 3) && (r < 6)) { t = PLANET_TYPE_TOXIC; }
-                    if ((r > 5) && (r < 8)) { t = PLANET_TYPE_INFERNO; }
-                    if ((r > 7) && (r < 0xa)) { t = PLANET_TYPE_DEAD; }
-                    if ((r > 9) && (r < 0xc)) { t = PLANET_TYPE_TUNDRA; }
-                    if ((r > 0xb) && (r < 0xe)) { t = PLANET_TYPE_BARREN; }
-                    if ((r > 0xd) && (r < 0x10)) { t = PLANET_TYPE_MINIMAL; }
-                    if ((r > 0xf) && (r < 0x12)) { t = PLANET_TYPE_DESERT; }
-                    if (r == 0x12) { t = PLANET_TYPE_STEPPE; }
-                    if (r == 0x13) { t = PLANET_TYPE_ARID; }
-                    if (r == 0x14) { t = PLANET_TYPE_OCEAN; }
-                    break;
-                case STAR_TYPE_BLUE:
-                    /*if (r < 4) { t = PLANET_TYPE_NOT_HABITABLE; }*/
-                    if ((r > 3) && (r < 6)) { t = PLANET_TYPE_RADIATED; }
-                    if ((r > 5) && (r < 8)) { t = PLANET_TYPE_TOXIC; }
-                    if ((r > 7) && (r < 0xa)) { t = PLANET_TYPE_INFERNO; }
-                    if ((r > 9) && (r < 0xc)) { t = PLANET_TYPE_DEAD; }
-                    if ((r > 0xb) && (r < 0xe)) { t = PLANET_TYPE_TUNDRA; }
-                    if ((r > 0xd) && (r < 0x10)) { t = PLANET_TYPE_BARREN; }
-                    if ((r > 0xf) && (r < 0x12)) { t = PLANET_TYPE_MINIMAL; }
-                    if (r == 0x12) { t = PLANET_TYPE_DESERT; }
-                    if (r == 0x13) { t = PLANET_TYPE_STEPPE; }
-                    if (r == 0x14) { t = PLANET_TYPE_ARID; }
-                    break;
-                case STAR_TYPE_NEUTRON:
-                    /*if (r < 5) { t = PLANET_TYPE_NOT_HABITABLE; }*/
-                    if ((r > 4) && (r < 0xa)) { t = PLANET_TYPE_RADIATED; }
-                    if ((r > 9) && (r < 0xd)) { t = PLANET_TYPE_TOXIC; }
-                    if ((r > 0xc) && (r < 0x10)) { t = PLANET_TYPE_INFERNO; }
-                    if ((r > 0xf) && (r < 0x12)) { t = PLANET_TYPE_DEAD; }
-                    if (r == 0x12) { t = PLANET_TYPE_TUNDRA; }
-                    if (r == 0x13) { t = PLANET_TYPE_BARREN; }
-                    if (r == 0x14) { t = PLANET_TYPE_MINIMAL; }
-                    break;
-                default:
-                    break;
-            }
-            p->type = t;
-        }
-
-        {
-            uint16_t a;
-            switch (p->type) {
-                case PLANET_TYPE_NOT_HABITABLE:
-                    a = 10;
-                    break;
-                case PLANET_TYPE_RADIATED:
-                case PLANET_TYPE_TOXIC:
-                case PLANET_TYPE_INFERNO:
-                    a = rnd_1_n(7, &g->seed) * 5 + 5;
-                    break;
-                case PLANET_TYPE_DEAD:
-                case PLANET_TYPE_TUNDRA:
-                    a = rnd_1_n(7, &g->seed) * 5 + 15;
-                    break;
-                case PLANET_TYPE_BARREN:
-                case PLANET_TYPE_MINIMAL:
-                    a = rnd_1_n(5, &g->seed) * 5 + 25;
-                    break;
-                /*
-                case PLANET_TYPE_DESERT:
-                case PLANET_TYPE_STEPPE:
-                case PLANET_TYPE_ARID:
-                case PLANET_TYPE_OCEAN:
-                */
-                default:
-                    a = rnd_1_n(4, &g->seed) * 5 + (((int)(p->type)) - (int)PLANET_TYPE_DESERT) * 10 + 30;
-                    break;
-                case PLANET_TYPE_JUNGLE:
-                    a = rnd_1_n(4, &g->seed) * 5 + 70;
-                    break;
-                case PLANET_TYPE_TERRAN:
-                    a = rnd_1_n(4, &g->seed) * 5 + 80;
-                    break;
-            }
-            p->max_pop2 = a;
-        }
-
-        {
-            uint8_t di;
-            di = rnd_1_n(10, &g->seed);
-            while ((di == 1) || (di == 10)) {
-                if (di == 1) {
-                    p->max_pop2 -= 20;
-                } else {
-                    p->max_pop2 += 20;
-                }
-                di = rnd_1_n(10, &g->seed);
-                SETMAX(p->max_pop2, 10);
-            }
-            SETMIN(p->max_pop2, 120);
-        }
-
-        p->max_pop3 = p->max_pop2;
-        p->max_pop1 = p->max_pop2;
-        if (!in_nebula) {
-            p->battlebg = rnd_1_n(4, &g->seed);
-        }
-        p->special = PLANET_SPECIAL_NORMAL;
-        {
-            star_type_t star_type;
-            int16_t di;
-            star_type = p->star_type;
-            if (p->type >= PLANET_TYPE_STEPPE) {
-                di = rnd_1_n(0x14, &g->seed);
-                if (star_type == STAR_TYPE_RED) { di -= 4; } else if (star_type == STAR_TYPE_GREEN) { di -= 2; }
-                if (di <= 2) {
-                    p->special = PLANET_SPECIAL_POOR;
-                    di = rnd_1_n(0x14, &g->seed);
-                    if (star_type == STAR_TYPE_RED) { di -= 4; } else if (star_type == STAR_TYPE_GREEN) { di -= 2; }
-                    if (di <= 5) {
-                        p->special = PLANET_SPECIAL_ULTRA_POOR;
-                    }
-                }
-            }
-            di = rnd_1_n(0x14, &g->seed) - (in_nebula ? 8 : 0);
-            if (star_type == STAR_TYPE_BLUE) { di -= 2; } else if (star_type == STAR_TYPE_NEUTRON) { di -= 5; }
-            if ((((int)PLANET_TYPE_STEPPE) - ((int)p->type)) > di) {
-                p->special = PLANET_SPECIAL_RICH;
-                di = rnd_1_n(0x14, &g->seed) - (in_nebula ? 8 : 0);
-                if (star_type == STAR_TYPE_BLUE) { di -= 2; } else if (star_type == STAR_TYPE_NEUTRON) { di -= 5; }
-                if (di < 6) {
-                    p->special = PLANET_SPECIAL_ULTRA_RICH;
-                }
-            }
-
-        }
-        if (1
-          && (p->type >= PLANET_TYPE_MINIMAL)
-          && (p->type <= PLANET_TYPE_OCEAN)
-          && (p->special == PLANET_SPECIAL_NORMAL)
-          && (rnd_1_n(10, &g->seed) == 1)
-        ) {
-            p->special = PLANET_SPECIAL_ARTIFACTS;
-        }
-        {
-            int16_t di;
-            di = rnd_1_n(100, &g->seed);
-            if (p->special == PLANET_SPECIAL_ULTRA_RICH) {
-                di -= 20;
-            } else if (p->special == PLANET_SPECIAL_RICH) {
-                di -= 10;
-            }
-            di -= 15 - (int)(p->type);
-            if (di < 15) {
-                p->rocks = PLANET_ROCKS_MANY;
-            } else if (di < 40) {
-                p->rocks = PLANET_ROCKS_SOME;
-            } else {
-                p->rocks = PLANET_ROCKS_NONE;
-            }
-        }
-        p->growth = PLANET_GROWTH_NORMAL;
-        if (p->type < PLANET_TYPE_MINIMAL) {
-            p->growth = PLANET_GROWTH_HOSTILE;
-        } else if ((p->type > PLANET_TYPE_DESERT) && (rnd_1_n(12, &g->seed) == 1)) {
-            game_soil_enrich(p, 0, 0);
-            p->max_pop1 = p->max_pop2;
-        }
-        p->owner = PLAYER_NONE;
-        p->prev_owner = PLAYER_NONE;
-        p->claim = PLAYER_NONE;
-        if (p->type == PLANET_TYPE_NOT_HABITABLE) {
-            p->growth = PLANET_GROWTH_NORMAL;
-            p->special = PLANET_SPECIAL_NORMAL;
-        }
-        p->pop_oper_fact = 2;
-        p->infogfx = tbl_planet_type_infogfx[p->type][rnd_0_nm1(6, &g->seed)] - 1;
-        p->slider[PLANET_SLIDER_IND] = 100;
-        p->reloc = i;
+    switch (rnd_0_nm1(0x14, &g->seed)) {
+        /*
+        case 0x00:
+        case 0x01:
+        case 0x02:
+        */
+        default:
+            p->star_type = STAR_TYPE_YELLOW;
+            break;
+        case 0x03:
+        case 0x04:
+        case 0x05:
+        case 0x06:
+        case 0x07:
+        case 0x08:
+            p->star_type = STAR_TYPE_RED;
+            break;
+        case 0x09:
+        case 0x0a:
+        case 0x0b:
+        case 0x0c:
+        case 0x0d:
+            p->star_type = STAR_TYPE_GREEN;
+            break;
+        case 0x0e:
+        case 0x0f:
+        case 0x10:
+            p->star_type = STAR_TYPE_BLUE;
+            break;
+        case 0x11:
+        case 0x12:
+            p->star_type = STAR_TYPE_WHITE;
+            break;
+        case 0x13:
+            p->star_type = STAR_TYPE_NEUTRON;
+            break;
     }
 
+    p->look = rnd_0_nm1(2, &g->seed) * 6;
+    p->frame = rnd_0_nm1(50, &g->seed);
+
+    in_nebula = false;
+    for (int k = 0; k < g->nebula_num; ++k) {
+        for (int j = 0; j < 4; ++j) {
+            if (1
+              && (p->x >= g->nebula_x0[k][j]) && (p->x <= g->nebula_x1[k][j])
+              && (p->y >= g->nebula_y0[k][j]) && (p->y <= g->nebula_y1[k][j])
+            ) {
+                in_nebula = true;
+                break;
+            }
+        }
+    }
+
+    {
+        planet_type_t t;
+        int16_t r;
+        t = PLANET_TYPE_NOT_HABITABLE;
+        r = rnd_1_n(20, &g->seed) - (in_nebula ? 4 : 0);
+        switch (p->star_type) {
+            case STAR_TYPE_YELLOW:
+                /*if (r < -1) { t = PLANET_TYPE_NOT_HABITABLE; }*/
+                if (r == -1) { t = PLANET_TYPE_RADIATED; }
+                if (r == 0) { t = PLANET_TYPE_TOXIC; }
+                if (r == 1) { t = PLANET_TYPE_INFERNO; }
+                if (r == 2) { t = PLANET_TYPE_TUNDRA; }
+                if (r == 3) { t = PLANET_TYPE_BARREN; }
+                if (r == 4) { t = PLANET_TYPE_MINIMAL; }
+                if (r == 5) { t = PLANET_TYPE_DESERT; }
+                if (r == 6) { t = PLANET_TYPE_STEPPE; }
+                if ((r > 6) && (r < 9)) { t = PLANET_TYPE_ARID; }
+                if ((r > 8) && (r < 0xb)) { t = PLANET_TYPE_OCEAN; }
+                if ((r > 0xa) && (r < 0xd)) { t = PLANET_TYPE_JUNGLE; }
+                if (r > 0xc) { t = PLANET_TYPE_TERRAN; }
+                break;
+            case STAR_TYPE_RED:
+                /*if (r < 2) { t = PLANET_TYPE_NOT_HABITABLE; }*/
+                if (r == 2) { t = PLANET_TYPE_RADIATED; }
+                if (r == 3) { t = PLANET_TYPE_TOXIC; }
+                if (r == 4) { t = PLANET_TYPE_INFERNO; }
+                if (r == 5) { t = PLANET_TYPE_DEAD; }
+                if (r == 6) { t = PLANET_TYPE_TUNDRA; }
+                if (r == 7) { t = PLANET_TYPE_BARREN; }
+                if (r == 8) { t = PLANET_TYPE_MINIMAL; }
+                if ((r > 8) && (r < 0xb)) { t = PLANET_TYPE_DESERT; }
+                if ((r > 0xa) && (r < 0xd)) { t = PLANET_TYPE_STEPPE; }
+                if ((r > 0xc) && (r < 0x10)) { t = PLANET_TYPE_ARID; }
+                if ((r > 0xf) && (r < 0x12)) { t = PLANET_TYPE_OCEAN; }
+                if ((r > 0x11) && (r < 0x14)) { t = PLANET_TYPE_JUNGLE; }
+                if (r >= 0x14) { t = PLANET_TYPE_TERRAN; }
+                break;
+            case STAR_TYPE_GREEN:
+                /*if (r < 2) { t = PLANET_TYPE_NOT_HABITABLE; }*/
+                if (r == 2) { t = PLANET_TYPE_RADIATED; }
+                if (r == 3) { t = PLANET_TYPE_TOXIC; }
+                if (r == 4) { t = PLANET_TYPE_INFERNO; }
+                if (r == 5) { t = PLANET_TYPE_DEAD; }
+                if (r == 6) { t = PLANET_TYPE_TUNDRA; }
+                if (r == 7) { t = PLANET_TYPE_BARREN; }
+                if (r == 8) { t = PLANET_TYPE_MINIMAL; }
+                if (r == 9) { t = PLANET_TYPE_DESERT; }
+                if ((r > 9) && (r < 0xc)) { t = PLANET_TYPE_STEPPE; }
+                if ((r > 0xb) && (r < 0xe)) { t = PLANET_TYPE_ARID; }
+                if ((r > 0xd) && (r < 0x10)) { t = PLANET_TYPE_OCEAN; }
+                if ((r > 0xf) && (r < 0x12)) { t = PLANET_TYPE_JUNGLE; }
+                if (r > 0x11) { t = PLANET_TYPE_TERRAN; }
+                break;
+            case STAR_TYPE_WHITE:
+                /*if (r < 3) { t = PLANET_TYPE_NOT_HABITABLE; }*/
+                if (r == 3) { t = PLANET_TYPE_RADIATED; }
+                if ((r > 3) && (r < 6)) { t = PLANET_TYPE_TOXIC; }
+                if ((r > 5) && (r < 8)) { t = PLANET_TYPE_INFERNO; }
+                if ((r > 7) && (r < 0xa)) { t = PLANET_TYPE_DEAD; }
+                if ((r > 9) && (r < 0xc)) { t = PLANET_TYPE_TUNDRA; }
+                if ((r > 0xb) && (r < 0xe)) { t = PLANET_TYPE_BARREN; }
+                if ((r > 0xd) && (r < 0x10)) { t = PLANET_TYPE_MINIMAL; }
+                if ((r > 0xf) && (r < 0x12)) { t = PLANET_TYPE_DESERT; }
+                if (r == 0x12) { t = PLANET_TYPE_STEPPE; }
+                if (r == 0x13) { t = PLANET_TYPE_ARID; }
+                if (r == 0x14) { t = PLANET_TYPE_OCEAN; }
+                break;
+            case STAR_TYPE_BLUE:
+                /*if (r < 4) { t = PLANET_TYPE_NOT_HABITABLE; }*/
+                if ((r > 3) && (r < 6)) { t = PLANET_TYPE_RADIATED; }
+                if ((r > 5) && (r < 8)) { t = PLANET_TYPE_TOXIC; }
+                if ((r > 7) && (r < 0xa)) { t = PLANET_TYPE_INFERNO; }
+                if ((r > 9) && (r < 0xc)) { t = PLANET_TYPE_DEAD; }
+                if ((r > 0xb) && (r < 0xe)) { t = PLANET_TYPE_TUNDRA; }
+                if ((r > 0xd) && (r < 0x10)) { t = PLANET_TYPE_BARREN; }
+                if ((r > 0xf) && (r < 0x12)) { t = PLANET_TYPE_MINIMAL; }
+                if (r == 0x12) { t = PLANET_TYPE_DESERT; }
+                if (r == 0x13) { t = PLANET_TYPE_STEPPE; }
+                if (r == 0x14) { t = PLANET_TYPE_ARID; }
+                break;
+            case STAR_TYPE_NEUTRON:
+                /*if (r < 5) { t = PLANET_TYPE_NOT_HABITABLE; }*/
+                if ((r > 4) && (r < 0xa)) { t = PLANET_TYPE_RADIATED; }
+                if ((r > 9) && (r < 0xd)) { t = PLANET_TYPE_TOXIC; }
+                if ((r > 0xc) && (r < 0x10)) { t = PLANET_TYPE_INFERNO; }
+                if ((r > 0xf) && (r < 0x12)) { t = PLANET_TYPE_DEAD; }
+                if (r == 0x12) { t = PLANET_TYPE_TUNDRA; }
+                if (r == 0x13) { t = PLANET_TYPE_BARREN; }
+                if (r == 0x14) { t = PLANET_TYPE_MINIMAL; }
+                break;
+            default:
+                break;
+        }
+        p->type = t;
+    }
+
+    {
+        uint16_t a;
+        switch (p->type) {
+            case PLANET_TYPE_NOT_HABITABLE:
+                a = 10;
+                break;
+            case PLANET_TYPE_RADIATED:
+            case PLANET_TYPE_TOXIC:
+            case PLANET_TYPE_INFERNO:
+                a = rnd_1_n(7, &g->seed) * 5 + 5;
+                break;
+            case PLANET_TYPE_DEAD:
+            case PLANET_TYPE_TUNDRA:
+                a = rnd_1_n(7, &g->seed) * 5 + 15;
+                break;
+            case PLANET_TYPE_BARREN:
+            case PLANET_TYPE_MINIMAL:
+                a = rnd_1_n(5, &g->seed) * 5 + 25;
+                break;
+            /*
+            case PLANET_TYPE_DESERT:
+            case PLANET_TYPE_STEPPE:
+            case PLANET_TYPE_ARID:
+            case PLANET_TYPE_OCEAN:
+            */
+            default:
+                a = rnd_1_n(4, &g->seed) * 5 + (((int)(p->type)) - (int)PLANET_TYPE_DESERT) * 10 + 30;
+                break;
+            case PLANET_TYPE_JUNGLE:
+                a = rnd_1_n(4, &g->seed) * 5 + 70;
+                break;
+            case PLANET_TYPE_TERRAN:
+                a = rnd_1_n(4, &g->seed) * 5 + 80;
+                break;
+        }
+        p->max_pop2 = a;
+    }
+
+    {
+        uint8_t di;
+        di = rnd_1_n(10, &g->seed);
+        while ((di == 1) || (di == 10)) {
+            if (di == 1) {
+                p->max_pop2 -= 20;
+            } else {
+                p->max_pop2 += 20;
+            }
+            di = rnd_1_n(10, &g->seed);
+            SETMAX(p->max_pop2, 10);
+        }
+        SETMIN(p->max_pop2, 120);
+    }
+
+    p->max_pop3 = p->max_pop2;
+    p->max_pop1 = p->max_pop2;
+    if (!in_nebula) {
+        p->battlebg = rnd_1_n(4, &g->seed);
+    }
+    p->special = PLANET_SPECIAL_NORMAL;
+    {
+        star_type_t star_type;
+        int16_t di;
+        star_type = p->star_type;
+        if (p->type >= PLANET_TYPE_STEPPE) {
+            di = rnd_1_n(0x14, &g->seed);
+            if (star_type == STAR_TYPE_RED) { di -= 4; } else if (star_type == STAR_TYPE_GREEN) { di -= 2; }
+            if (di <= 2) {
+                p->special = PLANET_SPECIAL_POOR;
+                di = rnd_1_n(0x14, &g->seed);
+                if (star_type == STAR_TYPE_RED) { di -= 4; } else if (star_type == STAR_TYPE_GREEN) { di -= 2; }
+                if (di <= 5) {
+                    p->special = PLANET_SPECIAL_ULTRA_POOR;
+                }
+            }
+        }
+        di = rnd_1_n(0x14, &g->seed) - (in_nebula ? 8 : 0);
+        if (star_type == STAR_TYPE_BLUE) { di -= 2; } else if (star_type == STAR_TYPE_NEUTRON) { di -= 5; }
+        if ((((int)PLANET_TYPE_STEPPE) - ((int)p->type)) > di) {
+            p->special = PLANET_SPECIAL_RICH;
+            di = rnd_1_n(0x14, &g->seed) - (in_nebula ? 8 : 0);
+            if (star_type == STAR_TYPE_BLUE) { di -= 2; } else if (star_type == STAR_TYPE_NEUTRON) { di -= 5; }
+            if (di < 6) {
+                p->special = PLANET_SPECIAL_ULTRA_RICH;
+            }
+        }
+
+    }
+    if (1
+      && (p->type >= PLANET_TYPE_MINIMAL)
+      && (p->type <= PLANET_TYPE_OCEAN)
+      && (p->special == PLANET_SPECIAL_NORMAL)
+      && (rnd_1_n(10, &g->seed) == 1)
+    ) {
+        p->special = PLANET_SPECIAL_ARTIFACTS;
+    }
+    {
+        int16_t di;
+        di = rnd_1_n(100, &g->seed);
+        if (p->special == PLANET_SPECIAL_ULTRA_RICH) {
+            di -= 20;
+        } else if (p->special == PLANET_SPECIAL_RICH) {
+            di -= 10;
+        }
+        di -= 15 - (int)(p->type);
+        if (di < 15) {
+            p->rocks = PLANET_ROCKS_MANY;
+        } else if (di < 40) {
+            p->rocks = PLANET_ROCKS_SOME;
+        } else {
+            p->rocks = PLANET_ROCKS_NONE;
+        }
+    }
+    p->growth = PLANET_GROWTH_NORMAL;
+    if (p->type < PLANET_TYPE_MINIMAL) {
+        p->growth = PLANET_GROWTH_HOSTILE;
+    } else if ((p->type > PLANET_TYPE_DESERT) && (rnd_1_n(12, &g->seed) == 1)) {
+        game_soil_enrich(p, 0, 0);
+        p->max_pop1 = p->max_pop2;
+    }
+    p->owner = PLAYER_NONE;
+    p->prev_owner = PLAYER_NONE;
+    p->claim = PLAYER_NONE;
+    if (p->type == PLANET_TYPE_NOT_HABITABLE) {
+        p->growth = PLANET_GROWTH_NORMAL;
+        p->special = PLANET_SPECIAL_NORMAL;
+    }
+    p->pop_oper_fact = 2;
+    p->infogfx = tbl_planet_type_infogfx[p->type][rnd_0_nm1(6, &g->seed)] - 1;
+    p->slider[PLANET_SLIDER_IND] = 100;
+    p->reloc = i;
+}
+
+static void game_generate_planets(struct game_s *g)
+{
+    uint16_t i;
+    for (i = 0; i < g->galaxy_stars; ++i) {
+        game_generate_planet(g, i);
+    }
+    /* enforce a non hostile 2nd colony for already defined homeworlds */
+    for (player_id_t pi = PLAYER_0; pi < g->players && g->evn.home[pi] != PLANET_NONE; ++pi) {
+        const planet_t *ph = &(g->planet[g->evn.home[pi]]);
+        int i2nd = PLANET_NONE;
+        planet_type_t t2nd = PLANET_TYPE_NOT_HABITABLE;
+        for (i = 0; i < g->galaxy_stars; ++i) {
+            if (i == g->evn.planet_orion_i || i == g->evn.home[pi]) continue;
+            const planet_t *p = &(g->planet[i]);
+            int d = util_math_dist_fast(ph->x, ph->y, p->x, p->y);
+            if (d >= 30) continue;
+            if (p->type >= t2nd) {
+                i2nd = i;
+                t2nd = p->type;
+            }
+        }
+        while (i2nd != PLANET_NONE && t2nd < PLANET_TYPE_MINIMAL) {
+            game_generate_planet(g, i2nd);
+            t2nd = g->planet[i2nd].type;
+        }
+    }
     {
         uint16_t tx = 0, ty = 0;
         for (i = 0; i < g->galaxy_stars; ++i) {
@@ -395,15 +426,15 @@ static void game_generate_planets(struct game_s *g)
         g->galaxy_maxy = ty + 25;
     }
 
-    for (int i = PLAYER_0; i < PLAYER_NUM; ++i) {
+    for (i = PLAYER_0; i < PLAYER_NUM; ++i) {
         g->evn.voted[i] = PLAYER_NONE;
     }
 
     {
-        uint16_t i;
         planet_t *p;
-        i = rnd_0_nm1(g->galaxy_stars, &g->seed);
-        g->evn.planet_orion_i = i;
+        if (g->evn.planet_orion_i == PLANET_NONE) {
+            g->evn.planet_orion_i = rnd_0_nm1(g->galaxy_stars, &g->seed);
+        }
         g->evn.have_guardian = true;
         p = &g->planet[i];
         p->type = PLANET_TYPE_TERRAN;
@@ -499,15 +530,15 @@ static void game_generate_galaxy(struct game_s *g)
             g->nebula_y1[i][j] = tbl_nebula_data[type][3][j] + g->nebula_y[i];
         }
     }
-
-    game_generate_planets(g);
 }
 
 static void game_generate_planet_names(struct game_s *g)
 {
     BOOLVEC_DECLARE(in_use, PLANET_NAMES_MAX);
     BOOLVEC_CLEAR(in_use, PLANET_NAMES_MAX);
+    lib_strcpy(g->planet[g->evn.planet_orion_i].name, game_str_planet_name_orion, PLANET_NAME_LEN);
     for (int i = 0; i < g->galaxy_stars; ++i) {
+        if (g->planet[i].name[0]) continue;
         uint16_t j;
         j = rnd_0_nm1(PLANET_NAMES_MAX, &g->seed);
         while (BOOLVEC_IS1(in_use, j)) {
@@ -516,7 +547,6 @@ static void game_generate_planet_names(struct game_s *g)
         BOOLVEC_SET1(in_use, j);
         lib_strcpy(g->planet[i].name, game_str_tbl_planet_names[j], PLANET_NAME_LEN);
     }
-    lib_strcpy(g->planet[g->evn.planet_orion_i].name, game_str_planet_name_orion, PLANET_NAME_LEN);
 }
 
 static void game_generate_race_banner(struct game_s *g)
@@ -587,12 +617,11 @@ static void game_generate_race_banner(struct game_s *g)
     }
 }
 
-static void game_generate_home_etc(struct game_s *g)
+static bool game_select_homeworlds(struct game_s *g) /* return true in case of error */
 {
     uint16_t tblhome[PLAYER_NUM];
-    uint16_t homei, loops;
+    uint16_t loops;
     bool flag_all_ok;
-start_of_func:
     flag_all_ok = false;
     loops = 0;
     while ((!flag_all_ok) && (loops < 200)) {
@@ -654,30 +683,13 @@ start_of_func:
                     flag_all_ok = false;    /* could break out here */
                 }
             }
-            for (player_id_t i = PLAYER_0; (i < g->players) && (i < 2); ++i) {
-                mindist = 10000;
-                for (int j = 0; j < g->galaxy_stars; ++j) {
-                    planet_t *p;
-                    p = &g->planet[j];
-                    if (1
-                      && (j != g->evn.planet_orion_i)
-                      && (j != tblhome[i])
-                    ) {
-                        dist = util_math_dist_fast(g->planet[tblhome[i]].x, g->planet[tblhome[i]].y, p->x, p->y);
-                        SETMIN(mindist, dist);
-                    }
-                }
-                if (mindist > 29) {
-                    /* regular planet too far away */
-                    flag_all_ok = false;    /* could break out here */
-                }
-            }
+            /* WASBUG: removed redundant copy of the above loop without the p->type condition */
         }
         ++loops;
     }
 #if 0
     /* FIXME in MOO1 this is actually after the if (!flag_all_ok) test, making it ineffective */
-    for (int i = 0; (i < g->players) && (i <= g->difficulty); ++i) {
+    for (int i = 2; (i < g->players) && (i <= g->difficulty); ++i) {
         uint16_t dist, mindist;
         mindist = 10000;
         for (int j = 0; j < g->galaxy_stars; ++j) {
@@ -698,16 +710,24 @@ start_of_func:
         }
     }
 #endif
-    if (!flag_all_ok) {
-        game_generate_galaxy(g);
-        game_generate_planet_names(g);
-        goto start_of_func;
+    if (!flag_all_ok) return true;
+    for (player_id_t i = PLAYER_0; i < g->players; ++i) {
+        g->evn.home[i] = tblhome[i];
     }
+    return false;
+}
+
+static void game_assert_second_cols(struct game_s *g)
+{
+    /* TODO */
+}
+
+static void game_generate_home_etc(struct game_s *g)
+{
     game_generate_race_banner(g);   /* must be run once and before the home planet name copy below */
     for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         planet_t *p;
-        homei = tblhome[i];
-        g->evn.home[i] = homei;
+        uint16_t homei = g->evn.home[i];
         g->planet_focus_i[i] = homei;
         p = &g->planet[homei];
         p->owner = i;
@@ -782,13 +802,13 @@ start_of_func:
             for (int j = 0; j < NUM_SHIPDESIGNS; ++j) {
                 shipcount_t n;
                 n = startfleet_ships[j];
-                e->orbit[tblhome[i]].ships[j] = n;
+                e->orbit[g->evn.home[i]].ships[j] = n;
                 srd->shipcount[j] = n;
             }
         }
         e->fuel_range = 3;
         if (IS_AI(g, i)) {
-            game_ai->new_game_init(g, i, tblhome[i]);
+            game_ai->new_game_init(g, i, g->evn.home[i]);
         } else {
             e->tech.slider[TECH_FIELD_COMPUTER] = 20;
             e->tech.slider[TECH_FIELD_CONSTRUCTION] = 10;
@@ -837,9 +857,23 @@ static bool game_generate_research_check_field(const uint8_t (*rl)[TECH_TIER_NUM
     return (rmask & got) == rmask;
 }
 
-static void game_generate_research(struct game_s *g, const uint8_t *rflag)
+static void game_generate_research(struct game_s *g)
 {
     bool flag_got_essentials = false;
+    uint8_t researchflag[6 * 50];
+    struct game_aux_s *gaux = g->gaux; 
+    {
+        const uint8_t *rawdata;
+        rawdata = gaux->research.d0;
+        for (int f = 0; f < 6; ++f) {
+            researchflag[f * 50] = 0;
+            for (int t = 1; t < 50; ++t) {
+                researchflag[f * 50 + t] = (rawdata[(f * 50 + t) * 6] != 0xff) ? 1 : 0;
+            }
+        }
+    }
+    researchflag[TECH_FIELD_WEAPON * 50 + (TECH_WEAP_DEATH_RAY - 1)] = 0;
+
     while (!flag_got_essentials) {
         flag_got_essentials = true;
         for (player_id_t pli = PLAYER_0; pli < g->players; ++pli) {
@@ -869,7 +903,7 @@ static void game_generate_research(struct game_s *g, const uint8_t *rflag)
                             flag_skip = false;
                             if (0
                               || (rr[ti + 1] & (GAME_NG_TECH_NEVER | GAME_NG_TECH_ALWAYS))
-                              || (rflag[field * 50 + ti] == 0)
+                              || (researchflag[field * 50 + ti] == 0)
                             ) {
                                 flag_skip = true;
                             }
@@ -977,12 +1011,25 @@ static void game_generate_emperor_names(struct game_s *g, const uint8_t *namedat
     }
 }
 
-/* -------------------------------------------------------------------------- */
-
-int game_new(struct game_s *g, struct game_new_options_s *opt)
+void game_print_options(struct game_s *g)
 {
-    uint8_t researchflag[6 * 50];
-    struct game_aux_s *gaux = g->gaux; 
+    uint32_t vo, vr = 0, vb = 0, m = 1, va = 0;
+    vo = g->difficulty + g->galaxy_size * 10 + g->players * 100;
+    for (int i = 0; i < g->players; ++i, m *= 0x10) {
+        vr += ((g->eto[i].race + 1) % (RACE_NUM + 1)) * m;
+    }
+    m = 1;
+    for (int i = 0; i < g->players; ++i, m *= 10) {
+        vb += ((g->eto[i].banner + 1) % (BANNER_NUM + 1)) * m;
+        if (IS_HUMAN(g, i)) {
+            va += m;
+        }
+    }
+    log_message("Game: new game -new %u:0x%x:%u:0x%x:%u -nga %u\n", vo, vr, vb, g->galaxy_seed, va, g->ai_id);
+}
+
+void game_set_options(struct game_s *g, struct game_new_options_s *opt)
+{
     if (opt->galaxy_seed == 0) {
         g->galaxy_seed = rnd_get_new_seed();
     } else {
@@ -1001,39 +1048,6 @@ int game_new(struct game_s *g, struct game_new_options_s *opt)
             BOOLVEC_SET1(g->is_ai, i);
         }
     }
-    {
-        const uint8_t *rawdata;
-        rawdata = gaux->research.d0;
-        for (int f = 0; f < 6; ++f) {
-            researchflag[f * 50] = 0;
-            for (int t = 1; t < 50; ++t) {
-                researchflag[f * 50 + t] = (rawdata[(f * 50 + t) * 6] != 0xff) ? 1 : 0;
-            }
-        }
-    }
-    researchflag[TECH_FIELD_WEAPON * 50 + (TECH_WEAP_DEATH_RAY - 1)] = 0;
-    {
-        uint32_t vo, vr = 0, vb = 0, m = 1, va = 0;
-        vo = g->difficulty + g->galaxy_size * 10 + g->players * 100;
-        for (int i = 0; i < g->players; ++i, m *= 0x10) {
-            vr += ((g->eto[i].race + 1) % (RACE_NUM + 1)) * m;
-        }
-        m = 1;
-        for (int i = 0; i < g->players; ++i, m *= 10) {
-            vb += ((g->eto[i].banner + 1) % (BANNER_NUM + 1)) * m;
-            if (IS_HUMAN(g, i)) {
-                va += m;
-            }
-        }
-        log_message("Game: new game -new %u:0x%x:%u:0x%x:%u -nga %u\n", vo, vr, vb, g->galaxy_seed, va, g->ai_id);
-    }
-    game_generate_galaxy(g);
-    game_generate_planet_names(g);
-    game_generate_home_etc(g);
-    game_generate_relation_etc(g);
-    game_generate_research(g, researchflag);
-    game_generate_misc(g);
-    game_generate_load(g);
     for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         char *b;
         const char *str;
@@ -1048,6 +1062,31 @@ int game_new(struct game_s *g, struct game_new_options_s *opt)
             util_trim_whitespace(b, PLANET_NAME_LEN);
         }
     }
+}
+
+/* -------------------------------------------------------------------------- */
+
+int game_new(struct game_s *g, struct game_new_options_s *opt)
+{
+    struct game_aux_s *gaux = g->gaux;
+    if (g->players == 0) game_set_options(g, opt);
+    if (g->galaxy_size <= GALAXY_SIZE_HUGE) game_print_options(g);
+    if (!g->galaxy_stars) {
+        game_generate_galaxy(g);
+        do {
+            game_place_planets(g);
+            game_generate_planets(g);
+        } while(game_select_homeworlds(g));
+    } else {
+      game_generate_planets(g);
+      game_assert_second_cols(g);
+    }
+    game_generate_home_etc(g);
+    game_generate_planet_names(g);
+    game_generate_relation_etc(g);
+    game_generate_research(g);
+    game_generate_misc(g);
+    game_generate_load(g);
     {
         uint8_t *namedata = lbxfile_item_get(LBXFILE_NAMES, 0);
         game_generate_emperor_names(g, namedata);
