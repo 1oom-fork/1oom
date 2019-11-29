@@ -80,71 +80,101 @@ static player_id_t game_event_new_get_trader(const struct game_s *g, player_id_t
     return trader;
 }
 
-static void game_monster_set_start(struct game_s *g, monster_t *m)
-{
-    int x, y, v;
-    uint8_t dest;
-    switch (rnd_0_nm1(4, &g->seed)) {
-        case 0:
-            v = rnd_0_nm1(g->galaxy_h, &g->seed);
-            dest = v * g->galaxy_w;
-            x = 0;
-            y = (v - 1) * 32 + rnd_1_n(12, &g->seed) + 10;
-            break;
-        case 1:
-            v = rnd_0_nm1(g->galaxy_w, &g->seed);
-            dest = v;
-            x = (v - 1) * 28 + rnd_1_n(12, &g->seed) + 30;
-            y = 0;
-            break;
-        case 2:
-            v = rnd_0_nm1(g->galaxy_h, &g->seed);
-            dest = (v + 1) * g->galaxy_w - 1;
-            x = g->galaxy_w * 28;
-            y = (v - 1) * 32 + rnd_1_n(12, &g->seed) + 10;
-            break;
-        default:
-            v = rnd_0_nm1(g->galaxy_w, &g->seed);
-            dest = (g->galaxy_h - 1) * g->galaxy_w + v;
-            x = (v - 1) * 28 + rnd_1_n(12, &g->seed) + 30;
-            y = g->galaxy_h * 32;
-            break;
-    }
-    m->x = x;
-    m->y = y;
-    m->dest = dest;
-}
-
 static void game_monster_set_next_dest(struct game_s *g, monster_t *m)
 {
-    uint8_t olddest = m->dest;
-    int dest = olddest, w = g->galaxy_w, h = g->galaxy_h;
-    while (dest == olddest) {
-        int x;
-        x = olddest % w;
-        if (x == 0) {
-            dest += rnd_0_nm1(2, &g->seed);
-        } else {
-            /*7da47*/
-            dest += rnd_1_n((x == (w - 1)) ? 2 : 3, &g->seed) - 2;
+    if (g->galaxy_w && g->galaxy_h) {
+        uint8_t olddest = m->dest;
+        int dest = olddest, w = g->galaxy_w, h = g->galaxy_h;
+        while (dest == olddest) {
+            int x;
+            x = olddest % w;
+            if (x == 0) {
+                dest += rnd_0_nm1(2, &g->seed);
+            } else {
+                /*7da47*/
+                dest += rnd_1_n((x == (w - 1)) ? 2 : 3, &g->seed) - 2;
+            }
+            /*7da6a*/
+            if (olddest < w) {
+                dest += rnd_0_nm1(2, &g->seed) * w;
+            } else {
+                /*7da86*/
+                dest += rnd_1_n(((w * h - w - 1) < olddest) ? 2 : 3, &g->seed) * w - w * 2;
+            }
+            /*7dab3*/
+            if (0
+              || (dest < 0) || (dest >= g->galaxy_stars)
+              || (g->planet[dest].type == PLANET_TYPE_NOT_HABITABLE)
+              || (dest == g->evn.planet_orion_i)
+            ) {
+                dest = olddest;
+            }
         }
-        /*7da6a*/
-        if (olddest < w) {
-            dest += rnd_0_nm1(2, &g->seed) * w;
-        } else {
-            /*7da86*/
-            dest += rnd_1_n(((w * h - w - 1) < olddest) ? 2 : 3, &g->seed) * w - w * 2;
-        }
-        /*7dab3*/
-        if (0
-          || (dest < 0) || (dest >= g->galaxy_stars)
-          || (g->planet[dest].type == PLANET_TYPE_NOT_HABITABLE)
-          || (dest == g->evn.planet_orion_i)
-        ) {
-            dest = olddest;
+        m->dest = dest;
+    } else {
+        uint8_t olddest = m->dest;
+        int dmin = 10000;
+        for (int i = g->galaxy_stars / 2; i; --i) {
+            int pi = rnd_0_nm1(g->galaxy_stars, &g->seed);
+            if (g->planet[pi].type == PLANET_TYPE_NOT_HABITABLE) continue;
+            if (pi == g->evn.planet_orion_i || pi == olddest) continue;
+            int d = util_math_dist_fast( m->x, m->y, g->planet[pi].x, g->planet[pi].y);
+            if (d < dmin && d > 10) {
+                dmin = d;
+                m->dest = pi;
+            }
         }
     }
-    m->dest = dest;
+}
+
+static void game_monster_set_start(struct game_s *g, monster_t *m)
+{
+    if (g->galaxy_w && g->galaxy_h) {
+        int x, y, v;
+        uint8_t dest;
+        switch (rnd_0_nm1(4, &g->seed)) {
+            case 0:
+                v = rnd_0_nm1(g->galaxy_h, &g->seed);
+                dest = v * g->galaxy_w;
+                x = 0;
+                y = (v - 1) * 32 + rnd_1_n(12, &g->seed) + 10;
+                break;
+            case 1:
+                v = rnd_0_nm1(g->galaxy_w, &g->seed);
+                dest = v;
+                x = (v - 1) * 28 + rnd_1_n(12, &g->seed) + 30;
+                y = 0;
+                break;
+            case 2:
+                v = rnd_0_nm1(g->galaxy_h, &g->seed);
+                dest = (v + 1) * g->galaxy_w - 1;
+                x = g->galaxy_w * 28;
+                y = (v - 1) * 32 + rnd_1_n(12, &g->seed) + 10;
+                break;
+            default:
+                v = rnd_0_nm1(g->galaxy_w, &g->seed);
+                dest = (g->galaxy_h - 1) * g->galaxy_w + v;
+                x = (v - 1) * 28 + rnd_1_n(12, &g->seed) + 30;
+                y = g->galaxy_h * 32;
+                break;
+        }
+        m->x = x;
+        m->y = y;
+        m->dest = dest;
+    } else {
+        int w = g->galaxy_maxx - GALAXY_BORDER_RIGHT + GALAXY_BORDER_LEFT;
+        int h = g->galaxy_maxy - GALAXY_BORDER_BOTTOM + GALAXY_BORDER_TOP;
+        int v = rnd_0_nm1(w+h, &g->seed);
+        if (v < w) {
+            m->x = v;
+            m->y = rnd_0_nm1(2, &g->seed) ? 0 : h;
+        } else {
+            m->x = rnd_0_nm1(2, &g->seed) ? 0 : w;
+            m->y = v - w;
+        }
+        m->dest = rnd_0_nm1(g->galaxy_w, &g->seed);
+        game_monster_set_next_dest(g, m);
+    }
 }
 
 static void game_event_kill_player(struct game_s *g, player_id_t pi)

@@ -72,8 +72,8 @@ static void game_place_planets(struct game_s *g)
         for (uint16_t w = 0; w < g->galaxy_w; ++w) {
             uint16_t x, y;
             again:
-            x = rnd_1_n(0x2b, &g->seed) + w * 0x1c + 9;
-            y = rnd_1_n(0x33, &g->seed) + h * 0x20 + 7;
+            x = rnd_0_nm1(0x2b, &g->seed) + w * 0x1c + GALAXY_BORDER_LEFT;
+            y = rnd_0_nm1(0x33, &g->seed) + h * 0x20 + GALAXY_BORDER_TOP;
             i = 0;
             for (i = 0; i < (h * g->galaxy_w + w); ++i) {
                 if ((tblpx[i] < x) || (tblpy[i] < y)) {
@@ -422,8 +422,8 @@ static void game_generate_planets(struct game_s *g)
                 ty = p->y;
             }
         }
-        g->galaxy_maxx = tx + 27;
-        g->galaxy_maxy = ty + 25;
+        g->galaxy_maxx = tx + GALAXY_BORDER_RIGHT;
+        g->galaxy_maxy = ty + GALAXY_BORDER_BOTTOM;
     }
 
     for (i = PLAYER_0; i < PLAYER_NUM; ++i) {

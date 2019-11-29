@@ -3,6 +3,11 @@
 
 #include "game.h"
 
+#define GALAXY_BORDER_LEFT    10
+#define GALAXY_BORDER_RIGHT   27
+#define GALAXY_BORDER_TOP     8
+#define GALAXY_BORDER_BOTTOM  25
+
 struct game_new_options_s {
     uint32_t galaxy_seed;
     galaxy_size_t galaxy_size;
