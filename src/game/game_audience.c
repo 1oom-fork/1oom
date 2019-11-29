@@ -711,6 +711,9 @@ static void audience_menu_threat(struct audience_s *au)
     if (eh->trade_bc[pa] == 0) {
         condtbl[2] = false;
     }
+    if (g->opt.enforce_nap == 3 && g->evn.ceasefire[ph][pa] > 0) {
+        condtbl[3] = false;
+    }
     game_audience_choice(au, game_str_au_youract, game_str_au_opts_threaten, condtbl, 5);
     au->condtbl = condtbl;
     selected = ui_audience_ask4(au);
