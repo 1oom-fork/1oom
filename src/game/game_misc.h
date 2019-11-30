@@ -35,5 +35,6 @@ extern int game_get_maxpop(const struct game_s *g, const planet_t *p);
 extern int game_get_maxprod(const struct game_s *g, const planet_t *p);
 extern void game_atmos_tform(struct planet_s *p);
 extern void game_soil_enrich(struct planet_s *p, int best_tform, bool advanced);
+extern bool game_has_fleet_in_orbit(const struct game_s *g, player_id_t pi, int planet_i);
 
 #endif

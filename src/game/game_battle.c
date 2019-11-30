@@ -315,15 +315,8 @@ void game_battle_handle_all(struct game_s *g)
         owner = p->owner;
         for (player_id_t i = PLAYER_0; i < g->players; ++i) {
             empiretechorbit_t *e = &(g->eto[i]);
-            if ((owner == i) && (p->missile_bases > 0)) {
+            if ((owner == i) && (p->missile_bases > 0) || game_has_fleet_in_orbit(g, i, pli)) {
                 BOOLVEC_SET1(tbl_have_force, i);
-            } else {
-                for (int j = 0; j < e->shipdesigns_num; ++j) {
-                    if (e->orbit[pli].ships[j] > 0) {
-                        BOOLVEC_SET1(tbl_have_force, i);
-                        break;
-                    }
-                }
             }
         }
         for (monster_id_t i = MONSTER_CRYSTAL; i < MONSTER_NUM; ++i) {

@@ -18,6 +18,7 @@ typedef struct gameopts_s {
     uint8_t fix_bait_yoyo;
     uint8_t nebula_speed;
     uint8_t enforce_nap;
+    uint8_t threats;
 } gameopts_t;
 
 #define GAMEOPTS sizeof(gameopts_t)

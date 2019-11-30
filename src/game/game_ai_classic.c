@@ -1823,9 +1823,8 @@ static void game_ai_classic_turn_p3_sub1(struct game_s *g, player_id_t pi)
     empiretechorbit_t *e = &(g->eto[pi]);
     for (player_id_t pi2 = PLAYER_0; pi2 < g->players; ++pi2) {
         e->spymode_next[pi2] = SPYMODE_HIDE;
-        if (IS_HUMAN(g, pi2) && (g->evn.ceasefire[pi2][pi2] > 0)) { /* FIXME BUG should be [pi2][pi] */
-            e->spymode_next[pi2] = SPYMODE_HIDE; /* FIXME redundant */
-        } else if ((pi != pi2) && BOOLVEC_IS1(e->contact, pi2)) {
+        if (IS_HUMAN(g, pi2) && (g->evn.ceasefire[pi2][pi] > 0)) continue; /* WASBUG: [pi2][pi2] */
+        if ((pi != pi2) && BOOLVEC_IS1(e->contact, pi2)) {
             if (e->treaty[pi2] >= TREATY_WAR) {
                 e->spymode_next[pi2] = SPYMODE_SABOTAGE;
             } else if (e->spymode_next[pi2] == SPYMODE_HIDE) { /* FIXME BUG always true */
@@ -4291,22 +4290,71 @@ static uint8_t game_ai_classic_aud_threaten(struct audience_s *au)
     empiretechorbit_t *ea = &(g->eto[pa]);
     int v;
     uint8_t dtype;
-    v = rnd_1_n(200, &g->seed) + eh->mood_treaty[pa] / 2;
-    v += game_diplo_tbl_reldiff[ea->trait1] * 2;
+    int valid = 0;
+    bool truce = g->evn.ceasefire[ph][pa] > 0;
+    bool allies = eh->treaty[pa] == TREATY_ALLIANCE;
+
+    if (!truce && g->opt.threats == 2) {
+        for (int i = 0; i < g->enroute_num; ++i) {
+            const fleet_enroute_t *r = &(g->enroute[i]);
+            if (r->owner != pa || g->planet[r->dest].owner != ph) continue;
+            valid += allies ? 1 : 20;
+            break;
+        }
+        for (int i = 0; i < g->galaxy_stars; ++i) {
+            if (g->planet[i].owner != ph) continue;
+            if (game_has_fleet_in_orbit(g, pa, i)) {
+                valid += allies ? 1 : 20;
+                break;
+            }
+        }
+        for (int i = 0; i < g->transport_num; ++i) {
+            const transport_t *r = &(g->transport[i]);
+            if (r->owner != pa || g->planet[r->dest].owner != ph) continue;
+            valid += 20;
+            break;
+        }
+        if (valid > 5) valid += 10;
+        if (eh->treaty[pa] <= TREATY_ALLIANCE) valid *= (1 + 2 * eh->treaty[pa]);
+    }
+    if (ea->spymode[ph] == SPYMODE_ESPIONAGE) valid += 10;
+
+    if (g->opt.threats == 2) {
+        v = 50 + rnd_1_n(100, &g->seed) + eh->mood_treaty[pa] / 3;
+        v += eh->relation1[pa] + game_diplo_tbl_reldiff[ea->trait1];
+        if (ea->trait1 == TRAIT1_HONORABLE) {
+            v += 2 * valid;
+        } else if (ea->trait1 == TRAIT1_RUTHLESS) {
+            v += valid / 2;
+        } else {
+            v += valid;
+        }
+        if (!valid) v -= 30;
+        SUBSATT(eh->relation1[pa], (valid ? 0 : 10) + rnd_1_n(10, &g->seed), -100);
+    } else {
+        v = rnd_1_n(200, &g->seed) + eh->mood_treaty[pa] / 2;
+        v += game_diplo_tbl_reldiff[ea->trait1] * 2;
+        SUBSATT(eh->relation1[pa], rnd_1_n(15, &g->seed), -100);
+    }
     if (ea->total_production_bc > 0) {
         v += (eh->total_production_bc * 100) / ea->total_production_bc;
     } else {
         v += 100;
     }
-    SUBSATT(eh->relation1[pa], rnd_1_n(15, &g->seed), -100);
     ea->relation1[ph] = eh->relation1[pa];
     eh->mood_treaty[pa] = -120;
     if (v < 170) {
-        if ((rnd_1_n(15, &g->seed) - game_diplo_tbl_reldiff[ea->trait1]) > rnd_1_n(100, &g->seed)) {
-            game_diplo_start_war(g, ph, pa);
+        int war_mod = rnd_1_n(15, &g->seed) - game_diplo_tbl_reldiff[ea->trait1];
+        if (g->opt.threats == 2 && !truce) {
+            war_mod += valid ? -15 : +15;
+            war_mod += eh->total_production_bc < ea->total_production_bc ? +5 : -5;
+        }
+        if (war_mod > rnd_1_n(100, &g->seed)) {
+            game_diplo_start_war(g, pa, ph); /* WASBUG: (g, ph, pa) */
             dtype = 13;
         } else {
             dtype = 69;
+            if (g->opt.threats == 1) game_diplo_start_war(g, ph, pa); /* ultimatum */
         }
     } else {
         if (g->ai_id == GAME_AI_CLASSICPLUS) {
@@ -4318,6 +4366,9 @@ static uint8_t game_ai_classic_aud_threaten(struct audience_s *au)
         }
         g->evn.ceasefire[ph][pa] = rnd_1_n(15, &g->seed) + 5;
         dtype = 70;
+        if (g->opt.threats == 2 && (valid || truce || eh->total_production_bc < ea->total_production_bc)) {
+            return dtype;
+        }
         if (v >= 275) {
             struct spy_esp_s s[1];
             s->spy = ph;

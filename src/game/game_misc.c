@@ -933,3 +933,10 @@ void game_soil_enrich(struct planet_s *p, int best_tform, bool advanced) {
     SETMIN(p->max_pop3, game_num_max_pop);
 }
 
+bool game_has_fleet_in_orbit(const struct game_s *g, player_id_t pi, int planet_i) {
+    const shipcount_t *ships = g->eto[pi].orbit[planet_i].ships;
+    for (int i = 0; i < g->eto[pi].shipdesigns_num; ++i) {
+        if (ships[i]) return true;
+    }
+    return false;
+}

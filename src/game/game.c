@@ -357,7 +357,7 @@ gameoptdescr_t gameopt_descr[GAMEOPTS] = {
   { 3, 0, "Spec Wars", { "allowed", "declare", "war only" },
     "Asking for a Declaration of War on another Race is allowed (default), declares war if accepted or is banned unless already at war with target."
   },
-  { 4, 0, "AI", { "battle exploits", "no baiting", "no yoyo", "no bait/yoyo" },
+  { 4, 0, "Battle", { "exploits", "no baiting", "no yoyo", "no bait/yoyo" },
     "No baiting lets AI retreat if bases are untouchable. No yoyo will not evade ship missiles if stronger bases are present."
   },
   { 4, 0, "Nebula speed", { "half", "warp 1", "step", "full" },
@@ -365,6 +365,9 @@ gameoptdescr_t gameopt_descr[GAMEOPTS] = {
   },
   { 4, 0, "Enforce NAP", { "no", "ships", "trans", "truce" },
     "Non-Aggression Pact enforcement: none (default), return ships, return ships and transports, also show and enforce truces for AI and Player."
+  },
+  { 4, 0, "Threats", { "normal", "ultimatum", "smart", "off" },
+    "Ultimatum means war when denied. Smart discers valid complaints from extortion and also takes relations, strength and treaties into account."
   }
 };
 

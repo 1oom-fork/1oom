@@ -493,6 +493,7 @@ restart:
             d->g->opt.retreat = 2;
             d->g->opt.spec_war = 1;
             d->g->opt.fix_bait_yoyo = 3;
+            d->g->opt.threats = 2;
         } else if (oi == oi_evdef) {
             BOOLVEC_CLEAR(d->g->evn.done, GAME_EVENT_TBL_NUM);
             d->g->evn.year = 40;
