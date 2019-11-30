@@ -345,8 +345,8 @@ gameoptdescr_t gameopt_descr[GAMEOPTS] = {
   { 3, 1, "RNG", { "random", "deterministic", "fixed" },
     "RNG settings: random, deterministic (default), fixed (deterministic and reset to a fixed value after each player turn)"
   },
-  { 4, 0, "Council", { "2/3", "3/4", "Orion", "none" },
-    "Galactic Council setting: 2/3 (default), 3/4 (after 3/4 of planets are settled), Orion (after Orion is settled), never"
+  { 4, 0, "Council", { "2/3", "late", "Orion", "none" },
+    "Galactic Council setting: 2/3 (default), late (every 25 years from 2400 on if 3/4 of planets are settled), after Orion is settled, never"
   },
   { 3, 0, "Guardian", { "normal", "weak", "weaker" },
     "Guardian setting: normal (default), weak (less weapons and DEF, no ARS/ADC), weaker (also less shields and ATT)"

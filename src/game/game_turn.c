@@ -1732,10 +1732,10 @@ struct game_end_s game_turn_process(struct game_s *g)
     if (1
       && (game_num_council_years != 0)
       && g->opt.council != 3
-      && (((g->year % game_num_council_years) == 0) || (!g->election_held))
+      && (((g->year % game_num_council_years) == 0) || (!g->election_held && g->opt.council != 1))
       && (num_alive > 2)
       && (((g->galaxy_stars * 2) / 3) <= num_colony)
-      && (g->opt.council != 1 || (((g->galaxy_stars * 3) / 4) <= num_colony))
+      && (g->opt.council != 1 || (3 * g->galaxy_stars <= 4 * num_colony && g->year > 99))
       && (g->end == GAME_END_NONE)
       && (g->opt.council != 2 || g->evn.have_orion_conquer)
     ) {
