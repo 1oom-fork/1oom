@@ -8,6 +8,23 @@
 #define GALAXY_BORDER_TOP     8
 #define GALAXY_BORDER_BOTTOM  25
 
+#define GALAXYOPTS 6
+#define PLANETOPTS 6
+#define NEWOPTS (GALAXYOPTS+PLANETOPTS)
+#define GALAXY_AUX_MAX 64
+
+typedef struct star_s {
+    union {
+        uint64_t info;
+        struct {
+            uint16_t y;
+            uint16_t x;
+            uint16_t z;
+            uint16_t t;
+        };
+    };
+} star_t;
+
 struct game_new_options_s {
     uint32_t galaxy_seed;
     galaxy_size_t galaxy_size;
@@ -21,7 +38,33 @@ struct game_new_options_s {
         banner_t banner;
         bool is_ai;
     } pdata[PLAYER_NUM];
+    uint8_t stars;
+    uint8_t naux;
+    int16_t height;
+    int16_t width;
+    union {
+        struct {
+            uint8_t density;
+            uint8_t gaps;
+            uint8_t cluster;
+            uint8_t neb;
+            uint8_t homeworlds;
+            uint8_t start;
+
+            uint8_t psize;
+            uint8_t env;
+            uint8_t res;
+            uint8_t ultra;
+            uint8_t artefacts;
+            uint8_t astroids;
+        };
+        uint8_t popt[NEWOPTS];
+    };
+    star_t aux[GALAXY_AUX_MAX];
+    star_t star[PLANETS_MAX];
 };
+
+optdescr_t newopt_descr[NEWOPTS];
 
 #define GAME_NEW_OPTS_DEFAULT \
     { \
@@ -33,7 +76,9 @@ struct game_new_options_s {
             { "", "", RACE_RANDOM, BANNER_RANDOM, true }, \
             { "", "", RACE_RANDOM, BANNER_RANDOM, true }, \
             { "", "", RACE_RANDOM, BANNER_RANDOM, true }  \
-        } \
+        }, \
+        0, 0, 0, 0, \
+        {  1,  2,  0,  2,  0,  0,  1,  1,  1,  3,  2,  1 } \ 
     }
 
 struct game_aux_s;

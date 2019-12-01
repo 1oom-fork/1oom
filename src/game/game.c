@@ -338,7 +338,7 @@ static int dump_numbers(char **argv, void *var)
 
 /* -------------------------------------------------------------------------- */
 
-gameoptdescr_t gameopt_descr[GAMEOPTS] = {
+optdescr_t gameopt_descr[GAMEOPTS] = {
   { 2, 0, "Rules", { "unlocked", "locked" },
     "Locks rules so they cannot be changed in the Game menu and disables cheat codes."
   },

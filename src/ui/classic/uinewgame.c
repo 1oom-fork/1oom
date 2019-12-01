@@ -289,6 +289,14 @@ static void new_game_print_shadow_right(int x, int y, uint8_t c1, uint8_t c2, co
     lbxfont_print_str_right(x, y, str, UI_SCREEN_W, ui_scale);
 }
 
+static void new_game_print_shadow_left(int x, int y, uint8_t c1, uint8_t c2, const char *str)
+{
+    lbxfont_set_color_c_n(c2, 8);
+    lbxfont_print_str_normal(x + 1, y + 1, str, UI_SCREEN_W, ui_scale);
+    lbxfont_set_color_c_n(c1, 8);
+    lbxfont_print_str_normal(x, y, str, UI_SCREEN_W, ui_scale);
+}
+
 static void new_game_draw_extra_cb(void *vptr)
 {
     struct new_game_data_s *d = vptr;
@@ -336,7 +344,7 @@ static void new_game_draw_extra_cb(void *vptr)
             d->frame = 0;
         }
     } else if (d->section==2) { /* Rules */
-        const uint8_t *popt = d->g->popt;
+        const uint8_t *ropt = d->g->popt;
         lbxfont_select(5, 0, 0, 0);
         lbxfont_print_str_center(80, 5, "Rules", UI_SCREEN_W, ui_scale);
         lbxfont_print_str_center(250, 5, "Events", UI_SCREEN_W, ui_scale);
@@ -349,8 +357,8 @@ static void new_game_draw_extra_cb(void *vptr)
         lbxfont_select(0, 0, 0, 0);
         new_game_print_shadow_right(300, 75, 208, 206, "not before");
         for (int i = 0; i < GAMEOPTS; ++i) {
-            lbxfont_set_color_c_n(popt[i] == gameopt_descr[i].dflt ? 19 : 71, 9);
-            lib_sprintf(buf, sizeof(buf), "%s: %s",gameopt_descr[i].name, gameopt_descr[i].opt[popt[i]]);
+            lbxfont_set_color_c_n(ropt[i] == gameopt_descr[i].dflt ? 19 : 71, 9);
+            lib_sprintf(buf, sizeof(buf), "%s: %s",gameopt_descr[i].name, gameopt_descr[i].opt[ropt[i]]);
             lbxfont_print_str_normal(20, 20 + 8 * i, buf, UI_SCREEN_W, ui_scale);
         }
         for (int i = 1; i < GAME_EVENT_NUM; ++i) {
@@ -367,8 +375,23 @@ static void new_game_draw_extra_cb(void *vptr)
             lbxfont_print_str_split(20, 156, 285, d->descr, 0, UI_SCREEN_W, UI_SCREEN_H, ui_scale);
         }
     } else { /* Galaxy */
+        const uint8_t *nopt = d->newopts->popt;
         lbxfont_select(5, 0, 0, 0);
-        lbxfont_print_str_center(160, 4, "Galaxy Options currently not implemented", UI_SCREEN_W, ui_scale);
+        lbxfont_print_str_center(212, 87, "Galaxy Options currently not implemented", UI_SCREEN_W, ui_scale);
+        lbxfont_print_str_center(55, 5, "Galaxy", UI_SCREEN_W, ui_scale);
+        lbxfont_print_str_center(55, 105, "Planets", UI_SCREEN_W, ui_scale);
+/*
+        new_game_print_shadow_left(10, 85, 71, 19, "Reset");
+        new_game_print_shadow_left(70, 85, 71, 19, "Edit");
+*/
+        ui_draw_box1(110, 10, 310+3, 170+3, 0xfa, 0xfc, ui_scale);
+        lbxfont_select(0, 0, 0, 0);
+        for (int i = 0; i < NEWOPTS; ++i) {
+            int y = i < GALAXYOPTS ? 8 * i + 44 : 8 * (i-GALAXYOPTS) + 120;
+            lbxfont_set_color_c_n(nopt[i] == newopt_descr[i].dflt ? 19 : 71, 9);
+            lib_sprintf(buf, sizeof(buf), "%s: %s",newopt_descr[i].name, newopt_descr[i].opt[nopt[i]]);
+            lbxfont_print_str_normal(10, y, buf, UI_SCREEN_W, ui_scale);
+        }
     }
 }
 
@@ -377,8 +400,10 @@ static bool ui_new_game_extra(struct game_new_options_s *newopts, struct new_gam
     bool flag_done = false, flag_ok = false;
     int16_t oi_cancel, oi_ok, oi_players, oi_rules, oi_galaxy, oi_ai_id,
             oi_option[GAMEOPTS], oi_event[GAME_EVENT_TBL_NUM], oi_optdef, oi_rbo, oi_evdef, oi_good, oi_evoff, oi_year,
+            oi_noption[NEWOPTS], 
             oi_race[PLAYER_NUM], oi_banner[PLAYER_NUM], oi_pname[PLAYER_NUM], oi_hname[PLAYER_NUM], oi_ai[PLAYER_NUM];
-    uint8_t *popt = d->g->popt;
+    uint8_t *ropt = d->g->popt;
+    uint8_t *nopt = d->newopts->popt;
     d->pi = PLAYER_0;
     d->str_title = 0;
     d->frame = 0;
@@ -417,6 +442,7 @@ restart:
          oi_ai[i] = UIOBJI_INVALID;
     }
     for (int i = 0; i < GAMEOPTS; ++i) oi_option[i] = UIOBJI_INVALID;
+    for (int i = 0; i < NEWOPTS; ++i) oi_noption[i] = UIOBJI_INVALID;
     for (int i = 0; i < GAME_EVENT_TBL_NUM; ++i) oi_event[i] = UIOBJI_INVALID;
     oi_optdef = oi_rbo = oi_evdef = oi_good = oi_evoff = oi_year = UIOBJI_INVALID;
     if (d->section==1) { 
@@ -451,6 +477,10 @@ restart:
         oi_evoff  = uiobj_add_mousearea(270, 50, 300, 60, MOO_KEY_UNKNOWN);
         oi_year   = uiobj_add_mousearea(270, 75, 300, 95, MOO_KEY_UNKNOWN);
     } else {
+        for (int i = 0; i < NEWOPTS; ++i) {
+            int y = i < GALAXYOPTS ? 8 * i + 43 : 8 * (i-GALAXYOPTS) + 119;
+            oi_noption[i] = uiobj_add_mousearea(10, y, 100, y + 6, MOO_KEY_UNKNOWN);
+        }
     }
 
     uiobj_set_callback_and_delay(new_game_draw_extra_cb, d, 2);
@@ -487,9 +517,9 @@ restart:
         } else if (oi == oi_ai_id) {
             d->newopts->ai_id = (d->newopts->ai_id + 1) % GAME_AI_NUM_VISIBLE;
         } else if (oi == oi_optdef) {
-            for (int i = 0; i < GAMEOPTS; ++i) popt[i] = gameopt_descr[i].dflt;
+            for (int i = 0; i < GAMEOPTS; ++i) nopt[i] = gameopt_descr[i].dflt;
         } else if (oi == oi_rbo) {
-            for (int i = 0; i < GAMEOPTS; ++i) popt[i] = gameopt_descr[i].dflt;
+            for (int i = 0; i < GAMEOPTS; ++i) nopt[i] = gameopt_descr[i].dflt;
             d->g->opt.retreat = 2;
             d->g->opt.spec_war = 1;
             d->g->opt.fix_bait_yoyo = 3;
@@ -557,11 +587,21 @@ restart:
         d->descr = NULL;
         for (int i = 0; d->section == 2 && i < GAMEOPTS; ++i) {
             if (oi == oi_option[i]) {
-                popt[i] += 1;
-                if (popt[i] >= gameopt_descr[i].opts) popt[i] = 0;
+                ropt[i] += 1;
+                if (ropt[i] >= gameopt_descr[i].opts) ropt[i] = 0;
             }
             if (oi2 == oi_option[i]) {
                 d->descr = gameopt_descr[i].descr;
+                break;
+            }
+        }
+        for (int i = 0; d->section == 3 && i < NEWOPTS; ++i) {
+            if (oi == oi_noption[i]) {
+                nopt[i] += 1;
+                if (nopt[i] >= newopt_descr[i].opts) nopt[i] = 0;
+            }
+            if (oi2 == oi_option[i]) {
+                d->descr = newopt_descr[i].descr;
                 break;
             }
         }

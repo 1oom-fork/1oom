@@ -24,15 +24,15 @@ typedef struct gameopts_s {
 #define GAMEOPTS sizeof(gameopts_t)
 #define MAXOPTS 9
 
-typedef struct gameoptdescr_s {
+typedef struct optdescr_s {
     int opts;
     int dflt;
     const char *name;
     const char *opt[MAXOPTS];
     const char *descr;
-} gameoptdescr_t;
+} optdescr_t;
 
-gameoptdescr_t gameopt_descr[GAMEOPTS];
+optdescr_t gameopt_descr[GAMEOPTS];
 
 typedef struct fleet_enroute_s {
     player_id_t owner;

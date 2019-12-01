@@ -1011,7 +1011,7 @@ static void game_generate_emperor_names(struct game_s *g, const uint8_t *namedat
     }
 }
 
-void game_print_options(struct game_s *g)
+static void game_print_options(struct game_s *g)
 {
     uint32_t vo, vr = 0, vb = 0, m = 1, va = 0;
     vo = g->difficulty + g->galaxy_size * 10 + g->players * 100;
@@ -1028,7 +1028,7 @@ void game_print_options(struct game_s *g)
     log_message("Game: new game -new %u:0x%x:%u:0x%x:%u -nga %u\n", vo, vr, vb, g->galaxy_seed, va, g->ai_id);
 }
 
-void game_set_options(struct game_s *g, struct game_new_options_s *opt)
+static void game_set_options(struct game_s *g, struct game_new_options_s *opt)
 {
     if (opt->galaxy_seed == 0) {
         g->galaxy_seed = rnd_get_new_seed();
@@ -1065,6 +1065,22 @@ void game_set_options(struct game_s *g, struct game_new_options_s *opt)
 }
 
 /* -------------------------------------------------------------------------- */
+
+optdescr_t newopt_descr[NEWOPTS] = {
+  { 4, 1, "Density", { "high", "normal", "low", "sparse" }, "" },
+  { 5, 2, "Gaps", { "narrow", "close", "medium", "wide", "vast" }, "" },
+  { 4, 0, "Cluster", { "one per player", "pls + 1", "pls + 2", "pls + 3" }, "" },
+  { 6, 2, "Nebulas", { "random", "none", "rare", "common", "frequent", "max" }, "" },
+  { 4, 0, "Homeworlds", { "map", "reroll", "distant", "fair" }, "" },
+  { 4, 0, "Start", { "random", "good", "average", "bad" }, "" },
+  { 3, 1, "Planet Size", { "small", "medium", "large" }, "" },
+  { 3, 1, "Environment", { "hostile", "moderate", "fertile" }, "" },
+  { 3, 1, "Minerals", { "poor", "average", "rich" }, "" },
+  { 4, 3, "Ultra Planets", { "none", "no urich", "no upoor", "yes" }, "" },
+  { 4, 2, "Artefacts", { "none", "rare", "normal", "frequent" }, "" },
+  { 2, 1, "Astroids", { "none", "yes" }, "" }
+};
+
 
 int game_new(struct game_s *g, struct game_new_options_s *opt)
 {
