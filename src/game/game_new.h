@@ -78,7 +78,7 @@ optdescr_t newopt_descr[NEWOPTS];
             { "", "", RACE_RANDOM, BANNER_RANDOM, true }  \
         }, \
         0, 0, 0, 0, \
-        {  1,  2,  0,  2,  0,  0,  1,  1,  1,  3,  2,  1 } \ 
+        {{  1,  2,  0,  2,  0,  0,  1,  1,  1,  3,  2,  1 }} \
     }
 
 struct game_aux_s;

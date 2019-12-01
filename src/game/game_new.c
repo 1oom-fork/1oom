@@ -436,7 +436,7 @@ static void game_generate_planets(struct game_s *g)
             g->evn.planet_orion_i = rnd_0_nm1(g->galaxy_stars, &g->seed);
         }
         g->evn.have_guardian = true;
-        p = &g->planet[i];
+        p = &g->planet[g->evn.planet_orion_i];
         p->type = PLANET_TYPE_TERRAN;
         p->max_pop3 = 120;
         p->max_pop2 = 120;
@@ -1084,7 +1084,6 @@ optdescr_t newopt_descr[NEWOPTS] = {
 
 int game_new(struct game_s *g, struct game_new_options_s *opt)
 {
-    struct game_aux_s *gaux = g->gaux;
     if (g->players == 0) game_set_options(g, opt);
     if (g->galaxy_size <= GALAXY_SIZE_HUGE) game_print_options(g);
     if (!g->galaxy_stars) {
