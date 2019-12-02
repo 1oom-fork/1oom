@@ -294,6 +294,7 @@ struct game_s {
     BOOLVEC_DECLARE(is_ai, PLAYER_NUM);
     player_id_t active_player;
     difficulty_t difficulty;
+    galaxy_type_t galaxy_type;
     galaxy_size_t galaxy_size;
     uint8_t galaxy_w;  /* 6 8 a c */
     uint8_t galaxy_h;  /* 4 6 7 9 */

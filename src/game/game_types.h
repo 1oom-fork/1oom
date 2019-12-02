@@ -54,6 +54,13 @@ typedef enum banner_e {
 #define BANNER_RANDOM   BANNER_NUM
 
 typedef enum {
+    GALAXY_TYPE_STD = 0,
+    GALAXY_TYPE_EDIT, /*1*/
+    GALAXY_TYPE_RND, /*2*/
+    GALAXY_TYPE_NUM
+} galaxy_type_t;
+
+typedef enum {
     GALAXY_SIZE_SMALL = 0,
     GALAXY_SIZE_MEDIUM, /*1*/
     GALAXY_SIZE_LARGE, /*2*/

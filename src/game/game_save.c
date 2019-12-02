@@ -698,7 +698,7 @@ static int game_save_encode(uint8_t *buf, int buflen, const struct game_s *g, ui
     SG_1OOM_EN_DUMMY(3);
     SG_1OOM_EN_U8(g->active_player);
     SG_1OOM_EN_U8(g->difficulty);
-    SG_1OOM_EN_U8(g->galaxy_size);
+    SG_1OOM_EN_U8(g->galaxy_size + GALAXY_SIZE_NUM * g->galaxy_type);
     SG_1OOM_EN_U8(g->galaxy_w);
     SG_1OOM_EN_U8(g->galaxy_h);
     SG_1OOM_EN_U8(g->galaxy_stars);
@@ -791,6 +791,8 @@ static int game_save_decode(const uint8_t *buf, int buflen, struct game_s *g, ui
     SG_1OOM_DE_U8(g->active_player);
     SG_1OOM_DE_U8(g->difficulty);
     SG_1OOM_DE_U8(g->galaxy_size);
+    g->galaxy_type = g->galaxy_size / GALAXY_SIZE_NUM;
+    g->galaxy_size = g->galaxy_size % GALAXY_SIZE_NUM;
     SG_1OOM_DE_U8(g->galaxy_w);
     SG_1OOM_DE_U8(g->galaxy_h);
     SG_1OOM_DE_U8(g->galaxy_stars);

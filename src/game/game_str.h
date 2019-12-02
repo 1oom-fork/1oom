@@ -14,6 +14,7 @@ extern const char *game_str_mm_quit;
 extern const char *game_str_tbl_race[RACE_NUM + 1];
 extern const char *game_str_tbl_races[RACE_NUM];
 extern const char *game_str_tbl_banner[BANNER_NUM + 1];
+extern const char *game_str_tbl_gtype[GALAXY_TYPE_NUM];
 extern const char *game_str_tbl_gsize[GALAXY_SIZE_NUM];
 extern const char *game_str_tbl_diffic[DIFFICULTY_NUM];
 extern const char *game_str_tbl_oppon[5];
