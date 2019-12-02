@@ -1582,20 +1582,6 @@ static void game_turn_update_final_war(struct game_s *g)
     }
 }
 
-static void game_turn_init_rng(struct game_s *g, uint32_t phase) {
-    if (g->opt.deterministic != 2) return;
-    uint32_t y = g->year, s = phase << 17 | y << 1 | 1;
-    s *= g->galaxy_seed;
-    s ^= s >> 13;
-    s ^= s << 7;
-    s ^= s >> 11;
-    s *= (0x87654321 ^ phase << 1 ^ y << 8);
-    s ^= s >> 19;
-    s ^= s << 12;
-    s ^= s >> 5;
-    g->seed = s;
-}
-
 /* -------------------------------------------------------------------------- */
 
 void game_turn_ai_do(struct game_s *g) {
@@ -1616,8 +1602,12 @@ struct game_end_s game_turn_process(struct game_s *g)
     BOOLVEC_TBL_DECLARE(old_contact, PLAYER_NUM, PLAYER_NUM);
     uint8_t old_focus[PLAYER_NUM];
     int num_alive = 0, num_colony = 0;
+    uint32_t seed = g->seed, old_seed = seed;
     game_end.type = GAME_END_NONE;
-    game_turn_init_rng(g, 123);
+    if (g->opt.deterministic == 2) {
+        seed = g->galaxy_seed * (2 * g->year + 1);
+    }
+    g->seed = rnd32alt(&seed);
     game_turn_limit_ships(g);
     for (int i = 0; i < g->players; ++i) {
         BOOLVEC_TBL_COPY1(old_contact, g->eto[i].contact, i, PLAYER_NUM);
@@ -1656,7 +1646,7 @@ struct game_end_s game_turn_process(struct game_s *g)
     game_remove_empty_fleets(g);
     game_spy_report(g);
     game_battle_handle_all(g);
-    game_turn_init_rng(g, 345);
+    g->seed = rnd32alt(&seed);
     for (int i = 0; i < g->players; ++i) {
         g->evn.newtech[i].num = 0;
     }
@@ -1688,7 +1678,7 @@ struct game_end_s game_turn_process(struct game_s *g)
     }
     game_turn_explore(g);
     game_turn_bomb(g);
-    game_turn_init_rng(g, 567);
+    g->seed = rnd32alt(&seed);
     game_turn_transport(g);
     {
         const uint8_t *grdata;
@@ -1742,7 +1732,7 @@ struct game_end_s game_turn_process(struct game_s *g)
         game_election(g);
         g->election_held = true;
     }
-    game_turn_init_rng(g, 789);
+    g->seed = rnd32alt(&seed);
     if (game_turn_check_end(g, &game_end)) {
         return game_end;
     }
@@ -1751,7 +1741,7 @@ struct game_end_s game_turn_process(struct game_s *g)
     }
     game_ai->turn_diplo_p2(g);
     game_turn_audiences(g);
-    game_turn_init_rng(g, 91011);
+    g->seed = rnd32alt(&seed);
     if (game_turn_check_end(g, &game_end)) {
         return game_end;
     }
@@ -1807,5 +1797,6 @@ struct game_end_s game_turn_process(struct game_s *g)
         if (g->evn.gov_eco_mode[i] & GOVERNOR_ECO_MODE_AUTO_TECH)
             game_tech_set_to_opt(e);
     }
+    g->seed = old_seed;
     return game_end;
 }

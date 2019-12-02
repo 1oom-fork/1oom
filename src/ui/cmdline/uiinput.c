@@ -108,6 +108,7 @@ char *ui_input_line(const char *prompt)
         log_message("(end of input)\n");
         exit(0);
     }
+    rnd_get_new_seed();
     return line;
 }
 #else
@@ -124,6 +125,7 @@ char *ui_input_line(const char *prompt)
             ++p;
         }
         *p = 0;
+        rnd_get_new_seed();
         return line;
     } else {
         log_message("(end of input)\n");

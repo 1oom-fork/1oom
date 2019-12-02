@@ -7,6 +7,7 @@
 #include "mouse.h"
 #include "types.h"
 #include "uicursor.h"
+#include "rnd.h"
 
 /* -------------------------------------------------------------------------- */
 
@@ -57,11 +58,18 @@ bool ui_delay_us_or_click(uint32_t delay)
                 return true;
             }
         }
-        if (((mx != moouse_x) || (my != moouse_y)) && ((now - mouse_time) > DELAY_MOUSE_UPDATE_LIMIT)) {
-            mouse_time = now;
-            mx = moouse_x;
-            my = moouse_y;
-            ui_cursor_refresh(mx, my);
+        if (mx != moouse_x || my != moouse_y) {
+            rnd_entropy_pool ^= rnd_entropy_pool >> 23;
+            rnd_entropy_pool += now;
+            rnd_entropy_pool += moouse_x << 10;
+            rnd_entropy_pool += moouse_y << 15;
+            rnd_entropy_pool *= 1058670809;
+            if(now - mouse_time > DELAY_MOUSE_UPDATE_LIMIT) {
+                mouse_time = now;
+                mx = moouse_x;
+                my = moouse_y;
+                ui_cursor_refresh(mx, my);
+            }
         }
     }
 }

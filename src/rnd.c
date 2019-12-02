@@ -8,14 +8,29 @@
 
 /* -------------------------------------------------------------------------- */
 
-uint16_t rnd_0_nm1(uint16_t n, uint32_t *seed)
-{
+uint64_t rnd_entropy_pool; /* uninitialized on purpose - it IS an entropy pool after all */
+
+uint32_t rnd32(uint32_t *seed) {
     uint32_t r = *seed;
     r ^= (r << 13);
     r ^= (r >> 17);
     r ^= (r << 5);
     *seed = r;
-    return (r >> 16) % n;
+    return r;
+}
+
+uint32_t rnd32alt(uint32_t *seed) {
+    uint32_t r = *seed;
+    r ^= (r << 7);
+    r ^= (r >> 25);
+    r ^= (r << 12);
+    *seed = r;
+    return r;
+}
+
+uint16_t rnd_0_nm1(uint16_t n, uint32_t *seed)
+{
+    return rnd32(seed) % (uint32_t)n;
 }
 
 uint16_t rnd_1_n(uint16_t n, uint32_t *seed)
@@ -26,10 +41,12 @@ uint16_t rnd_1_n(uint16_t n, uint32_t *seed)
 uint32_t rnd_get_new_seed(void)
 {
     uint32_t seed;
-    seed = hw_get_time_us();
-    if (seed == 0) {
-        seed = 123;
-    }
+    do {
+        rnd_entropy_pool += hw_get_time_us();
+        rnd_entropy_pool *= 718874301;
+        rnd_entropy_pool ^= rnd_entropy_pool >> 29;
+        seed = (uint32_t)rnd_entropy_pool;
+    } while(!seed);
     return seed;
 }
 
