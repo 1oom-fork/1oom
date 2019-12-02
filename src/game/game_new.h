@@ -2,15 +2,13 @@
 #define INC_1OOM_GAME_NEW_H
 
 #include "game.h"
+#include "game_options.h"
 
 #define GALAXY_BORDER_LEFT    10
 #define GALAXY_BORDER_RIGHT   27
 #define GALAXY_BORDER_TOP     8
 #define GALAXY_BORDER_BOTTOM  25
 
-#define GALAXYOPTS 6
-#define PLANETOPTS 6
-#define NEWOPTS (GALAXYOPTS+PLANETOPTS)
 #define GALAXY_AUX_MAX 64
 
 typedef struct star_s {
@@ -43,28 +41,14 @@ struct game_new_options_s {
     int16_t height;
     int16_t width;
     union {
-        struct {
-            uint8_t density;
-            uint8_t gaps;
-            uint8_t cluster;
-            uint8_t neb;
-            uint8_t homeworlds;
-            uint8_t start;
-
-            uint8_t psize;
-            uint8_t env;
-            uint8_t res;
-            uint8_t ultra;
-            uint8_t artefacts;
-            uint8_t astroids;
-        };
-        uint8_t popt[NEWOPTS];
+        newopts_t opt;
+        uint8_t popt[GAMEOPTS];
     };
     star_t aux[GALAXY_AUX_MAX];
     star_t star[PLANETS_MAX];
 };
 
-optdescr_t newopt_descr[NEWOPTS];
+extern optdescr_t newopt_descr[NEWOPTS];
 
 #define GAME_NEW_OPTS_DEFAULT \
     { \
@@ -78,7 +62,7 @@ optdescr_t newopt_descr[NEWOPTS];
             { "", "", RACE_RANDOM, BANNER_RANDOM, true }  \
         }, \
         0, 0, 0, 0, \
-        {{  1,  2,  0,  2,  0,  0,  1,  1,  1,  3,  2,  1 }} \
+        { NEWOPTS_DEFAULTS } \
     }
 
 struct game_aux_s;

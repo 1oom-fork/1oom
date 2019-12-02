@@ -1066,22 +1066,6 @@ static void game_set_options(struct game_s *g, struct game_new_options_s *opt)
 
 /* -------------------------------------------------------------------------- */
 
-optdescr_t newopt_descr[NEWOPTS] = {
-  { 4, 1, "Density", { "high", "normal", "low", "sparse" }, "" },
-  { 5, 2, "Gaps", { "narrow", "close", "medium", "wide", "vast" }, "" },
-  { 4, 0, "Cluster", { "one per player", "pls + 1", "pls + 2", "pls + 3" }, "" },
-  { 6, 2, "Nebulas", { "random", "none", "rare", "common", "frequent", "max" }, "" },
-  { 4, 0, "Homeworlds", { "map", "reroll", "distant", "fair" }, "" },
-  { 4, 0, "Start", { "random", "good", "average", "bad" }, "" },
-  { 3, 1, "Planet Size", { "small", "medium", "large" }, "" },
-  { 3, 1, "Environment", { "hostile", "moderate", "fertile" }, "" },
-  { 3, 1, "Minerals", { "poor", "average", "rich" }, "" },
-  { 4, 3, "Ultra Planets", { "none", "no urich", "no upoor", "yes" }, "" },
-  { 4, 2, "Artefacts", { "none", "rare", "normal", "frequent" }, "" },
-  { 2, 1, "Astroids", { "none", "yes" }, "" }
-};
-
-
 int game_new(struct game_s *g, struct game_new_options_s *opt)
 {
     if (g->players == 0) game_set_options(g, opt);

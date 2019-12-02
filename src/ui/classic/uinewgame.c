@@ -386,6 +386,14 @@ static void new_game_draw_extra_cb(void *vptr)
 */
         ui_draw_box1(110, 10, 310+3, 170+3, 0xfa, 0xfc, ui_scale);
         lbxfont_select(0, 0, 0, 0);
+        {
+            lib_sprintf(buf, sizeof(buf), "Type: %s",game_str_tbl_gsize[d->newopts->galaxy_size]);
+            lbxfont_print_str_normal(10, 20, buf, UI_SCREEN_W, ui_scale);
+            lib_sprintf(buf, sizeof(buf), "Stars: %d",d->newopts->stars);
+            lbxfont_print_str_normal(10, 28, buf, UI_SCREEN_W, ui_scale);
+            lib_sprintf(buf, sizeof(buf), "Seed: %08x",d->newopts->galaxy_seed);
+            lbxfont_print_str_normal(10, 36, buf, UI_SCREEN_W, ui_scale);
+        }
         for (int i = 0; i < NEWOPTS; ++i) {
             int y = i < GALAXYOPTS ? 8 * i + 44 : 8 * (i-GALAXYOPTS) + 120;
             lbxfont_set_color_c_n(nopt[i] == newopt_descr[i].dflt ? 19 : 71, 9);

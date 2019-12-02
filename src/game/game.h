@@ -6,33 +6,8 @@
 #include "game_shipdesign.h"
 #include "game_shiptech.h"
 #include "game_types.h"
+#include "game_options.h"
 #include "types.h"
-
-typedef struct gameopts_s {
-    uint8_t lock;
-    uint8_t deterministic;
-    uint8_t council;
-    uint8_t guardian;
-    uint8_t retreat;
-    uint8_t spec_war;
-    uint8_t fix_bait_yoyo;
-    uint8_t nebula_speed;
-    uint8_t enforce_nap;
-    uint8_t threats;
-} gameopts_t;
-
-#define GAMEOPTS sizeof(gameopts_t)
-#define MAXOPTS 9
-
-typedef struct optdescr_s {
-    int opts;
-    int dflt;
-    const char *name;
-    const char *opt[MAXOPTS];
-    const char *descr;
-} optdescr_t;
-
-optdescr_t gameopt_descr[GAMEOPTS];
 
 typedef struct fleet_enroute_s {
     player_id_t owner;
