@@ -1162,3 +1162,30 @@ void game_new_generate_other_emperor_name(struct game_s *g, player_id_t player)
     }
     lbxfile_item_release(LBXFILE_NAMES, namedata);
 }
+
+#define fdist(ax, ay, bx, by) util_math_dist_fast((ax),(ay),(bx),(by))
+
+int game_new_star_near(struct game_new_options_s *g, int x, int y, int rx, int ry)
+{
+     return 0;
+}
+
+int game_new_star(struct game_new_options_s *g)
+{
+     return 0;
+}
+
+int game_new_stars_near(struct game_new_options_s *g,int n, int tries, int rx, int ry, int d_star, int d_cluster)
+{
+    return 0;
+}
+
+int game_new_stars(struct game_new_options_s *g, int n, int tries, int d_star, int d_cluster, int d_border)
+{
+    return 0;
+}
+
+int game_new_galaxy(struct game_new_options_s *g)
+{
+    return 0;
+}

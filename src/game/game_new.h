@@ -9,6 +9,11 @@
 #define GALAXY_BORDER_TOP     8
 #define GALAXY_BORDER_BOTTOM  25
 
+#define GALAXY_MIN_WIDTH  160
+#define GALAXY_MIN_HEIGHT 128
+#define GALAXY_MAX_WIDTH  800
+#define GALAXY_MAX_HEIGHT 640
+
 #define GALAXY_AUX_MAX 64
 
 typedef struct star_s {
@@ -36,10 +41,11 @@ struct game_new_options_s {
         banner_t banner;
         bool is_ai;
     } pdata[PLAYER_NUM];
+    uint8_t type;
     uint8_t stars;
     uint8_t naux;
-    int16_t height;
-    int16_t width;
+    uint32_t seed;
+    int32_t n,k,h,w;
     union {
         newopts_t opt;
         uint8_t popt[GAMEOPTS];
@@ -61,7 +67,7 @@ extern optdescr_t newopt_descr[NEWOPTS];
             { "", "", RACE_RANDOM, BANNER_RANDOM, true }, \
             { "", "", RACE_RANDOM, BANNER_RANDOM, true }  \
         }, \
-        0, 0, 0, 0, \
+        0, 0, 0, 0, 0, 0, 0, 0, \
         { NEWOPTS_DEFAULTS } \
     }
 
@@ -69,10 +75,13 @@ struct game_aux_s;
 
 extern int game_new(struct game_s *g, struct game_new_options_s *opt);
 extern int game_new_tutor(struct game_s *g);
-
 extern void game_new_generate_emperor_name(race_t race, char *buf, size_t bufsize);
 extern void game_new_generate_home_name(race_t race, char *buf, size_t bufsize);
-
 extern void game_new_generate_other_emperor_name(struct game_s *g, player_id_t player);
+extern int game_new_star_near(struct game_new_options_s *g, int x, int y, int rx, int ry);
+extern int game_new_star(struct game_new_options_s *g);
+extern int game_new_stars_near(struct game_new_options_s *g,int n, int tries, int rx, int ry, int d_star, int d_cluster);
+extern int game_new_stars(struct game_new_options_s *g,int n, int tries, int d_star, int d_cluster, int d_border);
+extern int game_new_galaxy(struct game_new_options_s *g);
 
 #endif

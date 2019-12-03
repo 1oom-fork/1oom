@@ -12,7 +12,10 @@ const char *game_str_mm_quit = "Quit to OS";
 const char *game_str_tbl_race[RACE_NUM + 1] = { "Human", "Mrrshan", "Silicoid", "Sakkra", "Psilon", "Alkari", "Klackon", "Bulrathi", "Meklar", "Darlok", "Random" };
 const char *game_str_tbl_races[RACE_NUM] = { "Humans", "Mrrshans", "Silicoids", "Sakkras", "Psilons", "Alkaris", "Klackons", "Bulrathis", "Meklars", "Darloks" };
 const char *game_str_tbl_banner[BANNER_NUM + 1] = { "Blue", "Green", "Purple", "Red", "White", "Yellow", "Random" };
-const char *game_str_tbl_gtype[GALAXY_TYPE_NUM] = { "Standard", "Custom", "Random" };
+const char *game_str_tbl_gtype[GALAXY_TYPE_NUM] = {
+    "Standard", "Custom", "Random", "Elliptic", "Ring",
+    "Halo", "Spiral", "Star", "Cluster", "Filament"
+};
 const char *game_str_tbl_gsize[GALAXY_SIZE_NUM] = { "Small", "Medium", "Large", "Huge" };
 const char *game_str_tbl_diffic[DIFFICULTY_NUM] = { "Simple", "Easy", "Average", "Hard", "Impossible" };
 const char *game_str_tbl_oppon[5] = { "One", "Two", "Three", "Four", "Five" };

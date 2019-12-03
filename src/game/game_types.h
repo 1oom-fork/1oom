@@ -57,6 +57,13 @@ typedef enum {
     GALAXY_TYPE_STD = 0,
     GALAXY_TYPE_EDIT, /*1*/
     GALAXY_TYPE_RND, /*2*/
+    GALAXY_TYPE_ELLIPTIC, /*3*/
+    GALAXY_TYPE_RING, /*4*/
+    GALAXY_TYPE_HALO, /*5*/
+    GALAXY_TYPE_SPIRAL, /*6*/
+    GALAXY_TYPE_STAR, /*7*/
+    GALAXY_TYPE_CLUSTER, /*8*/
+    GALAXY_TYPE_FLIAMENTS, /*9*/
     GALAXY_TYPE_NUM
 } galaxy_type_t;
 

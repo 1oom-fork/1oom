@@ -19,13 +19,14 @@ typedef struct gameopts_s {
     uint8_t threats;
 } gameopts_t;
 
-#define GALAXYOPTS 6
+#define GALAXYOPTS 7
 #define PLANETOPTS 6
 #define NEWOPTS (GALAXYOPTS+PLANETOPTS)
-#define NEWOPTS_DEFAULTS { 1,  2,  0,  3,  0,  0,  1,  1,  1,  3,  2,  1 }
+#define NEWOPTS_DEFAULTS { 1,  1, 2,  0,  3,  0,  0,  1,  1,  1,  3,  2,  1 }
 
 typedef struct newopts_s {
     uint8_t density;
+    uint8_t aspect;
     uint8_t gaps;
     uint8_t cluster;
     uint8_t neb;
