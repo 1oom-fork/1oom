@@ -28,16 +28,6 @@ uint32_t rnd32alt(uint32_t *seed) {
     return r;
 }
 
-uint16_t rnd_0_nm1(uint16_t n, uint32_t *seed)
-{
-    return rnd32(seed) % (uint32_t)n;
-}
-
-uint16_t rnd_1_n(uint16_t n, uint32_t *seed)
-{
-    return 1 + rnd_0_nm1(n, seed);
-}
-
 uint32_t rnd_get_new_seed(void)
 {
     uint32_t seed;

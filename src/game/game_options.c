@@ -34,13 +34,14 @@ optdescr_t gameopt_descr[GAMEOPTS] = {
 };
 
 optdescr_t newopt_descr[NEWOPTS] = {
-  { 4, 1, "Density", { "high", "normal", "low", "sparse" }, "" },
-  { 4, 1, "Aspect", { "square", "starmap", "3:2", "2:1" }, "" },
-  { 5, 2, "Gaps", { "narrow", "close", "medium", "wide", "vast" }, "" },
-  { 4, 0, "Cluster", { "one per player", "players+1", "players+2", "players+3" }, "" },
-  { 6, 3, "Nebulas", { "random", "none", "rare", "common", "frequent", "max" }, "" },
-  { 4, 0, "Homeworlds", { "map", "reroll", "distant", "fair" }, "" },
-  { 4, 0, "Start", { "random", "good", "average", "bad" }, "" },
+  { 4, 1, "Density", { "high", "normal", "low", "sparse", "std" }, "" },
+  { 4, 1, "Aspect", { "square", "starmap", "3:2", "2:1", "fixed" }, "" },
+  { 5, 2, "Gaps", { "narrow", "close", "medium", "wide", "vast", "none" }, "" },
+  { 4, 0, "Cluster", { "one per player", "players+1", "players+2", "players+3", "none" }, "" },
+  { 6, 3, "Nebulas", { "random", "none", "rare", "common", "frequent", "max", "std" }, "" },
+
+  { 4, 0, "Homeworlds", { "map", "reroll", "distant", "fair", "std" }, "" },
+  { 5, 0, "Start", { "map", "random", "good", "average", "bad", "std" }, "" },
   { 3, 1, "Planet Size", { "small", "medium", "large" }, "" },
   { 3, 1, "Environment", { "hostile", "moderate", "fertile" }, "" },
   { 3, 1, "Minerals", { "poor", "average", "rich" }, "" },

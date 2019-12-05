@@ -1048,6 +1048,10 @@ static void game_set_options(struct game_s *g, struct game_new_options_s *opt)
             BOOLVEC_SET1(g->is_ai, i);
         }
     }
+}
+
+static void game_set_option_names(struct game_s *g, struct game_new_options_s *opt)
+{
     for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         char *b;
         const char *str;
@@ -1086,6 +1090,7 @@ int game_new(struct game_s *g, struct game_new_options_s *opt)
     game_generate_research(g);
     game_generate_misc(g);
     game_generate_load(g);
+    game_set_option_names(g, opt);
     {
         uint8_t *namedata = lbxfile_item_get(LBXFILE_NAMES, 0);
         game_generate_emperor_names(g, namedata);

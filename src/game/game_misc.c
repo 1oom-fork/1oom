@@ -770,7 +770,7 @@ bool game_transport_dest_ok(const struct game_s *g, const planet_t *p, player_id
     if (BOOLVEC_IS0(p->explored, pi) || p->type < g->eto[pi].have_colony_for) return false;
     if (g->opt.enforce_nap >= 2 && pi != p->owner) {
         if (treaty[p->owner] == TREATY_NONAGGRESSION || treaty[p->owner] == TREATY_ALLIANCE) return false;
-        if (g->opt.enforce_nap == 3 && g->evn.ceasefire[p->owner] > 0) return false;
+        if (g->opt.enforce_nap == 3 && g->evn.ceasefire[pi][p->owner] > 0) return false;
     }
     return true;
 }
@@ -781,7 +781,7 @@ bool game_fleet_dest_ok(const struct game_s *g, const planet_t *p, player_id_t p
     if (g->opt.enforce_nap >= 1 && p->owner != PLAYER_NONE && pi != p->owner) {
         if (treaty[p->owner] == TREATY_NONAGGRESSION) return false;
         if (treaty[p->owner] == TREATY_ALLIANCE) return true;
-        if (g->opt.enforce_nap == 3 && g->evn.ceasefire[p->owner] > 0) return false;
+        if (g->opt.enforce_nap == 3 && g->evn.ceasefire[pi][p->owner] > 0) return false;
     }
     return true;
 }
