@@ -315,7 +315,10 @@ void game_battle_handle_all(struct game_s *g)
         owner = p->owner;
         for (player_id_t i = PLAYER_0; i < g->players; ++i) {
             empiretechorbit_t *e = &(g->eto[i]);
-            if ((owner == i) && (p->missile_bases > 0) || game_has_fleet_in_orbit(g, i, pli)) {
+            bool has_fleet = game_has_fleet_in_orbit(g, i, pli);
+            if (has_fleet && !game_fleet_dest_ok(g, p, i)) {
+                game_battle_post(g, i, p->owner, pli, 0);
+            } else if (has_fleet || (owner == i) && (p->missile_bases > 0)) {
                 BOOLVEC_SET1(tbl_have_force, i);
             }
         }
@@ -364,9 +367,6 @@ void game_battle_handle_all(struct game_s *g)
                 /* TODO BUG? the scenario of owner dying to attacker and an alliance partner not doing anything
                    afterwards on the same turn could be fixed */
                 BOOLVEC_SET0(tbl_have_force, party_att);
-            } else if (g->opt.enforce_nap > 0 && party_att < PLAYER_NUM && e->treaty[party_att] == TREATY_NONAGGRESSION) {
-                BOOLVEC_SET0(tbl_have_force, party_att);
-                game_battle_post(g, party_att, party_def, pli, 0);
             } else {
                 if ((!PARTY_IS_HUMAN(g, party_def)) && (!PARTY_IS_HUMAN(g, party_att))) {
                     /* AI vs. AI (or monster) */
