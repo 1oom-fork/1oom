@@ -767,7 +767,7 @@ void ui_gmap_basic_draw_frame(void *ctx, int pi/*player_i*/)
             r = (i == 0) ? &(g->evn.crystal) : &(g->evn.amoeba);
             if (r->exists && (r->killer == PLAYER_NONE)) {
                 uint8_t *gfx = ui_data.gfx.planets.tmonster;
-                lbxgfx_draw_frame_offs(SX2(r->x), SY2(r->y), gfx, GMAP_LIMITS, UI_SCREEN_W, ui_scale);
+                lbxgfx_draw_frame_offs(SX2(r->x), SY2(r->y), gfx, GMAP_LIMITS, UI_SCREEN_W, gmap_scale);
             }
         }
     }
@@ -803,7 +803,7 @@ void ui_gmap_basic_draw_only(void *ctx, int pi/*planet_i*/)
             r = (i == 0) ? &(g->evn.crystal) : &(g->evn.amoeba);
             if (r->exists && (r->killer == PLAYER_NONE)) {
                 uint8_t *gfx = ui_data.gfx.planets.tmonster;
-                lbxgfx_draw_frame_offs(SX2(r->x), SY2(r->y), gfx, GMAP_LIMITS, UI_SCREEN_W, ui_scale);
+                lbxgfx_draw_frame_offs(SX2(r->x), SY2(r->y), gfx, GMAP_LIMITS, UI_SCREEN_W, gmap_scale);
             }
         }
     }
