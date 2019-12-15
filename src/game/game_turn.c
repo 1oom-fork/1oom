@@ -1608,6 +1608,7 @@ struct game_end_s game_turn_process(struct game_s *g)
         seed = g->galaxy_seed * (2 * g->year + 1);
     }
     g->seed = rnd32alt(&seed);
+    memset(g->gaux->last_col_killer, PLAYER_NONE, PLAYER_NUM);
     game_turn_limit_ships(g);
     for (int i = 0; i < g->players; ++i) {
         BOOLVEC_TBL_COPY1(old_contact, g->eto[i].contact, i, PLAYER_NUM);

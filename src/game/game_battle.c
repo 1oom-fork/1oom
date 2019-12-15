@@ -428,8 +428,8 @@ void game_battle_finish(struct battle_s *bt)
         p->max_pop3 -= bt->biodamage;
         SETMAX(p->max_pop3, 10);
         p->missile_bases = bt->bases;
-        if ((p->pop == 0) && (bt->s[SIDE_R].party < PLAYER_NUM)) {
-            game_planet_destroy(g, bt->planet_i, bt->s[SIDE_R].party);
+        if ((p->pop == 0) && (bt->s[1 - bt->planet_side].party < PLAYER_NUM)) {
+            game_planet_destroy(g, bt->planet_i, bt->s[1 - bt->planet_side].party);
         }
     }
     for (battle_side_i_t side = SIDE_L; side <= SIDE_R; ++side) {

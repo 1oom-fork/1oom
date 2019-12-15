@@ -65,6 +65,7 @@ struct game_aux_s {
     int savebuflen;
     char *savenamebuf;
     uint8_t *savebuf;
+    uint8_t last_col_killer[PLAYER_NUM];
 };
 
 extern int game_aux_init(struct game_aux_s *gaux, struct game_s *g);

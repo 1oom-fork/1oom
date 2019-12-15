@@ -182,6 +182,7 @@ void game_aux_start(struct game_aux_s *gaux, struct game_s *g)
     if ((n > 1) && !gaux->move_temp) {
         gaux->move_temp = lib_malloc(sizeof(*gaux->move_temp));
     }
+    memset(gaux->last_col_killer, PLAYER_NONE, PLAYER_NUM);
 }
 
 void game_aux_set_rules(uint8_t xopt)

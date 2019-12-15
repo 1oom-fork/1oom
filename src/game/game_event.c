@@ -1038,8 +1038,7 @@ bool game_event_run(struct game_s *g, struct game_end_s *ge)
                && (num_planets[i] == 0) && IS_ALIVE(g, i)
                && (IS_AI(g, i) || (num_humans > 1))
             ) {
-                player_id_t killer;
-                killer = PLAYER_NONE;
+                player_id_t killer = g->gaux->last_col_killer[i];
                 for (player_id_t j = PLAYER_0; (j < g->players) && (killer == PLAYER_NONE); ++j) {
                     empiretechorbit_t *e = &(g->eto[j]);
                     for (int pli = 0; pli < g->galaxy_stars; ++pli) {
