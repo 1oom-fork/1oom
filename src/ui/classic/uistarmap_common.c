@@ -632,16 +632,24 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
             }
         }
     }
-    if (ui_extra_enabled && d->dist_i >= 0) {
-        int j = g->planet_focus_i[d->api];
-        const planet_t *p = &g->planet[d->dist_i], *q = &g->planet[j];
-        int px = 2 * (p->x - x) + 14, py = 2 * (p->y - y) + 14;
-        int qx = 2 * (q->x - x) + 14, qy = 2 * (q->y - y) + 14;
-        if ( !(px<slx0 || px>slx1 || py<sly0 || py>sly1 || qx<slx0 || qx>slx1 || qy<sly0 || qy>sly1) ) {
-            ui_draw_line1(px, py, qx, qy, 0x06, starmap_scale);
+    if (ui_extra_enabled && d->ruler_from_i >= 0 && d->ruler_to_i >= 0 && d->ruler_from_i != d->ruler_to_i) {
+        const planet_t *p = &g->planet[d->ruler_to_i], *q = &g->planet[d->ruler_from_i];
+        int from_x, from_y, to_x, to_y;
+        if (d->ruler_from_fleet) {
+            from_x = 2 * (q->x - x) + 29;
+            from_y = 2 * (q->y - y) + 9;
+        } else {
+            from_x = 2 * (q->x - x) + 14;
+            from_y = 2 * (q->y - y) + 14;
+        }
+        to_x = 2 * (p->x - x) + 14;
+        to_y = 2 * (p->y - y) + 14;
+
+        if ( !(from_x < slx0 || from_x > slx1 || from_y < sly0 || from_y > sly1 || to_x < slx0 || to_x > slx1 || to_y < sly0 || to_y > sly1) ) {
+            ui_draw_line1(from_x, from_y, to_x, to_y, 0x06, starmap_scale);
             lbxfont_select(0, 0, 0, 0);
-            int l = g->gaux->star_dist[j][d->dist_i];
-            lbxfont_print_num_center( (px + qx) / 2, (py + qy) / 2 - 2, l, UI_SCREEN_W, starmap_scale);
+            int l = g->gaux->star_dist[d->ruler_from_i][d->ruler_to_i];
+            lbxfont_print_num_center( (from_x + to_x) / 2, (from_y + to_y) / 2 - 2, l, UI_SCREEN_W, starmap_scale);
         }
     }
 }
@@ -1055,4 +1063,19 @@ void ui_starmap_compute_scale(const struct game_s *g)
     int y = ((178 / 2 * ui_scale) / g->galaxy_maxy);
     starmap_scale = MIN(x, y);
     SETRANGE(starmap_scale, 1, ui_scale);
+}
+
+/* Returns the index of the star that the player is pointing on. Returns -1 if the player is not
+ * pointing at a star, or is pointing at the currently selected star. */
+int ui_starmap_cursor_on_star(const struct game_s *g, const struct starmap_data_s *d, int16_t oi2, player_id_t active_player)
+{
+    for (int i = 0; i < g->galaxy_stars; ++i) {
+        if ((oi2 == d->oi_tbl_stars[i]) && !g->evn.build_finished_num[active_player]) {
+            if (i == g->planet_focus_i[active_player]) {
+                break;
+            }
+            return i;
+        }
+    }
+    return -1;
 }

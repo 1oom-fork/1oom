@@ -56,7 +56,7 @@ void ui_turn_msg(struct game_s *g, int pi, const char *str)
     d.str = str;
     d.sm.g = g;
     d.sm.api = pi;
-    d.sm.bottom_highlight = d.sm.dist_i = -1;
+    d.sm.bottom_highlight = d.sm.ruler_to_i = d.sm.ruler_from_i = -1;
     d.sm.gov_highlight = 0;
     d.sm.anim_delay = 0;
     uiobj_set_callback_and_delay(ui_turn_msg_draw_cb, &d, 3);

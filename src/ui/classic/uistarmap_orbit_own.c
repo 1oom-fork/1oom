@@ -168,7 +168,9 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
     d.g = g;
     d.api = active_player;
     d.anim_delay = 0;
-    d.bottom_highlight = d.dist_i = -1;
+
+    d.bottom_highlight = d.ruler_to_i = d.ruler_from_i = -1;
+
     d.gov_highlight = 0;
     d.oo.from = g->planet_focus_i[active_player];
 
@@ -442,6 +444,9 @@ do_accept:
                 break;
             }
         }
+        d.ruler_from_i = d.oo.from;
+        d.ruler_to_i = ui_starmap_cursor_on_star(g, &d, oi2, active_player);
+        d.ruler_from_fleet = true;
         cursor_over = -1;
         for (int i = 0; i < d.oo.sn0.num; ++i) {
             if (0

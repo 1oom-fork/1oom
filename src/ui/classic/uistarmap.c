@@ -237,7 +237,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
     d.g = g;
     d.api = active_player;
     d.anim_delay = 0;
-    d.bottom_highlight = d.dist_i = -1;
+    d.bottom_highlight = d.ruler_to_i = d.ruler_from_i = -1;
     d.gov_highlight = 0;
 
     ui_delay_1();
@@ -684,16 +684,10 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             }
         }
 
-        d.bottom_highlight = d.dist_i = -1;
+        d.ruler_from_i = g->planet_focus_i[active_player];
+        d.bottom_highlight = d.ruler_to_i = ui_starmap_cursor_on_star(g, &d, oi2, active_player);
+        d.ruler_from_fleet = false;
         d.gov_highlight = 0;
-
-        for (int i = 0; i < g->galaxy_stars; ++i) {
-            if ((oi2 == d.oi_tbl_stars[i]) && !g->evn.build_finished_num[active_player]) {
-                if (i == g->planet_focus_i[active_player]) break;
-                d.dist_i=i;
-                break;
-            }
-        }
 
         p = &(g->planet[g->planet_focus_i[active_player]]);
         if (oi2 == d.oi_gameopts) {
