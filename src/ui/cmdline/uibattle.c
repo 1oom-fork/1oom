@@ -236,6 +236,10 @@ void ui_battle_draw_scan(const struct battle_s *bt, bool side_r)
     int itembase, itemnum;
     itembase = (scan_side == SIDE_L) ? 1 : (bt->s[SIDE_L].items + 1);
     itemnum = bt->s[scan_side].items;
+    if (!bt->s[scan_side].flag_have_scan) {
+        printf("No scanners available.\n");
+        return;
+    }
     for (int i = 0; i < itemnum; ++i) {
         const struct battle_item_s *b = &(bt->item[itembase + i]);
         char gfx[3][5];
