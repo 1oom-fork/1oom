@@ -290,23 +290,12 @@ void ui_battle_draw_misshield(const struct battle_s *bt, int target_i, int targe
 
 void ui_battle_draw_damage(const struct battle_s *bt, int target_i, int target_x, int target_y, uint32_t damage)
 {
-    char buf[8];
-    int tx, ty;
-    ui_battle_draw_arena(bt, target_i, 1);
-    ui_battle_draw_item(bt, target_i, target_x, target_y);
-    if (damage > 1000000) {
-        lib_sprintf(buf, sizeof(buf), "!%iM", damage / 1000000);
-    } else if (damage > 1000) {
-        lib_sprintf(buf, sizeof(buf), "!%ik", damage / 1000);
-    } else {
-        lib_sprintf(buf, sizeof(buf), "!%i", damage);
-    }
-    tx = (target_x * 4) / 32 + 3;
-    ty = (target_y * 3) / 24;
-    for (int i = 0; buf[i]; ++i) {
-        ui_data.battle.screen[ty + 1][tx + i] = buf[i];
-    }
-    ui_battle_draw_finish(bt);
+    char loc[3];
+    loc[0] = bt->item[target_i].sx + 'a';
+    loc[1] = bt->item[target_i].sy + '1';
+    loc[2] = '\0';
+
+    printf("%s: Hit, %d damage\n", loc, damage);
 }
 
 void ui_battle_draw_explos_small(const struct battle_s *bt, int x, int y)
@@ -512,7 +501,7 @@ ui_battle_action_t ui_battle_turn(const struct battle_s *bt)
 {
     int itemi = bt->cur_item;
     const struct battle_item_s *b = &(bt->item[itemi]);
-    char prompt[EMPEROR_NAME_LEN + 5];
+    char prompt[EMPEROR_NAME_LEN + SHIP_NAME_LEN + 20];
     ui_battle_draw_arena(bt, 0, 0);
     ui_battle_draw_finish(bt);
     if (0
@@ -523,7 +512,7 @@ ui_battle_action_t ui_battle_turn(const struct battle_s *bt)
     ) {
         return UI_BATTLE_ACT_DONE;
     }
-    lib_sprintf(prompt, sizeof(prompt), "%s > ", bt->g->emperor_names[bt->s[b->side].party]);
+    lib_sprintf(prompt, sizeof(prompt), "%s: %d %s > ", bt->g->emperor_names[bt->s[b->side].party], b->num, b->name);
     while (1) {
         char *input;
         input = ui_input_line(prompt);
