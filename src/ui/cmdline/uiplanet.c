@@ -157,6 +157,9 @@ void ui_planet_look(const struct game_s *g, int api, uint8_t planet_i, bool show
     {
         char buf[16];
         printf("[%i] (%i,%i) %s: ", planet_i, p->x, p->y, ui_planet_str(g, api, planet_i, buf, sizeof(buf)));
+        if (game_xy_is_in_nebula(g, p->x, p->y)) {
+            printf("(In nebula)\n");
+        }
     }
     if (BOOLVEC_IS1(p->explored, api)) {
         if (p->type == PLANET_TYPE_NOT_HABITABLE) {
