@@ -384,6 +384,9 @@ do_accept:
                 break;
             }
         }
+        d.ruler_from_i = d.tr.from;
+        d.ruler_to_i = ui_starmap_cursor_on_star(g, &d, oi2, active_player);
+        d.ruler_from_fleet = false;
         if (!flag_done) {
             pt = &(g->planet[g->planet_focus_i[active_player]]);
             p->trans_dest = g->planet_focus_i[active_player];

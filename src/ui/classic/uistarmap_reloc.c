@@ -267,6 +267,9 @@ do_accept:
                 break;
             }
         }
+        d.ruler_from_i = d.rl.from;
+        d.ruler_to_i = ui_starmap_cursor_on_star(g, &d, oi2, active_player);
+        d.ruler_from_fleet = false;
         if (!flag_done) {
             d.bottom_highlight = -1;
             if (oi2 == d.oi_gameopts) {
