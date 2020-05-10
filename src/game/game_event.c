@@ -1071,6 +1071,7 @@ bool game_event_run(struct game_s *g, struct game_end_s *ge)
             if (any_in_range) {
                 ui_news(g, &ns);
                 any_news = true;
+                /* WASBUG If multiple coups happen in one turn, MOO1 reports only one. */
             }
         }
     }
