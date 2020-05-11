@@ -212,6 +212,7 @@ ui_turn_action_t ui_game_turn(struct game_s *g, int *load_game_i_ptr, int pi)
                 ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
                 break;
             case UI_MAIN_LOOP_NEXT_TURN:
+                uiobj_table_clear();    /* HACK? game_turn_process may access invalid objects */
                 ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
                 ui_data.news.flag_also = false;
                 return UI_TURN_ACT_NEXT_TURN;
