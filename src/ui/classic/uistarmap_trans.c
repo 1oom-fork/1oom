@@ -337,4 +337,7 @@ void ui_starmap_trans(struct game_s *g, player_id_t active_player)
     uiobj_unset_callback();
     uiobj_set_help_id(-1);
     g->planet_focus_i[active_player] = d.from;
+
+    /* We clear the UI object table because one of them contains a pointer to a local variable. */
+    uiobj_table_clear();
 }
