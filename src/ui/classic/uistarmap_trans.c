@@ -333,4 +333,7 @@ do_accept:
     uiobj_unset_callback();
     uiobj_set_help_id(-1);
     g->planet_focus_i[active_player] = d.tr.from;
+
+    /* We clear the UI object table because one of them contains a pointer to a local variable. */
+    uiobj_table_clear();
 }
