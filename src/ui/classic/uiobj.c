@@ -151,7 +151,14 @@ int uiobj_maxy = UI_SCREEN_H - 1;
 
 /* -------------------------------------------------------------------------- */
 
-#define UIOBJI_ALLOC()  uiobj_table_num++
+static int16_t uiobj_alloc(void)
+{
+    if (uiobj_table_num < (UIOBJ_MAX - 1)) {
+        return uiobj_table_num++;
+    } else {
+        log_fatal_and_die("uiobj_table size exceeded");
+    }
+}
 
 static int smidx(const uiobj_t *p)
 {
@@ -1698,7 +1705,7 @@ int16_t uiobj_add_t0(uint16_t x, uint16_t y, const char *str, uint8_t *lbxdata, 
     uiobj_add_t03_do(x, y, str, lbxdata, key);
     p->type = UIOBJ_TYPE_BUTTON;
     p->vptr = 0;
-    return UIOBJI_ALLOC();
+    return uiobj_alloc();
 }
 
 int16_t uiobj_add_t1(uint16_t x, uint16_t y, const char *str, uint8_t *lbxdata, int16_t *vptr, mookey_t key)
@@ -1707,7 +1714,7 @@ int16_t uiobj_add_t1(uint16_t x, uint16_t y, const char *str, uint8_t *lbxdata, 
     uiobj_add_t03_do(x, y, str, lbxdata, key);
     p->type = UIOBJ_TYPE_TOGGLE;
     p->vptr = vptr;
-    return UIOBJI_ALLOC();
+    return uiobj_alloc();
 }
 
 int16_t uiobj_add_t2(uint16_t x, uint16_t y, const char *str, uint8_t *lbxdata, int16_t *vptr, mookey_t key)
@@ -1716,7 +1723,7 @@ int16_t uiobj_add_t2(uint16_t x, uint16_t y, const char *str, uint8_t *lbxdata, 
     uiobj_add_t03_do(x, y, str, lbxdata, key);
     p->type = UIOBJ_TYPE_SET;
     p->vptr = vptr;
-    return UIOBJI_ALLOC();
+    return uiobj_alloc();
 }
 
 int16_t uiobj_add_t3(uint16_t x, uint16_t y, const char *str, uint8_t *lbxdata, int16_t *vptr, int16_t z18, mookey_t key)
@@ -1726,7 +1733,7 @@ int16_t uiobj_add_t3(uint16_t x, uint16_t y, const char *str, uint8_t *lbxdata, 
     p->type = UIOBJ_TYPE_SETVAL;
     p->vptr = vptr;
     p->t0.z18 = z18;
-    return UIOBJI_ALLOC();
+    return uiobj_alloc();
 }
 
 int16_t uiobj_add_textinput(int x, int y, int w, char *buf, uint16_t max_chars, uint8_t rcolor, bool alignr, bool allow_lcase, const uint8_t *colortbl, mookey_t key)
@@ -1748,7 +1755,7 @@ int16_t uiobj_add_textinput(int x, int y, int w, char *buf, uint16_t max_chars, 
     p->type = UIOBJ_TYPE_TEXTINPUT;
     p->vptr = 0;
     p->key = key;
-    return UIOBJI_ALLOC();
+    return uiobj_alloc();
 }
 
 int16_t uiobj_add_slider_int(uint16_t x0, uint16_t y0, uint16_t vmin, uint16_t vmax, uint16_t w, uint16_t h, int16_t *vptr)
@@ -1766,7 +1773,7 @@ int16_t uiobj_add_slider_int(uint16_t x0, uint16_t y0, uint16_t vmin, uint16_t v
     p->t6.cb = 0;
     p->t6.ctx = 0;
     p->t6.slideri = 0;
-    return UIOBJI_ALLOC();
+    return uiobj_alloc();
 }
 
 int16_t uiobj_add_slider_func(uint16_t x0, uint16_t y0, uint16_t vmin, uint16_t vmax, uint16_t w, uint16_t h, int16_t *vptr, void (*cb)(void *ctx, uint8_t slideri, int16_t value), void *ctx, uint8_t slideri)
@@ -1784,7 +1791,7 @@ int16_t uiobj_add_slider_func(uint16_t x0, uint16_t y0, uint16_t vmin, uint16_t 
     p->t6.cb = cb;
     p->t6.ctx = ctx;
     p->t6.slideri = slideri;
-    return UIOBJI_ALLOC();
+    return uiobj_alloc();
 }
 
 int16_t uiobj_add_mousearea(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, mookey_t key)
@@ -1797,7 +1804,7 @@ int16_t uiobj_add_mousearea(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, 
     p->type = UIOBJ_TYPE_MOUSEAREA;
     p->vptr = 0;
     p->key = key;
-    return UIOBJI_ALLOC();
+    return uiobj_alloc();
 }
 
 int16_t uiobj_add_mousearea_limited(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, mookey_t key)
@@ -1822,7 +1829,7 @@ int16_t uiobj_add_mousewheel(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1,
     p->type = UIOBJ_TYPE_WHEELAREA;
     p->vptr = vptr;
     p->key = MOO_KEY_UNKNOWN;
-    return UIOBJI_ALLOC();
+    return uiobj_alloc();
 }
 
 int16_t uiobj_add_mousearea_all(mookey_t key)
@@ -1835,7 +1842,7 @@ int16_t uiobj_add_mousearea_all(mookey_t key)
     p->type = UIOBJ_TYPE_MOUSEAREA;
     p->vptr = 0;
     p->key = key;
-    return UIOBJI_ALLOC();
+    return uiobj_alloc();
 }
 
 int16_t uiobj_add_inputkey(uint32_t key)
@@ -1848,7 +1855,7 @@ int16_t uiobj_add_inputkey(uint32_t key)
     p->type = UIOBJ_TYPE_MOUSEAREA;
     p->vptr = 0;
     p->key = key;
-    return UIOBJI_ALLOC();
+    return uiobj_alloc();
 }
 
 int16_t uiobj_add_alt_str(const char *str)
@@ -1874,7 +1881,7 @@ int16_t uiobj_add_alt_str(const char *str)
         }
         p->key = b;
     }
-    return UIOBJI_ALLOC();
+    return uiobj_alloc();
 }
 
 int16_t uiobj_add_ta(uint16_t x, uint16_t y, uint16_t w, const char *str, bool z12, int16_t *vptr, int16_t z18, uint8_t subtype, uint8_t sp0v, mookey_t key)
@@ -1895,7 +1902,7 @@ int16_t uiobj_add_ta(uint16_t x, uint16_t y, uint16_t w, const char *str, bool z
     p->type = UIOBJ_TYPE_TEXTLINE;
     p->vptr = vptr;
     p->key = key;
-    return UIOBJI_ALLOC();
+    return uiobj_alloc();
 }
 
 int16_t uiobj_add_tb(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t xscale, uint16_t yscale, uint16_t *xptr, uint16_t *yptr)
@@ -1912,7 +1919,7 @@ int16_t uiobj_add_tb(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t xs
     p->type = UIOBJ_TYPE_SCROLLAREA;
     p->vptr = 0;
     p->key = MOO_KEY_UNKNOWN;
-    return UIOBJI_ALLOC();
+    return uiobj_alloc();
 }
 
 void uiobj_dec_y1(int16_t oi)
