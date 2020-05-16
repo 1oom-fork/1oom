@@ -654,7 +654,7 @@ again:
         }
         for (int i = 0; i < PLANETS_ON_SCREEN; ++i) {
             /* oi_tbl_prod and oi_tbl_dock exist as mouse areas only in uiextra mode. */
-            if (oi == oi_tbl_planets[i] || flag_trans && (oi == oi_tbl_prod[i] || oi == oi_tbl_dock[i])) {
+            if (oi == oi_tbl_planets[i] || (flag_trans && (oi == oi_tbl_prod[i] || oi == oi_tbl_dock[i]))) {
                 ui_sound_play_sfx_24();
                 if (!flag_trans) {
                     g->planet_focus_i[active_player] = tbl_onscreen_planets[i];
