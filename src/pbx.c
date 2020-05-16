@@ -29,7 +29,7 @@ static char *str_from_buf(const void *buf, uint32_t buf_size)
     return str;
 }
 
-static int pbx_cb_name(void *ctx, const char *filename, int pbxi, char *data, uint32_t len)
+static int pbx_cb_name(void *ctx, const char *filename, int pbxi, uint8_t *data, uint32_t len)
 {
     char *str = str_from_buf(data, len);
     log_message("PBX: name '%s'\n", str);
@@ -37,7 +37,7 @@ static int pbx_cb_name(void *ctx, const char *filename, int pbxi, char *data, ui
     return 0;
 }
 
-static int pbx_cb_desc(void *ctx, const char *filename, int pbxi, char *data, uint32_t len)
+static int pbx_cb_desc(void *ctx, const char *filename, int pbxi, uint8_t *data, uint32_t len)
 {
     /* ignore */
     return 0;
@@ -67,7 +67,7 @@ static int pbx_cb_lbxo(void *ctx, const char *filename, int pbxi, const char *id
     }
 }
 
-static bool pbx_cb_strp(void *ctx, const char *filename, int pbxi, const char *id, const char *patchstr_data, int itemi, uint32_t len)
+static bool pbx_cb_strp(void *ctx, const char *filename, int pbxi, const char *id, const uint8_t *patchstr_data, int itemi, uint32_t len)
 {
     char *patchstr = str_from_buf(patchstr_data, len);
     if (!game_str_patch(id, patchstr, itemi)) {
@@ -206,7 +206,7 @@ int pbx_add_file(const char *filename, struct pbx_add_cbs *cbs_in, void *ctx)
                 }
                 break;
             case PBX_ITEM_TYPE_STRP:
-                if (!cbs.strp(ctx, filename, i, id, (const char *)data, itemi, len)) {
+                if (!cbs.strp(ctx, filename, i, id, data, itemi, len)) {
                     goto fail;
                 }
                 break;
