@@ -67,7 +67,7 @@ static int pbxdump_write(const char *prefix, const char *suffix, bool flag_write
     return 0;
 }
 
-static int pbx_dump_textish(struct pbxdump_s *d, const char *filename, int pbxi, const char *str, uint32_t len, const char *pbxtext, const char *suffix)
+static int pbx_dump_textish(struct pbxdump_s *d, const char *filename, int pbxi, const uint8_t *str, uint32_t len, const char *pbxtext, const char *suffix)
 {
     bool can_print;
     if (len < 10) {
@@ -141,12 +141,12 @@ fail:
     return -1;
 }
 
-static int pbx_cb_name(void *ctx, const char *filename, int pbxi, char *str, uint32_t len)
+static int pbx_cb_name(void *ctx, const char *filename, int pbxi, uint8_t *str, uint32_t len)
 {
     return pbx_dump_textish(ctx, filename, pbxi, str, len, "0", "_name.txt");
 }
 
-static int pbx_cb_desc(void *ctx, const char *filename, int pbxi, char *str, uint32_t len)
+static int pbx_cb_desc(void *ctx, const char *filename, int pbxi, uint8_t *str, uint32_t len)
 {
     return pbx_dump_textish(ctx, filename, pbxi, str, len, "1", "_desc.txt");
 }
@@ -162,7 +162,7 @@ static int pbx_cb_lbxp(void *ctx, const char *filename, int pbxi, const char *id
     }
     lib_sprintf(p, sizeof(suffix), "_%03u.bin", itemi);
     lib_sprintf(pbxtext, sizeof(pbxtext), "2,%s,%u", id, itemi);
-    return pbx_dump_textish(ctx, filename, pbxi, (const char *)data, len, pbxtext, suffix);
+    return pbx_dump_textish(ctx, filename, pbxi, data, len, pbxtext, suffix);
 }
 
 static int pbx_cb_lbxo(void *ctx, const char *filename, int pbxi, const char *id, uint16_t itemi, uint8_t *data, uint32_t len, uint32_t itemoffs)
@@ -176,10 +176,10 @@ static int pbx_cb_lbxo(void *ctx, const char *filename, int pbxi, const char *id
     }
     lib_sprintf(p, sizeof(suffix), "_%03u.bin", itemi);
     lib_sprintf(pbxtext, sizeof(pbxtext), "5,%s,%u,0x%x", id, itemi, itemoffs);
-    return pbx_dump_textish(ctx, filename, pbxi, (const char *)data, len, pbxtext, suffix);
+    return pbx_dump_textish(ctx, filename, pbxi, data, len, pbxtext, suffix);
 }
 
-static bool pbx_cb_strp(void *ctx, const char *filename, int pbxi, const char *id, const char *patchstr, int itemi, uint32_t len)
+static bool pbx_cb_strp(void *ctx, const char *filename, int pbxi, const char *id, const uint8_t *patchstr, int itemi, uint32_t len)
 {
     char pbxtext[32];
     char suffix[40];
