@@ -58,10 +58,7 @@ static void caught_draw_cb(void *vptr)
             int v;
             sprintf(buf, "%s:", game_str_tbl_race[g->eto[i].race]);
             lbxfont_print_str_normal(x + 11, y, buf, UI_SCREEN_W);
-            v = 0;
-            for (int j = 0; j < g->players; ++j) {
-                v += g->evn.spies_caught[j][d->api];
-            }
+            v = g->evn.spies_caught[i][d->api];
             lbxfont_print_num_normal(x + 68, y, v, UI_SCREEN_W);
             v = g->evn.spies_caught[d->api][i];
             lbxfont_print_num_normal(x + 96, y, v, UI_SCREEN_W);
