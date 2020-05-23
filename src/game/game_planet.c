@@ -105,7 +105,11 @@ void game_planet_adjust_percent(struct game_s *g, player_id_t owner, planet_slid
               || ((growth == 1) && (p->growth > PLANET_GROWTH_HOSTILE))
               || ((growth == 2) && (p->growth == PLANET_GROWTH_HOSTILE))
             ) {
-                int sum, v;
+                int sum, slider_increase;
+
+                /* Summing up all sliders except for the one that is going to be increased
+                 * and ECO, because ECO is set to the minimum for waste cleanup before this
+                 * function is called. SHIP and TECH are never increased in this function. */
                 sum = p->slider[PLANET_SLIDER_SHIP] + p->slider[PLANET_SLIDER_TECH];
                 if (si != PLANET_SLIDER_DEF) {
                     sum += p->slider[PLANET_SLIDER_DEF];
@@ -113,20 +117,21 @@ void game_planet_adjust_percent(struct game_s *g, player_id_t owner, planet_slid
                 if (si != PLANET_SLIDER_IND) {
                     sum += p->slider[PLANET_SLIDER_IND];
                 }
-                v = (sum * percent) / 100;
+
+                slider_increase = (sum * percent) / 100;
                 p->slider[PLANET_SLIDER_SHIP] = (p->slider[PLANET_SLIDER_SHIP] * (100 - percent)) / 100;
                 if (si == PLANET_SLIDER_DEF) {
-                    p->slider[PLANET_SLIDER_DEF] += v;
+                    p->slider[PLANET_SLIDER_DEF] += slider_increase;
                 } else {
                     p->slider[PLANET_SLIDER_DEF] = (p->slider[PLANET_SLIDER_DEF] * (100 - percent)) / 100;
                 }
                 if (si == PLANET_SLIDER_IND) {
-                    p->slider[PLANET_SLIDER_IND] += v;
+                    p->slider[PLANET_SLIDER_IND] += slider_increase;
                 } else {
                     p->slider[PLANET_SLIDER_IND] = (p->slider[PLANET_SLIDER_IND] * (100 - percent)) / 100;
                 }
                 if (si == PLANET_SLIDER_ECO) {
-                    p->slider[PLANET_SLIDER_ECO] += v;
+                    p->slider[PLANET_SLIDER_ECO] += slider_increase;
                 }
                 p->slider[PLANET_SLIDER_TECH] = 100 - p->slider[PLANET_SLIDER_SHIP] - p->slider[PLANET_SLIDER_ECO] - p->slider[PLANET_SLIDER_DEF] - p->slider[PLANET_SLIDER_IND];
                 SETMAX(p->slider[PLANET_SLIDER_TECH], 0);
