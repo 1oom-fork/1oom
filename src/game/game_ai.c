@@ -7,4 +7,4 @@
 
 /* -------------------------------------------------------------------------- */
 
-struct game_ai_s const *game_ai = &game_ai_classic;
+const struct game_ai_s *game_ai = &game_ai_classic;
