@@ -99,12 +99,12 @@ void game_planet_adjust_percent(struct game_s *g, player_id_t owner, int a0, uin
                 v = (sum * percent) / 100;
                 p->slider[PLANET_SLIDER_SHIP] = (p->slider[PLANET_SLIDER_SHIP] * (100 - percent)) / 100;
                 if (a0 == 2) {
-                    p->slider[PLANET_SLIDER_DEF] = v;
+                    p->slider[PLANET_SLIDER_DEF] += v;
                 } else {
                     p->slider[PLANET_SLIDER_DEF] = (p->slider[PLANET_SLIDER_DEF] * (100 - percent)) / 100;
                 }
                 if (a0 == 0) {
-                    p->slider[PLANET_SLIDER_IND] = v;
+                    p->slider[PLANET_SLIDER_IND] += v;
                 } else {
                     p->slider[PLANET_SLIDER_IND] = (p->slider[PLANET_SLIDER_IND] * (100 - percent)) / 100;
                 }
