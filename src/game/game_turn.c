@@ -246,8 +246,7 @@ static void game_turn_build_eco(struct game_s *g)
                             v += 5;
                         }
                         SETMAX(v, 5);
-                        p->max_pop1 += v;
-                        p->max_pop2 += v;
+                        p->max_pop2 = p->max_pop1 + v;
                         p->max_pop3 += v;
                         SETMIN(p->max_pop3, (e->have_terraform_n + p->max_pop2));
                         SETMIN(p->max_pop3, game_num_max_pop);
@@ -268,8 +267,7 @@ static void game_turn_build_eco(struct game_s *g)
                             v += 5;
                         }
                         SETMAX(v, 5);
-                        p->max_pop1 += v;
-                        p->max_pop2 += v;
+                        p->max_pop2 = p->max_pop1 + v;
                         p->max_pop3 += v;
                         SETMIN(p->max_pop3, (e->have_terraform_n + p->max_pop2));
                         SETMIN(p->max_pop3, game_num_max_pop);
@@ -1391,7 +1389,7 @@ static void game_turn_coup(struct game_s *g)
         }
     }
     for (player_id_t i = PLAYER_0; i < g->players; ++i) {
-        if ((tbl_rebelplanets[i] > ((tbl_planets[i] + 1) / 2)) && IS_ALIVE(g, i)) {
+        if ((tbl_rebelplanets[i] >= ((tbl_planets[i] + 1) / 2)) && IS_ALIVE(g, i)) {
             empiretechorbit_t *e = &(g->eto[i]);
             e->trait2 = rnd_0_nm1(TRAIT2_NUM, &g->seed);
             e->trait1 = rnd_0_nm1(TRAIT1_NUM, &g->seed);
