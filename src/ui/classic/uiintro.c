@@ -73,7 +73,7 @@ void ui_play_intro(void)
     uiobji_now = 0;
     uiobj_set_downcount(2);
 
-    if (!flag_skip) {
+    /* if (!flag_skip) */ {
         intro_gfx = lbxfile_item_get(LBXFILE_INTRO, 0, 0);
         old_gfx = intro_gfx;
         ui_palette_fadeout_14_14_2();
