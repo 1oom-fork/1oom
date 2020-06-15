@@ -981,7 +981,9 @@ static bool game_battle_special(struct battle_s *bt, int attacker_i, int target_
                     break;
             }
             if (bd->hp1 <= bd->hploss) {
-                --bd->num;
+                if (bd->num > 0) {
+                    --bd->num;
+                }
                 bd->hploss = 0;
             }
             if ((bd->num <= 0) || (bd->hp1 <= 0)) {
