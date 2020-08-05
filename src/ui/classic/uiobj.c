@@ -1452,10 +1452,9 @@ static int16_t uiobj_handle_input_sub0(void)
                 mouse_set_click_xy(mx, my);
                 break;
             }
-            q = &uiobj_tbl[uiobj_focus_oi];
             p = &uiobj_tbl[oi];
             if ((oi != uiobj_focus_oi) && (p->type != UIOBJ_TYPE_TEXTINPUT)) {
-                if (q->type == UIOBJ_TYPE_SLIDER) {
+                if (uiobj_focus_oi >= 0 && uiobj_tbl[uiobj_focus_oi].type == UIOBJ_TYPE_SLIDER) {
                     uiobj_do_callback();
                 }
                 uiobj_click_obj(oi, mx, my);
