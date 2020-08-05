@@ -186,9 +186,9 @@ static void ui_news_fade(void)
                 v = dx = ui_news_fade_tbl_line[we2];
                 si = v * VGABUF_W / 4;
                 v += wde;
-                if (v > 40) {
+                if (v >= 40) {
                     v -= 40;
-                    if (v > 40) {
+                    if (v >= 40) {
                         v -= 40;
                     }
                 }
