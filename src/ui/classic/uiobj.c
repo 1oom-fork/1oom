@@ -1425,7 +1425,8 @@ static int16_t uiobj_handle_input_sub0(void)
             }
             p = &uiobj_tbl[oi];
             if ((oi != uiobj_focus_oi) && (p->type != 4)) {
-                if (uiobj_tbl[uiobj_focus_oi].type == 6) {
+                /* WASBUG? MOO1 does not check for uiobj_tbl[-1] */
+                if ((uiobj_focus_oi >= 0) && (uiobj_tbl[uiobj_focus_oi].type == 6)) {
                     uiobj_do_callback();
                 }
                 uiobj_click_obj(oi, mx, my);
