@@ -11,7 +11,7 @@ extern void log_error_direct(const char *msg);
 extern void log_message(const char *format, ...);
 extern void log_warning(const char *format, ...);
 extern void log_error(const char *format, ...);
-extern void log_fatal_and_die(const char *format, ...);
+extern void log_fatal_and_die(const char *format, ...) __attribute__((noreturn));
 
 #ifdef FEATURE_MODEBUG
 extern void log_debug(int level, const char *format, ...);
