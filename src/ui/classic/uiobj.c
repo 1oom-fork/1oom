@@ -1532,10 +1532,9 @@ static int16_t uiobj_handle_input_sub0(void)
                 mouse_set_click_xy(mx, my);
                 break;
             }
-            q = &uiobj_tbl[uiobj_focus_oi];
             p = &uiobj_tbl[oi];
             if ((oi != uiobj_focus_oi) && (p->type != 4)) {
-                if (q->type == 6) {
+                if (uiobj_focus_oi >= 0 && uiobj_tbl[uiobj_focus_oi].type == 6) {
                     uiobj_do_callback();
                 }
                 uiobj_click_obj(oi, mx, my);
