@@ -435,7 +435,7 @@ int ui_cmd_planet_trans(struct game_s *g, int api, struct input_token_s *param, 
             return -1;
         }
         if (pt->within_frange[api] != 1) {
-            int mindist = game_get_min_dist(g, api, pfi);
+            int mindist = game_get_min_dist(g, api, pti);
             printf("%s %i %s %i %s\n", game_str_sm_notrange1, mindist, game_str_sm_notrange2, e->fuel_range, game_str_sm_notrange3);
             return -1;
         } else if (BOOLVEC_IS0(pt->explored, api)) {
