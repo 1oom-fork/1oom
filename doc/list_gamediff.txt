@@ -48,6 +48,7 @@ Much of this file is based on the readme from the unofficial v1.40m patch.
     - AI does not go into panic ship building mode on planets with incoming allied fleets
     - AI-AI battles destroy missile bases
     - AI always uses one of their best engines
+    - AI does not transfer populations from rebel systems
 
 - the game has multiplayer (only local/hotseat for now); multiplayer differences to single player:
     - player diplomat is always up for audience except during the final war

@@ -936,7 +936,8 @@ static void game_ai_classic_turn_p1_trans_en(struct game_s *g, struct ai_turn_p1
             }
         }
         BOOLVEC_SET(tbl_trans_to, i, have_orbit);
-        BOOLVEC_SET(tbl_trans_from, i, (p->owner == pi) && (p->pop >= (p->max_pop3 / 2)) && (p->pop > 20));
+        BOOLVEC_SET(tbl_trans_from, i, (p->owner == pi) && (p->pop >= (p->max_pop3 / 2)) && (p->pop > 20)
+          && ((g->ai_id == GAME_AI_CLASSIC) || (p->unrest != PLANET_UNREST_REBELLION)));
     }
     for (int i = 0; i < g->transport_num; ++i) {
         const transport_t *r = &(g->transport[i]);
@@ -985,7 +986,7 @@ static void game_ai_classic_turn_p1_trans_own(struct game_s *g, struct ai_turn_p
             if ((p->pop < (p->max_pop3 / 3)) || (p->unrest == PLANET_UNREST_REBELLION)) {
                 BOOLVEC_SET1(tbl_trans_to, i);
             }
-            if (p->pop > ((p->max_pop3 * 3) / 4)) {
+            if (p->pop > ((p->max_pop3 * 3) / 4) && ((g->ai_id == GAME_AI_CLASSIC) || (p->unrest != PLANET_UNREST_REBELLION))) {
                 BOOLVEC_SET1(tbl_trans_from, i);
             }
         }
