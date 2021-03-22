@@ -51,10 +51,27 @@ uint16_t ui_cursor_gfx_i = 0;
 
 /* -------------------------------------------------------------------------- */
 
+static void ui_cursor_clamp_xy(int *mx, int *my)
+{
+    if (*mx < 0) {
+        *mx = 0;
+    }
+    if (*my < 0) {
+        *my = 0;
+    }
+    if (*mx >= UI_SCREEN_W) {
+        *mx = UI_SCREEN_W - 1;
+    }
+    if (*my >= UI_SCREEN_H) {
+        *my = UI_SCREEN_H - 1;
+    }
+}
+
 static void ui_cursor_store_bg(int mx, int my, uint8_t *p, struct cursor_bg_s *bg)
 {
     int w, h;
     uint8_t *q = bg->data;
+    ui_cursor_clamp_xy(&mx, &my);
     bg->x = mx;
     bg->y = my;
     p += my * UI_SCREEN_W + mx;
@@ -80,6 +97,7 @@ static void ui_cursor_draw(int mx, int my, uint8_t *p)
     }
     int w, h;
     uint8_t *q = lbxpal_cursors + ((ui_cursor_gfx_i - 1) * CURSOR_W * CURSOR_H);
+    ui_cursor_clamp_xy(&mx, &my);
     p += my * UI_SCREEN_W + mx;
     w = CURSOR_W;
     if ((mx + w) > UI_SCREEN_W) {
@@ -107,6 +125,7 @@ static void ui_cursor_erase(uint8_t *p, struct cursor_bg_s *bg)
     int mx = bg->x;
     int my = bg->y;
     uint8_t *q = bg->data;
+    ui_cursor_clamp_xy(&mx, &my);
     p += my * UI_SCREEN_W + mx;
     w = CURSOR_W;
     if ((mx + w) > UI_SCREEN_W) {
