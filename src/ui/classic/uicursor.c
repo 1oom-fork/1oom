@@ -67,6 +67,9 @@ static void ui_cursor_store_bg(int mx, int my, uint8_t *p, struct cursor_bg_s *b
     if ((my + h) > UI_SCREEN_H) {
         h = UI_SCREEN_H - my;
     }
+    if (w <= 0 || my < 0 || mx < 0) {
+        return;
+    }
     for (int y = 0; y < h; ++y) {
         memcpy(q, p, w);
         p += UI_SCREEN_W;
@@ -89,6 +92,9 @@ static void ui_cursor_draw(int mx, int my, uint8_t *p)
     h = CURSOR_H;
     if ((my + h) > UI_SCREEN_H) {
         h = UI_SCREEN_H - my;
+    }
+    if (w <= 0 || my < 0 || mx < 0) {
+        return;
     }
     for (int y = 0; y < h; ++y) {
         for (int x = 0; x < w; ++x) {
@@ -116,6 +122,9 @@ static void ui_cursor_erase(uint8_t *p, struct cursor_bg_s *bg)
     h = CURSOR_H;
     if ((my + h) > UI_SCREEN_H) {
         h = UI_SCREEN_H - my;
+    }
+    if (w <= 0 || my < 0 || mx < 0) {
+        return;
     }
     for (int y = 0; y < h; ++y) {
         memcpy(p, q, w);
