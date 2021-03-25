@@ -13,585 +13,195 @@
 
 /* -------------------------------------------------------------------------- */
 
-static void lbxgfx_draw_pixels_fmt0(uint8_t *pixbuf, uint16_t w, uint8_t *data, uint16_t pitch)
+struct thing_s;
+typedef struct thing_s thing_t;
+typedef void (*putpixel_func_t)(thing_t *, int);
+
+/* RLE decompressor state and parameters */
+struct thing_s {
+    /* these get set once and then used */
+    const uint8_t *src_data;
+    uint8_t *dst; /* points to start of output column */
+    int32_t pitch, scale; /* scale = scale */
+    int32_t yskip; /* used for skipping first N pixels from each input column */
+    int32_t ylimit; /* use at most this many input rows */
+    int32_t xlimit; /* use at most this many input columns */
+    putpixel_func_t put; /* this avoids a lot of conditionals in the hot innermost loop */
+
+    /* loop variables */
+    int32_t yskip_wr; /* how many pixels to skip from input (counts down) */
+    uint8_t *dst_wr; /* write pixel here */
+    uint8_t *dst_stop;
+};
+
+#define column_end_reached(_thing_) ((_thing_)->dst_wr >= (_thing_)->dst_stop)
+
+static void begin_column(thing_t *buf)
 {
-    uint8_t *q;
-    uint8_t b, /*dh*/mode, /*dl*/len_total, len_run;
-    while (w--) {
-        q = pixbuf++;
-        b = *data++;
-        if (b == 0xff) { /* skip column */
-            continue;
-        }
-        mode = b;
-        len_total = *data++;
-        if ((mode & 0x80) == 0) { /* regular data */
-            do {
-                len_run = *data++;
-                q += pitch * *data++;
-                len_total -= len_run + 2;
-                do {
-                    *q = *data++;
-                    q += pitch;
-                } while (--len_run);
-            } while (len_total >= 1);
-        } else {    /* compressed data */
-            do {
-                len_run = *data++;
-                q += pitch * *data++;
-                len_total -= len_run + 2;
-                do {
-                    b = *data++;
-                    if (b > 0xdf) { /* b-0xdf pixels, same color */
-                        uint8_t len_compr;
-                        len_compr = b - 0xdf;
-                        --len_run;
-                        b = *data++;
-                        while (len_compr) {
-                            *q = b;
-                            q += pitch;
-                            --len_compr;
-                        }
-                    } else {
-                        *q = b;
-                        q += pitch;
-                    }
-                } while (--len_run);
-            } while (len_total >= 1);
-        }
+    buf->dst_wr = buf->dst;
+    buf->dst_stop = buf->dst_wr + buf->ylimit * buf->pitch * buf->scale;
+    buf->dst += buf->scale; /* advance horizontally to next column */
+    buf->yskip_wr = buf->yskip;
+}
+
+static int input_seek(thing_t *buf, const uint8_t *p[1], int count)
+{
+    if (buf->yskip_wr >= count) {
+        buf->yskip_wr -= count;
+        count = 0;
+    } else {
+        if (p) *p += buf->yskip_wr;
+        count -= buf->yskip_wr;
+        buf->yskip_wr = 0;
+    }
+    return count;
+}
+
+static inline void putpixel_fmt0_(thing_t *buf, int value, int scale)
+{
+    buf->dst_wr = gfxscale_draw_pixel(buf->dst_wr, value, buf->pitch, scale);
+}
+
+static inline void putpixel_fmt1_(thing_t *buf, int value, int scale)
+{
+    if (value >= 0xe8) {
+        const uint8_t *tbl = lbxpal_colortable[value - 0xe8];
+        buf->dst_wr = gfxscale_draw_pixel_fmt1(buf->dst_wr, tbl, buf->pitch, scale);
+    } else {
+        buf->dst_wr = gfxscale_draw_pixel(buf->dst_wr, value, buf->pitch, scale);
     }
 }
 
-static void lbxgfx_draw_pixels_fmt0_scale(uint8_t *pixbuf, uint16_t w, uint8_t *data, uint16_t pitch, int scale)
+/* -------------------------------------------------------------------------- */
+/* Here we instantiate the poor man's templates
+ * The compiler should inline and unroll the loops when scale is constant */
+
+static void putpixel_fmt0_scale1(thing_t *b, int i) { putpixel_fmt0_(b, i, 1); }
+static void putpixel_fmt0_scale2(thing_t *b, int i) { putpixel_fmt0_(b, i, 2); }
+static void putpixel_fmt0_scale3(thing_t *b, int i) { putpixel_fmt0_(b, i, 3); }
+static void putpixel_fmt0_scale4(thing_t *b, int i) { putpixel_fmt0_(b, i, 4); }
+static void putpixel_fmt0_scaleN(thing_t *b, int i) { putpixel_fmt0_(b, i, b->scale); }
+
+static void putpixel_fmt1_scale1(thing_t *b, int i) { putpixel_fmt1_(b, i, 1); }
+static void putpixel_fmt1_scale2(thing_t *b, int i) { putpixel_fmt1_(b, i, 2); }
+static void putpixel_fmt1_scaleN(thing_t *b, int i) { putpixel_fmt1_(b, i, b->scale); }
+
+static putpixel_func_t choose_putpixel(int format, int scale)
 {
-    uint8_t *q;
-    uint8_t b, /*dh*/mode, /*dl*/len_total, len_run;
-    while (w--) {
-        q = pixbuf;
-        pixbuf += scale;
-        b = *data++;
-        if (b == 0xff) { /* skip column */
-            continue;
-        }
-        mode = b;
-        len_total = *data++;
-        if ((mode & 0x80) == 0) { /* regular data */
-            do {
-                len_run = *data++;
-                q += pitch * scale * *data++;
-                len_total -= len_run + 2;
-                do {
-                    b = *data++;
-                    q = gfxscale_draw_pixel(q, b, pitch, scale);
-                } while (--len_run);
-            } while (len_total >= 1);
-        } else {    /* compressed data */
-            do {
-                len_run = *data++;
-                q += pitch * scale * *data++;
-                len_total -= len_run + 2;
-                do {
-                    b = *data++;
-                    if (b > 0xdf) { /* b-0xdf pixels, same color */
-                        uint8_t len_compr;
-                        len_compr = b - 0xdf;
-                        --len_run;
-                        b = *data++;
-                        while (len_compr) {
-                            q = gfxscale_draw_pixel(q, b, pitch, scale);
-                            --len_compr;
-                        }
-                    } else {
-                        q = gfxscale_draw_pixel(q, b, pitch, scale);
-                    }
-                } while (--len_run);
-            } while (len_total >= 1);
-        }
+    switch(format) {
+        case 0:
+            switch(scale) {
+                case 1: return putpixel_fmt0_scale1;
+                case 2: return putpixel_fmt0_scale2;
+                case 3: return putpixel_fmt0_scale3;
+                case 4: return putpixel_fmt0_scale4;
+                default: return putpixel_fmt0_scaleN;
+            }
+        case 1: switch(scale) {
+                case 1: return putpixel_fmt1_scale1;
+                case 2: return putpixel_fmt1_scale2;
+                default: return putpixel_fmt1_scaleN;
+            }
+        default:
+            log_fatal_and_die("LBXGFX: unimplemented format=%d scale=%d\n", format, scale);
+            return NULL;
     }
 }
 
-static void lbxgfx_draw_pixels_offs_fmt0(int x0, int y0, int w, int h, int xskip, int yskip, uint8_t *data, uint16_t pitch)
+/* -------------------------------------------------------------------------- */
+
+static void copy_pixels(thing_t *buf, const uint8_t *src, int count)
 {
-    /* FIXME this an unreadable goto mess */
-    uint8_t *p = hw_video_get_buf() + y0 * pitch + x0;
-    uint8_t *q;
-    uint8_t b, mode, len_total, len_run;
-    int ylen;
-    /* skip columns */
-    while (xskip--) {
-        b = *data++;
+    count = input_seek(buf, &src, count);
+    /* More performance can be had by moving this loop into the callback but it cost many LOC */
+    for(int i=0; !column_end_reached(buf) && i<count; ++i) {
+        buf->put(buf, src[i]);
+    }
+}
+
+static void fill_pixels(thing_t *buf, uint8_t value, int count)
+{
+    count = input_seek(buf, NULL, count);
+    for(int i=0; !column_end_reached(buf) && i<count; ++i) {
+        buf->put(buf, value);
+    }
+}
+
+static void skip_output_gap(thing_t *buf, int gap)
+{
+    gap = input_seek(buf, NULL, gap);
+    buf->dst_wr += gap * buf->pitch * buf->scale;
+}
+
+static const uint8_t *do_xskip(const uint8_t *data, int xskip)
+{
+    /* skip columns in rle stream */
+    while (xskip-- > 0) {
+        uint8_t b = *data++;
         if (b != 0xff) {
             b = *data++;
             data += b;
         }
     }
-    while (w--) {
-        q = p++;
-        b = *data++;
-        if (b == 0xff) { /* skip column */
+    return data;
+}
+
+static thing_t lbxgfx_params(const uint8_t *src_data, int format, uint8_t *dst_data, int32_t pitch, int scale, int w, int h, int xskip, int yskip)
+{
+    thing_t d;
+    d.dst = dst_data;
+    d.put = choose_putpixel(format, scale);
+    d.src_data = do_xskip(src_data, xskip);
+    d.yskip = yskip;
+    d.pitch = pitch;
+    d.scale = scale;
+    d.xlimit = w;
+    d.ylimit = h;
+    return d;
+}
+
+/* -------------------------------------------------------------------------- */
+
+static void lbxgfx_rle_draw(thing_t state)
+{
+    const uint8_t *data = state.src_data;
+    int mode, len_total, len_run, gap;
+
+    while (state.xlimit-- > 0) {
+
+        begin_column(&state);
+
+        mode = *data++;
+        if (mode == 0xff) { /* skip column */
             continue;
         }
-        mode = b;
+
         len_total = *data++;
         if ((mode & 0x80) == 0) { /* regular data */
-            ylen = yskip;
-            loc_10dcf:
-            if (ylen != 0) {
-                ylen -= data[1];
-                if (ylen > 0) {
-                    len_run = *data++;
-                    ylen -= len_run;
-                    if (ylen >= 0) {
-                        data += len_run + 1;
-                        len_total -= len_run + 2;
-                        if (len_total != 0) {
-                            goto loc_10dcf;
-                        } else {
-                            /*10e18*/
-                            continue; /*goto loc_10e54*/
-                        }
-                    } else {
-                        /*goto loc_10e83;*/
-                        ++data;
-                        len_total -= len_run + 2;
-                        data += ylen + len_run;
-                        len_run = -ylen;
-                        ylen = h;
-                        goto loc_10e46;
-                    }
-                } else {
-                    /*goto loc_10e78;*/
-                    len_run = -ylen;
-                    ylen = h;
-                    goto loc_10e25;
+            do {
+                len_run = *data++;
+                gap = *data++;
+                if (len_run == 0) {
+                    len_run = 256;
                 }
-            }
-            /*10e1b */
-            ylen = h;
-            do {
-                /*loc_10e20:*/
-                len_run = data[1]; /*really skip pixels...*/
-                loc_10e25:
-                ylen -= len_run;
-                q += len_run * pitch;
-                len_run = *data++;
-                ++data;
+                skip_output_gap(&state, gap);
+                copy_pixels(&state, data, len_run);
+                data += len_run;
                 len_total -= len_run + 2;
-                loc_10e46:
-                do {
-                    if (--ylen >= 0) {
-                        *q = *data++;
-                        q += pitch;
-                    } else {
-                        data += len_run;
-                        break;
-                    }
-                } while (--len_run);
-            } while (len_total >= 1);
-        } else {    /* compressed data */
-            uint8_t len_compr;
-            /*10e97*/
-            ylen = yskip;
-            loc_10ea2:
-            if (ylen != 0) {
-                ylen -= data[1];
-                if (ylen > 0) {
-                    len_run = *data++;
-                    ++data;
-                    len_total -= len_run + 2;
-                    /*loc_10eb6:*/
-                    do {
-                        b = *data++;
-                        if (b <= 0xdf) {
-                            if (--ylen >= 0) {
-                                /*continue;*/
-                            } else {
-                                /*goto 10ec7*/
-                                len_run += ylen;
-                                ylen = h - 1;
-                                ++len_run;
-                                goto loc_10f38;
-                            }
-                        } else {
-                            /*10ed3*/
-                            ++data;
-                            ylen -= (b - 0xdf);
-                            if (ylen >= 0) {
-                                --len_run;
-                                /*continue;*/
-                            } else {
-                                /*goto loc_10ef6;*/
-                                --data;
-                                b = *data++;
-                                --len_run;
-                                len_compr = -ylen;
-                                ylen = h;
-                                goto loc_10f51;
-                            }
-                        }
-                    } while (--len_run);
-                    if (len_total >= 1) {
-                        goto loc_10ea2;
-                    } else {
-                        goto loc_10e54;
-                    }
-                } else {
-                    /*goto loc_10eea;*/
-                    len_run = -ylen;
-                    ylen = h;
-                    goto loc_10f0f;
-                }
-            }
-            /*loc_10f05:*/
-            ylen = h;
-            do {
-                /*loc_10f0a:*/
-                len_run = data[1]; /*really skip pixels...*/
-                loc_10f0f:
-                ylen -= len_run;
-                q += len_run * pitch;
-                len_run = *data++;
-                ++data;
-                len_total -= len_run + 2;
-                /*loc_10f30:*/
-                do {
-                    if (--ylen >= 0) {
-                        b = *data++;
-                        if (b <= 0xdf) {
-                            loc_10f38:
-                            *q = b;
-                            q += pitch;
-                        } else {
-                            len_compr = b - 0xdf;
-                            b = *data++;
-                            --len_run;
-                            ++ylen;
-                            loc_10f51:
-                            do {
-                                if (--ylen >= 0) {
-                                    *q = b;
-                                    q += pitch;
-                                } else {
-                                    --len_run;
-                                    goto loc_10f7e;
-                                }
-                            } while (--len_compr);
-                        }
-                    } else {
-                        loc_10f7e:
-                        data += len_run;
-                        break;
-                    }
-                } while (--len_run);
-            } while (len_total >= 1);
-        }
-        loc_10e54:
-        ;
-    }
-}
-
-static void lbxgfx_draw_pixels_offs_fmt0_scale(int x0, int y0, int w, int h, int xskip, int yskip, uint8_t *data, uint16_t pitch, int scale)
-{
-    /* FIXME this an unreadable goto mess */
-    uint8_t *p = hw_video_get_buf() + (y0 * pitch + x0) * scale;
-    uint8_t *q;
-    uint8_t b, mode, len_total, len_run;
-    int ylen;
-    /* skip columns */
-    while (xskip--) {
-        b = *data++;
-        if (b != 0xff) {
-            b = *data++;
-            data += b;
-        }
-    }
-    while (w--) {
-        q = p;
-        p += scale;
-        b = *data++;
-        if (b == 0xff) { /* skip column */
-            continue;
-        }
-        mode = b;
-        len_total = *data++;
-        if ((mode & 0x80) == 0) { /* regular data */
-            ylen = yskip;
-            locs_10dcf:
-            if (ylen != 0) {
-                ylen -= data[1];
-                if (ylen > 0) {
-                    len_run = *data++;
-                    ylen -= len_run;
-                    if (ylen >= 0) {
-                        data += len_run + 1;
-                        len_total -= len_run + 2;
-                        if (len_total != 0) {
-                            goto locs_10dcf;
-                        } else {
-                            continue;
-                        }
-                    } else {
-                        ++data;
-                        len_total -= len_run + 2;
-                        data += ylen + len_run;
-                        len_run = -ylen;
-                        ylen = h;
-                        goto locs_10e46;
-                    }
-                } else {
-                    len_run = -ylen;
-                    ylen = h;
-                    goto locs_10e25;
-                }
-            }
-            ylen = h;
-            do {
-                len_run = data[1]; /*really skip pixels...*/
-                locs_10e25:
-                ylen -= len_run;
-                q += len_run * pitch * scale;
-                len_run = *data++;
-                ++data;
-                len_total -= len_run + 2;
-                locs_10e46:
-                do {
-                    if (--ylen >= 0) {
-                        q = gfxscale_draw_pixel(q, *data++, pitch, scale);
-                    } else {
-                        data += len_run;
-                        break;
-                    }
-                } while (--len_run);
-            } while (len_total >= 1);
-        } else {    /* compressed data */
-            uint8_t len_compr;
-            ylen = yskip;
-            locs_10ea2:
-            if (ylen != 0) {
-                ylen -= data[1];
-                if (ylen > 0) {
-                    len_run = *data++;
-                    ++data;
-                    len_total -= len_run + 2;
-                    do {
-                        b = *data++;
-                        if (b <= 0xdf) {
-                            if (--ylen >= 0) {
-                                /*continue;*/
-                            } else {
-                                len_run += ylen;
-                                ylen = h - 1;
-                                ++len_run;
-                                goto locs_10f38;
-                            }
-                        } else {
-                            ++data;
-                            ylen -= (b - 0xdf);
-                            if (ylen >= 0) {
-                                --len_run;
-                                /*continue;*/
-                            } else {
-                                --data;
-                                b = *data++;
-                                --len_run;
-                                len_compr = -ylen;
-                                ylen = h;
-                                goto locs_10f51;
-                            }
-                        }
-                    } while (--len_run);
-                    if (len_total >= 1) {
-                        goto locs_10ea2;
-                    } else {
-                        goto locs_10e54;
-                    }
-                } else {
-                    len_run = -ylen;
-                    ylen = h;
-                    goto locs_10f0f;
-                }
-            }
-            ylen = h;
-            do {
-                len_run = data[1]; /*really skip pixels...*/
-                locs_10f0f:
-                ylen -= len_run;
-                q += len_run * pitch * scale;
-                len_run = *data++;
-                ++data;
-                len_total -= len_run + 2;
-                do {
-                    if (--ylen >= 0) {
-                        b = *data++;
-                        if (b <= 0xdf) {
-                            locs_10f38:
-                            q = gfxscale_draw_pixel(q, b, pitch, scale);
-                        } else {
-                            len_compr = b - 0xdf;
-                            b = *data++;
-                            --len_run;
-                            ++ylen;
-                            locs_10f51:
-                            do {
-                                if (--ylen >= 0) {
-                                    q = gfxscale_draw_pixel(q, b, pitch, scale);
-                                } else {
-                                    --len_run;
-                                    goto locs_10f7e;
-                                }
-                            } while (--len_compr);
-                        }
-                    } else {
-                        locs_10f7e:
-                        data += len_run;
-                        break;
-                    }
-                } while (--len_run);
-            } while (len_total >= 1);
-        }
-        locs_10e54:
-        ;
-    }
-}
-
-static void lbxgfx_draw_pixels_fmt1(uint8_t *pixbuf, uint16_t w, uint8_t *data, uint16_t pitch)
-{
-    uint8_t *q;
-    uint8_t b, /*dh*/mode, /*dl*/len_total, len_run;
-    while (w--) {
-        q = pixbuf++;
-        b = *data++;
-        if (b == 0xff) { /* skip column */
-            continue;
-        }
-        mode = b;
-        len_total = *data++;
-        if ((mode & 0x80) == 0) { /* regular(ish) data */
-            do {
-                len_run = *data++;
-                q += pitch * *data++;
-                len_total -= len_run + 2;
-                do {
-                    /*loc_df66:*/
-                    b = *data++;
-                    if (b >= 0xe8) {
-                        /*goto locs_df9c;*/
-                        b -= 0xe8;
-                        b = lbxpal_colortable[b][*q];
-                    }
-                    *q = b;
-                    q += pitch;
-                } while (--len_run);
             } while (len_total >= 1);
         } else {    /* compressed data */
             do {
                 len_run = *data++;
-                q += pitch * *data++;
+                gap = *data++;
+                skip_output_gap(&state, gap);
                 len_total -= len_run + 2;
                 do {
-                    b = *data++;
+                    uint8_t b = *data++;
                     if (b > 0xdf) { /* b-0xdf pixels, same color */
-                        uint8_t len_compr;
-                        len_compr = b - 0xdf;
                         --len_run;
-                        b = *data++;
-                        if (b >= 0xe8) {
-                            uint8_t *tbl;
-                            b -= 0xe8;
-                            tbl = lbxpal_colortable[b];
-                            while (len_compr) {
-                                b = tbl[*q];
-                                *q = b;
-                                q += pitch;
-                                --len_compr;
-                            }
-                        } else {
-                            while (len_compr) {
-                                *q = b;
-                                q += pitch;
-                                --len_compr;
-                            }
-                        }
+                        fill_pixels(&state, *data++, b - 0xdf);
                     } else {
-                        /* here is a test for b >= 0xe8 which is always false */
-                        *q = b;
-                        q += pitch;
-                    }
-                } while (--len_run);
-            } while (len_total >= 1);
-        }
-    }
-}
-
-static void lbxgfx_draw_pixels_fmt1_scale(uint8_t *pixbuf, uint16_t w, uint8_t *data, uint16_t pitch, int scale)
-{
-    uint8_t *q;
-    uint8_t b, /*dh*/mode, /*dl*/len_total, len_run;
-    while (w--) {
-        q = pixbuf;
-        pixbuf += scale;
-        b = *data++;
-        if (b == 0xff) { /* skip column */
-            continue;
-        }
-        mode = b;
-        len_total = *data++;
-        if ((mode & 0x80) == 0) { /* regular(ish) data */
-            do {
-                len_run = *data++;
-                q += pitch * scale * *data++;
-                len_total -= len_run + 2;
-                do {
-                    b = *data++;
-                    if (b >= 0xe8) {
-                        uint8_t *tbl;
-                        b -= 0xe8;
-                        tbl = lbxpal_colortable[b];
-                        for (int sy = 0; sy < scale; ++sy) {
-                            for (int sx = 0; sx < scale; ++sx) {
-                                q[sx] = tbl[q[sx]];
-                            }
-                            q += pitch;
-                        }
-                    } else {
-                        q = gfxscale_draw_pixel(q, b, pitch, scale);
-                    }
-                } while (--len_run);
-            } while (len_total >= 1);
-        } else {    /* compressed data */
-            do {
-                len_run = *data++;
-                q += pitch * scale * *data++;
-                len_total -= len_run + 2;
-                do {
-                    b = *data++;
-                    if (b > 0xdf) { /* b-0xdf pixels, same color */
-                        uint8_t len_compr;
-                        len_compr = b - 0xdf;
-                        --len_run;
-                        b = *data++;
-                        if (b >= 0xe8) {
-                            uint8_t *tbl;
-                            b -= 0xe8;
-                            tbl = lbxpal_colortable[b];
-                            while (len_compr) {
-                                for (int sy = 0; sy < scale; ++sy) {
-                                    for (int sx = 0; sx < scale; ++sx) {
-                                        q[sx] = tbl[q[sx]];
-                                    }
-                                    q += pitch;
-                                }
-                                --len_compr;
-                            }
-                        } else {
-                            while (len_compr) {
-                                q = gfxscale_draw_pixel(q, b, pitch, scale);
-                                --len_compr;
-                            }
-                        }
-                    } else {
-                        /* here is a test for b >= 0xe8 which is always false */
-                        q = gfxscale_draw_pixel(q, b, pitch, scale);
+                        fill_pixels(&state, b, 1);
                     }
                 } while (--len_run);
             } while (len_total >= 1);
@@ -601,26 +211,20 @@ static void lbxgfx_draw_pixels_fmt1_scale(uint8_t *pixbuf, uint16_t w, uint8_t *
 
 /* -------------------------------------------------------------------------- */
 
-void lbxgfx_draw_frame_do(uint8_t *p, uint8_t *data, uint16_t pitch, int scale)
+void lbxgfx_draw_frame_do(uint8_t *dst_p, uint8_t *data, uint16_t pitch, int scale)
 {
-    uint16_t frame, next_frame, w;
+    uint16_t frame, next_frame, w, h;
     uint8_t *frameptr;
+    int format;
+
     w = lbxgfx_get_w(data);
+    h = lbxgfx_get_h(data);
     frame = lbxgfx_get_frame(data);
     frameptr = lbxgfx_get_frameptr(data, frame) + 1;
-    if (lbxgfx_get_format(data) == 0) {
-        if (scale == 1) {
-            lbxgfx_draw_pixels_fmt0(p, w, frameptr, pitch);
-        } else {
-            lbxgfx_draw_pixels_fmt0_scale(p, w, frameptr, pitch, scale);
-        }
-    } else {
-        if (scale == 1) {
-            lbxgfx_draw_pixels_fmt1(p, w, frameptr, pitch);
-        } else {
-            lbxgfx_draw_pixels_fmt1_scale(p, w, frameptr, pitch, scale);
-        }
-    }
+    format = lbxgfx_get_format(data);
+
+    lbxgfx_rle_draw(lbxgfx_params(frameptr, format, dst_p, pitch, scale, w, h, 0, 0));
+
     next_frame = frame + 1;
     lbxgfx_set_frame(data, next_frame);
     if (next_frame >= lbxgfx_get_frames(data)) {
@@ -684,18 +288,11 @@ void lbxgfx_draw_frame_offs(int x, int y, uint8_t *data, int lx0, int ly0, int l
         lbxgfx_apply_palette(data);
     }
 
-    uint16_t frame;
-    frame = lbxgfx_get_frame(data);
-
-    if (lbxgfx_get_format(data) == 0) {
-        if (scale == 1) {
-            lbxgfx_draw_pixels_offs_fmt0(x0, y0, w, h, xskip, yskip, lbxgfx_get_frameptr(data, frame) + 1, pitch);
-        } else {
-            lbxgfx_draw_pixels_offs_fmt0_scale(x0, y0, w, h, xskip, yskip, lbxgfx_get_frameptr(data, frame) + 1, pitch, scale);
-        }
-    } else {
-        log_fatal_and_die("%s: offs_fmt1 unimpl\n", __func__);
-    }
+    uint16_t frame = lbxgfx_get_frame(data);
+    int format = lbxgfx_get_format(data);
+    const uint8_t *frameptr = lbxgfx_get_frameptr(data, frame) + 1;
+    uint8_t *dst_p = hw_video_get_buf() + (y0 * pitch + x0) * scale;
+    lbxgfx_rle_draw(lbxgfx_params(frameptr, format, dst_p, pitch, scale, w, h, xskip, yskip));
 
     ++frame;
     if (frame >= lbxgfx_get_frames(data)) {
