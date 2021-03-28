@@ -479,6 +479,10 @@ int create_window(int width, int height) {
 }
 
 int hw_video_init(int w, int h) {
+    if (w != MOO_WIDTH || h != MOO_HEIGHT) {
+        hw_log_error("The X11 backend only supports -uiscale=1\n");
+        abort(); /* prevent saving config file with incompatible uiscale */
+    }
     create_window(SCALE*MOO_WIDTH, SCALE*MOO_HEIGHT);
     return 0;
 }
