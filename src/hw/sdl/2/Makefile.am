@@ -7,11 +7,10 @@ AM_CPPFLAGS = \
 noinst_LIBRARIES = libhwsdl2.a
 
 libhwsdl2_a_SOURCES = \
-    hwsdl2_audio.c \
+    hwsdl2_common.c \
     hwsdl2_event.c \
     hwsdl2_init.c \
     hwsdl2_keymap.h \
-    hwsdl2_mouse.c \
     hwsdl2_opt.c \
     hwsdl2_video_buffers.c \
     hwsdl2_video_buffers.h \
