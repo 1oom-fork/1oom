@@ -24,5 +24,8 @@ extern int hw_opt_bpp;
 /* for SDL2 */
 extern bool hw_opt_force_sw;
 extern bool hw_opt_int_scaling;
+extern bool hw_opt_lock_texture;
+extern bool hw_opt_autotrim;
+extern bool hw_opt_vsync;
 
 #endif
