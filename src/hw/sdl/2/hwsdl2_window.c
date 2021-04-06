@@ -244,6 +244,9 @@ static int set_video_mode(int w, int h)
         SDL_DestroyRenderer(the_renderer);
     }
 
+    log_message("V-sync flag is %s\n",
+            (renderer_flags & SDL_RENDERER_PRESENTVSYNC) ?  "set" : "not set");
+
     the_renderer = SDL_CreateRenderer(the_window, -1, renderer_flags);
     if (the_renderer == NULL) {
         log_error("SDL2: Error creating renderer for screen window: %s\n", SDL_GetError());
