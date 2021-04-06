@@ -188,7 +188,9 @@ static void video_update(void)
             if ((flags & (SDL_WINDOW_FULLSCREEN_DESKTOP | SDL_WINDOW_FULLSCREEN | SDL_WINDOW_MAXIMIZED)) == 0) {
                 SDL_GetWindowSize(video.window, &w, &h);
                 /* Adjust the window by resizing again so that the window is the right aspect ratio. */
-                video_adjust_window_size(&w, &h);
+                if (hw_opt_autotrim) {
+                    video_adjust_window_size(&w, &h);
+                }
                 SDL_SetWindowSize(video.window, w, h);
                 hw_opt_screen_winw = w;
                 hw_opt_screen_winh = h;
