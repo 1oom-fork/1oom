@@ -21,6 +21,7 @@ extern bool hw_opt_borderless;
 extern bool hw_opt_int_scaling;
 extern bool hw_opt_relmouse;
 extern bool hw_opt_two_step_scaling;
+extern bool hw_opt_autotrim;
 extern bool hw_opt_vsync;
 
 #endif
