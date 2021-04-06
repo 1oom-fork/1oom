@@ -26,5 +26,6 @@ extern bool hw_opt_int_scaling;
 extern bool hw_opt_relmouse;
 extern bool hw_opt_autotrim;
 extern bool hw_opt_vsync;
+extern bool hw_opt_allow_upscaling;
 
 #endif
