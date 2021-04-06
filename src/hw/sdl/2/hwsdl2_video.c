@@ -74,6 +74,14 @@ static struct sdl_video_s {
 
 static void video_create_upscaled_texture(bool force)
 {
+    if (hw_opt_int_scaling || !hw_opt_two_step_scaling) {
+        if (video.texture_upscaled) {
+            SDL_DestroyTexture(video.texture_upscaled);
+            video.texture_upscaled = NULL;
+        }
+        return;
+    }
+
     int w, h;
     int h_upscale, w_upscale;
 
@@ -209,15 +217,21 @@ static void video_update(void)
     /* Make sure the pillarboxes are kept clear each frame. */
     SDL_RenderClear(video.renderer);
 
-    /* Render this intermediate texture into the upscaled texture
-       using "nearest" integer scaling.
-    */
-    SDL_SetRenderTarget(video.renderer, video.texture_upscaled);
-    SDL_RenderCopy(video.renderer, video.texture, NULL, NULL);
+    if (hw_opt_two_step_scaling && !hw_opt_int_scaling) {
+        /* Render this intermediate texture into the upscaled texture
+           using "nearest" integer scaling.
+        */
+        SDL_SetRenderTarget(video.renderer, video.texture_upscaled);
+        SDL_RenderCopy(video.renderer, video.texture, NULL, NULL);
 
-    /* Finally, render this upscaled texture to screen using linear scaling. */
-    SDL_SetRenderTarget(video.renderer, NULL);
-    SDL_RenderCopy(video.renderer, video.texture_upscaled, NULL, NULL);
+        /* Finally, render this upscaled texture to screen using linear scaling. */
+        SDL_SetRenderTarget(video.renderer, NULL);
+        SDL_RenderCopy(video.renderer, video.texture_upscaled, NULL, NULL);
+    } else {
+        /* Render this intermediate texture directly to screen using "nearest" scaling. */
+        SDL_SetRenderTarget(video.renderer, NULL);
+        SDL_RenderCopy(video.renderer, video.texture, NULL, NULL);
+    }
 
     /* Draw! */
     SDL_RenderPresent(video.renderer);

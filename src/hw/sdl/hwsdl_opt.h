@@ -18,6 +18,7 @@ extern int hw_opt_gl_filter;
 /* for SDL2 */
 extern bool hw_opt_borderless;
 extern bool hw_opt_int_scaling;
+extern bool hw_opt_two_step_scaling;
 extern bool hw_opt_vsync;
 
 #endif
