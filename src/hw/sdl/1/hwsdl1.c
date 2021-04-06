@@ -186,7 +186,7 @@ static inline uint32_t mod_xlat(SDLMod smod)
 #define SDL1or2Key  SDLKey
 #define SDL1or2Mod  SDLMod
 
-#include "hwsdl.c"
+#include "hwsdl1_hotkey.c"
 
 /* -------------------------------------------------------------------------- */
 
