@@ -1,9 +1,9 @@
 #include "config.h"
 
+#include "SDL.h"
 #include "hw.h"
 #include "comp.h"
 #include "hwsdl_mouse.h"
-#include "hwsdl_video.h"
 #include "hwsdl_opt.h"
 #include "log.h"
 #include "mouse.h"
@@ -11,161 +11,83 @@
 
 /* -------------------------------------------------------------------------- */
 
-static int hw_mouse_game_w;
-static int hw_mouse_game_h;
-static int hw_mouse_range_w;
-static int hw_mouse_range_h;
-static int hw_mouse_dx_acc = 0;
-static int hw_mouse_dy_acc = 0;
-static int hw_mouse_sx = 1;
-static int hw_mouse_sy = 1;
+static struct hwsdl_mouse_s {
+    int win_x, win_y;
+    int moo_x, moo_y;
+    int buttons;
+} hwsdl_mouse = {0};
+
+#define M hwsdl_mouse
+
+static int moo_range[2] = {0};
+static SDL_Rect win_range = {0, 0, 1, 1};
 
 /* -------------------------------------------------------------------------- */
 
-bool hw_mouse_enabled = false;
-bool hw_mouse_grabbed = false;
-
-/* -------------------------------------------------------------------------- */
-
-void hw_mouse_disable_sw_jumps(void)
+static void window_to_moo(int win_x, int win_y, int *moo_x, int *moo_y)
 {
-    mouse_disable_set_xy = true;
-}
-
-void hw_mouse_grab(void)
-{
-    hw_mouse_grabbed = true;
-    if (!hw_mouse_enabled) {
-        hw_mouse_enabled = true;
-        SDL_ShowCursor(SDL_DISABLE);
-    }
-    hw_video_input_grab(true);
-}
-
-/* with absolute coordinates, we do not need to disable input into 1oom */
-void hw_mouse_ungrab(void)
-{
-    hw_mouse_grabbed = false;
-    if (hw_opt_relmouse && hw_mouse_enabled) {
-        hw_mouse_enabled = false;
-        SDL_ShowCursor(SDL_ENABLE);
-    }
-    hw_video_input_grab(false);
-}
-
-void hw_mouse_toggle_grab(void)
-{
-    if (hw_mouse_grabbed) {
-        hw_mouse_ungrab();
-    } else {
-        hw_mouse_grab();
-    }
-}
-
-void hw_mouse_init()
-{
-    if (hw_opt_relmouse) {
-        hw_mouse_enabled = false;
-        SDL_ShowCursor(SDL_ENABLE);
-        log_message("using relative mouse\n");
-    } else {
-        hw_mouse_enabled = true;
-        SDL_ShowCursor(SDL_DISABLE);
-        hw_mouse_disable_sw_jumps();
-        log_message("using absolute mouse\n");
-    }
-    hw_mouse_ungrab();
-}
-
-void hw_mouse_set_limits(int w, int h)
-{
-    hw_mouse_game_w = w;
-    hw_mouse_game_h = h;
-}
-
-void hw_mouse_set_range(int w, int h)
-{
-    hw_mouse_range_w = w;
-    hw_mouse_range_h = h;
-}
-
-void hw_mouse_set_scale(int w, int h)
-{
-    int v;
-    v = w / hw_mouse_game_w;
-    SETMAX(v, 1);
-    v *= 100;
-    hw_mouse_sx = v;
-    v = h / hw_mouse_game_h;
-    SETMAX(v, 1);
-    v *= 100;
-    hw_mouse_sy = v;
-}
-
-void hw_mouse_move(int dx, int dy)
-{
-    int x, y;
-    {
-        hw_mouse_dx_acc += dx * hw_opt_mousespd;
-        dx = hw_mouse_dx_acc / hw_mouse_sx;
-        hw_mouse_dx_acc = hw_mouse_dx_acc % hw_mouse_sx;
-    }
-    {
-        hw_mouse_dy_acc += dy * hw_opt_mousespd;
-        dy = hw_mouse_dy_acc / hw_mouse_sy;
-        hw_mouse_dy_acc = hw_mouse_dy_acc % hw_mouse_sy;
-    }
-    if ((dx == 0) && (dy == 0)) {
+    if (win_range.w == 0 || win_range.h == 0) {
+        *moo_x = *moo_y = 0; /* avoid division by zero */
         return;
     }
-    x = moouse_x + dx;
-    SETRANGE(x, 0, hw_mouse_game_w - 1);
-    y = moouse_y + dy;
-    SETRANGE(y, 0, hw_mouse_game_h - 1);
-    mouse_set_xy_from_hw(x, y);
+    int x = (win_x - win_range.x) * moo_range[0] / win_range.w;
+    int y = (win_y - win_range.y) * moo_range[1] / win_range.h;
+    /* the game shouldn't crash due to weird mouse coordinates but clamp anyway */
+    *moo_x = MAX(0, MIN(x, moo_range[0]-1));
+    *moo_y = MAX(0, MIN(y, moo_range[1]-1));
+}
+
+/* called when the window is created. or re-created when toggling fullscreen */
+void hw_mouse_init(void)
+{
+    SDL_ShowCursor(SDL_DISABLE);
+}
+
+void hw_mouse_set_moo_range(int w, int h)
+{
+    moo_range[0] = w;
+    moo_range[1] = h;
+}
+
+void hw_mouse_set_win_range(int x0, int y0, int w, int h)
+{
+    win_range.x = x0;
+    win_range.y = y0;
+    win_range.w = w;
+    win_range.h = h;
 }
 
 void hw_mouse_set_xy(int x, int y)
 {
-    if (hw_mouse_range_w && hw_mouse_range_w != hw_mouse_game_w) x = x * hw_mouse_game_w / hw_mouse_range_w;
-    if (hw_mouse_range_h && hw_mouse_range_h != hw_mouse_game_h) y = y * hw_mouse_game_h / hw_mouse_range_h;
-    SETRANGE(x, 0, hw_mouse_game_w - 1);
-    SETRANGE(y, 0, hw_mouse_game_h - 1);
-    mouse_set_xy_from_hw(x, y);
+    M.win_x = x;
+    M.win_y = y;
+    window_to_moo(x, y, &M.moo_x, &M.moo_y);
+    mouse_set_xy_from_hw(M.moo_x, M.moo_y);
 }
 
 void hw_mouse_button(int i, int pressed)
 {
-    if (hw_mouse_enabled) {
-        int b = mouse_buttons;
-        if (i == (int)SDL_BUTTON_LEFT) {
-            if (pressed) {
-                b |= MOUSE_BUTTON_MASK_LEFT;
-            } else {
-                b &= ~MOUSE_BUTTON_MASK_LEFT;
-            }
-        } else if (i == (int)SDL_BUTTON_RIGHT) {
-            if (pressed) {
-                b |= MOUSE_BUTTON_MASK_RIGHT;
-            } else {
-                b &= ~MOUSE_BUTTON_MASK_RIGHT;
-            }
-        }
-        mouse_set_buttons_from_hw(b);
-    }
-
-    if (pressed) {
-        if (hw_mouse_enabled) {
-            if (i == (int)SDL_BUTTON_MIDDLE) {
-                hw_mouse_ungrab();
-            }
+    static int b = 0;
+    if (i == SDL_BUTTON_LEFT) {
+        if (pressed) {
+            b |= MOUSE_BUTTON_MASK_LEFT;
         } else {
-            hw_mouse_grab();
+            b &= ~MOUSE_BUTTON_MASK_LEFT;
+        }
+    } else if (i == SDL_BUTTON_RIGHT) {
+        if (pressed) {
+            b |= MOUSE_BUTTON_MASK_RIGHT;
+        } else {
+            b &= ~MOUSE_BUTTON_MASK_RIGHT;
         }
     }
+    M.buttons = b;
+    mouse_set_buttons_from_hw(b);
 }
 
 void hw_mouse_scroll(int scroll)
 {
     mouse_set_scroll_from_hw(scroll);
 }
+
+#undef M
