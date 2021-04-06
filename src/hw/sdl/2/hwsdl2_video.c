@@ -82,6 +82,16 @@ static struct sdl_video_s {
 
 static void video_create_upscaled_texture(bool force)
 {
+    if (!hw_opt_allow_upscaling) {
+        if (video.texture_upscaled) {
+            SDL_DestroyTexture(video.texture_upscaled);
+            video.texture_upscaled = NULL;
+            video.w_upscale = 0;
+            video.h_upscale = 0;
+        }
+        return;
+    }
+
     int w, h;
     int h_upscale, w_upscale;
 
@@ -218,6 +228,13 @@ static void video_update(void)
 
     /* Make sure the pillarboxes are kept clear each frame. */
     SDL_RenderClear(video.renderer);
+
+    if (video.texture_upscaled == NULL) {
+        SDL_SetRenderTarget(video.renderer, NULL);
+        SDL_RenderCopy(video.renderer, video.texture, NULL, NULL);
+        SDL_RenderPresent(video.renderer);
+        return;
+    }
 
     /* Render this intermediate texture into the upscaled texture
        using "nearest" integer scaling.
