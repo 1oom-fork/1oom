@@ -11,4 +11,4 @@ libhwsdl1_a_SOURCES = \
     hwsdl1_common.c \
     hwsdl1_opt.c \
     hwsdl1_video.c \
-    hwsdl_video.h
+    hwsdl1_video.h
