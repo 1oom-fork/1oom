@@ -19,6 +19,7 @@ extern int hw_opt_bpp;
 extern bool hw_opt_force_sw;
 extern bool hw_opt_int_scaling;
 extern bool hw_opt_relmouse;
+extern bool hw_opt_autotrim;
 extern bool hw_opt_vsync;
 
 #endif
