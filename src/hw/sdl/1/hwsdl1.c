@@ -14,7 +14,7 @@
 #include "hwsdl_audio.h"
 #include "hwsdl_mouse.h"
 #include "hwsdl_opt.h"
-#include "hwsdl_video.h"
+#include "hwsdl1_video.h"
 #include "kbd.h"
 #include "log.h"
 #include "main.h"

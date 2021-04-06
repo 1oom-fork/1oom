@@ -9,7 +9,7 @@
 #endif
 
 #include "hw.h"
-#include "hwsdl_video.h"
+#include "hwsdl1_video.h"
 #include "hwsdl_mouse.h"
 #include "hwsdl_opt.h"
 #include "lib.h"
