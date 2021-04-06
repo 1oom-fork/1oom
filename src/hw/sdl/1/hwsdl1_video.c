@@ -589,4 +589,4 @@ int hw_icon_set(const uint8_t *data, const uint8_t *pal, int w, int h)
     return 0;
 }
 
-#include "hwsdl_video.c"
+#include "hwsdl1_video_buf.c"
