@@ -11,4 +11,5 @@ libhwsdl1_a_SOURCES = \
     hwsdl1_audio.c \
     hwsdl1_mouse.c \
     hwsdl1_opt.c \
-    hwsdl1_video.c
+    hwsdl1_video.c \
+    hwsdl_video.h
