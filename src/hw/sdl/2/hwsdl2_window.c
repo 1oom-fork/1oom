@@ -189,12 +189,11 @@ static void destroy_window(void)
     }
 }
 
-static int set_video_mode(int w, int h)
+static bool create_window(int w, int h)
 {
     const int x = SDL_WINDOWPOS_UNDEFINED;
     const int y = SDL_WINDOWPOS_UNDEFINED;
-    int window_flags = 0, renderer_flags = 0;
-    SDL_DisplayMode mode;
+    uint32_t window_flags = 0;
 
     /* In windowed mode, the window can be resized while the game is running. */
     window_flags = SDL_WINDOW_RESIZABLE;
@@ -213,15 +212,13 @@ static int set_video_mode(int w, int h)
         }
     }
 
-    /* Create window and renderer contexts. We leave the window position "undefined".
-       If "window_flags" contains the fullscreen flag (see above), then w and h are ignored.
-    */
+    /* If "window_flags" contains the fullscreen flag (see above), then w and h are ignored. */
     if (!the_window) {
         log_message("SDL_CreateWindow(0, %i, %i, %i, %i, 0x%x)\n", x, y, w, h, window_flags);
         the_window = SDL_CreateWindow(0, x, y, w, h, window_flags);
         if (!the_window) {
             log_error("SDL_CreateWindow failed: %s\n", SDL_GetError());
-            return -1;
+            return false;
         }
         SDL_SetWindowMinimumSize(the_window, MIN_RESX, MIN_RESY);
         SDL_SetWindowTitle(the_window, PACKAGE_NAME " " VERSION_STR);
@@ -229,6 +226,14 @@ static int set_video_mode(int w, int h)
 
         print_format("Display format", SDL_GetWindowPixelFormat(the_window));
     }
+
+    return true;
+}
+
+static bool create_renderer(void)
+{
+    uint32_t renderer_flags = 0;
+    SDL_RendererInfo info;
 
     if (hw_opt_vsync) {
         /* Turn on vsync */
@@ -244,22 +249,44 @@ static int set_video_mode(int w, int h)
         SDL_DestroyRenderer(the_renderer);
     }
 
-    log_message("V-sync flag is %s\n",
-            (renderer_flags & SDL_RENDERER_PRESENTVSYNC) ?  "set" : "not set");
-
     the_renderer = SDL_CreateRenderer(the_window, -1, renderer_flags);
     if (the_renderer == NULL) {
         log_error("SDL2: Error creating renderer for screen window: %s\n", SDL_GetError());
-        return -1;
+        return false;
     }
 
 #ifdef HAVE_INT_SCALING
     SDL_RenderSetIntegerScale(the_renderer, hw_opt_int_scaling);
 #endif
 
+    if (!SDL_GetRendererInfo(the_renderer, &info)) {
+        const char *y = "yes";
+        const char *n = "no";
+        log_message("SDL renderer: %s\n"
+                "... accelerated %s\n"
+                "... V-sync %s\n"
+                "... max_texture_width: %d\n"
+                "... max_texture_height: %d\n",
+                info.name,
+                (info.flags & SDL_RENDERER_ACCELERATED) ? y : n,
+                (info.flags & SDL_RENDERER_PRESENTVSYNC) ? y : n,
+                info.max_texture_width,
+                info.max_texture_height);
+    }
+
+    return true;
+}
+
+static int set_video_mode(int w, int h)
+{
+    if (!create_window(w, h)) {
+        return -1;
+    }
+    if (!create_renderer()) {
+        return -1;
+    }
     hw_mouse_init();
     hwsdl_video_resized(w, h);
-
     return 0;
 }
 
@@ -288,7 +315,7 @@ bool hwsdl_video_toggle_intscaling(void)
 }
 #endif
 
-static bool recreate_window(void)
+static bool reset_video_mode(void)
 {
     /* About to destroy the window and re-create it.
      * this means we lose the GL context and every texture with it */
@@ -308,7 +335,7 @@ bool hw_video_update_aspect(void)
 bool hwsdl_video_toggle_fullscreen(void)
 {
     hw_opt_fullscreen = !hw_opt_fullscreen;
-    if (!recreate_window()) {
+    if (!reset_video_mode()) {
         hw_opt_fullscreen = !hw_opt_fullscreen; /* restore the setting for the config file */
         return false;
     }
@@ -318,7 +345,7 @@ bool hwsdl_video_toggle_fullscreen(void)
 bool hwsdl_video_toggle_vsync(void)
 {
     hw_opt_vsync = !hw_opt_vsync;
-    if (!recreate_window()) {
+    if (!reset_video_mode()) {
         hw_opt_vsync = !hw_opt_vsync; /* restore the setting for the config file */
         return false;
     }
