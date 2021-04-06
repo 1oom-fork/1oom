@@ -324,6 +324,7 @@ static int video_sw_set(int w, int h)
     int x, y;
     int window_flags = 0, renderer_flags = 0;
     SDL_DisplayMode mode;
+    SDL_RendererInfo info;
 
     /* In windowed mode, the window can be resized while the game is running. */
     window_flags = SDL_WINDOW_RESIZABLE;
@@ -393,6 +394,12 @@ static int video_sw_set(int w, int h)
     if (video.renderer == NULL) {
         log_error("SDL2: Error creating renderer for screen window: %s\n", SDL_GetError());
         return -1;
+    }
+    if (!SDL_GetRendererInfo(video.renderer, &info)) {
+        log_message("SDL_GetRendererInfo: %s%s%s\n",
+                    info.name,
+                    (info.flags & SDL_RENDERER_ACCELERATED) ? ", accelerated" : "",
+                    (info.flags & SDL_RENDERER_PRESENTVSYNC) ? ", vsync" : "");
     }
     if (hw_opt_aspect != 0) {
         /* Important: Set the "logical size" of the rendering context. At the same
