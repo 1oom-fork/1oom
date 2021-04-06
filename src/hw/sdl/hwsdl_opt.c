@@ -1,5 +1,7 @@
 /* includes already added by X/hwsdlX_opt.c which includes this */
 
+#include "hwsdl_aspect.h"
+
 /* -------------------------------------------------------------------------- */
 
 bool hw_opt_fullscreen = false;
@@ -31,35 +33,6 @@ const struct cfg_items_s hw_cfg_items[] = {
 #endif
     CFG_ITEM_END
 };
-
-/* -------------------------------------------------------------------------- */
-
-#ifdef HAVE_SDLX_ASPECT
-static const char *hw_uiopt_cb_aspect_get(void)
-{
-    if (hw_opt_aspect == HW_DEFAULT_ASPECT) {
-        return "VGA";
-    } else if (hw_opt_aspect == 1000000) {
-        return "1:1";
-    } else if (hw_opt_aspect == 0) {
-        return "Off";
-    } else {
-        return "Custom";
-    }
-}
-
-static bool hw_uiopt_cb_aspect_next(void)
-{
-    if (hw_opt_aspect == HW_DEFAULT_ASPECT) {
-        hw_opt_aspect = 1000000;
-    } else if (hw_opt_aspect == 1000000) {
-        hw_opt_aspect = 0;
-    } else {
-        hw_opt_aspect = HW_DEFAULT_ASPECT;
-    }
-    return hw_video_update_aspect();
-}
-#endif /* HAVE_SDLX_ASPECT */
 
 /* -------------------------------------------------------------------------- */
 

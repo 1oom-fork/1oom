@@ -381,12 +381,13 @@ bool hw_video_toggle_fullscreen(void)
     return true;
 }
 
-#ifdef HAVE_SDL1GL
 bool hw_video_update_aspect(void)
 {
+#ifdef HAVE_SDL1GL
     return (hw_video_resize(video.actual_w, video.actual_h) == 0);
-}
 #endif
+    return true;
+}
 
 int hw_video_init(int w, int h)
 {
