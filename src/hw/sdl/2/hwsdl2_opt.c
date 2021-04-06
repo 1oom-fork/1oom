@@ -14,7 +14,6 @@
 
 /* -------------------------------------------------------------------------- */
 
-#define HW_DEFAULT_FULLSCREEN   false
 #define HAVE_SDLX_ASPECT
 
 bool hw_opt_force_sw = false;

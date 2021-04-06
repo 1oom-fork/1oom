@@ -2,7 +2,7 @@
 
 /* -------------------------------------------------------------------------- */
 
-bool hw_opt_fullscreen = HW_DEFAULT_FULLSCREEN;
+bool hw_opt_fullscreen = false;
 int hw_opt_screen_winw = 0;
 int hw_opt_screen_winh = 0;
 int hw_opt_screen_fsw = 0;

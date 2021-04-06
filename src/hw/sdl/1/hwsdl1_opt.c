@@ -14,8 +14,6 @@
 
 /* -------------------------------------------------------------------------- */
 
-#define HW_DEFAULT_FULLSCREEN   false
-
 #ifdef HAVE_SDL1GL
 bool hw_opt_use_gl = true;
 int hw_opt_gl_filter = 1;
