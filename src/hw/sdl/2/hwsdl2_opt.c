@@ -19,6 +19,7 @@
 bool hw_opt_force_sw = false;
 bool hw_opt_int_scaling = false;
 bool hw_opt_relmouse = true;
+bool hw_opt_vsync = true;
 
 #ifdef HAVE_SDL2MIXER
 #define HAVE_SDLMIXER
@@ -30,6 +31,7 @@ const struct cfg_items_s hw_cfg_items_extra[] = {
     CFG_ITEM_BOOL("force_sw", &hw_opt_force_sw),
     CFG_ITEM_BOOL("int_scaling", &hw_opt_int_scaling),
     CFG_ITEM_BOOL("relmouse", &hw_opt_relmouse),
+    CFG_ITEM_BOOL("vsync", &hw_opt_vsync),
     CFG_ITEM_END
 };
 
@@ -54,5 +56,11 @@ const struct cmdline_options_s hw_cmdline_options_extra[] = {
     { "-norelmouse", 0,
       options_disable_bool_var, (void *)&hw_opt_relmouse,
       NULL, "Do not use relative mouse mode (for testing)" },
+    { "-vsync", 0,
+      options_enable_bool_var, &hw_opt_vsync,
+      NULL, "Enable V-sync" },
+    { "-novsync", 0,
+      options_disable_bool_var, &hw_opt_vsync,
+      NULL, "Disable V-sync" },
     { NULL, 0, NULL, NULL, NULL, NULL }
 };
