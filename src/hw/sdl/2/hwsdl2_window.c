@@ -121,6 +121,35 @@ void hwsdl_video_next_frame(const hwsdl_video_buffer_t *buf)
     hwsdl_video_update();
 }
 
+#ifdef FRAME_TIME_DUMP
+static void frame_time_dump(void)
+{
+    extern char *hw_opt_frame_time_dump_filename;
+    static FILE *fp = NULL;
+    static unsigned frame_id = 0;
+    static uint32_t prev_t = 0;
+    if (!fp) {
+        char *fn = hw_opt_frame_time_dump_filename;
+        if (fn) {
+            fp = fopen(fn, "w");
+            if (fp) {
+                log_message("Dumping frame timings to %s\n", fn);
+                fprintf(fp, "frame,dt\n");
+                prev_t = SDL_GetTicks();
+            } else {
+                log_error("failed to open file: %s\n", fn);
+            }
+        }
+    }
+    if (fp) {
+        uint32_t now = SDL_GetTicks();
+        unsigned dt = now - prev_t;
+        prev_t = now;
+        fprintf(fp, "%u,%u\n", ++frame_id, dt);
+    }
+}
+#endif
+
 void hwsdl_video_update(void)
 {
     if (need_resize && SDL_GetTicks() >= window_resize_time) {
@@ -139,6 +168,10 @@ void hwsdl_video_update(void)
 
     /* Draw! */
     SDL_RenderPresent(the_renderer);
+
+#ifdef FRAME_TIME_DUMP
+    frame_time_dump();
+#endif
 }
 
 /* -------------------------------------------------------------------------- */

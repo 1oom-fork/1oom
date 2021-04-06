@@ -30,4 +30,9 @@ void hwsdl_video_update(void);
 /* for hwsdl_opt.c */
 #define hw_video_toggle_fullscreen hwsdl_video_toggle_fullscreen
 
+#define FRAME_TIME_DUMP
+#ifdef FRAME_TIME_DUMP
+extern char *hw_opt_frame_time_dump_filename;
+#endif
+
 #endif

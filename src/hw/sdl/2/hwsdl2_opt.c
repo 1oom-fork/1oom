@@ -22,6 +22,10 @@ bool hw_opt_lock_texture = false;
 bool hw_opt_autotrim = true;
 bool hw_opt_vsync = true;
 
+#ifdef FRAME_TIME_DUMP
+char *hw_opt_frame_time_dump_filename = NULL;
+#endif
+
 #ifdef HAVE_SDL2MIXER
 #define HAVE_SDLMIXER
 #endif /* HAVE_SDL2MIXER */
@@ -78,6 +82,11 @@ const struct cmdline_options_s hw_cmdline_options_extra[] = {
     { "-novsync", 0,
       options_disable_bool_var, &hw_opt_vsync,
       NULL, "Disable V-sync" },
+#ifdef FRAME_TIME_DUMP
+    { "-frame-time-dump", 1,
+      options_set_str_var, &hw_opt_frame_time_dump_filename,
+      "FILEPATH", "dump timing of each frame into a CSV file" },
+#endif
     { NULL, 0, NULL, NULL, NULL, NULL }
 };
 
