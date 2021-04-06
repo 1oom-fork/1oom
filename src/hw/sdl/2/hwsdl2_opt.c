@@ -21,6 +21,7 @@ bool hw_opt_int_scaling = false;
 bool hw_opt_relmouse = true;
 bool hw_opt_autotrim = true;
 bool hw_opt_vsync = true;
+bool hw_opt_allow_upscaling = true;
 
 #ifdef HAVE_SDL2MIXER
 #define HAVE_SDLMIXER
@@ -34,6 +35,7 @@ const struct cfg_items_s hw_cfg_items_extra[] = {
     CFG_ITEM_BOOL("relmouse", &hw_opt_relmouse),
     CFG_ITEM_BOOL("autotrim", &hw_opt_autotrim),
     CFG_ITEM_BOOL("vsync", &hw_opt_vsync),
+    CFG_ITEM_BOOL("allow_upscaling", &hw_opt_allow_upscaling),
     CFG_ITEM_END
 };
 
