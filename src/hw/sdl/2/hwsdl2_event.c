@@ -11,8 +11,8 @@
 #include "hwsdl_audio.h"
 #include "hwsdl_mouse.h"
 #include "hwsdl_opt.h"
-#include "hwsdl_window.h" /* hwsdl_video_resized, hwsdl_video_update */
-#include "hwsdl_video_buffers.h" /* hwsdl_video_screenshot */
+#include "hwsdl2_window.h" /* hwsdl_video_resized, hwsdl_video_update */
+#include "hwsdl2_video_buffers.h" /* hwsdl_video_screenshot */
 #include "kbd.h"
 #include "log.h"
 #include "options.h"

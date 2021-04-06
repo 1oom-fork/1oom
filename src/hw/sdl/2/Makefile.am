@@ -7,7 +7,6 @@ AM_CPPFLAGS = \
 noinst_LIBRARIES = libhwsdl2.a
 
 libhwsdl2_a_SOURCES = \
-    hwsdl2.c \
     hwsdl2_audio.c \
     hwsdl2_mouse.c \
     hwsdl2_opt.c \

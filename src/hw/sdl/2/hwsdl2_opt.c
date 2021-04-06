@@ -14,8 +14,6 @@
 
 /* -------------------------------------------------------------------------- */
 
-#define HAVE_SDLX_ASPECT
-
 bool hw_opt_force_sw = false;
 #ifdef HAVE_INT_SCALING
 bool hw_opt_int_scaling = false;
@@ -50,8 +48,6 @@ const struct uiopt_s hw_uiopts_extra[] = {
     UIOPT_ITEM_END
 };
 
-#include "hwsdl_opt.c"
-
 const struct cmdline_options_s hw_cmdline_options_extra[] = {
     { "-forcesw", 0,
       options_enable_bool_var, (void *)&hw_opt_force_sw,
@@ -84,3 +80,6 @@ const struct cmdline_options_s hw_cmdline_options_extra[] = {
       NULL, "Disable V-sync" },
     { NULL, 0, NULL, NULL, NULL, NULL }
 };
+
+#include "hwsdl_opt.c"
+

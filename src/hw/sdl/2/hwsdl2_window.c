@@ -1,0 +1,320 @@
+#include "config.h"
+
+#include <stdio.h>
+#include <string.h>
+
+#include "SDL.h"
+
+#include "hw.h"
+#include "comp.h"
+#include "lib.h"
+#include "log.h"
+#include "types.h"
+#include "comp.h"
+#include "version.h"
+#include "hwsdl_mouse.h"
+#include "hwsdl_opt.h"
+#include "hwsdl_aspect.h"
+#include "hwsdl2_window.h"
+#include "hwsdl2_video_buffers.h"
+#include "hwsdl2_video_texture.h"
+#include "hwsdl2_window_icon.h"
+
+/* If a user wants a post stamp then let them do it */
+#define MIN_RESX 80
+#define MIN_RESY 50
+
+#define RESIZE_DELAY 500
+
+/* A line or two were adapted from Chocolate Doom 3.0 i_video.c by Simon Howard */
+
+/* -------------------------------------------------------------------------- */
+
+static bool need_resize = false;
+static uint32_t window_resize_time = 0;
+
+static SDL_Window *the_window = NULL;
+static SDL_Renderer *the_renderer = NULL;
+
+/* -------------------------------------------------------------------------- */
+
+static void print_format(const char *title, uint32_t p)
+{
+    uint32_t r, g, b, a;
+    int bpp;
+    SDL_PixelFormatEnumToMasks(p, &bpp, &r, &g, &b, &a);
+    log_message("%s: %s bytes/pixel=%d R=%x G=%x B=%x A=%x\n",
+            title, SDL_GetPixelFormatName(p), bpp, r, g, b, a);
+}
+
+static void move_window(int dx, int dy)
+{
+    int x, y;
+    SDL_GetWindowPosition(the_window, &x, &y);
+    x += dx;
+    y += dy;
+    SDL_SetWindowPosition(the_window, x, y);
+}
+
+static bool is_windowed(int flags)
+{
+    return (flags & (
+        SDL_WINDOW_FULLSCREEN_DESKTOP
+        | SDL_WINDOW_FULLSCREEN
+        | SDL_WINDOW_MAXIMIZED)) == 0;
+}
+
+static void do_the_resize(void)
+{
+    int flags, w, h;
+
+    if (!hw_opt_autotrim) {
+        return;
+    }
+
+    flags = SDL_GetWindowFlags(the_window);
+    if (!is_windowed(flags)) {
+        return;
+    }
+
+    SDL_GetWindowSize(the_window, &w, &h);
+
+    if (hw_opt_aspect != 0) {
+        SDL_Rect vp;
+        float scale[2];
+        int new_w, new_h;
+
+        /* here we figure out how many window units the picture is
+         * after SDL maybe letterboxed it and maybe did the integer scaling */
+        SDL_RenderGetViewport(the_renderer, &vp);
+        SDL_RenderGetScale(the_renderer, scale, scale+1);
+
+        if (vp.w > 0 && vp.h > 0) {
+            new_w = vp.w * scale[0];
+            new_h = vp.h * scale[1];
+
+            /* sometimes SDL gets the viewport size wrong by 1 pixel (e.g. 320x199)
+             * this rounding here hopes to prevent that bug */
+            new_w = ( new_w + 1 ) & ~1;
+            new_h = ( new_h + 1 ) & ~1;
+
+            new_w = MAX(MIN_RESX, new_w);
+            new_h = MAX(MIN_RESY, new_h);
+
+            move_window((w-new_w)/2, (h-new_h)/2); /* keep image centered */
+            SDL_SetWindowSize(the_window, new_w, new_h);
+        } else {
+            /* viewport not set? or SDL bug? try again soon */
+            log_warning("Strange viewport size: %dx%d\n", vp.w, vp.h);
+            need_resize = true;
+            window_resize_time = SDL_GetTicks() + RESIZE_DELAY;
+        }
+    }
+
+    hw_opt_screen_winw = w; /* this goes to config file */
+    hw_opt_screen_winh = h;
+}
+
+void hwsdl_video_next_frame(const hwsdl_video_buffer_t *buf)
+{
+    hwsdl_texture_update(the_renderer, buf);
+    hwsdl_video_update();
+}
+
+void hwsdl_video_update(void)
+{
+    if (need_resize && SDL_GetTicks() >= window_resize_time) {
+        need_resize = false;
+        do_the_resize();
+    }
+
+    /* Make sure the pillarboxes are kept clear each frame. */
+    SDL_RenderSetViewport(the_renderer, NULL);
+    SDL_SetRenderDrawBlendMode(the_renderer, SDL_BLENDMODE_NONE);
+    SDL_SetRenderDrawColor(the_renderer, 0, 0, 0, 0);
+    SDL_RenderClear(the_renderer);
+
+    /* Put the output texture on screen */
+    hwsdl_texture_output(the_renderer);
+
+    /* Draw! */
+    SDL_RenderPresent(the_renderer);
+}
+
+/* -------------------------------------------------------------------------- */
+
+static void destroy_window(void)
+{
+    hwsdl_texture_delete();
+    if (the_renderer) {
+        SDL_DestroyRenderer(the_renderer);
+        the_renderer = NULL;
+    }
+    if (the_window) {
+        SDL_DestroyWindow(the_window);
+        the_window = NULL;
+    }
+}
+
+static int set_video_mode(int w, int h)
+{
+    const int x = SDL_WINDOWPOS_UNDEFINED;
+    const int y = SDL_WINDOWPOS_UNDEFINED;
+    int window_flags = 0, renderer_flags = 0;
+    SDL_DisplayMode mode;
+
+    /* In windowed mode, the window can be resized while the game is running. */
+    window_flags = SDL_WINDOW_RESIZABLE;
+
+    /* Set the highdpi flag - this makes a big difference on Macs with
+       retina displays, especially when using small window sizes. */
+    window_flags |= SDL_WINDOW_ALLOW_HIGHDPI;
+
+    if (hw_opt_fullscreen) {
+        if (hw_opt_screen_fsw && hw_opt_screen_fsh) {
+            w = hw_opt_screen_fsw;
+            h = hw_opt_screen_fsh;
+            window_flags |= SDL_WINDOW_FULLSCREEN;
+        } else {
+            window_flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
+        }
+    }
+
+    /* Create window and renderer contexts. We leave the window position "undefined".
+       If "window_flags" contains the fullscreen flag (see above), then w and h are ignored.
+    */
+    if (!the_window) {
+        log_message("SDL_CreateWindow(0, %i, %i, %i, %i, 0x%x)\n", x, y, w, h, window_flags);
+        the_window = SDL_CreateWindow(0, x, y, w, h, window_flags);
+        if (!the_window) {
+            log_error("SDL_CreateWindow failed: %s\n", SDL_GetError());
+            return -1;
+        }
+        SDL_SetWindowMinimumSize(the_window, MIN_RESX, MIN_RESY);
+        SDL_SetWindowTitle(the_window, PACKAGE_NAME " " VERSION_STR);
+        hwsdl_set_icon(the_window);
+
+        print_format("Display format", SDL_GetWindowPixelFormat(the_window));
+    }
+
+    if (hw_opt_vsync) {
+        /* Turn on vsync */
+        renderer_flags = SDL_RENDERER_PRESENTVSYNC;
+    }
+
+    if (hw_opt_force_sw) {
+        renderer_flags |= SDL_RENDERER_SOFTWARE;
+        renderer_flags &= ~SDL_RENDERER_PRESENTVSYNC;
+    }
+
+    if (the_renderer) {
+        SDL_DestroyRenderer(the_renderer);
+    }
+
+    the_renderer = SDL_CreateRenderer(the_window, -1, renderer_flags);
+    if (the_renderer == NULL) {
+        log_error("SDL2: Error creating renderer for screen window: %s\n", SDL_GetError());
+        return -1;
+    }
+
+#ifdef HAVE_INT_SCALING
+    SDL_RenderSetIntegerScale(the_renderer, hw_opt_int_scaling);
+#endif
+
+    hw_mouse_init();
+    hwsdl_video_resized(w, h);
+
+    return 0;
+}
+
+/* -------------------------------------------------------------------------- */
+
+int hwsdl_video_resized(int w, int h) /* called from the event handler */
+{
+    need_resize = true;
+    window_resize_time = SDL_GetTicks() + RESIZE_DELAY;
+    return 0;
+}
+
+bool hwsdl_video_toggle_autotrim(void)
+{
+    hw_opt_autotrim = !hw_opt_autotrim;
+    hwsdl_video_resized(-1, -1); /* w,h not used so far */
+    return true;
+}
+
+#ifdef HAVE_INT_SCALING
+bool hwsdl_video_toggle_intscaling(void)
+{
+    hw_opt_int_scaling = !hw_opt_int_scaling;
+    SDL_RenderSetIntegerScale(the_renderer, hw_opt_int_scaling);
+    return true;
+}
+#endif
+
+static bool recreate_window(void)
+{
+    /* About to destroy the window and re-create it.
+     * this means we lose the GL context and every texture with it */
+    hwsdl_texture_delete(); /* recreate the texture when needed next time */
+    destroy_window();
+    return set_video_mode(hw_opt_screen_winw, hw_opt_screen_winh) == 0;
+}
+
+bool hw_video_update_aspect(void)
+{
+    /* called by hwsdl_opt.c 
+     * if autotrim is enabled and in windowed mode then gotta resize */
+    hwsdl_video_resized(-1, -1);
+    return true;
+}
+
+bool hwsdl_video_toggle_fullscreen(void)
+{
+    hw_opt_fullscreen = !hw_opt_fullscreen;
+    if (!recreate_window()) {
+        hw_opt_fullscreen = !hw_opt_fullscreen; /* restore the setting for the config file */
+        return false;
+    }
+    return true;
+}
+
+bool hwsdl_video_toggle_vsync(void)
+{
+    hw_opt_vsync = !hw_opt_vsync;
+    if (!recreate_window()) {
+        hw_opt_vsync = !hw_opt_vsync; /* restore the setting for the config file */
+        return false;
+    }
+    return true;
+}
+
+int hwsdl_win_init(void)
+{
+    int w = 640;
+    int h = 400;
+    if (hw_opt_screen_winw != 0 && hw_opt_screen_winh != 0) {
+        if (hw_opt_screen_winw < MIN_RESX || hw_opt_screen_winh < MIN_RESY) {
+            log_warning("ignoring too small configured resolution %ix%i < %ix%i\n",
+                    hw_opt_screen_winw, hw_opt_screen_winh, MIN_RESX, MIN_RESY);
+        } else {
+            w = hw_opt_screen_winw;
+            h = hw_opt_screen_winh;
+        }
+    }
+    if (hw_opt_aspect != 0) {
+        shrink_to_aspect_ratio(&w, &h, 1000000, hw_opt_aspect);
+    }
+    if (set_video_mode(w, h)) {
+        return -1;
+    }
+    hw_video_refresh_palette();
+    return 0;
+}
+
+void hwsdl_video_shutdown(void)
+{
+    hwsdl_delete_icon();
+    destroy_window();
+}
+
