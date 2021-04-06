@@ -23,6 +23,7 @@ bool hw_opt_int_scaling = false;
 #else
     bool hw_opt_relmouse = true;
 #endif
+bool hw_opt_two_step_scaling = true;
 bool hw_opt_vsync = true;
 
 #ifdef HAVE_SDL2MIXER
@@ -58,6 +59,12 @@ const struct cmdline_options_s hw_cmdline_options_extra[] = {
     { "-norelmouse", 0,
       options_disable_bool_var, (void *)&hw_opt_relmouse,
       NULL, "Do not use relative mouse mode" },
+    { "-twostep", 0,
+      options_enable_bool_var, (void *)&hw_opt_two_step_scaling,
+      NULL, "Allow two-step scaling" },
+    { "-notwostep", 0,
+      options_disable_bool_var, (void *)&hw_opt_two_step_scaling,
+      NULL, "Disable two-step scaling" },
     { "-vsync", 0,
       options_enable_bool_var, &hw_opt_vsync,
       NULL, "Enable V-sync" },
