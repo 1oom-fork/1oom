@@ -212,18 +212,7 @@ static void video_update(void)
     SDL_BlitSurface(video.screen, &video.blit_rect, video.interbuffer, &video.blit_rect);
 
     /* Update the intermediate texture with the contents of the intermediate buffer.*/
-    {
-        void *pixels;
-        int pitch;
-
-        if (SDL_LockTexture(video.texture, NULL, &pixels, &pitch) == 0) {
-            memcpy(pixels, video.interbuffer->pixels, pitch*video.bufh);
-            SDL_UnlockTexture(video.texture);
-        } else {
-            log_error("SDL_LockTexture(video.texture): %s\n", SDL_GetError());
-            exit(EXIT_FAILURE);
-        }
-    }
+    SDL_UpdateTexture(video.texture, NULL, video.interbuffer->pixels, video.interbuffer->pitch);
 
     /* Make sure the pillarboxes are kept clear each frame. */
     SDL_RenderClear(video.renderer);
