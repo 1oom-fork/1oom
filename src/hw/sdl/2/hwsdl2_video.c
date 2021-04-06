@@ -369,7 +369,9 @@ static int video_sw_set(int w, int h)
         return -1;
     }
     /* Turn on vsync */
-    renderer_flags |= SDL_RENDERER_PRESENTVSYNC;
+    if (hw_opt_vsync) {
+        renderer_flags |= SDL_RENDERER_PRESENTVSYNC;
+    }
 
     if (hw_opt_force_sw) {
         renderer_flags |= SDL_RENDERER_SOFTWARE;
