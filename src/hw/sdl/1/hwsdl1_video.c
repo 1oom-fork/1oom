@@ -291,8 +291,8 @@ static int video_sw_set(int w, int h)
         log_error("SDL_SetVideoMode failed: %s\n", SDL_GetError());
         return -1;
     }
-    hw_mouse_set_scale(w, h);
-    hw_mouse_set_range(w, h);
+    hw_mouse_set_win_range(0, 0, w, h);
+    hw_mouse_init();
     return 0;
 }
 
@@ -348,13 +348,7 @@ int hw_video_resize(int w, int h)
         goto fail;
     }
     set_viewport(video.bufw, video.bufh, actual_w, actual_h);
-    if (hw_opt_fullscreen) {
-        hw_mouse_grab();
-    } else {
-        hw_mouse_ungrab();
-    }
-    hw_mouse_set_scale(actual_w, actual_h);
-    hw_mouse_set_range(actual_w, actual_h);
+    hw_mouse_set_win_range(0, 0, actual_w, actual_h);
     video.actual_w = actual_w;
     video.actual_h = actual_h;
     return 0;
@@ -396,8 +390,8 @@ bool hw_video_update_aspect(void)
 
 int hw_video_init(int w, int h)
 {
-    hw_mouse_set_limits(w, h);
-    hw_mouse_set_range(w, h);
+    hw_mouse_set_moo_range(w, h);
+    hw_mouse_set_win_range(0, 0, w, h);
     hw_mouse_init();
     video.bufw = w;
     video.bufh = h;
@@ -537,11 +531,6 @@ void hw_video_shutdown(void)
         lib_free(video.buf[i]);
         video.buf[i] = NULL;
     }
-}
-
-void hw_video_input_grab(bool grab)
-{
-    SDL_WM_GrabInput(grab ? SDL_GRAB_ON : SDL_GRAB_OFF);
 }
 
 int hw_icon_set(const uint8_t *data, const uint8_t *pal, int w, int h)

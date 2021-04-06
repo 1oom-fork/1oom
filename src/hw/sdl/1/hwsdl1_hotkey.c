@@ -8,9 +8,6 @@ static bool hw_kbd_check_hotkey(SDL1or2Key key, SDL1or2Mod smod, char c)
         } else if (key == SDLK_F5) {
             hw_video_screenshot();
             return true;
-        } else if (key == SDLK_F10) {
-            hw_mouse_toggle_grab();
-            return true;
         } else if (c == '+') {
             if (smod & KMOD_SHIFT) {
                 hw_audio_music_volume(opt_music_volume + 4);
