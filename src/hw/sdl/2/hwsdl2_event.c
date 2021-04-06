@@ -3,95 +3,22 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#ifdef HAVE_SDLMAIN
-#include "SDL_main.h"
-#endif
-
 #include "SDL.h"
 #include "SDL_keycode.h"
 
+#include "types.h"
 #include "hw.h"
 #include "hwsdl_audio.h"
 #include "hwsdl_mouse.h"
 #include "hwsdl_opt.h"
-#include "hwsdl_video.h"
-#include "hwsdl2_video.h"
+#include "hwsdl_window.h" /* hwsdl_video_resized, hwsdl_video_update */
+#include "hwsdl_video_buffers.h" /* hwsdl_video_screenshot */
 #include "kbd.h"
 #include "log.h"
-#include "main.h"
 #include "options.h"
-#include "types.h"
-
-/* -------------------------------------------------------------------------- */
-
-const char *idstr_hw = "sdl2";
-
-/* -------------------------------------------------------------------------- */
-
 #include "hwsdl2_keymap.h"
 
 static bool hw_textinput_active = false;
-
-/* -------------------------------------------------------------------------- */
-
-#define SDL1or2Key  SDL_Keycode
-#define SDL1or2Mod  SDL_Keymod
-
-#include "hwsdl.c"
-
-/* -------------------------------------------------------------------------- */
-
-static void hw_event_handle_window(SDL_WindowEvent *e)
-{
-    switch (e->event) {
-        case SDL_WINDOWEVENT_RESIZED:
-            hw_video_resize(0, 0);
-            break;
-        case SDL_WINDOWEVENT_EXPOSED:
-            hw_video_update();
-            break;
-        case SDL_WINDOWEVENT_FOCUS_LOST:
-            hw_mouse_ungrab();
-            break;
-        default:
-            break;
-    }
-}
-
-/* -------------------------------------------------------------------------- */
-
-int main(int argc, char **argv)
-{
-    return main_1oom(argc, argv);
-}
-
-int hw_early_init(void)
-{
-    return 0;
-}
-
-int hw_init(void)
-{
-    int flags = SDL_INIT_VIDEO | (opt_audio_enabled ? SDL_INIT_AUDIO : 0);
-    log_message("SDL_Init\n");
-    if (SDL_Init(flags) < 0) {
-        log_error("SDL_Init(0x%x) failed: %s\n", flags, SDL_GetError());
-        return 11;
-    }
-    if (hw_audio_init()) {
-        return 12;
-    }
-    build_key_xlat();
-    return 0;
-}
-
-void hw_shutdown(void)
-{
-    hw_audio_shutdown();
-    hw_video_shutdown();
-    log_message("SDL_Quit\n");
-    SDL_Quit();
-}
 
 void hw_textinput_start(void)
 {
@@ -105,9 +32,69 @@ void hw_textinput_stop(void)
     hw_textinput_active = false;
 }
 
+/* -------------------------------------------------------------------------- */
+
+static bool hw_kbd_check_hotkey(SDL_Keycode key, SDL_Keymod smod, char c)
+{
+    if ((smod & KMOD_CTRL) && (!(smod & KMOD_ALT))) {
+        if (key == SDLK_ESCAPE) {
+            log_message("SDL: got Ctrl-ESC, quitting now\n");
+            hw_audio_shutdown_pre();
+            exit(EXIT_SUCCESS);
+        } else if (key == SDLK_F5) {
+            hwsdl_video_screenshot();
+            return true;
+        } else if (c == '+') {
+            if (smod & KMOD_SHIFT) {
+                hw_audio_music_volume(opt_music_volume + 4);
+            } else {
+                hw_audio_sfx_volume(opt_sfx_volume + 4);
+            }
+            return true;
+        } else if (c == '-') {
+            if (smod & KMOD_SHIFT) {
+                hw_audio_music_volume(opt_music_volume - 4);
+            } else {
+                hw_audio_sfx_volume(opt_sfx_volume - 4);
+            }
+            return true;
+#ifdef FEATURE_MODEBUG
+        } else if (key == SDLK_INSERT) {
+            hw_opt_overlay_pal ^= 1;
+            return true;
+#endif
+        }
+    } else if ((smod & (KMOD_MODE | KMOD_ALT)) && (!(smod & KMOD_CTRL))) {
+        if (key == SDLK_RETURN) {
+            if (!hwsdl_video_toggle_fullscreen()) {
+                log_message("SDL: fs toggle failure, quitting now\n");
+                exit(EXIT_FAILURE);
+            }
+            return true;
+        }
+    }
+    return false;
+}
+
+/* -------------------------------------------------------------------------- */
+
+static void limit_fps(void)
+{
+    /* prevent busy-polling the cpu to 100%
+     * but if the program is slow then don't stall for no reason */
+    static uint32_t prev_tick = 0;
+    uint32_t now = SDL_GetTicks();
+    if (now - prev_tick < 5) {
+        SDL_Delay(5);
+    }
+    prev_tick = now;
+}
+
 int hw_event_handle(void)
 {
-    SDL_Event e;
+    SDL_Event e, resize;
+    bool have_expose=false;
+    bool have_resize=false;
 
     SDL_PumpEvents();
 
@@ -170,17 +157,11 @@ int hw_event_handle(void)
                 }
                 break;
             case SDL_MOUSEMOTION:
-                if (hw_mouse_enabled) {
-                    if (hw_opt_relmouse) {
-                        hw_mouse_move((int)(e.motion.xrel), (int)(e.motion.yrel));
-                    } else {
-                        hw_mouse_set_xy(e.motion.x,e.motion.y);
-                    }
-                }
+                hw_mouse_set_xy(e.motion.x, e.motion.y);
                 break;
             case SDL_MOUSEBUTTONDOWN:
             case SDL_MOUSEBUTTONUP:
-                hw_mouse_button((int)(e.button.button), (e.button.state == SDL_PRESSED));
+                hw_mouse_button(e.button.button, e.button.state == SDL_PRESSED);
                 break;
             case SDL_MOUSEWHEEL:
                 if (e.wheel.y != 0) {
@@ -192,17 +173,48 @@ int hw_event_handle(void)
                 exit(EXIT_SUCCESS);
                 break;
             case SDL_WINDOWEVENT:
-                if (e.window.windowID == hw_video_get_window_id()) {
-                    hw_event_handle_window(&e.window);
+                switch (e.window.event) {
+                    case SDL_WINDOWEVENT_RESIZED:
+                        if (!have_resize || resize.window.timestamp < e.window.timestamp) {
+                            have_resize = true;
+                            resize = e;
+                        }
+                        break;
+                    case SDL_WINDOWEVENT_EXPOSED:
+                        if (!have_expose) {
+                            have_expose = true;
+                        }
+                        break;
+                    default:
+                        break;
                 }
+                break;
             default:
                 break;
         }
     }
+
     if (hw_audio_check_process()) {
         exit(EXIT_FAILURE);
     }
 
-    SDL_Delay(10);
+    if (have_resize) {
+        hwsdl_video_resized(resize.window.data1, resize.window.data2);
+    }
+
+    if (have_expose) {
+        hwsdl_video_update();
+    }
+
+    limit_fps();
     return 0;
 }
+
+void hwsdl_generate_quit_event(void)
+{
+    SDL_Event e;
+    e.type = SDL_QUIT;
+    e.window.timestamp = SDL_GetTicks();
+    SDL_PushEvent(&e);
+}
+
