@@ -262,6 +262,10 @@ static bool create_renderer(void)
     if (!SDL_GetRendererInfo(the_renderer, &info)) {
         const char *y = "yes";
         const char *n = "no";
+        
+        /* We want the extraui checkbox to be consistent with the actual state of the flag */
+        hw_opt_vsync = (info.flags & SDL_RENDERER_PRESENTVSYNC) != 0;
+
         log_message("SDL renderer: %s\n"
                 "... accelerated %s\n"
                 "... V-sync %s\n"
@@ -269,7 +273,7 @@ static bool create_renderer(void)
                 "... max_texture_height: %d\n",
                 info.name,
                 (info.flags & SDL_RENDERER_ACCELERATED) ? y : n,
-                (info.flags & SDL_RENDERER_PRESENTVSYNC) ? y : n,
+                hw_opt_vsync ? y : n,
                 info.max_texture_width,
                 info.max_texture_height);
     }
