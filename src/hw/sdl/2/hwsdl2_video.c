@@ -77,6 +77,14 @@ static void video_create_upscaled_texture(bool force)
         log_fatal_and_die("SDL2: Failed to get renderer output size: %s\n", SDL_GetError());
     }
 
+    if (!hw_opt_smooth_pixel_scaling || ((w % video.screen->w == 0) && (h % video.screen->h == 0))) {
+        if (video.texture_upscaled) {
+            SDL_DestroyTexture(video.texture_upscaled);
+            video.texture_upscaled = NULL;
+        }
+        return;
+    }
+
     /* When the screen or window dimensions do not match the aspect ratio
        of the texture, the rendered area is scaled down to fit. Calculate
        the actual dimensions of the rendered area.
@@ -206,15 +214,21 @@ static void video_update(void)
     /* Make sure the pillarboxes are kept clear each frame. */
     SDL_RenderClear(video.renderer);
 
-    /* Render this intermediate texture into the upscaled texture
-       using "nearest" integer scaling.
-    */
-    SDL_SetRenderTarget(video.renderer, video.texture_upscaled);
-    SDL_RenderCopy(video.renderer, video.texture, NULL, NULL);
+    if (hw_opt_smooth_pixel_scaling && (video.texture_upscaled != NULL)) {
+        /* Render this intermediate texture into the upscaled texture
+           using "nearest" integer scaling.
+        */
+        SDL_SetRenderTarget(video.renderer, video.texture_upscaled);
+        SDL_RenderCopy(video.renderer, video.texture, NULL, NULL);
 
-    /* Finally, render this upscaled texture to screen using linear scaling. */
-    SDL_SetRenderTarget(video.renderer, NULL);
-    SDL_RenderCopy(video.renderer, video.texture_upscaled, NULL, NULL);
+        /* Finally, render this upscaled texture to screen using linear scaling. */
+        SDL_SetRenderTarget(video.renderer, NULL);
+        SDL_RenderCopy(video.renderer, video.texture_upscaled, NULL, NULL);
+    } else {
+        /* Render this intermediate texture directly to screen using "nearest" scaling. */
+        SDL_SetRenderTarget(video.renderer, NULL);
+        SDL_RenderCopy(video.renderer, video.texture, NULL, NULL);
+    }
 
     /* Draw! */
     SDL_RenderPresent(video.renderer);
