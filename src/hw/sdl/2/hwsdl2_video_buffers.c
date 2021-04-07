@@ -9,8 +9,12 @@
 /* -------------------------------------------------------------------------- */
 
 /* used here and also in hwsdl_window_icon.c */
-const uint8_t sixbit_to_8bit[64] = {
-0,4,8,12,16,20,24,28,32,36,40,45,49,53,57,61,65,69,73,77,81,85,89,93,97,101,105,109,113,117,121,125,130,134,138,142,146,150,154,158,162,166,170,174,178,182,186,190,194,198,202,206,210,215,219,223,227,231,235,239,243,247,251,255
+const uint8_t sixbit_to_8bit[256] = {
+0,4,8,12,16,20,24,28,32,36,40,45,49,53,57,61,65,69,73,77,81,85,89,93,97,101,105,109,113,117,121,125,130,134,138,142,146,150,154,158,162,166,170,174,178,182,186,190,194,198,202,206,210,215,219,223,227,231,235,239,243,247,251,255,
+#define REP8(x) x,x,x,x,x,x,x,x
+#define REP48(x) REP8(x),REP8(x),REP8(x),REP8(x),REP8(x),REP8(x)
+#define REP192(x) REP48(x),REP48(x),REP48(x),REP48(x)
+REP192(255) /* saturate >6bit values to maximum. even though they should not happen */
 };
 static uint32_t palette_rgb888[256];
 static uint8_t palette_6bit[256*3]; /* 6bit palette from the game */
@@ -77,14 +81,14 @@ uint8_t *hw_video_draw_buf(void)
     return bufp[bufi];
 }
 
-static void set_palette_color(int i, uint32_t r, uint32_t g, uint32_t b)
+static void set_palette_color(int i, uint8_t r, uint8_t g, uint8_t b)
 {
     palette_6bit[3*i + 0] = r;
     palette_6bit[3*i + 1] = g;
     palette_6bit[3*i + 2] = b;
-    r = sixbit_to_8bit[r & 0x3f];
-    g = sixbit_to_8bit[g & 0x3f];
-    b = sixbit_to_8bit[b & 0x3f];
+    r = sixbit_to_8bit[r];
+    g = sixbit_to_8bit[g];
+    b = sixbit_to_8bit[b];
     /* using SDL_MapRGB to take care of possible endianness issues */
     palette_rgb888[i] = SDL_MapRGB(pixfmt, r, g, b);
 }
