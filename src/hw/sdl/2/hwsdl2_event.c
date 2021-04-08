@@ -13,6 +13,7 @@
 #include "hwsdl_opt.h"
 #include "hwsdl2_window.h" /* hwsdl_video_resized, hwsdl_video_update */
 #include "hwsdl2_video_buffers.h" /* hwsdl_video_screenshot */
+#include "hwsdl2_video_texture.h" /* hwsdl_texture_delete */
 #include "kbd.h"
 #include "log.h"
 #include "options.h"
@@ -181,13 +182,16 @@ int hw_event_handle(void)
                         }
                         break;
                     case SDL_WINDOWEVENT_EXPOSED:
-                        if (!have_expose) {
-                            have_expose = true;
-                        }
+                        have_expose = true;
                         break;
                     default:
                         break;
                 }
+                break;
+            case SDL_RENDER_DEVICE_RESET:
+            case SDL_RENDER_TARGETS_RESET:
+                hwsdl_texture_delete();
+                have_expose = true;
                 break;
             default:
                 break;
