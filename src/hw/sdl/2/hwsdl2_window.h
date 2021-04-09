@@ -7,7 +7,7 @@
 /* have SDL_RenderSetIntegerScale */ 
 #endif
 
-int hwsdl_win_init(void); /* first time setup. called on startup only once */
+int hwsdl_win_init(int moo_w, int moo_h); /* first time setup. called on startup only once */
 void hwsdl_video_shutdown(void);
 int hwsdl_video_resized(int w, int h); /* called after a resize event */
 

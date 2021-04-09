@@ -52,7 +52,7 @@ int hw_video_init(int w, int h)
     if (!hwsdl_video_buffers_alloc(w, h)) {
         return -1;
     }
-    if (hwsdl_win_init() < 0) {
+    if (hwsdl_win_init(w, h) < 0) {
         return -1;
     }
     return 0;

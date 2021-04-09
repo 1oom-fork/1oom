@@ -356,10 +356,10 @@ bool hwsdl_video_toggle_vsync(void)
     return true;
 }
 
-int hwsdl_win_init(void)
+int hwsdl_win_init(int moo_w, int moo_h)
 {
-    int w = 640;
-    int h = 400;
+    int w = moo_w;
+    int h = moo_h;
     if (hw_opt_screen_winw != 0 && hw_opt_screen_winh != 0) {
         if (hw_opt_screen_winw < MIN_RESX || hw_opt_screen_winh < MIN_RESY) {
             log_warning("ignoring too small configured resolution %ix%i < %ix%i\n",
