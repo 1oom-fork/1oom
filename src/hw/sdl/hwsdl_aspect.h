@@ -4,7 +4,9 @@
 #include "SDL.h"
 
 #define HAVE_SDLX_ASPECT
-#define HW_DEFAULT_ASPECT   833333
+
+/* 1000000:625000 matches 1oom video output size of 320x200 */
+#define HW_DEFAULT_ASPECT   625000
 
 extern int hw_opt_aspect; /* hwsdl_opt.c */
 bool hw_video_update_aspect(void); /* in some file under 1/ or 2/ */

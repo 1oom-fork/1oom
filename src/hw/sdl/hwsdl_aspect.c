@@ -17,25 +17,24 @@ void shrink_to_aspect_ratio(int wp[1], int hp[1], int rx, int ry)
 
 const char *hw_uiopt_cb_aspect_get(void)
 {
-    if (hw_opt_aspect == HW_DEFAULT_ASPECT) {
-        return "VGA";
-    } else if (hw_opt_aspect == 1000000) {
-        return "1:1";
-    } else if (hw_opt_aspect == 0) {
-        return "Off";
-    } else {
-        return "Custom";
+    switch(hw_opt_aspect) {
+        case 625000: return "16:10";
+        case 750000: return "4:3";
+        case 833333: return "VGA";
+        case 1000000: return "1:1";
+        case 0: return "Off";
+        default: return "Custom";
     }
 }
 
 bool hw_uiopt_cb_aspect_next(void)
 {
-    if (hw_opt_aspect == HW_DEFAULT_ASPECT) {
-        hw_opt_aspect = 1000000;
-    } else if (hw_opt_aspect == 1000000) {
-        hw_opt_aspect = 0;
-    } else {
-        hw_opt_aspect = HW_DEFAULT_ASPECT;
+    switch(hw_opt_aspect) {
+        case 625000: hw_opt_aspect = 750000; break;
+        case 750000: hw_opt_aspect = 833333; break;
+        case 833333: hw_opt_aspect = 1000000; break;
+        case 1000000: hw_opt_aspect = 0; break;
+        default: hw_opt_aspect = 625000; break;
     }
     return hw_video_update_aspect();
 }
