@@ -24,17 +24,27 @@ static SDL_Rect win_range = {0, 0, 1, 1};
 
 /* -------------------------------------------------------------------------- */
 
-static void window_to_moo(int win_x, int win_y, int *moo_x, int *moo_y)
+void window_to_moo(int win_x, int win_y, int *moo_x, int *moo_y)
 {
-    if (win_range.w == 0 || win_range.h == 0) {
+    if (win_range.w <= 1 || win_range.h <= 1) {
         *moo_x = *moo_y = 0; /* avoid division by zero */
         return;
     }
-    int x = (win_x - win_range.x) * moo_range[0] / win_range.w;
-    int y = (win_y - win_range.y) * moo_range[1] / win_range.h;
+    int x = (win_x - win_range.x) * (moo_range[0]-1) / (win_range.w-1);
+    int y = (win_y - win_range.y) * (moo_range[1]-1) / (win_range.h-1);
     /* the game shouldn't crash due to weird mouse coordinates but clamp anyway */
     *moo_x = MAX(0, MIN(x, moo_range[0]-1));
     *moo_y = MAX(0, MIN(y, moo_range[1]-1));
+}
+
+void moo_to_window(int moo_x, int moo_y, const struct SDL_Rect *win, int *win_x, int *win_y)
+{
+    if (moo_range[0] <= 1 || moo_range[1] <= 1) {
+        *win_x = *win_y = 0; /* avoid division by zero */
+        return;
+    }
+    *win_x = win->x + (moo_x * (win->w-1)) / (moo_range[0]-1);
+    *win_y = win->y + (moo_y * (win->h-1)) / (moo_range[1]-1);
 }
 
 /* called when the window is created. or re-created when toggling fullscreen */
