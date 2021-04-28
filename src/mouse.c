@@ -1,6 +1,7 @@
 #include "config.h"
 
 #include "mouse.h"
+#include "hw.h"
 
 /* ------------------------------------------------------------------------- */
 
@@ -49,6 +50,7 @@ void mouse_set_xy(int mx, int my)
     if (!mouse_disable_set_xy) {
         moouse_x = mx;
         moouse_y = my;
+        hw_mouse_warp(mx, my);
     }
 }
 

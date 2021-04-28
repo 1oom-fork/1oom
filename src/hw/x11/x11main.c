@@ -496,6 +496,11 @@ int hw_init(void) {
     return 0;
 }
 
+void hw_mouse_warp(int x, int y)
+{
+	(void) (x + y);
+}
+
 int main(int argc, char **argv) {
     return main_1oom(argc, argv);
 }

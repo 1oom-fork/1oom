@@ -82,3 +82,9 @@ void hw_mouse_scroll(int scroll)
 {
     mouse_set_scroll_from_hw(scroll);
 }
+
+void hw_mouse_warp(int x, int y)
+{
+	(void) (x + y);
+}
+

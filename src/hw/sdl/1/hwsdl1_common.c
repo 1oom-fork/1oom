@@ -13,3 +13,7 @@
 #include "hwsdl_mouse.c"
 #include "hwsdl_aspect.c"
 
+void hw_mouse_warp(int x, int y) {
+    SDL_WarpMouse(x, y);
+}
+

@@ -98,3 +98,9 @@ bool hw_audio_music_volume(int volume)
 {
     return true;
 }
+
+void hw_mouse_warp(int x, int y)
+{
+	(void) (x + y);
+}
+
