@@ -11,8 +11,6 @@ extern int moouse_x;
 extern int moouse_y;
 extern int mouse_buttons;
 extern int mouse_scroll;
-extern int mouse_stored_x;
-extern int mouse_stored_y;
 extern int mouse_click_x;
 extern int mouse_click_y;
 extern int mouse_click_buttons;

@@ -804,6 +804,7 @@ static int16_t uiobj_kbd_dir_key_dy_list(int diry)
         oi = 0;
     }
     if (oi > 0) {
+        int mouse_stored_x, mouse_stored_y;
         p = &uiobj_tbl[oi];
         mouse_stored_x = scmidx(p);
         mouse_stored_y = scmidy(p);
@@ -1013,13 +1014,8 @@ static int16_t uiobj_kbd_dir_key(int dirx, int diry)
         int mx, my;
         int16_t oi, oi2;
         uiobj_t *p;
-        if (1/*mouse_initialized*/) {
-            mx = moouse_x;
-            my = moouse_y;
-        }  else {
-            mx = mouse_stored_x;
-            my = mouse_stored_y;
-        }
+        mx = moouse_x;
+        my = moouse_y;
         oi2 = 0;
         oi = uiobj_table_num - 1;
         while (oi > 0) {
@@ -1045,6 +1041,7 @@ static int16_t uiobj_kbd_dir_key(int dirx, int diry)
         oi = uiobj_kbd_dir_key_dxdy(dirx, diry, oi2, mx, my);
         if ((oi != oi2) && (oi != UIOBJI_NONE)) {
             uiobj_t *p = &uiobj_tbl[oi];
+            int mouse_stored_x, mouse_stored_y;
             mouse_stored_x = scmidx(p);
             mouse_stored_y = scmidy(p);
             if ((mouse_stored_x >= 0) && (mouse_stored_x < UI_SCREEN_W) && (mouse_stored_y >= 0) && (mouse_stored_y < UI_SCREEN_H)) {
@@ -1117,6 +1114,7 @@ static uint32_t uiobj_handle_kbd(int16_t *oiptr)
         *oiptr = oi;
         p = &uiobj_tbl[oi];
         if ((p->x0 < UI_SCREEN_W) && (p->y0 < UI_SCREEN_H)) {
+            int mouse_stored_x, mouse_stored_y;
             mouse_stored_x = scmidx(p);
             mouse_stored_y = scmidy(p);
             if ((mouse_stored_x < UI_SCREEN_W) && (mouse_stored_y < UI_SCREEN_H)) {
@@ -1775,9 +1773,6 @@ void uiobj_set_focus(int16_t uiobji)
     x -= uiobj_mouseoff;
     y -= uiobj_mouseoff;
     mouse_set_xy(x, y);
-    /* needed anywhere? */
-    mouse_stored_x = x;
-    mouse_stored_y = y;
 }
 
 int16_t uiobj_find_obj_at_cursor(void)
