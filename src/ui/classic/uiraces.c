@@ -73,7 +73,7 @@ static void races_draw_cb(void *vptr)
         ui_draw_filled_rect(x + 56, y + 25, x + 158, y + 37, 0x5b);
         ui_draw_filled_rect(x + 58, y + 41, x + 156, y + 51, 0x5b);
         ui_draw_filled_rect(x + 56, y + 55, x + 158, y + 65, 0x5b);
-        lbxfont_print_str_center(x + 109, y + 27, (i < g->players) ? game_str_ra_nocont : game_str_ra_notpres, UI_SCREEN_W);
+        lbxfont_print_str_center(x + 109, y + 27, (i < g->players - 1) ? game_str_ra_nocont : game_str_ra_notpres, UI_SCREEN_W);
     }
 
     if (d->num) {
