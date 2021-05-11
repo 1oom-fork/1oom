@@ -39,6 +39,11 @@ void window_to_moo(int win_x, int win_y, int *moo_x, int *moo_y)
 
 void moo_to_window(int moo_x, int moo_y, const struct SDL_Rect *win, int *win_x, int *win_y)
 {
+    if (!win) {
+        /* can't use win_range for SDL2 because SDL_WarpMouseInWindow
+         * uses window coordinates, not logical coordinates */
+        win = &win_range;
+    }
     if (moo_range[0] <= 1 || moo_range[1] <= 1) {
         *win_x = *win_y = 0; /* avoid division by zero */
         return;
