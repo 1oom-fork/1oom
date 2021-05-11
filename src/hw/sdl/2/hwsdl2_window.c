@@ -40,20 +40,20 @@ static SDL_Renderer *the_renderer = NULL;
 
 void hw_mouse_warp(int x, int y)
 {
-	if (the_window) {
-		SDL_Rect win = {0};
-		int wx=0, wy=0;
+    if (the_window) {
+        SDL_Rect win = {0};
+        int wx=0, wy=0;
 
-		SDL_GetWindowSize(the_window, &win.w, &win.h);
-		moo_to_window(x, y, &win, &wx, &wy);
+        SDL_GetWindowSize(the_window, &win.w, &win.h);
+        moo_to_window(x, y, &win, &wx, &wy);
 
-		/* this function uses window coordinates. not logical units */
-		SDL_WarpMouseInWindow(the_window, wx, wy);
+        /* this function uses window coordinates. not logical units */
+        SDL_WarpMouseInWindow(the_window, wx, wy);
 
-		/* eat the generated mouse event */
-		SDL_PumpEvents();
-		SDL_FlushEvent(SDL_MOUSEMOTION);
-	}
+        /* eat the generated mouse event */
+        SDL_PumpEvents();
+        SDL_FlushEvent(SDL_MOUSEMOTION);
+    }
 }
 
 static void print_format(const char *title, uint32_t p)
