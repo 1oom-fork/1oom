@@ -42,10 +42,21 @@ void hw_mouse_warp(int x, int y)
 {
     if (the_window) {
         SDL_Rect win = {0};
+        SDL_Rect vp = {0}; /* viewport in window units */
         int wx=0, wy=0;
 
         SDL_GetWindowSize(the_window, &win.w, &win.h);
-        moo_to_window(x, y, &win, &wx, &wy);
+
+        vp = win;
+        if (hw_opt_aspect != 0) {
+            /* SDL has no function to query where the picture is drawn?
+            Gotta figure it out ourselves and risk being wrong */
+            shrink_to_aspect_ratio(&vp.w, &vp.h, 1000000, hw_opt_aspect);
+            vp.x = (win.w - vp.w) / 2;
+            vp.y = (win.h - vp.h) / 2;
+        }
+
+        moo_to_window(x, y, &vp, &wx, &wy);
 
         /* this function uses window coordinates. not logical units */
         SDL_WarpMouseInWindow(the_window, wx, wy);

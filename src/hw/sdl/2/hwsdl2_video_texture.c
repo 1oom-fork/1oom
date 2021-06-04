@@ -99,7 +99,8 @@ void hwsdl_texture_output(SDL_Renderer *rdr)
     }
 
     /* what the user clicks has to match what was drawn on screen.
-     * thus the best place to set mouse coordinate range is right here */
+     * thus the best place to set mouse coordinate range is right here
+     * NOTE box.x and box.y are 0 because SDL deals with repositioning of the picture */
     hw_mouse_set_win_range(box.x, box.y, box.w, box.h);
 
     SDL_SetRenderTarget(rdr, NULL);
