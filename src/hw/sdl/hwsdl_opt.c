@@ -13,7 +13,7 @@ int hw_opt_screen_fsh = 0;
 int hw_opt_overlay_pal = 0;
 #endif
 #ifdef HAVE_SDLX_ASPECT
-int hw_opt_aspect = HW_DEFAULT_ASPECT;
+int hw_opt_aspect = 0;
 #endif
 char *hw_opt_sdlmixer_sf = NULL;
 
