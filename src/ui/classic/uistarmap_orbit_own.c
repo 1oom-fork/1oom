@@ -447,6 +447,12 @@ do_accept:
                 ui_sound_play_sfx_24();
                 break;
             }
+            else if (oi2 == d.oi_tbl_stars[i]) {
+                if (ui_extra_enabled && g->planet_focus_i[active_player] != i) {
+                    g->planet_focus_i[active_player] = i;
+                    break;
+                }
+            }
         }
         d.ruler_from_i = d.oo.from;
         d.ruler_to_i = ui_starmap_cursor_on_star(g, &d, oi2, active_player);

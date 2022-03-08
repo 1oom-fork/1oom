@@ -314,6 +314,12 @@ do_accept:
                 }
                 break;
             }
+            else if (oi2 == d.oi_tbl_stars[i] && r->owner == active_player && (d.en.can_move != NO_MOVE)) {
+                if (ui_extra_enabled && g->planet_focus_i[active_player] != i) {
+                    g->planet_focus_i[active_player] = i;
+                    break;
+                }
+            }
         }
         if (!flag_done) {
             d.bottom_highlight = -1;
