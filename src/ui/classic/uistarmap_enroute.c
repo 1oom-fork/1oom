@@ -298,9 +298,13 @@ do_accept:
         ui_starmap_handle_oi_ctrl(&d, oi1);
         for (int i = 0; i < g->galaxy_stars; ++i) {
             if (oi1 == d.oi_tbl_stars[i]) {
-                if (ui_extra_enabled && (oi_accept != UIOBJI_INVALID) && (g->planet_focus_i[active_player] == i)) {
-                    oi1 = oi_accept;
-                    goto do_accept;
+                if (ui_extra_enabled && r->owner == active_player && (d.en.can_move != NO_MOVE)) {
+                    g->planet_focus_i[active_player] = i;
+                    p = &g->planet[g->planet_focus_i[active_player]];
+                    if (p->within_frange[active_player] != 0) {
+                        oi1 = oi_accept;
+                        goto do_accept;
+                    }
                 }
                 g->planet_focus_i[active_player] = i;
                 if ((r->owner != active_player) || (d.en.can_move == NO_MOVE)) {

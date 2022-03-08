@@ -435,9 +435,13 @@ do_accept:
         ui_starmap_handle_tag(&d, oi1, false);
         for (int i = 0; i < g->galaxy_stars; ++i) {
             if (oi1 == d.oi_tbl_stars[i]) {
-                if (ui_extra_enabled && (oi_accept != UIOBJI_INVALID) && (g->planet_focus_i[active_player] == i)) {
-                    oi1 = oi_accept;
-                    goto do_accept;
+                if (ui_extra_enabled) {
+                    g->planet_focus_i[active_player] = i;
+                    p = &g->planet[g->planet_focus_i[active_player]];
+                    if ((p->within_frange[active_player] == 1) || ((p->within_frange[active_player] == 2) && d.oo.sn0.have_reserve_fuel)) {
+                        oi1 = oi_accept;
+                        goto do_accept;
+                    }
                 }
                 g->planet_focus_i[active_player] = i;
                 ui_sound_play_sfx_24();

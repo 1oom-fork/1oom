@@ -65,7 +65,7 @@ or pressing Alt-X in the main menu enables the following extra UI features:
 - Report screen shows name of AI leaders, Map screen shows current year
 - Fleet deployment shows the amount of available ships
 - Sending fewer than all ships does not deselect the orbit fleet
-- Clicking a selected destination star again works as Accept for fleet send etc
+- Clicking destination star works as Accept for fleet send and reloc
 - Hovering over a planet draws a ruler with the distance in parsec from the
   currently selected planet if is in the screen.
 - Planetary governor can be enabled or disabled by clicking on planet name in

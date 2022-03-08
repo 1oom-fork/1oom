@@ -258,7 +258,8 @@ do_accept:
         ui_starmap_handle_tag(&d, oi1, false);
         for (int i = 0; i < g->galaxy_stars; ++i) {
             if (oi1 == d.oi_tbl_stars[i]) {
-                if (ui_extra_enabled && (oi_accept != UIOBJI_INVALID) && (g->planet_focus_i[active_player] == i)) {
+                if (ui_extra_enabled) {
+                    g->planet_focus_i[active_player] = i;
                     oi1 = oi_accept;
                     goto do_accept;
                 }
