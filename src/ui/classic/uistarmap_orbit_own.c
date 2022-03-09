@@ -406,28 +406,8 @@ do_accept:
                 game_send_fleet_from_orbit(g, active_player, d.oo.from, g->planet_focus_i[active_player], d.oo.ships, shiptypes, 6);
                 game_update_visibility(g);
             }
-            if ((!ui_extra_enabled) || BOOLVEC_IS_CLEAR(r->visible, PLAYER_NUM)) {
-                flag_done = true;
-                ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
-            } else {
-                bool any_selected;
-                ui_starmap_sn0_setup(&d.oo.sn0, NUM_SHIPDESIGNS, os);
-                any_selected = false;
-                for (int i = 0; i < NUM_SHIPDESIGNS; ++i) {
-                    shipcount_t n;
-                    n = MIN(d.oo.ships[i], os[i]);
-                    d.oo.ships[i] = n;
-                    if (n > 0) {
-                        any_selected = true;
-                    }
-                }
-                if (!any_selected) {
-                    for (int i = 0; i < NUM_SHIPDESIGNS; ++i) {
-                        d.oo.ships[i] = os[i];
-                    }
-                }
-                g->planet_focus_i[active_player] = d.oo.from;
-            }
+            flag_done = true;
+            ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
         } else if (oi1 == oi_scroll) {
             ui_starmap_scroll(g, scrollx, scrolly, scrollz);
         }
