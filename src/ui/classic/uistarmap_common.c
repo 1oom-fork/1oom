@@ -821,6 +821,19 @@ void ui_starmap_add_oi_bottom_buttons(struct starmap_data_s *d)
     d->oi_next_turn = uiobj_add_mousearea(258, 181, 314, 194, MOO_KEY_n);
 }
 
+void ui_starmap_add_oi_hotkeys(struct starmap_data_s *d)
+{
+    d->oi_f2 = uiobj_add_inputkey(MOO_KEY_F2);
+    d->oi_f3 = uiobj_add_inputkey(MOO_KEY_F3);
+    d->oi_f4 = uiobj_add_inputkey(MOO_KEY_F4);
+    d->oi_f5 = uiobj_add_inputkey(MOO_KEY_F5);
+    d->oi_f6 = uiobj_add_inputkey(MOO_KEY_F6);
+    d->oi_f7 = uiobj_add_inputkey(MOO_KEY_F7);
+    d->oi_f8 = uiobj_add_inputkey(MOO_KEY_F8);
+    d->oi_f9 = uiobj_add_inputkey(MOO_KEY_F9);
+    d->oi_f10 = uiobj_add_inputkey(MOO_KEY_F10);
+}
+
 void ui_starmap_fill_oi_tbls(struct starmap_data_s *d)
 {
     const struct game_s *g = d->g;
@@ -1079,4 +1092,96 @@ int ui_starmap_cursor_on_star(const struct game_s *g, const struct starmap_data_
         }
     }
     return -1;
+}
+
+int ui_starmap_cursor_on_enroute(const struct game_s *g, const struct starmap_data_s *d, int16_t oi2) {
+    for (int i = 0; i < g->enroute_num; ++i) {
+        if (oi2 == d->oi_tbl_enroute[i]) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+int ui_starmap_cursor_on_transport(const struct game_s *g, const struct starmap_data_s *d, int16_t oi2) {
+    for (int i = 0; i < g->transport_num; ++i) {
+        if (oi2 == d->oi_tbl_transport[i]) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+int ui_starmap_cursor_on_orbit(const struct game_s *g, const struct starmap_data_s *d, int16_t oi2, player_id_t orbit_owner) {
+    for (int i = 0; i < g->galaxy_stars; ++i) {
+        if (oi2 == d->oi_tbl_pl_stars[orbit_owner][i]) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+bool ui_starmap_handle_fleet_click(struct game_s *g, struct starmap_data_s *d, int16_t oi, player_id_t active_player) {
+    int i = ui_starmap_cursor_on_enroute(g, d, oi);
+    if (i != -1) {
+        ui_data.starmap.fleet_selected = i;
+        ui_data.ui_main_loop_action = UI_MAIN_LOOP_ENROUTE_SEL;
+        ui_sound_play_sfx_24();
+        return true;
+    }
+    i = ui_starmap_cursor_on_transport(g, d, oi);
+    if (i != -1) {
+        ui_data.starmap.fleet_selected = i;
+        ui_data.ui_main_loop_action = UI_MAIN_LOOP_TRANSPORT_SEL;
+        ui_sound_play_sfx_24();
+        return true;
+    }
+    for (player_id_t j = PLAYER_0; j < g->players; ++j) {
+        i = ui_starmap_cursor_on_orbit(g, d, oi, j);
+        if (i != -1) {
+            g->planet_focus_i[active_player] = i;  /* not done on MOO1! */
+            d->from = i;
+            ui_data.starmap.orbit_player = j;
+            ui_data.ui_main_loop_action = (j == active_player) ? UI_MAIN_LOOP_ORBIT_OWN_SEL : UI_MAIN_LOOP_ORBIT_EN_SEL;
+            ui_sound_play_sfx_24();
+            return true;
+        }
+    }
+    return false;
+}
+
+static int ui_starmap_bottom_menu_action(struct game_s *g, struct starmap_data_s *d, int16_t oi) {
+    ui_main_loop_action_t action = -1;
+    if (oi == d->oi_gameopts) {
+        action = UI_MAIN_LOOP_GAMEOPTS;
+    } else if (oi == d->oi_design) {
+        action = UI_MAIN_LOOP_DESIGN;
+    } else if (oi == d->oi_fleet) {
+        action = UI_MAIN_LOOP_FLEET;
+    } else if (oi == d->oi_map) {
+        action = UI_MAIN_LOOP_MAP;
+    } else if (oi == d->oi_races) {
+        action = UI_MAIN_LOOP_RACES;
+    } else if (oi == d->oi_planets) {
+        action = UI_MAIN_LOOP_PLANETS;
+    } else if (oi == d->oi_tech) {
+        action = UI_MAIN_LOOP_TECH;
+    } else if (oi == d->oi_next_turn) {
+        action = UI_MAIN_LOOP_NEXT_TURN;
+    }
+    return action;
+}
+
+bool ui_starmap_handle_menu_click(struct game_s *g, struct starmap_data_s *d, int16_t oi) {
+    ui_main_loop_action_t action = ui_starmap_bottom_menu_action(g, d, oi);
+    if (action != -1) {
+        ui_data.ui_main_loop_action = action;
+        ui_sound_play_sfx_24();
+        return true;
+    }
+    return false;
+}
+
+void ui_starmap_select_bottom_highlight(struct game_s *g, struct starmap_data_s *d, int16_t oi) {
+    d->bottom_highlight = ui_starmap_bottom_menu_action(g, d, oi) - 1;
 }

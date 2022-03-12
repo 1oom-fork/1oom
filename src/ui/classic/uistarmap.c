@@ -226,7 +226,6 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
 {
     bool flag_done = false;
     int16_t oi_b, oi_c, oi_scroll, oi_starview1, oi_starview2, oi_shippic, oi_finished, oi_equals, oi_hash,
-            oi_f2, oi_f3, oi_f4, oi_f5, oi_f6, oi_f7, oi_f8, oi_f9, oi_f10,
             oi_alt_galaxy, oi_alt_m, oi_alt_c, oi_alt_p, oi_alt_r, oi_alt_events,
             oi_governor, oi_wheelname, oi_wheelshippic, oi_xtramenu, oi_search
             ;
@@ -237,7 +236,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
     d.g = g;
     d.api = active_player;
     d.anim_delay = 0;
-    d.bottom_highlight = d.ruler_to_i = d.ruler_from_i = -1;
+    d.ruler_to_i = d.ruler_from_i = -1;
     d.gov_highlight = 0;
 
     ui_delay_1();
@@ -251,7 +250,6 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
 #define UIOBJ_CLEAR_LOCAL() \
     do { \
         STARMAP_UIOBJ_CLEAR_COMMON(); \
-        STARMAP_UIOBJ_CLEAR_FX(); \
         oi_b = UIOBJI_INVALID; \
         oi_c = UIOBJI_INVALID; \
         oi_starview1 = UIOBJI_INVALID; \
@@ -297,38 +295,8 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
         oi2 = uiobj_at_cursor();
         ui_delay_prepare();
         ui_starmap_handle_scrollkeys(&d, oi1);
-        if (oi1 == d.oi_gameopts) {
-            ui_data.ui_main_loop_action = UI_MAIN_LOOP_GAMEOPTS;
+        if (ui_starmap_handle_menu_click(g, &d, oi1)) {
             flag_done = true;
-            ui_sound_play_sfx_24();
-        } else if (oi1 == d.oi_design) {
-            ui_data.ui_main_loop_action = UI_MAIN_LOOP_DESIGN;
-            flag_done = true;
-            ui_sound_play_sfx_24();
-        } else if (oi1 == d.oi_fleet) {
-            ui_data.ui_main_loop_action = UI_MAIN_LOOP_FLEET;
-            flag_done = true;
-            ui_sound_play_sfx_24();
-        } else if (oi1 == d.oi_map) {
-            ui_data.ui_main_loop_action = UI_MAIN_LOOP_MAP;
-            flag_done = true;
-            ui_sound_play_sfx_24();
-        } else if (oi1 == d.oi_races) {
-            ui_data.ui_main_loop_action = UI_MAIN_LOOP_RACES;
-            flag_done = true;
-            ui_sound_play_sfx_24();
-        } else if (oi1 == d.oi_planets) {
-            ui_data.ui_main_loop_action = UI_MAIN_LOOP_PLANETS;
-            flag_done = true;
-            ui_sound_play_sfx_24();
-        } else if (oi1 == d.oi_tech) {
-            ui_data.ui_main_loop_action = UI_MAIN_LOOP_TECH;
-            flag_done = true;
-            ui_sound_play_sfx_24();
-        } else if (oi1 == d.oi_next_turn) {
-            ui_data.ui_main_loop_action = UI_MAIN_LOOP_NEXT_TURN;
-            flag_done = true;
-            ui_sound_play_sfx_24();
         } else if (oi1 == d.sm.oi_reloc) {
             ui_data.ui_main_loop_action = UI_MAIN_LOOP_RELOC;
             flag_done = true;
@@ -379,7 +347,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             if (game_cheat_events(g, active_player)) {
                 ui_sound_play_sfx_24();
             }
-        } else if (oi1 == oi_f10) {
+        } else if (oi1 == d.oi_f10) {
             game_save_do_save_i(GAME_SAVE_I_CONTINUE, "Continue", g);
         } else if (oi1 == oi_alt_p) {
             game_cheat_traits(g, active_player);
@@ -442,37 +410,8 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
                 }
                 game_planet_govern(g, p);
             }
-        }
-
-        for (int i = 0; i < g->enroute_num; ++i) {
-            if (oi1 == d.oi_tbl_enroute[i]) {
-                ui_data.starmap.fleet_selected = i;
-                ui_data.ui_main_loop_action = UI_MAIN_LOOP_ENROUTE_SEL;
-                ui_sound_play_sfx_24();
-                flag_done = true;
-                break;
-            }
-        }
-        for (int i = 0; i < g->transport_num; ++i) {
-            if (oi1 == d.oi_tbl_transport[i]) {
-                ui_data.starmap.fleet_selected = i;
-                ui_data.ui_main_loop_action = UI_MAIN_LOOP_TRANSPORT_SEL;
-                ui_sound_play_sfx_24();
-                flag_done = true;
-                break;
-            }
-        }
-        for (int i = 0; i < g->galaxy_stars; ++i) {
-            for (player_id_t j = PLAYER_0; j < g->players; ++j) {
-                if (oi1 == d.oi_tbl_pl_stars[j][i]) {
-                    g->planet_focus_i[active_player] = i;
-                    ui_data.starmap.orbit_player = j;
-                    ui_data.ui_main_loop_action = (j == active_player) ? UI_MAIN_LOOP_ORBIT_OWN_SEL : UI_MAIN_LOOP_ORBIT_EN_SEL;
-                    ui_sound_play_sfx_24();
-                    flag_done = true;
-                    j = g->players; i = g->galaxy_stars;
-                }
-            }
+        } else if (ui_starmap_handle_fleet_click(g, &d, oi1, active_player)) {
+            flag_done = true;
         }
         if (0
           || (oi1 == d.sm.oi_ship) || (oi1 == oi_shippic)
@@ -538,7 +477,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
         }
         ui_starmap_handle_oi_ctrl(&d, oi1);
         ui_starmap_handle_tag(&d, oi1, true);
-        if (oi1 == oi_f2) {
+        if (oi1 == d.oi_f2) {
             int i;
             i = g->planet_focus_i[active_player];
             do {
@@ -547,7 +486,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             g->planet_focus_i[active_player] = i;
             ui_starmap_set_pos_focus(g, active_player);
             ui_sound_play_sfx_24();
-        } else if (oi1 == oi_f3) {
+        } else if (oi1 == d.oi_f3) {
             int i;
             i = g->planet_focus_i[active_player];
             do {
@@ -576,7 +515,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
                 ui_sound_play_sfx_24();
             }
             game_update_production(g);
-        } else if (oi1 == oi_f6) {
+        } else if (oi1 == d.oi_f6) {
             int i;
             i = ui_starmap_newship_next(g, active_player, g->planet_focus_i[active_player]);
             g->planet_focus_i[active_player] = i;
@@ -587,7 +526,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
                 ui_data.ui_main_loop_action = UI_MAIN_LOOP_ORBIT_OWN_SEL;
                 flag_done = true;
             }
-        } else if (oi1 == oi_f7) {
+        } else if (oi1 == d.oi_f7) {
             int i;
             i = ui_starmap_newship_prev(g, active_player, g->planet_focus_i[active_player]);
             g->planet_focus_i[active_player] = i;
@@ -598,16 +537,16 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
                 ui_data.ui_main_loop_action = UI_MAIN_LOOP_ORBIT_OWN_SEL;
                 flag_done = true;
             }
-        } else if (((oi1 == oi_f8) || (oi1 == oi_f9)) && g->eto[active_player].have_ia_scanner) {
+        } else if (((oi1 == d.oi_f8) || (oi1 == d.oi_f9)) && g->eto[active_player].have_ia_scanner) {
             int i, pi;
             ui_sound_play_sfx_24();
             pi = g->planet_focus_i[active_player];
-            i = ui_starmap_enemy_incoming(g, active_player, pi, (oi1 == oi_f8));
+            i = ui_starmap_enemy_incoming(g, active_player, pi, (oi1 == d.oi_f8));
             if (i != pi) {
                 g->planet_focus_i[active_player] = i;
                 ui_starmap_set_pos_focus(g, active_player);
             }
-        } else if (oi1 == oi_f4) {
+        } else if (oi1 == d.oi_f4) {
             bool found;
             int i, pi;
             i = pi = g->planet_focus_i[active_player];
@@ -629,7 +568,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
                 ui_data.ui_main_loop_action = UI_MAIN_LOOP_ORBIT_OWN_SEL;
                 flag_done = true;
             }
-        } else if (oi1 == oi_f5) {
+        } else if (oi1 == d.oi_f5) {
             bool found;
             int i, pi;
             i = pi = g->planet_focus_i[active_player];
@@ -685,28 +624,13 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
         }
 
         d.ruler_from_i = g->planet_focus_i[active_player];
-        d.bottom_highlight = d.ruler_to_i = ui_starmap_cursor_on_star(g, &d, oi2, active_player);
+        d.ruler_to_i = ui_starmap_cursor_on_star(g, &d, oi2, active_player);
         d.ruler_from_fleet = false;
         d.gov_highlight = 0;
 
         p = &(g->planet[g->planet_focus_i[active_player]]);
-        if (oi2 == d.oi_gameopts) {
-            d.bottom_highlight = 0;
-        } else if (oi2 == d.oi_design) {
-            d.bottom_highlight = 1;
-        } else if (oi2 == d.oi_fleet) {
-            d.bottom_highlight = 2;
-        } else if (oi2 == d.oi_map) {
-            d.bottom_highlight = 3;
-        } else if (oi2 == d.oi_races) {
-            d.bottom_highlight = 4;
-        } else if (oi2 == d.oi_planets) {
-            d.bottom_highlight = 5;
-        } else if (oi2 == d.oi_tech) {
-            d.bottom_highlight = 6;
-        } else if (oi2 == d.oi_next_turn) {
-            d.bottom_highlight = 7;
-        } else if (oi2 == d.sm.oi_gov_ship) {
+        ui_starmap_select_bottom_highlight(g, &d, oi2);
+        if (oi2 == d.sm.oi_gov_ship) {
             d.gov_highlight = 1;
         } else if (oi2 == d.sm.oi_gov_reserve) {
             d.gov_highlight = 2;
@@ -725,15 +649,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
                 oi_equals = uiobj_add_inputkey(MOO_KEY_EQUALS);
                 oi_hash = uiobj_add_inputkey(MOO_KEY_HASH);
             }
-            oi_f2 = uiobj_add_inputkey(MOO_KEY_F2);
-            oi_f3 = uiobj_add_inputkey(MOO_KEY_F3);
-            oi_f4 = uiobj_add_inputkey(MOO_KEY_F4);
-            oi_f5 = uiobj_add_inputkey(MOO_KEY_F5);
-            oi_f6 = uiobj_add_inputkey(MOO_KEY_F6);
-            oi_f7 = uiobj_add_inputkey(MOO_KEY_F7);
-            oi_f8 = uiobj_add_inputkey(MOO_KEY_F8);
-            oi_f9 = uiobj_add_inputkey(MOO_KEY_F9);
-            oi_f10 = uiobj_add_inputkey(MOO_KEY_F10);
+            ui_starmap_add_oi_hotkeys(&d);
             if ((p->owner == active_player) && p->missile_bases) {
                 /* oi_b = uiobj_add_mousearea(272, 59, 312, 67, MOO_KEY_b); */
                 oi_b = uiobj_add_inputkey(MOO_KEY_b);
