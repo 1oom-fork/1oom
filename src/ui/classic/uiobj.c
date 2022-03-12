@@ -1098,7 +1098,9 @@ static uint32_t uiobj_handle_kbd(int16_t *oiptr)
     flag_reset_alt_str = true;
     if (oi < uiobj_table_num) {
         *oiptr = oi;
-        uiobj_set_focus(oi);
+        if (!ui_extra_enabled) {
+            uiobj_set_focus(oi);
+        }
         if (p->type == 8) {
             if (++p->t8.pos >= p->t8.len) {
                 p->t8.pos = 0;
@@ -1190,11 +1192,13 @@ static void uiobj_click_obj(int16_t oi, int mx, int my)
             }
             uiobj_focus_oi = oi;
             uiobj_handle_click(oi, true);
-            if (p->type == 4) {
-                mx = moouse_x;
-                my = moouse_y;
+            if (!ui_extra_enabled) {
+                if (p->type == 4) {
+                    mx = moouse_x;
+                    my = moouse_y;
+                }
+                mouse_set_xy(mx, my);
             }
-            mouse_set_xy(mx, my);
         }
     } else {
         /*don't care*/
