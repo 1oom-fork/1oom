@@ -777,8 +777,5 @@ const char *game_str_tbl_xtramenu[XTRAMENU_NUM] = {
     "Message filter",
     "Readjust Eco",
     "Select ship everywhere",
-    "Relocate relocated",
-    "Relocate all",
-    "Unrelocate all",
     "Cancel"
 };

@@ -523,7 +523,7 @@ extern const char *game_str_gnn_end_tyrant;
 extern const char *game_str_gnn_also;
 extern const char *game_str_mf_title;
 extern const char *game_str_tbl_mf[FINISHED_NUM];
-#define XTRAMENU_NUM    10
+#define XTRAMENU_NUM    7
 extern const char *game_str_tbl_xtramenu[XTRAMENU_NUM];
 
 #endif
