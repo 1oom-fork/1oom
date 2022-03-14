@@ -90,12 +90,13 @@ static void ui_starmap_orbit_en_draw_cb(void *vptr)
 void ui_starmap_orbit_en(struct game_s *g, player_id_t active_player)
 {
     bool flag_done = false;
-    int16_t oi_scroll, oi_search;
-    int16_t scrollx = 0, scrolly = 0;
-    uint8_t scrollz = starmap_scale;
+    int16_t oi_search;
     struct starmap_data_s d;
     shipcount_t *os;
 
+    d.scrollx = 0;
+    d.scrolly = 0;
+    d.scrollz = starmap_scale;
     d.g = g;
     d.api = active_player;
     d.anim_delay = 0;
@@ -136,33 +137,19 @@ void ui_starmap_orbit_en(struct game_s *g, player_id_t active_player)
     uiobj_set_callback_and_delay(ui_starmap_orbit_en_draw_cb, &d, STARMAP_DELAY);
 
     while (!flag_done) {
-        int16_t oi1, oi2;
-        oi1 = uiobj_handle_input_cond();
-        oi2 = uiobj_at_cursor();
         ui_delay_prepare();
-        ui_starmap_handle_scrollkeys(&d, oi1);
-        if (ui_starmap_handle_menu_click(g, &d, oi1)) {
-            flag_done = true;
-        } else if (oi1 == oi_search) {
+        if (ui_starmap_handle_common(g, &d, &flag_done)) {
+        } else if (d.oi1 == oi_search) {
             ui_sound_play_sfx_24();
             ui_search_set_pos(g, active_player);
-        } else if (ui_starmap_handle_fleet_click(g, &d, oi1, active_player)) {
-            flag_done = true;
         }
-        if (oi1 == UIOBJI_ESC) {
-            ui_sound_play_sfx_24();
-            flag_done = true;
-            ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
-        } else if (oi1 == oi_scroll) {
-            ui_starmap_scroll(g, scrollx, scrolly, scrollz);
-        }
-        ui_starmap_handle_oi_ctrl(&d, oi1);
-        if (ui_starmap_handle_tag(&d, oi1, false) != PLANET_NONE) {
+        ui_starmap_handle_oi_ctrl(&d, d.oi1);
+        if (ui_starmap_handle_tag(&d, d.oi1, false) != PLANET_NONE) {
             ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
             flag_done = true;
         }
         for (int i = 0; i < g->galaxy_stars; ++i) {
-            if ((oi1 == d.oi_tbl_stars[i]) && !g->evn.build_finished_num[active_player]) {
+            if ((d.oi1 == d.oi_tbl_stars[i]) && !g->evn.build_finished_num[active_player]) {
                 g->planet_focus_i[active_player] = i;
                 ui_sound_play_sfx_24();
                 ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
@@ -171,13 +158,13 @@ void ui_starmap_orbit_en(struct game_s *g, player_id_t active_player)
             }
         }
         if (!flag_done) {
-            ui_starmap_select_bottom_highlight(g, &d, oi2);
+            ui_starmap_select_bottom_highlight(g, &d, d.oi2);
             ui_starmap_orbit_en_draw_cb(&d);
             uiobj_table_clear();
             UIOBJ_CLEAR_LOCAL();
             ui_starmap_fill_oi_tbls(&d);
             ui_starmap_fill_oi_tbl_stars(&d);
-            oi_scroll = uiobj_add_tb(6, 6, 2, 2, 108, 86, &scrollx, &scrolly, &scrollz, ui_scale);
+            d.oi_scroll = uiobj_add_tb(6, 6, 2, 2, 108, 86, &d.scrollx, &d.scrolly, &d.scrollz, ui_scale);
             oi_search = uiobj_add_inputkey(MOO_KEY_SLASH);
             ui_starmap_fill_oi_ctrl(&d);
             ui_starmap_add_oi_bottom_buttons(&d);

@@ -8,6 +8,7 @@
 #include "game_aux.h"
 #include "game_fleet.h"
 #include "game_misc.h"
+#include "game_save.h"
 #include "game_num.h"
 #include "game_str.h"
 #include "game_tech.h"
@@ -726,7 +727,7 @@ void ui_starmap_handle_oi_ctrl(struct starmap_data_s *d, int16_t oi)
 #undef YSTEP
 }
 
-void ui_starmap_handle_scrollkeys(struct starmap_data_s *d, int16_t oi)
+static void ui_starmap_handle_scrollkeys(struct starmap_data_s *d, int16_t oi)
 {
     const struct game_s *g = d->g;
     int x, y, xh, yh;
@@ -1121,35 +1122,6 @@ int ui_starmap_cursor_on_orbit(const struct game_s *g, const struct starmap_data
     return -1;
 }
 
-bool ui_starmap_handle_fleet_click(struct game_s *g, struct starmap_data_s *d, int16_t oi, player_id_t active_player) {
-    int i = ui_starmap_cursor_on_enroute(g, d, oi);
-    if (i != -1) {
-        ui_data.starmap.fleet_selected = i;
-        ui_data.ui_main_loop_action = UI_MAIN_LOOP_ENROUTE_SEL;
-        ui_sound_play_sfx_24();
-        return true;
-    }
-    i = ui_starmap_cursor_on_transport(g, d, oi);
-    if (i != -1) {
-        ui_data.starmap.fleet_selected = i;
-        ui_data.ui_main_loop_action = UI_MAIN_LOOP_TRANSPORT_SEL;
-        ui_sound_play_sfx_24();
-        return true;
-    }
-    for (player_id_t j = PLAYER_0; j < g->players; ++j) {
-        i = ui_starmap_cursor_on_orbit(g, d, oi, j);
-        if (i != -1) {
-            g->planet_focus_i[active_player] = i;  /* not done on MOO1! */
-            d->from = i;
-            ui_data.starmap.orbit_player = j;
-            ui_data.ui_main_loop_action = (j == active_player) ? UI_MAIN_LOOP_ORBIT_OWN_SEL : UI_MAIN_LOOP_ORBIT_EN_SEL;
-            ui_sound_play_sfx_24();
-            return true;
-        }
-    }
-    return false;
-}
-
 static int ui_starmap_bottom_menu_action(struct game_s *g, struct starmap_data_s *d, int16_t oi) {
     ui_main_loop_action_t action = -1;
     if (oi == d->oi_gameopts) {
@@ -1170,16 +1142,6 @@ static int ui_starmap_bottom_menu_action(struct game_s *g, struct starmap_data_s
         action = UI_MAIN_LOOP_NEXT_TURN;
     }
     return action;
-}
-
-bool ui_starmap_handle_menu_click(struct game_s *g, struct starmap_data_s *d, int16_t oi) {
-    ui_main_loop_action_t action = ui_starmap_bottom_menu_action(g, d, oi);
-    if (action != -1) {
-        ui_data.ui_main_loop_action = action;
-        ui_sound_play_sfx_24();
-        return true;
-    }
-    return false;
 }
 
 void ui_starmap_select_bottom_highlight(struct game_s *g, struct starmap_data_s *d, int16_t oi) {
@@ -1243,4 +1205,81 @@ void ui_starmap_handle_reloc_all(struct game_s *g, player_id_t active_player) {
         ui_starmap_reloc_un(g, active_player);
     }
     ui_sound_play_sfx_24();
+}
+
+bool ui_starmap_handle_common(struct game_s *g, struct starmap_data_s *d, bool *flag_done) {
+    d->oi1 = uiobj_handle_input_cond();
+    d->oi2 = uiobj_at_cursor();
+    if (d->oi1 == d->oi_f10) {
+        if (ui_data.ui_main_loop_action == UI_MAIN_LOOP_STARMAP ||
+                ui_data.ui_main_loop_action == UI_MAIN_LOOP_ORBIT_OWN_SEL ||
+                ui_data.ui_main_loop_action == UI_MAIN_LOOP_RELOC ||
+                ui_data.ui_main_loop_action == UI_MAIN_LOOP_TRANS)
+        {
+            game_save_do_save_i(GAME_SAVE_I_CONTINUE, "Continue", g);
+            return true;
+        }
+    }
+    ui_starmap_handle_scrollkeys(d, d->oi1);
+    if (d->oi1 == d->oi_scroll && !g->evn.build_finished_num[d->api]) {
+        ui_starmap_scroll(g, d->scrollx, d->scrolly, d->scrollz);
+        return true;
+    }
+    if (d->oi1 == d->oi_cancel || d->oi1 == UIOBJI_ESC) {
+        if (ui_data.ui_main_loop_action == UI_MAIN_LOOP_ENROUTE_SEL ||
+                ui_data.ui_main_loop_action == UI_MAIN_LOOP_ORBIT_OWN_SEL ||
+                ui_data.ui_main_loop_action == UI_MAIN_LOOP_ORBIT_EN_SEL ||
+                ui_data.ui_main_loop_action == UI_MAIN_LOOP_RELOC ||
+                ui_data.ui_main_loop_action == UI_MAIN_LOOP_TRANS ||
+                ui_data.ui_main_loop_action == UI_MAIN_LOOP_TRANSPORT_SEL)
+        {
+            ui_sound_play_sfx_06();
+            ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
+            *flag_done = true;
+            return true;
+        }
+    }
+    ui_main_loop_action_t action = ui_starmap_bottom_menu_action(g, d, d->oi1);
+    if (action != -1) {
+        ui_data.ui_main_loop_action = action;
+        ui_sound_play_sfx_24();
+        *flag_done = true;
+        return true;
+    }
+    if (ui_data.ui_main_loop_action == UI_MAIN_LOOP_STARMAP ||
+            ui_data.ui_main_loop_action == UI_MAIN_LOOP_ENROUTE_SEL ||
+            ui_data.ui_main_loop_action == UI_MAIN_LOOP_ORBIT_OWN_SEL ||
+            ui_data.ui_main_loop_action == UI_MAIN_LOOP_ORBIT_EN_SEL ||
+            ui_data.ui_main_loop_action == UI_MAIN_LOOP_TRANSPORT_SEL)
+    {
+        int i = ui_starmap_cursor_on_enroute(g, d, d->oi1);
+        if (i != -1) {
+            ui_data.starmap.fleet_selected = i;
+            ui_data.ui_main_loop_action = UI_MAIN_LOOP_ENROUTE_SEL;
+            ui_sound_play_sfx_24();
+            *flag_done = true;
+            return true;
+        }
+        i = ui_starmap_cursor_on_transport(g, d, d->oi1);
+        if (i != -1) {
+            ui_data.starmap.fleet_selected = i;
+            ui_data.ui_main_loop_action = UI_MAIN_LOOP_TRANSPORT_SEL;
+            ui_sound_play_sfx_24();
+            *flag_done = true;
+            return true;
+        }
+        for (player_id_t j = PLAYER_0; j < g->players; ++j) {
+            i = ui_starmap_cursor_on_orbit(g, d, d->oi1, j);
+            if (i != -1) {
+                g->planet_focus_i[d->api] = i;  /* not done on MOO1! */
+                d->from = i;
+                ui_data.starmap.orbit_player = j;
+                ui_data.ui_main_loop_action = (j == d->api) ? UI_MAIN_LOOP_ORBIT_OWN_SEL : UI_MAIN_LOOP_ORBIT_EN_SEL;
+                ui_sound_play_sfx_24();
+                *flag_done = true;
+                return true;
+            }
+        }
+    }
+    return false;
 }

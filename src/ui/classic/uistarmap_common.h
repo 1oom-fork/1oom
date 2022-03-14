@@ -34,6 +34,8 @@ typedef enum { NO_MOVE, GOT_HYPERCOMM, ON_PLANET } can_move_t;
 struct starmap_data_s {
     struct game_s *g; /* FIXME non-const only for ui_starmap_draw_cb1 */
     player_id_t api;
+    int16_t oi1;
+    int16_t oi2;
     int bottom_highlight;
     int anim_delay;
     int ruler_from_i;
@@ -75,6 +77,11 @@ struct starmap_data_s {
     int16_t oi_f8;
     int16_t oi_f9;
     int16_t oi_f10;
+    int16_t oi_accept;
+    int16_t oi_cancel;
+    int16_t oi_scroll;
+    int16_t scrollx, scrolly;
+    uint8_t scrollz;
     uint8_t from;
     union {
         struct {
@@ -136,6 +143,8 @@ struct starmap_data_s {
 #define STARMAP_UIOBJ_CLEAR_COMMON() \
     do { \
         d.bottom_highlight = -1; \
+        d.oi1 = UIOBJI_INVALID; \
+        d.oi2 = UIOBJI_INVALID; \
         d.oi_gameopts = UIOBJI_INVALID; \
         d.oi_design = UIOBJI_INVALID; \
         d.oi_fleet = UIOBJI_INVALID; \
@@ -153,6 +162,9 @@ struct starmap_data_s {
         d.oi_f8 = UIOBJI_INVALID; \
         d.oi_f9 = UIOBJI_INVALID; \
         d.oi_f10 = UIOBJI_INVALID; \
+        d.oi_accept = UIOBJI_INVALID; \
+        d.oi_cancel = UIOBJI_INVALID; \
+        d.oi_scroll = UIOBJI_INVALID; \
         for (int i = 0; i < g->galaxy_stars; ++i) { \
             d.oi_tbl_stars[i] = UIOBJI_INVALID; \
         } \
@@ -164,7 +176,6 @@ struct starmap_data_s {
             } \
         } \
         oi_search = UIOBJI_INVALID; \
-        oi_scroll = UIOBJI_INVALID; \
         ui_starmap_clear_oi_ctrl(&d); \
     } while (0)
 
@@ -181,7 +192,6 @@ extern void ui_starmap_fill_oi_tbl_stars_own(struct starmap_data_s *d, player_id
 extern void ui_starmap_add_oi_bottom_buttons(struct starmap_data_s *d);
 extern void ui_starmap_add_oi_hotkeys(struct starmap_data_s *d);
 extern void ui_starmap_handle_oi_ctrl(struct starmap_data_s *d, int16_t oi);
-extern void ui_starmap_handle_scrollkeys(struct starmap_data_s *d, int16_t oi);
 extern uint8_t ui_starmap_handle_tag(struct starmap_data_s *d, int16_t oi, bool flag_set_focus);
 extern void ui_starmap_draw_basic(struct starmap_data_s *d);
 extern void ui_starmap_draw_starmap(struct starmap_data_s *d);
@@ -199,9 +209,8 @@ extern int ui_starmap_cursor_on_star(const struct game_s *g, const struct starma
 extern int ui_starmap_cursor_on_enroute(const struct game_s *g, const struct starmap_data_s *d, int16_t oi2);
 extern int ui_starmap_cursor_on_transport(const struct game_s *g, const struct starmap_data_s *d, int16_t oi2);
 extern int ui_starmap_cursor_on_orbit(const struct game_s *g, const struct starmap_data_s *d, int16_t oi2, player_id_t orbit_owner);
-extern bool ui_starmap_handle_fleet_click(struct game_s *g, struct starmap_data_s *d, int16_t oi, player_id_t active_player);
 extern void ui_starmap_handle_reloc_all(struct game_s *g, player_id_t active_player);
-extern bool ui_starmap_handle_menu_click(struct game_s *g, struct starmap_data_s *d, int16_t oi);
 extern void ui_starmap_select_bottom_highlight(struct game_s *g, struct starmap_data_s *d, int16_t oi);
+extern bool ui_starmap_handle_common(struct game_s *g, struct starmap_data_s *d, bool *flag_done);
 
 #endif
