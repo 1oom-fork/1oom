@@ -225,6 +225,7 @@ do_accept:
             ui_starmap_transport_draw_cb(&d);
             uiobj_table_clear();
             UIOBJ_CLEAR_LOCAL();
+            ui_starmap_add_oi_hotkeys(&d);
             ui_starmap_fill_oi_tbls(&d);
             ui_starmap_fill_oi_tbl_stars(&d);
             if ((r->owner == active_player) && (d.ts.can_move != NO_MOVE)) {

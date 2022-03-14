@@ -162,6 +162,7 @@ void ui_starmap_orbit_en(struct game_s *g, player_id_t active_player)
             ui_starmap_orbit_en_draw_cb(&d);
             uiobj_table_clear();
             UIOBJ_CLEAR_LOCAL();
+            ui_starmap_add_oi_hotkeys(&d);
             ui_starmap_fill_oi_tbls(&d);
             ui_starmap_fill_oi_tbl_stars(&d);
             d.oi_scroll = uiobj_add_tb(6, 6, 2, 2, 108, 86, &d.scrollx, &d.scrolly, &d.scrollz, ui_scale);

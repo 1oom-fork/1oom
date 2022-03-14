@@ -118,33 +118,6 @@ void ui_starmap_reloc(struct game_s *g, player_id_t active_player)
                     ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
                 }
             }
-        } else if (d.oi1 == d.oi_f2) {
-            int i;
-            i = g->planet_focus_i[active_player];
-            do {
-                if (--i < 0) { i = g->galaxy_stars - 1; }
-            } while (g->planet[i].owner != active_player);
-            g->planet_focus_i[active_player] = i;
-            ui_starmap_set_pos_focus(g, active_player);
-            ui_sound_play_sfx_24();
-        } else if (d.oi1 == d.oi_f3) {
-            int i;
-            i = g->planet_focus_i[active_player];
-            do {
-                i = (i + 1) % g->galaxy_stars;
-            } while (g->planet[i].owner != active_player);
-            g->planet_focus_i[active_player] = i;
-            ui_starmap_set_pos_focus(g, active_player);
-            ui_sound_play_sfx_24();
-        } else if (((d.oi1 == d.oi_f8) || (d.oi1 == d.oi_f9)) && g->eto[active_player].have_ia_scanner) {
-            int i, pi;
-            ui_sound_play_sfx_24();
-            pi = g->planet_focus_i[active_player];
-            i = ui_starmap_enemy_incoming(g, active_player, pi, (d.oi1 == d.oi_f8));
-            if (i != pi) {
-                g->planet_focus_i[active_player] = i;
-                ui_starmap_set_pos_focus(g, active_player);
-            }
         } else if (d.oi1 == d.oi_f4) {
             bool found;
             int i, pi;
