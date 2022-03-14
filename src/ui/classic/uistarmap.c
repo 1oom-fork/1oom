@@ -317,14 +317,8 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             ui_data.ui_main_loop_action = UI_MAIN_LOOP_SPIES_CAUGHT;
             flag_done = true;
             ui_sound_play_sfx_24();
-        } else if ((oi1 == oi_alt_r) && (p->owner == active_player)) {
-            for (int i = 0; i < g->galaxy_stars; ++i) {
-                planet_t *p2 = &(g->planet[i]);
-                if ((p2->owner == active_player) && (p2->reloc != i)) {
-                    p2->reloc = g->planet_focus_i[active_player];
-                }
-            }
-            ui_sound_play_sfx_24();
+        } else if (oi1 == oi_alt_r) {
+            ui_starmap_handle_reloc_all(g, active_player);
         } else if (oi1 == oi_alt_m) {
             ui_data.starmap.flag_show_grid = !ui_data.starmap.flag_show_grid;
             ui_sound_play_sfx_24();

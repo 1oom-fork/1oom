@@ -1185,3 +1185,62 @@ bool ui_starmap_handle_menu_click(struct game_s *g, struct starmap_data_s *d, in
 void ui_starmap_select_bottom_highlight(struct game_s *g, struct starmap_data_s *d, int16_t oi) {
     d->bottom_highlight = ui_starmap_bottom_menu_action(g, d, oi) - 1;
 }
+
+static void ui_starmap_reloc_reloc(struct game_s *g, player_id_t active_player)
+{
+    uint8_t target = g->planet_focus_i[active_player];
+    if (g->planet[target].owner != active_player) {
+        return;
+    }
+    for (int i = 0; i < g->galaxy_stars; ++i) {
+        planet_t *p = &(g->planet[i]);
+        if ((p->owner == active_player) && (p->reloc != i)) {
+            p->reloc = target;
+        }
+    }
+}
+
+static int ui_starmap_reloc_all(struct game_s *g, player_id_t active_player)
+{
+    int count = 0;
+    uint8_t target = g->planet_focus_i[active_player];
+    if (g->planet[target].owner != active_player) {
+        return count;
+    }
+    for (int i = 0; i < g->galaxy_stars; ++i) {
+        planet_t *p = &(g->planet[i]);
+        if (p->owner == active_player) {
+            if (p->reloc != target) {
+                ++count;
+            }
+            p->reloc = target;
+        }
+    }
+    return count;
+}
+
+static int ui_starmap_reloc_un(struct game_s *g, player_id_t active_player)
+{
+    int count = 0;
+    for (int i = 0; i < g->galaxy_stars; ++i) {
+        planet_t *p = &(g->planet[i]);
+        if (p->owner == active_player) {
+            if (p->reloc != i) {
+                ++count;
+            }
+            p->reloc = i;
+        }
+    }
+    return count;
+}
+
+void ui_starmap_handle_reloc_all(struct game_s *g, player_id_t active_player) {
+    if (!ui_extra_enabled) {
+        ui_starmap_reloc_reloc(g, active_player);
+    }
+    else {
+        ui_starmap_reloc_all(g, active_player) ||
+        ui_starmap_reloc_un(g, active_player);
+    }
+    ui_sound_play_sfx_24();
+}
