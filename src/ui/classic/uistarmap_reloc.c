@@ -118,56 +118,6 @@ void ui_starmap_reloc(struct game_s *g, player_id_t active_player)
                     ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
                 }
             }
-        } else if (d.oi1 == d.oi_f4) {
-            bool found;
-            int i, pi;
-            i = pi = g->planet_focus_i[active_player];
-            found = false;
-            do {
-                i = (i + 1) % g->galaxy_stars;
-                for (int j = 0; j < g->eto[active_player].shipdesigns_num; ++j) {
-                    if (g->eto[active_player].orbit[i].ships[j]) {
-                        found = true;
-                        break;
-                    }
-                }
-            } while ((!found) && (i != pi));
-            if (found) {
-                g->planet_focus_i[active_player] = i;
-                ui_starmap_set_pos_focus(g, active_player);
-                ui_sound_play_sfx_24();
-            }
-        } else if (d.oi1 == d.oi_f5) {
-            bool found;
-            int i, pi;
-            i = pi = g->planet_focus_i[active_player];
-            found = false;
-            do {
-                if (--i < 0) { i = g->galaxy_stars - 1; }
-                for (int j = 0; j < g->eto[active_player].shipdesigns_num; ++j) {
-                    if (g->eto[active_player].orbit[i].ships[j]) {
-                        found = true;
-                        break;
-                    }
-                }
-            } while ((!found) && (i != pi));
-            if (found) {
-                g->planet_focus_i[active_player] = i;
-                ui_starmap_set_pos_focus(g, active_player);
-                ui_sound_play_sfx_24();
-            }
-        } else if (d.oi1 == d.oi_f6) {
-            int i;
-            i = ui_starmap_newship_next(g, active_player, g->planet_focus_i[active_player]);
-            g->planet_focus_i[active_player] = i;
-            ui_starmap_set_pos_focus(g, active_player);
-            ui_sound_play_sfx_24();
-        } else if (d.oi1 == d.oi_f7) {
-            int i;
-            i = ui_starmap_newship_prev(g, active_player, g->planet_focus_i[active_player]);
-            g->planet_focus_i[active_player] = i;
-            ui_starmap_set_pos_focus(g, active_player);
-            ui_sound_play_sfx_24();
         }
         if (d.oi1 == d.oi_accept) {
 do_accept:

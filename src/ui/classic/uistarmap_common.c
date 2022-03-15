@@ -1225,6 +1225,39 @@ static int ui_starmap_next_star_i(struct game_s *g, player_id_t active_player, i
     return i;
 }
 
+static bool ui_starmap_star_have_fleet(struct game_s *g, player_id_t active_player, int star) {
+    for (int j = 0; j < g->eto[active_player].shipdesigns_num; ++j) {
+        if (g->eto[active_player].orbit[star].ships[j]) {
+            return true;
+        }
+    }
+    return false;
+}
+
+static int ui_starmap_previous_fleet_i(struct game_s *g, player_id_t active_player, int from) {
+    int i;
+    i = from;
+    do {
+        i = (i + 1) % g->galaxy_stars;
+        if (ui_starmap_star_have_fleet(g, active_player, i)) {
+            break;
+        }
+    } while (i != from);
+    return i;
+}
+
+static int ui_starmap_next_fleet_i(struct game_s *g, player_id_t active_player, int from) {
+    int i;
+    i = from;
+    do {
+        if (--i < 0) { i = g->galaxy_stars - 1; }
+        if (ui_starmap_star_have_fleet(g, active_player, i)) {
+            break;
+        }
+    } while (i != from);
+    return i;
+}
+
 static bool ui_starmap_can_iterate_planets(struct game_s *g, struct starmap_data_s *d) {
     if (ui_data.ui_main_loop_action == UI_MAIN_LOOP_STARMAP) return true;
     if (!ui_extra_enabled) return false;
@@ -1292,6 +1325,36 @@ bool ui_starmap_handle_common(struct game_s *g, struct starmap_data_s *d, bool *
             d->from = g->planet_focus_i[d->api];
             *flag_done = true;
             ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
+        } else if (ui_data.ui_main_loop_action == UI_MAIN_LOOP_TRANS) {
+            if (d->from != i) {
+                d->tr.other = true;
+            }
+        }
+        return true;
+    }
+    if (d->oi1 == d->oi_f4 || d->oi1 == d->oi_f5 || d->oi1 == d->oi_f6 || d->oi1 == d->oi_f7) {
+        int i;
+        if (d->oi1 == d->oi_f4) {
+            i = ui_starmap_previous_fleet_i(g, d->api, g->planet_focus_i[d->api]);
+        } else if (d->oi1 == d->oi_f5) {
+            i = ui_starmap_next_fleet_i(g, d->api, g->planet_focus_i[d->api]);
+        } else if (d->oi1 == d->oi_f6) {
+            i = ui_starmap_newship_next(g, d->api, g->planet_focus_i[d->api]);
+        } else if (d->oi1 == d->oi_f7) {
+            i = ui_starmap_newship_prev(g, d->api, g->planet_focus_i[d->api]);
+        }
+        g->planet_focus_i[d->api] = i;
+        ui_starmap_set_pos_focus(g, d->api);
+        ui_sound_play_sfx_24();
+        if (!ui_extra_enabled ||
+                (ui_data.ui_main_loop_action != UI_MAIN_LOOP_RELOC &&
+                ui_data.ui_main_loop_action != UI_MAIN_LOOP_TRANS)) {
+            if (BOOLVEC_IS1(g->eto[d->api].orbit[i].visible, d->api)) {
+                d->from = i;
+                ui_data.starmap.orbit_player = d->api;
+                ui_data.ui_main_loop_action = UI_MAIN_LOOP_ORBIT_OWN_SEL;
+                *flag_done = true;
+            }
         } else if (ui_data.ui_main_loop_action == UI_MAIN_LOOP_TRANS) {
             if (d->from != i) {
                 d->tr.other = true;
