@@ -77,6 +77,9 @@ struct starmap_data_s {
     int16_t oi_f8;
     int16_t oi_f9;
     int16_t oi_f10;
+    int16_t oi_alt_m;
+    int16_t oi_alt_c;
+    int16_t oi_alt_r;
     int16_t oi_accept;
     int16_t oi_cancel;
     int16_t oi_scroll;
@@ -162,6 +165,9 @@ struct starmap_data_s {
         d.oi_f8 = UIOBJI_INVALID; \
         d.oi_f9 = UIOBJI_INVALID; \
         d.oi_f10 = UIOBJI_INVALID; \
+        d.oi_alt_m = UIOBJI_INVALID; \
+        d.oi_alt_c = UIOBJI_INVALID; \
+        d.oi_alt_r = UIOBJI_INVALID; \
         d.oi_accept = UIOBJI_INVALID; \
         d.oi_cancel = UIOBJI_INVALID; \
         d.oi_scroll = UIOBJI_INVALID; \
@@ -209,7 +215,6 @@ extern int ui_starmap_cursor_on_star(const struct game_s *g, const struct starma
 extern int ui_starmap_cursor_on_enroute(const struct game_s *g, const struct starmap_data_s *d, int16_t oi2);
 extern int ui_starmap_cursor_on_transport(const struct game_s *g, const struct starmap_data_s *d, int16_t oi2);
 extern int ui_starmap_cursor_on_orbit(const struct game_s *g, const struct starmap_data_s *d, int16_t oi2, player_id_t orbit_owner);
-extern void ui_starmap_handle_reloc_all(struct game_s *g, player_id_t active_player);
 extern void ui_starmap_select_bottom_highlight(struct game_s *g, struct starmap_data_s *d, int16_t oi);
 extern bool ui_starmap_handle_common(struct game_s *g, struct starmap_data_s *d, bool *flag_done);
 

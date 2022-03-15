@@ -833,6 +833,9 @@ void ui_starmap_add_oi_hotkeys(struct starmap_data_s *d)
     d->oi_f8 = uiobj_add_inputkey(MOO_KEY_F8);
     d->oi_f9 = uiobj_add_inputkey(MOO_KEY_F9);
     d->oi_f10 = uiobj_add_inputkey(MOO_KEY_F10);
+    d->oi_alt_m = uiobj_add_inputkey(MOO_KEY_m | MOO_MOD_ALT);
+    d->oi_alt_c = uiobj_add_inputkey(MOO_KEY_c | MOO_MOD_ALT);
+    d->oi_alt_r = uiobj_add_inputkey(MOO_KEY_r | MOO_MOD_ALT);
 }
 
 void ui_starmap_fill_oi_tbls(struct starmap_data_s *d)
@@ -1196,7 +1199,7 @@ static int ui_starmap_reloc_un(struct game_s *g, player_id_t active_player)
     return count;
 }
 
-void ui_starmap_handle_reloc_all(struct game_s *g, player_id_t active_player) {
+static void ui_starmap_handle_reloc_all(struct game_s *g, player_id_t active_player) {
     if (!ui_extra_enabled) {
         ui_starmap_reloc_reloc(g, active_player);
     }
@@ -1290,6 +1293,28 @@ bool ui_starmap_handle_common(struct game_s *g, struct starmap_data_s *d, bool *
     ui_starmap_handle_scrollkeys(d, d->oi1);
     if (d->oi1 == d->oi_scroll && !g->evn.build_finished_num[d->api]) {
         ui_starmap_scroll(g, d->scrollx, d->scrolly, d->scrollz);
+        return true;
+    }
+    if (d->oi1 == d->oi_alt_c) {
+        ui_starmap_set_pos_focus(g, d->api);
+        ui_sound_play_sfx_24();
+        return true;
+    }
+    if (d->oi1 == d->oi_alt_m) {
+        ui_data.starmap.flag_show_grid = !ui_data.starmap.flag_show_grid;
+        ui_sound_play_sfx_24();
+        return true;
+    }
+    if (d->oi1 == d->oi_alt_r) {
+        if (ui_data.ui_main_loop_action == UI_MAIN_LOOP_ENROUTE_SEL &&
+                g->enroute[ui_data.starmap.fleet_selected].owner != d->api) {
+            return true;
+        }
+        if (ui_data.ui_main_loop_action == UI_MAIN_LOOP_TRANSPORT_SEL &&
+                g->transport[ui_data.starmap.fleet_selected].owner != d->api) {
+            return true;
+        }
+        ui_starmap_handle_reloc_all(g, d->api);
         return true;
     }
     if (d->oi1 == d->oi_cancel || d->oi1 == UIOBJI_ESC) {

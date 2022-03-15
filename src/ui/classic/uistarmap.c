@@ -225,7 +225,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
 {
     bool flag_done = false;
     int16_t oi_b, oi_c, oi_starview1, oi_starview2, oi_shippic, oi_finished, oi_equals, oi_hash,
-            oi_alt_galaxy, oi_alt_m, oi_alt_c, oi_alt_p, oi_alt_r, oi_alt_events,
+            oi_alt_galaxy, oi_alt_p, oi_alt_events,
             oi_governor, oi_wheelname, oi_wheelshippic, oi_xtramenu, oi_search
             ;
     int16_t scrollmisc = 0;
@@ -278,10 +278,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
     UIOBJ_CLEAR_LOCAL();
 
     oi_alt_galaxy = uiobj_add_alt_str("galaxy");
-    oi_alt_m = uiobj_add_alt_str("m");
-    oi_alt_c = uiobj_add_alt_str("c");
     oi_alt_p = uiobj_add_alt_str("p");
-    oi_alt_r = uiobj_add_alt_str("r");
     oi_alt_events = uiobj_add_alt_str("events");
 
     uiobj_set_callback_and_delay(ui_starmap_draw_cb1, &d, STARMAP_DELAY);
@@ -312,11 +309,6 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
         } else if (d.oi1 == oi_c) {
             ui_data.ui_main_loop_action = UI_MAIN_LOOP_SPIES_CAUGHT;
             flag_done = true;
-            ui_sound_play_sfx_24();
-        } else if (d.oi1 == oi_alt_r) {
-            ui_starmap_handle_reloc_all(g, active_player);
-        } else if (d.oi1 == oi_alt_m) {
-            ui_data.starmap.flag_show_grid = !ui_data.starmap.flag_show_grid;
             ui_sound_play_sfx_24();
         } else if ((d.oi1 == oi_finished) || ((d.oi1 == UIOBJI_ESC) && (oi_finished != UIOBJI_INVALID))) {
             if (ui_starmap_remove_build_finished(g, active_player, p)) {
@@ -460,10 +452,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
         }
         ui_starmap_handle_oi_ctrl(&d, d.oi1);
         ui_starmap_handle_tag(&d, d.oi1, true);
-        if (d.oi1 == oi_alt_c) {
-            ui_starmap_set_pos_focus(g, active_player);
-            ui_sound_play_sfx_24();
-        } else if (d.oi1 == oi_equals || d.oi1 == oi_hash) {
+        if (d.oi1 == oi_equals || d.oi1 == oi_hash) {
             if (2 * p->reserve >= p->prod_after_maint) {
                 if (ui_extra_enabled) {
                     g->eto[active_player].reserve_bc += p->reserve;
