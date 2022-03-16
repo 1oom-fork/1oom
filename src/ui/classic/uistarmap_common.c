@@ -677,7 +677,7 @@ void ui_starmap_draw_button_text(struct starmap_data_s *d, bool highlight)
     lbxfont_print_str_normal(263, 184, game_str_sm_next_turn, UI_SCREEN_W, ui_scale);
 }
 
-void ui_starmap_handle_oi_ctrl(struct starmap_data_s *d, int16_t oi)
+static void ui_starmap_handle_oi_ctrl(struct starmap_data_s *d, int16_t oi)
 {
 #define XSTEP   0x1b
 #define YSTEP   0x15
@@ -788,7 +788,7 @@ static void ui_starmap_handle_scrollkeys(struct starmap_data_s *d, int16_t oi)
     ui_data.starmap.yhold = yh;
 }
 
-uint8_t ui_starmap_handle_tag(struct starmap_data_s *d, int16_t oi, bool flag_set_focus)
+static uint8_t ui_starmap_handle_tag(struct starmap_data_s *d, int16_t oi)
 {
     for (int i = 0; i < PLANET_TAG_NUM; ++i) {
         if (oi == d->oi_tag_set[i]) {
@@ -799,10 +799,6 @@ uint8_t ui_starmap_handle_tag(struct starmap_data_s *d, int16_t oi, bool flag_se
             uint8_t pli;
             pli = ui_data.starmap.tag[d->api][i];
             if (pli < d->g->galaxy_stars) {
-                d->g->planet_focus_i[d->api] = pli;
-                if (flag_set_focus) {
-                    ui_starmap_set_pos_focus(d->g, d->api);
-                }
                 return pli;
             }
             break;
@@ -1011,7 +1007,7 @@ void ui_starmap_draw_planetinfo_2(const struct game_s *g, int p1, int p2, int pl
     ui_starmap_draw_planetinfo_do(g, api, planet_i, explored, false);
 }
 
-int ui_starmap_newship_next(const struct game_s *g, player_id_t pi, int i)
+static int ui_starmap_newship_next(const struct game_s *g, player_id_t pi, int i)
 {
     int t = i;
     const planet_t *p;
@@ -1022,7 +1018,7 @@ int ui_starmap_newship_next(const struct game_s *g, player_id_t pi, int i)
     return i;
 }
 
-int ui_starmap_newship_prev(const struct game_s *g, player_id_t pi, int i)
+static int ui_starmap_newship_prev(const struct game_s *g, player_id_t pi, int i)
 {
     int t = i;
     const planet_t *p;
@@ -1033,7 +1029,7 @@ int ui_starmap_newship_prev(const struct game_s *g, player_id_t pi, int i)
     return i;
 }
 
-int ui_starmap_enemy_incoming(const struct game_s *g, player_id_t pi, int i, bool next)
+static int ui_starmap_enemy_incoming(const struct game_s *g, player_id_t pi, int i, bool next)
 {
     int t = i;
     do {
@@ -1060,7 +1056,7 @@ int ui_starmap_enemy_incoming(const struct game_s *g, player_id_t pi, int i, boo
     return i;
 }
 
-void ui_starmap_scroll(const struct game_s *g, int scrollx, int scrolly, uint8_t scrollz)
+static void ui_starmap_scroll(const struct game_s *g, int scrollx, int scrolly, uint8_t scrollz)
 {
     int x, y;
     if (scrollx >= 0) {
@@ -1401,34 +1397,52 @@ bool ui_starmap_handle_common(struct game_s *g, struct starmap_data_s *d, bool *
         ui_starmap_focus_planet(g, d, i, flag_done);
         return true;
     }
-    if (d->oi1 == d->oi_f2 || d->oi1 == d->oi_f3 ||
-            (((d->oi1 == d->oi_f8) || (d->oi1 == d->oi_f9)) && g->eto[d->api].have_ia_scanner)) {
-        int i;
-        if (d->oi1 == d->oi_f2) {
-            i = ui_starmap_previous_star_i(g, d->api, g->planet_focus_i[d->api]);
-        } else if (d->oi1 == d->oi_f3) {
-            i = ui_starmap_next_star_i(g, d->api, g->planet_focus_i[d->api]);
-        } else if (d->oi1 == d->oi_f8) {
-            i = ui_starmap_enemy_incoming(g, d->api, g->planet_focus_i[d->api], true);
-        } else if (d->oi1 == d->oi_f9) {
-            i = ui_starmap_enemy_incoming(g, d->api, g->planet_focus_i[d->api], false);
-        }
+    if (d->oi1 == d->oi_f2) {
+        int i = ui_starmap_previous_star_i(g, d->api, g->planet_focus_i[d->api]);
         ui_starmap_focus_planet(g, d, i, flag_done);
         return true;
     }
-    if (d->oi1 == d->oi_f4 || d->oi1 == d->oi_f5 || d->oi1 == d->oi_f6 || d->oi1 == d->oi_f7) {
-        int i;
-        if (d->oi1 == d->oi_f4) {
-            i = ui_starmap_previous_fleet_i(g, d->api, g->planet_focus_i[d->api]);
-        } else if (d->oi1 == d->oi_f5) {
-            i = ui_starmap_next_fleet_i(g, d->api, g->planet_focus_i[d->api]);
-        } else if (d->oi1 == d->oi_f6) {
-            i = ui_starmap_newship_next(g, d->api, g->planet_focus_i[d->api]);
-        } else if (d->oi1 == d->oi_f7) {
-            i = ui_starmap_newship_prev(g, d->api, g->planet_focus_i[d->api]);
-        }
+    if (d->oi1 == d->oi_f3) {
+        int i = ui_starmap_next_star_i(g, d->api, g->planet_focus_i[d->api]);
+        ui_starmap_focus_planet(g, d, i, flag_done);
+        return true;
+    }
+    if (d->oi1 == d->oi_f8 && g->eto[d->api].have_ia_scanner) {
+        int i = ui_starmap_enemy_incoming(g, d->api, g->planet_focus_i[d->api], true);
+        ui_starmap_focus_planet(g, d, i, flag_done);
+        return true;
+    }
+    if (d->oi1 == d->oi_f9 && g->eto[d->api].have_ia_scanner) {
+        int i = ui_starmap_enemy_incoming(g, d->api, g->planet_focus_i[d->api], false);
+        ui_starmap_focus_planet(g, d, i, flag_done);
+        return true;
+    }
+    if (d->oi1 == d->oi_f4) {
+        int i = ui_starmap_previous_fleet_i(g, d->api, g->planet_focus_i[d->api]);
         ui_starmap_focus_own_fleet(g, d, i, flag_done);
         return true;
+    }
+    if (d->oi1 == d->oi_f5) {
+        int i = ui_starmap_next_fleet_i(g, d->api, g->planet_focus_i[d->api]);
+        ui_starmap_focus_own_fleet(g, d, i, flag_done);
+        return true;
+    }
+    if (d->oi1 == d->oi_f6) {
+        int i = ui_starmap_newship_next(g, d->api, g->planet_focus_i[d->api]);
+        ui_starmap_focus_own_fleet(g, d, i, flag_done);
+        return true;
+    }
+    if (d->oi1 == d->oi_f7) {
+        int i = ui_starmap_newship_prev(g, d->api, g->planet_focus_i[d->api]);
+        ui_starmap_focus_own_fleet(g, d, i, flag_done);
+        return true;
+    }
+    {
+        int i = ui_starmap_handle_tag(d, d->oi1);
+        if (i != PLANET_NONE) {
+            ui_starmap_focus_planet(g, d, i, flag_done);
+            return true;
+        }
     }
     ui_main_loop_action_t action = ui_starmap_bottom_menu_action(g, d, d->oi1);
     if (action != -1) {
@@ -1472,5 +1486,6 @@ bool ui_starmap_handle_common(struct game_s *g, struct starmap_data_s *d, bool *
             }
         }
     }
+    ui_starmap_handle_oi_ctrl(d, d->oi1);
     return false;
 }

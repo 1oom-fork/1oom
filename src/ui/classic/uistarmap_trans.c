@@ -229,10 +229,6 @@ do_accept:
             ++d.tr.num;
             SETMIN(d.tr.num, trans_max);
         }
-        ui_starmap_handle_oi_ctrl(&d, d.oi1);
-        if (ui_starmap_handle_tag(&d, d.oi1, false) != PLANET_NONE) {
-            d.tr.other = true;
-        }
         for (int i = 0; i < g->galaxy_stars; ++i) {
             if (d.oi1 == d.oi_tbl_stars[i]) {
                 if (ui_extra_enabled && (d.oi_accept != UIOBJI_INVALID) && (g->planet_focus_i[active_player] == i)) {

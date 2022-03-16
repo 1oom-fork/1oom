@@ -446,8 +446,6 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
                 }
             }
         }
-        ui_starmap_handle_oi_ctrl(&d, d.oi1);
-        ui_starmap_handle_tag(&d, d.oi1, true);
         if (d.oi1 == oi_equals || d.oi1 == oi_hash) {
             if (2 * p->reserve >= p->prod_after_maint) {
                 if (ui_extra_enabled) {

@@ -137,11 +137,6 @@ void ui_starmap_orbit_en(struct game_s *g, player_id_t active_player)
     while (!flag_done) {
         ui_delay_prepare();
         ui_starmap_handle_common(g, &d, &flag_done);
-        ui_starmap_handle_oi_ctrl(&d, d.oi1);
-        if (ui_starmap_handle_tag(&d, d.oi1, false) != PLANET_NONE) {
-            ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
-            flag_done = true;
-        }
         for (int i = 0; i < g->galaxy_stars; ++i) {
             if ((d.oi1 == d.oi_tbl_stars[i]) && !g->evn.build_finished_num[active_player]) {
                 g->planet_focus_i[active_player] = i;

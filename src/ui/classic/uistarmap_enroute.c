@@ -202,14 +202,6 @@ do_accept:
             }
             ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
         }
-        if (ui_starmap_handle_tag(&d, d.oi1, false) != PLANET_NONE) {
-            if ((r->owner != active_player) || (d.en.can_move == NO_MOVE)) {
-                d.from = g->planet_focus_i[active_player];
-                flag_done = true;
-                ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
-            }
-        }
-        ui_starmap_handle_oi_ctrl(&d, d.oi1);
         for (int i = 0; i < g->galaxy_stars; ++i) {
             if (d.oi1 == d.oi_tbl_stars[i]) {
                 if (ui_extra_enabled && r->owner == active_player && (d.en.can_move != NO_MOVE)) {

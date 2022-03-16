@@ -108,8 +108,6 @@ do_accept:
             g->planet[d.from].reloc = g->planet_focus_i[active_player];
             ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
         }
-        ui_starmap_handle_oi_ctrl(&d, d.oi1);
-        ui_starmap_handle_tag(&d, d.oi1, false);
         for (int i = 0; i < g->galaxy_stars; ++i) {
             if (d.oi1 == d.oi_tbl_stars[i]) {
                 if (ui_extra_enabled) {
