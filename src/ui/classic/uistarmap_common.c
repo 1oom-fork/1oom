@@ -1007,6 +1007,15 @@ void ui_starmap_draw_planetinfo_2(const struct game_s *g, int p1, int p2, int pl
     ui_starmap_draw_planetinfo_do(g, api, planet_i, explored, false);
 }
 
+static bool ui_starmap_star_have_fleet(const struct game_s *g, player_id_t active_player, int star) {
+    for (int j = 0; j < g->eto[active_player].shipdesigns_num; ++j) {
+        if (g->eto[active_player].orbit[star].ships[j]) {
+            return true;
+        }
+    }
+    return false;
+}
+
 static int ui_starmap_newship_next(const struct game_s *g, player_id_t pi, int i)
 {
     int t = i;
@@ -1014,8 +1023,11 @@ static int ui_starmap_newship_next(const struct game_s *g, player_id_t pi, int i
     do {
         i = (i + 1) % g->galaxy_stars;
         p = &(g->planet[i]);
-    } while ((!((p->owner == pi) && BOOLVEC_IS1(p->finished, FINISHED_SHIP))) && (i != t));
-    return i;
+        if (p->owner == pi && BOOLVEC_IS1(p->finished, FINISHED_SHIP) && ui_starmap_star_have_fleet(g, pi, i)) {
+            return i;
+        }
+    } while (i != t);
+    return PLANET_NONE;
 }
 
 static int ui_starmap_newship_prev(const struct game_s *g, player_id_t pi, int i)
@@ -1025,8 +1037,11 @@ static int ui_starmap_newship_prev(const struct game_s *g, player_id_t pi, int i
     do {
         if (--i < 0) { i = g->galaxy_stars - 1; }
         p = &(g->planet[i]);
-    } while ((!((p->owner == pi) && BOOLVEC_IS1(p->finished, FINISHED_SHIP))) && (i != t));
-    return i;
+        if (p->owner == pi && BOOLVEC_IS1(p->finished, FINISHED_SHIP) && ui_starmap_star_have_fleet(g, pi, i)) {
+            return i;
+        }
+    } while (i != t);
+    return PLANET_NONE;
 }
 
 static int ui_starmap_enemy_incoming(const struct game_s *g, player_id_t pi, int i, bool next)
@@ -1053,7 +1068,7 @@ static int ui_starmap_enemy_incoming(const struct game_s *g, player_id_t pi, int
             }
         }
     } while (i != t);
-    return i;
+    return PLANET_NONE;
 }
 
 static void ui_starmap_scroll(const struct game_s *g, int scrollx, int scrolly, uint8_t scrollz)
@@ -1213,8 +1228,11 @@ static int ui_starmap_previous_star_i(struct game_s *g, player_id_t active_playe
     i = from;
     do {
         if (--i < 0) { i = g->galaxy_stars - 1; }
-    } while (g->planet[i].owner != active_player);
-    return i;
+        if (g->planet[i].owner == active_player) {
+            return i;
+        }
+    } while (i != from);
+    return PLANET_NONE;
 }
 
 static int ui_starmap_next_star_i(struct game_s *g, player_id_t active_player, int from) {
@@ -1222,17 +1240,11 @@ static int ui_starmap_next_star_i(struct game_s *g, player_id_t active_player, i
     i = from;
     do {
         i = (i + 1) % g->galaxy_stars;
-    } while (g->planet[i].owner != active_player);
-    return i;
-}
-
-static bool ui_starmap_star_have_fleet(struct game_s *g, player_id_t active_player, int star) {
-    for (int j = 0; j < g->eto[active_player].shipdesigns_num; ++j) {
-        if (g->eto[active_player].orbit[star].ships[j]) {
-            return true;
+        if (g->planet[i].owner == active_player) {
+            return i;
         }
-    }
-    return false;
+    } while (i != from);
+    return PLANET_NONE;
 }
 
 static int ui_starmap_previous_fleet_i(struct game_s *g, player_id_t active_player, int from) {
@@ -1241,10 +1253,10 @@ static int ui_starmap_previous_fleet_i(struct game_s *g, player_id_t active_play
     do {
         i = (i + 1) % g->galaxy_stars;
         if (ui_starmap_star_have_fleet(g, active_player, i)) {
-            break;
+            return i;
         }
     } while (i != from);
-    return i;
+    return PLANET_NONE;
 }
 
 static int ui_starmap_next_fleet_i(struct game_s *g, player_id_t active_player, int from) {
@@ -1253,10 +1265,10 @@ static int ui_starmap_next_fleet_i(struct game_s *g, player_id_t active_player, 
     do {
         if (--i < 0) { i = g->galaxy_stars - 1; }
         if (ui_starmap_star_have_fleet(g, active_player, i)) {
-            break;
+            return i;
         }
     } while (i != from);
-    return i;
+    return PLANET_NONE;
 }
 
 static bool ui_starmap_can_iterate_own_planets(struct game_s *g, struct starmap_data_s *d) {
@@ -1294,6 +1306,9 @@ static bool ui_starmap_can_iterate_enemy_planets(struct game_s *g, struct starma
 }
 
 static void ui_starmap_focus_planet(struct game_s *g, struct starmap_data_s *d, int i, bool *flag_done) {
+    if (i == PLANET_NONE) {
+        return;
+    }
     g->planet_focus_i[d->api] = i;
     ui_starmap_set_pos_focus(g, d->api);
     ui_sound_play_sfx_24();
@@ -1315,6 +1330,9 @@ static void ui_starmap_focus_planet(struct game_s *g, struct starmap_data_s *d, 
 }
 
 static void ui_starmap_focus_own_fleet(struct game_s *g, struct starmap_data_s *d, int i, bool *flag_done) {
+    if (i == PLANET_NONE) {
+        return;
+    }
     g->planet_focus_i[d->api] = i;
     ui_starmap_set_pos_focus(g, d->api);
     ui_sound_play_sfx_24();

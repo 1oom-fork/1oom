@@ -59,6 +59,7 @@ The following new UI features are always enabled/available:
   one round of production (with uiextra also transfers back)
 - F2-F9, Alt+c, Alt+m, Alt+r and planet search (/) works regardless of
   selection type if possible
+- F2-F9 no longer do weird things if they can't find the next object
 
 The config file item "ui.uiextra" (set via the -uiextra command-line option)
 or pressing Alt-X in the main menu enables the following extra UI features:
