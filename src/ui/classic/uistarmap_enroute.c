@@ -20,7 +20,6 @@
 #include "uidefs.h"
 #include "uidelay.h"
 #include "uiobj.h"
-#include "uisearch.h"
 #include "uisound.h"
 #include "uistarmap_common.h"
 #include "util.h"
@@ -139,7 +138,6 @@ static void ui_starmap_enroute_draw_cb(void *vptr)
 void ui_starmap_enroute(struct game_s *g, player_id_t active_player)
 {
     bool flag_done = false;
-    int16_t oi_search;
     struct starmap_data_s d;
     fleet_enroute_t *r;
 
@@ -194,17 +192,8 @@ void ui_starmap_enroute(struct game_s *g, player_id_t active_player)
         p = &g->planet[g->planet_focus_i[active_player]];
         d.en.in_frange = ((p->within_frange[active_player] == 1) || ((p->within_frange[active_player] == 2) && d.en.sn0.have_reserve_fuel));
         ui_delay_prepare();
-        if (ui_starmap_handle_common(g, &d, &flag_done)) {
-        } else if (d.oi1 == oi_search) {
-            ui_sound_play_sfx_24();
-            if (ui_search_set_pos(g, active_player)) {
-                if ((r->owner != active_player) || (d.en.can_move == NO_MOVE)) {
-                    d.from = g->planet_focus_i[active_player];
-                    flag_done = true;
-                    ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
-                }
-            }
-        } else if (d.oi1 == d.oi_accept) {
+        ui_starmap_handle_common(g, &d, &flag_done);
+        if (d.oi1 == d.oi_accept) {
 do_accept:
             ui_sound_play_sfx_24();
             if (p->within_frange[active_player] != 0) {
@@ -261,7 +250,6 @@ do_accept:
                 }
             }
             d.oi_scroll = uiobj_add_tb(6, 6, 2, 2, 108, 86, &d.scrollx, &d.scrolly, &d.scrollz, ui_scale);
-            oi_search = uiobj_add_inputkey(MOO_KEY_SLASH);
             ui_starmap_fill_oi_ctrl(&d);
             ui_starmap_add_oi_bottom_buttons(&d);
             ui_draw_finish();

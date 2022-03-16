@@ -20,7 +20,6 @@
 #include "uidefs.h"
 #include "uidelay.h"
 #include "uiobj.h"
-#include "uisearch.h"
 #include "uisound.h"
 #include "uistarmap_common.h"
 
@@ -149,7 +148,7 @@ static void ui_starmap_orbit_own_draw_cb(void *vptr)
 void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
 {
     bool flag_done = false;
-    int16_t oi_search, oi_cycle,
+    int16_t oi_cycle,
             oi_tbl_p[NUM_SHIPDESIGNS],
             oi_tbl_m[NUM_SHIPDESIGNS],
             oi_tbl_a[NUM_SHIPDESIGNS],
@@ -208,11 +207,7 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
         p = &g->planet[g->planet_focus_i[active_player]];
         ui_starmap_update_reserve_fuel(g, &d.oo.sn0, d.oo.ships, active_player);
         ui_delay_prepare();
-        if (ui_starmap_handle_common(g, &d, &flag_done)) {
-        } else if (d.oi1 == oi_search) {
-            ui_sound_play_sfx_24();
-            ui_search_set_pos(g, active_player);
-        }
+        ui_starmap_handle_common(g, &d, &flag_done);
         if (d.oi1 == d.oi_accept) {
 do_accept:
             ui_sound_play_sfx_24();
@@ -334,7 +329,6 @@ do_accept:
             }
             oi_cycle = uiobj_add_inputkey(MOO_KEY_TAB);
             d.oi_scroll = uiobj_add_tb(6, 6, 2, 2, 108, 86, &d.scrollx, &d.scrolly, &d.scrollz, ui_scale);
-            oi_search = uiobj_add_inputkey(MOO_KEY_SLASH);
             ui_starmap_fill_oi_ctrl(&d);
             for (int i = 0; i < d.oo.sn0.num; ++i) {
                 oi_tbl_p[i] = uiobj_add_t0(288, 35 + i * 26, "", ui_data.gfx.starmap.move_but_p, (cursor_over == i) ? MOO_KEY_GREATER : MOO_KEY_UNKNOWN);

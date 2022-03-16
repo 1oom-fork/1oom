@@ -25,7 +25,6 @@
 #include "uidelay.h"
 #include "uihelp.h"
 #include "uiobj.h"
-#include "uisearch.h"
 #include "uisound.h"
 #include "uistarmap_common.h"
 
@@ -226,7 +225,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
     bool flag_done = false;
     int16_t oi_b, oi_c, oi_starview1, oi_starview2, oi_shippic, oi_finished, oi_equals, oi_hash,
             oi_alt_galaxy, oi_alt_p, oi_alt_events,
-            oi_governor, oi_wheelname, oi_wheelshippic, oi_xtramenu, oi_search
+            oi_governor, oi_wheelname, oi_wheelshippic, oi_xtramenu
             ;
     int16_t scrollmisc = 0;
     struct starmap_data_s d;
@@ -331,9 +330,6 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             }
         } else if (d.oi1 == oi_alt_p) {
             game_cheat_traits(g, active_player);
-        } else if (d.oi1 == oi_search) {
-            ui_sound_play_sfx_24();
-            ui_search_set_pos(g, active_player);
         } else if (d.oi1 == d.sm.oi_gov_ship) {
             ui_sound_play_sfx_24();
             BOOLVEC_SET1(p->extras, PLANET_EXTRAS_GOVERNOR);
@@ -566,7 +562,6 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             ui_starmap_fill_oi_tbl_stars(&d);
             ui_starmap_fill_oi_slider(&d, p);
             d.oi_scroll = uiobj_add_tb(6, 6, 2, 2, 108, 86, &d.scrollx, &d.scrolly, &d.scrollz, ui_scale);
-            oi_search = uiobj_add_inputkey(MOO_KEY_SLASH);
             ui_starmap_fill_oi_ctrl(&d);
             if (1) {
                 int x0, y0, x1, y1;

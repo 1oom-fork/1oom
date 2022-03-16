@@ -25,6 +25,7 @@
 #include "uidefs.h"
 #include "uidelay.h"
 #include "uiobj.h"
+#include "uisearch.h"
 #include "uisound.h"
 #include "uistarmap.h"
 #include "mouse.h"
@@ -836,6 +837,7 @@ void ui_starmap_add_oi_hotkeys(struct starmap_data_s *d)
     d->oi_alt_m = uiobj_add_inputkey(MOO_KEY_m | MOO_MOD_ALT);
     d->oi_alt_c = uiobj_add_inputkey(MOO_KEY_c | MOO_MOD_ALT);
     d->oi_alt_r = uiobj_add_inputkey(MOO_KEY_r | MOO_MOD_ALT);
+    d->oi_search = uiobj_add_inputkey(MOO_KEY_SLASH);
 }
 
 void ui_starmap_fill_oi_tbls(struct starmap_data_s *d)
@@ -1261,7 +1263,7 @@ static int ui_starmap_next_fleet_i(struct game_s *g, player_id_t active_player, 
     return i;
 }
 
-static bool ui_starmap_can_iterate_planets(struct game_s *g, struct starmap_data_s *d) {
+static bool ui_starmap_can_iterate_own_planets(struct game_s *g, struct starmap_data_s *d) {
     if (ui_data.ui_main_loop_action == UI_MAIN_LOOP_STARMAP) return true;
     if (!ui_extra_enabled) return false;
     if (ui_data.ui_main_loop_action == UI_MAIN_LOOP_ORBIT_OWN_SEL) return true;
@@ -1275,6 +1277,65 @@ static bool ui_starmap_can_iterate_planets(struct game_s *g, struct starmap_data
         return (d->ts.can_move != NO_MOVE) && (g->transport[ui_data.starmap.fleet_selected].owner == d->api);
     }
     return false;
+}
+
+static bool ui_starmap_can_iterate_enemy_planets(struct game_s *g, struct starmap_data_s *d) {
+    if (ui_data.ui_main_loop_action == UI_MAIN_LOOP_RELOC ||
+            ui_data.ui_main_loop_action == UI_MAIN_LOOP_ORBIT_EN_SEL) {
+        return false;
+    }
+    if (ui_data.ui_main_loop_action == UI_MAIN_LOOP_ENROUTE_SEL) {
+        if (d->en.can_move == NO_MOVE || g->enroute[ui_data.starmap.fleet_selected].owner != d->api) {
+            return false;
+        }
+    }
+    if (ui_data.ui_main_loop_action == UI_MAIN_LOOP_TRANSPORT_SEL) {
+        if(d->ts.can_move == NO_MOVE || g->transport[ui_data.starmap.fleet_selected].owner != d->api) {
+            return false;
+        }
+    }
+    return true;
+}
+
+static void ui_starmap_focus_planet(struct game_s *g, struct starmap_data_s *d, int i, bool *flag_done) {
+    g->planet_focus_i[d->api] = i;
+    ui_starmap_set_pos_focus(g, d->api);
+    ui_sound_play_sfx_24();
+    bool can_iterate_planets;
+    if (g->planet[i].owner == d->api) {
+        can_iterate_planets = ui_starmap_can_iterate_own_planets(g, d);
+    } else {
+        can_iterate_planets = ui_starmap_can_iterate_enemy_planets(g, d);
+    }
+    if (!can_iterate_planets) {
+        d->from = g->planet_focus_i[d->api];
+        *flag_done = true;
+        ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
+    } else if (ui_data.ui_main_loop_action == UI_MAIN_LOOP_TRANS) {
+        if (d->from != i) {
+            d->tr.other = true;
+        }
+    }
+}
+
+static void ui_starmap_focus_own_fleet(struct game_s *g, struct starmap_data_s *d, int i, bool *flag_done) {
+    g->planet_focus_i[d->api] = i;
+    ui_starmap_set_pos_focus(g, d->api);
+    ui_sound_play_sfx_24();
+    if (!ui_extra_enabled ||
+            (ui_data.ui_main_loop_action != UI_MAIN_LOOP_RELOC &&
+            ui_data.ui_main_loop_action != UI_MAIN_LOOP_TRANS)) {
+        if (BOOLVEC_IS1(g->eto[d->api].orbit[i].visible, d->api)) {
+            d->from = i;
+            ui_data.starmap.orbit_player = d->api;
+            ui_data.ui_main_loop_action = UI_MAIN_LOOP_ORBIT_OWN_SEL;
+            *flag_done = true;
+        }
+    } else if (ui_data.ui_main_loop_action == UI_MAIN_LOOP_TRANS) {
+        if (d->from != i) {
+            d->tr.other = true;
+        }
+    }
 }
 
 bool ui_starmap_handle_common(struct game_s *g, struct starmap_data_s *d, bool *flag_done) {
@@ -1331,6 +1392,15 @@ bool ui_starmap_handle_common(struct game_s *g, struct starmap_data_s *d, bool *
             return true;
         }
     }
+    if (d->oi1 == d->oi_search) {
+        ui_sound_play_sfx_24();
+        int i = ui_search(g, d->api);
+        if (i < 0) {
+            return true;
+        }
+        ui_starmap_focus_planet(g, d, i, flag_done);
+        return true;
+    }
     if (d->oi1 == d->oi_f2 || d->oi1 == d->oi_f3 ||
             (((d->oi1 == d->oi_f8) || (d->oi1 == d->oi_f9)) && g->eto[d->api].have_ia_scanner)) {
         int i;
@@ -1343,18 +1413,7 @@ bool ui_starmap_handle_common(struct game_s *g, struct starmap_data_s *d, bool *
         } else if (d->oi1 == d->oi_f9) {
             i = ui_starmap_enemy_incoming(g, d->api, g->planet_focus_i[d->api], false);
         }
-        g->planet_focus_i[d->api] = i;
-        ui_starmap_set_pos_focus(g, d->api);
-        ui_sound_play_sfx_24();
-        if (!ui_starmap_can_iterate_planets(g, d)) {
-            d->from = g->planet_focus_i[d->api];
-            *flag_done = true;
-            ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
-        } else if (ui_data.ui_main_loop_action == UI_MAIN_LOOP_TRANS) {
-            if (d->from != i) {
-                d->tr.other = true;
-            }
-        }
+        ui_starmap_focus_planet(g, d, i, flag_done);
         return true;
     }
     if (d->oi1 == d->oi_f4 || d->oi1 == d->oi_f5 || d->oi1 == d->oi_f6 || d->oi1 == d->oi_f7) {
@@ -1368,23 +1427,7 @@ bool ui_starmap_handle_common(struct game_s *g, struct starmap_data_s *d, bool *
         } else if (d->oi1 == d->oi_f7) {
             i = ui_starmap_newship_prev(g, d->api, g->planet_focus_i[d->api]);
         }
-        g->planet_focus_i[d->api] = i;
-        ui_starmap_set_pos_focus(g, d->api);
-        ui_sound_play_sfx_24();
-        if (!ui_extra_enabled ||
-                (ui_data.ui_main_loop_action != UI_MAIN_LOOP_RELOC &&
-                ui_data.ui_main_loop_action != UI_MAIN_LOOP_TRANS)) {
-            if (BOOLVEC_IS1(g->eto[d->api].orbit[i].visible, d->api)) {
-                d->from = i;
-                ui_data.starmap.orbit_player = d->api;
-                ui_data.ui_main_loop_action = UI_MAIN_LOOP_ORBIT_OWN_SEL;
-                *flag_done = true;
-            }
-        } else if (ui_data.ui_main_loop_action == UI_MAIN_LOOP_TRANS) {
-            if (d->from != i) {
-                d->tr.other = true;
-            }
-        }
+        ui_starmap_focus_own_fleet(g, d, i, flag_done);
         return true;
     }
     ui_main_loop_action_t action = ui_starmap_bottom_menu_action(g, d, d->oi1);

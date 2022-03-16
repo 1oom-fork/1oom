@@ -17,7 +17,6 @@
 #include "uidefs.h"
 #include "uidelay.h"
 #include "uiobj.h"
-#include "uisearch.h"
 #include "uisound.h"
 #include "uistarmap_common.h"
 #include "util.h"
@@ -157,7 +156,7 @@ static void ui_starmap_trans_draw_cb(void *vptr)
 void ui_starmap_trans(struct game_s *g, player_id_t active_player)
 {
     bool flag_done = false;
-    int16_t oi_plus, oi_minus, oi_search
+    int16_t oi_plus, oi_minus
             ;
     struct starmap_data_s d;
     planet_t *p;
@@ -204,13 +203,7 @@ void ui_starmap_trans(struct game_s *g, player_id_t active_player)
         const planet_t *pt;
         ui_delay_prepare();
         pt = &(g->planet[g->planet_focus_i[active_player]]);
-        if (ui_starmap_handle_common(g, &d, &flag_done)) {
-        } else if (d.oi1 == oi_search) {
-            ui_sound_play_sfx_24();
-            if (ui_search_set_pos(g, active_player)) {
-                d.tr.other = true;
-            }
-        }
+        ui_starmap_handle_common(g, &d, &flag_done);
         if (d.oi1 == d.oi_accept) {
 do_accept:
             ui_sound_play_sfx_24();
@@ -275,7 +268,6 @@ do_accept:
                 oi_plus = uiobj_add_mousearea(301, 124, 305, 131, MOO_KEY_PLUS);
             }
             d.oi_scroll = uiobj_add_tb(6, 6, 2, 2, 108, 86, &d.scrollx, &d.scrolly, &d.scrollz, ui_scale);
-            oi_search = uiobj_add_inputkey(MOO_KEY_SLASH);
             ui_starmap_fill_oi_ctrl(&d);
             ui_starmap_add_oi_bottom_buttons(&d);
             ui_draw_finish();
