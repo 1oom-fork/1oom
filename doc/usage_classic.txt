@@ -121,5 +121,6 @@ or pressing Alt-X in the main menu enables the following extra UI features:
 - Alt+R to set/unset relocation for all planets
 - F2-F9 have context sensitive behavior if possible
 - Default hotkeys changed: Races screen (r -> e), Reloc button (l -> r)
+- Alt+F to show/hide incoming friendly fleet route when planet is selected
 
 See doc/list_gamediff.txt for a list of differences in the game itself.

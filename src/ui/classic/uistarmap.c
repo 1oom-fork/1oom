@@ -229,7 +229,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
 {
     bool flag_done = false;
     int16_t oi_b, oi_c, oi_starview1, oi_starview2, oi_shippic, oi_finished, oi_equals, oi_hash,
-            oi_alt_galaxy, oi_alt_p, oi_alt_events,
+            oi_alt_f, oi_alt_galaxy, oi_alt_p, oi_alt_events,
             oi_governor, oi_wheelname, oi_wheelshippic, oi_xtramenu
             ;
     int16_t scrollmisc = 0;
@@ -257,6 +257,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
         STARMAP_UIOBJ_CLEAR_COMMON(); \
         oi_b = UIOBJI_INVALID; \
         oi_c = UIOBJI_INVALID; \
+        oi_alt_f = UIOBJI_INVALID; \
         oi_starview1 = UIOBJI_INVALID; \
         oi_starview2 = UIOBJI_INVALID; \
         oi_shippic = UIOBJI_INVALID; \
@@ -325,6 +326,8 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             flag_done = true;
             ui_delay_1();
             d.oi1 = 0;
+        } else if (d.oi1 == oi_alt_f) {
+            g->planet_show_enroutes[d.api] = !g->planet_show_enroutes[d.api];
         } else if (d.oi1 == oi_alt_galaxy) {
             if (game_cheat_galaxy(g, active_player)) {
                 ui_sound_play_sfx_24();
@@ -533,6 +536,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
                 oi_b = uiobj_add_inputkey(MOO_KEY_b);
             }
             oi_c = uiobj_add_inputkey(MOO_KEY_c);
+            oi_alt_f = uiobj_add_inputkey(MOO_KEY_f | MOO_MOD_ALT);
             ui_starmap_add_oi_bottom_buttons(&d);
             if (g->evn.build_finished_num[active_player]) {
                 oi_finished = uiobj_add_mousearea(6, 6, 225, 180, MOO_KEY_SPACE);
