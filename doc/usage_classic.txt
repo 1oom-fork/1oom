@@ -58,6 +58,7 @@ The following new UI features are always enabled/available:
 - Pressing = or # in the galaxy movement screen transfers reserve for
   one round of production (with uiextra also transfers back)
 - Pressing +/-/= in send transport screen adjusts slider by 10% of max amount
+- Pressing A in send transport screen sets slider to maximum
 - F2-F9, Alt+c, Alt+m, Alt+r and planet search (/) works regardless of
   selection type if possible
 - F2-F9 no longer do weird things if they can't find the next object

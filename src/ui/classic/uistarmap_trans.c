@@ -156,7 +156,7 @@ static void ui_starmap_trans_draw_cb(void *vptr)
 void ui_starmap_trans(struct game_s *g, player_id_t active_player)
 {
     bool flag_done = false;
-    int16_t oi_plus, oi_minus
+    int16_t oi_plus, oi_minus, oi_a
             ;
     struct starmap_data_s d;
     planet_t *p;
@@ -193,6 +193,7 @@ void ui_starmap_trans(struct game_s *g, player_id_t active_player)
         STARMAP_UIOBJ_CLEAR_COMMON(); \
         oi_plus = UIOBJI_INVALID; \
         oi_minus = UIOBJI_INVALID; \
+        oi_a = UIOBJI_INVALID; \
     } while (0)
 
     UIOBJ_CLEAR_LOCAL();
@@ -236,6 +237,9 @@ do_accept:
             ui_sound_play_sfx_24();
             ++d.tr.num;
             SETMIN(d.tr.num, trans_max);
+        } else if (d.oi1 == oi_a) {
+            ui_sound_play_sfx_24();
+            d.tr.num = trans_max;
         }
         for (int i = 0; i < g->galaxy_stars; ++i) {
             if (d.oi1 == d.oi_tbl_stars[i]) {
@@ -273,6 +277,7 @@ do_accept:
                 d.oi_minus = uiobj_add_inputkey(MOO_KEY_MINUS);
                 d.oi_plus = uiobj_add_inputkey(MOO_KEY_PLUS);
                 d.oi_equals = uiobj_add_inputkey(MOO_KEY_EQUALS);
+                oi_a = uiobj_add_inputkey(MOO_KEY_a);
             }
             d.oi_scroll = uiobj_add_tb(6, 6, 2, 2, 108, 86, &d.scrollx, &d.scrolly, &d.scrollz, ui_scale);
             ui_starmap_fill_oi_ctrl(&d);
