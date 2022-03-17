@@ -107,7 +107,7 @@ or pressing Alt-X in the main menu enables the following extra UI features:
 - Tech screen has additional buttons to equalize spending (= or #), set to
   minimum for bonus (m) and for optimum allocation (o). The latter can be
   automated by clicking the level/auto button (t) in the upper right corner.
-- Pressing E or clicking the bottom left corner near Game opens an extra menu:
+- Pressing V or clicking the bottom left corner near Game opens an extra menu:
     - Eco readjustment for Clean as save/reload used to do in v1.3
     - The ship production selection can be set everywhere
     - "X has finished ..." messages can be filtered
@@ -120,5 +120,6 @@ or pressing Alt-X in the main menu enables the following extra UI features:
 - Hotkey press does not change mouse position
 - Alt+R to set/unset relocation for all planets
 - F2-F9 have context sensitive behavior if possible
+- Default hotkeys changed: Races screen (r -> e), Reloc button (l -> r)
 
 See doc/list_gamediff.txt for a list of differences in the game itself.

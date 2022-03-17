@@ -87,7 +87,12 @@ static void ui_starmap_fill_oi_slider(struct starmap_data_s *d, planet_t *p)
         }
         d->sm.oi_ship = uiobj_add_t0(282, 140, "", ui_data.gfx.starmap.col_butt_ship, MOO_KEY_s);
         if (p->buildship != BUILDSHIP_STARGATE) {
-            d->sm.oi_reloc = uiobj_add_t0(282, 152, "", ui_data.gfx.starmap.col_butt_reloc, MOO_KEY_l);
+            if (ui_extra_enabled) {
+                d->sm.oi_reloc = uiobj_add_t0(282, 152, "", ui_data.gfx.starmap.col_butt_reloc, MOO_KEY_r);
+            }
+            else {
+                d->sm.oi_reloc = uiobj_add_t0(282, 152, "", ui_data.gfx.starmap.col_butt_reloc, MOO_KEY_l);
+            }
         }
         if (g->evn.have_plague && (g->evn.plague_planet_i == g->planet_focus_i[d->api])) {
             lbxgfx_set_frame(ui_data.gfx.starmap.col_butt_trans, 1);
@@ -547,7 +552,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
                 }
             }
             if (ui_extra_enabled) {
-                oi_xtramenu = uiobj_add_mousearea(0, 195, 5, 199, MOO_KEY_e);
+                oi_xtramenu = uiobj_add_mousearea(0, 195, 5, 199, MOO_KEY_v);
             }
             oi_wheelname = uiobj_add_mousewheel(227, 8, 310, 20, &scrollmisc);
             ui_starmap_fill_oi_tbls(&d);
