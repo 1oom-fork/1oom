@@ -69,7 +69,7 @@ static void ui_starmap_trans_draw_cb(void *vptr)
         }
         ui_draw_line_limit_ctbl(x0 + 6, y0 + 6, x1, y1, ctbl, 5, ui_data.starmap.line_anim_phase, starmap_scale);
     }
-    if (d->from != g->planet_focus_i[d->api]) {
+    if (d->from != g->planet_focus_i[d->api] || ui_extra_enabled) {
         if (pt->within_frange[d->api] != 1) {
             int mindist = game_get_min_dist(g, d->api, g->planet_focus_i[d->api]);
             lbxfont_select_set_12_1(0, 0xe, 5, 0);
@@ -261,13 +261,15 @@ do_accept:
             ui_starmap_add_oi_hotkeys(&d);
             ui_starmap_fill_oi_tbl_stars(&d);
             d.oi_cancel = uiobj_add_t0(227, 163, "", ui_data.gfx.starmap.reloc_bu_cancel, MOO_KEY_ESCAPE);
-            if (d.from != g->planet_focus_i[active_player]
+            if ((d.from != g->planet_focus_i[active_player] || ui_extra_enabled)
               && (pt->owner != PLAYER_NONE)
               && (pt->within_frange[active_player] == 1)
               && BOOLVEC_IS1(pt->explored, active_player)
               && (pt->type >= g->eto[active_player].have_colony_for)
             ) {
-                d.oi_accept = uiobj_add_t0(271, 163, "", ui_data.gfx.starmap.reloc_bu_accept, MOO_KEY_SPACE);
+                if (d.from != g->planet_focus_i[active_player]) {
+                    d.oi_accept = uiobj_add_t0(271, 163, "", ui_data.gfx.starmap.reloc_bu_accept, MOO_KEY_SPACE);
+                }
                 uiobj_add_slider_int(258, 124, 0, trans_max, 41, 8, &d.tr.num);
                 oi_minus = uiobj_add_mousearea(252, 124, 256, 131, MOO_KEY_UNKNOWN);
                 oi_plus = uiobj_add_mousearea(301, 124, 305, 131, MOO_KEY_UNKNOWN);
