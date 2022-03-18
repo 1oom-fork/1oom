@@ -240,13 +240,20 @@ do_accept:
         }
         for (int i = 0; i < g->galaxy_stars; ++i) {
             if (d.oi1 == d.oi_tbl_stars[i]) {
-                if (ui_extra_enabled && (d.oi_accept != UIOBJI_INVALID) && (g->planet_focus_i[active_player] == i)) {
+                if (ui_extra_enabled && pt->type >= g->eto[active_player].have_colony_for) {
+                    g->planet_focus_i[active_player] = i;
                     d.oi1 = d.oi_accept;
                     goto do_accept;
                 }
                 g->planet_focus_i[active_player] = i;
                 ui_sound_play_sfx_24();
                 break;
+            }
+            else if (d.oi2 == d.oi_tbl_stars[i]) {
+                if (ui_extra_enabled && g->planet_focus_i[active_player] != i) {
+                    g->planet_focus_i[active_player] = i;
+                    break;
+                }
             }
         }
         d.ruler_from_i = d.from;
