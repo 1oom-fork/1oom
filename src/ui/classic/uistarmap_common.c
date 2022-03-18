@@ -1337,10 +1337,6 @@ static void ui_starmap_focus_planet(struct game_s *g, struct starmap_data_s *d, 
         d->from = g->planet_focus_i[d->api];
         *flag_done = true;
         ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
-    } else if (ui_data.ui_main_loop_action == UI_MAIN_LOOP_TRANS) {
-        if (d->from != i) {
-            d->tr.other = true;
-        }
     }
 }
 
@@ -1359,10 +1355,6 @@ static void ui_starmap_focus_own_fleet(struct game_s *g, struct starmap_data_s *
             ui_data.starmap.orbit_player = d->api;
             ui_data.ui_main_loop_action = UI_MAIN_LOOP_ORBIT_OWN_SEL;
             *flag_done = true;
-        }
-    } else if (ui_data.ui_main_loop_action == UI_MAIN_LOOP_TRANS) {
-        if (d->from != i) {
-            d->tr.other = true;
         }
     }
 }

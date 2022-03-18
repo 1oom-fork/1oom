@@ -109,7 +109,6 @@ struct starmap_data_s {
         } rl;   /* reloc */
         struct {
             int16_t num;
-            bool other;
             bool blink;
         } tr;   /* trans */
         struct {

@@ -58,7 +58,6 @@ static void ui_starmap_trans_draw_cb(void *vptr)
         x1 = (pt->x - ui_data.starmap.x) * 2 + 14;
         y1 = (pt->y - ui_data.starmap.y) * 2 + 14;
         if (0
-          || (!d->tr.other)
           || (pt->within_frange[d->api] != 1)
           || BOOLVEC_IS0(pt->explored, d->api)
           || (pt->owner == PLAYER_NONE)
@@ -146,7 +145,7 @@ static void ui_starmap_trans_draw_cb(void *vptr)
     lbxfont_select_set_12_1(5, 5, 0, 0);
     {
         int y;
-        y = (d->tr.other && (pt->within_frange[d->api] != 1)) ? 77 : 90;
+        y = (d->from != g->planet_focus_i[d->api] && (pt->within_frange[d->api] != 1)) ? 77 : 90;
         lbxfont_print_str_center(269, y, game_str_sm_transs, UI_SCREEN_W, ui_scale);
     }
 }
@@ -176,10 +175,8 @@ void ui_starmap_trans(struct game_s *g, player_id_t active_player)
         d.from = pi;
         p = &(g->planet[pi]);
         if (p->trans_num != 0) {
-            d.tr.other = true;
             g->planet_focus_i[active_player] = p->trans_dest;
         } else {
-            d.tr.other = false;
             g->planet_focus_i[active_player] = pi;
         }
     }
@@ -247,7 +244,6 @@ do_accept:
                     d.oi1 = d.oi_accept;
                     goto do_accept;
                 }
-                d.tr.other = true;
                 g->planet_focus_i[active_player] = i;
                 ui_sound_play_sfx_24();
                 break;
@@ -265,7 +261,8 @@ do_accept:
             ui_starmap_add_oi_hotkeys(&d);
             ui_starmap_fill_oi_tbl_stars(&d);
             d.oi_cancel = uiobj_add_t0(227, 163, "", ui_data.gfx.starmap.reloc_bu_cancel, MOO_KEY_ESCAPE);
-            if ((d.tr.other) && (pt->owner != PLAYER_NONE)
+            if (d.from != g->planet_focus_i[active_player]
+              && (pt->owner != PLAYER_NONE)
               && (pt->within_frange[active_player] == 1)
               && BOOLVEC_IS1(pt->explored, active_player)
               && (pt->type >= g->eto[active_player].have_colony_for)
