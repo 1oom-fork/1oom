@@ -187,7 +187,8 @@ do_accept:
         }
         for (int i = 0; i < g->galaxy_stars; ++i) {
             if (d.oi1 == d.oi_tbl_stars[i]) {
-                if (ui_extra_enabled && (d.oi_accept != UIOBJI_INVALID) && (g->planet_focus_i[active_player] == i)) {
+                if (ui_extra_enabled && r->owner == active_player && d.ts.can_move != NO_MOVE) {
+                    g->planet_focus_i[active_player] = i;
                     d.oi1 = d.oi_accept;
                     goto do_accept;
                 }
@@ -198,6 +199,12 @@ do_accept:
                     ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
                 }
                 break;
+            }
+            else if (d.oi2 == d.oi_tbl_stars[i] && r->owner == active_player && (d.ts.can_move != NO_MOVE)) {
+                if (ui_extra_enabled && g->planet_focus_i[active_player] != i) {
+                    g->planet_focus_i[active_player] = i;
+                    break;
+                }
             }
         }
         if (!flag_done) {
