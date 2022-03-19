@@ -38,9 +38,6 @@ struct starmap_data_s {
     int16_t oi2;
     int bottom_highlight;
     int anim_delay;
-    int ruler_from_i;
-    int ruler_to_i;
-    bool ruler_from_fleet;
     int gov_highlight;
     int16_t oi_gameopts;
     int16_t oi_design;

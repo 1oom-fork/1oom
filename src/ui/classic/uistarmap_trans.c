@@ -167,7 +167,6 @@ void ui_starmap_trans(struct game_s *g, player_id_t active_player)
     d.g = g;
     d.api = active_player;
     d.anim_delay = 0;
-    d.ruler_from_i = d.ruler_to_i = -1;
     d.gov_highlight = 0;
     d.tr.blink = false;
     {
@@ -256,9 +255,6 @@ do_accept:
                 }
             }
         }
-        d.ruler_from_i = d.from;
-        d.ruler_to_i = ui_starmap_cursor_on_star(g, &d, d.oi2, active_player);
-        d.ruler_from_fleet = false;
         if (!flag_done) {
             pt = &(g->planet[g->planet_focus_i[active_player]]);
             ui_starmap_select_bottom_highlight(g, &d, d.oi2);

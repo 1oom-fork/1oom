@@ -645,24 +645,24 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
             }
         }
     }
-    if (ui_extra_enabled && d->ruler_from_i >= 0 && d->ruler_to_i >= 0 && d->ruler_from_i != d->ruler_to_i) {
-        const planet_t *p = &g->planet[d->ruler_to_i], *q = &g->planet[d->ruler_from_i];
-        int from_x, from_y, to_x, to_y;
-        if (d->ruler_from_fleet) {
-            from_x = 2 * (q->x - x) + 29;
-            from_y = 2 * (q->y - y) + 9;
-        } else {
+    if (ui_extra_enabled && ui_data.ui_main_loop_action == UI_MAIN_LOOP_STARMAP && !g->evn.build_finished_num[d->api]) {
+        int ruler_from_i, ruler_to_i;
+        ruler_from_i = g->planet_focus_i[d->api];
+        ruler_to_i = ui_starmap_cursor_on_star(g, d, d->oi2, d->api);
+        if (ruler_to_i >= 0 && ruler_from_i != ruler_to_i) {
+            const planet_t *p = &g->planet[ruler_to_i], *q = &g->planet[ruler_from_i];
+            int from_x, from_y, to_x, to_y;
             from_x = 2 * (q->x - x) + 14;
             from_y = 2 * (q->y - y) + 14;
-        }
-        to_x = 2 * (p->x - x) + 14;
-        to_y = 2 * (p->y - y) + 14;
+            to_x = 2 * (p->x - x) + 14;
+            to_y = 2 * (p->y - y) + 14;
 
-        if ( !(from_x < slx0 || from_x > slx1 || from_y < sly0 || from_y > sly1 || to_x < slx0 || to_x > slx1 || to_y < sly0 || to_y > sly1) ) {
-            ui_draw_line1(from_x, from_y, to_x, to_y, 0x06, starmap_scale);
-            lbxfont_select(0, 0, 0, 0);
-            int l = g->gaux->star_dist[d->ruler_from_i][d->ruler_to_i];
-            lbxfont_print_num_center( (from_x + to_x) / 2, (from_y + to_y) / 2 - 2, l, UI_SCREEN_W, starmap_scale);
+            if ( !(from_x < slx0 || from_x > slx1 || from_y < sly0 || from_y > sly1 || to_x < slx0 || to_x > slx1 || to_y < sly0 || to_y > sly1) ) {
+                ui_draw_line1(from_x, from_y, to_x, to_y, 0x06, starmap_scale);
+                lbxfont_select(0, 0, 0, 0);
+                int l = g->gaux->star_dist[ruler_from_i][ruler_to_i];
+                lbxfont_print_num_center( (from_x + to_x) / 2, (from_y + to_y) / 2 - 2, l, UI_SCREEN_W, starmap_scale);
+            }
         }
     }
 }
@@ -1116,10 +1116,7 @@ void ui_starmap_compute_scale(const struct game_s *g)
 int ui_starmap_cursor_on_star(const struct game_s *g, const struct starmap_data_s *d, int16_t oi2, player_id_t active_player)
 {
     for (int i = 0; i < g->galaxy_stars; ++i) {
-        if ((oi2 == d->oi_tbl_stars[i]) && !g->evn.build_finished_num[active_player]) {
-            if (i == g->planet_focus_i[active_player]) {
-                break;
-            }
+        if (oi2 == d->oi_tbl_stars[i]) {
             return i;
         }
     }
