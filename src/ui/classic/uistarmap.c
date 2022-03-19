@@ -242,6 +242,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
     d.api = active_player;
     d.anim_delay = 0;
     d.gov_highlight = 0;
+    d.controllable = false; //TODO: fix
 
     ui_delay_1();
     ui_sound_stop_music();  /* or fade? */

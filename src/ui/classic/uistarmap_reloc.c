@@ -84,6 +84,7 @@ void ui_starmap_reloc(struct game_s *g, player_id_t active_player)
             g->planet_focus_i[active_player] = pi;
         }
     }
+    d.controllable = true;
 
     uiobj_table_clear();
 

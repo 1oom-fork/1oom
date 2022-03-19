@@ -181,6 +181,7 @@ void ui_starmap_trans(struct game_s *g, player_id_t active_player)
     }
     d.tr.num = p->trans_num;
     trans_max = p->pop / 2;
+    d.controllable = true;
 
     uiobj_table_clear();
 

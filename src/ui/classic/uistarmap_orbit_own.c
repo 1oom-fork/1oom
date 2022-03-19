@@ -170,6 +170,7 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
 
     d.gov_highlight = 0;
     d.from = g->planet_focus_i[active_player];
+    d.controllable = true;
 
     r = &(g->eto[active_player].orbit[d.from]);
 

@@ -87,6 +87,7 @@ struct starmap_data_s {
     int16_t scrollx, scrolly;
     uint8_t scrollz;
     uint8_t from;
+    bool controllable;
     union {
         struct {
             int16_t oi_ship;
@@ -110,7 +111,6 @@ struct starmap_data_s {
         } tr;   /* trans */
         struct {
             bool in_frange;
-            can_move_t can_move;
             struct draw_stars_s ds;
             int frame_ship;
             int frame_scanner;

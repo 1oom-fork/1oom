@@ -1286,17 +1286,7 @@ static int ui_starmap_next_fleet_i(struct game_s *g, player_id_t active_player, 
 static bool ui_starmap_can_iterate_own_planets(struct game_s *g, struct starmap_data_s *d) {
     if (ui_data.ui_main_loop_action == UI_MAIN_LOOP_STARMAP) return true;
     if (!ui_extra_enabled) return false;
-    if (ui_data.ui_main_loop_action == UI_MAIN_LOOP_ORBIT_OWN_SEL) return true;
-    if (ui_data.ui_main_loop_action == UI_MAIN_LOOP_RELOC) return true;
-    if (ui_data.ui_main_loop_action == UI_MAIN_LOOP_TRANS) return true;
-    if (ui_data.ui_main_loop_action == UI_MAIN_LOOP_ORBIT_EN_SEL) return false;
-    if (ui_data.ui_main_loop_action == UI_MAIN_LOOP_ENROUTE_SEL) {
-        return (d->en.can_move != NO_MOVE) && (g->enroute[ui_data.starmap.fleet_selected].owner == d->api);
-    }
-    if (ui_data.ui_main_loop_action == UI_MAIN_LOOP_TRANSPORT_SEL) {
-        return (d->ts.can_move != NO_MOVE) && (g->transport[ui_data.starmap.fleet_selected].owner == d->api);
-    }
-    return false;
+    return d->controllable;
 }
 
 static bool ui_starmap_can_iterate_enemy_planets(struct game_s *g, struct starmap_data_s *d) {
@@ -1304,15 +1294,9 @@ static bool ui_starmap_can_iterate_enemy_planets(struct game_s *g, struct starma
             ui_data.ui_main_loop_action == UI_MAIN_LOOP_ORBIT_EN_SEL) {
         return false;
     }
-    if (ui_data.ui_main_loop_action == UI_MAIN_LOOP_ENROUTE_SEL) {
-        if (d->en.can_move == NO_MOVE || g->enroute[ui_data.starmap.fleet_selected].owner != d->api) {
-            return false;
-        }
-    }
-    if (ui_data.ui_main_loop_action == UI_MAIN_LOOP_TRANSPORT_SEL) {
-        if(d->ts.can_move == NO_MOVE || g->transport[ui_data.starmap.fleet_selected].owner != d->api) {
-            return false;
-        }
+    if (ui_data.ui_main_loop_action == UI_MAIN_LOOP_ENROUTE_SEL ||
+            ui_data.ui_main_loop_action == UI_MAIN_LOOP_TRANSPORT_SEL) {
+        return d->controllable;
     }
     return true;
 }

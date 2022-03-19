@@ -102,6 +102,7 @@ void ui_starmap_orbit_en(struct game_s *g, player_id_t active_player)
     d.oe.frame_scanner = 0;
     d.oe.scanner_delay = 0;
     d.from = g->planet_focus_i[active_player];
+    d.controllable = false;
     d.oe.player = ui_data.starmap.orbit_player;
     os = &(g->eto[d.oe.player].orbit[d.from].ships[0]);
     for (int i = 0; i < NUM_SHIPDESIGNS; ++i) {
