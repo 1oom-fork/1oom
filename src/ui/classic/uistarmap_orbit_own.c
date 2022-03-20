@@ -158,6 +158,13 @@ static void ui_starmap_orbit_own_draw_cb(void *vptr)
 
 /* -------------------------------------------------------------------------- */
 
+static void ui_starmap_orbit_own_do_accept(struct game_s *g, struct starmap_data_s *d) {
+    const uint8_t shiptypes[NUM_SHIPDESIGNS] = { 0, 1, 2, 3, 4, 5 };
+    game_send_fleet_from_orbit(g, d->api, d->from, g->planet_focus_i[d->api], d->oo.ships, shiptypes, 6);
+    game_update_visibility(g);
+    ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
+}
+
 void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
 {
     bool flag_done = false;
@@ -172,7 +179,6 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
     struct starmap_data_s d;
     const fleet_orbit_t *r;
     const shipcount_t *os;
-    const uint8_t shiptypes[NUM_SHIPDESIGNS] = { 0, 1, 2, 3, 4, 5 };
 
     d.scrollx = 0;
     d.scrolly = 0;
@@ -224,24 +230,22 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
         ui_delay_prepare();
         ui_starmap_handle_common(g, &d, &flag_done);
         if (d.oi1 == d.oi_accept) {
-do_accept:
             ui_sound_play_sfx_24();
             if (ui_starmap_orbit_own_valid_destination(g, &d, g->planet_focus_i[active_player])) {
-                game_send_fleet_from_orbit(g, active_player, d.from, g->planet_focus_i[active_player], d.oo.ships, shiptypes, 6);
-                game_update_visibility(g);
                 flag_done = true;
-                ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
+                ui_starmap_orbit_own_do_accept(g, &d);
             }
         }
         for (int i = 0; i < g->galaxy_stars; ++i) {
             if (d.oi1 == d.oi_tbl_stars[i]) {
+                ui_sound_play_sfx_24();
                 if (ui_extra_enabled && ui_starmap_orbit_own_valid_destination(g, &d, i)) {
                     g->planet_focus_i[active_player] = i;
-                    d.oi1 = d.oi_accept;
-                    goto do_accept;
+                    flag_done = true;
+                    ui_starmap_orbit_own_do_accept(g, &d);
+                    break;
                 }
                 g->planet_focus_i[active_player] = i;
-                ui_sound_play_sfx_24();
                 break;
             }
             else if (d.oi2 == d.oi_tbl_stars[i]) {

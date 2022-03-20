@@ -156,6 +156,12 @@ static void ui_starmap_transport_draw_cb(void *vptr)
 
 /* -------------------------------------------------------------------------- */
 
+static void ui_starmap_transport_do_accept(struct game_s *g, struct starmap_data_s *d) {
+    transport_t *r = &g->transport[ui_data.starmap.fleet_selected];
+    r->dest = g->planet_focus_i[d->api];
+    ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
+}
+
 void ui_starmap_transport(struct game_s *g, player_id_t active_player)
 {
     bool flag_done = false;
@@ -194,20 +200,20 @@ void ui_starmap_transport(struct game_s *g, player_id_t active_player)
         ui_delay_prepare();
         ui_starmap_handle_common(g, &d, &flag_done);
         if (d.oi1 == d.oi_accept) {
-do_accept:
             ui_sound_play_sfx_24();
             if (d.controllable && ui_starmap_transport_valid_destination(g, &d, g->planet_focus_i[active_player])) { /* FIXME allows redirecting no nonexplored planets */
-                r->dest = g->planet_focus_i[active_player];
                 flag_done = true;
-                ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
+                ui_starmap_transport_do_accept(g, &d);
             }
         }
         for (int i = 0; i < g->galaxy_stars; ++i) {
             if (d.oi1 == d.oi_tbl_stars[i]) {
+                ui_sound_play_sfx_24();
                 if (ui_extra_enabled && d.controllable && ui_starmap_transport_withinin_frange(g, &d, i)) {
                     g->planet_focus_i[active_player] = i;
-                    d.oi1 = d.oi_accept;
-                    goto do_accept;
+                    flag_done = true;
+                    ui_starmap_transport_do_accept(g, &d);
+                    break;
                 }
                 g->planet_focus_i[active_player] = i;
                 if (!d.controllable) {
