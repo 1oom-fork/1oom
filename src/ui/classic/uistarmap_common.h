@@ -110,7 +110,6 @@ struct starmap_data_s {
             bool blink;
         } tr;   /* trans */
         struct {
-            bool in_frange;
             struct draw_stars_s ds;
             int frame_ship;
             int frame_scanner;
@@ -120,7 +119,6 @@ struct starmap_data_s {
             shipcount_t ships[NUM_SHIPDESIGNS];
             uint8_t shiptypenon0numsel; /* number of ship types selected with nonzero amount */
             struct shipnon0_s sn0;
-            bool in_frange;
         } oo;   /* orbit_own */
         struct {
             shipcount_t ships[NUM_SHIPDESIGNS];
@@ -132,7 +130,6 @@ struct starmap_data_s {
         } oe;   /* orbit_en */
         struct {
             struct shipnon0_s sn0;
-            bool in_frange;
             uint8_t pon;
             can_move_t can_move;
             struct draw_stars_s ds;
