@@ -1111,8 +1111,6 @@ void ui_starmap_compute_scale(const struct game_s *g)
     SETRANGE(starmap_scale, 1, ui_scale);
 }
 
-/* Returns the index of the star that the player is pointing on. Returns -1 if the player is not
- * pointing at a star, or is pointing at the currently selected star. */
 int ui_starmap_cursor_on_star(const struct game_s *g, const struct starmap_data_s *d, int16_t oi2, player_id_t active_player)
 {
     for (int i = 0; i < g->galaxy_stars; ++i) {
@@ -1493,5 +1491,51 @@ bool ui_starmap_handle_common(struct game_s *g, struct starmap_data_s *d, bool *
         }
     }
     ui_starmap_handle_oi_ctrl(d, d->oi1);
+    if (d->oi1 == d->oi_accept) {
+        ui_sound_play_sfx_24();
+        if (d->controllable && d->is_valid_destination(g, d, g->planet_focus_i[d->api])) {
+            *flag_done = true;
+            d->do_accept(g, d);
+            return true;
+        }
+    }
+    if (d->controllable) {
+        int i;
+        i = ui_starmap_cursor_on_star(g, d, d->oi1, d->api);
+        if (ui_extra_enabled && i >= 0) {
+            if (d->is_valid_destination(g, d, i)) {
+                g->planet_focus_i[d->api] = i;
+                *flag_done = true;
+                d->do_accept(g, d);
+            }
+            ui_sound_play_sfx_24();
+            return true;
+        } else if (i >= 0) {
+            ui_sound_play_sfx_24();
+            g->planet_focus_i[d->api] = i;
+            return true;
+        }
+    }
+    if (!d->controllable) {
+        int i;
+        i = ui_starmap_cursor_on_star(g, d, d->oi1, d->api);
+        if (i >= 0 && !g->evn.build_finished_num[d->api]) {
+            g->planet_focus_i[d->api] = i;
+            ui_sound_play_sfx_24();
+            d->from = i;
+            if (ui_data.ui_main_loop_action != UI_MAIN_LOOP_STARMAP) {
+                ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
+                *flag_done = true;
+            }
+            return true;
+        }
+    }
+    if (ui_extra_enabled && d->controllable) {
+        int i;
+        i = ui_starmap_cursor_on_star(g, d, d->oi2, d->api);
+        if (i >= 0) {
+            g->planet_focus_i[d->api] = i;
+        }
+    }
     return false;
 }

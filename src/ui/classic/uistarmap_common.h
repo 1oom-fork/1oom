@@ -33,6 +33,8 @@ typedef enum { NO_MOVE, GOT_HYPERCOMM, ON_PLANET } can_move_t;
 
 struct starmap_data_s {
     struct game_s *g; /* FIXME non-const only for ui_starmap_draw_cb1 */
+    bool (*is_valid_destination) (const struct game_s *g, const struct starmap_data_s *d, int planet_i);
+    void (*do_accept) (struct game_s *g, struct starmap_data_s *d);
     player_id_t api;
     int16_t oi1;
     int16_t oi2;

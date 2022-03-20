@@ -182,7 +182,10 @@ void ui_starmap_transport(struct game_s *g, player_id_t active_player)
     g->planet_focus_i[active_player] = r->dest;
     d.ts.ds.xoff1 = 0;
     d.ts.ds.xoff2 = 0;
+
     d.controllable = g->eto[active_player].have_hyperspace_comm && r->owner == active_player;
+    d.is_valid_destination = ui_starmap_transport_valid_destination;
+    d.do_accept = ui_starmap_transport_do_accept;
 
     uiobj_table_clear();
 
@@ -199,37 +202,6 @@ void ui_starmap_transport(struct game_s *g, player_id_t active_player)
     while (!flag_done) {
         ui_delay_prepare();
         ui_starmap_handle_common(g, &d, &flag_done);
-        if (d.oi1 == d.oi_accept) {
-            ui_sound_play_sfx_24();
-            if (d.controllable && ui_starmap_transport_valid_destination(g, &d, g->planet_focus_i[active_player])) { /* FIXME allows redirecting no nonexplored planets */
-                flag_done = true;
-                ui_starmap_transport_do_accept(g, &d);
-            }
-        }
-        for (int i = 0; i < g->galaxy_stars; ++i) {
-            if (d.oi1 == d.oi_tbl_stars[i]) {
-                ui_sound_play_sfx_24();
-                if (ui_extra_enabled && d.controllable && ui_starmap_transport_withinin_frange(g, &d, i)) {
-                    g->planet_focus_i[active_player] = i;
-                    flag_done = true;
-                    ui_starmap_transport_do_accept(g, &d);
-                    break;
-                }
-                g->planet_focus_i[active_player] = i;
-                if (!d.controllable) {
-                    d.from = i;
-                    flag_done = true;
-                    ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
-                }
-                break;
-            }
-            else if (d.oi2 == d.oi_tbl_stars[i] && d.controllable) {
-                if (ui_extra_enabled && g->planet_focus_i[active_player] != i) {
-                    g->planet_focus_i[active_player] = i;
-                    break;
-                }
-            }
-        }
         if (!flag_done) {
             ui_starmap_select_bottom_highlight(g, &d, d.oi2);
             ui_starmap_transport_draw_cb(&d);

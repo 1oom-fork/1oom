@@ -102,7 +102,11 @@ void ui_starmap_orbit_en(struct game_s *g, player_id_t active_player)
     d.oe.frame_scanner = 0;
     d.oe.scanner_delay = 0;
     d.from = g->planet_focus_i[active_player];
+
     d.controllable = false;
+    d.is_valid_destination = NULL;
+    d.do_accept = NULL;
+
     d.oe.player = ui_data.starmap.orbit_player;
     os = &(g->eto[d.oe.player].orbit[d.from].ships[0]);
     for (int i = 0; i < NUM_SHIPDESIGNS; ++i) {
@@ -137,15 +141,6 @@ void ui_starmap_orbit_en(struct game_s *g, player_id_t active_player)
     while (!flag_done) {
         ui_delay_prepare();
         ui_starmap_handle_common(g, &d, &flag_done);
-        for (int i = 0; i < g->galaxy_stars; ++i) {
-            if ((d.oi1 == d.oi_tbl_stars[i]) && !g->evn.build_finished_num[active_player]) {
-                g->planet_focus_i[active_player] = i;
-                ui_sound_play_sfx_24();
-                ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
-                flag_done = true;
-                break;
-            }
-        }
         if (!flag_done) {
             ui_starmap_select_bottom_highlight(g, &d, d.oi2);
             ui_starmap_orbit_en_draw_cb(&d);
