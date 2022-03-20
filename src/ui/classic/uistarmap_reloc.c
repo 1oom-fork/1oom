@@ -22,6 +22,11 @@
 
 /* -------------------------------------------------------------------------- */
 
+static bool ui_starmap_reloc_valid_destination(const struct game_s *g, const struct starmap_data_s *d, int planet_i) {
+    //TODO: FIX: actual test is somewhere else
+    return g->planet[d->from].buildship != BUILDSHIP_STARGATE;
+}
+
 static void ui_starmap_reloc_draw_cb(void *vptr)
 {
     struct starmap_data_s *d = vptr;
@@ -104,13 +109,15 @@ void ui_starmap_reloc(struct game_s *g, player_id_t active_player)
         if (d.oi1 == d.oi_accept) {
 do_accept:
             ui_sound_play_sfx_24();
-            flag_done = true;
-            g->planet[d.from].reloc = g->planet_focus_i[active_player];
-            ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
+            if (ui_starmap_reloc_valid_destination(g, &d, g->planet_focus_i[active_player])) {
+                flag_done = true;
+                g->planet[d.from].reloc = g->planet_focus_i[active_player];
+                ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
+            }
         }
         for (int i = 0; i < g->galaxy_stars; ++i) {
             if (d.oi1 == d.oi_tbl_stars[i]) {
-                if (ui_extra_enabled) {
+                if (ui_extra_enabled && ui_starmap_reloc_valid_destination(g, &d, i)) {
                     g->planet_focus_i[active_player] = i;
                     d.oi1 = d.oi_accept;
                     goto do_accept;
@@ -134,7 +141,7 @@ do_accept:
             ui_starmap_add_oi_hotkeys(&d);
             ui_starmap_fill_oi_tbl_stars_own(&d, active_player);
             d.oi_cancel = uiobj_add_t0(227, 163, "", ui_data.gfx.starmap.reloc_bu_cancel, MOO_KEY_ESCAPE);
-            if (g->planet[d.from].buildship != BUILDSHIP_STARGATE) {
+            if (ui_starmap_reloc_valid_destination(g, &d, g->planet_focus_i[active_player])) {
                 d.oi_accept = uiobj_add_t0(271, 163, "", ui_data.gfx.starmap.reloc_bu_accept, MOO_KEY_SPACE);
             }
             d.oi_scroll = uiobj_add_tb(6, 6, 2, 2, 108, 86, &d.scrollx, &d.scrolly, &d.scrollz, ui_scale);

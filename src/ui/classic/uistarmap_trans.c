@@ -28,6 +28,16 @@ static bool ui_starmap_trans_withinin_frange(const struct game_s *g, const struc
     return (p->within_frange[d->api] == 1);
 }
 
+static bool ui_starmap_trans_valid_destination(const struct game_s *g, const struct starmap_data_s *d, int planet_i) {
+    const planet_t *pt = &g->planet[planet_i];
+    return 1
+      && (d->from != planet_i || ui_extra_enabled)
+      && (pt->owner != PLAYER_NONE)
+      && ui_starmap_trans_withinin_frange(g, d, planet_i)
+      && BOOLVEC_IS1(pt->explored, d->api)
+      && (pt->type >= g->eto[d->api].have_colony_for);
+}
+
 static void ui_starmap_trans_draw_cb(void *vptr)
 {
     struct starmap_data_s *d = vptr;
@@ -62,12 +72,7 @@ static void ui_starmap_trans_draw_cb(void *vptr)
         int x1, y1;
         x1 = (pt->x - ui_data.starmap.x) * 2 + 14;
         y1 = (pt->y - ui_data.starmap.y) * 2 + 14;
-        if (0
-          || !ui_starmap_trans_withinin_frange(g, d, g->planet_focus_i[d->api])
-          || BOOLVEC_IS0(pt->explored, d->api)
-          || (pt->owner == PLAYER_NONE)
-          || (pt->type < g->eto[d->api].have_colony_for)
-        ) {
+        if (!ui_starmap_trans_valid_destination(g, d, g->planet_focus_i[d->api])) {
             ctbl = colortbl_line_red;
         } else {
             ctbl = colortbl_line_green;
@@ -203,28 +208,26 @@ void ui_starmap_trans(struct game_s *g, player_id_t active_player)
     uiobj_set_callback_and_delay(ui_starmap_trans_draw_cb, &d, STARMAP_DELAY);
 
     while (!flag_done) {
-        const planet_t *pt;
         ui_delay_prepare();
-        pt = &(g->planet[g->planet_focus_i[active_player]]);
         ui_starmap_handle_common(g, &d, &flag_done);
         if (d.oi1 == d.oi_accept) {
 do_accept:
             ui_sound_play_sfx_24();
-            flag_done = true;
-            if (BOOLVEC_IS1(pt->explored, active_player) && ui_starmap_trans_withinin_frange(g, &d, g->planet_focus_i[active_player])) {
+            if (ui_starmap_trans_valid_destination(g, &d, g->planet_focus_i[active_player])) {
+                flag_done = true;
                 p->trans_dest = g->planet_focus_i[active_player];
                 p->trans_num = d.tr.num;
-            }
-            if (d.from == g->planet_focus_i[active_player]) {
-                p->trans_num = 0;
-            }
-            if (p->trans_num && p->owner != PLAYER_NONE) {
-                if(BOOLVEC_IS1(p->extras, PLANET_EXTRAS_GOVERNOR)) {
-                    game_update_production(g);
-                    game_planet_govern(g, p);
+                if (d.from == g->planet_focus_i[active_player]) {
+                    p->trans_num = 0;
                 }
+                if (p->trans_num && p->owner != PLAYER_NONE) {
+                    if(BOOLVEC_IS1(p->extras, PLANET_EXTRAS_GOVERNOR)) {
+                        game_update_production(g);
+                        game_planet_govern(g, p);
+                    }
+                }
+                ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
             }
-            ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
         } else if (d.oi1 == d.oi_minus) {
             ui_sound_play_sfx_24();
             SUBSAT0(d.tr.num, (trans_max / 10) ? (trans_max / 10) : 1);
@@ -245,7 +248,7 @@ do_accept:
         }
         for (int i = 0; i < g->galaxy_stars; ++i) {
             if (d.oi1 == d.oi_tbl_stars[i]) {
-                if (ui_extra_enabled && ui_starmap_trans_withinin_frange(g, &d, i) && pt->type >= g->eto[active_player].have_colony_for) {
+                if (ui_extra_enabled && ui_starmap_trans_valid_destination(g, &d, i)) {
                     g->planet_focus_i[active_player] = i;
                     d.oi1 = d.oi_accept;
                     goto do_accept;
@@ -262,7 +265,6 @@ do_accept:
             }
         }
         if (!flag_done) {
-            pt = &(g->planet[g->planet_focus_i[active_player]]);
             ui_starmap_select_bottom_highlight(g, &d, d.oi2);
             ui_starmap_trans_draw_cb(&d);
             uiobj_table_clear();
@@ -270,15 +272,8 @@ do_accept:
             ui_starmap_add_oi_hotkeys(&d);
             ui_starmap_fill_oi_tbl_stars(&d);
             d.oi_cancel = uiobj_add_t0(227, 163, "", ui_data.gfx.starmap.reloc_bu_cancel, MOO_KEY_ESCAPE);
-            if ((d.from != g->planet_focus_i[active_player] || ui_extra_enabled)
-              && (pt->owner != PLAYER_NONE)
-              && ui_starmap_trans_withinin_frange(g, &d, g->planet_focus_i[active_player])
-              && BOOLVEC_IS1(pt->explored, active_player)
-              && (pt->type >= g->eto[active_player].have_colony_for)
-            ) {
-                if (d.from != g->planet_focus_i[active_player]) {
-                    d.oi_accept = uiobj_add_t0(271, 163, "", ui_data.gfx.starmap.reloc_bu_accept, MOO_KEY_SPACE);
-                }
+            if (ui_starmap_trans_valid_destination(g, &d, g->planet_focus_i[active_player])) {
+                d.oi_accept = uiobj_add_t0(271, 163, "", ui_data.gfx.starmap.reloc_bu_accept, MOO_KEY_SPACE);
                 uiobj_add_slider_int(258, 124, 0, trans_max, 41, 8, &d.tr.num);
                 oi_minus = uiobj_add_mousearea(252, 124, 256, 131, MOO_KEY_UNKNOWN);
                 oi_plus = uiobj_add_mousearea(301, 124, 305, 131, MOO_KEY_UNKNOWN);

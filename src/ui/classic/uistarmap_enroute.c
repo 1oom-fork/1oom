@@ -31,6 +31,13 @@ static bool ui_starmap_enroute_withinin_frange(const struct game_s *g, const str
     return p->within_frange[d->api] == 1 || (p->within_frange[d->api] == 2 && d->en.sn0.have_reserve_fuel);
 }
 
+static bool ui_starmap_enroute_valid_destination(const struct game_s *g, const struct starmap_data_s *d, int planet_i) {
+    const fleet_enroute_t *r = &g->enroute[ui_data.starmap.fleet_selected];
+    return 1
+      && ui_starmap_enroute_withinin_frange(g, d, planet_i)
+      && (!game_num_retreat_redir_fix || !r->retreat || d->en.can_move == GOT_HYPERCOMM || planet_i != d->en.pon);
+}
+
 static void ui_starmap_enroute_draw_cb(void *vptr)
 {
     struct starmap_data_s *d = vptr;
@@ -129,7 +136,7 @@ static void ui_starmap_enroute_draw_cb(void *vptr)
     }
     if (1
       && d->controllable
-      && (!in_frange || (game_num_retreat_redir_fix && r->retreat && (d->en.can_move != GOT_HYPERCOMM) && (pto == d->en.pon)))
+      && (!ui_starmap_enroute_valid_destination(g, d, g->planet_focus_i[d->api]))
     ) {
         lbxgfx_set_new_frame(ui_data.gfx.starmap.reloc_bu_accept, 1);
         lbxgfx_draw_frame(271, 163, ui_data.gfx.starmap.reloc_bu_accept, UI_SCREEN_W, ui_scale);
@@ -197,15 +204,15 @@ void ui_starmap_enroute(struct game_s *g, player_id_t active_player)
         if (d.oi1 == d.oi_accept) {
 do_accept:
             ui_sound_play_sfx_24();
-            if (ui_starmap_enroute_withinin_frange(g, &d, g->planet_focus_i[active_player])) {
+            if (d.controllable && ui_starmap_enroute_valid_destination(g, &d, g->planet_focus_i[active_player])) {
                 game_fleet_redirect(g, r, d.en.pon, g->planet_focus_i[active_player]);
                 flag_done = true;
+                ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
             }
-            ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
         }
         for (int i = 0; i < g->galaxy_stars; ++i) {
             if (d.oi1 == d.oi_tbl_stars[i]) {
-                if (ui_extra_enabled && d.controllable && ui_starmap_enroute_withinin_frange(g, &d, i)) {
+                if (ui_extra_enabled && d.controllable && ui_starmap_enroute_valid_destination(g, &d, i)) {
                     g->planet_focus_i[active_player] = i;
                     d.oi1 = d.oi_accept;
                     goto do_accept;
@@ -235,9 +242,9 @@ do_accept:
             ui_starmap_fill_oi_tbl_stars(&d);
             if (d.controllable) {
                 d.oi_cancel = uiobj_add_t0(227, 163, "", ui_data.gfx.starmap.reloc_bu_cancel, MOO_KEY_ESCAPE);
-                if (ui_starmap_enroute_withinin_frange(g, &d, g->planet_focus_i[active_player]) && ((!game_num_retreat_redir_fix) || (!r->retreat) || (d.en.can_move == GOT_HYPERCOMM) || (g->planet_focus_i[active_player] != d.en.pon))) {
-                    d.oi_accept = uiobj_add_t0(271, 163, "", ui_data.gfx.starmap.reloc_bu_accept, MOO_KEY_SPACE);
-                }
+            }
+            if (d.controllable && ui_starmap_enroute_valid_destination(g, &d, g->planet_focus_i[active_player])) {
+                d.oi_accept = uiobj_add_t0(271, 163, "", ui_data.gfx.starmap.reloc_bu_accept, MOO_KEY_SPACE);
             }
             d.oi_scroll = uiobj_add_tb(6, 6, 2, 2, 108, 86, &d.scrollx, &d.scrolly, &d.scrollz, ui_scale);
             ui_starmap_fill_oi_ctrl(&d);

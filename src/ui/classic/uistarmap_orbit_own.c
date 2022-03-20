@@ -30,6 +30,13 @@ static bool ui_starmap_orbit_own_withinin_frange(const struct game_s *g, const s
     return p->within_frange[d->api] == 1 || (p->within_frange[d->api] == 2 && d->oo.sn0.have_reserve_fuel);
 }
 
+static bool ui_starmap_orbit_own_valid_destination(const struct game_s *g, const struct starmap_data_s *d, int planet_i) {
+    return 1
+      && planet_i != d->from
+      && ui_starmap_orbit_own_withinin_frange(g, d, planet_i)
+      && d->oo.shiptypenon0numsel;
+}
+
 static void ui_starmap_orbit_own_draw_cb(void *vptr)
 {
     struct starmap_data_s *d = vptr;
@@ -189,6 +196,12 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
     for (int i = 0; i < NUM_SHIPDESIGNS; ++i) {
         d.oo.ships[i] = os[i];
     }
+    d.oo.shiptypenon0numsel = 0;
+    for (int i = 0; i < NUM_SHIPDESIGNS; ++i) {
+        if (d.oo.ships[i] != 0) {
+            ++d.oo.shiptypenon0numsel;
+        }
+    }
     ui_starmap_sn0_setup(&d.oo.sn0, NUM_SHIPDESIGNS, d.oo.ships);
 
     uiobj_table_clear();
@@ -213,16 +226,16 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
         if (d.oi1 == d.oi_accept) {
 do_accept:
             ui_sound_play_sfx_24();
-            if (ui_starmap_orbit_own_withinin_frange(g, &d, g->planet_focus_i[active_player])) {
+            if (ui_starmap_orbit_own_valid_destination(g, &d, g->planet_focus_i[active_player])) {
                 game_send_fleet_from_orbit(g, active_player, d.from, g->planet_focus_i[active_player], d.oo.ships, shiptypes, 6);
                 game_update_visibility(g);
+                flag_done = true;
+                ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
             }
-            flag_done = true;
-            ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
         }
         for (int i = 0; i < g->galaxy_stars; ++i) {
             if (d.oi1 == d.oi_tbl_stars[i]) {
-                if (ui_extra_enabled && ui_starmap_orbit_own_withinin_frange(g, &d, i)) {
+                if (ui_extra_enabled && ui_starmap_orbit_own_valid_destination(g, &d, i)) {
                     g->planet_focus_i[active_player] = i;
                     d.oi1 = d.oi_accept;
                     goto do_accept;
@@ -309,10 +322,7 @@ do_accept:
             ui_starmap_fill_oi_tbls(&d);
             ui_starmap_fill_oi_tbl_stars(&d);
             d.oi_cancel = uiobj_add_t0(227, 180, "", ui_data.gfx.starmap.reloc_bu_cancel, MOO_KEY_ESCAPE);
-            if ( 1
-              && g->planet_focus_i[active_player] != d.from
-              && ui_starmap_orbit_own_withinin_frange(g, &d, g->planet_focus_i[active_player])
-              && d.oo.shiptypenon0numsel) {
+            if (ui_starmap_orbit_own_valid_destination(g, &d, g->planet_focus_i[active_player])) {
                 d.oi_accept = uiobj_add_t0(271, 180, "", ui_data.gfx.starmap.reloc_bu_accept, MOO_KEY_SPACE);
             }
             oi_cycle = uiobj_add_inputkey(MOO_KEY_TAB);
