@@ -228,7 +228,7 @@ void ui_starmap_set_pos(const struct game_s *g, int x, int y)
 void ui_starmap_do(struct game_s *g, player_id_t active_player)
 {
     bool flag_done = false;
-    int16_t oi_b, oi_c, oi_starview1, oi_starview2, oi_shippic, oi_finished, oi_equals, oi_hash,
+    int16_t oi_b, oi_starview1, oi_starview2, oi_shippic, oi_finished, oi_equals, oi_hash,
             oi_alt_f, oi_alt_galaxy, oi_alt_p, oi_alt_events,
             oi_governor, oi_wheelname, oi_wheelshippic, oi_xtramenu
             ;
@@ -259,7 +259,6 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
     do { \
         STARMAP_UIOBJ_CLEAR_COMMON(); \
         oi_b = UIOBJI_INVALID; \
-        oi_c = UIOBJI_INVALID; \
         oi_alt_f = UIOBJI_INVALID; \
         oi_starview1 = UIOBJI_INVALID; \
         oi_starview2 = UIOBJI_INVALID; \
@@ -312,10 +311,6 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             ui_sound_play_sfx_24();
         } else if (d.oi1 == oi_b) {
             ui_data.ui_main_loop_action = UI_MAIN_LOOP_SCRAP_BASES;
-            flag_done = true;
-            ui_sound_play_sfx_24();
-        } else if (d.oi1 == oi_c) {
-            ui_data.ui_main_loop_action = UI_MAIN_LOOP_SPIES_CAUGHT;
             flag_done = true;
             ui_sound_play_sfx_24();
         } else if ((d.oi1 == oi_finished) || ((d.oi1 == UIOBJI_ESC) && (oi_finished != UIOBJI_INVALID))) {
@@ -528,7 +523,6 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
                 /* oi_b = uiobj_add_mousearea(272, 59, 312, 67, MOO_KEY_b); */
                 oi_b = uiobj_add_inputkey(MOO_KEY_b);
             }
-            oi_c = uiobj_add_inputkey(MOO_KEY_c);
             oi_alt_f = uiobj_add_inputkey(MOO_KEY_f | MOO_MOD_ALT);
             ui_starmap_add_oi_bottom_buttons(&d);
             if (g->evn.build_finished_num[active_player]) {

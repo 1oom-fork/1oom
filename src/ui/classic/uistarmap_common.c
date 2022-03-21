@@ -24,6 +24,7 @@
 #include "uidraw.h"
 #include "uidefs.h"
 #include "uidelay.h"
+#include "uimsgfilter.h"
 #include "uiobj.h"
 #include "uisearch.h"
 #include "uisound.h"
@@ -845,6 +846,8 @@ void ui_starmap_add_oi_hotkeys(struct starmap_data_s *d)
     d->oi_f8 = uiobj_add_inputkey(MOO_KEY_F8);
     d->oi_f9 = uiobj_add_inputkey(MOO_KEY_F9);
     d->oi_f10 = uiobj_add_inputkey(MOO_KEY_F10);
+    d->oi_caught = uiobj_add_inputkey(MOO_KEY_c);
+    d->oi_filter = uiobj_add_inputkey(MOO_KEY_i);
     d->oi_alt_m = uiobj_add_inputkey(MOO_KEY_m | MOO_MOD_ALT);
     d->oi_alt_c = uiobj_add_inputkey(MOO_KEY_c | MOO_MOD_ALT);
     d->oi_alt_r = uiobj_add_inputkey(MOO_KEY_r | MOO_MOD_ALT);
@@ -1399,6 +1402,18 @@ bool ui_starmap_handle_common(struct game_s *g, struct starmap_data_s *d, bool *
             return true;
         }
         ui_starmap_focus_planet(g, d, i, flag_done);
+        return true;
+    }
+    if (d->oi1 == d->oi_caught) {
+        ui_data.ui_main_loop_action = UI_MAIN_LOOP_SPIES_CAUGHT;
+        *flag_done = true;
+        ui_sound_play_sfx_24();
+        return true;
+    }
+    if (ui_extra_enabled && d->oi1 == d->oi_filter) {
+        ui_data.ui_main_loop_action = UI_MAIN_LOOP_MSGFILTER;
+        *flag_done = true;
+        ui_sound_play_sfx_24();
         return true;
     }
     if (d->oi1 == d->oi_f2) {

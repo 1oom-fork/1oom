@@ -83,6 +83,8 @@ struct starmap_data_s {
     int16_t oi_cancel;
     int16_t oi_scroll;
     int16_t oi_search;
+    int16_t oi_caught;
+    int16_t oi_filter;
     int16_t oi_minus;
     int16_t oi_plus;
     int16_t oi_equals;
@@ -171,6 +173,8 @@ struct starmap_data_s {
         d.oi_cancel = UIOBJI_INVALID; \
         d.oi_scroll = UIOBJI_INVALID; \
         d.oi_search = UIOBJI_INVALID; \
+        d.oi_caught = UIOBJI_INVALID; \
+        d.oi_filter = UIOBJI_INVALID; \
         d.oi_minus = UIOBJI_INVALID; \
         d.oi_plus = UIOBJI_INVALID; \
         d.oi_equals = UIOBJI_INVALID; \

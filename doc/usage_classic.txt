@@ -59,7 +59,7 @@ The following new UI features are always enabled/available:
   one round of production (with uiextra also transfers back)
 - Pressing +/-/= in send transport screen adjusts slider by 10% of max amount
 - Pressing A in send transport screen sets slider to maximum
-- F2-F9, Alt+c, Alt+m, Alt+r and planet search (/) works regardless of
+- F2-F9, Alt+c, Alt+m, Alt+r, C and planet search (/) works regardless of
   selection type if possible
 - F2-F9 no longer do weird things if they can't find the next object
 
@@ -122,5 +122,6 @@ or pressing Alt-X in the main menu enables the following extra UI features:
 - F2-F9 have context sensitive behavior if possible
 - Default hotkeys changed: Races screen (r -> e), Reloc button (l -> r)
 - Alt+F to show/hide incoming friendly fleet route when planet is selected
+- I to show message filter options
 
 See doc/list_gamediff.txt for a list of differences in the game itself.
