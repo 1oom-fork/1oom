@@ -314,7 +314,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
     bool flag_done = false;
     int16_t oi_b, oi_starview1, oi_starview2, oi_shippic, oi_finished, oi_equals, oi_hash,
             oi_alt_f, oi_alt_galaxy, oi_alt_p, oi_alt_events,
-            oi_wheelname, oi_wheelshippic, oi_xtramenu
+            oi_wheelname, oi_wheelshippic
             ;
     int16_t scrollmisc = 0;
     struct starmap_data_s d;
@@ -352,7 +352,6 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
         oi_hash = UIOBJI_INVALID; \
         oi_wheelname = UIOBJI_INVALID; \
         oi_wheelshippic = UIOBJI_INVALID; \
-        oi_xtramenu = UIOBJI_INVALID; \
         d.sm.oi_ship = UIOBJI_INVALID; \
         d.sm.oi_reloc = UIOBJI_INVALID; \
         d.sm.oi_trans = UIOBJI_INVALID; \
@@ -503,10 +502,6 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             ui_data.ui_main_loop_action = UI_MAIN_LOOP_GOVERN;
             flag_done = true;
             ui_sound_play_sfx_24();
-        } else if (d.oi1 == oi_xtramenu) {
-            ui_data.ui_main_loop_action = UI_MAIN_LOOP_XTRAMENU;
-            flag_done = true;
-            ui_sound_play_sfx_24();
         } else if (d.oi1 == oi_wheelname) {
             int i;
             i = g->planet_focus_i[active_player];
@@ -553,9 +548,6 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
                     d.sm.oi_gov_wheel_bases = uiobj_add_mousewheel( 273, 60, 312, 66, &scrollmisc);
                     d.sm.oi_gov_boost = uiobj_add_mousearea( 226, 71, 312, 77, MOO_KEY_UNKNOWN );
                 }
-            }
-            if (ui_extra_enabled) {
-                oi_xtramenu = uiobj_add_mousearea(0, 195, 5, 199, MOO_KEY_v);
             }
             oi_wheelname = uiobj_add_mousewheel(227, 8, 310, 20, &scrollmisc);
             ui_starmap_fill_oi_tbls(&d);

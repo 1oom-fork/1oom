@@ -107,10 +107,6 @@ or pressing Alt-X in the main menu enables the following extra UI features:
 - Tech screen has additional buttons to equalize spending (= or #), set to
   minimum for bonus (m) and for optimum allocation (o). The latter can be
   automated by clicking the level/auto button (t) in the upper right corner.
-- Pressing V or clicking the bottom left corner near Game opens an extra menu:
-    - Eco readjustment for Clean as save/reload used to do in v1.3
-    - The ship production selection can be set everywhere
-    - "X has finished ..." messages can be filtered
 - Completing terraforming generates a message (which is filtered by default)
 - After running through the Next turn phase and messages the game recenters on
   your last planet of choice

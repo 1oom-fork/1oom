@@ -39,7 +39,6 @@
 #include "uistarview.h"
 #include "uiswitch.h"
 #include "uitech.h"
-#include "uixtramenu.h"
 
 /* -------------------------------------------------------------------------- */
 
@@ -251,9 +250,6 @@ ui_turn_action_t ui_game_turn(struct game_s *g, int *load_game_i_ptr, int pi)
             case UI_MAIN_LOOP_MSGFILTER:
                 ui_msg_filter(g, pi);
                 ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
-                break;
-            case UI_MAIN_LOOP_XTRAMENU:
-                ui_data.ui_main_loop_action = ui_xtramenu(g, pi);
                 break;
             case UI_MAIN_LOOP_NEXT_TURN:
                 ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
