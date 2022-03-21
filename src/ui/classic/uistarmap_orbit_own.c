@@ -32,7 +32,6 @@ static bool ui_starmap_orbit_own_withinin_frange(const struct game_s *g, const s
 
 static bool ui_starmap_orbit_own_valid_destination(const struct game_s *g, const struct starmap_data_s *d, int planet_i) {
     return 1
-      && planet_i != d->from
       && ui_starmap_orbit_own_withinin_frange(g, d, planet_i)
       && d->oo.shiptypenon0numsel;
 }
@@ -160,8 +159,10 @@ static void ui_starmap_orbit_own_draw_cb(void *vptr)
 
 static void ui_starmap_orbit_own_do_accept(struct game_s *g, struct starmap_data_s *d) {
     const uint8_t shiptypes[NUM_SHIPDESIGNS] = { 0, 1, 2, 3, 4, 5 };
-    game_send_fleet_from_orbit(g, d->api, d->from, g->planet_focus_i[d->api], d->oo.ships, shiptypes, 6);
-    game_update_visibility(g);
+    if (d->from != g->planet_focus_i[d->api]) {
+        game_send_fleet_from_orbit(g, d->api, d->from, g->planet_focus_i[d->api], d->oo.ships, shiptypes, 6);
+        game_update_visibility(g);
+    }
     ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
 }
 
