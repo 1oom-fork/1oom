@@ -10,19 +10,6 @@ arguments.
 The UI controls like the original. Consult the game manual and the readme.txt
 from v1.3. This document describes only the differences.
 
-New hoykeys:
-- Middle click or Ctrl-F10 to grab/ungrab input
-- Ctrl-Esc to quit (without saving)
-- Ctrl-Plus/Minus to adjust sfx volume
-- Ctrl-Shift-Plus/Minus to adjust music volume
-- Ctrl-F5 saves a screenshot
-- Alt-Enter to toggle full screen mode
-
-Unlike the original, 1oom does not autosave the "continue game" (save slot 7)
-when starting a new game or every N turns. It only saves it when quitting the
-game via Game -> Quit or when F10 is pressed while in the "control screen" /
-"galaxy movement screen".
-
 The config file item "ui.uiscale" (set via the -uiscale command-line option)
 is an integer scaling factor for the whole UI except:
 - mouse cursor
@@ -33,12 +20,20 @@ more of the galaxy to be viewed without scrolling. Mouse wheel can be used
 to adjust the scaling of the galaxy movement screen map.
 
 The following new UI features are always enabled/available:
+1) New game options
+- Local multiplayer (use -new or -uiextra to start a game)
+- Random race / banner
+2) Camera
 - Smoother galaxy movement screen scrolling
 - Galaxy movement screen scrolling speed is adjustable (-uismscroll)
-- Random race / banner
-- Local multiplayer (use -new or -uiextra to start a game)
-- Lowercase allowed in save names
-- Load Game screen uses numbers as hotkeys for slots
+- The keys UHJK scroll the galaxy movement screen map
+- Mouse cursor scroll the map when it touches the edge of the screen
+- Planets can be tagged with Ctrl-1-9 and recalled with 1-9
+- Planets can be searched for by pressing the / key
+- F2-F9, 1-9, Alt+c, Alt+m and planet search (/) works regardless of
+  selection type if possible
+- F2-F9 no longer do weird things if it can't find the next object
+3) Gameplay
 - Objects with hotkeys can be navigated to using cursor keys
 - Mouse wheel can be used to scroll lists and adjust many things
 - Mouse wheel on planet name in the galaxy movement screen changes planet
@@ -51,37 +46,51 @@ The following new UI features are always enabled/available:
 - Ind slider no longer shows 0.N/y when at max factories
 - Eco slider shows Clean/+N Pop past T-Form on a full planet
 - Clicking cycles selection of overlapping fleets
-- The keys UHJK scroll the galaxy movement screen map
-- Classic mouse scroll
-- Planets can be searched for by pressing the / key
-- Planets can be tagged with Ctrl-1-9 and recalled with 1-9
 - Pressing = or # in the galaxy movement screen transfers reserve for
   one round of production (with uiextra also transfers back)
 - Pressing +/-/= in send transport screen adjusts slider by 10% of max amount
 - Pressing A in send transport screen sets slider to maximum
-- F2-F9, Alt+c, Alt+m, Alt+r, C and planet search (/) works regardless of
-  selection type if possible
-- F2-F9 no longer do weird things if they can't find the next object
+- Alt+r and C works regardless of selection type if possible
+4) Misc
+- Middle click or Ctrl-F10 to grab/ungrab input
+- Ctrl-Esc to quit (without saving)
+- Ctrl-Plus/Minus to adjust sfx volume
+- Ctrl-Shift-Plus/Minus to adjust music volume
+- Ctrl-F5 saves a screenshot
+- Alt-Enter to toggle full screen mode
+- Lowercase allowed in save names
+- Load Game screen uses numbers as hotkeys for slots
+- Unlike the original, 1oom does not autosave the "continue game" (save slot 7)
+when starting a new game or every N turns. It only saves it when quitting the
+game via Game -> Quit or when F10 is pressed while in the "control screen" /
+"galaxy movement screen".
 
 The config file item "ui.uiextra" (set via the -uiextra command-line option)
 or pressing Alt-X in the main menu enables the following extra UI features:
-- Continue and Undo saves can be chosen in the Load Game screen
+1) New game options
 - New Game screen allows setting opponent race/banner/names and AI/human flag
-- Game options screen Silent/FX Only/Music is replaced with more options
-- Report screen shows name of AI leaders, Map screen shows current year
-- Fleet deployment shows the amount of available ships
+2) Star map controls
 - Hovering over a planet selects planet for fleet/trans send and reloc
 - Clicking destination star works as Accept for fleet/trans send and reloc
+- F2-F9 keeps current action type if possible
+- Hotkey press does not change mouse position
+- Alt+R to set/unset relocation for all planets
+- Default hotkeys changed: Races screen (r -> e), Reloc button (l -> r)
+- Alt+F to show/hide incoming friendly fleet route when planet is selected
 - Hovering over a planet draws a ruler with the distance in parsec from the
   currently selected planet if is in the screen.
-- Planetary governor can be enabled or disabled by clicking on planet name in
-  the galaxy movement screen, setting reserve spending mode (see below) or by
-  clicking on the respective amount fields (right of the slider) for Ships, Ind
-  or Tech. The latter also sets the governor  production focus for the planet.
+- Fleet deployment shows the amount of available ships
+- Summary of forces shown before ship combat
+- New Auto and Retreat buttons for space combat autoresolve
+3) Planetary controls
 - Right clicking on planet name in the galaxy movement screen opens a governor
   screen for all governor related local and global settings. The latter include
   Eco mode, buildup mode and whether to build stargates. All local settings
   are also reachable directly over the planet interface.
+- Planetary governor can be enabled or disabled by clicking on planet name in
+  the galaxy movement screen, setting reserve spending mode (see below) or by
+  clicking on the respective amount fields (right of the slider) for Ships, Ind
+  or Tech. The latter also sets the governor  production focus for the planet.
 - Clicking on the planetary production field when the governor is active cycles
   through the reserve spending modes for the planet. The modes are "none"
   (never), "buildup" (only during buildup) and "always" (useful for Ultra Rich
@@ -89,17 +98,17 @@ or pressing Alt-X in the main menu enables the following extra UI features:
 - When a planet is governed, clicking on or mouse wheeling over the bases field
   allow to increase or adjust the target bases amount.
 - Eco slider shows fractional population growth if growth is less than 10
-- Summary of forces shown before ship combat
-- When espionage was successful, clicking on the race icon opens the spy report
 - The plantary production field indicates whether the planet currently receives
   reserve spending (yellow = none, red = partial, while = full). The same
   colors are also used in the Planets screen.
 - Clicking on the production field in the Planets screen resets the allocated
   reserve to zero or (when it is already zero) directly opens the reserve
   transfer dialog.
+- The = key can be substitued by the # key (useful for some non-US keyboards)
+4) Gameplay
+- When espionage was successful, clicking on the race icon opens the spy report
 - Nebula planets show "NEB" in their shields field and have a purple instead
   of a red frame around their picture
-- New Auto and Retreat buttons for space combat autoresolve
 - Pressing = or # on the Tech screen adjusts only the unlocked sliders
 - Tech screen has lights showing when you reach max research bonus
 - Clicking on the Tech screen lights sets the slider to bonus limit
@@ -112,12 +121,9 @@ or pressing Alt-X in the main menu enables the following extra UI features:
   your last planet of choice
 - Clicking on #, Name, etc on Planets screen sorts the list
 - Clicking on Station or ship names on Fleet screen sorts the list
-- The = key can be substitued by the # key (useful for some non-US keyboards)
-- Hotkey press does not change mouse position
-- Alt+R to set/unset relocation for all planets
-- F2-F9 have context sensitive behavior if possible
-- Default hotkeys changed: Races screen (r -> e), Reloc button (l -> r)
-- Alt+F to show/hide incoming friendly fleet route when planet is selected
 - I to show message filter options
-
+- Report screen shows name of AI leaders, Map screen shows current year
+5) Misc
+- Game options screen Silent/FX Only/Music is replaced with more options
+- Continue and Undo saves can be chosen in the Load Game screen
 See doc/list_gamediff.txt for a list of differences in the game itself.
