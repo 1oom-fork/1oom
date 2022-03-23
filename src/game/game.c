@@ -611,6 +611,7 @@ int main_do(void)
                 main_menu_new_game:
                 game_new(&game, &game_aux, &game_new_opts);
                 game_opt_new_value = game_get_opts_value(&game);
+                game_save_do_save_i(GAME_SAVE_I_INIT, "Init", &game);
                 break;
             case MAIN_MENU_ACT_TUTOR:
                 game_new_tutor(&game, &game_aux);

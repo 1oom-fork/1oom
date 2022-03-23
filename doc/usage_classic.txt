@@ -125,5 +125,5 @@ or pressing Alt-X in the main menu enables the following extra UI features:
 - Report screen shows name of AI leaders, Map screen shows current year
 5) Misc
 - Game options screen Silent/FX Only/Music is replaced with more options
-- Continue and Undo saves can be chosen in the Load Game screen
+- Continue, Undo and Init saves can be chosen in the Load Game screen
 See doc/list_gamediff.txt for a list of differences in the game itself.
