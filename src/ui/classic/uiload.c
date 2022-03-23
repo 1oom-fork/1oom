@@ -90,10 +90,11 @@ int ui_load_game(void)
     uiobj_set_focus(oi_ok);
 
     for (int i = 0; i < d.savenum; ++i) {
-        int si, y0;
+        int si, y0, y1;
         si = d.tbl_savei[i];
-        y0 = (si < NUM_SAVES) ? (31 + 18 * si) : (110 + 10 * si);
-        oi_save[i] = uiobj_add_mousearea(130, y0, 264, y0 + 14, MOO_KEY_1 + si);
+        y0 = (si < NUM_SAVES) ? (31 + 18 * si) : (112 + 10 * si);
+        y1 = y0 + ((si < NUM_SAVES) ? 14 : 8);
+        oi_save[i] = uiobj_add_mousearea(130, y0, 264, y1, MOO_KEY_1 + si);
     }
 
     d.selected = 0;
