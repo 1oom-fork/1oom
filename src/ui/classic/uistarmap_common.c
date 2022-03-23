@@ -1345,14 +1345,8 @@ bool ui_starmap_handle_common(struct game_s *g, struct starmap_data_s *d, bool *
     d->oi1 = uiobj_handle_input_cond();
     d->oi2 = uiobj_at_cursor();
     if (d->oi1 == d->oi_f10) {
-        if (ui_data.ui_main_loop_action == UI_MAIN_LOOP_STARMAP ||
-                ui_data.ui_main_loop_action == UI_MAIN_LOOP_ORBIT_OWN_SEL ||
-                ui_data.ui_main_loop_action == UI_MAIN_LOOP_RELOC ||
-                ui_data.ui_main_loop_action == UI_MAIN_LOOP_TRANS)
-        {
-            game_save_do_save_i(GAME_SAVE_I_CONTINUE, "Continue", g);
-            return true;
-        }
+        game_save_do_save_i(GAME_SAVE_I_CONTINUE, "Continue", g);
+        return true;
     }
     ui_starmap_handle_scrollkeys(d, d->oi1);
     if (d->oi1 == d->oi_scroll && !g->evn.build_finished_num[d->api]) {
