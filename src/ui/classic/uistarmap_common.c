@@ -1151,7 +1151,7 @@ int ui_starmap_cursor_on_orbit(const struct game_s *g, const struct starmap_data
     return -1;
 }
 
-static int ui_starmap_bottom_menu_action(struct game_s *g, struct starmap_data_s *d, int16_t oi) {
+static int ui_starmap_bottom_menu_action(const struct game_s *g, const struct starmap_data_s *d, int16_t oi) {
     ui_main_loop_action_t action = -1;
     if (oi == d->oi_gameopts) {
         action = UI_MAIN_LOOP_GAMEOPTS;
@@ -1173,7 +1173,7 @@ static int ui_starmap_bottom_menu_action(struct game_s *g, struct starmap_data_s
     return action;
 }
 
-void ui_starmap_select_bottom_highlight(struct game_s *g, struct starmap_data_s *d, int16_t oi) {
+void ui_starmap_select_bottom_highlight(const struct game_s *g, struct starmap_data_s *d, int16_t oi) {
     d->bottom_highlight = ui_starmap_bottom_menu_action(g, d, oi) - 1;
 }
 

@@ -293,8 +293,8 @@ static void ui_starmap_handle_governor(struct game_s *g, struct starmap_data_s *
     }
 }
 
-static void ui_starmap_select_governor_highlight(struct game_s *g, struct starmap_data_s *d, int16_t oi2) {
-    planet_t *p = &g->planet[g->planet_focus_i[d->api]];
+static void ui_starmap_select_governor_highlight(const struct game_s *g, struct starmap_data_s *d, int16_t oi2) {
+    const planet_t *p = &g->planet[g->planet_focus_i[d->api]];
     d->gov_highlight = 0;
     if (d->oi2 == d->sm.oi_gov_ship) {
         d->gov_highlight = 1;
