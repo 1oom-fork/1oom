@@ -71,6 +71,16 @@ typedef enum {
 } difficulty_t;
 
 typedef enum {
+    GAME_AI_NONE = -1,
+    GAME_AI_CLASSIC = 0,
+    GAME_AI_CLASSICPLUS, /* 1 */
+    GAME_AI_MUXER,       /* 2 */
+    GAME_AI_STUB,        /* 3 */
+    GAME_AI_NUM,         /* 4 */
+    GAME_AI_NUM_VISIBLE = 2 /* Show only Classic and Classic+ */
+} game_ai_id_t;
+
+typedef enum {
     GAME_MODE_EXTRA_NO_EXTRA     = 0,
     GAME_MODE_EXTRA_NO_ELECTIONS = (1 << 0),
 } game_mode_extra_t;

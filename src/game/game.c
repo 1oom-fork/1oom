@@ -459,6 +459,45 @@ const struct cfg_items_s game_cfg_items[] = {
     CFG_ITEM_END
 };
 
+static bool newgame_extra_cfg_check_race(void *v) {
+    int race = (int)(intptr_t)v;
+    return race <= RACE_NUM;
+}
+
+static bool newgame_extra_cfg_check_banner(void *v) {
+    int banner = (int)(intptr_t)v;
+    return banner <= BANNER_NUM;
+}
+
+static bool newgame_extra_cfg_check_ai_id(void *v) {
+    int id = (int)(intptr_t)v;
+    return id < GAME_AI_NUM_VISIBLE;
+}
+
+const struct cfg_items_s newgame_extra_cfg_items[] = {
+    CFG_ITEM_INT("race0", &game_opt_new.pdata[0].race, newgame_extra_cfg_check_race),
+    CFG_ITEM_INT("race1", &game_opt_new.pdata[1].race, newgame_extra_cfg_check_race),
+    CFG_ITEM_INT("race2", &game_opt_new.pdata[2].race, newgame_extra_cfg_check_race),
+    CFG_ITEM_INT("race3", &game_opt_new.pdata[3].race, newgame_extra_cfg_check_race),
+    CFG_ITEM_INT("race4", &game_opt_new.pdata[4].race, newgame_extra_cfg_check_race),
+    CFG_ITEM_INT("race5", &game_opt_new.pdata[5].race, newgame_extra_cfg_check_race),
+    CFG_ITEM_INT("banner0", &game_opt_new.pdata[0].banner, newgame_extra_cfg_check_banner),
+    CFG_ITEM_INT("banner1", &game_opt_new.pdata[1].banner, newgame_extra_cfg_check_banner),
+    CFG_ITEM_INT("banner2", &game_opt_new.pdata[2].banner, newgame_extra_cfg_check_banner),
+    CFG_ITEM_INT("banner3", &game_opt_new.pdata[3].banner, newgame_extra_cfg_check_banner),
+    CFG_ITEM_INT("banner4", &game_opt_new.pdata[4].banner, newgame_extra_cfg_check_banner),
+    CFG_ITEM_INT("banner5", &game_opt_new.pdata[5].banner, newgame_extra_cfg_check_banner),
+    CFG_ITEM_BOOL("is_ai0", &game_opt_new.pdata[0].is_ai),
+    CFG_ITEM_BOOL("is_ai1", &game_opt_new.pdata[1].is_ai),
+    CFG_ITEM_BOOL("is_ai2", &game_opt_new.pdata[2].is_ai),
+    CFG_ITEM_BOOL("is_ai3", &game_opt_new.pdata[3].is_ai),
+    CFG_ITEM_BOOL("is_ai4", &game_opt_new.pdata[4].is_ai),
+    CFG_ITEM_BOOL("is_ai5", &game_opt_new.pdata[5].is_ai),
+    CFG_ITEM_INT("ai_id", &game_opt_new.ai_id, newgame_extra_cfg_check_ai_id),
+    CFG_ITEM_BOOL("no_elections", &game_opt_new.no_elections),
+    CFG_ITEM_END
+};
+
 /* -------------------------------------------------------------------------- */
 
 int main_handle_option(const char *argv)

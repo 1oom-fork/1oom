@@ -7,7 +7,7 @@ struct game_new_options_s {
     uint32_t galaxy_seed;
     galaxy_size_t galaxy_size;
     difficulty_t difficulty;
-    uint8_t ai_id;
+    game_ai_id_t ai_id;
     uint8_t players;
     uint8_t no_elections;
     struct {

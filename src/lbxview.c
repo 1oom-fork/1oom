@@ -54,6 +54,10 @@ const struct cfg_items_s game_cfg_items[] = {
     CFG_ITEM_END
 };
 
+const struct cfg_items_s newgame_extra_cfg_items[] = {  //TODO: WHY???
+    CFG_ITEM_END
+};
+
 /* Dummy functions because the headers pull in gameapi.h. */
 bool game_str_patch(const char *strid, const char *patchstr, int i)
 {
