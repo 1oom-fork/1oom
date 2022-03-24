@@ -23,7 +23,7 @@ struct game_new_options_s {
     { \
         0, GALAXY_SIZE_SMALL, DIFFICULTY_SIMPLE, GAME_AI_DEFAULT, 2, false, \
         { \
-            { "", "", RACE_RANDOM, BANNER_RANDOM, false }, \
+            { "", "", RACE_HUMAN, BANNER_BLUE, false }, \
             { "", "", RACE_RANDOM, BANNER_RANDOM, true }, \
             { "", "", RACE_RANDOM, BANNER_RANDOM, true }, \
             { "", "", RACE_RANDOM, BANNER_RANDOM, true }, \
