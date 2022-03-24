@@ -75,6 +75,29 @@ static void game_stop(struct game_s *g)
     g->gaux->flag_cheat_events = false;
 }
 
+static bool game_cfg_check_new_game_opts(void *val)
+{
+    int v2, v = (int)(intptr_t)val;
+    v2 = v % 10;
+    v = v / 10;
+    if (v2 > DIFFICULTY_NUM) {
+        log_error("invalid difficulty num %i\n", v2);
+        return false;
+    }
+    v2 = v % 10;
+    v = v / 10;
+    if (v2 > GALAXY_SIZE_HUGE) {
+        log_error("invalid galaxy size num %i\n", v2);
+        return false;
+    }
+    v2 = v % 10;
+    if ((v2 < 2) || (v2 > PLAYER_NUM)) {
+        log_error("invalid players num %i\n", v2);
+        return false;
+    }
+    return true;
+}
+
 static void game_set_opts_from_value(struct game_new_options_s *go, int v)
 {
     int v2;
@@ -146,27 +169,10 @@ static int game_opt_do_new_seed(char **argv, void *var)
         } else {
             v = game_opt_new_value;
         }
-        vo = v;
-        v2 = v % 10;
-        v = v / 10;
-        if (v2 > DIFFICULTY_NUM) {
-            log_error("invalid difficulty num %i\n", v2);
+        if (!game_cfg_check_new_game_opts(&v)) {
             return -1;
         }
-        game_opt_new.difficulty = v2;
-        v2 = v % 10;
-        v = v / 10;
-        if (v2 > GALAXY_SIZE_HUGE) {
-            log_error("invalid galaxy size num %i\n", v2);
-            return -1;
-        }
-        game_opt_new.galaxy_size = v2;
-        v2 = v % 10;
-        if ((v2 < 2) || (v2 > PLAYER_NUM)) {
-            log_error("invalid players num %i\n", v2);
-            return -1;
-        }
-        game_opt_new.players = v2;
+        game_set_opts_from_value(&game_opt_new, v);
     }
     {
         uint32_t v = 0, v2;
@@ -441,29 +447,6 @@ const struct cmdline_options_s main_cmdline_options[] = {
 };
 
 /* -------------------------------------------------------------------------- */
-
-static bool game_cfg_check_new_game_opts(void *val)
-{
-    int v2, v = (int)(intptr_t)val;
-    v2 = v % 10;
-    v = v / 10;
-    if (v2 > DIFFICULTY_NUM) {
-        log_error("invalid difficulty num %i\n", v2);
-        return false;
-    }
-    v2 = v % 10;
-    v = v / 10;
-    if (v2 > GALAXY_SIZE_HUGE) {
-        log_error("invalid galaxy size num %i\n", v2);
-        return false;
-    }
-    v2 = v % 10;
-    if ((v2 < 2) || (v2 > PLAYER_NUM)) {
-        log_error("invalid players num %i\n", v2);
-        return false;
-    }
-    return true;
-}
 
 const struct cfg_items_s game_cfg_items[] = {
     CFG_ITEM_BOOL("undo", &game_opt_undo_enabled),
