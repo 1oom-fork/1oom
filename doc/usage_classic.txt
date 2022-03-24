@@ -69,6 +69,7 @@ The config file item "ui.uiextra" (set via the -uiextra command-line option)
 or pressing Alt-X in the main menu enables the following extra UI features:
 1) New game options
 - New Game screen allows setting opponent race/banner/names and AI/human flag
+- New Game screen allows new rule: no World Ruler Elections
 2) Star map controls
 - Hovering over a planet selects planet for fleet/trans send and reloc
 - Clicking destination star works as Accept for fleet/trans send and reloc

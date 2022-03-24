@@ -690,7 +690,8 @@ static int game_save_encode(uint8_t *buf, int buflen, const struct game_s *g, ui
     SG_1OOM_EN_BV(g->is_ai, PLAYER_NUM);
     SG_1OOM_EN_BV(g->refuse, PLAYER_NUM);
     SG_1OOM_EN_U8(g->ai_id);
-    SG_1OOM_EN_DUMMY(3);
+    SG_1OOM_EN_BV(&g->game_mode_extra, 8);
+    SG_1OOM_EN_DUMMY(2);
     SG_1OOM_EN_U8(g->active_player);
     SG_1OOM_EN_U8(g->difficulty);
     SG_1OOM_EN_U8(g->galaxy_size);
@@ -769,7 +770,8 @@ static int game_save_decode(const uint8_t *buf, int buflen, struct game_s *g, ui
     SG_1OOM_DE_BV(g->is_ai, PLAYER_NUM);
     SG_1OOM_DE_BV(g->refuse, PLAYER_NUM);
     SG_1OOM_DE_U8(g->ai_id);
-    SG_1OOM_DE_DUMMY(3);
+    SG_1OOM_DE_BV(&g->game_mode_extra, 8);
+    SG_1OOM_DE_DUMMY(2);
     SG_1OOM_DE_U8(g->active_player);
     SG_1OOM_DE_U8(g->difficulty);
     SG_1OOM_DE_U8(g->galaxy_size);

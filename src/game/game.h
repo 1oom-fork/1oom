@@ -290,6 +290,7 @@ struct game_s {
     uint16_t year;  /* init to 1 */
     uint8_t players;
     uint8_t ai_id;
+    uint8_t game_mode_extra;
     BOOLVEC_DECLARE(is_ai, PLAYER_NUM);
     player_id_t active_player;
     difficulty_t difficulty;
