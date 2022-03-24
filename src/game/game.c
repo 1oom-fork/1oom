@@ -549,13 +549,11 @@ int main_do(void)
         ui_play_intro();
     }
     while (1) {
-        struct game_new_options_s game_new_opts = GAME_NEW_OPTS_DEFAULT;
         main_menu_action_t main_menu_action;
         int load_game_i = 0;
 
         if (game_opt_new_game) {
             game_opt_new_game = false;
-            game_new_opts = game_opt_new;
             goto main_menu_new_game;
         } else if (game_opt_load_fname) {
             if (game_save_do_load_fname(game_opt_load_fname, 0, &game)) {
@@ -586,13 +584,13 @@ int main_do(void)
                 continue;
             }
         } else {
-            game_set_opts_from_value(&game_new_opts, game_opt_new_value);
-            main_menu_action = ui_main_menu(&game_new_opts, &load_game_i);
+            game_set_opts_from_value(&game_opt_new, game_opt_new_value);
+            main_menu_action = ui_main_menu(&game_opt_new, &load_game_i);
         }
         switch (main_menu_action) {
             case MAIN_MENU_ACT_NEW_GAME:
                 main_menu_new_game:
-                game_new(&game, &game_aux, &game_new_opts);
+                game_new(&game, &game_aux, &game_opt_new);
                 game_opt_new_value = game_get_opts_value(&game);
                 game_save_do_save_i(GAME_SAVE_I_INIT, "Init", &game);
                 break;
