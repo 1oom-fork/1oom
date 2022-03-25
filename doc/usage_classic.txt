@@ -60,6 +60,7 @@ The following new UI features are always enabled/available:
 - Alt-Enter to toggle full screen mode
 - Lowercase allowed in save names
 - Load Game screen uses numbers as hotkeys for slots
+- "ui.skip_bomb_animation = true" or -nobombanimation to disable bomb animation
 - Unlike the original, 1oom does not autosave the "continue game" (save slot 7)
 when starting a new game or every N turns. It only saves it when quitting the
 game via Game -> Quit or when F10 is pressed while in the "control screen" /
