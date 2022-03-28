@@ -1505,11 +1505,16 @@ static int16_t uiobj_handle_input_sub0_mouse(void) {
             mouse_getclear_click_sw();
             return -1;
         }
+        if (ui_extra_enabled) {
+            oi = uiobj_find_obj_at_cursor();
+        }
         while (mouse_buttons != 0) {
             mx = moouse_x;
             my = moouse_y;
             uiobj_mouseoff = ui_cursor_mouseoff;
-            oi = uiobj_find_obj_at_cursor();
+            if (!ui_extra_enabled) {
+                oi = uiobj_find_obj_at_cursor();
+            }
             if (oi == 0) {
                 if (uiobj_focus_oi != -1) {
                     p = &uiobj_tbl[uiobj_focus_oi];
