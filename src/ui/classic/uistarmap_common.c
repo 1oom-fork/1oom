@@ -1393,9 +1393,11 @@ bool ui_starmap_handle_common(struct game_s *g, struct starmap_data_s *d, bool *
         ui_sound_play_sfx_24();
         int i = ui_search(g, d->api);
         if (i < 0) {
+            *flag_done = true;
             return true;
         }
         ui_starmap_focus_planet(g, d, i, flag_done);
+        *flag_done = true;
         return true;
     }
     if (d->oi1 == d->oi_caught) {
