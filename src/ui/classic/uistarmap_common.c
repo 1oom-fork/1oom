@@ -646,7 +646,7 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
             }
         }
     }
-    if (ui_extra_enabled && ui_data.ui_main_loop_action == UI_MAIN_LOOP_STARMAP && !g->evn.build_finished_num[d->api]) {
+    if (ui_extra_enabled && d->oi2 > 0 && ui_data.ui_main_loop_action == UI_MAIN_LOOP_STARMAP && !g->evn.build_finished_num[d->api]) {
         int ruler_from_i, ruler_to_i;
         ruler_from_i = g->planet_focus_i[d->api];
         ruler_to_i = ui_starmap_cursor_on_star(g, d, d->oi2, d->api);
@@ -1117,6 +1117,9 @@ void ui_starmap_compute_scale(const struct game_s *g)
 
 int ui_starmap_cursor_on_star(const struct game_s *g, const struct starmap_data_s *d, int16_t oi2, player_id_t active_player)
 {
+    if (oi2 == 0) {
+        return -1;
+    }
     for (int i = 0; i < g->galaxy_stars; ++i) {
         if (oi2 == d->oi_tbl_stars[i]) {
             return i;
@@ -1126,6 +1129,9 @@ int ui_starmap_cursor_on_star(const struct game_s *g, const struct starmap_data_
 }
 
 int ui_starmap_cursor_on_enroute(const struct game_s *g, const struct starmap_data_s *d, int16_t oi2) {
+    if (oi2 == 0) {
+        return -1;
+    }
     for (int i = 0; i < g->enroute_num; ++i) {
         if (oi2 == d->oi_tbl_enroute[i]) {
             return i;
@@ -1135,6 +1141,9 @@ int ui_starmap_cursor_on_enroute(const struct game_s *g, const struct starmap_da
 }
 
 int ui_starmap_cursor_on_transport(const struct game_s *g, const struct starmap_data_s *d, int16_t oi2) {
+    if (oi2 == 0) {
+        return -1;
+    }
     for (int i = 0; i < g->transport_num; ++i) {
         if (oi2 == d->oi_tbl_transport[i]) {
             return i;
@@ -1144,6 +1153,9 @@ int ui_starmap_cursor_on_transport(const struct game_s *g, const struct starmap_
 }
 
 int ui_starmap_cursor_on_orbit(const struct game_s *g, const struct starmap_data_s *d, int16_t oi2, player_id_t orbit_owner) {
+    if (oi2 == 0) {
+        return -1;
+    }
     for (int i = 0; i < g->galaxy_stars; ++i) {
         if (oi2 == d->oi_tbl_pl_stars[orbit_owner][i]) {
             return i;
