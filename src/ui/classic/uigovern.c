@@ -173,7 +173,7 @@ void ui_govern(struct game_s *g, player_id_t pi)
     y = 150 + 5;
     oi_adjust = uiobj_add_mousearea(x, y, x + 160, y + 7, MOO_KEY_o);
     y += 8;
-    oi_spendall = uiobj_add_mousearea(x, y, x + 160, y + 7, MOO_KEY_v);
+    oi_spendall = uiobj_add_mousearea(x, y, x + 160, y + 7, MOO_KEY_UNKNOWN);
 
     uiobj_set_callback_and_delay(govern_draw_cb, &d, 1);
 
