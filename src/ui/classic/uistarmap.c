@@ -526,8 +526,11 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             }
             ui_starmap_add_oi_hotkeys(&d);
             if ((p->owner == active_player) && p->missile_bases) {
-                /* oi_b = uiobj_add_mousearea(272, 59, 312, 67, MOO_KEY_b); */
-                oi_b = uiobj_add_inputkey(MOO_KEY_b);
+                if (ui_extra_enabled) {
+                    oi_b = uiobj_add_mousearea(272, 59, 312, 67, MOO_KEY_b);
+                } else {
+                    oi_b = uiobj_add_inputkey(MOO_KEY_b);
+                }
             }
             ui_starmap_add_oi_bottom_buttons(&d);
             if (g->evn.build_finished_num[active_player]) {

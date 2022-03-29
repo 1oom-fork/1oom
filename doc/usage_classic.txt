@@ -85,6 +85,7 @@ or pressing Alt-X in the main menu enables the following extra UI features:
 - Summary of forces shown before ship combat
 - New Auto and Retreat buttons for space combat autoresolve
 3) Planetary controls
+- Bases can be scrapped by clicking on the Bases text
 - Right clicking on planet name in the galaxy movement screen opens a governor
   screen for all governor related local and global settings. The latter include
   Eco mode, buildup mode and whether to build stargates. All local settings
