@@ -225,7 +225,7 @@ void ui_starmap_set_pos(const struct game_s *g, int x, int y)
     ui_data.starmap.y2 = y;
 }
 
-static void ui_starmap_handle_governor(struct game_s *g, struct starmap_data_s *d, int16_t scrollmisc) {
+static void ui_starmap_handle_governor(struct game_s *g, struct starmap_data_s *d, int16_t scrollmisc, bool *flag_done) {
     planet_t *p;
     p = &g->planet[g->planet_focus_i[d->api]];
     if (d->oi1 == d->sm.oi_gov_ship) {
@@ -285,6 +285,10 @@ static void ui_starmap_handle_governor(struct game_s *g, struct starmap_data_s *
             game_planet_govern(g, p);
         }
     } else if (d->oi1 == d->sm.oi_governor) {
+        ui_data.ui_main_loop_action = UI_MAIN_LOOP_GOVERN;
+        *flag_done = true;
+        ui_sound_play_sfx_24();
+    } else if (d->oi2 == d->sm.oi_governor && d->oi1 == UIOBJI_ESC) {
         /* invert the governor flag */
         BOOLVEC_TOGGLE(p->extras, PLANET_EXTRAS_GOVERNOR);
         if (BOOLVEC_IS1(p->extras, PLANET_EXTRAS_GOVERNOR)) {
@@ -419,7 +423,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
         } else if (d.oi1 == oi_alt_p) {
             game_cheat_traits(g, active_player);
         } else {
-            ui_starmap_handle_governor(g, &d, scrollmisc);
+            ui_starmap_handle_governor(g, &d, scrollmisc, &flag_done);
         }
         if (0
           || (d.oi1 == d.sm.oi_ship) || (d.oi1 == oi_shippic)
@@ -497,10 +501,6 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
                 ui_sound_play_sfx_24();
             }
             game_update_production(g);
-        } else if ((d.oi1 == UIOBJI_ESC) && (d.oi2 == d.sm.oi_governor)) {
-            ui_data.ui_main_loop_action = UI_MAIN_LOOP_GOVERN;
-            flag_done = true;
-            ui_sound_play_sfx_24();
         } else if (d.oi1 == oi_wheelname) {
             int i;
             i = g->planet_focus_i[active_player];
@@ -541,7 +541,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
                 oi_shippic = uiobj_add_mousearea(228, 139, 275, 175, MOO_KEY_UNKNOWN);
                 oi_wheelshippic = uiobj_add_mousewheel(228, 139, 275, 175, &scrollmisc);
                 if (ui_extra_enabled) {
-                    d.sm.oi_governor = uiobj_add_mousearea(227, 8, 310, 20, MOO_KEY_UNKNOWN);
+                    d.sm.oi_governor = uiobj_add_mousearea(227, 59, 268, 67, MOO_KEY_UNKNOWN);
                     d.sm.oi_gov_ship = uiobj_add_mousearea( 288, 82, 312, 88, MOO_KEY_UNKNOWN );
                     d.sm.oi_gov_reserve = uiobj_add_mousearea( 288, 104, 312, 110, MOO_KEY_UNKNOWN );
                     d.sm.oi_gov_tech = uiobj_add_mousearea( 288, 126, 312, 132, MOO_KEY_UNKNOWN );

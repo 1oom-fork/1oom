@@ -86,12 +86,11 @@ or pressing Alt-X in the main menu enables the following extra UI features:
 - New Auto and Retreat buttons for space combat autoresolve
 3) Planetary controls
 - Bases can be scrapped by clicking on the Bases text
-- Right clicking on planet name in the galaxy movement screen opens a governor
-  screen for all governor related local and global settings. The latter include
+- Governor screen can be opened by clicking on the Pop text. The screen include
   Eco mode, buildup mode and whether to build stargates. All local settings
   are also reachable directly over the planet interface.
-- Planetary governor can be enabled or disabled by clicking on planet name in
-  the galaxy movement screen, setting reserve spending mode (see below) or by
+- Planetary governor can be enabled or disabled by right clicking on the Pop
+  text, setting reserve spending mode (see below) or by
   clicking on the respective amount fields (right of the slider) for Ships, Ind
   or Tech. The latter also sets the governor  production focus for the planet.
 - Clicking on the planetary production field when the governor is active cycles
