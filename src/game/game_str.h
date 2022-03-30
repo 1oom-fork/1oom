@@ -268,6 +268,8 @@ extern const char *game_str_gv_target;
 extern const char *game_str_gv_adjust;
 extern const char *game_str_gv_resta;
 extern const char *game_str_gv_thispl;
+extern const char *game_str_gv_enabled;
+extern const char *game_str_gv_disabled;
 extern const char *game_str_gv_rest;
 extern const char *game_str_tbl_gv_rest[3];
 extern const char *game_str_gv_reserve;

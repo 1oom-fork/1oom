@@ -32,6 +32,7 @@ struct govern_data_s {
     uint16_t target;
     enum {
         UI_GV_HIGHLIGHT_NONE,
+        UI_GV_HIGHLIGHT_ENABLED,
         UI_GV_HIGHLIGHT_ECO_MODE,
         UI_GV_HIGHLIGHT_BUILDUP,
         UI_GV_HIGHLIGHT_STARGATE,
@@ -42,35 +43,45 @@ struct govern_data_s {
     } highlight;
     bool allow_stargates;
     bool my_planet;
+    bool enabled;
 };
 
 static void govern_draw_cb(void *vptr)
 {
     struct govern_data_s *d = vptr;
     if (d->my_planet) {
-        const int x = 56, y = 10;
-        ui_draw_filled_rect(x, y, x + 160, y + 30, 0x06, ui_scale);
-        lbxfont_select(0, 0xd, 0, 0);
-        lbxfont_print_str_split(x + 5, y + 5, 145, game_str_gv_target, 0, UI_SCREEN_W, UI_SCREEN_H, ui_scale);
-        lbxfont_select(2, 6, 0, 0);
-        lbxfont_print_num_right(x + 73, y + 18, d->target, UI_SCREEN_W, ui_scale);
-    }
-    if (d->my_planet) {
         const int x = 56;
-        int y = 45;
-        ui_draw_filled_rect(x, y, x + 160, y + 35, 0x06, ui_scale);
+        int y = 10;
+        ui_draw_filled_rect(x, y, x + 160, y + 45, 0x06, ui_scale);
         lbxfont_select(0, 0xd, 0, 0);
         y += 5;
         lbxfont_print_str_normal(x + 5, y, game_str_gv_thispl, UI_SCREEN_W, ui_scale);
-        lbxfont_select(0, (d->highlight == UI_GV_HIGHLIGHT_SPENDTHIS) ? 0x1 : 0x0, 0, 0);
         lib_sprintf(ui_data.strbuf, UI_STRBUF_SIZE, "%s %s", game_str_gv_rest, game_str_tbl_gv_rest[d->spend_rest]);
         y += 10;
+        ui_draw_filled_rect(x + 5, y + 1, x + 8, y + 4, 0x01, ui_scale);
+        lbxfont_select(0, (d->highlight == UI_GV_HIGHLIGHT_ENABLED) ? 0x1 : 0x0, 0, 0);
+        if (d->enabled) {
+            ui_draw_filled_rect(x + 6, y + 2, x + 7, y + 3, 0x44, ui_scale);
+            lbxfont_print_str_normal(x + 11, y, game_str_gv_enabled, UI_SCREEN_W, ui_scale);
+        } else {
+            lbxfont_print_str_normal(x + 11, y, game_str_gv_disabled, UI_SCREEN_W, ui_scale);
+        }
+        y += 8;
+        lbxfont_select(0, (d->highlight == UI_GV_HIGHLIGHT_SPENDTHIS) ? 0x1 : 0x0, 0, 0);
         lbxfont_print_str_normal(x + 5, y, ui_data.strbuf, UI_SCREEN_W, ui_scale);
 
         lbxfont_select(0, (d->highlight == UI_GV_HIGHLIGHT_RESERVE) ? 0x1 : 0x0, 0, 0);
         sprintf(ui_data.strbuf, "%s: %s", game_str_gv_reserve, game_str_tbl_gv_reserve[d->reserve]);
         y += 8;
         lbxfont_print_str_normal(x + 5, y, ui_data.strbuf, UI_SCREEN_W, ui_scale);
+    }
+    if (d->my_planet) {
+        const int x = 56, y = 60;
+        ui_draw_filled_rect(x, y, x + 160, y + 30, 0x06, ui_scale);
+        lbxfont_select(0, 0xd, 0, 0);
+        lbxfont_print_str_split(x + 5, y + 5, 145, game_str_gv_target, 0, UI_SCREEN_W, UI_SCREEN_H, ui_scale);
+        lbxfont_select(2, 6, 0, 0);
+        lbxfont_print_num_right(x + 73, y + 18, d->target, UI_SCREEN_W, ui_scale);
     }
     {
         const int x = 56;
@@ -112,10 +123,11 @@ void ui_govern(struct game_s *g, player_id_t pi)
 {
     struct govern_data_s d;
     bool flag_done = false;
-    int16_t oi_cancel, oi_accept, oi_p, oi_m, oi_p10, oi_m10, oi_adjust, oi_wheel, 
-            oi_spendthis, oi_sg, oi_ecom, oi_spendall, oi_reserve, oi_buildup;
+    int16_t oi_cancel, oi_accept, oi_p, oi_m, oi_p10, oi_m10, oi_adjust, oi_wheel,
+            oi_spendthis, oi_sg, oi_ecom, oi_spendall, oi_reserve, oi_buildup,
+            oi_enabled;
     const int x = 56;
-    int y = 10;
+    int y;
     int16_t scroll = 0;
     planet_t *p = &(g->planet[g->planet_focus_i[pi]]);
 
@@ -123,11 +135,13 @@ void ui_govern(struct game_s *g, player_id_t pi)
     uiobj_finish_frame();
     d.my_planet = (p->owner == pi);
     if (d.my_planet) {
+        d.enabled = BOOLVEC_IS1(p->extras, PLANET_EXTRAS_GOVERNOR);
         d.target = p->target_bases;
         d.spend_rest = (p->extras[0] >> 1) & 3;
         d.reserve = BOOLVEC_IS1(p->extras, PLANET_EXTRAS_GOV_BOOST_BUILD) +
                     BOOLVEC_IS1(p->extras, PLANET_EXTRAS_GOV_BOOST_PROD);
     } else {
+        d.enabled = false;
         d.target = 0;
         d.spend_rest = 0;
         d.reserve = 0;
@@ -139,6 +153,19 @@ void ui_govern(struct game_s *g, player_id_t pi)
     ui_cursor_setup_area(1, &ui_cursor_area_tbl[0]);
 
     uiobj_table_clear();
+    y = 10 + 15;
+    if (d.my_planet) {
+        oi_enabled = uiobj_add_mousearea(x, y, x + 160, y + 7, MOO_KEY_UNKNOWN);
+        y += 8;
+        oi_spendthis = uiobj_add_mousearea(x, y, x + 160, y + 7, MOO_KEY_r);
+        y += 8;
+        oi_reserve = uiobj_add_mousearea(x, y, x + 160, y + 7, MOO_KEY_UNKNOWN);
+    } else {
+        oi_enabled = UIOBJI_INVALID;
+        oi_spendthis = UIOBJI_INVALID;
+        oi_reserve = UIOBJI_INVALID;
+    }
+    y = 60;
     if (d.my_planet) {
         oi_p = uiobj_add_t0(x + 5 + 23, y + 15, "", ui_data.gfx.starmap.move_but_p, MOO_KEY_UNKNOWN);
         oi_m = uiobj_add_t0(x + 5 + 12, y + 15, "", ui_data.gfx.starmap.move_but_m, MOO_KEY_UNKNOWN);
@@ -155,15 +182,6 @@ void ui_govern(struct game_s *g, player_id_t pi)
         oi_accept = UIOBJI_INVALID;
     }
     oi_wheel = uiobj_add_mousewheel(x, y, x + 80, y + 30, &scroll);
-    y = 45 + 15;
-    if (d.my_planet) {
-        oi_spendthis = uiobj_add_mousearea(x, y, x + 160, y + 7, MOO_KEY_r);
-        y += 8;
-        oi_reserve = uiobj_add_mousearea(x, y, x + 160, y + 7, MOO_KEY_UNKNOWN);
-    } else {
-        oi_spendthis = UIOBJI_INVALID;
-        oi_reserve = UIOBJI_INVALID;
-    }
     y = 102 + 15;
     oi_sg = uiobj_add_mousearea(x, y, x + 160, y + 7, MOO_KEY_s);
     y += 8;
@@ -185,7 +203,9 @@ void ui_govern(struct game_s *g, player_id_t pi)
             oi2 = uiobj_at_cursor();
             d.highlight = UI_GV_HIGHLIGHT_NONE;
             if (oi2 != UIOBJI_INVALID) {
-                if (oi2 == oi_ecom) {
+                if (oi2 == oi_enabled) {
+                    d.highlight = UI_GV_HIGHLIGHT_ENABLED;
+                } else if (oi2 == oi_ecom) {
                     d.highlight = UI_GV_HIGHLIGHT_ECO_MODE;
                 } else if (oi2 == oi_sg) {
                     d.highlight = UI_GV_HIGHLIGHT_STARGATE;
@@ -206,6 +226,12 @@ void ui_govern(struct game_s *g, player_id_t pi)
         if ((oi == oi_cancel) || (oi == UIOBJI_ESC)) {
             ui_sound_play_sfx_06();
             flag_done = true;
+        } else if (oi == oi_enabled) {
+            BOOLVEC_TOGGLE(p->extras, PLANET_EXTRAS_GOVERNOR);
+            d.enabled = !d.enabled;
+            if (BOOLVEC_IS1(p->extras, PLANET_EXTRAS_GOVERNOR)) {
+                game_planet_govern(g, p);
+            }
         } else if (oi == oi_accept) {
             ui_sound_play_sfx_24();
             p->target_bases = d.target;
