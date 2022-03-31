@@ -1576,7 +1576,7 @@ static int16_t uiobj_handle_input_sub0_mouse(void) {
             }
         }
         uiobj_focus_oi = -1;
-        if (oi != uiobj_find_obj_at_cursor()) {
+        if (oi != uiobj_find_obj_at_cursor() && uiobj_tbl[oi].type != UIOBJ_TYPE_TEXTINPUT) {
             return 0;
         }
         if (mb == MOUSE_BUTTON_MASK_RIGHT) {
