@@ -1505,15 +1505,18 @@ static int16_t uiobj_handle_input_sub0_mouse(void) {
             mouse_getclear_click_sw();
             return -1;
         }
-        if (ui_extra_enabled) {
-            oi = uiobj_find_obj_at_cursor();
-        }
+        oi = uiobj_find_obj_at_cursor();
         while (mouse_buttons != 0) {
             mx = moouse_x;
             my = moouse_y;
             uiobj_mouseoff = ui_cursor_mouseoff;
-            if (!ui_extra_enabled) {
-                oi = uiobj_find_obj_at_cursor();
+            if (uiobj_tbl[oi].type == UIOBJ_TYPE_TEXTLINE
+              ||uiobj_tbl[oi].type == UIOBJ_TYPE_SETVAL)
+            {
+                int oi_next = uiobj_find_obj_at_cursor();
+                if (oi_next != 0 && uiobj_tbl[oi].type == uiobj_tbl[oi_next].type) {
+                    oi = oi_next;
+                }
             }
             if (oi == 0) {
                 if (uiobj_focus_oi != -1) {
@@ -1573,6 +1576,9 @@ static int16_t uiobj_handle_input_sub0_mouse(void) {
             }
         }
         uiobj_focus_oi = -1;
+        if (oi != uiobj_find_obj_at_cursor()) {
+            return 0;
+        }
         if (mb == MOUSE_BUTTON_MASK_RIGHT) {
             return -oi;
         } else {
