@@ -31,7 +31,6 @@ static bool ui_starmap_trans_withinin_frange(const struct game_s *g, const struc
 static bool ui_starmap_trans_valid_destination(const struct game_s *g, const struct starmap_data_s *d, int planet_i) {
     const planet_t *pt = &g->planet[planet_i];
     return 1
-      && (d->from != planet_i || ui_extra_enabled)
       && (pt->owner != PLAYER_NONE)
       && ui_starmap_trans_withinin_frange(g, d, planet_i)
       && BOOLVEC_IS1(pt->explored, d->api)
