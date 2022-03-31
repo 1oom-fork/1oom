@@ -203,7 +203,6 @@ extern void ui_starmap_fill_oi_ctrl(struct starmap_data_s *d);
 extern void ui_starmap_clear_oi_ctrl(struct starmap_data_s *d);
 extern void ui_starmap_fill_oi_tbls(struct starmap_data_s *d);
 extern void ui_starmap_fill_oi_tbl_stars(struct starmap_data_s *d);
-extern void ui_starmap_fill_oi_tbl_stars_own(struct starmap_data_s *d, player_id_t owner);
 extern void ui_starmap_add_oi_bottom_buttons(struct starmap_data_s *d);
 extern void ui_starmap_add_oi_hotkeys(struct starmap_data_s *d);
 extern void ui_starmap_draw_basic(struct starmap_data_s *d);

@@ -53,6 +53,7 @@ The following new UI features are always enabled/available:
   one round of production (with uiextra also transfers back)
 - Pressing +/-/= in send transport screen adjusts slider by 10% of max amount
 - Pressing A in send transport screen sets slider to maximum
+- Fleet relocation point is allowed for any planet within normal fuel range
 - Alt+r and C works regardless of selection type if possible
 - Hotkeys changed: Races screen (r -> e), Reloc button (l -> r)
 - Bases can be scrapped by clicking on the Bases text

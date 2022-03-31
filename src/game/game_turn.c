@@ -1514,6 +1514,17 @@ static void game_turn_claim(struct game_s *g)
     }
 }
 
+static void game_turn_remove_reloc_out_of_range(struct game_s *g) {
+    for (int i = 0; i < g->galaxy_stars; ++i) {
+        planet_t *p = &(g->planet[i]);
+        player_id_t owner = p->owner;
+        planet_t *q = &(g->planet[p->reloc]);
+        if (q->within_frange[owner] != 1) {
+            p->reloc = i;
+        }
+    }
+}
+
 static void game_turn_update_final_war(struct game_s *g)
 {
     if (g->end != GAME_END_FINAL_WAR) {
@@ -1734,6 +1745,7 @@ struct game_end_s game_turn_process(struct game_s *g)
     game_turn_finished_slider(g);
     game_turn_claim(g);
     game_update_within_range(g);
+    game_turn_remove_reloc_out_of_range(g);
     game_update_visibility(g);
     if (g->gaux->local_players == 1) {
         game_turn_update_final_war(g);  /* MOO1 does this here, after update_tech_util etc */

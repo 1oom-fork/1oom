@@ -23,8 +23,8 @@
 /* -------------------------------------------------------------------------- */
 
 static bool ui_starmap_reloc_valid_destination(const struct game_s *g, const struct starmap_data_s *d, int planet_i) {
-    //TODO: FIX: actual test is somewhere else
-    return g->planet[d->from].buildship != BUILDSHIP_STARGATE;
+    const planet_t *p = &g->planet[planet_i];
+    return (p->within_frange[d->api] == 1) && g->planet[d->from].buildship != BUILDSHIP_STARGATE;
 }
 
 static void ui_starmap_reloc_draw_cb(void *vptr)
@@ -41,10 +41,16 @@ static void ui_starmap_reloc_draw_cb(void *vptr)
     x0 = (pf->x - ui_data.starmap.x) * 2 + 8;
     y0 = (pf->y - ui_data.starmap.y) * 2 + 8;
     if (g->planet_focus_i[d->api] != d->from) {
+        const uint8_t *ctbl;
         int x1, y1;
         x1 = (pt->x - ui_data.starmap.x) * 2 + 14;
         y1 = (pt->y - ui_data.starmap.y) * 2 + 14;
-        ui_draw_line_limit_ctbl(x0 + 6, y0 + 6, x1, y1, colortbl_line_green, 5, ui_data.starmap.line_anim_phase, starmap_scale);
+        if (!ui_starmap_reloc_valid_destination(g, d, g->planet_focus_i[d->api])) {
+            ctbl = colortbl_line_red;
+        } else {
+            ctbl = colortbl_line_green;
+        }
+        ui_draw_line_limit_ctbl(x0 + 6, y0 + 6, x1, y1, ctbl, 5, ui_data.starmap.line_anim_phase, starmap_scale);
     }
     lbxgfx_draw_frame_offs(x0, y0, ui_data.gfx.starmap.planbord, STARMAP_LIMITS, UI_SCREEN_W, starmap_scale);
     lbxgfx_draw_frame(222, 80, ui_data.gfx.starmap.relocate, UI_SCREEN_W, ui_scale);
@@ -120,7 +126,7 @@ void ui_starmap_reloc(struct game_s *g, player_id_t active_player)
             uiobj_table_clear();
             UIOBJ_CLEAR_LOCAL();
             ui_starmap_add_oi_hotkeys(&d);
-            ui_starmap_fill_oi_tbl_stars_own(&d, active_player);
+            ui_starmap_fill_oi_tbl_stars(&d);
             d.oi_cancel = uiobj_add_t0(227, 163, "", ui_data.gfx.starmap.reloc_bu_cancel, MOO_KEY_ESCAPE);
             if (ui_starmap_reloc_valid_destination(g, &d, g->planet_focus_i[active_player])) {
                 d.oi_accept = uiobj_add_t0(271, 163, "", ui_data.gfx.starmap.reloc_bu_accept, MOO_KEY_SPACE);

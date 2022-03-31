@@ -909,24 +909,6 @@ void ui_starmap_fill_oi_tbl_stars(struct starmap_data_s *d)
     }
 }
 
-void ui_starmap_fill_oi_tbl_stars_own(struct starmap_data_s *d, player_id_t owner)
-{
-    const struct game_s *g = d->g;
-    const int x = ui_data.starmap.x;
-    const int y = ui_data.starmap.y;
-    STARMAP_LIM_INIT();
-    uiobj_set_limits(STARMAP_LIMITS);
-    for (int i = 0; i < g->galaxy_stars; ++i) {
-        const planet_t *p = &(g->planet[i]);
-        if (p->owner == owner) {
-            int x0, y0;
-            x0 = (p->x - x) * 2 + 8;
-            y0 = (p->y - y) * 2 + 8;
-            d->oi_tbl_stars[i] = uiobj_add_mousearea_limited(x0, y0, x0 + 13, y0 + 13, starmap_scale, MOO_KEY_UNKNOWN);
-        }
-    }
-}
-
 void ui_starmap_clear_oi_ctrl(struct starmap_data_s *d)
 {
     d->oi_ctrl_left = UIOBJI_INVALID;
@@ -1188,7 +1170,7 @@ void ui_starmap_select_bottom_highlight(const struct game_s *g, struct starmap_d
 static void ui_starmap_reloc_reloc(struct game_s *g, player_id_t active_player)
 {
     uint8_t target = g->planet_focus_i[active_player];
-    if (g->planet[target].owner != active_player) {
+    if (g->planet[target].within_frange[active_player] != 1) {
         return;
     }
     for (int i = 0; i < g->galaxy_stars; ++i) {
@@ -1203,7 +1185,7 @@ static int ui_starmap_reloc_all(struct game_s *g, player_id_t active_player)
 {
     int count = 0;
     uint8_t target = g->planet_focus_i[active_player];
-    if (g->planet[target].owner != active_player) {
+    if (g->planet[target].within_frange[active_player] != 1) {
         return count;
     }
     for (int i = 0; i < g->galaxy_stars; ++i) {
