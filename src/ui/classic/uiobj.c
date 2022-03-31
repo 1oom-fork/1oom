@@ -1112,7 +1112,7 @@ static uint32_t uiobj_handle_kbd(int16_t *oiptr)
     flag_reset_alt_str = true;
     if (oi < uiobj_table_num) {
         *oiptr = oi;
-        if (!ui_extra_enabled) {
+        if (0) { //TODO: kbd focus implementation
             uiobj_set_focus(oi);
         }
         if (p->type == UIOBJ_TYPE_ALTSTR) {
@@ -1206,7 +1206,7 @@ static void uiobj_click_obj(int16_t oi, int mx, int my)
             }
             uiobj_focus_oi = oi;
             uiobj_handle_click(oi, true);
-            if (!ui_extra_enabled) {
+            if (0) { //TODO: kbd focus implementation
                 if (p->type == UIOBJ_TYPE_TEXTINPUT) {
                     mx = moouse_x;
                     my = moouse_y;
