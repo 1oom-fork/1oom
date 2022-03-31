@@ -57,6 +57,7 @@ The following new UI features are always enabled/available:
 - Hotkeys changed: Races screen (r -> e), Reloc button (l -> r)
 - Bases can be scrapped by clicking on the Bases text
 - The = key can be substitued by the # key (useful for some non-US keyboards)
+- Pressing = or # on the Tech screen adjusts only the unlocked sliders
 4) Misc
 - Middle click or Ctrl-F10 to grab/ungrab input
 - Ctrl-Esc to quit (without saving)
@@ -113,7 +114,6 @@ or pressing Alt-X in the main menu enables the following extra UI features:
 - When espionage was successful, clicking on the race icon opens the spy report
 - Nebula planets show "NEB" in their shields field and have a purple instead
   of a red frame around their picture
-- Pressing = or # on the Tech screen adjusts only the unlocked sliders
 - Tech screen has lights showing when you reach max research bonus
 - Clicking on the Tech screen lights sets the slider to bonus limit
 - Tech bonus amount is shown in the slider background

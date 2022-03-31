@@ -372,16 +372,7 @@ void ui_tech(struct game_s *g, player_id_t active_player)
         }
         if (oi == oi_equals || oi == oi_equ) {
             ui_sound_play_sfx_24();
-            if (ui_extra_enabled) {
-                game_equalize_slider_group(t->slider, TECH_FIELD_NUM, t->slider_lock);
-            } else {
-                t->slider[0] = 16;
-                t->slider[1] = 17;
-                t->slider[2] = 17;
-                t->slider[3] = 16;
-                t->slider[4] = 17;
-                t->slider[5] = 17;
-            }
+            game_equalize_slider_group(t->slider, TECH_FIELD_NUM, t->slider_lock);
         } else if (oi == oi_min) {
             ui_sound_play_sfx_24();
             game_tech_set_to_min(&(g->eto[active_player]));
