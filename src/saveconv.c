@@ -395,7 +395,7 @@ static int savetype_de_moo13(struct game_s *g, const char *fname)
     M13_GET_16_CHECK(g->players, 0xe2d2, 2, 6);
     g->is_ai[0] = ((1 << g->players) - 1) & ~1;
     g->active_player = PLAYER_0;
-    M13_GET_16_CHECK(g->difficulty, 0xe2d4, 0, 4);
+    M13_GET_16_CHECK(g->difficulty, 0xe2d4, 0, 5);
     M13_GET_16_CHECK(g->galaxy_size, 0xe2d8, 0, 3);
     M13_GET_16_CHECK(g->nebula_num, 0xe238, 0, 4);
     M13_GET_16_CHECK(g->galaxy_stars, 0xe2d6, 24, 108);

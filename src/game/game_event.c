@@ -188,7 +188,7 @@ void game_event_new(struct game_s *g)
         chance = g->year - g->evn.year;
     }
     /*eb0c*/
-    switch (g->difficulty) {
+    switch (game_difficulty_limited(g)) {
         case DIFFICULTY_SIMPLE:
             chance /= 2;
             break;
@@ -200,6 +200,9 @@ void game_event_new(struct game_s *g)
             break;
         case DIFFICULTY_HARD:
             chance = (chance * 4) / 5;
+            break;
+        case DIFFICULTY_IMPOSSIBLE:
+            chance = (chance * 5) / 5;
             break;
         default:
             break;
@@ -269,7 +272,7 @@ void game_event_new(struct game_s *g)
     g->evn.year = g->year;
     BOOLVEC_SET1(g->evn.done, type);
 #if 0   /* result is unused */
-    switch (g->difficulty) {
+    switch (game_difficulty_limited(g)) {
         case DIFFICULTY_SIMPLE:
             va = g->year / 20;
             break;
@@ -294,7 +297,7 @@ void game_event_new(struct game_s *g)
             g->evn.have_plague = 1;
             g->evn.plague_player = player;
             g->evn.plague_planet_i = planet;
-            g->evn.plague_val = (rnd_1_n(8, &g->seed) + g->difficulty * 2) * p->prod_after_maint;
+            g->evn.plague_val = (rnd_1_n(8, &g->seed) + game_difficulty_limited(g) * 2) * p->prod_after_maint;
             break;
         case GAME_EVENT_QUAKE:
             g->evn.have_quake = true;
@@ -305,8 +308,8 @@ void game_event_new(struct game_s *g)
             g->evn.have_nova = 1;
             g->evn.nova_player = player;
             g->evn.nova_planet_i = planet;
-            g->evn.nova_years = rnd_1_n(5, &g->seed) + 10 - g->difficulty;
-            g->evn.nova_val = (rnd_1_n(5, &g->seed) + 10 - g->difficulty) * p->prod_after_maint;
+            g->evn.nova_years = rnd_1_n(5, &g->seed) + 10 - game_difficulty_limited(g);
+            g->evn.nova_val = (rnd_1_n(5, &g->seed) + 10 - game_difficulty_limited(g)) * p->prod_after_maint;
             break;
         case GAME_EVENT_ACCIDENT:
             g->evn.have_accident = 1;
@@ -350,14 +353,14 @@ void game_event_new(struct game_s *g)
             g->evn.have_comet = 1;
             g->evn.comet_player = player;
             g->evn.comet_planet_i = planet;
-            g->evn.comet_years = rnd_1_n(5, &g->seed) + 10 - g->difficulty;
-            g->evn.comet_hp = (rnd_1_n(5, &g->seed) + 10 + g->difficulty) * 25;
+            g->evn.comet_years = rnd_1_n(5, &g->seed) + 10 - game_difficulty_limited(g);
+            g->evn.comet_hp = (rnd_1_n(5, &g->seed) + 10 + game_difficulty_limited(g)) * 25;
             g->evn.comet_dmg = 0;
             break;
         case GAME_EVENT_PIRATES:
             g->evn.have_pirates = 1;
             g->evn.pirates_planet_i = rnd_0_nm1(g->galaxy_stars, &g->seed);
-            g->evn.pirates_hp = (rnd_1_n(5, &g->seed) + 10 + g->difficulty) * 30;
+            g->evn.pirates_hp = (rnd_1_n(5, &g->seed) + 10 + game_difficulty_limited(g)) * 30;
             break;
         case GAME_EVENT_DERELICT:
             g->evn.have_derelict = true;

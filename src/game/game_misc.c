@@ -898,3 +898,7 @@ void game_soil_enrich(struct planet_s *p, int best_tform, bool advanced) {
     SETMIN(p->max_pop3, game_num_max_pop);
 }
 
+
+difficulty_t game_difficulty_limited(const struct game_s *g) {
+    return g->difficulty <= DIFFICULTY_IMPOSSIBLE ? g->difficulty : DIFFICULTY_IMPOSSIBLE;
+}

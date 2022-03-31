@@ -520,7 +520,7 @@ bool ui_new_game(struct game_new_options_s *newopts)
             ui_sound_play_sfx_06();
         }
         if ((oi == oi_diffic) || (oi == oi_d)) {
-            if (++diffic >= 5) { diffic = 0; }
+            if (++diffic >= DIFFICULTY_NUM) { diffic = 0; }
         }
         if ((oi == oi_gsize) || (oi == oi_g)) {
             if (++gsize >= 4) { gsize = 0; }

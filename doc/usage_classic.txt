@@ -23,6 +23,7 @@ The following new UI features are always enabled/available:
 1) New game options
 - Local multiplayer (use -new or -uiextra to start a game)
 - Random race / banner
+- New difficulty level - "Hopeless"
 2) Camera
 - Smoother galaxy movement screen scrolling
 - Galaxy movement screen scrolling speed is adjustable (-uismscroll)
