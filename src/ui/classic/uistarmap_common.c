@@ -818,7 +818,7 @@ static uint8_t ui_starmap_handle_tag(struct starmap_data_s *d, int16_t oi)
     return PLANET_NONE;
 }
 
-void ui_starmap_add_oi_bottom_buttons(struct starmap_data_s *d)
+static void ui_starmap_add_oi_bottom_buttons(struct starmap_data_s *d)
 {
     d->oi_gameopts = uiobj_add_mousearea(5, 181, 36, 194, MOO_KEY_g);
     d->oi_design = uiobj_add_mousearea(40, 181, 75, 194, MOO_KEY_d);
@@ -830,7 +830,7 @@ void ui_starmap_add_oi_bottom_buttons(struct starmap_data_s *d)
     d->oi_next_turn = uiobj_add_mousearea(258, 181, 314, 194, MOO_KEY_n);
 }
 
-void ui_starmap_add_oi_hotkeys(struct starmap_data_s *d)
+static void ui_starmap_add_oi_hotkeys(struct starmap_data_s *d)
 {
     d->oi_f2 = uiobj_add_inputkey(MOO_KEY_F2);
     d->oi_f3 = uiobj_add_inputkey(MOO_KEY_F3);
@@ -850,7 +850,7 @@ void ui_starmap_add_oi_hotkeys(struct starmap_data_s *d)
     d->oi_search = uiobj_add_inputkey(MOO_KEY_SLASH);
 }
 
-void ui_starmap_fill_oi_tbls(struct starmap_data_s *d)
+static void ui_starmap_fill_oi_tbls(struct starmap_data_s *d)
 {
     const struct game_s *g = d->g;
     const int x = ui_data.starmap.x;
@@ -893,7 +893,7 @@ void ui_starmap_fill_oi_tbls(struct starmap_data_s *d)
     ui_starmap_add_oi_enroute(d, true);
 }
 
-void ui_starmap_fill_oi_tbl_stars(struct starmap_data_s *d)
+static void ui_starmap_fill_oi_tbl_stars(struct starmap_data_s *d)
 {
     const struct game_s *g = d->g;
     const int x = ui_data.starmap.x;
@@ -927,7 +927,7 @@ void ui_starmap_clear_oi_ctrl(struct starmap_data_s *d)
     UIOBJI_SET_TBL_INVALID(d->oi_tag_get);
 }
 
-void ui_starmap_fill_oi_ctrl(struct starmap_data_s *d)
+static void ui_starmap_fill_oi_ctrl(struct starmap_data_s *d)
 {
     d->oi_ctrl_left = uiobj_add_inputkey(MOO_KEY_LEFT | MOO_MOD_CTRL);
     if (MOO_KEY_LEFT != MOO_KEY_KP4) {
@@ -1543,4 +1543,17 @@ bool ui_starmap_handle_common(struct game_s *g, struct starmap_data_s *d, bool *
         }
     }
     return false;
+}
+
+void ui_starmap_fill_oi_common(struct starmap_data_s *d) {
+    ui_starmap_add_oi_hotkeys(d);
+    if (ui_data.ui_main_loop_action != UI_MAIN_LOOP_RELOC
+      &&ui_data.ui_main_loop_action != UI_MAIN_LOOP_TRANS)
+    {
+        ui_starmap_fill_oi_tbls(d);
+    }
+    ui_starmap_fill_oi_tbl_stars(d);
+    d->oi_scroll = uiobj_add_tb(6, 6, 2, 2, 108, 86, &d->scrollx, &d->scrolly, &d->scrollz, ui_scale);
+    ui_starmap_fill_oi_ctrl(d);
+    ui_starmap_add_oi_bottom_buttons(d);
 }

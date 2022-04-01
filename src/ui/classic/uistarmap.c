@@ -519,11 +519,9 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
                 oi_equals = uiobj_add_inputkey(MOO_KEY_EQUALS);
                 oi_hash = uiobj_add_inputkey(MOO_KEY_HASH);
             }
-            ui_starmap_add_oi_hotkeys(&d);
             if ((p->owner == active_player) && p->missile_bases) {
                 oi_b = uiobj_add_mousearea(272, 59, 312, 67, MOO_KEY_b);
             }
-            ui_starmap_add_oi_bottom_buttons(&d);
             if (g->evn.build_finished_num[active_player]) {
                 oi_finished = uiobj_add_mousearea(6, 6, 225, 180, MOO_KEY_SPACE);
             }
@@ -542,17 +540,14 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
                 }
             }
             oi_wheelname = uiobj_add_mousewheel(227, 8, 310, 20, &scrollmisc);
-            ui_starmap_fill_oi_tbls(&d);
             {
                 int x0, y0;
                 x0 = (p->x - ui_data.starmap.x) * 2 + 6;
                 y0 = (p->y - ui_data.starmap.y) * 2 + 6;
                 oi_starview1 = uiobj_add_mousearea_limited(x0, y0, x0 + 16, y0 + 16, starmap_scale, MOO_KEY_UNKNOWN);
             }
-            ui_starmap_fill_oi_tbl_stars(&d);
+            ui_starmap_fill_oi_common(&d);
             ui_starmap_fill_oi_slider(&d, p);
-            d.oi_scroll = uiobj_add_tb(6, 6, 2, 2, 108, 86, &d.scrollx, &d.scrolly, &d.scrollz, ui_scale);
-            ui_starmap_fill_oi_ctrl(&d);
             if (1) {
                 int x0, y0, x1, y1;
                 x0 = (p->x - ui_data.starmap.x) * 2 + 6;
