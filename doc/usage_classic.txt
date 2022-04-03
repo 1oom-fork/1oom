@@ -39,6 +39,7 @@ The following new UI features are always enabled/available:
 - F2-F9, 1-9, Alt+c, Alt+m and planet search (/) works regardless of
   selection type if possible
 - F2-F9 no longer do weird things if it can't find the next object
+- Alt+F shows/hides all friendly route indicators for the target planet
 3) Gameplay
 - Mouse click works for the first clicked object if the mouse moved 
   to another object before the button was released
@@ -88,7 +89,6 @@ or pressing Alt-X in the main menu enables the following extra UI features:
 2) Star map controls
 - F2-F9 keeps current action type if possible
 - Alt+R to set/unset relocation for all planets
-- Alt+F to show/hide incoming friendly fleet route when planet is focused
 - Hovering over a planet draws a ruler with the distance in parsec from the
   currently selected planet if is in the screen.
 - Fleet deployment shows the amount of available ships
