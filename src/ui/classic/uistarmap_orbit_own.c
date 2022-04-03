@@ -313,8 +313,6 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
                 oi_tbl_n[i] = uiobj_add_t0(265, 35 + i * 26, "", ui_data.gfx.starmap.move_but_n, MOO_KEY_UNKNOWN);
                 oi_tbl_s[i] = uiobj_add_mousewheel(227, 22 + i * 26, 319, 46 + i * 26, &scrollship);
             }
-            d.oi_tech = UIOBJI_INVALID;
-            d.oi_next_turn = UIOBJI_INVALID;
             ui_draw_finish();
             ui_delay_ticks_or_click(STARMAP_DELAY);
         }
