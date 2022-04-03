@@ -1509,7 +1509,7 @@ bool ui_starmap_handle_common(struct game_s *g, struct starmap_data_s *d, bool *
     if (d->controllable) {
         int i;
         i = ui_starmap_cursor_on_star(g, d, d->oi1, d->api);
-        if (ui_extra_enabled && i >= 0) {
+        if (ui_modern_starmap_controls && i >= 0) {
             if (d->is_valid_destination(g, d, i)) {
                 g->planet_focus_i[d->api] = i;
                 *flag_done = true;
@@ -1537,7 +1537,7 @@ bool ui_starmap_handle_common(struct game_s *g, struct starmap_data_s *d, bool *
             return true;
         }
     }
-    if (ui_extra_enabled && d->controllable) {
+    if (ui_modern_starmap_controls && d->controllable) {
         int i;
         i = ui_starmap_cursor_on_star(g, d, d->oi2, d->api);
         if (i >= 0) {

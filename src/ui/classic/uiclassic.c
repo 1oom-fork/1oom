@@ -68,6 +68,7 @@ static bool check_ui_sm_scroll_speed(void *var)
 const struct cfg_items_s ui_cfg_items[] = {
     CFG_ITEM_INT("uiscale", &ui_scale, check_ui_scale),
     CFG_ITEM_BOOL("uiextra", &ui_extra_enabled),
+    CFG_ITEM_BOOL("modern_starmap_controls", &ui_modern_starmap_controls),
     CFG_ITEM_BOOL("skip_bomb_animation", &game_battle_skip_bomb_animation),
     CFG_ITEM_COMMENT("0..146"),
     CFG_ITEM_INT("uiicon", &ui_icon, check_ui_icon),
@@ -110,6 +111,12 @@ const struct cmdline_options_s ui_cmdline_options[] = {
     { "-nouiextra", 0,
       options_disable_bool_var, (void *)&ui_extra_enabled,
       NULL, "Disable UI extras" },
+    { "-modernstarmapcontrols", 0,
+      options_enable_bool_var, (void *)&ui_modern_starmap_controls,
+      NULL, "Enable modern starmap controls" },
+    { "-nomodernstarmapcontrols", 0,
+      options_disable_bool_var, (void *)&ui_modern_starmap_controls,
+      NULL, "Disable modern starmap controls" },
     { "-nobombanimation", 0,
       options_enable_bool_var, (void *)&game_battle_skip_bomb_animation,
       NULL, "Disable bomb animation in space combat" },
@@ -145,6 +152,7 @@ int ui_screen_h = 0;
 int ui_scale = 0;
 int starmap_scale = 0;
 bool ui_extra_enabled = false;
+bool ui_modern_starmap_controls = false;
 bool ui_mwi_slider = false;
 bool ui_mwi_counter = false;
 int ui_sm_scroll_speed = 3;

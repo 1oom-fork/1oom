@@ -19,6 +19,11 @@ The default value is 1 for that classic 320x200 feeling. Larger values allow
 more of the galaxy to be viewed without scrolling. Mouse wheel can be used
 to adjust the scaling of the galaxy movement screen map.
 
+The config file item "ui.modern_starmap_controls" (set via
+the -modernstarmapcontrols command-line option) enables the following features:
+- Hovering over a star selects the star as the target if possible
+- Clicking on the target star works as Accept button
+
 The following new UI features are always enabled/available:
 1) New game options
 - Local multiplayer (use -new or -uiextra to start a game)
@@ -81,8 +86,6 @@ or pressing Alt-X in the main menu enables the following extra UI features:
 - New Game screen allows setting opponent race/banner/names and AI/human flag
 - New Game screen allows new rule: no World Ruler Elections
 2) Star map controls
-- Hovering over a planet selects planet for fleet/trans send and reloc
-- Clicking destination star works as Accept for fleet/trans send and reloc
 - F2-F9 keeps current action type if possible
 - Alt+R to set/unset relocation for all planets
 - Alt+F to show/hide incoming friendly fleet route when planet is focused

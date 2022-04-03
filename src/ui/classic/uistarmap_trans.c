@@ -78,7 +78,7 @@ static void ui_starmap_trans_draw_cb(void *vptr)
         }
         ui_draw_line_limit_ctbl(x0 + 6, y0 + 6, x1, y1, ctbl, 5, ui_data.starmap.line_anim_phase, starmap_scale);
     }
-    if (d->from != g->planet_focus_i[d->api] || ui_extra_enabled) {
+    if (d->from != g->planet_focus_i[d->api] || ui_modern_starmap_controls) {
         if (!ui_starmap_trans_withinin_frange(g, d, g->planet_focus_i[d->api])) {
             int mindist = game_get_min_dist(g, d->api, g->planet_focus_i[d->api]);
             lbxfont_select_set_12_1(0, 0xe, 5, 0);
