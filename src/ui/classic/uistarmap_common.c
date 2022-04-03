@@ -848,6 +848,7 @@ static void ui_starmap_add_oi_hotkeys(struct starmap_data_s *d)
     d->oi_alt_m = uiobj_add_inputkey(MOO_KEY_m | MOO_MOD_ALT);
     d->oi_alt_c = uiobj_add_inputkey(MOO_KEY_c | MOO_MOD_ALT);
     d->oi_alt_r = uiobj_add_inputkey(MOO_KEY_r | MOO_MOD_ALT);
+    d->oi_ctrl_r = uiobj_add_inputkey(MOO_KEY_r | MOO_MOD_CTRL);
     d->oi_alt_f = uiobj_add_inputkey(MOO_KEY_f | MOO_MOD_ALT);
     d->oi_search = uiobj_add_inputkey(MOO_KEY_SLASH);
 }
@@ -1217,17 +1218,6 @@ static int ui_starmap_reloc_un(struct game_s *g, player_id_t active_player)
     return count;
 }
 
-static void ui_starmap_handle_reloc_all(struct game_s *g, player_id_t active_player) {
-    if (!ui_extra_enabled) {
-        ui_starmap_reloc_reloc(g, active_player);
-    }
-    else {
-        ui_starmap_reloc_all(g, active_player) ||
-        ui_starmap_reloc_un(g, active_player);
-    }
-    ui_sound_play_sfx_24();
-}
-
 static int ui_starmap_previous_star_i(struct game_s *g, player_id_t active_player, int from) {
     int i;
     i = from;
@@ -1355,7 +1345,7 @@ bool ui_starmap_handle_common(struct game_s *g, struct starmap_data_s *d, bool *
         ui_sound_play_sfx_24();
         return true;
     }
-    if (d->oi1 == d->oi_alt_r) {
+    if (d->oi1 == d->oi_alt_r || d->oi1 == d->oi_ctrl_r) {
         if (ui_data.ui_main_loop_action == UI_MAIN_LOOP_ENROUTE_SEL &&
                 g->enroute[ui_data.starmap.fleet_selected].owner != d->api) {
             return true;
@@ -1364,7 +1354,12 @@ bool ui_starmap_handle_common(struct game_s *g, struct starmap_data_s *d, bool *
                 g->transport[ui_data.starmap.fleet_selected].owner != d->api) {
             return true;
         }
-        ui_starmap_handle_reloc_all(g, d->api);
+        if (d->oi1 == d->oi_alt_r) {
+            ui_starmap_reloc_reloc(g, d->api);
+        } else {
+            ui_starmap_reloc_all(g, d->api) ||
+            ui_starmap_reloc_un(g, d->api);
+        }
         return true;
     }
     if (d->oi1 == d->oi_alt_f) {

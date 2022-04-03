@@ -60,8 +60,9 @@ The following new UI features are always enabled/available:
   one round of production (with uiextra also transfers back)
 - Pressing +/-/= in send transport screen adjusts slider by 10% of max amount
 - Pressing A in send transport screen sets slider to maximum
-- Fleet relocation point is allowed for any planet within normal fuel range
-- Alt+r and C works regardless of selection type if possible
+- Fleet relocation point is allowed for any star within normal fuel range
+- Pressing Ctrl+R sets/unsets the relocation point for all stars.
+- Alt+R, Ctrl+R and C works regardless of selection type if possible
 - Hotkeys changed: Races screen (r -> e), Reloc button (l -> r)
 - Bases can be scrapped by clicking on the Bases text
 - The = key can be substitued by the # key (useful for some non-US keyboards)
@@ -88,7 +89,6 @@ or pressing Alt-X in the main menu enables the following extra UI features:
 - New Game screen allows new rule: no World Ruler Elections
 2) Star map controls
 - F2-F9 keeps current action type if possible
-- Alt+R to set/unset relocation for all planets
 - Hovering over a planet draws a ruler with the distance in parsec from the
   currently selected planet if is in the screen.
 - Fleet deployment shows the amount of available ships
