@@ -37,7 +37,7 @@ The following new UI features are always enabled/available:
 - Planets can be tagged with Ctrl-1-9 and recalled with 1-9
 - Planets can be searched for by pressing the / key
 - F2-F9, 1-9, Alt+c, Alt+m and planet search (/) works regardless of
-  selection type if possible
+  selection type and keeps current action if possible
 - F2-F9 no longer do weird things if it can't find the next object
 - Alt+F shows/hides all friendly route indicators for the target planet
 3) Gameplay
@@ -88,7 +88,6 @@ or pressing Alt-X in the main menu enables the following extra UI features:
 - New Game screen allows setting opponent race/banner/names and AI/human flag
 - New Game screen allows new rule: no World Ruler Elections
 2) Star map controls
-- F2-F9 keeps current action type if possible
 - Hovering over a planet draws a ruler with the distance in parsec from the
   currently selected planet if is in the screen.
 - Fleet deployment shows the amount of available ships
