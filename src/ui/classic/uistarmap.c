@@ -386,7 +386,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             ui_data.ui_main_loop_action = UI_MAIN_LOOP_TRANS;
             flag_done = true;
             ui_sound_play_sfx_24();
-        } else if (((d.oi1 == oi_starview1) && BOOLVEC_IS1(p->explored, active_player)) || (d.oi1 == oi_starview2)) {
+        } else if (d.oi1 == oi_starview1 || d.oi1 == oi_starview2) {
             ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARVIEW;
             flag_done = true;
             ui_sound_play_sfx_24();
@@ -526,7 +526,6 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
                 oi_finished = uiobj_add_mousearea(6, 6, 225, 180, MOO_KEY_SPACE);
             }
             if (p->owner == active_player) {
-                oi_starview2 = uiobj_add_mousearea(227, 24, 310, 53, MOO_KEY_UNKNOWN);
                 oi_shippic = uiobj_add_mousearea(228, 139, 275, 175, MOO_KEY_UNKNOWN);
                 oi_wheelshippic = uiobj_add_mousewheel(228, 139, 275, 175, &scrollmisc);
                 if (ui_extra_enabled) {
@@ -541,7 +540,10 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             }
             oi_wheelname = uiobj_add_mousewheel(227, 8, 310, 20, &scrollmisc);
             ui_starmap_fill_oi_common(&d);
-            oi_starview1 = d.oi_tbl_stars[g->planet_focus_i[active_player]];
+            if (BOOLVEC_IS1(p->explored, active_player)) {
+                oi_starview1 = d.oi_tbl_stars[g->planet_focus_i[active_player]];
+                oi_starview2 = uiobj_add_mousearea(227, 24, 310, 53, MOO_KEY_UNKNOWN);
+            }
             ui_starmap_fill_oi_slider(&d, p);
             if (g->evn.build_finished_num[active_player]) {
                 ui_cursor_setup_area(2, &ui_cursor_area_tbl[0]);
