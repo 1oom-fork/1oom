@@ -1494,6 +1494,10 @@ bool ui_starmap_handle_common(struct game_s *g, struct starmap_data_s *d, bool *
         }
     }
     if (!d->controllable) {
+        if (ui_data.ui_main_loop_action == UI_MAIN_LOOP_STARMAP
+          &&d->oi1 == d->oi_tbl_stars[g->planet_focus_i[d->api]]) {
+            return false;   //TODO: accept handler for uistarmap.c
+        }
         int i;
         i = ui_starmap_cursor_on_star(g, d, d->oi1, d->api);
         if (i >= 0 && !g->evn.build_finished_num[d->api]) {
