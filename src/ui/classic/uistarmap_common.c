@@ -1186,11 +1186,11 @@ static void ui_starmap_reloc_reloc(struct game_s *g, player_id_t active_player)
 
 static int ui_starmap_reloc_all(struct game_s *g, player_id_t active_player)
 {
-    int count = 0;
     uint8_t target = g->planet_focus_i[active_player];
     if (g->planet[target].within_frange[active_player] != 1) {
-        return count;
+        return -1;
     }
+    int count = 0;
     for (int i = 0; i < g->galaxy_stars; ++i) {
         planet_t *p = &(g->planet[i]);
         if (p->owner == active_player) {
