@@ -30,6 +30,16 @@
 
 /* -------------------------------------------------------------------------- */
 
+struct starmap_governor_data_s {
+    int16_t oi_governor;
+    int16_t oi_ship;
+    int16_t oi_reserve;
+    int16_t oi_tech;
+    int16_t oi_bases;
+    int16_t oi_wheel_bases;
+    int16_t oi_boost;
+};
+
 static void ui_starmap_draw_cb1(void *vptr)
 {
     struct starmap_data_s *d = vptr;
@@ -221,27 +231,28 @@ void ui_starmap_set_pos(const struct game_s *g, int x, int y)
 }
 
 static void ui_starmap_handle_governor(struct game_s *g, struct starmap_data_s *d, int16_t scrollmisc, bool *flag_done) {
+    struct starmap_governor_data_s *gd = d->sm.gov_data;
     planet_t *p;
     p = &g->planet[g->planet_focus_i[d->api]];
-    if (d->oi1 == d->sm.oi_gov_ship) {
+    if (d->oi1 == gd->oi_ship) {
         ui_sound_play_sfx_24();
         BOOLVEC_SET1(p->extras, PLANET_EXTRAS_GOVERNOR);
         BOOLVEC_SET1(p->extras, PLANET_EXTRAS_GOV_SPEND_REST_SHIP);
         BOOLVEC_SET0(p->extras, PLANET_EXTRAS_GOV_SPEND_REST_IND);
         game_planet_govern(g, p);
-    } else if (d->oi1 == d->sm.oi_gov_reserve) {
+    } else if (d->oi1 == gd->oi_reserve) {
         ui_sound_play_sfx_24();
         BOOLVEC_SET1(p->extras, PLANET_EXTRAS_GOVERNOR);
         BOOLVEC_SET0(p->extras, PLANET_EXTRAS_GOV_SPEND_REST_SHIP);
         BOOLVEC_SET1(p->extras, PLANET_EXTRAS_GOV_SPEND_REST_IND);
         game_planet_govern(g, p);
-    } else if (d->oi1 == d->sm.oi_gov_tech) {
+    } else if (d->oi1 == gd->oi_tech) {
         ui_sound_play_sfx_24();
         BOOLVEC_SET1(p->extras, PLANET_EXTRAS_GOVERNOR);
         BOOLVEC_SET0(p->extras, PLANET_EXTRAS_GOV_SPEND_REST_SHIP);
         BOOLVEC_SET0(p->extras, PLANET_EXTRAS_GOV_SPEND_REST_IND);
         game_planet_govern(g, p);
-    } else if (d->oi1 == d->sm.oi_gov_bases || (d->oi1 == d->sm.oi_gov_wheel_bases && scrollmisc > 0)) {
+    } else if (d->oi1 == gd->oi_bases || (d->oi1 == gd->oi_wheel_bases && scrollmisc > 0)) {
         if (BOOLVEC_IS1(p->extras, PLANET_EXTRAS_GOVERNOR)) {
             ui_sound_play_sfx_24();
             int t = p->target_bases + 1;
@@ -253,7 +264,7 @@ static void ui_starmap_handle_governor(struct game_s *g, struct starmap_data_s *
                 game_planet_govern(g, p);
             }
         }
-    } else if (d->oi1 == d->sm.oi_gov_wheel_bases && scrollmisc < 0) {
+    } else if (d->oi1 == gd->oi_wheel_bases && scrollmisc < 0) {
         if (BOOLVEC_IS1(p->extras, PLANET_EXTRAS_GOVERNOR) && p->target_bases) {
             int t = p->target_bases;
             --t;
@@ -265,7 +276,7 @@ static void ui_starmap_handle_governor(struct game_s *g, struct starmap_data_s *
                 game_planet_govern(g, p);
             }
         }
-    } else if (d->oi1 == d->sm.oi_gov_boost) {
+    } else if (d->oi1 == gd->oi_boost) {
         if (BOOLVEC_IS1(p->extras, PLANET_EXTRAS_GOVERNOR)) {
             if (BOOLVEC_IS1(p->extras, PLANET_EXTRAS_GOV_BOOST_PROD)) {
                 BOOLVEC_SET0(p->extras, PLANET_EXTRAS_GOV_BOOST_BUILD);
@@ -279,11 +290,11 @@ static void ui_starmap_handle_governor(struct game_s *g, struct starmap_data_s *
             }
             game_planet_govern(g, p);
         }
-    } else if (d->oi1 == d->sm.oi_governor) {
+    } else if (d->oi1 == gd->oi_governor) {
         ui_data.ui_main_loop_action = UI_MAIN_LOOP_GOVERN;
         *flag_done = true;
         ui_sound_play_sfx_24();
-    } else if (d->oi2 == d->sm.oi_governor && d->oi1 == UIOBJI_ESC) {
+    } else if (d->oi2 == gd->oi_governor && d->oi1 == UIOBJI_ESC) {
         /* invert the governor flag */
         BOOLVEC_TOGGLE(p->extras, PLANET_EXTRAS_GOVERNOR);
         if (BOOLVEC_IS1(p->extras, PLANET_EXTRAS_GOVERNOR)) {
@@ -293,19 +304,30 @@ static void ui_starmap_handle_governor(struct game_s *g, struct starmap_data_s *
 }
 
 static void ui_starmap_select_governor_highlight(const struct game_s *g, struct starmap_data_s *d, int16_t oi2) {
+    struct starmap_governor_data_s *gd = d->sm.gov_data;
     const planet_t *p = &g->planet[g->planet_focus_i[d->api]];
     d->gov_highlight = 0;
-    if (d->oi2 == d->sm.oi_gov_ship) {
+    if (d->oi2 == gd->oi_ship) {
         d->gov_highlight = 1;
-    } else if (d->oi2 == d->sm.oi_gov_reserve) {
+    } else if (d->oi2 == gd->oi_reserve) {
         d->gov_highlight = 2;
-    } else if (d->oi2 == d->sm.oi_gov_tech) {
+    } else if (d->oi2 == gd->oi_tech) {
         d->gov_highlight = 3;
-    } else if (d->oi2 == d->sm.oi_gov_bases) {
+    } else if (d->oi2 == gd->oi_bases) {
         if (BOOLVEC_IS1(p->extras, PLANET_EXTRAS_GOVERNOR)) d->gov_highlight = 4;
-    } else if (d->oi2 == d->sm.oi_gov_boost) {
+    } else if (d->oi2 == gd->oi_boost) {
         d->gov_highlight = 5;
     }
+}
+
+static void ui_starmap_fill_oi_governor(struct starmap_governor_data_s *gd, int16_t *scrollmisc) {
+    gd->oi_governor = uiobj_add_mousearea(227, 59, 268, 67, MOO_KEY_v);
+    gd->oi_ship = uiobj_add_mousearea( 288, 82, 312, 88, MOO_KEY_UNKNOWN );
+    gd->oi_reserve = uiobj_add_mousearea( 288, 104, 312, 110, MOO_KEY_UNKNOWN );
+    gd->oi_tech = uiobj_add_mousearea( 288, 126, 312, 132, MOO_KEY_UNKNOWN );
+    gd->oi_bases = uiobj_add_mousearea( 273, 60, 312, 66, MOO_KEY_UNKNOWN );
+    gd->oi_wheel_bases = uiobj_add_mousewheel( 273, 60, 312, 66, scrollmisc);
+    gd->oi_boost = uiobj_add_mousearea( 226, 71, 312, 77, MOO_KEY_UNKNOWN );
 }
 
 void ui_starmap_do(struct game_s *g, player_id_t active_player)
@@ -317,6 +339,8 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             ;
     int16_t scrollmisc = 0;
     struct starmap_data_s d;
+    struct starmap_governor_data_s gov_d;
+    d.sm.gov_data = &gov_d;
 
     d.scrollx = 0;
     d.scrolly = 0;
@@ -354,13 +378,13 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
         d.sm.oi_reloc = UIOBJI_INVALID; \
         d.sm.oi_trans = UIOBJI_INVALID; \
         UIOBJI_SET_TBL3_INVALID(d.sm.oi_tbl_slider_lock, d.sm.oi_tbl_slider_minus, d.sm.oi_tbl_slider_plus); \
-        d.sm.oi_governor = UIOBJI_INVALID; \
-        d.sm.oi_gov_ship = UIOBJI_INVALID; \
-        d.sm.oi_gov_reserve = UIOBJI_INVALID; \
-        d.sm.oi_gov_tech = UIOBJI_INVALID; \
-        d.sm.oi_gov_bases = UIOBJI_INVALID; \
-        d.sm.oi_gov_wheel_bases = UIOBJI_INVALID; \
-        d.sm.oi_gov_boost = UIOBJI_INVALID; \
+        gov_d.oi_governor = UIOBJI_INVALID; \
+        gov_d.oi_ship = UIOBJI_INVALID; \
+        gov_d.oi_reserve = UIOBJI_INVALID; \
+        gov_d.oi_tech = UIOBJI_INVALID; \
+        gov_d.oi_bases = UIOBJI_INVALID; \
+        gov_d.oi_wheel_bases = UIOBJI_INVALID; \
+        gov_d.oi_boost = UIOBJI_INVALID; \
     } while (0)
 
     UIOBJ_CLEAR_LOCAL();
@@ -529,13 +553,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
                 oi_shippic = uiobj_add_mousearea(228, 139, 275, 175, MOO_KEY_UNKNOWN);
                 oi_wheelshippic = uiobj_add_mousewheel(228, 139, 275, 175, &scrollmisc);
                 if (ui_extra_enabled) {
-                    d.sm.oi_governor = uiobj_add_mousearea(227, 59, 268, 67, MOO_KEY_v);
-                    d.sm.oi_gov_ship = uiobj_add_mousearea( 288, 82, 312, 88, MOO_KEY_UNKNOWN );
-                    d.sm.oi_gov_reserve = uiobj_add_mousearea( 288, 104, 312, 110, MOO_KEY_UNKNOWN );
-                    d.sm.oi_gov_tech = uiobj_add_mousearea( 288, 126, 312, 132, MOO_KEY_UNKNOWN );
-                    d.sm.oi_gov_bases = uiobj_add_mousearea( 273, 60, 312, 66, MOO_KEY_UNKNOWN );
-                    d.sm.oi_gov_wheel_bases = uiobj_add_mousewheel( 273, 60, 312, 66, &scrollmisc);
-                    d.sm.oi_gov_boost = uiobj_add_mousearea( 226, 71, 312, 77, MOO_KEY_UNKNOWN );
+                    ui_starmap_fill_oi_governor(&gov_d, &scrollmisc);
                 }
             }
             oi_wheelname = uiobj_add_mousewheel(227, 8, 310, 20, &scrollmisc);
