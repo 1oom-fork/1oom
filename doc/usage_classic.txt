@@ -68,6 +68,7 @@ The following new UI features are always enabled/available:
 - Bases can be scrapped by clicking on the Bases text
 - The = key can be substitued by the # key (useful for some non-US keyboards)
 - Pressing = or # on the Tech screen adjusts only the unlocked sliders
+- The ship production selection can be set everywhere by pressing Ctrl + S.
 4) Misc
 - Middle click or Ctrl-F10 to grab/ungrab input
 - Ctrl-Esc to quit (without saving)
