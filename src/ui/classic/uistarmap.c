@@ -30,6 +30,23 @@
 
 /* -------------------------------------------------------------------------- */
 
+struct starmap_planet_data_s {
+    int16_t oi_b;
+    int16_t oi_equals;
+    int16_t oi_hash;
+    int16_t oi_wheelname;
+    int16_t oi_starview1;
+    int16_t oi_starview2;
+    int16_t oi_shippic;
+    int16_t oi_wheelshippic;
+    int16_t oi_ship;
+    int16_t oi_reloc;
+    int16_t oi_trans;
+    int16_t oi_tbl_slider_lock[PLANET_SLIDER_NUM];
+    int16_t oi_tbl_slider_minus[PLANET_SLIDER_NUM];
+    int16_t oi_tbl_slider_plus[PLANET_SLIDER_NUM];
+};
+
 struct starmap_governor_data_s {
     int16_t oi_governor;
     int16_t oi_ship;
@@ -80,30 +97,31 @@ static bool ui_starmap_remove_build_finished(struct game_s *g, player_id_t api, 
 static void ui_starmap_fill_oi_slider(struct starmap_data_s *d, planet_t *p)
 {
     const struct game_s *g = d->g;
-    d->sm.oi_ship = UIOBJI_INVALID;
-    d->sm.oi_reloc = UIOBJI_INVALID;
-    d->sm.oi_trans = UIOBJI_INVALID;
-    UIOBJI_SET_TBL3_INVALID(d->sm.oi_tbl_slider_lock, d->sm.oi_tbl_slider_minus, d->sm.oi_tbl_slider_plus);
+    struct starmap_planet_data_s *pd = d->sm.planet_data;
+    pd->oi_ship = UIOBJI_INVALID;
+    pd->oi_reloc = UIOBJI_INVALID;
+    pd->oi_trans = UIOBJI_INVALID;
+    UIOBJI_SET_TBL3_INVALID(pd->oi_tbl_slider_lock, pd->oi_tbl_slider_minus, pd->oi_tbl_slider_plus);
     if ((p->owner == d->api) && (p->unrest != PLANET_UNREST_REBELLION)) {
         for (planet_slider_i_t i = PLANET_SLIDER_SHIP; i < PLANET_SLIDER_NUM; ++i) {
             int y0;
             y0 = 81 + i * 11;
             if (!p->slider_lock[i]) {
                 uiobj_add_slider_func(253, y0 + 3, 0, 100, 25, 9, &p->slider[i], ui_starmap_planet_slider_cb, d, i);
-                d->sm.oi_tbl_slider_minus[i] = uiobj_add_mousearea(247, y0 + 1, 251, y0 + 8, MOO_KEY_UNKNOWN);
-                d->sm.oi_tbl_slider_plus[i] = uiobj_add_mousearea(280, y0 + 1, 283, y0 + 8, MOO_KEY_UNKNOWN);
+                pd->oi_tbl_slider_minus[i] = uiobj_add_mousearea(247, y0 + 1, 251, y0 + 8, MOO_KEY_UNKNOWN);
+                pd->oi_tbl_slider_plus[i] = uiobj_add_mousearea(280, y0 + 1, 283, y0 + 8, MOO_KEY_UNKNOWN);
             }
-            d->sm.oi_tbl_slider_lock[i] = uiobj_add_mousearea(226, y0, 245, y0 + 9, MOO_KEY_UNKNOWN);
+            pd->oi_tbl_slider_lock[i] = uiobj_add_mousearea(226, y0, 245, y0 + 9, MOO_KEY_UNKNOWN);
         }
-        d->sm.oi_ship = uiobj_add_t0(282, 140, "", ui_data.gfx.starmap.col_butt_ship, MOO_KEY_s);
+        pd->oi_ship = uiobj_add_t0(282, 140, "", ui_data.gfx.starmap.col_butt_ship, MOO_KEY_s);
         if (p->buildship != BUILDSHIP_STARGATE) {
-            d->sm.oi_reloc = uiobj_add_t0(282, 152, "", ui_data.gfx.starmap.col_butt_reloc, MOO_KEY_r);
+            pd->oi_reloc = uiobj_add_t0(282, 152, "", ui_data.gfx.starmap.col_butt_reloc, MOO_KEY_r);
         }
         if (g->evn.have_plague && (g->evn.plague_planet_i == g->planet_focus_i[d->api])) {
             lbxgfx_set_frame(ui_data.gfx.starmap.col_butt_trans, 1);
             lbxgfx_draw_frame(282, 164, ui_data.gfx.starmap.col_butt_trans, UI_SCREEN_W, ui_scale);
         } else {
-            d->sm.oi_trans = uiobj_add_t0(282, 164, "", ui_data.gfx.starmap.col_butt_trans, MOO_KEY_x);
+            pd->oi_trans = uiobj_add_t0(282, 164, "", ui_data.gfx.starmap.col_butt_trans, MOO_KEY_x);
         }
     }
 }
@@ -230,6 +248,130 @@ void ui_starmap_set_pos(const struct game_s *g, int x, int y)
     ui_data.starmap.y2 = y;
 }
 
+static bool ui_starmap_handle_planet_controls(struct game_s *g, struct starmap_data_s *d, int16_t scrollmisc, bool *flag_done) {
+    struct starmap_planet_data_s *pd = d->sm.planet_data;
+    planet_t *p = &g->planet[g->planet_focus_i[d->api]];
+    if (d->oi1 == pd->oi_reloc) {
+        ui_data.ui_main_loop_action = UI_MAIN_LOOP_RELOC;
+        *flag_done = true;
+        ui_sound_play_sfx_24();
+        return true;
+    }
+    if (d->oi1 == pd->oi_trans) {
+        ui_data.ui_main_loop_action = UI_MAIN_LOOP_TRANS;
+        *flag_done = true;
+        ui_sound_play_sfx_24();
+        return true;
+    }
+    if (d->oi1 == pd->oi_starview1 || d->oi1 == pd->oi_starview2) {
+        ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARVIEW;
+        *flag_done = true;
+        ui_sound_play_sfx_24();
+        return true;
+    }
+    if (d->oi1 == pd->oi_b) {
+        ui_data.ui_main_loop_action = UI_MAIN_LOOP_SCRAP_BASES;
+        *flag_done = true;
+        ui_sound_play_sfx_24();
+        return true;
+    }
+    if (d->oi1 == pd->oi_equals || d->oi1 == pd->oi_hash) {
+        if (2 * p->reserve >= p->prod_after_maint) {
+            if (ui_extra_enabled) {
+                g->eto[d->api].reserve_bc += p->reserve;
+                p->reserve = 0;
+                ui_sound_play_sfx_24();
+            } else {
+                ui_sound_play_sfx_06();
+            }
+        } else {
+            int v = p->prod_after_maint - 2 * p->reserve;
+            SETMIN(v, g->eto[d->api].reserve_bc);
+            p->reserve += v;
+            g->eto[d->api].reserve_bc -= v;
+            ui_sound_play_sfx_24();
+        }
+        game_update_production(g);
+        return true;
+    }
+    if (d->oi1 == pd->oi_wheelname) {
+        int i;
+        i = g->planet_focus_i[d->api];
+        i += scrollmisc;
+        if (i < 0) {
+            i = g->galaxy_stars - 1;
+        } else if (i >= g->galaxy_stars) {
+            i = 0;
+        }
+        g->planet_focus_i[d->api] = i;
+        return true;
+    }
+    if (0
+      || (d->oi1 == pd->oi_ship) || (d->oi1 == pd->oi_shippic)
+      || ((d->oi1 == pd->oi_wheelshippic) && (scrollmisc < 0))
+    ) {
+        int n;
+        n = p->buildship + 1;
+        if (n >= g->eto[d->api].shipdesigns_num) {
+            if (n >= (NUM_SHIPDESIGNS + 1)) {
+                n = 0;
+            } else if (g->eto[d->api].have_stargates && !p->have_stargate) {
+                n = BUILDSHIP_STARGATE;
+            } else {
+                n = 0;
+            }
+        }
+        p->buildship = n;
+        return true;
+    }
+    if (0
+      || ((d->oi1 == UIOBJI_ESC) && ((d->oi2 == pd->oi_ship) || (d->oi2 == pd->oi_shippic)))
+      || ((d->oi1 == pd->oi_wheelshippic) && (scrollmisc > 0))
+    ) {
+        int n;
+        n = p->buildship - 1;
+        if (n >= g->eto[d->api].shipdesigns_num) {
+            n = g->eto[d->api].shipdesigns_num - 1;
+        } else if (n < 0) {
+            if (g->eto[d->api].have_stargates && !p->have_stargate) {
+                n = BUILDSHIP_STARGATE;
+            } else {
+                n = g->eto[d->api].shipdesigns_num - 1;
+            }
+        }
+        p->buildship = n;
+        return true;
+    }
+    for (planet_slider_i_t i = 0; i < PLANET_SLIDER_NUM; ++i) {
+        if (d->oi1 == pd->oi_tbl_slider_lock[i]) {
+            p->slider_lock[i] = !p->slider_lock[i];
+            ui_sound_play_sfx_24();
+            return true;
+        } else if (!p->slider_lock[i]) {
+            bool do_adj = false;
+            int v;
+            if (d->oi1 == pd->oi_tbl_slider_minus[i]) {
+                if (kbd_is_modifier(MOO_MOD_CTRL)) v = p->slider[i] - 1;
+                else v = p->slider[i] - 4;
+                SETMAX(v, 0);
+                p->slider[i] = v;
+                do_adj = true;
+            } else if (d->oi1 == pd->oi_tbl_slider_plus[i]) {
+                if (kbd_is_modifier(MOO_MOD_CTRL)) v = p->slider[i] + 1;
+                else v = p->slider[i] + 4;
+                SETMIN(v, 100);
+                p->slider[i] = v;
+                do_adj = true;
+            }
+            if (do_adj) {
+                game_adjust_slider_group(p->slider, i, p->slider[i], PLANET_SLIDER_NUM, p->slider_lock);
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
 static void ui_starmap_handle_governor(struct game_s *g, struct starmap_data_s *d, int16_t scrollmisc, bool *flag_done) {
     struct starmap_governor_data_s *gd = d->sm.gov_data;
     planet_t *p;
@@ -320,6 +462,25 @@ static void ui_starmap_select_governor_highlight(const struct game_s *g, struct 
     }
 }
 
+static void ui_starmap_fill_oi_planet(const struct game_s *g, struct starmap_data_s *d, int16_t *scrollmisc) {
+    struct starmap_planet_data_s *pd = d->sm.planet_data;
+    const planet_t *p = &g->planet[g->planet_focus_i[d->api]];
+
+    if (p->owner == d->api) {
+        pd->oi_equals = uiobj_add_inputkey(MOO_KEY_EQUALS);
+        pd->oi_hash = uiobj_add_inputkey(MOO_KEY_HASH);
+    }
+    if ((p->owner == d->api) && p->missile_bases) {
+        pd->oi_b = uiobj_add_mousearea(272, 59, 312, 67, MOO_KEY_b);
+    }
+    if (p->owner == d->api) {
+        pd->oi_shippic = uiobj_add_mousearea(228, 139, 275, 175, MOO_KEY_UNKNOWN);
+        pd->oi_wheelshippic = uiobj_add_mousewheel(228, 139, 275, 175, scrollmisc);
+    }
+    pd->oi_wheelname = uiobj_add_mousewheel(227, 8, 310, 20, scrollmisc);
+    pd->oi_starview2 = uiobj_add_mousearea(227, 24, 310, 53, MOO_KEY_UNKNOWN);
+}
+
 static void ui_starmap_fill_oi_governor(struct starmap_governor_data_s *gd, int16_t *scrollmisc) {
     gd->oi_governor = uiobj_add_mousearea(227, 59, 268, 67, MOO_KEY_v);
     gd->oi_ship = uiobj_add_mousearea( 288, 82, 312, 88, MOO_KEY_UNKNOWN );
@@ -333,13 +494,13 @@ static void ui_starmap_fill_oi_governor(struct starmap_governor_data_s *gd, int1
 void ui_starmap_do(struct game_s *g, player_id_t active_player)
 {
     bool flag_done = false;
-    int16_t oi_b, oi_starview1, oi_starview2, oi_shippic, oi_finished, oi_equals, oi_hash,
-            oi_alt_galaxy, oi_alt_p, oi_alt_events,
-            oi_wheelname, oi_wheelshippic
+    int16_t oi_finished, oi_alt_galaxy, oi_alt_p, oi_alt_events
             ;
     int16_t scrollmisc = 0;
     struct starmap_data_s d;
+    struct starmap_planet_data_s planet_d;
     struct starmap_governor_data_s gov_d;
+    d.sm.planet_data = &planet_d;
     d.sm.gov_data = &gov_d;
 
     d.scrollx = 0;
@@ -365,19 +526,19 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
 #define UIOBJ_CLEAR_LOCAL() \
     do { \
         STARMAP_UIOBJ_CLEAR_COMMON(); \
-        oi_b = UIOBJI_INVALID; \
-        oi_starview1 = UIOBJI_INVALID; \
-        oi_starview2 = UIOBJI_INVALID; \
-        oi_shippic = UIOBJI_INVALID; \
+        planet_d.oi_b = UIOBJI_INVALID; \
+        planet_d.oi_starview1 = UIOBJI_INVALID; \
+        planet_d.oi_starview2 = UIOBJI_INVALID; \
+        planet_d.oi_shippic = UIOBJI_INVALID; \
         oi_finished = UIOBJI_INVALID; \
-        oi_equals = UIOBJI_INVALID; \
-        oi_hash = UIOBJI_INVALID; \
-        oi_wheelname = UIOBJI_INVALID; \
-        oi_wheelshippic = UIOBJI_INVALID; \
-        d.sm.oi_ship = UIOBJI_INVALID; \
-        d.sm.oi_reloc = UIOBJI_INVALID; \
-        d.sm.oi_trans = UIOBJI_INVALID; \
-        UIOBJI_SET_TBL3_INVALID(d.sm.oi_tbl_slider_lock, d.sm.oi_tbl_slider_minus, d.sm.oi_tbl_slider_plus); \
+        planet_d.oi_equals = UIOBJI_INVALID; \
+        planet_d.oi_hash = UIOBJI_INVALID; \
+        planet_d.oi_wheelname = UIOBJI_INVALID; \
+        planet_d.oi_wheelshippic = UIOBJI_INVALID; \
+        planet_d.oi_ship = UIOBJI_INVALID; \
+        planet_d.oi_reloc = UIOBJI_INVALID; \
+        planet_d.oi_trans = UIOBJI_INVALID; \
+        UIOBJI_SET_TBL3_INVALID(planet_d.oi_tbl_slider_lock, planet_d.oi_tbl_slider_minus, planet_d.oi_tbl_slider_plus); \
         gov_d.oi_governor = UIOBJI_INVALID; \
         gov_d.oi_ship = UIOBJI_INVALID; \
         gov_d.oi_reserve = UIOBJI_INVALID; \
@@ -402,35 +563,18 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
         scrollmisc = 0;
         ui_delay_prepare();
         if (ui_starmap_handle_common(g, &d, &flag_done)) {
-        } else if (d.oi1 == d.sm.oi_reloc) {
-            ui_data.ui_main_loop_action = UI_MAIN_LOOP_RELOC;
-            flag_done = true;
-            ui_sound_play_sfx_24();
-        } else if (d.oi1 == d.sm.oi_trans) {
-            ui_data.ui_main_loop_action = UI_MAIN_LOOP_TRANS;
-            flag_done = true;
-            ui_sound_play_sfx_24();
-        } else if (d.oi1 == oi_starview1 || d.oi1 == oi_starview2) {
-            ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARVIEW;
-            flag_done = true;
-            ui_sound_play_sfx_24();
-        } else if (d.oi1 == oi_b) {
-            ui_data.ui_main_loop_action = UI_MAIN_LOOP_SCRAP_BASES;
-            flag_done = true;
-            ui_sound_play_sfx_24();
+        } else if (ui_starmap_handle_planet_controls(g, &d, scrollmisc, &flag_done)) {
         } else if ((d.oi1 == oi_finished) || ((d.oi1 == UIOBJI_ESC) && (oi_finished != UIOBJI_INVALID))) {
-            if (d.oi1 != UIOBJI_ESC || (d.oi2 != d.sm.oi_ship && d.oi2 != oi_shippic)) {
-                if (ui_starmap_remove_build_finished(g, active_player, p)) {
-                    if (ui_extra_enabled) {
-                        g->planet_focus_i[active_player] = ui_data.start_planet_focus_i;
-                        ui_starmap_set_pos_focus(g, active_player);
-                    }
+            if (ui_starmap_remove_build_finished(g, active_player, p)) {
+                if (ui_extra_enabled) {
+                    g->planet_focus_i[active_player] = ui_data.start_planet_focus_i;
+                    ui_starmap_set_pos_focus(g, active_player);
                 }
-                ui_sound_play_sfx_24();
-                flag_done = true;
-                ui_delay_1();
-                d.oi1 = 0;
             }
+            ui_sound_play_sfx_24();
+            flag_done = true;
+            ui_delay_1();
+            d.oi1 = 0;
         } else if (d.oi1 == oi_alt_galaxy) {
             if (game_cheat_galaxy(g, active_player)) {
                 ui_sound_play_sfx_24();
@@ -444,93 +588,6 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
         } else {
             ui_starmap_handle_governor(g, &d, scrollmisc, &flag_done);
         }
-        if (0
-          || (d.oi1 == d.sm.oi_ship) || (d.oi1 == oi_shippic)
-          || ((d.oi1 == oi_wheelshippic) && (scrollmisc < 0))
-        ) {
-            int n;
-            n = p->buildship + 1;
-            if (n >= g->eto[active_player].shipdesigns_num) {
-                if (n >= (NUM_SHIPDESIGNS + 1)) {
-                    n = 0;
-                } else if (g->eto[active_player].have_stargates && !p->have_stargate) {
-                    n = BUILDSHIP_STARGATE;
-                } else {
-                    n = 0;
-                }
-            }
-            p->buildship = n;
-        }
-        if (0
-          || ((d.oi1 == UIOBJI_ESC) && ((d.oi2 == d.sm.oi_ship) || (d.oi2 == oi_shippic)))
-          || ((d.oi1 == oi_wheelshippic) && (scrollmisc > 0))
-        ) {
-            int n;
-            n = p->buildship - 1;
-            if (n >= g->eto[active_player].shipdesigns_num) {
-                n = g->eto[active_player].shipdesigns_num - 1;
-            } else if (n < 0) {
-                if (g->eto[active_player].have_stargates && !p->have_stargate) {
-                    n = BUILDSHIP_STARGATE;
-                } else {
-                    n = g->eto[active_player].shipdesigns_num - 1;
-                }
-            }
-            p->buildship = n;
-        }
-        for (planet_slider_i_t i = 0; i < PLANET_SLIDER_NUM; ++i) {
-            if (d.oi1 == d.sm.oi_tbl_slider_lock[i]) {
-                p->slider_lock[i] = !p->slider_lock[i];
-                ui_sound_play_sfx_24();
-            } else if (!p->slider_lock[i]) {
-                bool do_adj = false;
-                int v;
-                if (d.oi1 == d.sm.oi_tbl_slider_minus[i]) {
-                    if (kbd_is_modifier(MOO_MOD_CTRL)) v = p->slider[i] - 1;
-                    else v = p->slider[i] - 4;
-                    SETMAX(v, 0);
-                    p->slider[i] = v;
-                    do_adj = true;
-                } else if (d.oi1 == d.sm.oi_tbl_slider_plus[i]) {
-                    if (kbd_is_modifier(MOO_MOD_CTRL)) v = p->slider[i] + 1;
-                    else v = p->slider[i] + 4;
-                    SETMIN(v, 100);
-                    p->slider[i] = v;
-                    do_adj = true;
-                }
-                if (do_adj) {
-                    game_adjust_slider_group(p->slider, i, p->slider[i], PLANET_SLIDER_NUM, p->slider_lock);
-                }
-            }
-        }
-        if (d.oi1 == oi_equals || d.oi1 == oi_hash) {
-            if (2 * p->reserve >= p->prod_after_maint) {
-                if (ui_extra_enabled) {
-                    g->eto[active_player].reserve_bc += p->reserve;
-                    p->reserve = 0;
-                    ui_sound_play_sfx_24();
-                } else {
-                    ui_sound_play_sfx_06();
-                }
-            } else {
-                int v = p->prod_after_maint - 2 * p->reserve;
-                SETMIN(v, g->eto[active_player].reserve_bc);
-                p->reserve += v;
-                g->eto[active_player].reserve_bc -= v;
-                ui_sound_play_sfx_24();
-            }
-            game_update_production(g);
-        } else if (d.oi1 == oi_wheelname) {
-            int i;
-            i = g->planet_focus_i[active_player];
-            i += scrollmisc;
-            if (i < 0) {
-                i = g->galaxy_stars - 1;
-            } else if (i >= g->galaxy_stars) {
-                i = 0;
-            }
-            g->planet_focus_i[active_player] = i;
-        }
 
         if (!flag_done) {
             ui_starmap_select_bottom_highlight(g, &d);
@@ -539,28 +596,16 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             uiobj_table_set_last(oi_alt_events);
             UIOBJ_CLEAR_LOCAL();
             p = &g->planet[g->planet_focus_i[active_player]];
-            if (p->owner == active_player) {
-                oi_equals = uiobj_add_inputkey(MOO_KEY_EQUALS);
-                oi_hash = uiobj_add_inputkey(MOO_KEY_HASH);
-            }
-            if ((p->owner == active_player) && p->missile_bases) {
-                oi_b = uiobj_add_mousearea(272, 59, 312, 67, MOO_KEY_b);
-            }
             if (g->evn.build_finished_num[active_player]) {
                 oi_finished = uiobj_add_mousearea(6, 6, 225, 180, MOO_KEY_SPACE);
             }
-            if (p->owner == active_player) {
-                oi_shippic = uiobj_add_mousearea(228, 139, 275, 175, MOO_KEY_UNKNOWN);
-                oi_wheelshippic = uiobj_add_mousewheel(228, 139, 275, 175, &scrollmisc);
-                if (ui_extra_enabled) {
-                    ui_starmap_fill_oi_governor(&gov_d, &scrollmisc);
-                }
+            ui_starmap_fill_oi_planet(g, &d, &scrollmisc);
+            if (p->owner == active_player && ui_extra_enabled) {
+                ui_starmap_fill_oi_governor(&gov_d, &scrollmisc);
             }
-            oi_wheelname = uiobj_add_mousewheel(227, 8, 310, 20, &scrollmisc);
             ui_starmap_fill_oi_common(&d);
             if (BOOLVEC_IS1(p->explored, active_player)) {
-                oi_starview1 = d.oi_tbl_stars[g->planet_focus_i[active_player]];
-                oi_starview2 = uiobj_add_mousearea(227, 24, 310, 53, MOO_KEY_UNKNOWN);
+                planet_d.oi_starview1 = d.oi_tbl_stars[g->planet_focus_i[active_player]];
             }
             ui_starmap_fill_oi_slider(&d, p);
             if (g->evn.build_finished_num[active_player]) {
