@@ -57,7 +57,7 @@ The following new UI features are always enabled/available:
 - Eco slider shows Clean/+N Pop past T-Form on a full planet
 - Clicking cycles selection of overlapping fleets
 - Pressing = or # in the galaxy movement screen transfers reserve for
-  one round of production (with uiextra also transfers back)
+  one round of production or cancels the transfer
 - Pressing +/-/= in send transport screen adjusts slider by 10% of max amount
 - Pressing A in send transport screen sets slider to maximum
 - Fleet relocation point is allowed for any star within normal fuel range

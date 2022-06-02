@@ -276,14 +276,10 @@ static bool ui_starmap_handle_planet_controls(struct game_s *g, struct starmap_d
         return true;
     }
     if (d->oi1 == pd->oi_equals || d->oi1 == pd->oi_hash) {
-        if (2 * p->reserve >= p->prod_after_maint) {
-            if (ui_extra_enabled) {
-                g->eto[d->api].reserve_bc += p->reserve;
-                p->reserve = 0;
-                ui_sound_play_sfx_24();
-            } else {
-                ui_sound_play_sfx_06();
-            }
+        if (p->reserve > 0) {
+            g->eto[d->api].reserve_bc += p->reserve;
+            p->reserve = 0;
+            ui_sound_play_sfx_24();
         } else {
             int v = p->prod_after_maint - 2 * p->reserve;
             SETMIN(v, g->eto[d->api].reserve_bc);
