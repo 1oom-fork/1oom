@@ -190,6 +190,11 @@ static void ui_starmap_draw_sliders_and_prod(struct starmap_data_s *d)
         lbxgfx_draw_frame(236, 142, gfx, UI_SCREEN_W, ui_scale);
         lbxfont_print_str_center(252, 169, sd->name, UI_SCREEN_W, ui_scale);
     }
+    if (ui_extra_enabled && kbd_is_modifier(MOO_MOD_CTRL)) {
+        lbxfont_select(2, 0xd, 0, 0);
+        lbxfont_print_str_center(252, 143, "Build", UI_SCREEN_W, ui_scale);
+        lbxfont_print_str_center(252, 149, "everywhere", UI_SCREEN_W, ui_scale);
+    }
 
     lbxfont_select(2, 6, 0, 0);
     {
