@@ -121,7 +121,7 @@ void ui_starmap_reloc(struct game_s *g, player_id_t active_player)
         ui_delay_prepare();
         ui_starmap_handle_common(g, &d, &flag_done);
         if (!flag_done) {
-            ui_starmap_select_bottom_highlight(g, &d, d.oi2);
+            ui_starmap_select_bottom_highlight(g, &d);
             ui_starmap_reloc_draw_cb(&d);
             uiobj_table_clear();
             UIOBJ_CLEAR_LOCAL();

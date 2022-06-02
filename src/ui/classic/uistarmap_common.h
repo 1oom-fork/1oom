@@ -208,7 +208,7 @@ extern int ui_starmap_cursor_on_star(const struct game_s *g, const struct starma
 extern int ui_starmap_cursor_on_enroute(const struct game_s *g, const struct starmap_data_s *d, int16_t oi2);
 extern int ui_starmap_cursor_on_transport(const struct game_s *g, const struct starmap_data_s *d, int16_t oi2);
 extern int ui_starmap_cursor_on_orbit(const struct game_s *g, const struct starmap_data_s *d, int16_t oi2, player_id_t orbit_owner);
-extern void ui_starmap_select_bottom_highlight(const struct game_s *g, struct starmap_data_s *d, int16_t oi);
+extern void ui_starmap_select_bottom_highlight(const struct game_s *g, struct starmap_data_s *d);
 extern bool ui_starmap_handle_common(struct game_s *g, struct starmap_data_s *d, bool *flag_done);
 extern void ui_starmap_fill_oi_common(struct starmap_data_s *d);
 

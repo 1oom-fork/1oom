@@ -296,7 +296,7 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
             }
         }
         if (!flag_done) {
-            ui_starmap_select_bottom_highlight(g, &d, d.oi2);
+            ui_starmap_select_bottom_highlight(g, &d);
             ui_starmap_orbit_own_draw_cb(&d);
             uiobj_table_clear();
             UIOBJ_CLEAR_LOCAL();

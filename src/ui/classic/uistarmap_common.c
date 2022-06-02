@@ -1166,8 +1166,8 @@ static int ui_starmap_bottom_menu_action(const struct game_s *g, const struct st
     return action;
 }
 
-void ui_starmap_select_bottom_highlight(const struct game_s *g, struct starmap_data_s *d, int16_t oi) {
-    d->bottom_highlight = ui_starmap_bottom_menu_action(g, d, oi) - 1;
+void ui_starmap_select_bottom_highlight(const struct game_s *g, struct starmap_data_s *d) {
+    d->bottom_highlight = ui_starmap_bottom_menu_action(g, d, d->oi2) - 1;
 }
 
 static void ui_starmap_reloc_reloc(struct game_s *g, player_id_t active_player)

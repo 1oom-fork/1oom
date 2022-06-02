@@ -303,7 +303,7 @@ static void ui_starmap_handle_governor(struct game_s *g, struct starmap_data_s *
     }
 }
 
-static void ui_starmap_select_governor_highlight(const struct game_s *g, struct starmap_data_s *d, int16_t oi2) {
+static void ui_starmap_select_governor_highlight(const struct game_s *g, struct starmap_data_s *d) {
     struct starmap_governor_data_s *gd = d->sm.gov_data;
     const planet_t *p = &g->planet[g->planet_focus_i[d->api]];
     d->gov_highlight = 0;
@@ -533,8 +533,8 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
         }
 
         if (!flag_done) {
-            ui_starmap_select_bottom_highlight(g, &d, d.oi2);
-            ui_starmap_select_governor_highlight(g, &d, d.oi2);
+            ui_starmap_select_bottom_highlight(g, &d);
+            ui_starmap_select_governor_highlight(g, &d);
             ui_starmap_draw_cb1(&d);
             uiobj_table_set_last(oi_alt_events);
             UIOBJ_CLEAR_LOCAL();
