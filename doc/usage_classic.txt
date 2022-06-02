@@ -58,6 +58,7 @@ The following new UI features are always enabled/available:
 - Clicking cycles selection of overlapping fleets
 - Pressing = or # in the galaxy movement screen transfers reserve for
   one round of production or cancels the transfer
+- Reserve can also be transfered by clicking on the Production text
 - Pressing +/-/= in send transport screen adjusts slider by 10% of max amount
 - Pressing A in send transport screen sets slider to maximum
 - Fleet relocation point is allowed for any star within normal fuel range

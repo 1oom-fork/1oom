@@ -463,7 +463,7 @@ static void ui_starmap_fill_oi_planet(const struct game_s *g, struct starmap_dat
     const planet_t *p = &g->planet[g->planet_focus_i[d->api]];
 
     if (p->owner == d->api) {
-        pd->oi_equals = uiobj_add_inputkey(MOO_KEY_EQUALS);
+        pd->oi_equals = uiobj_add_mousearea(227, 70, 312, 78, MOO_KEY_EQUALS);
         pd->oi_hash = uiobj_add_inputkey(MOO_KEY_HASH);
     }
     if ((p->owner == d->api) && p->missile_bases) {
