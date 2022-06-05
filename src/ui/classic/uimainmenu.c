@@ -70,17 +70,17 @@ static void main_menu_draw_cb(void *vptr)
     } else {
         lbxfont_select(4, 7, 0, 0);
     }
-    lbxfont_print_str_center(0xa0, 0x7f, game_str_mm_continue, UI_SCREEN_W, ui_scale);
+    lbxfont_print_str_center(0xa0, 0x79, game_str_mm_continue, UI_SCREEN_W, ui_scale);
     if (d->have_loadgame) {
         lbxfont_select(4, (d->selected == MAIN_MENU_ACT_LOAD_GAME) ? 3 : 2, 0, 0);
     } else {
         lbxfont_select(4, 7, 0, 0);
     }
-    lbxfont_print_str_center(0xa0, 0x8f, game_str_mm_load, UI_SCREEN_W, ui_scale);
+    lbxfont_print_str_center(0xa0, 0x87, game_str_mm_load, UI_SCREEN_W, ui_scale);
     lbxfont_select(4, (d->selected == MAIN_MENU_ACT_NEW_GAME) ? 3 : 2, 0, 0);
-    lbxfont_print_str_center(0xa0, 0x9f, game_str_mm_new, UI_SCREEN_W, ui_scale);
+    lbxfont_print_str_center(0xa0, 0x95, game_str_mm_new, UI_SCREEN_W, ui_scale);
     lbxfont_select(4, (d->selected == MAIN_MENU_ACT_QUIT_GAME) ? 3 : 2, 0, 0);
-    lbxfont_print_str_center(0xa0, 0xaf, game_str_mm_quit, UI_SCREEN_W, ui_scale);
+    lbxfont_print_str_center(0xa0, 0xb1, game_str_mm_quit, UI_SCREEN_W, ui_scale);
     d->frame = (d->frame + 1) % 0x30;
 }
 
@@ -108,7 +108,7 @@ static main_menu_action_t main_menu_do(struct main_menu_data_s *d)
     oi_extra = uiobj_add_alt_str("x");
     d->have_continue = game_save_tbl_have_save[GAME_SAVE_I_CONTINUE];
     if (d->have_continue) {
-        oi_continue = uiobj_add_mousearea(0x3c, 0x7f, 0x104, 0x8e, MOO_KEY_UNKNOWN);
+        oi_continue = uiobj_add_mousearea(0x3c, 0x79, 0x104, 0x86, MOO_KEY_UNKNOWN);
     } else {
         oi_continue = UIOBJI_INVALID;
     }
@@ -116,13 +116,13 @@ static main_menu_action_t main_menu_do(struct main_menu_data_s *d)
     d->have_loadgame = false;
     for (int i = 0; i < NUM_SAVES; ++i) {
         if (game_save_tbl_have_save[i]) {
-            oi_loadgame = uiobj_add_mousearea(0x3c, 0x8f, 0x104, 0x9e, MOO_KEY_UNKNOWN);
+            oi_loadgame = uiobj_add_mousearea(0x3c, 0x87, 0x104, 0x94, MOO_KEY_UNKNOWN);
             d->have_loadgame = true;
             break;
         }
     }
-    oi_newgame = uiobj_add_mousearea(0x3c, 0x9f, 0x104, 0xae, MOO_KEY_UNKNOWN);
-    oi_quit = uiobj_add_mousearea(0x3c, 0xaf, 0x104, 0xbe, MOO_KEY_UNKNOWN);
+    oi_newgame = uiobj_add_mousearea(0x3c, 0x95, 0x104, 0xa2, MOO_KEY_UNKNOWN);
+    oi_quit = uiobj_add_mousearea(0x3c, 0xb1, 0x104, 0xbe, MOO_KEY_UNKNOWN);
     if (d->have_continue) {
         oi_c = uiobj_add_inputkey(MOO_KEY_c);
     } else {
