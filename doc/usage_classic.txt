@@ -26,7 +26,9 @@ the -modernstarmapcontrols command-line option) enables the following features:
 
 The following new UI features are always enabled/available:
 1) New game options
-- Local multiplayer (use -new or -uiextra to start a game)
+- Custom Game screen allows local multiplayer
+- Custom Game screen allows setting opponent race/banner/names and AI/human flag
+- Custom Game screen allows new rule: no World Ruler Elections
 - Random race / banner
 - New difficulty level - "Hopeless"
 2) Camera
@@ -86,16 +88,13 @@ game via Game -> Quit or when F10 is pressed while in the "control screen" /
 
 The config file item "ui.uiextra" (set via the -uiextra command-line option)
 or pressing Alt-X in the main menu enables the following extra UI features:
-1) New game options
-- New Game screen allows setting opponent race/banner/names and AI/human flag
-- New Game screen allows new rule: no World Ruler Elections
-2) Star map controls
+1) Star map controls
 - Hovering over a planet draws a ruler with the distance in parsec from the
   currently selected planet if is in the screen.
 - Fleet deployment shows the amount of available ships
 - Summary of forces shown before ship combat
 - New Auto and Retreat buttons for space combat autoresolve
-3) Planetary controls
+2) Planetary controls
 - Governor screen can be opened by clicking on the Pop text or pressing V key.
   The screen include Eco mode, buildup mode and whether to build stargates.
   All local settings are also reachable directly over the planet interface.
@@ -118,7 +117,7 @@ or pressing Alt-X in the main menu enables the following extra UI features:
   transfer dialog.
 - The ship production selection can be set everywhere by pressing Ctrl +
   clicking on the ship picture.
-4) Gameplay
+3) Gameplay
 - When espionage was successful, clicking on the race icon opens the spy report
 - Nebula planets show "NEB" in their shields field and have a purple instead
   of a red frame around their picture
@@ -135,7 +134,7 @@ or pressing Alt-X in the main menu enables the following extra UI features:
 - Clicking on Station or ship names on Fleet screen sorts the list
 - I to show message filter options
 - Report screen shows name of AI leaders, Map screen shows current year
-5) Misc
+4) Misc
 - Game options screen Silent/FX Only/Music is replaced with more options
 - Continue, Undo and Init saves can be chosen in the Load Game screen
 See doc/list_gamediff.txt for a list of differences in the game itself.

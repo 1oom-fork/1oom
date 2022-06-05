@@ -79,6 +79,8 @@ static void main_menu_draw_cb(void *vptr)
     lbxfont_print_str_center(0xa0, 0x87, game_str_mm_load, UI_SCREEN_W, ui_scale);
     lbxfont_select(4, (d->selected == MAIN_MENU_ACT_NEW_GAME) ? 3 : 2, 0, 0);
     lbxfont_print_str_center(0xa0, 0x95, game_str_mm_new, UI_SCREEN_W, ui_scale);
+    lbxfont_select(4, (d->selected == MAIN_MENU_ACT_CUSTOM_GAME) ? 3 : 2, 0, 0);
+    lbxfont_print_str_center(0xa0, 0xa3, game_str_mm_custom, UI_SCREEN_W, ui_scale);
     lbxfont_select(4, (d->selected == MAIN_MENU_ACT_QUIT_GAME) ? 3 : 2, 0, 0);
     lbxfont_print_str_center(0xa0, 0xb1, game_str_mm_quit, UI_SCREEN_W, ui_scale);
     d->frame = (d->frame + 1) % 0x30;
@@ -86,8 +88,8 @@ static void main_menu_draw_cb(void *vptr)
 
 static main_menu_action_t main_menu_do(struct main_menu_data_s *d)
 {
-    int16_t oi_n, oi_l, oi_c, oi_q;
-    int16_t oi_newgame, oi_continue, oi_loadgame, oi_quit;
+    int16_t oi_n, oi_g, oi_l, oi_c, oi_q;
+    int16_t oi_newgame, oi_customgame, oi_continue, oi_loadgame, oi_quit;
     int16_t oi_tutor, oi_extra, cursor_at;
     bool flag_done = false, flag_fadein = false;
 
@@ -122,6 +124,7 @@ static main_menu_action_t main_menu_do(struct main_menu_data_s *d)
         }
     }
     oi_newgame = uiobj_add_mousearea(0x3c, 0x95, 0x104, 0xa2, MOO_KEY_UNKNOWN);
+    oi_customgame = uiobj_add_mousearea(0x3c, 0xa3, 0x104, 0xb0, MOO_KEY_UNKNOWN);
     oi_quit = uiobj_add_mousearea(0x3c, 0xb1, 0x104, 0xbe, MOO_KEY_UNKNOWN);
     if (d->have_continue) {
         oi_c = uiobj_add_inputkey(MOO_KEY_c);
@@ -134,6 +137,7 @@ static main_menu_action_t main_menu_do(struct main_menu_data_s *d)
         oi_l = UIOBJI_INVALID;
     }
     oi_n = uiobj_add_inputkey(MOO_KEY_n);
+    oi_g = uiobj_add_inputkey(MOO_KEY_g);
     oi_q = uiobj_add_inputkey(MOO_KEY_q);
     uiobj_set_focus(oi_newgame);
     d->selected = -1;
@@ -143,6 +147,8 @@ static main_menu_action_t main_menu_do(struct main_menu_data_s *d)
         d->selected = MAIN_MENU_ACT_CONTINUE_GAME;
     } else if (cursor_at == oi_newgame) {
         d->selected = MAIN_MENU_ACT_NEW_GAME;
+    } else if (cursor_at == oi_customgame) {
+        d->selected = MAIN_MENU_ACT_CUSTOM_GAME;
     } else if (cursor_at == oi_loadgame) {
         d->selected = MAIN_MENU_ACT_LOAD_GAME;
     } else if (cursor_at == oi_quit) {
@@ -165,6 +171,8 @@ static main_menu_action_t main_menu_do(struct main_menu_data_s *d)
             d->selected = MAIN_MENU_ACT_LOAD_GAME;
         } else if (oi2 == oi_newgame) {
             d->selected = MAIN_MENU_ACT_NEW_GAME;
+        } else if (oi2 == oi_customgame) {
+            d->selected = MAIN_MENU_ACT_CUSTOM_GAME;
         } else if (oi2 == oi_quit) {
             d->selected = MAIN_MENU_ACT_QUIT_GAME;
         }
@@ -174,6 +182,8 @@ static main_menu_action_t main_menu_do(struct main_menu_data_s *d)
             d->selected = MAIN_MENU_ACT_LOAD_GAME;
         } else if (oi1 == oi_n) {
             d->selected = MAIN_MENU_ACT_NEW_GAME;
+        } else if (oi1 == oi_g) {
+            d->selected = MAIN_MENU_ACT_CUSTOM_GAME;
         } else if (oi1 == oi_q) {
             d->selected = MAIN_MENU_ACT_QUIT_GAME;
         } else if (oi1 == oi_tutor) {
@@ -217,7 +227,8 @@ main_menu_action_t ui_main_menu(struct game_new_options_s *newopts, int *load_ga
         ui_draw_finish_mode = 0;
         switch (ret) {
             case MAIN_MENU_ACT_NEW_GAME:
-                flag_done = ui_new_game(newopts);
+            case MAIN_MENU_ACT_CUSTOM_GAME:
+                flag_done = ui_new_game(newopts, (ret == MAIN_MENU_ACT_CUSTOM_GAME));
                 ui_draw_finish_mode = 1;
                 break;
             case MAIN_MENU_ACT_LOAD_GAME:
