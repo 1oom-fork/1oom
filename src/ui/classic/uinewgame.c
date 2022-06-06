@@ -476,11 +476,19 @@ bool ui_new_game(struct game_new_options_s *newopts, bool is_custom)
     int16_t oi_gsize, oi_diffic, oi_oppon, oi_cancel, oi_ok;
     int16_t oi_esc, oi_d, oi_g, oi_o, oi_space;
 
-    d.newopts = newopts;
-
     gsize = newopts->galaxy_size;
     diffic = newopts->difficulty;
     oppon = newopts->players - 1/*0-based*/ - 1/*player*/;
+
+    const struct game_new_options_s defaults = GAME_NEW_OPTS_DEFAULT;
+    if (!is_custom) {
+        *newopts = defaults;
+        newopts->galaxy_size = gsize;
+        newopts->difficulty = diffic;
+        newopts->players = oppon + 1/*0-based*/ + 1/*player*/;
+    }
+
+    d.newopts = newopts;
 
     ui_palette_fadeout_19_19_1();
     lbxpal_select(3, -1, 0);
