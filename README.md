@@ -4,6 +4,13 @@
 1oom is a Master of Orion (1993) game engine recreation.
 1oom is Free Software (GPLv2), see COPYING.
 
+1oom-fork
+=========
+
+1oom-fork was made as an attempt to fix the imperfect features of the 1oom interface
+if that feature is annoying or already better implemented in modern games.
+1oom-fork tries to add all the best extra UI features to the main game.
+See CHANGES for more information.
 
 1 Installation
 ===============
