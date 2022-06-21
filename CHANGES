@@ -1,0 +1,68 @@
+1oom-fork
+=========
+
+Version 1.1
+-----------
+
+Added features from extra UI:
+-Press Ctrl+R to set/unset reloc points for all planets
+-Press Ctrl+S to build this type of ship everywhere
+-Press '/' to search planet:
+	-fixed following bug: search feature breaks game UI
+-"Custom game" screen implements "New game" screen from extra UI
+	-Custom game screen keeps game options
+-Clicking the portraits in Races screen brings report page
+-Pressing = or # on the Tech screen adjusts only the unlocked sliders
+-Home planet is valid target for transports
+	-Transport count is set to 0 if ordered to home planet
+-Pressing = or # in galaxy screen also transfers reserve back
+	-Reserve can be transfered by clicking on the Production text
+
+Added new features:
+-Classic mouse scroll
+-Ctrl+R, Alt+R, Alt+C, Alt+M, Alt+R works regardless of selection
+-F2-F9, '/', 'C', F10 works regardless of selection
+	-fixed following bug: F2-F9 do weird things if cant find planet
+-Press '+', '-', '=', 'A' to manipulate "Send Transport" slider
+-Press Alt+F to show/hide incoming friendly fleet routes for planet
+-Click current planet or press Space to clear selection when
+  own fleet in orbit is selected
+-Bases can be scrapped by clicking on the Bases text
+-Save new game to slot 9
+-Custom game screen allows new rule: no World Ruler Elections
+-Allow relocation point for any planet in normal fleet range
+-New difficulty level: Hopeless
+-Star view screen always allowed for explored planets
+
+Added new optional features:
+-ui.modern_starmap_controls = true or -modernstarmapcontrols feature:
+	-Hovering over a star selects the star as the target if possible
+	-Clicking on the target star works as Accept button
+-ui.skip_bomb_animation = true or -nobombanimation disables bomb animation
+
+The following annoying behavior fixed:
+-Hotkey press changes mouse position
+-Clicked item is selected when mouse button is released
+-Unable to change fleet selection in some cases
+-Question mark cursor area prevents selection of fleet in orbit 
+  when the planet is selected
+
+The following bugs fixed:
+-Invisible "Send Transport" buttons if home planet is reselected
+-Right click on ship production picture removes "Build finished" message
+
+Changed default settings:
+-Aspect ratio is off by default
+-Hotkeys changed:
+	-Races screen (r -> e)
+	-Reloc button (l -> r)
+-./data is valid path for LBX files
+
+Added new extra UI features:
+-Press I to show message filter
+-Press 'V' to open governor screen or click Pop text
+-"Enable/Disable governor" button in governor screen
+
+The following UI extra features removed:
+-Removed extra UI menu
+-Sending fewer than all ships does not deselect the orbit fleet
