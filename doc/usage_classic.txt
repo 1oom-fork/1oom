@@ -25,6 +25,12 @@ enables the following features:
 - Hovering over a star selects the star as the target if possible
 - Clicking on the target star works as Accept button
 
+The config file item "ui.space_combat_autoresolve" (set via
+the -spacecombatautoresolve command-line option or uiextra options menu)
+enables the following features:
+- Summary of forces shown before ship combat
+- New Auto and Retreat buttons for space combat autoresolve
+
 The following new UI features are always enabled/available:
 1) New game options
 - Custom Game screen allows local multiplayer
@@ -93,8 +99,6 @@ or pressing Alt-X in the main menu enables the following extra UI features:
 - Hovering over a planet draws a ruler with the distance in parsec from the
   currently selected planet if is in the screen.
 - Fleet deployment shows the amount of available ships
-- Summary of forces shown before ship combat
-- New Auto and Retreat buttons for space combat autoresolve
 2) Planetary controls
 - Governor screen can be opened by clicking on the Pop text or pressing V key.
   The screen include Eco mode, buildup mode and whether to build stargates.

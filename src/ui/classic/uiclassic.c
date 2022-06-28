@@ -70,6 +70,7 @@ const struct cfg_items_s ui_cfg_items[] = {
     CFG_ITEM_BOOL("uiextra", &ui_extra_enabled),
     CFG_ITEM_BOOL("modern_starmap_controls", &ui_modern_starmap_controls),
     CFG_ITEM_BOOL("skip_bomb_animation", &game_battle_skip_bomb_animation),
+    CFG_ITEM_BOOL("space_combat_autoresolve", &ui_space_combat_autoresolve),
     CFG_ITEM_COMMENT("0..146"),
     CFG_ITEM_INT("uiicon", &ui_icon, check_ui_icon),
     CFG_ITEM_COMMENT("Invert mouse wheel for sliders"),
@@ -123,6 +124,12 @@ const struct cmdline_options_s ui_cmdline_options[] = {
     { "-bombanimation", 0,
       options_disable_bool_var, (void *)&game_battle_skip_bomb_animation,
       NULL, "Enable bomb animation in space combat" },
+    { "-spacecombatautoresolve", 0,
+      options_enable_bool_var, (void *)&ui_space_combat_autoresolve,
+      NULL, "Enable space combat autoresolve UI" },
+    { "-nospacecombatautoresolve", 0,
+      options_disable_bool_var, (void *)&ui_space_combat_autoresolve,
+      NULL, "Disable space combat autoresolve UI" },
     { "-mwislider", 0,
       options_enable_bool_var, (void *)&ui_mwi_slider,
       NULL, "Invert mouse wheel for sliders" },
@@ -153,6 +160,7 @@ int ui_scale = 0;
 int starmap_scale = 0;
 bool ui_extra_enabled = false;
 bool ui_modern_starmap_controls = false;
+bool ui_space_combat_autoresolve = false;
 bool ui_mwi_slider = false;
 bool ui_mwi_counter = false;
 int ui_sm_scroll_speed = 3;
