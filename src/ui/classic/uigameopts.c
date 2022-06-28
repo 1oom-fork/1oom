@@ -27,18 +27,6 @@
 
 /* -------------------------------------------------------------------------- */
 
-static bool ui_opt_toggle_mwi_slider(void)
-{
-    ui_mwi_slider = !ui_mwi_slider;
-    return true;
-}
-
-static bool ui_opt_toggle_mwi_counter(void)
-{
-    ui_mwi_counter = !ui_mwi_counter;
-    return true;
-}
-
 static bool ui_opt_cb_scrollspd(void)
 {
     ui_sm_scroll_speed = 3;
@@ -46,8 +34,6 @@ static bool ui_opt_cb_scrollspd(void)
 }
 
 static const struct uiopt_s ui_uiopts[] = {
-    UIOPT_ITEM_BOOL("Invert wheel slider", ui_mwi_slider, ui_opt_toggle_mwi_slider),
-    UIOPT_ITEM_BOOL("Invert wheel counter", ui_mwi_counter, ui_opt_toggle_mwi_counter),
     UIOPT_ITEM_FUNC("Scroll spd", ui_opt_cb_scrollspd),
     UIOPT_ITEM_SLIDER_INT(ui_sm_scroll_speed, 0, UI_SCROLL_SPEED_MAX),
     UIOPT_ITEM_END
