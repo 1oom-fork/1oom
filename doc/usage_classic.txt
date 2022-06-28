@@ -20,7 +20,8 @@ more of the galaxy to be viewed without scrolling. Mouse wheel can be used
 to adjust the scaling of the galaxy movement screen map.
 
 The config file item "ui.modern_starmap_controls" (set via
-the -modernstarmapcontrols command-line option) enables the following features:
+the -modernstarmapcontrols command-line option or uiextra options menu)
+enables the following features:
 - Hovering over a star selects the star as the target if possible
 - Clicking on the target star works as Accept button
 

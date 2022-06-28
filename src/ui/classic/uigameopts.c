@@ -33,9 +33,16 @@ static bool ui_opt_cb_scrollspd(void)
     return true;
 }
 
+static bool ui_opt_toggle_modern_controls(void)
+{
+    ui_modern_starmap_controls = !ui_modern_starmap_controls;
+    return true;
+}
+
 static const struct uiopt_s ui_uiopts[] = {
     UIOPT_ITEM_FUNC("Scroll spd", ui_opt_cb_scrollspd),
     UIOPT_ITEM_SLIDER_INT(ui_sm_scroll_speed, 0, UI_SCROLL_SPEED_MAX),
+    UIOPT_ITEM_BOOL("Modern controls", ui_modern_starmap_controls, ui_opt_toggle_modern_controls),
     UIOPT_ITEM_END
 };
 
