@@ -213,17 +213,13 @@ static void ui_starmap_draw_sliders_and_prod(struct starmap_data_s *d)
     lbxfont_print_str_right(x, 105, buf, UI_SCREEN_W, ui_scale);
     {
         int v;
-        v = game_planet_get_slider_text_eco(g, p, d->api, ui_extra_enabled, buf, sizeof(buf));
+        v = game_planet_get_slider_text_eco(g, p, d->api, true, buf, sizeof(buf));
         lbxfont_print_str_right(x, 116, buf, UI_SCREEN_W, ui_scale);
         if (v >= 0) {
-            if (ui_extra_enabled) {
-                if (v < 100) {
-                    lib_sprintf(buf, sizeof(buf), "%i.%i", v / 10, v % 10); /* "+0.X" does not fit the box */
-                } else {
-                    lib_sprintf(buf, sizeof(buf), "+%i", v / 10);
-                }
+            if (v < 100) {
+                lib_sprintf(buf, sizeof(buf), "%i.%i", v / 10, v % 10); /* "+0.X" does not fit the box */
             } else {
-                lib_sprintf(buf, sizeof(buf), "+%i", v);
+                lib_sprintf(buf, sizeof(buf), "+%i", v / 10);
             }
             lbxfont_print_str_right(297, 116, buf, UI_SCREEN_W, ui_scale);
         }

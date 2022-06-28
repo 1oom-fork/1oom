@@ -78,6 +78,7 @@ The following new UI features are always enabled/available:
 - The = key can be substitued by the # key (useful for some non-US keyboards)
 - Pressing = or # on the Tech screen adjusts only the unlocked sliders
 - The ship production selection can be set everywhere by pressing Ctrl + S.
+- Eco slider shows fractional population growth if growth is less than 10
 4) Misc
 - Middle click or Ctrl-F10 to grab/ungrab input
 - Ctrl-Esc to quit (without saving)
@@ -113,7 +114,6 @@ or pressing Alt-X in the main menu enables the following extra UI features:
   or Artifacts planets).
 - When a planet is governed, clicking on or mouse wheeling over the bases field
   allow to increase or adjust the target bases amount.
-- Eco slider shows fractional population growth if growth is less than 10
 - The plantary production field indicates whether the planet currently receives
   reserve spending (yellow = none, red = partial, while = full). The same
   colors are also used in the Planets screen.
