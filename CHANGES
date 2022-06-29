@@ -1,8 +1,32 @@
 1oom-fork
 =========
 
-Version 1.1
------------
+Version 1.2.0
+-------------
+
+The following bugs fixed:
+- SDL2: keypress event causes freeze and buffer overflow
+
+Added new features:
+- Holding Ctrl in Design screen changes weapon amount by 10 instead of 1
+
+Added features from extra UI:
+- Eco slider shows fractional population growth if less than 10
+- Clicking on the production field in the Planets screen resets
+  the allocated reserve to zero or (when it is already zero) directly 
+  opens the reserve transfer dialog.
+- Clicking on a ship design name in the Planets screen changes
+  the current ship design for the clicked planet.
+- ui.space_combat_autoresolve or -spacecombatautoresolve feature:
+	- Summary of forces shown before ship combat
+	- New Auto and Retreat buttons for space combat autoresolve
+	
+Added new options to extra UI options screen:
+- Modern controls (ui.modern_starmap_controls)
+- Combat autoresolve (ui.space_combat_autoresolve)
+
+Version 1.1.0
+-------------
 
 Added features from extra UI:
 -Press Ctrl+R to set/unset reloc points for all planets
