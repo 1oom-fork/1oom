@@ -1164,16 +1164,20 @@ bool ui_design(struct game_s *g, struct game_design_s *gd, player_id_t active_pl
               && ((oi == u.oi_tbl_weap_up[i]) || ((oi == u.oi_tbl_weap_n_scroll[i]) && ((u.scroll > 0) != ui_mwi_counter)))
             ) {
                 int space;
+                int diff = kbd_is_modifier(MOO_MOD_CTRL) ? 10 : 1;
                 ui_sound_play_sfx_24();
-                ++sd->wpnn[i];
-                game_design_update_engines(sd);
-                space = game_design_calc_space(gd);
-                if (space >= 0) {
-                    sd->space = space;
-                    game_design_update_haveflags(&d);
-                } else {
-                    --sd->wpnn[i];
+                for (int iter = 0; iter < diff; ++iter) {
+                    ++sd->wpnn[i];
                     game_design_update_engines(sd);
+                    space = game_design_calc_space(gd);
+                    if (space >= 0 && sd->wpnn[i] < 100) {
+                        sd->space = space;
+                        game_design_update_haveflags(&d);
+                    } else {
+                        --sd->wpnn[i];
+                        game_design_update_engines(sd);
+                        break;
+                    }
                 }
                 break;
             } else if (1
@@ -1181,7 +1185,15 @@ bool ui_design(struct game_s *g, struct game_design_s *gd, player_id_t active_pl
               && ((oi == u.oi_tbl_weap_dn[i]) || ((oi == u.oi_tbl_weap_n_scroll[i]) && ((u.scroll < 0) != ui_mwi_counter)))
             ) {
                 ui_sound_play_sfx_24();
-                --sd->wpnn[i];
+                if (kbd_is_modifier(MOO_MOD_CTRL)) {
+                    if (sd->wpnn[i] < 10) {
+                        sd->wpnn[i] = 0;
+                    } else {
+                        sd->wpnn[i] -= 10;
+                    }
+                } else {
+                    --sd->wpnn[i];
+                }
                 game_design_update_haveflags(&d);
                 d.flag_tbl_weap_dn[i] = (sd->wpnn[i] == 0);
                 break;

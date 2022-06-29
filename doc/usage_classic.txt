@@ -84,6 +84,8 @@ The following new UI features are always enabled/available:
   transfer dialog.
 - Clicking on a ship design name in the Planets screen changes the current
   ship design for the clicked planet.
+- Changing the number of weapons in the Design screen while holding down
+  the Ctrl key takes effect up to 10 times.
 4) Misc
 - Middle click or Ctrl-F10 to grab/ungrab input
 - Ctrl-Esc to quit (without saving)
