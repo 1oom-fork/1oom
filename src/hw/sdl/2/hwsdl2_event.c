@@ -103,6 +103,9 @@ int hw_event_handle(void)
         switch (e.type) {
             uint32_t mod;
             case SDL_KEYDOWN:
+                if (e.key.repeat) {
+                    break;
+                }
                 {
                     SDL_Keycode sym;
                     SDL_Keymod smod;
