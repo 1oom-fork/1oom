@@ -165,7 +165,9 @@ static void planets_draw_cb(void *vptr)
                 }
             }
             lbxfont_select(2, 6, 0, 0);
-            lbxfont_print_num_right(111, y0, p->pop, UI_SCREEN_W, ui_scale);
+            lbxfont_print_num_right(99, y0, p->pop, UI_SCREEN_W, ui_scale);
+            lbxfont_select(2, 1, 0, 0);
+            lbxfont_print_num_normal(102, y0, p->max_pop3, UI_SCREEN_W, ui_scale);
             if (p->pop != p->pop_prev) {
                 int v;
                 char c;
@@ -174,14 +176,11 @@ static void planets_draw_cb(void *vptr)
                     lbxfont_select(2, 0xe, 0, 0);
                     v = p->pop - p->pop_prev;
                     c = '+';
-                    gfx = ui_data.gfx.starmap.gr_arrow_u;
                 } else {
                     lbxfont_select(2, 0xb, 0, 0);
                     v = p->pop_prev - p->pop;
                     c = '-';
-                    gfx = ui_data.gfx.starmap.gr_arrow_d;
                 }
-                lbxgfx_draw_frame(92, y0 - 1, gfx, UI_SCREEN_W, ui_scale);
                 lib_sprintf(buf, sizeof(buf), "%c%i", c, v);
                 lbxfont_print_str_right(83, y0, buf, UI_SCREEN_W, ui_scale);
             }
