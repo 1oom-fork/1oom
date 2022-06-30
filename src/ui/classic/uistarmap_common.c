@@ -363,7 +363,7 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
     STARMAP_LIM_INIT();
     {
         int v, step;
-        step = STARMAP_SCROLLSTEP;
+        step = ui_sm_scroll_speed;
         v = ui_data.starmap.x2;
         x = ui_data.starmap.x;
         if (v != x) {
@@ -371,10 +371,10 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
                 x = v;
             } else {
                 if (v < x) {
-                    x -= STARMAP_SCROLLSTEP;
+                    x -= ui_sm_scroll_speed;
                     SETMAX(x, v);
                 } else {
-                    x += STARMAP_SCROLLSTEP;
+                    x += ui_sm_scroll_speed;
                     SETMIN(x, v);
                 }
             }
@@ -387,10 +387,10 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
                 y = v;
             } else {
                 if (v < y) {
-                    y -= STARMAP_SCROLLSTEP;
+                    y -= ui_sm_scroll_speed;
                     SETMAX(y, v);
                 } else {
-                    y += STARMAP_SCROLLSTEP;
+                    y += ui_sm_scroll_speed;
                     SETMIN(y, v);
                 }
             }
