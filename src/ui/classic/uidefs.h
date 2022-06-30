@@ -233,8 +233,6 @@ struct ui_data_s {
         int y;
         int x2;
         int y2;
-        int xhold;
-        int yhold;
         bool flag_show_grid;
         int line_anim_phase;
         struct gfx_aux_s star_aux;
