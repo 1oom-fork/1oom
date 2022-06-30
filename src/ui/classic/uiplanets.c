@@ -171,10 +171,12 @@ static void planets_draw_cb(void *vptr)
                 char c;
                 uint8_t *gfx;
                 if (p->pop > p->pop_prev) {
+                    lbxfont_select(2, 0xe, 0, 0);
                     v = p->pop - p->pop_prev;
                     c = '+';
                     gfx = ui_data.gfx.starmap.gr_arrow_u;
                 } else {
+                    lbxfont_select(2, 0xb, 0, 0);
                     v = p->pop_prev - p->pop;
                     c = '-';
                     gfx = ui_data.gfx.starmap.gr_arrow_d;
@@ -183,6 +185,7 @@ static void planets_draw_cb(void *vptr)
                 lib_sprintf(buf, sizeof(buf), "%c%i", c, v);
                 lbxfont_print_str_right(111, y0, buf, UI_SCREEN_W, ui_scale);
             }
+            lbxfont_select(2, 6, 0, 0);
             if (ui_extra_enabled && p->battlebg == 0)
                 lbxfont_print_str_right(149, y0, "\x2neb\x1", UI_SCREEN_W, ui_scale);
             else
