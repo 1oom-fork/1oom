@@ -219,6 +219,7 @@ static void planets_draw_cb(void *vptr)
                 } else {
                     str = g->srd[d->api].design[p->buildship].name;
                 }
+                lbxfont_select(2, 6, 0, 0);
                 lbxfont_print_str_normal(221, y0, str, UI_SCREEN_W, ui_scale);
             }
         }
