@@ -368,6 +368,7 @@ enum {
     UI_SORT_GOVERN,
     UI_SORT_GROWTH,
     UI_SORT_POP,
+    UI_SORT_MAXPOP,
     UI_SORT_FACT,
     UI_SORT_SHIELD,
     UI_SORT_BASE,
@@ -435,6 +436,17 @@ static int planets_sort_inc_pop(const void *ptr0, const void *ptr1)
 static int planets_sort_dec_pop(const void *ptr0, const void *ptr1)
 {
     return planets_sort_inc_pop(ptr1, ptr0);
+}
+
+static int planets_sort_inc_max_pop(const void *ptr0, const void *ptr1)
+{
+    UI_SORT_SETUP();
+    return UI_SORT_CMP_VARIABLE(max_pop3);
+}
+
+static int planets_sort_dec_max_pop(const void *ptr0, const void *ptr1)
+{
+    return planets_sort_inc_max_pop(ptr1, ptr0);
 }
 
 static int planets_sort_inc_growth(const void *ptr0, const void *ptr1)
@@ -576,6 +588,8 @@ static sort_cb_t * const sort_cb_tbl[UI_SORT_NUM * 2] = {
     planets_sort_inc_growth,
     planets_sort_dec_pop,
     planets_sort_inc_pop,
+    planets_sort_dec_max_pop,
+    planets_sort_inc_max_pop,
     planets_sort_dec_fact,
     planets_sort_inc_fact,
     planets_sort_dec_shield,
@@ -759,8 +773,8 @@ again:
                 }
             }
             if (ui_extra_enabled) {
-                const int x0[UI_SORT_NUM] = {  8, 23, 61, 71,  87, 117, 138, 155, 176, 194, 220, 267 };
-                const int x1[UI_SORT_NUM] = { 20, 60, 67, 86, 113, 134, 151, 172, 192, 216, 262, 310 };
+                const int x0[UI_SORT_NUM] = {  8, 23, 61, 71,  87, 101, 117, 138, 155, 176, 194, 220, 267 };
+                const int x1[UI_SORT_NUM] = { 20, 60, 67, 86,  99, 113, 134, 151, 172, 192, 216, 262, 310 };
                 const int y0 = 8, y1 = 16;
                 for (int i = 0; i < UI_SORT_NUM; ++i) {
                     oi_sort[i] = uiobj_add_mousearea(x0[i], y0, x1[i], y1, MOO_KEY_UNKNOWN);
