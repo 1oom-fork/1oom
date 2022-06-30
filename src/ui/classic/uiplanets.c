@@ -165,7 +165,7 @@ static void planets_draw_cb(void *vptr)
                 }
             }
             lbxfont_select(2, 6, 0, 0);
-            lbxfont_print_num_right(83, y0, p->pop, UI_SCREEN_W, ui_scale);
+            lbxfont_print_num_right(111, y0, p->pop, UI_SCREEN_W, ui_scale);
             if (p->pop != p->pop_prev) {
                 int v;
                 char c;
@@ -183,7 +183,7 @@ static void planets_draw_cb(void *vptr)
                 }
                 lbxgfx_draw_frame(92, y0 - 1, gfx, UI_SCREEN_W, ui_scale);
                 lib_sprintf(buf, sizeof(buf), "%c%i", c, v);
-                lbxfont_print_str_right(111, y0, buf, UI_SCREEN_W, ui_scale);
+                lbxfont_print_str_right(83, y0, buf, UI_SCREEN_W, ui_scale);
             }
             lbxfont_select(2, 6, 0, 0);
             if (ui_extra_enabled && p->battlebg == 0)
@@ -367,8 +367,8 @@ enum {
     UI_SORT_INDEX = 0,
     UI_SORT_NAME,
     UI_SORT_GOVERN,
-    UI_SORT_POP,
     UI_SORT_GROWTH,
+    UI_SORT_POP,
     UI_SORT_FACT,
     UI_SORT_SHIELD,
     UI_SORT_BASE,
@@ -562,10 +562,10 @@ static sort_cb_t * const sort_cb_tbl[UI_SORT_NUM * 2] = {
     planets_sort_dec_name,
     planets_sort_inc_govern,
     planets_sort_dec_govern,
-    planets_sort_dec_pop,
-    planets_sort_inc_pop,
     planets_sort_dec_growth,
     planets_sort_inc_growth,
+    planets_sort_dec_pop,
+    planets_sort_inc_pop,
     planets_sort_dec_fact,
     planets_sort_inc_fact,
     planets_sort_dec_shield,
