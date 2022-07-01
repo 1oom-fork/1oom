@@ -212,7 +212,6 @@ int hw_init(void)
     if (hw_audio_init()) {
         return 12;
     }
-    SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
     SDL_EnableUNICODE(1);
     build_key_xlat();
     return 0;
