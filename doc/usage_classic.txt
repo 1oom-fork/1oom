@@ -49,6 +49,7 @@ The following new UI features are always enabled/available:
 - F2-F9 no longer do weird things if it can't find the next object
 - Alt+F shows/hides all friendly route indicators for the target planet
 3) Keyboard and Mouse
+- Keypress event repeating is disabled in SDL1 and SDL2 to avoid freezes
 - Mouse click works for the first clicked object if the mouse moved 
   to another object before the button was released
 - Hotkey press does not change mouse position

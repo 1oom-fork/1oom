@@ -1,6 +1,24 @@
 1oom-fork
 =========
 
+Version 1.2.1
+
+The following bugs fixed:
+- SDL1: keypress event causes freezes
+	- SDL1/SDL2 keypress event repeating is now disabled
+
+The following new features have been improved:
+- UHJK and Mouse scroll now respect scroll speed value
+	- Scrolling this way is now linear
+	
+Added features from extra UI:
+- Planets screen sorting
+	- Improved sort order
+	
+Added new features:
+- Planets screen now contain max population values
+- Tweaked some colors on the Planets screen
+
 Version 1.2.0
 -------------
 
