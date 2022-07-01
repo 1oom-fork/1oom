@@ -103,6 +103,17 @@ static const char *planets_get_notes_str(const struct game_s *g, uint8_t pli, bo
     return str;
 }
 
+static const char *planets_get_dock_str(const struct game_s *g, const struct planet_s *p)
+{
+    const char *str;
+    if (p->buildship == BUILDSHIP_STARGATE) {
+        str = game_str_sm_stargate;
+    } else {
+        str = g->srd[p->owner].design[p->buildship].name;
+    }
+    return str;
+}
+
 static void planets_draw_cb(void *vptr)
 {
     struct planets_data_s *d = vptr;
@@ -216,11 +227,7 @@ static void planets_draw_cb(void *vptr)
                 }
             }
             if (p->slider[PLANET_SLIDER_SHIP] > 0) {
-                if (p->buildship == BUILDSHIP_STARGATE) {
-                    str = game_str_sm_stargate;
-                } else {
-                    str = g->srd[d->api].design[p->buildship].name;
-                }
+                str = planets_get_dock_str(g, p);
                 lbxfont_select(2, 6, 0, 0);
                 lbxfont_print_str_normal(221, y0, str, UI_SCREEN_W, ui_scale);
             }
