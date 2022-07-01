@@ -788,7 +788,7 @@ again:
                     oi_tbl_planets[i] = uiobj_add_mousearea(7, y0, 312, y1, MOO_KEY_UNKNOWN);
                 }
             }
-            if (ui_extra_enabled) {
+            {
                 const int x0[UI_SORT_NUM] = {  8, 23, 61, 71,  87, 101, 117, 138, 155, 176, 194, 220, 267 };
                 const int x1[UI_SORT_NUM] = { 20, 60, 67, 86,  99, 113, 134, 151, 172, 192, 216, 262, 310 };
                 const int y0 = 8, y1 = 16;
