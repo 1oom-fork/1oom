@@ -39,54 +39,57 @@ The following new UI features are always enabled/available:
 - Random race / banner
 - New difficulty level - "Hopeless"
 2) Camera
-- Smoother galaxy movement screen scrolling
 - Galaxy movement screen scrolling speed is adjustable (-uismscroll)
 - The keys UHJK scroll the galaxy movement screen map
 - Mouse cursor scroll the map when it touches the edge of the screen
 - Planets can be tagged with Ctrl-1-9 and recalled with 1-9
 - Planets can be searched for by pressing the / key
-- F2-F9, 1-9, Alt+c, Alt+m and planet search (/) works regardless of
+- F2-F9, 1-9, Alt+c, Alt+m, C and planet search (/) works regardless of
   selection type and keeps current action if possible
 - F2-F9 no longer do weird things if it can't find the next object
 - Alt+F shows/hides all friendly route indicators for the target planet
-3) Gameplay
+3) Keyboard and Mouse
 - Mouse click works for the first clicked object if the mouse moved 
   to another object before the button was released
 - Hotkey press does not change mouse position
 - Objects with hotkeys can be navigated to using cursor keys
 - Mouse wheel can be used to scroll lists and adjust many things
-- Mouse wheel on planet name in the galaxy movement screen changes planet
 - Space bar works as a generic dismiss message key (Continue, ...)
-- In Tech screen Tab runs through tech fields, A-F/1-6 are for field slider +/-
-- When sending a fleet Tab cycles ships and <> adjusts selected ship
-- Clicking the portraits in Races screen brings Report page
-- In Races screen the keys 1-5 correspond to clicking the portraits
+- The = key can be substitued by the # key (useful for some non-US keyboards)
+4) Planetary controls
+- Mouse wheel on planet name changes planet
 - Right-clicking on the ship image or Ships button cycles the other way
 - Ind slider no longer shows 0.N/y when at max factories
 - Eco slider shows Clean/+N Pop past T-Form on a full planet
-- Clicking cycles selection of overlapping fleets
-- Pressing = or # in the galaxy movement screen transfers reserve for
-  one round of production or cancels the transfer
-- Reserve can also be transfered by clicking on the Production text
+- Pressing = or # or clicking on the 'Production' text transfers reserve
+  for one round of production or cancels the transfer
 - Pressing +/-/= in send transport screen adjusts slider by 10% of max amount
 - Pressing A in send transport screen sets slider to maximum
+- Bases can be scrapped by clicking on the Bases text
+- The ship production selection can be set everywhere by pressing Ctrl + S
+- Eco slider shows fractional population growth if growth is less than 10
+5) Fleet controls
+- Clicking cycles selection of overlapping fleets
+- When sending a fleet Tab cycles ships and <> adjusts selected ship
 - Fleet relocation point is allowed for any star within normal fuel range
 - Pressing Ctrl+R sets/unsets the relocation point for all stars.
-- Alt+R, Ctrl+R and C works regardless of selection type if possible
+- Alt+R, Ctrl+R works regardless of selection type if possible
 - Hotkeys changed: Races screen (r -> e), Reloc button (l -> r)
-- Bases can be scrapped by clicking on the Bases text
-- The = key can be substitued by the # key (useful for some non-US keyboards)
+6) Planets screen
+- Clicking on the production field resets the allocated reserve to zero
+  or (when it is already zero) directly opens the reserve transfer dialog
+- Clicking on a ship design name cycles through the current ship design
+- Clicking on #, Name, etc sorts the list
+- Clicking on the name of the planet does not close the screen
+- Added max population values and tuned some colors
+7) Other gameplay
+- Clicking the portraits in Races screen brings Report page
+- In Races screen the keys 1-5 correspond to clicking the portraits
+- In Tech screen Tab runs through tech fields, A-F/1-6 are for field slider +/-
 - Pressing = or # on the Tech screen adjusts only the unlocked sliders
-- The ship production selection can be set everywhere by pressing Ctrl + S.
-- Eco slider shows fractional population growth if growth is less than 10
-- Clicking on the production field in the Planets screen resets the allocated
-  reserve to zero or (when it is already zero) directly opens the reserve
-  transfer dialog.
-- Clicking on a ship design name in the Planets screen changes the current
-  ship design for the clicked planet.
 - Changing the number of weapons in the Design screen while holding down
   the Ctrl key takes effect up to 10 times.
-4) Misc
+8) Misc
 - Middle click or Ctrl-F10 to grab/ungrab input
 - Ctrl-Esc to quit (without saving)
 - Ctrl-Plus/Minus to adjust sfx volume
@@ -107,7 +110,7 @@ or pressing Alt-X in the main menu enables the following extra UI features:
 - Hovering over a planet draws a ruler with the distance in parsec from the
   currently selected planet if is in the screen.
 - Fleet deployment shows the amount of available ships
-2) Planetary controls
+2) Governor
 - Governor screen can be opened by clicking on the Pop text or pressing V key.
   The screen include Eco mode, buildup mode and whether to build stargates.
   All local settings are also reachable directly over the planet interface.
@@ -124,9 +127,9 @@ or pressing Alt-X in the main menu enables the following extra UI features:
 - The plantary production field indicates whether the planet currently receives
   reserve spending (yellow = none, red = partial, while = full). The same
   colors are also used in the Planets screen.
+3) Gameplay
 - The ship production selection can be set everywhere by pressing Ctrl +
   clicking on the ship picture.
-3) Gameplay
 - When espionage was successful, clicking on the race icon opens the spy report
 - Nebula planets show "NEB" in their shields field and have a purple instead
   of a red frame around their picture
@@ -139,7 +142,6 @@ or pressing Alt-X in the main menu enables the following extra UI features:
 - Completing terraforming generates a message (which is filtered by default)
 - After running through the Next turn phase and messages the game recenters on
   your last planet of choice
-- Clicking on #, Name, etc on Planets screen sorts the list
 - Clicking on Station or ship names on Fleet screen sorts the list
 - I to show message filter options
 - Report screen shows name of AI leaders, Map screen shows current year
