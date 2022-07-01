@@ -529,9 +529,16 @@ static int planets_sort_dec_prod(const void *ptr0, const void *ptr1)
 static int planets_sort_inc_dock(const void *ptr0, const void *ptr1)
 {
     UI_SORT_SETUP();
-    int v0 = (p0->slider[PLANET_SLIDER_SHIP] > 0) ? p0->buildship : -1;
-    int v1 = (p1->slider[PLANET_SLIDER_SHIP] > 0) ? p1->buildship : -1;
-    return UI_SORT_CMP_VALUE(v0, v1);
+    bool active0 = p0->slider[PLANET_SLIDER_SHIP] > 0;
+    bool active1 = p1->slider[PLANET_SLIDER_SHIP] > 0;
+    if (active0 && !active1) {
+        return 1;
+    } else if (active1 && !active0) {
+        return -1;
+    }
+    const char *s0 = active0 ? planets_get_dock_str(g, p0) : "";
+    const char *s1 = active1 ? planets_get_dock_str(g, p1) : "";
+    return UI_SORT_CMP_VALUE(strcmp(s1, s0), 0);
 }
 
 static int planets_sort_dec_dock(const void *ptr0, const void *ptr1)
