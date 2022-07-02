@@ -1248,6 +1248,7 @@ static void ui_starmap_focus_planet(struct game_s *g, struct starmap_data_s *d, 
     if (i == PLANET_NONE) {
         return;
     }
+    d->lock_mouse_focus = true;
     g->planet_focus_i[d->api] = i;
     ui_starmap_set_pos_focus(g, d->api);
     ui_sound_play_sfx_24();
@@ -1262,6 +1263,7 @@ static void ui_starmap_focus_own_fleet(struct game_s *g, struct starmap_data_s *
     if (i == PLANET_NONE) {
         return;
     }
+    d->lock_mouse_focus = true;
     g->planet_focus_i[d->api] = i;
     ui_starmap_set_pos_focus(g, d->api);
     ui_sound_play_sfx_24();
@@ -1277,12 +1279,14 @@ static void ui_starmap_focus_own_fleet(struct game_s *g, struct starmap_data_s *
 }
 
 void ui_starmap_init_common_data(struct game_s *g, struct starmap_data_s *d, player_id_t active_player) {
+    d->lock_mouse_focus = false;
     d->flag_done = false;
     d->scrollx = 0;
     d->scrolly = 0;
     d->scrollz = starmap_scale;
     d->g = g;
     d->api = active_player;
+    d->focus_lock_planet_i = PLANET_NONE;
     d->anim_delay = 0;
     d->bottom_highlight = -1;
     d->gov_highlight = 0;
@@ -1509,7 +1513,11 @@ bool ui_starmap_handle_common(struct game_s *g, struct starmap_data_s *d) {
     if (ui_modern_starmap_controls && d->controllable) {
         int i;
         i = ui_starmap_cursor_on_star(g, d, d->oi2, d->api);
-        if (i >= 0) {
+        if (i < 0) {
+            d->focus_lock_planet_i = PLANET_NONE;
+        }
+        if (i >= 0 && d->focus_lock_planet_i != i) {
+            d->focus_lock_planet_i = PLANET_NONE;
             g->planet_focus_i[d->api] = i;
         }
     }
@@ -1527,4 +1535,8 @@ void ui_starmap_fill_oi_common(struct starmap_data_s *d) {
     d->oi_scroll = uiobj_add_tb(6, 6, 2, 2, 108, 86, &d->scrollx, &d->scrolly, &d->scrollz, ui_scale);
     ui_starmap_fill_oi_ctrl(d);
     ui_starmap_add_oi_bottom_buttons(d);
+    if (d->lock_mouse_focus) {
+        d->focus_lock_planet_i = ui_starmap_cursor_on_star(d->g, d, uiobj_at_cursor(), d->api);
+        d->lock_mouse_focus = false;
+    }
 }
