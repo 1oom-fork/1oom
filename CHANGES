@@ -1,7 +1,21 @@
 1oom-fork
 =========
 
+Version 1.2.2
+-------------
+
+Added new features:
+-Press Alt+O to show the population of friendly planets
+
+The following features have been improved:
+-Improved F2-F9 behavior
+	-Better interaction in Modern Controls mode
+	-Fixed F4-F7 rules to match MOO v1.3
+
+Minor bug fixes
+
 Version 1.2.1
+-------------
 
 The following bugs fixed:
 - SDL1: keypress event causes freezes
