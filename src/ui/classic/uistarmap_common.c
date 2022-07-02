@@ -645,7 +645,7 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
         int ruler_from_i, ruler_to_i;
         ruler_from_i = g->planet_focus_i[d->api];
         ruler_to_i = ui_starmap_cursor_on_star(g, d, d->oi2, d->api);
-        if (ruler_to_i >= 0 && ruler_from_i != ruler_to_i) {
+        if (ruler_to_i != PLANET_NONE && ruler_from_i != ruler_to_i) {
             const planet_t *p = &g->planet[ruler_to_i], *q = &g->planet[ruler_from_i];
             int from_x, from_y, to_x, to_y;
             from_x = 2 * (q->x - x) + 14;
@@ -1076,14 +1076,14 @@ void ui_starmap_compute_scale(const struct game_s *g)
 int ui_starmap_cursor_on_star(const struct game_s *g, const struct starmap_data_s *d, int16_t oi2, player_id_t active_player)
 {
     if (oi2 == 0) {
-        return -1;
+        return PLANET_NONE;
     }
     for (int i = 0; i < g->galaxy_stars; ++i) {
         if (oi2 == d->oi_tbl_stars[i]) {
             return i;
         }
     }
-    return -1;
+    return PLANET_NONE;
 }
 
 int ui_starmap_cursor_on_enroute(const struct game_s *g, const struct starmap_data_s *d, int16_t oi2) {
@@ -1478,7 +1478,7 @@ bool ui_starmap_handle_common(struct game_s *g, struct starmap_data_s *d) {
     if (d->controllable) {
         int i;
         i = ui_starmap_cursor_on_star(g, d, d->oi1, d->api);
-        if (ui_modern_starmap_controls && i >= 0) {
+        if (ui_modern_starmap_controls && i != PLANET_NONE) {
             if (d->is_valid_destination(g, d, i)) {
                 g->planet_focus_i[d->api] = i;
                 d->flag_done = true;
@@ -1486,7 +1486,7 @@ bool ui_starmap_handle_common(struct game_s *g, struct starmap_data_s *d) {
             }
             ui_sound_play_sfx_24();
             return true;
-        } else if (i >= 0) {
+        } else if (i != PLANET_NONE) {
             ui_sound_play_sfx_24();
             g->planet_focus_i[d->api] = i;
             return true;
@@ -1499,7 +1499,7 @@ bool ui_starmap_handle_common(struct game_s *g, struct starmap_data_s *d) {
         }
         int i;
         i = ui_starmap_cursor_on_star(g, d, d->oi1, d->api);
-        if (i >= 0 && !g->evn.build_finished_num[d->api]) {
+        if (i != PLANET_NONE && !g->evn.build_finished_num[d->api]) {
             g->planet_focus_i[d->api] = i;
             ui_sound_play_sfx_24();
             d->from = i;
@@ -1513,12 +1513,11 @@ bool ui_starmap_handle_common(struct game_s *g, struct starmap_data_s *d) {
     if (ui_modern_starmap_controls && d->controllable) {
         int i;
         i = ui_starmap_cursor_on_star(g, d, d->oi2, d->api);
-        if (i < 0) {
+        if (i != d->focus_lock_planet_i) {
             d->focus_lock_planet_i = PLANET_NONE;
-        }
-        if (i >= 0 && d->focus_lock_planet_i != i) {
-            d->focus_lock_planet_i = PLANET_NONE;
-            g->planet_focus_i[d->api] = i;
+            if (i != PLANET_NONE) {
+                g->planet_focus_i[d->api] = i;
+            }
         }
     }
     return false;
