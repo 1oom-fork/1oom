@@ -1259,6 +1259,15 @@ static void ui_starmap_focus_planet(struct game_s *g, struct starmap_data_s *d, 
     }
 }
 
+static int ui_starmap_f4_f7_helper(struct starmap_data_s *d) {
+    if (ui_data.ui_main_loop_action != UI_MAIN_LOOP_TRANS
+      &&ui_data.ui_main_loop_action != UI_MAIN_LOOP_RELOC) {
+        return d->from;
+    } else {
+        return d->g->planet_focus_i[d->api];
+    }
+}
+
 static void ui_starmap_focus_own_fleet(struct game_s *g, struct starmap_data_s *d, int i) {
     if (i == PLANET_NONE) {
         return;
@@ -1398,22 +1407,22 @@ bool ui_starmap_handle_common(struct game_s *g, struct starmap_data_s *d) {
         return true;
     }
     if (d->oi1 == d->oi_f4) {
-        int i = ui_starmap_previous_fleet_i(g, d->api, g->planet_focus_i[d->api]);
+        int i = ui_starmap_previous_fleet_i(g, d->api, ui_starmap_f4_f7_helper(d));
         ui_starmap_focus_own_fleet(g, d, i);
         return true;
     }
     if (d->oi1 == d->oi_f5) {
-        int i = ui_starmap_next_fleet_i(g, d->api, g->planet_focus_i[d->api]);
+        int i = ui_starmap_next_fleet_i(g, d->api, ui_starmap_f4_f7_helper(d));
         ui_starmap_focus_own_fleet(g, d, i);
         return true;
     }
     if (d->oi1 == d->oi_f6) {
-        int i = ui_starmap_newship_next(g, d->api, g->planet_focus_i[d->api]);
+        int i = ui_starmap_newship_next(g, d->api, ui_starmap_f4_f7_helper(d));
         ui_starmap_focus_own_fleet(g, d, i);
         return true;
     }
     if (d->oi1 == d->oi_f7) {
-        int i = ui_starmap_newship_prev(g, d->api, g->planet_focus_i[d->api]);
+        int i = ui_starmap_newship_prev(g, d->api, ui_starmap_f4_f7_helper(d));
         ui_starmap_focus_own_fleet(g, d, i);
         return true;
     }
