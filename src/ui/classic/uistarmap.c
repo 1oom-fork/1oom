@@ -515,20 +515,14 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
     int16_t oi_finished, oi_alt_galaxy, oi_alt_p, oi_alt_events
             ;
     int16_t scrollmisc = 0;
+
     struct starmap_data_s d;
-    d.flag_done = false;
+    ui_starmap_init_common_data(g, &d, active_player);
+
     struct starmap_planet_data_s planet_d;
     struct starmap_governor_data_s gov_d;
     d.sm.planet_data = &planet_d;
     d.sm.gov_data = &gov_d;
-
-    d.scrollx = 0;
-    d.scrolly = 0;
-    d.scrollz = starmap_scale;
-    d.g = g;
-    d.api = active_player;
-    d.anim_delay = 0;
-    d.gov_highlight = 0;
 
     d.controllable = false;
     d.is_valid_destination = NULL;

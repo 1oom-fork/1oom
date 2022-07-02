@@ -156,16 +156,9 @@ static void ui_starmap_enroute_do_accept(struct game_s *g, struct starmap_data_s
 void ui_starmap_enroute(struct game_s *g, player_id_t active_player)
 {
     struct starmap_data_s d;
-    d.flag_done = false;
-    fleet_enroute_t *r;
+    ui_starmap_init_common_data(g, &d, active_player);
 
-    d.scrollx = 0;
-    d.scrolly = 0;
-    d.scrollz = starmap_scale;
-    d.g = g;
-    d.api = active_player;
-    d.anim_delay = 0;
-    d.gov_highlight = 0;
+    fleet_enroute_t *r;
 
     r = &(g->enroute[ui_data.starmap.fleet_selected]);
     d.en.can_move = g->eto[active_player].have_hyperspace_comm ? GOT_HYPERCOMM : NO_MOVE;
@@ -186,7 +179,6 @@ void ui_starmap_enroute(struct game_s *g, player_id_t active_player)
     d.is_valid_destination = ui_starmap_enroute_valid_destination;
     d.do_accept = ui_starmap_enroute_do_accept;
 
-    d.from = g->planet_focus_i[active_player];
     d.en.frame_scanner = 0;
     d.en.scanner_delay = 0;
     d.en.frame_ship = 0;

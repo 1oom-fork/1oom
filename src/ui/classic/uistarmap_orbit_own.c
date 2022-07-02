@@ -176,20 +176,12 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
             oi_tbl_s[NUM_SHIPDESIGNS]
             ;
     int16_t scrollship = 0;
+
     struct starmap_data_s d;
-    d.flag_done = false;
+    ui_starmap_init_common_data(g, &d, active_player);
+
     const fleet_orbit_t *r;
     const shipcount_t *os;
-
-    d.scrollx = 0;
-    d.scrolly = 0;
-    d.scrollz = starmap_scale;
-    d.g = g;
-    d.api = active_player;
-    d.anim_delay = 0;
-
-    d.gov_highlight = 0;
-    d.from = g->planet_focus_i[active_player];
 
     d.controllable = true;
     d.is_valid_destination = ui_starmap_orbit_own_valid_destination;

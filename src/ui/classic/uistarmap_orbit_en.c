@@ -89,19 +89,12 @@ static void ui_starmap_orbit_en_draw_cb(void *vptr)
 void ui_starmap_orbit_en(struct game_s *g, player_id_t active_player)
 {
     struct starmap_data_s d;
-    d.flag_done = false;
+    ui_starmap_init_common_data(g, &d, active_player);
+
     shipcount_t *os;
 
-    d.scrollx = 0;
-    d.scrolly = 0;
-    d.scrollz = starmap_scale;
-    d.g = g;
-    d.api = active_player;
-    d.anim_delay = 0;
-    d.gov_highlight = 0;
     d.oe.frame_scanner = 0;
     d.oe.scanner_delay = 0;
-    d.from = g->planet_focus_i[active_player];
 
     d.controllable = false;
     d.is_valid_destination = NULL;

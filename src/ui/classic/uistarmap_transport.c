@@ -165,20 +165,13 @@ static void ui_starmap_transport_do_accept(struct game_s *g, struct starmap_data
 void ui_starmap_transport(struct game_s *g, player_id_t active_player)
 {
     struct starmap_data_s d;
-    d.flag_done = false;
+    ui_starmap_init_common_data(g, &d, active_player);
+
     transport_t *r = &(g->transport[ui_data.starmap.fleet_selected]);
 
-    d.scrollx = 0;
-    d.scrolly = 0;
-    d.scrollz = starmap_scale;
-    d.g = g;
-    d.api = active_player;
-    d.anim_delay = 0;
-    d.gov_highlight = 0;
     d.ts.frame_ship = 0;
     d.ts.frame_scanner = 0;
     d.ts.scanner_delay = 0;
-    d.from = g->planet_focus_i[active_player];
     g->planet_focus_i[active_player] = r->dest;
     d.ts.ds.xoff1 = 0;
     d.ts.ds.xoff2 = 0;

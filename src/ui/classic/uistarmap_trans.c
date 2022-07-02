@@ -182,21 +182,14 @@ void ui_starmap_trans(struct game_s *g, player_id_t active_player)
     int16_t oi_plus, oi_minus, oi_a
             ;
     struct starmap_data_s d;
-    d.flag_done = false;
+    ui_starmap_init_common_data(g, &d, active_player);
+
     planet_t *p;
     int16_t trans_max;
 
-    d.scrollx = 0;
-    d.scrolly = 0;
-    d.scrollz = starmap_scale;
-    d.g = g;
-    d.api = active_player;
-    d.anim_delay = 0;
-    d.gov_highlight = 0;
     d.tr.blink = false;
     {
         uint8_t pi = g->planet_focus_i[active_player];
-        d.from = pi;
         p = &(g->planet[pi]);
         if (p->trans_num != 0) {
             g->planet_focus_i[active_player] = p->trans_dest;

@@ -83,18 +83,10 @@ static void ui_starmap_reloc_do_accept(struct game_s *g, struct starmap_data_s *
 void ui_starmap_reloc(struct game_s *g, player_id_t active_player)
 {
     struct starmap_data_s d;
-    d.flag_done = false;
+    ui_starmap_init_common_data(g, &d, active_player);
 
-    d.scrollx = 0;
-    d.scrolly = 0;
-    d.scrollz = starmap_scale;
-    d.g = g;
-    d.api = active_player;
-    d.anim_delay = 0;
-    d.gov_highlight = 0;
     {
         uint8_t pi = g->planet_focus_i[active_player];
-        d.from = pi;
         g->planet_focus_i[active_player] = g->planet[pi].reloc;
         if (g->planet[g->planet[pi].reloc].owner != active_player) {
             g->planet_focus_i[active_player] = pi;

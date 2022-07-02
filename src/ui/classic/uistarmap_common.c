@@ -1276,6 +1276,18 @@ static void ui_starmap_focus_own_fleet(struct game_s *g, struct starmap_data_s *
     }
 }
 
+void ui_starmap_init_common_data(struct game_s *g, struct starmap_data_s *d, player_id_t active_player) {
+    d->flag_done = false;
+    d->scrollx = 0;
+    d->scrolly = 0;
+    d->scrollz = starmap_scale;
+    d->g = g;
+    d->api = active_player;
+    d->anim_delay = 0;
+    d->gov_highlight = 0;
+    d->from = g->planet_focus_i[active_player];
+}
+
 bool ui_starmap_handle_common(struct game_s *g, struct starmap_data_s *d) {
     d->oi1 = uiobj_handle_input_cond();
     d->oi2 = uiobj_at_cursor();
