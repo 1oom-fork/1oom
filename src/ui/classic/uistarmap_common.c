@@ -510,7 +510,12 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
                 ty = (p->y - y) * 2 + 22;
                 if (ui_show_populations && p->owner == d->api) {
                     char str[8];
-                    lib_sprintf(str, sizeof(str), "%i/%i", p->pop, p->max_pop3);
+                    int max_pop;
+                    max_pop = p->max_pop3;
+                    if (g->eto[d->api].race != RACE_SILICOID) {
+                        max_pop -= p->waste;
+                    }
+                    lib_sprintf(str, sizeof(str), "%i/%i", p->pop, max_pop);
                     lbxfont_print_str_center_limit(tx, ty, str, STARMAP_TEXT_LIMITS, UI_SCREEN_W, starmap_scale);
                 } else {
                     lbxfont_print_str_center_limit(tx, ty, p->name, STARMAP_TEXT_LIMITS, UI_SCREEN_W, starmap_scale);

@@ -158,6 +158,7 @@ static void planets_draw_cb(void *vptr)
         pi = d->pos + i;
         if (pi < d->num) {
             int y0;
+            int max_pop;
             const planet_t *p;
             const char *str;
             uint8_t pli;
@@ -178,7 +179,11 @@ static void planets_draw_cb(void *vptr)
             lbxfont_select(2, 6, 0, 0);
             lbxfont_print_num_right(99, y0, p->pop, UI_SCREEN_W, ui_scale);
             lbxfont_select(2, 1, 0, 0);
-            lbxfont_print_num_normal(102, y0, p->max_pop3, UI_SCREEN_W, ui_scale);
+            max_pop = p->max_pop3;
+            if (g->eto[d->api].race != RACE_SILICOID) {
+                max_pop -= p->waste;
+            }
+            lbxfont_print_num_normal(102, y0, max_pop, UI_SCREEN_W, ui_scale);
             if (p->pop != p->pop_prev) {
                 int v;
                 char c;
