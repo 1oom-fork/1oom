@@ -509,13 +509,19 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
                 tx = (p->x - x) * 2 + 14;
                 ty = (p->y - y) * 2 + 22;
                 if (ui_show_populations && p->owner == d->api) {
-                    char str[8];
+                    char str[9];
                     int max_pop;
+                    bool plus;
+                    plus = ((p->max_pop2 + g->eto[d->api].have_terraform_n) > p->max_pop3) && (p->max_pop3 < game_num_max_pop);
                     max_pop = p->max_pop3;
                     if (g->eto[d->api].race != RACE_SILICOID) {
                         max_pop -= p->waste;
                     }
-                    lib_sprintf(str, sizeof(str), "%i/%i", p->pop, max_pop);
+                    if (plus) {
+                        lib_sprintf(str, sizeof(str), "%i/%i+", p->pop, max_pop);
+                    } else {
+                        lib_sprintf(str, sizeof(str), "%i/%i", p->pop, max_pop);
+                    }
                     lbxfont_print_str_center_limit(tx, ty, str, STARMAP_TEXT_LIMITS, UI_SCREEN_W, starmap_scale);
                 } else {
                     lbxfont_print_str_center_limit(tx, ty, p->name, STARMAP_TEXT_LIMITS, UI_SCREEN_W, starmap_scale);
