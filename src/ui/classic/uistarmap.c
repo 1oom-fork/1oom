@@ -512,11 +512,11 @@ static void ui_starmap_fill_oi_governor(struct starmap_governor_data_s *gd, int1
 
 void ui_starmap_do(struct game_s *g, player_id_t active_player)
 {
-    bool flag_done = false;
     int16_t oi_finished, oi_alt_galaxy, oi_alt_p, oi_alt_events
             ;
     int16_t scrollmisc = 0;
     struct starmap_data_s d;
+    d.flag_done = false;
     struct starmap_planet_data_s planet_d;
     struct starmap_governor_data_s gov_d;
     d.sm.planet_data = &planet_d;
@@ -577,14 +577,14 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
 
     uiobj_set_callback_and_delay(ui_starmap_draw_cb1, &d, STARMAP_DELAY);
 
-    while (!flag_done) {
+    while (!d.flag_done) {
         planet_t *p;
         p = &g->planet[g->planet_focus_i[active_player]];
         uiobj_set_help_id((p->owner == active_player) ? 0 : 3);
         scrollmisc = 0;
         ui_delay_prepare();
-        if (ui_starmap_handle_common(g, &d, &flag_done)) {
-        } else if (ui_starmap_handle_planet_controls(g, &d, scrollmisc, &flag_done)) {
+        if (ui_starmap_handle_common(g, &d)) {
+        } else if (ui_starmap_handle_planet_controls(g, &d, scrollmisc, &d.flag_done)) {
         } else if ((d.oi1 == oi_finished) || ((d.oi1 == UIOBJI_ESC) && (oi_finished != UIOBJI_INVALID))) {
             if (ui_starmap_remove_build_finished(g, active_player, p)) {
                 if (ui_extra_enabled) {
@@ -593,7 +593,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
                 }
             }
             ui_sound_play_sfx_24();
-            flag_done = true;
+            d.flag_done = true;
             ui_delay_1();
             d.oi1 = 0;
         } else if (d.oi1 == oi_alt_galaxy) {
@@ -607,10 +607,10 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
         } else if (d.oi1 == oi_alt_p) {
             game_cheat_traits(g, active_player);
         } else {
-            ui_starmap_handle_governor(g, &d, scrollmisc, &flag_done);
+            ui_starmap_handle_governor(g, &d, scrollmisc, &d.flag_done);
         }
 
-        if (!flag_done) {
+        if (!d.flag_done) {
             ui_starmap_select_bottom_highlight(g, &d);
             ui_starmap_select_governor_highlight(g, &d);
             ui_starmap_draw_cb1(&d);

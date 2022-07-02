@@ -82,8 +82,8 @@ static void ui_starmap_reloc_do_accept(struct game_s *g, struct starmap_data_s *
 
 void ui_starmap_reloc(struct game_s *g, player_id_t active_player)
 {
-    bool flag_done = false;
     struct starmap_data_s d;
+    d.flag_done = false;
 
     d.scrollx = 0;
     d.scrolly = 0;
@@ -117,10 +117,10 @@ void ui_starmap_reloc(struct game_s *g, player_id_t active_player)
     uiobj_set_help_id(2);
     uiobj_set_callback_and_delay(ui_starmap_reloc_draw_cb, &d, STARMAP_DELAY);
 
-    while (!flag_done) {
+    while (!d.flag_done) {
         ui_delay_prepare();
-        ui_starmap_handle_common(g, &d, &flag_done);
-        if (!flag_done) {
+        ui_starmap_handle_common(g, &d);
+        if (!d.flag_done) {
             ui_starmap_select_bottom_highlight(g, &d);
             ui_starmap_reloc_draw_cb(&d);
             uiobj_table_clear();

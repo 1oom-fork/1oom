@@ -168,7 +168,6 @@ static void ui_starmap_orbit_own_do_accept(struct game_s *g, struct starmap_data
 
 void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
 {
-    bool flag_done = false;
     int16_t oi_cycle,
             oi_tbl_p[NUM_SHIPDESIGNS],
             oi_tbl_m[NUM_SHIPDESIGNS],
@@ -178,6 +177,7 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
             ;
     int16_t scrollship = 0;
     struct starmap_data_s d;
+    d.flag_done = false;
     const fleet_orbit_t *r;
     const shipcount_t *os;
 
@@ -228,11 +228,11 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
     uiobj_set_help_id(16);
     uiobj_set_callback_and_delay(ui_starmap_orbit_own_draw_cb, &d, STARMAP_DELAY);
 
-    while (!flag_done) {
+    while (!d.flag_done) {
         int cursor_over;
         ui_starmap_update_reserve_fuel(g, &d.oo.sn0, d.oo.ships, active_player);
         ui_delay_prepare();
-        ui_starmap_handle_common(g, &d, &flag_done);
+        ui_starmap_handle_common(g, &d);
         cursor_over = -1;
         for (int i = 0; i < d.oo.sn0.num; ++i) {
             if (0
@@ -295,7 +295,7 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
                 ++d.oo.shiptypenon0numsel;
             }
         }
-        if (!flag_done) {
+        if (!d.flag_done) {
             ui_starmap_select_bottom_highlight(g, &d);
             ui_starmap_orbit_own_draw_cb(&d);
             uiobj_table_clear();

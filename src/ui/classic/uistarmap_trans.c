@@ -179,10 +179,10 @@ static void ui_starmap_trans_do_accept(struct game_s *g, struct starmap_data_s *
 
 void ui_starmap_trans(struct game_s *g, player_id_t active_player)
 {
-    bool flag_done = false;
     int16_t oi_plus, oi_minus, oi_a
             ;
     struct starmap_data_s d;
+    d.flag_done = false;
     planet_t *p;
     int16_t trans_max;
 
@@ -225,9 +225,9 @@ void ui_starmap_trans(struct game_s *g, player_id_t active_player)
 
     uiobj_set_callback_and_delay(ui_starmap_trans_draw_cb, &d, STARMAP_DELAY);
 
-    while (!flag_done) {
+    while (!d.flag_done) {
         ui_delay_prepare();
-        ui_starmap_handle_common(g, &d, &flag_done);
+        ui_starmap_handle_common(g, &d);
         if (d.oi1 == d.oi_minus) {
             ui_sound_play_sfx_24();
             SUBSAT0(d.tr.num, (trans_max / 10) ? (trans_max / 10) : 1);
@@ -246,7 +246,7 @@ void ui_starmap_trans(struct game_s *g, player_id_t active_player)
             ui_sound_play_sfx_24();
             d.tr.num = trans_max;
         }
-        if (!flag_done) {
+        if (!d.flag_done) {
             ui_starmap_select_bottom_highlight(g, &d);
             ui_starmap_trans_draw_cb(&d);
             uiobj_table_clear();
