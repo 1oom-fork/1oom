@@ -139,7 +139,6 @@ struct starmap_data_s {
 
 #define STARMAP_UIOBJ_CLEAR_COMMON() \
     do { \
-        d.bottom_highlight = -1; \
         d.oi1 = UIOBJI_INVALID; \
         d.oi2 = UIOBJI_INVALID; \
         d.oi_gameopts = UIOBJI_INVALID; \

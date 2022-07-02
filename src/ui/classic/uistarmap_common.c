@@ -1284,6 +1284,7 @@ void ui_starmap_init_common_data(struct game_s *g, struct starmap_data_s *d, pla
     d->g = g;
     d->api = active_player;
     d->anim_delay = 0;
+    d->bottom_highlight = -1;
     d->gov_highlight = 0;
     d->from = g->planet_focus_i[active_player];
 }
