@@ -308,7 +308,6 @@ struct game_s {
     bool election_held;
     BOOLVEC_DECLARE(refuse, PLAYER_NUM);
     uint8_t planet_focus_i[PLAYER_NUM];
-    uint8_t planet_show_enroutes[PLAYER_NUM];
     uint8_t nebula_num;        /* 0..4 */
     uint8_t nebula_type[NEBULA_MAX];    /* 0..9 */
     uint16_t nebula_x[NEBULA_MAX];

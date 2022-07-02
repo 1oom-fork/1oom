@@ -288,7 +288,6 @@ void ui_game_start(struct game_s *g)
     for (int i = 0; i < g->players; ++i) {
         if (IS_HUMAN(g, i)) {
             ui_starmap_set_pos_focus(g, i);
-            g->planet_show_enroutes[i] = false;
             break;
         }
     }

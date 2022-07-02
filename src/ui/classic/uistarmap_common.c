@@ -546,7 +546,7 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
             if (g->eto[d->api].have_ia_scanner && (p->owner == d->api) && (r->owner != d->api) && (r->dest == g->planet_focus_i[d->api])) {
                 ui_draw_line_limit_ctbl(tx + 5, ty + 2, (p->x - x) * 2 + 14, (p->y - y) * 2 + 14, colortbl_line_red, 5, ui_data.starmap.line_anim_phase, starmap_scale);
             }
-            if (g->planet_show_enroutes[d->api] && (ui_data.ui_main_loop_action == UI_MAIN_LOOP_STARMAP || d->controllable)) {
+            if (ui_show_routes && (ui_data.ui_main_loop_action == UI_MAIN_LOOP_STARMAP || d->controllable)) {
                 if (r->owner == d->api && r->dest == g->planet_focus_i[d->api]) {
                     ui_draw_line_limit_ctbl(tx + 5, ty + 2, (p->x - x) * 2 + 14, (p->y - y) * 2 + 14, colortbl_line_green, 5, ui_data.starmap.line_anim_phase, starmap_scale);
                 }
@@ -570,7 +570,7 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
             if (g->eto[d->api].have_ia_scanner && (p->owner == d->api) && (r->owner != d->api) && (r->dest == g->planet_focus_i[d->api])) {
                 ui_draw_line_limit_ctbl(tx + 5, ty + 2, (p->x - x) * 2 + 14, (p->y - y) * 2 + 14, colortbl_line_red, 5, ui_data.starmap.line_anim_phase, starmap_scale);
             }
-            if (g->planet_show_enroutes[d->api] && (ui_data.ui_main_loop_action == UI_MAIN_LOOP_STARMAP || d->controllable)) {
+            if (ui_show_routes && (ui_data.ui_main_loop_action == UI_MAIN_LOOP_STARMAP || d->controllable)) {
                 if (r->owner == d->api && r->dest == g->planet_focus_i[d->api]) {
                     ui_draw_line_limit_ctbl(tx + 5, ty + 2, (p->x - x) * 2 + 14, (p->y - y) * 2 + 14, colortbl_line_green, 5, ui_data.starmap.line_anim_phase, starmap_scale);
                 }
@@ -1298,7 +1298,7 @@ bool ui_starmap_handle_common(struct game_s *g, struct starmap_data_s *d, bool *
         return true;
     }
     if (d->oi1 == d->oi_alt_f) {
-        g->planet_show_enroutes[d->api] = !g->planet_show_enroutes[d->api];
+        ui_show_routes = !ui_show_routes;
         return true;
     }
     if (d->oi1 == d->oi_cancel || d->oi1 == UIOBJI_ESC) {
