@@ -25,14 +25,14 @@
 
 /* -------------------------------------------------------------------------- */
 
-static bool ui_starmap_orbit_own_withinin_frange(const struct game_s *g, const struct starmap_data_s *d, int planet_i) {
+static bool ui_starmap_orbit_own_within_frange(const struct game_s *g, const struct starmap_data_s *d, int planet_i) {
     const planet_t *p = &g->planet[planet_i];
     return p->within_frange[d->api] == 1 || (p->within_frange[d->api] == 2 && d->oo.sn0.have_reserve_fuel);
 }
 
 static bool ui_starmap_orbit_own_valid_destination(const struct game_s *g, const struct starmap_data_s *d, int planet_i) {
     return 1
-      && ui_starmap_orbit_own_withinin_frange(g, d, planet_i)
+      && ui_starmap_orbit_own_within_frange(g, d, planet_i)
       && d->oo.shiptypenon0numsel;
 }
 
@@ -42,7 +42,7 @@ static void ui_starmap_orbit_own_draw_cb(void *vptr)
     const struct game_s *g = d->g;
     const planet_t *pf = &g->planet[d->from];
     const planet_t *pt = &g->planet[g->planet_focus_i[d->api]];
-    bool in_frange = ui_starmap_orbit_own_withinin_frange(g, d, g->planet_focus_i[d->api]);
+    bool in_frange = ui_starmap_orbit_own_within_frange(g, d, g->planet_focus_i[d->api]);
     char buf[0x80];
     STARMAP_LIM_INIT();
 

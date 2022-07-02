@@ -26,7 +26,7 @@
 
 /* -------------------------------------------------------------------------- */
 
-static bool ui_starmap_enroute_withinin_frange(const struct game_s *g, const struct starmap_data_s *d, int planet_i) {
+static bool ui_starmap_enroute_within_frange(const struct game_s *g, const struct starmap_data_s *d, int planet_i) {
     const planet_t *p = &g->planet[planet_i];
     return p->within_frange[d->api] == 1 || (p->within_frange[d->api] == 2 && d->en.sn0.have_reserve_fuel);
 }
@@ -34,7 +34,7 @@ static bool ui_starmap_enroute_withinin_frange(const struct game_s *g, const str
 static bool ui_starmap_enroute_valid_destination(const struct game_s *g, const struct starmap_data_s *d, int planet_i) {
     const fleet_enroute_t *r = &g->enroute[ui_data.starmap.fleet_selected];
     return 1
-      && ui_starmap_enroute_withinin_frange(g, d, planet_i)
+      && ui_starmap_enroute_within_frange(g, d, planet_i)
       && (!game_num_retreat_redir_fix || !r->retreat || d->en.can_move == GOT_HYPERCOMM || planet_i != d->en.pon);
 }
 
@@ -46,7 +46,7 @@ static void ui_starmap_enroute_draw_cb(void *vptr)
     const empiretechorbit_t *e = &(g->eto[r->owner]);
     uint8_t pto = g->planet_focus_i[d->api];
     const planet_t *pt = &g->planet[pto];
-    bool in_frange = ui_starmap_enroute_withinin_frange(g, d, g->planet_focus_i[d->api]);
+    bool in_frange = ui_starmap_enroute_within_frange(g, d, g->planet_focus_i[d->api]);
     char buf[0x80];
     STARMAP_LIM_INIT();
 

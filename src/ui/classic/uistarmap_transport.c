@@ -26,7 +26,7 @@
 
 /* -------------------------------------------------------------------------- */
 
-static bool ui_starmap_transport_withinin_frange(const struct game_s *g, const struct starmap_data_s *d, int planet_i) {
+static bool ui_starmap_transport_within_frange(const struct game_s *g, const struct starmap_data_s *d, int planet_i) {
     const planet_t *p = &g->planet[planet_i];
     if (!game_num_trans_redir_fix) {
         return (p->within_frange[d->api] != 0); /* WASBUG MOO1 allows redirection almost anywhere */
@@ -37,7 +37,7 @@ static bool ui_starmap_transport_withinin_frange(const struct game_s *g, const s
 
 static bool ui_starmap_transport_valid_destination(const struct game_s *g, const struct starmap_data_s *d, int planet_i) {
     if (!game_num_trans_redir_fix) {
-        return ui_starmap_transport_withinin_frange(g, d, planet_i);
+        return ui_starmap_transport_within_frange(g, d, planet_i);
     }
     const planet_t *p = &g->planet[planet_i];
     return game_transport_dest_ok(g, p, d->api);
@@ -101,7 +101,7 @@ static void ui_starmap_transport_draw_cb(void *vptr)
         }
         lbxgfx_draw_frame_offs(x0, y0, gfx, STARMAP_LIMITS, UI_SCREEN_W, starmap_scale);
         dist = game_get_min_dist(g, r->owner, g->planet_focus_i[d->api]);
-        if (d->controllable && !ui_starmap_transport_withinin_frange(g, d, g->planet_focus_i[d->api])) {
+        if (d->controllable && !ui_starmap_transport_within_frange(g, d, g->planet_focus_i[d->api])) {
             /* FIXME use proper positioning for varying str length */
             in_frange = false;
             lib_sprintf(buf, sizeof(buf), "  %s   %i %s.", game_str_sm_outsr, dist - e->fuel_range, game_str_sm_parsecs2);

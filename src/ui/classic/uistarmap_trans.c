@@ -23,7 +23,7 @@
 
 /* -------------------------------------------------------------------------- */
 
-static bool ui_starmap_trans_withinin_frange(const struct game_s *g, const struct starmap_data_s *d, int planet_i) {
+static bool ui_starmap_trans_within_frange(const struct game_s *g, const struct starmap_data_s *d, int planet_i) {
     const planet_t *p = &g->planet[planet_i];
     return (p->within_frange[d->api] == 1);
 }
@@ -32,7 +32,7 @@ static bool ui_starmap_trans_valid_destination(const struct game_s *g, const str
     const planet_t *pt = &g->planet[planet_i];
     return 1
       && (pt->owner != PLAYER_NONE)
-      && ui_starmap_trans_withinin_frange(g, d, planet_i)
+      && ui_starmap_trans_within_frange(g, d, planet_i)
       && BOOLVEC_IS1(pt->explored, d->api)
       && (pt->type >= g->eto[d->api].have_colony_for);
 }
@@ -79,7 +79,7 @@ static void ui_starmap_trans_draw_cb(void *vptr)
         ui_draw_line_limit_ctbl(x0 + 6, y0 + 6, x1, y1, ctbl, 5, ui_data.starmap.line_anim_phase, starmap_scale);
     }
     if (d->from != g->planet_focus_i[d->api] || ui_modern_starmap_controls) {
-        if (!ui_starmap_trans_withinin_frange(g, d, g->planet_focus_i[d->api])) {
+        if (!ui_starmap_trans_within_frange(g, d, g->planet_focus_i[d->api])) {
             int mindist = game_get_min_dist(g, d->api, g->planet_focus_i[d->api]);
             lbxfont_select_set_12_1(0, 0xe, 5, 0);
             lbxfont_set_gap_h(1);
@@ -154,7 +154,7 @@ static void ui_starmap_trans_draw_cb(void *vptr)
     lbxfont_select_set_12_1(5, 5, 0, 0);
     {
         int y;
-        y = (d->from != g->planet_focus_i[d->api] && !ui_starmap_trans_withinin_frange(g, d, g->planet_focus_i[d->api])) ? 77 : 90;
+        y = (d->from != g->planet_focus_i[d->api] && !ui_starmap_trans_within_frange(g, d, g->planet_focus_i[d->api])) ? 77 : 90;
         lbxfont_print_str_center(269, y, game_str_sm_transs, UI_SCREEN_W, ui_scale);
     }
 }
