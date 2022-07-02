@@ -508,7 +508,13 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
             if (do_print) {
                 tx = (p->x - x) * 2 + 14;
                 ty = (p->y - y) * 2 + 22;
-                lbxfont_print_str_center_limit(tx, ty, p->name, STARMAP_TEXT_LIMITS, UI_SCREEN_W, starmap_scale);
+                if (ui_show_populations && p->owner == d->api) {
+                    char str[8];
+                    lib_sprintf(str, sizeof(str), "%i/%i", p->pop, p->max_pop3);
+                    lbxfont_print_str_center_limit(tx, ty, str, STARMAP_TEXT_LIMITS, UI_SCREEN_W, starmap_scale);
+                } else {
+                    lbxfont_print_str_center_limit(tx, ty, p->name, STARMAP_TEXT_LIMITS, UI_SCREEN_W, starmap_scale);
+                }
             }
         }
     }
@@ -807,6 +813,7 @@ static void ui_starmap_add_oi_hotkeys(struct starmap_data_s *d)
     d->oi_filter = uiobj_add_inputkey(MOO_KEY_i);
     d->oi_alt_m = uiobj_add_inputkey(MOO_KEY_m | MOO_MOD_ALT);
     d->oi_alt_c = uiobj_add_inputkey(MOO_KEY_c | MOO_MOD_ALT);
+    d->oi_alt_o = uiobj_add_inputkey(MOO_KEY_o | MOO_MOD_ALT);
     d->oi_alt_r = uiobj_add_inputkey(MOO_KEY_r | MOO_MOD_ALT);
     d->oi_ctrl_r = uiobj_add_inputkey(MOO_KEY_r | MOO_MOD_CTRL);
     d->oi_alt_f = uiobj_add_inputkey(MOO_KEY_f | MOO_MOD_ALT);
@@ -1299,6 +1306,10 @@ bool ui_starmap_handle_common(struct game_s *g, struct starmap_data_s *d, bool *
     }
     if (d->oi1 == d->oi_alt_f) {
         ui_show_routes = !ui_show_routes;
+        return true;
+    }
+    if (d->oi1 == d->oi_alt_o) {
+        ui_show_populations = !ui_show_populations;
         return true;
     }
     if (d->oi1 == d->oi_cancel || d->oi1 == UIOBJI_ESC) {

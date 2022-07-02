@@ -72,6 +72,7 @@ const struct cfg_items_s ui_cfg_items[] = {
     CFG_ITEM_BOOL("skip_bomb_animation", &game_battle_skip_bomb_animation),
     CFG_ITEM_BOOL("space_combat_autoresolve", &ui_space_combat_autoresolve),
     CFG_ITEM_BOOL("show_routes", &ui_show_routes),
+    CFG_ITEM_BOOL("show_populations", &ui_show_populations),
     CFG_ITEM_COMMENT("0..146"),
     CFG_ITEM_INT("uiicon", &ui_icon, check_ui_icon),
     CFG_ITEM_COMMENT("Invert mouse wheel for sliders"),
@@ -137,6 +138,12 @@ const struct cmdline_options_s ui_cmdline_options[] = {
     { "-noshowroutes", 0,
       options_disable_bool_var, (void *)&ui_show_routes,
       NULL, "Disable show friendly routes" },
+    { "-showpopulations", 0,
+      options_enable_bool_var, (void *)&ui_show_populations,
+      NULL, "Enable show friendly populations" },
+    { "-noshowpopulations", 0,
+      options_disable_bool_var, (void *)&ui_show_populations,
+      NULL, "Disable show friendly populations" },
     { "-mwislider", 0,
       options_enable_bool_var, (void *)&ui_mwi_slider,
       NULL, "Invert mouse wheel for sliders" },
@@ -169,6 +176,7 @@ bool ui_extra_enabled = false;
 bool ui_modern_starmap_controls = false;
 bool ui_space_combat_autoresolve = false;
 bool ui_show_routes = false;
+bool ui_show_populations = false;
 bool ui_mwi_slider = false;
 bool ui_mwi_counter = false;
 int ui_sm_scroll_speed = 3;
