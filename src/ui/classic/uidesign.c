@@ -873,23 +873,8 @@ static void ui_design_sel_weapon(struct design_data_s *d, int wslot)
         havelast = game_design_build_tbl_fit_weapon(d->g, d->gd, havebuf, wslot);
 
         {
-            int i = havelast + 1, firsti;
-            if ((game_num_weapon_list_max > 0) && (game_num_weapon_list_max < WEAPON_NUM)) {
-                int j;
-                for (j = 0; (j < game_num_weapon_list_max) && (i > 0); ) {
-                    --i;
-                    if (havebuf[i] >= 0) {
-                        ++j;
-                    }
-                }
-                firsti = i;
-                if (firsti > 0) {
-                    i = 0;
-                }
-            } else {
-                firsti = 0;
-                i = 0;
-            }
+            int i = 0;
+            int firsti = 0;
 
             /* game_design_build_tbl_fit_weapon ensures that havelast < WEAPON_NUM. */
             while (i <= havelast) {
