@@ -31,7 +31,6 @@
 4,orbital_torpedo,0,1
 4,orbital_comp_fix,0,1
 4,combat_trans_fix,0,1
-4,stargate_redir_fix,0,1
 4,first_tech_rp_fix,0,1
 4,waste_calc_fix,0,1
 4,waste_adjust_fix,0,1

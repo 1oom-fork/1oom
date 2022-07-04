@@ -263,7 +263,7 @@ void game_fleet_unrefuel(struct game_s *g)
 
 uint8_t game_fleet_get_speed(const struct game_s *g, const struct fleet_enroute_s *r, uint8_t pfrom, uint8_t pto)
 {
-    if (game_num_stargate_redir_fix && ((r->speed == FLEET_SPEED_STARGATE) || (pfrom != PLANET_NONE))) {
+    if ((r->speed == FLEET_SPEED_STARGATE) || (pfrom != PLANET_NONE)) {
         player_id_t owner = r->owner;
         const planet_t *pt = (&g->planet[pto]);
         const planet_t *pf = (pfrom != PLANET_NONE) ? (&g->planet[pfrom]) : 0;
