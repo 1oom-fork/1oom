@@ -32,7 +32,6 @@ int game_num_max_ship_maint = 32000;
 int game_num_max_tribute_bc = 32000;
 int game_num_event_roll = 512;
 int game_num_council_years = 25;
-bool game_num_news_orion = false;
 bool game_num_aud_ask_break_nap = false;
 bool game_num_aud_bounty_give = false;
 bool game_num_monster_rest_att = false;

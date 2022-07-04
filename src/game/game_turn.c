@@ -927,7 +927,7 @@ static void game_turn_explore(struct game_s *g)
                         p->owner = i;
                         p->pop = 2;
                         --e->orbit[pli].ships[best_colonyship];
-                        if ((pli == g->evn.planet_orion_i) && game_num_news_orion) {
+                        if (pli == g->evn.planet_orion_i) {
                             g->evn.have_orion_conquer = i + 1;
                         }
                         BOOLVEC_SET0(p->extras, PLANET_EXTRAS_GOVERNOR);
