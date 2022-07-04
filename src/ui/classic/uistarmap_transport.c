@@ -28,17 +28,10 @@
 
 static bool ui_starmap_transport_within_frange(const struct game_s *g, const struct starmap_data_s *d, int planet_i) {
     const planet_t *p = &g->planet[planet_i];
-    if (!game_num_trans_redir_fix) {
-        return (p->within_frange[d->api] != 0); /* WASBUG MOO1 allows redirection almost anywhere */
-    } else {
-        return (p->within_frange[d->api] == 1);
-    }
+    return (p->within_frange[d->api] == 1);
 }
 
 static bool ui_starmap_transport_valid_destination(const struct game_s *g, const struct starmap_data_s *d, int planet_i) {
-    if (!game_num_trans_redir_fix) {
-        return ui_starmap_transport_within_frange(g, d, planet_i);
-    }
     const planet_t *p = &g->planet[planet_i];
     return game_transport_dest_ok(g, p, d->api);
 }
