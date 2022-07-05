@@ -10,9 +10,6 @@
 4,startship_engines,0,2,27,110,85,100
 4,startship_cost,0,8,14,74,65,570
 
-# The 2500 factories limit is too low for Meklars.
-4,max_factories,0,2700
-
 # Silicoids have most of the tech useless to them not appear in their research tree.
 # However, Advanced Eco Restoration and Advanced Soil Enrichment can still appear.
 # This must be an oversight.
