@@ -27,6 +27,32 @@ Much of this file is based on the readme from the unofficial v1.40m patch.
 - breaking a NAP / alliance no more positively contributes to your relations with the AIs
 - 8th stargate bug corrected (no ship maintenance overflow)
 
+- Max. number of weapons shown in the ship design weapon list is 64. 30 in MOO1
+- Fix the Oracle Interface. In MOO1 the Oracle Interface does nothing to the target's shields
+- Fix Guardian Advanced Damage Control for Hard/Impossible/Hopeless (15%/0%/# -> 15%/30%/50%)
+- Only apply the industrial accident events to colonies with some industry (at least 30) as described in the OSG
+- Fix transport redirection bug/cheat. In MOO1 transports can be redirected (given Hyperspace Communications) to
+  unexplored, reserve-fuel-needing and no-colony-for destinations
+- Fix Star Gate fleet redirection bug/cheat. In MOO1 a fleet sent via Star Gate can be redirected to any other planet
+  and the flight will take only 1 turn regardless of destination. The other way was also bugged:
+  redirecting a fleet to a valid Star Gate use situation did not end up in the fleet using the Star Gates
+- Fix negative/32000 ship doom stack bug. In MOO1 overflows in AI-AI battles can result in 32000 ship doom stacks
+- Show news when Orion is first colonized. MOO1 has a news item for conquering Orion but never shows it
+- Do not reload ship specials on Wait. MOO1 reloads ship specials when Wait is pressed and the ship's turn resumes
+  This means it is possible to use the Pulsars, Black Hole Generator, Automated repair etc an unlimited number of times
+- 2700 factories limit. The 2500 factories limit is too low for Meklars
+
+- new game modes:
+	- no world ruler elections
+	- MOO v1.3 fair space combat:
+		- Do not accumulate To Hit bonuses. MOO1 accumulates weapon To Hit bonuses while firing the four weapons slots
+		  This results in Hyper-X or better missiles or Megabolt Cannon in slots 1..3
+		  affecting the accuracy of a beam weapon in slot 4
+	- Balanced space combat:
+		- Includes MOO v1.3 fair space combat mode
+		- Add To Hit bonus before capping defense to 95%. MOO1 adds To Hit bonuses after capping defense
+		  This results in high defense being less effective against high tech missiles or Megabolt cannons
+
 - changes in Classic+ AI:
     - first tech costs are calculated using the same formula as the rest
     - cash tributes work as described in OSG instead of not at all

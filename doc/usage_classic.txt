@@ -37,6 +37,7 @@ The following new UI features are always enabled/available:
 - Custom Game screen allows setting opponent race/banner/names and AI/human flag
 - Custom Game screen allows new rule: no World Ruler Elections
 - Custom game screen allows to select space combat ruleset
+	- Balanced space combat is default game mode for new games
 - Random race / banner
 - New difficulty level - "Hopeless"
 2) Camera
