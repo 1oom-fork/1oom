@@ -996,6 +996,12 @@ int game_new(struct game_s *g, struct game_aux_s *gaux, struct game_new_options_
     if (opt->no_elections) {
         g->game_mode_extra |= GAME_MODE_EXTRA_NO_ELECTIONS;
     }
+    if (opt->space_combat_rules == GAME_NEW_SPACE_COMBAT_FAIR_1_3) {
+        g->game_mode_extra |= GAME_MODE_EXTRA_NO_TOHIT_ACC;
+    } else if (opt->space_combat_rules == GAME_NEW_SPACE_COMBAT_BALANCED) {
+        g->game_mode_extra |= GAME_MODE_EXTRA_NO_TOHIT_ACC;
+        g->game_mode_extra |= GAME_MODE_EXTRA_PRECAP_TOHIT;
+    }
     game_ai = game_ais[g->ai_id];
     g->players = opt->players;
     g->difficulty = opt->difficulty;
