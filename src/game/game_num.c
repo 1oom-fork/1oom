@@ -9,8 +9,6 @@
 bool game_num_deterministic = true;
 /* bool game_num_deterministic = false; */
 int game_num_bt_turn_max = 50;
-bool game_num_bt_precap_tohit = false;
-bool game_num_bt_no_tohit_acc = false;
 int game_num_stargate_cost = 3000;
 int game_num_stargate_maint = 100;
 int game_num_limit_ships = 32000;
