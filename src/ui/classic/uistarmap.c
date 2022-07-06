@@ -450,12 +450,6 @@ static void ui_starmap_handle_governor(struct game_s *g, struct starmap_data_s *
         ui_data.ui_main_loop_action = UI_MAIN_LOOP_GOVERN;
         *flag_done = true;
         ui_sound_play_sfx_24();
-    } else if (d->oi2 == gd->oi_governor && d->oi1 == UIOBJI_ESC) {
-        /* invert the governor flag */
-        BOOLVEC_TOGGLE(p->extras, PLANET_EXTRAS_GOVERNOR);
-        if (BOOLVEC_IS1(p->extras, PLANET_EXTRAS_GOVERNOR)) {
-            game_planet_govern(g, p);
-        }
     }
 }
 
@@ -500,14 +494,18 @@ static void ui_starmap_fill_oi_planet(const struct game_s *g, struct starmap_dat
     pd->oi_starview2 = uiobj_add_mousearea(227, 24, 310, 53, MOO_KEY_UNKNOWN);
 }
 
-static void ui_starmap_fill_oi_governor(struct starmap_governor_data_s *gd, int16_t *scrollmisc) {
+static void ui_starmap_fill_oi_governor(struct starmap_data_s *d, int16_t *scrollmisc) {
+    struct starmap_governor_data_s *gd = d->sm.gov_data;
+    const planet_t *p = &d->g->planet[d->g->planet_focus_i[d->api]];
     gd->oi_governor = uiobj_add_mousearea(227, 59, 268, 67, MOO_KEY_v);
-    gd->oi_ship = uiobj_add_mousearea( 288, 82, 312, 88, MOO_KEY_UNKNOWN );
-    gd->oi_reserve = uiobj_add_mousearea( 288, 104, 312, 110, MOO_KEY_UNKNOWN );
-    gd->oi_tech = uiobj_add_mousearea( 288, 126, 312, 132, MOO_KEY_UNKNOWN );
-    gd->oi_bases = uiobj_add_mousearea( 273, 60, 312, 66, MOO_KEY_UNKNOWN );
-    gd->oi_wheel_bases = uiobj_add_mousewheel( 273, 60, 312, 66, scrollmisc);
-    gd->oi_boost = uiobj_add_mousearea( 226, 71, 312, 77, MOO_KEY_UNKNOWN );
+    if (BOOLVEC_IS1(p->extras, PLANET_EXTRAS_GOVERNOR)) {
+        gd->oi_ship = uiobj_add_mousearea( 288, 82, 312, 88, MOO_KEY_UNKNOWN );
+        gd->oi_reserve = uiobj_add_mousearea( 288, 104, 312, 110, MOO_KEY_UNKNOWN );
+        gd->oi_tech = uiobj_add_mousearea( 288, 126, 312, 132, MOO_KEY_UNKNOWN );
+        gd->oi_bases = uiobj_add_mousearea( 273, 60, 312, 66, MOO_KEY_UNKNOWN );
+        gd->oi_wheel_bases = uiobj_add_mousewheel( 273, 60, 312, 66, scrollmisc);
+        gd->oi_boost = uiobj_add_mousearea( 226, 71, 312, 77, MOO_KEY_UNKNOWN );
+    }
 }
 
 void ui_starmap_do(struct game_s *g, player_id_t active_player)
@@ -616,7 +614,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             }
             ui_starmap_fill_oi_planet(g, &d, &scrollmisc);
             if (p->owner == active_player && ui_extra_enabled) {
-                ui_starmap_fill_oi_governor(&gov_d, &scrollmisc);
+                ui_starmap_fill_oi_governor(&d, &scrollmisc);
             }
             ui_starmap_fill_oi_common(&d);
             if (BOOLVEC_IS1(p->explored, active_player)) {
