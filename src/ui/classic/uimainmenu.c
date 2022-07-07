@@ -88,7 +88,6 @@ static void main_menu_draw_cb(void *vptr)
 
 static main_menu_action_t main_menu_do(struct main_menu_data_s *d)
 {
-    int16_t oi_n, oi_g, oi_l, oi_c, oi_q;
     int16_t oi_newgame, oi_customgame, oi_continue, oi_loadgame, oi_quit;
     int16_t oi_tutor, oi_extra, cursor_at;
     bool flag_done = false, flag_fadein = false;
@@ -110,7 +109,7 @@ static main_menu_action_t main_menu_do(struct main_menu_data_s *d)
     oi_extra = uiobj_add_alt_str("x");
     d->have_continue = game_save_tbl_have_save[GAME_SAVE_I_CONTINUE];
     if (d->have_continue) {
-        oi_continue = uiobj_add_mousearea(0x3c, 0x79, 0x104, 0x86, MOO_KEY_UNKNOWN);
+        oi_continue = uiobj_add_mousearea(0x3c, 0x79, 0x104, 0x86, MOO_KEY_c);
     } else {
         oi_continue = UIOBJI_INVALID;
     }
@@ -118,27 +117,14 @@ static main_menu_action_t main_menu_do(struct main_menu_data_s *d)
     d->have_loadgame = false;
     for (int i = 0; i < NUM_SAVES; ++i) {
         if (game_save_tbl_have_save[i]) {
-            oi_loadgame = uiobj_add_mousearea(0x3c, 0x87, 0x104, 0x94, MOO_KEY_UNKNOWN);
+            oi_loadgame = uiobj_add_mousearea(0x3c, 0x87, 0x104, 0x94, MOO_KEY_l);
             d->have_loadgame = true;
             break;
         }
     }
-    oi_newgame = uiobj_add_mousearea(0x3c, 0x95, 0x104, 0xa2, MOO_KEY_UNKNOWN);
-    oi_customgame = uiobj_add_mousearea(0x3c, 0xa3, 0x104, 0xb0, MOO_KEY_UNKNOWN);
-    oi_quit = uiobj_add_mousearea(0x3c, 0xb1, 0x104, 0xbe, MOO_KEY_UNKNOWN);
-    if (d->have_continue) {
-        oi_c = uiobj_add_inputkey(MOO_KEY_c);
-    } else {
-        oi_c = UIOBJI_INVALID;
-    }
-    if (d->have_loadgame) {
-        oi_l = uiobj_add_inputkey(MOO_KEY_l);
-    } else {
-        oi_l = UIOBJI_INVALID;
-    }
-    oi_n = uiobj_add_inputkey(MOO_KEY_n);
-    oi_g = uiobj_add_inputkey(MOO_KEY_g);
-    oi_q = uiobj_add_inputkey(MOO_KEY_q);
+    oi_newgame = uiobj_add_mousearea(0x3c, 0x95, 0x104, 0xa2, MOO_KEY_n);
+    oi_customgame = uiobj_add_mousearea(0x3c, 0xa3, 0x104, 0xb0, MOO_KEY_g);
+    oi_quit = uiobj_add_mousearea(0x3c, 0xb1, 0x104, 0xbe, MOO_KEY_q);
     uiobj_set_focus(oi_newgame);
     d->selected = -1;
     d->fix_version = false;
@@ -176,15 +162,15 @@ static main_menu_action_t main_menu_do(struct main_menu_data_s *d)
         } else if (oi2 == oi_quit) {
             d->selected = MAIN_MENU_ACT_QUIT_GAME;
         }
-        if (oi1 == oi_c) {
+        if (oi1 == oi_continue) {
             d->selected = MAIN_MENU_ACT_CONTINUE_GAME;
-        } else if (oi1 == oi_l) {
+        } else if (oi1 == oi_loadgame) {
             d->selected = MAIN_MENU_ACT_LOAD_GAME;
-        } else if (oi1 == oi_n) {
+        } else if (oi1 == oi_newgame) {
             d->selected = MAIN_MENU_ACT_NEW_GAME;
-        } else if (oi1 == oi_g) {
+        } else if (oi1 == oi_customgame) {
             d->selected = MAIN_MENU_ACT_CUSTOM_GAME;
-        } else if (oi1 == oi_q) {
+        } else if (oi1 == oi_quit) {
             d->selected = MAIN_MENU_ACT_QUIT_GAME;
         } else if (oi1 == oi_tutor) {
             d->selected = MAIN_MENU_ACT_TUTOR;
