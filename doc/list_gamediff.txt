@@ -37,6 +37,7 @@ Much of this file is based on the readme from the unofficial v1.40m patch.
   and the flight will take only 1 turn regardless of destination. The other way was also bugged:
   redirecting a fleet to a valid Star Gate use situation did not end up in the fleet using the Star Gates
 - Fix negative/32000 ship doom stack bug. In MOO1 overflows in AI-AI battles can result in 32000 ship doom stacks
+- Fix negative/25+ population growth bug. In 1oom overflows in pop->tenths can result in extra 25+ population growth
 - Show news when Orion is first colonized. MOO1 has a news item for conquering Orion but never shows it
 - Do not reload ship specials on Wait. MOO1 reloads ship specials when Wait is pressed and the ship's turn resumes
   This means it is possible to use the Pulsars, Black Hole Generator, Automated repair etc an unlimited number of times

@@ -345,7 +345,7 @@ The governor works as follows:
 - If all of the above are finished, do research, ship building or reserve.
 
 The governor adjusts the sliders only at the following times:
-- When enabling the governor by clicking the planet name.
+- When enabling the governor.
 - When readjusting all planets via the governor screen.
 - After a turn, just before any "Planetary spending ratios may ..." messages.
 
