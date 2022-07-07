@@ -125,7 +125,6 @@ static main_menu_action_t main_menu_do(struct main_menu_data_s *d)
     oi_newgame = uiobj_add_mousearea(0x3c, 0x95, 0x104, 0xa2, MOO_KEY_n);
     oi_customgame = uiobj_add_mousearea(0x3c, 0xa3, 0x104, 0xb0, MOO_KEY_g);
     oi_quit = uiobj_add_mousearea(0x3c, 0xb1, 0x104, 0xbe, MOO_KEY_q);
-    uiobj_set_focus(oi_newgame);
     d->selected = -1;
     d->fix_version = false;
     cursor_at = abs(uiobj_at_cursor());
