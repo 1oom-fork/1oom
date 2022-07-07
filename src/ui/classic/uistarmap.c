@@ -474,12 +474,16 @@ static void ui_starmap_fill_oi_planet(const struct game_s *g, struct starmap_dat
     struct starmap_planet_data_s *pd = d->sm.planet_data;
     const planet_t *p = &g->planet[g->planet_focus_i[d->api]];
 
-    if (p->owner == d->api) {
+    if (p->owner == d->api && (!ui_extra_enabled || BOOLVEC_IS0(p->extras, PLANET_EXTRAS_GOVERNOR))) {
         pd->oi_equals = uiobj_add_mousearea(227, 70, 312, 78, MOO_KEY_EQUALS);
         pd->oi_hash = uiobj_add_inputkey(MOO_KEY_HASH);
     }
     if ((p->owner == d->api) && p->missile_bases) {
-        pd->oi_b = uiobj_add_mousearea(272, 59, 312, 67, MOO_KEY_b);
+        if (!ui_extra_enabled || BOOLVEC_IS0(p->extras, PLANET_EXTRAS_GOVERNOR)) {
+            pd->oi_b = uiobj_add_mousearea(272, 59, 312, 67, MOO_KEY_b);
+        } else {
+            pd->oi_b = uiobj_add_inputkey(MOO_KEY_b);
+        }
     }
     if (p->owner == d->api) {
         if (ui_extra_enabled && kbd_is_modifier(MOO_MOD_CTRL)) {
