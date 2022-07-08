@@ -54,6 +54,10 @@ static bool main_menu_load_active(void *vptr) {
     return main_menu_have_save_any(vptr) && main_menu_game_active(vptr);
 }
 
+static void main_menu_toggle_fullscreen(void *vptr) {
+    hw_video_toggle_fullscreen();
+}
+
 /* -------------------------------------------------------------------------- */
 
 #define MM_ITEMS_PER_PAGE 5
@@ -82,6 +86,8 @@ typedef enum {
     MAIN_MENU_ITEM_MOUSE_INVERT_SLIDER,
     MAIN_MENU_ITEM_MOUSE_INVERT_COUNTER,
     MAIN_MENU_ITEM_UI_SCALE,
+    MAIN_MENU_ITEM_VIDEO,
+    MAIN_MENU_ITEM_VIDEO_FULLSCREEN,
     MAIN_MENU_ITEM_BACK,
     MAIN_MENU_ITEM_NUM,
 } main_menu_item_id_t;
@@ -93,6 +99,7 @@ typedef enum {
     MAIN_MENU_PAGE_SOUND,
     MAIN_MENU_PAGE_OPTIONS,
     MAIN_MENU_PAGE_MOUSE,
+    MAIN_MENU_PAGE_VIDEO,
     MAIN_MENU_PAGE_NUM,
 } main_menu_page_id_t;
 
@@ -390,6 +397,30 @@ static struct main_menu_item_s mm_items[MAIN_MENU_ITEM_NUM] = {
         -1,
     },
     {
+        "Video",
+        NULL,
+        NULL,
+        NULL,
+        0,
+        0,
+        MOO_KEY_v,
+        MAIN_MENU_ITEM_TYPE_PAGE,
+        MAIN_MENU_PAGE_VIDEO,
+        -1,
+    },
+    {
+        "Fullscreen",
+        &hw_opt_fullscreen,
+        NULL,
+        main_menu_toggle_fullscreen,
+        0,
+        0,
+        MOO_KEY_f,
+        MAIN_MENU_ITEM_TYPE_BOOL,
+        -1,
+        -1,
+    },
+    {
         "Back",
         NULL,
         NULL,
@@ -445,7 +476,7 @@ static struct main_menu_page_s mm_pages[MAIN_MENU_PAGE_NUM] = {
             MAIN_MENU_ITEM_INTERFACE,
             MAIN_MENU_ITEM_MOUSE,
             MAIN_MENU_ITEM_SOUND,
-            -1,
+            MAIN_MENU_ITEM_VIDEO,
             MAIN_MENU_ITEM_BACK,
         },
     },
@@ -454,6 +485,15 @@ static struct main_menu_page_s mm_pages[MAIN_MENU_PAGE_NUM] = {
             MAIN_MENU_ITEM_SCROLL_SPEED,
             MAIN_MENU_ITEM_MOUSE_INVERT_SLIDER,
             MAIN_MENU_ITEM_MOUSE_INVERT_COUNTER,
+            -1,
+            MAIN_MENU_ITEM_BACK,
+        },
+    },
+    {
+        {
+            MAIN_MENU_ITEM_VIDEO_FULLSCREEN,
+            -1,
+            -1,
             -1,
             MAIN_MENU_ITEM_BACK,
         },

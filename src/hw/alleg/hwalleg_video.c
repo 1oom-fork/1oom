@@ -91,3 +91,8 @@ void hw_video_screenshot(void)
 {
     video.flag_screenshot = true;
 }
+
+bool hw_video_toggle_fullscreen(void)
+{
+    return false;
+}

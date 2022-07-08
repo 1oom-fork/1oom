@@ -67,7 +67,7 @@ static bool hw_kbd_check_hotkey(SDL_Keycode key, SDL_Keymod smod, char c)
         }
     } else if ((smod & (KMOD_MODE | KMOD_ALT)) && (!(smod & KMOD_CTRL))) {
         if (key == SDLK_RETURN) {
-            if (!hwsdl_video_toggle_fullscreen()) {
+            if (!hw_video_toggle_fullscreen()) {
                 log_message("SDL: fs toggle failure, quitting now\n");
                 exit(EXIT_FAILURE);
             }

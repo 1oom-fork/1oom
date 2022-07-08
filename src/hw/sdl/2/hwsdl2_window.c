@@ -365,7 +365,7 @@ bool hw_video_update_aspect(void)
     return true;
 }
 
-bool hwsdl_video_toggle_fullscreen(void)
+bool hw_video_toggle_fullscreen(void)
 {
     hw_opt_fullscreen = !hw_opt_fullscreen;
     if (!reset_video_mode()) {

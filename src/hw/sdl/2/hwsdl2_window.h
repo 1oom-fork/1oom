@@ -13,7 +13,7 @@ int hwsdl_video_resized(int w, int h); /* called after a resize event */
 
 /* For the UI options. Return true on success */
 bool hwsdl_video_toggle_autotrim(void);
-bool hwsdl_video_toggle_fullscreen(void);
+bool hw_video_toggle_fullscreen(void);
 bool hwsdl_video_toggle_vsync(void);
 #ifdef HAVE_INT_SCALING
 bool hwsdl_video_toggle_intscaling(void);
@@ -26,9 +26,6 @@ void hwsdl_video_next_frame(const struct hwsdl_video_buffer_s *buf);
 
 /* show the same old thing again. called after expose event */
 void hwsdl_video_update(void);
-
-/* for hwsdl_opt.c */
-#define hw_video_toggle_fullscreen hwsdl_video_toggle_fullscreen
 
 #define FRAME_TIME_DUMP
 #ifdef FRAME_TIME_DUMP
