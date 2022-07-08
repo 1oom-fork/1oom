@@ -58,6 +58,14 @@ static void main_menu_toggle_fullscreen(void *vptr) {
     hw_video_toggle_fullscreen();
 }
 
+static const char* mm_hw_aspect_helper;
+
+static void main_menu_next_aspect(void *vptr) {
+    hw_uiopt_cb_aspect_next();
+    mm_hw_aspect_helper = hw_uiopt_cb_aspect_get();
+    hw_video_update_aspect();
+}
+
 /* -------------------------------------------------------------------------- */
 
 #define MM_ITEMS_PER_PAGE 5
@@ -88,6 +96,7 @@ typedef enum {
     MAIN_MENU_ITEM_UI_SCALE,
     MAIN_MENU_ITEM_VIDEO,
     MAIN_MENU_ITEM_VIDEO_FULLSCREEN,
+    MAIN_MENU_ITEM_VIDEO_ASPECT,
     MAIN_MENU_ITEM_BACK,
     MAIN_MENU_ITEM_NUM,
 } main_menu_item_id_t;
@@ -421,6 +430,18 @@ static struct main_menu_item_s mm_items[MAIN_MENU_ITEM_NUM] = {
         -1,
     },
     {
+        "Aspect Ratio",
+        &mm_hw_aspect_helper,
+        NULL,
+        main_menu_next_aspect,
+        0,
+        0,
+        MOO_KEY_a,
+        MAIN_MENU_ITEM_TYPE_STR,
+        -1,
+        -1,
+    },
+    {
         "Back",
         NULL,
         NULL,
@@ -492,7 +513,7 @@ static struct main_menu_page_s mm_pages[MAIN_MENU_PAGE_NUM] = {
     {
         {
             MAIN_MENU_ITEM_VIDEO_FULLSCREEN,
-            -1,
+            MAIN_MENU_ITEM_VIDEO_ASPECT,
             -1,
             -1,
             MAIN_MENU_ITEM_BACK,
@@ -703,6 +724,7 @@ static main_menu_action_t main_menu_do(struct main_menu_data_s *d)
     d->flag_done = false;
     d->ret = -1;
     mm_ui_scale_helper = ui_scale;
+    mm_hw_aspect_helper = hw_uiopt_cb_aspect_get();
     if (ui_draw_finish_mode != 0) {
         ui_palette_fadeout_19_19_1();
     }

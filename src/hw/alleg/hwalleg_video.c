@@ -96,3 +96,18 @@ bool hw_video_toggle_fullscreen(void)
 {
     return false;
 }
+
+bool hw_video_update_aspect(void)
+{
+    return false;
+}
+
+const char *hw_uiopt_cb_aspect_get(void)
+{
+    return "";
+}
+
+bool hw_uiopt_cb_aspect_next(void)
+{
+    return false;
+}

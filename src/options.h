@@ -11,6 +11,7 @@ extern const struct cfg_items_s opt_cfg_items_audio[];
 extern int opt_modebug;
 #endif
 extern bool hw_opt_fullscreen;
+extern int hw_opt_aspect;
 extern bool opt_audio_enabled;
 extern bool opt_music_enabled;
 extern bool opt_sfx_enabled;

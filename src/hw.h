@@ -43,6 +43,10 @@ extern uint8_t hw_video_get_palette_byte(int i);
 extern void hw_video_set_palette_byte(int i, uint8_t b);
 extern void hw_video_refresh_palette(void);
 extern bool hw_video_toggle_fullscreen(void);
+/* Aspect ratio */
+extern bool hw_video_update_aspect(void); /* in some file under 1/ or 2/ */
+extern const char *hw_uiopt_cb_aspect_get(void);
+extern bool hw_uiopt_cb_aspect_next(void);
 /* Return back buffer. */
 extern uint8_t *hw_video_get_buf(void);
 /* Return front buffer. */

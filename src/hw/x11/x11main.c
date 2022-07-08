@@ -60,6 +60,7 @@ const struct uiopt_s hw_uiopts_extra[] = { UIOPT_ITEM_END };
 const struct cfg_items_s hw_cfg_items[] = { CFG_ITEM_END };
 const struct cfg_items_s hw_cfg_items_extra[] = { CFG_ITEM_END };
 bool hw_opt_fullscreen = false;
+int hw_opt_aspect = 0;
 
 /* -- HW API Audio functions, dummies since X11 does not do audio ----------- */
 
@@ -503,6 +504,18 @@ void hw_mouse_warp(int x, int y)
 }
 
 bool hw_video_toggle_fullscreen(void) {
+    return false;
+}
+
+bool hw_video_update_aspect(void) {
+    return false;
+}
+
+const char *hw_uiopt_cb_aspect_get(void) {
+    return "";
+}
+
+bool hw_uiopt_cb_aspect_next(void) {
     return false;
 }
 
