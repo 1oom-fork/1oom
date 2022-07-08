@@ -23,7 +23,7 @@
 
 #define BATTLE_ROUTE_LEN    20
 
-bool game_battle_skip_bomb_animation = false;
+bool game_battle_enable_bomb_animation = true;
 
 /* -------------------------------------------------------------------------- */
 
@@ -1676,7 +1676,7 @@ bool game_battle_attack(struct battle_s *bt, int attacker_i, int target_i, bool 
                 if ((damagerange != 0) || w->is_bio) {
                     /*5755a*/
                     int absorbdiv;
-                    if (!bt->autoresolve && (!game_battle_skip_bomb_animation || !w->is_bomb)) {
+                    if (!bt->autoresolve && (game_battle_enable_bomb_animation || !w->is_bomb)) {
                         ui_sound_play_sfx(w->sound);
                     }
                     if (w->is_bomb) {
@@ -1701,7 +1701,7 @@ bool game_battle_attack(struct battle_s *bt, int attacker_i, int target_i, bool 
                             }
                             bt->biodamage += dmgsum;
                         }
-                        if (!bt->autoresolve && !game_battle_skip_bomb_animation) {
+                        if (!bt->autoresolve && game_battle_enable_bomb_animation) {
                             ui_battle_draw_bomb_attack(bt, attacker_i, target_i, w->is_bio ? UI_BATTLE_BOMB_BIO : UI_BATTLE_BOMB_BOMB);
                         }
                     }

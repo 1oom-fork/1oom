@@ -20,7 +20,8 @@ extern int opt_music_volume;
 extern int opt_sfx_volume;
 extern int opt_audiorate;
 extern int opt_audioslice_ms;
-extern bool game_battle_skip_bomb_animation;
+extern bool game_battle_enable_bomb_animation;
+extern bool game_opt_skip_intro_always;
 #ifdef HAVE_SAMPLERATE
 extern bool opt_use_libsamplerate;
 extern int opt_libsamplerate_scale;
