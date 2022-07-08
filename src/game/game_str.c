@@ -7,7 +7,6 @@
 const char *game_str_mm_continue = "Continue";
 const char *game_str_mm_load = "Load Game";
 const char *game_str_mm_new = "New Game";
-const char *game_str_mm_custom = "Custom Game";
 const char *game_str_mm_quit = "Quit to OS";
 
 const char *game_str_tbl_race[RACE_NUM + 1] = { "Human", "Mrrshan", "Silicoid", "Sakkra", "Psilon", "Alkari", "Klackon", "Bulrathi", "Meklar", "Darlok", "Random" };

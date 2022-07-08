@@ -10,7 +10,6 @@
 extern const char *game_str_mm_continue;
 extern const char *game_str_mm_load;
 extern const char *game_str_mm_new;
-extern const char *game_str_mm_custom;
 extern const char *game_str_mm_quit;
 extern const char *game_str_tbl_race[RACE_NUM + 1];
 extern const char *game_str_tbl_races[RACE_NUM];

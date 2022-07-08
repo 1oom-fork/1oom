@@ -26,11 +26,114 @@
 
 /* -------------------------------------------------------------------------- */
 
+static bool main_menu_have_save_continue(void *vptr) {
+    return game_save_tbl_have_save[GAME_SAVE_I_CONTINUE];
+}
+
+static bool main_menu_have_save_any(void *vptr) {
+    for (int i = 0; i < NUM_SAVES; ++i) {
+        if (game_save_tbl_have_save[i]) {
+            return true;
+        }
+    }
+    return false;
+}
+
+/* -------------------------------------------------------------------------- */
+
+#define MM_ITEMS_PER_PAGE 5
+
+typedef enum {
+    MAIN_MENU_ITEM_GAME_CONTINUE,
+    MAIN_MENU_ITEM_GAME_LOAD,
+    MAIN_MENU_ITEM_GAME_NEW,
+    MAIN_MENU_ITEM_GAME_CUSTOM,
+    MAIN_MENU_ITEM_QUIT,
+    MAIN_MENU_ITEM_NUM,
+} main_menu_item_id_t;
+
+typedef enum {
+    MAIN_MENU_PAGE_MAIN,
+    MAIN_MENU_PAGE_NUM,
+} main_menu_page_id_t;
+
+typedef enum {
+    MAIN_MENU_ITEM_TYPE_NONE,
+    MAIN_MENU_ITEM_TYPE_RETURN,
+} main_menu_item_type_t;
+
+struct main_menu_item_s {
+    const char *text;
+    bool (*is_active) (void *);
+    mookey_t key;
+    main_menu_item_type_t type;
+    main_menu_action_t ret_action;
+};
+
+struct main_menu_page_s {
+    main_menu_item_id_t item_id[MM_ITEMS_PER_PAGE];
+};
+
+static struct main_menu_item_s mm_items[MAIN_MENU_ITEM_NUM] = {
+    {
+        "Continue",
+        main_menu_have_save_continue,
+        MOO_KEY_c,
+        MAIN_MENU_ITEM_TYPE_RETURN,
+        MAIN_MENU_ACT_CONTINUE_GAME,
+    },
+    {
+        "Load Game",
+        main_menu_have_save_any,
+        MOO_KEY_l,
+        MAIN_MENU_ITEM_TYPE_RETURN,
+        MAIN_MENU_ACT_LOAD_GAME
+    },
+    {
+        "New Game",
+        NULL,
+        MOO_KEY_n,
+        MAIN_MENU_ITEM_TYPE_RETURN,
+        MAIN_MENU_ACT_NEW_GAME,
+    },
+    {
+        "Custom Game",
+        NULL,
+        MOO_KEY_g,
+        MAIN_MENU_ITEM_TYPE_RETURN,
+        MAIN_MENU_ACT_CUSTOM_GAME,
+    },
+    {
+        "Quit to OS",
+        NULL,
+        MOO_KEY_q,
+        MAIN_MENU_ITEM_TYPE_RETURN,
+        MAIN_MENU_ACT_QUIT_GAME
+    },
+};
+
+static struct main_menu_page_s mm_pages[MAIN_MENU_PAGE_NUM] = {
+    {
+        {
+            MAIN_MENU_ITEM_GAME_CONTINUE,
+            MAIN_MENU_ITEM_GAME_LOAD,
+            MAIN_MENU_ITEM_GAME_NEW,
+            MAIN_MENU_ITEM_GAME_CUSTOM,
+            MAIN_MENU_ITEM_QUIT,
+        },
+    },
+};
+
 struct main_menu_data_s {
+    const struct main_menu_item_s *items[MM_ITEMS_PER_PAGE];
+    int16_t item_oi[MM_ITEMS_PER_PAGE];
+    int16_t oi_quit;
+    bool active[MM_ITEMS_PER_PAGE];
     int frame;
-    int selected;
-    bool have_continue;
-    bool have_loadgame;
+    main_menu_action_t ret;
+    bool flag_done;
+    int clicked_i;
+    int highlight;
     bool fix_version;
     uint8_t *gfx_vortex;
     uint8_t *gfx_title;
@@ -46,6 +149,43 @@ static void free_mainmenu_data(struct main_menu_data_s *d)
 {
     lbxfile_item_release(LBXFILE_VORTEX, d->gfx_vortex);
     lbxfile_item_release(LBXFILE_V11, d->gfx_title);
+}
+
+static void main_menu_load_page(struct main_menu_data_s *d, main_menu_page_id_t page_i)
+{
+    if (page_i < 0 || page_i >= MAIN_MENU_PAGE_NUM) {
+        return;
+    }
+    lbxgfx_set_frame_0(d->gfx_vortex);
+    uiobj_table_clear();
+    d->oi_quit = uiobj_add_alt_str("q");
+    for (int i = 0; i < MM_ITEMS_PER_PAGE; ++i) {
+        d->item_oi[i] = UIOBJI_INVALID;
+        if (mm_pages[page_i].item_id[i] < 0 || mm_pages[page_i].item_id[i] >= MAIN_MENU_ITEM_NUM) {
+            d->items[i] = NULL;
+            continue;
+        }
+        d->items[i] = &mm_items[mm_pages[page_i].item_id[i]];
+        if (!d->items[i]->text) {
+            d->items[i] = NULL;
+            continue;
+        }
+        d->active[i] = d->items[i]->is_active ? d->items[i]->is_active(&d) : true;
+        if (d->active[i]) {
+            int y = 0x79 + 0xd * i;
+            d->item_oi[i] = uiobj_add_mousearea(0x3c, y, 0x104, y + 0xd, d->items[i]->key);
+        }
+    }
+}
+
+static int main_menu_get_item(struct main_menu_data_s *d, int16_t oi)
+{
+    for (int i = 0; i < MM_ITEMS_PER_PAGE; ++i) {
+        if (oi == d->item_oi[i] && d->items[i] != NULL) {
+            return i;
+        }
+    }
+    return -1;
 }
 
 static void main_menu_draw_cb(void *vptr)
@@ -65,124 +205,75 @@ static void main_menu_draw_cb(void *vptr)
         lbxfont_select(2, 7, 0, 0);
         lbxfont_print_str_center(160, 193, "PROGRAM VERSION " PACKAGE_NAME " " VERSION_STR, UI_SCREEN_W, ui_scale);
     }
-    if (d->have_continue) {
-        lbxfont_select(4, (d->selected == MAIN_MENU_ACT_CONTINUE_GAME) ? 3 : 2, 0, 0);
-    } else {
-        lbxfont_select(4, 7, 0, 0);
+    for (int i = 0; i < MM_ITEMS_PER_PAGE; ++i) {
+        if (!d->items[i] || !d->items[i]->text) {
+            continue;
+        }
+        int y = 0x79 + 0xe * i;
+        if (d->active[i]) {
+            lbxfont_select(4, (d->highlight == i) ? 3 : 2, 0, 0);
+        } else {
+            lbxfont_select(4, 7, 0, 0);
+        }
+        lbxfont_print_str_center(0xa0, y, d->items[i]->text, UI_SCREEN_W, ui_scale);
     }
-    lbxfont_print_str_center(0xa0, 0x79, game_str_mm_continue, UI_SCREEN_W, ui_scale);
-    if (d->have_loadgame) {
-        lbxfont_select(4, (d->selected == MAIN_MENU_ACT_LOAD_GAME) ? 3 : 2, 0, 0);
-    } else {
-        lbxfont_select(4, 7, 0, 0);
-    }
-    lbxfont_print_str_center(0xa0, 0x87, game_str_mm_load, UI_SCREEN_W, ui_scale);
-    lbxfont_select(4, (d->selected == MAIN_MENU_ACT_NEW_GAME) ? 3 : 2, 0, 0);
-    lbxfont_print_str_center(0xa0, 0x95, game_str_mm_new, UI_SCREEN_W, ui_scale);
-    lbxfont_select(4, (d->selected == MAIN_MENU_ACT_CUSTOM_GAME) ? 3 : 2, 0, 0);
-    lbxfont_print_str_center(0xa0, 0xa3, game_str_mm_custom, UI_SCREEN_W, ui_scale);
-    lbxfont_select(4, (d->selected == MAIN_MENU_ACT_QUIT_GAME) ? 3 : 2, 0, 0);
-    lbxfont_print_str_center(0xa0, 0xb1, game_str_mm_quit, UI_SCREEN_W, ui_scale);
     d->frame = (d->frame + 1) % 0x30;
 }
 
 static main_menu_action_t main_menu_do(struct main_menu_data_s *d)
 {
-    int16_t oi_newgame, oi_customgame, oi_continue, oi_loadgame, oi_quit;
-    int16_t oi_tutor, oi_extra, cursor_at;
-    bool flag_done = false, flag_fadein = false;
+    int16_t oi_tutor, oi_extra;
+    bool flag_fadein = false;
 
     d->frame = 0;
+    d->flag_done = false;
+    d->ret = -1;
     if (ui_draw_finish_mode != 0) {
         ui_palette_fadeout_19_19_1();
     }
     lbxpal_select(1, -1, 0);
     ui_cursor_setup_area(1, &ui_cursor_area_all_i1);
-    lbxgfx_set_frame_0(d->gfx_vortex);
     uiobj_table_clear();
 
     /* HACK these fix the gfx mess after canceling a load */
     ui_draw_erase_buf();
     uiobj_finish_frame();
 
+    main_menu_load_page(d, MAIN_MENU_PAGE_MAIN);
+
     oi_tutor = uiobj_add_alt_str("tutor");
     oi_extra = uiobj_add_alt_str("x");
-    d->have_continue = game_save_tbl_have_save[GAME_SAVE_I_CONTINUE];
-    if (d->have_continue) {
-        oi_continue = uiobj_add_mousearea(0x3c, 0x79, 0x104, 0x86, MOO_KEY_c);
-    } else {
-        oi_continue = UIOBJI_INVALID;
-    }
-    oi_loadgame = UIOBJI_INVALID;
-    d->have_loadgame = false;
-    for (int i = 0; i < NUM_SAVES; ++i) {
-        if (game_save_tbl_have_save[i]) {
-            oi_loadgame = uiobj_add_mousearea(0x3c, 0x87, 0x104, 0x94, MOO_KEY_l);
-            d->have_loadgame = true;
-            break;
-        }
-    }
-    oi_newgame = uiobj_add_mousearea(0x3c, 0x95, 0x104, 0xa2, MOO_KEY_n);
-    oi_customgame = uiobj_add_mousearea(0x3c, 0xa3, 0x104, 0xb0, MOO_KEY_g);
-    oi_quit = uiobj_add_mousearea(0x3c, 0xb1, 0x104, 0xbe, MOO_KEY_q);
-    d->selected = -1;
     d->fix_version = false;
-    cursor_at = abs(uiobj_at_cursor());
-    if (cursor_at == oi_continue) {
-        d->selected = MAIN_MENU_ACT_CONTINUE_GAME;
-    } else if (cursor_at == oi_newgame) {
-        d->selected = MAIN_MENU_ACT_NEW_GAME;
-    } else if (cursor_at == oi_customgame) {
-        d->selected = MAIN_MENU_ACT_CUSTOM_GAME;
-    } else if (cursor_at == oi_loadgame) {
-        d->selected = MAIN_MENU_ACT_LOAD_GAME;
-    } else if (cursor_at == oi_quit) {
-        d->selected = MAIN_MENU_ACT_QUIT_GAME;
-    }
+
+    d->highlight = main_menu_get_item(d, uiobj_at_cursor());
     uiobj_set_callback_and_delay(main_menu_draw_cb, d, 2);
-    while (!flag_done) {
+    while (!d->flag_done) {
         int16_t oi1, oi2;
         ui_delay_prepare();
         oi1 = uiobj_handle_input_cond();
         oi2 = uiobj_at_cursor();
-        if (oi1 != 0) {
-            flag_done = true;
-        }
+        d->highlight = main_menu_get_item(d, oi2);
         main_menu_draw_cb(d);
-        d->selected = -1;
-        if (oi2 == oi_continue) {
-            d->selected = MAIN_MENU_ACT_CONTINUE_GAME;
-        } else if (oi2 == oi_loadgame) {
-            d->selected = MAIN_MENU_ACT_LOAD_GAME;
-        } else if (oi2 == oi_newgame) {
-            d->selected = MAIN_MENU_ACT_NEW_GAME;
-        } else if (oi2 == oi_customgame) {
-            d->selected = MAIN_MENU_ACT_CUSTOM_GAME;
-        } else if (oi2 == oi_quit) {
-            d->selected = MAIN_MENU_ACT_QUIT_GAME;
+        d->clicked_i = main_menu_get_item(d, oi1);
+        if (oi1 == d->oi_quit) {
+            d->ret = MAIN_MENU_ACT_QUIT_GAME;
+            d->flag_done = true;
+        } else if (d->clicked_i != -1) {
+            ui_sound_play_sfx_24();
+            const struct main_menu_item_s *it = d->items[d->clicked_i];
+            if (it->type == MAIN_MENU_ITEM_TYPE_RETURN) {
+                d->ret = it->ret_action;
+                d->flag_done = true;
+            }
         }
-        if (oi1 == oi_continue) {
-            d->selected = MAIN_MENU_ACT_CONTINUE_GAME;
-        } else if (oi1 == oi_loadgame) {
-            d->selected = MAIN_MENU_ACT_LOAD_GAME;
-        } else if (oi1 == oi_newgame) {
-            d->selected = MAIN_MENU_ACT_NEW_GAME;
-        } else if (oi1 == oi_customgame) {
-            d->selected = MAIN_MENU_ACT_CUSTOM_GAME;
-        } else if (oi1 == oi_quit) {
-            d->selected = MAIN_MENU_ACT_QUIT_GAME;
-        } else if (oi1 == oi_tutor) {
-            d->selected = MAIN_MENU_ACT_TUTOR;
+
+        if (oi1 == oi_tutor) {
+            ui_sound_play_sfx_24();
+            d->ret = MAIN_MENU_ACT_TUTOR;
+            d->flag_done = true;
         } else if (oi1 == oi_extra) {
             ui_extra_enabled = !ui_extra_enabled;
             d->fix_version = true;
-            flag_done = false;
-        }
-        if (flag_done) {
-            ui_sound_play_sfx_24();
-        }
-        if (d->selected == -1) {
-            flag_done = false;
         }
         uiobj_finish_frame();
         if ((ui_draw_finish_mode != 0) && !flag_fadein) {
@@ -192,7 +283,7 @@ static main_menu_action_t main_menu_do(struct main_menu_data_s *d)
         ui_delay_ticks_or_click(2);
     }
     uiobj_unset_callback();
-    return d->selected;
+    return d->ret;
 }
 
 /* -------------------------------------------------------------------------- */
