@@ -40,6 +40,20 @@ static bool main_menu_have_save_any(void *vptr) {
     return false;
 }
 
+static int mm_ui_scale_helper;
+
+static bool main_menu_game_active(void *vptr) {
+    return ui_scale == mm_ui_scale_helper;
+}
+
+static bool main_menu_continue_active(void *vptr) {
+    return main_menu_have_save_continue(vptr) && main_menu_game_active(vptr);
+}
+
+static bool main_menu_load_active(void *vptr) {
+    return main_menu_have_save_any(vptr) && main_menu_game_active(vptr);
+}
+
 /* -------------------------------------------------------------------------- */
 
 #define MM_ITEMS_PER_PAGE 5
@@ -67,6 +81,7 @@ typedef enum {
     MAIN_MENU_ITEM_MOUSE,
     MAIN_MENU_ITEM_MOUSE_INVERT_SLIDER,
     MAIN_MENU_ITEM_MOUSE_INVERT_COUNTER,
+    MAIN_MENU_ITEM_UI_SCALE,
     MAIN_MENU_ITEM_BACK,
     MAIN_MENU_ITEM_NUM,
 } main_menu_item_id_t;
@@ -113,7 +128,7 @@ static struct main_menu_item_s mm_items[MAIN_MENU_ITEM_NUM] = {
     {
         "Continue",
         NULL,
-        main_menu_have_save_continue,
+        main_menu_continue_active,
         NULL,
         0,
         0,
@@ -125,7 +140,7 @@ static struct main_menu_item_s mm_items[MAIN_MENU_ITEM_NUM] = {
     {
         "Load Game",
         NULL,
-        main_menu_have_save_any,
+        main_menu_load_active,
         NULL,
         0,
         0,
@@ -137,7 +152,7 @@ static struct main_menu_item_s mm_items[MAIN_MENU_ITEM_NUM] = {
     {
         "New Game",
         NULL,
-        NULL,
+        main_menu_game_active,
         NULL,
         0,
         0,
@@ -149,7 +164,7 @@ static struct main_menu_item_s mm_items[MAIN_MENU_ITEM_NUM] = {
     {
         "Custom Game",
         NULL,
-        NULL,
+        main_menu_game_active,
         NULL,
         0,
         0,
@@ -173,7 +188,7 @@ static struct main_menu_item_s mm_items[MAIN_MENU_ITEM_NUM] = {
     {
         "Game",
         NULL,
-        NULL,
+        main_menu_game_active,
         NULL,
         0,
         0,
@@ -185,7 +200,7 @@ static struct main_menu_item_s mm_items[MAIN_MENU_ITEM_NUM] = {
     {
         "Tutorial",
         NULL,
-        NULL,
+        main_menu_game_active,
         NULL,
         0,
         0,
@@ -363,6 +378,18 @@ static struct main_menu_item_s mm_items[MAIN_MENU_ITEM_NUM] = {
         -1,
     },
     {
+        "UI Scale",
+        &mm_ui_scale_helper,
+        NULL,
+        NULL,
+        1,
+        UI_SCALE_MAX - 1,
+        MOO_KEY_UNKNOWN,
+        MAIN_MENU_ITEM_TYPE_INT,
+        -1,
+        -1,
+    },
+    {
         "Back",
         NULL,
         NULL,
@@ -400,7 +427,7 @@ static struct main_menu_page_s mm_pages[MAIN_MENU_PAGE_NUM] = {
             MAIN_MENU_ITEM_COMBAT_AUTORESOLVE,
             MAIN_MENU_ITEM_MODERN_CONTROLS,
             MAIN_MENU_ITEM_UIEXTRA,
-            -1,
+            MAIN_MENU_ITEM_UI_SCALE,
             MAIN_MENU_ITEM_BACK,
         },
     },
@@ -534,6 +561,10 @@ static void main_menu_draw_cb(void *vptr)
         lbxfont_select(2, 7, 0, 0);
         lbxfont_print_str_center(160, 193, "PROGRAM VERSION " PACKAGE_NAME " " VERSION_STR, UI_SCREEN_W, ui_scale);
     }
+    if (!main_menu_game_active(vptr)) {
+        lbxfont_select(2, 2, 0, 0);
+        lbxfont_print_str_center(160, 80, "Press Alt+Q to apply the new settings", UI_SCREEN_W, ui_scale);
+    }
     for (int i = 0; i < MM_ITEMS_PER_PAGE; ++i) {
         if (!d->items[i] || !d->items[i]->text) {
             continue;
@@ -631,6 +662,7 @@ static main_menu_action_t main_menu_do(struct main_menu_data_s *d)
     d->frame = 0;
     d->flag_done = false;
     d->ret = -1;
+    mm_ui_scale_helper = ui_scale;
     if (ui_draw_finish_mode != 0) {
         ui_palette_fadeout_19_19_1();
     }
@@ -668,6 +700,11 @@ static main_menu_action_t main_menu_do(struct main_menu_data_s *d)
                 ui_sound_play_sfx_06();
                 main_menu_pop_page(d);
             }
+        }
+        if(1
+          && ui_scale != mm_ui_scale_helper
+          && d->ret == MAIN_MENU_ACT_QUIT_GAME) {
+            ui_scale = mm_ui_scale_helper;
         }
 
         uiobj_finish_frame();
