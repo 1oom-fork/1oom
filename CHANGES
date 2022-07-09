@@ -1,6 +1,15 @@
 1oom-fork
 =========
 
+Version 1.4.0
+-------------
+
+The main menu has been redesigned:
+- Implemented tree structure
+- Now contains settings that were only available through the UI-Extra 
+  and configuration file
+- Responds to pressing +/-/= and scrolling with the mouse
+
 Version 1.3.1
 -------------
 

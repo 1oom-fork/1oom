@@ -10,28 +10,23 @@ arguments.
 The UI controls like the original. Consult the game manual and the readme.txt
 from v1.3. This document describes only the differences.
 
-The config file item "ui.uiscale" (set via the -uiscale command-line option)
-is an integer scaling factor for the whole UI except:
-- mouse cursor
-- galaxy movement screen map
-- sliders
-The default value is 1 for that classic 320x200 feeling. Larger values allow
-more of the galaxy to be viewed without scrolling. Mouse wheel can be used
-to adjust the scaling of the galaxy movement screen map.
-
-The config file item "ui.modern_starmap_controls" (set via
-the -modernstarmapcontrols command-line option or uiextra options menu)
-enables the following features:
-- Hovering over a star selects the star as the target if possible
-- Clicking on the target star works as Accept button
-
-The config file item "ui.space_combat_autoresolve" (set via
-the -spacecombatautoresolve command-line option or uiextra options menu)
-enables the following features:
-- Summary of forces shown before ship combat
-- New Auto and Retreat buttons for space combat autoresolve
-
 The following new UI features are always enabled/available:
+0) New main menu tree:
+0a) Tutorial is now present in the root menu (was available via Alt+"tutor")
+0b) The options submenu controls the elements of the configuration file:
+- "ui.uiscale" is an integer scaling factor for the whole UI except
+  mouse cursor, galaxy movement screen map and sliders. The default
+  value is 1 for that classic 320x200 feeling. Larger values allow more
+  of the galaxy to be viewed without scrolling. Mouse wheel can be used
+  to adjust the scaling of the galaxy movement screen map.
+- "ui.modern_starmap_controls" enables the following:
+  - Hovering over a star selects the star as the target if possible
+  - Clicking on the target star works as Accept button
+- "ui.space_combat_autoresolve" enables the following:
+  - Summary of forces shown before ship combat
+  - New Auto and Retreat buttons for space combat autoresolve
+- "ui.enable_bomb_animation" allows to disable bomb animation in combat
+- "ui.uiextra" (see below)
 1) New game options
 - Custom Game screen allows local multiplayer
 - Custom Game screen allows setting opponent race/banner/names and AI/human flag
@@ -102,14 +97,12 @@ The following new UI features are always enabled/available:
 - Alt-Enter to toggle full screen mode
 - Lowercase allowed in save names
 - Load Game screen uses numbers as hotkeys for slots
-- "ui.skip_bomb_animation = true" or -nobombanimation to disable bomb animation
 - Unlike the original, 1oom does not autosave the "continue game" (save slot 7)
 when starting a new game or every N turns. It only saves it when quitting the
 game via Game -> Quit or when F10 is pressed while in the "control screen" /
 "galaxy movement screen".
 
-The config file item "ui.uiextra" (set via the -uiextra command-line option)
-or pressing Alt-X in the main menu enables the following extra UI features:
+The config file item "ui.uiextra" enables the following extra UI features:
 1) Star map controls
 - Hovering over a planet draws a ruler with the distance in parsec from the
   currently selected planet if is in the screen.
