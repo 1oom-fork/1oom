@@ -570,7 +570,7 @@ struct main_menu_data_s {
     main_menu_page_id_t pages_stack[MM_PAGE_STACK_SIZE];
     int pages_stack_i;
     int16_t item_oi[MM_ITEMS_PER_PAGE];
-    int16_t oi_quit;
+    int16_t oi_quit, oi_plus, oi_minus, oi_equals;
     bool active[MM_ITEMS_PER_PAGE];
     int frame;
     main_menu_action_t ret;
@@ -608,6 +608,9 @@ static bool main_menu_load_page(struct main_menu_data_s *d, main_menu_page_id_t 
     main_menu_refresh_screen(d);
     uiobj_table_clear();
     d->oi_quit = uiobj_add_alt_str("q");
+    d->oi_plus = uiobj_add_inputkey(MOO_KEY_PLUS);
+    d->oi_minus = uiobj_add_inputkey(MOO_KEY_MINUS);
+    d->oi_equals = uiobj_add_inputkey(MOO_KEY_EQUALS);
     for (int i = 0; i < MM_ITEMS_PER_PAGE; ++i) {
         d->item_oi[i] = UIOBJI_INVALID;
         if (mm_pages[page_i].item_id[i] < 0 || mm_pages[page_i].item_id[i] >= MAIN_MENU_ITEM_NUM) {
@@ -791,6 +794,13 @@ static main_menu_action_t main_menu_do(struct main_menu_data_s *d)
         if (oi1 == d->oi_quit) {
             d->ret = MAIN_MENU_ACT_QUIT_GAME;
             d->flag_done = true;
+        } else if ((oi1 == d->oi_plus || oi1 == d->oi_equals) && d->highlight != -1) {
+            d->clicked_i = d->highlight;
+            ui_sound_play_sfx_24();
+            main_menu_item_do_plus(d);
+        } else if ((oi1 == d->oi_minus) && d->highlight != -1) {
+            ui_sound_play_sfx_24();
+            main_menu_item_do_minus(d);
         } else if (d->clicked_i != -1) {
             ui_sound_play_sfx_24();
             main_menu_item_do_plus(d);
