@@ -65,3 +65,13 @@ void ui_sound_stop_music(void)
 {
     hw_audio_music_stop();
 }
+
+void ui_sound_music_volume(int volume)
+{
+    hw_audio_music_volume(volume);
+}
+
+void ui_sound_sfx_volume(int volume)
+{
+    hw_audio_sfx_volume(volume);
+}

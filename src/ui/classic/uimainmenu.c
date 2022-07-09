@@ -76,6 +76,14 @@ static void main_menu_toggle_music(void *vptr) {
     }
 }
 
+static void main_menu_update_music_volume(void *vptr) {
+    ui_sound_music_volume(opt_music_volume);
+}
+
+static void main_menu_update_sfx_volume(void *vptr) {
+    ui_sound_sfx_volume(opt_sfx_volume);
+}
+
 /* -------------------------------------------------------------------------- */
 
 #define MM_ITEMS_PER_PAGE 5
@@ -325,7 +333,7 @@ static struct main_menu_item_s mm_items[MAIN_MENU_ITEM_NUM] = {
         "Music Volume",
         &opt_music_volume,
         NULL,
-        NULL,
+        main_menu_update_music_volume,
         0,
         128,
         MOO_KEY_UNKNOWN,
@@ -337,7 +345,7 @@ static struct main_menu_item_s mm_items[MAIN_MENU_ITEM_NUM] = {
         "SFX Volume",
         &opt_sfx_volume,
         NULL,
-        NULL,
+        main_menu_update_sfx_volume,
         0,
         128,
         MOO_KEY_UNKNOWN,
