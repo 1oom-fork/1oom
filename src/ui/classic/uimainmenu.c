@@ -66,6 +66,16 @@ static void main_menu_next_aspect(void *vptr) {
     hw_video_update_aspect();
 }
 
+static void main_menu_toggle_music(void *vptr) {
+    if (opt_music_enabled) {
+        ui_sound_stop_music();
+        opt_music_enabled = false;
+    } else {
+        opt_music_enabled = true;
+        ui_sound_play_music(1);
+    }
+}
+
 /* -------------------------------------------------------------------------- */
 
 #define MM_ITEMS_PER_PAGE 5
@@ -291,7 +301,7 @@ static struct main_menu_item_s mm_items[MAIN_MENU_ITEM_NUM] = {
         "Music",
         &opt_music_enabled,
         NULL,
-        NULL,
+        main_menu_toggle_music,
         0,
         0,
         MOO_KEY_m,
