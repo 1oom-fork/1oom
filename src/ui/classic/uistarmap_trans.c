@@ -223,13 +223,13 @@ void ui_starmap_trans(struct game_s *g, player_id_t active_player)
         ui_starmap_handle_common(g, &d);
         if (d.oi1 == d.oi_minus) {
             ui_sound_play_sfx_24();
-            SUBSAT0(d.tr.num, (trans_max / 10) ? (trans_max / 10) : 1);
+            SUBSAT0(d.tr.num, (trans_max + 9) / 10);
         } else if (d.oi1 == oi_minus) {
             ui_sound_play_sfx_24();
             SUBSAT0(d.tr.num, 1);
         } else if (d.oi1 == d.oi_plus || d.oi1 == d.oi_equals) {
             ui_sound_play_sfx_24();
-            d.tr.num += (trans_max / 10) ? (trans_max / 10) : 1;
+            d.tr.num += (trans_max + 9) / 10;
             SETMIN(d.tr.num, trans_max);
         } else if (d.oi1 == oi_plus) {
             ui_sound_play_sfx_24();
