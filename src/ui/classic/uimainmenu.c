@@ -570,12 +570,15 @@ struct main_menu_data_s {
     main_menu_page_id_t pages_stack[MM_PAGE_STACK_SIZE];
     int pages_stack_i;
     int16_t item_oi[MM_ITEMS_PER_PAGE];
+    int16_t item_wheel_oi[MM_ITEMS_PER_PAGE];
     int16_t oi_quit, oi_plus, oi_minus, oi_equals;
     bool active[MM_ITEMS_PER_PAGE];
+    int16_t scrollmisc;
     int frame;
     main_menu_action_t ret;
     bool flag_done;
     int clicked_i;
+    int wheel_i;
     int highlight;
     uint8_t *gfx_vortex;
     uint8_t *gfx_title;
@@ -607,12 +610,14 @@ static bool main_menu_load_page(struct main_menu_data_s *d, main_menu_page_id_t 
     }
     main_menu_refresh_screen(d);
     uiobj_table_clear();
+    d->scrollmisc = 0;
     d->oi_quit = uiobj_add_alt_str("q");
     d->oi_plus = uiobj_add_inputkey(MOO_KEY_PLUS);
     d->oi_minus = uiobj_add_inputkey(MOO_KEY_MINUS);
     d->oi_equals = uiobj_add_inputkey(MOO_KEY_EQUALS);
     for (int i = 0; i < MM_ITEMS_PER_PAGE; ++i) {
         d->item_oi[i] = UIOBJI_INVALID;
+        d->item_wheel_oi[i] = UIOBJI_INVALID;
         if (mm_pages[page_i].item_id[i] < 0 || mm_pages[page_i].item_id[i] >= MAIN_MENU_ITEM_NUM) {
             d->items[i] = NULL;
             continue;
@@ -626,6 +631,7 @@ static bool main_menu_load_page(struct main_menu_data_s *d, main_menu_page_id_t 
         if (d->active[i]) {
             int y = 0x79 + 0xd * i;
             d->item_oi[i] = uiobj_add_mousearea(0x3c, y, 0x104, y + 0xd, d->items[i]->key);
+            d->item_wheel_oi[i] = uiobj_add_mousewheel(0x3c, y, 0x104, y + 0xd, &d->scrollmisc);
         }
     }
     return true;
@@ -649,6 +655,16 @@ static int main_menu_get_item(struct main_menu_data_s *d, int16_t oi)
 {
     for (int i = 0; i < MM_ITEMS_PER_PAGE; ++i) {
         if (oi == d->item_oi[i] && d->items[i] != NULL) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+static int main_menu_get_item_wheel(struct main_menu_data_s *d, int16_t oi)
+{
+    for (int i = 0; i < MM_ITEMS_PER_PAGE; ++i) {
+        if (oi == d->item_wheel_oi[i] && d->items[i] != NULL) {
             return i;
         }
     }
@@ -791,6 +807,7 @@ static main_menu_action_t main_menu_do(struct main_menu_data_s *d)
         d->highlight = main_menu_get_item(d, oi2);
         main_menu_draw_cb(d);
         d->clicked_i = main_menu_get_item(d, oi1);
+        d->wheel_i = main_menu_get_item_wheel(d, oi1);
         if (oi1 == d->oi_quit) {
             d->ret = MAIN_MENU_ACT_QUIT_GAME;
             d->flag_done = true;
@@ -801,6 +818,17 @@ static main_menu_action_t main_menu_do(struct main_menu_data_s *d)
         } else if ((oi1 == d->oi_minus) && d->highlight != -1) {
             ui_sound_play_sfx_24();
             main_menu_item_do_minus(d);
+        } else if (d->wheel_i != -1) {
+            if ((d->scrollmisc >= 0) != (ui_mwi_counter && 1) ) {
+                d->clicked_i = d->wheel_i;
+                ui_sound_play_sfx_24();
+                main_menu_item_do_plus(d);
+            } else {
+                d->highlight = d->wheel_i;
+                ui_sound_play_sfx_24();
+                main_menu_item_do_minus(d);
+            }
+            d->scrollmisc = 0;
         } else if (d->clicked_i != -1) {
             ui_sound_play_sfx_24();
             main_menu_item_do_plus(d);
