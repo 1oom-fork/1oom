@@ -78,6 +78,7 @@ The following new UI features are always enabled/available:
 - Clicking on the production field resets the allocated reserve to zero
   or (when it is already zero) directly opens the reserve transfer dialog
 - Clicking on a ship design name cycles through the current ship design
+- Ctrl + LMB on a ship design name sets this selection everywhere
 - Clicking on #, Name, etc sorts the list
 - Clicking on the name of the planet does not close the screen
 - Added max population values and tuned some colors

@@ -305,19 +305,7 @@ static bool ui_starmap_handle_planet_controls(struct game_s *g, struct starmap_d
         return true;
     }
     if (d->oi1 == pd->oi_build_everywhere || d->oi1 == pd->oi_ctrl_s) {
-        uint8_t si = p->buildship;
-        for (uint8_t i = 0; i < g->galaxy_stars; ++i) {
-            planet_t *p2 = &(g->planet[i]);
-            if (p2->owner == d->api) {
-                if (si == BUILDSHIP_STARGATE) {
-                    if (!p2->have_stargate) {
-                        p2->buildship = BUILDSHIP_STARGATE;
-                    }
-                } else {
-                    p2->buildship = si;
-                }
-            }
-        }
+        game_planet_ship_build_everywhere(g, d->api, p->buildship);
         return true;
     }
     if (0

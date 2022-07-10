@@ -729,20 +729,24 @@ again:
                 }
                 goto again;
             } else if( oi == oi_tbl_dock[i] && !flag_trans) {
-                planet_t *p = g->planet + tbl_onscreen_planets[i];
-                int n;
                 ui_sound_play_sfx_24();
-                n = p->buildship + 1;
-                if (n >= g->eto[active_player].shipdesigns_num) {
-                    if (n >= (NUM_SHIPDESIGNS + 1)) {
-                        n = 0;
-                    } else if (g->eto[active_player].have_stargates && !p->have_stargate) {
-                        n = BUILDSHIP_STARGATE;
-                    } else {
-                        n = 0;
+                planet_t *p = g->planet + tbl_onscreen_planets[i];
+                if (kbd_is_modifier(MOO_MOD_CTRL)) {
+                    game_planet_ship_build_everywhere(g, p->owner, p->buildship);
+                } else {
+                    int n;
+                    n = p->buildship + 1;
+                    if (n >= g->eto[active_player].shipdesigns_num) {
+                        if (n >= (NUM_SHIPDESIGNS + 1)) {
+                            n = 0;
+                        } else if (g->eto[active_player].have_stargates && !p->have_stargate) {
+                            n = BUILDSHIP_STARGATE;
+                        } else {
+                            n = 0;
+                        }
                     }
+                    p->buildship = n;
                 }
-                p->buildship = n;
             }
         }
         if (oi == oi_alt_moola) {
