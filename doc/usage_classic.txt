@@ -81,6 +81,7 @@ The following new UI features are always enabled/available:
 - Clicking on #, Name, etc sorts the list
 - Clicking on the name of the planet does not close the screen
 - Added max population values and tuned some colors
+- Nebula planets show "NEB" in their shields field
 7) Other gameplay
 - Clicking the portraits in Races screen brings Report page
 - In Races screen the keys 1-5 correspond to clicking the portraits

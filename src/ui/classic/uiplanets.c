@@ -200,7 +200,7 @@ static void planets_draw_cb(void *vptr)
                 lib_sprintf(buf, sizeof(buf), "%c%i", c, v);
                 lbxfont_print_str_right(83, y0, buf, UI_SCREEN_W, ui_scale);
             }
-            if (ui_extra_enabled && p->battlebg == 0) {
+            if (p->battlebg == 0) {
                 lbxfont_select(2, 1, 0, 0);
                 lbxfont_print_str_right(149, y0, "neb", UI_SCREEN_W, ui_scale);
             } else {
