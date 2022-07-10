@@ -571,6 +571,7 @@ struct main_menu_data_s {
     int pages_stack_i;
     int16_t item_oi[MM_ITEMS_PER_PAGE];
     int16_t item_wheel_oi[MM_ITEMS_PER_PAGE];
+    int item_count;
     int16_t oi_quit, oi_plus, oi_minus, oi_equals;
     bool active[MM_ITEMS_PER_PAGE];
     int16_t scrollmisc;
@@ -600,6 +601,16 @@ static void main_menu_refresh_screen(struct main_menu_data_s *d) {
     lbxgfx_set_frame_0(d->gfx_vortex);
 }
 
+static int main_menu_get_item_y(struct main_menu_data_s *d, int i)
+{
+    if (d->item_count < 2) {
+        return 0x95;
+    }
+    int step = 0x38 / (d->item_count - 1);
+    int offset = 0x38 % (d->item_count - 1) / 2;
+    return 0x79 + offset + step * i;
+}
+
 static bool main_menu_load_page(struct main_menu_data_s *d, main_menu_page_id_t page_i)
 {
     if (page_i < 0 || page_i >= MAIN_MENU_PAGE_NUM) {
@@ -610,6 +621,7 @@ static bool main_menu_load_page(struct main_menu_data_s *d, main_menu_page_id_t 
     }
     main_menu_refresh_screen(d);
     uiobj_table_clear();
+    d->item_count = 0;
     d->scrollmisc = 0;
     d->oi_quit = uiobj_add_alt_str("q");
     d->oi_plus = uiobj_add_inputkey(MOO_KEY_PLUS);
@@ -618,18 +630,21 @@ static bool main_menu_load_page(struct main_menu_data_s *d, main_menu_page_id_t 
     for (int i = 0; i < MM_ITEMS_PER_PAGE; ++i) {
         d->item_oi[i] = UIOBJI_INVALID;
         d->item_wheel_oi[i] = UIOBJI_INVALID;
+        d->items[i] = NULL;
         if (mm_pages[page_i].item_id[i] < 0 || mm_pages[page_i].item_id[i] >= MAIN_MENU_ITEM_NUM) {
-            d->items[i] = NULL;
             continue;
         }
-        d->items[i] = &mm_items[mm_pages[page_i].item_id[i]];
-        if (!d->items[i]->text) {
-            d->items[i] = NULL;
+        d->items[d->item_count] = &mm_items[mm_pages[page_i].item_id[i]];
+        if (!d->items[d->item_count]->text) {
+            d->items[d->item_count] = NULL;
             continue;
         }
+        ++d->item_count;
+    }
+    for (int i = 0; i < d->item_count; ++i) {
         d->active[i] = d->items[i]->is_active ? d->items[i]->is_active(&d) : true;
         if (d->active[i]) {
-            int y = 0x79 + 0xd * i;
+            int y = main_menu_get_item_y(d, i);
             d->item_oi[i] = uiobj_add_mousearea(0x3c, y, 0x104, y + 0xd, d->items[i]->key);
             d->item_wheel_oi[i] = uiobj_add_mousewheel(0x3c, y, 0x104, y + 0xd, &d->scrollmisc);
         }
@@ -653,7 +668,7 @@ static void main_menu_pop_page(struct main_menu_data_s *d) {
 
 static int main_menu_get_item(struct main_menu_data_s *d, int16_t oi)
 {
-    for (int i = 0; i < MM_ITEMS_PER_PAGE; ++i) {
+    for (int i = 0; i < d->item_count; ++i) {
         if (oi == d->item_oi[i] && d->items[i] != NULL) {
             return i;
         }
@@ -663,7 +678,7 @@ static int main_menu_get_item(struct main_menu_data_s *d, int16_t oi)
 
 static int main_menu_get_item_wheel(struct main_menu_data_s *d, int16_t oi)
 {
-    for (int i = 0; i < MM_ITEMS_PER_PAGE; ++i) {
+    for (int i = 0; i < d->item_count; ++i) {
         if (oi == d->item_wheel_oi[i] && d->items[i] != NULL) {
             return i;
         }
@@ -685,11 +700,11 @@ static void main_menu_draw_cb(void *vptr)
         lbxfont_select(2, 2, 0, 0);
         lbxfont_print_str_center(160, 80, "Press Alt+Q to apply the new settings", UI_SCREEN_W, ui_scale);
     }
-    for (int i = 0; i < MM_ITEMS_PER_PAGE; ++i) {
+    for (int i = 0; i < d->item_count; ++i) {
         if (!d->items[i] || !d->items[i]->text) {
             continue;
         }
-        int y = 0x79 + 0xe * i;
+        int y = main_menu_get_item_y(d, i);
         if (d->active[i]) {
             lbxfont_select(4, (d->highlight == i) ? 3 : 2, 0, 0);
         } else {
