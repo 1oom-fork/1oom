@@ -88,7 +88,7 @@ static void ui_starmap_draw_planetinfo_do(const struct game_s *g, player_id_t ap
                 }
                 lbxfont_print_str_right(305, 36, str, UI_SCREEN_W, ui_scale);
                 lbxfont_select(2, 0xe, 0, 0);
-                if (show_plus && (p->owner == api) && ((p->max_pop2 + g->eto[api].have_terraform_n) > max_pop) && (max_pop < game_num_max_pop)) {
+                if (show_plus && (p->owner == api) && game_planet_can_terraform(g, p)) {
                     lbxfont_print_str_normal(289, 44, "+", UI_SCREEN_W, ui_scale);
                     x = 287;
                     xp = x - 22;
@@ -511,13 +511,11 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
                 if (ui_show_populations && p->owner == d->api) {
                     char str[9];
                     int max_pop;
-                    bool plus;
-                    plus = ((p->max_pop2 + g->eto[d->api].have_terraform_n) > p->max_pop3) && (p->max_pop3 < game_num_max_pop);
                     max_pop = p->max_pop3;
                     if (g->eto[d->api].race != RACE_SILICOID) {
                         max_pop -= p->waste;
                     }
-                    if (plus) {
+                    if (game_planet_can_terraform(g, p)) {
                         lib_sprintf(str, sizeof(str), "%i/%i+", p->pop, max_pop);
                     } else {
                         lib_sprintf(str, sizeof(str), "%i/%i", p->pop, max_pop);
