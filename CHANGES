@@ -1,6 +1,20 @@
 1oom-fork
 =========
 
+Version 1.4.1
+-------------
+
+The following features was improved:
+- Main menu
+	- Improved menu item positions
+- Planets screen
+	- Nebula planets show "NEB" in their Shields field (was in ui-extra)
+	- Improved sort order of Shields field
+	- Ctrl + LMB on a ship design name sets this selection everywhere
+- Old controls
+	- Click on an already selected planet works as accept button
+		(was in ui-extra)
+
 Version 1.4.0
 -------------
 
