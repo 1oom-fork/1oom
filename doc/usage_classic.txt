@@ -68,6 +68,7 @@ The following new UI features are always enabled/available:
 - The ship production selection can be set everywhere by pressing Ctrl + S
 - Eco slider shows fractional population growth if growth is less than 10
 5) Fleet controls
+- Click on an already selected planet works as accept button
 - Clicking cycles selection of overlapping fleets
 - When sending a fleet Tab cycles ships and <> adjusts selected ship
 - Fleet relocation point is allowed for any star within normal fuel range

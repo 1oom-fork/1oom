@@ -1485,7 +1485,7 @@ bool ui_starmap_handle_common(struct game_s *g, struct starmap_data_s *d) {
     if (d->controllable) {
         int i;
         i = ui_starmap_cursor_on_star(g, d, d->oi1, d->api);
-        if (ui_modern_starmap_controls && i != PLANET_NONE) {
+        if ((ui_modern_starmap_controls || i == g->planet_focus_i[d->api]) && i != PLANET_NONE) {
             if (d->is_valid_destination(g, d, i)) {
                 g->planet_focus_i[d->api] = i;
                 d->flag_done = true;
