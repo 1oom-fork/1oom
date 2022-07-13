@@ -67,6 +67,7 @@ The following new UI features are always enabled/available:
 - Bases can be scrapped by clicking on the Bases text
 - The ship production selection can be set everywhere by pressing Ctrl + S
 - Eco slider shows fractional population growth if growth is less than 10
+- Nebula planets have a purple instead of a red frame around their picture
 5) Fleet controls
 - Click on an already selected planet works as accept button
 - Clicking cycles selection of overlapping fleets
@@ -131,8 +132,6 @@ The config file item "ui.uiextra" enables the following extra UI features:
 - The ship production selection can be set everywhere by pressing Ctrl +
   clicking on the ship picture.
 - When espionage was successful, clicking on the race icon opens the spy report
-- Nebula planets show "NEB" in their shields field and have a purple instead
-  of a red frame around their picture
 - Tech screen has lights showing when you reach max research bonus
 - Clicking on the Tech screen lights sets the slider to bonus limit
 - Tech bonus amount is shown in the slider background
