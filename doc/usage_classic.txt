@@ -87,6 +87,7 @@ The following new UI features are always enabled/available:
 - Nebula planets show "NEB" in their shields field
 7) Other gameplay
 - Clicking the portraits in Races screen brings Report page
+- Report screen shows name of AI leaders 
 - In Races screen the keys 1-5 correspond to clicking the portraits
 - In Tech screen Tab runs through tech fields, A-F/1-6 are for field slider +/-
 - Pressing = or # on the Tech screen adjusts only the unlocked sliders
@@ -143,7 +144,7 @@ The config file item "ui.uiextra" enables the following extra UI features:
   your last planet of choice
 - Clicking on Station or ship names on Fleet screen sorts the list
 - I to show message filter options
-- Report screen shows name of AI leaders, Map screen shows current year
+- Map screen shows current year
 4) Misc
 - Game options screen Silent/FX Only/Music is replaced with more options
 - Continue, Undo and Init saves can be chosen in the Load Game screen

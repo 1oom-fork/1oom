@@ -56,7 +56,7 @@ static void empirereport_draw_cb(void *vptr)
     ui_draw_filled_rect(17, 58, 64, 68, tbl_banner_color2[e->banner], ui_scale);
     lbxfont_select(5, 6, 0, 0);
     {
-        const char *str = ui_extra_enabled ? g->emperor_names[d->pi] : game_str_tbl_races[e->race];
+        const char *str = g->emperor_names[d->pi];
         lbxfont_print_str_center(40, 60, str, UI_SCREEN_W, ui_scale);
     }
     lbxfont_select(0, 6, 0, 0);
