@@ -508,7 +508,7 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
             if (do_print) {
                 tx = (p->x - x) * 2 + 14;
                 ty = (p->y - y) * 2 + 22;
-                if (ui_show_populations && p->owner == d->api) {
+                if (ui_show_populations && (p->owner == d->api || BOOLVEC_IS1(p->within_srange, d->api))) {
                     char str[9];
                     int max_pop;
                     max_pop = p->max_pop3;
