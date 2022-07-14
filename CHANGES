@@ -1,6 +1,21 @@
 1oom-fork
 =========
 
+Version 1.4.2
+-------------
+
+The following features was improved:
+- Planet info
+	- Alt+O shows populations of all planets within scanner range
+	- Now always draws + if can terraform
+	
+Added features from extra UI:
+- Nebula planets have a purple frame instead of red
+- Report screen shows name of AI leaders
+
+Fixed compilation in Windows:
+- Now always skips building X11 binaries
+
 Version 1.4.1
 -------------
 
