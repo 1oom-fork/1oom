@@ -7,8 +7,6 @@ noinst_LIBRARIES = libuiclassic.a
 
 libuiclassic_a_SOURCES = \
     uiaudience.c \
-    uibasescrap.c \
-    uibasescrap.h \
     uibattle.c \
     uibattlepre.c \
     uibattlepre.h \
@@ -78,6 +76,7 @@ libuiclassic_a_SOURCES = \
     uispy_sab.c \
     uistarmap.c \
     uistarmap.h \
+    uistarmap_bases.c \
     uistarmap_common.c \
     uistarmap_common.h \
     uistarmap_enroute.c \

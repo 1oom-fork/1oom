@@ -15,7 +15,6 @@
 #include "lib.h"
 #include "log.h"
 #include "types.h"
-#include "uibasescrap.h"
 #include "uicaught.h"
 #include "uicursor.h"
 #include "uidefs.h"
@@ -234,7 +233,7 @@ ui_turn_action_t ui_game_turn(struct game_s *g, int *load_game_i_ptr, int pi)
                 ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
                 break;
             case UI_MAIN_LOOP_SCRAP_BASES:
-                ui_basescrap(g, pi);
+                ui_starmap_bases(g, pi);
                 ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
                 break;
             case UI_MAIN_LOOP_SPIES_CAUGHT:
