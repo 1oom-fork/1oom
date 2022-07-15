@@ -419,8 +419,8 @@ const char *game_str_gm_prodb3 = "SHIPS AND DEFENSE";
 const char *game_str_gm_gmap = "Galaxy Map";
 const char *game_str_gm_mapkey = "Map Key";
 
-const char *game_str_bs_line1 = "How many missile";
-const char *game_str_bs_line2 = "bases to eliminate?";
+const char *game_str_bs_line1 = "Defenses";
+const char *game_str_bs_line2 = "How many missile bases to eliminate?";
 const char *game_str_bs_base = "Base";
 const char *game_str_bs_bases = "Bases";
 
