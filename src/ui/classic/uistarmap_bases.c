@@ -48,6 +48,7 @@ static void ui_starmap_bases_draw_cb1(void *vptr)
     const struct game_s *g = d->g;
     const int x = 56, y = 50;
     const planet_t *p = &(g->planet[g->planet_focus_i[d->api]]);
+    ui_starmap_draw_basic(d);
     lbxgfx_draw_frame(x, y, bd->gfx, UI_SCREEN_W, ui_scale);
     ui_draw_filled_rect(x + 14, y + 35, x + 64, y + 38, 0x2f, ui_scale);
     if (bd->slider_var > 0) {
@@ -94,7 +95,7 @@ void ui_starmap_bases(struct game_s *g, player_id_t active_player)
     oi_minus = uiobj_add_mousearea(x + 10, y + 33, x + 12, y + 41, MOO_KEY_UNKNOWN);
     oi_plus = uiobj_add_mousearea(x + 66, y + 33, x + 70, y + 41, MOO_KEY_UNKNOWN);
 
-    uiobj_set_callback_and_delay(ui_starmap_bases_draw_cb1, &d, 1);
+    uiobj_set_callback_and_delay(ui_starmap_bases_draw_cb1, &d, STARMAP_DELAY);
 
     while (!flag_done) {
         int16_t oi;
@@ -121,7 +122,7 @@ void ui_starmap_bases(struct game_s *g, player_id_t active_player)
         if (!flag_done) {
             ui_starmap_bases_draw_cb1(&d);
             ui_draw_finish();
-            ui_delay_ticks_or_click(3);
+            ui_delay_ticks_or_click(STARMAP_DELAY);
         }
     }
 
