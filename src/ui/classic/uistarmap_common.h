@@ -103,6 +103,9 @@ struct starmap_data_s {
             void *gov_data;
         } sm;   /* starmap_do */
         struct {
+            void *bases_data;
+        } ba;
+        struct {
         } rl;   /* reloc */
         struct {
             int16_t num;

@@ -22,13 +22,12 @@
 #include "uiobj.h"
 #include "uipal.h"
 #include "uisound.h"
+#include "uistarmap_common.h"
 
 /* -------------------------------------------------------------------------- */
 
 struct starmap_bases_data_s {
-    struct game_s *g;
     uint8_t *gfx;
-    player_id_t api;
     int16_t slider_var;
 };
 
@@ -44,10 +43,11 @@ static void ui_starmap_bases_free_data(struct starmap_bases_data_s *d)
 
 static void ui_starmap_bases_draw_cb1(void *vptr)
 {
-    struct starmap_bases_data_s *bd = vptr;
-    struct game_s *g = bd->g;
+    struct starmap_data_s *d = vptr;
+    struct starmap_bases_data_s *bd = d->ba.bases_data;
+    const struct game_s *g = d->g;
     const int x = 56, y = 50;
-    const planet_t *p = &(g->planet[g->planet_focus_i[bd->api]]);
+    const planet_t *p = &(g->planet[g->planet_focus_i[d->api]]);
     lbxgfx_draw_frame(x, y, bd->gfx, UI_SCREEN_W, ui_scale);
     ui_draw_filled_rect(x + 14, y + 35, x + 64, y + 38, 0x2f, ui_scale);
     if (bd->slider_var > 0) {
@@ -68,14 +68,17 @@ static void ui_starmap_bases_draw_cb1(void *vptr)
 
 void ui_starmap_bases(struct game_s *g, player_id_t active_player)
 {
+    struct starmap_data_s d;
+    ui_starmap_init_common_data(g, &d, active_player);
+
     struct starmap_bases_data_s bd;
+    d.ba.bases_data = &bd;
+
     bool flag_done = false;
     int16_t oi_cancel, oi_accept, oi_plus, oi_minus;
     const int x = 56, y = 50;
     planet_t *p = &(g->planet[g->planet_focus_i[active_player]]);
 
-    bd.g = g;
-    bd.api = active_player;
     ui_starmap_bases_load_data(&bd);
     ui_draw_copy_buf();
     uiobj_finish_frame();
@@ -83,13 +86,15 @@ void ui_starmap_bases(struct game_s *g, player_id_t active_player)
     ui_cursor_setup_area(1, &ui_cursor_area_tbl[0]);
 
     uiobj_table_clear();
+    STARMAP_UIOBJ_CLEAR_COMMON();
+
     oi_cancel = uiobj_add_t0(x + 10, y + 47, "", ui_data.gfx.starmap.reloc_bu_cancel, MOO_KEY_ESCAPE);
     oi_accept = uiobj_add_t0(x + 66, y + 47, "", ui_data.gfx.starmap.reloc_bu_accept, MOO_KEY_SPACE);
     uiobj_add_slider_int(x + 14, y + 35, 0, 100, 50, 9, &bd.slider_var);
     oi_minus = uiobj_add_mousearea(x + 10, y + 33, x + 12, y + 41, MOO_KEY_UNKNOWN);
     oi_plus = uiobj_add_mousearea(x + 66, y + 33, x + 70, y + 41, MOO_KEY_UNKNOWN);
 
-    uiobj_set_callback_and_delay(ui_starmap_bases_draw_cb1, &bd, 1);
+    uiobj_set_callback_and_delay(ui_starmap_bases_draw_cb1, &d, 1);
 
     while (!flag_done) {
         int16_t oi;
@@ -114,7 +119,7 @@ void ui_starmap_bases(struct game_s *g, player_id_t active_player)
             SETMIN(bd.slider_var, 100);
         }
         if (!flag_done) {
-            ui_starmap_bases_draw_cb1(&bd);
+            ui_starmap_bases_draw_cb1(&d);
             ui_draw_finish();
             ui_delay_ticks_or_click(3);
         }
