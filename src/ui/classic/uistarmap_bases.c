@@ -64,16 +64,26 @@ static void ui_starmap_bases_draw_cb1(void *vptr)
 
 /* -------------------------------------------------------------------------- */
 
+static bool ui_starmap_bases_is_valid_selection(const struct game_s *g, const struct starmap_data_s *d, int i)
+{
+    const planet_t *p = &(g->planet[g->planet_focus_i[d->api]]);
+    return p->owner == d->api;
+}
+
 void ui_starmap_bases(struct game_s *g, player_id_t active_player)
 {
     struct starmap_data_s d;
     ui_starmap_init_common_data(g, &d, active_player);
 
+    d.controllable = false;
+    d.draw_own_routes = true;
+    d.is_valid_selection = ui_starmap_bases_is_valid_selection;
+    d.do_accept = NULL;
+
     struct starmap_bases_data_s bd;
     d.ba.bases_data = &bd;
 
-    bool flag_done = false;
-    int16_t oi_cancel, oi_accept, oi_plus, oi_minus;
+    int16_t oi_plus, oi_minus;
     planet_t *p = &(g->planet[g->planet_focus_i[active_player]]);
 
     bd.slider_var = 0;
@@ -82,37 +92,37 @@ void ui_starmap_bases(struct game_s *g, player_id_t active_player)
     uiobj_table_clear();
     STARMAP_UIOBJ_CLEAR_COMMON();
 
-    oi_cancel = uiobj_add_t0(227, 163, "", ui_data.gfx.starmap.reloc_bu_cancel, MOO_KEY_ESCAPE);
-    oi_accept = uiobj_add_t0(271, 163, "", ui_data.gfx.starmap.reloc_bu_accept, MOO_KEY_SPACE);
-    uiobj_add_slider_int(258, 124, 0, p->missile_bases, 41, 8, &bd.slider_var);
-    oi_minus = uiobj_add_mousearea(252, 124, 256, 131, MOO_KEY_UNKNOWN);
-    oi_plus = uiobj_add_mousearea(301, 124, 305, 131, MOO_KEY_UNKNOWN);
+    ui_starmap_fill_oi_common(&d);
+    d.oi_cancel = uiobj_add_t0(227, 163, "", ui_data.gfx.starmap.reloc_bu_cancel, MOO_KEY_ESCAPE);
+    d.oi_accept = uiobj_add_t0(271, 163, "", ui_data.gfx.starmap.reloc_bu_accept, MOO_KEY_SPACE);
+    if (p->missile_bases > 0) {
+        uiobj_add_slider_int(258, 124, 0, p->missile_bases, 41, 8, &bd.slider_var);
+        oi_minus = uiobj_add_mousearea(252, 124, 256, 131, MOO_KEY_UNKNOWN);
+        oi_plus = uiobj_add_mousearea(301, 124, 305, 131, MOO_KEY_UNKNOWN);
+    }
 
     uiobj_set_callback_and_delay(ui_starmap_bases_draw_cb1, &d, STARMAP_DELAY);
 
-    while (!flag_done) {
-        int16_t oi;
-        oi = uiobj_handle_input_cond();
+    while (!d.flag_done) {
         ui_delay_prepare();
-        if ((oi == oi_cancel) || (oi == UIOBJI_ESC)) {
-            ui_sound_play_sfx_06();
-            flag_done = true;
-        } else if (oi == oi_accept) {
+        if (ui_starmap_handle_common(g, &d)) {
+        } else if (d.oi1 == d.oi_accept) {
             int n;
             ui_sound_play_sfx_24();
             n = bd.slider_var;
             p->missile_bases -= n;
             g->eto[active_player].reserve_bc += (n * game_get_base_cost(g, active_player)) / 4;
-            flag_done = true;
+            d.flag_done = true;
             SETMAX(p->missile_bases, 0);
-        } else if (oi == oi_minus) {
+        } else if (d.oi1 == oi_minus) {
             --bd.slider_var;
             SETMAX(bd.slider_var, 0);
-        } else if (oi == oi_plus) {
+        } else if (d.oi1 == oi_plus) {
             ++bd.slider_var;
             SETMIN(bd.slider_var, p->missile_bases);
         }
-        if (!flag_done) {
+        if (!d.flag_done) {
+            ui_starmap_select_bottom_highlight(g, &d);
             ui_starmap_bases_draw_cb1(&d);
             ui_draw_finish();
             ui_delay_ticks_or_click(STARMAP_DELAY);
