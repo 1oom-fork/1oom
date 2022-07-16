@@ -97,7 +97,7 @@ void ui_starmap_orbit_en(struct game_s *g, player_id_t active_player)
     d.oe.scanner_delay = 0;
 
     d.controllable = false;
-    d.is_valid_destination = NULL;
+    d.is_valid_selection = NULL;
     d.do_accept = NULL;
 
     d.oe.player = ui_data.starmap.orbit_player;

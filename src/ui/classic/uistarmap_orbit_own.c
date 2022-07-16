@@ -183,7 +183,7 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
     const shipcount_t *os;
 
     d.controllable = true;
-    d.is_valid_destination = ui_starmap_orbit_own_valid_destination;
+    d.is_valid_selection = ui_starmap_orbit_own_valid_destination;
     d.do_accept = ui_starmap_orbit_own_do_accept;
 
     r = &(g->eto[active_player].orbit[d.from]);

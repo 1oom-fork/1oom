@@ -1253,7 +1253,11 @@ static void ui_starmap_select_planet(struct game_s *g, struct starmap_data_s *d,
     }
     g->planet_focus_i[d->api] = i;
     d->from = i;
-    ui_starmap_reset_main_loop_action(g, d);
+    if (d->is_valid_selection == NULL || !d->is_valid_selection(g, d, i)) {
+        ui_starmap_reset_main_loop_action(g, d);
+    } else {
+        d->flag_done = true;
+    }
 }
 
 static void ui_starmap_focus_planet(struct game_s *g, struct starmap_data_s *d, int i) {
@@ -1311,7 +1315,7 @@ void ui_starmap_init_common_data(struct game_s *g, struct starmap_data_s *d, pla
     d->gov_highlight = 0;
     d->from = g->planet_focus_i[active_player];
 
-    d->is_valid_destination = NULL;
+    d->is_valid_selection = NULL;
 }
 
 bool ui_starmap_handle_common(struct game_s *g, struct starmap_data_s *d) {
@@ -1483,7 +1487,7 @@ bool ui_starmap_handle_common(struct game_s *g, struct starmap_data_s *d) {
     ui_starmap_handle_oi_ctrl(d, d->oi1);
     if (d->oi1 == d->oi_accept && d->controllable) {
         ui_sound_play_sfx_24();
-        if (d->is_valid_destination == NULL || d->is_valid_destination(g, d, g->planet_focus_i[d->api])) {
+        if (d->is_valid_selection == NULL || d->is_valid_selection(g, d, g->planet_focus_i[d->api])) {
             d->do_accept(g, d);
             ui_starmap_reset_main_loop_action(g, d);
             return true;
@@ -1493,7 +1497,7 @@ bool ui_starmap_handle_common(struct game_s *g, struct starmap_data_s *d) {
         int i;
         i = ui_starmap_cursor_on_star(g, d, d->oi1, d->api);
         if ((ui_modern_starmap_controls || i == g->planet_focus_i[d->api]) && i != PLANET_NONE) {
-            if (d->is_valid_destination == NULL || d->is_valid_destination(g, d, i)) {
+            if (d->is_valid_selection == NULL || d->is_valid_selection(g, d, i)) {
                 g->planet_focus_i[d->api] = i;
                 d->do_accept(g, d);
                 ui_starmap_reset_main_loop_action(g, d);
