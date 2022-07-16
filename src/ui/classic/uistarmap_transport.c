@@ -152,7 +152,6 @@ static void ui_starmap_transport_draw_cb(void *vptr)
 static void ui_starmap_transport_do_accept(struct game_s *g, struct starmap_data_s *d) {
     transport_t *r = &g->transport[ui_data.starmap.fleet_selected];
     r->dest = g->planet_focus_i[d->api];
-    ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
 }
 
 void ui_starmap_transport(struct game_s *g, player_id_t active_player)

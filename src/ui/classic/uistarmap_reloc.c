@@ -77,7 +77,6 @@ static void ui_starmap_reloc_draw_cb(void *vptr)
 
 static void ui_starmap_reloc_do_accept(struct game_s *g, struct starmap_data_s *d) {
     g->planet[d->from].reloc = g->planet_focus_i[d->api];
-    ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
 }
 
 void ui_starmap_reloc(struct game_s *g, player_id_t active_player)

@@ -174,7 +174,6 @@ static void ui_starmap_trans_do_accept(struct game_s *g, struct starmap_data_s *
             game_planet_govern(g, p);
         }
     }
-    ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
 }
 
 void ui_starmap_trans(struct game_s *g, player_id_t active_player)

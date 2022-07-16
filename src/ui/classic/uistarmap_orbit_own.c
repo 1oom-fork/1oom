@@ -163,7 +163,6 @@ static void ui_starmap_orbit_own_do_accept(struct game_s *g, struct starmap_data
         game_send_fleet_from_orbit(g, d->api, d->from, g->planet_focus_i[d->api], d->oo.ships, shiptypes, 6);
         game_update_visibility(g);
     }
-    ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
 }
 
 void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)

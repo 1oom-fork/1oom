@@ -150,7 +150,6 @@ static void ui_starmap_enroute_draw_cb(void *vptr)
 static void ui_starmap_enroute_do_accept(struct game_s *g, struct starmap_data_s *d) {
     fleet_enroute_t *r = &g->enroute[ui_data.starmap.fleet_selected];
     game_fleet_redirect(g, r, d->en.pon, g->planet_focus_i[d->api]);
-    ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
 }
 
 void ui_starmap_enroute(struct game_s *g, player_id_t active_player)
