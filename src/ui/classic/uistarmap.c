@@ -515,6 +515,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
     d.sm.gov_data = &gov_d;
 
     d.controllable = false;
+    d.draw_own_routes = true;
     d.is_valid_selection = NULL;
     d.do_accept = NULL;
 

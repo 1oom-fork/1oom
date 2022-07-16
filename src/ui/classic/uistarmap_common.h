@@ -98,6 +98,7 @@ struct starmap_data_s {
     uint8_t from;
     bool can_select_fleet;
     bool controllable;
+    bool draw_own_routes;
     union {
         struct {
             void *planet_data;

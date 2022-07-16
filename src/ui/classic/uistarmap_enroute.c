@@ -175,6 +175,7 @@ void ui_starmap_enroute(struct game_s *g, player_id_t active_player)
     }
 
     d.controllable = r->owner == active_player && d.en.can_move != NO_MOVE;
+    d.draw_own_routes = d.controllable;
     d.is_valid_selection = d.controllable ? ui_starmap_enroute_valid_destination : NULL;
     d.do_accept = ui_starmap_enroute_do_accept;
 

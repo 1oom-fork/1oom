@@ -169,6 +169,7 @@ void ui_starmap_transport(struct game_s *g, player_id_t active_player)
     d.ts.ds.xoff2 = 0;
 
     d.controllable = g->eto[active_player].have_hyperspace_comm && r->owner == active_player;
+    d.draw_own_routes = d.controllable;
     d.is_valid_selection = ui_starmap_transport_valid_destination;
     d.do_accept = ui_starmap_transport_do_accept;
 
