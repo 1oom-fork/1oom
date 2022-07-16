@@ -1315,6 +1315,7 @@ void ui_starmap_init_common_data(struct game_s *g, struct starmap_data_s *d, pla
     d->gov_highlight = 0;
     d->from = g->planet_focus_i[active_player];
 
+    d->can_select_fleet = true;
     d->is_valid_selection = NULL;
 }
 
@@ -1449,12 +1450,7 @@ bool ui_starmap_handle_common(struct game_s *g, struct starmap_data_s *d) {
         d->flag_done = true;
         return true;
     }
-    if (ui_data.ui_main_loop_action == UI_MAIN_LOOP_STARMAP ||
-            ui_data.ui_main_loop_action == UI_MAIN_LOOP_ENROUTE_SEL ||
-            ui_data.ui_main_loop_action == UI_MAIN_LOOP_ORBIT_OWN_SEL ||
-            ui_data.ui_main_loop_action == UI_MAIN_LOOP_ORBIT_EN_SEL ||
-            ui_data.ui_main_loop_action == UI_MAIN_LOOP_TRANSPORT_SEL)
-    {
+    if (d->can_select_fleet) {
         int i = ui_starmap_cursor_on_enroute(g, d, d->oi1);
         if (i != -1) {
             ui_data.starmap.fleet_selected = i;

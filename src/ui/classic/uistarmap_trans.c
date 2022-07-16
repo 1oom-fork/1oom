@@ -199,6 +199,7 @@ void ui_starmap_trans(struct game_s *g, player_id_t active_player)
     d.tr.num = p->trans_num;
     trans_max = p->pop / 2;
 
+    d.can_select_fleet = false;
     d.controllable = true;
     d.is_valid_selection = ui_starmap_trans_valid_destination;
     d.do_accept = ui_starmap_trans_do_accept;

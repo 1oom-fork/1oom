@@ -96,6 +96,7 @@ struct starmap_data_s {
     int16_t scrollx, scrolly;
     uint8_t scrollz;
     uint8_t from;
+    bool can_select_fleet;
     bool controllable;
     union {
         struct {
