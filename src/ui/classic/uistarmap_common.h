@@ -204,6 +204,7 @@ extern void ui_starmap_draw_starmap(struct starmap_data_s *d);
 extern void ui_starmap_draw_button_text(struct starmap_data_s *d, bool highlight);
 extern void ui_starmap_sn0_setup(struct shipnon0_s *sn0, int sd_num, const shipcount_t *ships);
 extern void ui_starmap_update_reserve_fuel(struct game_s *g, struct shipnon0_s *sn0, const shipcount_t *ships, player_id_t pi);
+extern void ui_starmap_draw_sliders_and_prod(struct starmap_data_s *d);
 extern void ui_starmap_draw_planetinfo(const struct game_s *g, player_id_t api, int planet_i);
 extern void ui_starmap_draw_planetinfo_2(const struct game_s *g, int p1, int p2, int planet_i);
 extern void ui_starmap_compute_scale(const struct game_s *g);

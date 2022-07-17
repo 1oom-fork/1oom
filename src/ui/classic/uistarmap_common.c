@@ -121,7 +121,7 @@ static void ui_starmap_draw_range_parsec(struct starmap_data_s *d, int y)
     lbxfont_print_str_center(269, y, buf, UI_SCREEN_W, ui_scale);
 }
 
-static void ui_starmap_draw_sliders_and_prod(struct starmap_data_s *d)
+void ui_starmap_draw_sliders_and_prod(struct starmap_data_s *d)
 {
     const struct game_s *g = d->g;
     const planet_t *p = &g->planet[g->planet_focus_i[d->api]];

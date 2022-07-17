@@ -308,8 +308,14 @@ static bool ui_starmap_handle_planet_controls(struct game_s *g, struct starmap_d
         game_planet_ship_build_everywhere(g, d->api, p->buildship);
         return true;
     }
+    if (d->oi1 == pd->oi_ship) {
+        ui_sound_play_sfx_24();
+        ui_data.ui_main_loop_action = UI_MAIN_LOOP_PLANET_SHIPS;
+        d->flag_done = true;
+        return true;
+    }
     if (0
-      || (d->oi1 == pd->oi_ship) || (d->oi1 == pd->oi_shippic)
+      || (d->oi1 == pd->oi_shippic)
       || ((d->oi1 == pd->oi_wheelshippic) && (scrollmisc < 0))
     ) {
         int n;
@@ -327,7 +333,7 @@ static bool ui_starmap_handle_planet_controls(struct game_s *g, struct starmap_d
         return true;
     }
     if (0
-      || ((d->oi1 == UIOBJI_ESC) && ((d->oi2 == pd->oi_ship) || (d->oi2 == pd->oi_shippic)))
+      || ((d->oi1 == UIOBJI_ESC) && (d->oi2 == pd->oi_shippic))
       || ((d->oi1 == pd->oi_wheelshippic) && (scrollmisc > 0))
     ) {
         int n;

@@ -16,5 +16,6 @@ extern void ui_starmap_reloc(struct game_s *g, player_id_t pi);
 extern void ui_starmap_trans(struct game_s *g, player_id_t pi); /* "trans" button pressed */
 extern void ui_starmap_transport(struct game_s *g, player_id_t pi); /* transport selected */
 extern void ui_starmap_bases(struct game_s *g, player_id_t pi);
+extern void ui_starmap_ships(struct game_s *g, player_id_t pi);
 
 #endif
