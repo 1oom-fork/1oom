@@ -82,16 +82,15 @@ void ui_starmap_bases(struct game_s *g, player_id_t active_player)
     ui_cursor_setup_area(1, &ui_cursor_area_tbl[0]);
 
     uiobj_table_clear();
-    STARMAP_UIOBJ_CLEAR_COMMON();
 
-    ui_starmap_fill_oi_common(&d);
-    d.oi_cancel = uiobj_add_t0(227, 163, "", ui_data.gfx.starmap.reloc_bu_cancel, MOO_KEY_ESCAPE);
-    d.oi_accept = uiobj_add_t0(271, 163, "", ui_data.gfx.starmap.reloc_bu_accept, MOO_KEY_SPACE);
-    if (p->missile_bases > 0) {
-        uiobj_add_slider_int(258, 124, 0, p->missile_bases, 41, 8, &d.ba.slider_var);
-        oi_minus = uiobj_add_mousearea(252, 124, 256, 131, MOO_KEY_UNKNOWN);
-        oi_plus = uiobj_add_mousearea(301, 124, 305, 131, MOO_KEY_UNKNOWN);
-    }
+#define UIOBJ_CLEAR_LOCAL() \
+    do { \
+        STARMAP_UIOBJ_CLEAR_COMMON(); \
+        oi_plus = UIOBJI_INVALID; \
+        oi_minus = UIOBJI_INVALID; \
+    } while (0)
+
+    UIOBJ_CLEAR_LOCAL();
 
     uiobj_set_callback_and_delay(ui_starmap_bases_draw_cb1, &d, STARMAP_DELAY);
 
@@ -116,6 +115,16 @@ void ui_starmap_bases(struct game_s *g, player_id_t active_player)
         if (!d.flag_done) {
             ui_starmap_select_bottom_highlight(g, &d);
             ui_starmap_bases_draw_cb1(&d);
+            uiobj_table_clear();
+            UIOBJ_CLEAR_LOCAL();
+            ui_starmap_fill_oi_common(&d);
+            d.oi_cancel = uiobj_add_t0(227, 163, "", ui_data.gfx.starmap.reloc_bu_cancel, MOO_KEY_ESCAPE);
+            d.oi_accept = uiobj_add_t0(271, 163, "", ui_data.gfx.starmap.reloc_bu_accept, MOO_KEY_SPACE);
+            if (p->missile_bases > 0) {
+                uiobj_add_slider_int(258, 124, 0, p->missile_bases, 41, 8, &d.ba.slider_var);
+                oi_minus = uiobj_add_mousearea(252, 124, 256, 131, MOO_KEY_UNKNOWN);
+                oi_plus = uiobj_add_mousearea(301, 124, 305, 131, MOO_KEY_UNKNOWN);
+            }
             ui_draw_finish();
             ui_delay_ticks_or_click(STARMAP_DELAY);
         }

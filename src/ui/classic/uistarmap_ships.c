@@ -110,21 +110,14 @@ void ui_starmap_ships(struct game_s *g, player_id_t active_player)
     ui_cursor_setup_area(1, &ui_cursor_area_tbl[0]);
 
     uiobj_table_clear();
-    STARMAP_UIOBJ_CLEAR_COMMON();
 
-    ui_starmap_fill_oi_common(&d);
-    d.oi_cancel = uiobj_add_t0(227, 163, "", ui_data.gfx.starmap.reloc_bu_cancel, MOO_KEY_ESCAPE);
-    d.oi_accept = uiobj_add_t0(271, 163, "", ui_data.gfx.starmap.reloc_bu_accept, MOO_KEY_SPACE);
-    for (int i = 0; i < g->eto[active_player].shipdesigns_num; ++i) {
-        int x = ui_starmap_ships_get_x(i);
-        int y = ui_starmap_ships_get_y(i);
-        oi_ship_design[i] = uiobj_add_mousearea(
-                    x - UI_SM_PL_SHIPS_BORDER_WIDTH,
-                    y - UI_SM_PL_SHIPS_BORDER_HEIGHT,
-                    x + UI_SM_PL_SHIPS_BORDER_WIDTH + UI_SM_PL_SHIPS_WIDTH,
-                    y + UI_SM_PL_SHIPS_BORDER_HEIGHT + UI_SM_PL_SHIPS_HEIGHT,
-                    MOO_KEY_1 + i);
-    }
+#define UIOBJ_CLEAR_LOCAL() \
+    do { \
+        STARMAP_UIOBJ_CLEAR_COMMON(); \
+        UIOBJI_SET_TBL_INVALID(oi_ship_design); \
+    } while (0)
+
+    UIOBJ_CLEAR_LOCAL();
 
     uiobj_set_callback_and_delay(ui_starmap_ships_draw_cb1, &d, STARMAP_DELAY);
 
@@ -145,6 +138,21 @@ void ui_starmap_ships(struct game_s *g, player_id_t active_player)
         if (!d.flag_done) {
             ui_starmap_select_bottom_highlight(g, &d);
             ui_starmap_ships_draw_cb1(&d);
+            uiobj_table_clear();
+            UIOBJ_CLEAR_LOCAL();
+            ui_starmap_fill_oi_common(&d);
+            d.oi_cancel = uiobj_add_t0(227, 163, "", ui_data.gfx.starmap.reloc_bu_cancel, MOO_KEY_ESCAPE);
+            d.oi_accept = uiobj_add_t0(271, 163, "", ui_data.gfx.starmap.reloc_bu_accept, MOO_KEY_SPACE);
+            for (int i = 0; i < g->eto[active_player].shipdesigns_num; ++i) {
+                int x = ui_starmap_ships_get_x(i);
+                int y = ui_starmap_ships_get_y(i);
+                oi_ship_design[i] = uiobj_add_mousearea(
+                            x - UI_SM_PL_SHIPS_BORDER_WIDTH,
+                            y - UI_SM_PL_SHIPS_BORDER_HEIGHT,
+                            x + UI_SM_PL_SHIPS_BORDER_WIDTH + UI_SM_PL_SHIPS_WIDTH,
+                            y + UI_SM_PL_SHIPS_BORDER_HEIGHT + UI_SM_PL_SHIPS_HEIGHT,
+                            MOO_KEY_1 + i);
+            }
             ui_draw_finish();
             ui_delay_ticks_or_click(STARMAP_DELAY);
         }
