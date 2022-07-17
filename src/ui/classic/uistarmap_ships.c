@@ -98,6 +98,7 @@ void ui_starmap_ships(struct game_s *g, player_id_t active_player)
     ui_starmap_init_common_data(g, &d, active_player);
 
     int16_t oi_ship_design[NUM_SHIPDESIGNS];
+    int16_t oi_s;
 
     d.controllable = false;
     d.draw_own_routes = true;
@@ -115,6 +116,7 @@ void ui_starmap_ships(struct game_s *g, player_id_t active_player)
     do { \
         STARMAP_UIOBJ_CLEAR_COMMON(); \
         UIOBJI_SET_TBL_INVALID(oi_ship_design); \
+        oi_s = UIOBJI_INVALID; \
     } while (0)
 
     UIOBJ_CLEAR_LOCAL();
@@ -128,6 +130,8 @@ void ui_starmap_ships(struct game_s *g, player_id_t active_player)
             ui_sound_play_sfx_24();
             ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
             d.flag_done = true;
+        } else if (d.oi1 == oi_s) {
+            p->buildship = (p->buildship + 1) % g->eto[active_player].shipdesigns_num;
         }
         for (int i = 0; i < g->eto[active_player].shipdesigns_num; ++i) {
             if (d.oi1 == oi_ship_design[i]) {
@@ -143,6 +147,7 @@ void ui_starmap_ships(struct game_s *g, player_id_t active_player)
             ui_starmap_fill_oi_common(&d);
             d.oi_cancel = uiobj_add_t0(227, 163, "", ui_data.gfx.starmap.reloc_bu_cancel, MOO_KEY_ESCAPE);
             d.oi_accept = uiobj_add_t0(271, 163, "", ui_data.gfx.starmap.reloc_bu_accept, MOO_KEY_SPACE);
+            oi_s = uiobj_add_inputkey(MOO_KEY_s);
             for (int i = 0; i < g->eto[active_player].shipdesigns_num; ++i) {
                 int x = ui_starmap_ships_get_x(i);
                 int y = ui_starmap_ships_get_y(i);
