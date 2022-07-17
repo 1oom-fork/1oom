@@ -26,14 +26,9 @@
 
 /* -------------------------------------------------------------------------- */
 
-struct starmap_bases_data_s {
-    int16_t slider_var;
-};
-
 static void ui_starmap_bases_draw_cb1(void *vptr)
 {
     struct starmap_data_s *d = vptr;
-    struct starmap_bases_data_s *bd = d->ba.bases_data;
     const struct game_s *g = d->g;
     const planet_t *p = &(g->planet[g->planet_focus_i[d->api]]);
     ui_starmap_draw_basic(d);
@@ -43,8 +38,8 @@ static void ui_starmap_bases_draw_cb1(void *vptr)
     ui_draw_filled_rect(233, 138, 304, 143, 0x7, ui_scale);
     ui_draw_line1(233, 125, 246, 125, 0xfb, ui_scale);
     ui_draw_line1(233, 137, 304, 137, 0xfb, ui_scale);
-    if (bd->slider_var > 0) {
-        ui_draw_slider(258, 127, bd->slider_var * 40, p->missile_bases, 0, 0x73, ui_scale);
+    if (d->ba.slider_var > 0) {
+        ui_draw_slider(258, 127, d->ba.slider_var * 40, p->missile_bases, 0, 0x73, ui_scale);
     }
 
     lbxfont_select_set_12_1(5, 5, 0, 0);
@@ -54,7 +49,7 @@ static void ui_starmap_bases_draw_cb1(void *vptr)
     lbxfont_print_str_normal(234, 137, "Scrap", UI_SCREEN_W, ui_scale);
     lbxfont_print_str_normal(234, 125, "Bas", UI_SCREEN_W, ui_scale);
     {
-        int n = bd->slider_var;
+        int n = d->ba.slider_var;
         lbxfont_select_set_12_1(0, 1, 0, 0);
         lbxfont_print_num_center(268, 137, n, UI_SCREEN_W, ui_scale);
         lbxfont_select(0, 6, 0, 0);
@@ -80,13 +75,10 @@ void ui_starmap_bases(struct game_s *g, player_id_t active_player)
     d.is_valid_selection = ui_starmap_bases_is_valid_selection;
     d.do_accept = NULL;
 
-    struct starmap_bases_data_s bd;
-    d.ba.bases_data = &bd;
-
     int16_t oi_plus, oi_minus;
     planet_t *p = &(g->planet[g->planet_focus_i[active_player]]);
 
-    bd.slider_var = 0;
+    d.ba.slider_var = 0;
     ui_cursor_setup_area(1, &ui_cursor_area_tbl[0]);
 
     uiobj_table_clear();
@@ -96,7 +88,7 @@ void ui_starmap_bases(struct game_s *g, player_id_t active_player)
     d.oi_cancel = uiobj_add_t0(227, 163, "", ui_data.gfx.starmap.reloc_bu_cancel, MOO_KEY_ESCAPE);
     d.oi_accept = uiobj_add_t0(271, 163, "", ui_data.gfx.starmap.reloc_bu_accept, MOO_KEY_SPACE);
     if (p->missile_bases > 0) {
-        uiobj_add_slider_int(258, 124, 0, p->missile_bases, 41, 8, &bd.slider_var);
+        uiobj_add_slider_int(258, 124, 0, p->missile_bases, 41, 8, &d.ba.slider_var);
         oi_minus = uiobj_add_mousearea(252, 124, 256, 131, MOO_KEY_UNKNOWN);
         oi_plus = uiobj_add_mousearea(301, 124, 305, 131, MOO_KEY_UNKNOWN);
     }
@@ -109,17 +101,17 @@ void ui_starmap_bases(struct game_s *g, player_id_t active_player)
         } else if (d.oi1 == d.oi_accept) {
             int n;
             ui_sound_play_sfx_24();
-            n = bd.slider_var;
+            n = d.ba.slider_var;
             p->missile_bases -= n;
             g->eto[active_player].reserve_bc += (n * game_get_base_cost(g, active_player)) / 4;
             d.flag_done = true;
             SETMAX(p->missile_bases, 0);
         } else if (d.oi1 == oi_minus) {
-            --bd.slider_var;
-            SETMAX(bd.slider_var, 0);
+            --d.ba.slider_var;
+            SETMAX(d.ba.slider_var, 0);
         } else if (d.oi1 == oi_plus) {
-            ++bd.slider_var;
-            SETMIN(bd.slider_var, p->missile_bases);
+            ++d.ba.slider_var;
+            SETMIN(d.ba.slider_var, p->missile_bases);
         }
         if (!d.flag_done) {
             ui_starmap_select_bottom_highlight(g, &d);
