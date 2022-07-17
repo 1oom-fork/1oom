@@ -101,6 +101,7 @@ void ui_starmap_ships(struct game_s *g, player_id_t active_player)
 
     d.controllable = false;
     d.draw_own_routes = true;
+    d.tags_enabled = false;
     d.is_valid_selection = ui_starmap_ships_is_valid_selection;
     d.do_accept = NULL;
 
@@ -122,7 +123,7 @@ void ui_starmap_ships(struct game_s *g, player_id_t active_player)
                     y - UI_SM_PL_SHIPS_BORDER_HEIGHT,
                     x + UI_SM_PL_SHIPS_BORDER_WIDTH + UI_SM_PL_SHIPS_WIDTH,
                     y + UI_SM_PL_SHIPS_BORDER_HEIGHT + UI_SM_PL_SHIPS_HEIGHT,
-                    MOO_KEY_UNKNOWN);
+                    MOO_KEY_1 + i);
     }
 
     uiobj_set_callback_and_delay(ui_starmap_ships_draw_cb1, &d, STARMAP_DELAY);
