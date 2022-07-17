@@ -926,9 +926,11 @@ static void ui_starmap_fill_oi_ctrl(struct starmap_data_s *d)
         d->oi_ctrl_d2 = uiobj_add_inputkey(MOO_KEY_KP2 | MOO_MOD_CTRL);
     }
     d->oi_ctrl_dr = uiobj_add_inputkey(MOO_KEY_KP3 | MOO_MOD_CTRL);
-    for (int i = 0; i < PLANET_TAG_NUM; ++i) {
-        d->oi_tag_set[i] = uiobj_add_inputkey((MOO_KEY_1 + i) | MOO_MOD_CTRL);
-        d->oi_tag_get[i] = uiobj_add_inputkey((MOO_KEY_1 + i));
+    if (d->tags_enabled) {
+        for (int i = 0; i < PLANET_TAG_NUM; ++i) {
+            d->oi_tag_set[i] = uiobj_add_inputkey((MOO_KEY_1 + i) | MOO_MOD_CTRL);
+            d->oi_tag_get[i] = uiobj_add_inputkey((MOO_KEY_1 + i));
+        }
     }
 }
 
@@ -1316,6 +1318,7 @@ void ui_starmap_init_common_data(struct game_s *g, struct starmap_data_s *d, pla
     d->from = g->planet_focus_i[active_player];
 
     d->can_select_fleet = true;
+    d->tags_enabled = true;
     d->is_valid_selection = NULL;
 }
 
