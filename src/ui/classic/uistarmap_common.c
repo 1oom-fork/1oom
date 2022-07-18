@@ -679,6 +679,25 @@ void ui_starmap_draw_button_text(struct starmap_data_s *d, bool highlight)
     lbxfont_print_str_normal(263, 184, game_str_sm_next_turn, UI_SCREEN_W, ui_scale);
 }
 
+static bool ui_starmap_remove_build_finished(struct game_s *g, player_id_t api)
+{
+    planet_t *p = &g->planet[g->planet_focus_i[api]];
+    int num = g->evn.build_finished_num[api];
+    if (num) {
+        g->evn.build_finished_num[api] = --num;
+        for (planet_finished_t i = 0; i < FINISHED_NUM; ++i) {
+            if ((i != FINISHED_SHIP) && BOOLVEC_IS1(p->finished, i)) {
+                BOOLVEC_SET0(p->finished, i);
+                break;
+            }
+        }
+        if (!num) {
+            return true;
+        }
+    }
+    return false;
+}
+
 static void ui_starmap_handle_oi_ctrl(struct starmap_data_s *d, int16_t oi)
 {
 #define XSTEP   0x1b
@@ -1320,6 +1339,25 @@ bool ui_starmap_handle_common(struct game_s *g, struct starmap_data_s *d) {
     d->oi1 = uiobj_handle_input_cond();
     d->oi2 = uiobj_at_cursor();
     if (g->evn.build_finished_num[d->api]) {
+        if ((d->oi1 == d->oi_build_finished) || ((d->oi1 == UIOBJI_ESC) && (d->oi2 == d->oi_build_finished))) {
+            if (ui_starmap_remove_build_finished(g, d->api)) {
+                if (ui_extra_enabled) {
+                    g->planet_focus_i[d->api] = ui_data.start_planet_focus_i;
+                    ui_starmap_set_pos_focus(g, d->api);
+                }
+            }
+            ui_sound_play_sfx_24();
+            d->flag_done = true;
+            ui_delay_1();
+            d->oi1 = 0;
+            return true;
+        } else if (d->oi1 == d->oi_cancel || d->oi1 == UIOBJI_ESC) {
+            if (ui_data.ui_main_loop_action != UI_MAIN_LOOP_STARMAP) {
+                ui_sound_play_sfx_06();
+                ui_starmap_reset_main_loop_action(g, d);
+                return true;
+            }
+        }
         return false;
     }
     if (d->oi1 == d->oi_f10) {
@@ -1533,6 +1571,13 @@ bool ui_starmap_handle_common(struct game_s *g, struct starmap_data_s *d) {
 }
 
 void ui_starmap_fill_oi_common(struct starmap_data_s *d) {
+    if (d->g->evn.build_finished_num[d->api]) {
+        d->oi_build_finished = uiobj_add_mousearea(6, 6, 225, 180, MOO_KEY_SPACE);
+        ui_cursor_setup_area(2, &ui_cursor_area_tbl[0]);
+        return;
+    } else {
+        ui_cursor_setup_area(2, &ui_cursor_area_tbl[3]);
+    }
     ui_starmap_add_oi_hotkeys(d);
     if (ui_data.ui_main_loop_action != UI_MAIN_LOOP_RELOC
       &&ui_data.ui_main_loop_action != UI_MAIN_LOOP_TRANS)

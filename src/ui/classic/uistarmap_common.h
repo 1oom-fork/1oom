@@ -39,6 +39,7 @@ struct starmap_data_s {
     bool flag_done;
     int16_t oi1;
     int16_t oi2;
+    int16_t oi_build_finished;
     int focus_lock_planet_i;
     int bottom_highlight;
     int anim_delay;
@@ -149,6 +150,7 @@ struct starmap_data_s {
     do { \
         d.oi1 = UIOBJI_INVALID; \
         d.oi2 = UIOBJI_INVALID; \
+        d.oi_build_finished = UIOBJI_INVALID; \
         d.oi_gameopts = UIOBJI_INVALID; \
         d.oi_design = UIOBJI_INVALID; \
         d.oi_fleet = UIOBJI_INVALID; \
