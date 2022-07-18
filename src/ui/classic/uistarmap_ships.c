@@ -108,8 +108,6 @@ void ui_starmap_ships(struct game_s *g, player_id_t active_player)
 
     planet_t *p = &(g->planet[g->planet_focus_i[active_player]]);
 
-    ui_cursor_setup_area(1, &ui_cursor_area_tbl[0]);
-
     uiobj_table_clear();
 
 #define UIOBJ_CLEAR_LOCAL() \

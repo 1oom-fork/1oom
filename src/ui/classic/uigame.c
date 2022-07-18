@@ -93,7 +93,7 @@ ui_turn_action_t ui_game_turn(struct game_s *g, int *load_game_i_ptr, int pi)
                 ui_starmap_do(g, pi);
                 break;
             case UI_MAIN_LOOP_PLANET_SHIPS:
-                ui_cursor_setup_area(2, &ui_cursor_area_tbl[1]);
+                ui_cursor_setup_area(2, &ui_cursor_area_tbl[3]);
                 ui_starmap_ships(g, pi);
                 break;
             case UI_MAIN_LOOP_RELOC:
@@ -237,6 +237,7 @@ ui_turn_action_t ui_game_turn(struct game_s *g, int *load_game_i_ptr, int pi)
                 ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
                 break;
             case UI_MAIN_LOOP_SCRAP_BASES:
+                ui_cursor_setup_area(2, &ui_cursor_area_tbl[3]);
                 ui_starmap_bases(g, pi);
                 break;
             case UI_MAIN_LOOP_SPIES_CAUGHT:
