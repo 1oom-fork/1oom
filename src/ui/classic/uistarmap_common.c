@@ -686,9 +686,6 @@ static void ui_starmap_handle_oi_ctrl(struct starmap_data_s *d, int16_t oi)
     const struct game_s *g = d->g;
     bool changed = false;
     int x, y;
-    if (g->evn.build_finished_num[d->api]) {
-        return;
-    }
     x = ui_data.starmap.x;
     y = ui_data.starmap.y;
     if (oi == d->oi_ctrl_ul) {
@@ -735,9 +732,6 @@ static void ui_starmap_handle_scrollkeys(struct starmap_data_s *d, int16_t oi)
     const struct game_s *g = d->g;
     int x, y, xh, yh;
     if (oi != 0) {
-        return;
-    }
-    if (g->evn.build_finished_num[d->api]) {
         return;
     }
     x = ui_data.starmap.x;
@@ -1325,12 +1319,15 @@ void ui_starmap_init_common_data(struct game_s *g, struct starmap_data_s *d, pla
 bool ui_starmap_handle_common(struct game_s *g, struct starmap_data_s *d) {
     d->oi1 = uiobj_handle_input_cond();
     d->oi2 = uiobj_at_cursor();
+    if (g->evn.build_finished_num[d->api]) {
+        return false;
+    }
     if (d->oi1 == d->oi_f10) {
         game_save_do_save_i(GAME_SAVE_I_CONTINUE, "Continue", g);
         return true;
     }
     ui_starmap_handle_scrollkeys(d, d->oi1);
-    if (d->oi1 == d->oi_scroll && !g->evn.build_finished_num[d->api]) {
+    if (d->oi1 == d->oi_scroll) {
         ui_starmap_scroll(g, d->scrollx, d->scrolly, d->scrollz);
         return true;
     }
@@ -1516,7 +1513,7 @@ bool ui_starmap_handle_common(struct game_s *g, struct starmap_data_s *d) {
         }
         int i;
         i = ui_starmap_cursor_on_star(g, d, d->oi1, d->api);
-        if (i != PLANET_NONE && !g->evn.build_finished_num[d->api]) {
+        if (i != PLANET_NONE) {
             ui_sound_play_sfx_24();
             ui_starmap_select_planet(g, d, i);
             return true;
