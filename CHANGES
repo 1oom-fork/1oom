@@ -1,6 +1,16 @@
 1oom-fork
 =========
 
+Version 1.5.1
+-------------
+
+The following bugs fixed:
+- Changing planet selection when displaying "Build finished" message
+  leads to meaningless message
+	- Now starmap controls is locked in this case
+- "Ships" and "B" buttons do not work when "Build finished" message
+  appears
+
 Version 1.5.0
 -------------
 
