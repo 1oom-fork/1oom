@@ -56,6 +56,11 @@ The following new UI features are always enabled/available:
 - Space bar works as a generic dismiss message key (Continue, ...)
 - The = key can be substitued by the # key (useful for some non-US keyboards)
 4) Planetary controls
+- Added ship design selection UI ("Ships" button)
+	- S changes the current design
+	- 1-6 chooses design
+	- LMB chooses design
+- "Base scrap" UI reworked ("B" button)
 - Mouse wheel on planet name changes planet
 - Right-clicking on the ship image or Ships button cycles the other way
 - Ind slider no longer shows 0.N/y when at max factories
