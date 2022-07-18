@@ -274,7 +274,7 @@ static bool ui_starmap_handle_planet_controls(struct game_s *g, struct starmap_d
         game_update_production(g);
         return true;
     }
-    if (d->oi1 == pd->oi_wheelname) {
+    if (d->oi1 == pd->oi_wheelname && !g->evn.build_finished_num[d->api]) {
         int i;
         i = g->planet_focus_i[d->api];
         i += scrollmisc;
