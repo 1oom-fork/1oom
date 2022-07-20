@@ -1575,6 +1575,8 @@ void ui_starmap_fill_oi_common(struct starmap_data_s *d) {
         d->oi_build_finished = uiobj_add_mousearea(6, 6, 225, 180, MOO_KEY_SPACE);
         ui_cursor_setup_area(2, &ui_cursor_area_tbl[0]);
         return;
+    } else if (d->controllable) {
+        ui_cursor_setup_area(2, &ui_cursor_area_tbl[1]);
     } else {
         ui_cursor_setup_area(2, &ui_cursor_area_tbl[3]);
     }
