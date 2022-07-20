@@ -54,6 +54,9 @@ If you want to use SDL1:
 
 If you prefer SDL2:
     aptitude install libsdl2-dev libsdl2-mixer-dev
+    
+If you have issues with SDL you can try Allegro4:
+	aptitude install liballegro4-dev
 
 For better audio quality, also get libsamplerate.
     aptitude install libsamplerate-dev
