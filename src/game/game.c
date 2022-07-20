@@ -169,7 +169,7 @@ static int game_opt_do_new_seed(char **argv, void *var)
         } else {
             v = game_opt_new_value;
         }
-        if (!game_cfg_check_new_game_opts(&v)) {
+        if (!game_cfg_check_new_game_opts(v)) {
             return -1;
         }
         game_set_opts_from_value(&game_opt_new, v);
