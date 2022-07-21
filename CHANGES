@@ -1,6 +1,15 @@
 1oom-fork
 =========
 
+Version 1.5.2
+-------------
+
+The following bugs fixed:
+- Command line option -new does not work
+- inaccurate selection of the cursor icon on the star map
+	- now shows the order cursor if a controlled fleet is selected
+
+
 Version 1.5.1
 -------------
 
