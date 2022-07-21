@@ -129,7 +129,7 @@ typedef struct planet_s {
     uint16_t bc_to_shield;
     uint16_t trans_num;
     uint8_t trans_dest;
-    uint8_t pop_tenths;
+    int8_t pop_tenths;
     BOOLVEC_DECLARE(explored, PLAYER_NUM);
     BOOLVEC_DECLARE(within_srange, PLAYER_NUM); /* scanner range covers planet */
     uint8_t within_frange[PLAYER_NUM]; /* fuel range reaches planet: 0=no, 1=yes, 2=with reserve fuel */
