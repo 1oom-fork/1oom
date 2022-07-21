@@ -195,7 +195,7 @@ int cfg_load(const char *filename)
     log_message("Cfg: loading configuration from '%s'\n", filename);
     fd = fopen(filename, "r");
     if (!fd) {
-        log_error("Cfg: failed to open file '%s'\n", filename);
+        log_warning("Cfg: failed to open config file '%s'\n", filename);
         return -1;
     }
     cfg_parse_init(ctx);

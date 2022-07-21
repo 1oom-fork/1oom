@@ -451,9 +451,7 @@ int options_parse_early(int argc, char **argv)
         } else {
             opt_configfilename = cfg_cfgname();
         }
-        if (cfg_load(opt_configfilename)) {
-            log_warning("Opt: problems loading config file '%s'\n", opt_configfilename);
-        }
+        cfg_load(opt_configfilename);
         /* parse options again to override configuration */
         res = options_parse_do(argc, argv, true);
     }
