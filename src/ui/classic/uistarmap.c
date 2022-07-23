@@ -39,8 +39,6 @@ struct starmap_planet_data_s {
     int16_t oi_starview2;
     int16_t oi_shippic;
     int16_t oi_wheelshippic;
-    int16_t oi_build_everywhere;
-    int16_t oi_ctrl_s;
     int16_t oi_ship;
     int16_t oi_reloc;
     int16_t oi_trans;
@@ -286,10 +284,6 @@ static bool ui_starmap_handle_planet_controls(struct game_s *g, struct starmap_d
         g->planet_focus_i[d->api] = i;
         return true;
     }
-    if (d->oi1 == pd->oi_build_everywhere || d->oi1 == pd->oi_ctrl_s) {
-        game_planet_ship_build_everywhere(g, d->api, p->buildship);
-        return true;
-    }
     if (d->oi1 == pd->oi_ship) {
         ui_sound_play_sfx_24();
         ui_data.ui_main_loop_action = UI_MAIN_LOOP_PLANET_SHIPS;
@@ -462,13 +456,8 @@ static void ui_starmap_fill_oi_planet(const struct game_s *g, struct starmap_dat
         }
     }
     if (p->owner == d->api) {
-        if (ui_extra_enabled && kbd_is_modifier(MOO_MOD_CTRL)) {
-            pd->oi_build_everywhere = uiobj_add_mousearea(228, 139, 275, 175, MOO_KEY_UNKNOWN);
-        } else {
-            pd->oi_shippic = uiobj_add_mousearea(228, 139, 275, 175, MOO_KEY_UNKNOWN);
-            pd->oi_wheelshippic = uiobj_add_mousewheel(228, 139, 275, 175, scrollmisc);
-        }
-        pd->oi_ctrl_s = uiobj_add_inputkey(MOO_KEY_s | MOO_MOD_CTRL);
+        pd->oi_shippic = uiobj_add_mousearea(228, 139, 275, 175, MOO_KEY_UNKNOWN);
+        pd->oi_wheelshippic = uiobj_add_mousewheel(228, 139, 275, 175, scrollmisc);
     }
     pd->oi_wheelname = uiobj_add_mousewheel(227, 8, 310, 20, scrollmisc);
     pd->oi_starview2 = uiobj_add_mousearea(227, 24, 310, 53, MOO_KEY_UNKNOWN);
@@ -522,8 +511,6 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
         planet_d.oi_starview1 = UIOBJI_INVALID; \
         planet_d.oi_starview2 = UIOBJI_INVALID; \
         planet_d.oi_shippic = UIOBJI_INVALID; \
-        planet_d.oi_build_everywhere = UIOBJI_INVALID; \
-        planet_d.oi_ctrl_s = UIOBJI_INVALID; \
         oi_finished = UIOBJI_INVALID; \
         planet_d.oi_equals = UIOBJI_INVALID; \
         planet_d.oi_hash = UIOBJI_INVALID; \

@@ -73,7 +73,6 @@ The following new UI features are always enabled/available:
 - Pressing +/-/= in send transport screen adjusts slider by 10% of max amount
 - Pressing A in send transport screen sets slider to maximum
 - Bases can be scrapped by clicking on the Bases text
-- The ship production selection can be set everywhere by pressing Ctrl + S
 - Eco slider shows fractional population growth if growth is less than 10
 - Nebula planets have a purple instead of a red frame around their picture
 5) Fleet controls
@@ -138,8 +137,6 @@ The config file item "ui.uiextra" enables the following extra UI features:
   reserve spending (yellow = none, red = partial, while = full). The same
   colors are also used in the Planets screen.
 3) Gameplay
-- The ship production selection can be set everywhere by pressing Ctrl +
-  clicking on the ship picture.
 - When espionage was successful, clicking on the race icon opens the spy report
 - Tech screen has lights showing when you reach max research bonus
 - Clicking on the Tech screen lights sets the slider to bonus limit
