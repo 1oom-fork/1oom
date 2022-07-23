@@ -78,9 +78,7 @@ ui_turn_action_t ui_game_turn(struct game_s *g, int *load_game_i_ptr, int pi)
                 g->planet_focus_i[pi] = pli;
             } else {
                 g->evn.build_finished_num[pi] = 0;
-                if (ui_extra_enabled) {
-                    g->planet_focus_i[pi] = ui_data.start_planet_focus_i;
-                }
+                g->planet_focus_i[pi] = ui_data.start_planet_focus_i;
             }
             if (ui_data.ui_main_loop_action != UI_MAIN_LOOP_SCRAP_BASES
               &&ui_data.ui_main_loop_action != UI_MAIN_LOOP_PLANET_SHIPS)

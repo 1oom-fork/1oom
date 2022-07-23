@@ -1341,10 +1341,8 @@ bool ui_starmap_handle_common(struct game_s *g, struct starmap_data_s *d) {
     if (g->evn.build_finished_num[d->api]) {
         if ((d->oi1 == d->oi_build_finished) || ((d->oi1 == UIOBJI_ESC) && (d->oi2 == d->oi_build_finished))) {
             if (ui_starmap_remove_build_finished(g, d->api)) {
-                if (ui_extra_enabled) {
-                    g->planet_focus_i[d->api] = ui_data.start_planet_focus_i;
-                    ui_starmap_set_pos_focus(g, d->api);
-                }
+                g->planet_focus_i[d->api] = ui_data.start_planet_focus_i;
+                ui_starmap_set_pos_focus(g, d->api);
             }
             ui_sound_play_sfx_24();
             d->flag_done = true;

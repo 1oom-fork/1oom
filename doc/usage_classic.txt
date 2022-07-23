@@ -46,6 +46,8 @@ The following new UI features are always enabled/available:
 - F2-F9 no longer do weird things if it can't find the next object
 - Alt+F shows/hides all friendly route indicators for the target planet
 - Alt+O replaces planet names with population
+- After running through the Next turn phase and messages the game recenters on
+  your last planet of choice
 3) Keyboard and Mouse
 - Keypress event repeating is disabled in SDL1 and SDL2 to avoid freezes
 - Mouse click works for the first clicked object if the mouse moved 
@@ -145,8 +147,6 @@ The config file item "ui.uiextra" enables the following extra UI features:
   minimum for bonus (m) and for optimum allocation (o). The latter can be
   automated by clicking the level/auto button (t) in the upper right corner.
 - Completing terraforming generates a message (which is filtered by default)
-- After running through the Next turn phase and messages the game recenters on
-  your last planet of choice
 - Clicking on Station or ship names on Fleet screen sorts the list
 - I to show message filter options
 - Map screen shows current year
