@@ -31,16 +31,17 @@
 #define UI_SM_PL_SHIPS_HEIGHT 23
 #define UI_SM_PL_SHIPS_BORDER_HEIGHT 1
 
+static const int offset_x = UI_SM_PL_SHIPS_WIDTH + UI_SM_PL_SHIPS_BORDER_WIDTH * 2 + 1;
+static const int offset_y = UI_SM_PL_SHIPS_HEIGHT + UI_SM_PL_SHIPS_BORDER_HEIGHT * 2 + 1;
+
 static int ui_starmap_ships_get_x(int i)
 {
-    static const int offset = UI_SM_PL_SHIPS_WIDTH + UI_SM_PL_SHIPS_BORDER_WIDTH * 2 + 1;
-    return 228 + offset * (i / 3);
+    return 228 + offset_x * (i / 3);
 }
 
 static int ui_starmap_ships_get_y(int i)
 {
-    static const int offset = UI_SM_PL_SHIPS_HEIGHT + UI_SM_PL_SHIPS_BORDER_HEIGHT * 2 + 1;
-    return 83 + offset * (i % 3);
+    return 83 + offset_y * (i % 3);
 }
 
 static void ui_starmap_ships_draw_cb1(void *vptr)
@@ -48,6 +49,7 @@ static void ui_starmap_ships_draw_cb1(void *vptr)
     struct starmap_data_s *d = vptr;
     const struct game_s *g = d->g;
     const planet_t *p = &(g->planet[g->planet_focus_i[d->api]]);
+    char buf[0x80];
     ui_starmap_draw_basic(d);
     lbxgfx_draw_frame(222, 80, ui_data.gfx.starmap.relocate, UI_SCREEN_W, ui_scale);
     ui_draw_filled_rect(225, 81, 312, 160, 0, ui_scale);
@@ -81,6 +83,15 @@ static void ui_starmap_ships_draw_cb1(void *vptr)
                      x + UI_SM_PL_SHIPS_BORDER_WIDTH + UI_SM_PL_SHIPS_WIDTH,
                      y + UI_SM_PL_SHIPS_BORDER_HEIGHT + UI_SM_PL_SHIPS_HEIGHT,
                      0x56, 0x56, ui_scale);
+    }
+    if (kbd_is_modifier(MOO_MOD_CTRL)) {
+        lbxfont_select_set_12_1(2, 0xd, 0, 0);
+        lbxfont_print_str_center(228 + offset_x, 84, game_str_sm_sh_everywhere, UI_SCREEN_W, ui_scale);
+    } else if (kbd_is_modifier(MOO_MOD_ALT)) {
+        const shipdesign_t *sd = &g->srd[d->api].design[p->buildship];
+        lbxfont_select_set_12_1(2, 0xd, 0, 0);
+        lib_sprintf(buf, sizeof(buf), "%s %s", game_str_sm_sh_replace, sd->name);
+        lbxfont_print_str_center(228 + offset_x, 84, buf, UI_SCREEN_W, ui_scale);
     }
 }
 
@@ -134,7 +145,13 @@ void ui_starmap_ships(struct game_s *g, player_id_t active_player)
         for (int i = 0; i < g->eto[active_player].shipdesigns_num; ++i) {
             if (d.oi1 == oi_ship_design[i]) {
                 ui_sound_play_sfx_24();
-                p->buildship = i;
+                if (kbd_is_modifier(MOO_MOD_CTRL)) {
+                    game_planet_ship_build_everywhere(g, p->owner, i);
+                } else if (kbd_is_modifier(MOO_MOD_ALT)) {
+                    game_planet_ship_replace_everywhere(g, p->owner, p->buildship, i);
+                } else {
+                    p->buildship = i;
+                }
             }
         }
         if (!d.flag_done) {

@@ -60,8 +60,9 @@ The following new UI features are always enabled/available:
 4) Planetary controls
 - Added ship design selection UI ("Ships" button)
 	- S changes the current design
-	- 1-6 chooses design
-	- LMB chooses design
+	- 1-6, LMB chooses design
+	- Ctrl + 1-6/LMB chooses design for all planets
+	- Alt + 1-6/LMB replaces the current design for all planets
 - "Base scrap" UI reworked ("B" button)
 - Mouse wheel on planet name changes planet
 - Right-clicking on the ship image or Ships button cycles the other way

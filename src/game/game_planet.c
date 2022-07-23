@@ -865,6 +865,15 @@ void game_planet_ship_build_everywhere(struct game_s *g, player_id_t owner, uint
     }
 }
 
+void game_planet_ship_replace_everywhere(struct game_s *g, player_id_t owner, uint8_t replace_i, uint8_t ship_i) {
+    for (uint8_t i = 0; i < g->galaxy_stars; ++i) {
+        planet_t *p = &(g->planet[i]);
+        if (p->owner == owner && p->buildship == replace_i) {
+            p->buildship = ship_i;
+        }
+    }
+}
+
 bool game_planet_can_terraform(const struct game_s *g, const planet_t *p)
 {
     const empiretechorbit_t *e = &(g->eto[p->owner]);
