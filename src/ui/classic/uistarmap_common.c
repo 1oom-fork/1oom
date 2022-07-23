@@ -1331,6 +1331,7 @@ void ui_starmap_init_common_data(struct game_s *g, struct starmap_data_s *d, pla
     d->from = g->planet_focus_i[active_player];
 
     d->can_select_fleet = true;
+    d->draw_own_routes = true;
     d->tags_enabled = true;
     d->is_valid_selection = NULL;
 }

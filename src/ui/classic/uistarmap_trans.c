@@ -201,7 +201,6 @@ void ui_starmap_trans(struct game_s *g, player_id_t active_player)
 
     d.can_select_fleet = false;
     d.controllable = true;
-    d.draw_own_routes = true;
     d.is_valid_selection = ui_starmap_trans_valid_destination;
     d.do_accept = ui_starmap_trans_do_accept;
 

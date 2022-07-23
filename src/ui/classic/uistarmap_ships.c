@@ -112,7 +112,6 @@ void ui_starmap_ships(struct game_s *g, player_id_t active_player)
     int16_t oi_s;
 
     d.controllable = false;
-    d.draw_own_routes = true;
     d.tags_enabled = false;
     d.is_valid_selection = ui_starmap_ships_is_valid_selection;
     d.do_accept = NULL;

@@ -71,7 +71,6 @@ void ui_starmap_bases(struct game_s *g, player_id_t active_player)
     ui_starmap_init_common_data(g, &d, active_player);
 
     d.controllable = false;
-    d.draw_own_routes = true;
     d.is_valid_selection = ui_starmap_bases_is_valid_selection;
     d.do_accept = NULL;
 
