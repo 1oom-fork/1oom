@@ -93,6 +93,7 @@ The following new UI features are always enabled/available:
 - Added max population values and tuned some colors
 - Nebula planets show "NEB" in their shields field
 7) Other gameplay
+- Clicking on Station or ship names on Fleet screen sorts the list
 - Clicking the portraits in Races screen brings Report page
 - Report screen shows name of AI leaders 
 - In Races screen the keys 1-5 correspond to clicking the portraits
@@ -146,7 +147,6 @@ The config file item "ui.uiextra" enables the following extra UI features:
 4) Gameplay
 - When espionage was successful, clicking on the race icon opens the spy report
 - Completing terraforming generates a message (which is filtered by default)
-- Clicking on Station or ship names on Fleet screen sorts the list
 - I to show message filter options
 - Map screen shows current year
 5) Misc
