@@ -136,19 +136,20 @@ The config file item "ui.uiextra" enables the following extra UI features:
 - The plantary production field indicates whether the planet currently receives
   reserve spending (yellow = none, red = partial, while = full). The same
   colors are also used in the Planets screen.
-3) Gameplay
-- When espionage was successful, clicking on the race icon opens the spy report
+3) Tech screen
 - Tech screen has lights showing when you reach max research bonus
 - Clicking on the Tech screen lights sets the slider to bonus limit
 - Tech bonus amount is shown in the slider background
 - Tech screen has additional buttons to equalize spending (= or #), set to
   minimum for bonus (m) and for optimum allocation (o). The latter can be
   automated by clicking the level/auto button (t) in the upper right corner.
+4) Gameplay
+- When espionage was successful, clicking on the race icon opens the spy report
 - Completing terraforming generates a message (which is filtered by default)
 - Clicking on Station or ship names on Fleet screen sorts the list
 - I to show message filter options
 - Map screen shows current year
-4) Misc
+5) Misc
 - Game options screen Silent/FX Only/Music is replaced with more options
 - Continue, Undo and Init saves can be chosen in the Load Game screen
 See doc/list_gamediff.txt for a list of differences in the game itself.
