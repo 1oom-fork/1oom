@@ -1,6 +1,23 @@
 1oom-fork
 =========
 
+Version 1.5.3
+-------------
+
+Support for ARM32/64 and possibly other architectures:
+- Fixed bug: The game freezes on startup
+
+The following UI features has been improved:
+- Build everywhere feature moved to ship design selection UI:
+	- Ctrl + 1-6, Ctrl + LMB chooses design for all planets
+	- Alt + 1-6, Alt + LMB chooses a design for all planets where
+	  the same design is chosen
+
+Added features from extra UI:
+- After running through the Next turn phase and messages the game
+  recenters on your last planet of choice
+- Clicking on Station or ship names on Fleet screen sorts the list
+
 Version 1.5.2
 -------------
 
