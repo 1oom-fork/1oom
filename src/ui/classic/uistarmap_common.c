@@ -525,6 +525,13 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
                     lbxfont_print_str_center_limit(tx, ty, p->name, STARMAP_TEXT_LIMITS, UI_SCREEN_W, starmap_scale);
                 }
             }
+        } else if (p->type == PLANET_TYPE_NOT_HABITABLE && BOOLVEC_IS1(p->explored, d->api)) {
+            if (ui_show_populations) {
+                tx = (p->x - x) * 2 + 14;
+                ty = (p->y - y) * 2 + 22;
+                lbxfont_select(2, 7, 0, 0);
+                lbxfont_print_str_center_limit(tx, ty, "0/0", STARMAP_TEXT_LIMITS, UI_SCREEN_W, starmap_scale);
+            }
         }
     }
     if (1
