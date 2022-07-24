@@ -525,12 +525,25 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
                     lbxfont_print_str_center_limit(tx, ty, p->name, STARMAP_TEXT_LIMITS, UI_SCREEN_W, starmap_scale);
                 }
             }
-        } else if (p->type == PLANET_TYPE_NOT_HABITABLE && BOOLVEC_IS1(p->explored, d->api)) {
-            if (ui_show_populations) {
-                tx = (p->x - x) * 2 + 14;
-                ty = (p->y - y) * 2 + 22;
-                lbxfont_select(2, 7, 0, 0);
+        } else if (ui_show_populations && BOOLVEC_IS1(p->explored, d->api)) {
+            tx = (p->x - x) * 2 + 14;
+            ty = (p->y - y) * 2 + 22;
+            lbxfont_select(2, 7, 0, 0);
+            if (p->type == PLANET_TYPE_NOT_HABITABLE) {
                 lbxfont_print_str_center_limit(tx, ty, "0/0", STARMAP_TEXT_LIMITS, UI_SCREEN_W, starmap_scale);
+            } else if (BOOLVEC_IS1(p->within_srange, d->api)) {
+                char str[9];
+                int max_pop;
+                max_pop = p->max_pop3;
+                if (g->eto[d->api].race != RACE_SILICOID) {
+                    max_pop -= p->waste;
+                }
+                if (game_planet_can_terraform(g, p)) {
+                    lib_sprintf(str, sizeof(str), "0/%i+", max_pop);
+                } else {
+                    lib_sprintf(str, sizeof(str), "0/%i", max_pop);
+                }
+                lbxfont_print_str_center_limit(tx, ty, str, STARMAP_TEXT_LIMITS, UI_SCREEN_W, starmap_scale);
             }
         }
     }
