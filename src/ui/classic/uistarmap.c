@@ -685,11 +685,12 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
         }
 
         d.ruler_from_i = g->planet_focus_i[active_player];
-        d.bottom_highlight = d.ruler_to_i = ui_starmap_cursor_on_star(g, &d, oi2, active_player);
+        d.ruler_to_i = ui_starmap_cursor_on_star(g, &d, oi2, active_player);
         d.ruler_from_fleet = false;
         d.gov_highlight = 0;
 
         p = &(g->planet[g->planet_focus_i[active_player]]);
+        d.bottom_highlight = -1;
         if (oi2 == d.oi_gameopts) {
             d.bottom_highlight = 0;
         } else if (oi2 == d.oi_design) {
