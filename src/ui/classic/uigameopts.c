@@ -45,9 +45,17 @@ static bool ui_opt_cb_scrollspd(void)
     return true;
 }
 
+static bool ui_opt_toggle_kbd_repeat(void)
+{
+    ui_kbd_repeat = !ui_kbd_repeat;
+    hw_kbd_set_repeat(ui_kbd_repeat);
+    return true;
+}
+
 static const struct uiopt_s ui_uiopts[] = {
     UIOPT_ITEM_BOOL("Invert wheel slider", ui_mwi_slider, ui_opt_toggle_mwi_slider),
     UIOPT_ITEM_BOOL("Invert wheel counter", ui_mwi_counter, ui_opt_toggle_mwi_counter),
+    UIOPT_ITEM_BOOL("Keyboard auto repeat", ui_kbd_repeat, ui_opt_toggle_kbd_repeat),
     UIOPT_ITEM_FUNC("Scroll spd", ui_opt_cb_scrollspd),
     UIOPT_ITEM_SLIDER_INT(ui_sm_scroll_speed, 0, UI_SCROLL_SPEED_MAX),
     UIOPT_ITEM_END
