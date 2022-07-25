@@ -296,3 +296,13 @@ int64_t hw_get_time_us(void)
 {
     return hw_timer_count * 1000;
 }
+
+bool hw_kbd_set_repeat(bool enabled)
+{
+    if (enabled) {
+        set_keyboard_rate(250, 33);
+    } else {
+        set_keyboard_rate(0, 0);
+    }
+    return true;
+}
