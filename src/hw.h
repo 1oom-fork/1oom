@@ -27,6 +27,7 @@ extern int hw_event_handle(void);
 
 extern void hw_textinput_start(void);
 extern void hw_textinput_stop(void);
+extern bool hw_kbd_set_repeat(bool enabled);
 
 extern int hw_icon_set(const uint8_t *data, const uint8_t *pal, int w, int h);
 
