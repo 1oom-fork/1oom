@@ -29,6 +29,7 @@ static Window mainwin;
 static int sizex, sizey;               /* Size of window */
 static XImage *shared_image = NULL;
 static XShmSegmentInfo shminfo;
+static bool hw_key_press_repeat_active = true;
 
 /* -- Variables for 1OOM graphics ------------------------------------------- */
 
@@ -348,6 +349,12 @@ int hw_icon_set(const uint8_t *data, const uint8_t *pal, int w, int h) {
     return 0;
 }
 
+bool hw_kbd_set_repeat(bool enabled)
+{
+    hw_key_press_repeat_active = enabled;
+    return true;
+}
+
 /* -- X11 specific implementations ---------------------------------------- */
 
 void hw_shutdown(void) {
@@ -386,6 +393,17 @@ int hw_event_handle(void) {
         switch (e.type) {
         case KeyPress:
         case KeyRelease:
+            if (!hw_key_press_repeat_active && e.type == KeyRelease && XEventsQueued(dpy, QueuedAfterReading)) {
+              XEvent new;
+              XPeekEvent(dpy, &new);
+
+              if (new.type == KeyPress && new.xkey.time == e.xkey.time &&
+                  new.xkey.keycode == e.xkey.keycode)
+              {
+                XNextEvent(dpy, &new);
+                break;
+              }
+            }
             modifiers = 0;
             ks = XkbKeycodeToKeysym(dpy, e.xkey.keycode, 0, 0);
             if ((e.type == KeyPress) && ((e.xkey.state & ControlMask) || (ks == XK_Control_L) || (ks == XK_Control_R))) modifiers = MOO_MOD_CTRL;
