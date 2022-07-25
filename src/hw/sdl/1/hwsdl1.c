@@ -213,7 +213,6 @@ int hw_init(void)
     if (hw_audio_init()) {
         return 12;
     }
-    SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
     SDL_EnableUNICODE(1);
     build_key_xlat();
     return 0;
@@ -310,4 +309,14 @@ int hw_event_handle(void)
     }
 
     return 0;
+}
+
+bool hw_kbd_set_repeat(bool enabled)
+{
+    if (enabled) {
+        SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
+    } else {
+        SDL_EnableKeyRepeat(0, 0);
+    }
+    return true;
 }
