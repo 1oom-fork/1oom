@@ -267,5 +267,6 @@ extern bool ui_extra_enabled;
 extern bool ui_mwi_slider;
 extern bool ui_mwi_counter;
 extern int ui_sm_scroll_speed;
+extern bool ui_kbd_repeat;
 
 #endif

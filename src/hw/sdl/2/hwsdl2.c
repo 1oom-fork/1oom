@@ -185,6 +185,7 @@ static inline uint32_t mod_xlat(SDL_Keymod smod)
 }
 
 static bool hw_textinput_active = false;
+static bool hw_key_press_repeat_active = true;
 
 /* -------------------------------------------------------------------------- */
 
@@ -270,6 +271,9 @@ int hw_event_handle(void)
         switch (e.type) {
             uint32_t mod;
             case SDL_KEYDOWN:
+                if (e.key.repeat && !hw_key_press_repeat_active) {
+                    break;
+                }
                 {
                     SDL_Keycode sym;
                     SDL_Keymod smod;
@@ -359,4 +363,10 @@ int hw_event_handle(void)
 
     SDL_Delay(10);
     return 0;
+}
+
+bool hw_kbd_set_repeat(bool enabled)
+{
+    hw_key_press_repeat_active = enabled;
+    return true;
 }
