@@ -64,6 +64,7 @@ const struct cfg_items_s ui_cfg_items[] = {
     CFG_ITEM_BOOL("mwicounter", &ui_mwi_counter),
     CFG_ITEM_COMMENT("Starmap scroll speed (1..10, 0 = instant)"),
     CFG_ITEM_INT("sm_scroll_speed", &ui_sm_scroll_speed, check_ui_sm_scroll_speed),
+    CFG_ITEM_BOOL("kbd_repeat", &ui_kbd_repeat),
     CFG_ITEM_END
 };
 
@@ -119,6 +120,7 @@ bool ui_fixbugs_enabled = false;
 bool ui_mwi_slider = false;
 bool ui_mwi_counter = false;
 int ui_sm_scroll_speed = 3;
+bool ui_kbd_repeat = true;
 
 bool ui_use_audio = true;
 
@@ -448,6 +450,7 @@ int ui_late_init(void)
     }
     uiobj_table_clear();
     kbd_clear();
+    hw_kbd_set_repeat(ui_kbd_repeat);
     return 0;
 }
 
