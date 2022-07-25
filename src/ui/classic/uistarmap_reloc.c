@@ -47,7 +47,7 @@ static void ui_starmap_reloc_draw_cb(void *vptr)
     lbxfont_select(0, 6, 0, 0);
     lbxfont_print_str_split(229, 105, 80, game_str_sm_sreloc2, 2, UI_SCREEN_W, UI_SCREEN_H);
     if (g->planet_focus_i[d->api] != d->from) {
-        if (pf->have_stargate && pt->have_stargate) {
+        if (pf->have_stargate && pt->have_stargate && pf->owner == pt->owner) {
             lib_strcpy(buf, game_str_sm_stargate, sizeof(buf));
         } else {
             int eta;
