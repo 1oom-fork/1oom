@@ -514,7 +514,10 @@ dnl - X11 interface, no need to check, X11 presence is part of autotools system 
 AM_CONDITIONAL(COMPILE_HW_X11, false)
 HW_X11_CFLAGS=
 HW_X11_LIBS=
-if test x"$enable_hwx11" != "xno"; then
+if test x"$is_win32" = "xyes"; then
+	HW_X11_CFLAGS=
+	HW_X11_LIBS=
+elif test x"$enable_hwx11" != "xno"; then
     old_LIBS="$LIBS"
 	AC_DEFINE(USE_X11,,[Enable Xorg HW support.])
     AC_MSG_CHECKING(for Xorg)
