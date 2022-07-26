@@ -734,15 +734,17 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
                 }
                 oi_hash = uiobj_add_inputkey(MOO_KEY_HASH);
             }
-            oi_f2 = uiobj_add_inputkey(MOO_KEY_F2);
-            oi_f3 = uiobj_add_inputkey(MOO_KEY_F3);
-            oi_f4 = uiobj_add_inputkey(MOO_KEY_F4);
-            oi_f5 = uiobj_add_inputkey(MOO_KEY_F5);
-            oi_f6 = uiobj_add_inputkey(MOO_KEY_F6);
-            oi_f7 = uiobj_add_inputkey(MOO_KEY_F7);
-            oi_f8 = uiobj_add_inputkey(MOO_KEY_F8);
-            oi_f9 = uiobj_add_inputkey(MOO_KEY_F9);
-            oi_f10 = uiobj_add_inputkey(MOO_KEY_F10);
+            if (!g->evn.build_finished_num[active_player]) {
+                oi_f2 = uiobj_add_inputkey(MOO_KEY_F2);
+                oi_f3 = uiobj_add_inputkey(MOO_KEY_F3);
+                oi_f4 = uiobj_add_inputkey(MOO_KEY_F4);
+                oi_f5 = uiobj_add_inputkey(MOO_KEY_F5);
+                oi_f6 = uiobj_add_inputkey(MOO_KEY_F6);
+                oi_f7 = uiobj_add_inputkey(MOO_KEY_F7);
+                oi_f8 = uiobj_add_inputkey(MOO_KEY_F8);
+                oi_f9 = uiobj_add_inputkey(MOO_KEY_F9);
+                oi_f10 = uiobj_add_inputkey(MOO_KEY_F10);
+            }
             if ((p->owner == active_player) && p->missile_bases) {
                 if (ui_extra_enabled && BOOLVEC_IS0(p->extras, PLANET_EXTRAS_GOVERNOR)) {
                     oi_b = uiobj_add_mousearea(272, 59, 312, 67, MOO_KEY_b);
@@ -777,7 +779,9 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             if (ui_extra_enabled) {
                 oi_filter = uiobj_add_inputkey(MOO_KEY_i);
             }
-            oi_wheelname = uiobj_add_mousewheel(227, 8, 310, 20, &scrollmisc);
+            if (!g->evn.build_finished_num[active_player]) {
+                oi_wheelname = uiobj_add_mousewheel(227, 8, 310, 20, &scrollmisc);
+            }
             ui_starmap_fill_oi_tbls(&d);
             if (!ui_extra_enabled){
                 int x0, y0;
@@ -791,9 +795,11 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
                 d.oi_tbl_stars[g->planet_focus_i[active_player]] = UIOBJI_INVALID;
             }
             ui_starmap_fill_oi_slider(&d, p);
-            oi_scroll = uiobj_add_tb(6, 6, 2, 2, 108, 86, &scrollx, &scrolly, &scrollz, ui_scale);
-            oi_search = uiobj_add_inputkey(MOO_KEY_SLASH);
-            ui_starmap_fill_oi_ctrl(&d);
+            if (!g->evn.build_finished_num[active_player]) {
+                oi_scroll = uiobj_add_tb(6, 6, 2, 2, 108, 86, &scrollx, &scrolly, &scrollz, ui_scale);
+                oi_search = uiobj_add_inputkey(MOO_KEY_SLASH);
+                ui_starmap_fill_oi_ctrl(&d);
+            }
             if (!ui_extra_enabled) {
                 int x0, y0, x1, y1;
                 x0 = (p->x - ui_data.starmap.x) * 2 + 6;
