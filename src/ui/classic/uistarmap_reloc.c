@@ -33,7 +33,7 @@ static void ui_starmap_reloc_draw_cb(void *vptr)
     ui_starmap_draw_basic(d);
     x0 = ui_starmap_x_to_screen(pf->x) + 2;
     y0 = ui_starmap_y_to_screen(pf->y) + 2;
-    if (pf->reloc != d->from) {
+    if (g->planet_focus_i[d->api] != d->from) {
         int x1, y1;
         x1 = ui_starmap_x_to_screen(pt->x) + 8;
         y1 = ui_starmap_y_to_screen(pt->y) + 8;
@@ -68,10 +68,10 @@ void ui_starmap_reloc(struct game_s *g, player_id_t active_player)
     uiobj_id_t oi_scroll, oi_cancel, oi_accept, oi_z;
     int16_t scrollx = 0, scrolly = 0;
     struct starmap_data_s d;
-    planet_id_t oldreloc;
     d.g = g;
     d.api = active_player;
     {
+        uint8_t oldreloc;
         planet_id_t pi = g->planet_focus_i[active_player];
         d.from = pi;
         oldreloc = g->planet[pi].reloc;
@@ -102,7 +102,6 @@ void ui_starmap_reloc(struct game_s *g, player_id_t active_player)
         oi1 = uiobj_handle_input_cond();
         oi2 = uiobj_at_cursor();
         ui_delay_prepare();
-        g->planet[d.from].reloc = g->planet_focus_i[active_player];
         if (oi1 == d.oi_gameopts) {
             ui_data.ui_main_loop_action = UI_MAIN_LOOP_GAMEOPTS;
             flag_done = true;
@@ -139,7 +138,6 @@ void ui_starmap_reloc(struct game_s *g, player_id_t active_player)
         if ((oi1 == oi_cancel) || (oi1 == UIOBJI_ESC)) {
             ui_sound_play_sfx_06();
             flag_done = true;
-            g->planet[d.from].reloc = oldreloc;
             ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
         } else if (oi1 == oi_accept) {
             ui_sound_play_sfx_24();
