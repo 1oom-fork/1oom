@@ -174,7 +174,6 @@ void ui_starmap_trans(struct game_s *g, player_id_t active_player)
     int16_t oi_scroll, oi_cancel, oi_accept, oi_plus, oi_minus, oi_search;
     int16_t scrollx = 0, scrolly = 0;
     struct starmap_data_s d;
-    uint8_t olddest;
     planet_t *p;
     int16_t trans_max;
     d.g = g;
@@ -185,7 +184,6 @@ void ui_starmap_trans(struct game_s *g, player_id_t active_player)
         uint8_t pi = g->planet_focus_i[active_player];
         d.from = pi;
         p = &(g->planet[pi]);
-        olddest = p->trans_dest;
         if (p->trans_num != 0) {
             d.tr.other = true;
             g->planet_focus_i[active_player] = p->trans_dest;
@@ -219,7 +217,6 @@ void ui_starmap_trans(struct game_s *g, player_id_t active_player)
         oi2 = uiobj_at_cursor();
         ui_delay_prepare();
         pt = &(g->planet[g->planet_focus_i[active_player]]);
-        p->trans_dest = g->planet_focus_i[active_player];
         ui_starmap_handle_scrollkeys(&d, oi1);
         if (oi1 == d.oi_gameopts) {
             ui_data.ui_main_loop_action = UI_MAIN_LOOP_GAMEOPTS;
@@ -262,7 +259,6 @@ void ui_starmap_trans(struct game_s *g, player_id_t active_player)
         if ((oi1 == oi_cancel) || (oi1 == UIOBJI_ESC)) {
             ui_sound_play_sfx_06();
             flag_done = true;
-            p->trans_dest = olddest;
             ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
         } else if (oi1 == oi_accept) {
 do_accept:
@@ -271,8 +267,6 @@ do_accept:
             if (BOOLVEC_IS1(pt->explored, active_player) && (pt->within_frange[active_player] == 1)) {
                 p->trans_dest = g->planet_focus_i[active_player];
                 p->trans_num = d.tr.num;
-            } else {
-                p->trans_dest = olddest;
             }
             if (d.from == g->planet_focus_i[active_player]) {
                 p->trans_num = 0;
