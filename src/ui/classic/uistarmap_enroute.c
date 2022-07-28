@@ -199,7 +199,7 @@ void ui_starmap_enroute(struct game_s *g, player_id_t active_player)
         oi2 = uiobj_at_cursor();
         ui_delay_prepare();
         ui_starmap_handle_scrollkeys(&d, oi1);
-        if (ui_starmap_handle_tag(&d, oi1, false) != PLANET_NONE) {
+        if (ui_starmap_handle_tag(&d, oi1) != PLANET_NONE) {
             if ((r->owner != active_player) || (d.en.can_move == NO_MOVE)) {
                 d.en.from = g->planet_focus_i[active_player];
                 flag_done = true;
