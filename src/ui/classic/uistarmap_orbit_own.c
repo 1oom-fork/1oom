@@ -283,13 +283,11 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
             i = ui_starmap_enemy_incoming(g, active_player, pi, (oi1 == oi_f8));
             if (i != pi) {
                 g->planet_focus_i[active_player] = i;
-                if (!ui_extra_enabled) {
-                    ui_starmap_set_pos_focus(g, active_player);
-                    d.oo.from = i;
-                    /* flag_have_colony_lbx = false */
-                    flag_done = true;
-                    ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
-                }
+                ui_starmap_set_pos_focus(g, active_player);
+                d.oo.from = i;
+                /* flag_have_colony_lbx = false */
+                flag_done = true;
+                ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
             }
         } else if (oi1 == oi_f10) {
             game_save_do_save_i(GAME_SAVE_I_CONTINUE, "Continue", g);

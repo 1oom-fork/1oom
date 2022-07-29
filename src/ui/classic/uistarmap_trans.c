@@ -277,9 +277,7 @@ void ui_starmap_trans(struct game_s *g, player_id_t active_player)
             if (i != pi) {
                 g->planet_focus_i[active_player] = i;
                 d.tr.other = (i != d.tr.from);
-                if (!ui_extra_enabled) {
-                    ui_starmap_set_pos_focus(g, active_player);
-                }
+                ui_starmap_set_pos_focus(g, active_player);
             }
         } else if (oi1 == oi_f10) {
             game_save_do_save_i(GAME_SAVE_I_CONTINUE, "Continue", g);
