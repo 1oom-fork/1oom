@@ -545,8 +545,6 @@ do_accept:
                 oi_tbl_s[i] = uiobj_add_mousewheel(227, 22 + i * 26, 319, 46 + i * 26, &scrollship);
             }
             ui_starmap_add_oi_bottom_buttons(&d);
-            d.oi_tech = UIOBJI_INVALID;
-            d.oi_next_turn = UIOBJI_INVALID;
             ui_draw_finish();
             ui_delay_ticks_or_click(STARMAP_DELAY);
         }
