@@ -161,6 +161,24 @@ int game_planet_get_w1(const struct game_s *g, uint8_t planet_i)
     return w;
 }
 
+bool game_planet_can_terraform(const struct game_s *g, uint8_t planet_i, player_id_t active_player, bool soilatmos)
+{
+    const planet_t *p = &(g->planet[planet_i]);
+    const empiretechorbit_t *e = &(g->eto[active_player]);
+    if (soilatmos) {
+        if (e->have_atmos_terra && (p->growth == PLANET_GROWTH_HOSTILE)) {
+            return true;
+        }
+        if (e->have_soil_enrich && (p->growth == PLANET_GROWTH_NORMAL)) {
+            return true;
+        }
+        if (e->have_adv_soil_enrich && ((p->growth == PLANET_GROWTH_NORMAL) || (p->growth == PLANET_GROWTH_FERTILE))) {
+            return true;
+        }
+    }
+    return ((p->max_pop2 + e->have_terraform_n) > p->max_pop3) && (p->max_pop3 < game_num_max_pop);
+}
+
 void game_planet_update_home(struct game_s *g)
 {
     for (int i = 0; i < g->galaxy_stars; ++i) {
