@@ -69,6 +69,8 @@ or pressing Alt-X in the main menu enables the following extra UI features:
 - The position of the build finished message is slightly improved.
 - Hovering over a planet draws a ruler with the distance in parsec from the
   currently selected planet if is in the screen.
+- Clicking on the picture of the planet in the upper right corner works for all
+  explored planets
 - Planetary governor can be enabled or disabled by clicking on planet name in
   the galaxy movement screen
 - Right clicking on planet name in the galaxy movement screen opens a governor
