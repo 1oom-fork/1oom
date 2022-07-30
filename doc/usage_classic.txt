@@ -53,6 +53,8 @@ enables the following extra UI features:
 - The position of the build finished message is slightly improved.
 - Clicking on the picture of the planet in the upper right corner works for all
   explored planets
+- The + sign is placed in the population text if it is possible to do
+  atmospheric terraforming or soil enrichment
 - Eco slider shows fractional population growth if growth is less than 10
 - Summary of forces shown before ship combat
 - When espionage was successful, clicking on the race icon opens the spy report
