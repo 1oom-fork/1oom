@@ -63,6 +63,8 @@ enables the following extra UI features:
 - The position of the build finished message is slightly improved.
 - Hovering over a planet draws a ruler with the distance in parsec from the
   currently selected planet if is in the screen.
+- Clicking on the picture of the planet in the upper right corner works for all
+  explored planets
 - Eco slider shows fractional population growth if growth is less than 10
 - Summary of forces shown before ship combat
 - When espionage was successful, clicking on the race icon opens the spy report
