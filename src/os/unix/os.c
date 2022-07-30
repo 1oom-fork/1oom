@@ -98,6 +98,7 @@ const char **os_get_paths_data(void)
         }
         all_data_paths[i++] = lib_stralloc("/usr/share/1oom");
         all_data_paths[i++] = lib_stralloc("/usr/local/share/1oom");
+        all_data_paths[i++] = lib_stralloc("." FSDEV_DIR_SEP_STR "data");
         all_data_paths[i++] = lib_stralloc(".");
         all_data_paths[i] = NULL;
         num_data_paths = i;
