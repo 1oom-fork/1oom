@@ -346,6 +346,7 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
 {
     const struct game_s *g = d->g;
     int x, y, tx, ty;
+    char str[16];
     {
         int v, step;
         step = STARMAP_SCROLLSTEP;
@@ -442,6 +443,9 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
         const planet_t *p = &g->planet[pi];
         uint8_t *gfx = ui_data.gfx.starmap.stars[p->star_type + p->look];
         uint8_t anim_frame = ui_data.star_frame[pi];
+        bool explored = BOOLVEC_IS1(p->explored, d->api);
+        bool visible = BOOLVEC_IS1(p->within_srange, d->api);
+        bool done = false;
         lbxgfx_set_new_frame(gfx, (anim_frame < 4) ? anim_frame : 0);
         gfx_aux_draw_frame_to(gfx, &ui_data.starmap.star_aux);
         if (p->look > 0) {
@@ -460,23 +464,61 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
             }
             ui_data.star_frame[pi] = anim_frame;
         }
-        if (p->owner != PLAYER_NONE) {
-            bool do_print;
-            do_print = BOOLVEC_IS1(p->within_srange, d->api);
-            if (do_print || (pi == g->evn.planet_orion_i)) {
-                do_print = true;
-                lbxfont_select(2, tbl_banner_fontparam[g->eto[p->owner].banner], 0, 0);
-                tx = (p->x - x) * 2 + 14;
-                ty = (p->y - y) * 2 + 22;
-                lbxfont_print_str_center_limit(tx, ty, p->name, STARMAP_LIMITS, UI_SCREEN_W);
-            } else if (BOOLVEC_IS1(g->eto[d->api].contact, p->owner) || (p->within_frange[d->api] == 1)) {
-                do_print = true;
-                lbxfont_select(2, 0, 0, 0);
-                lbxfont_set_color0(tbl_banner_color[g->eto[p->owner].banner]);
+        tx = (p->x - x) * 2 + 14;
+        ty = (p->y - y) * 2 + 22;
+        if (p->owner == PLAYER_NONE) {
+            lbxfont_select(2, 7, 0, 0);
+        } else if (visible || (pi == g->evn.planet_orion_i)) {
+            lbxfont_select(2, tbl_banner_fontparam[g->eto[p->owner].banner], 0, 0);
+        } else if (BOOLVEC_IS1(g->eto[d->api].contact, p->owner) || (p->within_frange[d->api] == 1)) {
+            lbxfont_select(2, 0, 0, 0);
+            lbxfont_set_color0(tbl_banner_color[g->eto[p->owner].banner]);
+        } else {
+            lbxfont_select(2, 7, 0, 0);
+        }
+        if (ui_extra_enabled && explored && ui_data.starmap.star_text_type != UI_SM_STAR_TEXT_NAME) {
+            if (p->type == PLANET_TYPE_NOT_HABITABLE) {
+                lbxfont_print_str_center_limit(tx, ty, "0/0", STARMAP_LIMITS, UI_SCREEN_W);
+                done = true;
+            } else if (visible && ui_data.starmap.star_text_type == UI_SM_STAR_TEXT_POPULATION) {
+                int max_pop = p->max_pop3;
+                if (g->eto[d->api].race != RACE_SILICOID) {
+                    max_pop -= p->waste;
+                }
+                if (game_planet_can_terraform(g, pi, d->api, true)) {
+                    lib_sprintf(str, sizeof(str), "%i/%i+", p->pop, max_pop);
+                } else {
+                    lib_sprintf(str, sizeof(str), "%i/%i", p->pop, max_pop);
+                }
+                lbxfont_print_str_center_limit(tx, ty, str, STARMAP_LIMITS, UI_SCREEN_W);
+                done = true;
+            } else if (ui_data.starmap.star_text_type == UI_SM_STAR_TEXT_ENVIRONMENT) {
+                lib_sprintf(str, sizeof(str), "%s", game_str_tbl_sm_pltype[p->type]);
+                lbxfont_print_str_center_limit(tx, ty, str, STARMAP_LIMITS, UI_SCREEN_W);
+                done = true;
+            } else if (ui_data.starmap.star_text_type == UI_SM_STAR_TEXT_SPECIAL) {
+                if (p->special == PLANET_SPECIAL_NORMAL) {
+                    lib_sprintf(str, sizeof(str), "%s", "Normal");
+                } else {
+                    lib_sprintf(str, sizeof(str), "%s", game_str_tbl_sm_pspecial[p->special]);
+                }
+                lbxfont_print_str_center_limit(tx, ty, str, STARMAP_LIMITS, UI_SCREEN_W);
+                done = true;
             }
-            if (do_print) {
-                tx = (p->x - x) * 2 + 14;
-                ty = (p->y - y) * 2 + 22;
+        }
+        if (ui_data.starmap.star_text_type == UI_SM_STAR_TEXT_DISTANCE) {
+            if (p->owner != d->api) {
+                lib_sprintf(str, sizeof(str), "%d parsecs", game_get_min_dist(g, d->api, pi));
+                lbxfont_print_str_center_limit(tx, ty, str, STARMAP_LIMITS, UI_SCREEN_W);
+                done = true;
+            }
+        }
+        if (!done) {
+            bool do_print = visible
+                        || (pi == g->evn.planet_orion_i)
+                        || (BOOLVEC_IS1(g->eto[d->api].contact, p->owner))
+                        || (p->within_frange[d->api] == 1);
+            if (p->owner != PLAYER_NONE && do_print) {
                 lbxfont_print_str_center_limit(tx, ty, p->name, STARMAP_LIMITS, UI_SCREEN_W);
             }
         }
@@ -824,6 +866,7 @@ void ui_starmap_add_oi_misc(struct starmap_data_s *d)
     }
     if (ui_extra_enabled) {
         d->oi_alt_f = uiobj_add_inputkey(MOO_KEY_f | MOO_MOD_ALT);
+        d->oi_alt_o = uiobj_add_inputkey(MOO_KEY_o | MOO_MOD_ALT);
     }
 }
 
@@ -840,6 +883,9 @@ bool ui_starmap_handle_oi_misc(struct starmap_data_s *d, int16_t oi)
         match = true;
     } else if (oi == d->oi_alt_f) {
         ui_data.starmap.flag_show_own_routes = !ui_data.starmap.flag_show_own_routes;
+        match = true;
+    } else if (oi == d->oi_alt_o) {
+        ui_data.starmap.star_text_type = (ui_data.starmap.star_text_type + 1) % UI_SM_STAR_TEXT_NUM;
         match = true;
     } else if ((oi == d->oi_alt_r) && game_reloc_dest_ok(g, planet_focus_i, d->api)) {
         for (int i = 0; i < g->galaxy_stars; ++i) {
