@@ -45,6 +45,15 @@ typedef enum {
     UI_MAIN_LOOP_NUM
 } ui_main_loop_action_t;
 
+typedef enum {
+    UI_SM_STAR_TEXT_NAME,
+    UI_SM_STAR_TEXT_POPULATION,
+    UI_SM_STAR_TEXT_DISTANCE,
+    UI_SM_STAR_TEXT_ENVIRONMENT,
+    UI_SM_STAR_TEXT_SPECIAL,
+    UI_SM_STAR_TEXT_NUM,
+} ui_starmap_star_text_t;
+
 struct ui_data_s {
     uint32_t seed;
     uint8_t *sfx[NUM_SOUNDS];
@@ -230,6 +239,7 @@ struct ui_data_s {
         int yhold;
         bool flag_show_grid;
         bool flag_show_own_routes;
+        ui_starmap_star_text_t star_text_type;
         int line_anim_phase;
         int stars_xoff1;
         int stars_xoff2;
