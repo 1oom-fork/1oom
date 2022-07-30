@@ -21,7 +21,7 @@ const struct cmdline_options_s os_cmdline_options[] = {
 
 static char *data_path = NULL;
 static char *user_path = NULL;
-static char *all_data_paths[] = { NULL, NULL, NULL };
+static char *all_data_paths[] = { NULL, NULL, NULL, NULL };
 
 /* -------------------------------------------------------------------------- */
 
@@ -52,6 +52,7 @@ const char **os_get_paths_data(void)
         all_data_paths[i++] = data_path;
     }
     all_data_paths[i++] = ".";
+    all_data_paths[i++] = ".\\data";
     all_data_paths[i] = NULL;
     return (const char **)all_data_paths;
 }
