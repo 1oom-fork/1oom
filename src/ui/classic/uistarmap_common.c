@@ -209,7 +209,8 @@ static void ui_starmap_draw_textbox_finished(const struct game_s *g, player_id_t
         }
     }
     game_planet_get_finished_text(g, p, i, buf, UI_STRBUF_SIZE);
-    ui_draw_textbox_2str("", buf, 54);
+    int y = ui_extra_enabled ? 45 : 54;
+    ui_draw_textbox_2str("", buf, y);
     ui_draw_textbox_2str("", game_str_sm_planratio, 110);
 }
 
