@@ -177,13 +177,12 @@ void ui_starmap_reloc(struct game_s *g, player_id_t active_player)
             ui_starmap_set_pos_focus(g, active_player);
             ui_sound_play_sfx_24();
         } else if (((oi1 == oi_f8) || (oi1 == oi_f9)) && g->eto[active_player].have_ia_scanner) {
-            int i, pi;
-            ui_sound_play_sfx_24();
-            pi = g->planet_focus_i[active_player];
-            i = ui_starmap_enemy_incoming(g, active_player, pi, (oi1 == oi_f8));
-            if (i != pi) {
+            int i = g->planet_focus_i[active_player];
+            i = ui_starmap_enemy_incoming(g, active_player, i, (oi1 == oi_f8));
+            if (i != PLANET_NONE) {
                 g->planet_focus_i[active_player] = i;
                 ui_starmap_set_pos_focus(g, active_player);
+                ui_sound_play_sfx_24();
             }
         } else if (oi1 == oi_f10) {
             game_save_do_save_i(GAME_SAVE_I_CONTINUE, "Continue", g);
@@ -228,15 +227,19 @@ void ui_starmap_reloc(struct game_s *g, player_id_t active_player)
         } else if (oi1 == oi_f6) {
             int i;
             i = ui_starmap_newship_next(g, active_player, g->planet_focus_i[active_player]);
-            g->planet_focus_i[active_player] = i;
-            ui_starmap_set_pos_focus(g, active_player);
-            ui_sound_play_sfx_24();
+            if (i != PLANET_NONE) {
+                g->planet_focus_i[active_player] = i;
+                ui_starmap_set_pos_focus(g, active_player);
+                ui_sound_play_sfx_24();
+            }
         } else if (oi1 == oi_f7) {
             int i;
             i = ui_starmap_newship_prev(g, active_player, g->planet_focus_i[active_player]);
-            g->planet_focus_i[active_player] = i;
-            ui_starmap_set_pos_focus(g, active_player);
-            ui_sound_play_sfx_24();
+            if (i != PLANET_NONE) {
+                g->planet_focus_i[active_player] = i;
+                ui_starmap_set_pos_focus(g, active_player);
+                ui_sound_play_sfx_24();
+            }
         }
         if ((oi1 == oi_cancel) || (oi1 == UIOBJI_ESC)) {
             ui_sound_play_sfx_06();
