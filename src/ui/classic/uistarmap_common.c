@@ -487,6 +487,7 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
         const planet_t *p = &g->planet[pi];
         uint8_t *gfx = ui_data.gfx.starmap.stars[p->star_type + p->look];
         uint8_t anim_frame = ui_data.star_frame[pi];
+        bool show_pop;
         lbxgfx_set_new_frame(gfx, (anim_frame < 4) ? anim_frame : 0);
         gfx_aux_draw_frame_to(gfx, &ui_data.starmap.star_aux);
         if (p->look > 0) {
@@ -505,6 +506,7 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
             }
             ui_data.star_frame[pi] = anim_frame;
         }
+        show_pop = ui_extra_enabled && ui_data.starmap.flag_show_pop && BOOLVEC_IS1(p->explored, d->api);
         if (p->owner != PLAYER_NONE) {
             bool do_print;
             do_print = BOOLVEC_IS1(p->within_srange, d->api);
@@ -519,7 +521,42 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
             if (do_print) {
                 tx = (p->x - x) * 2 + 14;
                 ty = (p->y - y) * 2 + 22;
-                lbxfont_print_str_center_limit(tx, ty, p->name, STARMAP_TEXT_LIMITS, UI_SCREEN_W, starmap_scale);
+                if (show_pop && BOOLVEC_IS1(p->within_srange, d->api)) {
+                    char str[16];
+                    int max_pop = p->max_pop3;
+                    bool show_plus = ((p->max_pop2 + g->eto[d->api].have_terraform_n) > max_pop) && (max_pop < game_num_max_pop);
+                    if (g->eto[d->api].race != RACE_SILICOID) {
+                        max_pop -= p->waste;
+                    }
+                    if (show_plus) {
+                        lib_sprintf(str, sizeof(str), "%i/%i+", p->pop, max_pop);
+                    } else {
+                        lib_sprintf(str, sizeof(str), "%i/%i", p->pop, max_pop);
+                    }
+                    lbxfont_print_str_center_limit(tx, ty, str, STARMAP_TEXT_LIMITS, UI_SCREEN_W, starmap_scale);
+                } else {
+                    lbxfont_print_str_center_limit(tx, ty, p->name, STARMAP_TEXT_LIMITS, UI_SCREEN_W, starmap_scale);
+                }
+            }
+        } else if (show_pop) {
+            tx = (p->x - x) * 2 + 14;
+            ty = (p->y - y) * 2 + 22;
+            lbxfont_select(2, 7, 0, 0);
+            if (p->type == PLANET_TYPE_NOT_HABITABLE) {
+                 lbxfont_print_str_center_limit(tx, ty, "0/0", STARMAP_TEXT_LIMITS, UI_SCREEN_W, starmap_scale);
+            } else if (BOOLVEC_IS1(p->within_srange, d->api)) {
+                char str[16];
+                int max_pop = p->max_pop3;
+                bool show_plus = ((p->max_pop2 + g->eto[d->api].have_terraform_n) > max_pop) && (max_pop < game_num_max_pop);
+                if (g->eto[d->api].race != RACE_SILICOID) {
+                    max_pop -= p->waste;
+                }
+                if (show_plus) {
+                    lib_sprintf(str, sizeof(str), "0/%i+", max_pop);
+                } else {
+                    lib_sprintf(str, sizeof(str), "0/%i", max_pop);
+                }
+                lbxfont_print_str_center_limit(tx, ty, str, STARMAP_TEXT_LIMITS, UI_SCREEN_W, starmap_scale);
             }
         }
     }
