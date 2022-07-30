@@ -50,6 +50,7 @@ enables the following extra UI features:
 - Fleet deployment shows the amount of available ships
 - Sending fewer than all ships does not deselect the orbit fleet
 - Clicking a selected destination star again works as Accept for fleet send etc
+- The position of the build finished message is slightly improved.
 - Eco slider shows fractional population growth if growth is less than 10
 - Summary of forces shown before ship combat
 - When espionage was successful, clicking on the race icon opens the spy report
