@@ -21,7 +21,8 @@ The LBX files are first looked for in the directory specified with
 1.1. Windows, MSDOS
 --------------------
 
-1oom will check the directory of the executable.
+1oom will check the directory of the executable and
+the "data" directory inside it.
 
 1.2 Unix (Linux)
 -----------------
