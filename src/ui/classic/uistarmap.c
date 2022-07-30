@@ -631,8 +631,10 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             if (g->evn.build_finished_num[active_player]) {
                 oi_finished = uiobj_add_mousearea(6, 6, 225, 180, MOO_KEY_SPACE);
             }
-            if (p->owner == active_player) {
+            if ((p->owner == active_player) || (ui_extra_enabled && BOOLVEC_IS1(p->explored, active_player))) {
                 oi_starview2 = uiobj_add_mousearea(227, 24, 310, 53, MOO_KEY_UNKNOWN);
+            }
+            if (p->owner == active_player) {
                 oi_shippic = uiobj_add_mousearea(228, 139, 275, 175, MOO_KEY_UNKNOWN);
                 oi_wheelshippic = uiobj_add_mousewheel(228, 139, 275, 175, &scrollmisc);
             }
