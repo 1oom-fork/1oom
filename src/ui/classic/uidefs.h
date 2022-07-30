@@ -52,6 +52,14 @@ typedef enum {
     UI_MAIN_LOOP_NUM
 } ui_main_loop_action_t;
 
+typedef enum {
+    UI_SM_PLANET_TEXT_NAME,
+    UI_SM_PLANET_TEXT_POPULATION,
+    UI_SM_PLANET_TEXT_ENVIRONMENT,
+    UI_SM_PLANET_TEXT_SPECIAL,
+    UI_SM_PLANET_TEXT_NUM,
+} ui_starmap_planet_text_t;
+
 struct ui_data_s {
     uint32_t seed;
     uint8_t *sfx[NUM_SOUNDS];
@@ -236,6 +244,7 @@ struct ui_data_s {
         int xhold;
         int yhold;
         bool flag_show_grid;
+        ui_starmap_planet_text_t planet_text;
         int line_anim_phase;
         struct gfx_aux_s star_aux;
         int fleet_selected;
