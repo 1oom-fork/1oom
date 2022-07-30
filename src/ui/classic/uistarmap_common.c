@@ -814,8 +814,10 @@ void ui_starmap_add_oi_bottom_buttons(struct starmap_data_s *d)
     d->oi_map = uiobj_add_mousearea(115, 181, 139, 194, MOO_KEY_m);
     d->oi_races = uiobj_add_mousearea(143, 181, 176, 194, MOO_KEY_r);
     d->oi_planets = uiobj_add_mousearea(180, 181, 221, 194, MOO_KEY_p);
-    d->oi_tech = uiobj_add_mousearea(225, 181, 254, 194, MOO_KEY_t);
-    d->oi_next_turn = uiobj_add_mousearea(258, 181, 314, 194, MOO_KEY_n);
+    if (ui_data.ui_main_loop_action != UI_MAIN_LOOP_ORBIT_OWN_SEL) {
+        d->oi_tech = uiobj_add_mousearea(225, 181, 254, 194, MOO_KEY_t);
+        d->oi_next_turn = uiobj_add_mousearea(258, 181, 314, 194, MOO_KEY_n);
+    }
 }
 
 void ui_starmap_fill_oi_tbls(struct starmap_data_s *d)
