@@ -277,13 +277,12 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
             flag_done = true;
             ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
         } else if (((oi1 == oi_f8) || (oi1 == oi_f9)) && g->eto[active_player].have_ia_scanner) {
-            int i, pi;
-            ui_sound_play_sfx_24();
-            pi = g->planet_focus_i[active_player];
-            i = ui_starmap_enemy_incoming(g, active_player, pi, (oi1 == oi_f8));
-            if (i != pi) {
+            int i = g->planet_focus_i[active_player];
+            i = ui_starmap_enemy_incoming(g, active_player, i, (oi1 == oi_f8));
+            if (i != PLANET_NONE) {
                 g->planet_focus_i[active_player] = i;
                 ui_starmap_set_pos_focus(g, active_player);
+                ui_sound_play_sfx_24();
                 d.oo.from = i;
                 /* flag_have_colony_lbx = false */
                 flag_done = true;
@@ -338,29 +337,33 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
         } else if (oi1 == oi_f6) {
             int i;
             i = ui_starmap_newship_next(g, active_player, d.oo.from);
-            g->planet_focus_i[active_player] = i;
-            ui_starmap_set_pos_focus(g, active_player);
-            d.oo.from = i;
-            ui_sound_play_sfx_24();
-            if (BOOLVEC_IS1(g->eto[active_player].orbit[i].visible, active_player)) {
-                ui_data.starmap.orbit_player = active_player;
-            } else {
-                ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
+            if (i != PLANET_NONE) {
+                g->planet_focus_i[active_player] = i;
+                ui_starmap_set_pos_focus(g, active_player);
+                d.oo.from = i;
+                ui_sound_play_sfx_24();
+                if (BOOLVEC_IS1(g->eto[active_player].orbit[i].visible, active_player)) {
+                    ui_data.starmap.orbit_player = active_player;
+                } else {
+                    ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
+                }
+                flag_done = true;
             }
-            flag_done = true;
         } else if (oi1 == oi_f7) {
             int i;
             i = ui_starmap_newship_prev(g, active_player, d.oo.from);
-            g->planet_focus_i[active_player] = i;
-            ui_starmap_set_pos_focus(g, active_player);
-            d.oo.from = i;
-            ui_sound_play_sfx_24();
-            if (BOOLVEC_IS1(g->eto[active_player].orbit[i].visible, active_player)) {
-                ui_data.starmap.orbit_player = active_player;
-            } else {
-                ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
+            if (i != PLANET_NONE) {
+                g->planet_focus_i[active_player] = i;
+                ui_starmap_set_pos_focus(g, active_player);
+                d.oo.from = i;
+                ui_sound_play_sfx_24();
+                if (BOOLVEC_IS1(g->eto[active_player].orbit[i].visible, active_player)) {
+                    ui_data.starmap.orbit_player = active_player;
+                } else {
+                    ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
+                }
+                flag_done = true;
             }
-            flag_done = true;
         }
         for (int i = 0; i < g->enroute_num; ++i) {
             if (oi1 == d.oi_tbl_enroute[i]) {

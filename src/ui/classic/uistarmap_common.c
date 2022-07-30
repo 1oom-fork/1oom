@@ -1054,8 +1054,9 @@ int ui_starmap_newship_next(const struct game_s *g, player_id_t pi, int i)
     do {
         i = (i + 1) % g->galaxy_stars;
         p = &(g->planet[i]);
-    } while ((!((p->owner == pi) && BOOLVEC_IS1(p->finished, FINISHED_SHIP))) && (i != t));
-    return i;
+        if ((p->owner == pi) && BOOLVEC_IS1(p->finished, FINISHED_SHIP)) return i;
+    } while (i != t);
+    return PLANET_NONE;
 }
 
 int ui_starmap_newship_prev(const struct game_s *g, player_id_t pi, int i)
@@ -1065,8 +1066,9 @@ int ui_starmap_newship_prev(const struct game_s *g, player_id_t pi, int i)
     do {
         if (--i < 0) { i = g->galaxy_stars - 1; }
         p = &(g->planet[i]);
-    } while ((!((p->owner == pi) && BOOLVEC_IS1(p->finished, FINISHED_SHIP))) && (i != t));
-    return i;
+        if ((p->owner == pi) && BOOLVEC_IS1(p->finished, FINISHED_SHIP)) return i;
+    } while (i != t);
+    return PLANET_NONE;
 }
 
 int ui_starmap_enemy_incoming(const struct game_s *g, player_id_t pi, int i, bool next)
@@ -1093,7 +1095,7 @@ int ui_starmap_enemy_incoming(const struct game_s *g, player_id_t pi, int i, boo
             }
         }
     } while (i != t);
-    return i;
+    return PLANET_NONE;
 }
 
 void ui_starmap_scroll(const struct game_s *g, int scrollx, int scrolly, uint8_t scrollz)
