@@ -900,3 +900,21 @@ void game_planet_reloc_un(struct game_s *g, player_id_t pi)
         }
     }
 }
+
+bool game_planet_can_terraform(const struct game_s *g, const planet_t *p, player_id_t active_player)
+{
+    const empiretechorbit_t *e = &(g->eto[active_player]);
+    if (e->have_atmos_terra && (p->growth == PLANET_GROWTH_HOSTILE)) {
+        return true;
+    }
+    if (e->have_soil_enrich && (p->growth == PLANET_GROWTH_NORMAL)) {
+        return true;
+    }
+    if (e->have_adv_soil_enrich && ((p->growth == PLANET_GROWTH_NORMAL) || (p->growth == PLANET_GROWTH_FERTILE))) {
+        return true;
+    }
+    if (((p->max_pop2 + e->have_terraform_n) > p->max_pop3) && (p->max_pop3 < game_num_max_pop)) {
+        return true;
+    };
+    return false;
+}

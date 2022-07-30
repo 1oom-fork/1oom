@@ -181,5 +181,6 @@ extern void game_planet_ship_build_everywhere(struct game_s *g, player_id_t owne
 extern void game_planet_ship_replace_everywhere(struct game_s *g, player_id_t owner, uint8_t replace_i, uint8_t ship_i);
 extern int game_planet_reloc_all(struct game_s *g, player_id_t pi);
 extern void game_planet_reloc_un(struct game_s *g, player_id_t pi);
+extern bool game_planet_can_terraform(const struct game_s *g, const planet_t *p, player_id_t active_player);
 
 #endif

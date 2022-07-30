@@ -85,7 +85,7 @@ static void ui_starmap_draw_planetinfo_do(const struct game_s *g, player_id_t ap
                 }
                 lbxfont_print_str_right(305, 36, str, UI_SCREEN_W, ui_scale);
                 lbxfont_select(2, 0xe, 0, 0);
-                if (show_plus && (p->owner == api) && ((p->max_pop2 + g->eto[api].have_terraform_n) > max_pop) && (max_pop < game_num_max_pop)) {
+                if (show_plus && (p->owner == api) && game_planet_can_terraform(g, p, api)) {
                     lbxfont_print_str_normal(289, 44, "+", UI_SCREEN_W, ui_scale);
                     x = 287;
                     xp = x - 22;
@@ -536,7 +536,11 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
                 if (g->eto[d->api].race != RACE_SILICOID) {
                     max_pop -= p->waste;
                 }
-                lib_sprintf(str, sizeof(str), "%i/%i", p->pop, max_pop);
+                if (game_planet_can_terraform(g, p, d->api)) {
+                    lib_sprintf(str, sizeof(str), "%i/%i+", p->pop, max_pop);
+                } else {
+                    lib_sprintf(str, sizeof(str), "%i/%i", p->pop, max_pop);
+                }
                 lbxfont_print_str_center_limit(tx, ty, str, STARMAP_TEXT_LIMITS, UI_SCREEN_W, starmap_scale);
                 break;
             case UI_SM_PLANET_TEXT_SPECIAL:
