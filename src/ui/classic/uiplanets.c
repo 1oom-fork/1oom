@@ -253,6 +253,7 @@ static void planets_draw_cb(void *vptr)
             }
             if (p->slider[PLANET_SLIDER_SHIP] > 0) {
                 str = planets_get_dock_str(g, p);
+                lbxfont_select(2, 6, 0, 0);
                 lbxfont_print_str_normal(221, y0, str, UI_SCREEN_W, ui_scale);
             }
         }
