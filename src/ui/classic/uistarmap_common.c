@@ -148,7 +148,7 @@ static void ui_starmap_draw_sliders_and_prod(struct starmap_data_s *d)
         lbxfont_select(2, 0, 0, 0);
         lbxfont_print_str_normal( 274, 61, "Plan", UI_SCREEN_W, ui_scale);
         lbxfont_print_str_normal( 229, 72, "Reserve boost", UI_SCREEN_W, ui_scale);
-        if (p->target_bases) {
+        if (BOOLVEC_IS1(p->extras, PLANET_EXTRAS_GOVERNOR) && p->target_bases) {
             lbxfont_select(2, p->missile_bases < p->target_bases ? 0xb : 0xd, 0, 0);
             lbxfont_print_num_right(x, 61, p->target_bases, UI_SCREEN_W, ui_scale);
         } else {
@@ -161,7 +161,7 @@ static void ui_starmap_draw_sliders_and_prod(struct starmap_data_s *d)
         lbxfont_select(2, !ui_extra_enabled || !p->reserve ? 0xd : 2 * p->reserve < p->prod_after_maint ? 0xb : 0x0, 0xe, 0);
         lib_sprintf(buf, sizeof(buf), "%i \x02(%i)\x01", p->prod_after_maint, p->total_prod);
         lbxfont_print_str_right(x, 72, buf, UI_SCREEN_W, ui_scale);
-        lbxfont_select(2, ui_extra_enabled && p->missile_bases < p->target_bases ? 0xb : 0xd, 0, 0);
+        lbxfont_select(2, ui_extra_enabled && BOOLVEC_IS1(p->extras, PLANET_EXTRAS_GOVERNOR) && p->missile_bases < p->target_bases ? 0xb : 0xd, 0, 0);
         lbxfont_print_num_right(x, 61, p->missile_bases, UI_SCREEN_W, ui_scale);
     }
     lbxfont_select(2, 0xd, 0, 0);

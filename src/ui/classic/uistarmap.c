@@ -653,12 +653,6 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
                 flag_done = true;
             }
         } else if (oi1 == oi_governor) {
-            /* invert the governor flag */
-            BOOLVEC_TOGGLE(p->extras, PLANET_EXTRAS_GOVERNOR);
-            if (BOOLVEC_IS1(p->extras, PLANET_EXTRAS_GOVERNOR)) {
-                game_planet_govern(g, p);
-            }
-        } else if ((oi1 == UIOBJI_ESC) && (oi2 == oi_governor)) {
             ui_data.ui_main_loop_action = UI_MAIN_LOOP_GOVERN;
             flag_done = true;
             ui_sound_play_sfx_24();
@@ -750,13 +744,15 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
                 oi_shippic = uiobj_add_mousearea(228, 139, 275, 175, MOO_KEY_UNKNOWN);
                 oi_wheelshippic = uiobj_add_mousewheel(228, 139, 275, 175, &scrollmisc);
                 if (ui_extra_enabled) {
-                    oi_governor = uiobj_add_mousearea(227, 8, 310, 20, MOO_KEY_UNKNOWN);
-                    d.sm.oi_gov_ship = uiobj_add_mousearea( 288, 82, 312, 88, MOO_KEY_UNKNOWN );
-                    d.sm.oi_gov_reserve = uiobj_add_mousearea( 288, 104, 312, 110, MOO_KEY_UNKNOWN );
-                    d.sm.oi_gov_tech = uiobj_add_mousearea( 288, 126, 312, 132, MOO_KEY_UNKNOWN );
-                    d.sm.oi_gov_bases = uiobj_add_mousearea( 273, 60, 312, 66, MOO_KEY_UNKNOWN );
-                    d.sm.oi_gov_wheel_bases = uiobj_add_mousewheel( 273, 60, 312, 66, &scrollmisc);
-                    d.sm.oi_gov_boost = uiobj_add_mousearea( 226, 71, 312, 77, MOO_KEY_UNKNOWN );
+                    oi_governor = uiobj_add_mousearea(227, 59, 268, 67, MOO_KEY_v);
+                    if (BOOLVEC_IS1(p->extras, PLANET_EXTRAS_GOVERNOR)) {
+                        d.sm.oi_gov_ship = uiobj_add_mousearea( 288, 82, 312, 88, MOO_KEY_UNKNOWN );
+                        d.sm.oi_gov_reserve = uiobj_add_mousearea( 288, 104, 312, 110, MOO_KEY_UNKNOWN );
+                        d.sm.oi_gov_tech = uiobj_add_mousearea( 288, 126, 312, 132, MOO_KEY_UNKNOWN );
+                        d.sm.oi_gov_bases = uiobj_add_mousearea( 273, 60, 312, 66, MOO_KEY_UNKNOWN );
+                        d.sm.oi_gov_wheel_bases = uiobj_add_mousewheel( 273, 60, 312, 66, &scrollmisc);
+                        d.sm.oi_gov_boost = uiobj_add_mousearea( 226, 71, 312, 77, MOO_KEY_UNKNOWN );
+                    }
                 }
             }
             if (ui_extra_enabled) {

@@ -203,7 +203,7 @@ static void planets_draw_cb(void *vptr)
             }
             lbxfont_select(2, 6, 0, 0);
             lbxfont_print_num_right(132, y0, p->factories, UI_SCREEN_W, ui_scale);
-            lbxfont_select(2, ui_extra_enabled && p->missile_bases < p->target_bases ? 11 : 6, 0, 0);
+            lbxfont_select(2, ui_extra_enabled && BOOLVEC_IS1(p->extras, PLANET_EXTRAS_GOVERNOR) && p->missile_bases < p->target_bases ? 11 : 6, 0, 0);
             lbxfont_print_num_right(170, y0, p->missile_bases, UI_SCREEN_W, ui_scale);
             lbxfont_select(2, 6, 0, 0);
             if (p->waste) {
