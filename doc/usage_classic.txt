@@ -84,6 +84,7 @@ enables the following extra UI features:
 - Clicking on #, Name, etc on Planets screen sorts the list
 - Clicking on Station or ship names on Fleet screen sorts the list
 - The color of ship names on Planets screen is black
+- Added max population column on Planets screen
 - Pressing = in the galaxy movement screen also transfers reserve back and
   the behavior is more predictable
 - Weapons can be filtered by type when modeling a ship
