@@ -850,6 +850,21 @@ void game_planet_govern_all_owned_by(struct game_s *g, player_id_t owner)
     }
 }
 
+void game_planet_ship_build_everywhere(struct game_s *g, player_id_t owner, uint8_t ship_i) {
+    for (uint8_t i = 0; i < g->galaxy_stars; ++i) {
+        planet_t *p = &(g->planet[i]);
+        if (p->owner == owner) {
+            if (ship_i == BUILDSHIP_STARGATE) {
+                if (!p->have_stargate) {
+                    p->buildship = BUILDSHIP_STARGATE;
+                }
+            } else {
+                p->buildship = ship_i;
+            }
+        }
+    }
+}
+
 int game_planet_reloc_all(struct game_s *g, player_id_t pi)
 {
     uint8_t target = g->planet_focus_i[pi];

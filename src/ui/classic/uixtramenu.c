@@ -36,26 +36,11 @@ static void xtramenu_eco_readjust(struct game_s *g, player_id_t pi)
 
 static void xtramenu_ship_everywhere(struct game_s *g, player_id_t pi)
 {
-    uint8_t si;
-    {
-        planet_t *p = &(g->planet[g->planet_focus_i[pi]]);
-        if (p->owner != pi) {
-            return;
-        }
-        si = p->buildship;
+    planet_t *p = &(g->planet[g->planet_focus_i[pi]]);
+    if (p->owner != pi) {
+        return;
     }
-    for (uint8_t i = 0; i < g->galaxy_stars; ++i) {
-        planet_t *p = &(g->planet[i]);
-        if (p->owner == pi) {
-            if (si == BUILDSHIP_STARGATE) {
-                if (!p->have_stargate) {
-                    p->buildship = BUILDSHIP_STARGATE;
-                }
-            } else {
-                p->buildship = si;
-            }
-        }
-    }
+    game_planet_ship_build_everywhere(g, p->owner, p->buildship);
 }
 
 static void xtramenu_reloc_reloc(struct game_s *g, player_id_t pi)
