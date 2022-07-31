@@ -206,6 +206,9 @@ static void planets_draw_cb(void *vptr)
                     lbxfont_print_str_normal(268, y0, str, UI_SCREEN_W);
                 }
             }
+            if (ui_extra_enabled) {
+                lbxfont_select(2, 6, 0, 0);
+            }
             if (p->slider[PLANET_SLIDER_SHIP] > 0) {
                 if (p->buildship == BUILDSHIP_STARGATE) {
                     str = game_str_sm_stargate;
