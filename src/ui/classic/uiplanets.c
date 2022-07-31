@@ -727,7 +727,7 @@ again:
                 ui_sound_play_sfx_24();
                 if (!flag_trans) {
                     g->planet_focus_i[active_player] = tbl_onscreen_planets[i];
-                    flag_done = true;
+                    d.focus_i = g->planet_focus_i[active_player];
                 } else {
                     d.planet_i = tbl_onscreen_planets[i];
                     ui_planets_transfer(&d);
