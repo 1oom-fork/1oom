@@ -850,3 +850,29 @@ void game_planet_govern_all_owned_by(struct game_s *g, player_id_t owner)
     }
 }
 
+int game_planet_reloc_all(struct game_s *g, player_id_t pi)
+{
+    uint8_t target = g->planet_focus_i[pi];
+    if (g->planet[target].owner != pi) {
+        return -1;
+    }
+    int count = 0;
+    for (int i = 0; i < g->galaxy_stars; ++i) {
+        planet_t *p = &(g->planet[i]);
+        if (p->owner == pi && p->reloc != target) {
+            ++count;
+            p->reloc = target;
+        }
+    }
+    return count;
+}
+
+void game_planet_reloc_un(struct game_s *g, player_id_t pi)
+{
+    for (int i = 0; i < g->galaxy_stars; ++i) {
+        planet_t *p = &(g->planet[i]);
+        if (p->owner == pi) {
+            p->reloc = i;
+        }
+    }
+}
