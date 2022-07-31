@@ -51,6 +51,7 @@ struct starmap_data_s {
     int16_t oi_tech;
     int16_t oi_next_turn;
     int16_t oi_alt_c;
+    int16_t oi_alt_f;
     int16_t oi_alt_m;
     int16_t oi_alt_r;
     int16_t oi_ctrl_r;
@@ -106,6 +107,7 @@ struct starmap_data_s {
         d.oi_tech = UIOBJI_INVALID; \
         d.oi_next_turn = UIOBJI_INVALID; \
         d.oi_alt_c = UIOBJI_INVALID; \
+        d.oi_alt_f = UIOBJI_INVALID; \
         d.oi_alt_m = UIOBJI_INVALID; \
         d.oi_alt_r = UIOBJI_INVALID; \
         d.oi_ctrl_r = UIOBJI_INVALID; \

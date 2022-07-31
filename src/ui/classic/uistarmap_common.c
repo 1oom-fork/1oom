@@ -496,6 +496,11 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
             if (g->eto[d->api].have_ia_scanner && (p->owner == d->api) && (r->owner != d->api) && (r->dest == g->planet_focus_i[d->api])) {
                 ui_draw_line_limit_ctbl(tx + 5, ty + 2, (p->x - x) * 2 + 14, (p->y - y) * 2 + 14, colortbl_line_red, 5, ui_data.starmap.line_anim_phase);
             }
+            if (ui_extra_enabled && ui_data.starmap.flag_show_own_routes && d->show_planet_focus) {
+                if ((r->owner == d->api) && (r->dest == g->planet_focus_i[d->api])) {
+                    ui_draw_line_limit_ctbl(tx + 5, ty + 2, (p->x - x) * 2 + 14, (p->y - y) * 2 + 14, colortbl_line_green, 5, ui_data.starmap.line_anim_phase);
+                }
+            }
             lbxgfx_draw_frame_offs(tx, ty, gfx, UI_SCREEN_W);
         }
     }
@@ -514,6 +519,11 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
             p = &g->planet[g->planet_focus_i[d->api]];
             if (g->eto[d->api].have_ia_scanner && (p->owner == d->api) && (r->owner != d->api) && (r->dest == g->planet_focus_i[d->api])) {
                 ui_draw_line_limit_ctbl(tx + 5, ty + 2, (p->x - x) * 2 + 14, (p->y - y) * 2 + 14, colortbl_line_red, 5, ui_data.starmap.line_anim_phase);
+            }
+            if (ui_extra_enabled && ui_data.starmap.flag_show_own_routes && d->show_planet_focus) {
+                if ((r->owner == d->api) && (r->dest == g->planet_focus_i[d->api])) {
+                    ui_draw_line_limit_ctbl(tx + 5, ty + 2, (p->x - x) * 2 + 14, (p->y - y) * 2 + 14, colortbl_line_green, 5, ui_data.starmap.line_anim_phase);
+                }
             }
             lbxgfx_draw_frame_offs(tx, ty, gfx, UI_SCREEN_W);
         }
@@ -753,6 +763,9 @@ void ui_starmap_add_oi_misc(struct starmap_data_s *d)
         d->oi_alt_r = uiobj_add_inputkey(MOO_KEY_r | MOO_MOD_ALT);
         d->oi_ctrl_r = uiobj_add_inputkey(MOO_KEY_r | MOO_MOD_CTRL);
     }
+    if (ui_extra_enabled) {
+        d->oi_alt_f = uiobj_add_inputkey(MOO_KEY_f | MOO_MOD_ALT);
+    }
 }
 
 bool ui_starmap_handle_oi_misc(struct starmap_data_s *d, int16_t oi)
@@ -765,6 +778,9 @@ bool ui_starmap_handle_oi_misc(struct starmap_data_s *d, int16_t oi)
         match = true;
     } else if (oi == d->oi_alt_c) {
         d->set_pos_focus(d->g, d->api);
+        match = true;
+    } else if (oi == d->oi_alt_f) {
+        ui_data.starmap.flag_show_own_routes = !ui_data.starmap.flag_show_own_routes;
         match = true;
     } else if ((oi == d->oi_alt_r) && (g->planet[planet_focus_i].owner == d->api)) {
         for (int i = 0; i < g->galaxy_stars; ++i) {

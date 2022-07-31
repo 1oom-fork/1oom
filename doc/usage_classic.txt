@@ -41,6 +41,7 @@ enables the following extra UI features:
 - Clicking the portraits in Races screen brings Report page
 - Report screen shows name of AI leaders, Map screen shows current year
 - Fleet deployment shows the amount of available ships
+- Alt+f shows friendly fleet routes
 - Sending fewer than all ships does not deselect the orbit fleet
 - The + sign is placed in the population text if it is possible to do
   atmospheric terraforming or soil enrichment
