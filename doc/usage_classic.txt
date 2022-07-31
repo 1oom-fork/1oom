@@ -92,6 +92,7 @@ or pressing Alt-X in the main menu enables the following extra UI features:
   your last planet of choice
 - Clicking on #, Name, etc on Planets screen sorts the list
 - Clicking on Station or ship names on Fleet screen sorts the list
+- The color of ship names on Planets screen is black
 
 Pressing Alt-X in the main menu also enables the following features:
 - Population scheduled for transport no longer contributes to production
