@@ -98,6 +98,7 @@ or pressing Alt-X in the main menu enables the following extra UI features:
   minimum for bonus (m) and for optimum allocation (o). The latter can be
   automated by clicking the level/auto button (t) in the upper right corner.
 - Pressing I opens message filter options
+- Planets: Add max population column
 - Completing terraforming generates a message (which is filtered by default)
 - After running through the Next turn phase and messages the game recenters on
   your last planet of choice
