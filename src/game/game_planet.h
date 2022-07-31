@@ -177,5 +177,7 @@ extern int game_planet_govern_reserve(struct game_s *g, planet_t *p);
 extern int game_planet_govern_sliders(const struct game_s *g, planet_t *p);
 extern void game_planet_govern(struct game_s *g, planet_t *p);
 extern void game_planet_govern_all_owned_by(struct game_s *g, player_id_t owner);
+extern int game_planet_reloc_all(struct game_s *g, player_id_t pi);
+extern void game_planet_reloc_un(struct game_s *g, player_id_t pi);
 
 #endif

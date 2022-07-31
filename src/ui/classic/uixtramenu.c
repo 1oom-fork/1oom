@@ -74,26 +74,7 @@ static void xtramenu_reloc_reloc(struct game_s *g, player_id_t pi)
 
 static void xtramenu_reloc_all(struct game_s *g, player_id_t pi)
 {
-    uint8_t target = g->planet_focus_i[pi];
-    if (g->planet[target].owner != pi) {
-        return;
-    }
-    for (int i = 0; i < g->galaxy_stars; ++i) {
-        planet_t *p = &(g->planet[i]);
-        if (p->owner == pi) {
-            p->reloc = target;
-        }
-    }
-}
-
-static void xtramenu_reloc_un(struct game_s *g, player_id_t pi)
-{
-    for (int i = 0; i < g->galaxy_stars; ++i) {
-        planet_t *p = &(g->planet[i]);
-        if (p->owner == pi) {
-            p->reloc = i;
-        }
-    }
+    game_planet_reloc_all(g, pi);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -111,7 +92,7 @@ static const struct xtramenu_s {
     { MOO_KEY_s, UI_MAIN_LOOP_STARMAP, xtramenu_ship_everywhere },
     { MOO_KEY_l, UI_MAIN_LOOP_STARMAP, xtramenu_reloc_reloc },
     { MOO_KEY_a, UI_MAIN_LOOP_STARMAP, xtramenu_reloc_all },
-    { MOO_KEY_u, UI_MAIN_LOOP_STARMAP, xtramenu_reloc_un },
+    { MOO_KEY_u, UI_MAIN_LOOP_STARMAP, game_planet_reloc_un },
     { MOO_KEY_SPACE, UI_MAIN_LOOP_STARMAP, 0 }
 };
 
