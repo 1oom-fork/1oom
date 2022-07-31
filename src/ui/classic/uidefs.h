@@ -244,6 +244,7 @@ struct ui_data_s {
         int xhold;
         int yhold;
         bool flag_show_grid;
+        bool flag_show_own_routes;
         ui_starmap_planet_text_t planet_text;
         int line_anim_phase;
         struct gfx_aux_s star_aux;
