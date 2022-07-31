@@ -60,6 +60,7 @@ enables the following extra UI features:
 - Report screen shows name of AI leaders, Map screen shows current year
 - Pressing + or - will show the slider when sending transport
 - Fleet deployment shows the amount of available ships
+- Alt+f shows friendly fleet routes
 - Sending fewer than all ships does not deselect the orbit fleet
 - Clicking a selected destination star again works as Accept for fleet send etc
 - The position of the build finished message is slightly improved.
