@@ -108,5 +108,6 @@ or pressing Alt-X in the main menu enables the following extra UI features:
 - Clicking on Station or ship names on Fleet screen sorts the list
 - The = key can be substitued by the # key (useful for some non-US keyboards)
 - Starmap: Ctrl+R sets reloc point for all planets
+- Planets: Ctrl+LMB on ship design name to build it everywhere
 
 See doc/list_gamediff.txt for a list of differences in the game itself.
