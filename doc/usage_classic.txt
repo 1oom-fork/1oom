@@ -66,6 +66,7 @@ enables the following extra UI features:
 - Galaxy movement screen scrolling range is expanded
 - Pressing + or - will show the slider when sending transport
 - Fleet deployment shows the amount of available ships
+- Alt+f shows friendly fleet routes
 - The question mark cursor is disabled on the galaxy movement screen
 - Sending fewer than all ships does not deselect the orbit fleet
 - Clicking a selected destination star again works as Accept for fleet send etc
