@@ -237,6 +237,7 @@ struct ui_data_s {
         int yhold;
         bool flag_show_grid;
         bool flag_show_pop;
+        bool flag_show_own_routes;
         int line_anim_phase;
         struct gfx_aux_s star_aux;
         int fleet_selected;
