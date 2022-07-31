@@ -169,24 +169,43 @@ static void planets_draw_cb(void *vptr)
             lbxfont_select(2, 0xd, 0, 0);
             lbxfont_print_str_normal(25, y0, p->name, UI_SCREEN_W);
             lbxfont_select(2, 6, 0, 0);
-            lbxfont_print_num_right(83, y0, p->pop, UI_SCREEN_W);
+            if (ui_extra_enabled) {
+                lbxfont_print_num_right(99, y0, p->pop, UI_SCREEN_W);
+                lbxfont_select(2, 1, 0, 0);
+                lbxfont_print_num_normal(102, y0, p->max_pop3, UI_SCREEN_W);
+            } else {
+                lbxfont_print_num_right(83, y0, p->pop, UI_SCREEN_W);
+            }
             if (p->pop != p->pop_prev) {
                 int v;
                 char c;
-                uint8_t *gfx;
+                uint8_t *gfx = NULL;
                 if (p->pop > p->pop_prev) {
+                    if (ui_extra_enabled) {
+                        lbxfont_select(2, 0xe, 0, 0);
+                    } else {
+                        gfx = ui_data.gfx.starmap.gr_arrow_u;
+                    }
                     v = p->pop - p->pop_prev;
                     c = '+';
-                    gfx = ui_data.gfx.starmap.gr_arrow_u;
                 } else {
+                    if (ui_extra_enabled) {
+                        lbxfont_select(2, 0xb, 0, 0);
+                    } else {
+                        gfx = ui_data.gfx.starmap.gr_arrow_d;
+                    }
                     v = p->pop_prev - p->pop;
                     c = '-';
-                    gfx = ui_data.gfx.starmap.gr_arrow_d;
                 }
-                lbxgfx_draw_frame(92, y0 - 1, gfx, UI_SCREEN_W);
                 lib_sprintf(buf, sizeof(buf), "%c%i", c, v);
-                lbxfont_print_str_right(111, y0, buf, UI_SCREEN_W);
+                if (ui_extra_enabled) {
+                    lbxfont_print_str_right(83, y0, buf, UI_SCREEN_W);
+                } else {
+                    lbxgfx_draw_frame(92, y0 - 1, gfx, UI_SCREEN_W);
+                    lbxfont_print_str_right(111, y0, buf, UI_SCREEN_W);
+                }
             }
+            lbxfont_select(2, 6, 0, 0);
             if (ui_extra_enabled && p->battlebg == 0) {
                 lbxfont_select(2, 1, 0, 0);
                 lbxfont_print_str_right(149, y0, "neb", UI_SCREEN_W);
@@ -365,8 +384,9 @@ static void ui_planets_transfer(struct planets_data_s *d)
 enum {
     UI_SORT_INDEX = 0,
     UI_SORT_NAME,
-    UI_SORT_POP,
     UI_SORT_GROWTH,
+    UI_SORT_POP,
+    UI_SORT_MAXPOP,
     UI_SORT_FACT,
     UI_SORT_SHIELD,
     UI_SORT_BASE,
@@ -421,6 +441,17 @@ static int planets_sort_inc_pop(const void *ptr0, const void *ptr1)
 static int planets_sort_dec_pop(const void *ptr0, const void *ptr1)
 {
     return planets_sort_inc_pop(ptr1, ptr0);
+}
+
+static int planets_sort_inc_max_pop(const void *ptr0, const void *ptr1)
+{
+    UI_SORT_SETUP();
+    return UI_SORT_CMP_VARIABLE(max_pop3);
+}
+
+static int planets_sort_dec_max_pop(const void *ptr0, const void *ptr1)
+{
+    return planets_sort_inc_max_pop(ptr1, ptr0);
 }
 
 static int planets_sort_inc_growth(const void *ptr0, const void *ptr1)
@@ -547,10 +578,12 @@ static sort_cb_t * const sort_cb_tbl[UI_SORT_NUM * 2] = {
     planets_sort_dec_index,
     planets_sort_inc_name,
     planets_sort_dec_name,
-    planets_sort_dec_pop,
-    planets_sort_inc_pop,
     planets_sort_dec_growth,
     planets_sort_inc_growth,
+    planets_sort_dec_pop,
+    planets_sort_inc_pop,
+    planets_sort_dec_max_pop,
+    planets_sort_inc_max_pop,
     planets_sort_dec_fact,
     planets_sort_inc_fact,
     planets_sort_dec_shield,
@@ -723,8 +756,8 @@ again:
                 }
             }
             if (ui_extra_enabled) {
-                const int x0[UI_SORT_NUM] = {  8, 23, 71,  87, 117, 138, 155, 176, 194, 220, 267 };
-                const int x1[UI_SORT_NUM] = { 20, 67, 86, 113, 134, 151, 172, 192, 216, 262, 310 };
+                const int x0[UI_SORT_NUM] = {  8, 23, 71,  87, 101, 117, 138, 155, 176, 194, 220, 267 };
+                const int x1[UI_SORT_NUM] = { 20, 60, 86,  99, 113, 134, 151, 172, 192, 216, 262, 310 };
                 const int y0 = 8, y1 = 16;
                 for (int i = 0; i < UI_SORT_NUM; ++i) {
                     oi_sort[i] = uiobj_add_mousearea(x0[i], y0, x1[i], y1, MOO_KEY_UNKNOWN);
