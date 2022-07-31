@@ -1,3 +1,71 @@
+1oom-fix-conservative
+---------------------
+
+This branch may only fix 1oom bugs or change ui_extra features
+and never touches original MOO1 gameplay
+
+Core: 
+- Implemented the ability to disable keyboard auto-repeat
+  CFG: ui.kbd_repeat, CMD: -nokbdrepeat
+- Added ./data to lbx search path list
+- Implemented initial autosave in a new game
+- Implemented mouse cursor scaling
+
+UI Starmap:
+- Added map scrolling by mouse
+  CFG: ui.sm_mouse_scroll, CMD: -uismmousescroll
+- UI Orbit Own: Fixed button overlap
+- UI Reloc: Fixed ETA for hostile planet with stargate
+  
+UI Space Combat:
+- Added option to disable bomb animation
+  CFG: game.bombanimation, CMD: -nobombanimation
+  
+UI Specs:
+- Added hotkeys for scrap buttons (1-6)
+
+UI Extra:
+- UI Starmap:
+	- Removed F8/F9 ui_extra section
+	- Removed '?' cursor area
+	- Improved #,= behavior and added 'production' button
+	- Added 'bases' button
+	- Added I hotkey for message filter options
+	- Added Ctrl+R hotkey for 'relocate all' feature
+	- Removed extra menu
+	- Alt+O shows populations for explored planets
+	- Alt+F shows incoming friendly fleet routes
+	- Races hotkey changed 'r' -> 'e'
+	- Reloc hotkey changed 'l' -> 'r'
+	- Increased starmap scroll range
+- UI Send Transport:
+	- Pressing A sets the slider to maximum
+	- Holding Ctrl changes the number of transports by 10%
+- UI Orbit Own:
+	- Removed ui_extra feature: "Sending fewer than all ships
+	  does not deselect the orbit fleet"
+	- Holding Ctrl changes the number of ships by 1
+- UI Planets:
+	- Fixed sort order
+	- Fixed 'neb' text color
+	- Added max population column
+	- Added Ctrl+LMB hotkey for 'build everywhere' feature
+	- Alt+LMB replaces the ship design with the ship design 
+	  of the current planet everywhere
+- UI Governor:
+	- Moved governor UI button to 'Pop' text (V key)
+	- Removed all governor UI controls if governor is disabled
+- UI Design:
+	- Holding Ctrl changes the number of weapons by 10
+- UI Battle:
+	- Do Auto on Esc/RMB
+- UI Fleet:
+	- Specs hotkey changed 'v' -> 's'
+	- Scrap hotkey changed 's' -> 'r'
+
+Autoreconf:
+- Disables hwx11 if win32 detected
+
 Core
 ----
 
@@ -30,4 +98,3 @@ For 1oom features:
 	- Fixed ability to set reloc point to any planet
 - uistarmap: Fixed UHJK scroll speed
 - uimainmenu: Fixed Load Game button condition
-
