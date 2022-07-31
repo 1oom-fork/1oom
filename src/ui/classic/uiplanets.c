@@ -103,6 +103,17 @@ static const char *planets_get_notes_str(const struct game_s *g, uint8_t pli, bo
     return str;
 }
 
+static const char *planets_get_dock_str(const struct game_s *g, const struct planet_s *p)
+{
+    const char *str;
+    if (p->buildship == BUILDSHIP_STARGATE) {
+        str = game_str_sm_stargate;
+    } else {
+        str = g->srd[p->owner].design[p->buildship].name;
+    }
+    return str;
+}
+
 static void planets_draw_cb(void *vptr)
 {
     struct planets_data_s *d = vptr;
@@ -214,11 +225,7 @@ static void planets_draw_cb(void *vptr)
                 }
             }
             if (p->slider[PLANET_SLIDER_SHIP] > 0) {
-                if (p->buildship == BUILDSHIP_STARGATE) {
-                    str = game_str_sm_stargate;
-                } else {
-                    str = g->srd[d->api].design[p->buildship].name;
-                }
+                str = planets_get_dock_str(g, p);
                 lbxfont_print_str_normal(221, y0, str, UI_SCREEN_W, ui_scale);
             }
         }
@@ -384,7 +391,7 @@ enum {
     const planet_t *p0 = &(g->planet[pli0]); \
     const planet_t *p1 = &(g->planet[pli1])
 
-#define UI_SORT_CMP_VALUE(_v0_, _v1_) (((_v0_) != (_v1_)) ? ((_v0_) - (_v1_)) : (i0 - i1))
+#define UI_SORT_CMP_VALUE(_v0_, _v1_) (((_v0_) != (_v1_)) ? ((_v0_) - (_v1_)) : (i1 - i0))
 #define UI_SORT_CMP_VARIABLE(_var_) UI_SORT_CMP_VALUE(p0->_var_, p1->_var_)
 
 static int planets_sort_inc_index(const void *ptr0, const void *ptr1)
@@ -461,7 +468,9 @@ static int planets_sort_dec_fact(const void *ptr0, const void *ptr1)
 static int planets_sort_inc_shield(const void *ptr0, const void *ptr1)
 {
     UI_SORT_SETUP();
-    return UI_SORT_CMP_VARIABLE(shield);
+    int v0 = p0->battlebg ? p0->shield : -1;
+    int v1 = p1->battlebg ? p1->shield : -1;
+    return UI_SORT_CMP_VALUE(v0, v1);
 }
 
 static int planets_sort_dec_shield(const void *ptr0, const void *ptr1)
@@ -507,9 +516,16 @@ static int planets_sort_dec_prod(const void *ptr0, const void *ptr1)
 static int planets_sort_inc_dock(const void *ptr0, const void *ptr1)
 {
     UI_SORT_SETUP();
-    int v0 = (p0->slider[PLANET_SLIDER_SHIP] > 0) ? p0->buildship : -1;
-    int v1 = (p1->slider[PLANET_SLIDER_SHIP] > 0) ? p1->buildship : -1;
-    return UI_SORT_CMP_VALUE(v0, v1);
+    bool active0 = p0->slider[PLANET_SLIDER_SHIP] > 0;
+    bool active1 = p1->slider[PLANET_SLIDER_SHIP] > 0;
+    if (active0 && !active1) {
+        return 1;
+    } else if (active1 && !active0) {
+        return -1;
+    }
+    const char *s0 = active0 ? planets_get_dock_str(g, p0) : "";
+    const char *s1 = active1 ? planets_get_dock_str(g, p1) : "";
+    return UI_SORT_CMP_VALUE(strcmp(s1, s0), 0);
 }
 
 static int planets_sort_dec_dock(const void *ptr0, const void *ptr1)
@@ -519,26 +535,37 @@ static int planets_sort_dec_dock(const void *ptr0, const void *ptr1)
 
 static int planets_sort_inc_notes(const void *ptr0, const void *ptr1)
 {
-    const struct game_s *g = ui_data.sorted.g;
-    uint16_t i0 = *((uint16_t const *)ptr0);
-    uint16_t i1 = *((uint16_t const *)ptr1);
-    uint8_t pli0 = ui_data.sorted.value[i0];
-    uint8_t pli1 = ui_data.sorted.value[i1];
+    UI_SORT_SETUP();
     char buf0[64];
     char buf1[64];
-    const char *s0 = planets_get_notes_str(g, pli0, 0, buf0, sizeof(buf0));
-    const char *s1 = planets_get_notes_str(g, pli1, 0, buf1, sizeof(buf1));
+    bool normal0, normal1;
+    const char *s0 = planets_get_notes_str(g, pli0, &normal0, buf0, sizeof(buf0));
+    const char *s1 = planets_get_notes_str(g, pli1, &normal1, buf1, sizeof(buf1));
     int d;
-    if ((!s0) && (!s1)) {
-        d = i0 - i1;
-    } else if ((!s0) && s1) {
-        d = -1;
-    } else if ((!s1) && s0) {
+    if (normal1 && !normal0) {
         d = 1;
-    } else {
-        d = strcmp(planets_get_notes_str(g, pli0, 0, buf0, sizeof(buf0)), planets_get_notes_str(g, pli1, 0, buf1, sizeof(buf1)));
+    } else if (normal0 && !normal1) {
+        d = -1;
+    } else if (!normal0 && !normal1) {
+        if (s0 && s1) {
+            d = strcmp(s1, s0);
+        } else {
+            d = i1 - i0;
+        }
         if (d == 0) {
-            d = i0 - i1;
+            d = i1 - i0;
+        }
+    } else {
+        if (p0->special > p1->special) {
+            d = 1;
+        } else if (p0->special < p1->special) {
+            d = -1;
+        } else if (p0->growth > p1->growth) {
+            d = 1;
+        } else if (p0->growth < p1->growth) {
+            d = -1;
+        } else {
+            d = i1 - i0;
         }
     }
     return d;
