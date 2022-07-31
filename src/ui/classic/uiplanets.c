@@ -194,11 +194,14 @@ static void planets_draw_cb(void *vptr)
                 lib_sprintf(buf, sizeof(buf), "%c%i", c, v);
                 lbxfont_print_str_right(111, y0, buf, UI_SCREEN_W, ui_scale);
             }
-            if (ui_extra_enabled && p->battlebg == 0)
-                lbxfont_print_str_right(149, y0, "\x2neb\x1", UI_SCREEN_W, ui_scale);
-            else
+            if (ui_extra_enabled && p->battlebg == 0) {
+                lbxfont_select(2, 1, 0, 0);
+                lbxfont_print_str_right(149, y0, "neb", UI_SCREEN_W, ui_scale);
+            } else {
+                lbxfont_select(2, 6, 0, 0);
                 lbxfont_print_str_right(149, y0, game_str_tbl_roman[p->shield], UI_SCREEN_W, ui_scale);
-            /*lbxfont_select(2, 6, 0, 0);*/
+            }
+            lbxfont_select(2, 6, 0, 0);
             lbxfont_print_num_right(132, y0, p->factories, UI_SCREEN_W, ui_scale);
             lbxfont_select(2, ui_extra_enabled && p->missile_bases < p->target_bases ? 11 : 6, 0, 0);
             lbxfont_print_num_right(170, y0, p->missile_bases, UI_SCREEN_W, ui_scale);
