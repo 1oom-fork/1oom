@@ -64,6 +64,7 @@ enables the following extra UI features:
   your last planet of choice
 - Clicking on #, Name, etc on Planets screen sorts the list
 - Clicking on Station or ship names on Fleet screen sorts the list
+- The color of ship names on Planets screen is black
 
 The config file item "ui.uifixbugs" (set via the -uifixbugs command-line option)
 enables the following UI bug fixes:
