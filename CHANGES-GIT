@@ -1,0 +1,75 @@
+1oom-fix-conservative
+---------------------
+
+This branch forked from https://gitlab.com/Tapani_/1oom
+
+This branch may only fix 1oom bugs or change ui_extra features
+and never touches original MOO1 gameplay
+
+Core: 
+- Fixed infinite loop in lbxfont_calc_str_width
+  The game is now playable on ARM devices
+- Fixed population growth negative overflow
+- Implemented the ability to disable keyboard auto-repeat
+  CFG: ui.kbd_repeat, CMD: -nokbdrepeat
+- Added ./data to lbx search path list
+- Fixed difficulty, galaxy size, and player count values
+  in a new game if config values are too high.
+- Implemented initial autosave in a new game
+
+UI Starmap:
+- Added map scrolling by mouse
+  CFG: ui.sm_mouse_scroll, CMD: -uismmousescroll
+- Fixed UHJK scroll speed
+- Fixed bottom menu highlight
+- UI Orbit Own: Fixed button overlap
+- UI Reloc: Fixed ETA for hostile planet with stargate
+  
+UI Search:
+- Fixed undefined/unexpected behavior
+
+UI Tag:
+- Fixed behavior:
+	- Tap once to select the marked planet
+	- Tap twice to focus on the planet
+- Fixed ability to set reloc point to any planet
+
+UI Space Combat:
+- Added option to disable bomb animation
+  CFG: game.bombanimation, CMD: -nobombanimation
+
+UI Extra:
+- UI New Game:
+	- Keep settings
+- UI Starmap:
+	- Removed F8/F9 ui_extra section
+	- Removed '?' cursor area
+	- Improved #,= behavior and added 'production' button
+	- Added 'bases' button
+	- Added I hotkey for message filter options
+	- Added Ctrl+R hotkey for 'relocate all' feature
+	- Removed extra menu
+	- Alt+O shows populations for explored planets
+	- Alt+F shows incoming friendly fleet routes
+	- Races hotkey changed 'r' -> 'e'
+	- Reloc hotkey changed 'l' -> 'r'
+- UI Send Transport:
+	- Pressing A sets the slider to maximum
+	- Holding Ctrl changes the number of transports by 10%
+- UI Orbit Own:
+	- Removed ui_extra feature: "Sending fewer than all ships
+	  does not deselect the orbit fleet"
+	- Holding Ctrl changes the number of ships by 1
+- UI Planets:
+	- Fixed sort order
+	- Fixed 'neb' text color
+	- Added max population column
+	- Added Ctrl+LMB hotkey for 'build everywhere' feature
+- UI Governor:
+	- Moved governor UI button to 'Pop' text (V key)
+	- Removed all governor UI controls if governor is disabled
+- UI Design:
+	- Holding Ctrl changes the number of weapons by 10
+
+Autoreconf:
+- Disables hwx11 if win32 detected
