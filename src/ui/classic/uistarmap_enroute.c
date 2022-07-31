@@ -84,6 +84,12 @@ static void ui_starmap_enroute_draw_cb(void *vptr)
             ctbl = (d->controllable && !ui_starmap_enroute_in_frange(d)) ? colortbl_line_red : colortbl_line_green;
             ui_draw_line_limit_ctbl(x0 + 4, y0 + 1, x1 + 6, y1 + 6, ctbl, 5, ui_data.starmap.line_anim_phase);
         }
+        if (ui_extra_enabled && ui_data.starmap.flag_show_own_routes && (r->owner == d->api)) {
+            int x2, y2;
+            x2 = (pd->x - ui_data.starmap.x) * 2 + 8;
+            y2 = (pd->y - ui_data.starmap.y) * 2 + 8;
+            ui_draw_line_limit_ctbl(x0 + 4, y0 + 1, x2 + 6, y2 + 6, colortbl_line_green, 5, ui_data.starmap.line_anim_phase);
+        }
         gfx = ui_data.gfx.starmap.smalship[e->banner];
         if (pd->x < r->x) {
             lbxgfx_set_new_frame(gfx, 1);

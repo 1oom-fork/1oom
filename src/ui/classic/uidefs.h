@@ -228,6 +228,7 @@ struct ui_data_s {
         int xhold;
         int yhold;
         bool flag_show_grid;
+        bool flag_show_own_routes;
         int line_anim_phase;
         int stars_xoff1;
         int stars_xoff2;
