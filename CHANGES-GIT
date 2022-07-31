@@ -1,3 +1,29 @@
+1oom-fix-all
+------------
+
+This branch follows 1oom-fix-conservative and may fix
+MOO1 bugs. This branch never changes MOO1 rules
+
+Core:
+- Fix Ctrl, Alt, Shift behavior
+- Pressing hot key or changing focus does not move the mouse
+- Only the clicked object is triggered on mouse button release
+
+UI Starmap:
+- Build Finished: Locked planet focus to avoid 'BUG' message
+- Build Finished: Fixed text position so the star is visible
+- UI Orbit Own: Allow to select the current planet
+- UI Send Transport/Reloc: Fixed the possibility of implicitly
+  changing the destination without clicking the Accept button
+- UI Send Transport: Fixed hotkeys and behavior
+- F6/F7/F8/F9: Fixed behavior if the target is not found
+- Max population: Always draws + if you can terraform
+- Top-right star view button: Now enabled if explored
+
+UI Planets:
+- Fix ship name color
+- Do not leave the planets UI when selecting a planet
+
 1oom-fix-conservative
 ---------------------
 
