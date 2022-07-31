@@ -67,14 +67,9 @@ or pressing Alt-X in the main menu enables the following extra UI features:
 - Clicking a selected destination star again works as Accept for fleet send etc
 - Hovering over a planet draws a ruler with the distance in parsec from the
   currently selected planet if is in the screen.
-- Planetary governor can be enabled or disabled by clicking on planet name in
-  the galaxy movement screen, setting reserve spending mode (see below) or by
-  clicking on the respective amount fields (right of the slider) for Ships, Ind
-  or Tech. The latter also sets the governor  production focus for the planet.
-- Right clicking on planet name in the galaxy movement screen opens a governor
-  screen for all governor related local and global settings. The latter include
-  Eco mode, buildup mode and whether to build stargates. All local settings
-  are also reachable directly over the planet interface.
+- Governor screen can be opened by clicking on the Pop text or pressing V key.
+  The screen include Eco mode, buildup mode and whether to build stargates.
+  All local settings are also reachable directly over the planet interface.
 - Clicking on the planetary production field when the governor is active cycles
   through the reserve spending modes for the planet. The modes are "none"
   (never), "buildup" (only during buildup) and "always" (useful for Ultra Rich
