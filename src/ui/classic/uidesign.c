@@ -1100,6 +1100,29 @@ static void ui_design_sub(struct ui_design_data_s *u, design_slot_t selmode)
     uiobj_set_help_id(5);
 }
 
+bool ui_design_try_inc_weap_count(struct game_s *g, struct design_data_s *d, int i, int inc)
+{
+    struct game_design_s *gd = d->gd;
+    shipdesign_t *sd = &(gd->sd);
+    bool ret = false;
+    int space;
+    if (sd->wpnn[i] + inc > 99) {
+        inc = 99 - sd->wpnn[i];
+    }
+    sd->wpnn[i] += inc;
+    game_design_update_engines(sd);
+    space = game_design_calc_space(gd);
+    if (space >= 0) {
+        sd->space = space;
+        game_design_update_haveflags(d);
+        ret = true;
+    } else {
+        sd->wpnn[i] -= inc;
+        game_design_update_engines(sd);
+    }
+    return ret;
+}
+
 /* -------------------------------------------------------------------------- */
 
 bool ui_design(struct game_s *g, struct game_design_s *gd, player_id_t active_player)
@@ -1170,18 +1193,8 @@ bool ui_design(struct game_s *g, struct game_design_s *gd, player_id_t active_pl
               && (sd->wpnn[i] < 99)
               && ((oi == u.oi_tbl_weap_up[i]) || ((oi == u.oi_tbl_weap_n_scroll[i]) && ((u.scroll > 0) != ui_mwi_counter)))
             ) {
-                int space;
                 ui_sound_play_sfx_24();
-                ++sd->wpnn[i];
-                game_design_update_engines(sd);
-                space = game_design_calc_space(gd);
-                if (space >= 0) {
-                    sd->space = space;
-                    game_design_update_haveflags(&d);
-                } else {
-                    --sd->wpnn[i];
-                    game_design_update_engines(sd);
-                }
+                ui_design_try_inc_weap_count(g, &d, i, 1);
                 break;
             } else if (1
               && (sd->wpnn[i] > 0)
