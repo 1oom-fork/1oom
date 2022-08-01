@@ -1194,14 +1194,35 @@ bool ui_design(struct game_s *g, struct game_design_s *gd, player_id_t active_pl
               && ((oi == u.oi_tbl_weap_up[i]) || ((oi == u.oi_tbl_weap_n_scroll[i]) && ((u.scroll > 0) != ui_mwi_counter)))
             ) {
                 ui_sound_play_sfx_24();
-                ui_design_try_inc_weap_count(g, &d, i, 1);
+                if (kbd_is_modifier(MOO_MOD_ALT)) {
+                    if (!ui_design_try_inc_weap_count(g, &d, i, 99)) {
+                        while (ui_design_try_inc_weap_count(g, &d, i, 10)) {}
+                        while (ui_design_try_inc_weap_count(g, &d, i, 1)) {}
+                    }
+                } else if (kbd_is_modifier(MOO_MOD_CTRL)) {
+                    if (!ui_design_try_inc_weap_count(g, &d, i, 10)) {
+                        while (ui_design_try_inc_weap_count(g, &d, i, 1)) {}
+                    }
+                } else {
+                    ui_design_try_inc_weap_count(g, &d, i, 1);
+                }
                 break;
             } else if (1
               && (sd->wpnn[i] > 0)
               && ((oi == u.oi_tbl_weap_dn[i]) || ((oi == u.oi_tbl_weap_n_scroll[i]) && ((u.scroll < 0) != ui_mwi_counter)))
             ) {
                 ui_sound_play_sfx_24();
-                --sd->wpnn[i];
+                if (kbd_is_modifier(MOO_MOD_CTRL)) {
+                    if (sd->wpnn[i] < 10) {
+                        sd->wpnn[i] = 0;
+                    } else {
+                        sd->wpnn[i] -= 10;
+                    }
+                } else if (kbd_is_modifier(MOO_MOD_ALT)) {
+                    sd->wpnn[i] = 0;
+                } else {
+                    --sd->wpnn[i];
+                }
                 game_design_update_haveflags(&d);
                 d.flag_tbl_weap_dn[i] = (sd->wpnn[i] == 0);
                 break;
