@@ -89,7 +89,7 @@ static void ui_starmap_fill_oi_slider(struct starmap_data_s *d, planet_t *p)
         }
         d->sm.oi_ship = uiobj_add_t0(282, 140, "", ui_data.gfx.starmap.col_butt_ship, MOO_KEY_s);
         if (p->buildship != BUILDSHIP_STARGATE) {
-            d->sm.oi_reloc = uiobj_add_t0(282, 152, "", ui_data.gfx.starmap.col_butt_reloc, MOO_KEY_l);
+            d->sm.oi_reloc = uiobj_add_t0(282, 152, "", ui_data.gfx.starmap.col_butt_reloc, (ui_extra_enabled ? MOO_KEY_r : MOO_KEY_l));
         }
         if (g->evn.have_plague && (g->evn.plague_planet_i == g->planet_focus_i[d->api])) {
             lbxgfx_set_frame(ui_data.gfx.starmap.col_butt_trans, 1);
