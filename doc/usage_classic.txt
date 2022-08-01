@@ -60,7 +60,7 @@ The following new UI features are always enabled/available:
 
 The config file item "ui.uiextra" (set via the -uiextra command-line option)
 or pressing Alt-X in the main menu enables the following extra UI features:
-- Continue and Undo saves can be chosen in the Load Game screen
+- Continue, Undo and Initial saves can be chosen in the Load Game screen
 - New Game screen allows setting opponent race/banner/names and AI/human flag
 - Clicking the portraits in Races screen brings Report page
 - Pressing a hotkey does not trigger mouse warp
