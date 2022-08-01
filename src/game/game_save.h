@@ -4,11 +4,12 @@
 #include "types.h"
 
 #define NUM_SAVES   6
-#define NUM_ALL_SAVES   (NUM_SAVES + 1/*continue game*/ + 1/*undo*/)
+#define NUM_ALL_SAVES   (NUM_SAVES + 1/*continue game*/ + 1/*undo*/ + 1/*init*/)
 #define SAVE_NAME_LEN   20
 
 #define GAME_SAVE_I_CONTINUE    (7 - 1)
 #define GAME_SAVE_I_UNDO        (8 - 1)
+#define GAME_SAVE_I_INIT        (9 - 1)
 
 extern bool game_save_tbl_have_save[NUM_ALL_SAVES];
 extern char game_save_tbl_name[NUM_ALL_SAVES][SAVE_NAME_LEN];
