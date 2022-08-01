@@ -67,6 +67,11 @@ enables the following extra UI features:
 - Pressing = on the Tech screen adjusts only the unlocked sliders
 - Tech screen has lights showing when you reach max research bonus
 - Clicking on the Tech screen lights sets the slider to bonus limit
+- Changed some illogical hotkeys:
+  - Starmap -> Fleet -> Specs ('v' -> 's')
+  - Starmap -> Fleet -> Scrap ('s' -> 'c')
+  - Starmap -> Reloc ('l' -> 'r')
+  - Starmap -> Races ('r' -> 'a')
 - After running through the Next turn phase and messages the game recenters on
   your last planet of choice
 - Clicking on #, Name, etc on Planets screen sorts the list
