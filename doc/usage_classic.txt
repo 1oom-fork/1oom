@@ -114,5 +114,7 @@ or pressing Alt-X in the main menu enables the following extra UI features:
 - Starmap: Added 'production' button for reserve transfer
 - Starmap: Added 'bases' button for basescrap UI
 - Starmap: Removed '?' cursor area
+- Starmap: Races hotkey changed 'r' -> 'e'
+- Starmap: Reloc hotkey changed 'l' -> 'r'
 
 See doc/list_gamediff.txt for a list of differences in the game itself.
