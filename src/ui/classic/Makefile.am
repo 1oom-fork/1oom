@@ -92,6 +92,4 @@ libuiclassic_a_SOURCES = \
     uiswitch.h \
     uitech.c \
     uitech.h \
-    uiturn.c \
-    uixtramenu.c \
-    uixtramenu.h
+    uiturn.c
