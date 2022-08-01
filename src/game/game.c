@@ -28,6 +28,7 @@ static bool game_opt_continue = false;
 static int game_opt_load_game = 0;
 static const char *game_opt_load_fname = 0;
 static bool game_opt_undo_enabled = true;
+static bool game_opt_init_saves_enabled = true;
 static bool game_opt_next_turn = false;
 static bool game_opt_save_quit = false;
 
@@ -245,7 +246,7 @@ static int game_opt_set_new_home(char **argv, void *var)
 
 static int game_opt_do_load(char **argv, void *var)
 {
-    if ((argv[1][1] == 0) && (argv[1][0] >= '1') && (argv[1][0] <= '8')) {
+    if ((argv[1][1] == 0) && (argv[1][0] >= '1') && (argv[1][0] <= '9')) {
         game_opt_load_game = argv[1][0] - '0';
         game_opt_load_fname = 0;
         log_message("Game: load game %i\n", game_opt_load_game);
@@ -312,6 +313,12 @@ const struct cmdline_options_s main_cmdline_options[] = {
     { "-noundo", 0,
       options_disable_bool_var, (void *)&game_opt_undo_enabled,
       NULL, "Disable undo saves" },
+    { "-initsaves", 0,
+      options_enable_bool_var, (void *)&game_opt_init_saves_enabled,
+      NULL, "Enable init saves" },
+    { "-noinitsaves", 0,
+      options_disable_bool_var, (void *)&game_opt_init_saves_enabled,
+      NULL, "Disable init saves" },
     { "-nextturn", 0,
       options_enable_bool_var, (void *)&game_opt_next_turn,
       NULL, "Go directly to next turn" },
@@ -451,6 +458,9 @@ int main_do(void)
             case MAIN_MENU_ACT_NEW_GAME:
                 main_menu_new_game:
                 game_new(&game, &game_aux, &game_new_opts);
+                if (game_opt_init_saves_enabled) {
+                    game_save_do_save_i(GAME_SAVE_I_INIT, "Init", &game);
+                }
                 break;
             case MAIN_MENU_ACT_TUTOR:
                 game_new_tutor(&game, &game_aux);
