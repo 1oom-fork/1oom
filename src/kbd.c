@@ -31,7 +31,10 @@ void kbd_clear(void)
 void kbd_add_keypress(mookey_t key, uint32_t mod, char c)
 {
     uint32_t value = ((uint32_t)key) | mod | (((uint32_t)c) << 8);
-    if (key == MOO_KEY_LAST) {
+    if (key == MOO_KEY_LAST
+     || key == MOO_KEY_RSHIFT || key == MOO_KEY_LSHIFT
+     || key == MOO_KEY_RCTRL  || key == MOO_KEY_LCTRL
+     || key == MOO_KEY_RALT   || key == MOO_KEY_LALT) {
         return;
     }
     if (kbd.full) {
