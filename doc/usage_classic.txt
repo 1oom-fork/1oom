@@ -111,5 +111,6 @@ or pressing Alt-X in the main menu enables the following extra UI features:
 - Starmap: Ctrl+R sets reloc point for all planets
 - Planets: Ctrl+LMB on ship design name to build it everywhere
 - Design: Holding Ctrl changes the number of weapons by 10
+- Starmap: Added 'production' button for reserve transfer
 
 See doc/list_gamediff.txt for a list of differences in the game itself.

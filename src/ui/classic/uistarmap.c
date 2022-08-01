@@ -735,7 +735,11 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             oi_alt_o = uiobj_add_inputkey(MOO_KEY_o | MOO_MOD_ALT);
             oi_alt_f = uiobj_add_inputkey(MOO_KEY_f | MOO_MOD_ALT);
             if (p->owner == active_player) {
-                oi_equals = uiobj_add_inputkey(MOO_KEY_EQUALS);
+                if (ui_extra_enabled && BOOLVEC_IS0(p->extras, PLANET_EXTRAS_GOVERNOR)) {
+                    oi_equals = uiobj_add_mousearea(227, 70, 312, 78, MOO_KEY_EQUALS);
+                } else {
+                    oi_equals = uiobj_add_inputkey(MOO_KEY_EQUALS);
+                }
                 oi_hash = uiobj_add_inputkey(MOO_KEY_HASH);
             }
             oi_f2 = uiobj_add_inputkey(MOO_KEY_F2);
