@@ -53,7 +53,7 @@ static void load_game_draw_cb(void *vptr)
     for (int i = 0; i < d->savenum; ++i) {
         int si, y;
         si = d->tbl_savei[i];
-        y = (si < NUM_SAVES) ? (33 + 18 * si) : (112 + 10 * si);
+        y = (si < NUM_SAVES) ? (33 + 18 * si) : (110 + 10 * si);
         lbxgfx_draw_frame(134, y, (d->selected == i) ? d->gfx_lg_green : d->gfx_lg_gray, UI_SCREEN_W);
         lbxfont_select(0, (d->selected == i) ? 2 : 1, 0, 0);
         lbxfont_print_str_normal(149, y + 2, game_save_tbl_name[si], UI_SCREEN_W);
@@ -90,10 +90,11 @@ int ui_load_game(void)
     uiobj_set_focus(oi_ok);
 
     for (int i = 0; i < d.savenum; ++i) {
-        int si, y0;
+        int si, y0, y1;
         si = d.tbl_savei[i];
         y0 = (si < NUM_SAVES) ? (31 + 18 * si) : (110 + 10 * si);
-        oi_save[i] = uiobj_add_mousearea(130, y0, 264, y0 + 14, MOO_KEY_1 + si);
+        y1 = y0 + ((si < NUM_SAVES) ? 14 : 8);
+        oi_save[i] = uiobj_add_mousearea(130, y0, 264, y1, MOO_KEY_1 + si);
     }
 
     d.selected = 0;
