@@ -4,7 +4,7 @@
 #include "types.h"
 
 #define NUM_SAVES   6
-#define NUM_ALL_SAVES   (NUM_SAVES + 1/*continue game*/ + 1/*undo*/)
+#define NUM_ALL_SAVES   (NUM_SAVES + 1/*continue game*/ + 1/*undo*/ + 1/*init*/)
 #define SAVE_NAME_LEN   20
 
 #define GAME_SAVE_I_CONTINUE    (7 - 1)
