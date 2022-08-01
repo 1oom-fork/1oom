@@ -20,7 +20,8 @@ New hotkeys:
 Unlike the original, 1oom does not autosave the "continue game" (save slot 7)
 when starting a new game or every N turns. It only saves it when quitting the
 game via Game -> Quit or when F10 is pressed while in the "control screen" /
-"galaxy movement screen".
+"galaxy movement screen". 1oom does autosave the "new game" (save slot 9)
+when starting a new game.
 
 The following new UI features are always enabled/available:
 - Smoother galaxy movement screen scrolling
