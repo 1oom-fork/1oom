@@ -497,7 +497,6 @@ do_accept:
         if (!flag_done) {
             p = &g->planet[g->planet_focus_i[active_player]];
             if (1
-              && (g->planet_focus_i[active_player] != d.oo.from)
               && ((p->within_frange[active_player] == 1) || ((p->within_frange[active_player] == 2) && d.oo.sn0.have_reserve_fuel))
             ) {
                 d.oo.in_frange = true;
