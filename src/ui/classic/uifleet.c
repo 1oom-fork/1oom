@@ -453,7 +453,7 @@ int ui_fleet(struct game_s *g, player_id_t active_player)
             UIOBJ_CLEAR_LOCAL();
 
             oi_ok = uiobj_add_t0(268, 181, "", ui_data.gfx.starmap.fleetbut_ok, MOO_KEY_SPACE);
-            oi_view = uiobj_add_t0(180, 181, "", ui_data.gfx.starmap.fleetbut_view, MOO_KEY_v);
+            oi_view = uiobj_add_t0(180, 181, "", ui_data.gfx.starmap.fleetbut_view, (ui_extra_enabled ? MOO_KEY_s : MOO_KEY_v));
             if (d.pos > 0) {
                 oi_up = uiobj_add_t0(307, 24, "", ui_data.gfx.starmap.fleetbut_up, MOO_KEY_COMMA);
             }
@@ -461,7 +461,7 @@ int ui_fleet(struct game_s *g, player_id_t active_player)
                 oi_down = uiobj_add_t0(307, 156, "", ui_data.gfx.starmap.fleetbut_down, MOO_KEY_PERIOD);
             }
             if ((g->eto[active_player].shipdesigns_num > 1) && !flag_scrap) {
-                oi_scrap = uiobj_add_t0(224, 181, "", ui_data.gfx.starmap.fleetbut_scrap, MOO_KEY_s);
+                oi_scrap = uiobj_add_t0(224, 181, "", ui_data.gfx.starmap.fleetbut_scrap, (ui_extra_enabled ? MOO_KEY_c : MOO_KEY_s));
             } else {
                 lbxgfx_set_new_frame(ui_data.gfx.starmap.fleetbut_scrap, 1);
                 lbxgfx_draw_frame(224, 181, ui_data.gfx.starmap.fleetbut_scrap, UI_SCREEN_W);
