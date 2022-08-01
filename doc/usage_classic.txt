@@ -100,6 +100,7 @@ or pressing Alt-X in the main menu enables the following extra UI features:
     - The ship production selection can be set everywhere
     - Relocation can be (un)set for all planets
     - "X has finished ..." messages can be filtered
+- Pressing I opens message filter options
 - Completing terraforming generates a message (which is filtered by default)
 - After running through the Next turn phase and messages the game recenters on
   your last planet of choice
