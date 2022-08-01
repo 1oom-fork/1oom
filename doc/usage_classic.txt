@@ -62,6 +62,7 @@ or pressing Alt-X in the main menu enables the following extra UI features:
 - New Game screen allows setting opponent race/banner/names and AI/human flag
 - Report screen shows name of AI leaders, Map screen shows current year
 - Fleet deployment shows the amount of available ships
+- The question mark cursor is disabled on the galaxy movement screen
 - The current planet is allowed as a target on the fleet deployment screen
 - Sending fewer than all ships does not deselect the orbit fleet
 - Clicking a selected destination star again works as Accept for fleet send etc
