@@ -620,7 +620,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             uiobj_table_set_last(oi_alt_events);
             UIOBJ_CLEAR_LOCAL();
             if (p->owner == active_player) {
-                oi_equals = uiobj_add_inputkey(MOO_KEY_EQUALS);
+                oi_equals = uiobj_add_mousearea(227, 70, 312, 78, MOO_KEY_EQUALS);
                 oi_hash = uiobj_add_inputkey(MOO_KEY_HASH);
             }
             STARMAP_UIOBJ_FILL_FX();
