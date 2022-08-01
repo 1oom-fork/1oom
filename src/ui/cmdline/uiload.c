@@ -22,6 +22,7 @@ int ui_load_game(void)
         { 5, "6", NULL, NULL },
         { 7, "7", NULL, NULL },
         { 8, "8", NULL, NULL },
+        { 9, "9", NULL, NULL },
         { 0, NULL, NULL, NULL },
         { 0, NULL, NULL, NULL }
     };
