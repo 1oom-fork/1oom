@@ -43,7 +43,7 @@ The following new UI features are always enabled/available:
 
 The config file item "ui.uiextra" (set via the -uiextra command-line option)
 enables the following extra UI features:
-- Continue and Undo saves can be chosen in the Load Game screen
+- Continue, Undo and Initial saves can be chosen in the Load Game screen
 - New Game screen allows setting opponent race/banner/names and AI/human flag
 - Clicking the portraits in Races screen brings Report page
 - Report screen shows name of AI leaders, Map screen shows current year
