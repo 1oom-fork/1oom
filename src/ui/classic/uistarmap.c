@@ -787,18 +787,21 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             }
             oi_wheelname = uiobj_add_mousewheel(227, 8, 310, 20, &scrollmisc);
             ui_starmap_fill_oi_tbls(&d);
-            {
+            if (!ui_extra_enabled){
                 int x0, y0;
                 x0 = (p->x - ui_data.starmap.x) * 2 + 6;
                 y0 = (p->y - ui_data.starmap.y) * 2 + 6;
                 oi_starview1 = uiobj_add_mousearea_limited(x0, y0, x0 + 16, y0 + 16, starmap_scale, MOO_KEY_UNKNOWN);
             }
             ui_starmap_fill_oi_tbl_stars(&d);
+            if (ui_extra_enabled) {
+                oi_starview1 = d.oi_tbl_stars[g->planet_focus_i[active_player]];
+            }
             ui_starmap_fill_oi_slider(&d, p);
             oi_scroll = uiobj_add_tb(6, 6, 2, 2, 108, 86, &scrollx, &scrolly, &scrollz, ui_scale);
             oi_search = uiobj_add_inputkey(MOO_KEY_SLASH);
             ui_starmap_fill_oi_ctrl(&d);
-            if (1) {
+            if (!ui_extra_enabled) {
                 int x0, y0, x1, y1;
                 x0 = (p->x - ui_data.starmap.x) * 2 + 6;
                 y0 = (p->y - ui_data.starmap.y) * 2 + 6;
@@ -829,6 +832,8 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             }
             if (g->evn.build_finished_num[active_player]) {
                 ui_cursor_setup_area(2, &ui_cursor_area_tbl[0]);
+            } else if (ui_extra_enabled) {
+                ui_cursor_setup_area(2, &ui_cursor_area_tbl[3]);
             }
             ui_draw_finish();
             if (g->difficulty < DIFFICULTY_AVERAGE) {
