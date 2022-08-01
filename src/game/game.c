@@ -33,6 +33,7 @@ static int game_opt_load_game = 0;
 static const char *game_opt_load_fname = 0;
 static bool game_opt_undo_enabled = true;
 static bool game_opt_year_save_enabled = false;
+static bool game_opt_init_save_enabled = true;
 static bool game_opt_next_turn = false;
 
 static struct game_end_s game_opt_end = { GAME_END_NONE, 0, 0, 0, 0 };
@@ -432,6 +433,7 @@ static bool game_cfg_check_new_game_opts(void *val)
 const struct cfg_items_s game_cfg_items[] = {
     CFG_ITEM_BOOL("undo", &game_opt_undo_enabled),
     CFG_ITEM_BOOL("yearsave", &game_opt_year_save_enabled),
+    CFG_ITEM_BOOL("initsave", &game_opt_init_save_enabled),
     CFG_ITEM_BOOL("skipintro", &game_opt_skip_intro_always),
     CFG_ITEM_COMMENT("PLAYERS*100+GALAXYSIZE*10+DIFFICULTY"),
     CFG_ITEM_COMMENT(" 2..6, 0..3 = small..huge, 0..4 = simple..impossible"),
@@ -574,6 +576,9 @@ int main_do(void)
                 main_menu_new_game:
                 game_new(&game, &game_aux, &game_new_opts);
                 game_opt_new_value = game_get_opts_value(&game);
+                if (game_opt_init_save_enabled) {
+                    game_save_do_save_i(GAME_SAVE_I_INIT, "Init", &game);
+                }
                 break;
             case MAIN_MENU_ACT_TUTOR:
                 game_new_tutor(&game, &game_aux);
