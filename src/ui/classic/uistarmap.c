@@ -752,8 +752,11 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             oi_f9 = uiobj_add_inputkey(MOO_KEY_F9);
             oi_f10 = uiobj_add_inputkey(MOO_KEY_F10);
             if ((p->owner == active_player) && p->missile_bases) {
-                /* oi_b = uiobj_add_mousearea(272, 59, 312, 67, MOO_KEY_b); */
-                oi_b = uiobj_add_inputkey(MOO_KEY_b);
+                if (ui_extra_enabled && BOOLVEC_IS0(p->extras, PLANET_EXTRAS_GOVERNOR)) {
+                    oi_b = uiobj_add_mousearea(272, 59, 312, 67, MOO_KEY_b);
+                } else {
+                    oi_b = uiobj_add_inputkey(MOO_KEY_b);
+                }
             }
             oi_c = uiobj_add_inputkey(MOO_KEY_c);
             if (ui_extra_enabled) {
