@@ -92,6 +92,11 @@ or pressing Alt-X in the main menu enables the following extra UI features:
     - Relocation can be (un)set for all planets
     - "X has finished ..." messages can be filtered
 - Completing terraforming generates a message (which is filtered by default)
+- Changed some illogical hotkeys:
+  - Starmap -> Fleet -> Specs ('v' -> 's')
+  - Starmap -> Fleet -> Scrap ('s' -> 'c')
+  - Starmap -> Reloc ('l' -> 'r')
+  - Starmap -> Races ('r' -> 'a')
 - After running through the Next turn phase and messages the game recenters on
   your last planet of choice
 - Clicking on #, Name, etc on Planets screen sorts the list
