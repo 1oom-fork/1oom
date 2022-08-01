@@ -32,6 +32,8 @@ The following new UI features are always enabled/available:
 - Objects with hotkeys can be navigated to using cursor keys
 - Mouse wheel can be used to scroll lists and adjust many things
 - Space bar works as a generic dismiss message key (Continue, ...)
+- Ctrl and Alt works as a step modifier for the counters and sliders:
+  - on the Design screen
 - Clicking the portraits in Races screen brings Report page
 - In Races screen the keys 1-5 correspond to clicking the portraits
 - Ind slider no longer shows 0.N/y when at max factories
