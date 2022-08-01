@@ -771,16 +771,3 @@ const char *game_str_mf_title = "Show messages:";
 const char *game_str_tbl_mf[FINISHED_NUM] = {
     "Max factories",  "Max population", "Better growth", "Stargate", "Shield", "", "Terraformed", "for governed Planets"
 };
-
-const char *game_str_tbl_xtramenu[XTRAMENU_NUM] = {
-    "Scrap bases",
-    "Caught spies",
-    "Governor settings",
-    "Message filter",
-    "Readjust Eco",
-    "Select ship everywhere",
-    "Relocate relocated",
-    "Relocate all",
-    "Unrelocate all",
-    "Cancel"
-};
