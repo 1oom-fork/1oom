@@ -72,7 +72,7 @@ static void ui_starmap_trans_draw_cb(void *vptr)
         }
         ui_draw_line_limit_ctbl(x0 + 6, y0 + 6, x1, y1, ctbl, 5, ui_data.starmap.line_anim_phase, starmap_scale);
     }
-    if (d->tr.from != g->planet_focus_i[d->api]) {
+    if (d->tr.other) {
         if (pt->within_frange[d->api] != 1) {
             int mindist = game_get_min_dist(g, d->api, g->planet_focus_i[d->api]);
             lbxfont_select_set_12_1(0, 0xe, 5, 0);
@@ -158,7 +158,7 @@ static void ui_starmap_trans_draw_cb(void *vptr)
 void ui_starmap_trans(struct game_s *g, player_id_t active_player)
 {
     bool flag_done = false;
-    int16_t oi_scroll, oi_cancel, oi_accept, oi_plus, oi_minus, oi_search,
+    int16_t oi_scroll, oi_cancel, oi_accept, oi_plus, oi_minus, oi_equals, oi_search,
             oi_f2, oi_f3, oi_f4, oi_f5, oi_f6, oi_f7, oi_f8, oi_f9, oi_f10,
             oi_a;
     int16_t scrollx = 0, scrolly = 0;
@@ -197,6 +197,7 @@ void ui_starmap_trans(struct game_s *g, player_id_t active_player)
         oi_cancel = UIOBJI_INVALID; \
         oi_plus = UIOBJI_INVALID; \
         oi_minus = UIOBJI_INVALID; \
+        oi_equals = UIOBJI_INVALID; \
         oi_a = UIOBJI_INVALID; \
     } while (0)
 
@@ -362,13 +363,16 @@ do_accept:
             } else {
                 SUBSAT0(d.tr.num, 1);
             }
-        } else if (oi1 == oi_plus) {
+            d.tr.other = true;
+        } else if (oi1 == oi_plus || oi1 == oi_equals) {
+            ui_sound_play_sfx_24();
             if (ui_extra_enabled && kbd_is_modifier(MOO_MOD_CTRL)) {
                 d.tr.num += (trans_max + 9) / 10;
             } else {
                 ++d.tr.num;
             }
             SETMIN(d.tr.num, trans_max);
+            d.tr.other = true;
         } else if (oi1 == oi_a) {
             ui_sound_play_sfx_24();
             if (d.tr.num < trans_max) {
@@ -376,6 +380,7 @@ do_accept:
             } else {
                 d.tr.num = 0;
             }
+            d.tr.other = true;
         } else if (oi1 == oi_scroll) {
             ui_starmap_scroll(g, scrollx, scrolly, scrollz);
         }
@@ -432,15 +437,21 @@ do_accept:
             oi_f10 = uiobj_add_inputkey(MOO_KEY_F10);
             ui_starmap_fill_oi_tbl_stars(&d);
             oi_cancel = uiobj_add_t0(227, 163, "", ui_data.gfx.starmap.reloc_bu_cancel, MOO_KEY_ESCAPE);
-            if ((d.tr.other) && (pt->owner != PLAYER_NONE)
+            if ((pt->owner != PLAYER_NONE)
               && (pt->within_frange[active_player] == 1)
               && BOOLVEC_IS1(pt->explored, active_player)
               && (pt->type >= g->eto[active_player].have_colony_for)
             ) {
-                oi_accept = uiobj_add_t0(271, 163, "", ui_data.gfx.starmap.reloc_bu_accept, MOO_KEY_SPACE);
-                uiobj_add_slider_int(258, 124, 0, trans_max, 41, 8, &d.tr.num);
-                oi_minus = uiobj_add_mousearea(252, 124, 256, 131, MOO_KEY_MINUS);
-                oi_plus = uiobj_add_mousearea(301, 124, 305, 131, MOO_KEY_PLUS);
+                if (d.tr.other) {
+                    oi_accept = uiobj_add_t0(271, 163, "", ui_data.gfx.starmap.reloc_bu_accept, MOO_KEY_SPACE);
+                    uiobj_add_slider_int(258, 124, 0, trans_max, 41, 8, &d.tr.num);
+                    oi_minus = uiobj_add_mousearea(252, 124, 256, 131, MOO_KEY_MINUS);
+                    oi_plus = uiobj_add_mousearea(301, 124, 305, 131, MOO_KEY_PLUS);
+                } else {
+                    oi_minus = uiobj_add_inputkey(MOO_KEY_MINUS);
+                    oi_plus = uiobj_add_inputkey(MOO_KEY_PLUS);
+                }
+                oi_equals = uiobj_add_inputkey(MOO_KEY_EQUALS);
                 if (ui_extra_enabled) {
                     oi_a = uiobj_add_inputkey(MOO_KEY_a);
                 }
