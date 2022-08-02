@@ -116,5 +116,6 @@ or pressing Alt-X in the main menu enables the following extra UI features:
 - Starmap: Removed '?' cursor area
 - Starmap: Races hotkey changed 'r' -> 'e'
 - Starmap: Reloc hotkey changed 'l' -> 'r'
+- Starmap: Send transport: Pressing A sets the slider to maximum
 
 See doc/list_gamediff.txt for a list of differences in the game itself.
