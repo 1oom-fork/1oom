@@ -49,6 +49,7 @@ The config file item "ui.uiextra" (set via the -uiextra command-line option)
 enables the following extra UI features:
 - Continue, Undo and Initial saves can be chosen in the Load Game screen
 - New Game screen allows setting opponent race/banner/names and AI/human flag
+- Mouse scrolls the galaxy movement screen if touches edge
 - Report screen shows name of AI leaders, Map screen shows current year
 - Fleet deployment shows the amount of available ships
 - The question mark cursor is disabled on the galaxy movement screen
