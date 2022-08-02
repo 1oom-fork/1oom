@@ -76,6 +76,7 @@ const struct cfg_items_s ui_cfg_items[] = {
     CFG_ITEM_COMMENT("Invert mouse wheel for counters"),
     CFG_ITEM_BOOL("mwicounter", &ui_mwi_counter),
     CFG_ITEM_COMMENT("Starmap scroll speed (1..10, 0 = instant)"),
+    CFG_ITEM_BOOL("sm_mouse_scroll", &ui_sm_mouse_scroll),
     CFG_ITEM_INT("sm_scroll_speed", &ui_sm_scroll_speed, check_ui_sm_scroll_speed),
     CFG_ITEM_END
 };
@@ -128,6 +129,12 @@ const struct cmdline_options_s ui_cmdline_options[] = {
     { "-nomwicounter", 0,
       options_disable_bool_var, (void *)&ui_mwi_counter,
       NULL, "Do not invert mouse wheel for counters" },
+    { "-uismmousescroll", 0,
+      options_enable_bool_var, (void *)&ui_sm_mouse_scroll,
+      NULL, "Enable map scrolling by mouse"},
+    { "-nouismmousescroll", 0,
+      options_disable_bool_var, (void *)&ui_sm_mouse_scroll,
+      NULL, "Disable map scrolling by mouse"},
     { "-uismscroll", 1,
       ui_options_set_scroll_speed, 0,
       "SPEED", "Starmap scroll speed (1..10, 0 = instant)" },
@@ -148,6 +155,7 @@ bool ui_extra_enabled = false;
 bool ui_kbd_repeat = true;
 bool ui_mwi_slider = false;
 bool ui_mwi_counter = false;
+bool ui_sm_mouse_scroll = false;
 int ui_sm_scroll_speed = 3;
 
 bool ui_use_audio = true;

@@ -39,9 +39,9 @@ static bool ui_opt_toggle_mwi_counter(void)
     return true;
 }
 
-static bool ui_opt_cb_scrollspd(void)
+static bool ui_opt_toggle_sm_mouse_scroll(void)
 {
-    ui_sm_scroll_speed = 3;
+    ui_sm_mouse_scroll = !ui_sm_mouse_scroll;
     return true;
 }
 
@@ -56,7 +56,7 @@ static const struct uiopt_s ui_uiopts[] = {
     UIOPT_ITEM_BOOL("Invert wheel slider", ui_mwi_slider, ui_opt_toggle_mwi_slider),
     UIOPT_ITEM_BOOL("Invert wheel counter", ui_mwi_counter, ui_opt_toggle_mwi_counter),
     UIOPT_ITEM_BOOL("Keyboard auto repeat", ui_kbd_repeat, ui_opt_toggle_kbd_repeat),
-    UIOPT_ITEM_FUNC("Scroll spd", ui_opt_cb_scrollspd),
+    UIOPT_ITEM_BOOL("Scroll", ui_sm_mouse_scroll, ui_opt_toggle_sm_mouse_scroll),
     UIOPT_ITEM_SLIDER_INT(ui_sm_scroll_speed, 0, UI_SCROLL_SPEED_MAX),
     UIOPT_ITEM_END
 };
