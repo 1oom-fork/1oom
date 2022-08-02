@@ -12,6 +12,7 @@
 #include "game_str.h"
 #include "game_tech.h"
 #include "kbd.h"
+#include "mouse.h"
 #include "lbxgfx.h"
 #include "lbxfont.h"
 #include "log.h"
@@ -657,12 +658,16 @@ void ui_starmap_handle_scrollkeys(struct starmap_data_s *d, int16_t oi)
     y = ui_data.starmap.y;
     xh = ui_data.starmap.xhold;
     yh = ui_data.starmap.yhold;
-    if (kbd_is_pressed(MOO_KEY_u, 0, MOO_MOD_SHIFT | MOO_MOD_ALT | MOO_MOD_CTRL)) {
+    if (0
+      || kbd_is_pressed(MOO_KEY_u, 0, MOO_MOD_SHIFT | MOO_MOD_ALT | MOO_MOD_CTRL)
+      || (ui_extra_enabled && (moo_mouse_y <= 0))) {
         if (yh > 0) {
             yh = 0;
         }
         --yh;
-    } else if (kbd_is_pressed(MOO_KEY_j, 0, MOO_MOD_SHIFT | MOO_MOD_ALT | MOO_MOD_CTRL)) {
+    } else if (0
+      || kbd_is_pressed(MOO_KEY_j, 0, MOO_MOD_SHIFT | MOO_MOD_ALT | MOO_MOD_CTRL)
+      || (ui_extra_enabled && (moo_mouse_y >= UI_SCREEN_H - 1))) {
         if (yh < 0) {
             yh = 0;
         }
@@ -673,12 +678,16 @@ void ui_starmap_handle_scrollkeys(struct starmap_data_s *d, int16_t oi)
     if (yh) {
         y += ui_starmap_scrollkey_accel(yh);
     }
-    if (kbd_is_pressed(MOO_KEY_h, 0, MOO_MOD_SHIFT | MOO_MOD_ALT | MOO_MOD_CTRL)) {
+    if (0
+      || kbd_is_pressed(MOO_KEY_h, 0, MOO_MOD_SHIFT | MOO_MOD_ALT | MOO_MOD_CTRL)
+      || (ui_extra_enabled && (moo_mouse_x <= 0))) {
         if (xh > 0) {
             xh = 0;
         }
         --xh;
-    } else if (kbd_is_pressed(MOO_KEY_k, 0, MOO_MOD_SHIFT | MOO_MOD_ALT | MOO_MOD_CTRL)) {
+    } else if (0
+      || kbd_is_pressed(MOO_KEY_k, 0, MOO_MOD_SHIFT | MOO_MOD_ALT | MOO_MOD_CTRL)
+      || (ui_extra_enabled && (moo_mouse_x >= UI_SCREEN_W - 1))) {
         if (xh < 0) {
             xh = 0;
         }
