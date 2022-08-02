@@ -52,6 +52,7 @@ The following new UI features are always enabled/available:
 - Eco slider shows Clean/+N Pop past T-Form on a full planet
 - Clicking cycles selection of overlapping fleets
 - The keys UHJK scroll the galaxy movement screen map
+- Map scrolling by mouse (ui.sm_mouse_scroll , -uismmousescroll)
 - Planets can be searched for by pressing the / key
 - Planets can be tagged with Ctrl-1-9 and recalled with 1-9
 - Pressing = or # in the galaxy movement screen transfers reserve for
