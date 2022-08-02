@@ -159,8 +159,8 @@ void ui_starmap_trans(struct game_s *g, player_id_t active_player)
 {
     bool flag_done = false;
     int16_t oi_scroll, oi_cancel, oi_accept, oi_plus, oi_minus, oi_search,
-            oi_f2, oi_f3, oi_f4, oi_f5, oi_f6, oi_f7, oi_f8, oi_f9, oi_f10
-            ;
+            oi_f2, oi_f3, oi_f4, oi_f5, oi_f6, oi_f7, oi_f8, oi_f9, oi_f10,
+            oi_a;
     int16_t scrollx = 0, scrolly = 0;
     uint8_t scrollz = starmap_scale;
     struct starmap_data_s d;
@@ -199,6 +199,7 @@ void ui_starmap_trans(struct game_s *g, player_id_t active_player)
         oi_cancel = UIOBJI_INVALID; \
         oi_plus = UIOBJI_INVALID; \
         oi_minus = UIOBJI_INVALID; \
+        oi_a = UIOBJI_INVALID; \
     } while (0)
 
     UIOBJ_CLEAR_LOCAL();
@@ -363,6 +364,13 @@ do_accept:
         } else if (oi1 == oi_plus) {
             ++d.tr.num;
             SETMIN(d.tr.num, trans_max);
+        } else if (oi1 == oi_a) {
+            ui_sound_play_sfx_24();
+            if (d.tr.num < trans_max) {
+                d.tr.num = trans_max;
+            } else {
+                d.tr.num = 0;
+            }
         } else if (oi1 == oi_scroll) {
             ui_starmap_scroll(g, scrollx, scrolly, scrollz);
         }
@@ -429,6 +437,9 @@ do_accept:
                 uiobj_add_slider_int(258, 124, 0, trans_max, 41, 8, &d.tr.num);
                 oi_minus = uiobj_add_mousearea(252, 124, 256, 131, MOO_KEY_MINUS);
                 oi_plus = uiobj_add_mousearea(301, 124, 305, 131, MOO_KEY_PLUS);
+                if (ui_extra_enabled) {
+                    oi_a = uiobj_add_inputkey(MOO_KEY_a);
+                }
             }
             oi_scroll = uiobj_add_tb(6, 6, 2, 2, 108, 86, &scrollx, &scrolly, &scrollz, ui_scale);
             oi_search = uiobj_add_inputkey(MOO_KEY_SLASH);
