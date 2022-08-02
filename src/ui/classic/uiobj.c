@@ -1131,7 +1131,9 @@ static void uiobj_click_obj(int16_t oi, int mx, int my)
                 mx = moouse_x;
                 my = moouse_y;
             }
-            mouse_set_xy(mx, my);
+            if (!ui_extra_enabled) {
+                mouse_set_xy(mx, my);
+            }
         }
     } else {
         /*don't care*/
@@ -1652,7 +1654,9 @@ void uiobj_set_focus_forced(int16_t uiobji)
 
 void uiobj_set_focus(int16_t uiobji)
 {
-    uiobj_set_focus_forced(uiobji);
+    if (!ui_extra_enabled) {
+        uiobj_set_focus_forced(uiobji);
+    }
 }
 
 int16_t uiobj_find_obj_at_cursor(void)
