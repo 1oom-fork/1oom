@@ -1126,19 +1126,7 @@ static uint32_t uiobj_handle_kbd(int16_t *oiptr)
     flag_reset_alt_str = true;
     if (oi < uiobj_table_num) {
         *oiptr = oi;
-        p = &uiobj_tbl[oi];
-        if ((p->x0 < UI_SCREEN_W) && (p->y0 < UI_SCREEN_H)) {
-            int mouse_stored_x, mouse_stored_y;
-            mouse_stored_x = scmidx(p);
-            mouse_stored_y = scmidy(p);
-            if ((mouse_stored_x < UI_SCREEN_W) && (mouse_stored_y < UI_SCREEN_H)) {
-                ui_cursor_update_gfx_i(mouse_stored_x, mouse_stored_y);
-                uiobj_mouseoff = ui_cursor_mouseoff;
-                mouse_stored_x -= uiobj_mouseoff;
-                mouse_stored_y -= uiobj_mouseoff;
-                mouse_set_xy(mouse_stored_x, mouse_stored_y);
-            }
-        }
+        uiobj_set_focus(oi);
         if (p->type == 8) {
             if (++p->t8.pos >= p->t8.len) {
                 p->t8.pos = 0;
@@ -1230,11 +1218,7 @@ static void uiobj_click_obj(int16_t oi, int mx, int my)
             }
             uiobj_focus_oi = oi;
             uiobj_handle_click(oi, true);
-            if (p->type == UIOBJ_TYPE_TEXTINPUT) {
-                mx = moouse_x;
-                my = moouse_y;
-            }
-            mouse_set_xy(mx, my);
+            uiobj_set_focus(oi);
         }
     } else {
         /*don't care*/
@@ -1773,8 +1757,9 @@ void uiobj_do_callback(void)
     }
 }
 
-void uiobj_set_focus(int16_t uiobji)
+void uiobj_set_focus(int16_t uiobji) /* FIXME: Implement keyboard focus */
 {
+#if 0
     uiobj_t *p = &uiobj_tbl[uiobji];
     int x, y;
     x = scmidx(p);
@@ -1787,6 +1772,7 @@ void uiobj_set_focus(int16_t uiobji)
     x -= uiobj_mouseoff;
     y -= uiobj_mouseoff;
     mouse_set_xy(x, y);
+#endif
 }
 
 int16_t uiobj_find_obj_at_cursor(void)
