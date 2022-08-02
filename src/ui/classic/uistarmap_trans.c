@@ -360,9 +360,17 @@ do_accept:
             ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
         } else if (oi1 == oi_minus) {
             ui_sound_play_sfx_24();
-            SUBSAT0(d.tr.num, 1);
+            if (ui_extra_enabled && kbd_is_modifier(MOO_MOD_CTRL)) {
+                SUBSAT0(d.tr.num, (trans_max + 9) / 10);
+            } else {
+                SUBSAT0(d.tr.num, 1);
+            }
         } else if (oi1 == oi_plus) {
-            ++d.tr.num;
+            if (ui_extra_enabled && kbd_is_modifier(MOO_MOD_CTRL)) {
+                d.tr.num += (trans_max + 9) / 10;
+            } else {
+                ++d.tr.num;
+            }
             SETMIN(d.tr.num, trans_max);
         } else if (oi1 == oi_a) {
             ui_sound_play_sfx_24();
