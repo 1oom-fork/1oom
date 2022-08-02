@@ -275,10 +275,16 @@ do_accept:
         } else if (oi1 == oi_minus) {
             ui_sound_play_sfx_24();
             SUBSAT0(d.tr.num, 1);
+            if (ui_extra_enabled) {
+                d.tr.other = true;
+            }
         } else if (oi1 == oi_plus) {
             ui_sound_play_sfx_24();
             ++d.tr.num;
             SETMIN(d.tr.num, trans_max);
+            if (ui_extra_enabled) {
+                d.tr.other = true;
+            }
         } else if (oi1 == oi_scroll) {
             ui_starmap_scroll(g, scrollx, scrolly);
         }
@@ -330,6 +336,9 @@ do_accept:
                 uiobj_add_slider_int(258, 124, 0, trans_max, 41, 8, &d.tr.num);
                 oi_minus = uiobj_add_mousearea(252, 124, 256, 131, MOO_KEY_MINUS);
                 oi_plus = uiobj_add_mousearea(301, 124, 305, 131, MOO_KEY_PLUS);
+            } else if (ui_extra_enabled && !d.tr.other) {
+                oi_minus = uiobj_add_inputkey(MOO_KEY_MINUS);
+                oi_plus = uiobj_add_inputkey(MOO_KEY_PLUS);
             }
             oi_scroll = uiobj_add_tb(6, 6, 2, 2, 108, 86, &scrollx, &scrolly);
             oi_search = uiobj_add_inputkey(MOO_KEY_SLASH);
