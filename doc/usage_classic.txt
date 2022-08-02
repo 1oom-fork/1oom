@@ -32,6 +32,7 @@ The following new UI features are always enabled/available:
 - Space bar works as a generic dismiss message key (Continue, ...)
 - Ctrl and Alt works as a step modifier for the counters and sliders:
   - on the Design screen
+  - on the transport sending screen
 - In Races screen the keys 1-5 correspond to clicking the portraits
 - Ind slider no longer shows 0.N/y when at max factories
 - Eco slider shows Clean/+N Pop past T-Form on a full planet
@@ -47,6 +48,7 @@ enables the following extra UI features:
 - New Game screen allows setting opponent race/banner/names and AI/human flag
 - Clicking the portraits in Races screen brings Report page
 - Report screen shows name of AI leaders, Map screen shows current year
+- Pressing + or - will show the slider when sending transport
 - Fleet deployment shows the amount of available ships
 - Sending fewer than all ships does not deselect the orbit fleet
 - Clicking a selected destination star again works as Accept for fleet send etc
