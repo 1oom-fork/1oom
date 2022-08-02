@@ -972,16 +972,7 @@ static int16_t uiobj_kbd_dir_key(int dirx, int diry)
         }
         oi = uiobj_kbd_dir_key_dxdy(dirx, diry, oi2, mx, my);
         if ((oi != oi2) && (oi != UIOBJI_NONE)) {
-            uiobj_t *p = &uiobj_tbl[oi];
-            mouse_stored_x = smidx(p);
-            mouse_stored_y = smidy(p);
-            if ((mouse_stored_x >= 0) && (mouse_stored_x < UI_SCREEN_W) && (mouse_stored_y >= 0) && (mouse_stored_y < UI_SCREEN_H)) {
-                ui_cursor_update_gfx_i(mouse_stored_x, mouse_stored_y);
-                uiobj_mouseoff = ui_cursor_mouseoff;
-                mouse_stored_x -= uiobj_mouseoff;
-                mouse_stored_y -= uiobj_mouseoff;
-                mouse_set_xy(mouse_stored_x, mouse_stored_y);
-            }
+            uiobj_set_focus_forced(oi);
         }
         return oi;
     }
@@ -1043,18 +1034,8 @@ static uint32_t uiobj_handle_kbd(int16_t *oiptr)
     flag_reset_alt_str = true;
     if (oi < uiobj_table_num) {
         *oiptr = oi;
+        uiobj_set_focus(oi);
         p = &uiobj_tbl[oi];
-        if ((p->x0 < UI_SCREEN_W) && (p->y0 < UI_SCREEN_H)) {
-            mouse_stored_x = p->x0 + (p->x1 - p->x0) / 2;
-            mouse_stored_y = p->y0 + (p->y1 - p->y0) / 2;
-            if ((mouse_stored_x < UI_SCREEN_W) && (mouse_stored_y < UI_SCREEN_H)) {
-                ui_cursor_update_gfx_i(mouse_stored_x, mouse_stored_y);
-                uiobj_mouseoff = ui_cursor_mouseoff;
-                mouse_stored_x -= uiobj_mouseoff;
-                mouse_stored_y -= uiobj_mouseoff;
-                mouse_set_xy(mouse_stored_x, mouse_stored_y);
-            }
-        }
         if (p->type == UIOBJ_TYPE_ALTSTR) {
             if (++p->t8.pos >= p->t8.len) {
                 p->t8.pos = 0;
@@ -1650,7 +1631,7 @@ void uiobj_do_callback(void)
     }
 }
 
-void uiobj_set_focus(int16_t uiobji)
+void uiobj_set_focus_forced(int16_t uiobji)
 {
     uiobj_t *p = &uiobj_tbl[uiobji];
     int x, y;
@@ -1667,6 +1648,11 @@ void uiobj_set_focus(int16_t uiobji)
     /* needed anywhere? */
     mouse_stored_x = x;
     mouse_stored_y = y;
+}
+
+void uiobj_set_focus(int16_t uiobji)
+{
+    uiobj_set_focus_forced(uiobji);
 }
 
 int16_t uiobj_find_obj_at_cursor(void)
