@@ -30,6 +30,20 @@
 
 #define UIOBJ_OFFSCREEN (((UI_SCREEN_W > UI_SCREEN_H) ? UI_SCREEN_W : UI_SCREEN_H) + 100)
 
+typedef enum {
+    UIOBJ_TYPE_BUTTON = 0,
+    UIOBJ_TYPE_TOGGLE = 1,
+    UIOBJ_TYPE_SET = 2,
+    UIOBJ_TYPE_SETVAL = 3,
+    UIOBJ_TYPE_TEXTINPUT = 4,
+    UIOBJ_TYPE_SLIDER = 6,
+    UIOBJ_TYPE_MOUSEAREA = 7,
+    UIOBJ_TYPE_ALTSTR = 8,
+    UIOBJ_TYPE_T9 = 9,
+    UIOBJ_TYPE_TEXTLINE = 0xa,
+    UIOBJ_TYPE_SCROLLAREA = 0xb,
+} uiobj_type_t;
+
 typedef struct uiobj_s {
     /*00*/ uint16_t x0;
     /*02*/ uint16_t y0;
@@ -473,19 +487,19 @@ static inline void uiobj_handle_objects_sub1(int i)
 {
     uiobj_t *p = &uiobj_tbl[i];
     switch (p->type) {
-        case 0:
+        case UIOBJ_TYPE_BUTTON:
             uiobj_handle_t03_cond(p, true);
             break;
-        case 1:
+        case UIOBJ_TYPE_TOGGLE:
             uiobj_handle_t03_cond(p, *p->vptr == 0);
             break;
-        case 2:
+        case UIOBJ_TYPE_SET:
             uiobj_handle_t03_cond(p, *p->vptr == 0);
             break;
-        case 3:
+        case UIOBJ_TYPE_SETVAL:
             uiobj_handle_t03_cond(p, *p->vptr != p->t0.z18);
             break;
-        case 0xa:
+        case UIOBJ_TYPE_TEXTLINE:
             lbxfont_select(p->ta.fontnum, p->ta.fonta2, uiobj_hmm3_fonta4, 0);
             if (*p->vptr != p->ta.z18) {
                 if (!p->ta.z12) {
@@ -508,7 +522,7 @@ static inline void uiobj_handle_objects_sub1(int i)
                 lbxfont_print_str_normal(p->x0, p->y0 + 1, p->ta.str, UI_SCREEN_W);
             }
             break;
-        case 4:
+        case UIOBJ_TYPE_TEXTINPUT:
             if (uiobj_focus_oi != i) {
                 lbxfont_select(p->t4.fontnum, p->t4.fonta2, p->t4.fonta4, 0);
                 ui_draw_filled_rect(p->x0, p->y0, p->x1, p->y1, p->t4.rectcolor);
@@ -519,7 +533,7 @@ static inline void uiobj_handle_objects_sub1(int i)
                 }
             }
             break;
-        case 6:
+        case UIOBJ_TYPE_SLIDER:
             {
                 uint16_t v = *p->vptr;
                 if (p->t6.fmin > v) {
@@ -540,16 +554,16 @@ static void uiobj_handle_click(int i, bool in_focus)
 {
     uiobj_t *p = &uiobj_tbl[i];
     switch (p->type) {
-        case 0:
+        case UIOBJ_TYPE_BUTTON:
             uiobj_handle_t03_cond(p, !in_focus);
             break;
-        case 1:
+        case UIOBJ_TYPE_TOGGLE:
             uiobj_handle_t03_cond(p, (!in_focus) || (*p->vptr == 1));
             break;
-        case 2:
+        case UIOBJ_TYPE_SET:
             uiobj_handle_t03_cond(p, (!in_focus) && (*p->vptr == 0));
             break;
-        case 3:
+        case UIOBJ_TYPE_SETVAL:
             if (!in_focus) {
                 *p->vptr = UIOBJI_INVALID; /* TODO or other 0xfc18? */
             } else {
@@ -557,7 +571,7 @@ static void uiobj_handle_click(int i, bool in_focus)
             }
             uiobj_handle_t03_cond(p, *p->vptr != p->t0.z18);
             break;
-        case 0xa:
+        case UIOBJ_TYPE_TEXTLINE:
             if (!in_focus) {
                 *p->vptr = 0;
             } else if (p->ta.z12) {
@@ -585,23 +599,23 @@ static void uiobj_handle_click(int i, bool in_focus)
                 lbxfont_print_str_normal(p->x0, p->y0 + 1, p->ta.str, UI_SCREEN_W);
             }
             break;
-        case 0xb:
+        case UIOBJ_TYPE_SCROLLAREA:
             if (in_focus) {
                 *p->tb.xptr = (mouse_x - p->x0) / p->tb.xdiv;
                 *p->tb.yptr = (mouse_y - p->y0) / p->tb.ydiv;
             }
             break;
-        case 6:
+        case UIOBJ_TYPE_SLIDER:
             if (in_focus) {
                 uiobj_handle_t6_slider_input(p);
             }
             break;
-        case 9:
+        case UIOBJ_TYPE_T9:
             if (in_focus) {
                 *p->vptr = p->t9.z18;
             }
             break;
-        case 4:
+        case UIOBJ_TYPE_TEXTINPUT:
             uiobj_handle_t4_sub1(p);
             break;
         default:
@@ -616,12 +630,12 @@ static int16_t uiobj_kbd_dir_key_dy_list(int diry)
     uiobj_t *p;
     if (oi != 0) {
         if (diry == 1) {
-            while ((++oi < (uiobj_table_num - 1)) && (uiobj_tbl[oi].type == 0xa)) {
+            while ((++oi < (uiobj_table_num - 1)) && (uiobj_tbl[oi].type == UIOBJ_TYPE_TEXTLINE)) {
                 if (uiobj_tbl[oi].ta.z12) {
                     break;
                 }
             }
-            if (!((oi < (uiobj_table_num - 1)) && (uiobj_tbl[oi].type == 0xa))) {
+            if (!((oi < (uiobj_table_num - 1)) && (uiobj_tbl[oi].type == UIOBJ_TYPE_TEXTLINE))) {
                 if (uiobj_flag_select_list_multipage) {
                     oi = oi2;
                     uiobj_kbd_movey = 1;
@@ -629,7 +643,7 @@ static int16_t uiobj_kbd_dir_key_dy_list(int diry)
                     oi = 0;
                     while (oi < uiobj_table_num) {
                         ++oi;
-                        if (/*not tested in MOO1!*/(uiobj_tbl[oi].type == 0xa) && uiobj_tbl[oi].ta.z12) {
+                        if (/*not tested in MOO1!*/(uiobj_tbl[oi].type == UIOBJ_TYPE_TEXTLINE) && uiobj_tbl[oi].ta.z12) {
                             break;
                         }
                     }
@@ -651,10 +665,10 @@ static int16_t uiobj_kbd_dir_key_dy_list(int diry)
                 } else {
                     oi = uiobj_table_num - 1 - 1;
                 }
-                while (oi && (uiobj_tbl[oi].type != 0xa)) {
+                while (oi && (uiobj_tbl[oi].type != UIOBJ_TYPE_TEXTLINE)) {
                     --oi;
                 }
-                while (oi && /*not tested in MOO1!*/(uiobj_tbl[oi].type == 0xa) && !uiobj_tbl[oi].ta.z12) {
+                while (oi && /*not tested in MOO1!*/(uiobj_tbl[oi].type == UIOBJ_TYPE_TEXTLINE) && !uiobj_tbl[oi].ta.z12) {
                     --oi;
                 }
                 if (oi <= 0) {
@@ -663,10 +677,10 @@ static int16_t uiobj_kbd_dir_key_dy_list(int diry)
                         oi = 1;
                     } else {
                         oi = uiobj_table_num - 1 - 1;
-                        while (oi && /*not tested in MOO1!*/(uiobj_tbl[oi].type == 0xa) && uiobj_tbl[oi].ta.z12) {
+                        while (oi && /*not tested in MOO1!*/(uiobj_tbl[oi].type == UIOBJ_TYPE_TEXTLINE) && uiobj_tbl[oi].ta.z12) {
                             --oi;
                         }
-                        while (oi && /*not tested in MOO1!*/(uiobj_tbl[oi].type == 0xa) && !uiobj_tbl[oi].ta.z12) {
+                        while (oi && /*not tested in MOO1!*/(uiobj_tbl[oi].type == UIOBJ_TYPE_TEXTLINE) && !uiobj_tbl[oi].ta.z12) {
                             --oi;
                         }
                         if (oi == 0) {
@@ -685,17 +699,17 @@ static int16_t uiobj_kbd_dir_key_dy_list(int diry)
             }
             oi = oi2;
             if (diry == 1) {
-                while ((++oi < (uiobj_table_num - 1)) && (uiobj_tbl[oi].type == 0xa)) {
+                while ((++oi < (uiobj_table_num - 1)) && (uiobj_tbl[oi].type == UIOBJ_TYPE_TEXTLINE)) {
                     if (uiobj_tbl[oi].ta.z12) {
                         break;
                     }
                 }
-                if (!((oi < uiobj_table_num) && (uiobj_tbl[oi].type == 0xa))) {
+                if (!((oi < uiobj_table_num) && (uiobj_tbl[oi].type == UIOBJ_TYPE_TEXTLINE))) {
                     if (uiobj_flag_select_list_multipage) {
                         uiobj_kbd_movey = 1;
                     } else if (oi < uiobj_table_num) {
                         oi = 1;
-                        while (oi && /*not tested in MOO1!*/(uiobj_tbl[oi].type == 0xa) && !uiobj_tbl[oi].ta.z12) {
+                        while (oi && /*not tested in MOO1!*/(uiobj_tbl[oi].type == UIOBJ_TYPE_TEXTLINE) && !uiobj_tbl[oi].ta.z12) {
                             ++oi;
                         }
                         if (oi >= uiobj_table_num) {
@@ -712,12 +726,12 @@ static int16_t uiobj_kbd_dir_key_dy_list(int diry)
                     } else {
                         --oi;
                     }
-                    while (oi && /*not tested in MOO1!*/(uiobj_tbl[oi].type == 0xa) && !uiobj_tbl[oi].ta.z12) {
+                    while (oi && /*not tested in MOO1!*/(uiobj_tbl[oi].type == UIOBJ_TYPE_TEXTLINE) && !uiobj_tbl[oi].ta.z12) {
                         --oi;
                     }
                     if (oi == 0) {
                         oi = uiobj_table_num - 1 - 1;
-                        while (oi && /*not tested in MOO1!*/(uiobj_tbl[oi].type == 0xa) && !uiobj_tbl[oi].ta.z12) {
+                        while (oi && /*not tested in MOO1!*/(uiobj_tbl[oi].type == UIOBJ_TYPE_TEXTLINE) && !uiobj_tbl[oi].ta.z12) {
                             --oi;
                         }
                         if (oi == 0) {
@@ -728,7 +742,7 @@ static int16_t uiobj_kbd_dir_key_dy_list(int diry)
             }
         } else {
             for (oi = 1; oi < uiobj_table_num; ++oi) {
-                if (/*not tested in MOO1!*/(uiobj_tbl[oi].type == 0xa) && uiobj_tbl[oi].ta.z12) {
+                if (/*not tested in MOO1!*/(uiobj_tbl[oi].type == UIOBJ_TYPE_TEXTLINE) && uiobj_tbl[oi].ta.z12) {
                     break;
                 }
             }
@@ -754,7 +768,7 @@ static int16_t uiobj_kbd_dir_key_dy_list(int diry)
             ui_cursor_draw0(mouse_stored_x, mouse_stored_y);
             /* TODO hw_redraw */
             mouse_set_xy(mouse_stored_x, mouse_stored_y);
-            if (p->type == 0xa) {
+            if (p->type == UIOBJ_TYPE_TEXTLINE) {
                 *p->vptr = p->ta.z18;
             }
         }
@@ -774,7 +788,7 @@ static int16_t uiobj_kbd_dir_key_dxdy(int dirx, int diry, int16_t oi2, int mx, i
         bool flag_found = false;
         for (int i = 1; i < uiobj_table_num; ++i) {
             p = &uiobj_tbl[i];
-            if ((p->type < 0xb) && (p->key == MOO_KEY_UNKNOWN) && ((p->type != 0xa) || p->ta.z12)) {
+            if ((p->type < UIOBJ_TYPE_SCROLLAREA) && (p->key == MOO_KEY_UNKNOWN) && ((p->type != UIOBJ_TYPE_TEXTLINE) || p->ta.z12)) {
                 flag_found = true;
                 break;
             }
@@ -793,7 +807,7 @@ static int16_t uiobj_kbd_dir_key_dxdy(int dirx, int diry, int16_t oi2, int mx, i
                 }
             }
             p = &uiobj_tbl[i];
-            if ((p->type < 0xb) && (p->key == MOO_KEY_UNKNOWN) && ((p->type != 0xa) || p->ta.z12)) {
+            if ((p->type < UIOBJ_TYPE_SCROLLAREA) && (p->key == MOO_KEY_UNKNOWN) && ((p->type != UIOBJ_TYPE_TEXTLINE) || p->ta.z12)) {
                 dy = (diry < 0) ? (my - smidy(p)) : (smidy(p) - my);
                 dx = smidx(p) - mx;
                 if ((p->x0 <= mx) && (p->x1 >= mx) && ((dx < -6) || (dx > 6))) {
@@ -815,7 +829,7 @@ static int16_t uiobj_kbd_dir_key_dxdy(int dirx, int diry, int16_t oi2, int mx, i
                     }
                 }
                 p = &uiobj_tbl[i];
-                if ((p->type < 0xb) && (p->key == MOO_KEY_UNKNOWN) && ((p->type != 0xa) || p->ta.z12)) {
+                if ((p->type < UIOBJ_TYPE_SCROLLAREA) && (p->key == MOO_KEY_UNKNOWN) && ((p->type != UIOBJ_TYPE_TEXTLINE) || p->ta.z12)) {
                     dy = (diry < 0) ? (my - smidy(p)) : (smidy(p) - my);
                     dx = smidx(p) - mx;
                     if ((p->x0 <= mx) && (p->x1 >= mx) && ((dx < -6) || (dx > 6))) {
@@ -852,7 +866,7 @@ static int16_t uiobj_kbd_dir_key_dxdy(int dirx, int diry, int16_t oi2, int mx, i
                 }
             }
             p = &uiobj_tbl[i];
-            if ((p->type < 0xb) && (p->key == MOO_KEY_UNKNOWN) && ((p->type != 0xa) || p->ta.z12)) {
+            if ((p->type < UIOBJ_TYPE_SCROLLAREA) && (p->key == MOO_KEY_UNKNOWN) && ((p->type != UIOBJ_TYPE_TEXTLINE) || p->ta.z12)) {
                 dx = (dirx < 0) ? (mx - smidx(p)) : (smidx(p) - mx);
                 dy = smidy(p) - my;
                 if ((p->y0 <= my) && (p->y1 >= my) && ((dy < -6) || (dy > 6))) {
@@ -874,7 +888,7 @@ static int16_t uiobj_kbd_dir_key_dxdy(int dirx, int diry, int16_t oi2, int mx, i
                     }
                 }
                 p = &uiobj_tbl[i];
-                if ((p->type < 0xb) && (p->key == MOO_KEY_UNKNOWN) && ((p->type != 0xa) || p->ta.z12)) {
+                if ((p->type < UIOBJ_TYPE_SCROLLAREA) && (p->key == MOO_KEY_UNKNOWN) && ((p->type != UIOBJ_TYPE_TEXTLINE) || p->ta.z12)) {
                     dx = (dirx < 0) ? (mx - smidx(p)) : (smidx(p) - mx);
                     dy = smidy(p) - my;
                     if ((p->y0 <= my) && (p->y1 >= my) && ((dy < -6) || (dy > 6))) {
@@ -911,7 +925,7 @@ static int16_t uiobj_kbd_dir_key_dxdy(int dirx, int diry, int16_t oi2, int mx, i
                 }
             }
             p = &uiobj_tbl[i];
-            if ((p->type < 0xb) && (p->key == MOO_KEY_UNKNOWN) && ((p->type != 0xa) || p->ta.z12)) {
+            if ((p->type < UIOBJ_TYPE_SCROLLAREA) && (p->key == MOO_KEY_UNKNOWN) && ((p->type != UIOBJ_TYPE_TEXTLINE) || p->ta.z12)) {
                 dx = (dirx < 0) ? (mx - smidx(p)) : (smidx(p) - mx);
                 dy = (diry < 0) ? (my - smidy(p)) : (smidy(p) - my);
                 if ((dx < 0) || (dy < 0)) {
@@ -959,9 +973,9 @@ static int16_t uiobj_kbd_dir_key(int dirx, int diry)
         oi = uiobj_table_num - 1;
         while (oi > 0) {
             p = &uiobj_tbl[oi];
-            if (p->type < 0xb) {
+            if (p->type < UIOBJ_TYPE_SCROLLAREA) {
                 if (uiobj_is_at_xy(p, mx, my)) {
-                    if (p->type == 0xa) {
+                    if (p->type == UIOBJ_TYPE_TEXTLINE) {
                         if (p->ta.z12) {
                             oi2 = oi;
                         }
@@ -1005,9 +1019,9 @@ static int16_t uiobj_handle_kbd_find_alt(int16_t oi, uint32_t key)
     const uiobj_t *p = &uiobj_tbl[oi];
     while (1
       && (oi != uiobj_table_num)
-      && (!((KBD_GET_KEYMOD(key) == p->key) && (p->type != 8)))
+      && (!((KBD_GET_KEYMOD(key) == p->key) && (p->type != UIOBJ_TYPE_ALTSTR)))
     ) {
-        if ((p->type == 8) && KBD_MOD_ONLY_ALT(key) && (KBD_GET_KEY(key) == p->key)) {
+        if ((p->type == UIOBJ_TYPE_ALTSTR) && KBD_MOD_ONLY_ALT(key) && (KBD_GET_KEY(key) == p->key)) {
             break;
         }
         ++oi;
@@ -1060,7 +1074,7 @@ static uint32_t uiobj_handle_kbd(int16_t *oiptr)
                 /*hw_video_redraw_front();*/
             }
         }
-        if (p->type == 8) {
+        if (p->type == UIOBJ_TYPE_ALTSTR) {
             if (++p->t8.pos >= p->t8.len) {
                 p->t8.pos = 0;
             } else {
@@ -1119,7 +1133,7 @@ static uint32_t uiobj_handle_kbd(int16_t *oiptr)
     if (flag_reset_alt_str) {
         for (int16_t oi3 = 0; oi3 < uiobj_table_num; ++oi3) {
             p = &uiobj_tbl[oi3];
-            if (p->type == 8) {
+            if (p->type == UIOBJ_TYPE_ALTSTR) {
                 p->t8.pos = 0;
                 p->key = p->t8.str[0];
             }
@@ -1140,9 +1154,9 @@ static void uiobj_click_obj(int16_t oi, int mx, int my)
             if (uiobj_focus_oi != -1) {
                 uiobj_t *q = &uiobj_tbl[uiobj_focus_oi];
                 /*if (uiobj_focus_oi != oi) {  redundant, checked above */
-                if ((q->type != 3) || (p->type == 3)) {
-                    if (q->type == 0xa) {
-                        if ((p->type == 0xa) && p->ta.z12) {
+                if ((q->type != UIOBJ_TYPE_SETVAL) || (p->type == UIOBJ_TYPE_SETVAL)) {
+                    if (q->type == UIOBJ_TYPE_TEXTLINE) {
+                        if ((p->type == UIOBJ_TYPE_TEXTLINE) && p->ta.z12) {
                             uiobj_handle_click(uiobj_focus_oi, false);
                         }
                     } else {
@@ -1152,7 +1166,7 @@ static void uiobj_click_obj(int16_t oi, int mx, int my)
             }
             uiobj_focus_oi = oi;
             uiobj_handle_click(oi, true);
-            if (p->type == 4) {
+            if (p->type == UIOBJ_TYPE_TEXTINPUT) {
                 mx = mouse_x;
                 my = mouse_y;
             }
@@ -1258,28 +1272,28 @@ static int16_t uiobj_handle_input_sub0(void)
             return -1;
         }
         p = &uiobj_tbl[oi];
-        if (p->type == 8) {
+        if (p->type == UIOBJ_TYPE_ALTSTR) {
             return oi;
         }
         if (KBD_GET_KEYMOD(key) == p->key) {
-            if (p->type == 6) {
+            if (p->type == UIOBJ_TYPE_SLIDER) {
                 return 0;
             }
             if (oi != 0) {
                 mx = p->x0 + (p->x1 - p->x0) / 2;
                 my = p->y0 + (p->y1 - p->y0) / 2;
                 uiobj_click_obj(oi, mx, my);
-                if (p->type == 1) {
+                if (p->type == UIOBJ_TYPE_TOGGLE) {
                     if (*p->vptr == 0) {
                         *p->vptr = 1;
                     } else {
                         *p->vptr = 0;
                     }
-                } else if (p->type == 2) {
+                } else if (p->type == UIOBJ_TYPE_SET) {
                     if (*p->vptr == 0) {
                         *p->vptr = 1;
                     }
-                } else if (p->type == 9) {
+                } else if (p->type == UIOBJ_TYPE_T9) {
                     uiobj_focus_oi = -1;
                     return p->t9.uiobji;
                 }
@@ -1292,20 +1306,20 @@ static int16_t uiobj_handle_input_sub0(void)
             oi = uiobj_find_obj_at_cursor();
             if (oi != 0) {
                 p = &uiobj_tbl[oi];
-                if (p->type != 6) {
+                if (p->type != UIOBJ_TYPE_SLIDER) {
                     uiobj_click_obj(oi, mx, my);
                 }
-                if (p->type == 1) {
+                if (p->type == UIOBJ_TYPE_TOGGLE) {
                     if (*p->vptr == 0) {
                         *p->vptr = 1;
                     } else {
                         *p->vptr = 0;
                     }
-                } else if (p->type == 2) {
+                } else if (p->type == UIOBJ_TYPE_SET) {
                     if (*p->vptr == 0) {
                         *p->vptr = 1;
                     }
-                } else if (p->type == 9) {
+                } else if (p->type == UIOBJ_TYPE_T9) {
                     uiobj_focus_oi = -1;
                     return p->t9.uiobji;
                 }
@@ -1318,7 +1332,7 @@ static int16_t uiobj_handle_input_sub0(void)
                 if (uiobj_flag_select_list_active) {
                     for (oi = 1; oi < uiobj_table_num; ++oi) {
                         p = &uiobj_tbl[oi];
-                        if ((p->type == 0xa) && (*p->vptr == p->ta.z18) && p->ta.z12) {
+                        if ((p->type == UIOBJ_TYPE_TEXTLINE) && (*p->vptr == p->ta.z18) && p->ta.z12) {
                             uiobj_focus_oi = -1;
                             return oi;
                         }
@@ -1330,7 +1344,7 @@ static int16_t uiobj_handle_input_sub0(void)
             oi = uiobj_find_obj_at_cursor();
             if (oi != 0) {
                 p = &uiobj_tbl[oi];
-                if (p->type == 6) {
+                if (p->type == UIOBJ_TYPE_SLIDER) {
                     if (KBD_GET_CHAR(key) == '+') {
                         uiobj_slider_plus(p);
                     } else {
@@ -1381,7 +1395,7 @@ static int16_t uiobj_handle_input_sub0(void)
             if (oi != 0) {
                 mouse_getclear_click_sw();
             }
-            if (p->type == 9) {
+            if (p->type == UIOBJ_TYPE_T9) {
                 p = &uiobj_tbl[oi];
                 return p->t9.uiobji;
             } else {
@@ -1411,10 +1425,10 @@ static int16_t uiobj_handle_input_sub0(void)
             if (oi == 0) {
                 if (uiobj_focus_oi != -1) {
                     p = &uiobj_tbl[uiobj_focus_oi];
-                    if (p->type == 6) {
+                    if (p->type == UIOBJ_TYPE_SLIDER) {
                         uiobj_do_callback();
                     }
-                    if ((p->type != 3) && (p->type != 0xa)) {
+                    if ((p->type != UIOBJ_TYPE_SETVAL) && (p->type != UIOBJ_TYPE_TEXTLINE)) {
                         ui_cursor_erase0();
                         uiobj_handle_click(uiobj_focus_oi, false);
                         ui_cursor_store_bg0(mx, my);
@@ -1428,8 +1442,8 @@ static int16_t uiobj_handle_input_sub0(void)
             }
             q = &uiobj_tbl[uiobj_focus_oi];
             p = &uiobj_tbl[oi];
-            if ((oi != uiobj_focus_oi) && (p->type != 4)) {
-                if (q->type == 6) {
+            if ((oi != uiobj_focus_oi) && (p->type != UIOBJ_TYPE_TEXTINPUT)) {
+                if (q->type == UIOBJ_TYPE_SLIDER) {
                     uiobj_do_callback();
                 }
                 uiobj_click_obj(oi, mx, my);
@@ -1443,7 +1457,7 @@ static int16_t uiobj_handle_input_sub0(void)
             }
         }
         q = &uiobj_tbl[uiobj_clicked_oi];
-        if (q->type == 6) {
+        if (q->type == UIOBJ_TYPE_SLIDER) {
             uiobj_do_callback();
         }
         uiobj_clicked_oi = 0;
@@ -1451,26 +1465,26 @@ static int16_t uiobj_handle_input_sub0(void)
             mouse_getclear_click_hw();
             mouse_getclear_click_sw();
             switch (p->type) {
-                case 2:
+                case UIOBJ_TYPE_SET:
                     if (*p->vptr == 0) {
                         *p->vptr = 1;
                     }
                     break;
-                case 9:
+                case UIOBJ_TYPE_T9:
                     if (mb != MOUSE_BUTTON_MASK_RIGHT) {
                         uiobj_focus_oi = -1;
                         p = &uiobj_tbl[oi];
                         return p->t9.uiobji;
                     }
                     return -1;
-                case 1:
+                case UIOBJ_TYPE_TOGGLE:
                     if (*p->vptr == 0) {
                         *p->vptr = 1;
                     } else {
                         *p->vptr = 0;
                     }
                     break;
-                case 4:
+                case UIOBJ_TYPE_TEXTINPUT:
                     uiobj_click_obj(oi, mx, my);
                 default:
                     break;
@@ -1537,7 +1551,7 @@ void uiobj_handle_objects(void)
 {
     for (int i = 1; i < uiobj_table_num; ++i) {
         uiobj_t *p = &uiobj_tbl[i];
-        if ((i == uiobj_focus_oi) && (p->type != 4)) {
+        if ((i == uiobj_focus_oi) && (p->type != UIOBJ_TYPE_TEXTINPUT)) {
             uiobj_handle_click(i, true);
         } else {
             uiobj_handle_objects_sub1(i);
@@ -1704,10 +1718,10 @@ int16_t uiobj_at_cursor(void)
     uiobj_mouseoff = ui_cursor_mouseoff;
     i = uiobj_find_obj_at_cursor();
     p = &uiobj_tbl[i];
-    if (p->type == 9) {
+    if (p->type == UIOBJ_TYPE_T9) {
         *p->vptr = p->t9.z18;
         i = p->t9.uiobji;
-    } else if ((p->type == 0xa) && !p->ta.z12) {
+    } else if ((p->type == UIOBJ_TYPE_TEXTLINE) && !p->ta.z12) {
         i = 0;
     }
     return i;
@@ -1717,7 +1731,7 @@ int16_t uiobj_add_t0(uint16_t x, uint16_t y, const char *str, uint8_t *lbxdata, 
 {
     uiobj_t *p = &uiobj_tbl[uiobj_table_num];
     uiobj_add_t03_do(x, y, str, lbxdata, key, helpid);
-    p->type = 0;
+    p->type = UIOBJ_TYPE_BUTTON;
     p->vptr = 0;
     return UIOBJI_ALLOC();
 }
@@ -1726,7 +1740,7 @@ int16_t uiobj_add_t1(uint16_t x, uint16_t y, const char *str, uint8_t *lbxdata, 
 {
     uiobj_t *p = &uiobj_tbl[uiobj_table_num];
     uiobj_add_t03_do(x, y, str, lbxdata, key, helpid);
-    p->type = 1;
+    p->type = UIOBJ_TYPE_TOGGLE;
     p->vptr = vptr;
     return UIOBJI_ALLOC();
 }
@@ -1735,7 +1749,7 @@ int16_t uiobj_add_t2(uint16_t x, uint16_t y, const char *str, uint8_t *lbxdata, 
 {
     uiobj_t *p = &uiobj_tbl[uiobj_table_num];
     uiobj_add_t03_do(x, y, str, lbxdata, key, helpid);
-    p->type = 2;
+    p->type = UIOBJ_TYPE_SET;
     p->vptr = vptr;
     return UIOBJI_ALLOC();
 }
@@ -1744,7 +1758,7 @@ int16_t uiobj_add_t3(uint16_t x, uint16_t y, const char *str, uint8_t *lbxdata, 
 {
     uiobj_t *p = &uiobj_tbl[uiobj_table_num];
     uiobj_add_t03_do(x, y, str, lbxdata, key, helpid);
-    p->type = 3;
+    p->type = UIOBJ_TYPE_SETVAL;
     p->vptr = vptr;
     p->t0.z18 = z18;
     return UIOBJI_ALLOC();
@@ -1766,7 +1780,7 @@ int16_t uiobj_add_textinput(int x, int y, int w, char *buf, uint16_t buflen, uin
     p->t4.align_right = alignr;
     p->t4.z1e = z1e;
     p->t4.colortbl = colortbl;
-    p->type = 4;
+    p->type = UIOBJ_TYPE_TEXTINPUT;
     p->helpid = helpid;
     p->vptr = 0;
     p->key = key;
@@ -1785,7 +1799,7 @@ int16_t uiobj_add_slider(uint16_t x0, uint16_t y0, uint16_t vmin, uint16_t vmax,
     p->t6.fmin = fmin;
     p->t6.fmax = fmax;
     p->t6.vertical = (h > w);
-    p->type = 6;
+    p->type = UIOBJ_TYPE_SLIDER;
     p->helpid = helpid;
     p->vptr = vptr;
     p->key = key;
@@ -1799,7 +1813,7 @@ int16_t uiobj_add_mousearea(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, 
     p->y0 = y0;
     p->x1 = x1;
     p->y1 = y1;
-    p->type = 7;
+    p->type = UIOBJ_TYPE_MOUSEAREA;
     p->helpid = helpid;
     p->vptr = 0;
     p->key = key;
@@ -1825,7 +1839,7 @@ int16_t uiobj_add_inputkey(uint32_t key)
     p->y0 = UIOBJ_OFFSCREEN;
     p->x1 = UIOBJ_OFFSCREEN;
     p->y1 = UIOBJ_OFFSCREEN;
-    p->type = 7;
+    p->type = UIOBJ_TYPE_MOUSEAREA;
     p->helpid = -1;
     p->vptr = 0;
     p->key = key;
@@ -1843,7 +1857,7 @@ int16_t uiobj_add_alt_str(const char *str)
     p->y0 = UIOBJ_OFFSCREEN;
     p->x1 = UIOBJ_OFFSCREEN;
     p->y1 = UIOBJ_OFFSCREEN;
-    p->type = 8;
+    p->type = UIOBJ_TYPE_ALTSTR;
     p->helpid = -1;
     p->vptr = 0;
     p->t8.str = str;
@@ -1878,7 +1892,7 @@ int16_t uiobj_add_ta(uint16_t x, uint16_t y, uint16_t w, const char *str, bool z
     p->ta.sp1 = sp1;
     p->ta.sp2 = sp2;
     p->ta.sp3 = sp3;
-    p->type = 0xa;
+    p->type = UIOBJ_TYPE_TEXTLINE;
     p->helpid = helpid;
     p->vptr = vptr;
     p->key = key;
@@ -1896,7 +1910,7 @@ int16_t uiobj_add_tb(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t xs
     p->tb.ydiv = h;
     p->tb.xptr = xptr;
     p->tb.yptr = yptr;
-    p->type = 0xb;
+    p->type = UIOBJ_TYPE_SCROLLAREA;
     p->helpid = helpid;
     p->vptr = 0;
     p->key = MOO_KEY_UNKNOWN;
@@ -1911,7 +1925,7 @@ void uiobj_dec_y1(int16_t oi)
 void uiobj_ta_set_val_0(int16_t oi)
 {
     uiobj_t *p = &uiobj_tbl[oi];
-    if (p->type == 0xa) {
+    if (p->type == UIOBJ_TYPE_TEXTLINE) {
         *p->vptr = 0;
     }
 }
@@ -1919,7 +1933,7 @@ void uiobj_ta_set_val_0(int16_t oi)
 void uiobj_ta_set_val_1(int16_t oi)
 {
     uiobj_t *p = &uiobj_tbl[oi];
-    if (p->type == 0xa) {
+    if (p->type == UIOBJ_TYPE_TEXTLINE) {
         *p->vptr = 1;
     }
 }
