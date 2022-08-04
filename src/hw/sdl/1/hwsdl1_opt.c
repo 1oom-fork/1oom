@@ -9,6 +9,7 @@
 #include "hwsdl_video.h"
 #include "lib.h"
 #include "log.h"
+#include "menu.h"
 #include "options.h"
 #include "types.h"
 
@@ -82,3 +83,14 @@ const struct cmdline_options_s hw_cmdline_options_extra[] = {
 #endif /* HAVE_SDL1GL */
     { NULL, 0, NULL, NULL, NULL, NULL }
 };
+
+void hw_opt_menu_make_page_video(void)
+{
+    menu_make_bool_func(menu_allocate_item(), "Fullscreen", &hw_opt_fullscreen, hw_video_toggle_fullscreen, MOO_KEY_f);
+#ifdef HAVE_SDLX_ASPECT
+    menu_make_str_func(menu_allocate_item(), "Aspect ratio", hw_uiopt_cb_aspect_get, hw_uiopt_cb_aspect_next, MOO_KEY_a);
+#endif
+#ifdef HAVE_SDL1GL
+    menu_make_str_func(menu_allocate_item(), "Filter", hw_uiopts_filter_get, hw_uiopts_filter_next, MOO_KEY_i);
+#endif /* HAVE_SDL1GL */
+}

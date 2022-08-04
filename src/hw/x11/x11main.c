@@ -212,6 +212,8 @@ void hw_mouse_set_xy(int mx, int my)
     mouse_set_xy_from_hw(mx, my);
 }
 
+void hw_opt_menu_make_page_video(void) {}
+
 /* -- X11 specific implementations ---------------------------------------- */
 
 void hw_shutdown(void) {

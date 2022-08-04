@@ -23,6 +23,8 @@ extern const struct cfg_items_s hw_cfg_items_extra[];
 extern const struct uiopt_s hw_uiopts[];
 extern const struct uiopt_s hw_uiopts_extra[];
 
+extern void hw_opt_menu_make_page_video(void);
+
 extern void hw_log_message(const char *msg);
 extern void hw_log_warning(const char *msg);
 extern void hw_log_error(const char *msg);
