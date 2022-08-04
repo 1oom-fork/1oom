@@ -19,6 +19,8 @@ extern const struct cmdline_options_s hw_cmdline_options_extra[];
 extern const struct cfg_items_s hw_cfg_items[];
 extern const struct cfg_items_s hw_cfg_items_extra[];
 
+extern void hw_opt_menu_make_page_video(void);
+
 extern void hw_log_message(const char *msg);
 extern void hw_log_warning(const char *msg);
 extern void hw_log_error(const char *msg);

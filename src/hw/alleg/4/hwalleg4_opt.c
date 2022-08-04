@@ -22,3 +22,5 @@ const struct cfg_items_s hw_cfg_items_extra[] = {
 const struct cmdline_options_s hw_cmdline_options_extra[] = {
     { NULL, 0, NULL, NULL, NULL, NULL }
 };
+
+void hw_opt_menu_make_page_video(void) {}
