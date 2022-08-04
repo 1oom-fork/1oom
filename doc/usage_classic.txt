@@ -103,8 +103,6 @@ Pressing Alt-X in the main menu also enables the following features:
   ("ui.game_opts_extra")
 - Continue, Undo and Initial saves can be chosen in the Load Game screen
   ("ui.load_opts_extra")
-- New Game screen allows setting opponent race/banner/names and AI/human flag
-  ("ui.new_game_opts_extra")
 - Summary of forces shown before ship combat. New Auto and Retreat buttons
   for space combat autoresolve ("ui.space_combat_autoresolve")
 - Galaxy movement screen scrolling range is expanded ("ui.sm_expanded_scroll")
