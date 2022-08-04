@@ -44,6 +44,7 @@ static bool main_menu_have_save_any(void *vptr) {
 
 struct main_menu_data_s;
 static void main_menu_set_item_dimensions(struct main_menu_data_s *d, int i);
+static void mm_game_set_item_dimensions(struct main_menu_data_s *d, int i);
 
 /* -------------------------------------------------------------------------- */
 
@@ -51,6 +52,8 @@ static void main_menu_set_item_dimensions(struct main_menu_data_s *d, int i);
 #define MM_PAGE_STACK_SIZE 4
 
 typedef enum {
+    MAIN_MENU_ITEM_GAME,
+    MAIN_MENU_ITEM_GAME_TUTOR,
     MAIN_MENU_ITEM_GAME_CONTINUE,
     MAIN_MENU_ITEM_GAME_LOAD,
     MAIN_MENU_ITEM_GAME_NEW,
@@ -61,6 +64,7 @@ typedef enum {
 
 typedef enum {
     MAIN_MENU_PAGE_MAIN,
+    MAIN_MENU_PAGE_GAME,
     MAIN_MENU_PAGE_NUM,
 } main_menu_page_id_t;
 
@@ -71,6 +75,20 @@ struct main_menu_page_s {
 };
 
 static struct main_menu_item_data_s mm_items[MAIN_MENU_ITEM_NUM] = {
+    {
+        MAIN_MENU_ITEM_TYPE_PAGE,
+        NULL, NULL,
+        "Game", NULL, MAIN_MENU_PAGE_GAME,
+        0, 0,
+        MOO_KEY_g,
+    },
+    {
+        MAIN_MENU_ITEM_TYPE_RETURN,
+        NULL, NULL,
+        "Tutor", NULL, MAIN_MENU_ACT_TUTOR,
+        0, 0,
+        MOO_KEY_t,
+    },
     {
         MAIN_MENU_ITEM_TYPE_RETURN,
         NULL, main_menu_have_save_continue,
@@ -111,13 +129,23 @@ static struct main_menu_item_data_s mm_items[MAIN_MENU_ITEM_NUM] = {
 static struct main_menu_page_s mm_pages[MAIN_MENU_PAGE_NUM] = {
     {
         {
-            MAIN_MENU_ITEM_GAME_CONTINUE,
-            MAIN_MENU_ITEM_GAME_LOAD,
-            MAIN_MENU_ITEM_GAME_NEW,
+            MAIN_MENU_ITEM_GAME,
             MAIN_MENU_ITEM_QUIT,
             MAIN_MENU_ITEM_NUM,
         },
         main_menu_set_item_dimensions,
+        NULL,
+    },
+    {
+        {
+            MAIN_MENU_ITEM_GAME_TUTOR,
+            MAIN_MENU_ITEM_GAME_CONTINUE,
+            MAIN_MENU_ITEM_GAME_LOAD,
+            MAIN_MENU_ITEM_GAME_NEW,
+            MAIN_MENU_ITEM_BACK,
+            MAIN_MENU_ITEM_NUM,
+        },
+        mm_game_set_item_dimensions,
         NULL,
     },
 };
@@ -227,6 +255,18 @@ static void main_menu_set_item_dimensions(struct main_menu_data_s *d, int i)
     it->step_y = 0x40 / d->item_count;
     it->x = 0xa0;
     it->y = 0x7f + it->step_y * i;
+}
+
+static void mm_game_set_item_dimensions(struct main_menu_data_s *d, int i)
+{
+    struct main_menu_item_s *it = &d->items[i];
+    main_menu_set_item_wh(it);
+    it->step_y = 0x40 / ((d->item_count + 1) / 2);
+    it->x = i%2 ? 0xd0 : 0x70;
+    if (i%2 == 0 && i == d->item_count - 1) {
+        it->x = 0xa0;
+    }
+    it->y = 0x7f + it->step_y * (i/2);
 }
 
 static void main_menu_refresh_screen(struct main_menu_data_s *d)
@@ -405,7 +445,7 @@ static void main_menu_item_do_minus(struct main_menu_data_s *d)
 
 static main_menu_action_t main_menu_do(struct main_menu_data_s *d)
 {
-    int16_t oi_tutor, oi_extra;
+    int16_t oi_extra;
     bool flag_fadein = false;
 
     d->page_stack_i = -1;
@@ -425,7 +465,6 @@ static main_menu_action_t main_menu_do(struct main_menu_data_s *d)
 
     main_menu_push_page(d, MAIN_MENU_PAGE_MAIN);
 
-    oi_tutor = uiobj_add_alt_str("tutor");
     oi_extra = uiobj_add_alt_str("x");
     d->fix_version = false;
 
@@ -473,11 +512,7 @@ static main_menu_action_t main_menu_do(struct main_menu_data_s *d)
             }
         }
 
-        if (oi1 == oi_tutor) {
-            ui_sound_play_sfx_24();
-            d->ret = MAIN_MENU_ACT_TUTOR;
-            d->flag_done = true;
-        } else if (oi1 == oi_extra) {
+        if (oi1 == oi_extra) {
             ui_extra_enabled = !ui_extra_enabled;
             d->fix_version = true;
         }
