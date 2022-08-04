@@ -48,6 +48,7 @@ static bool main_menu_have_save_any(void) {
 
 typedef enum {
     MAIN_MENU_PAGE_MAIN,
+    MAIN_MENU_PAGE_GAME,
     MAIN_MENU_PAGE_NUM,
 } main_menu_page_id_t;
 
@@ -171,13 +172,36 @@ static void main_menu_set_item_dimensions(struct main_menu_data_s *d, int i)
     it->y = 0x7f + step_y * i;
 }
 
+static void mm_game_set_item_dimensions(struct main_menu_data_s *d, int i)
+{
+    struct main_menu_item_s *it = &d->items[i];
+    uint16_t step_y;
+    it->font_i = 4;
+    main_menu_set_item_wh(d, it);
+    step_y = 0x40 / ((d->item_count + 1) / 2);
+    it->x = i%2 ? 0xd0 : 0x70;
+    if (i%2 == 0 && i == d->item_count - 1) {
+        it->x = 0xa0;
+    }
+    it->y = 0x7f + step_y * (i/2);
+}
+
 static void main_menu_make_main_page(struct main_menu_data_s *d)
 {
     d->set_item_dimensions = main_menu_set_item_dimensions;
+    menu_make_page(menu_allocate_item(), "Game", MAIN_MENU_PAGE_GAME, MOO_KEY_g);
+    menu_make_action(menu_allocate_item(), "Quit to OS", MAIN_MENU_ACT_QUIT_GAME, MOO_KEY_q);
+}
+
+static void main_menu_make_game_page(struct main_menu_data_s *d)
+{
+    d->set_item_dimensions = mm_game_set_item_dimensions;
+    menu_make_action(menu_allocate_item(), "Tutor", MAIN_MENU_ACT_TUTOR, MOO_KEY_t);
     menu_make_action_conditional(menu_allocate_item(), "Continue", MAIN_MENU_ACT_CONTINUE_GAME, main_menu_have_save_continue, MOO_KEY_c);
     menu_make_action_conditional(menu_allocate_item(), "Load Game", MAIN_MENU_ACT_LOAD_GAME, main_menu_have_save_any, MOO_KEY_l);
     menu_make_action(menu_allocate_item(), "New Game", MAIN_MENU_ACT_NEW_GAME, MOO_KEY_n);
-    menu_make_action(menu_allocate_item(), "Quit to OS", MAIN_MENU_ACT_QUIT_GAME, MOO_KEY_q);
+    menu_make_action(menu_allocate_item(), "Custom Game", MAIN_MENU_ACT_CUSTOM_GAME, MOO_KEY_u);
+    menu_make_back(menu_allocate_item());
 }
 
 /* -------------------------------------------------------------------------- */
@@ -189,6 +213,9 @@ struct main_menu_page_s {
 static struct main_menu_page_s mm_pages[MAIN_MENU_PAGE_NUM] = {
     {
         main_menu_make_main_page,
+    },
+    {
+        main_menu_make_game_page,
     },
 };
 
@@ -344,7 +371,6 @@ static void main_menu_item_do_minus(struct main_menu_data_s *d, int item_i)
 
 static main_menu_action_t main_menu_do(struct main_menu_data_s *d)
 {
-    int16_t oi_tutor;
     bool flag_fadein = false;
 
     d->page_stack_i = -1;
@@ -364,7 +390,6 @@ static main_menu_action_t main_menu_do(struct main_menu_data_s *d)
 
     main_menu_push_page(d, MAIN_MENU_PAGE_MAIN);
 
-    oi_tutor = uiobj_add_alt_str("tutor");
     d->highlight = main_menu_get_item(d, uiobj_at_cursor());
     uiobj_set_callback_and_delay(main_menu_draw_cb, d, 2);
     while (!d->flag_done) {
@@ -407,11 +432,6 @@ static main_menu_action_t main_menu_do(struct main_menu_data_s *d)
             }
         }
 
-        if (oi1 == oi_tutor) {
-            ui_sound_play_sfx_24();
-            d->ret = MAIN_MENU_ACT_TUTOR;
-            d->flag_done = true;
-        }
         uiobj_finish_frame();
         if ((ui_draw_finish_mode != 0) && !flag_fadein) {
             ui_palette_fadein_4b_19_1();
@@ -420,9 +440,6 @@ static main_menu_action_t main_menu_do(struct main_menu_data_s *d)
         ui_delay_ticks_or_click(2);
     }
     uiobj_unset_callback();
-    if ((d->ret == MAIN_MENU_ACT_NEW_GAME) && ui_extra_enabled) {
-        d->ret = MAIN_MENU_ACT_CUSTOM_GAME;
-    }
     return d->ret;
 }
 
