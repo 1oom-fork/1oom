@@ -57,6 +57,7 @@ typedef enum {
     MAIN_MENU_ITEM_GAME_CONTINUE,
     MAIN_MENU_ITEM_GAME_LOAD,
     MAIN_MENU_ITEM_GAME_NEW,
+    MAIN_MENU_ITEM_UIEXTRA,
     MAIN_MENU_ITEM_QUIT,
     MAIN_MENU_ITEM_BACK,
     MAIN_MENU_ITEM_NUM,
@@ -111,6 +112,13 @@ static struct main_menu_item_data_s mm_items[MAIN_MENU_ITEM_NUM] = {
         MOO_KEY_n,
     },
     {
+        MAIN_MENU_ITEM_TYPE_BOOL,
+        NULL, NULL,
+        "UI Extra", NULL, &ui_extra_enabled, 0,
+        0, 0,
+        MOO_KEY_x,
+    },
+    {
         MAIN_MENU_ITEM_TYPE_RETURN,
         NULL, NULL,
         "Quit to OS", NULL, NULL, MAIN_MENU_ACT_QUIT_GAME,
@@ -130,6 +138,7 @@ static struct main_menu_page_s mm_pages[MAIN_MENU_PAGE_NUM] = {
     {
         {
             MAIN_MENU_ITEM_GAME,
+            MAIN_MENU_ITEM_UIEXTRA,
             MAIN_MENU_ITEM_QUIT,
             MAIN_MENU_ITEM_NUM,
         },
@@ -174,7 +183,6 @@ struct main_menu_data_s {
     int clicked_i;
     int wheel_i;
     int highlight;
-    bool fix_version;
     uint8_t *gfx_vortex;
     uint8_t *gfx_title;
 };
@@ -216,10 +224,6 @@ static void main_menu_draw_cb(void *vptr)
     char buf[64];
     ui_draw_erase_buf();
     ui_draw_copy_buf();
-    if (d->fix_version) {
-        d->fix_version = false;
-        lbxgfx_set_frame_0(d->gfx_vortex);
-    }
     lbxgfx_draw_frame(0, 0, d->gfx_vortex, UI_SCREEN_W, ui_scale);
     if (!ui_extra_enabled) {
         lbxgfx_draw_frame(0, 0, d->gfx_title, UI_SCREEN_W, ui_scale);
@@ -451,7 +455,6 @@ static void main_menu_item_do_minus(struct main_menu_data_s *d)
 
 static main_menu_action_t main_menu_do(struct main_menu_data_s *d)
 {
-    int16_t oi_extra;
     bool flag_fadein = false;
 
     d->page_stack_i = -1;
@@ -470,9 +473,6 @@ static main_menu_action_t main_menu_do(struct main_menu_data_s *d)
     uiobj_finish_frame();
 
     main_menu_push_page(d, MAIN_MENU_PAGE_MAIN);
-
-    oi_extra = uiobj_add_alt_str("x");
-    d->fix_version = false;
 
     d->highlight = main_menu_get_item(d, uiobj_at_cursor());
     uiobj_set_callback_and_delay(main_menu_draw_cb, d, 2);
@@ -518,10 +518,6 @@ static main_menu_action_t main_menu_do(struct main_menu_data_s *d)
             }
         }
 
-        if (oi1 == oi_extra) {
-            ui_extra_enabled = !ui_extra_enabled;
-            d->fix_version = true;
-        }
         uiobj_finish_frame();
         if ((ui_draw_finish_mode != 0) && !flag_fadein) {
             ui_palette_fadein_4b_19_1();
