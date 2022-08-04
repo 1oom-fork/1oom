@@ -373,6 +373,33 @@ void hw_video_set_visible(bool visible)
     video.noblit = !visible;
 }
 
+#if SDL_VERSION_ATLEAST(2, 0, 18)
+bool hw_video_toggle_vsync(void)
+{
+    hw_opt_vsync = !hw_opt_vsync;
+    SDL_RenderSetVSync(video.renderer, hw_opt_vsync);
+    return true;
+}
+#endif
+
+#if SDL_VERSION_ATLEAST(2, 0, 5)
+bool hw_video_toggle_int_scaling(void)
+{
+    hw_opt_int_scaling = !hw_opt_int_scaling;
+    SDL_RenderSetIntegerScale(video.renderer, hw_opt_int_scaling);
+    return true;
+}
+#endif
+
+#if SDL_VERSION_ATLEAST(2, 0, 12)
+bool hw_video_filter_next(void)
+{
+    hw_opt_scaling_quality = (hw_opt_scaling_quality + 1) % 3;
+    SDL_SetTextureScaleMode(video.texture, hw_opt_scaling_quality);
+    return true;
+}
+#endif
+
 /* -------------------------------------------------------------------------- */
 
 /* Check the display bounds of the display referred to by 'video_display' and
@@ -610,6 +637,17 @@ void hw_video_enlarge(void)
     video.shrink = false;
     video.enlarge = true;
     hw_video_resize(0, 0);
+}
+
+bool hw_video_toggle_borderless(void)
+{
+    hw_opt_borderless = !hw_opt_borderless;
+    video_window_destroy();
+    if (video_sw_set(hw_opt_screen_winw, hw_opt_screen_winh) != 0) {
+        hw_opt_borderless = !hw_opt_borderless; /* restore the setting for the config file */
+        return false;
+    }
+    return true;
 }
 
 bool hw_video_toggle_fullscreen(void)
