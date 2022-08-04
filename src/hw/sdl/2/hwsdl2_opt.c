@@ -9,7 +9,9 @@
 #include "hwsdl_opt.h"
 #include "hwsdl_audio.h"
 #include "hwsdl_video.h"
+#include "hwsdl2_video.h"
 #include "lib.h"
+#include "menu.h"
 #include "options.h"
 #include "types.h"
 
@@ -33,6 +35,15 @@ int hw_opt_scaling_quality = 0;
 #ifdef HAVE_SDL2MIXER
 #define HAVE_SDLMIXER
 #endif /* HAVE_SDL2MIXER */
+
+#if SDL_VERSION_ATLEAST(2, 0, 12)
+static const char *hw_scaling_quality_str[3] = { "Nearest", "Linear", "Best" };
+
+static const char *hw_uiopts_scaling_quality_get(void)
+{
+    return hw_scaling_quality_str[hw_opt_scaling_quality];
+}
+#endif
 
 /* -------------------------------------------------------------------------- */
 
@@ -85,3 +96,21 @@ const struct cmdline_options_s hw_cmdline_options_extra[] = {
      "FILTER", "Set scaling quality (0 = nearest, 1 = linear, 2 = best)" },
     { NULL, 0, NULL, NULL, NULL, NULL }
 };
+
+void hw_opt_menu_make_page_video(void)
+{
+    menu_make_bool_func(menu_allocate_item(), "Borderless", &hw_opt_borderless, hw_video_toggle_borderless, MOO_KEY_o);
+    menu_make_bool_func(menu_allocate_item(), "Fullscreen", &hw_opt_fullscreen, hw_video_toggle_fullscreen, MOO_KEY_f);
+    #ifdef HAVE_SDLX_ASPECT
+        menu_make_str_func(menu_allocate_item(), "Aspect ratio", hw_uiopt_cb_aspect_get, hw_uiopt_cb_aspect_next, MOO_KEY_a);
+    #endif
+    #if SDL_VERSION_ATLEAST(2, 0, 18)
+        menu_make_bool_func(menu_allocate_item(), "V-sync", &hw_opt_vsync, hw_video_toggle_vsync, MOO_KEY_v);
+    #endif
+    #if SDL_VERSION_ATLEAST(2, 0, 5)
+        menu_make_bool_func(menu_allocate_item(), "Integer scaling", &hw_opt_int_scaling, hw_video_toggle_int_scaling, MOO_KEY_i);
+    #endif
+    #if SDL_VERSION_ATLEAST(2, 0, 12)
+        menu_make_str_func(menu_allocate_item(), "Filter", hw_uiopts_scaling_quality_get, hw_video_filter_next, MOO_KEY_i);
+    #endif
+}
