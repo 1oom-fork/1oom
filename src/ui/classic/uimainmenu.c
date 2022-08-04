@@ -3,6 +3,8 @@
 #include "ui.h"
 #include "comp.h"
 #include "game.h"
+#include "game_event.h"
+#include "game_num.h"
 #include "game_save.h"
 #include "game_str.h"
 #include "hw.h"
@@ -42,6 +44,33 @@ static bool main_menu_have_save_any(void) {
     return false;
 }
 
+static bool main_menu_toggle_kbd_repeat(void) {
+    ui_kbd_repeat = !ui_kbd_repeat;
+    hw_kbd_set_repeat(ui_kbd_repeat);
+    return true;
+}
+
+static bool main_menu_toggle_music(void) {
+    if (opt_music_enabled) {
+        ui_sound_stop_music();
+        opt_music_enabled = false;
+    } else {
+        opt_music_enabled = true;
+        ui_sound_play_music(1);
+    }
+    return true;
+}
+
+static bool main_menu_update_music_volume(void) {
+    hw_audio_music_volume(opt_music_volume);
+    return true;
+}
+
+static bool main_menu_update_sfx_volume(void) {
+    hw_audio_sfx_volume(opt_sfx_volume);
+    return true;
+}
+
 /* -------------------------------------------------------------------------- */
 
 #define MM_PAGE_STACK_SIZE 4
@@ -49,6 +78,15 @@ static bool main_menu_have_save_any(void) {
 typedef enum {
     MAIN_MENU_PAGE_MAIN,
     MAIN_MENU_PAGE_GAME,
+    MAIN_MENU_PAGE_OPTIONS,
+    MAIN_MENU_PAGE_OPTIONS_INPUT,
+    MAIN_MENU_PAGE_OPTIONS_SOUND,
+    MAIN_MENU_PAGE_OPTIONS_VIDEO,
+    MAIN_MENU_PAGE_OPTIONS_ADDONS,
+    MAIN_MENU_PAGE_OPTIONS_ADDONS_MESSAGE_FILTER,
+    MAIN_MENU_PAGE_OPTIONS_MISC,
+    MAIN_MENU_PAGE_OPTIONS_STARMAP,
+    MAIN_MENU_PAGE_OPTIONS_RULES,
     MAIN_MENU_PAGE_NUM,
 } main_menu_page_id_t;
 
@@ -184,10 +222,32 @@ static void mm_game_set_item_dimensions(struct main_menu_data_s *d, int i)
     it->y = 0x7f + step_y * (i/2);
 }
 
+static void mm_options_set_item_dimensions(struct main_menu_data_s *d, int i)
+{
+    struct main_menu_item_s *it = &d->items[i];
+    uint16_t step_y;
+    it->font_i = 5;
+    main_menu_set_item_wh(d, it);
+    if (d->item_count <= 6) {
+        step_y = 0x48 / d->item_count;
+        it->x = 0xa0;
+        it->y = 0x77 + step_y * i;
+    } else {
+        step_y = 0x48 / ((d->item_count + 1) / 2);
+        it->x = i%2 ? 0xe0 : 0x60;
+        if (i%2 == 0 && i == d->item_count - 1) {
+            it->x = 0xa0;
+        }
+        it->y = 0x77 + step_y * (i/2);
+    }
+}
+
 static void main_menu_make_main_page(struct main_menu_data_s *d)
 {
     d->set_item_dimensions = main_menu_set_item_dimensions;
     menu_make_page(menu_allocate_item(), "Game", MAIN_MENU_PAGE_GAME, MOO_KEY_g);
+    menu_make_page(menu_allocate_item(), "Rules", MAIN_MENU_PAGE_OPTIONS_RULES, MOO_KEY_r);
+    menu_make_page(menu_allocate_item(), "UI Options", MAIN_MENU_PAGE_OPTIONS, MOO_KEY_o);
     menu_make_action(menu_allocate_item(), "Quit to OS", MAIN_MENU_ACT_QUIT_GAME, MOO_KEY_q);
 }
 
@@ -199,6 +259,101 @@ static void main_menu_make_game_page(struct main_menu_data_s *d)
     menu_make_action_conditional(menu_allocate_item(), "Load Game", MAIN_MENU_ACT_LOAD_GAME, main_menu_have_save_any, MOO_KEY_l);
     menu_make_action(menu_allocate_item(), "New Game", MAIN_MENU_ACT_NEW_GAME, MOO_KEY_n);
     menu_make_action(menu_allocate_item(), "Custom Game", MAIN_MENU_ACT_CUSTOM_GAME, MOO_KEY_u);
+    menu_make_back(menu_allocate_item());
+}
+
+static void main_menu_make_options_page(struct main_menu_data_s *d)
+{
+    d->set_item_dimensions = mm_game_set_item_dimensions;
+    menu_make_page(menu_allocate_item(), "Input", MAIN_MENU_PAGE_OPTIONS_INPUT, MOO_KEY_i);
+    menu_make_page(menu_allocate_item(), "Add-ons", MAIN_MENU_PAGE_OPTIONS_ADDONS, MOO_KEY_a);
+    menu_make_page(menu_allocate_item(), "Sound", MAIN_MENU_PAGE_OPTIONS_SOUND, MOO_KEY_s);
+    menu_make_page(menu_allocate_item(), "Starmap", MAIN_MENU_PAGE_OPTIONS_STARMAP, MOO_KEY_t);
+    menu_make_page(menu_allocate_item(), "Video", MAIN_MENU_PAGE_OPTIONS_VIDEO, MOO_KEY_v);
+    menu_make_page(menu_allocate_item(), "Misc", MAIN_MENU_PAGE_OPTIONS_MISC, MOO_KEY_m);
+    menu_make_back(menu_allocate_item());
+}
+
+static void main_menu_make_options_input_page(struct main_menu_data_s *d)
+{
+    d->set_item_dimensions = mm_options_set_item_dimensions;
+    menu_make_bool(menu_allocate_item(), "Disable Mouse Warp", &ui_mouse_warp_disabled, MOO_KEY_w);
+    menu_make_bool(menu_allocate_item(), "LMB Behavior Fix", &ui_mouse_lmb_fix, MOO_KEY_l);
+    menu_make_bool(menu_allocate_item(), "Invert slider", &ui_mwi_slider, MOO_KEY_i);
+    menu_make_bool(menu_allocate_item(), "Invert counter", &ui_mwi_counter, MOO_KEY_n);
+    menu_make_bool_func(menu_allocate_item(), "Keyboard repeat", &ui_kbd_repeat, main_menu_toggle_kbd_repeat, MOO_KEY_k);
+    menu_make_bool(menu_allocate_item(), "Direction Keys Fix", &ui_kbd_cursor_keys_fix, MOO_KEY_d);
+    menu_make_bool(menu_allocate_item(), "Illogical Hotkey Fix", &ui_illogical_hotkey_fix, MOO_KEY_h);
+    menu_make_back(menu_allocate_item());
+}
+
+static void main_menu_make_options_sound_page(struct main_menu_data_s *d)
+{
+    d->set_item_dimensions = mm_options_set_item_dimensions;
+    menu_make_bool_func(menu_allocate_item(), "Music", &opt_music_enabled, main_menu_toggle_music, MOO_KEY_m);
+    menu_make_int_func(menu_allocate_item(), "Music volume", &opt_music_volume, 0, 128, main_menu_update_music_volume, MOO_KEY_u);
+    menu_make_bool(menu_allocate_item(), "SFX", &opt_sfx_enabled, MOO_KEY_s);
+    menu_make_int_func(menu_allocate_item(), "SFX volume", &opt_sfx_volume, 0, 128, main_menu_update_sfx_volume, MOO_KEY_f);
+    menu_make_back(menu_allocate_item());
+}
+
+static void main_menu_make_options_video_page(struct main_menu_data_s *d)
+{
+    d->set_item_dimensions = mm_options_set_item_dimensions;
+    menu_make_int(menu_item_force_restart(menu_allocate_item()), "UI scale", &ui_scale_hint, 1, UI_SCALE_MAX, MOO_KEY_s);
+    hw_opt_menu_make_page_video();
+    menu_make_back(menu_allocate_item());
+}
+
+static void main_menu_make_options_addons_page(struct main_menu_data_s *d)
+{
+    d->set_item_dimensions = mm_options_set_item_dimensions;
+    menu_make_bool(menu_allocate_item(), "UI Extra", &ui_extra_enabled, MOO_KEY_e);
+    menu_make_bool(menu_allocate_item(), "UI Fixbugs", &ui_fixbugs_enabled, MOO_KEY_f);
+    menu_make_bool(menu_allocate_item(), "Combat Autoresolve", &ui_space_combat_autoresolve, MOO_KEY_v);
+    menu_make_bool(menu_allocate_item(), "UI SM Ships", &ui_sm_ships_enabled, MOO_KEY_s);
+    menu_make_bool(menu_allocate_item(), "Load Options Extra", &ui_load_opts_extra, MOO_KEY_o);
+    menu_make_page(menu_allocate_item(), "Message Filter", MAIN_MENU_PAGE_OPTIONS_ADDONS_MESSAGE_FILTER, MOO_KEY_m);
+    menu_make_back(menu_allocate_item());
+}
+
+static void main_menu_make_options_addons_message_filter_page(struct main_menu_data_s *d)
+{
+    d->set_item_dimensions = mm_options_set_item_dimensions;
+    menu_make_bool(menu_allocate_item(), "Max Factories", &game_opt_message_filter[FINISHED_FACT], MOO_KEY_f);
+    menu_make_bool(menu_allocate_item(), "Max Population", &game_opt_message_filter[FINISHED_POPMAX], MOO_KEY_f);
+    menu_make_bool(menu_allocate_item(), "Atmos / Soil", &game_opt_message_filter[FINISHED_SOILATMOS], MOO_KEY_f);
+    menu_make_bool(menu_allocate_item(), "Stargate", &game_opt_message_filter[FINISHED_STARGATE], MOO_KEY_f);
+    menu_make_bool(menu_allocate_item(), "Planetary Shield", &game_opt_message_filter[FINISHED_SHIELD], MOO_KEY_f);
+    menu_make_back(menu_allocate_item());
+}
+
+static void main_menu_make_options_misc_page(struct main_menu_data_s *d)
+{
+    d->set_item_dimensions = mm_options_set_item_dimensions;
+    menu_make_bool(menu_allocate_item(), "Skip Intro", &game_opt_skip_intro_always, MOO_KEY_i);
+    menu_make_bool(menu_allocate_item(), "Skip Random News", &game_opt_skip_random_news, MOO_KEY_n);
+    menu_make_bool(menu_allocate_item(), "Skip Copy Protection", &ui_copyprotection_disabled, MOO_KEY_p);
+    menu_make_back(menu_allocate_item());
+}
+
+static void main_menu_make_options_starmap_page(struct main_menu_data_s *d)
+{
+    d->set_item_dimensions = mm_options_set_item_dimensions;
+    menu_make_bool(menu_allocate_item(), "Explicit Cursor Context", &ui_sm_explicit_cursor_context, MOO_KEY_c);
+    menu_make_bool(menu_allocate_item(), "No '?' Cursor", &ui_sm_no_question_mark_cursor, MOO_KEY_q);
+    menu_make_bool(menu_allocate_item(), "Expanded Scroll", &ui_sm_expanded_scroll, MOO_KEY_e);
+    menu_make_bool(menu_allocate_item(), "Mouseover Focus", &ui_sm_mouseover_focus, MOO_KEY_m);
+    menu_make_bool(menu_allocate_item(), "Scroll by mouse", &ui_sm_mouse_scroll, MOO_KEY_s);
+    menu_make_bool(menu_allocate_item(), "UHJK scroll", &ui_sm_uhjk_scroll, MOO_KEY_u);
+    menu_make_bool(menu_allocate_item(), "Smoother scrolling", &ui_sm_smoother_scrolling, MOO_KEY_o);
+    menu_make_int(menu_allocate_item(), "Scroll speed", &ui_sm_scroll_speed, 0, UI_SCROLL_SPEED_MAX, MOO_KEY_p);
+    menu_make_back(menu_allocate_item());
+}
+
+static void main_menu_make_options_rules_page(struct main_menu_data_s *d)
+{
+    d->set_item_dimensions = mm_options_set_item_dimensions;
     menu_make_back(menu_allocate_item());
 }
 
@@ -214,6 +369,33 @@ static struct main_menu_page_s mm_pages[MAIN_MENU_PAGE_NUM] = {
     },
     {
         main_menu_make_game_page,
+    },
+    {
+        main_menu_make_options_page,
+    },
+    {
+        main_menu_make_options_input_page,
+    },
+    {
+        main_menu_make_options_sound_page,
+    },
+    {
+        main_menu_make_options_video_page,
+    },
+    {
+        main_menu_make_options_addons_page,
+    },
+    {
+        main_menu_make_options_addons_message_filter_page,
+    },
+    {
+        main_menu_make_options_misc_page,
+    },
+    {
+        main_menu_make_options_starmap_page,
+    },
+    {
+        main_menu_make_options_rules_page,
     },
 };
 
