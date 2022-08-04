@@ -304,7 +304,7 @@ static void main_menu_item_do_minus(struct main_menu_data_s *d, int item_i)
 
 static main_menu_action_t main_menu_do(struct main_menu_data_s *d)
 {
-    int16_t oi_tutor, oi_extra;
+    int16_t oi_tutor;
     bool flag_fadein = false;
 
     d->page_stack_i = -1;
@@ -325,7 +325,6 @@ static main_menu_action_t main_menu_do(struct main_menu_data_s *d)
     main_menu_push_page(d, MAIN_MENU_PAGE_MAIN);
 
     oi_tutor = uiobj_add_alt_str("tutor");
-    oi_extra = uiobj_add_alt_str("x");
 
     d->highlight = main_menu_get_item(d, uiobj_at_cursor());
     uiobj_set_callback_and_delay(main_menu_draw_cb, d, 2);
@@ -353,9 +352,6 @@ static main_menu_action_t main_menu_do(struct main_menu_data_s *d)
             ui_sound_play_sfx_24();
             d->ret = MAIN_MENU_ACT_TUTOR;
             d->flag_done = true;
-        } else if (oi1 == oi_extra) {
-            ui_sound_play_sfx_24();
-            ui_extra_toggle_preset(!ui_extra_enabled);
         }
         uiobj_finish_frame();
         if ((ui_draw_finish_mode != 0) && !flag_fadein) {
