@@ -59,6 +59,7 @@ struct main_menu_item_s {
     uint16_t w;
     uint16_t h;
     int16_t oi;
+    int16_t oi_wheel;
     bool active;
 };
 
@@ -69,11 +70,14 @@ struct main_menu_data_s {
     int current_page_i;
     struct main_menu_item_s items[MENU_MAX_ITEMS_PER_PAGE];
     uint8_t item_count;
+    int16_t oi_plus, oi_minus, oi_equals;
+    int16_t scrollmisc;
     int frame;
     bool refresh;
     main_menu_action_t ret;
     bool flag_done;
     int clicked_i;
+    int wheel_i;
     int highlight;
     uint8_t *gfx_vortex;
     uint8_t *gfx_title;
@@ -191,6 +195,10 @@ static bool main_menu_load_page(struct main_menu_data_s *d, main_menu_page_id_t 
     menu_clear();
     mm_pages[page_i].make_page(d);
     d->item_count = menu_get_item_count();
+    d->scrollmisc = 0;
+    d->oi_plus = uiobj_add_inputkey(MOO_KEY_PLUS);
+    d->oi_minus = uiobj_add_inputkey(MOO_KEY_MINUS);
+    d->oi_equals = uiobj_add_inputkey(MOO_KEY_EQUALS);
     for (int i = 0; i < d->item_count; ++i) {
         struct main_menu_item_s *it = &d->items[i];
         it->data = *menu_get_item(i);
@@ -198,8 +206,10 @@ static bool main_menu_load_page(struct main_menu_data_s *d, main_menu_page_id_t 
         it->active = it->data.is_active ? it->data.is_active() : true;
         if (it->active) {
             it->oi = uiobj_add_mousearea(it->x - it->w / 2, it->y, it->x + it->w / 2, it->y + it->h - 1, it->data.key);
+            it->oi_wheel = uiobj_add_mousewheel(it->x - it->w / 2, it->y, it->x + it->w / 2, it->y + it->h - 1, &d->scrollmisc);
         } else {
             it->oi = UIOBJI_INVALID;
+            it->oi_wheel = UIOBJI_INVALID;
         }
     }
     return true;
@@ -228,6 +238,16 @@ static int main_menu_get_item(struct main_menu_data_s *d, int16_t oi)
 {
     for (int i = 0; i < d->item_count; ++i) {
         if (oi == d->items[i].oi) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+static int main_menu_get_item_wheel(struct main_menu_data_s *d, int16_t oi)
+{
+    for (int i = 0; i < d->item_count; ++i) {
+        if (oi == d->items[i].oi_wheel) {
             return i;
         }
     }
@@ -336,7 +356,23 @@ static main_menu_action_t main_menu_do(struct main_menu_data_s *d)
         d->highlight = main_menu_get_item(d, oi2);
         main_menu_draw_cb(d);
         d->clicked_i = main_menu_get_item(d, oi1);
-        if (d->clicked_i != -1) {
+        d->wheel_i = main_menu_get_item_wheel(d, oi1);
+        if ((oi1 == d->oi_plus || oi1 == d->oi_equals) && d->highlight != -1) {
+            ui_sound_play_sfx_24();
+            main_menu_item_do_plus(d, d->highlight);
+        } else if ((oi1 == d->oi_minus) && d->highlight != -1) {
+            ui_sound_play_sfx_24();
+            main_menu_item_do_minus(d, d->highlight);
+        } else if (d->wheel_i != -1) {
+            if ((d->scrollmisc >= 0) != (ui_mwi_counter && 1) ) {
+                ui_sound_play_sfx_24();
+                main_menu_item_do_plus(d, d->wheel_i);
+            } else {
+                ui_sound_play_sfx_24();
+                main_menu_item_do_minus(d, d->wheel_i);
+            }
+            d->scrollmisc = 0;
+        } else if (d->clicked_i != -1) {
             ui_sound_play_sfx_24();
             main_menu_item_do_plus(d, d->clicked_i);
         } else if (oi1 == UIOBJI_ESC) {
