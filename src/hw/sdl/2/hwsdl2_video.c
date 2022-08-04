@@ -299,6 +299,25 @@ void hw_video_set_visible(bool visible)
     video.noblit = !visible;
 }
 
+#if SDL_VERSION_ATLEAST(2, 0, 18)
+bool hw_video_toggle_vsync(void)
+{
+    hw_opt_vsync = !hw_opt_vsync;
+    SDL_RenderSetVSync(video.renderer, hw_opt_vsync);
+    return true;
+}
+#endif
+
+#if SDL_VERSION_ATLEAST(2, 0, 5)
+bool hw_video_toggle_int_scaling(void)
+{
+    hw_opt_int_scaling = !hw_opt_int_scaling;
+    SDL_RenderSetIntegerScale(video.renderer, hw_opt_int_scaling);
+    hw_video_resize(0, 0);
+    return true;
+}
+#endif
+
 /* -------------------------------------------------------------------------- */
 
 /* Check the display bounds of the display referred to by 'video_display' and
