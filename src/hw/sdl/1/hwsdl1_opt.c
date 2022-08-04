@@ -6,7 +6,9 @@
 #include "cfg.h"
 #include "hwsdl_opt.h"
 #include "hwsdl_audio.h"
+#include "hwsdl_video.h"
 #include "lib.h"
+#include "menu.h"
 #include "options.h"
 #include "types.h"
 
@@ -24,6 +26,23 @@ int hw_opt_bpp = 0;
 #ifdef HAVE_SDL1MIXER
 #define HAVE_SDLMIXER
 #endif /* HAVE_SDL1MIXER */
+
+/* -------------------------------------------------------------------------- */
+
+#ifdef HAVE_SDL1GL
+static const char *hw_gl_filter_str[2] = { "Nearest", "Linear" };
+
+static const char *hw_uiopts_filter_get(void)
+{
+    return hw_gl_filter_str[hw_opt_gl_filter];
+}
+
+static bool hw_uiopts_filter_next(void)
+{
+    hw_opt_gl_filter = (hw_opt_gl_filter + 1) % 2;
+    return true;
+}
+#endif /* HAVE_SDL1GL */
 
 /* -------------------------------------------------------------------------- */
 
@@ -52,3 +71,11 @@ const struct cmdline_options_s hw_cmdline_options_extra[] = {
 #endif /* HAVE_SDL1GL */
     { NULL, 0, NULL, NULL, NULL, NULL }
 };
+
+void hw_opt_menu_make_page_video(void)
+{
+    menu_make_bool_func(menu_allocate_item(), "Fullscreen", &hw_opt_fullscreen, hw_video_toggle_fullscreen, MOO_KEY_f);
+#ifdef HAVE_SDL1GL
+    menu_make_str_func(menu_allocate_item(), "Filter", hw_uiopts_filter_get, hw_uiopts_filter_next, MOO_KEY_i);
+#endif /* HAVE_SDL1GL */
+}
