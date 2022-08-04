@@ -42,6 +42,24 @@ static bool main_menu_have_save_any(void *vptr) {
     return false;
 }
 
+static void main_menu_toggle_music(void *vptr) {
+    if (opt_music_enabled) {
+        ui_sound_stop_music();
+        opt_music_enabled = false;
+    } else {
+        opt_music_enabled = true;
+        ui_sound_play_music(1);
+    }
+}
+
+static void main_menu_update_music_volume(void *vptr) {
+    hw_audio_music_volume(opt_music_volume);
+}
+
+static void main_menu_update_sfx_volume(void *vptr) {
+    hw_audio_sfx_volume(opt_sfx_volume);
+}
+
 struct main_menu_data_s;
 static void main_menu_set_item_dimensions(struct main_menu_data_s *d, int i);
 static void mm_game_set_item_dimensions(struct main_menu_data_s *d, int i);
@@ -65,6 +83,11 @@ typedef enum {
     MAIN_MENU_ITEM_OPTIONS_INPUT_MWISLIDER,
     MAIN_MENU_ITEM_OPTIONS_INPUT_MWICOUNTER,
     MAIN_MENU_ITEM_OPTIONS_INPUT_KBDREPEAT,
+    MAIN_MENU_ITEM_OPTIONS_SOUND,
+    MAIN_MENU_ITEM_OPTIONS_SOUND_MUSIC,
+    MAIN_MENU_ITEM_OPTIONS_SOUND_MUSIC_VOLUME,
+    MAIN_MENU_ITEM_OPTIONS_SOUND_SFX,
+    MAIN_MENU_ITEM_OPTIONS_SOUND_SFX_VOLUME,
     MAIN_MENU_ITEM_UIEXTRA,
     MAIN_MENU_ITEM_QUIT,
     MAIN_MENU_ITEM_BACK,
@@ -76,6 +99,7 @@ typedef enum {
     MAIN_MENU_PAGE_GAME,
     MAIN_MENU_PAGE_OPTIONS,
     MAIN_MENU_PAGE_OPTIONS_INPUT,
+    MAIN_MENU_PAGE_OPTIONS_SOUND,
     MAIN_MENU_PAGE_NUM,
 } main_menu_page_id_t;
 
@@ -171,6 +195,41 @@ static struct main_menu_item_data_s mm_items[MAIN_MENU_ITEM_NUM] = {
         MOO_KEY_k,
     },
     {
+        MAIN_MENU_ITEM_TYPE_PAGE,
+        NULL, NULL,
+        "Sound", NULL, NULL, MAIN_MENU_PAGE_OPTIONS_SOUND,
+        0, 0,
+        MOO_KEY_s,
+    },
+    {
+        MAIN_MENU_ITEM_TYPE_BOOL,
+        main_menu_toggle_music, NULL,
+        "Music", NULL, &opt_music_enabled, 0,
+        0, 0,
+        MOO_KEY_m,
+    },
+    {
+        MAIN_MENU_ITEM_TYPE_INT,
+        main_menu_update_music_volume, NULL,
+        "Music volume", NULL, &opt_music_volume, 0,
+        0, 128,
+        MOO_KEY_u,
+    },
+    {
+        MAIN_MENU_ITEM_TYPE_BOOL,
+        NULL, NULL,
+        "SFX", NULL, &opt_sfx_enabled, 0,
+        0, 0,
+        MOO_KEY_s,
+    },
+    {
+        MAIN_MENU_ITEM_TYPE_INT,
+        main_menu_update_sfx_volume, NULL,
+        "SFX volume", NULL, &opt_sfx_volume, 0,
+        0, 128,
+        MOO_KEY_f,
+    },
+    {
         MAIN_MENU_ITEM_TYPE_BOOL,
         NULL, NULL,
         "UI Extra", NULL, &ui_extra_enabled, 0,
@@ -220,6 +279,7 @@ static struct main_menu_page_s mm_pages[MAIN_MENU_PAGE_NUM] = {
     {
         {
             MAIN_MENU_ITEM_OPTIONS_INPUT,
+            MAIN_MENU_ITEM_OPTIONS_SOUND,
             MAIN_MENU_ITEM_BACK,
             MAIN_MENU_ITEM_NUM,
         },
@@ -233,6 +293,18 @@ static struct main_menu_page_s mm_pages[MAIN_MENU_PAGE_NUM] = {
             MAIN_MENU_ITEM_OPTIONS_INPUT_MWISLIDER,
             MAIN_MENU_ITEM_OPTIONS_INPUT_MWICOUNTER,
             MAIN_MENU_ITEM_OPTIONS_INPUT_KBDREPEAT,
+            MAIN_MENU_ITEM_BACK,
+            MAIN_MENU_ITEM_NUM,
+        },
+        mm_options_set_item_dimensions,
+        NULL,
+    },
+    {
+        {
+            MAIN_MENU_ITEM_OPTIONS_SOUND_MUSIC,
+            MAIN_MENU_ITEM_OPTIONS_SOUND_MUSIC_VOLUME,
+            MAIN_MENU_ITEM_OPTIONS_SOUND_SFX,
+            MAIN_MENU_ITEM_OPTIONS_SOUND_SFX_VOLUME,
             MAIN_MENU_ITEM_BACK,
             MAIN_MENU_ITEM_NUM,
         },
