@@ -149,8 +149,11 @@ static void main_menu_draw_cb(void *vptr)
 
 static void main_menu_set_item_wh(struct main_menu_data_s *d, struct main_menu_item_s *it)
 {
-    it->w = 0xc8;
-    it->h = 0x10;
+    char buf[64];
+    lbxfont_select(it->font_i, 7, 0, 0);
+    main_menu_get_item_string(it, buf, sizeof(buf));
+    it->w = lbxfont_calc_str_width(buf);
+    it->h = lbxfont_get_height();
 }
 
 static void main_menu_set_item_dimensions(struct main_menu_data_s *d, int i)
@@ -205,8 +208,8 @@ static bool main_menu_load_page(struct main_menu_data_s *d, main_menu_page_id_t 
         d->set_item_dimensions(d, i);
         it->active = it->data.is_active ? it->data.is_active() : true;
         if (it->active) {
-            it->oi = uiobj_add_mousearea(it->x - it->w / 2, it->y, it->x + it->w / 2, it->y + it->h - 1, it->data.key);
-            it->oi_wheel = uiobj_add_mousewheel(it->x - it->w / 2, it->y, it->x + it->w / 2, it->y + it->h - 1, &d->scrollmisc);
+            it->oi = uiobj_add_mousearea(it->x - it->w / 2, it->y, it->x + it->w / 2, it->y + it->h - 2, it->data.key);
+            it->oi_wheel = uiobj_add_mousewheel(it->x - it->w / 2, it->y, it->x + it->w / 2, it->y + it->h - 2, &d->scrollmisc);
         } else {
             it->oi = UIOBJI_INVALID;
             it->oi_wheel = UIOBJI_INVALID;
