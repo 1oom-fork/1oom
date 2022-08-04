@@ -45,6 +45,7 @@ static bool main_menu_have_save_any(void *vptr) {
 struct main_menu_data_s;
 static void main_menu_set_item_dimensions(struct main_menu_data_s *d, int i);
 static void mm_game_set_item_dimensions(struct main_menu_data_s *d, int i);
+static void mm_options_set_item_dimensions(struct main_menu_data_s *d, int i);
 
 /* -------------------------------------------------------------------------- */
 
@@ -57,6 +58,13 @@ typedef enum {
     MAIN_MENU_ITEM_GAME_CONTINUE,
     MAIN_MENU_ITEM_GAME_LOAD,
     MAIN_MENU_ITEM_GAME_NEW,
+    MAIN_MENU_ITEM_OPTIONS,
+    MAIN_MENU_ITEM_OPTIONS_INPUT,
+    MAIN_MENU_ITEM_OPTIONS_INPUT_SMSCROLL,
+    MAIN_MENU_ITEM_OPTIONS_INPUT_SMSCROLLSPD,
+    MAIN_MENU_ITEM_OPTIONS_INPUT_MWISLIDER,
+    MAIN_MENU_ITEM_OPTIONS_INPUT_MWICOUNTER,
+    MAIN_MENU_ITEM_OPTIONS_INPUT_KBDREPEAT,
     MAIN_MENU_ITEM_UIEXTRA,
     MAIN_MENU_ITEM_QUIT,
     MAIN_MENU_ITEM_BACK,
@@ -66,6 +74,8 @@ typedef enum {
 typedef enum {
     MAIN_MENU_PAGE_MAIN,
     MAIN_MENU_PAGE_GAME,
+    MAIN_MENU_PAGE_OPTIONS,
+    MAIN_MENU_PAGE_OPTIONS_INPUT,
     MAIN_MENU_PAGE_NUM,
 } main_menu_page_id_t;
 
@@ -112,6 +122,55 @@ static struct main_menu_item_data_s mm_items[MAIN_MENU_ITEM_NUM] = {
         MOO_KEY_n,
     },
     {
+        MAIN_MENU_ITEM_TYPE_PAGE,
+        NULL, NULL,
+        "Options", NULL, NULL, MAIN_MENU_PAGE_OPTIONS,
+        0, 0,
+        MOO_KEY_o,
+    },
+    {
+        MAIN_MENU_ITEM_TYPE_PAGE,
+        NULL, NULL,
+        "Input", NULL, NULL, MAIN_MENU_PAGE_OPTIONS_INPUT,
+        0, 0,
+        MOO_KEY_i,
+    },
+    {
+        MAIN_MENU_ITEM_TYPE_BOOL,
+        NULL, NULL,
+        "Scroll by mouse", NULL, &ui_sm_mouse_scroll, 0,
+        0, 0,
+        MOO_KEY_m,
+    },
+    {
+        MAIN_MENU_ITEM_TYPE_INT,
+        NULL, NULL,
+        "Scroll speed", NULL, &ui_sm_scroll_speed, 0,
+        0, UI_SCROLL_SPEED_MAX,
+        MOO_KEY_s,
+    },
+    {
+        MAIN_MENU_ITEM_TYPE_BOOL,
+        NULL, NULL,
+        "Invert slider", NULL, &ui_mwi_slider, 0,
+        0, 0,
+        MOO_KEY_l,
+    },
+    {
+        MAIN_MENU_ITEM_TYPE_BOOL,
+        NULL, NULL,
+        "Invert counter", NULL, &ui_mwi_counter, 0,
+        0, 0,
+        MOO_KEY_c,
+    },
+    {
+        MAIN_MENU_ITEM_TYPE_BOOL,
+        NULL, NULL,
+        "Keyboard repeat", NULL, &ui_kbd_repeat, 0,
+        0, 0,
+        MOO_KEY_k,
+    },
+    {
         MAIN_MENU_ITEM_TYPE_BOOL,
         NULL, NULL,
         "UI Extra", NULL, &ui_extra_enabled, 0,
@@ -138,6 +197,7 @@ static struct main_menu_page_s mm_pages[MAIN_MENU_PAGE_NUM] = {
     {
         {
             MAIN_MENU_ITEM_GAME,
+            MAIN_MENU_ITEM_OPTIONS,
             MAIN_MENU_ITEM_UIEXTRA,
             MAIN_MENU_ITEM_QUIT,
             MAIN_MENU_ITEM_NUM,
@@ -155,6 +215,28 @@ static struct main_menu_page_s mm_pages[MAIN_MENU_PAGE_NUM] = {
             MAIN_MENU_ITEM_NUM,
         },
         mm_game_set_item_dimensions,
+        NULL,
+    },
+    {
+        {
+            MAIN_MENU_ITEM_OPTIONS_INPUT,
+            MAIN_MENU_ITEM_BACK,
+            MAIN_MENU_ITEM_NUM,
+        },
+        main_menu_set_item_dimensions,
+        NULL,
+    },
+    {
+        {
+            MAIN_MENU_ITEM_OPTIONS_INPUT_SMSCROLL,
+            MAIN_MENU_ITEM_OPTIONS_INPUT_SMSCROLLSPD,
+            MAIN_MENU_ITEM_OPTIONS_INPUT_MWISLIDER,
+            MAIN_MENU_ITEM_OPTIONS_INPUT_MWICOUNTER,
+            MAIN_MENU_ITEM_OPTIONS_INPUT_KBDREPEAT,
+            MAIN_MENU_ITEM_BACK,
+            MAIN_MENU_ITEM_NUM,
+        },
+        mm_options_set_item_dimensions,
         NULL,
     },
 };
@@ -271,6 +353,19 @@ static void mm_game_set_item_dimensions(struct main_menu_data_s *d, int i)
     main_menu_set_item_wh(it);
     step_y = 0x40 / ((d->item_count + 1) / 2);
     it->x = i%2 ? 0xd0 : 0x70;
+    if (i%2 == 0 && i == d->item_count - 1) {
+        it->x = 0xa0;
+    }
+    it->y = 0x7f + step_y * (i/2);
+}
+
+static void mm_options_set_item_dimensions(struct main_menu_data_s *d, int i)
+{
+    struct main_menu_item_s *it = &d->items[i];
+    uint16_t step_y;
+    main_menu_set_item_wh(it);
+    step_y = 0x40 / ((d->item_count + 1) / 2);
+    it->x = i%2 ? 0xe0 : 0x60;
     if (i%2 == 0 && i == d->item_count - 1) {
         it->x = 0xa0;
     }
