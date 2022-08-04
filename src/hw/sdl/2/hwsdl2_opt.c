@@ -9,7 +9,9 @@
 #include "hwsdl_opt.h"
 #include "hwsdl_audio.h"
 #include "hwsdl_video.h"
+#include "hwsdl2_video.h"
 #include "lib.h"
+#include "menu.h"
 #include "options.h"
 #include "types.h"
 
@@ -97,3 +99,15 @@ const struct cmdline_options_s hw_cmdline_options_extra[] = {
       NULL, "Disable V-sync" },
     { NULL, 0, NULL, NULL, NULL, NULL }
 };
+
+void hw_opt_menu_make_page_video(void)
+{
+    menu_make_bool_func(menu_allocate_item(), "Borderless", &hw_opt_borderless, hw_video_toggle_borderless, MOO_KEY_o);
+    menu_make_bool_func(menu_allocate_item(), "Fullscreen", &hw_opt_fullscreen, hw_video_toggle_fullscreen, MOO_KEY_f);
+    #if SDL_VERSION_ATLEAST(2, 0, 18)
+        menu_make_bool_func(menu_allocate_item(), "V-sync", &hw_opt_vsync, hw_video_toggle_vsync, MOO_KEY_v);
+    #endif
+    #if SDL_VERSION_ATLEAST(2, 0, 5)
+        menu_make_bool_func(menu_allocate_item(), "Integer scaling", &hw_opt_int_scaling, hw_video_toggle_int_scaling, MOO_KEY_i);
+    #endif
+}
