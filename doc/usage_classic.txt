@@ -32,6 +32,12 @@ The default value is 1 for that classic 320x200 feeling. Larger values allow
 more of the galaxy to be viewed without scrolling. Mouse wheel can be used
 to adjust the scaling of the galaxy movement screen map.
 
+The config file item "ui.space_combat_autoresolve" (set via
+the -spacecombatautoresolve command-line option or uiextra options menu)
+enables the following features:
+- Summary of forces shown before ship combat
+- New Auto and Retreat buttons for space combat autoresolve
+
 The following new UI features are always enabled/available:
 - Smoother galaxy movement screen scrolling
 - Galaxy movement screen scrolling speed is adjustable (-uismscroll)
@@ -82,7 +88,6 @@ or pressing Alt-X in the main menu enables the following extra UI features:
 - When a planet is governed, clicking on or mouse wheeling over the bases field
   allow to increase or adjust the target bases amount.
 - Eco slider shows fractional population growth if growth is less than 10
-- Summary of forces shown before ship combat
 - When espionage was successful, clicking on the race icon opens the spy report
 - The plantary production field indicates whether the planet currently receives
   reserve spending (yellow = none, red = partial, while = full). The same
@@ -92,7 +97,6 @@ or pressing Alt-X in the main menu enables the following extra UI features:
   transfer dialog.
 - Nebula planets show "NEB" in their shields field and have a purple instead
   of a red frame around their picture
-- New Auto and Retreat buttons for space combat autoresolve
 - Pressing = or # on the Tech screen adjusts only the unlocked sliders
 - Tech screen has lights showing when you reach max research bonus
 - Clicking on the Tech screen lights sets the slider to bonus limit
