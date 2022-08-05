@@ -106,7 +106,9 @@ typedef enum {
     MAIN_MENU_ITEM_OPTIONS_VIDEO,
     MAIN_MENU_ITEM_OPTIONS_VIDEO_UISCALE,
     MAIN_MENU_ITEM_OPTIONS_VIDEO_SKIPINTRO,
-    MAIN_MENU_ITEM_UIEXTRA,
+    MAIN_MENU_ITEM_INTERFACE,
+    MAIN_MENU_ITEM_INTERFACE_BOMBANIMATION,
+    MAIN_MENU_ITEM_INTERFACE_UIEXTRA,
     MAIN_MENU_ITEM_QUIT,
     MAIN_MENU_ITEM_BACK,
     MAIN_MENU_ITEM_NUM,
@@ -119,6 +121,7 @@ typedef enum {
     MAIN_MENU_PAGE_OPTIONS_INPUT,
     MAIN_MENU_PAGE_OPTIONS_SOUND,
     MAIN_MENU_PAGE_OPTIONS_VIDEO,
+    MAIN_MENU_PAGE_INTERFACE,
     MAIN_MENU_PAGE_NUM,
 } main_menu_page_id_t;
 
@@ -270,6 +273,20 @@ static struct main_menu_item_data_s mm_items[MAIN_MENU_ITEM_NUM] = {
         MOO_KEY_i,
     },
     {
+        MAIN_MENU_ITEM_TYPE_PAGE,
+        NULL, NULL,
+        "Interface", NULL, NULL, MAIN_MENU_PAGE_INTERFACE,
+        0, 0,
+        MOO_KEY_1,
+    },
+    {
+        MAIN_MENU_ITEM_TYPE_BOOL,
+        NULL, NULL,
+        "Bomb Animation", NULL, &game_opt_enable_bomb_animation, 0,
+        0, 0,
+        MOO_KEY_o,
+    },
+    {
         MAIN_MENU_ITEM_TYPE_BOOL,
         NULL, NULL,
         "UI Extra", NULL, &ui_extra_enabled, 0,
@@ -307,7 +324,7 @@ static struct main_menu_page_s mm_pages[MAIN_MENU_PAGE_NUM] = {
         {
             MAIN_MENU_ITEM_GAME,
             MAIN_MENU_ITEM_OPTIONS,
-            MAIN_MENU_ITEM_UIEXTRA,
+            MAIN_MENU_ITEM_INTERFACE,
             MAIN_MENU_ITEM_QUIT,
             MAIN_MENU_ITEM_NUM,
         },
@@ -370,6 +387,16 @@ static struct main_menu_page_s mm_pages[MAIN_MENU_PAGE_NUM] = {
         },
         mm_options_set_item_dimensions,
         mm_opt_video_items,
+    },
+    {
+        {
+            MAIN_MENU_ITEM_INTERFACE_BOMBANIMATION,
+            MAIN_MENU_ITEM_INTERFACE_UIEXTRA,
+            MAIN_MENU_ITEM_BACK,
+            MAIN_MENU_ITEM_NUM,
+        },
+        mm_options_set_item_dimensions,
+        NULL,
     },
 };
 
