@@ -91,6 +91,7 @@ typedef enum {
     MAIN_MENU_ITEM_GAME_CONTINUE,
     MAIN_MENU_ITEM_GAME_LOAD,
     MAIN_MENU_ITEM_GAME_NEW,
+    MAIN_MENU_ITEM_GAME_CUSTOM,
     MAIN_MENU_ITEM_OPTIONS,
     MAIN_MENU_ITEM_OPTIONS_INPUT,
     MAIN_MENU_ITEM_OPTIONS_INPUT_SMSCROLL,
@@ -167,6 +168,13 @@ static struct main_menu_item_data_s mm_items[MAIN_MENU_ITEM_NUM] = {
         "New Game", NULL, MAIN_MENU_ACT_NEW_GAME,
         0, 0,
         MOO_KEY_n,
+    },
+    {
+        MAIN_MENU_ITEM_TYPE_RETURN,
+        NULL, main_menu_game_active,
+        "Custom Game", NULL, MAIN_MENU_ACT_CUSTOM_GAME,
+        0, 0,
+        MOO_KEY_g,
     },
     {
         MAIN_MENU_ITEM_TYPE_PAGE,
@@ -345,6 +353,7 @@ static struct main_menu_page_s mm_pages[MAIN_MENU_PAGE_NUM] = {
             MAIN_MENU_ITEM_GAME_CONTINUE,
             MAIN_MENU_ITEM_GAME_LOAD,
             MAIN_MENU_ITEM_GAME_NEW,
+            MAIN_MENU_ITEM_GAME_CUSTOM,
             MAIN_MENU_ITEM_BACK,
             MAIN_MENU_ITEM_NUM,
         },
@@ -816,9 +825,6 @@ static main_menu_action_t main_menu_do(struct main_menu_data_s *d)
         ui_delay_ticks_or_click(2);
     }
     uiobj_unset_callback();
-    if (ui_extra_enabled && d->ret == MAIN_MENU_ACT_NEW_GAME) {
-        d->ret = MAIN_MENU_ACT_CUSTOM_GAME;
-    }
     return d->ret;
 }
 
