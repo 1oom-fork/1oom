@@ -29,6 +29,8 @@
 
 /* -------------------------------------------------------------------------- */
 
+static int mm_ui_scale_helper;
+
 static bool main_menu_have_save_continue(void *vptr) {
     return game_save_tbl_have_save[GAME_SAVE_I_CONTINUE];
 }
@@ -40,6 +42,18 @@ static bool main_menu_have_save_any(void *vptr) {
         }
     }
     return false;
+}
+
+static bool main_menu_game_active(void *vptr) {
+    return ui_scale == mm_ui_scale_helper;
+}
+
+static bool main_menu_continue_active(void *vptr) {
+    return main_menu_have_save_continue(vptr) && main_menu_game_active(vptr);
+}
+
+static bool main_menu_load_active(void *vptr) {
+    return main_menu_have_save_any(vptr) && main_menu_game_active(vptr);
 }
 
 static void main_menu_toggle_music(void *vptr) {
@@ -88,6 +102,8 @@ typedef enum {
     MAIN_MENU_ITEM_OPTIONS_SOUND_MUSIC_VOLUME,
     MAIN_MENU_ITEM_OPTIONS_SOUND_SFX,
     MAIN_MENU_ITEM_OPTIONS_SOUND_SFX_VOLUME,
+    MAIN_MENU_ITEM_OPTIONS_VIDEO,
+    MAIN_MENU_ITEM_OPTIONS_VIDEO_UISCALE,
     MAIN_MENU_ITEM_UIEXTRA,
     MAIN_MENU_ITEM_QUIT,
     MAIN_MENU_ITEM_BACK,
@@ -100,6 +116,7 @@ typedef enum {
     MAIN_MENU_PAGE_OPTIONS,
     MAIN_MENU_PAGE_OPTIONS_INPUT,
     MAIN_MENU_PAGE_OPTIONS_SOUND,
+    MAIN_MENU_PAGE_OPTIONS_VIDEO,
     MAIN_MENU_PAGE_NUM,
 } main_menu_page_id_t;
 
@@ -112,35 +129,35 @@ struct main_menu_page_s {
 static struct main_menu_item_data_s mm_items[MAIN_MENU_ITEM_NUM] = {
     {
         MAIN_MENU_ITEM_TYPE_PAGE,
-        NULL, NULL,
+        NULL, main_menu_game_active,
         "Game", NULL, MAIN_MENU_PAGE_GAME,
         0, 0,
         MOO_KEY_g,
     },
     {
         MAIN_MENU_ITEM_TYPE_RETURN,
-        NULL, NULL,
+        NULL, main_menu_game_active,
         "Tutor", NULL, MAIN_MENU_ACT_TUTOR,
         0, 0,
         MOO_KEY_t,
     },
     {
         MAIN_MENU_ITEM_TYPE_RETURN,
-        NULL, main_menu_have_save_continue,
+        NULL, main_menu_continue_active,
         "Continue", NULL, MAIN_MENU_ACT_CONTINUE_GAME,
         0, 0,
         MOO_KEY_c,
     },
     {
         MAIN_MENU_ITEM_TYPE_RETURN,
-        NULL, main_menu_have_save_any,
+        NULL, main_menu_load_active,
         "Load Game", NULL, MAIN_MENU_ACT_LOAD_GAME,
         0, 0,
         MOO_KEY_l,
     },
     {
         MAIN_MENU_ITEM_TYPE_RETURN,
-        NULL, NULL,
+        NULL, main_menu_game_active,
         "New Game", NULL, MAIN_MENU_ACT_NEW_GAME,
         0, 0,
         MOO_KEY_n,
@@ -230,6 +247,20 @@ static struct main_menu_item_data_s mm_items[MAIN_MENU_ITEM_NUM] = {
         MOO_KEY_f,
     },
     {
+        MAIN_MENU_ITEM_TYPE_PAGE,
+        NULL, NULL,
+        "Video", NULL, MAIN_MENU_PAGE_OPTIONS_VIDEO,
+        0, 0,
+        MOO_KEY_v,
+    },
+    {
+        MAIN_MENU_ITEM_TYPE_INT,
+        NULL, NULL,
+        "UI Scale", &mm_ui_scale_helper, 0,
+        1, UI_SCALE_MAX - 1,
+        MOO_KEY_s,
+    },
+    {
         MAIN_MENU_ITEM_TYPE_BOOL,
         NULL, NULL,
         "UI Extra", &ui_extra_enabled, 0,
@@ -280,6 +311,7 @@ static struct main_menu_page_s mm_pages[MAIN_MENU_PAGE_NUM] = {
         {
             MAIN_MENU_ITEM_OPTIONS_INPUT,
             MAIN_MENU_ITEM_OPTIONS_SOUND,
+            MAIN_MENU_ITEM_OPTIONS_VIDEO,
             MAIN_MENU_ITEM_BACK,
             MAIN_MENU_ITEM_NUM,
         },
@@ -305,6 +337,15 @@ static struct main_menu_page_s mm_pages[MAIN_MENU_PAGE_NUM] = {
             MAIN_MENU_ITEM_OPTIONS_SOUND_MUSIC_VOLUME,
             MAIN_MENU_ITEM_OPTIONS_SOUND_SFX,
             MAIN_MENU_ITEM_OPTIONS_SOUND_SFX_VOLUME,
+            MAIN_MENU_ITEM_BACK,
+            MAIN_MENU_ITEM_NUM,
+        },
+        mm_options_set_item_dimensions,
+        NULL,
+    },
+    {
+        {
+            MAIN_MENU_ITEM_OPTIONS_VIDEO_UISCALE,
             MAIN_MENU_ITEM_BACK,
             MAIN_MENU_ITEM_NUM,
         },
@@ -383,6 +424,10 @@ static void main_menu_draw_cb(void *vptr)
         lbxgfx_draw_frame_offs(0, 0, d->gfx_title, 0, 0, UI_VGA_W - 1, 191, UI_SCREEN_W, ui_scale);
         lbxfont_select(2, 7, 0, 0);
         lbxfont_print_str_center(160, 193, "PROGRAM VERSION " PACKAGE_NAME " " VERSION_STR, UI_SCREEN_W, ui_scale);
+    }
+    if (!main_menu_game_active(vptr)) {
+        lbxfont_select(2, 2, 0, 0);
+        lbxfont_print_str_center(160, 80, "Press Alt+Q to apply the new settings", UI_SCREEN_W, ui_scale);
     }
     for (int i = 0; i < d->item_count; ++i) {
         struct main_menu_item_s *it = &d->items[i];
@@ -621,6 +666,7 @@ static main_menu_action_t main_menu_do(struct main_menu_data_s *d)
     d->frame = 0;
     d->flag_done = false;
     d->ret = -1;
+    mm_ui_scale_helper = ui_scale;
     if (ui_draw_finish_mode != 0) {
         ui_palette_fadeout_19_19_1();
     }
@@ -676,6 +722,11 @@ static main_menu_action_t main_menu_do(struct main_menu_data_s *d)
             } else {
                 main_menu_pop_page(d);
             }
+        }
+        if (ui_scale != mm_ui_scale_helper
+          &&d->ret == MAIN_MENU_ACT_QUIT_GAME)
+        {
+            ui_scale = mm_ui_scale_helper;
         }
 
         uiobj_finish_frame();
