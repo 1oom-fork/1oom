@@ -57,6 +57,7 @@ The following new UI features are always enabled/available:
 - Planets can be tagged with Ctrl-1-9 and recalled with 1-9
 - Pressing = or # in the galaxy movement screen transfers reserve for
   one round of production (with uiextra also transfers back)
+- -nobombanimation disables bomb animation in space combat
 
 The config file item "ui.uiextra" (set via the -uiextra command-line option)
 or pressing Alt-X in the main menu enables the following extra UI features:
