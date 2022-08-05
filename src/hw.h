@@ -7,6 +7,7 @@
 #include "options.h"
 #include "types.h"
 #include "uiopt.h"
+#include "menu.h"
 
 extern const char *idstr_hw;
 
@@ -44,6 +45,7 @@ extern void hw_video_set_palette(const uint8_t *palette, int first, int num);
 extern uint8_t hw_video_get_palette_byte(int i);
 extern void hw_video_set_palette_byte(int i, uint8_t b);
 extern void hw_video_refresh_palette(void);
+extern void *hw_video_get_menu_item(int i);
 /* Return back buffer. */
 extern uint8_t *hw_video_get_buf(void);
 /* Return front buffer. */

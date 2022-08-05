@@ -292,6 +292,16 @@ static struct main_menu_item_data_s mm_items[MAIN_MENU_ITEM_NUM] = {
     },
 };
 
+static struct main_menu_item_data_s mm_opt_video_items[MM_MAX_ITEMS_PER_PAGE] = {
+    {
+        MAIN_MENU_ITEM_TYPE_NONE,
+        NULL, NULL,
+        NULL, NULL, NULL, 0,
+        0, 0,
+        MOO_KEY_UNKNOWN,
+    },
+};
+
 static struct main_menu_page_s mm_pages[MAIN_MENU_PAGE_NUM] = {
     {
         {
@@ -356,11 +366,10 @@ static struct main_menu_page_s mm_pages[MAIN_MENU_PAGE_NUM] = {
         {
             MAIN_MENU_ITEM_OPTIONS_VIDEO_UISCALE,
             MAIN_MENU_ITEM_OPTIONS_VIDEO_SKIPINTRO,
-            MAIN_MENU_ITEM_BACK,
             MAIN_MENU_ITEM_NUM,
         },
         mm_options_set_item_dimensions,
-        NULL,
+        mm_opt_video_items,
     },
 };
 
@@ -528,6 +537,33 @@ static struct main_menu_item_data_s *main_menu_get_itemdata(main_menu_page_id_t 
     return main_menu_get_local_itemdata(page_i, i);
 }
 
+static void main_menu_load_opt_video_data(struct main_menu_data_s *d)
+{
+    struct main_menu_item_data_s *it = mm_opt_video_items;
+    if (it->type != MAIN_MENU_ITEM_TYPE_NONE) {
+        return;
+    }
+    int i_src, i_dst;
+    struct main_menu_item_data_s *src;
+    for (i_src = 0, i_dst = 0; i_dst < MM_MAX_ITEMS_PER_PAGE - 1; ++i_src, ++i_dst) {
+        src = main_menu_get_local_itemdata(MAIN_MENU_PAGE_OPTIONS_VIDEO, i_src);
+        if (!src) {
+            it[i_dst].type = MAIN_MENU_ITEM_TYPE_NONE;
+            break;
+        }
+        it[i_dst] = *src;
+    }
+    for (i_src = 0; i_dst < MM_MAX_ITEMS_PER_PAGE - 1; ++i_src, ++i_dst) {
+        src = hw_video_get_menu_item(i_src);
+        if (!src) {
+            it[i_dst].type = MAIN_MENU_ITEM_TYPE_NONE;
+            break;
+        }
+        it[i_dst] = *src;
+    }
+    it[i_dst] = mm_items[MAIN_MENU_ITEM_BACK];
+}
+
 static bool main_menu_load_page(struct main_menu_data_s *d, main_menu_page_id_t page_i)
 {
     if (page_i < 0 || page_i >= MAIN_MENU_PAGE_NUM) {
@@ -679,6 +715,7 @@ static main_menu_action_t main_menu_do(struct main_menu_data_s *d)
 {
     bool flag_fadein = false;
 
+    main_menu_load_opt_video_data(d);
     d->page_stack_i = -1;
     d->frame = 0;
     d->flag_done = false;
