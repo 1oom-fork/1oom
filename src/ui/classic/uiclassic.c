@@ -68,6 +68,7 @@ static bool check_ui_sm_scroll_speed(void *var)
 const struct cfg_items_s ui_cfg_items[] = {
     CFG_ITEM_INT("uiscale", &ui_scale, check_ui_scale),
     CFG_ITEM_BOOL("uiextra", &ui_extra_enabled),
+    CFG_ITEM_BOOL("space_combat_autoresolve", &ui_space_combat_autoresolve),
     CFG_ITEM_BOOL("kbdrepeat", &ui_kbd_repeat),
     CFG_ITEM_COMMENT("0..146"),
     CFG_ITEM_INT("uiicon", &ui_icon, check_ui_icon),
@@ -111,6 +112,12 @@ const struct cmdline_options_s ui_cmdline_options[] = {
     { "-nouiextra", 0,
       options_disable_bool_var, (void *)&ui_extra_enabled,
       NULL, "Disable UI extras" },
+    { "-spacecombatautoresolve", 0,
+      options_enable_bool_var, (void *)&ui_space_combat_autoresolve,
+      NULL, "Enable space combat autoresolve UI" },
+    { "-nospacecombatautoresolve", 0,
+      options_disable_bool_var, (void *)&ui_space_combat_autoresolve,
+      NULL, "Disable space combat autoresolve UI" },
     { "-kbdrepeat", 0,
       options_enable_bool_var, (void *)&ui_kbd_repeat,
       NULL, "Enable keyboard auto repeat" },
@@ -152,6 +159,7 @@ int ui_screen_h = 0;
 int ui_scale = 0;
 int starmap_scale = 0;
 bool ui_extra_enabled = false;
+bool ui_space_combat_autoresolve = false;
 bool ui_kbd_repeat = true;
 bool ui_mwi_slider = false;
 bool ui_mwi_counter = false;

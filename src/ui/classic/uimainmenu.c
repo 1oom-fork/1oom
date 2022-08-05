@@ -107,6 +107,7 @@ typedef enum {
     MAIN_MENU_ITEM_OPTIONS_VIDEO_UISCALE,
     MAIN_MENU_ITEM_OPTIONS_VIDEO_SKIPINTRO,
     MAIN_MENU_ITEM_INTERFACE,
+    MAIN_MENU_ITEM_INTERFACE_COMBATAUTORESOLVE,
     MAIN_MENU_ITEM_INTERFACE_BOMBANIMATION,
     MAIN_MENU_ITEM_INTERFACE_UIEXTRA,
     MAIN_MENU_ITEM_QUIT,
@@ -282,6 +283,13 @@ static struct main_menu_item_data_s mm_items[MAIN_MENU_ITEM_NUM] = {
     {
         MAIN_MENU_ITEM_TYPE_BOOL,
         NULL, NULL,
+        "Combat Autoresolve", NULL, &ui_space_combat_autoresolve, 0,
+        0, 0,
+        MOO_KEY_c,
+    },
+    {
+        MAIN_MENU_ITEM_TYPE_BOOL,
+        NULL, NULL,
         "Bomb Animation", NULL, &game_opt_enable_bomb_animation, 0,
         0, 0,
         MOO_KEY_o,
@@ -390,6 +398,7 @@ static struct main_menu_page_s mm_pages[MAIN_MENU_PAGE_NUM] = {
     },
     {
         {
+            MAIN_MENU_ITEM_INTERFACE_COMBATAUTORESOLVE,
             MAIN_MENU_ITEM_INTERFACE_BOMBANIMATION,
             MAIN_MENU_ITEM_INTERFACE_UIEXTRA,
             MAIN_MENU_ITEM_BACK,
