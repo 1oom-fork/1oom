@@ -9,6 +9,7 @@
 #include "hwsdl2_window.h"
 #include "lib.h"
 #include "log.h"
+#include "menu.h"
 #include "options.h"
 #include "types.h"
 
@@ -92,7 +93,89 @@ const struct cmdline_options_s hw_cmdline_options_extra[] = {
 
 #include "hwsdl_opt.c"
 
+static void hwsdl2_mm_toggle_fullscreen(void *vptr)
+{
+    hw_video_toggle_fullscreen();
+}
+
+#ifdef HAVE_INT_SCALING
+static void hwsdl2_mm_toggle_intscaling(void *vptr)
+{
+    hwsdl_video_toggle_intscaling();
+}
+#endif
+
+static void hwsdl2_mm_toggle_autotrim(void *vptr)
+{
+    hwsdl_video_toggle_autotrim();
+}
+
+static void hwsdl2_mm_toggle_vsync(void *vptr)
+{
+    hwsdl_video_toggle_vsync();
+}
+
+#ifdef HAVE_SDLX_ASPECT
+static void hwsdl2_mm_aspect_next(void *vptr)
+{
+    hw_uiopt_cb_aspect_next();
+    hw_video_update_aspect();
+}
+#endif
+
+static struct main_menu_item_data_s hwsdl2_mm_opt_items[] = {
+    {
+        MAIN_MENU_ITEM_TYPE_BOOL,
+        hwsdl2_mm_toggle_fullscreen, NULL,
+        "Fullscreen", &hw_opt_fullscreen, 0,
+        0, 0,
+        MOO_KEY_f,
+    },
+#ifdef HAVE_SDLX_ASPECT
+    {
+        MAIN_MENU_ITEM_TYPE_STR,
+        hwsdl2_mm_aspect_next, NULL,
+        "Aspect Ratio", hw_uiopt_cb_aspect_get, 0,
+        0, 0,
+        MOO_KEY_a,
+    },
+#endif
+#ifdef HAVE_INT_SCALING
+    {
+        MAIN_MENU_ITEM_TYPE_BOOL,
+        hwsdl2_mm_toggle_intscaling, NULL,
+        "Integer scaling", &hw_opt_int_scaling, 0,
+        0, 0,
+        MOO_KEY_i,
+    },
+#endif
+    {
+        MAIN_MENU_ITEM_TYPE_BOOL,
+        hwsdl2_mm_toggle_autotrim, NULL,
+        "Auto-trim window", &hw_opt_autotrim, 0,
+        0, 0,
+        MOO_KEY_t,
+    },
+    {
+        MAIN_MENU_ITEM_TYPE_BOOL,
+        hwsdl2_mm_toggle_vsync, NULL,
+        "V-sync", &hw_opt_vsync, 0,
+        0, 0,
+        MOO_KEY_v,
+    },
+    {
+        MAIN_MENU_ITEM_TYPE_NONE,
+        NULL, NULL,
+        NULL, NULL, 0,
+        0, 0,
+        MOO_KEY_UNKNOWN,
+    },
+};
+
 void *hw_video_get_menu_item(int i)
 {
-    return NULL;
+    if (hwsdl2_mm_opt_items[i].type == MAIN_MENU_ITEM_TYPE_NONE) {
+        return NULL;
+    }
+    return &hwsdl2_mm_opt_items[i];
 }
