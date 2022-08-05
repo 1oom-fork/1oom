@@ -124,15 +124,10 @@ static void main_menu_draw_cb(void *vptr)
         hw_video_copy_back_from_page2();
     }
     lbxgfx_draw_frame(0, 0, d->gfx_vortex, UI_SCREEN_W, ui_scale);
-    if (!ui_extra_enabled) {
-        lbxgfx_draw_frame(0, 0, d->gfx_title, UI_SCREEN_W, ui_scale);
-        hw_video_copy_back_to_page2();
-    } else {
-        lbxgfx_draw_frame_offs(0, 0, d->gfx_title, 0, 0, UI_VGA_W - 1, 191, UI_SCREEN_W, ui_scale);
-        hw_video_copy_back_to_page2();
-        lbxfont_select(2, 7, 0, 0);
-        lbxfont_print_str_center(160, 193, "PROGRAM VERSION " PACKAGE_NAME " " VERSION_STR, UI_SCREEN_W, ui_scale);
-    }
+    lbxgfx_draw_frame_offs(0, 0, d->gfx_title, 0, 0, UI_VGA_W - 1, 191, UI_SCREEN_W, ui_scale);
+    hw_video_copy_back_to_page2();
+    lbxfont_select(2, 7, 0, 0);
+    lbxfont_print_str_right(315, 193, PACKAGE_NAME " " VERSION_STR, UI_SCREEN_W, ui_scale);
     for (int i = 0; i < d->item_count; ++i) {
         struct main_menu_item_s *it = &d->items[i];
         if (it->active) {
