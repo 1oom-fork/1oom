@@ -4,6 +4,7 @@
 #include "comp.h"
 #include "game.h"
 #include "game_new.h"
+#include "gameapi.h"
 #include "game_save.h"
 #include "game_str.h"
 #include "hw.h"
@@ -104,6 +105,7 @@ typedef enum {
     MAIN_MENU_ITEM_OPTIONS_SOUND_SFX_VOLUME,
     MAIN_MENU_ITEM_OPTIONS_VIDEO,
     MAIN_MENU_ITEM_OPTIONS_VIDEO_UISCALE,
+    MAIN_MENU_ITEM_OPTIONS_VIDEO_SKIPINTRO,
     MAIN_MENU_ITEM_UIEXTRA,
     MAIN_MENU_ITEM_QUIT,
     MAIN_MENU_ITEM_BACK,
@@ -263,6 +265,13 @@ static struct main_menu_item_data_s mm_items[MAIN_MENU_ITEM_NUM] = {
     {
         MAIN_MENU_ITEM_TYPE_BOOL,
         NULL, NULL,
+        "Skip Intro", &game_opt_skip_intro_always, 0,
+        0, 0,
+        MOO_KEY_i,
+    },
+    {
+        MAIN_MENU_ITEM_TYPE_BOOL,
+        NULL, NULL,
         "UI Extra", &ui_extra_enabled, 0,
         0, 0,
         MOO_KEY_x,
@@ -346,6 +355,7 @@ static struct main_menu_page_s mm_pages[MAIN_MENU_PAGE_NUM] = {
     {
         {
             MAIN_MENU_ITEM_OPTIONS_VIDEO_UISCALE,
+            MAIN_MENU_ITEM_OPTIONS_VIDEO_SKIPINTRO,
             MAIN_MENU_ITEM_BACK,
             MAIN_MENU_ITEM_NUM,
         },
