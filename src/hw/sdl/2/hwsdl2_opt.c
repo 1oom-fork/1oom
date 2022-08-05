@@ -92,3 +92,7 @@ const struct cmdline_options_s hw_cmdline_options_extra[] = {
 
 #include "hwsdl_opt.c"
 
+void *hw_video_get_menu_item(int i)
+{
+    return NULL;
+}

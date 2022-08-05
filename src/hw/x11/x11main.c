@@ -524,6 +524,11 @@ void hw_mouse_warp(int x, int y)
 	(void) (x + y);
 }
 
+void *hw_video_get_menu_item(int i)
+{
+    return NULL;
+}
+
 int main(int argc, char **argv) {
     return main_1oom(argc, argv);
 }

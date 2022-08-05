@@ -80,3 +80,8 @@ const struct cmdline_options_s hw_cmdline_options_extra[] = {
 #endif /* HAVE_SDL1GL */
     { NULL, 0, NULL, NULL, NULL, NULL }
 };
+
+void *hw_video_get_menu_item(int i)
+{
+    return NULL;
+}
