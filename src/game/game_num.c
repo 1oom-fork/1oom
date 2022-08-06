@@ -15,7 +15,6 @@ bool game_num_bt_no_tohit_acc = false;
 bool game_num_bt_oracle_fix = false;
 int game_num_stargate_cost = 3000;
 int game_num_stargate_maint = 100;
-int game_num_weapon_list_max = 30;
 int game_num_limit_ships = 32000;
 int game_num_limit_ships_all = 32000;
 int game_num_max_pop = 300;

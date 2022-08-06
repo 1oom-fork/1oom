@@ -161,7 +161,6 @@ static const struct numtbl_s {
     DEFNUMITEML(bt_oracle_fix, NUMTYPE_BOOL, 0, 1),
     DEFNUMITEML(stargate_cost, NUMTYPE_S, 1, 0xffff),
     DEFNUMITEML(stargate_maint, NUMTYPE_S, 1, 0xffff),
-    DEFNUMITEML(weapon_list_max, NUMTYPE_S, 0, WEAPON_NUM),
     DEFNUMITEML(limit_ships, NUMTYPE_S, 1, 0xffff),
     DEFNUMITEML(limit_ships_all, NUMTYPE_S, 1, 0xffff),
     DEFNUMITEML(max_pop, NUMTYPE_S, 1, 0x7fff),
@@ -463,7 +462,6 @@ void game_num_fixbugs(void)
     game_num_bt_no_tohit_acc = true;
     game_num_bt_oracle_fix = true;
     game_num_news_orion = true;
-    game_num_weapon_list_max = 64;
     game_num_aud_bounty_give = true;
     game_num_monster_rest_att = true;
     game_num_orbital_weap_any = true;

@@ -37,9 +37,6 @@ bt_oracle_fix : 0..1, 0
     does take the target's (!) Oracle shield into account in damage esimates,
     including those related to missiles.
 
-weapon_list_max : 0..64, 30
-  - Max. number of weapons shown in the ship design weapon list.
-
 news_orion : 0..1, 0
   - Show news when Orion is first colonized.
     MOO1 has a news item for conquering Orion but never shows it.
