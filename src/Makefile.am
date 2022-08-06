@@ -55,6 +55,8 @@ util_sources = \
     log.h \
     main.c \
     main.h \
+    menu.c \
+    menu.h \
     options.c \
     options.h \
     os.h \
