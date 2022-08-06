@@ -49,6 +49,7 @@ static uint32_t game_opt_race_value = 0xaaaaa0;
 static uint32_t game_opt_banner_value = 666660;
 static uint32_t game_opt_isai_value = 111110;
 static int game_opt_ai_id = GAME_AI_DEFAULT;
+static int game_opt_game_mode_extra = 0;
 
 static struct game_s game;
 static struct game_aux_s game_aux;
@@ -102,6 +103,7 @@ static void game_set_custom_opts_from_cfg(struct game_new_options_s *go)
     uint32_t is_ai = game_opt_isai_value;
 
     go->ai_id = game_opt_ai_id;
+    go->no_elections = game_opt_game_mode_extra % 10;
     for (int i = 0; i < PLAYER_NUM; ++i) {
         go->pdata[i].race = races % 0x10;
         races /= 0x10;
@@ -120,6 +122,7 @@ static int game_get_opts_value(const struct game_s *g)
 static void game_save_custom_opts_to_cfg(struct game_new_options_s *go)
 {
     game_opt_ai_id = go->ai_id;
+    game_opt_game_mode_extra = go->no_elections;
     game_opt_race_value = 0;
     game_opt_banner_value = 0;
     game_opt_isai_value = 0;
@@ -524,6 +527,7 @@ const struct cfg_items_s game_cfg_items[] = {
     CFG_ITEM_INT("new_game_banners", &game_opt_banner_value, NULL),
     CFG_ITEM_INT("new_game_isai", &game_opt_isai_value, NULL),
     CFG_ITEM_INT("new_game_ai_id", &game_opt_ai_id, NULL),
+    CFG_ITEM_INT("new_game_mode_extra", &game_opt_game_mode_extra, NULL),
     CFG_ITEM_STR("ruleset", &game_opt_ruleset, game_opt_validate_ruleset),
     CFG_ITEM_END
 };

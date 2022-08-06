@@ -9,6 +9,7 @@ struct game_new_options_s {
     difficulty_t difficulty;
     uint8_t ai_id;
     uint8_t players;
+    uint8_t no_elections;
     struct {
         char playername[EMPEROR_NAME_LEN];
         char homename[PLANET_NAME_LEN];
@@ -20,7 +21,7 @@ struct game_new_options_s {
 
 #define GAME_NEW_OPTS_DEFAULT \
     { \
-        0, GALAXY_SIZE_SMALL, DIFFICULTY_SIMPLE, GAME_AI_DEFAULT, 2, \
+        0, GALAXY_SIZE_SMALL, DIFFICULTY_SIMPLE, GAME_AI_DEFAULT, 2, false, \
         { \
             { "", "", RACE_HUMAN, BANNER_BLUE, false }, \
             { "", "", RACE_RANDOM, BANNER_RANDOM, true }, \

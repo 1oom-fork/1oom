@@ -71,6 +71,11 @@ typedef enum {
 } difficulty_t;
 
 typedef enum {
+    GAME_MODE_EXTRA_NO_EXTRA     = 0,
+    GAME_MODE_EXTRA_NO_ELECTIONS = (1 << 0),
+} game_mode_extra_t;
+
+typedef enum {
     TREATY_NONE = 0,
     TREATY_NONAGGRESSION, /*1*/
     TREATY_ALLIANCE, /*2*/

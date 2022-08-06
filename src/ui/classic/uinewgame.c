@@ -301,9 +301,10 @@ static void new_game_draw_extra_cb(void *vptr)
     if (!d->have_human) {
         lbxfont_print_str_center(160, 2, game_str_ng_allai, UI_SCREEN_W, ui_scale);
     }
-    lbxfont_print_str_normal(103, 155, game_ais[d->newopts->ai_id]->name, UI_SCREEN_W, ui_scale);
+    lbxfont_print_str_normal(30, 155, game_ais[d->newopts->ai_id]->name, UI_SCREEN_W, ui_scale);
+    lbxfont_print_str_normal(70, 167, newopts->no_elections ? game_str_el_no : game_str_el_yes, UI_SCREEN_W, ui_scale);
     lbxfont_select(0, 0, 0, 0);
-    lbxfont_print_str_normal(103, 167, game_ais[d->newopts->ai_id]->description, UI_SCREEN_W, ui_scale);
+    lbxfont_print_str_normal(103, 157, game_ais[d->newopts->ai_id]->description, UI_SCREEN_W, ui_scale);
     if (++d->frame >= 10) {
         d->frame = 0;
     }
@@ -312,7 +313,7 @@ static void new_game_draw_extra_cb(void *vptr)
 static bool ui_new_game_extra(struct game_new_options_s *newopts, struct new_game_data_s *d)
 {
     bool flag_done = false, flag_ok = false;
-    int16_t oi_cancel, oi_ok, oi_ai_id, oi_race[PLAYER_NUM], oi_banner[PLAYER_NUM], oi_pname[PLAYER_NUM], oi_hname[PLAYER_NUM], oi_ai[PLAYER_NUM];
+    int16_t oi_cancel, oi_ok, oi_ai_id, oi_elections, oi_race[PLAYER_NUM], oi_banner[PLAYER_NUM], oi_pname[PLAYER_NUM], oi_hname[PLAYER_NUM], oi_ai[PLAYER_NUM];
     d->pi = PLAYER_0;
     d->str_title = 0;
     d->frame = 0;
@@ -345,8 +346,9 @@ static bool ui_new_game_extra(struct game_new_options_s *newopts, struct new_gam
         ui_draw_box1(x0 + 43, y0, x0 + 43 + 41, y0 + 35, 0x9b, 0x9b, ui_scale);
     }
     lbxfont_select(5, 0, 0, 0);
-    lbxfont_print_str_right(100 - 3, 155, game_str_ng_ai, UI_SCREEN_W, ui_scale);
-    lbxfont_print_str_normal(100, 165, ":", UI_SCREEN_W, ui_scale);
+    lbxfont_print_str_normal(15, 167, game_str_ng_elections, UI_SCREEN_W, ui_scale);
+    lbxfont_print_str_normal(15, 155, game_str_ng_ai, UI_SCREEN_W, ui_scale);
+    lbxfont_print_str_normal(100, 155, ":", UI_SCREEN_W, ui_scale);
     lbxfont_print_str_center(40, 180, game_str_ng_cancel, UI_SCREEN_W, ui_scale);
     lbxfont_print_str_center(260, 180, game_str_ng_ok, UI_SCREEN_W, ui_scale);
     hw_video_copy_back_to_page3();
@@ -354,9 +356,10 @@ static bool ui_new_game_extra(struct game_new_options_s *newopts, struct new_gam
 #define MAKE_UIOBJS() \
     do { \
         uiobj_table_clear(); \
-        oi_cancel = uiobj_add_mousearea(0, 170, 80, 199, MOO_KEY_ESCAPE); \
-        oi_ok = uiobj_add_mousearea(220, 170, 300, 199, MOO_KEY_SPACE); \
-        oi_ai_id = uiobj_add_mousearea(100 - 3, 155, 150, 167, MOO_KEY_a); \
+        oi_cancel = uiobj_add_mousearea(0, 180, 80, 199, MOO_KEY_ESCAPE); \
+        oi_ok = uiobj_add_mousearea(220, 180, 300, 199, MOO_KEY_SPACE); \
+        oi_ai_id = uiobj_add_mousearea(15, 155, 65, 167, MOO_KEY_a); \
+        oi_elections = uiobj_add_mousearea(15, 167, 85, 179, MOO_KEY_e); \
         for (int i = 0; i < newopts->players; ++i) { \
             int x0 = 4 + (i / 3) * 160; \
             int y0 = PORTRAITBOX_TOP_MARGIN + (i % 3) * PORTRAITBOX_H; \
@@ -398,6 +401,8 @@ static bool ui_new_game_extra(struct game_new_options_s *newopts, struct new_gam
             }
         } else if (oi == oi_ai_id) {
             d->newopts->ai_id = (d->newopts->ai_id + 1) % GAME_AI_NUM_VISIBLE;
+        } else if (oi == oi_elections) {
+            d->newopts->no_elections = !d->newopts->no_elections;
         }
         for (int i = 0; i < newopts->players; ++i) {
             if (oi == oi_race[i]) {

@@ -1676,6 +1676,7 @@ struct game_end_s game_turn_process(struct game_s *g)
         }
     }
     if (1
+      && !(g->game_mode_extra & GAME_MODE_EXTRA_NO_ELECTIONS)
       && (game_num_council_years != 0)
       && (((g->year % game_num_council_years) == 0) || (!g->election_held))
       && (num_alive > 2)
