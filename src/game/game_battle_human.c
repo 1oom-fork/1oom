@@ -635,7 +635,7 @@ static void game_battle_reset_specials(struct battle_s *bt)
             b->missile = 1;
         }
     }
-    if (game_num_bt_wait_no_reload && b->can_retaliate) {   /* WASBUG MOO1 reloads specials on Wait */
+    if (b->can_retaliate) {   /* WASBUG MOO1 reloads specials on Wait */
         return;
     }
     b->can_retaliate = true;
