@@ -317,11 +317,15 @@ static bool ui_new_game_extra(struct game_new_options_s *newopts, struct new_gam
     d->str_title = 0;
     d->frame = 0;
 
-    newopts->pdata[PLAYER_0].race = RACE_HUMAN;
-    newopts->pdata[PLAYER_0].banner = BANNER_BLUE;
-    d->have_human = true;
-    game_new_generate_emperor_name(newopts->pdata[PLAYER_0].race, newopts->pdata[PLAYER_0].playername, EMPEROR_NAME_LEN);
-    game_new_generate_home_name(newopts->pdata[PLAYER_0].race, newopts->pdata[PLAYER_0].homename, PLANET_NAME_LEN);
+    for (int i = 0; i < 6; ++i) {
+        if (!newopts->pdata[i].is_ai) {
+            d->have_human = true;
+        }
+        if (newopts->pdata[i].race != RACE_RANDOM) {
+            game_new_generate_emperor_name(newopts->pdata[i].race, newopts->pdata[i].playername, EMPEROR_NAME_LEN);
+            game_new_generate_home_name(newopts->pdata[i].race, newopts->pdata[i].homename, PLANET_NAME_LEN);
+        }
+    }
     uiobj_table_clear();
     ui_palette_fadeout_19_19_1();
     d->fadein = true;
@@ -460,7 +464,7 @@ static bool ui_new_game_extra(struct game_new_options_s *newopts, struct new_gam
 
 /* -------------------------------------------------------------------------- */
 
-bool ui_new_game(struct game_new_options_s *newopts)
+bool ui_new_game(struct game_new_options_s *newopts, bool is_custom)
 {
     struct new_game_data_s d;
     bool flag_done = false, flag_fadein = false, flag_ok = false;
@@ -473,6 +477,14 @@ bool ui_new_game(struct game_new_options_s *newopts)
     gsize = newopts->galaxy_size;
     diffic = newopts->difficulty;
     oppon = newopts->players - 1/*0-based*/ - 1/*player*/;
+
+    if (!is_custom) {
+        const struct game_new_options_s defaults = GAME_NEW_OPTS_DEFAULT;
+        *newopts = defaults;
+        newopts->galaxy_size = gsize;
+        newopts->difficulty = diffic;
+        newopts->players = oppon + 1/*0-based*/ + 1/*player*/;
+    }
 
     ui_palette_fadeout_19_19_1();
     lbxpal_select(3, -1, 0);
@@ -550,7 +562,7 @@ bool ui_new_game(struct game_new_options_s *newopts)
     uiobj_unset_callback();
 
     if (flag_ok) {
-        if (ui_extra_enabled) {
+        if (is_custom) {
             flag_ok = ui_new_game_extra(newopts, &d);
         } else {
             flag_ok = ui_new_game_racebannernames(newopts, &d);

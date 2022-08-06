@@ -45,6 +45,10 @@ static const char *ruleset_names[NUM_RULESETS] = { "1.3", "fixbugs" };
 static const char *game_opt_ruleset = NULL;
 
 static int game_opt_new_value = 200;
+static uint32_t game_opt_race_value = 0xaaaaa0;
+static uint32_t game_opt_banner_value = 666660;
+static uint32_t game_opt_isai_value = 111110;
+static int game_opt_ai_id = GAME_AI_DEFAULT;
 
 static struct game_s game;
 static struct game_aux_s game_aux;
@@ -91,9 +95,42 @@ static void game_set_opts_from_value(struct game_new_options_s *go, int v)
     SETMIN(go->players, PLAYER_NUM);
 }
 
+static void game_set_custom_opts_from_cfg(struct game_new_options_s *go)
+{
+    uint32_t races = game_opt_race_value;
+    uint32_t banners = game_opt_banner_value;
+    uint32_t is_ai = game_opt_isai_value;
+
+    go->ai_id = game_opt_ai_id;
+    for (int i = 0; i < PLAYER_NUM; ++i) {
+        go->pdata[i].race = races % 0x10;
+        races /= 0x10;
+        go->pdata[i].banner = banners % 10;
+        banners /= 10;
+        go->pdata[i].is_ai = is_ai % 10;
+        is_ai /= 10;
+    }
+}
+
 static int game_get_opts_value(const struct game_s *g)
 {
     return g->difficulty + g->galaxy_size * 10 + g->players * 100;
+}
+
+static void game_save_custom_opts_to_cfg(struct game_new_options_s *go)
+{
+    game_opt_ai_id = go->ai_id;
+    game_opt_race_value = 0;
+    game_opt_banner_value = 0;
+    game_opt_isai_value = 0;
+    for (int i = PLAYER_NUM - 1; i >= 0; --i) {
+        game_opt_race_value *= 0x10;
+        game_opt_race_value += go->pdata[i].race;
+        game_opt_banner_value *= 10;
+        game_opt_banner_value += go->pdata[i].banner;
+        game_opt_isai_value *= 10;
+        game_opt_isai_value += go->pdata[i].is_ai;
+    }
 }
 
 void game_apply_ruleset(void)
@@ -483,6 +520,10 @@ const struct cfg_items_s game_cfg_items[] = {
     CFG_ITEM_COMMENT("PLAYERS*100+GALAXYSIZE*10+DIFFICULTY"),
     CFG_ITEM_COMMENT(" 2..6, 0..3 = small..huge, 0..4 = simple..impossible"),
     CFG_ITEM_INT("new_game_opts", &game_opt_new_value, game_cfg_check_new_game_opts),
+    CFG_ITEM_INT("new_game_races", &game_opt_race_value, NULL),
+    CFG_ITEM_INT("new_game_banners", &game_opt_banner_value, NULL),
+    CFG_ITEM_INT("new_game_isai", &game_opt_isai_value, NULL),
+    CFG_ITEM_INT("new_game_ai_id", &game_opt_ai_id, NULL),
     CFG_ITEM_STR("ruleset", &game_opt_ruleset, game_opt_validate_ruleset),
     CFG_ITEM_END
 };
@@ -576,6 +617,10 @@ int main_do(void)
     if (!(game_opt_skip_intro || game_opt_skip_intro_always)) {
         ui_play_intro();
     }
+    if (!game_opt_new_game) {
+        game_set_opts_from_value(&game_opt_new, game_opt_new_value);
+        game_set_custom_opts_from_cfg(&game_opt_new);
+    }
     while (1) {
         struct game_new_options_s game_new_opts = GAME_NEW_OPTS_DEFAULT;
         main_menu_action_t main_menu_action;
@@ -614,10 +659,14 @@ int main_do(void)
                 continue;
             }
         } else {
+            game_new_opts = game_opt_new;
             game_set_opts_from_value(&game_new_opts, game_opt_new_value);
             main_menu_action = ui_main_menu(&game_new_opts, &load_game_i);
         }
         switch (main_menu_action) {
+            case MAIN_MENU_ACT_CUSTOM_GAME:
+                game_opt_new = game_new_opts;
+                game_save_custom_opts_to_cfg(&game_opt_new);
             case MAIN_MENU_ACT_NEW_GAME:
                 main_menu_new_game:
                 game_new(&game, &game_aux, &game_new_opts);

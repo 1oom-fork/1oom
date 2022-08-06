@@ -2,6 +2,7 @@
 
 #include "ui.h"
 #include "game.h"
+#include "game_new.h"
 #include "game_save.h"
 #include "game_str.h"
 #include "hw.h"
@@ -197,6 +198,9 @@ static main_menu_action_t main_menu_do(struct main_menu_data_s *d)
         ui_delay_ticks_or_click(2);
     }
     uiobj_unset_callback();
+    if (ui_extra_enabled && d->selected == MAIN_MENU_ACT_NEW_GAME) {
+        d->selected = MAIN_MENU_ACT_CUSTOM_GAME;
+    }
     return d->selected;
 }
 
@@ -205,6 +209,7 @@ static main_menu_action_t main_menu_do(struct main_menu_data_s *d)
 main_menu_action_t ui_main_menu(struct game_new_options_s *newopts, int *load_game_i_ptr)
 {
     struct main_menu_data_s d;
+    const struct game_new_options_s opts = *newopts;
     bool flag_done = false;
     main_menu_action_t ret = MAIN_MENU_ACT_QUIT_GAME;
     uiobj_set_help_id(-1);
@@ -217,7 +222,12 @@ main_menu_action_t ui_main_menu(struct game_new_options_s *newopts, int *load_ga
         ui_draw_finish_mode = 0;
         switch (ret) {
             case MAIN_MENU_ACT_NEW_GAME:
-                flag_done = ui_new_game(newopts);
+                flag_done = ui_new_game(newopts, false);
+                ui_draw_finish_mode = 1;
+                break;
+            case MAIN_MENU_ACT_CUSTOM_GAME:
+                *newopts = opts;
+                flag_done = ui_new_game(newopts, true);
                 ui_draw_finish_mode = 1;
                 break;
             case MAIN_MENU_ACT_LOAD_GAME:
