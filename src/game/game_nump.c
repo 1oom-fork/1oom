@@ -155,8 +155,6 @@ static const struct numtbl_s {
     DEFNUMITEMLSTBL(st_hull_defense, tbl_shiptech_hull, defense, NUMTYPE_S16, -0x8000, 0x7fff),
     DEFNUMITEML(deterministic, NUMTYPE_BOOL, 0, 1),
     DEFNUMITEML(bt_turn_max, NUMTYPE_S, 1, 0xffff),
-    DEFNUMITEML(bt_precap_tohit, NUMTYPE_BOOL, 0, 1),
-    DEFNUMITEML(bt_no_tohit_acc, NUMTYPE_BOOL, 0, 1),
     DEFNUMITEML(stargate_cost, NUMTYPE_S, 1, 0xffff),
     DEFNUMITEML(stargate_maint, NUMTYPE_S, 1, 0xffff),
     DEFNUMITEML(limit_ships, NUMTYPE_S, 1, 0xffff),
@@ -445,8 +443,6 @@ void game_num_fixbugs(void)
     tbl_startship[4].cost = 570;
     game_num_ng_tech[RACE_SILICOID][TECH_FIELD_PLANETOLOGY][24] = 1;
     game_num_ng_tech[RACE_SILICOID][TECH_FIELD_PLANETOLOGY][30] = 1;
-    game_num_bt_precap_tohit = true;
-    game_num_bt_no_tohit_acc = true;
     game_num_aud_bounty_give = true;
     game_num_monster_rest_att = true;
     game_num_orbital_weap_any = true;

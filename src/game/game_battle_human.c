@@ -303,13 +303,13 @@ static void game_battle_missile_hit(struct battle_s *bt, int missile_i, int targ
         if (b->cloak == 1) {
             misschance += 50;
         }
-        if (!game_num_bt_precap_tohit) {
+        if (!(g->game_mode_extra & GAME_MODE_EXTRA_PRECAP_TOHIT)) {
             SETMIN(misschance, 95);
         }
         for (int i = 0; i < m->nummissiles; ++i) {
             int chance;
             chance = misschance - w->extraacc * 10;
-            if (game_num_bt_precap_tohit) {
+            if (g->game_mode_extra & GAME_MODE_EXTRA_PRECAP_TOHIT) {
                 SETMIN(chance, 95);
             }
             if (chance <= rnd_1_n(100, &g->seed)) {
@@ -1629,7 +1629,7 @@ bool game_battle_attack(struct battle_s *bt, int attacker_i, int target_i, bool 
         miss_chance_beam += 50;
         miss_chance_missile += 50;
     }
-    if (!game_num_bt_precap_tohit) {
+    if (!(bt->g->game_mode_extra & GAME_MODE_EXTRA_PRECAP_TOHIT)) {
         SETMIN(miss_chance_beam, 95);
         SETMIN(miss_chance_missile, 95);
     }
@@ -1669,7 +1669,7 @@ bool game_battle_attack(struct battle_s *bt, int attacker_i, int target_i, bool 
             }
             range += w->range;
             if ((range >= dist) && ((!w->is_bomb) || (target_i == 0/*planet*/))) {
-                if (!game_num_bt_no_tohit_acc) { /* BUG? each weapon reduces miss chance */
+                if (!(bt->g->game_mode_extra & GAME_MODE_EXTRA_NO_TOHIT_ACC)) { /* BUG? each weapon reduces miss chance */
                     miss_chance_beam -= w->extraacc * 10;
                     miss_chance_missile -= w->extraacc * 10;
                 }
@@ -1731,10 +1731,10 @@ bool game_battle_attack(struct battle_s *bt, int attacker_i, int target_i, bool 
                             --b->wpn[i].numshots;
                         }
                         miss_chance = w->is_bomb ? miss_chance_missile : miss_chance_beam;
-                        if (game_num_bt_no_tohit_acc) {
+                        if (bt->g->game_mode_extra & GAME_MODE_EXTRA_NO_TOHIT_ACC) {
                             miss_chance -= w->extraacc * 10;
                         }
-                        if (game_num_bt_precap_tohit) {
+                        if (bt->g->game_mode_extra & GAME_MODE_EXTRA_PRECAP_TOHIT) {
                             SETMIN(miss_chance, 95);
                         }
                         for (uint32_t j = 0; j < damagemul1; ++j) {

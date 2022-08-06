@@ -3,6 +3,13 @@
 
 #include "game.h"
 
+typedef enum {
+    GAME_NEW_SPACE_COMBAT_MOO_1_3 = 0,
+    GAME_NEW_SPACE_COMBAT_FAIR_1_3,
+    GAME_NEW_SPACE_COMBAT_BALANCED,
+    GAME_NEW_SPACE_COMBAT_NUM,
+} game_new_space_combat_rules_t;
+
 struct game_new_options_s {
     uint32_t galaxy_seed;
     galaxy_size_t galaxy_size;
@@ -10,6 +17,7 @@ struct game_new_options_s {
     uint8_t ai_id;
     uint8_t players;
     uint8_t no_elections;
+    uint8_t space_combat_rules;
     struct {
         char playername[EMPEROR_NAME_LEN];
         char homename[PLANET_NAME_LEN];
@@ -21,7 +29,8 @@ struct game_new_options_s {
 
 #define GAME_NEW_OPTS_DEFAULT \
     { \
-        0, GALAXY_SIZE_SMALL, DIFFICULTY_SIMPLE, GAME_AI_DEFAULT, 2, false, \
+        0, GALAXY_SIZE_SMALL, DIFFICULTY_SIMPLE, GAME_AI_DEFAULT, 2, \
+        false, GAME_NEW_SPACE_COMBAT_BALANCED, \
         { \
             { "", "", RACE_HUMAN, BANNER_BLUE, false }, \
             { "", "", RACE_RANDOM, BANNER_RANDOM, true }, \
