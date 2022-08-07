@@ -1149,7 +1149,7 @@ bool ui_design(struct game_s *g, struct game_design_s *gd, player_id_t active_pl
               && ((oi == u.oi_tbl_weap_up[i]) || ((oi == u.oi_tbl_weap_n_scroll[i]) && ((u.scroll > 0) != ui_mwi_counter)))
             ) {
                 int space;
-                int diff = (ui_extra_enabled && kbd_is_modifier(MOO_MOD_CTRL)) ? 10 : 1;
+                int diff = kbd_is_modifier(MOO_MOD_CTRL) ? 10 : 1;
                 ui_sound_play_sfx_24();
                 for (int iter = 0; iter < diff; ++iter) {
                     ++sd->wpnn[i];
@@ -1170,7 +1170,7 @@ bool ui_design(struct game_s *g, struct game_design_s *gd, player_id_t active_pl
               && ((oi == u.oi_tbl_weap_dn[i]) || ((oi == u.oi_tbl_weap_n_scroll[i]) && ((u.scroll < 0) != ui_mwi_counter)))
             ) {
                 ui_sound_play_sfx_24();
-                if (ui_extra_enabled && kbd_is_modifier(MOO_MOD_CTRL)) {
+                if (kbd_is_modifier(MOO_MOD_CTRL)) {
                     if (sd->wpnn[i] < 10) {
                         sd->wpnn[i] = 0;
                     } else {

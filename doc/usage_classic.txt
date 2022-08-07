@@ -71,6 +71,7 @@ The following new UI features are always enabled/available:
 - Planets can be tagged with Ctrl-1-9 and recalled with 1-9
 - -nobombanimation disables bomb animation in space combat
 
+- Design screen: Holding Ctrl changes the number of weapons by 10
 - Report screen: Shows name of AI leaders
 
 - Starmap: Clicking a selected destination star again works as Accept
@@ -127,7 +128,6 @@ enables the following extra UI features:
 - Clicking on Station or ship names on Fleet screen sorts the list
 - The = key can be substitued by the # key (useful for some non-US keyboards)
 - Planets: Ctrl+LMB on ship design name to build it everywhere
-- Design: Holding Ctrl changes the number of weapons by 10
 - Starmap: Added 'production' button for reserve transfer
 - Starmap: Added 'bases' button for basescrap UI
 
