@@ -73,6 +73,7 @@ The following new UI features are always enabled/available:
   one round of production (with uiextra also transfers back)
 - -nobombanimation disables bomb animation in space combat
 
+- Starmap: Clicking a selected destination star again works as Accept
 - Starmap: Removed '?' cursor area
 - Starmap: Keep planet focus after running through the Next turn phase
 - Starmap: Races hotkey changed 'r' -> 'e'
@@ -90,7 +91,6 @@ enables the following extra UI features:
 - Report screen shows name of AI leaders, Map screen shows current year
 - Fleet deployment shows the amount of available ships
 - Fleet deployment: Holding Ctrl changes the number of ships by 1
-- Clicking a selected destination star again works as Accept for fleet send etc
 - Hovering over a planet draws a ruler with the distance in parsec from the
   currently selected planet if is in the screen.
 - Governor screen can be opened by clicking on the Pop text or pressing V key.
