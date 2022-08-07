@@ -77,6 +77,8 @@ The following new UI features are always enabled/available:
 - Tech screen: Pressing = or # adjusts only the unlocked sliders
 
 - Planets screen: Nebula planets show "NEB" in their shields field
+- Planets screen: Clicking on #, Name, etc sorts the list
+- Planets screen: Max population column
 
 - Starmap: Clicking a selected destination star again works as Accept
 - Starmap: Prssing = or # transfers reserve for one round of production
@@ -124,9 +126,7 @@ enables the following extra UI features:
   minimum for bonus (m) and for optimum allocation (o). The latter can be
   automated by clicking the level/auto button (t) in the upper right corner.
 - Pressing I opens message filter options
-- Planets: Add max population column
 - Completing terraforming generates a message (which is filtered by default)
-- Clicking on #, Name, etc on Planets screen sorts the list
 - The = key can be substitued by the # key (useful for some non-US keyboards)
 - Planets: Ctrl+LMB on ship design name to build it everywhere
 - Starmap: Added 'production' button for reserve transfer
