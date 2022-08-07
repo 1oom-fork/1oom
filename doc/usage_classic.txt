@@ -74,6 +74,7 @@ The following new UI features are always enabled/available:
 - -nobombanimation disables bomb animation in space combat
 
 - Starmap: Removed '?' cursor area
+- Starmap: Keep planet focus after running through the Next turn phase
 - Starmap: Races hotkey changed 'r' -> 'e'
 - Starmap: Reloc hotkey changed 'l' -> 'r'
 - Starmap: Send transport: Holding Ctrl changes the number of transports by 10%
@@ -121,8 +122,6 @@ enables the following extra UI features:
 - Pressing I opens message filter options
 - Planets: Add max population column
 - Completing terraforming generates a message (which is filtered by default)
-- After running through the Next turn phase and messages the game recenters on
-  your last planet of choice
 - Clicking on #, Name, etc on Planets screen sorts the list
 - Clicking on Station or ship names on Fleet screen sorts the list
 - The = key can be substitued by the # key (useful for some non-US keyboards)

@@ -376,10 +376,8 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             ui_sound_play_sfx_24();
         } else if ((oi1 == oi_finished) || ((oi1 == UIOBJI_ESC) && (oi_finished != UIOBJI_INVALID))) {
             if (ui_starmap_remove_build_finished(g, active_player, p)) {
-                if (ui_extra_enabled) {
-                    g->planet_focus_i[active_player] = ui_data.start_planet_focus_i;
-                    ui_starmap_set_pos_focus(g, active_player);
-                }
+                g->planet_focus_i[active_player] = ui_data.start_planet_focus_i;
+                ui_starmap_set_pos_focus(g, active_player);
             }
             ui_sound_play_sfx_24();
             flag_done = true;
