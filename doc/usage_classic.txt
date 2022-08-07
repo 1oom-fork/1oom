@@ -76,6 +76,7 @@ The following new UI features are always enabled/available:
 - Starmap: Clicking a selected destination star again works as Accept
 - Starmap: Removed '?' cursor area
 - Starmap: Keep planet focus after running through the Next turn phase
+- Starmap: Eco slider shows fractional population growth if less than 10
 - Starmap: Races hotkey changed 'r' -> 'e'
 - Starmap: Reloc hotkey changed 'l' -> 'r'
 - Starmap: Send transport: Holding Ctrl changes the number of transports by 10%
@@ -102,7 +103,6 @@ enables the following extra UI features:
   or Artifacts planets).
 - When a planet is governed, clicking on or mouse wheeling over the bases field
   allow to increase or adjust the target bases amount.
-- Eco slider shows fractional population growth if growth is less than 10
 - When espionage was successful, clicking on the race icon opens the spy report
 - The plantary production field indicates whether the planet currently receives
   reserve spending (yellow = none, red = partial, while = full). The same
