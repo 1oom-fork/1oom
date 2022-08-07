@@ -285,12 +285,13 @@ void game_event_new(struct game_s *g)
             break;
     }
 #endif
+    int difficulty = (g->difficulty > DIFFICULTY_IMPOSSIBLE ? DIFFICULTY_IMPOSSIBLE : g->difficulty);
     switch (type) {
         case GAME_EVENT_PLAGUE:
             g->evn.have_plague = 1;
             g->evn.plague_player = player;
             g->evn.plague_planet_i = planet;
-            g->evn.plague_val = (rnd_1_n(8, &g->seed) + g->difficulty * 2) * p->prod_after_maint;
+            g->evn.plague_val = (rnd_1_n(8, &g->seed) + difficulty * 2) * p->prod_after_maint;
             break;
         case GAME_EVENT_QUAKE:
             g->evn.have_quake = true;
@@ -301,8 +302,8 @@ void game_event_new(struct game_s *g)
             g->evn.have_nova = 1;
             g->evn.nova_player = player;
             g->evn.nova_planet_i = planet;
-            g->evn.nova_years = rnd_1_n(5, &g->seed) + 10 - g->difficulty;
-            g->evn.nova_val = (rnd_1_n(5, &g->seed) + 10 - g->difficulty) * p->prod_after_maint;
+            g->evn.nova_years = rnd_1_n(5, &g->seed) + 10 - difficulty;
+            g->evn.nova_val = (rnd_1_n(5, &g->seed) + 10 - difficulty) * p->prod_after_maint;
             break;
         case GAME_EVENT_ACCIDENT:
             g->evn.have_accident = 1;
@@ -346,14 +347,14 @@ void game_event_new(struct game_s *g)
             g->evn.have_comet = 1;
             g->evn.comet_player = player;
             g->evn.comet_planet_i = planet;
-            g->evn.comet_years = rnd_1_n(5, &g->seed) + 10 - g->difficulty;
-            g->evn.comet_hp = (rnd_1_n(5, &g->seed) + 10 + g->difficulty) * 25;
+            g->evn.comet_years = rnd_1_n(5, &g->seed) + 10 - difficulty;
+            g->evn.comet_hp = (rnd_1_n(5, &g->seed) + 10 + difficulty) * 25;
             g->evn.comet_dmg = 0;
             break;
         case GAME_EVENT_PIRATES:
             g->evn.have_pirates = 1;
             g->evn.pirates_planet_i = rnd_0_nm1(g->galaxy_stars, &g->seed);
-            g->evn.pirates_hp = (rnd_1_n(5, &g->seed) + 10 + g->difficulty) * 30;
+            g->evn.pirates_hp = (rnd_1_n(5, &g->seed) + 10 + difficulty) * 30;
             break;
         case GAME_EVENT_DERELICT:
             g->evn.have_derelict = true;

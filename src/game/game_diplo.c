@@ -101,7 +101,7 @@ void game_diplo_act(struct game_s *g, int dv, player_id_t pi, player_id_t pi2, i
             dv *= 2;
         }
         if (dv < 0) {
-            dv /= (g->difficulty / 2 + 1);
+            dv /= ((g->difficulty > DIFFICULTY_IMPOSSIBLE ? DIFFICULTY_IMPOSSIBLE : g->difficulty) / 2 + 1);
         }
     }
     if (dv != 0) {

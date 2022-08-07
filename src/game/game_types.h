@@ -67,6 +67,7 @@ typedef enum {
     DIFFICULTY_AVERAGE, /*2*/
     DIFFICULTY_HARD, /*3*/
     DIFFICULTY_IMPOSSIBLE, /*4*/
+    DIFFICULTY_HOPELESS, /*5*/
     DIFFICULTY_NUM
 } difficulty_t;
 

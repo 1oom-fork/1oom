@@ -155,6 +155,11 @@ static int game_ai_best_speed(const struct game_s *g, player_id_t player_i)
     return v + 3;
 }
 
+static int game_ai_get_difficulty(const struct game_s *g)
+{
+    return (g->difficulty > DIFFICULTY_IMPOSSIBLE ? DIFFICULTY_IMPOSSIBLE : g->difficulty);
+}
+
 static void game_ai_classic_turn_p1_send_scout(struct game_s *g, struct ai_turn_p1_s *ait, player_id_t pi)
 {
     empiretechorbit_t *e = &(g->eto[pi]);
@@ -193,7 +198,7 @@ static void game_ai_classic_turn_p1_send_scout(struct game_s *g, struct ai_turn_
         }
     }
     ait->have_colonizable = false;
-    ait->need_conquer = !rnd_0_nm1(8 - g->difficulty, &g->seed);
+    ait->need_conquer = !rnd_0_nm1(8 - game_ai_get_difficulty(g), &g->seed);
     for (int i = 0; i < g->galaxy_stars; ++i) {
         const planet_t *p = &(g->planet[i]);
         if (p->owner == PLAYER_NONE) {
@@ -1072,7 +1077,7 @@ static void game_ai_classic_turn_p1_fund_developing(struct game_s *g, player_id_
 
 static void game_ai_classic_turn_p1_tax(struct game_s *g, player_id_t pi)
 {
-    g->eto[pi].tax = (g->year >= 20) ? (rnd_1_n(10, &g->seed) + g->difficulty + 2) : 0;
+    g->eto[pi].tax = (g->year >= 20) ? (rnd_1_n(10, &g->seed) + game_ai_get_difficulty(g) + 2) : 0;
 }
 
 
@@ -1954,6 +1959,13 @@ static void game_ai_classic_turn_p3(struct game_s *g, player_id_t pi)
         for (int i = 0; i < g->galaxy_stars; ++i) {
             planet_t *p = &(g->planet[i]);
             if (p->owner == pi) {
+                int max_bases_3;
+                if (g->difficulty <= DIFFICULTY_IMPOSSIBLE) {
+                    max_bases_3 = p->pop / (5 - g->difficulty);
+                    break;
+                } else {
+                    max_bases_3 = (p->pop * 2) / (6 - g->difficulty);
+                }
                 int16_t *sl;
                 sl = &(p->slider[0]);
                 if (p->factories >= (p->pop * e->colonist_oper_factories)) {
@@ -1965,7 +1977,7 @@ static void game_ai_classic_turn_p3(struct game_s *g, player_id_t pi)
                 }
                 if (1
                   && (p->missile_bases > 4)
-                  && ((p->missile_bases * 3) >= (p->pop / (5 - g->difficulty)))
+                  && ((p->missile_bases * 3) >= max_bases_3)
                   && (p->shield >= e->have_planet_shield)
                 ) {
                     uint16_t v;
@@ -2041,7 +2053,7 @@ static void game_ai_classic_turn_p3(struct game_s *g, player_id_t pi)
             } else {
                 sec = rnd_0_nm1(2, &g->seed) * totalspies;
             }
-            sec += g->difficulty * 8;
+            sec += game_ai_get_difficulty(g) * 8;
             SETMIN(sec, 100);
             e->security = sec;
             game_ai_classic_turn_p3_sub1(g, pi);
@@ -2086,6 +2098,9 @@ uint32_t game_ai_classic_production_boost(const struct game_s *g, player_id_t pl
     case DIFFICULTY_IMPOSSIBLE:
         v += prod;
         break;
+    case DIFFICULTY_HOPELESS:
+        v += prod * 2;
+        break;
     }
     return v;
 }
@@ -2115,6 +2130,10 @@ uint16_t game_ai_classic_base_cost(const struct game_s *g, player_id_t player, u
       break;
    case DIFFICULTY_IMPOSSIBLE:
       cost /= 2;
+      break;
+   case DIFFICULTY_HOPELESS:
+      cost /= 3;
+      break;
    case DIFFICULTY_SIMPLE:
    default:
       break;
@@ -2662,7 +2681,7 @@ static int game_battle_ai_missile_evade(const struct battle_s *bt)
                 evade = 1;
             }
             dist += movex * 32 - 18;
-            if ((rnd_1_n(3, &bt->g->seed) < bt->g->difficulty) && (dist > dangerdist)) {
+            if ((rnd_1_n(3, &bt->g->seed) < game_ai_get_difficulty(bt->g)) && (dist > dangerdist)) {
                 evade = 2;
             }
         }
@@ -3225,7 +3244,7 @@ static bool game_ai_classic_battle_ai_retreat(struct battle_s *bt)
     {
         int v;
         int64_t w[2];
-        v = (5 - bt->g->difficulty) * 5 + 5;
+        v = (5 - game_ai_get_difficulty(bt->g)) * 5 + 5;
         switch (bt->item[0/*planet*/].side) {
             case SIDE_L:
                 v += 10;
@@ -3256,7 +3275,7 @@ static bool game_ai_classic_battle_ai_retreat(struct battle_s *bt)
 static uint8_t game_ai_classic_tech_next(struct game_s *g, player_id_t player, tech_field_t field, uint8_t *tbl, int num)
 {
     uint8_t tech;
-    if (rnd_1_n(6, &g->seed) < g->difficulty) {
+    if (rnd_1_n(6, &g->seed) < game_ai_get_difficulty(g)) {
         tech = tbl[num - 1];
     } else {
         tech = tbl[rnd_0_nm1(num, &g->seed)];
@@ -3528,7 +3547,7 @@ static void game_ai_classic_diplo_wage_war(struct game_s *g, player_id_t p1, pla
         }
         if (1
           && (e2->trait1 == TRAIT1_ERRATIC)
-          && (rnd_1_n(300, &g->seed) <= g->difficulty)
+          && (rnd_1_n(300, &g->seed) <= game_ai_get_difficulty(g))
           && (IS_AI(g, p1) || (g->evn.ceasefire[p1][p2] < 1))
         ) {
             e1->diplo_type[p2] = 61;
@@ -3589,7 +3608,7 @@ static void game_ai_classic_diplo_wage_war(struct game_s *g, player_id_t p1, pla
                     ++num;
                 }
             }
-            if (num < g->difficulty) {
+            if (num < game_ai_get_difficulty(g)) {
                 /* MOO1 does unused buggy count of planets ; overwrites local variable at tbl[-1] (which is also unused) */
                 int v = e1->relation1[p2];
                 if (v < -30) {
@@ -3673,7 +3692,7 @@ static void game_ai_classic_turn_diplo_p1(struct game_s *g)
             if ((p1 == p2) || IS_HUMAN(g, p2)) {
                 continue;
             }
-            if ((!(rnd_0_nm1(15 - g->difficulty * 2, &g->seed))) && BOOLVEC_IS1(e1->contact, p2)) {
+            if ((!(rnd_0_nm1(15 - game_ai_get_difficulty(g) * 2, &g->seed))) && BOOLVEC_IS1(e1->contact, p2)) {
                 int v;
                 v = e1->trust[p2] + e1->relation1[p2] + game_diplo_tbl_reldiff[e2->trait1] + rnd_1_n(100, &g->seed);
                 if (e1->treaty[p2] == TREATY_NONAGGRESSION) {

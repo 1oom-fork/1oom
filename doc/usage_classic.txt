@@ -46,6 +46,7 @@ The following new UI features are always enabled/available:
 - Pressing hot key or changing focus does not change mouse position
 - When you release the mouse, only the clicked object is triggered
 - Random race / banner
+- New difficulty level - "Hopeless"
 - Custom Game screen allows local multiplayer
 - Custom Game screen allows setting opponent race/banner/namesand AI/human flag
 - Custom Game screen allows new rule: no World Ruler Elections
