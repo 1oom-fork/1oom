@@ -73,6 +73,8 @@ The following new UI features are always enabled/available:
   one round of production (with uiextra also transfers back)
 - -nobombanimation disables bomb animation in space combat
 
+- Starmap: Removed '?' cursor area
+
 The config file item "ui.uiextra" (set via the -uiextra command-line option)
 enables the following extra UI features:
 - Continue, Undo and Init saves can be chosen in the Load Game screen
@@ -125,7 +127,6 @@ enables the following extra UI features:
 - Design: Holding Ctrl changes the number of weapons by 10
 - Starmap: Added 'production' button for reserve transfer
 - Starmap: Added 'bases' button for basescrap UI
-- Starmap: Removed '?' cursor area
 - Starmap: Races hotkey changed 'r' -> 'e'
 - Starmap: Reloc hotkey changed 'l' -> 'r'
 - Starmap: Send transport: Pressing A sets the slider to maximum
