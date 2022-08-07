@@ -74,6 +74,13 @@ The following new UI features are always enabled/available:
 - -nobombanimation disables bomb animation in space combat
 
 - Starmap: Removed '?' cursor area
+- Starmap: Races hotkey changed 'r' -> 'e'
+- Starmap: Reloc hotkey changed 'l' -> 'r'
+- Starmap: Send transport: Holding Ctrl changes the number of transports by 10%
+- Starmap: Send transport: Pressing A sets the slider to maximum
+- Starmap: Ctrl+R sets reloc point for all planets
+- Starmap: Alt+F shows incoming friendly fleet routes
+- Starmap: Alt+O shows populations for explored planets in scanner range
 
 The config file item "ui.uiextra" (set via the -uiextra command-line option)
 enables the following extra UI features:
@@ -119,17 +126,9 @@ enables the following extra UI features:
 - Clicking on #, Name, etc on Planets screen sorts the list
 - Clicking on Station or ship names on Fleet screen sorts the list
 - The = key can be substitued by the # key (useful for some non-US keyboards)
-- Starmap: Alt+F shows incoming friendly fleet routes
-- Starmap: Alt+O shows current/max populations for explored planets in
-  scanner range
-- Starmap: Ctrl+R sets reloc point for all planets
 - Planets: Ctrl+LMB on ship design name to build it everywhere
 - Design: Holding Ctrl changes the number of weapons by 10
 - Starmap: Added 'production' button for reserve transfer
 - Starmap: Added 'bases' button for basescrap UI
-- Starmap: Races hotkey changed 'r' -> 'e'
-- Starmap: Reloc hotkey changed 'l' -> 'r'
-- Starmap: Send transport: Pressing A sets the slider to maximum
-- Starmap: Send transport: Holding Ctrl changes the number of transports by 10%
 
 See doc/list_gamediff.txt for a list of differences in the game itself.

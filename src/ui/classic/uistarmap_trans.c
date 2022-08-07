@@ -358,7 +358,7 @@ do_accept:
             ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
         } else if (oi1 == oi_minus) {
             ui_sound_play_sfx_24();
-            if (ui_extra_enabled && kbd_is_modifier(MOO_MOD_CTRL)) {
+            if (kbd_is_modifier(MOO_MOD_CTRL)) {
                 SUBSAT0(d.tr.num, (trans_max + 9) / 10);
             } else {
                 SUBSAT0(d.tr.num, 1);
@@ -366,7 +366,7 @@ do_accept:
             d.tr.other = true;
         } else if (oi1 == oi_plus || oi1 == oi_equals) {
             ui_sound_play_sfx_24();
-            if (ui_extra_enabled && kbd_is_modifier(MOO_MOD_CTRL)) {
+            if (kbd_is_modifier(MOO_MOD_CTRL)) {
                 d.tr.num += (trans_max + 9) / 10;
             } else {
                 ++d.tr.num;
@@ -452,9 +452,7 @@ do_accept:
                     oi_plus = uiobj_add_inputkey(MOO_KEY_PLUS);
                 }
                 oi_equals = uiobj_add_inputkey(MOO_KEY_EQUALS);
-                if (ui_extra_enabled) {
-                    oi_a = uiobj_add_inputkey(MOO_KEY_a);
-                }
+                oi_a = uiobj_add_inputkey(MOO_KEY_a);
             }
             oi_scroll = uiobj_add_tb(6, 6, 2, 2, 108, 86, &scrollx, &scrolly, &scrollz, ui_scale);
             oi_search = uiobj_add_inputkey(MOO_KEY_SLASH);
