@@ -252,6 +252,9 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
     do { \
         STARMAP_UIOBJ_CLEAR_COMMON(); \
         STARMAP_UIOBJ_CLEAR_FX(); \
+        oi_alt_m = UIOBJI_INVALID; \
+        oi_alt_c = UIOBJI_INVALID; \
+        oi_alt_r = UIOBJI_INVALID; \
         oi_b = UIOBJI_INVALID; \
         oi_c = UIOBJI_INVALID; \
         oi_starview1 = UIOBJI_INVALID; \
@@ -280,10 +283,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
     UIOBJ_CLEAR_LOCAL();
 
     oi_alt_galaxy = uiobj_add_alt_str("galaxy");
-    oi_alt_m = uiobj_add_alt_str("m");
-    oi_alt_c = uiobj_add_alt_str("c");
     oi_alt_p = uiobj_add_alt_str("p");
-    oi_alt_r = uiobj_add_alt_str("r");
     oi_alt_events = uiobj_add_alt_str("events");
 
     uiobj_set_callback_and_delay(ui_starmap_draw_cb1, &d, STARMAP_DELAY);
@@ -721,6 +721,9 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             ui_starmap_draw_cb1(&d);
             uiobj_table_set_last(oi_alt_events);
             UIOBJ_CLEAR_LOCAL();
+            oi_alt_m = uiobj_add_inputkey(MOO_KEY_m | MOO_MOD_ALT);
+            oi_alt_c = uiobj_add_inputkey(MOO_KEY_c | MOO_MOD_ALT);
+            oi_alt_r = uiobj_add_inputkey(MOO_KEY_r | MOO_MOD_ALT);
             if (p->owner == active_player) {
                 oi_equals = uiobj_add_inputkey(MOO_KEY_EQUALS);
                 oi_hash = uiobj_add_inputkey(MOO_KEY_HASH);
