@@ -69,11 +69,10 @@ The following new UI features are always enabled/available:
 - Map scrolling by mouse (ui.sm_mouse_scroll , -uismmousescroll)
 - Planets can be searched for by pressing the / key
 - Planets can be tagged with Ctrl-1-9 and recalled with 1-9
-- Pressing = or # in the galaxy movement screen transfers reserve for
-  one round of production (with uiextra also transfers back)
 - -nobombanimation disables bomb animation in space combat
 
 - Starmap: Clicking a selected destination star again works as Accept
+- Starmap: Prssing = or # transfers reserve for one round of production
 - Starmap: Removed '?' cursor area
 - Starmap: Keep planet focus after running through the Next turn phase
 - Starmap: Eco slider shows fractional population growth if less than 10
