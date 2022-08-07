@@ -77,6 +77,7 @@ The following new UI features are always enabled/available:
 - Starmap: Removed '?' cursor area
 - Starmap: Keep planet focus after running through the Next turn phase
 - Starmap: Eco slider shows fractional population growth if less than 10
+- Starmap: Nebula planets have a purple frame around their picture
 - Starmap: Races hotkey changed 'r' -> 'e'
 - Starmap: Reloc hotkey changed 'l' -> 'r'
 - Starmap: Send transport: Holding Ctrl changes the number of transports by 10%
@@ -110,8 +111,7 @@ enables the following extra UI features:
 - Clicking on the production field in the Planets screen resets the allocated
   reserve to zero or (when it is already zero) directly opens the reserve
   transfer dialog.
-- Nebula planets show "NEB" in their shields field and have a purple instead
-  of a red frame around their picture
+- Nebula planets show "NEB" in their shields field
 - Pressing = or # on the Tech screen adjusts only the unlocked sliders
 - Tech screen has lights showing when you reach max research bonus
 - Clicking on the Tech screen lights sets the slider to bonus limit
