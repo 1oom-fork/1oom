@@ -72,6 +72,7 @@ The following new UI features are always enabled/available:
 - -nobombanimation disables bomb animation in space combat
 
 - Design screen: Holding Ctrl changes the number of weapons by 10
+- Fleet screen: Clicking on Station or ship names sorts the list
 - Report screen: Shows name of AI leaders
 - Tech screen: Pressing = or # adjusts only the unlocked sliders
 
@@ -125,7 +126,6 @@ enables the following extra UI features:
 - Planets: Add max population column
 - Completing terraforming generates a message (which is filtered by default)
 - Clicking on #, Name, etc on Planets screen sorts the list
-- Clicking on Station or ship names on Fleet screen sorts the list
 - The = key can be substitued by the # key (useful for some non-US keyboards)
 - Planets: Ctrl+LMB on ship design name to build it everywhere
 - Starmap: Added 'production' button for reserve transfer
