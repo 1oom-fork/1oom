@@ -82,6 +82,7 @@ The following new UI features are always enabled/available:
 - Planets screen: Clicking on the production field opens the reserve
   transfer dialog or cancels the transfer.
 - Planets screen: Clicking on the dock field changes design selection
+- Planets screen: Ctrl+LMB on ship design name to build it everywhere
 
 - Starmap: Clicking a selected destination star again works as Accept
 - Starmap: Prssing = or # transfers reserve for one round of production
@@ -128,7 +129,6 @@ enables the following extra UI features:
 - Pressing I opens message filter options
 - Completing terraforming generates a message (which is filtered by default)
 - The = key can be substitued by the # key (useful for some non-US keyboards)
-- Planets: Ctrl+LMB on ship design name to build it everywhere
 - Starmap: Added 'production' button for reserve transfer
 - Starmap: Added 'bases' button for basescrap UI
 
