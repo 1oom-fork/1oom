@@ -18,7 +18,6 @@
 #include "uidefs.h"
 #include "uidelay.h"
 #include "uiobj.h"
-#include "uisearch.h"
 #include "uisound.h"
 #include "uistarmap_common.h"
 #include "util.h"
@@ -184,7 +183,7 @@ static void ui_starmap_trans_do_accept(struct starmap_data_s *d)
 void ui_starmap_trans(struct game_s *g, player_id_t active_player)
 {
     bool flag_done = false;
-    int16_t oi_cancel, oi_plus, oi_minus, oi_equals, oi_search,
+    int16_t oi_cancel, oi_plus, oi_minus, oi_equals,
             oi_f2, oi_f3, oi_f4, oi_f5, oi_f6, oi_f7, oi_f8, oi_f9, oi_f10,
             oi_a;
     struct starmap_data_s d;
@@ -231,11 +230,6 @@ void ui_starmap_trans(struct game_s *g, player_id_t active_player)
         oi2 = uiobj_at_cursor();
         ui_delay_prepare();
         if (ui_starmap_common_handle_oi(g, &d, &flag_done, oi1, oi2)) {
-        } else if (oi1 == oi_search) {
-            ui_sound_play_sfx_24();
-            if (ui_search_set_pos(g, active_player)) {
-                d.tr.other = true;
-            }
         } else if (oi1 == oi_f2) {
             int i;
             i = g->planet_focus_i[active_player];
@@ -390,7 +384,6 @@ void ui_starmap_trans(struct game_s *g, player_id_t active_player)
                 oi_equals = uiobj_add_inputkey(MOO_KEY_EQUALS);
                 oi_a = uiobj_add_inputkey(MOO_KEY_a);
             }
-            oi_search = uiobj_add_inputkey(MOO_KEY_SLASH);
             ui_draw_finish();
             ui_delay_ticks_or_click(STARMAP_DELAY);
         }

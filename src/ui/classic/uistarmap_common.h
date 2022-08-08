@@ -56,6 +56,7 @@ struct starmap_data_s {
     int16_t oi_next_turn;
     int16_t oi_accept;
     int16_t oi_scroll;
+    int16_t oi_search;
     int16_t oi_tbl_stars[PLANETS_MAX];
     int16_t oi_ctrl_left;
     int16_t oi_ctrl_l2;
@@ -143,6 +144,7 @@ struct starmap_data_s {
         d.oi_next_turn = UIOBJI_INVALID; \
         d.oi_accept = UIOBJI_INVALID; \
         d.oi_scroll = UIOBJI_INVALID; \
+        d.oi_search = UIOBJI_INVALID; \
         for (int i = 0; i < g->galaxy_stars; ++i) { \
             d.oi_tbl_stars[i] = UIOBJI_INVALID; \
         } \
@@ -153,7 +155,6 @@ struct starmap_data_s {
                 d.oi_tbl_pl_stars[j][i] = UIOBJI_INVALID; \
             } \
         } \
-        oi_search = UIOBJI_INVALID; \
         ui_starmap_clear_oi_ctrl(&d); \
     } while (0)
 

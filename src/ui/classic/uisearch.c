@@ -121,14 +121,3 @@ int ui_search(struct game_s *g, player_id_t pi)
     uiobj_finish_frame();
     return pli;
 }
-
-bool ui_search_set_pos(struct game_s *g, player_id_t pi)
-{
-    int found = ui_search(g, pi);
-    if (found >= 0) {
-        g->planet_focus_i[pi] = found;
-        ui_starmap_set_pos_focus(g, pi);
-        return true;
-    }
-    return false;
-}

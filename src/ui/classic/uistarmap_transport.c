@@ -20,7 +20,6 @@
 #include "uidefs.h"
 #include "uidelay.h"
 #include "uiobj.h"
-#include "uisearch.h"
 #include "uisound.h"
 #include "uistarmap_common.h"
 #include "util.h"
@@ -160,7 +159,7 @@ static void ui_starmap_transport_do_accept(struct starmap_data_s *d)
 void ui_starmap_transport(struct game_s *g, player_id_t active_player)
 {
     bool flag_done = false;
-    int16_t oi_cancel, oi_search;
+    int16_t oi_cancel;
     struct starmap_data_s d;
     transport_t *r = &(g->transport[ui_data.starmap.fleet_selected]);
 
@@ -196,15 +195,6 @@ void ui_starmap_transport(struct game_s *g, player_id_t active_player)
         oi2 = uiobj_at_cursor();
         ui_delay_prepare();
         if (ui_starmap_common_handle_oi(g, &d, &flag_done, oi1, oi2)) {
-        } else if (oi1 == oi_search) {
-            ui_sound_play_sfx_24();
-            if (ui_search_set_pos(g, active_player)) {
-                if (!d.controllable) {
-                    d.from_i = g->planet_focus_i[active_player];
-                    flag_done = true;
-                    ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
-                }
-            }
         } else if ((oi1 == oi_cancel) || (oi1 == UIOBJI_ESC)) {
             ui_sound_play_sfx_06();
             flag_done = true;
@@ -229,7 +219,6 @@ void ui_starmap_transport(struct game_s *g, player_id_t active_player)
                     d.oi_accept = uiobj_add_t0(271, 163, "", ui_data.gfx.starmap.reloc_bu_accept, MOO_KEY_SPACE);
                 }
             }
-            oi_search = uiobj_add_inputkey(MOO_KEY_SLASH);
             ui_draw_finish();
             ui_delay_ticks_or_click(STARMAP_DELAY);
         }

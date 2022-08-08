@@ -21,7 +21,6 @@
 #include "uidefs.h"
 #include "uidelay.h"
 #include "uiobj.h"
-#include "uisearch.h"
 #include "uisound.h"
 #include "uistarmap_common.h"
 
@@ -90,7 +89,6 @@ static void ui_starmap_orbit_en_draw_cb(void *vptr)
 void ui_starmap_orbit_en(struct game_s *g, player_id_t active_player)
 {
     bool flag_done = false;
-    int16_t oi_search;
     struct starmap_data_s d;
     shipcount_t *os;
 
@@ -133,11 +131,6 @@ void ui_starmap_orbit_en(struct game_s *g, player_id_t active_player)
         oi2 = uiobj_at_cursor();
         ui_delay_prepare();
         if (ui_starmap_common_handle_oi(g, &d, &flag_done, oi1, oi2)) {
-        } else if (oi1 == oi_search) {
-            ui_sound_play_sfx_24();
-            ui_search_set_pos(g, active_player);
-            ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
-            flag_done = true;
         }
         if (oi1 == UIOBJI_ESC) {
             ui_sound_play_sfx_24();
@@ -154,7 +147,6 @@ void ui_starmap_orbit_en(struct game_s *g, player_id_t active_player)
             uiobj_table_clear();
             UIOBJ_CLEAR_LOCAL();
             ui_starmap_common_fill_oi(&d);
-            oi_search = uiobj_add_inputkey(MOO_KEY_SLASH);
             ui_draw_finish();
             ui_delay_ticks_or_click(STARMAP_DELAY);
         }

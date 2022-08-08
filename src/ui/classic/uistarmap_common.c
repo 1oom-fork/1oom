@@ -25,6 +25,7 @@
 #include "uidefs.h"
 #include "uidelay.h"
 #include "uiobj.h"
+#include "uisearch.h"
 #include "uisound.h"
 #include "uistarmap.h"
 
@@ -1343,6 +1344,23 @@ static bool ui_starmap_handle_oi_star(struct game_s *g, struct starmap_data_s *d
     return true;
 }
 
+static bool ui_starmap_handle_oi_search(struct game_s *g, struct starmap_data_s *d, bool *flag_done, int16_t oi)
+{
+    if (oi != d->oi_search) {
+        return false;
+    }
+    if (ui_data.ui_main_loop_action == UI_MAIN_LOOP_STARMAP) {
+        *flag_done = true;
+    }
+    int i = ui_search(g, d->api);
+    if (i >= 0) {
+        if (ui_starmap_select_planet(g, d, flag_done, i)) {
+            ui_starmap_set_pos_focus(g, d->api);
+        }
+    }
+    return true;
+}
+
 bool ui_starmap_common_init(struct game_s *g, struct starmap_data_s *d, player_id_t active_player)
 {
     d->g = g;
@@ -1381,7 +1399,8 @@ bool ui_starmap_common_handle_oi(struct game_s *g, struct starmap_data_s *d, boo
     ui_starmap_handle_scrollkeys(d, oi1);
     if (ui_starmap_handle_bottom_buttons(d, flag_done, oi1)
      || ui_starmap_handle_oi_fleet(g, d, flag_done, oi1)
-     || ui_starmap_handle_oi_star(g, d, flag_done, oi1)) {
+     || ui_starmap_handle_oi_star(g, d, flag_done, oi1)
+     || ui_starmap_handle_oi_search(g, d, flag_done, oi1)) {
         ui_sound_play_sfx_24();
         return true;
     } else if (ui_starmap_handle_oi_ctrl(d, oi1)
@@ -1407,6 +1426,7 @@ void ui_starmap_common_fill_oi(struct starmap_data_s *d)
     }
     ui_starmap_fill_oi_tbl_stars(d);
     d->oi_scroll = uiobj_add_tb(6, 6, 2, 2, 108, 86, &d->scroll_x, &d->scroll_y, &d->scroll_z, ui_scale);
+    d->oi_search = uiobj_add_inputkey(MOO_KEY_SLASH);
     ui_starmap_fill_oi_ctrl(d);
     ui_starmap_add_oi_bottom_buttons(d);
 }
