@@ -26,11 +26,10 @@ struct shipnon0_s {
     bool have_reserve_fuel;
 };
 
-typedef enum { NO_MOVE, GOT_HYPERCOMM, ON_PLANET } can_move_t;
-
 struct starmap_data_s {
     struct game_s *g; /* FIXME non-const only for ui_starmap_draw_cb1 */
     player_id_t api;
+    bool controllable;
     int bottom_highlight;
     int anim_delay;
     int16_t oi_gameopts;
@@ -78,7 +77,6 @@ struct starmap_data_s {
         struct {
             bool in_frange;
             uint8_t from;
-            can_move_t can_move;
             int frame_ship;
             int frame_scanner;
             int scanner_delay;
@@ -102,7 +100,6 @@ struct starmap_data_s {
             struct shipnon0_s sn0;
             uint8_t from;
             uint8_t pon;
-            can_move_t can_move;
             int frame_ship;
             int frame_scanner;
             int scanner_delay;
