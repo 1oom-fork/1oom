@@ -143,10 +143,22 @@ static bool ui_starmap_enroute_valid_destination(const struct starmap_data_s *d,
     return d->en.in_frange && !retreat_fix;
 }
 
+static void ui_starmap_enroute_do_accept(struct starmap_data_s *d)
+{
+    struct game_s *g = d->g;
+    uint8_t planet_i = g->planet_focus_i[d->api];
+    planet_t *p = &g->planet[planet_i];
+    fleet_enroute_t *r = &(g->enroute[ui_data.starmap.fleet_selected]);
+
+    if (p->within_frange[d->api] != 0) {
+        game_fleet_redirect(g, r, d->en.pon, planet_i);
+    }
+}
+
 void ui_starmap_enroute(struct game_s *g, player_id_t active_player)
 {
     bool flag_done = false;
-    int16_t oi_scroll, oi_cancel, oi_accept, oi_search;
+    int16_t oi_scroll, oi_cancel, oi_search;
     int16_t scrollx = 0, scrolly = 0;
     uint8_t scrollz = starmap_scale;
     struct starmap_data_s d;
@@ -154,6 +166,7 @@ void ui_starmap_enroute(struct game_s *g, player_id_t active_player)
 
     ui_starmap_common_init(g, &d, active_player);
     d.valid_target_cb = ui_starmap_enroute_valid_destination;
+    d.on_accept_cb = ui_starmap_enroute_do_accept;
 
     r = &(g->enroute[ui_data.starmap.fleet_selected]);
     d.en.can_move = g->eto[active_player].have_hyperspace_comm ? GOT_HYPERCOMM : NO_MOVE;
@@ -185,7 +198,6 @@ void ui_starmap_enroute(struct game_s *g, player_id_t active_player)
 #define UIOBJ_CLEAR_LOCAL() \
     do { \
         STARMAP_UIOBJ_CLEAR_COMMON(); \
-        oi_accept = UIOBJI_INVALID; \
         oi_cancel = UIOBJI_INVALID; \
     } while (0)
 
@@ -215,14 +227,6 @@ void ui_starmap_enroute(struct game_s *g, player_id_t active_player)
             ui_sound_play_sfx_06();
             flag_done = true;
             ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
-        } else if (oi1 == oi_accept) {
-do_accept:
-            ui_sound_play_sfx_24();
-            if (p->within_frange[active_player] != 0) {
-                game_fleet_redirect(g, r, d.en.pon, g->planet_focus_i[active_player]);
-                flag_done = true;
-            }
-            ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
         }
         if (oi1 == oi_scroll) {
             ui_starmap_scroll(g, scrollx, scrolly, scrollz);
@@ -238,8 +242,11 @@ do_accept:
         for (int i = 0; i < g->galaxy_stars; ++i) {
             if (oi1 == d.oi_tbl_stars[i]) {
                 if (d.controllable && d.valid_target_cb(&d, i) && (g->planet_focus_i[active_player] == i)) {
-                    oi1 = oi_accept;
-                    goto do_accept;
+                    ui_sound_play_sfx_24();
+                    d.on_accept_cb(&d);
+                    ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
+                    flag_done = true;
+                    break;
                 }
                 g->planet_focus_i[active_player] = i;
                 if (!d.controllable) {
@@ -259,7 +266,7 @@ do_accept:
             if (d.controllable) {
                 oi_cancel = uiobj_add_t0(227, 163, "", ui_data.gfx.starmap.reloc_bu_cancel, MOO_KEY_ESCAPE);
                 if (d.valid_target_cb(&d, g->planet_focus_i[active_player])) {
-                    oi_accept = uiobj_add_t0(271, 163, "", ui_data.gfx.starmap.reloc_bu_accept, MOO_KEY_SPACE);
+                    d.oi_accept = uiobj_add_t0(271, 163, "", ui_data.gfx.starmap.reloc_bu_accept, MOO_KEY_SPACE);
                 }
             }
             oi_scroll = uiobj_add_tb(6, 6, 2, 2, 108, 86, &scrollx, &scrolly, &scrollz, ui_scale);

@@ -147,15 +147,29 @@ static void ui_starmap_orbit_own_draw_cb(void *vptr)
 
 /* -------------------------------------------------------------------------- */
 
+static const uint8_t shiptypes[NUM_SHIPDESIGNS] = { 0, 1, 2, 3, 4, 5 };
+
 static bool ui_starmap_orbit_own_valid_destination(const struct starmap_data_s *d, int planet_i)
 {
     return d->oo.in_frange && d->oo.shiptypenon0numsel;
 }
 
+static void ui_starmap_orbit_own_do_accept(struct starmap_data_s *d)
+{
+    struct game_s *g = d->g;
+    uint8_t planet_i = g->planet_focus_i[d->api];
+    planet_t *p = &g->planet[planet_i];
+
+    if ((p->within_frange[d->api] == 1) || ((p->within_frange[d->api] == 2) && d->oo.sn0.have_reserve_fuel)) {
+        game_send_fleet_from_orbit(g, d->api, d->from_i, planet_i, d->oo.ships, shiptypes, 6);
+        game_update_visibility(g);
+    }
+}
+
 void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
 {
     bool flag_done = false;
-    int16_t oi_scroll, oi_cancel, oi_accept, oi_search, oi_cycle,
+    int16_t oi_scroll, oi_cancel, oi_search, oi_cycle,
             oi_f2, oi_f3, oi_f4, oi_f5, oi_f6, oi_f7, oi_f8, oi_f9, oi_f10,
             oi_tbl_p[NUM_SHIPDESIGNS],
             oi_tbl_m[NUM_SHIPDESIGNS],
@@ -168,10 +182,10 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
     struct starmap_data_s d;
     const fleet_orbit_t *r;
     const shipcount_t *os;
-    const uint8_t shiptypes[NUM_SHIPDESIGNS] = { 0, 1, 2, 3, 4, 5 };
 
     ui_starmap_common_init(g, &d, active_player);
     d.valid_target_cb = ui_starmap_orbit_own_valid_destination;
+    d.on_accept_cb = ui_starmap_orbit_own_do_accept;
 
     r = &(g->eto[active_player].orbit[d.from_i]);
 
@@ -193,7 +207,6 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
     do { \
         STARMAP_UIOBJ_CLEAR_COMMON(); \
         STARMAP_UIOBJ_CLEAR_FX(); \
-        oi_accept = UIOBJI_INVALID; \
         oi_cancel = UIOBJI_INVALID; \
         oi_cycle = UIOBJI_INVALID; \
         UIOBJI_SET_TBL5_INVALID(oi_tbl_p, oi_tbl_m, oi_tbl_a, oi_tbl_n, oi_tbl_s); \
@@ -335,15 +348,6 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
             ui_sound_play_sfx_06();
             flag_done = true;
             ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
-        } else if (oi1 == oi_accept) {
-do_accept:
-            ui_sound_play_sfx_24();
-            if ((p->within_frange[active_player] == 1) || ((p->within_frange[active_player] == 2) && d.oo.sn0.have_reserve_fuel)) {
-                game_send_fleet_from_orbit(g, active_player, d.from_i, g->planet_focus_i[active_player], d.oo.ships, shiptypes, 6);
-                game_update_visibility(g);
-            }
-            flag_done = true;
-            ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
         } else if (oi1 == oi_scroll) {
             ui_starmap_scroll(g, scrollx, scrolly, scrollz);
         }
@@ -352,8 +356,11 @@ do_accept:
         for (int i = 0; i < g->galaxy_stars; ++i) {
             if (oi1 == d.oi_tbl_stars[i]) {
                 if (d.controllable && d.valid_target_cb(&d, i) && (g->planet_focus_i[active_player] == i)) {
-                    oi1 = oi_accept;
-                    goto do_accept;
+                    ui_sound_play_sfx_24();
+                    d.on_accept_cb(&d);
+                    ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
+                    flag_done = true;
+                    break;
                 }
                 g->planet_focus_i[active_player] = i;
                 ui_sound_play_sfx_24();
@@ -453,7 +460,7 @@ do_accept:
             ui_starmap_common_fill_oi(&d);
             oi_cancel = uiobj_add_t0(227, 180, "", ui_data.gfx.starmap.reloc_bu_cancel, MOO_KEY_ESCAPE);
             if (d.valid_target_cb(&d, g->planet_focus_i[active_player])) {
-                oi_accept = uiobj_add_t0(271, 180, "", ui_data.gfx.starmap.reloc_bu_accept, MOO_KEY_SPACE);
+                d.oi_accept = uiobj_add_t0(271, 180, "", ui_data.gfx.starmap.reloc_bu_accept, MOO_KEY_SPACE);
             }
             oi_cycle = uiobj_add_inputkey(MOO_KEY_TAB);
             oi_scroll = uiobj_add_tb(6, 6, 2, 2, 108, 86, &scrollx, &scrolly, &scrollz, ui_scale);
