@@ -481,7 +481,6 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
         if ((oi1 == oi_scroll) && !g->evn.build_finished_num[active_player]) {
             ui_starmap_scroll(g, scrollx, scrolly, scrollz);
         }
-        ui_starmap_handle_oi_ctrl(&d, oi1);
         ui_starmap_handle_tag(&d, oi1);
         if (oi1 == oi_f2) {
             int i;

@@ -708,7 +708,7 @@ void ui_starmap_draw_button_text(struct starmap_data_s *d, bool highlight)
     lbxfont_print_str_normal(263, 184, game_str_sm_next_turn, UI_SCREEN_W, ui_scale);
 }
 
-void ui_starmap_handle_oi_ctrl(struct starmap_data_s *d, int16_t oi)
+static bool ui_starmap_handle_oi_ctrl(struct starmap_data_s *d, int16_t oi)
 {
 #define XSTEP   0x1b
 #define YSTEP   0x15
@@ -716,7 +716,7 @@ void ui_starmap_handle_oi_ctrl(struct starmap_data_s *d, int16_t oi)
     bool changed = false;
     int x, y;
     if (g->evn.build_finished_num[d->api]) {
-        return;
+        return false;
     }
     x = ui_data.starmap.x;
     y = ui_data.starmap.y;
@@ -755,6 +755,7 @@ void ui_starmap_handle_oi_ctrl(struct starmap_data_s *d, int16_t oi)
         ui_data.starmap.x2 = x;
         ui_data.starmap.y2 = y;
     }
+    return changed;
 #undef XSTEP
 #undef YSTEP
 }
@@ -1338,6 +1339,8 @@ bool ui_starmap_common_handle_oi(struct game_s *g, struct starmap_data_s *d, boo
      || ui_starmap_handle_oi_fleet(g, d, flag_done, oi1)
      || ui_starmap_handle_oi_star(g, d, flag_done, oi1)) {
         ui_sound_play_sfx_24();
+        return true;
+    } else if (ui_starmap_handle_oi_ctrl(d, oi1)) {
         return true;
     } else if (oi1 == d->oi_accept && d->on_accept_cb != NULL) {
         ui_sound_play_sfx_24();

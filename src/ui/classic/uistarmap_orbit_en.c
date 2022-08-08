@@ -148,7 +148,6 @@ void ui_starmap_orbit_en(struct game_s *g, player_id_t active_player)
         } else if (oi1 == oi_scroll) {
             ui_starmap_scroll(g, scrollx, scrolly, scrollz);
         }
-        ui_starmap_handle_oi_ctrl(&d, oi1);
         if (ui_starmap_handle_tag(&d, oi1) != PLANET_NONE) {
             ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
             flag_done = true;

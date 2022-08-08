@@ -229,7 +229,6 @@ void ui_starmap_reloc(struct game_s *g, player_id_t active_player)
         } else if (oi1 == oi_scroll) {
             ui_starmap_scroll(g, scrollx, scrolly, scrollz);
         }
-        ui_starmap_handle_oi_ctrl(&d, oi1);
         ui_starmap_handle_tag(&d, oi1);
         ui_starmap_set_ruler(&d, oi2);
         d.ruler_from_fleet = false;
