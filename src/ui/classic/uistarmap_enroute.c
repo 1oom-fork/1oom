@@ -30,7 +30,7 @@
 static inline bool ui_starmap_enroute_locked_by_retreat(struct starmap_data_s *d, uint8_t planet_i)
 {
     const fleet_enroute_t *r = &(d->g->enroute[ui_data.starmap.fleet_selected]);
-    return (game_num_retreat_redir_fix && r->retreat && (d->en.can_move != GOT_HYPERCOMM) && (planet_i == d->en.pon));
+    return (game_num_retreat_redir_fix && r->retreat && !d->g->eto[d->api].have_hyperspace_comm && (planet_i == d->en.pon));
 }
 
 /* -------------------------------------------------------------------------- */
