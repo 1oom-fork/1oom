@@ -36,7 +36,7 @@ struct starmap_data_s {
     player_id_t api;
     int bottom_highlight;
     int anim_delay;
-    int ruler_from_i;
+    uint8_t from_i;
     int ruler_to_i;
     bool ruler_from_fleet;
     int gov_highlight;
@@ -82,17 +82,14 @@ struct starmap_data_s {
             int16_t oi_gov_boost;
         } sm;   /* starmap_do */
         struct {
-            uint8_t from;
         } rl;   /* reloc */
         struct {
-            uint8_t from;
             int16_t num;
             bool other;
             bool blink;
         } tr;   /* trans */
         struct {
             bool in_frange;
-            uint8_t from;
             can_move_t can_move;
             struct draw_stars_s ds;
             int frame_ship;
@@ -104,12 +101,10 @@ struct starmap_data_s {
             uint8_t shiptypenon0numsel; /* number of ship types selected with nonzero amount */
             struct shipnon0_s sn0;
             bool in_frange;
-            uint8_t from;
         } oo;   /* orbit_own */
         struct {
             shipcount_t ships[NUM_SHIPDESIGNS];
             struct shipnon0_s sn0;
-            uint8_t from;
             player_id_t player;
             int frame_scanner;
             int scanner_delay;
@@ -118,7 +113,6 @@ struct starmap_data_s {
         struct {
             struct shipnon0_s sn0;
             bool in_frange;
-            uint8_t from;
             uint8_t pon;
             can_move_t can_move;
             struct draw_stars_s ds;

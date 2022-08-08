@@ -29,7 +29,7 @@ static void ui_starmap_trans_draw_cb(void *vptr)
 {
     struct starmap_data_s *d = vptr;
     const struct game_s *g = d->g;
-    const planet_t *pf = &g->planet[d->tr.from];
+    const planet_t *pf = &g->planet[d->from_i];
     const planet_t *pt = &g->planet[g->planet_focus_i[d->api]];
     char buf[0x80];
     int x0, y0, trans_max = pf->pop / 2;
@@ -54,7 +54,7 @@ static void ui_starmap_trans_draw_cb(void *vptr)
     lbxgfx_draw_frame_offs(x0, y0, ui_data.gfx.starmap.planbord, STARMAP_LIMITS, UI_SCREEN_W, starmap_scale);
     lbxgfx_set_new_frame(ui_data.gfx.starmap.reloc_bu_accept, 1);
     lbxgfx_draw_frame(271, 163, ui_data.gfx.starmap.reloc_bu_accept, UI_SCREEN_W, ui_scale);
-    if (d->tr.from != g->planet_focus_i[d->api]) {
+    if (d->from_i != g->planet_focus_i[d->api]) {
         const uint8_t *ctbl;
         int x1, y1;
         x1 = (pt->x - ui_data.starmap.x) * 2 + 14;
@@ -168,13 +168,13 @@ void ui_starmap_trans(struct game_s *g, player_id_t active_player)
     int16_t trans_max;
     d.g = g;
     d.api = active_player;
+    d.from_i = g->planet_focus_i[active_player];
     d.anim_delay = 0;
-    d.bottom_highlight = d.ruler_from_i = d.ruler_to_i = -1;
+    d.bottom_highlight = d.ruler_to_i = -1;
     d.gov_highlight = 0;
     d.tr.blink = false;
     {
         uint8_t pi = g->planet_focus_i[active_player];
-        d.tr.from = pi;
         p = &(g->planet[pi]);
         if (p->trans_num != 0) {
             d.tr.other = true;
@@ -273,7 +273,7 @@ void ui_starmap_trans(struct game_s *g, player_id_t active_player)
             i = ui_starmap_enemy_incoming(g, active_player, i, (oi1 == oi_f8));
             if (i != PLANET_NONE) {
                 g->planet_focus_i[active_player] = i;
-                d.tr.other = (i != d.tr.from);
+                d.tr.other = (i != d.from_i);
                 ui_starmap_set_pos_focus(g, active_player);
                 ui_sound_play_sfx_24();
             }
@@ -346,7 +346,7 @@ do_accept:
                 p->trans_dest = g->planet_focus_i[active_player];
                 p->trans_num = d.tr.num;
             }
-            if (d.tr.from == g->planet_focus_i[active_player]) {
+            if (d.from_i == g->planet_focus_i[active_player]) {
                 p->trans_num = 0;
             }
             if (p->trans_num && p->owner != PLAYER_NONE) {
@@ -400,7 +400,6 @@ do_accept:
                 break;
             }
         }
-        d.ruler_from_i = d.tr.from;
         d.ruler_to_i = ui_starmap_cursor_on_star(g, &d, oi2, active_player);
         d.ruler_from_fleet = false;
         if (!flag_done) {
@@ -464,7 +463,7 @@ do_accept:
     }
     uiobj_unset_callback();
     uiobj_set_help_id(-1);
-    g->planet_focus_i[active_player] = d.tr.from;
+    g->planet_focus_i[active_player] = d.from_i;
 
     /* We clear the UI object table because one of them contains a pointer to a local variable. */
     uiobj_table_clear();

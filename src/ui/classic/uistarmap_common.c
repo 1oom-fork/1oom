@@ -666,8 +666,8 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
             }
         }
     }
-    if (ui_extra_enabled && d->ruler_from_i >= 0 && d->ruler_to_i >= 0 && d->ruler_from_i != d->ruler_to_i) {
-        const planet_t *p = &g->planet[d->ruler_to_i], *q = &g->planet[d->ruler_from_i];
+    if (ui_extra_enabled && d->from_i != PLANET_NONE && d->ruler_to_i >= 0 && d->from_i != d->ruler_to_i) {
+        const planet_t *p = &g->planet[d->ruler_to_i], *q = &g->planet[d->from_i];
         int from_x, from_y, to_x, to_y;
         if (d->ruler_from_fleet) {
             from_x = 2 * (q->x - x) + 29;
@@ -682,7 +682,7 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
         if ( !(from_x < slx0 || from_x > slx1 || from_y < sly0 || from_y > sly1 || to_x < slx0 || to_x > slx1 || to_y < sly0 || to_y > sly1) ) {
             ui_draw_line1(from_x, from_y, to_x, to_y, 0x06, starmap_scale);
             lbxfont_select(0, 0, 0, 0);
-            int l = g->gaux->star_dist[d->ruler_from_i][d->ruler_to_i];
+            int l = g->gaux->star_dist[d->from_i][d->ruler_to_i];
             lbxfont_print_num_center( (from_x + to_x) / 2, (from_y + to_y) / 2 - 2, l, UI_SCREEN_W, starmap_scale);
         }
     }

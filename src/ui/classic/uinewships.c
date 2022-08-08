@@ -97,8 +97,9 @@ void ui_newships(struct game_s *g, int pi)
     d.api = pi;
     d.sm.g = g;
     d.sm.api = pi;
+    d.sm.from_i = g->planet_focus_i[pi];
     d.sm.anim_delay = 0;
-    d.sm.bottom_highlight = d.sm.ruler_to_i  = d.sm.ruler_from_i = -1;
+    d.sm.bottom_highlight = d.sm.ruler_to_i = -1;
     d.sm.gov_highlight = 0;
     d.ds.xoff1 = 0;
     d.ds.xoff2 = 0;

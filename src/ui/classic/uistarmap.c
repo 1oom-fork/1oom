@@ -236,8 +236,9 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
 
     d.g = g;
     d.api = active_player;
+    d.from_i = g->planet_focus_i[active_player];
     d.anim_delay = 0;
-    d.bottom_highlight = d.ruler_to_i = d.ruler_from_i = -1;
+    d.bottom_highlight = d.ruler_to_i = -1;
     d.gov_highlight = 0;
 
     ui_delay_1();
@@ -690,7 +691,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             }
         }
 
-        d.ruler_from_i = g->planet_focus_i[active_player];
+        d.from_i = g->planet_focus_i[active_player];
         d.ruler_to_i = ui_starmap_cursor_on_star(g, &d, oi2, active_player);
         d.ruler_from_fleet = false;
         d.gov_highlight = 0;
