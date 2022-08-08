@@ -450,7 +450,7 @@ do_accept:
             oi_f8 = uiobj_add_inputkey(MOO_KEY_F8);
             oi_f9 = uiobj_add_inputkey(MOO_KEY_F9);
             oi_f10 = uiobj_add_inputkey(MOO_KEY_F10);
-            ui_starmap_fill_oi_tbl_stars(&d);
+            ui_starmap_common_fill_oi(&d);
             oi_cancel = uiobj_add_t0(227, 180, "", ui_data.gfx.starmap.reloc_bu_cancel, MOO_KEY_ESCAPE);
             if (d.valid_target_cb(&d, g->planet_focus_i[active_player])) {
                 oi_accept = uiobj_add_t0(271, 180, "", ui_data.gfx.starmap.reloc_bu_accept, MOO_KEY_SPACE);
@@ -458,7 +458,6 @@ do_accept:
             oi_cycle = uiobj_add_inputkey(MOO_KEY_TAB);
             oi_scroll = uiobj_add_tb(6, 6, 2, 2, 108, 86, &scrollx, &scrolly, &scrollz, ui_scale);
             oi_search = uiobj_add_inputkey(MOO_KEY_SLASH);
-            ui_starmap_fill_oi_ctrl(&d);
             for (int i = 0; i < d.oo.sn0.num; ++i) {
                 oi_tbl_p[i] = uiobj_add_t0(288, 35 + i * 26, "", ui_data.gfx.starmap.move_but_p, (cursor_over == i) ? MOO_KEY_GREATER : MOO_KEY_UNKNOWN);
                 oi_tbl_m[i] = uiobj_add_t0(277, 35 + i * 26, "", ui_data.gfx.starmap.move_but_m, (cursor_over == i) ? MOO_KEY_LESS : MOO_KEY_UNKNOWN);
@@ -466,7 +465,6 @@ do_accept:
                 oi_tbl_n[i] = uiobj_add_t0(265, 35 + i * 26, "", ui_data.gfx.starmap.move_but_n, MOO_KEY_UNKNOWN);
                 oi_tbl_s[i] = uiobj_add_mousewheel(227, 22 + i * 26, 319, 46 + i * 26, &scrollship);
             }
-            ui_starmap_add_oi_bottom_buttons(&d);
             ui_draw_finish();
             ui_delay_ticks_or_click(STARMAP_DELAY);
         }

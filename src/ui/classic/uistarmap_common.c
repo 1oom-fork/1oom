@@ -1324,3 +1324,16 @@ bool ui_starmap_common_handle_oi(struct game_s *g, struct starmap_data_s *d, boo
     }
     return false;
 }
+
+void ui_starmap_common_fill_oi(struct starmap_data_s *d)
+{
+    if (d->g->evn.build_finished_num[d->api]) {
+        return;
+    }
+    if (!d->controllable) {
+        ui_starmap_fill_oi_tbls(d);
+    }
+    ui_starmap_fill_oi_tbl_stars(d);
+    ui_starmap_fill_oi_ctrl(d);
+    ui_starmap_add_oi_bottom_buttons(d);
+}
