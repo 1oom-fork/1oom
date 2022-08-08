@@ -859,35 +859,6 @@ static bool ui_starmap_handle_bottom_buttons(struct starmap_data_s *d, bool *fla
     return ret;
 }
 
-uint8_t ui_starmap_handle_tag(struct starmap_data_s *d, int16_t oi)
-{
-    for (int i = 0; i < PLANET_TAG_NUM; ++i) {
-        if (oi == d->oi_tag_set[i]) {
-            ui_data.starmap.tag[d->api][i] = d->g->planet_focus_i[d->api];
-            ui_sound_play_sfx_24();
-            break;
-        }
-        if (oi == d->oi_tag_get[i]) {
-            uint8_t pli;
-            pli = ui_data.starmap.tag[d->api][i];
-            if (pli < d->g->galaxy_stars) {
-                if (ui_data.ui_main_loop_action == UI_MAIN_LOOP_RELOC && d->g->planet[pli].owner != d->api) {
-                    break;
-                }
-                if (d->g->planet_focus_i[d->api] != pli) {
-                    d->g->planet_focus_i[d->api] = pli;
-                } else {
-                    ui_starmap_set_pos_focus(d->g, d->api);
-                }
-                ui_sound_play_sfx_24();
-                return pli;
-            }
-            break;
-        }
-    }
-    return PLANET_NONE;
-}
-
 void ui_starmap_add_oi_bottom_buttons(struct starmap_data_s *d)
 {
     d->oi_gameopts = uiobj_add_mousearea(5, 181, 36, 194, MOO_KEY_g);
@@ -1336,6 +1307,37 @@ static bool ui_starmap_handle_oi_search(struct game_s *g, struct starmap_data_s 
     return true;
 }
 
+static bool ui_starmap_handle_oi_tag_set(struct starmap_data_s *d, int16_t oi)
+{
+    for (int i = 0; i < PLANET_TAG_NUM; ++i) {
+        if (oi == d->oi_tag_set[i]) {
+            ui_data.starmap.tag[d->api][i] = d->g->planet_focus_i[d->api];
+            return true;
+        }
+    }
+    return false;
+}
+
+static bool ui_starmap_handle_oi_tag_get(struct game_s *g, struct starmap_data_s *d, bool *flag_done, int16_t oi)
+{
+    for (int i = 0; i < PLANET_TAG_NUM; ++i) {
+        if (oi == d->oi_tag_get[i]) {
+            uint8_t pli;
+            pli = ui_data.starmap.tag[d->api][i];
+            if (pli < d->g->galaxy_stars) {
+                if (d->g->planet_focus_i[d->api] != pli) {
+                    ui_starmap_select_planet(g, d, flag_done, pli);
+                } else {
+                    ui_starmap_set_pos_focus(g, d->api);
+                }
+                return true;
+            }
+            break;
+        }
+    }
+    return false;
+}
+
 bool ui_starmap_common_init(struct game_s *g, struct starmap_data_s *d, player_id_t active_player)
 {
     d->g = g;
@@ -1375,7 +1377,9 @@ bool ui_starmap_common_handle_oi(struct game_s *g, struct starmap_data_s *d, boo
     if (ui_starmap_handle_bottom_buttons(d, flag_done, oi1)
      || ui_starmap_handle_oi_fleet(g, d, flag_done, oi1)
      || ui_starmap_handle_oi_star(g, d, flag_done, oi1)
-     || ui_starmap_handle_oi_search(g, d, flag_done, oi1)) {
+     || ui_starmap_handle_oi_search(g, d, flag_done, oi1)
+     || ui_starmap_handle_oi_tag_set(d, oi1)
+     || ui_starmap_handle_oi_tag_get(g, d, flag_done, oi1)) {
         ui_sound_play_sfx_24();
         return true;
     } else if (ui_starmap_handle_oi_ctrl(d, oi1)

@@ -137,10 +137,6 @@ void ui_starmap_orbit_en(struct game_s *g, player_id_t active_player)
             flag_done = true;
             ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
         }
-        if (ui_starmap_handle_tag(&d, oi1) != PLANET_NONE) {
-            ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
-            flag_done = true;
-        }
         if (!flag_done) {
             ui_starmap_select_bottom_highlight(&d, oi2);
             ui_starmap_orbit_en_draw_cb(&d);

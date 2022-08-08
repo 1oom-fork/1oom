@@ -200,13 +200,6 @@ void ui_starmap_transport(struct game_s *g, player_id_t active_player)
             flag_done = true;
             ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
         }
-        if (ui_starmap_handle_tag(&d, oi1) != PLANET_NONE) {
-            if (!d.controllable) {
-                d.from_i = g->planet_focus_i[active_player];
-                flag_done = true;
-                ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
-            }
-        }
         if (!flag_done) {
             ui_starmap_select_bottom_highlight(&d, oi2);
             ui_starmap_transport_draw_cb(&d);
