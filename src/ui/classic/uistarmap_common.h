@@ -37,7 +37,7 @@ struct starmap_data_s {
     int bottom_highlight;
     int anim_delay;
     uint8_t from_i;
-    int ruler_to_i;
+    uint8_t ruler_to_i;
     bool ruler_from_fleet;
     int gov_highlight;
     bool controllable;
@@ -187,7 +187,7 @@ extern int ui_starmap_enemy_incoming(const struct game_s *g, player_id_t pi, int
 extern void ui_starmap_scroll(const struct game_s *g, int scrollx, int scrolly, uint8_t scrollz);
 extern void ui_starmap_compute_scale(const struct game_s *g);
 extern void ui_starmap_select_bottom_highlight(struct starmap_data_s *d, int16_t oi);
-extern int ui_starmap_cursor_on_star(const struct game_s *g, const struct starmap_data_s *d, int16_t oi2, player_id_t active_player);
+extern void ui_starmap_set_ruler(struct starmap_data_s *d, int16_t oi);
 
 extern bool ui_starmap_common_init(struct game_s *g, struct starmap_data_s *d, player_id_t active_player);
 extern bool ui_starmap_common_late_init(struct starmap_data_s *d, void (*draw_cb) (void *), bool controllable);
