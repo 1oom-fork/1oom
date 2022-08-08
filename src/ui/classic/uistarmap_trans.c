@@ -184,11 +184,9 @@ static void ui_starmap_trans_do_accept(struct starmap_data_s *d)
 void ui_starmap_trans(struct game_s *g, player_id_t active_player)
 {
     bool flag_done = false;
-    int16_t oi_scroll, oi_cancel, oi_plus, oi_minus, oi_equals, oi_search,
+    int16_t oi_cancel, oi_plus, oi_minus, oi_equals, oi_search,
             oi_f2, oi_f3, oi_f4, oi_f5, oi_f6, oi_f7, oi_f8, oi_f9, oi_f10,
             oi_a;
-    int16_t scrollx = 0, scrolly = 0;
-    uint8_t scrollz = starmap_scale;
     struct starmap_data_s d;
     planet_t *p;
     int16_t trans_max;
@@ -357,8 +355,6 @@ void ui_starmap_trans(struct game_s *g, player_id_t active_player)
                 d.tr.num = 0;
             }
             d.tr.other = true;
-        } else if (oi1 == oi_scroll) {
-            ui_starmap_scroll(g, scrollx, scrolly, scrollz);
         }
         if (ui_starmap_handle_tag(&d, oi1) != PLANET_NONE) {
             d.tr.other = true;
@@ -394,7 +390,6 @@ void ui_starmap_trans(struct game_s *g, player_id_t active_player)
                 oi_equals = uiobj_add_inputkey(MOO_KEY_EQUALS);
                 oi_a = uiobj_add_inputkey(MOO_KEY_a);
             }
-            oi_scroll = uiobj_add_tb(6, 6, 2, 2, 108, 86, &scrollx, &scrolly, &scrollz, ui_scale);
             oi_search = uiobj_add_inputkey(MOO_KEY_SLASH);
             ui_draw_finish();
             ui_delay_ticks_or_click(STARMAP_DELAY);

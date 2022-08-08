@@ -1149,19 +1149,23 @@ int ui_starmap_enemy_incoming(const struct game_s *g, player_id_t pi, int i, boo
     return PLANET_NONE;
 }
 
-void ui_starmap_scroll(const struct game_s *g, int scrollx, int scrolly, uint8_t scrollz)
+static bool ui_starmap_handle_oi_scroll(struct game_s *g, struct starmap_data_s *d, int16_t oi)
 {
+    if (oi != d->oi_scroll || g->evn.build_finished_num[d->api]) {
+        return false;
+    }
     int x, y;
-    if (scrollx >= 0) {
-        x = ui_data.starmap.x + scrollx - 54;
-        y = ui_data.starmap.y + scrolly - 43;
+    if (d->scroll_x >= 0) {
+        x = ui_data.starmap.x + d->scroll_x - 54;
+        y = ui_data.starmap.y + d->scroll_y - 43;
         ui_starmap_clamp_xy(g, &x, &y);
         ui_data.starmap.x2 = x;
         ui_data.starmap.y2 = y;
     } else {
-        starmap_scale = scrollz;
+        starmap_scale = d->scroll_z;
         ui_starmap_set_pos_focus(g, g->active_player);
     }
+    return true;
 }
 
 /* compute maximum starmap_scale such that map is as big as possible and not clipped */
@@ -1332,6 +1336,9 @@ bool ui_starmap_common_init(struct game_s *g, struct starmap_data_s *d, player_i
     d->g = g;
     d->api = active_player;
     d->from_i = g->planet_focus_i[active_player];
+    d->scroll_x = 0;
+    d->scroll_y = 0;
+    d->scroll_z = starmap_scale;
     d->anim_delay = 0;
     d->bottom_highlight = -1;
     d->ruler_to_i = -1;
@@ -1365,7 +1372,8 @@ bool ui_starmap_common_handle_oi(struct game_s *g, struct starmap_data_s *d, boo
      || ui_starmap_handle_oi_star(g, d, flag_done, oi1)) {
         ui_sound_play_sfx_24();
         return true;
-    } else if (ui_starmap_handle_oi_ctrl(d, oi1)) {
+    } else if (ui_starmap_handle_oi_ctrl(d, oi1)
+            || ui_starmap_handle_oi_scroll(g, d, oi1)) {
         return true;
     } else if (oi1 == d->oi_accept && d->on_accept_cb != NULL) {
         ui_sound_play_sfx_24();
@@ -1386,6 +1394,7 @@ void ui_starmap_common_fill_oi(struct starmap_data_s *d)
         ui_starmap_fill_oi_tbls(d);
     }
     ui_starmap_fill_oi_tbl_stars(d);
+    d->oi_scroll = uiobj_add_tb(6, 6, 2, 2, 108, 86, &d->scroll_x, &d->scroll_y, &d->scroll_z, ui_scale);
     ui_starmap_fill_oi_ctrl(d);
     ui_starmap_add_oi_bottom_buttons(d);
 }

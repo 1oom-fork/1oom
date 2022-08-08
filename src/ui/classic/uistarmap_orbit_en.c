@@ -90,9 +90,7 @@ static void ui_starmap_orbit_en_draw_cb(void *vptr)
 void ui_starmap_orbit_en(struct game_s *g, player_id_t active_player)
 {
     bool flag_done = false;
-    int16_t oi_scroll, oi_search;
-    int16_t scrollx = 0, scrolly = 0;
-    uint8_t scrollz = starmap_scale;
+    int16_t oi_search;
     struct starmap_data_s d;
     shipcount_t *os;
 
@@ -145,8 +143,6 @@ void ui_starmap_orbit_en(struct game_s *g, player_id_t active_player)
             ui_sound_play_sfx_24();
             flag_done = true;
             ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
-        } else if (oi1 == oi_scroll) {
-            ui_starmap_scroll(g, scrollx, scrolly, scrollz);
         }
         if (ui_starmap_handle_tag(&d, oi1) != PLANET_NONE) {
             ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
@@ -157,7 +153,6 @@ void ui_starmap_orbit_en(struct game_s *g, player_id_t active_player)
             ui_starmap_orbit_en_draw_cb(&d);
             uiobj_table_clear();
             UIOBJ_CLEAR_LOCAL();
-            oi_scroll = uiobj_add_tb(6, 6, 2, 2, 108, 86, &scrollx, &scrolly, &scrollz, ui_scale);
             ui_starmap_common_fill_oi(&d);
             oi_search = uiobj_add_inputkey(MOO_KEY_SLASH);
             ui_draw_finish();

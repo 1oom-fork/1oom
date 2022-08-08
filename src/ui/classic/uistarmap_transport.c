@@ -160,9 +160,7 @@ static void ui_starmap_transport_do_accept(struct starmap_data_s *d)
 void ui_starmap_transport(struct game_s *g, player_id_t active_player)
 {
     bool flag_done = false;
-    int16_t oi_scroll, oi_cancel, oi_search;
-    int16_t scrollx = 0, scrolly = 0;
-    uint8_t scrollz = starmap_scale;
+    int16_t oi_cancel, oi_search;
     struct starmap_data_s d;
     transport_t *r = &(g->transport[ui_data.starmap.fleet_selected]);
 
@@ -212,9 +210,6 @@ void ui_starmap_transport(struct game_s *g, player_id_t active_player)
             flag_done = true;
             ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
         }
-        if (oi1 == oi_scroll) {
-            ui_starmap_scroll(g, scrollx, scrolly, scrollz);
-        }
         if (ui_starmap_handle_tag(&d, oi1) != PLANET_NONE) {
             if (!d.controllable) {
                 d.from_i = g->planet_focus_i[active_player];
@@ -234,7 +229,6 @@ void ui_starmap_transport(struct game_s *g, player_id_t active_player)
                     d.oi_accept = uiobj_add_t0(271, 163, "", ui_data.gfx.starmap.reloc_bu_accept, MOO_KEY_SPACE);
                 }
             }
-            oi_scroll = uiobj_add_tb(6, 6, 2, 2, 108, 86, &scrollx, &scrolly, &scrollz, ui_scale);
             oi_search = uiobj_add_inputkey(MOO_KEY_SLASH);
             ui_draw_finish();
             ui_delay_ticks_or_click(STARMAP_DELAY);
