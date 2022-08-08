@@ -26,7 +26,6 @@
 #include "uidelay.h"
 #include "uihelp.h"
 #include "uiobj.h"
-#include "uisearch.h"
 #include "uisound.h"
 #include "uistarmap_common.h"
 
@@ -228,7 +227,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
     int16_t oi_b, oi_c, oi_starview1, oi_starview2, oi_shippic, oi_finished, oi_equals, oi_hash,
             oi_f2, oi_f3, oi_f4, oi_f5, oi_f6, oi_f7, oi_f8, oi_f9, oi_f10,
             oi_alt_galaxy, oi_alt_m, oi_alt_c, oi_alt_p, oi_alt_r, oi_alt_events,
-            oi_governor, oi_wheelname, oi_wheelshippic, oi_search,
+            oi_governor, oi_wheelname, oi_wheelshippic,
             oi_filter, oi_alt_o, oi_alt_f, oi_ctrl_r;
     int16_t scrollmisc = 0;
     struct starmap_data_s d;
@@ -357,10 +356,6 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             game_save_do_save_i(GAME_SAVE_I_CONTINUE, "Continue", g);
         } else if (oi1 == oi_alt_p) {
             game_cheat_traits(g, active_player);
-        } else if (oi1 == oi_search) {
-            ui_sound_play_sfx_24();
-            ui_search_set_pos(g, active_player);
-            flag_done = true;
         } else if (oi1 == d.sm.oi_gov_ship) {
             ui_sound_play_sfx_24();
             BOOLVEC_SET1(p->extras, PLANET_EXTRAS_GOVERNOR);
@@ -695,9 +690,6 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
                 oi_starview2 = uiobj_add_mousearea(227, 24, 310, 53, MOO_KEY_UNKNOWN);
             }
             ui_starmap_fill_oi_slider(&d, p);
-            if (!g->evn.build_finished_num[active_player]) {
-                oi_search = uiobj_add_inputkey(MOO_KEY_SLASH);
-            }
             if (g->evn.build_finished_num[active_player]) {
                 ui_cursor_setup_area(2, &ui_cursor_area_tbl[0]);
             } else {
