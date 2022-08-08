@@ -27,6 +27,14 @@
 
 /* -------------------------------------------------------------------------- */
 
+static inline bool ui_starmap_enroute_locked_by_retreat(struct starmap_data_s *d, uint8_t planet_i)
+{
+    const fleet_enroute_t *r = &(d->g->enroute[ui_data.starmap.fleet_selected]);
+    return (game_num_retreat_redir_fix && r->retreat && (d->en.can_move != GOT_HYPERCOMM) && (planet_i == d->en.pon));
+}
+
+/* -------------------------------------------------------------------------- */
+
 static void ui_starmap_enroute_draw_cb(void *vptr)
 {
     struct starmap_data_s *d = vptr;
@@ -125,7 +133,7 @@ static void ui_starmap_enroute_draw_cb(void *vptr)
     if (1
       && (r->owner == d->api)
       && (d->en.can_move != NO_MOVE)
-      && ((!d->en.in_frange) || (game_num_retreat_redir_fix && r->retreat && (d->en.can_move != GOT_HYPERCOMM) && (pto == d->en.pon)))
+      && ((!d->en.in_frange) || ui_starmap_enroute_locked_by_retreat(d, pto))
     ) {
         lbxgfx_set_new_frame(ui_data.gfx.starmap.reloc_bu_accept, 1);
         lbxgfx_draw_frame(271, 163, ui_data.gfx.starmap.reloc_bu_accept, UI_SCREEN_W, ui_scale);
@@ -333,7 +341,7 @@ do_accept:
             ui_starmap_fill_oi_tbl_stars(&d);
             if ((r->owner == active_player) && (d.en.can_move != NO_MOVE)) {
                 oi_cancel = uiobj_add_t0(227, 163, "", ui_data.gfx.starmap.reloc_bu_cancel, MOO_KEY_ESCAPE);
-                if (d.en.in_frange && ((!game_num_retreat_redir_fix) || (!r->retreat) || (d.en.can_move == GOT_HYPERCOMM) || (g->planet_focus_i[active_player] != d.en.pon))) {
+                if (d.en.in_frange && !ui_starmap_enroute_locked_by_retreat(&d, g->planet_focus_i[active_player])) {
                     oi_accept = uiobj_add_t0(271, 163, "", ui_data.gfx.starmap.reloc_bu_accept, MOO_KEY_SPACE);
                 }
             }
