@@ -677,7 +677,6 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             }
             oi_c = uiobj_add_inputkey(MOO_KEY_c);
             oi_ctrl_r = uiobj_add_inputkey(MOO_KEY_r | MOO_MOD_CTRL);
-            ui_starmap_add_oi_bottom_buttons(&d);
             if (g->evn.build_finished_num[active_player]) {
                 oi_finished = uiobj_add_mousearea(6, 6, 225, 180, MOO_KEY_SPACE);
             }
@@ -702,8 +701,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             if (!g->evn.build_finished_num[active_player]) {
                 oi_wheelname = uiobj_add_mousewheel(227, 8, 310, 20, &scrollmisc);
             }
-            ui_starmap_fill_oi_tbls(&d);
-            ui_starmap_fill_oi_tbl_stars(&d);
+            ui_starmap_common_fill_oi(&d);
             if (BOOLVEC_IS1(p->explored, active_player)) {
                 oi_starview1 = d.oi_tbl_stars[g->planet_focus_i[active_player]];
                 oi_starview2 = uiobj_add_mousearea(227, 24, 310, 53, MOO_KEY_UNKNOWN);
@@ -712,7 +710,6 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             if (!g->evn.build_finished_num[active_player]) {
                 oi_scroll = uiobj_add_tb(6, 6, 2, 2, 108, 86, &scrollx, &scrolly, &scrollz, ui_scale);
                 oi_search = uiobj_add_inputkey(MOO_KEY_SLASH);
-                ui_starmap_fill_oi_ctrl(&d);
             }
             if (g->evn.build_finished_num[active_player]) {
                 ui_cursor_setup_area(2, &ui_cursor_area_tbl[0]);

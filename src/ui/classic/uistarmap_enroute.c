@@ -255,10 +255,7 @@ do_accept:
             ui_starmap_enroute_draw_cb(&d);
             uiobj_table_clear();
             UIOBJ_CLEAR_LOCAL();
-            if (!d.controllable) {
-                ui_starmap_fill_oi_tbls(&d);
-            }
-            ui_starmap_fill_oi_tbl_stars(&d);
+            ui_starmap_common_fill_oi(&d);
             if (d.controllable) {
                 oi_cancel = uiobj_add_t0(227, 163, "", ui_data.gfx.starmap.reloc_bu_cancel, MOO_KEY_ESCAPE);
                 if (d.valid_target_cb(&d, g->planet_focus_i[active_player])) {
@@ -267,8 +264,6 @@ do_accept:
             }
             oi_scroll = uiobj_add_tb(6, 6, 2, 2, 108, 86, &scrollx, &scrolly, &scrollz, ui_scale);
             oi_search = uiobj_add_inputkey(MOO_KEY_SLASH);
-            ui_starmap_fill_oi_ctrl(&d);
-            ui_starmap_add_oi_bottom_buttons(&d);
             ui_draw_finish();
             ui_delay_ticks_or_click(STARMAP_DELAY);
         }

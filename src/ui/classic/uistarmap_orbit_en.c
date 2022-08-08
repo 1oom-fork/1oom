@@ -167,12 +167,9 @@ void ui_starmap_orbit_en(struct game_s *g, player_id_t active_player)
             ui_starmap_orbit_en_draw_cb(&d);
             uiobj_table_clear();
             UIOBJ_CLEAR_LOCAL();
-            ui_starmap_fill_oi_tbls(&d);
-            ui_starmap_fill_oi_tbl_stars(&d);
             oi_scroll = uiobj_add_tb(6, 6, 2, 2, 108, 86, &scrollx, &scrolly, &scrollz, ui_scale);
+            ui_starmap_common_fill_oi(&d);
             oi_search = uiobj_add_inputkey(MOO_KEY_SLASH);
-            ui_starmap_fill_oi_ctrl(&d);
-            ui_starmap_add_oi_bottom_buttons(&d);
             ui_draw_finish();
             ui_delay_ticks_or_click(STARMAP_DELAY);
         }

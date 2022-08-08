@@ -168,12 +168,7 @@ extern const uint8_t colortbl_line_red[5];
 extern const uint8_t colortbl_line_reloc[5];
 extern const uint8_t colortbl_line_green[5];
 
-extern void ui_starmap_fill_oi_ctrl(struct starmap_data_s *d);
 extern void ui_starmap_clear_oi_ctrl(struct starmap_data_s *d);
-extern void ui_starmap_fill_oi_tbls(struct starmap_data_s *d);
-extern void ui_starmap_fill_oi_tbl_stars(struct starmap_data_s *d);
-extern void ui_starmap_fill_oi_tbl_stars_own(struct starmap_data_s *d, player_id_t owner);
-extern void ui_starmap_add_oi_bottom_buttons(struct starmap_data_s *d);
 extern void ui_starmap_handle_oi_ctrl(struct starmap_data_s *d, int16_t oi);
 extern uint8_t ui_starmap_handle_tag(struct starmap_data_s *d, int16_t oi);
 extern void ui_starmap_draw_basic(struct starmap_data_s *d);
@@ -194,5 +189,6 @@ extern int ui_starmap_cursor_on_star(const struct game_s *g, const struct starma
 extern bool ui_starmap_common_init(struct game_s *g, struct starmap_data_s *d, player_id_t active_player);
 extern bool ui_starmap_common_late_init(struct starmap_data_s *d, void (*draw_cb) (void *), bool controllable);
 extern bool ui_starmap_common_handle_oi(struct game_s *g, struct starmap_data_s *d, bool *flag_done, int16_t oi1, int16_t oi2);
+extern void ui_starmap_common_fill_oi(struct starmap_data_s *d);
 
 #endif
