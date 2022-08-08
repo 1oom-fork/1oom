@@ -344,7 +344,6 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
             flag_done = true;
             ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
         }
-        ui_starmap_handle_tag(&d, oi1);
         ui_starmap_set_ruler(&d, oi2);
         d.ruler_from_fleet = true;
         cursor_over = -1;

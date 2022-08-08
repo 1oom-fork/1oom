@@ -177,7 +177,6 @@ extern const uint8_t colortbl_line_reloc[5];
 extern const uint8_t colortbl_line_green[5];
 
 extern void ui_starmap_clear_oi_ctrl(struct starmap_data_s *d);
-extern uint8_t ui_starmap_handle_tag(struct starmap_data_s *d, int16_t oi);
 extern void ui_starmap_draw_basic(struct starmap_data_s *d);
 extern void ui_starmap_draw_starmap(struct starmap_data_s *d);
 extern void ui_starmap_draw_button_text(struct starmap_data_s *d, bool highlight);

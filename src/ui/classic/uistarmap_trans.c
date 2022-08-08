@@ -350,9 +350,6 @@ void ui_starmap_trans(struct game_s *g, player_id_t active_player)
             }
             d.tr.other = true;
         }
-        if (ui_starmap_handle_tag(&d, oi1) != PLANET_NONE) {
-            d.tr.other = true;
-        }
         ui_starmap_set_ruler(&d, oi2);
         d.ruler_from_fleet = false;
         if (!flag_done) {
