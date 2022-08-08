@@ -59,13 +59,7 @@ static void ui_starmap_trans_draw_cb(void *vptr)
         int x1, y1;
         x1 = (pt->x - ui_data.starmap.x) * 2 + 14;
         y1 = (pt->y - ui_data.starmap.y) * 2 + 14;
-        if (0
-          || (!d->tr.other)
-          || (pt->within_frange[d->api] != 1)
-          || BOOLVEC_IS0(pt->explored, d->api)
-          || (pt->owner == PLAYER_NONE)
-          || (pt->type < g->eto[d->api].have_colony_for)
-        ) {
+        if (!d->valid_target_cb(d, g->planet_focus_i[d->api])) {
             ctbl = colortbl_line_red;
         } else {
             ctbl = colortbl_line_green;
@@ -155,6 +149,16 @@ static void ui_starmap_trans_draw_cb(void *vptr)
 
 /* -------------------------------------------------------------------------- */
 
+static bool ui_starmap_trans_valid_destination(const struct starmap_data_s *d, int planet_i)
+{
+    const struct game_s *g = d->g;
+    const planet_t *p = &g->planet[planet_i];
+    return (p->owner != PLAYER_NONE)
+        && (p->within_frange[g->active_player] == 1)
+        && BOOLVEC_IS1(p->explored, d->api)
+        && (p->type >= g->eto[d->api].have_colony_for);
+}
+
 void ui_starmap_trans(struct game_s *g, player_id_t active_player)
 {
     bool flag_done = false;
@@ -168,6 +172,7 @@ void ui_starmap_trans(struct game_s *g, player_id_t active_player)
     int16_t trans_max;
 
     ui_starmap_common_init(g, &d, active_player);
+    d.valid_target_cb = ui_starmap_trans_valid_destination;
 
     d.tr.blink = false;
     {
@@ -353,7 +358,7 @@ do_accept:
         }
         for (int i = 0; i < g->galaxy_stars; ++i) {
             if (oi1 == d.oi_tbl_stars[i]) {
-                if ((oi_accept != UIOBJI_INVALID) && (g->planet_focus_i[active_player] == i)) {
+                if (d.controllable && d.valid_target_cb(&d, i) && (g->planet_focus_i[active_player] == i)) {
                     oi1 = oi_accept;
                     goto do_accept;
                 }
@@ -382,11 +387,7 @@ do_accept:
             oi_f10 = uiobj_add_inputkey(MOO_KEY_F10);
             ui_starmap_fill_oi_tbl_stars(&d);
             oi_cancel = uiobj_add_t0(227, 163, "", ui_data.gfx.starmap.reloc_bu_cancel, MOO_KEY_ESCAPE);
-            if ((pt->owner != PLAYER_NONE)
-              && (pt->within_frange[active_player] == 1)
-              && BOOLVEC_IS1(pt->explored, active_player)
-              && (pt->type >= g->eto[active_player].have_colony_for)
-            ) {
+            if (d.valid_target_cb(&d, g->planet_focus_i[active_player])) {
                 if (d.tr.other) {
                     oi_accept = uiobj_add_t0(271, 163, "", ui_data.gfx.starmap.reloc_bu_accept, MOO_KEY_SPACE);
                     uiobj_add_slider_int(258, 124, 0, trans_max, 41, 8, &d.tr.num);

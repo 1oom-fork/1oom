@@ -122,10 +122,7 @@ static void ui_starmap_enroute_draw_cb(void *vptr)
     } else {
         d->en.scanner_delay = 0;
     }
-    if (1
-      && d->controllable
-      && ((!d->en.in_frange) || (game_num_retreat_redir_fix && r->retreat && (d->en.can_move != GOT_HYPERCOMM) && (pto == d->en.pon)))
-    ) {
+    if (d->controllable && !d->valid_target_cb(d, g->planet_focus_i[d->api])) {
         lbxgfx_set_new_frame(ui_data.gfx.starmap.reloc_bu_accept, 1);
         lbxgfx_draw_frame(271, 163, ui_data.gfx.starmap.reloc_bu_accept, UI_SCREEN_W, ui_scale);
     }
@@ -134,6 +131,17 @@ static void ui_starmap_enroute_draw_cb(void *vptr)
 }
 
 /* -------------------------------------------------------------------------- */
+
+static bool ui_starmap_enroute_valid_destination(const struct starmap_data_s *d, int planet_i)
+{
+    const struct game_s *g = d->g;
+    const fleet_enroute_t *r = &(g->enroute[ui_data.starmap.fleet_selected]);
+    bool retreat_fix = game_num_retreat_redir_fix
+            && r->retreat
+            && d->en.can_move != GOT_HYPERCOMM
+            && planet_i == d->en.pon;
+    return d->en.in_frange && !retreat_fix;
+}
 
 void ui_starmap_enroute(struct game_s *g, player_id_t active_player)
 {
@@ -145,6 +153,7 @@ void ui_starmap_enroute(struct game_s *g, player_id_t active_player)
     fleet_enroute_t *r;
 
     ui_starmap_common_init(g, &d, active_player);
+    d.valid_target_cb = ui_starmap_enroute_valid_destination;
 
     r = &(g->enroute[ui_data.starmap.fleet_selected]);
     d.en.can_move = g->eto[active_player].have_hyperspace_comm ? GOT_HYPERCOMM : NO_MOVE;
@@ -228,7 +237,7 @@ do_accept:
         }
         for (int i = 0; i < g->galaxy_stars; ++i) {
             if (oi1 == d.oi_tbl_stars[i]) {
-                if (d.controllable && (oi_accept != UIOBJI_INVALID) && (g->planet_focus_i[active_player] == i)) {
+                if (d.controllable && d.valid_target_cb(&d, i) && (g->planet_focus_i[active_player] == i)) {
                     oi1 = oi_accept;
                     goto do_accept;
                 }
@@ -252,7 +261,7 @@ do_accept:
             ui_starmap_fill_oi_tbl_stars(&d);
             if (d.controllable) {
                 oi_cancel = uiobj_add_t0(227, 163, "", ui_data.gfx.starmap.reloc_bu_cancel, MOO_KEY_ESCAPE);
-                if (d.en.in_frange && ((!game_num_retreat_redir_fix) || (!r->retreat) || (d.en.can_move == GOT_HYPERCOMM) || (g->planet_focus_i[active_player] != d.en.pon))) {
+                if (d.valid_target_cb(&d, g->planet_focus_i[active_player])) {
                     oi_accept = uiobj_add_t0(271, 163, "", ui_data.gfx.starmap.reloc_bu_accept, MOO_KEY_SPACE);
                 }
             }

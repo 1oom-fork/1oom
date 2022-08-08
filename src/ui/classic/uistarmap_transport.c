@@ -69,7 +69,7 @@ static void ui_starmap_transport_draw_cb(void *vptr)
         x0 = (r->x - ui_data.starmap.x) * 2 + 8;
         y0 = (r->y - ui_data.starmap.y) * 2 + 8;
         if (d->controllable) {
-            dest_ok = game_transport_dest_ok(g, pt, d->api);
+            dest_ok = d->valid_target_cb(d, g->planet_focus_i[d->api]);
         }
         {
             const uint8_t *ctbl;
@@ -139,6 +139,12 @@ static void ui_starmap_transport_draw_cb(void *vptr)
 
 /* -------------------------------------------------------------------------- */
 
+static bool ui_starmap_transport_valid_destination(const struct starmap_data_s *d, int planet_i)
+{
+    const struct game_s *g = d->g;
+    return game_transport_dest_ok(g, &(g->planet[planet_i]), d->api);
+}
+
 void ui_starmap_transport(struct game_s *g, player_id_t active_player)
 {
     bool flag_done = false;
@@ -149,6 +155,7 @@ void ui_starmap_transport(struct game_s *g, player_id_t active_player)
     transport_t *r = &(g->transport[ui_data.starmap.fleet_selected]);
 
     ui_starmap_common_init(g, &d, active_player);
+    d.valid_target_cb = ui_starmap_transport_valid_destination;
 
     d.ts.in_frange = false;
     d.ts.frame_ship = 0;
@@ -214,7 +221,7 @@ do_accept:
         }
         for (int i = 0; i < g->galaxy_stars; ++i) {
             if (oi1 == d.oi_tbl_stars[i]) {
-                if (d.controllable && (oi_accept != UIOBJI_INVALID) && (g->planet_focus_i[active_player] == i)) {
+                if (d.controllable && d.valid_target_cb(&d, i) && (g->planet_focus_i[active_player] == i)) {
                     oi1 = oi_accept;
                     goto do_accept;
                 }
@@ -238,7 +245,7 @@ do_accept:
             ui_starmap_fill_oi_tbl_stars(&d);
             if (d.controllable) {
                 oi_cancel = uiobj_add_t0(227, 163, "", ui_data.gfx.starmap.reloc_bu_cancel, MOO_KEY_ESCAPE);
-                if (game_transport_dest_ok(g, &(g->planet[g->planet_focus_i[active_player]]), active_player)) {
+                if (d.valid_target_cb(&d, g->planet_focus_i[active_player])) {
                     oi_accept = uiobj_add_t0(271, 163, "", ui_data.gfx.starmap.reloc_bu_accept, MOO_KEY_SPACE);
                 }
             }
