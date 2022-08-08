@@ -419,37 +419,6 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
                 game_planet_govern(g, p);
             }
         }
-
-        for (int i = 0; i < g->enroute_num; ++i) {
-            if (oi1 == d.oi_tbl_enroute[i]) {
-                ui_data.starmap.fleet_selected = i;
-                ui_data.ui_main_loop_action = UI_MAIN_LOOP_ENROUTE_SEL;
-                ui_sound_play_sfx_24();
-                flag_done = true;
-                break;
-            }
-        }
-        for (int i = 0; i < g->transport_num; ++i) {
-            if (oi1 == d.oi_tbl_transport[i]) {
-                ui_data.starmap.fleet_selected = i;
-                ui_data.ui_main_loop_action = UI_MAIN_LOOP_TRANSPORT_SEL;
-                ui_sound_play_sfx_24();
-                flag_done = true;
-                break;
-            }
-        }
-        for (int i = 0; i < g->galaxy_stars; ++i) {
-            for (player_id_t j = PLAYER_0; j < g->players; ++j) {
-                if (oi1 == d.oi_tbl_pl_stars[j][i]) {
-                    g->planet_focus_i[active_player] = i;
-                    ui_data.starmap.orbit_player = j;
-                    ui_data.ui_main_loop_action = (j == active_player) ? UI_MAIN_LOOP_ORBIT_OWN_SEL : UI_MAIN_LOOP_ORBIT_EN_SEL;
-                    ui_sound_play_sfx_24();
-                    flag_done = true;
-                    j = g->players; i = g->galaxy_stars;
-                }
-            }
-        }
         if (0
           || (oi1 == d.sm.oi_ship) || (oi1 == oi_shippic)
           || ((oi1 == oi_wheelshippic) && (scrollmisc < 0))
