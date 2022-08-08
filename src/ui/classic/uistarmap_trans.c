@@ -364,21 +364,6 @@ void ui_starmap_trans(struct game_s *g, player_id_t active_player)
         if (ui_starmap_handle_tag(&d, oi1) != PLANET_NONE) {
             d.tr.other = true;
         }
-        for (int i = 0; i < g->galaxy_stars; ++i) {
-            if (oi1 == d.oi_tbl_stars[i]) {
-                if (d.controllable && d.valid_target_cb(&d, i) && (g->planet_focus_i[active_player] == i)) {
-                    ui_sound_play_sfx_24();
-                    d.on_accept_cb(&d);
-                    ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
-                    flag_done = true;
-                    break;
-                }
-                d.tr.other = true;
-                g->planet_focus_i[active_player] = i;
-                ui_sound_play_sfx_24();
-                break;
-            }
-        }
         ui_starmap_set_ruler(&d, oi2);
         d.ruler_from_fleet = false;
         if (!flag_done) {
