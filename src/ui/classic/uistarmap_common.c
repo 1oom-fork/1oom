@@ -1021,3 +1021,10 @@ void ui_starmap_compute_scale(const struct game_s *g)
     starmap_scale = MIN(x, y);
     SETRANGE(starmap_scale, 1, ui_scale);
 }
+
+void ui_starmap_common_init(struct game_s *g, struct starmap_data_s *d, player_id_t active_player)
+{
+    d->g = g;
+    d->api = active_player;
+    d->anim_delay = 0;
+}

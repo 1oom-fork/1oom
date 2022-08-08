@@ -95,9 +95,7 @@ void ui_newships(struct game_s *g, int pi)
     ui_switch_1(g, pi);
     d.g = g;
     d.api = pi;
-    d.sm.g = g;
-    d.sm.api = pi;
-    d.sm.anim_delay = 0;
+    ui_starmap_common_init(g, &d.sm, pi);
     d.sm.bottom_highlight = -1;
     d.sm.sm.dist_i = PLANET_NONE;
     d.ds.xoff1 = 0;

@@ -234,9 +234,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
     uint8_t scrollz = starmap_scale;
     struct starmap_data_s d;
 
-    d.g = g;
-    d.api = active_player;
-    d.anim_delay = 0;
+    ui_starmap_common_init(g, &d, active_player);
     d.sm.dist_i = PLANET_NONE;
 
     ui_delay_1();
