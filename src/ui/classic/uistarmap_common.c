@@ -1273,6 +1273,34 @@ static bool ui_starmap_handle_oi_fleet(struct game_s *g, struct starmap_data_s *
     return false;
 }
 
+static bool ui_starmap_handle_oi_star(struct game_s *g, struct starmap_data_s *d, bool *flag_done, int16_t oi)
+{
+    if (g->evn.build_finished_num[d->api]) {
+        return false;
+    }
+    int i = ui_starmap_cursor_on_star(g, d, oi);
+    if (i == PLANET_NONE) {
+        return false;
+    }
+    if (d->controllable && d->valid_target_cb(d, i) && g->planet_focus_i[d->api] == i) {
+        d->on_accept_cb(d);
+        ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
+        *flag_done = true;
+        return true;
+    }
+    if (ui_data.ui_main_loop_action == UI_MAIN_LOOP_TRANS) {
+        d->tr.other = true;
+    }
+    g->planet_focus_i[d->api] = i;
+    if (!d->controllable && ui_data.ui_main_loop_action != UI_MAIN_LOOP_STARMAP) {
+        d->from_i = i;
+        ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
+        *flag_done = true;
+        return true;
+    }
+    return true;
+}
+
 bool ui_starmap_common_init(struct game_s *g, struct starmap_data_s *d, player_id_t active_player)
 {
     d->g = g;
@@ -1307,7 +1335,8 @@ bool ui_starmap_common_handle_oi(struct game_s *g, struct starmap_data_s *d, boo
 {
     ui_starmap_handle_scrollkeys(d, oi1);
     if (ui_starmap_handle_bottom_buttons(d, flag_done, oi1)
-     || ui_starmap_handle_oi_fleet(g, d, flag_done, oi1)) {
+     || ui_starmap_handle_oi_fleet(g, d, flag_done, oi1)
+     || ui_starmap_handle_oi_star(g, d, flag_done, oi1)) {
         ui_sound_play_sfx_24();
         return true;
     } else if (oi1 == d->oi_accept && d->on_accept_cb != NULL) {
