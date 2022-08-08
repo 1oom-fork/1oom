@@ -186,4 +186,6 @@ extern int ui_starmap_newship_prev(const struct game_s *g, player_id_t pi, int i
 extern int ui_starmap_enemy_incoming(const struct game_s *g, player_id_t pi, int i, bool next);
 extern void ui_starmap_scroll(const struct game_s *g, int scrollx, int scrolly);
 
+extern void ui_starmap_common_init(struct game_s *g, struct starmap_data_s *d, player_id_t active_player);
+
 #endif
