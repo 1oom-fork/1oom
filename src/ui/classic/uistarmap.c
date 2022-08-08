@@ -628,24 +628,8 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
         d.gov_highlight = 0;
 
         p = &(g->planet[g->planet_focus_i[active_player]]);
-        d.bottom_highlight = -1;
-        if (oi2 == d.oi_gameopts) {
-            d.bottom_highlight = 0;
-        } else if (oi2 == d.oi_design) {
-            d.bottom_highlight = 1;
-        } else if (oi2 == d.oi_fleet) {
-            d.bottom_highlight = 2;
-        } else if (oi2 == d.oi_map) {
-            d.bottom_highlight = 3;
-        } else if (oi2 == d.oi_races) {
-            d.bottom_highlight = 4;
-        } else if (oi2 == d.oi_planets) {
-            d.bottom_highlight = 5;
-        } else if (oi2 == d.oi_tech) {
-            d.bottom_highlight = 6;
-        } else if (oi2 == d.oi_next_turn) {
-            d.bottom_highlight = 7;
-        } else if (oi2 == d.sm.oi_gov_ship) {
+        ui_starmap_select_bottom_highlight(&d, oi2);
+        if (oi2 == d.sm.oi_gov_ship) {
             d.gov_highlight = 1;
         } else if (oi2 == d.sm.oi_gov_reserve) {
             d.gov_highlight = 2;

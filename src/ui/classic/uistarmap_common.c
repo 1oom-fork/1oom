@@ -1147,6 +1147,28 @@ void ui_starmap_compute_scale(const struct game_s *g)
     SETRANGE(starmap_scale, 1, ui_scale);
 }
 
+void ui_starmap_select_bottom_highlight(struct starmap_data_s *d, int16_t oi)
+{
+    d->bottom_highlight = -1;
+    if (oi == d->oi_gameopts) {
+        d->bottom_highlight = 0;
+    } else if (oi == d->oi_design) {
+        d->bottom_highlight = 1;
+    } else if (oi == d->oi_fleet) {
+        d->bottom_highlight = 2;
+    } else if (oi == d->oi_map) {
+        d->bottom_highlight = 3;
+    } else if (oi == d->oi_races) {
+        d->bottom_highlight = 4;
+    } else if (oi == d->oi_planets) {
+        d->bottom_highlight = 5;
+    } else if (oi == d->oi_tech) {
+        d->bottom_highlight = 6;
+    } else if (oi == d->oi_next_turn) {
+        d->bottom_highlight = 7;
+    }
+}
+
 /* Returns the index of the star that the player is pointing on. Returns -1 if the player is not
  * pointing at a star, or is pointing at the currently selected star. */
 int ui_starmap_cursor_on_star(const struct game_s *g, const struct starmap_data_s *d, int16_t oi2, player_id_t active_player)
