@@ -206,39 +206,7 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
         oi1 = uiobj_handle_input_cond();
         oi2 = uiobj_at_cursor();
         ui_delay_prepare();
-        ui_starmap_handle_scrollkeys(&d, oi1);
-        if (oi1 == d.oi_gameopts) {
-            ui_data.ui_main_loop_action = UI_MAIN_LOOP_GAMEOPTS;
-            flag_done = true;
-            ui_sound_play_sfx_24();
-        } else if (oi1 == d.oi_design) {
-            ui_data.ui_main_loop_action = UI_MAIN_LOOP_DESIGN;
-            flag_done = true;
-            ui_sound_play_sfx_24();
-        } else if (oi1 == d.oi_fleet) {
-            ui_data.ui_main_loop_action = UI_MAIN_LOOP_FLEET;
-            flag_done = true;
-            ui_sound_play_sfx_24();
-        } else if (oi1 == d.oi_map) {
-            ui_data.ui_main_loop_action = UI_MAIN_LOOP_MAP;
-            flag_done = true;
-            ui_sound_play_sfx_24();
-        } else if (oi1 == d.oi_races) {
-            ui_data.ui_main_loop_action = UI_MAIN_LOOP_RACES;
-            flag_done = true;
-            ui_sound_play_sfx_24();
-        } else if (oi1 == d.oi_planets) {
-            ui_data.ui_main_loop_action = UI_MAIN_LOOP_PLANETS;
-            flag_done = true;
-            ui_sound_play_sfx_24();
-        } else if (oi1 == d.oi_tech) {
-            ui_data.ui_main_loop_action = UI_MAIN_LOOP_TECH;
-            flag_done = true;
-            ui_sound_play_sfx_24();
-        } else if (oi1 == d.oi_next_turn) {
-            ui_data.ui_main_loop_action = UI_MAIN_LOOP_NEXT_TURN;
-            flag_done = true;
-            ui_sound_play_sfx_24();
+        if (ui_starmap_common_handle_oi(g, &d, &flag_done, oi1, oi2)) {
         } else if (oi1 == oi_search) {
             ui_sound_play_sfx_24();
             ui_search_set_pos(g, active_player);
