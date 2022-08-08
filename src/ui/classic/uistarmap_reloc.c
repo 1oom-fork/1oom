@@ -66,6 +66,12 @@ static void ui_starmap_reloc_draw_cb(void *vptr)
 
 /* -------------------------------------------------------------------------- */
 
+static bool ui_starmap_reloc_valid_destination(const struct starmap_data_s *d, int planet_i)
+{
+    const struct game_s *g = d->g;
+    return g->planet[d->from_i].buildship != BUILDSHIP_STARGATE;
+}
+
 void ui_starmap_reloc(struct game_s *g, player_id_t active_player)
 {
     bool flag_done = false;
@@ -77,6 +83,7 @@ void ui_starmap_reloc(struct game_s *g, player_id_t active_player)
     struct starmap_data_s d;
 
     ui_starmap_common_init(g, &d, active_player);
+    d.valid_target_cb = ui_starmap_reloc_valid_destination;
 
     {
         uint8_t oldreloc;
@@ -222,7 +229,7 @@ do_accept:
         ui_starmap_handle_tag(&d, oi1);
         for (int i = 0; i < g->galaxy_stars; ++i) {
             if (oi1 == d.oi_tbl_stars[i]) {
-                if ((oi_accept != UIOBJI_INVALID) && (g->planet_focus_i[active_player] == i)) {
+                if (d.controllable && d.valid_target_cb(&d, i) && (g->planet_focus_i[active_player] == i)) {
                     oi1 = oi_accept;
                     goto do_accept;
                 }
@@ -249,7 +256,7 @@ do_accept:
             oi_f10 = uiobj_add_inputkey(MOO_KEY_F10);
             ui_starmap_fill_oi_tbl_stars_own(&d, active_player);
             oi_cancel = uiobj_add_t0(227, 163, "", ui_data.gfx.starmap.reloc_bu_cancel, MOO_KEY_ESCAPE);
-            if (g->planet[d.from_i].buildship != BUILDSHIP_STARGATE) {
+            if (d.valid_target_cb(&d, g->planet_focus_i[active_player])) {
                 oi_accept = uiobj_add_t0(271, 163, "", ui_data.gfx.starmap.reloc_bu_accept, MOO_KEY_SPACE);
             }
             oi_scroll = uiobj_add_tb(6, 6, 2, 2, 108, 86, &scrollx, &scrolly, &scrollz, ui_scale);

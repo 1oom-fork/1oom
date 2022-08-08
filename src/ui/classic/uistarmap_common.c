@@ -1295,6 +1295,7 @@ bool ui_starmap_common_init(struct game_s *g, struct starmap_data_s *d, player_i
     d->ruler_to_i = -1;
     d->gov_highlight = 0;
     d->controllable = false;
+    d->valid_target_cb = NULL;
 
     return true;
 }
