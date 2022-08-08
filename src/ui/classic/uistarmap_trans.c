@@ -169,8 +169,6 @@ void ui_starmap_trans(struct game_s *g, player_id_t active_player)
 
     ui_starmap_common_init(g, &d, active_player);
 
-    d.controllable = true;
-
     d.tr.blink = false;
     {
         uint8_t pi = g->planet_focus_i[active_player];
@@ -186,7 +184,7 @@ void ui_starmap_trans(struct game_s *g, player_id_t active_player)
     d.tr.num = p->trans_num;
     trans_max = p->pop / 2;
 
-    uiobj_table_clear();
+    ui_starmap_common_late_init(&d, ui_starmap_trans_draw_cb, true);
 
 #define UIOBJ_CLEAR_LOCAL() \
     do { \
@@ -201,8 +199,6 @@ void ui_starmap_trans(struct game_s *g, player_id_t active_player)
     } while (0)
 
     UIOBJ_CLEAR_LOCAL();
-
-    uiobj_set_callback_and_delay(ui_starmap_trans_draw_cb, &d, STARMAP_DELAY);
 
     while (!flag_done) {
         int16_t oi1, oi2;

@@ -78,8 +78,6 @@ void ui_starmap_reloc(struct game_s *g, player_id_t active_player)
 
     ui_starmap_common_init(g, &d, active_player);
 
-    d.controllable = true;
-
     {
         uint8_t oldreloc;
         uint8_t pi = g->planet_focus_i[active_player];
@@ -90,7 +88,7 @@ void ui_starmap_reloc(struct game_s *g, player_id_t active_player)
         }
     }
 
-    uiobj_table_clear();
+    ui_starmap_common_late_init(&d, ui_starmap_reloc_draw_cb, true);
 
 #define UIOBJ_CLEAR_LOCAL() \
     do { \
@@ -103,7 +101,6 @@ void ui_starmap_reloc(struct game_s *g, player_id_t active_player)
     UIOBJ_CLEAR_LOCAL();
 
     uiobj_set_help_id(2);
-    uiobj_set_callback_and_delay(ui_starmap_reloc_draw_cb, &d, STARMAP_DELAY);
 
     while (!flag_done) {
         int16_t oi1, oi2;

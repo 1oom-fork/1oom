@@ -242,7 +242,8 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
     game_update_production(g);
     game_update_visibility(g);
     ui_data.gfx.colonies.current = NULL;
-    uiobj_table_clear();
+
+    ui_starmap_common_late_init(&d, ui_starmap_draw_cb1, false);
 
 #define UIOBJ_CLEAR_LOCAL() \
     do { \
@@ -283,8 +284,6 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
     oi_alt_galaxy = uiobj_add_alt_str("galaxy");
     oi_alt_p = uiobj_add_alt_str("p");
     oi_alt_events = uiobj_add_alt_str("events");
-
-    uiobj_set_callback_and_delay(ui_starmap_draw_cb1, &d, STARMAP_DELAY);
 
     while (!flag_done) {
         planet_t *p;

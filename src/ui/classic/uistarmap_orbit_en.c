@@ -120,7 +120,7 @@ void ui_starmap_orbit_en(struct game_s *g, player_id_t active_player)
         d.oe.yoff = n * 6;
     }
 
-    uiobj_table_clear();
+    ui_starmap_common_late_init(&d, ui_starmap_orbit_en_draw_cb, false);
 
 #define UIOBJ_CLEAR_LOCAL() \
     do { \
@@ -128,8 +128,6 @@ void ui_starmap_orbit_en(struct game_s *g, player_id_t active_player)
     } while (0)
 
     UIOBJ_CLEAR_LOCAL();
-
-    uiobj_set_callback_and_delay(ui_starmap_orbit_en_draw_cb, &d, STARMAP_DELAY);
 
     while (!flag_done) {
         int16_t oi1, oi2;

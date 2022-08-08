@@ -191,5 +191,6 @@ extern void ui_starmap_compute_scale(const struct game_s *g);
 extern int ui_starmap_cursor_on_star(const struct game_s *g, const struct starmap_data_s *d, int16_t oi2, player_id_t active_player);
 
 extern bool ui_starmap_common_init(struct game_s *g, struct starmap_data_s *d, player_id_t active_player);
+extern bool ui_starmap_common_late_init(struct starmap_data_s *d, void (*draw_cb) (void *), bool controllable);
 
 #endif
