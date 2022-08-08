@@ -40,6 +40,7 @@ struct starmap_data_s {
     int ruler_to_i;
     bool ruler_from_fleet;
     int gov_highlight;
+    bool controllable;
     int16_t oi_gameopts;
     int16_t oi_design;
     int16_t oi_fleet;

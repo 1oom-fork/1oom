@@ -167,6 +167,8 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
 
     ui_starmap_common_init(g, &d, active_player);
 
+    d.controllable = true;
+
     r = &(g->eto[active_player].orbit[d.from_i]);
 
     if (BOOLVEC_IS_CLEAR(r->visible, PLAYER_NUM)) {
