@@ -41,6 +41,8 @@ enables the following features:
 - New Auto and Retreat buttons for space combat autoresolve
 
 The following new UI features are always enabled/available:
+- It is now possible to select a reloc point within 
+  the normal range of the fleet
 - Smoother galaxy movement screen scrolling
 - Galaxy movement screen scrolling speed is adjustable (-uismscroll)
 - Pressing hot key or changing focus does not change mouse position

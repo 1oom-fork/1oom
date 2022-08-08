@@ -315,7 +315,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             ui_data.ui_main_loop_action = UI_MAIN_LOOP_SPIES_CAUGHT;
             flag_done = true;
             ui_sound_play_sfx_24();
-        } else if ((oi1 == oi_alt_r) && (p->owner == active_player)) {
+        } else if ((oi1 == oi_alt_r) && (p->within_frange[g->active_player] == 1)) {
             for (int i = 0; i < g->galaxy_stars; ++i) {
                 planet_t *p2 = &(g->planet[i]);
                 if ((p2->owner == active_player) && (p2->reloc != i)) {

@@ -868,7 +868,8 @@ void game_planet_ship_build_everywhere(struct game_s *g, player_id_t owner, uint
 int game_planet_reloc_all(struct game_s *g, player_id_t pi)
 {
     uint8_t target = g->planet_focus_i[pi];
-    if (g->planet[target].owner != pi) {
+    struct planet_s *p = &g->planet[target];
+    if (p->within_frange[g->active_player] != 1) {
         return -1;
     }
     int count = 0;
