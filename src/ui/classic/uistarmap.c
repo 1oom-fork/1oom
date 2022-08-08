@@ -244,9 +244,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
     int16_t scrollx = 0, scrolly = 0;
     struct starmap_data_s d;
 
-    d.g = g;
-    d.api = active_player;
-    d.anim_delay = 0;
+    ui_starmap_common_init(g, &d, active_player);
 
     ui_delay_1();
     ui_sound_stop_music();  /* or fade? */
