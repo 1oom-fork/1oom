@@ -147,8 +147,9 @@ void ui_starmap_enroute(struct game_s *g, player_id_t active_player)
 
     d.g = g;
     d.api = active_player;
+    d.from_i = g->planet_focus_i[active_player];
     d.anim_delay = 0;
-    d.bottom_highlight = d.ruler_from_i = d.ruler_to_i = -1;
+    d.bottom_highlight = d.ruler_to_i = -1;
     d.gov_highlight = 0;
 
     r = &(g->enroute[ui_data.starmap.fleet_selected]);
@@ -165,7 +166,6 @@ void ui_starmap_enroute(struct game_s *g, player_id_t active_player)
             break;
         }
     }
-    d.en.from = g->planet_focus_i[active_player];
     d.en.frame_scanner = 0;
     d.en.scanner_delay = 0;
     d.en.frame_ship = 0;
@@ -201,7 +201,7 @@ void ui_starmap_enroute(struct game_s *g, player_id_t active_player)
         ui_starmap_handle_scrollkeys(&d, oi1);
         if (ui_starmap_handle_tag(&d, oi1) != PLANET_NONE) {
             if ((r->owner != active_player) || (d.en.can_move == NO_MOVE)) {
-                d.en.from = g->planet_focus_i[active_player];
+                d.from_i = g->planet_focus_i[active_player];
                 flag_done = true;
                 ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
             }
@@ -242,7 +242,7 @@ void ui_starmap_enroute(struct game_s *g, player_id_t active_player)
             ui_sound_play_sfx_24();
             if (ui_search_set_pos(g, active_player)) {
                 if ((r->owner != active_player) || (d.en.can_move == NO_MOVE)) {
-                    d.en.from = g->planet_focus_i[active_player];
+                    d.from_i = g->planet_focus_i[active_player];
                     flag_done = true;
                     ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
                 }
@@ -282,7 +282,7 @@ do_accept:
                 for (player_id_t j = PLAYER_0; j < g->players; ++j) {
                     if (oi1 == d.oi_tbl_pl_stars[j][i]) {
                         g->planet_focus_i[active_player] = i;
-                        d.en.from = i;
+                        d.from_i = i;
                         ui_data.starmap.orbit_player = j;
                         ui_data.ui_main_loop_action = (j == active_player) ? UI_MAIN_LOOP_ORBIT_OWN_SEL : UI_MAIN_LOOP_ORBIT_EN_SEL;
                         ui_sound_play_sfx_24();
@@ -304,7 +304,7 @@ do_accept:
                 }
                 g->planet_focus_i[active_player] = i;
                 if ((r->owner != active_player) || (d.en.can_move == NO_MOVE)) {
-                    d.en.from = i;
+                    d.from_i = i;
                     flag_done = true;
                     ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
                 }
@@ -352,5 +352,5 @@ do_accept:
     uiobj_unset_callback();
     uiobj_table_clear();
     uiobj_set_help_id(-1);
-    g->planet_focus_i[active_player] = d.en.from;
+    g->planet_focus_i[active_player] = d.from_i;
 }
