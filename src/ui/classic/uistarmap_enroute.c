@@ -58,7 +58,7 @@ static void ui_starmap_enroute_draw_cb(void *vptr)
     }
     ui_draw_filled_rect(225, 8, 314, 180, 7);
     lbxgfx_draw_frame(224, 4, ui_data.gfx.starmap.movextr2, UI_SCREEN_W);
-    if ((r->owner == d->api) && (d->en.can_move != NO_MOVE)) {
+    if (d->controllable) {
         lbxgfx_draw_frame(224, 160, ui_data.gfx.starmap.movextr3, UI_SCREEN_W);
     }
     ui_draw_filled_rect(227, 8, 310, 39, 0);
@@ -80,7 +80,7 @@ static void ui_starmap_enroute_draw_cb(void *vptr)
         y0 = (r->y - ui_data.starmap.y) * 2 + 8;
         {
             const uint8_t *ctbl;
-            ctbl = ((r->owner == d->api) && (d->en.can_move != NO_MOVE) && (!ui_starmap_enroute_in_frange(d))) ? colortbl_line_red : colortbl_line_green;
+            ctbl = (d->controllable && !ui_starmap_enroute_in_frange(d)) ? colortbl_line_red : colortbl_line_green;
             ui_draw_line_limit_ctbl(x0 + 4, y0 + 1, x1 + 6, y1 + 6, ctbl, 5, ui_data.starmap.line_anim_phase);
         }
         gfx = ui_data.gfx.starmap.smalship[e->banner];
@@ -91,7 +91,7 @@ static void ui_starmap_enroute_draw_cb(void *vptr)
         }
         lbxgfx_draw_frame_offs(x0, y0, gfx, UI_SCREEN_W);
         dist = game_get_min_dist(g, r->owner, g->planet_focus_i[d->api]);
-        if ((r->owner == d->api) && (d->en.can_move != NO_MOVE) && !ui_starmap_enroute_in_frange(d)) {
+        if (d->controllable && !ui_starmap_enroute_in_frange(d)) {
             /* FIXME use proper positioning for varying str length */
             sprintf(buf, "  %s   %i %s.", game_str_sm_outsr, dist - e->fuel_range, game_str_sm_parsecs2);
             lbxfont_select_set_12_4(2, 0, 0, 0);
@@ -131,8 +131,7 @@ static void ui_starmap_enroute_draw_cb(void *vptr)
         ui_data.starmap.scanner_delay = 0;
     }
     if (1
-      && (r->owner == d->api)
-      && (d->en.can_move != NO_MOVE)
+      && d->controllable
       && (!ui_starmap_enroute_in_frange(d) || ui_starmap_enroute_locked_by_retreat(d, pto))
     ) {
         lbxgfx_set_new_frame(ui_data.gfx.starmap.reloc_bu_accept, 1);
@@ -155,19 +154,16 @@ void ui_starmap_enroute(struct game_s *g, player_id_t active_player)
     ui_starmap_common_init(g, &d, active_player);
 
     r = &(g->enroute[ui_data.starmap.fleet_selected]);
-    d.en.can_move = g->eto[active_player].have_hyperspace_comm ? GOT_HYPERCOMM : NO_MOVE;
     d.en.pon = PLANET_NONE;
     for (int i = 0; i < g->galaxy_stars; ++i) {
         const planet_t *p;
         p = &g->planet[i];
         if ((p->x == r->x) && (p->y == r->y)) {
-            if (d.en.can_move == NO_MOVE) {
-                d.en.can_move = ON_PLANET;
-            }
             d.en.pon = i;
             break;
         }
     }
+    d.controllable = (g->eto[active_player].have_hyperspace_comm || d.en.pon != PLANET_NONE) && (r->owner == active_player);
     d.from = g->planet_focus_i[active_player];
     ui_data.starmap.frame_scanner = 0;
     ui_data.starmap.scanner_delay = 0;
@@ -233,7 +229,7 @@ void ui_starmap_enroute(struct game_s *g, player_id_t active_player)
         } else if (oi1 == oi_search) {
             ui_sound_play_sfx_24();
             if (ui_search_set_pos(g, active_player)) {
-                if ((r->owner != active_player) || (d.can_move == NO_MOVE)) {
+                if (!d.controllable) {
                     d.from = g->planet_focus_i[active_player];
                     flag_done = true;
                     ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
@@ -259,7 +255,7 @@ void ui_starmap_enroute(struct game_s *g, player_id_t active_player)
                 break;
             }
         }
-        if ((r->owner != active_player) || (d.en.can_move == NO_MOVE)) {
+        if (!d.controllable) {
             for (int i = 0; i < g->transport_num; ++i) {
                 if (oi1 == d.oi_tbl_transport[i]) {
                     ui_data.starmap.fleet_selected = i;
@@ -290,7 +286,7 @@ void ui_starmap_enroute(struct game_s *g, player_id_t active_player)
         for (int i = 0; i < g->galaxy_stars; ++i) {
             if (oi1 == d.oi_tbl_stars[i]) {
                 g->planet_focus_i[active_player] = i;
-                if ((r->owner != active_player) || (d.en.can_move == NO_MOVE)) {
+                if (!d.controllable) {
                     d.from = i;
                     flag_done = true;
                     ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
@@ -323,7 +319,7 @@ void ui_starmap_enroute(struct game_s *g, player_id_t active_player)
             /* uiobj_set_limits(STARMAP_LIMITS); */
             ui_starmap_fill_oi_tbls(&d);
             ui_starmap_fill_oi_tbl_stars(&d);
-            if ((r->owner == active_player) && (d.en.can_move != NO_MOVE)) {
+            if (d.controllable) {
                 oi_cancel = uiobj_add_t0(227, 163, "", ui_data.gfx.starmap.reloc_bu_cancel, MOO_KEY_ESCAPE);
                 if (ui_starmap_enroute_in_frange(&d) && !ui_starmap_enroute_locked_by_retreat(&d, g->planet_focus_i[active_player])) {
                     oi_accept = uiobj_add_t0(271, 163, "", ui_data.gfx.starmap.reloc_bu_accept, MOO_KEY_SPACE);
