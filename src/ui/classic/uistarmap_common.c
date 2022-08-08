@@ -948,3 +948,10 @@ int ui_starmap_enemy_incoming(const struct game_s *g, player_id_t pi, int i, boo
     } while (i != t);
     return i;
 }
+
+void ui_starmap_common_init(struct game_s *g, struct starmap_data_s *d, player_id_t active_player)
+{
+    d->g = g;
+    d->api = active_player;
+    d->anim_delay = 0;
+}
