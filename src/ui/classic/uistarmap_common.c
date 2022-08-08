@@ -1296,6 +1296,7 @@ bool ui_starmap_common_init(struct game_s *g, struct starmap_data_s *d, player_i
     d->gov_highlight = 0;
     d->controllable = false;
     d->valid_target_cb = NULL;
+    d->on_accept_cb = NULL;
 
     return true;
 }
@@ -1320,6 +1321,12 @@ bool ui_starmap_common_handle_oi(struct game_s *g, struct starmap_data_s *d, boo
     if (ui_starmap_handle_bottom_buttons(d, flag_done, oi1)
      || ui_starmap_handle_oi_fleet(g, d, flag_done, oi1)) {
         ui_sound_play_sfx_24();
+        return true;
+    } else if (oi1 == d->oi_accept && d->on_accept_cb != NULL) {
+        ui_sound_play_sfx_24();
+        d->on_accept_cb(d);
+        ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
+        *flag_done = true;
         return true;
     }
     return false;

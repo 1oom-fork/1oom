@@ -159,10 +159,32 @@ static bool ui_starmap_trans_valid_destination(const struct starmap_data_s *d, i
         && (p->type >= g->eto[d->api].have_colony_for);
 }
 
+static void ui_starmap_trans_do_accept(struct starmap_data_s *d)
+{
+    struct game_s *g = d->g;
+    uint8_t planet_i = g->planet_focus_i[d->api];
+    planet_t *pt = &g->planet[planet_i];
+    planet_t *pf = &g->planet[d->from_i];
+
+    if (BOOLVEC_IS1(pt->explored, d->api) && (pt->within_frange[d->api] == 1)) {
+        pf->trans_dest = planet_i;
+        pf->trans_num = d->tr.num;
+    }
+    if (d->from_i == planet_i) {
+        pf->trans_num = 0;
+    }
+    if (pf->trans_num && pf->owner != PLAYER_NONE) {
+        if(BOOLVEC_IS1(pf->extras, PLANET_EXTRAS_GOVERNOR)) {
+            game_update_production(g);
+            game_planet_govern(g, pf);
+        }
+    }
+}
+
 void ui_starmap_trans(struct game_s *g, player_id_t active_player)
 {
     bool flag_done = false;
-    int16_t oi_scroll, oi_cancel, oi_accept, oi_plus, oi_minus, oi_equals, oi_search,
+    int16_t oi_scroll, oi_cancel, oi_plus, oi_minus, oi_equals, oi_search,
             oi_f2, oi_f3, oi_f4, oi_f5, oi_f6, oi_f7, oi_f8, oi_f9, oi_f10,
             oi_a;
     int16_t scrollx = 0, scrolly = 0;
@@ -173,6 +195,7 @@ void ui_starmap_trans(struct game_s *g, player_id_t active_player)
 
     ui_starmap_common_init(g, &d, active_player);
     d.valid_target_cb = ui_starmap_trans_valid_destination;
+    d.on_accept_cb = ui_starmap_trans_do_accept;
 
     d.tr.blink = false;
     {
@@ -195,7 +218,6 @@ void ui_starmap_trans(struct game_s *g, player_id_t active_player)
     do { \
         STARMAP_UIOBJ_CLEAR_COMMON(); \
         STARMAP_UIOBJ_CLEAR_FX(); \
-        oi_accept = UIOBJI_INVALID; \
         oi_cancel = UIOBJI_INVALID; \
         oi_plus = UIOBJI_INVALID; \
         oi_minus = UIOBJI_INVALID; \
@@ -207,11 +229,9 @@ void ui_starmap_trans(struct game_s *g, player_id_t active_player)
 
     while (!flag_done) {
         int16_t oi1, oi2;
-        const planet_t *pt;
         oi1 = uiobj_handle_input_cond();
         oi2 = uiobj_at_cursor();
         ui_delay_prepare();
-        pt = &(g->planet[g->planet_focus_i[active_player]]);
         if (ui_starmap_common_handle_oi(g, &d, &flag_done, oi1, oi2)) {
         } else if (oi1 == oi_search) {
             ui_sound_play_sfx_24();
@@ -312,24 +332,6 @@ void ui_starmap_trans(struct game_s *g, player_id_t active_player)
             ui_sound_play_sfx_06();
             flag_done = true;
             ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
-        } else if (oi1 == oi_accept) {
-do_accept:
-            ui_sound_play_sfx_24();
-            flag_done = true;
-            if (BOOLVEC_IS1(pt->explored, active_player) && (pt->within_frange[active_player] == 1)) {
-                p->trans_dest = g->planet_focus_i[active_player];
-                p->trans_num = d.tr.num;
-            }
-            if (d.from_i == g->planet_focus_i[active_player]) {
-                p->trans_num = 0;
-            }
-            if (p->trans_num && p->owner != PLAYER_NONE) {
-                if(BOOLVEC_IS1(p->extras, PLANET_EXTRAS_GOVERNOR)) {
-                    game_update_production(g);
-                    game_planet_govern(g, p);
-                }
-            }
-            ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
         } else if (oi1 == oi_minus) {
             ui_sound_play_sfx_24();
             if (kbd_is_modifier(MOO_MOD_CTRL)) {
@@ -365,8 +367,11 @@ do_accept:
         for (int i = 0; i < g->galaxy_stars; ++i) {
             if (oi1 == d.oi_tbl_stars[i]) {
                 if (d.controllable && d.valid_target_cb(&d, i) && (g->planet_focus_i[active_player] == i)) {
-                    oi1 = oi_accept;
-                    goto do_accept;
+                    ui_sound_play_sfx_24();
+                    d.on_accept_cb(&d);
+                    ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
+                    flag_done = true;
+                    break;
                 }
                 d.tr.other = true;
                 g->planet_focus_i[active_player] = i;
@@ -377,7 +382,6 @@ do_accept:
         d.ruler_to_i = ui_starmap_cursor_on_star(g, &d, oi2, active_player);
         d.ruler_from_fleet = false;
         if (!flag_done) {
-            pt = &(g->planet[g->planet_focus_i[active_player]]);
             ui_starmap_select_bottom_highlight(&d, oi2);
             ui_starmap_trans_draw_cb(&d);
             uiobj_table_clear();
@@ -395,7 +399,7 @@ do_accept:
             oi_cancel = uiobj_add_t0(227, 163, "", ui_data.gfx.starmap.reloc_bu_cancel, MOO_KEY_ESCAPE);
             if (d.valid_target_cb(&d, g->planet_focus_i[active_player])) {
                 if (d.tr.other) {
-                    oi_accept = uiobj_add_t0(271, 163, "", ui_data.gfx.starmap.reloc_bu_accept, MOO_KEY_SPACE);
+                    d.oi_accept = uiobj_add_t0(271, 163, "", ui_data.gfx.starmap.reloc_bu_accept, MOO_KEY_SPACE);
                     uiobj_add_slider_int(258, 124, 0, trans_max, 41, 8, &d.tr.num);
                     oi_minus = uiobj_add_mousearea(252, 124, 256, 131, MOO_KEY_MINUS);
                     oi_plus = uiobj_add_mousearea(301, 124, 305, 131, MOO_KEY_PLUS);

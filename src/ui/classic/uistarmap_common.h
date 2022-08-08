@@ -42,6 +42,7 @@ struct starmap_data_s {
     int gov_highlight;
     bool controllable;
     bool (*valid_target_cb) (const struct starmap_data_s *, int planet_i);
+    void (*on_accept_cb) (struct starmap_data_s *);
     int16_t oi_gameopts;
     int16_t oi_design;
     int16_t oi_fleet;
@@ -50,6 +51,7 @@ struct starmap_data_s {
     int16_t oi_planets;
     int16_t oi_tech;
     int16_t oi_next_turn;
+    int16_t oi_accept;
     int16_t oi_tbl_stars[PLANETS_MAX];
     int16_t oi_ctrl_left;
     int16_t oi_ctrl_l2;
@@ -135,6 +137,7 @@ struct starmap_data_s {
         d.oi_planets = UIOBJI_INVALID; \
         d.oi_tech = UIOBJI_INVALID; \
         d.oi_next_turn = UIOBJI_INVALID; \
+        d.oi_accept = UIOBJI_INVALID; \
         for (int i = 0; i < g->galaxy_stars; ++i) { \
             d.oi_tbl_stars[i] = UIOBJI_INVALID; \
         } \
