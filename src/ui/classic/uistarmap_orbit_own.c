@@ -169,7 +169,7 @@ static void ui_starmap_orbit_own_do_accept(struct starmap_data_s *d)
 void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
 {
     bool flag_done = false;
-    int16_t oi_scroll, oi_cancel, oi_search, oi_cycle,
+    int16_t oi_cancel, oi_search, oi_cycle,
             oi_f2, oi_f3, oi_f4, oi_f5, oi_f6, oi_f7, oi_f8, oi_f9, oi_f10,
             oi_tbl_p[NUM_SHIPDESIGNS],
             oi_tbl_m[NUM_SHIPDESIGNS],
@@ -177,8 +177,7 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
             oi_tbl_n[NUM_SHIPDESIGNS],
             oi_tbl_s[NUM_SHIPDESIGNS]
             ;
-    int16_t scrollx = 0, scrolly = 0, scrollship = 0;
-    uint8_t scrollz = starmap_scale;
+    int16_t scrollship = 0;
     struct starmap_data_s d;
     const fleet_orbit_t *r;
     const shipcount_t *os;
@@ -348,8 +347,6 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
             ui_sound_play_sfx_06();
             flag_done = true;
             ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
-        } else if (oi1 == oi_scroll) {
-            ui_starmap_scroll(g, scrollx, scrolly, scrollz);
         }
         ui_starmap_handle_tag(&d, oi1);
         ui_starmap_set_ruler(&d, oi2);
@@ -448,7 +445,6 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
                 d.oi_accept = uiobj_add_t0(271, 180, "", ui_data.gfx.starmap.reloc_bu_accept, MOO_KEY_SPACE);
             }
             oi_cycle = uiobj_add_inputkey(MOO_KEY_TAB);
-            oi_scroll = uiobj_add_tb(6, 6, 2, 2, 108, 86, &scrollx, &scrolly, &scrollz, ui_scale);
             oi_search = uiobj_add_inputkey(MOO_KEY_SLASH);
             for (int i = 0; i < d.oo.sn0.num; ++i) {
                 oi_tbl_p[i] = uiobj_add_t0(288, 35 + i * 26, "", ui_data.gfx.starmap.move_but_p, (cursor_over == i) ? MOO_KEY_GREATER : MOO_KEY_UNKNOWN);
