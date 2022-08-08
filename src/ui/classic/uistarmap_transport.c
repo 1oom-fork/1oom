@@ -148,12 +148,8 @@ void ui_starmap_transport(struct game_s *g, player_id_t active_player)
     struct starmap_data_s d;
     transport_t *r = &(g->transport[ui_data.starmap.fleet_selected]);
 
-    d.g = g;
-    d.api = active_player;
-    d.from_i = g->planet_focus_i[active_player];
-    d.anim_delay = 0;
-    d.bottom_highlight = d.ruler_to_i = -1;
-    d.gov_highlight = 0;
+    ui_starmap_common_init(g, &d, active_player);
+
     d.ts.in_frange = false;
     d.ts.frame_ship = 0;
     d.ts.frame_scanner = 0;

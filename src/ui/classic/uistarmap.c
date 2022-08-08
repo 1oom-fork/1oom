@@ -234,12 +234,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
     uint8_t scrollz = starmap_scale;
     struct starmap_data_s d;
 
-    d.g = g;
-    d.api = active_player;
-    d.from_i = g->planet_focus_i[active_player];
-    d.anim_delay = 0;
-    d.bottom_highlight = d.ruler_to_i = -1;
-    d.gov_highlight = 0;
+    ui_starmap_common_init(g, &d, active_player);
 
     ui_delay_1();
     ui_sound_stop_music();  /* or fade? */

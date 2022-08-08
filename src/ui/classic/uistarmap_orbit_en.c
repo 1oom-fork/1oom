@@ -96,12 +96,8 @@ void ui_starmap_orbit_en(struct game_s *g, player_id_t active_player)
     struct starmap_data_s d;
     shipcount_t *os;
 
-    d.g = g;
-    d.api = active_player;
-    d.from_i = g->planet_focus_i[active_player];
-    d.anim_delay = 0;
-    d.bottom_highlight = d.ruler_to_i = -1;
-    d.gov_highlight = 0;
+    ui_starmap_common_init(g, &d, active_player);
+
     d.oe.frame_scanner = 0;
     d.oe.scanner_delay = 0;
     d.oe.player = ui_data.starmap.orbit_player;
