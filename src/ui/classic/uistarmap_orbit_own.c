@@ -367,7 +367,7 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
                 break;
             }
         }
-        d.ruler_to_i = ui_starmap_cursor_on_star(g, &d, oi2, active_player);
+        ui_starmap_set_ruler(&d, oi2);
         d.ruler_from_fleet = true;
         cursor_over = -1;
         for (int i = 0; i < d.oo.sn0.num; ++i) {

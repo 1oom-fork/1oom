@@ -373,7 +373,7 @@ void ui_starmap_trans(struct game_s *g, player_id_t active_player)
                 break;
             }
         }
-        d.ruler_to_i = ui_starmap_cursor_on_star(g, &d, oi2, active_player);
+        ui_starmap_set_ruler(&d, oi2);
         d.ruler_from_fleet = false;
         if (!flag_done) {
             ui_starmap_select_bottom_highlight(&d, oi2);

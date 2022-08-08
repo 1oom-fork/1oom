@@ -666,7 +666,7 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
             }
         }
     }
-    if (ui_extra_enabled && d->from_i != PLANET_NONE && d->ruler_to_i >= 0 && d->from_i != d->ruler_to_i) {
+    if (d->ruler_to_i != PLANET_NONE) {
         const planet_t *p = &g->planet[d->ruler_to_i], *q = &g->planet[d->from_i];
         int from_x, from_y, to_x, to_y;
         if (d->ruler_from_fleet) {
@@ -1169,19 +1169,32 @@ void ui_starmap_select_bottom_highlight(struct starmap_data_s *d, int16_t oi)
     }
 }
 
-/* Returns the index of the star that the player is pointing on. Returns -1 if the player is not
- * pointing at a star, or is pointing at the currently selected star. */
-int ui_starmap_cursor_on_star(const struct game_s *g, const struct starmap_data_s *d, int16_t oi2, player_id_t active_player)
+/* Returns the index of the star that the player is pointing on. */
+/* Returns -1 if the player is not pointing at a star. */
+static uint8_t ui_starmap_cursor_on_star(const struct game_s *g, const struct starmap_data_s *d, int16_t oi2)
 {
+    if (oi2 == 0) {
+        return PLANET_NONE;
+    }
     for (int i = 0; i < g->galaxy_stars; ++i) {
-        if ((oi2 == d->oi_tbl_stars[i]) && !g->evn.build_finished_num[active_player]) {
-            if (i == g->planet_focus_i[active_player]) {
-                break;
-            }
+        if (oi2 == d->oi_tbl_stars[i]) {
             return i;
         }
     }
-    return -1;
+    return PLANET_NONE;
+}
+
+void ui_starmap_set_ruler(struct starmap_data_s *d, int16_t oi)
+{
+    const struct game_s *g = d->g;
+    d->ruler_to_i = PLANET_NONE;
+    if (!ui_extra_enabled || g->evn.build_finished_num[d->api]) {
+        return;
+    }
+    d->ruler_to_i = ui_starmap_cursor_on_star(g, d, oi);
+    if(d->ruler_to_i == d->from_i) {
+        d->ruler_to_i = PLANET_NONE;
+    }
 }
 
 static uint8_t ui_starmap_cursor_on_orbit(const struct starmap_data_s *d, int16_t oi, player_id_t orbit_player_i)
