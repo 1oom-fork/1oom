@@ -169,6 +169,8 @@ void ui_starmap_trans(struct game_s *g, player_id_t active_player)
 
     ui_starmap_common_init(g, &d, active_player);
 
+    d.controllable = true;
+
     d.tr.blink = false;
     {
         uint8_t pi = g->planet_focus_i[active_player];

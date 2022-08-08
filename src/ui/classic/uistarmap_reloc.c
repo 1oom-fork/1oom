@@ -78,6 +78,8 @@ void ui_starmap_reloc(struct game_s *g, player_id_t active_player)
 
     ui_starmap_common_init(g, &d, active_player);
 
+    d.controllable = true;
+
     {
         uint8_t oldreloc;
         uint8_t pi = g->planet_focus_i[active_player];
