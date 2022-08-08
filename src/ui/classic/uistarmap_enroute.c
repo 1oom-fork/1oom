@@ -146,9 +146,7 @@ void ui_starmap_enroute(struct game_s *g, player_id_t active_player)
     struct starmap_data_s d;
     fleet_enroute_t *r;
 
-    d.g = g;
-    d.api = active_player;
-    d.anim_delay = 0;
+    ui_starmap_common_init(g, &d, active_player);
 
     r = &(g->enroute[ui_data.starmap.fleet_selected]);
     d.en.can_move = g->eto[active_player].have_hyperspace_comm ? GOT_HYPERCOMM : NO_MOVE;
