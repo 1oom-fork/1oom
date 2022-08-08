@@ -1170,6 +1170,11 @@ bool ui_starmap_common_init(struct game_s *g, struct starmap_data_s *d, player_i
 bool ui_starmap_common_late_init(struct starmap_data_s *d, void (*draw_cb) (void *), bool controllable)
 {
     d->controllable = controllable;
+    if (controllable) {
+        ui_cursor_setup_area(2, &ui_cursor_area_tbl[1]);
+    } else {
+        ui_cursor_setup_area(2, &ui_cursor_area_tbl[3]);
+    }
     uiobj_table_clear();
     uiobj_set_callback_and_delay(draw_cb, d, STARMAP_DELAY);
 

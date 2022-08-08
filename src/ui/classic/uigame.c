@@ -90,27 +90,22 @@ ui_turn_action_t ui_game_turn(struct game_s *g, int *load_game_i_ptr, int pi)
         ui_data.flag_scrap_for_new_design = false;
         switch (ui_data.ui_main_loop_action) {
             case UI_MAIN_LOOP_STARMAP:
-                ui_cursor_setup_area(2, &ui_cursor_area_tbl[3]);
                 ui_starmap_do(g, pi);
                 break;
             case UI_MAIN_LOOP_RELOC:
-                ui_cursor_setup_area(2, &ui_cursor_area_tbl[1]);
                 ui_starmap_reloc(g, pi);
                 break;
             case UI_MAIN_LOOP_TRANS:
-                ui_cursor_setup_area(2, &ui_cursor_area_tbl[1]);
                 ui_starmap_trans(g, pi);
                 break;
             case UI_MAIN_LOOP_ORBIT_OWN_SEL:
                 BOOLVEC_CLEAR(ui_data.starmap.select_prio_fleet, FLEET_ENROUTE_MAX);
                 BOOLVEC_CLEAR(ui_data.starmap.select_prio_trans, TRANSPORT_MAX);
-                ui_cursor_setup_area(2, &ui_cursor_area_tbl[3]);
                 ui_starmap_orbit_own(g, pi);
                 break;
             case UI_MAIN_LOOP_ORBIT_EN_SEL:
                 BOOLVEC_CLEAR(ui_data.starmap.select_prio_fleet, FLEET_ENROUTE_MAX);
                 BOOLVEC_CLEAR(ui_data.starmap.select_prio_trans, TRANSPORT_MAX);
-                ui_cursor_setup_area(2, &ui_cursor_area_tbl[3]);
                 ui_starmap_orbit_en(g, pi);
                 break;
             case UI_MAIN_LOOP_TRANSPORT_SEL:
@@ -119,7 +114,6 @@ ui_turn_action_t ui_game_turn(struct game_s *g, int *load_game_i_ptr, int pi)
                     BOOLVEC_CLEAR(ui_data.starmap.select_prio_trans, TRANSPORT_MAX);
                 }
                 BOOLVEC_SET1(ui_data.starmap.select_prio_trans, ui_data.starmap.fleet_selected);
-                ui_cursor_setup_area(2, &ui_cursor_area_tbl[3]);
                 ui_starmap_transport(g, pi);
                 break;
             case UI_MAIN_LOOP_ENROUTE_SEL:
@@ -128,7 +122,6 @@ ui_turn_action_t ui_game_turn(struct game_s *g, int *load_game_i_ptr, int pi)
                     BOOLVEC_CLEAR(ui_data.starmap.select_prio_trans, TRANSPORT_MAX);
                 }
                 BOOLVEC_SET1(ui_data.starmap.select_prio_fleet, ui_data.starmap.fleet_selected);
-                ui_cursor_setup_area(2, &ui_cursor_area_tbl[3]);
                 ui_starmap_enroute(g, pi);
                 break;
             case UI_MAIN_LOOP_GAMEOPTS:
