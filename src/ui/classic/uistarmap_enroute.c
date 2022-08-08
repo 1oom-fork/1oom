@@ -170,9 +170,8 @@ void ui_starmap_enroute(struct game_s *g, player_id_t active_player)
     ui_starmap_sn0_setup(&d.en.sn0, g->eto[r->owner].shipdesigns_num, r->ships);
     ui_starmap_update_reserve_fuel(g, &d.en.sn0, r->ships, active_player);
 
-    d.controllable = (d.en.can_move != NO_MOVE) && (r->owner == active_player);
-
-    uiobj_table_clear();
+    ui_starmap_common_late_init(&d, ui_starmap_enroute_draw_cb,
+                                (d.en.can_move != NO_MOVE) && (r->owner == active_player));
 
 #define UIOBJ_CLEAR_LOCAL() \
     do { \
@@ -184,7 +183,6 @@ void ui_starmap_enroute(struct game_s *g, player_id_t active_player)
     UIOBJ_CLEAR_LOCAL();
 
     uiobj_set_help_id(3);
-    uiobj_set_callback_and_delay(ui_starmap_enroute_draw_cb, &d, STARMAP_DELAY);
 
     while (!flag_done) {
         planet_t *p;

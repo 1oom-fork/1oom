@@ -159,9 +159,8 @@ void ui_starmap_transport(struct game_s *g, player_id_t active_player)
     d.ts.ds.xoff1 = 0;
     d.ts.ds.xoff2 = 0;
 
-    d.controllable = (d.ts.can_move != NO_MOVE) && (r->owner == active_player);
-
-    uiobj_table_clear();
+    ui_starmap_common_late_init(&d, ui_starmap_transport_draw_cb,
+                                (d.ts.can_move != NO_MOVE) && (r->owner == active_player));
 
 #define UIOBJ_CLEAR_LOCAL() \
     do { \
@@ -173,7 +172,6 @@ void ui_starmap_transport(struct game_s *g, player_id_t active_player)
     UIOBJ_CLEAR_LOCAL();
 
     uiobj_set_help_id(3);
-    uiobj_set_callback_and_delay(ui_starmap_transport_draw_cb, &d, STARMAP_DELAY);
 
     while (!flag_done) {
         int16_t oi1, oi2;

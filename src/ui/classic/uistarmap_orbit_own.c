@@ -167,8 +167,6 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
 
     ui_starmap_common_init(g, &d, active_player);
 
-    d.controllable = true;
-
     r = &(g->eto[active_player].orbit[d.from_i]);
 
     if (BOOLVEC_IS_CLEAR(r->visible, PLAYER_NUM)) {
@@ -183,7 +181,7 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
     d.oo.in_frange = false;
     ui_starmap_sn0_setup(&d.oo.sn0, NUM_SHIPDESIGNS, d.oo.ships);
 
-    uiobj_table_clear();
+    ui_starmap_common_late_init(&d, ui_starmap_orbit_own_draw_cb, true);
 
 #define UIOBJ_CLEAR_LOCAL() \
     do { \
@@ -198,7 +196,6 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
     UIOBJ_CLEAR_LOCAL();
 
     uiobj_set_help_id(16);
-    uiobj_set_callback_and_delay(ui_starmap_orbit_own_draw_cb, &d, STARMAP_DELAY);
 
     while (!flag_done) {
         planet_t *p;
