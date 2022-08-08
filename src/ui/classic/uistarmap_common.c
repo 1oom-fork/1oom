@@ -759,7 +759,7 @@ void ui_starmap_handle_oi_ctrl(struct starmap_data_s *d, int16_t oi)
 #undef YSTEP
 }
 
-void ui_starmap_handle_scrollkeys(struct starmap_data_s *d, int16_t oi)
+static void ui_starmap_handle_scrollkeys(struct starmap_data_s *d, int16_t oi)
 {
     const struct game_s *g = d->g;
     int x, y, xh, yh;
@@ -821,6 +821,40 @@ void ui_starmap_handle_scrollkeys(struct starmap_data_s *d, int16_t oi)
     }
     ui_data.starmap.xhold = xh;
     ui_data.starmap.yhold = yh;
+}
+
+static bool ui_starmap_handle_bottom_buttons(struct starmap_data_s *d, bool *flag_done, int16_t oi)
+{
+    bool ret = false;
+    if (oi == d->oi_gameopts) {
+        ui_data.ui_main_loop_action = UI_MAIN_LOOP_GAMEOPTS;
+        ret = true;
+    } else if (oi == d->oi_design) {
+        ui_data.ui_main_loop_action = UI_MAIN_LOOP_DESIGN;
+        ret = true;
+    } else if (oi == d->oi_fleet) {
+        ui_data.ui_main_loop_action = UI_MAIN_LOOP_FLEET;
+        ret = true;
+    } else if (oi == d->oi_map) {
+        ui_data.ui_main_loop_action = UI_MAIN_LOOP_MAP;
+        ret = true;
+    } else if (oi == d->oi_races) {
+        ui_data.ui_main_loop_action = UI_MAIN_LOOP_RACES;
+        ret = true;
+    } else if (oi == d->oi_planets) {
+        ui_data.ui_main_loop_action = UI_MAIN_LOOP_PLANETS;
+        ret = true;
+    } else if (oi == d->oi_tech) {
+        ui_data.ui_main_loop_action = UI_MAIN_LOOP_TECH;
+        ret = true;
+    } else if (oi == d->oi_next_turn) {
+        ui_data.ui_main_loop_action = UI_MAIN_LOOP_NEXT_TURN;
+        ret = true;
+    }
+    if (ret) {
+        *flag_done = true;
+    }
+    return ret;
 }
 
 uint8_t ui_starmap_handle_tag(struct starmap_data_s *d, int16_t oi)
@@ -1154,4 +1188,14 @@ bool ui_starmap_common_late_init(struct starmap_data_s *d, void (*draw_cb) (void
     uiobj_set_callback_and_delay(draw_cb, d, STARMAP_DELAY);
 
     return true;
+}
+
+bool ui_starmap_common_handle_oi(struct game_s *g, struct starmap_data_s *d, bool *flag_done, int16_t oi1, int16_t oi2)
+{
+    ui_starmap_handle_scrollkeys(d, oi1);
+    if (ui_starmap_handle_bottom_buttons(d, flag_done, oi1)) {
+        ui_sound_play_sfx_24();
+        return true;
+    }
+    return false;
 }
