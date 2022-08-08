@@ -165,14 +165,7 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
     const shipcount_t *os;
     const uint8_t shiptypes[NUM_SHIPDESIGNS] = { 0, 1, 2, 3, 4, 5 };
 
-    d.g = g;
-    d.api = active_player;
-    d.from_i = g->planet_focus_i[active_player];
-    d.anim_delay = 0;
-
-    d.bottom_highlight = d.ruler_to_i = -1;
-
-    d.gov_highlight = 0;
+    ui_starmap_common_init(g, &d, active_player);
 
     r = &(g->eto[active_player].orbit[d.from_i]);
 

@@ -1152,3 +1152,16 @@ int ui_starmap_cursor_on_star(const struct game_s *g, const struct starmap_data_
     }
     return -1;
 }
+
+bool ui_starmap_common_init(struct game_s *g, struct starmap_data_s *d, player_id_t active_player)
+{
+    d->g = g;
+    d->api = active_player;
+    d->from_i = g->planet_focus_i[active_player];
+    d->anim_delay = 0;
+    d->bottom_highlight = -1;
+    d->ruler_to_i = -1;
+    d->gov_highlight = 0;
+
+    return true;
+}

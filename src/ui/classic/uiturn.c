@@ -54,12 +54,9 @@ void ui_turn_msg(struct game_s *g, int pi, const char *str)
     d.g = g;
     d.api = pi;
     d.str = str;
-    d.sm.g = g;
-    d.sm.api = pi;
-    d.sm.from_i = g->planet_focus_i[pi];
-    d.sm.bottom_highlight = d.sm.ruler_to_i = -1;
-    d.sm.gov_highlight = 0;
-    d.sm.anim_delay = 0;
+
+    ui_starmap_common_init(g, &d.sm, pi);
+
     uiobj_set_callback_and_delay(ui_turn_msg_draw_cb, &d, 3);
     uiobj_table_clear();
     uiobj_add_mousearea(0, 0, UI_SCREEN_W - 1, UI_SCREEN_H -1, MOO_KEY_SPACE);

@@ -95,12 +95,9 @@ void ui_newships(struct game_s *g, int pi)
     ui_switch_1(g, pi);
     d.g = g;
     d.api = pi;
-    d.sm.g = g;
-    d.sm.api = pi;
-    d.sm.from_i = g->planet_focus_i[pi];
-    d.sm.anim_delay = 0;
-    d.sm.bottom_highlight = d.sm.ruler_to_i = -1;
-    d.sm.gov_highlight = 0;
+
+    ui_starmap_common_init(g, &d.sm, pi);
+
     d.ds.xoff1 = 0;
     d.ds.xoff2 = 0;
     newships_load_data(&d);
