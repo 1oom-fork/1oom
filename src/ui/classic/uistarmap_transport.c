@@ -137,9 +137,7 @@ void ui_starmap_transport(struct game_s *g, player_id_t active_player)
     struct starmap_data_s d;
     transport_t *r = &(g->transport[ui_data.starmap.fleet_selected]);
 
-    d.g = g;
-    d.api = active_player;
-    d.anim_delay = 0;
+    ui_starmap_common_init(g, &d, active_player);
     ui_data.starmap.frame_ship = 0;
     ui_data.starmap.frame_scanner = 0;
     ui_data.starmap.scanner_delay = 0;
