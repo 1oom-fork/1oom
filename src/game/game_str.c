@@ -313,6 +313,9 @@ const char *game_str_sm_trbdb2 = "was destroyed before the transports arrived le
 
 const char *game_str_sm_inorbit = "In Orbit";
 
+const char *game_str_sm_ship_everywhere = "Build everywhere";
+const char *game_str_sm_ship_replace = "Replace";
+
 const char *game_str_tbl_roman[31] = {
     " ", "I", "II", "III", "IV", "V", "VI", "VII",
     "VIII", "IX", "X", "XI", "XII", "XIII", "XIV", "XV",
