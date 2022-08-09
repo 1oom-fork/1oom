@@ -81,6 +81,7 @@ libuiclassic_a_SOURCES = \
     uistarmap_orbit_en.c \
     uistarmap_orbit_own.c \
     uistarmap_reloc.c \
+    uistarmap_ships.c \
     uistarmap_trans.c \
     uistarmap_transport.c \
     uistarview.c \
