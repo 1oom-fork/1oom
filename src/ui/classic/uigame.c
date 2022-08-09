@@ -83,7 +83,9 @@ ui_turn_action_t ui_game_turn(struct game_s *g, int *load_game_i_ptr, int pi)
                 g->evn.build_finished_num[pi] = 0;
                 g->planet_focus_i[pi] = ui_data.start_planet_focus_i;
             }
-            ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
+            if (ui_data.ui_main_loop_action != UI_MAIN_LOOP_PLANET_SHIPS) {
+                ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
+            }
             ui_starmap_set_pos_focus(g, pi);
         }
 
@@ -94,6 +96,9 @@ ui_turn_action_t ui_game_turn(struct game_s *g, int *load_game_i_ptr, int pi)
                 break;
             case UI_MAIN_LOOP_RELOC:
                 ui_starmap_reloc(g, pi);
+                break;
+            case UI_MAIN_LOOP_PLANET_SHIPS:
+                ui_starmap_ships(g, pi);
                 break;
             case UI_MAIN_LOOP_TRANS:
                 ui_starmap_trans(g, pi);

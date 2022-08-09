@@ -45,6 +45,7 @@ struct starmap_data_s {
     int gov_highlight;
     bool controllable;
     bool hide_focus;
+    bool disable_tags;
     bool (*valid_target_cb) (const struct starmap_data_s *, int planet_i);
     void (*on_accept_cb) (struct starmap_data_s *);
     int16_t oi_gameopts;
