@@ -228,7 +228,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             oi_f2, oi_f3, oi_f4, oi_f5, oi_f6, oi_f7, oi_f8, oi_f9, oi_f10,
             oi_alt_galaxy, oi_alt_m, oi_alt_c, oi_alt_p, oi_alt_events,
             oi_governor, oi_wheelname, oi_wheelshippic,
-            oi_filter, oi_alt_o, oi_alt_f;
+            oi_filter, oi_alt_o;
     int16_t scrollmisc = 0;
     struct starmap_data_s d;
 
@@ -250,7 +250,6 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
         oi_alt_m = UIOBJI_INVALID; \
         oi_alt_c = UIOBJI_INVALID; \
         oi_alt_o = UIOBJI_INVALID; \
-        oi_alt_f = UIOBJI_INVALID; \
         oi_b = UIOBJI_INVALID; \
         oi_c = UIOBJI_INVALID; \
         oi_starview1 = UIOBJI_INVALID; \
@@ -310,9 +309,6 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
         } else if (oi1 == oi_c) {
             ui_data.ui_main_loop_action = UI_MAIN_LOOP_SPIES_CAUGHT;
             flag_done = true;
-            ui_sound_play_sfx_24();
-        } else if (oi1 == oi_alt_f) {
-            ui_data.starmap.flag_show_own_routes = !ui_data.starmap.flag_show_own_routes;
             ui_sound_play_sfx_24();
         } else if (oi1 == oi_alt_m) {
             ui_data.starmap.flag_show_grid = !ui_data.starmap.flag_show_grid;
@@ -614,7 +610,6 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             oi_alt_m = uiobj_add_inputkey(MOO_KEY_m | MOO_MOD_ALT);
             oi_alt_c = uiobj_add_inputkey(MOO_KEY_c | MOO_MOD_ALT);
             oi_alt_o = uiobj_add_inputkey(MOO_KEY_o | MOO_MOD_ALT);
-            oi_alt_f = uiobj_add_inputkey(MOO_KEY_f | MOO_MOD_ALT);
             if (p->owner == active_player) {
                 if (BOOLVEC_IS0(p->extras, PLANET_EXTRAS_GOVERNOR)) {
                     oi_equals = uiobj_add_mousearea(227, 70, 312, 78, MOO_KEY_EQUALS);
