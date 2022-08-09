@@ -30,6 +30,7 @@ struct starmap_data_s {
     struct game_s *g; /* FIXME non-const only for ui_starmap_draw_cb1 */
     player_id_t api;
     bool controllable;
+    bool show_planet_focus;
     int bottom_highlight;
     int anim_delay;
     int16_t oi_gameopts;
