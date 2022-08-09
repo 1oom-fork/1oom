@@ -1363,6 +1363,43 @@ static bool ui_starmap_handle_oi_starmap(struct game_s *g, struct starmap_data_s
     return false;
 }
 
+static bool ui_starmap_remove_build_finished(struct game_s *g, player_id_t api)
+{
+    planet_t *p = &g->planet[g->planet_focus_i[api]];
+    int num = g->evn.build_finished_num[api];
+    if (num) {
+        g->evn.build_finished_num[api] = --num;
+        for (planet_finished_t i = 0; i < FINISHED_NUM; ++i) {
+            if ((i != FINISHED_SHIP) && BOOLVEC_IS1(p->finished, i)) {
+                BOOLVEC_SET0(p->finished, i);
+                break;
+            }
+        }
+        if (!num) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool ui_starmap_handle_oi_finished(struct game_s *g, struct starmap_data_s *d, bool *flag_done, int16_t oi)
+{
+    if (!g->evn.build_finished_num[d->api] || d->oi_finished == UIOBJI_INVALID) {
+        return false;
+    }
+    if ((oi != d->oi_finished) && (oi != UIOBJI_ESC)) {
+        return false;
+    }
+    if (ui_starmap_remove_build_finished(g, d->api)) {
+        g->planet_focus_i[d->api] = ui_data.start_planet_focus_i;
+        ui_starmap_set_pos_focus(g, d->api);
+    }
+    ui_sound_play_sfx_24();
+    *flag_done = true;
+    ui_delay_1();
+    return true;
+}
+
 bool ui_starmap_common_init(struct game_s *g, struct starmap_data_s *d, player_id_t active_player)
 {
     d->g = g;
@@ -1425,6 +1462,7 @@ bool ui_starmap_common_handle_oi(struct game_s *g, struct starmap_data_s *d, boo
 void ui_starmap_common_fill_oi(struct starmap_data_s *d)
 {
     if (d->g->evn.build_finished_num[d->api]) {
+        d->oi_finished = uiobj_add_mousearea(6, 6, 225, 180, MOO_KEY_SPACE);
         return;
     }
     if (!d->controllable) {
