@@ -69,7 +69,7 @@ static void ui_starmap_enroute_draw_cb(void *vptr)
     sprintf(buf, "%s %s", game_str_tbl_race[e->race], game_str_sm_fleet);
     lbxfont_select_set_12_4(5, tbl_banner_fontparam[e->banner], 0, 0);
     lbxfont_print_str_center(267, 10, buf, UI_SCREEN_W);
-    if ((r->owner == d->api) || (g->eto[d->api].have_ia_scanner)) {
+    if (d->show_planet_focus) {
         const planet_t *pd = &(g->planet[r->dest]);
         uint8_t *gfx;
         int x0, y0, x1, y1, dist;
@@ -154,6 +154,7 @@ void ui_starmap_enroute(struct game_s *g, player_id_t active_player)
     ui_starmap_common_init(g, &d, active_player);
 
     r = &(g->enroute[ui_data.starmap.fleet_selected]);
+    d.show_planet_focus = ((r->owner == d.api) || (g->eto[d.api].have_ia_scanner));
     d.en.pon = PLANET_NONE;
     for (int i = 0; i < g->galaxy_stars; ++i) {
         const planet_t *p;
