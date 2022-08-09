@@ -31,5 +31,7 @@ extern bool game_reloc_dest_ok(const struct game_s *g, uint8_t planet_i, player_
 extern void game_rng_step(struct game_s *g);
 extern void game_turn_atmos_tform(struct planet_s *p);
 extern void game_turn_soil_enrich(struct planet_s *p, int best_tform, bool advanced);
+extern void game_ship_build_everywhere(struct game_s *g, player_id_t owner, uint8_t ship_i);
+extern void game_ship_replace_everywhere(struct game_s *g, player_id_t owner, uint8_t replace_i, uint8_t ship_i);
 
 #endif
