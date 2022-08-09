@@ -862,3 +862,33 @@ void game_turn_soil_enrich(struct planet_s *p, int best_tform, bool advanced) {
     }
     SETMIN(p->max_pop3, game_num_max_pop);
 }
+
+void game_ship_build_everywhere(struct game_s *g, player_id_t owner, uint8_t ship_i) {
+    for (uint8_t i = 0; i < g->galaxy_stars; ++i) {
+        planet_t *p = &(g->planet[i]);
+        if (p->owner == owner) {
+            if (ship_i == BUILDSHIP_STARGATE) {
+                if (!p->have_stargate) {
+                    p->buildship = BUILDSHIP_STARGATE;
+                }
+            } else {
+                p->buildship = ship_i;
+            }
+        }
+    }
+}
+
+void game_ship_replace_everywhere(struct game_s *g, player_id_t owner, uint8_t replace_i, uint8_t ship_i) {
+    for (uint8_t i = 0; i < g->galaxy_stars; ++i) {
+        planet_t *p = &(g->planet[i]);
+        if (p->owner == owner && p->buildship == replace_i) {
+            if (ship_i == BUILDSHIP_STARGATE) {
+                if (!p->have_stargate) {
+                    p->buildship = BUILDSHIP_STARGATE;
+                }
+            } else {
+                p->buildship = ship_i;
+            }
+        }
+    }
+}
