@@ -1378,6 +1378,12 @@ static bool ui_starmap_handle_oi_starmap(struct game_s *g, struct starmap_data_s
     } else if (oi == d->oi_alt_f && !d->hide_focus) {
         ui_data.starmap.flag_show_own_routes = !ui_data.starmap.flag_show_own_routes;
         return true;
+    } else if (oi == d->oi_alt_m) {
+        ui_data.starmap.flag_show_grid = !ui_data.starmap.flag_show_grid;
+        return true;
+    } else if (oi == d->oi_alt_o) {
+        ui_data.starmap.planet_text = (ui_data.starmap.planet_text + 1) % UI_SM_PLANET_TEXT_NUM;
+        return true;
     }
     return false;
 }
@@ -1457,6 +1463,8 @@ void ui_starmap_common_fill_oi(struct starmap_data_s *d)
         d->oi_alt_r = uiobj_add_inputkey(MOO_KEY_r | MOO_MOD_ALT);
         d->oi_alt_f = uiobj_add_inputkey(MOO_KEY_f | MOO_MOD_ALT);
     }
+    d->oi_alt_m = uiobj_add_inputkey(MOO_KEY_m | MOO_MOD_ALT);
+    d->oi_alt_o = uiobj_add_inputkey(MOO_KEY_o | MOO_MOD_ALT);
     ui_starmap_fill_oi_ctrl(d);
     ui_starmap_add_oi_bottom_buttons(d);
 }
