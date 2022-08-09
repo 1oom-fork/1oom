@@ -359,8 +359,14 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
                 game_planet_govern(g, p);
             }
         }
+        if (oi1 == d.sm.oi_ship) {
+            ui_sound_play_sfx_24();
+            ui_data.ui_main_loop_action = UI_MAIN_LOOP_PLANET_SHIPS;
+            flag_done = true;
+            oi1 = 0;
+        }
         if (0
-          || (oi1 == d.sm.oi_ship) || (oi1 == oi_shippic)
+          || (oi1 == oi_shippic)
           || ((oi1 == oi_wheelshippic) && (scrollmisc < 0))
         ) {
             int n;
@@ -377,7 +383,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             p->buildship = n;
         }
         if (0
-          || ((oi1 == UIOBJI_ESC) && ((oi2 == d.sm.oi_ship) || (oi2 == oi_shippic)))
+          || ((oi1 == UIOBJI_ESC) && (oi2 == oi_shippic))
           || ((oi1 == oi_wheelshippic) && (scrollmisc > 0))
         ) {
             int n;

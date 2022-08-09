@@ -43,6 +43,7 @@ enables the following features:
 The following new UI features are always enabled/available:
 - It is now possible to select a reloc point within 
   the normal range of the fleet
+- Added UI for choosing the design of the ship
 - Smoother galaxy movement screen scrolling
 - Galaxy movement screen scrolling speed is adjustable (-uismscroll)
 - Pressing hot key or changing focus does not change mouse position

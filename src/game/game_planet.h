@@ -178,6 +178,7 @@ extern int game_planet_govern_sliders(const struct game_s *g, planet_t *p);
 extern void game_planet_govern(struct game_s *g, planet_t *p);
 extern void game_planet_govern_all_owned_by(struct game_s *g, player_id_t owner);
 extern void game_planet_ship_build_everywhere(struct game_s *g, player_id_t owner, uint8_t ship_i);
+extern void game_planet_ship_replace_everywhere(struct game_s *g, player_id_t owner, uint8_t replace_i, uint8_t ship_i);
 extern int game_planet_reloc_all(struct game_s *g, player_id_t pi, uint8_t target);
 extern void game_planet_reloc_reloc(struct game_s *g, player_id_t pi, uint8_t target);
 extern void game_planet_reloc_un(struct game_s *g, player_id_t pi);

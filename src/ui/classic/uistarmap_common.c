@@ -993,6 +993,9 @@ void ui_starmap_fill_oi_ctrl(struct starmap_data_s *d)
     }
     d->oi_ctrl_dr = uiobj_add_inputkey(MOO_KEY_KP3 | MOO_MOD_CTRL);
     for (int i = 0; i < PLANET_TAG_NUM; ++i) {
+        if (d->disable_tags) {
+            break;
+        }
         d->oi_tag_set[i] = uiobj_add_inputkey((MOO_KEY_1 + i) | MOO_MOD_CTRL);
         d->oi_tag_get[i] = uiobj_add_inputkey((MOO_KEY_1 + i));
     }
@@ -1234,6 +1237,12 @@ static bool ui_starmap_select_planet(struct game_s *g, struct starmap_data_s *d,
     if (ui_data.ui_main_loop_action == UI_MAIN_LOOP_STARMAP) {
         return true;
     }
+    if (ui_data.ui_main_loop_action == UI_MAIN_LOOP_PLANET_SHIPS) {
+        if (g->planet[planet_i].owner == d->api) {
+            *flag_done = true;
+            return true;
+        }
+    }
     ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
     *flag_done = true;
     return true;
@@ -1414,6 +1423,7 @@ bool ui_starmap_common_init(struct game_s *g, struct starmap_data_s *d, player_i
     d->gov_highlight = 0;
     d->controllable = false;
     d->hide_focus = false;
+    d->disable_tags = false;
     d->valid_target_cb = NULL;
     d->on_accept_cb = NULL;
 
@@ -1468,7 +1478,11 @@ void ui_starmap_common_fill_oi(struct starmap_data_s *d)
     if (!d->controllable) {
         ui_starmap_fill_oi_tbls(d);
     }
-    ui_starmap_fill_oi_tbl_stars(d);
+    if (ui_data.ui_main_loop_action == UI_MAIN_LOOP_PLANET_SHIPS) {
+        ui_starmap_fill_oi_tbl_stars_own(d, d->api);
+    } else {
+        ui_starmap_fill_oi_tbl_stars(d);
+    }
     d->oi_scroll = uiobj_add_tb(6, 6, 2, 2, 108, 86, &d->scroll_x, &d->scroll_y, &d->scroll_z, ui_scale);
     d->oi_search = uiobj_add_inputkey(MOO_KEY_SLASH);
     if (!d->hide_focus) {
