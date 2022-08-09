@@ -63,6 +63,7 @@ struct starmap_data_s {
     int16_t oi_alt_f;
     int16_t oi_alt_m;
     int16_t oi_alt_o;
+    int16_t oi_finished;
     int16_t oi_tbl_stars[PLANETS_MAX];
     int16_t oi_ctrl_left;
     int16_t oi_ctrl_l2;
@@ -156,6 +157,7 @@ struct starmap_data_s {
         d.oi_alt_f = UIOBJI_INVALID; \
         d.oi_alt_m = UIOBJI_INVALID; \
         d.oi_alt_o = UIOBJI_INVALID; \
+        d.oi_finished = UIOBJI_INVALID; \
         for (int i = 0; i < g->galaxy_stars; ++i) { \
             d.oi_tbl_stars[i] = UIOBJI_INVALID; \
         } \
@@ -201,6 +203,7 @@ extern int ui_starmap_enemy_incoming(const struct game_s *g, player_id_t pi, int
 extern void ui_starmap_compute_scale(const struct game_s *g);
 extern void ui_starmap_select_bottom_highlight(struct starmap_data_s *d, int16_t oi);
 extern void ui_starmap_set_ruler(struct starmap_data_s *d, int16_t oi);
+extern bool ui_starmap_handle_oi_finished(struct game_s *g, struct starmap_data_s *d, bool *flag_done, int16_t oi1, int16_t oi2);
 
 extern bool ui_starmap_common_init(struct game_s *g, struct starmap_data_s *d, player_id_t active_player);
 extern bool ui_starmap_common_late_init(struct starmap_data_s *d, void (*draw_cb) (void *), bool controllable);
