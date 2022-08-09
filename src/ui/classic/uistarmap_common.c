@@ -958,5 +958,6 @@ void ui_starmap_common_init(struct game_s *g, struct starmap_data_s *d, player_i
     d->g = g;
     d->api = active_player;
     d->controllable = false;
+    d->show_planet_focus = true;
     d->anim_delay = 0;
 }
