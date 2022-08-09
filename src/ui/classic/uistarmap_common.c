@@ -600,8 +600,9 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
             if (g->eto[d->api].have_ia_scanner && (p->owner == d->api) && (r->owner != d->api) && (r->dest == g->planet_focus_i[d->api])) {
                 ui_draw_line_limit_ctbl(tx + 5, ty + 2, (p->x - x) * 2 + 14, (p->y - y) * 2 + 14, colortbl_line_red, 5, ui_data.starmap.line_anim_phase, starmap_scale);
             }
-            if (ui_data.starmap.flag_show_own_routes && ui_data.ui_main_loop_action == UI_MAIN_LOOP_STARMAP) {
-                if (r->owner == d->api && r->dest == g->planet_focus_i[d->api]) {
+            if (ui_data.starmap.flag_show_own_routes && !d->hide_focus) {
+                if (ui_data.ui_main_loop_action == UI_MAIN_LOOP_ENROUTE_SEL && i == ui_data.starmap.fleet_selected) {
+                } else if (r->owner == d->api && r->dest == g->planet_focus_i[d->api]) {
                     ui_draw_line_limit_ctbl(tx + 5, ty + 2, (p->x - x) * 2 + 14, (p->y - y) * 2 + 14, colortbl_line_green, 5, ui_data.starmap.line_anim_phase, starmap_scale);
                 }
             }
@@ -624,8 +625,9 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
             if (g->eto[d->api].have_ia_scanner && (p->owner == d->api) && (r->owner != d->api) && (r->dest == g->planet_focus_i[d->api])) {
                 ui_draw_line_limit_ctbl(tx + 5, ty + 2, (p->x - x) * 2 + 14, (p->y - y) * 2 + 14, colortbl_line_red, 5, ui_data.starmap.line_anim_phase, starmap_scale);
             }
-            if (ui_data.starmap.flag_show_own_routes && ui_data.ui_main_loop_action == UI_MAIN_LOOP_STARMAP) {
-                if (r->owner == d->api && r->dest == g->planet_focus_i[d->api]) {
+            if (ui_data.starmap.flag_show_own_routes && !d->hide_focus) {
+                if (ui_data.ui_main_loop_action == UI_MAIN_LOOP_TRANSPORT_SEL && i == ui_data.starmap.fleet_selected) {
+                } else if (r->owner == d->api && r->dest == g->planet_focus_i[d->api]) {
                     ui_draw_line_limit_ctbl(tx + 5, ty + 2, (p->x - x) * 2 + 14, (p->y - y) * 2 + 14, colortbl_line_green, 5, ui_data.starmap.line_anim_phase, starmap_scale);
                 }
             }
@@ -1373,6 +1375,9 @@ static bool ui_starmap_handle_oi_starmap(struct game_s *g, struct starmap_data_s
     } else if (oi == d->oi_alt_r && !d->hide_focus) {
         game_planet_reloc_reloc(g, d->api, g->planet_focus_i[d->api]);
         return true;
+    } else if (oi == d->oi_alt_f && !d->hide_focus) {
+        ui_data.starmap.flag_show_own_routes = !ui_data.starmap.flag_show_own_routes;
+        return true;
     }
     return false;
 }
@@ -1450,6 +1455,7 @@ void ui_starmap_common_fill_oi(struct starmap_data_s *d)
     if (!d->hide_focus) {
         d->oi_ctrl_r = uiobj_add_inputkey(MOO_KEY_r | MOO_MOD_CTRL);
         d->oi_alt_r = uiobj_add_inputkey(MOO_KEY_r | MOO_MOD_ALT);
+        d->oi_alt_f = uiobj_add_inputkey(MOO_KEY_f | MOO_MOD_ALT);
     }
     ui_starmap_fill_oi_ctrl(d);
     ui_starmap_add_oi_bottom_buttons(d);
