@@ -126,6 +126,8 @@ or pressing Alt-X in the main menu enables the following extra UI features:
   the mouse icon offset
 - The cursor key behavior is more intuitive
 - Improved behavior of the left mouse button
+- Pressing the "Ships" button in the galaxy movement screen opens the ship
+  design selection screen
 
 Pressing Alt-X in the main menu also enables the following features:
 - Population scheduled for transport no longer contributes to production

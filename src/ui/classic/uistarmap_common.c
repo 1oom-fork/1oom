@@ -1041,6 +1041,9 @@ void ui_starmap_fill_oi_ctrl(struct starmap_data_s *d)
         d->oi_ctrl_d2 = uiobj_add_inputkey(MOO_KEY_KP2 | MOO_MOD_CTRL);
     }
     d->oi_ctrl_dr = uiobj_add_inputkey(MOO_KEY_KP3 | MOO_MOD_CTRL);
+    if (ui_data.ui_main_loop_action == UI_MAIN_LOOP_PLANET_SHIPS) {
+        return;
+    }
     for (int i = 0; i < PLANET_TAG_NUM; ++i) {
         d->oi_tag_set[i] = uiobj_add_inputkey((MOO_KEY_1 + i) | MOO_MOD_CTRL);
         d->oi_tag_get[i] = uiobj_add_inputkey((MOO_KEY_1 + i));
