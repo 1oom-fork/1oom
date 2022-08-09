@@ -875,9 +875,8 @@ void game_planet_ship_replace_everywhere(struct game_s *g, player_id_t owner, ui
     }
 }
 
-int game_planet_reloc_all(struct game_s *g, player_id_t pi)
+int game_planet_reloc_all(struct game_s *g, player_id_t pi, uint8_t target)
 {
-    uint8_t target = g->planet_focus_i[pi];
     struct planet_s *p = &g->planet[target];
     if (p->within_frange[g->active_player] != 1) {
         return -1;
@@ -891,6 +890,20 @@ int game_planet_reloc_all(struct game_s *g, player_id_t pi)
         }
     }
     return count;
+}
+
+void game_planet_reloc_reloc(struct game_s *g, player_id_t pi, uint8_t target)
+{
+    struct planet_s *p = &g->planet[target];
+    if (p->within_frange[g->active_player] != 1) {
+        return;
+    }
+    for (int i = 0; i < g->galaxy_stars; ++i) {
+        planet_t *p = &(g->planet[i]);
+        if ((p->owner == pi) && (p->reloc != i)) {
+            p->reloc = target;
+        }
+    }
 }
 
 void game_planet_reloc_un(struct game_s *g, player_id_t pi)
