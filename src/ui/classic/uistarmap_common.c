@@ -1338,6 +1338,20 @@ static bool ui_starmap_handle_oi_tag_get(struct game_s *g, struct starmap_data_s
     return false;
 }
 
+static bool ui_starmap_handle_oi_starmap(struct game_s *g, struct starmap_data_s *d, int16_t oi)
+{
+    if (oi == d->oi_ctrl_r && !d->hide_focus) {
+        if (!game_planet_reloc_all(g, d->api, g->planet_focus_i[d->api])) {
+            game_planet_reloc_un(g, d->api);
+        }
+        return true;
+    } else if (oi == d->oi_alt_r && !d->hide_focus) {
+        game_planet_reloc_reloc(g, d->api, g->planet_focus_i[d->api]);
+        return true;
+    }
+    return false;
+}
+
 bool ui_starmap_common_init(struct game_s *g, struct starmap_data_s *d, player_id_t active_player)
 {
     d->g = g;
@@ -1378,6 +1392,7 @@ bool ui_starmap_common_handle_oi(struct game_s *g, struct starmap_data_s *d, boo
     if (ui_starmap_handle_bottom_buttons(d, flag_done, oi1)
      || ui_starmap_handle_oi_fleet(g, d, flag_done, oi1)
      || ui_starmap_handle_oi_star(g, d, flag_done, oi1)
+     || ui_starmap_handle_oi_starmap(g, d, oi1)
      || ui_starmap_handle_oi_search(g, d, flag_done, oi1)
      || ui_starmap_handle_oi_tag_set(d, oi1)
      || ui_starmap_handle_oi_tag_get(g, d, flag_done, oi1)) {
@@ -1407,6 +1422,10 @@ void ui_starmap_common_fill_oi(struct starmap_data_s *d)
     ui_starmap_fill_oi_tbl_stars(d);
     d->oi_scroll = uiobj_add_tb(6, 6, 2, 2, 108, 86, &d->scroll_x, &d->scroll_y, &d->scroll_z, ui_scale);
     d->oi_search = uiobj_add_inputkey(MOO_KEY_SLASH);
+    if (!d->hide_focus) {
+        d->oi_ctrl_r = uiobj_add_inputkey(MOO_KEY_r | MOO_MOD_CTRL);
+        d->oi_alt_r = uiobj_add_inputkey(MOO_KEY_r | MOO_MOD_ALT);
+    }
     ui_starmap_fill_oi_ctrl(d);
     ui_starmap_add_oi_bottom_buttons(d);
 }
