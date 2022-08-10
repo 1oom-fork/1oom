@@ -97,6 +97,8 @@ The following new UI features are always enabled/available:
 - Starmap: Ctrl+R sets reloc point for all planets
 - Starmap: Alt+F shows incoming friendly fleet routes
 - Starmap: Alt+O shows populations for explored planets in scanner range
+- Starmap: Added 'production' button for reserve transfer
+- Starmap: Added 'bases' button for basescrap UI
 
 The config file item "ui.uiextra" (set via the -uiextra command-line option)
 enables the following extra UI features:
@@ -129,7 +131,5 @@ enables the following extra UI features:
 - Pressing I opens message filter options
 - Completing terraforming generates a message (which is filtered by default)
 - The = key can be substitued by the # key (useful for some non-US keyboards)
-- Starmap: Added 'production' button for reserve transfer
-- Starmap: Added 'bases' button for basescrap UI
 
 See doc/list_gamediff.txt for a list of differences in the game itself.

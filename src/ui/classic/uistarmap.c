@@ -734,7 +734,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             oi_alt_o = uiobj_add_inputkey(MOO_KEY_o | MOO_MOD_ALT);
             oi_alt_f = uiobj_add_inputkey(MOO_KEY_f | MOO_MOD_ALT);
             if (p->owner == active_player) {
-                if (ui_extra_enabled && BOOLVEC_IS0(p->extras, PLANET_EXTRAS_GOVERNOR)) {
+                if (BOOLVEC_IS0(p->extras, PLANET_EXTRAS_GOVERNOR)) {
                     oi_equals = uiobj_add_mousearea(227, 70, 312, 78, MOO_KEY_EQUALS);
                 } else {
                     oi_equals = uiobj_add_inputkey(MOO_KEY_EQUALS);
@@ -753,7 +753,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
                 oi_f10 = uiobj_add_inputkey(MOO_KEY_F10);
             }
             if ((p->owner == active_player) && p->missile_bases) {
-                if (ui_extra_enabled && BOOLVEC_IS0(p->extras, PLANET_EXTRAS_GOVERNOR)) {
+                if (BOOLVEC_IS0(p->extras, PLANET_EXTRAS_GOVERNOR)) {
                     oi_b = uiobj_add_mousearea(272, 59, 312, 67, MOO_KEY_b);
                 } else {
                     oi_b = uiobj_add_inputkey(MOO_KEY_b);
