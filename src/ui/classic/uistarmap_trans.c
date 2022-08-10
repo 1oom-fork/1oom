@@ -201,6 +201,9 @@ void ui_starmap_trans(struct game_s *g, player_id_t active_player)
         if (p->trans_num != 0) {
             d.tr.other = true;
             g->planet_focus_i[active_player] = p->trans_dest;
+        } else if (ui_modern_controls) {
+            d.tr.other = true;
+            g->planet_focus_i[active_player] = pi;
         } else {
             d.tr.other = false;
             g->planet_focus_i[active_player] = pi;

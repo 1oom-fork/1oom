@@ -70,6 +70,7 @@ const struct cfg_items_s ui_cfg_items[] = {
     CFG_ITEM_BOOL("uiextra", &ui_extra_enabled),
     CFG_ITEM_BOOL("uigovernor", &ui_governor_enabled),
     CFG_ITEM_BOOL("space_combat_autoresolve", &ui_space_combat_autoresolve),
+    CFG_ITEM_BOOL("modern_controls", &ui_modern_controls),
     CFG_ITEM_BOOL("kbdrepeat", &ui_kbd_repeat),
     CFG_ITEM_COMMENT("0..146"),
     CFG_ITEM_INT("uiicon", &ui_icon, check_ui_icon),
@@ -168,6 +169,7 @@ int starmap_scale = 0;
 bool ui_extra_enabled = false;
 bool ui_governor_enabled = false;
 bool ui_space_combat_autoresolve = false;
+bool ui_modern_controls = false;
 bool ui_kbd_repeat = true;
 bool ui_mwi_slider = false;
 bool ui_mwi_counter = false;
