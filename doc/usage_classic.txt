@@ -99,6 +99,7 @@ The following new UI features are always enabled/available:
 - Starmap: Alt+O shows populations for explored planets in scanner range
 - Starmap: Added 'production' button for reserve transfer
 - Starmap: Added 'bases' button for basescrap UI
+- Starmap: Fleet deployment: Holding Ctrl changes the number of ships by 1
 
 The config file item "ui.uiextra" (set via the -uiextra command-line option)
 enables the following extra UI features:
@@ -106,7 +107,6 @@ enables the following extra UI features:
 - Game options screen Silent/FX Only/Music is replaced with more options
 - Map screen shows current year
 - Fleet deployment shows the amount of available ships
-- Fleet deployment: Holding Ctrl changes the number of ships by 1
 - Hovering over a planet draws a ruler with the distance in parsec from the
   currently selected planet if is in the screen.
 - Governor screen can be opened by clicking on the Pop text or pressing V key.
