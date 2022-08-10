@@ -446,7 +446,11 @@ do_accept:
         for (int i = 0; i < d.oo.sn0.num; ++i) {
             int si, per10num;
             si = d.oo.sn0.type[i];
-            per10num = os[si] / 10;
+            if (ui_extra_enabled && kbd_is_modifier(MOO_MOD_CTRL)) {
+                per10num = 1;
+            } else {
+                per10num = os[si] / 10;
+            }
             SETMAX(per10num, 1);
             if ((oi1 == oi_tbl_p[i]) || ((oi1 == oi_tbl_s[i]) && ((scrollship > 0) != ui_mwi_counter))) {
                 shipcount_t t;
