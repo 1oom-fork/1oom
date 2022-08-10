@@ -26,6 +26,12 @@
 
 /* -------------------------------------------------------------------------- */
 
+static bool ui_starmap_transport_in_frange(const struct starmap_data_s *d, uint8_t planet_i)
+{
+    struct planet_s *p = &d->g->planet[planet_i];
+    return p->within_frange[d->api] == 1;
+}
+
 static void ui_starmap_transport_draw_cb(void *vptr)
 {
     struct starmap_data_s *d = vptr;
@@ -83,26 +89,18 @@ static void ui_starmap_transport_draw_cb(void *vptr)
         }
         lbxgfx_draw_frame_offs(x0, y0, gfx, STARMAP_LIMITS, UI_SCREEN_W, starmap_scale);
         dist = game_get_min_dist(g, r->owner, g->planet_focus_i[d->api]);
-        if (d->controllable && (pt->within_frange[d->api] == 0)) {
+        if (d->controllable && !ui_starmap_transport_in_frange(d, g->planet_focus_i[d->api])) {
             /* FIXME use proper positioning for varying str length */
-            d->ts.in_frange = false;
             lib_sprintf(buf, sizeof(buf), "  %s   %i %s.", game_str_sm_outsr, dist - e->fuel_range, game_str_sm_parsecs2);
             lbxfont_select_set_12_4(2, 0, 0, 0);
             lbxfont_set_gap_h(2);
             lbxfont_print_str_split(230, 26, 80, buf, 2, UI_SCREEN_W, UI_SCREEN_H, ui_scale);
         } else {
             int eta = game_calc_eta_trans(g, r->speed, pt->x, pt->y, r->x, r->y);
-            d->ts.in_frange = true;
             lib_sprintf(buf, sizeof(buf), "%s %i %s", game_str_sm_eta, eta, (eta == 1) ? game_str_sm_turn : game_str_sm_turns);
             lbxfont_select_set_12_4(0, 0, 0, 0);
             lbxfont_print_str_center(268, 32, buf, UI_SCREEN_W, ui_scale);
         }
-        if (!dest_ok) {
-            d->ts.in_frange = false;
-        }
-    } else {
-        /*6a51c*/
-        d->ts.in_frange = false;
     }
     {
         int x = 228, y = 73;
@@ -129,7 +127,7 @@ static void ui_starmap_transport_draw_cb(void *vptr)
         d->ts.scanner_delay = 0;
     }
     d->ts.frame_ship = (d->ts.frame_ship + 1) % 5;
-    if (d->controllable && (!d->ts.in_frange)) {
+    if (d->controllable && !d->valid_target_cb(d, g->planet_focus_i[d->api])) {
         lbxgfx_set_new_frame(ui_data.gfx.starmap.reloc_bu_accept, 1);
         lbxgfx_draw_frame(271, 163, ui_data.gfx.starmap.reloc_bu_accept, UI_SCREEN_W, ui_scale);
     }
@@ -167,7 +165,6 @@ void ui_starmap_transport(struct game_s *g, player_id_t active_player)
     d.valid_target_cb = ui_starmap_transport_valid_destination;
     d.on_accept_cb = ui_starmap_transport_do_accept;
 
-    d.ts.in_frange = false;
     d.ts.frame_ship = 0;
     d.ts.frame_scanner = 0;
     d.ts.scanner_delay = 0;

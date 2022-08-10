@@ -26,6 +26,12 @@
 
 /* -------------------------------------------------------------------------- */
 
+static bool ui_starmap_enroute_in_frange(const struct starmap_data_s *d, uint8_t planet_i)
+{
+    struct planet_s *p = &d->g->planet[planet_i];
+    return ((p->within_frange[d->api] == 1) || ((p->within_frange[d->api] == 2) && d->en.sn0.have_reserve_fuel));
+}
+
 static void ui_starmap_enroute_draw_cb(void *vptr)
 {
     struct starmap_data_s *d = vptr;
@@ -69,7 +75,7 @@ static void ui_starmap_enroute_draw_cb(void *vptr)
         y0 = (r->y - ui_data.starmap.y) * 2 + 8;
         {
             const uint8_t *ctbl;
-            ctbl = (d->controllable && (!d->en.in_frange)) ? colortbl_line_red : colortbl_line_green;
+            ctbl = (d->controllable && (!ui_starmap_enroute_in_frange(d, pto))) ? colortbl_line_red : colortbl_line_green;
             ui_draw_line_limit_ctbl(x0 + 4, y0 + 1, x1 + 6, y1 + 6, ctbl, 5, ui_data.starmap.line_anim_phase, starmap_scale);
         }
         gfx = ui_data.gfx.starmap.smalship[e->banner];
@@ -80,7 +86,7 @@ static void ui_starmap_enroute_draw_cb(void *vptr)
         }
         lbxgfx_draw_frame_offs(x0, y0, gfx, STARMAP_LIMITS, UI_SCREEN_W, starmap_scale);
         dist = game_get_min_dist(g, r->owner, g->planet_focus_i[d->api]);
-        if (d->controllable && (!d->en.in_frange)) {
+        if (d->controllable && (!ui_starmap_enroute_in_frange(d, pto))) {
             /* FIXME use proper positioning for varying str length */
             lib_sprintf(buf, sizeof(buf), "  %s   %i %s.", game_str_sm_outsr, dist - e->fuel_range, game_str_sm_parsecs2);
             lbxfont_select_set_12_4(2, 0, 0, 0);
@@ -139,7 +145,7 @@ static bool ui_starmap_enroute_valid_destination(const struct starmap_data_s *d,
             && r->retreat
             && d->en.can_move != GOT_HYPERCOMM
             && planet_i == d->en.pon;
-    return d->en.in_frange && !retreat_fix;
+    return ui_starmap_enroute_in_frange(d, planet_i) && !retreat_fix;
 }
 
 static void ui_starmap_enroute_do_accept(struct starmap_data_s *d)
@@ -185,7 +191,6 @@ void ui_starmap_enroute(struct game_s *g, player_id_t active_player)
     d.en.ds.xoff1 = 0;
     d.en.ds.xoff2 = 0;
     g->planet_focus_i[active_player] = r->dest;
-    d.en.in_frange = false;
     ui_starmap_sn0_setup(&d.en.sn0, g->eto[r->owner].shipdesigns_num, r->ships);
     ui_starmap_update_reserve_fuel(g, &d.en.sn0, r->ships, active_player);
 
@@ -207,7 +212,6 @@ void ui_starmap_enroute(struct game_s *g, player_id_t active_player)
         planet_t *p;
         int16_t oi1, oi2;
         p = &g->planet[g->planet_focus_i[active_player]];
-        d.en.in_frange = ((p->within_frange[active_player] == 1) || ((p->within_frange[active_player] == 2) && d.en.sn0.have_reserve_fuel));
         oi1 = uiobj_handle_input_cond();
         oi2 = uiobj_at_cursor();
         ui_delay_prepare();
