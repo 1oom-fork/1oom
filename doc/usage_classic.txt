@@ -35,6 +35,7 @@ The following new UI features are always enabled/available:
 - Space bar works as a generic dismiss message key (Continue, ...)
 - Ctrl and Alt works as a step modifier for the counters and sliders:
   - on the Design screen
+  - on the fleet sending screen
   - on the transport sending screen
 - Clicking the portraits in Races screen brings Report page
 - In Races screen the keys 1-5 correspond to clicking the portraits
