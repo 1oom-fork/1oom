@@ -428,6 +428,9 @@ do_accept:
             int si, per10num;
             si = d.ss.sn0.type[i];
             per10num = os[si] / 10;
+            if (kbd_is_modifier(MOO_MOD_CTRL)) {
+                per10num = 1;
+            }
             SETMAX(per10num, 1);
             if ((oi1 == oi_tbl_p[i]) || ((oi1 == oi_tbl_s[i]) && ((scrollship > 0) != ui_mwi_counter))) {
                 shipcount_t t;
