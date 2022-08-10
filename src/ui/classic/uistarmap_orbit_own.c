@@ -26,6 +26,12 @@
 
 /* -------------------------------------------------------------------------- */
 
+static bool ui_starmap_orbit_own_in_frange(const struct starmap_data_s *d, uint8_t planet_i)
+{
+    struct planet_s *p = &d->g->planet[planet_i];
+    return (p->within_frange[d->api] == 1) || ((p->within_frange[d->api] == 2) && d->oo.sn0.have_reserve_fuel);
+}
+
 static void ui_starmap_orbit_own_draw_cb(void *vptr)
 {
     struct starmap_data_s *d = vptr;
@@ -62,12 +68,12 @@ static void ui_starmap_orbit_own_draw_cb(void *vptr)
         lbxgfx_draw_frame_offs(x1, y1, ui_data.gfx.starmap.planbord, STARMAP_LIMITS, UI_SCREEN_W, starmap_scale);
         x0 = (pf->x - ui_data.starmap.x) * 2 + 26;
         y0 = (pf->y - ui_data.starmap.y) * 2 + 8;
-        ctbl = d->oo.in_frange ? colortbl_line_green : colortbl_line_red;
+        ctbl = ui_starmap_orbit_own_in_frange(d, g->planet_focus_i[d->api]) ? colortbl_line_green : colortbl_line_red;
         ui_draw_line_limit_ctbl(x0 + 3, y0 + 1, x1 + 6, y1 + 6, ctbl, 5, ui_data.starmap.line_anim_phase, starmap_scale);
         gfx = ui_data.gfx.starmap.smalship[g->eto[d->api].banner];
         lbxgfx_set_frame_0(gfx);
         lbxgfx_draw_frame_offs(x0, y0, gfx, STARMAP_LIMITS, UI_SCREEN_W, starmap_scale);
-        if (!d->oo.in_frange) {
+        if (!ui_starmap_orbit_own_in_frange(d, g->planet_focus_i[d->api])) {
             if (d->oo.sn0.num < NUM_SHIPDESIGNS) { /* WASBUG MOO1 compares to 7, resulting in text below last ship */
                 lib_sprintf(buf, sizeof(buf), "%s %i %s", game_str_sm_destoor, dist, game_str_sm_parsfromcc);
                 lbxfont_select(2, 0, 0, 0);
@@ -150,7 +156,7 @@ static const uint8_t shiptypes[NUM_SHIPDESIGNS] = { 0, 1, 2, 3, 4, 5 };
 
 static bool ui_starmap_orbit_own_valid_destination(const struct starmap_data_s *d, int planet_i)
 {
-    return d->oo.in_frange && d->oo.shiptypenon0numsel;
+    return ui_starmap_orbit_own_in_frange(d, planet_i) && d->oo.shiptypenon0numsel;
 }
 
 static void ui_starmap_orbit_own_do_accept(struct starmap_data_s *d)
@@ -196,7 +202,6 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
     for (int i = 0; i < NUM_SHIPDESIGNS; ++i) {
         d.oo.ships[i] = os[i];
     }
-    d.oo.in_frange = false;
     ui_starmap_sn0_setup(&d.oo.sn0, NUM_SHIPDESIGNS, d.oo.ships);
 
     ui_starmap_common_late_init(&d, ui_starmap_orbit_own_draw_cb, true);
@@ -414,13 +419,6 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
         }
         if (!flag_done) {
             p = &g->planet[g->planet_focus_i[active_player]];
-            if (1
-              && ((p->within_frange[active_player] == 1) || ((p->within_frange[active_player] == 2) && d.oo.sn0.have_reserve_fuel))
-            ) {
-                d.oo.in_frange = true;
-            } else {
-                d.oo.in_frange = false;
-            }
             ui_starmap_select_bottom_highlight(&d, oi2);
             ui_starmap_orbit_own_draw_cb(&d);
             uiobj_table_clear();
