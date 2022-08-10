@@ -1291,7 +1291,8 @@ static bool ui_starmap_handle_oi_star(struct game_s *g, struct starmap_data_s *d
     if (i == PLANET_NONE) {
         return false;
     }
-    if (d->controllable && d->valid_target_cb(d, i) && g->planet_focus_i[d->api] == i) {
+    if (d->controllable && d->valid_target_cb(d, i) && (g->planet_focus_i[d->api] == i || ui_modern_controls)) {
+        g->planet_focus_i[d->api] = i;
         d->on_accept_cb(d);
         ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
         *flag_done = true;
@@ -1414,6 +1415,7 @@ bool ui_starmap_common_init(struct game_s *g, struct starmap_data_s *d, player_i
     d->g = g;
     d->api = active_player;
     d->from_i = g->planet_focus_i[active_player];
+    d->hover_i = PLANET_NONE;
     d->scroll_x = 0;
     d->scroll_y = 0;
     d->scroll_z = starmap_scale;
@@ -1446,6 +1448,7 @@ bool ui_starmap_common_late_init(struct starmap_data_s *d, void (*draw_cb) (void
 
 bool ui_starmap_common_handle_oi(struct game_s *g, struct starmap_data_s *d, bool *flag_done, int16_t oi1, int16_t oi2)
 {
+    d->hover_i = ui_starmap_cursor_on_star(g, d, oi2);
     ui_starmap_handle_scrollkeys(d, oi1);
     if (ui_starmap_handle_bottom_buttons(d, flag_done, oi1)
      || ui_starmap_handle_oi_fleet(g, d, flag_done, oi1)
@@ -1465,6 +1468,9 @@ bool ui_starmap_common_handle_oi(struct game_s *g, struct starmap_data_s *d, boo
         ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
         *flag_done = true;
         return true;
+    }
+    if (ui_modern_controls && d->controllable && d->hover_i != PLANET_NONE) {
+        g->planet_focus_i[d->api] = d->hover_i;
     }
     return false;
 }

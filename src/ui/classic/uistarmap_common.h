@@ -40,6 +40,7 @@ struct starmap_data_s {
     int bottom_highlight;
     int anim_delay;
     uint8_t from_i;
+    uint8_t hover_i;
     uint8_t ruler_to_i;
     bool ruler_from_fleet;
     int gov_highlight;
