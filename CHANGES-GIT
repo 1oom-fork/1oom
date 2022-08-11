@@ -1,3 +1,17 @@
+1oom-main-menu-rework
+---------------------
+
+This branch follows 1oom-fix-all and improves the main menu
+
+- Implemented menu with multiple pages and different layouts
+  for each page
+- Most of the settings are now available in the main menu
+- Menu items can be adjusted using the +/- keys, mouse wheel
+  and left/right mouse buttons
+- Removed Alt+X hotkey for UI Extra
+- The space combat auto resolve UI is separated from UI Extra
+  and can be enabled from the main menu or via cmd/cfg
+
 1oom-fix-all
 ------------
 
