@@ -1,3 +1,24 @@
+1oom-uistarmap-rework
+---------------------
+
+- Changed the cursor image when selecting a destination
+- You cannot select ships when choosing a destination but
+  you can force the selection cursor mode by holding Alt
+- It is now possible to select a reloc point within 
+  the normal range of the fleet
+- Alt+M, Alt+O, Alt+F, Ctrl+R, Alt+R merged to common UI
+- Added UI for choosing the design of the ship
+- The range check has been improved
+- Added the "Modern Controls" feature that allows you 
+  to select a planet on mouse hover
+- F2, F3, F8, F9 behavior is now the same as tag/search
+  if planet focus is visible
+- Starmap: Fleet: Holding Shift keeps selection if possible
+- Starmap: Fleet: Implemented kbd focus for +/-/=/a keys
+- Starmap: F4, F5 now iterates over transports or fleets enroute
+- Starmap: Planet: Pressing Alt + clicking on the left/right
+  slider arrow sets slider to min/max
+
 1oom-extra-merge
 ----------------
 
