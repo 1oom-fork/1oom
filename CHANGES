@@ -1,0 +1,12 @@
+1oom-fork-v1.6.0
+----------------
+
+Most features of 1oom-fork-v1.5.3 have been revised 
+and re-implemented with better quality if possible
+
+F2-F10 behavior changes have been discarded
+Old saved game compatibility - Yes
+Old configuration compatibility - No
+Old source tree compatibility - No
+
+For a full list of features, see the CHANGES-GIT
