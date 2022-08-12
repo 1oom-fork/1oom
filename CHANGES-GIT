@@ -1,3 +1,16 @@
+1oom-uistarmap-rework
+---------------------
+
+- Changed the cursor image when selecting a destination
+- You cannot select ships when choosing a destination
+- It is now possible to select a reloc point within 
+  the normal range of the fleet
+- Alt+M, Alt+O, Alt+F, Ctrl+R, Alt+R merged to common UI
+- Added UI for choosing the design of the ship
+- The range check has been improved
+- Added the "Modern Controls" feature that allows you 
+  to select a planet on mouse hover
+
 1oom-extra-merge
 ----------------
 
