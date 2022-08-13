@@ -288,7 +288,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             ui_data.ui_main_loop_action = UI_MAIN_LOOP_SPIES_CAUGHT;
             flag_done = true;
             ui_sound_play_sfx_24();
-        } else if (ui_starmap_handle_oi_finished(g, &d, &flag_done, oi1)) {
+        } else if (ui_starmap_handle_oi_finished(g, &d, &flag_done, oi1, oi2)) {
             oi1 = 0;
         } else if (oi1 == oi_alt_galaxy) {
             if (game_cheat_galaxy(g, active_player)) {

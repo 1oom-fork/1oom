@@ -1392,12 +1392,12 @@ static bool ui_starmap_remove_build_finished(struct game_s *g, player_id_t api)
     return false;
 }
 
-bool ui_starmap_handle_oi_finished(struct game_s *g, struct starmap_data_s *d, bool *flag_done, int16_t oi)
+bool ui_starmap_handle_oi_finished(struct game_s *g, struct starmap_data_s *d, bool *flag_done, int16_t oi1, int16_t oi2)
 {
     if (!g->evn.build_finished_num[d->api] || d->oi_finished == UIOBJI_INVALID) {
         return false;
     }
-    if ((oi != d->oi_finished) && (oi != UIOBJI_ESC)) {
+    if ((oi1 != d->oi_finished) && (oi1 != UIOBJI_ESC || oi2 != d->oi_finished)) {
         return false;
     }
     if (ui_starmap_remove_build_finished(g, d->api)) {
