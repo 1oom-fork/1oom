@@ -127,6 +127,8 @@ void ui_starmap_ships(struct game_s *g, player_id_t active_player)
         oi2 = uiobj_at_cursor();
         ui_delay_prepare();
         if (ui_starmap_common_handle_oi(g, &d, &flag_done, oi1, oi2)) {
+        } else if (ui_starmap_handle_oi_finished(g, &d, &flag_done, oi1, oi2)) {
+            oi1 = 0;
         } else if (oi1 == d.oi_accept) {
             ui_sound_play_sfx_24();
             ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
