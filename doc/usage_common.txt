@@ -302,12 +302,8 @@ However, unlike PBX files, the ruleset choice is stored.
 PBX files override the chosen ruleset.
 
 
-4. New features
+4. Optional features
 ================
-
-The governor feature discussed here need to be enabled in the classic UI
-with the config file item "ui.uiextra" set via the -uiextra command-line
-option or via the main menu.
 
 4.1. Planetary governor
 ------------------------

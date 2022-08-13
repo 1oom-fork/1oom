@@ -116,6 +116,10 @@ enables the following extra UI features:
 - Fleet deployment shows the amount of available ships
 - Hovering over a planet draws a ruler with the distance in parsec from the
   currently selected planet if is in the screen.
+- When espionage was successful, clicking on the race icon opens the spy report
+- The = key can be substitued by the # key (useful for some non-US keyboards)
+
+The config file item "ui.uigovernor" enables the following UI features:
 - Governor screen can be opened by clicking on the Pop text or pressing V key.
   The screen include Eco mode, buildup mode and whether to build stargates.
   All local settings are also reachable directly over the planet interface.
@@ -125,7 +129,6 @@ enables the following extra UI features:
   or Artifacts planets).
 - When a planet is governed, clicking on or mouse wheeling over the bases field
   allow to increase or adjust the target bases amount.
-- When espionage was successful, clicking on the race icon opens the spy report
 - The plantary production field indicates whether the planet currently receives
   reserve spending (yellow = none, red = partial, while = full). The same
   colors are also used in the Planets screen.
@@ -137,6 +140,6 @@ enables the following extra UI features:
   automated by clicking the level/auto button (t) in the upper right corner.
 - Pressing I opens message filter options
 - Completing terraforming generates a message (which is filtered by default)
-- The = key can be substitued by the # key (useful for some non-US keyboards)
+
 
 See doc/list_gamediff.txt for a list of differences in the game itself.

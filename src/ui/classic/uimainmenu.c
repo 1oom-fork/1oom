@@ -112,6 +112,7 @@ typedef enum {
     MAIN_MENU_ITEM_INTERFACE_MODERNCONTROLS,
     MAIN_MENU_ITEM_INTERFACE_BOMBANIMATION,
     MAIN_MENU_ITEM_INTERFACE_UIEXTRA,
+    MAIN_MENU_ITEM_INTERFACE_UIGOVERNOR,
     MAIN_MENU_ITEM_QUIT,
     MAIN_MENU_ITEM_BACK,
     MAIN_MENU_ITEM_NUM,
@@ -318,6 +319,13 @@ static struct main_menu_item_data_s mm_items[MAIN_MENU_ITEM_NUM] = {
         MOO_KEY_x,
     },
     {
+        MAIN_MENU_ITEM_TYPE_BOOL,
+        NULL, NULL,
+        "UI Governor", &ui_governor_enabled, 0,
+        0, 0,
+        MOO_KEY_g,
+    },
+    {
         MAIN_MENU_ITEM_TYPE_RETURN,
         NULL, NULL,
         "Quit to OS", NULL, MAIN_MENU_ACT_QUIT_GAME,
@@ -416,13 +424,14 @@ static struct main_menu_page_s mm_pages[MAIN_MENU_PAGE_NUM] = {
     {
         {
             MAIN_MENU_ITEM_INTERFACE_COMBATAUTORESOLVE,
-            MAIN_MENU_ITEM_INTERFACE_MODERNCONTROLS,
-            MAIN_MENU_ITEM_INTERFACE_BOMBANIMATION,
             MAIN_MENU_ITEM_INTERFACE_UIEXTRA,
+            MAIN_MENU_ITEM_INTERFACE_MODERNCONTROLS,
+            MAIN_MENU_ITEM_INTERFACE_UIGOVERNOR,
+            MAIN_MENU_ITEM_INTERFACE_BOMBANIMATION,
             MAIN_MENU_ITEM_BACK,
             MAIN_MENU_ITEM_NUM,
         },
-        main_menu_set_item_dimensions,
+        mm_options_set_item_dimensions,
         NULL,
     },
 };

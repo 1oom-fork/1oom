@@ -295,7 +295,7 @@ void ui_game_start(struct game_s *g)
     }
     ui_data.seed = g->seed;
     /* turn off governor and set default msg filter if ui_extra is disabled */
-    if (!ui_extra_enabled) {
+    if (!ui_governor_enabled) {
         for (int pli = 0; pli < g->galaxy_stars; ++pli) {
             planet_t *p = &(g->planet[pli]);
             BOOLVEC_SET0(p->extras, PLANET_EXTRAS_GOVERNOR);

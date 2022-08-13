@@ -152,7 +152,7 @@ static void tech_draw_cb(void *vptr)
         int y;
         y = 21 * i + 24;
         ui_draw_filled_rect(227, y, 277, y + 3, 0x2f, ui_scale);
-        if (ui_extra_enabled && e->total_research_bc && e->tech.investment[i] && ((t->percent[i] < 99) || (t->project[i] != 0))) {
+        if (ui_governor_enabled && e->total_research_bc && e->tech.investment[i] && ((t->percent[i] < 99) || (t->project[i] != 0))) {
             int slider=75*e->tech.investment[i]/e->total_research_bc;
             SETMIN(slider,1000);
             if (slider >= 10) ui_draw_slider4(227, y, slider, 20, -1, 0x6e, ui_scale);
@@ -162,7 +162,7 @@ static void tech_draw_cb(void *vptr)
         }
         lbxfont_select(0, 6, 0, 0);
         /* cols changed to fit with auto button, was 0x41 : 0x26 */
-        lbxfont_set_color_c_n(ui_extra_enabled && game_tech_current_research_has_max_bonus(e, i) ? 0x24 : 0x27, 5);
+        lbxfont_set_color_c_n(ui_governor_enabled && game_tech_current_research_has_max_bonus(e, i) ? 0x24 : 0x27, 5);
         lbxfont_print_num_right(307, y, t->percent[i], UI_SCREEN_W, ui_scale);
     }
 
@@ -242,7 +242,7 @@ static void tech_draw_cb(void *vptr)
             lbxfont_print_str_right(295, y + 3, game_str_te_max, UI_SCREEN_W, ui_scale);
         }
     }
-    if (ui_extra_enabled) {
+    if (ui_governor_enabled) {
         lbxfont_select(0, 2, 0, 0);
         for (int i = 0; i < 3; ++i) {
             const char *lab[3] = { "equ", "min", "opt" };
@@ -424,7 +424,7 @@ void ui_tech(struct game_s *g, player_id_t active_player)
             oi_tbl_field[5] = uiobj_add_mousearea(109, 19, 161, 31, MOO_KEY_UNKNOWN);
             oi_equals = uiobj_add_inputkey(MOO_KEY_EQUALS);
             oi_tab = uiobj_add_inputkey(MOO_KEY_TAB);
-            if (ui_extra_enabled) {
+            if (ui_governor_enabled) {
                 oi_equ = uiobj_add_mousearea(240, 138, 260, 145, MOO_KEY_HASH);
                 oi_min = uiobj_add_mousearea(265, 138, 285, 145, MOO_KEY_m);
                 oi_opt = uiobj_add_mousearea(290, 138, 310, 145, MOO_KEY_o);
@@ -435,7 +435,7 @@ void ui_tech(struct game_s *g, player_id_t active_player)
                 int y;
                 y = i * 21 + 22;
                 oi_tbl_lock[i] = uiobj_add_mousearea(168, y, 218, y + 8, MOO_KEY_UNKNOWN);
-                if (ui_extra_enabled) {
+                if (ui_governor_enabled) {
                     oi_tbl_bonus[i] = uiobj_add_mousearea(298, y, 309, y + 8, MOO_KEY_UNKNOWN);
                 }
                 if (!t->slider_lock[i]) {

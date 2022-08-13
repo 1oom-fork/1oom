@@ -609,7 +609,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             if (p->owner == active_player) {
                 oi_shippic = uiobj_add_mousearea(228, 139, 275, 175, MOO_KEY_UNKNOWN);
                 oi_wheelshippic = uiobj_add_mousewheel(228, 139, 275, 175, &scrollmisc);
-                if (ui_extra_enabled) {
+                if (ui_governor_enabled) {
                     oi_governor = uiobj_add_mousearea(227, 59, 268, 67, MOO_KEY_v);
                     if (BOOLVEC_IS1(p->extras, PLANET_EXTRAS_GOVERNOR)) {
                         d.sm.oi_gov_ship = uiobj_add_mousearea( 288, 82, 312, 88, MOO_KEY_UNKNOWN );
@@ -621,7 +621,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
                     }
                 }
             }
-            if (ui_extra_enabled) {
+            if (ui_governor_enabled) {
                 oi_filter = uiobj_add_inputkey(MOO_KEY_i);
             }
             if (!g->evn.build_finished_num[active_player]) {
