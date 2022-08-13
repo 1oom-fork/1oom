@@ -88,6 +88,8 @@ The following new UI features are always enabled/available:
   transfer dialog or cancels the transfer.
 - Planets screen: Clicking on the dock field changes design selection
 - Planets screen: Ctrl+LMB on ship design name to build it everywhere
+- Planets screen: Alt+LMB replaces the ship design with the ship design 
+  of the current planet everywhere
 
 - Starmap: Clicking a selected destination star again works as Accept
 - Starmap: Prssing = or # transfers reserve for one round of production
