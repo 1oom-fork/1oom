@@ -47,6 +47,7 @@ const char *game_str_ng_space_combat = "Space combat";
 const char *game_str_ng_sc_v1_3 = "MOO v1.3";
 const char *game_str_ng_sc_v1_3_fair = "Fair v1.3";
 const char *game_str_ng_sc_balanced = "Balanced";
+const char *game_str_ng_galaxy_seed = "Galaxy seed";
 const char *game_str_ng_computer = "Computer";
 const char *game_str_ng_player = "Player";
 const char *game_str_ng_cancel = "Cancel";

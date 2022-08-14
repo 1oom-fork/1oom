@@ -30,6 +30,7 @@ extern const char *game_str_ng_space_combat;
 extern const char *game_str_ng_sc_v1_3;
 extern const char *game_str_ng_sc_v1_3_fair;
 extern const char *game_str_ng_sc_balanced;
+extern const char *game_str_ng_galaxy_seed;
 extern const char *game_str_ng_computer;
 extern const char *game_str_ng_player;
 extern const char *game_str_ng_cancel;
