@@ -819,6 +819,13 @@ int lbxfont_print_num_normal(int x, int y, int num, uint16_t pitch, int scale)
     return lbxfont_print_str_normal(x, y, buf, pitch, scale);
 }
 
+int lbxfont_print_unum_normal(int x, int y, unsigned int num, uint16_t pitch, int scale)
+{
+    char buf[16];
+    lib_sprintf(buf, sizeof(buf), "%u", num);
+    return lbxfont_print_str_normal(x, y, buf, pitch, scale);
+}
+
 int lbxfont_print_num_center(int x, int y, int num, uint16_t pitch, int scale)
 {
     char buf[16];

@@ -314,7 +314,7 @@ static void new_game_draw_extra_cb(void *vptr)
     if (!newopts->galaxy_seed) {
         lbxfont_print_str_normal(260, 167, game_str_el_no, UI_SCREEN_W, ui_scale);
     } else {
-        lbxfont_print_num_normal(260, 167, newopts->galaxy_seed, UI_SCREEN_W, ui_scale);
+        lbxfont_print_unum_normal(260, 167, newopts->galaxy_seed, UI_SCREEN_W, ui_scale);
     }
     lbxfont_select(0, 0, 0, 0);
     lbxfont_print_str_normal(103, 157, game_ais[d->newopts->ai_id]->description, UI_SCREEN_W, ui_scale);
