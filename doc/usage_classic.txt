@@ -70,7 +70,7 @@ The following new UI features are always enabled/available:
 - Right-clicking on the ship image or Ships button cycles the other way
 - Ind slider no longer shows 0.N/y when at max factories
 - Eco slider shows Clean/+N Pop past T-Form on a full planet
-- Clicking cycles selection of overlapping fleets
+- Alt + clicking cycles selection of overlapping fleets
 - The keys UHJK scroll the galaxy movement screen map
 - Map scrolling by mouse (ui.sm_mouse_scroll , -uismmousescroll)
 - Planets can be searched for by pressing the / key
