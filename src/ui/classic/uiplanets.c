@@ -749,6 +749,10 @@ again:
             } else if( ui_extra_enabled && oi == oi_tbl_dock[i] && kbd_is_modifier(MOO_MOD_CTRL) && !flag_trans) {
                 struct planet_s *p = &g->planet[tbl_onscreen_planets[i]];
                 game_planet_ship_build_everywhere(g, p->owner, p->buildship);
+            } else if( ui_extra_enabled && oi == oi_tbl_dock[i] && kbd_is_modifier(MOO_MOD_ALT) && !flag_trans) {
+                struct planet_s *p = &g->planet[d.focus_i];
+                struct planet_s *pr = &g->planet[tbl_onscreen_planets[i]];
+                game_planet_ship_replace_everywhere(g, p->owner, pr->buildship, p->buildship);
             } else if( oi == oi_tbl_dock[i] && !flag_trans) {
                 planet_t *p = g->planet + tbl_onscreen_planets[i];
                 int n;
