@@ -1,3 +1,15 @@
+1oom-fork-v1.6.1
+----------------
+
+- Planets screen: Alt+LMB replaces the ship design
+with the ship design of the current planet everywhere
+- Starmap: Holding Alt forces the selection cursor mode
+- The UI Governor features are separated from the UI Extra
+- Build finished screen: minor tweaks
+- Custom game screen: custom galaxy seed option
+- Game -> Tutor: changed galaxy seed
+- Modern controls: fixed send transport UI behavior
+
 1oom-fork-v1.6.0
 ----------------
 
