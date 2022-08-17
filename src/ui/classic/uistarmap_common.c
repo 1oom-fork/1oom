@@ -875,6 +875,19 @@ void ui_starmap_add_oi_bottom_buttons(struct starmap_data_s *d)
     }
 }
 
+void ui_starmap_fill_oi_fx(struct starmap_data_s *d)
+{
+    if (d->hide_focus) {
+        return;
+    }
+    d->oi_f2 = uiobj_add_inputkey(MOO_KEY_F2);
+    d->oi_f3 = uiobj_add_inputkey(MOO_KEY_F3);
+    if (d->g->eto[d->api].have_ia_scanner) {
+        d->oi_f8 = uiobj_add_inputkey(MOO_KEY_F8);
+        d->oi_f9 = uiobj_add_inputkey(MOO_KEY_F9);
+    }
+}
+
 void ui_starmap_fill_oi_tbls(struct starmap_data_s *d)
 {
     const struct game_s *g = d->g;
@@ -1410,6 +1423,43 @@ bool ui_starmap_handle_oi_finished(struct game_s *g, struct starmap_data_s *d, b
     return true;
 }
 
+bool ui_starmap_handle_oi_f2389(struct game_s *g, struct starmap_data_s *d, bool *flag_done, int16_t oi1)
+{
+    if (d->hide_focus) {
+        return false;
+    }
+    if (oi1 == d->oi_f2) {
+        int i;
+        i = g->planet_focus_i[d->api];
+        do {
+            if (--i < 0) { i = g->galaxy_stars - 1; }
+        } while (g->planet[i].owner != d->api);
+        ui_starmap_select_planet(g, d, flag_done, i);
+        ui_starmap_set_pos_focus(g, d->api);
+        return true;
+    }
+    if (oi1 == d->oi_f3) {
+        int i;
+        i = g->planet_focus_i[d->api];
+        do {
+            i = (i + 1) % g->galaxy_stars;
+        } while (g->planet[i].owner != d->api);
+        ui_starmap_select_planet(g, d, flag_done, i);
+        ui_starmap_set_pos_focus(g, d->api);
+        return true;
+    }
+    if (((oi1 == d->oi_f8) || (oi1 == d->oi_f9)) && g->eto[d->api].have_ia_scanner) {
+        int i = g->planet_focus_i[d->api];
+        i = ui_starmap_enemy_incoming(g, d->api, i, (oi1 == d->oi_f8));
+        if (i != PLANET_NONE) {
+            ui_starmap_select_planet(g, d, flag_done, i);
+            ui_starmap_set_pos_focus(g, d->api);
+            return true;
+        }
+    }
+    return false;
+}
+
 bool ui_starmap_common_init(struct game_s *g, struct starmap_data_s *d, player_id_t active_player)
 {
     d->g = g;
@@ -1458,7 +1508,8 @@ bool ui_starmap_common_handle_oi(struct game_s *g, struct starmap_data_s *d, boo
      || ui_starmap_handle_oi_starmap(g, d, oi1)
      || ui_starmap_handle_oi_search(g, d, flag_done, oi1)
      || ui_starmap_handle_oi_tag_set(d, oi1)
-     || ui_starmap_handle_oi_tag_get(g, d, flag_done, oi1)) {
+     || ui_starmap_handle_oi_tag_get(g, d, flag_done, oi1)
+     || ui_starmap_handle_oi_f2389(g, d, flag_done, oi1)) {
         ui_sound_play_sfx_24();
         return true;
     } else if (ui_starmap_handle_oi_ctrl(d, oi1)
@@ -1506,4 +1557,5 @@ void ui_starmap_common_fill_oi(struct starmap_data_s *d)
     d->oi_alt_o = uiobj_add_inputkey(MOO_KEY_o | MOO_MOD_ALT);
     ui_starmap_fill_oi_ctrl(d);
     ui_starmap_add_oi_bottom_buttons(d);
+    ui_starmap_fill_oi_fx(d);
 }

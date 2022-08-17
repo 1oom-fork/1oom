@@ -80,6 +80,10 @@ struct starmap_data_s {
     int16_t oi_ctrl_down;
     int16_t oi_ctrl_d2;
     int16_t oi_ctrl_dr;
+    int16_t oi_f2;
+    int16_t oi_f3;
+    int16_t oi_f8;
+    int16_t oi_f9;
     int16_t oi_tag_set[PLANET_TAG_NUM];
     int16_t oi_tag_get[PLANET_TAG_NUM];
     int16_t oi_tbl_enroute[FLEET_ENROUTE_MAX];
@@ -158,6 +162,10 @@ struct starmap_data_s {
         d.oi_alt_m = UIOBJI_INVALID; \
         d.oi_alt_o = UIOBJI_INVALID; \
         d.oi_finished = UIOBJI_INVALID; \
+        d.oi_f2 = UIOBJI_INVALID; \
+        d.oi_f3 = UIOBJI_INVALID; \
+        d.oi_f8 = UIOBJI_INVALID; \
+        d.oi_f9 = UIOBJI_INVALID; \
         for (int i = 0; i < g->galaxy_stars; ++i) { \
             d.oi_tbl_stars[i] = UIOBJI_INVALID; \
         } \
@@ -173,14 +181,10 @@ struct starmap_data_s {
 
 #define STARMAP_UIOBJ_CLEAR_FX() \
     do { \
-        oi_f2 = UIOBJI_INVALID; \
-        oi_f3 = UIOBJI_INVALID; \
         oi_f4 = UIOBJI_INVALID; \
         oi_f5 = UIOBJI_INVALID; \
         oi_f6 = UIOBJI_INVALID; \
         oi_f7 = UIOBJI_INVALID; \
-        oi_f8 = UIOBJI_INVALID; \
-        oi_f9 = UIOBJI_INVALID; \
         oi_f10 = UIOBJI_INVALID; \
     } while (0)
 

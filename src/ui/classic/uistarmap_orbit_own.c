@@ -175,7 +175,7 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
 {
     bool flag_done = false;
     int16_t oi_cancel, oi_cycle,
-            oi_f2, oi_f3, oi_f4, oi_f5, oi_f6, oi_f7, oi_f8, oi_f9, oi_f10,
+            oi_f4, oi_f5, oi_f6, oi_f7, oi_f10,
             oi_tbl_p[NUM_SHIPDESIGNS],
             oi_tbl_m[NUM_SHIPDESIGNS],
             oi_tbl_a[NUM_SHIPDESIGNS],
@@ -229,44 +229,6 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
         oi2 = uiobj_at_cursor();
         ui_delay_prepare();
         if (ui_starmap_common_handle_oi(g, &d, &flag_done, oi1, oi2)) {
-        } else if (oi1 == oi_f2) {
-            int i;
-            i = d.from_i;
-            do {
-                if (--i < 0) { i = g->galaxy_stars - 1; }
-            } while (g->planet[i].owner != active_player);
-            g->planet_focus_i[active_player] = i;
-            ui_starmap_set_pos_focus(g, active_player);
-            ui_sound_play_sfx_24();
-            d.from_i = i;
-            /* flag_have_colony_lbx = false */
-            flag_done = true;
-            ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
-        } else if (oi1 == oi_f3) {
-            int i;
-            i = d.from_i;
-            do {
-                i = (i + 1) % g->galaxy_stars;
-            } while (g->planet[i].owner != active_player);
-            g->planet_focus_i[active_player] = i;
-            ui_starmap_set_pos_focus(g, active_player);
-            ui_sound_play_sfx_24();
-            d.from_i = i;
-            /* flag_have_colony_lbx = false */
-            flag_done = true;
-            ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
-        } else if (((oi1 == oi_f8) || (oi1 == oi_f9)) && g->eto[active_player].have_ia_scanner) {
-            int i = g->planet_focus_i[active_player];
-            i = ui_starmap_enemy_incoming(g, active_player, i, (oi1 == oi_f8));
-            if (i != PLANET_NONE) {
-                g->planet_focus_i[active_player] = i;
-                ui_starmap_set_pos_focus(g, active_player);
-                ui_sound_play_sfx_24();
-                d.from_i = i;
-                /* flag_have_colony_lbx = false */
-                flag_done = true;
-                ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
-            }
         } else if (oi1 == oi_f10) {
             game_save_do_save_i(GAME_SAVE_I_CONTINUE, "Continue", g);
         } else if (oi1 == oi_f4) {
@@ -423,14 +385,10 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
             ui_starmap_orbit_own_draw_cb(&d);
             uiobj_table_clear();
             UIOBJ_CLEAR_LOCAL();
-            oi_f2 = uiobj_add_inputkey(MOO_KEY_F2);
-            oi_f3 = uiobj_add_inputkey(MOO_KEY_F3);
             oi_f4 = uiobj_add_inputkey(MOO_KEY_F4);
             oi_f5 = uiobj_add_inputkey(MOO_KEY_F5);
             oi_f6 = uiobj_add_inputkey(MOO_KEY_F6);
             oi_f7 = uiobj_add_inputkey(MOO_KEY_F7);
-            oi_f8 = uiobj_add_inputkey(MOO_KEY_F8);
-            oi_f9 = uiobj_add_inputkey(MOO_KEY_F9);
             oi_f10 = uiobj_add_inputkey(MOO_KEY_F10);
             ui_starmap_common_fill_oi(&d);
             oi_cancel = uiobj_add_t0(227, 180, "", ui_data.gfx.starmap.reloc_bu_cancel, MOO_KEY_ESCAPE);
