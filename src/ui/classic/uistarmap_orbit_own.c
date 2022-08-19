@@ -207,7 +207,7 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
         d.oo.ships[i] = os[i];
     }
     ui_starmap_sn0_setup(&d.oo.sn0, NUM_SHIPDESIGNS, d.oo.ships);
-    d.oo.cursor_over = -1;
+    d.oo.cursor_over = 0;
 
     ui_starmap_common_late_init(&d, ui_starmap_orbit_own_draw_cb, true);
 
@@ -335,7 +335,7 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
         }
         if (oi1 == oi_cycle) {
             if (++d.oo.cursor_over >= d.oo.sn0.num) {
-                d.oo.cursor_over = -1;
+                d.oo.cursor_over = 0;
             }
         }
         for (int i = 0; i < d.oo.sn0.num; ++i) {
