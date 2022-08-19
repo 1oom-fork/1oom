@@ -157,6 +157,24 @@ static void ui_starmap_orbit_own_draw_cb(void *vptr)
 
 static const uint8_t shiptypes[NUM_SHIPDESIGNS] = { 0, 1, 2, 3, 4, 5 };
 
+static bool ui_starmap_orbit_own_update(struct starmap_data_s *d, bool first_time)
+{
+    const fleet_orbit_t *r = &(d->g->eto[d->api].orbit[d->from_i]);
+    if (BOOLVEC_IS_CLEAR(r->visible, PLAYER_NUM)) {
+        return false;
+    }
+    for (int i = 0; i < NUM_SHIPDESIGNS; ++i) {
+        if (first_time || d->oo.ships[i] > r->ships[i]) {
+            d->oo.ships[i] = r->ships[i];
+        }
+    }
+    ui_starmap_sn0_setup(&d->oo.sn0, NUM_SHIPDESIGNS, r->ships);
+    if (first_time || d->oo.cursor_over >= d->oo.sn0.num) {
+        d->oo.cursor_over = 0;
+    }
+    return true;
+}
+
 static bool ui_starmap_orbit_own_valid_destination(const struct starmap_data_s *d, int planet_i)
 {
     return ui_starmap_orbit_own_in_frange(d, planet_i) && d->oo.shiptypenon0numsel;
@@ -188,26 +206,18 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
             ;
     int16_t scrollship = 0;
     struct starmap_data_s d;
-    const fleet_orbit_t *r;
     const shipcount_t *os;
 
     ui_starmap_common_init(g, &d, active_player);
+    d.update_cb = ui_starmap_orbit_own_update;
     d.valid_target_cb = ui_starmap_orbit_own_valid_destination;
     d.on_accept_cb = ui_starmap_orbit_own_do_accept;
 
-    r = &(g->eto[active_player].orbit[d.from_i]);
-
-    if (BOOLVEC_IS_CLEAR(r->visible, PLAYER_NUM)) {
+    if (!d.update_cb(&d, true)) {
         ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
         return;
     }
-
-    os = &(r->ships[0]);
-    for (int i = 0; i < NUM_SHIPDESIGNS; ++i) {
-        d.oo.ships[i] = os[i];
-    }
-    ui_starmap_sn0_setup(&d.oo.sn0, NUM_SHIPDESIGNS, d.oo.ships);
-    d.oo.cursor_over = 0;
+    os = &(g->eto[active_player].orbit[d.from_i].ships[0]);
 
     ui_starmap_common_late_init(&d, ui_starmap_orbit_own_draw_cb, true);
 
