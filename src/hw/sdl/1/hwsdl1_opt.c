@@ -95,6 +95,11 @@ static void hwsdl1_mm_aspect_next(void *vptr)
 }
 #endif
 
+static void hwsdl1_mm_filter_next(void *vptr)
+{
+    hw_uiopts_filter_next();
+}
+
 static struct main_menu_item_data_s hwsdl1_mm_opt_items[] = {
     {
         MAIN_MENU_ITEM_TYPE_BOOL,
@@ -115,7 +120,7 @@ static struct main_menu_item_data_s hwsdl1_mm_opt_items[] = {
 #ifdef HAVE_SDL1GL
     {
         MAIN_MENU_ITEM_TYPE_STR,
-        hw_uiopts_filter_next, NULL,
+        hwsdl1_mm_filter_next, NULL,
         "Filter", hw_uiopts_filter_get, 0,
         0, 0,
         MOO_KEY_i,
