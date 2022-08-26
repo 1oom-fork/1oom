@@ -600,6 +600,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             ui_starmap_common_fill_oi(&d);
             if (BOOLVEC_IS1(p->explored, active_player)) {
                 oi_starview1 = d.oi_tbl_stars[g->planet_focus_i[active_player]];
+                d.oi_tbl_stars[g->planet_focus_i[active_player]] = UIOBJI_INVALID;
                 oi_starview2 = uiobj_add_mousearea(227, 24, 310, 53, MOO_KEY_UNKNOWN);
             }
             ui_starmap_fill_oi_slider(&d, p);
