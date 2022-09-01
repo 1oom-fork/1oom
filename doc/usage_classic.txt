@@ -65,6 +65,7 @@ The following new UI features are always enabled/available:
 - Space bar works as a generic dismiss message key (Continue, ...)
 - In Tech screen Tab runs through tech fields, A-F/1-6 are for field slider +/-
 - When sending a fleet Tab cycles ships and +/-/=/a adjusts selected ship
+- When sending a fleet hold shift to keep selection
 - Clicking the portraits in Races screen brings Report page
 - In Races screen the keys 1-5 correspond to clicking the portraits
 - Right-clicking on the ship image or Ships button cycles the other way
