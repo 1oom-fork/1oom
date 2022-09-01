@@ -1,3 +1,15 @@
+1oom-fork-v.1.6.2
+-----------------
+
+- Starmap -> Send Transport: fixed F2-F9 behavior
+- Starmap: F2,F3,F8,F9 behavior is now the same
+  as tag/search if planet focus is visible
+- Starmap -> Fleet selection: Implemented kbd focus
+  for +/-/=/a keys
+- Starmap -> Fleet selection: Holding shift keeps
+  selection if possible
+- Starmap -> Planet: fixed starview button
+
 1oom-fork-v1.6.1
 ----------------
 
