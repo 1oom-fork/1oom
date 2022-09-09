@@ -40,6 +40,10 @@ The SDL version will include game audio and allow full screen mode.
 Check your distribution's package manager or the library
 website on how to install them.
 
+1.3 Android (DOSBox)
+--------------------
+
+Install DOSBox and use the MSDOS executable
 
 2 Configuration
 ===============
