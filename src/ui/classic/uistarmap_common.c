@@ -711,6 +711,23 @@ void ui_starmap_draw_button_text(struct starmap_data_s *d, bool highlight)
     lbxfont_print_str_normal(263, 184, game_str_sm_next_turn, UI_SCREEN_W, ui_scale);
 }
 
+static void ui_starmap_clamp_xy(const struct game_s *g, int *x, int *y)
+{
+    SETRANGE(*x, 0, g->galaxy_maxx - ((108 * ui_scale) / starmap_scale));
+    SETRANGE(*y, 0, g->galaxy_maxy - ((86 * ui_scale) / starmap_scale));
+}
+
+void ui_starmap_set_pos(const struct game_s *g, int x, int y)
+{
+    x -= (54 * ui_scale) / starmap_scale;
+    y -= (43 * ui_scale) / starmap_scale;
+    ui_starmap_clamp_xy(g, &x, &y);
+    ui_data.starmap.x = x;
+    ui_data.starmap.x2 = x;
+    ui_data.starmap.y = y;
+    ui_data.starmap.y2 = y;
+}
+
 static bool ui_starmap_handle_oi_ctrl(struct starmap_data_s *d, int16_t oi)
 {
 #define XSTEP   0x1b
@@ -753,8 +770,7 @@ static bool ui_starmap_handle_oi_ctrl(struct starmap_data_s *d, int16_t oi)
         changed = true;
     }
     if (changed) {
-        SETRANGE(x, 0, g->galaxy_maxx - ((108 * ui_scale) / starmap_scale));
-        SETRANGE(y, 0, g->galaxy_maxy - ((86 * ui_scale) / starmap_scale));
+        ui_starmap_clamp_xy(g, &x, &y);
         ui_data.starmap.x2 = x;
         ui_data.starmap.y2 = y;
     }
@@ -816,8 +832,7 @@ static void ui_starmap_handle_scrollkeys(struct starmap_data_s *d, int16_t oi)
         x += ui_starmap_scrollkey_accel(xh);
     }
     if (xh || yh) {
-        SETRANGE(x, 0, g->galaxy_maxx - ((108 * ui_scale) / starmap_scale));
-        SETRANGE(y, 0, g->galaxy_maxy - ((86 * ui_scale) / starmap_scale));
+        ui_starmap_clamp_xy(g, &x, &y);
         ui_data.starmap.x2 = x;
         ui_data.starmap.y2 = y;
         ui_data.starmap.x = x;
@@ -1122,8 +1137,7 @@ static bool ui_starmap_handle_oi_scroll(struct game_s *g, struct starmap_data_s 
     if (d->scroll_x >= 0) {
         x = ui_data.starmap.x + d->scroll_x - 54;
         y = ui_data.starmap.y + d->scroll_y - 43;
-        SETRANGE(x, 0, g->galaxy_maxx - ((108 * ui_scale) / starmap_scale));
-        SETRANGE(y, 0, g->galaxy_maxy - ((86 * ui_scale) / starmap_scale));
+        ui_starmap_clamp_xy(g, &x, &y);
         ui_data.starmap.x2 = x;
         ui_data.starmap.y2 = y;
     } else {
