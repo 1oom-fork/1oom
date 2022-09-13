@@ -147,6 +147,10 @@ static void ui_cursor_init_do(int scale, ui_cursor_area_t *area)
     } else {
         area->y1 *= scale;
     }
+    area->x0 += area->mouseoff * (scale - 1);
+    area->y0 += area->mouseoff * (scale - 1);
+    area->x1 += area->mouseoff * (scale - 1);
+    area->y1 += area->mouseoff * (scale - 1);
 }
 
 /* -------------------------------------------------------------------------- */
