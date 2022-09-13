@@ -208,7 +208,7 @@ ui_battle_autoresolve_t ui_battle_pre(struct game_s *g, const struct battle_s *b
             ui_sound_play_sfx_24();
             ret = UI_BATTLE_AUTORESOLVE_OFF;
             flag_done = true;
-        } else if (oi == oi_auto) {
+        } else if (oi == oi_auto || oi == UIOBJI_ESC) {
             ui_sound_play_sfx_24();
             ret = UI_BATTLE_AUTORESOLVE_AUTO;
             flag_done = true;
