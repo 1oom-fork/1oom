@@ -713,8 +713,8 @@ void ui_starmap_draw_button_text(struct starmap_data_s *d, bool highlight)
 
 static void ui_starmap_clamp_xy(const struct game_s *g, int *x, int *y)
 {
-    SETRANGE(*x, 0, g->galaxy_maxx - ((108 * ui_scale) / starmap_scale));
-    SETRANGE(*y, 0, g->galaxy_maxy - ((86 * ui_scale) / starmap_scale));
+    SETRANGE(*x, -((54 * ui_scale) / starmap_scale), g->galaxy_maxx - ((54 * ui_scale) / starmap_scale));
+    SETRANGE(*y, -((43 * ui_scale) / starmap_scale), g->galaxy_maxy - ((43 * ui_scale) / starmap_scale));
 }
 
 void ui_starmap_set_pos(const struct game_s *g, int x, int y)
