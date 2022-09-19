@@ -37,7 +37,8 @@ static bool main_menu_have_save_continue(void *vptr) {
 }
 
 static bool main_menu_have_save_any(void *vptr) {
-    for (int i = 0; i < NUM_SAVES; ++i) {
+    const int num_saves = ui_extra_enabled ? NUM_ALL_SAVES : NUM_SAVES;
+    for (int i = 0; i < num_saves; ++i) {
         if (game_save_tbl_have_save[i]) {
             return true;
         }
