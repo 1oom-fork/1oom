@@ -292,7 +292,7 @@ int ui_specs(struct game_s *g, player_id_t active_player)
             uiobj_table_clear();
             if (sd_num > 1) {
                 for (int i = 0; i < sd_num; ++i) {
-                    oi_tbl_scrap[i] = uiobj_add_t0(106, (i << 5) + 6, "", ui_data.gfx.starmap.viewshbt, MOO_KEY_UNKNOWN);
+                    oi_tbl_scrap[i] = uiobj_add_t0(106, (i << 5) + 6, "", ui_data.gfx.starmap.viewshbt, MOO_KEY_1 + i);
                 }
             }
             oi_ma = uiobj_add_mousearea(0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, MOO_KEY_o);
