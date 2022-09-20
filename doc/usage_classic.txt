@@ -27,7 +27,6 @@ Most of the settings are now available in the main menu.
 
 The config file item "ui.uiscale" (set via the -uiscale command-line option)
 is an integer scaling factor for the whole UI except:
-- mouse cursor
 - galaxy movement screen map
 - sliders
 The default value is 1 for that classic 320x200 feeling. Larger values allow
@@ -80,6 +79,9 @@ The following new UI features are always enabled/available:
 
 - Design screen: Holding Ctrl changes the number of weapons by 10
 - Fleet screen: Clicking on Station or ship names sorts the list
+- Fleet screen: Specs hotkey changed 'v' -> 's'
+- Fleet screen: Scrap hotkey changed 's' -> 'r'
+- Specs screen: Added hotkeys for Scrap buttons (1-6)
 - Report screen: Shows name of AI leaders
 - Tech screen: Pressing = or # adjusts only the unlocked sliders
 
@@ -93,6 +95,7 @@ The following new UI features are always enabled/available:
 - Planets screen: Alt+LMB replaces the ship design with the ship design 
   of the current planet everywhere
 
+- Starmap: Map scroll borders expanded to be able to center on any planet
 - Starmap: Clicking a selected destination star again works as Accept
 - Starmap: Prssing = or # transfers reserve for one round of production
 - Starmap: Removed '?' cursor area
