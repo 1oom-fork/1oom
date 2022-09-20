@@ -1,3 +1,18 @@
+1oom-fork-v1.6.3
+----------------
+
+- Fix: Allegro4 Shift/Ctrl/Alt modifiers handling
+- Fix: Combat screen hit/death explosion scaling #1
+- Fix: Cursor areas for ui_scale > 1
+- Fix: Main Menu: Load Game button condition
+- Combat Autoresolve: Added Esc/RMB hotkey for Auto
+- Starmap: Map scroll borders expanded to be able
+  to center on any planet
+- Changed Fleet screen hotkeys: 'v' -> 's' (Specs)
+								's' -> 'r' (Scrap)
+- Added Specs screen hotkeys: 1-6 (Scrap)
+- Implemented cursor scaling
+
 1oom-fork-v.1.6.2
 -----------------
 
