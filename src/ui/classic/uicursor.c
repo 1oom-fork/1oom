@@ -31,21 +31,21 @@ static bool cursor_i0_bg_stored = false;
 
 /* -------------------------------------------------------------------------- */
 
-ui_cursor_area_t ui_cursor_area_all_i0 = { 0, 0, 0, 0, UI_VGA_W - 1, UI_VGA_H - 1 };
-ui_cursor_area_t ui_cursor_area_all_i1 = { 1, 0, 0, 0, UI_VGA_W - 1, UI_VGA_H - 1 };
+ui_cursor_area_t ui_cursor_area_all_i0 = { 0, 0, 0, 0, 0, UI_VGA_W - 1, UI_VGA_H - 1 };
+ui_cursor_area_t ui_cursor_area_all_i1 = { 1, 0, 0, 0, 0, UI_VGA_W - 1, UI_VGA_H - 1 };
 
 ui_cursor_area_t ui_cursor_area_tbl[] = {
-    /*0*/ { 1, 0, 0, 0, UI_VGA_W - 1, UI_VGA_H - 1 },
-    /*1*/ { 1, 0, 0, 0, UI_VGA_W - 1, UI_VGA_H - 1 },
-    /*2*/ { 8, 0, 3, 2, 218, 174 },
-    /*3*/ { 1, 0, 0, 0, UI_VGA_W - 1, UI_VGA_H - 1 },
-    /*4*/ { 7, 4, 3, 2, 218, 174 },
-    /*5*/ { 1, 0, 0, 0, UI_VGA_W - 1, UI_VGA_H - 1 },
-    /*6*/ { 7, 4, 3, 2, 218, 174 },
-    /*7*/ { 5, 0, 0, 0, 0, 0 },
-    /*8*/ { 9, 0, 0, 0, UI_VGA_W - 1, UI_VGA_H - 1 },
-    /*9*/ { 10, 0, 0, 0, UI_VGA_W - 1, UI_VGA_H - 1 },
-    /*a*/ { 11, 0, 0, 0, UI_VGA_W - 1, UI_VGA_H - 1 }
+    /*0*/ { 1, 0, 0, 0, 0, UI_VGA_W - 1, UI_VGA_H - 1 },
+    /*1*/ { 1, 0, 0, 0, 0, UI_VGA_W - 1, UI_VGA_H - 1 },
+    /*2*/ { 8, 0, 1, 3, 2, 218, 174 },
+    /*3*/ { 1, 0, 0, 0, 0, UI_VGA_W - 1, UI_VGA_H - 1 },
+    /*4*/ { 7, 4, 1, 3, 2, 218, 174 },
+    /*5*/ { 1, 0, 0, 0, 0, UI_VGA_W - 1, UI_VGA_H - 1 },
+    /*6*/ { 7, 4, 0, 3, 2, 218, 174 },
+    /*7*/ { 5, 0, 0, 0, 0, 0, 0 },
+    /*8*/ { 9, 0, 0, 0, 0, UI_VGA_W - 1, UI_VGA_H - 1 },
+    /*9*/ { 10, 0, 0, 0, 0, UI_VGA_W - 1, UI_VGA_H - 1 },
+    /*a*/ { 11, 0, 0, 0, 0, UI_VGA_W - 1, UI_VGA_H - 1 }
 };
 
 uint16_t ui_cursor_mouseoff = 0;
@@ -178,6 +178,7 @@ void ui_cursor_setup_area(int num, ui_cursor_area_t *area)
             --area;
         }
     }
+    ui_cursor_scale = area->cursor_scale_type ? starmap_scale : ui_scale;
     ui_cursor_mouseoff = area->mouseoff * ui_cursor_scale;
     ui_cursor_gfx_i = area->cursor_i;
 }
@@ -201,6 +202,7 @@ void ui_cursor_update_gfx_i(int mx, int my)
         }
     }
 
+    ui_cursor_scale = area->cursor_scale_type ? starmap_scale : ui_scale;
     ui_cursor_mouseoff = area->mouseoff * ui_cursor_scale;
     ui_cursor_gfx_i = area->cursor_i;
 }
