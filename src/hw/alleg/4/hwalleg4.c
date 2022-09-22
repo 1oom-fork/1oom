@@ -272,6 +272,13 @@ int hw_event_handle(void)
             kbd_add_keypress(key, mod, c);
         }
     }
+    {
+        uint32_t mod = 0;
+        if (key_shifts & KB_SHIFT_FLAG) { mod |= MOO_MOD_SHIFT; }
+        if (key_shifts & KB_CTRL_FLAG) { mod |= MOO_MOD_CTRL; }
+        if (key_shifts & KB_ALT_FLAG) { mod |= MOO_MOD_ALT; }
+        kbd_set_pressed(MOO_KEY_UNKNOWN, mod, false);
+    }
     if (mouse_needs_poll()) {
         poll_mouse();
     }
