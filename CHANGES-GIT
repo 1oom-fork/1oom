@@ -1,0 +1,33 @@
+Core
+----
+
+This branch forked from https://gitlab.com/Tapani_/1oom
+
+This branch can only fix bugs introduced in 1oom
+
+- Fixed infinite loop in lbxfont_calc_str_width
+  The game is now playable on ARM devices
+- Fixed population growth negative overflow
+- Fixed bottom menu highlighting on galaxy map screen
+- Fixed "Combat screen hit / death explosion effects #1"
+- Fixed handling of Shift/Ctrl/Alt modifiers in allegro4
+- game_cfg_check_new_game_opts: Fixed difficulty check
+
+For ui_scale > 1:
+
+- Fixed text_input dimensions
+- Fixed STARMAP_LIMITS
+- ui_game_start: Fixed starmap position
+- Fixed ui_cursor_area dimensions
+
+For 1oom features:
+
+- uistarmap: Fixed search UI
+- uistarmap:
+	Fixed tag behavior:
+	- Tap once to select the marked planet
+	- Tap twice to focus on the planet
+	- Fixed ability to set reloc point to any planet
+- uistarmap: Fixed UHJK scroll speed
+- uimainmenu: Fixed Load Game button condition
+
