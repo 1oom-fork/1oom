@@ -274,7 +274,7 @@ do_accept:
             ui_starmap_scroll(g, scrollx, scrolly, scrollz);
         }
         ui_starmap_handle_oi_ctrl(&d, oi1);
-        if (ui_starmap_handle_tag(&d, oi1, false) != PLANET_NONE) {
+        if (ui_starmap_handle_tag(&d, oi1) != PLANET_NONE) {
             if ((r->owner != active_player) || (d.ts.can_move == NO_MOVE)) {
                 d.ts.from = g->planet_focus_i[active_player];
                 flag_done = true;

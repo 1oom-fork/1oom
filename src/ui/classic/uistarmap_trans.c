@@ -369,7 +369,7 @@ do_accept:
             ui_starmap_scroll(g, scrollx, scrolly, scrollz);
         }
         ui_starmap_handle_oi_ctrl(&d, oi1);
-        if (ui_starmap_handle_tag(&d, oi1, false) != PLANET_NONE) {
+        if (ui_starmap_handle_tag(&d, oi1) != PLANET_NONE) {
             d.tr.other = true;
         }
         for (int i = 0; i < g->galaxy_stars; ++i) {

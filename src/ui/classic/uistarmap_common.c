@@ -785,21 +785,27 @@ void ui_starmap_handle_scrollkeys(struct starmap_data_s *d, int16_t oi)
     ui_data.starmap.yhold = yh;
 }
 
-uint8_t ui_starmap_handle_tag(struct starmap_data_s *d, int16_t oi, bool flag_set_focus)
+uint8_t ui_starmap_handle_tag(struct starmap_data_s *d, int16_t oi)
 {
     for (int i = 0; i < PLANET_TAG_NUM; ++i) {
         if (oi == d->oi_tag_set[i]) {
             ui_data.starmap.tag[d->api][i] = d->g->planet_focus_i[d->api];
+            ui_sound_play_sfx_24();
             break;
         }
         if (oi == d->oi_tag_get[i]) {
             uint8_t pli;
             pli = ui_data.starmap.tag[d->api][i];
             if (pli < d->g->galaxy_stars) {
-                d->g->planet_focus_i[d->api] = pli;
-                if (flag_set_focus) {
+                if (ui_data.ui_main_loop_action == UI_MAIN_LOOP_RELOC && d->g->planet[pli].owner != d->api) {
+                    break;
+                }
+                if (d->g->planet_focus_i[d->api] != pli) {
+                    d->g->planet_focus_i[d->api] = pli;
+                } else {
                     ui_starmap_set_pos_focus(d->g, d->api);
                 }
+                ui_sound_play_sfx_24();
                 return pli;
             }
             break;
