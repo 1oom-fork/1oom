@@ -290,13 +290,6 @@ void ui_game_start(struct game_s *g)
     */
     lbxpal_set_update_range(248, 255);
     ui_palette_set_n();
-    ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
-    for (int i = 0; i < g->players; ++i) {
-        if (IS_HUMAN(g, i)) {
-            ui_starmap_set_pos_focus(g, i);
-            break;
-        }
-    }
     BOOLVEC_CLEAR(ui_data.players_viewing, PLAYER_NUM);
     for (int pli = 0; pli < g->galaxy_stars; ++pli) {
         ui_data.star_frame[pli] = g->planet[pli].frame;
@@ -318,6 +311,13 @@ void ui_game_start(struct game_s *g)
     /* HACK ensure the game starts with a wipe, fixing -new help gfx glitch  */
     ui_draw_finish_mode = 1;
     ui_starmap_compute_scale(g);
+    ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
+    for (int i = 0; i < g->players; ++i) {
+        if (IS_HUMAN(g, i)) {
+            ui_starmap_set_pos_focus(g, i);
+            break;
+        }
+    }
 }
 
 void ui_game_end(struct game_s *g)
