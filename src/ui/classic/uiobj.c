@@ -2049,7 +2049,7 @@ int16_t uiobj_add_tb(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t xs
 void uiobj_dec_y1(int16_t oi)
 {
     uiobj_t *p = &uiobj_tbl[oi];
-    p->y1 -= p->scale;
+    --p->y1;
 }
 
 void uiobj_ta_set_val_0(int16_t oi)
