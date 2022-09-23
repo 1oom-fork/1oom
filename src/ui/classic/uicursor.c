@@ -146,16 +146,20 @@ static void ui_cursor_erase(uint8_t *p, struct cursor_bg_s *bg)
 static void ui_cursor_init_do(int scale, ui_cursor_area_t *area)
 {
     area->x0 *= scale;
+    area->x0 += area->mouseoff * (scale - 1);
     area->y0 *= scale;
+    area->y0 += area->mouseoff * (scale - 1);
     if (area->x1 == (UI_VGA_W - 1)) {
         area->x1 = UI_SCREEN_W - 1;
     } else {
         area->x1 *= scale;
+        area->x1 += area->mouseoff * (scale - 1);
     }
     if (area->y1 == (UI_VGA_H - 1)) {
         area->y1 = UI_SCREEN_H - 1;
     } else {
         area->y1 *= scale;
+        area->y1 += area->mouseoff * (scale - 1);
     }
 }
 
