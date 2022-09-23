@@ -314,7 +314,7 @@ LOG_DEBUG((DEBUGLEVEL_ROTATE, "r: hf:%i S:%i d:%i,%i,0x%x  s:%i y:%i,%i,0x%x,%i,
         if (--w <= 0) {
             break;
         }
-        di += r->destxstep + scale;
+        di += (r->destxstep + 1 ) * scale;
         if ((edest += r->destxfrac) >= 0x100) {
             edest &= 0xff;
             di += r->destxadd * scale;
@@ -359,8 +359,8 @@ static void gfx_aux_draw_frame_from_rotate_limit_do(int x0, int y0, int x1, int 
     memset(&r, 0, sizeof(r));
     r.srcw = aux->w;
     r.srch = aux->h;
-    r.destmin = lx0 * pitch_hw;
-    r.destmax = (lx1 + 1) * pitch_hw;
+    r.destmin = lx0 * pitch_hw * scale;
+    r.destmax = (lx1 + 1) * pitch_hw * scale;
     if (tx[0] == tx[1]) {
         if (ty[0] > ty[1]) {
             int t;
