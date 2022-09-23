@@ -386,6 +386,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
         } else if (oi1 == oi_search) {
             ui_sound_play_sfx_24();
             ui_search_set_pos(g, active_player);
+            flag_done = true;
         } else if (oi1 == d.sm.oi_gov_ship) {
             ui_sound_play_sfx_24();
             BOOLVEC_SET1(p->extras, PLANET_EXTRAS_GOVERNOR);

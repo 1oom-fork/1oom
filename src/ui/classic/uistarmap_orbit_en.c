@@ -176,6 +176,8 @@ void ui_starmap_orbit_en(struct game_s *g, player_id_t active_player)
         } else if (oi1 == oi_search) {
             ui_sound_play_sfx_24();
             ui_search_set_pos(g, active_player);
+            ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
+            flag_done = true;
         }
         for (int i = 0; i < g->enroute_num; ++i) {
             if (oi1 == d.oi_tbl_enroute[i]) {
