@@ -18,7 +18,7 @@
 #define STARMAP_SCROLLSTEP  ui_sm_scroll_speed
 #endif
 
-#define STARMAP_LIM_INIT()  const int slx0 = (6 * ui_scale) / starmap_scale, sly0 = (6 * ui_scale) / starmap_scale, slx1 = (222 * ui_scale) / starmap_scale - 1, sly1 = (178 * ui_scale) / starmap_scale - 1
+#define STARMAP_LIM_INIT()  const int slx0 = (6 * ui_scale) / starmap_scale, sly0 = (6 * ui_scale) / starmap_scale, slx1 = (222 * ui_scale - 1) / starmap_scale, sly1 = (178 * ui_scale - 1) / starmap_scale
 #define STARMAP_TEXT_LIMITS 6 * ui_scale, 6 * ui_scale, 222 * ui_scale - 1, 178 * ui_scale - 1
 #define STARMAP_LIMITS  slx0, sly0, slx1, sly1
 
