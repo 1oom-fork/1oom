@@ -3,9 +3,15 @@
 
 #include "types.h"
 
+typedef enum ui_cursor_scale_type_t {
+    UI_CURSOR_SCALE_TYPE_NORMAL,
+    UI_CURSOR_SCALE_TYPE_STARMAP,
+} ui_cursor_scale_type_t;
+
 typedef struct ui_cursor_area_s {
     uint8_t cursor_i;
     uint8_t mouseoff;
+    uint8_t cursor_scale_mode;
     uint16_t x0;
     uint16_t y0;
     uint16_t x1;    /* inclusive */
