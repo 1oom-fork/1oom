@@ -45,6 +45,7 @@ struct starmap_data_s {
     bool ruler_from_fleet;
     int gov_highlight;
     bool controllable;
+    bool order_mode;
     bool hide_focus;
     bool disable_tags;
     bool (*valid_target_cb) (const struct starmap_data_s *, int planet_i);

@@ -1255,7 +1255,7 @@ static bool ui_starmap_select_planet(struct game_s *g, struct starmap_data_s *d,
         d->tr.other = true;
     }
     g->planet_focus_i[d->api] = planet_i;
-    if (d->controllable) {
+    if (d->order_mode) {
         return true;
     }
     d->from_i = planet_i;
@@ -1275,7 +1275,7 @@ static bool ui_starmap_select_planet(struct game_s *g, struct starmap_data_s *d,
 
 static bool ui_starmap_handle_oi_fleet(struct game_s *g, struct starmap_data_s *d, bool *flag_done, int16_t oi)
 {
-    if (d->controllable) {
+    if (d->order_mode) {
         return false;
     }
     int i;
@@ -1316,7 +1316,7 @@ static bool ui_starmap_handle_oi_star(struct game_s *g, struct starmap_data_s *d
     if (i == PLANET_NONE) {
         return false;
     }
-    if (d->controllable && d->valid_target_cb(d, i) && (g->planet_focus_i[d->api] == i || ui_modern_controls)) {
+    if (d->order_mode && d->valid_target_cb(d, i) && (g->planet_focus_i[d->api] == i || ui_modern_controls)) {
         g->planet_focus_i[d->api] = i;
         d->on_accept_cb(d);
         ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
@@ -1449,6 +1449,7 @@ bool ui_starmap_common_init(struct game_s *g, struct starmap_data_s *d, player_i
     d->ruler_to_i = -1;
     d->gov_highlight = 0;
     d->controllable = false;
+    d->order_mode = false;
     d->hide_focus = false;
     d->disable_tags = false;
     d->valid_target_cb = NULL;
@@ -1460,7 +1461,8 @@ bool ui_starmap_common_init(struct game_s *g, struct starmap_data_s *d, player_i
 bool ui_starmap_common_late_init(struct starmap_data_s *d, void (*draw_cb) (void *), bool controllable)
 {
     d->controllable = controllable;
-    if (controllable) {
+    d->order_mode = controllable && !kbd_is_modifier(MOO_MOD_ALT);
+    if (d->order_mode) {
         ui_cursor_setup_area(2, &ui_cursor_area_tbl[1]);
     } else {
         ui_cursor_setup_area(2, &ui_cursor_area_tbl[3]);
@@ -1494,7 +1496,7 @@ bool ui_starmap_common_handle_oi(struct game_s *g, struct starmap_data_s *d, boo
         *flag_done = true;
         return true;
     }
-    if (ui_modern_controls && d->controllable && d->hover_i != PLANET_NONE) {
+    if (ui_modern_controls && d->order_mode && d->hover_i != PLANET_NONE) {
         g->planet_focus_i[d->api] = d->hover_i;
     }
     return false;
@@ -1506,8 +1508,12 @@ void ui_starmap_common_fill_oi(struct starmap_data_s *d)
         d->oi_finished = uiobj_add_mousearea(6, 6, 225, 180, MOO_KEY_SPACE);
         return;
     }
-    if (!d->controllable) {
+    d->order_mode = d->controllable && !kbd_is_modifier(MOO_MOD_ALT);
+    if (!d->order_mode) {
         ui_starmap_fill_oi_tbls(d);
+        ui_cursor_setup_area(2, &ui_cursor_area_tbl[3]);
+    } else {
+        ui_cursor_setup_area(2, &ui_cursor_area_tbl[1]);
     }
     if (ui_data.ui_main_loop_action == UI_MAIN_LOOP_PLANET_SHIPS) {
         ui_starmap_fill_oi_tbl_stars_own(d, d->api);
