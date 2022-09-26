@@ -18,6 +18,7 @@ int mouse_stored_y = 0;
 int mouse_click_x = 0;
 int mouse_click_y = 0;
 int mouse_click_buttons = 0;
+int mouse_cursor_scale = 1;
 
 /* ------------------------------------------------------------------------- */
 
