@@ -169,6 +169,7 @@ ui_battle_autoresolve_t ui_battle_pre(struct game_s *g, const struct battle_s *b
 {
     struct ui_battle_pre_data_s d[1];
     int16_t oi_cont = UIOBJI_INVALID, oi_cont2 = UIOBJI_INVALID, oi_auto = UIOBJI_INVALID, oi_retreat = UIOBJI_INVALID;
+    int16_t oi_esc = UIOBJI_INVALID;
     bool flag_done = false;
     ui_battle_autoresolve_t ret;
     int party_u = bt->s[SIDE_L].party, party_d = bt->s[SIDE_R].party;
@@ -198,6 +199,9 @@ ui_battle_autoresolve_t ui_battle_pre(struct game_s *g, const struct battle_s *b
         oi_auto = uiobj_add_t0(250, 152, "", ui_data.gfx.space.autob, MOO_KEY_a);
         oi_retreat = uiobj_add_t0(270, 152, "", ui_data.gfx.space.retreat, MOO_KEY_r);
     }
+    if (ui_extra_enabled) {
+        oi_esc = UIOBJI_ESC;
+    }
     uiobj_set_focus(oi_cont);
     uiobj_set_callback_and_delay(ui_battle_pre_draw_cb, &d, 4);
     while (!flag_done) {
@@ -208,7 +212,7 @@ ui_battle_autoresolve_t ui_battle_pre(struct game_s *g, const struct battle_s *b
             ui_sound_play_sfx_24();
             ret = UI_BATTLE_AUTORESOLVE_OFF;
             flag_done = true;
-        } else if (oi == oi_auto) {
+        } else if (oi == oi_auto || oi == oi_esc) {
             ui_sound_play_sfx_24();
             ret = UI_BATTLE_AUTORESOLVE_AUTO;
             flag_done = true;
