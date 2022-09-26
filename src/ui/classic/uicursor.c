@@ -6,6 +6,7 @@
 #include "comp.h"
 #include "hw.h"
 #include "lbxpal.h"
+#include "mouse.h"
 #include "types.h"
 #include "uidefs.h"
 
@@ -20,7 +21,7 @@ static uint16_t ui_cursor_gfx_i_old = 0;
 
 struct cursor_bg_s {
     int x, y;
-    uint8_t data[CURSOR_W * CURSOR_H];
+    uint8_t data[CURSOR_W * CURSOR_H * UI_SCALE_MAX * UI_SCALE_MAX];
 };
 
 static struct cursor_bg_s cursor_bg0;
@@ -30,21 +31,21 @@ static bool cursor_i0_bg_stored = false;
 
 /* -------------------------------------------------------------------------- */
 
-static const ui_cursor_area_t ui_cursor_area_all_i0_default = { 0, 0, 0, 0, UI_VGA_W - 1, UI_VGA_H - 1 };
-static const ui_cursor_area_t ui_cursor_area_all_i1_default = { 1, 0, 0, 0, UI_VGA_W - 1, UI_VGA_H - 1 };
+static const ui_cursor_area_t ui_cursor_area_all_i0_default = { 0, 0, UI_CURSOR_SCALE_MODE_NORMAL, 0, 0, UI_VGA_W - 1, UI_VGA_H - 1 };
+static const ui_cursor_area_t ui_cursor_area_all_i1_default = { 1, 0, UI_CURSOR_SCALE_MODE_NORMAL, 0, 0, UI_VGA_W - 1, UI_VGA_H - 1 };
 
 static const ui_cursor_area_t ui_cursor_area_tbl_default[UI_CURSOR_AREA_NUM] = {
-    /*0*/ { 1, 0, 0, 0, UI_VGA_W - 1, UI_VGA_H - 1 },
-    /*1*/ { 1, 0, 0, 0, UI_VGA_W - 1, UI_VGA_H - 1 },
-    /*2*/ { 8, 0, 3, 2, 218, 174 },
-    /*3*/ { 1, 0, 0, 0, UI_VGA_W - 1, UI_VGA_H - 1 },
-    /*4*/ { 7, 4, 3, 2, 218, 174 },
-    /*5*/ { 1, 0, 0, 0, UI_VGA_W - 1, UI_VGA_H - 1 },
-    /*6*/ { 7, 4, 3, 2, 218, 174 },
-    /*7*/ { 5, 0, 0, 0, 0, 0 },
-    /*8*/ { 9, 0, 0, 0, UI_VGA_W - 1, UI_VGA_H - 1 },
-    /*9*/ { 10, 0, 0, 0, UI_VGA_W - 1, UI_VGA_H - 1 },
-    /*a*/ { 11, 0, 0, 0, UI_VGA_W - 1, UI_VGA_H - 1 }
+    /*0*/ { 1, 0, UI_CURSOR_SCALE_MODE_NORMAL, 0, 0, UI_VGA_W - 1, UI_VGA_H - 1 },
+    /*1*/ { 1, 0, UI_CURSOR_SCALE_MODE_NORMAL, 0, 0, UI_VGA_W - 1, UI_VGA_H - 1 },
+    /*2*/ { 8, 0, UI_CURSOR_SCALE_MODE_STARMAP, 3, 2, 218, 174 },
+    /*3*/ { 1, 0, UI_CURSOR_SCALE_MODE_NORMAL, 0, 0, UI_VGA_W - 1, UI_VGA_H - 1 },
+    /*4*/ { 7, 4, UI_CURSOR_SCALE_MODE_STARMAP, 3, 2, 218, 174 },
+    /*5*/ { 1, 0, UI_CURSOR_SCALE_MODE_NORMAL, 0, 0, UI_VGA_W - 1, UI_VGA_H - 1 },
+    /*6*/ { 7, 4, UI_CURSOR_SCALE_MODE_STARMAP, 3, 2, 218, 174 },
+    /*7*/ { 5, 0, UI_CURSOR_SCALE_MODE_STARMAP, 0, 0, 0, 0 },
+    /*8*/ { 9, 0, UI_CURSOR_SCALE_MODE_NORMAL, 0, 0, UI_VGA_W - 1, UI_VGA_H - 1 },
+    /*9*/ { 10, 0, UI_CURSOR_SCALE_MODE_NORMAL, 0, 0, UI_VGA_W - 1, UI_VGA_H - 1 },
+    /*a*/ { 11, 0, UI_CURSOR_SCALE_MODE_NORMAL, 0, 0, UI_VGA_W - 1, UI_VGA_H - 1 }
 };
 
 ui_cursor_area_t ui_cursor_area_all_i0 = {0};
@@ -80,18 +81,18 @@ static void ui_cursor_store_bg(int mx, int my, uint8_t *p, struct cursor_bg_s *b
     bg->x = mx;
     bg->y = my;
     p += my * UI_SCREEN_W + mx;
-    w = CURSOR_W;
+    w = CURSOR_W * mouse_cursor_scale;
     if ((mx + w) > UI_SCREEN_W) {
         w = UI_SCREEN_W - mx;
     }
-    h = CURSOR_H;
+    h = CURSOR_H * mouse_cursor_scale;
     if ((my + h) > UI_SCREEN_H) {
         h = UI_SCREEN_H - my;
     }
     for (int y = 0; y < h; ++y) {
         memcpy(q, p, w);
         p += UI_SCREEN_W;
-        q += CURSOR_W;
+        q += w;
     }
 }
 
@@ -104,23 +105,25 @@ static void ui_cursor_draw(int mx, int my, uint8_t *p)
     uint8_t *q = lbxpal_cursors + ((ui_cursor_gfx_i - 1) * CURSOR_W * CURSOR_H);
     ui_cursor_clamp_xy(&mx, &my);
     p += my * UI_SCREEN_W + mx;
-    w = CURSOR_W;
+    w = CURSOR_W * mouse_cursor_scale;
     if ((mx + w) > UI_SCREEN_W) {
         w = UI_SCREEN_W - mx;
     }
-    h = CURSOR_H;
+    h = CURSOR_H * mouse_cursor_scale;
     if ((my + h) > UI_SCREEN_H) {
         h = UI_SCREEN_H - my;
     }
     for (int y = 0; y < h; ++y) {
         for (int x = 0; x < w; ++x) {
-            uint8_t b = q[x * CURSOR_W];
+            uint8_t b = q[x / mouse_cursor_scale * CURSOR_W];
             if (b) {
                 p[x] = b;
             }
         }
         p += UI_SCREEN_W;
-        ++q;
+        if ((y + 1) % mouse_cursor_scale == 0) {
+            ++q;
+        }
     }
 }
 
@@ -132,18 +135,18 @@ static void ui_cursor_erase(uint8_t *p, struct cursor_bg_s *bg)
     uint8_t *q = bg->data;
     ui_cursor_clamp_xy(&mx, &my);
     p += my * UI_SCREEN_W + mx;
-    w = CURSOR_W;
+    w = CURSOR_W * mouse_cursor_scale;
     if ((mx + w) > UI_SCREEN_W) {
         w = UI_SCREEN_W - mx;
     }
-    h = CURSOR_H;
+    h = CURSOR_H * mouse_cursor_scale;
     if ((my + h) > UI_SCREEN_H) {
         h = UI_SCREEN_H - my;
     }
     for (int y = 0; y < h; ++y) {
         memcpy(p, q, w);
         p += UI_SCREEN_W;
-        q += CURSOR_W;
+        q += w;
     }
 }
 
@@ -190,7 +193,8 @@ void ui_cursor_setup_area(int num, ui_cursor_area_t *area)
             --area;
         }
     }
-    ui_cursor_mouseoff = area->mouseoff;
+    mouse_cursor_scale = (area->cursor_scale_mode == UI_CURSOR_SCALE_MODE_STARMAP) ? starmap_scale : ui_scale;
+    ui_cursor_mouseoff = area->mouseoff * mouse_cursor_scale;
     ui_cursor_gfx_i = area->cursor_i;
 }
 
@@ -212,8 +216,8 @@ void ui_cursor_update_gfx_i(int mx, int my)
             --area;
         }
     }
-
-    ui_cursor_mouseoff = area->mouseoff;
+    mouse_cursor_scale = (area->cursor_scale_mode == UI_CURSOR_SCALE_MODE_STARMAP) ? starmap_scale : ui_scale;
+    ui_cursor_mouseoff = area->mouseoff * mouse_cursor_scale;
     ui_cursor_gfx_i = area->cursor_i;
 }
 
