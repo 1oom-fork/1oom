@@ -412,7 +412,7 @@ static bool game_cfg_check_new_game_opts(void *val)
     int v2, v = (int)(intptr_t)val;
     v2 = v % 10;
     v = v / 10;
-    if (v2 > DIFFICULTY_NUM) {
+    if (v2 >= DIFFICULTY_NUM) {
         log_error("invalid difficulty num %i\n", v2);
         return false;
     }
