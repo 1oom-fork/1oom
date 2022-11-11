@@ -5,7 +5,6 @@
 
 #include "main.h"
 #include "cfg.h"
-#include "comp.h"
 #include "game.h"
 #include "gameapi.h"
 #include "game_ai.h"
@@ -88,13 +87,10 @@ static void game_set_opts_from_value(struct game_new_options_s *go, int v)
     v2 = v % 10;
     v = v / 10;
     go->difficulty = v2;
-    SETMIN(go->difficulty, DIFFICULTY_NUM - 1);
     v2 = v % 10;
     v = v / 10;
     go->galaxy_size = v2;
-    SETMIN(go->galaxy_size, GALAXY_SIZE_HUGE);
     go->players = v;
-    SETMIN(go->players, PLAYER_NUM);
 }
 
 static void game_set_custom_opts_from_cfg(struct game_new_options_s *go)
