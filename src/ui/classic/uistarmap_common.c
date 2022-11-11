@@ -244,17 +244,9 @@ static int ui_starmap_scrollkey_accel(int zh)
     if (zh < 0) {
         v = -v;
     }
-    if (v > 64) {
-        v = 5;
-    } if (v > 32) {
-        v = 4;
-    } else if (v > 16) {
-        v = 3;
-    } else if (v > 4) {
-        v = 2;
-    } else {
-        v = 1;
-    }
+    v = 1 + (v / 4);
+    if (v > 8) v = 8;
+    v *= ui_sm_scroll_speed / 2 + 1;
     if (zh < 0) {
         v = -v;
     }
