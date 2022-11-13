@@ -6,5 +6,6 @@
 struct game_new_options_s;
 /* returns false on cancel  */
 extern bool ui_new_game(struct game_new_options_s *newopts);
+extern bool ui_custom_game(struct game_new_options_s *newopts);
 
 #endif

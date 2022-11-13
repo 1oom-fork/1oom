@@ -550,11 +550,7 @@ bool ui_new_game(struct game_new_options_s *newopts)
     uiobj_unset_callback();
 
     if (flag_ok) {
-        if (ui_extra_enabled) {
-            flag_ok = ui_new_game_extra(newopts, &d);
-        } else {
-            flag_ok = ui_new_game_racebannernames(newopts, &d);
-        }
+        flag_ok = ui_new_game_racebannernames(newopts, &d);
     }
 
     uiobj_unset_callback();
@@ -566,5 +562,22 @@ bool ui_new_game(struct game_new_options_s *newopts)
     ui_draw_erase_buf();
     hw_video_draw_buf();
 
+    return flag_ok;
+}
+
+bool ui_custom_game(struct game_new_options_s *newopts) {
+    struct new_game_data_s d;
+    bool flag_ok = false;
+
+    d.newopts = newopts;
+    *d.newopts = game_opt_custom;
+    new_game_load_data(&d);
+
+    flag_ok = ui_new_game_extra(newopts, &d);
+    if (flag_ok) {
+        game_opt_custom = *d.newopts;
+    }
+
+    new_game_free_data(&d);
     return flag_ok;
 }

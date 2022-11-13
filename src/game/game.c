@@ -615,6 +615,7 @@ int main_do(void)
         }
         switch (main_menu_action) {
             case MAIN_MENU_ACT_NEW_GAME:
+            case MAIN_MENU_ACT_CUSTOM_GAME:
                 main_menu_new_game:
                 game_new(&game, &game_aux, &game_new_opts);
                 game_opt_new_value = game_get_opts_value(&game);

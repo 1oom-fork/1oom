@@ -31,6 +31,8 @@ struct game_new_options_s {
         } \
     }
 
+extern struct game_new_options_s game_opt_custom;
+
 struct game_aux_s;
 
 extern int game_new(struct game_s *g, struct game_aux_s *gaux, struct game_new_options_s *opt);

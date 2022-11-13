@@ -5,6 +5,7 @@
 
 #include "game_nebula.h"
 #include "game_new.h"
+#include "cfg.h"
 #include "comp.h"
 #include "game.h"
 #include "game_ai.h"
@@ -58,6 +59,45 @@ static const int8_t tbl_orion_race_relation[RACE_NUM][RACE_NUM] = {
     { 1,-1, 0, 0, 0, 0, 0, 0, 0,-1 },
     { 1, 0, 1,-1, 0, 0, 0, 0, 0,-1 },
     { 1,-1,-1,-1,-1,-1,-1,-1,-1, 1 }
+};
+
+struct game_new_options_s game_opt_custom = GAME_NEW_OPTS_DEFAULT;
+
+static bool game_cfg_check_custom_game_difficulty(void *val)
+{
+    int v = (int)(intptr_t)val;
+    if (v >= DIFFICULTY_NUM || v < 0) {
+        log_error("invalid difficulty num %i\n", v);
+        return false;
+    }
+    return true;
+}
+
+static bool game_cfg_check_custom_game_galaxy_size(void *val)
+{
+    int v = (int)(intptr_t)val;
+    if (v > GALAXY_SIZE_HUGE || v < 0) {
+        log_error("invalid galaxy size num %i\n", v);
+        return false;
+    }
+    return true;
+}
+
+static bool game_cfg_check_custom_game_players(void *val)
+{
+    int v = (int)(intptr_t)val;
+    if (v > PLAYER_NUM || v < 2) {
+        log_error("invalid players num %i\n", v);
+        return false;
+    }
+    return true;
+}
+
+const struct cfg_items_s game_new_cfg_items[] = {
+    CFG_ITEM_INT("custom_game_difficulty", &game_opt_custom.difficulty, game_cfg_check_custom_game_difficulty),
+    CFG_ITEM_INT("custom_game_galaxy_size", &game_opt_custom.galaxy_size, game_cfg_check_custom_game_galaxy_size),
+    CFG_ITEM_INT("custom_game_players", &game_opt_custom.players, game_cfg_check_custom_game_players),
+    CFG_ITEM_END
 };
 
 /* -------------------------------------------------------------------------- */

@@ -30,6 +30,7 @@ extern void ui_play_ending_exile(const char *name);
 
 typedef enum {
     MAIN_MENU_ACT_NEW_GAME,
+    MAIN_MENU_ACT_CUSTOM_GAME,
     MAIN_MENU_ACT_LOAD_GAME,
     MAIN_MENU_ACT_CONTINUE_GAME,
     MAIN_MENU_ACT_QUIT_GAME,

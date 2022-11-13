@@ -5,6 +5,7 @@
 #include "types.h"
 
 extern const struct cfg_items_s game_cfg_items[];
+extern const struct cfg_items_s game_new_cfg_items[];
 
 extern bool game_opt_enable_bomb_animation;
 extern bool game_opt_skip_intro_always;

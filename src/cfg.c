@@ -27,6 +27,7 @@ static const struct cfg_module_s {
     { "opt", opt_cfg_items, 0 },
     { "opta", opt_cfg_items_audio, &ui_use_audio },
     { "game", game_cfg_items, 0 },
+    { "newgame", game_new_cfg_items, 0 },
     { "hw", hw_cfg_items, 0 },
     { "hwx", hw_cfg_items_extra, 0 },
     { "ui", ui_cfg_items, 0 },

@@ -4,6 +4,7 @@
 #include "comp.h"
 #include "game.h"
 #include "gameapi.h"
+#include "game_new.h"
 #include "game_save.h"
 #include "game_str.h"
 #include "hw.h"
@@ -75,10 +76,21 @@ static void main_menu_update_sfx_volume(void *vptr) {
     hw_audio_sfx_volume(opt_sfx_volume);
 }
 
+static const char* mm_get_custom_difficulty_value(int i) {
+    return game_str_tbl_diffic[i];
+}
+static const char* mm_get_custom_galaxy_size_value(int i) {
+    return game_str_tbl_gsize[i];
+}
+static const char* mm_get_custom_players_value(int i) {
+    return game_str_tbl_oppon[i - 2];
+}
+
 struct main_menu_data_s;
 static void main_menu_set_item_dimensions(struct main_menu_data_s *d, int i);
 static void mm_game_set_item_dimensions(struct main_menu_data_s *d, int i);
 static void mm_options_set_item_dimensions(struct main_menu_data_s *d, int i);
+static void mm_custom_set_item_dimensions(struct main_menu_data_s *d, int i);
 
 /* -------------------------------------------------------------------------- */
 
@@ -91,6 +103,11 @@ typedef enum {
     MAIN_MENU_ITEM_GAME_CONTINUE,
     MAIN_MENU_ITEM_GAME_LOAD,
     MAIN_MENU_ITEM_GAME_NEW,
+    MAIN_MENU_ITEM_GAME_CUSTOM,
+    MAIN_MENU_ITEM_GAME_CUSTOM_DIFFICULTY,
+    MAIN_MENU_ITEM_GAME_CUSTOM_GALAXY_SIZE,
+    MAIN_MENU_ITEM_GAME_CUSTOM_PLAYERS,
+    MAIN_MENU_ITEM_GAME_CUSTOM_NEXT,
     MAIN_MENU_ITEM_OPTIONS,
     MAIN_MENU_ITEM_OPTIONS_INPUT,
     MAIN_MENU_ITEM_OPTIONS_INPUT_SMSCROLL,
@@ -118,6 +135,7 @@ typedef enum {
 typedef enum {
     MAIN_MENU_PAGE_MAIN,
     MAIN_MENU_PAGE_GAME,
+    MAIN_MENU_PAGE_GAME_CUSTOM,
     MAIN_MENU_PAGE_OPTIONS,
     MAIN_MENU_PAGE_OPTIONS_INPUT,
     MAIN_MENU_PAGE_OPTIONS_SOUND,
@@ -165,6 +183,41 @@ static struct main_menu_item_data_s mm_items[MAIN_MENU_ITEM_NUM] = {
         MAIN_MENU_ITEM_TYPE_RETURN,
         NULL, main_menu_game_active,
         "New Game", NULL, NULL, MAIN_MENU_ACT_NEW_GAME,
+        0, 0,
+        MOO_KEY_n,
+    },
+    {
+        MAIN_MENU_ITEM_TYPE_PAGE,
+        NULL, main_menu_game_active,
+        "Custom Game", NULL, NULL, MAIN_MENU_PAGE_GAME_CUSTOM,
+        0, 0,
+        MOO_KEY_g,
+    },
+    {
+        MAIN_MENU_ITEM_TYPE_ENUM,
+        NULL, NULL,
+        "Difficulty", mm_get_custom_difficulty_value, &game_opt_custom.difficulty, 0,
+        0, DIFFICULTY_NUM - 1,
+        MOO_KEY_d,
+    },
+    {
+        MAIN_MENU_ITEM_TYPE_ENUM,
+        NULL, NULL,
+        "Galaxy Size", mm_get_custom_galaxy_size_value, &game_opt_custom.galaxy_size, 0,
+        0, GALAXY_SIZE_HUGE,
+        MOO_KEY_g,
+    },
+    {
+        MAIN_MENU_ITEM_TYPE_ENUM,
+        NULL, NULL,
+        "Players", mm_get_custom_players_value, &game_opt_custom.players, 0,
+        2, PLAYER_NUM,
+        MOO_KEY_p,
+    },
+    {
+        MAIN_MENU_ITEM_TYPE_RETURN,
+        NULL, main_menu_game_active,
+        "Next", NULL, NULL, MAIN_MENU_ACT_CUSTOM_GAME,
         0, 0,
         MOO_KEY_n,
     },
@@ -345,10 +398,23 @@ static struct main_menu_page_s mm_pages[MAIN_MENU_PAGE_NUM] = {
             MAIN_MENU_ITEM_GAME_CONTINUE,
             MAIN_MENU_ITEM_GAME_LOAD,
             MAIN_MENU_ITEM_GAME_NEW,
+            MAIN_MENU_ITEM_GAME_CUSTOM,
             MAIN_MENU_ITEM_BACK,
             MAIN_MENU_ITEM_NUM,
         },
         mm_game_set_item_dimensions,
+        NULL,
+    },
+    {
+        {
+            MAIN_MENU_ITEM_GAME_CUSTOM_DIFFICULTY,
+            MAIN_MENU_ITEM_GAME_CUSTOM_GALAXY_SIZE,
+            MAIN_MENU_ITEM_GAME_CUSTOM_PLAYERS,
+            MAIN_MENU_ITEM_BACK,
+            MAIN_MENU_ITEM_GAME_CUSTOM_NEXT,
+            MAIN_MENU_ITEM_NUM,
+        },
+        mm_custom_set_item_dimensions,
         NULL,
     },
     {
@@ -538,6 +604,24 @@ static void mm_options_set_item_dimensions(struct main_menu_data_s *d, int i)
         it->x = 0xa0;
     }
     it->y = 0x7f + step_y * (i/2);
+}
+
+static void mm_custom_set_item_dimensions(struct main_menu_data_s *d, int i)
+{
+    struct main_menu_item_s *it = &d->items[i];
+    uint16_t step_y;
+    main_menu_set_item_wh(it);
+    step_y = 0x40 / ((d->item_count + 1) / 2);
+    it->x = i%2 ? 0xe0 : 0x60;
+    it->y = 0x7f + step_y * (i/2);
+    if (i == d->item_count - 1) {
+        it->x = 0xe0;
+        it->y = 0x7f + 0x30;
+    }
+    if (i == d->item_count - 2) {
+        it->x = 0x60;
+        it->y = 0x7f + 0x30;
+    }
 }
 
 static void main_menu_refresh_screen(struct main_menu_data_s *d)
@@ -844,6 +928,10 @@ main_menu_action_t ui_main_menu(struct game_new_options_s *newopts, int *load_ga
         switch (ret) {
             case MAIN_MENU_ACT_NEW_GAME:
                 flag_done = ui_new_game(newopts);
+                ui_draw_finish_mode = 1;
+                break;
+            case MAIN_MENU_ACT_CUSTOM_GAME:
+                flag_done = ui_custom_game(newopts);
                 ui_draw_finish_mode = 1;
                 break;
             case MAIN_MENU_ACT_LOAD_GAME:
