@@ -4,6 +4,7 @@
 #include "comp.h"
 #include "game.h"
 #include "gameapi.h"
+#include "game_ai.h"
 #include "game_new.h"
 #include "game_save.h"
 #include "game_str.h"
@@ -86,6 +87,10 @@ static const char* mm_get_custom_players_value(int i) {
     return game_str_tbl_oppon[i - 2];
 }
 
+static const char* mm_get_custom_ai_id_value(int i) {
+    return game_ais[i]->name;
+}
+
 struct main_menu_data_s;
 static void main_menu_set_item_dimensions(struct main_menu_data_s *d, int i);
 static void mm_game_set_item_dimensions(struct main_menu_data_s *d, int i);
@@ -107,6 +112,7 @@ typedef enum {
     MAIN_MENU_ITEM_GAME_CUSTOM_DIFFICULTY,
     MAIN_MENU_ITEM_GAME_CUSTOM_GALAXY_SIZE,
     MAIN_MENU_ITEM_GAME_CUSTOM_PLAYERS,
+    MAIN_MENU_ITEM_GAME_CUSTOM_AI_ID,
     MAIN_MENU_ITEM_GAME_CUSTOM_NEXT,
     MAIN_MENU_ITEM_OPTIONS,
     MAIN_MENU_ITEM_OPTIONS_INPUT,
@@ -213,6 +219,13 @@ static struct main_menu_item_data_s mm_items[MAIN_MENU_ITEM_NUM] = {
         "Players", mm_get_custom_players_value, &game_opt_custom.players, 0,
         2, PLAYER_NUM,
         MOO_KEY_p,
+    },
+    {
+        MAIN_MENU_ITEM_TYPE_ENUM,
+        NULL, NULL,
+        "AI ID", mm_get_custom_ai_id_value, &game_opt_custom.ai_id, 0,
+        0, GAME_AI_NUM_VISIBLE - 1,
+        MOO_KEY_a,
     },
     {
         MAIN_MENU_ITEM_TYPE_RETURN,
@@ -410,6 +423,7 @@ static struct main_menu_page_s mm_pages[MAIN_MENU_PAGE_NUM] = {
             MAIN_MENU_ITEM_GAME_CUSTOM_DIFFICULTY,
             MAIN_MENU_ITEM_GAME_CUSTOM_GALAXY_SIZE,
             MAIN_MENU_ITEM_GAME_CUSTOM_PLAYERS,
+            MAIN_MENU_ITEM_GAME_CUSTOM_AI_ID,
             MAIN_MENU_ITEM_BACK,
             MAIN_MENU_ITEM_GAME_CUSTOM_NEXT,
             MAIN_MENU_ITEM_NUM,

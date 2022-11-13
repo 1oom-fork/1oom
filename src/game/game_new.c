@@ -93,10 +93,21 @@ static bool game_cfg_check_custom_game_players(void *val)
     return true;
 }
 
+static bool game_cfg_check_custom_game_ai_id(void *val)
+{
+    int v = (int)(intptr_t)val;
+    if (v >= GAME_AI_NUM_VISIBLE || v < 0) {
+        log_error("invalid ai id %i\n", v);
+        return false;
+    }
+    return true;
+}
+
 const struct cfg_items_s game_new_cfg_items[] = {
     CFG_ITEM_INT("custom_game_difficulty", &game_opt_custom.difficulty, game_cfg_check_custom_game_difficulty),
     CFG_ITEM_INT("custom_game_galaxy_size", &game_opt_custom.galaxy_size, game_cfg_check_custom_game_galaxy_size),
     CFG_ITEM_INT("custom_game_players", &game_opt_custom.players, game_cfg_check_custom_game_players),
+    CFG_ITEM_INT("custom_game_ai_id", &game_opt_custom.ai_id, game_cfg_check_custom_game_ai_id),
     CFG_ITEM_END
 };
 
