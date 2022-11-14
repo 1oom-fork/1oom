@@ -72,6 +72,7 @@ typedef enum {
 
 typedef enum {
     GAME_MODE_EXTRA_NO_EXTRA     = 0,
+    GAME_MODE_EXTRA_NO_ELECTIONS = (1 << 0),
 } game_mode_extra_t;
 
 typedef enum {

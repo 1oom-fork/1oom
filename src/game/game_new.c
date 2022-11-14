@@ -108,6 +108,7 @@ const struct cfg_items_s game_new_cfg_items[] = {
     CFG_ITEM_INT("custom_game_galaxy_size", &game_opt_custom.galaxy_size, game_cfg_check_custom_game_galaxy_size),
     CFG_ITEM_INT("custom_game_players", &game_opt_custom.players, game_cfg_check_custom_game_players),
     CFG_ITEM_INT("custom_game_ai_id", &game_opt_custom.ai_id, game_cfg_check_custom_game_ai_id),
+    CFG_ITEM_BOOL("custom_game_no_elections", &game_opt_custom.no_elections),
     CFG_ITEM_END
 };
 
@@ -1043,6 +1044,9 @@ int game_new(struct game_s *g, struct game_aux_s *gaux, struct game_new_options_
     g->seed = g->galaxy_seed;
     g->ai_id = opt->ai_id;
     g->game_mode_extra = GAME_MODE_EXTRA_NO_EXTRA;
+    if (opt->no_elections) {
+        g->game_mode_extra |= GAME_MODE_EXTRA_NO_ELECTIONS;
+    }
     game_ai = game_ais[g->ai_id];
     g->players = opt->players;
     g->difficulty = opt->difficulty;
