@@ -1042,6 +1042,7 @@ int game_new(struct game_s *g, struct game_aux_s *gaux, struct game_new_options_
     }
     g->seed = g->galaxy_seed;
     g->ai_id = opt->ai_id;
+    g->game_mode_extra = GAME_MODE_EXTRA_NO_EXTRA;
     game_ai = game_ais[g->ai_id];
     g->players = opt->players;
     g->difficulty = opt->difficulty;
