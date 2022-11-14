@@ -109,6 +109,8 @@ const struct cfg_items_s game_new_cfg_items[] = {
     CFG_ITEM_INT("custom_game_players", &game_opt_custom.players, game_cfg_check_custom_game_players),
     CFG_ITEM_INT("custom_game_ai_id", &game_opt_custom.ai_id, game_cfg_check_custom_game_ai_id),
     CFG_ITEM_BOOL("custom_game_no_elections", &game_opt_custom.no_elections),
+    CFG_ITEM_BOOL("custom_game_no_tohit_acc", &game_opt_custom.no_tohit_acc),
+    CFG_ITEM_BOOL("custom_game_precap_tohit", &game_opt_custom.precap_tohit),
     CFG_ITEM_END
 };
 
@@ -1046,6 +1048,12 @@ int game_new(struct game_s *g, struct game_aux_s *gaux, struct game_new_options_
     g->game_mode_extra = GAME_MODE_EXTRA_NO_EXTRA;
     if (opt->no_elections) {
         g->game_mode_extra |= GAME_MODE_EXTRA_NO_ELECTIONS;
+    }
+    if (opt->no_tohit_acc) {
+        g->game_mode_extra |= GAME_MODE_EXTRA_NO_TOHIT_ACC;
+    }
+    if (opt->precap_tohit) {
+        g->game_mode_extra |= GAME_MODE_EXTRA_PRECAP_TOHIT;
     }
     game_ai = game_ais[g->ai_id];
     g->players = opt->players;

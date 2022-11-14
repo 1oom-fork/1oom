@@ -116,6 +116,8 @@ typedef enum {
     MAIN_MENU_ITEM_GAME_CUSTOM_NEXT,
     MAIN_MENU_ITEM_GAME_CUSTOM_RULES,
     MAIN_MENU_ITEM_GAME_CUSTOM_RULES_NOELECTIONS,
+    MAIN_MENU_ITEM_GAME_CUSTOM_RULES_NO_TOHIT_ACC,
+    MAIN_MENU_ITEM_GAME_CUSTOM_RULES_PRECAP_TOHIT,
     MAIN_MENU_ITEM_OPTIONS,
     MAIN_MENU_ITEM_OPTIONS_INPUT,
     MAIN_MENU_ITEM_OPTIONS_INPUT_SMSCROLL,
@@ -250,6 +252,20 @@ static struct main_menu_item_data_s mm_items[MAIN_MENU_ITEM_NUM] = {
         "No Elections", NULL, &game_opt_custom.no_elections, 0,
         0, 0,
         MOO_KEY_e,
+    },
+    {
+        MAIN_MENU_ITEM_TYPE_BOOL,
+        NULL, NULL,
+        "No Tohit Accumulation", NULL, &game_opt_custom.no_tohit_acc, 0,
+        0, 0,
+        MOO_KEY_a,
+    },
+    {
+        MAIN_MENU_ITEM_TYPE_BOOL,
+        NULL, NULL,
+        "Precap Tohit", NULL, &game_opt_custom.precap_tohit, 0,
+        0, 0,
+        MOO_KEY_p,
     },
     {
         MAIN_MENU_ITEM_TYPE_PAGE,
@@ -452,6 +468,8 @@ static struct main_menu_page_s mm_pages[MAIN_MENU_PAGE_NUM] = {
     {
         {
             MAIN_MENU_ITEM_GAME_CUSTOM_RULES_NOELECTIONS,
+            MAIN_MENU_ITEM_GAME_CUSTOM_RULES_NO_TOHIT_ACC,
+            MAIN_MENU_ITEM_GAME_CUSTOM_RULES_PRECAP_TOHIT,
             MAIN_MENU_ITEM_BACK,
             MAIN_MENU_ITEM_NUM,
         },

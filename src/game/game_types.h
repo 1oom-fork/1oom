@@ -73,6 +73,13 @@ typedef enum {
 typedef enum {
     GAME_MODE_EXTRA_NO_EXTRA     = 0,
     GAME_MODE_EXTRA_NO_ELECTIONS = (1 << 0),
+    GAME_MODE_EXTRA_NO_TOHIT_ACC = (1 << 1), /* Do not accumulate To Hit bonuses.
+    MOO1 accumulates weapon To Hit bonuses while firing the four weapons slots.
+    This results in Hyper-X or better missiles or Megabolt Cannon in slots 1..3
+    affecting the accuracy of a beam weapon in slot 4. */
+    GAME_MODE_EXTRA_PRECAP_TOHIT = (1 << 2), /* Add To Hit bonus before capping
+    defense to 95%. MOO1 adds To Hit bonuses after capping defense. This results
+    in high defense being less effective against high tech missiles. */
 } game_mode_extra_t;
 
 typedef enum {
