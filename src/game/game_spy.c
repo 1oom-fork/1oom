@@ -274,15 +274,17 @@ static void game_spy_sabotage(struct game_s *g, player_id_t spy, player_id_t tar
             g->evn.sabotage_spy[target][spy] = flag_frame ? -1 : rcaught;
         } else if (IS_HUMAN(g, target)) {
             if (rnd_0_nm1(4, &g->seed) == 0) {
-                v8 = (p->pop * (v8 / 2)) / 100;
-                SETMAX(v8, 1);
-                SETMIN(v8, p->pop);
-                p->rebels += v8;
-                SETMIN(p->rebels, p->pop);
-                if (p->rebels >= (p->pop / 2)) {
-                    p->unrest = PLANET_UNREST_REBELLION;
-                    p->unrest_reported = false;
-                    p->rebels = p->pop;
+                if (!(g->game_mode_extra & GAME_MODE_EXTRA_NO_EVENTS)) {
+                    v8 = (p->pop * (v8 / 2)) / 100;
+                    SETMAX(v8, 1);
+                    SETMIN(v8, p->pop);
+                    p->rebels += v8;
+                    SETMIN(p->rebels, p->pop);
+                    if (p->rebels >= (p->pop / 2)) {
+                        p->unrest = PLANET_UNREST_REBELLION;
+                        p->unrest_reported = false;
+                        p->rebels = p->pop;
+                    }
                 }
             } else {
                 /*822f6*/
@@ -715,6 +717,9 @@ void game_spy_sab_human(struct game_s *g)
                         p->missile_bases -= snum;
                         break;
                     case UI_SABOTAGE_REVOLT: /*2*/
+                        if (g->game_mode_extra & GAME_MODE_EXTRA_NO_EVENTS) {
+                            break;
+                        }
                         snum = (p->pop * snum) / 200;
                         if (p->pop < snum) {
                             snum = p->pop - p->rebels;

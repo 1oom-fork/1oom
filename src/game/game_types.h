@@ -80,6 +80,7 @@ typedef enum {
     GAME_MODE_EXTRA_PRECAP_TOHIT = (1 << 2), /* Add To Hit bonus before capping
     defense to 95%. MOO1 adds To Hit bonuses after capping defense. This results
     in high defense being less effective against high tech missiles. */
+    GAME_MODE_EXTRA_NO_EVENTS = (1 << 3),
 } game_mode_extra_t;
 
 typedef enum {

@@ -12,6 +12,7 @@ struct game_new_options_s {
     uint8_t no_elections;
     uint8_t no_tohit_acc;
     uint8_t precap_tohit;
+    uint8_t no_events;
     struct {
         char playername[EMPEROR_NAME_LEN];
         char homename[PLANET_NAME_LEN];
@@ -23,7 +24,7 @@ struct game_new_options_s {
 
 #define GAME_NEW_OPTS_DEFAULT \
     { \
-        0, GALAXY_SIZE_SMALL, DIFFICULTY_SIMPLE, GAME_AI_DEFAULT, 2, false, true, true,\
+        0, GALAXY_SIZE_SMALL, DIFFICULTY_SIMPLE, GAME_AI_DEFAULT, 2, false, true, true, false,\
         { \
             { "", "", RACE_RANDOM, BANNER_RANDOM, false }, \
             { "", "", RACE_RANDOM, BANNER_RANDOM, true }, \
