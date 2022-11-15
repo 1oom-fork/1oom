@@ -17,6 +17,7 @@
 #include "lib.h"
 #include "log.h"
 #include "menu.h"
+#include "rnd.h"
 #include "types.h"
 #include "uicursor.h"
 #include "uidelay.h"
@@ -91,6 +92,16 @@ static const char* mm_get_custom_ai_id_value(int i) {
     return game_ais[i]->name;
 }
 
+static const char* mm_get_custom_galaxy_seed_str(void) {
+    static char buf[64];
+    lib_sprintf(buf, 64, "%d", game_opt_custom.galaxy_seed);
+    return buf;
+}
+
+static void mm_gen_custom_galaxy_seed(void) {
+    game_opt_custom.galaxy_seed = game_opt_custom.galaxy_seed ? 0 : rnd_get_new_seed();
+}
+
 struct main_menu_data_s;
 static void main_menu_set_item_dimensions(struct main_menu_data_s *d, int i);
 static void mm_game_set_item_dimensions(struct main_menu_data_s *d, int i);
@@ -113,6 +124,7 @@ typedef enum {
     MAIN_MENU_ITEM_GAME_CUSTOM_GALAXY_SIZE,
     MAIN_MENU_ITEM_GAME_CUSTOM_PLAYERS,
     MAIN_MENU_ITEM_GAME_CUSTOM_AI_ID,
+    MAIN_MENU_ITEM_GAME_CUSTOM_GALAXY_SEED,
     MAIN_MENU_ITEM_GAME_CUSTOM_NEXT,
     MAIN_MENU_ITEM_GAME_CUSTOM_RULES,
     MAIN_MENU_ITEM_GAME_CUSTOM_RULES_NOELECTIONS,
@@ -232,6 +244,13 @@ static struct main_menu_item_data_s mm_items[MAIN_MENU_ITEM_NUM] = {
         "AI ID", mm_get_custom_ai_id_value, &game_opt_custom.ai_id, 0,
         0, GAME_AI_NUM_VISIBLE - 1,
         MOO_KEY_a,
+    },
+    {
+        MAIN_MENU_ITEM_TYPE_STR,
+        mm_gen_custom_galaxy_seed, NULL,
+        "Galaxy Seed", NULL, mm_get_custom_galaxy_seed_str, 0,
+        0, 0,
+        MOO_KEY_s,
     },
     {
         MAIN_MENU_ITEM_TYPE_RETURN,
@@ -465,6 +484,7 @@ static struct main_menu_page_s mm_pages[MAIN_MENU_PAGE_NUM] = {
             MAIN_MENU_ITEM_GAME_CUSTOM_GALAXY_SIZE,
             MAIN_MENU_ITEM_GAME_CUSTOM_PLAYERS,
             MAIN_MENU_ITEM_GAME_CUSTOM_AI_ID,
+            MAIN_MENU_ITEM_GAME_CUSTOM_GALAXY_SEED,
             MAIN_MENU_ITEM_GAME_CUSTOM_RULES,
             MAIN_MENU_ITEM_BACK,
             MAIN_MENU_ITEM_GAME_CUSTOM_NEXT,
