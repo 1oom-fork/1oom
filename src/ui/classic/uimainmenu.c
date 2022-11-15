@@ -131,7 +131,7 @@ typedef enum {
 } main_menu_page_id_t;
 
 struct main_menu_page_s {
-    main_menu_item_id_t item_id[MM_MAX_ITEMS_PER_PAGE];
+    main_menu_item_id_t item_id[MM_MAX_ITEMS_PER_PAGE + 1];
     void (*set_item_dimensions)(struct main_menu_data_s *, int i);
     struct main_menu_item_data_s *item_data;
 };
