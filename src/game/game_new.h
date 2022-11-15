@@ -7,12 +7,12 @@ struct game_new_options_s {
     uint32_t galaxy_seed;
     galaxy_size_t galaxy_size;
     difficulty_t difficulty;
-    uint8_t ai_id;
-    uint8_t players;
-    uint8_t no_elections;
-    uint8_t no_tohit_acc;
-    uint8_t precap_tohit;
-    uint8_t no_events;
+    uint32_t ai_id;
+    uint32_t players;
+    uint32_t no_elections;
+    uint32_t no_tohit_acc;
+    uint32_t precap_tohit;
+    uint32_t no_events;
     struct {
         char playername[EMPEROR_NAME_LEN];
         char homename[PLANET_NAME_LEN];
