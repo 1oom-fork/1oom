@@ -845,7 +845,7 @@ static int16_t uiobj_kbd_dir_key_dxdy(int dirx, int diry, int16_t oi2, int mx, i
     /* FIXME this behaves like MOO1, meaning it sucks */
     int dx = UIOBJ_OFFSCREEN, dy = UIOBJ_OFFSCREEN;
     int slope = UIOBJ_OFFSCREEN;
-    int mind = UIOBJ_OFFSCREEN * 100;
+    int mind = UIOBJ_OFFSCREEN * UIOBJ_OFFSCREEN;
     int dist;
     int16_t oi = oi2;
     uiobj_t *p;
@@ -949,7 +949,7 @@ static int16_t uiobj_kbd_dir_key_dxdy(int dirx, int diry, int16_t oi2, int mx, i
                 dx = (dirx < 0) ? (mx - scmidx(p)) : (scmidx(p) - mx);
                 dy = scmidy(p) - my;
                 if ((p->y0 * p->scale <= my) && (p->y1 * p->scale >= my) && ((dy * p->scale < -6) || (dy * p->scale > 6))) {
-                    dy = 6;
+                    dy = 6 * p->scale;
                 }
                 if ((dy > -6 * p->scale) && (dy < 6 * p->scale) && (dx > 0) && (dx < mind)) {
                     mind = dx;
@@ -2049,7 +2049,7 @@ int16_t uiobj_add_tb(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t xs
 void uiobj_dec_y1(int16_t oi)
 {
     uiobj_t *p = &uiobj_tbl[oi];
-    p->y1 -= p->scale;
+    --p->y1;
 }
 
 void uiobj_ta_set_val_0(int16_t oi)

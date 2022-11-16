@@ -319,12 +319,14 @@ static void gmap_draw_cb(void *vptr)
     lbxfont_print_str_normal(250, 88, game_str_gm_mapkey, UI_SCREEN_W, ui_scale);
     lbxfont_set_temp_color(0x00);
     gmap_blink_step(&(d->b));
-    if (ui_extra_enabled) {
+    if (ui_scale > 1) {
         const uint8_t ctblf[5] = { 0xbd, 0xbc, 0xbb, 0xba, 0xb9 };
         const uint8_t ctblb[5] = { 0xba, 0xbb, 0xbc, 0xbd, 0xb9 };
         int x0, y0, x1, y1, pos;
         x0 = (ui_data.starmap.x * 224) / g->galaxy_maxx + 7;
+        SETMAX(x0, 7);
         y0 = (ui_data.starmap.y * 185) / g->galaxy_maxy + 7;
+        SETMAX(y0, 7);
         x1 = ((ui_data.starmap.x + ((108 * ui_scale) / starmap_scale)) * 224) / g->galaxy_maxx + 7;
         SETMIN(x1, 230);
         y1 = ((ui_data.starmap.y + ((86 * ui_scale) / starmap_scale)) * 185) / g->galaxy_maxy + 7;
