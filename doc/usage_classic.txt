@@ -52,6 +52,7 @@ The following new UI features are always enabled/available:
 - When sending a fleet Tab cycles ships and <> adjusts selected ship
 - Clicking the portraits in Races screen brings Report page
 - In Races screen the keys 1-5 correspond to clicking the portraits
+- In Specs screen the keys 1-6 correspond to clicking the scrap button
 - Right-clicking on the ship image or Ships button cycles the other way
 - Ind slider no longer shows 0.N/y when at max factories
 - Eco slider shows Clean/+N Pop past T-Form on a full planet
