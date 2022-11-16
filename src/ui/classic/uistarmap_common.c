@@ -26,6 +26,7 @@
 #include "uidelay.h"
 #include "uiobj.h"
 #include "uisound.h"
+#include "uistarmap.h"
 
 /* -------------------------------------------------------------------------- */
 
@@ -597,6 +598,34 @@ void ui_starmap_draw_button_text(struct starmap_data_s *d, bool highlight)
     lbxfont_print_str_normal(230, 184, game_str_sm_tech, UI_SCREEN_W);
     lbxfont_select_set_12_4(5, (highlight && (d->bottom_highlight == 7)) ? 0 : 2, 0, 0);
     lbxfont_print_str_normal(263, 184, game_str_sm_next_turn, UI_SCREEN_W);
+}
+
+void ui_starmap_set_pos_focus(const struct game_s *g, player_id_t active_player)
+{
+    const planet_t *p = &g->planet[g->planet_focus_i[active_player]];
+    ui_starmap_set_pos(g, p->x, p->y);
+}
+
+void ui_starmap_set_pos(const struct game_s *g, int x, int y)
+{
+    x -= 0x36;
+    if (x < 0) {
+        x = 0;
+    }
+    if (x > (g->galaxy_maxx - 0x6c)) {
+        x = (g->galaxy_maxx - 0x6c);
+    }
+    ui_data.starmap.x = x;
+    ui_data.starmap.x2 = x;
+    y -= 0x2b;
+    if (y < 0) {
+        y = 0;
+    }
+    if (y > (g->galaxy_maxy - 0x56)) {
+        y = (g->galaxy_maxy - 0x56);
+    }
+    ui_data.starmap.y = y;
+    ui_data.starmap.y2 = y;
 }
 
 void ui_starmap_handle_oi_ctrl(struct starmap_data_s *d, int16_t oi)
