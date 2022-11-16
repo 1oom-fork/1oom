@@ -322,7 +322,9 @@ static void gmap_draw_cb(void *vptr)
         const uint8_t ctblb[5] = { 0xba, 0xbb, 0xbc, 0xbd, 0xb9 };
         int x0, y0, x1, y1, pos;
         x0 = (ui_data.starmap.x * 224) / g->galaxy_maxx + 7;
+        SETMAX(x0, 7);
         y0 = (ui_data.starmap.y * 185) / g->galaxy_maxy + 7;
+        SETMAX(y0, 7);
         x1 = ((ui_data.starmap.x + ((108 * ui_scale) / starmap_scale)) * 224) / g->galaxy_maxx + 7;
         SETMIN(x1, 230);
         y1 = ((ui_data.starmap.y + ((86 * ui_scale) / starmap_scale)) * 185) / g->galaxy_maxy + 7;
@@ -339,7 +341,9 @@ static void gmap_draw_cb(void *vptr)
     } else {
         int x, y;
         x = (ui_data.starmap.x * 224) / g->galaxy_maxx + 7;
+        SETMAX(x, 7);
         y = (ui_data.starmap.y * 185) / g->galaxy_maxy + 7;
+        SETMAX(y, 7);
         lbxgfx_draw_frame(x, y, ui_data.gfx.starmap.bmap, UI_SCREEN_W, ui_scale);
     }
 }
