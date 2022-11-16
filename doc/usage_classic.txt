@@ -54,6 +54,7 @@ enables the following extra UI features:
 - Pressing a hotkey does not trigger mouse warp
 - Mouse scrolls the galaxy movement screen if touches edge
 - Report screen shows name of AI leaders, Map screen shows current year
+- Galaxy movement screen scrolling range is expanded
 - Pressing + or - will show the slider when sending transport
 - Fleet deployment shows the amount of available ships
 - The question mark cursor is disabled on the galaxy movement screen
