@@ -39,6 +39,7 @@ The following new UI features are always enabled/available:
   - on the transport sending screen
 - Clicking the portraits in Races screen brings Report page
 - In Races screen the keys 1-5 correspond to clicking the portraits
+- In Specs screen the keys 1-6 correspond to clicking the scrap button
 - Ind slider no longer shows 0.N/y when at max factories
 - Eco slider shows Clean/+N Pop past T-Form on a full planet
 - Bases can be scrapped by clicking on the Bases text
