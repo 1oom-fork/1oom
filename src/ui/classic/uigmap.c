@@ -319,7 +319,9 @@ static void gmap_draw_cb(void *vptr)
     {
         int x, y;
         x = (ui_data.starmap.x * 224) / g->galaxy_maxx + 7;
+        SETMAX(x, 7);
         y = (ui_data.starmap.y * 185) / g->galaxy_maxy + 7;
+        SETMAX(y, 7);
         lbxgfx_draw_frame(x, y, ui_data.gfx.starmap.bmap, UI_SCREEN_W);
     }
 }
