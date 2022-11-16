@@ -204,34 +204,6 @@ static void ui_starmap_do_help(struct game_s *g, player_id_t api)
 
 /* -------------------------------------------------------------------------- */
 
-void ui_starmap_set_pos_focus(const struct game_s *g, player_id_t active_player)
-{
-    const planet_t *p = &g->planet[g->planet_focus_i[active_player]];
-    ui_starmap_set_pos(g, p->x, p->y);
-}
-
-void ui_starmap_set_pos(const struct game_s *g, int x, int y)
-{
-    x -= 0x36;
-    if (x < 0) {
-        x = 0;
-    }
-    if (x > (g->galaxy_maxx - 0x6c)) {
-        x = (g->galaxy_maxx - 0x6c);
-    }
-    ui_data.starmap.x = x;
-    ui_data.starmap.x2 = x;
-    y -= 0x2b;
-    if (y < 0) {
-        y = 0;
-    }
-    if (y > (g->galaxy_maxy - 0x56)) {
-        y = (g->galaxy_maxy - 0x56);
-    }
-    ui_data.starmap.y = y;
-    ui_data.starmap.y2 = y;
-}
-
 void ui_starmap_do(struct game_s *g, player_id_t active_player)
 {
     bool flag_done = false;
