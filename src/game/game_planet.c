@@ -524,7 +524,8 @@ int game_planet_get_slider_text(const struct game_s *g, const planet_t *p, playe
             break;
         case PLANET_SLIDER_TECH:
             {
-                int v = game_get_tech_prod(p->prod_after_maint, p->slider[PLANET_SLIDER_TECH], e->race, p->special);
+                uint32_t mult = game_tech_get_research_mult(g);
+                int v = game_get_tech_prod(p->prod_after_maint, p->slider[PLANET_SLIDER_TECH], e->race, p->special) * mult / 4;
                 lib_sprintf(buf, bufsize, "%i", v);
                 retval = v;
             }

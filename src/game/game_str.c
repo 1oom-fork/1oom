@@ -14,6 +14,7 @@ const char *game_str_tbl_races[RACE_NUM] = { "Humans", "Mrrshans", "Silicoids", 
 const char *game_str_tbl_banner[BANNER_NUM + 1] = { "Blue", "Green", "Purple", "Red", "White", "Yellow", "Random" };
 const char *game_str_tbl_gsize[GALAXY_SIZE_NUM] = { "Small", "Medium", "Large", "Huge" };
 const char *game_str_tbl_diffic[DIFFICULTY_NUM] = { "Simple", "Easy", "Average", "Hard", "Impossible" };
+const char *game_str_tbl_research_rate[RESEARCH_RATE_NUM] = { "Normal", "Fast", "Slow", "Slowest"};
 const char *game_str_tbl_oppon[5] = { "One", "Two", "Three", "Four", "Five" };
 
 const char *game_str_tbl_traits[RACE_NUM * 3] = {

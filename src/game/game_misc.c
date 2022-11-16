@@ -205,6 +205,9 @@ void game_update_production(struct game_s *g)
 
 void game_update_total_research(struct game_s *g)
 {
+    uint32_t mult;
+    mult = game_tech_get_research_mult(g);
+
     for (player_id_t pi = PLAYER_0; pi < g->players; ++pi) {
         g->eto[pi].total_research_bc = 0;
     }
@@ -217,7 +220,7 @@ void game_update_total_research(struct game_s *g)
         ) {
             empiretechorbit_t *e;
             e = &(g->eto[p->owner]);
-            e->total_research_bc += game_get_tech_prod(p->prod_after_maint, p->slider[PLANET_SLIDER_TECH], e->race, p->special);
+            e->total_research_bc += game_get_tech_prod(p->prod_after_maint, p->slider[PLANET_SLIDER_TECH], e->race, p->special) * mult / 4;
         }
     }
 }

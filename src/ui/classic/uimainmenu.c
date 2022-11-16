@@ -102,6 +102,10 @@ static void mm_gen_custom_galaxy_seed(void) {
     game_opt_custom.galaxy_seed = game_opt_custom.galaxy_seed ? 0 : rnd_get_new_seed();
 }
 
+static const char* mm_get_custom_research_rate_value(int i) {
+    return game_str_tbl_research_rate[i];
+}
+
 struct main_menu_data_s;
 static void main_menu_set_item_dimensions(struct main_menu_data_s *d, int i);
 static void mm_game_set_item_dimensions(struct main_menu_data_s *d, int i);
@@ -131,6 +135,7 @@ typedef enum {
     MAIN_MENU_ITEM_GAME_CUSTOM_RULES_NO_TOHIT_ACC,
     MAIN_MENU_ITEM_GAME_CUSTOM_RULES_PRECAP_TOHIT,
     MAIN_MENU_ITEM_GAME_CUSTOM_RULES_NOEVENTS,
+    MAIN_MENU_ITEM_GAME_CUSTOM_RULES_RESEARCH_RATE,
     MAIN_MENU_ITEM_OPTIONS,
     MAIN_MENU_ITEM_OPTIONS_INPUT,
     MAIN_MENU_ITEM_OPTIONS_INPUT_SMSCROLL,
@@ -293,6 +298,13 @@ static struct main_menu_item_data_s mm_items[MAIN_MENU_ITEM_NUM] = {
         "No Events", NULL, &game_opt_custom.no_events, 0,
         0, 0,
         MOO_KEY_v,
+    },
+    {
+        MAIN_MENU_ITEM_TYPE_ENUM,
+        NULL, NULL,
+        "Research Rate", mm_get_custom_research_rate_value, &game_opt_custom.research_rate, 0,
+        0, RESEARCH_RATE_NUM - 1,
+        MOO_KEY_r,
     },
     {
         MAIN_MENU_ITEM_TYPE_PAGE,
@@ -499,6 +511,7 @@ static struct main_menu_page_s mm_pages[MAIN_MENU_PAGE_NUM] = {
             MAIN_MENU_ITEM_GAME_CUSTOM_RULES_PRECAP_TOHIT,
             MAIN_MENU_ITEM_GAME_CUSTOM_RULES_NO_TOHIT_ACC,
             MAIN_MENU_ITEM_GAME_CUSTOM_RULES_NOEVENTS,
+            MAIN_MENU_ITEM_GAME_CUSTOM_RULES_RESEARCH_RATE,
             MAIN_MENU_ITEM_BACK,
             MAIN_MENU_ITEM_NUM,
         },

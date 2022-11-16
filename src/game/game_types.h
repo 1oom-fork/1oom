@@ -84,6 +84,14 @@ typedef enum {
 } game_mode_extra_t;
 
 typedef enum {
+    RESEARCH_RATE_NORMAL,
+    RESEARCH_RATE_FAST,
+    RESEARCH_RATE_SLOW,
+    RESEARCH_RATE_SLOWEST,
+    RESEARCH_RATE_NUM,
+} research_rate_t;
+
+typedef enum {
     TREATY_NONE = 0,
     TREATY_NONAGGRESSION, /*1*/
     TREATY_ALLIANCE, /*2*/

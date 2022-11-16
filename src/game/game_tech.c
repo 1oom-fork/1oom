@@ -271,6 +271,27 @@ static void game_tech_share(struct game_s *g, tech_field_t f, bool accepted, boo
 
 /* -------------------------------------------------------------------------- */
 
+uint8_t game_tech_get_research_mult(const struct game_s *g)
+{
+    uint32_t mult = 4;
+    switch (g->research_rate) {
+    case RESEARCH_RATE_FAST:
+        mult = 8;
+        break;
+    case RESEARCH_RATE_NORMAL:
+    default:
+        mult = 4;
+        break;
+    case RESEARCH_RATE_SLOW:
+        mult = 2;
+        break;
+    case RESEARCH_RATE_SLOWEST:
+        mult = 1;
+        break;
+    }
+    return mult;
+}
+
 uint8_t game_tech_player_has_tech(const struct game_s *g, int field_i, int tech_i, int player_i)
 {
     const uint8_t *p = g->srd[player_i].researchcompleted[field_i];
