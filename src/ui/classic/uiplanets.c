@@ -176,7 +176,7 @@ static void planets_draw_cb(void *vptr)
                 }
             }
             lbxfont_select(2, 6, 0, 0);
-            if (ui_extra_enabled) {
+            {
                 int max_pop;
                 max_pop = p->max_pop3;
                 if (g->eto[d->api].race != RACE_SILICOID) {
@@ -185,37 +185,21 @@ static void planets_draw_cb(void *vptr)
                 lbxfont_print_num_right(99, y0, p->pop, UI_SCREEN_W, ui_scale);
                 lbxfont_select(2, 1, 0, 0);
                 lbxfont_print_num_normal(102, y0, max_pop, UI_SCREEN_W, ui_scale);
-            } else {
-                lbxfont_print_num_right(83, y0, p->pop, UI_SCREEN_W, ui_scale);
             }
             if (p->pop != p->pop_prev) {
                 int v;
                 char c;
-                uint8_t *gfx;
                 if (p->pop > p->pop_prev) {
-                    if (ui_extra_enabled) {
-                        lbxfont_select(2, 0xe, 0, 0);
-                    } else {
-                        gfx = ui_data.gfx.starmap.gr_arrow_u;
-                    }
+                    lbxfont_select(2, 0xe, 0, 0);
                     v = p->pop - p->pop_prev;
                     c = '+';
                 } else {
-                    if (ui_extra_enabled) {
-                        lbxfont_select(2, 0xb, 0, 0);
-                    } else {
-                        gfx = ui_data.gfx.starmap.gr_arrow_d;
-                    }
+                    lbxfont_select(2, 0xb, 0, 0);
                     v = p->pop_prev - p->pop;
                     c = '-';
                 }
                 lib_sprintf(buf, sizeof(buf), "%c%i", c, v);
-                if (ui_extra_enabled) {
-                    lbxfont_print_str_right(83, y0, buf, UI_SCREEN_W, ui_scale);
-                } else {
-                    lbxgfx_draw_frame(92, y0 - 1, gfx, UI_SCREEN_W, ui_scale);
-                    lbxfont_print_str_right(111, y0, buf, UI_SCREEN_W, ui_scale);
-                }
+                lbxfont_print_str_right(83, y0, buf, UI_SCREEN_W, ui_scale);
             }
             lbxfont_select(2, 6, 0, 0);
             if (p->battlebg == 0) {
@@ -825,7 +809,7 @@ again:
                     }
                 }
             }
-            if (ui_extra_enabled) {
+            {
                 const int x0[UI_SORT_NUM] = {  8, 23, 61, 71,  87, 101, 117, 138, 155, 176, 194, 220, 267 };
                 const int x1[UI_SORT_NUM] = { 20, 60, 67, 86,  99, 113, 134, 151, 172, 192, 216, 262, 310 };
                 const int y0 = 8, y1 = 16;
