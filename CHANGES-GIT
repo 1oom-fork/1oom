@@ -1,3 +1,52 @@
+1oom-extra-merge
+----------------
+
+This branch follows 1oom-custom-game-menu and merges the best
+part of UI Extra, ruleset and 1oom-fork features to the core
+
+Ruleset:
+- permanently disabled weapon_list_max (now always 64)
+- permanently enabled bt_oracle_fix, stargate_redir_fix,
+  accident_chk_factories, trans_redir_fix, bt_wait_no_reload,
+  news_orion, doom_stack_fix
+- permanently enabled guardian fix and num_max_factories fix
+- New game: Added Hopeless difficulty
+
+UI Extra features merged:
+- UI Governor: Separated from the UI Extra
+- Starmap: Removed '?' cursor area
+- Starmap: Races hotkey changed 'r' -> 'e'
+- Starmap: Reloc hotkey changed 'l' -> 'r'
+- Starmap: Send transport: Holding Ctrl changes the number
+  of transports by 10%
+- Starmap: Send trans: Pressing A sets the slider to maximum
+- Starmap: Ctrl+R sets reloc point for all planets
+- Starmap: Alt+F shows incoming friendly fleet routes
+- Starmap: Alt+O shows populations for explored planets
+- Starmap: Keep focus after running through the Next turn phase
+- Starmap: Clicking a selected destination again works as Accept
+- Starmap: Eco slider shows fractional population growth
+- Starmap: Nebula planets have a purple frame around their picture
+- Starmap: = or # transfers reserve for one round of production
+- Races screen: Clicking the portraits brings Report page
+- Report screen: Shows name of AI leaders
+- Fleet screen: Clicking on Station or ship names sorts the list
+- Fleet screen: Specs hotkey changed 'v' -> 's'
+- Fleet screen: Scrap hotkey changed 's' -> 'r'
+- Planets screen: Nebula planets show NEB in their shields field
+- Planets screen: Clicking on #, Name, etc sorts the list
+- Planets screen: Added max population column
+- Planets screen: Clicking on the production field opens the reserve
+  transfer dialog or cancels the transfer.
+- Planets screen: Clicking on the dock field changes design selection
+- Planets screen: Ctrl+LMB on ship design name to build it everywhere
+- Planets screen: Alt+LMB replaces the ship design with the ship design 
+  of the current planet everywhere
+- Starmap: Added 'production' button for reserve transfer
+- Starmap: Added 'bases' button for basescrap UI
+- Starmap: Fleet: Holding Ctrl changes the number of ships by 1
+- Starmap: Allowed centering on any planet
+
 1oom-custom-game-menu
 ---------------------
 
