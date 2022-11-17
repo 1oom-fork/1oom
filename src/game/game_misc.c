@@ -743,15 +743,11 @@ int game_calc_eta_trans(const struct game_s *g, int speed, int x0, int y0, int x
 
 bool game_transport_dest_ok(const struct game_s *g, const planet_t *p, player_id_t pi)
 {
-    if (!game_num_trans_redir_fix) {
-        return (p->within_frange[pi] != 0); /* WASBUG MOO1 allows redirection almost anywhere */
-    } else {
-        return (p->within_frange[pi] == 1)
-            && BOOLVEC_IS1(p->explored, pi)
-            && (p->type >= g->eto[pi].have_colony_for)
-            && (p->owner != PLAYER_NONE)
-            ;
-    }
+    return (p->within_frange[pi] == 1)
+        && BOOLVEC_IS1(p->explored, pi)
+        && (p->type >= g->eto[pi].have_colony_for)
+        && (p->owner != PLAYER_NONE)
+        ;
 }
 
 void game_rng_step(struct game_s *g)
