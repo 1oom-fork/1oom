@@ -314,11 +314,16 @@ static bool ui_new_game_extra(struct game_new_options_s *newopts, struct new_gam
     d->str_title = 0;
     d->frame = 0;
 
-    newopts->pdata[PLAYER_0].race = RACE_HUMAN;
-    newopts->pdata[PLAYER_0].banner = BANNER_BLUE;
-    d->have_human = true;
-    game_new_generate_emperor_name(newopts->pdata[PLAYER_0].race, newopts->pdata[PLAYER_0].playername, EMPEROR_NAME_LEN);
-    game_new_generate_home_name(newopts->pdata[PLAYER_0].race, newopts->pdata[PLAYER_0].homename, PLANET_NAME_LEN);
+    for (int i = 0; i < 6; ++i) {
+        if (!newopts->pdata[i].is_ai) {
+            d->have_human = true;
+        }
+        if (newopts->pdata[i].race != RACE_RANDOM) {
+            game_new_generate_emperor_name(newopts->pdata[i].race, newopts->pdata[i].playername, EMPEROR_NAME_LEN);
+            game_new_generate_home_name(newopts->pdata[i].race, newopts->pdata[i].homename, PLANET_NAME_LEN);
+        }
+    }
+
     uiobj_table_clear();
     ui_palette_fadeout_19_19_1();
     d->fadein = true;
@@ -447,6 +452,37 @@ static bool ui_new_game_extra(struct game_new_options_s *newopts, struct new_gam
     return flag_ok;
 }
 
+static void game_set_custom_opts_from_cfg(struct game_new_options_s *go)
+{
+    uint32_t races = game_opt_race_value;
+    uint32_t banners = game_opt_banner_value;
+    uint32_t is_ai = game_opt_isai_value;
+
+    for (int i = 0; i < PLAYER_NUM; ++i) {
+        go->pdata[i].race = races % 0x10;
+        races /= 0x10;
+        go->pdata[i].banner = banners % 10;
+        banners /= 10;
+        go->pdata[i].is_ai = is_ai % 10;
+        is_ai /= 10;
+    }
+}
+
+static void game_save_custom_opts_to_cfg(struct game_new_options_s *go)
+{
+    game_opt_race_value = 0;
+    game_opt_banner_value = 0;
+    game_opt_isai_value = 0;
+    for (int i = PLAYER_NUM - 1; i >= 0; --i) {
+        game_opt_race_value *= 0x10;
+        game_opt_race_value += go->pdata[i].race;
+        game_opt_banner_value *= 10;
+        game_opt_banner_value += go->pdata[i].banner;
+        game_opt_isai_value *= 10;
+        game_opt_isai_value += go->pdata[i].is_ai;
+    }
+}
+
 #undef PORTRAITBOX_H
 #undef PORTRAITBOX_TOP_MARGIN
 
@@ -563,11 +599,13 @@ bool ui_custom_game(struct game_new_options_s *newopts) {
 
     d.newopts = newopts;
     *d.newopts = game_opt_custom;
+    game_set_custom_opts_from_cfg(d.newopts);
     new_game_load_data(&d);
 
     flag_ok = ui_new_game_extra(newopts, &d);
     if (flag_ok) {
         game_opt_custom = *d.newopts;
+        game_save_custom_opts_to_cfg(d.newopts);
     }
 
     new_game_free_data(&d);

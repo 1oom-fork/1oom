@@ -27,7 +27,7 @@ struct game_new_options_s {
     { \
         0, GALAXY_SIZE_SMALL, DIFFICULTY_SIMPLE, GAME_AI_DEFAULT, 2, false, true, true, false, RESEARCH_RATE_NORMAL, \
         { \
-            { "", "", RACE_RANDOM, BANNER_RANDOM, false }, \
+            { "", "", RACE_HUMAN, BANNER_BLUE, false }, \
             { "", "", RACE_RANDOM, BANNER_RANDOM, true }, \
             { "", "", RACE_RANDOM, BANNER_RANDOM, true }, \
             { "", "", RACE_RANDOM, BANNER_RANDOM, true }, \
@@ -37,6 +37,9 @@ struct game_new_options_s {
     }
 
 extern struct game_new_options_s game_opt_custom;
+extern uint32_t game_opt_race_value;
+extern uint32_t game_opt_banner_value;
+extern uint32_t game_opt_isai_value;
 
 struct game_aux_s;
 

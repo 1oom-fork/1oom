@@ -62,6 +62,9 @@ static const int8_t tbl_orion_race_relation[RACE_NUM][RACE_NUM] = {
 };
 
 struct game_new_options_s game_opt_custom = GAME_NEW_OPTS_DEFAULT;
+uint32_t game_opt_race_value = 0xaaaaa0;
+uint32_t game_opt_banner_value = 666660;
+uint32_t game_opt_isai_value = 111110;
 
 static bool game_cfg_check_custom_game_difficulty(void *val)
 {
@@ -114,6 +117,9 @@ const struct cfg_items_s game_new_cfg_items[] = {
     CFG_ITEM_BOOL("custom_game_no_events", &game_opt_custom.no_events),
     CFG_ITEM_INT("custom_game_galaxy_seed", &game_opt_custom.galaxy_seed, NULL),
     CFG_ITEM_INT("custom_game_research_rate", &game_opt_custom.research_rate, NULL),
+    CFG_ITEM_INT("custom_game_races", &game_opt_race_value, NULL),
+    CFG_ITEM_INT("custom_game_banners", &game_opt_banner_value, NULL),
+    CFG_ITEM_INT("custom_game_isai", &game_opt_isai_value, NULL),
     CFG_ITEM_END
 };
 
