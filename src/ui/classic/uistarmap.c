@@ -89,11 +89,7 @@ static void ui_starmap_fill_oi_slider(struct starmap_data_s *d, planet_t *p)
         }
         d->sm.oi_ship = uiobj_add_t0(282, 140, "", ui_data.gfx.starmap.col_butt_ship, MOO_KEY_s);
         if (p->buildship != BUILDSHIP_STARGATE) {
-            if (!ui_extra_enabled) {
-                d->sm.oi_reloc = uiobj_add_t0(282, 152, "", ui_data.gfx.starmap.col_butt_reloc, MOO_KEY_l);
-            } else {
-                d->sm.oi_reloc = uiobj_add_t0(282, 152, "", ui_data.gfx.starmap.col_butt_reloc, MOO_KEY_r);
-            }
+            d->sm.oi_reloc = uiobj_add_t0(282, 152, "", ui_data.gfx.starmap.col_butt_reloc, MOO_KEY_r);
         }
         if (g->evn.have_plague && (g->evn.plague_planet_i == g->planet_focus_i[d->api])) {
             lbxgfx_set_frame(ui_data.gfx.starmap.col_butt_trans, 1);
@@ -363,7 +359,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
         } else if (oi1 == oi_alt_m) {
             ui_data.starmap.flag_show_grid = !ui_data.starmap.flag_show_grid;
             ui_sound_play_sfx_24();
-        } else if (ui_extra_enabled && oi1 == oi_alt_o) {
+        } else if (oi1 == oi_alt_o) {
             ui_data.starmap.planet_text = (ui_data.starmap.planet_text + 1) % UI_SM_PLANET_TEXT_NUM;
             ui_sound_play_sfx_24();
         } else if ((oi1 == oi_finished) || ((oi1 == UIOBJI_ESC) && (oi2 == oi_finished))) {
@@ -756,9 +752,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
                 }
             }
             oi_c = uiobj_add_inputkey(MOO_KEY_c);
-            if (ui_extra_enabled) {
-                oi_ctrl_r = uiobj_add_inputkey(MOO_KEY_r | MOO_MOD_CTRL);
-            }
+            oi_ctrl_r = uiobj_add_inputkey(MOO_KEY_r | MOO_MOD_CTRL);
             ui_starmap_add_oi_bottom_buttons(&d);
             if (g->evn.build_finished_num[active_player]) {
                 oi_finished = uiobj_add_mousearea(6, 6, 225, 180, MOO_KEY_SPACE);
