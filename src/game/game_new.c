@@ -797,6 +797,7 @@ start_of_func:
                 break;
             case DIFFICULTY_HARD:
             case DIFFICULTY_IMPOSSIBLE:
+            case DIFFICULTY_HOPELESS:
                 p->pop = 40;
                 p->factories = 30;
                 p->total_prod = 50;

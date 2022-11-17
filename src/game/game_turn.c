@@ -381,7 +381,7 @@ static void game_turn_diplo_adjust(struct game_s *g)
     if ((g->year & 1) == 0) {
         uint8_t tbl_num_pp[PLAYER_NUM];
         int gscale = ((g->galaxy_size + 1) * 3);
-        int gdiv = g->galaxy_size + 6 - g->difficulty;
+        int gdiv = g->galaxy_size + 6 - ((g->difficulty > DIFFICULTY_IMPOSSIBLE) ? DIFFICULTY_IMPOSSIBLE : g->difficulty);
         for (player_id_t i = PLAYER_0; i < g->players; ++i) {
             tbl_num_pp[i] = 0;
         }

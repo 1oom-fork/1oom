@@ -74,6 +74,15 @@ shipparsed_t tbl_monster[MONSTER_NUM][DIFFICULTY_NUM] = {
             7000, 2, 10, 5, 5, 5, 0, 100,
             0, 0,
             1/*num*/, 0x90, 0, 0, (1 << SHIP_SPECIAL_BOOL_BLACKHOLE)
+        },
+        { /* hopeless */
+            "", SHIP_HULL_HUGE, SHIP_COMP_MARK_X, 0, SHIP_SHIELD_CLASS_V, 0, 0,
+            { SHIP_SPECIAL_BLACK_HOLE_GENERATOR, SHIP_SPECIAL_LIGHTNING_SHIELD, 0 },
+            { WEAPON_CRYSTAL_RAY, 0, 0, 0 },
+            { 10, 0, 0, 0 },
+            8000, 2, 10, 6, 6, 5, 0, 100,
+            0, 0,
+            1/*num*/, 0x90, 0, 0, (1 << SHIP_SPECIAL_BOOL_BLACKHOLE)
         }
     },
     { /* amoeba */
@@ -119,6 +128,15 @@ shipparsed_t tbl_monster[MONSTER_NUM][DIFFICULTY_NUM] = {
             { WEAPON_AMEOBA_STREAM, 0, 0, 0 },
             { 1, 0, 0, 0 },
             5000, 2, 10, 5, 5, 0, 50, 0,
+            0, 0,
+            1/*num*/, 0x91, 0, 0, 0
+        },
+        { /* hopeless */
+            "", SHIP_HULL_HUGE, SHIP_COMP_MARK_X, 0, SHIP_SHIELD_NONE, 0, 0,
+            { SHIP_SPECIAL_ADV_DAMAGE_CONTROL, 0, 0 },
+            { WEAPON_AMEOBA_STREAM, 0, 0, 0 },
+            { 1, 0, 0, 0 },
+            6000, 2, 10, 6, 6, 0, 50, 0,
             0, 0,
             1/*num*/, 0x91, 0, 0, 0
         }
@@ -168,7 +186,16 @@ shipparsed_t tbl_monster[MONSTER_NUM][DIFFICULTY_NUM] = {
             10000, 2, 10, 9, 9, 9, 30, 100,
             0, 3,
             1/*num*/, 0x92, 0, 0, 0
-        }
+        },
+        { /* hopeless */
+            "", SHIP_HULL_HUGE, SHIP_COMP_MARK_X, SHIP_JAMMER_JAMMER_X, SHIP_SHIELD_CLASS_XIII, 0, 0,
+            { SHIP_SPECIAL_HIGH_ENERGY_FOCUS, SHIP_SPECIAL_ADV_DAMAGE_CONTROL, SHIP_SPECIAL_LIGHTNING_SHIELD },
+            { WEAPON_SCATTER_PACK_X_5, WEAPON_DEATH_RAY, WEAPON_STELLAR_CONVERTER, WEAPON_PLASMA_TORPEDO },
+            { 99, 1, 60, 25 },
+            15000, 2, 10, 11, 11, 10, 50, 100,
+            0, 3,
+            1/*num*/, 0x92, 0, 0, 0
+      }
     }
 };
 
