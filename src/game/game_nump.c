@@ -438,9 +438,6 @@ static const struct numtbl_s *find_match(const char *numid, int i, int num)
 void game_num_fixbugs(void)
 {
     /* This function must be kept in sync with doc/pbxin_fixbugs.txt */
-    tbl_monster[MONSTER_GUARDIAN][3].special[1] = 16;
-    tbl_monster[MONSTER_GUARDIAN][4].special[1] = 26;
-    tbl_monster[MONSTER_GUARDIAN][4].repair = 30;
     tbl_startship[0].engines = 2;
     tbl_startship[1].engines = 27;
     tbl_startship[2].engines = 110;

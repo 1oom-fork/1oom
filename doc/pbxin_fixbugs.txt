@@ -6,15 +6,6 @@
 0,"Fix MOO1 bugs"
 1,"Enables most of the optional MOO1 bug fixes.\nAlso tweaks some clearly bug-like things such as Guardian ADC and starting ship costs."
 
-# Give Guardian Advance Damage Control on impossible.
-# MOO1 has Automated Repair (but shows ADC) on hard and nothing on impossible.
-# The MOO1 code is along the lines of:
-#   if (difficulty == hard) { special2 = ADC; } else if (difficulty == hard) { special2 = AR; }
-#   if (difficulty == hard) { repair = 15; } else if (difficulty == hard) { repair = 30; }
-# This is clearly a bug.
-4,guardian_special2,3,16,26
-4,guardian_repair,4,30
-
 # The amount of engines and thus costs of the starting ship designs are wrong.
 4,startship_engines,0,2,27,110,85,100
 4,startship_cost,0,8,14,74,65,570
