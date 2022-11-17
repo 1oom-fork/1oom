@@ -449,7 +449,7 @@ do_accept:
         for (int i = 0; i < d.oo.sn0.num; ++i) {
             int si, per10num;
             si = d.oo.sn0.type[i];
-            if (ui_extra_enabled && kbd_is_modifier(MOO_MOD_CTRL)) {
+            if (kbd_is_modifier(MOO_MOD_CTRL)) {
                 per10num = 1;
             } else {
                 per10num = os[si] / 10;
