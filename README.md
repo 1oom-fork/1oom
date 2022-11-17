@@ -36,6 +36,14 @@ http://www.mega-nerd.com/libsamplerate/
 Check your distribution's package manager or the library
 website on how to install them.
 
+1.3 Android (DOSBox)
+--------------------
+
+To play on Android you will need the 1oom executable for MSDOS,
+DOSBox application for Android and DPMI extension, for example
+CWSDPMI. You can build the 1oom executable for MSDOS using i586
+DJGPP and Allegro4.
+
 
 2 Configuration
 ===============
