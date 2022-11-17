@@ -45,6 +45,7 @@ The following new UI features are always enabled/available:
 - Pressing hot key or changing focus does not change mouse position
 - When you release the mouse, only the clicked object is triggered
 - Random race / banner
+- New difficulty level - "Hopeless"
 - Lowercase allowed in save names
 - Load Game screen uses numbers as hotkeys for slots
 - Objects with hotkeys can be navigated to using cursor keys
@@ -63,8 +64,6 @@ The following new UI features are always enabled/available:
 - Map scrolling by mouse (ui.sm_mouse_scroll , -uismmousescroll)
 - Planets can be searched for by pressing the / key
 - Planets can be tagged with Ctrl-1-9 and recalled with 1-9
-- Pressing = or # in the galaxy movement screen transfers reserve for
-  one round of production (with uiextra also transfers back)
 - -nobombanimation disables bomb animation in space combat
 - The = key can be substitued by the # key (useful for some non-US keyboards)
 
@@ -86,17 +85,53 @@ The following new UI features are always enabled/available:
 - Precap tohit and No tohit accumulation is now enabled by
   default in new games
 
+- Design screen: Holding Ctrl changes the number of weapons by 10
+- Fleet screen: Clicking on Station or ship names sorts the list
+- Fleet screen: Specs hotkey changed 'v' -> 's'
+- Fleet screen: Scrap hotkey changed 's' -> 'r'
+- Races screen: Clicking the portraits brings Report page
+- Report screen: Shows name of AI leaders
+- Tech screen: Pressing = or # adjusts only the unlocked sliders
+
+- Planets screen: Nebula planets show "NEB" in their shields field
+- Planets screen: Clicking on #, Name, etc sorts the list
+- Planets screen: Max population column
+- Planets screen: Clicking on the production field opens the reserve
+  transfer dialog or cancels the transfer.
+- Planets screen: Clicking on the dock field changes design selection
+- Planets screen: Ctrl+LMB on ship design name to build it everywhere
+- Planets screen: Alt+LMB replaces the ship design with the ship design 
+  of the current planet everywhere
+
+- Starmap: Clicking a selected destination star again works as Accept
+- Starmap: Prssing = or # transfers reserve for one round of production
+- Starmap: Removed '?' cursor area
+- Starmap: Keep planet focus after running through the Next turn phase
+- Starmap: Eco slider shows fractional population growth if less than 10
+- Starmap: Nebula planets have a purple frame around their picture
+- Starmap: Races hotkey changed 'r' -> 'e'
+- Starmap: Reloc hotkey changed 'l' -> 'r'
+- Starmap: Send transport: Holding Ctrl changes the number of transports by 10%
+- Starmap: Send transport: Pressing A sets the slider to maximum
+- Starmap: Ctrl+R sets reloc point for all planets
+- Starmap: Alt+F shows incoming friendly fleet routes
+- Starmap: Alt+O shows populations for explored planets in scanner range
+- Starmap: Added 'production' button for reserve transfer
+- Starmap: Added 'bases' button for basescrap UI
+- Starmap: Fleet deployment: Holding Ctrl changes the number of ships by 1
+- Starmap: Allowed centering on any planet
+
 The config file item "ui.uiextra" (set via the -uiextra command-line option)
 enables the following extra UI features:
 - Continue, Undo and Init saves can be chosen in the Load Game screen
 - Game options screen Silent/FX Only/Music is replaced with more options
-- Clicking the portraits in Races screen brings Report page
-- Report screen shows name of AI leaders, Map screen shows current year
+- Map screen shows current year
 - Fleet deployment shows the amount of available ships
-- Fleet deployment: Holding Ctrl changes the number of ships by 1
-- Clicking a selected destination star again works as Accept for fleet send etc
 - Hovering over a planet draws a ruler with the distance in parsec from the
   currently selected planet if is in the screen.
+- When espionage was successful, clicking on the race icon opens the spy report
+
+The config file item "ui.uigovernor" enables the following UI features:
 - Governor screen can be opened by clicking on the Pop text or pressing V key.
   The screen include Eco mode, buildup mode and whether to build stargates.
   All local settings are also reachable directly over the planet interface.
@@ -106,17 +141,9 @@ enables the following extra UI features:
   or Artifacts planets).
 - When a planet is governed, clicking on or mouse wheeling over the bases field
   allow to increase or adjust the target bases amount.
-- Eco slider shows fractional population growth if growth is less than 10
-- When espionage was successful, clicking on the race icon opens the spy report
 - The plantary production field indicates whether the planet currently receives
   reserve spending (yellow = none, red = partial, while = full). The same
   colors are also used in the Planets screen.
-- Clicking on the production field in the Planets screen resets the allocated
-  reserve to zero or (when it is already zero) directly opens the reserve
-  transfer dialog.
-- Nebula planets show "NEB" in their shields field and have a purple instead
-  of a red frame around their picture
-- Pressing = or # on the Tech screen adjusts only the unlocked sliders
 - Tech screen has lights showing when you reach max research bonus
 - Clicking on the Tech screen lights sets the slider to bonus limit
 - Tech bonus amount is shown in the slider background
@@ -124,28 +151,6 @@ enables the following extra UI features:
   minimum for bonus (m) and for optimum allocation (o). The latter can be
   automated by clicking the level/auto button (t) in the upper right corner.
 - Pressing I opens message filter options
-- Planets: Add max population column
 - Completing terraforming generates a message (which is filtered by default)
-- After running through the Next turn phase and messages the game recenters on
-  your last planet of choice
-- Clicking on #, Name, etc on Planets screen sorts the list
-- Clicking on Station or ship names on Fleet screen sorts the list
-- Starmap: Alt+F shows incoming friendly fleet routes
-- Starmap: Alt+O shows current/max populations for explored planets in
-  scanner range
-- Starmap: Ctrl+R sets reloc point for all planets
-- Planets: Ctrl+LMB on ship design name to build it everywhere
-- Planets: Alt+LMB replaces the ship design with the ship design 
-  of the current planet everywhere
-- Design: Holding Ctrl changes the number of weapons by 10
-- Starmap: Added 'production' button for reserve transfer
-- Starmap: Added 'bases' button for basescrap UI
-- Starmap: Removed '?' cursor area
-- Starmap: Races hotkey changed 'r' -> 'e'
-- Starmap: Reloc hotkey changed 'l' -> 'r'
-- Starmap: Send transport: Pressing A sets the slider to maximum
-- Starmap: Send transport: Holding Ctrl changes the number of transports by 10%
-- UI Fleet: Specs hotkey changed 'v' -> 's'
-- UI Fleet: Scrap hotkey changed 's' -> 'r'
 
 See doc/list_gamediff.txt for a list of differences in the game itself.
