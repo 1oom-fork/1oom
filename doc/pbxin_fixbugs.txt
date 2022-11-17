@@ -20,7 +20,6 @@
 4,ngt_pl_silicoid,30,1
 
 # See doc/list_pbxnum.txt for description of the rest of the fixes.
-4,bt_wait_no_reload,0,1
 4,aud_bounty_give,0,1
 4,monster_rest_att,0,1
 4,orbital_weap_any,0,1

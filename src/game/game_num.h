@@ -6,7 +6,6 @@
 
 extern bool game_num_deterministic;
 extern int game_num_bt_turn_max;
-extern bool game_num_bt_wait_no_reload;
 extern int game_num_stargate_cost;
 extern int game_num_stargate_maint;
 extern int game_num_limit_ships;

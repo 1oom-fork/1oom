@@ -13,13 +13,6 @@ deterministic : 0..1, 1
 bt_turn_max : 1..65535, 50
   - The number of battle turns before a forced retreat.
 
-bt_wait_no_reload : 0..1, 0
-  - Do not reload ship specials on Wait.
-    MOO1 reloads ship specials when Wait is pressed and the ship's turn resumes.
-    This means it is possible to fire the Pulsars, Black Hole Generator etc an
-    unlimited number of times. Automated repair also kicks in on every resume
-    from wait.
-
 aud_ask_break_nap : 0..1, 0
   - Include Non-Aggression Pact in Break Alliance With Another Race.
     The OSG claims that the audience dialog option is enabled if a NAP exists
