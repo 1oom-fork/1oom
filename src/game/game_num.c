@@ -44,7 +44,6 @@ bool game_num_retreat_redir_fix = false;
 bool game_num_first_tech_rp_fix = false;
 bool game_num_waste_calc_fix = false;
 bool game_num_waste_adjust_fix = false;
-bool game_num_doom_stack_fix = true;
 uint8_t game_num_eco_slider_slack = 7;
 bool game_num_reset_tform_to_max = true;
 bool game_num_soil_rounding_fix = false;
