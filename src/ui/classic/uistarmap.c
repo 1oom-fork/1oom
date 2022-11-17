@@ -785,19 +785,11 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
                 oi_wheelname = uiobj_add_mousewheel(227, 8, 310, 20, &scrollmisc);
             }
             ui_starmap_fill_oi_tbls(&d);
-            if (BOOLVEC_IS1(p->explored, active_player)) {
-                int x0, y0;
-                x0 = (p->x - ui_data.starmap.x) * 2 + 6;
-                y0 = (p->y - ui_data.starmap.y) * 2 + 6;
-                if (!ui_extra_enabled) {
-                    oi_starview1 = uiobj_add_mousearea_limited(x0, y0, x0 + 16, y0 + 16, starmap_scale, MOO_KEY_UNKNOWN);
-                }
-                oi_starview2 = uiobj_add_mousearea(227, 24, 310, 53, MOO_KEY_UNKNOWN);
-            }
             ui_starmap_fill_oi_tbl_stars(&d);
-            if (ui_extra_enabled && BOOLVEC_IS1(p->explored, active_player)) {
+            if (BOOLVEC_IS1(p->explored, active_player)) {
                 oi_starview1 = d.oi_tbl_stars[g->planet_focus_i[active_player]];
                 d.oi_tbl_stars[g->planet_focus_i[active_player]] = UIOBJI_INVALID;
+                oi_starview2 = uiobj_add_mousearea(227, 24, 310, 53, MOO_KEY_UNKNOWN);
             }
             ui_starmap_fill_oi_slider(&d, p);
             if (!g->evn.build_finished_num[active_player]) {
@@ -805,38 +797,9 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
                 oi_search = uiobj_add_inputkey(MOO_KEY_SLASH);
                 ui_starmap_fill_oi_ctrl(&d);
             }
-            if (!ui_extra_enabled) {
-                int x0, y0, x1, y1;
-                x0 = (p->x - ui_data.starmap.x) * 2 + 6;
-                y0 = (p->y - ui_data.starmap.y) * 2 + 6;
-                x1 = x0 + 16;
-                y1 = y0 + 16;
-                ui_cursor_area_tbl[7].x0 = x0;
-                ui_cursor_area_tbl[7].x1 = x1;
-                ui_cursor_area_tbl[7].y0 = y0;
-                ui_cursor_area_tbl[7].y1 = y1;
-                if (1
-                  && BOOLVEC_IS1(p->explored, active_player)
-                  && (x0 >= 7 * ui_scale)
-                  && (x1 <= 221 * ui_scale)
-                  && (y0 >= 7 * ui_scale)
-                  && (y1 <= 177 * ui_scale)
-                ) {
-                    /* FIXME why were these here? these only seem to break stuff */
-                    /*
-                    SETMAX(ui_cursor_area_tbl[5].x0, 7);
-                    SETMIN(ui_cursor_area_tbl[5].x1, 221);
-                    SETMAX(ui_cursor_area_tbl[5].y0, 7);
-                    SETMIN(ui_cursor_area_tbl[5].y1, 177);
-                    */
-                    ui_cursor_setup_area(3, &ui_cursor_area_tbl[5]);
-                } else {
-                    ui_cursor_setup_area(2, &ui_cursor_area_tbl[3]);
-                }
-            }
             if (g->evn.build_finished_num[active_player]) {
                 ui_cursor_setup_area(2, &ui_cursor_area_tbl[0]);
-            } else if (ui_extra_enabled) {
+            } else {
                 ui_cursor_setup_area(2, &ui_cursor_area_tbl[3]);
             }
             ui_draw_finish();
