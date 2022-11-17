@@ -218,7 +218,7 @@ static void planets_draw_cb(void *vptr)
                 }
             }
             lbxfont_select(2, 6, 0, 0);
-            if (ui_extra_enabled && p->battlebg == 0) {
+            if (p->battlebg == 0) {
                 lbxfont_select(2, 1, 0, 0);
                 lbxfont_print_str_right(149, y0, "neb", UI_SCREEN_W, ui_scale);
             } else {
