@@ -20,12 +20,6 @@ bt_wait_no_reload : 0..1, 0
     unlimited number of times. Automated repair also kicks in on every resume
     from wait.
 
-bt_oracle_fix : 0..1, 0
-  - Fix the Oracle Interface.
-    In MOO1 the Oracle Interface does nothing to the target's shields. The AI
-    does take the target's (!) Oracle shield into account in damage esimates,
-    including those related to missiles.
-
 news_orion : 0..1, 0
   - Show news when Orion is first colonized.
     MOO1 has a news item for conquering Orion but never shows it.

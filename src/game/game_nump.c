@@ -156,7 +156,6 @@ static const struct numtbl_s {
     DEFNUMITEML(deterministic, NUMTYPE_BOOL, 0, 1),
     DEFNUMITEML(bt_turn_max, NUMTYPE_S, 1, 0xffff),
     DEFNUMITEML(bt_wait_no_reload, NUMTYPE_BOOL, 0, 1),
-    DEFNUMITEML(bt_oracle_fix, NUMTYPE_BOOL, 0, 1),
     DEFNUMITEML(stargate_cost, NUMTYPE_S, 1, 0xffff),
     DEFNUMITEML(stargate_maint, NUMTYPE_S, 1, 0xffff),
     DEFNUMITEML(limit_ships, NUMTYPE_S, 1, 0xffff),
@@ -448,7 +447,6 @@ void game_num_fixbugs(void)
     game_num_ng_tech[RACE_SILICOID][TECH_FIELD_PLANETOLOGY][30] = 1;
     game_num_max_factories = 2700;
     game_num_bt_wait_no_reload = true;
-    game_num_bt_oracle_fix = true;
     game_num_news_orion = true;
     game_num_aud_bounty_give = true;
     game_num_monster_rest_att = true;
