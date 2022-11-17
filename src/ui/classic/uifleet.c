@@ -473,7 +473,7 @@ int ui_fleet(struct game_s *g, player_id_t active_player)
                     x0 = 44 * i + 48;
                     oi_tbl_ship[i] = uiobj_add_mousearea(x0, 0, x0 + 38, 180, MOO_KEY_UNKNOWN);
                 }
-            } else if (ui_extra_enabled) {
+            } else {
                 const int x0[UI_SORT_NUM] = { 0, 10, 47,  91, 134, 178, 222, 267 };
                 const int x1[UI_SORT_NUM] = { 9, 41, 87, 131, 174, 218, 262, 307 };
                 const int y0 = 5, y1 = 12;
