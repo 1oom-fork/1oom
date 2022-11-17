@@ -45,7 +45,6 @@ The following new UI features are always enabled/available:
 - Pressing hot key or changing focus does not change mouse position
 - When you release the mouse, only the clicked object is triggered
 - Random race / banner
-- Local multiplayer (use -new or -uiextra to start a game)
 - Lowercase allowed in save names
 - Load Game screen uses numbers as hotkeys for slots
 - Objects with hotkeys can be navigated to using cursor keys
@@ -69,10 +68,27 @@ The following new UI features are always enabled/available:
 - -nobombanimation disables bomb animation in space combat
 - The = key can be substitued by the # key (useful for some non-US keyboards)
 
+- Custom Game screen allows Local multiplayer
+- Custom Game screen allows setting opponent race/banner/names
+- Custom Game option of the Main Menu allows to change some game rules
+	- No elections
+	- No random events
+	- Faster/Slower research rate
+	- Precap tohit (from fixbugs ruleset)
+		MOO1 adds To Hit bonuses after capping defense. This
+		results in high defense being less effective against
+		high tech missiles.
+	- No tohit accumulation (from fixbugs ruleset)
+		MOO1 accumulates weapon To Hit bonuses while firing
+		the four weapons slots. This results in Hyper-X or 
+		better missiles or Megabolt Cannon in slots 1..3
+		affecting the accuracy of a beam weapon in slot 4.
+- Precap tohit and No tohit accumulation is now enabled by
+  default in new games
+
 The config file item "ui.uiextra" (set via the -uiextra command-line option)
 enables the following extra UI features:
 - Continue, Undo and Init saves can be chosen in the Load Game screen
-- New Game screen allows setting opponent race/banner/names and AI/human flag
 - Game options screen Silent/FX Only/Music is replaced with more options
 - Clicking the portraits in Races screen brings Report page
 - Report screen shows name of AI leaders, Map screen shows current year
