@@ -443,7 +443,6 @@ void game_num_fixbugs(void)
     tbl_startship[4].cost = 570;
     game_num_ng_tech[RACE_SILICOID][TECH_FIELD_PLANETOLOGY][24] = 1;
     game_num_ng_tech[RACE_SILICOID][TECH_FIELD_PLANETOLOGY][30] = 1;
-    game_num_max_factories = 2700;
     game_num_aud_bounty_give = true;
     game_num_monster_rest_att = true;
     game_num_orbital_weap_any = true;
