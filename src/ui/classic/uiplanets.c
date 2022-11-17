@@ -211,13 +211,13 @@ static void planets_draw_cb(void *vptr)
             }
             lbxfont_select(2, 6, 0, 0);
             lbxfont_print_num_right(132, y0, p->factories, UI_SCREEN_W, ui_scale);
-            lbxfont_select(2, ui_extra_enabled && BOOLVEC_IS1(p->extras, PLANET_EXTRAS_GOVERNOR) && p->missile_bases < p->target_bases ? 11 : 6, 0, 0);
+            lbxfont_select(2, ui_governor_enabled && BOOLVEC_IS1(p->extras, PLANET_EXTRAS_GOVERNOR) && p->missile_bases < p->target_bases ? 11 : 6, 0, 0);
             lbxfont_print_num_right(170, y0, p->missile_bases, UI_SCREEN_W, ui_scale);
             lbxfont_select(2, 6, 0, 0);
             if (p->waste) {
                 lbxfont_print_num_right(189, y0, p->waste, UI_SCREEN_W, ui_scale);
             }
-            lbxfont_select(0, !ui_extra_enabled || !p->reserve ? 0xe : 2 * p->reserve < p->prod_after_maint ? 0xb : 0x0, 0, 0);
+            lbxfont_select(0, !ui_governor_enabled || !p->reserve ? 0xe : 2 * p->reserve < p->prod_after_maint ? 0xb : 0x0, 0, 0);
             if (p->unrest == PLANET_UNREST_REBELLION) {
                 v = 0;
             } else {
