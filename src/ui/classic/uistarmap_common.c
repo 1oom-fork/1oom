@@ -1332,8 +1332,10 @@ static bool ui_starmap_handle_oi_star(struct game_s *g, struct starmap_data_s *d
     if (d->order_mode && d->valid_target_cb(d, i) && (g->planet_focus_i[d->api] == i || ui_modern_controls)) {
         g->planet_focus_i[d->api] = i;
         d->on_accept_cb(d);
-        ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
-        *flag_done = true;
+        if (!kbd_is_modifier(MOO_MOD_SHIFT) || !d->update_cb || !d->update_cb(d, false)) {
+            ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
+            *flag_done = true;
+        }
     } else {
         ui_starmap_select_planet(g, d, flag_done, i);
     }
@@ -1502,6 +1504,7 @@ bool ui_starmap_common_init(struct game_s *g, struct starmap_data_s *d, player_i
     d->order_mode = false;
     d->hide_focus = false;
     d->disable_tags = false;
+    d->update_cb = NULL;
     d->valid_target_cb = NULL;
     d->on_accept_cb = NULL;
 
@@ -1543,8 +1546,10 @@ bool ui_starmap_common_handle_oi(struct game_s *g, struct starmap_data_s *d, boo
     } else if (oi1 == d->oi_accept && d->on_accept_cb != NULL) {
         ui_sound_play_sfx_24();
         d->on_accept_cb(d);
-        ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
-        *flag_done = true;
+        if (!kbd_is_modifier(MOO_MOD_SHIFT) || !d->update_cb || !d->update_cb(d, false)) {
+            ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
+            *flag_done = true;
+        }
         return true;
     }
     if (ui_modern_controls && d->order_mode && d->hover_i != PLANET_NONE) {
