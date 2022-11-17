@@ -800,13 +800,9 @@ again:
                     tbl_onscreen_planets[i] = ui_data.sorted.value[ui_data.sorted.index[pi]];
                     y0 = 21 + i * 11;
                     y1 = y0 + 8;
-                    if (ui_extra_enabled) {
-                        oi_tbl_planets[i] = uiobj_add_mousearea(7, y0, 190, y1, MOO_KEY_UNKNOWN);
-                        oi_tbl_prod[i] = uiobj_add_mousearea(195, y0, 215, y1, MOO_KEY_UNKNOWN);
-                        oi_tbl_dock[i] = uiobj_add_mousearea(220, y0, 262, y1, MOO_KEY_UNKNOWN);
-                    } else {
-                        oi_tbl_planets[i] = uiobj_add_mousearea(7, y0, 248, y1, MOO_KEY_UNKNOWN);
-                    }
+                    oi_tbl_planets[i] = uiobj_add_mousearea(7, y0, 190, y1, MOO_KEY_UNKNOWN);
+                    oi_tbl_prod[i] = uiobj_add_mousearea(195, y0, 215, y1, MOO_KEY_UNKNOWN);
+                    oi_tbl_dock[i] = uiobj_add_mousearea(220, y0, 262, y1, MOO_KEY_UNKNOWN);
                 }
             }
             {
