@@ -186,7 +186,6 @@ static const struct numtbl_s {
     DEFNUMITEML(orbital_torpedo, NUMTYPE_BOOL, 0, 1),
     DEFNUMITEML(orbital_comp_fix, NUMTYPE_BOOL, 0, 1),
     DEFNUMITEML(combat_trans_fix, NUMTYPE_BOOL, 0, 1),
-    DEFNUMITEML(stargate_redir_fix, NUMTYPE_BOOL, 0, 1),
     DEFNUMITEML(retreat_redir_fix, NUMTYPE_BOOL, 0, 1),
     DEFNUMITEML(first_tech_rp_fix, NUMTYPE_BOOL, 0, 1),
     DEFNUMITEML(waste_calc_fix, NUMTYPE_BOOL, 0, 1),
@@ -459,7 +458,6 @@ void game_num_fixbugs(void)
     game_num_orbital_torpedo = true;
     game_num_orbital_comp_fix = true;
     game_num_combat_trans_fix = true;
-    game_num_stargate_redir_fix = true;
     game_num_first_tech_rp_fix = true;
     game_num_waste_calc_fix = true;
     game_num_waste_adjust_fix = true;
