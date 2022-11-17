@@ -10,7 +10,6 @@ extern bool game_num_bt_wait_no_reload;
 extern bool game_num_bt_oracle_fix;
 extern int game_num_stargate_cost;
 extern int game_num_stargate_maint;
-extern int game_num_weapon_list_max;
 extern int game_num_limit_ships;
 extern int game_num_limit_ships_all;
 extern int game_num_max_pop;
