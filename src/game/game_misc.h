@@ -13,6 +13,7 @@ extern void game_update_have_reserve_fuel(struct game_s *g);
 extern void game_update_maint_costs(struct game_s *g);
 extern void game_update_production(struct game_s *g);
 extern void game_update_total_research(struct game_s *g);
+extern void game_planet_update_eco_on_waste(struct game_s *g, struct planet_s *p, int player_i, bool force_adjust);
 extern void game_update_eco_on_waste(struct game_s *g, int player_i, bool force_adjust);
 extern void game_update_within_range(struct game_s *g);
 extern void game_update_empire_contact(struct game_s *g);
