@@ -23,6 +23,8 @@ when starting a new game or every N turns. It only saves it when quitting the
 game via Game -> Quit or when F10 is pressed while in the "control screen" /
 "galaxy movement screen".
 
+Most of the settings are now available in the main menu.
+
 The config file item "ui.uiscale" (set via the -uiscale command-line option)
 is an integer scaling factor for the whole UI except:
 - galaxy movement screen map
@@ -30,6 +32,12 @@ is an integer scaling factor for the whole UI except:
 The default value is 1 for that classic 320x200 feeling. Larger values allow
 more of the galaxy to be viewed without scrolling. Mouse wheel can be used
 to adjust the scaling of the galaxy movement screen map.
+
+The config file item "ui.space_combat_autoresolve" (set via
+the -spacecombatautoresolve command-line option or uiextra options menu)
+enables the following features:
+- Summary of forces shown before ship combat
+- New Auto and Retreat buttons for space combat autoresolve
 
 The following new UI features are always enabled/available:
 - Smoother galaxy movement screen scrolling
@@ -62,7 +70,7 @@ The following new UI features are always enabled/available:
 - The = key can be substitued by the # key (useful for some non-US keyboards)
 
 The config file item "ui.uiextra" (set via the -uiextra command-line option)
-or pressing Alt-X in the main menu enables the following extra UI features:
+enables the following extra UI features:
 - Continue, Undo and Init saves can be chosen in the Load Game screen
 - New Game screen allows setting opponent race/banner/names and AI/human flag
 - Game options screen Silent/FX Only/Music is replaced with more options
@@ -83,7 +91,6 @@ or pressing Alt-X in the main menu enables the following extra UI features:
 - When a planet is governed, clicking on or mouse wheeling over the bases field
   allow to increase or adjust the target bases amount.
 - Eco slider shows fractional population growth if growth is less than 10
-- Summary of forces shown before ship combat
 - When espionage was successful, clicking on the race icon opens the spy report
 - The plantary production field indicates whether the planet currently receives
   reserve spending (yellow = none, red = partial, while = full). The same
@@ -93,7 +100,6 @@ or pressing Alt-X in the main menu enables the following extra UI features:
   transfer dialog.
 - Nebula planets show "NEB" in their shields field and have a purple instead
   of a red frame around their picture
-- New Auto and Retreat buttons for space combat autoresolve
 - Pressing = or # on the Tech screen adjusts only the unlocked sliders
 - Tech screen has lights showing when you reach max research bonus
 - Clicking on the Tech screen lights sets the slider to bonus limit
