@@ -34,6 +34,8 @@ to adjust the scaling of the galaxy movement screen map.
 The following new UI features are always enabled/available:
 - Smoother galaxy movement screen scrolling
 - Galaxy movement screen scrolling speed is adjustable (-uismscroll)
+- Pressing hot key or changing focus does not change mouse position
+- When you release the mouse, only the clicked object is triggered
 - Random race / banner
 - Local multiplayer (use -new or -uiextra to start a game)
 - Lowercase allowed in save names
