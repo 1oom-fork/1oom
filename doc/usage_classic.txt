@@ -25,7 +25,6 @@ game via Game -> Quit or when F10 is pressed while in the "control screen" /
 
 The config file item "ui.uiscale" (set via the -uiscale command-line option)
 is an integer scaling factor for the whole UI except:
-- mouse cursor
 - galaxy movement screen map
 - sliders
 The default value is 1 for that classic 320x200 feeling. Larger values allow
@@ -43,39 +42,38 @@ The following new UI features are always enabled/available:
 - Mouse wheel can be used to scroll lists and adjust many things
 - Mouse wheel on planet name in the galaxy movement screen changes planet
 - Space bar works as a generic dismiss message key (Continue, ...)
+- Fleet/Specs screen uses numbers as hotkeys for scrap buttons
 - In Tech screen Tab runs through tech fields, A-F/1-6 are for field slider +/-
 - When sending a fleet Tab cycles ships and <> adjusts selected ship
-- Clicking the portraits in Races screen brings Report page
 - In Races screen the keys 1-5 correspond to clicking the portraits
 - Right-clicking on the ship image or Ships button cycles the other way
 - Ind slider no longer shows 0.N/y when at max factories
 - Eco slider shows Clean/+N Pop past T-Form on a full planet
 - Clicking cycles selection of overlapping fleets
 - The keys UHJK scroll the galaxy movement screen map
+- Map scrolling by mouse (ui.sm_mouse_scroll , -uismmousescroll)
 - Planets can be searched for by pressing the / key
 - Planets can be tagged with Ctrl-1-9 and recalled with 1-9
 - Pressing = or # in the galaxy movement screen transfers reserve for
   one round of production (with uiextra also transfers back)
+- -nobombanimation disables bomb animation in space combat
+- The = key can be substitued by the # key (useful for some non-US keyboards)
 
 The config file item "ui.uiextra" (set via the -uiextra command-line option)
 or pressing Alt-X in the main menu enables the following extra UI features:
-- Continue and Undo saves can be chosen in the Load Game screen
+- Continue, Undo and Init saves can be chosen in the Load Game screen
 - New Game screen allows setting opponent race/banner/names and AI/human flag
 - Game options screen Silent/FX Only/Music is replaced with more options
+- Clicking the portraits in Races screen brings Report page
 - Report screen shows name of AI leaders, Map screen shows current year
 - Fleet deployment shows the amount of available ships
-- Sending fewer than all ships does not deselect the orbit fleet
+- Fleet deployment: Holding Ctrl changes the number of ships by 1
 - Clicking a selected destination star again works as Accept for fleet send etc
 - Hovering over a planet draws a ruler with the distance in parsec from the
   currently selected planet if is in the screen.
-- Planetary governor can be enabled or disabled by clicking on planet name in
-  the galaxy movement screen, setting reserve spending mode (see below) or by
-  clicking on the respective amount fields (right of the slider) for Ships, Ind
-  or Tech. The latter also sets the governor  production focus for the planet.
-- Right clicking on planet name in the galaxy movement screen opens a governor
-  screen for all governor related local and global settings. The latter include
-  Eco mode, buildup mode and whether to build stargates. All local settings
-  are also reachable directly over the planet interface.
+- Governor screen can be opened by clicking on the Pop text or pressing V key.
+  The screen include Eco mode, buildup mode and whether to build stargates.
+  All local settings are also reachable directly over the planet interface.
 - Clicking on the planetary production field when the governor is active cycles
   through the reserve spending modes for the planet. The modes are "none"
   (never), "buildup" (only during buildup) and "always" (useful for Ultra Rich
@@ -101,16 +99,29 @@ or pressing Alt-X in the main menu enables the following extra UI features:
 - Tech screen has additional buttons to equalize spending (= or #), set to
   minimum for bonus (m) and for optimum allocation (o). The latter can be
   automated by clicking the level/auto button (t) in the upper right corner.
-- Pressing E or clicking the bottom left corner near Game opens an extra menu:
-    - Eco readjustment for Clean as save/reload used to do in v1.3
-    - The ship production selection can be set everywhere
-    - Relocation can be (un)set for all planets
-    - "X has finished ..." messages can be filtered
+- Pressing I opens message filter options
+- Planets: Add max population column
 - Completing terraforming generates a message (which is filtered by default)
 - After running through the Next turn phase and messages the game recenters on
   your last planet of choice
 - Clicking on #, Name, etc on Planets screen sorts the list
 - Clicking on Station or ship names on Fleet screen sorts the list
-- The = key can be substitued by the # key (useful for some non-US keyboards)
+- Starmap: Alt+F shows incoming friendly fleet routes
+- Starmap: Alt+O shows current/max populations for explored planets in
+  scanner range
+- Starmap: Ctrl+R sets reloc point for all planets
+- Planets: Ctrl+LMB on ship design name to build it everywhere
+- Planets: Alt+LMB replaces the ship design with the ship design 
+  of the current planet everywhere
+- Design: Holding Ctrl changes the number of weapons by 10
+- Starmap: Added 'production' button for reserve transfer
+- Starmap: Added 'bases' button for basescrap UI
+- Starmap: Removed '?' cursor area
+- Starmap: Races hotkey changed 'r' -> 'e'
+- Starmap: Reloc hotkey changed 'l' -> 'r'
+- Starmap: Send transport: Pressing A sets the slider to maximum
+- Starmap: Send transport: Holding Ctrl changes the number of transports by 10%
+- UI Fleet: Specs hotkey changed 'v' -> 's'
+- UI Fleet: Scrap hotkey changed 's' -> 'r'
 
 See doc/list_gamediff.txt for a list of differences in the game itself.
