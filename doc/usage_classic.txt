@@ -40,6 +40,11 @@ enables the following features:
 - New Auto and Retreat buttons for space combat autoresolve
 
 The following new UI features are always enabled/available:
+- It is now possible to select a reloc point within 
+  the normal range of the fleet
+- Added UI for choosing the design of the ship
+- Added the "Modern Controls" feature that allows you 
+  to select a planet on mouse hover
 - Smoother galaxy movement screen scrolling
 - Galaxy movement screen scrolling speed is adjustable (-uismscroll)
 - Pressing hot key or changing focus does not change mouse position
@@ -59,7 +64,7 @@ The following new UI features are always enabled/available:
 - Right-clicking on the ship image or Ships button cycles the other way
 - Ind slider no longer shows 0.N/y when at max factories
 - Eco slider shows Clean/+N Pop past T-Form on a full planet
-- Clicking cycles selection of overlapping fleets
+- Alt + clicking cycles selection of overlapping fleets
 - The keys UHJK scroll the galaxy movement screen map
 - Map scrolling by mouse (ui.sm_mouse_scroll , -uismmousescroll)
 - Planets can be searched for by pressing the / key
@@ -89,6 +94,7 @@ The following new UI features are always enabled/available:
 - Fleet screen: Clicking on Station or ship names sorts the list
 - Fleet screen: Specs hotkey changed 'v' -> 's'
 - Fleet screen: Scrap hotkey changed 's' -> 'r'
+- Fleet screen: Holding shift keeps selection if possible
 - Races screen: Clicking the portraits brings Report page
 - Report screen: Shows name of AI leaders
 - Tech screen: Pressing = or # adjusts only the unlocked sliders
@@ -120,6 +126,11 @@ The following new UI features are always enabled/available:
 - Starmap: Added 'bases' button for basescrap UI
 - Starmap: Fleet deployment: Holding Ctrl changes the number of ships by 1
 - Starmap: Allowed centering on any planet
+- Starmap: F2, F3, F8, F9 behavior is now the same as tag/search
+  if planet focus is visible
+- Starmap: F4, F5 now iterates over transports or fleets enroute
+- Starmap: Planet: Pressing Alt + clicking on the left/right slider arrow
+  sets slider to min/max
 
 The config file item "ui.uiextra" (set via the -uiextra command-line option)
 enables the following extra UI features:
