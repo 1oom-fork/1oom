@@ -160,10 +160,40 @@ static void ui_starmap_enroute_do_accept(struct starmap_data_s *d)
     }
 }
 
+static int ui_starmap_enroute_next(const struct game_s *g, player_id_t pi, int i)
+{
+    const fleet_enroute_t *r = &g->enroute[i];
+    player_id_t owner = r->owner;
+    int start = i;
+    do {
+        i = (i + 1) % g->enroute_num;
+        r = &g->enroute[i];
+        if (r->owner == owner && BOOLVEC_IS1(r->visible, pi)) {
+            return i;
+        }
+    } while (i != start);
+    return g->enroute_num;
+}
+
+static int ui_starmap_enroute_prev(const struct game_s *g, player_id_t pi, int i)
+{
+    const fleet_enroute_t *r = &g->enroute[i];
+    player_id_t owner = r->owner;
+    int start = i;
+    do {
+        if (--i < 0) { i = g->enroute_num - 1; }
+        r = &g->enroute[i];
+        if (r->owner == owner && BOOLVEC_IS1(r->visible, pi)) {
+            return i;
+        }
+    } while (i != start);
+    return g->enroute_num;
+}
+
 void ui_starmap_enroute(struct game_s *g, player_id_t active_player)
 {
     bool flag_done = false;
-    int16_t oi_cancel;
+    int16_t oi_cancel, oi_f4, oi_f5;
     struct starmap_data_s d;
     fleet_enroute_t *r;
 
@@ -202,6 +232,8 @@ void ui_starmap_enroute(struct game_s *g, player_id_t active_player)
     do { \
         STARMAP_UIOBJ_CLEAR_COMMON(); \
         oi_cancel = UIOBJI_INVALID; \
+        oi_f4 = UIOBJI_INVALID; \
+        oi_f5 = UIOBJI_INVALID; \
     } while (0)
 
     UIOBJ_CLEAR_LOCAL();
@@ -220,12 +252,28 @@ void ui_starmap_enroute(struct game_s *g, player_id_t active_player)
             ui_sound_play_sfx_06();
             flag_done = true;
             ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
+        } else if (oi1 == oi_f4) {
+            int i = ui_starmap_enroute_next(g, active_player, ui_data.starmap.fleet_selected);
+            if (i != g->enroute_num) {
+                ui_data.starmap.fleet_selected = i;
+                flag_done = true;
+                ui_sound_play_sfx_24();
+            }
+        } else if (oi1 == oi_f5) {
+            int i = ui_starmap_enroute_prev(g, active_player, ui_data.starmap.fleet_selected);
+            if (i != g->enroute_num) {
+                ui_data.starmap.fleet_selected = i;
+                flag_done = true;
+                ui_sound_play_sfx_24();
+            }
         }
         if (!flag_done) {
             ui_starmap_select_bottom_highlight(&d, oi2);
             ui_starmap_enroute_draw_cb(&d);
             uiobj_table_clear();
             UIOBJ_CLEAR_LOCAL();
+            oi_f4 = uiobj_add_inputkey(MOO_KEY_F4);
+            oi_f5 = uiobj_add_inputkey(MOO_KEY_F5);
             ui_starmap_common_fill_oi(&d);
             if (d.controllable) {
                 oi_cancel = uiobj_add_t0(227, 163, "", ui_data.gfx.starmap.reloc_bu_cancel, MOO_KEY_ESCAPE);
