@@ -424,7 +424,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
                 if (do_adj) {
                     game_adjust_slider_group(p->slider, i, p->slider[i], PLANET_SLIDER_NUM, p->slider_lock);
                 }
-                if (upd_eco) {
+                if (upd_eco && !p->slider_lock[3]) {
                     game_planet_update_eco_on_waste(g, p, d.api, true);
                 }
             }
