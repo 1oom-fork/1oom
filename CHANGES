@@ -1,0 +1,17 @@
+1oom-fork-v1.7.0
+----------------
+
+The "Custom game" menu was partially merged with the Main Menu and
+contains some new options such as "Research rate" and "No Events"
+
+Ui Starmap:
+- F4 and F5 now works for transports and fleets enroute
+- Pressing Alt + clicking slider arrows sets planet slider to min/max
+
+Old saved game compatibility - Yes
+Old configuration compatibility - No
+Old source tree compatibility - No
+
+For a full list of features, see the CHANGES-GIT
+
+
