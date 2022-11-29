@@ -368,6 +368,7 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
 {
     const struct game_s *g = d->g;
     int x, y, tx, ty;
+    char str[16];
     STARMAP_LIM_INIT();
     {
         int v, step;
@@ -486,6 +487,7 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
         uint8_t anim_frame = ui_data.star_frame[pi];
         bool explored = BOOLVEC_IS1(p->explored, d->api);
         bool visible = BOOLVEC_IS1(p->within_srange, d->api);
+        bool done = false;
         lbxgfx_set_new_frame(gfx, (anim_frame < 4) ? anim_frame : 0);
         gfx_aux_draw_frame_to(gfx, &ui_data.starmap.star_aux);
         if (p->look > 0) {
@@ -514,22 +516,12 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
             lbxfont_select(2, 0, 0, 0);
             lbxfont_set_color0(tbl_banner_color[g->eto[p->owner].banner]);
         }
-        if (p->type == PLANET_TYPE_NOT_HABITABLE && explored) {
-            lbxfont_print_str_center_limit(tx, ty, "0/0", STARMAP_TEXT_LIMITS, UI_SCREEN_W, starmap_scale);
-        } else if (ui_data.starmap.planet_text == UI_SM_PLANET_TEXT_NAME) {
-            bool do_print = visible
-                        || (pi == g->evn.planet_orion_i)
-                        || (BOOLVEC_IS1(g->eto[d->api].contact, p->owner))
-                        || (p->within_frange[d->api] == 1);
-            if (p->owner != PLAYER_NONE && do_print) {
-                lbxfont_print_str_center_limit(tx, ty, p->name, STARMAP_TEXT_LIMITS, UI_SCREEN_W, starmap_scale);
-            }
-        } else if (explored && visible) {
-            char str[16];
-            int max_pop;
-            switch (ui_data.starmap.planet_text) {
-            case UI_SM_PLANET_TEXT_POPULATION:
-                max_pop = p->max_pop3;
+        if (explored && ui_data.starmap.planet_text != UI_SM_PLANET_TEXT_NAME) {
+            if (p->type == PLANET_TYPE_NOT_HABITABLE) {
+                lbxfont_print_str_center_limit(tx, ty, "0/0", STARMAP_TEXT_LIMITS, UI_SCREEN_W, starmap_scale);
+                done = true;
+            } else if (visible && ui_data.starmap.planet_text == UI_SM_PLANET_TEXT_POPULATION) {
+                int max_pop = p->max_pop3;
                 if (g->eto[d->api].race != RACE_SILICOID) {
                     max_pop -= p->waste;
                 }
@@ -539,24 +531,22 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
                     lib_sprintf(str, sizeof(str), "%i/%i", p->pop, max_pop);
                 }
                 lbxfont_print_str_center_limit(tx, ty, str, STARMAP_TEXT_LIMITS, UI_SCREEN_W, starmap_scale);
-                break;
-            case UI_SM_PLANET_TEXT_SPECIAL:
+                done = true;
+            } else if (ui_data.starmap.planet_text == UI_SM_PLANET_TEXT_ENVIRONMENT) {
+                lib_sprintf(str, sizeof(str), "%s", game_str_tbl_sm_pltype[p->type]);
+                lbxfont_print_str_center_limit(tx, ty, str, STARMAP_TEXT_LIMITS, UI_SCREEN_W, starmap_scale);
+                done = true;
+            } else if (ui_data.starmap.planet_text == UI_SM_PLANET_TEXT_SPECIAL) {
                 if (p->special == PLANET_SPECIAL_NORMAL) {
                     lib_sprintf(str, sizeof(str), "%s", "Normal");
                 } else {
                     lib_sprintf(str, sizeof(str), "%s", game_str_tbl_sm_pspecial[p->special]);
                 }
                 lbxfont_print_str_center_limit(tx, ty, str, STARMAP_TEXT_LIMITS, UI_SCREEN_W, starmap_scale);
-                break;
-            case UI_SM_PLANET_TEXT_ENVIRONMENT:
-                lib_sprintf(str, sizeof(str), "%s", game_str_tbl_sm_pltype[p->type]);
-                lbxfont_print_str_center_limit(tx, ty, str, STARMAP_TEXT_LIMITS, UI_SCREEN_W, starmap_scale);
-                break;
-            case UI_SM_PLANET_TEXT_NAME:
-            default:
-                break;
+                done = true;
             }
-        } else {
+        }
+        if (!done) {
             bool do_print = visible
                         || (pi == g->evn.planet_orion_i)
                         || (BOOLVEC_IS1(g->eto[d->api].contact, p->owner))
