@@ -879,9 +879,9 @@ static int main_menu_get_item_wheel(struct main_menu_data_s *d, int16_t oi)
     return -1;
 }
 
-static void main_menu_item_do_plus(struct main_menu_data_s *d)
+static void main_menu_item_do_plus(struct main_menu_data_s *d, int item_i)
 {
-    const struct main_menu_item_s *it = &d->items[d->clicked_i];
+    const struct main_menu_item_s *it = &d->items[item_i];
     if (it->data.type == MAIN_MENU_ITEM_TYPE_RETURN) {
         d->ret = it->data.action_i;
         d->flag_done = true;
@@ -923,9 +923,9 @@ static void main_menu_item_do_plus(struct main_menu_data_s *d)
     }
 }
 
-static void main_menu_item_do_minus(struct main_menu_data_s *d)
+static void main_menu_item_do_minus(struct main_menu_data_s *d, int item_i)
 {
-    const struct main_menu_item_s *it = &d->items[d->highlight];
+    const struct main_menu_item_s *it = &d->items[item_i];
     if (it->data.type == MAIN_MENU_ITEM_TYPE_INT
      || it->data.type == MAIN_MENU_ITEM_TYPE_ENUM) {
         int *v = it->data.value_ptr;
@@ -941,8 +941,7 @@ static void main_menu_item_do_minus(struct main_menu_data_s *d)
         main_menu_refresh_screen(d);
     }
     else {
-        d->clicked_i = d->highlight;
-        main_menu_item_do_plus(d);
+        main_menu_item_do_plus(d, item_i);
     }
 }
 
@@ -984,30 +983,27 @@ static main_menu_action_t main_menu_do(struct main_menu_data_s *d)
             d->ret = MAIN_MENU_ACT_QUIT_GAME;
             d->flag_done = true;
         } else if ((oi1 == d->oi_plus || oi1 == d->oi_equals) && d->highlight != -1) {
-            d->clicked_i = d->highlight;
             ui_sound_play_sfx_24();
-            main_menu_item_do_plus(d);
+            main_menu_item_do_plus(d, d->highlight);
         } else if ((oi1 == d->oi_minus) && d->highlight != -1) {
             ui_sound_play_sfx_24();
-            main_menu_item_do_minus(d);
+            main_menu_item_do_minus(d, d->highlight);
         } else if (d->wheel_i != -1) {
             if ((d->scrollmisc >= 0) != (ui_mwi_counter && 1) ) {
-                d->clicked_i = d->wheel_i;
                 ui_sound_play_sfx_24();
-                main_menu_item_do_plus(d);
+                main_menu_item_do_plus(d, d->wheel_i);
             } else {
-                d->highlight = d->wheel_i;
                 ui_sound_play_sfx_24();
-                main_menu_item_do_minus(d);
+                main_menu_item_do_minus(d, d->wheel_i);
             }
             d->scrollmisc = 0;
         } else if (d->clicked_i != -1) {
             ui_sound_play_sfx_24();
-            main_menu_item_do_plus(d);
+            main_menu_item_do_plus(d, d->clicked_i);
         } else if (oi1 == UIOBJI_ESC) {
             if (d->highlight != -1) {
                 ui_sound_play_sfx_24();
-                main_menu_item_do_minus(d);
+                main_menu_item_do_minus(d, d->highlight);
             } else {
                 main_menu_pop_page(d);
             }
