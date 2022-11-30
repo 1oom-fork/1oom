@@ -418,7 +418,7 @@ static struct main_menu_item_data_s mm_items[MAIN_MENU_ITEM_NUM] = {
         NULL, NULL,
         "Interface", NULL, NULL, MAIN_MENU_PAGE_INTERFACE,
         0, 0,
-        MOO_KEY_1,
+        MOO_KEY_i,
     },
     {
         MAIN_MENU_ITEM_TYPE_BOOL,
