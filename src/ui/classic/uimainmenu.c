@@ -601,6 +601,7 @@ struct main_menu_item_s {
     uint16_t w;
     uint16_t h;
     int16_t oi;
+    int16_t oi_shift;
     int16_t oi_wheel;
     bool active;
 };
@@ -616,6 +617,7 @@ struct main_menu_data_s {
     main_menu_action_t ret;
     bool flag_done;
     int clicked_i;
+    int shift_i;
     int wheel_i;
     int highlight;
     uint8_t *gfx_vortex;
@@ -816,6 +818,7 @@ static bool main_menu_load_page(struct main_menu_data_s *d, main_menu_page_id_t 
         struct main_menu_item_s *it = &d->items[d->item_count];
         struct main_menu_item_data_s *it_data = main_menu_get_itemdata(page_i, i);
         it->oi = UIOBJI_INVALID;
+        it->oi_shift = UIOBJI_INVALID;
         it->oi_wheel = UIOBJI_INVALID;
         if (it_data) {
             it->data = *it_data;
@@ -834,6 +837,7 @@ static bool main_menu_load_page(struct main_menu_data_s *d, main_menu_page_id_t 
         it->active = it->data.is_active ? it->data.is_active(&d) : true;
         if (it->active) {
             it->oi = uiobj_add_mousearea(it->x - it->w / 2, it->y, it->x + it->w / 2, it->y + it->h - 2, it->data.key);
+            it->oi_shift = uiobj_add_inputkey(it->data.key | MOO_MOD_SHIFT);
             it->oi_wheel = uiobj_add_mousewheel(it->x - it->w / 2, it->y, it->x + it->w / 2, it->y + it->h - 2, &d->scrollmisc);
         }
     }
@@ -863,6 +867,16 @@ static int main_menu_get_item(struct main_menu_data_s *d, int16_t oi)
 {
     for (int i = 0; i < d->item_count; ++i) {
         if (oi == d->items[i].oi) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+static int main_menu_get_item_shift(struct main_menu_data_s *d, int16_t oi)
+{
+    for (int i = 0; i < d->item_count; ++i) {
+        if (oi == d->items[i].oi_shift) {
             return i;
         }
     }
@@ -978,6 +992,7 @@ static main_menu_action_t main_menu_do(struct main_menu_data_s *d)
         d->highlight = main_menu_get_item(d, oi2);
         main_menu_draw_cb(d);
         d->clicked_i = main_menu_get_item(d, oi1);
+        d->shift_i = main_menu_get_item_shift(d, oi1);
         d->wheel_i = main_menu_get_item_wheel(d, oi1);
         if (oi1 == d->oi_quit) {
             d->ret = MAIN_MENU_ACT_QUIT_GAME;
@@ -1000,6 +1015,9 @@ static main_menu_action_t main_menu_do(struct main_menu_data_s *d)
         } else if (d->clicked_i != -1) {
             ui_sound_play_sfx_24();
             main_menu_item_do_plus(d, d->clicked_i);
+        } else if (d->shift_i != -1) {
+            ui_sound_play_sfx_24();
+            main_menu_item_do_minus(d, d->shift_i);
         } else if (oi1 == UIOBJI_ESC) {
             if (d->highlight != -1) {
                 ui_sound_play_sfx_24();
