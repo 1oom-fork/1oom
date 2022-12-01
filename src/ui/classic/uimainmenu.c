@@ -98,7 +98,7 @@ static const char* mm_get_custom_galaxy_seed_str(void) {
     return buf;
 }
 
-static void mm_gen_custom_galaxy_seed(void) {
+static void mm_gen_custom_galaxy_seed(void *vptr) {
     game_opt_custom.galaxy_seed = game_opt_custom.galaxy_seed ? 0 : rnd_get_new_seed();
 }
 
