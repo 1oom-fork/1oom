@@ -184,6 +184,12 @@ static int ui_starmap_transport_prev(const struct game_s *g, player_id_t pi, int
     return g->transport_num;
 }
 
+static void ui_starmap_transport_set_pos_focus(struct starmap_data_s *d)
+{
+    const transport_t *r = &d->g->transport[ui_data.starmap.fleet_selected];
+    ui_starmap_set_pos(d->g, r->x, r->y);
+}
+
 void ui_starmap_transport(struct game_s *g, player_id_t active_player)
 {
     bool flag_done = false;
@@ -194,6 +200,7 @@ void ui_starmap_transport(struct game_s *g, player_id_t active_player)
     ui_starmap_common_init(g, &d, active_player);
     d.valid_target_cb = ui_starmap_transport_valid_destination;
     d.on_accept_cb = ui_starmap_transport_do_accept;
+    d.on_pos_focus_cb = ui_starmap_transport_set_pos_focus;
 
     d.ts.frame_ship = 0;
     d.ts.frame_scanner = 0;

@@ -1477,6 +1477,20 @@ static bool ui_starmap_handle_oi_f2389(struct game_s *g, struct starmap_data_s *
     return false;
 }
 
+static bool ui_starmap_handle_oi_alt_c(struct game_s *g, struct starmap_data_s *d, int16_t oi1)
+{
+    if (oi1 != d->oi_alt_c) {
+        return false;
+    }
+    if (!d->on_pos_focus_cb) {
+        ui_starmap_set_pos_focus(g, d->api);
+    } else {
+        d->on_pos_focus_cb(d);
+    }
+    ui_sound_play_sfx_24();
+    return true;
+}
+
 bool ui_starmap_common_init(struct game_s *g, struct starmap_data_s *d, player_id_t active_player)
 {
     d->g = g;
@@ -1497,6 +1511,7 @@ bool ui_starmap_common_init(struct game_s *g, struct starmap_data_s *d, player_i
     d->update_cb = NULL;
     d->valid_target_cb = NULL;
     d->on_accept_cb = NULL;
+    d->on_pos_focus_cb = NULL;
 
     return true;
 }
@@ -1531,7 +1546,8 @@ bool ui_starmap_common_handle_oi(struct game_s *g, struct starmap_data_s *d, boo
         ui_sound_play_sfx_24();
         return true;
     } else if (ui_starmap_handle_oi_ctrl(d, oi1)
-            || ui_starmap_handle_oi_scroll(g, d, oi1)) {
+            || ui_starmap_handle_oi_scroll(g, d, oi1)
+            || ui_starmap_handle_oi_alt_c(g, d, oi1)) {
         return true;
     } else if (oi1 == d->oi_accept && d->on_accept_cb != NULL) {
         ui_sound_play_sfx_24();
@@ -1575,6 +1591,7 @@ void ui_starmap_common_fill_oi(struct starmap_data_s *d)
     }
     d->oi_alt_m = uiobj_add_inputkey(MOO_KEY_m | MOO_MOD_ALT);
     d->oi_alt_o = uiobj_add_inputkey(MOO_KEY_o | MOO_MOD_ALT);
+    d->oi_alt_c = uiobj_add_inputkey(MOO_KEY_c | MOO_MOD_ALT);
     ui_starmap_fill_oi_ctrl(d);
     ui_starmap_add_oi_bottom_buttons(d);
     ui_starmap_fill_oi_fx(d);

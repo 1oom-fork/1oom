@@ -190,6 +190,12 @@ static int ui_starmap_enroute_prev(const struct game_s *g, player_id_t pi, int i
     return g->enroute_num;
 }
 
+static void ui_starmap_enroute_set_pos_focus(struct starmap_data_s *d)
+{
+    const fleet_enroute_t *r = &d->g->enroute[ui_data.starmap.fleet_selected];
+    ui_starmap_set_pos(d->g, r->x, r->y);
+}
+
 void ui_starmap_enroute(struct game_s *g, player_id_t active_player)
 {
     bool flag_done = false;
@@ -200,6 +206,7 @@ void ui_starmap_enroute(struct game_s *g, player_id_t active_player)
     ui_starmap_common_init(g, &d, active_player);
     d.valid_target_cb = ui_starmap_enroute_valid_destination;
     d.on_accept_cb = ui_starmap_enroute_do_accept;
+    d.on_pos_focus_cb = ui_starmap_enroute_set_pos_focus;
 
     r = &(g->enroute[ui_data.starmap.fleet_selected]);
     d.en.can_move = g->eto[active_player].have_hyperspace_comm ? GOT_HYPERCOMM : NO_MOVE;

@@ -196,7 +196,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
     bool flag_done = false;
     int16_t oi_b, oi_c, oi_starview1, oi_starview2, oi_shippic, oi_equals, oi_hash,
             oi_f4, oi_f5, oi_f6, oi_f7, oi_f10,
-            oi_alt_galaxy, oi_alt_c, oi_alt_p, oi_alt_events,
+            oi_alt_galaxy, oi_alt_p, oi_alt_events,
             oi_governor, oi_wheelname, oi_wheelshippic, oi_filter;
     int16_t scrollmisc = 0;
     struct starmap_data_s d;
@@ -216,7 +216,6 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
     do { \
         STARMAP_UIOBJ_CLEAR_COMMON(); \
         STARMAP_UIOBJ_CLEAR_FX(); \
-        oi_alt_c = UIOBJI_INVALID; \
         oi_b = UIOBJI_INVALID; \
         oi_c = UIOBJI_INVALID; \
         oi_starview1 = UIOBJI_INVALID; \
@@ -429,10 +428,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
                 }
             }
         }
-        if (oi1 == oi_alt_c) {
-            ui_starmap_set_pos_focus(g, active_player);
-            ui_sound_play_sfx_24();
-        } else if (oi1 == oi_equals || oi1 == oi_hash) {
+        if (oi1 == oi_equals || oi1 == oi_hash) {
             if (p->reserve > 0) {
                 g->eto[active_player].reserve_bc += p->reserve;
                 p->reserve = 0;
@@ -557,7 +553,6 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             ui_starmap_draw_cb1(&d);
             uiobj_table_set_last(oi_alt_events);
             UIOBJ_CLEAR_LOCAL();
-            oi_alt_c = uiobj_add_inputkey(MOO_KEY_c | MOO_MOD_ALT);
             if (p->owner == active_player) {
                 if (BOOLVEC_IS0(p->extras, PLANET_EXTRAS_GOVERNOR)) {
                     oi_equals = uiobj_add_mousearea(227, 70, 312, 78, MOO_KEY_EQUALS);

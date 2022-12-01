@@ -51,6 +51,7 @@ struct starmap_data_s {
     bool (*update_cb) (struct starmap_data_s *, bool first_time);
     bool (*valid_target_cb) (const struct starmap_data_s *, int planet_i);
     void (*on_accept_cb) (struct starmap_data_s *);
+    void (*on_pos_focus_cb) (struct starmap_data_s *);
     int16_t oi_gameopts;
     int16_t oi_design;
     int16_t oi_fleet;
@@ -67,6 +68,7 @@ struct starmap_data_s {
     int16_t oi_alt_f;
     int16_t oi_alt_m;
     int16_t oi_alt_o;
+    int16_t oi_alt_c;
     int16_t oi_finished;
     int16_t oi_tbl_stars[PLANETS_MAX];
     int16_t oi_ctrl_left;
@@ -163,6 +165,7 @@ struct starmap_data_s {
         d.oi_alt_f = UIOBJI_INVALID; \
         d.oi_alt_m = UIOBJI_INVALID; \
         d.oi_alt_o = UIOBJI_INVALID; \
+        d.oi_alt_c = UIOBJI_INVALID; \
         d.oi_finished = UIOBJI_INVALID; \
         d.oi_f2 = UIOBJI_INVALID; \
         d.oi_f3 = UIOBJI_INVALID; \
