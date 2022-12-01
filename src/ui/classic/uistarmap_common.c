@@ -1440,7 +1440,7 @@ bool ui_starmap_handle_oi_finished(struct game_s *g, struct starmap_data_s *d, b
     return true;
 }
 
-bool ui_starmap_handle_oi_f2389(struct game_s *g, struct starmap_data_s *d, bool *flag_done, int16_t oi1)
+static bool ui_starmap_handle_oi_f2389(struct game_s *g, struct starmap_data_s *d, bool *flag_done, int16_t oi1)
 {
     if (d->hide_focus) {
         return false;
