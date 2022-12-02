@@ -263,6 +263,7 @@ void ui_starmap_enroute(struct game_s *g, player_id_t active_player)
             int i = ui_starmap_enroute_next(g, active_player, ui_data.starmap.fleet_selected);
             if (i != g->enroute_num) {
                 ui_data.starmap.fleet_selected = i;
+                d.on_pos_focus_cb(&d);
                 flag_done = true;
                 ui_sound_play_sfx_24();
             }
@@ -270,6 +271,7 @@ void ui_starmap_enroute(struct game_s *g, player_id_t active_player)
             int i = ui_starmap_enroute_prev(g, active_player, ui_data.starmap.fleet_selected);
             if (i != g->enroute_num) {
                 ui_data.starmap.fleet_selected = i;
+                d.on_pos_focus_cb(&d);
                 flag_done = true;
                 ui_sound_play_sfx_24();
             }
