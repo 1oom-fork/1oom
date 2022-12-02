@@ -89,6 +89,7 @@ static void ui_starmap_orbit_en_draw_cb(void *vptr)
 void ui_starmap_orbit_en(struct game_s *g, player_id_t active_player)
 {
     bool flag_done = false;
+    int16_t oi_f4, oi_f5;
     struct starmap_data_s d;
     shipcount_t *os;
 
@@ -121,6 +122,8 @@ void ui_starmap_orbit_en(struct game_s *g, player_id_t active_player)
 #define UIOBJ_CLEAR_LOCAL() \
     do { \
         STARMAP_UIOBJ_CLEAR_COMMON(); \
+        oi_f4 = UIOBJI_INVALID; \
+        oi_f5 = UIOBJI_INVALID; \
     } while (0)
 
     UIOBJ_CLEAR_LOCAL();
@@ -131,6 +134,50 @@ void ui_starmap_orbit_en(struct game_s *g, player_id_t active_player)
         oi2 = uiobj_at_cursor();
         ui_delay_prepare();
         if (ui_starmap_common_handle_oi(g, &d, &flag_done, oi1, oi2)) {
+        } else if (oi1 == oi_f4) {
+            bool found;
+            int i, pi;
+            i = pi = d.from_i;
+            found = false;
+            do {
+                i = (i + 1) % g->galaxy_stars;
+                for (int j = 0; j < g->eto[ui_data.starmap.orbit_player].shipdesigns_num; ++j) {
+                    if (g->eto[ui_data.starmap.orbit_player].orbit[i].ships[j]
+                     && BOOLVEC_IS1(g->planet[i].within_srange, d.api)) {
+                        found = true;
+                        break;
+                    }
+                }
+            } while ((!found) && (i != pi));
+            if (found) {
+                g->planet_focus_i[active_player] = i;
+                ui_starmap_set_pos_focus(g, active_player);
+                d.from_i = i;
+                ui_sound_play_sfx_24();
+                flag_done = true;
+            }
+        } else if (oi1 == oi_f5) {
+            bool found;
+            int i, pi;
+            i = pi = d.from_i;
+            found = false;
+            do {
+                if (--i < 0) { i = g->galaxy_stars - 1; }
+                for (int j = 0; j < g->eto[ui_data.starmap.orbit_player].shipdesigns_num; ++j) {
+                    if (g->eto[ui_data.starmap.orbit_player].orbit[i].ships[j]
+                     && BOOLVEC_IS1(g->planet[i].within_srange, d.api)) {
+                        found = true;
+                        break;
+                    }
+                }
+            } while ((!found) && (i != pi));
+            if (found) {
+                g->planet_focus_i[active_player] = i;
+                ui_starmap_set_pos_focus(g, active_player);
+                d.from_i = i;
+                ui_sound_play_sfx_24();
+                flag_done = true;
+            }
         }
         if (oi1 == UIOBJI_ESC) {
             ui_sound_play_sfx_24();
@@ -142,6 +189,8 @@ void ui_starmap_orbit_en(struct game_s *g, player_id_t active_player)
             ui_starmap_orbit_en_draw_cb(&d);
             uiobj_table_clear();
             UIOBJ_CLEAR_LOCAL();
+            oi_f4 = uiobj_add_inputkey(MOO_KEY_F4);
+            oi_f5 = uiobj_add_inputkey(MOO_KEY_F5);
             ui_starmap_common_fill_oi(&d);
             ui_draw_finish();
             ui_delay_ticks_or_click(STARMAP_DELAY);
