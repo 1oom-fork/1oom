@@ -1,3 +1,16 @@
+1oom-fork-v1.7.1
+----------------
+
+Ui Starmap:
+- The "Build finished" text position now matches v1.6.4
+- Alt+c now centers on the selected fleet
+- F4, F5 now works for enemy orbits
+
+Ui Main Menu:
+- Fixed the "Interface" hotkey
+- Pressing Shift + hotkey works as RMB
+
+
 1oom-fork-v1.7.0
 ----------------
 

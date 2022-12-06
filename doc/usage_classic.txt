@@ -24,6 +24,9 @@ game via Game -> Quit or when F10 is pressed while in the "control screen" /
 "galaxy movement screen".
 
 Most of the settings are now available in the main menu.
+- Menu items can be adjusted using the +/- keys, mouse wheel
+  and left/right mouse buttons
+- Pressing hotkey works as +, pressing Shift + hotkey works as '-'
 
 The config file item "ui.uiscale" (set via the -uiscale command-line option)
 is an integer scaling factor for the whole UI except:
