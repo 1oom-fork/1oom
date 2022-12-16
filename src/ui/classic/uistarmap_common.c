@@ -398,14 +398,14 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
     }
     if (ui_data.starmap.flag_show_grid) {
         int x0, y0, x1, y1;
-        for (y0 = 10; y0 < (g->galaxy_maxy * 2); y0 += 50) {
+        for (y0 = 10; y0 < g->galaxy_maxy; y0 += 50) {
             int ty;
             x0 = (-x) * 2 + 6;
             x1 = (g->galaxy_maxx - x) * 2 + 6;
             ty = (y0 - y) * 2 + 6;
             ui_draw_line_limit(x0, ty, x1, ty, 4);
         }
-        for (x0 = 10; x0 < (g->galaxy_maxx * 2); x0 += 50) {
+        for (x0 = 10; x0 < g->galaxy_maxx; x0 += 50) {
             int tx;
             y0 = (-y) * 2 + 6;
             y1 = (g->galaxy_maxy - y) * 2 + 6;
