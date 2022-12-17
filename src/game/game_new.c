@@ -650,6 +650,33 @@ static void game_generate_race_banner(struct game_s *g)
     }
 }
 
+static uint16_t game_get_random_planet_i(struct game_s *g)
+{
+    uint16_t pi;
+    if (g->galaxy_stars > 24) {
+        pi = rnd_1_n(g->galaxy_w - 2, &g->seed) + rnd_1_n(g->galaxy_h - 2, &g->seed) * g->galaxy_w;
+    } else if (g->players > 3) {
+        pi = rnd_0_nm1(g->galaxy_stars, &g->seed);
+    } else {
+        pi = rnd_1_n(g->galaxy_w - 2, &g->seed) + rnd_1_n(g->galaxy_h - 2, &g->seed) * g->galaxy_w;
+    }
+    return pi;
+}
+
+static bool game_check_random_home_i(const struct game_s *g, const uint16_t *tblhome, player_id_t player_i, uint16_t planet_i)
+{
+    bool flag_ok = true;
+    for (int j = 0; j < player_i; ++j) {
+        if (tblhome[j] == planet_i) {
+            flag_ok = false;
+        }
+    }
+    if (planet_i == g->evn.planet_orion_i) {
+        flag_ok = false;
+    }
+    return flag_ok;
+}
+
 static void game_generate_home_etc(struct game_s *g)
 {
     uint16_t tblhome[PLAYER_NUM];
@@ -661,28 +688,9 @@ start_of_func:
     while ((!flag_all_ok) && (loops < 200)) {
         flag_all_ok = true;
         for (player_id_t i = PLAYER_0; i < g->players; ++i) {
-            uint16_t pi;
-            bool flag_again2;
-            flag_again2 = true;
-            while (flag_again2) {
-                if (g->galaxy_stars > 24) {
-                    pi = rnd_1_n(g->galaxy_w - 2, &g->seed) + rnd_1_n(g->galaxy_h - 2, &g->seed) * g->galaxy_w;
-                } else if (g->players > 3) {
-                    pi = rnd_0_nm1(g->galaxy_stars, &g->seed);
-                } else {
-                    pi = rnd_1_n(g->galaxy_w - 2, &g->seed) + rnd_1_n(g->galaxy_h - 2, &g->seed) * g->galaxy_w;
-                }
-                flag_again2 = false;
-                for (int j = 0; j < i; ++j) {
-                    if (tblhome[j] == pi) {
-                        flag_again2 = true;
-                    }
-                }
-                if (pi == g->evn.planet_orion_i) {
-                    flag_again2 = true;
-                }
-            }
-            tblhome[i] = pi;
+            do {
+                tblhome[i] = game_get_random_planet_i(g);
+            } while (!game_check_random_home_i(g, tblhome, i, tblhome[i]));
         }
         {
             uint16_t dist, mindist;
