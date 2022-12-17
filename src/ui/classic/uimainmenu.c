@@ -94,7 +94,11 @@ static const char* mm_get_custom_ai_id_value(int i) {
 
 static const char* mm_get_custom_galaxy_seed_str(void) {
     static char buf[64];
-    lib_sprintf(buf, 64, "%d", game_opt_custom.galaxy_seed);
+    if (game_opt_custom.galaxy_seed == 0) {
+        lib_sprintf(buf, 64, "Off");
+    } else {
+        lib_sprintf(buf, 64, "%d", game_opt_custom.galaxy_seed);
+    }
     return buf;
 }
 
