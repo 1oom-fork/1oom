@@ -115,6 +115,7 @@ const struct cfg_items_s game_new_cfg_items[] = {
     CFG_ITEM_BOOL("custom_game_no_tohit_acc", &game_opt_custom.no_tohit_acc),
     CFG_ITEM_BOOL("custom_game_precap_tohit", &game_opt_custom.precap_tohit),
     CFG_ITEM_BOOL("custom_game_no_events", &game_opt_custom.no_events),
+    CFG_ITEM_BOOL("custom_game_fix_homeworlds_too_close", &game_opt_custom.fix_homeworlds_too_close),
     CFG_ITEM_INT("custom_game_galaxy_seed", &game_opt_custom.galaxy_seed, NULL),
     CFG_ITEM_INT("custom_game_research_rate", &game_opt_custom.research_rate, NULL),
     CFG_ITEM_INT("custom_game_races", &game_opt_race_value, NULL),
@@ -663,7 +664,7 @@ static uint16_t game_get_random_planet_i(struct game_s *g)
     return pi;
 }
 
-static bool game_check_random_home_i(const struct game_s *g, const uint16_t *tblhome, player_id_t player_i, uint16_t planet_i)
+static bool game_check_random_home_i(const struct game_s *g, const uint16_t *tblhome, player_id_t player_i, uint16_t planet_i, uint16_t mindist_limit)
 {
     bool flag_ok = true;
     for (int j = 0; j < player_i; ++j) {
@@ -674,7 +675,31 @@ static bool game_check_random_home_i(const struct game_s *g, const uint16_t *tbl
     if (planet_i == g->evn.planet_orion_i) {
         flag_ok = false;
     }
+    if (flag_ok && mindist_limit > 0) {
+        for (int j = 0; j < player_i; ++j) {
+            if (util_math_dist_fast(g->planet[planet_i].x, g->planet[planet_i].y, g->planet[tblhome[j]].x, g->planet[tblhome[j]].y) < mindist_limit) {
+                flag_ok = false;
+            }
+        }
+    }
     return flag_ok;
+}
+
+static uint16_t game_get_ok_home_i(struct game_s *g, uint16_t *tblhome, player_id_t player_i, uint16_t mindist_limit)
+{
+    uint16_t ok_home_i[PLANETS_MAX];
+    uint16_t ok_home_count = 0;
+    for (int pi = 0; pi < g->galaxy_stars; ++pi) {
+        if (game_check_random_home_i(g, tblhome, player_i, pi, 80)) {
+            ok_home_i[ok_home_count] = pi;
+            ++ok_home_count;
+        }
+    }
+    uint16_t home_i = PLANETS_MAX;
+    if (ok_home_count) {
+        home_i = ok_home_i[rnd_0_nm1(ok_home_count, &g->seed)];
+    }
+    return home_i;
 }
 
 static void game_generate_home_etc(struct game_s *g)
@@ -688,11 +713,19 @@ start_of_func:
     while ((!flag_all_ok) && (loops < 200)) {
         flag_all_ok = true;
         for (player_id_t i = PLAYER_0; i < g->players; ++i) {
-            do {
-                tblhome[i] = game_get_random_planet_i(g);
-            } while (!game_check_random_home_i(g, tblhome, i, tblhome[i]));
+            if (!game_opt_custom.fix_homeworlds_too_close) {
+                do {
+                    tblhome[i] = game_get_random_planet_i(g);
+                } while (!game_check_random_home_i(g, tblhome, i, tblhome[i], 0));
+            } else {
+                tblhome[i] = game_get_ok_home_i(g, tblhome, i, 80);
+                if (tblhome[i] == PLANETS_MAX) {
+                    flag_all_ok = false;
+                    break;
+                }
+            }
         }
-        {
+        if (flag_all_ok && !game_opt_custom.fix_homeworlds_too_close){
             uint16_t dist, mindist;
             mindist = 10000;
             for (player_id_t i = PLAYER_0; (i < g->players) && (i < 2); ++i) {
