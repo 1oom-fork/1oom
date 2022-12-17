@@ -248,7 +248,7 @@ static struct main_menu_item_data_s mm_items[MAIN_MENU_ITEM_NUM] = {
     {
         MAIN_MENU_ITEM_TYPE_ENUM,
         NULL, NULL,
-        "Players", mm_get_custom_players_value, &game_opt_custom.players, 0,
+        "Opponents", mm_get_custom_players_value, &game_opt_custom.players, 0,
         2, PLAYER_NUM,
         MOO_KEY_p,
     },
