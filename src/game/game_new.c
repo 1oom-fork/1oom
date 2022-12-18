@@ -128,6 +128,23 @@ const struct cfg_items_s game_new_cfg_items[] = {
 
 /* -------------------------------------------------------------------------- */
 
+static bool game_planet_in_nebula(const struct game_s *g, const struct planet_s *p)
+{
+    bool ret = false;
+    for (int k = 0; k < g->nebula_num; ++k) {
+        for (int j = 0; j < 4; ++j) {
+            if (1
+              && (p->x >= g->nebula_x0[k][j]) && (p->x <= g->nebula_x1[k][j])
+              && (p->y >= g->nebula_y0[k][j]) && (p->y <= g->nebula_y1[k][j])
+            ) {
+                ret = true;
+                break;
+            }
+        }
+    }
+    return ret;
+}
+
 static void game_generate_planets(struct game_s *g)
 {
     /* assumes the planet data is already 0'd by caller */
@@ -204,18 +221,7 @@ static void game_generate_planets(struct game_s *g)
         p->look = rnd_0_nm1(2, &g->seed) * 6;
         p->frame = rnd_0_nm1(50, &g->seed);
 
-        in_nebula = false;
-        for (int k = 0; k < g->nebula_num; ++k) {
-            for (int j = 0; j < 4; ++j) {
-                if (1
-                  && (p->x >= g->nebula_x0[k][j]) && (p->x <= g->nebula_x1[k][j])
-                  && (p->y >= g->nebula_y0[k][j]) && (p->y <= g->nebula_y1[k][j])
-                ) {
-                    in_nebula = true;
-                    break;
-                }
-            }
-        }
+        in_nebula = game_planet_in_nebula(g, p);
 
         {
             planet_type_t t;
@@ -772,6 +778,11 @@ static bool game_gen_fix_satellites(struct game_s *g, uint16_t *tblhome)
                 while (util_math_dist_fast(home->x, home->y, sat->x, sat->y) > 27) {
                     sat->x += dx;
                     sat->y += dy;
+                }
+                if (game_planet_in_nebula(g, sat)) {
+                    sat->battlebg = 0;
+                } else {
+                    sat->battlebg = rnd_1_n(4, &g->seed);
                 }
             }
             if (!game_opt_custom.fix_homeworlds_too_close) {
