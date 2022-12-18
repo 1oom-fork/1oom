@@ -117,6 +117,7 @@ const struct cfg_items_s game_new_cfg_items[] = {
     CFG_ITEM_BOOL("custom_game_no_events", &game_opt_custom.no_events),
     CFG_ITEM_BOOL("custom_game_fix_homeworlds_too_close", &game_opt_custom.fix_homeworlds_too_close),
     CFG_ITEM_BOOL("custom_game_fix_homeworld_sattelites", &game_opt_custom.fix_homeworld_sattelites),
+    CFG_ITEM_BOOL("custom_game_fix_bad_sattelites", &game_opt_custom.fix_bad_sattelites),
     CFG_ITEM_INT("custom_game_galaxy_seed", &game_opt_custom.galaxy_seed, NULL),
     CFG_ITEM_INT("custom_game_research_rate", &game_opt_custom.research_rate, NULL),
     CFG_ITEM_INT("custom_game_races", &game_opt_race_value, NULL),
@@ -718,6 +719,17 @@ static void game_gen_clone_planet(struct planet_s *from, struct planet_s *to)
     to->special = from->special;
 }
 
+static bool game_planet_is_good(const struct planet_s *p)
+{
+    if (!game_opt_custom.fix_bad_sattelites) {
+        return p->type >= PLANET_TYPE_MINIMAL;
+    }
+    if (p->special == PLANET_SPECIAL_ULTRA_POOR || p->special == PLANET_SPECIAL_POOR) {
+        return false;
+    }
+    return p->type >= PLANET_TYPE_MINIMAL && (p->max_pop1 >= 50 || p->special == PLANET_SPECIAL_ARTIFACTS || p->special == PLANET_SPECIAL_RICH || p->special == PLANET_SPECIAL_ULTRA_RICH);
+}
+
 static bool game_gen_fix_sattelites(struct game_s *g, uint16_t *tblhome)
 {
     uint16_t tblsat[PLAYER_NUM] = {PLANETS_MAX, PLANETS_MAX, PLANETS_MAX, PLANETS_MAX, PLANETS_MAX, PLANETS_MAX};
@@ -781,7 +793,7 @@ static bool game_gen_fix_sattelites(struct game_s *g, uint16_t *tblhome)
     for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         struct planet_s *sat = &g->planet[tblsat[i]];
 
-        if (sat->type >= PLANET_TYPE_MINIMAL) {
+        if (game_planet_is_good(sat)) {
             continue;
         }
 
@@ -800,7 +812,7 @@ static bool game_gen_fix_sattelites(struct game_s *g, uint16_t *tblhome)
                 continue;
             }
             struct planet_s *p = &g->planet[pi];
-            if (p->type < PLANET_TYPE_MINIMAL) {
+            if (!game_planet_is_good(p)) {
                 continue;
             }
 
@@ -868,7 +880,7 @@ start_of_func:
                     planet_t *p;
                     p = &g->planet[j];
                     if (1
-                      && (p->type >= PLANET_TYPE_MINIMAL)
+                      && (game_planet_is_good(p))
                       && (j != g->evn.planet_orion_i)
                       && (j != tblhome[i])
                     ) {
