@@ -15,6 +15,7 @@ struct game_new_options_s {
     uint32_t no_events;
     bool fix_homeworlds_too_close;
     bool fix_homeworld_satellites;
+    bool fix_bad_satellites;
     research_rate_t research_rate;
     struct {
         char playername[EMPEROR_NAME_LEN];
@@ -27,7 +28,7 @@ struct game_new_options_s {
 
 #define GAME_NEW_OPTS_DEFAULT \
     { \
-        0, GALAXY_SIZE_SMALL, DIFFICULTY_SIMPLE, GAME_AI_DEFAULT, 2, false, true, true, false, false, false, RESEARCH_RATE_NORMAL, \
+        0, GALAXY_SIZE_SMALL, DIFFICULTY_SIMPLE, GAME_AI_DEFAULT, 2, false, true, true, false, false, false, false, RESEARCH_RATE_NORMAL, \
         { \
             { "", "", RACE_HUMAN, BANNER_BLUE, false }, \
             { "", "", RACE_RANDOM, BANNER_RANDOM, true }, \
