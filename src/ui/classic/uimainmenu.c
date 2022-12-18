@@ -139,6 +139,7 @@ typedef enum {
     MAIN_MENU_ITEM_GAME_CUSTOM_RULES_RESEARCH_RATE,
     MAIN_MENU_ITEM_GAME_CUSTOM_GALAXY,
     MAIN_MENU_ITEM_GAME_CUSTOM_GALAXY_FIX_HOMEWORLDS_TOO_CLOSE,
+    MAIN_MENU_ITEM_GAME_CUSTOM_GALAXY_FIX_HOMEWORLD_SATTELITES,
     MAIN_MENU_ITEM_OPTIONS,
     MAIN_MENU_ITEM_OPTIONS_INPUT,
     MAIN_MENU_ITEM_OPTIONS_INPUT_SMSCROLL,
@@ -325,6 +326,13 @@ static struct main_menu_item_data_s mm_items[MAIN_MENU_ITEM_NUM] = {
         "Fix Homes Too Close", NULL, &game_opt_custom.fix_homeworlds_too_close, 0,
         0, 0,
         MOO_KEY_h,
+    },
+    {
+        MAIN_MENU_ITEM_TYPE_BOOL,
+        NULL, NULL,
+        "Fix Sattelites", NULL, &game_opt_custom.fix_homeworld_sattelites, 0,
+        0, 0,
+        MOO_KEY_a,
     },
     {
         MAIN_MENU_ITEM_TYPE_PAGE,
@@ -554,8 +562,9 @@ static struct main_menu_page_s mm_pages[MAIN_MENU_PAGE_NUM] = {
     {
         {
             MAIN_MENU_ITEM_GAME_CUSTOM_GALAXY_SIZE,
-            MAIN_MENU_ITEM_GAME_CUSTOM_GALAXY_FIX_HOMEWORLDS_TOO_CLOSE,
             MAIN_MENU_ITEM_GAME_CUSTOM_GALAXY_SEED,
+            MAIN_MENU_ITEM_GAME_CUSTOM_GALAXY_FIX_HOMEWORLDS_TOO_CLOSE,
+            MAIN_MENU_ITEM_GAME_CUSTOM_GALAXY_FIX_HOMEWORLD_SATTELITES,
             MAIN_MENU_ITEM_BACK,
             MAIN_MENU_ITEM_NUM,
         },
