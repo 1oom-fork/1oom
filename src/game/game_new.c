@@ -116,6 +116,7 @@ const struct cfg_items_s game_new_cfg_items[] = {
     CFG_ITEM_BOOL("custom_game_precap_tohit", &game_opt_custom.precap_tohit),
     CFG_ITEM_BOOL("custom_game_no_events", &game_opt_custom.no_events),
     CFG_ITEM_BOOL("custom_game_fix_homeworlds_too_close", &game_opt_custom.fix_homeworlds_too_close),
+    CFG_ITEM_BOOL("custom_game_fix_homeworld_satellites", &game_opt_custom.fix_homeworld_satellites),
     CFG_ITEM_INT("custom_game_galaxy_seed", &game_opt_custom.galaxy_seed, NULL),
     CFG_ITEM_INT("custom_game_research_rate", &game_opt_custom.research_rate, NULL),
     CFG_ITEM_INT("custom_game_races", &game_opt_race_value, NULL),
@@ -702,6 +703,119 @@ static uint16_t game_get_ok_home_i(struct game_s *g, uint16_t *tblhome, player_i
     return home_i;
 }
 
+static void game_gen_clone_planet(struct planet_s *from, struct planet_s *to)
+{
+    to->star_type = from->star_type;
+    to->look = from->look;
+    to->frame = from->frame;
+    to->rocks = from->rocks;
+    to->max_pop1 = from->max_pop1;
+    to->max_pop2 = from->max_pop2;
+    to->max_pop3 = from->max_pop3;
+    to->type = from->type;
+    to->infogfx = from->infogfx;
+    to->growth = from->growth;
+    to->special = from->special;
+}
+
+static bool game_gen_fix_satellites(struct game_s *g, uint16_t *tblhome)
+{
+    uint16_t tblsat[PLAYER_NUM] = {PLANETS_MAX, PLANETS_MAX, PLANETS_MAX, PLANETS_MAX, PLANETS_MAX, PLANETS_MAX};
+    for (player_id_t i = PLAYER_0; i < g->players; ++i) {
+        uint16_t dist, mindist;
+        mindist = 10000;
+        for (int j = 0; j < g->galaxy_stars; ++j) {
+            planet_t *p;
+            p = &g->planet[j];
+            if (1
+              && (j != g->evn.planet_orion_i)
+              && (j != tblhome[i])
+            ) {
+                dist = util_math_dist_fast(g->planet[tblhome[i]].x, g->planet[tblhome[i]].y, p->x, p->y);
+                if (mindist > dist) {
+                    bool owned = false;
+                    for (int k = PLAYER_0; k < g->players; ++k) {
+                        if (tblhome[k] == j) {
+                            owned = true;
+                        }
+                        if (tblsat[k] == j && k < i) {
+                            owned = true;
+                        }
+                    }
+                    if (!owned) {
+                        tblsat[i] = j;
+                        mindist = dist;
+                    }
+                }
+            }
+        }
+        if (mindist > 27) {
+            planet_t *home, *sat;
+            home = &g->planet[tblhome[i]];
+            sat = &g->planet[tblsat[i]];
+            if (util_math_dist_fast(home->x, home->y, sat->x, sat->y) > 27) {
+                int16_t dx, dy;
+                dx = (home->x - sat->x) * 10 / mindist;
+                dy = (home->y - sat->y) * 10 / mindist;
+                while (util_math_dist_fast(home->x, home->y, sat->x, sat->y) > 27) {
+                    sat->x += dx;
+                    sat->y += dy;
+                }
+            }
+            if (!game_opt_custom.fix_homeworlds_too_close) {
+                for (int i = 0; i < g->galaxy_stars; ++i) {
+                    int dist = util_math_dist_fast(g->planet[i].x, g->planet[i].y, sat->x, sat->y);
+                    if (dist < util_math_dist_fast(home->x, home->y, sat->x, sat->y)) {
+                        return false;
+                    }
+                }
+            } else {
+                struct planet_s *orion = &g->planet[g->evn.planet_orion_i];
+                int dist = util_math_dist_fast(orion->x, orion->y, sat->x, sat->y);
+                if (dist < 20) {
+                    return false;
+                }
+            }
+        }
+    }
+    for (player_id_t i = PLAYER_0; i < g->players; ++i) {
+        struct planet_s *sat = &g->planet[tblsat[i]];
+
+        if (sat->type >= PLANET_TYPE_MINIMAL) {
+            continue;
+        }
+
+        struct planet_s tmp;
+        int loops = 200;
+        while (--loops) {
+            bool again = false;
+            uint16_t pi = game_get_random_planet_i(g);
+            for (player_id_t j = PLAYER_0; j < g->players; ++j) {
+                if (pi == tblhome[j] || pi == tblsat[j] || pi == g->evn.planet_orion_i) {
+                    again = true;
+                    break;
+                }
+            }
+            if (again) {
+                continue;
+            }
+            struct planet_s *p = &g->planet[pi];
+            if (p->type < PLANET_TYPE_MINIMAL) {
+                continue;
+            }
+
+            game_gen_clone_planet(p, &tmp);
+            game_gen_clone_planet(sat, p);
+            game_gen_clone_planet(&tmp, sat);
+            break;
+        }
+        if (!loops) {
+            return false;
+        }
+    }
+    return true;
+}
+
 static void game_generate_home_etc(struct game_s *g)
 {
     uint16_t tblhome[PLAYER_NUM];
@@ -739,6 +853,15 @@ start_of_func:
                 /* homeworlds too close */
                 flag_all_ok = false;    /* could break out here */
             }
+        }
+        if (flag_all_ok && game_opt_custom.fix_homeworld_satellites) {
+            flag_all_ok = game_gen_fix_satellites(g, tblhome);
+            if (!flag_all_ok) {
+                break;
+            }
+        }
+        if (flag_all_ok && !game_opt_custom.fix_homeworlds_too_close && !game_opt_custom.fix_homeworld_satellites){
+            uint16_t dist, mindist;
             for (player_id_t i = PLAYER_0; (i < g->players) && (i < 2); ++i) {
                 mindist = 10000;
                 for (int j = 0; j < g->galaxy_stars; ++j) {
