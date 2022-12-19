@@ -86,10 +86,12 @@ The install step can still be done:
 3. Compiling on Windows
 ========================
 
-To compile 1oom, you need a GNU build environment. This guide uses MinGW to
-compile the SDL2 version of 1oom. There are other options you may use, like
-Cygwin, MinGW-w64 or MSYS2, but in that case, you're on your own.
+To compile 1oom, you need a GNU build environment. This guide demonstrates
+using MinGW or MinGW-w64 to compile the SDL2 version of 1oom. There are other
+options you may use, like Cygwin or WSL, but in that case, you're on your own.
 
+Build with MinGW/MSYS
+---------------------
 Download and install mingw-get-setup.exe from: https://osdn.net/projects/mingw/releases/
 
 This will install a graphical package manager. Ensure that you install:
@@ -118,6 +120,39 @@ running configure, pass the following options:
 
 To run 1oom, place SDL2.dll and SDL2_mixer.dll from "C:\MinGW\bin" into the
 same directory as the binary.
+
+Build with MinGW-w64/MSYS2
+--------------------------
+Download and install MSYS2 from: https://www.msys2.org/
+
+Open the MSYS2 MINGW64 shell. You can use the MINGW32 shell to create a
+32-bit build if you want, but you'll need to replace any instances of "x86_64"
+with "i686" in the following section, and copy the DLLs shown later from the
+"mingw32/bin" folder instead.
+
+Install the following packages using 'pacman -S PACKAGE_NAME':
+   - mingw-w64-x86_64-toolchain
+   - mingw-w64-x86_64-autotools
+   - mingw-w64-x86_64-SDL2
+   - mingw-w64-x86_64-SDL2_mixer
+   - mingw-w64-x86_64-fluidsynth (optional)
+
+You are now ready to configure and build 1oom as described in Section 2. When
+running configure, pass the following options:
+    --disable-hwsdl1 --disable-hwalleg4 --disable-hwx11
+
+To run 1oom, you'll need to copy several DLLs from your MSYS2/mingw64 bin
+directory (usually C:\msys64\mingw64) to the same directory as the binary.
+The exact ones needed vary depending on which features you intend to use, but
+the bare minimum to run this build of 1oom are:
+    - libmpg123-0.dll
+    - libogg-0.dll
+    - libopus-0.dll
+    - libopusfile-0.dll
+    - SDL2.dll
+    - SDL2_mixer.dll
+
+and finally libfluidsynth-3.dll if you opted into install fluidsynth above.
 
 
 4. Cross-compiling
