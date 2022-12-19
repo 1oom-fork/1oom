@@ -83,19 +83,17 @@ This will install a graphical package manager. Ensure that you have the latest a
 automake and make versions available and also MSYS.
 
 Download the SDL2 development libarary for MinGW from:
-    https://www.libsdl.org/download-2.0.php
+    https://github.com/libsdl-org/SDL/releases
 
 Download the SDL2 mixer development library for MinGW from:
-    https://www.libsdl.org/projects/SDL_mixer/
+    https://github.com/libsdl-org/SDL_mixer/releases
 
 Then unzip the two archives you downloaded.
 
-Then, open a command prompt and run
-    C:\MinGW\msys\1.0\bin\sh
+Then, run:
+    C:\MinGW\msys\1.0\msys.bat
 
-which gives you a UNIX-style command prompt. First, add the MinGW binaries to
-your PATH:
-    PATH="/c/MinGW/bin:/c/MinGW/msys/1.0/bin:$PATH"
+which gives you a UNIX-style command prompt with the correct PATHs already configured.
 
 Then, go to the directory where you extracted SDL2 and enter:
     make native
