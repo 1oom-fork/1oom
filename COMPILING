@@ -92,34 +92,31 @@ Cygwin, MinGW-w64 or MSYS2, but in that case, you're on your own.
 
 Download and install mingw-get-setup.exe from: https://osdn.net/projects/mingw/releases/
 
-This will install a graphical package manager. Ensure that you have the latest autoconf,
-automake and make versions available and also MSYS.
+This will install a graphical package manager. Ensure that you install:
+    - mingw32-autotools-bin
+    - mingw32-base-bin
+    - msys-base-bin
 
 Download the SDL2 development libarary for MinGW from:
-    https://www.libsdl.org/download-2.0.php
+    https://github.com/libsdl-org/SDL/releases
 
 Download the SDL2 mixer development library for MinGW from:
-    https://www.libsdl.org/projects/SDL_mixer/
+    https://github.com/libsdl-org/SDL_mixer/releases
 
-Then unzip the two archives you downloaded.
+Both archives contain a "i686-w64-mingw32" folder. Extract the the 'bin', 'include',
+and 'lib' folders within each to your MinGW directory (usually "C:\MinGW"),
+merging them with the existing folders there.
 
-Then, open a command prompt and run
-    C:\MinGW\msys\1.0\bin\sh
+Then, run:
+    C:\MinGW\msys\1.0\msys.bat
 
-which gives you a UNIX-style command prompt. First, add the MinGW binaries to
-your PATH:
-    PATH="/c/MinGW/bin:/c/MinGW/msys/1.0/bin:$PATH"
-
-Then, go to the directory where you extracted SDL2 and enter:
-    make native
-
-Do the same for SDL2 Mixer.
+which gives you a UNIX-style command prompt with the correct PATHs already configured.
 
 You are now ready to configure and build 1oom as described in Section 2. When
 running configure, pass the following options:
     --disable-hwsdl1 --disable-hwalleg4 --disable-hwx11
 
-To run 1oom, place the *32-bit* versions of SDL2.dll and SDL2_mixer.dll in the
+To run 1oom, place SDL2.dll and SDL2_mixer.dll from "C:\MinGW\bin" into the
 same directory as the binary.
 
 
