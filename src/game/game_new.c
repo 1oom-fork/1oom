@@ -839,91 +839,64 @@ static bool game_gen_fix_satellites(struct game_s *g, uint16_t *tblhome)
     return true;
 }
 
-static void game_generate_home_etc(struct game_s *g)
+static bool game_gen_check_home_distance_moo_1_3(struct game_s *g, uint16_t *tblhome)
 {
-    uint16_t tblhome[PLAYER_NUM];
-    uint16_t homei, loops;
-    bool flag_all_ok;
-start_of_func:
-    flag_all_ok = false;
-    loops = 0;
-    while ((!flag_all_ok) && (loops < 200)) {
-        flag_all_ok = true;
-        for (player_id_t i = PLAYER_0; i < g->players; ++i) {
-            if (!game_opt_custom.fix_homeworlds_too_close) {
-                do {
-                    tblhome[i] = game_get_random_planet_i(g);
-                } while (!game_check_random_home_i(g, tblhome, i, tblhome[i], 0));
-            } else {
-                tblhome[i] = game_get_ok_home_i(g, tblhome, i, 80);
-                if (tblhome[i] == PLANETS_MAX) {
-                    flag_all_ok = false;
-                    break;
-                }
+    uint16_t dist, mindist;
+    mindist = 10000;
+    for (player_id_t i = PLAYER_0; (i < g->players) && (i < 2); ++i) {
+        for (int j = 0; j < g->players; ++j) {
+            if (i == j) { continue; }
+            dist = util_math_dist_fast(g->planet[tblhome[i]].x, g->planet[tblhome[i]].y, g->planet[tblhome[j]].x, g->planet[tblhome[j]].y);
+            SETMIN(mindist, dist);
+        }
+    }
+    if (mindist < 80) {
+        /* homeworlds too close */
+        return false;
+    }
+    return true;
+}
+
+static bool game_gen_check_satellite_distance_moo_1_3(struct game_s *g, uint16_t *tblhome)
+{
+    uint16_t dist, mindist;
+    for (player_id_t i = PLAYER_0; (i < g->players) && (i < 2); ++i) {
+        mindist = 10000;
+        for (int j = 0; j < g->galaxy_stars; ++j) {
+            planet_t *p;
+            p = &g->planet[j];
+            if (1
+              && (game_planet_is_good(p))
+              && (j != g->evn.planet_orion_i)
+              && (j != tblhome[i])
+            ) {
+                dist = util_math_dist_fast(g->planet[tblhome[i]].x, g->planet[tblhome[i]].y, p->x, p->y);
+                SETMIN(mindist, dist);
             }
         }
-        if (flag_all_ok && !game_opt_custom.fix_homeworlds_too_close){
-            uint16_t dist, mindist;
-            mindist = 10000;
-            for (player_id_t i = PLAYER_0; (i < g->players) && (i < 2); ++i) {
-                for (int j = 0; j < g->players; ++j) {
-                    if (i == j) { continue; }
-                    dist = util_math_dist_fast(g->planet[tblhome[i]].x, g->planet[tblhome[i]].y, g->planet[tblhome[j]].x, g->planet[tblhome[j]].y);
-                    SETMIN(mindist, dist);
-                }
-            }
-            if (mindist < 80) {
-                /* homeworlds too close */
-                flag_all_ok = false;    /* could break out here */
+        if (mindist > 29) {
+            /* ok planet too far away */
+            return false;    /* could break out here */
+        }
+    }
+    for (player_id_t i = PLAYER_0; (i < g->players) && (i < 2); ++i) {
+        mindist = 10000;
+        for (int j = 0; j < g->galaxy_stars; ++j) {
+            planet_t *p;
+            p = &g->planet[j];
+            if (1
+              && (j != g->evn.planet_orion_i)
+              && (j != tblhome[i])
+            ) {
+                dist = util_math_dist_fast(g->planet[tblhome[i]].x, g->planet[tblhome[i]].y, p->x, p->y);
+                SETMIN(mindist, dist);
             }
         }
-        if (flag_all_ok && game_opt_custom.fix_homeworld_satellites) {
-            flag_all_ok = game_gen_fix_satellites(g, tblhome);
-            if (!flag_all_ok) {
-                break;
-            }
+
+        if (mindist > 29) {
+            /* regular planet too far away */
+            return false;    /* could break out here */
         }
-        if (flag_all_ok && !game_opt_custom.fix_homeworlds_too_close && !game_opt_custom.fix_homeworld_satellites){
-            uint16_t dist, mindist;
-            for (player_id_t i = PLAYER_0; (i < g->players) && (i < 2); ++i) {
-                mindist = 10000;
-                for (int j = 0; j < g->galaxy_stars; ++j) {
-                    planet_t *p;
-                    p = &g->planet[j];
-                    if (1
-                      && (game_planet_is_good(p))
-                      && (j != g->evn.planet_orion_i)
-                      && (j != tblhome[i])
-                    ) {
-                        dist = util_math_dist_fast(g->planet[tblhome[i]].x, g->planet[tblhome[i]].y, p->x, p->y);
-                        SETMIN(mindist, dist);
-                    }
-                }
-                if (mindist > 29) {
-                    /* ok planet too far away */
-                    flag_all_ok = false;    /* could break out here */
-                }
-            }
-            for (player_id_t i = PLAYER_0; (i < g->players) && (i < 2); ++i) {
-                mindist = 10000;
-                for (int j = 0; j < g->galaxy_stars; ++j) {
-                    planet_t *p;
-                    p = &g->planet[j];
-                    if (1
-                      && (j != g->evn.planet_orion_i)
-                      && (j != tblhome[i])
-                    ) {
-                        dist = util_math_dist_fast(g->planet[tblhome[i]].x, g->planet[tblhome[i]].y, p->x, p->y);
-                        SETMIN(mindist, dist);
-                    }
-                }
-                if (mindist > 29) {
-                    /* regular planet too far away */
-                    flag_all_ok = false;    /* could break out here */
-                }
-            }
-        }
-        ++loops;
     }
 #if 0
     /* FIXME in MOO1 this is actually after the if (!flag_all_ok) test, making it ineffective */
@@ -948,6 +921,46 @@ start_of_func:
         }
     }
 #endif
+    return true;
+}
+
+static void game_generate_home_etc(struct game_s *g)
+{
+    uint16_t tblhome[PLAYER_NUM];
+    uint16_t homei, loops;
+    bool flag_all_ok;
+start_of_func:
+    flag_all_ok = false;
+    loops = 0;
+    while ((!flag_all_ok) && (loops < 200)) {
+        flag_all_ok = true;
+        for (player_id_t i = PLAYER_0; i < g->players; ++i) {
+            if (!game_opt_custom.fix_homeworlds_too_close) {
+                do {
+                    tblhome[i] = game_get_random_planet_i(g);
+                } while (!game_check_random_home_i(g, tblhome, i, tblhome[i], 0));
+            } else {
+                tblhome[i] = game_get_ok_home_i(g, tblhome, i, 80);
+                if (tblhome[i] == PLANETS_MAX) {
+                    flag_all_ok = false;
+                    break;
+                }
+            }
+        }
+        if (flag_all_ok && !game_opt_custom.fix_homeworlds_too_close){
+            flag_all_ok = game_gen_check_home_distance_moo_1_3(g, tblhome);
+        }
+        if (flag_all_ok && game_opt_custom.fix_homeworld_satellites) {
+            flag_all_ok = game_gen_fix_satellites(g, tblhome);
+            if (!flag_all_ok) {
+                break;
+            }
+        }
+        if (flag_all_ok && !game_opt_custom.fix_homeworlds_too_close && !game_opt_custom.fix_homeworld_satellites){
+            flag_all_ok = game_gen_check_satellite_distance_moo_1_3(g, tblhome);
+        }
+        ++loops;
+    }
     if (!flag_all_ok) {
         game_generate_galaxy(g);
         game_generate_planet_names(g);
