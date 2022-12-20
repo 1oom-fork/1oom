@@ -1,3 +1,26 @@
+1oom-fork-v1.7.2
+----------------
+
+Galaxy generator:
+- Added new Custom Game menu options
+	- The 'Fix homes too close' option checks the distance
+	  between all homeworlds instead of only 2 of them
+	  This option disables Moo v1.3 check for good planets nearby
+	- The "Fix satellites" option ensures that each homeworld
+	  has a suitable planet next to it instead of only 2 of them
+	- The "Good satellites" option ensures that each satellite
+	  will be at least not bad quality
+
+Ui Starmap:
+- Fixed Alt+m grid limits
+
+Ui Main Menu -> Game -> Custom Game:
+- Changed 'Players' option text
+- Changed 'Galaxy seed' option text
+
+Updated COMPILING MinGW instructions
+
+
 1oom-fork-v1.7.1
 ----------------
 
