@@ -725,9 +725,9 @@ static void game_gen_clone_planet(struct planet_s *from, struct planet_s *to)
     to->special = from->special;
 }
 
-static bool game_planet_is_good(const struct planet_s *p)
+static bool game_planet_is_good(struct game_new_options_s *opt, const struct planet_s *p)
 {
-    if (!game_opt_custom.fix_bad_satellites) {
+    if (!opt->fix_bad_satellites) {
         return p->type >= PLANET_TYPE_MINIMAL;
     }
     if (p->special == PLANET_SPECIAL_ULTRA_POOR || p->special == PLANET_SPECIAL_POOR) {
@@ -736,7 +736,7 @@ static bool game_planet_is_good(const struct planet_s *p)
     return p->type >= PLANET_TYPE_MINIMAL && (p->max_pop1 >= 50 || p->special == PLANET_SPECIAL_ARTIFACTS || p->special == PLANET_SPECIAL_RICH || p->special == PLANET_SPECIAL_ULTRA_RICH);
 }
 
-static bool game_gen_fix_satellites(struct game_s *g, uint16_t *tblhome)
+static bool game_gen_fix_satellites(struct game_s *g, struct game_new_options_s *opt, uint16_t *tblhome)
 {
     uint16_t tblsat[PLAYER_NUM] = {PLANETS_MAX, PLANETS_MAX, PLANETS_MAX, PLANETS_MAX, PLANETS_MAX, PLANETS_MAX};
     for (player_id_t i = PLAYER_0; i < g->players; ++i) {
@@ -785,7 +785,7 @@ static bool game_gen_fix_satellites(struct game_s *g, uint16_t *tblhome)
                     sat->battlebg = rnd_1_n(4, &g->seed);
                 }
             }
-            if (!game_opt_custom.fix_homeworlds_too_close) {
+            if (!opt->fix_homeworlds_too_close) {
                 for (int i = 0; i < g->galaxy_stars; ++i) {
                     int dist = util_math_dist_fast(g->planet[i].x, g->planet[i].y, sat->x, sat->y);
                     if (dist < util_math_dist_fast(home->x, home->y, sat->x, sat->y)) {
@@ -804,7 +804,7 @@ static bool game_gen_fix_satellites(struct game_s *g, uint16_t *tblhome)
     for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         struct planet_s *sat = &g->planet[tblsat[i]];
 
-        if (game_planet_is_good(sat)) {
+        if (game_planet_is_good(opt, sat)) {
             continue;
         }
 
@@ -823,7 +823,7 @@ static bool game_gen_fix_satellites(struct game_s *g, uint16_t *tblhome)
                 continue;
             }
             struct planet_s *p = &g->planet[pi];
-            if (!game_planet_is_good(p)) {
+            if (!game_planet_is_good(opt, p)) {
                 continue;
             }
 
@@ -857,7 +857,7 @@ static bool game_gen_check_home_distance_moo_1_3(struct game_s *g, uint16_t *tbl
     return true;
 }
 
-static bool game_gen_check_satellite_distance_moo_1_3(struct game_s *g, uint16_t *tblhome)
+static bool game_gen_check_satellite_distance_moo_1_3(struct game_s *g, struct game_new_options_s *opt, uint16_t *tblhome)
 {
     uint16_t dist, mindist;
     for (player_id_t i = PLAYER_0; (i < g->players) && (i < 2); ++i) {
@@ -866,7 +866,7 @@ static bool game_gen_check_satellite_distance_moo_1_3(struct game_s *g, uint16_t
             planet_t *p;
             p = &g->planet[j];
             if (1
-              && (game_planet_is_good(p))
+              && (game_planet_is_good(opt, p))
               && (j != g->evn.planet_orion_i)
               && (j != tblhome[i])
             ) {
@@ -924,7 +924,7 @@ static bool game_gen_check_satellite_distance_moo_1_3(struct game_s *g, uint16_t
     return true;
 }
 
-static void game_generate_home_etc(struct game_s *g)
+static void game_generate_home_etc(struct game_s *g, struct game_new_options_s *opt)
 {
     uint16_t tblhome[PLAYER_NUM];
     uint16_t homei, loops;
@@ -935,7 +935,7 @@ start_of_func:
     while ((!flag_all_ok) && (loops < 200)) {
         flag_all_ok = true;
         for (player_id_t i = PLAYER_0; i < g->players; ++i) {
-            if (!game_opt_custom.fix_homeworlds_too_close) {
+            if (!opt->fix_homeworlds_too_close) {
                 do {
                     tblhome[i] = game_get_random_planet_i(g);
                 } while (!game_check_random_home_i(g, tblhome, i, tblhome[i], 0));
@@ -947,17 +947,17 @@ start_of_func:
                 }
             }
         }
-        if (flag_all_ok && !game_opt_custom.fix_homeworlds_too_close){
+        if (flag_all_ok && !opt->fix_homeworlds_too_close){
             flag_all_ok = game_gen_check_home_distance_moo_1_3(g, tblhome);
         }
-        if (flag_all_ok && game_opt_custom.fix_homeworld_satellites) {
-            flag_all_ok = game_gen_fix_satellites(g, tblhome);
+        if (flag_all_ok && opt->fix_homeworld_satellites) {
+            flag_all_ok = game_gen_fix_satellites(g, opt, tblhome);
             if (!flag_all_ok) {
                 break;
             }
         }
-        if (flag_all_ok && !game_opt_custom.fix_homeworlds_too_close && !game_opt_custom.fix_homeworld_satellites){
-            flag_all_ok = game_gen_check_satellite_distance_moo_1_3(g, tblhome);
+        if (flag_all_ok && !opt->fix_homeworlds_too_close && !opt->fix_homeworld_satellites){
+            flag_all_ok = game_gen_check_satellite_distance_moo_1_3(g, opt, tblhome);
         }
         ++loops;
     }
@@ -1308,7 +1308,7 @@ int game_new(struct game_s *g, struct game_aux_s *gaux, struct game_new_options_
     }
     game_generate_galaxy(g);
     game_generate_planet_names(g);
-    game_generate_home_etc(g);
+    game_generate_home_etc(g, opt);
     game_generate_relation_etc(g);
     game_generate_research(g, researchflag);
     game_generate_misc(g);
