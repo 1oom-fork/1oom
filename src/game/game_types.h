@@ -82,6 +82,9 @@ typedef enum {
     defense to 95%. MOO1 adds To Hit bonuses after capping defense. This results
     in high defense being less effective against high tech missiles. */
     GAME_MODE_EXTRA_NO_EVENTS = (1 << 3),
+    GAME_MODE_EXTRA_FIX_POPULATION_GROWTH = (1 << 4), /* Do not add Population
+    Tenths twice. MOO1 adds Population Tenths twice when calculating population
+    growth. This results in higher and nonlinear changes of growth value. */
 } game_mode_extra_t;
 
 typedef enum {

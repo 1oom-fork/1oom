@@ -137,6 +137,7 @@ typedef enum {
     MAIN_MENU_ITEM_GAME_CUSTOM_RULES_PRECAP_TOHIT,
     MAIN_MENU_ITEM_GAME_CUSTOM_RULES_NOEVENTS,
     MAIN_MENU_ITEM_GAME_CUSTOM_RULES_RESEARCH_RATE,
+    MAIN_MENU_ITEM_GAME_CUSTOM_RULES_FIX_POPULATION_GROWTH,
     MAIN_MENU_ITEM_GAME_CUSTOM_GALAXY,
     MAIN_MENU_ITEM_GAME_CUSTOM_GALAXY_FIX_HOMEWORLDS_TOO_CLOSE,
     MAIN_MENU_ITEM_GAME_CUSTOM_GALAXY_FIX_HOMEWORLD_SATELLITES,
@@ -313,6 +314,13 @@ static struct main_menu_item_data_s mm_items[MAIN_MENU_ITEM_NUM] = {
         "Research Rate", mm_get_custom_research_rate_value, &game_opt_custom.research_rate, 0,
         0, RESEARCH_RATE_NUM - 1,
         MOO_KEY_r,
+    },
+    {
+        MAIN_MENU_ITEM_TYPE_BOOL,
+        NULL, NULL,
+        "Fix Population Growth", NULL, &game_opt_custom.fix_population_growth, 0,
+        0, 0,
+        MOO_KEY_o,
     },
     {
         MAIN_MENU_ITEM_TYPE_PAGE,
@@ -556,11 +564,12 @@ static struct main_menu_page_s mm_pages[MAIN_MENU_PAGE_NUM] = {
     },
     {
         {
-            MAIN_MENU_ITEM_GAME_CUSTOM_RULES_NOELECTIONS,
-            MAIN_MENU_ITEM_GAME_CUSTOM_RULES_PRECAP_TOHIT,
             MAIN_MENU_ITEM_GAME_CUSTOM_RULES_NO_TOHIT_ACC,
-            MAIN_MENU_ITEM_GAME_CUSTOM_RULES_NOEVENTS,
+            MAIN_MENU_ITEM_GAME_CUSTOM_RULES_PRECAP_TOHIT,
             MAIN_MENU_ITEM_GAME_CUSTOM_RULES_RESEARCH_RATE,
+            MAIN_MENU_ITEM_GAME_CUSTOM_RULES_NOELECTIONS,
+            MAIN_MENU_ITEM_GAME_CUSTOM_RULES_FIX_POPULATION_GROWTH,
+            MAIN_MENU_ITEM_GAME_CUSTOM_RULES_NOEVENTS,
             MAIN_MENU_ITEM_BACK,
             MAIN_MENU_ITEM_NUM,
         },

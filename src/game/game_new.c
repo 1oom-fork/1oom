@@ -115,6 +115,7 @@ const struct cfg_items_s game_new_cfg_items[] = {
     CFG_ITEM_BOOL("custom_game_no_tohit_acc", &game_opt_custom.no_tohit_acc),
     CFG_ITEM_BOOL("custom_game_precap_tohit", &game_opt_custom.precap_tohit),
     CFG_ITEM_BOOL("custom_game_no_events", &game_opt_custom.no_events),
+    CFG_ITEM_BOOL("custom_game_fix_population_growth", &game_opt_custom.fix_population_growth),
     CFG_ITEM_BOOL("custom_game_fix_homeworlds_too_close", &game_opt_custom.fix_homeworlds_too_close),
     CFG_ITEM_BOOL("custom_game_fix_homeworld_satellites", &game_opt_custom.fix_homeworld_satellites),
     CFG_ITEM_BOOL("custom_game_fix_bad_satellites", &game_opt_custom.fix_bad_satellites),
@@ -1267,6 +1268,9 @@ int game_new(struct game_s *g, struct game_aux_s *gaux, struct game_new_options_
     }
     if (opt->no_events) {
         g->game_mode_extra |= GAME_MODE_EXTRA_NO_EVENTS;
+    }
+    if (opt->fix_population_growth) {
+        g->game_mode_extra |= GAME_MODE_EXTRA_FIX_POPULATION_GROWTH;
     }
     g->research_rate = opt->research_rate;
     game_ai = game_ais[g->ai_id];

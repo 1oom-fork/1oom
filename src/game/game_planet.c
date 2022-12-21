@@ -614,25 +614,39 @@ int game_planet_get_slider_text_eco(const struct game_s *g, const planet_t *p, p
                     }
                 }
                 vthis -= tform_cost;
-                growth = game_get_pop_growth_max(g, p, max_pop) + p->pop_tenths;
-                if (!flag_tenths) {
-                    if (((p->pop - p->trans_num) + (growth / 10)) > max_pop) {
-                        growth = (max_pop - (p->pop - p->trans_num)) * 10;
+                if (g->game_mode_extra & GAME_MODE_EXTRA_FIX_POPULATION_GROWTH) {
+                    int pop_before_growth, pop_after_growth1, pop_after_growth2;
+                    pop_before_growth = (p->pop - p->trans_num) * 10 + p->pop_tenths;
+                    pop_after_growth1 = pop_before_growth + game_get_pop_growth_max(g, p, max_pop);
+                    SETMIN(pop_after_growth1, max_pop * 10);
+                    pop_after_growth2 = pop_after_growth1 + game_get_pop_growth_for_eco(g, p, vthis);
+                    SETMIN(pop_after_growth2, max_pop * 10);
+                    if (flag_tenths) {
+                        growth = pop_after_growth2 - pop_after_growth1;
+                    } else {
+                        growth = pop_after_growth2 / 10 - pop_after_growth1 / 10;
                     }
-                    growth2 = game_get_pop_growth_for_eco(g, p, vthis) + growth;
-                    if (((p->pop - p->trans_num) + (growth2 / 10)) > max_pop) {
-                        growth2 = (max_pop - (p->pop - p->trans_num)) * 10;
-                    }
-                    growth = growth2 / 10 - growth / 10;
                 } else {
-                    if (((p->pop - p->trans_num) * 10 + growth) > (max_pop * 10)) {
-                        growth = (max_pop - (p->pop - p->trans_num)) * 10;
+                    growth = game_get_pop_growth_max(g, p, max_pop) + p->pop_tenths;
+                    if (!flag_tenths) {
+                        if (((p->pop - p->trans_num) + (growth / 10)) > max_pop) {
+                            growth = (max_pop - (p->pop - p->trans_num)) * 10;
+                        }
+                        growth2 = game_get_pop_growth_for_eco(g, p, vthis) + growth;
+                        if (((p->pop - p->trans_num) + (growth2 / 10)) > max_pop) {
+                            growth2 = (max_pop - (p->pop - p->trans_num)) * 10;
+                        }
+                        growth = growth2 / 10 - growth / 10;
+                    } else {
+                        if (((p->pop - p->trans_num) * 10 + growth) > (max_pop * 10)) {
+                            growth = (max_pop - (p->pop - p->trans_num)) * 10 + p->pop_tenths;
+                        }
+                        growth2 = game_get_pop_growth_for_eco(g, p, vthis) + growth;
+                        if (((p->pop - p->trans_num) * 10 + growth2) > (max_pop * 10)) {
+                            growth2 = (max_pop - (p->pop - p->trans_num)) * 10 + p->pop_tenths;
+                        }
+                        growth = growth2 - growth;
                     }
-                    growth2 = game_get_pop_growth_for_eco(g, p, vthis) + growth;
-                    if (((p->pop - p->trans_num) * 10 + growth2) > (max_pop * 10)) {
-                        growth2 = (max_pop - (p->pop - p->trans_num)) * 10;
-                    }
-                    growth = growth2 - growth;
                 }
                 if (growth <= 0) {
                     str = game_str_sm_ecoclean;
