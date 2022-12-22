@@ -607,6 +607,7 @@ int game_planet_get_slider_text_eco(const struct game_s *g, const planet_t *p, p
                 str = game_str_sm_ecotform;
             } else {
                 int growth, growth2, max_pop;
+                bool max = false;
                 max_pop = p->max_pop3;
                 if (tform_cost > 0) {
                     if (flag_tenths) {   /* keep same +N as MOO1 for developing planets on -nouiextra */
@@ -623,10 +624,14 @@ int game_planet_get_slider_text_eco(const struct game_s *g, const planet_t *p, p
                     SETMIN(pop_after_growth2, max_pop * 10);
                     if (flag_tenths) {
                         growth = pop_after_growth2 - pop_after_growth1;
+                        if (growth > 0 && pop_after_growth2 == max_pop * 10) {
+                            max = true;
+                        }
                     } else {
                         growth = pop_after_growth2 / 10 - pop_after_growth1 / 10;
                     }
                 } else {
+                    bool not_max = false;
                     growth = game_get_pop_growth_max(g, p, max_pop) + p->pop_tenths;
                     if (!flag_tenths) {
                         if (((p->pop - p->trans_num) + (growth / 10)) > max_pop) {
@@ -638,17 +643,21 @@ int game_planet_get_slider_text_eco(const struct game_s *g, const planet_t *p, p
                         }
                         growth = growth2 / 10 - growth / 10;
                     } else {
-                        if (((p->pop - p->trans_num) * 10 + growth) > (max_pop * 10)) {
+                        if (((p->pop - p->trans_num) * 10 + growth) >= (max_pop * 10)) {
                             growth = (max_pop - (p->pop - p->trans_num)) * 10 + p->pop_tenths;
+                            not_max = true;
                         }
                         growth2 = game_get_pop_growth_for_eco(g, p, vthis) + growth;
-                        if (((p->pop - p->trans_num) * 10 + growth2) > (max_pop * 10)) {
+                        if (((p->pop - p->trans_num) * 10 + growth2) >= (max_pop * 10)) {
                             growth2 = (max_pop - (p->pop - p->trans_num)) * 10 + p->pop_tenths;
+                            max = !not_max;
                         }
                         growth = growth2 - growth;
                     }
                 }
-                if (growth <= 0) {
+                if (max) {
+                    str = game_str_sm_max;
+                } else if (growth <= 0) {
                     str = game_str_sm_ecoclean;
                 } else {
                     retval = growth;
