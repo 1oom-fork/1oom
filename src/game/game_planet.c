@@ -607,12 +607,9 @@ int game_planet_get_slider_text_eco(const struct game_s *g, const planet_t *p, p
                 str = game_str_sm_ecotform;
             } else {
                 int growth, growth2, max_pop;
-                bool flag_tform = false;
                 max_pop = p->max_pop3;
                 if (tform_cost > 0) {
-                    if (vthis < tform_cost) {
-                        flag_tform = true;
-                    } else if (flag_tenths) {   /* keep same +N as MOO1 for developing planets on -nouiextra */
+                    if (flag_tenths) {   /* keep same +N as MOO1 for developing planets on -nouiextra */
                         max_pop = p->max_pop2 + e->have_terraform_n;
                     }
                 }
@@ -638,7 +635,7 @@ int game_planet_get_slider_text_eco(const struct game_s *g, const planet_t *p, p
                     growth = growth2 - growth;
                 }
                 if (growth <= 0) {
-                    str = flag_tform ? game_str_sm_ecotform : game_str_sm_ecoclean;
+                    str = game_str_sm_ecoclean;
                 } else {
                     retval = growth;
                     str = game_str_sm_ecopop;
