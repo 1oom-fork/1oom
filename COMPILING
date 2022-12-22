@@ -120,6 +120,14 @@ running configure, pass the following options:
 To run 1oom, place the *32-bit* versions of SDL2.dll and SDL2_mixer.dll in the
 same directory as the binary.
 
+3.1 Compiling with MSYS2
+
+Follow: https://www.msys2.org/#installation
+
+Install toolchain, autotools, SDL2, SDL2-mixer, fluidsynth packages
+for your preferred toolchain
+
+When you run configure, add the --enable-static option
 
 4. Cross-compiling
 ===================
