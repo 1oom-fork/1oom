@@ -6,7 +6,6 @@
 #include "comp.h"
 #include "game.h"
 #include "game_aux.h"
-#include "game_cheat.h"
 #include "game_fleet.h"
 #include "game_misc.h"
 #include "game_num.h"
@@ -196,7 +195,6 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
     bool flag_done = false;
     int16_t oi_b, oi_c, oi_starview1, oi_starview2, oi_shippic, oi_equals, oi_hash,
             oi_f4, oi_f5, oi_f6, oi_f7, oi_f10,
-            oi_alt_galaxy, oi_alt_p, oi_alt_events,
             oi_governor, oi_wheelname, oi_wheelshippic, oi_filter;
     int16_t scrollmisc = 0;
     struct starmap_data_s d;
@@ -241,10 +239,6 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
 
     UIOBJ_CLEAR_LOCAL();
 
-    oi_alt_galaxy = uiobj_add_alt_str("galaxy");
-    oi_alt_p = uiobj_add_alt_str("p");
-    oi_alt_events = uiobj_add_alt_str("events");
-
     while (!flag_done) {
         planet_t *p;
         int16_t oi1, oi2;
@@ -277,18 +271,8 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             ui_sound_play_sfx_24();
         } else if (ui_starmap_handle_oi_finished(g, &d, &flag_done, oi1, oi2)) {
             oi1 = 0;
-        } else if (oi1 == oi_alt_galaxy) {
-            if (game_cheat_galaxy(g, active_player)) {
-                ui_sound_play_sfx_24();
-            }
-        } else if (oi1 == oi_alt_events) {
-            if (game_cheat_events(g, active_player)) {
-                ui_sound_play_sfx_24();
-            }
         } else if (oi1 == oi_f10) {
             game_save_do_save_i(GAME_SAVE_I_CONTINUE, "Continue", g);
-        } else if (oi1 == oi_alt_p) {
-            game_cheat_traits(g, active_player);
         } else if (oi1 == d.sm.oi_gov_ship) {
             ui_sound_play_sfx_24();
             BOOLVEC_SET1(p->extras, PLANET_EXTRAS_GOVERNOR);
@@ -551,7 +535,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
         }
         if (!flag_done) {
             ui_starmap_draw_cb1(&d);
-            uiobj_table_set_last(oi_alt_events);
+            uiobj_table_clear();
             UIOBJ_CLEAR_LOCAL();
             if (p->owner == active_player) {
                 if (BOOLVEC_IS0(p->extras, PLANET_EXTRAS_GOVERNOR)) {

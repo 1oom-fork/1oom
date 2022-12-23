@@ -1337,9 +1337,6 @@ static bool ui_starmap_handle_oi_search(struct game_s *g, struct starmap_data_s 
     if (oi != d->oi_search) {
         return false;
     }
-    if (ui_data.ui_main_loop_action == UI_MAIN_LOOP_STARMAP) {
-        *flag_done = true;
-    }
     int i = ui_search(g, d->api);
     if (i >= 0) {
         if (ui_starmap_select_planet(g, d, flag_done, i)) {
