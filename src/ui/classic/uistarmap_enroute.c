@@ -248,9 +248,7 @@ void ui_starmap_enroute(struct game_s *g, player_id_t active_player)
     uiobj_set_help_id(3);
 
     while (!flag_done) {
-        planet_t *p;
         int16_t oi1, oi2;
-        p = &g->planet[g->planet_focus_i[active_player]];
         oi1 = uiobj_handle_input_cond();
         oi2 = uiobj_at_cursor();
         ui_delay_prepare();

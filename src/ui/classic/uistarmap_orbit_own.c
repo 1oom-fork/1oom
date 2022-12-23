@@ -239,9 +239,7 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
     uiobj_set_help_id(16);
 
     while (!flag_done) {
-        planet_t *p;
         int16_t oi1, oi2;
-        p = &g->planet[g->planet_focus_i[active_player]];
         ui_starmap_update_reserve_fuel(g, &d.oo.sn0, d.oo.ships, active_player);
         oi1 = uiobj_handle_input_cond();
         oi2 = uiobj_at_cursor();
@@ -404,7 +402,6 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
             }
         }
         if (!flag_done) {
-            p = &g->planet[g->planet_focus_i[active_player]];
             ui_starmap_select_bottom_highlight(&d, oi2);
             ui_starmap_orbit_own_draw_cb(&d);
             uiobj_table_clear();
