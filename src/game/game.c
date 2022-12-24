@@ -476,6 +476,7 @@ const struct cfg_items_s game_cfg_items[] = {
     CFG_ITEM_BOOL("yearsave", &game_opt_year_save_enabled),
     CFG_ITEM_BOOL("skipintro", &game_opt_skip_intro_always),
     CFG_ITEM_BOOL("bombanimation", &game_opt_enable_bomb_animation),
+    CFG_ITEM_BOOL("randomnews", &game_opt_random_news),
     CFG_ITEM_COMMENT("PLAYERS*100+GALAXYSIZE*10+DIFFICULTY"),
     CFG_ITEM_COMMENT(" 2..6, 0..3 = small..huge, 0..4 = simple..impossible"),
     CFG_ITEM_INT("new_game_opts", &game_opt_new_value, game_cfg_check_new_game_opts),
