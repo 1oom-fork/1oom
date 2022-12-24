@@ -5,12 +5,12 @@ OUTFILE=$2
 GIT=$3
 VERSION1OOM=$4
 
-if test x$GIT != "xno" && test -d $TOPSRCDIR/.git
-    then
-    VERSIONSTR=`$GIT -C $TOPSRCDIR describe --tags`
-else
+#if test x$GIT != "xno" && test -d $TOPSRCDIR/.git
+#    then
+#    VERSIONSTR=`$GIT -C $TOPSRCDIR describe --tags`
+#else
     VERSIONSTR=$VERSION1OOM
-fi
+#fi
 
 OUTSTR="#define VERSION_STR \"$VERSIONSTR\""
 
