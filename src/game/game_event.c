@@ -27,6 +27,8 @@
 
 /* -------------------------------------------------------------------------- */
 
+bool game_opt_skip_random_news = false;
+
 /* -------------------------------------------------------------------------- */
 
 static player_id_t game_event_new_get_victim(struct game_s *g)
@@ -1156,6 +1158,7 @@ bool game_event_run(struct game_s *g, struct game_end_s *ge)
     }
     /*114fb*/
     if (1
+      && (!game_opt_skip_random_news)
       && (!any_news)
       && (!rnd_0_nm1(40, &g->seed))
       && (g->year > 25)
