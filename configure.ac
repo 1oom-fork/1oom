@@ -245,7 +245,11 @@ if test x"$enable_hwsdl1" == "xyes"; then
                 HW_SDL1_LIBS="$HW_SDL1_LIBS $SDL1MIXER_LIBS"
             elif $pkg_config --exists SDL_mixer; then
                 if test x"$enable_static" = "xyes"; then
-                    HW_SDL1_LIBS="`$pkg_config --static --libs SDL_mixer`"
+                    if $pkg_config --exists mad; then
+                        HW_SDL1_LIBS="`$pkg_config --static --libs SDL_mixer` `$pkg_config --static --libs mad`"
+                    else
+                        HW_SDL1_LIBS="`$pkg_config --static --libs SDL_mixer`"
+                    fi
                 else
                     HW_SDL1_LIBS="`$pkg_config --libs SDL_mixer`"
                 fi
