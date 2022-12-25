@@ -1,3 +1,25 @@
+1oom-fork-v1.7.3
+----------------
+
+Added new Custom Game menu options:
+- Fix population growth (now enabled by default in new games)
+  Do not add Population Tenths twice. MOO1 adds
+  Population Tenths twice when calculating population
+  growth. This results in nonlinear changes of growth value.
+  
+Added new Interface menu options:
+- Random News (on/off)
+		
+Ui Starmap:
+- Eco slider can show 'MAX'
+- Removed alt-strings (now available in search UI as slash-commands):
+	/alt-string
+	
+Galaxy generator:
+- Fixed some bugs in the new galaxy_gen logic
+	
+Fixed static build scripts for SDL1 and SDL2
+
 1oom-fork-v1.7.2
 ----------------
 
