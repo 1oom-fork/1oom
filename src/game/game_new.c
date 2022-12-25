@@ -772,7 +772,7 @@ static bool game_gen_fix_satellites(struct game_s *g, struct game_new_options_s 
             planet_t *home, *sat;
             home = &g->planet[tblhome[i]];
             sat = &g->planet[tblsat[i]];
-            if (util_math_dist_fast(home->x, home->y, sat->x, sat->y) > 27) {
+            if (util_math_dist_steps(home->x, home->y, sat->x, sat->y) > 3) {
                 int16_t dx, dy;
                 dx = (home->x - sat->x) * 10 / mindist;
                 dy = (home->y - sat->y) * 10 / mindist;
@@ -785,19 +785,19 @@ static bool game_gen_fix_satellites(struct game_s *g, struct game_new_options_s 
                 } else {
                     sat->battlebg = rnd_1_n(4, &g->seed);
                 }
-            }
-            if (!opt->fix_homeworlds_too_close) {
-                for (int i = 0; i < g->galaxy_stars; ++i) {
-                    int dist = util_math_dist_fast(g->planet[i].x, g->planet[i].y, sat->x, sat->y);
-                    if (dist < util_math_dist_fast(home->x, home->y, sat->x, sat->y)) {
+                if (!opt->fix_homeworlds_too_close) {
+                    for (int i = 0; i < g->galaxy_stars; ++i) {
+                        int dist = util_math_dist_fast(g->planet[i].x, g->planet[i].y, sat->x, sat->y);
+                        if (dist < 20) {
+                            return false;
+                        }
+                    }
+                } else {
+                    struct planet_s *orion = &g->planet[g->evn.planet_orion_i];
+                    int dist = util_math_dist_fast(orion->x, orion->y, sat->x, sat->y);
+                    if (dist < 20) {
                         return false;
                     }
-                }
-            } else {
-                struct planet_s *orion = &g->planet[g->evn.planet_orion_i];
-                int dist = util_math_dist_fast(orion->x, orion->y, sat->x, sat->y);
-                if (dist < 20) {
-                    return false;
                 }
             }
         }
