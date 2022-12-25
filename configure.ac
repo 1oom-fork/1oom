@@ -413,7 +413,7 @@ if test x"$enable_hwsdl2" != "xno"; then
                 HW_SDL2_LIBS="$HW_SDL2_LIBS $SDL2MIXER_LIBS"
             elif $pkg_config --exists SDL2_mixer; then
                 if test x"$enable_static" = "xyes"; then
-                    HW_SDL2_LIBS="`$pkg_config --static-libs SDL2_mixer`"
+                    HW_SDL2_LIBS="`$pkg_config --libs --static SDL2_mixer`"
                 else
                     HW_SDL2_LIBS="`$pkg_config --libs SDL2_mixer`"
                 fi
