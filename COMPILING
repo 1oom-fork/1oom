@@ -86,9 +86,10 @@ The install step can still be done:
 3. Compiling on Windows
 ========================
 
-To compile 1oom, you need a GNU build environment. This guide uses MinGW to
-compile the SDL2 version of 1oom. There are other options you may use, like
-Cygwin, MinGW-w64 or MSYS2, but in that case, you're on your own.
+To compile 1oom, you need a GNU build environment.
+
+3.1. Compiling with MinGW
+==========================
 
 Download and install mingw-get-setup.exe from: https://osdn.net/projects/mingw/releases/
 
@@ -120,14 +121,35 @@ running configure, pass the following options:
 To run 1oom, place the *32-bit* versions of SDL2.dll and SDL2_mixer.dll in the
 same directory as the binary.
 
-3.1 Compiling with MSYS2
+3.2. Compiling with MSYS2
+==========================
 
-Follow: https://www.msys2.org/#installation
+Download and install MSYS2 from: https://www.msys2.org/
 
-Install toolchain, autotools, SDL2, SDL2-mixer, fluidsynth packages
-for your preferred toolchain
+Open the MSYS2 MINGW32 shell.
 
-When you run configure, add the --enable-static option
+Install the toolchain:
+   pacman -S mingw-w64-i686-toolchain mingw-w64-i686-autotools
+   
+If you want to use SDL1:
+   pacman -S mingw-w64-i686-SDL mingw-w64-i686-SDL_mixer
+
+If you prefer SDL2 (recommended):
+   pacman -S mingw-w64-i686-SDL2 mingw-w64-i686-SDL2_mixer
+   
+Optional:
+   pacman -S mingw-w64-i686-fluidsynth
+   pacman -S mingw-w64-i686-libsamplerate
+
+You are now ready to configure and build 1oom as described in Section 2. When
+running configure, pass the following options:
+    --disable-hwalleg4 --disable-hwx11 --enable-static
+    
+To run 1oom with fluidsynth support, you'll need to copy DLLs to the same
+directory as the binary.
+
+Check the x86 release for a list of DLLs:
+https://github.com/FluidSynth/fluidsynth/releases
 
 4. Cross-compiling
 ===================
