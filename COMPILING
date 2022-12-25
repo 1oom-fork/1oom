@@ -75,6 +75,8 @@ To compile 1oom, you need a GNU build environment.
 2.2.1. Compiling with MinGW
 ----------------------------
 
+Note: This method is deprecated. Follow 2.2.2 if you want FluidSynth support.
+
 Download and install mingw-get-setup.exe from: https://osdn.net/projects/mingw/releases/
 
 This will install a graphical package manager. Ensure that you have the latest autoconf,
@@ -104,6 +106,42 @@ running configure, pass the following options:
 
 To run 1oom, place the *32-bit* versions of SDL2.dll and SDL2_mixer.dll in the
 same directory as the binary.
+
+2.2.2. Compiling with MSYS2
+----------------------------
+
+Download and install MSYS2 from: https://www.msys2.org/
+
+Open the MSYS2 MINGW32 shell.
+
+Install the toolchain:
+    pacman -S mingw-w64-i686-toolchain mingw-w64-i686-autotools
+
+If you want to use SDL1:
+    pacman -S mingw-w64-i686-SDL mingw-w64-i686-SDL_mixer
+
+If you prefer SDL2 (recommended):
+    pacman -S mingw-w64-i686-SDL2 mingw-w64-i686-SDL2_mixer
+
+Optional:
+    pacman -S mingw-w64-i686-fluidsynth
+    pacman -S mingw-w64-i686-libsamplerate
+
+You are now ready to configure and build 1oom as described in Section 3. When
+running configure, pass the following options:
+    ../configure --disable-hwalleg4 --disable-hwx11
+
+Note: Add the --enable-static flag for static build.
+
+Required DLLs can be taken from the x86 release:
+https://github.com/libsdl-org/SDL/releases
+https://github.com/libsdl-org/SDL_mixer/releases
+https://github.com/libsndfile/libsamplerate/releases
+
+To run 1oom with fluidsynth support, you'll need to copy DLLs to the same
+directory as the binary.
+
+https://github.com/FluidSynth/fluidsynth/releases
 
 
 3. Compiling 1oom
