@@ -233,9 +233,7 @@ void game_planet_update_eco_on_waste(struct game_s *g, struct planet_s *p, int p
     }
     uint16_t v, fact, waste, prod;
     int16_t left;
-    fact = p->factories;
-    v = e->colonist_oper_factories * (p->pop - p->trans_num);
-    SETMIN(fact, v);
+    fact = game_planet_get_operating_factories(g, p);
     waste = (fact * e->ind_waste_scale) / 10;
     waste = (waste + p->waste) / e->have_eco_restoration_n;
     prod = p->prod_after_maint;
@@ -564,6 +562,14 @@ void game_equalize_slider_group(int16_t *slidertbl, int num, const uint16_t *loc
             }
         }
     }
+}
+
+int game_planet_get_operating_factories(const struct game_s *g, const struct planet_s *p)
+{
+    const empiretechorbit_t *e = &g->eto[p->owner];
+    int oper_fact = (p->pop - p->trans_num) * e->colonist_oper_factories;
+    SETMIN(oper_fact, p->factories);
+    return oper_fact;
 }
 
 int game_get_min_dist(const struct game_s *g, int player_i, int planet_i)

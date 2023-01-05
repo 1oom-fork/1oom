@@ -187,8 +187,7 @@ static void game_planet_build_eco_do(const struct game_s *g, struct planet_s *p)
             const empiretechorbit_t *e;
             int ecorestore, ecoprod, operating_factories;
             e = &(g->eto[owner]);
-            operating_factories = p->pop * e->colonist_oper_factories;
-            SETMIN(operating_factories, p->factories);
+            operating_factories = game_planet_get_operating_factories(g, p);
             {
                 int v;
                 v = (operating_factories * e->ind_waste_scale) / 10;
@@ -1437,8 +1436,7 @@ static void game_turn_finished_slider(struct game_s *g)
             }
             if (!flag_pending_ecoproj) {
                 int w, fact, waste, prod;
-                fact = p->factories;
-                SETMIN(fact, p->pop * e->colonist_oper_factories);
+                fact = game_planet_get_operating_factories(g, p);
                 waste = (e->race == RACE_SILICOID) ? 0 : (((fact * e->ind_waste_scale) / 10 + p->waste) / e->have_eco_restoration_n);
                 prod = p->prod_after_maint;
                 if (prod == 0) {

@@ -342,8 +342,7 @@ int game_planet_get_w1(const struct game_s *g, uint8_t planet_i)
         return 0;
     }
     e = &(g->eto[p->owner]);
-    fact = p->factories;
-    SETMIN(fact, p->pop * e->colonist_oper_factories);
+    fact = game_planet_get_operating_factories(g, p);
     waste = (e->race == RACE_SILICOID) ? 0 : (((fact * e->ind_waste_scale) / 10 + p->waste) / e->have_eco_restoration_n);
     prod = p->prod_after_maint;
     if (prod == 0) {
@@ -545,8 +544,7 @@ int game_planet_get_slider_text_eco(const struct game_s *g, const planet_t *p, p
     int vthis, factoper, waste, adjwaste, tform_cost;
     bool flag_ecoproj = false;
     vthis = (p->prod_after_maint * p->slider[PLANET_SLIDER_ECO]) / 100;
-    factoper = (p->pop - p->trans_num) * e->colonist_oper_factories;
-    SETMIN(factoper, p->factories);
+    factoper = game_planet_get_operating_factories(g, p);
     waste = (factoper * e->ind_waste_scale) / 10;
     if (e->race == RACE_SILICOID) {
         adjwaste = 0;
