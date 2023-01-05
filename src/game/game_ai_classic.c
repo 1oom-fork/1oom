@@ -1968,8 +1968,11 @@ static void game_ai_classic_turn_p3(struct game_s *g, player_id_t pi)
                     max_bases_3 = (p->pop * 2) / (6 - g->difficulty);
                 }
                 int16_t *sl;
+                bool build_ind;
                 sl = &(p->slider[0]);
-                if (p->factories >= (p->pop * e->colonist_oper_factories)) {
+                build_ind = (p->factories < (p->pop * e->colonist_oper_factories))
+                         || (p->pop_oper_fact != e->colonist_oper_factories);
+                if (!build_ind) {
                     uint8_t si;
                     si = sl[PLANET_SLIDER_IND];
                     sl[PLANET_SLIDER_DEF] += si / 2;
