@@ -234,7 +234,7 @@ void game_planet_update_eco_on_waste(struct game_s *g, struct planet_s *p, int p
     uint16_t v, fact, waste, prod;
     int16_t left;
     fact = p->factories;
-    v = e->colonist_oper_factories * p->pop;
+    v = e->colonist_oper_factories * (p->pop - p->trans_num);
     SETMIN(fact, v);
     waste = (fact * e->ind_waste_scale) / 10;
     waste = (waste + p->waste) / e->have_eco_restoration_n;
