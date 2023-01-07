@@ -673,7 +673,7 @@ static void game_turn_build_ind(struct game_s *g)
         owner = p->owner;
         if (owner != PLAYER_NONE) {
             empiretechorbit_t *e;
-            uint16_t fact, factold, num;
+            uint16_t fact, factold, num, maxfact;
             uint8_t cost;
             int prod, v;
             e = &(g->eto[owner]);
@@ -682,7 +682,13 @@ static void game_turn_build_ind(struct game_s *g)
             prod = game_adjust_prod_by_special((p->slider[PLANET_SLIDER_IND] * p->prod_after_maint) / 100, p->special);
             prod += p->bc_to_factory;
             v = game_turn_get_refit_cost(g, p);
-            if ((prod / cost + fact) > (p->pop * p->pop_oper_fact)) {
+            maxfact = p->pop * p->pop_oper_fact;
+            if ((prod / cost + fact) > maxfact) {
+                if (fact < maxfact) {
+                    num = maxfact - fact;
+                    fact = maxfact;
+                    prod -= num * cost;
+                }
                 p->bc_to_refit += prod;
                 if (p->bc_to_refit >= v) {
                     p->pop_oper_fact = e->colonist_oper_factories;
