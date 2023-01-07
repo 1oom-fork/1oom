@@ -1025,7 +1025,6 @@ start_of_func:
         empiretechorbit_t *e;
         e = &g->eto[i];
         e->have_colony_for = PLANET_TYPE_MINIMAL;
-        e->factory_adj_cost = 10;
         e->factory_cost = 10;
         e->have_engine = 1;
         e->colonist_oper_factories = 2;

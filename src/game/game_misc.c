@@ -572,6 +572,19 @@ int game_planet_get_operating_factories(const struct game_s *g, const struct pla
     return oper_fact;
 }
 
+int game_planet_get_factory_adj_cost(const struct game_s *g, const struct planet_s *p)
+{
+    const empiretechorbit_t *e = &(g->eto[p->owner]);
+    int cost;
+    if (e->race == RACE_MEKLAR) {
+        cost = e->factory_cost;
+    } else {
+        cost = (e->factory_cost * e->colonist_oper_factories) / 2;
+    }
+    SETMAX(cost, e->factory_cost);
+    return cost;
+}
+
 int game_get_min_dist(const struct game_s *g, int player_i, int planet_i)
 {
     int dist, mindist = 255;

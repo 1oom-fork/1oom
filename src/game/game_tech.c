@@ -523,10 +523,6 @@ void game_update_tech_util(struct game_s *g)
             b = 10;
         }
         e->factory_cost = b;
-        if (e->race != RACE_MEKLAR) {
-            b = (b * e->colonist_oper_factories) / 2;
-        }
-        e->factory_adj_cost = b;
         if (BOOLVEC_TBL_IS1(tbl_techcompl, TECH_FIELD_CONSTRUCTION, 45)) {
             b = 0;
         } else if (BOOLVEC_TBL_IS1(tbl_techcompl, TECH_FIELD_CONSTRUCTION, 35)) {

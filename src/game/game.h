@@ -141,7 +141,6 @@ typedef struct empiretechorbit_s {
     bool have_stargates;
     uint8_t colonist_oper_factories; /* 2.. */
     uint8_t factory_cost;   /* 10..2 */
-    uint8_t factory_adj_cost;   /* meklar ? factory_cost : factory_cost*colonist_oper_factories/2 */
     uint8_t ind_waste_scale;    /* 0, 2, ..10 */
     uint8_t fuel_range;     /* 3..10, 30 */
     bool have_combat_transporter;
