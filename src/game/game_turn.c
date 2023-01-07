@@ -655,7 +655,7 @@ static int game_turn_get_refit_cost(const struct game_s *g, const struct planet_
     refit_cost = e->colonist_oper_factories - p->pop_oper_fact - bonus;
     if (refit_cost > 0) {
         if (g->game_mode_extra & GAME_MODE_EXTRA_FIX_FACTORY_COST) {
-            refit_cost *= (e->factory_cost * p->factories / 2);
+            refit_cost = (e->factory_cost * p->factories / 2);
         } else {
             refit_cost *= (e->factory_cost / 2);
         }
@@ -691,7 +691,13 @@ static void game_turn_build_ind(struct game_s *g)
                 }
                 p->bc_to_refit += prod;
                 if (p->bc_to_refit >= v) {
-                    p->pop_oper_fact = e->colonist_oper_factories;
+                    if ((g->game_mode_extra & GAME_MODE_EXTRA_FIX_FACTORY_COST)
+                     && (e->race != RACE_MEKLAR)) {
+                        ++p->pop_oper_fact;
+                        SETMIN(p->pop_oper_fact, e->colonist_oper_factories);
+                    } else {
+                        p->pop_oper_fact = e->colonist_oper_factories;
+                    }
                     prod = p->bc_to_refit - v;
                     p->bc_to_refit = 0;
                 } else {
