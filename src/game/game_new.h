@@ -14,6 +14,7 @@ struct game_new_options_s {
     uint32_t precap_tohit;
     uint32_t no_events;
     uint32_t fix_population_growth;
+    uint32_t fix_factory_cost;
     bool fix_homeworlds_too_close;
     bool fix_homeworld_satellites;
     bool fix_bad_satellites;
@@ -29,7 +30,7 @@ struct game_new_options_s {
 
 #define GAME_NEW_OPTS_DEFAULT \
     { \
-        0, GALAXY_SIZE_SMALL, DIFFICULTY_SIMPLE, GAME_AI_DEFAULT, 2, false, true, true, false, true, false, false, false, RESEARCH_RATE_NORMAL, \
+        0, GALAXY_SIZE_SMALL, DIFFICULTY_SIMPLE, GAME_AI_DEFAULT, 2, false, true, true, false, true, true, false, false, false, RESEARCH_RATE_NORMAL, \
         { \
             { "", "", RACE_HUMAN, BANNER_BLUE, false }, \
             { "", "", RACE_RANDOM, BANNER_RANDOM, true }, \

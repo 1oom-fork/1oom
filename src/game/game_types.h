@@ -85,6 +85,9 @@ typedef enum {
     GAME_MODE_EXTRA_FIX_POPULATION_GROWTH = (1 << 4), /* Do not add Population
     Tenths twice. MOO1 adds Population Tenths twice when calculating population
     growth. This results in higher and nonlinear changes of growth value. */
+    GAME_MODE_EXTRA_FIX_FACTORY_COST = (1 << 5), /* Continue building cheap
+    factories after researching the Improved Robotic Controls tech.
+    This also changes the refit cost to match the value described in OSG. */
 } game_mode_extra_t;
 
 typedef enum {
