@@ -642,6 +642,21 @@ static inline void game_add_planet_to_build_finished(struct game_s *g, uint8_t p
     }
 }
 
+static int game_turn_get_refit_cost(const struct game_s *g, const struct planet_s *p)
+{
+    const empiretechorbit_t *e;
+    int refit_cost, bonus;
+    e = &(g->eto[p->owner]);
+    bonus = (e->race == RACE_MEKLAR) ? 2 : 0;
+    refit_cost = e->colonist_oper_factories - p->pop_oper_fact - bonus;
+    if (refit_cost > 0) {
+        refit_cost *= (e->factory_cost / 2);
+    } else {
+        refit_cost = 0;
+    }
+    return refit_cost;
+}
+
 static void game_turn_build_ind(struct game_s *g)
 {
     for (int i = 0; i < g->galaxy_stars; ++i) {
@@ -651,20 +666,14 @@ static void game_turn_build_ind(struct game_s *g)
         if (owner != PLAYER_NONE) {
             empiretechorbit_t *e;
             uint16_t fact, factold, num;
-            uint8_t cost, bonus;
+            uint8_t cost;
             int prod, v;
             e = &(g->eto[owner]);
             factold = fact = p->factories;
             cost = game_planet_get_factory_adj_cost(g, p);
             prod = game_adjust_prod_by_special((p->slider[PLANET_SLIDER_IND] * p->prod_after_maint) / 100, p->special);
             prod += p->bc_to_factory;
-            bonus = (e->race == RACE_MEKLAR) ? 2 : 0;
-            v = e->colonist_oper_factories - p->pop_oper_fact - bonus;
-            if (v > 0) {
-                v *= (e->factory_cost / 2);
-            } else {
-                v = 0;
-            }
+            v = game_turn_get_refit_cost(g, p);
             if ((prod / cost + fact) > (p->pop * p->pop_oper_fact)) {
                 p->bc_to_refit += prod;
                 if (p->bc_to_refit >= v) {
