@@ -752,6 +752,10 @@ static int game_save_decode(const uint8_t *buf, int buflen, struct game_s *g, ui
     SG_1OOM_DE_DUMMY(3);
     SG_1OOM_DE_U8(g->active_player);
     SG_1OOM_DE_U8(g->difficulty);
+    if ((g->difficulty < 0) || (g->difficulty >= DIFFICULTY_NUM)) {
+        log_error("Save: decode invalid difficulty value %i\n", g->difficulty);
+        return -1;
+    }
     SG_1OOM_DE_U8(g->galaxy_size);
     SG_1OOM_DE_U8(g->galaxy_w);
     SG_1OOM_DE_U8(g->galaxy_h);
