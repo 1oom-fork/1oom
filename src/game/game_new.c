@@ -117,6 +117,7 @@ const struct cfg_items_s game_new_cfg_items[] = {
     CFG_ITEM_BOOL("custom_game_no_events", &game_opt_custom.no_events),
     CFG_ITEM_BOOL("custom_game_fix_population_growth", &game_opt_custom.fix_population_growth),
     CFG_ITEM_BOOL("custom_game_fix_factory_cost", &game_opt_custom.fix_factory_cost),
+    CFG_ITEM_BOOL("custom_game_waste_calc_fix", &game_opt_custom.waste_calc_fix),
     CFG_ITEM_BOOL("custom_game_fix_homeworlds_too_close", &game_opt_custom.fix_homeworlds_too_close),
     CFG_ITEM_BOOL("custom_game_fix_homeworld_satellites", &game_opt_custom.fix_homeworld_satellites),
     CFG_ITEM_BOOL("custom_game_fix_bad_satellites", &game_opt_custom.fix_bad_satellites),
@@ -1274,6 +1275,9 @@ int game_new(struct game_s *g, struct game_aux_s *gaux, struct game_new_options_
     }
     if (opt->fix_factory_cost) {
         g->game_mode_extra |= GAME_MODE_EXTRA_FIX_FACTORY_COST;
+    }
+    if (opt->waste_calc_fix) {
+        g->game_mode_extra |= GAME_MODE_EXTRA_WASTE_CALC_FIX;
     }
     g->research_rate = opt->research_rate;
     game_ai = game_ais[g->ai_id];

@@ -198,7 +198,7 @@ static void game_planet_build_eco_do(const struct game_s *g, struct planet_s *p)
                 p->waste = 0;
             }
             ecorestore = (e->race != RACE_SILICOID) ? (p->waste / e->have_eco_restoration_n) : 0;
-            if (!game_num_waste_calc_fix) {
+            if (!(g->game_mode_extra & GAME_MODE_EXTRA_WASTE_CALC_FIX)) {
                 /* WASBUG
                    MOO1 adds waste twice using two separate pieces of code.
                    The first time (see above) is as described in OSG.

@@ -88,6 +88,12 @@ typedef enum {
     GAME_MODE_EXTRA_FIX_FACTORY_COST = (1 << 5), /* Continue building cheap
     factories after researching the Improved Robotic Controls tech.
     This also changes the refit cost to match the value described in OSG. */
+    GAME_MODE_EXTRA_WASTE_CALC_FIX = (1 << 6), /* Fix waste calculation.
+    MOO1 adds waste twice: first using a perfectly sensible formula and then
+    a baffling one. The waste elimination cost is calculated in between.
+    The second amount added is often negative due to the waste amount not
+    being limited. This is why Silicoid planets end up with 0 waste. Other
+    races only see the effect when setting the Eco slider below Clean. */
 } game_mode_extra_t;
 
 typedef enum {

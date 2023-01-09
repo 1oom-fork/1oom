@@ -36,7 +36,6 @@ extern bool game_num_orbital_comp_fix;
 extern bool game_num_combat_trans_fix;
 extern bool game_num_retreat_redir_fix;
 extern bool game_num_first_tech_rp_fix;
-extern bool game_num_waste_calc_fix;
 extern bool game_num_waste_adjust_fix;
 extern uint8_t game_num_eco_slider_slack;
 extern bool game_num_reset_tform_to_max;
