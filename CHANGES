@@ -1,13 +1,37 @@
+1oom-fork-v1.7.4
+----------------
+
+Ui Main Menu -> Game -> Custom Game:
+- The 'Fix factory cost' option (now enabled by default in new games):
+  Continue building cheap factories after researching 
+  the 'Improved Robotic Controls' tech. This also changes
+  the refit cost to match the value described in OSG.
+- The 'Waste calc fix' option (from fixbugs ruleset)
+  (now enabled by default in new games): Fix waste calculation.
+  MOO1 adds waste twice: first using a perfectly sensible formula
+  and then a baffling one. The waste elimination cost is calculated
+  in between. The second amount added is often negative due to the
+  waste amount not being limited. This is why Silicoid planets
+  end up with 0 waste. Other races only see the effect when setting
+  the Eco slider below Clean.
+  
+AI:
+- Fix AI transport range
+
+UI Starmap:
+- Fix slider behavior
+
 1oom-fork-v1.7.3
 ----------------
 
-Added new Custom Game menu options:
-- Fix population growth (now enabled by default in new games)
+Ui Main Menu -> Game -> Custom Game:
+- The 'Fix population growth' option
+  (now enabled by default in new games):
   Do not add Population Tenths twice. MOO1 adds
   Population Tenths twice when calculating population
   growth. This results in nonlinear changes of growth value.
   
-Added new Interface menu options:
+Ui Main Menu -> Interface
 - Random News (on/off)
 		
 Ui Starmap:
@@ -23,8 +47,8 @@ Fixed static build scripts for SDL1 and SDL2
 1oom-fork-v1.7.2
 ----------------
 
-Galaxy generator:
-- Added new Custom Game menu options
+Ui Main Menu -> Game -> Custom Game:
+- Galaxy generator:
 	- The 'Fix homes too close' option checks the distance
 	  between all homeworlds instead of only 2 of them
 	  This option disables Moo v1.3 check for good planets nearby
@@ -33,12 +57,11 @@ Galaxy generator:
 	- The "Good satellites" option ensures that each satellite
 	  will be at least not bad quality
 
-Ui Starmap:
-- Fixed Alt+m grid limits
-
-Ui Main Menu -> Game -> Custom Game:
 - Changed 'Players' option text
 - Changed 'Galaxy seed' option text
+
+Ui Starmap:
+- Fixed Alt+m grid limits
 
 Updated COMPILING MinGW instructions
 
