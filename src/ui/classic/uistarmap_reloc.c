@@ -28,6 +28,7 @@ static void ui_starmap_reloc_draw_cb(void *vptr)
     struct starmap_data_s *d = vptr;
     const struct game_s *g = d->g;
     const planet_t *pf = &g->planet[d->from_i];
+    const planet_t *pr = &g->planet[pf->reloc];
     const planet_t *pt = &g->planet[g->planet_focus_i[d->api]];
     char buf[0x40];
     int x0, y0;
@@ -36,13 +37,26 @@ static void ui_starmap_reloc_draw_cb(void *vptr)
     ui_starmap_draw_button_text(d, true);
     x0 = (pf->x - ui_data.starmap.x) * 2 + 8;
     y0 = (pf->y - ui_data.starmap.y) * 2 + 8;
-    if (g->planet_focus_i[d->api] != d->from_i) {
+    if (pf != pt || ui_modern_controls) {
         int x1, y1;
         const uint8_t *ctbl;
         x1 = (pt->x - ui_data.starmap.x) * 2 + 14;
         y1 = (pt->y - ui_data.starmap.y) * 2 + 14;
         ctbl = !d->valid_target_cb(d, g->planet_focus_i[d->api]) ? colortbl_line_red : colortbl_line_green;
-        ui_draw_line_limit_ctbl(x0 + 6, y0 + 6, x1, y1, ctbl, 5, ui_data.starmap.line_anim_phase, starmap_scale);
+        if (ui_modern_controls) {
+            int x2, y2;
+            x2 = (pr->x - ui_data.starmap.x) * 2 + 14;
+            y2 = (pr->y - ui_data.starmap.y) * 2 + 14;
+            if (pt != pf) {
+                ui_draw_planet_frame_limit_ctbl(x1 - 6, y1 - 6, ctbl, 5, ui_data.starmap.line_anim_phase, starmap_scale);
+            }
+            if (pr != pf) {
+                ui_draw_line_limit_ctbl(x0 + 6, y0 + 6, x2, y2, colortbl_line_green, 5, ui_data.starmap.line_anim_phase, starmap_scale);
+            }
+        }
+        if (pf != pt) {
+            ui_draw_line_limit_ctbl(x0 + 6, y0 + 6, x1, y1, ctbl, 5, ui_data.starmap.line_anim_phase, starmap_scale);
+        }
     }
     lbxgfx_draw_frame_offs(x0, y0, ui_data.gfx.starmap.planbord, STARMAP_LIMITS, UI_SCREEN_W, starmap_scale);
     lbxgfx_draw_frame(222, 80, ui_data.gfx.starmap.relocate, UI_SCREEN_W, ui_scale);

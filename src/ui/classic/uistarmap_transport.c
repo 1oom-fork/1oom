@@ -79,6 +79,13 @@ static void ui_starmap_transport_draw_cb(void *vptr)
         {
             const uint8_t *ctbl;
             ctbl = dest_ok ? colortbl_line_green : colortbl_line_red;
+            if (ui_modern_controls && d->controllable) {
+                int x2, y2;
+                x2 = (pd->x - ui_data.starmap.x) * 2 + 8;
+                y2 = (pd->y - ui_data.starmap.y) * 2 + 8;
+                ui_draw_planet_frame_limit_ctbl(x1, y1, ctbl, 5, ui_data.starmap.line_anim_phase, starmap_scale);
+                ui_draw_line_limit_ctbl(x0 + 4, y0 + 1, x2 + 6, y2 + 6, colortbl_line_green, 5, ui_data.starmap.line_anim_phase, starmap_scale);
+            }
             ui_draw_line_limit_ctbl(x0 + 4, y0 + 1, x1 + 6, y1 + 6, ctbl, 5, ui_data.starmap.line_anim_phase, starmap_scale);
         }
         gfx = ui_data.gfx.starmap.smaltran[e->banner];

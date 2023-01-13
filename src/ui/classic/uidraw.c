@@ -367,6 +367,20 @@ void ui_draw_line_limit_ctbl(int x0, int y0, int x1, int y1, const uint8_t *colo
     ui_draw_line_limit_do(x0, y0, x1, y1, 0, colortbl, colornum, pos, scale);
 }
 
+void ui_draw_planet_frame_limit_ctbl(int x0, int y0, const uint8_t *colortbl, int colornum, int pos, int scale)
+{
+    int x1 = x0 + 12;
+    int y1 = y0 + 12;
+    ui_draw_line_limit_ctbl(x0 + 3, y0, x0, y0, colortbl, 5, pos, scale);
+    ui_draw_line_limit_ctbl(x0, y0 + 3, x0, y0, colortbl, 5, pos, scale);
+    ui_draw_line_limit_ctbl(x0 + 3, y1, x0, y1, colortbl, 5, pos, scale);
+    ui_draw_line_limit_ctbl(x0, y1 - 3, x0, y1, colortbl, 5, pos, scale);
+    ui_draw_line_limit_ctbl(x1 - 3, y0, x1, y0, colortbl, 5, pos, scale);
+    ui_draw_line_limit_ctbl(x1, y0 + 3, x1, y0, colortbl, 5, pos, scale);
+    ui_draw_line_limit_ctbl(x1 - 3, y1, x1, y1, colortbl, 5, pos, scale);
+    ui_draw_line_limit_ctbl(x1, y1 - 3, x1, y1, colortbl, 5, pos, scale);
+}
+
 void ui_draw_slider(int x, int y, int w, int wdiv, int xoff, uint8_t color, int scale)
 {
     int y1, x1;

@@ -69,6 +69,9 @@ static void ui_starmap_orbit_own_draw_cb(void *vptr)
         x0 = (pf->x - ui_data.starmap.x) * 2 + 26;
         y0 = (pf->y - ui_data.starmap.y) * 2 + 8;
         ctbl = ui_starmap_orbit_own_in_frange(d, g->planet_focus_i[d->api]) ? colortbl_line_green : colortbl_line_red;
+        if (ui_modern_controls) {
+            ui_draw_planet_frame_limit_ctbl(x1, y1, ctbl, 5, ui_data.starmap.line_anim_phase, starmap_scale);
+        }
         ui_draw_line_limit_ctbl(x0 + 3, y0 + 1, x1 + 6, y1 + 6, ctbl, 5, ui_data.starmap.line_anim_phase, starmap_scale);
         gfx = ui_data.gfx.starmap.smalship[g->eto[d->api].banner];
         lbxgfx_set_frame_0(gfx);
