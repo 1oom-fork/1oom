@@ -115,10 +115,10 @@ const struct cfg_items_s game_new_cfg_items[] = {
     CFG_ITEM_BOOL("custom_game_no_tohit_acc", &game_opt_custom.no_tohit_acc),
     CFG_ITEM_BOOL("custom_game_precap_tohit", &game_opt_custom.precap_tohit),
     CFG_ITEM_BOOL("custom_game_no_events", &game_opt_custom.no_events),
-    CFG_ITEM_BOOL("custom_game_fix_population_growth", &game_opt_custom.fix_population_growth),
-    CFG_ITEM_BOOL("custom_game_fix_factory_cost", &game_opt_custom.fix_factory_cost),
+    CFG_ITEM_BOOL("custom_game_population_growth_fix", &game_opt_custom.population_growth_fix),
+    CFG_ITEM_BOOL("custom_game_factory_cost_fix", &game_opt_custom.factory_cost_fix),
     CFG_ITEM_BOOL("custom_game_waste_calc_fix", &game_opt_custom.waste_calc_fix),
-    CFG_ITEM_BOOL("custom_game_fix_homeworlds_too_close", &game_opt_custom.fix_homeworlds_too_close),
+    CFG_ITEM_BOOL("custom_game_players_distance_fix", &game_opt_custom.players_distance_fix),
     CFG_ITEM_BOOL("custom_game_fix_homeworld_satellites", &game_opt_custom.fix_homeworld_satellites),
     CFG_ITEM_BOOL("custom_game_fix_bad_satellites", &game_opt_custom.fix_bad_satellites),
     CFG_ITEM_INT("custom_game_galaxy_seed", &game_opt_custom.galaxy_seed, NULL),
@@ -787,7 +787,7 @@ static bool game_gen_fix_satellites(struct game_s *g, struct game_new_options_s 
                 } else {
                     sat->battlebg = rnd_1_n(4, &g->seed);
                 }
-                if (!opt->fix_homeworlds_too_close) {
+                if (!opt->players_distance_fix) {
                     for (int i = 0; i < g->galaxy_stars; ++i) {
                         int dist = util_math_dist_fast(g->planet[i].x, g->planet[i].y, sat->x, sat->y);
                         if (dist < 20) {
@@ -938,7 +938,7 @@ start_of_func:
     while ((!flag_all_ok) && (loops < 200)) {
         flag_all_ok = true;
         for (player_id_t i = PLAYER_0; i < g->players; ++i) {
-            if (!opt->fix_homeworlds_too_close) {
+            if (!opt->players_distance_fix) {
                 do {
                     tblhome[i] = game_get_random_planet_i(g);
                 } while (!game_check_random_home_i(g, tblhome, i, tblhome[i], 0));
@@ -950,7 +950,7 @@ start_of_func:
                 }
             }
         }
-        if (flag_all_ok && !opt->fix_homeworlds_too_close){
+        if (flag_all_ok && !opt->players_distance_fix){
             flag_all_ok = game_gen_check_home_distance_moo_1_3(g, tblhome);
         }
         if (flag_all_ok && opt->fix_homeworld_satellites) {
@@ -959,7 +959,7 @@ start_of_func:
                 break;
             }
         }
-        if (flag_all_ok && !opt->fix_homeworlds_too_close && !opt->fix_homeworld_satellites){
+        if (flag_all_ok && !opt->players_distance_fix && !opt->fix_homeworld_satellites){
             flag_all_ok = game_gen_check_satellite_distance_moo_1_3(g, opt, tblhome);
         }
         ++loops;
@@ -1270,11 +1270,11 @@ int game_new(struct game_s *g, struct game_aux_s *gaux, struct game_new_options_
     if (opt->no_events) {
         g->game_mode_extra |= GAME_MODE_EXTRA_NO_EVENTS;
     }
-    if (opt->fix_population_growth) {
-        g->game_mode_extra |= GAME_MODE_EXTRA_FIX_POPULATION_GROWTH;
+    if (opt->population_growth_fix) {
+        g->game_mode_extra |= GAME_MODE_EXTRA_POPULATION_GROWTH_FIX;
     }
-    if (opt->fix_factory_cost) {
-        g->game_mode_extra |= GAME_MODE_EXTRA_FIX_FACTORY_COST;
+    if (opt->factory_cost_fix) {
+        g->game_mode_extra |= GAME_MODE_EXTRA_FACTORY_COST_FIX;
     }
     if (opt->waste_calc_fix) {
         g->game_mode_extra |= GAME_MODE_EXTRA_WASTE_CALC_FIX;

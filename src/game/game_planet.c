@@ -613,7 +613,7 @@ int game_planet_get_slider_text_eco(const struct game_s *g, const planet_t *p, p
                     }
                 }
                 vthis -= tform_cost;
-                if (g->game_mode_extra & GAME_MODE_EXTRA_FIX_POPULATION_GROWTH) {
+                if (g->game_mode_extra & GAME_MODE_EXTRA_POPULATION_GROWTH_FIX) {
                     int pop_before_growth, pop_after_growth1, pop_after_growth2;
                     pop_before_growth = (p->pop - p->trans_num) * 10 + p->pop_tenths;
                     pop_after_growth1 = pop_before_growth + game_get_pop_growth_max(g, p, max_pop);

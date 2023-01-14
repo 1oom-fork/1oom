@@ -13,10 +13,10 @@ struct game_new_options_s {
     uint32_t no_tohit_acc;
     uint32_t precap_tohit;
     uint32_t no_events;
-    uint32_t fix_population_growth;
-    uint32_t fix_factory_cost;
+    uint32_t population_growth_fix;
+    uint32_t factory_cost_fix;
     uint32_t waste_calc_fix;
-    bool fix_homeworlds_too_close;
+    bool players_distance_fix;
     bool fix_homeworld_satellites;
     bool fix_bad_satellites;
     research_rate_t research_rate;

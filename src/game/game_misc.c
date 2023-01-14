@@ -125,7 +125,7 @@ void game_update_production(struct game_s *g)
 		    SUBSAT0(r, t / 2 + 1);
                     SETMAX(popx, 1);
 		}
-        if (g->game_mode_extra & GAME_MODE_EXTRA_FIX_FACTORY_COST) {
+        if (g->game_mode_extra & GAME_MODE_EXTRA_FACTORY_COST_FIX) {
             v = (popx - r) * p->pop_oper_fact;
         } else {
             v = (popx - r) * e->colonist_oper_factories;
@@ -572,7 +572,7 @@ int game_planet_get_operating_factories(const struct game_s *g, const struct pla
 {
     const empiretechorbit_t *e = &g->eto[p->owner];
     int oper_fact;
-    if (g->game_mode_extra & GAME_MODE_EXTRA_FIX_FACTORY_COST) {
+    if (g->game_mode_extra & GAME_MODE_EXTRA_FACTORY_COST_FIX) {
         oper_fact = (p->pop - p->trans_num) * p->pop_oper_fact;
     } else {
         oper_fact = (p->pop - p->trans_num) * e->colonist_oper_factories;
@@ -588,7 +588,7 @@ int game_planet_get_factory_adj_cost(const struct game_s *g, const struct planet
     if (e->race == RACE_MEKLAR) {
         cost = e->factory_cost;
     } else {
-        if (g->game_mode_extra & GAME_MODE_EXTRA_FIX_FACTORY_COST) {
+        if (g->game_mode_extra & GAME_MODE_EXTRA_FACTORY_COST_FIX) {
             cost = (e->factory_cost * p->pop_oper_fact) / 2;
         } else {
             cost = (e->factory_cost * e->colonist_oper_factories) / 2;
@@ -669,7 +669,7 @@ int game_get_pop_growth_max(const struct game_s *g, const planet_t *p, int max_p
             v *= 2;
         }
     }
-    if (g->game_mode_extra & GAME_MODE_EXTRA_FIX_POPULATION_GROWTH) {
+    if (g->game_mode_extra & GAME_MODE_EXTRA_POPULATION_GROWTH_FIX) {
         retval = (v * p->pop + 5) / 100;
     } else {
         retval = (v * p->pop + 5) / 100 + p->pop_tenths;
