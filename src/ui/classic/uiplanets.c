@@ -379,7 +379,7 @@ enum {
     const planet_t *p0 = &(g->planet[pli0]); \
     const planet_t *p1 = &(g->planet[pli1])
 
-#define UI_SORT_CMP_VALUE(_v0_, _v1_) (((_v0_) != (_v1_)) ? ((_v0_) - (_v1_)) : (i0 - i1))
+#define UI_SORT_CMP_VALUE(_v0_, _v1_) (((_v0_) != (_v1_)) ? ((_v0_) - (_v1_)) : (i1 - i0))
 #define UI_SORT_CMP_VARIABLE(_var_) UI_SORT_CMP_VALUE(p0->_var_, p1->_var_)
 
 static int planets_sort_inc_index(const void *ptr0, const void *ptr1)
