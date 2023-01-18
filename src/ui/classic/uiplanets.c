@@ -510,26 +510,26 @@ static int planets_sort_dec_dock(const void *ptr0, const void *ptr1)
 
 static int planets_sort_inc_notes(const void *ptr0, const void *ptr1)
 {
-    const struct game_s *g = ui_data.sorted.g;
-    uint16_t i0 = *((uint16_t const *)ptr0);
-    uint16_t i1 = *((uint16_t const *)ptr1);
-    uint8_t pli0 = ui_data.sorted.value[i0];
-    uint8_t pli1 = ui_data.sorted.value[i1];
+    UI_SORT_SETUP();
     char buf0[64];
     char buf1[64];
-    const char *s0 = planets_get_notes_str(g, pli0, 0, buf0, sizeof(buf0));
-    const char *s1 = planets_get_notes_str(g, pli1, 0, buf1, sizeof(buf1));
+    bool normal0, normal1;
+    const char *s0 = planets_get_notes_str(g, pli0, &normal0, buf0, sizeof(buf0));
+    const char *s1 = planets_get_notes_str(g, pli1, &normal1, buf1, sizeof(buf1));
     int d;
-    if ((!s0) && (!s1)) {
-        d = i0 - i1;
-    } else if ((!s0) && s1) {
-        d = -1;
-    } else if ((!s1) && s0) {
+    if (normal1 && !normal0) {
         d = 1;
+    } else if (normal0 && !normal1) {
+        d = -1;
+    } else if (!normal0 && !normal1) {
+        d = UI_SORT_CMP_VALUE(strcmp(s1, s0), 0);
     } else {
-        d = strcmp(planets_get_notes_str(g, pli0, 0, buf0, sizeof(buf0)), planets_get_notes_str(g, pli1, 0, buf1, sizeof(buf1)));
-        if (d == 0) {
-            d = i0 - i1;
+        if (p0->special > p1->special) {
+            d = 1;
+        } else if (p0->special < p1->special) {
+            d = -1;
+        } else {
+            d = UI_SORT_CMP_VARIABLE(growth);
         }
     }
     return d;
