@@ -103,6 +103,17 @@ static const char *planets_get_notes_str(const struct game_s *g, uint8_t pli, bo
     return str;
 }
 
+static const char *planets_get_dock_str(const struct game_s *g, const struct planet_s *p)
+{
+    const char *str;
+    if (p->buildship == BUILDSHIP_STARGATE) {
+        str = game_str_sm_stargate;
+    } else {
+        str = g->srd[p->owner].design[p->buildship].name;
+    }
+    return str;
+}
+
 static void planets_draw_cb(void *vptr)
 {
     struct planets_data_s *d = vptr;
@@ -210,11 +221,7 @@ static void planets_draw_cb(void *vptr)
                 lbxfont_select(2, 6, 0, 0);
             }
             if (p->slider[PLANET_SLIDER_SHIP] > 0) {
-                if (p->buildship == BUILDSHIP_STARGATE) {
-                    str = game_str_sm_stargate;
-                } else {
-                    str = g->srd[d->api].design[p->buildship].name;
-                }
+                str = planets_get_dock_str(g, p);
                 lbxfont_print_str_normal(221, y0, str, UI_SCREEN_W);
             }
         }
@@ -491,9 +498,9 @@ static int planets_sort_dec_prod(const void *ptr0, const void *ptr1)
 static int planets_sort_inc_dock(const void *ptr0, const void *ptr1)
 {
     UI_SORT_SETUP();
-    int v0 = (p0->slider[PLANET_SLIDER_SHIP] > 0) ? p0->buildship : -1;
-    int v1 = (p1->slider[PLANET_SLIDER_SHIP] > 0) ? p1->buildship : -1;
-    return UI_SORT_CMP_VALUE(v0, v1);
+    const char *s0 = (p0->slider[PLANET_SLIDER_SHIP] > 0) ? planets_get_dock_str(g, p0) : "\xff";
+    const char *s1 = (p1->slider[PLANET_SLIDER_SHIP] > 0) ? planets_get_dock_str(g, p1) : "\xff";
+    return UI_SORT_CMP_VALUE(strcmp(s1, s0), 0);
 }
 
 static int planets_sort_dec_dock(const void *ptr0, const void *ptr1)
