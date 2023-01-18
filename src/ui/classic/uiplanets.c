@@ -443,7 +443,9 @@ static int planets_sort_dec_fact(const void *ptr0, const void *ptr1)
 static int planets_sort_inc_shield(const void *ptr0, const void *ptr1)
 {
     UI_SORT_SETUP();
-    return UI_SORT_CMP_VARIABLE(shield);
+    int v0 = p0->battlebg ? p0->shield : -1;
+    int v1 = p1->battlebg ? p1->shield : -1;
+    return UI_SORT_CMP_VALUE(v0, v1);
 }
 
 static int planets_sort_dec_shield(const void *ptr0, const void *ptr1)
