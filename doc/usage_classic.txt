@@ -47,6 +47,7 @@ The following new UI features are always enabled/available:
 - The keys UHJK scroll the galaxy movement screen map
 - Planets can be searched for by pressing the / key
 - The = key can be substituted by the # key
+- The + key can be substituted by the = key (if not conflicting)
 
 The config file item "ui.uiextra" (set via the -uiextra command-line option)
 enables the following extra UI features:
