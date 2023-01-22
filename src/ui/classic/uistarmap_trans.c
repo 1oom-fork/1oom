@@ -171,7 +171,7 @@ static void ui_starmap_trans_draw_cb(void *vptr)
 void ui_starmap_trans(struct game_s *g, player_id_t active_player)
 {
     bool flag_done = false;
-    int16_t oi_scroll, oi_cancel, oi_accept, oi_plus, oi_minus, oi_search;
+    int16_t oi_scroll, oi_cancel, oi_accept, oi_plus, oi_minus, oi_search, oi_equals;
     int16_t scrollx = 0, scrolly = 0;
     struct starmap_data_s d;
     planet_t *p;
@@ -203,6 +203,7 @@ void ui_starmap_trans(struct game_s *g, player_id_t active_player)
         oi_cancel = UIOBJI_INVALID; \
         oi_plus = UIOBJI_INVALID; \
         oi_minus = UIOBJI_INVALID; \
+        oi_equals = UIOBJI_INVALID; \
     } while (0)
 
     UIOBJ_CLEAR_LOCAL();
@@ -283,7 +284,7 @@ do_accept:
             if (ui_extra_enabled) {
                 d.tr.other = true;
             }
-        } else if (oi1 == oi_plus) {
+        } else if (oi1 == oi_plus || oi1 == oi_equals) {
             ui_sound_play_sfx_24();
             if (kbd_is_modifier(MOO_MOD_CTRL)) {
                 d.tr.num += (trans_max + 9) / 10;
@@ -347,9 +348,11 @@ do_accept:
                 uiobj_add_slider_int(258, 124, 0, trans_max, 41, 8, &d.tr.num);
                 oi_minus = uiobj_add_mousearea(252, 124, 256, 131, MOO_KEY_MINUS);
                 oi_plus = uiobj_add_mousearea(301, 124, 305, 131, MOO_KEY_PLUS);
+                oi_equals = uiobj_add_mousearea(301, 124, 305, 131, MOO_KEY_EQUALS);
             } else if (ui_extra_enabled && !d.tr.other) {
                 oi_minus = uiobj_add_inputkey(MOO_KEY_MINUS);
                 oi_plus = uiobj_add_inputkey(MOO_KEY_PLUS);
+                oi_equals = uiobj_add_inputkey(MOO_KEY_EQUALS);
             }
             oi_scroll = uiobj_add_tb(6, 6, 2, 2, 108, 86, &scrollx, &scrolly);
             oi_search = uiobj_add_inputkey(MOO_KEY_SLASH);
