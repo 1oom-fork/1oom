@@ -355,6 +355,7 @@ do_accept:
                 d.tr.other = true;
             }
         } else if (oi1 == oi_plus || oi1 == oi_equals) {
+            ui_sound_play_sfx_24();
             if (kbd_is_modifier(MOO_MOD_CTRL)) {
                 d.tr.num += (trans_max + 9) / 10;
             } else if (kbd_is_modifier(MOO_MOD_ALT)) {
