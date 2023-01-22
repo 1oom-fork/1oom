@@ -62,6 +62,7 @@ The following new UI features are always enabled/available:
 - Planets can be searched for by pressing the / key
 - Planets can be tagged with Ctrl-1-9 and recalled with 1-9
 - The = key can be substituted by the # key
+- The + key can be substituted by the = key (if not conflicting)
 
 The config file item "ui.uiextra" (set via the -uiextra command-line option)
 or pressing Alt-X in the main menu enables the following extra UI features:
