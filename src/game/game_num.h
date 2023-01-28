@@ -48,6 +48,7 @@ extern bool game_num_retreat_redir_fix;
 extern bool game_num_first_tech_rp_fix;
 extern bool game_num_waste_calc_fix;
 extern bool game_num_waste_adjust_fix;
+extern bool game_num_pop_tenths_fix;
 extern bool game_num_doom_stack_fix;
 extern bool game_num_reset_tform_to_max;
 extern bool game_num_soil_rounding_fix;
