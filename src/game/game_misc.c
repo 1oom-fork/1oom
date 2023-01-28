@@ -670,7 +670,10 @@ int game_get_pop_growth_max(const struct game_s *g, const planet_t *p, int max_p
             v *= 2;
         }
     }
-    retval = (v * p->pop + 5) / 100 + p->pop_tenths;
+    retval = (v * p->pop + 5) / 100;
+    if (!game_num_pop_tenths_fix) {
+        retval += p->pop_tenths;
+    }
     if ((v > 0) && (retval < 1)) {
         retval = 1;
     }
