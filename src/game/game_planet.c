@@ -441,11 +441,17 @@ int game_planet_get_slider_text_eco(const struct game_s *g, uint8_t planet_i, bo
                     growth = growth2 / 10 - growth / 10;
                 } else {
                     if (((p->pop - p->trans_num) * 10 + growth) > (max_pop * 10)) {
-                        growth = (max_pop - (p->pop - p->trans_num)) * 10 + p->pop_tenths;
+                        growth = (max_pop - (p->pop - p->trans_num)) * 10;
+                        if (!game_num_pop_tenths_fix) {
+                            growth += p->pop_tenths;
+                        }
                     }
                     growth2 = game_get_pop_growth_for_eco(g, planet_i, vthis) + growth;
-                    if (((p->pop - p->trans_num) * 10 + growth2) > (max_pop * 10)) {
-                        growth2 = (max_pop - (p->pop - p->trans_num)) * 10 + p->pop_tenths;
+                    if (((p->pop - p->trans_num) * 10 + growth2) >= (max_pop * 10)) {
+                        growth2 = (max_pop - (p->pop - p->trans_num)) * 10;
+                        if (!game_num_pop_tenths_fix) {
+                            growth2 += p->pop_tenths;
+                        }
                     }
                     growth = growth2 - growth;
                 }
