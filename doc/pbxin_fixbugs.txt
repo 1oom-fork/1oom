@@ -50,6 +50,7 @@
 4,first_tech_rp_fix,0,1
 4,waste_calc_fix,0,1
 4,waste_adjust_fix,0,1
+4,pop_tenths_fix,0,0
 4,eco_slider_slack,0,0
 4,reset_tform_to_max,0,0
 4,soil_rounding_fix,0,1
