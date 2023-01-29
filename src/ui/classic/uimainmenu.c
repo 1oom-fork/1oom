@@ -696,6 +696,7 @@ struct main_menu_data_s {
     int16_t oi_quit, oi_plus, oi_minus, oi_equals;
     int16_t scrollmisc;
     int frame;
+    bool refresh;
     main_menu_action_t ret;
     bool flag_done;
     int clicked_i;
@@ -742,7 +743,12 @@ static void main_menu_draw_cb(void *vptr)
     struct main_menu_data_s *d = vptr;
     char buf[64];
     ui_draw_erase_buf();
-    ui_draw_copy_buf();
+    if (d->refresh) {
+        lbxgfx_set_frame_0(d->gfx_vortex);
+        d->refresh = false;
+    } else {
+        ui_draw_copy_buf();
+    }
     lbxgfx_draw_frame(0, 0, d->gfx_vortex, UI_SCREEN_W, ui_scale);
     lbxgfx_draw_frame_offs(0, 0, d->gfx_title, 0, 0, UI_VGA_W - 1, 191, UI_SCREEN_W, ui_scale);
     lbxfont_select(2, 7, 0, 0);
@@ -829,7 +835,7 @@ static void mm_custom_set_item_dimensions(struct main_menu_data_s *d, int i)
 
 static void main_menu_refresh_screen(struct main_menu_data_s *d)
 {
-    lbxgfx_set_frame_0(d->gfx_vortex);
+    d->refresh = true;
 }
 
 static struct main_menu_item_data_s *main_menu_get_local_itemdata(main_menu_page_id_t page_i, int i)
@@ -1048,6 +1054,7 @@ static main_menu_action_t main_menu_do(struct main_menu_data_s *d)
     main_menu_load_opt_video_data(d);
     d->page_stack_i = -1;
     d->frame = 0;
+    d->refresh = true;
     d->flag_done = false;
     d->ret = -1;
     mm_ui_scale_helper = ui_scale;
