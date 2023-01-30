@@ -330,6 +330,7 @@ static sort_cb_t * const sort_cb_tbl[UI_SORT_NUM * 2] = {
 static void ui_fleet_sort(struct fleet_data_s *d)
 {
     qsort(ui_data.sorted.index, d->num, sizeof(ui_data.sorted.index[0]), sort_cb_tbl[d->order_i]);
+    ui_data.sorted.fleet_order[d->api] = d->order_i;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -355,6 +356,10 @@ int ui_fleet(struct game_s *g, player_id_t active_player)
     ui_fleet_sub(&d);
     ui_data.starmap.frame_ship = 0;
     d.lines = 0;
+    if (ui_extra_enabled) {
+        d.order_i = ui_data.sorted.fleet_order[active_player];
+        ui_fleet_sort(&d);
+    }
 
     uiobj_table_clear();
 
