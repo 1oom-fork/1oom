@@ -328,6 +328,11 @@ static sort_cb_t * const sort_cb_tbl[UI_SORT_NUM * 2] = {
     fleet_sort_inc_ship5
 };
 
+static void ui_fleet_sort(struct fleet_data_s *d)
+{
+    qsort(ui_data.sorted.index, d->num, sizeof(ui_data.sorted.index[0]), sort_cb_tbl[d->order_i]);
+}
+
 /* -------------------------------------------------------------------------- */
 
 int ui_fleet(struct game_s *g, player_id_t active_player)
@@ -438,7 +443,7 @@ int ui_fleet(struct game_s *g, player_id_t active_player)
                     ++v;
                 }
                 d.order_i = v;
-                qsort(ui_data.sorted.index, d.num, sizeof(ui_data.sorted.index[0]), sort_cb_tbl[d.order_i]);
+                ui_fleet_sort(&d);
             }
         }
         if (!flag_done) {
