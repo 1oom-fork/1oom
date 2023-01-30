@@ -567,6 +567,11 @@ static sort_cb_t * const sort_cb_tbl[UI_SORT_NUM * 2] = {
     planets_sort_inc_notes
 };
 
+static void ui_planets_sort(struct planets_data_s *d)
+{
+    qsort(ui_data.sorted.index, d->num, sizeof(ui_data.sorted.index[0]), sort_cb_tbl[d->order_i]);
+}
+
 /* -------------------------------------------------------------------------- */
 
 void ui_planets(struct game_s *g, player_id_t active_player)
@@ -681,7 +686,7 @@ again:
                     ++v;
                 }
                 d.order_i = v;
-                qsort(ui_data.sorted.index, d.num, sizeof(ui_data.sorted.index[0]), sort_cb_tbl[d.order_i]);
+                ui_planets_sort(&d);
             }
         }
         ui_cursor_setup_area(1, &ui_cursor_area_tbl[flag_trans ? 9 : 0]);
