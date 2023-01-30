@@ -47,7 +47,6 @@ struct fleet_data_s {
     int num;
     int lines;
     int frame;
-    int order_i;
     struct draw_stars_s s;
     uint8_t *gfx_fleetbrb;
 };
@@ -344,11 +343,11 @@ int ui_fleet(struct game_s *g, player_id_t active_player)
     d.api = active_player;
     d.pos = 0;
     d.num = 0;
-    d.order_i = 0;
     game_update_maint_costs(g);
     d.s.xoff1 = 0;
     d.s.xoff2 = 0;
     ui_fleet_sub(&d);
+    qsort(ui_data.sorted.index, d.num, sizeof(ui_data.sorted.index[0]), sort_cb_tbl[ui_data.sorted.ships_order[active_player]]);
     d.frame = 0;
     d.lines = 0;
 
@@ -434,11 +433,11 @@ int ui_fleet(struct game_s *g, player_id_t active_player)
             if (oi == oi_sort[i]) {
                 int v;
                 v = i * 2;
-                if (v == d.order_i) {
+                if (v == ui_data.sorted.ships_order[active_player]) {
                     ++v;
                 }
-                d.order_i = v;
-                qsort(ui_data.sorted.index, d.num, sizeof(ui_data.sorted.index[0]), sort_cb_tbl[d.order_i]);
+                ui_data.sorted.ships_order[active_player] = v;
+                qsort(ui_data.sorted.index, d.num, sizeof(ui_data.sorted.index[0]), sort_cb_tbl[ui_data.sorted.ships_order[active_player]]);
             }
         }
         if (!flag_done) {
