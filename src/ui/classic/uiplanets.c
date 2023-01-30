@@ -570,6 +570,7 @@ static sort_cb_t * const sort_cb_tbl[UI_SORT_NUM * 2] = {
 static void ui_planets_sort(struct planets_data_s *d)
 {
     qsort(ui_data.sorted.index, d->num, sizeof(ui_data.sorted.index[0]), sort_cb_tbl[d->order_i]);
+    ui_data.sorted.planets_order[d->api] = d->order_i;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -602,6 +603,11 @@ void ui_planets(struct game_s *g, player_id_t active_player)
             ui_data.sorted.index[d.num] = d.num;
             ui_data.sorted.value[d.num++] = i;
         }
+    }
+
+    if (ui_extra_enabled) {
+        d.order_i = ui_data.sorted.planets_order[active_player];
+        ui_planets_sort(&d);
     }
 
 again:
