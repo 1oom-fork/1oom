@@ -654,14 +654,18 @@ void ui_planets(struct game_s *g, player_id_t active_player)
     ui_data.sorted.g = g;
     for (int i = 0; i < g->galaxy_stars; ++i) {
         if (g->planet[i].owner == active_player) {
-            if (i == d.focus_i) {
-                d.pos = d.num - 5;  /* WASBUG MOO1 uses i - 5 */
-            }
             ui_data.sorted.index[d.num] = d.num;
             ui_data.sorted.value[d.num++] = i;
         }
     }
     qsort(ui_data.sorted.index, d.num, sizeof(ui_data.sorted.index[0]), sort_cb_tbl[ui_data.sorted.planets_order[active_player]]);
+    for (int i = 0; i < d.num; ++i) {
+        int index = ui_data.sorted.index[i];
+        if (ui_data.sorted.value[index] == d.focus_i) {
+            d.pos = i - 5;
+            break;
+        }
+    }
 
 again:
     flag_trans = false;
