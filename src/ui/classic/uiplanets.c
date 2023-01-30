@@ -37,7 +37,6 @@ struct planets_data_s {
     int16_t amount_trans;
     uint8_t focus_i;
     int planet_i;
-    int order_i;
     struct game_s *g;
     uint8_t *gfx_report;
     uint8_t *gfx_but_trans;
@@ -649,7 +648,6 @@ void ui_planets(struct game_s *g, player_id_t active_player)
     d.g = g;
     d.api = active_player;
     d.focus_i = g->planet_focus_i[active_player];
-    d.order_i = 0;
     d.pos = 0;
     d.num = 0;
 
@@ -663,6 +661,7 @@ void ui_planets(struct game_s *g, player_id_t active_player)
             ui_data.sorted.value[d.num++] = i;
         }
     }
+    qsort(ui_data.sorted.index, d.num, sizeof(ui_data.sorted.index[0]), sort_cb_tbl[ui_data.sorted.planets_order[active_player]]);
 
 again:
     flag_trans = false;
@@ -780,11 +779,11 @@ again:
             if (oi == oi_sort[i]) {
                 int v;
                 v = i * 2;
-                if (v == d.order_i) {
+                if (v == ui_data.sorted.planets_order[active_player]) {
                     ++v;
                 }
-                d.order_i = v;
-                qsort(ui_data.sorted.index, d.num, sizeof(ui_data.sorted.index[0]), sort_cb_tbl[d.order_i]);
+                ui_data.sorted.planets_order[active_player] = v;
+                qsort(ui_data.sorted.index, d.num, sizeof(ui_data.sorted.index[0]), sort_cb_tbl[ui_data.sorted.planets_order[active_player]]);
             }
         }
         ui_cursor_setup_area(1, &ui_cursor_area_tbl[flag_trans ? 9 : 0]);
