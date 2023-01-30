@@ -251,6 +251,7 @@ struct ui_data_s {
         uint16_t index[FLEET_ENROUTE_MAX + PLANETS_MAX];
         uint32_t value[FLEET_ENROUTE_MAX + PLANETS_MAX];
         int fleet_order[PLAYER_NUM];
+        int planets_order[PLAYER_NUM];
     } sorted;   /* global for qsort */
     uint8_t star_frame[PLANETS_MAX];
     ui_main_loop_action_t ui_main_loop_action;
