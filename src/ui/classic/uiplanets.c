@@ -571,6 +571,17 @@ static void ui_planets_sort(struct planets_data_s *d)
 {
     qsort(ui_data.sorted.index, d->num, sizeof(ui_data.sorted.index[0]), sort_cb_tbl[d->order_i]);
     ui_data.sorted.planets_order[d->api] = d->order_i;
+    for (int i = 0; i < d->num; ++i) {
+        int index = ui_data.sorted.index[i];
+        if (ui_data.sorted.value[index] == d->focus_i) {
+            d->pos = i - 5;
+            break;
+        }
+    }
+    if ((d->pos + PLANETS_ON_SCREEN) >= d->num) {
+        d->pos = d->num - PLANETS_ON_SCREEN;
+    }
+    SETMAX(d->pos, 0);
 }
 
 /* -------------------------------------------------------------------------- */
