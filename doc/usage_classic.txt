@@ -37,6 +37,7 @@ The following new UI features are always enabled/available:
   - on the Design screen
   - on the fleet sending screen
   - on the transport sending screen
+  - on the Tech screen
 - Clicking the portraits in Races screen brings Report page
 - In Races screen the keys 1-5 correspond to clicking the portraits
 - In Specs screen the keys 1-6 correspond to clicking the scrap button
