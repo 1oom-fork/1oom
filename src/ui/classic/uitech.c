@@ -312,18 +312,38 @@ void ui_tech(struct game_s *g, player_id_t active_player)
             } else if (oi == oi_tbl_minus[i]) {
                 int16_t v;
                 ui_sound_play_sfx_24();
-                v = t->slider[i];
-                v -= 2;
-                SETMAX(v, 0);
-                t->slider[i] = v;
+                if (kbd_is_modifier(MOO_MOD_ALT)) {
+                    v = 0;
+                    t->slider[i] = 0;
+                } else if (kbd_is_modifier(MOO_MOD_CTRL)) {
+                    v = t->slider[i];
+                    v -= 10;
+                    SETMAX(v, 0);
+                    t->slider[i] = v;
+                } else {
+                    v = t->slider[i];
+                    v -= 2;
+                    SETMAX(v, 0);
+                    t->slider[i] = v;
+                }
                 game_adjust_slider_group(t->slider, i, v, TECH_FIELD_NUM, t->slider_lock);
             } else if (oi == oi_tbl_plus[i]) {
                 int16_t v;
                 ui_sound_play_sfx_24();
-                v = t->slider[i];
-                v += 2;
-                SETMIN(v, 100);
-                t->slider[i] = v;
+                if (kbd_is_modifier(MOO_MOD_ALT)) {
+                    v = 100;
+                    t->slider[i] = 100;
+                } else if (kbd_is_modifier(MOO_MOD_CTRL)) {
+                    v = t->slider[i];
+                    v += 10;
+                    SETMIN(v, 100);
+                    t->slider[i] = v;
+                } else {
+                    v = t->slider[i];
+                    v += 2;
+                    SETMIN(v, 100);
+                    t->slider[i] = v;
+                }
                 game_adjust_slider_group(t->slider, i, v, TECH_FIELD_NUM, t->slider_lock);
             } else if (oi == oi_tbl_bonus[i]) {
                 ui_sound_play_sfx_24();
