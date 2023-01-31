@@ -8,6 +8,7 @@
 #include "boolvec.h"
 #include "comp.h"
 #include "game.h"
+#include "game_cheat.h"
 #include "game_planet.h"
 #include "hw.h"
 #include "lbxfont.h"
@@ -109,7 +110,15 @@ int ui_search(struct game_s *g, player_id_t pi)
         lbxfont_select(0, 0, 0, 0);
         if (uiobj_read_str(x + 2, y + 2, 90, buf, PLANET_NAME_LEN - 1, 0, false, ctbl)) {
             util_trim_whitespace(buf, sizeof(buf));
-            if (buf[0] != 0) {
+            if (strcasecmp(buf, "/galaxy") == 0) {
+                game_cheat_galaxy(g, pi);
+            } else if (strcasecmp(buf, "/events") == 0) {
+                game_cheat_events(g, pi);
+            } else if (strcasecmp(buf, "/p") == 0) {
+                game_cheat_traits(g, pi);
+            } else if (strcasecmp(buf, "/moola") == 0) {
+                game_cheat_moola(g, pi);
+            } else if (buf[0] != 0) {
                 pli = search_planet(g, pi, buf);
             }
         }
