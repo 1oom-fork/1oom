@@ -119,6 +119,9 @@ int hw_event_handle(void)
                         if (sym & SDLK_SCANCODE_MASK) {
                             key = key_xlat_scan[SDLK_TBLI_FROM_SCAN(sym)];
                             c = 0;
+                            if (!hw_textinput_active) {
+                                c = key_xlat_char[SDLK_TBLI_FROM_SCAN(sym)];
+                            }
                         } else {
                             key = key_xlat_key[sym];
                             c = (char)sym; /* TODO SDL 2 */
