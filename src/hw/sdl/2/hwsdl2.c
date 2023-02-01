@@ -32,6 +32,7 @@ const char *idstr_hw = "sdl2";
 
 static mookey_t key_xlat_key[0x80];
 static mookey_t key_xlat_scan[SDL_NUM_SCANCODES];
+static char key_xlat_char[SDL_NUM_SCANCODES];
 
 #define SDLK_TBLI_FROM_SCAN(i) ((i) & (~SDLK_SCANCODE_MASK))
 
@@ -39,6 +40,7 @@ static void build_key_xlat(void)
 {
     memset(key_xlat_key, 0, sizeof(key_xlat_key));
     memset(key_xlat_scan, 0, sizeof(key_xlat_scan));
+    memset(key_xlat_char, 0, sizeof(key_xlat_char));
     key_xlat_key[SDLK_BACKSPACE] = MOO_KEY_BACKSPACE;
     key_xlat_key[SDLK_TAB] = MOO_KEY_TAB;
     key_xlat_key[SDLK_RETURN] = MOO_KEY_RETURN;
@@ -175,6 +177,13 @@ static void build_key_xlat(void)
     key_xlat_scan[SDLK_TBLI_FROM_SCAN(SDLK_MENU)] = MOO_KEY_MENU;
     key_xlat_scan[SDLK_TBLI_FROM_SCAN(SDLK_POWER)] = MOO_KEY_POWER;
     key_xlat_scan[SDLK_TBLI_FROM_SCAN(SDLK_UNDO)] = MOO_KEY_UNDO;
+
+    key_xlat_char[SDLK_TBLI_FROM_SCAN(SDLK_KP_PERIOD)] = SDLK_PERIOD;
+    key_xlat_char[SDLK_TBLI_FROM_SCAN(SDLK_KP_DIVIDE)] = SDLK_SLASH;
+    key_xlat_char[SDLK_TBLI_FROM_SCAN(SDLK_KP_MULTIPLY)] = SDLK_ASTERISK;
+    key_xlat_char[SDLK_TBLI_FROM_SCAN(SDLK_KP_MINUS)] = SDLK_MINUS;
+    key_xlat_char[SDLK_TBLI_FROM_SCAN(SDLK_KP_PLUS)] = SDLK_PLUS;
+    key_xlat_char[SDLK_TBLI_FROM_SCAN(SDLK_KP_EQUALS)] = SDLK_EQUALS;
 }
 
 static inline uint32_t mod_xlat(SDL_Keymod smod)
@@ -292,6 +301,9 @@ int hw_event_handle(void)
                         if (sym & SDLK_SCANCODE_MASK) {
                             key = key_xlat_scan[SDLK_TBLI_FROM_SCAN(sym)];
                             c = 0;
+                            if (!hw_textinput_active) {
+                                c = key_xlat_char[SDLK_TBLI_FROM_SCAN(sym)];
+                            }
                         } else {
                             key = key_xlat_key[sym];
                             c = (char)sym; /* TODO SDL 2 */
