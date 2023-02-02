@@ -416,12 +416,12 @@ void ui_tech(struct game_s *g, player_id_t active_player)
                 }
             }
             oi_ok = uiobj_add_t0(277, 181, "", ui_data.gfx.screens.tech_but_ok, MOO_KEY_SPACE);
-            oi_tbl_field[0] = uiobj_add_mousearea(5, 4, 53, 15, MOO_KEY_UNKNOWN);
-            oi_tbl_field[1] = uiobj_add_mousearea(55, 4, 108, 15, MOO_KEY_UNKNOWN);
-            oi_tbl_field[2] = uiobj_add_mousearea(109, 4, 161, 16, MOO_KEY_UNKNOWN);
-            oi_tbl_field[3] = uiobj_add_mousearea(5, 19, 54, 31, MOO_KEY_UNKNOWN);
-            oi_tbl_field[4] = uiobj_add_mousearea(55, 19, 108, 31, MOO_KEY_UNKNOWN);
-            oi_tbl_field[5] = uiobj_add_mousearea(109, 19, 161, 31, MOO_KEY_UNKNOWN);
+            oi_tbl_field[0] = uiobj_add_mousearea(5, 4, 53, 15, MOO_KEY_1);
+            oi_tbl_field[1] = uiobj_add_mousearea(55, 4, 108, 15, MOO_KEY_2);
+            oi_tbl_field[2] = uiobj_add_mousearea(109, 4, 161, 16, MOO_KEY_3);
+            oi_tbl_field[3] = uiobj_add_mousearea(5, 19, 54, 31, MOO_KEY_4);
+            oi_tbl_field[4] = uiobj_add_mousearea(55, 19, 108, 31, MOO_KEY_5);
+            oi_tbl_field[5] = uiobj_add_mousearea(109, 19, 161, 31, MOO_KEY_6);
             oi_equals = uiobj_add_inputkey(MOO_KEY_EQUALS);
             oi_tab = uiobj_add_inputkey(MOO_KEY_TAB);
             if (ui_governor_enabled) {
@@ -439,8 +439,8 @@ void ui_tech(struct game_s *g, player_id_t active_player)
                     oi_tbl_bonus[i] = uiobj_add_mousearea(298, y, 309, y + 8, MOO_KEY_UNKNOWN);
                 }
                 if (!t->slider_lock[i]) {
-                    oi_tbl_minus[i] = uiobj_add_mousearea(223, y, 226, y + 8, MOO_KEY_1 + i);
-                    oi_tbl_plus[i] = uiobj_add_mousearea(279, y, 283, y + 8, MOO_KEY_a + i);
+                    oi_tbl_minus[i] = uiobj_add_mousearea(223, y, 226, y + 8, d.field == i ? MOO_KEY_MINUS : MOO_KEY_UNKNOWN);
+                    oi_tbl_plus[i] = uiobj_add_mousearea(279, y, 283, y + 8, d.field == i ? MOO_KEY_PLUS : MOO_KEY_UNKNOWN);
                     uiobj_add_slider_func(227, y, 0, 100, 50, 9, &t->slider[i], tech_slider_cb, &d, i);
                 }
             }
