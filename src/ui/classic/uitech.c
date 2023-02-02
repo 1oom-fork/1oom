@@ -408,7 +408,7 @@ void ui_tech(struct game_s *g, player_id_t active_player)
             for (int i = 0; i < TECH_FIELD_NUM; ++i) {
                 int y;
                 y = i * 21 + 22;
-                oi_tbl_lock[i] = uiobj_add_mousearea(168, y, 218, y + 8, MOO_KEY_UNKNOWN);
+                oi_tbl_lock[i] = uiobj_add_mousearea(168, y, 218, y + 8, (d.field == i) ? MOO_KEY_l : MOO_KEY_UNKNOWN);
                 if (ui_extra_enabled) {
                     oi_tbl_bonus[i] = uiobj_add_mousearea(298, y, 309, y + 8, MOO_KEY_UNKNOWN);
                 }
