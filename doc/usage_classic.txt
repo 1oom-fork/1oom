@@ -36,6 +36,7 @@ The following new UI features are always enabled/available:
   - on the transport sending screen
   - on the Tech screen
 - In Tech screen +/- adjusts the current field slider
+- In Tech screen the L key locks the current slider
 - In Races screen the keys 1-5 correspond to clicking the portraits
 - In Specs screen the keys 1-6 correspond to clicking the scrap button
 - In Tech screen the keys 1-6 correspond to clicking the tech fields
