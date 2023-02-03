@@ -8,14 +8,14 @@ static bool hw_kbd_check_hotkey(SDL1or2Key key, SDL1or2Mod smod, char c)
         } else if (key == SDLK_F10) {
             hw_mouse_toggle_grab();
             return true;
-        } else if (c == '+') {
+        } else if (c == ']') {
             if (smod & KMOD_SHIFT) {
                 hw_audio_music_volume(opt_music_volume + 4);
             } else {
                 hw_audio_sfx_volume(opt_sfx_volume + 4);
             }
             return true;
-        } else if (c == '-') {
+        } else if (c == '[') {
             if (smod & KMOD_SHIFT) {
                 hw_audio_music_volume(opt_music_volume - 4);
             } else {
