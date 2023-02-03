@@ -116,7 +116,7 @@ static void build_key_xlat(void)
     key_xlat[KEY_ASTERISK] = MOO_KEY_ASTERISK;  /* or MOO_KEY_KP_MULTIPLY? */
     key_xlat[KEY_MINUS_PAD] = MOO_KEY_KP_MINUS;
     key_xlat[KEY_PLUS_PAD] = MOO_KEY_KP_PLUS;
-    /* KEY_DEL_PAL */
+    key_xlat[KEY_DEL_PAD] = MOO_KEY_KP_PERIOD;
     key_xlat[KEY_ENTER_PAD] = MOO_KEY_KP_ENTER;
     key_xlat[KEY_PRTSCR] = MOO_KEY_PRINT;
     key_xlat[KEY_PAUSE] = MOO_KEY_PAUSE;
