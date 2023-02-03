@@ -267,13 +267,8 @@ int hw_event_handle(void)
             if (smod & KB_SHIFT_FLAG) { mod |= MOO_MOD_SHIFT; }
             if (smod & KB_ALT_FLAG) { mod |= MOO_MOD_ALT; }
             if (smod & KB_CTRL_FLAG) { mod |= MOO_MOD_CTRL; }
-            if ((k & 0xff) == 0) {
-                if (k & 0xff00) {
-                    c = (k >> 8);
-                } else {
-                    c = 0;
-                }
-            } else {
+            c = scancode_to_ascii(k >> 8);
+            if (((k >> 8) >= KEY_0_PAD) && ((k >> 8) <= KEY_9_PAD)) {
                 c = k & 0xff;
             }
             key = key_xlat[(k >> 8)];
