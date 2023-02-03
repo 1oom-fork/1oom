@@ -13,8 +13,8 @@ from v1.3. This document describes only the differences.
 New hotkeys:
 - Middle click or Ctrl-F10 to grab/ungrab input
 - Ctrl-Esc to quit (without saving)
-- Ctrl-Plus/Minus to adjust sfx volume
-- Ctrl-Shift-Plus/Minus to adjust music volume
+- Ctrl-[] to adjust sfx volume
+- Ctrl-Shift-[] to adjust music volume
 - Alt-Enter to toggle full screen mode
 
 Unlike the original, 1oom does not autosave the "continue game" (save slot 7)
