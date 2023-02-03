@@ -91,8 +91,8 @@ static void build_key_xlat(void)
     key_xlat[KEY_EQUALS] = MOO_KEY_EQUALS;
     key_xlat[KEY_BACKSPACE] = MOO_KEY_BACKSPACE;
     key_xlat[KEY_TAB] = MOO_KEY_TAB;
-    /* KEY_OPENBRACE */
-    /* KEY_CLOSEBRACE */
+    key_xlat[KEY_OPENBRACE] = MOO_KEY_LEFTBRACKET;
+    key_xlat[KEY_CLOSEBRACE] = MOO_KEY_RIGHTBRACKET;
     key_xlat[KEY_ENTER] = MOO_KEY_RETURN;
     key_xlat[KEY_COLON] = MOO_KEY_COLON;
     key_xlat[KEY_QUOTE] = MOO_KEY_QUOTE;
