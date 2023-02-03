@@ -268,6 +268,9 @@ int hw_event_handle(void)
             if (smod & KB_ALT_FLAG) { mod |= MOO_MOD_ALT; }
             if (smod & KB_CTRL_FLAG) { mod |= MOO_MOD_CTRL; }
             c = scancode_to_ascii(k >> 8);
+            if (((k >> 8) >= KEY_0_PAD) && ((k >> 8) <= KEY_9_PAD)) {
+                c = k & 0xff;
+            }
             key = key_xlat[(k >> 8)];
             kbd_add_keypress(key, mod, c);
         }
