@@ -268,11 +268,7 @@ int hw_event_handle(void)
             if (smod & KB_ALT_FLAG) { mod |= MOO_MOD_ALT; }
             if (smod & KB_CTRL_FLAG) { mod |= MOO_MOD_CTRL; }
             if ((k & 0xff) == 0) {
-                if (k & 0xff00) {
-                    c = (k >> 8);
-                } else {
-                    c = 0;
-                }
+                c = 0;
             } else {
                 c = k & 0xff;
             }
