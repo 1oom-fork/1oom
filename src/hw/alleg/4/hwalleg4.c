@@ -23,10 +23,12 @@ const char *idstr_hw = "alleg4";
 /* -------------------------------------------------------------------------- */
 
 static mookey_t key_xlat[KEY_MAX];
+static char key_char[KEY_MAX];
 
 static void build_key_xlat(void)
 {
     memset(key_xlat, 0, sizeof(key_xlat));
+    memset(key_char, 0, sizeof(char));
     key_xlat[KEY_A] = MOO_KEY_a;
     key_xlat[KEY_B] = MOO_KEY_b;
     key_xlat[KEY_C] = MOO_KEY_c;
@@ -169,6 +171,12 @@ static void build_key_xlat(void)
     key_xlat[KEY_EURO] = MOO_KEY_EURO;
     key_xlat[KEY_UNDO] = MOO_KEY_UNDO;
     */
+
+    key_char[KEY_SLASH_PAD] = MOO_KEY_SLASH;
+    key_char[KEY_ASTERISK] = MOO_KEY_ASTERISK;  /* or MOO_KEY_KP_MULTIPLY? */
+    key_char[KEY_MINUS_PAD] = MOO_KEY_MINUS;
+    key_char[KEY_PLUS_PAD] = MOO_KEY_PLUS;
+    key_char[KEY_EQUALS_PAD] = MOO_KEY_EQUALS;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -269,8 +277,17 @@ int hw_event_handle(void)
             if (smod & KB_CTRL_FLAG) { mod |= MOO_MOD_CTRL; }
             if ((k & 0xff) == 0) {
                 c = 0;
+                if (k & 0xff00) {
+                    c = key_char[k >> 8];
+                }
             } else {
-                c = k & 0xff;
+                c = 0;
+                if (k & 0xff00) {
+                    c = key_char[k >> 8];
+                }
+                if (c == 0) {
+                    c = k & 0xff;
+                }
             }
             key = key_xlat[(k >> 8)];
             kbd_add_keypress(key, mod, c);
