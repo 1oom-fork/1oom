@@ -282,8 +282,8 @@ int hw_event_handle(void)
                 }
             } else {
                 c = 0;
-                if (k & 0xff00) {
-                    c = key_char[k >> 8];
+                if ((k & 0xff00) && (smod & KB_CTRL_FLAG)) {
+                    c = scancode_to_ascii(k >> 8);
                 }
                 if (c == 0) {
                     c = k & 0xff;
