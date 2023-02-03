@@ -4,6 +4,7 @@
 #include "kbd.h"
 #include "log.h"
 #include "types.h"
+#include "hw.h"
 
 /* -------------------------------------------------------------------------- */
 
@@ -35,6 +36,22 @@ void kbd_add_keypress(mookey_t key, uint32_t mod, char c)
      || key == MOO_KEY_RSHIFT || key == MOO_KEY_LSHIFT
      || key == MOO_KEY_RCTRL  || key == MOO_KEY_LCTRL
      || key == MOO_KEY_RALT   || key == MOO_KEY_LALT) {
+        return;
+    }
+    if ((key == MOO_KEY_LEFTBRACKET) && (mod & MOO_MOD_CTRL)) {
+        if (mod & MOO_MOD_SHIFT) {
+            hw_audio_music_volume(opt_music_volume - 8);
+        } else {
+            hw_audio_sfx_volume(opt_sfx_volume - 8);
+        }
+        return;
+    }
+    if ((key == MOO_KEY_RIGHTBRACKET) && (mod & MOO_MOD_CTRL)) {
+        if (mod & MOO_MOD_SHIFT) {
+            hw_audio_music_volume(opt_music_volume + 8);
+        } else {
+            hw_audio_sfx_volume(opt_sfx_volume + 8);
+        }
         return;
     }
     if (kbd.full) {

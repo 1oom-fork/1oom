@@ -12,20 +12,6 @@ static bool hw_kbd_check_hotkey(uint32_t key, uint32_t smod)
         } else if ((key >> 8) == KEY_F5) {
             hw_video_screenshot();
             return true;
-        } else if ((key >> 8) == KEY_PLUS_PAD) {
-            if (smod & KB_SHIFT_FLAG) {
-                hw_audio_music_volume(opt_music_volume + 4);
-            } else {
-                hw_audio_sfx_volume(opt_sfx_volume + 4);
-            }
-            return true;
-        } else if ((key >> 8) == KEY_MINUS_PAD) {
-            if (smod & KB_SHIFT_FLAG) {
-                hw_audio_music_volume(opt_music_volume - 4);
-            } else {
-                hw_audio_sfx_volume(opt_sfx_volume - 4);
-            }
-            return true;
         }
     }
     return false;
