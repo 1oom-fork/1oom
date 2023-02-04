@@ -844,7 +844,7 @@ static int16_t uiobj_kbd_dir_key_dxdy(int dirx, int diry, int16_t oi2, int mx, i
 {
     int dx = UIOBJ_OFFSCREEN, dy = UIOBJ_OFFSCREEN;
     int slope = UIOBJ_OFFSCREEN;
-    int mind = UIOBJ_OFFSCREEN * 100;
+    int mind = UIOBJ_OFFSCREEN * UIOBJ_OFFSCREEN;
     int dist;
     int16_t oi = oi2;
     uiobj_t *p;
