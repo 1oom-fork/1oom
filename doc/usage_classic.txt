@@ -116,6 +116,7 @@ or pressing Alt-X in the main menu enables the following extra UI features:
 - The color of ship names on Planets screen is black
 - When using cursor keys, the mouse position is calculated taking into account
   the mouse icon offset
+- The cursor key behavior is more intuitive
 
 Pressing Alt-X in the main menu also enables the following features:
 - Population scheduled for transport no longer contributes to production
