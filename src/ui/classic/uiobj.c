@@ -949,7 +949,7 @@ static int16_t uiobj_kbd_dir_key_dxdy(int dirx, int diry, int16_t oi2, int mx, i
                 dx = (dirx < 0) ? (mx - scmidx(p)) : (scmidx(p) - mx);
                 dy = scmidy(p) - my;
                 if ((p->y0 * p->scale <= my) && (p->y1 * p->scale >= my) && ((dy * p->scale < -6) || (dy * p->scale > 6))) {
-                    dy = 6;
+                    dy = 6 * p->scale;
                 }
                 if ((dy > -6 * p->scale) && (dy < 6 * p->scale) && (dx > 0) && (dx < mind)) {
                     mind = dx;
