@@ -90,5 +90,7 @@ enables the following extra UI features:
 - Clicking on #, Name, etc on Planets screen sorts the list
 - Clicking on Station or ship names on Fleet screen sorts the list
 - The color of ship names on Planets screen is black
+- When using cursor keys, the mouse position is calculated taking into account
+  the mouse icon offset
 
 See doc/list_gamediff.txt for a list of differences in the game itself.
