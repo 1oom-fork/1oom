@@ -1,3 +1,25 @@
+1oom-fork-v1.7.5
+----------------
+
+Keyboard:
+- Changed volume hotkeys '+','-' to '[',']' to avoid conflicts
+- Improved hotkeys for Tech screen:
+	- 1-6 selects tech tab
+	- +,- adjusts related slider
+	- L locks related slider
+	- Holding Ctrl changes slider by 10
+	- Holding Alt changes slider to maximum
+- Fixed various bugs and odd behaviors related to numpad 1-9 keys
+	- The game is now expected to be playable without mouse
+
+Other:
+- Planets and fleets screens retain sort order
+- Fixed main menu background
+- Fixed stream/bomb/stasis animations for uiscale > 1
+- Renamed some main menu items
+- Added animation for current routes in Modern Controls mode
+- Fixed =,# reserve transfer behavior in case if empire reserve is 0
+
 1oom-fork-v1.7.4
 ----------------
 

@@ -13,8 +13,8 @@ from v1.3. This document describes only the differences.
 New hoykeys:
 - Middle click or Ctrl-F10 to grab/ungrab input
 - Ctrl-Esc to quit (without saving)
-- Ctrl-Plus/Minus to adjust sfx volume
-- Ctrl-Shift-Plus/Minus to adjust music volume
+- Ctrl-[/] to adjust sfx volume
+- Ctrl-Shift-[/] to adjust music volume
 - Ctrl-F5 saves a screenshot
 - Alt-Enter to toggle full screen mode
 
@@ -61,7 +61,6 @@ The following new UI features are always enabled/available:
 - Mouse wheel on planet name in the galaxy movement screen changes planet
 - Space bar works as a generic dismiss message key (Continue, ...)
 - Fleet/Specs screen uses numbers as hotkeys for scrap buttons
-- In Tech screen Tab runs through tech fields, A-F/1-6 are for field slider +/-
 - When sending a fleet Tab cycles ships and <> adjusts selected ship
 - In Races screen the keys 1-5 correspond to clicking the portraits
 - Right-clicking on the ship image or Ships button cycles the other way
@@ -100,8 +99,14 @@ The following new UI features are always enabled/available:
 - Fleet screen: Holding shift keeps selection if possible
 - Races screen: Clicking the portraits brings Report page
 - Report screen: Shows name of AI leaders
-- Tech screen: Pressing = or # adjusts only the unlocked sliders
-
+- Tech screen:
+	- Pressing = or # adjusts only the unlocked sliders
+	- Tab runs through tech fields
+	- 1-6 selects tech tab
+	- +,- adjusts related slider
+	- L locks related slider
+	- Holding Ctrl changes slider by 10
+	- Holding Alt changes slider to maximum
 - Planets screen: Nebula planets show "NEB" in their shields field
 - Planets screen: Clicking on #, Name, etc sorts the list
 - Planets screen: Max population column
