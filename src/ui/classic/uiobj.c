@@ -868,6 +868,9 @@ static int16_t uiobj_kbd_dir_key_dxdy(int dirx, int diry, int16_t oi2, int mx, i
     }
     if ((diry != 0) && (dirx == 0)) {
         for (int i = 1; i < uiobj_table_num; ++i) {
+            if (ui_extra_enabled) {
+                break;
+            }
             if (i == oi2) {
                 if (i != (uiobj_table_num - 1)) {
                     ++i;
@@ -888,7 +891,7 @@ static int16_t uiobj_kbd_dir_key_dxdy(int dirx, int diry, int16_t oi2, int mx, i
                 }
             }
         }
-        if (oi == oi2) {
+        if (oi == oi2 || ui_extra_enabled) {
             for (int i = 1; i < uiobj_table_num; ++i) {
                 if (i == oi2) {
                     if (i != (uiobj_table_num - 1)) {
@@ -901,7 +904,7 @@ static int16_t uiobj_kbd_dir_key_dxdy(int dirx, int diry, int16_t oi2, int mx, i
                 if (uiobj_kbd_dir_obj_ok(p)) {
                     dy = (diry < 0) ? (my - scmidy(p)) : (scmidy(p) - my);
                     dx = scmidx(p) - mx;
-                    if ((p->x0 * p->scale <= mx) && (p->x1 * p->scale >= mx) && ((dx < -6 * p->scale) || (dx > 6 * p->scale))) {
+                    if (!ui_extra_enabled && (p->x0 * p->scale <= mx) && (p->x1 * p->scale >= mx) && ((dx < -6 * p->scale) || (dx > 6 * p->scale))) {
                         dx = 6 * p->scale;
                     }
                     if (dx < 0) {
@@ -911,7 +914,11 @@ static int16_t uiobj_kbd_dir_key_dxdy(int dirx, int diry, int16_t oi2, int mx, i
                         dx = UIOBJ_OFFSCREEN;
                     }
                     if (dy == 0) {
-                        dy = 1;
+                        if (ui_extra_enabled) {
+                            continue;
+                        } else {
+                            dy = 1;
+                        }
                     }
                     slope = (dx * 100) / dy;
                     if ((slope >= 0) && (slope < 0x2c)) {
@@ -927,6 +934,9 @@ static int16_t uiobj_kbd_dir_key_dxdy(int dirx, int diry, int16_t oi2, int mx, i
     }
     if ((dirx != 0) && (diry == 0)) {
         for (int i = 1; i < uiobj_table_num; ++i) {
+            if (ui_extra_enabled) {
+                break;
+            }
             if (i == oi2) {
                 if (i != (uiobj_table_num - 1)) {
                     ++i;
@@ -947,7 +957,7 @@ static int16_t uiobj_kbd_dir_key_dxdy(int dirx, int diry, int16_t oi2, int mx, i
                 }
             }
         }
-        if (oi == oi2) {
+        if (oi == oi2 || ui_extra_enabled) {
             for (int i = 1; i < uiobj_table_num; ++i) {
                 if (i == oi2) {
                     if (i != (uiobj_table_num - 1)) {
@@ -960,7 +970,7 @@ static int16_t uiobj_kbd_dir_key_dxdy(int dirx, int diry, int16_t oi2, int mx, i
                 if (uiobj_kbd_dir_obj_ok(p)) {
                     dx = (dirx < 0) ? (mx - scmidx(p)) : (scmidx(p) - mx);
                     dy = scmidy(p) - my;
-                    if ((p->y0 * p->scale <= my) && (p->y1 * p->scale >= my) && ((dy < -6 * p->scale) || (dy > 6 * p->scale))) {
+                    if (!ui_extra_enabled && (p->y0 * p->scale <= my) && (p->y1 * p->scale >= my) && ((dy < -6 * p->scale) || (dy > 6 * p->scale))) {
                         dy = 6 * p->scale;
                     }
                     if (dy < 0) {
@@ -970,7 +980,11 @@ static int16_t uiobj_kbd_dir_key_dxdy(int dirx, int diry, int16_t oi2, int mx, i
                         dy = UIOBJ_OFFSCREEN;
                     }
                     if (dx == 0) {
-                        dx = 1;
+                        if (ui_extra_enabled) {
+                            continue;
+                        } else {
+                            dx = 1;
+                        }
                     }
                     slope = (dy * 100) / dx;
                     if ((slope >= 0) && (slope < 0x2c)) {
