@@ -15,14 +15,12 @@ See CHANGES-GIT for more info.
 ===============
 
 1oom requires a copy of the Master of Orion (v1.3) LBX files.
-See doc/usage_common.txt for more info.
 
 1.1 Windows, MSDOS
 ------------------
 
 Simply copy the EXE and DLLs (if any) to your MOO1 directory.
 Alternatively copy your MOO1 LBX files to your 1oom directory.
-See doc/usage_common.txt if you prefer to use a separate directory.
 
 1.2 Unix (Linux)
 ----------------
