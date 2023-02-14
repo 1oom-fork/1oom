@@ -9,7 +9,6 @@
 ===============
 
 1oom requires a copy of the Master of Orion (v1.3) LBX files.
-See doc/usage_common.txt for more info.
 
 1.1 Windows, MSDOS
 ------------------
