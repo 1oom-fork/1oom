@@ -25,5 +25,6 @@ extern bool hw_opt_int_scaling;
 extern bool hw_opt_lock_texture;
 extern bool hw_opt_autotrim;
 extern bool hw_opt_vsync;
+extern bool hw_opt_texture_filtering;
 
 #endif

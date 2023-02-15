@@ -21,7 +21,7 @@ static void setup_texture(SDL_Renderer *rdr, uint32_t pixfmt, size_t w, size_t h
         SDL_DestroyTexture(texture);
     }
 
-    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "nearest");
+    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, hw_opt_texture_filtering ? "best" : "nearest");
     texture = SDL_CreateTexture(rdr, pixfmt, SDL_TEXTUREACCESS_STREAMING, w, h);
     texture_w = w;
     texture_h = h;

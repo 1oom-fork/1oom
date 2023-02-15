@@ -22,6 +22,7 @@ bool hw_opt_int_scaling = false;
 bool hw_opt_lock_texture = false;
 bool hw_opt_autotrim = true;
 bool hw_opt_vsync = true;
+bool hw_opt_texture_filtering = false;
 
 #ifdef FRAME_TIME_DUMP
 char *hw_opt_frame_time_dump_filename = NULL;
@@ -41,6 +42,7 @@ const struct cfg_items_s hw_cfg_items_extra[] = {
     CFG_ITEM_BOOL("autotrim", &hw_opt_autotrim),
     CFG_ITEM_BOOL("locktex", &hw_opt_lock_texture),
     CFG_ITEM_BOOL("vsync", &hw_opt_vsync),
+    CFG_ITEM_BOOL("texturefiltering", &hw_opt_texture_filtering),
     CFG_ITEM_END
 };
 
