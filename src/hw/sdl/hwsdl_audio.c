@@ -308,8 +308,8 @@ void hw_audio_music_play(int mus_index)
         if (Mix_PlayingMusic()) {
             Mix_HaltMusic();
         }
-        Mix_VolumeMusic(opt_music_volume);
         Mix_PlayMusic(mustbl[mus_index].music, mustbl[mus_index].loops ? -1 : 0);
+        Mix_VolumeMusic(opt_music_volume);
         mus_playing = mus_index;
     }
 }
