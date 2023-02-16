@@ -366,8 +366,7 @@ bool hw_video_update_aspect(void)
 {
     /* called by hwsdl_opt.c 
      * if autotrim is enabled and in windowed mode then gotta resize */
-    hwsdl_video_resized(-1, -1);
-    return true;
+    return reset_video_mode();
 }
 
 bool hwsdl_video_toggle_fullscreen(void)
