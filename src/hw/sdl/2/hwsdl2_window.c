@@ -36,6 +36,9 @@ static uint32_t window_resize_time = 0;
 static SDL_Window *the_window = NULL;
 static SDL_Renderer *the_renderer = NULL;
 
+static int viewport_w = 0;
+static int viewport_h = 0;
+
 /* -------------------------------------------------------------------------- */
 
 void hw_mouse_warp(int x, int y)
@@ -139,9 +142,6 @@ static void do_the_resize(void)
             window_resize_time = SDL_GetTicks() + RESIZE_DELAY;
         }
     }
-
-    hw_opt_screen_winw = w; /* this goes to config file */
-    hw_opt_screen_winh = h;
 }
 
 void hwsdl_video_next_frame(const hwsdl_video_buffer_t *buf)
@@ -225,7 +225,7 @@ static bool create_window(int w, int h)
     uint32_t window_flags = 0;
 
     /* In windowed mode, the window can be resized while the game is running. */
-    window_flags = SDL_WINDOW_RESIZABLE;
+    window_flags = 0;
 
     /* Set the highdpi flag - this makes a big difference on Macs with
        retina displays, especially when using small window sizes. */
@@ -354,7 +354,12 @@ static bool reset_video_mode(void)
      * this means we lose the GL context and every texture with it */
     hwsdl_texture_delete(); /* recreate the texture when needed next time */
     destroy_window();
-    return set_video_mode(hw_opt_screen_winw, hw_opt_screen_winh) == 0;
+    int w = viewport_w;
+    int h = viewport_h;
+    if (hw_opt_aspect != 0) {
+        shrink_to_aspect_ratio(&w, &h, 1000000, hw_opt_aspect);
+    }
+    return set_video_mode(w, h) == 0;
 }
 
 bool hw_video_update_aspect(void)
@@ -398,6 +403,8 @@ int hwsdl_win_init(int moo_w, int moo_h)
             h = hw_opt_screen_winh;
         }
     }
+    viewport_w = w;
+    viewport_h = h;
     if (hw_opt_aspect != 0) {
         shrink_to_aspect_ratio(&w, &h, 1000000, hw_opt_aspect);
     }
