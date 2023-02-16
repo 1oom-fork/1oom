@@ -348,10 +348,7 @@ int hw_video_init(int w, int h)
 
 void hw_video_shutdown(void)
 {
-    if (video.screen) {
-        SDL_FreeSurface(video.screen);
-        video.screen = NULL;
-    }
+    video.screen = NULL;
 #ifdef HAVE_OPENGL
     if (video.hwrenderbuf) {
         SDL_FreeSurface(video.hwrenderbuf);
