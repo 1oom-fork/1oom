@@ -18,6 +18,9 @@ static struct {
 
 void kbd_add_keypress(mookey_t key, uint32_t mod, char c)
 {
+    if ((key <= MOO_KEY_UNKNOWN) || (key >= MOO_KEY_NUMLOCK)) {
+        return;
+    }
     uint32_t value = ((uint32_t)key) | mod | (((uint32_t)c) << 8);
     if (kbd.full) {
         log_warning("kbd: full while inserting 0x%x\n", value);
