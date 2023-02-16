@@ -90,7 +90,7 @@ static void build_key_xlat(void)
     key_xlat[SDLK_KP_MULTIPLY] = MOO_KEY_KP_MULTIPLY;
     key_xlat[SDLK_KP_MINUS] = MOO_KEY_KP_MINUS;
     key_xlat[SDLK_KP_PLUS] = MOO_KEY_KP_PLUS;
-    key_xlat[SDLK_KP_ENTER] = MOO_KEY_KP_ENTER;
+    key_xlat[SDLK_KP_ENTER] = MOO_KEY_RETURN;
     key_xlat[SDLK_KP_EQUALS] = MOO_KEY_KP_EQUALS;
     key_xlat[SDLK_UP] = MOO_KEY_UP;
     key_xlat[SDLK_DOWN] = MOO_KEY_DOWN;
@@ -152,14 +152,14 @@ static bool hw_kbd_check_hotkey(SDLKey key, SDLMod smod, char c)
         } else if (key == SDLK_F10) {
             hw_mouse_toggle_grab();
             return true;
-        } else if (c == '+') {
+        } else if (key == SDLK_RIGHTBRACKET) {
             if (smod & KMOD_SHIFT) {
                 hw_audio_music_volume(opt_music_volume + 4);
             } else {
                 hw_audio_sfx_volume(opt_sfx_volume + 4);
             }
             return true;
-        } else if (c == '-') {
+        } else if (key == SDLK_LEFTBRACKET) {
             if (smod & KMOD_SHIFT) {
                 hw_audio_music_volume(opt_music_volume - 4);
             } else {
