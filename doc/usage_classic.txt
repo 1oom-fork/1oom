@@ -93,5 +93,6 @@ enables the following extra UI features:
 - When using cursor keys, the mouse position is calculated taking into account
   the mouse icon offset
 - The cursor key behavior is more intuitive
+- Improved behavior of the left mouse button
 
 See doc/list_gamediff.txt for a list of differences in the game itself.
