@@ -34,6 +34,15 @@ void kbd_add_keypress(mookey_t key, uint32_t mod, char c)
     if (key == MOO_KEY_LAST) {
         return;
     }
+
+    if (key == MOO_KEY_RSHIFT || key == MOO_KEY_LSHIFT
+     || key == MOO_KEY_RCTRL  || key == MOO_KEY_LCTRL
+     || key == MOO_KEY_RALT   || key == MOO_KEY_LALT) {
+        if (kbd_is_pressed(key, 0, 0)) {
+            return;
+        }
+    }
+
     if (kbd.full) {
         log_warning("kbd: full while inserting 0x%x\n", value);
     } else {
