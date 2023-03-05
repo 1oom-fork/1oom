@@ -6,7 +6,6 @@
 #include "comp.h"
 #include "game.h"
 #include "game_misc.h"
-#include "game_save.h"
 #include "game_str.h"
 #include "kbd.h"
 #include "lbxgfx.h"
@@ -167,9 +166,7 @@ static void ui_starmap_trans_draw_cb(void *vptr)
 void ui_starmap_trans(struct game_s *g, player_id_t active_player)
 {
     bool flag_done = false;
-    int16_t oi_scroll, oi_cancel, oi_accept, oi_plus, oi_minus,
-            oi_f2, oi_f3, oi_f4, oi_f5, oi_f6, oi_f7, oi_f8, oi_f9, oi_f10
-            ;
+    int16_t oi_scroll, oi_cancel, oi_accept, oi_plus, oi_minus;
     uint16_t scrollx = 0, scrolly = 0;
     struct starmap_data_s d;
     uint8_t olddest;
@@ -200,7 +197,6 @@ void ui_starmap_trans(struct game_s *g, player_id_t active_player)
 #define UIOBJ_CLEAR_LOCAL() \
     do { \
         STARMAP_UIOBJ_CLEAR_COMMON(); \
-        STARMAP_UIOBJ_CLEAR_FX(); \
         oi_accept = UIOBJI_INVALID; \
         oi_cancel = UIOBJI_INVALID; \
         oi_plus = UIOBJI_INVALID; \
@@ -250,130 +246,6 @@ void ui_starmap_trans(struct game_s *g, player_id_t active_player)
         } else if (oi1 == d.oi_next_turn) {
             ui_data.ui_main_loop_action = UI_MAIN_LOOP_NEXT_TURN;
             flag_done = true;
-            ui_sound_play_sfx_24();
-        } else if (oi1 == oi_f2) {
-            int i;
-            i = g->planet_focus_i[active_player];
-            do {
-                if (--i < 0) { i = g->galaxy_stars - 1; }
-            } while (g->planet[i].owner != active_player);
-            g->planet_focus_i[active_player] = i;
-            ui_starmap_set_pos_focus(g, active_player);
-            ui_sound_play_sfx_24();
-        } else if (oi1 == oi_f3) {
-            int i;
-            i = g->planet_focus_i[active_player];
-            do {
-                i = (i + 1) % g->galaxy_stars;
-            } while (g->planet[i].owner != active_player);
-            g->planet_focus_i[active_player] = i;
-            ui_starmap_set_pos_focus(g, active_player);
-            ui_sound_play_sfx_24();
-        } else if ((oi1 == oi_f8) && g->eto[active_player].have_ia_scanner) {
-            bool found;
-            int i, pi;
-            i = pi = g->planet_focus_i[active_player];
-            found = false;
-            ui_sound_play_sfx_24();
-            do {
-                i = (i + 1) % g->galaxy_stars;
-                if (g->planet[i].owner == active_player) {
-                    for (int j = 0; !found && (j < g->enroute_num); ++j) {
-                        fleet_enroute_t *r = &(g->enroute[i]);
-                        if (BOOLVEC_IS1(r->visible, active_player) && (r->owner != active_player) && (r->dest == pi)) {
-                            found = true;
-                        }
-                    }
-                    for (int j = 0; !found && (j < g->transport_num); ++j) {
-                        transport_t *r = &(g->transport[i]);
-                        if (BOOLVEC_IS1(r->visible, active_player) && (r->owner != active_player) && (r->dest == pi)) {
-                            found = true;
-                        }
-                    }
-                }
-            } while (!found && (i != pi));
-            if (found) {
-                g->planet_focus_i[active_player] = i;
-                ui_starmap_set_pos_focus(g, active_player);
-            }
-        } else if ((oi1 == oi_f9) && g->eto[active_player].have_ia_scanner) {
-            bool found;
-            int i, pi;
-            i = pi = g->planet_focus_i[active_player];
-            found = false;
-            ui_sound_play_sfx_24();
-            do {
-                if (--i < 0) { i = g->galaxy_stars - 1; }
-                if (g->planet[i].owner == active_player) {
-                    for (int j = 0; !found && (j < g->enroute_num); ++j) {
-                        fleet_enroute_t *r = &(g->enroute[i]);
-                        if (BOOLVEC_IS1(r->visible, active_player) && (r->owner != active_player) && (r->dest == pi)) {
-                            found = true;
-                        }
-                    }
-                    for (int j = 0; !found && (j < g->transport_num); ++j) {
-                        transport_t *r = &(g->transport[i]);
-                        if (BOOLVEC_IS1(r->visible, active_player) && (r->owner != active_player) && (r->dest == pi)) {
-                            found = true;
-                        }
-                    }
-                }
-            } while (!found && (i != pi));
-            if (found) {
-                g->planet_focus_i[active_player] = i;
-                ui_starmap_set_pos_focus(g, active_player);
-            }
-        } else if (oi1 == oi_f10) {
-            game_save_do_save_i(GAME_SAVE_I_CONTINUE, "Continue", g);
-        } else if (oi1 == oi_f4) {
-            bool found;
-            int i, pi;
-            i = pi = g->planet_focus_i[active_player];
-            found = false;
-            do {
-                i = (i + 1) % g->galaxy_stars;
-                for (int j = 0; j < g->eto[active_player].shipdesigns_num; ++j) {
-                    if (g->eto[active_player].orbit[i].ships[j]) {
-                        found = true;
-                        break;
-                    }
-                }
-            } while ((!found) && (i != pi));
-            if (found) {
-                g->planet_focus_i[active_player] = i;
-                ui_starmap_set_pos_focus(g, active_player);
-                ui_sound_play_sfx_24();
-            }
-        } else if (oi1 == oi_f5) {
-            bool found;
-            int i, pi;
-            i = pi = g->planet_focus_i[active_player];
-            found = false;
-            do {
-                if (--i < 0) { i = g->galaxy_stars - 1; }
-                for (int j = 0; j < g->eto[active_player].shipdesigns_num; ++j) {
-                    if (g->eto[active_player].orbit[i].ships[j]) {
-                        found = true;
-                        break;
-                    }
-                }
-            } while ((!found) && (i != pi));
-            if (found) {
-                g->planet_focus_i[active_player] = i;
-                ui_starmap_set_pos_focus(g, active_player);
-                ui_sound_play_sfx_24();
-            }
-        } else if (oi1 == oi_f6) {
-            int i;
-            i = ui_starmap_newship_next(g, active_player, g->planet_focus_i[active_player]);
-            g->planet_focus_i[active_player] = i;
-            ui_starmap_set_pos_focus(g, active_player);
-            ui_sound_play_sfx_24();
-        } else if (oi1 == oi_f7) {
-            int i;
-            i = ui_starmap_newship_prev(g, active_player, g->planet_focus_i[active_player]);
-            g->planet_focus_i[active_player] = i;
-            ui_starmap_set_pos_focus(g, active_player);
             ui_sound_play_sfx_24();
         }
         if ((oi1 == oi_cancel) || (oi1 == UIOBJI_ESC)) {
@@ -440,15 +312,6 @@ void ui_starmap_trans(struct game_s *g, player_id_t active_player)
             ui_starmap_trans_draw_cb(&d);
             uiobj_table_clear();
             UIOBJ_CLEAR_LOCAL();
-            oi_f2 = uiobj_add_inputkey(MOO_KEY_F2);
-            oi_f3 = uiobj_add_inputkey(MOO_KEY_F3);
-            oi_f4 = uiobj_add_inputkey(MOO_KEY_F4);
-            oi_f5 = uiobj_add_inputkey(MOO_KEY_F5);
-            oi_f6 = uiobj_add_inputkey(MOO_KEY_F6);
-            oi_f7 = uiobj_add_inputkey(MOO_KEY_F7);
-            oi_f8 = uiobj_add_inputkey(MOO_KEY_F8);
-            oi_f9 = uiobj_add_inputkey(MOO_KEY_F9);
-            oi_f10 = uiobj_add_inputkey(MOO_KEY_F10);
             ui_starmap_fill_oi_tbl_stars(&d);
             oi_cancel = uiobj_add_t0(227, 163, "", ui_data.gfx.starmap.reloc_bu_cancel, MOO_KEY_ESCAPE, -1);
             if ((d.tr.other) && (pt->owner != PLAYER_NONE)
