@@ -154,6 +154,7 @@ static const struct numtbl_s {
     DEFNUMITEMLSTBL(st_hull_power, tbl_shiptech_hull, power, NUMTYPE_U16, 0, 0xffff),
     DEFNUMITEMLSTBL(st_hull_defense, tbl_shiptech_hull, defense, NUMTYPE_S16, -0x8000, 0x7fff),
     DEFNUMITEML(deterministic, NUMTYPE_BOOL, 0, 1),
+    DEFNUMITEML(ai_trans_range_fix, NUMTYPE_BOOL, 0, 1),
     DEFNUMITEML(bt_turn_max, NUMTYPE_S, 1, 0xffff),
     DEFNUMITEML(bt_wait_no_reload, NUMTYPE_BOOL, 0, 1),
     DEFNUMITEML(bt_precap_tohit, NUMTYPE_BOOL, 0, 1),
