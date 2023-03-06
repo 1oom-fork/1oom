@@ -32,6 +32,7 @@
 4,accident_chk_factories,0,1
 
 # See doc/list_pbxnum.txt for description of the rest of the fixes.
+4,ai_trans_range_fix,0,0
 4,bt_wait_no_reload,0,1
 4,bt_precap_tohit,0,1
 4,bt_no_tohit_acc,0,1
