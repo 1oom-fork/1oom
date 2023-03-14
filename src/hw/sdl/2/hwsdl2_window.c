@@ -224,7 +224,6 @@ static bool create_window(int w, int h)
     const int y = SDL_WINDOWPOS_UNDEFINED;
     uint32_t window_flags = 0;
 
-    /* In windowed mode, the window can be resized while the game is running. */
     window_flags = 0;
 
     /* Set the highdpi flag - this makes a big difference on Macs with
