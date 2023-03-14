@@ -1,3 +1,15 @@
+1oom-fork-v1.7.6
+----------------
+
+- Restored original behavior of spies when NoEvents rule is enabled
+  (this may corrupt some saved games related to NoEvents mode)
+- Removed undefined auto-resolve hotkey behavior when combat 
+  auto-resolve is disabled
+- CFG: Added texture filtering option
+- SDL2: Fixed some screen resolution issues (might need to wipe
+  configuration file)
+- Fixed several issues with the intro movie
+
 1oom-fork-v1.7.5
 ----------------
 
