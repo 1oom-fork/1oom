@@ -289,6 +289,7 @@ struct ui_data_s {
 
 extern struct ui_data_s ui_data;
 extern int ui_scale;
+extern int ui_scale_hint;
 extern int starmap_scale;
 extern int ui_screen_w;
 extern int ui_screen_h;
