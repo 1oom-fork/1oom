@@ -302,24 +302,7 @@ do_accept:
             }
         }
         if (!flag_done) {
-            d.bottom_highlight = -1;
-            if (oi2 == d.oi_gameopts) {
-                d.bottom_highlight = 0;
-            } else if (oi2 == d.oi_design) {
-                d.bottom_highlight = 1;
-            } else if (oi2 == d.oi_fleet) {
-                d.bottom_highlight = 2;
-            } else if (oi2 == d.oi_map) {
-                d.bottom_highlight = 3;
-            } else if (oi2 == d.oi_races) {
-                d.bottom_highlight = 4;
-            } else if (oi2 == d.oi_planets) {
-                d.bottom_highlight = 5;
-            } else if (oi2 == d.oi_tech) {
-                d.bottom_highlight = 6;
-            } else if (oi2 == d.oi_next_turn) {
-                d.bottom_highlight = 7;
-            }
+            ui_starmap_common_update_mouse_hover(&d, oi2);
             ui_starmap_enroute_draw_cb(&d);
             uiobj_table_clear();
             UIOBJ_CLEAR_LOCAL();

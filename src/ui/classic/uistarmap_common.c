@@ -982,3 +982,25 @@ void ui_starmap_common_init(struct game_s *g, struct starmap_data_s *d, player_i
     d->show_planet_focus = true;
     d->anim_delay = 0;
 }
+
+void ui_starmap_common_update_mouse_hover(struct starmap_data_s *d, int16_t oi)
+{
+    d->bottom_highlight = -1;
+    if (oi == d->oi_gameopts) {
+        d->bottom_highlight = 0;
+    } else if (oi == d->oi_design) {
+        d->bottom_highlight = 1;
+    } else if (oi == d->oi_fleet) {
+        d->bottom_highlight = 2;
+    } else if (oi == d->oi_map) {
+        d->bottom_highlight = 3;
+    } else if (oi == d->oi_races) {
+        d->bottom_highlight = 4;
+    } else if (oi == d->oi_planets) {
+        d->bottom_highlight = 5;
+    } else if (oi == d->oi_tech) {
+        d->bottom_highlight = 6;
+    } else if (oi == d->oi_next_turn) {
+        d->bottom_highlight = 7;
+    }
+}
