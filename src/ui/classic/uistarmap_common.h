@@ -184,5 +184,6 @@ extern void ui_starmap_scroll(const struct game_s *g, int scrollx, int scrolly, 
 extern void ui_starmap_compute_scale(const struct game_s *g);
 
 extern void ui_starmap_common_init(struct game_s *g, struct starmap_data_s *d, player_id_t active_player);
+extern void ui_starmap_common_update_mouse_hover(struct starmap_data_s *d, int16_t oi);
 
 #endif
