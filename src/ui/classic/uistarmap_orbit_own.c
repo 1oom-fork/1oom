@@ -154,7 +154,7 @@ static void ui_starmap_orbit_own_draw_cb(void *vptr)
 void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
 {
     bool flag_done = false;
-    int16_t oi_scroll, oi_cancel, oi_accept, oi_search,
+    int16_t oi_cancel, oi_accept, oi_search,
             oi_f2, oi_f3, oi_f4, oi_f5, oi_f6, oi_f7, oi_f8, oi_f9, oi_f10,
             oi_tbl_p[NUM_SHIPDESIGNS],
             oi_tbl_m[NUM_SHIPDESIGNS],
@@ -163,7 +163,6 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
             oi_tbl_s[NUM_SHIPDESIGNS]
             ;
     int16_t scrollship = 0;
-    int16_t scrollx = 0, scrolly = 0;
     struct starmap_data_s d;
     const fleet_orbit_t *r;
     const shipcount_t *os;
@@ -408,8 +407,6 @@ do_accept:
                 }
                 g->planet_focus_i[active_player] = d.from;
             }
-        } else if (oi1 == oi_scroll) {
-            ui_starmap_scroll(g, scrollx, scrolly);
         }
         ui_starmap_handle_oi_ctrl(&d, oi1);
         for (int i = 0; i < g->galaxy_stars; ++i) {
@@ -484,7 +481,6 @@ do_accept:
             if (ui_starmap_orbit_own_in_frange(&d) && d.ss.shiptypenon0numsel) {
                 oi_accept = uiobj_add_t0(271, 180, "", ui_data.gfx.starmap.reloc_bu_accept, MOO_KEY_SPACE);
             }
-            oi_scroll = uiobj_add_tb(6, 6, 2, 2, 108, 86, &scrollx, &scrolly);
             oi_search = uiobj_add_inputkey(MOO_KEY_SLASH);
             ui_starmap_fill_oi_ctrl(&d);
             for (int i = 0; i < d.ss.sn0.num; ++i) {
