@@ -141,8 +141,7 @@ static void ui_starmap_transport_draw_cb(void *vptr)
 void ui_starmap_transport(struct game_s *g, player_id_t active_player)
 {
     bool flag_done = false;
-    int16_t oi_scroll, oi_cancel, oi_accept, oi_search;
-    uint16_t scrollx = 0, scrolly = 0;
+    int16_t oi_cancel, oi_accept, oi_search;
     struct starmap_data_s d;
     transport_t *r = &(g->transport[ui_data.starmap.fleet_selected]);
 
@@ -265,15 +264,6 @@ do_accept:
                 }
             }
         }
-        if (oi1 == oi_scroll) {
-            int x, y;
-            x = ui_data.starmap.x + scrollx - 54;
-            y = ui_data.starmap.y + scrolly - 43;
-            SETRANGE(x, 0, g->galaxy_maxx - 108);
-            SETRANGE(y, 0, g->galaxy_maxy - 86);
-            ui_data.starmap.x2 = x;
-            ui_data.starmap.y2 = y;
-        }
         ui_starmap_handle_oi_ctrl(&d, oi1);
         for (int i = 0; i < g->galaxy_stars; ++i) {
             if (oi1 == d.oi_tbl_stars[i]) {
@@ -303,7 +293,6 @@ do_accept:
                     oi_accept = uiobj_add_t0(271, 163, "", ui_data.gfx.starmap.reloc_bu_accept, MOO_KEY_SPACE);
                 }
             }
-            oi_scroll = uiobj_add_tb(6, 6, 2, 2, 108, 86, &scrollx, &scrolly);
             oi_search = uiobj_add_inputkey(MOO_KEY_SLASH);
             ui_starmap_fill_oi_ctrl(&d);
             ui_starmap_add_oi_bottom_buttons(&d);

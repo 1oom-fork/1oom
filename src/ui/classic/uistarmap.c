@@ -207,12 +207,11 @@ static void ui_starmap_do_help(struct game_s *g, player_id_t api)
 void ui_starmap_do(struct game_s *g, player_id_t active_player)
 {
     bool flag_done = false;
-    int16_t oi_b, oi_c, oi_scroll, oi_starview1, oi_starview2, oi_shippic, oi_finished, oi_equals, oi_hash,
+    int16_t oi_b, oi_c, oi_starview1, oi_starview2, oi_shippic, oi_finished, oi_equals, oi_hash,
             oi_f2, oi_f3, oi_f4, oi_f5, oi_f6, oi_f7, oi_f8, oi_f9, oi_f10,
             oi_alt_galaxy, oi_alt_m, oi_alt_c, oi_alt_p, oi_alt_r, oi_alt_events,
             oi_wheelname, oi_wheelshippic, oi_search
             ;
-    uint16_t scrollx = 0, scrolly = 0;
     int16_t scrollmisc = 0;
     struct starmap_data_s d;
 
@@ -443,15 +442,6 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
                 }
             }
         }
-        if ((oi1 == oi_scroll) && !g->evn.build_finished_num[active_player]) {
-            int x, y;
-            x = ui_data.starmap.x + scrollx - 0x36;
-            y = ui_data.starmap.y + scrolly - 0x2b;
-            SETRANGE(x, 0, g->galaxy_maxx - 0x6c);
-            SETRANGE(y, 0, g->galaxy_maxy - 0x56);
-            ui_data.starmap.x2 = x;
-            ui_data.starmap.y2 = y;
-        }
         ui_starmap_handle_oi_ctrl(&d, oi1);
         if (oi1 == oi_f2) {
             int i;
@@ -639,7 +629,6 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
                 oi_starview1 = d.oi_tbl_stars[g->planet_focus_i[active_player]];
             }
             ui_starmap_fill_oi_slider(&d, p);
-            oi_scroll = uiobj_add_tb(6, 6, 2, 2, 108, 86, &scrollx, &scrolly);
             oi_search = uiobj_add_inputkey(MOO_KEY_SLASH);
             ui_starmap_fill_oi_ctrl(&d);
             if (1) {
