@@ -147,8 +147,7 @@ static void ui_starmap_enroute_draw_cb(void *vptr)
 void ui_starmap_enroute(struct game_s *g, player_id_t active_player)
 {
     bool flag_done = false;
-    int16_t oi_scroll, oi_cancel, oi_accept, oi_search;
-    int16_t scrollx = 0, scrolly = 0;
+    int16_t oi_cancel, oi_accept, oi_search;
     struct starmap_data_s d;
     fleet_enroute_t *r;
 
@@ -282,9 +281,6 @@ do_accept:
                 }
             }
         }
-        if (oi1 == oi_scroll) {
-            ui_starmap_scroll(g, scrollx, scrolly);
-        }
         ui_starmap_handle_oi_ctrl(&d, oi1);
         for (int i = 0; i < g->galaxy_stars; ++i) {
             if (oi1 == d.oi_tbl_stars[i]) {
@@ -315,7 +311,6 @@ do_accept:
                     oi_accept = uiobj_add_t0(271, 163, "", ui_data.gfx.starmap.reloc_bu_accept, MOO_KEY_SPACE);
                 }
             }
-            oi_scroll = uiobj_add_tb(6, 6, 2, 2, 108, 86, &scrollx, &scrolly);
             oi_search = uiobj_add_inputkey(MOO_KEY_SLASH);
             ui_starmap_fill_oi_ctrl(&d);
             ui_starmap_add_oi_bottom_buttons(&d);

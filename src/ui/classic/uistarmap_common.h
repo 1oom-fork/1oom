@@ -39,6 +39,8 @@ struct starmap_data_s {
     bool show_planet_focus;
     int bottom_highlight;
     int anim_delay;
+    int16_t scrollx;
+    int16_t scrolly;
     int16_t oi_gameopts;
     int16_t oi_design;
     int16_t oi_fleet;
@@ -48,6 +50,7 @@ struct starmap_data_s {
     int16_t oi_tech;
     int16_t oi_next_turn;
     int16_t oi_tbl_stars[PLANETS_MAX];
+    int16_t oi_scroll;
     int16_t oi_ctrl_left;
     int16_t oi_ctrl_l2;
     int16_t oi_ctrl_right;
@@ -108,7 +111,6 @@ struct starmap_data_s {
             } \
         } \
         oi_search = UIOBJI_INVALID; \
-        oi_scroll = UIOBJI_INVALID; \
         ui_starmap_clear_oi_ctrl(&d); \
     } while (0)
 
@@ -161,7 +163,6 @@ extern void ui_starmap_draw_planetinfo_2(const struct game_s *g, int p1, int p2,
 extern int ui_starmap_newship_next(const struct game_s *g, player_id_t pi, int i);
 extern int ui_starmap_newship_prev(const struct game_s *g, player_id_t pi, int i);
 extern int ui_starmap_enemy_incoming(const struct game_s *g, player_id_t pi, int i, bool next);
-extern void ui_starmap_scroll(const struct game_s *g, int scrollx, int scrolly);
 
 extern void ui_starmap_common_init(struct game_s *g, struct starmap_data_s *d, player_id_t active_player);
 extern void ui_starmap_common_update_mouse_hover(struct starmap_data_s *d, int16_t oi);

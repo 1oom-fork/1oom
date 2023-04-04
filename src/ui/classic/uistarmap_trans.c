@@ -171,8 +171,7 @@ static void ui_starmap_trans_draw_cb(void *vptr)
 void ui_starmap_trans(struct game_s *g, player_id_t active_player)
 {
     bool flag_done = false;
-    int16_t oi_scroll, oi_cancel, oi_accept, oi_plus, oi_minus, oi_search, oi_equals;
-    int16_t scrollx = 0, scrolly = 0;
+    int16_t oi_cancel, oi_accept, oi_plus, oi_minus, oi_search, oi_equals;
     struct starmap_data_s d;
     planet_t *p;
     int16_t trans_max;
@@ -297,8 +296,6 @@ do_accept:
             if (ui_extra_enabled) {
                 d.tr.other = true;
             }
-        } else if (oi1 == oi_scroll) {
-            ui_starmap_scroll(g, scrollx, scrolly);
         }
         ui_starmap_handle_oi_ctrl(&d, oi1);
         for (int i = 0; i < g->galaxy_stars; ++i) {
@@ -337,7 +334,6 @@ do_accept:
                 oi_plus = uiobj_add_inputkey(MOO_KEY_PLUS);
                 oi_equals = uiobj_add_inputkey(MOO_KEY_EQUALS);
             }
-            oi_scroll = uiobj_add_tb(6, 6, 2, 2, 108, 86, &scrollx, &scrolly);
             oi_search = uiobj_add_inputkey(MOO_KEY_SLASH);
             ui_starmap_fill_oi_ctrl(&d);
             ui_starmap_add_oi_bottom_buttons(&d);
