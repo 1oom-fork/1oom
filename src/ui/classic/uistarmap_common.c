@@ -632,7 +632,11 @@ void ui_starmap_handle_oi_ctrl(struct starmap_data_s *d, int16_t oi)
     }
     x = ui_data.starmap.x;
     y = ui_data.starmap.y;
-    if (oi == d->oi_ctrl_ul) {
+    if (oi == d->oi_scroll) {
+        x += d->scrollx - 54;
+        y += d->scrolly - 43;
+        changed = true;
+    } else if (oi == d->oi_ctrl_ul) {
         x -= XSTEP;
         y -= YSTEP;
         changed = true;
@@ -825,6 +829,7 @@ void ui_starmap_fill_oi_tbl_stars_own(struct starmap_data_s *d, player_id_t owne
 
 void ui_starmap_clear_oi_ctrl(struct starmap_data_s *d)
 {
+    d->oi_scroll = UIOBJI_INVALID;
     d->oi_ctrl_left = UIOBJI_INVALID;
     d->oi_ctrl_l2 = UIOBJI_INVALID;
     d->oi_ctrl_right = UIOBJI_INVALID;
@@ -841,6 +846,7 @@ void ui_starmap_clear_oi_ctrl(struct starmap_data_s *d)
 
 void ui_starmap_fill_oi_ctrl(struct starmap_data_s *d)
 {
+    d->oi_scroll = uiobj_add_tb(6, 6, 2, 2, 108, 86, &d->scrollx, &d->scrolly);
     d->oi_ctrl_left = uiobj_add_inputkey(MOO_KEY_LEFT | MOO_MOD_CTRL);
     if (MOO_KEY_LEFT != MOO_KEY_KP4) {
         d->oi_ctrl_l2 = uiobj_add_inputkey(MOO_KEY_KP4 | MOO_MOD_CTRL);
@@ -960,16 +966,6 @@ int ui_starmap_enemy_incoming(const struct game_s *g, player_id_t pi, int i, boo
     return i;
 }
 
-void ui_starmap_scroll(const struct game_s *g, int scrollx, int scrolly)
-{
-    int x, y;
-    x = ui_data.starmap.x + scrollx - 54;
-    y = ui_data.starmap.y + scrolly - 43;
-    ui_starmap_clamp_xy(g, &x, &y);
-    ui_data.starmap.x2 = x;
-    ui_data.starmap.y2 = y;
-}
-
 void ui_starmap_common_init(struct game_s *g, struct starmap_data_s *d, player_id_t active_player)
 {
     d->g = g;
@@ -977,6 +973,8 @@ void ui_starmap_common_init(struct game_s *g, struct starmap_data_s *d, player_i
     d->controllable = false;
     d->show_planet_focus = true;
     d->anim_delay = 0;
+    d->scrollx = 0;
+    d->scrolly = 0;
 }
 
 void ui_starmap_common_update_mouse_hover(struct starmap_data_s *d, int16_t oi)
