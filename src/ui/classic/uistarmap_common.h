@@ -31,6 +31,8 @@ struct starmap_data_s {
     bool show_planet_focus;
     int bottom_highlight;
     int anim_delay;
+    uint16_t scrollx;
+    uint16_t scrolly;
     int16_t oi_gameopts;
     int16_t oi_design;
     int16_t oi_fleet;
@@ -40,6 +42,7 @@ struct starmap_data_s {
     int16_t oi_tech;
     int16_t oi_next_turn;
     int16_t oi_tbl_stars[PLANETS_MAX];
+    int16_t oi_scroll;
     int16_t oi_ctrl_left;
     int16_t oi_ctrl_l2;
     int16_t oi_ctrl_right;
@@ -130,7 +133,6 @@ struct starmap_data_s {
                 d.oi_tbl_pl_stars[j][i] = UIOBJI_INVALID; \
             } \
         } \
-        oi_scroll = UIOBJI_INVALID; \
         ui_starmap_clear_oi_ctrl(&d); \
     } while (0)
 
