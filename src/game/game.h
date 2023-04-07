@@ -346,4 +346,6 @@ static inline bool IS_ALIVE(const struct game_s *g, player_id_t i)
 
 #define IS_AI(_g_, _i_) BOOLVEC_IS1((_g_)->is_ai, (_i_))
 
+extern bool game_opt_skip_intro_always;
+
 #endif
