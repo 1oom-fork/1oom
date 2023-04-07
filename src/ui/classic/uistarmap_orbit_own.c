@@ -450,7 +450,9 @@ do_accept:
             uiobj_table_clear();
             UIOBJ_CLEAR_LOCAL();
             STARMAP_UIOBJ_FILL_FX();
-            ui_starmap_fill_oi_tbls(&d);
+            if (!ui_extra_enabled || kbd_is_modifier(MOO_MOD_ALT)) {
+                ui_starmap_fill_oi_tbls(&d);
+            }
             ui_starmap_fill_oi_tbl_stars(&d);
             oi_cancel = uiobj_add_t0(227, 180, "", ui_data.gfx.starmap.reloc_bu_cancel, MOO_KEY_ESCAPE);
             if (1
