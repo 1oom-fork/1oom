@@ -331,4 +331,6 @@ struct game_s {
 #define IS_HUMAN(_g_, _i_) BOOLVEC_IS0((_g_)->is_ai, (_i_))
 #define IS_ALIVE(_g_, _i_) ((_g_)->evn.home[(_i_)] != PLANET_NONE)
 
+extern bool game_opt_skip_intro_always;
+
 #endif
