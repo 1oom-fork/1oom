@@ -151,6 +151,7 @@ extern void ui_starmap_fill_oi_tbls(struct starmap_data_s *d);
 extern void ui_starmap_fill_oi_tbl_stars(struct starmap_data_s *d);
 extern void ui_starmap_fill_oi_tbl_stars_own(struct starmap_data_s *d, player_id_t owner);
 extern void ui_starmap_add_oi_bottom_buttons(struct starmap_data_s *d);
+extern bool ui_starmap_handle_oi_bottom_buttons(struct starmap_data_s *d, int16_t oi);
 extern void ui_starmap_handle_oi_ctrl(struct starmap_data_s *d, int16_t oi);
 extern void ui_starmap_handle_scrollkeys(struct starmap_data_s *d, int16_t oi);
 extern void ui_starmap_draw_basic(struct starmap_data_s *d);
