@@ -26,7 +26,7 @@
 
 /* -------------------------------------------------------------------------- */
 
-static bool game_opt_skip_intro_always = false;
+bool game_opt_skip_intro_always = false;
 static bool game_opt_skip_intro = false;
 static bool game_opt_new_game = false;
 static bool game_opt_continue = false;
