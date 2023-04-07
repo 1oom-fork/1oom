@@ -753,6 +753,33 @@ void ui_starmap_add_oi_bottom_buttons(struct starmap_data_s *d)
     d->oi_next_turn = uiobj_add_mousearea(258, 181, 314, 194, MOO_KEY_n);
 }
 
+bool ui_starmap_handle_oi_bottom_buttons(struct starmap_data_s *d, int16_t oi)
+{
+    ui_main_loop_action_t action = UI_MAIN_LOOP_NUM;
+    if (oi == d->oi_gameopts) {
+        action = UI_MAIN_LOOP_GAMEOPTS;
+    } else if (oi == d->oi_design) {
+        action = UI_MAIN_LOOP_DESIGN;
+    } else if (oi == d->oi_fleet) {
+        action = UI_MAIN_LOOP_FLEET;
+    } else if (oi == d->oi_map) {
+        action = UI_MAIN_LOOP_MAP;
+    } else if (oi == d->oi_races) {
+        action = UI_MAIN_LOOP_RACES;
+    } else if (oi == d->oi_planets) {
+        action = UI_MAIN_LOOP_PLANETS;
+    } else if (oi == d->oi_tech) {
+        action = UI_MAIN_LOOP_TECH;
+    } else if (oi == d->oi_next_turn) {
+        action = UI_MAIN_LOOP_NEXT_TURN;
+    }
+    if (action != UI_MAIN_LOOP_NUM) {
+        ui_data.ui_main_loop_action = action;
+        return true;
+    }
+    return false;
+}
+
 void ui_starmap_fill_oi_tbls(struct starmap_data_s *d)
 {
     const struct game_s *g = d->g;
