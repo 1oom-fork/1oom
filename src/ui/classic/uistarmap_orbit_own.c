@@ -461,6 +461,9 @@ do_accept:
             oi_f10 = uiobj_add_inputkey(MOO_KEY_F10);
             if (!ui_extra_enabled || kbd_is_modifier(MOO_MOD_ALT)) {
                 ui_starmap_fill_oi_tbls(&d);
+                ui_cursor_setup_area(2, &ui_cursor_area_tbl[3]);
+            } else {
+                ui_cursor_setup_area(2, &ui_cursor_area_tbl[1]);
             }
             ui_starmap_fill_oi_tbl_stars(&d);
             oi_cancel = uiobj_add_t0(227, 180, "", ui_data.gfx.starmap.reloc_bu_cancel, MOO_KEY_ESCAPE);
