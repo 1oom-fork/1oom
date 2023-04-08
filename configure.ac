@@ -1,5 +1,5 @@
-AC_INIT([1oom-fork], [1.7.6])
-VERSION_1OOM=v1.7.6
+AC_INIT([1oom-fork], [1.7.6a])
+VERSION_1OOM=v1.7.6a
 
 AC_ARG_ENABLE(static, AS_HELP_STRING([--enable-static], [enable static builds]))
 AC_ARG_ENABLE(modebug, AS_HELP_STRING([--enable-modebug], [add debugging options]))
