@@ -237,7 +237,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
     bool flag_done = false;
     int16_t oi_b, oi_c, oi_starview1, oi_starview2, oi_shippic, oi_finished, oi_equals,
             oi_f2, oi_f3, oi_f4, oi_f5, oi_f6, oi_f7, oi_f8, oi_f9, oi_f10,
-            oi_alt_galaxy, oi_alt_p, oi_alt_r, oi_alt_events,
+            oi_alt_galaxy, oi_alt_p, oi_alt_events,
             oi_wheelshippic, oi_search
             ;
     int16_t scrollmisc = 0;
@@ -275,7 +275,6 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
 
     oi_alt_galaxy = uiobj_add_alt_str("galaxy");
     oi_alt_p = uiobj_add_alt_str("p");
-    oi_alt_r = uiobj_add_alt_str("r");
     oi_alt_events = uiobj_add_alt_str("events");
 
     uiobj_set_callback_and_delay(ui_starmap_draw_cb1, &d, STARMAP_DELAY);
@@ -314,14 +313,6 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
         } else if (oi1 == oi_c) {
             ui_data.ui_main_loop_action = UI_MAIN_LOOP_SPIES_CAUGHT;
             flag_done = true;
-            ui_sound_play_sfx_24();
-        } else if ((oi1 == oi_alt_r) && (p->owner == active_player)) {
-            for (int i = 0; i < g->galaxy_stars; ++i) {
-                planet_t *p2 = &(g->planet[i]);
-                if ((p2->owner == active_player) && (p2->reloc != i)) {
-                    p2->reloc = g->planet_focus_i[active_player];
-                }
-            }
             ui_sound_play_sfx_24();
         } else if ((oi1 == oi_finished) || ((oi1 == UIOBJI_ESC) && (oi_finished != UIOBJI_INVALID))) {
             if (ui_starmap_remove_build_finished(g, active_player, p)) {
