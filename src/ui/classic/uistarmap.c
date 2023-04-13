@@ -209,7 +209,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
     bool flag_done = false;
     int16_t oi_b, oi_c, oi_starview1, oi_starview2, oi_shippic, oi_finished, oi_equals, oi_hash,
             oi_f2, oi_f3, oi_f4, oi_f5, oi_f6, oi_f7, oi_f8, oi_f9, oi_f10,
-            oi_alt_galaxy, oi_alt_c, oi_alt_p, oi_alt_r, oi_alt_events,
+            oi_alt_galaxy, oi_alt_p, oi_alt_r, oi_alt_events,
             oi_wheelshippic, oi_search
             ;
     int16_t scrollmisc = 0;
@@ -247,7 +247,6 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
     UIOBJ_CLEAR_LOCAL();
 
     oi_alt_galaxy = uiobj_add_alt_str("galaxy");
-    oi_alt_c = uiobj_add_alt_str("c");
     oi_alt_p = uiobj_add_alt_str("p");
     oi_alt_r = uiobj_add_alt_str("r");
     oi_alt_events = uiobj_add_alt_str("events");
@@ -429,9 +428,6 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
                 i = (i + 1) % g->galaxy_stars;
             } while (g->planet[i].owner != active_player);
             g->planet_focus_i[active_player] = i;
-            ui_starmap_set_pos_focus(g, active_player);
-            ui_sound_play_sfx_24();
-        } else if (oi1 == oi_alt_c) {
             ui_starmap_set_pos_focus(g, active_player);
             ui_sound_play_sfx_24();
         } else if (oi1 == oi_equals || oi1 == oi_hash) {
