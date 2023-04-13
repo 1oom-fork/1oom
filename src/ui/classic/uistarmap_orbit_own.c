@@ -211,6 +211,8 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
         if (ui_starmap_handle_oi_bottom_buttons(&d, oi1)) {
             flag_done = true;
             ui_sound_play_sfx_24();
+        } else if (ui_starmap_handle_oi_misc(&d, oi1)) {
+            ui_sound_play_sfx_24();
         } else if (oi1 == oi_search) {
             ui_sound_play_sfx_24();
             ui_search_set_pos(g, active_player);
@@ -461,6 +463,7 @@ do_accept:
                 oi_tbl_s[i] = uiobj_add_mousewheel(227, 22 + i * 26, 319, 46 + i * 26, &scrollship);
             }
             ui_starmap_add_oi_bottom_buttons(&d);
+            ui_starmap_add_oi_misc(&d);
             d.oi_tech = UIOBJI_INVALID;
             d.oi_next_turn = UIOBJI_INVALID;
             ui_draw_finish();
