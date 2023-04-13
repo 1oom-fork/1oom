@@ -795,16 +795,29 @@ void ui_starmap_add_oi_misc(struct starmap_data_s *d)
 {
     d->oi_alt_c = uiobj_add_inputkey(MOO_KEY_c | MOO_MOD_ALT);
     d->oi_alt_m = uiobj_add_inputkey(MOO_KEY_m | MOO_MOD_ALT);
+    if (d->show_planet_focus) {
+        d->oi_alt_r = uiobj_add_inputkey(MOO_KEY_r | MOO_MOD_ALT);
+    }
 }
 
 bool ui_starmap_handle_oi_misc(struct starmap_data_s *d, int16_t oi)
 {
     bool match = false;
+    struct game_s *g = d->g;
+    uint8_t planet_focus_i = g->planet_focus_i[d->api];
     if (oi == d->oi_alt_m) {
         ui_data.starmap.flag_show_grid = !ui_data.starmap.flag_show_grid;
         match = true;
     } else if (oi == d->oi_alt_c) {
         d->set_pos_focus(d->g, d->api);
+        match = true;
+    } else if ((oi == d->oi_alt_r) && (g->planet[planet_focus_i].owner == d->api)) {
+        for (int i = 0; i < g->galaxy_stars; ++i) {
+            planet_t *p = &(g->planet[i]);
+            if ((p->owner == d->api) && (p->reloc != i)) {
+                p->reloc = planet_focus_i;
+            }
+        }
         match = true;
     }
     return match;
