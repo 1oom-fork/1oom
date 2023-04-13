@@ -624,6 +624,17 @@ void ui_starmap_set_pos_focus(const struct game_s *g, player_id_t active_player)
     ui_starmap_set_pos(g, p->x, p->y);
 }
 
+static void ui_starmap_select_target(struct starmap_data_s *d, uint8_t planet_i)
+{
+    if (!d->controllable || (planet_i == PLANET_NONE)) {
+        return;
+    }
+    d->g->planet_focus_i[d->api] = planet_i;
+    if (ui_data.ui_main_loop_action == UI_MAIN_LOOP_TRANS) {
+        d->tr.other = true;
+    }
+}
+
 void ui_starmap_handle_oi_ctrl(struct starmap_data_s *d, int16_t oi)
 {
 #define XSTEP   0x1b
