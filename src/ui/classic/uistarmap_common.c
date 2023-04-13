@@ -797,6 +797,7 @@ bool ui_starmap_handle_oi_bottom_buttons(struct starmap_data_s *d, int16_t oi)
 
 void ui_starmap_add_oi_misc(struct starmap_data_s *d)
 {
+    d->oi_alt_c = uiobj_add_inputkey(MOO_KEY_c | MOO_MOD_ALT);
     d->oi_alt_m = uiobj_add_inputkey(MOO_KEY_m | MOO_MOD_ALT);
 }
 
@@ -805,6 +806,9 @@ bool ui_starmap_handle_oi_misc(struct starmap_data_s *d, int16_t oi)
     bool match = false;
     if (oi == d->oi_alt_m) {
         ui_data.starmap.flag_show_grid = !ui_data.starmap.flag_show_grid;
+        match = true;
+    } else if (oi == d->oi_alt_c) {
+        d->set_pos_focus(d->g, d->api);
         match = true;
     }
     return match;
