@@ -129,6 +129,12 @@ static void ui_starmap_transport_draw_cb(void *vptr)
 
 /* -------------------------------------------------------------------------- */
 
+static void ui_starmap_transport_set_pos_focus(const struct game_s *g, player_id_t player_i)
+{
+    const transport_t *r = &g->transport[ui_data.starmap.fleet_selected];
+    ui_starmap_set_pos(g, r->x, r->y);
+}
+
 void ui_starmap_transport(struct game_s *g, player_id_t active_player)
 {
     bool flag_done = false;
@@ -138,6 +144,7 @@ void ui_starmap_transport(struct game_s *g, player_id_t active_player)
 
     ui_starmap_common_init(g, &d, active_player);
     d.show_planet_focus = ((r->owner == d.api) || (g->eto[d.api].have_ia_scanner));
+    d.set_pos_focus = ui_starmap_transport_set_pos_focus;
     ui_data.starmap.frame_ship = 0;
     ui_data.starmap.frame_scanner = 0;
     ui_data.starmap.scanner_delay = 0;
