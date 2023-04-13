@@ -46,7 +46,7 @@ The following new UI features are always enabled/available:
 - Clicking cycles selection of overlapping fleets
 - The keys UHJK scroll the galaxy movement screen map
 - The following hotkeys are available for the star map whenever it makes
-  sense: Alt+m
+  sense: Alt+m, Alt+c
 - Planets can be searched for by pressing the / key
 - The = key can be substituted by the # key
 - The + key can be substituted by the = key (if not conflicting)
