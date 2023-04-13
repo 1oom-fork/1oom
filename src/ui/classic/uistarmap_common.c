@@ -795,6 +795,16 @@ bool ui_starmap_handle_oi_bottom_buttons(struct starmap_data_s *d, int16_t oi)
     return false;
 }
 
+void ui_starmap_add_oi_misc(struct starmap_data_s *d)
+{
+}
+
+bool ui_starmap_handle_oi_misc(struct starmap_data_s *d, int16_t oi)
+{
+    bool match = false;
+    return match;
+}
+
 void ui_starmap_fill_oi_tbls(struct starmap_data_s *d)
 {
     const struct game_s *g = d->g;
