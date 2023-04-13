@@ -45,6 +45,8 @@ The following new UI features are always enabled/available:
 - Bases can be scrapped by clicking on the Bases text
 - Clicking cycles selection of overlapping fleets
 - The keys UHJK scroll the galaxy movement screen map
+- The following hotkeys are available for the star map whenever it makes
+  sense: Alt+m
 - Planets can be searched for by pressing the / key
 - The = key can be substituted by the # key
 - The + key can be substituted by the = key (if not conflicting)
