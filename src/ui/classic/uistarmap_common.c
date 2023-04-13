@@ -1075,6 +1075,7 @@ void ui_starmap_compute_scale(const struct game_s *g)
 
 void ui_starmap_common_init(struct game_s *g, struct starmap_data_s *d, player_id_t active_player)
 {
+    d->set_pos_focus = ui_starmap_set_pos_focus;
     d->g = g;
     d->api = active_player;
     d->controllable = false;
