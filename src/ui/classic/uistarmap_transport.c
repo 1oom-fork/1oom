@@ -186,6 +186,8 @@ void ui_starmap_transport(struct game_s *g, player_id_t active_player)
         if (ui_starmap_handle_oi_bottom_buttons(&d, oi1)) {
             flag_done = true;
             ui_sound_play_sfx_24();
+        } else if (ui_starmap_handle_oi_misc(&d, oi1)) {
+            ui_sound_play_sfx_24();
         } else if ((oi1 == oi_cancel) || (oi1 == UIOBJI_ESC)) {
             ui_sound_play_sfx_06();
             flag_done = true;
@@ -263,6 +265,7 @@ do_accept:
             }
             ui_starmap_fill_oi_ctrl(&d);
             ui_starmap_add_oi_bottom_buttons(&d);
+            ui_starmap_add_oi_misc(&d);
             ui_draw_finish();
             ui_delay_ticks_or_click(STARMAP_DELAY);
         }
