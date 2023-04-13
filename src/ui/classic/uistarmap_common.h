@@ -27,6 +27,7 @@ struct shipnon0_s {
 };
 
 struct starmap_data_s {
+    void (*set_pos_focus) (const struct game_s *, player_id_t);
     struct game_s *g; /* FIXME non-const only for ui_starmap_draw_cb1 */
     player_id_t api;
     bool controllable;
