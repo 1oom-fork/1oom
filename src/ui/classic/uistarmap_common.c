@@ -34,6 +34,19 @@ const uint8_t colortbl_line_red[5] = { 0x44, 0x43, 0x42, 0x41, 0x40 };
 const uint8_t colortbl_line_reloc[5] = { 0x14, 0x15, 0x16, 0x17, 0x18 };
 const uint8_t colortbl_line_green[5] = { 0xb0, 0xb1, 0xb2, 0xb3, 0xb4 };
 
+static uint8_t ui_starmap_cursor_on_star(const struct starmap_data_s *d, int16_t oi)
+{
+    if (oi == 0) {
+        return PLANET_NONE;
+    }
+    for (int i = 0; i < d->g->galaxy_stars; ++i) {
+        if (oi == d->oi_tbl_stars[i]) {
+            return i;
+        }
+    }
+    return PLANET_NONE;
+}
+
 /* -------------------------------------------------------------------------- */
 
 static void ui_starmap_draw_planetinfo_do(const struct game_s *g, player_id_t api, uint8_t planet_i, bool explored, bool show_plus)
