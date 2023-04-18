@@ -61,7 +61,7 @@ static void xtramenu_ship_everywhere(struct game_s *g, player_id_t pi)
 static void xtramenu_reloc_reloc(struct game_s *g, player_id_t pi)
 {
     uint8_t target = g->planet_focus_i[pi];
-    if (g->planet[target].owner != pi) {
+    if (!game_reloc_dest_ok(g, target, pi)) {
         return;
     }
     for (int i = 0; i < g->galaxy_stars; ++i) {
@@ -75,7 +75,7 @@ static void xtramenu_reloc_reloc(struct game_s *g, player_id_t pi)
 static void xtramenu_reloc_all(struct game_s *g, player_id_t pi)
 {
     uint8_t target = g->planet_focus_i[pi];
-    if (g->planet[target].owner != pi) {
+    if (!game_reloc_dest_ok(g, target, pi)) {
         return;
     }
     for (int i = 0; i < g->galaxy_stars; ++i) {
