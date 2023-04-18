@@ -157,7 +157,8 @@ do_accept:
             UIOBJ_CLEAR_LOCAL();
             ui_starmap_fill_oi_tbl_stars_own(&d, active_player);
             oi_cancel = uiobj_add_t0(227, 163, "", ui_data.gfx.starmap.reloc_bu_cancel, MOO_KEY_ESCAPE);
-            if (g->planet[d.rl.from].buildship != BUILDSHIP_STARGATE) {
+            if (g->planet[d.rl.from].buildship != BUILDSHIP_STARGATE
+             && game_reloc_dest_ok(g, g->planet_focus_i[active_player], active_player)) {
                 oi_accept = uiobj_add_t0(271, 163, "", ui_data.gfx.starmap.reloc_bu_accept, MOO_KEY_SPACE);
             }
             oi_search = uiobj_add_inputkey(MOO_KEY_SLASH);
