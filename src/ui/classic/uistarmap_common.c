@@ -829,7 +829,7 @@ bool ui_starmap_handle_oi_misc(struct starmap_data_s *d, int16_t oi)
     } else if (oi == d->oi_alt_c) {
         d->set_pos_focus(d->g, d->api);
         match = true;
-    } else if ((oi == d->oi_alt_r) && (g->planet[planet_focus_i].owner == d->api)) {
+    } else if ((oi == d->oi_alt_r) && game_reloc_dest_ok(g, planet_focus_i, d->api)) {
         for (int i = 0; i < g->galaxy_stars; ++i) {
             planet_t *p = &(g->planet[i]);
             if ((p->owner == d->api) && (p->reloc != i)) {
@@ -837,7 +837,7 @@ bool ui_starmap_handle_oi_misc(struct starmap_data_s *d, int16_t oi)
             }
         }
         match = true;
-    } else if ((oi == d->oi_ctrl_r) && (g->planet[planet_focus_i].owner == d->api)) {
+    } else if ((oi == d->oi_ctrl_r) && game_reloc_dest_ok(g, planet_focus_i, d->api)) {
         int count = 0;
         for (int i = 0; i < g->galaxy_stars; ++i) {
             planet_t *p = &(g->planet[i]);
