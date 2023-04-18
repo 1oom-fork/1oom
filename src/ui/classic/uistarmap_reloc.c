@@ -76,7 +76,7 @@ void ui_starmap_reloc(struct game_s *g, player_id_t active_player)
         d.rl.from = pi;
         oldreloc = g->planet[pi].reloc;
         g->planet_focus_i[active_player] = oldreloc;
-        if (g->planet[oldreloc].owner != active_player) {
+        if (!game_reloc_dest_ok(g, oldreloc, active_player)) {
             g->planet_focus_i[active_player] = pi;
         }
     }
