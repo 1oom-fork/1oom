@@ -76,7 +76,7 @@ void ui_starmap_reloc(struct game_s *g, player_id_t active_player)
         d.from = pi;
         oldreloc = g->planet[pi].reloc;
         g->planet_focus_i[active_player] = oldreloc;
-        if (g->planet[oldreloc].owner != active_player) {
+        if (!game_reloc_dest_ok(g, oldreloc, active_player)) {
             g->planet_focus_i[active_player] = pi;
         }
     }
@@ -110,7 +110,7 @@ void ui_starmap_reloc(struct game_s *g, player_id_t active_player)
             int i;
             i = ui_search(g, active_player);
             if (i >= 0) {
-                if (g->planet[i].owner == active_player) {
+                if (game_reloc_dest_ok(g, i, active_player)) {
                     ui_sound_play_sfx_24();
                     g->planet_focus_i[active_player] = i;
                     ui_starmap_set_pos_focus(g, active_player);
