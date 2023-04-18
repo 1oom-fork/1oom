@@ -394,7 +394,7 @@ int ui_cmd_planet_reloc(struct game_s *g, player_id_t api, struct input_token_s 
         pti = pfi;
     } else {
         pti = ui_planet_from_param(g, api, param);
-        if ((pti == PLANET_NONE) || (g->planet[pti].owner != api)) {
+        if ((pti == PLANET_NONE) || !game_reloc_dest_ok(g, pti, api)) {
             return -1;
         }
     }
