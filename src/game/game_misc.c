@@ -816,6 +816,11 @@ bool game_transport_dest_ok(const struct game_s *g, const planet_t *p, player_id
     }
 }
 
+bool game_reloc_dest_ok(const struct game_s *g, uint8_t planet_i, player_id_t pi)
+{
+    return (g->planet[planet_i].owner == pi);
+}
+
 void game_rng_step(struct game_s *g)
 {
     /* TODO disable for multiplayer */
