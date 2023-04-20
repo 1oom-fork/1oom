@@ -195,8 +195,45 @@ void hw_audio_shutdown(void)
     hw_opt_sdlmixer_sf = NULL;
 }
 
+static int hw_audio_check_sdlmixer_sf_path(const char *path)
+{
+    char buf[64];
+    const char *begin = path;
+    const char *end = path;
+    do {
+        end = strchr(begin, ';');
+        {
+            FILE *fd;
+            int n = end - begin;
+            if (end == NULL || n >= 62) {
+                n = strlen(begin);
+                if (n >= 62) {
+                    return -1;
+                }
+            }
+            strncpy(&buf[0], begin, n);
+            buf[n] = '\0';
+            fd = fopen(buf, "rb");
+            if (!fd) {
+                return -1;
+            } else {
+                fclose(fd);
+            }
+        }
+        if (end == NULL) {
+            break;
+        }
+        ++end;
+        begin = end;
+    } while (1);
+    return 0;
+}
+
 int hw_audio_set_sdlmixer_sf(const char *path)
 {
+    if (hw_audio_check_sdlmixer_sf_path(path) < 0) {
+        log_warning("SDLA: invalid soundfont path\n");
+    }
     log_message("SDLA: setting soundfont to '%s'\n", path);
     if (Mix_SetSoundFonts(path) < 0) {
         log_error("SDLA: failed to set soundfonts to '%s'\n", path);
