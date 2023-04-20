@@ -10,6 +10,7 @@ struct game_s;
 struct empiretechorbit_s;
 
 extern bool game_planet_leaving_trans_fix;
+extern bool game_extended_reloc_range;
 
 extern void game_update_have_reserve_fuel(struct game_s *g);
 extern void game_update_maint_costs(struct game_s *g);
@@ -17,6 +18,7 @@ extern void game_update_production(struct game_s *g);
 extern void game_update_total_research(struct game_s *g);
 extern void game_update_eco_on_waste(struct game_s *g, int player_i, bool force_adjust);
 extern void game_update_within_range(struct game_s *g);
+extern void game_update_reloc_dest(struct game_s *g);
 extern void game_update_empire_contact(struct game_s *g);
 extern void game_update_visibility(struct game_s *g);
 extern void game_adjust_slider_group(int16_t *slidertbl, int slideri, int16_t value, int num, const uint16_t *locktbl);
