@@ -1741,6 +1741,9 @@ struct game_end_s game_turn_process(struct game_s *g)
     game_turn_finished_slider(g);
     game_turn_claim(g);
     game_update_within_range(g);
+    if (game_num_extended_reloc_range) {
+        game_update_reloc_dest(g);
+    }
     game_update_visibility(g);
     if (g->gaux->local_players == 1) {
         game_turn_update_final_war(g);  /* MOO1 does this here, after update_tech_util etc */

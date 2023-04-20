@@ -428,6 +428,16 @@ void game_update_within_range(struct game_s *g)
     }
 }
 
+void game_update_reloc_dest(struct game_s *g)
+{
+    for (int i = 0; i < g->galaxy_stars; ++i) {
+        struct planet_s *pf = &(g->planet[i]);
+        if (!game_reloc_dest_ok(g, pf->reloc, pf->owner)) {
+            pf->reloc = i;
+        }
+    }
+}
+
 void game_update_empire_contact(struct game_s *g)
 {
     uint8_t tbl_pnum[PLAYER_NUM];
@@ -777,7 +787,7 @@ bool game_transport_dest_ok(const struct game_s *g, const planet_t *p, player_id
 
 bool game_reloc_dest_ok(const struct game_s *g, uint8_t planet_i, player_id_t pi)
 {
-    return (g->planet[planet_i].owner == pi);
+    return game_num_extended_reloc_range ? (g->planet[planet_i].within_frange[pi] == 1) : (g->planet[planet_i].owner == pi);
 }
 
 void game_rng_step(struct game_s *g)

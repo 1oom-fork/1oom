@@ -128,6 +128,10 @@ hidden_child_labor_fix : 0..1, 0
     and pop growth. TECH spending is not affected and uses pre-growth values.
     A value of 1 means the same production for all sliders.
 
+extended_reloc_range : 0..1, 0
+  - Allow new fleets to relocate to any planet within range.
+    MOO1 allows you to assign only controlled planets as reloc points.
+
 doom_stack_fix : 0..1, 1
   - Fix negative/32000 ship doom stack bug.
     In MOO1 overflows in AI-AI battles can result in 32000 ship doom stacks.

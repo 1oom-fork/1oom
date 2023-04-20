@@ -6,6 +6,7 @@
 #include "comp.h"
 #include "game.h"
 #include "game_misc.h"
+#include "game_num.h"
 #include "game_str.h"
 #include "kbd.h"
 #include "lbxgfx.h"
@@ -156,7 +157,11 @@ do_accept:
             uiobj_table_clear();
             UIOBJ_CLEAR_LOCAL();
             /* uiobj_set_limits(STARMAP_LIMITS); */
-            ui_starmap_fill_oi_tbl_stars_own(&d, active_player);
+            if (game_num_extended_reloc_range) {
+                ui_starmap_fill_oi_tbl_stars(&d);
+            } else {
+                ui_starmap_fill_oi_tbl_stars_own(&d, active_player);
+            }
             oi_cancel = uiobj_add_t0(227, 163, "", ui_data.gfx.starmap.reloc_bu_cancel, MOO_KEY_ESCAPE);
             if (g->planet[d.from].buildship != BUILDSHIP_STARGATE
              && game_reloc_dest_ok(g, g->planet_focus_i[active_player], active_player)) {
