@@ -262,6 +262,9 @@ void game_planet_destroy(struct game_s *g, uint8_t planet_i, player_id_t attacke
     BOOLVEC_SET0(p->extras, PLANET_EXTRAS_GOVERNOR);
     BOOLVEC_SET0(p->extras, PLANET_EXTRAS_GOV_SPEND_REST_SHIP);
     BOOLVEC_SET0(p->extras, PLANET_EXTRAS_GOV_SPEND_REST_IND);
+    if (game_extended_reloc_range) {
+        return;
+    }
     for (int i = 0; i < g->galaxy_stars; ++i) {
         p = &(g->planet[i]);
         if (p->reloc == planet_i) {
