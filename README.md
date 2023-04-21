@@ -54,7 +54,7 @@ See doc/usage_common.txt.
 3 Development
 =============
 
-See INSTALL and HACKING for more information.
+See COMPILING and HACKING for more information.
 
 
 4 Executables
