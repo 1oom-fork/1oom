@@ -39,43 +39,33 @@ Parameters for configure:
     SDL2MIXER_LIBS
 
 
-2. Quick guide
-===============
+2. Preparing build tools
+=========================
 
-You'll need make, a C99 compiler and SDL2 development libraries.
+You'll need autotools, make and a C99 compiler.
+You will most likely also want to have SDL2 development libraries.
+OpenGL libraries are highly recommended.
+
+2.1. Compiling on Linux
+===============================
+
     aptitude install libsdl2-dev libsdl2-mixer-dev
 
 For better audio quality, also get libsamplerate.
     aptitude install libsamplerate-dev
+    
+For custom sound fonts support:
+    aptitude install libfluidsynth-dev
+	
+You are now ready to configure and build 1oom as described in Section 3.
 
-OpenGL libraries are highly recommended.
+2.2. Compiling on Windows
+==========================
 
-If you checked this out with git, do this first:
-    autoreconf -fi
+To compile 1oom, you need a GNU build environment.
 
-Make a build directory:
-    mkdir build-native
-    cd build-native
-
-Then the usual:
-    ../configure && make -j 3
-
-!!! You need the data files from the original Master of Orion to run 1oom. !!!
-
-Actual install step is not needed:
-    src/1oom_classic_sdl1 -data /path/to/moo
-    src/1oom_classic_sdl2 -data /path/to/moo
-
-The install step can still be done:
-    make install
-
-
-3. Compiling on Windows
-========================
-
-To compile 1oom, you need a GNU build environment. This guide uses MinGW to
-compile the SDL2 version of 1oom. There are other options you may use, like
-Cygwin, MinGW-w64 or MSYS2, but in that case, you're on your own.
+2.2.1. Compiling with MinGW
+----------------------------
 
 Download and install mingw-get-setup.exe from: https://osdn.net/projects/mingw/releases/
 
@@ -100,10 +90,33 @@ Then, go to the directory where you extracted SDL2 and enter:
 
 Do the same for SDL2 Mixer.
 
-You are now ready to configure and build 1oom as described in Section 2.
+You are now ready to configure and build 1oom as described in Section 3.
 
 To run 1oom, place the *32-bit* versions of SDL2.dll and SDL2_mixer.dll in the
 same directory as the binary.
+
+
+3. Compiling 1oom
+==================
+
+The following needs to be run from the 1oom folder.
+
+If you checked this out with git, do this first:
+    autoreconf -fi
+
+Make a build directory:
+    mkdir build-native
+    cd build-native
+
+Then the usual:
+    ../configure
+    make -j 3
+
+!!! You need the data files from the original Master of Orion to run 1oom. !!!
+
+Actual install step is not needed:
+    src/1oom_classic_sdl1 -data /path/to/moo
+    src/1oom_classic_sdl2 -data /path/to/moo
 
 
 4. Cross-compiling
