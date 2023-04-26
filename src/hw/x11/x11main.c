@@ -27,6 +27,7 @@ static Display *dpy = NULL;            /* X server connection */
 static GC gc;
 static Visual *visual;
 static Window mainwin;
+static uint64_t bufsize;
 static int sizex, sizey;               /* Size of window */
 static XImage *shared_image = NULL;
 static XShmSegmentInfo shminfo;
@@ -37,9 +38,9 @@ static bool hw_key_press_repeat_active = true;
 #define MOO_WIDTH 320
 #define MOO_HEIGHT 200
 /* Buffers 0-3 are for drawing; 4 is a copy of last frame, 5 updated pixels */
-static uint8_t moobuf[6][MOO_HEIGHT][MOO_WIDTH] __attribute__((aligned(16)));
+static uint8_t moobuf[6][MOO_HEIGHT * 10 * MOO_WIDTH * 10] __attribute__((aligned(16)));
 static uint32_t palette_scaled[256] = { 0 };    /* 8-bit ARGB */
-static int bufi = 0, scale = 4;                 /* TODO: set by cmd line arg */
+static int bufi = 0;
 static int minpal = 767, maxpal = 0;            /* Palette change boundaries */
 static uint32_t *screenbuf = NULL;              /* Pointer to graphics memory*/
 static long *icondata = NULL;                   /* Icon, if set */
@@ -104,10 +105,9 @@ static void hide_cursor(void) {	/* Hide the X11 mouse cursor when in 1oom win */
 
 /* Invalidate all pixels of certain colours */
 static void invalidate_palrange(uint8_t min, uint8_t max) {
-    for (int y = 0; y < MOO_HEIGHT; y++) {
-        for (int x = 0; x < MOO_WIDTH; x++) {
-            if (moobuf[4][y][x] >= min && moobuf[4][y][x] <= max)
-                moobuf[5][y][x] = 2;
+    for (uint64_t offset = 0; offset < bufsize; ++offset) {
+        if (moobuf[4][offset] >= min && moobuf[4][offset] <= max) {
+            moobuf[5][offset] = 2;
         }
     }
 }
@@ -124,36 +124,24 @@ static void convert_palette(const unsigned char *const palette) {
 
 /* Main paint method, where the graphics actually happen */
 static void hw_video_paint(int toshow) {
-    int xcur, ycur;
-
     if (maxpal >= minpal) invalidate_palrange(minpal/3, maxpal/3);
     convert_palette(ui_palette);
     minpal = 768; maxpal = 0;
 
     /* Buf 5 tracks which pixels need update, buf 4 is a copy of last frame */
     if (toshow != 4) { /* Optimization: the loops do nothing when visual==4*/
-        for (int y=0; y<MOO_HEIGHT; y++) {
-            for (int x=0; x<MOO_WIDTH; x++) {
-                /* Set buf[5] nonzero when buf[4] != buf[toshow] */
-                moobuf[5][y][x] |= moobuf[4][y][x] ^ moobuf[toshow][y][x];
-            }
+        for (uint64_t offset = 0; offset < bufsize; ++offset) {
+            /* Set buf[5] nonzero when buf[4] != buf[toshow] */
+            moobuf[5][offset] |= moobuf[4][offset] ^ moobuf[toshow][offset];
         }
     }
     /* Could be taken out when scale is hard coded */
-    ycur = sizey/scale < MOO_HEIGHT ? sizey/scale : MOO_HEIGHT;
-    xcur = sizex/scale < MOO_WIDTH ? sizex/scale : MOO_WIDTH;
-    for (int y=0; y<ycur; y++) {
-        for (int x=0; x<xcur; x++) {
-            if (moobuf[5][y][x]) {
-                unsigned char c = moobuf[toshow][y][x];
-                for (int j=0; j<scale; j++) {
-                    for (int i=0; i<scale; i++) {
-                        screenbuf[(scale*y + j)*sizex + scale*x + i] = palette_scaled[c];
-                    }
-                }
-                moobuf[5][y][x] = 0;
-                moobuf[4][y][x] = c;
-            }
+    for (uint64_t offset = 0; offset < bufsize; ++offset) {
+        if (moobuf[5][offset]) {
+            unsigned char c = moobuf[toshow][offset];
+            screenbuf[offset] = palette_scaled[c];
+            moobuf[5][offset] = 0;
+            moobuf[4][offset] = c;
         }
     }
     XShmPutImage(dpy, mainwin, gc, shared_image, 0, 0, 0, 0, sizex, sizey, false);
@@ -180,12 +168,12 @@ void hw_video_redraw_front(void) { hw_video_paint(bufi ^ 1); }
 
 uint8_t *hw_video_draw_buf(void) {
     hw_video_paint(bufi);
-    return &moobuf[bufi ^= 1][0][0];
+    return &moobuf[bufi ^= 1][0];
 }
 
 /* Functions for copying buffers back and forth */
 void copybuf(int dst, int src) {
-    memcpy(&moobuf[dst][0][0], &moobuf[src][0][0], sizeof(moobuf[0]));
+    memcpy(&moobuf[dst][0], &moobuf[src][0], sizeof(moobuf[0]));
 }
 
 void hw_video_copy_buf(void)             { copybuf(bufi, bufi ^ 1); }
@@ -195,11 +183,11 @@ void hw_video_copy_back_to_page3(void)   { copybuf(3, bufi); }
 void hw_video_copy_back_from_page3(void) { copybuf(bufi, 3); }
 
 void hw_video_copy_buf_out(uint8_t *buf) {
-    memcpy(buf, &moobuf[bufi][0][0], sizeof(moobuf[0]));
+    memcpy(buf, &moobuf[bufi][0], sizeof(moobuf[0]));
 }
 
-uint8_t *hw_video_get_buf(void) { return &moobuf[bufi][0][0]; }
-uint8_t *hw_video_get_buf_front(void) { return &moobuf[bufi^1][0][0]; }
+uint8_t *hw_video_get_buf(void) { return &moobuf[bufi][0]; }
+uint8_t *hw_video_get_buf_front(void) { return &moobuf[bufi^1][0]; }
 
 /* ABI for setting an icon */
 int hw_icon_set(const uint8_t *data, const uint8_t *pal, int w, int h) {
@@ -258,7 +246,7 @@ int hw_event_handle(void) {
     int button, modifiers;
     static unsigned char buttonstate = 0;
     char ascii[4], c;
-    int updminx = MOO_WIDTH, updmaxx = 0, updminy = MOO_HEIGHT, updmaxy = 0;
+    int updminx = sizex, updmaxx = 0, updminy = sizey, updmaxy = 0;
 
     while (XPending(dpy) > 0) {
         XNextEvent(dpy, &e);
@@ -292,7 +280,7 @@ int hw_event_handle(void) {
                 kbd_set_pressed(c, modifiers, false);
             break;
         case MotionNotify:
-            mouse_set_xy_from_hw(e.xmotion.x / scale, e.xmotion.y / scale);
+            mouse_set_xy_from_hw(e.xmotion.x, e.xmotion.y);
             break;
         case ButtonRelease:
             button = e.xbutton.button;
@@ -318,14 +306,14 @@ int hw_event_handle(void) {
 			}
             break;
         case Expose:
-            if (updminx > e.xexpose.x/scale) updminx = e.xexpose.x/scale;
-            if (updminy > e.xexpose.y/scale) updminy = e.xexpose.y/scale;
-            if (updmaxx < (e.xexpose.x + e.xexpose.width + scale-1)/scale) updmaxx = (e.xexpose.x + e.xexpose.width + scale-1)/scale;
-            if (updmaxy < (e.xexpose.y + e.xexpose.height + scale-1)/scale) updmaxy = (e.xexpose.y + e.xexpose.height + scale-1)/scale;
+            if (updminx > e.xexpose.x) updminx = e.xexpose.x;
+            if (updminy > e.xexpose.y) updminy = e.xexpose.y;
+            if (updmaxx < (e.xexpose.x + e.xexpose.width - 1)) updmaxx = (e.xexpose.x + e.xexpose.width - 1);
+            if (updmaxy < (e.xexpose.y + e.xexpose.height -1)) updmaxy = (e.xexpose.y + e.xexpose.height - 1);
             if (e.xexpose.count == 0) { /* No more expose events queued, invalidate rectangle */
                 for (int y = updminy; y < updmaxy; y++) {
                     for (int x = updminx; x < updmaxx; x++) {
-                        moobuf[5][y][x] = 1;
+                        moobuf[5][y * sizex + x] = 1;
                     }
                 }
                 hw_video_paint(4); /* Paint exposed regions with last frame */
@@ -340,6 +328,7 @@ int hw_event_handle(void) {
 int create_window(int width, int height) {
     XSetWindowAttributes attribs = { 0 };
     XSizeHints sizehint;
+    bufsize = width * height;
     sizex = width;
     sizey = height;
 
@@ -369,7 +358,7 @@ int create_window(int width, int height) {
 }
 
 int hw_video_init(int w, int h) {
-    create_window(scale*MOO_WIDTH, scale*MOO_HEIGHT);
+    create_window(w, h);
     return 0;
 }
 
