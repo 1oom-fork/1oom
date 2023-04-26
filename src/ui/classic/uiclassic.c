@@ -495,7 +495,7 @@ int ui_late_init(void)
         ui_scale_hint = 1;
     }
     ui_scale = ui_scale_hint;
-    starmap_scale = 1;
+    starmap_scale = ui_scale_hint;
     ui_screen_w = UI_VGA_W * ui_scale;
     ui_screen_h = UI_VGA_H * ui_scale;
     ui_cursor_init(ui_scale);
