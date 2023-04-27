@@ -69,6 +69,7 @@ enables the following extra UI features:
 - Alt+f shows friendly fleet routes
 - The question mark cursor is disabled on the galaxy movement screen
 - Sending fewer than all ships does not deselect the orbit fleet
+- Buttons and slider are always visible when sending transport
 - Clicking a selected destination star again works as Accept for fleet send etc
 - The position of the build finished message is slightly improved.
 - Clicking on the picture of the planet in the upper right corner works for all
