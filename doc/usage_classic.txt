@@ -43,6 +43,7 @@ enables the following extra UI features:
 - Fleet deployment shows the amount of available ships
 - Alt+f shows friendly fleet routes
 - Sending fewer than all ships does not deselect the orbit fleet
+- Buttons and slider are always visible when sending transport
 - The + sign is placed in the population text if it is possible to do
   atmospheric terraforming or soil enrichment
 - Eco slider shows fractional population growth if growth is less than 10
