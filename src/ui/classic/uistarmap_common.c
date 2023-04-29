@@ -741,6 +741,16 @@ void ui_starmap_handle_oi_ctrl(struct starmap_data_s *d, int16_t oi)
         x += XSTEP;
         y += YSTEP;
         changed = true;
+    } else if (oi == d->oi_pgdown) {
+        --d->scrollz;
+        SETMAX(d->scrollz, 1);
+        starmap_scale = d->scrollz;
+        ui_starmap_set_pos_focus(g, g->active_player);
+    } else if (oi == d->oi_pgup) {
+        ++d->scrollz;
+        SETMIN(d->scrollz, ui_scale);
+        starmap_scale = d->scrollz;
+        ui_starmap_set_pos_focus(g, g->active_player);
     }
     if (changed) {
         ui_starmap_clamp_xy(g, &x, &y);
@@ -1029,6 +1039,8 @@ void ui_starmap_clear_oi_ctrl(struct starmap_data_s *d)
     d->oi_ctrl_down = UIOBJI_INVALID;
     d->oi_ctrl_d2 = UIOBJI_INVALID;
     d->oi_ctrl_dr = UIOBJI_INVALID;
+    d->oi_pgup = UIOBJI_INVALID;
+    d->oi_pgdown = UIOBJI_INVALID;
     UIOBJI_SET_TBL_INVALID(d->oi_tag_set);
     UIOBJI_SET_TBL_INVALID(d->oi_tag_get);
 }
@@ -1056,6 +1068,8 @@ void ui_starmap_fill_oi_ctrl(struct starmap_data_s *d)
         d->oi_ctrl_d2 = uiobj_add_inputkey(MOO_KEY_KP2 | MOO_MOD_CTRL);
     }
     d->oi_ctrl_dr = uiobj_add_inputkey(MOO_KEY_KP3 | MOO_MOD_CTRL);
+    d->oi_pgup = uiobj_add_inputkey(MOO_KEY_PAGEUP);
+    d->oi_pgdown = uiobj_add_inputkey(MOO_KEY_PAGEDOWN);
     if (ui_data.ui_main_loop_action == UI_MAIN_LOOP_PLANET_SHIPS) {
         return;
     }

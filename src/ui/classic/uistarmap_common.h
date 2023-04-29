@@ -69,6 +69,8 @@ struct starmap_data_s {
     int16_t oi_ctrl_down;
     int16_t oi_ctrl_d2;
     int16_t oi_ctrl_dr;
+    int16_t oi_pgup;
+    int16_t oi_pgdown;
     int16_t oi_tag_set[PLANET_TAG_NUM];
     int16_t oi_tag_get[PLANET_TAG_NUM];
     int16_t oi_tbl_enroute[FLEET_ENROUTE_MAX];
