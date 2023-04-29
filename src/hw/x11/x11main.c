@@ -407,8 +407,8 @@ int hw_event_handle(void) {
             modifiers = 0;
             ks = XkbKeycodeToKeysym(dpy, e.xkey.keycode, 0, 0);
             if ((e.type == KeyPress) && ((e.xkey.state & ControlMask) || (ks == XK_Control_L) || (ks == XK_Control_R))) modifiers = MOO_MOD_CTRL;
-            if (e.xkey.state & ShiftMask) modifiers |= MOO_MOD_SHIFT;
-            if (e.xkey.state & Mod1Mask) modifiers |= MOO_MOD_ALT;
+            if ((e.type == KeyPress) && ((e.xkey.state & Mod1Mask) || (ks == XK_Alt_L) || (ks == XK_Alt_R))) modifiers = MOO_MOD_ALT;
+            if ((e.type == KeyPress) && ((e.xkey.state & ShiftMask) || (ks == XK_Shift_L) || (ks == XK_Shift_R))) modifiers = MOO_MOD_SHIFT;
             XLookupString(&e.xkey, ascii, 4, NULL, NULL);
             c = ascii[0];
             if (c >= 'A' && c <= 'Z') c += 'a' - 'A';
