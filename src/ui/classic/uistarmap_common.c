@@ -1045,7 +1045,9 @@ void ui_starmap_fill_oi_ctrl(struct starmap_data_s *d)
         return;
     }
     for (int i = 0; i < PLANET_TAG_NUM; ++i) {
-        d->oi_tag_set[i] = uiobj_add_inputkey((MOO_KEY_1 + i) | MOO_MOD_CTRL);
+        if (d->show_planet_focus) {
+            d->oi_tag_set[i] = uiobj_add_inputkey((MOO_KEY_1 + i) | MOO_MOD_CTRL);
+        }
         d->oi_tag_get[i] = uiobj_add_inputkey((MOO_KEY_1 + i));
     }
 }
