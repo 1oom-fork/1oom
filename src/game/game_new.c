@@ -596,7 +596,9 @@ static void game_generate_home_etc(struct game_s *g)
     uint16_t tblhome[PLAYER_NUM];
     uint16_t homei, loops;
     bool flag_all_ok;
-start_of_func:
+    do {
+        game_generate_galaxy(g);
+        game_generate_planet_names(g);
     flag_all_ok = false;
     loops = 0;
     while ((!flag_all_ok) && (loops < 200)) {
@@ -702,11 +704,7 @@ start_of_func:
         }
     }
 #endif
-    if (!flag_all_ok) {
-        game_generate_galaxy(g);
-        game_generate_planet_names(g);
-        goto start_of_func;
-    }
+    } while (!flag_all_ok);
     game_generate_race_banner(g);   /* must be run once and before the home planet name copy below */
     for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         planet_t *p;
@@ -1024,8 +1022,6 @@ int game_new(struct game_s *g, struct game_aux_s *gaux, struct game_new_options_
         }
         log_message("Game: new game -new %u:0x%x:%u:0x%x:%u -nga %u\n", vo, vr, vb, g->galaxy_seed, va, g->ai_id);
     }
-    game_generate_galaxy(g);
-    game_generate_planet_names(g);
     game_generate_home_etc(g);
     game_generate_relation_etc(g);
     game_generate_research(g, researchflag);
