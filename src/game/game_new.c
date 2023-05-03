@@ -652,14 +652,10 @@ static void game_generate_race_banner(struct game_s *g)
     }
 }
 
-static void game_generate_home_etc(struct game_s *g)
+static bool game_generate_home_do(struct game_s *g, uint16_t tblhome[])
 {
-    uint16_t tblhome[PLAYER_NUM];
-    uint16_t homei, loops;
+    uint16_t loops;
     bool flag_all_ok;
-    do {
-        game_generate_galaxy(g);
-        game_generate_planet_names(g);
     flag_all_ok = false;
     loops = 0;
     game_generate_race_banner(g);
@@ -766,6 +762,18 @@ static void game_generate_home_etc(struct game_s *g)
         }
     }
 #endif
+    return flag_all_ok;
+}
+
+static void game_generate_home_etc(struct game_s *g)
+{
+    uint16_t tblhome[PLAYER_NUM];
+    uint16_t homei;
+    bool flag_all_ok;
+    do {
+        game_generate_galaxy(g);
+        game_generate_planet_names(g);
+        flag_all_ok = game_generate_home_do(g, tblhome);
     } while (!flag_all_ok);
     for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         planet_t *p;
