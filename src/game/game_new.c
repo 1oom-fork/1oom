@@ -707,7 +707,7 @@ static bool game_generate_home_do(struct game_s *g, uint16_t tblhome[])
     return flag_all_ok;
 }
 
-static void game_generate_home_etc(struct game_s *g)
+static void game_generate_home_etc(struct game_s *g, struct game_new_options_s *opts)
 {
     uint16_t tblhome[PLAYER_NUM];
     uint16_t homei;
@@ -1034,7 +1034,7 @@ int game_new(struct game_s *g, struct game_aux_s *gaux, struct game_new_options_
         }
         log_message("Game: new game -new %u:0x%x:%u:0x%x:%u -nga %u\n", vo, vr, vb, g->galaxy_seed, va, g->ai_id);
     }
-    game_generate_home_etc(g);
+    game_generate_home_etc(g, opt);
     game_generate_relation_etc(g);
     game_generate_research(g, researchflag);
     game_generate_misc(g);
