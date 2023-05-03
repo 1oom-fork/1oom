@@ -4,6 +4,7 @@
 #include "game.h"
 
 struct game_new_options_s {
+    bool improved_galaxy_generator;
     uint32_t galaxy_seed;
     galaxy_size_t galaxy_size;
     difficulty_t difficulty;
@@ -20,7 +21,7 @@ struct game_new_options_s {
 
 #define GAME_NEW_OPTS_DEFAULT \
     { \
-        0, GALAXY_SIZE_SMALL, DIFFICULTY_SIMPLE, 0, 2, \
+        0, 0, GALAXY_SIZE_SMALL, DIFFICULTY_SIMPLE, 0, 2, \
         { \
             { "", "", RACE_HUMAN, BANNER_BLUE, false }, \
             { "", "", RACE_RANDOM, BANNER_RANDOM, true }, \
