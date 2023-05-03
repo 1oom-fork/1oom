@@ -652,6 +652,81 @@ static void game_generate_race_banner(struct game_s *g)
     }
 }
 
+static bool game_generate_home_improved_do_i(struct game_s *g, struct game_new_options_s *opts, uint8_t tblhome[], player_id_t i)
+{   //NOTE: Bottleneck for SMALL galaxy and 6 PLAYERS
+    static const int mindist = 80;
+    uint8_t ok_home_i[PLANETS_MAX];
+    uint16_t ok_home_count = 0;
+    int safe_mindist = (g->galaxy_size > GALAXY_SIZE_SMALL || g->players < 6) ? mindist : mindist - 10;
+    for (uint8_t pi = 0; pi < g->galaxy_stars; ++pi) {
+        int x = g->planet[pi].x;
+        int y = g->planet[pi].y;
+        {
+            bool next = false;
+            for (int j = 0; j < i; ++j) {
+                planet_t *p;
+                p = &g->planet[tblhome[j]];
+                if (tblhome[j] == pi) {
+                    next = true;
+                    break;
+                }
+                if (util_math_dist_fast(x, y, p->x, p->y) < safe_mindist) {
+                    next = true;
+                    break;
+                }
+            }
+            if (next) continue;
+        }
+        if (i < 5 || g->galaxy_size > GALAXY_SIZE_SMALL) {
+            bool next = true;
+            for (int j = 0; j < g->galaxy_stars; ++j) {
+                planet_t *p;
+                p = &g->planet[j];
+                if (1
+                    && (p->type >= PLANET_TYPE_MINIMAL)
+                    && (j != g->evn.planet_orion_i)
+                    && (j != pi)
+                    ) {
+                    if (util_math_dist_fast(x, y, p->x, p->y) <= 29) {
+                        next = false;
+                        break;
+                    }
+                }
+            }
+            if (next) continue;
+        }
+        if (pi == g->evn.planet_orion_i) {
+            continue;
+        }
+        ok_home_i[ok_home_count] = pi;
+        ++ok_home_count;
+    }
+    while (ok_home_count > 0) {
+        int k = rnd_0_nm1(ok_home_count, &g->seed);
+        tblhome[i] = ok_home_i[k];
+        --ok_home_count;
+        ok_home_i[k] = ok_home_i[ok_home_count];
+        if ((i + 1) >= g->players) {
+            return true;
+        }
+        if ((i < (PLAYER_NUM - 1)) && game_generate_home_improved_do_i(g, opts, tblhome, i + 1)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+static bool game_generate_home_improved_do(struct game_s *g, struct game_new_options_s *opts, uint16_t tblhome[])
+{
+    uint8_t homes[PLAYER_NUM] = { PLANET_NONE , PLANET_NONE , PLANET_NONE , PLANET_NONE , PLANET_NONE , PLANET_NONE };
+    game_generate_race_banner(g);
+    bool result = game_generate_home_improved_do_i(g, opts, homes, PLAYER_0);
+    for (int i = 0; i < PLAYER_NUM; ++i) {
+        tblhome[i] = homes[i];
+    }
+    return result;
+}
+
 static bool game_generate_home_do(struct game_s *g, uint16_t tblhome[])
 {
     uint16_t loops;
@@ -773,7 +848,11 @@ static void game_generate_home_etc(struct game_s *g, struct game_new_options_s *
     do {
         game_generate_galaxy(g);
         game_generate_planet_names(g);
-        flag_all_ok = game_generate_home_do(g, tblhome);
+        if (opts->improved_galaxy_generator) {
+            flag_all_ok = game_generate_home_improved_do(g, opts, tblhome);
+        } else {
+            flag_all_ok = game_generate_home_do(g, tblhome);
+        }
     } while (!flag_all_ok);
     for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         planet_t *p;
