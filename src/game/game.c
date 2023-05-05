@@ -414,6 +414,46 @@ const struct cmdline_options_s main_cmdline_options[] = {
 
 /* -------------------------------------------------------------------------- */
 
+static bool game_cfg_check_difficulty_value(void *val)
+{
+    int v = (int)(intptr_t)val;
+    if (v >= DIFFICULTY_NUM) {
+        log_error("invalid difficulty num %i\n", v);
+        return false;
+    }
+    return true;
+}
+
+static bool game_cfg_check_galaxy_size_value(void *val)
+{
+    int v = (int)(intptr_t)val;
+    if (v > GALAXY_SIZE_HUGE) {
+        log_error("invalid galaxy size num %i\n", v);
+        return false;
+    }
+    return true;
+}
+
+static bool game_cfg_check_players_value(void *val)
+{
+    int v = (int)(intptr_t)val;
+    if ((v < 2) || (v > PLAYER_NUM)) {
+        log_error("invalid players num %i\n", v);
+        return false;
+    }
+    return true;
+}
+
+static bool game_cfg_check_custom_game_ai_id(void *val)
+{
+    int v = (int)(intptr_t)val;
+    if (v >= GAME_AI_NUM || v < 0) {
+        log_error("invalid ai id %i\n", v);
+        return false;
+    }
+    return true;
+}
+
 static bool game_cfg_check_new_game_opts(void *val)
 {
     int v2, v = (int)(intptr_t)val;
@@ -446,6 +486,10 @@ const struct cfg_items_s game_cfg_items[] = {
     CFG_ITEM_COMMENT("PLAYERS*100+GALAXYSIZE*10+DIFFICULTY"),
     CFG_ITEM_COMMENT(" 2..6, 0..3 = small..huge, 0..4 = simple..impossible"),
     CFG_ITEM_INT("new_game_opts", &game_opt_new_value, game_cfg_check_new_game_opts),
+    CFG_ITEM_INT("custom_game_ai_id", &game_opt_custom.ai_id, game_cfg_check_custom_game_ai_id),
+    CFG_ITEM_INT("custom_game_difficulty", &game_opt_custom.difficulty, game_cfg_check_difficulty_value),
+    CFG_ITEM_INT("custom_game_galaxy_size", &game_opt_custom.galaxy_size, game_cfg_check_galaxy_size_value),
+    CFG_ITEM_INT("custom_game_players", &game_opt_custom.players, game_cfg_check_players_value),
     CFG_ITEM_END
 };
 
