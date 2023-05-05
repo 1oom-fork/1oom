@@ -311,8 +311,6 @@ static bool ui_new_game_extra(struct game_new_options_s *newopts, struct new_gam
     d->str_title = 0;
     d->frame = 0;
 
-    newopts->pdata[PLAYER_0].race = RACE_HUMAN;
-    newopts->pdata[PLAYER_0].banner = BANNER_BLUE;
     d->have_human = true;
     game_new_generate_emperor_name(newopts->pdata[PLAYER_0].race, newopts->pdata[PLAYER_0].playername, EMPEROR_NAME_LEN);
     game_new_generate_home_name(newopts->pdata[PLAYER_0].race, newopts->pdata[PLAYER_0].homename, PLANET_NAME_LEN);
