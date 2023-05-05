@@ -331,7 +331,7 @@ static bool ui_new_game(struct game_new_options_s *newopts)
 
 /* -------------------------------------------------------------------------- */
 
-main_menu_action_t ui_main_menu(struct game_new_options_s *newopts, int *load_game_i_ptr)
+main_menu_action_t ui_main_menu(struct game_new_options_s *newopts, struct game_new_options_s *customopts, int *load_game_i_ptr)
 {
     struct input_list_s main_menu_in[] = {
         { MAIN_MENU_ACT_CONTINUE_GAME, "C", NULL, game_str_mm_continue },
@@ -339,6 +339,7 @@ main_menu_action_t ui_main_menu(struct game_new_options_s *newopts, int *load_ga
         { MAIN_MENU_ACT_NEW_GAME, "N", NULL, game_str_mm_new },
         { MAIN_MENU_ACT_QUIT_GAME, "Q", NULL, game_str_mm_quit },
         { MAIN_MENU_ACT_TUTOR, NULL, "tutor", NULL },
+        { MAIN_MENU_ACT_CUSTOM_GAME, "U", NULL, NULL },
         { 0, NULL, NULL, NULL },
     };
 
@@ -349,6 +350,9 @@ main_menu_action_t ui_main_menu(struct game_new_options_s *newopts, int *load_ga
         switch (ret) {
             case MAIN_MENU_ACT_NEW_GAME:
                 flag_done = ui_new_game(newopts);
+                break;
+            case MAIN_MENU_ACT_CUSTOM_GAME:
+                flag_done = ui_new_game(customopts);
                 break;
             case MAIN_MENU_ACT_LOAD_GAME:
                 {
