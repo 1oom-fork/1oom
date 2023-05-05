@@ -39,6 +39,7 @@ static bool game_opt_next_turn = false;
 
 static struct game_end_s game_opt_end = { GAME_END_NONE, 0, 0, 0, 0 };
 static struct game_new_options_s game_opt_new = GAME_NEW_OPTS_DEFAULT;
+static struct game_new_options_s game_opt_custom = GAME_NEW_OPTS_DEFAULT;
 
 static int game_opt_new_value = 200;
 
@@ -571,13 +572,19 @@ int main_do(void)
             }
         } else {
             game_set_opts_from_value(&game_new_opts, game_opt_new_value);
-            main_menu_action = ui_main_menu(&game_new_opts, &load_game_i);
+            main_menu_action = ui_main_menu(&game_new_opts, &game_opt_custom, &load_game_i);
         }
         switch (main_menu_action) {
             case MAIN_MENU_ACT_NEW_GAME:
                 main_menu_new_game:
                 game_new(&game, &game_aux, &game_new_opts);
                 game_opt_new_value = game_get_opts_value(&game);
+                if (game_opt_init_save_enabled) {
+                    game_save_do_save_i(GAME_SAVE_I_INIT, "Init", &game);
+                }
+                break;
+            case MAIN_MENU_ACT_CUSTOM_GAME:
+                game_new(&game, &game_aux, &game_opt_custom);
                 if (game_opt_init_save_enabled) {
                     game_save_do_save_i(GAME_SAVE_I_INIT, "Init", &game);
                 }
