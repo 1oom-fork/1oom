@@ -319,8 +319,16 @@ static bool ui_new_game_extra(struct game_new_options_s *newopts, struct new_gam
             break;
         }
     }
-    game_new_generate_emperor_name(newopts->pdata[PLAYER_0].race, newopts->pdata[PLAYER_0].playername, EMPEROR_NAME_LEN);
-    game_new_generate_home_name(newopts->pdata[PLAYER_0].race, newopts->pdata[PLAYER_0].homename, PLANET_NAME_LEN);
+    for (int i = 0; i < newopts->players; ++i) {
+        if (newopts->pdata[i].race != RACE_RANDOM) {
+            if (!strlen(newopts->pdata[i].playername)) {
+                game_new_generate_emperor_name(newopts->pdata[i].race, newopts->pdata[i].playername, EMPEROR_NAME_LEN);
+            }
+            if (!strlen(newopts->pdata[i].homename)) {
+                game_new_generate_home_name(newopts->pdata[i].race, newopts->pdata[i].homename, PLANET_NAME_LEN);
+            }
+        }
+    }
     uiobj_table_clear();
     ui_palette_fadeout_19_19_1();
     d->fadein = true;
