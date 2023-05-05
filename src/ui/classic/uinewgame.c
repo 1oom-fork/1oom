@@ -460,7 +460,7 @@ static bool ui_new_game_extra(struct game_new_options_s *newopts, struct new_gam
 
 /* -------------------------------------------------------------------------- */
 
-bool ui_new_game(struct game_new_options_s *newopts)
+bool ui_new_game(struct game_new_options_s *newopts, bool flag_custom)
 {
     struct new_game_data_s d;
     bool flag_done = false, flag_fadein = false, flag_ok = false;
@@ -550,7 +550,7 @@ bool ui_new_game(struct game_new_options_s *newopts)
     uiobj_unset_callback();
 
     if (flag_ok) {
-        if (ui_extra_enabled) {
+        if (flag_custom) {
             flag_ok = ui_new_game_extra(newopts, &d);
         } else {
             flag_ok = ui_new_game_racebannernames(newopts, &d);
