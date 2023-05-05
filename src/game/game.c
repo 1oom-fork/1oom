@@ -42,6 +42,9 @@ static struct game_new_options_s game_opt_new = GAME_NEW_OPTS_DEFAULT;
 static struct game_new_options_s game_opt_custom = GAME_NEW_OPTS_DEFAULT;
 
 static int game_opt_new_value = 200;
+static int game_opt_custom_race_value = 0xaaaaa0;
+static int game_opt_custom_banner_value = 666660;
+static int game_opt_custom_isai_value = 111110;
 
 static struct game_s game;
 static struct game_aux_s game_aux;
@@ -88,6 +91,37 @@ static void game_set_opts_from_value(struct game_new_options_s *go, int v)
 static int game_get_opts_value(const struct game_s *g)
 {
     return g->difficulty + g->galaxy_size * 10 + g->players * 100;
+}
+
+static void game_set_custom_opts_from_cfg(struct game_new_options_s *go)
+{
+    uint32_t races = game_opt_custom_race_value;
+    uint32_t banners = game_opt_custom_banner_value;
+    uint32_t is_ai = game_opt_custom_isai_value;
+
+    for (int i = 0; i < PLAYER_NUM; ++i) {
+        go->pdata[i].race = races % 0x10;
+        races /= 0x10;
+        go->pdata[i].banner = banners % 10;
+        banners /= 10;
+        go->pdata[i].is_ai = is_ai % 10;
+        is_ai /= 10;
+    }
+}
+
+static void game_save_custom_opts_to_cfg(struct game_new_options_s *go)
+{
+    game_opt_custom_race_value = 0;
+    game_opt_custom_banner_value = 0;
+    game_opt_custom_isai_value = 0;
+    for (int i = PLAYER_NUM - 1; i >= 0; --i) {
+        game_opt_custom_race_value *= 0x10;
+        game_opt_custom_race_value += go->pdata[i].race;
+        game_opt_custom_banner_value *= 10;
+        game_opt_custom_banner_value += go->pdata[i].banner;
+        game_opt_custom_isai_value *= 10;
+        game_opt_custom_isai_value += go->pdata[i].is_ai;
+    }
 }
 
 /* -------------------------------------------------------------------------- */
@@ -472,6 +506,48 @@ static bool game_cfg_check_new_game_opts(void *val)
     return true;
 }
 
+static bool game_cfg_check_race_value(void *val)
+{
+    int v2, v = (int)(intptr_t)val;
+    for (int i = 0; i < PLAYER_NUM; ++i) {
+        v2 = v % 0x10;
+        v = v / 0x10;
+        if (v2 > RACE_RANDOM) {
+            log_error("invalid race num %i\n", v2);
+            return false;
+        }
+    }
+    return true;
+}
+
+static bool game_cfg_check_banner_value(void *val)
+{
+    int v2, v = (int)(intptr_t)val;
+    for (int i = 0; i < PLAYER_NUM; ++i) {
+        v2 = v % 10;
+        v = v / 10;
+        if (v2 > BANNER_RANDOM) {
+            log_error("invalid banner num %i\n", v2);
+            return false;
+        }
+    }
+    return true;
+}
+
+static bool game_cfg_check_isai_value(void *val)
+{
+    int v2, v = (int)(intptr_t)val;
+    for (int i = 0; i < PLAYER_NUM; ++i) {
+        v2 = v % 10;
+        v = v / 10;
+        if (v2 > 1) {
+            log_error("invalid isai num %i\n", v2);
+            return false;
+        }
+    }
+    return true;
+}
+
 const struct cfg_items_s game_cfg_items[] = {
     CFG_ITEM_BOOL("undo", &game_opt_undo_enabled),
     CFG_ITEM_BOOL("yearsave", &game_opt_year_save_enabled),
@@ -485,6 +561,9 @@ const struct cfg_items_s game_cfg_items[] = {
     CFG_ITEM_INT("custom_game_difficulty", &game_opt_custom.difficulty, game_cfg_check_difficulty_value),
     CFG_ITEM_INT("custom_game_galaxy_size", &game_opt_custom.galaxy_size, game_cfg_check_galaxy_size_value),
     CFG_ITEM_INT("custom_game_players", &game_opt_custom.players, game_cfg_check_players_value),
+    CFG_ITEM_INT("custom_game_races", &game_opt_custom_race_value, game_cfg_check_race_value),
+    CFG_ITEM_INT("custom_game_banners", &game_opt_custom_banner_value, game_cfg_check_banner_value),
+    CFG_ITEM_INT("custom_game_isai", &game_opt_custom_isai_value, game_cfg_check_isai_value),
     CFG_ITEM_END
 };
 
@@ -616,6 +695,7 @@ int main_do(void)
             }
         } else {
             game_set_opts_from_value(&game_new_opts, game_opt_new_value);
+            game_set_custom_opts_from_cfg(&game_opt_custom);
             main_menu_action = ui_main_menu(&game_new_opts, &game_opt_custom, &load_game_i);
         }
         switch (main_menu_action) {
@@ -629,6 +709,7 @@ int main_do(void)
                 break;
             case MAIN_MENU_ACT_CUSTOM_GAME:
                 game_new(&game, &game_aux, &game_opt_custom);
+                game_save_custom_opts_to_cfg(&game_opt_custom);
                 if (game_opt_init_save_enabled) {
                     game_save_do_save_i(GAME_SAVE_I_INIT, "Init", &game);
                 }
