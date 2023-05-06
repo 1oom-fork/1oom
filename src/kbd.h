@@ -122,7 +122,7 @@ typedef enum {
     MOO_KEY_KP_MULTIPLY,
     MOO_KEY_KP_MINUS,
     MOO_KEY_KP_PLUS,
-    MOO_KEY_KP_ENTER,
+    MOO_KEY_KP_NONE1,   //MOO_KEY_KP_ENTER
     MOO_KEY_KP_EQUALS,
         /*@}*/
 

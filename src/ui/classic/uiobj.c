@@ -1279,7 +1279,7 @@ static int16_t uiobj_handle_input_sub0(void)
             uiobj_focus_oi = -1;
             return oi;
         }
-        if ((k == MOO_KEY_RETURN) || (k == MOO_KEY_KP_ENTER)) {
+        if (k == MOO_KEY_RETURN) {
             oi = uiobj_find_obj_at_cursor();
             if (oi != 0) {
                 p = &uiobj_tbl[oi];
