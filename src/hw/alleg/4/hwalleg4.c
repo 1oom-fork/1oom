@@ -117,7 +117,7 @@ static void build_key_xlat(void)
     key_xlat[KEY_MINUS_PAD] = MOO_KEY_KP_MINUS;
     key_xlat[KEY_PLUS_PAD] = MOO_KEY_KP_PLUS;
     key_xlat[KEY_DEL_PAD] = MOO_KEY_KP_PERIOD;
-    key_xlat[KEY_ENTER_PAD] = MOO_KEY_KP_ENTER;
+    key_xlat[KEY_ENTER_PAD] = MOO_KEY_RETURN;
     key_xlat[KEY_PRTSCR] = MOO_KEY_PRINT;
     key_xlat[KEY_PAUSE] = MOO_KEY_PAUSE;
     /* KEY_ABNT_C1, KEY_YEN, KEY_KANA, KEY_CONVERT, KEY_NOCONVERT */
