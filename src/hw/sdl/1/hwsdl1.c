@@ -119,7 +119,7 @@ static void build_key_xlat(void)
     key_xlat[SDLK_KP_MULTIPLY] = MOO_KEY_KP_MULTIPLY;
     key_xlat[SDLK_KP_MINUS] = MOO_KEY_KP_MINUS;
     key_xlat[SDLK_KP_PLUS] = MOO_KEY_KP_PLUS;
-    key_xlat[SDLK_KP_ENTER] = MOO_KEY_KP_ENTER;
+    key_xlat[SDLK_KP_ENTER] = MOO_KEY_RETURN;
     key_xlat[SDLK_KP_EQUALS] = MOO_KEY_KP_EQUALS;
     key_xlat[SDLK_UP] = MOO_KEY_UP;
     key_xlat[SDLK_DOWN] = MOO_KEY_DOWN;
