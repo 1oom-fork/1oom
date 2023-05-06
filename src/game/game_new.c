@@ -864,12 +864,18 @@ static void game_generate_home_etc(struct game_s *g, struct game_new_options_s *
         p->claim = i;
         p->type = PLANET_TYPE_TERRAN;
         p->star_type = STAR_TYPE_YELLOW;
-        p->max_pop2 = 100;
-        p->max_pop3 = 100;
-        p->max_pop1 = 100;
+        if ((opts->homeworlds.max_pop < 50) || (opts->homeworlds.max_pop > 120)) {
+            opts->homeworlds.max_pop = 100;
+        }
+        p->max_pop2 = opts->homeworlds.max_pop;
+        p->max_pop3 = opts->homeworlds.max_pop;
+        p->max_pop1 = opts->homeworlds.max_pop;
         p->infogfx = tbl_planet_type_infogfx[p->type][rnd_0_nm1(6, &g->seed)] - 1;
         p->growth = PLANET_GROWTH_NORMAL;
-        p->special = PLANET_SPECIAL_NORMAL;
+        if ((opts->homeworlds.special < PLANET_SPECIAL_ULTRA_POOR) || (opts->homeworlds.special >= PLANET_SPECIAL_NUM)) {
+            opts->homeworlds.special = PLANET_SPECIAL_NORMAL;
+        }
+        p->special = opts->homeworlds.special;
         BOOLVEC_SET1(p->explored, i);
         BOOLVEC_SET1(p->within_srange, i);
         p->within_frange[i] = 1;
