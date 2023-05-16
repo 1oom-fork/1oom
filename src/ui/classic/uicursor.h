@@ -15,7 +15,8 @@ typedef struct ui_cursor_area_s {
 extern ui_cursor_area_t ui_cursor_area_all_i0;
 extern ui_cursor_area_t ui_cursor_area_all_i1;
 
-extern ui_cursor_area_t ui_cursor_area_tbl[];   /* not const! */
+#define UI_CURSOR_AREA_NUM 11
+extern ui_cursor_area_t ui_cursor_area_tbl[UI_CURSOR_AREA_NUM];   /* not const! */
 
 extern uint16_t ui_cursor_gfx_i;
 extern uint16_t ui_cursor_mouseoff;
