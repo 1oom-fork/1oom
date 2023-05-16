@@ -30,10 +30,10 @@ static bool cursor_i0_bg_stored = false;
 
 /* -------------------------------------------------------------------------- */
 
-ui_cursor_area_t ui_cursor_area_all_i0 = { 0, 0, 0, 0, UI_VGA_W - 1, UI_VGA_H - 1 };
-ui_cursor_area_t ui_cursor_area_all_i1 = { 1, 0, 0, 0, UI_VGA_W - 1, UI_VGA_H - 1 };
+static const ui_cursor_area_t ui_cursor_area_all_i0_default = { 0, 0, 0, 0, UI_VGA_W - 1, UI_VGA_H - 1 };
+static const ui_cursor_area_t ui_cursor_area_all_i1_default = { 1, 0, 0, 0, UI_VGA_W - 1, UI_VGA_H - 1 };
 
-ui_cursor_area_t ui_cursor_area_tbl[] = {
+static const ui_cursor_area_t ui_cursor_area_tbl_default[UI_CURSOR_AREA_NUM] = {
     /*0*/ { 1, 0, 0, 0, UI_VGA_W - 1, UI_VGA_H - 1 },
     /*1*/ { 1, 0, 0, 0, UI_VGA_W - 1, UI_VGA_H - 1 },
     /*2*/ { 8, 0, 3, 2, 218, 174 },
@@ -46,6 +46,10 @@ ui_cursor_area_t ui_cursor_area_tbl[] = {
     /*9*/ { 10, 0, 0, 0, UI_VGA_W - 1, UI_VGA_H - 1 },
     /*a*/ { 11, 0, 0, 0, UI_VGA_W - 1, UI_VGA_H - 1 }
 };
+
+ui_cursor_area_t ui_cursor_area_all_i0 = {0};
+ui_cursor_area_t ui_cursor_area_all_i1 = {0};
+ui_cursor_area_t ui_cursor_area_tbl[UI_CURSOR_AREA_NUM] = {0};
 
 uint16_t ui_cursor_mouseoff = 0;
 uint16_t ui_cursor_gfx_i = 0;
@@ -143,8 +147,9 @@ static void ui_cursor_erase(uint8_t *p, struct cursor_bg_s *bg)
     }
 }
 
-static void ui_cursor_init_do(int scale, ui_cursor_area_t *area)
+static void ui_cursor_init_do(int scale, const ui_cursor_area_t *src, ui_cursor_area_t *area)
 {
+    *area = *src;
     area->x0 *= scale;
     area->x0 += area->mouseoff * (scale - 1);
     area->y0 *= scale;
@@ -167,10 +172,10 @@ static void ui_cursor_init_do(int scale, ui_cursor_area_t *area)
 
 void ui_cursor_init(int scale)
 {
-    ui_cursor_init_do(scale, &ui_cursor_area_all_i0);
-    ui_cursor_init_do(scale, &ui_cursor_area_all_i1);
+    ui_cursor_init_do(scale, &ui_cursor_area_all_i0_default, &ui_cursor_area_all_i0);
+    ui_cursor_init_do(scale, &ui_cursor_area_all_i1_default, &ui_cursor_area_all_i1);
     for (int i = 0; i < TBLLEN(ui_cursor_area_tbl); ++i) {
-        ui_cursor_init_do(scale, &ui_cursor_area_tbl[i]);
+        ui_cursor_init_do(scale, &ui_cursor_area_tbl_default[i], &ui_cursor_area_tbl[i]);
     }
 }
 
