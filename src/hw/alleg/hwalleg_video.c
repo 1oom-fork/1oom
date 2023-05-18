@@ -13,6 +13,7 @@ void hw_video_update(void)
 
 void hw_video_set_palette(const uint8_t *pal, int first, int num)
 {
+    memcpy(&video.pal[first * 3], pal, num * 3);
     video.setpal(pal, first, num);
 }
 
@@ -23,7 +24,7 @@ void hw_video_set_palette_byte(int i, uint8_t b)
 
 void hw_video_refresh_palette(void)
 {
-    hw_video_set_palette(video.pal, 0, 256);
+    video.setpal(video.pal, 0, 256);
 }
 
 uint8_t *hw_video_get_buf(void)
