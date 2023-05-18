@@ -78,7 +78,6 @@ static struct sdl_video_s {
     /* palette as used by SDL */
     SDL_Color color[256];
     bool palette_to_set;
-    bool flag_screenshot;
 } video = { 0 };
 
 /* -------------------------------------------------------------------------- */
@@ -538,7 +537,6 @@ int hw_video_init(int w, int h)
     hw_mouse_set_limits(w, h);
     video.bufw = w;
     video.bufh = h;
-    video.flag_screenshot = false;
     video.window = NULL;
     video.renderer = NULL;
     video.screen = NULL;

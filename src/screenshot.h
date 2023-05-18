@@ -3,6 +3,8 @@
 
 #include "types.h"
 
+extern bool flag_screenshot;
+
 extern bool screenshot_save(const uint8_t *screen, const uint8_t *pal, int w, int h);
 
 #endif

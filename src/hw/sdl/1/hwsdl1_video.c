@@ -57,7 +57,6 @@ static struct sdl_video_s {
     struct {
         int w, h, bpp;
     } bestmode;
-    bool flag_screenshot;
 } video = { 0 };
 
 /* -------------------------------------------------------------------------- */
@@ -395,7 +394,6 @@ int hw_video_init(int w, int h)
     hw_mouse_set_limits(w, h);
     video.bufw = w;
     video.bufh = h;
-    video.flag_screenshot = false;
     {
         const SDL_VideoInfo *p = SDL_GetVideoInfo();
         video.bestmode.w = p->current_w;
