@@ -22,18 +22,18 @@ void hw_video_update(void)
 
 void hw_video_set_palette(const uint8_t *pal, int first, int num)
 {
-    memcpy(&video.pal[first * 3], pal, num * 3);
+    ui_palette_set(pal, first, num);
     video.setpal(pal, first, num);
 }
 
 void hw_video_set_palette_byte(int i, uint8_t b)
 {
-    video.pal[i] = b & 0x3f;
+    ui_palette_set_byte(i, b);
 }
 
 void hw_video_refresh_palette(void)
 {
-    video.setpal(video.pal, 0, 256);
+    video.setpal(ui_palette, 0, 256);
 }
 
 uint8_t *hw_video_get_buf(void)
@@ -51,7 +51,7 @@ uint8_t *hw_video_draw_buf(void)
     hw_video_refresh(0);
     if (flag_screenshot) {
         flag_screenshot = false;
-        screenshot_save(video.buf[video.bufi], video.pal, video.bufw, video.bufh);
+        screenshot_save(video.buf[video.bufi], ui_palette, video.bufw, video.bufh);
     }
     video.bufi ^= 1;
     return video.buf[video.bufi];

@@ -90,6 +90,8 @@ ui_sources = \
     kbd.h \
     mouse.c \
     mouse.h \
+    palette.c \
+    palette.h \
     screenshot.c \
     screenshot.h
 

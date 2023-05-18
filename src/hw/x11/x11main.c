@@ -8,6 +8,7 @@
 #include "kbd.h"
 #include "main.h"
 #include "mouse.h"
+#include "palette.h"
 #include "types.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -39,7 +40,6 @@ static bool hw_key_press_repeat_active = true;
 /* Buffers 0-3 are for drawing; 4 is a copy of last frame, 5 updated pixels */
 static uint8_t moobuf[6][MOO_HEIGHT][MOO_WIDTH] __attribute__((aligned(16)));
 static uint32_t palette_scaled[256] = { 0 };    /* 8-bit ARGB */
-static unsigned char palette_raw[3*256];        /* With 6-bit RGB components */
 static uint64_t palette_b0g0r[256];
 static int bufi = 0;
 static int minpal = 767, maxpal = 0;            /* Palette change boundaries */
@@ -216,7 +216,7 @@ static void hw_video_paint(int toshow) {
     uint64_t right_b0g0r[SCALE]; /* only scale first are used */
 
     if (maxpal >= minpal) invalidate_palrange(minpal/3, maxpal/3);
-    convert_palette(palette_raw, minpal/3, maxpal/3);
+    convert_palette(ui_palette, minpal/3, maxpal/3);
     minpal = 768; maxpal = 0;
 
     /* Buf 5 tracks which pixels need update, buf 4 is a copy of last frame */
@@ -299,13 +299,13 @@ static void hw_video_paint(int toshow) {
 /* -- HW graphics API functions -------------------------------------------- */
 
 void hw_video_set_palette(const uint8_t *pal, const int first, const int num) {
-    memmove(&palette_raw[first*3], pal, num*3);
+    ui_palette_set(pal, first, num);
     if (first*3 < minpal) minpal = first*3;
     if ((first+num)*3 > maxpal) maxpal = (first+num)*3;
 }
 
 void hw_video_set_palette_byte(int i, uint8_t b) {
-    palette_raw[i] = b & 0x3f;
+    ui_palette_set_byte(i, b);
     if (i < minpal) minpal = i;    /* minpal/maxpal are not colour numbers! */
     if (i > maxpal) maxpal = i;
 }

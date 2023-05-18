@@ -12,6 +12,7 @@
 #include "hwsdl_opt.h"
 #include "lib.h"
 #include "log.h"
+#include "palette.h"
 #include "screenshot.h"
 #include "types.h"
 #include "version.h"
@@ -73,8 +74,6 @@ static struct sdl_video_s {
     int bufh;
     int bufi;
 
-    /* palette as set by UI, 6bpp */
-    uint8_t pal[256 * 3];
     /* palette as used by SDL */
     SDL_Color color[256];
     bool palette_to_set;
@@ -572,7 +571,7 @@ int hw_video_init(int w, int h)
         video.buf[i] = lib_malloc(w * h);
     }
     video.bufi = 0;
-    memset(video.pal, 0, sizeof(video.pal));
+    ui_palette_clear();
     hw_video_refresh_palette();
     return 0;
 }
