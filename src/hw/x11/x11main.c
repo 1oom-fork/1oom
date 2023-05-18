@@ -310,7 +310,6 @@ void hw_video_set_palette_byte(int i, uint8_t b) {
     if (i > maxpal) maxpal = i;
 }
 
-uint8_t hw_video_get_palette_byte(int i) { return palette_raw[i]; }
 void hw_video_refresh_palette(void) { hw_video_paint(4); }
 void hw_video_redraw_front(void) { hw_video_paint(bufi ^ 1); }
 
