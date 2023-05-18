@@ -83,7 +83,9 @@ ui_sources = \
     kbd.c \
     kbd.h \
     mouse.c \
-    mouse.h
+    mouse.h \
+    palette.c \
+    palette.h
 
 pic_sources = \
     fmt_pic.c \
