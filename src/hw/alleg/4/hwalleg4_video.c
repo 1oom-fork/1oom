@@ -56,7 +56,6 @@ static void video_update_8bpp(void)
 
 static void video_setpal_8bpp(const uint8_t *pal, int first, int num)
 {
-    memcpy(&video.pal[first * 3], pal, num * 3);
     for (int i = first; i < (first + num); ++i) {
         video.color[i].r = *pal++;
         video.color[i].g = *pal++;
