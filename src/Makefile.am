@@ -20,27 +20,15 @@ util_sources = \
     bits.h \
     boolvec.h \
     comp.h \
-    gfxaux.c \
-    gfxaux.h \
     hw.h \
-    kbd.c \
-    kbd.h \
     lbx.c \
     lbx.h \
-    lbxfont.c \
-    lbxfont.h \
-    lbxgfx.c \
-    lbxgfx.h \
-    lbxpal.c \
-    lbxpal.h \
     lib.c \
     lib.h \
     log.c \
     log.h \
     main.c \
     main.h \
-    mouse.c \
-    mouse.h \
     options.c \
     options.h \
     os.h \
@@ -52,6 +40,20 @@ util_sources = \
     util.h \
     util_math.c \
     util_math.h
+
+gui_sources = \
+    gfxaux.c \
+    gfxaux.h \
+    kbd.c \
+    kbd.h \
+    lbxfont.c \
+    lbxfont.h \
+    lbxgfx.c \
+    lbxgfx.h \
+    lbxpal.c \
+    lbxpal.h \
+    mouse.c \
+    mouse.h
 
 audio_sources = \
     fmt_id.h \
@@ -72,13 +74,13 @@ hwnop_lib = $(top_builddir)/src/hw/nop/libhwnop.a
 uiclassic_lib = $(top_builddir)/src/ui/classic/libuiclassic.a
 hwsdl1_lib = $(top_builddir)/src/hw/sdl/1/libhwsdl1.a
 1oom_classic_sdl1_libs = $(gamemain_lib) $(game_lib) $(uiclassic_lib) $(game_lib) $(hwsdl1_lib) $(common_libs)
-1oom_classic_sdl1_SOURCES = $(audio_sources) $(util_sources)
+1oom_classic_sdl1_SOURCES = $(audio_sources) $(gui_sources) $(util_sources)
 1oom_classic_sdl1_LDADD = $(1oom_classic_sdl1_libs) @HW_SDL1_LIBS@ @EXTRA_SDL1_LIBS@ @SAMPLERATE_LIBS@
 1oom_classic_sdl1_DEPENDENCIES = $(1oom_classic_sdl1_libs)
 
 uinop_lib = $(top_builddir)/src/ui/nop/libuinop.a
 1oom_lbxview_sdl1_libs = $(hwsdl1_lib) $(uinop_lib) $(common_libs)
-1oom_lbxview_sdl1_SOURCES = lbxview.c $(audio_sources) $(util_sources)
+1oom_lbxview_sdl1_SOURCES = lbxview.c $(audio_sources) $(gui_sources) $(util_sources)
 1oom_lbxview_sdl1_LDADD = $(1oom_lbxview_sdl1_libs) @HW_SDL1_LIBS@ @EXTRA_SDL1_LIBS@ @SAMPLERATE_LIBS@
 1oom_lbxview_sdl1_DEPENDENCIES = $(1oom_lbxview_sdl1_libs)
 
