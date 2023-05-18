@@ -77,7 +77,9 @@ gui_sources = \
     kbd.c \
     kbd.h \
     mouse.c \
-    mouse.h
+    mouse.h \
+    palette.c \
+    palette.h
 
 audio_sources = \
     fmt_id.h \
