@@ -254,7 +254,6 @@ static void video_update(void)
 
 static void video_setpal(const uint8_t *pal, int first, int num)
 {
-    memcpy(&video.pal[first * 3], pal, num * 3);
     for (int i = first; i < (first + num); ++i) {
         video.color[i].r = *pal++ << 2;
         video.color[i].g = *pal++ << 2;
