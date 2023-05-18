@@ -77,7 +77,6 @@ static void video_update_8bpp(void)
 static void video_setpal_8bpp(const uint8_t *pal, int first, int num)
 {
     SDL_Color color[256];
-    memcpy(&video.pal[first * 3], pal, num * 3);
     for (int i = first; i < (first + num); ++i) {
         color[i].r = (*pal << 2) | ((*pal >> 4) & 3);
         pal++;
@@ -117,7 +116,6 @@ static void video_render_gl_24bpp(int bufi)
 
 static void video_setpal_gl_24bpp(const uint8_t *pal, int f, int num)
 {
-    memcpy(&video.pal[f * 3], pal, num * 3);
     for (int i = 0; i < num; ++i) {
         for (int j = 0; j < 3; ++j) {
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
@@ -213,7 +211,6 @@ static void video_update_gl(void)
 
 static void video_setpal_gl_32bpp(const uint8_t *pal, int f, int num)
 {
-    memcpy(&video.pal[f * 3], pal, num * 3);
     for (int i = 0; i < num; ++i) {
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
         video.ppal.p32[f + i] = ((pal[i * 3 + 0] << 2) << 24)
