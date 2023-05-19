@@ -722,7 +722,7 @@ void gfx_aux_free(struct gfx_aux_s *aux)
     if (aux) {
         if (aux->data) {
             lib_free(aux->data);
-            aux->data = 0;
+            memset(aux, 0, sizeof(struct gfx_aux_s));
         }
     }
 }
