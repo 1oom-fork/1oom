@@ -725,6 +725,7 @@ void gfx_aux_free(struct gfx_aux_s *aux)
         if (aux->data) {
             lib_free(aux->data);
             aux->data = 0;
+            aux->size = 0;
         }
     }
 }
