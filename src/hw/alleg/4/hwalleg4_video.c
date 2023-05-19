@@ -58,7 +58,12 @@ static void video_setpal_8bpp(const uint8_t *pal, int first, int num)
 
 static int video_sw_set(int w, int h)
 {
+#ifdef IS_MSDOS
     if (set_gfx_mode(GFX_AUTODETECT, w, h, 0, 0) != 0) {
+#else
+    int gfx_mode = hw_opt_fullscreen ? GFX_AUTODETECT_FULLSCREEN : GFX_AUTODETECT_WINDOWED;
+    if ((set_gfx_mode(gfx_mode, w, h, 0, 0) != 0) && (set_gfx_mode(GFX_AUTODETECT, w, h, 0, 0) != 0)) {
+#endif
         log_error("set_gfx_mode(..., %i, %i, 0, 0) failed!\n", w, h);
         return -1;
     }
