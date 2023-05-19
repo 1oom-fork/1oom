@@ -73,9 +73,11 @@ int hw_video_init(int w, int h)
     video.update = video_update_8bpp;
     video.setpal = video_setpal_8bpp;
     set_color_depth(8);
-    if (set_gfx_mode(GFX_AUTODETECT, w, h, 0, 0) != 0) {
-        log_error("set_gfx_mode(..., %i, %i, 0, 0) failed!\n", w, h);
-        return -1;
+    if (hw_opt_fullscreen || (set_gfx_mode(GFX_AUTODETECT_WINDOWED, w, h, 0, 0) != 0)) {
+        if (set_gfx_mode(GFX_AUTODETECT, w, h, 0, 0) != 0) {
+            log_error("set_gfx_mode(..., %i, %i, 0, 0) failed!\n", w, h);
+            return -1;
+        }
     }
     hw_mouse_set_limits(w, h);
     hw_video_in_gfx = true;

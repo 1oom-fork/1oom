@@ -12,9 +12,12 @@
 
 /* -------------------------------------------------------------------------- */
 
+bool hw_opt_fullscreen = true;
+
 /* -------------------------------------------------------------------------- */
 
 const struct cfg_items_s hw_cfg_items[] = {
+    CFG_ITEM_BOOL("fs", &hw_opt_fullscreen),
     CFG_ITEM_END
 };
 
