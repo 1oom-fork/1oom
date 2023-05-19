@@ -12,14 +12,23 @@
 
 /* -------------------------------------------------------------------------- */
 
+bool hw_opt_fullscreen = true;
+
 /* -------------------------------------------------------------------------- */
 
 const struct cfg_items_s hw_cfg_items[] = {
+    CFG_ITEM_BOOL("fs", &hw_opt_fullscreen),
     CFG_ITEM_END
 };
 
 /* -------------------------------------------------------------------------- */
 
 const struct cmdline_options_s hw_cmdline_options[] = {
+    { "-fs", 0,
+      options_enable_bool_var, (void *)&hw_opt_fullscreen,
+      NULL, "Enable fullscreen" },
+    { "-window", 0,
+      options_disable_bool_var, (void *)&hw_opt_fullscreen,
+      NULL, "Use windowed mode" },
     { NULL, 0, NULL, NULL, NULL, NULL }
 };
