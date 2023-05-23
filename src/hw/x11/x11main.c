@@ -357,7 +357,10 @@ bool hw_kbd_set_repeat(bool enabled)
 /* -- X11 specific implementations ---------------------------------------- */
 
 void hw_shutdown(void) {
-    if (icondata != NULL) free(icondata);
+    if (icondata != NULL) {
+        free(icondata);
+        icondata = NULL;
+    }
     if (gc != NULL) {
         XShmDetach(dpy, &shminfo);
         XDestroyImage(shared_image);
