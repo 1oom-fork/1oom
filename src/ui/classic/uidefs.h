@@ -9,7 +9,7 @@
 #include "ui.h"
 #include "types.h"
 
-#define UI_SCALE_MAX    10
+#define UI_SCALE_MAX    6
 
 #define UI_VGA_W    320
 #define UI_VGA_H    200
