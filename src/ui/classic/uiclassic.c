@@ -56,10 +56,10 @@ void ui_extra_toggle_preset(bool enabled)
 static bool check_ui_scale(void *var)
 {
     int v = (int)(intptr_t)var;
-    if ((v > 0) && (v < UI_SCALE_MAX)) {
+    if ((v > 0) && (v <= UI_SCALE_MAX)) {
         return true;
     } else {
-        log_error("invalid ui_scale %i, must be 0 < N < %i\n", v, UI_SCALE_MAX);
+        log_error("invalid ui_scale %i, must be 0 < N <= %i\n", v, UI_SCALE_MAX);
         return false;
     }
 }
