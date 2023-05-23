@@ -238,7 +238,7 @@ void ui_tech(struct game_s *g, player_id_t active_player)
 {
     struct tech_data_s d;
     bool flag_done = false;
-    int16_t oi_ok, oi_up, oi_down, oi_equals, oi_tab, oi_wheel, oi_hash,
+    int16_t oi_ok, oi_up, oi_down, oi_equals, oi_wheel, oi_hash,
             oi_tbl_lock[TECH_FIELD_NUM],
             oi_tbl_plus[TECH_FIELD_NUM],
             oi_tbl_minus[TECH_FIELD_NUM],
@@ -262,7 +262,6 @@ void ui_tech(struct game_s *g, player_id_t active_player)
         oi_up = UIOBJI_INVALID; \
         oi_down = UIOBJI_INVALID; \
         oi_equals = UIOBJI_INVALID; \
-        oi_tab = UIOBJI_INVALID; \
         oi_wheel = UIOBJI_INVALID; \
         oi_hash = UIOBJI_INVALID; \
         UIOBJI_SET_TBL5_INVALID(oi_tbl_lock, oi_tbl_plus, oi_tbl_minus, oi_tbl_bonus, oi_tbl_field); \
@@ -368,10 +367,6 @@ void ui_tech(struct game_s *g, player_id_t active_player)
                 t->slider[4] = 17;
                 t->slider[5] = 17;
             }
-        } else if (oi == oi_tab) {
-            ui_sound_play_sfx_24();
-            d.field = (d.field + 1) % TECH_FIELD_NUM;
-            flag_change_field = true;
         }
         if (flag_change_field) {
             ui_tech_build_completed(&d);
@@ -408,7 +403,6 @@ void ui_tech(struct game_s *g, player_id_t active_player)
             oi_tbl_field[5] = uiobj_add_mousearea(109, 19, 161, 31, MOO_KEY_6);
             oi_equals = uiobj_add_inputkey(MOO_KEY_EQUALS);
             oi_hash = uiobj_add_inputkey(MOO_KEY_HASH);
-            oi_tab = uiobj_add_inputkey(MOO_KEY_TAB);
             for (int i = 0; i < TECH_FIELD_NUM; ++i) {
                 int y;
                 y = i * 21 + 22;
