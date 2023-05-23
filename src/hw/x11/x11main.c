@@ -38,7 +38,7 @@ static bool hw_key_press_repeat_active = true;
 #define MOO_WIDTH 320
 #define MOO_HEIGHT 200
 /* Buffers 0-3 are for drawing; 4 is a copy of last frame, 5 updated pixels */
-static uint8_t moobuf[6][MOO_HEIGHT * 10 * MOO_WIDTH * 10] __attribute__((aligned(16)));
+static uint8_t moobuf[6][MOO_HEIGHT * 6 * MOO_WIDTH * 6] __attribute__((aligned(16)));
 static uint32_t palette_scaled[256] = { 0 };    /* 8-bit ARGB */
 static int bufi = 0;
 static int minpal = 767, maxpal = 0;            /* Palette change boundaries */
