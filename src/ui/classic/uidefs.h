@@ -6,10 +6,16 @@
 #include "game_planet.h"
 #include "game_types.h"
 #include "gfxaux.h"
+#include "osdefs.h"
 #include "ui.h"
 #include "types.h"
 
+#ifdef OS_UI_SCALE_MAX
+#define UI_SCALE_MAX    OS_UI_SCALE_MAX
+#else
 #define UI_SCALE_MAX    6
+#endif
+
 #define UI_SCROLL_SPEED_MAX 10
 
 #define UI_VGA_W    320
