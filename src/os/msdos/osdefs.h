@@ -7,4 +7,6 @@
 #define FSDEV_EXT_SEP_STR    "."
 #define FSDEV_EXT_SEP_CHR    '.'
 
+#define OS_UI_SCALE_MAX  2
+
 #endif
