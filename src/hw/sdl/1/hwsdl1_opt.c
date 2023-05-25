@@ -11,7 +11,7 @@
 /* -------------------------------------------------------------------------- */
 
 #define HW_DEFAULT_FULLSCREEN   0
-#define HW_DEFAULT_ASPECT   833333
+#define HW_DEFAULT_ASPECT   1000000
 
 #ifdef HAVE_OPENGL
 int hw_opt_use_gl = 1;
