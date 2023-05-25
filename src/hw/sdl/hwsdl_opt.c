@@ -54,7 +54,7 @@ const struct cfg_items_s hw_cfg_items[] = {
 #ifdef HAVE_SDLX_ASPECT
 static const char *hw_uiopt_cb_aspect_get(void)
 {
-    if (hw_opt_aspect == HW_DEFAULT_ASPECT) {
+    if (hw_opt_aspect == 833333) {
         return "VGA";
     } else if (hw_opt_aspect == 1000000) {
         return "1:1";
@@ -67,12 +67,12 @@ static const char *hw_uiopt_cb_aspect_get(void)
 
 static bool hw_uiopt_cb_aspect_next(void)
 {
-    if (hw_opt_aspect == HW_DEFAULT_ASPECT) {
+    if (hw_opt_aspect == 833333) {
         hw_opt_aspect = 1000000;
     } else if (hw_opt_aspect == 1000000) {
         hw_opt_aspect = 0;
     } else {
-        hw_opt_aspect = HW_DEFAULT_ASPECT;
+        hw_opt_aspect = 833333;
     }
     return hw_video_update_aspect();
 }
