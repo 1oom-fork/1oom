@@ -12,7 +12,7 @@
 
 /* -------------------------------------------------------------------------- */
 
-#define HW_DEFAULT_ASPECT   833333
+#define HW_DEFAULT_ASPECT   1000000
 
 bool hw_opt_fullscreen = HW_DEFAULT_FULLSCREEN;
 int hw_opt_screen_winw = 0;
