@@ -8,6 +8,7 @@
 #include "comp.h"
 #include "fmt_mus.h"
 #include "fmt_sfx.h"
+#include "font8x8_draw.h"
 #include "gfxaux.h"
 #include "hw.h"
 #include "kbd.h"
@@ -74,48 +75,22 @@ static uint32_t cur_key = 0;
 static int cur_xoff = 0;
 static int cur_yoff = 0;
 static struct gfx_aux_s gfxaux;
-static uint8_t romfont_08[256 * 8];
 
 /* -------------------------------------------------------------------------- */
 
 static void drawchar(int dx, int dy, uint8_t c, uint8_t fg, uint8_t bg)
 {
-    uint8_t *p = hw_video_get_buf() + dx + dy * 320;
-    for (int y = 0; y < 8; ++y) {
-        uint8_t b;
-        b = romfont_08[c * 8 + y];
-        for (int x = 0; x < 8; ++x) {
-            p[x] = (b & (1 << (7 - x))) ? fg : bg;
-        }
-        p += 320;
-    }
+    font8x8_drawchar(dx, dy, 320, c, fg, bg);
 }
 
 static void drawstr(int x, int y, const char *str, uint8_t fg, uint8_t bg)
 {
-    char c;
-    while ((c = *str++)) {
-        drawchar(x, y, c, fg, bg);
-        x += 8;
-        if (x >= 320) {
-            x = 0;
-            y += 8;
-        }
-    }
+    font8x8_drawstr(x, y, 320, str, fg, bg);
 }
 
 static void drawstrlen(int x, int y, const char *str, int len, uint8_t fg, uint8_t bg)
 {
-    char c;
-    while (len--) {
-        c = *str++;
-        drawchar(x, y, c, fg, bg);
-        x += 8;
-        if (x >= 320) {
-            x = 0;
-            y += 8;
-        }
-    }
+    font8x8_drawstrlen(x, y, 320, str, len, fg, bg);
 }
 
 static void drawscreen_outlbx(void)
@@ -345,28 +320,6 @@ static void do_lbx_sound(uint32_t k)
     }
 }
 
-static int loadfont(void)
-{
-    FILE *fd;
-    char *fname;
-    int res = -1;
-    fname = util_concat(os_get_path_data(), FSDEV_DIR_SEP_STR, "romfont.bin", NULL);
-    log_message("Load font '%s'\n", fname);
-    fd = fopen(fname, "rb");
-    if (fd && (fread(romfont_08, 256 * 8, 1, fd) == 1)) {
-        res = 0;
-    } else {
-        log_error("loading font '%s'. Put a 8x8 1bpp font (2048 bytes) there to use this program.\n", fname);
-    }
-    if (fd) {
-        fclose(fd);
-        fd = NULL;
-    }
-    lib_free(fname);
-    fname = NULL;
-    return res;
-}
-
 /* -------------------------------------------------------------------------- */
 
 int main_handle_option(const char *argv)
@@ -409,9 +362,6 @@ void main_do_shutdown(void)
 
 int main_do(void)
 {
-    if (loadfont()) {
-        return 1;
-    }
     if (hw_video_init(320, 400)) {
         return 1;
     }
