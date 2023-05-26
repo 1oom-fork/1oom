@@ -10,6 +10,7 @@
 #include "fmt_mus.h"
 #include "fmt_pic.h"
 #include "fmt_sfx.h"
+#include "font8x8_draw.h"
 #include "gfxaux.h"
 #include "hw.h"
 #include "kbd.h"
@@ -98,10 +99,11 @@ static int cur_xoff = 0;
 static int cur_yoff = 0;
 static struct gfx_aux_s gfxaux;
 static uint8_t romfont_08[256 * 8];
+static bool have_romfont = false;
 
 /* -------------------------------------------------------------------------- */
 
-static void drawchar(int dx, int dy, uint8_t c, uint8_t fg, uint8_t bg)
+static void drawchar_romfont(int dx, int dy, uint8_t c, uint8_t fg, uint8_t bg)
 {
     uint8_t *p = hw_video_get_buf() + dx + dy * 320;
     for (int y = 0; y < 8; ++y) {
@@ -111,6 +113,15 @@ static void drawchar(int dx, int dy, uint8_t c, uint8_t fg, uint8_t bg)
             p[x] = (b & (1 << (7 - x))) ? fg : bg;
         }
         p += 320;
+    }
+}
+
+static void drawchar(int dx, int dy, uint8_t c, uint8_t fg, uint8_t bg)
+{
+    if (have_romfont) {
+        drawchar_romfont(dx, dy, c, fg, bg);
+    } else {
+        font8x8_drawchar(dx, dy, 320, c, fg, bg);
     }
 }
 
@@ -507,8 +518,8 @@ void main_do_shutdown(void)
 
 int main_do(void)
 {
-    if (loadfont()) {
-        return 1;
+    if (!loadfont()) {
+        have_romfont = true;
     }
     if (hw_video_init(320, 400)) {
         return 1;
