@@ -8,6 +8,7 @@
 #include "comp.h"
 #include "fmt_mus.h"
 #include "fmt_sfx.h"
+#include "font8x8_draw.h"
 #include "gfxaux.h"
 #include "hw.h"
 #include "kbd.h"
@@ -74,61 +75,20 @@ static uint32_t cur_key = 0;
 static int cur_xoff = 0;
 static int cur_yoff = 0;
 static struct gfx_aux_s gfxaux;
-static uint8_t romfont_08[256 * 8];
 
 /* -------------------------------------------------------------------------- */
-
-static void drawchar(int dx, int dy, uint8_t c, uint8_t fg, uint8_t bg)
-{
-    uint8_t *p = hw_video_get_buf() + dx + dy * 320;
-    for (int y = 0; y < 8; ++y) {
-        uint8_t b;
-        b = romfont_08[c * 8 + y];
-        for (int x = 0; x < 8; ++x) {
-            p[x] = (b & (1 << (7 - x))) ? fg : bg;
-        }
-        p += 320;
-    }
-}
-
-static void drawstr(int x, int y, const char *str, uint8_t fg, uint8_t bg)
-{
-    char c;
-    while ((c = *str++)) {
-        drawchar(x, y, c, fg, bg);
-        x += 8;
-        if (x >= 320) {
-            x = 0;
-            y += 8;
-        }
-    }
-}
-
-static void drawstrlen(int x, int y, const char *str, int len, uint8_t fg, uint8_t bg)
-{
-    char c;
-    while (len--) {
-        c = *str++;
-        drawchar(x, y, c, fg, bg);
-        x += 8;
-        if (x >= 320) {
-            x = 0;
-            y += 8;
-        }
-    }
-}
 
 static void drawscreen_outlbx(void)
 {
     char linebuf[40 + 1];
     for (lbxfile_e i = 0; i < LBXFILE_NUM; ++i) {
-        drawstr(0, 0, " #  Filename    Type Items", textcolor, 0);
+        font8x8_drawstr(0, 0, 320, " #  Filename    Type Items", textcolor, 0);
         sprintf(linebuf, "%x", i);
-        drawstr(1 * 8, 8 + ((int)i) * 8, linebuf, textcolor, 0);
-        drawstr(4 * 8, 8 + ((int)i) * 8, lbxfile_name(i), textcolor, 0);
+        font8x8_drawstr(1 * 8, 8 + ((int)i) * 8, 320, linebuf, textcolor, 0);
+        font8x8_drawstr(4 * 8, 8 + ((int)i) * 8, 320, lbxfile_name(i), textcolor, 0);
         sprintf(linebuf, "%u  %u", lbxfile_type(i), lbxfile_num_items(i));
-        drawstr(18 * 8, 8 + ((int)i) * 8, linebuf, textcolor, 0);
-        drawchar(0, (cursor_i + 1) * 8, ' ', 0, textcolor);
+        font8x8_drawstr(18 * 8, 8 + ((int)i) * 8, 320, linebuf, textcolor, 0);
+        font8x8_drawchar(0, (cursor_i + 1) * 8, 320, ' ', 0, textcolor);
     }
     for (int k = 0; k < 16; ++k) {
         uint8_t *p, *q;
@@ -144,7 +104,7 @@ static void drawscreen_outlbx(void)
     lbxfont_select(5, 1, 0, 0);
     lbxfont_print_str_normal(0, 300, "Loading Master of Orion...", 320);
     sprintf(linebuf, "key 0x%x %c", cur_key, cur_key & 0xff);
-    drawstr(0, 320, linebuf, textcolor, 0);
+    font8x8_drawstr(0, 320, 320, linebuf, textcolor, 0);
 }
 
 static void drawscreen_inlbx_rotate(void)
@@ -201,9 +161,9 @@ static void drawscreen_inlbx_data(const uint8_t *p, int len)
     }
     len -= pos;
     sprintf(linebuf, "pos:%i (%x) len:%i", pos, pos, len);
-    drawstr(0, 200 + 8 * 2, linebuf, textcolor, 0);
+    font8x8_drawstr(0, 200 + 8 * 2, 320, linebuf, textcolor, 0);
     SETMIN(len, 40 * 25);
-    drawstrlen(0, 0, (const char *)&p[pos], len, textcolor, 0);
+    font8x8_drawstrlen(0, 0, 320, (const char *)&p[pos], len, textcolor, 0);
 }
 
 static void drawscreen_inlbx(void)
@@ -215,7 +175,7 @@ static void drawscreen_inlbx(void)
     if (cursor_i < cursor_offs) {
         cursor_offs = 0;
     }
-    drawstr(8, 200 + 8 * 4, "#  Name", textcolor, 0);
+    font8x8_drawstr(8, 200 + 8 * 4, 320, "#  Name", textcolor, 0);
     for (int i = 0; i < 20; ++i) {
         int j = i + cursor_offs;
         if (j >= cur_items) {
@@ -227,15 +187,15 @@ static void drawscreen_inlbx(void)
             linebuf[3 + k] = name[k] ? name[k] : ' ';
         }
         linebuf[3 + 32] = 0;
-        drawstr(8, 200 + 8 * (5 + i), linebuf, textcolor, 0);
-        drawchar(0, 200 + (cursor_i - cursor_offs + 5) * 8, ' ', 0, textcolor);
+        font8x8_drawstr(8, 200 + 8 * (5 + i), 320, linebuf, textcolor, 0);
+        font8x8_drawchar(0, 200 + (cursor_i - cursor_offs + 5) * 8, 320, ' ', 0, textcolor);
     }
     {
         uint32_t offs, len;
         offs = lbxfile_item_offs(cur_lbx, cursor_i);
         len = lbxfile_item_len(cur_lbx, cursor_i);
         sprintf(linebuf, "offs:%x:.%x len:%x (%i)", offs, offs+len, len, len);
-        drawstr(0, 200 + 8 * 0, linebuf, textcolor, 0);
+        font8x8_drawstr(0, 200 + 8 * 0, 320, linebuf, textcolor, 0);
     }
     if (lbxfile_type(cur_lbx) == LBX_TYPE_GFX) {
         uint8_t *p = cur_ptr;
@@ -267,14 +227,14 @@ static void drawscreen_inlbx(void)
                 lbxgfx_get_ehandle(p), lbxgfx_get_epage(p), lbxgfx_get_hmm0c(p),
                 lbxgfx_get_indep(p), lbxgfx_get_format(p), cur_xoff, cur_yoff
                );
-        drawstr(0, 200 + 8 * 1, linebuf, textcolor, 0);
+        font8x8_drawstr(0, 200 + 8 * 1, 320, linebuf, textcolor, 0);
         if (lbxgfx_has_palette(p)) {
             sprintf(linebuf, "pal o:%x do:%x f:%i n:%i (%02x)",
                     lbxgfx_get_paloffs(p),
                     lbxgfx_get_paldataoffs(p), lbxgfx_get_palfirst(p),
                     lbxgfx_get_palnum(p), lbxgfx_get_palhmm06(p)
                    );
-            drawstr(0, 200 + 8 * 2, linebuf, textcolor, 0);
+            font8x8_drawstr(0, 200 + 8 * 2, 320, linebuf, textcolor, 0);
         }
     } else if (lbxfile_type(cur_lbx) == LBX_TYPE_DATA) {
         uint16_t num, size, view;
@@ -284,7 +244,7 @@ static void drawscreen_inlbx(void)
         view = cur_xoff;
         SETRANGE(view, 0, num - 1);
         sprintf(linebuf, "num:%i sz:%x v:%i", num, size, view);
-        drawstr(0, 200 + 8 * 1, linebuf, textcolor, 0);
+        font8x8_drawstr(0, 200 + 8 * 1, 320, linebuf, textcolor, 0);
         p = cur_ptr + 4 + view * size;
         drawscreen_inlbx_data(p, size);
     } else {
@@ -345,28 +305,6 @@ static void do_lbx_sound(uint32_t k)
     }
 }
 
-static int loadfont(void)
-{
-    FILE *fd;
-    char *fname;
-    int res = -1;
-    fname = util_concat(os_get_path_data(), FSDEV_DIR_SEP_STR, "romfont.bin", NULL);
-    log_message("Load font '%s'\n", fname);
-    fd = fopen(fname, "rb");
-    if (fd && (fread(romfont_08, 256 * 8, 1, fd) == 1)) {
-        res = 0;
-    } else {
-        log_error("loading font '%s'. Put a 8x8 1bpp font (2048 bytes) there to use this program.\n", fname);
-    }
-    if (fd) {
-        fclose(fd);
-        fd = NULL;
-    }
-    lib_free(fname);
-    fname = NULL;
-    return res;
-}
-
 /* -------------------------------------------------------------------------- */
 
 int main_handle_option(const char *argv)
@@ -409,9 +347,6 @@ void main_do_shutdown(void)
 
 int main_do(void)
 {
-    if (loadfont()) {
-        return 1;
-    }
     if (hw_video_init(320, 400)) {
         return 1;
     }
