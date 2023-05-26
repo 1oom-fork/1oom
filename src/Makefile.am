@@ -65,6 +65,10 @@ util_sources = \
     version.h
 
 gui_sources = \
+    font8x8.c \
+    font8x8.h \
+    font8x8_draw.c \
+    font8x8_draw.h \
     gfxaux.c \
     gfxaux.h \
     kbd.c \
