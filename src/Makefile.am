@@ -23,6 +23,10 @@ util_sources = \
     bits.h \
     boolvec.h \
     comp.h \
+    font8x8.c \
+    font8x8.h \
+    font8x8_draw.c \
+    font8x8_draw.h \
     gameapi.h \
     gfxaux.c \
     gfxaux.h \
