@@ -53,7 +53,7 @@ static uint8_t ui_starmap_cursor_on_star(const struct starmap_data_s *d, int16_t
 static void ui_starmap_draw_planetinfo_do(const struct game_s *g, player_id_t api, uint8_t planet_i, bool explored, bool show_plus)
 {
     const planet_t *p = &g->planet[planet_i];
-    if (explored) {
+    if (explored || (ui_extra_enabled && g->gaux->flag_cheat_stars)) {
         lbxfont_set_temp_color(0x0);
         lbxfont_select_set_12_4(4, 0xf, 0, 0);
         lbxfont_print_str_center(269, 10, p->name, UI_SCREEN_W, ui_scale);
@@ -98,7 +98,7 @@ static void ui_starmap_draw_planetinfo_do(const struct game_s *g, player_id_t ap
                 }
                 lbxfont_print_str_right(305, 36, str, UI_SCREEN_W, ui_scale);
                 lbxfont_select(2, 0xe, 0, 0);
-                if (show_plus && (p->owner == api) && game_planet_can_terraform(g, p, api, ui_extra_enabled)) {
+                if (show_plus && ((p->owner == api) || (ui_extra_enabled && g->gaux->flag_cheat_stars)) && game_planet_can_terraform(g, p, api, ui_extra_enabled)) {
                     lbxfont_print_str_normal(289, 44, "+", UI_SCREEN_W, ui_scale);
                     x = 287;
                     xp = x - 22;
@@ -285,7 +285,7 @@ void ui_starmap_draw_basic(struct starmap_data_s *d)
     ui_starmap_draw_starmap(d);
     ui_starmap_draw_button_text(d, true);
     ui_draw_filled_rect(224, 5, 314, 178, 0, ui_scale);
-    if (BOOLVEC_IS0(p->explored, d->api)) {
+    if (BOOLVEC_IS0(p->explored, d->api) && !(ui_extra_enabled && g->gaux->flag_cheat_stars)) {
         lbxgfx_draw_frame(224, 5, ui_data.gfx.starmap.unexplor, UI_SCREEN_W, ui_scale);
         lbxfont_select_set_12_4(5, 1, 0, 0);
         lbxfont_print_str_split(232, 74, 76, game_str_tbl_sm_stinfo[p->star_type], 2, UI_SCREEN_W, UI_SCREEN_H, ui_scale);
@@ -293,7 +293,7 @@ void ui_starmap_draw_basic(struct starmap_data_s *d)
     } else {
         player_id_t owner = p->owner;
         int pi = g->planet_focus_i[d->api];
-        if (BOOLVEC_IS0(p->within_srange, d->api) && ((owner == PLAYER_NONE) || BOOLVEC_IS0(g->eto[d->api].contact, owner))) {
+        if (BOOLVEC_IS0(p->within_srange, d->api) && !(ui_extra_enabled && g->gaux->flag_cheat_stars) && ((owner == PLAYER_NONE) || BOOLVEC_IS0(g->eto[d->api].contact, owner))) {
             owner = g->seen[d->api][pi].owner;
         }
         if (owner == PLAYER_NONE) {
@@ -302,7 +302,7 @@ void ui_starmap_draw_basic(struct starmap_data_s *d)
             lbxgfx_draw_frame(227, 73, ui_data.gfx.colonies.current, UI_SCREEN_W, ui_scale);
             ui_draw_box1(227, 73, 310, 174, 0, 0, ui_scale);
             ui_starmap_draw_range_parsec(d, 80);
-        } else if ((owner != d->api) || (p->unrest == PLANET_UNREST_REBELLION)) {
+        } else if (((owner != d->api) && !(ui_extra_enabled && g->gaux->flag_cheat_stars)) || (p->unrest == PLANET_UNREST_REBELLION)) {
             char buf[64];
             int pop, bases, range_y;
             lbxgfx_draw_frame(224, 5, ui_data.gfx.starmap.en_colny, UI_SCREEN_W, ui_scale);
