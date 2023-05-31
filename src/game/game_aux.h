@@ -57,6 +57,7 @@ struct game_aux_s {
     int local_players;
     bool flag_cheat_galaxy;
     bool flag_cheat_events;
+    bool flag_cheat_stars;
     bool initialized;
     int savenamebuflen;
     int savebuflen;
