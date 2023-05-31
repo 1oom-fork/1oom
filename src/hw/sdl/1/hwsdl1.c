@@ -256,6 +256,8 @@ int hw_event_handle(void)
                         key = key_xlat[e.key.keysym.sym];
                         mod = mod_xlat(smod);
                         if (e.key.keysym.sym == SDLK_LCTRL || e.key.keysym.sym == SDLK_RCTRL) mod |= MOO_MOD_CTRL;
+                        if (e.key.keysym.sym == SDLK_LALT || e.key.keysym.sym == SDLK_RALT) mod |= MOO_MOD_ALT;
+                        if (e.key.keysym.sym == SDLK_LSHIFT || e.key.keysym.sym == SDLK_RSHIFT) mod |= MOO_MOD_SHIFT;
                         kbd_add_keypress(key, mod, c);
                         kbd_set_pressed(key, mod, true);
                     }
