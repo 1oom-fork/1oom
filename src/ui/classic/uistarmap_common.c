@@ -170,7 +170,7 @@ static void ui_starmap_draw_sliders_and_prod(struct starmap_data_s *d)
         lbxgfx_draw_frame(229, 141, ui_data.gfx.starmap.stargate, UI_SCREEN_W, ui_scale);
         lbxfont_print_str_center(251, 169, game_str_sm_stargate, UI_SCREEN_W, ui_scale);
     } else {
-        const shipdesign_t *sd = &g->srd[d->api].design[p->buildship];
+        const shipdesign_t *sd = &g->srd[p->owner].design[p->buildship];
         uint8_t *gfx = ui_data.gfx.ships[sd->look];
         lbxgfx_set_frame_0(gfx);
         lbxgfx_draw_frame(236, 142, gfx, UI_SCREEN_W, ui_scale);
