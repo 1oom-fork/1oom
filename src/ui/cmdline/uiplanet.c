@@ -221,7 +221,7 @@ void ui_planet_look(const struct game_s *g, int api, uint8_t planet_i, bool show
                 if (show_full) {
                     char buf[10];
                     int v;
-                    v = game_planet_get_slider_text(g, p, api, PLANET_SLIDER_SHIP, buf, sizeof(buf));
+                    v = game_planet_get_slider_text(g, p, PLANET_SLIDER_SHIP, buf, sizeof(buf));
                     printf("  - Build ");
                     if (p->buildship == BUILDSHIP_STARGATE) {
                         printf("%s\n", game_str_sm_stargate);
@@ -229,11 +229,11 @@ void ui_planet_look(const struct game_s *g, int api, uint8_t planet_i, bool show
                         printf("%i %s\n", v, g->srd[api].design[p->buildship].name);
                     }
                     printf("  - Slider %cSHIP %3i  %s\n", p->slider_lock[PLANET_SLIDER_SHIP] ? '*' : ' ', p->slider[PLANET_SLIDER_SHIP], buf);
-                    game_planet_get_slider_text(g, p, api, PLANET_SLIDER_DEF, buf, sizeof(buf));
+                    game_planet_get_slider_text(g, p, PLANET_SLIDER_DEF, buf, sizeof(buf));
                     printf("  - Slider %c DEF %3i  %s\n", p->slider_lock[PLANET_SLIDER_DEF] ? '*' : ' ', p->slider[PLANET_SLIDER_DEF], buf);
-                    game_planet_get_slider_text(g, p, api, PLANET_SLIDER_IND, buf, sizeof(buf));
+                    game_planet_get_slider_text(g, p, PLANET_SLIDER_IND, buf, sizeof(buf));
                     printf("  - Slider %c IND %3i  %s\n", p->slider_lock[PLANET_SLIDER_IND] ? '*' : ' ', p->slider[PLANET_SLIDER_IND], buf);
-                    v = game_planet_get_slider_text_eco(g, p, api, true, buf, sizeof(buf));
+                    v = game_planet_get_slider_text_eco(g, p, true, buf, sizeof(buf));
                     printf("  - Slider %c ECO %3i  ", p->slider_lock[PLANET_SLIDER_ECO] ? '*' : ' ', p->slider[PLANET_SLIDER_ECO]);
                     if (v >= 0) {
                         if (v < 100) {
@@ -243,7 +243,7 @@ void ui_planet_look(const struct game_s *g, int api, uint8_t planet_i, bool show
                         }
                     }
                     printf("%s\n", buf);
-                    game_planet_get_slider_text(g, p, api, PLANET_SLIDER_TECH, buf, sizeof(buf));
+                    game_planet_get_slider_text(g, p, PLANET_SLIDER_TECH, buf, sizeof(buf));
                     printf("  - Slider %cTECH %3i  %s RP\n", p->slider_lock[PLANET_SLIDER_TECH] ? '*' : ' ', p->slider[PLANET_SLIDER_TECH], buf);
                     if (p->reloc != planet_i) {
                         printf("  - Reloc to %s\n", g->planet[p->reloc].name);
