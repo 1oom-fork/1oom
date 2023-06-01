@@ -96,7 +96,7 @@ static void ui_starmap_draw_planetinfo_do(const struct game_s *g, player_id_t ap
                 }
                 lbxfont_print_str_right(305, 36, str, UI_SCREEN_W);
                 lbxfont_select(2, 0xe, 0, 0);
-                if (show_plus && ((p->owner == api) || (ui_extra_enabled && g->gaux->flag_cheat_stars)) && game_planet_can_terraform(g, planet_i, api, ui_extra_enabled)) {
+                if (show_plus && ((p->owner == api) || (ui_extra_enabled && g->gaux->flag_cheat_stars)) && game_planet_can_terraform(g, planet_i, p->owner, ui_extra_enabled)) {
                     lbxfont_print_str_normal(289, 44, "+", UI_SCREEN_W);
                     x = 287;
                     xp = x - 22;
