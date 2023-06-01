@@ -42,7 +42,7 @@ static void set_slider(planet_t *p, int slideri, int16_t value)
 static bool slider_text_equals(const struct game_s *g, const planet_t *p, int slideri, const char *string)
 {
     char buf[64];
-    game_planet_get_slider_text(g, p, p->owner, slideri, buf, sizeof(buf));
+    game_planet_get_slider_text(g, p, slideri, buf, sizeof(buf));
     return strcmp(string, buf) == 0;
 }
 
@@ -52,7 +52,7 @@ static bool slider_text_num_grequ(const struct game_s *g, const planet_t *p, int
     char *q = &buf[0];
     char c;
     int v = 0;
-    game_planet_get_slider_text(g, p, p->owner, slideri, buf, sizeof(buf));
+    game_planet_get_slider_text(g, p, slideri, buf, sizeof(buf));
     while (((c = *q++) >= '0') && (c <= '9')) {
         v *= 10;
         v += c - '0';
@@ -131,14 +131,13 @@ static void move_eco_terraform(const struct game_s *g, planet_t *p)
 static void move_eco_grow_pop(const struct game_s *g, planet_t *p)
 {
     const int slideri = PLANET_SLIDER_ECO;
-    player_id_t player = p->owner;
     int original_allocation = p->slider[slideri];
     int previous_allocation;
     int plus_pop, old_plus_pop = 0, last_inc_pos = original_allocation;
     do {
         char buf[10];
         previous_allocation = p->slider[slideri];
-        plus_pop = game_planet_get_slider_text_eco(g, p, player, true, buf, sizeof(buf));
+        plus_pop = game_planet_get_slider_text_eco(g, p, true, buf, sizeof(buf));
         if (plus_pop > old_plus_pop) {
             old_plus_pop = plus_pop;
             last_inc_pos = previous_allocation;
@@ -416,8 +415,9 @@ const char *game_planet_get_finished_text(const struct game_s *g, const planet_t
     return buf;
 }
 
-int game_planet_get_slider_text(const struct game_s *g, const planet_t *p, player_id_t player, planet_slider_i_t si, char *buf, size_t bufsize)
+int game_planet_get_slider_text(const struct game_s *g, const planet_t *p, planet_slider_i_t si, char *buf, size_t bufsize)
 {
+    player_id_t player = p->owner;
     const empiretechorbit_t *e = &(g->eto[player]);
     int retval = -1;
     switch (si) {
@@ -537,7 +537,7 @@ int game_planet_get_slider_text(const struct game_s *g, const planet_t *p, playe
             }
             break;
         case PLANET_SLIDER_ECO:
-            retval = game_planet_get_slider_text_eco(g, p, player, false, buf, bufsize);
+            retval = game_planet_get_slider_text_eco(g, p, false, buf, bufsize);
             break;
         case PLANET_SLIDER_TECH:
             {
@@ -553,8 +553,9 @@ int game_planet_get_slider_text(const struct game_s *g, const planet_t *p, playe
     return retval;
 }
 
-int game_planet_get_slider_text_eco(const struct game_s *g, const planet_t *p, player_id_t player, bool flag_tenths, char *buf, size_t bufsize)
+int game_planet_get_slider_text_eco(const struct game_s *g, const planet_t *p, bool flag_tenths, char *buf, size_t bufsize)
 {
+    player_id_t player = p->owner;
     const empiretechorbit_t *e = &(g->eto[player]);
     int retval = -1;
     const char *str = NULL;
