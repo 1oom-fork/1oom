@@ -257,9 +257,10 @@ const char *game_planet_get_finished_text(const struct game_s *g, const planet_t
     return buf;
 }
 
-int game_planet_get_slider_text(const struct game_s *g, uint8_t planet_i, player_id_t player, planet_slider_i_t si, char *buf, size_t bufsize)
+int game_planet_get_slider_text(const struct game_s *g, uint8_t planet_i, planet_slider_i_t si, char *buf, size_t bufsize)
 {
     const planet_t *p = &(g->planet[planet_i]);
+    player_id_t player = p->owner;
     const empiretechorbit_t *e = &(g->eto[player]);
     int retval = -1;
     switch (si) {
@@ -380,7 +381,7 @@ int game_planet_get_slider_text(const struct game_s *g, uint8_t planet_i, player
             }
             break;
         case PLANET_SLIDER_ECO:
-            retval = game_planet_get_slider_text_eco(g, planet_i, player, false, buf, bufsize);
+            retval = game_planet_get_slider_text_eco(g, planet_i, false, buf, bufsize);
             break;
         case PLANET_SLIDER_TECH:
             {
@@ -396,9 +397,10 @@ int game_planet_get_slider_text(const struct game_s *g, uint8_t planet_i, player
     return retval;
 }
 
-int game_planet_get_slider_text_eco(const struct game_s *g, uint8_t planet_i, player_id_t player, bool flag_tenths, char *buf, size_t bufsize)
+int game_planet_get_slider_text_eco(const struct game_s *g, uint8_t planet_i, bool flag_tenths, char *buf, size_t bufsize)
 {
     const planet_t *p = &(g->planet[planet_i]);
+    player_id_t player = p->owner;
     const empiretechorbit_t *e = &(g->eto[player]);
     int retval = -1;
     const char *str = NULL;
