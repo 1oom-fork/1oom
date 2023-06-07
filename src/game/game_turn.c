@@ -1422,16 +1422,18 @@ static void game_turn_finished_slider(struct game_s *g)
         planet_t *p = &(g->planet[pli]);
         player_id_t pi;
         empiretechorbit_t *e;
+        bool cond_build_ind;
         pi = p->owner;
         if ((pi == PLAYER_NONE) || IS_AI(g, pi)) {
             BOOLVEC_CLEAR(p->finished, FINISHED_NUM);
             continue;
         }
         e = &(g->eto[pi]);
+        cond_build_ind = (p->factories < (p->pop * e->colonist_oper_factories));
         if (BOOLVEC_IS1(p->finished, FINISHED_SOILATMOS)) {
             int v;
             v = game_planet_get_w1(g, pli);
-            if (p->factories >= (p->pop * e->colonist_oper_factories)) {
+            if (!cond_build_ind) {
                 p->slider[PLANET_SLIDER_TECH] += p->slider[PLANET_SLIDER_ECO] - v;
             } else {
                 p->slider[PLANET_SLIDER_IND] += p->slider[PLANET_SLIDER_ECO] - v;
@@ -1474,7 +1476,7 @@ static void game_turn_finished_slider(struct game_s *g)
                   || ((p->slider[PLANET_SLIDER_ECO] != 0) && (e->race == RACE_SILICOID))
                 ) {
                     if ((p->pop > p->pop_prev) || (p->slider[PLANET_SLIDER_ECO] > (w + game_num_eco_slider_slack))) {
-                        if (p->factories >= (p->pop * e->colonist_oper_factories)) {
+                        if (!cond_build_ind) {
                             p->slider[PLANET_SLIDER_TECH] += p->slider[PLANET_SLIDER_ECO] - w;
                         } else {
                             p->slider[PLANET_SLIDER_IND] += p->slider[PLANET_SLIDER_ECO] - w;
@@ -1489,7 +1491,7 @@ static void game_turn_finished_slider(struct game_s *g)
                   && (p->slider[PLANET_SLIDER_ECO] > 0)
                   && ((e->race == RACE_SILICOID) || ((e->ind_waste_scale == 0) && (p->waste == 0)))
                 ) {
-                    if (p->factories >= (p->pop * e->colonist_oper_factories)) {
+                    if (!cond_build_ind) {
                         p->slider[PLANET_SLIDER_TECH] += p->slider[PLANET_SLIDER_ECO];
                     } else {
                         p->slider[PLANET_SLIDER_IND] += p->slider[PLANET_SLIDER_ECO];
