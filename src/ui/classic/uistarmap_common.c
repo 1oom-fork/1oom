@@ -563,14 +563,14 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
         ty = (g->evn.crystal.y - y) * 2 + 8;
         lbxgfx_draw_frame_offs(tx, ty, ui_data.gfx.planets.smonster, STARMAP_LIMITS, UI_SCREEN_W, starmap_scale);
         lbxfont_select(2, 8, 0, 0);
-        lbxfont_print_str_center_limit(tx + 2, ty + 5, game_str_sm_crystal, STARMAP_LIMITS, UI_SCREEN_W, starmap_scale);
+        lbxfont_print_str_center_limit(tx + 2, ty + 5, game_str_sm_crystal, STARMAP_TEXT_LIMITS, UI_SCREEN_W, starmap_scale);
     }
     if ((g->evn.amoeba.exists != 0) && (g->evn.amoeba.killer == PLAYER_NONE)) {
         tx = (g->evn.amoeba.x - x) * 2 + 8;
         ty = (g->evn.amoeba.y - y) * 2 + 8;
         lbxgfx_draw_frame_offs(tx, ty, ui_data.gfx.planets.smonster, STARMAP_LIMITS, UI_SCREEN_W, starmap_scale);
         lbxfont_select(2, 8, 0, 0);
-        lbxfont_print_str_center_limit(tx + 2, ty + 5, game_str_sm_amoeba, STARMAP_LIMITS, UI_SCREEN_W, starmap_scale);
+        lbxfont_print_str_center_limit(tx + 2, ty + 5, game_str_sm_amoeba, STARMAP_TEXT_LIMITS, UI_SCREEN_W, starmap_scale);
     }
     for (int pi = 0; pi < g->galaxy_stars; ++pi) {
         const planet_t *p = &g->planet[pi];
