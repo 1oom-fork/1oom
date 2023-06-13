@@ -390,7 +390,7 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
     if (++d->anim_delay >= STARMAP_ANIM_DELAY) {
         d->anim_delay = 0;
     }
-    ui_draw_filled_rect(STARMAP_LIMITS, 0, starmap_scale);
+    ui_draw_filled_rect(6, 6, 222 - 1, 178 - 1, 0, ui_scale);
     lbxgfx_draw_frame(0, 0, ui_data.gfx.starmap.mainview, UI_SCREEN_W, ui_scale);
     uiobj_set_limits(STARMAP_LIMITS);
     {
