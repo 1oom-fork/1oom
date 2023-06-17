@@ -1955,12 +1955,12 @@ static void text_dump_prefix_init(struct text_dump_prefix_s *tp)
 
 static void text_dump_prefix_add(struct text_dump_prefix_s *tp, const char *str, const char *sep)
 {
-    int num, pos, prev_pos;
+    int num, pos;
     num = tp->num++;
     if (num >= 10) {
         log_fatal_and_die("test_dump_prefix_add: too many entries.");
     }
-    prev_pos = pos = tp->pos[num];
+    pos = tp->pos[num];
     pos += lib_sprintf(&(tp->buf[pos]), 128 - pos, "%s%s", str, sep);
     if (num <= 8) {
         tp->pos[num + 1] = pos;
