@@ -1470,7 +1470,7 @@ static bool game_turn_check_end(struct game_s *g, struct game_end_s *ge)
                 } else if (pi2 == PLAYER_NONE) {
                     pi2 = i;
                 }
-                if (IS_HUMAN(g, i) && (good_planets[i] > 0)) {
+                if (IS_HUMAN(g, i) && (good_planets[i] > 0) && IS_ALIVE(g, i)) {
                     human_alive = true;
                 }
             }
@@ -1826,6 +1826,9 @@ struct game_end_s game_turn_process(struct game_s *g)
     }
     game_event_new(g);
     if (game_event_run(g, &game_end)) {
+        return game_end;
+    }
+    if (game_turn_check_end(g, &game_end)) {
         return game_end;
     }
     if (artifact_planet != PLANET_NONE) {
