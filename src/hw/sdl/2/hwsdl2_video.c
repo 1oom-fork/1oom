@@ -76,6 +76,10 @@ static struct sdl_video_s {
 
 /* -------------------------------------------------------------------------- */
 
+#include "hwsdl_video.c"
+
+/* -------------------------------------------------------------------------- */
+
 static void video_create_upscaled_texture(bool force)
 {
     if (!hw_opt_allow_upscaling) {
@@ -647,5 +651,3 @@ int hw_icon_set(const uint8_t *data, const uint8_t *pal, int w, int h)
     video.icon = icon;
     return 0;
 }
-
-#include "hwsdl_video.c"
