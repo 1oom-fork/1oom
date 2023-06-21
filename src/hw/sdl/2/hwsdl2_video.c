@@ -558,14 +558,9 @@ int hw_video_init(int w, int h)
     video.blit_rect.h = video.bufh;
     hw_video_update_actual_h();
     SETMAX(h, video.actualh);
-    if ((hw_opt_screen_winw != 0) && (hw_opt_screen_winh != 0)) {
+    if (video_check_opt_screen_winwh() == 0) {
         w = hw_opt_screen_winw;
         h = hw_opt_screen_winh;
-        if ((w < video.bufw) || (h < video.bufh)) {
-            log_warning("ignoring too small configured resolution %ix%i < %ix%i\n", w, h, video.bufw, video.bufh);
-            w = video.bufw;
-            h = video.bufh;
-        }
     }
     if (video_sw_set(w, h)) {
         return -1;
