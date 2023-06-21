@@ -54,6 +54,10 @@ static struct sdl_video_s {
 
 /* -------------------------------------------------------------------------- */
 
+#include "hwsdl_video.c"
+
+/* -------------------------------------------------------------------------- */
+
 static void video_render_8bpp(int bufi)
 {
     int pitch = video.screen->pitch;
@@ -512,5 +516,3 @@ int hw_icon_set(const uint8_t *data, const uint8_t *pal, int w, int h)
     mask = NULL;
     return 0;
 }
-
-#include "hwsdl_video.c"
