@@ -149,6 +149,19 @@ static void video_create_upscaled_texture(bool force)
 
 }
 
+static void video_destroy_renderer(void)
+{
+    if (video.renderer) {
+        SDL_DestroyRenderer(video.renderer);
+        // all associated textures get destroyed
+        video.renderer = NULL;
+        video.texture = NULL;
+        video.texture_upscaled = NULL;
+        video.w_upscale = 0;
+        video.h_upscale = 0;
+    }
+}
+
 /* -------------------------------------------------------------------------- */
 
 static void video_render(void)
@@ -303,12 +316,7 @@ static void video_get_window_position(int *x, int *y, int w, int h)
 
 static void video_window_destroy(void)
 {
-    if (video.renderer) {
-        SDL_DestroyRenderer(video.renderer);
-        video.renderer = NULL;
-        video.texture = NULL;
-        video.texture_upscaled = NULL;
-    }
+    video_destroy_renderer();
     if (video.window) {
         SDL_DestroyWindow(video.window);
         video.window = NULL;
@@ -375,12 +383,7 @@ static int video_sw_set(int w, int h)
         renderer_flags &= ~SDL_RENDERER_PRESENTVSYNC;
     }
 
-    if (video.renderer) {
-        SDL_DestroyRenderer(video.renderer);
-        // all associated textures get destroyed
-        video.texture = NULL;
-        video.texture_upscaled = NULL;
-    }
+    video_destroy_renderer();
     video.renderer = SDL_CreateRenderer(video.window, -1, renderer_flags);
     if (video.renderer == NULL) {
         log_error("SDL2: Error creating renderer for screen window: %s\n", SDL_GetError());
