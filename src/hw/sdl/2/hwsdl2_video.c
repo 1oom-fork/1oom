@@ -566,7 +566,7 @@ int hw_video_init(int w, int h)
         return -1;
     }
     for (int i = 0; i < NUM_VIDEOBUF; ++i) {
-        video.buf[i] = lib_malloc(w * h);
+        video.buf[i] = lib_malloc(video.bufw * video.bufh);
     }
     video.bufi = 0;
     return 0;
