@@ -1,3 +1,19 @@
+static int video_check_opt_screen_winwh(void)
+{
+    int minw = video.bufw;
+    int minh = video.bufh;
+    if ((hw_opt_screen_winw != 0) && (hw_opt_screen_winh != 0)) {
+        if ((hw_opt_screen_winw < minw) || (hw_opt_screen_winh < minh)) {
+            log_warning("ignoring too small configured resolution %ix%i < %ix%i\n", hw_opt_screen_winw, hw_opt_screen_winh, minw, minh);
+        } else {
+            return 0;
+        }
+    }
+    return -1;
+}
+
+/* -------------------------------------------------------------------------- */
+
 void hw_video_refresh(int front)
 {
     if (SDL_MUSTLOCK(video.screen)) {

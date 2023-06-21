@@ -365,7 +365,6 @@ int hw_video_init(int w, int h)
     }
 #ifdef HAVE_SDL1GL
     else {
-        bool find_resolution;
         int texturebpp;
         Uint32 rmask, gmask, bmask, amask;
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
@@ -416,17 +415,10 @@ int hw_video_init(int w, int h)
         if ((video.hwrenderbuf->pitch % sizeof(Uint32)) != 0) {
             log_warning("SDL renderbuf pitch mod %i == %i\n", sizeof(Uint32), video.hwrenderbuf->pitch);
         }
-        find_resolution = true;
-        if ((hw_opt_screen_winw != 0) && (hw_opt_screen_winh != 0)) {
+        if (video_check_opt_screen_winwh() == 0) {
             w = hw_opt_screen_winw;
             h = hw_opt_screen_winh;
-            if ((w < video.bufw) || (h < video.bufh)) {
-                log_warning("ignoring too small configured resolution %ix%i < %ix%i\n", w, h, video.bufw, video.bufh);
-            } else {
-                find_resolution = false;
-            }
-        }
-        if (find_resolution) {
+        } else {
             int scale = (video.bestmode.w - 50/*window borders*/) / video.bufw + 1;
             if (scale > 1) {
                 do {
