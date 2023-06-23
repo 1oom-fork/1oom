@@ -11,5 +11,6 @@ extern void hw_mouse_grab(void);
 extern void hw_mouse_ungrab(void);
 
 extern unsigned int hw_video_get_window_id(void);
+extern void hw_video_set_visible(bool visible);
 
 #endif
