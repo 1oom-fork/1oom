@@ -84,6 +84,26 @@ static struct sdl_video_s {
 
 /* -------------------------------------------------------------------------- */
 
+static void video_create_texture(void)
+{
+    if (video.texture != NULL) {
+        SDL_DestroyTexture(video.texture);
+    }
+    /* Set the scaling quality for rendering the intermediate texture into
+       the upscaled texture to "nearest", which is gritty and pixelated and
+       resembles software scaling pretty well.
+    */
+    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "nearest");
+    /* Create the intermediate texture that the RGBA surface gets loaded into.
+       The SDL_TEXTUREACCESS_STREAMING flag means that this texture's content
+       is going to change frequently.
+    */
+    video.texture = SDL_CreateTexture(video.renderer,
+                                      video.pixel_format,
+                                      SDL_TEXTUREACCESS_STREAMING,
+                                      video.bufw, video.bufh);
+}
+
 static void video_create_upscaled_texture(bool force)
 {
     if (!hw_opt_allow_upscaling) {
@@ -467,22 +487,8 @@ static int video_sw_set(int w, int h)
             return -1;
         }
     }
-    if (video.texture != NULL) {
-        SDL_DestroyTexture(video.texture);
-    }
-    /* Set the scaling quality for rendering the intermediate texture into
-       the upscaled texture to "nearest", which is gritty and pixelated and
-       resembles software scaling pretty well.
-    */
-    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "nearest");
-    /* Create the intermediate texture that the RGBA surface gets loaded into.
-       The SDL_TEXTUREACCESS_STREAMING flag means that this texture's content
-       is going to change frequently.
-    */
-    video.texture = SDL_CreateTexture(video.renderer,
-                                video.pixel_format,
-                                SDL_TEXTUREACCESS_STREAMING,
-                                video.bufw, video.bufh);
+
+    video_create_texture();
 
     /* Initially create the upscaled texture for rendering to screen */
     video_create_upscaled_texture(true);
