@@ -56,6 +56,7 @@ static struct sdl_video_s {
     int w_upscale, h_upscale;
     int actualh;
 
+    bool noblit;
     bool need_resize;
     int last_resize_time;
 
@@ -181,6 +182,9 @@ static void video_destroy_renderer(void)
 
 static void video_render(const uint8_t *buf)
 {
+    if (video.noblit) {
+        return;
+    }
     int w = video.screen->w, h = video.screen->h;
     int pitch = video.screen->pitch;
     Uint8 *p = (Uint8 *)video.screen->pixels;
@@ -212,6 +216,9 @@ static void video_adjust_window_size(int *wptr, int *hptr)
 
 static void video_update(void)
 {
+    if (video.noblit) {
+        return;
+    }
     if (video.need_resize) {
         if (SDL_GetTicks() > (video.last_resize_time + RESIZE_DELAY)) {
             int flags, w, h;
@@ -287,6 +294,11 @@ static void video_setpal(const uint8_t *pal, int first, int num)
 }
 
 /* -------------------------------------------------------------------------- */
+
+void hw_video_set_visible(bool visible)
+{
+    video.noblit = !visible;
+}
 
 /* -------------------------------------------------------------------------- */
 
@@ -519,6 +531,7 @@ static int hw_video_init_do(int w, int h)
     video.display = 0;
     video.w_upscale = 0;
     video.h_upscale = 0;
+    video.noblit = false;
     video.need_resize = false;
     video.last_resize_time = 0;
     video.render = video_render;
