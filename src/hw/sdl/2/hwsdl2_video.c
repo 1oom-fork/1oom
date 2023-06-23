@@ -50,6 +50,7 @@ static struct sdl_video_s {
     int w_upscale, h_upscale;
     int actualw, actualh;
 
+    bool screen_visible;
     bool need_resize;
     unsigned int last_resize_time;
 
@@ -166,6 +167,10 @@ static void video_adjust_window_size(int *wptr, int *hptr)
 
 static void video_update(void)
 {
+    if (!video.screen_visible) {
+        return;
+    }
+
     if (video.need_resize) {
         if (SDL_GetTicks() > (video.last_resize_time + RESIZE_DELAY)) {
             Uint32 flags;
@@ -240,6 +245,11 @@ static void video_setpal(const uint8_t *pal, int first, int num)
 }
 
 /* -------------------------------------------------------------------------- */
+
+void hw_video_set_visible(bool visible)
+{
+    video.screen_visible = visible;
+}
 
 /* -------------------------------------------------------------------------- */
 
@@ -454,6 +464,7 @@ int hw_video_init(int w, int h)
     video.display = 0;
     video.w_upscale = 0;
     video.h_upscale = 0;
+    video.screen_visible = true;
     video.need_resize = false;
     video.last_resize_time = 0;
     i_hw_video.setmode = video_sw_set;
