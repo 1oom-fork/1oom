@@ -217,6 +217,13 @@ static void hw_event_handle_window(SDL_WindowEvent *e)
         case SDL_WINDOWEVENT_FOCUS_LOST:
             hw_mouse_ungrab();
             break;
+        case SDL_WINDOWEVENT_MINIMIZED:
+            hw_video_set_visible(false);
+            break;
+        case SDL_WINDOWEVENT_MAXIMIZED:
+        case SDL_WINDOWEVENT_RESTORED:
+            hw_video_set_visible(true);
+            break;
         default:
             break;
     }
