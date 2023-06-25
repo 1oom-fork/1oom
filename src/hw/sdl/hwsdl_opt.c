@@ -6,6 +6,7 @@
 
 /* -------------------------------------------------------------------------- */
 
+bool hw_opt_borderless = false;
 bool hw_opt_fullscreen = HW_DEFAULT_FULLSCREEN;
 int hw_opt_screen_winw = 0;
 int hw_opt_screen_winh = 0;
@@ -34,6 +35,7 @@ static bool check_mouse_speed(void *var)
 }
 
 const struct cfg_items_s hw_cfg_items[] = {
+    CFG_ITEM_BOOL("borderless", &hw_opt_borderless),
     CFG_ITEM_BOOL("fs", &hw_opt_fullscreen),
     CFG_ITEM_INT("winw", &hw_opt_screen_winw, 0),
     CFG_ITEM_INT("winh", &hw_opt_screen_winh, 0),
