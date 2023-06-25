@@ -260,6 +260,9 @@ static int video_sw_set(int w, int h)
 {
     int flags;
     flags = SDL_SWSURFACE | SDL_DOUBLEBUF;
+    if (hw_opt_borderless) {
+        flags |= SDL_NOFRAME;
+    }
     if (hw_opt_fullscreen) {
         flags |= SDL_FULLSCREEN;
     }
@@ -293,6 +296,10 @@ int hw_video_resize(int w, int h)
     }
 
     flags = SDL_OPENGL | SDL_RESIZABLE;
+
+    if (hw_opt_borderless) {
+        flags |= SDL_NOFRAME;
+    }
 
     if (hw_opt_fullscreen) {
         flags |= SDL_FULLSCREEN;
