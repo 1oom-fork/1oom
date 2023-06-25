@@ -3,6 +3,7 @@
 
 #define HW_DEFAULT_ASPECT   1000000
 
+extern bool hw_opt_borderless;
 extern bool hw_opt_fullscreen;
 extern int hw_opt_screen_winw;
 extern int hw_opt_screen_winh;
