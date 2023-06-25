@@ -542,6 +542,34 @@ int hw_video_init(int w, int h)
             w = hw_opt_screen_winw;
             h = hw_opt_screen_winh;
         }
+    } else {
+        SDL_Rect bounds;
+        if (SDL_GetDisplayUsableBounds(video.display, &bounds) != 0) {
+            log_error("SDL2: Could not get display usable bounds for video display #%d: %s\n", video.display, SDL_GetError());
+            return -1;
+        }
+        int maxw = bounds.w;
+        int maxh = bounds.h;
+        {
+            int top, left, bottom, right;
+            if (SDL_GetWindowBordersSize(video.window, &top, &left, &bottom, &right) == 0) {
+                maxw -= (left + right);
+                maxh -= (top + bottom);
+            } else {
+                maxw -= 50;
+                maxh -= 50;
+            }
+        }
+        {
+            int scale_w = maxw / video.screen->w;
+            int scale_h = maxh / video.actualh;
+            int scale = (scale_w > scale_h) ? scale_h : scale_w;
+            if (scale <= 0) {
+                scale = 1;
+            }
+            w = video.screen->w * scale;
+            h = video.actualh * scale;
+        }
     }
     if (i_hw_video.setmode(w, h)) {
         return -1;
