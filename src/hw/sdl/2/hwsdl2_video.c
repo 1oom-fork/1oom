@@ -377,6 +377,9 @@ static int video_sw_set(int w, int h)
     /* Set the highdpi flag - this makes a big difference on Macs with
        retina displays, especially when using small window sizes. */
     window_flags |= SDL_WINDOW_ALLOW_HIGHDPI;
+    if (hw_opt_borderless) {
+        window_flags |= SDL_WINDOW_BORDERLESS;
+    }
     if (hw_opt_fullscreen) {
         if (hw_opt_screen_fsw && hw_opt_screen_fsh) {
             w = hw_opt_screen_fsw;
