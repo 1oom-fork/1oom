@@ -66,14 +66,7 @@ static void ui_starmap_orbit_own_draw_cb(void *vptr)
         lbxgfx_draw_frame_offs(x1, y1, ui_data.gfx.starmap.planbord, UI_SCREEN_W);
         x0 = (pf->x - ui_data.starmap.x) * 2 + 26;
         y0 = (pf->y - ui_data.starmap.y) * 2 + 8;
-        /* FIXME update outside draw */
-        if (ui_starmap_orbit_own_in_frange(d)) {
-            ctbl = colortbl_line_green;
-            d->in_frange = true;
-        } else {
-            ctbl = colortbl_line_red;
-            d->in_frange = false;
-        }
+        ctbl = ui_starmap_orbit_own_in_frange(d) ? colortbl_line_green : colortbl_line_red;
         ui_draw_line_limit_ctbl(x0 + 3, y0 + 1, x1 + 6, y1 + 6, ctbl, 5, ui_data.starmap.line_anim_phase);
         gfx = ui_data.gfx.starmap.smalship[g->eto[d->api].banner];
         lbxgfx_set_frame_0(gfx);
@@ -165,7 +158,6 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
     for (int i = 0; i < NUM_SHIPDESIGNS; ++i) {
         d.ss.ships[i] = os[i];
     }
-    d.in_frange = false;
     ui_starmap_sn0_setup(&d.ss.sn0, NUM_SHIPDESIGNS, d.ss.ships);
 
     uiobj_table_clear();
@@ -498,7 +490,7 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
             ui_starmap_fill_oi_tbls(&d);
             ui_starmap_fill_oi_tbl_stars(&d);
             oi_cancel = uiobj_add_t0(227, 180, "", ui_data.gfx.starmap.reloc_bu_cancel, MOO_KEY_ESCAPE, -1);
-            if (d.in_frange && d.ss.shiptypenon0numsel) {
+            if (ui_starmap_orbit_own_in_frange(&d) && d.ss.shiptypenon0numsel) {
                 oi_accept = uiobj_add_t0(271, 180, "", ui_data.gfx.starmap.reloc_bu_accept, MOO_KEY_SPACE, -1);
             }
             oi_scroll = uiobj_add_tb(6, 6, 2, 2, 108, 86, &scrollx, &scrolly, -1);
