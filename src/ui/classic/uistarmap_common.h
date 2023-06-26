@@ -102,7 +102,6 @@ struct starmap_data_s {
         } oe;   /* orbit_en */
         struct {
             struct shipnon0_s sn0;
-            bool in_frange;
             uint8_t from;
             uint8_t pon;
         } en;   /* enroute */
