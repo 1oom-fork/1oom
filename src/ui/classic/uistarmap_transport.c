@@ -78,21 +78,16 @@ static void ui_starmap_transport_draw_cb(void *vptr)
         dist = game_get_min_dist(g, r->owner, g->planet_focus_i[d->api]);
         if ((r->owner == d->api) && g->eto[d->api].have_hyperspace_comm && (pt->within_frange[d->api] == 0)) {
             /* FIXME use proper positioning for varying str length */
-            d->in_frange = false;
             sprintf(buf, "  %s   %i %s.", game_str_sm_outsr, dist - e->fuel_range, game_str_sm_parsecs2);
             lbxfont_select_set_12_4(2, 0, 0, 0);
             lbxfont_set_gap_h(2);
             lbxfont_print_str_split(230, 26, 80, buf, 2, UI_SCREEN_W, UI_SCREEN_H);
         } else {
             int eta = game_calc_eta(g, r->speed, pt->x, pt->y, r->x, r->y);
-            d->in_frange = true;
             sprintf(buf, "%s %i %s", game_str_sm_eta, eta, (eta == 1) ? game_str_sm_turn : game_str_sm_turns);
             lbxfont_select_set_12_4(0, 0, 0, 0);
             lbxfont_print_str_center(268, 32, buf, UI_SCREEN_W);
         }
-    } else {
-        /*6a51c*/
-        d->in_frange = false;
     }
     {
         int x = 228, y = 73;
@@ -139,7 +134,6 @@ void ui_starmap_transport(struct game_s *g, player_id_t active_player)
 
     d.g = g;
     d.api = active_player;
-    d.in_frange = false;
     ui_data.starmap.frame_ship = 0;
     ui_data.starmap.frame_scanner = 0;
     ui_data.starmap.scanner_delay = 0;
