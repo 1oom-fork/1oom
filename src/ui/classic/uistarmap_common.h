@@ -49,7 +49,6 @@ struct starmap_data_s {
     int16_t oi_tbl_transport[TRANSPORT_MAX];
     int16_t oi_tbl_pl_stars[PLAYER_NUM][PLANETS_MAX];
     uint8_t from;
-    bool in_frange;
     can_move_t can_move;
     shipcount_t ships[NUM_SHIPDESIGNS];
     struct shipnon0_s sn0;
