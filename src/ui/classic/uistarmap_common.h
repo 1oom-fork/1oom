@@ -195,7 +195,6 @@ extern void ui_starmap_draw_planetinfo_2(const struct game_s *g, int p1, int p2,
 extern int ui_starmap_newship_next(const struct game_s *g, player_id_t pi, int i);
 extern int ui_starmap_newship_prev(const struct game_s *g, player_id_t pi, int i);
 extern int ui_starmap_enemy_incoming(const struct game_s *g, player_id_t pi, int i, bool next);
-extern void ui_starmap_compute_scale(const struct game_s *g);
 
 extern void ui_starmap_common_init(struct game_s *g, struct starmap_data_s *d, player_id_t active_player);
 extern void ui_starmap_common_update_mouse_hover(struct starmap_data_s *d, int16_t oi);
