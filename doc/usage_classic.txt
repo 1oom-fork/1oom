@@ -51,7 +51,6 @@ The following new UI features are always enabled/available:
   - on the Tech screen
 - In Tech screen +/- adjusts the current field slider
 - In Tech screen the L key locks the current slider
-- When sending a fleet Tab cycles ships and <> adjusts selected ship
 - Clicking the portraits in Races screen brings Report page
 - In Races screen the keys 1-5 correspond to clicking the portraits
 - In Specs screen the keys 1-6 correspond to clicking the scrap button

@@ -158,7 +158,7 @@ static void ui_starmap_orbit_own_draw_cb(void *vptr)
 void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
 {
     bool flag_done = false;
-    int16_t oi_cancel, oi_accept, oi_search, oi_cycle,
+    int16_t oi_cancel, oi_accept, oi_search,
             oi_f2, oi_f3, oi_f4, oi_f5, oi_f6, oi_f7, oi_f8, oi_f9, oi_f10,
             oi_tbl_p[NUM_SHIPDESIGNS],
             oi_tbl_m[NUM_SHIPDESIGNS],
@@ -197,7 +197,6 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
         STARMAP_UIOBJ_CLEAR_FX(); \
         oi_accept = UIOBJI_INVALID; \
         oi_cancel = UIOBJI_INVALID; \
-        oi_cycle = UIOBJI_INVALID; \
         UIOBJI_SET_TBL5_INVALID(oi_tbl_p, oi_tbl_m, oi_tbl_a, oi_tbl_n, oi_tbl_s); \
     } while (0)
 
@@ -208,7 +207,6 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
 
     while (!flag_done) {
         int16_t oi1, oi2;
-        int cursor_over;
         ui_starmap_update_reserve_fuel(g, &d.oo.sn0, d.oo.ships, active_player);
         oi1 = uiobj_handle_input_cond();
         oi2 = uiobj_at_cursor();
@@ -414,24 +412,7 @@ do_accept:
                 break;
             }
         }
-        cursor_over = -1;
-        for (int i = 0; i < d.oo.sn0.num; ++i) {
-            if (0
-              || (oi2 == oi_tbl_p[i])
-              || (oi2 == oi_tbl_m[i])
-              || (oi2 == oi_tbl_a[i])
-              || (oi2 == oi_tbl_n[i])
-            ) {
-                cursor_over = i;
-                break;
-            }
-        }
-        if (oi1 == oi_cycle) {
-            if (++cursor_over >= d.oo.sn0.num) {
-                cursor_over = 0;
-            }
-            uiobj_set_focus(oi_tbl_m[cursor_over]);
-        }
+
         for (int i = 0; i < d.oo.sn0.num; ++i) {
             int si, per10num;
             si = d.oo.sn0.type[i];
@@ -502,12 +483,11 @@ do_accept:
               && d.oo.shiptypenon0numsel) {
                 oi_accept = uiobj_add_t0(271, 180, "", ui_data.gfx.starmap.reloc_bu_accept, MOO_KEY_SPACE);
             }
-            oi_cycle = uiobj_add_inputkey(MOO_KEY_TAB);
             oi_search = uiobj_add_inputkey(MOO_KEY_SLASH);
             ui_starmap_fill_oi_ctrl(&d);
             for (int i = 0; i < d.oo.sn0.num; ++i) {
-                oi_tbl_p[i] = uiobj_add_t0(288, 35 + i * 26, "", ui_data.gfx.starmap.move_but_p, (cursor_over == i) ? MOO_KEY_GREATER : MOO_KEY_UNKNOWN);
-                oi_tbl_m[i] = uiobj_add_t0(277, 35 + i * 26, "", ui_data.gfx.starmap.move_but_m, (cursor_over == i) ? MOO_KEY_LESS : MOO_KEY_UNKNOWN);
+                oi_tbl_p[i] = uiobj_add_t0(288, 35 + i * 26, "", ui_data.gfx.starmap.move_but_p, MOO_KEY_UNKNOWN);
+                oi_tbl_m[i] = uiobj_add_t0(277, 35 + i * 26, "", ui_data.gfx.starmap.move_but_m, MOO_KEY_UNKNOWN);
                 oi_tbl_a[i] = uiobj_add_t0(299, 35 + i * 26, "", ui_data.gfx.starmap.move_but_a, MOO_KEY_UNKNOWN);
                 oi_tbl_n[i] = uiobj_add_t0(265, 35 + i * 26, "", ui_data.gfx.starmap.move_but_n, MOO_KEY_UNKNOWN);
                 oi_tbl_s[i] = uiobj_add_mousewheel(227, 22 + i * 26, 319, 46 + i * 26, &scrollship);
