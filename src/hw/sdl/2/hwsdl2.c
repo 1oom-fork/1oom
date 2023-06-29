@@ -368,9 +368,9 @@ int hw_event_handle(void)
                 break;
         }
     }
+    int x, y;
+    SDL_GetRelativeMouseState(&x, &y);
     if (hw_mouse_enabled) {
-        int x, y;
-        SDL_GetRelativeMouseState(&x, &y);
         if ((x != 0) || (y != 0)) {
             hw_mouse_move(x, y);
         }
