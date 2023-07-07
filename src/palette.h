@@ -22,4 +22,9 @@ static inline void ui_palette_set(const uint8_t *pal, int first, int num)
     memcpy(&ui_palette[first * 3], pal, num * 3);
 }
 
+static inline uint8_t palette_6bit_to_8bit(uint8_t six_bit)
+{
+    return (six_bit << 2) | ((six_bit >> 4) & 3);
+}
+
 #endif
