@@ -25,11 +25,14 @@
 /* -------------------------------------------------------------------------- */
 
 struct govern_data_s {
+    struct game_s *g;
+    player_id_t api;
     int spend_rest;
     governor_eco_mode_t eco_mode;
     uint16_t target;
     enum {
         UI_GV_HIGHLIGHT_NONE,
+        UI_GV_HIGHLIGHT_ENABLED,
         UI_GV_HIGHLIGHT_ECO_MODE,
         UI_GV_HIGHLIGHT_STARGATE,
         UI_GV_HIGHLIGHT_ADJUST,
@@ -43,6 +46,7 @@ struct govern_data_s {
 static void govern_draw_cb(void *vptr)
 {
     struct govern_data_s *d = vptr;
+    planet_t *p = &(d->g->planet[d->g->planet_focus_i[d->api]]);
     if (d->my_planet) {
         const int x = 56, y = 10;
         ui_draw_filled_rect(x, y, x + 160, y + 30, 0x06, ui_scale);
@@ -54,13 +58,20 @@ static void govern_draw_cb(void *vptr)
     if (d->my_planet) {
         const int x = 56;
         int y = 45;
-        ui_draw_filled_rect(x, y, x + 160, y + 25, 0x06, ui_scale);
+        ui_draw_filled_rect(x, y, x + 160, y + 33, 0x06, ui_scale);
         lbxfont_select(0, 0xd, 0, 0);
         y += 5;
         lbxfont_print_str_normal(x + 5, y, game_str_gv_thispl, UI_SCREEN_W, ui_scale);
+        y += 10;
+        ui_draw_filled_rect(x + 5, y + 1, x + 8, y + 4, 0x01, ui_scale);
+        if (BOOLVEC_IS1(p->extras, PLANET_EXTRAS_GOVERNOR)) {
+            ui_draw_filled_rect(x + 6, y + 2, x + 7, y + 3, 0x44, ui_scale);
+        }
+        lbxfont_select(0, (d->highlight == UI_GV_HIGHLIGHT_ENABLED) ? 0x1 : 0x0, 0, 0);
+        lbxfont_print_str_normal(x + 11, y, game_str_gv_governor, UI_SCREEN_W, ui_scale);
+        y += 8;
         lbxfont_select(0, (d->highlight == UI_GV_HIGHLIGHT_SPENDTHIS) ? 0x1 : 0x0, 0, 0);
         lib_sprintf(ui_data.strbuf, UI_STRBUF_SIZE, "%s %s", game_str_gv_rest, game_str_tbl_gv_rest[d->spend_rest]);
-        y += 10;
         lbxfont_print_str_normal(x + 5, y, ui_data.strbuf, UI_SCREEN_W, ui_scale);
     }
     {
@@ -99,7 +110,7 @@ void ui_govern(struct game_s *g, player_id_t pi)
 {
     struct govern_data_s d;
     bool flag_done = false;
-    int16_t oi_cancel, oi_accept, oi_p, oi_m, oi_p10, oi_m10, oi_adjust, oi_wheel, oi_spendthis, oi_sg, oi_ecom, oi_spendall;
+    int16_t oi_cancel, oi_accept, oi_p, oi_m, oi_p10, oi_m10, oi_adjust, oi_wheel, oi_spendthis, oi_sg, oi_ecom, oi_spendall, oi_enabled;
     const int x = 56;
     int y = 10;
     int16_t scroll = 0;
@@ -107,6 +118,8 @@ void ui_govern(struct game_s *g, player_id_t pi)
 
     ui_draw_copy_buf();
     uiobj_finish_frame();
+    d.g = g;
+    d.api = pi;
     d.my_planet = (p->owner == pi);
     if (d.my_planet) {
         d.target = p->target_bases;
@@ -138,8 +151,11 @@ void ui_govern(struct game_s *g, player_id_t pi)
     oi_wheel = uiobj_add_mousewheel(x, y, x + 80, y + 30, &scroll);
     y = 45 + 15;
     if (d.my_planet) {
+        oi_enabled = uiobj_add_mousearea(x, y, x + 160, y + 7, MOO_KEY_g);
+        y += 8;
         oi_spendthis = uiobj_add_mousearea(x, y, x + 160, y + 7, MOO_KEY_r);
     } else {
+        oi_enabled = UIOBJI_INVALID;
         oi_spendthis = UIOBJI_INVALID;
     }
     y = 110 + 15;
@@ -171,6 +187,8 @@ void ui_govern(struct game_s *g, player_id_t pi)
                     d.highlight = UI_GV_HIGHLIGHT_SPENDTHIS;
                 } else if (oi2 == oi_spendall)  {
                     d.highlight = UI_GV_HIGHLIGHT_SPENDALL;
+                } else if (oi2 == oi_enabled) {
+                    d.highlight = UI_GV_HIGHLIGHT_ENABLED;
                 }
             }
         }
@@ -224,6 +242,11 @@ void ui_govern(struct game_s *g, player_id_t pi)
         } else if (oi == oi_ecom) {
             d.eco_mode = (d.eco_mode + 1) % GOVERNOR_ECO_MODE_NUM;
             g->evn.gov_eco_mode[pi] = d.eco_mode;
+        } else if (oi == oi_enabled) {
+            BOOLVEC_TOGGLE(p->extras, PLANET_EXTRAS_GOVERNOR);
+            if (BOOLVEC_IS1(p->extras, PLANET_EXTRAS_GOVERNOR)) {
+                game_planet_govern(g, p);
+            }
         }
         if (!flag_done) {
             govern_draw_cb(&d);

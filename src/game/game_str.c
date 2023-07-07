@@ -422,6 +422,7 @@ const char *game_str_bs_line2 = "bases to eliminate?";
 const char *game_str_bs_base = "Base";
 const char *game_str_bs_bases = "Bases";
 
+const char *game_str_gv_governor = "Governor";
 const char *game_str_gv_target = "How many missile bases to build here?";
 const char *game_str_gv_adjust = "Readjust all governed planets";
 const char *game_str_gv_resta = "All planets spend rest on";
