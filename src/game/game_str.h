@@ -265,6 +265,7 @@ extern const char *game_str_bs_line1;
 extern const char *game_str_bs_line2;
 extern const char *game_str_bs_base;
 extern const char *game_str_bs_bases;
+extern const char *game_str_gv_governor;
 extern const char *game_str_gv_target;
 extern const char *game_str_gv_adjust;
 extern const char *game_str_gv_resta;

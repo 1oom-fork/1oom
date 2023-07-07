@@ -300,6 +300,7 @@ highlights governed planets.
 
 The classic UI has a new governor screen which is accessed by right clicking on
 the planet name. The governor screen allows:
+- Enabling/disabling the governor.
 - Setting a target amount of missile bases.
 - Choosing where to spend remaining points: research, ships or reserve.
 - Allowing the governors to build stargates.
