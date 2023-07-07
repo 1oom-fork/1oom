@@ -90,10 +90,7 @@ or pressing Alt-X in the main menu enables the following extra UI features:
   explored planets
 - The + sign is placed in the population text if it is possible to do
   atmospheric terraforming or soil enrichment
-- Planetary governor can be enabled or disabled by clicking on planet name in
-  the galaxy movement screen
-- Right clicking on planet name in the galaxy movement screen opens a governor
-  screen for setting target missile base amount or readjusting all planets
+- Clicking on planet name in the galaxy movement screen opens a governor screen
 - Eco slider shows fractional population growth if growth is less than 10
 - Summary of forces shown before ship combat
 - When espionage was successful, clicking on the race icon opens the spy report
