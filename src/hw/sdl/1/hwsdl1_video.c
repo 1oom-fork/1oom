@@ -186,14 +186,14 @@ static void video_setpal_gl_32bpp(const uint8_t *pal, int f, int num)
 {
     for (int i = 0; i < num; ++i) {
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
-        video.ppal.p32[f + i] = ((pal[i * 3 + 0] << 2) << 24)
-                              | ((pal[i * 3 + 1] << 2) << 16)
-                              | ((pal[i * 3 + 2] << 2) << 8)
+        video.ppal.p32[f + i] = (palette_6bit_to_8bit(pal[i * 3 + 0]) << 24)
+                              | (palette_6bit_to_8bit(pal[i * 3 + 1]) << 16)
+                              | (palette_6bit_to_8bit(pal[i * 3 + 2]) << 8)
                               ;
 #else
-        video.ppal.p32[f + i] = ((pal[i * 3 + 0] << 2) << 0)
-                              | ((pal[i * 3 + 1] << 2) << 8)
-                              | ((pal[i * 3 + 2] << 2) << 16)
+        video.ppal.p32[f + i] = (palette_6bit_to_8bit(pal[i * 3 + 0]) << 0)
+                              | (palette_6bit_to_8bit(pal[i * 3 + 1]) << 8)
+                              | (palette_6bit_to_8bit(pal[i * 3 + 2]) << 16)
                               ;
 #endif
     }

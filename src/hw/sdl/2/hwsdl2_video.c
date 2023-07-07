@@ -297,9 +297,9 @@ static void video_update(void)
 static void video_setpal(const uint8_t *pal, int first, int num)
 {
     for (int i = first; i < (first + num); ++i) {
-        video.color[i].r = *pal++ << 2;
-        video.color[i].g = *pal++ << 2;
-        video.color[i].b = *pal++ << 2;
+        video.color[i].r = palette_6bit_to_8bit(*pal++);
+        video.color[i].g = palette_6bit_to_8bit(*pal++);
+        video.color[i].b = palette_6bit_to_8bit(*pal++);
         video.color[i].a = 255;
     }
     video.palette_to_set = true;
@@ -673,9 +673,9 @@ int hw_icon_set(const uint8_t *data, const uint8_t *pal, int w, int h)
         p += icon->pitch;
     }
     for (int i = 0; i < 256; ++i) {
-        color[i].r = *pal++ << 2;
-        color[i].g = *pal++ << 2;
-        color[i].b = *pal++ << 2;
+        color[i].r = palette_6bit_to_8bit(*pal++);
+        color[i].g = palette_6bit_to_8bit(*pal++);
+        color[i].b = palette_6bit_to_8bit(*pal++);
         color[i].a = 255;
     }
     color[0].a = 0;
