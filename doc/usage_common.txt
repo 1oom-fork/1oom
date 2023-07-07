@@ -294,11 +294,10 @@ config file item "ui.uiextra" (set via the -uiextra command-line option).
 ------------------------
 
 The planetary governor is provided as an option for reducing micromanagement.
-It is enabled/disabled for each planet individually. In the classic UI this is
-done by clicking the planet name in the galaxy movement screen. The planet list
+It is enabled/disabled for each planet individually. The planet list
 highlights governed planets.
 
-The classic UI has a new governor screen which is accessed by right clicking on
+The classic UI has a new governor screen which is accessed by clicking on
 the planet name. The governor screen allows:
 - Enabling/disabling the governor.
 - Setting a target amount of missile bases.
