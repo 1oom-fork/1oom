@@ -239,8 +239,8 @@ static void video_update(void)
                save the new window size.
             */
             flags = SDL_GetWindowFlags(video.window);
+            SDL_GetWindowSize(video.window, &w, &h);
             if ((flags & (SDL_WINDOW_FULLSCREEN_DESKTOP | SDL_WINDOW_FULLSCREEN | SDL_WINDOW_MAXIMIZED)) == 0) {
-                SDL_GetWindowSize(video.window, &w, &h);
                 /* Adjust the window by resizing again so that the window is the right aspect ratio. */
                 if (hw_opt_autotrim) {
                     video_adjust_window_size(&w, &h);
@@ -249,6 +249,7 @@ static void video_update(void)
                 hw_opt_screen_winw = w;
                 hw_opt_screen_winh = h;
             }
+            hw_mouse_set_scale(w, h);
             video_create_upscaled_texture(false);
             video.need_resize = false;
             video.palette_to_set = true;
