@@ -22,6 +22,7 @@ bool hw_opt_relmouse = true;
 bool hw_opt_autotrim = true;
 bool hw_opt_vsync = true;
 bool hw_opt_allow_upscaling = true;
+int hw_opt_scaling_quality = 0;
 
 #ifdef HAVE_SDL2MIXER
 #define HAVE_SDLMIXER
@@ -36,6 +37,7 @@ const struct cfg_items_s hw_cfg_items_extra[] = {
     CFG_ITEM_BOOL("autotrim", &hw_opt_autotrim),
     CFG_ITEM_BOOL("vsync", &hw_opt_vsync),
     CFG_ITEM_BOOL("allow_upscaling", &hw_opt_allow_upscaling),
+    CFG_ITEM_INT("scaling_quality", &hw_opt_scaling_quality, 0),
     CFG_ITEM_END
 };
 
@@ -72,5 +74,8 @@ const struct cmdline_options_s hw_cmdline_options_extra[] = {
     { "-novsync", 0,
       options_disable_bool_var, &hw_opt_vsync,
       NULL, "Disable V-sync" },
+    { "-filt", 1,
+     options_set_int_var, (void *)&hw_opt_scaling_quality,
+     "FILTER", "Set scaling quality (0 = nearest, 1 = linear, 2 = best)" },
     { NULL, 0, NULL, NULL, NULL, NULL }
 };
