@@ -23,6 +23,7 @@ extern bool hw_opt_relmouse;
 extern bool hw_opt_autotrim;
 extern bool hw_opt_vsync;
 extern bool hw_opt_allow_upscaling;
+extern int hw_opt_scaling_quality;
 
 extern int hw_opt_check_screen_winwh(int minw, int minh);
 
