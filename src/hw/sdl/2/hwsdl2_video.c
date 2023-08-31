@@ -87,14 +87,26 @@ static struct sdl_video_s {
 
 static void video_create_texture(void)
 {
+    const char *scaling_quality_str = NULL;
     if (video.texture != NULL) {
         SDL_DestroyTexture(video.texture);
     }
     /* Set the scaling quality for rendering the intermediate texture into
-       the upscaled texture to "nearest", which is gritty and pixelated and
-       resembles software scaling pretty well.
+       the upscaled texture to "nearest" (by default), which is gritty and
+       pixelated and resembles software scaling pretty well.
     */
-    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "nearest");
+    switch (hw_opt_scaling_quality) {
+        case 1:
+            scaling_quality_str = "linear";
+            break;
+        case 2:
+            scaling_quality_str = "best";
+            break;
+        default:
+            scaling_quality_str = "nearest";
+            break;
+    }
+    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, scaling_quality_str);
     /* Create the intermediate texture that the RGBA surface gets loaded into.
        The SDL_TEXTUREACCESS_STREAMING flag means that this texture's content
        is going to change frequently.
@@ -282,7 +294,7 @@ static void video_update(void)
     }
 
     /* Render this intermediate texture into the upscaled texture
-       using "nearest" integer scaling.
+       using hw_opt_scaling_quality integer scaling.
     */
     SDL_SetRenderTarget(video.renderer, video.texture_upscaled);
     SDL_RenderCopy(video.renderer, video.texture, NULL, NULL);
