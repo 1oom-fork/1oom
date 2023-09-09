@@ -73,8 +73,8 @@ See doc/ for more documentation.
 
 Middle click or Ctrl-F10 to grab/ungrab input.
 Ctrl-Esc to quit (without saving).
-Ctrl-Plus/Minus to adjust sfx volume.
-Ctrl-Shift-Plus/Minus to adjust music volume.
+Ctrl-[] to adjust sfx volume.
+Ctrl-Shift-[] to adjust music volume.
 Otherwise it controls like the original.
 
 
