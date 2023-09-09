@@ -186,14 +186,14 @@ static bool hw_kbd_check_hotkey(SDLKey key, SDLMod smod, char c)
                 hw_mouse_grab();
             }
             return true;
-        } else if (c == '+') {
+        } else if (key == SDLK_RIGHTBRACKET) {
             if (smod & KMOD_SHIFT) {
                 hw_audio_music_volume(opt_music_volume + 4);
             } else {
                 hw_audio_sfx_volume(opt_sfx_volume + 4);
             }
             return true;
-        } else if (c == '-') {
+        } else if (key == SDLK_LEFTBRACKET) {
             if (smod & KMOD_SHIFT) {
                 hw_audio_music_volume(opt_music_volume - 4);
             } else {
