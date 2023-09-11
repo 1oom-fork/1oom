@@ -121,7 +121,7 @@ static void video_create_texture(void)
 
 static void video_create_upscaled_texture(bool force)
 {
-    if (!hw_opt_allow_upscaling) {
+    if (!hw_opt_allow_upscaling || hw_opt_int_scaling) {
         if (video.texture_upscaled) {
             SDL_DestroyTexture(video.texture_upscaled);
             video.texture_upscaled = NULL;
