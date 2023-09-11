@@ -97,6 +97,8 @@ static void video_create_texture(void)
        The SDL_TEXTUREACCESS_STREAMING flag means that this texture's content
        is going to change frequently.
     */
+    log_message("SDL_CreateTexture: source, %d, %d, %s\n",
+                video.blit_rect.w, video.blit_rect.h, scaling_quality_str);
     video.texture = SDL_CreateTexture(video.renderer,
                                       video.pixel_format,
                                       SDL_TEXTUREACCESS_STREAMING,
@@ -168,6 +170,8 @@ static void video_create_upscaled_texture(bool force)
     */
     SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
 
+    log_message("SDL_CreateTexture: upscaled, %d, %d\n",
+                w_upscale * video.blit_rect.w, h_upscale * video.blit_rect.h);
     video.texture_upscaled = SDL_CreateTexture(video.renderer,
                                 video.pixel_format,
                                 SDL_TEXTUREACCESS_TARGET,
