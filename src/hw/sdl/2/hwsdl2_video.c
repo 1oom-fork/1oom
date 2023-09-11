@@ -126,6 +126,8 @@ static void video_create_upscaled_texture(bool force)
     */
     SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
 
+    log_message("SDL_CreateTexture: upscaled, %d, %d\n",
+                w_upscale * video.screen->w, h_upscale * video.screen->h);
     video.texture_upscaled = SDL_CreateTexture(video.renderer,
                                 SDL_PIXELFORMAT_ARGB8888,
                                 SDL_TEXTUREACCESS_TARGET,
@@ -185,6 +187,7 @@ static void video_update(void)
                 SDL_GetWindowSize(video.window, &w, &h);
                 /* Adjust the window by resizing again so that the window is the right aspect ratio. */
                 video_adjust_window_size(&w, &h);
+                log_message("SDL_SetWindowSize: %d, %d\n", w, h);
                 SDL_SetWindowSize(video.window, w, h);
                 hw_opt_screen_winw = w;
                 hw_opt_screen_winh = h;
@@ -408,6 +411,8 @@ static int video_sw_set(int w, int h)
        The SDL_TEXTUREACCESS_STREAMING flag means that this texture's content
        is going to change frequently.
     */
+    log_message("SDL_CreateTexture: source, %d, %d\n",
+                video.screen->w, video.screen->h);
     video.texture = SDL_CreateTexture(video.renderer,
                                 SDL_PIXELFORMAT_ARGB8888,
                                 SDL_TEXTUREACCESS_STREAMING,
