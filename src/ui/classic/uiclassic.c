@@ -39,6 +39,7 @@ void ui_extra_toggle_preset(bool enabled)
     ui_game_opts_extra = enabled;
     ui_load_opts_extra = enabled;
     game_planet_leaving_trans_fix = enabled;
+    ui_space_combat_autoresolve = enabled;
     ui_sm_distance_tooltip = enabled;
     ui_live_spy_reports = enabled;
 }
@@ -81,6 +82,7 @@ const struct cfg_items_s ui_cfg_items[] = {
     CFG_ITEM_BOOL("uiextra", &ui_extra_enabled),
     CFG_ITEM_BOOL("game_opts_extra", &ui_game_opts_extra),
     CFG_ITEM_BOOL("load_opts_extra", &ui_load_opts_extra),
+    CFG_ITEM_BOOL("space_combat_autoresolve", &ui_space_combat_autoresolve),
     CFG_ITEM_BOOL("sm_distance_tooltip", &ui_sm_distance_tooltip),
     CFG_ITEM_BOOL("live_spy_reports", &ui_live_spy_reports),
     CFG_ITEM_COMMENT("0..146"),
@@ -156,6 +158,7 @@ int starmap_scale = 0;
 bool ui_extra_enabled = false;
 bool ui_game_opts_extra = false;
 bool ui_load_opts_extra = false;
+bool ui_space_combat_autoresolve = false;
 bool ui_sm_distance_tooltip = false;
 bool ui_live_spy_reports = false;
 bool ui_mwi_slider = false;
