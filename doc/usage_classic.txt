@@ -69,11 +69,9 @@ enables the following extra UI features:
 - The + sign is placed in the population text if it is possible to do
   atmospheric terraforming or soil enrichment
 - Eco slider shows fractional population growth if growth is less than 10
-- Summary of forces shown before ship combat
 - When espionage was successful, clicking on the race icon opens the spy report
 - Nebula planets show "NEB" in their shields field and have a purple instead
   of a red frame around their picture
-- New Auto and Retreat buttons for space combat autoresolve
 - Tech screen has lights showing when you reach max research bonus
 - Clicking on the Tech screen lights sets the slider to bonus limit
 - After running through the Next turn phase and messages the game recenters on
@@ -92,5 +90,7 @@ enables the following UI bug fixes:
 The following features can be enabled in the configuration file:
 - Continue, Undo and Initial saves can be chosen in the Load Game screen
   ("ui.load_opts_extra")
+- Summary of forces shown before ship combat. New Auto and Retreat buttons
+  for space combat autoresolve ("ui.space_combat_autoresolve")
 
 See doc/list_gamediff.txt for a list of differences in the game itself.
