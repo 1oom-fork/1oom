@@ -36,6 +36,7 @@ void ui_extra_toggle_preset(bool enabled)
 {
     ui_extra_enabled = enabled;
     ui_load_opts_extra = enabled;
+    ui_space_combat_autoresolve = enabled;
 }
 
 static bool check_ui_scale(void *var)
@@ -75,6 +76,7 @@ const struct cfg_items_s ui_cfg_items[] = {
     CFG_ITEM_INT("uiscale", &ui_scale, check_ui_scale),
     CFG_ITEM_BOOL("uiextra", &ui_extra_enabled),
     CFG_ITEM_BOOL("load_opts_extra", &ui_load_opts_extra),
+    CFG_ITEM_BOOL("space_combat_autoresolve", &ui_space_combat_autoresolve),
     CFG_ITEM_COMMENT("0..146"),
     CFG_ITEM_INT("uiicon", &ui_icon, check_ui_icon),
     CFG_ITEM_COMMENT("Invert mouse wheel for sliders"),
@@ -147,6 +149,7 @@ int ui_scale = 0;
 int starmap_scale = 0;
 bool ui_extra_enabled = false;
 bool ui_load_opts_extra = false;
+bool ui_space_combat_autoresolve = false;
 bool ui_mwi_slider = false;
 bool ui_mwi_counter = false;
 int ui_sm_scroll_speed = 3;
