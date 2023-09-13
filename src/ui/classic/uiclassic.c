@@ -36,6 +36,7 @@ void ui_extra_toggle_preset(bool enabled)
 {
     ui_extra_enabled = enabled;
     game_planet_leaving_trans_fix = enabled;
+    ui_live_spy_reports = enabled;
 }
 
 static bool check_ui_icon(void *var)
@@ -62,6 +63,7 @@ static bool check_ui_sm_scroll_speed(void *var)
 
 const struct cfg_items_s ui_cfg_items[] = {
     CFG_ITEM_BOOL("uiextra", &ui_extra_enabled),
+    CFG_ITEM_BOOL("live_spy_reports", &ui_live_spy_reports),
     CFG_ITEM_COMMENT("0..146"),
     CFG_ITEM_INT("uiicon", &ui_icon, check_ui_icon),
     CFG_ITEM_COMMENT("Invert mouse wheel for sliders"),
@@ -116,6 +118,7 @@ const char *idstr_ui = "classic";
 struct ui_data_s ui_data = { 0 };
 
 bool ui_extra_enabled = false;
+bool ui_live_spy_reports = false;
 bool ui_mwi_slider = false;
 bool ui_mwi_counter = false;
 int ui_sm_scroll_speed = 3;
