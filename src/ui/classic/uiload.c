@@ -69,7 +69,7 @@ int ui_load_game(void)
     int16_t oi_cancel, oi_ok, oi_save[NUM_ALL_SAVES];
 
     d.savenum = 0;
-    for (int i = 0; i < (ui_extra_enabled ? NUM_ALL_SAVES : NUM_SAVES); ++i) {
+    for (int i = 0; i < (ui_load_opts_extra ? NUM_ALL_SAVES : NUM_SAVES); ++i) {
         if (game_save_tbl_have_save[i]) {
             d.tbl_savei[d.savenum++] = i;
         }
