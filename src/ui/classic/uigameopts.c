@@ -249,7 +249,7 @@ gameopts_act_t ui_gameopts(struct game_s *g, int *load_game_i_ptr)
 
     d.num_newopts = 0;
     d.newopts = newopts;
-    if (ui_extra_enabled) {
+    if (ui_game_opts_extra) {
         gameopts_new_add(&d, uiopts_audio);
         gameopts_new_add(&d, ui_uiopts);
         gameopts_new_add(&d, hw_uiopts);
