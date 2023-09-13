@@ -276,6 +276,7 @@ extern bool ui_extra_enabled;
 extern bool ui_fixbugs_enabled;
 extern bool ui_load_opts_extra;
 extern bool ui_space_combat_autoresolve;
+extern bool ui_sm_expanded_scroll;
 extern bool ui_mwi_slider;
 extern bool ui_mwi_counter;
 extern int ui_sm_scroll_speed;
