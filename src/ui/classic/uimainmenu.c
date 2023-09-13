@@ -199,7 +199,7 @@ static main_menu_action_t main_menu_do(struct main_menu_data_s *d)
         ui_delay_ticks_or_click(2);
     }
     uiobj_unset_callback();
-    if ((d->selected == MAIN_MENU_ACT_NEW_GAME) && ui_extra_enabled) {
+    if ((d->selected == MAIN_MENU_ACT_NEW_GAME) && ui_new_game_opts_extra) {
         d->selected = MAIN_MENU_ACT_CUSTOM_GAME;
     }
     return d->selected;
