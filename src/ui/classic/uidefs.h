@@ -266,6 +266,7 @@ struct ui_data_s {
 
 extern struct ui_data_s ui_data;
 extern bool ui_extra_enabled;
+extern bool ui_sm_distance_tooltip;
 extern bool ui_mwi_slider;
 extern bool ui_mwi_counter;
 extern int ui_sm_scroll_speed;
