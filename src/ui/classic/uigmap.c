@@ -318,7 +318,7 @@ static void gmap_draw_cb(void *vptr)
         int x, y;
         x = (ui_data.starmap.x * 224) / g->galaxy_maxx + 7;
         y = (ui_data.starmap.y * 185) / g->galaxy_maxy + 7;
-        if (ui_extra_enabled) {
+        if (ui_sm_expanded_scroll) {
             lbxgfx_draw_frame_offs(x, y, ui_data.gfx.starmap.bmap, 7, 7, 230, 191, UI_SCREEN_W);
         } else {
             lbxgfx_draw_frame(x, y, ui_data.gfx.starmap.bmap, UI_SCREEN_W);
