@@ -604,7 +604,7 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
             }
         }
     }
-    if (ui_extra_enabled && ui_data.ui_main_loop_action == UI_MAIN_LOOP_STARMAP && d->sm.dist_i != PLANET_NONE) {
+    if (ui_sm_distance_tooltip && ui_data.ui_main_loop_action == UI_MAIN_LOOP_STARMAP && d->sm.dist_i != PLANET_NONE) {
         int j = g->planet_focus_i[d->api];
         const planet_t *p = &g->planet[d->sm.dist_i], *q = &g->planet[j];
         int px = 2 * (p->x - x) + 14, py = 2 * (p->y - y) + 14;

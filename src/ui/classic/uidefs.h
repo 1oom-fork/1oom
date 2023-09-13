@@ -280,6 +280,7 @@ extern int starmap_scale;
 extern int ui_screen_w;
 extern int ui_screen_h;
 extern bool ui_extra_enabled;
+extern bool ui_sm_distance_tooltip;
 extern bool ui_mwi_slider;
 extern bool ui_mwi_counter;
 extern int ui_sm_scroll_speed;

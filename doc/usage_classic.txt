@@ -86,8 +86,6 @@ or pressing Alt-X in the main menu enables the following extra UI features:
 - Buttons and slider are always visible when sending transport
 - Clicking a selected destination star again works as Accept for fleet send etc
 - The position of the build finished message is slightly improved.
-- Hovering over a planet draws a ruler with the distance in parsec from the
-  currently selected planet if is in the screen.
 - Hovering over a planet changes the target for fleets and transports
 - Clicking on the picture of the planet in the upper right corner works for all
   explored planets
@@ -129,5 +127,7 @@ or pressing Alt-X in the main menu enables the following extra UI features:
 Pressing Alt-X in the main menu also enables the following features:
 - Population scheduled for transport no longer contributes to production
   ("game.planet_leaving_trans_fix")
+- Hovering over a planet draws a ruler with the distance in parsec from the
+  currently selected planet if is in the screen ("ui.sm_distance_tooltip")
 
 See doc/list_gamediff.txt for a list of differences in the game itself.
