@@ -79,7 +79,6 @@ or pressing Alt-X in the main menu enables the following extra UI features:
   atmospheric terraforming or soil enrichment
 - Eco slider shows fractional population growth if growth is less than 10
 - Summary of forces shown before ship combat
-- When espionage was successful, clicking on the race icon opens the spy report
 - Nebula planets show "NEB" in their shields field and have a purple instead
   of a red frame around their picture
 - New Auto and Retreat buttons for space combat autoresolve
@@ -107,5 +106,7 @@ or pressing Alt-X in the main menu enables the following extra UI features:
 Pressing Alt-X in the main menu also enables the following features:
 - Population scheduled for transport no longer contributes to production
   ("game.planet_leaving_trans_fix")
+- When espionage was successful, clicking on the race icon opens the spy
+  report ("ui.live_spy_reports")
 
 See doc/list_gamediff.txt for a list of differences in the game itself.
