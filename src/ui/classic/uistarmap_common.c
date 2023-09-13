@@ -647,7 +647,7 @@ void ui_starmap_draw_scanner(struct starmap_data_s *d)
 
 static void ui_starmap_clamp_xy(const struct game_s *g, int *x, int *y)
 {
-    if (!ui_extra_enabled) {
+    if (!ui_sm_expanded_scroll) {
         SETRANGE(*x, 0, g->galaxy_maxx - 0x6c);
         SETRANGE(*y, 0, g->galaxy_maxy - 0x56);
     } else {
