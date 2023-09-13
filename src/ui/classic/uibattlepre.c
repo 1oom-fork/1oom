@@ -105,7 +105,7 @@ static void ui_battle_pre_draw_cb(void *vptr)
         race_t race = g->eto[d->flag_human_att ? d->party_u : d->party_d].race;
         lib_strcpy(buf, game_str_tbl_races[race], sizeof(buf));
     }
-    if (ui_extra_enabled) {
+    if (ui_space_combat_autoresolve) {
         if (d->flag_human_att) {
             lbxfont_print_str_normal(230, 80, buf, UI_SCREEN_W);
         } else {
@@ -114,12 +114,12 @@ static void ui_battle_pre_draw_cb(void *vptr)
     } else {
         lbxfont_print_str_center(267, 100, buf, UI_SCREEN_W);
     }
-    lbxfont_print_str_center(267, ui_extra_enabled ? 90 : 115, (d->party_d >= PLAYER_NUM) ? game_str_bp_attacks : game_str_bp_attack, UI_SCREEN_W);
+    lbxfont_print_str_center(267, ui_space_combat_autoresolve ? 90 : 115, (d->party_d >= PLAYER_NUM) ? game_str_bp_attacks : game_str_bp_attack, UI_SCREEN_W);
     {
         race_t race = g->eto[d->flag_human_att ? d->party_d : d->party_u].race;
         lib_strcpy(buf, game_str_tbl_races[race], sizeof(buf));
     }
-    if (ui_extra_enabled) {
+    if (ui_space_combat_autoresolve) {
         if (d->flag_human_att) {
             lbxfont_print_str_right(308, 100, buf, UI_SCREEN_W);
         } else {
@@ -128,7 +128,7 @@ static void ui_battle_pre_draw_cb(void *vptr)
     } else {
         lbxfont_print_str_center(267, 130, buf, UI_SCREEN_W);
     }
-    if (ui_extra_enabled) {
+    if (ui_space_combat_autoresolve) {
         int y = 112;
         lbxfont_set_temp_color(0x0);
         lbxfont_select_set_12_4(0, 0x2, 0, 0);
@@ -188,18 +188,18 @@ ui_battle_autoresolve_t ui_battle_pre(struct game_s *g, const struct battle_s *b
     if (IS_HUMAN(g, party_d)) {
         g->planet_focus_i[party_d] = bt->planet_i;
     }
-    if (ui_extra_enabled) {
+    if (ui_space_combat_autoresolve) {
         d->bases = bt->bases;
         game_battle_count_hulls(bt, d->force);
     }
     uiobj_table_clear();
     oi_cont = uiobj_add_t0(227, 163, "", d->gfx_contbutt, MOO_KEY_c);
     oi_cont2 = uiobj_add_inputkey(MOO_KEY_SPACE);
-    if (ui_extra_enabled && (winner == SIDE_NONE)) {
+    if (ui_space_combat_autoresolve && (winner == SIDE_NONE)) {
         oi_auto = uiobj_add_t0(250, 152, "", ui_data.gfx.space.autob, MOO_KEY_a);
         oi_retreat = uiobj_add_t0(270, 152, "", ui_data.gfx.space.retreat, MOO_KEY_r);
     }
-    if (ui_extra_enabled) {
+    if (ui_space_combat_autoresolve) {
         oi_esc = UIOBJI_ESC;
     }
     uiobj_set_focus(oi_cont);
