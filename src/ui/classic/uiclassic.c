@@ -37,6 +37,7 @@ void ui_extra_toggle_preset(bool enabled)
     ui_new_game_opts_extra = enabled;
     game_planet_leaving_trans_fix = enabled;
     ui_space_combat_autoresolve = enabled;
+    ui_sm_expanded_scroll = enabled;
     ui_live_spy_reports = enabled;
 }
 
@@ -67,6 +68,7 @@ const struct cfg_items_s ui_cfg_items[] = {
     CFG_ITEM_BOOL("load_opts_extra", &ui_load_opts_extra),
     CFG_ITEM_BOOL("new_game_opts_extra", &ui_new_game_opts_extra),
     CFG_ITEM_BOOL("space_combat_autoresolve", &ui_space_combat_autoresolve),
+    CFG_ITEM_BOOL("sm_expanded_scroll", &ui_sm_expanded_scroll),
     CFG_ITEM_BOOL("live_spy_reports", &ui_live_spy_reports),
     CFG_ITEM_COMMENT("0..146"),
     CFG_ITEM_INT("uiicon", &ui_icon, check_ui_icon),
@@ -125,6 +127,7 @@ bool ui_extra_enabled = false;
 bool ui_load_opts_extra = false;
 bool ui_new_game_opts_extra = false;
 bool ui_space_combat_autoresolve = false;
+bool ui_sm_expanded_scroll = false;
 bool ui_live_spy_reports = false;
 bool ui_mwi_slider = false;
 bool ui_mwi_counter = false;
