@@ -44,6 +44,7 @@ void ui_extra_toggle_preset(bool enabled)
     ui_sm_distance_tooltip = enabled;
     ui_sm_expanded_scroll = enabled;
     ui_live_spy_reports = enabled;
+    ui_kbd_cursor_offset_fix = enabled;
 }
 
 static bool check_ui_scale(void *var)
@@ -89,6 +90,7 @@ const struct cfg_items_s ui_cfg_items[] = {
     CFG_ITEM_BOOL("sm_expanded_scroll", &ui_sm_expanded_scroll),
     CFG_ITEM_BOOL("sm_distance_tooltip", &ui_sm_distance_tooltip),
     CFG_ITEM_BOOL("live_spy_reports", &ui_live_spy_reports),
+    CFG_ITEM_BOOL("kbd_cursor_offset_fix", &ui_kbd_cursor_offset_fix),
     CFG_ITEM_COMMENT("0..146"),
     CFG_ITEM_INT("uiicon", &ui_icon, check_ui_icon),
     CFG_ITEM_COMMENT("Invert mouse wheel for sliders"),
@@ -167,6 +169,7 @@ bool ui_space_combat_autoresolve = false;
 bool ui_sm_expanded_scroll = false;
 bool ui_sm_distance_tooltip = false;
 bool ui_live_spy_reports = false;
+bool ui_kbd_cursor_offset_fix = false;
 bool ui_mwi_slider = false;
 bool ui_mwi_counter = false;
 int ui_sm_scroll_speed = 3;
