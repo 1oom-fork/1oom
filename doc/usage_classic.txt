@@ -95,7 +95,6 @@ or pressing Alt-X in the main menu enables the following extra UI features:
 - Fixed graphics bug with brighter stars drawn further away than dimmer ones
 - The color of ship names on Planets screen is black
 - The cursor key behavior is more intuitive
-- Improved behavior of the left mouse button
 - Pressing = in the galaxy movement screen also transfers reserve back and
   the behavior is more predictable
 - Pressing the "Ships" button in the galaxy movement screen opens the ship
@@ -115,5 +114,6 @@ Pressing Alt-X in the main menu also enables the following features:
   report ("ui.live_spy_reports")
 - When using cursor keys, the mouse position is calculated taking into account
   the mouse icon offset ("ui.kbd_cursor_offset_fix")
+- Improved behavior of the left mouse button ("ui.mouse_lmb_fix")
 
 See doc/list_gamediff.txt for a list of differences in the game itself.
