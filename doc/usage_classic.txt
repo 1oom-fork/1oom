@@ -26,10 +26,7 @@ game via Game -> Quit or when F10 is pressed while in the "control screen" /
 when starting a new game.
 
 The config file item "ui.uiscale" (set via the -uiscale command-line option)
-is an integer scaling factor for the whole UI except:
-- mouse cursor
-- galaxy movement screen map
-- sliders
+is an int scaling factor for the whole UI except galaxy movement screen map.
 The default value is 1 for that classic 320x200 feeling. Larger values allow
 more of the galaxy to be viewed without scrolling. Mouse wheel can be used
 to adjust the scaling of the galaxy movement screen map.
