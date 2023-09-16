@@ -95,7 +95,6 @@ enables the following extra UI features:
 - When using cursor keys, the mouse position is calculated taking into account
   the mouse icon offset
 - The cursor key behavior is more intuitive
-- Improved behavior of the left mouse button
 - Pressing the "Ships" button in the galaxy movement screen opens the ship
   design selection screen
 
@@ -105,5 +104,6 @@ The following features can be enabled in the configuration file:
 - Summary of forces shown before ship combat. New Auto and Retreat buttons
   for space combat autoresolve ("ui.space_combat_autoresolve")
 - Galaxy movement screen scrolling range is expanded ("ui.sm_expanded_scroll")
+- Improved behavior of the left mouse button ("ui.mouse_lmb_fix")
 
 See doc/list_gamediff.txt for a list of differences in the game itself.
