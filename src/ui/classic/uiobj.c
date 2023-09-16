@@ -1417,14 +1417,14 @@ static int16_t uiobj_handle_input_sub0(void)
             mouse_getclear_click_sw();
             return -1;
         }
-        if (ui_extra_enabled) {
+        if (ui_mouse_lmb_fix) {
             oi = uiobj_find_obj_at_cursor();
         }
         while (mouse_buttons != 0) {
             mx = moouse_x;
             my = moouse_y;
             uiobj_mouseoff = ui_cursor_mouseoff;
-            if (ui_extra_enabled) {
+            if (ui_mouse_lmb_fix) {
                 if ((uiobj_tbl[oi].type == UIOBJ_TYPE_TEXTLINE)
                   ||(uiobj_tbl[oi].type == UIOBJ_TYPE_SETVAL))
                 {
@@ -1494,7 +1494,7 @@ static int16_t uiobj_handle_input_sub0(void)
             }
         }
         uiobj_focus_oi = -1;
-        if (ui_extra_enabled && (oi != uiobj_find_obj_at_cursor()) && (uiobj_tbl[oi].type != UIOBJ_TYPE_TEXTINPUT)) {
+        if (ui_mouse_lmb_fix && (oi != uiobj_find_obj_at_cursor()) && (uiobj_tbl[oi].type != UIOBJ_TYPE_TEXTINPUT)) {
             return 0;
         }
         if (mb == MOUSE_BUTTON_MASK_RIGHT) {
