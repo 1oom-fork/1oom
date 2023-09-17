@@ -95,6 +95,8 @@ enables the following extra UI features:
 - When using cursor keys, the mouse position is calculated taking into account
   the mouse icon offset
 - The cursor key behavior is more intuitive
+- Pressing = in the galaxy movement screen also transfers reserve back and
+  the behavior is more predictable
 - Pressing the "Ships" button in the galaxy movement screen opens the ship
   design selection screen
 
