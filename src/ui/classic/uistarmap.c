@@ -429,6 +429,8 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
         } else if (oi1 == oi_equals || oi1 == oi_hash) {
             if (p->prod_after_maint < p->reserve) {
                 ui_sound_play_sfx_06();
+            } else if (g->eto[active_player].reserve_bc == 0) {
+                ui_sound_play_sfx_06();
             } else {
                 int v = p->prod_after_maint;
                 if (v > g->eto[active_player].reserve_bc) {
