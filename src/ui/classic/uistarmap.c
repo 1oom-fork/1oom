@@ -427,6 +427,13 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             ui_starmap_set_pos_focus(g, active_player);
             ui_sound_play_sfx_24();
         } else if (oi1 == oi_equals || oi1 == oi_hash) {
+            uint32_t old_reserve = p->reserve;
+            if (ui_extra_enabled) {
+                g->eto[active_player].reserve_bc += p->reserve;
+                p->total_prod -= p->reserve;
+                p->reserve = 0;
+                game_update_production(g);
+            }
             if (p->prod_after_maint < p->reserve) {
                 ui_sound_play_sfx_06();
             } else if (g->eto[active_player].reserve_bc == 0) {
@@ -440,6 +447,14 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
                 p->reserve = v;
                 g->eto[active_player].reserve_bc -= v;
                 p->total_prod += v;
+                if (ui_extra_enabled) {
+                    if (old_reserve == p->reserve) {
+                        g->eto[active_player].reserve_bc += p->reserve;
+                        p->total_prod -= p->reserve;
+                        p->reserve = 0;
+                    }
+                    game_update_production(g);
+                }
                 ui_sound_play_sfx_24();
             }
         } else if (oi1 == oi_f6) {
