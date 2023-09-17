@@ -110,6 +110,8 @@ or pressing Alt-X in the main menu enables the following extra UI features:
 - Clicking on Station or ship names on Fleet screen sorts the list
 - The color of ship names on Planets screen is black
 - The cursor key behavior is more intuitive
+- Pressing = in the galaxy movement screen also transfers reserve back and
+  the behavior is more predictable
 - Pressing the "Ships" button in the galaxy movement screen opens the ship
   design selection screen
 
