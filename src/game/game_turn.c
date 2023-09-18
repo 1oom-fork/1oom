@@ -1434,6 +1434,9 @@ static void game_turn_finished_slider(struct game_s *g)
         }
         e = &(g->eto[pi]);
         cond_build_ind = (p->factories < (p->pop * e->colonist_oper_factories));
+        if (game_num_cond_switch_to_ind_fix) {
+            cond_build_ind = (p->factories < (p->max_pop3 * e->colonist_oper_factories));
+        }
         if (BOOLVEC_IS1(p->finished, FINISHED_SOILATMOS)) {
             int v;
             v = game_planet_get_w1(g, pli);
