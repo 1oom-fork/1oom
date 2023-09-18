@@ -57,6 +57,7 @@ bool game_num_reset_tform_to_max = true;
 bool game_num_soil_rounding_fix = false;
 bool game_num_leaving_trans_fix = false;
 bool game_num_hidden_child_labor_fix = false;
+bool game_num_cond_switch_to_ind_fix = false;
 
 uint8_t game_num_tbl_hull_w[4] = { 1, 5, 25, 125 };
 
