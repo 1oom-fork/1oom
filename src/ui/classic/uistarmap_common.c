@@ -730,14 +730,14 @@ void ui_starmap_handle_scrollkeys(struct starmap_data_s *d, int16_t oi)
     yh = ui_data.starmap.yhold;
     if (0
       || kbd_is_pressed(MOO_KEY_u, 0, MOO_MOD_SHIFT | MOO_MOD_ALT | MOO_MOD_CTRL)
-      || (ui_extra_enabled && (moo_mouse_y <= 0))) {
+      || (ui_sm_mouse_scroll && (moo_mouse_y <= 0))) {
         if (yh > 0) {
             yh = 0;
         }
         --yh;
     } else if (0
       || kbd_is_pressed(MOO_KEY_j, 0, MOO_MOD_SHIFT | MOO_MOD_ALT | MOO_MOD_CTRL)
-      || (ui_extra_enabled && (moo_mouse_y >= UI_SCREEN_H - 1))) {
+      || (ui_sm_mouse_scroll && (moo_mouse_y >= UI_SCREEN_H - 1))) {
         if (yh < 0) {
             yh = 0;
         }
@@ -750,14 +750,14 @@ void ui_starmap_handle_scrollkeys(struct starmap_data_s *d, int16_t oi)
     }
     if (0
       || kbd_is_pressed(MOO_KEY_h, 0, MOO_MOD_SHIFT | MOO_MOD_ALT | MOO_MOD_CTRL)
-      || (ui_extra_enabled && (moo_mouse_x <= 0))) {
+      || (ui_sm_mouse_scroll && (moo_mouse_x <= 0))) {
         if (xh > 0) {
             xh = 0;
         }
         --xh;
     } else if (0
       || kbd_is_pressed(MOO_KEY_k, 0, MOO_MOD_SHIFT | MOO_MOD_ALT | MOO_MOD_CTRL)
-      || (ui_extra_enabled && (moo_mouse_x >= UI_SCREEN_W - 1))) {
+      || (ui_sm_mouse_scroll && (moo_mouse_x >= UI_SCREEN_W - 1))) {
         if (xh < 0) {
             xh = 0;
         }
