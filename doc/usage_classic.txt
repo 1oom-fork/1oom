@@ -60,7 +60,6 @@ The config file item "ui.uiextra" (set via the -uiextra command-line option)
 enables the following extra UI features:
 - New Game screen allows setting opponent race/banner/names and AI/human flag
 - Pressing a hotkey does not trigger mouse warp
-- Mouse scrolls the galaxy movement screen if touches edge
 - Report screen shows name of AI leaders, Map screen shows current year
 - Pressing + or - will show the slider when sending transport
 - Fleet deployment shows the amount of available ships
@@ -107,5 +106,7 @@ The following features can be enabled in the configuration file:
   for space combat autoresolve ("ui.space_combat_autoresolve")
 - Galaxy movement screen scrolling range is expanded ("ui.sm_expanded_scroll")
 - Improved behavior of the left mouse button ("ui.mouse_lmb_fix")
+- Mouse scrolls the galaxy movement screen if touches edge
+  ("ui.sm_mouse_scroll")
 
 See doc/list_gamediff.txt for a list of differences in the game itself.
