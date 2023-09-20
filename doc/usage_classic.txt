@@ -98,5 +98,6 @@ The following features can be enabled in the configuration file:
 - Improved behavior of the left mouse button ("ui.mouse_lmb_fix")
 - Mouse scrolls the galaxy movement screen if touches edge
   ("ui.sm_mouse_scroll")
+- Pressing a hotkey does not trigger mouse warp ("ui.mouse_warp_disabled")
 
 See doc/list_gamediff.txt for a list of differences in the game itself.
