@@ -40,6 +40,7 @@ void ui_extra_toggle_preset(bool enabled)
     ui_sm_distance_tooltip = enabled;
     ui_sm_expanded_scroll = enabled;
     ui_mouse_lmb_fix = enabled;
+    ui_mouse_warp_disabled = enabled;
 }
 
 static bool check_ui_scale(void *var)
@@ -83,6 +84,7 @@ const struct cfg_items_s ui_cfg_items[] = {
     CFG_ITEM_BOOL("sm_expanded_scroll", &ui_sm_expanded_scroll),
     CFG_ITEM_BOOL("sm_distance_tooltip", &ui_sm_distance_tooltip),
     CFG_ITEM_BOOL("mouse_lmb_fix", &ui_mouse_lmb_fix),
+    CFG_ITEM_BOOL("mouse_warp_disabled", &ui_mouse_warp_disabled),
     CFG_ITEM_BOOL("sm_mouse_scroll", &ui_sm_mouse_scroll),
     CFG_ITEM_COMMENT("0..146"),
     CFG_ITEM_INT("uiicon", &ui_icon, check_ui_icon),
@@ -160,6 +162,7 @@ bool ui_space_combat_autoresolve = false;
 bool ui_sm_expanded_scroll = false;
 bool ui_sm_distance_tooltip = false;
 bool ui_mouse_lmb_fix = false;
+bool ui_mouse_warp_disabled = false;
 bool ui_sm_mouse_scroll = false;
 bool ui_mwi_slider = false;
 bool ui_mwi_counter = false;
