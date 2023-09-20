@@ -85,19 +85,10 @@ or pressing Alt-X in the main menu enables the following extra UI features:
   explored planets
 - The + sign is placed in the population text if it is possible to do
   atmospheric terraforming or soil enrichment
-- Clicking on planet name in the galaxy movement screen opens a governor screen
 - Eco slider shows fractional population growth if growth is less than 10
 - Nebula planets show "NEB" in their shields field and have a purple instead
   of a red frame around their picture
 - Pressing = on the Tech screen adjusts only the unlocked sliders
-- Tech screen has lights showing when you reach max research bonus
-- Clicking on the Tech screen lights sets the slider to bonus limit
-- Pressing E or clicking the bottom left corner near Game opens an extra menu:
-    - Eco readjustment for Clean as save/reload used to do in v1.3
-    - The ship production selection can be set everywhere
-    - Relocation can be (un)set for all planets
-    - "X has finished ..." messages can be filtered
-- Completing terraforming generates a message (which is filtered by default)
 - Changed some illogical hotkeys:
   - Starmap -> Fleet -> Specs ('v' -> 's')
   - Starmap -> Fleet -> Scrap ('s' -> 'c')
@@ -136,5 +127,15 @@ Pressing Alt-X in the main menu also enables the following features:
 - Mouse scrolls the galaxy movement screen if touches edge
   ("ui.sm_mouse_scroll")
 - Pressing a hotkey does not trigger mouse warp ("ui.mouse_warp_disabled")
+- "ui.uigovernor":
+  - Clicking on planet name in the galaxy movement screen opens a governor screen
+  - Tech screen has lights showing when you reach max research bonus
+  - Clicking on the Tech screen lights sets the slider to bonus limit
+  - Pressing E or clicking the bottom left corner near Game opens an extra menu:
+    - Eco readjustment for Clean as save/reload used to do in v1.3
+    - The ship production selection can be set everywhere
+    - Relocation can be (un)set for all planets
+    - "X has finished ..." messages can be filtered
+  - Completing terraforming generates a message (which is filtered by default)
 
 See doc/list_gamediff.txt for a list of differences in the game itself.
