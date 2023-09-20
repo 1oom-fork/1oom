@@ -1235,7 +1235,7 @@ static void uiobj_click_obj(int16_t oi, int mx, int my)
                 mx = moouse_x;
                 my = moouse_y;
             }
-            if (!ui_extra_enabled) {
+            if (!ui_mouse_warp_disabled) {
                 mouse_set_xy(mx, my);
             }
         }
@@ -1814,7 +1814,7 @@ void uiobj_set_focus_forced(int16_t uiobji)
 
 void uiobj_set_focus(int16_t uiobji)
 {
-    if (!ui_extra_enabled) {
+    if (!ui_mouse_warp_disabled) {
         uiobj_set_focus_forced(uiobji);
     }
 }
