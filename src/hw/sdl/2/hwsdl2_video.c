@@ -155,6 +155,16 @@ static void video_create_upscaled_texture(bool force)
         w = (h * video.bufw) / video.actualh;
     }
 
+    if ((w % video.bufw == 0) && (h % video.bufh == 0)) {
+        if (video.texture_upscaled) {
+            SDL_DestroyTexture(video.texture_upscaled);
+            video.texture_upscaled = NULL;
+            video.w_upscale = 0;
+            video.h_upscale = 0;
+        }
+        return;
+    }
+
     /* Pick texture size the next integer multiple of the screen dimensions.
        If one screen dimension matches an integer multiple of the original
        resolution, there is no need to overscale in this direction.
