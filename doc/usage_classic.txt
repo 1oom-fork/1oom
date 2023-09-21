@@ -15,6 +15,7 @@ New hoykeys:
 - Ctrl-Esc to quit (without saving)
 - Ctrl-[] to adjust sfx volume
 - Ctrl-Shift-[] to adjust music volume
+- Alt-[] to adjust window size
 - Ctrl-F5 saves a screenshot
 - Alt-Enter to toggle full screen mode
 
