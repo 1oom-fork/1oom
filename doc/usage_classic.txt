@@ -15,6 +15,7 @@ New hotkeys:
 - Ctrl-Esc to quit (without saving)
 - Ctrl-[] to adjust sfx volume
 - Ctrl-Shift-[] to adjust music volume
+- Alt-[] to adjust window size
 - Alt-Enter to toggle full screen mode
 
 Unlike the original, 1oom does not autosave the "continue game" (save slot 7)

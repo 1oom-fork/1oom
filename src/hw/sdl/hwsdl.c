@@ -30,6 +30,10 @@ static bool hw_kbd_check_hotkey(SDL1or2Key key, SDL1or2Mod smod, char c)
                 exit(EXIT_FAILURE);
             }
             return true;
+        } else if (key == SDLK_LEFTBRACKET) {
+            hw_video_shrink();
+        } else if (key == SDLK_RIGHTBRACKET) {
+            hw_video_enlarge();
         }
     }
     return false;

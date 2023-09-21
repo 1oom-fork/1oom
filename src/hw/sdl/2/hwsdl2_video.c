@@ -62,6 +62,7 @@ static struct sdl_video_s {
 
     bool noblit;
     bool need_resize;
+    bool shrink, enlarge;
     int last_resize_time;
 
     void (*render)(int bufi);
@@ -238,6 +239,26 @@ static void video_adjust_window_size(int *wptr, int *hptr)
         } else {
             w = (h * video.bufw) / video.actualh;
         }
+        bool do_resize = false;
+        int scale = w / video.bufw;
+        if (video.shrink || video.enlarge) {
+            if (video.shrink) {
+                --scale;
+                if (w % video.bufw) {
+                    ++scale;
+                }
+            } else {
+                ++scale;
+            }
+            do_resize = true;
+        }
+        if (do_resize) {
+            if (scale <= 0) {
+                scale = 1;
+            }
+            w = video.bufw * scale;
+            h = video.actualh * scale;
+        }
         *wptr = w;
         *hptr = h;
     }
@@ -258,7 +279,7 @@ static void video_update(void)
             SDL_GetWindowSize(video.window, &w, &h);
             if ((flags & (SDL_WINDOW_FULLSCREEN_DESKTOP | SDL_WINDOW_FULLSCREEN | SDL_WINDOW_MAXIMIZED)) == 0) {
                 /* Adjust the window by resizing again so that the window is the right aspect ratio. */
-                if (hw_opt_autotrim) {
+                if (hw_opt_autotrim || video.shrink || video.enlarge) {
                     video_adjust_window_size(&w, &h);
                 }
                 SDL_SetWindowSize(video.window, w, h);
@@ -268,6 +289,8 @@ static void video_update(void)
             hw_mouse_set_scale(w, h);
             video_create_upscaled_texture(false);
             video.need_resize = false;
+            video.shrink = false;
+            video.enlarge = false;
             video.palette_to_set = true;
         } else {
             return;
@@ -550,6 +573,20 @@ int hw_video_resize(int w, int h)
     return 0;
 }
 
+void hw_video_shrink(void)
+{
+    video.shrink = true;
+    video.enlarge = false;
+    hw_video_resize(0, 0);
+}
+
+void hw_video_enlarge(void)
+{
+    video.shrink = false;
+    video.enlarge = true;
+    hw_video_resize(0, 0);
+}
+
 bool hw_video_toggle_fullscreen(void)
 {
     hw_opt_fullscreen = !hw_opt_fullscreen;
@@ -587,6 +624,8 @@ int hw_video_init(int w, int h)
     video.h_upscale = 0;
     video.noblit = false;
     video.need_resize = false;
+    video.shrink = false;
+    video.enlarge = false;
     video.last_resize_time = 0;
     video.render = video_render;
     video.update = video_update;
