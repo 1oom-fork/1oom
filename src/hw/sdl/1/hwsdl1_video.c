@@ -317,6 +317,16 @@ int hw_video_resize(int w, int h)
 #endif
 }
 
+void hw_video_shrink(void)
+{
+
+}
+
+void hw_video_enlarge(void)
+{
+
+}
+
 bool hw_video_toggle_fullscreen(void)
 {
     int (*func)(int, int) = video_sw_set;
