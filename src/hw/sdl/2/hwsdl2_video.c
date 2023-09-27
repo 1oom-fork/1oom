@@ -487,6 +487,9 @@ static int video_sw_set(int w, int h)
 
     /* Initially create the upscaled texture for rendering to screen */
     video_create_upscaled_texture(true);
+
+    hw_video_resize(0, 0);
+
     return 0;
 }
 
