@@ -261,6 +261,15 @@ static void video_adjust_window_size(int *wptr, int *hptr)
                 ++scale;
             }
             do_resize = true;
+        } else if (hw_opt_int_scaling) {
+            if (video_check_opt_screen_winwh() == 0) {
+                if ((hw_opt_screen_winw < *wptr) && (hw_opt_screen_winh <= *hptr)) {
+                    ++scale;
+                } else if ((hw_opt_screen_winw <= *wptr) && (hw_opt_screen_winh < *hptr)) {
+                    ++scale;
+                }
+            }
+            do_resize = true;
         }
         if (do_resize) {
             if (scale <= 0) {
