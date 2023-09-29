@@ -36,6 +36,7 @@ The following new UI features are always enabled/available:
   - on the fleet sending screen
   - on the transport sending screen
   - on the Tech screen
+- Sending ships does not deselect the orbit fleet when holding Shift
 - In Tech screen +/- adjusts the current field slider
 - In Tech screen the L key locks the current slider
 - In Races screen the keys 1-5 correspond to clicking the portraits
@@ -61,7 +62,6 @@ enables the following extra UI features:
 - Pressing + or - will show the slider when sending transport
 - Fleet deployment shows the amount of available ships
 - Alt+f shows friendly fleet routes
-- Sending fewer than all ships does not deselect the orbit fleet
 - Buttons and slider are always visible when sending transport
 - Clicking a selected destination star again works as Accept for fleet send etc
 - The position of the build finished message is slightly improved.

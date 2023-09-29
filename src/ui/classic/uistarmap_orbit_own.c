@@ -370,7 +370,7 @@ do_accept:
                 game_send_fleet_from_orbit(g, active_player, d.from, g->planet_focus_i[active_player], d.ss.ships, shiptypes, 6);
                 game_update_visibility(g);
             }
-            if ((!ui_extra_enabled) || BOOLVEC_IS_CLEAR(r->visible, PLAYER_NUM)) {
+            if ((!kbd_is_modifier(MOO_MOD_SHIFT)) || BOOLVEC_IS_CLEAR(r->visible, PLAYER_NUM)) {
                 flag_done = true;
                 ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
             } else {
