@@ -380,21 +380,9 @@ do_accept:
                 flag_done = true;
                 ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
             } else {
-                bool any_selected;
                 ui_starmap_sn0_setup(&d.oo.sn0, NUM_SHIPDESIGNS, os);
-                any_selected = false;
                 for (int i = 0; i < NUM_SHIPDESIGNS; ++i) {
-                    shipcount_t n;
-                    n = MIN(d.oo.ships[i], os[i]);
-                    d.oo.ships[i] = n;
-                    if (n > 0) {
-                        any_selected = true;
-                    }
-                }
-                if (!any_selected) {
-                    for (int i = 0; i < NUM_SHIPDESIGNS; ++i) {
-                        d.oo.ships[i] = os[i];
-                    }
+                    SETMIN(d.oo.ships[i], os[i]);
                 }
                 g->planet_focus_i[active_player] = d.oo.from;
             }
