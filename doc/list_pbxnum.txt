@@ -132,6 +132,14 @@ extended_reloc_range : 0..1, 0
   - Allow new fleets to relocate to any planet within range.
     MOO1 allows you to assign only controlled planets as reloc points.
 
+colonized_factories_fix : 0..1, 0
+  - Fix robotic controls factor for colonized factories
+    There are scenarios that after destroying colony, the planet factories
+    survive and new colony created by another player didn't reset robotic
+    control factor of this colony. This fix resets the factor to 2 if no
+    factories or to 1 if there are factories on the planet. This also sets
+    bc_to_refit to 0.
+
 doom_stack_fix : 0..1, 1
   - Fix negative/32000 ship doom stack bug.
     In MOO1 overflows in AI-AI battles can result in 32000 ship doom stacks.

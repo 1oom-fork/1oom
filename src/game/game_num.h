@@ -53,6 +53,7 @@ extern bool game_num_soil_rounding_fix;
 extern bool game_num_leaving_trans_fix;
 extern bool game_num_hidden_child_labor_fix;
 extern bool game_num_extended_reloc_range;
+extern bool game_num_colonized_factories_fix;
 extern uint8_t game_num_tbl_hull_w[4];
 extern uint8_t game_num_tech_costmuld[DIFFICULTY_NUM];
 extern uint8_t game_num_tech_costmula[DIFFICULTY_NUM];
