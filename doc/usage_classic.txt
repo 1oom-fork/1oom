@@ -91,11 +91,6 @@ or pressing Alt-X in the main menu enables the following extra UI features:
 - Pressing = on the Tech screen adjusts only the unlocked sliders
 - Tech screen has lights showing when you reach max research bonus
 - Clicking on the Tech screen lights sets the slider to bonus limit
-- Changed some illogical hotkeys:
-  - Starmap -> Fleet -> Specs ('v' -> 's')
-  - Starmap -> Fleet -> Scrap ('s' -> 'c')
-  - Starmap -> Reloc ('l' -> 'r')
-  - Starmap -> Races ('r' -> 'a')
 - After running through the Next turn phase and messages the game recenters on
   your last planet of choice
 - Clicking on #, Name, etc on Planets screen sorts the list
@@ -125,6 +120,11 @@ Pressing Alt-X in the main menu also enables the following features:
 - Mouse scrolls the galaxy movement screen if touches edge
   ("ui.sm_mouse_scroll")
 - Pressing a hotkey does not trigger mouse warp ("ui.mouse_warp_disabled")
+- "ui.illogical_hotkey_fix" changes some illogical hotkeys:
+  - Starmap -> Fleet -> Specs ('v' -> 's')
+  - Starmap -> Fleet -> Scrap ('s' -> 'c')
+  - Starmap -> Reloc ('l' -> 'r')
+  - Starmap -> Races ('r' -> 'a')
 
 Also:
 - "ui.uigovernor":
