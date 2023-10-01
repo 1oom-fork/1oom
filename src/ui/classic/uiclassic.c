@@ -36,6 +36,7 @@ void ui_extra_toggle_preset(bool enabled)
     ui_load_opts_extra = enabled;
     ui_space_combat_autoresolve = enabled;
     ui_sm_expanded_scroll = enabled;
+    ui_illogical_hotkey_fix = enabled;
     ui_mouse_lmb_fix = enabled;
     ui_mouse_warp_disabled = enabled;
 }
@@ -64,6 +65,7 @@ static bool check_ui_sm_scroll_speed(void *var)
 
 const struct cfg_items_s ui_cfg_items[] = {
     CFG_ITEM_BOOL("uiextra", &ui_extra_enabled),
+    CFG_ITEM_BOOL("illogical_hotkey_fix", &ui_illogical_hotkey_fix),
     CFG_ITEM_BOOL("load_opts_extra", &ui_load_opts_extra),
     CFG_ITEM_BOOL("space_combat_autoresolve", &ui_space_combat_autoresolve),
     CFG_ITEM_BOOL("sm_expanded_scroll", &ui_sm_expanded_scroll),
@@ -124,6 +126,7 @@ const char *idstr_ui = "classic";
 struct ui_data_s ui_data = { 0 };
 
 bool ui_extra_enabled = false;
+bool ui_illogical_hotkey_fix = false;
 bool ui_load_opts_extra = false;
 bool ui_space_combat_autoresolve = false;
 bool ui_sm_expanded_scroll = false;
