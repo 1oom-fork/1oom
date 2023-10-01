@@ -145,6 +145,14 @@ hidden_child_labor_fix : 0..1, 0
     and pop growth. TECH spending is not affected and uses pre-growth values.
     A value of 1 means the same production for all sliders.
 
+colonized_factories_fix : 0..1, 0
+  - Fix robotic controls factor for colonized factories
+    There are scenarios that after destroying colony, the planet factories
+    survive and new colony created by another player didn't reset robotic
+    control factor of this colony. This fix resets the factor to 2 if no
+    factories or to 1 if there are factories on the planet. This also sets
+    bc_to_refit to 0.
+
 doom_stack_fix : 0..1, 1
   - Fix negative/32000 ship doom stack bug.
     In MOO1 overflows in AI-AI battles can result in 32000 ship doom stacks.
