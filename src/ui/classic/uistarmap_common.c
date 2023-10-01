@@ -785,7 +785,7 @@ void ui_starmap_add_oi_bottom_buttons(struct starmap_data_s *d)
     d->oi_design = uiobj_add_mousearea(40, 181, 75, 194, MOO_KEY_d);
     d->oi_fleet = uiobj_add_mousearea(79, 181, 111, 194, MOO_KEY_f);
     d->oi_map = uiobj_add_mousearea(115, 181, 139, 194, MOO_KEY_m);
-    d->oi_races = uiobj_add_mousearea(143, 181, 176, 194, (ui_extra_enabled ? MOO_KEY_a : MOO_KEY_r));
+    d->oi_races = uiobj_add_mousearea(143, 181, 176, 194, (ui_illogical_hotkey_fix ? MOO_KEY_a : MOO_KEY_r));
     d->oi_planets = uiobj_add_mousearea(180, 181, 221, 194, MOO_KEY_p);
     d->oi_tech = uiobj_add_mousearea(225, 181, 254, 194, MOO_KEY_t);
     d->oi_next_turn = uiobj_add_mousearea(258, 181, 314, 194, MOO_KEY_n);
