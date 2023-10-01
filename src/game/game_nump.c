@@ -201,6 +201,7 @@ static const struct numtbl_s {
     DEFNUMITEML(reset_tform_to_max, NUMTYPE_BOOL, 0, 1),
     DEFNUMITEML(soil_rounding_fix, NUMTYPE_BOOL, 0, 1),
     DEFNUMITEML(hidden_child_labor_fix, NUMTYPE_BOOL, 0, 1),
+    DEFNUMITEML(colonized_factories_fix, NUMTYPE_BOOL, 0, 1),
     DEFNUMITEMLTBLL(tbl_hull_w, NUMTYPE_U8, 0, 0xff),
     DEFNUMITEMLTBLL(tech_costmuld, NUMTYPE_U8, 0, 0xff),
     DEFNUMITEMLTBLL(tech_costmula, NUMTYPE_U8, 0, 0xff),
@@ -480,6 +481,7 @@ void game_num_fixbugs(void)
     game_num_reset_tform_to_max = false;
     game_num_soil_rounding_fix = true;
     game_num_hidden_child_labor_fix = true;
+    game_num_colonized_factories_fix = true;
     /* The doomstack fix is on by default even in non-fixbugs mode and can only be
      * disabled via a mod. */
 }
