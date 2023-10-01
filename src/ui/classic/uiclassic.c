@@ -42,6 +42,7 @@ void ui_extra_toggle_preset(bool enabled)
     ui_sm_distance_tooltip = enabled;
     ui_sm_expanded_scroll = enabled;
     ui_live_spy_reports = enabled;
+    ui_illogical_hotkey_fix = enabled;
     ui_kbd_cursor_offset_fix = enabled;
     ui_mouse_lmb_fix = enabled;
     ui_mouse_warp_disabled = enabled;
@@ -84,6 +85,7 @@ static bool check_ui_sm_scroll_speed(void *var)
 const struct cfg_items_s ui_cfg_items[] = {
     CFG_ITEM_INT("uiscale", &ui_scale, check_ui_scale),
     CFG_ITEM_BOOL("uiextra", &ui_extra_enabled),
+    CFG_ITEM_BOOL("illogical_hotkey_fix", &ui_illogical_hotkey_fix),
     CFG_ITEM_BOOL("uigovernor", &ui_governor_enabled),
     CFG_ITEM_BOOL("load_opts_extra", &ui_load_opts_extra),
     CFG_ITEM_BOOL("space_combat_autoresolve", &ui_space_combat_autoresolve),
@@ -165,6 +167,7 @@ int ui_screen_h = 0;
 int ui_scale = 0;
 int starmap_scale = 0;
 bool ui_extra_enabled = false;
+bool ui_illogical_hotkey_fix = false;
 bool ui_governor_enabled = false;
 bool ui_load_opts_extra = false;
 bool ui_space_combat_autoresolve = false;
