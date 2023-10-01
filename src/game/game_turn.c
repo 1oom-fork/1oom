@@ -944,6 +944,17 @@ static void game_turn_explore(struct game_s *g)
                     if (flag_do_colonize) {
                         p->owner = i;
                         p->pop = 2;
+                        if (1
+                          && game_num_colonized_factories_fix
+                          && (p->prev_owner != PLAYER_NONE)
+                          && (p->prev_owner != i)) {
+                            if (p->factories != 0) {
+                                p->pop_oper_fact = 1;
+                            } else {
+                                p->pop_oper_fact = 2;
+                            }
+                            p->bc_to_refit = 0;
+                        }
                         --e->orbit[pli].ships[best_colonyship];
                         if ((pli == g->evn.planet_orion_i) && game_num_news_orion) {
                             g->evn.have_orion_conquer = i + 1;
