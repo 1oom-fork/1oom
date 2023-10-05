@@ -24,6 +24,7 @@ static const char *opt_configfilename_in = 0;   /* used only for the -c option *
 static char *opt_configfilename = 0;
 static bool opt_config_ro = false;
 static char *opt_datapath = 0;
+static bool opt_default = false;
 
 /* -------------------------------------------------------------------------- */
 /* global options */
@@ -153,11 +154,15 @@ static int options_add_patchfile(char **argv, void *var)
 /* -------------------------------------------------------------------------- */
 
 static int show_usage(char **argv, void *var);
+static int load_default(char **argv, void *var);
 
 static const struct cmdline_options_s cmdline_options_early[] = {
     { "-?", 0,
       show_usage, NULL,
       NULL, "Show command line options" },
+    { "-default", 0,
+      load_default, NULL,
+      NULL, "Use default configuration" },
 #ifdef FEATURE_MODEBUG
     { "-modebug", 1,
       options_set_int_var, (void *)&opt_modebug,
@@ -310,6 +315,12 @@ static int show_usage(char **argv, void *var)
     return -1;
 }
 
+static int load_default(char **argv, void *var)
+{
+    opt_default = true;
+    return 0;
+}
+
 /* -------------------------------------------------------------------------- */
 
 static const struct cmdline_options_s *find_option_do(const char *name, const struct cmdline_options_s *cmds)
@@ -439,7 +450,7 @@ int options_parse_early(int argc, char **argv)
         } else {
             opt_configfilename = cfg_cfgname();
         }
-        if (cfg_load(opt_configfilename)) {
+        if (!opt_default && cfg_load(opt_configfilename)) {
             log_warning("Opt: problems loading config file '%s'\n", opt_configfilename);
         }
         /* parse options again to override configuration */
