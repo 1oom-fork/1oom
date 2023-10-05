@@ -138,5 +138,6 @@ Pressing Alt-X in the main menu also enables the following features:
   - Starmap -> Fleet -> Scrap ('s' -> 'c')
   - Starmap -> Reloc ('l' -> 'r')
   - Starmap -> Races ('r' -> 'a')
+- "game.skipintro" skips intro video
 
 See doc/list_gamediff.txt for a list of differences in the game itself.
