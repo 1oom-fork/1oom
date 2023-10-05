@@ -36,6 +36,7 @@ void ui_extra_toggle_preset(bool enabled)
 {
     ui_extra_enabled = enabled;
     ui_load_opts_extra = enabled;
+    game_opt_skip_intro_always = enabled;
     ui_space_combat_autoresolve = enabled;
     ui_sm_distance_tooltip = enabled;
     ui_sm_expanded_scroll = enabled;
