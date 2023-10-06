@@ -50,11 +50,7 @@ static void ui_starmap_transport_draw_cb(void *vptr)
     if (d->controllable) {
         lbxgfx_draw_frame(224, 159, ui_data.gfx.starmap.tranxtra, UI_SCREEN_W, ui_scale);
     }
-    ui_draw_filled_rect(227, 8, 310, 39, 0, ui_scale);
-    lbxgfx_set_frame_0(ui_data.gfx.starmap.scanner);
-    for (int f = 0; f <= d->ts.frame_scanner; ++f) {
-        lbxgfx_draw_frame(227, 8, ui_data.gfx.starmap.scanner, UI_SCREEN_W, ui_scale);
-    }
+    ui_starmap_draw_scanner(d);
     lib_sprintf(buf, sizeof(buf), "%s %s", game_str_tbl_race[e->race], game_str_sm_fleet);
     lbxfont_select_set_12_4(5, tbl_banner_fontparam[e->banner], 0, 0);
     lbxfont_print_str_center(267, 10, buf, UI_SCREEN_W, ui_scale);
@@ -129,12 +125,6 @@ static void ui_starmap_transport_draw_cb(void *vptr)
         lbxfont_print_str_center(267, 110, game_str_sm_tdest, UI_SCREEN_W, ui_scale);
         lbxfont_print_str_center(267, 120, pd->name, UI_SCREEN_W, ui_scale);
     }
-    if (d->ts.scanner_delay == 0) {
-        d->ts.frame_scanner = (d->ts.frame_scanner + 1) % 20;
-        ++d->ts.scanner_delay;
-    } else {
-        d->ts.scanner_delay = 0;
-    }
     d->ts.frame_ship = (d->ts.frame_ship + 1) % 5;
     if (d->controllable && (!d->ts.in_frange)) {
         lbxgfx_set_new_frame(ui_data.gfx.starmap.reloc_bu_accept, 1);
@@ -163,8 +153,6 @@ void ui_starmap_transport(struct game_s *g, player_id_t active_player)
     d.set_pos_focus = ui_starmap_transport_set_pos_focus;
     d.ts.in_frange = false;
     d.ts.frame_ship = 0;
-    d.ts.frame_scanner = 0;
-    d.ts.scanner_delay = 0;
     d.ts.from = g->planet_focus_i[active_player];
     g->planet_focus_i[active_player] = r->dest;
     d.controllable = g->eto[active_player].have_hyperspace_comm && (r->owner == active_player);

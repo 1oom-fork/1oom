@@ -37,6 +37,8 @@ struct starmap_data_s {
     bool show_planet_focus;
     int bottom_highlight;
     int anim_delay;
+    int frame_scanner;
+    int scanner_delay;
     int16_t scrollx;
     int16_t scrolly;
     uint8_t scrollz;
@@ -96,8 +98,6 @@ struct starmap_data_s {
             uint8_t from;
             struct draw_stars_s ds;
             int frame_ship;
-            int frame_scanner;
-            int scanner_delay;
         } ts;   /* transport */
         struct {
             shipcount_t ships[NUM_SHIPDESIGNS];
@@ -110,8 +110,6 @@ struct starmap_data_s {
             struct shipnon0_s sn0;
             uint8_t from;
             player_id_t player;
-            int frame_scanner;
-            int scanner_delay;
             int yoff;
         } oe;   /* orbit_en */
         struct {
@@ -120,8 +118,6 @@ struct starmap_data_s {
             uint8_t pon;
             struct draw_stars_s ds;
             int frame_ship;
-            int frame_scanner;
-            int scanner_delay;
         } en;   /* enroute */
     };
 };
@@ -188,6 +184,7 @@ extern uint8_t ui_starmap_handle_tag(struct starmap_data_s *d, int16_t oi, bool 
 extern void ui_starmap_draw_basic(struct starmap_data_s *d);
 extern void ui_starmap_draw_starmap(struct starmap_data_s *d);
 extern void ui_starmap_draw_button_text(struct starmap_data_s *d, bool highlight);
+extern void ui_starmap_draw_scanner(struct starmap_data_s *d);
 extern void ui_starmap_sn0_setup(struct shipnon0_s *sn0, int sd_num, const shipcount_t *ships);
 extern void ui_starmap_update_reserve_fuel(struct game_s *g, struct shipnon0_s *sn0, const shipcount_t *ships, player_id_t pi);
 extern void ui_starmap_draw_planetinfo(const struct game_s *g, player_id_t api, int planet_i);

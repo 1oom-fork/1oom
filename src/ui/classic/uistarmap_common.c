@@ -638,6 +638,21 @@ void ui_starmap_draw_button_text(struct starmap_data_s *d, bool highlight)
     lbxfont_print_str_normal(263, 184, game_str_sm_next_turn, UI_SCREEN_W, ui_scale);
 }
 
+void ui_starmap_draw_scanner(struct starmap_data_s *d)
+{
+    ui_draw_filled_rect(227, 8, 310, 39, 0, ui_scale);
+    lbxgfx_set_frame_0(ui_data.gfx.starmap.scanner);
+    for (int f = 0; f <= d->frame_scanner; ++f) {
+        lbxgfx_draw_frame(227, 8, ui_data.gfx.starmap.scanner, UI_SCREEN_W, ui_scale);
+    }
+    if (d->scanner_delay == 0) {
+        d->frame_scanner = (d->frame_scanner + 1) % 20;
+        ++d->scanner_delay;
+    } else {
+        d->scanner_delay = 0;
+    }
+}
+
 static void ui_starmap_clamp_xy(const struct game_s *g, int *x, int *y)
 {
     if (!ui_sm_expanded_scroll) {
@@ -1157,6 +1172,8 @@ void ui_starmap_common_init(struct game_s *g, struct starmap_data_s *d, player_i
     d->controllable = false;
     d->show_planet_focus = true;
     d->anim_delay = 0;
+    d->frame_scanner = 0;
+    d->scanner_delay = 0;
     d->scrollx = 0;
     d->scrolly = 0;
     d->scrollz = starmap_scale;
