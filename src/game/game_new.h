@@ -15,6 +15,9 @@ struct game_new_options_s {
         planet_special_t special;
         uint32_t num_dist_checks;
         uint32_t num_ok_planet_checks;
+        uint32_t num_scouts;
+        uint32_t num_fighters;
+        uint32_t num_colony_ships;
     } homeworlds;
     struct {
         char playername[EMPEROR_NAME_LEN];
@@ -31,6 +34,7 @@ struct game_new_options_s {
         { \
             100, PLANET_SPECIAL_NORMAL, \
             2, 2, \
+            2, 0, 1, \
         }, \
         { \
             { "", "", RACE_HUMAN, BANNER_BLUE, false }, \
