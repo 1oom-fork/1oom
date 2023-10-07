@@ -301,3 +301,10 @@ Pressing the Auto button results in the battle beings fought as if the player(s)
 pressed Auto right after starting combat.
 The Retreat button works as if the (human) player(s) pressed Retreat at the
 earliest and every opportunity.
+
+4.2. Improved galaxy generator
+-------------------------------
+
+The improved galaxy generator allows you to fine-tune your opponents' positions.
+num_dist_checks sets the number of players that will be kept away from others.
+num_ok_planet_checks sets how many players will have an acceptable second planet.
