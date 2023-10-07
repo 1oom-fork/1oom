@@ -851,6 +851,18 @@ static void game_generate_home_etc(struct game_s *g, struct game_new_options_s *
         }
         /* seen_pop.._factories cleared here */
     }
+    if ((opts->homeworlds.num_scouts < 0) || (opts->homeworlds.num_scouts > 5)) {
+        opts->homeworlds.num_scouts = 2;
+    }
+    startfleet_ships[0] = opts->homeworlds.num_scouts;
+    if ((opts->homeworlds.num_fighters < 0) || (opts->homeworlds.num_fighters > 10)) {
+        opts->homeworlds.num_fighters = 0;
+    }
+    startfleet_ships[1] = opts->homeworlds.num_fighters;
+    if ((opts->homeworlds.num_colony_ships < 0) || (opts->homeworlds.num_colony_ships > 2)) {
+        opts->homeworlds.num_colony_ships = 1;
+    }
+    startfleet_ships[4] = opts->homeworlds.num_colony_ships;
     for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         empiretechorbit_t *e;
         e = &g->eto[i];
