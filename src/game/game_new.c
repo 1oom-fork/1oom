@@ -605,6 +605,7 @@ static bool game_generate_home_improved_do_i(struct game_s *g, struct game_new_o
         int y = g->planet[pi].y;
         {
             bool next = false;
+            int num_checks = opts->homeworlds.num_dist_checks;
             for (int j = 0; j < i; ++j) {
                 planet_t *p;
                 p = &g->planet[tblhome[j]];
@@ -612,14 +613,14 @@ static bool game_generate_home_improved_do_i(struct game_s *g, struct game_new_o
                     next = true;
                     break;
                 }
-                if (util_math_dist_fast(x, y, p->x, p->y) < safe_mindist) {
+                if ((j < num_checks) && (util_math_dist_fast(x, y, p->x, p->y) < safe_mindist)) {
                     next = true;
                     break;
                 }
             }
             if (next) continue;
         }
-        if (i < 5 || g->galaxy_size > GALAXY_SIZE_SMALL) {
+        if ((i < opts->homeworlds.num_ok_planet_checks) && (i < 5 || g->galaxy_size > GALAXY_SIZE_SMALL)) {
             bool next = true;
             for (int j = 0; j < g->galaxy_stars; ++j) {
                 planet_t *p;
