@@ -13,6 +13,8 @@ struct game_new_options_s {
     struct {
         uint32_t max_pop;
         planet_special_t special;
+        uint32_t num_dist_checks;
+        uint32_t num_ok_planet_checks;
     } homeworlds;
     struct {
         char playername[EMPEROR_NAME_LEN];
@@ -28,6 +30,7 @@ struct game_new_options_s {
         0, 0, GALAXY_SIZE_SMALL, DIFFICULTY_SIMPLE, 0, 2, \
         { \
             100, PLANET_SPECIAL_NORMAL, \
+            2, 2, \
         }, \
         { \
             { "", "", RACE_HUMAN, BANNER_BLUE, false }, \
