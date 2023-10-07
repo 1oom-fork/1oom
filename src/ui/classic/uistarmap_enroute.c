@@ -229,6 +229,7 @@ void ui_starmap_enroute(struct game_s *g, player_id_t active_player)
         } else if (oi1 == oi_accept) {
 do_accept:
             ui_sound_play_sfx_24();
+            //BUG: Always true, but otherwise leads to undefined behavior
             if (p->within_frange[active_player] != 0) {
                 game_fleet_redirect(g, r, d.en.pon, g->planet_focus_i[active_player]);
                 flag_done = true;
