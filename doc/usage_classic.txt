@@ -106,6 +106,8 @@ The following features can be enabled in the configuration file:
   - Starmap -> Reloc ('l' -> 'r')
   - Starmap -> Races ('r' -> 'a')
 - "game.skipintro" skips intro video
+- The question mark cursor is disabled on the galaxy movement screen
+  ("ui.sm_no_question_mark_cursor")
 
 Also:
 - "ui.sm_mouseover_focus" changes the target when hovering over a star
