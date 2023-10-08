@@ -83,7 +83,6 @@ enables the following extra UI features:
 - Buttons and slider are always visible when sending transport
 - Clicking a selected destination star again works as Accept for fleet send etc
 - The position of the build finished message is slightly improved.
-- Hovering over a planet changes the target for fleets and transports
 - Clicking on the picture of the planet in the upper right corner works for all
   explored planets
 - The + sign is placed in the population text if it is possible to do
@@ -139,5 +138,6 @@ Also:
     - Relocation can be (un)set for all planets
     - "X has finished ..." messages can be filtered
   - Completing terraforming generates a message (which is filtered by default)
+- "ui.sm_mouseover_focus" changes the target when hovering over a star
 
 See doc/list_gamediff.txt for a list of differences in the game itself.
