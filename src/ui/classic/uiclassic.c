@@ -37,6 +37,7 @@ void ui_extra_toggle_preset(bool enabled)
     game_opt_skip_intro_always = enabled;
     ui_space_combat_autoresolve = enabled;
     ui_sm_expanded_scroll = enabled;
+    ui_sm_no_question_mark_cursor = enabled;
     ui_illogical_hotkey_fix = enabled;
     ui_mouse_lmb_fix = enabled;
     ui_mouse_warp_disabled = enabled;
@@ -70,6 +71,7 @@ const struct cfg_items_s ui_cfg_items[] = {
     CFG_ITEM_BOOL("load_opts_extra", &ui_load_opts_extra),
     CFG_ITEM_BOOL("space_combat_autoresolve", &ui_space_combat_autoresolve),
     CFG_ITEM_BOOL("sm_expanded_scroll", &ui_sm_expanded_scroll),
+    CFG_ITEM_BOOL("sm_no_question_mark_cursor", &ui_sm_no_question_mark_cursor),
     CFG_ITEM_BOOL("mouse_lmb_fix", &ui_mouse_lmb_fix),
     CFG_ITEM_BOOL("mouse_warp_disabled", &ui_mouse_warp_disabled),
     CFG_ITEM_BOOL("sm_mouseover_focus", &ui_sm_mouseover_focus),
@@ -132,6 +134,7 @@ bool ui_illogical_hotkey_fix = false;
 bool ui_load_opts_extra = false;
 bool ui_space_combat_autoresolve = false;
 bool ui_sm_expanded_scroll = false;
+bool ui_sm_no_question_mark_cursor = false;
 bool ui_mouse_lmb_fix = false;
 bool ui_mouse_warp_disabled = false;
 bool ui_sm_mouseover_focus = false;
