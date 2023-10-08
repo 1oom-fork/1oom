@@ -568,14 +568,14 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
                 oi_wheelshippic = uiobj_add_mousewheel(228, 139, 275, 175, &scrollmisc);
             }
             ui_starmap_fill_oi_tbls(&d);
-            if (!ui_extra_enabled && BOOLVEC_IS1(p->explored, active_player)) {
+            if (!ui_sm_no_question_mark_cursor && BOOLVEC_IS1(p->explored, active_player)) {
                 int x0, y0;
                 x0 = (p->x - ui_data.starmap.x) * 2 + 6;
                 y0 = (p->y - ui_data.starmap.y) * 2 + 6;
                 oi_starview1 = uiobj_add_mousearea_limited(x0, y0, x0 + 16, y0 + 16, MOO_KEY_UNKNOWN);
             }
             ui_starmap_fill_oi_tbl_stars(&d);
-            if (ui_extra_enabled && BOOLVEC_IS1(p->explored, active_player)) {
+            if (ui_sm_no_question_mark_cursor && BOOLVEC_IS1(p->explored, active_player)) {
                 oi_starview1 = d.oi_tbl_stars[g->planet_focus_i[active_player]];
             }
             ui_starmap_fill_oi_slider(&d, p);
@@ -591,7 +591,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
                 ui_cursor_area_tbl[7].x1 = x1;
                 ui_cursor_area_tbl[7].y0 = y0;
                 ui_cursor_area_tbl[7].y1 = y1;
-                if (!ui_extra_enabled
+                if (!ui_sm_no_question_mark_cursor
                   && BOOLVEC_IS1(p->explored, active_player)
                   && (x0 >= 7)
                   && (x1 <= 221)

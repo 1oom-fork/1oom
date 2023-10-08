@@ -65,7 +65,6 @@ enables the following extra UI features:
 - Pressing + or - will show the slider when sending transport
 - Fleet deployment shows the amount of available ships
 - Alt+f shows friendly fleet routes
-- The question mark cursor is disabled on the galaxy movement screen
 - Buttons and slider are always visible when sending transport
 - Clicking a selected destination star again works as Accept for fleet send etc
 - The position of the build finished message is slightly improved.
@@ -109,6 +108,8 @@ The following features can be enabled in the configuration file:
   - Starmap -> Reloc ('l' -> 'r')
   - Starmap -> Races ('r' -> 'a')
 - "game.skipintro" skips intro video
+- The question mark cursor is disabled on the galaxy movement screen
+  ("ui.sm_no_question_mark_cursor")
 
 Also:
 - "ui.sm_mouseover_focus" changes the target when hovering over a star
