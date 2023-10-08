@@ -1116,7 +1116,7 @@ void ui_starmap_common_update_mouse_hover(struct starmap_data_s *d, int16_t oi)
     } else if (oi == d->oi_next_turn) {
         d->bottom_highlight = 7;
     }
-    if (ui_extra_enabled && d->controllable) {
+    if (ui_sm_mouseover_focus && d->controllable) {
         ui_starmap_select_target(d, ui_starmap_cursor_on_star(d, oi));
     }
 }
