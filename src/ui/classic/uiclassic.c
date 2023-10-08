@@ -42,6 +42,7 @@ void ui_extra_toggle_preset(bool enabled)
     ui_space_combat_autoresolve = enabled;
     ui_sm_distance_tooltip = enabled;
     ui_sm_expanded_scroll = enabled;
+    ui_sm_no_question_mark_cursor = enabled;
     ui_live_spy_reports = enabled;
     ui_illogical_hotkey_fix = enabled;
     ui_kbd_cursor_offset_fix = enabled;
@@ -93,6 +94,7 @@ const struct cfg_items_s ui_cfg_items[] = {
     CFG_ITEM_BOOL("sm_expanded_scroll", &ui_sm_expanded_scroll),
     CFG_ITEM_BOOL("sm_distance_tooltip", &ui_sm_distance_tooltip),
     CFG_ITEM_BOOL("live_spy_reports", &ui_live_spy_reports),
+    CFG_ITEM_BOOL("sm_no_question_mark_cursor", &ui_sm_no_question_mark_cursor),
     CFG_ITEM_BOOL("kbd_cursor_offset_fix", &ui_kbd_cursor_offset_fix),
     CFG_ITEM_BOOL("mouse_lmb_fix", &ui_mouse_lmb_fix),
     CFG_ITEM_BOOL("mouse_warp_disabled", &ui_mouse_warp_disabled),
@@ -176,6 +178,7 @@ bool ui_space_combat_autoresolve = false;
 bool ui_sm_expanded_scroll = false;
 bool ui_sm_distance_tooltip = false;
 bool ui_live_spy_reports = false;
+bool ui_sm_no_question_mark_cursor = false;
 bool ui_kbd_cursor_offset_fix = false;
 bool ui_mouse_lmb_fix = false;
 bool ui_mouse_warp_disabled = false;
