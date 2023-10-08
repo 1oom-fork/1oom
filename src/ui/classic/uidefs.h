@@ -274,6 +274,7 @@ extern bool ui_space_combat_autoresolve;
 extern bool ui_sm_expanded_scroll;
 extern bool ui_mouse_lmb_fix;
 extern bool ui_mouse_warp_disabled;
+extern bool ui_sm_mouseover_focus;
 extern bool ui_sm_mouse_scroll;
 extern bool ui_mwi_slider;
 extern bool ui_mwi_counter;
