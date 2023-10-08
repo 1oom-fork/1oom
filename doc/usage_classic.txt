@@ -78,7 +78,6 @@ enables the following extra UI features:
 - Pressing + or - will show the slider when sending transport
 - Fleet deployment shows the amount of available ships
 - Alt+f shows friendly fleet routes
-- The question mark cursor is disabled on the galaxy movement screen
 - The current planet is allowed as a target on the fleet deployment screen
 - Buttons and slider are always visible when sending transport
 - Clicking a selected destination star again works as Accept for fleet send etc
@@ -128,6 +127,8 @@ Pressing Alt-X in the main menu also enables the following features:
   - Starmap -> Reloc ('l' -> 'r')
   - Starmap -> Races ('r' -> 'a')
 - "game.skipintro" skips intro video
+- The question mark cursor is disabled on the galaxy movement screen
+  ("ui.sm_no_question_mark_cursor")
 
 Also:
 - "ui.uigovernor":
