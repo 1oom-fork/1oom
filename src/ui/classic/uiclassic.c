@@ -39,6 +39,7 @@ void ui_extra_toggle_preset(bool enabled)
     ui_new_game_opts_extra = enabled;
     game_opt_skip_intro_always = enabled;
     game_planet_leaving_trans_fix = enabled;
+    game_extended_reloc_range = enabled;
     ui_space_combat_autoresolve = enabled;
     ui_sm_expanded_scroll = enabled;
     ui_sm_mouseover_focus = enabled;
