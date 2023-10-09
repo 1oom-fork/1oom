@@ -102,6 +102,7 @@ or pressing Alt-X in the main menu enables the following extra UI features:
 Pressing Alt-X in the main menu also enables the following features:
 - Population scheduled for transport no longer contributes to production
   ("game.planet_leaving_trans_fix")
+- "game.extendedreloc" allows 'relocation points' within normal fleet range
 - Game options screen Silent/FX Only/Music is replaced with more options
   ("ui.game_opts_extra")
 - Continue, Undo and Initial saves can be chosen in the Load Game screen
