@@ -720,9 +720,14 @@ void ui_starmap_handle_oi_ctrl(struct starmap_data_s *d, int16_t oi)
     x = ui_data.starmap.x;
     y = ui_data.starmap.y;
     if (oi == d->oi_scroll) {
-        x += d->scrollx - 54;
-        y += d->scrolly - 43;
-        changed = true;
+        if (d->scrollx >= 0) {
+            x += d->scrollx - 54;
+            y += d->scrolly - 43;
+            changed = true;
+        } else {
+            starmap_scale = d->scrollz;
+            d->set_pos_focus(g, g->active_player);
+        }
     } else if (oi == d->oi_ctrl_ul) {
         x -= XSTEP;
         y -= YSTEP;
