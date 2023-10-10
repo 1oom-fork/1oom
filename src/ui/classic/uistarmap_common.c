@@ -689,7 +689,7 @@ void ui_starmap_handle_oi_ctrl(struct starmap_data_s *d, int16_t oi)
             changed = true;
         } else {
             starmap_scale = d->scrollz;
-            ui_starmap_set_pos_focus(g, g->active_player);
+            d->set_pos_focus(g, g->active_player);
         }
     } else if (oi == d->oi_ctrl_ul) {
         x -= XSTEP;
