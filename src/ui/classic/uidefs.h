@@ -288,6 +288,7 @@ extern bool ui_sm_ships_enabled;
 extern bool ui_sm_expanded_scroll;
 extern bool ui_sm_distance_tooltip;
 extern bool ui_sm_no_question_mark_cursor;
+extern bool ui_sm_explicit_cursor_context;
 extern bool ui_mouse_lmb_fix;
 extern bool ui_mouse_warp_disabled;
 extern bool ui_sm_mouseover_focus;
