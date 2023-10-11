@@ -459,7 +459,7 @@ do_accept:
             oi_f8 = uiobj_add_inputkey(MOO_KEY_F8);
             oi_f9 = uiobj_add_inputkey(MOO_KEY_F9);
             oi_f10 = uiobj_add_inputkey(MOO_KEY_F10);
-            if (!ui_extra_enabled || kbd_is_modifier(MOO_MOD_ALT)) {
+            if (!ui_sm_explicit_cursor_context || kbd_is_modifier(MOO_MOD_ALT)) {
                 ui_starmap_fill_oi_tbls(&d);
                 ui_cursor_setup_area(2, &ui_cursor_area_tbl[3]);
             } else {
