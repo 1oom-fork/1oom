@@ -41,6 +41,7 @@ void ui_extra_toggle_preset(bool enabled)
     ui_space_combat_autoresolve = enabled;
     ui_sm_ships_enabled = enabled;
     ui_sm_expanded_scroll = enabled;
+    ui_sm_explicit_cursor_context = enabled;
     ui_sm_no_question_mark_cursor = enabled;
     ui_illogical_hotkey_fix = enabled;
     ui_kbd_cursor_keys_fix = enabled;
@@ -78,6 +79,7 @@ const struct cfg_items_s ui_cfg_items[] = {
     CFG_ITEM_BOOL("ui_sm_ships_enabled", &ui_sm_ships_enabled),
     CFG_ITEM_BOOL("sm_expanded_scroll", &ui_sm_expanded_scroll),
     CFG_ITEM_BOOL("sm_no_question_mark_cursor", &ui_sm_no_question_mark_cursor),
+    CFG_ITEM_BOOL("sm_explicit_cursor_context", &ui_sm_explicit_cursor_context),
     CFG_ITEM_BOOL("mouse_lmb_fix", &ui_mouse_lmb_fix),
     CFG_ITEM_BOOL("mouse_warp_disabled", &ui_mouse_warp_disabled),
     CFG_ITEM_BOOL("sm_mouseover_focus", &ui_sm_mouseover_focus),
@@ -143,6 +145,7 @@ bool ui_space_combat_autoresolve = false;
 bool ui_sm_ships_enabled = false;
 bool ui_sm_expanded_scroll = false;
 bool ui_sm_no_question_mark_cursor = false;
+bool ui_sm_explicit_cursor_context = false;
 bool ui_mouse_lmb_fix = false;
 bool ui_mouse_warp_disabled = false;
 bool ui_sm_mouseover_focus = false;

@@ -244,7 +244,7 @@ do_accept:
                 break;
             }
         }
-        if (!d.controllable || ui_extra_enabled) {
+        if (!d.controllable || ui_sm_explicit_cursor_context) {
             for (int i = 0; i < g->transport_num; ++i) {
                 if (oi1 == d.oi_tbl_transport[i]) {
                     ui_data.starmap.fleet_selected = i;
@@ -289,7 +289,7 @@ do_accept:
             ui_starmap_enroute_draw_cb(&d);
             uiobj_table_clear();
             UIOBJ_CLEAR_LOCAL();
-            if (!ui_extra_enabled || kbd_is_modifier(MOO_MOD_ALT) || !d.controllable) {
+            if (!ui_sm_explicit_cursor_context || kbd_is_modifier(MOO_MOD_ALT) || !d.controllable) {
                 ui_starmap_fill_oi_tbls(&d);
                 ui_cursor_setup_area(2, &ui_cursor_area_tbl[3]);
             } else {

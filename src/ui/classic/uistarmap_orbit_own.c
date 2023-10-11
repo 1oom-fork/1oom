@@ -447,7 +447,7 @@ do_accept:
             uiobj_table_clear();
             UIOBJ_CLEAR_LOCAL();
             STARMAP_UIOBJ_FILL_FX();
-            if (!ui_extra_enabled || kbd_is_modifier(MOO_MOD_ALT)) {
+            if (!ui_sm_explicit_cursor_context || kbd_is_modifier(MOO_MOD_ALT)) {
                 ui_starmap_fill_oi_tbls(&d);
                 ui_cursor_setup_area(2, &ui_cursor_area_tbl[3]);
             } else {
