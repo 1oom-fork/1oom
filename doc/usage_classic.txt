@@ -139,5 +139,7 @@ Pressing Alt-X in the main menu also enables the following features:
   ("ui.sm_no_question_mark_cursor")
 - Pressing the "Ships" button in the galaxy movement screen opens the ship
   design selection screen ("ui.ui_sm_ships_enabled")
+- Holding Alt toggles the cursor icon and the ability to select a fleet
+  ("ui.sm_explicit_cursor_context")
 
 See doc/list_gamediff.txt for a list of differences in the game itself.
