@@ -114,6 +114,8 @@ The following features can be enabled in the configuration file:
   design selection screen ("ui.ui_sm_ships_enabled"):
   - Holding down the Ctrl or Alt keys on the ship design selection screen
     allows you to make selections for all colonies at once
+- Holding Alt toggles the cursor icon and the ability to select a fleet
+  ("ui.sm_explicit_cursor_context")
 
 Also:
 - "ui.sm_mouseover_focus" changes the target when hovering over a star
