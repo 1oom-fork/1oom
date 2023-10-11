@@ -293,6 +293,7 @@ extern bool ui_sm_expanded_scroll;
 extern bool ui_sm_distance_tooltip;
 extern bool ui_live_spy_reports;
 extern bool ui_sm_no_question_mark_cursor;
+extern bool ui_sm_explicit_cursor_context;
 extern bool ui_kbd_cursor_offset_fix;
 extern bool ui_mouse_lmb_fix;
 extern bool ui_mouse_warp_disabled;
