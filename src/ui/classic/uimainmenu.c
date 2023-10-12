@@ -179,7 +179,7 @@ static main_menu_action_t main_menu_do(struct main_menu_data_s *d)
         } else if (oi1 == oi_tutor) {
             d->selected = MAIN_MENU_ACT_TUTOR;
         } else if (oi1 == oi_extra) {
-            ui_extra_enabled = !ui_extra_enabled;
+            ui_extra_toggle_preset(!ui_extra_enabled);
             d->fix_version = true;
             flag_done = false;
         }
