@@ -90,4 +90,6 @@ enables the following UI bug fixes:
 - When using cursor keys, the mouse position is calculated taking into account
   the mouse icon offset
 
+The following features can be enabled in the configuration file:
+
 See doc/list_gamediff.txt for a list of differences in the game itself.

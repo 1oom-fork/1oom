@@ -279,4 +279,6 @@ extern bool ui_mwi_counter;
 extern int ui_sm_scroll_speed;
 extern bool ui_kbd_repeat;
 
+extern void ui_extra_toggle_preset(bool enabled);
+
 #endif
