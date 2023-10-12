@@ -30,6 +30,11 @@ static int ui_icon = 146/*guardian*/;
 
 /* -------------------------------------------------------------------------- */
 
+void ui_extra_toggle_preset(bool enabled)
+{
+    ui_extra_enabled = enabled;
+}
+
 static bool check_ui_icon(void *var)
 {
     int v = (int)(intptr_t)var;
