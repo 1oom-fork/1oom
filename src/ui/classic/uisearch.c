@@ -100,7 +100,7 @@ int ui_search(struct game_s *g, player_id_t pi)
     ui_draw_copy_buf();
     hw_video_copy_back_to_page2();
     uiobj_finish_frame();
-    ui_cursor_setup_area(1, &ui_cursor_area_tbl[0]);
+    //ui_cursor_setup_area(1, &ui_cursor_area_tbl[0]);
 
     uiobj_table_clear();
     uiobj_set_callback_and_delay(search_draw_cb, 0, 1);
