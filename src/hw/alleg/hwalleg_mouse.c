@@ -60,6 +60,11 @@ void hw_mouse_move(int dx, int dy)
     mouse_set_xy_from_hw(x, y);
 }
 
+void hw_mouse_set_xy(int mx, int my)
+{
+    mouse_set_xy_from_hw(mx, my);
+}
+
 void hw_mouse_buttons(int state)
 {
     if (hw_mouse_enabled) {
