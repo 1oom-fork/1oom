@@ -82,6 +82,7 @@ int hw_video_init(int w, int h)
     i_hw_video.update = video_update_8bpp;
     i_hw_video.setpal = video_setpal_8bpp;
     set_color_depth(8);
+    set_mouse_speed(hw_opt_mouse_slowdown_x, hw_opt_mouse_slowdown_y);
     video.bm = create_bitmap(w, h);
     if (i_hw_video.setmode(w, h)) {
         return -1;
