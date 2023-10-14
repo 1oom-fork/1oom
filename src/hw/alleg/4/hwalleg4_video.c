@@ -101,7 +101,9 @@ void hw_video_input_grab(bool grab)
 
 void hw_video_position_cursor(int mx, int my)
 {
-    /* Not implemented */
+    if (!hw_opt_relmouse) {
+        position_mouse(mx, my);
+    }
 }
 
 #include "hwalleg_video.c"

@@ -5,6 +5,7 @@
 
 #include "hw.h"
 #include "hwalleg_mouse.h"
+#include "hwalleg_opt.h"
 #include "hwalleg_video.h"
 #include "mouse.h"
 
