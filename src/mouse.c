@@ -45,12 +45,6 @@ void mouse_set_scroll_from_hw(int scroll)
     mouse_scroll += scroll;
 }
 
-void mouse_set_xy(int mx, int my)
-{
-    moouse_x = mx;
-    moouse_y = my;
-}
-
 void mouse_set_click_xy(int mx, int my)
 {
     mouse_have_click_sw = true;
