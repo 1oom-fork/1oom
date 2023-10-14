@@ -21,7 +21,6 @@ extern void mouse_set_xy_from_hw(int mx, int my);
 extern void mouse_set_buttons_from_hw(int buttons);
 extern void mouse_set_scroll_from_hw(int scroll);
 extern void mouse_set_click_xy(int mx, int my);
-extern void mouse_set_xy(int mx, int my);
 
 extern bool mouse_getclear_click_hw(void);
 extern bool mouse_getclear_click_sw(void);
