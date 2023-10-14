@@ -80,6 +80,7 @@ int hw_video_init(int w, int h)
     mouse_set_limits(w, h);
     set_mouse_range(0, 0, w - 1, h - 1);
     hw_video_in_gfx = true;
+    set_mouse_speed(hw_opt_mouse_slowdown_x, hw_opt_mouse_slowdown_y);
     video.bm = create_bitmap(w, h);
     return 0;
 }
