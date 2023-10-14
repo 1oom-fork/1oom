@@ -741,7 +741,7 @@ static int16_t uiobj_kbd_dir_key_dy_list(int diry)
             uiobj_mouseoff = ui_cursor_mouseoff;
             mouse_stored_x -= uiobj_mouseoff;
             mouse_stored_y -= uiobj_mouseoff;
-            mouse_set_xy(mouse_stored_x, mouse_stored_y);
+            hw_mouse_set_xy(mouse_stored_x, mouse_stored_y);
             if (p->type == UIOBJ_TYPE_TEXTLINE) {
                 *p->vptr = p->ta.z18;
             }
@@ -1150,7 +1150,7 @@ static void uiobj_click_obj(int16_t oi, int mx, int my)
                 my = moouse_y;
             }
             if (!ui_mouse_warp_disabled) {
-                mouse_set_xy(mx, my);
+                hw_mouse_set_xy(mx, my);
             }
         }
     } else {
@@ -1444,7 +1444,7 @@ static int16_t uiobj_handle_input_sub0(void)
                     }
                     if ((p->type != UIOBJ_TYPE_SETVAL) && (p->type != UIOBJ_TYPE_TEXTLINE)) {
                         uiobj_handle_click(uiobj_focus_oi, false);
-                        mouse_set_xy(mx, my);
+                        hw_mouse_set_xy(mx, my);
                     }
                     uiobj_focus_oi = -1;
                 }
@@ -1681,7 +1681,7 @@ void uiobj_set_focus_forced(int16_t uiobji)
     uiobj_mouseoff = ui_cursor_mouseoff;
     x -= uiobj_mouseoff;
     y -= uiobj_mouseoff;
-    mouse_set_xy(x, y);
+    hw_mouse_set_xy(x, y);
     /* needed anywhere? */
     mouse_stored_x = x;
     mouse_stored_y = y;
