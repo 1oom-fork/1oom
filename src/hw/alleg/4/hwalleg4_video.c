@@ -81,6 +81,7 @@ int hw_video_init(int w, int h)
     }
     hw_mouse_set_limits(w, h);
     hw_video_in_gfx = true;
+    set_mouse_speed(hw_opt_mouse_slowdown_x, hw_opt_mouse_slowdown_y);
     video.bm = create_bitmap(w, h);
     video.buf[0] = lib_malloc(video.bufw * video.bufh * NUM_VIDEOBUF);
     for (int i = 1; i < NUM_VIDEOBUF; ++i) {
