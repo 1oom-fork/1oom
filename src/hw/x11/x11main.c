@@ -354,6 +354,11 @@ bool hw_kbd_set_repeat(bool enabled)
     return true;
 }
 
+void hw_mouse_set_xy(int mx, int my)
+{
+    mouse_set_xy_from_hw(mx, my);
+}
+
 /* -- X11 specific implementations ---------------------------------------- */
 
 void hw_shutdown(void) {
