@@ -14,6 +14,7 @@
 #include "kbd.h"
 #include "log.h"
 #include "main.h"
+#include "mouse.h"
 #include "options.h"
 
 /* -------------------------------------------------------------------------- */
@@ -297,11 +298,15 @@ int hw_event_handle(void)
             prev_y = y;
             prev_z = z;
         }
-        hw_mouse_move(x - prev_x, y - prev_y);
-        if ((x <= 10) || (x >= (hw_mouse_w - 10)) || (y <= 10) || (y >= (hw_mouse_h - 10))) {
-            x = hw_mouse_w / 2;
-            y = hw_mouse_h / 2;
-            position_mouse(x, y);
+        if (hw_opt_relmouse) {
+            hw_mouse_move(x - prev_x, y - prev_y);
+            if ((x <= 10) || (x >= (hw_mouse_w - 10)) || (y <= 10) || (y >= (hw_mouse_h - 10))) {
+                x = hw_mouse_w / 2;
+                y = hw_mouse_h / 2;
+                position_mouse(x, y);
+            }
+        } else {
+            mouse_set_xy_from_hw(x, y);
         }
         prev_x = x;
         prev_y = y;

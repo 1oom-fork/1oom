@@ -5,6 +5,7 @@
 
 #include "hw.h"
 #include "hwalleg_mouse.h"
+#include "hwalleg_opt.h"
 #include "hwalleg_video.h"
 #include "mouse.h"
 
@@ -62,7 +63,11 @@ void hw_mouse_move(int dx, int dy)
 
 void hw_mouse_set_xy(int mx, int my)
 {
-    mouse_set_xy_from_hw(mx, my);
+    if (hw_opt_relmouse) {
+        mouse_set_xy_from_hw(mx, my);
+    } else {
+        position_mouse(mx, my);
+    }
 }
 
 void hw_mouse_buttons(int state)
