@@ -2,6 +2,8 @@
 
 #include <stdio.h>
 
+#include <SDL.h>
+
 #include "hw.h"
 #include "cfg.h"
 #include "hwsdl_opt.h"
@@ -18,7 +20,11 @@
 
 bool hw_opt_borderless = false;
 bool hw_opt_int_scaling = false;
-bool hw_opt_relmouse = true;
+#if SDL_VERSION_ATLEAST(2, 0, 18)
+    bool hw_opt_relmouse = false;
+#else
+    bool hw_opt_relmouse = true;
+#endif
 bool hw_opt_two_step_scaling = true;
 bool hw_opt_autotrim = true;
 bool hw_opt_vsync = true;
@@ -58,10 +64,10 @@ const struct cmdline_options_s hw_cmdline_options_extra[] = {
       NULL, "Do not force integer scaling" },
     { "-relmouse", 0,
       options_enable_bool_var, (void *)&hw_opt_relmouse,
-      NULL, "Use relative mouse mode (default)" },
+      NULL, "Use relative mouse mode" },
     { "-norelmouse", 0,
       options_disable_bool_var, (void *)&hw_opt_relmouse,
-      NULL, "Do not use relative mouse mode (for testing)" },
+      NULL, "Do not use relative mouse mode" },
     { "-twostep", 0,
       options_enable_bool_var, (void *)&hw_opt_two_step_scaling,
       NULL, "Allow two-step scaling" },
