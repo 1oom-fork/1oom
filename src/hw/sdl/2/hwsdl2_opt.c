@@ -2,6 +2,8 @@
 
 #include <stdio.h>
 
+#include <SDL.h>
+
 #include "hw.h"
 #include "cfg.h"
 #include "hwsdl_opt.h"
@@ -19,7 +21,11 @@
 
 bool hw_opt_force_sw = false;
 bool hw_opt_int_scaling = false;
-bool hw_opt_relmouse = true;
+#if SDL_VERSION_ATLEAST(2, 0, 18)
+    bool hw_opt_relmouse = false;
+#else
+    bool hw_opt_relmouse = true;
+#endif
 bool hw_opt_autotrim = true;
 bool hw_opt_vsync = true;
 bool hw_opt_allow_upscaling = true;
