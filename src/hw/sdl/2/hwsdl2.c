@@ -19,6 +19,7 @@
 #include "kbd.h"
 #include "log.h"
 #include "main.h"
+#include "mouse.h"
 #include "options.h"
 #include "types.h"
 
@@ -253,7 +254,9 @@ int hw_init(void)
         return 12;
     }
     build_key_xlat();
-    SDL_EventState(SDL_MOUSEMOTION, SDL_IGNORE);
+    if (hw_opt_relmouse) {
+        SDL_EventState(SDL_MOUSEMOTION, SDL_IGNORE);
+    }
     return 0;
 }
 
@@ -347,6 +350,11 @@ int hw_event_handle(void)
                     kbd_add_keypress(MOO_KEY_UNKNOWN, 0, c);
                 }
                 break;
+            case SDL_MOUSEMOTION:
+                if (!hw_opt_relmouse && hw_mouse_enabled) {
+                    mouse_set_xy_from_hw(e.motion.x, e.motion.y);
+                }
+                break;
             case SDL_MOUSEBUTTONDOWN:
             case SDL_MOUSEBUTTONUP:
                 hw_mouse_button((int)(e.button.button), (e.button.state == SDL_PRESSED));
@@ -368,11 +376,13 @@ int hw_event_handle(void)
                 break;
         }
     }
-    int x, y;
-    SDL_GetRelativeMouseState(&x, &y);
-    if (hw_mouse_enabled) {
-        if ((x != 0) || (y != 0)) {
-            hw_mouse_move(x, y);
+    if (hw_opt_relmouse) {
+        int x, y;
+        SDL_GetRelativeMouseState(&x, &y);
+        if (hw_mouse_enabled) {
+            if ((x != 0) || (y != 0)) {
+                hw_mouse_move(x, y);
+            }
         }
     }
 
