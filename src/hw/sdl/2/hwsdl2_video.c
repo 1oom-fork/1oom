@@ -12,6 +12,7 @@
 #include "hwsdl_opt.h"
 #include "lib.h"
 #include "log.h"
+#include "mouse.h"
 #include "types.h"
 #include "version.h"
 #include "vgapal.h"
@@ -732,7 +733,21 @@ void hw_video_input_grab(bool grab)
     SDL_SetWindowGrab(video.window, grab);
     if (hw_opt_relmouse) {
         SDL_SetRelativeMouseMode(grab);
+    } else {
+        hw_mouse_set_xy(moouse_x, moouse_y);
+        SDL_ShowCursor(grab ? SDL_DISABLE : SDL_ENABLE);
     }
+}
+
+void hw_video_mouse_warp(int mx, int my)
+{
+#if SDL_VERSION_ATLEAST(2, 0, 18)
+    int x, y;
+    SDL_RenderLogicalToWindow(video.renderer, mx, my, &x, &y);
+    SDL_WarpMouseInWindow(video.window, x, y);
+#else
+    mouse_set_xy_from_hw(mx, my);
+#endif
 }
 
 int hw_icon_set(const uint8_t *data, const uint8_t *pal, int w, int h)

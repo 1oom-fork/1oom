@@ -3,5 +3,6 @@
 
 extern int hw_video_get_window_id(void);
 extern void hw_video_set_visible(bool visible);
+extern void hw_video_mouse_warp(int mx, int my);
 
 #endif
