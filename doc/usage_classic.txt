@@ -97,8 +97,6 @@ or pressing Alt-X in the main menu enables the following extra UI features:
 - The cursor key behavior is more intuitive
 - Pressing = in the galaxy movement screen also transfers reserve back and
   the behavior is more predictable
-- Pressing the "Ships" button in the galaxy movement screen opens the ship
-  design selection screen
 
 Pressing Alt-X in the main menu also enables the following features:
 - Population scheduled for transport no longer contributes to production
@@ -127,6 +125,8 @@ Pressing Alt-X in the main menu also enables the following features:
 - "game.skipintro" skips intro video
 - The question mark cursor is disabled on the galaxy movement screen
   ("ui.sm_no_question_mark_cursor")
+- Pressing the "Ships" button in the galaxy movement screen opens the ship
+  design selection screen ("ui.ui_sm_ships_enabled")
 
 Also:
 - "ui.uigovernor":
