@@ -108,6 +108,10 @@ The following features can be enabled in the configuration file:
 - "game.skipintro" skips intro video
 - The question mark cursor is disabled on the galaxy movement screen
   ("ui.sm_no_question_mark_cursor")
+- Pressing the "Ships" button in the galaxy movement screen opens the ship
+  design selection screen ("ui.ui_sm_ships_enabled"):
+  - Holding down the Ctrl or Alt keys on the ship design selection screen
+    allows you to make selections for all colonies at once
 
 Also:
 - "ui.sm_mouseover_focus" changes the target when hovering over a star
