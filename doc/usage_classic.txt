@@ -89,8 +89,6 @@ enables the following extra UI features:
 - The cursor key behavior is more intuitive
 - Pressing = in the galaxy movement screen also transfers reserve back and
   the behavior is more predictable
-- Pressing the "Ships" button in the galaxy movement screen opens the ship
-  design selection screen
 
 The following features can be enabled in the configuration file:
 - Continue, Undo and Initial saves can be chosen in the Load Game screen
@@ -110,6 +108,8 @@ The following features can be enabled in the configuration file:
 - "game.skipintro" skips intro video
 - The question mark cursor is disabled on the galaxy movement screen
   ("ui.sm_no_question_mark_cursor")
+- Pressing the "Ships" button in the galaxy movement screen opens the ship
+  design selection screen ("ui.ui_sm_ships_enabled")
 
 Also:
 - "ui.sm_mouseover_focus" changes the target when hovering over a star
