@@ -267,7 +267,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             ui_sound_play_sfx_24();
         } else if (ui_starmap_handle_oi_misc(&d, oi1)) {
             ui_sound_play_sfx_24();
-        } else if ((oi1 == d.sm.oi_ship) && ui_extra_enabled) {
+        } else if ((oi1 == d.sm.oi_ship) && ui_sm_ships_enabled) {
             ui_sound_play_sfx_24();
             ui_data.ui_main_loop_action = UI_MAIN_LOOP_PLANET_SHIPS;
             flag_done = true;
@@ -350,7 +350,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             }
         }
         if (0
-          || ((oi1 == d.sm.oi_ship) && !ui_extra_enabled) || (oi1 == oi_shippic)
+          || ((oi1 == d.sm.oi_ship) && !ui_sm_ships_enabled) || (oi1 == oi_shippic)
           || ((oi1 == oi_wheelshippic) && (scrollmisc < 0))
         ) {
             int n;
