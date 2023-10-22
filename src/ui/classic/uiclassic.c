@@ -7,6 +7,7 @@
 #include "bits.h"
 #include "cfg.h"
 #include "comp.h"
+#include "font8x8_draw.h"
 #include "game_shiptech.h"  /* for sounds used */
 #include "gfxaux.h"
 #include "hw.h"
@@ -21,8 +22,11 @@
 #include "options.h"
 #include "types.h"
 #include "uidefs.h"
+#include "uidelay.h"
 #include "uipal.h"
 #include "uiobj.h"
+#include "vgabuf.h"
+#include "vgapal.h"
 
 /* -------------------------------------------------------------------------- */
 
@@ -402,6 +406,36 @@ static int set_ui_icon(void)
 }
 
 /* -------------------------------------------------------------------------- */
+
+void ui_early_show_message_box(const char *msg)
+{
+    if (hw_video_init(320, 200)) {
+        return;
+    }
+    bool initialized = false;
+    int64_t init_time = hw_get_time_us();
+    lbxpal_init();
+    vgapal_set_color(0, 0, 0, 0);
+    vgapal_set_color(1, 0x3f, 0x3f, 0x3f);
+    hw_video_refresh_palette();
+    while (1) {
+        if (!initialized && (hw_get_time_us() - init_time) > 1000000) {
+            memset(vgabuf_get_back(), 0, 320 * 200);
+            font8x8_drawstr(50, 20, 320, msg, 1, 0);
+            hw_video_draw_buf();
+            initialized = true;
+        }
+        hw_event_handle();
+        if (kbd_have_keypress()) {
+            uint32_t k;
+            k = kbd_get_keypress();
+            if ((KBD_GET_KEY(k) == MOO_KEY_SPACE)
+              ||(KBD_GET_KEY(k) == MOO_KEY_ESCAPE)) {
+                break;
+            }
+        }
+    }
+}
 
 int ui_early_init(void)
 {
