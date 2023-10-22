@@ -32,6 +32,11 @@ bool ui_use_audio = false;
 
 /* -------------------------------------------------------------------------- */
 
+void ui_early_show_message_box(const char *msg)
+{
+
+}
+
 int ui_early_init(void)
 {
     return 0;
