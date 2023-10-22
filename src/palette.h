@@ -12,9 +12,12 @@ static inline void ui_palette_clear(void)
     memset(ui_palette, 0, sizeof(ui_palette));
 }
 
-static inline void ui_palette_set_byte(int i, uint8_t b)
+static inline void ui_palette_set_color(int i, uint8_t r, uint8_t g, uint8_t b)
 {
-    ui_palette[i] = b & 0x3f;
+    int j = i * 3;
+    ui_palette[j] = r & 0x3f;
+    ui_palette[j+1] = g & 0x3f;
+    ui_palette[j+2] = b & 0x3f;
 }
 
 static inline void ui_palette_set(const uint8_t *pal, int first, int num)

@@ -47,17 +47,10 @@ void ui_palette_set_n(void)
     bool got_update = false;
 
     /* wait_retrace */
-    for (i = j = 0; j < 256; ++j) {
+    for (i = j = 0; j < 256; ++j, i += 3) {
         if (lbxpal_update_flag[j] != 0) {
-            hw_video_set_palette_byte(i, lbxpal_palette[i]);
-            ++i;
-            hw_video_set_palette_byte(i, lbxpal_palette[i]);
-            ++i;
-            hw_video_set_palette_byte(i, lbxpal_palette[i]);
-            ++i;
+            hw_video_set_palette_color(j, lbxpal_palette[i], lbxpal_palette[i + 1], lbxpal_palette[i + 2]);
             got_update = true;
-        } else {
-            i += 3;
         }
     }
 
@@ -73,16 +66,9 @@ void ui_palette_fade_n(uint16_t fadepercent)
     v = 100 - fadepercent;
     if (v <= 0) {
         /* wait_retrace */
-        for (i = j = 0; j < 256; ++j) {
+        for (j = 0; j < 256; ++j) {
             if (lbxpal_update_flag[j] != 0) {
-                hw_video_set_palette_byte(i, 0);
-                ++i;
-                hw_video_set_palette_byte(i, 0);
-                ++i;
-                hw_video_set_palette_byte(i, 0);
-                ++i;
-            } else {
-                i += 3;
+                hw_video_set_palette_color(j, 0, 0, 0);
             }
         }
     } else if (v >= 100) {
@@ -91,16 +77,11 @@ void ui_palette_fade_n(uint16_t fadepercent)
     } else {
         v = ((v * 0x100) / 100) & 0xff;
         /* wait_retrace */
-        for (i = j = 0; j < 256; ++j) {
+        for (i = j = 0; j < 256; ++j, i += 3) {
             if (lbxpal_update_flag[j] != 0) {
-                hw_video_set_palette_byte(i, (((uint16_t)lbxpal_palette[i]) * v) >> 8);
-                ++i;
-                hw_video_set_palette_byte(i, (((uint16_t)lbxpal_palette[i]) * v) >> 8);
-                ++i;
-                hw_video_set_palette_byte(i, (((uint16_t)lbxpal_palette[i]) * v) >> 8);
-                ++i;
-            } else {
-                i += 3;
+                hw_video_set_palette_color(j, (((uint16_t)lbxpal_palette[i]) * v) >> 8,
+                                              (((uint16_t)lbxpal_palette[i + 1]) * v) >> 8,
+                                              (((uint16_t)lbxpal_palette[i + 2]) * v) >> 8);
             }
         }
     }
