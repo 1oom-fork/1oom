@@ -16,6 +16,14 @@ static inline void vgapal_set_byte(int i, uint8_t b)
     vgapal[i] = b & 0x3f;
 }
 
+static inline void vgapal_set_color(int i, uint8_t r, uint8_t g, uint8_t b)
+{
+    int j = i * 3;
+    vgapal[j] = r & 0x3f;
+    vgapal[j + 1] = g & 0x3f;
+    vgapal[j + 2] = b & 0x3f;
+}
+
 extern void vgapal_set(const uint8_t *pal, int first, int num);
 
 #endif
