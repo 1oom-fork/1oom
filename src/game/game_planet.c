@@ -143,17 +143,21 @@ void game_planet_adjust_percent(struct game_s *g, player_id_t owner, planet_slid
     }
 }
 
-int game_planet_get_w1(const struct game_s *g, uint8_t planet_i)
+int game_planet_get_waste_percent(int *r_waste, const struct game_s *g, uint8_t planet_i, bool subtract_transports)
 {
     const planet_t *p = &(g->planet[planet_i]);
     const empiretechorbit_t *e;
-    int w, fact, waste, prod;
+    int w, fact, waste, prod, pop;
     if (p->owner == PLAYER_NONE) {
         return 0;
     }
     e = &(g->eto[p->owner]);
     fact = p->factories;
-    SETMIN(fact, p->pop * e->colonist_oper_factories);
+    pop = p->pop;
+    if (subtract_transports) {
+        pop -= p->trans_num;
+    }
+    SETMIN(fact, pop * e->colonist_oper_factories);
     waste = (e->race == RACE_SILICOID) ? 0 : (((fact * e->ind_waste_scale) / 10 + p->waste) / e->have_eco_restoration_n);
     prod = p->prod_after_maint;
     if (prod == 0) {
@@ -161,6 +165,9 @@ int game_planet_get_w1(const struct game_s *g, uint8_t planet_i)
     }
     w = ((waste * 100) + prod - 1) / prod;
     SETRANGE(w, 0, 100);
+    if (r_waste != NULL) {
+        *r_waste = waste;
+    }
     return w;
 }
 

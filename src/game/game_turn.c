@@ -1439,7 +1439,7 @@ static void game_turn_finished_slider(struct game_s *g)
         }
         if (BOOLVEC_IS1(p->finished, FINISHED_SOILATMOS)) {
             int v;
-            v = game_planet_get_w1(g, pli);
+            v = game_planet_get_waste_percent(NULL, g, pli, false);
             if (!cond_build_ind) {
                 p->slider[PLANET_SLIDER_TECH] += p->slider[PLANET_SLIDER_ECO] - v;
             } else {
