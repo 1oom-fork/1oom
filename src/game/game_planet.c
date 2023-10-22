@@ -404,17 +404,10 @@ int game_planet_get_slider_text_eco(const struct game_s *g, uint8_t planet_i, pl
     const empiretechorbit_t *e = &(g->eto[player]);
     int retval = -1;
     const char *str = NULL;
-    int vthis, factoper, waste, adjwaste, tform_cost;
+    int vthis, adjwaste = 0, tform_cost;
     bool flag_ecoproj = false;
     vthis = (p->prod_after_maint * p->slider[PLANET_SLIDER_ECO]) / 100;
-    factoper = (p->pop - p->trans_num) * e->colonist_oper_factories;
-    SETMIN(factoper, p->factories);
-    waste = (factoper * e->ind_waste_scale) / 10;
-    if (e->race == RACE_SILICOID) {
-        adjwaste = 0;
-    } else {
-        adjwaste = (waste + p->waste) / e->have_eco_restoration_n;
-    }
+    game_planet_get_waste_percent(&adjwaste, g, planet_i, true);
     if ((vthis < adjwaste) || (vthis == 0)) {
         str = (vthis < adjwaste) ? game_str_sm_ecowaste : game_str_sm_prodnone;
     } else {
