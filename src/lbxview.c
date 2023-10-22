@@ -461,6 +461,11 @@ static int loadfont(void)
     return res;
 }
 
+void ui_early_show_message_box(const char *msg)
+{
+
+}
+
 /* -------------------------------------------------------------------------- */
 
 int main_handle_option(const char *argv)

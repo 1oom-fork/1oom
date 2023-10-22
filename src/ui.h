@@ -9,6 +9,8 @@
 
 extern const char *idstr_ui;
 
+extern void ui_early_show_message_box(const char *msg);
+
 extern int ui_early_init(void);
 extern int ui_init(void);
 extern int ui_late_init(void);
