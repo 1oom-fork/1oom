@@ -377,6 +377,11 @@ static void do_lbx_gfx(uint32_t k)
     }
 }
 
+void ui_early_show_message_box(const char *msg)
+{
+
+}
+
 /* -------------------------------------------------------------------------- */
 
 int main_handle_option(const char *argv)
