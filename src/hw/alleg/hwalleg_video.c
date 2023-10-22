@@ -17,9 +17,9 @@ void hw_video_set_palette(const uint8_t *pal, int first, int num)
     video.setpal(pal, first, num);
 }
 
-void hw_video_set_palette_byte(int i, uint8_t b)
+void hw_video_set_palette_color(int i, uint8_t r, uint8_t g, uint8_t b)
 {
-    ui_palette_set_byte(i, b);
+    ui_palette_set_color(i, r, g, b);
 }
 
 void hw_video_refresh_palette(void)
