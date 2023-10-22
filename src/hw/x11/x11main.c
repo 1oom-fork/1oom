@@ -304,10 +304,11 @@ void hw_video_set_palette(const uint8_t *pal, const int first, const int num) {
     if ((first+num)*3 > maxpal) maxpal = (first+num)*3;
 }
 
-void hw_video_set_palette_byte(int i, uint8_t b) {
-    ui_palette_set_byte(i, b);
-    if (i < minpal) minpal = i;    /* minpal/maxpal are not colour numbers! */
-    if (i > maxpal) maxpal = i;
+void hw_video_set_palette_color(int i, uint8_t r, uint8_t g, uint8_t b)
+{
+    ui_palette_set_color(i, r, g, b);
+    if ((i * 3) < minpal) minpal = i * 3;
+    if ((i * 3 + 2) > maxpal) maxpal = i * 3 + 2;
 }
 
 void hw_video_refresh_palette(void) { hw_video_paint(4); }
