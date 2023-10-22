@@ -37,6 +37,7 @@ The following new UI features are always enabled/available:
 - Ctrl and Alt works as a step modifier for the counters and sliders:
   - on the Design screen
   - on the fleet sending screen
+  - on the galaxy movement screen
   - on the transport sending screen
   - on the Tech screen
 - Sending ships does not deselect the orbit fleet when holding Shift
