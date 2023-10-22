@@ -75,6 +75,10 @@ int main_1oom(int argc, char **argv)
         return 3;
     }
     if (lbxfile_find_dir()) {
+        ui_early_show_message_box("Error: could not find\nthe LBX files!\n"
+                            "1oom requires a copy\nof the Master of Orion\n(v1.3) LBX files.\n"
+                            "Simply copy the EXE and\nDLLs to your MOO1\ndirectory.\n"
+                            "Alternatively copy your\nMOO1 LBX files to your\n1oom directory.");
         return 4;
     }
     if (pbx_apply_queued_files()) {
