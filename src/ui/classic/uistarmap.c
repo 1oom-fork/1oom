@@ -396,11 +396,29 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
                     do_adj = true;
                 } else if (oi1 == d.sm.oi_tbl_slider_plus[i]) {
                     ui_sound_play_sfx_24();
-                    if (kbd_is_modifier(MOO_MOD_CTRL)) v = p->slider[i] + 1;
-                    else v = p->slider[i] + 4;
-                    SETMIN(v, 100);
-                    p->slider[i] = v;
-                    do_adj = true;
+                    if (kbd_is_modifier(MOO_MOD_ALT)) {
+                        for (planet_slider_i_t j = 0; j < PLANET_SLIDER_NUM; ++j) {
+                            if (p->slider_lock[j]) continue;
+                            if (i == j) continue;
+                            if (j == PLANET_SLIDER_ECO) {
+                                int w = game_planet_get_waste_percent(NULL, g, g->planet_focus_i[active_player], true);
+                                if (w < p->slider[j]) {
+                                    int diff = p->slider[j] - w;
+                                    p->slider[i] += diff;
+                                    p->slider[j] -= diff;
+                                }
+                            } else {
+                                p->slider[i] += p->slider[j];
+                                p->slider[j] = 0;
+                            }
+                        }
+                    } else {
+                        if (kbd_is_modifier(MOO_MOD_CTRL)) v = p->slider[i] + 1;
+                        else v = p->slider[i] + 4;
+                        SETMIN(v, 100);
+                        p->slider[i] = v;
+                        do_adj = true;
+                    }
                 }
                 if (do_adj) {
                     game_adjust_slider_group(p->slider, i, p->slider[i], PLANET_SLIDER_NUM, p->slider_lock);
