@@ -1467,16 +1467,8 @@ static void game_turn_finished_slider(struct game_s *g)
                 }
             }
             if (!flag_pending_ecoproj) {
-                int w, fact, waste, prod;
-                fact = p->factories;
-                SETMIN(fact, p->pop * e->colonist_oper_factories);
-                waste = (e->race == RACE_SILICOID) ? 0 : (((fact * e->ind_waste_scale) / 10 + p->waste) / e->have_eco_restoration_n);
-                prod = p->prod_after_maint;
-                if (prod == 0) {
-                    prod = 1000;
-                }
-                w = ((waste * 100) + prod - 1) / prod;
-                SETRANGE(w, 0, 100);
+                int w, waste = 0;
+                w = game_planet_get_waste_percent(&waste, g, pli, false);
                 SUBSAT0(v, waste);
                 if (0
                   || ((game_get_pop_growth_for_eco(g, pli, v) / 10) > 0)
