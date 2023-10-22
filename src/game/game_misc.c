@@ -245,19 +245,9 @@ void game_update_eco_on_waste(struct game_s *g, player_id_t player_i, bool force
     for (int i = 0; i < g->galaxy_stars; ++i) {
         planet_t *p = &(g->planet[i]);
         if (p->owner == player_i) {
-            uint16_t v, fact, waste, prod;
+            uint16_t v;
             int16_t left;
-            fact = p->factories;
-            v = e->colonist_oper_factories * p->pop;
-            SETMIN(fact, v);
-            waste = (fact * e->ind_waste_scale) / 10;
-            waste = (waste + p->waste) / e->have_eco_restoration_n;
-            prod = p->prod_after_maint;
-            if (!prod) {
-                prod = 1000;
-            }
-            v = (waste * 100 + prod - 1) / prod;
-            SETRANGE(v, 0, 100);
+            v = game_planet_get_waste_percent(NULL, g, i, false);
             if ((p->slider[PLANET_SLIDER_ECO] < v) || force_adjust) {
                 if (game_num_waste_adjust_fix) {
                     int sum;
