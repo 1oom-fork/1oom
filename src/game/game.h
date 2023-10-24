@@ -348,5 +348,6 @@ static inline bool IS_ALIVE(const struct game_s *g, player_id_t i)
 
 extern bool game_opt_skip_intro_always;
 extern bool game_opt_message_filter[FINISHED_NUM];
+extern struct game_new_options_s game_opt_custom;
 
 #endif
