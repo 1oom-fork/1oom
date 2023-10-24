@@ -69,14 +69,10 @@ static bool slider_text_num_grequ(const struct game_s *g, const planet_t *p, int
 static void move_eco_min(const struct game_s *g, planet_t *p)
 {
     int slideri = PLANET_SLIDER_ECO;
-    int previous_allocation;
-    do {
-        if (!slider_text_equals(g, p, slideri, game_str_sm_ecowaste)) {
-            break;
-        }
-        previous_allocation = p->slider[slideri];
-        increment_slider(p, slideri);
-    } while (previous_allocation != p->slider[slideri]);
+    int w = game_planet_get_waste_percent(NULL, g, p, true);
+    if (p->slider[slideri] < w) {
+        set_slider(p, slideri, w);
+    }
 }
 
 /* Move industry slider right until "RESERVE" appears. Then move 1 tick back */
