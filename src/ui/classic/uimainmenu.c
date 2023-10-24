@@ -3,7 +3,9 @@
 #include "ui.h"
 #include "comp.h"
 #include "game.h"
+#include "game_ai.h"
 #include "game_event.h"
+#include "game_new.h"
 #include "game_num.h"
 #include "game_save.h"
 #include "game_str.h"
@@ -16,6 +18,7 @@
 #include "lib.h"
 #include "log.h"
 #include "menu.h"
+#include "rnd.h"
 #include "types.h"
 #include "uicursor.h"
 #include "uidelay.h"
@@ -78,6 +81,40 @@ static bool main_menu_update_sfx_volume(void) {
     return true;
 }
 
+static const char* mm_get_custom_difficulty_value(uint32_t i) {
+    return game_str_tbl_diffic[i];
+}
+static const char* mm_get_custom_galaxy_size_value(uint32_t i) {
+    return game_str_tbl_gsize[i];
+}
+
+static const char* mm_get_custom_ai_id_value(uint32_t i) {
+    return game_ais[i]->name;
+}
+
+static const char* mm_get_custom_galaxy_seed_str(void) {
+    static char buf[64];
+    if (game_opt_custom.galaxy_seed == 0) {
+        lib_sprintf(buf, 64, "Off");
+    } else {
+        lib_sprintf(buf, 64, "%d", game_opt_custom.galaxy_seed);
+    }
+    return buf;
+}
+
+static bool mm_gen_custom_galaxy_seed(void) {
+    game_opt_custom.galaxy_seed = game_opt_custom.galaxy_seed ? 0 : rnd_get_new_seed();
+    return true;
+}
+
+const char *game_str_tbl_sm_pspecial_mm[PLANET_SPECIAL_NUM] = {
+    "Ultra Poor", "Poor", "Normal", "Artifacts", "Rich", "Ultra Rich", "4x Tech"
+};
+
+static const char* mm_get_custom_special_value(uint32_t i) {
+    return game_str_tbl_sm_pspecial_mm[i];
+}
+
 /* -------------------------------------------------------------------------- */
 
 #define MM_PAGE_STACK_SIZE 4
@@ -85,6 +122,9 @@ static bool main_menu_update_sfx_volume(void) {
 typedef enum {
     MAIN_MENU_PAGE_MAIN,
     MAIN_MENU_PAGE_GAME,
+    MAIN_MENU_PAGE_GAME_CUSTOM,
+    MAIN_MENU_PAGE_GAME_CUSTOM_GALAXY,
+    MAIN_MENU_PAGE_GAME_CUSTOM_HOMEWORLDS,
     MAIN_MENU_PAGE_OPTIONS,
     MAIN_MENU_PAGE_OPTIONS_INPUT,
     MAIN_MENU_PAGE_OPTIONS_SOUND,
@@ -253,6 +293,25 @@ static void mm_options_set_item_dimensions(struct main_menu_data_s *d, int i)
     }
 }
 
+static void mm_custom_set_item_dimensions(struct main_menu_data_s *d, int i)
+{
+    struct main_menu_item_s *it = &d->items[i];
+    uint16_t step_y;
+    it->font_i = 5;
+    main_menu_set_item_wh(d, it);
+    step_y = 0x40 / ((d->item_count + 1) / 2);
+    it->x = i%2 ? 0xe0 : 0x60;
+    it->y = 0x7f + step_y * (i/2);
+    if (i == d->item_count - 1) {
+        it->x = 0xe0;
+        it->y = 0x7f + 0x30;
+    }
+    if (i == d->item_count - 2) {
+        it->x = 0x60;
+        it->y = 0x7f + 0x30;
+    }
+}
+
 static void main_menu_make_main_page(struct main_menu_data_s *d)
 {
     d->set_item_dimensions = main_menu_set_item_dimensions;
@@ -269,7 +328,43 @@ static void main_menu_make_game_page(struct main_menu_data_s *d)
     menu_make_action_conditional(menu_allocate_item(), "Continue", MAIN_MENU_ACT_CONTINUE_GAME, main_menu_have_save_continue, MOO_KEY_c);
     menu_make_action_conditional(menu_allocate_item(), "Load Game", MAIN_MENU_ACT_LOAD_GAME, main_menu_have_save_any, MOO_KEY_l);
     menu_make_action(menu_allocate_item(), "New Game", MAIN_MENU_ACT_NEW_GAME, MOO_KEY_n);
-    menu_make_action(menu_allocate_item(), "Custom Game", MAIN_MENU_ACT_CUSTOM_GAME, MOO_KEY_u);
+    menu_make_page(menu_allocate_item(), "Custom Game", MAIN_MENU_PAGE_GAME_CUSTOM, MOO_KEY_u);
+    menu_make_back(menu_allocate_item());
+}
+
+static void main_menu_make_game_custom_page(struct main_menu_data_s *d)
+{
+    d->set_item_dimensions = mm_custom_set_item_dimensions;
+    menu_make_enum(menu_allocate_item(), "Difficulty", mm_get_custom_difficulty_value, &game_opt_custom.difficulty, 0, DIFFICULTY_NUM - 1, MOO_KEY_d);
+    menu_make_enum(menu_allocate_item(), "AI ID", mm_get_custom_ai_id_value, &game_opt_custom.ai_id, 0, GAME_AI_NUM - 1, MOO_KEY_a);
+    menu_make_page(menu_allocate_item(), "Galaxy", MAIN_MENU_PAGE_GAME_CUSTOM_GALAXY, MOO_KEY_g);
+    menu_make_page(menu_allocate_item(), "Homeworlds", MAIN_MENU_PAGE_GAME_CUSTOM_HOMEWORLDS, MOO_KEY_h);
+    menu_make_back(menu_allocate_item());
+    menu_make_action(menu_allocate_item(), "Next", MAIN_MENU_ACT_CUSTOM_GAME, MOO_KEY_n);
+}
+
+static void main_menu_make_game_custom_galaxy_page(struct main_menu_data_s *d)
+{
+    d->set_item_dimensions = mm_options_set_item_dimensions;
+    menu_make_enum(menu_allocate_item(), "Size", mm_get_custom_galaxy_size_value, &game_opt_custom.galaxy_size, 0, GALAXY_SIZE_HUGE, MOO_KEY_s);
+    menu_make_str_func(menu_allocate_item(), "Galaxy Seed", mm_get_custom_galaxy_seed_str, mm_gen_custom_galaxy_seed, MOO_KEY_e);
+    menu_make_int(menu_allocate_item(), "Players", &game_opt_custom.players, 2, PLAYER_NUM, MOO_KEY_p);
+    menu_make_bool(menu_allocate_item(), "Improved generator", &game_opt_custom.improved_galaxy_generator, MOO_KEY_g);
+    menu_make_int(menu_allocate_item(), "Num dist checks", &game_opt_custom.homeworlds.num_dist_checks, 0, PLAYER_NUM, MOO_KEY_d);
+    menu_make_int(menu_allocate_item(), "Num OK planet checks", &game_opt_custom.homeworlds.num_ok_planet_checks, 0, PLAYER_NUM, MOO_KEY_o);
+    menu_make_bool(menu_allocate_item(), "Nebulae", &game_opt_custom.nebulae, MOO_KEY_n);
+    menu_make_back(menu_allocate_item());
+}
+
+static void main_menu_make_game_custom_homeworlds_page(struct main_menu_data_s *d)
+{
+    d->set_item_dimensions = mm_options_set_item_dimensions;
+    menu_make_int(menu_allocate_item(), "Max population", &game_opt_custom.homeworlds.max_pop, 50, 120, MOO_KEY_p);
+    menu_make_enum(menu_allocate_item(), "Special", mm_get_custom_special_value, &game_opt_custom.homeworlds.special, 0, PLANET_SPECIAL_4XTECH, MOO_KEY_e);
+    menu_make_int(menu_allocate_item(), "Num scouts", &game_opt_custom.homeworlds.num_scouts, 0, 5, MOO_KEY_s);
+    menu_make_int(menu_allocate_item(), "Num fighters", &game_opt_custom.homeworlds.num_fighters, 0, 10, MOO_KEY_f);
+    menu_make_int(menu_allocate_item(), "Num colony ships", &game_opt_custom.homeworlds.num_colony_ships, 0, 2, MOO_KEY_c);
+    menu_make_bool(menu_allocate_item(), "Armed colony ships", &game_opt_custom.homeworlds.armed_colony_ships, MOO_KEY_a);
     menu_make_back(menu_allocate_item());
 }
 
@@ -380,6 +475,15 @@ static struct main_menu_page_s mm_pages[MAIN_MENU_PAGE_NUM] = {
     },
     {
         main_menu_make_game_page,
+    },
+    {
+        main_menu_make_game_custom_page,
+    },
+    {
+        main_menu_make_game_custom_galaxy_page,
+    },
+    {
+        main_menu_make_game_custom_homeworlds_page,
     },
     {
         main_menu_make_options_page,
@@ -657,11 +761,11 @@ main_menu_action_t ui_main_menu(struct game_new_options_s *newopts, struct game_
         ui_draw_finish_mode = 0;
         switch (ret) {
             case MAIN_MENU_ACT_NEW_GAME:
-                flag_done = ui_new_game(newopts, false);
+                flag_done = ui_new_game(newopts);
                 ui_draw_finish_mode = 1;
                 break;
             case MAIN_MENU_ACT_CUSTOM_GAME:
-                flag_done = ui_new_game(customopts, true);
+                flag_done = ui_custom_game(customopts);
                 ui_draw_finish_mode = 1;
                 break;
             case MAIN_MENU_ACT_LOAD_GAME:
