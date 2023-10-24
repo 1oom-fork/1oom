@@ -341,5 +341,6 @@ static inline bool NOT_IN_CONTACT(const struct game_s *g, player_id_t p1, player
 
 extern bool game_opt_skip_intro_always;
 extern bool game_opt_message_filter[FINISHED_NUM];
+extern struct game_new_options_s game_opt_custom;
 
 #endif
