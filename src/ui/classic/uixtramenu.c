@@ -14,6 +14,7 @@
 #include "lbxfont.h"
 #include "lib.h"
 #include "log.h"
+#include "menu.h"
 #include "types.h"
 #include "uicursor.h"
 #include "uidelay.h"
@@ -25,7 +26,7 @@
 /* -------------------------------------------------------------------------- */
 
 #define XTRAMENU_POS_X  10
-#define XTRAMENU_POS_Y  (170 - (XTRAMENU_NUM * 8))
+#define XTRAMENU_POS_Y  170
 
 /* -------------------------------------------------------------------------- */
 
@@ -98,25 +99,6 @@ static void xtramenu_reloc_un(struct game_s *g, player_id_t pi)
 
 /* -------------------------------------------------------------------------- */
 
-static const struct xtramenu_s {
-    mookey_t key;
-    ui_main_loop_action_t act;
-    void (*cb)(struct game_s *g, player_id_t pi);
-} xtramenu[XTRAMENU_NUM] = {
-    { MOO_KEY_b, UI_MAIN_LOOP_SCRAP_BASES, 0 },
-    { MOO_KEY_c, UI_MAIN_LOOP_SPIES_CAUGHT, 0 },
-    { MOO_KEY_g, UI_MAIN_LOOP_GOVERN, 0 },
-    { MOO_KEY_m, UI_MAIN_LOOP_MSGFILTER, 0 },
-    { MOO_KEY_r, UI_MAIN_LOOP_STARMAP, xtramenu_eco_readjust },
-    { MOO_KEY_s, UI_MAIN_LOOP_STARMAP, xtramenu_ship_everywhere },
-    { MOO_KEY_l, UI_MAIN_LOOP_STARMAP, xtramenu_reloc_reloc },
-    { MOO_KEY_a, UI_MAIN_LOOP_STARMAP, xtramenu_reloc_all },
-    { MOO_KEY_u, UI_MAIN_LOOP_STARMAP, xtramenu_reloc_un },
-    { MOO_KEY_SPACE, UI_MAIN_LOOP_STARMAP, 0 }
-};
-
-/* -------------------------------------------------------------------------- */
-
 struct xtramenu_draw_s {
     int highlight;
 };
@@ -124,24 +106,40 @@ struct xtramenu_draw_s {
 static void xtramenu_draw_cb(void *vptr)
 {
     struct xtramenu_draw_s *d = vptr;
-    const int x = XTRAMENU_POS_X, y = XTRAMENU_POS_Y;
+    const int x = XTRAMENU_POS_X, y = XTRAMENU_POS_Y - menu_get_item_count() * 8;;
     int y0 = y + 5;
-    ui_draw_filled_rect(x, y, x + 100, y + 5 + XTRAMENU_NUM * 8, 0x06, ui_scale);
-    for (int i = 0; i < XTRAMENU_NUM; ++i) {
+    ui_draw_filled_rect(x, y, x + 100, y + 5 + menu_get_item_count() * 8, 0x06, ui_scale);
+    for (int i = 0; i < menu_get_item_count(); ++i) {
         lbxfont_select(0, (d->highlight == i) ? 0x1 : 0x0 , 0, 0);
-        lbxfont_print_str_normal(x + 10, y0, game_str_tbl_xtramenu[i], UI_SCREEN_W, ui_scale);
+        lbxfont_print_str_normal(x + 10, y0, menu_get_item(i)->text, UI_SCREEN_W, ui_scale);
         y0 += 8;
     }
 }
 
 /* -------------------------------------------------------------------------- */
 
+void ui_xtramenu_build(void)
+{
+    menu_clear();
+    menu_make_action(menu_allocate_item(), game_str_tbl_xtramenu[0], UI_MAIN_LOOP_SCRAP_BASES, MOO_KEY_b);
+    menu_make_action(menu_allocate_item(), game_str_tbl_xtramenu[1], UI_MAIN_LOOP_SPIES_CAUGHT, MOO_KEY_c);
+    if (ui_governor_enabled) {
+        menu_make_action(menu_allocate_item(), game_str_tbl_xtramenu[2], UI_MAIN_LOOP_GOVERN, MOO_KEY_g);
+        menu_make_action(menu_allocate_item(), game_str_tbl_xtramenu[3], UI_MAIN_LOOP_MSGFILTER, MOO_KEY_m);
+    }
+    menu_make_func(menu_allocate_item(), game_str_tbl_xtramenu[4], (void*)xtramenu_eco_readjust, MOO_KEY_r);
+    menu_make_func(menu_allocate_item(), game_str_tbl_xtramenu[5], (void*)xtramenu_ship_everywhere, MOO_KEY_s);
+    menu_make_func(menu_allocate_item(), game_str_tbl_xtramenu[6], (void*)xtramenu_reloc_reloc, MOO_KEY_l);
+    menu_make_func(menu_allocate_item(), game_str_tbl_xtramenu[7], (void*)xtramenu_reloc_all, MOO_KEY_a);
+    menu_make_func(menu_allocate_item(), game_str_tbl_xtramenu[8], (void*)xtramenu_reloc_un, MOO_KEY_u);
+    menu_make_action(menu_allocate_item(), game_str_tbl_xtramenu[9], UI_MAIN_LOOP_STARMAP, MOO_KEY_SPACE);
+}
+
 ui_main_loop_action_t ui_xtramenu(struct game_s *g, player_id_t pi)
 {
     bool flag_done = false;
     ui_main_loop_action_t act = UI_MAIN_LOOP_STARMAP;
-    int16_t oi_tbl[XTRAMENU_NUM];
-    const int x = XTRAMENU_POS_X, y = XTRAMENU_POS_Y;
+    int16_t oi_tbl[MENU_MAX_ITEMS_PER_PAGE];
     struct xtramenu_draw_s d;
 
     d.highlight = -1;
@@ -151,11 +149,13 @@ ui_main_loop_action_t ui_xtramenu(struct game_s *g, player_id_t pi)
     uiobj_finish_frame();
     ui_cursor_setup_area(1, &ui_cursor_area_tbl[0]);
 
+    ui_xtramenu_build();
     uiobj_table_clear();
     {
+        const int x = XTRAMENU_POS_X, y = XTRAMENU_POS_Y - menu_get_item_count() * 8;
         int y0 = y + 5;
-        for (int i = 0; i < XTRAMENU_NUM; ++i) {
-            oi_tbl[i] = uiobj_add_mousearea(x, y0, x + 100, y0 + 7, xtramenu[i].key);
+        for (int i = 0; i < menu_get_item_count(); ++i) {
+            oi_tbl[i] = uiobj_add_mousearea(x, y0, x + 100, y0 + 7, menu_get_item(i)->key);
             y0 += 8;
         }
     }
@@ -172,16 +172,20 @@ ui_main_loop_action_t ui_xtramenu(struct game_s *g, player_id_t pi)
             flag_done = true;
         }
         d.highlight = -1;
-        for (int i = 0; i < XTRAMENU_NUM; ++i) {
+        for (int i = 0; i < menu_get_item_count(); ++i) {
             if (oi2 == oi_tbl[i]) {
                 d.highlight = i;
             }
             if (oi == oi_tbl[i]) {
                 ui_sound_play_sfx_24();
                 flag_done = true;
-                act = xtramenu[i].act;
-                if (xtramenu[i].cb) {
-                    xtramenu[i].cb(g, pi);
+                act = UI_MAIN_LOOP_STARMAP;
+                if (menu_get_item(i)->type == MENU_ITEM_TYPE_RETURN) {
+                    act = menu_get_item(i)->action_i;
+                }
+                if (menu_get_item(i)->func) {
+                    void (*f)(struct game_s *, player_id_t) = (void*)menu_get_item(i)->func;
+                    f(g, pi);
                 }
                 break;
             }
