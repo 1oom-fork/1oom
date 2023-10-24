@@ -42,7 +42,7 @@ static bool game_opt_save_quit = false;
 
 static struct game_end_s game_opt_end = { GAME_END_NONE, 0, 0, 0, 0 };
 static struct game_new_options_s game_opt_new = GAME_NEW_OPTS_DEFAULT;
-static struct game_new_options_s game_opt_custom = GAME_NEW_OPTS_DEFAULT;
+struct game_new_options_s game_opt_custom = GAME_NEW_OPTS_DEFAULT;
 
 static int game_opt_new_value = 200;
 static int game_opt_custom_race_value = 0xaaaaa0;
