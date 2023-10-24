@@ -341,5 +341,6 @@ static inline bool IS_HUMAN(const struct game_s *g, player_id_t i)
 #define IS_ALIVE(_g_, _i_) ((_g_)->evn.home[(_i_)] != PLANET_NONE)
 
 extern bool game_opt_skip_intro_always;
+extern struct game_new_options_s game_opt_custom;
 
 #endif
