@@ -96,6 +96,7 @@ const struct cfg_items_s ui_cfg_items[] = {
     CFG_ITEM_BOOL("uiextra", &ui_extra_enabled),
     CFG_ITEM_BOOL("illogical_hotkey_fix", &ui_illogical_hotkey_fix),
     CFG_ITEM_BOOL("uigovernor", &ui_governor_enabled),
+    CFG_ITEM_BOOL("uixtramenu", &ui_xtramenu_enabled),
     CFG_ITEM_BOOL("load_opts_extra", &ui_load_opts_extra),
     CFG_ITEM_BOOL("space_combat_autoresolve", &ui_space_combat_autoresolve),
     CFG_ITEM_BOOL("ui_sm_ships_enabled", &ui_sm_ships_enabled),
@@ -184,6 +185,7 @@ int starmap_scale = 0;
 bool ui_extra_enabled = false;
 bool ui_illogical_hotkey_fix = false;
 bool ui_governor_enabled = false;
+bool ui_xtramenu_enabled = false;
 bool ui_load_opts_extra = false;
 bool ui_space_combat_autoresolve = false;
 bool ui_sm_ships_enabled = false;

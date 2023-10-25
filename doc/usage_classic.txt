@@ -130,13 +130,14 @@ Pressing Alt-X in the main menu also enables the following features:
   ("ui.sm_explicit_cursor_context")
 
 Also:
-- "ui.uigovernor":
-  - Clicking on planet name in the galaxy movement screen opens a governor screen
+- "ui.uixtramenu":
   - Pressing E or clicking the bottom left corner near Game opens an extra menu:
     - Eco readjustment for Clean as save/reload used to do in v1.3
     - The ship production selection can be set everywhere
     - Relocation can be (un)set for all planets
     - "X has finished ..." messages can be filtered
+- "ui.uigovernor":
+  - Clicking on planet name in the galaxy movement screen opens a governor screen
   - Completing terraforming generates a message (which is filtered by default)
 - "ui.sm_mouseover_focus" changes the target when hovering over a star
 

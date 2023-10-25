@@ -295,6 +295,7 @@ extern int ui_screen_h;
 extern bool ui_extra_enabled;
 extern bool ui_illogical_hotkey_fix;
 extern bool ui_governor_enabled;
+extern bool ui_xtramenu_enabled;
 extern bool ui_load_opts_extra;
 extern bool ui_space_combat_autoresolve;
 extern bool ui_sm_ships_enabled;
