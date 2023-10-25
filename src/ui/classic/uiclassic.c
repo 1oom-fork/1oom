@@ -46,6 +46,7 @@ void ui_extra_toggle_preset(bool enabled)
     game_planet_leaving_trans_fix = enabled;
     game_extended_reloc_range = enabled;
     ui_governor_enabled = enabled;
+    ui_xtramenu_enabled = enabled;
     ui_space_combat_autoresolve = enabled;
     ui_sm_ships_enabled = enabled;
     ui_sm_distance_tooltip = enabled;
@@ -100,6 +101,7 @@ const struct cfg_items_s ui_cfg_items[] = {
     CFG_ITEM_BOOL("uiextra", &ui_extra_enabled),
     CFG_ITEM_BOOL("illogical_hotkey_fix", &ui_illogical_hotkey_fix),
     CFG_ITEM_BOOL("uigovernor", &ui_governor_enabled),
+    CFG_ITEM_BOOL("uixtramenu", &ui_xtramenu_enabled),
     CFG_ITEM_BOOL("game_opts_extra", &ui_game_opts_extra),
     CFG_ITEM_BOOL("load_opts_extra", &ui_load_opts_extra),
     CFG_ITEM_BOOL("new_game_opts_extra", &ui_new_game_opts_extra),
@@ -190,6 +192,7 @@ int starmap_scale = 0;
 bool ui_extra_enabled = false;
 bool ui_illogical_hotkey_fix = false;
 bool ui_governor_enabled = false;
+bool ui_xtramenu_enabled = false;
 bool ui_game_opts_extra = false;
 bool ui_load_opts_extra = false;
 bool ui_new_game_opts_extra = false;
