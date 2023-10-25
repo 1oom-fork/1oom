@@ -210,7 +210,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
     int16_t oi_b, oi_c, oi_starview1, oi_starview2, oi_shippic, oi_finished, oi_equals, oi_hash,
             oi_f2, oi_f3, oi_f4, oi_f5, oi_f6, oi_f7, oi_f8, oi_f9, oi_f10,
             oi_alt_galaxy, oi_alt_p, oi_alt_events,
-            oi_governor, oi_wheelname, oi_wheelshippic, oi_xtramenu, oi_search
+            oi_governor, oi_wheelname, oi_wheelshippic, oi_xtramenu, oi_msgfilter, oi_search
             ;
     int16_t scrollmisc = 0;
     struct starmap_data_s d;
@@ -242,6 +242,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
         oi_wheelname = UIOBJI_INVALID; \
         oi_wheelshippic = UIOBJI_INVALID; \
         oi_xtramenu = UIOBJI_INVALID; \
+        oi_msgfilter = UIOBJI_INVALID; \
         d.sm.oi_ship = UIOBJI_INVALID; \
         d.sm.oi_reloc = UIOBJI_INVALID; \
         d.sm.oi_trans = UIOBJI_INVALID; \
@@ -562,6 +563,10 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             ui_data.ui_main_loop_action = UI_MAIN_LOOP_XTRAMENU;
             flag_done = true;
             ui_sound_play_sfx_24();
+        } else if (oi1 == oi_msgfilter) {
+            ui_data.ui_main_loop_action = UI_MAIN_LOOP_MSGFILTER;
+            flag_done = true;
+            ui_sound_play_sfx_24();
         } else if (oi1 == oi_wheelname) {
             int i;
             i = g->planet_focus_i[active_player];
@@ -627,6 +632,9 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
                 oi_wheelshippic = uiobj_add_mousewheel(228, 139, 275, 175, &scrollmisc);
                 if (ui_governor_enabled) {
                     oi_governor = uiobj_add_mousearea(227, 8, 310, 20, MOO_KEY_UNKNOWN);
+                }
+                if (ui_msg_filter_enabled) {
+                    oi_msgfilter = uiobj_add_inputkey(MOO_KEY_i);
                 }
             }
             if (ui_xtramenu_enabled) {
