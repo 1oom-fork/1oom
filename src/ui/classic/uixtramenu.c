@@ -125,6 +125,8 @@ void ui_xtramenu_build(void)
     menu_make_action(menu_allocate_item(), game_str_tbl_xtramenu[1], UI_MAIN_LOOP_SPIES_CAUGHT, MOO_KEY_c);
     if (ui_governor_enabled) {
         menu_make_action(menu_allocate_item(), game_str_tbl_xtramenu[2], UI_MAIN_LOOP_GOVERN, MOO_KEY_g);
+    }
+    if (ui_msg_filter_enabled) {
         menu_make_action(menu_allocate_item(), game_str_tbl_xtramenu[3], UI_MAIN_LOOP_MSGFILTER, MOO_KEY_m);
     }
     menu_make_func(menu_allocate_item(), game_str_tbl_xtramenu[4], (void*)xtramenu_eco_readjust, MOO_KEY_r);

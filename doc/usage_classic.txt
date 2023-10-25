@@ -138,9 +138,10 @@ Also:
     - Eco readjustment for Clean as save/reload used to do in v1.3
     - The ship production selection can be set everywhere
     - Relocation can be (un)set for all planets
-    - "X has finished ..." messages can be filtered
 - "ui.uigovernor":
   - Clicking on planet name in the galaxy movement screen opens a governor screen
+- "ui.uimsgfilter":
+  - "X has finished ..." messages can be filtered (xtramenu)
   - Completing terraforming generates a message (which is filtered by default)
 - "ui.sm_mouseover_focus" changes the target when hovering over a star
 
