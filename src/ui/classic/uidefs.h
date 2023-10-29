@@ -278,6 +278,7 @@ extern bool ui_mouse_lmb_fix;
 extern bool ui_mouse_warp_disabled;
 extern bool ui_sm_mouseover_focus;
 extern bool ui_sm_mouse_scroll;
+extern bool ui_kbd_cursor_keys_fix;
 extern bool ui_mwi_slider;
 extern bool ui_mwi_counter;
 extern int ui_sm_scroll_speed;
