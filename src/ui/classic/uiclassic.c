@@ -46,6 +46,7 @@ void ui_extra_toggle_preset(bool enabled)
     ui_sm_expanded_scroll = enabled;
     ui_sm_no_question_mark_cursor = enabled;
     ui_illogical_hotkey_fix = enabled;
+    ui_kbd_cursor_keys_fix = enabled;
     ui_mouse_lmb_fix = enabled;
     ui_mouse_warp_disabled = enabled;
 }
@@ -85,6 +86,7 @@ const struct cfg_items_s ui_cfg_items[] = {
     CFG_ITEM_BOOL("mouse_warp_disabled", &ui_mouse_warp_disabled),
     CFG_ITEM_BOOL("sm_mouseover_focus", &ui_sm_mouseover_focus),
     CFG_ITEM_BOOL("sm_mouse_scroll", &ui_sm_mouse_scroll),
+    CFG_ITEM_BOOL("kbd_cursor_keys_fix", &ui_kbd_cursor_keys_fix),
     CFG_ITEM_COMMENT("0..146"),
     CFG_ITEM_INT("uiicon", &ui_icon, check_ui_icon),
     CFG_ITEM_COMMENT("Invert mouse wheel for sliders"),
@@ -156,6 +158,7 @@ bool ui_mouse_lmb_fix = false;
 bool ui_mouse_warp_disabled = false;
 bool ui_sm_mouseover_focus = false;
 bool ui_sm_mouse_scroll = false;
+bool ui_kbd_cursor_keys_fix = false;
 bool ui_mwi_slider = false;
 bool ui_mwi_counter = false;
 int ui_sm_scroll_speed = 3;
