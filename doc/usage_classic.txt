@@ -95,7 +95,6 @@ or pressing Alt-X in the main menu enables the following extra UI features:
 - Clicking on #, Name, etc on Planets screen sorts the list
 - Clicking on Station or ship names on Fleet screen sorts the list
 - The color of ship names on Planets screen is black
-- The cursor key behavior is more intuitive
 - Pressing = in the galaxy movement screen also transfers reserve back and
   the behavior is more predictable
 
@@ -114,6 +113,7 @@ Pressing Alt-X in the main menu also enables the following features:
   report ("ui.live_spy_reports")
 - When using cursor keys, the mouse position is calculated taking into account
   the mouse icon offset ("ui.kbd_cursor_offset_fix")
+- The cursor key behavior is more intuitive (ui.kbd_cursor_keys_fix)
 - Improved behavior of the left mouse button ("ui.mouse_lmb_fix")
 - Mouse scrolls the galaxy movement screen if touches edge
   ("ui.sm_mouse_scroll")
