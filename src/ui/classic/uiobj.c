@@ -867,7 +867,7 @@ static int16_t uiobj_kbd_dir_key_dxdy(int dirx, int diry, int16_t oi2, int mx, i
     }
     if ((diry != 0) && (dirx == 0)) {
         for (int i = 1; i < uiobj_table_num; ++i) {
-            if (ui_extra_enabled) {
+            if (ui_kbd_cursor_keys_fix) {
                 break;
             }
             if (i == oi2) {
@@ -890,7 +890,7 @@ static int16_t uiobj_kbd_dir_key_dxdy(int dirx, int diry, int16_t oi2, int mx, i
                 }
             }
         }
-        if (oi == oi2 || ui_extra_enabled) {
+        if (oi == oi2 || ui_kbd_cursor_keys_fix) {
             for (int i = 1; i < uiobj_table_num; ++i) {
                 if (i == oi2) {
                     if (i != (uiobj_table_num - 1)) {
@@ -903,7 +903,7 @@ static int16_t uiobj_kbd_dir_key_dxdy(int dirx, int diry, int16_t oi2, int mx, i
                 if (uiobj_kbd_dir_obj_ok(p)) {
                     dy = (diry < 0) ? (my - scmidy(p)) : (scmidy(p) - my);
                     dx = scmidx(p) - mx;
-                    if (!ui_extra_enabled && (p->x0 * p->scale <= mx) && (p->x1 * p->scale >= mx) && ((dx < -6 * p->scale) || (dx > 6 * p->scale))) {
+                    if (!ui_kbd_cursor_keys_fix && (p->x0 * p->scale <= mx) && (p->x1 * p->scale >= mx) && ((dx < -6 * p->scale) || (dx > 6 * p->scale))) {
                         dx = 6 * p->scale;
                     }
                     if (dx < 0) {
@@ -913,7 +913,7 @@ static int16_t uiobj_kbd_dir_key_dxdy(int dirx, int diry, int16_t oi2, int mx, i
                         dx = UIOBJ_OFFSCREEN;
                     }
                     if (dy == 0) {
-                        if (ui_extra_enabled) {
+                        if (ui_kbd_cursor_keys_fix) {
                             continue;
                         } else {
                             dy = 1;
@@ -933,7 +933,7 @@ static int16_t uiobj_kbd_dir_key_dxdy(int dirx, int diry, int16_t oi2, int mx, i
     }
     if ((dirx != 0) && (diry == 0)) {
         for (int i = 1; i < uiobj_table_num; ++i) {
-            if (ui_extra_enabled) {
+            if (ui_kbd_cursor_keys_fix) {
                 break;
             }
             if (i == oi2) {
@@ -956,7 +956,7 @@ static int16_t uiobj_kbd_dir_key_dxdy(int dirx, int diry, int16_t oi2, int mx, i
                 }
             }
         }
-        if (oi == oi2 || ui_extra_enabled) {
+        if (oi == oi2 || ui_kbd_cursor_keys_fix) {
             for (int i = 1; i < uiobj_table_num; ++i) {
                 if (i == oi2) {
                     if (i != (uiobj_table_num - 1)) {
@@ -969,7 +969,7 @@ static int16_t uiobj_kbd_dir_key_dxdy(int dirx, int diry, int16_t oi2, int mx, i
                 if (uiobj_kbd_dir_obj_ok(p)) {
                     dx = (dirx < 0) ? (mx - scmidx(p)) : (scmidx(p) - mx);
                     dy = scmidy(p) - my;
-                    if (!ui_extra_enabled && (p->y0 * p->scale <= my) && (p->y1 * p->scale >= my) && ((dy < -6 * p->scale) || (dy > 6 * p->scale))) {
+                    if (!ui_kbd_cursor_keys_fix && (p->y0 * p->scale <= my) && (p->y1 * p->scale >= my) && ((dy < -6 * p->scale) || (dy > 6 * p->scale))) {
                         dy = 6 * p->scale;
                     }
                     if (dy < 0) {
@@ -979,7 +979,7 @@ static int16_t uiobj_kbd_dir_key_dxdy(int dirx, int diry, int16_t oi2, int mx, i
                         dy = UIOBJ_OFFSCREEN;
                     }
                     if (dx == 0) {
-                        if (ui_extra_enabled) {
+                        if (ui_kbd_cursor_keys_fix) {
                             continue;
                         } else {
                             dx = 1;
