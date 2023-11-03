@@ -89,7 +89,6 @@ For all:
     -log FILE.TXT        Set log filename
     -nolog               Do not create a log file
     -file FILE.PBX       Add PBX file
-    -ruleset RULESET     Selects a ruleset (1.3 or fixbugs)
 
 For UIs with audio support:
     -audio               Enable audio
@@ -285,19 +284,6 @@ respectively.
 Unlike Doom, the "-file" part needs to added for each PBX file.
 Like Doom, the given PBX filenames are not stored anywhere and must be given
 with -file whenever the PBX files are to be used.
-
-3.4. -ruleset
---------------
-
-The ruleset option currently allows the values "1.3" (the default) or "fixbugs".
-The 1.3 mode closely follows the latest official release of the game, with some
-of the worst bugs fixed, such as the dreaded negative fleet bug.
-
-The fixbugs mode fixes further bugs and odd behaviors. Running the fixbugs
-ruleset is equivalent to loading a PBX file compiled from pbxin_fixbugs.txt.
-However, unlike PBX files, the ruleset choice is stored.
-
-PBX files override the chosen ruleset.
 
 
 4. New features
