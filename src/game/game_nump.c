@@ -464,13 +464,11 @@ void game_num_fixbugs(void)
     game_num_max_factories = 2700;
     game_num_accident_chk_factories = true;
     game_num_bt_wait_no_reload = true;
-    game_num_bt_precap_tohit = true;
     game_num_bt_no_tohit_acc = true;
     game_num_bt_oracle_fix = true;
     game_num_news_orion = true;
     game_num_weapon_list_max = 64;
     game_num_aud_bounty_give = true;
-    game_num_monster_rest_att = true;
     game_num_orbital_weap_any = true;
     game_num_orbital_weap_4 = true;
     game_num_orbital_torpedo = true;
