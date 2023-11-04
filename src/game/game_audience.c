@@ -132,7 +132,7 @@ static const char *game_audience_get_str1(struct audience_s *au)
                             s = game_str_au_allian;
                         } else if (eh->treaty[pa] == TREATY_NONAGGRESSION) {
                             s = game_str_au_nonagg;
-                        } else if (eh->trade_bc != 0) {
+                        } else if (eh->trade_bc[pa] != 0) {
                             s = game_str_au_tradea;
                         } else {
                             s = game_str_au_treaty;
@@ -939,7 +939,8 @@ static void audience_menu_tech(struct audience_s *au)
     if (eh->treaty[pa] == TREATY_ALLIANCE) {
         di += 25;
     }
-    v = eh->hmm06c[pa] + eh->relation1[pa] / 2 + ((eh->race == RACE_HUMAN) ? 50 : 0) + game_diplo_tbl_reldiff[ea->trait1] + rnd_1_n(100, &g->seed) - 125;
+    v = eh->hmm06c[pa] + eh->relation1[pa] / 2 + ((eh->race == RACE_HUMAN) ? 50 : 0);
+    v += game_diplo_tbl_reldiff[ea->trait1] * 2 + di + rnd_1_n(100, &g->seed) - 125;
     if (v < 0) {
         v = abs(v) + 100;
     } else {

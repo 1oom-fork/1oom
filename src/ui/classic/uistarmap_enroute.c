@@ -34,8 +34,7 @@ static void ui_starmap_enroute_draw_cb(void *vptr)
     const planet_t *pt = &g->planet[g->planet_focus_i[d->api]];
     char buf[0x80];
 
-    ui_starmap_draw_starmap(d);
-    ui_starmap_draw_button_text(d, true);
+    ui_starmap_draw_basic(d);
     {
         int x, y;
         x = (r->x - ui_data.starmap.x) * 2 + 5;
@@ -95,8 +94,8 @@ static void ui_starmap_enroute_draw_cb(void *vptr)
         x = (i & 1) * 43 + 228;
         y = (i / 2) * 40 + 44;
         ui_draw_filled_rect(x, y, x + 38, y + 24, 0);
-        ui_draw_filled_rect(x, y + 28, x + 38, y + 34, 0);
-        ui_draw_stars(x, y, 0, 32, &(d->en.ds));
+        ui_draw_filled_rect(x, y + 28, x + 38, y + 34, 0x1c);
+        ui_draw_stars(x, y, 0, 38, &(d->en.ds));
         st = d->en.sn0.type[i];
         gfx = ui_data.gfx.ships[sd[st].look];
         lbxgfx_set_frame_0(gfx);
@@ -150,8 +149,6 @@ void ui_starmap_enroute(struct game_s *g, player_id_t active_player)
     d.en.frame_scanner = 0;
     d.en.scanner_delay = 0;
     d.en.frame_ship = 0;
-    d.en.ds.xoff1 = 0;
-    d.en.ds.xoff2 = 0;
     g->planet_focus_i[active_player] = r->dest;
     d.en.in_frange = false;
     ui_starmap_sn0_setup(&d.en.sn0, g->eto[r->owner].shipdesigns_num, r->ships);

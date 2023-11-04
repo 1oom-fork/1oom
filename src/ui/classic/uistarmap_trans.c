@@ -405,11 +405,12 @@ void ui_starmap_trans(struct game_s *g, player_id_t active_player)
             }
             ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
         } else if (oi1 == oi_minus) {
-            ui_sound_play_sfx_24();
             SUBSAT0(d.tr.num, 1);
+            ui_sound_play_sfx_24();
         } else if (oi1 == oi_plus) {
             ++d.tr.num;
             SETMIN(d.tr.num, trans_max);
+            ui_sound_play_sfx_24();
         } else if (oi1 == oi_scroll) {
             int x, y;
             x = ui_data.starmap.x + scrollx - 54;

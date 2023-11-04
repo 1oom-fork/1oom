@@ -420,11 +420,13 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
                 if (oi1 == d.sm.oi_tbl_slider[i]) {
                     do_adj = true;
                 } else if (oi1 == d.sm.oi_tbl_slider_minus[i]) {
+                    ui_sound_play_sfx_24();
                     int v = p->slider[i] - 4;
                     SETMAX(v, 0);
                     p->slider[i] = v;
                     do_adj = true;
                 } else if (oi1 == d.sm.oi_tbl_slider_plus[i]) {
+                    ui_sound_play_sfx_24();
                     int v = p->slider[i] + 4;
                     SETMIN(v, 100);
                     p->slider[i] = v;
@@ -470,6 +472,8 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             ui_sound_play_sfx_24();
         } else if (oi1 == oi_equals) {
             if (p->prod_after_maint < p->reserve) {
+                ui_sound_play_sfx_06();
+            } else if (g->eto[active_player].reserve_bc == 0) {
                 ui_sound_play_sfx_06();
             } else {
                 int v = p->prod_after_maint;
