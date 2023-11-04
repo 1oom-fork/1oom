@@ -109,6 +109,16 @@ static const char* mm_get_custom_special_value(int i) {
     return game_str_tbl_sm_pspecial_mm[i];
 }
 
+static bool mm_enable_preset_classic(void) {
+    ui_extra_toggle_preset(false);
+    return true;
+}
+
+static bool mm_enable_preset_1oom(void) {
+    ui_extra_toggle_preset(true);
+    return true;
+}
+
 /* -------------------------------------------------------------------------- */
 
 #define MM_PAGE_STACK_SIZE 4
@@ -126,6 +136,7 @@ typedef enum {
     MAIN_MENU_PAGE_OPTIONS_ADDONS,
     MAIN_MENU_PAGE_OPTIONS_INTERFACE,
     MAIN_MENU_PAGE_OPTIONS_RULES,
+    MAIN_MENU_PAGE_PRESET,
     MAIN_MENU_PAGE_NUM,
 } main_menu_page_id_t;
 
@@ -325,6 +336,7 @@ static void main_menu_make_main_page(struct main_menu_data_s *d)
     d->set_item_dimensions = main_menu_set_item_dimensions;
     menu_make_page(menu_allocate_item(), "Game", MAIN_MENU_PAGE_GAME, MOO_KEY_g);
     menu_make_page(menu_allocate_item(), "Options", MAIN_MENU_PAGE_OPTIONS, MOO_KEY_o);
+    menu_make_page(menu_allocate_item(), "UI Preset", MAIN_MENU_PAGE_PRESET, MOO_KEY_p);
     menu_make_action(menu_allocate_item(), "Quit to OS", MAIN_MENU_ACT_QUIT_GAME, MOO_KEY_q);
 }
 
@@ -454,6 +466,14 @@ static void main_menu_make_options_rules_page(struct main_menu_data_s *d)
     menu_make_back(menu_allocate_item());
 }
 
+static void main_menu_make_preset_page(struct main_menu_data_s *d)
+{
+    d->set_item_dimensions = main_menu_set_item_dimensions;
+    menu_make_func(menu_allocate_item(), "Classic", mm_enable_preset_classic, MOO_KEY_c);
+    menu_make_func(menu_allocate_item(), "1oom", mm_enable_preset_1oom, MOO_KEY_1);
+    menu_make_back(menu_allocate_item());
+}
+
 /* -------------------------------------------------------------------------- */
 
 struct main_menu_page_s {
@@ -496,6 +516,9 @@ static struct main_menu_page_s mm_pages[MAIN_MENU_PAGE_NUM] = {
     },
     {
         main_menu_make_options_rules_page,
+    },
+    {
+        main_menu_make_preset_page,
     },
 };
 
