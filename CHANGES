@@ -1,0 +1,30 @@
+1oom-fork-v1.8.0
+----------------
+
+Disclaimer:
+This release is an interim release.
+I'm posting this to give people the opportunity to enjoy a relatively
+high quality build that still contains many bugs inherited from v1.0.
+Previous 1oom-fork versions are now considered defective.
+It is recommended to close the old version of 1oom-fork and delete
+config file if you want to run this version.
+Saved games from an older version of 1oom-fork may not work or refuse to load
+if you try them from this version.
+
+This (v1.8.0) version of fork does not change save game format compared to the
+point when it's forked from Tapani-fork (9b9cf63...)
+This version of fork is based on reworked version of Tapani-fork mixed with
+reworked and filtered version of 1oom-fork-v1.7.6 (1oom-v1.0-rev-5)
+The commit history is now can be used as detailed changelog
+
+Summary:
+- most of the 1oom-fork commits were rewritten from scratch with improvements
+- removed or rewrote most of the later commits from the Tapani branch,
+  with special attention to those that added bugs or problems for developers
+- it is now possible to use absolute mouse in DOSBox on Andriod by enabling
+  absolute mouse in both the game and DOSBox configurations
+- most rule bug fixes is enabled and can only be disabled via PBX
+- added UI Presets
+This is not a complete list of changes
+
+Bug reports are welcome
