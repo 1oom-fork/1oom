@@ -350,13 +350,13 @@ void game_update_within_range(struct game_s *g)
                     p->within_frange[pi] = 0;
                 }
                 BOOLVEC_SET(p->within_srange, pi, (mindist2 <= srange));
-#if 0   /* buggy and pointless code */
+#if 0   /* BUG? This code was supposed to be responsible for the operation of space scanners on ships */
                 if (BOOLVEC_IS0(p->within_srange, pi) && (srange2 > 0)) {
                     mindist1 = 0x2710;
                     for (int j = 0; (j < g->enroute_num) && (mindist1 > srange2); ++j) {
                         if (g->enroute[j].owner == pi) {
                             dist = util_math_dist_fast(g->enroute[j].x, g->enroute[j].y, p->x, p->y);
-                            dist = (dist + 9) / 10;
+                            dist = (dist + 9) / 10; /* BUG This line was probably added by mistake */
                             if (dist < mindist1) {
                                 dist = mindist1;    /* BUG? supposed to be mindist1 = dist instead? */
                             }
