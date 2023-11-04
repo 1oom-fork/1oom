@@ -72,6 +72,7 @@ void ui_play_intro(void)
     flag_skip = 0;
     uiobji_now = 0;
     uiobj_set_downcount(2);
+    flag_fadein = false;
 
     if (!flag_skip) {
         intro_gfx = lbxfile_item_get(LBXFILE_INTRO, 0, 0);
@@ -111,6 +112,7 @@ void ui_play_intro(void)
         intro_gfx = lbxfile_item_get(LBXFILE_INTRO, 1, 0);
         lbxfile_item_release(LBXFILE_INTRO, old_gfx);
         old_gfx = intro_gfx;
+        flag_fadein = false;
         ui_palette_fadeout_14_14_2();
         frame = 0;
     }
@@ -158,6 +160,7 @@ void ui_play_intro(void)
         intro_gfx = lbxfile_item_get(LBXFILE_INTRO, 2, 0);
         lbxfile_item_release(LBXFILE_INTRO, old_gfx);
         old_gfx = intro_gfx;
+        flag_fadein = false;
         ui_palette_fadeout_14_14_2();
         frame = 0;
     }
@@ -208,6 +211,7 @@ void ui_play_intro(void)
         intro_gfx = lbxfile_item_get(LBXFILE_INTRO, 3, 0);
         lbxfile_item_release(LBXFILE_INTRO, old_gfx);
         old_gfx = intro_gfx;
+        flag_fadein = false;
         ui_palette_fadeout_14_14_2();
         frame = 0;
     }
@@ -255,6 +259,7 @@ void ui_play_intro(void)
     if (!flag_skip) {
         intro_gfx = lbxfile_item_get(LBXFILE_INTRO2, 0, 0);
         old_gfx = intro_gfx;
+        flag_fadein = false;
         ui_palette_fadeout_14_14_2();
         frame = 0;
     }
@@ -298,6 +303,7 @@ void ui_play_intro(void)
         intro_gfx = lbxfile_item_get(LBXFILE_INTRO2, 1, 0);
         lbxfile_item_release(LBXFILE_INTRO2, old_gfx);
         old_gfx = intro_gfx;
+        flag_fadein = false;
         ui_palette_fadeout_14_14_2();
         frame = 0;
     }
@@ -336,6 +342,7 @@ void ui_play_intro(void)
         intro_gfx = lbxfile_item_get(LBXFILE_INTRO2, 2, 0);
         lbxfile_item_release(LBXFILE_INTRO2, old_gfx);
         old_gfx = intro_gfx;
+        flag_fadein = false;
         ui_palette_fadeout_14_14_2();
         frame = 0;
     }
