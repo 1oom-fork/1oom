@@ -45,7 +45,6 @@ void ui_extra_toggle_preset(bool enabled)
     ui_tech_bonus_button = enabled;
     ui_sm_expanded_scroll = enabled;
     ui_sm_explicit_cursor_context = enabled;
-    ui_sm_mouseover_focus = enabled;
     ui_sm_no_question_mark_cursor = enabled;
     ui_live_spy_reports = enabled;
     ui_illogical_hotkey_fix = enabled;
