@@ -178,11 +178,6 @@ void ui_draw_copy_buf(void)
 */
 }
 
-void ui_draw_color_buf(uint8_t color)
-{
-    memset(hw_video_get_buf(), color, UI_SCREEN_W * UI_SCREEN_H);
-}
-
 void ui_draw_pixel(int x, int y, uint8_t color)
 {
     uint8_t *p = hw_video_get_buf();

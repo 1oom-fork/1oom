@@ -61,7 +61,7 @@ static void races_draw_cb(void *vptr)
         e->spymode[pi] = (spymode_t)d->tbl_spymode[i];
     }
 
-    ui_draw_color_buf(0x5b);
+    ui_draw_filled_rect(0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, 0x5b);
     lbxgfx_draw_frame(0, 0, d->gfx, UI_SCREEN_W);
 
     lbxfont_select_set_12_1(5, 0xa, 0, 0);
