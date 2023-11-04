@@ -605,7 +605,7 @@ int lbxfont_calc_str_width(const char *str)
 {
     uint16_t gap_w = lbxfontdata[0x48];
     uint16_t w = 0;
-    char c;
+    int8_t c;
     while (1) {
         c = *str++;
         c -= 0x20;

@@ -34,8 +34,7 @@ static void ui_starmap_transport_draw_cb(void *vptr)
     const planet_t *pt = &g->planet[g->planet_focus_i[d->api]];
     char buf[0x80];
 
-    ui_starmap_draw_starmap(d);
-    ui_starmap_draw_button_text(d, true);
+    ui_starmap_draw_basic(d);
     {
         int x, y;
         x = (r->x - ui_data.starmap.x) * 2 + 5;
@@ -110,6 +109,7 @@ static void ui_starmap_transport_draw_cb(void *vptr)
     lbxfont_print_str_center(267, 57, (r->pop == 1) ? game_str_sm_trans1 : game_str_sm_transs, UI_SCREEN_W);
     if ((r->owner == d->api) || (g->eto[d->api].have_ia_scanner)) {
         const planet_t *pd = &(g->planet[r->dest]);
+        lbxfont_select_set_12_1(5, 0, 0, 0);
         lbxfont_print_str_center(267, 110, game_str_sm_tdest, UI_SCREEN_W);
         lbxfont_print_str_center(267, 120, pd->name, UI_SCREEN_W);
     }
