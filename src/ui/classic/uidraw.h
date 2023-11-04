@@ -16,7 +16,6 @@ extern const uint8_t tbl_banner_fontparam[BANNER_NUM];
 
 extern void ui_draw_erase_buf(void);
 extern void ui_draw_copy_buf(void);
-extern void ui_draw_color_buf(uint8_t color);
 extern void ui_draw_pixel(int x, int y,  uint8_t color);
 extern void ui_draw_filled_rect(int x0, int y0, int x1, int y1, uint8_t color);
 extern void ui_draw_line1(int x0, int y0, int x1, int y1, uint8_t color);
