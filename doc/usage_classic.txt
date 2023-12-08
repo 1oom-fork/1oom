@@ -86,8 +86,6 @@ or pressing Alt-X in the main menu enables the following extra UI features:
 - Nebula planets show "NEB" in their shields field and have a purple instead
   of a red frame around their picture
 - Pressing = on the Tech screen adjusts only the unlocked sliders
-- Tech screen has lights showing when you reach max research bonus
-- Clicking on the Tech screen lights sets the slider to bonus limit
 - After running through the Next turn phase and messages the game recenters on
   your last planet of choice
 - Clicking on #, Name, etc on Planets screen sorts the list
@@ -107,6 +105,9 @@ Pressing Alt-X in the main menu also enables the following features:
 - Galaxy movement screen scrolling range is expanded ("ui.sm_expanded_scroll")
 - Hovering over a planet draws a ruler with the distance in parsec from the
   currently selected planet if is in the screen ("ui.sm_distance_tooltip")
+- "ui.tech_bonus_button":
+  - Tech screen has lights showing when you reach max research bonus
+  - Clicking on the Tech screen lights sets the slider to bonus limit
 - When espionage was successful, clicking on the race icon opens the spy
   report ("ui.live_spy_reports")
 - When using cursor keys, the mouse position is calculated taking into account
