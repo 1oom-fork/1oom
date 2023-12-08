@@ -439,6 +439,7 @@ static void main_menu_make_options_addons_page(struct main_menu_data_s *d)
     menu_make_bool(menu_allocate_item(), "UI SM Ships", &ui_sm_ships_enabled, MOO_KEY_s);
     menu_make_bool(menu_allocate_item(), "Live Spy Reports", &ui_live_spy_reports, MOO_KEY_p);
     menu_make_bool(menu_allocate_item(), "SM Distance Tooltip", &ui_sm_distance_tooltip, MOO_KEY_t);
+    menu_make_bool(menu_allocate_item(), "UI Tech Bonus Button", &ui_tech_bonus_button, MOO_KEY_c);
     menu_make_bool(menu_allocate_item(), "Game Options Extra", &ui_game_opts_extra, MOO_KEY_a);
     menu_make_bool(menu_allocate_item(), "Load Options Extra", &ui_load_opts_extra, MOO_KEY_o);
     menu_make_back(menu_allocate_item());

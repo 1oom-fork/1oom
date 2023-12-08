@@ -306,6 +306,7 @@ extern bool ui_space_combat_autoresolve;
 extern bool ui_sm_ships_enabled;
 extern bool ui_sm_expanded_scroll;
 extern bool ui_sm_distance_tooltip;
+extern bool ui_tech_bonus_button;
 extern bool ui_live_spy_reports;
 extern bool ui_sm_no_question_mark_cursor;
 extern bool ui_sm_explicit_cursor_context;

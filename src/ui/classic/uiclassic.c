@@ -50,6 +50,7 @@ void ui_extra_toggle_preset(bool enabled)
     ui_space_combat_autoresolve = enabled;
     ui_sm_ships_enabled = enabled;
     ui_sm_distance_tooltip = enabled;
+    ui_tech_bonus_button = enabled;
     ui_sm_expanded_scroll = enabled;
     ui_sm_explicit_cursor_context = enabled;
     ui_sm_no_question_mark_cursor = enabled;
@@ -108,6 +109,7 @@ const struct cfg_items_s ui_cfg_items[] = {
     CFG_ITEM_BOOL("ui_sm_ships_enabled", &ui_sm_ships_enabled),
     CFG_ITEM_BOOL("sm_expanded_scroll", &ui_sm_expanded_scroll),
     CFG_ITEM_BOOL("sm_distance_tooltip", &ui_sm_distance_tooltip),
+    CFG_ITEM_BOOL("tech_bonus_button", &ui_tech_bonus_button),
     CFG_ITEM_BOOL("live_spy_reports", &ui_live_spy_reports),
     CFG_ITEM_BOOL("sm_no_question_mark_cursor", &ui_sm_no_question_mark_cursor),
     CFG_ITEM_BOOL("sm_explicit_cursor_context", &ui_sm_explicit_cursor_context),
@@ -199,6 +201,7 @@ bool ui_space_combat_autoresolve = false;
 bool ui_sm_ships_enabled = false;
 bool ui_sm_expanded_scroll = false;
 bool ui_sm_distance_tooltip = false;
+bool ui_tech_bonus_button = false;
 bool ui_live_spy_reports = false;
 bool ui_sm_no_question_mark_cursor = false;
 bool ui_sm_explicit_cursor_context = false;
