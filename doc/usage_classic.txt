@@ -69,7 +69,7 @@ The following new UI features are always enabled/available:
 - The + key can be substituted by the = key (if not conflicting)
 
 The config file item "ui.uiextra" (set via the -uiextra command-line option)
-or pressing Alt-X in the main menu enables the following extra UI features:
+or selecting the 1oom UI preset enables the following extra UI features:
 - Report screen shows name of AI leaders, Map screen shows current year
 - Pressing + or - will show the slider when sending transport
 - Fleet deployment shows the amount of available ships
@@ -95,7 +95,7 @@ or pressing Alt-X in the main menu enables the following extra UI features:
 - Pressing = in the galaxy movement screen also transfers reserve back and
   the behavior is more predictable
 
-Pressing Alt-X in the main menu also enables the following features:
+Selecting the 1oom UI preset also enables the following features:
 - Population scheduled for transport no longer contributes to production
   ("game.planet_leaving_trans_fix")
 - "game.extendedreloc" allows 'relocation points' within normal fleet range
@@ -134,12 +134,14 @@ Pressing Alt-X in the main menu also enables the following features:
   - Starmap -> Reloc ('l' -> 'r')
   - Starmap -> Races ('r' -> 'a')
 - "game.skipintro" skips intro video
-- "ui.sm_mouseover_focus" changes the target when hovering over a star
 - The question mark cursor is disabled on the galaxy movement screen
   ("ui.sm_no_question_mark_cursor")
 - Pressing the "Ships" button in the galaxy movement screen opens the ship
   design selection screen ("ui.ui_sm_ships_enabled")
 - Holding Alt toggles the cursor icon and the ability to select a fleet
   ("ui.sm_explicit_cursor_context")
+
+Also:
+- "ui.sm_mouseover_focus" changes the target when hovering over a star
 
 See doc/list_gamediff.txt for a list of differences in the game itself.
