@@ -56,6 +56,7 @@ struct game_aux_s {
     player_id_t human_killer;   /* used for funeral ending */
     int local_players;
     bool flag_cheat_galaxy;
+    bool flag_cheat_elections;
     bool flag_cheat_events;
     bool flag_cheat_stars;
     bool initialized;
