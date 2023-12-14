@@ -324,6 +324,7 @@ const char *game_str_tbl_roman[31] = {
 };
 
 const char *game_str_no_events = "No Events";
+const char *game_str_no_elections = "No Elections";
 const char *game_str_bc = "BC";
 const char *game_str_y = "Y";
 const char *game_str_year = "Year ";
