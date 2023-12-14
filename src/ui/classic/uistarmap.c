@@ -39,6 +39,9 @@ static void ui_starmap_draw_cb1(void *vptr)
     if (d->g->gaux->flag_cheat_events) {
         ui_draw_text_overlay(0, 0, game_str_no_events);
     }
+    if (d->g->gaux->flag_cheat_elections) {
+        ui_draw_text_overlay(0, 10, game_str_no_elections);
+    }
 }
 
 static void ui_starmap_planet_slider_cb(void *ctx, uint8_t i, int16_t value)

@@ -98,6 +98,7 @@ int game_aux_init(struct game_aux_s *gaux, struct game_s *g)
     gaux->savebuflen = sizeof(struct game_s) + 64;
     gaux->savebuf = lib_malloc(gaux->savebuflen);
     gaux->flag_cheat_galaxy = false;
+    gaux->flag_cheat_elections = false;
     gaux->flag_cheat_events = false;
     gaux->flag_cheat_stars = false;
     gaux->initialized = true;

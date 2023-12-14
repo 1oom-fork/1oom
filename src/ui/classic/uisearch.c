@@ -112,6 +112,8 @@ int ui_search(struct game_s *g, player_id_t pi)
             util_trim_whitespace(buf, sizeof(buf));
             if (strcasecmp(buf, "/galaxy") == 0) {
                 game_cheat_galaxy(g, pi);
+            } else if (strcasecmp(buf, "/elections") == 0) {
+                game_cheat_elections(g, pi);
             } else if (strcasecmp(buf, "/events") == 0) {
                 game_cheat_events(g, pi);
             } else if (strcasecmp(buf, "/stars") == 0) {

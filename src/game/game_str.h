@@ -170,6 +170,7 @@ extern const char *game_str_sm_ship_everywhere;
 extern const char *game_str_sm_ship_replace;
 extern const char *game_str_tbl_roman[31];
 extern const char *game_str_no_events;
+extern const char *game_str_no_elections;
 extern const char *game_str_bc;
 extern const char *game_str_y;
 extern const char *game_str_year;
