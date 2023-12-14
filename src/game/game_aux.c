@@ -94,6 +94,7 @@ int game_aux_init(struct game_aux_s *gaux, struct game_s *g)
 
     gaux->move_temp = 0;
     gaux->flag_cheat_galaxy = false;
+    gaux->flag_cheat_elections = false;
     gaux->flag_cheat_events = false;
     gaux->flag_cheat_stars = false;
     gaux->initialized = true;
