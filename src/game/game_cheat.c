@@ -23,6 +23,12 @@ bool game_cheat_galaxy(struct game_s *g, player_id_t pi)
     return true;
 }
 
+bool game_cheat_elections(struct game_s *g, player_id_t pi)
+{
+    g->gaux->flag_cheat_elections = !g->gaux->flag_cheat_elections;
+    return true;
+}
+
 bool game_cheat_events(struct game_s *g, player_id_t pi)
 {
     g->gaux->flag_cheat_events = !g->gaux->flag_cheat_events;
