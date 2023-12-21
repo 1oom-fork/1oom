@@ -74,7 +74,8 @@ While 1oom recreates the Vanilla behaviour, it also extends it:
  * The "classic" UI (1oom_classic_*) will always remain reasonably close to
    the one in the DOS binaries, but alternative UIs are within the scope.
    The UI can be scaled to allow the player to see more of the galaxy at once.
-   New/improved UI features are documented and enabled with -uiextra.
+   New/improved UI features are documented and enabled using appropriate
+   flags in the configuration file.
  * The "Classic" AI will always remain reasonably close to the one in the
    DOS binaries, but alternative AIs are within the scope.
  * The "Classic+" AI will always remain somewhat close to the one in the
