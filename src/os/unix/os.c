@@ -22,9 +22,12 @@ const struct cmdline_options_s os_cmdline_options[] = {
 
 /* -------------------------------------------------------------------------- */
 
+#define NUM_DATA_PATHS  24
+#define NUM_ALL_DATA_PATHS  (NUM_DATA_PATHS + 8)
+
 static char *data_path = NULL;
 static char *user_path = NULL;
-static char *all_data_paths[] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL };
+static char *all_data_paths[NUM_ALL_DATA_PATHS] = { NULL };
 static int num_data_paths = 0;
 
 /* -------------------------------------------------------------------------- */
@@ -73,27 +76,49 @@ void os_shutdown(void)
 const char **os_get_paths_data(void)
 {
     if (num_data_paths == 0) {
-        char *p;
+        const char *p;
         int i = 0;
-        bool got_xdg = false;
 
         if (data_path) {
             all_data_paths[i++] = lib_stralloc(data_path);
         }
         p = getenv("XDG_DATA_HOME");
-        if (p) {
+        if (p && (p[0] != '\0')) {
             all_data_paths[i++] = util_concat(p, "/1oom", NULL);
-            got_xdg = true;
         }
         p = getenv("XDG_DATA_DIRS");
-        if (p) {
-            all_data_paths[i++] = util_concat(p, "/1oom", NULL);;
-            got_xdg = true;
+        if (p && (p[0] != '\0')) {
+            char *dirs = lib_stralloc(p);
+            char *q = dirs;
+            char *tok = dirs;
+            while ((*q != '\0') && (i < NUM_DATA_PATHS)) {
+                while (*q == ':') {
+                    ++q;
+                    tok = q;
+                }
+                while ((*q != ':') && (*q != '\0')) {
+                    ++q;
+                }
+                if (*(q - 1) == '/') {
+                    *(q - 1) = '\0';
+                }
+                {
+                    bool flag_done = (*q == '\0');
+                    *q = '\0';
+                    if (strlen(tok) > 0) {
+                        all_data_paths[i++] = util_concat(tok, "/1oom", NULL);
+                    }
+                    if (!flag_done) {
+                        tok = ++q;
+                    }
+                }
+            }
+            lib_free(dirs);
         }
-        if (!got_xdg) {
+        {
             p = getenv("HOME");
-            if (p) {
-                all_data_paths[i++] = util_concat(p, "/.local/share/1oom", NULL);;
+            if (p && (p[0] != '\0')) {
+                all_data_paths[i++] = util_concat(p, "/.local/share/1oom", NULL);
             }
         }
         all_data_paths[i++] = lib_stralloc("/usr/share/1oom");
@@ -132,12 +157,12 @@ void os_set_path_user(const char *path)
 const char *os_get_path_user(void)
 {
     if (user_path == NULL) {
-        char *xdg_config_home = getenv("XDG_CONFIG_HOME");
-        if (xdg_config_home != NULL) {
+        const char *xdg_config_home = getenv("XDG_CONFIG_HOME");
+        if ((xdg_config_home != NULL) && (xdg_config_home[0] != '\0')) {
             user_path = util_concat(xdg_config_home, "/1oom", NULL);
         } else {
-            char *home = getenv("HOME");
-            if (home != NULL) {
+            const char *home = getenv("HOME");
+            if ((home != NULL) && (home[0] != '\0')) {
                 user_path = util_concat(home, "/.config/1oom", NULL);
             } else {
                 user_path = lib_stralloc(".");
