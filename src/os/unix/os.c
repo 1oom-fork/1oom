@@ -22,9 +22,11 @@ const struct cmdline_options_s os_cmdline_options[] = {
 
 /* -------------------------------------------------------------------------- */
 
+#define NUM_ALL_DATA_PATHS 64
+
 static char *data_path = NULL;
 static char *user_path = NULL;
-static char *all_data_paths[] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL };
+static char *all_data_paths[NUM_ALL_DATA_PATHS] = {NULL};
 static int num_data_paths = 0;
 
 /* -------------------------------------------------------------------------- */
@@ -71,8 +73,31 @@ const char **os_get_paths_data(void)
         }
         p = getenv("XDG_DATA_DIRS");
         if (p) {
-            all_data_paths[i++] = util_concat(p, "/1oom", NULL);
+            char *data_dirs = lib_stralloc(p);
+            char *q = data_dirs;
+            bool flag_done = false;
+            while (!flag_done && *q) {
+                char *r = strchr(q, ':');
+                if (r == NULL) {
+                    flag_done = true;
+                } else {
+                    *r = '\0';
+                }
+                r = strchr(q, '\0');
+                if (!r || (r == q)) {
+                    flag_done = true;
+                } else {
+                    if (*(r - 1) == '/') {
+                        *(r - 1) = '\0';
+                    }
+                    all_data_paths[i++] = util_concat(q, "/1oom", NULL);
+                }
+                if (!flag_done) {
+                    q = r + 1;
+                }
+            }
             got_xdg = true;
+            lib_free(data_dirs);
         }
         if (!got_xdg) {
             p = getenv("HOME");
