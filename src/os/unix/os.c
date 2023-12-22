@@ -59,7 +59,7 @@ void os_shutdown(void)
 const char **os_get_paths_data(void)
 {
     if (num_data_paths == 0) {
-        char *p;
+        const char *p;
         int i = 0;
         bool got_xdg = false;
 
