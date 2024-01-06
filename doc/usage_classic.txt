@@ -93,6 +93,7 @@ or pressing Alt-X in the main menu enables the following extra UI features:
 - The color of ship names on Planets screen is black
 - Pressing = in the galaxy movement screen also transfers reserve back and
   the behavior is more predictable
+- Fixed graphics bug with brighter stars drawn further away than dimmer ones
 
 Pressing Alt-X in the main menu also enables the following features:
 - Population scheduled for transport no longer contributes to production
