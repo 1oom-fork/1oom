@@ -207,6 +207,14 @@ static void ui_starmap_draw_textbox_finished(const struct game_s *g, player_id_t
     ui_draw_textbox_2str("", game_str_sm_planratio, 110);
 }
 
+static void ui_starmap_draw_starback(uint8_t *gfx, int x, int y)
+{
+    lbxgfx_draw_frame_offs(x, y, gfx, 6, 6, 221, 177, UI_SCREEN_W);
+    lbxgfx_draw_frame_offs(x + 320, y, gfx, 6, 6, 221, 177, UI_SCREEN_W);
+    lbxgfx_draw_frame_offs(x, y + 200, gfx, 6, 6, 221, 177, UI_SCREEN_W);
+    lbxgfx_draw_frame_offs(x + 320, y + 200, gfx, 6, 6, 221, 177, UI_SCREEN_W);
+}
+
 static void ui_starmap_add_oi_enroute(struct starmap_data_s *d, bool want_prio)
 {
     const struct game_s *g = d->g;
@@ -349,14 +357,8 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
         y0 = (-y / 4) + 6;
         x1 = ((-x + 1) / 2) + 6;
         y1 = ((-y + 1) / 2) + 6;
-        lbxgfx_draw_frame_offs(x0, y0, ui_data.gfx.starmap.starback, 6, 6, 221, 177, UI_SCREEN_W);
-        lbxgfx_draw_frame_offs(x0 + 320, y0, ui_data.gfx.starmap.starback, 6, 6, 221, 177, UI_SCREEN_W);
-        lbxgfx_draw_frame_offs(x0, y0 + 200, ui_data.gfx.starmap.starback, 6, 6, 221, 177, UI_SCREEN_W);
-        lbxgfx_draw_frame_offs(x0 + 320, y0 + 200, ui_data.gfx.starmap.starback, 6, 6, 221, 177, UI_SCREEN_W);
-        lbxgfx_draw_frame_offs(x1, y1, ui_data.gfx.starmap.starbak2, 6, 6, 221, 177, UI_SCREEN_W);
-        lbxgfx_draw_frame_offs(x1 + 320, y1, ui_data.gfx.starmap.starbak2, 6, 6, 221, 177, UI_SCREEN_W);
-        lbxgfx_draw_frame_offs(x1, y1 + 200, ui_data.gfx.starmap.starbak2, 6, 6, 221, 177, UI_SCREEN_W);
-        lbxgfx_draw_frame_offs(x1 + 320, y1 + 200, ui_data.gfx.starmap.starbak2, 6, 6, 221, 177, UI_SCREEN_W);
+        ui_starmap_draw_starback(ui_data.gfx.starmap.starback, x0, y0);
+        ui_starmap_draw_starback(ui_data.gfx.starmap.starbak2, x1, y1);
     }
     for (int i = 0; i < g->nebula_num; ++i) {
         int tx, ty;
