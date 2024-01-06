@@ -90,6 +90,7 @@ enables the following extra UI features:
   the mouse icon offset
 - Pressing = in the galaxy movement screen also transfers reserve back and
   the behavior is more predictable
+- Fixed graphics bug with brighter stars drawn further away than dimmer ones
 
 The following features can be enabled in the configuration file:
 - Continue, Undo and Initial saves can be chosen in the Load Game screen
