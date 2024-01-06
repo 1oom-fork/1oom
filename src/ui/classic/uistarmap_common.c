@@ -409,12 +409,20 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
         ly = 178 * ui_scale - 1;
         for (int yb = y0; yb < ly; yb += 200) {
             for (int xb = x0; xb < lx; xb += 320) {
-                lbxgfx_draw_frame_offs(xb, yb, ui_data.gfx.starmap.starbak2, STARMAP_LIMITS, UI_SCREEN_W, starmap_scale);
+                if (ui_extra_enabled) {
+                    lbxgfx_draw_frame_offs(xb, yb, ui_data.gfx.starmap.starbak2, STARMAP_LIMITS, UI_SCREEN_W, starmap_scale);
+                } else {
+                    lbxgfx_draw_frame_offs(xb, yb, ui_data.gfx.starmap.starback, STARMAP_LIMITS, UI_SCREEN_W, starmap_scale);
+                }
             }
         }
         for (int yb = y1; yb < ly; yb += 200) {
             for (int xb = x1; xb < lx; xb += 320) {
-                lbxgfx_draw_frame_offs(xb, yb, ui_data.gfx.starmap.starback, STARMAP_LIMITS, UI_SCREEN_W, starmap_scale);
+                if (ui_extra_enabled) {
+                    lbxgfx_draw_frame_offs(xb, yb, ui_data.gfx.starmap.starback, STARMAP_LIMITS, UI_SCREEN_W, starmap_scale);
+                } else {
+                    lbxgfx_draw_frame_offs(xb, yb, ui_data.gfx.starmap.starbak2, STARMAP_LIMITS, UI_SCREEN_W, starmap_scale);
+                }
             }
         }
     }
