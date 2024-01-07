@@ -111,10 +111,12 @@ static const char* mm_get_custom_special_value(int i) {
 
 static bool mm_enable_preset_classic(void) {
     ui_extra_toggle_preset(false);
+    return true;
 }
 
 static bool mm_enable_preset_1oom(void) {
     ui_extra_toggle_preset(true);
+    return true;
 }
 
 /* -------------------------------------------------------------------------- */
