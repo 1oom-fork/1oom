@@ -187,7 +187,7 @@ static void video_update_gl(void)
         glTexParameteri(GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_MAG_FILTER, filter);
         glTexParameteri(GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_MIN_FILTER, filter);
     }
-    glTexImage2D(GL_TEXTURE_RECTANGLE_ARB, 0, video.rgb_mode, video.bufw, video.bufh, 0, video.rgb_mode, GL_UNSIGNED_BYTE, video.hwrenderbuf->pixels);
+    glTexImage2D(GL_TEXTURE_RECTANGLE_ARB, 0, video.rgb_mode, video.hwrenderbuf->w, video.hwrenderbuf->h, 0, video.rgb_mode, GL_UNSIGNED_BYTE, video.hwrenderbuf->pixels);
 
     glBegin(GL_QUADS);
 
@@ -196,15 +196,15 @@ static void video_update_gl(void)
     glVertex2f(-1.0f, 1.0f);
 
     /* Upper Right Of Texture */
-    glTexCoord2f(0.0f, (float)(video.bufh));
+    glTexCoord2f(0.0f, (float)(video.hwrenderbuf->h));
     glVertex2f(-1.0f, -1.0f);
 
     /* Upper Left Of Texture */
-    glTexCoord2f((float)(video.bufw), (float)(video.bufh));
+    glTexCoord2f((float)(video.hwrenderbuf->w), (float)(video.hwrenderbuf->h));
     glVertex2f(1.0f, -1.0f);
 
     /* Lower Left Of Texture */
-    glTexCoord2f((float)(video.bufw), 0.0f);
+    glTexCoord2f((float)(video.hwrenderbuf->w), 0.0f);
     glVertex2f(1.0f, 1.0f);
 
     glEnd();
