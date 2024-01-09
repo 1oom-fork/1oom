@@ -51,7 +51,7 @@ static void video_render_8bpp(int bufi)
 
 static void video_update_8bpp(void)
 {
-    blit(video.bm, screen, 0, 0, 0, 0, video.bufw, video.bufh);
+    blit(video.bm, screen, 0, 0, 0, 0, video.bm->w, video.bm->h);
 }
 
 static void video_setpal_8bpp(const uint8_t *pal, int first, int num)
