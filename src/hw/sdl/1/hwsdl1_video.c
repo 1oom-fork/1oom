@@ -292,8 +292,8 @@ int hw_video_resize(int w, int h)
     }
 
     if ((w < 0) || (h < 0)) {
-        w = video.bufw;
-        h = video.bufh;
+        w = video.hwrenderbuf->w;
+        h = video.hwrenderbuf->h;
     }
 
     flags = SDL_OPENGL | SDL_RESIZABLE;
@@ -332,7 +332,7 @@ int hw_video_resize(int w, int h)
                 );
         goto fail;
     }
-    set_viewport(video.bufw, video.bufh, actual_w, actual_h);
+    set_viewport(video.hwrenderbuf->w, video.hwrenderbuf->h, actual_w, actual_h);
     if (hw_opt_fullscreen) {
         hw_mouse_grab();
     }
