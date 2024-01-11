@@ -696,8 +696,8 @@ int hw_video_init(int w, int h)
     video.setpal = video_setpal;
     video.blit_rect.x = 0;
     video.blit_rect.y = 0;
-    video.blit_rect.w = video.bufw;
-    video.blit_rect.h = video.bufh;
+    video.blit_rect.w = w;
+    video.blit_rect.h = h;
     hw_video_update_actual_h();
     SETMAX(h, video.actualh);
     if (video_check_opt_screen_winwh() == 0) {
