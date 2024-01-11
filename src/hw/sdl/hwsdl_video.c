@@ -22,7 +22,7 @@ void hw_video_refresh(int front)
         }
     }
 
-    video.render(video.bufi ^ front);
+    video.render(video.buf[video.bufi ^ front]);
 
     if (SDL_MUSTLOCK(video.screen)) {
         SDL_UnlockSurface(video.screen);

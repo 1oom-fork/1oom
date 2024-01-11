@@ -28,7 +28,7 @@ static struct sdl_video_s {
 #ifdef HAVE_SDL1GL
     SDL_Surface *hwrenderbuf;
 #endif
-    void (*render)(int bufi);
+    void (*render)(const uint8_t *buf);
     void (*update)(void);
     void (*setpal)(const uint8_t *pal, int first, int num);
 
@@ -60,15 +60,16 @@ static struct sdl_video_s {
 
 /* -------------------------------------------------------------------------- */
 
-static void video_render_8bpp(int bufi)
+static void video_render_8bpp(const uint8_t *buf)
 {
+    int w = video.screen->w, h = video.screen->h;
     int pitch = video.screen->pitch;
     Uint8 *p = (Uint8 *)video.screen->pixels;
-    uint8_t *q = video.buf[bufi];
-    for (int y = 0; y < video.bufh; ++y) {
-        memcpy(p, q, video.bufw);
+    const uint8_t *q = buf;
+    for (int y = 0; y < h; ++y) {
+        memcpy(p, q, w);
         p += pitch;
-        q += video.bufw;
+        q += w;
     }
 }
 
@@ -99,14 +100,15 @@ static void video_setpal_8bpp(const uint8_t *pal, int first, int num)
 static uint8_t colorpaldebug = 0;
 #endif
 
-static void video_render_gl_24bpp(int bufi)
+static void video_render_gl_24bpp(const uint8_t *buf)
 {
-    int pitch_skip = (video.bufw * 3) - video.hwrenderbuf->pitch;
+    int w = video.hwrenderbuf->w, h = video.hwrenderbuf->h;
+    int pitch_skip = (w * 3) - video.hwrenderbuf->pitch;
 
     uint8_t *p = (uint8_t *)video.hwrenderbuf->pixels;
-    uint8_t *q = video.buf[bufi];
-    for (int y = 0; y < video.bufh; ++y) {
-        for (int x = 0; x < video.bufw; ++x) {
+    const uint8_t *q = buf;
+    for (int y = 0; y < h; ++y) {
+        for (int x = 0; x < w; ++x) {
             uint8_t *c;
             c = &(video.ppal.p8[*q++ * 3]);
             *p++ = *c++;
@@ -135,14 +137,15 @@ static void video_setpal_gl_24bpp(const uint8_t *pal, int f, int num)
     hw_video_refresh(1);
 }
 
-static void video_render_gl_32bpp(int bufi)
+static void video_render_gl_32bpp(const uint8_t *buf)
 {
-    int pitch_skip = ((video.bufw * sizeof(Uint32)) - video.hwrenderbuf->pitch) / sizeof(Uint32);
+    int w = video.hwrenderbuf->w, h = video.hwrenderbuf->h;
+    int pitch_skip = ((w * sizeof(Uint32)) - video.hwrenderbuf->pitch) / sizeof(Uint32);
 
     Uint32 *p = (Uint32 *)video.hwrenderbuf->pixels;
-    uint8_t *q = video.buf[bufi];
-    for (int y = 0; y < video.bufh; ++y) {
-        for (int x = 0; x < video.bufw; ++x) {
+    const uint8_t *q = buf;
+    for (int y = 0; y < h; ++y) {
+        for (int x = 0; x < w; ++x) {
             *p++ = video.ppal.p32[*q++];
         }
         p += pitch_skip;

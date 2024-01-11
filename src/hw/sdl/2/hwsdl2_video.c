@@ -67,7 +67,7 @@ static struct sdl_video_s {
     bool shrink, enlarge;
     int last_resize_time;
 
-    void (*render)(int bufi);
+    void (*render)(const uint8_t *buf);
     void (*update)(void);
     void (*setpal)(const uint8_t *pal, int first, int num);
 
@@ -223,18 +223,19 @@ static void video_destroy_renderer(void)
 
 /* -------------------------------------------------------------------------- */
 
-static void video_render(int bufi)
+static void video_render(const uint8_t *buf)
 {
     if (video.noblit) {
         return;
     }
+    int w = video.screen->w, h = video.screen->h;
     int pitch = video.screen->pitch;
     Uint8 *p = (Uint8 *)video.screen->pixels;
-    uint8_t *q = video.buf[bufi];
-    for (int y = 0; y < video.bufh; ++y) {
-        memcpy(p, q, video.bufw);
+    const uint8_t *q = buf;
+    for (int y = 0; y < h; ++y) {
+        memcpy(p, q, w);
         p += pitch;
-        q += video.bufw;
+        q += w;
     }
 }
 
