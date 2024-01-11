@@ -149,15 +149,15 @@ static void video_create_upscaled_texture(bool force)
        of the texture, the rendered area is scaled down to fit. Calculate
        the actual dimensions of the rendered area.
     */
-    if (w * video.actualh < h * video.bufw) {
+    if (w * video.actualh < h * video.blit_rect.w) {
         /* Tall window. */
-        h = (w * video.actualh) / video.bufw;
+        h = (w * video.actualh) / video.blit_rect.w;
     } else {
         /* Wide window. */
-        w = (h * video.bufw) / video.actualh;
+        w = (h * video.blit_rect.w) / video.actualh;
     }
 
-    if ((w % video.bufw == 0) && (h % video.bufh == 0)) {
+    if ((w % video.blit_rect.w == 0) && (h % video.blit_rect.h == 0)) {
         if (video.texture_upscaled) {
             SDL_DestroyTexture(video.texture_upscaled);
             video.texture_upscaled = NULL;
@@ -171,8 +171,8 @@ static void video_create_upscaled_texture(bool force)
        If one screen dimension matches an integer multiple of the original
        resolution, there is no need to overscale in this direction.
     */
-    w_upscale = (w + video.bufw - 1) / video.bufw;
-    h_upscale = (h + video.bufh - 1) / video.bufh;
+    w_upscale = (w + video.blit_rect.w - 1) / video.blit_rect.w;
+    h_upscale = (h + video.blit_rect.h - 1) / video.blit_rect.h;
 
     /* Minimum texture dimensions of 320x200. */
     SETMAX(w_upscale, 1);
@@ -198,12 +198,12 @@ static void video_create_upscaled_texture(bool force)
     SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
 
     log_message("SDL_CreateTexture: upscaled, %d, %d\n",
-                w_upscale * video.bufw, h_upscale * video.bufh);
+                w_upscale * video.blit_rect.w, h_upscale * video.blit_rect.h);
     video.texture_upscaled = SDL_CreateTexture(video.renderer,
                                 video.pixel_format,
                                 SDL_TEXTUREACCESS_TARGET,
-                                w_upscale * video.bufw,
-                                h_upscale * video.bufh
+                                w_upscale * video.blit_rect.w,
+                                h_upscale * video.blit_rect.h
                              );
 
 }
