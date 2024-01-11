@@ -23,7 +23,7 @@
 static struct alleg_video_s {
     BITMAP *bm;
 
-    void (*render)(int bufi);
+    void (*render)(const uint8_t *buf);
     void (*update)(void);
     void (*setpal)(const uint8_t *pal, int first, int num);
 
@@ -38,14 +38,16 @@ static struct alleg_video_s {
 
 /* -------------------------------------------------------------------------- */
 
-static void video_render_8bpp(int bufi)
+static void video_render_8bpp(const uint8_t *buf)
 {
     BITMAP *bm = video.bm;
-    uint8_t *p, *q = video.buf[bufi];
-    for (int y = 0; y < video.bufh; ++y) {
+    int w = bm->w, h = bm->h;
+    uint8_t *p;
+    const uint8_t *q = buf;
+    for (int y = 0; y < h; ++y) {
         p = bm->line[y];
-        memcpy(p, q, video.bufw);
-        q += video.bufw;
+        memcpy(p, q, w);
+        q += w;
     }
 }
 

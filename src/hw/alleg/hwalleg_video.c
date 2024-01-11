@@ -2,7 +2,7 @@ bool hw_video_in_gfx = false;
 
 void hw_video_refresh(int front)
 {
-    video.render(video.bufi ^ front);
+    video.render(video.buf[video.bufi ^ front]);
     video.update();
 }
 
