@@ -502,7 +502,7 @@ static int video_sw_set(int w, int h)
             return -1;
         }
         video.pixel_format = SDL_GetWindowPixelFormat(video.window);
-        SDL_SetWindowMinimumSize(video.window, video.bufw, video.actualh);
+        SDL_SetWindowMinimumSize(video.window, video.blit_rect.w, video.actualh);
         SDL_SetWindowTitle(video.window, PACKAGE_NAME " " VERSION_STR);
         if (video.icon) {
             SDL_SetWindowIcon(video.window, video.icon);
@@ -543,7 +543,7 @@ static int video_sw_set(int w, int h)
            time this also defines the aspect ratio that is preserved while scaling
            and stretching the texture into the window.
         */
-        SDL_RenderSetLogicalSize(video.renderer, video.bufw, video.actualh);
+        SDL_RenderSetLogicalSize(video.renderer, video.blit_rect.w, video.actualh);
     } else {
         /* Use full window. */
         SDL_RenderSetViewport(video.renderer, NULL);
@@ -563,7 +563,7 @@ static int video_sw_set(int w, int h)
 
     /* Create the 8-bit paletted screenbuffer surface. */
     if (video.screen == NULL) {
-        video.screen = SDL_CreateRGBSurface(0, video.bufw, video.bufh, 8, 0, 0, 0, 0);
+        video.screen = SDL_CreateRGBSurface(0, video.blit_rect.w, video.blit_rect.h, 8, 0, 0, 0, 0);
         SDL_FillRect(video.screen, NULL, 0);
     }
     /* Format of interbuffer must match the screen pixel format
@@ -579,7 +579,7 @@ static int video_sw_set(int w, int h)
                 log_error("Unsupported bits per pixel: %d\n", bpp);
                 return -1;
             }
-            video.interbuffer = SDL_CreateRGBSurface(0, video.bufw, video.bufh, bpp, rmask, gmask, bmask, amask);
+            video.interbuffer = SDL_CreateRGBSurface(0, video.blit_rect.w, video.blit_rect.h, bpp, rmask, gmask, bmask, amask);
             if (video.interbuffer == NULL) {
                 log_message("SDL_CreateRGBSurface(): %s\n", SDL_GetError());
                 return -1;
