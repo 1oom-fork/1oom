@@ -121,7 +121,7 @@ static void ui_starmap_enroute_draw_cb(void *vptr)
         x = (i & 1) * 43 + 228;
         y = (i / 2) * 40 + 44;
         ui_draw_filled_rect(x, y, x + 38, y + 24, 0, ui_scale);
-        ui_draw_filled_rect(x, y + 28, x + 38, y + 34, 0, ui_scale);
+        ui_draw_filled_rect(x, y + 28, x + 38, y + 34, 0x1c, ui_scale);
         ui_draw_stars(x, y, 0, 32, &(d->en.ds), ui_scale);
         st = d->en.sn0.type[i];
         gfx = ui_data.gfx.ships[sd[st].look];
