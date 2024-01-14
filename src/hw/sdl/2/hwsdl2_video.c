@@ -246,18 +246,18 @@ static void video_adjust_window_size(int *wptr, int *hptr)
 {
     if (hw_opt_aspect != 0) {
         int w = *wptr, h = *hptr;
-        if ((w * video.actualh) <= (h * video.bufw)) {
+        if ((w * video.actualh) <= (h * video.blit_rect.w)) {
             /* We round up window_height if the ratio is not exact; this leaves the result stable. */
-            h = (w * video.actualh + video.bufw - 1) / video.bufw;
+            h = (w * video.actualh + video.blit_rect.w - 1) / video.blit_rect.w;
         } else {
-            w = (h * video.bufw) / video.actualh;
+            w = (h * video.blit_rect.w) / video.actualh;
         }
         bool do_resize = false;
-        int scale = w / video.bufw;
+        int scale = w / video.blit_rect.w;
         if (video.shrink || video.enlarge) {
             if (video.shrink) {
                 --scale;
-                if (w % video.bufw) {
+                if (w % video.blit_rect.w) {
                     ++scale;
                 }
             } else {
@@ -278,7 +278,7 @@ static void video_adjust_window_size(int *wptr, int *hptr)
             if (scale <= 0) {
                 scale = 1;
             }
-            w = video.bufw * scale;
+            w = video.blit_rect.w * scale;
             h = video.actualh * scale;
         }
         *wptr = w;
