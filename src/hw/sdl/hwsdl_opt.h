@@ -13,9 +13,6 @@ extern char *hw_opt_sdlmixer_sf;
 extern int hw_opt_aspect;
 extern int hw_opt_mousespd;
 
-/* debug */
-extern int hw_opt_overlay_pal;
-
 /* for SDL1 */
 extern bool hw_opt_use_gl;
 extern int hw_opt_gl_filter;
