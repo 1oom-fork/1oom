@@ -93,11 +93,6 @@ static void video_setpal_8bpp(const uint8_t *pal, int first, int num)
 
 #ifdef HAVE_SDL1GL
 
-#ifdef FEATURE_MODEBUG
-#include "mouse.h"
-static uint8_t colorpaldebug = 0;
-#endif
-
 static void video_render_gl_24bpp(int bufi)
 {
     int pitch_skip = (video.bufw * 3) - video.hwrenderbuf->pitch;
