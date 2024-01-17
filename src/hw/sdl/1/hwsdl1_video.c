@@ -93,11 +93,6 @@ static void video_setpal_8bpp(const uint8_t *pal, int first, int num)
 
 #ifdef HAVE_SDL1GL
 
-#ifdef FEATURE_MODEBUG
-#include "mouse.h"
-static uint8_t colorpaldebug = 0;
-#endif
-
 static void video_render_gl_24bpp(int bufi)
 {
     int pitch_skip = (video.bufw * 3) - video.hwrenderbuf->pitch;
@@ -146,31 +141,6 @@ static void video_render_gl_32bpp(int bufi)
         }
         p += pitch_skip;
     }
-#ifdef FEATURE_MODEBUG
-    if (hw_opt_overlay_pal) {
-        p = (Uint32 *)video.hwrenderbuf->pixels;
-        for (int x = 0; x < 256; ++x) {
-            *p++ = video.ppal.p32[x];
-        }
-        if ((moouse_x >= 1) && (moouse_x < video.bufw) && (moouse_y >= 1) && (moouse_y < video.bufh)) {
-            uint8_t c;
-            int mx = moouse_x - 1, my = moouse_y - 1;
-            c = colorpaldebug;
-            p = (Uint32 *)(((uint8_t *)video.hwrenderbuf->pixels) + video.hwrenderbuf->pitch * my + mx * sizeof(Uint32));
-            *p = c;
-            c = video.buf[bufi][mx + my * video.bufw];
-            p = (Uint32 *)(((uint8_t *)video.hwrenderbuf->pixels) + video.hwrenderbuf->pitch + c * sizeof(Uint32));
-            *p = c;
-            p += video.bufw;
-            c = colorpaldebug;
-            *p = c;
-            p += video.bufw;
-            c = colorpaldebug + 0x80;
-            *p = c;
-            ++colorpaldebug;
-        }
-    }
-#endif
 }
 
 static void video_update_gl(void)
