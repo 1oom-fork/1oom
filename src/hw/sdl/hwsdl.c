@@ -22,11 +22,6 @@ static bool hw_kbd_check_hotkey(SDL1or2Key key, SDL1or2Mod smod, char c)
                 hw_audio_sfx_volume(opt_sfx_volume - 4);
             }
             return true;
-#ifdef FEATURE_MODEBUG
-        } else if (key == SDLK_INSERT) {
-            hw_opt_overlay_pal ^= 1;
-            return true;
-#endif
         }
     } else if ((smod & KMOD_ALT) && (!(smod & KMOD_CTRL))) {
         if (key == SDLK_RETURN) {
