@@ -789,8 +789,6 @@ main_menu_action_t ui_main_menu(struct game_new_options_s *newopts, struct game_
                 }
                 break;
             case MAIN_MENU_ACT_QUIT_GAME:
-                hw_audio_music_fadeout();
-                ui_palette_fadeout_a_f_1();
                 flag_done = true;
                 break;
             default:
