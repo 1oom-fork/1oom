@@ -9,13 +9,47 @@
 /* -------------------------------------------------------------------------- */
 
 uint16_t rnd_0_nm1(uint16_t n, uint32_t *seed)
-{
-    uint32_t r = *seed;
-    r ^= (r << 13);
-    r ^= (r >> 17);
-    r ^= (r << 5);
-    *seed = r;
-    return (r >> 16) % n;
+{   /* NOTE: This code is simplified and contains hacks.
+       Assembler code in this function would be more appropriate. */
+    uint16_t r = 0;
+    uint32_t di_si = *seed;
+
+    for (int i = 9; i > 0; --i) {
+        uint16_t ax = di_si;
+        uint16_t dx;
+        {
+            uint32_t dx_bx = di_si;
+            dx_bx >>= 1;
+            ax ^= dx_bx;
+            dx_bx >>= 1;
+            ax ^= dx_bx;
+            dx_bx >>= 2;
+            ax ^= dx_bx;
+            dx_bx >>= 2;
+            ax ^= dx_bx;
+            dx = dx_bx >> 25;
+        }
+        {
+            uint8_t al = ax & 0xff;
+            uint8_t ah = ax >> 8;
+            al ^= dx;
+            ax = ((uint16_t)ah << 8) + al;
+            dx = ax;
+        }
+        r <<= 1;
+        if (dx & 1) {
+            ++r;
+        }
+        di_si >>= 1;
+        if (ax & 1) {
+            di_si += 0x80000000;
+        }
+    }
+    if (di_si == 0) {
+        di_si = 0x30be;
+    }
+    *seed = di_si;
+    return r % n;
 }
 
 uint16_t rnd_1_n(uint16_t n, uint32_t *seed)
