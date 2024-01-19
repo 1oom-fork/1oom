@@ -1165,7 +1165,7 @@ int game_new_tutor(struct game_s *g, struct game_aux_s *gaux)
     opt.pdata[PLAYER_0].banner = BANNER_WHITE;
     lib_strcpy(opt.pdata[PLAYER_0].playername, "Mr Tutor", EMPEROR_NAME_LEN);
     lib_strcpy(opt.pdata[PLAYER_0].homename, "SOL", PLANET_NAME_LEN);
-    opt.galaxy_seed = 0xdeadbeef; /* FIXME find value that gives an easy game */
+    opt.galaxy_seed = 0xfda3f;
     return game_new(g, gaux, &opt);
 }
 
