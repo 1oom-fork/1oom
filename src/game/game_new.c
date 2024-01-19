@@ -137,6 +137,8 @@ static void game_generate_planets(struct game_s *g)
 
         p->look = rnd_0_nm1(2, &g->seed) * 6;
         p->frame = rnd_0_nm1(50, &g->seed);
+        /* Needed for the original sequence of random numbers */
+        /*p->field_16 =*/ rnd_0_nm1(4, &g->seed);
 
         in_nebula = false;
         for (int k = 0; k < g->nebula_num; ++k) {
