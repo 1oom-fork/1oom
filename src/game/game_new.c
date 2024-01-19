@@ -515,14 +515,13 @@ static void game_generate_galaxy(struct game_s *g)
 
 static void game_generate_planet_names(struct game_s *g)
 {
-    BOOLVEC_DECLARE(in_use, PLANET_NAMES_MAX);
-    BOOLVEC_CLEAR(in_use, PLANET_NAMES_MAX);
+    BOOLVEC_DECLARE(in_use, PLANETS_MAX);
+    BOOLVEC_CLEAR(in_use, PLANETS_MAX);
     for (int i = 0; i < g->galaxy_stars; ++i) {
         uint16_t j;
-        j = rnd_0_nm1(PLANET_NAMES_MAX, &g->seed);
-        while (BOOLVEC_IS1(in_use, j)) {
-            if (++j == PLANET_NAMES_MAX) { j = 0; }
-        }
+        do {
+            j = rnd_0_nm1(PLANETS_MAX, &g->seed);
+        } while (BOOLVEC_IS1(in_use, j));
         BOOLVEC_SET1(in_use, j);
         lib_strcpy(g->planet[i].name, game_str_tbl_planet_names[j], PLANET_NAME_LEN);
     }
