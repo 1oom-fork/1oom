@@ -317,9 +317,11 @@ static void game_generate_planets(struct game_s *g)
                 if (star_type == STAR_TYPE_RED) { di -= 4; } else if (star_type == STAR_TYPE_GREEN) { di -= 2; }
                 if (di <= 2) {
                     p->special = PLANET_SPECIAL_POOR;
-                    di = rnd_1_n(0x14, &g->seed);
-                    if (star_type == STAR_TYPE_RED) { di -= 4; } else if (star_type == STAR_TYPE_GREEN) { di -= 2; }
-                    if (di <= 5) {
+                }
+                di = rnd_1_n(0x14, &g->seed);
+                if (star_type == STAR_TYPE_RED) { di -= 4; } else if (star_type == STAR_TYPE_GREEN) { di -= 2; }
+                if (di <= 5) {
+                    if (p->special == PLANET_SPECIAL_POOR) {
                         p->special = PLANET_SPECIAL_ULTRA_POOR;
                     }
                 }
@@ -328,9 +330,11 @@ static void game_generate_planets(struct game_s *g)
             if (star_type == STAR_TYPE_BLUE) { di -= 2; } else if (star_type == STAR_TYPE_NEUTRON) { di -= 5; }
             if ((((int)PLANET_TYPE_STEPPE) - ((int)p->type)) > di) {
                 p->special = PLANET_SPECIAL_RICH;
-                di = rnd_1_n(0x14, &g->seed) - (in_nebula ? 8 : 0);
-                if (star_type == STAR_TYPE_BLUE) { di -= 2; } else if (star_type == STAR_TYPE_NEUTRON) { di -= 5; }
-                if (di < 6) {
+            }
+            di = rnd_1_n(0x14, &g->seed) - (in_nebula ? 8 : 0);
+            if (star_type == STAR_TYPE_BLUE) { di -= 2; } else if (star_type == STAR_TYPE_NEUTRON) { di -= 5; }
+            if (di < 6) {
+                if (p->special == PLANET_SPECIAL_RICH) {
                     p->special = PLANET_SPECIAL_ULTRA_RICH;
                 }
             }
