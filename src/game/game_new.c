@@ -1178,7 +1178,7 @@ int game_new_tutor(struct game_s *g, struct game_aux_s *gaux)
     opt.pdata[PLAYER_3].banner = BANNER_GREEN;
     lib_strcpy(opt.pdata[PLAYER_0].playername, "Mr Tutor", EMPEROR_NAME_LEN);
     lib_strcpy(opt.pdata[PLAYER_0].homename, "SOL", PLANET_NAME_LEN);
-    opt.galaxy_seed = 180616000; /* FIXME Generates a map different from the original MOO v1.3 */
+    opt.galaxy_seed = 0xfda3f;
     return game_new(g, gaux, &opt);
 }
 
