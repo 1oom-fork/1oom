@@ -662,6 +662,7 @@ static bool game_generate_home_improved_do_i(struct game_s *g, struct game_new_o
 static bool game_generate_home_improved_do(struct game_s *g, struct game_new_options_s *opts, uint16_t tblhome[])
 {
     uint8_t homes[PLAYER_NUM] = { PLANET_NONE , PLANET_NONE , PLANET_NONE , PLANET_NONE , PLANET_NONE , PLANET_NONE };
+    game_generate_race_banner(g);
     bool result = game_generate_home_improved_do_i(g, opts, homes, PLAYER_0);
     for (int i = 0; i < PLAYER_NUM; ++i) {
         tblhome[i] = homes[i];
