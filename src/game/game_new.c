@@ -583,37 +583,31 @@ static void game_generate_planet_names(struct game_s *g)
 
 static void game_generate_race_banner(struct game_s *g)
 {
-    BOOLVEC_DECLARE(in_use, MAX((int)RACE_NUM, (int)BANNER_NUM));
+    const uint16_t race_tbl[] = {7, 1, 5, 0, 3, 9, 4, 6, 2, 8};
+    BOOLVEC_DECLARE(in_use, (int)BANNER_NUM);
     uint16_t loops;
     loops = 0;
-    BOOLVEC_CLEAR(in_use, MAX((int)RACE_NUM, (int)BANNER_NUM));
     for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         race_t race;
+        bool in_use = false;
         race = g->eto[i].race;
         if (race != RACE_RANDOM) {
-            BOOLVEC_SET1(in_use, race);
             continue;
         }
-        race = rnd_0_nm1(RACE_NUM, &g->seed);
-        if (BOOLVEC_IS0(in_use, race)) {
-            BOOLVEC_SET1(in_use, race);
-            g->eto[i].race = race;
-        } else {
-            --i; /* try again */
-            if (++loops == 100) {
-                for (race = 0; race < RACE_NUM; ++race) {
-                    if (BOOLVEC_IS0(in_use, race)) {
-                        BOOLVEC_SET1(in_use, race);
-                        g->eto[i].race = race;
-                        break;
-                    }
-                }
-                loops = 0;
+        race = race_tbl[rnd_0_nm1(RACE_NUM, &g->seed)];
+        for (player_id_t j = PLAYER_0; j < i; ++j) {
+            if (g->eto[j].race == race) {
+                in_use = true;
+                --i;
+                break;
             }
+        }
+        if (!in_use) {
+            g->eto[i].race = race;
         }
     }
     loops = 0;
-    BOOLVEC_CLEAR(in_use, MAX((int)RACE_NUM, (int)BANNER_NUM));
+    BOOLVEC_CLEAR(in_use, (int)BANNER_NUM);
     for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         banner_t banner;
         banner = g->eto[i].banner;
