@@ -658,6 +658,7 @@ static bool game_generate_home_improved_do_i(struct game_s *g, struct game_new_o
 static bool game_generate_home_improved_do(struct game_s *g, struct game_new_options_s *opts, uint16_t tblhome[])
 {
     uint8_t homes[PLAYER_NUM] = { PLANET_NONE , PLANET_NONE , PLANET_NONE , PLANET_NONE , PLANET_NONE , PLANET_NONE };
+    game_generate_race_banner(g);
     bool result = game_generate_home_improved_do_i(g, opts, homes, PLAYER_0);
     for (int i = 0; i < PLAYER_NUM; ++i) {
         tblhome[i] = homes[i];
@@ -671,6 +672,7 @@ static bool game_generate_home_do(struct game_s *g, uint16_t tblhome[])
     bool flag_all_ok;
     flag_all_ok = false;
     loops = 0;
+    game_generate_race_banner(g);
     while ((!flag_all_ok) && (loops < 200)) {
         flag_all_ok = true;
         for (player_id_t i = PLAYER_0; i < g->players; ++i) {
@@ -791,7 +793,6 @@ static void game_generate_home_etc(struct game_s *g, struct game_new_options_s *
             flag_all_ok = game_generate_home_do(g, tblhome);
         }
     } while (!flag_all_ok);
-    game_generate_race_banner(g);   /* must be run once and before the home planet name copy below */
     for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         planet_t *p;
         homei = tblhome[i];
