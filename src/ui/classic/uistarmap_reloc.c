@@ -49,7 +49,18 @@ static void ui_starmap_reloc_draw_cb(void *vptr)
         ui_draw_line_limit_ctbl(x0 + 6, y0 + 6, x1, y1, ctbl, 5, ui_data.starmap.line_anim_phase, starmap_scale);
     }
     lbxgfx_draw_frame_offs(x0, y0, ui_data.gfx.starmap.planbord, STARMAP_LIMITS, UI_SCREEN_W, starmap_scale);
-    lbxgfx_draw_frame(222, 80, ui_data.gfx.starmap.relocate, UI_SCREEN_W, ui_scale);
+    if (pt->owner == d->api) {
+        lbxgfx_draw_frame(222, 80, ui_data.gfx.starmap.relocate, UI_SCREEN_W, ui_scale);
+    } else {
+        lbxgfx_draw_frame_offs(222, 80, ui_data.gfx.starmap.relocate, 0, 83, 310, 199, UI_SCREEN_W, ui_scale);
+        if (BOOLVEC_IS0(pt->explored, d->api)) {
+            ui_draw_filled_rect(227, 57, 310, 159, 0, ui_scale);
+            lbxgfx_draw_frame_offs(224, 5, ui_data.gfx.starmap.unexplor, 227, 57, 310, 159, UI_SCREEN_W, ui_scale);
+        } else {
+            ui_draw_filled_rect(227, 73, 310, 159, 7, ui_scale);
+            ui_draw_box1(227, 73, 310, 159, 4, 4, ui_scale);
+        }
+    }
     lbxfont_select_set_12_1(5, 5, 0, 0);
     lbxfont_print_str_center(269, 90, game_str_sm_sreloc, UI_SCREEN_W, ui_scale);
     lbxfont_select(0, 6, 0, 0);
