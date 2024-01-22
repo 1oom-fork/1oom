@@ -34,8 +34,7 @@ static void ui_starmap_transport_draw_cb(void *vptr)
     const planet_t *pt = &g->planet[g->planet_focus_i[d->api]];
     char buf[0x80];
 
-    ui_starmap_draw_starmap(d);
-    ui_starmap_draw_button_text(d, true);
+    ui_starmap_draw_basic(d);
     {
         int x, y;
         x = (r->x - ui_data.starmap.x) * 2 + 5;

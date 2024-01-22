@@ -29,8 +29,7 @@ static void ui_starmap_reloc_draw_cb(void *vptr)
     const planet_t *pt = &g->planet[g->planet_focus_i[d->api]];
     char buf[0x40];
     int x0, y0;
-    ui_starmap_draw_starmap(d);
-    ui_starmap_draw_button_text(d, true);
+    ui_starmap_draw_basic(d);
     x0 = (pf->x - ui_data.starmap.x) * 2 + 8;
     y0 = (pf->y - ui_data.starmap.y) * 2 + 8;
     if (pf->reloc != d->rl.from) {
