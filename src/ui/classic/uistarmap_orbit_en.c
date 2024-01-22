@@ -36,8 +36,7 @@ static void ui_starmap_orbit_en_draw_cb(void *vptr)
     char buf[0x80];
     STARMAP_LIM_INIT();
 
-    ui_starmap_draw_starmap(d);
-    ui_starmap_draw_button_text(d, true);
+    ui_starmap_draw_basic(d);
     {
         int x, y;
         x = (p->x - ui_data.starmap.x) * 2 + 23;
