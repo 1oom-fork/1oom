@@ -121,6 +121,7 @@ static void ui_starmap_transport_draw_cb(void *vptr)
     lbxfont_print_str_center(267, 57, (r->pop == 1) ? game_str_sm_trans1 : game_str_sm_transs, UI_SCREEN_W, ui_scale);
     if (d->show_planet_focus) {
         const planet_t *pd = &(g->planet[r->dest]);
+        lbxfont_select_set_12_1(5, 0, 0, 0);
         lbxfont_print_str_center(267, 110, game_str_sm_tdest, UI_SCREEN_W, ui_scale);
         lbxfont_print_str_center(267, 120, pd->name, UI_SCREEN_W, ui_scale);
     }
