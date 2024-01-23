@@ -96,7 +96,8 @@ The following abbreviations appear in the documentation and code:
 ==================
 
 Most of the credit for this software belongs to the progammer who authored
-1oom v1.0 under the pseudonym Kilgore Trout Mask Replicant. Thank you for
+[1oom v1.0](https://kilgoretroutmaskreplicant.gitlab.io/plain-html) 
+under the pseudonym Kilgore Trout Mask Replicant. Thank you for
 creating this and publishing it free and open source!
 
 The original game Master of Orion was developed  by Simtex Software and
