@@ -34,7 +34,6 @@
 static void ui_starmap_draw_cb1(void *vptr)
 {
     struct starmap_data_s *d = vptr;
-    ui_starmap_draw_basic(d);
     if (d->g->gaux->flag_cheat_events) {
         ui_draw_text_overlay(0, 0, game_str_no_events);
     }
@@ -214,6 +213,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
     struct starmap_data_s d;
 
     ui_starmap_common_init(g, &d, active_player);
+    d.draw_cb = ui_starmap_draw_cb1;
 
     ui_delay_1();
     ui_sound_stop_music();  /* or fade? */
@@ -247,8 +247,6 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
     oi_alt_galaxy = uiobj_add_alt_str("galaxy");
     oi_alt_p = uiobj_add_alt_str("p");
     oi_alt_events = uiobj_add_alt_str("events");
-
-    uiobj_set_callback_and_delay(ui_starmap_draw_cb1, &d, STARMAP_DELAY);
 
     while (!flag_done) {
         planet_t *p;
@@ -553,7 +551,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
         p = &(g->planet[g->planet_focus_i[active_player]]);
         ui_starmap_common_update_mouse_hover(&d, oi2);
         if (!flag_done) {
-            ui_starmap_draw_cb1(&d);
+            ui_starmap_draw(&d);
             uiobj_table_set_last(oi_alt_events);
             UIOBJ_CLEAR_LOCAL();
             if (p->owner == active_player) {

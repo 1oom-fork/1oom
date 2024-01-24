@@ -30,7 +30,6 @@ static void ui_starmap_reloc_draw_cb(void *vptr)
     const planet_t *pt = &g->planet[g->planet_focus_i[d->api]];
     char buf[0x40];
     int x0, y0;
-    ui_starmap_draw_basic(d);
     x0 = (pf->x - ui_data.starmap.x) * 2 + 8;
     y0 = (pf->y - ui_data.starmap.y) * 2 + 8;
     if (g->planet_focus_i[d->api] != d->rl.from) {
@@ -80,6 +79,7 @@ void ui_starmap_reloc(struct game_s *g, player_id_t active_player)
     int16_t oi_cancel, oi_accept;
     struct starmap_data_s d;
     ui_starmap_common_init(g, &d, active_player);
+    d.draw_cb = ui_starmap_reloc_draw_cb;
     d.controllable = true;
     {
         uint8_t oldreloc;
@@ -104,7 +104,6 @@ void ui_starmap_reloc(struct game_s *g, player_id_t active_player)
     UIOBJ_CLEAR_LOCAL();
 
     uiobj_set_help_id(2);
-    uiobj_set_callback_and_delay(ui_starmap_reloc_draw_cb, &d, STARMAP_DELAY);
 
     while (!flag_done) {
         int16_t oi1, oi2;
@@ -143,7 +142,7 @@ do_accept:
         }
         if (!flag_done) {
             ui_starmap_common_update_mouse_hover(&d, oi2);
-            ui_starmap_reloc_draw_cb(&d);
+            ui_starmap_draw(&d);
             uiobj_table_clear();
             UIOBJ_CLEAR_LOCAL();
             if (game_extended_reloc_range) {

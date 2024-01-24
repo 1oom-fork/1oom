@@ -42,7 +42,6 @@ static void ui_starmap_orbit_own_draw_cb(void *vptr)
     const planet_t *pt = &g->planet[g->planet_focus_i[d->api]];
     char buf[0x80];
 
-    ui_starmap_draw_basic(d);
     {
         int x, y;
         x = (pf->x - ui_data.starmap.x) * 2 + 23;
@@ -170,6 +169,7 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
     const uint8_t shiptypes[NUM_SHIPDESIGNS] = { 0, 1, 2, 3, 4, 5 };
 
     ui_starmap_common_init(g, &d, active_player);
+    d.draw_cb = ui_starmap_orbit_own_draw_cb;
     d.oo.from = g->planet_focus_i[active_player];
     d.controllable = true;
 
@@ -200,7 +200,6 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
     UIOBJ_CLEAR_LOCAL();
 
     uiobj_set_help_id(16);
-    uiobj_set_callback_and_delay(ui_starmap_orbit_own_draw_cb, &d, STARMAP_DELAY);
 
     while (!flag_done) {
         int16_t oi1, oi2;
@@ -441,7 +440,7 @@ do_accept:
         }
         if (!flag_done) {
             ui_starmap_common_update_mouse_hover(&d, oi2);
-            ui_starmap_orbit_own_draw_cb(&d);
+            ui_starmap_draw(&d);
             uiobj_table_clear();
             UIOBJ_CLEAR_LOCAL();
             oi_f2 = uiobj_add_inputkey(MOO_KEY_F2);

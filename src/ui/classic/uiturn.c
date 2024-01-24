@@ -37,7 +37,6 @@ struct turnmsg_data_s {
 static void ui_turn_msg_draw_cb(void *vptr)
 {
     struct turnmsg_data_s *d = vptr;
-    ui_starmap_draw_basic(&d->sm);
     ui_draw_textbox_2str("", d->str, 74);
 }
 
@@ -55,8 +54,8 @@ void ui_turn_msg(struct game_s *g, int pi, const char *str)
     d.api = pi;
     d.str = str;
     ui_starmap_common_init(g, &d.sm, pi);
+    d.sm.draw_cb = ui_turn_msg_draw_cb;
     d.sm.bottom_highlight = -1;
-    uiobj_set_callback_and_delay(ui_turn_msg_draw_cb, &d, 3);
     uiobj_table_clear();
     uiobj_add_mousearea(0, 0, UI_SCREEN_W - 1, UI_SCREEN_H -1, MOO_KEY_SPACE);
     while (!flag_done) {
@@ -66,7 +65,7 @@ void ui_turn_msg(struct game_s *g, int pi, const char *str)
         if (oi != 0) {
             flag_done = true;
         }
-        ui_turn_msg_draw_cb(&d);
+        ui_starmap_draw(&d);
         ui_draw_finish();
         ui_delay_ticks_or_click(3);
     }

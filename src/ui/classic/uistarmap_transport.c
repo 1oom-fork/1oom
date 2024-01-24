@@ -35,7 +35,6 @@ static void ui_starmap_transport_draw_cb(void *vptr)
     const planet_t *pt = &g->planet[g->planet_focus_i[d->api]];
     char buf[0x80];
 
-    ui_starmap_draw_basic(d);
     {
         int x, y;
         x = (r->x - ui_data.starmap.x) * 2 + 5;
@@ -147,6 +146,7 @@ void ui_starmap_transport(struct game_s *g, player_id_t active_player)
     transport_t *r = &(g->transport[ui_data.starmap.fleet_selected]);
 
     ui_starmap_common_init(g, &d, active_player);
+    d.draw_cb = ui_starmap_transport_draw_cb;
     d.show_planet_focus = ((r->owner == d.api) || (g->eto[d.api].have_ia_scanner));
     d.set_pos_focus = ui_starmap_transport_set_pos_focus;
     d.ts.in_frange = false;
@@ -169,7 +169,6 @@ void ui_starmap_transport(struct game_s *g, player_id_t active_player)
     UIOBJ_CLEAR_LOCAL();
 
     uiobj_set_help_id(3);
-    uiobj_set_callback_and_delay(ui_starmap_transport_draw_cb, &d, STARMAP_DELAY);
 
     while (!flag_done) {
         int16_t oi1, oi2;
@@ -246,7 +245,7 @@ do_accept:
         }
         if (!flag_done) {
             ui_starmap_common_update_mouse_hover(&d, oi2);
-            ui_starmap_transport_draw_cb(&d);
+            ui_starmap_draw(&d);
             uiobj_table_clear();
             UIOBJ_CLEAR_LOCAL();
             if (!ui_extra_enabled || kbd_is_modifier(MOO_MOD_ALT) || !d.controllable) {
