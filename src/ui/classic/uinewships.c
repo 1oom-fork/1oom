@@ -50,7 +50,6 @@ static void newships_draw_cb(void *vptr)
     const struct game_s *g = d->g;
     int x = 38, y = 27;
     char buf[0x20];
-    ui_starmap_draw_basic(&d->sm);
     ui_draw_filled_rect(x, y, x + 151, y + 128, 0x2b);
     lbxgfx_draw_frame(x, y, d->gfx_newship, UI_SCREEN_W);
     lbxfont_select(5, 6, 0, 0);
@@ -95,9 +94,9 @@ void ui_newships(struct game_s *g, int pi)
     d.g = g;
     d.api = pi;
     ui_starmap_common_init(g, &d.sm, pi);
+    d.sm.draw_cb = newships_draw_cb;
     d.sm.bottom_highlight = -1;
     newships_load_data(&d);
-    uiobj_set_callback_and_delay(newships_draw_cb, &d, 4);
     uiobj_table_clear();
     uiobj_add_mousearea(0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, MOO_KEY_SPACE);
     while (!flag_done) {
@@ -108,7 +107,7 @@ void ui_newships(struct game_s *g, int pi)
             flag_done = true;
         }
         if (!flag_done) {
-            newships_draw_cb(&d);
+            ui_starmap_draw(&d);
             ui_draw_finish();
             ui_delay_ticks_or_click(4);
         }

@@ -277,8 +277,9 @@ static int ui_starmap_scrollkey_accel(int zh)
 
 /* -------------------------------------------------------------------------- */
 
-void ui_starmap_draw_basic(struct starmap_data_s *d)
+void ui_starmap_draw(void *vptr)
 {
+    struct starmap_data_s *d = vptr;
     const struct game_s *g = d->g;
     const planet_t *p = &g->planet[g->planet_focus_i[d->api]];
 
@@ -348,6 +349,9 @@ void ui_starmap_draw_basic(struct starmap_data_s *d)
     ui_starmap_draw_planetinfo(g, d->api, g->planet_focus_i[d->api]);
     if (g->evn.build_finished_num[d->api]) {
         ui_starmap_draw_textbox_finished(g, d->api, g->planet_focus_i[d->api]);
+    }
+    if (d->draw_cb) {
+        d->draw_cb(d);
     }
 }
 
@@ -1110,6 +1114,7 @@ int ui_starmap_enemy_incoming(const struct game_s *g, player_id_t pi, int i, boo
 void ui_starmap_common_init(struct game_s *g, struct starmap_data_s *d, player_id_t active_player)
 {
     d->set_pos_focus = ui_starmap_set_pos_focus;
+    d->draw_cb = NULL;
     d->g = g;
     d->api = active_player;
     d->controllable = false;
@@ -1119,6 +1124,8 @@ void ui_starmap_common_init(struct game_s *g, struct starmap_data_s *d, player_i
     d->scanner_delay = 0;
     d->scrollx = 0;
     d->scrolly = 0;
+
+    uiobj_set_callback_and_delay(ui_starmap_draw, d, STARMAP_DELAY);
 }
 
 void ui_starmap_common_update_mouse_hover(struct starmap_data_s *d, int16_t oi)

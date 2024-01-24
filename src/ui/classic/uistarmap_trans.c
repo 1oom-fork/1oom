@@ -32,7 +32,6 @@ static void ui_starmap_trans_draw_cb(void *vptr)
     char buf[0x80];
     int x0, y0, trans_max = pf->pop / 2;
     uiobj_set_help_id(17);
-    ui_starmap_draw_basic(d);
     x0 = (pf->x - ui_data.starmap.x) * 2 + 8;
     y0 = (pf->y - ui_data.starmap.y) * 2 + 8;
     if (pt->owner == d->api) {
@@ -160,6 +159,7 @@ void ui_starmap_trans(struct game_s *g, player_id_t active_player)
     planet_t *p;
     int16_t trans_max;
     ui_starmap_common_init(g, &d, active_player);
+    d.draw_cb = ui_starmap_trans_draw_cb;
     d.controllable = true;
     d.tr.blink = false;
     {
@@ -190,8 +190,6 @@ void ui_starmap_trans(struct game_s *g, player_id_t active_player)
     } while (0)
 
     UIOBJ_CLEAR_LOCAL();
-
-    uiobj_set_callback_and_delay(ui_starmap_trans_draw_cb, &d, STARMAP_DELAY);
 
     while (!flag_done) {
         int16_t oi1, oi2;
@@ -265,7 +263,7 @@ do_accept:
         if (!flag_done) {
             pt = &(g->planet[g->planet_focus_i[active_player]]);
             ui_starmap_common_update_mouse_hover(&d, oi2);
-            ui_starmap_trans_draw_cb(&d);
+            ui_starmap_draw(&d);
             uiobj_table_clear();
             UIOBJ_CLEAR_LOCAL();
             ui_starmap_fill_oi_tbl_stars(&d);

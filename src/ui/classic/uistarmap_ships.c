@@ -43,7 +43,6 @@ static void ui_starmap_ships_draw_cb1(void *vptr)
     const struct game_s *g = d->g;
     const planet_t *p = &(g->planet[g->planet_focus_i[d->api]]);
     char buf[0x80];
-    ui_starmap_draw_basic(d);
     lbxgfx_draw_frame(222, 80, ui_data.gfx.starmap.relocate, UI_SCREEN_W);
     ui_draw_filled_rect(225, 81, 312, 160, 0);
 
@@ -96,6 +95,7 @@ void ui_starmap_ships(struct game_s *g, player_id_t active_player)
     int16_t oi_cancel, oi_accept, oi_finished, oi_s;
     struct starmap_data_s d;
     ui_starmap_common_init(g, &d, active_player);
+    d.draw_cb = ui_starmap_ships_draw_cb1;
 
     planet_t *p = &(g->planet[g->planet_focus_i[active_player]]);
 
@@ -112,8 +112,6 @@ void ui_starmap_ships(struct game_s *g, player_id_t active_player)
     } while (0)
 
     UIOBJ_CLEAR_LOCAL();
-
-    uiobj_set_callback_and_delay(ui_starmap_ships_draw_cb1, &d, STARMAP_DELAY);
 
     while (!flag_done) {
         int16_t oi1, oi2;
@@ -168,7 +166,7 @@ void ui_starmap_ships(struct game_s *g, player_id_t active_player)
         }
         if (!flag_done) {
             ui_starmap_common_update_mouse_hover(&d, oi2);
-            ui_starmap_ships_draw_cb1(&d);
+            ui_starmap_draw(&d);
             uiobj_table_clear();
             UIOBJ_CLEAR_LOCAL();
             if (g->evn.build_finished_num[active_player]) {

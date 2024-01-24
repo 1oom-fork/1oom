@@ -26,6 +26,7 @@ struct shipnon0_s {
 
 struct starmap_data_s {
     void (*set_pos_focus) (const struct game_s *, player_id_t);
+    void (*draw_cb) (void *vptr);
     struct game_s *g; /* FIXME non-const only for ui_starmap_draw_cb1 */
     player_id_t api;
     bool controllable;
@@ -168,7 +169,7 @@ extern void ui_starmap_add_oi_misc(struct starmap_data_s *d);
 extern bool ui_starmap_handle_oi_misc(struct starmap_data_s *d, int16_t oi);
 extern void ui_starmap_handle_oi_ctrl(struct starmap_data_s *d, int16_t oi);
 extern void ui_starmap_handle_scrollkeys(struct starmap_data_s *d, int16_t oi);
-extern void ui_starmap_draw_basic(struct starmap_data_s *d);
+extern void ui_starmap_draw(void *vptr);
 extern void ui_starmap_draw_starmap(struct starmap_data_s *d);
 extern void ui_starmap_draw_button_text(struct starmap_data_s *d, bool highlight);
 extern void ui_starmap_draw_scanner(struct starmap_data_s *d);

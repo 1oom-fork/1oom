@@ -34,7 +34,6 @@ static void ui_starmap_orbit_en_draw_cb(void *vptr)
     const empiretechorbit_t *e = &(g->eto[d->oe.player]);
     char buf[0x80];
 
-    ui_starmap_draw_basic(d);
     {
         int x, y;
         x = (p->x - ui_data.starmap.x) * 2 + 23;
@@ -80,6 +79,7 @@ void ui_starmap_orbit_en(struct game_s *g, player_id_t active_player)
     shipcount_t *os;
 
     ui_starmap_common_init(g, &d, active_player);
+    d.draw_cb = ui_starmap_orbit_en_draw_cb;
     d.oe.from = g->planet_focus_i[active_player];
     d.oe.player = ui_data.starmap.orbit_player;
     os = &(g->eto[d.oe.player].orbit[d.oe.from].ships[0]);
@@ -109,8 +109,6 @@ void ui_starmap_orbit_en(struct game_s *g, player_id_t active_player)
     } while (0)
 
     UIOBJ_CLEAR_LOCAL();
-
-    uiobj_set_callback_and_delay(ui_starmap_orbit_en_draw_cb, &d, STARMAP_DELAY);
 
     while (!flag_done) {
         int16_t oi1, oi2;
@@ -172,7 +170,7 @@ void ui_starmap_orbit_en(struct game_s *g, player_id_t active_player)
         }
         if (!flag_done) {
             ui_starmap_common_update_mouse_hover(&d, oi2);
-            ui_starmap_orbit_en_draw_cb(&d);
+            ui_starmap_draw(&d);
             uiobj_table_clear();
             UIOBJ_CLEAR_LOCAL();
             ui_starmap_fill_oi_tbls(&d);
