@@ -116,6 +116,9 @@ struct starmap_data_s {
             uint8_t *gfx_newship;
             struct draw_stars_s ds;
         } ns;   /* newships */
+        struct {
+            const char *str;
+        } tm;   /* turnmsg */
     };
 };
 

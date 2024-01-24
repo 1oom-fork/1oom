@@ -27,24 +27,17 @@
 
 /* -------------------------------------------------------------------------- */
 
-struct turnmsg_data_s {
-    struct game_s *g;
-    player_id_t api;
-    const char *str;
-    struct starmap_data_s sm;
-};
-
 static void ui_turn_msg_draw_cb(void *vptr)
 {
-    struct turnmsg_data_s *d = vptr;
-    ui_draw_textbox_2str("", d->str, 74);
+    struct starmap_data_s *d = vptr;
+    ui_draw_textbox_2str("", d->tm.str, 74);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void ui_turn_msg(struct game_s *g, int pi, const char *str)
 {
-    struct turnmsg_data_s d;
+    struct starmap_data_s d;
     bool flag_done = false;
     int tempnum;
     ui_switch_1(g, pi);
@@ -52,10 +45,10 @@ void ui_turn_msg(struct game_s *g, int pi, const char *str)
     g->evn.build_finished_num[pi] = 0;
     d.g = g;
     d.api = pi;
-    d.str = str;
-    ui_starmap_common_init(g, &d.sm, pi);
-    d.sm.draw_starmap_cb = ui_turn_msg_draw_cb;
-    d.sm.bottom_highlight = -1;
+    d.tm.str = str;
+    ui_starmap_common_init(g, &d, pi);
+    d.draw_starmap_cb = ui_turn_msg_draw_cb;
+    d.bottom_highlight = -1;
     uiobj_table_clear();
     uiobj_add_mousearea(0, 0, UI_SCREEN_W - 1, UI_SCREEN_H -1, MOO_KEY_SPACE);
     while (!flag_done) {
