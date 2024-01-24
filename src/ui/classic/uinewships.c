@@ -27,31 +27,24 @@
 
 /* -------------------------------------------------------------------------- */
 
-struct newships_data_s {
-    struct game_s *g;
-    player_id_t api;
-    uint8_t *gfx_newship;
-    struct starmap_data_s sm;
-};
-
-static void newships_load_data(struct newships_data_s *d)
+static void newships_load_data(struct starmap_data_s *d)
 {
-    d->gfx_newship = lbxfile_item_get(LBXFILE_BACKGRND, 0x14);
+    d->ns.gfx_newship = lbxfile_item_get(LBXFILE_BACKGRND, 0x14);
 }
 
-static void newships_free_data(struct newships_data_s *d)
+static void newships_free_data(struct starmap_data_s *d)
 {
-    lbxfile_item_release(LBXFILE_BACKGRND, d->gfx_newship);
+    lbxfile_item_release(LBXFILE_BACKGRND, d->ns.gfx_newship);
 }
 
 static void newships_draw_cb(void *vptr)
 {
-    struct newships_data_s *d = vptr;
+    struct starmap_data_s *d = vptr;
     const struct game_s *g = d->g;
     int x = 38, y = 27;
     char buf[0x20];
     ui_draw_filled_rect(x, y, x + 151, y + 128, 0x2b);
-    lbxgfx_draw_frame(x, y, d->gfx_newship, UI_SCREEN_W);
+    lbxgfx_draw_frame(x, y, d->ns.gfx_newship, UI_SCREEN_W);
     lbxfont_select(5, 6, 0, 0);
     lbxfont_set_color_c_n(0x49, 5);
     lib_sprintf(buf, sizeof(buf), "%s %i", game_str_year, g->year + YEAR_BASE);
@@ -85,7 +78,7 @@ static void newships_draw_cb(void *vptr)
 
 void ui_newships(struct game_s *g, int pi)
 {
-    struct newships_data_s d;
+    struct starmap_data_s d;
     bool flag_done = false;
     int tempnum;
     tempnum = g->evn.build_finished_num[pi];
@@ -93,9 +86,9 @@ void ui_newships(struct game_s *g, int pi)
     ui_switch_1(g, pi);
     d.g = g;
     d.api = pi;
-    ui_starmap_common_init(g, &d.sm, pi);
-    d.sm.draw_starmap_cb = newships_draw_cb;
-    d.sm.bottom_highlight = -1;
+    ui_starmap_common_init(g, &d, pi);
+    d.draw_starmap_cb = newships_draw_cb;
+    d.bottom_highlight = -1;
     newships_load_data(&d);
     uiobj_table_clear();
     uiobj_add_mousearea(0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, MOO_KEY_SPACE);
