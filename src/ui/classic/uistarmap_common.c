@@ -283,6 +283,7 @@ void ui_starmap_draw(void *vptr)
     const struct game_s *g = d->g;
     const planet_t *p = &g->planet[g->planet_focus_i[d->api]];
 
+    lbxgfx_draw_frame(0, 0, ui_data.gfx.starmap.mainview, UI_SCREEN_W);
     ui_starmap_draw_starmap(d);
     ui_starmap_draw_button_text(d, true);
     ui_draw_filled_rect(224, 5, 314, 178, 0);
@@ -399,7 +400,6 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
         d->anim_delay = 0;
     }
     ui_draw_filled_rect(6, 6, 221, 177, 0);
-    lbxgfx_draw_frame(0, 0, ui_data.gfx.starmap.mainview, UI_SCREEN_W);
     uiobj_set_limits(6, 6, 221, 177);
     {
         int x0, y0, x1, y1;
