@@ -112,6 +112,10 @@ struct starmap_data_s {
             struct draw_stars_s ds;
             int frame_ship;
         } en;   /* enroute */
+        struct {
+            uint8_t *gfx_newship;
+            struct draw_stars_s ds;
+        } ns;   /* newships */
     };
 };
 

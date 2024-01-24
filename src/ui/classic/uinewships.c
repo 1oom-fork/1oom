@@ -27,32 +27,24 @@
 
 /* -------------------------------------------------------------------------- */
 
-struct newships_data_s {
-    struct game_s *g;
-    player_id_t api;
-    uint8_t *gfx_newship;
-    struct starmap_data_s sm;
-    struct draw_stars_s ds;
-};
-
-static void newships_load_data(struct newships_data_s *d)
+static void newships_load_data(struct starmap_data_s *d)
 {
-    d->gfx_newship = lbxfile_item_get(LBXFILE_BACKGRND, 0x14);
+    d->ns.gfx_newship = lbxfile_item_get(LBXFILE_BACKGRND, 0x14);
 }
 
-static void newships_free_data(struct newships_data_s *d)
+static void newships_free_data(struct starmap_data_s *d)
 {
-    lbxfile_item_release(LBXFILE_BACKGRND, d->gfx_newship);
+    lbxfile_item_release(LBXFILE_BACKGRND, d->ns.gfx_newship);
 }
 
 static void newships_draw_cb(void *vptr)
 {
-    struct newships_data_s *d = vptr;
+    struct starmap_data_s *d = vptr;
     const struct game_s *g = d->g;
     int x = 38, y = 27;
     char buf[0x20];
     ui_draw_filled_rect(x, y, x + 151, y + 128, 0x2b);
-    lbxgfx_draw_frame(x, y, d->gfx_newship, UI_SCREEN_W);
+    lbxgfx_draw_frame(x, y, d->ns.gfx_newship, UI_SCREEN_W);
     lbxfont_select(5, 6, 0, 0);
     lbxfont_set_color_c_n(0x49, 5);
     lib_sprintf(buf, sizeof(buf), "%s %i", game_str_year, g->year + YEAR_BASE);
@@ -71,7 +63,7 @@ static void newships_draw_cb(void *vptr)
             ui_draw_line1(x0, y0 + 30, x0 + 39, y0 + 30, 0x5c);
             lbxfont_select(2, 0, 0, 0);
             lbxfont_print_str_center(x0 + 20, y0 + 33, sd->name, UI_SCREEN_W);
-            ui_draw_stars(x0, y0 + 2, i * 10, 40, &d->ds);
+            ui_draw_stars(x0, y0 + 2, i * 10, 40, &d->ns.ds);
             gfx = ui_data.gfx.ships[sd->look];
             lbxgfx_set_frame_0(gfx);
             lbxgfx_draw_frame(x0 + 4, y0 + 3, gfx, UI_SCREEN_W);
@@ -79,14 +71,14 @@ static void newships_draw_cb(void *vptr)
             lbxfont_print_num_right(x0 + 36, y0 + 23, n, UI_SCREEN_W);
         }
     }
-    ui_draw_set_stars_xoffs(&d->ds, false);
+    ui_draw_set_stars_xoffs(&d->ns.ds, false);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void ui_newships(struct game_s *g, int pi)
 {
-    struct newships_data_s d;
+    struct starmap_data_s d;
     bool flag_done = false;
     int tempnum;
     tempnum = g->evn.build_finished_num[pi];
@@ -94,11 +86,11 @@ void ui_newships(struct game_s *g, int pi)
     ui_switch_1(g, pi);
     d.g = g;
     d.api = pi;
-    ui_starmap_common_init(g, &d.sm, pi);
-    d.sm.draw_starmap_cb = newships_draw_cb;
-    d.sm.bottom_highlight = -1;
-    d.ds.xoff1 = 0;
-    d.ds.xoff2 = 0;
+    ui_starmap_common_init(g, &d, pi);
+    d.draw_starmap_cb = newships_draw_cb;
+    d.bottom_highlight = -1;
+    d.ns.ds.xoff1 = 0;
+    d.ns.ds.xoff2 = 0;
     newships_load_data(&d);
     uiobj_table_clear();
     uiobj_add_mousearea(0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, MOO_KEY_SPACE);
