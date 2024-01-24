@@ -605,6 +605,9 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
             }
         }
     }
+    if (d->draw_starmap_cb) {
+        d->draw_starmap_cb(d);
+    }
 }
 
 void ui_starmap_draw_button_text(struct starmap_data_s *d, bool highlight)
@@ -1115,6 +1118,7 @@ void ui_starmap_common_init(struct game_s *g, struct starmap_data_s *d, player_i
 {
     d->set_pos_focus = ui_starmap_set_pos_focus;
     d->draw_cb = NULL;
+    d->draw_starmap_cb = NULL;
     d->g = g;
     d->api = active_player;
     d->controllable = false;

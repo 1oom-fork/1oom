@@ -54,7 +54,7 @@ void ui_turn_msg(struct game_s *g, int pi, const char *str)
     d.api = pi;
     d.str = str;
     ui_starmap_common_init(g, &d.sm, pi);
-    d.sm.draw_cb = ui_turn_msg_draw_cb;
+    d.sm.draw_starmap_cb = ui_turn_msg_draw_cb;
     d.sm.bottom_highlight = -1;
     uiobj_table_clear();
     uiobj_add_mousearea(0, 0, UI_SCREEN_W - 1, UI_SCREEN_H -1, MOO_KEY_SPACE);

@@ -26,34 +26,23 @@
 
 /* -------------------------------------------------------------------------- */
 
-static void ui_starmap_transport_draw_cb(void *vptr)
+static void ui_starmap_transport_draw_starmap_cb(void *vptr)
 {
     struct starmap_data_s *d = vptr;
     const struct game_s *g = d->g;
-    const transport_t *r = &(g->transport[ui_data.starmap.fleet_selected]);
+    const transport_t *r = &(d->g->transport[ui_data.starmap.fleet_selected]);
     const empiretechorbit_t *e = &(g->eto[r->owner]);
     const planet_t *pt = &g->planet[g->planet_focus_i[d->api]];
-    char buf[0x80];
-
     {
         int x, y;
         x = (r->x - ui_data.starmap.x) * 2 + 5;
         y = (r->y - ui_data.starmap.y) * 2 + 5;
         lbxgfx_draw_frame_offs(x, y, ui_data.gfx.starmap.shipbord, 6, 6, 221, 177, UI_SCREEN_W);
     }
-    ui_draw_filled_rect(225, 8, 314, 180, 7);
-    lbxgfx_draw_frame(224, 4, ui_data.gfx.starmap.tranbord, UI_SCREEN_W);
-    if (d->controllable) {
-        lbxgfx_draw_frame(224, 159, ui_data.gfx.starmap.tranxtra, UI_SCREEN_W);
-    }
-    ui_starmap_draw_scanner(d);
-    lib_sprintf(buf, sizeof(buf), "%s %s", game_str_tbl_race[e->race], game_str_sm_fleet);
-    lbxfont_select_set_12_4(5, tbl_banner_fontparam[e->banner], 0, 0);
-    lbxfont_print_str_center(267, 10, buf, UI_SCREEN_W);
     if (d->show_planet_focus) {
         const planet_t *pd = &(g->planet[r->dest]);
         uint8_t *gfx;
-        int x0, y0, x1, y1, dist;
+        int x0, y0, x1, y1;
         bool dest_ok = true;
         x1 = (pt->x - ui_data.starmap.x) * 2 + 8;
         y1 = (pt->y - ui_data.starmap.y) * 2 + 8;
@@ -81,7 +70,31 @@ static void ui_starmap_transport_draw_cb(void *vptr)
             lbxgfx_set_frame_0(gfx);
         }
         lbxgfx_draw_frame_offs(x0, y0, gfx, 6, 6, 221, 177, UI_SCREEN_W);
-        dist = game_get_min_dist(g, r->owner, g->planet_focus_i[d->api]);
+    }
+}
+
+static void ui_starmap_transport_draw_cb(void *vptr)
+{
+    struct starmap_data_s *d = vptr;
+    const struct game_s *g = d->g;
+    const transport_t *r = &(g->transport[ui_data.starmap.fleet_selected]);
+    const empiretechorbit_t *e = &(g->eto[r->owner]);
+    const planet_t *pt = &g->planet[g->planet_focus_i[d->api]];
+    char buf[0x80];
+    bool dest_ok = true;
+
+    ui_draw_filled_rect(225, 8, 314, 180, 7);
+    lbxgfx_draw_frame(224, 4, ui_data.gfx.starmap.tranbord, UI_SCREEN_W);
+    if (d->controllable) {
+        lbxgfx_draw_frame(224, 159, ui_data.gfx.starmap.tranxtra, UI_SCREEN_W);
+        dest_ok = game_transport_dest_ok(g, pt, d->api);
+    }
+    ui_starmap_draw_scanner(d);
+    lib_sprintf(buf, sizeof(buf), "%s %s", game_str_tbl_race[e->race], game_str_sm_fleet);
+    lbxfont_select_set_12_4(5, tbl_banner_fontparam[e->banner], 0, 0);
+    lbxfont_print_str_center(267, 10, buf, UI_SCREEN_W);
+    if (d->show_planet_focus) {
+        int dist = game_get_min_dist(g, r->owner, g->planet_focus_i[d->api]);
         if (d->controllable && (pt->within_frange[d->api] == 0)) {
             /* FIXME use proper positioning for varying str length */
             d->ts.in_frange = false;
@@ -147,6 +160,7 @@ void ui_starmap_transport(struct game_s *g, player_id_t active_player)
 
     ui_starmap_common_init(g, &d, active_player);
     d.draw_cb = ui_starmap_transport_draw_cb;
+    d.draw_starmap_cb = ui_starmap_transport_draw_starmap_cb;
     d.show_planet_focus = ((r->owner == d.api) || (g->eto[d.api].have_ia_scanner));
     d.set_pos_focus = ui_starmap_transport_set_pos_focus;
     d.ts.in_frange = false;
