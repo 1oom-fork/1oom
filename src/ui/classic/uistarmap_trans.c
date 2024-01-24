@@ -23,6 +23,36 @@
 
 /* -------------------------------------------------------------------------- */
 
+static void ui_starmap_trans_draw_starmap_cb(void *vptr)
+{
+    struct starmap_data_s *d = vptr;
+    const struct game_s *g = d->g;
+    const planet_t *pf = &g->planet[d->tr.from];
+    const planet_t *pt = &g->planet[g->planet_focus_i[d->api]];
+    int x0, y0;
+    x0 = (pf->x - ui_data.starmap.x) * 2 + 8;
+    y0 = (pf->y - ui_data.starmap.y) * 2 + 8;
+    lbxgfx_draw_frame_offs(x0, y0, ui_data.gfx.starmap.planbord, 6, 6, 221, 177, UI_SCREEN_W);
+    if (d->tr.from != g->planet_focus_i[d->api]) {
+        const uint8_t *ctbl;
+        int x1, y1;
+        x1 = (pt->x - ui_data.starmap.x) * 2 + 14;
+        y1 = (pt->y - ui_data.starmap.y) * 2 + 14;
+        if (0
+            || (!d->tr.other)
+            || (pt->within_frange[d->api] != 1)
+            || BOOLVEC_IS0(pt->explored, d->api)
+            || (pt->owner == PLAYER_NONE)
+            || (pt->type < g->eto[d->api].have_colony_for)
+            ) {
+            ctbl = colortbl_line_red;
+        } else {
+            ctbl = colortbl_line_green;
+        }
+        ui_draw_line_limit_ctbl(x0 + 6, y0 + 6, x1, y1, ctbl, 5, ui_data.starmap.line_anim_phase);
+    }
+}
+
 static void ui_starmap_trans_draw_cb(void *vptr)
 {
     struct starmap_data_s *d = vptr;
@@ -30,10 +60,8 @@ static void ui_starmap_trans_draw_cb(void *vptr)
     const planet_t *pf = &g->planet[d->tr.from];
     const planet_t *pt = &g->planet[g->planet_focus_i[d->api]];
     char buf[0x80];
-    int x0, y0, trans_max = pf->pop / 2;
+    int trans_max = pf->pop / 2;
     uiobj_set_help_id(17);
-    x0 = (pf->x - ui_data.starmap.x) * 2 + 8;
-    y0 = (pf->y - ui_data.starmap.y) * 2 + 8;
     if (pt->owner == d->api) {
         lbxgfx_draw_frame(222, 80, ui_data.gfx.starmap.relocate, UI_SCREEN_W);
         /* if (pt->unrest == PLANET_UNREST_REBELLION) {} never true, trans button disabled in uistarmap.c */
@@ -47,27 +75,8 @@ static void ui_starmap_trans_draw_cb(void *vptr)
             ui_draw_box1(227, 73, 310, 159, 4, 4);
         }
     }
-    lbxgfx_draw_frame_offs(x0, y0, ui_data.gfx.starmap.planbord, 6, 6, 221, 177, UI_SCREEN_W);
     lbxgfx_set_new_frame(ui_data.gfx.starmap.reloc_bu_accept, 1);
     lbxgfx_draw_frame(271, 163, ui_data.gfx.starmap.reloc_bu_accept, UI_SCREEN_W);
-    if (d->tr.from != g->planet_focus_i[d->api]) {
-        const uint8_t *ctbl;
-        int x1, y1;
-        x1 = (pt->x - ui_data.starmap.x) * 2 + 14;
-        y1 = (pt->y - ui_data.starmap.y) * 2 + 14;
-        if (0
-          || (!d->tr.other)
-          || (pt->within_frange[d->api] != 1)
-          || BOOLVEC_IS0(pt->explored, d->api)
-          || (pt->owner == PLAYER_NONE)
-          || (pt->type < g->eto[d->api].have_colony_for)
-        ) {
-            ctbl = colortbl_line_red;
-        } else {
-            ctbl = colortbl_line_green;
-        }
-        ui_draw_line_limit_ctbl(x0 + 6, y0 + 6, x1, y1, ctbl, 5, ui_data.starmap.line_anim_phase);
-    }
     if (d->tr.from != g->planet_focus_i[d->api] || (ui_extra_enabled && d->tr.other)) {
         if (pt->within_frange[d->api] != 1) {
             int mindist = game_get_min_dist(g, d->api, g->planet_focus_i[d->api]);
@@ -160,6 +169,7 @@ void ui_starmap_trans(struct game_s *g, player_id_t active_player)
     int16_t trans_max;
     ui_starmap_common_init(g, &d, active_player);
     d.draw_cb = ui_starmap_trans_draw_cb;
+    d.draw_starmap_cb = ui_starmap_trans_draw_starmap_cb;
     d.controllable = true;
     d.tr.blink = false;
     {

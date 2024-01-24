@@ -34,31 +34,19 @@ static inline bool ui_starmap_orbit_own_in_frange(struct starmap_data_s *d, uint
 
 /* -------------------------------------------------------------------------- */
 
-static void ui_starmap_orbit_own_draw_cb(void *vptr)
+static void ui_starmap_orbit_own_draw_starmap_cb(void *vptr)
 {
     struct starmap_data_s *d = vptr;
     const struct game_s *g = d->g;
-    const planet_t *pf = &g->planet[d->oo.from];
+    const planet_t *pf = &d->g->planet[d->oo.from];
     const planet_t *pt = &g->planet[g->planet_focus_i[d->api]];
-    char buf[0x80];
-
     {
         int x, y;
         x = (pf->x - ui_data.starmap.x) * 2 + 23;
         y = (pf->y - ui_data.starmap.y) * 2 + 5;
         lbxgfx_draw_frame_offs(x, y, ui_data.gfx.starmap.shipbord, 6, 6, 221, 177, UI_SCREEN_W);
     }
-    ui_draw_filled_rect(225, 8, 314, 192, 7);
-    lbxgfx_draw_frame(224, 5, ui_data.gfx.starmap.move_shi, UI_SCREEN_W);
-    if (d->oo.sn0.num < NUM_SHIPDESIGNS) {
-        lbxgfx_draw_frame(224, 151, ui_data.gfx.starmap.movextra, UI_SCREEN_W);
-        ui_draw_filled_rect(228, 155, 309, 175, 7);
-    }
-    lbxfont_select_set_12_4(0, 5, 0, 0);
-    lbxfont_print_str_center(268, 11, game_str_sm_fleetdep, UI_SCREEN_W);
-
     if (g->planet_focus_i[d->api] != d->oo.from) {
-        int dist = game_get_min_dist(g, d->api, g->planet_focus_i[d->api]);
         int x0, y0, x1, y1;
         const uint8_t *ctbl;
         uint8_t *gfx;
@@ -72,6 +60,28 @@ static void ui_starmap_orbit_own_draw_cb(void *vptr)
         gfx = ui_data.gfx.starmap.smalship[g->eto[d->api].banner];
         lbxgfx_set_frame_0(gfx);
         lbxgfx_draw_frame_offs(x0, y0, gfx, 6, 6, 221, 177, UI_SCREEN_W);
+    }
+}
+
+static void ui_starmap_orbit_own_draw_cb(void *vptr)
+{
+    struct starmap_data_s *d = vptr;
+    const struct game_s *g = d->g;
+    const planet_t *pf = &g->planet[d->oo.from];
+    const planet_t *pt = &g->planet[g->planet_focus_i[d->api]];
+    char buf[0x80];
+
+    ui_draw_filled_rect(225, 8, 314, 192, 7);
+    lbxgfx_draw_frame(224, 5, ui_data.gfx.starmap.move_shi, UI_SCREEN_W);
+    if (d->oo.sn0.num < NUM_SHIPDESIGNS) {
+        lbxgfx_draw_frame(224, 151, ui_data.gfx.starmap.movextra, UI_SCREEN_W);
+        ui_draw_filled_rect(228, 155, 309, 175, 7);
+    }
+    lbxfont_select_set_12_4(0, 5, 0, 0);
+    lbxfont_print_str_center(268, 11, game_str_sm_fleetdep, UI_SCREEN_W);
+
+    if (g->planet_focus_i[d->api] != d->oo.from) {
+        int dist = game_get_min_dist(g, d->api, g->planet_focus_i[d->api]);
         if (!ui_starmap_orbit_own_in_frange(d, g->planet_focus_i[d->api])) {
             if (d->oo.sn0.num < NUM_SHIPDESIGNS) { /* WASBUG MOO1 compares to 7, resulting in text below last ship */
                 lib_sprintf(buf, sizeof(buf), "%s %i %s", game_str_sm_destoor, dist, game_str_sm_parsfromcc);
@@ -169,6 +179,7 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
 
     ui_starmap_common_init(g, &d, active_player);
     d.draw_cb = ui_starmap_orbit_own_draw_cb;
+    d.draw_starmap_cb = ui_starmap_orbit_own_draw_starmap_cb;
     d.oo.from = g->planet_focus_i[active_player];
     d.controllable = true;
 
