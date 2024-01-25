@@ -1340,9 +1340,9 @@ static void game_battle_with_human_do_sub3(struct battle_s *bt)
                         b->retreat = 1;
                     } else {
                         game_battle_with_human_do_turn_ai(bt);
+                        flag_turn_done = true;
+                        game_battle_item_done(bt);
                     }
-                    flag_turn_done = true;
-                    game_battle_item_done(bt);
                 } else {
                     /*4ece2*/
                     act = ui_battle_turn(bt);
