@@ -198,6 +198,8 @@ static void game_generate_planets(struct game_s *g)
 
         p->look = rnd_0_nm1(2, &g->seed) * 6;
         p->frame = rnd_0_nm1(50, &g->seed);
+        /* Needed for the original sequence of random numbers */
+        /*p->field_16 =*/ rnd_0_nm1(4, &g->seed);
 
         in_nebula = false;
         for (int k = 0; k < g->nebula_num; ++k) {
@@ -574,14 +576,13 @@ static void game_generate_galaxy(struct game_s *g)
 
 static void game_generate_planet_names(struct game_s *g)
 {
-    BOOLVEC_DECLARE(in_use, PLANET_NAMES_MAX);
-    BOOLVEC_CLEAR(in_use, PLANET_NAMES_MAX);
+    BOOLVEC_DECLARE(in_use, PLANETS_MAX);
+    BOOLVEC_CLEAR(in_use, PLANETS_MAX);
     for (int i = 0; i < g->galaxy_stars; ++i) {
         uint16_t j;
-        j = rnd_0_nm1(PLANET_NAMES_MAX, &g->seed);
-        while (BOOLVEC_IS1(in_use, j)) {
-            if (++j == PLANET_NAMES_MAX) { j = 0; }
-        }
+        do {
+            j = rnd_0_nm1(PLANETS_MAX, &g->seed);
+        } while (BOOLVEC_IS1(in_use, j));
         BOOLVEC_SET1(in_use, j);
         strcpy(g->planet[i].name, game_str_tbl_planet_names[j]);
     }
@@ -590,37 +591,31 @@ static void game_generate_planet_names(struct game_s *g)
 
 static void game_generate_race_banner(struct game_s *g)
 {
-    BOOLVEC_DECLARE(in_use, MAX((int)RACE_NUM, (int)BANNER_NUM));
+    const uint16_t race_tbl[] = {7, 1, 5, 0, 3, 9, 4, 6, 2, 8};
+    BOOLVEC_DECLARE(in_use, (int)BANNER_NUM);
     uint16_t loops;
     loops = 0;
-    BOOLVEC_CLEAR(in_use, MAX((int)RACE_NUM, (int)BANNER_NUM));
     for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         race_t race;
+        bool in_use = false;
         race = g->eto[i].race;
         if (race != RACE_RANDOM) {
-            BOOLVEC_SET1(in_use, race);
             continue;
         }
-        race = rnd_0_nm1(RACE_NUM, &g->seed);
-        if (BOOLVEC_IS0(in_use, race)) {
-            BOOLVEC_SET1(in_use, race);
-            g->eto[i].race = race;
-        } else {
-            --i; /* try again */
-            if (++loops == 100) {
-                for (race = 0; race < RACE_NUM; ++race) {
-                    if (BOOLVEC_IS0(in_use, race)) {
-                        BOOLVEC_SET1(in_use, race);
-                        g->eto[i].race = race;
-                        break;
-                    }
-                }
-                loops = 0;
+        race = race_tbl[rnd_0_nm1(RACE_NUM, &g->seed)];
+        for (player_id_t j = PLAYER_0; j < i; ++j) {
+            if (g->eto[j].race == race) {
+                in_use = true;
+                --i;
+                break;
             }
+        }
+        if (!in_use) {
+            g->eto[i].race = race;
         }
     }
     loops = 0;
-    BOOLVEC_CLEAR(in_use, MAX((int)RACE_NUM, (int)BANNER_NUM));
+    BOOLVEC_CLEAR(in_use, (int)BANNER_NUM);
     for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         banner_t banner;
         banner = g->eto[i].banner;
@@ -650,9 +645,13 @@ static void game_generate_race_banner(struct game_s *g)
         if (IS_AI(g, i)) {
             race_t r;
             r = g->eto[i].race;
-            g->eto[i].trait1 = game_num_tbl_trait1[r][rnd_0_nm1(TRAIT1_TBL_NUM, &g->seed)];
             g->eto[i].trait2 = game_num_tbl_trait2[r][rnd_0_nm1(TRAIT2_TBL_NUM, &g->seed)];
         }
+    }
+    for (player_id_t i = PLAYER_0; i < g->players; ++i) {
+        race_t r;
+        r = g->eto[i].race;
+        g->eto[i].trait1 = game_num_tbl_trait1[r][rnd_0_nm1(TRAIT1_TBL_NUM, &g->seed)];
     }
 }
 
@@ -664,6 +663,7 @@ static void game_generate_home_etc(struct game_s *g)
 start_of_func:
     flag_all_ok = false;
     loops = 0;
+    game_generate_race_banner(g);
     while ((!flag_all_ok) && (loops < 200)) {
         flag_all_ok = true;
         for (player_id_t i = PLAYER_0; i < g->players; ++i) {
@@ -772,7 +772,6 @@ start_of_func:
         game_generate_planet_names(g);
         goto start_of_func;
     }
-    game_generate_race_banner(g);   /* must be run once and before the home planet name copy below */
     for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         planet_t *p;
         homei = tblhome[i];
@@ -1253,7 +1252,7 @@ int game_new_tutor(struct game_s *g, struct game_aux_s *gaux)
     opt.pdata[PLAYER_0].banner = BANNER_WHITE;
     strcpy(opt.pdata[PLAYER_0].playername, "Mr Tutor");
     strcpy(opt.pdata[PLAYER_0].homename, "SOL");
-    opt.galaxy_seed = 0xdeadbeef; /* FIXME find value that gives an easy game */
+    opt.galaxy_seed = 0xfda3f;
     return game_new(g, gaux, &opt);
 }
 

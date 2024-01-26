@@ -7,9 +7,6 @@
 #ifndef MAX
 #define MAX(a, b) (((a) >= (b)) ? (a) : (b))
 #endif
-#ifndef MAX3
-#define MAX3(a, b) (MAX(NAX((a), (b)), (c)))
-#endif
 #ifndef SETMIN
 #define SETMIN(a, b) do { if ((b) < (a)) { (a) = (b); }} while (0)
 #endif
@@ -23,4 +20,5 @@
 #define SUBSATT(_v_, _n_, _bot_) do { int _t_; _t_ = (_v_) - (_n_); SETMAX(_t_, (_bot_)); (_v_) = _t_; } while (0)
 #define SUBSAT0(_v_, _n_) SUBSATT(_v_, _n_, 0)
 #define TBLLEN(_t_) (sizeof((_t_)) / sizeof((_t_)[0]))
+
 #endif

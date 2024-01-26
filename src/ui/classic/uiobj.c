@@ -1191,8 +1191,8 @@ static uint32_t uiobj_handle_kbd(int16_t *oiptr)
         *oiptr = oi;
         p = &uiobj_tbl[oi];
         if ((p->x0 < UI_SCREEN_W) && (p->y0 < UI_SCREEN_H)) {
-            mouse_stored_x = p->x0 + (p->x1 - p->x0) / 2;
-            mouse_stored_y = p->y0 + (p->y1 - p->y0) / 2;
+            mouse_stored_x = smidx(p);
+            mouse_stored_y = smidy(p);
             if ((mouse_stored_x < UI_SCREEN_W) && (mouse_stored_y < UI_SCREEN_H)) {
                 ui_cursor_update_gfx_i(mouse_stored_x, mouse_stored_y);
                 uiobj_mouseoff = ui_cursor_mouseoff;
@@ -1419,8 +1419,8 @@ static int16_t uiobj_handle_input_sub0(void)
             if (oi == 0) {
                 goto loc_13896;
             }
-            mx = p->x0 + (p->x1 - p->x0) / 2;
-            my = p->y0 + (p->y1 - p->y0) / 2;
+            mx = smidx(p);
+            my = smidy(p);
             uiobj_cursor_redraw_hmm2(oi, mx, my);
             if (p->type == 1) {
                 if (*p->vptr == 0) {
