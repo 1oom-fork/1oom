@@ -43,7 +43,7 @@ static void empirestatus_draw_cb(void *vptr)
     const struct game_stats_s *st = &(d->st);
     char buf[0x40];
 
-    ui_draw_color_buf(0x3a);
+    ui_draw_filled_rect(0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, 0x3a);
     lbxgfx_draw_frame(0, 0, d->gfx, UI_SCREEN_W);
 
     lbxfont_select_set_12_4(4, 0xf, 0, 0);
