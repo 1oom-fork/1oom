@@ -429,19 +429,19 @@ void game_update_empire_within_range(struct game_s *g)
     }
 }
 
-bool game_check_coord_is_visible(struct game_s *g, player_id_t pi, int range, int x, int y)
+bool game_check_coord_is_visible(const struct game_s *g, player_id_t pi, int range, int x, int y)
 {
-    empiretechorbit_t *e = &(g->eto[pi]);
+    const empiretechorbit_t *e = &(g->eto[pi]);
     range *= 10;    /* 30, 50, 70, 90 */
     for (int i = 0; i < g->galaxy_stars; ++i) {
-        planet_t *p = &(g->planet[i]);
+        const planet_t *p = &(g->planet[i]);
         if ((p->owner == pi) && (util_math_dist_fast(x, y, p->x, p->y) <= range)) {
             return true;
         }
     }
     range = (range - 30) / 2;  /* 0, 10, 20, 30 */
     for (int i = 0; i < g->galaxy_stars; ++i) {
-        planet_t *p = &(g->planet[i]);
+        const planet_t *p = &(g->planet[i]);
         uint32_t snum;
         snum = 0;
         for (int j = 0; (j < e->shipdesigns_num) && !snum; ++j) {
@@ -452,7 +452,7 @@ bool game_check_coord_is_visible(struct game_s *g, player_id_t pi, int range, in
         }
     }
     for (int ei = 0; ei < g->enroute_num; ++ei) {
-        fleet_enroute_t *r = &(g->enroute[ei]);
+        const fleet_enroute_t *r = &(g->enroute[ei]);
         if ((r->owner == pi) && (util_math_dist_fast(x, y, r->x, r->y) <= range)) {
             return true;
         }
@@ -667,7 +667,7 @@ int game_get_tech_prod(int prod, int slider, race_t race, planet_special_t speci
     return MIN(v, 0x7fff);
 }
 
-void game_print_prod_of_total(struct game_s *g, int prod, char *buf)
+void game_print_prod_of_total(const struct game_s *g, int prod, char *buf)
 {
     int v = g->eto[PLAYER_0].total_production_bc;
     if (v == 0) {
