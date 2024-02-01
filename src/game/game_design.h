@@ -79,7 +79,7 @@ extern void game_design_compact_slots(shipdesign_t *sd);
 extern void game_design_scrap(struct game_s *g, player_id_t player, int shipi, bool flag_for_new);
 extern bool game_design_add(struct game_s *g, player_id_t player, const shipdesign_t *sd, bool update_reserve_fuel);
 extern void game_design_set_hp(shipdesign_t *sd);
-extern void game_design_update_haveflags(struct design_data_s *d);;
+extern void game_design_update_haveflags(struct design_data_s *d);
 extern void game_design_init_maxtech_haveflags(struct design_data_s *d);
 
 #endif
