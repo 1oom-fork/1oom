@@ -9,6 +9,7 @@
 #endif
 
 #include "hw.h"
+#include "hw_video.h"
 #include "hwsdl_video.h"
 #include "hwsdl_mouse.h"
 #include "hwsdl_opt.h"
@@ -18,26 +19,15 @@
 
 /* -------------------------------------------------------------------------- */
 
-/* double buffering + 2 aux buffers */
-#define NUM_VIDEOBUF    4
-
 static struct sdl_video_s {
     SDL_Surface *screen;
 #ifdef HAVE_OPENGL
     SDL_Surface *hwrenderbuf;
 #endif
-    void (*render)(int bufi);
+    void (*render)(const uint8_t *buf);
     void (*update)(void);
-    void (*setpal)(uint8_t *pal, int first, int num);
+    void (*setpal)(const uint8_t *pal, int first, int num);
 
-    /* buffers used by UI */
-    uint8_t *buf[NUM_VIDEOBUF];
-    int bufw;
-    int bufh;
-    int bufi;
-
-    /* palette as set by UI, 6bpp */
-    uint8_t pal[256 * 3];
 #ifdef HAVE_OPENGL
     /* precalculated 32bit palette */
     uint32_t pal32[256];
@@ -50,15 +40,16 @@ static struct sdl_video_s {
 
 /* -------------------------------------------------------------------------- */
 
-static void video_render_8bpp(int bufi)
+static void video_render_8bpp(const uint8_t *buf)
 {
+    int w = video.screen->w, h = video.screen->h;
     int pitch = video.screen->pitch;
     Uint8 *p = (Uint8 *)video.screen->pixels;
-    uint8_t *q = video.buf[bufi];
-    for (int y = 0; y < video.bufh; ++y) {
-        memcpy(p, q, video.bufw);
+    const uint8_t *q = buf;
+    for (int y = 0; y < h; ++y) {
+        memcpy(p, q, w);
         p += pitch;
-        q += video.bufw;
+        q += w;
     }
 }
 
@@ -67,14 +58,13 @@ static void video_update_8bpp(void)
     SDL_UpdateRect(video.screen, 0, 0, video.screen->w, video.screen->h);
 }
 
-static void video_setpal_8bpp(uint8_t *pal, int first, int num)
+static void video_setpal_8bpp(const uint8_t *pal, int first, int num)
 {
     SDL_Color color[256];
-    memcpy(&video.pal[first * 3], pal, num * 3);
     for (int i = first; i < (first + num); ++i) {
-        color[i].r = *pal++ << 2;
-        color[i].g = *pal++ << 2;
-        color[i].b = *pal++ << 2;
+        color[i].r = palette_6bit_to_8bit(*pal++);
+        color[i].g = palette_6bit_to_8bit(*pal++);
+        color[i].b = palette_6bit_to_8bit(*pal++);
     }
     SDL_SetColors(video.screen, &color[first], first, num);
     video_update_8bpp();
@@ -82,48 +72,19 @@ static void video_setpal_8bpp(uint8_t *pal, int first, int num)
 
 #ifdef HAVE_OPENGL
 
-#ifdef FEATURE_MODEBUG
-#include "mouse.h"
-static uint8_t colorpaldebug = 0;
-#endif
-
-static void video_render_gl_32bpp(int bufi)
+static void video_render_gl_32bpp(const uint8_t *buf)
 {
-    int pitch_skip = ((video.bufw * sizeof(Uint32)) - video.hwrenderbuf->pitch) / sizeof(Uint32);
+    int w = video.hwrenderbuf->w, h = video.hwrenderbuf->h;
+    int pitch_skip = ((w * sizeof(Uint32)) - video.hwrenderbuf->pitch) / sizeof(Uint32);
 
     Uint32 *p = (Uint32 *)video.hwrenderbuf->pixels;
-    uint8_t *q = video.buf[bufi];
-    for (int y = 0; y < video.bufh; ++y) {
-        for (int x = 0; x < video.bufw; ++x) {
+    const uint8_t *q = buf;
+    for (int y = 0; y < h; ++y) {
+        for (int x = 0; x < w; ++x) {
             *p++ = video.pal32[*q++];
         }
         p += pitch_skip;
     }
-#ifdef FEATURE_MODEBUG
-    if (hw_opt_overlay_pal) {
-        p = (Uint32 *)video.hwrenderbuf->pixels;
-        for (int x = 0; x < 256; ++x) {
-            *p++ = video.pal32[x];
-        }
-        if ((mouse_x >= 1) && (mouse_x < video.bufw) && (mouse_y >= 1) && (mouse_y < video.bufh)) {
-            uint8_t c;
-            int mx = mouse_x - 1, my = mouse_y - 1;
-            c = colorpaldebug;
-            p = (Uint32 *)(((uint8_t *)video.hwrenderbuf->pixels) + video.hwrenderbuf->pitch * my + mx * sizeof(Uint32));
-            *p = c;
-            c = video.buf[bufi][mx + my * video.bufw];
-            p = (Uint32 *)(((uint8_t *)video.hwrenderbuf->pixels) + video.hwrenderbuf->pitch + c * sizeof(Uint32));
-            *p = c;
-            p += video.bufw;
-            c = colorpaldebug;
-            *p = c;
-            p += video.bufw;
-            c = colorpaldebug + 0x80;
-            *p = c;
-            ++colorpaldebug;
-        }
-    }
-#endif
 }
 
 static void video_update_gl_32bpp(void)
@@ -139,7 +100,7 @@ static void video_update_gl_32bpp(void)
         glTexParameteri(GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_MAG_FILTER, filter);
         glTexParameteri(GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_MIN_FILTER, filter);
     }
-    glTexImage2D(GL_TEXTURE_RECTANGLE_ARB, 0, GL_RGBA, video.bufw, video.bufh, 0, GL_RGBA, GL_UNSIGNED_BYTE, video.hwrenderbuf->pixels);
+    glTexImage2D(GL_TEXTURE_RECTANGLE_ARB, 0, GL_RGBA, video.hwrenderbuf->w, video.hwrenderbuf->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, video.hwrenderbuf->pixels);
 
     glBegin(GL_QUADS);
 
@@ -148,15 +109,15 @@ static void video_update_gl_32bpp(void)
     glVertex2f(-1.0f, 1.0f);
 
     /* Upper Right Of Texture */
-    glTexCoord2f(0.0f, (float)(video.bufh));
+    glTexCoord2f(0.0f, (float)(video.hwrenderbuf->h));
     glVertex2f(-1.0f, -1.0f);
 
     /* Upper Left Of Texture */
-    glTexCoord2f((float)(video.bufw), (float)(video.bufh));
+    glTexCoord2f((float)(video.hwrenderbuf->w), (float)(video.hwrenderbuf->h));
     glVertex2f(1.0f, -1.0f);
 
     /* Lower Left Of Texture */
-    glTexCoord2f((float)(video.bufw), 0.0f);
+    glTexCoord2f((float)(video.hwrenderbuf->w), 0.0f);
     glVertex2f(1.0f, 1.0f);
 
     glEnd();
@@ -164,19 +125,18 @@ static void video_update_gl_32bpp(void)
     SDL_GL_SwapBuffers();
 }
 
-static void video_setpal_gl_32bpp(uint8_t *pal, int f, int num)
+static void video_setpal_gl_32bpp(const uint8_t *pal, int f, int num)
 {
-    memcpy(&video.pal[f * 3], pal, num * 3);
     for (int i = 0; i < num; ++i) {
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
-        video.pal32[f + i] = ((pal[i * 3 + 0] << 2) << 24)
-                           | ((pal[i * 3 + 1] << 2) << 16)
-                           | ((pal[i * 3 + 2] << 2) << 8)
+        video.pal32[f + i] = (palette_6bit_to_8bit(pal[i * 3 + 0]) << 24)
+                           | (palette_6bit_to_8bit(pal[i * 3 + 1]) << 16)
+                           | (palette_6bit_to_8bit(pal[i * 3 + 2]) << 8)
                            ;
 #else
-        video.pal32[f + i] = ((pal[i * 3 + 0] << 2) << 0)
-                           | ((pal[i * 3 + 1] << 2) << 8)
-                           | ((pal[i * 3 + 2] << 2) << 16)
+        video.pal32[f + i] = (palette_6bit_to_8bit(pal[i * 3 + 0]) << 0)
+                           | (palette_6bit_to_8bit(pal[i * 3 + 1]) << 8)
+                           | (palette_6bit_to_8bit(pal[i * 3 + 2]) << 16)
                            ;
 #endif
     }
@@ -224,8 +184,8 @@ int hw_video_resize(int w, int h)
     }
 
     if ((w < 0) || (h < 0)) {
-        w = video.bufw;
-        h = video.bufh;
+        w = video.hwrenderbuf->w;
+        h = video.hwrenderbuf->h;
     }
 
     new_w = w;
@@ -257,7 +217,7 @@ int hw_video_resize(int w, int h)
         log_error("SDL_SetVideoMode failed!");
         goto fail;
     }
-    set_viewport(video.bufw, video.bufh, actual_w, actual_h);
+    set_viewport(video.hwrenderbuf->w, video.hwrenderbuf->h, actual_w, actual_h);
     if (hw_opt_fullscreen) {
         hw_mouse_grab();
     }
@@ -269,11 +229,9 @@ int hw_video_resize(int w, int h)
 #endif
 }
 
-int hw_video_init(int w, int h)
+static int hw_video_init_do(int w, int h)
 {
     hw_mouse_set_limits(w, h);
-    video.bufw = w;
-    video.bufh = h;
     {
         const SDL_VideoInfo *p = SDL_GetVideoInfo();
         video.bestmode.w = p->current_w;
@@ -326,16 +284,10 @@ int hw_video_init(int w, int h)
     }
 #endif
 
-    for (int i = 0; i < NUM_VIDEOBUF; ++i) {
-        video.buf[i] = lib_malloc(w * h);
-    }
-    video.bufi = 0;
-    memset(video.pal, 0, sizeof(video.pal));
-    hw_video_refresh_palette();
     return 0;
 }
 
-void hw_video_shutdown(void)
+static void hw_video_shutdown_do(void)
 {
     if (video.screen) {
         SDL_FreeSurface(video.screen);
@@ -347,10 +299,6 @@ void hw_video_shutdown(void)
         video.hwrenderbuf = NULL;
     }
 #endif
-    for (int i = 0; i < NUM_VIDEOBUF; ++i) {
-        lib_free(video.buf[i]);
-        video.buf[i] = NULL;
-    }
 }
 
 #include "hwsdl_video.c"

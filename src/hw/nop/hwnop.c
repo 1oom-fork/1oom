@@ -65,7 +65,7 @@ int hw_video_init(int w, int h)
     return 0;
 }
 
-void hw_video_set_palette(uint8_t *palette, int first, int num)
+void hw_video_set_palette(const uint8_t *palette, int first, int num)
 {
 }
 
