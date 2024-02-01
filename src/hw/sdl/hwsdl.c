@@ -151,22 +151,21 @@ static bool hw_kbd_check_hotkey(SDLKey key, SDLMod smod, char c)
             exit(EXIT_SUCCESS);
         } else if (key == SDLK_F10) {
             hw_mouse_toggle_grab();
-        } else if (c == '+') {
+            return true;
+        } else if (key == SDLK_RIGHTBRACKET) {
             if (smod & KMOD_SHIFT) {
                 hw_audio_music_volume(opt_music_volume + 4);
             } else {
                 hw_audio_sfx_volume(opt_sfx_volume + 4);
             }
-        } else if (c == '-') {
+            return true;
+        } else if (key == SDLK_LEFTBRACKET) {
             if (smod & KMOD_SHIFT) {
                 hw_audio_music_volume(opt_music_volume - 4);
             } else {
                 hw_audio_sfx_volume(opt_sfx_volume - 4);
             }
-#ifdef FEATURE_MODEBUG
-        } else if (key == SDLK_INSERT) {
-            hw_opt_overlay_pal ^= 1;
-#endif
+            return true;
         }
     }
 
