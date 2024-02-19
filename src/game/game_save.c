@@ -929,3 +929,10 @@ int game_save_do_save_i(int savei, const char *savename, const struct game_s *g)
     res = game_save_do_save_do(filename, savename, g, savei);
     return res;
 }
+
+void game_save_do_delete_i(int savei, const struct game_s *g)
+{
+    char *filename = g->gaux->savenamebuf;
+    game_save_get_slot_fname(filename, g->gaux->savenamebuflen, savei);
+    unlink(filename);
+}

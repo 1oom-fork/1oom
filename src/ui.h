@@ -38,6 +38,7 @@ struct game_new_options_s;
 extern main_menu_action_t ui_main_menu(struct game_new_options_s *newopts, int *load_game_i_ptr);
 
 struct game_s;
+struct game_end_s;
 
 extern void ui_game_start(struct game_s *g);
 extern void ui_game_end(struct game_s *g);
@@ -170,5 +171,8 @@ extern void ui_audience_newtech(struct audience_s *au);
 extern void ui_audience_end(struct audience_s *au);
 
 extern void ui_newships(struct game_s *g, int pi);
+
+extern void ui_copyprotection_check(struct game_s *g);
+extern void ui_copyprotection_lose(struct game_s *g, struct game_end_s *ge);
 
 #endif
