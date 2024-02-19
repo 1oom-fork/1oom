@@ -589,6 +589,17 @@ const char *game_str_tbl_stship_names[NUM_SHIPDESIGNS] = {
     "SCOUT", "FIGHTER", "DESTROYER", "BOMBER", "COLONY SHIP", "NONE"
 };
 
+const char *game_str_tbl_copyprotection_ship_names[40] = {
+    "Paladin", "Marauder", "Gladiator", "Devastator", "Cutlass",
+    "Sky Hawk", "Shark", "Dark Star", "Cyclops", "Panther",
+    "Corvette", "Penetrator", "Punisher", "Black Widow", "Destroyer",
+    "Warbird", "Piranha", "Banshee", "Hydra", "Cheetah",
+    "Dreadstar", "Foxbat", "Hunter", "Hornet", "Star Blazer",
+    "Knight", "Kraken", "Avenger", "Manta", "Warcat",
+    "Escort", "Nemesis", "Warbear", "Scorpion", "Seeker",
+    "Condor", "Sun Fire", "Viper", "Titan", "Lynx"
+};
+
 const char *game_str_tbl_monsh_names[MONSTER_NUM] = {
     "SPACE CRYSTAL", "SPACE AMOEBA", "GUARDIAN"
 };
