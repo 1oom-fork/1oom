@@ -16,6 +16,7 @@ libuiclassic_a_SOURCES = \
     uicaught.c \
     uicaught.h \
     uiclassic.c \
+    uicopyprotection.c \
     uicursor.c \
     uicursor.h \
     uidefs.h \
