@@ -68,6 +68,10 @@ void ui_turn_msg(struct game_s *g, int pi, const char *str)
     printf("%s | %i | Message: %s\n", g->emperor_names[pi], g->year + YEAR_BASE, str);
 }
 
+void ui_copyprotection_check(struct game_s *g) {
+    return 0;
+}
+
 void ui_newships(struct game_s *g, int pi)
 {
     bool first = true;

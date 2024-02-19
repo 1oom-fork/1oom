@@ -183,4 +183,6 @@ extern void ui_audience_end(struct audience_s *au);
 
 extern void ui_newships(struct game_s *g, int pi);
 
+extern void ui_copyprotection_check(struct game_s *g);
+
 #endif
