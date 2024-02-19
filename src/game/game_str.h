@@ -34,6 +34,7 @@ extern const char *game_str_rndempname;
 extern const char *game_str_planet_name_orion;
 extern const char *game_str_tbl_ship_names[RACE_NUM * SHIP_NAME_NUM];
 extern const char *game_str_tbl_stship_names[NUM_SHIPDESIGNS];
+extern const char *game_str_tbl_copyprotection_ship_names[40];
 extern const char *game_str_tbl_monsh_names[MONSTER_NUM];
 extern const char *game_str_tbl_mon_names[MONSTER_NUM];
 extern const char *game_str_ai_colonyship;
