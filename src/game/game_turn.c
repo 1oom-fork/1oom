@@ -39,6 +39,8 @@
 
 /* -------------------------------------------------------------------------- */
 
+int copyprot_status = 0;
+
 static void game_turn_limit_ships(struct game_s *g)
 {
     for (int ei = 0; ei < g->enroute_num; ++ei) {
@@ -1577,11 +1579,9 @@ struct game_end_s game_turn_process(struct game_s *g)
         BOOLVEC_TBL_COPY1(old_contact, g->eto[i].contact, i, PLAYER_NUM);
         old_focus[i] = g->planet_focus_i[i];
     }
-#if 0
     if ((g->year > 40) && (!rnd_0_nm1(30, &g->seed)) && (copyprot_status == 0)) {
         copyprot_status = 1;
     }
-#endif
     game_turn_countdown_ceasefire(g);
     game_turn_update_mood_blunder(g);
     game_update_have_reserve_fuel(g);
@@ -1710,11 +1710,9 @@ struct game_end_s game_turn_process(struct game_s *g)
     }
     game_fleet_unrefuel(g);
     game_update_production(g);
-#if 0
     if (copyprot_status == 1) {
-        copyprotection_check();
+        ui_copyprotection_check(g);
     }
-#endif
     for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         game_update_eco_on_waste(g, i, false);
     }
@@ -1724,11 +1722,11 @@ struct game_end_s game_turn_process(struct game_s *g)
         g->planet_focus_i[i] = old_focus[i]; /* FIXME should not be needed anymore */
     }
     ++g->year;
-#if 0
     if (copyprot_status == 1) {
-        copyprotection_lose(&game_end);
+        ui_copyprotection_lose(g, &game_end);
         return game_end;
     }
+#if 0
     game_turn_show_newships(g); /* handled in game_turn_start_messages */
 #endif
     /* MOO1 autosaves here every 5 turns */
