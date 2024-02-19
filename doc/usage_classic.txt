@@ -21,7 +21,7 @@ Unlike the original, 1oom does not autosave the "continue game" (save slot 7)
 when starting a new game or every N turns. It only saves it when quitting the
 game via Game -> Quit or when F10 is pressed while in the "control screen" /
 "galaxy movement screen".
-The original copy protection dialog is not implemented.
+An incorrect answer in the copy protection dialog does not delete save slot 7.
 
 The following new UI features are always enabled/available:
 - Smoother galaxy movement screen scrolling
