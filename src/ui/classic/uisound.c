@@ -46,7 +46,7 @@ void ui_sound_play_music(int musici)
         return;
     }
     hw_audio_music_stop();
-    if (ui_data.music_i != musici) {
+    {
         uint8_t *n;
         uint32_t len;
         n = lbxfile_item_get_with_len(LBXFILE_MUSIC, musici, &len);
