@@ -6,6 +6,7 @@
 #include "cfg.h"
 #include "game.h"
 #include "game_end.h"
+#include "game_turn.h"
 #include "log.h"
 #include "options.h"
 #include "types.h"
@@ -70,6 +71,7 @@ void ui_turn_msg(struct game_s *g, int pi, const char *str)
 }
 
 void ui_copyprotection_check(struct game_s *g) {
+    copyprot_status = -99;
 }
 
 void ui_copyprotection_lose(struct game_s *g, struct game_end_s *ge) {
