@@ -24,7 +24,7 @@ when starting a new game or every N turns. It only saves it when quitting the
 game via Game -> Quit or when F10 is pressed while in the "control screen" /
 "galaxy movement screen". 1oom does autosave the "new game" (save slot 9)
 when starting a new game.
-An incorrect answer in the copy protection dialog does not result in a loss.
+An incorrect answer in the copy protection dialog does not delete save slot 7.
 
 The config file item "ui.uiscale" (set via the -uiscale command-line option)
 is an int scaling factor for the whole UI except galaxy movement screen map.

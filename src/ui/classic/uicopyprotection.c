@@ -4,6 +4,8 @@
 #include <stdio.h>
 
 #include "comp.h"
+#include "game.h"
+#include "game_news.h"
 #include "game_str.h"
 #include "game_turn.h"
 #include "game_types.h"
@@ -153,4 +155,49 @@ void ui_copyprotection_check(struct game_s *g)
     lbxpal_set_update_range(0, 255);
     lbxfile_item_release(LBXFILE_BACKGRND, d.gfx);
     lbxfile_item_release(LBXFILE_BACKGRND, d.gfx2);
+}
+
+void ui_copyprotection_lose(struct game_s *g, struct game_end_s *ge)
+{
+    struct news_s ns;
+    int best_ai = 0;
+    int best_planet_num = 0;
+    int planet_num[6] = {0, 0, 0, 0, 0, 0};
+    player_id_t api = 0;
+    for (player_id_t i = PLAYER_0; i < g->players; ++i) {
+        api = i;
+        if (!IS_AI(g, i)) {
+            break;
+        }
+    }
+    for (int si = 0; si < g->galaxy_stars; ++si) {
+        if (g->planet[si].owner == -1) {
+            continue;
+        }
+        if (!IS_AI(g, g->planet[si].owner)) {
+            continue;
+        }
+        /*  ++planet_num[si];  WASBUG: wrong index   */
+        ++planet_num[g->planet[si].owner];
+    }
+    for (int si = 0; si < g->players; ++si) {
+        if (si == api) {
+            continue;
+        }
+        if (planet_num[si] <= best_planet_num) {
+            continue;
+        }
+        best_planet_num = planet_num[si];
+        best_ai = si;
+    }
+    /* MOO deletes save_7 here */
+    ns.type = GAME_NEWS_GENOCIDE;
+    ns.subtype = 3;
+    ns.num1 = 0;
+    ns.race = g->eto[api].race;
+    ui_data.news.flag_also = false;
+    ui_news(g, &ns);
+    ge->banner_dead = g->eto[api].banner;
+    ge->race = g->eto[best_ai].banner;
+    ge->type = GAME_END_LOST_FUNERAL;
 }

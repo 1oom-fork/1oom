@@ -1719,11 +1719,11 @@ struct game_end_s game_turn_process(struct game_s *g)
         g->planet_focus_i[i] = old_focus[i]; /* FIXME should not be needed anymore */
     }
     ++g->year;
-#if 0
     if (copyprot_status == 1) {
-        copyprotection_lose(&game_end);
+        ui_copyprotection_lose(g, &game_end);
         return game_end;
     }
+#if 0
     game_turn_show_newships(g); /* handled in game_turn_start_messages */
 #endif
     /* MOO1 autosaves here every 5 turns */
