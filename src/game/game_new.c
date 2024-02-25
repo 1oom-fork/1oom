@@ -524,6 +524,7 @@ static void game_generate_planet_names(struct game_s *g)
         } while (BOOLVEC_IS1(in_use, j));
         BOOLVEC_SET1(in_use, j);
         lib_strcpy(g->planet[i].name, game_str_tbl_planet_names[j], PLANET_NAME_LEN);
+        printf("%d %s\n", j, game_str_tbl_planet_names[j]);
     }
     lib_strcpy(g->planet[g->evn.planet_orion_i].name, game_str_planet_name_orion, PLANET_NAME_LEN);
 }

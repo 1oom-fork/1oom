@@ -88,7 +88,7 @@ typedef enum {
 } planet_finished_t;
 
 #define FINISHED_DEFAULT_FILTER (((1 << FINISHED_NUM) - 1) & ~(1 << FINISHED_TERRAF))
-#define PLANET_NAME_LEN 12
+#define PLANET_NAME_LEN 20
 
 typedef enum {
     PLANET_EXTRAS_GOVERNOR = 0,
