@@ -30,7 +30,7 @@ extern const char *game_str_ng_player;
 extern const char *game_str_ng_cancel;
 extern const char *game_str_ng_ok;
 extern const char *game_str_ng_allai;
-#define PLANET_NAMES_MAX    532
+#define PLANET_NAMES_MAX    1532
 extern const char *game_str_tbl_planet_names[PLANET_NAMES_MAX];
 extern const char *game_str_tbl_home_names[RACE_NUM + 1];
 extern const char *game_str_rndempname;
