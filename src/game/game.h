@@ -317,12 +317,26 @@ struct game_s {
     struct game_aux_s *gaux;
 };
 
+static inline bool IS_PLAYER(const struct game_s *g, player_id_t i)
+{
+    return (i >= 0) && (i < g->players);
+}
+
+static inline bool IS_HUMAN(const struct game_s *g, player_id_t i)
+{
+    /*
+        In MOO1, instead of IS_HUMAN, the index is checked for equality to zero,
+        which in turn implicitly guarantees that the index is less than g->players.
+        The IS_PLAYER check eliminates the potential for memory corruption.
+    */
+    return IS_PLAYER(g, i) && BOOLVEC_IS0(g->is_ai, i);
+}
+
 static inline bool IS_ALIVE(const struct game_s *g, player_id_t i)
 {
     return (g->evn.home[i] != PLANET_NONE);
 }
 
 #define IS_AI(_g_, _i_) BOOLVEC_IS1((_g_)->is_ai, (_i_))
-#define IS_HUMAN(_g_, _i_) BOOLVEC_IS0((_g_)->is_ai, (_i_))
 
 #endif
