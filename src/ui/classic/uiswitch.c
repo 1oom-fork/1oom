@@ -165,11 +165,11 @@ bool ui_switch_2(struct game_s *g, player_id_t pi1, player_id_t pi2)
         return false;
     }
     BOOLVEC_CLEAR(viewing, PLAYER_NUM);
-    if ((pi1 < PLAYER_NUM) && IS_HUMAN(g, pi1) && IS_ALIVE(g, pi1)) {
+    if (IS_HUMAN(g, pi1) && IS_ALIVE(g, pi1)) {
         BOOLVEC_SET1(viewing, pi1);
         tbl[n++] = pi1;
     }
-    if ((pi2 < PLAYER_NUM) && IS_HUMAN(g, pi2) && IS_ALIVE(g, pi2)) {
+    if (IS_HUMAN(g, pi2) && IS_ALIVE(g, pi2)) {
         BOOLVEC_SET1(viewing, pi2);
         tbl[n++] = pi2;
     }
