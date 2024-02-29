@@ -327,8 +327,12 @@ struct game_s {
     struct game_aux_s *gaux;
 };
 
+static inline bool IS_HUMAN(const struct game_s *g, player_id_t i)
+{
+    return (i < g->players) && BOOLVEC_IS0(g->is_ai, i);
+}
+
 #define IS_AI(_g_, _i_) BOOLVEC_IS1((_g_)->is_ai, (_i_))
-#define IS_HUMAN(_g_, _i_) BOOLVEC_IS0((_g_)->is_ai, (_i_))
 #define IS_ALIVE(_g_, _i_) ((_g_)->evn.home[(_i_)] != PLANET_NONE)
 
 extern bool game_opt_skip_intro_always;
