@@ -166,7 +166,7 @@ void ui_copyprotection_lose(struct game_s *g, struct game_end_s *ge)
     player_id_t api = 0;
     for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         api = i;
-        if (!IS_AI(g, i)) {
+        if (IS_HUMAN(g, i)) {
             break;
         }
     }
@@ -174,7 +174,7 @@ void ui_copyprotection_lose(struct game_s *g, struct game_end_s *ge)
         if (g->planet[si].owner == -1) {
             continue;
         }
-        if (!IS_AI(g, g->planet[si].owner)) {
+        if (IS_HUMAN(g, g->planet[si].owner)) {
             continue;
         }
         /*  ++planet_num[si];  WASBUG: wrong index   */
