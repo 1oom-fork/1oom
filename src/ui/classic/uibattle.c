@@ -802,7 +802,7 @@ void ui_battle_init(struct battle_s *bt)
         player_id_t tbl[2];
         int n = 1;
         tbl[0] = party_human;
-        if ((party_opp < PLAYER_NUM) && IS_HUMAN(bt->g, party_opp)) {
+        if (IS_HUMAN(bt->g, party_opp)) {
             tbl[n++] = party_opp;
         }
         ui_switch(bt->g, tbl, n, false);
