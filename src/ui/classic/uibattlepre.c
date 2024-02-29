@@ -123,10 +123,10 @@ void ui_battle_pre(struct game_s *g, int party_u, int party_d, uint8_t planet_i,
     d->flag_human_att = flag_human_att;
     d->hide_other = hide_other;
     battle_pre_load_data(d);
-    if ((party_u < PLAYER_NUM) && IS_HUMAN(g, party_u)) {
+    if (IS_HUMAN(g, party_u)) {
         g->planet_focus_i[party_u] = planet_i;
     }
-    if ((party_d < PLAYER_NUM) && IS_HUMAN(g, party_d)) {
+    if (IS_HUMAN(g, party_d)) {
         g->planet_focus_i[party_d] = planet_i;
     }
     uiobj_table_clear();
