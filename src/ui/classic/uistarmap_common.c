@@ -1004,8 +1004,8 @@ void ui_starmap_draw_planetinfo_2(const struct game_s *g, int p1, int p2, int pl
     player_id_t api = (p1 < PLAYER_NUM) ? p1 : p2;
     bool explored = true;
     if (0
-      || ((p1 < PLAYER_NUM) && IS_HUMAN(g, p1) && !PLANET_IS_EXPLORED(g, planet_i, p1))
-      || ((p2 < PLAYER_NUM) && IS_HUMAN(g, p2) && !PLANET_IS_EXPLORED(g, planet_i, p2))
+      || (IS_HUMAN(g, p1) && !PLANET_IS_EXPLORED(g, planet_i, p1))
+      || (IS_HUMAN(g, p2) && !PLANET_IS_EXPLORED(g, planet_i, p2))
     ) {
         explored = false;
     }
