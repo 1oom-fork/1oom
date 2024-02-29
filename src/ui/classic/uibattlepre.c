@@ -182,10 +182,10 @@ ui_battle_autoresolve_t ui_battle_pre(struct game_s *g, const struct battle_s *b
     d->flag_human_att = bt->flag_human_att;
     d->hide_other = hide_other;
     battle_pre_load_data(d);
-    if ((d->party_u < PLAYER_NUM) && IS_HUMAN(g, party_u)) {
+    if (IS_HUMAN(g, party_u)) {
         g->planet_focus_i[party_u] = bt->planet_i;
     }
-    if ((party_d < PLAYER_NUM) && IS_HUMAN(g, party_d)) {
+    if (IS_HUMAN(g, party_d)) {
         g->planet_focus_i[party_d] = bt->planet_i;
     }
     if (ui_space_combat_autoresolve) {
