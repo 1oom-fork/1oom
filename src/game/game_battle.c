@@ -345,7 +345,7 @@ void game_battle_handle_all(struct game_s *g)
                    afterwards on the same turn could be fixed */
                 BOOLVEC_SET0(tbl_have_force, party_att);
             } else {
-                if (!(((party_def < PARTY_NUM) && IS_HUMAN(g, party_def)) || ((party_att < PARTY_NUM) && IS_HUMAN(g, party_att)))) {
+                if (!IS_HUMAN(g, party_def) && !IS_HUMAN(g, party_att)) {
                     game_battle_prepare(bt, party_att, party_def, pli);
                     if (game_ai->battle_ai_ai_resolve(bt)) {
                         /* HACK _att won, swap variables */
