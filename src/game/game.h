@@ -324,9 +324,14 @@ struct game_s {
     struct game_aux_s *gaux;
 };
 
+static inline bool IS_PLAYER(const struct game_s *g, player_id_t i)
+{
+    return (i >= 0) && (i < g->players);
+}
+
 static inline bool IS_HUMAN(const struct game_s *g, player_id_t i)
 {
-    return (i < g->players) && BOOLVEC_IS0(g->is_ai, i);
+    return IS_PLAYER(g, i) && BOOLVEC_IS0(g->is_ai, i);
 }
 
 #define IS_AI(_g_, _i_) BOOLVEC_IS1((_g_)->is_ai, (_i_))
