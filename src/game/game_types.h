@@ -165,7 +165,7 @@ typedef enum {
 typedef uint16_t shipcount_t;
 typedef uint32_t shipsum_t;
 
-#define SHIP_NAME_NUM   12
+#define SHIP_NAME_NUM   16
 #define NUM_SHIPDESIGNS 6
 #define BUILDSHIP_STARGATE NUM_SHIPDESIGNS
 

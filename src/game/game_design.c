@@ -45,7 +45,8 @@ static void game_get_random_shipnames(struct game_s *g, player_id_t player, char
         int namei;
         bool flag_unused;
         flag_unused = false;
-        namei = i * 3 + rnd_0_nm1(3, &g->seed);
+        const int num = 4;
+        namei = i * num + rnd_0_nm1(num, &g->seed);
         if (BOOLVEC_IS1(name_unused, namei)) {
             flag_unused = true;
         } else {
