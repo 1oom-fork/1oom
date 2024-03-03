@@ -2485,12 +2485,12 @@ int main_do(void)
         game_save_get_slot_fname(gameptr->gaux->savenamebuf, gameptr->gaux->savenamebuflen, v - 1);
         fname = gameptr->gaux->savenamebuf;
     }
-    LOG_DEBUG((1, "%s: decode type '%s' file '%s'\n", __func__, savetype[savetypei].name, fname));
     res = savetype[savetypei].decode(gameptr, fname);
     if (res < 0) {
         log_error("decoding file '%s' failed\n", fname);
         return 1;
     }
+    log_message("saveconv: decode type '%s' file '%s'\n", savetype[savetypei].name, fname);
     if (!savetype[savetypeo].encode) {
         LOG_DEBUG((1, "%s: encode type '%s' no callback\n", __func__, savetype[savetypeo].name));
         if (main_fname_num == 2) {
@@ -2509,7 +2509,7 @@ int main_do(void)
         game_save_get_slot_fname(gameptr->gaux->savenamebuf, gameptr->gaux->savenamebuflen, v - 1);
         fname = gameptr->gaux->savenamebuf;
     }
-    LOG_DEBUG((1, "%s: encode type '%s' file '%s'\n", savetype[savetypeo].name, fname ? fname : "(null)"));
+    log_message("saveconv: encode type '%s' file '%s'\n", savetype[savetypeo].name, fname ? fname : "(null)");
     if (savename[0] == '\0') {
         strcpy(savename, "saveconv");
     }
