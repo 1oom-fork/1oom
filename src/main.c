@@ -44,6 +44,7 @@ static void main_shutdown(void)
     ui_shutdown();
     hw_shutdown();
     os_shutdown();
+    log_message("Thanks for playing Master of Orion.\n");
 }
 
 /* -------------------------------------------------------------------------- */
