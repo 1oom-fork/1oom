@@ -381,7 +381,6 @@ void game_update_within_range(struct game_s *g)
                     for (int j = 0; (j < g->enroute_num) && (mindist1 > srange2); ++j) {
                         if (g->enroute[j].owner == pi) {
                             dist = util_math_dist_fast(g->enroute[j].x, g->enroute[j].y, p->x, p->y);
-                            dist = (dist + 9) / 10;
                             if (dist < mindist1) {
                                 mindist1 = dist;
                             }
