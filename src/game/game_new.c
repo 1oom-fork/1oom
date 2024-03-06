@@ -1044,6 +1044,7 @@ static void game_generate_load(struct game_s *g)
     game_update_tech_util(g);
     for (player_id_t pli = PLAYER_0; pli < g->players; ++pli) {
         game_update_eco_on_waste(g, pli, false);
+        game_update_seen_by_orbit(g, pli);
     }
     game_update_within_range(g);
     game_update_visibility(g);
