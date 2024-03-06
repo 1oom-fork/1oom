@@ -11,6 +11,7 @@
 #include "game_aux.h"
 #include "game_misc.h"
 #include "game_new.h"
+#include "game_num.h"
 #include "game_nump.h"
 #include "game_end.h"
 #include "game_event.h"
