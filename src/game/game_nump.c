@@ -206,6 +206,7 @@ static const struct numtbl_s {
     DEFNUMITEML(colonized_factories_fix, NUMTYPE_BOOL, 0, 1),
     DEFNUMITEML(cond_build_ind_fix, NUMTYPE_BOOL, 0, 1),
     DEFNUMITEML(slider_stop_terraform_fix, NUMTYPE_BOOL, 0, 1),
+    DEFNUMITEML(ship_scanner_fix, NUMTYPE_BOOL, 0, 1),
     DEFNUMITEMLTBLL(tbl_hull_w, NUMTYPE_U8, 0, 0xff),
     DEFNUMITEMLTBLL(tech_costmuld, NUMTYPE_U8, 0, 0xff),
     DEFNUMITEMLTBLL(tech_costmula, NUMTYPE_U8, 0, 0xff),
