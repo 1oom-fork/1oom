@@ -470,6 +470,7 @@ static void main_menu_make_options_rules_page(struct main_menu_data_s *d)
     menu_make_bool(menu_allocate_item(), "Monster Rest Attack", &game_num_monster_rest_att, MOO_KEY_m);
     menu_make_bool(menu_allocate_item(), "Population Tenths Fix", &game_num_pop_tenths_fix, MOO_KEY_o);
     menu_make_bool(menu_allocate_item(), "Retreat Redir Fix", &game_num_retreat_redir_fix, MOO_KEY_r);
+    menu_make_bool(menu_allocate_item(), "Ship Scanner Fix", &game_num_ship_scanner_fix, MOO_KEY_s);
     menu_make_back(menu_allocate_item());
 }
 
