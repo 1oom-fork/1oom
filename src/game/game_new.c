@@ -842,10 +842,6 @@ static void game_generate_home_etc(struct game_s *g, struct game_new_options_s *
         }
         p->pop_prev = p->pop;
         game_new_generate_home_name(g->eto[i].race, p->name, PLANET_NAME_LEN);
-        g->seen[i][homei].owner = p->owner;
-        g->seen[i][homei].pop = p->pop;
-        g->seen[i][homei].bases = p->missile_bases;
-        g->seen[i][homei].factories = p->factories;
     }
     for (int j = 0; j < g->galaxy_stars; ++j) {
         player_id_t owner;
