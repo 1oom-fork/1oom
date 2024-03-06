@@ -329,7 +329,7 @@ void game_update_within_range(struct game_s *g)
         uint8_t tblplanet_num;
         empiretechorbit_t *e = &(g->eto[pi]);
         bool tbl_alliance[PLAYER_NUM];
-        uint8_t frange, frangep3, srange;
+        uint8_t frange, frangep3, srange, srange2;
         for (int i = 0; i < PLAYER_NUM; ++i) {
             tbl_alliance[i] = (e->treaty[i] == TREATY_ALLIANCE);
         }
@@ -337,7 +337,6 @@ void game_update_within_range(struct game_s *g)
         frange = e->fuel_range;
         frangep3 = frange + 3;
         srange = e->scanner_range;
-#if 0   /* only used by disabled buggy code */
         switch (srange) {
             case 3: srange2 = 0; break;
             case 5: srange2 = 10; break;
@@ -345,7 +344,6 @@ void game_update_within_range(struct game_s *g)
             case 9: srange2 = 30; break;
             default: break;
         }
-#endif
         tblplanet_num = 0;
         for (int i = 0; i < g->galaxy_stars; ++i) {
             planet_t *p = &(g->planet[i]);
@@ -379,7 +377,6 @@ void game_update_within_range(struct game_s *g)
                     p->within_frange[pi] = 0;
                 }
                 BOOLVEC_SET(p->within_srange, pi, (mindist2 <= srange));
-#if 0   /* buggy code that does nothing */
                 if (BOOLVEC_IS0(p->within_srange, pi) && (srange2 > 0)) {
                     mindist1 = 10000;
                     for (int j = 0; (j < g->enroute_num) && (mindist1 > srange2); ++j) {
@@ -395,7 +392,6 @@ void game_update_within_range(struct game_s *g)
                         BOOLVEC_SET1(p->within_srange, pi);
                     }
                 }
-#endif
             }
         }
     }
