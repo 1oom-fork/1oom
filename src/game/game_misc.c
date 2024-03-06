@@ -383,11 +383,11 @@ void game_update_within_range(struct game_s *g)
                             dist = util_math_dist_fast(g->enroute[j].x, g->enroute[j].y, p->x, p->y);
                             dist = (dist + 9) / 10;
                             if (dist < mindist1) {
-                                dist = mindist1;    /* BUG supposed to be mindist1 = dist instead */
+                                mindist1 = dist;
                             }
                         }
                     }
-                    if (mindist1 <= srange2) { /* never true */
+                    if (mindist1 <= srange2) {
                         BOOLVEC_SET1(p->within_srange, pi);
                     }
                 }
