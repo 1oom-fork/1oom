@@ -326,6 +326,15 @@ void game_update_within_range(struct game_s *g)
         frange = e->fuel_range;
         frangep3 = frange + 3;
         srange = e->scanner_range;
+#if 0   /* only used by disabled buggy code */
+        switch (srange) {
+            case 3: srange2 = 0; break;
+            case 5: srange2 = 10; break;
+            case 7: srange2 = 20; break;
+            case 9: srange2 = 30; break;
+            default: break;
+        }
+#endif
         tblplanet_num = 0;
         for (int i = 0; i < g->galaxy_stars; ++i) {
             planet_t *p = &(g->planet[i]);
@@ -359,6 +368,23 @@ void game_update_within_range(struct game_s *g)
                     p->within_frange[pi] = 0;
                 }
                 BOOLVEC_SET(p->within_srange, pi, (mindist2 <= srange));
+#if 0   /* buggy code that does nothing */
+                if (BOOLVEC_IS0(p->within_srange, pi) && (srange2 > 0)) {
+                    mindist1 = 10000;
+                    for (int j = 0; (j < g->enroute_num) && (mindist1 > srange2); ++j) {
+                        if (g->enroute[j].owner == pi) {
+                            dist = util_math_dist_fast(g->enroute[j].x, g->enroute[j].y, p->x, p->y);
+                            dist = (dist + 9) / 10;
+                            if (dist < mindist1) {
+                                dist = mindist1;    /* BUG supposed to be mindist1 = dist instead */
+                            }
+                        }
+                    }
+                    if (mindist1 <= srange2) { /* never true */
+                        BOOLVEC_SET1(p->within_srange, pi);
+                    }
+                }
+#endif
             }
         }
     }
