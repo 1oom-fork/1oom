@@ -591,6 +591,7 @@ const struct cfg_items_s game_cfg_items[] = {
     CFG_ITEM_BOOL("rules_monster_rest_attack", &game_num_monster_rest_att),
     CFG_ITEM_BOOL("rules_pop_tenths_fix", &game_num_pop_tenths_fix),
     CFG_ITEM_BOOL("rules_retreat_redir_fix", &game_num_retreat_redir_fix),
+    CFG_ITEM_BOOL("rules_ship_scanner_fix", &game_num_ship_scanner_fix),
     CFG_ITEM_END
 };
 
