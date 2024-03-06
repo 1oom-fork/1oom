@@ -59,6 +59,7 @@ bool game_num_hidden_child_labor_fix = false;
 bool game_num_colonized_factories_fix = false;
 bool game_num_cond_build_ind_fix = false;
 bool game_num_slider_stop_terraform_fix = false;
+bool game_num_ship_scanner_fix = false;
 
 uint8_t game_num_tbl_hull_w[4] = { 1, 5, 25, 125 };
 
