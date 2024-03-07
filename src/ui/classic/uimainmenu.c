@@ -249,6 +249,10 @@ main_menu_action_t ui_main_menu(struct game_new_options_s *newopts, struct game_
         }
     }
     ui_sound_stop_music();
+    /* call run_starmap_exe */
+    if (ret != MAIN_MENU_ACT_QUIT_GAME) {
+        ui_palette_fadeout_19_19_1();
+    }
     free_mainmenu_data(&d);
     return ret;
 }
