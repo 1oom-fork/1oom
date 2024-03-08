@@ -352,8 +352,6 @@ int ui_fleet(struct game_s *g, player_id_t active_player)
     d.num = 0;
     d.order_i = 0;
     game_update_maint_costs(g);
-    d.s.xoff1 = 0;
-    d.s.xoff2 = 0;
     ui_fleet_sub(&d);
     d.frame = 0;
     d.lines = 0;
