@@ -117,7 +117,7 @@ static void ui_starmap_enroute_draw_cb(void *vptr)
         y = (i / 2) * 40 + 44;
         ui_draw_filled_rect(x, y, x + 38, y + 24, 0, ui_scale);
         ui_draw_filled_rect(x, y + 28, x + 38, y + 34, 0x1c, ui_scale);
-        ui_draw_stars(x, y, 0, 32, &(d->en.ds), ui_scale);
+        ui_draw_stars(x, y, 0, 32, ui_scale);
         st = d->en.sn0.type[i];
         gfx = ui_data.gfx.ships[sd[st].look];
         lbxgfx_set_frame_0(gfx);
@@ -137,7 +137,7 @@ static void ui_starmap_enroute_draw_cb(void *vptr)
         lbxgfx_draw_frame(271, 163, ui_data.gfx.starmap.reloc_bu_accept, UI_SCREEN_W, ui_scale);
     }
     d->en.frame_ship = (d->en.frame_ship + 1) % 5;
-    ui_draw_set_stars_xoffs(&d->en.ds, false);
+    ui_draw_set_stars_xoffs(false);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -172,8 +172,8 @@ void ui_starmap_enroute(struct game_s *g, player_id_t active_player)
     d.controllable = (g->eto[active_player].have_hyperspace_comm || d.en.pon != PLANET_NONE) && (r->owner == active_player);
     d.en.from = g->planet_focus_i[active_player];
     d.en.frame_ship = 0;
-    d.en.ds.xoff1 = 0;
-    d.en.ds.xoff2 = 0;
+    ui_data.gfx.draw_stars.xoff1 = 0;
+    ui_data.gfx.draw_stars.xoff2 = 0;
     g->planet_focus_i[active_player] = r->dest;
     ui_starmap_sn0_setup(&d.en.sn0, g->eto[r->owner].shipdesigns_num, r->ships);
     ui_starmap_update_reserve_fuel(g, &d.en.sn0, r->ships, active_player);

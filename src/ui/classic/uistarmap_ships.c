@@ -49,13 +49,12 @@ static void ui_starmap_ships_draw_cb1(void *vptr)
     ui_draw_filled_rect(225, 81, 312, 160, 0, ui_scale);
 
     const uint8_t n = g->eto[d->api].shipdesigns_num;
-    struct draw_stars_s ds;
-    ds.xoff1 = 0;
-    ds.xoff2 = 0;
+    ui_data.gfx.draw_stars.xoff1 = 0;
+    ui_data.gfx.draw_stars.xoff2 = 0;
     for (int i = 0; i < NUM_SHIPDESIGNS; ++i) {
         int x = ui_starmap_ships_get_x(i);
         int y = ui_starmap_ships_get_y(i);
-        ui_draw_stars(x, y, i * 5, 32, &ds, ui_scale);
+        ui_draw_stars(x, y, i * 5, 32, ui_scale);
     }
     for (int i = 0; i < n; ++i) {
         const shipdesign_t *sd = &g->srd[d->api].design[i];

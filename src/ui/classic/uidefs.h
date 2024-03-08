@@ -241,6 +241,10 @@ struct ui_data_s {
             uint8_t *icon;
             bool flag_also;
         } news;
+        struct {
+            int xoff1;
+            int xoff2;
+        } draw_stars;
         uint8_t *vgafileh;
         bool initialized;
     } gfx;

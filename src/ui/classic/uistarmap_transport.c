@@ -109,7 +109,7 @@ static void ui_starmap_transport_draw_cb(void *vptr)
     {
         int x = 228, y = 73;
         ui_draw_filled_rect(x, y, x + 81, y + 25, 0, ui_scale);
-        ui_draw_stars(x, y, 0, 80, &(d->ts.ds), ui_scale);
+        ui_draw_stars(x, y, 0, 80, ui_scale);
         lbxgfx_set_frame_0(ui_data.gfx.starmap.tranship);
         for (int f = 0; f <= d->ts.frame_ship; ++f) {
             lbxgfx_draw_frame(x + 7, y + 3, ui_data.gfx.starmap.tranship, UI_SCREEN_W, ui_scale);
@@ -130,7 +130,7 @@ static void ui_starmap_transport_draw_cb(void *vptr)
         lbxgfx_set_new_frame(ui_data.gfx.starmap.reloc_bu_accept, 1);
         lbxgfx_draw_frame(271, 163, ui_data.gfx.starmap.reloc_bu_accept, UI_SCREEN_W, ui_scale);
     }
-    ui_draw_set_stars_xoffs(&d->ts.ds, false);
+    ui_draw_set_stars_xoffs(false);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -156,8 +156,8 @@ void ui_starmap_transport(struct game_s *g, player_id_t active_player)
     d.ts.from = g->planet_focus_i[active_player];
     g->planet_focus_i[active_player] = r->dest;
     d.controllable = g->eto[active_player].have_hyperspace_comm && (r->owner == active_player);
-    d.ts.ds.xoff1 = 0;
-    d.ts.ds.xoff2 = 0;
+    ui_data.gfx.draw_stars.xoff1 = 0;
+    ui_data.gfx.draw_stars.xoff2 = 0;
 
     uiobj_table_clear();
 
