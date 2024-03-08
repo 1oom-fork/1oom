@@ -126,12 +126,12 @@ static void ui_starmap_transport_draw_cb(void *vptr)
     } else {
         d->ts.scanner_delay = 0;
     }
-    d->ts.frame_ship = (d->ts.frame_ship + 1) % 5;
     if ((r->owner == d->api) && (d->ts.can_move != NO_MOVE) && (!d->ts.in_frange)) {
         lbxgfx_set_new_frame(ui_data.gfx.starmap.reloc_bu_accept, 1);
         lbxgfx_draw_frame(271, 163, ui_data.gfx.starmap.reloc_bu_accept, UI_SCREEN_W);
     }
     if (!(d->anim_delay % STARMAP_ANIM_DELAY)) {
+        d->ts.frame_ship = (d->ts.frame_ship + 1) % 5;
         ui_draw_set_stars_xoffs(false);
     }
 }
