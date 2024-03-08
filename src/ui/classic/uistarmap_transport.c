@@ -156,8 +156,6 @@ void ui_starmap_transport(struct game_s *g, player_id_t active_player)
     d.ts.from = g->planet_focus_i[active_player];
     g->planet_focus_i[active_player] = r->dest;
     d.controllable = g->eto[active_player].have_hyperspace_comm && (r->owner == active_player);
-    ui_data.gfx.draw_stars.xoff1 = 0;
-    ui_data.gfx.draw_stars.xoff2 = 0;
 
     uiobj_table_clear();
 

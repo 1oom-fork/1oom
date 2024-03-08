@@ -172,8 +172,6 @@ void ui_starmap_enroute(struct game_s *g, player_id_t active_player)
     d.controllable = (g->eto[active_player].have_hyperspace_comm || d.en.pon != PLANET_NONE) && (r->owner == active_player);
     d.en.from = g->planet_focus_i[active_player];
     d.en.frame_ship = 0;
-    ui_data.gfx.draw_stars.xoff1 = 0;
-    ui_data.gfx.draw_stars.xoff2 = 0;
     g->planet_focus_i[active_player] = r->dest;
     ui_starmap_sn0_setup(&d.en.sn0, g->eto[r->owner].shipdesigns_num, r->ships);
     ui_starmap_update_reserve_fuel(g, &d.en.sn0, r->ships, active_player);
