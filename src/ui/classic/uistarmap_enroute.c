@@ -136,8 +136,8 @@ static void ui_starmap_enroute_draw_cb(void *vptr)
         lbxgfx_set_new_frame(ui_data.gfx.starmap.reloc_bu_accept, 1);
         lbxgfx_draw_frame(271, 163, ui_data.gfx.starmap.reloc_bu_accept, UI_SCREEN_W, ui_scale);
     }
-    d->en.frame_ship = (d->en.frame_ship + 1) % 5;
     if (!(d->anim_delay % STARMAP_ANIM_DELAY)) {
+        d->en.frame_ship = (d->en.frame_ship + 1) % 5;
         ui_draw_set_stars_xoffs(false);
     }
 }
