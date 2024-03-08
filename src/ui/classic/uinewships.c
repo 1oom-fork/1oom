@@ -97,8 +97,6 @@ void ui_newships(struct game_s *g, int pi)
     d.api = pi;
     ui_starmap_common_init(g, &d.sm, pi);
     d.sm.bottom_highlight = -1;
-    d.ds.xoff1 = 0;
-    d.ds.xoff2 = 0;
     newships_load_data(&d);
     uiobj_set_callback_and_delay(newships_draw_cb, &d, 4);
     uiobj_table_clear();
