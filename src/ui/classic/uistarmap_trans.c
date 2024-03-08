@@ -50,7 +50,7 @@ static void ui_starmap_trans_draw_cb(void *vptr)
             ui_draw_box1(227, 73, 310, 159, 4, 4, ui_scale);
         }
     }
-    lbxgfx_draw_frame_offs(x0, y0, ui_data.gfx.starmap.planbord, STARMAP_LIMITS, UI_SCREEN_W, starmap_scale);
+    lbxgfx_draw_frame_offs_delay(x0, y0, !(d->anim_delay % STARMAP_ANIM_DELAY), ui_data.gfx.starmap.planbord, STARMAP_LIMITS, UI_SCREEN_W, starmap_scale);
     lbxgfx_set_new_frame(ui_data.gfx.starmap.reloc_bu_accept, 1);
     lbxgfx_draw_frame(271, 163, ui_data.gfx.starmap.reloc_bu_accept, UI_SCREEN_W, ui_scale);
     if (d->tr.from != g->planet_focus_i[d->api]) {
