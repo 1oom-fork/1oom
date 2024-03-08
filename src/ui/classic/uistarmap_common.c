@@ -672,11 +672,13 @@ void ui_starmap_draw_scanner(struct starmap_data_s *d)
     for (int f = 0; f <= d->frame_scanner; ++f) {
         lbxgfx_draw_frame(227, 8, ui_data.gfx.starmap.scanner, UI_SCREEN_W);
     }
-    if (d->scanner_delay == 0) {
-        d->frame_scanner = (d->frame_scanner + 1) % 20;
-        ++d->scanner_delay;
-    } else {
-        d->scanner_delay = 0;
+    if (!(d->anim_delay % STARMAP_ANIM_DELAY)) {
+        if (d->scanner_delay == 0) {
+            d->frame_scanner = (d->frame_scanner + 1) % 20;
+            ++d->scanner_delay;
+        } else {
+            d->scanner_delay = 0;
+        }
     }
 }
 
