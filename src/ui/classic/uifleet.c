@@ -38,7 +38,6 @@ struct fleet_data_s {
     int num;
     int lines;
     int frame;
-    struct draw_stars_s s;
     uint8_t planet[FLEET_ENROUTE_MAX];
     uint16_t enroute[FLEET_ENROUTE_MAX];
     BOOLVEC_DECLARE(is_enroute, FLEET_ENROUTE_MAX);
@@ -119,12 +118,11 @@ static void fleet_draw_cb(void *vptr)
                 x0 = 44 * j + 48;
                 ui_draw_filled_rect(x0, y0, x0 + 36, y0 + 25, 0);
                 if (BOOLVEC_IS0(d->is_enroute, fi)) {
-                    struct draw_stars_s temps;
-                    temps.xoff1 = 0;
-                    temps.xoff2 = 0;
-                    ui_draw_stars(x0, y0 + 1, j * 10, 37, &temps);
+                    ui_data.gfx.draw_stars.xoff1 = 0;
+                    ui_data.gfx.draw_stars.xoff2 = 0;
+                    ui_draw_stars(x0, y0 + 1, j * 10, 37);
                 } else {
-                    ui_draw_stars(x0, y0 + 1, j * 5, 37, &d->s);
+                    ui_draw_stars(x0, y0 + 1, j * 5, 37);
                 }
                 gfx_ship = ui_data.gfx.ships[sd[j].look];
                 lbxgfx_set_frame_0(gfx_ship);
@@ -144,7 +142,7 @@ static void fleet_draw_cb(void *vptr)
         ui_draw_filled_rect(7, i * 33 + 17, 40, i * 33 + 42, 0x3a);
     }
     d->frame = (d->frame + 1) % 5;
-    ui_draw_set_stars_xoffs(&d->s, false);
+    ui_draw_set_stars_xoffs(false);
     lbxfont_select(2, 6, 0, 0);
     lbxfont_print_num_right(137, 185, e->ship_maint_bc, UI_SCREEN_W);
 }

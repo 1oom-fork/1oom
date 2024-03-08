@@ -97,7 +97,7 @@ static void ui_starmap_transport_draw_cb(void *vptr)
     {
         int x = 228, y = 73;
         ui_draw_filled_rect(x, y, x + 81, y + 25, 0);
-        ui_draw_stars(x, y, 0, 80, &(d->ts.ds));
+        ui_draw_stars(x, y, 0, 80);
         lbxgfx_set_frame_0(ui_data.gfx.starmap.tranship);
         for (int f = 0; f <= d->ts.frame_ship; ++f) {
             lbxgfx_draw_frame(x + 7, y + 3, ui_data.gfx.starmap.tranship, UI_SCREEN_W);
@@ -125,7 +125,7 @@ static void ui_starmap_transport_draw_cb(void *vptr)
         lbxgfx_draw_frame(271, 163, ui_data.gfx.starmap.reloc_bu_accept, UI_SCREEN_W);
 
     }
-    ui_draw_set_stars_xoffs(&d->ts.ds, false);
+    ui_draw_set_stars_xoffs(false);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -148,8 +148,6 @@ void ui_starmap_transport(struct game_s *g, player_id_t active_player)
     d.ts.from = g->planet_focus_i[active_player];
     g->planet_focus_i[active_player] = r->dest;
     d.ts.can_move = g->eto[active_player].have_hyperspace_comm ? GOT_HYPERCOMM : NO_MOVE;
-    d.ts.ds.xoff1 = 0;
-    d.ts.ds.xoff2 = 0;
 
     uiobj_table_clear();
 

@@ -95,7 +95,7 @@ static void ui_starmap_enroute_draw_cb(void *vptr)
         y = (i / 2) * 40 + 44;
         ui_draw_filled_rect(x, y, x + 38, y + 24, 0);
         ui_draw_filled_rect(x, y + 28, x + 38, y + 34, 0x1c);
-        ui_draw_stars(x, y, 0, 38, &(d->en.ds));
+        ui_draw_stars(x, y, 0, 38);
         st = d->en.sn0.type[i];
         gfx = ui_data.gfx.ships[sd[st].look];
         lbxgfx_set_frame_0(gfx);
@@ -119,7 +119,7 @@ static void ui_starmap_enroute_draw_cb(void *vptr)
 
     }
     d->en.frame_ship = (d->en.frame_ship + 1) % 5;
-    ui_draw_set_stars_xoffs(&d->en.ds, false);
+    ui_draw_set_stars_xoffs(false);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -149,8 +149,6 @@ void ui_starmap_enroute(struct game_s *g, player_id_t active_player)
     d.en.frame_scanner = 0;
     d.en.scanner_delay = 0;
     d.en.frame_ship = 0;
-    d.en.ds.xoff1 = 0;
-    d.en.ds.xoff2 = 0;
     g->planet_focus_i[active_player] = r->dest;
     d.en.in_frange = false;
     ui_starmap_sn0_setup(&d.en.sn0, g->eto[r->owner].shipdesigns_num, r->ships);
