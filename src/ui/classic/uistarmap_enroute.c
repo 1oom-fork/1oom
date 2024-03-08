@@ -184,8 +184,6 @@ void ui_starmap_enroute(struct game_s *g, player_id_t active_player)
     d.en.frame_scanner = 0;
     d.en.scanner_delay = 0;
     d.en.frame_ship = 0;
-    d.en.ds.xoff1 = 0;
-    d.en.ds.xoff2 = 0;
     g->planet_focus_i[active_player] = r->dest;
     ui_starmap_sn0_setup(&d.en.sn0, g->eto[r->owner].shipdesigns_num, r->ships);
     ui_starmap_update_reserve_fuel(g, &d.en.sn0, r->ships, active_player);
