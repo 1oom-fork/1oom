@@ -167,12 +167,10 @@ bool ui_explore(struct game_s *g, int pi, uint8_t planet_i, bool by_scanner, boo
         oi_cont = uiobj_add_t0(227, 164, "", d.gfx_contbutt, MOO_KEY_c);
         oi_n = uiobj_add_inputkey(MOO_KEY_SPACE);
         oi_y = UIOBJI_INVALID;
-        uiobj_set_focus(oi_cont);
     } else {
         oi_cont = UIOBJI_INVALID;
         oi_n = uiobj_add_t0(227, 163, "", ui_data.gfx.starmap.scrapbut_no, MOO_KEY_n);
         oi_y = uiobj_add_t0(271, 163, "", ui_data.gfx.starmap.scrapbut_yes, MOO_KEY_y);
-        uiobj_set_focus(oi_y);
     }
     while (!flag_done) {
         int16_t oi;
