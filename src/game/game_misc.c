@@ -376,7 +376,7 @@ void game_update_within_range(struct game_s *g)
                     p->within_frange[pi] = 0;
                 }
                 BOOLVEC_SET(p->within_srange, pi, (mindist2 <= srange));
-                if (BOOLVEC_IS0(p->within_srange, pi) && (srange2 > 0)) {
+                if (BOOLVEC_IS0(p->within_srange, pi) && ((srange2 > 0) || game_num_ship_scanner_fix)) {
                     mindist1 = 10000;
                     for (int j = 0; (j < g->enroute_num) && (mindist1 > srange2); ++j) {
                         if (g->enroute[j].owner == pi) {
