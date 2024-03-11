@@ -153,12 +153,12 @@ static void audience_build_diplo_msg(struct audience_s *au, bool framed)
                         s = game_str_au_allian;
                     } else if (eh->treaty[pa] == TREATY_NONAGGRESSION) {
                         s = game_str_au_nonagg;
-                    } else {
-                        /* WASBUG eh->trade_bc != 0 was checked here, but this
-                         * is an array address, so this was always true. The
-                         * placeholder only makes sense if the player and AI
-                         * at least have a trade agreement anyway. */
+                    } else if (eh->trade_bc[pa] != 0) {
                         s = game_str_au_tradea;
+                    } else {
+                        /* The placeholder only makes sense if the player and AI
+                         * at least have a trade agreement. */
+                        s = game_str_au_treaty;
                     }
                     break;
                 case 0x17:  /* Broken treaty (by AI) */
