@@ -63,6 +63,10 @@ void ui_copyprotection_check(struct game_s *g)
     int16_t oi_ship_name[8];
     int16_t oi;
     d.g = g;
+    if (ui_copyprotection_disabled) {
+        copyprot_status = -99;
+        return;
+    }
     uiobj_set_xyoff(1, 1);
     if (copyprot_status == 0) {
         return;
