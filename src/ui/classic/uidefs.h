@@ -283,6 +283,7 @@ extern bool ui_sm_no_question_mark_cursor;
 extern bool ui_sm_explicit_cursor_context;
 extern bool ui_mouse_lmb_fix;
 extern bool ui_mouse_warp_disabled;
+extern bool ui_copyprotection_disabled;
 extern bool ui_sm_mouseover_focus;
 extern bool ui_sm_mouse_scroll;
 extern bool ui_kbd_cursor_keys_fix;
