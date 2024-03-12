@@ -62,10 +62,10 @@ static void game_ai_classic_new_game_init(struct game_s *g, player_id_t player, 
         p->slider[PLANET_SLIDER_TECH] = 0;
         e->tech.slider[TECH_FIELD_COMPUTER] = 20;
         e->tech.slider[TECH_FIELD_CONSTRUCTION] = 20;
-        e->tech.slider[TECH_FIELD_FORCE_FIELD] = 15;
+        e->tech.slider[TECH_FIELD_FORCE_FIELD] = 0;
         e->tech.slider[TECH_FIELD_PLANETOLOGY] = 40;
         e->tech.slider[TECH_FIELD_PROPULSION] = 20;
-        e->tech.slider[TECH_FIELD_WEAPON] = 20;
+        e->tech.slider[TECH_FIELD_WEAPON] = 0;
     } else {
         e->ai_p3_countdown = rnd_1_n(6, &g->seed) + 24;
         p->slider[PLANET_SLIDER_SHIP] = 0;
