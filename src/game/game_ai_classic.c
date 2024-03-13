@@ -81,8 +81,8 @@ static void game_ai_classic_new_game_init(struct game_s *g, player_id_t player, 
         e->tech.slider[TECH_FIELD_WEAPON] = 0;
     }
     /* XXX these shipi values are wrong, but fixed by first next turn */
-    e->shipi_colony = 4;
-    e->shipi_bomber = 1;
+    e->shipi_colony = 1;
+    e->shipi_bomber = 4;
 }
 
 static void game_ai_classic_new_game_tech(struct game_s *g)
