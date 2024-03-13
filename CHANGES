@@ -1,3 +1,24 @@
+1oom-f1.8.1
+-----------
+
+This release is special. For the first time since the release of v1.0,
+a large number of corrections have been verified with the original.
+In addition, some fundamental new improvements have been made.
+
+Summary:
+- Classic AI is now competitive and selected by default
+- Restored vanilla Tutor map
+- Fixed the chances of rich/poor planets when creating a galaxy
+- Fixed autoretreat behavior
+- The vanilla copy protection dialog has been restored
+- Added optional fix for scanners on ships
+- Fixed numerous visual differences from vanilla
+- Fixed several minor bugs
+
+The main goal of the project is now explicitly stated on the main page.
+Bug reports are welcome.
+
+
 1oom-fork-v1.8.0
 ----------------
 
