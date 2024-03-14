@@ -39,14 +39,10 @@ static int ui_icon = 146/*guardian*/;
 void ui_extra_toggle_preset(bool enabled)
 {
     ui_extra_enabled = enabled;
-    ui_game_opts_extra = enabled;
     ui_load_opts_extra = enabled;
     game_opt_skip_intro_always = enabled;
     game_planet_leaving_trans_fix = enabled;
     game_extended_reloc_range = enabled;
-    ui_governor_enabled = enabled;
-    ui_xtramenu_enabled = enabled;
-    ui_msg_filter_enabled = enabled;
     ui_space_combat_autoresolve = enabled;
     ui_sm_ships_enabled = enabled;
     ui_sm_distance_tooltip = enabled;
