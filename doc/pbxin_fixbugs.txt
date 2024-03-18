@@ -57,7 +57,7 @@
 4,hidden_child_labor_fix,0,1
 4,colonized_factories_fix,0,1
 4,cond_build_ind_fix,0,1
-4,slider_stop_terraform_fix,0,1
+4,slider_stop_tform_fix,0,1
 4,ship_scanner_fix,0,1
 
 # Disabled fixes. Remove the # in front of 4 to enable.
