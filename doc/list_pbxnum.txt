@@ -165,7 +165,7 @@ cond_build_ind_fix: 0..1, 0
   - Always switch production from eco to building factories rather than
     technology, regardless of current population.
 
-slider_stop_terraform_fix: 0..1, 0
+slider_stop_tform_fix: 0..1, 0
   - Do not stop terraforming when finishing eco project.
 
 ship_scanner_fix : 0..1, 0
