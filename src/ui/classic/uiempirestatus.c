@@ -49,8 +49,8 @@ static void empirestatus_draw_cb(void *vptr)
     lbxfont_select_set_12_4(4, 0xf, 0, 0);
     lbxfont_print_str_center(160, 9, game_str_ra_stats, UI_SCREEN_W, ui_scale);
     lbxfont_select_set_12_4(5, 5, 0, 0);
-    lib_sprintf(buf, sizeof(buf), "%s: %i", game_str_year, g->year + YEAR_BASE);
-    lbxfont_print_str_normal(15, 11, buf, UI_SCREEN_W, ui_scale);
+    lbxfont_print_str_normal(15, 11, game_str_year, UI_SCREEN_W, ui_scale);
+    lbxfont_print_num_normal(42, 11, g->year + YEAR_BASE, UI_SCREEN_W, ui_scale);
 
     lbxfont_select(2, 6, 0, 0);
     for (int s = 0; s < 6; ++s) {
