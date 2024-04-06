@@ -214,7 +214,7 @@ void game_event_new(struct game_s *g)
         type = rnd_1_n(GAME_EVENT_NUM - 1, &g->seed);
         if (0
           || BOOLVEC_IS1(g->evn.done, type)
-          || ((type == GAME_EVENT_REBELLION) && IS_AI(g, player))
+          || ((type == GAME_EVENT_REBELLION) && (!IS_HUMAN(g, player) || (g->evn.home[player] == planet)))
           || ((type == GAME_EVENT_QUAKE) && (p->pop < 50))
           || (((type == GAME_EVENT_CRYSTAL) || (type == GAME_EVENT_AMOEBA)) && (g->year < 200))
           || (((type == GAME_EVENT_CRYSTAL) || (type == GAME_EVENT_AMOEBA)) && (g->evn.crystal.exists || g->evn.amoeba.exists))
