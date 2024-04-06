@@ -465,7 +465,6 @@ void game_num_fixbugs(void)
     game_num_max_factories = 2700;
     game_num_accident_chk_factories = true;
     game_num_bt_wait_no_reload = true;
-    game_num_bt_no_tohit_acc = true;
     game_num_bt_oracle_fix = true;
     game_num_news_orion = true;
     game_num_weapon_list_max = 64;
@@ -478,7 +477,6 @@ void game_num_fixbugs(void)
     game_num_stargate_redir_fix = true;
     game_num_trans_redir_fix = true;
     game_num_first_tech_rp_fix = true;
-    game_num_waste_calc_fix = true;
     game_num_waste_adjust_fix = true;
     game_num_eco_slider_slack = 0;
     game_num_reset_tform_to_max = false;

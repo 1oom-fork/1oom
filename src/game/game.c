@@ -587,11 +587,13 @@ const struct cfg_items_s game_cfg_items[] = {
     CFG_ITEM_INT("custom_game_home_num_colony_ships", &game_opt_custom.homeworlds.num_colony_ships, NULL),
     CFG_ITEM_BOOL("planet_leaving_trans_fix", &game_planet_leaving_trans_fix),
     CFG_ITEM_BOOL("rules_ai_transport_range_fix", &game_num_ai_trans_range_fix),
+    CFG_ITEM_BOOL("rules_bt_no_tohit_acc", &game_num_bt_no_tohit_acc),
     CFG_ITEM_BOOL("rules_bt_precap_tohit", &game_num_bt_precap_tohit),
     CFG_ITEM_BOOL("rules_monster_rest_attack", &game_num_monster_rest_att),
     CFG_ITEM_BOOL("rules_pop_tenths_fix", &game_num_pop_tenths_fix),
     CFG_ITEM_BOOL("rules_retreat_redir_fix", &game_num_retreat_redir_fix),
     CFG_ITEM_BOOL("rules_ship_scanner_fix", &game_num_ship_scanner_fix),
+    CFG_ITEM_BOOL("rules_waste_calc_fix", &game_num_waste_calc_fix),
     CFG_ITEM_END
 };
 

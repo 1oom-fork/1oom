@@ -467,11 +467,13 @@ static void main_menu_make_options_rules_page(struct main_menu_data_s *d)
 {
     d->set_item_dimensions = mm_options_small_set_item_dimensions;
     menu_make_bool(menu_allocate_item(), "AI Transport Range Fix", &game_num_ai_trans_range_fix, MOO_KEY_t);
+    menu_make_bool(menu_allocate_item(), "Battle No Tohit Accumulation", &game_num_bt_no_tohit_acc, MOO_KEY_a);
     menu_make_bool(menu_allocate_item(), "Battle Precap Tohit", &game_num_bt_precap_tohit, MOO_KEY_p);
     menu_make_bool(menu_allocate_item(), "Monster Rest Attack", &game_num_monster_rest_att, MOO_KEY_m);
     menu_make_bool(menu_allocate_item(), "Population Tenths Fix", &game_num_pop_tenths_fix, MOO_KEY_o);
     menu_make_bool(menu_allocate_item(), "Retreat Redir Fix", &game_num_retreat_redir_fix, MOO_KEY_r);
     menu_make_bool(menu_allocate_item(), "Ship Scanner Fix", &game_num_ship_scanner_fix, MOO_KEY_s);
+    menu_make_bool(menu_allocate_item(), "Waste Calc Fix", &game_num_waste_calc_fix, MOO_KEY_w);
     menu_make_back(menu_allocate_item());
 }
 
