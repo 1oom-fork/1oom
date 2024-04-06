@@ -30,7 +30,7 @@ void ui_play_intro(void)
 {
     int16_t uiobji_now, uiobji_ma;
     uint16_t frame;
-    bool flag_skip, flag_fadein;
+    bool flag_skip, flag_fadein = false;
     uint8_t *intro_sfx1;
     uint8_t *intro_sfx3;
     uint8_t *intro_sfx5;
@@ -113,6 +113,7 @@ void ui_play_intro(void)
         old_gfx = intro_gfx;
         ui_palette_fadeout_14_14_2();
         frame = 0;
+        flag_fadein = false;
     }
 
     while ((frame < 0x1e) && (!flag_skip)) {
@@ -160,6 +161,7 @@ void ui_play_intro(void)
         old_gfx = intro_gfx;
         ui_palette_fadeout_14_14_2();
         frame = 0;
+        flag_fadein = false;
     }
 
     while ((frame < 0x46) && (!flag_skip)) {
@@ -210,6 +212,7 @@ void ui_play_intro(void)
         old_gfx = intro_gfx;
         ui_palette_fadeout_14_14_2();
         frame = 0;
+        flag_fadein = false;
     }
 
     while ((frame < 0x45) && (!flag_skip)) {
@@ -257,6 +260,7 @@ void ui_play_intro(void)
         old_gfx = intro_gfx;
         ui_palette_fadeout_14_14_2();
         frame = 0;
+        flag_fadein = false;
     }
 
     while ((frame < 0x28) && (!flag_skip)) {
@@ -300,6 +304,7 @@ void ui_play_intro(void)
         old_gfx = intro_gfx;
         ui_palette_fadeout_14_14_2();
         frame = 0;
+        flag_fadein = false;
     }
 
     while ((frame < 0x1e) && (!flag_skip)) {
@@ -338,6 +343,7 @@ void ui_play_intro(void)
         old_gfx = intro_gfx;
         ui_palette_fadeout_14_14_2();
         frame = 0;
+        flag_fadein = false;
     }
 
     while ((frame < 0xb4) && (!flag_skip)) {
