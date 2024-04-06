@@ -1157,7 +1157,7 @@ void ui_battle_draw_damage(const struct battle_s *bt, int target_i, int target_x
     int target_x_hit, target_y_hit, si, v4, ax, ay, scale;
     bool flag_quick;
     si = (b->hp1 > 0) ? b->hp1 * 3 : 1;
-    if ((b->num > 0) || (si < damage)) {
+    if ((b->num <= 0) || (si < damage)) {
         v4 = si;
     } else {
         v4 = damage; /* & 0xffff */
