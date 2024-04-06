@@ -933,10 +933,10 @@ static int16_t uiobj_kbd_dir_key_dxdy(int dirx, int diry, int16_t oi2, int mx, i
                     continue;
                 }
                 if ((dx >= dy) && (dy != 0)) {
-                    slope = (dx * 100) / dy;
+                    slope = (dy * 100) / dx;
                 }
                 if ((dy > dx) && (dx != 0)) {
-                    slope = (dy * 100) / dx;
+                    slope = (dx * 100) / dy;
                 }
                 if ((dx == 0) || (dy == 0)) {
                     slope = UIOBJ_OFFSCREEN;
