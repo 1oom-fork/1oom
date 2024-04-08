@@ -132,12 +132,6 @@ static void game_turn_bomb_damage(struct game_s *g, uint8_t pli, player_id_t att
         *popdmgptr = v;
     }
     {
-#if 0
-        int v;
-        v = p->max_pop3 - totalbio;
-        SETMAX(v, 10);
-        p->max_pop3 = v;    /* WASBUG reduced before y/n */
-#endif
         *biodmgptr = totalbio;
     }
 }
@@ -183,6 +177,12 @@ void game_turn_bomb(struct game_s *g)
                 /*cf52*/
                 flag_play_music = true;
                 game_turn_bomb_damage(g, pli, i, &popdmg, &factdmg, &biodmg);
+                {
+                    int v;
+                    v = p->max_pop3 - biodmg;
+                    SETMAX(v, 10);
+                    p->max_pop3 = v;    /* BUG? reduced before y/n */
+                }
                 if ((popdmg == 0) && (factdmg == 0)) {
                     flag_do_bomb = false;
                 } else if (IS_HUMAN(g, i)) {
