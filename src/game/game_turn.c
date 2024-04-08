@@ -1240,10 +1240,10 @@ static int game_turn_transport_shoot(struct game_s *g, uint8_t planet_i, player_
         const uint8_t *rc = &(g->srd[rowner].researchcompleted[TECH_FIELD_CONSTRUCTION][0]);
         for (int i = 0; i < ed->tech.completed[TECH_FIELD_CONSTRUCTION]; ++i) {
             uint8_t tier;
-            const uint8_t *r;
-            r = RESEARCH_D0_PTR(g->gaux, TECH_FIELD_CONSTRUCTION, rc[i]);
+            tech_group_t group;
+            group = game_tech_get_group(g->gaux, TECH_FIELD_CONSTRUCTION, rc[i]);
             tier = game_tech_get_tier(g->gaux, TECH_FIELD_CONSTRUCTION, rc[i]);
-            if (r[0] == 7) {
+            if (group == TECH_GROUP_ARMOR) {
                 bestarmor = tier;
             }
         }

@@ -41,12 +41,12 @@ static void game_ground_init(struct ground_s *gr)
         rc = &(srd->researchcompleted[TECH_FIELD_CONSTRUCTION][0]);
         for (int j = 0; j < e->tech.completed[TECH_FIELD_CONSTRUCTION]; ++j) {
             uint8_t tier;
-            const uint8_t *r;
-            r = RESEARCH_D0_PTR(g->gaux, TECH_FIELD_CONSTRUCTION, rc[j]);
+            tech_group_t group;
+            group = game_tech_get_group(g->gaux, TECH_FIELD_CONSTRUCTION, rc[j]);
             tier = game_tech_get_tier(g->gaux, TECH_FIELD_CONSTRUCTION, rc[j]);
-            if (r[0] == 7) {
+            if (group == TECH_GROUP_ARMOR) {
                 bestarmor = tier;
-            } else if (r[0] == 0xf) {
+            } else if (group == TECH_GROUP_PERSONAL_ARMOR) {
                 bestsuit = tier;
                 besti = rc[j];
             }
@@ -65,10 +65,10 @@ static void game_ground_init(struct ground_s *gr)
         rc = &(srd->researchcompleted[TECH_FIELD_FORCE_FIELD][0]);
         for (int j = 0; j < e->tech.completed[TECH_FIELD_FORCE_FIELD]; ++j) {
             uint8_t tier;
-            const uint8_t *r;
-            r = RESEARCH_D0_PTR(g->gaux, TECH_FIELD_FORCE_FIELD, rc[j]);
+            tech_group_t group;
+            group = game_tech_get_group(g->gaux, TECH_FIELD_FORCE_FIELD, rc[j]);
             tier = game_tech_get_tier(g->gaux, TECH_FIELD_FORCE_FIELD, rc[j]);
-            if (r[0] == 0x10) {
+            if (group == TECH_GROUP_PERSONAL_SHIELD) {
                 bestshield = tier;
                 besti = rc[j];
             }
@@ -82,10 +82,10 @@ static void game_ground_init(struct ground_s *gr)
         rc = &(srd->researchcompleted[TECH_FIELD_WEAPON][0]);
         for (int j = 0; j < e->tech.completed[TECH_FIELD_WEAPON]; ++j) {
             uint8_t tier;
-            const uint8_t *r;
-            r = RESEARCH_D0_PTR(g->gaux, TECH_FIELD_WEAPON, rc[j]);
+            tech_group_t group;
+            group = game_tech_get_group(g->gaux, TECH_FIELD_WEAPON, rc[j]);
             tier = game_tech_get_tier(g->gaux, TECH_FIELD_WEAPON, rc[j]);
-            if (r[0] == 0x15) {
+            if (group == TECH_GROUP_PERSONAL_WEAPONS) {
                 bestweap = tier;
                 besti = rc[j];
             }
