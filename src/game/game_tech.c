@@ -582,6 +582,16 @@ void game_update_tech_util(struct game_s *g)
     }
 }
 
+uint8_t game_tech_get_group(const struct game_aux_s *gaux, tech_field_t field, int tech)
+{
+    return RESEARCH_D0_PTR(gaux, field, tech)[0];
+}
+
+uint8_t game_tech_get_tier(const struct game_aux_s *gaux, tech_field_t field, int tech)
+{
+    return (game_tech_get_group(gaux, field, tech) == 0xff) ? 0 : RESEARCH_D0_PTR(gaux, field, tech)[1];
+}
+
 const char *game_tech_get_name(const struct game_aux_s *gaux, tech_field_t field, int tech, char *buf, size_t bufsize)
 {
     if (tech == 0) {
