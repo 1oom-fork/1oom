@@ -474,6 +474,7 @@ static void main_menu_make_options_rules_page(struct main_menu_data_s *d)
     menu_make_bool(menu_allocate_item(), "Retreat Redir Fix", &game_num_retreat_redir_fix, MOO_KEY_r);
     menu_make_bool(menu_allocate_item(), "Ship Scanner Fix", &game_num_ship_scanner_fix, MOO_KEY_s);
     menu_make_bool(menu_allocate_item(), "Waste Calc Fix", &game_num_waste_calc_fix, MOO_KEY_w);
+    menu_make_bool(menu_allocate_item(), "Passive Bio Damage Fix", &game_num_passive_bio_damage_fix, MOO_KEY_i);
     menu_make_back(menu_allocate_item());
 }
 

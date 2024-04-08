@@ -177,7 +177,7 @@ void game_turn_bomb(struct game_s *g)
                 /*cf52*/
                 flag_play_music = true;
                 game_turn_bomb_damage(g, pli, i, &popdmg, &factdmg, &biodmg);
-                {
+                if (!game_num_passive_bio_damage_fix) {
                     int v;
                     v = p->max_pop3 - biodmg;
                     SETMAX(v, 10);
