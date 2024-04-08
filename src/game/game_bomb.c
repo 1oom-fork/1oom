@@ -131,11 +131,13 @@ static void game_turn_bomb_damage(struct game_s *g, uint8_t pli, player_id_t att
         SETMIN(v, p->pop);
         *popdmgptr = v;
     }
-    {
+    if (!game_num_passive_bio_damage_fix) {
         int v;
         v = p->max_pop3 - totalbio;
         SETMAX(v, 10);
         p->max_pop3 = v;    /* BUG? reduced before y/n */
+    }
+    {
         *biodmgptr = totalbio;
     }
 }
