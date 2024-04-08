@@ -465,6 +465,12 @@ void game_update_tech_util(struct game_s *g)
     }
 }
 
+uint8_t game_tech_get_tier(const struct game_aux_s *gaux, tech_field_t field, int tech)
+{
+    const uint8_t *p = RESEARCH_D0_PTR(gaux, field, tech);
+    return (p[0] == 0xff) ? 0 : p[1];
+}
+
 const char *game_tech_get_name(const struct game_aux_s *gaux, tech_field_t field, int tech, char *buf)
 {
     if (tech == 0) {
