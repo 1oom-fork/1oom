@@ -40,12 +40,14 @@ static void game_ground_init(struct ground_s *gr)
         bestsuit = 0;
         rc = &(srd->researchcompleted[TECH_FIELD_CONSTRUCTION][0]);
         for (int j = 0; j < e->tech.completed[TECH_FIELD_CONSTRUCTION]; ++j) {
+            uint8_t tier;
             const uint8_t *r;
             r = RESEARCH_D0_PTR(g->gaux, TECH_FIELD_CONSTRUCTION, rc[j]);
+            tier = game_tech_get_tier(g->gaux, TECH_FIELD_CONSTRUCTION, rc[j]);
             if (r[0] == 7) {
-                bestarmor = r[1];
+                bestarmor = tier;
             } else if (r[0] == 0xf) {
-                bestsuit = r[1];
+                bestsuit = tier;
                 besti = rc[j];
             }
         }
@@ -62,10 +64,12 @@ static void game_ground_init(struct ground_s *gr)
         bestshield = 0;
         rc = &(srd->researchcompleted[TECH_FIELD_FORCE_FIELD][0]);
         for (int j = 0; j < e->tech.completed[TECH_FIELD_FORCE_FIELD]; ++j) {
+            uint8_t tier;
             const uint8_t *r;
             r = RESEARCH_D0_PTR(g->gaux, TECH_FIELD_FORCE_FIELD, rc[j]);
+            tier = game_tech_get_tier(g->gaux, TECH_FIELD_FORCE_FIELD, rc[j]);
             if (r[0] == 0x10) {
-                bestshield = r[1];
+                bestshield = tier;
                 besti = rc[j];
             }
         }
@@ -77,10 +81,12 @@ static void game_ground_init(struct ground_s *gr)
         bestweap = 0;
         rc = &(srd->researchcompleted[TECH_FIELD_WEAPON][0]);
         for (int j = 0; j < e->tech.completed[TECH_FIELD_WEAPON]; ++j) {
+            uint8_t tier;
             const uint8_t *r;
             r = RESEARCH_D0_PTR(g->gaux, TECH_FIELD_WEAPON, rc[j]);
+            tier = game_tech_get_tier(g->gaux, TECH_FIELD_WEAPON, rc[j]);
             if (r[0] == 0x15) {
-                bestweap = r[1];
+                bestweap = tier;
                 besti = rc[j];
             }
         }
