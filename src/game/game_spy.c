@@ -26,7 +26,7 @@ static uint8_t game_spy_esp_sub3_sub1(struct game_s *g, uint8_t a0, tech_field_t
         techi = src[i];
         p = RESEARCH_D0_PTR(g->gaux, field, techi);
         if (a0 == p[0]) {
-            v = RESEARCH_D0_B1(p);
+            v = game_tech_get_tier(g->gaux, field, techi);
         }
     }
     return v;
@@ -41,7 +41,7 @@ static void game_spy_esp_sub3(struct game_s *g, struct spy_esp_s *s, tech_field_
         techi = trc[i];
         p = RESEARCH_D0_PTR(g->gaux, field, techi);
         b0 = p[0];
-        b1 = RESEARCH_D0_B1(p);
+        b1 = game_tech_get_tier(g->gaux, field, techi);
         have_tech = false;
         for (int j = 0; j < slen; ++j) {
             if (src[j] == techi) {
