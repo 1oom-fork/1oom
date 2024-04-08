@@ -19,29 +19,29 @@
 
 static uint8_t game_spy_esp_sub3_sub1(struct game_s *g, uint8_t a0, tech_field_t field, uint16_t slen, const uint8_t *src)
 {
-    int v = 0;
+    uint8_t best_tier = 0;
     for (int i = 0; i < slen; ++i) {
         uint8_t techi;
         const uint8_t *p;
         techi = src[i];
         p = RESEARCH_D0_PTR(g->gaux, field, techi);
         if (a0 == p[0]) {
-            v = RESEARCH_D0_B1(p);
+            best_tier = game_tech_get_tier(g->gaux, field, techi);
         }
     }
-    return v;
+    return best_tier;
 }
 
 static void game_spy_esp_sub3(struct game_s *g, struct spy_esp_s *s, tech_field_t field, int tlen, const uint8_t *trc, int slen, const uint8_t *src)
 {
     for (int i = 0; i < tlen; ++i) {
         const uint8_t *p;
-        uint8_t techi, b0, b1;
+        uint8_t techi, b0, tier;
         bool have_tech;
         techi = trc[i];
         p = RESEARCH_D0_PTR(g->gaux, field, techi);
         b0 = p[0];
-        b1 = RESEARCH_D0_B1(p);
+        tier = game_tech_get_tier(g->gaux, field, techi);
         have_tech = false;
         for (int j = 0; j < slen; ++j) {
             if (src[j] == techi) {
@@ -54,7 +54,7 @@ static void game_spy_esp_sub3(struct game_s *g, struct spy_esp_s *s, tech_field_
           || (b0 == 10) || (b0 == 18) || (b0 == 21)
           || ((b0 >= 12) && (b0 <= 16))
         ) {
-            if (game_spy_esp_sub3_sub1(g, b0, field, slen, src) >= b1) {
+            if (game_spy_esp_sub3_sub1(g, b0, field, slen, src) >= tier) {
                 have_tech = true;
             }
         }
@@ -72,18 +72,19 @@ static int game_spy_esp_get_value(struct game_s *g, struct spy_esp_s *s, tech_fi
 {
     empiretechorbit_t *es = &(g->eto[s->spy]);
     const shipresearch_t *srds = &(g->srd[s->spy]);
-    uint8_t b0 = RESEARCH_D0_PTR(g->gaux, field, techi)[0], maxb1 = 0, maxti = 0;
+    uint8_t b0 = RESEARCH_D0_PTR(g->gaux, field, techi)[0], maxtier = 0, maxti = 0;
     int v;
     if (b0 & 0x80) {
         return 0;
     }
     for (int i = 0; i < es->tech.completed[field]; ++i) {
         const uint8_t *p;
-        uint8_t ti;
+        uint8_t tier2, ti;
         ti = srds->researchcompleted[field][i];
         p = RESEARCH_D0_PTR(g->gaux, field, ti);
-        if ((p[0] == b0) && (p[1] > maxb1)) {
-             maxb1 = p[1];
+        tier2 = game_tech_get_tier(g->gaux, field, ti);
+        if ((p[0] == b0) && (tier2 > maxtier)) {
+             maxtier = tier2;
              maxti = ti;
         }
     }
