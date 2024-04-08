@@ -126,10 +126,12 @@ static void empirereport_draw_cb(void *vptr)
         }
         for (int i = 0; i < num; ++i) {
             uint8_t rc;
+            tech_group_t group;
             rc = rct[first + i];
             game_tech_get_name(g->gaux, f, rc, buf);
             lbxfont_select(2, game_tech_player_has_tech(g, f, rc, d->api) ? 0xa : 0, 0, 0);
-            if (RESEARCH_D0_PTR(g->gaux, f, rc)[0] == 13) {
+            group = game_tech_get_group(g->gaux, f, rc);
+            if (group == TECH_GROUP_CONTROLLED_ENVIRONMENT) {
                 int j, pos_space;
                 j = 0;
                 pos_space = 0;
