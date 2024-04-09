@@ -977,10 +977,12 @@ static int game_turn_transport_shoot(struct game_s *g, uint8_t planet_i, player_
 
     /* Transports use the best armor that the owner has researched. */
     for (int i = 0; i < ed->tech.completed[TECH_FIELD_CONSTRUCTION]; ++i) {
-        const uint8_t *r;
-        r = RESEARCH_D0_PTR(g->gaux, TECH_FIELD_CONSTRUCTION, rc[i]);
-        if (r[0] == 7) {
-            bestarmor = r[1];
+        uint8_t tier;
+        tech_group_t group;
+        group = game_tech_get_group(g->gaux, TECH_FIELD_CONSTRUCTION, rc[i]);
+        tier = game_tech_get_tier(g->gaux, TECH_FIELD_CONSTRUCTION, rc[i]);
+        if (group == TECH_GROUP_ARMOR) {
+            bestarmor = tier;
         }
     }
     transport_hp = ((bestarmor + 1) * 15);

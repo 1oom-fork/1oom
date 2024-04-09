@@ -160,14 +160,15 @@ static void tech_draw_cb(void *vptr)
     {
         uint8_t groundcmbonus = 0, groundcmbonus2 = 0;
         for (int i = 0; i < t->completed[TECH_FIELD_CONSTRUCTION]; ++i) {
-            uint8_t c;
-            const uint8_t *p;
+            uint8_t c, tier;
+            tech_group_t group;
             c = g->srd[d->api].researchcompleted[TECH_FIELD_CONSTRUCTION][i];
-            p = RESEARCH_D0_PTR(g->gaux, TECH_FIELD_CONSTRUCTION, c);
-            if (p[0] == 7) {
-                groundcmbonus = p[1] * 5;
-            } else if (p[0] == 15) {
-                groundcmbonus2 = p[1] * 10;
+            group = game_tech_get_group(g->gaux, TECH_FIELD_CONSTRUCTION, c);
+            tier = game_tech_get_tier(g->gaux, TECH_FIELD_CONSTRUCTION, c);
+            if (group == TECH_GROUP_ARMOR) {
+                groundcmbonus = tier * 5;
+            } else if (group == TECH_GROUP_PERSONAL_ARMOR) {
+                groundcmbonus2 = tier * 10;
             }
         }
         groundcmbonus += groundcmbonus2;
@@ -177,12 +178,13 @@ static void tech_draw_cb(void *vptr)
     {
         uint8_t groundcmbonus = 0;
         for (int i = 0; i < t->completed[TECH_FIELD_FORCE_FIELD]; ++i) {
-            uint8_t c;
-            const uint8_t *p;
+            uint8_t c, tier;
+            tech_group_t group;
             c = g->srd[d->api].researchcompleted[TECH_FIELD_FORCE_FIELD][i];
-            p = RESEARCH_D0_PTR(g->gaux, TECH_FIELD_FORCE_FIELD, c);
-            if (p[0] == 16) {
-                groundcmbonus = p[1] * 10;
+            group = game_tech_get_group(g->gaux, TECH_FIELD_FORCE_FIELD, c);
+            tier = game_tech_get_tier(g->gaux, TECH_FIELD_FORCE_FIELD, c);
+            if (group == TECH_GROUP_PERSONAL_SHIELD) {
+                groundcmbonus = tier * 10;
             }
         }
         lib_sprintf(buf, sizeof(buf), "%s +%i%%", game_str_te_gcombat, groundcmbonus);
@@ -195,12 +197,13 @@ static void tech_draw_cb(void *vptr)
     {
         uint8_t groundcmbonus = 0;
         for (int i = 0; i < t->completed[TECH_FIELD_WEAPON]; ++i) {
-            uint8_t c;
-            const uint8_t *p;
+            uint8_t c, tier;
+            tech_group_t group;
             c = g->srd[d->api].researchcompleted[TECH_FIELD_WEAPON][i];
-            p = RESEARCH_D0_PTR(g->gaux, TECH_FIELD_WEAPON, c);
-            if (p[0] == 21) {
-                groundcmbonus = p[1] * 5;
+            group = game_tech_get_group(g->gaux, TECH_FIELD_WEAPON, c);
+            tier = game_tech_get_tier(g->gaux, TECH_FIELD_WEAPON, c);
+            if (group == TECH_GROUP_PERSONAL_WEAPONS) {
+                groundcmbonus = tier * 5;
             }
         }
         lib_sprintf(buf, sizeof(buf), "%s +%i%%", game_str_te_gcombat, groundcmbonus);
