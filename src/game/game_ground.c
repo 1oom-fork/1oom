@@ -45,12 +45,14 @@ static void game_ground_resolve_init(struct game_s *g, struct ground_s *gr)
         bestsuit = besti = 0;
         rc = &(srd->researchcompleted[TECH_FIELD_CONSTRUCTION][0]);
         for (int j = 0; j < e->tech.completed[TECH_FIELD_CONSTRUCTION]; ++j) {
-            const uint8_t *r;
-            r = RESEARCH_D0_PTR(g->gaux, TECH_FIELD_CONSTRUCTION, rc[j]);
-            if (r[0] == 7) {
-                bestarmor = r[1];
-            } else if (r[0] == 0xf) {
-                bestsuit = r[1];
+            uint8_t tier;
+            tech_group_t group;
+            group = game_tech_get_group(g->gaux, TECH_FIELD_CONSTRUCTION, rc[j]);
+            tier = game_tech_get_tier(g->gaux, TECH_FIELD_CONSTRUCTION, rc[j]);
+            if (group == TECH_GROUP_ARMOR) {
+                bestarmor = tier;
+            } else if (group == TECH_GROUP_PERSONAL_ARMOR) {
+                bestsuit = tier;
                 besti = rc[j];
             }
         }
@@ -60,10 +62,12 @@ static void game_ground_resolve_init(struct game_s *g, struct ground_s *gr)
         bestshield = besti = 0;
         rc = &(srd->researchcompleted[TECH_FIELD_FORCE_FIELD][0]);
         for (int j = 0; j < e->tech.completed[TECH_FIELD_FORCE_FIELD]; ++j) {
-            const uint8_t *r;
-            r = RESEARCH_D0_PTR(g->gaux, TECH_FIELD_FORCE_FIELD, rc[j]);
-            if (r[0] == 0x10) {
-                bestshield = r[1];
+            uint8_t tier;
+            tech_group_t group;
+            group = game_tech_get_group(g->gaux, TECH_FIELD_FORCE_FIELD, rc[j]);
+            tier = game_tech_get_tier(g->gaux, TECH_FIELD_FORCE_FIELD, rc[j]);
+            if (group == TECH_GROUP_PERSONAL_SHIELD) {
+                bestshield = tier;
                 besti = rc[j];
             }
         }
@@ -74,10 +78,12 @@ static void game_ground_resolve_init(struct game_s *g, struct ground_s *gr)
         bestweap = besti = 0;
         rc = &(srd->researchcompleted[TECH_FIELD_WEAPON][0]);
         for (int j = 0; j < e->tech.completed[TECH_FIELD_WEAPON]; ++j) {
-            const uint8_t *r;
-            r = RESEARCH_D0_PTR(g->gaux, TECH_FIELD_WEAPON, rc[j]);
-            if (r[0] == 0x15) {
-                bestweap = r[1];
+            uint8_t tier;
+            tech_group_t group;
+            group = game_tech_get_group(g->gaux, TECH_FIELD_WEAPON, rc[j]);
+            tier = game_tech_get_tier(g->gaux, TECH_FIELD_WEAPON, rc[j]);
+            if (group == TECH_GROUP_PERSONAL_WEAPONS) {
+                bestweap = tier;
                 besti = rc[j];
             }
         }

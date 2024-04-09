@@ -22,6 +22,8 @@
 
 /* -------------------------------------------------------------------------- */
 
+#define RESEARCH_D0_PTR(ga_, f_, t_)   ((const uint8_t *)&((ga_)->research.d0[((f_) * 50 + (t_) - 1) * 6]))
+
 const uint8_t tech_reduce_50percent_per_10pts[51] = {
     100, 93, 87, 81, 76, 71, 66, 62, 58, 54,
     50, 47, 44, 41, 38, 35, 33, 31, 29, 27,
@@ -592,6 +594,11 @@ uint8_t game_tech_get_tier(const struct game_aux_s *gaux, tech_field_t field, in
     return (game_tech_get_group(gaux, field, tech) == 0xff) ? 0 : RESEARCH_D0_PTR(gaux, field, tech)[1];
 }
 
+uint8_t game_tech_get_gfx_i(const struct game_aux_s *gaux, tech_field_t field, int tech)
+{
+    return RESEARCH_D0_PTR(gaux, field, tech)[2];
+}
+
 const char *game_tech_get_name(const struct game_aux_s *gaux, tech_field_t field, int tech, char *buf, size_t bufsize)
 {
     if (tech == 0) {
@@ -921,11 +928,11 @@ void game_tech_get_orion_loot(struct game_s *g, player_id_t player)
         for (int loops = 0; loops < 200; ++loops) {
             tech_field_t field;
             uint8_t tech;
-            const uint8_t *p;
+            tech_group_t group;
             field = rnd_0_nm1(TECH_FIELD_NUM, &g->seed);
             tech = rnd_1_n(31, &g->seed) + 19;
-            p = RESEARCH_D0_PTR(g->gaux, field, tech);
-            if ((percent[field] >= tech) && (p[0] != 0xff)) {
+            group = game_tech_get_group(g->gaux, field, tech);
+            if ((percent[field] >= tech) && (group != TECH_GROUP_UNUSED)) {
                 const uint8_t *rc;
                 bool have_tech;
                 rc = &(g->srd[player].researchcompleted[field][0]);
@@ -960,11 +967,11 @@ void game_tech_get_artifact_loot(struct game_s *g, uint8_t planet, player_id_t p
         for (int loops = 0; loops < 200; ++loops) {
             tech_field_t field;
             uint8_t tech;
-            const uint8_t *p;
+            tech_group_t group;
             field = rnd_0_nm1(TECH_FIELD_NUM, &g->seed);
             tech = rnd_1_n(30, &g->seed);
-            p = RESEARCH_D0_PTR(g->gaux, field, tech);
-            if ((percent[field] >= tech) && (p[0] != 0xff)) {
+            group = game_tech_get_group(g->gaux, field, tech);
+            if ((percent[field] >= tech) && (group != TECH_GROUP_UNUSED)) {
                 const uint8_t *rc;
                 bool have_tech;
                 rc = &(g->srd[player].researchcompleted[field][0]);

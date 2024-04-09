@@ -133,7 +133,7 @@ static void empirereport_draw_cb(void *vptr)
             rc = rct[first + i];
             game_tech_get_name(g->gaux, f, rc, buf, sizeof(buf));
             lbxfont_select(2, game_tech_player_has_tech(g, f, rc, d->api) ? 0xa : 0, 0, 0);
-            if ((rc <= 50) && (RESEARCH_D0_PTR(g->gaux, f, rc)[0] == 13)) {
+            if ((rc <= 50) && (game_tech_get_tier(g->gaux, f, rc) == TECH_GROUP_CONTROLLED_ENVIRONMENT)) {
                 int j, pos_space;
                 j = 0;
                 pos_space = 0;

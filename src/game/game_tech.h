@@ -22,6 +22,7 @@ extern uint8_t game_get_best_jammer(const struct game_s *g, player_id_t player_i
 extern void game_update_tech_util(struct game_s *g);
 extern uint8_t game_tech_get_group(const struct game_aux_s *gaux, tech_field_t field, int tech);
 extern uint8_t game_tech_get_tier(const struct game_aux_s *gaux, tech_field_t field, int tech);
+extern uint8_t game_tech_get_gfx_i(const struct game_aux_s *gaux, tech_field_t field, int tech);
 extern const char *game_tech_get_name(const struct game_aux_s *gaux, tech_field_t field, int tech, char *buf, size_t bufsize);
 extern const char *game_tech_get_descr(const struct game_aux_s *gaux, tech_field_t field, int tech, char *buf, size_t bufsize);
 extern const char *game_tech_get_newtech_msg(const struct game_s *g, player_id_t pi, struct newtech_s *nt, char *buf, size_t bufsize);
