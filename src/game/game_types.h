@@ -44,7 +44,7 @@ typedef enum tech_group_e {
     TECH_GROUP_STREAM_PROJECTOR = 25,
     TECH_GROUP_PENETRATING_BEAMS = 30,
     /*FIXME is there anything else????*/
-    TECH_GROUP_UNKNOWN = 0xff,    /*FIXME???*/
+    TECH_GROUP_UNUSED = 0xff,
 } tech_group_t;
 
 typedef enum tech_field_e {
