@@ -82,10 +82,10 @@ static void game_spy_esp_sub3(struct game_s *g, struct spy_esp_s *s, tech_field_
     }
 }
 
-static int game_spy_esp_get_value(struct game_s *g, struct spy_esp_s *s, tech_field_t field, uint8_t techi)
+static int game_spy_esp_get_value(struct game_s *g, tech_field_t field, uint8_t techi, player_id_t player_i)
 {
-    empiretechorbit_t *es = &(g->eto[s->spy]);
-    const shipresearch_t *srds = &(g->srd[s->spy]);
+    const empiretechorbit_t *es = &(g->eto[player_i]);
+    const shipresearch_t *srds = &(g->srd[player_i]);
     uint8_t maxtier = 0, maxti = 0;
     tech_group_t group = game_tech_get_group(g->gaux, field, techi);
     int v;
@@ -372,7 +372,7 @@ int game_spy_esp_sub1(struct game_s *g, struct spy_esp_s *s, int a4, int a6)
                     have_tech = true;
                 }
             }
-            value = game_spy_esp_get_value(g, s, field, techi);
+            value = game_spy_esp_get_value(g, field, techi, s->spy);
             if ((value == 0) || (value < a4)) {
                 have_tech = true;
             }
