@@ -17,8 +17,6 @@
 
 #define RESEARCH_DESCR_LEN  0xc3
 
-#define RESEARCH_D0_PTR(ga_, f_, t_)   ((const uint8_t *)&((ga_)->research.d0[((f_) * 50 + (t_) - 1) * 6]))
-
 #define EVENTMSG_TYPE_NUM   22
 #define EVENTMSG_SUB_NUM    7
 #define EVENTMSG_NUM  (EVENTMSG_TYPE_NUM * EVENTMSG_SUB_NUM)
