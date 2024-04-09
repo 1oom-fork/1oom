@@ -19,6 +19,8 @@
 
 /* -------------------------------------------------------------------------- */
 
+#define RESEARCH_D0_PTR(ga_, f_, t_)   ((const uint8_t *)&((ga_)->research.d0[((f_) * 50 + (t_) - 1) * 6]))
+
 const uint8_t tech_reduce_50percent_per_10pts[] = {
     0, 100, 93, 87, 81, 76, 71, 66, 62, 58, 54, 50, 47, 44, 41, 38,
     35, 33, 31, 29, 27, 25, 23, 22, 20, 19, 18, 16, 15, 14, 13, 13,
@@ -474,6 +476,11 @@ uint8_t game_tech_get_tier(const struct game_aux_s *gaux, tech_field_t field, in
 {
     const uint8_t *p = RESEARCH_D0_PTR(gaux, field, tech);
     return (p[0] == TECH_GROUP_UNUSED) ? 0 : p[1];
+}
+
+uint8_t game_tech_get_gfx_i(const struct game_aux_s *gaux, tech_field_t field, int tech)
+{
+    return RESEARCH_D0_PTR(gaux, field, tech)[2];
 }
 
 const char *game_tech_get_name(const struct game_aux_s *gaux, tech_field_t field, int tech, char *buf)
