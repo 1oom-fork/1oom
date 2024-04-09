@@ -16,7 +16,7 @@ typedef enum {
 #define PLAYER_NONE PLAYER_NUM
 
 typedef enum tech_group_e {
-    TECH_GROUP_OTHER = 0,
+    TECH_GROUP_SINGULAR = 0,
     TECH_GROUP_ECM_JAMMER = 1,
     TECH_GROUP_BATTLE_COMPUTER = 2,
     TECH_GROUP_IMPROVED_ROBOTIC_CONTROLS = 3,
