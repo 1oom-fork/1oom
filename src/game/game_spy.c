@@ -17,50 +17,64 @@
 
 /* -------------------------------------------------------------------------- */
 
-static uint8_t game_spy_esp_sub3_sub1(struct game_s *g, uint8_t a0, tech_field_t field, uint16_t slen, const uint8_t *src)
+static uint8_t game_spy_esp_get_group_tier(struct game_s *g, tech_group_t group, tech_field_t field, uint16_t len, const uint8_t *research_completed)
 {
     int v = 0;
-    for (int i = 0; i < slen; ++i) {
+    for (int i = 0; i < len; ++i) {
         uint8_t techi;
-        const uint8_t *p;
-        techi = src[i];
-        p = RESEARCH_D0_PTR(g->gaux, field, techi);
-        if (a0 == p[0]) {
+        tech_group_t group2;
+        techi = research_completed[i];
+        group2 = game_tech_get_group(g->gaux, field, techi);
+        if (group == group2) {
             v = game_tech_get_tier(g->gaux, field, techi);
         }
     }
     return v;
 }
 
-static void game_spy_esp_sub3(struct game_s *g, struct spy_esp_s *s, tech_field_t field, int tlen, const uint8_t *trc, int slen, const uint8_t *src)
+static void game_spy_esp_sift_useful_techs_do(struct game_s *g, struct spy_esp_s *s, tech_field_t field, int target_len, const uint8_t *target_research_completed, int spy_len, const uint8_t *spy_research_completed)
 {
-    for (int i = 0; i < tlen; ++i) {
-        const uint8_t *p;
-        uint8_t techi, b0, b1;
+    for (int i = 0; i < target_len; ++i) {
+        uint8_t techi, tier;
+        tech_group_t group;
         bool have_tech;
-        techi = trc[i];
-        p = RESEARCH_D0_PTR(g->gaux, field, techi);
-        b0 = p[0];
-        b1 = game_tech_get_tier(g->gaux, field, techi);
+        techi = target_research_completed[i];
+        group = game_tech_get_group(g->gaux, field, techi);
+        tier = game_tech_get_tier(g->gaux, field, techi);
         have_tech = false;
-        for (int j = 0; j < slen; ++j) {
-            if (src[j] == techi) {
+        for (int j = 0; j < spy_len; ++j) {
+            if (spy_research_completed[j] == techi) {
                 have_tech = true;
                 break;
             }
         }
         if (0
-          || ((b0 >= 3) && (b0 <= 6))
-          || (b0 == 10) || (b0 == 18) || (b0 == 21)
-          || ((b0 >= 12) && (b0 <= 16))
+          || (group == TECH_GROUP_IMPROVED_ROBOTIC_CONTROLS)
+          || (group == TECH_GROUP_SPACE_SCANNER)
+          || (group == TECH_GROUP_REDUCED_INDUSTRIAL_WASTE)
+          || (group == TECH_GROUP_IMPROVED_INDUSTRIAL_TECH)
+          || (group == TECH_GROUP_PLANETARY_SHIELD)
+          || (group == TECH_GROUP_IMPROVED_TERRAFORMING)
+          || (group == TECH_GROUP_CONTROLLED_ENVIRONMENT)
+          || (group == TECH_GROUP_ECO_RESTORATION)
+          || (group == TECH_GROUP_PERSONAL_ARMOR)
+          || (group == TECH_GROUP_PERSONAL_SHIELD)
+          || (group == TECH_GROUP_FUEL_CELLS)
+          || (group == TECH_GROUP_PERSONAL_WEAPONS)
         ) {
-            if (game_spy_esp_sub3_sub1(g, b0, field, slen, src) >= b1) {
+            if (game_spy_esp_get_group_tier(g, group, field, spy_len, spy_research_completed) >= tier) {
                 have_tech = true;
             }
         }
         /*632ff*/
-        if ((g->eto[s->spy].race == RACE_SILICOID) && ((b0 == 5) || (b0 == 13) || (b0 == 14))) {
-            have_tech = true;
+        if (g->eto[s->spy].race == RACE_SILICOID) {
+            if (0
+              || (group == TECH_GROUP_REDUCED_INDUSTRIAL_WASTE)
+              || (group == TECH_GROUP_CONTROLLED_ENVIRONMENT)
+              || (group == TECH_GROUP_ECO_RESTORATION)
+            ) {
+                have_tech = true;
+            }
         }
         if (!have_tech) {
             s->tbl_techi[field][s->tbl_num[field]++] = techi;
@@ -376,7 +390,7 @@ int game_spy_esp_sub2(struct game_s *g, struct spy_esp_s *s, int a4)
         s->tbl_num[f] = 0;
     }
     for (tech_field_t f = 0; f < TECH_FIELD_NUM; ++f) {
-        game_spy_esp_sub3(g, s, f, et->tech.completed[f] - a4, srdt->researchcompleted[f], es->tech.completed[f], srds->researchcompleted[f]);
+        game_spy_esp_sift_useful_techs_do(g, s, f, et->tech.completed[f] - a4, srdt->researchcompleted[f], es->tech.completed[f], srds->researchcompleted[f]);
     }
     for (tech_field_t f = 0; f < TECH_FIELD_NUM; ++f) {
         sum += s->tbl_num[f];
