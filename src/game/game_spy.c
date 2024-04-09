@@ -82,22 +82,24 @@ static void game_spy_esp_sift_useful_techs_do(struct game_s *g, struct spy_esp_s
     }
 }
 
-static int game_spy_esp_get_value(struct game_s *g, struct spy_esp_s *s, tech_field_t field, uint8_t techi)
+static int game_spy_esp_get_value(struct game_s *g, tech_field_t field, uint8_t techi, player_id_t player_i)
 {
-    empiretechorbit_t *es = &(g->eto[s->spy]);
-    const shipresearch_t *srds = &(g->srd[s->spy]);
-    uint8_t b0 = RESEARCH_D0_PTR(g->gaux, field, techi)[0], maxb1 = 0, maxti = 0;
+    const empiretechorbit_t *es = &(g->eto[player_i]);
+    const shipresearch_t *srds = &(g->srd[player_i]);
+    uint8_t maxtier = 0, maxti = 0;
+    tech_group_t group = game_tech_get_group(g->gaux, field, techi);
     int v;
-    if (b0 & 0x80) {
+    if (group & 0x80) {
         return 0;
     }
     for (int i = 0; i < es->tech.completed[field]; ++i) {
-        const uint8_t *p;
-        uint8_t ti;
+        uint8_t tier2, ti;
+        tech_group_t group2;
         ti = srds->researchcompleted[field][i];
-        p = RESEARCH_D0_PTR(g->gaux, field, ti);
-        if ((p[0] == b0) && (p[1] > maxb1)) {
-             maxb1 = p[1];
+        group2 = game_tech_get_group(g->gaux, field, ti);
+        tier2 = game_tech_get_tier(g->gaux, field, ti);
+        if ((group2 == group) && (tier2 > maxtier)) {
+             maxtier = tier2;
              maxti = ti;
         }
     }
@@ -141,16 +143,16 @@ static int game_spy_esp_get_value(struct game_s *g, struct spy_esp_s *s, tech_fi
 #endif
     /*62f24*/
     v = techi * techi;
-    if (b0 == 0) {
+    if (group == TECH_GROUP_SINGULAR) {
         v *= 10;
     }
-    if (b0 == 3) {
+    if (group == TECH_GROUP_IMPROVED_ROBOTIC_CONTROLS) {
         v *= 6;
     }
-    if (b0 == 5) {
+    if (group == TECH_GROUP_REDUCED_INDUSTRIAL_WASTE) {
         v *= 3;
     }
-    if (b0 == 14) {
+    if (group == TECH_GROUP_ECO_RESTORATION) {
         v *= 3;
     }
     if (maxti > techi) {
@@ -159,8 +161,14 @@ static int game_spy_esp_get_value(struct game_s *g, struct spy_esp_s *s, tech_fi
     if (maxti == techi) {
         v = 0;
     }
-    if ((es->race == RACE_SILICOID) && ((b0 == 5) || (b0 == 13) || (b0 == 14))) {
-        v = 0;
+    if (es->race == RACE_SILICOID) {
+        if (0
+          || (group == TECH_GROUP_REDUCED_INDUSTRIAL_WASTE)
+          || (group == TECH_GROUP_CONTROLLED_ENVIRONMENT)
+          || (group == TECH_GROUP_ECO_RESTORATION)
+        ) {
+            v = 0;
+        }
     }
     if ((field == TECH_FIELD_WEAPON) && (techi == TECH_WEAP_DEATH_RAY)) {
         v = 30000;
@@ -362,7 +370,7 @@ int game_spy_esp_sub1(struct game_s *g, struct spy_esp_s *s, int a4, int a6)
                     have_tech = true;
                 }
             }
-            value = game_spy_esp_get_value(g, s, field, techi);
+            value = game_spy_esp_get_value(g, field, techi, s->spy);
             if ((value == 0) || (value < a4)) {
                 have_tech = true;
             }
