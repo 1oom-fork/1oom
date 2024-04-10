@@ -239,6 +239,7 @@ extern const char *game_str_sd_dmg;
 extern const char *game_str_sd_weaps;
 extern const char *game_str_sd_specname;
 extern const char *game_str_sd_specs;
+extern const char *game_str_sd_wgroup_names[WEAPON_GROUP_NUM];
 extern const char *game_str_sp_only6;
 extern const char *game_str_sp_wantscrap;
 extern const char *game_str_sp_before;

@@ -83,6 +83,8 @@ enables the following extra UI features:
 - The color of ship names on Planets screen is black
 - Pressing = in the galaxy movement screen also transfers reserve back and
   the behavior is more predictable
+- Weapons can be filtered by type when modeling a ship
+  Click on Weapons to change the filter
 
 The config file item "ui.uifixbugs" (set via the -uifixbugs command-line option)
 enables the following UI bug fixes:

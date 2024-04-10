@@ -400,6 +400,10 @@ const char *game_str_sd_weaps = "WEAPONS";
 const char *game_str_sd_specname = "SPECIAL NAME";
 const char *game_str_sd_specs = "SPECIAL DEVICES";
 
+const char *game_str_sd_wgroup_names[WEAPON_GROUP_NUM] = {
+    "WEAPONS", "BEAMS", "KINETIC", "BOMBS", "MISSILES", "BIOLOGICAL", "SPECIAL"
+};
+
 const char *game_str_sp_only6 = "Only 6 ships may be commisioned at one time. 1/4 the decomissioned ship's cost is placed in the planetary reserve.";
 const char *game_str_sp_wantscrap = "Do you want to scrap this ship?";
 const char *game_str_sp_before = "Before a new design can be created, you must first scrap one of the six current designs.";
