@@ -874,7 +874,7 @@ static void ui_design_sel_weapon(struct design_data_s *d, int wslot)
         game_design_update_engines(sd);
         space = game_design_calc_space(d->gd);
         cost = game_design_calc_cost(d->gd);
-        havelast = game_design_build_tbl_fit_weapon(d->g, d->gd, havebuf, wslot);
+        havelast = game_design_build_tbl_fit_weapon(d->g, d->gd, havebuf, wslot, WEAPON_GROUP_ALL);
 
         {
             weapon_t i = havelast + 1, firsti;
