@@ -33,6 +33,17 @@ typedef enum {
     DESIGN_SLOT_WEAPON4 /*15*/
 } design_slot_t;
 
+typedef enum {
+    WEAPON_GROUP_ALL,
+    WEAPON_GROUP_BEAMS,
+    WEAPON_GROUP_KINETIC,
+    WEAPON_GROUP_BOMBS,
+    WEAPON_GROUP_MISSILES,
+    WEAPON_GROUP_BIOLOGICAL,
+    WEAPON_GROUP_SPECIAL,
+    WEAPON_GROUP_NUM,
+} weapon_group_t;
+
 struct game_s;
 struct game_aux_s;
 
@@ -73,7 +84,7 @@ extern int game_design_build_tbl_fit_jammer(struct game_s *g, struct game_design
 extern int game_design_build_tbl_fit_armor(struct game_s *g, struct game_design_s *gd, int8_t *buf);
 extern int game_design_build_tbl_fit_engine(struct game_s *g, struct game_design_s *gd, int8_t *buf);
 extern int game_design_build_tbl_fit_man(struct game_s *g, struct game_design_s *gd, int8_t *buf);
-extern int game_design_build_tbl_fit_weapon(struct game_s *g, struct game_design_s *gd, int8_t *buf, int wslot);
+extern int game_design_build_tbl_fit_weapon(struct game_s *g, struct game_design_s *gd, int8_t *buf, int wslot, weapon_group_t wgroup);
 extern int game_design_build_tbl_fit_special(struct game_s *g, struct game_design_s *gd, int8_t *buf, int sslot);
 extern void game_design_compact_slots(shipdesign_t *sd);
 extern void game_design_scrap(struct game_s *g, player_id_t player, int shipi, bool flag_for_new);
