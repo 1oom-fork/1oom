@@ -524,7 +524,7 @@ static int cmd_sel_wpnt(struct design_data_s *d, int wslot)
     struct input_list_dyn_s ld = { .list = il, .ctx = &sel, .is_ok = sel_is_ok, .get_display = sel_wpnt_get_display };
     sd->wpnt[wslot] = 0;
     game_design_update_engines(sd);
-    havelast = game_design_build_tbl_fit_weapon(d->g, gd, havebuf, wslot);
+    havelast = game_design_build_tbl_fit_weapon(d->g, gd, havebuf, wslot, WEAPON_GROUP_ALL);
     while (1) {
         int v;
         sel_build_il(il, flag_enable, havebuf, havelast, offs);
