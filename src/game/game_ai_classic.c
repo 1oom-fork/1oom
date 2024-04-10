@@ -1497,7 +1497,7 @@ static void game_ai_classic_design_ship_weapon(struct game_s *g, struct ai_turn_
     int8_t tbl_have[WEAPON_NUM];
     shipdesign_t *sd = &(ait->gd.sd);
     int v;
-    v = game_design_build_tbl_fit_weapon(g, &ait->gd, tbl_have, sloti);
+    v = game_design_build_tbl_fit_weapon(g, &ait->gd, tbl_have, sloti, WEAPON_GROUP_ALL);
     if ((sloti == 0) && tbl_shiptech_weap[v].is_bomb && (ait->shiptype != 2/*bomber*/)) {
         --v;
     }
