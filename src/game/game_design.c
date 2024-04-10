@@ -182,6 +182,47 @@ static void game_design_prepare_do(struct game_s *g, struct game_design_s *gd, p
     memcpy(gd->percent, e->tech.percent, sizeof(gd->percent));
 }
 
+static weapon_group_t game_design_get_weapon_group(const struct game_s *g, const struct shiptech_weap_s *w)
+{
+    tech_field_t field;
+    tech_group_t group;
+    if (w->tech_i > 50) {
+        return WEAPON_GROUP_SPECIAL;
+    }
+    field = w->is_bio ? TECH_FIELD_PLANETOLOGY : TECH_FIELD_WEAPON;
+    group = game_tech_get_group(g->gaux, field, w->tech_i);
+    if (group == TECH_GROUP_SINGULAR) {
+        if (w->is_bio) {
+            return WEAPON_GROUP_BIOLOGICAL;
+        }
+        if (w->is_bomb) {
+            return WEAPON_GROUP_BOMBS;
+        }
+        if (w->halveshield) {
+            return WEAPON_GROUP_KINETIC;
+        }
+        if (w->damagemin != w->damagemax) {
+            return WEAPON_GROUP_BEAMS;
+        }
+        return WEAPON_GROUP_MISSILES;
+    }
+    switch (group) {
+        case TECH_GROUP_BEAMS:
+            return WEAPON_GROUP_BEAMS;
+        case TECH_GROUP_PENETRATING_BEAMS:
+            return WEAPON_GROUP_KINETIC;
+        case TECH_GROUP_BIO_WEAPONS:
+            return WEAPON_GROUP_BIOLOGICAL;
+        case TECH_GROUP_BOMBS:
+            return WEAPON_GROUP_BOMBS;
+        case TECH_GROUP_ROCKETS:
+            return WEAPON_GROUP_MISSILES;
+        default:
+            break;
+    }
+    return WEAPON_GROUP_NUM;
+}
+
 /* -------------------------------------------------------------------------- */
 
 void game_design_prepare(struct game_s *g, struct game_design_s *gd, player_id_t player, shipdesign_t *sd)
@@ -593,7 +634,7 @@ int game_design_build_tbl_fit_man(struct game_s *g, struct game_design_s *gd, in
     return sd->engine;
 }
 
-int game_design_build_tbl_fit_weapon(struct game_s *g, struct game_design_s *gd, int8_t *buf, int wslot)
+int game_design_build_tbl_fit_weapon(struct game_s *g, struct game_design_s *gd, int8_t *buf, int wslot, weapon_group_t wgroup)
 {
     shipdesign_t *sd = &(gd->sd);
     weapon_t actwpnt = sd->wpnt[wslot];
@@ -602,8 +643,12 @@ int game_design_build_tbl_fit_weapon(struct game_s *g, struct game_design_s *gd,
     buf[0] = 1/*HAVE*/;
     for (int i = 1; i < WEAPON_NUM; ++i) {
         tech_field_t fi;
+        weapon_group_t group;
+        bool match;
         fi = tbl_shiptech_weap[i].is_bio ? TECH_FIELD_PLANETOLOGY : TECH_FIELD_WEAPON;
-        if (game_tech_player_has_tech(g, fi, tbl_shiptech_weap[i].tech_i, gd->player_i)) {
+        group = game_design_get_weapon_group(g, &(tbl_shiptech_weap[i]));
+        match = (wgroup == WEAPON_GROUP_ALL) || (wgroup == group);
+        if (game_tech_player_has_tech(g, fi, tbl_shiptech_weap[i].tech_i, gd->player_i) && match) {
             uint8_t n;
             sd->wpnt[wslot] = i;
             /* TODO use binary search */
