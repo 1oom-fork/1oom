@@ -1941,12 +1941,13 @@ void uiobj_ta_set_val_1(int16_t oi)
     }
 }
 
-int16_t uiobj_select_from_list1(int x, int y, int w, const char *title, char const * const *strtbl, int16_t *selptr, const bool *condtbl, uint8_t subtype, uint8_t sp0v, bool update_at_cursor)
+int16_t uiobj_select_from_list3(int x, int y, int w, const char *title, char const * const *strtbl, int16_t *selptr, const bool *condtbl, uint8_t subtype, uint8_t sp0v, bool update_at_cursor, bool add_switch, int sx, int sy)
 {
     int h, dy, ty = y, di = -1;
     bool flag_done = false, toz12, flag_copy_buf = false;
     uint16_t itemi = 0, v6 = 0;
     int16_t oi = 0, oi_title, v18 = 0;
+    int16_t oi_switch = UIOBJI_INVALID;
     char const * const *s = strtbl;
 
     uiobj_flag_select_list_active = true;
@@ -1981,6 +1982,9 @@ int16_t uiobj_select_from_list1(int x, int y, int w, const char *title, char con
     v6 = itemi;
     lbxfont_select(lbxfont_get_current_fontnum(), lbxfont_get_current_fonta2(), lbxfont_get_current_fonta4(), 0);
     oi_title = uiobj_add_ta(x, y, w, title, false, &v18, 1, 0, 0, MOO_KEY_UNKNOWN);
+    if (add_switch) {
+        oi_switch = uiobj_add_mousearea(120, sy + 3, 200, sy + 11, MOO_KEY_UNKNOWN);
+    }
 
     if ((*selptr < 0) || (*selptr >= v6) || (*selptr < di)) {
         if ((di >= 0) && (di < v6)) {
@@ -1996,6 +2000,10 @@ int16_t uiobj_select_from_list1(int x, int y, int w, const char *title, char con
     while (!flag_done) {
         ui_delay_prepare();
         oi = uiobj_handle_input_cond();
+        if (oi == oi_switch) {
+            flag_done = true;
+            break;
+        }
         if (oi != 0) {
             flag_done = true;
         }
@@ -2025,18 +2033,27 @@ int16_t uiobj_select_from_list1(int x, int y, int w, const char *title, char con
     uiobj_flag_select_list_active = false;
     mouse_getclear_click_hw();
     mouse_getclear_click_sw();
+    if (oi == oi_switch) {
+        return -2;
+    }
     if (oi < 0) {
         return -1;
     }
     return oi - 1;
 }
 
-int16_t uiobj_select_from_list2(int x, int y, int w, const char *title, char const * const *strtbl, int16_t *selptr, const bool *condtbl, int linenum, int upx, int upy, uint8_t *uplbx, int dnx, int dny, uint8_t *dnlbx, uint8_t subtype, uint8_t sp0v, bool update_at_cursor)
+int16_t uiobj_select_from_list1(int x, int y, int w, const char *title, char const * const *strtbl, int16_t *selptr, const bool *condtbl, uint8_t subtype, uint8_t sp0v, bool update_at_cursor)
+{
+    return uiobj_select_from_list3(x, y, w, title, strtbl, selptr, condtbl, subtype, sp0v, update_at_cursor, false, 0, 0);
+}
+
+int16_t uiobj_select_from_list4(int x, int y, int w, const char *title, char const * const *strtbl, int16_t *selptr, const bool *condtbl, int linenum, int upx, int upy, uint8_t *uplbx, int dnx, int dny, uint8_t *dnlbx, uint8_t subtype, uint8_t sp0v, bool update_at_cursor, bool add_switch, int sx, int sy)
 {
     int h, dy, ty, linei = 0, itemi = 0, itemnum, itemoffs, foundi = 0;
     bool flag_done = false, flag_copy_buf = false, flag_found = false;
     uint16_t fonta4, fonta2b;
     int16_t oi = 0, oi_title, oi_up, oi_dn, oi_wheel, v18 = 0, upvar, dnvar, curval, scroll = 0;
+    int16_t oi_switch = UIOBJI_INVALID;
     char const * const *s = strtbl;
 
     uiobj_flag_select_list_active = true;
@@ -2098,6 +2115,9 @@ int16_t uiobj_select_from_list2(int x, int y, int w, const char *title, char con
     dnvar = (itemi >= itemnum) ? 1 : 0;
     oi_up = uiobj_add_t2(upx, upy, "", uplbx, &upvar, MOO_KEY_PAGEUP);
     oi_dn = uiobj_add_t2(dnx, dny, "", dnlbx, &dnvar, MOO_KEY_PAGEDOWN);
+    if (add_switch) {
+        oi_switch = uiobj_add_mousearea(120, sy + 3, 200, sy + 11, MOO_KEY_UNKNOWN);
+    }
     oi_wheel = uiobj_add_mousewheel(0, 0, 319, 199, &scroll);
 
     flag_done = false;
@@ -2141,6 +2161,9 @@ int16_t uiobj_select_from_list2(int x, int y, int w, const char *title, char con
             }
             itemoffs = i;
             flag_rebuild = true;
+        } else if (oi == oi_switch) {
+            flag_done = true;
+            break;
         }
         if (uiobj_kbd_movey == 1) {
             int i, j;
@@ -2209,6 +2232,9 @@ int16_t uiobj_select_from_list2(int x, int y, int w, const char *title, char con
             dnvar = (itemi >= itemnum) ? 1 : 0;
             oi_up = uiobj_add_t2(upx, upy, "", uplbx, &upvar, MOO_KEY_PAGEUP);
             oi_dn = uiobj_add_t2(dnx, dny, "", dnlbx, &dnvar, MOO_KEY_PAGEDOWN);
+            if (add_switch) {
+                oi_switch = uiobj_add_mousearea(120, sy + 3, 200, sy + 11, MOO_KEY_UNKNOWN);
+            }
             oi_wheel = uiobj_add_mousewheel(0, 0, 319, 199, &scroll);
         }
         uiobj_kbd_movey = 0;
@@ -2233,11 +2259,20 @@ int16_t uiobj_select_from_list2(int x, int y, int w, const char *title, char con
     uiobj_flag_select_list_multipage = false;
     mouse_getclear_click_hw();
     mouse_getclear_click_sw();
+    if (oi == oi_switch) {
+        *selptr = curval;
+        return -2;
+    }
     if (oi < 0) {
         *selptr = curval;
         return -1;
     }
     return oi + itemoffs - 1;
+}
+
+int16_t uiobj_select_from_list2(int x, int y, int w, const char *title, char const * const *strtbl, int16_t *selptr, const bool *condtbl, int linenum, int upx, int upy, uint8_t *uplbx, int dnx, int dny, uint8_t *dnlbx, uint8_t subtype, uint8_t sp0v, bool update_at_cursor)
+{
+    return uiobj_select_from_list4(x, y, w, title, strtbl, selptr, condtbl, linenum, upx, upy, uplbx, dnx, dny, dnlbx, subtype, sp0v, update_at_cursor, false, 0, 0);
 }
 
 
