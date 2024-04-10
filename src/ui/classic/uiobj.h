@@ -68,6 +68,8 @@ extern void uiobj_ta_set_val_1(int16_t oi);
 
 extern int16_t uiobj_select_from_list1(int x, int y, int w, const char *title, char const * const *strtbl, int16_t *selptr, const bool *condtbl, uint8_t subtype, uint8_t sp0v, bool update_at_cursor);
 extern int16_t uiobj_select_from_list2(int x, int y, int w, const char *title, char const * const *strtbl, int16_t *selptr, const bool *condtbl, int linenum, int upx, int upy, uint8_t *uplbx, int dnx, int dny, uint8_t *dnlbx, uint8_t subtype, uint8_t sp0v, bool update_at_cursor);
+extern int16_t uiobj_select_from_list3(int x, int y, int w, const char *title, char const * const *strtbl, int16_t *selptr, const bool *condtbl, uint8_t subtype, uint8_t sp0v, bool update_at_cursor, bool add_switch, int sx, int sy);
+extern int16_t uiobj_select_from_list4(int x, int y, int w, const char *title, char const * const *strtbl, int16_t *selptr, const bool *condtbl, int linenum, int upx, int upy, uint8_t *uplbx, int dnx, int dny, uint8_t *dnlbx, uint8_t subtype, uint8_t sp0v, bool update_at_cursor, bool add_switch, int sx, int sy);
 extern bool uiobj_read_str(int x, int y, int w, char *buf, int buflen, uint8_t rcolor, bool alignr, const uint8_t *ctbl);
 
 extern void uiobj_input_flush(void);
