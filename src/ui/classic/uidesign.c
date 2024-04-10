@@ -342,7 +342,11 @@ static struct xy_s ui_design_draw_selbox(int xpos, int xoff1, int xoff2, int xof
     SETMIN(x1, 159);
     SETMAX(y0, 0);
 
-    ui_cursor_erase1(); /* HACK should not be needed */
+    if (ui_extra_enabled) {
+        hw_video_copy_back_from_page3();
+    } else {
+        ui_cursor_erase1(); /* HACK should not be needed */
+    }
     ui_draw_box_grain(x0 + 4, y0 + 4, x0 + xpos + xoff2, y1 + 20, 1, 2, 0x37);
     /*uiobj_set_limits(x0, y0, x1, y1);*/
     lbxgfx_draw_frame_offs(x0, y0, ui_data.gfx.design.pop1_ul, x0, y0, x1, y1, UI_SCREEN_W);
@@ -825,16 +829,21 @@ static void ui_design_sel_weapon(struct design_data_s *d, int wslot)
     int8_t havebuf[WEAPON_NUM];
     bool flag_tbl_enable[WEAPON_NUM];
     weapon_t tbl_weapon[WEAPON_NUM];
-    int xpos, xpos2, n = 0, numlines = 0;
-    int16_t curweap = 0;
+    int xpos, xpos2, n, numlines;
+    int16_t curweap;
     char titlebuf[0x80];
     char linebuf[WEAPON_NUM * 0x58];
     const char *lineptr[WEAPON_NUM + 1];
-    struct strbuild_s line_builder = strbuild_init(linebuf, sizeof(linebuf));
+    struct strbuild_s line_builder;
     shipdesign_t *sd = &(d->gd->sd);
     weapon_t actwpnt = sd->wpnt[wslot];
     uint8_t actwpnn = sd->wpnn[wslot];
 
+    again:
+    n = 0;
+    numlines = 0;
+    curweap = 0;
+    line_builder = strbuild_init(linebuf, sizeof(linebuf));
     lbxfont_select(2, 0, 4, 0xe);
 
     {
@@ -870,7 +879,13 @@ static void ui_design_sel_weapon(struct design_data_s *d, int wslot)
         game_design_update_engines(sd);
         space = game_design_calc_space(d->gd);
         cost = game_design_calc_cost(d->gd);
-        havelast = game_design_build_tbl_fit_weapon(d->g, d->gd, havebuf, wslot, WEAPON_GROUP_ALL);
+        havelast = 0;
+        while (!havelast) {
+            havelast = game_design_build_tbl_fit_weapon(d->g, d->gd, havebuf, wslot, ui_data.sorted.weapon_type[d->api]);
+            if (!havelast) {
+                ui_data.sorted.weapon_type[d->api] = (ui_data.sorted.weapon_type[d->api] + 1) % WEAPON_GROUP_NUM;
+            }
+        }
 
         {
             int i = havelast + 1, firsti;
@@ -933,13 +948,16 @@ static void ui_design_sel_weapon(struct design_data_s *d, int wslot)
         int listi;
         struct xy_s xy;
         SETMIN(n, 18);
-        xy = ui_design_draw_selbox(xpos, 160, 160, 0, n + 2, game_str_sd_weaps);
+        xy = ui_design_draw_selbox(xpos, 160, 160, 0, n + 2, ui_extra_enabled ? game_str_sd_wgroup_names[ui_data.sorted.weapon_type[d->api]] : game_str_sd_weaps);
         if (numlines < 18) {
-            listi = uiobj_select_from_list1(xy.x + 14, xy.y + 20, xpos + 131, titlebuf, lineptr, &curweap, flag_tbl_enable, 1, 0x60, false);
+            listi = uiobj_select_from_list3(xy.x + 14, xy.y + 20, xpos + 131, titlebuf, lineptr, &curweap, flag_tbl_enable, 1, 0x60, false, ui_extra_enabled, xy.x, xy.y);
         } else {
-            listi = uiobj_select_from_list2(xy.x + 14, xy.y + 20, xpos + 131, titlebuf, lineptr, &curweap, flag_tbl_enable, 18, 312, 19, ui_data.gfx.design.popscrol_u, 313, 183, ui_data.gfx.design.popscrol_d, 1, 0x60, false);
+            listi = uiobj_select_from_list4(xy.x + 14, xy.y + 20, xpos + 131, titlebuf, lineptr, &curweap, flag_tbl_enable, 18, 312, 19, ui_data.gfx.design.popscrol_u, 313, 183, ui_data.gfx.design.popscrol_d, 1, 0x60, false, ui_extra_enabled, xy.x, xy.y);
         }
-        if (listi < 0) {
+        if (listi == -2) {
+            ui_data.sorted.weapon_type[d->api] = (ui_data.sorted.weapon_type[d->api] + 1) % WEAPON_GROUP_NUM;
+            goto again;
+        } else if (listi < 0) {
             sd->wpnt[wslot] = actwpnt;
             sd->wpnn[wslot] = actwpnn;
         } else {
@@ -1052,6 +1070,9 @@ static void ui_design_sub(struct ui_design_data_s *u, design_slot_t selmode)
 {
     struct design_data_s *d = u->d;
     uiobj_unset_callback();
+    if (ui_extra_enabled) {
+        hw_video_copy_back_to_page3();
+    }
     uiobj_set_callback_and_delay(design_draw_sub_cb, 0, 1);
     switch (selmode) {
         case DESIGN_SLOT_COMP:
