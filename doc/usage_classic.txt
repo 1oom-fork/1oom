@@ -91,6 +91,8 @@ enables the following extra UI features:
 - Pressing = in the galaxy movement screen also transfers reserve back and
   the behavior is more predictable
 - Fixed graphics bug with brighter stars drawn further away than dimmer ones
+- Weapons can be filtered by type when modeling a ship
+  Click on Weapons to change the filter
 
 The following features can be enabled in the configuration file:
 - Continue, Undo and Initial saves can be chosen in the Load Game screen
