@@ -41,7 +41,6 @@ static void empirestatus_draw_cb(void *vptr)
     struct empirestatus_data_s *d = vptr;
     const struct game_s *g = d->g;
     const struct game_stats_s *st = &(d->st);
-    char buf[0x40];
 
     ui_draw_color_buf(0x3a);
     lbxgfx_draw_frame(0, 0, d->gfx, UI_SCREEN_W, ui_scale);
