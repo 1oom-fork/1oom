@@ -382,6 +382,7 @@ static void main_menu_make_game_custom_homeworlds_page(struct main_menu_data_s *
     menu_make_int(menu_allocate_item(), "Num scouts", &game_opt_custom.homeworlds.num_scouts, 0, 5, MOO_KEY_s);
     menu_make_int(menu_allocate_item(), "Num fighters", &game_opt_custom.homeworlds.num_fighters, 0, 10, MOO_KEY_f);
     menu_make_int(menu_allocate_item(), "Num colony ships", &game_opt_custom.homeworlds.num_colony_ships, 0, 2, MOO_KEY_c);
+    menu_make_bool(menu_allocate_item(), "Armed colony ships", &game_opt_custom.homeworlds.armed_colony_ships, MOO_KEY_a);
     menu_make_back(menu_allocate_item());
 }
 
