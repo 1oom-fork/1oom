@@ -891,6 +891,10 @@ static void game_generate_home_etc(struct game_s *g, struct game_new_options_s *
                 n = startfleet_ships[j];
                 e->orbit[tblhome[i]].ships[j] = n;
                 srd->shipcount[j] = n;
+                if ((j == 4) && opts->homeworlds.armed_colony_ships && !srd->design[4].wpnt[0]) {
+                    srd->design[4].wpnn[0] = 1;
+                    srd->design[4].wpnt[0] = 2;
+                }
             }
         }
         e->fuel_range = 3;
