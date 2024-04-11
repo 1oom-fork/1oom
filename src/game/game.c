@@ -580,6 +580,7 @@ const struct cfg_items_s game_cfg_items[] = {
     CFG_ITEM_INT("custom_game_home_num_scouts", &game_opt_custom.homeworlds.num_scouts, NULL),
     CFG_ITEM_INT("custom_game_home_num_fighters", &game_opt_custom.homeworlds.num_fighters, NULL),
     CFG_ITEM_INT("custom_game_home_num_colony_ships", &game_opt_custom.homeworlds.num_colony_ships, NULL),
+    CFG_ITEM_BOOL("custom_game_home_armed_colony_ships", &game_opt_custom.homeworlds.armed_colony_ships),
     CFG_ITEM_END
 };
 
