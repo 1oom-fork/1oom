@@ -595,6 +595,7 @@ const struct cfg_items_s game_cfg_items[] = {
     CFG_ITEM_BOOL("rules_retreat_redir_fix", &game_num_retreat_redir_fix),
     CFG_ITEM_BOOL("rules_ship_scanner_fix", &game_num_ship_scanner_fix),
     CFG_ITEM_BOOL("rules_waste_calc_fix", &game_num_waste_calc_fix),
+    CFG_ITEM_BOOL("rules_locked_eco_fix", &game_num_locked_eco_fix),
     CFG_ITEM_END
 };
 

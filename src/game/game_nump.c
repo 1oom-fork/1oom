@@ -208,6 +208,7 @@ static const struct numtbl_s {
     DEFNUMITEML(slider_stop_tform_fix, NUMTYPE_BOOL, 0, 1),
     DEFNUMITEML(ship_scanner_fix, NUMTYPE_BOOL, 0, 1),
     DEFNUMITEML(passive_bio_damage_fix, NUMTYPE_BOOL, 0, 1),
+    DEFNUMITEML(locked_eco_fix, NUMTYPE_BOOL, 0, 1),
     DEFNUMITEMLTBLL(tbl_hull_w, NUMTYPE_U8, 0, 0xff),
     DEFNUMITEMLTBLL(tech_costmuld, NUMTYPE_U8, 0, 0xff),
     DEFNUMITEMLTBLL(tech_costmula, NUMTYPE_U8, 0, 0xff),

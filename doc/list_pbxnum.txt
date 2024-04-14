@@ -176,6 +176,9 @@ passive_bio_damage_fix : 0..1, 0
   - Remove passive bio damage
     In MOO1, bio weapons reduce maximum population without orders
 
+locked_eco_fix : 0..1, 0
+  - Do not touch eco slider if locked
+
 doom_stack_fix : 0..1, 1
   - Fix negative/32000 ship doom stack bug.
     In MOO1 overflows in AI-AI battles can result in 32000 ship doom stacks.

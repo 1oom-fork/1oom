@@ -237,6 +237,9 @@ void game_update_eco_on_waste(struct game_s *g, int player_i, bool force_adjust)
         if (p->owner == player_i) {
             uint16_t v;
             int16_t left;
+            if (game_num_locked_eco_fix && IS_HUMAN(g, p->owner) && p->slider_lock[PLANET_SLIDER_ECO]) {
+                continue;
+            }
             v = game_planet_get_waste_percent(NULL, g, p, false);
             if ((p->slider[PLANET_SLIDER_ECO] < v) || force_adjust) {
                 if (game_num_waste_adjust_fix) {
