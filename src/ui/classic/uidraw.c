@@ -135,7 +135,7 @@ void ui_draw_text_overlay(int x, int y, const char *str)
     y1 = y + h + 5;
     SETMIN(y1, VGABUF_H - 1);
     vgabuf_fill_rect(x0, y0, x1, y1, 0);
-    lbxfont_print_str_normal(x, y, str);
+    lbxfont_print_str_normal(x + 1, y + 1, str);
 }
 
 void ui_draw_box_grain(int x0, int y0, int x1, int y1, uint8_t color0, uint8_t color1, uint8_t ae)

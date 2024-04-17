@@ -326,11 +326,5 @@ bool ui_new_game(struct game_new_options_s *newopts)
     uiobj_unset_callback();
     new_game_free_data(&d);
 
-    ui_palette_fadeout_19_19_1();
-    vgabuf_erase();
-    vgabuf_flip();
-    vgabuf_erase();
-    vgabuf_flip();
-
     return flag_ok;
 }
