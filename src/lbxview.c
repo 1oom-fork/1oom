@@ -366,6 +366,7 @@ int main_do(void)
         return 1;
     }
     lbxfont_init();
+    lbxpal_init();
     lbxpal_select(0, -1, 0);
     lbxpal_update();
     drawscreen();
