@@ -7,7 +7,6 @@
 #include "game_new.h"
 #include "game_str.h"
 #include "gfxaux.h"
-#include "hw.h"
 #include "kbd.h"
 #include "lbx.h"
 #include "lbxfont.h"
@@ -327,12 +326,6 @@ bool ui_new_game(struct game_new_options_s *newopts)
 
     uiobj_unset_callback();
     new_game_free_data(&d);
-
-    ui_palette_fadeout_19_19_1();
-    ui_draw_erase_buf();
-    hw_video_draw_buf();
-    ui_draw_erase_buf();
-    hw_video_draw_buf();
 
     return flag_ok;
 }
