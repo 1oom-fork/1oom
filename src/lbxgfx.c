@@ -320,6 +320,10 @@ static void lbxgfx_draw_pixels_fmt1(uint8_t *pixbuf, uint16_t w, uint8_t *data, 
 void lbxgfx_draw_frame_do(uint8_t *p, uint8_t *data, uint16_t pitch)
 {
     uint16_t frame, next_frame;
+    if (lbxgfx_get_epage(data) == 0) {
+        lbxgfx_set_epage(data, 1);
+        lbxgfx_apply_palette(data);
+    }
     frame = lbxgfx_get_frame(data);
     if (lbxgfx_get_format(data) == 0) {
         lbxgfx_draw_pixels_fmt0(p, lbxgfx_get_w(data), lbxgfx_get_frameptr(data, frame) + 1, pitch);
