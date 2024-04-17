@@ -389,12 +389,14 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
                 bool do_adj = false;
                 int v;
                 if (oi1 == d.sm.oi_tbl_slider_minus[i]) {
+                    ui_sound_play_sfx_24();
                     if (kbd_is_modifier(MOO_MOD_CTRL)) v = p->slider[i] - 1;
                     else v = p->slider[i] - 4;
                     SETMAX(v, 0);
                     p->slider[i] = v;
                     do_adj = true;
                 } else if (oi1 == d.sm.oi_tbl_slider_plus[i]) {
+                    ui_sound_play_sfx_24();
                     if (kbd_is_modifier(MOO_MOD_ALT)) {
                         for (planet_slider_i_t j = 0; j < PLANET_SLIDER_NUM; ++j) {
                             if (p->slider_lock[j]) continue;
