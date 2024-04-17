@@ -31,6 +31,7 @@ struct starview_data_s {
     struct game_s *g;
     player_id_t api;
     uint8_t planet_i;
+    uint8_t mode;
     int frame;
     bool flag_pal;
     uint8_t *gfx_planet;
@@ -112,7 +113,7 @@ static void starview_draw_cb(void *vptr)
         lbxfont_select(5, 0xb, 0, 0);
         lbxfont_print_str_center(269, 134, game_str_sv_stargt, UI_SCREEN_W);
     }
-    if (sowner != PLAYER_NONE) {
+    if ((sowner != PLAYER_NONE) && d->mode) {
         const empiretechorbit_t *e = &(g->eto[sowner]);
         const shipdesign_t *sd = &(g->srd[sowner].design[0]);
         int n = 0;
@@ -136,7 +137,7 @@ static void starview_draw_cb(void *vptr)
             }
         }
     }
-    if (sowner != PLAYER_NONE) {
+    if ((sowner != PLAYER_NONE) && d->mode) {
         if (p->shield != 0) {
             lib_sprintf(buf, sizeof(buf), "%s %s %s", game_str_sv_shild1, game_str_tbl_roman[p->shield], game_str_sv_shild2);
             lbxfont_select(0, 0xd, 0, 0);
@@ -223,7 +224,7 @@ static void starview_draw_cb(void *vptr)
             lbxfont_print_str_split(80, y0, 110, buf, 0, UI_SCREEN_W, UI_SCREEN_H);
         }
     }
-    if (sowner != PLAYER_NONE) {
+    if ((sowner != PLAYER_NONE) && d->mode) {
         int v10, v12, v14, y0 = 184;
         v12 = (s->pop + 9) / 10;
         v10 = (v12 + 9) / 10;
@@ -286,9 +287,11 @@ void ui_starview(struct game_s *g, player_id_t pi)
 {
     struct starview_data_s d;
     bool flag_done = false;
+    int16_t oi_mode;
     d.g = g;
     d.api = pi;
     d.planet_i = g->planet_focus_i[pi];
+    d.mode = (g->planet[d.planet_i].owner == PLAYER_NONE) ? 0 : 1;
     d.frame = 0;
     d.flag_pal = false;
     ui_palette_fadeout_a_f_1();
@@ -298,13 +301,16 @@ void ui_starview(struct game_s *g, player_id_t pi)
     uiobj_set_callback_and_delay(starview_draw_cb, &d, 4);
     uiobj_table_clear();
     uiobj_add_mousearea_all(MOO_KEY_UNKNOWN);
+    oi_mode = ui_extra_enabled ? uiobj_add_inputkey(MOO_KEY_i) : UIOBJI_INVALID;
     uiobj_set_help_id(34);
     uiobj_set_downcount(1);
     while (!flag_done) {
         int16_t oi;
         ui_delay_prepare();
         oi = uiobj_handle_input_cond();
-        if (oi != 0) {
+        if (oi == oi_mode) {
+            d.mode = (d.mode + 1) % 2;
+        } else if (oi != 0) {
             flag_done = true;
         }
         if (!flag_done) {

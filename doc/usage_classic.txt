@@ -93,6 +93,8 @@ enables the following extra UI features:
 - Fixed graphics bug with brighter stars drawn further away than dimmer ones
 - Weapons can be filtered by type when modeling a ship
   Click on Weapons to change the filter
+- Pressing the I key on the planet overview screen shows additional info
+  for inhabited planets
 
 The following features can be enabled in the configuration file:
 - Continue, Undo and Initial saves can be chosen in the Load Game screen
