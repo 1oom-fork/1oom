@@ -67,7 +67,7 @@ static void ui_starmap_orbit_own_draw_cb(void *vptr)
         x0 = (pf->x - ui_data.starmap.x) * 2 + 26;
         y0 = (pf->y - ui_data.starmap.y) * 2 + 8;
         /* FIXME update outside draw */
-        if ((pt->within_frange[d->api] == 1) || ((pt->within_frange[d->api] == 2) && d->oo.sn0.have_reserve_fuel)) {
+        if (ui_starmap_orbit_own_in_frange(d)) {
             ctbl = colortbl_line_green;
             d->oo.in_frange = true;
         } else {
@@ -78,7 +78,7 @@ static void ui_starmap_orbit_own_draw_cb(void *vptr)
         gfx = ui_data.gfx.starmap.smalship[g->eto[d->api].banner];
         lbxgfx_set_frame_0(gfx);
         lbxgfx_draw_frame_offs(x0, y0, gfx, STARMAP_LIMITS, UI_SCREEN_W);
-        if (!d->oo.in_frange) {
+        if (!ui_starmap_orbit_own_in_frange(d)) {
             if (d->oo.sn0.num < 7) { /* FIXME ?? always true */
                 sprintf(buf, "%s %i %s", game_str_sm_destoor, dist, game_str_sm_parsfromcc);
                 lbxfont_select(2, 0, 0, 0);
