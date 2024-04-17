@@ -120,7 +120,7 @@ static void ui_starmap_transport_draw_cb(void *vptr)
         d->ts.scanner_delay = 0;
     }
     d->ts.frame_ship = (d->ts.frame_ship + 1) % 5;
-    if ((r->owner == d->api) && g->eto[d->api].have_hyperspace_comm && (!d->ts.in_frange)) {
+    if ((r->owner == d->api) && g->eto[d->api].have_hyperspace_comm && (pt->within_frange[d->api] == 0)) {
         lbxgfx_set_new_frame(ui_data.gfx.starmap.reloc_bu_accept, 1);
 
         lbxgfx_draw_frame(271, 163, ui_data.gfx.starmap.reloc_bu_accept);
@@ -147,8 +147,6 @@ void ui_starmap_transport(struct game_s *g, player_id_t active_player)
     d.ts.scanner_delay = 0;
     d.ts.from = g->planet_focus_i[active_player];
     g->planet_focus_i[active_player] = r->dest;
-    d.ts.ds.xoff1 = 0;
-    d.ts.ds.xoff2 = 0;
 
     uiobj_table_clear();
 
