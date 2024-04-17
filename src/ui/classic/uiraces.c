@@ -159,6 +159,7 @@ static void races_draw_cb(void *vptr)
             } else {
                 sprintf(buf, "%i %s", spies, (spies == 1) ? game_str_ra_spy : game_str_ra_spies);
             }
+            lbxfont_select(2, 6, 0, 0);
             lbxfont_print_str_right(x + 91, y + 44, buf, UI_SCREEN_W);
             if (spycost <= spyspend) {
                 spies = 0;

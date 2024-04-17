@@ -270,6 +270,7 @@ void ui_starmap_trans(struct game_s *g, player_id_t active_player)
             ui_sound_play_sfx_24();
             SUBSAT0(d.tr.num, 1);
         } else if (oi1 == oi_plus) {
+            ui_sound_play_sfx_24();
             ++d.tr.num;
             SETMIN(d.tr.num, trans_max);
         } else if (oi1 == oi_scroll) {
