@@ -427,11 +427,13 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
                 if (oi1 == d.sm.oi_tbl_slider[i]) {
                     do_adj = true;
                 } else if (oi1 == d.sm.oi_tbl_slider_minus[i]) {
+                    ui_sound_play_sfx_24();
                     int v = p->slider[i] - 4;
                     SETMAX(v, 0);
                     p->slider[i] = v;
                     do_adj = true;
                 } else if (oi1 == d.sm.oi_tbl_slider_plus[i]) {
+                    ui_sound_play_sfx_24();
                     int v = p->slider[i] + 4;
                     SETMIN(v, 100);
                     p->slider[i] = v;
