@@ -203,7 +203,7 @@ static void starview_draw_cb(void *vptr)
                     break;
             }
             sprintf(buf, "%s:", str0);
-            lbxfont_select(5, 0xd, 0, 0);
+            lbxfont_select_set_12_4(5, 0xd, 0, 0);
             lbxfont_print_str_normal(8, y0, buf, UI_SCREEN_W);
             sprintf(buf, "%s %s", str1, str2);
             lbxfont_select_set_12_4(5, 0xa, 0, 0);

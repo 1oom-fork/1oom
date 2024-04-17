@@ -222,7 +222,7 @@ uint8_t lbxpal_find_closest(uint8_t r, uint8_t g, uint8_t b)
 
 int lbxpal_init(void)
 {
-    memset(lbxpal_palette, 0, sizeof(lbxpal_update_flag));
+    memset(lbxpal_palette, 0, sizeof(lbxpal_palette));
     lbxpal_update();
     return 0;
 }

@@ -79,7 +79,7 @@ static void ui_starmap_enroute_draw_cb(void *vptr)
         }
         lbxgfx_draw_frame_offs(x0, y0, gfx, STARMAP_LIMITS, UI_SCREEN_W);
         dist = game_get_min_dist(g, r->owner, g->planet_focus_i[d->api]);
-        if ((r->owner == d->api) && (d->en.can_move != NO_MOVE) && (!d->en.in_frange)) {
+        if ((r->owner == d->api) && (d->en.can_move != NO_MOVE) && !ui_starmap_enroute_in_frange(d)) {
             /* FIXME use proper positioning for varying str length */
             sprintf(buf, "  %s   %i %s.", game_str_sm_outsr, dist - e->fuel_range, game_str_sm_parsecs2);
             lbxfont_select_set_12_4(2, 0, 0, 0);
@@ -101,8 +101,8 @@ static void ui_starmap_enroute_draw_cb(void *vptr)
         x = (i & 1) * 43 + 228;
         y = (i / 2) * 40 + 44;
         ui_draw_filled_rect(x, y, x + 38, y + 24, 0);
-        ui_draw_filled_rect(x, y + 28, x + 38, y + 34, 0);
-        ui_draw_stars(x, y, 0, 32, &(d->en.ds));
+        ui_draw_filled_rect(x, y + 28, x + 38, y + 34, 0x1c);
+        ui_draw_stars(x, y, 0, 38, &(d->en.ds));
         st = d->en.sn0.type[i];
         gfx = ui_data.gfx.ships[sd[st].look];
         lbxgfx_set_frame_0(gfx);
@@ -120,7 +120,7 @@ static void ui_starmap_enroute_draw_cb(void *vptr)
     } else {
         d->en.scanner_delay = 0;
     }
-    if ((r->owner == d->api) && (d->en.can_move != NO_MOVE) && (!d->en.in_frange)) {
+    if ((r->owner == d->api) && (d->en.can_move != NO_MOVE) && !ui_starmap_enroute_in_frange(d)) {
         lbxgfx_set_new_frame(ui_data.gfx.starmap.reloc_bu_accept, 1);
         lbxgfx_draw_frame(271, 163, ui_data.gfx.starmap.reloc_bu_accept, UI_SCREEN_W);
     }
@@ -155,8 +155,6 @@ void ui_starmap_enroute(struct game_s *g, player_id_t active_player)
     d.en.frame_scanner = 0;
     d.en.scanner_delay = 0;
     d.en.frame_ship = 0;
-    d.en.ds.xoff1 = 0;
-    d.en.ds.xoff2 = 0;
     g->planet_focus_i[active_player] = r->dest;
     d.en.in_frange = false;
     ui_starmap_sn0_setup(&d.en.sn0, g->eto[r->owner].shipdesigns_num, r->ships);
