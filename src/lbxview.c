@@ -354,6 +354,7 @@ int main_do(void)
         return 1;
     }
     lbxfont_init();
+    lbxpal_init();
     lbxpal_select(0, -1, 0);
     lbxpal_update();
     textcolor = lbxpal_find_closest(0x1f, 0x1f, 0x1f);

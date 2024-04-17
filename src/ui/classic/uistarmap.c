@@ -405,6 +405,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
         }
         if ((oi1 == d.sm.oi_ship) || (oi1 == oi_shippic)) {
             int n;
+            ui_sound_play_sfx_24();
             n = p->buildship + 1;
             if (n >= g->eto[active_player].shipdesigns_num) {
                 if (n >= (NUM_SHIPDESIGNS + 1)) {
@@ -427,11 +428,13 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
                 if (oi1 == d.sm.oi_tbl_slider[i]) {
                     do_adj = true;
                 } else if (oi1 == d.sm.oi_tbl_slider_minus[i]) {
+                    ui_sound_play_sfx_24();
                     int v = p->slider[i] - 4;
                     SETMAX(v, 0);
                     p->slider[i] = v;
                     do_adj = true;
                 } else if (oi1 == d.sm.oi_tbl_slider_plus[i]) {
+                    ui_sound_play_sfx_24();
                     int v = p->slider[i] + 4;
                     SETMIN(v, 100);
                     p->slider[i] = v;
