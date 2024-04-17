@@ -109,6 +109,7 @@ static void ui_starmap_transport_draw_cb(void *vptr)
     lbxfont_print_str_center(267, 57, (r->pop == 1) ? game_str_sm_trans1 : game_str_sm_transs, UI_SCREEN_W);
     if ((r->owner == d->api) || (g->eto[d->api].have_ia_scanner)) {
         const planet_t *pd = &(g->planet[r->dest]);
+        lbxfont_select_set_12_1(5, 0, 0, 0);
         lbxfont_print_str_center(267, 110, game_str_sm_tdest, UI_SCREEN_W);
         lbxfont_print_str_center(267, 120, pd->name, UI_SCREEN_W);
     }
@@ -146,8 +147,6 @@ void ui_starmap_transport(struct game_s *g, player_id_t active_player)
     d.ts.from = g->planet_focus_i[active_player];
     g->planet_focus_i[active_player] = r->dest;
     d.ts.can_move = g->eto[active_player].have_hyperspace_comm ? GOT_HYPERCOMM : NO_MOVE;
-    d.ts.ds.xoff1 = 0;
-    d.ts.ds.xoff2 = 0;
 
     uiobj_table_clear();
 
