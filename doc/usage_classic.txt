@@ -86,6 +86,10 @@ or pressing Alt-X in the main menu enables the following extra UI features:
 - The color of ship names on Planets screen is black
 - Pressing = in the galaxy movement screen also transfers reserve back and
   the behavior is more predictable
+- Weapons can be filtered by type when modeling a ship
+  Click on Weapons to change the filter
+- Pressing the I key on the planet overview screen shows additional info
+  for inhabited planets
 
 Pressing Alt-X in the main menu also enables the following features:
 - Population scheduled for transport no longer contributes to production
