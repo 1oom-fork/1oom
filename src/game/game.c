@@ -597,6 +597,7 @@ const struct cfg_items_s game_cfg_items[] = {
     CFG_ITEM_BOOL("rules_waste_calc_fix", &game_num_waste_calc_fix),
     CFG_ITEM_BOOL("rules_passive_bio_damage_fix", &game_num_passive_bio_damage_fix),
     CFG_ITEM_BOOL("rules_locked_eco_fix", &game_num_locked_eco_fix),
+    CFG_ITEM_BOOL("rules_doom_stack_fix", &game_num_doom_stack_fix),
     CFG_ITEM_END
 };
 

@@ -487,8 +487,6 @@ void game_num_fixbugs(void)
     game_num_colonized_factories_fix = true;
     game_num_cond_build_ind_fix = true;
     game_num_slider_stop_tform_fix = true;
-    /* The doomstack fix is on by default even in non-fixbugs mode and can only be
-     * disabled via a mod. */
 }
 
 bool game_num_patch(const char *numid, const int32_t *patchnums, int first, int num)

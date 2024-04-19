@@ -477,6 +477,7 @@ static void main_menu_make_options_rules_page(struct main_menu_data_s *d)
     menu_make_bool(menu_allocate_item(), "Waste Calc Fix", &game_num_waste_calc_fix, MOO_KEY_w);
     menu_make_bool(menu_allocate_item(), "Passive Bio Damage Fix", &game_num_passive_bio_damage_fix, MOO_KEY_i);
     menu_make_bool(menu_allocate_item(), "Locked Eco Fix", &game_num_locked_eco_fix, MOO_KEY_e);
+    menu_make_bool(menu_allocate_item(), "Doom Stack Fix", &game_num_doom_stack_fix, MOO_KEY_d);
     menu_make_back(menu_allocate_item());
 }
 

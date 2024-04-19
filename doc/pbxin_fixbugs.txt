@@ -61,11 +61,9 @@
 4,ship_scanner_fix,0,1
 4,passive_bio_damage_fix,0,1
 4,locked_eco_fix,0,1
+4,doom_stack_fix,0,1
 
 # Disabled fixes. Remove the # in front of 4 to enable.
 #4,aud_ask_break_nap,0,1
 #4,retreat_redir_fix,0,1
 #4,monster_rest_att,0,1
-
-# Disabled unfixes. Remove the # in front of 4 to enable.
-#4,doom_stack_fix,0,0
