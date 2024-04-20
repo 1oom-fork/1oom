@@ -60,6 +60,7 @@ extern bool game_num_slider_stop_tform_fix;
 extern bool game_num_ship_scanner_fix;
 extern bool game_num_passive_bio_damage_fix;
 extern bool game_num_locked_eco_fix;
+extern bool game_num_ai_fleet_cheating_fix;
 extern uint8_t game_num_tbl_hull_w[4];
 extern uint8_t game_num_tech_costmuld[DIFFICULTY_NUM];
 extern uint8_t game_num_tech_costmula[DIFFICULTY_NUM];
