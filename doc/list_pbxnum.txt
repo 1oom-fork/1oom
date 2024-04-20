@@ -165,6 +165,11 @@ doom_stack_fix : 0..1, 1
     This bug is fixed by default but can be disabled for those who actually
     prefer the added challenge.
 
+ai_fleet_cheating_fix : 0..1, 0
+  - Fix unlimited exponential growth of ship slider value when too many
+    MBases on a planet.
+    In MOO1, ship slider can reach 1000% (maybe more)
+
 tech_costmuld : 0..255, ?
   - Research discovery base cost difficulty multiplier for human players.
 
