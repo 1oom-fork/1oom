@@ -1974,10 +1974,10 @@ static void game_ai_classic_turn_p3(struct game_s *g)
                   && (p->shield >= e->have_planet_shield)
                 ) {
                     uint16_t v;
-                    if (g->ai_id == GAME_AI_CLASSICPLUS) {
+                    if (game_num_ai_fleet_cheating_fix) {
                         v = sl[PLANET_SLIDER_DEF];
                     } else {
-                        v = sl[PLANET_SLIDER_SHIP];   /* BUG should be DEF */
+                        v = sl[PLANET_SLIDER_SHIP];   /* BUG creates very large fleets */
                     }
                     sl[PLANET_SLIDER_SHIP] += v;
                     sl[PLANET_SLIDER_DEF] = 0;
