@@ -207,6 +207,7 @@ static const struct numtbl_s {
     DEFNUMITEML(cond_build_ind_fix, NUMTYPE_BOOL, 0, 1),
     DEFNUMITEML(slider_stop_tform_fix, NUMTYPE_BOOL, 0, 1),
     DEFNUMITEML(ship_scanner_fix, NUMTYPE_BOOL, 0, 1),
+    DEFNUMITEML(ai_fleet_cheating_fix, NUMTYPE_BOOL, 0, 1),
     DEFNUMITEMLTBLL(tbl_hull_w, NUMTYPE_U8, 0, 0xff),
     DEFNUMITEMLTBLL(tech_costmuld, NUMTYPE_U8, 0, 0xff),
     DEFNUMITEMLTBLL(tech_costmula, NUMTYPE_U8, 0, 0xff),
