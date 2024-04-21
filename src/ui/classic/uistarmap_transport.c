@@ -119,18 +119,20 @@ static void ui_starmap_transport_draw_cb(void *vptr)
         lbxfont_print_str_center(267, 110, game_str_sm_tdest, UI_SCREEN_W);
         lbxfont_print_str_center(267, 120, pd->name, UI_SCREEN_W);
     }
-    if (ui_data.starmap.scanner_delay == 0) {
-        ui_data.starmap.frame_scanner = (ui_data.starmap.frame_scanner + 1) % 20;
-        ++ui_data.starmap.scanner_delay;
-    } else {
-        ui_data.starmap.scanner_delay = 0;
-    }
-    ui_data.starmap.frame_ship = (ui_data.starmap.frame_ship + 1) % 5;
     if (d->controllable && !game_transport_dest_ok(g, pt, d->api)) {
         lbxgfx_set_new_frame(ui_data.gfx.starmap.reloc_bu_accept, 1);
         lbxgfx_draw_frame(271, 163, ui_data.gfx.starmap.reloc_bu_accept, UI_SCREEN_W);
     }
-    ui_draw_set_stars_xoffs(false);
+    if (!d->anim_delay) {
+        if (ui_data.starmap.scanner_delay == 0) {
+            ui_data.starmap.frame_scanner = (ui_data.starmap.frame_scanner + 1) % 20;
+            ++ui_data.starmap.scanner_delay;
+        } else {
+            ui_data.starmap.scanner_delay = 0;
+        }
+        ui_data.starmap.frame_ship = (ui_data.starmap.frame_ship + 1) % 5;
+        ui_draw_set_stars_xoffs(false);
+    }
 }
 
 /* -------------------------------------------------------------------------- */
