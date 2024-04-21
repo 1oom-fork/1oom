@@ -32,7 +32,6 @@
 struct specs_data_s {
     struct game_s *g;
     player_id_t api;
-    int frame;
     int scrapi;
     struct draw_stars_s s;
 };
@@ -72,7 +71,7 @@ static void specs_draw_cb1(void *vptr)
         ui_draw_filled_rect(6, y, 37, y + 29, 0, ui_scale);
         ui_draw_stars(6, y + 1, si * 5, 32, &d->s, ui_scale);
         lbxgfx_set_frame_0(ui_data.gfx.ships[sp.look]);
-        for (int f = 0; f <= d->frame; ++f) {
+        for (int f = 0; f <= ui_data.starmap.frame_ship; ++f) {
             lbxgfx_draw_frame(6, y + 3, ui_data.gfx.ships[sp.look], UI_SCREEN_W, ui_scale);
         }
         lbxgfx_set_new_frame(ui_data.gfx.starmap.viewshbt, 1);
@@ -121,7 +120,7 @@ static void specs_draw_cb1(void *vptr)
     }
 
     ui_draw_set_stars_xoffs(&d->s, false);
-    d->frame = (d->frame + 1) % 5;
+    ui_data.starmap.frame_ship = (ui_data.starmap.frame_ship + 1) % 5;
 }
 
 static void specs_before_draw_cb(void *vptr)
@@ -164,7 +163,7 @@ void ui_specs_before(struct game_s *g, player_id_t active_player)
 
     d.g = g;
     d.api = active_player;
-    d.frame = 0;
+    ui_data.starmap.frame_ship = 0;
     d.s.xoff1 = 0;
     d.s.xoff2 = 0;
 
@@ -198,7 +197,7 @@ void ui_specs_mustscrap(struct game_s *g, player_id_t active_player, int scrapi)
 
     d.g = g;
     d.api = active_player;
-    d.frame = 0;
+    ui_data.starmap.frame_ship = 0;
     d.scrapi = scrapi;
 
     uiobj_set_callback_and_delay(specs_mustscrap_draw_cb, &d, 2);
@@ -246,7 +245,7 @@ int ui_specs(struct game_s *g, player_id_t active_player)
 
     d.g = g;
     d.api = active_player;
-    d.frame = 0;
+    ui_data.starmap.frame_ship = 0;
     d.s.xoff1 = 0;
     d.s.xoff2 = 0;
 
