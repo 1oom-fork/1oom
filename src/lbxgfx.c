@@ -351,7 +351,7 @@ void lbxgfx_draw_frame_pal(int x, int y, uint8_t *data, uint16_t pitch)
     lbxgfx_draw_frame_do(p, data, pitch);
 }
 
-void lbxgfx_draw_frame_offs(int x, int y, uint8_t *data, int lx0, int ly0, int lx1, int ly1, uint16_t pitch)
+void lbxgfx_draw_frame_offs_delay(int x, int y, bool next, uint8_t *data, int lx0, int ly0, int lx1, int ly1, uint16_t pitch)
 {
     int xskip, yskip, x0, y0, x1, y1, w, h;
 
@@ -397,11 +397,18 @@ void lbxgfx_draw_frame_offs(int x, int y, uint8_t *data, int lx0, int ly0, int l
         lbxgfx_draw_pixels_offs_fmt1(x0, y0, w, h, xskip, yskip, lbxgfx_get_frameptr(data, frame) + 1, pitch);
     }
 
-    ++frame;
-    if (frame >= lbxgfx_get_frames(data)) {
-        frame = lbxgfx_get_frames2(data);
+    if (next) {
+        ++frame;
+        if (frame >= lbxgfx_get_frames(data)) {
+            frame = lbxgfx_get_frames2(data);
+        }
+        lbxgfx_set_frame(data, frame);
     }
-    lbxgfx_set_frame(data, frame);
+}
+
+void lbxgfx_draw_frame_offs(int x, int y, uint8_t *data, int lx0, int ly0, int lx1, int ly1, uint16_t pitch)
+{
+    lbxgfx_draw_frame_offs_delay(x, y, 1, data, lx0, ly0, lx1, ly1, pitch);
 }
 
 void lbxgfx_set_new_frame(uint8_t *data, uint16_t newframe)
