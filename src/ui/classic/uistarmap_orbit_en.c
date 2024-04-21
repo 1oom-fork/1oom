@@ -47,7 +47,7 @@ static void ui_starmap_orbit_en_draw_cb(void *vptr)
     lbxgfx_draw_frame(224, 4, ui_data.gfx.starmap.movextr2, UI_SCREEN_W, ui_scale);
     ui_draw_filled_rect(227, 8, 310, 39, 0, ui_scale);
     lbxgfx_set_frame_0(ui_data.gfx.starmap.scanner);
-    for (int f = 0; f <= d->oe.frame_scanner; ++f) {
+    for (int f = 0; f <= ui_data.starmap.frame_scanner; ++f) {
         lbxgfx_draw_frame(227, 8, ui_data.gfx.starmap.scanner, UI_SCREEN_W, ui_scale);
     }
     lib_sprintf(buf, sizeof(buf), "%s %s", game_str_tbl_race[e->race], game_str_sm_fleet);
@@ -76,11 +76,11 @@ static void ui_starmap_orbit_en_draw_cb(void *vptr)
         lbxfont_select(2, 0xa, 0, 0);
         lbxfont_print_str_center(x + 19, y + 29, sd[st].name, UI_SCREEN_W, ui_scale);
     }
-    if (d->oe.scanner_delay == 0) {
-        d->oe.frame_scanner = (d->oe.frame_scanner + 1) % 20;
-        ++d->oe.scanner_delay;
+    if (ui_data.starmap.scanner_delay == 0) {
+        ui_data.starmap.frame_scanner = (ui_data.starmap.frame_scanner + 1) % 20;
+        ++ui_data.starmap.scanner_delay;
     } else {
-        d->oe.scanner_delay = 0;
+        ui_data.starmap.scanner_delay = 0;
     }
 }
 
@@ -94,8 +94,8 @@ void ui_starmap_orbit_en(struct game_s *g, player_id_t active_player)
     shipcount_t *os;
 
     ui_starmap_common_init(g, &d, active_player);
-    d.oe.frame_scanner = 0;
-    d.oe.scanner_delay = 0;
+    ui_data.starmap.frame_scanner = 0;
+    ui_data.starmap.scanner_delay = 0;
     d.oe.from = g->planet_focus_i[active_player];
     d.oe.player = ui_data.starmap.orbit_player;
     os = &(g->eto[d.oe.player].orbit[d.oe.from].ships[0]);
