@@ -4,11 +4,6 @@
 #include "game_types.h"
 #include "types.h"
 
-struct draw_stars_s {
-    int xoff1;
-    int xoff2;
-};
-
 extern int ui_draw_finish_mode;
 extern const uint8_t tbl_banner_color[BANNER_NUM];
 extern const uint8_t tbl_banner_color2[BANNER_NUM];
@@ -30,8 +25,8 @@ extern void ui_draw_box_fill(int x0, int y0, int x1, int y1, const uint8_t *colo
 extern void ui_draw_box_grain(int x0, int y0, int x1, int y1, uint8_t color0, uint8_t color1, uint8_t ae, int scale);
 extern void ui_draw_text_overlay(int x, int y, const char *str);
 extern void ui_draw_finish(void);
-extern void ui_draw_stars(int x, int y, int xoff1, int xoff2, struct draw_stars_s *s, int scale);
-extern void ui_draw_set_stars_xoffs(struct draw_stars_s *s, bool flag_right);
+extern void ui_draw_stars(int x, int y, int xoff1, int xoff2, int scale);
+extern void ui_draw_set_stars_xoffs(bool flag_right);
 extern void ui_draw_textbox_2str(const char *str1, const char *str2, int y0, int scale);
 
 struct planet_s;
