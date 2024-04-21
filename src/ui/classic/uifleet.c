@@ -144,7 +144,7 @@ static void fleet_draw_cb(void *vptr)
         ui_draw_filled_rect(7, i * 33 + 17, 40, i * 33 + 42, 0x3a);
     }
     d->frame = (d->frame + 1) % 5;
-    ui_draw_set_stars_xoffs(&d->s, false);
+    ui_draw_set_stars_xoffs(false);
     lbxfont_select(2, 6, 0, 0);
     lbxfont_print_num_right(137, 185, e->ship_maint_bc, UI_SCREEN_W);
 }
