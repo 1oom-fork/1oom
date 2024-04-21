@@ -120,7 +120,7 @@ static void specs_draw_cb1(void *vptr)
         lbxfont_print_num_right(295, y + 23, sd->cost, UI_SCREEN_W);
     }
 
-    ui_draw_set_stars_xoffs(&d->s, false);
+    ui_draw_set_stars_xoffs(false);
     d->frame = (d->frame + 1) % 5;
 }
 
