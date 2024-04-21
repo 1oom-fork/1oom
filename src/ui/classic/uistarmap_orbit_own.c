@@ -114,13 +114,12 @@ static void ui_starmap_orbit_own_draw_cb(void *vptr)
     }
     for (int i = 0; i < d->oo.sn0.num; ++i) {
         const shipdesign_t *sd = &(g->srd[d->api].design[0]);
-        struct draw_stars_s ds;
         uint8_t *gfx;
         int st;
         ui_draw_filled_rect(227, 22 + i * 26, 259, 46 + i * 26, 0);
         ui_draw_filled_rect(264, 34 + i * 26, 310, 46 + i * 26, 0);
-        ds.xoff1 = 0;
-        ds.xoff2 = 0;
+        ui_data.starmap.stars_xoff1 = 0;
+        ui_data.starmap.stars_xoff2 = 0;
         ui_draw_stars(227, 22 + i * 26, 0, 32);
         st = d->oo.sn0.type[i];
         gfx = ui_data.gfx.ships[sd[st].look];
