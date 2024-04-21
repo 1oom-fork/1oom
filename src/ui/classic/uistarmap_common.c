@@ -619,7 +619,7 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
         planet_t *p = &g->planet[g->planet_focus_i[d->api]];
         tx = (p->x - x) * 2 + 8;
         ty = (p->y - y) * 2 + 8;
-        lbxgfx_draw_frame_offs(tx, ty, ui_data.gfx.starmap.planbord, 6, 6, 221, 177, UI_SCREEN_W);
+        lbxgfx_draw_frame_offs_delay(tx, ty, !d->anim_delay, ui_data.gfx.starmap.planbord, 6, 6, 221, 177, UI_SCREEN_W);
     }
     if (d->anim_delay == 0) {
         if (--ui_data.starmap.line_anim_phase < 0) {
