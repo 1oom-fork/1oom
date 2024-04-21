@@ -95,7 +95,6 @@ struct starmap_data_s {
             bool in_frange;
             uint8_t from;
             struct draw_stars_s ds;
-            int frame_ship;
         } ts;   /* transport */
         struct {
             shipcount_t ships[NUM_SHIPDESIGNS];
@@ -115,7 +114,6 @@ struct starmap_data_s {
             uint8_t from;
             uint8_t pon;
             struct draw_stars_s ds;
-            int frame_ship;
         } en;   /* enroute */
     };
 };
