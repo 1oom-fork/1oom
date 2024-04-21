@@ -46,7 +46,6 @@ struct ui_battle_data_s {
     uint8_t frame_missile;
     bool flag_scanning;
     battle_side_i_t scan_side;
-    struct draw_stars_s stars;
     int16_t oi_ai;
     int16_t oi_missile;
     int16_t oi_special;
@@ -77,7 +76,7 @@ static void ui_battle_draw_scan_cb(void *vptr)
         y = i * 32 + 5;
         lbxgfx_draw_frame(46, y - 1, ui_data.gfx.space.vs2, UI_SCREEN_W, ui_scale);
         ui_draw_filled_rect(6, y, 38, y + 29, 0, ui_scale);
-        ui_draw_stars(6, y + 1, 0, 32, &d->stars, ui_scale);
+        ui_draw_stars(6, y + 1, 0, 32, ui_scale);
         ui_battle_draw_item(bt, itembase + i, 6, y + 1);
         lbxfont_select(2, 0xd, 0, 0);
         lbxfont_print_str_normal(52, y + 3, b->name, UI_SCREEN_W, ui_scale);
@@ -132,7 +131,7 @@ static void ui_battle_draw_scan_cb(void *vptr)
     }
     uiobj_finish_frame();
     ui_draw_copy_buf();
-    ui_draw_set_stars_xoffs(&d->stars, d->scan_side == SIDE_R);
+    ui_draw_set_stars_xoffs(d->scan_side == SIDE_R);
     d->frame_ship = (d->frame_ship + 1) % 5;
 }
 

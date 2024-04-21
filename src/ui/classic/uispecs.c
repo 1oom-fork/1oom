@@ -33,7 +33,6 @@ struct specs_data_s {
     struct game_s *g;
     player_id_t api;
     int scrapi;
-    struct draw_stars_s s;
 };
 
 static void specs_print_weap(weapon_t wi, uint8_t wn, char *buf1, size_t buf1_size, char *buf2, size_t buf2_size)
@@ -69,7 +68,7 @@ static void specs_draw_cb1(void *vptr)
         y = (si << 5) + 5;
         lbxgfx_draw_frame(44, y - 1, ui_data.gfx.starmap.viewshp2, UI_SCREEN_W, ui_scale);
         ui_draw_filled_rect(6, y, 37, y + 29, 0, ui_scale);
-        ui_draw_stars(6, y + 1, si * 5, 32, &d->s, ui_scale);
+        ui_draw_stars(6, y + 1, si * 5, 32, ui_scale);
         lbxgfx_set_frame_0(ui_data.gfx.ships[sp.look]);
         for (int f = 0; f <= ui_data.starmap.frame_ship; ++f) {
             lbxgfx_draw_frame(6, y + 3, ui_data.gfx.ships[sp.look], UI_SCREEN_W, ui_scale);
@@ -119,7 +118,7 @@ static void specs_draw_cb1(void *vptr)
         lbxfont_print_num_right(295, y + 23, sd->cost, UI_SCREEN_W, ui_scale);
     }
 
-    ui_draw_set_stars_xoffs(&d->s, false);
+    ui_draw_set_stars_xoffs(false);
     ui_data.starmap.frame_ship = (ui_data.starmap.frame_ship + 1) % 5;
 }
 
@@ -164,8 +163,8 @@ void ui_specs_before(struct game_s *g, player_id_t active_player)
     d.g = g;
     d.api = active_player;
     ui_data.starmap.frame_ship = 0;
-    d.s.xoff1 = 0;
-    d.s.xoff2 = 0;
+    ui_data.starmap.stars_xoff1 = 0;
+    ui_data.starmap.stars_xoff2 = 0;
 
     oi_ma = UIOBJI_INVALID;
     uiobj_set_callback_and_delay(specs_before_draw_cb, &d, 2);
@@ -246,8 +245,8 @@ int ui_specs(struct game_s *g, player_id_t active_player)
     d.g = g;
     d.api = active_player;
     ui_data.starmap.frame_ship = 0;
-    d.s.xoff1 = 0;
-    d.s.xoff2 = 0;
+    ui_data.starmap.stars_xoff1 = 0;
+    ui_data.starmap.stars_xoff2 = 0;
 
     oi_ma = UIOBJI_INVALID;
     for (int i = 0; i < NUM_SHIPDESIGNS; ++i) {

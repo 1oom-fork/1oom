@@ -32,7 +32,6 @@ struct newships_data_s {
     player_id_t api;
     uint8_t *gfx_newship;
     struct starmap_data_s sm;
-    struct draw_stars_s ds;
 };
 
 static void newships_load_data(struct newships_data_s *d)
@@ -72,7 +71,7 @@ static void newships_draw_cb(void *vptr)
             ui_draw_line1(x0, y0 + 30, x0 + 39, y0 + 30, 0x5c, ui_scale);
             lbxfont_select(2, 0, 0, 0);
             lbxfont_print_str_center(x0 + 20, y0 + 33, sd->name, UI_SCREEN_W, ui_scale);
-            ui_draw_stars(x0, y0 + 2, i * 10, 40, &d->ds, ui_scale);
+            ui_draw_stars(x0, y0 + 2, i * 10, 40, ui_scale);
             gfx = ui_data.gfx.ships[sd->look];
             lbxgfx_set_frame_0(gfx);
             lbxgfx_draw_frame(x0 + 4, y0 + 3, gfx, UI_SCREEN_W, ui_scale);
@@ -80,7 +79,7 @@ static void newships_draw_cb(void *vptr)
             lbxfont_print_num_right(x0 + 36, y0 + 23, n, UI_SCREEN_W, ui_scale);
         }
     }
-    ui_draw_set_stars_xoffs(&d->ds, false);
+    ui_draw_set_stars_xoffs(false);
 }
 
 /* -------------------------------------------------------------------------- */
