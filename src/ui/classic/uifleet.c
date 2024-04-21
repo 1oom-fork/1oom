@@ -47,7 +47,6 @@ struct fleet_data_s {
     int num;
     int lines;
     int order_i;
-    struct draw_stars_s s;
     uint8_t *gfx_fleetbrb;
 };
 
@@ -129,12 +128,15 @@ static void fleet_draw_cb(void *vptr)
                 x0 = 44 * j + 48;
                 ui_draw_filled_rect(x0, y0, x0 + 36, y0 + 25, 0, ui_scale);
                 if (!FLEET_IS_ENROUTE(fi)) {
-                    struct draw_stars_s temps;
-                    temps.xoff1 = 0;
-                    temps.xoff2 = 0;
-                    ui_draw_stars(x0, y0 + 1, j * 10, 37, &temps, ui_scale);
+                    int tmp_xoff1 = ui_data.starmap.stars_xoff1;
+                    int tmp_xoff2 = ui_data.starmap.stars_xoff2;
+                    ui_data.starmap.stars_xoff1 = 0;
+                    ui_data.starmap.stars_xoff2 = 0;
+                    ui_draw_stars(x0, y0 + 1, j * 10, 37, ui_scale);
+                    ui_data.starmap.stars_xoff1 = tmp_xoff1;
+                    ui_data.starmap.stars_xoff2 = tmp_xoff2;
                 } else {
-                    ui_draw_stars(x0, y0 + 1, j * 5, 37, &d->s, ui_scale);
+                    ui_draw_stars(x0, y0 + 1, j * 5, 37, ui_scale);
                 }
                 gfx_ship = ui_data.gfx.ships[sd[j].look];
                 lbxgfx_set_frame_0(gfx_ship);
@@ -154,7 +156,7 @@ static void fleet_draw_cb(void *vptr)
         ui_draw_filled_rect(7, i * 33 + 17, 40, i * 33 + 42, 0x3a, ui_scale);
     }
     ui_data.starmap.frame_ship = (ui_data.starmap.frame_ship + 1) % 5;
-    ui_draw_set_stars_xoffs(&d->s, false);
+    ui_draw_set_stars_xoffs(false);
     lbxfont_select(2, 6, 0, 0);
     lbxfont_print_num_right(137, 185, e->ship_maint_bc, UI_SCREEN_W, ui_scale);
 }
