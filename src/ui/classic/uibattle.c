@@ -45,7 +45,6 @@ struct ui_battle_data_s {
     uint8_t frame_missile;
     bool flag_scanning;
     battle_side_i_t scan_side;
-    struct draw_stars_s stars;
     int16_t oi_ai;
     int16_t oi_missile;
     int16_t oi_special;

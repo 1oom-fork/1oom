@@ -54,15 +54,14 @@ static void ui_starmap_orbit_en_draw_cb(void *vptr)
     lbxfont_print_str_center(268, 33, game_str_sm_inorbit, UI_SCREEN_W);
     for (int i = 0; i < d->oe.sn0.num; ++i) {
         const shipdesign_t *sd = &(g->srd[d->oe.player].design[0]);
-        struct draw_stars_s ds;
         uint8_t *gfx;
         int st, x, y;
         x = 228 + (i % 2) * 43;
         y = 44 + (i / 2) * 40;
         ui_draw_filled_rect(x, y, x + 38, y + 24, 0);
         ui_draw_filled_rect(x, y + 28, x + 38, y + 34, 0x1c);
-        ds.xoff1 = 0;
-        ds.xoff2 = 0;
+        ui_data.starmap.stars_xoff1 = 0;
+        ui_data.starmap.stars_xoff2 = 0;
         ui_draw_stars(x, y, 0, 38);
         st = d->oe.sn0.type[i];
         gfx = ui_data.gfx.ships[sd[st].look];
