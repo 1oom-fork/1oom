@@ -125,7 +125,7 @@ static void ui_starmap_transport_draw_cb(void *vptr)
         lbxgfx_draw_frame(271, 163, ui_data.gfx.starmap.reloc_bu_accept, UI_SCREEN_W);
 
     }
-    ui_draw_set_stars_xoffs(&d->ts.ds, false);
+    ui_draw_set_stars_xoffs(false);
 }
 
 /* -------------------------------------------------------------------------- */
