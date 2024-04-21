@@ -222,6 +222,7 @@ struct ui_data_s {
         int y2;
         bool flag_show_grid;
         int line_anim_phase;
+        int frame_ship;
         int frame_scanner;
         int scanner_delay;
         int stars_xoff1;
