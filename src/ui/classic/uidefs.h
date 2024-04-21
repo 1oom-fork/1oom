@@ -223,6 +223,7 @@ struct ui_data_s {
         bool flag_show_grid;
         int line_anim_phase;
         int frame_scanner;
+        int scanner_delay;
         int stars_xoff1;
         int stars_xoff2;
         struct gfx_aux_s star_aux;
