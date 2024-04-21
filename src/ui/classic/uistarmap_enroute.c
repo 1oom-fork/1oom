@@ -107,19 +107,21 @@ static void ui_starmap_enroute_draw_cb(void *vptr)
         lbxfont_select(2, 0xa, 0, 0);
         lbxfont_print_str_center(x + 19, y + 29, sd[st].name, UI_SCREEN_W);
     }
-    if (ui_data.starmap.scanner_delay == 0) {
-        ui_data.starmap.frame_scanner = (ui_data.starmap.frame_scanner + 1) % 20;
-        ++ui_data.starmap.scanner_delay;
-    } else {
-        ui_data.starmap.scanner_delay = 0;
-    }
     if ((r->owner == d->api) && (d->en.can_move != NO_MOVE) && (!d->en.in_frange)) {
         lbxgfx_set_new_frame(ui_data.gfx.starmap.reloc_bu_accept, 1);
         lbxgfx_draw_frame(271, 163, ui_data.gfx.starmap.reloc_bu_accept, UI_SCREEN_W);
 
     }
-    ui_data.starmap.frame_ship = (ui_data.starmap.frame_ship + 1) % 5;
-    ui_draw_set_stars_xoffs(false);
+    if (!d->anim_delay) {
+        if (ui_data.starmap.scanner_delay == 0) {
+            ui_data.starmap.frame_scanner = (ui_data.starmap.frame_scanner + 1) % 20;
+            ++ui_data.starmap.scanner_delay;
+        } else {
+            ui_data.starmap.scanner_delay = 0;
+        }
+        ui_data.starmap.frame_ship = (ui_data.starmap.frame_ship + 1) % 5;
+        ui_draw_set_stars_xoffs(false);
+    }
 }
 
 /* -------------------------------------------------------------------------- */
