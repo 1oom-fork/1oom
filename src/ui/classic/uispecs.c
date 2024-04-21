@@ -70,7 +70,7 @@ static void specs_draw_cb1(void *vptr)
         y = (si << 5) + 5;
         lbxgfx_draw_frame(44, y - 1, ui_data.gfx.starmap.viewshp2, UI_SCREEN_W);
         ui_draw_filled_rect(6, y, 37, y + 29, 0);
-        ui_draw_stars(6, y + 1, si * 5, 32, &d->s);
+        ui_draw_stars(6, y + 1, si * 5, 32);
         lbxgfx_set_frame_0(ui_data.gfx.ships[sp.look]);
         for (int f = 0; f <= d->frame; ++f) {
             lbxgfx_draw_frame(6, y + 3, ui_data.gfx.ships[sp.look], UI_SCREEN_W);

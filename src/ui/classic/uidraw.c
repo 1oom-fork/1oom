@@ -612,15 +612,15 @@ void ui_draw_finish(void)
     ui_draw_finish_mode = 0;
 }
 
-void ui_draw_stars(int x, int y, int xoff1, int xoff2, struct draw_stars_s *s)
+void ui_draw_stars(int x, int y, int xoff1, int xoff2)
 {
     const int sx1[16] = { 2, 6, 30, 34, 48, 74, 88, 96, 99, 103, 119, 123, 136, 137, 152, 159 };
     const int sy1[16] = { 15, 2, 16, 24, 19, 4, 11, 23, 22, 10, 21, 11, 4, 12, 22, 10 };
     const int sx2[23] = { 0, 6, 11, 33, 36, 46, 52, 67, 84, 86, 91, 95, 98, 103, 107, 112, 123, 125, 139, 142, 148, 151, 159 };
     const int sy2[23] = { 22, 8, 18, 19, 3, 18, 7, 24, 14, 17, 11, 1, 13, 15, 5, 6, 19, 1, 13, 10, 6, 23, 13 };
     int xo1, xo2;
-    xo1 = (s->xoff1 + xoff1) % (UI_SCREEN_W / 2);
-    xo2 = (s->xoff2 + xoff1 * 2) % (UI_SCREEN_W / 2);
+    xo1 = (ui_data.starmap.stars_xoff1 + xoff1) % (UI_SCREEN_W / 2);
+    xo2 = (ui_data.starmap.stars_xoff2 + xoff1 * 2) % (UI_SCREEN_W / 2);
     if (((UI_SCREEN_W / 2) - xoff2) > xo1) {
         int tx = xo1 + xoff2;
         for (int i = 0; i < 16; ++i) {
