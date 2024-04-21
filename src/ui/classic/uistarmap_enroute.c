@@ -119,7 +119,7 @@ static void ui_starmap_enroute_draw_cb(void *vptr)
 
     }
     d->en.frame_ship = (d->en.frame_ship + 1) % 5;
-    ui_draw_set_stars_xoffs(&d->en.ds, false);
+    ui_draw_set_stars_xoffs(false);
 }
 
 /* -------------------------------------------------------------------------- */
