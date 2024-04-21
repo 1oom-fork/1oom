@@ -123,7 +123,7 @@ static void ui_starmap_enroute_draw_cb(void *vptr)
         st = d->en.sn0.type[i];
         gfx = ui_data.gfx.ships[sd[st].look];
         lbxgfx_set_frame_0(gfx);
-        for (int f = 0; f <= d->en.frame_ship; ++f) {
+        for (int f = 0; f <= ui_data.starmap.frame_ship; ++f) {
             lbxgfx_draw_frame(x, y, gfx, UI_SCREEN_W);
         }
         lbxfont_select(0, 0xd, 0, 0);
@@ -144,7 +144,7 @@ static void ui_starmap_enroute_draw_cb(void *vptr)
         lbxgfx_set_new_frame(ui_data.gfx.starmap.reloc_bu_accept, 1);
         lbxgfx_draw_frame(271, 163, ui_data.gfx.starmap.reloc_bu_accept, UI_SCREEN_W);
     }
-    d->en.frame_ship = (d->en.frame_ship + 1) % 5;
+    ui_data.starmap.frame_ship = (ui_data.starmap.frame_ship + 1) % 5;
     ui_draw_set_stars_xoffs(false);
 }
 
@@ -181,7 +181,7 @@ void ui_starmap_enroute(struct game_s *g, player_id_t active_player)
     d.en.from = g->planet_focus_i[active_player];
     ui_data.starmap.frame_scanner = 0;
     ui_data.starmap.scanner_delay = 0;
-    d.en.frame_ship = 0;
+    ui_data.starmap.frame_ship = 0;
     g->planet_focus_i[active_player] = r->dest;
     ui_starmap_sn0_setup(&d.en.sn0, g->eto[r->owner].shipdesigns_num, r->ships);
     ui_starmap_update_reserve_fuel(g, &d.en.sn0, r->ships, active_player);

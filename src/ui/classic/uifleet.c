@@ -46,7 +46,6 @@ struct fleet_data_s {
     int pos;
     int num;
     int lines;
-    int frame;
     int order_i;
     uint8_t *gfx_fleetbrb;
 };
@@ -144,7 +143,7 @@ static void fleet_draw_cb(void *vptr)
                 if (!FLEET_IS_ENROUTE(fi)) {
                     lbxgfx_draw_frame(x0, y0 + 1, gfx_ship, UI_SCREEN_W);
                 } else {
-                    for (int f = 0; f <= d->frame; ++f) {
+                    for (int f = 0; f <= ui_data.starmap.frame_ship; ++f) {
                         lbxgfx_draw_frame(x0, y0 + 1, gfx_ship, UI_SCREEN_W);
                     }
                 }
@@ -156,7 +155,7 @@ static void fleet_draw_cb(void *vptr)
     for (int i = num; i < FLEET_LINES; ++i) {
         ui_draw_filled_rect(7, i * 33 + 17, 40, i * 33 + 42, 0x3a);
     }
-    d->frame = (d->frame + 1) % 5;
+    ui_data.starmap.frame_ship = (ui_data.starmap.frame_ship + 1) % 5;
     ui_draw_set_stars_xoffs(false);
     lbxfont_select(2, 6, 0, 0);
     lbxfont_print_num_right(137, 185, e->ship_maint_bc, UI_SCREEN_W);
@@ -355,7 +354,7 @@ int ui_fleet(struct game_s *g, player_id_t active_player)
     d.order_i = 0;
     game_update_maint_costs(g);
     ui_fleet_sub(&d);
-    d.frame = 0;
+    ui_data.starmap.frame_ship = 0;
     d.lines = 0;
     if (ui_extra_enabled) {
         d.order_i = ui_data.sorted.fleet_order[active_player];

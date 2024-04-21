@@ -241,6 +241,7 @@ struct ui_data_s {
         bool flag_show_own_routes;
         ui_starmap_star_text_t star_text_type;
         int line_anim_phase;
+        int frame_ship;
         int frame_scanner;
         int scanner_delay;
         int stars_xoff1;
