@@ -72,11 +72,11 @@ static void ui_starmap_orbit_en_draw_cb(void *vptr)
         lbxfont_select(2, 0xa, 0, 0);
         lbxfont_print_str_center(x + 19, y + 29, sd[st].name, UI_SCREEN_W);
     }
-    if (d->oe.scanner_delay == 0) {
+    if (ui_data.starmap.scanner_delay == 0) {
         ui_data.starmap.frame_scanner = (ui_data.starmap.frame_scanner + 1) % 20;
-        ++d->oe.scanner_delay;
+        ++ui_data.starmap.scanner_delay;
     } else {
-        d->oe.scanner_delay = 0;
+        ui_data.starmap.scanner_delay = 0;
     }
 }
 
@@ -94,7 +94,7 @@ void ui_starmap_orbit_en(struct game_s *g, player_id_t active_player)
     d.api = active_player;
     d.anim_delay = 0;
     ui_data.starmap.frame_scanner = 0;
-    d.oe.scanner_delay = 0;
+    ui_data.starmap.scanner_delay = 0;
     d.oe.from = g->planet_focus_i[active_player];
     d.oe.player = ui_data.starmap.orbit_player;
     os = &(g->eto[d.oe.player].orbit[d.oe.from].ships[0]);
