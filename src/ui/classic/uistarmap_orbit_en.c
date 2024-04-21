@@ -63,7 +63,7 @@ static void ui_starmap_orbit_en_draw_cb(void *vptr)
         ui_draw_filled_rect(x, y + 28, x + 38, y + 34, 0x1c);
         ds.xoff1 = 0;
         ds.xoff2 = 0;
-        ui_draw_stars(x, y, 0, 38, &ds);
+        ui_draw_stars(x, y, 0, 38);
         st = d->oe.sn0.type[i];
         gfx = ui_data.gfx.ships[sd[st].look];
         lbxgfx_set_frame_0(gfx);

@@ -97,7 +97,7 @@ static void ui_starmap_transport_draw_cb(void *vptr)
     {
         int x = 228, y = 73;
         ui_draw_filled_rect(x, y, x + 81, y + 25, 0);
-        ui_draw_stars(x, y, 0, 80, &(d->ts.ds));
+        ui_draw_stars(x, y, 0, 80);
         lbxgfx_set_frame_0(ui_data.gfx.starmap.tranship);
         for (int f = 0; f <= d->ts.frame_ship; ++f) {
             lbxgfx_draw_frame(x + 7, y + 3, ui_data.gfx.starmap.tranship, UI_SCREEN_W);

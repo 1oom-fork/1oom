@@ -76,7 +76,7 @@ static void ui_battle_draw_scan_cb(void *vptr)
         y = i * 32 + 5;
         lbxgfx_draw_frame(46, y - 1, ui_data.gfx.space.vs2, UI_SCREEN_W);
         ui_draw_filled_rect(6, y, 38, y + 29, 0);
-        ui_draw_stars(6, y + 1, 0, 32, &d->stars);
+        ui_draw_stars(6, y + 1, 0, 32);
         ui_battle_draw_item(bt, itembase + i, 6, y + 1);
         lbxfont_select(2, 0xd, 0, 0);
         lbxfont_print_str_normal(52, y + 3, b->name, UI_SCREEN_W);
