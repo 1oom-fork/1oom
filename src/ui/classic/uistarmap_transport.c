@@ -41,7 +41,7 @@ static void ui_starmap_transport_draw_cb(void *vptr)
         int x, y;
         x = (r->x - ui_data.starmap.x) * 2 + 5;
         y = (r->y - ui_data.starmap.y) * 2 + 5;
-        lbxgfx_draw_frame_offs(x, y, ui_data.gfx.starmap.shipbord, STARMAP_LIMITS, UI_SCREEN_W);
+        lbxgfx_draw_frame_offs_delay(x, y, !d->anim_delay, ui_data.gfx.starmap.shipbord, STARMAP_LIMITS, UI_SCREEN_W);
     }
     ui_draw_filled_rect(225, 8, 314, 180, 7);
     lbxgfx_draw_frame(224, 4, ui_data.gfx.starmap.tranbord, UI_SCREEN_W);
@@ -63,7 +63,7 @@ static void ui_starmap_transport_draw_cb(void *vptr)
         bool dest_ok = true;
         x1 = (pt->x - ui_data.starmap.x) * 2 + 8;
         y1 = (pt->y - ui_data.starmap.y) * 2 + 8;
-        lbxgfx_draw_frame_offs(x1, y1, ui_data.gfx.starmap.planbord, STARMAP_LIMITS, UI_SCREEN_W);
+        lbxgfx_draw_frame_offs_delay(x1, y1, !d->anim_delay, ui_data.gfx.starmap.planbord, STARMAP_LIMITS, UI_SCREEN_W);
         x0 = (r->x - ui_data.starmap.x) * 2 + 8;
         y0 = (r->y - ui_data.starmap.y) * 2 + 8;
         if (d->controllable) {

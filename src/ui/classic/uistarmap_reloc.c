@@ -47,7 +47,7 @@ static void ui_starmap_reloc_draw_cb(void *vptr)
         }
         ui_draw_line_limit_ctbl(x0 + 6, y0 + 6, x1, y1, ctbl, 5, ui_data.starmap.line_anim_phase);
     }
-    lbxgfx_draw_frame_offs(x0, y0, ui_data.gfx.starmap.planbord, STARMAP_LIMITS, UI_SCREEN_W);
+    lbxgfx_draw_frame_offs_delay(x0, y0, !d->anim_delay, ui_data.gfx.starmap.planbord, STARMAP_LIMITS, UI_SCREEN_W);
     if (pt->owner == d->api) {
         lbxgfx_draw_frame(222, 80, ui_data.gfx.starmap.relocate, UI_SCREEN_W);
     } else {
