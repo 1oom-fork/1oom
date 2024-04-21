@@ -74,11 +74,13 @@ static void ui_starmap_orbit_en_draw_cb(void *vptr)
         lbxfont_select(2, 0xa, 0, 0);
         lbxfont_print_str_center(x + 19, y + 29, sd[st].name, UI_SCREEN_W);
     }
-    if (ui_data.starmap.scanner_delay == 0) {
-        ui_data.starmap.frame_scanner = (ui_data.starmap.frame_scanner + 1) % 20;
-        ++ui_data.starmap.scanner_delay;
-    } else {
-        ui_data.starmap.scanner_delay = 0;
+    if (!d->anim_delay) {
+        if (ui_data.starmap.scanner_delay == 0) {
+            ui_data.starmap.frame_scanner = (ui_data.starmap.frame_scanner + 1) % 20;
+            ++ui_data.starmap.scanner_delay;
+        } else {
+            ui_data.starmap.scanner_delay = 0;
+        }
     }
 }
 
