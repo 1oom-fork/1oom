@@ -122,9 +122,9 @@ static void fleet_draw_cb(void *vptr)
                     struct draw_stars_s temps;
                     temps.xoff1 = 0;
                     temps.xoff2 = 0;
-                    ui_draw_stars(x0, y0 + 1, j * 10, 37, &temps);
+                    ui_draw_stars(x0, y0 + 1, j * 10, 37);
                 } else {
-                    ui_draw_stars(x0, y0 + 1, j * 5, 37, &d->s);
+                    ui_draw_stars(x0, y0 + 1, j * 5, 37);
                 }
                 gfx_ship = ui_data.gfx.ships[sd[j].look];
                 lbxgfx_set_frame_0(gfx_ship);
