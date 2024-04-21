@@ -114,11 +114,11 @@ static void ui_starmap_enroute_draw_cb(void *vptr)
         lbxfont_select(2, 0xa, 0, 0);
         lbxfont_print_str_center(x + 19, y + 29, sd[st].name, UI_SCREEN_W);
     }
-    if (d->en.scanner_delay == 0) {
+    if (ui_data.starmap.scanner_delay == 0) {
         ui_data.starmap.frame_scanner = (ui_data.starmap.frame_scanner + 1) % 20;
-        ++d->en.scanner_delay;
+        ++ui_data.starmap.scanner_delay;
     } else {
-        d->en.scanner_delay = 0;
+        ui_data.starmap.scanner_delay = 0;
     }
     if ((r->owner == d->api) && (d->en.can_move != NO_MOVE) && !ui_starmap_enroute_in_frange(d)) {
         lbxgfx_set_new_frame(ui_data.gfx.starmap.reloc_bu_accept, 1);
@@ -153,7 +153,7 @@ void ui_starmap_enroute(struct game_s *g, player_id_t active_player)
     }
     d.en.from = g->planet_focus_i[active_player];
     ui_data.starmap.frame_scanner = 0;
-    d.en.scanner_delay = 0;
+    ui_data.starmap.scanner_delay = 0;
     d.en.frame_ship = 0;
     g->planet_focus_i[active_player] = r->dest;
     d.en.in_frange = false;
