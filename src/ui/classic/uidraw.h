@@ -32,7 +32,7 @@ extern void ui_draw_box_grain(int x0, int y0, int x1, int y1, uint8_t color0, ui
 extern void ui_draw_text_overlay(int x, int y, const char *str);
 extern void ui_draw_finish(void);
 extern void ui_draw_stars(int x, int y, int xoff1, int xoff2);
-extern void ui_draw_set_stars_xoffs(struct draw_stars_s *s, bool flag_right);
+extern void ui_draw_set_stars_xoffs(bool flag_right);
 extern void ui_draw_textbox_2str(const char *str1, const char *str2, int y0);
 
 #endif
