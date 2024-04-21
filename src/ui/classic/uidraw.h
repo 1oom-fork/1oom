@@ -4,11 +4,6 @@
 #include "game_types.h"
 #include "types.h"
 
-struct draw_stars_s {
-    int xoff1;
-    int xoff2;
-};
-
 extern int ui_draw_finish_mode;
 extern const uint8_t tbl_banner_color[BANNER_NUM];
 extern const uint8_t tbl_banner_color2[BANNER_NUM];
