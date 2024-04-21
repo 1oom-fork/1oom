@@ -671,7 +671,7 @@ void ui_draw_stars(int x, int y, int xoff1, int xoff2)
     }
 }
 
-void ui_draw_set_stars_xoffs(struct draw_stars_s *s, bool flag_right)
+void ui_draw_set_stars_xoffs(bool flag_right)
 {
     int x1, x2;
     if (flag_right) {
@@ -681,8 +681,8 @@ void ui_draw_set_stars_xoffs(struct draw_stars_s *s, bool flag_right)
         x1 = 1;
         x2 = 2;
     }
-    s->xoff1 = (s->xoff1 + x1) % (UI_SCREEN_W / 2);
-    s->xoff2 = (s->xoff2 + x2) % (UI_SCREEN_W / 2);
+    ui_data.starmap.stars_xoff1 = (ui_data.starmap.stars_xoff1 + x1) % (UI_SCREEN_W / 2);
+    ui_data.starmap.stars_xoff2 = (ui_data.starmap.stars_xoff2 + x2) % (UI_SCREEN_W / 2);
 }
 
 void ui_draw_textbox_2str(const char *str1, const char *str2, int y0)

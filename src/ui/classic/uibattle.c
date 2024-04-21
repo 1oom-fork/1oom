@@ -131,7 +131,7 @@ static void ui_battle_draw_scan_cb(void *vptr)
     }
     uiobj_finish_frame();
     ui_draw_copy_buf();
-    ui_draw_set_stars_xoffs(&d->stars, d->scan_side == SIDE_R);
+    ui_draw_set_stars_xoffs(d->scan_side == SIDE_R);
     d->frame_ship = (d->frame_ship + 1) % 5;
 }
 
