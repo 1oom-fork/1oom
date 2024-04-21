@@ -61,7 +61,6 @@ static void newships_draw_cb(void *vptr)
         n = g->evn.new_ships[d->api][i];
         if (n != 0) {
             const shipdesign_t *sd = &(g->srd[d->api].design[i]);
-            struct draw_stars_s ds;
             uint8_t *gfx;
             int x0, y0;
             x0 = x + 8 + (i % 3) * 48;
@@ -79,6 +78,7 @@ static void newships_draw_cb(void *vptr)
             lbxfont_print_num_right(x0 + 36, y0 + 23, n, UI_SCREEN_W);
         }
     }
+    ui_draw_set_stars_xoffs(false);
 }
 
 /* -------------------------------------------------------------------------- */

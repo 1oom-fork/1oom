@@ -34,7 +34,6 @@ struct specs_data_s {
     player_id_t api;
     int frame;
     int scrapi;
-    struct draw_stars_s s;
 };
 
 static void specs_print_weap(weapon_t wi, uint8_t wn, char *buf1, char *buf2)
@@ -165,8 +164,8 @@ void ui_specs_before(struct game_s *g, player_id_t active_player)
     d.g = g;
     d.api = active_player;
     d.frame = 0;
-    d.s.xoff1 = 0;
-    d.s.xoff2 = 0;
+    ui_data.starmap.stars_xoff1 = 0;
+    ui_data.starmap.stars_xoff2 = 0;
 
     oi_ma = UIOBJI_INVALID;
     uiobj_set_callback_and_delay(specs_before_draw_cb, &d, 2);
@@ -247,8 +246,8 @@ int ui_specs(struct game_s *g, player_id_t active_player)
     d.g = g;
     d.api = active_player;
     d.frame = 0;
-    d.s.xoff1 = 0;
-    d.s.xoff2 = 0;
+    ui_data.starmap.stars_xoff1 = 0;
+    ui_data.starmap.stars_xoff2 = 0;
 
     oi_ma = UIOBJI_INVALID;
     for (int i = 0; i < NUM_SHIPDESIGNS; ++i) {
