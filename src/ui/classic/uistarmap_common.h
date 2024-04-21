@@ -85,8 +85,6 @@ struct starmap_data_s {
         struct {
             bool in_frange;
             int frame_ship;
-            int frame_scanner;
-            int scanner_delay;
         } ts;   /* transport */
         struct {
             shipcount_t ships[NUM_SHIPDESIGNS];
@@ -97,16 +95,12 @@ struct starmap_data_s {
             shipcount_t ships[NUM_SHIPDESIGNS];
             struct shipnon0_s sn0;
             player_id_t player;
-            int frame_scanner;
-            int scanner_delay;
             int yoff;
         } oe;   /* orbit_en */
         struct {
             struct shipnon0_s sn0;
             uint8_t pon;
             int frame_ship;
-            int frame_scanner;
-            int scanner_delay;
         } en;   /* enroute */
     };
 };
