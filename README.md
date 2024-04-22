@@ -1,8 +1,8 @@
 1oom
 ====
 
-1oom is a Master of Orion (1993) game engine recreation.
-1oom is Free Software (GPLv2), see COPYING.
+1oom aims to accurately reproduce the original DOS version of Master of Orion (1993) in a form that can be run on modern computers.
+1oom is Free Software (GPLv2), see [COPYING](COPYING).
 
 
 1 Installation
@@ -15,7 +15,7 @@
 
 Simply copy the EXE and DLLs (if any) to your MOO1 directory.
 Alternatively copy your MOO1 LBX files to your 1oom directory.
-See doc/usage_common.txt if you prefer to use a separate directory.
+See [usage_common](doc/usage_common.txt) if you prefer to use a separate directory.
 
 1.2 Unix (Linux)
 ----------------
@@ -47,13 +47,13 @@ DJGPP and Allegro4.
 2 Configuration
 ===============
 
-See doc/usage_common.txt.
+See [usage_common](doc/usage_common.txt).
 
 
 3 Development
 =============
 
-See COMPILING and HACKING for more information.
+See [COMPILING](COMPILING) and [HACKING](HACKING) for more information.
 
 
 4 Executables
@@ -61,19 +61,19 @@ See COMPILING and HACKING for more information.
 
 1oom consists of a few executables:
 
-- 1oom_classic_*    (the 1993 UI)
-- 1oom_cmdline      (proof of concept textual UI)
-- 1oom_lbxview_*    (for viewing LBX files)
-- 1oom_lbxedit      (for editing LBX files)
-- 1oom_pbxmake      (for creating PBX files)
-- 1oom_pbxdump      (for dumping PBX files)
-- 1oom_gfxconv      (for converting GFX for use in PBX files)
-- 1oom_saveconv     (for converting save game files)
+- [1oom_classic_*](doc/usage_classic.txt)    (the 1993 UI)
+- [1oom_cmdline](doc/usage_cmdline.txt)      (proof of concept textual UI)
+- [1oom_lbxview_*](doc/usage_lbxview.txt)    (for viewing LBX files)
+- [1oom_lbxedit](doc/usage_lbxedit.txt)      (for editing LBX files)
+- [1oom_pbxmake](doc/usage_pbxmake.txt)      (for creating PBX files)
+- [1oom_pbxdump](doc/usage_pbxdump.txt)      (for dumping PBX files)
+- [1oom_gfxconv](doc/usage_gfxconv.txt)      (for converting GFX for use in PBX files)
+- [1oom_saveconv](doc/usage_saveconv.txt)     (for converting save game files)
 - 1oom_*_sdl1       (using SDL 1.2.x)
 - 1oom_*_sdl2       (using SDL 2.x)
 - 1oom_*_alleg4     (using Allegro 4.x)
 
-See doc/usage_* for more documentation.
+See [usage_common](doc/usage_common.txt) for common documentation.
 
 Some ports have shorter filenames due to filesystem limitations.
 
@@ -91,7 +91,8 @@ The following abbreviations appear in the documentation and code:
 ==================
 
 Most of the credit for this software belongs to the progammer who authored
-1oom v1.0 under the pseudonym Kilgore Trout Mask Replicant. Thank you for
+[1oom v1.0](https://kilgoretroutmaskreplicant.gitlab.io/plain-html) 
+under the pseudonym Kilgore Trout Mask Replicant. Thank you for
 creating this and publishing it free and open source!
 
 The original game Master of Orion was developed  by Simtex Software and
@@ -113,4 +114,4 @@ Thanks to those who contributed code, ideas or bug reports.
 
 Some code has been pilfered from Chocolate Doom and VICE.
 
-The files HACKING and PHILOSOPHY are based on Chocolate Doom.
+The files [HACKING](HACKING) and [PHILOSOPHY](PHILOSOPHY) are based on Chocolate Doom.
