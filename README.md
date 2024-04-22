@@ -1,8 +1,9 @@
 1oom
 ====
 
-1oom is a Master of Orion (1993) game engine recreation.
-1oom is Free Software (GPLv2), see COPYING.
+1oom aims to accurately reproduce the original DOS version of
+Master of Orion Classic (1993) in a form that can be run on modern computers.
+1oom is Free Software (GPLv2), see [COPYING](COPYING).
 
 
 Installation
@@ -20,15 +21,12 @@ Linux
 
 1oom requires the following libraries:
 
-- SDL (libsdl1.2):
-http://www.libsdl.org
-- SDL_mixer (libsdl-mixer1.2):
-http://www.libsdl.org/projects/SDL_mixer/
+- [SDL](https://www.libsdl.org) (libsdl1.2)
+- [SDL_mixer](https://www.libsdl.org/projects/SDL_mixer/) (libsdl-mixer1.2)
 
 Also recommended:
 
-- libsamplerate:
-http://www.mega-nerd.com/libsamplerate/
+- [libsamplerate](https://www.mega-nerd.com/libsamplerate/)
 
 Check your distribution's package manager or the library
 website on how to install them.
@@ -37,8 +35,7 @@ website on how to install them.
 Configuration
 =============
 
-1oom is configured via command-line arguments or editing the
-configuration file.
+1oom is configured via command-line arguments.
 
 User Directory
 --------------
@@ -54,7 +51,7 @@ options in one of the following paths:
 Development
 ===========
 
-See INSTALL and HACKING for more information.
+See [INSTALL](INSTALL) and [HACKING](HACKING) for more information.
 
 
 Executables
