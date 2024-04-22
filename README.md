@@ -1,7 +1,8 @@
 1oom
 ====
 
-1oom is a Master of Orion (1993) game engine recreation.
+1oom aims to accurately reproduce the original DOS version of
+Master of Orion Classic (1993) in a form that can be run on modern computers.
 1oom is Free Software (GPLv2), see COPYING.
 
 
@@ -37,8 +38,7 @@ website on how to install them.
 Configuration
 =============
 
-1oom is configured via command-line arguments or editing the
-configuration file.
+1oom is configured via command-line arguments.
 
 User Directory
 --------------
@@ -102,8 +102,7 @@ Ideas and text snippets have been taken from kyrub's unofficial patch 1.40m
 Readme. Thanks for the patch.
 
 Thanks to
-http://www.shikadi.net/wiki/modding/index.php?title=XMI_Format&oldid=6874
-for the music format info.
+https://moddingwiki.shikadi.net/wiki/XMI_Format for the music format info.
 
 Thanks to CivFanatics forum user sargon0 for partial save game format info in
 http://forums.civfanatics.com/threads/moo-save-file-layout.275055/
