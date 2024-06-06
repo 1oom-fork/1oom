@@ -66,6 +66,8 @@ To compile 1oom, you need a GNU build environment.
 2.2.1. Compiling with MinGW
 ----------------------------
 
+Note: This method is deprecated. Follow 2.2.2 if you want FluidSynth support.
+
 Download and install mingw-get-setup.exe from: https://osdn.net/projects/mingw/releases/
 
 This will install a graphical package manager. Ensure that you have the latest autoconf,
@@ -94,6 +96,19 @@ You are now ready to configure and build 1oom as described in Section 3.
 To run 1oom, place the *32-bit* versions of SDL2.dll and SDL2_mixer.dll in the
 same directory as the binary.
 
+2.2.2. Compiling with MSYS2
+----------------------------
+
+https://kilgoretroutmaskreplicant.gitlab.io/plain-html/howto_build_windows.html
+
+For Windows 7, you can download the old version of MSYS2 here:
+    https://github.com/msys2/msys2-installer/releases/tag/2022-10-28
+
+Note: Add the --enable-static flag for static build when you run ./configure.
+
+To run 1oom with FluidSynth support, before building you need to install
+the appropriate fluidsynth package in MSYS2 and copy the fluidsynth DLLs to
+same directory as 1oom binary (even for static build).
 
 3. Compiling 1oom
 ==================
