@@ -9,6 +9,7 @@
 #include "gameapi.h"
 #include "game_ai.h"
 #include "game_aux.h"
+#include "game_fix.h"
 #include "game_misc.h"
 #include "game_new.h"
 #include "game_num.h"
@@ -137,6 +138,19 @@ static void game_save_custom_opts_to_cfg(struct game_new_options_s *go)
         game_opt_custom_banner_value += go->pdata[i].banner;
         game_opt_custom_isai_value *= 10;
         game_opt_custom_isai_value += go->pdata[i].is_ai;
+    }
+}
+
+void game_apply_rules(void)
+{
+    if (game_opt_fix_bugs) {
+        game_num_fix_bugs();
+    }
+    if (game_opt_fix_guardian_repair) {
+        game_num_fix_guardian_repair();
+    }
+    if (game_opt_fix_starting_ships) {
+        game_num_fix_starting_ships();
     }
 }
 
@@ -573,6 +587,7 @@ const struct cfg_items_s game_cfg_items[] = {
     CFG_ITEM_BOOL("initsave", &game_opt_init_save_enabled),
     CFG_ITEM_BOOL("skipintro", &game_opt_skip_intro_always),
     CFG_ITEM_BOOL("skiprandomnews", &game_opt_skip_random_news),
+    CFG_ITEM_BOOL("news_orion_colonized", &game_num_news_orion),
     CFG_ITEM_COMMENT("PLAYERS*100+GALAXYSIZE*10+DIFFICULTY"),
     CFG_ITEM_COMMENT(" 2..6, 0..3 = small..huge, 0..4 = simple..impossible"),
     CFG_ITEM_INT("new_game_opts", &game_opt_new_value, game_cfg_check_new_game_opts),
@@ -599,6 +614,46 @@ const struct cfg_items_s game_cfg_items[] = {
     CFG_ITEM_BOOL("msg_filter_soilatmos", &game_opt_message_filter[FINISHED_SOILATMOS]),
     CFG_ITEM_BOOL("msg_filter_stargate", &game_opt_message_filter[FINISHED_STARGATE]),
     CFG_ITEM_BOOL("msg_filter_shield", &game_opt_message_filter[FINISHED_SHIELD]),
+    CFG_ITEM_INT("rules_tech_cost_mul", &game_num_tech_costmul, NULL),
+    CFG_ITEM_INT("rules_tech_cost_mul_human", &game_num_tech_costmuld2, NULL),
+    CFG_ITEM_INT("rules_tech_cost_mul_ai", &game_num_tech_costmula2, NULL),
+    CFG_ITEM_BOOL("rules_ai_transport_range_fix", &game_num_ai_trans_range_fix),
+    CFG_ITEM_BOOL("rules_ai_4th_colony_curse_fix", &game_num_ai_4_colony_curse_fix),
+    CFG_ITEM_BOOL("rules_ai_first_tech_cost_fix", &game_num_ai_first_tech_cost_fix),
+    CFG_ITEM_BOOL("rules_doom_stack_fix", &game_num_doom_stack_fix),
+    CFG_ITEM_BOOL("rules_bt_no_tohit_acc", &game_num_bt_no_tohit_acc),
+    CFG_ITEM_BOOL("rules_bt_oracle_fix", &game_num_bt_oracle_fix),
+    CFG_ITEM_BOOL("rules_bt_precap_tohit", &game_num_bt_precap_tohit),
+    CFG_ITEM_BOOL("rules_bt_wait_no_reload", &game_num_bt_wait_no_reload),
+    CFG_ITEM_BOOL("rules_deterministic_rng", &game_num_deterministic),
+    CFG_ITEM_BOOL("rules_first_tech_rp_fix", &game_num_first_tech_rp_fix),
+    CFG_ITEM_BOOL("rules_hidden_child_labor_fix", &game_num_hidden_child_labor_fix),
+    CFG_ITEM_BOOL("rules_leaving_trans_fix", &game_num_leaving_trans_fix),
+    CFG_ITEM_BOOL("rules_monster_rest_attack", &game_num_monster_rest_att),
+    CFG_ITEM_BOOL("rules_pop_tenths_fix", &game_num_pop_tenths_fix),
+    CFG_ITEM_BOOL("rules_factory_cost_fix", &game_num_factory_cost_fix),
+    CFG_ITEM_BOOL("rules_colonized_factories_fix", &game_num_colonized_factories_fix),
+    CFG_ITEM_BOOL("rules_newtech_adjust_fix", &game_num_newtech_adjust_fix),
+    CFG_ITEM_BOOL("rules_slider_eco_done_fix", &game_num_slider_eco_done_fix),
+    CFG_ITEM_BOOL("rules_cond_switch_to_ind_fix", &game_num_cond_switch_to_ind_fix),
+    CFG_ITEM_BOOL("rules_waste_adjust_fix", &game_num_waste_adjust_fix),
+    CFG_ITEM_BOOL("rules_slider_respects_locks", &game_num_slider_respects_locks),
+    CFG_ITEM_BOOL("rules_orbital_bio_fix", &game_num_orbital_bio_fix),
+    CFG_ITEM_BOOL("rules_orbital_weap_any", &game_fix_orbital_weap_any),
+    CFG_ITEM_BOOL("rules_orbital_weap_4", &game_fix_orbital_weap_4),
+    CFG_ITEM_BOOL("rules_orbital_torpedo", &game_fix_orbital_torpedo),
+    CFG_ITEM_BOOL("rules_orbital_comp", &game_fix_orbital_comp),
+    CFG_ITEM_BOOL("rules_extended_reloc_range", &game_num_extended_reloc_range),
+    CFG_ITEM_BOOL("rules_retreat_redir_fix", &game_num_retreat_redir_fix),
+    CFG_ITEM_BOOL("rules_ship_scanner_fix", &game_num_ship_scanner_fix),
+    CFG_ITEM_BOOL("rules_ship_stargate_redir_fix", &game_num_stargate_redir_fix),
+    CFG_ITEM_BOOL("rules_ship_trans_redir_fix", &game_num_trans_redir_fix),
+    CFG_ITEM_BOOL("rules_soil_rounding_fix", &game_num_soil_rounding_fix),
+    CFG_ITEM_BOOL("rules_waste_calc_fix", &game_num_waste_calc_fix),
+    CFG_ITEM_BOOL("rules_ai_fleet_cheating_fix", &game_num_ai_fleet_cheating_fix),
+    CFG_ITEM_BOOL("rules_fix_bugs", &game_opt_fix_bugs),
+    CFG_ITEM_BOOL("rules_fix_guardian_repair", &game_opt_fix_guardian_repair),
+    CFG_ITEM_BOOL("rules_fix_starting_ships", &game_opt_fix_starting_ships),
     CFG_ITEM_END
 };
 
