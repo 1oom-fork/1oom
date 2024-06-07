@@ -127,6 +127,19 @@ static void game_save_custom_opts_to_cfg(struct game_new_options_s *go)
     }
 }
 
+void game_apply_rules(void)
+{
+    if (game_opt_fix_bugs) {
+        game_num_fix_bugs();
+    }
+    if (game_opt_fix_guardian_repair) {
+        game_num_fix_guardian_repair();
+    }
+    if (game_opt_fix_starting_ships) {
+        game_num_fix_starting_ships();
+    }
+}
+
 /* -------------------------------------------------------------------------- */
 
 static int game_opt_do_new_seed(char **argv, void *var)
@@ -582,6 +595,21 @@ const struct cfg_items_s game_cfg_items[] = {
     CFG_ITEM_INT("custom_game_home_num_colony_ships", &game_opt_custom.homeworlds.num_colony_ships, NULL),
     CFG_ITEM_BOOL("custom_game_home_armed_colony_ships", &game_opt_custom.homeworlds.armed_colony_ships),
     CFG_ITEM_BOOL("planet_leaving_trans_fix", &game_planet_leaving_trans_fix),
+    CFG_ITEM_BOOL("rules_ai_transport_range_fix", &game_num_ai_trans_range_fix),
+    CFG_ITEM_BOOL("rules_bt_no_tohit_acc", &game_num_bt_no_tohit_acc),
+    CFG_ITEM_BOOL("rules_bt_precap_tohit", &game_num_bt_precap_tohit),
+    CFG_ITEM_BOOL("rules_bt_wait_no_reload", &game_num_bt_wait_no_reload),
+    CFG_ITEM_BOOL("rules_monster_rest_attack", &game_num_monster_rest_att),
+    CFG_ITEM_BOOL("rules_pop_tenths_fix", &game_num_pop_tenths_fix),
+    CFG_ITEM_BOOL("rules_retreat_redir_fix", &game_num_retreat_redir_fix),
+    CFG_ITEM_BOOL("rules_ship_scanner_fix", &game_num_ship_scanner_fix),
+    CFG_ITEM_BOOL("rules_ship_stargate_redir_fix", &game_num_stargate_redir_fix),
+    CFG_ITEM_BOOL("rules_ship_trans_redir_fix", &game_num_trans_redir_fix),
+    CFG_ITEM_BOOL("rules_waste_calc_fix", &game_num_waste_calc_fix),
+    CFG_ITEM_BOOL("rules_ai_fleet_cheating_fix", &game_num_ai_fleet_cheating_fix),
+    CFG_ITEM_BOOL("rules_fix_bugs", &game_opt_fix_bugs),
+    CFG_ITEM_BOOL("rules_fix_guardian_repair", &game_opt_fix_guardian_repair),
+    CFG_ITEM_BOOL("rules_fix_starting_ships", &game_opt_fix_starting_ships),
     CFG_ITEM_END
 };
 

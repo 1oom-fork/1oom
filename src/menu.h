@@ -30,7 +30,14 @@ struct menu_item_data_s {
     int action_i;
     int value_min;
     int value_max;
+    bool need_restart;
 };
+
+static inline struct menu_item_data_s *menu_item_force_restart(struct menu_item_data_s *d)
+{
+    d->need_restart = true;
+    return d;
+}
 
 static inline void menu_make_page(struct menu_item_data_s *d, const char *text, int page, mookey_t key)
 {

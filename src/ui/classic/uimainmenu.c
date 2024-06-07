@@ -8,6 +8,7 @@
 #include "game_misc.h"
 #include "game_new.h"
 #include "game_num.h"
+#include "game_nump.h"
 #include "game_save.h"
 #include "game_str.h"
 #include "hw.h"
@@ -33,6 +34,13 @@
 #include "version.h"
 
 /* -------------------------------------------------------------------------- */
+
+static bool force_restart = false;
+
+static bool main_menu_game_active(void)
+{
+    return !force_restart;
+}
 
 static bool main_menu_have_save_continue(void) {
     return game_save_tbl_have_save[GAME_SAVE_I_CONTINUE];
@@ -223,6 +231,10 @@ static void main_menu_draw_cb(void *vptr)
     hw_video_copy_back_to_page2();
     lbxfont_select(2, 7, 0, 0);
     lbxfont_print_str_right(315, 193, PACKAGE_NAME " " VERSION_STR, UI_SCREEN_W, ui_scale);
+    if (force_restart) {
+        lbxfont_select(2, 2, 0, 0);
+        lbxfont_print_str_center(160, 60, "Application restart required", UI_SCREEN_W, ui_scale);
+    }
     for (int i = 0; i < d->item_count; ++i) {
         struct main_menu_item_s *it = &d->items[i];
         if (it->active) {
@@ -312,6 +324,20 @@ static void mm_options_small_set_item_dimensions(struct main_menu_data_s *d, int
     }
 }
 
+static void mm_options_small2_set_item_dimensions(struct main_menu_data_s *d, int i)
+{
+    struct main_menu_item_s *it = &d->items[i];
+    uint16_t step_y;
+    it->font_i = 2;
+    main_menu_set_item_wh(d, it);
+    step_y = 0x80 / ((d->item_count + 1) / 2);
+    it->x = i%2 ? 0xe0 : 0x60;
+    if (i%2 == 0 && i == d->item_count - 1) {
+        it->x = 0xa0;
+    }
+    it->y = 0x47 + step_y * (i/2);
+}
+
 static void mm_custom_set_item_dimensions(struct main_menu_data_s *d, int i)
 {
     struct main_menu_item_s *it = &d->items[i];
@@ -334,7 +360,7 @@ static void mm_custom_set_item_dimensions(struct main_menu_data_s *d, int i)
 static void main_menu_make_main_page(struct main_menu_data_s *d)
 {
     d->set_item_dimensions = main_menu_set_item_dimensions;
-    menu_make_page(menu_allocate_item(), "Game", MAIN_MENU_PAGE_GAME, MOO_KEY_g);
+    menu_make_page_conditional(menu_allocate_item(), "Game", MAIN_MENU_PAGE_GAME, main_menu_game_active, MOO_KEY_g);
     menu_make_page(menu_allocate_item(), "Options", MAIN_MENU_PAGE_OPTIONS, MOO_KEY_o);
     menu_make_page(menu_allocate_item(), "UI Preset", MAIN_MENU_PAGE_PRESET, MOO_KEY_p);
     menu_make_action(menu_allocate_item(), "Quit to OS", MAIN_MENU_ACT_QUIT_GAME, MOO_KEY_q);
@@ -426,7 +452,7 @@ static void main_menu_make_options_sound_page(struct main_menu_data_s *d)
 static void main_menu_make_options_video_page(struct main_menu_data_s *d)
 {
     d->set_item_dimensions = mm_options_set_item_dimensions;
-    menu_make_int(menu_allocate_item(), "UI scale", &ui_scale_hint, 1, UI_SCALE_MAX, MOO_KEY_s);
+    menu_make_int(menu_item_force_restart(menu_allocate_item()), "UI scale", &ui_scale_hint, 1, UI_SCALE_MAX, MOO_KEY_s);
     hw_opt_menu_make_page_video();
     menu_make_back(menu_allocate_item());
 }
@@ -462,7 +488,22 @@ static void main_menu_make_options_interface_page(struct main_menu_data_s *d)
 
 static void main_menu_make_options_rules_page(struct main_menu_data_s *d)
 {
-    d->set_item_dimensions = mm_options_small_set_item_dimensions;
+    d->set_item_dimensions = mm_options_small2_set_item_dimensions;
+    menu_make_bool(menu_allocate_item(), "AI Transport Range Fix", &game_num_ai_trans_range_fix, MOO_KEY_UNKNOWN);
+    menu_make_bool(menu_allocate_item(), "Battle No Tohit Accumulation", &game_num_bt_no_tohit_acc, MOO_KEY_UNKNOWN);
+    menu_make_bool(menu_allocate_item(), "Battle Precap Tohit", &game_num_bt_precap_tohit, MOO_KEY_UNKNOWN);
+    menu_make_bool(menu_allocate_item(), "Battle Wait No Reload", &game_num_bt_wait_no_reload, MOO_KEY_UNKNOWN);
+    menu_make_bool(menu_allocate_item(), "Monster Rest Attack", &game_num_monster_rest_att, MOO_KEY_UNKNOWN);
+    menu_make_bool(menu_allocate_item(), "Population Tenths Fix", &game_num_pop_tenths_fix, MOO_KEY_UNKNOWN);
+    menu_make_bool(menu_allocate_item(), "Retreat Redir Fix", &game_num_retreat_redir_fix, MOO_KEY_UNKNOWN);
+    menu_make_bool(menu_allocate_item(), "Ship Scanner Fix", &game_num_ship_scanner_fix, MOO_KEY_UNKNOWN);
+    menu_make_bool(menu_allocate_item(), "Stargate Redirection Fix", &game_num_stargate_redir_fix, MOO_KEY_UNKNOWN);
+    menu_make_bool(menu_allocate_item(), "Transport Redirection Fix", &game_num_trans_redir_fix, MOO_KEY_UNKNOWN);
+    menu_make_bool(menu_allocate_item(), "Waste Calc Fix", &game_num_waste_calc_fix, MOO_KEY_UNKNOWN);
+    menu_make_bool(menu_allocate_item(), "AI Fleet Cheating Fix", &game_num_ai_fleet_cheating_fix, MOO_KEY_UNKNOWN);
+    menu_make_bool(menu_item_force_restart(menu_allocate_item()), "Apply Fix Bugs", &game_opt_fix_bugs, MOO_KEY_UNKNOWN);
+    menu_make_bool(menu_item_force_restart(menu_allocate_item()), "Apply Fix Guardian Repair", &game_opt_fix_guardian_repair, MOO_KEY_UNKNOWN);
+    menu_make_bool(menu_item_force_restart(menu_allocate_item()), "Apply Fix Starting Ships", &game_opt_fix_starting_ships, MOO_KEY_UNKNOWN);
     menu_make_back(menu_allocate_item());
 }
 
@@ -606,6 +647,9 @@ static int main_menu_get_item_wheel(struct main_menu_data_s *d, int16_t oi)
 static void main_menu_item_do_plus(struct main_menu_data_s *d, int item_i)
 {
     const struct main_menu_item_s *it = &d->items[item_i];
+    if (it->data.need_restart) {
+        force_restart = true;
+    }
     if (it->data.type == MENU_ITEM_TYPE_RETURN) {
         d->ret = it->data.action_i;
         d->flag_done = true;
@@ -650,6 +694,9 @@ static void main_menu_item_do_plus(struct main_menu_data_s *d, int item_i)
 static void main_menu_item_do_minus(struct main_menu_data_s *d, int item_i)
 {
     const struct main_menu_item_s *it = &d->items[item_i];
+    if (it->data.need_restart) {
+        force_restart = true;
+    }
     if (it->data.type == MENU_ITEM_TYPE_INT
      || it->data.type == MENU_ITEM_TYPE_ENUM) {
         int *v = it->data.value_ptr;
