@@ -4,6 +4,7 @@
 #include <stdlib.h>
 
 #include "main.h"
+#include "gameapi.h"
 #include "hw.h"
 #include "lbx.h"
 #include "log.h"
@@ -81,6 +82,7 @@ int main_1oom(int argc, char **argv)
                             "Alternatively copy your\nMOO1 LBX files to your\n1oom directory.");
         return 4;
     }
+    game_apply_rules();
     if (pbx_apply_queued_files()) {
         return 5;
     }
