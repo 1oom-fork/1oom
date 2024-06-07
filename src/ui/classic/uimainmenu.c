@@ -7,6 +7,7 @@
 #include "game_event.h"
 #include "game_new.h"
 #include "game_num.h"
+#include "game_nump.h"
 #include "game_save.h"
 #include "game_str.h"
 #include "hw.h"
@@ -144,6 +145,15 @@ typedef enum {
     MAIN_MENU_PAGE_OPTIONS_MISC,
     MAIN_MENU_PAGE_OPTIONS_STARMAP,
     MAIN_MENU_PAGE_OPTIONS_RULES,
+    MAIN_MENU_PAGE_OPTIONS_RULES_AI,
+    MAIN_MENU_PAGE_OPTIONS_RULES_BATTLE,
+    MAIN_MENU_PAGE_OPTIONS_RULES_DIFFICULTY,
+    MAIN_MENU_PAGE_OPTIONS_RULES_FLEET_BEHAVIOR,
+    MAIN_MENU_PAGE_OPTIONS_RULES_MONSTER,
+    MAIN_MENU_PAGE_OPTIONS_RULES_ORBITAL_BOMBARDMENT,
+    MAIN_MENU_PAGE_OPTIONS_RULES_PLANETARY_DEVELOPMENT,
+    MAIN_MENU_PAGE_OPTIONS_RULES_SLIDER_BEHAVIOR,
+    MAIN_MENU_PAGE_OPTIONS_RULES_OTHER,
     MAIN_MENU_PAGE_PRESET,
     MAIN_MENU_PAGE_NUM,
 } main_menu_page_id_t;
@@ -452,6 +462,7 @@ static void main_menu_make_options_misc_page(struct main_menu_data_s *d)
     menu_make_bool(menu_allocate_item(), "Skip Intro", &game_opt_skip_intro_always, MOO_KEY_i);
     menu_make_bool(menu_allocate_item(), "Skip Random News", &game_opt_skip_random_news, MOO_KEY_n);
     menu_make_bool(menu_allocate_item(), "Skip Copy Protection", &ui_copyprotection_disabled, MOO_KEY_p);
+    menu_make_bool(menu_allocate_item(), "News Orion Colonized", &game_num_news_orion, MOO_KEY_o);
     menu_make_back(menu_allocate_item());
 }
 
@@ -472,6 +483,109 @@ static void main_menu_make_options_starmap_page(struct main_menu_data_s *d)
 static void main_menu_make_options_rules_page(struct main_menu_data_s *d)
 {
     d->set_item_dimensions = mm_options_set_item_dimensions;
+    menu_make_page(menu_allocate_item(), "AI Behavior", MAIN_MENU_PAGE_OPTIONS_RULES_AI, MOO_KEY_a);
+    menu_make_page(menu_allocate_item(), "Difficulty Modifiers", MAIN_MENU_PAGE_OPTIONS_RULES_DIFFICULTY, MOO_KEY_d);
+    menu_make_page(menu_allocate_item(), "Fleet Behavior", MAIN_MENU_PAGE_OPTIONS_RULES_FLEET_BEHAVIOR, MOO_KEY_f);
+    menu_make_page(menu_allocate_item(), "Monster", MAIN_MENU_PAGE_OPTIONS_RULES_MONSTER, MOO_KEY_m);
+    menu_make_page(menu_allocate_item(), "Orbital Bombardment", MAIN_MENU_PAGE_OPTIONS_RULES_ORBITAL_BOMBARDMENT, MOO_KEY_o);
+    menu_make_page(menu_allocate_item(), "Planetary Development", MAIN_MENU_PAGE_OPTIONS_RULES_PLANETARY_DEVELOPMENT, MOO_KEY_p);
+    menu_make_page(menu_allocate_item(), "Slider Behavior", MAIN_MENU_PAGE_OPTIONS_RULES_SLIDER_BEHAVIOR, MOO_KEY_l);
+    menu_make_page(menu_allocate_item(), "Space Battle", MAIN_MENU_PAGE_OPTIONS_RULES_BATTLE, MOO_KEY_s);
+    menu_make_page(menu_allocate_item(), "Other", MAIN_MENU_PAGE_OPTIONS_RULES_OTHER, MOO_KEY_t);
+    menu_make_back(menu_allocate_item());
+}
+
+static void main_menu_make_options_rules_ai_page(struct main_menu_data_s *d)
+{
+    d->set_item_dimensions = mm_options_set_item_dimensions;
+    menu_make_bool(menu_allocate_item(), "Transport Range Fix", &game_num_ai_trans_range_fix, MOO_KEY_UNKNOWN);
+    menu_make_bool(menu_allocate_item(), "4th Colony Curse Fix", &game_num_ai_4_colony_curse_fix, MOO_KEY_UNKNOWN);
+    menu_make_bool(menu_allocate_item(), "Doom Stack Fix", &game_num_doom_stack_fix, MOO_KEY_UNKNOWN);
+    menu_make_bool(menu_allocate_item(), "First Tech Cost Fix", &game_num_ai_first_tech_cost_fix, MOO_KEY_UNKNOWN);
+    menu_make_back(menu_allocate_item());
+}
+
+static void main_menu_make_options_rules_battle_page(struct main_menu_data_s *d)
+{
+    d->set_item_dimensions = mm_options_set_item_dimensions;
+    menu_make_bool(menu_allocate_item(), "No Tohit Accumulation", &game_num_bt_no_tohit_acc, MOO_KEY_UNKNOWN);
+    menu_make_bool(menu_allocate_item(), "Oracle Fix", &game_num_bt_oracle_fix, MOO_KEY_UNKNOWN);
+    menu_make_bool(menu_allocate_item(), "Precap Tohit", &game_num_bt_precap_tohit, MOO_KEY_UNKNOWN);
+    menu_make_bool(menu_allocate_item(), "Wait No Reload", &game_num_bt_wait_no_reload, MOO_KEY_UNKNOWN);
+    menu_make_back(menu_allocate_item());
+}
+
+static void main_menu_make_options_rules_difficulty_page(struct main_menu_data_s *d)
+{
+    d->set_item_dimensions = mm_options_set_item_dimensions;
+    menu_make_bool(menu_allocate_item(), "AI Fleet Cheating Fix", &game_num_ai_fleet_cheating_fix, MOO_KEY_UNKNOWN);
+    menu_make_int(menu_allocate_item(), "Tech Cost Multiplier", &game_num_tech_costmul, 50, 400, MOO_KEY_UNKNOWN);
+    menu_make_int(menu_allocate_item(), "AI Tech Cost Multiplier", &game_num_tech_costmula2, 50, 100, MOO_KEY_UNKNOWN);
+    menu_make_int(menu_allocate_item(), "Human Tech Cost Multiplier", &game_num_tech_costmuld2, 100, 400, MOO_KEY_UNKNOWN);
+    menu_make_back(menu_allocate_item());
+}
+
+static void main_menu_make_options_rules_fleet_behavior_page(struct main_menu_data_s *d)
+{
+    d->set_item_dimensions = mm_options_set_item_dimensions;
+    menu_make_bool(menu_allocate_item(), "Extended Reloc Range", &game_num_extended_reloc_range, MOO_KEY_UNKNOWN);
+    menu_make_bool(menu_allocate_item(), "Ship Scanner Fix", &game_num_ship_scanner_fix, MOO_KEY_UNKNOWN);
+    menu_make_bool(menu_allocate_item(), "Retreat Redirection Fix", &game_num_retreat_redir_fix, MOO_KEY_UNKNOWN);
+    menu_make_bool(menu_allocate_item(), "Stargate Redirection Fix", &game_num_stargate_redir_fix, MOO_KEY_UNKNOWN);
+    menu_make_bool(menu_allocate_item(), "Transport Redirection Fix", &game_num_trans_redir_fix, MOO_KEY_UNKNOWN);
+    menu_make_back(menu_allocate_item());
+}
+
+static void main_menu_make_options_rules_monster_page(struct main_menu_data_s *d)
+{
+    d->set_item_dimensions = mm_options_set_item_dimensions;
+    menu_make_bool(menu_allocate_item(), "Monster Rest Attack", &game_num_monster_rest_att, MOO_KEY_UNKNOWN);
+    menu_make_bool(menu_item_force_restart(menu_allocate_item()), "Guardian Repair Fix", &game_opt_fix_guardian_repair, MOO_KEY_UNKNOWN);
+    menu_make_back(menu_allocate_item());
+}
+
+static void main_menu_make_options_rules_orbital_bombardment_page(struct main_menu_data_s *d)
+{
+    d->set_item_dimensions = mm_options_set_item_dimensions;
+    menu_make_bool(menu_allocate_item(), "Bio Damage Fix", &game_num_orbital_bio_fix, MOO_KEY_UNKNOWN);
+    menu_make_bool(menu_allocate_item(), "Allow Any Weapon", &game_num_orbital_weap_any, MOO_KEY_UNKNOWN);
+    menu_make_bool(menu_allocate_item(), "Allow Weapon 4", &game_num_orbital_weap_4, MOO_KEY_UNKNOWN);
+    menu_make_bool(menu_allocate_item(), "Torpedo Damage Fix", &game_num_orbital_torpedo, MOO_KEY_UNKNOWN);
+    menu_make_bool(menu_allocate_item(), "Computer Bonus Fix", &game_num_orbital_comp_fix, MOO_KEY_UNKNOWN);
+    menu_make_back(menu_allocate_item());
+}
+
+static void main_menu_make_options_rules_planetary_development_page(struct main_menu_data_s *d)
+{
+    d->set_item_dimensions = mm_options_set_item_dimensions;
+    menu_make_bool(menu_allocate_item(), "Factory Cost Fix", &game_num_factory_cost_fix, MOO_KEY_UNKNOWN);
+    menu_make_bool(menu_allocate_item(), "First Tech Rp Fix", &game_num_first_tech_rp_fix, MOO_KEY_UNKNOWN);
+    menu_make_bool(menu_allocate_item(), "Hidden Child Labor Fix", &game_num_hidden_child_labor_fix, MOO_KEY_UNKNOWN);
+    menu_make_bool(menu_allocate_item(), "Leaving Transport Fix", &game_num_leaving_trans_fix, MOO_KEY_UNKNOWN);
+    menu_make_bool(menu_allocate_item(), "Population Tenths Fix", &game_num_pop_tenths_fix, MOO_KEY_UNKNOWN);
+    menu_make_bool(menu_allocate_item(), "Soil Rounding Fix", &game_num_soil_rounding_fix, MOO_KEY_UNKNOWN);
+    menu_make_bool(menu_allocate_item(), "Waste Calc Fix", &game_num_waste_calc_fix, MOO_KEY_UNKNOWN);
+    menu_make_bool(menu_allocate_item(), "Colonized Factories Fix", &game_num_colonized_factories_fix, MOO_KEY_UNKNOWN);
+    menu_make_back(menu_allocate_item());
+}
+
+static void main_menu_make_options_rules_slider_behavior_page(struct main_menu_data_s *d)
+{
+    d->set_item_dimensions = mm_options_set_item_dimensions;
+    menu_make_bool(menu_allocate_item(), "Cond Switch To Ind Fix", &game_num_cond_switch_to_ind_fix, MOO_KEY_UNKNOWN);
+    menu_make_bool(menu_allocate_item(), "Eco Done Fix", &game_num_slider_eco_done_fix, MOO_KEY_UNKNOWN);
+    menu_make_bool(menu_allocate_item(), "Newtech Adjust Fix", &game_num_newtech_adjust_fix, MOO_KEY_UNKNOWN);
+    menu_make_bool(menu_allocate_item(), "Waste Adjust Fix", &game_num_waste_adjust_fix, MOO_KEY_UNKNOWN);
+    menu_make_bool(menu_allocate_item(), "Slider Respects Locks", &game_num_slider_respects_locks, MOO_KEY_UNKNOWN);
+    menu_make_back(menu_allocate_item());
+}
+
+static void main_menu_make_options_rules_other_page(struct main_menu_data_s *d)
+{
+    d->set_item_dimensions = mm_options_set_item_dimensions;
+    menu_make_bool(menu_allocate_item(), "Deterministic RNG", &game_num_deterministic, MOO_KEY_UNKNOWN);
+    menu_make_bool(menu_item_force_restart(menu_allocate_item()), "Fix Other Bugs", &game_opt_fix_bugs, MOO_KEY_UNKNOWN);
+    menu_make_bool(menu_item_force_restart(menu_allocate_item()), "Starting Ships Fix", &game_opt_fix_starting_ships, MOO_KEY_UNKNOWN);
     menu_make_back(menu_allocate_item());
 }
 
@@ -531,6 +645,33 @@ static struct main_menu_page_s mm_pages[MAIN_MENU_PAGE_NUM] = {
     },
     {
         main_menu_make_options_rules_page,
+    },
+    {
+        main_menu_make_options_rules_ai_page,
+    },
+    {
+        main_menu_make_options_rules_battle_page,
+    },
+    {
+        main_menu_make_options_rules_difficulty_page,
+    },
+    {
+        main_menu_make_options_rules_fleet_behavior_page,
+    },
+    {
+        main_menu_make_options_rules_monster_page,
+    },
+    {
+        main_menu_make_options_rules_orbital_bombardment_page,
+    },
+    {
+        main_menu_make_options_rules_planetary_development_page,
+    },
+    {
+        main_menu_make_options_rules_slider_behavior_page,
+    },
+    {
+        main_menu_make_options_rules_other_page,
     },
     {
         main_menu_make_preset_page,

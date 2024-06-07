@@ -67,6 +67,11 @@ bool game_num_patch(const char *numid, int32_t *patchnums, int first, int num)
     return true;
 }
 
+void game_apply_rules(void)
+{
+
+}
+
 /* -------------------------------------------------------------------------- */
 
 #define UI_SCREEN_W 320
