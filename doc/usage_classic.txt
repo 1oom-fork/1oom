@@ -26,8 +26,10 @@ when starting a new game.
 An incorrect answer in the copy protection dialog does not delete save slot 7.
 
 The following new UI features are always enabled/available:
+- The main menu now allows you to change game settings
 - Random race / banner
-- Local multiplayer (use -new or -uiextra to start a game)
+- Custom Game screen allows setting opponent race/banner/names and AI/human flag
+- Custom Game screen allows local multiplayer
 - Lowercase allowed in save names
 - Load Game screen uses numbers as hotkeys for slots
 - Objects with hotkeys can be navigated to using cursor keys
@@ -61,8 +63,7 @@ The following new UI features are always enabled/available:
 - The + key can be substituted by the = key (if not conflicting)
 
 The config file item "ui.uiextra" (set via the -uiextra command-line option)
-enables the following extra UI features:
-- New Game screen allows setting opponent race/banner/names and AI/human flag
+or selecting the 1oom UI preset enables the following extra UI features:
 - Report screen shows name of AI leaders, Map screen shows current year
 - Pressing + or - will show the slider when sending transport
 - Fleet deployment shows the amount of available ships
@@ -98,7 +99,8 @@ enables the following extra UI features:
 - Holding the Alt or Ctrl key while clicking on the frame with the slider value
   text allows you to adjust sliders for all colonies at once
 
-The following features can be enabled in the configuration file:
+The following features can be enabled in the configuration file or by
+selecting the 1oom UI preset:
 - The config file item "ui.fixbugs" fixes the following:
   - Pressing = on the Tech screen adjusts only the unlocked sliders
   - When using cursor keys, the mouse position is calculated taking into account
