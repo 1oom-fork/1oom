@@ -25,14 +25,17 @@ game or when F10 is pressed while in the "galaxy movement screen".
 An incorrect answer in the copy protection dialog does not delete save slot 7.
 
 The following new UI features are always enabled/available:
+- The main menu now allows you to change game settings
 - Random race / banner
-- Local multiplayer (use -new or -uiextra to start a game)
+- Custom Game screen allows setting opponent race/banner/names and AI/human flag
+- Custom Game screen allows local multiplayer
 - Lowercase allowed in save names
 - Load Game screen uses numbers as hotkeys for slots
 - Objects with hotkeys can be navigated to using cursor keys
 - Mouse wheel can be used to scroll lists and adjust many things
 - Space bar works as a generic dismiss message key (Continue, ...)
 - Ctrl and Alt works as a step modifier for the counters and sliders:
+  - in the main menu
   - on the Design screen
   - on the fleet sending screen
   - on the galaxy movement screen
@@ -59,8 +62,7 @@ The following new UI features are always enabled/available:
 - The + key can be substituted by the = key (if not conflicting)
 
 The config file item "ui.uiextra" (set via the -uiextra command-line option)
-enables the following extra UI features:
-- New Game screen allows setting opponent race/banner/names and AI/human flag
+or selecting the 1oom UI preset enables the following extra UI features:
 - Clicking the portraits in Races screen brings Report page
 - Report screen shows name of AI leaders, Map screen shows current year
 - Pressing + or - will show the slider when sending transport
@@ -103,7 +105,8 @@ enables the following UI bug fixes:
 - When using cursor keys, the mouse position is calculated taking into account
   the mouse icon offset
 
-The following features can be enabled in the configuration file:
+The following features can be enabled in the configuration file or by
+selecting the 1oom UI preset:
 - Continue, Undo and Initial saves can be chosen in the Load Game screen
   ("ui.load_opts_extra")
 - Summary of forces shown before ship combat. New Auto and Retreat buttons
