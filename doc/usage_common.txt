@@ -139,8 +139,8 @@ For SDL2 HW:
     -noforcesw           Do not force software rendering
     -intscaling          Force integer scaling
     -nointscaling        Do not force integer scaling
-    -relmouse            Use relative mouse mode (default)
-    -norelmouse          Do not use relative mouse mode (for testing)
+    -relmouse            Use relative mouse mode
+    -norelmouse          Do not use relative mouse mode
 
 For all game UIs:
     -dumpstr             Dump strings in PBXIN format
@@ -288,7 +288,7 @@ with -file whenever the PBX files are to be used.
 ================
 
 All the features discussed here need to be enabled in the classic UI with the
-config file item or by pressing Alt-X in the main menu.
+config file item.
 
 4.1. Planetary governor
 ------------------------
