@@ -38,6 +38,7 @@ The following new UI features are always enabled/available:
   - on the transport sending screen
   - on the Tech screen
 - Sending ships does not deselect the orbit fleet when holding Shift
+- F4/F5 can iterate over fleets of the same owner
 - In Tech screen +/- adjusts the current field slider
 - In Tech screen the L key locks the current slider
 - In Races screen the keys 1-5 correspond to clicking the portraits
