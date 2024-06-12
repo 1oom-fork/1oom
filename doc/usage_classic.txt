@@ -76,6 +76,7 @@ enables the following extra UI features:
   atmospheric terraforming or soil enrichment
 - Eco slider shows fractional population growth if growth is less than 10
 - When espionage was successful, clicking on the race icon opens the spy report
+- Eco slider can show "MAX"
 - Nebula planets show "NEB" in their shields field and have a purple instead
   of a red frame around their picture
 - Pressing = on the Tech screen adjusts only the unlocked sliders
