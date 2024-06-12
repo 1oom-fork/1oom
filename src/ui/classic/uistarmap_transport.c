@@ -143,10 +143,41 @@ static void ui_starmap_transport_set_pos_focus(const struct game_s *g, player_id
     ui_starmap_set_pos(g, r->x, r->y);
 }
 
+static int ui_starmap_transport_next(const struct game_s *g, player_id_t pi, int i)
+{
+    const transport_t *r = &g->transport[i];
+    player_id_t owner = r->owner;
+    int start = i;
+    do {
+        i = (i + 1) % g->transport_num;
+        r = &g->transport[i];
+        if (r->owner == owner && BOOLVEC_IS1(r->visible, pi)) {
+            return i;
+        }
+    } while (i != start);
+    return g->transport_num;
+}
+
+static int ui_starmap_transport_prev(const struct game_s *g, player_id_t pi, int i)
+{
+    const transport_t *r = &g->transport[i];
+    player_id_t owner = r->owner;
+    int start = i;
+    do {
+        if (--i < 0) { i = g->transport_num - 1; }
+        r = &g->transport[i];
+        if (r->owner == owner && BOOLVEC_IS1(r->visible, pi)) {
+            return i;
+        }
+    } while (i != start);
+    return g->transport_num;
+}
+
 void ui_starmap_transport(struct game_s *g, player_id_t active_player)
 {
     bool flag_done = false;
     int16_t oi_cancel, oi_accept, oi_search;
+    int16_t oi_f4, oi_f5;
     struct starmap_data_s d;
     transport_t *r = &(g->transport[ui_data.starmap.fleet_selected]);
 
@@ -167,6 +198,8 @@ void ui_starmap_transport(struct game_s *g, player_id_t active_player)
         STARMAP_UIOBJ_CLEAR_COMMON(); \
         oi_accept = UIOBJI_INVALID; \
         oi_cancel = UIOBJI_INVALID; \
+        oi_f4 = UIOBJI_INVALID; \
+        oi_f5 = UIOBJI_INVALID; \
     } while (0)
 
     UIOBJ_CLEAR_LOCAL();
@@ -200,6 +233,20 @@ void ui_starmap_transport(struct game_s *g, player_id_t active_player)
             ui_sound_play_sfx_06();
             flag_done = true;
             ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
+        } else if (oi1 == oi_f4) {
+            int i = ui_starmap_transport_next(g, active_player, ui_data.starmap.fleet_selected);
+            if (i != g->transport_num) {
+                ui_data.starmap.fleet_selected = i;
+                flag_done = true;
+                ui_sound_play_sfx_24();
+            }
+        } else if (oi1 == oi_f5) {
+            int i = ui_starmap_transport_prev(g, active_player, ui_data.starmap.fleet_selected);
+            if (i != g->transport_num) {
+                ui_data.starmap.fleet_selected = i;
+                flag_done = true;
+                ui_sound_play_sfx_24();
+            }
         } else if (oi1 == oi_accept) {
             ui_sound_play_sfx_24();
             if (p->within_frange[active_player] != 0) { /* FIXME allows redirecting no nonexplored planets */
@@ -277,6 +324,8 @@ void ui_starmap_transport(struct game_s *g, player_id_t active_player)
             uiobj_table_clear();
             UIOBJ_CLEAR_LOCAL();
             /* uiobj_set_limits(STARMAP_LIMITS); */
+            oi_f4 = uiobj_add_inputkey(MOO_KEY_F4);
+            oi_f5 = uiobj_add_inputkey(MOO_KEY_F5);
             ui_starmap_fill_oi_tbls(&d);
             ui_starmap_fill_oi_tbl_stars(&d);
             if (d.controllable) {
