@@ -417,6 +417,7 @@ int game_planet_get_slider_text_eco(const struct game_s *g, const planet_t *p, b
                 str = game_str_sm_ecotform;
             } else {
                 int growth, growth2, max_pop;
+                bool max = false;
                 bool flag_tform = false;
                 max_pop = p->max_pop3;
                 if (tform_cost > 0) {
@@ -450,11 +451,14 @@ int game_planet_get_slider_text_eco(const struct game_s *g, const planet_t *p, b
                         if (!game_num_pop_tenths_fix) {
                             growth2 += p->pop_tenths;
                         }
+                        max = (growth != growth2);
                     }
                     growth = growth2 - growth;
                 }
                 if (growth <= 0) {
                     str = flag_tform ? game_str_sm_ecotform : game_str_sm_ecoclean;
+                } else if (max) {
+                    str = game_str_sm_max;
                 } else {
                     retval = growth;
                     str = game_str_sm_ecopop;
