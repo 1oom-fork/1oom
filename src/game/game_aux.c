@@ -100,6 +100,7 @@ int game_aux_init(struct game_aux_s *gaux, struct game_s *g)
     gaux->flag_cheat_galaxy = false;
     gaux->flag_cheat_elections = false;
     gaux->flag_cheat_events = false;
+    gaux->flag_cheat_spy_hint = false;
     gaux->flag_cheat_stars = false;
     gaux->flag_cheat_tech_hint = false;
     gaux->initialized = true;
