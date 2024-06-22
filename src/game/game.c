@@ -76,6 +76,7 @@ static void game_stop(struct game_s *g)
     g->gaux->flag_cheat_galaxy = false;
     g->gaux->flag_cheat_elections = false;
     g->gaux->flag_cheat_events = false;
+    g->gaux->flag_cheat_spy_hint = false;
     g->gaux->flag_cheat_stars = false;
     g->gaux->flag_cheat_tech_hint = false;
 }
