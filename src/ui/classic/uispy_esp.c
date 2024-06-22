@@ -6,6 +6,7 @@
 #include "ui.h"
 #include "comp.h"
 #include "game.h"
+#include "game_aux.h"
 #include "game_str.h"
 #include "game_tech.h"
 #include "hw.h"
@@ -175,7 +176,7 @@ restart:
             oi_tbl_field[i] = UIOBJI_INVALID;
         }
     }
-    if (ui_extra_enabled) {
+    if (g->gaux->flag_cheat_spy_hint) {
         oi_report = uiobj_add_mousearea(18, 43, 210, 76, MOO_KEY_UNKNOWN);
     }
 
