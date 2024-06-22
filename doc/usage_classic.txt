@@ -76,8 +76,6 @@ enables the following extra UI features:
 - Eco slider can show "MAX"
 - Nebula planets show "NEB" in their shields field and have a purple instead
   of a red frame around their picture
-- Tech screen has lights showing when you reach max research bonus
-- Clicking on the Tech screen lights sets the slider to bonus limit
 - After running through the Next turn phase and messages the game recenters on
   your last planet of choice
 - Clicking on #, Name, etc on Planets screen sorts the list
