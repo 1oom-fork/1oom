@@ -35,6 +35,12 @@ bool game_cheat_events(struct game_s *g, player_id_t pi)
     return true;
 }
 
+bool game_cheat_spy_hint(struct game_s *g, player_id_t pi)
+{
+    g->gaux->flag_cheat_spy_hint = !g->gaux->flag_cheat_spy_hint;
+    return true;
+}
+
 bool game_cheat_stars(struct game_s *g, player_id_t pi)
 {
     g->gaux->flag_cheat_stars = !g->gaux->flag_cheat_stars;
