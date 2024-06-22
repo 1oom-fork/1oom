@@ -118,6 +118,8 @@ int ui_search(struct game_s *g, player_id_t pi)
                 game_cheat_events(g, pi);
             } else if (strcasecmp(buf, "/stars") == 0) {
                 game_cheat_stars(g, pi);
+            } else if (strcasecmp(buf, "/techhint") == 0) {
+                game_cheat_tech_hint(g, pi);
             } else if (strcasecmp(buf, "/p") == 0) {
                 game_cheat_traits(g, pi);
             } else if (strcasecmp(buf, "/moola") == 0) {
