@@ -150,7 +150,7 @@ static void tech_draw_cb(void *vptr)
             ui_draw_line_3h(227, y + 1, 226 + t->slider[i] / 2, t->slider_lock[i] ? 0x22 : 0x73);
         }
         lbxfont_select(0, 6, 0, 0);
-        lbxfont_set_color_c_n(ui_extra_enabled && game_tech_current_research_has_max_bonus(g, d->api, i) ? 0x41 : 0x26, 5); /* 0x44 too bright */
+        lbxfont_set_color_c_n((g->gaux->flag_cheat_tech_hint && game_tech_current_research_has_max_bonus(g, d->api, i)) ? 0x41 : 0x26, 5);
         lbxfont_print_num_right(307, y, t->percent[i], UI_SCREEN_W);
     }
 
@@ -405,7 +405,7 @@ void ui_tech(struct game_s *g, player_id_t active_player)
                 int y;
                 y = i * 21 + 22;
                 oi_tbl_lock[i] = uiobj_add_mousearea(168, y, 218, y + 8, (d.field == i) ? MOO_KEY_l : MOO_KEY_UNKNOWN);
-                if (ui_extra_enabled) {
+                if (g->gaux->flag_cheat_tech_hint) {
                     oi_tbl_bonus[i] = uiobj_add_mousearea(298, y, 309, y + 8, MOO_KEY_UNKNOWN);
                 }
                 if (!t->slider_lock[i]) {

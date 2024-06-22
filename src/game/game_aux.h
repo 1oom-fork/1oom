@@ -59,6 +59,7 @@ struct game_aux_s {
     bool flag_cheat_elections;
     bool flag_cheat_events;
     bool flag_cheat_stars;
+    bool flag_cheat_tech_hint;
     bool initialized;
     int savenamebuflen;
     int savebuflen;

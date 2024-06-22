@@ -41,6 +41,12 @@ bool game_cheat_stars(struct game_s *g, player_id_t pi)
     return true;
 }
 
+bool game_cheat_tech_hint(struct game_s *g, player_id_t pi)
+{
+    g->gaux->flag_cheat_tech_hint = !g->gaux->flag_cheat_tech_hint;
+    return true;
+}
+
 bool game_cheat_moola(struct game_s *g, player_id_t pi)
 {
     empiretechorbit_t *e = &(g->eto[pi]);
