@@ -115,6 +115,8 @@ int ui_search(struct game_s *g, player_id_t pi)
                 game_cheat_elections(g, pi);
             } else if (strcasecmp(buf, "/events") == 0) {
                 game_cheat_events(g, pi);
+            } else if (strcasecmp(buf, "/spyhint") == 0) {
+                game_cheat_spy_hint(g, pi);
             } else if (strcasecmp(buf, "/stars") == 0) {
                 game_cheat_stars(g, pi);
             } else if (strcasecmp(buf, "/techhint") == 0) {
