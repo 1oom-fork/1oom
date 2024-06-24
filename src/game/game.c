@@ -576,6 +576,7 @@ const struct cfg_items_s game_cfg_items[] = {
     CFG_ITEM_INT("custom_game_isai", &game_opt_custom_isai_value, game_cfg_check_isai_value),
     CFG_ITEM_INT("custom_game_galaxy_seed", &game_opt_custom.galaxy_seed, NULL),
     CFG_ITEM_BOOL("custom_game_improved_galaxy_generator", &game_opt_custom.improved_galaxy_generator),
+    CFG_ITEM_BOOL("custom_game_nebulae", &game_opt_custom.nebulae),
     CFG_ITEM_INT("custom_game_home_max_pop", &game_opt_custom.homeworlds.max_pop, NULL),
     CFG_ITEM_INT("custom_game_home_special", &game_opt_custom.homeworlds.special, NULL),
     CFG_ITEM_INT("custom_game_home_num_dist_checks", &game_opt_custom.homeworlds.num_dist_checks, NULL),
