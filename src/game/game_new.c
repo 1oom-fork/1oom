@@ -484,7 +484,7 @@ static void game_generate_planets(struct game_s *g)
     }
 }
 
-static void game_generate_galaxy(struct game_s *g)
+static void game_generate_galaxy(struct game_s *g, struct game_new_options_s *opts)
 {
     {
         uint16_t a = 0, w = 0, h = 0;
@@ -513,7 +513,7 @@ static void game_generate_galaxy(struct game_s *g)
                 break;
         }
 
-        g->nebula_num = a;
+        g->nebula_num = opts->nebulae ? a : 0;
         g->galaxy_w = w;
         g->galaxy_h = h;
         g->galaxy_maxx = (w - 1) * 0x1c + 0x14;
@@ -847,7 +847,7 @@ static void game_generate_home_etc(struct game_s *g, struct game_new_options_s *
     uint16_t homei;
     bool flag_all_ok;
     do {
-        game_generate_galaxy(g);
+        game_generate_galaxy(g, opts);
         game_generate_planet_names(g);
         if (opts->improved_galaxy_generator) {
             flag_all_ok = game_generate_home_improved_do(g, opts, tblhome);
