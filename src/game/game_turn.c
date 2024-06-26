@@ -652,13 +652,30 @@ static void game_turn_build_ind(struct game_s *g)
             v = e->colonist_oper_factories - p->pop_oper_fact - bonus;
             if (v > 0) {
                 v = v * (e->factory_cost / 2);
+                if (game_num_factory_cost_fix) {
+                    if (e->race != RACE_MEKLAR) {
+                        v = (e->factory_cost * p->factories) / 2;
+                    } else {
+                        v = 0;
+                    }
+                }
             } else {
                 v = 0;
             }
             if ((prod.vtotal / cost + fact) > (p->pop * p->pop_oper_fact)) {
+                if (game_num_factory_cost_fix && (fact < (p->pop * p->pop_oper_fact))) {
+                    num = p->pop * p->pop_oper_fact - fact;
+                    fact = p->pop * p->pop_oper_fact;
+                    prod.vtotal -= num * cost;
+                }
                 p->bc_to_refit += prod.vtotal;
                 if (p->bc_to_refit >= v) {
-                    p->pop_oper_fact = e->colonist_oper_factories;
+                    if (game_num_factory_cost_fix && (e->race != RACE_MEKLAR)) {
+                        ++p->pop_oper_fact;
+                        SETMIN(p->pop_oper_fact, e->colonist_oper_factories);
+                    } else {
+                        p->pop_oper_fact = e->colonist_oper_factories;
+                    }
                     prod.vtotal = p->bc_to_refit - v;
                     p->bc_to_refit = 0;
                 } else {
@@ -676,7 +693,11 @@ static void game_turn_build_ind(struct game_s *g)
             } else {
                 v = 0;
             }
-            e->reserve_bc += (v * cost) / 2;
+            if (game_num_factory_cost_fix && (p->pop_oper_fact < e->colonist_oper_factories)) {
+                p->bc_to_refit += (v * cost) / 2;
+            } else {
+                e->reserve_bc += (v * cost) / 2;
+            }
             fact += num;
             SETMIN(fact, game_num_max_factories);
             p->factories = fact;
@@ -1443,6 +1464,9 @@ static void game_turn_finished_slider(struct game_s *g)
         cond_build_ind = (p->factories < (p->pop * e->colonist_oper_factories));
         if (game_num_cond_switch_to_ind_fix) {
             cond_build_ind = (p->factories < (p->max_pop3 * e->colonist_oper_factories));
+        }
+        if (game_num_factory_cost_fix) {
+            cond_build_ind |= (p->pop_oper_fact < e->colonist_oper_factories);
         }
         if (BOOLVEC_IS1(p->finished, FINISHED_SOILATMOS)
           && !(game_num_slider_eco_done_fix && game_planet_can_terraform(g, pli, p->owner, true))) {
