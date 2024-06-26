@@ -194,6 +194,7 @@ static const struct numtbl_s {
     DEFNUMITEML(waste_calc_fix, NUMTYPE_BOOL, 0, 1),
     DEFNUMITEML(waste_adjust_fix, NUMTYPE_BOOL, 0, 1),
     DEFNUMITEML(pop_tenths_fix, NUMTYPE_BOOL, 0, 1),
+    DEFNUMITEML(factory_cost_fix, NUMTYPE_BOOL, 0, 1),
     DEFNUMITEML(doom_stack_fix, NUMTYPE_BOOL, 0, 1),
     DEFNUMITEML(eco_slider_slack, NUMTYPE_U8, 0, 0xff),
     DEFNUMITEML(reset_tform_to_max, NUMTYPE_BOOL, 0, 1),
