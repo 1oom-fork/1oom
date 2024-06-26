@@ -354,7 +354,7 @@ int game_planet_get_slider_text(const struct game_s *g, uint8_t planet_i, planet
                 const char *str = NULL;
                 struct planet_prod_s prod;
                 int cost;
-                cost = e->factory_adj_cost;
+                cost = game_planet_get_fact_adj_cost(g, p);
                 game_planet_get_ind_prod(p, &prod);
                 if (prod.vthis != 0) {
                     int v20;

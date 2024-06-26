@@ -646,7 +646,7 @@ static void game_turn_build_ind(struct game_s *g)
             int v;
             e = &(g->eto[owner]);
             factold = fact = p->factories;
-            cost = e->factory_adj_cost;
+            cost = game_planet_get_fact_adj_cost(g, p);
             game_planet_get_ind_prod(p, &prod);
             bonus = (e->race == RACE_MEKLAR) ? 2 : 0;
             v = e->colonist_oper_factories - p->pop_oper_fact - bonus;
