@@ -41,4 +41,9 @@ static inline int game_planet_get_pop_oper_fact(const struct game_s *g, const st
     return g->eto[p->owner].colonist_oper_factories;
 }
 
+static inline int game_planet_get_fact_adj_cost(const struct game_s *g, const struct planet_s *p)
+{
+    return g->eto[p->owner].factory_adj_cost;
+}
+
 #endif
