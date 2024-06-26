@@ -185,7 +185,7 @@ static void game_turn_build_eco(struct game_s *g)
             const empiretechorbit_t *e;
             int ecorestore, ecoprod, operating_factories;
             e = &(g->eto[owner]);
-            operating_factories = p->pop * e->colonist_oper_factories;
+            operating_factories = p->pop * game_planet_get_pop_oper_fact(g, p);
             SETMIN(operating_factories, p->factories);
             {
                 int v;
@@ -660,7 +660,7 @@ static void game_turn_build_ind(struct game_s *g)
             }
             num = prod / cost;
             p->bc_to_factory = prod % cost;
-            v = p->max_pop3 * e->colonist_oper_factories;
+            v = p->max_pop3 * game_planet_get_pop_oper_fact(g, p);
             if (v < (fact + num)) {
                 v = (fact + num) - v;
                 SETMAX(v, 0);
