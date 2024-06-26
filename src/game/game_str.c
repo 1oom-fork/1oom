@@ -197,6 +197,7 @@ const char *game_str_sm_prod_y = "Y";
 const char *game_str_sm_defupg = "UPGRD";
 const char *game_str_sm_defshld = "SHIELD";
 const char *game_str_sm_refit = "REFIT";
+const char *game_str_sm_irc[] = { "IRC II", "IRC III", "IRC IV", "IRC V", "IRC VI", "IRC VII" };
 const char *game_str_sm_indmax = "MAX";
 const char *game_str_sm_indres = "RESERV";
 const char *game_str_sm_ecowaste = "WASTE";

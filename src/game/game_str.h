@@ -76,6 +76,7 @@ extern const char *game_str_sm_prod_y;
 extern const char *game_str_sm_defupg;
 extern const char *game_str_sm_defshld;
 extern const char *game_str_sm_refit;
+extern const char *game_str_sm_irc[];
 extern const char *game_str_sm_indmax;
 extern const char *game_str_sm_indres;
 extern const char *game_str_sm_ecowaste;
