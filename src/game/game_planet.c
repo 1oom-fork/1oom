@@ -329,6 +329,10 @@ int game_planet_get_slider_text(const struct game_s *g, uint8_t planet_i, planet
                         if (p->pop_oper_fact < e->colonist_oper_factories) {
                             if (e->race != RACE_MEKLAR) {
                                 str = game_str_sm_refit;
+                                if (game_num_factory_cost_fix) {
+                                    /* FIXME: Doesn't always match the result */
+                                    str = game_str_sm_irc[p->pop_oper_fact - 1];
+                                }
                             } else {
                                 struct strbuild_s strbuild = strbuild_init(buf, bufsize);
                                 tenths_2str(&strbuild, v20);
