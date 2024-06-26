@@ -208,7 +208,7 @@ static void game_turn_build_eco(struct game_s *g)
             {
                 int v, fact, waste;
                 fact = p->factories;
-                v = p->pop * e->colonist_oper_factories;
+                v = p->pop * game_planet_get_pop_oper_fact(g, p);
                 SETMIN(fact, v);
                 waste = (fact * e->ind_waste_scale) / 10;
                 p->waste += ((100 - ((p->waste * 100) / p->max_pop2)) * waste) / 100;
@@ -217,7 +217,7 @@ static void game_turn_build_eco(struct game_s *g)
                 p->waste = 0;
             }
             ecorestore = (e->race != RACE_SILICOID) ? (p->waste / e->have_eco_restoration_n) : 0;
-            p->waste += game_turn_build_eco_sub1(p->factories, e->colonist_oper_factories, p->pop, p->waste, p->max_pop2);
+            p->waste += game_turn_build_eco_sub1(p->factories, game_planet_get_pop_oper_fact(g, p), p->pop, p->waste, p->max_pop2);
             ecoprod = (p->slider[PLANET_SLIDER_ECO] * p->prod_after_maint) / 100;
             if (e->race != RACE_SILICOID) {
                 if (ecorestore > ecoprod) {
@@ -667,7 +667,7 @@ static void game_turn_build_ind(struct game_s *g)
             }
             num = prod.vtotal / cost;
             p->bc_to_factory = prod.vtotal % cost;
-            v = p->max_pop3 * e->colonist_oper_factories;
+            v = p->max_pop3 * game_planet_get_pop_oper_fact(g, p);
             if (v < (fact + num)) {
                 v = (fact + num) - v;
                 SETMAX(v, 0);
