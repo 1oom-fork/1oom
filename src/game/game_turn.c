@@ -645,7 +645,7 @@ static void game_turn_build_ind(struct game_s *g)
             int prod, v;
             e = &(g->eto[owner]);
             factold = fact = p->factories;
-            cost = e->factory_adj_cost;
+            cost = game_planet_get_fact_adj_cost(g, p);
             prod = game_adjust_prod_by_special((p->slider[PLANET_SLIDER_IND] * p->prod_after_maint) / 100, p->special);
             prod += p->bc_to_factory;
             bonus = (e->race == RACE_MEKLAR) ? 2 : 0;

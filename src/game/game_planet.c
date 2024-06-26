@@ -320,7 +320,7 @@ int game_planet_get_slider_text(const struct game_s *g, uint8_t planet_i, planet
             {
                 const char *str = NULL;
                 int vthis, cost;
-                cost = e->factory_adj_cost;
+                cost = game_planet_get_fact_adj_cost(g, p);
                 vthis = game_adjust_prod_by_special((p->prod_after_maint * p->slider[PLANET_SLIDER_IND]) / 100, p->special);
                 if (vthis != 0) {
                     int v20;
