@@ -121,12 +121,12 @@ void game_update_production(struct game_s *g)
                     SUBSAT0(rebels, p->trans_num / 2 + 1);
                     SETMAX(pop, 1);
                 }
-                v = (pop - rebels) * e->colonist_oper_factories;
+                v = (pop - rebels) * game_planet_get_pop_oper_fact(g, p);
                 SETMAX(v, 0);
             } else {
                 int popx = p->pop - p->rebels;
                 SETMAX(popx, 0);
-                v = popx * e->colonist_oper_factories;
+                v = popx * game_planet_get_pop_oper_fact(g, p);
             }
             {
                 uint16_t factories = p->factories;
