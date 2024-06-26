@@ -1,6 +1,7 @@
 #ifndef INC_1OOM_GAME_MISC_H
 #define INC_1OOM_GAME_MISC_H
 
+#include "game.h"
 #include "game_planet.h"
 #include "game_types.h"
 #include "types.h"
@@ -34,5 +35,10 @@ extern void game_turn_atmos_tform(struct planet_s *p);
 extern void game_turn_soil_enrich(struct planet_s *p, int best_tform, bool advanced);
 extern void game_ship_build_everywhere(struct game_s *g, player_id_t owner, uint8_t ship_i);
 extern void game_ship_replace_everywhere(struct game_s *g, player_id_t owner, uint8_t replace_i, uint8_t ship_i);
+
+static inline int game_planet_get_pop_oper_fact(const struct game_s *g, const struct planet_s *p)
+{
+    return g->eto[p->owner].colonist_oper_factories;
+}
 
 #endif
