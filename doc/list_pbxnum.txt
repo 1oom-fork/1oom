@@ -129,6 +129,10 @@ pop_tenths_fix: 0..1, 0
     MOO1 adds population tenths twice when calculating population growth.
     This results in higher and nonlinear changes of growth value.
 
+factory_cost_fix: 0..1, 0
+  - Fix factory cost and refit cost after researching the Computers->IRC tech.
+    This also removes refit cost for Meklars
+
 eco_slider_slack : 0..255, 7
   - Eco slider automatic adjustment slack.
     Reducing the value to 0 eliminates extraneous eco spending after population
