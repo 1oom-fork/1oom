@@ -62,6 +62,10 @@ monster_rest_att : 0..1, 0
     In MOO1 it is impossible to attack a space crystal or amoeba after the
     turn it has reached a planet.
 
+orbital_bio_fix : 0..1, 0
+  - Remove passive bio damage
+    In MOO1, bio weapons reduce maximum population without orders
+
 orbital_weap_any : 0..1, 0
   - Allow orbital bombardment with any weapon type.
     In MOO1 neither Death Ray, Crystal Ray nor Amoeba Stream can be used for
