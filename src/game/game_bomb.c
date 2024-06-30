@@ -133,12 +133,6 @@ static void game_turn_bomb_damage(struct game_s *g, uint8_t pli, player_id_t att
         *popdmgptr = v;
     }
     {
-#if 0
-        int v;
-        v = p->max_pop3 - totalbio;
-        SETMAX(v, 10);
-        p->max_pop3 = v;    /* WASBUG reduced before y/n */
-#endif
         *biodmgptr = totalbio;
     }
 }
@@ -193,15 +187,17 @@ void game_turn_bomb(struct game_s *g)
                     flag_do_bomb = game_ai->bomb(g, i, pli, pop_inbound);
                 }
                 /*d004*/
-                if (flag_do_bomb && ((popdmg > 0) || (factdmg > 0))) { /* FIXME biodmg? */
-                    p->pop -= popdmg;
-                    p->factories -= factdmg;
+                if (flag_do_bomb || !game_num_orbital_bio_fix) {
                     if (biodmg) {
                         int v;
                         v = p->max_pop3 - biodmg;
                         SETMAX(v, 10);
                         p->max_pop3 = v;
                     }
+                }
+                if (flag_do_bomb && ((popdmg > 0) || (factdmg > 0))) {
+                    p->pop -= popdmg;
+                    p->factories -= factdmg;
                     SUBSAT0(p->rebels, popdmg / 2 + 1);
                     if (p->pop == 0) {
                         game_planet_destroy(g, pli, i);
