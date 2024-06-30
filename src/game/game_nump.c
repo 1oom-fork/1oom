@@ -186,6 +186,7 @@ static const struct numtbl_s {
     DEFNUMITEML(aud_ask_break_nap, NUMTYPE_BOOL, 0, 1),
     DEFNUMITEML(aud_bounty_give, NUMTYPE_BOOL, 0, 1),
     DEFNUMITEML(monster_rest_att, NUMTYPE_BOOL, 0, 1),
+    DEFNUMITEML(orbital_bio_fix, NUMTYPE_BOOL, 0, 1),
     DEFNUMITEML(orbital_weap_any, NUMTYPE_BOOL, 0, 1),
     DEFNUMITEML(orbital_weap_4, NUMTYPE_BOOL, 0, 1),
     DEFNUMITEML(orbital_torpedo, NUMTYPE_BOOL, 0, 1),
