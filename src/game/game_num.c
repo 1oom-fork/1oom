@@ -39,6 +39,7 @@ bool game_num_news_orion = false;
 bool game_num_aud_ask_break_nap = false;
 bool game_num_aud_bounty_give = false;
 bool game_num_monster_rest_att = false;
+bool game_num_orbital_bio_fix = false;
 bool game_num_orbital_weap_any = false;
 bool game_num_orbital_weap_4 = false;
 bool game_num_orbital_torpedo = false;
