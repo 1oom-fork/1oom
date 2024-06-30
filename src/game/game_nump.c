@@ -186,6 +186,7 @@ static const struct numtbl_s {
     DEFNUMITEML(aud_ask_break_nap, NUMTYPE_BOOL, 0, 1),
     DEFNUMITEML(aud_bounty_give, NUMTYPE_BOOL, 0, 1),
     DEFNUMITEML(monster_rest_att, NUMTYPE_BOOL, 0, 1),
+    DEFNUMITEML(orbital_bio_fix, NUMTYPE_BOOL, 0, 1),
     DEFNUMITEML(combat_trans_fix, NUMTYPE_BOOL, 0, 1),
     DEFNUMITEML(stargate_redir_fix, NUMTYPE_BOOL, 0, 1),
     DEFNUMITEML(trans_redir_fix, NUMTYPE_BOOL, 0, 1),
