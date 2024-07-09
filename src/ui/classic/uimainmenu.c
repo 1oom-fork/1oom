@@ -30,6 +30,13 @@
 
 /* -------------------------------------------------------------------------- */
 
+static bool force_restart = false;
+
+static bool main_menu_game_active(void)
+{
+    return !force_restart;
+}
+
 static bool main_menu_have_save_continue(void) {
     return game_save_tbl_have_save[GAME_SAVE_I_CONTINUE];
 }
@@ -173,6 +180,10 @@ static void main_menu_draw_cb(void *vptr)
     hw_video_copy_back_to_page2();
     lbxfont_select(2, 7, 0, 0);
     lbxfont_print_str_right(315, 193, PACKAGE_NAME " " VERSION_STR, UI_SCREEN_W, ui_scale);
+    if (force_restart) {
+        lbxfont_select(2, 2, 0, 0);
+        lbxfont_print_str_center(160, 60, "Application restart required", UI_SCREEN_W, ui_scale);
+    }
     for (int i = 0; i < d->item_count; ++i) {
         struct main_menu_item_s *it = &d->items[i];
         if (it->active) {
@@ -245,7 +256,7 @@ static void mm_options_set_item_dimensions(struct main_menu_data_s *d, int i)
 static void main_menu_make_main_page(struct main_menu_data_s *d)
 {
     d->set_item_dimensions = main_menu_set_item_dimensions;
-    menu_make_page(menu_allocate_item(), "Game", MAIN_MENU_PAGE_GAME, MOO_KEY_g);
+    menu_make_page_conditional(menu_allocate_item(), "Game", MAIN_MENU_PAGE_GAME, main_menu_game_active, MOO_KEY_g);
     menu_make_page(menu_allocate_item(), "Rules", MAIN_MENU_PAGE_OPTIONS_RULES, MOO_KEY_r);
     menu_make_page(menu_allocate_item(), "UI Options", MAIN_MENU_PAGE_OPTIONS, MOO_KEY_o);
     menu_make_action(menu_allocate_item(), "Quit to OS", MAIN_MENU_ACT_QUIT_GAME, MOO_KEY_q);
@@ -483,6 +494,9 @@ static int main_menu_get_item_wheel(struct main_menu_data_s *d, int16_t oi)
 static void main_menu_item_do_plus(struct main_menu_data_s *d, int item_i)
 {
     const struct main_menu_item_s *it = &d->items[item_i];
+    if (it->data.need_restart) {
+        force_restart = true;
+    }
     if (it->data.type == MENU_ITEM_TYPE_RETURN) {
         d->ret = it->data.action_i;
         d->flag_done = true;
@@ -527,6 +541,9 @@ static void main_menu_item_do_plus(struct main_menu_data_s *d, int item_i)
 static void main_menu_item_do_minus(struct main_menu_data_s *d, int item_i)
 {
     const struct main_menu_item_s *it = &d->items[item_i];
+    if (it->data.need_restart) {
+        force_restart = true;
+    }
     if (it->data.type == MENU_ITEM_TYPE_INT
      || it->data.type == MENU_ITEM_TYPE_ENUM) {
         uint32_t *v = it->data.value_ptr;
