@@ -82,7 +82,7 @@ static int cmd_battle_look(struct game_s *g, int api, struct input_token_s *para
     return 0;
 }
 
-static const struct input_cmd_s * const cmdsptr_battle[];
+static const struct input_cmd_s * const cmdsptr_battle[2];
 
 static const struct input_cmd_s cmds_battle[] = {
     { "?", NULL, "Help", 0, 0, 0, ui_cmd_help, (void *)cmdsptr_battle },
@@ -99,7 +99,7 @@ static const struct input_cmd_s cmds_battle[] = {
     { NULL, NULL, NULL, 0, 0, 0, NULL, 0 }
 };
 
-static const struct input_cmd_s * const cmdsptr_battle[] = {
+static const struct input_cmd_s * const cmdsptr_battle[2] = {
     cmds_battle,
     0
 };
