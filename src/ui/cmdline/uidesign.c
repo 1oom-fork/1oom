@@ -748,7 +748,7 @@ static int cmd_set_name(struct game_s *g, int api, struct input_token_s *param, 
 
 /* -------------------------------------------------------------------------- */
 
-static const struct input_cmd_s * const cmdsptr_design[];
+static const struct input_cmd_s * const cmdsptr_design[2];
 
 static const struct input_cmd_s cmds_design[] = {
     { "?", NULL, "Help", 0, 0, 0, ui_cmd_help, (void *)cmdsptr_design },
@@ -778,7 +778,7 @@ static const struct input_cmd_s cmds_design[] = {
     { NULL, NULL, NULL, 0, 0, 0, NULL, 0 }
 };
 
-static const struct input_cmd_s * const cmdsptr_design[] = {
+static const struct input_cmd_s * const cmdsptr_design[2] = {
     cmds_design,
     NULL
 };

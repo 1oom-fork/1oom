@@ -38,7 +38,7 @@ static int cmd_next(struct game_s *g, int api, struct input_token_s *param, int 
     return 0;
 }
 
-static const struct input_cmd_s * const cmdsptr_turn[];
+static const struct input_cmd_s * const cmdsptr_turn[3];
 
 static const struct input_cmd_s cmds_turn[] = {
     { "?", NULL, "Help", 0, 0, 0, ui_cmd_help, (void *)cmdsptr_turn },
@@ -77,7 +77,7 @@ static const struct input_cmd_s cmds_turn[] = {
     { NULL, NULL, NULL, 0, 0, 0, NULL, 0 }
 };
 
-static const struct input_cmd_s * const cmdsptr_turn[] = {
+static const struct input_cmd_s * const cmdsptr_turn[3] = {
     cmds_turn,
     ui_cmds_opts,
     NULL
