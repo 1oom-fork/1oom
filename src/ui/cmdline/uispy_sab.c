@@ -55,7 +55,7 @@ static int cmd_sab(struct game_s *g, int api, struct input_token_s *param, int n
     return UI_SPY_SAB_MAKE(act, planet);
 }
 
-static const struct input_cmd_s * const cmdsptr_sab[];
+static const struct input_cmd_s * const cmdsptr_sab[2];
 
 static const struct input_cmd_s cmds_sab[] = {
     { "?", NULL, "Help", 0, 0, 0, ui_cmd_help, (void *)cmdsptr_sab },
@@ -67,7 +67,7 @@ static const struct input_cmd_s cmds_sab[] = {
     { NULL, NULL, NULL, 0, 0, 0, NULL, 0 }
 };
 
-static const struct input_cmd_s * const cmdsptr_sab[] = {
+static const struct input_cmd_s * const cmdsptr_sab[2] = {
     cmds_sab,
     0
 };
