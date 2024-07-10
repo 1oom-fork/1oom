@@ -73,6 +73,7 @@ struct starmap_data_s {
     int16_t oi_tbl_transport[TRANSPORT_MAX];
     int16_t oi_tbl_pl_stars[PLAYER_NUM][PLANETS_MAX];
     uint8_t dist_i;
+    uint8_t from;
     union {
         struct {
             int16_t oi_ship;
@@ -83,34 +84,26 @@ struct starmap_data_s {
             int16_t oi_tbl_slider_plus[PLANET_SLIDER_NUM];
         } sm;   /* starmap_do */
         struct {
-            uint8_t from;
-        } rl;   /* reloc */
-        struct {
-            uint8_t from;
             int16_t num;
             bool other;
             bool blink;
         } tr;   /* trans */
         struct {
             bool in_frange;
-            uint8_t from;
         } ts;   /* transport */
         struct {
             shipcount_t ships[NUM_SHIPDESIGNS];
             uint8_t shiptypenon0numsel; /* number of ship types selected with nonzero amount */
             struct shipnon0_s sn0;
-            uint8_t from;
         } oo;   /* orbit_own */
         struct {
             shipcount_t ships[NUM_SHIPDESIGNS];
             struct shipnon0_s sn0;
-            uint8_t from;
             player_id_t player;
             int yoff;
         } oe;   /* orbit_en */
         struct {
             struct shipnon0_s sn0;
-            uint8_t from;
             uint8_t pon;
         } en;   /* enroute */
     };
