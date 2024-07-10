@@ -31,7 +31,7 @@ static void ui_starmap_orbit_en_draw_cb(void *vptr)
 {
     struct starmap_data_s *d = vptr;
     const struct game_s *g = d->g;
-    const planet_t *p = &g->planet[d->oe.from];
+    const planet_t *p = &g->planet[d->from];
     const empiretechorbit_t *e = &(g->eto[d->oe.player]);
     char buf[0x80];
 
@@ -97,9 +97,9 @@ void ui_starmap_orbit_en(struct game_s *g, player_id_t active_player)
     ui_starmap_common_init(g, &d, active_player);
     ui_data.starmap.frame_scanner = 0;
     ui_data.starmap.scanner_delay = 0;
-    d.oe.from = g->planet_focus_i[active_player];
+    d.from = g->planet_focus_i[active_player];
     d.oe.player = ui_data.starmap.orbit_player;
-    os = &(g->eto[d.oe.player].orbit[d.oe.from].ships[0]);
+    os = &(g->eto[d.oe.player].orbit[d.from].ships[0]);
     for (int i = 0; i < NUM_SHIPDESIGNS; ++i) {
         d.oe.ships[i] = os[i];
     }
@@ -107,7 +107,7 @@ void ui_starmap_orbit_en(struct game_s *g, player_id_t active_player)
     {
         int n = 0;
         for (player_id_t i = PLAYER_0; i < d.oe.player; ++i) {
-            os = &(g->eto[i].orbit[d.oe.from].ships[0]);
+            os = &(g->eto[i].orbit[d.from].ships[0]);
             for (int j = 0; j < g->eto[i].shipdesigns_num; ++j) {
                 if (os[j] != 0) {
                     ++n;
@@ -168,7 +168,7 @@ void ui_starmap_orbit_en(struct game_s *g, player_id_t active_player)
             for (player_id_t j = PLAYER_0; j < g->players; ++j) {
                 if (oi1 == d.oi_tbl_pl_stars[j][i]) {
                     g->planet_focus_i[active_player] = i;
-                    d.oe.from = i;
+                    d.from = i;
                     ui_data.starmap.orbit_player = j;
                     ui_data.ui_main_loop_action = (j == active_player) ? UI_MAIN_LOOP_ORBIT_OWN_SEL : UI_MAIN_LOOP_ORBIT_EN_SEL;
                     ui_sound_play_sfx_24();
@@ -184,7 +184,7 @@ void ui_starmap_orbit_en(struct game_s *g, player_id_t active_player)
         } else if (oi1 == oi_f4) {
             bool found;
             int i, pi;
-            i = pi = d.oe.from;
+            i = pi = d.from;
             found = false;
             do {
                 i = (i + 1) % g->galaxy_stars;
@@ -199,14 +199,14 @@ void ui_starmap_orbit_en(struct game_s *g, player_id_t active_player)
             if (found) {
                 g->planet_focus_i[active_player] = i;
                 ui_starmap_set_pos_focus(g, active_player);
-                d.oe.from = i;
+                d.from = i;
                 ui_sound_play_sfx_24();
                 flag_done = true;
             }
         } else if (oi1 == oi_f5) {
             bool found;
             int i, pi;
-            i = pi = d.oe.from;
+            i = pi = d.from;
             found = false;
             do {
                 if (--i < 0) { i = g->galaxy_stars - 1; }
@@ -221,7 +221,7 @@ void ui_starmap_orbit_en(struct game_s *g, player_id_t active_player)
             if (found) {
                 g->planet_focus_i[active_player] = i;
                 ui_starmap_set_pos_focus(g, active_player);
-                d.oe.from = i;
+                d.from = i;
                 ui_sound_play_sfx_24();
                 flag_done = true;
             }
