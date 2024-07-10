@@ -4,6 +4,7 @@
 #include "config.h"
 
 #include <stdio.h>
+#include <strings.h>
 
 #include "types.h"
 
