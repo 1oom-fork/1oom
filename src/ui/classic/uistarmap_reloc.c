@@ -25,14 +25,14 @@ static void ui_starmap_reloc_draw_cb(void *vptr)
 {
     struct starmap_data_s *d = vptr;
     const struct game_s *g = d->g;
-    const planet_t *pf = &g->planet[d->rl.from];
+    const planet_t *pf = &g->planet[d->from];
     const planet_t *pt = &g->planet[g->planet_focus_i[d->api]];
     char buf[0x40];
     int x0, y0;
     ui_starmap_draw_basic(d);
     x0 = (pf->x - ui_data.starmap.x) * 2 + 8;
     y0 = (pf->y - ui_data.starmap.y) * 2 + 8;
-    if (pf->reloc != d->rl.from) {
+    if (pf->reloc != d->from) {
         int x1, y1;
         x1 = (pt->x - ui_data.starmap.x) * 2 + 14;
         y1 = (pt->y - ui_data.starmap.y) * 2 + 14;
@@ -44,7 +44,7 @@ static void ui_starmap_reloc_draw_cb(void *vptr)
     lbxfont_print_str_center(269, 90, game_str_sm_sreloc, UI_SCREEN_W);
     lbxfont_select(0, 6, 0, 0);
     lbxfont_print_str_split(229, 105, 80, game_str_sm_sreloc2, 2, UI_SCREEN_W, UI_SCREEN_H);
-    if (g->planet_focus_i[d->api] != d->rl.from) {
+    if (g->planet_focus_i[d->api] != d->from) {
         if (pf->have_stargate && pt->have_stargate) {
             strcpy(buf, game_str_sm_stargate);
         } else {
@@ -73,7 +73,7 @@ void ui_starmap_reloc(struct game_s *g, player_id_t active_player)
     d.anim_delay = 0;
     {
         uint8_t pi = g->planet_focus_i[active_player];
-        d.rl.from = pi;
+        d.from = pi;
         oldreloc = g->planet[pi].reloc;
         g->planet_focus_i[active_player] = oldreloc;
         if (g->planet[oldreloc].owner != active_player) {
@@ -100,7 +100,7 @@ void ui_starmap_reloc(struct game_s *g, player_id_t active_player)
         oi1 = uiobj_handle_input_cond();
         oi2 = uiobj_at_cursor();
         ui_delay_prepare();
-        g->planet[d.rl.from].reloc = g->planet_focus_i[active_player];
+        g->planet[d.from].reloc = g->planet_focus_i[active_player];
         if (oi1 == d.oi_gameopts) {
             ui_data.ui_main_loop_action = UI_MAIN_LOOP_GAMEOPTS;
             flag_done = true;
@@ -137,12 +137,12 @@ void ui_starmap_reloc(struct game_s *g, player_id_t active_player)
         if ((oi1 == oi_cancel) || (oi1 == UIOBJI_ESC)) {
             ui_sound_play_sfx_06();
             flag_done = true;
-            g->planet[d.rl.from].reloc = oldreloc;
+            g->planet[d.from].reloc = oldreloc;
             ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
         } else if (oi1 == oi_accept) {
             ui_sound_play_sfx_24();
             flag_done = true;
-            g->planet[d.rl.from].reloc = g->planet_focus_i[active_player];
+            g->planet[d.from].reloc = g->planet_focus_i[active_player];
             ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
         } else if (oi1 == oi_scroll) {
             int x, y;
@@ -168,7 +168,7 @@ void ui_starmap_reloc(struct game_s *g, player_id_t active_player)
             UIOBJ_CLEAR_LOCAL();
             ui_starmap_fill_oi_tbl_stars_own(&d, active_player);
             oi_cancel = uiobj_add_t0(227, 163, "", ui_data.gfx.starmap.reloc_bu_cancel, MOO_KEY_ESCAPE, -1);
-            if (g->planet[d.rl.from].buildship != BUILDSHIP_STARGATE) {
+            if (g->planet[d.from].buildship != BUILDSHIP_STARGATE) {
                 oi_accept = uiobj_add_t0(271, 163, "", ui_data.gfx.starmap.reloc_bu_accept, MOO_KEY_SPACE, -1);
             }
             oi_scroll = uiobj_add_tb(6, 6, 2, 2, 108, 86, &scrollx, &scrolly, -1);
@@ -180,5 +180,5 @@ void ui_starmap_reloc(struct game_s *g, player_id_t active_player)
     }
     uiobj_unset_callback();
     uiobj_set_help_id(-1);
-    g->planet_focus_i[active_player] = d.rl.from;
+    g->planet_focus_i[active_player] = d.from;
 }
