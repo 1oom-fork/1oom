@@ -7,7 +7,7 @@
 #define UIOBJI_NONE 0
 #define UIOBJI_ESC  -1
 #define UIOBJI_INVALID  -1000
-#define UIOBJI_OUTSIDE  0xd8f0
+#define UIOBJI_OUTSIDE  -10000
 
 #define UIOBJI_SET_TBL_INVALID(name) do { for (int i = 0; i < (sizeof(name)/sizeof(name[0])); ++i) { name[i] = UIOBJI_INVALID; } } while (0)
 
