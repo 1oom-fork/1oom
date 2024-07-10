@@ -28,7 +28,7 @@ if test -z "$user_cflags" ; then
 
     dnl Check for the type of compiler first.
     if test x"$GCC" = "xyes" ; then
-        warnings_c="-Wall -Wno-inline -Wstrict-prototypes"
+        warnings_c="-Wall -Wextra -std=c99 -pedantic -Wno-inline -Wstrict-prototypes -Wno-unused-parameter"
 
         dnl Set appropriate optimization options (better than the default -g -O)
         dnl if using GCC.
