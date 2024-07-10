@@ -144,7 +144,7 @@ void ui_starmap_transport(struct game_s *g, player_id_t active_player)
     ui_data.starmap.frame_ship = 0;
     ui_data.starmap.frame_scanner = 0;
     ui_data.starmap.scanner_delay = 0;
-    d.ts.from = g->planet_focus_i[active_player];
+    d.from = g->planet_focus_i[active_player];
     g->planet_focus_i[active_player] = r->dest;
     d.ts.can_move = g->eto[active_player].have_hyperspace_comm ? GOT_HYPERCOMM : NO_MOVE;
 
@@ -236,7 +236,7 @@ void ui_starmap_transport(struct game_s *g, player_id_t active_player)
                 for (player_id_t j = PLAYER_0; j < g->players; ++j) {
                     if (oi1 == d.oi_tbl_pl_stars[j][i]) {
                         g->planet_focus_i[active_player] = i;
-                        d.ts.from = i;
+                        d.from = i;
                         ui_data.starmap.orbit_player = j;
                         ui_data.ui_main_loop_action = (j == active_player) ? UI_MAIN_LOOP_ORBIT_OWN_SEL : UI_MAIN_LOOP_ORBIT_EN_SEL;
                         ui_sound_play_sfx_24();
@@ -260,7 +260,7 @@ void ui_starmap_transport(struct game_s *g, player_id_t active_player)
             if (oi1 == d.oi_tbl_stars[i]) {
                 g->planet_focus_i[active_player] = i;
                 if ((r->owner != active_player) || (d.ts.can_move == NO_MOVE)) {
-                    d.ts.from = i;
+                    d.from = i;
                     flag_done = true;
                     ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
                 }
@@ -290,5 +290,5 @@ void ui_starmap_transport(struct game_s *g, player_id_t active_player)
     }
     uiobj_unset_callback();
     uiobj_set_help_id(-1);
-    g->planet_focus_i[active_player] = d.ts.from;
+    g->planet_focus_i[active_player] = d.from;
 }
