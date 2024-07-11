@@ -424,7 +424,7 @@ bool game_num_patch(const char *numid, const int32_t *patchnums, int first, int 
     if (s) {
         void *p;
         bool is_signed;
-        p = s->ptr + first * s->tstep;
+        p = ((uint8_t *)s->ptr) + first * s->tstep;
         is_signed = NUMTYPE_IS_S(s->numtype);
         for (int i = 0; i < num; ++i) {
             int32_t v;
@@ -448,7 +448,7 @@ bool game_num_patch(const char *numid, const int32_t *patchnums, int first, int 
                 case NUMTYPE_U32: *((uint32_t *)p) = (uint32_t)v; break;
                 case NUMTYPE_BOOL: *((bool *)p) = (v != 0); break;
             }
-            p += s->tstep;
+            p = ((uint8_t *)p) + s->tstep;
         }
         return true;
     } else {
@@ -490,7 +490,7 @@ void game_num_dump(void)
             } else {
                 log_message(",%u", vu);
             }
-            p += s->tstep;
+            p = ((uint8_t *)p) + s->tstep;
         }
         log_message("\n");
         ++s;
