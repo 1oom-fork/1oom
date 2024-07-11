@@ -264,7 +264,7 @@ void util_table_remove_item_keep_order(int itemi, void *tbl, int itemsz, int ite
     if ((itemi < 0) || (itemi >= (itemnum - 1))) {
         return;
     }
-    memmove(tbl + itemi * itemsz, tbl + (itemi + 1) * itemsz, (itemnum - 1 - itemi) * itemsz);
+    memmove(((uint8_t *)tbl) + itemi * itemsz, ((uint8_t *)tbl) + (itemi + 1) * itemsz, (itemnum - 1 - itemi) * itemsz);
 }
 
 void util_table_remove_item_keep_order_zero(int itemi, void *tbl, int itemsz, int itemnum)
@@ -273,9 +273,9 @@ void util_table_remove_item_keep_order_zero(int itemi, void *tbl, int itemsz, in
         return;
     }
     if (itemi < (itemnum - 1)) {
-        memmove(tbl + itemi * itemsz, tbl + (itemi + 1) * itemsz, (itemnum - 1 - itemi) * itemsz);
+        memmove(((uint8_t *)tbl) + itemi * itemsz, ((uint8_t *)tbl) + (itemi + 1) * itemsz, (itemnum - 1 - itemi) * itemsz);
     }
-    memset(tbl + (itemnum - 1) * itemsz, 0, itemsz);
+    memset(((uint8_t *)tbl) + (itemnum - 1) * itemsz, 0, itemsz);
 }
 
 void util_table_remove_item_any_order(int itemi, void *tbl, int itemsz, int itemnum)
@@ -283,7 +283,7 @@ void util_table_remove_item_any_order(int itemi, void *tbl, int itemsz, int item
     if ((itemi < 0) || (itemi >= (itemnum - 1))) {
         return;
     }
-    memcpy(tbl + itemi * itemsz, tbl + (itemnum - 1) * itemsz, itemsz);
+    memcpy(((uint8_t *)tbl) + itemi * itemsz, ((uint8_t *)tbl) + (itemnum - 1) * itemsz, itemsz);
 }
 
 /* -------------------------------------------------------------------------- */
