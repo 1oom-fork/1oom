@@ -43,6 +43,7 @@ int game_num_race_bonus_mrrshan = 4;
 bool game_num_news_orion = false;
 bool game_num_aud_ask_break_nap = false;
 bool game_num_aud_bounty_give = false;
+bool game_num_aud_update_tech = false;
 bool game_num_monster_rest_att = false;
 bool game_num_combat_trans_fix = false;
 bool game_num_stargate_redir_fix = false;
