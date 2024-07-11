@@ -61,6 +61,10 @@ aud_update_tech : 0..1, 0
   - Update tech, range and visibility after audience.
     MOO1 does this on save/load.
 
+update_on_load : 0..1, 1
+  - Readjust eco and update visibility on load.
+    In MOO1 saving and reloading affect game state.
+
 monster_rest_att : 0..1, 0
   - Allow attacking resting space monsters.
     In MOO1 it is impossible to attack a space crystal or amoeba after the
