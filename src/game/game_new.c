@@ -1140,7 +1140,9 @@ int game_new(struct game_s *g, struct game_aux_s *gaux, struct game_new_options_
     game_generate_relation_etc(g);
     game_generate_research(g, researchflag);
     game_generate_misc(g);
-    game_generate_load(g);
+    if (!game_num_update_on_load) {
+        game_generate_load(g);
+    }
     for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         char *b;
         const char *str;
