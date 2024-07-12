@@ -79,23 +79,24 @@ enables the following extra UI features:
 - Eco slider can show "MAX"
 - Nebula planets show "NEB" in their shields field and have a purple instead
   of a red frame around their picture
-- Pressing = on the Tech screen adjusts only the unlocked sliders
 - After running through the Next turn phase and messages the game recenters on
   your last planet of choice
 - Clicking on #, Name, etc on Planets screen sorts the list
 - Clicking on Station or ship names on Fleet screen sorts the list
 - The color of ship names on Planets screen is black
-- When using cursor keys, the mouse position is calculated taking into account
-  the mouse icon offset
 - Pressing = in the galaxy movement screen also transfers reserve back and
   the behavior is more predictable
-- Fixed graphics bug with brighter stars drawn further away than dimmer ones
 - Weapons can be filtered by type when modeling a ship
   Click on Weapons to change the filter
 - Pressing the I key on the planet overview screen shows additional info
   for inhabited planets
 
 The following features can be enabled in the configuration file:
+- The config file item "ui.fixbugs" fixes the following:
+  - Pressing = on the Tech screen adjusts only the unlocked sliders
+  - When using cursor keys, the mouse position is calculated taking into account
+    the mouse icon offset
+  - Fixed graphics bug with brighter stars drawn further away than dimmer ones
 - Continue, Undo and Initial saves can be chosen in the Load Game screen
   ("ui.load_opts_extra")
 - Summary of forces shown before ship combat. New Auto and Retreat buttons
