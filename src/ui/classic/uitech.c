@@ -361,7 +361,7 @@ void ui_tech(struct game_s *g, player_id_t active_player)
         }
         if (oi == oi_equals || oi == oi_hash) {
             ui_sound_play_sfx_24();
-            if (ui_extra_enabled) {
+            if (ui_fixbugs_enabled) {
                 game_equalize_slider_group(t->slider, TECH_FIELD_NUM, t->slider_lock);
             } else {
                 t->slider[0] = 16;
