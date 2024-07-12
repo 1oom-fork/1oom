@@ -340,5 +340,6 @@ static inline bool NOT_IN_CONTACT(const struct game_s *g, player_id_t p1, player
 #define IS_AI(_g_, _i_) BOOLVEC_IS1((_g_)->is_ai, (_i_))
 
 extern bool game_opt_skip_intro_always;
+extern bool game_opt_message_filter[FINISHED_NUM];
 
 #endif
