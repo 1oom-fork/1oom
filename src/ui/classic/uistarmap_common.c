@@ -396,8 +396,8 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
         y0 = (-y / 4) + 6;
         x1 = ((-x + 1) / 2) + 6;
         y1 = ((-y + 1) / 2) + 6;
-        gfx1 = ui_extra_enabled ? ui_data.gfx.starmap.starbak2 : ui_data.gfx.starmap.starback;
-        gfx2 = ui_extra_enabled ? ui_data.gfx.starmap.starback : ui_data.gfx.starmap.starbak2;
+        gfx1 = ui_fixbugs_enabled ? ui_data.gfx.starmap.starbak2 : ui_data.gfx.starmap.starback;
+        gfx2 = ui_fixbugs_enabled ? ui_data.gfx.starmap.starback : ui_data.gfx.starmap.starbak2;
         lbxgfx_draw_frame_offs(x0, y0, gfx1, STARMAP_LIMITS, UI_SCREEN_W);
         lbxgfx_draw_frame_offs(x0 + 320, y0, gfx1, STARMAP_LIMITS, UI_SCREEN_W);
         lbxgfx_draw_frame_offs(x0, y0 + 200, gfx1, STARMAP_LIMITS, UI_SCREEN_W);
