@@ -627,6 +627,9 @@ static void game_turn_reserve(struct game_s *g)
 
 static inline void game_add_planet_to_build_finished(struct game_s *g, uint8_t pli, player_id_t owner, uint8_t type)
 {
+    if (game_opt_message_filter[type]) {
+        return;
+    }
     planet_t *p = &(g->planet[pli]);
     BOOLVEC_SET1(p->finished, type);
     ++g->evn.build_finished_num[owner];
