@@ -49,6 +49,8 @@ static int game_opt_custom_race_value = 0xaaaaa0;
 static int game_opt_custom_banner_value = 666660;
 static int game_opt_custom_isai_value = 111110;
 
+bool game_opt_message_filter[FINISHED_NUM] = { false, false, false, false, false, false };
+
 static struct game_s game;
 static struct game_aux_s game_aux;
 
@@ -591,6 +593,11 @@ const struct cfg_items_s game_cfg_items[] = {
     CFG_ITEM_INT("custom_game_home_num_fighters", &game_opt_custom.homeworlds.num_fighters, NULL),
     CFG_ITEM_INT("custom_game_home_num_colony_ships", &game_opt_custom.homeworlds.num_colony_ships, NULL),
     CFG_ITEM_BOOL("custom_game_home_armed_colony_ships", &game_opt_custom.homeworlds.armed_colony_ships),
+    CFG_ITEM_BOOL("msg_filter_fact", &game_opt_message_filter[FINISHED_FACT]),
+    CFG_ITEM_BOOL("msg_filter_popmax", &game_opt_message_filter[FINISHED_POPMAX]),
+    CFG_ITEM_BOOL("msg_filter_soilatmos", &game_opt_message_filter[FINISHED_SOILATMOS]),
+    CFG_ITEM_BOOL("msg_filter_stargate", &game_opt_message_filter[FINISHED_STARGATE]),
+    CFG_ITEM_BOOL("msg_filter_shield", &game_opt_message_filter[FINISHED_SHIELD]),
     CFG_ITEM_END
 };
 
