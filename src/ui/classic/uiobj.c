@@ -763,7 +763,7 @@ static int16_t uiobj_kbd_dir_key_dxdy(int dirx, int diry, int16_t oi2, int mx, i
     int dist;
     int16_t oi = oi2;
     uiobj_t *p;
-    if (ui_extra_enabled) {
+    if (ui_fixbugs_enabled) {
         mx += ui_cursor_mouseoff;
         my += ui_cursor_mouseoff;
     }
