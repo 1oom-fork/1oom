@@ -175,6 +175,8 @@ For all game UIs:
 For classic game UI:
     -uiextra             Enable UI extras
     -nouiextra           Disable UI extras
+    -uifixbugs           Enable UI bug fixes
+    -nouifixbugs         Disable UI bug fixes
 
 3.1. -new
 ----------
