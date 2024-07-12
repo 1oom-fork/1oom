@@ -345,5 +345,6 @@ static inline bool OWNER_IS_NOT_KNOWN(const struct game_s *g, const planet_t *p,
 #define IS_AI(_g_, _i_) BOOLVEC_IS1((_g_)->is_ai, (_i_))
 
 extern bool game_opt_skip_intro_always;
+extern bool game_opt_message_filter[FINISHED_NUM];
 
 #endif
