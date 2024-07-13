@@ -94,6 +94,7 @@ AC_CHECK_HEADERS([wtypes.h winnt.h], [is_win32=yes; AC_DEFINE(IS_WINDOWS,, [Comp
 dnl - check for msdos
 
 if test x"$host_vendor" = "xgo32" -o x"$host_vendor" = "xmsdos" -o x"$host_os" = "xmsdosdjgpp"; then
+    AC_DEFINE(IS_MSDOS,, [Compiling for MSDOS])
     is_msdos=yes
 else
     is_msdos=false
