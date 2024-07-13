@@ -66,9 +66,13 @@ void hw_log_error(const char *msg)
 
 int64_t hw_get_time_us(void)
 {
+#ifndef IS_MSDOS
     struct timeval tv;
     gettimeofday(&tv, NULL);
     return (int64_t)tv.tv_usec + 1000000ll * (int64_t)tv.tv_sec;
+#else
+    return 0;
+#endif
 }
 
 uint8_t *hw_video_get_buf(void)
