@@ -44,6 +44,7 @@ bool game_num_aud_ask_break_nap = false;
 bool game_num_aud_bounty_give = false;
 bool game_num_aud_update_tech = false;
 bool game_num_update_on_load = true;
+bool game_num_newtech_adjust_fix = false;
 bool game_num_monster_rest_att = false;
 bool game_num_orbital_bio_fix = false;
 bool game_num_combat_trans_fix = false;
