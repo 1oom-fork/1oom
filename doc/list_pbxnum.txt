@@ -65,6 +65,9 @@ update_on_load : 0..1, 1
   - Readjust eco and update visibility on load.
     In MOO1 saving and reloading affect game state.
 
+newtech_adjust_fix : 0..1, 1
+  - Do not reset the eco slider in the 25/50/75% dialog.
+
 monster_rest_att : 0..1, 0
   - Allow attacking resting space monsters.
     In MOO1 it is impossible to attack a space crystal or amoeba after the
