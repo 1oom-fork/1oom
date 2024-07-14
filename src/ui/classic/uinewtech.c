@@ -306,7 +306,9 @@ static void ui_newtech_adjust(struct newtech_data_s *d)
                 const int tbl_gr[5] = { 0, 0, 0, 1, 2 };
                 ui_sound_play_sfx_24();
                 game_update_tech_util(d->g);
-                game_update_eco_on_waste(d->g, d->api, true);
+                if (!game_num_newtech_adjust_fix) {
+                    game_update_eco_on_waste(d->g, d->api, true);
+                }
                 game_planet_adjust_percent(d->g, d->api, tbl_si[d->dialog_type - 1], game_num_tbl_tech_autoadj[i + 1], tbl_gr[d->dialog_type - 1]);
                 flag_done = true;
             }
