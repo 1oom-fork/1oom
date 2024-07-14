@@ -90,6 +90,7 @@ enables the following extra UI features:
   Click on Weapons to change the filter
 - Pressing the I key on the planet overview screen shows additional info
   for inhabited planets
+- The entire map on the Map screen is now clickable (focus on the mouse cursor)
 
 The following features can be enabled in the configuration file:
 - The config file item "ui.fixbugs" fixes the following:
