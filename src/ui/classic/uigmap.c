@@ -9,6 +9,7 @@
 #include "game_str.h"
 #include "hw.h"
 #include "kbd.h"
+#include "mouse.h"
 #include "lbx.h"
 #include "lbxfont.h"
 #include "lbxgfx.h"
@@ -24,6 +25,7 @@
 #include "uiobj.h"
 #include "uipal.h"
 #include "uisound.h"
+#include "uistarmap.h"
 #include "uistarmap_common.h"
 #include "uiswitch.h"
 
@@ -363,6 +365,7 @@ bool ui_gmap(struct game_s *g, player_id_t active_player)
     struct gmap_data_s d;
     bool flag_done = false, flag_do_focus = false;
     int16_t /*oi_col, oi_env, oi_min,*/ oi_ok, oi_tbl_planet[PLANETS_MAX];
+    int16_t oi_map = UIOBJI_INVALID;
 
     gmap_load_data(&d);
     d.g = g;
@@ -386,6 +389,9 @@ bool ui_gmap(struct game_s *g, player_id_t active_player)
         /* FIXME limits not set! ... but no need to limit anyway */
         oi_tbl_planet[i] = uiobj_add_mousearea/*_limited*/(x, y, x + 4, y + 4, MOO_KEY_UNKNOWN);
     }
+    if (ui_extra_enabled) {
+        oi_map = uiobj_add_mousearea(GMAP_LIMITS, MOO_KEY_UNKNOWN);
+    }
 
     uiobj_set_help_id(9);
     uiobj_set_callback_and_delay(gmap_draw_cb, &d, 4);
@@ -408,6 +414,13 @@ bool ui_gmap(struct game_s *g, player_id_t active_player)
                 flag_done = true;
                 break;
             }
+        }
+        if (ui_extra_enabled && (oi == oi_map)) {
+            int x, y;
+            x = ((moouse_x - 7) * g->galaxy_maxx) / 224;
+            y = ((moouse_y - 7) * g->galaxy_maxy) / 185;
+            ui_starmap_set_pos(g, x, y);
+            flag_done = true;
         }
         if (!flag_done) {
             gmap_draw_cb(&d);
