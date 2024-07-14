@@ -132,7 +132,9 @@ static void ui_newtech_adjust(struct newtech_data_s *d)
         }
         v = ui_input_list(buf, "> ", rl_in);
         game_update_tech_util(d->g);
-        game_update_eco_on_waste(d->g, d->api, true);
+        if (!game_num_newtech_adjust_fix) {
+            game_update_eco_on_waste(d->g, d->api, true);
+        }
         game_planet_adjust_percent(d->g, d->api, tbl_a0[d->dialog_type - 1], game_num_tbl_tech_autoadj[v], tbl_a2[d->dialog_type - 1]);
     }
 }

@@ -41,6 +41,7 @@ extern bool game_num_aud_ask_break_nap;
 extern bool game_num_aud_bounty_give;
 extern bool game_num_aud_update_tech;
 extern bool game_num_update_on_load;
+extern bool game_num_newtech_adjust_fix;
 extern bool game_num_monster_rest_att;
 extern bool game_num_orbital_bio_fix;
 extern bool game_num_combat_trans_fix;
