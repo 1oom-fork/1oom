@@ -113,6 +113,13 @@ void game_planet_adjust_percent(struct game_s *g, player_id_t owner, planet_slid
                 if (si != PLANET_SLIDER_IND) {
                     sum += p->slider[PLANET_SLIDER_IND];
                 }
+                if (game_num_newtech_adjust_fix && (si != PLANET_SLIDER_ECO)) {
+                    int eco = p->slider[PLANET_SLIDER_ECO] - game_planet_get_waste_percent(NULL, g, i, false);
+                    SETMAX(eco, 0);
+                    sum += eco;
+                    p->slider[PLANET_SLIDER_ECO] -= (eco * percent) / 100;
+                }
+
                 v = (sum * percent) / 100;
                 p->slider[PLANET_SLIDER_SHIP] = (p->slider[PLANET_SLIDER_SHIP] * (100 - percent)) / 100;
                 if (si == PLANET_SLIDER_DEF) {
