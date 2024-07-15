@@ -56,6 +56,7 @@ struct ui_battle_data_s {
     int16_t oi_scan;
     int16_t oi_auto;
     int16_t oi_done;
+    int16_t oi_grid;
     int16_t oi_area[BATTLE_AREA_H][BATTLE_AREA_W];
     ui_cursor_area_t cursor[1 + BATTLE_AREA_W * BATTLE_AREA_H];
 };
@@ -192,6 +193,7 @@ static void ui_battle_clear_ois(struct ui_battle_data_s *d)
     d->oi_scan = UIOBJI_INVALID;
     d->oi_auto = UIOBJI_INVALID;
     d->oi_done = UIOBJI_INVALID;
+    d->oi_grid = UIOBJI_INVALID;
     for (int y = 0; y < BATTLE_AREA_H; ++y) {
         for (int x = 0; x < BATTLE_AREA_W; ++x) {
             d->oi_area[y][x] = UIOBJI_INVALID; /* BUG? not done in MOO1 */
@@ -330,6 +332,7 @@ static void ui_battle_draw_bottom_add_ois(const struct battle_s *bt)
         d->oi_retreat = uiobj_add_t0(241, 193, "", ui_data.gfx.space.retreat, MOO_KEY_r);
     }
     d->oi_done = uiobj_add_t0(297, 193, "", ui_data.gfx.space.done, MOO_KEY_d);
+    d->oi_grid = uiobj_add_inputkey(MOO_KEY_g);
     d->oi_wait = uiobj_add_t0(274, 193, "", ui_data.gfx.space.wait, MOO_KEY_w);
 #if 0
     d->oi_auto = uiobj_add_t0(99, 193, "", ui_data.gfx.space.autob, MOO_KEY_a);
@@ -1044,6 +1047,14 @@ void ui_battle_draw_arena(const struct battle_s *bt, int itemi, int dmode)
     lbxgfx_draw_frame(0, 0, d->gfx_bg, UI_SCREEN_W);
     lbxfont_set_temp_color(0);
     lbxfont_select_set_12_4(2, 0xd, 0, 0);
+    if (ui_extra_enabled && ui_data.battle.show_grid) {
+        for (int x = 0; x < 10; ++x) {
+            ui_draw_line1(x * 32, 0, x * 32, 24 * 8 - 1, 4);
+        }
+        for (int y = 0; y < 8; ++y) {
+            ui_draw_line1(0, y * 24, 32 * 10 - 1, y * 24, 4);
+        }
+    }
     for (int i = 0; i <= bt->items_num; ++i) {
         if ((i != itemi) || (dmode == 0/*normal*/)) {
             const struct battle_item_s *b;
@@ -1931,6 +1942,9 @@ ui_battle_action_t ui_battle_turn(const struct battle_s *bt)
             ui_sound_play_sfx_24();
         }
         return UI_BATTLE_ACT_DONE;
+    }
+    if (oi == d->oi_grid) {
+        ui_data.battle.show_grid = !ui_data.battle.show_grid;
     }
     /*4eddd*/
     if (oi == d->oi_wait) {
