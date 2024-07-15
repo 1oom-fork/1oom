@@ -261,6 +261,9 @@ struct ui_data_s {
         int planets_order[PLAYER_NUM];
         int weapon_type[PLAYER_NUM];
     } sorted;   /* global for qsort */
+    struct {
+        bool show_grid;
+    } battle;
     uint8_t star_frame[PLANETS_MAX];
     ui_main_loop_action_t ui_main_loop_action;
     ui_main_loop_action_t ui_main_loop_action_prev;
