@@ -1,5 +1,5 @@
-AC_INIT([1oom], [1.10.0])
-VERSION_1OOM=v1.10.0
+AC_INIT([1oom], [1.10.1])
+VERSION_1OOM=v1.10.1
 
 AC_ARG_ENABLE(static, AS_HELP_STRING([--enable-static], [enable static builds]))
 AC_ARG_ENABLE(modebug, AS_HELP_STRING([--enable-modebug], [add debugging options]))
