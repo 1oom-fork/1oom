@@ -87,6 +87,7 @@ enables the following extra UI features:
 - Pressing the I key on the planet overview screen shows additional info
   for inhabited planets
 - The entire map on the Map screen is now clickable (focus on the mouse cursor)
+- Pressing g on the battlefield screen shows the grid
 
 The config file item "ui.uifixbugs" (set via the -uifixbugs command-line option)
 enables the following UI bug fixes:
