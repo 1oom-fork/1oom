@@ -648,12 +648,10 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
         const planet_t *p = &g->planet[d->dist_i], *q = &g->planet[j];
         int px = 2 * (p->x - x) + 14, py = 2 * (p->y - y) + 14;
         int qx = 2 * (q->x - x) + 14, qy = 2 * (q->y - y) + 14;
-        if ( !(px<slx0 || px>slx1 || py<sly0 || py>sly1 || qx<slx0 || qx>slx1 || qy<sly0 || qy>sly1) ) {
-            ui_draw_line1(px, py, qx, qy, 0x06, starmap_scale);
-            lbxfont_select(0, 0, 0, 0);
-            int l = g->gaux->star_dist[j][d->dist_i];
-            lbxfont_print_num_center( (px + qx) / 2, (py + qy) / 2 - 2, l, UI_SCREEN_W, starmap_scale);
-        }
+        ui_draw_line_limit(px, py, qx, qy, 0x06, starmap_scale);
+        lbxfont_select(0, 0, 0, 0);
+        int l = g->gaux->star_dist[j][d->dist_i];
+        lbxfont_print_num_center_limit( (px + qx) / 2, (py + qy) / 2 - 2, l, STARMAP_TEXT_LIMITS, UI_SCREEN_W, starmap_scale);
     }
 }
 
