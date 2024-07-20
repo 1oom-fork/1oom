@@ -69,7 +69,7 @@ static void ui_battle_draw_scan_cb(void *vptr)
     int itembase, itemnum;
     itembase = (d->scan_side == SIDE_L) ? 1 : (bt->s[SIDE_L].items + 1);
     itemnum = bt->s[d->scan_side].items;
-    ui_draw_color_buf(0x3a);
+    ui_draw_filled_rect(0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, 0x3a);
     lbxgfx_draw_frame(0, 0, ui_data.gfx.starmap.viewship, UI_SCREEN_W);
     for (int i = 0; i < itemnum; ++i) {
         const struct battle_item_s *b = &(bt->item[itembase + i]);
