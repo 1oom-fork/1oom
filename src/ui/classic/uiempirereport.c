@@ -49,7 +49,7 @@ static void empirereport_draw_cb(void *vptr)
     const shipresearch_t *srd = &(g->srd[d->pi]);
     char buf[0x40];
 
-    ui_draw_color_buf(0x3e);
+    ui_draw_filled_rect(0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, 0x3e);
     lbxgfx_draw_frame(0, 0, d->gfx, UI_SCREEN_W);
     ui_draw_filled_rect(21, 15, 60, 48, 0);
     lbxgfx_draw_frame(21, 15, ui_data.gfx.planets.race[e->race], UI_SCREEN_W);
