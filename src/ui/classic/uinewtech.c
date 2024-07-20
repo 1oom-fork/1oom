@@ -124,6 +124,8 @@ static void newtech_draw_cb1(void *vptr)
         /* BUG?
            Some lowercase letters extend past the screen, for example 'p' in the Hyper-X msg.
            On DOS/v1.3 this only overwrites unused VRAM. y <= 148 would be OK.
+           In this version of 1oom, the video buffer does not contain padding, which can lead
+           to small visible artifacts.
         */
         y = (strh >= 36) ? 150 : 160;
         lbxfont_print_str_split(9, y, 305, buf, 3, UI_SCREEN_W, UI_SCREEN_H);

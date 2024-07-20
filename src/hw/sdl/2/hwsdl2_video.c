@@ -696,8 +696,9 @@ int hw_video_init(int w, int h)
     if (video_sw_set(w, h)) {
         return -1;
     }
-    for (int i = 0; i < NUM_VIDEOBUF; ++i) {
-        video.buf[i] = lib_malloc(video.bufw * video.bufh);
+    video.buf[0] = lib_malloc(video.bufw * video.bufh * NUM_VIDEOBUF);
+    for (int i = 1; i < NUM_VIDEOBUF; ++i) {
+        video.buf[i] = video.buf[0] + video.bufw * video.bufh * i;
     }
     video.bufi = 0;
     return 0;
@@ -722,8 +723,8 @@ void hw_video_shutdown(void)
         SDL_FreePalette(video.iconpal);
         video.iconpal = NULL;
     }
+    lib_free(video.buf[0]);
     for (int i = 0; i < NUM_VIDEOBUF; ++i) {
-        lib_free(video.buf[i]);
         video.buf[i] = NULL;
     }
 }
