@@ -83,8 +83,9 @@ int hw_video_init(int w, int h)
     hw_video_in_gfx = true;
     set_mouse_speed(hw_opt_mouse_slowdown_x, hw_opt_mouse_slowdown_y);
     video.bm = create_bitmap(w, h);
-    for (int i = 0; i < NUM_VIDEOBUF; ++i) {
-        video.buf[i] = lib_malloc(w * h);
+    video.buf[0] = lib_malloc(video.bufw * video.bufh * NUM_VIDEOBUF);
+    for (int i = 1; i < NUM_VIDEOBUF; ++i) {
+        video.buf[i] = video.buf[0] + video.bufw * video.bufh * i;
     }
     video.bufi = 0;
     return 0;
@@ -99,8 +100,8 @@ void hw_video_shutdown(void)
         video.bm = NULL;
     }
 #endif
+    lib_free(video.buf[0]);
     for (int i = 0; i < NUM_VIDEOBUF; ++i) {
-        lib_free(video.buf[i]);
         video.buf[i] = NULL;
     }
 }
