@@ -1,7 +1,7 @@
 static int video_check_opt_screen_winwh(void)
 {
-    int minw = video.bufw;
-    int minh = video.bufh;
+    int minw = UI_VIDEO_BUFW;
+    int minh = UI_VIDEO_BUFH;
     if ((hw_opt_screen_winw != 0) && (hw_opt_screen_winh != 0)) {
         if ((hw_opt_screen_winw < minw) || (hw_opt_screen_winh < minh)) {
             log_warning("ignoring too small configured resolution %ix%i < %ix%i\n", hw_opt_screen_winw, hw_opt_screen_winh, minw, minh);
@@ -22,7 +22,7 @@ void hw_video_refresh(int front)
         }
     }
 
-    video.render(video.buf[video.bufi ^ front]);
+    video.render(UI_VIDEO_BUF(front));
 
     if (SDL_MUSTLOCK(video.screen)) {
         SDL_UnlockSurface(video.screen);
@@ -54,19 +54,19 @@ void hw_video_refresh_palette(void)
 
 uint8_t *hw_video_get_buf(void)
 {
-    return video.buf[video.bufi];
+    return UI_VIDEO_BUF_BACK;
 }
 
 uint8_t *hw_video_get_buf_front(void)
 {
-    return video.buf[video.bufi ^ 1];
+    return UI_VIDEO_BUF_FRONT;
 }
 
 uint8_t *hw_video_draw_buf(void)
 {
     hw_video_refresh(0);
-    video.bufi ^= 1;
-    return video.buf[video.bufi];
+    UI_VIDEO_BUF_SWAP;
+    return UI_VIDEO_BUF_BACK;
 }
 
 void hw_video_redraw_front(void)
@@ -76,30 +76,30 @@ void hw_video_redraw_front(void)
 
 void hw_video_copy_buf(void)
 {
-    memcpy(video.buf[video.bufi], video.buf[video.bufi ^ 1], video.bufw * video.bufh);
+    UI_VIDEO_COPY_BUF;
 }
 
 void hw_video_copy_buf_out(uint8_t *buf)
 {
-    memcpy(buf, video.buf[video.bufi], video.bufw * video.bufh);
+    UI_VIDEO_COPY_BUF_OUT(buf);
 }
 
 void hw_video_copy_back_to_page2(void)
 {
-    memcpy(video.buf[2], video.buf[video.bufi], video.bufw * video.bufh);
+    UI_VIDEO_COPY_BACK_TO_PAGE2;
 }
 
 void hw_video_copy_back_from_page2(void)
 {
-    memcpy(video.buf[video.bufi], video.buf[2], video.bufw * video.bufh);
+    UI_VIDEO_COPY_BACK_FROM_PAGE2;
 }
 
 void hw_video_copy_back_to_page3(void)
 {
-    memcpy(video.buf[3], video.buf[video.bufi], video.bufw * video.bufh);
+    UI_VIDEO_COPY_BACK_TO_PAGE3;
 }
 
 void hw_video_copy_back_from_page3(void)
 {
-    memcpy(video.buf[video.bufi], video.buf[3], video.bufw * video.bufh);
+    UI_VIDEO_COPY_BACK_FROM_PAGE3;
 }
