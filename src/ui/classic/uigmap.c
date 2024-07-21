@@ -387,7 +387,7 @@ bool ui_gmap(struct game_s *g, player_id_t active_player)
     struct gmap_data_s d;
     bool flag_done = false, flag_do_focus = false;
     int16_t /*oi_col, oi_env, oi_min,*/ oi_ok, oi_tbl_planet[PLANETS_MAX];
-    int16_t oi_map;
+    int16_t oi_map = UIOBJI_INVALID;
 
     gmap_load_data(&d);
     d.g = g;
@@ -443,7 +443,6 @@ bool ui_gmap(struct game_s *g, player_id_t active_player)
             y = ((moouse_y / ui_scale - 7) * g->galaxy_maxy) / 185;
             ui_starmap_set_pos(g, x, y);
             flag_done = true;
-
         }
         if (!flag_done) {
             gmap_draw_cb(&d);
