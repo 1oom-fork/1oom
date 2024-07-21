@@ -13,11 +13,9 @@
 #include "lib.h"
 #include "log.h"
 #include "palette.h"
+#include "video_buf.h"
 
 /* -------------------------------------------------------------------------- */
-
-/* double buffering + 2 aux buffers */
-#define NUM_VIDEOBUF    4
 
 static struct alleg_video_s {
     BITMAP *bm;
@@ -25,12 +23,6 @@ static struct alleg_video_s {
     void (*render)(const uint8_t *buf);
     void (*update)(void);
     void (*setpal)(const uint8_t *pal, int first, int num);
-
-    /* buffers used by UI */
-    uint8_t *buf[NUM_VIDEOBUF];
-    int bufw;
-    int bufh;
-    int bufi;
 
     RGB color[256];
 } video = { 0 };
@@ -70,8 +62,6 @@ static void video_setpal_8bpp(const uint8_t *pal, int first, int num)
 
 int hw_video_init(int w, int h)
 {
-    video.bufw = w;
-    video.bufh = h;
     video.render = video_render_8bpp;
     video.update = video_update_8bpp;
     video.setpal = video_setpal_8bpp;
@@ -86,11 +76,6 @@ int hw_video_init(int w, int h)
     hw_video_in_gfx = true;
     set_mouse_speed(hw_opt_mouse_slowdown_x, hw_opt_mouse_slowdown_y);
     video.bm = create_bitmap(w, h);
-    video.buf[0] = lib_malloc(video.bufw * video.bufh * NUM_VIDEOBUF);
-    for (int i = 1; i < NUM_VIDEOBUF; ++i) {
-        video.buf[i] = video.buf[0] + video.bufw * video.bufh * i;
-    }
-    video.bufi = 0;
     ui_palette_clear();
     hw_video_refresh_palette();
     return 0;
@@ -105,10 +90,6 @@ void hw_video_shutdown(void)
         video.bm = NULL;
     }
 #endif
-    lib_free(video.buf[0]);
-    for (int i = 0; i < NUM_VIDEOBUF; ++i) {
-        video.buf[i] = NULL;
-    }
 }
 
 void hw_video_input_grab(bool grab)
