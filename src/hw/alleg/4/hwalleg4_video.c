@@ -76,8 +76,6 @@ int hw_video_init(int w, int h)
     hw_video_in_gfx = true;
     set_mouse_speed(hw_opt_mouse_slowdown_x, hw_opt_mouse_slowdown_y);
     video.bm = create_bitmap(w, h);
-    ui_palette_clear();
-    hw_video_refresh_palette();
     return 0;
 }
 

@@ -461,8 +461,6 @@ int hw_video_init(int w, int h)
         video.buf[i] = video.buf[0] + video.bufw * video.bufh * i;
     }
     video.bufi = 0;
-    ui_palette_clear();
-    hw_video_refresh_palette();
     return 0;
 }
 
