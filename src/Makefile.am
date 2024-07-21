@@ -93,7 +93,9 @@ ui_sources = \
     mouse.c \
     mouse.h \
     palette.c \
-    palette.h
+    palette.h \
+    video_buf.c \
+    video_buf.h
 
 pic_sources = \
     fmt_pic.c \
