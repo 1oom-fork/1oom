@@ -210,8 +210,8 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
     int16_t oi_b, oi_c, oi_starview1, oi_starview2, oi_shippic, oi_finished, oi_equals, oi_hash,
             oi_f2, oi_f3, oi_f4, oi_f5, oi_f6, oi_f7, oi_f8, oi_f9, oi_f10,
             oi_alt_galaxy, oi_alt_p, oi_alt_events,
-            oi_wheelname, oi_wheelshippic, oi_search
-            ;
+            oi_wheelname, oi_wheelshippic, oi_search,
+            oi_adj_def, oi_adj_ind, oi_adj_eco;
     int16_t scrollmisc = 0;
     struct starmap_data_s d;
 
@@ -239,6 +239,9 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
         oi_hash = UIOBJI_INVALID; \
         oi_wheelname = UIOBJI_INVALID; \
         oi_wheelshippic = UIOBJI_INVALID; \
+        oi_adj_def = UIOBJI_INVALID; \
+        oi_adj_ind = UIOBJI_INVALID; \
+        oi_adj_eco = UIOBJI_INVALID; \
         d.sm.oi_ship = UIOBJI_INVALID; \
         d.sm.oi_reloc = UIOBJI_INVALID; \
         d.sm.oi_trans = UIOBJI_INVALID; \
@@ -561,6 +564,15 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
                 i = 0;
             }
             g->planet_focus_i[active_player] = i;
+        } else if (oi1 == oi_adj_def) {
+            ui_slider_adjust(g, active_player, 3);
+            flag_done = true;
+        } else if (oi1 == oi_adj_ind) {
+            ui_slider_adjust(g, active_player, 1);
+            flag_done = true;
+        } else if (oi1 == oi_adj_eco) {
+            ui_slider_adjust(g, active_player, 2);
+            flag_done = true;
         }
         for (int i = 0; i < g->galaxy_stars; ++i) {
             if ((oi1 == d.oi_tbl_stars[i]) && !g->evn.build_finished_num[active_player]) {
@@ -616,6 +628,11 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
                 oi_wheelshippic = uiobj_add_mousewheel(228, 139, 275, 175, &scrollmisc);
             }
             oi_wheelname = uiobj_add_mousewheel(227, 8, 310, 20, &scrollmisc);
+            if (ui_extra_enabled) {
+                oi_adj_def = uiobj_add_mousearea( 288, 93, 312, 99, MOO_KEY_UNKNOWN );
+                oi_adj_ind = uiobj_add_mousearea( 288, 104, 312, 110, MOO_KEY_UNKNOWN );
+                oi_adj_eco = uiobj_add_mousearea( 288, 115, 312, 121, MOO_KEY_UNKNOWN );
+            }
             ui_starmap_fill_oi_tbls(&d);
             if (!ui_sm_no_question_mark_cursor && BOOLVEC_IS1(p->explored, active_player)) {
                 int x0, y0;

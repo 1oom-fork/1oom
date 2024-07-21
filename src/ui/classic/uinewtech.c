@@ -54,6 +54,7 @@ struct newtech_data_s {
     bool flag_music;
     bool flag_is_current;
     bool flag_choose_next;
+    bool flag_popup;
     uint8_t tech_next[TECH_NEXT_MAX];
     int num_next;
     int16_t selected;
@@ -222,7 +223,9 @@ static void newtech_adjust_draw_cb(void *vptr)
     struct newtech_data_s *d = vptr;
     char buf[0x96];
     int x = 150, y = 30;
-    newtech_draw_cb1(d);
+    if (!d->flag_popup) {
+        newtech_draw_cb1(d);
+    }
     ui_draw_filled_rect(x, y, x + 135, y + 80, 0xf9);
     lbxgfx_draw_frame(x, y, (d->dialog_type == 0) ? d->gfx_eco_chng2 : d->gfx_eco_chng4, UI_SCREEN_W);
     lbxfont_select_set_12_1(0, 0, 0, 0);
@@ -440,6 +443,23 @@ again:
 }
 
 /* -------------------------------------------------------------------------- */
+
+void ui_slider_adjust(struct game_s *g, int pi, int type)
+{
+    struct newtech_data_s d;
+
+    uiobj_set_xyoff(0, 0);
+
+    memset(&d, 0, sizeof(d));
+    d.g = g;
+    d.api = pi;
+    d.dialog_type = type;
+    d.flag_popup = true;
+
+    newtech_load_data(&d);
+    ui_newtech_adjust(&d);
+    newtech_free_data(&d);
+}
 
 void ui_newtech(struct game_s *g, int pi)
 {

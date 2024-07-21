@@ -147,6 +147,7 @@ extern ui_sabotage_t ui_spy_sabotage_ask(struct game_s *g, int spy, int target, 
 extern int ui_spy_sabotage_done(struct game_s *g, int pi, int spy, int target, ui_sabotage_t act, int other1, int other2, uint8_t planet, int snum);
 
 extern void ui_newtech(struct game_s *g, int pi);
+extern void ui_slider_adjust(struct game_s *g, int pi, int type);
 
 extern bool ui_explore(struct game_s *g, int pi, uint8_t planet_i, bool by_scanner, bool flag_colony_ship);
 extern bool ui_bomb_ask(struct game_s *g, int pi, uint8_t planet_i, int pop_inbound);
