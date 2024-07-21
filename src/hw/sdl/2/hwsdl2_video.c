@@ -14,6 +14,7 @@
 #include "log.h"
 #include "mouse.h"
 #include "palette.h"
+#include "video_buf.h"
 #include "types.h"
 #include "version.h"
 
@@ -24,9 +25,6 @@
 */
 
 /* -------------------------------------------------------------------------- */
-
-/* double buffering + 2 aux buffers */
-#define NUM_VIDEOBUF    4
 
 #define RESIZE_DELAY 500
 
@@ -69,12 +67,6 @@ static struct sdl_video_s {
     void (*render)(const uint8_t *buf);
     void (*update)(void);
     void (*setpal)(const uint8_t *pal, int first, int num);
-
-    /* buffers used by UI */
-    uint8_t *buf[NUM_VIDEOBUF];
-    int bufw;
-    int bufh;
-    int bufi;
 
     /* palette as used by SDL */
     SDL_Color color[256];
@@ -606,9 +598,9 @@ static int video_sw_set(int w, int h)
 static void hw_video_update_actual_h(void)
 {
     if (!hw_opt_aspect) {
-        video.actualh = video.bufh;
+        video.actualh = UI_VIDEO_BUFH;
     } else {
-        video.actualh = (uint32_t)(video.bufh * 1000000) / hw_opt_aspect;
+        video.actualh = (uint32_t)(UI_VIDEO_BUFH * 1000000) / hw_opt_aspect;
     }
 }
 
@@ -675,8 +667,6 @@ bool hw_video_update_aspect(void)
 int hw_video_init(int w, int h)
 {
     hw_mouse_set_limits(w, h);
-    video.bufw = w;
-    video.bufh = h;
     video.window = NULL;
     video.renderer = NULL;
     video.screen = NULL;
@@ -722,24 +712,19 @@ int hw_video_init(int w, int h)
             }
         }
         {
-            int scale_w = maxw / video.bufw;
+            int scale_w = maxw / UI_VIDEO_BUFW;
             int scale_h = maxh / video.actualh;
             int scale = (scale_w > scale_h) ? scale_h : scale_w;
             if (scale <= 0) {
                 scale = 1;
             }
-            w = video.bufw * scale;
+            w = UI_VIDEO_BUFW * scale;
             h = video.actualh * scale;
         }
     }
     if (video_sw_set(w, h)) {
         return -1;
     }
-    video.buf[0] = lib_malloc(video.bufw * video.bufh * NUM_VIDEOBUF);
-    for (int i = 1; i < NUM_VIDEOBUF; ++i) {
-        video.buf[i] = video.buf[0] + video.bufw * video.bufh * i;
-    }
-    video.bufi = 0;
     return 0;
 }
 
@@ -761,10 +746,6 @@ void hw_video_shutdown(void)
     if (video.iconpal) {
         SDL_FreePalette(video.iconpal);
         video.iconpal = NULL;
-    }
-    lib_free(video.buf[0]);
-    for (int i = 0; i < NUM_VIDEOBUF; ++i) {
-        video.buf[i] = NULL;
     }
 }
 

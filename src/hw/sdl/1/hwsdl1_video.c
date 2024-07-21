@@ -15,12 +15,10 @@
 #include "lib.h"
 #include "log.h"
 #include "palette.h"
+#include "video_buf.h"
 #include "types.h"
 
 /* -------------------------------------------------------------------------- */
-
-/* double buffering + 2 aux buffers */
-#define NUM_VIDEOBUF    4
 
 static struct sdl_video_s {
     SDL_Surface *screen;
@@ -31,11 +29,6 @@ static struct sdl_video_s {
     void (*update)(void);
     void (*setpal)(const uint8_t *pal, int first, int num);
 
-    /* buffers used by UI */
-    uint8_t *buf[NUM_VIDEOBUF];
-    int bufw;
-    int bufh;
-    int bufi;
 #ifdef HAVE_SDL1GL
     /* precalculated palette for used >8 bpp */
     union {
@@ -361,8 +354,6 @@ bool hw_video_update_aspect(void)
 int hw_video_init(int w, int h)
 {
     hw_mouse_set_limits(w, h);
-    video.bufw = w;
-    video.bufh = h;
     {
         const SDL_VideoInfo *p = SDL_GetVideoInfo();
         video.bestmode.w = p->current_w;
@@ -438,16 +429,16 @@ int hw_video_init(int w, int h)
             w = hw_opt_screen_winw;
             h = hw_opt_screen_winh;
         } else {
-            int scale = (video.bestmode.w - 50/*window borders*/) / video.bufw + 1;
+            int scale = (video.bestmode.w - 50/*window borders*/) / UI_VIDEO_BUFW + 1;
             if (scale > 1) {
                 do {
                     --scale;
-                    h = video.bufh * scale;
+                    h = UI_VIDEO_BUFH * scale;
                     if (hw_opt_aspect != 0) {
                         h = (int)(((double)(h) * 1000000.) / ((double)(hw_opt_aspect)));
                     }
                 } while ((scale > 1) && ((h + 50/*space for window borders, taskbar etc*/) > video.bestmode.h));
-                w = video.bufw * scale;
+                w = UI_VIDEO_BUFW * scale;
             }
         }
         if (hw_video_resize(w, h)) {
@@ -456,11 +447,6 @@ int hw_video_init(int w, int h)
     }
 #endif
 
-    video.buf[0] = lib_malloc(video.bufw * video.bufh * NUM_VIDEOBUF);
-    for (int i = 1; i < NUM_VIDEOBUF; ++i) {
-        video.buf[i] = video.buf[0] + video.bufw * video.bufh * i;
-    }
-    video.bufi = 0;
     return 0;
 }
 
@@ -476,10 +462,6 @@ void hw_video_shutdown(void)
         video.hwrenderbuf = NULL;
     }
 #endif
-    lib_free(video.buf[0]);
-    for (int i = 0; i < NUM_VIDEOBUF; ++i) {
-        video.buf[i] = NULL;
-    }
 }
 
 void hw_video_input_grab(bool grab)
