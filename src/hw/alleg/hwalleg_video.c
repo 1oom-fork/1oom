@@ -1,8 +1,8 @@
 bool hw_video_in_gfx = false;
 
-void hw_video_refresh(int front)
+void hw_video_redraw_front(void)
 {
-    video.render(UI_VIDEO_BUF(front));
+    video.render(UI_VIDEO_BUF_FRONT);
     video.update();
 }
 
@@ -29,12 +29,7 @@ void hw_video_refresh_palette(void)
 
 uint8_t *hw_video_draw_buf(void)
 {
-    hw_video_refresh(0);
     UI_VIDEO_BUF_SWAP;
+    hw_video_redraw_front();
     return hw_video_get_buf();
-}
-
-void hw_video_redraw_front(void)
-{
-    hw_video_refresh(1);
 }
