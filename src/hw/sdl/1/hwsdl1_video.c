@@ -121,7 +121,7 @@ static void video_setpal_gl_24bpp(const uint8_t *pal, int f, int num)
 #endif
         }
     }
-    hw_video_refresh(1);
+    hw_video_redraw_front();
 }
 
 static void video_render_gl_32bpp(const uint8_t *buf)
@@ -192,7 +192,7 @@ static void video_setpal_gl_32bpp(const uint8_t *pal, int f, int num)
                               ;
 #endif
     }
-    hw_video_refresh(1);
+    hw_video_redraw_front();
 }
 
 #endif /* HAVE_SDL1GL */

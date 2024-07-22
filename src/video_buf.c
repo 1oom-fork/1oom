@@ -4,7 +4,6 @@ uint8_t ui_video_buf[UI_NUM_VIDEOBUF * UI_VIDEO_BUF_SIZE];
 int ui_video_bufi = 0;
 
 #define UI_VIDEO_BUF_BACK  &ui_video_buf[UI_VIDEO_BUF_SIZE * ui_video_bufi]
-#define UI_VIDEO_BUF_FRONT  &ui_video_buf[UI_VIDEO_BUF_SIZE * (ui_video_bufi ^ 1)]
 #define UI_VIDEO_BUF_N(n)  &ui_video_buf[UI_VIDEO_BUF_SIZE * n]
 
 uint8_t *hw_video_get_buf(void)

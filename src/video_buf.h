@@ -10,7 +10,7 @@
 #define UI_VIDEO_BUFW   320
 #define UI_VIDEO_BUFH   200
 #define UI_VIDEO_BUF_SIZE   UI_VIDEO_BUFW * UI_VIDEO_BUFH
-#define UI_VIDEO_BUF(front)  &ui_video_buf[UI_VIDEO_BUF_SIZE * (ui_video_bufi ^ front)]
+#define UI_VIDEO_BUF_FRONT  &ui_video_buf[UI_VIDEO_BUF_SIZE * (ui_video_bufi ^ 1)]
 #define UI_VIDEO_BUF_SWAP   ui_video_bufi ^= 1
 
 /* buffers used by UI */

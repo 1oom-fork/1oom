@@ -14,7 +14,7 @@ static int video_check_opt_screen_winwh(void)
 
 /* -------------------------------------------------------------------------- */
 
-void hw_video_refresh(int front)
+void hw_video_redraw_front(void)
 {
     if (SDL_MUSTLOCK(video.screen)) {
         if (SDL_LockSurface(video.screen) < 0) {
@@ -22,7 +22,7 @@ void hw_video_refresh(int front)
         }
     }
 
-    video.render(UI_VIDEO_BUF(front));
+    video.render(UI_VIDEO_BUF_FRONT);
 
     if (SDL_MUSTLOCK(video.screen)) {
         SDL_UnlockSurface(video.screen);
@@ -54,12 +54,7 @@ void hw_video_refresh_palette(void)
 
 uint8_t *hw_video_draw_buf(void)
 {
-    hw_video_refresh(0);
     UI_VIDEO_BUF_SWAP;
+    hw_video_redraw_front();
     return hw_video_get_buf();
-}
-
-void hw_video_redraw_front(void)
-{
-    hw_video_refresh(1);
 }
