@@ -27,54 +27,14 @@ void hw_video_refresh_palette(void)
     video.setpal(ui_palette, 0, 256);
 }
 
-uint8_t *hw_video_get_buf(void)
-{
-    return UI_VIDEO_BUF_BACK;
-}
-
-uint8_t *hw_video_get_buf_front(void)
-{
-    return UI_VIDEO_BUF_FRONT;
-}
-
 uint8_t *hw_video_draw_buf(void)
 {
     hw_video_refresh(0);
     UI_VIDEO_BUF_SWAP;
-    return UI_VIDEO_BUF_BACK;
+    return hw_video_get_buf();
 }
 
 void hw_video_redraw_front(void)
 {
     hw_video_refresh(1);
-}
-
-void hw_video_copy_buf(void)
-{
-    UI_VIDEO_COPY_BUF;
-}
-
-void hw_video_copy_buf_out(uint8_t *buf)
-{
-    UI_VIDEO_COPY_BUF_OUT(buf);
-}
-
-void hw_video_copy_back_to_page2(void)
-{
-    UI_VIDEO_COPY_BACK_TO_PAGE2;
-}
-
-void hw_video_copy_back_from_page2(void)
-{
-    UI_VIDEO_COPY_BACK_FROM_PAGE2;
-}
-
-void hw_video_copy_back_to_page3(void)
-{
-    UI_VIDEO_COPY_BACK_TO_PAGE3;
-}
-
-void hw_video_copy_back_from_page3(void)
-{
-    UI_VIDEO_COPY_BACK_FROM_PAGE3;
 }
