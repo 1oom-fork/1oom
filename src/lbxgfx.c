@@ -7,6 +7,7 @@
 #include "hw.h"
 #include "lbxpal.h"
 #include "lib.h"
+#include "uiobj_limits.h"
 #include "log.h"
 #include "types.h"
 
@@ -351,9 +352,10 @@ void lbxgfx_draw_frame_pal(int x, int y, uint8_t *data, uint16_t pitch)
     lbxgfx_draw_frame_do(p, data, pitch);
 }
 
-void lbxgfx_draw_frame_offs_delay(int x, int y, bool next, uint8_t *data, int lx0, int ly0, int lx1, int ly1, uint16_t pitch)
+void lbxgfx_draw_frame_offs_delay(int x, int y, bool next, uint8_t *data, uint16_t pitch)
 {
     int xskip, yskip, x0, y0, x1, y1, w, h;
+    int lx0 = uiobj_minx, ly0 = uiobj_miny, lx1 = uiobj_maxx, ly1 = uiobj_maxy;
 
     if ((x > lx1) || (y > ly1)) {
         return;
@@ -406,9 +408,9 @@ void lbxgfx_draw_frame_offs_delay(int x, int y, bool next, uint8_t *data, int lx
     }
 }
 
-void lbxgfx_draw_frame_offs(int x, int y, uint8_t *data, int lx0, int ly0, int lx1, int ly1, uint16_t pitch)
+void lbxgfx_draw_frame_offs(int x, int y, uint8_t *data, uint16_t pitch)
 {
-    lbxgfx_draw_frame_offs_delay(x, y, 1, data, lx0, ly0, lx1, ly1, pitch);
+    lbxgfx_draw_frame_offs_delay(x, y, 1, data, pitch);
 }
 
 void lbxgfx_set_new_frame(uint8_t *data, uint16_t newframe)
