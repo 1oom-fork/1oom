@@ -6,11 +6,9 @@
 #include "game_planet.h"
 #include "game_types.h"
 #include "gfxaux.h"
+#include "uiobj_limits.h"
 #include "ui.h"
 #include "types.h"
-
-#define UI_SCREEN_W 320
-#define UI_SCREEN_H 200
 
 #define UI_SCROLL_SPEED_MAX 10
 
