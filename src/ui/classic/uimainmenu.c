@@ -235,7 +235,10 @@ static void main_menu_draw_cb(void *vptr)
         hw_video_copy_back_from_page2();
     }
     lbxgfx_draw_frame(0, 0, d->gfx_vortex, UI_SCREEN_W);
-    lbxgfx_draw_frame_offs(0, 0, d->gfx_title, 0, 0, UI_SCREEN_W - 1, 191, UI_SCREEN_W);
+    /* HACK: initially there is an implicit uiobj_set_limits_all() */
+    uiobj_set_limits(0, 0, UI_SCREEN_W - 1, 191);
+    lbxgfx_draw_frame_offs(0, 0, d->gfx_title, UI_SCREEN_W);
+    uiobj_set_limits_all();
     hw_video_copy_back_to_page2();
     lbxfont_select(2, 7, 0, 0);
     lbxfont_print_str_right(315, 193, PACKAGE_NAME " " VERSION_STR, UI_SCREEN_W);
@@ -837,6 +840,7 @@ static main_menu_action_t main_menu_do(struct main_menu_data_s *d)
     lbxpal_select(1, -1, 0);
     ui_cursor_setup_area(1, &ui_cursor_area_all_i1);
     uiobj_table_clear();
+    uiobj_set_limits_all(); /* HACK */
 
     ui_draw_erase_buf();
     hw_video_copy_back_to_page2();

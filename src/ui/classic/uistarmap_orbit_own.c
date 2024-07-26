@@ -48,7 +48,7 @@ static void ui_starmap_orbit_own_draw_cb(void *vptr)
         int x, y;
         x = (pf->x - ui_data.starmap.x) * 2 + 23;
         y = (pf->y - ui_data.starmap.y) * 2 + 5;
-        lbxgfx_draw_frame_offs_delay(x, y, !d->anim_delay, ui_data.gfx.starmap.shipbord, 6, 6, 221, 177, UI_SCREEN_W);
+        lbxgfx_draw_frame_offs_delay(x, y, !d->anim_delay, ui_data.gfx.starmap.shipbord, UI_SCREEN_W);
     }
     ui_draw_filled_rect(225, 8, 314, 192, 7);
     lbxgfx_draw_frame(224, 5, ui_data.gfx.starmap.move_shi, UI_SCREEN_W);
@@ -66,14 +66,14 @@ static void ui_starmap_orbit_own_draw_cb(void *vptr)
         uint8_t *gfx;
         x1 = (pt->x - ui_data.starmap.x) * 2 + 8;
         y1 = (pt->y - ui_data.starmap.y) * 2 + 8;
-        lbxgfx_draw_frame_offs_delay(x1, y1, !d->anim_delay, ui_data.gfx.starmap.planbord, 6, 6, 221, 177, UI_SCREEN_W);
+        lbxgfx_draw_frame_offs_delay(x1, y1, !d->anim_delay, ui_data.gfx.starmap.planbord, UI_SCREEN_W);
         x0 = (pf->x - ui_data.starmap.x) * 2 + 26;
         y0 = (pf->y - ui_data.starmap.y) * 2 + 8;
         ctbl = ui_starmap_orbit_own_in_frange(d, g->planet_focus_i[d->api]) ? colortbl_line_green : colortbl_line_red;
         ui_draw_line_limit_ctbl(x0 + 3, y0 + 1, x1 + 6, y1 + 6, ctbl, 5, ui_data.starmap.line_anim_phase);
         gfx = ui_data.gfx.starmap.smalship[g->eto[d->api].banner];
         lbxgfx_set_frame_0(gfx);
-        lbxgfx_draw_frame_offs(x0, y0, gfx, 6, 6, 221, 177, UI_SCREEN_W);
+        lbxgfx_draw_frame_offs(x0, y0, gfx, UI_SCREEN_W);
         if (!ui_starmap_orbit_own_in_frange(d, g->planet_focus_i[d->api])) {
             if (d->oo.sn0.num < NUM_SHIPDESIGNS) { /* WASBUG MOO1 compares to 7, resulting in text below last ship */
                 lib_sprintf(buf, sizeof(buf), "%s %i %s", game_str_sm_destoor, dist, game_str_sm_parsfromcc);
