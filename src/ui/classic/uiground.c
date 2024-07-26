@@ -47,8 +47,9 @@ static void ground_prepare(struct ground_data_s *d)
     const struct game_s *g = d->g;
     hw_video_copy_back_from_page3();
     lbxgfx_set_new_frame(d->l.gfx_transprt, 39);
+    /* BUG? no uiobj_set_limits_all() */
     gfx_aux_draw_frame_to(d->l.gfx_transprt, &ui_data.aux.screen);
-    gfx_aux_draw_frame_from_limit(0, 100, &ui_data.aux.screen, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
+    gfx_aux_draw_frame_from_limit(0, 100, &ui_data.aux.screen, UI_SCREEN_W);
     hw_video_copy_back_to_page3();
     ui_delay_1();
     ui_sound_stop_music();
@@ -98,8 +99,9 @@ static void ground_draw_cb1(void *vptr)
     if (d->l.frame < 50) {
         int y;
         y = d->l.frame * 4 - 100;
+        uiobj_set_limits_all();
         gfx_aux_draw_frame_to(d->l.gfx_transprt, &ui_data.aux.screen);
-        gfx_aux_draw_frame_from_limit(0, y, &ui_data.aux.screen, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
+        gfx_aux_draw_frame_from_limit(0, y, &ui_data.aux.screen, UI_SCREEN_W);
         if (!gr->flag_rebel) {
             lib_sprintf(buf, sizeof(buf), "%i %s %i %s %s", gr->inbound, game_str_gr_outof, gr->total_inbound, strrace[gr->flag_swap ? 1 : 0], game_str_gr_transs);
         } else {
