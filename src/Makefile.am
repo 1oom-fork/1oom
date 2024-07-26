@@ -66,6 +66,8 @@ util_sources = \
     rnd.h \
     types.h \
     ui.h \
+    uiobj_limits.c \
+    uiobj_limits.h \
     util.c \
     util.h \
     util_cstr.c \
