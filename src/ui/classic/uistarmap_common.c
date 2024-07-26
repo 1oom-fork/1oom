@@ -463,7 +463,7 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
             tx = (p->x - x) * 2 + 11;
             ty = (p->y - y) * 2 + 11;
         }
-        gfx_aux_draw_frame_from_limit(tx, ty, &ui_data.starmap.star_aux, 6, 6, 221, 177, UI_SCREEN_W);
+        gfx_aux_draw_frame_from_limit(tx, ty, &ui_data.starmap.star_aux, UI_SCREEN_W);
         if (d->anim_delay == 0) {
             if (anim_frame == 4) {
                 anim_frame = rnd_0_nm1(50, &ui_data.seed);
