@@ -486,7 +486,7 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
         }
         if (ui_extra_enabled && explored && ui_data.starmap.star_text_type != UI_SM_STAR_TEXT_NAME) {
             if (p->type == PLANET_TYPE_NOT_HABITABLE) {
-                lbxfont_print_str_center_limit(tx, ty, "0/0", 6, 6, 221, 177, UI_SCREEN_W);
+                lbxfont_print_str_center_limit(tx, ty, "0/0", UI_SCREEN_W);
                 done = true;
             } else if (visible && ui_data.starmap.star_text_type == UI_SM_STAR_TEXT_POPULATION) {
                 int max_pop = p->max_pop3;
@@ -498,11 +498,11 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
                 } else {
                     lib_sprintf(str, sizeof(str), "%i/%i", p->pop, max_pop);
                 }
-                lbxfont_print_str_center_limit(tx, ty, str, 6, 6, 221, 177, UI_SCREEN_W);
+                lbxfont_print_str_center_limit(tx, ty, str, UI_SCREEN_W);
                 done = true;
             } else if (ui_data.starmap.star_text_type == UI_SM_STAR_TEXT_ENVIRONMENT) {
                 lib_sprintf(str, sizeof(str), "%s", game_str_tbl_sm_pltype[p->type]);
-                lbxfont_print_str_center_limit(tx, ty, str, 6, 6, 221, 177, UI_SCREEN_W);
+                lbxfont_print_str_center_limit(tx, ty, str, UI_SCREEN_W);
                 done = true;
             } else if (ui_data.starmap.star_text_type == UI_SM_STAR_TEXT_SPECIAL) {
                 if (p->special == PLANET_SPECIAL_NORMAL) {
@@ -510,7 +510,7 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
                 } else {
                     lib_sprintf(str, sizeof(str), "%s", game_str_tbl_sm_pspecial[p->special]);
                 }
-                lbxfont_print_str_center_limit(tx, ty, str, 6, 6, 221, 177, UI_SCREEN_W);
+                lbxfont_print_str_center_limit(tx, ty, str, UI_SCREEN_W);
                 done = true;
             }
         }
@@ -520,7 +520,7 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
                         || (BOOLVEC_IS1(g->eto[d->api].contact, p->owner))
                         || (p->within_frange[d->api] == 1);
             if (p->owner != PLAYER_NONE && do_print) {
-                lbxfont_print_str_center_limit(tx, ty, p->name, 6, 6, 221, 177, UI_SCREEN_W);
+                lbxfont_print_str_center_limit(tx, ty, p->name, UI_SCREEN_W);
             }
         }
     }
@@ -595,14 +595,14 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
         ty = (g->evn.crystal.y - y) * 2 + 8;
         lbxgfx_draw_frame_offs(tx, ty, ui_data.gfx.planets.smonster, UI_SCREEN_W);
         lbxfont_select(2, 8, 0, 0);
-        lbxfont_print_str_center_limit(tx + 2, ty + 5, game_str_sm_crystal, 6, 6, 221, 177, UI_SCREEN_W);
+        lbxfont_print_str_center_limit(tx + 2, ty + 5, game_str_sm_crystal, UI_SCREEN_W);
     }
     if ((g->evn.amoeba.exists != 0) && (g->evn.amoeba.killer == PLAYER_NONE)) {
         tx = (g->evn.amoeba.x - x) * 2 + 8;
         ty = (g->evn.amoeba.y - y) * 2 + 8;
         lbxgfx_draw_frame_offs(tx, ty, ui_data.gfx.planets.smonster, UI_SCREEN_W);
         lbxfont_select(2, 8, 0, 0);
-        lbxfont_print_str_center_limit(tx + 2, ty + 5, game_str_sm_amoeba, 6, 6, 221, 177, UI_SCREEN_W);
+        lbxfont_print_str_center_limit(tx + 2, ty + 5, game_str_sm_amoeba, UI_SCREEN_W);
     }
     for (int pi = 0; pi < g->galaxy_stars; ++pi) {
         const planet_t *p = &g->planet[pi];
@@ -644,7 +644,7 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
         ui_draw_line_limit(px, py, qx, qy, 0x06);
         lbxfont_select(0, 0, 0, 0);
         int l = g->gaux->star_dist[j][d->dist_i];
-        lbxfont_print_num_center_limit( (px + qx) / 2, (py + qy) / 2 - 2, l, 6, 6, 221, 177, UI_SCREEN_W);
+        lbxfont_print_num_center_limit( (px + qx) / 2, (py + qy) / 2 - 2, l, UI_SCREEN_W);
     }
 }
 
