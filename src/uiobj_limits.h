@@ -4,6 +4,8 @@
 #define UI_SCREEN_W 320
 #define UI_SCREEN_H 200
 
+#define UI_STARMAP_LIMITS 6, 6, 221, 177
+
 /* HACK for lbxgfx_draw_frame_offs params */
 extern int uiobj_minx;
 extern int uiobj_miny;
