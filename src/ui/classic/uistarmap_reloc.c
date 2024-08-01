@@ -62,7 +62,7 @@ static void ui_starmap_reloc_draw_cb(void *vptr)
             ui_draw_box1(227, 73, 310, 159, 4, 4);
         }
     }
-    uiobj_set_limits(6, 6, 221, 177);
+    uiobj_set_limits(UI_STARMAP_LIMITS);
     lbxfont_select_set_12_1(5, 5, 0, 0);
     lbxfont_print_str_center(269, 90, game_str_sm_sreloc, UI_SCREEN_W);
     lbxfont_select(0, 6, 0, 0);

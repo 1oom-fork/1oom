@@ -51,7 +51,7 @@ static void ui_starmap_trans_draw_cb(void *vptr)
             ui_draw_box1(227, 73, 310, 159, 4, 4);
         }
     }
-    uiobj_set_limits(6, 6, 221, 177);
+    uiobj_set_limits(UI_STARMAP_LIMITS);
     lbxgfx_draw_frame_offs_delay(x0, y0, !d->anim_delay, ui_data.gfx.starmap.planbord, UI_SCREEN_W);
     lbxgfx_set_new_frame(ui_data.gfx.starmap.reloc_bu_accept, 1);
     lbxgfx_draw_frame(271, 163, ui_data.gfx.starmap.reloc_bu_accept, UI_SCREEN_W);
