@@ -16,6 +16,7 @@ bool hw_opt_fullscreen = true;
 bool hw_opt_relmouse = true;
 int hw_opt_mouse_slowdown_x = 1;
 int hw_opt_mouse_slowdown_y = 1;
+int hw_opt_scale = 1;
 
 /* -------------------------------------------------------------------------- */
 
@@ -24,6 +25,7 @@ const struct cfg_items_s hw_cfg_items[] = {
     CFG_ITEM_BOOL("relmouse", &hw_opt_relmouse),
     CFG_ITEM_INT("mouse_slowdown_x", &hw_opt_mouse_slowdown_x, NULL),
     CFG_ITEM_INT("mouse_slowdown_y", &hw_opt_mouse_slowdown_y, NULL),
+    CFG_ITEM_INT("scale", &hw_opt_scale, NULL),
     CFG_ITEM_END
 };
 
