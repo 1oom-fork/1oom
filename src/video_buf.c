@@ -1,3 +1,4 @@
+#include "hw.h"
 #include "video_buf.h"
 
 uint8_t ui_video_buf[UI_NUM_VIDEOBUF * UI_VIDEO_BUF_SIZE];
@@ -14,6 +15,13 @@ uint8_t *hw_video_get_buf(void)
 uint8_t *hw_video_get_buf_front(void)
 {
     return UI_VIDEO_BUF_FRONT;
+}
+
+uint8_t *hw_video_draw_buf(void)
+{
+    ui_video_bufi ^= 1;
+    hw_video_redraw_front();
+    return hw_video_get_buf();
 }
 
 void hw_video_copy_buf(void)
