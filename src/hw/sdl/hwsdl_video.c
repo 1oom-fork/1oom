@@ -51,10 +51,3 @@ void hw_video_refresh_palette(void)
 {
     video.setpal(ui_palette, 0, 256);
 }
-
-uint8_t *hw_video_draw_buf(void)
-{
-    UI_VIDEO_BUF_SWAP;
-    hw_video_redraw_front();
-    return hw_video_get_buf();
-}
