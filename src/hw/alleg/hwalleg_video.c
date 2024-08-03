@@ -2,7 +2,12 @@ bool hw_video_in_gfx = false;
 
 void hw_video_redraw_front(void)
 {
-    video.render(UI_VIDEO_BUF_FRONT);
+    if (hw_opt_scale == 1) {
+        video.render(UI_VIDEO_BUF_FRONT);
+    } else {
+        video_set_render_target(0, 0, 320, 200, hw_opt_scale);
+        video.render_target(UI_VIDEO_BUF_FRONT, 0, 0, 320);
+    }
     video.update();
 }
 
