@@ -48,6 +48,24 @@ struct game_new_options_s {
         } \
     }
 
+#define GAME_NEW_OPTS_CHALLENGE_118835000 \
+    { \
+        1, 1, 118835000, GALAXY_SIZE_SMALL, DIFFICULTY_IMPOSSIBLE, 0, 6, \
+        { \
+            100, PLANET_SPECIAL_NORMAL, \
+            6, 6, \
+            2, 0, 1, false \
+        }, \
+        { \
+            { "", "", RACE_HUMAN, BANNER_BLUE, false }, \
+            { "", "", RACE_MRRSHAN, BANNER_RANDOM, true }, \
+            { "", "", RACE_SAKKRA, BANNER_RANDOM, true }, \
+            { "", "", RACE_PSILON, BANNER_RANDOM, true }, \
+            { "", "", RACE_KLACKON, BANNER_RANDOM, true }, \
+            { "", "", RACE_SILICOID, BANNER_RANDOM, true }  \
+        } \
+    }
+
 struct game_aux_s;
 
 extern int game_new(struct game_s *g, struct game_aux_s *gaux, struct game_new_options_s *opt);
