@@ -33,6 +33,7 @@ extern void ui_play_ending_exile(const char *name);
 typedef enum {
     MAIN_MENU_ACT_NEW_GAME,
     MAIN_MENU_ACT_CUSTOM_GAME,
+    MAIN_MENU_ACT_CHALLENGE_GAME,
     MAIN_MENU_ACT_LOAD_GAME,
     MAIN_MENU_ACT_CONTINUE_GAME,
     MAIN_MENU_ACT_QUIT_GAME,
@@ -41,7 +42,7 @@ typedef enum {
 
 struct game_new_options_s;
 
-extern main_menu_action_t ui_main_menu(struct game_new_options_s *newopts, struct game_new_options_s *customopts, int *load_game_i_ptr);
+extern main_menu_action_t ui_main_menu(struct game_new_options_s *newopts, struct game_new_options_s *customopts, struct game_new_options_s *challengeopts, int *load_game_i_ptr);
 
 struct game_s;
 struct game_end_s;
