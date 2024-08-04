@@ -572,3 +572,41 @@ bool ui_custom_game(struct game_new_options_s *newopts) {
     new_game_free_data(&d);
     return flag_ok;
 }
+
+bool ui_challenge_game(struct game_new_options_s *newopts) {
+    static const struct game_new_options_s challenge = GAME_NEW_OPTS_CHALLENGE_118835000;
+    struct new_game_data_s d;
+    bool flag_ok = false;
+
+    d.newopts = newopts;
+    *d.newopts = challenge;
+
+    new_game_load_data(&d);
+
+    flag_ok = ui_new_game_racebannernames(newopts, &d);
+
+    uiobj_unset_callback();
+    new_game_free_data(&d);
+
+    if (d.newopts->pdata[0].race == RACE_MRRSHAN) {
+        d.newopts->pdata[1].race = RACE_ALKARI;
+    }
+
+    if (d.newopts->pdata[0].race == RACE_SAKKRA) {
+        d.newopts->pdata[2].race = RACE_MEKLAR;
+    }
+
+    if (d.newopts->pdata[0].race == RACE_PSILON) {
+        d.newopts->pdata[3].race = RACE_HUMAN;
+    }
+
+    if (d.newopts->pdata[0].race == RACE_KLACKON) {
+        d.newopts->pdata[4].race = RACE_MEKLAR;
+    }
+
+    if (d.newopts->pdata[0].race == RACE_SILICOID) {
+        d.newopts->pdata[5].race = RACE_HUMAN;
+    }
+
+    return flag_ok;
+}

@@ -331,7 +331,7 @@ static bool ui_new_game(struct game_new_options_s *newopts)
 
 /* -------------------------------------------------------------------------- */
 
-main_menu_action_t ui_main_menu(struct game_new_options_s *newopts, struct game_new_options_s *customopts, int *load_game_i_ptr)
+main_menu_action_t ui_main_menu(struct game_new_options_s *newopts, struct game_new_options_s *customopts, struct game_new_options_s *challengeopts, int *load_game_i_ptr)
 {
     struct input_list_s main_menu_in[] = {
         { MAIN_MENU_ACT_CONTINUE_GAME, "C", NULL, game_str_mm_continue },
