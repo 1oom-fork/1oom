@@ -116,9 +116,10 @@ waste_calc_fix : 0..1, 0
     races only see the effect when setting the Eco slider below Clean.
 
 waste_adjust_fix : 0..1, 0
-  - Fix waste elimination slider autoadjustment.
+  - Partially fix waste elimination slider autoadjustment.
     In MOO1 the sum of sliders can exceed 100 due to weird math in the waste
-    elimination slider adjustment code.
+    elimination slider adjustment code. This fix does not address the effects
+    of integer division.
 
 pop_tenths_fix: 0..1, 0
   - Do not add population tenths twice.
