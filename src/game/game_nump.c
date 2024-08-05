@@ -467,7 +467,6 @@ void game_num_fix_bugs(void)
     game_num_aud_update_tech = true;
     game_num_update_on_load = false;
     game_num_combat_trans_fix = true;
-    game_num_waste_adjust_fix = true;
     game_num_eco_slider_slack = 0;
     game_num_reset_tform_to_max = false;
 }
