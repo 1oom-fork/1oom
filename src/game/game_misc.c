@@ -250,10 +250,16 @@ void game_update_eco_on_waste(struct game_s *g, player_id_t player_i, bool force
             v = game_planet_get_waste_percent(NULL, g, i, false);
             if ((p->slider[PLANET_SLIDER_ECO] < v) || force_adjust) {
                 int16_t eco_diff = v - p->slider[PLANET_SLIDER_ECO];
+                int16_t sum = 100;
+                if (game_num_waste_adjust_fix) {
+                    sum = p->slider[PLANET_SLIDER_SHIP] + p->slider[PLANET_SLIDER_DEF] + p->slider[PLANET_SLIDER_IND] + p->slider[PLANET_SLIDER_TECH];
+                }
                 p->slider[PLANET_SLIDER_ECO] = v;
-                p->slider[PLANET_SLIDER_SHIP] -= (p->slider[PLANET_SLIDER_SHIP] * eco_diff) / 100;
-                p->slider[PLANET_SLIDER_DEF] -= (p->slider[PLANET_SLIDER_DEF] * eco_diff) / 100;
-                p->slider[PLANET_SLIDER_IND] -= (p->slider[PLANET_SLIDER_IND] * eco_diff) / 100;
+                if (sum > 0) {
+                    p->slider[PLANET_SLIDER_SHIP] -= (p->slider[PLANET_SLIDER_SHIP] * eco_diff) / sum;
+                    p->slider[PLANET_SLIDER_DEF] -= (p->slider[PLANET_SLIDER_DEF] * eco_diff) / sum;
+                    p->slider[PLANET_SLIDER_IND] -= (p->slider[PLANET_SLIDER_IND] * eco_diff) / sum;
+                }
             }
             SETMAX(p->slider[PLANET_SLIDER_SHIP], 0);
             SETMAX(p->slider[PLANET_SLIDER_DEF], 0);
