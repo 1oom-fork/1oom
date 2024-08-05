@@ -250,11 +250,11 @@ void game_update_eco_on_waste(struct game_s *g, int player_i, bool force_adjust)
             int16_t left;
             v = game_planet_get_waste_percent(NULL, g, i, false);
             if ((p->slider[PLANET_SLIDER_ECO] < v) || force_adjust) {
-                left = 100 - (v - p->slider[PLANET_SLIDER_ECO]);
+                int16_t eco_diff = v - p->slider[PLANET_SLIDER_ECO];
                 p->slider[PLANET_SLIDER_ECO] = v;
-                p->slider[PLANET_SLIDER_SHIP] = (p->slider[PLANET_SLIDER_SHIP] * left) / 100;
-                p->slider[PLANET_SLIDER_DEF] = (p->slider[PLANET_SLIDER_DEF] * left) / 100;
-                p->slider[PLANET_SLIDER_IND] = (p->slider[PLANET_SLIDER_IND] * left) / 100;
+                p->slider[PLANET_SLIDER_SHIP] -= (p->slider[PLANET_SLIDER_SHIP] * eco_diff) / 100;
+                p->slider[PLANET_SLIDER_DEF] -= (p->slider[PLANET_SLIDER_DEF] * eco_diff) / 100;
+                p->slider[PLANET_SLIDER_IND] -= (p->slider[PLANET_SLIDER_IND] * eco_diff) / 100;
             }
             SETMAX(p->slider[PLANET_SLIDER_SHIP], 0);
             SETMAX(p->slider[PLANET_SLIDER_DEF], 0);
