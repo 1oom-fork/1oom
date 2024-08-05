@@ -250,40 +250,11 @@ void game_update_eco_on_waste(struct game_s *g, int player_i, bool force_adjust)
             int16_t left;
             v = game_planet_get_waste_percent(NULL, g, i, false);
             if ((p->slider[PLANET_SLIDER_ECO] < v) || force_adjust) {
-                if (game_num_waste_adjust_fix) {
-                    int sum;
-                    sum = p->slider[PLANET_SLIDER_SHIP] + p->slider[PLANET_SLIDER_DEF] + p->slider[PLANET_SLIDER_IND] + p->slider[PLANET_SLIDER_TECH];
-                    left = sum + p->slider[PLANET_SLIDER_ECO] - v;
-                    SETMAX(left, 0);
-                    if (sum > 0) {
-                        int16_t left2, maxt;
-                        planet_slider_i_t maxi = 0;
-                        maxt = -1;
-                        left2 = left;
-                        for (planet_slider_i_t si = PLANET_SLIDER_SHIP; si <= PLANET_SLIDER_TECH; ++si) {
-                            int16_t t;
-                            if (si == PLANET_SLIDER_ECO) {
-                                continue;
-                            }
-                            p->slider[si] = t = (p->slider[si] * left) / sum;
-                            left2 -= t;
-                            if (maxt < t) {
-                                maxt = t;
-                                maxi = si;
-                            }
-                        }
-                        if (left2 > 0) {
-                            p->slider[maxi] += left2;
-                        }
-                    }
-                } else {
-                    /* WASBUG this can result in the sum of sliders exceeding 100 */
-                    left = 100 - (v - p->slider[PLANET_SLIDER_ECO]);
-                    p->slider[PLANET_SLIDER_SHIP] = (p->slider[PLANET_SLIDER_SHIP] * left) / 100;
-                    p->slider[PLANET_SLIDER_DEF] = (p->slider[PLANET_SLIDER_DEF] * left) / 100;
-                    p->slider[PLANET_SLIDER_IND] = (p->slider[PLANET_SLIDER_IND] * left) / 100;
-                }
+                left = 100 - (v - p->slider[PLANET_SLIDER_ECO]);
                 p->slider[PLANET_SLIDER_ECO] = v;
+                p->slider[PLANET_SLIDER_SHIP] = (p->slider[PLANET_SLIDER_SHIP] * left) / 100;
+                p->slider[PLANET_SLIDER_DEF] = (p->slider[PLANET_SLIDER_DEF] * left) / 100;
+                p->slider[PLANET_SLIDER_IND] = (p->slider[PLANET_SLIDER_IND] * left) / 100;
             }
             SETMAX(p->slider[PLANET_SLIDER_SHIP], 0);
             SETMAX(p->slider[PLANET_SLIDER_DEF], 0);
