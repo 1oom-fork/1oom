@@ -121,6 +121,9 @@ waste_adjust_fix : 0..1, 0
     elimination slider adjustment code. This fix does not address the effects
     of integer division.
 
+slider_respects_locks : 0..1, 0
+  - Waste elimination slider autoadjustment does not change locked sliders.
+
 pop_tenths_fix: 0..1, 0
   - Do not add population tenths twice.
     MOO1 adds population tenths twice when calculating population growth.
