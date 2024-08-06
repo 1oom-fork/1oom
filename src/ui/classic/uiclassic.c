@@ -51,7 +51,6 @@ void ui_extra_toggle_preset(bool enabled)
     ui_kbd_cursor_keys_fix = enabled;
     ui_mouse_lmb_fix = enabled;
     ui_mouse_warp_disabled = enabled;
-    ui_sm_mouse_scroll = enabled;
 }
 
 static bool check_ui_scale(void *var)
