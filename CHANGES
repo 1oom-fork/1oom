@@ -1,3 +1,17 @@
+1oom-v1.10.3
+------------
+
+This release is a general cleanup and improvement to the
+game_update_eco_on_waste code:
+
+- The old implementation of waste_adjust_fix has been replaced
+with a simpler and clearer one, based on the original code
+- Added slider_respects_locks rule, which prevents the functions
+above from changing locked sliders
+
+The changes above are in preparation for the introduction of
+more extensive game controls. Bug reports are welcome.
+
 1oom-v1.10.2
 ------------
 
