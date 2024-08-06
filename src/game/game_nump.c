@@ -201,6 +201,7 @@ static const struct numtbl_s {
     DEFNUMITEML(first_tech_rp_fix, NUMTYPE_BOOL, 0, 1),
     DEFNUMITEML(waste_calc_fix, NUMTYPE_BOOL, 0, 1),
     DEFNUMITEML(waste_adjust_fix, NUMTYPE_BOOL, 0, 1),
+    DEFNUMITEML(slider_respects_locks, NUMTYPE_BOOL, 0, 1),
     DEFNUMITEML(pop_tenths_fix, NUMTYPE_BOOL, 0, 1),
     DEFNUMITEML(factory_cost_fix, NUMTYPE_BOOL, 0, 1),
     DEFNUMITEML(doom_stack_fix, NUMTYPE_BOOL, 0, 1),
