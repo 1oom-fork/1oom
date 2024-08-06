@@ -248,18 +248,37 @@ void game_update_eco_on_waste(struct game_s *g, int player_i, bool force_adjust)
         if (p->owner == player_i) {
             uint16_t v;
             int16_t left;
+            bool check_locks = !force_adjust && game_num_slider_respects_locks && IS_HUMAN(g, p->owner);
             v = game_planet_get_waste_percent(NULL, g, i, false);
-            if ((p->slider[PLANET_SLIDER_ECO] < v) || force_adjust) {
+            if (check_locks && p->slider_lock[PLANET_SLIDER_ECO]) {
+            } else if (check_locks && p->slider_lock[PLANET_SLIDER_SHIP] && p->slider_lock[PLANET_SLIDER_DEF] && p->slider_lock[PLANET_SLIDER_IND] && p->slider_lock[PLANET_SLIDER_TECH]) {
+            } else if ((p->slider[PLANET_SLIDER_ECO] < v) || force_adjust) {
                 int16_t eco_diff = v - p->slider[PLANET_SLIDER_ECO];
                 int16_t sum = 100;
                 if (game_num_waste_adjust_fix) {
                     sum = p->slider[PLANET_SLIDER_SHIP] + p->slider[PLANET_SLIDER_DEF] + p->slider[PLANET_SLIDER_IND] + p->slider[PLANET_SLIDER_TECH];
                 }
+                if (check_locks) {
+                    int16_t sum_locks = 0;
+                    for (int si = 0; si < PLANET_SLIDER_NUM; ++si){
+                        if (p->slider_lock[si]) {
+                            sum_locks += p->slider[si];
+                        }
+                    }
+                    sum -= sum_locks;
+                    SETMIN(v, 100 - sum_locks);
+                }
                 p->slider[PLANET_SLIDER_ECO] = v;
                 if (sum > 0) {
-                    p->slider[PLANET_SLIDER_SHIP] -= (p->slider[PLANET_SLIDER_SHIP] * eco_diff) / sum;
-                    p->slider[PLANET_SLIDER_DEF] -= (p->slider[PLANET_SLIDER_DEF] * eco_diff) / sum;
-                    p->slider[PLANET_SLIDER_IND] -= (p->slider[PLANET_SLIDER_IND] * eco_diff) / sum;
+                    if (!check_locks || !p->slider_lock[PLANET_SLIDER_SHIP]) {
+                        p->slider[PLANET_SLIDER_SHIP] -= (p->slider[PLANET_SLIDER_SHIP] * eco_diff) / sum;
+                    }
+                    if (!check_locks || !p->slider_lock[PLANET_SLIDER_DEF]) {
+                        p->slider[PLANET_SLIDER_DEF] -= (p->slider[PLANET_SLIDER_DEF] * eco_diff) / sum;
+                    }
+                    if (!check_locks || !p->slider_lock[PLANET_SLIDER_IND]) {
+                        p->slider[PLANET_SLIDER_IND] -= (p->slider[PLANET_SLIDER_IND] * eco_diff) / sum;
+                    }
                 }
             }
             SETMAX(p->slider[PLANET_SLIDER_SHIP], 0);
@@ -272,7 +291,9 @@ void game_update_eco_on_waste(struct game_s *g, int player_i, bool force_adjust)
             left -= p->slider[PLANET_SLIDER_IND];
             left -= p->slider[PLANET_SLIDER_ECO];
             SETMAX(left, 0);
-            p->slider[PLANET_SLIDER_TECH] = left;
+            if (!check_locks || !p->slider_lock[PLANET_SLIDER_TECH]) {
+                p->slider[PLANET_SLIDER_TECH] = left;
+            }
         }
     }
 }

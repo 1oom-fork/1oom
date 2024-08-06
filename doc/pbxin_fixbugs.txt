@@ -54,6 +54,7 @@
 4,first_tech_rp_fix,0,1
 4,waste_calc_fix,0,1
 4,waste_adjust_fix,0,1
+4,slider_respects_locks,0,1
 4,pop_tenths_fix,0,0
 4,factory_cost_fix,0,0
 4,eco_slider_slack,0,0
