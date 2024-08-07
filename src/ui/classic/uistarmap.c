@@ -17,6 +17,7 @@
 #include "kbd.h"
 #include "lbxgfx.h"
 #include "lbxfont.h"
+#include "lib.h"
 #include "log.h"
 #include "rnd.h"
 #include "types.h"
@@ -24,6 +25,7 @@
 #include "uidraw.h"
 #include "uidefs.h"
 #include "uidelay.h"
+#include "uidialog.h"
 #include "uihelp.h"
 #include "uiobj.h"
 #include "uisearch.h"
@@ -213,8 +215,8 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
     int16_t oi_b, oi_c, oi_starview1, oi_starview2, oi_shippic, oi_finished, oi_equals, oi_hash,
             oi_f2, oi_f3, oi_f4, oi_f5, oi_f6, oi_f7, oi_f8, oi_f9, oi_f10,
             oi_alt_galaxy, oi_alt_p, oi_alt_events,
-            oi_wheelshippic, oi_search
-            ;
+            oi_wheelshippic, oi_search,
+            oi_adj[PLANET_SLIDER_NUM];
     int16_t scrollmisc = 0;
     struct starmap_data_s d;
 
@@ -245,6 +247,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
         d.sm.oi_reloc = UIOBJI_INVALID; \
         d.sm.oi_trans = UIOBJI_INVALID; \
         UIOBJI_SET_TBL3_INVALID(d.sm.oi_tbl_slider_lock, d.sm.oi_tbl_slider_minus, d.sm.oi_tbl_slider_plus); \
+        UIOBJI_SET_TBL_INVALID(oi_adj); \
     } while (0)
 
     UIOBJ_CLEAR_LOCAL();
@@ -540,6 +543,40 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
                 flag_done = true;
             }
         }
+        for (int i = 0; i < PLANET_SLIDER_NUM; ++i) {
+            if (oi1 == oi_adj[i]) {
+                char buf[0x96];
+                if (kbd_is_modifier(MOO_MOD_CTRL)) {
+                    int button;
+                    lib_strcpy(buf, game_str_nt_inc, sizeof(buf));
+                    lib_strcat(buf, game_str_adj_slider[i], sizeof(buf));
+                    lib_strcat(buf, game_str_adj_ratios, sizeof(buf));
+                    button = ui_dialog_choose(g, active_player, buf, 50, 30, 0);
+                    if (button) {
+                        for (uint8_t pi = 0; pi < g->galaxy_stars; ++pi) {
+                            if (g->planet[pi].owner == active_player) {
+                                game_planet_adjust_percent2(g, pi, i, game_num_tbl_tech_autoadj[button], true);
+                            }
+                        }
+                    }
+                    flag_done = true;
+                    break;
+                } else if (kbd_is_modifier(MOO_MOD_ALT)) {
+                    lib_strcpy(buf, game_str_adj_set, sizeof(buf));
+                    lib_strcat(buf, game_str_adj_slider[i], sizeof(buf));
+                    lib_strcat(buf, game_str_adj_max, sizeof(buf));
+                    if (ui_dialog_yesno(g, active_player, buf, 50, 30, 0)) {
+                        for (uint8_t pi = 0; pi < g->galaxy_stars; ++pi) {
+                            if (g->planet[pi].owner == active_player) {
+                                game_planet_adjust_percent2(g, pi, i, 100, true);
+                            }
+                        }
+                    }
+                    flag_done = true;
+                    break;
+                }
+            }
+        }
         for (int i = 0; i < g->galaxy_stars; ++i) {
             if ((oi1 == d.oi_tbl_stars[i]) && !g->evn.build_finished_num[active_player]) {
                 g->planet_focus_i[active_player] = i;
@@ -573,6 +610,13 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             if (p->owner == active_player) {
                 oi_shippic = uiobj_add_mousearea(228, 139, 275, 175, MOO_KEY_UNKNOWN);
                 oi_wheelshippic = uiobj_add_mousewheel(228, 139, 275, 175, &scrollmisc);
+            }
+            if (ui_extra_enabled) {
+                int y0 = 82;
+                for (int i = 0; i < PLANET_SLIDER_NUM; ++i) {
+                    oi_adj[i] = uiobj_add_mousearea( 288, y0, 312, y0 + 6, MOO_KEY_UNKNOWN );
+                    y0 += 11;
+                }
             }
             ui_starmap_fill_oi_tbls(&d);
             if (!ui_sm_no_question_mark_cursor && BOOLVEC_IS1(p->explored, active_player)) {
