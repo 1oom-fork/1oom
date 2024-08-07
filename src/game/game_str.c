@@ -484,6 +484,12 @@ const char *game_str_nt_ecohost = "ecology ratio of your colonies with hostile e
 const char *game_str_tbl_nt_adj[4] = {
     "NO", "+25%", "+50%", "+75%"
 };
+const char *game_str_adj_set = "set the ";
+const char *game_str_adj_ratios = " ratios of all of your colonies?";
+const char *game_str_adj_max = " ratios of all of your colonies to maximum?";
+const char *game_str_adj_slider[PLANET_SLIDER_NUM] = {
+    "ship", "defense", "industry", "ecology", "technology"
+};
 
 const char *game_str_ra_nocont = "No Contact";
 const char *game_str_ra_notpres = "Not Present";
