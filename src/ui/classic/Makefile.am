@@ -24,6 +24,8 @@ libuiclassic_a_SOURCES = \
     uidelay.h \
     uidesign.c \
     uidesign.h \
+    uidialog.c \
+    uidialog.h \
     uidraw.c \
     uidraw.h \
     uielection.c \
