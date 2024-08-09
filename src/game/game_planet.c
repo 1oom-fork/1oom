@@ -100,6 +100,27 @@ uint8_t game_planet_get_random(struct game_s *g, player_id_t owner)
     }
 }
 
+void game_planet_adjust_max(struct game_s *g, uint8_t planet_i, planet_slider_i_t si)
+{
+    planet_t *p = &(g->planet[planet_i]);
+    if (game_num_slider_respects_locks && p->slider_lock[si]) return;
+    for (planet_slider_i_t j = 0; j < PLANET_SLIDER_NUM; ++j) {
+        if (game_num_slider_respects_locks && p->slider_lock[j]) continue;
+        if (si == j) continue;
+        if (j == PLANET_SLIDER_ECO) {
+            int w = game_planet_get_waste_percent(NULL, g, p, true);
+            if (w < p->slider[j]) {
+                int diff = p->slider[j] - w;
+                p->slider[si] += diff;
+                p->slider[j] -= diff;
+            }
+        } else {
+            p->slider[si] += p->slider[j];
+            p->slider[j] = 0;
+        }
+    }
+}
+
 void game_planet_adjust_percent(struct game_s *g, player_id_t owner, planet_slider_i_t si, uint8_t percent, int growth)
 {
     for (int i = 0; i < g->galaxy_stars; ++i) {
