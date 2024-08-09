@@ -312,6 +312,7 @@ extern const char *game_str_adj_set;
 extern const char *game_str_adj_ratios;
 extern const char *game_str_adj_max;
 extern const char *game_str_adj_slider[PLANET_SLIDER_NUM];
+extern const char *game_str_adj_lock;
 extern const char *game_str_tbl_nt_adj[4];
 extern const char *game_str_ra_nocont;
 extern const char *game_str_ra_notpres;
