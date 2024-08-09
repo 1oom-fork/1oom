@@ -129,3 +129,10 @@ Summary:
 This is not a complete list of changes
 
 Bug reports are welcome
+
+1oom-fork-v1.7.6
+----------------
+
+The list of changes for this version of the fork is irrelevant, since
+subsequent versions reject or modify most of the changes in order to
+improve the quality of the project and its compliance with the original.
