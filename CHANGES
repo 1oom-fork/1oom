@@ -1,3 +1,17 @@
+1oom-v1.10.4
+------------
+
+This release adds the ability to change sliders for all colonies
+at once in one click:
+
+- Added dialog box code
+- Holding the Ctrl key while locking a colony slider allows you to lock sliders
+  for all colonies at once
+- Holding the Alt or Ctrl key while clicking on the frame with the slider value
+  text allows you to adjust sliders for all colonies at once
+- Most smart slider manipulations now depend on the slider_respects_locks rule,
+  with the exception of the new technologies UI
+
 1oom-v1.10.3
 ------------
 
