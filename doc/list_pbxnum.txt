@@ -145,7 +145,8 @@ waste_adjust_fix : 0..1, 0
     of integer division.
 
 slider_respects_locks : 0..1, 0
-  - Waste elimination slider autoadjustment does not change locked sliders.
+  - Waste elimination slider autoadjustment and most slider controls does not
+    change locked sliders.
 
 pop_tenths_fix: 0..1, 0
   - Do not add population tenths twice.
