@@ -388,8 +388,24 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
         }
         for (planet_slider_i_t i = 0; i < PLANET_SLIDER_NUM; ++i) {
             if (oi1 == d.sm.oi_tbl_slider_lock[i]) {
-                p->slider_lock[i] = !p->slider_lock[i];
-                ui_sound_play_sfx_24();
+                char buf[0x96];
+                if (kbd_is_modifier(MOO_MOD_CTRL)) {
+                    lib_strcpy(buf, game_str_adj_set, sizeof(buf));
+                    lib_strcat(buf, game_str_adj_slider[i], sizeof(buf));
+                    lib_strcat(buf, game_str_adj_lock, sizeof(buf));
+                    if (ui_dialog_yesno(g, active_player, buf, 50, 30, 0)) {
+                        bool locked = p->slider_lock[i];
+                        for (uint8_t pi = 0; pi < g->galaxy_stars; ++pi) {
+                            if (g->planet[pi].owner == active_player) {
+                                g->planet[pi].slider_lock[i] = !locked;
+                            }
+                        }
+                    }
+                    flag_done = true;
+                } else {
+                    p->slider_lock[i] = !p->slider_lock[i];
+                    ui_sound_play_sfx_24();
+                }
             } else if (!p->slider_lock[i]) {
                 bool do_adj = false;
                 int v;
