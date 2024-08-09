@@ -152,6 +152,7 @@ struct game_s;
 
 extern void game_planet_destroy(struct game_s *g, uint8_t planet_i, player_id_t attacker);
 extern uint8_t game_planet_get_random(struct game_s *g, player_id_t owner);
+extern void game_planet_adjust_percent2(struct game_s *g, uint8_t planet_i, planet_slider_i_t si, uint8_t percent, bool respect_locks);
 extern void game_planet_adjust_percent(struct game_s *g, player_id_t owner, planet_slider_i_t si, uint8_t percent, int growth);
 extern int game_planet_get_waste_percent(int *r_waste, const struct game_s *g, uint8_t planet_i, bool subtract_transports);
 extern int game_adjust_prod_by_special(int prod, planet_special_t special);
