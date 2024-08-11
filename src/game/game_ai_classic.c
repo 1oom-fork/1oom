@@ -439,7 +439,7 @@ static shipcount_t game_ai_classic_turn_p1_spawn_colony_ship(struct game_s *g, s
       || (ait->num_fronts == 0) /* never true? */
       || (shipi == -1)
       || (e->total_production_bc == 0)
-      || ((g->ai_id == GAME_AI_CLASSIC) && (shipn > 3)) /* WASBUG 4th colony ship disables sending colony ships */
+      || (!game_num_ai_4_colony_curse_fix && (shipn > 3)) /* WASBUG 4th colony ship disables sending colony ships */
     ) {
         return 0;
     }

@@ -12,6 +12,9 @@ deterministic : 0..1, 1
 ai_trans_range_fix : 0..1, 0
   - In MOO1 AI never checks range when sending transport.
 
+ai_4_colony_curse_fix :
+  - In MOO1 4th colony ship disables sending colony ships.
+
 bt_turn_max : 1..65535, 50
   - The number of battle turns before a forced retreat.
 
