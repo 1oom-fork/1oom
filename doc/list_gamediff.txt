@@ -30,7 +30,6 @@ Much of this file is based on the readme from the unofficial v1.40m patch.
     - AI checks the correct mood variable when asked for a peace treaty
     - AI-AI stop war check uses the same relation value as the make treaty/trade checks instead of the last diplo message subtype
     - AI huge, armored ships now cannot cause a negative overflow
-    - 4th colony ship curse removed
     - ignore journey length for closest in-range colony ship
     - do not try to send one colony ship to multiple destinations
     - AIs now actually take their treaties in consideration when asked to declare war on their allies
