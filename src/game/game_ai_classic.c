@@ -441,7 +441,7 @@ static bool game_ai_classic_turn_p1_have_colony_ship(struct game_s *g, struct ai
         return false;
     }
     shipn = srd->shipcount[shipi];
-    if ((g->ai_id == GAME_AI_CLASSIC) && (shipn > 3)) { /* WASBUG 4th colony ship disables sending colony ships */
+    if (!game_num_ai_4_colony_curse_fix && (shipn > 3)) {
         return false;
     }
     planeti = ait->tbl_front_planet[rnd_0_nm1(ait->num_fronts, &g->seed)];
