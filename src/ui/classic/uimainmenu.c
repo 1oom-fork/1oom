@@ -511,6 +511,7 @@ static void main_menu_make_options_rules_ai_page(struct main_menu_data_s *d)
     menu_make_bool(menu_allocate_item(), "Transport Range Fix", &game_num_ai_trans_range_fix, MOO_KEY_UNKNOWN);
     menu_make_bool(menu_allocate_item(), "4th Colony Curse Fix", &game_num_ai_4_colony_curse_fix, MOO_KEY_UNKNOWN);
     menu_make_bool(menu_allocate_item(), "Fleet Cheating Fix", &game_num_ai_fleet_cheating_fix, MOO_KEY_UNKNOWN);
+    menu_make_bool(menu_allocate_item(), "Doom Stack Fix", &game_num_doom_stack_fix, MOO_KEY_UNKNOWN);
     menu_make_back(menu_allocate_item());
 }
 

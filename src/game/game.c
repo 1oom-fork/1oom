@@ -613,6 +613,7 @@ const struct cfg_items_s game_cfg_items[] = {
     CFG_ITEM_BOOL("msg_filter_shield", &game_opt_message_filter[FINISHED_SHIELD]),
     CFG_ITEM_BOOL("rules_ai_transport_range_fix", &game_num_ai_trans_range_fix),
     CFG_ITEM_BOOL("rules_ai_4th_colony_curse_fix", &game_num_ai_4_colony_curse_fix),
+    CFG_ITEM_BOOL("rules_doom_stack_fix", &game_num_doom_stack_fix),
     CFG_ITEM_BOOL("rules_bt_no_tohit_acc", &game_num_bt_no_tohit_acc),
     CFG_ITEM_BOOL("rules_bt_oracle_fix", &game_num_bt_oracle_fix),
     CFG_ITEM_BOOL("rules_bt_precap_tohit", &game_num_bt_precap_tohit),
