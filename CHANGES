@@ -1,3 +1,10 @@
+1oom-v1.10.5
+------------
+
+- Planets UI: Added max population column as in 1.7.6
+- AI: 4th colony curse fix is now a separate rule
+- AI: Doom stack fix is now a separate rule and disabled by default
+
 1oom-v1.10.4
 ------------
 
