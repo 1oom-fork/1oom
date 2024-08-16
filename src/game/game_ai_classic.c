@@ -144,12 +144,10 @@ struct ai_turn_p2_s {
 
 static int game_ai_best_speed(const struct game_s *g, player_id_t player_i)
 {
-    int v = game_tech_player_best_tech(g, TECH_FIELD_PROPULSION, 0, 6, 50, player_i);
-    if (g->ai_id != GAME_AI_CLASSIC) {
-        /* WASBUG v is the engine tech level (0, 6, ...) while caller expects speed (0, 1, ...) */
-        v /= 6;
-    }
-    return v + 3;
+    /* FIXME: The name of the function does not correctly reflect its meaning.
+       Previous fixes to this function resulted in serious bugs in AI behavior.
+    */
+    return game_tech_player_best_tech(g, TECH_FIELD_PROPULSION, 0, 6, 50, player_i) + 3;
 }
 
 static void game_ai_classic_turn_p1_send_scout(struct game_s *g, struct ai_turn_p1_s *ait, player_id_t pi)
