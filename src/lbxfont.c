@@ -665,13 +665,6 @@ int lbxfont_print_str_center_limit(int x, int y, const char *str, int lx0, int l
     return lbxfont_print_str_normal_limit(x - w / 2, y, str, lx0, ly0, lx1, ly1, pitch);
 }
 
-int lbxfont_print_str_center_limit_unconst(int x, int y, const char *str, int lx0, int ly0, int lx1, int ly1, uint16_t pitch)
-{
-    char buf[1024];
-    lib_strcpy(buf, str, sizeof(buf));
-    return lbxfont_print_str_center_limit(x, y, buf, lx0, ly0, lx1, ly1, pitch);
-}
-
 void lbxfont_print_str_split(int x, int y, int maxw, const char *str, int type, uint16_t pitch, uint16_t maxy)
 {
     split_str_t s;
