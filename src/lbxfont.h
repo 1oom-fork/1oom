@@ -41,7 +41,6 @@ extern int lbxfont_print_str_right(int x, int y, const char *str, uint16_t pitch
 extern void lbxfont_print_str_split(int x, int y, int maxw, const char *str, int type, uint16_t pitch, uint16_t maxy);
 extern int lbxfont_print_str_normal_limit(int x, int y, const char *str, int lx0, int ly0, int lx1, int ly1, uint16_t pitch);
 extern int lbxfont_print_str_center_limit(int x, int y, const char *str, int lx0, int ly0, int lx1, int ly1, uint16_t pitch);
-extern int lbxfont_print_str_center_limit_unconst(int x, int y, const char *str, int lx0, int ly0, int lx1, int ly1, uint16_t pitch);
 extern int lbxfont_print_num_normal(int x, int y, int num, uint16_t pitch);
 extern int lbxfont_print_num_center(int x, int y, int num, uint16_t pitch);
 extern int lbxfont_print_num_right(int x, int y, int num, uint16_t pitch);
