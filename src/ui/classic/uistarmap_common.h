@@ -121,6 +121,19 @@ struct starmap_data_s {
         ui_starmap_clear_oi_ctrl(&d); \
     } while (0)
 
+#define STARMAP_UIOBJ_FILL_FX() \
+    do { \
+        oi_f2 = uiobj_add_inputkey(MOO_KEY_F2); \
+        oi_f3 = uiobj_add_inputkey(MOO_KEY_F3); \
+        oi_f4 = uiobj_add_inputkey(MOO_KEY_F4); \
+        oi_f5 = uiobj_add_inputkey(MOO_KEY_F5); \
+        oi_f6 = uiobj_add_inputkey(MOO_KEY_F6); \
+        oi_f7 = uiobj_add_inputkey(MOO_KEY_F7); \
+        oi_f8 = uiobj_add_inputkey(MOO_KEY_F8); \
+        oi_f9 = uiobj_add_inputkey(MOO_KEY_F9); \
+        oi_f10 = uiobj_add_inputkey(MOO_KEY_F10); \
+    } while (0)
+
 #define STARMAP_UIOBJ_CLEAR_FX() \
     do { \
         oi_f2 = UIOBJI_INVALID; \
