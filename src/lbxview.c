@@ -585,6 +585,8 @@ int main_do(void)
             }
             drawscreen();
             hw_video_draw_buf();
+        } else {
+            hw_video_redraw_front();
         }
     }
 done:
