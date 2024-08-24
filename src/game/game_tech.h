@@ -8,7 +8,6 @@
 
 struct game_s;
 struct game_aux_s;
-struct empiretechorbit_s;
 
 extern const uint8_t tech_reduce_50percent_per_10pts[];
 extern const uint8_t tech_reduce_25percent_per_10pts[];
@@ -28,8 +27,8 @@ extern uint8_t game_tech_get_tier(const struct game_aux_s *gaux, tech_field_t fi
 extern uint8_t game_tech_get_gfx_i(const struct game_aux_s *gaux, tech_field_t field, int tech);
 extern const char *game_tech_get_name(const struct game_aux_s *gaux, tech_field_t field, int tech, char *buf);
 extern const char *game_tech_get_descr(const struct game_aux_s *gaux, tech_field_t field, int tech, char *buf);
-extern int game_tech_current_research_percent1(struct empiretechorbit_s *e, tech_field_t field);
-extern int game_tech_current_research_percent2(struct empiretechorbit_s *e, tech_field_t field);
+extern int game_tech_current_research_percent1(const struct game_s *g, player_id_t player_i, tech_field_t field);
+extern int game_tech_current_research_percent2(const struct game_s *g, player_id_t player_i, tech_field_t field);
 extern void game_tech_get_new(struct game_s *g, player_id_t player, tech_field_t field, uint8_t tech, techsource_t source, int a8, player_id_t stolen_from, bool flag_frame);
 extern int game_tech_get_next_techs(const struct game_s *g, player_id_t player, tech_field_t field, uint8_t *tbl);
 extern uint32_t game_tech_get_next_rp(const struct game_s *g, player_id_t player, tech_field_t field, uint8_t tech);
