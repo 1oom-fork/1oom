@@ -671,10 +671,11 @@ const char *game_tech_get_newtech_msg(const struct game_s *g, player_id_t pi, st
     return buf;
 }
 
-int game_tech_current_research_percent1(const struct empiretechorbit_s *e, tech_field_t field)
+int game_tech_current_research_percent1(const struct game_s *g, player_id_t player, tech_field_t field)
 {
     uint32_t invest, cost;
     int slider, t1, t3, percent;
+    const empiretechorbit_t *e = &(g->eto[player]);
     cost = e->tech.cost[field];
     slider = e->tech.slider[field];
     if ((cost == 0) || (slider == 0)) {
@@ -689,10 +690,11 @@ int game_tech_current_research_percent1(const struct empiretechorbit_s *e, tech_
     return percent;
 }
 
-int game_tech_current_research_percent2(const struct empiretechorbit_s *e, tech_field_t field)
+int game_tech_current_research_percent2(const struct game_s *g, player_id_t player, tech_field_t field)
 {
     uint32_t invest, cost;
     int slider, t1, t3;
+    const empiretechorbit_t *e = &(g->eto[player]);
     cost = e->tech.cost[field];
     slider = e->tech.slider[field];
     if ((cost == 0) || (slider == 0)) {
@@ -712,10 +714,11 @@ int game_tech_current_research_percent2(const struct empiretechorbit_s *e, tech_
     }
 }
 
-bool game_tech_current_research_has_max_bonus(const struct empiretechorbit_s *e, tech_field_t field)
+bool game_tech_current_research_has_max_bonus(const struct game_s *g, player_id_t player, tech_field_t field)
 {
     uint32_t invest, cost;
     int slider, t1, t3;
+    const empiretechorbit_t *e = &(g->eto[player]);
     cost = e->tech.cost[field];
     slider = e->tech.slider[field];
     if ((cost == 0) || (slider == 0)) {
@@ -727,9 +730,10 @@ bool game_tech_current_research_has_max_bonus(const struct empiretechorbit_s *e,
     return (t1 <= (t3 * 2) && t3 > 0);
 }
 
-void game_tech_set_to_max_bonus(struct empiretechorbit_s *e, tech_field_t field)
+void game_tech_set_to_max_bonus(struct game_s *g, player_id_t player, tech_field_t field)
 {
-    bool has_bonus, had_bonus = game_tech_current_research_has_max_bonus(e, field);
+    bool has_bonus, had_bonus = game_tech_current_research_has_max_bonus(g, player, field);
+    empiretechorbit_t *e = &(g->eto[player]);
     techdata_t *t = &(e->tech);
     int16_t prev, v = t->slider[field];
     do {
@@ -738,7 +742,7 @@ void game_tech_set_to_max_bonus(struct empiretechorbit_s *e, tech_field_t field)
         SETRANGE(v, 0, 100);
         t->slider[field] = v;
         game_adjust_slider_group(t->slider, field, v, TECH_FIELD_NUM, t->slider_lock);
-        has_bonus = game_tech_current_research_has_max_bonus(e, field);
+        has_bonus = game_tech_current_research_has_max_bonus(g, player, field);
         v = t->slider[field];
     } while ((has_bonus == had_bonus) && (v != prev));
 }

@@ -34,7 +34,7 @@ static void ui_tech_look_sliders(const struct game_s *g, int api)
         printf("%c%c %12s: %3i ", t->slider_lock[f] ? '*' : ' ', slchars[f], game_str_tbl_te_field[f], t->slider[f]);
         if ((t->percent[f] < 99) || (t->project[f] != 0)) {
             int complpercent;
-            complpercent = game_tech_current_research_percent2(e, f);
+            complpercent = game_tech_current_research_percent2(g, api, f);
             if (complpercent > 0) {
                 if (complpercent < 10) {
                     putchar(' ');
@@ -44,14 +44,14 @@ static void ui_tech_look_sliders(const struct game_s *g, int api)
                 #define LIGHTBULB_CHARS 8
                 const char lightbulb[LIGHTBULB_CHARS] = { ' ', '.', ',', '_', 'o', 'O', '?', '!' };
                 int pos;
-                complpercent = game_tech_current_research_percent1(e, f);
+                complpercent = game_tech_current_research_percent1(g, api, f);
                 pos = (complpercent * LIGHTBULB_CHARS) / 100;
                 putchar(' ');
                 putchar(lightbulb[pos]);
                 putchar(' ');
             }
             putchar(' ');
-            putchar(game_tech_current_research_has_max_bonus(e, f) ? 'X' : ' ');
+            putchar(game_tech_current_research_has_max_bonus(g, api, f) ? 'X' : ' ');
         } else {
             fputs(game_str_te_max, stdout);
         }

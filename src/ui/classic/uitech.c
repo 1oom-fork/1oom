@@ -150,7 +150,7 @@ static void tech_draw_cb(void *vptr)
             ui_draw_slider(227, y + 1, t->slider[i], 2, -1, t->slider_lock[i] ? 0x22 : 0x73, ui_scale);
         }
         lbxfont_select(0, 6, 0, 0);
-        lbxfont_set_color_c_n((g->gaux->flag_cheat_tech_hint && game_tech_current_research_has_max_bonus(e, i)) ? 0x41 : 0x26, 5);
+        lbxfont_set_color_c_n((g->gaux->flag_cheat_tech_hint && game_tech_current_research_has_max_bonus(g, d->api, i)) ? 0x41 : 0x26, 5);
         lbxfont_print_num_right(307, y, t->percent[i], UI_SCREEN_W, ui_scale);
     }
 
@@ -215,14 +215,14 @@ static void tech_draw_cb(void *vptr)
         y = 21 * i + 21;
         if ((t->percent[i] < 99) || (t->project[i] != 0)) { /* WASBUG MOO1 has no project check and shows MAX early */
             int complpercent;
-            complpercent = game_tech_current_research_percent2(e, i);
+            complpercent = game_tech_current_research_percent2(g, d->api, i);
             if (complpercent > 0) {
                 lib_sprintf(buf, sizeof(buf), "%i%%", complpercent);
                 lbxfont_select_set_12_1(2, 0xd, 0, 0);
                 lbxfont_print_str_right(295, y + 3, buf, UI_SCREEN_W, ui_scale);
             } else {
                 int y0, y1;
-                complpercent = game_tech_current_research_percent1(e, i);
+                complpercent = game_tech_current_research_percent1(g, d->api, i);
                 lbxgfx_draw_frame(287, y, ui_data.gfx.screens.litebulb_off, UI_SCREEN_W, ui_scale);
                 y0 = y + (8 - (complpercent * 4) / 50);
                 y1 = y + 7;
@@ -350,7 +350,7 @@ void ui_tech(struct game_s *g, player_id_t active_player)
                 game_adjust_slider_group(t->slider, i, v, TECH_FIELD_NUM, t->slider_lock);
             } else if (oi == oi_tbl_bonus[i]) {
                 ui_sound_play_sfx_24();
-                game_tech_set_to_max_bonus(&(g->eto[active_player]), i);
+                game_tech_set_to_max_bonus(g, active_player, i);
             }
         }
         for (int i = 0; i < TECH_ON_SCREEN; ++i) {
