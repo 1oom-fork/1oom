@@ -146,6 +146,7 @@ typedef enum {
     MAIN_MENU_PAGE_OPTIONS_RULES,
     MAIN_MENU_PAGE_OPTIONS_RULES_AI,
     MAIN_MENU_PAGE_OPTIONS_RULES_BATTLE,
+    MAIN_MENU_PAGE_OPTIONS_RULES_DIFFICULTY,
     MAIN_MENU_PAGE_OPTIONS_RULES_FLEET_BEHAVIOR,
     MAIN_MENU_PAGE_OPTIONS_RULES_MONSTER,
     MAIN_MENU_PAGE_OPTIONS_RULES_ORBITAL_BOMBARDMENT,
@@ -495,6 +496,7 @@ static void main_menu_make_options_rules_page(struct main_menu_data_s *d)
 {
     d->set_item_dimensions = mm_options_set_item_dimensions;
     menu_make_page(menu_allocate_item(), "AI Behavior", MAIN_MENU_PAGE_OPTIONS_RULES_AI, MOO_KEY_a);
+    menu_make_page(menu_allocate_item(), "Difficulty Modifiers", MAIN_MENU_PAGE_OPTIONS_RULES_DIFFICULTY, MOO_KEY_d);
     menu_make_page(menu_allocate_item(), "Fleet Behavior", MAIN_MENU_PAGE_OPTIONS_RULES_FLEET_BEHAVIOR, MOO_KEY_f);
     menu_make_page(menu_allocate_item(), "Monster", MAIN_MENU_PAGE_OPTIONS_RULES_MONSTER, MOO_KEY_m);
     menu_make_page(menu_allocate_item(), "Orbital Bombardment", MAIN_MENU_PAGE_OPTIONS_RULES_ORBITAL_BOMBARDMENT, MOO_KEY_o);
@@ -522,6 +524,15 @@ static void main_menu_make_options_rules_battle_page(struct main_menu_data_s *d)
     menu_make_bool(menu_allocate_item(), "Oracle Fix", &game_num_bt_oracle_fix, MOO_KEY_UNKNOWN);
     menu_make_bool(menu_allocate_item(), "Precap Tohit", &game_num_bt_precap_tohit, MOO_KEY_UNKNOWN);
     menu_make_bool(menu_allocate_item(), "Wait No Reload", &game_num_bt_wait_no_reload, MOO_KEY_UNKNOWN);
+    menu_make_back(menu_allocate_item());
+}
+
+static void main_menu_make_options_rules_difficulty_page(struct main_menu_data_s *d)
+{
+    d->set_item_dimensions = mm_options_set_item_dimensions;
+    menu_make_int(menu_allocate_item(), "Tech Cost Multiplier", &game_num_tech_costmul, 50, 400, MOO_KEY_UNKNOWN);
+    menu_make_int(menu_allocate_item(), "AI Tech Cost Multiplier", &game_num_tech_costmula2, 50, 100, MOO_KEY_UNKNOWN);
+    menu_make_int(menu_allocate_item(), "Human Tech Cost Multiplier", &game_num_tech_costmuld2, 100, 400, MOO_KEY_UNKNOWN);
     menu_make_back(menu_allocate_item());
 }
 
@@ -648,6 +659,9 @@ static struct main_menu_page_s mm_pages[MAIN_MENU_PAGE_NUM] = {
     },
     {
         main_menu_make_options_rules_battle_page,
+    },
+    {
+        main_menu_make_options_rules_difficulty_page,
     },
     {
         main_menu_make_options_rules_fleet_behavior_page,
