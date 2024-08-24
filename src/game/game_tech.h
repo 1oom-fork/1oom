@@ -36,6 +36,7 @@ extern bool game_tech_can_choose(const struct game_s *g, player_id_t player, tec
 extern uint32_t game_tech_get_next_rp(const struct game_s *g, player_id_t player, tech_field_t field, uint8_t tech);
 extern void game_tech_start_next(struct game_s *g, player_id_t player, tech_field_t field, uint8_t tech);
 extern int game_tech_get_field_percent(const struct game_s *g, player_id_t player, tech_field_t field);
+extern int game_tech_get_field_cost(const struct game_s *g, player_id_t player, tech_field_t field);
 extern void game_tech_research(struct game_s *g);
 extern void game_tech_get_orion_loot(struct game_s *g, player_id_t player);
 extern void game_tech_get_artifact_loot(struct game_s *g, uint8_t planet, player_id_t player);
