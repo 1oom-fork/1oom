@@ -674,7 +674,7 @@ int game_tech_current_research_percent1(const struct game_s *g, player_id_t play
     const empiretechorbit_t *e = &(g->eto[player_i]);
     uint32_t invest, cost;
     int slider, t1, t3, percent;
-    cost = e->tech.cost[field];
+    cost = game_tech_get_field_cost(g, player_i, field);
     slider = e->tech.slider[field];
     if ((cost == 0) || (slider == 0)) {
         return 0;
@@ -693,7 +693,7 @@ int game_tech_current_research_percent2(const struct game_s *g, player_id_t play
     const empiretechorbit_t *e = &(g->eto[player_i]);
     uint32_t invest, cost;
     int slider, t1, t3;
-    cost = e->tech.cost[field];
+    cost = game_tech_get_field_cost(g, player_i, field);
     slider = e->tech.slider[field];
     if ((cost == 0) || (slider == 0)) {
         return 0;
@@ -717,7 +717,7 @@ bool game_tech_current_research_has_max_bonus(const struct game_s *g, player_id_
     const empiretechorbit_t *e = &(g->eto[player_i]);
     uint32_t invest, cost;
     int slider, t1, t3;
-    cost = e->tech.cost[field];
+    cost = game_tech_get_field_cost(g, player_i, field);
     slider = e->tech.slider[field];
     if ((cost == 0) || (slider == 0)) {
         return false;
@@ -878,6 +878,12 @@ int game_tech_get_field_percent(const struct game_s *g, player_id_t player, tech
     return v;
 }
 
+int game_tech_get_field_cost(const struct game_s *g, player_id_t player, tech_field_t field)
+{
+    const empiretechorbit_t *e = &(g->eto[player]);
+    return e->tech.cost[field];
+}
+
 void game_tech_research(struct game_s *g)
 {
     for (player_id_t player = PLAYER_0; player < g->players; ++player) {
@@ -896,7 +902,7 @@ void game_tech_research(struct game_s *g)
             invest += t3 + t1;
             td->investment[field] = invest;
             td->percent[field] = game_tech_get_field_percent(g, player, field);
-            cost = td->cost[field];
+            cost = game_tech_get_field_cost(g, player, field);
             if ((cost != 0) && (slider != 0) && (total_research != 0)) {
                 if (cost < invest) {
                     int v;
