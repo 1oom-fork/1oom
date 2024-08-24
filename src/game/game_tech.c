@@ -881,7 +881,20 @@ int game_tech_get_field_percent(const struct game_s *g, player_id_t player, tech
 int game_tech_get_field_cost(const struct game_s *g, player_id_t player, tech_field_t field)
 {
     const empiretechorbit_t *e = &(g->eto[player]);
-    return e->tech.cost[field];
+    uint32_t cost = e->tech.cost[field];
+    if (IS_HUMAN(g, player)) {
+        if (game_num_tech_costmuld2 != 100) {
+            cost = (cost * game_num_tech_costmuld2) / 100;
+        }
+    } else {
+        if (game_num_tech_costmula2 != 100) {
+            cost = (cost * game_num_tech_costmula2) / 100;
+        }
+    }
+    if (game_num_tech_costmul != 100) {
+        cost = (cost * game_num_tech_costmul) / 100;
+    }
+    return cost;
 }
 
 void game_tech_research(struct game_s *g)
