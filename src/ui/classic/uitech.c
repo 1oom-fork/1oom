@@ -213,7 +213,7 @@ static void tech_draw_cb(void *vptr)
     for (int i = 0; i < TECH_FIELD_NUM; ++i) {
         int y, complpercent;
         y = 21 * i + 21;
-        complpercent = game_tech_current_research_percent2(e, i);
+        complpercent = game_tech_current_research_percent2(g, d->api, i);
         if (complpercent < 99) {
             if (complpercent > 0) {
                 sprintf(buf, "%i%%", complpercent);
@@ -221,7 +221,7 @@ static void tech_draw_cb(void *vptr)
                 lbxfont_print_str_right(295, y + 3, buf, UI_SCREEN_W);
             } else {
                 int y0, y1;
-                complpercent = game_tech_current_research_percent1(e, i);
+                complpercent = game_tech_current_research_percent1(g, d->api, i);
                 lbxgfx_draw_frame(287, y, ui_data.gfx.screens.litebulb_off, UI_SCREEN_W);
                 y0 = y + (8 - (complpercent * 4) / 50);
                 y1 = y + 7;
