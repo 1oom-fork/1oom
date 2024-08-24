@@ -78,6 +78,9 @@ uint16_t game_num_pshield_cost[PSHIELD_NUM] = { 0, 500, 1000, 1500, 2000 };
 
 uint8_t game_num_tech_costmuld[DIFFICULTY_NUM] = { 20, 25, 30, 35, 40 };
 uint8_t game_num_tech_costmula[DIFFICULTY_NUM] = { 20, 20, 20, 20, 20 };
+int game_num_tech_costmuld2 = 100;
+int game_num_tech_costmula2 = 100;
+int game_num_tech_costmul = 100;
 
 uint8_t game_num_tech_costmulr[RACE_NUM][TECH_FIELD_NUM] = {
     { 100, 100, 60, 80, 80, 100 },
