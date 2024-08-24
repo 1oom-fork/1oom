@@ -155,6 +155,7 @@ static void newtech_choose_next_draw_cb(void *vptr)
     char buf[RESEARCH_DESCR_LEN + 20];
     int x = 145, y = 30, yo, pos;
     uint8_t tech = d->tbl_tech[d->selected];
+    uint32_t cost;
     d->nt.source = TECHSOURCE_CHOOSE;
     newtech_draw_cb1(d);
     yo = ((d->num_next > 10) ? 8 : 9) * d->num_next + 8;
@@ -173,7 +174,14 @@ static void newtech_choose_next_draw_cb(void *vptr)
     lbxfont_select_set_12_1(0, 0, 0xe, 0);
     game_tech_get_descr(d->g->gaux, d->nt.field, tech, buf, sizeof(buf));
     pos = strlen(buf);
-    lib_sprintf(&buf[pos], sizeof(buf) - pos, " \x02(%u %s)\x1", game_tech_get_next_rp(d->g, d->api, d->nt.field, tech), game_str_te_rp);
+    cost = game_tech_get_next_rp(d->g, d->api, d->nt.field, tech);
+    if (game_num_tech_costmuld2 != 100) {
+        cost = (cost * game_num_tech_costmuld2) / 100;
+    }
+    if (game_num_tech_costmul != 100) {
+        cost = (cost * game_num_tech_costmul) / 100;
+    }
+    lib_sprintf(&buf[pos], sizeof(buf) - pos, " \x02(%u %s)\x1", cost, game_str_te_rp);
     lbxfont_print_str_split(151, y + yo + 18, 156, buf, 0, UI_SCREEN_W, UI_SCREEN_H);
 }
 
