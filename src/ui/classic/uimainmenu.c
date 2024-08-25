@@ -512,7 +512,6 @@ static void main_menu_make_options_rules_ai_page(struct main_menu_data_s *d)
     d->set_item_dimensions = mm_options_set_item_dimensions;
     menu_make_bool(menu_allocate_item(), "Transport Range Fix", &game_num_ai_trans_range_fix, MOO_KEY_UNKNOWN);
     menu_make_bool(menu_allocate_item(), "4th Colony Curse Fix", &game_num_ai_4_colony_curse_fix, MOO_KEY_UNKNOWN);
-    menu_make_bool(menu_allocate_item(), "Fleet Cheating Fix", &game_num_ai_fleet_cheating_fix, MOO_KEY_UNKNOWN);
     menu_make_bool(menu_allocate_item(), "Doom Stack Fix", &game_num_doom_stack_fix, MOO_KEY_UNKNOWN);
     menu_make_back(menu_allocate_item());
 }
@@ -530,6 +529,7 @@ static void main_menu_make_options_rules_battle_page(struct main_menu_data_s *d)
 static void main_menu_make_options_rules_difficulty_page(struct main_menu_data_s *d)
 {
     d->set_item_dimensions = mm_options_set_item_dimensions;
+    menu_make_bool(menu_allocate_item(), "AI Fleet Cheating Fix", &game_num_ai_fleet_cheating_fix, MOO_KEY_UNKNOWN);
     menu_make_int(menu_allocate_item(), "Tech Cost Multiplier", &game_num_tech_costmul, 50, 400, MOO_KEY_UNKNOWN);
     menu_make_int(menu_allocate_item(), "AI Tech Cost Multiplier", &game_num_tech_costmula2, 50, 100, MOO_KEY_UNKNOWN);
     menu_make_int(menu_allocate_item(), "Human Tech Cost Multiplier", &game_num_tech_costmuld2, 100, 400, MOO_KEY_UNKNOWN);
