@@ -156,6 +156,7 @@ static const struct numtbl_s {
     DEFNUMITEML(deterministic, NUMTYPE_BOOL, 0, 1),
     DEFNUMITEML(ai_trans_range_fix, NUMTYPE_BOOL, 0, 1),
     DEFNUMITEML(ai_4_colony_curse_fix, NUMTYPE_BOOL, 0, 1),
+    DEFNUMITEML(ai_first_tech_cost_fix, NUMTYPE_BOOL, 0, 1),
     DEFNUMITEML(bt_turn_max, NUMTYPE_S, 1, 0xffff),
     DEFNUMITEML(bt_wait_no_reload, NUMTYPE_BOOL, 0, 1),
     DEFNUMITEML(bt_precap_tohit, NUMTYPE_BOOL, 0, 1),
