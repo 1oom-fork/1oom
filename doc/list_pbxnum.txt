@@ -15,6 +15,10 @@ ai_trans_range_fix : 0..1, 0
 ai_4_colony_curse_fix :
   - In MOO1 4th colony ship disables sending colony ships.
 
+ai_first_tech_cost_fix : 0..1, 0
+  - First tech costs are calculated using the same formula as the rest.
+    This fix significantly reduces the cost compared to MOO1.
+
 bt_turn_max : 1..65535, 50
   - The number of battle turns before a forced retreat.
 
