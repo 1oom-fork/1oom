@@ -98,7 +98,7 @@ static void game_ai_classic_new_game_tech(struct game_s *g)
             do {
                 tech = rl[rnd_0_nm1(3, &g->seed)];
             } while (tech == 0);
-            if (g->ai_id == GAME_AI_CLASSICPLUS) {
+            if (game_num_ai_first_tech_cost_fix) {
                 game_tech_start_next(g, pli, field, tech);
             } else {
                 empiretechorbit_t *e;
