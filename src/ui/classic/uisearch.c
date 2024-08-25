@@ -18,6 +18,7 @@
 #include "uidefs.h"
 #include "uidraw.h"
 #include "uiobj.h"
+#include "uispecs.h"
 #include "uistarmap.h"
 #include "util.h"
 #include "vgabuf.h"
@@ -125,6 +126,24 @@ int ui_search(struct game_s *g, player_id_t pi)
                 game_cheat_traits(g, pi);
             } else if (strcasecmp(buf, "/moola") == 0) {
                 game_cheat_moola(g, pi);
+            } else if (strcasecmp(buf, "/oracle0") == 0) {
+                ui_cursor_setup_area(1, &ui_cursor_area_tbl[0]);
+                ui_specs(g, 0, true);
+            } else if (strcasecmp(buf, "/oracle1") == 0) {
+                ui_cursor_setup_area(1, &ui_cursor_area_tbl[0]);
+                ui_specs(g, 1, true);
+            } else if (strcasecmp(buf, "/oracle2") == 0) {
+                ui_cursor_setup_area(1, &ui_cursor_area_tbl[0]);
+                ui_specs(g, 2, true);
+            } else if (strcasecmp(buf, "/oracle3") == 0) {
+                ui_cursor_setup_area(1, &ui_cursor_area_tbl[0]);
+                ui_specs(g, 3, true);
+            } else if (strcasecmp(buf, "/oracle4") == 0) {
+                ui_cursor_setup_area(1, &ui_cursor_area_tbl[0]);
+                ui_specs(g, 4, true);
+            } else if (strcasecmp(buf, "/oracle5") == 0) {
+                ui_cursor_setup_area(1, &ui_cursor_area_tbl[0]);
+                ui_specs(g, 5, true);
             } else if (buf[0] != 0) {
                 pli = search_planet(g, pi, buf);
             }
