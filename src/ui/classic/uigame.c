@@ -160,7 +160,7 @@ ui_turn_action_t ui_game_turn(struct game_s *g, int *load_game_i_ptr, int pi)
                         ui_data.ui_main_loop_action_next = UI_MAIN_LOOP_SPECS;
                         ui_data.ui_main_loop_action_prev = UI_MAIN_LOOP_DESIGN;
                         ui_data.flag_scrap_for_new_design = true;
-                        scrapi = ui_specs(g, pi);
+                        scrapi = ui_specs(g, pi, false);
                         sd_num = g->eto[pi].shipdesigns_num;
                         ok = (sd_num < NUM_SHIPDESIGNS);
                         if (ok) {
@@ -175,7 +175,7 @@ ui_turn_action_t ui_game_turn(struct game_s *g, int *load_game_i_ptr, int pi)
                 ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
                 break;
             case UI_MAIN_LOOP_SPECS:
-                scrapi = ui_specs(g, pi);
+                scrapi = ui_specs(g, pi, false);
                 break;
             case UI_MAIN_LOOP_MUSTSCRAP:
                 if (scrapi >= 0) {
