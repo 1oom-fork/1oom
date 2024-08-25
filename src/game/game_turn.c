@@ -628,6 +628,40 @@ static inline void game_add_planet_to_build_finished(struct game_s *g, uint8_t p
     ++g->evn.build_finished_num[owner];
 }
 
+static bool game_turn_finished_switch_slider(struct game_s *g, uint8_t planet_i, planet_slider_i_t from, planet_slider_i_t to)
+{
+    planet_t *p = &(g->planet[planet_i]);
+    if (game_num_slider_respects_locks && (p->slider_lock[from] || p->slider_lock[to])) {
+        return false;
+    }
+    if (from == to) {
+        return false;
+    }
+    int v = p->slider[from];
+    if (from == PLANET_SLIDER_ECO) {
+        v -= game_planet_get_waste_percent(NULL, g, planet_i, false);
+        SETMAX(v, 0);
+    }
+    p->slider[from] -= v;
+    p->slider[to] += v;
+    return true;
+}
+
+static void game_turn_finished_disable_slider(struct game_s *g, uint8_t planet_i, planet_slider_i_t from, bool build_ind)
+{
+    planet_t *p = &(g->planet[planet_i]);
+    if (game_num_slider_respects_locks && p->slider_lock[from]) {
+        return;
+    }
+    planet_slider_i_t first = build_ind ? PLANET_SLIDER_IND : PLANET_SLIDER_TECH;
+    game_turn_finished_switch_slider(g, planet_i, from, first)
+    || game_turn_finished_switch_slider(g, planet_i, from, PLANET_SLIDER_TECH)
+    || game_turn_finished_switch_slider(g, planet_i, from, PLANET_SLIDER_SHIP)
+    || game_turn_finished_switch_slider(g, planet_i, from, PLANET_SLIDER_DEF)
+    || game_turn_finished_switch_slider(g, planet_i, from, PLANET_SLIDER_IND)
+    || game_turn_finished_switch_slider(g, planet_i, from, PLANET_SLIDER_ECO);
+}
+
 static void game_turn_build_ind(struct game_s *g)
 {
     for (int i = 0; i < g->galaxy_stars; ++i) {
@@ -699,8 +733,7 @@ static void game_turn_build_ind(struct game_s *g)
             p->factories = fact;
             if ((fact != factold) && (fact >= (p->max_pop3 * e->colonist_oper_factories))) {
                 if (IS_HUMAN(g, owner) && (p->slider[PLANET_SLIDER_IND] > 0)) {
-                    p->slider[PLANET_SLIDER_TECH] += p->slider[PLANET_SLIDER_IND];
-                    p->slider[PLANET_SLIDER_IND] = 0;
+                    game_turn_finished_disable_slider(g, i, PLANET_SLIDER_IND, false);
                 }
                 game_add_planet_to_build_finished(g, i, owner, FINISHED_FACT);
             }
@@ -1432,14 +1465,7 @@ static void game_turn_finished_slider(struct game_s *g)
         }
         if (BOOLVEC_IS1(p->finished, FINISHED_SOILATMOS)
           && !(game_num_slider_eco_done_fix && game_planet_can_terraform(g, pli, p->owner, true))) {
-            int v;
-            v = game_planet_get_waste_percent(NULL, g, pli, false);
-            if (!cond_build_ind) {
-                p->slider[PLANET_SLIDER_TECH] += p->slider[PLANET_SLIDER_ECO] - v;
-            } else {
-                p->slider[PLANET_SLIDER_IND] += p->slider[PLANET_SLIDER_ECO] - v;
-            }
-            p->slider[PLANET_SLIDER_ECO] = v;
+            game_turn_finished_disable_slider(g, pli, PLANET_SLIDER_ECO, cond_build_ind);
             game_add_planet_to_build_finished(g, pli, pi, FINISHED_SOILATMOS);
         }
         if (1
@@ -1469,12 +1495,7 @@ static void game_turn_finished_slider(struct game_s *g)
                   || ((p->slider[PLANET_SLIDER_ECO] != 0) && (e->race == RACE_SILICOID))
                 ) {
                     if ((p->pop > p->pop_prev) || (p->slider[PLANET_SLIDER_ECO] > (w + game_num_eco_slider_slack))) {
-                        if (!cond_build_ind) {
-                            p->slider[PLANET_SLIDER_TECH] += p->slider[PLANET_SLIDER_ECO] - w;
-                        } else {
-                            p->slider[PLANET_SLIDER_IND] += p->slider[PLANET_SLIDER_ECO] - w;
-                        }
-                        p->slider[PLANET_SLIDER_ECO] = w;
+                        game_turn_finished_disable_slider(g, pli, PLANET_SLIDER_ECO, cond_build_ind);
                         if (p->pop > p->pop_prev) {
                             game_add_planet_to_build_finished(g, pli, pi, FINISHED_POPMAX);
                         }
@@ -1484,24 +1505,19 @@ static void game_turn_finished_slider(struct game_s *g)
                   && (p->slider[PLANET_SLIDER_ECO] > 0)
                   && ((e->race == RACE_SILICOID) || ((e->ind_waste_scale == 0) && (p->waste == 0)))
                 ) {
-                    if (!cond_build_ind) {
-                        p->slider[PLANET_SLIDER_TECH] += p->slider[PLANET_SLIDER_ECO];
-                    } else {
-                        p->slider[PLANET_SLIDER_IND] += p->slider[PLANET_SLIDER_ECO];
-                    }
-                    p->slider[PLANET_SLIDER_ECO] = 0;
+                    game_turn_finished_disable_slider(g, pli, PLANET_SLIDER_ECO, cond_build_ind);
                 }
             }
         }
         if (BOOLVEC_IS1(p->finished, FINISHED_SHIELD)) {
-            p->slider[PLANET_SLIDER_TECH] += p->slider[PLANET_SLIDER_DEF];
-            p->slider[PLANET_SLIDER_DEF] = 0;
+            game_turn_finished_disable_slider(g, pli, PLANET_SLIDER_DEF, false);
             game_add_planet_to_build_finished(g, pli, pi, FINISHED_SHIELD);
         }
         if (BOOLVEC_IS1(p->finished, FINISHED_STARGATE)) {
             /* WASBUG MOO1 has DEF, not SHIP */
-            p->slider[PLANET_SLIDER_TECH] += p->slider[PLANET_SLIDER_SHIP];
-            p->slider[PLANET_SLIDER_SHIP] = 0;
+            /* p->slider[PLANET_SLIDER_TECH] += p->slider[PLANET_SLIDER_SHIP];
+            p->slider[PLANET_SLIDER_SHIP] = 0; */
+            game_turn_finished_disable_slider(g, pli, PLANET_SLIDER_SHIP, false);
             game_add_planet_to_build_finished(g, pli, pi, FINISHED_STARGATE);
         }
     }
