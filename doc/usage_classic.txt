@@ -93,8 +93,8 @@ enables the following extra UI features:
   for inhabited planets
 - The entire map on the Map screen is now clickable (focus on the mouse cursor)
 - Pressing g on the battlefield screen shows the grid
-- Holding the Ctrl key while locking a colony slider allows you to lock sliders
-  for all colonies at once
+- Holding the Alt or Ctrl key while locking a colony slider allows you to lock
+  sliders for all colonies at once (or for all colonies of the same type)
 - Holding the Alt or Ctrl key while clicking on the frame with the slider value
   text allows you to adjust sliders for all colonies at once
 
