@@ -7,6 +7,7 @@
 extern bool game_num_deterministic;
 extern bool game_num_ai_trans_range_fix;
 extern bool game_num_ai_4_colony_curse_fix;
+extern bool game_num_ai_first_tech_cost_fix;
 extern int game_num_bt_turn_max;
 extern bool game_num_bt_wait_no_reload;
 extern bool game_num_bt_precap_tohit;
