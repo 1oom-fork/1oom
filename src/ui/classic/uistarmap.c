@@ -403,6 +403,23 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
                         }
                     }
                     flag_done = true;
+                } else if (kbd_is_modifier(MOO_MOD_ALT)) {
+                    lib_strcpy(buf, game_str_adj_set, sizeof(buf));
+                    lib_strcat(buf, game_str_adj_slider[i], sizeof(buf));
+                    lib_strcat(buf, game_str_adj_lock2, sizeof(buf));
+                    lib_strcat(buf, game_str_adj_special[p->special], sizeof(buf));
+                    lib_strcat(buf, game_str_adj_colonies, sizeof(buf));
+                    if (ui_dialog_yesno(g, active_player, buf, 50, 30, 0)) {
+                        bool locked = p->slider_lock[i];
+                        planet_special_t special = p->special;
+                        for (uint8_t pi = 0; pi < g->galaxy_stars; ++pi) {
+                            if ((g->planet[pi].owner == active_player) && g->planet[pi].special == special) {
+                                g->planet[pi].slider_lock[i] = !locked;
+                            }
+                        }
+                    }
+                    flag_done = true;
+
                 } else {
                     p->slider_lock[i] = !p->slider_lock[i];
                     ui_sound_play_sfx_24();
