@@ -490,7 +490,12 @@ const char *game_str_adj_max = " ratios of all of your colonies to maximum?";
 const char *game_str_adj_slider[PLANET_SLIDER_NUM] = {
     "ship", "defense", "industry", "ecology", "technology"
 };
+const char *game_str_adj_colonies = " colonies?";
 const char *game_str_adj_lock = " slider lock for all of your colonies?";
+const char *game_str_adj_lock2 = " slider lock for ";
+const char *game_str_adj_special[7] = {
+    "ultra poor", "poor", "normal", "artifacts", "rich", "ultra rich", "4x tech"
+};
 
 const char *game_str_ra_nocont = "No Contact";
 const char *game_str_ra_notpres = "Not Present";
