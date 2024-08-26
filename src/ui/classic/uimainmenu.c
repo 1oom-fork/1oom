@@ -460,7 +460,6 @@ static void main_menu_make_options_addons_page(struct main_menu_data_s *d)
     menu_make_bool(menu_allocate_item(), "UI Fixbugs", &ui_fixbugs_enabled, MOO_KEY_f);
     menu_make_bool(menu_allocate_item(), "Combat Autoresolve", &ui_space_combat_autoresolve, MOO_KEY_v);
     menu_make_bool(menu_allocate_item(), "UI SM Ships", &ui_sm_ships_enabled, MOO_KEY_s);
-    menu_make_bool(menu_allocate_item(), "SM Distance Tooltip", &ui_sm_distance_tooltip, MOO_KEY_t);
     menu_make_bool(menu_allocate_item(), "Load Options Extra", &ui_load_opts_extra, MOO_KEY_o);
     menu_make_page(menu_allocate_item(), "Message Filter", MAIN_MENU_PAGE_OPTIONS_ADDONS_MESSAGE_FILTER, MOO_KEY_m);
     menu_make_back(menu_allocate_item());

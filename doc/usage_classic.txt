@@ -120,8 +120,6 @@ selecting the 1oom UI preset:
 - Summary of forces shown before ship combat. New Auto and Retreat buttons
   for space combat autoresolve ("ui.space_combat_autoresolve")
 - Galaxy movement screen scrolling range is expanded ("ui.sm_expanded_scroll")
-- Hovering over a planet draws a ruler with the distance in parsec from the
-  currently selected planet if is in the screen ("ui.sm_distance_tooltip")
 - The cursor key behavior is more intuitive (ui.kbd_cursor_keys_fix)
 - Improved behavior of the left mouse button ("ui.mouse_lmb_fix")
 - Mouse scrolls the galaxy movement screen if touches edge
