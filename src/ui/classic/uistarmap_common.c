@@ -49,12 +49,14 @@ static uint8_t ui_starmap_cursor_on_star(const struct starmap_data_s *d, int16_t
 
 /* -------------------------------------------------------------------------- */
 
-static void ui_starmap_draw_planetinfo_do(const struct game_s *g, player_id_t api, uint8_t planet_i, bool explored, bool show_plus)
+static void ui_starmap_draw_planetinfo_do(const struct game_s *g, player_id_t api, uint8_t planet_i, bool explored, bool show_plus, bool draw_name)
 {
     const planet_t *p = &g->planet[planet_i];
     if (explored || (ui_extra_enabled && g->gaux->flag_cheat_stars)) {
-        lbxfont_select_set_12_4(4, 0xf, 0, 0);
-        lbxfont_print_str_center(269, 10, p->name, UI_SCREEN_W);
+        if (draw_name) {
+            lbxfont_select_set_12_4(4, 0xf, 0, 0);
+            lbxfont_print_str_center(269, 10, p->name, UI_SCREEN_W);
+        }
         /* stars in nebulas get a purple instead of a red frame */
         if (ui_extra_enabled && p->battlebg==0) {
             ui_draw_box1(228, 25, 309, 52, 0xd3, 0xd3);
@@ -336,7 +338,7 @@ void ui_starmap_draw_basic(struct starmap_data_s *d)
             lbxgfx_draw_frame(282, 164, ui_data.gfx.starmap.col_butt_trans, UI_SCREEN_W);
         }
     }
-    ui_starmap_draw_planetinfo(g, d->api, g->planet_focus_i[d->api]);
+    ui_starmap_draw_planetinfo(g, d->api, g->planet_focus_i[d->api], d->planet_draw_name);
     if (g->evn.build_finished_num[d->api]) {
         ui_starmap_draw_textbox_finished(g, d->api, g->planet_focus_i[d->api]);
     }
@@ -1064,10 +1066,10 @@ void ui_starmap_update_reserve_fuel(struct game_s *g, struct shipnon0_s *sn0, co
     sn0->have_reserve_fuel = true;
 }
 
-void ui_starmap_draw_planetinfo(const struct game_s *g, player_id_t api, int planet_i)
+void ui_starmap_draw_planetinfo(const struct game_s *g, player_id_t api, int planet_i, bool draw_name)
 {
     const planet_t *p = &(g->planet[planet_i]);
-    ui_starmap_draw_planetinfo_do(g, api, planet_i, BOOLVEC_IS1(p->explored, api), true);
+    ui_starmap_draw_planetinfo_do(g, api, planet_i, BOOLVEC_IS1(p->explored, api), true, draw_name);
 }
 
 void ui_starmap_draw_planetinfo_2(const struct game_s *g, int p1, int p2, int planet_i)
@@ -1081,7 +1083,7 @@ void ui_starmap_draw_planetinfo_2(const struct game_s *g, int p1, int p2, int pl
     ) {
         explored = false;
     }
-    ui_starmap_draw_planetinfo_do(g, api, planet_i, explored, false);
+    ui_starmap_draw_planetinfo_do(g, api, planet_i, explored, false, true);
 }
 
 int ui_starmap_newship_next(const struct game_s *g, player_id_t pi, int i)
@@ -1141,6 +1143,7 @@ void ui_starmap_common_init(struct game_s *g, struct starmap_data_s *d, player_i
     d->controllable = false;
     d->show_planet_focus = true;
     d->anim_delay = 0;
+    d->planet_draw_name = true;
     d->scrollx = 0;
     d->scrolly = 0;
 }
