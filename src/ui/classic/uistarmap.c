@@ -31,6 +31,7 @@
 #include "uisearch.h"
 #include "uisound.h"
 #include "uistarmap_common.h"
+#include "util.h"
 
 /* -------------------------------------------------------------------------- */
 
@@ -215,7 +216,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
     int16_t oi_b, oi_c, oi_starview1, oi_starview2, oi_shippic, oi_finished, oi_equals, oi_hash,
             oi_f2, oi_f3, oi_f4, oi_f5, oi_f6, oi_f7, oi_f8, oi_f9, oi_f10,
             oi_alt_galaxy, oi_alt_p, oi_alt_events,
-            oi_wheelshippic, oi_search,
+            oi_wheelshippic, oi_search, oi_rename,
             oi_adj[PLANET_SLIDER_NUM];
     int16_t scrollmisc = 0;
     struct starmap_data_s d;
@@ -243,6 +244,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
         oi_equals = UIOBJI_INVALID; \
         oi_hash = UIOBJI_INVALID; \
         oi_wheelshippic = UIOBJI_INVALID; \
+        oi_rename = UIOBJI_INVALID; \
         d.sm.oi_ship = UIOBJI_INVALID; \
         d.sm.oi_reloc = UIOBJI_INVALID; \
         d.sm.oi_trans = UIOBJI_INVALID; \
@@ -575,6 +577,20 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
                 ui_data.ui_main_loop_action = UI_MAIN_LOOP_ORBIT_OWN_SEL;
                 flag_done = true;
             }
+        } else if (oi1 == oi_rename) {
+            const uint8_t ctbl[8] = { 0x34, 0x34, 0x34, 0x34, 0x34, 0x34, 0x34, 0x34 };
+            char buf[PLANET_NAME_LEN];
+            lib_strcpy(buf, p->name, sizeof(buf));
+            lbxfont_select_set_12_4(4, 0xf, 0, 0);
+            d.planet_draw_name = false;
+            if (uiobj_read_str(239, 10, 65, buf, PLANET_NAME_LEN - 1, 0, false, ctbl)) {
+                util_trim_whitespace(buf, sizeof(buf));
+                if (buf[0] != 0) {
+                    lib_strcpy(p->name, buf, PLANET_NAME_LEN);
+                }
+            }
+            d.planet_draw_name = true;
+            flag_done = true;
         }
         for (int i = 0; i < PLANET_SLIDER_NUM; ++i) {
             if (oi1 == oi_adj[i]) {
@@ -643,6 +659,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             if (p->owner == active_player) {
                 oi_shippic = uiobj_add_mousearea(228, 139, 275, 175, MOO_KEY_UNKNOWN);
                 oi_wheelshippic = uiobj_add_mousewheel(228, 139, 275, 175, &scrollmisc);
+                oi_rename = uiobj_add_mousearea(227, 8, 310, 20, MOO_KEY_UNKNOWN);
             }
             if (ui_extra_enabled) {
                 int y0 = 82;
