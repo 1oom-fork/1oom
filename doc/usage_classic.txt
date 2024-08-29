@@ -57,6 +57,7 @@ The following new UI features are always enabled/available:
   sense: Alt+m, Alt+c, Alt+r
 - Ctrl+r sets or unsets all reloc points similar to Alt+r
 - Planets can be searched for by pressing the / key
+- Planets can be renamed by clicking on their name
 - The = key can be substituted by the # key
 - The + key can be substituted by the = key (if not conflicting)
 
