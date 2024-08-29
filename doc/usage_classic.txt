@@ -40,6 +40,7 @@ The following new UI features are always enabled/available:
   - on the galaxy movement screen
   - on the transport sending screen
   - on the Tech screen
+  - on the Races screen
 - Sending ships does not deselect the orbit fleet when holding Shift
 - F4/F5 can iterate over fleets of the same owner
 - In Tech screen +/- adjusts the current field slider
