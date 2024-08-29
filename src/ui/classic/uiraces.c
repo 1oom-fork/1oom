@@ -308,19 +308,27 @@ int ui_races(struct game_s *g, player_id_t api)
             ui_sound_play_sfx_24();
             d.cursor_mode = 5;
         } else if (oi == oi_sec_minus) {
-            int v;
-            ui_sound_play_sfx_24();
-            v = e->security;
-            v -= 10;
-            SETMAX(v, 0);
-            e->security = v;
+            if (kbd_is_modifier(MOO_MOD_ALT)) {
+                e->security = 0;
+            } else {
+                int v;
+                ui_sound_play_sfx_24();
+                v = e->security;
+                v -= 10;
+                SETMAX(v, 0);
+                e->security = v;
+            }
         } else if (oi == oi_sec_plus) {
-            int v;
-            ui_sound_play_sfx_24();
-            v = e->security;
-            v += 10;
-            SETMIN(v, 200);
-            e->security = v;
+            if (kbd_is_modifier(MOO_MOD_ALT)) {
+                e->security = 200;
+            } else {
+                int v;
+                ui_sound_play_sfx_24();
+                v = e->security;
+                v += 10;
+                SETMIN(v, 200);
+                e->security = v;
+            }
         }
         for (int i = 0; i < (PLAYER_NUM - 1); ++i) {
             if (oi == oi_tbl_spy_minus[i]) {
