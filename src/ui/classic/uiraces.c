@@ -323,19 +323,27 @@ int ui_races(struct game_s *g, player_id_t api)
         }
         for (int i = 0; i < (PLAYER_NUM - 1); ++i) {
             if (oi == oi_tbl_spy_minus[i]) {
-                int v;
-                ui_sound_play_sfx_24();
-                v = e->spying[d.tbl_ei[i]];
-                v -= 4;
-                SETMAX(v, 0);
-                e->spying[d.tbl_ei[i]] = v;
+                if (kbd_is_modifier(MOO_MOD_ALT)) {
+                    e->spying[d.tbl_ei[i]] = 0;
+                } else {
+                    int v;
+                    ui_sound_play_sfx_24();
+                    v = e->spying[d.tbl_ei[i]];
+                    v -= 4;
+                    SETMAX(v, 0);
+                    e->spying[d.tbl_ei[i]] = v;
+                }
             } else if (oi == oi_tbl_spy_plus[i]) {
-                int v;
-                ui_sound_play_sfx_24();
-                v = e->spying[d.tbl_ei[i]];
-                v += 4;
-                SETMIN(v, 100);
-                e->spying[d.tbl_ei[i]] = v;
+                if (kbd_is_modifier(MOO_MOD_ALT)) {
+                    e->spying[d.tbl_ei[i]] = 100;
+                } else {
+                    int v;
+                    ui_sound_play_sfx_24();
+                    v = e->spying[d.tbl_ei[i]];
+                    v += 4;
+                    SETMIN(v, 100);
+                    e->spying[d.tbl_ei[i]] = v;
+                }
             } else if (oi == oi_tbl_oppon[i]) {
                 ui_sound_play_sfx_24();
                 if ((d.cursor_mode == 4) || (ui_extra_enabled && (d.cursor_mode == 0))) {
