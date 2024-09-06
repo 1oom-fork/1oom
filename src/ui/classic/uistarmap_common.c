@@ -522,6 +522,13 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
                 done = true;
             }
         }
+        if (ui_data.starmap.star_text_type == UI_SM_STAR_TEXT_DISTANCE) {
+            if (p->owner != d->api) {
+                lib_sprintf(str, sizeof(str), "%d parsecs", game_get_min_dist(g, d->api, pi));
+                lbxfont_print_str_center_limit(tx, ty, str, STARMAP_TEXT_LIMITS, UI_SCREEN_W, starmap_scale);
+                done = true;
+            }
+        }
         if (!done) {
             bool do_print = visible
                         || (pi == g->evn.planet_orion_i)
