@@ -25,6 +25,7 @@
 #include "uiobj.h"
 #include "uipal.h"
 #include "uisound.h"
+#include "util.h"
 #include "vgabuf.h"
 
 /* -------------------------------------------------------------------------- */
@@ -33,6 +34,7 @@ struct specs_data_s {
     struct game_s *g;
     player_id_t api;
     int scrapi;
+    int renamei;
 };
 
 static void specs_print_weap(weapon_t wi, uint8_t wn, char *buf1, size_t buf1_size, char *buf2, size_t buf2_size)
@@ -77,7 +79,9 @@ static void specs_draw_cb1(void *vptr)
         lbxgfx_draw_frame(106, y + 1, ui_data.gfx.starmap.viewshbt, UI_SCREEN_W);
         lbxfont_select(0, 0xd, 0, 0);
         lbxfont_print_num_right(35, y + 22, srd->shipcount[si], UI_SCREEN_W);
-        lbxfont_print_str_normal(49, y + 2, sp.name, UI_SCREEN_W);
+        if (d->renamei != si) {
+            lbxfont_print_str_normal(49, y + 2, sp.name, UI_SCREEN_W);
+        }
         lbxfont_select(2, 0xb, 0, 0);
         lbxfont_print_num_right(86, y + 13, sp.defense, UI_SCREEN_W);
         lbxfont_print_num_right(86, y + 23, sp.misdefense, UI_SCREEN_W);
@@ -162,6 +166,7 @@ void ui_specs_before(struct game_s *g, player_id_t active_player)
 
     d.g = g;
     d.api = active_player;
+    d.renamei = -1;
     ui_data.starmap.frame_ship = 0;
     ui_data.starmap.stars_xoff1 = 0;
     ui_data.starmap.stars_xoff2 = 0;
@@ -198,6 +203,7 @@ void ui_specs_mustscrap(struct game_s *g, player_id_t active_player, int scrapi)
     d.api = active_player;
     ui_data.starmap.frame_ship = 0;
     d.scrapi = scrapi;
+    d.renamei = -1;
 
     uiobj_set_callback_and_delay(specs_mustscrap_draw_cb, &d, 2);
     uiobj_table_clear();
@@ -238,12 +244,13 @@ int ui_specs(struct game_s *g, player_id_t active_player, bool flag_cheat)
 {
     struct specs_data_s d;
     bool flag_done = false;
-    int16_t oi_ma, oi_tbl_scrap[NUM_SHIPDESIGNS];
+    int16_t oi_ma, oi_tbl_scrap[NUM_SHIPDESIGNS], oi_tbl_rename[NUM_SHIPDESIGNS];
     int scrapi = -1;
     game_update_maint_costs(g);
 
     d.g = g;
     d.api = active_player;
+    d.renamei = -1;
     ui_data.starmap.frame_ship = 0;
     ui_data.starmap.stars_xoff1 = 0;
     ui_data.starmap.stars_xoff2 = 0;
@@ -251,6 +258,7 @@ int ui_specs(struct game_s *g, player_id_t active_player, bool flag_cheat)
     oi_ma = UIOBJI_INVALID;
     for (int i = 0; i < NUM_SHIPDESIGNS; ++i) {
         oi_tbl_scrap[i] = UIOBJI_INVALID;
+        oi_tbl_rename[i] = UIOBJI_INVALID;
     }
 
     uiobj_set_help_id(35);
@@ -281,6 +289,22 @@ int ui_specs(struct game_s *g, player_id_t active_player, bool flag_cheat)
                 }
                 flag_done = true;
             }
+            if (oi == oi_tbl_rename[i]) {
+                const uint8_t ctbl[8] = { 0x34, 0x34, 0x34, 0x34, 0x34, 0x34, 0x34, 0x34 };
+                shipresearch_t *srd = &(g->srd[active_player]);
+                char buf[SHIP_NAME_LEN];
+                lib_strcpy(buf, srd->design[i].name, sizeof(buf));
+                lbxfont_select(0, 0xd, 0, 0);
+                d.renamei = i;
+                if (uiobj_read_str(49, (i << 5) + 7, 55, buf, SHIP_NAME_LEN - 1, 0, false, ctbl)) {
+                    util_trim_whitespace(buf, sizeof(buf));
+                    if (buf[0] != 0) {
+                        lib_strcpy(srd->design[i].name, buf, SHIP_NAME_LEN);
+                    }
+                }
+                d.renamei = -1;
+                flag_done = true;
+            }
         }
         if (!flag_done) {
             int sd_num;
@@ -288,11 +312,17 @@ int ui_specs(struct game_s *g, player_id_t active_player, bool flag_cheat)
             specs_draw_cb1(&d);
             for (int i = 0; i < NUM_SHIPDESIGNS; ++i) {
                 oi_tbl_scrap[i] = UIOBJI_INVALID;
+                oi_tbl_rename[i] = UIOBJI_INVALID;
             }
             uiobj_table_clear();
             if ((sd_num > 1) && !flag_cheat) {
                 for (int i = 0; i < sd_num; ++i) {
                     oi_tbl_scrap[i] = uiobj_add_t0(106, (i << 5) + 6, "", ui_data.gfx.starmap.viewshbt, MOO_KEY_1 + i);
+                }
+            }
+            if (!flag_cheat) {
+                for (int i = 0; i < sd_num; ++i) {
+                    oi_tbl_rename[i] = uiobj_add_mousearea(46, (i << 5) + 6, 103, (i << 5) + 13, MOO_KEY_UNKNOWN);
                 }
             }
             oi_ma = uiobj_add_mousearea(UI_SCREEN_LIMITS, MOO_KEY_o);
