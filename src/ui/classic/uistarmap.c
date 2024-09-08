@@ -641,17 +641,6 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
                 break;
             }
         }
-        d.dist_i = PLANET_NONE;
-        if (!g->evn.build_finished_num[active_player]) {
-            for (int i = 0; i < g->galaxy_stars; ++i) {
-                if (oi2 == d.oi_tbl_stars[i]) {
-                    if (i != g->planet_focus_i[active_player]) {
-                        d.dist_i = i;
-                    }
-                    break;
-                }
-            }
-        }
         p = &(g->planet[g->planet_focus_i[active_player]]);
         ui_starmap_common_update_mouse_hover(&d, oi2);
         if (!flag_done) {
@@ -742,7 +731,6 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             ui_delay_ticks_or_click(STARMAP_DELAY);
         }
     }
-    d.dist_i = PLANET_NONE;
     uiobj_table_clear();
     uiobj_unset_callback();
     uiobj_set_help_id(-1);

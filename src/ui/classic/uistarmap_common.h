@@ -72,7 +72,6 @@ struct starmap_data_s {
     int16_t oi_tbl_enroute[FLEET_ENROUTE_MAX];
     int16_t oi_tbl_transport[TRANSPORT_MAX];
     int16_t oi_tbl_pl_stars[PLAYER_NUM][PLANETS_MAX];
-    uint8_t dist_i;
     uint8_t from;
     bool planet_draw_name;
     union {

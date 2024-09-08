@@ -127,8 +127,6 @@ int ui_search(struct game_s *g, player_id_t pi)
                 game_cheat_traits(g, pi);
             } else if (strcasecmp(buf, "/moola") == 0) {
                 game_cheat_moola(g, pi);
-            } else if (strcasecmp(buf, "/distance") == 0) {
-                game_cheat_distance_hint(g, pi);
             } else if (strcasecmp(buf, "/oracle0") == 0) {
                 ui_cursor_setup_area(1, &ui_cursor_area_tbl[0]);
                 ui_specs(g, 0, true);
