@@ -14,6 +14,7 @@
 #include "lbxfont.h"
 #include "lbxgfx.h"
 #include "lbxpal.h"
+#include "lib.h"
 #include "rnd.h"
 #include "uidefs.h"
 #include "uidelay.h"
@@ -50,7 +51,7 @@ static void ui_copyprotection_draw_cb(void *vptr)
     lbxgfx_draw_frame(208, 23, ui_data.gfx.ships[look_i[d->seed]], UI_SCREEN_W);
     lbxfont_select(5, 0, 0, 0);
     lbxfont_print_str_normal(197, 48, "Pages", UI_SCREEN_W);
-    sprintf(buf, "%d-%d", d->page_min, d->page_max);
+    lib_sprintf(buf, 64, "%d-%d", d->page_min, d->page_max);
     lbxfont_print_str_normal(224, 48, buf, UI_SCREEN_W);
 }
 
