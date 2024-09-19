@@ -22,6 +22,7 @@ Unlike the original, 1oom does not autosave the "continue game" (save slot 7)
 when starting a new game or every N turns. It only saves it when quitting the
 game or when F10 is pressed while in the "galaxy movement screen".
 1oom makes autosave (save slot 9) when starting a new game.
+An incorrect answer in the copy protection dialog does not delete save slot 7.
 
 The following new UI features are always enabled/available:
 - Random race / banner
@@ -37,6 +38,7 @@ The following new UI features are always enabled/available:
   - on the galaxy movement screen
   - on the transport sending screen
   - on the Tech screen
+  - on the Races screen
 - Sending ships does not deselect the orbit fleet when holding Shift
 - F4/F5 can iterate over fleets of the same owner
 - In Tech screen +/- adjusts the current field slider
@@ -48,7 +50,6 @@ The following new UI features are always enabled/available:
 - Eco slider shows Clean/+N Pop past T-Form on a full planet
 - Bases can be scrapped by clicking on the Bases text
 - Clicking cycles selection of overlapping fleets
-- The keys UHJK scroll the galaxy movement screen map
 - The following hotkeys are available for the star map whenever it makes
   sense: Alt+m, Alt+c, Alt+r
 - Ctrl+r sets or unsets all reloc points similar to Alt+r
@@ -110,8 +111,6 @@ The following features can be enabled in the configuration file:
 - Galaxy movement screen scrolling range is expanded ("ui.sm_expanded_scroll")
 - The cursor key behavior is more intuitive (ui.kbd_cursor_keys_fix)
 - Improved behavior of the left mouse button ("ui.mouse_lmb_fix")
-- Mouse scrolls the galaxy movement screen if touches edge
-  ("ui.sm_mouse_scroll")
 - Pressing a hotkey does not trigger mouse warp ("ui.mouse_warp_disabled")
 - "ui.illogical_hotkey_fix" changes some illogical hotkeys:
   - Starmap -> Fleet -> Specs ('v' -> 's')
@@ -130,5 +129,11 @@ The following features can be enabled in the configuration file:
 
 Also:
 - "ui.sm_mouseover_focus" changes the target when hovering over a star
+- The keys UHJK scroll the galaxy movement screen map ("ui.sm_uhjk_scroll")
+- Mouse scrolls the galaxy movement screen map if touches edge
+  ("ui.sm_mouse_scroll")
+- "ui.sm_smoother_scrolling":
+  - Smoother galaxy movement screen scrolling
+  - Galaxy movement screen scrolling speed is adjustable ("ui.sm_scroll_speed")
 
 See doc/list_gamediff.txt for a list of differences in the game itself.
