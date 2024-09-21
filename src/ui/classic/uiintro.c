@@ -83,7 +83,7 @@ void ui_play_intro(void)
         int16_t oi;
         ui_delay_prepare();
         oi = uiobj_handle_input_cond();
-        if ((oi == oi_skip) || (oi == -1)) {
+        if ((oi == oi_skip) || (oi == UIOBJI_ESC)) {
             flag_skip = true;
             break;
         } else {
@@ -120,7 +120,7 @@ void ui_play_intro(void)
         int16_t oi;
         ui_delay_prepare();
         oi = uiobj_handle_input_cond();
-        if ((oi == oi_skip) || (oi == -1)) {
+        if ((oi == oi_skip) || (oi == UIOBJI_ESC)) {
             flag_skip = true;
             break;
         } else {
@@ -169,7 +169,7 @@ void ui_play_intro(void)
         int16_t oi;
         ui_delay_prepare();
         oi = uiobj_handle_input_cond();
-        if ((oi == oi_skip) || (oi == -1)) {
+        if ((oi == oi_skip) || (oi == UIOBJI_ESC)) {
             flag_skip = true;
             break;
         } else {
@@ -221,7 +221,7 @@ void ui_play_intro(void)
         int16_t oi;
         ui_delay_prepare();
         oi = uiobj_handle_input_cond();
-        if ((oi == oi_skip) || (oi == -1)) {
+        if ((oi == oi_skip) || (oi == UIOBJI_ESC)) {
             flag_skip = true;
             break;
         } else {
@@ -270,7 +270,7 @@ void ui_play_intro(void)
         int16_t oi;
         ui_delay_prepare();
         oi = uiobj_handle_input_cond();
-        if ((oi == oi_skip) || (oi == -1)) {
+        if ((oi == oi_skip) || (oi == UIOBJI_ESC)) {
             flag_skip = true;
             break;
         } else {
@@ -315,7 +315,7 @@ void ui_play_intro(void)
         int16_t oi;
         ui_delay_prepare();
         oi = uiobj_handle_input_cond();
-        if ((oi == oi_skip) || (oi == -1)) {
+        if ((oi == oi_skip) || (oi == UIOBJI_ESC)) {
             flag_skip = true;
             break;
         } else {
@@ -355,7 +355,7 @@ void ui_play_intro(void)
         int16_t oi;
         ui_delay_prepare();
         oi = uiobj_handle_input_cond();
-        if ((oi == oi_skip) || (oi == -1)) {
+        if ((oi == oi_skip) || (oi == UIOBJI_ESC)) {
             flag_skip = true;
             break;
         } else {
