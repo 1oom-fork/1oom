@@ -28,7 +28,7 @@
 
 void ui_play_intro(void)
 {
-    int16_t uiobji_ma;
+    int16_t oi_skip;
     uint16_t frame;
     bool flag_skip, flag_fadein = false;
     uint8_t *intro_sfx1;
@@ -69,7 +69,7 @@ void ui_play_intro(void)
     uiobj_table_clear();
     uiobj_set_skip_delay(true);
 
-    uiobji_ma = uiobj_add_mousearea_all(MOO_KEY_UNKNOWN, -1);
+    oi_skip = uiobj_add_mousearea_all(MOO_KEY_UNKNOWN, -1);
     flag_skip = 0;
     uiobj_set_downcount(2);
 
@@ -84,7 +84,7 @@ void ui_play_intro(void)
         int16_t oi;
         ui_delay_prepare();
         oi = uiobj_handle_input_cond();
-        if ((oi == uiobji_ma) || (oi == -1)) {
+        if ((oi == oi_skip) || (oi == -1)) {
             flag_skip = true;
             break;
         } else {
@@ -121,7 +121,7 @@ void ui_play_intro(void)
         int16_t oi;
         ui_delay_prepare();
         oi = uiobj_handle_input_cond();
-        if ((oi == uiobji_ma) || (oi == -1)) {
+        if ((oi == oi_skip) || (oi == -1)) {
             flag_skip = true;
             break;
         } else {
@@ -170,7 +170,7 @@ void ui_play_intro(void)
         int16_t oi;
         ui_delay_prepare();
         oi = uiobj_handle_input_cond();
-        if ((oi == uiobji_ma) || (oi == -1)) {
+        if ((oi == oi_skip) || (oi == -1)) {
             flag_skip = true;
             break;
         } else {
@@ -222,7 +222,7 @@ void ui_play_intro(void)
         int16_t oi;
         ui_delay_prepare();
         oi = uiobj_handle_input_cond();
-        if ((oi == uiobji_ma) || (oi == -1)) {
+        if ((oi == oi_skip) || (oi == -1)) {
             flag_skip = true;
             break;
         } else {
@@ -271,7 +271,7 @@ void ui_play_intro(void)
         int16_t oi;
         ui_delay_prepare();
         oi = uiobj_handle_input_cond();
-        if ((oi == uiobji_ma) || (oi == -1)) {
+        if ((oi == oi_skip) || (oi == -1)) {
             flag_skip = true;
             break;
         } else {
@@ -316,7 +316,7 @@ void ui_play_intro(void)
         int16_t oi;
         ui_delay_prepare();
         oi = uiobj_handle_input_cond();
-        if ((oi == uiobji_ma) || (oi == -1)) {
+        if ((oi == oi_skip) || (oi == -1)) {
             flag_skip = true;
             break;
         } else {
@@ -356,7 +356,7 @@ void ui_play_intro(void)
         int16_t oi;
         ui_delay_prepare();
         oi = uiobj_handle_input_cond();
-        if ((oi == uiobji_ma) || (oi == -1)) {
+        if ((oi == oi_skip) || (oi == -1)) {
             flag_skip = true;
             break;
         } else {
