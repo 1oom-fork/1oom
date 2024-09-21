@@ -28,7 +28,7 @@
 
 void ui_play_intro(void)
 {
-    int16_t uiobji_now, uiobji_ma;
+    int16_t uiobji_ma;
     uint16_t frame;
     bool flag_skip, flag_fadein = false;
     uint8_t *intro_sfx1;
@@ -70,7 +70,6 @@ void ui_play_intro(void)
 
     uiobji_ma = uiobj_add_mousearea(0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, MOO_KEY_UNKNOWN, -1);
     flag_skip = 0;
-    uiobji_now = 0;
     uiobj_set_downcount(2);
 
     if (!flag_skip) {
@@ -81,9 +80,10 @@ void ui_play_intro(void)
     }
 
     while ((frame < 0x73) && (!flag_skip)) {
+        int16_t oi;
         ui_delay_prepare();
-        uiobji_now = uiobj_handle_input_cond();
-        if ((uiobji_now == uiobji_ma) || (uiobji_now == -1)) {
+        oi = uiobj_handle_input_cond();
+        if ((oi == uiobji_ma) || (oi == -1)) {
             flag_skip = true;
             break;
         } else {
@@ -117,9 +117,10 @@ void ui_play_intro(void)
     }
 
     while ((frame < 0x1e) && (!flag_skip)) {
+        int16_t oi;
         ui_delay_prepare();
-        uiobji_now = uiobj_handle_input_cond();
-        if ((uiobji_now == uiobji_ma) || (uiobji_now == -1)) {
+        oi = uiobj_handle_input_cond();
+        if ((oi == uiobji_ma) || (oi == -1)) {
             flag_skip = true;
             break;
         } else {
@@ -165,9 +166,10 @@ void ui_play_intro(void)
     }
 
     while ((frame < 0x46) && (!flag_skip)) {
+        int16_t oi;
         ui_delay_prepare();
-        uiobji_now = uiobj_handle_input_cond();
-        if ((uiobji_now == uiobji_ma) || (uiobji_now == -1)) {
+        oi = uiobj_handle_input_cond();
+        if ((oi == uiobji_ma) || (oi == -1)) {
             flag_skip = true;
             break;
         } else {
@@ -216,9 +218,10 @@ void ui_play_intro(void)
     }
 
     while ((frame < 0x45) && (!flag_skip)) {
+        int16_t oi;
         ui_delay_prepare();
-        uiobji_now = uiobj_handle_input_cond();
-        if ((uiobji_now == uiobji_ma) || (uiobji_now == -1)) {
+        oi = uiobj_handle_input_cond();
+        if ((oi == uiobji_ma) || (oi == -1)) {
             flag_skip = true;
             break;
         } else {
@@ -264,9 +267,10 @@ void ui_play_intro(void)
     }
 
     while ((frame < 0x28) && (!flag_skip)) {
+        int16_t oi;
         ui_delay_prepare();
-        uiobji_now = uiobj_handle_input_cond();
-        if ((uiobji_now == uiobji_ma) || (uiobji_now == -1)) {
+        oi = uiobj_handle_input_cond();
+        if ((oi == uiobji_ma) || (oi == -1)) {
             flag_skip = true;
             break;
         } else {
@@ -308,9 +312,10 @@ void ui_play_intro(void)
     }
 
     while ((frame < 0x1e) && (!flag_skip)) {
+        int16_t oi;
         ui_delay_prepare();
-        uiobji_now = uiobj_handle_input_cond();
-        if ((uiobji_now == uiobji_ma) || (uiobji_now == -1)) {
+        oi = uiobj_handle_input_cond();
+        if ((oi == uiobji_ma) || (oi == -1)) {
             flag_skip = true;
             break;
         } else {
@@ -347,9 +352,10 @@ void ui_play_intro(void)
     }
 
     while ((frame < 0xb4) && (!flag_skip)) {
+        int16_t oi;
         ui_delay_prepare();
-        uiobji_now = uiobj_handle_input_cond();
-        if ((uiobji_now == uiobji_ma) || (uiobji_now == -1)) {
+        oi = uiobj_handle_input_cond();
+        if ((oi == uiobji_ma) || (oi == -1)) {
             flag_skip = true;
             break;
         } else {
