@@ -92,7 +92,6 @@ void ui_starmap_orbit_en(struct game_s *g, player_id_t active_player)
 
     d.g = g;
     d.api = active_player;
-    d.anim_delay = 0;
     d.oe.frame_scanner = 0;
     d.oe.scanner_delay = 0;
     d.oe.from = g->planet_focus_i[active_player];
