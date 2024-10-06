@@ -160,7 +160,6 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
 
     d.g = g;
     d.api = active_player;
-    d.anim_delay = 0;
     d.from = g->planet_focus_i[active_player];
     os = &(g->eto[active_player].orbit[d.from].ships[0]);
     for (int i = 0; i < NUM_SHIPDESIGNS; ++i) {
