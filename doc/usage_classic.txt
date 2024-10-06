@@ -33,8 +33,6 @@ to adjust the scaling of the galaxy movement screen map.
 
 The following new UI features are always enabled/available:
 - The main menu now allows you to change game settings
-- Smoother galaxy movement screen scrolling
-- Galaxy movement screen scrolling speed is adjustable (-uismscroll)
 - Random race / banner
 - Custom Game screen allows setting opponent race/banner/names and AI/human flag
 - Custom Game screen allows local multiplayer
@@ -142,5 +140,8 @@ Also:
 - The keys UHJK scroll the galaxy movement screen map ("ui.sm_uhjk_scroll")
 - Mouse scrolls the galaxy movement screen map if touches edge
   ("ui.sm_mouse_scroll")
+- "ui.sm_smoother_scrolling":
+  - Smoother galaxy movement screen scrolling
+  - Galaxy movement screen scrolling speed is adjustable ("ui.sm_scroll_speed")
 
 See doc/list_gamediff.txt for a list of differences in the game itself.
