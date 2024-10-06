@@ -142,7 +142,8 @@ typedef enum {
     MAIN_MENU_PAGE_OPTIONS_VIDEO,
     MAIN_MENU_PAGE_OPTIONS_ADDONS,
     MAIN_MENU_PAGE_OPTIONS_ADDONS_MESSAGE_FILTER,
-    MAIN_MENU_PAGE_OPTIONS_INTERFACE,
+    MAIN_MENU_PAGE_OPTIONS_MISC,
+    MAIN_MENU_PAGE_OPTIONS_STARMAP,
     MAIN_MENU_PAGE_OPTIONS_RULES,
     MAIN_MENU_PAGE_OPTIONS_RULES_AI,
     MAIN_MENU_PAGE_OPTIONS_RULES_BATTLE,
@@ -415,8 +416,9 @@ static void main_menu_make_options_page(struct main_menu_data_s *d)
     menu_make_page(menu_allocate_item(), "Input", MAIN_MENU_PAGE_OPTIONS_INPUT, MOO_KEY_i);
     menu_make_page(menu_allocate_item(), "Add-ons", MAIN_MENU_PAGE_OPTIONS_ADDONS, MOO_KEY_a);
     menu_make_page(menu_allocate_item(), "Sound", MAIN_MENU_PAGE_OPTIONS_SOUND, MOO_KEY_s);
-    menu_make_page(menu_allocate_item(), "Interface", MAIN_MENU_PAGE_OPTIONS_INTERFACE, MOO_KEY_n);
+    menu_make_page(menu_allocate_item(), "Starmap", MAIN_MENU_PAGE_OPTIONS_STARMAP, MOO_KEY_t);
     menu_make_page(menu_allocate_item(), "Video", MAIN_MENU_PAGE_OPTIONS_VIDEO, MOO_KEY_v);
+    menu_make_page(menu_allocate_item(), "Misc", MAIN_MENU_PAGE_OPTIONS_MISC, MOO_KEY_m);
     menu_make_page(menu_allocate_item(), "Preset", MAIN_MENU_PAGE_PRESET, MOO_KEY_p);
     menu_make_back(menu_allocate_item());
 }
@@ -424,14 +426,13 @@ static void main_menu_make_options_page(struct main_menu_data_s *d)
 static void main_menu_make_options_input_page(struct main_menu_data_s *d)
 {
     d->set_item_dimensions = mm_options_set_item_dimensions;
-    menu_make_bool(menu_allocate_item(), "Scroll by mouse", &ui_sm_mouse_scroll, MOO_KEY_s);
-    menu_make_int(menu_allocate_item(), "Scroll speed", &ui_sm_scroll_speed, 0, UI_SCROLL_SPEED_MAX, MOO_KEY_p);
     menu_make_bool(menu_allocate_item(), "Disable Mouse Warp", &ui_mouse_warp_disabled, MOO_KEY_w);
     menu_make_bool(menu_allocate_item(), "LMB Behavior Fix", &ui_mouse_lmb_fix, MOO_KEY_l);
     menu_make_bool(menu_allocate_item(), "Invert slider", &ui_mwi_slider, MOO_KEY_i);
     menu_make_bool(menu_allocate_item(), "Invert counter", &ui_mwi_counter, MOO_KEY_n);
     menu_make_bool_func(menu_allocate_item(), "Keyboard repeat", &ui_kbd_repeat, main_menu_toggle_kbd_repeat, MOO_KEY_k);
     menu_make_bool(menu_allocate_item(), "Direction Keys Fix", &ui_kbd_cursor_keys_fix, MOO_KEY_d);
+    menu_make_bool(menu_allocate_item(), "Illogical Hotkey Fix", &ui_illogical_hotkey_fix, MOO_KEY_h);
     menu_make_back(menu_allocate_item());
 }
 
@@ -476,18 +477,25 @@ static void main_menu_make_options_addons_message_filter_page(struct main_menu_d
     menu_make_back(menu_allocate_item());
 }
 
-static void main_menu_make_options_interface_page(struct main_menu_data_s *d)
+static void main_menu_make_options_misc_page(struct main_menu_data_s *d)
 {
-    d->set_item_dimensions = mm_options_small_set_item_dimensions;
+    d->set_item_dimensions = mm_options_set_item_dimensions;
     menu_make_bool(menu_allocate_item(), "Skip Intro", &game_opt_skip_intro_always, MOO_KEY_i);
     menu_make_bool(menu_allocate_item(), "Skip Random News", &game_opt_skip_random_news, MOO_KEY_n);
-    menu_make_bool(menu_allocate_item(), "Explicit Cursor Context", &ui_sm_explicit_cursor_context, MOO_KEY_c);
-    menu_make_bool(menu_allocate_item(), "No '?' Starmap Cursor", &ui_sm_no_question_mark_cursor, MOO_KEY_q);
-    menu_make_bool(menu_allocate_item(), "Illogical Hotkey Fix", &ui_illogical_hotkey_fix, MOO_KEY_h);
-    menu_make_bool(menu_allocate_item(), "Expanded Starmap Scroll", &ui_sm_expanded_scroll, MOO_KEY_e);
-    menu_make_bool(menu_allocate_item(), "SM Mouseover Focus", &ui_sm_mouseover_focus, MOO_KEY_m);
     menu_make_bool(menu_allocate_item(), "Skip Copy Protection", &ui_copyprotection_disabled, MOO_KEY_p);
     menu_make_bool(menu_allocate_item(), "News Orion Colonized", &game_num_news_orion, MOO_KEY_o);
+    menu_make_back(menu_allocate_item());
+}
+
+static void main_menu_make_options_starmap_page(struct main_menu_data_s *d)
+{
+    d->set_item_dimensions = mm_options_set_item_dimensions;
+    menu_make_bool(menu_allocate_item(), "Explicit Cursor Context", &ui_sm_explicit_cursor_context, MOO_KEY_c);
+    menu_make_bool(menu_allocate_item(), "No '?' Cursor", &ui_sm_no_question_mark_cursor, MOO_KEY_q);
+    menu_make_bool(menu_allocate_item(), "Expanded Scroll", &ui_sm_expanded_scroll, MOO_KEY_e);
+    menu_make_bool(menu_allocate_item(), "Mouseover Focus", &ui_sm_mouseover_focus, MOO_KEY_m);
+    menu_make_bool(menu_allocate_item(), "Scroll by mouse", &ui_sm_mouse_scroll, MOO_KEY_s);
+    menu_make_int(menu_allocate_item(), "Scroll speed", &ui_sm_scroll_speed, 0, UI_SCROLL_SPEED_MAX, MOO_KEY_p);
     menu_make_back(menu_allocate_item());
 }
 
@@ -649,7 +657,10 @@ static struct main_menu_page_s mm_pages[MAIN_MENU_PAGE_NUM] = {
         main_menu_make_options_addons_message_filter_page,
     },
     {
-        main_menu_make_options_interface_page,
+        main_menu_make_options_misc_page,
+    },
+    {
+        main_menu_make_options_starmap_page,
     },
     {
         main_menu_make_options_rules_page,
