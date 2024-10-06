@@ -86,6 +86,7 @@ const struct cfg_items_s ui_cfg_items[] = {
     CFG_ITEM_BOOL("mouse_warp_disabled", &ui_mouse_warp_disabled),
     CFG_ITEM_BOOL("copy_protection_disabled", &ui_copyprotection_disabled),
     CFG_ITEM_BOOL("sm_mouseover_focus", &ui_sm_mouseover_focus),
+    CFG_ITEM_BOOL("sm_smoother_scrolling", &ui_sm_smoother_scrolling),
     CFG_ITEM_BOOL("sm_mouse_scroll", &ui_sm_mouse_scroll),
     CFG_ITEM_BOOL("sm_uhjk_scroll", &ui_sm_uhjk_scroll),
     CFG_ITEM_BOOL("kbd_cursor_keys_fix", &ui_kbd_cursor_keys_fix),
@@ -155,6 +156,7 @@ bool ui_mouse_lmb_fix = false;
 bool ui_mouse_warp_disabled = false;
 bool ui_copyprotection_disabled = false;
 bool ui_sm_mouseover_focus = false;
+bool ui_sm_smoother_scrolling = false;
 bool ui_sm_mouse_scroll = false;
 bool ui_sm_uhjk_scroll = false;
 bool ui_kbd_cursor_keys_fix = false;
