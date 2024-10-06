@@ -140,7 +140,6 @@ void ui_starmap_enroute(struct game_s *g, player_id_t active_player)
 
     d.g = g;
     d.api = active_player;
-    d.anim_delay = 0;
 
     d.en.can_move = g->eto[active_player].have_hyperspace_comm ? GOT_HYPERCOMM : NO_MOVE;
     for (int i = 0; i < g->galaxy_stars; ++i) {
