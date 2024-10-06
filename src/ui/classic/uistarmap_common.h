@@ -6,16 +6,9 @@
 #include "uidraw.h"
 #include "uiobj.h"
 
-#if 0
-/* original */
-#define STARMAP_DELAY 3
-#define STARMAP_ANIM_DELAY 1
-#define STARMAP_SCROLLSTEP 10
-#else
-#define STARMAP_DELAY 1
-#define STARMAP_ANIM_DELAY 3
-#define STARMAP_SCROLLSTEP  ui_sm_scroll_speed
-#endif
+#define STARMAP_DELAY (ui_sm_smoother_scrolling ? 1 : 3)
+#define STARMAP_ANIM_DELAY (ui_sm_smoother_scrolling ? 3 : 1)
+#define STARMAP_SCROLLSTEP  (ui_sm_smoother_scrolling ? ui_sm_scroll_speed : 10)
 
 #define STARMAP_LIMITS  6, 6, 222 - 1, 178 - 1
 
