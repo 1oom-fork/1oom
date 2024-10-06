@@ -495,6 +495,7 @@ static void main_menu_make_options_starmap_page(struct main_menu_data_s *d)
     menu_make_bool(menu_allocate_item(), "Expanded Scroll", &ui_sm_expanded_scroll, MOO_KEY_e);
     menu_make_bool(menu_allocate_item(), "Mouseover Focus", &ui_sm_mouseover_focus, MOO_KEY_m);
     menu_make_bool(menu_allocate_item(), "Scroll by mouse", &ui_sm_mouse_scroll, MOO_KEY_s);
+    menu_make_bool(menu_allocate_item(), "UHJK scroll", &ui_sm_uhjk_scroll, MOO_KEY_u);
     menu_make_int(menu_allocate_item(), "Scroll speed", &ui_sm_scroll_speed, 0, UI_SCROLL_SPEED_MAX, MOO_KEY_p);
     menu_make_back(menu_allocate_item());
 }

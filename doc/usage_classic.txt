@@ -63,7 +63,6 @@ The following new UI features are always enabled/available:
 - Eco slider shows Clean/+N Pop past T-Form on a full planet
 - Bases can be scrapped by clicking on the Bases text
 - Clicking cycles selection of overlapping fleets
-- The keys UHJK scroll the galaxy movement screen map
 - The following hotkeys are available for the star map whenever it makes
   sense: Alt+m, Alt+c, Alt+r
 - Ctrl+r sets or unsets all reloc points similar to Alt+r
@@ -142,5 +141,6 @@ selecting the 1oom UI preset:
 
 Also:
 - "ui.sm_mouseover_focus" changes the target when hovering over a star
+- The keys UHJK scroll the galaxy movement screen map ("ui.sm_uhjk_scroll")
 
 See doc/list_gamediff.txt for a list of differences in the game itself.
