@@ -556,9 +556,6 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
             ui_data.starmap.y = y;
         }
     }
-    if (++d->anim_delay >= STARMAP_ANIM_DELAY) {
-        d->anim_delay = 0;
-    }
     ui_starmap_draw_clear();
     lbxgfx_draw_frame(0, 0, ui_data.gfx.starmap.mainview);
     ui_starmap_set_limits();
@@ -628,12 +625,10 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
             ty = (p->y - y) * 2 + 11;
         }
         ui_starmap_draw_frame_from(tx, ty, &ui_data.starmap.star_aux);
-        if (d->anim_delay == 0) {
-            if (p->frame == 4) {
-                p->frame = rnd_0_nm1(50, &g->seed);
-            } else {
-                p->frame = (p->frame + 1) % 50;
-            }
+        if (p->frame == 4) {
+            p->frame = rnd_0_nm1(50, &g->seed);
+        } else {
+            p->frame = (p->frame + 1) % 50;
         }
         if (p->owner != PLAYER_NONE) {
             bool do_print;
@@ -669,10 +664,8 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
         ty = (p->y - y) * 2 + 8;
         ui_starmap_draw_frame(tx, ty, ui_data.gfx.starmap.planbord);
     }
-    if (d->anim_delay == 0) {
-        if (--ui_data.starmap.line_anim_phase < 0) {
-            ui_data.starmap.line_anim_phase = 4;
-        }
+    if (--ui_data.starmap.line_anim_phase < 0) {
+        ui_data.starmap.line_anim_phase = 4;
     }
     for (int i = 0; i < g->enroute_num; ++i) {
         const fleet_enroute_t *r = &g->enroute[i];
