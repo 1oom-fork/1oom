@@ -70,7 +70,6 @@ void ui_starmap_reloc(struct game_s *g, player_id_t active_player)
     uint8_t oldreloc;
     d.g = g;
     d.api = active_player;
-    d.anim_delay = 0;
     {
         uint8_t pi = g->planet_focus_i[active_player];
         d.from = pi;
