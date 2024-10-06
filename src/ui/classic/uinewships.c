@@ -91,7 +91,6 @@ void ui_newships(struct game_s *g, int pi)
     d.api = pi;
     d.sm.g = g;
     d.sm.api = pi;
-    d.sm.anim_delay = 0;
     d.sm.bottom_highlight = -1;
     newships_load_data(&d);
     uiobj_set_callback_and_delay(newships_draw_cb, &d, 4);
