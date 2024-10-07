@@ -57,11 +57,8 @@ static void basescrap_draw_cb1(void *vptr)
     lbxfont_print_str_center(x + 57, y + 11, game_str_bs_line1, UI_SCREEN_W, ui_scale);
     lbxfont_print_str_center(x + 57, y + 20, game_str_bs_line2, UI_SCREEN_W, ui_scale);
     lbxfont_select(2, 6, 0, 0);
-    {
-        int n = (p->missile_bases * d->slider_var) / 100;
-        lbxfont_print_str_right(x + 104, y + 35, (n == 1) ? game_str_bs_base : game_str_bs_bases, UI_SCREEN_W, ui_scale);
-        lbxfont_print_num_right(x + 83, y + 35, n, UI_SCREEN_W, ui_scale);
-    }
+    lbxfont_print_str_right(x + 104, y + 35, game_str_bs_bases, UI_SCREEN_W, ui_scale);
+    lbxfont_print_num_right(x + 83, y + 35, (p->missile_bases * d->slider_var) / 100, UI_SCREEN_W, ui_scale);
 }
 
 /* -------------------------------------------------------------------------- */
