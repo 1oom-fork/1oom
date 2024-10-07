@@ -4,8 +4,7 @@ Run with -dumpnum for the full list without explanations.
 (name : range, default)
 
 deterministic : 0..1, 1
-  - Game is deterministic.
-    The game is deterministic by default. Given the same input, the outcome
+  - Game is deterministic. Given the same input, the outcome
     remains the same. Reloading a save and clicking Next turn will not get rid
     of a nasty event. Setting this number to 0 makes sitting idle churn the
     random number generator for producing different results.
