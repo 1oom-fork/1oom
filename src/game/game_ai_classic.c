@@ -2066,9 +2066,9 @@ static void game_ai_classic_turn_p3(struct game_s *g)
 
 static void game_ai_classic_battle_ai_ai_get_weights(const struct game_s *g, player_id_t pi, int *tbl)
 {
-    const shipdesign_t *sd = &(g->srd[pi].design[0]);
     const empiretechorbit_t *e = &(g->eto[pi]);
     for (int i = 0; i < e->shipdesigns_num; ++i) {
+        const shipdesign_t *sd = &(g->srd[pi].design[i]);
         tbl[i] += sd->shield * 5;
         tbl[i] += sd->comp * 5;
         tbl[i] += sd->wpnt[0];
@@ -2081,7 +2081,6 @@ static void game_ai_classic_battle_ai_ai_get_weights(const struct game_s *g, pla
             tbl[i] += ((g->ai_id == GAME_AI_CLASSIC) ? 15 : 20);
         }
         tbl[i] *= game_num_tbl_hull_w[sd->hull];
-        sd++;
     }
 }
 
