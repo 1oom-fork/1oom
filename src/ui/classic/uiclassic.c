@@ -47,6 +47,7 @@ void ui_extra_toggle_preset(bool enabled)
     ui_sm_explicit_cursor_context = enabled;
     ui_sm_no_question_mark_cursor = enabled;
     ui_illogical_hotkey_fix = enabled;
+    ui_sm_smoother_scrolling = enabled;
     ui_kbd_cursor_keys_fix = enabled;
     ui_mouse_lmb_fix = enabled;
     ui_mouse_warp_disabled = enabled;
