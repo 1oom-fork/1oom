@@ -1202,7 +1202,7 @@ static void game_turn_transport(struct game_s *g)
                 if (p->owner == owner) {
                     if (p->unrest == PLANET_UNREST_REBELLION) {
                         ADDSATT(p->inbound[owner], pop3, game_num_max_inbound);
-                        p->total_inbound[owner] += pop2;
+                        p->total_inbound[owner] += pop3;
                     } else {
                         ADDSATT(p->pop, pop3, p->max_pop3);
                     }
