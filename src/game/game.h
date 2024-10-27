@@ -331,6 +331,11 @@ static inline bool IS_PLAYER(const struct game_s *g, player_id_t i)
 
 static inline bool IS_HUMAN(const struct game_s *g, player_id_t i)
 {
+    /*
+        In MOO1, instead of IS_HUMAN, the index is checked for equality to zero,
+        which in turn implicitly guarantees that the index is less than g->players.
+        The IS_PLAYER check eliminates the potential for memory corruption.
+    */
     return IS_PLAYER(g, i) && BOOLVEC_IS0(g->is_ai, i);
 }
 
