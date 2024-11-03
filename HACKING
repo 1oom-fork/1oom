@@ -115,6 +115,9 @@ Comment only the unobvious or the big picture. Do not add inane comments like:
 Keep the commit message as one line of 70 characters or less. Do not end it
 with a '.'. Save any explanatory paragraphs for the merge request.
 
+Don't try to remove code that you don't think makes sense. It always has value
+if it strictly matches the original.
+
 ## Portability
 
 1oom is designed to be cross-platform and work on different Operating
