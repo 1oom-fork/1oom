@@ -10,12 +10,14 @@ Master of Orion (1993) in a form that can be run on modern computers.
 ===============
 
 1oom requires a copy of the Master of Orion (v1.3) LBX files.
+Please note that older saved games may not work in newer versions of 1oom.
+Read the [changelog](CHANGES) to learn more about the breaking changes.
 
 1.1 Windows, MSDOS
 ------------------
 
-Simply copy the EXE and DLLs (if any) to your MOO1 directory.
-Alternatively copy your MOO1 LBX files to your 1oom directory.
+Simply extract the desired [release](https://github.com/1oom-fork/1oom/releases) to your MOO1 directory.
+Alternatively copy your MOO1 LBX files (and saved games if needed) to your 1oom directory.
 See [usage_common](doc/usage_common.txt) if you prefer to use a separate directory.
 
 1.2 Unix (Linux)
@@ -110,6 +112,8 @@ Thanks to [shikadi.net](http://www.shikadi.net) for documenting the
 
 Thanks to CivFanatics forum user sargon0 for
 [partial save game format info](http://forums.civfanatics.com/threads/moo-save-file-layout.275055/).
+
+Special thanks to Zachary Kline (BlindGuyNW) for improving the text version of the game.
 
 Thanks to those who contributed code, ideas or bug reports.
 
