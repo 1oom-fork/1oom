@@ -13,7 +13,7 @@
 1.1 Windows, MSDOS
 ------------------
 
-Simply copy the EXE and DLLs (if any) to your MOO1 directory.
+Simply extract the desired [release](https://github.com/1oom-fork/1oom/releases) to your MOO1 directory.
 Alternatively copy your MOO1 LBX files to your 1oom directory.
 See [usage_common](doc/usage_common.txt) if you prefer to use a separate directory.
 
