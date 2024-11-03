@@ -96,6 +96,9 @@ Otherwise, try to keep close to C89.
 Avoid #ifdefs! No OS-specific #ifdefs are allowed in game/, ui/ or src/.
 Acceptable ones include HAVE_SAMPLERATE etc and FEATURE_MODEBUG.
 
+Don't try to remove code that you don't think makes sense. It always has value
+if it strictly matches the original.
+
 ## Portability
 
 1oom is designed to be cross-platform and work on different Operating
