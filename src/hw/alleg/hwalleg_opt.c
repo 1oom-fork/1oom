@@ -30,5 +30,11 @@ const struct cfg_items_s hw_cfg_items[] = {
 /* -------------------------------------------------------------------------- */
 
 const struct cmdline_options_s hw_cmdline_options[] = {
+    { "-fs", 0,
+      options_enable_bool_var, (void *)&hw_opt_fullscreen,
+      NULL, "Enable fullscreen" },
+    { "-window", 0,
+      options_disable_bool_var, (void *)&hw_opt_fullscreen,
+      NULL, "Use windowed mode" },
     { NULL, 0, NULL, NULL, NULL, NULL }
 };
