@@ -348,6 +348,7 @@ static void main_menu_make_game_page(struct main_menu_data_s *d)
     menu_make_action(menu_allocate_item(), "Tutor", MAIN_MENU_ACT_TUTOR, MOO_KEY_t);
     menu_make_action_conditional(menu_allocate_item(), "Continue", MAIN_MENU_ACT_CONTINUE_GAME, main_menu_have_save_continue, MOO_KEY_c);
     menu_make_action_conditional(menu_allocate_item(), "Load Game", MAIN_MENU_ACT_LOAD_GAME, main_menu_have_save_any, MOO_KEY_l);
+    menu_make_action(menu_allocate_item(), "Load Game MOO", MAIN_MENU_ACT_LOAD_GAME_MOO13, MOO_KEY_m);
     menu_make_action(menu_allocate_item(), "New Game", MAIN_MENU_ACT_NEW_GAME, MOO_KEY_n);
     menu_make_page(menu_allocate_item(), "Custom Game", MAIN_MENU_PAGE_GAME_CUSTOM, MOO_KEY_u);
     menu_make_action(menu_allocate_item(), "Challenge", MAIN_MENU_ACT_CHALLENGE_GAME, MOO_KEY_h);
@@ -941,6 +942,17 @@ main_menu_action_t ui_main_menu(struct game_new_options_s *newopts, struct game_
                 {
                     int i;
                     i = ui_load_game();
+                    if (i >= 0) {
+                        *load_game_i_ptr = i;
+                        flag_done = true;
+                    }
+                    ui_draw_finish_mode = 1;
+                }
+                break;
+            case MAIN_MENU_ACT_LOAD_GAME_MOO13:
+                {
+                    int i;
+                    i = ui_load_game_moo13();
                     if (i >= 0) {
                         *load_game_i_ptr = i;
                         flag_done = true;
