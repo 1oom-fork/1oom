@@ -822,6 +822,18 @@ int main_do(void)
                     log_fatal_and_die("Game: could not load save %i\n", load_game_i);
                 }
                 break;
+            case MAIN_MENU_ACT_LOAD_GAME_MOO13:
+                {
+                    char fname[12] = "SAVEX.GAM";
+                    fname[4] = load_game_i + '0' + 1;   /* FIXME */
+                    saveconv_init();
+                    if (!saveconv_is_moo13(&game, fname) || saveconv_de_moo13(&game, fname)) {
+                        saveconv_shutdown();
+                        continue;
+                    }
+                    saveconv_shutdown();
+                }
+                break;
             case MAIN_MENU_ACT_CONTINUE_GAME:
                 main_menu_continue_game:
                 if (game_save_do_load_i(GAME_SAVE_I_CONTINUE, &game)) {
