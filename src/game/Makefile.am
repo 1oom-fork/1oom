@@ -55,6 +55,8 @@ libgame_a_SOURCES = \
     game_planet.h \
     game_save.c \
     game_save.h \
+    game_save_moo13.c \
+    game_save_moo13.h \
     game_shipdesign.c \
     game_shipdesign.h \
     game_shiptech.c \
