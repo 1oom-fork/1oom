@@ -16,6 +16,7 @@
 #include "game_end.h"
 #include "game_event.h"
 #include "game_save.h"
+#include "game_save_moo13.h"
 #include "game_strp.h"
 #include "game_turn.h"
 #include "game_tech.h"
@@ -814,6 +815,15 @@ int main_do(void)
                   || ((load_game_i >= 2300) && game_save_do_load_year(load_game_i, 0, &game))
                 ) {
                     log_fatal_and_die("Game: could not load save %i\n", load_game_i);
+                }
+                break;
+            case MAIN_MENU_ACT_LOAD_GAME_MOO13:
+                {
+                    char fname[12] = "SAVEX.GAM";
+                    fname[4] = load_game_i + '0' + 1;   /* FIXME */
+                    if (game_save_de_moo13(&game, fname) < 0) {
+                        continue;
+                    }
                 }
                 break;
             case MAIN_MENU_ACT_CONTINUE_GAME:
