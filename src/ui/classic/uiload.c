@@ -29,6 +29,7 @@ struct load_game_data_s {
     uint8_t *gfx_loadgame;
     uint8_t *gfx_lg_gray;
     uint8_t *gfx_lg_green;
+    bool flag_moo13;
 };
 
 static void load_lg_data(struct load_game_data_s *d)
@@ -56,22 +57,33 @@ static void load_game_draw_cb(void *vptr)
         y = (si < NUM_SAVES) ? (33 + 18 * si) : (110 + 10 * si);
         lbxgfx_draw_frame(134, y, (d->selected == i) ? d->gfx_lg_green : d->gfx_lg_gray, UI_SCREEN_W, ui_scale);
         lbxfont_select(0, (d->selected == i) ? 2 : 1, 0, 0);
-        lbxfont_print_str_normal(149, y + 2, game_save_tbl_name[si], UI_SCREEN_W, ui_scale);
+        if (d->flag_moo13) {
+            lbxfont_print_num_normal(149, y + 2, si + 1, UI_SCREEN_W, ui_scale);
+        } else {
+            lbxfont_print_str_normal(149, y + 2, game_save_tbl_name[si], UI_SCREEN_W, ui_scale);
+        }
     }
 }
 
 /* -------------------------------------------------------------------------- */
 
-int ui_load_game(void)
+static int ui_load_game_do(bool flag_moo13)
 {
     struct load_game_data_s d;
     bool flag_done = false, flag_fadein = false;
     int16_t oi_cancel, oi_ok, oi_save[NUM_ALL_SAVES];
 
+    d.flag_moo13 = flag_moo13;
     d.savenum = 0;
     for (int i = 0; i < (ui_load_opts_extra ? NUM_ALL_SAVES : NUM_SAVES); ++i) {
         if (game_save_tbl_have_save[i]) {
             d.tbl_savei[d.savenum++] = i;
+        }
+    }
+    if (d.flag_moo13) { /* FIXME */
+        d.savenum = 7;
+        for (int i = 0; i < d.savenum; ++i) {
+            d.tbl_savei[i] = i;
         }
     }
 
@@ -136,4 +148,12 @@ int ui_load_game(void)
     uiobj_unset_callback();
     free_lg_data(&d);
     return (d.selected >= 0) ? d.tbl_savei[d.selected] : -1;
+}
+
+int ui_load_game(void) {
+    return ui_load_game_do(false);
+}
+
+int ui_load_game_moo13(void) {
+    return ui_load_game_do(true);
 }
