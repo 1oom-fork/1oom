@@ -1114,10 +1114,10 @@ int game_new(struct game_s *g, struct game_aux_s *gaux, struct game_new_options_
         const uint8_t *rawdata;
         rawdata = gaux->research.d0;
         for (int f = 0; f < 6; ++f) {
-            researchflag[f * 50] = 0;
-            for (int t = 1; t < 50; ++t) {
+            for (int t = 0; t < 50; ++t) {
                 researchflag[f * 50 + t] = (rawdata[(f * 50 + t) * 6] != 0xff) ? 1 : 0;
             }
+            researchflag[f * 50] = 0;
         }
     }
     researchflag[TECH_FIELD_WEAPON * 50 + (TECH_WEAP_DEATH_RAY - 1)] = 0;
