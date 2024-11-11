@@ -904,8 +904,8 @@ start_of_func:
         }
         e->fuel_range = 3;
         /* BUG? these shipi values are wrong, but fixed by first next turn */
-        e->shipi_colony = 4;
-        e->shipi_bomber = 1;
+        e->shipi_colony = 1;
+        e->shipi_bomber = 4;
     }
 }
 
