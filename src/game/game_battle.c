@@ -42,6 +42,7 @@ static void game_battle_item_from_parsed(struct battle_item_s *b, const shippars
     COPY_PROP(b, sp, look);
     COPY_PROP(b, sp, pulsar);
     COPY_PROP(b, sp, stream);
+    COPY_PROP(b, sp, pshield);
     COPY_PROP(b, sp, sbmask);
     COPY_PROP(b, sp, extrarange);
     COPY_PROP(b, sp, num);
@@ -51,7 +52,6 @@ static void game_battle_item_from_parsed(struct battle_item_s *b, const shippars
     b->hp1 = sp->hp;
     b->hp2 = sp->hp;
     COPY_PROP(b, sp, absorb);
-    COPY_PROP(b, sp, pshield);
     COPY_PROP(b, sp, man);
     for (int i = 0; i < WEAPON_SLOT_NUM; ++i) {
         b->wpn[i].t = sp->wpnt[i];
