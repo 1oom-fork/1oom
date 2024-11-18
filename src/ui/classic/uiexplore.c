@@ -43,14 +43,10 @@ struct explore_data_s {
 static void explore_load_data(struct explore_data_s *d)
 {
     const planet_t *p = &(d->g->planet[d->planet]);
-    int planet_gfx_index = p->type * 2;
-    if (p->owner != PLAYER_NONE) {
-        planet_gfx_index += 1;
-    }
     d->gfx_explobac = lbxfile_item_get(LBXFILE_BACKGRND, 0xf);
     d->gfx_contbutt = lbxfile_item_get(LBXFILE_BACKGRND, 0xc);
     d->gfx_yn_back = lbxfile_item_get(LBXFILE_BACKGRND, 0x18);
-    d->gfx_colony = lbxfile_item_get(LBXFILE_COLONIES, planet_gfx_index);
+    d->gfx_colony = lbxfile_item_get(LBXFILE_COLONIES, p->type * 2 + ((p->owner != PLAYER_NONE) ? 1 : 0));
 }
 
 static void explore_free_data(struct explore_data_s *d)
