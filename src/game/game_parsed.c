@@ -251,10 +251,10 @@ void game_parsed_from_planet(shipparsed_t *sp, const struct game_s *g, const str
     const empiretechorbit_t *e = &(g->eto[p->owner]);
     memset(sp, 0, sizeof(*sp));
     lib_strcpy(sp->name, p->name, SHIP_NAME_LEN);
-    {
-        uint8_t comp = e->base_comp + 1;
-        sp->comp = comp;
-        sp->complevel = comp + ((e->race == RACE_MRRSHAN) ? 4 : 0);
+    sp->comp = e->base_comp + 1;
+    sp->complevel = sp->comp;
+    if (e->race == RACE_MRRSHAN) {
+        sp->complevel += 4;
     }
     sp->shield = e->base_shield;
     sp->absorb = tbl_shiptech_shield[e->base_shield].absorb;
