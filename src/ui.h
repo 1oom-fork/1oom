@@ -140,6 +140,7 @@ extern bool ui_explore(struct game_s *g, int pi, uint8_t planet_i, bool by_scann
 extern bool ui_bomb_ask(struct game_s *g, int pi, uint8_t planet_i, int pop_inbound);
 extern void ui_bomb_show(struct game_s *g, int attacker_i, int owner_i, uint8_t planet_i, int popdmg, int factdmg, bool play_music);
 
+extern void ui_turn_pre(const struct game_s *g);
 extern void ui_turn_msg(struct game_s *g, int pi, const char *str);
 
 struct ground_s;
