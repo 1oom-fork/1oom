@@ -8,7 +8,6 @@
 #include "game.h"
 #include "game_aux.h"
 #include "game_str.h"
-#include "hw.h"
 #include "kbd.h"
 #include "lbx.h"
 #include "lbxfont.h"
@@ -23,6 +22,7 @@
 #include "uiobj.h"
 #include "uisound.h"
 #include "uistarmap_common.h"
+#include "vgabuf.h"
 
 /* -------------------------------------------------------------------------- */
 
@@ -41,6 +41,13 @@ static void ui_turn_msg_draw_cb(void *vptr)
 }
 
 /* -------------------------------------------------------------------------- */
+
+void ui_turn_pre(const struct game_s *g)
+{
+    struct starmap_data_s d;
+    ui_starmap_draw_button_text(&d, false);
+    vgabuf_copy_back_to_page2();
+}
 
 void ui_turn_msg(struct game_s *g, int pi, const char *str)
 {
