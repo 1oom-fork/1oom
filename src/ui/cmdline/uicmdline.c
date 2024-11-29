@@ -65,6 +65,10 @@ void ui_sound_play_sfx(int sfxi)
 {
 }
 
+void ui_turn_pre(const struct game_s *g)
+{
+}
+
 void ui_turn_msg(struct game_s *g, int pi, const char *str)
 {
     printf("%s | %i | Message: %s\n", g->emperor_names[pi], g->year + YEAR_BASE, str);

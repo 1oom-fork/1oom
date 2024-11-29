@@ -248,7 +248,6 @@ ui_turn_action_t ui_game_turn(struct game_s *g, int *load_game_i_ptr, int pi)
             case UI_MAIN_LOOP_NEXT_TURN:
                 ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
                 ui_data.news.flag_also = false;
-                hw_video_copy_back_to_page2();  /* MOO1 does this early in game_turn_process */
                 return UI_TURN_ACT_NEXT_TURN;
             default:
                 LOG_DEBUG((0, "BUG: %s: invalid action 0x%x\n", __func__, ui_data.ui_main_loop_action));
