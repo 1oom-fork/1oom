@@ -1729,6 +1729,7 @@ struct game_end_s game_turn_process(struct game_s *g)
     if ((g->year > 40) && (!rnd_0_nm1(30, &g->seed)) && (copyprot_status == 0)) {
         copyprot_status = 1;
     }
+    ui_turn_pre(g);
     game_turn_countdown_ceasefire(g);
     /* temp_turn_hmm3 = 0; */
     game_turn_update_mood_blunder(g);
