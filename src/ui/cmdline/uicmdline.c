@@ -120,6 +120,10 @@ void ui_bomb_show(struct game_s *g, int attacker_i, int owner_i, uint8_t planet_
 {
 }
 
+void ui_turn_pre(const struct game_s *g)
+{
+}
+
 void ui_turn_msg(struct game_s *g, int pi, const char *str)
 {
     fputs(str, stdout);
