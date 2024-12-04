@@ -842,7 +842,6 @@ static inline bool uiobj_kbd_dir_obj_ok(const uiobj_t *p)
 
 static int16_t uiobj_kbd_dir_key_dxdy(int dirx, int diry, int16_t oi2, int mx, int my)
 {
-    /* FIXME this behaves like MOO1, meaning it sucks */
     int dx = UIOBJ_OFFSCREEN, dy = UIOBJ_OFFSCREEN;
     int slope = UIOBJ_OFFSCREEN;
     int mind = UIOBJ_OFFSCREEN * UIOBJ_OFFSCREEN;
@@ -1015,11 +1014,11 @@ static int16_t uiobj_kbd_dir_key_dxdy(int dirx, int diry, int16_t oi2, int mx, i
                     slope = UIOBJ_OFFSCREEN;
                     continue;
                 }
-                if ((dx < dy) && (dy != 0)) {
-                    slope = (dx * 100) / dy;
-                }
-                if ((dy <= dx) && (dx != 0)) {
+                if ((dx >= dy) && (dy != 0)) {
                     slope = (dy * 100) / dx;
+                }
+                if ((dy > dx) && (dx != 0)) {
+                    slope = (dx * 100) / dy;
                 }
                 if ((dx == 0) || (dy == 0)) {
                     slope = UIOBJ_OFFSCREEN;
@@ -1995,13 +1994,16 @@ int16_t uiobj_add_inputkey(uint32_t key)
 int16_t uiobj_add_alt_str(const char *str)
 {
     uiobj_t *p = &uiobj_tbl[uiobj_table_num];
-    int len = strlen(str);
+    int len = 0;
+    while ((str[len] != 0) && (len < 0x1e)) {
+        ++len;
+    }
     uiobj_add_set_xys_offscreen(p);
     p->type = UIOBJ_TYPE_ALTSTR;
     p->vptr = 0;
     p->t8.str = str;
     p->t8.pos = 0;
-    p->t8.len = MIN(len, 0x1e);
+    p->t8.len = len;
     {
         char b = *str;
         if ((b >= 'a') && (b <= 'z')) {
@@ -2239,7 +2241,7 @@ int16_t uiobj_select_from_list4(int x, int y, int w, const char *title, char con
     oi_title = uiobj_add_ta(x, y, w, title, false, &v18, 1, 0, 0, MOO_KEY_UNKNOWN);
 
     upvar = (itemoffs == 0) ? 1 : 0;
-    dnvar = (itemi == itemnum) ? 1 : 0;
+    dnvar = (itemi >= itemnum) ? 1 : 0;
     oi_up = uiobj_add_t2(upx, upy, "", uplbx, &upvar, MOO_KEY_PAGEUP);
     oi_dn = uiobj_add_t2(dnx, dny, "", dnlbx, &dnvar, MOO_KEY_PAGEDOWN);
     if (add_switch) {
@@ -2356,7 +2358,7 @@ int16_t uiobj_select_from_list4(int x, int y, int w, const char *title, char con
             lbxfont_select(lbxfont_get_current_fontnum(), lbxfont_get_current_fonta2(), fonta4, 0);
             oi_title = uiobj_add_ta(x, y, w, title, false, &v18, 1, 0, 0, MOO_KEY_UNKNOWN);
             upvar = (itemoffs == 0) ? 1 : 0;
-            dnvar = (itemi == itemnum) ? 1 : 0;
+            dnvar = (itemi >= itemnum) ? 1 : 0;
             oi_up = uiobj_add_t2(upx, upy, "", uplbx, &upvar, MOO_KEY_PAGEUP);
             oi_dn = uiobj_add_t2(dnx, dny, "", dnlbx, &dnvar, MOO_KEY_PAGEDOWN);
             if (add_switch) {
