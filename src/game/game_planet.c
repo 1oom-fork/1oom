@@ -100,12 +100,12 @@ uint8_t game_planet_get_random(struct game_s *g, player_id_t owner)
     }
 }
 
-void game_planet_adjust_percent2(struct game_s *g, uint8_t planet_i, planet_slider_i_t si, uint8_t percent)
+void game_planet_adjust_percent2(struct game_s *g, uint8_t planet_i, planet_slider_i_t si, uint8_t percent, bool respect_locks)
 {
     planet_t *p = &(g->planet[planet_i]);
-    if (game_num_slider_respects_locks && p->slider_lock[si]) return;
+    if (respect_locks && p->slider_lock[si]) return;
     for (planet_slider_i_t j = 0; j < PLANET_SLIDER_NUM; ++j) {
-        if (game_num_slider_respects_locks && p->slider_lock[j]) continue;
+        if (respect_locks && p->slider_lock[j]) continue;
         if (si == j) continue;
         int diff = 0;
         if (j == PLANET_SLIDER_ECO) {

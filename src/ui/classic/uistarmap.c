@@ -436,7 +436,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
                 } else if (oi1 == d.sm.oi_tbl_slider_plus[i]) {
                     ui_sound_play_sfx_24();
                     if (kbd_is_modifier(MOO_MOD_ALT)) {
-                        game_planet_adjust_percent2(g, g->planet_focus_i[active_player], i, 100);
+                        game_planet_adjust_percent2(g, g->planet_focus_i[active_player], i, 100, true);
                     } else {
                         if (kbd_is_modifier(MOO_MOD_CTRL)) v = p->slider[i] + 1;
                         else v = p->slider[i] + 4;
@@ -612,7 +612,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
                     if (button) {
                         for (uint8_t pi = 0; pi < g->galaxy_stars; ++pi) {
                             if (g->planet[pi].owner == active_player) {
-                                game_planet_adjust_percent2(g, pi, i, game_num_tbl_tech_autoadj[button]);
+                                game_planet_adjust_percent2(g, pi, i, game_num_tbl_tech_autoadj[button], true);
                             }
                         }
                     }
@@ -625,7 +625,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
                     if (ui_dialog_yesno(g, active_player, buf, 50, 30, 0)) {
                         for (uint8_t pi = 0; pi < g->galaxy_stars; ++pi) {
                             if (g->planet[pi].owner == active_player) {
-                                game_planet_adjust_percent2(g, pi, i, 100);
+                                game_planet_adjust_percent2(g, pi, i, 100, true);
                             }
                         }
                     }
