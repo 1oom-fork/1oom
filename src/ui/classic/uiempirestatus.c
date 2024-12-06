@@ -43,7 +43,6 @@ static void empirestatus_draw_cb(void *vptr)
 {
     struct empirestatus_data_s *d = vptr;
     const struct game_s *g = d->g;
-    char buf[0x40];
     uint8_t tbl_stat[6][PLAYER_NUM];
     int tbl_sum[PLAYER_NUM];
 
@@ -53,8 +52,8 @@ static void empirestatus_draw_cb(void *vptr)
     lbxfont_select_set_12_4(4, 0xf, 0, 0);
     lbxfont_print_str_center(160, 9, game_str_ra_stats, UI_SCREEN_W);
     lbxfont_select_set_12_4(5, 5, 0, 0);
-    sprintf(buf, "%s: %i", game_str_year, g->year + YEAR_BASE);
-    lbxfont_print_str_normal(15, 11, buf, UI_SCREEN_W);
+    lbxfont_print_str_normal(15, 11, game_str_year, UI_SCREEN_W);
+    lbxfont_print_num_normal(42, 11, g->year + YEAR_BASE, UI_SCREEN_W);
 
     for (int i = 0; i < d->num; ++i) {
         tbl_sum[i] = 0;
