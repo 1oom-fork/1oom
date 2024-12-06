@@ -164,6 +164,8 @@ extern const char *game_str_no_events;
 extern const char *game_str_bc;
 extern const char *game_str_y;
 extern const char *game_str_year;
+extern const char *game_str_year0;
+extern const char *game_str_year1;
 extern const char *game_str_player;
 extern const char *game_str_pl_reserve;
 extern const char *game_str_pl_plague;
