@@ -156,8 +156,6 @@ static void audience_build_diplo_msg(struct audience_s *au, bool framed)
                     } else if (eh->trade_bc[pa] != 0) {
                         s = game_str_au_tradea;
                     } else {
-                        /* The placeholder only makes sense if the player and AI
-                         * at least have a trade agreement. */
                         s = game_str_au_treaty;
                     }
                     break;
