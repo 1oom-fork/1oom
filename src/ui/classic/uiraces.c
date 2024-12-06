@@ -190,7 +190,7 @@ static void races_draw_cb(void *vptr)
             lbxfont_print_str_normal(x + 60, y + 9, str, UI_SCREEN_W);
         }
         if (e->trade_bc[pi] != 0) {
-            sprintf(buf, "%s: %i %s/%s", game_str_ra_trade, e->trade_bc[pi], game_str_bc, game_str_year);
+            sprintf(buf, "%s: %i %s%s", game_str_ra_trade, e->trade_bc[pi], game_str_bc, game_str_year0);
         } else {
             strcpy(buf, game_str_ra_notrade);
         }
