@@ -257,18 +257,16 @@ void game_update_eco_on_waste(struct game_s *g, int player_i, bool force_adjust)
                 int16_t eco_diff = v - p->slider[PLANET_SLIDER_ECO];
                 int16_t sum = 100;
                 if (game_num_waste_adjust_fix) {
-                    sum = p->slider[PLANET_SLIDER_SHIP] + p->slider[PLANET_SLIDER_DEF] + p->slider[PLANET_SLIDER_IND];
+                    sum = p->slider[PLANET_SLIDER_SHIP] + p->slider[PLANET_SLIDER_DEF] + p->slider[PLANET_SLIDER_IND] + p->slider[PLANET_SLIDER_TECH];
                 }
                 if (check_locks) {
                     int16_t sum_locks = 0;
                     for (int si = 0; si < PLANET_SLIDER_NUM; ++si){
                         if (p->slider_lock[si]) {
                             sum_locks += p->slider[si];
-                            if (si != PLANET_SLIDER_TECH) {
-                                sum -= p->slider[si];
-                            }
                         }
                     }
+                    sum -= sum_locks;
                     SETMIN(v, 100 - sum_locks);
                 }
                 p->slider[PLANET_SLIDER_ECO] = v;
