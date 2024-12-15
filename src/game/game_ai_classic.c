@@ -2700,7 +2700,6 @@ static int game_battle_ai_best_range(struct battle_s *bt, int target_i)
                 }
             }
             range = (itemi == 0/*planet*/) ? 12 : 0;
-            /* damagemax != damagemin means beam or bomb weapon */
             if ((w->damagemax != w->damagemin) && (!w->is_bomb)) {
                 range = b->extrarange;
             } else if (!w->is_bomb) {

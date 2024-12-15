@@ -196,7 +196,7 @@ typedef enum {
 struct shiptech_weap_s {
     char const * const * const nameptr;
     char const * const * const extratextptr;
-    uint16_t damagemin;
+    uint16_t damagemin; /* damagemax != damagemin means beam or bomb weapon */
     uint16_t damagemax;
     uint8_t range;
     uint8_t extraacc;
