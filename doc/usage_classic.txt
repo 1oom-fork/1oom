@@ -10,7 +10,7 @@ arguments.
 The UI controls like the original. Consult the game manual and the readme.txt
 from v1.3. This document describes only the differences.
 
-New hoykeys:
+New hotkeys:
 - Middle click or Ctrl-F10 to grab/ungrab input
 - Ctrl-Esc to quit (without saving)
 - Ctrl-[] to adjust sfx volume
