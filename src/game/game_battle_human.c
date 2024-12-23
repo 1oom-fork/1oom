@@ -826,7 +826,6 @@ static void game_battle_item_move_find_route(struct battle_s *bt, uint8_t *route
             }
         }
     }
-    /*return minlen; BUG set to void retval on len==1 case */
 }
 
 static uint32_t game_battle_pulsar_get_dmg(struct battle_s *bt, int target_i, int v)
