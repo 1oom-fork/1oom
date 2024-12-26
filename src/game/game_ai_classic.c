@@ -3182,7 +3182,7 @@ static void game_ai_classic_turn_diplo_p1(struct game_s *g)
             if ((p1 == p2) || IS_HUMAN(g, p2)) {
                 continue;
             }
-            if ((!(rnd_0_nm1(15 - g->difficulty * 2, &g->seed))) && BOOLVEC_IS1(e1->within_frange, p2)) {
+            if (!rnd_0_nm1(15 - g->difficulty * 2, &g->seed) && BOOLVEC_IS1(e1->within_frange, p2)) {
                 int v;
                 v = e1->hmm06c[p2] + e1->relation1[p2] + game_diplo_tbl_reldiff[e2->trait1] + rnd_1_n(100, &g->seed);
                 if (e1->treaty[p2] == TREATY_NONAGGRESSION) {

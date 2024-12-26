@@ -132,7 +132,6 @@ static void game_generate_planets(struct game_s *g)
             again:
             x = rnd_1_n(0x2b, &g->seed) + w * 0x1c + 9;
             y = rnd_1_n(0x33, &g->seed) + h * 0x20 + 7;
-            i = 0;
             for (i = 0; i < (h * g->galaxy_w + w); ++i) {
                 if ((tblpx[i] < x) || (tblpy[i] < y)) {
                     if (util_math_dist_fast(tblpx[i], tblpy[i], x, y) < 20) {
