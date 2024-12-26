@@ -143,75 +143,7 @@ int uiobj_maxy = UI_SCREEN_H - 1;
 
 /* -------------------------------------------------------------------------- */
 
-#ifdef FEATURE_MODEBUG
-#define DEBUGLEVEL_UIOBJ    1
-static void dump_uiobj_p(uiobj_t *p)
-{
-    LOG_DEBUG((DEBUGLEVEL_UIOBJ, "i:%i xy:%i-%i,%i-%i t:%x key:%05x(%c) z0a:%i vptr:%i*:%i ", (p - uiobj_tbl), p->x0, p->x1, p->y0, p->y1, p->type, p->key, (p->key >= 0x20 && p->key < 0x7e) ? p->key : '.', p->z0a, p->vptr ? 0 : 1, p->vptr ? *p->vptr : 0));
-    switch (p->type) {
-        case 0:
-        case 1:
-        case 2:
-        case 3:
-            LOG_DEBUG((DEBUGLEVEL_UIOBJ, "font:%i,%x '%s' n0:%i lbx:%p\n", p->t0.fontnum, p->t0.fonta2, p->t0.str, p->t0.indep, p->t0.lbxdata));
-            break;
-        case 4:
-            LOG_DEBUG((DEBUGLEVEL_UIOBJ, "font:%i,%x,%x '%s' rc:%02x ar:%i z1e:%i len:%i z22:%i\n", p->t4.fontnum, p->t4.fonta2, p->t4.fonta4, p->t4.buf, p->t4.rectcolor, p->t4.align_right, p->t4.z1e, p->t4.buflen, p->t4.colortbl != 0));
-            break;
-        default:
-            LOG_DEBUG((DEBUGLEVEL_UIOBJ, "?\n"));
-            break;
-        case 6:
-            LOG_DEBUG((DEBUGLEVEL_UIOBJ, "f:%i-%i p:%p v:%i-%i e:%i\n", p->t6.fmin, p->t6.fmax, p->vptr, p->t6.vmin, p->t6.vmax, p->t6.vertical));
-            break;
-        case 7:
-            LOG_DEBUG((DEBUGLEVEL_UIOBJ, "\n"));
-            break;
-        case 8:
-            LOG_DEBUG((DEBUGLEVEL_UIOBJ, "'%s' p:%i l:%i\n", p->t8.str, p->t8.pos, p->t8.len));
-            break;
-        case 9:
-            LOG_DEBUG((DEBUGLEVEL_UIOBJ, "oi:%i z18:%i\n", p->t9.uiobji, p->t9.z18));
-            break;
-        case 0xa:
-            LOG_DEBUG((DEBUGLEVEL_UIOBJ, "font:%i,%i|%i s:%i z12:%i '%s' z18:%i p0p:%p p0v:%i p1:%i p2:%i p3:%i\n",
-                                     p->ta.fontnum, p->ta.fonta2, p->ta.fonta2b, p->ta.subtype, p->ta.z12,
-                                     p->ta.str, p->ta.z18, p->ta.sp0p, p->ta.sp0v,
-                                     p->ta.sp1, p->ta.sp2, p->ta.sp3));
-            break;
-        case 0xb:
-            LOG_DEBUG((DEBUGLEVEL_UIOBJ, "xd:%i yd%i xp:%p yp:%p\n", p->tb.xdiv, p->tb.ydiv, p->tb.xptr, p->tb.yptr));
-            break;
-    }
-}
-#define DUMP_UIOBJ_P(x) dump_uiobj_p x
-#else
-#define DUMP_UIOBJ_P(x)
-#endif
-
-/* -------------------------------------------------------------------------- */
-
-#ifdef FEATURE_MODEBUG
-static int16_t uiobj_alloc_check(void)
-{
-    static int nmax = 150; /* MOO1 max */
-    int num = uiobj_table_num;
-    if (num > nmax) {
-        nmax = num;
-        LOG_DEBUG((DEBUGLEVEL_UIOBJ, "uiobj tbl use %i/%i\n", num, UIOBJ_MAX));
-    }
-    if (num < (UIOBJ_MAX - 1)) {
-        ++uiobj_table_num;
-    } else {
-        LOG_DEBUG((DEBUGLEVEL_UIOBJ, "BUG: hit uiobj tbl max %i: ", UIOBJ_MAX));
-        DUMP_UIOBJ_P((&(uiobj_tbl[num])));
-    }
-    return num;
-}
-#define UIOBJI_ALLOC()  uiobj_alloc_check()
-#else
 #define UIOBJI_ALLOC()  uiobj_table_num++
-#endif
 
 static inline int16_t hmmdiv2(int16_t v)
 {
@@ -247,7 +179,6 @@ static inline bool uiobj_is_at_xy(uiobj_t *p, int x, int y)
 
 static void uiobj_handle_t03_cond(uiobj_t *p, bool cond)
 {
-    /* p->type == 0..3 */
     if (cond) {
         lbxgfx_set_frame_0(p->t0.lbxdata);
         lbxgfx_draw_frame(p->x0, p->y0, p->t0.lbxdata, UI_SCREEN_W);
@@ -268,7 +199,6 @@ static void uiobj_handle_t03_cond(uiobj_t *p, bool cond)
 
 static void uiobj_handle_t4_sub2(uiobj_t *p, uint16_t len, uint16_t a4, const char *str)
 {
-    /* p->type == 4 */
     char strbuf[64];
     int16_t si, va;
     si = a4;
@@ -490,7 +420,6 @@ static void uiobj_handle_t4_sub1(uiobj_t *p)
 
 static void uiobj_handle_t6_slider_input(uiobj_t *p)
 {
-    /* p->type == 6 */
     uint16_t sliderval, slideroff, di;
     if (p->t6.vertical == false) {
         di = mouse_x + uiobj_mouseoff;
@@ -524,7 +453,6 @@ static void uiobj_handle_t6_slider_input(uiobj_t *p)
 
 static void uiobj_handle_ta_sub1(int x0, int y0, int x1, int y1, uint16_t subtype, uint8_t *p0p, uint16_t p0v, uint16_t p1, uint16_t p2, uint16_t p3)
 {
-    /* type == 0xa */
     switch (subtype) {
         case 1:
             ui_draw_filled_rect(x0, y0, x1, y1, p0v);
