@@ -674,7 +674,7 @@ LOG_DEBUG((DEBUGLEVEL_ROTATE, "%s: case %i  y1:%i y2:%i -> %i\n", __func__, ti[0
 
 static void gfx_aux_make_paltbl(const struct gfx_aux_s *aux, uint8_t *tbl)
 {
-    const uint8_t *p = aux->data, *q = lbxpal_palette;;
+    const uint8_t *p = aux->data, *q = lbxpal_palette;
     int len = aux->w * aux->h;
     memset(tbl, 0xff, 0x100);
     for (int i = 0; i < len; ++i) {

@@ -17,9 +17,6 @@ int hw_opt_screen_winw = 0;
 int hw_opt_screen_winh = 0;
 int hw_opt_screen_fsw = 0;
 int hw_opt_screen_fsh = 0;
-#ifdef FEATURE_MODEBUG
-int hw_opt_overlay_pal = 0;
-#endif
 const char *hw_opt_sdlmixer_sf = NULL;
 
 /* -------------------------------------------------------------------------- */
