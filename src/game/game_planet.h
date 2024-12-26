@@ -117,8 +117,8 @@ typedef struct planet_s {
     int16_t factories;
     uint16_t prod_after_maint;
     uint16_t total_prod;
-    int16_t slider[PLANET_SLIDER_NUM];          /* FIXME? could be int8_t but uiobj uses uint16_t */
-    uint16_t slider_lock[PLANET_SLIDER_NUM];    /* FIXME should be boolvec but uiobj uses uint16_t */
+    int16_t slider[PLANET_SLIDER_NUM];
+    uint16_t slider_lock[PLANET_SLIDER_NUM];
     uint8_t buildship; /* 0..NUM_SHIPDESIGNS-1 or BUILDSHIP_STARGATE */
     uint8_t reloc; /* planet i to relocate produced ships (== planet's own index if no relocation) */
     uint16_t missile_bases;
