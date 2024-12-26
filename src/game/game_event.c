@@ -22,7 +22,6 @@
 #include "rnd.h"
 #include "types.h"
 #include "ui.h"
-#include "util.h"
 #include "util_math.h"
 
 /* -------------------------------------------------------------------------- */
