@@ -14,10 +14,6 @@
 
 /* -------------------------------------------------------------------------- */
 
-#ifdef FEATURE_MODEBUG
-int opt_modebug = 0;
-#endif
-
 #define SEP_CHAR    ','
 
 struct patch_item_s {

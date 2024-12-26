@@ -163,10 +163,6 @@ static bool hw_kbd_check_hotkey(SDLKey key, SDLMod smod, char c)
             } else {
                 hw_audio_sfx_volume(opt_sfx_volume - 4);
             }
-#ifdef FEATURE_MODEBUG
-        } else if (key == SDLK_INSERT) {
-            hw_opt_overlay_pal ^= 1;
-#endif
         }
     }
     return false;
