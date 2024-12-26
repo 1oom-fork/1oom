@@ -277,7 +277,6 @@ static inline bool uiobj_is_at_xy(const uiobj_t *p, int x, int y)
 
 static void uiobj_handle_t03_cond(uiobj_t *p, bool cond)
 {
-    /* p->type: UIOBJ_TYPE_BUTTON, UIOBJ_TYPE_TOGGLE, UIOBJ_TYPE_SET, UIOBJ_TYPE_SETVAL */
     if (cond) {
         lbxgfx_set_frame_0(p->t0.lbxdata);
         lbxgfx_draw_frame(p->x0, p->y0, p->t0.lbxdata, UI_SCREEN_W, p->scale);
@@ -298,7 +297,6 @@ static void uiobj_handle_t03_cond(uiobj_t *p, bool cond)
 
 static void uiobj_handle_t4_sub2(uiobj_t *p, uint16_t len, uint16_t a4, const char *str)
 {
-    /* p->type == UIOBJ_TYPE_TEXTINPUT */
     char strbuf[64];
     int16_t si, va;
     si = a4;
@@ -524,7 +522,6 @@ static void uiobj_handle_t4_sub1(uiobj_t *p)
 
 static void uiobj_handle_t6_slider_input(uiobj_t *p)
 {
-    /* p->type == UIOBJ_TYPE_SLIDER */
     int16_t sliderval, slideroff, di;
     di = moouse_x + uiobj_mouseoff;
     slideroff = ((p->t6.vmax - p->t6.vmin) * (di - p->x0 * p->scale)) / ((p->x1 - p->x0) * p->scale);
@@ -545,7 +542,6 @@ static void uiobj_handle_t6_slider_input(uiobj_t *p)
 
 static void uiobj_handle_ta_sub1(int x0, int y0, int x1, int y1, uint8_t subtype, uint8_t p0v, int scale)
 {
-    /* type == UIOBJ_TYPE_TEXTLINE */
     switch (subtype) {
         case 1:
             ui_draw_filled_rect(x0, y0, x1, y1, p0v, scale);
