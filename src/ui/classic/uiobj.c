@@ -251,7 +251,6 @@ static inline bool uiobj_is_at_xy(const uiobj_t *p, int x, int y)
 
 static void uiobj_handle_t03_cond(uiobj_t *p, bool cond)
 {
-    /* p->type == 0..3 */
     if (cond) {
         lbxgfx_set_frame_0(p->t0.lbxdata);
         lbxgfx_draw_frame(p->x0, p->y0, p->t0.lbxdata, UI_SCREEN_W);
@@ -272,7 +271,6 @@ static void uiobj_handle_t03_cond(uiobj_t *p, bool cond)
 
 static void uiobj_handle_t4_sub2(uiobj_t *p, uint16_t len, uint16_t a4, const char *str)
 {
-    /* p->type == 4 */
     char strbuf[64];
     int16_t si, va;
     si = a4;
@@ -484,7 +482,6 @@ static void uiobj_handle_t4_sub1(uiobj_t *p)
 
 static void uiobj_handle_t6_slider_input(uiobj_t *p)
 {
-    /* p->type == 6 */
     uint16_t sliderval, slideroff, di;
     if (p->t6.vertical == false) {
         di = mouse_x + uiobj_mouseoff;
@@ -518,7 +515,6 @@ static void uiobj_handle_t6_slider_input(uiobj_t *p)
 
 static void uiobj_handle_ta_sub1(int x0, int y0, int x1, int y1, uint16_t subtype, uint8_t *p0p, uint16_t p0v, uint16_t p1, uint16_t p2, uint16_t p3)
 {
-    /* type == 0xa */
     switch (subtype) {
         case 1:
             ui_draw_filled_rect(x0, y0, x1, y1, p0v);
