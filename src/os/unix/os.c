@@ -84,13 +84,13 @@ const char **os_get_paths_data(void)
         }
         p = getenv("XDG_DATA_DIRS");
         if (p) {
-            all_data_paths[i++] = util_concat(p, "/1oom", NULL);;
+            all_data_paths[i++] = util_concat(p, "/1oom", NULL);
             got_xdg = true;
         }
         if (!got_xdg) {
             p = getenv("HOME");
             if (p) {
-                all_data_paths[i++] = util_concat(p, "/.local/share/1oom", NULL);;
+                all_data_paths[i++] = util_concat(p, "/.local/share/1oom", NULL);
             }
         }
         all_data_paths[i++] = lib_stralloc("/usr/share/1oom");

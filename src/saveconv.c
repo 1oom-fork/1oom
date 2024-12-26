@@ -668,13 +668,6 @@ static int savetype_de_moo13(struct game_s *g, const char *fname)
         if (t_ == PLAYER_NONE) { t_ = 0xffff; }; \
         SET_LE_16(&save2buf[addr_], t_); \
     } while (0)
-#define M13_SET_16_HATED(item_, addr_) \
-    do { \
-        uint16_t t_; \
-        t_ = item_; \
-        if (t_ == PLAYER_NONE) { t_ = 0; } \
-        SET_LE_16(&save2buf[addr_], t_); \
-    } while (0)
 #define M13_SET_16_KILLER(item_, addr_) \
     do { \
         uint16_t t_; \
