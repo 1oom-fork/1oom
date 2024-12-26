@@ -339,7 +339,6 @@ void game_battle_handle_all(struct game_s *g)
                 BOOLVEC_SET0(tbl_have_force, party_att);
             } else {
                 if (!(((party_def < PARTY_NUM) && IS_HUMAN(g, party_def)) || ((party_att < PARTY_NUM) && IS_HUMAN(g, party_att)))) {
-                    /* AI vs. AI (or monster) */
                     game_battle_prepare(bt, party_att, party_def, pli);
                     if (game_ai->battle_ai_ai_resolve(bt)) {
                         /* HACK _att won, swap variables */
@@ -349,7 +348,6 @@ void game_battle_handle_all(struct game_s *g)
                     BOOLVEC_SET0(tbl_have_force, party_att);
                     game_battle_post(g, party_att, party_def, pli);
                 } else {
-                    /* human player involved */
                     /*11926*/
                     /* BUG? first check not in MOO1, reads past table if monster */
                     if ((party_att < PLAYER_NUM) && IS_AI(g, party_att) && (g->evn.hmm28e[party_def][party_att] > 0)) {
