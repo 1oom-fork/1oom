@@ -1621,15 +1621,6 @@ static void uiobj_add_set_xys(uiobj_t *p, uint16_t x0, uint16_t y0, uint16_t x1,
     p->y1 = y1;
 }
 
-static void uiobj_add_set_xys_offscreen(uiobj_t *p)
-{
-    p->scale = 1;
-    p->x0 = UIOBJ_OFFSCREEN;
-    p->y0 = UIOBJ_OFFSCREEN;
-    p->x1 = UIOBJ_OFFSCREEN;
-    p->y1 = UIOBJ_OFFSCREEN;
-}
-
 static void uiobj_add_t03_do(uint16_t x, uint16_t y, const char *str, uint8_t *lbxdata, mookey_t key, uint8_t scale)
 {
     uiobj_t *p = &uiobj_tbl[uiobj_table_num];
@@ -1980,7 +1971,11 @@ int16_t uiobj_add_mousearea_all(mookey_t key)
 int16_t uiobj_add_inputkey(uint32_t key)
 {
     uiobj_t *p = &uiobj_tbl[uiobj_table_num];
-    uiobj_add_set_xys_offscreen(p);
+    p->x0 = UIOBJ_OFFSCREEN;
+    p->y0 = UIOBJ_OFFSCREEN;
+    p->x1 = UIOBJ_OFFSCREEN;
+    p->y1 = UIOBJ_OFFSCREEN;
+    p->scale = 1;
     p->type = UIOBJ_TYPE_MOUSEAREA;
     p->vptr = 0;
     p->key = key;
@@ -1994,7 +1989,11 @@ int16_t uiobj_add_alt_str(const char *str)
     while ((str[len] != 0) && (len < 0x1e)) {
         ++len;
     }
-    uiobj_add_set_xys_offscreen(p);
+    p->x0 = UIOBJ_OFFSCREEN;
+    p->y0 = UIOBJ_OFFSCREEN;
+    p->x1 = UIOBJ_OFFSCREEN;
+    p->y1 = UIOBJ_OFFSCREEN;
+    p->scale = 1;
     p->type = UIOBJ_TYPE_ALTSTR;
     p->vptr = 0;
     p->t8.str = str;
