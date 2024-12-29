@@ -2260,10 +2260,37 @@ static int game_ai_battle_dmgmax(struct battle_s *bt, int itemi)
     const struct battle_item_s *b = &(bt->item[itemi]);
     int v = 0, num_weap = (itemi == 0/*planet*/) ? 1 : 4;
     bool flag_planet_opponent = false;
-    /* XXX MOO1 has more calc here for an unused variable */
+#if 1
     if ((b->side + bt->item[0/*planet*/].side) == 1) {
         flag_planet_opponent = true;
     }
+#else
+    /* FIXME MOO1 does this, but v8 is unused */
+    int v8 = 0;
+    if (b->side == SIDE_L) {
+        if (bt->item[0/*planet*/].side == SIDE_R) {
+            flag_planet_opponent = true;
+            v8 = bt->item[0/*planet*/].absorb;
+        }
+        for (int i = bt->s[SIDE_L].items + 1; i <= bt->items_num; ++i) {
+            v8 += bt->item[i].absorb;
+        }
+        if ((bt->s[SIDE_R].items > 0) || flag_planet_opponent) {
+            v8 /= bt->s[SIDE_R].items + (flag_planet_opponent ? 1 : 0);
+        }
+    } else {
+        if (bt->item[0/*planet*/].side == SIDE_L) {
+            flag_planet_opponent = true;
+            v8 = bt->item[0/*planet*/].absorb;
+        }
+        for (int i = 1; i <= bt->s[SIDE_L].items; ++i) {
+            v8 += bt->item[i].absorb;
+        }
+        if ((bt->s[SIDE_R].items > 0) || flag_planet_opponent) {
+            v8 /= bt->s[SIDE_R].items + (flag_planet_opponent ? 1 : 0);
+        }
+    }
+#endif
     for (int i = 0; i < num_weap; ++i) {
         const struct shiptech_weap_s *w = &(tbl_shiptech_weap[b->wpn[i].t]);
         if (b->wpn[i].numshots != 0) {
