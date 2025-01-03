@@ -20,7 +20,6 @@ typedef enum planet_type_e {
     PLANET_TYPE_OCEAN, /*b*/
     PLANET_TYPE_JUNGLE, /*c*/
     PLANET_TYPE_TERRAN, /*d*/
-    PLANET_TYPE_GAIA, /*e*/
     PLANET_TYPE_NUM
 } planet_type_t;
 
