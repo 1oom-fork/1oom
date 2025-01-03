@@ -82,7 +82,7 @@ extern const char *game_str_sm_ecopop;
 extern const char *game_str_sm_unexplored;
 extern const char *game_str_sm_nohabit;
 extern const char *game_str_sm__planets;
-extern const char *game_str_tbl_sm_pltype[PLANET_TYPE_NUM];
+extern const char *game_str_tbl_sm_pltype[PLANET_TYPE_NUM + 1];
 extern const char *game_str_tbl_sm_stinfo[STAR_TYPE_NUM];
 extern const char *game_str_sm_plague;
 extern const char *game_str_sm_nova;
