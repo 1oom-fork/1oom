@@ -726,7 +726,7 @@ const char *game_str_sm_unexplored = "UNEXPLORED";
 const char *game_str_sm_nohabit = "NO HABITABLE";
 const char *game_str_sm__planets = "PLANETS";
 
-const char *game_str_tbl_sm_pltype[PLANET_TYPE_NUM] = {
+const char *game_str_tbl_sm_pltype[PLANET_TYPE_NUM + 1] = {
     "NO HABITABLE PLANETS", "RADIATED", "TOXIC", "INFERNO", "DEAD",
     "TUNDRA", "BARREN", "MINIMAL", "DESERT", "STEPPE", "ARID", "OCEAN",
     "JUNGLE", "TERRAN", "GAIA"
