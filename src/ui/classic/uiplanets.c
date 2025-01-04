@@ -162,7 +162,7 @@ static void planets_draw_cb(void *vptr)
             const char *str;
             uint8_t pli;
             pli = ui_data.sorted.value[ui_data.sorted.index[pi]];
-            y0 = 22 + i * 11;
+            y0 = 21 + i * 11 + 1;   /* di + 1 */
             p = &(g->planet[pli]);
             lbxfont_select(2, 0xb, 0, 0);
             lbxfont_print_num_right(17, y0, ui_data.sorted.index[pi] + 1, UI_SCREEN_W, ui_scale);
