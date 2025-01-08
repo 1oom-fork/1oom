@@ -881,7 +881,7 @@ static void game_turn_move_ships(struct game_s *g)
 #if 0
 static void game_turn_unrest_hmm1(struct game_s *g)
 {
-    /* TODO remove ; this does nothing except churn the rng! */
+    /* this does nothing except churn the rng! */
     int tbl1[PLAYER_NUM], tbl2[PLAYER_NUM];
     for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         tbl1[i] = 0;
