@@ -305,14 +305,13 @@ const uint8_t *game_turn_ground_resolve_all(struct game_s *g)
                     gr->s[0].player = i;
                     gr->s[1].player = powner;
                     gr->planet_i = pli;
+                    gr->flag_swap = false;
                     if (IS_HUMAN(g, i) || IS_HUMAN(g, powner)) {
                         int t;
                         gr->flag_swap = true;
                         t = gr->s[0].pop2; gr->s[0].pop2 = gr->s[1].pop2; gr->s[1].pop2 = t;
                         t = gr->s[0].pop1; gr->s[0].pop1 = gr->s[1].pop1; gr->s[1].pop1 = t;
                         t = gr->s[0].player; gr->s[0].player = gr->s[1].player; gr->s[1].player = t;
-                    } else {
-                        gr->flag_swap = false;
                     }
                     game_ground_resolve_init(g, gr);
                     if ((gr->s[0].pop1 != 0) && (gr->s[1].pop1 != 0)) {
