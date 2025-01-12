@@ -1107,10 +1107,8 @@ static bool game_battle_special(struct battle_s *bt, int attacker_i, int target_
         if ((bd->side == SIDE_L) || (bt->s[SIDE_R].race != RACE_NUM/*monster*/)) {
             int v;
             v = bd->complevel - rnd_1_n(3, &bt->g->seed) - rnd_1_n(3, &bt->g->seed);
-            SETMAX(v, -128);
             bd->complevel = v;
             v = bd->misdefense - rnd_1_n(3, &bt->g->seed) - rnd_1_n(3, &bt->g->seed);
-            SETMAX(v, -128);
             SETMAX(v, bd->defense);
             bd->misdefense = v;
             if (!bt->autoresolve) {
