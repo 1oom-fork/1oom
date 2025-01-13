@@ -314,26 +314,6 @@ static void mm_options_set_item_dimensions(struct main_menu_data_s *d, int i)
     }
 }
 
-static void mm_options_small_set_item_dimensions(struct main_menu_data_s *d, int i)
-{
-    struct main_menu_item_s *it = &d->items[i];
-    uint16_t step_y;
-    it->font_i = 2;
-    main_menu_set_item_wh(d, it);
-    if (d->item_count <= 8) {
-        step_y = 0x50 / d->item_count;
-        it->x = 0xa0;
-        it->y = 0x6f + step_y * i;
-    } else {
-        step_y = 0x50 / ((d->item_count + 1) / 2);
-        it->x = i%2 ? 0xe0 : 0x60;
-        if (i%2 == 0 && i == d->item_count - 1) {
-            it->x = 0xa0;
-        }
-        it->y = 0x6f + step_y * (i/2);
-    }
-}
-
 static void mm_custom_set_item_dimensions(struct main_menu_data_s *d, int i)
 {
     struct main_menu_item_s *it = &d->items[i];
