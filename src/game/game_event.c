@@ -200,7 +200,7 @@ void game_event_new(struct game_s *g)
         return;
     }
     player = game_event_new_get_victim(g);
-    if ((player < PLAYER_0) || (player >= g->players)) {
+    if (!IS_PLAYER(g, player)) {
         return;
     }
     e = &(g->eto[player]);
