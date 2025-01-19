@@ -441,6 +441,7 @@ int game_save_de_moo13(struct game_s *g, const char *fname)
             }
         }
     }
+    g->guardian_killer = PLAYER_NONE;
     if (savebuf) {
         lib_free(savebuf);
         savebuf = NULL;
