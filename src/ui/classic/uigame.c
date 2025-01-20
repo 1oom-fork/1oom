@@ -279,6 +279,7 @@ void ui_game_start(struct game_s *g)
     */
     lbxpal_set_update_range(248, 255);
     ui_palette_set_n();
+    ui_draw_finish_mode = 1;
     ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
     for (int i = 0; i < g->players; ++i) {
         if (IS_HUMAN(g, i)) {
@@ -291,8 +292,6 @@ void ui_game_start(struct game_s *g)
         ui_data.star_frame[pli] = g->planet[pli].frame;
     }
     ui_data.seed = g->seed;
-    /* HACK ensure the game starts with a wipe, fixing -new help gfx glitch  */
-    ui_draw_finish_mode = 1;
 }
 
 void ui_game_end(struct game_s *g)
