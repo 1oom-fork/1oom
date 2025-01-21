@@ -1393,7 +1393,7 @@ static void game_turn_update_have_met(struct game_s *g)
     game_update_empire_contact(g);
     for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         empiretechorbit_t *e = &(g->eto[i]);
-        if (IS_AI(g, i)) {
+        if (!IS_HUMAN(g, i)) {
             continue;
         }
         for (player_id_t j = PLAYER_0; j < g->players; ++j) {
