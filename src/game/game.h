@@ -339,8 +339,12 @@ static inline bool IS_HUMAN(const struct game_s *g, player_id_t i)
     return IS_PLAYER(g, i) && BOOLVEC_IS0(g->is_ai, i);
 }
 
+static inline bool IS_ALIVE(const struct game_s *g, player_id_t i)
+{
+    return (g->evn.home[i] != PLANET_NONE);
+}
+
 #define IS_AI(_g_, _i_) BOOLVEC_IS1((_g_)->is_ai, (_i_))
-#define IS_ALIVE(_g_, _i_) ((_g_)->evn.home[(_i_)] != PLANET_NONE)
 
 extern bool game_opt_skip_intro_always;
 extern bool game_opt_message_filter[FINISHED_NUM];
