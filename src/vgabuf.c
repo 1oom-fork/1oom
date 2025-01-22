@@ -18,7 +18,6 @@
 /* buffers used by UI */
 static uint8_t vgabuf[NUM_VIDEOBUF * VGABUF_SIZE_INTERNAL] = {0};
 static int16_t vga_page = 0;
-static uint8_t *vgabuf_seg = &(vgabuf[0]);
 
 static inline uint8_t *vgabuf_get_i(int16_t i)
 {
@@ -29,6 +28,8 @@ int16_t vgabuf_limits_minx = 0;
 int16_t vgabuf_limits_miny = 0;
 int16_t vgabuf_limits_maxx = VGABUF_W - 1;
 int16_t vgabuf_limits_maxy = VGABUF_H - 1;
+
+struct vgabuf_s vgabuf_seg = {&(vgabuf[0]), VGABUF_RECT, VGABUF_W};
 
 static void vgabuf_draw_line_limit_do(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint8_t color, const uint8_t *colortbl, int colornum, int colorpos)
 {
@@ -118,12 +119,22 @@ static void vgabuf_draw_line_limit_do(int16_t x0, int16_t y0, int16_t x1, int16_
 
 void vgabuf_select_back(void)
 {
-    vgabuf_seg = vgabuf_get_back();
+    vgabuf_seg.buf = vgabuf_get_back();
+    vgabuf_seg.x = 0;
+    vgabuf_seg.y = 0;
+    vgabuf_seg.w = VGABUF_W;
+    vgabuf_seg.h = VGABUF_H;
+    vgabuf_seg.pitch = VGABUF_W;
 }
 
 void vgabuf_select_front(void)
 {
-    vgabuf_seg = vgabuf_get_front();
+    vgabuf_seg.buf = vgabuf_get_front();
+    vgabuf_seg.x = 0;
+    vgabuf_seg.y = 0;
+    vgabuf_seg.w = VGABUF_W;
+    vgabuf_seg.h = VGABUF_H;
+    vgabuf_seg.pitch = VGABUF_W;
 }
 
 void vgabuf_flip(void)
@@ -135,7 +146,7 @@ void vgabuf_flip(void)
 
 uint8_t *vgabuf_get(void)
 {
-    return vgabuf_seg;
+    return vgabuf_seg.buf;
 }
 
 uint8_t *vgabuf_get_back(void)
