@@ -60,8 +60,6 @@ gui_sources = \
     lbxpal.h \
     mouse.c \
     mouse.h \
-    vgabuf.c \
-    vgabuf.h \
     vgapal.c \
     vgapal.h
 

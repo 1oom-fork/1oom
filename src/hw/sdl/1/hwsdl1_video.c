@@ -15,10 +15,12 @@
 #include "lib.h"
 #include "log.h"
 #include "types.h"
-#include "vgabuf.h"
 #include "vgapal.h"
 
 /* -------------------------------------------------------------------------- */
+
+/* double buffering + 2 aux buffers */
+#define NUM_VIDEOBUF    4
 
 static struct sdl_video_s {
     SDL_Surface *screen;
@@ -292,7 +294,7 @@ int hw_video_init(int w, int h)
 #endif
 
     for (int i = 0; i < NUM_VIDEOBUF; ++i) {
-        video.buf[i] = vgabuf_get(i);
+        video.buf[i] = lib_malloc(w * h);
     }
     video.bufi = 0;
     return 0;
@@ -311,6 +313,7 @@ void hw_video_shutdown(void)
     }
 #endif
     for (int i = 0; i < NUM_VIDEOBUF; ++i) {
+        lib_free(video.buf[i]);
         video.buf[i] = NULL;
     }
 }
