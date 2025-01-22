@@ -59,7 +59,9 @@ gui_sources = \
     kbd.c \
     kbd.h \
     mouse.c \
-    mouse.h
+    mouse.h \
+    vgabuf.c \
+    vgabuf.h
 
 audio_sources = \
     fmt_id.h \
