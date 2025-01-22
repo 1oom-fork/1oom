@@ -22,6 +22,7 @@
 #include "uiobj.h"
 #include "uipal.h"
 #include "uisound.h"
+#include "vgabuf.h"
 
 /* -------------------------------------------------------------------------- */
 
@@ -47,7 +48,7 @@ static void election_load_data(struct election_data_s *d)
         lbxgfx_draw_frame(0, 0, gfx, UI_SCREEN_W);
         lbxfile_item_release(LBXFILE_COUNCIL, gfx);
     }
-    hw_video_copy_back_to_page2();
+    vgabuf_copy_back_to_page2();
     d->gfx_cylinder = lbxfile_item_get(LBXFILE_COUNCIL, 1, 0);
     {
         int num;
@@ -76,7 +77,7 @@ static void ui_election_draw_cb(void *vptr)
     struct election_data_s *d = vptr;
     struct election_s *el = d->el;
     struct game_s *g = el->g;
-    hw_video_copy_back_from_page2();
+    vgabuf_copy_back_from_page2();
     if ((el->cur_i != PLAYER_NONE) && (d->count == 0)) {
         uint8_t *gfx = d->gfx_race[el->cur_i];
         int fn = lbxgfx_get_frame(gfx);
@@ -134,8 +135,8 @@ void ui_election_start(struct election_s *el)
     static struct election_data_s d;    /* HACK */
     d.el = el;
     el->uictx = &d;
-    hw_video_copy_back_from_page2();
-    hw_video_copy_back_to_page3();
+    vgabuf_copy_back_from_page2();
+    vgabuf_copy_back_to_page3();
     if (ui_draw_finish_mode == 0) {
         ui_palette_fadeout_a_f_1();
     }
@@ -271,8 +272,8 @@ void ui_election_end(struct election_s *el)
     hw_audio_music_fadeout();
     ui_palette_fadeout_a_f_1();
     ui_draw_finish_mode = 2;
-    hw_video_copy_back_from_page3();
-    hw_video_copy_back_to_page2();
+    vgabuf_copy_back_from_page3();
+    vgabuf_copy_back_to_page2();
     lbxpal_select(0, -1, 0);
     lbxpal_set_update_range(0, 255);
     lbxpal_build_colortables();

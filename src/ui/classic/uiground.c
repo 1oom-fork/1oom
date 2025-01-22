@@ -29,6 +29,7 @@
 #include "uipal.h"
 #include "uisound.h"
 #include "util.h"
+#include "vgabuf.h"
 
 /* -------------------------------------------------------------------------- */
 
@@ -43,11 +44,11 @@ struct ground_data_s {
 static void ground_prepare(struct ground_data_s *d)
 {
     const struct game_s *g = d->gr->g;
-    hw_video_copy_back_from_page3();
+    vgabuf_copy_back_from_page3();
     lbxgfx_set_new_frame(d->l.gfx_transprt, 39);
     gfx_aux_draw_frame_to(d->l.gfx_transprt, &ui_data.aux.screen);
     gfx_aux_draw_frame_from_limit(0, 100, &ui_data.aux.screen, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
-    hw_video_copy_back_to_page3();
+    vgabuf_copy_back_to_page3();
     ui_delay_1();
     ui_sound_stop_music();
     for (int i = 0; i < 2; ++i) {
@@ -92,7 +93,7 @@ static void ground_draw_cb1(void *vptr)
     for (int i = 0; i < 2; ++i) {
         strrace[i] = game_str_tbl_race[g->eto[gr->s[i].player].race];
     }
-    hw_video_copy_back_from_page3();
+    vgabuf_copy_back_from_page3();
     if (d->l.frame < 50) {
         int y;
         y = d->l.frame * 4 - 100;

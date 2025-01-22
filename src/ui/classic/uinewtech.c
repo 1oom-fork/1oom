@@ -29,6 +29,7 @@
 #include "uiobj.h"
 #include "uipal.h"
 #include "uisound.h"
+#include "vgabuf.h"
 
 /* -------------------------------------------------------------------------- */
 
@@ -89,7 +90,7 @@ static void newtech_draw_cb1(void *vptr)
     struct game_s *g = d->g;
     empiretechorbit_t *e = &(g->eto[d->api]);
     char buf[RESEARCH_DESCR_LEN];
-    hw_video_copy_back_from_page2();
+    vgabuf_copy_back_from_page2();
     {
         int frame = lbxgfx_get_frame(d->gfx_spies);
         lbxgfx_set_frame_0(d->gfx_spies);
@@ -501,8 +502,8 @@ void ui_newtech(struct game_s *g, int pi)
         d.nt = g->evn.newtech[pi].d[i];
         if (!flag_copybuf) {
             flag_copybuf = true;
-            hw_video_copy_back_from_page2();
-            hw_video_copy_back_to_page3();
+            vgabuf_copy_back_from_page2();
+            vgabuf_copy_back_to_page3();
         }
         d.flag_is_current = false;
         d.flag_choose_next = false;
@@ -525,7 +526,7 @@ void ui_newtech(struct game_s *g, int pi)
             d.gfx_tech = lbxfile_item_get(LBXFILE_TECHNO, v, 0);
         }
         lbxgfx_draw_frame(145, 54, d.gfx_tech, UI_SCREEN_W);
-        hw_video_copy_back_to_page2();
+        vgabuf_copy_back_to_page2();
         {
             int v;
             if (d.nt.source == 4) {
@@ -572,15 +573,15 @@ void ui_newtech(struct game_s *g, int pi)
         ) {
             if (!flag_copybuf) {
                 flag_copybuf = true;
-                hw_video_copy_back_from_page2();
-                hw_video_copy_back_to_page3();
+                vgabuf_copy_back_from_page2();
+                vgabuf_copy_back_to_page3();
             }
             if (d.cur_source == -1) {
                 /*soundsys_hmm3?*/
                 ui_draw_erase_buf();
                 d.gfx_lab = lbxfile_item_get(LBXFILE_TECHNO, 0, 0);
                 lbxgfx_draw_frame(0, 0, d.gfx_lab, UI_SCREEN_W);
-                hw_video_copy_back_to_page2();
+                vgabuf_copy_back_to_page2();
                 lbxfile_item_release(LBXFILE_TECHNO, d.gfx_lab);
                 d.music_i = newtech_music_tbl[0];
             }
@@ -598,8 +599,8 @@ void ui_newtech(struct game_s *g, int pi)
         hw_audio_music_fadeout();
     }
     if (flag_copybuf) {
-        hw_video_copy_back_from_page3();
-        hw_video_copy_back_to_page2();
+        vgabuf_copy_back_from_page3();
+        vgabuf_copy_back_to_page2();
         ui_palette_fadeout_a_f_1();
         ui_draw_finish_mode = 2;
     }

@@ -15,27 +15,22 @@
 #include "lib.h"
 #include "log.h"
 #include "types.h"
+#include "vgabuf.h"
 #include "vgapal.h"
 
 /* -------------------------------------------------------------------------- */
-
-/* double buffering + 2 aux buffers */
-#define NUM_VIDEOBUF    4
 
 static struct sdl_video_s {
     SDL_Surface *screen;
 #ifdef HAVE_OPENGL
     SDL_Surface *hwrenderbuf;
 #endif
-    void (*render)(int bufi);
+    void (*render)(void);
     void (*update)(void);
     void (*setpal)(uint8_t *pal, int first, int num);
 
-    /* buffers used by UI */
-    uint8_t *buf[NUM_VIDEOBUF];
     int bufw;
     int bufh;
-    int bufi;
 
 #ifdef HAVE_OPENGL
     /* precalculated 32bit palette */
@@ -49,11 +44,11 @@ static struct sdl_video_s {
 
 /* -------------------------------------------------------------------------- */
 
-static void video_render_8bpp(int bufi)
+static void video_render_8bpp(void)
 {
     int pitch = video.screen->pitch;
     Uint8 *p = (Uint8 *)video.screen->pixels;
-    uint8_t *q = video.buf[bufi];
+    uint8_t *q = vgabuf_get_front();
     for (int y = 0; y < video.bufh; ++y) {
         memcpy(p, q, video.bufw);
         p += pitch;
@@ -85,12 +80,12 @@ static void video_setpal_8bpp(uint8_t *pal, int first, int num)
 static uint8_t colorpaldebug = 0;
 #endif
 
-static void video_render_gl_32bpp(int bufi)
+static void video_render_gl_32bpp(void)
 {
     int pitch_skip = ((video.bufw * sizeof(Uint32)) - video.hwrenderbuf->pitch) / sizeof(Uint32);
 
     Uint32 *p = (Uint32 *)video.hwrenderbuf->pixels;
-    uint8_t *q = video.buf[bufi];
+    uint8_t *q = vgabuf_get_front();
     for (int y = 0; y < video.bufh; ++y) {
         for (int x = 0; x < video.bufw; ++x) {
             *p++ = video.pal32[*q++];
@@ -109,7 +104,7 @@ static void video_render_gl_32bpp(int bufi)
             c = colorpaldebug;
             p = (Uint32 *)(((uint8_t *)video.hwrenderbuf->pixels) + video.hwrenderbuf->pitch * my + mx * sizeof(Uint32));
             *p = c;
-            c = video.buf[bufi][mx + my * video.bufw];
+            c = q[mx + my * video.bufw];
             p = (Uint32 *)(((uint8_t *)video.hwrenderbuf->pixels) + video.hwrenderbuf->pitch + c * sizeof(Uint32));
             *p = c;
             p += video.bufw;
@@ -177,7 +172,7 @@ static void video_setpal_gl_32bpp(uint8_t *pal, int f, int num)
                            ;
 #endif
     }
-    hw_video_refresh(1);
+    hw_video_refresh();
 }
 #endif /* HAVE_OPENGL */
 
@@ -323,10 +318,6 @@ int hw_video_init(int w, int h)
     }
 #endif
 
-    for (int i = 0; i < NUM_VIDEOBUF; ++i) {
-        video.buf[i] = lib_malloc(w * h);
-    }
-    video.bufi = 0;
     return 0;
 }
 
@@ -342,10 +333,6 @@ void hw_video_shutdown(void)
         video.hwrenderbuf = NULL;
     }
 #endif
-    for (int i = 0; i < NUM_VIDEOBUF; ++i) {
-        lib_free(video.buf[i]);
-        video.buf[i] = NULL;
-    }
 }
 
 #include "hwsdl_video.c"
