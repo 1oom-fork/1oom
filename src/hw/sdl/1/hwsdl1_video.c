@@ -15,11 +15,9 @@
 #include "lib.h"
 #include "log.h"
 #include "types.h"
+#include "vgabuf.h"
 
 /* -------------------------------------------------------------------------- */
-
-/* double buffering + 2 aux buffers */
-#define NUM_VIDEOBUF    4
 
 static struct sdl_video_s {
     SDL_Surface *screen;
@@ -30,11 +28,9 @@ static struct sdl_video_s {
     void (*update)(void);
     void (*setpal)(uint8_t *pal, int first, int num);
 
-    /* buffers used by UI */
-    uint8_t *buf[NUM_VIDEOBUF];
+    uint8_t *buf;
     int bufw;
     int bufh;
-    int bufi;
 
     /* palette as set by UI, 6bpp */
     uint8_t pal[256 * 3];
@@ -54,7 +50,7 @@ static void video_render_8bpp(int bufi)
 {
     int pitch = video.screen->pitch;
     Uint8 *p = (Uint8 *)video.screen->pixels;
-    uint8_t *q = video.buf[bufi];
+    uint8_t *q = video.buf;
     for (int y = 0; y < video.bufh; ++y) {
         memcpy(p, q, video.bufw);
         p += pitch;
@@ -87,7 +83,7 @@ static void video_render_gl_32bpp(int bufi)
     int pitch_skip = ((video.bufw * sizeof(Uint32)) - video.hwrenderbuf->pitch) / sizeof(Uint32);
 
     Uint32 *p = (Uint32 *)video.hwrenderbuf->pixels;
-    uint8_t *q = video.buf[bufi];
+    uint8_t *q = video.buf;
     for (int y = 0; y < video.bufh; ++y) {
         for (int x = 0; x < video.bufw; ++x) {
             *p++ = video.pal32[*q++];
@@ -242,6 +238,7 @@ int hw_video_resize(int w, int h)
 int hw_video_init(int w, int h)
 {
     hw_mouse_set_limits(w, h);
+    video.buf = vgabuf_get_front();
     video.bufw = w;
     video.bufh = h;
     {
@@ -296,10 +293,6 @@ int hw_video_init(int w, int h)
     }
 #endif
 
-    for (int i = 0; i < NUM_VIDEOBUF; ++i) {
-        video.buf[i] = lib_malloc(w * h);
-    }
-    video.bufi = 0;
     memset(video.pal, 0, sizeof(video.pal));
     hw_video_refresh_palette();
     return 0;
@@ -317,10 +310,7 @@ void hw_video_shutdown(void)
         video.hwrenderbuf = NULL;
     }
 #endif
-    for (int i = 0; i < NUM_VIDEOBUF; ++i) {
-        lib_free(video.buf[i]);
-        video.buf[i] = NULL;
-    }
+    video.buf = NULL;
 }
 
 void hw_video_input_grab(bool grab)
