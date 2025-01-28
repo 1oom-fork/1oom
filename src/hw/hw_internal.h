@@ -6,6 +6,7 @@
 #include "log.h"
 #include "mouse.h"
 #include "types.h"
+#include "vgapal.h"
 
 extern struct i_hw_video_s {
     int (*setmode)(int w, int h);
