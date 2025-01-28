@@ -7,11 +7,6 @@
 
 extern uint8_t ui_palette[256*3]; /* 6bit palette from the game */
 
-static inline void ui_palette_clear(void)
-{
-    memset(ui_palette, 0, sizeof(ui_palette));
-}
-
 static inline void ui_palette_set_color(int i, uint8_t r, uint8_t g, uint8_t b)
 {
     int j = i * 3;

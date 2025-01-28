@@ -529,6 +529,7 @@ int main_do(void)
         return 1;
     }
     lbxfont_init();
+    lbxpal_init();
     lbxpal_select(0, -1, 0);
     if (cur_ptr && (lbxfile_type(cur_lbx) == LBX_TYPE_GFX)) {
         lbxgfx_apply_palette(cur_ptr);

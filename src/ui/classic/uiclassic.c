@@ -451,7 +451,7 @@ void ui_early_show_message_box(const char *msg)
     }
     bool initialized = false;
     int64_t init_time = hw_get_time_us();
-    ui_palette_clear();
+    lbxpal_init();
     ui_palette_set_color(0, 0, 0, 0);
     ui_palette_set_color(1, 0x3f, 0x3f, 0x3f);
     hw_video_refresh_palette();
@@ -506,12 +506,8 @@ int ui_late_init(void)
       || init_lbx_ships()
       || set_ui_icon()
       || hw_video_init(UI_SCREEN_W, UI_SCREEN_H)
+      || lbxpal_init()
     ) {
-        return 1;
-    }
-    ui_palette_clear();
-    hw_video_refresh_palette();
-    if (lbxpal_init()) {
         return 1;
     }
     if (opt_audio_enabled) {
