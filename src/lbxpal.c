@@ -9,6 +9,7 @@
 #include "lbxfont.h"
 #include "log.h"
 #include "types.h"
+#include "vgapal.h"
 
 /* -------------------------------------------------------------------------- */
 
@@ -165,7 +166,10 @@ void lbxpal_select(int pal_index, int first/*or -1*/, int last)
             --num;
         }
         /* not done in MOO */
-        /*hw_video_set_palette(lbxpal_palette, 0, 256);*/
+        /*
+         * vgapal_set(lbxpal_palette, 0, 256);
+         * hw_video_refresh_palette();
+        */
     }
     lbxfont_select(0, 0, 0, 0);
 }
@@ -186,7 +190,8 @@ void lbxpal_set_update_range(int from, int to)
 void lbxpal_update(void)
 {
     memset(lbxpal_update_flag, 0, sizeof(lbxpal_update_flag));
-    hw_video_set_palette(lbxpal_palette, 0, 256);
+    vgapal_set(lbxpal_palette, 0, 256);
+    hw_video_refresh_palette();
 }
 
 void lbxpal_build_colortables(void)
