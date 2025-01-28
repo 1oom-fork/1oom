@@ -44,6 +44,8 @@ util_sources = \
     main.c \
     mouse.c \
     mouse.h \
+    vgapal.c \
+    vgapal.h \
     options.c \
     options.h \
     os.h \
