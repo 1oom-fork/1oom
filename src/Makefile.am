@@ -52,7 +52,9 @@ util_sources = \
     util.c \
     util.h \
     util_math.c \
-    util_math.h
+    util_math.h \
+    vgapal.c \
+    vgapal.h
 
 audio_sources = \
     fmt_id.h \
