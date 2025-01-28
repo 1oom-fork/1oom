@@ -2,6 +2,7 @@
 #define INC_1OOM_HW_INTERNAL_H
 
 #include "types.h"
+#include "vgapal.h"
 
 extern struct i_hw_video_s {
     int (*setmode)(int w, int h);
