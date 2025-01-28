@@ -15,24 +15,9 @@ void hw_video_refresh(int front)
     i_hw_video.update();
 }
 
-void hw_video_set_palette(uint8_t *pal, int first, int num)
-{
-    i_hw_video.setpal(pal, first, num);
-}
-
-uint8_t hw_video_get_palette_byte(int i)
-{
-    return video.pal[i];
-}
-
-void hw_video_set_palette_byte(int i, uint8_t b)
-{
-    video.pal[i] = b & 0x3f;
-}
-
 void hw_video_refresh_palette(void)
 {
-    hw_video_set_palette(video.pal, 0, 256);
+    i_hw_video.setpal(vgapal, 0, 256);
 }
 
 uint8_t *hw_video_get_buf(void)

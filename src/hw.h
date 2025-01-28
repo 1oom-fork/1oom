@@ -18,9 +18,6 @@ extern const struct cmdline_options_s hw_cmdline_options_extra[];
 extern int hw_event_handle(void);
 
 extern int hw_video_init(int w, int h);
-extern void hw_video_set_palette(uint8_t *palette, int first, int num);
-extern uint8_t hw_video_get_palette_byte(int i);
-extern void hw_video_set_palette_byte(int i, uint8_t b);
 extern void hw_video_refresh_palette(void);
 /* Return back buffer. */
 extern uint8_t *hw_video_get_buf(void);
