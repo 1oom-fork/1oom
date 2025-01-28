@@ -16,6 +16,7 @@
 #include "log.h"
 #include "types.h"
 #include "vgabuf.h"
+#include "vgapal.h"
 
 /* -------------------------------------------------------------------------- */
 
@@ -34,8 +35,6 @@ static struct sdl_video_s {
     int bufh;
     int bufi;
 
-    /* palette as set by UI, 6bpp */
-    uint8_t pal[256 * 3];
 #ifdef HAVE_OPENGL
     /* precalculated 32bit palette */
     uint32_t pal32[256];
@@ -68,7 +67,6 @@ static void video_update_8bpp(void)
 static void video_setpal_8bpp(uint8_t *pal, int first, int num)
 {
     SDL_Color color[256];
-    memcpy(&video.pal[first * 3], pal, num * 3);
     for (int i = first; i < (first + num); ++i) {
         color[i].r = *pal++ << 2;
         color[i].g = *pal++ << 2;
@@ -134,7 +132,6 @@ static void video_update_gl_32bpp(void)
 
 static void video_setpal_gl_32bpp(uint8_t *pal, int f, int num)
 {
-    memcpy(&video.pal[f * 3], pal, num * 3);
     for (int i = 0; i < num; ++i) {
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
         video.pal32[f + i] = ((pal[i * 3 + 0] << 2) << 24)
@@ -298,8 +295,6 @@ int hw_video_init(int w, int h)
         video.buf[i] = vgabuf_get(i);
     }
     video.bufi = 0;
-    memset(video.pal, 0, sizeof(video.pal));
-    hw_video_refresh_palette();
     return 0;
 }
 
