@@ -55,10 +55,6 @@ void hw_log_error(const char *msg)
     fputs(msg, stderr);
 }
 
-void hw_video_set_palette(uint8_t *palette, int first, int num)
-{
-}
-
 uint8_t *hw_video_get_buf(void)
 {
     return 0;

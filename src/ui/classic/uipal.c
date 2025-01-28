@@ -8,6 +8,7 @@
 #include "lbxpal.h"
 #include "types.h"
 #include "uidelay.h"
+#include "vgapal.h"
 
 /* -------------------------------------------------------------------------- */
 
@@ -47,11 +48,11 @@ void ui_palette_set_n(void)
     /* wait_retrace */
     for (i = j = 0; j < 256; ++j) {
         if (lbxpal_update_flag[j] != 0) {
-            hw_video_set_palette_byte(i, lbxpal_palette[i]);
+            vgapal_set_byte(i, lbxpal_palette[i]);
             ++i;
-            hw_video_set_palette_byte(i, lbxpal_palette[i]);
+            vgapal_set_byte(i, lbxpal_palette[i]);
             ++i;
-            hw_video_set_palette_byte(i, lbxpal_palette[i]);
+            vgapal_set_byte(i, lbxpal_palette[i]);
             ++i;
             got_update = true;
         } else {
@@ -73,11 +74,11 @@ void ui_palette_fade_n(uint16_t fadepercent)
         /* wait_retrace */
         for (i = j = 0; j < 256; ++j) {
             if (lbxpal_update_flag[j] != 0) {
-                hw_video_set_palette_byte(i, 0);
+                vgapal_set_byte(i, 0);
                 ++i;
-                hw_video_set_palette_byte(i, 0);
+                vgapal_set_byte(i, 0);
                 ++i;
-                hw_video_set_palette_byte(i, 0);
+                vgapal_set_byte(i, 0);
                 ++i;
             } else {
                 i += 3;
@@ -91,11 +92,11 @@ void ui_palette_fade_n(uint16_t fadepercent)
         /* wait_retrace */
         for (i = j = 0; j < 256; ++j) {
             if (lbxpal_update_flag[j] != 0) {
-                hw_video_set_palette_byte(i, (((uint16_t)lbxpal_palette[i]) * v) >> 8);
+                vgapal_set_byte(i, (((uint16_t)lbxpal_palette[i]) * v) >> 8);
                 ++i;
-                hw_video_set_palette_byte(i, (((uint16_t)lbxpal_palette[i]) * v) >> 8);
+                vgapal_set_byte(i, (((uint16_t)lbxpal_palette[i]) * v) >> 8);
                 ++i;
-                hw_video_set_palette_byte(i, (((uint16_t)lbxpal_palette[i]) * v) >> 8);
+                vgapal_set_byte(i, (((uint16_t)lbxpal_palette[i]) * v) >> 8);
                 ++i;
             } else {
                 i += 3;
