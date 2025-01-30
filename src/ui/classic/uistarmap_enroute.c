@@ -27,9 +27,10 @@
 
 /* -------------------------------------------------------------------------- */
 
-static inline bool ui_starmap_enroute_in_frange(struct starmap_data_s *d, uint8_t planet_i)
+static inline bool ui_starmap_enroute_in_frange(struct starmap_data_s *d)
 {
-    const planet_t *p = &d->g->planet[planet_i];
+    uint8_t pi = d->g->planet_focus_i[d->api];
+    const planet_t *p = &d->g->planet[pi];
     return ((p->within_frange[d->api] == 1) || ((p->within_frange[d->api] == 2) && d->en.sn0.have_reserve_fuel));
 }
 
@@ -38,8 +39,6 @@ static inline bool ui_starmap_enroute_locked_by_retreat(struct starmap_data_s *d
     const fleet_enroute_t *r = &(d->g->enroute[ui_data.starmap.fleet_selected]);
     return (game_num_retreat_redir_fix && r->retreat && !d->g->eto[d->api].have_hyperspace_comm && (planet_i == d->en.pon));
 }
-
-/* -------------------------------------------------------------------------- */
 
 static void ui_starmap_enroute_draw_cb(void *vptr)
 {
@@ -83,7 +82,7 @@ static void ui_starmap_enroute_draw_cb(void *vptr)
         y0 = (r->y - ui_data.starmap.y) * 2 + 8;
         {
             const uint8_t *ctbl;
-            ctbl = (d->controllable && (!ui_starmap_enroute_in_frange(d, pto))) ? colortbl_line_red : colortbl_line_green;
+            ctbl = (d->controllable && !ui_starmap_enroute_in_frange(d)) ? colortbl_line_red : colortbl_line_green;
             ui_draw_line_limit_ctbl(x0 + 4, y0 + 1, x1 + 6, y1 + 6, ctbl, 5, ui_data.starmap.line_anim_phase, starmap_scale);
         }
         if (ui_extra_enabled && ui_data.starmap.flag_show_own_routes && (r->owner == d->api)) {
@@ -100,7 +99,7 @@ static void ui_starmap_enroute_draw_cb(void *vptr)
         }
         lbxgfx_draw_frame_offs(x0, y0, gfx, STARMAP_LIMITS, UI_SCREEN_W, starmap_scale);
         dist = game_get_min_dist(g, r->owner, g->planet_focus_i[d->api]);
-        if (d->controllable && (!ui_starmap_enroute_in_frange(d, pto))) {
+        if (d->controllable && !ui_starmap_enroute_in_frange(d)) {
             /* FIXME use proper positioning for varying str length */
             lib_sprintf(buf, sizeof(buf), "  %s   %i %s.", game_str_sm_outsr, dist - e->fuel_range, game_str_sm_parsecs2);
             lbxfont_select_set_12_4(2, 0, 0, 0);
@@ -135,7 +134,7 @@ static void ui_starmap_enroute_draw_cb(void *vptr)
     }
     if (1
       && d->controllable
-      && (!ui_starmap_enroute_in_frange(d, pto) || ui_starmap_enroute_locked_by_retreat(d, pto))
+      && (!ui_starmap_enroute_in_frange(d) || ui_starmap_enroute_locked_by_retreat(d, pto))
     ) {
         lbxgfx_set_new_frame(ui_data.gfx.starmap.reloc_bu_accept, 1);
         lbxgfx_draw_frame(271, 163, ui_data.gfx.starmap.reloc_bu_accept, UI_SCREEN_W, ui_scale);
@@ -351,7 +350,7 @@ do_accept:
             ui_starmap_fill_oi_tbl_stars(&d);
             if (d.controllable) {
                 oi_cancel = uiobj_add_t0(227, 163, "", ui_data.gfx.starmap.reloc_bu_cancel, MOO_KEY_ESCAPE);
-                if (ui_starmap_enroute_in_frange(&d, g->planet_focus_i[active_player]) && !ui_starmap_enroute_locked_by_retreat(&d, g->planet_focus_i[active_player])) {
+                if (ui_starmap_enroute_in_frange(&d) && !ui_starmap_enroute_locked_by_retreat(&d, g->planet_focus_i[active_player])) {
                     oi_accept = uiobj_add_t0(271, 163, "", ui_data.gfx.starmap.reloc_bu_accept, MOO_KEY_SPACE);
                 }
             }
