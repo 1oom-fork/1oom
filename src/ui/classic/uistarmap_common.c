@@ -394,29 +394,24 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
     lbxgfx_draw_frame(0, 0, ui_data.gfx.starmap.mainview, UI_SCREEN_W, ui_scale);
     uiobj_set_limits(STARMAP_LIMITS);
     {
+        uint8_t *gfx1, *gfx2;
         int x0, y0, x1, y1, lx, ly;
         x0 = (-x / 4) + 6;
         y0 = (-y / 4) + 6;
         x1 = ((-x + 1) / 2) + 6;
         y1 = ((-y + 1) / 2) + 6;
+        gfx1 = ui_fixbugs_enabled ? ui_data.gfx.starmap.starbak2 : ui_data.gfx.starmap.starback;
+        gfx2 = ui_fixbugs_enabled ? ui_data.gfx.starmap.starback : ui_data.gfx.starmap.starbak2;
         lx = 222 * ui_scale - 1;
         ly = 178 * ui_scale - 1;
         for (int yb = y0; yb < ly; yb += 200) {
             for (int xb = x0; xb < lx; xb += 320) {
-                if (ui_fixbugs_enabled) {
-                    lbxgfx_draw_frame_offs(xb, yb, ui_data.gfx.starmap.starbak2, STARMAP_LIMITS, UI_SCREEN_W, starmap_scale);
-                } else {
-                    lbxgfx_draw_frame_offs(xb, yb, ui_data.gfx.starmap.starback, STARMAP_LIMITS, UI_SCREEN_W, starmap_scale);
-                }
+                lbxgfx_draw_frame_offs(xb, yb, gfx1, STARMAP_LIMITS, UI_SCREEN_W, starmap_scale);
             }
         }
         for (int yb = y1; yb < ly; yb += 200) {
             for (int xb = x1; xb < lx; xb += 320) {
-                if (ui_fixbugs_enabled) {
-                    lbxgfx_draw_frame_offs(xb, yb, ui_data.gfx.starmap.starback, STARMAP_LIMITS, UI_SCREEN_W, starmap_scale);
-                } else {
-                    lbxgfx_draw_frame_offs(xb, yb, ui_data.gfx.starmap.starbak2, STARMAP_LIMITS, UI_SCREEN_W, starmap_scale);
-                }
+                lbxgfx_draw_frame_offs(xb, yb, gfx2, STARMAP_LIMITS, UI_SCREEN_W, starmap_scale);
             }
         }
     }
