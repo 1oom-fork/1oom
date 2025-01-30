@@ -27,13 +27,12 @@
 
 /* -------------------------------------------------------------------------- */
 
-static inline bool ui_starmap_orbit_own_in_frange(struct starmap_data_s *d, uint8_t planet_i)
+static inline bool ui_starmap_orbit_own_in_frange(struct starmap_data_s *d)
 {
-    const planet_t *p = &d->g->planet[planet_i];
+    uint8_t pi = d->g->planet_focus_i[d->api];
+    const planet_t *p = &d->g->planet[pi];
     return (p->within_frange[d->api] == 1) || ((p->within_frange[d->api] == 2) && d->oo.sn0.have_reserve_fuel);
 }
-
-/* -------------------------------------------------------------------------- */
 
 static void ui_starmap_orbit_own_draw_cb(void *vptr)
 {
@@ -70,12 +69,12 @@ static void ui_starmap_orbit_own_draw_cb(void *vptr)
         lbxgfx_draw_frame_offs_delay(x1, y1, !d->anim_delay, ui_data.gfx.starmap.planbord, STARMAP_LIMITS, UI_SCREEN_W, starmap_scale);
         x0 = (pf->x - ui_data.starmap.x) * 2 + 26;
         y0 = (pf->y - ui_data.starmap.y) * 2 + 8;
-        ctbl = ui_starmap_orbit_own_in_frange(d, g->planet_focus_i[d->api]) ? colortbl_line_green : colortbl_line_red;
+        ctbl = ui_starmap_orbit_own_in_frange(d) ? colortbl_line_green : colortbl_line_red;
         ui_draw_line_limit_ctbl(x0 + 3, y0 + 1, x1 + 6, y1 + 6, ctbl, 5, ui_data.starmap.line_anim_phase, starmap_scale);
         gfx = ui_data.gfx.starmap.smalship[g->eto[d->api].banner];
         lbxgfx_set_frame_0(gfx);
         lbxgfx_draw_frame_offs(x0, y0, gfx, STARMAP_LIMITS, UI_SCREEN_W, starmap_scale);
-        if (!ui_starmap_orbit_own_in_frange(d, g->planet_focus_i[d->api])) {
+        if (!ui_starmap_orbit_own_in_frange(d)) {
             if (d->oo.sn0.num < NUM_SHIPDESIGNS) { /* WASBUG MOO1 compares to 7, resulting in text below last ship */
                 lib_sprintf(buf, sizeof(buf), "%s %i %s", game_str_sm_destoor, dist, game_str_sm_parsfromcc);
                 lbxfont_select(2, 0, 0, 0);
@@ -368,7 +367,7 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
         } else if (oi1 == oi_accept) {
 do_accept:
             ui_sound_play_sfx_24();
-            if (ui_starmap_orbit_own_in_frange(&d, g->planet_focus_i[active_player])) {
+            if (ui_starmap_orbit_own_in_frange(&d)) {
                 game_send_fleet_from_orbit(g, active_player, d.from, g->planet_focus_i[active_player], d.oo.ships, shiptypes, 6);
                 game_update_visibility(g);
             }
@@ -457,10 +456,7 @@ do_accept:
             }
             ui_starmap_fill_oi_tbl_stars(&d);
             oi_cancel = uiobj_add_t0(227, 180, "", ui_data.gfx.starmap.reloc_bu_cancel, MOO_KEY_ESCAPE);
-            if (1
-              && ((g->planet_focus_i[active_player] != d.from) || ui_extra_enabled)
-              && ui_starmap_orbit_own_in_frange(&d, g->planet_focus_i[active_player])
-              && d.oo.shiptypenon0numsel) {
+            if (ui_starmap_orbit_own_in_frange(&d) && d.oo.shiptypenon0numsel) {
                 oi_accept = uiobj_add_t0(271, 180, "", ui_data.gfx.starmap.reloc_bu_accept, MOO_KEY_SPACE);
             }
             oi_search = uiobj_add_inputkey(MOO_KEY_SLASH);

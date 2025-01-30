@@ -76,7 +76,6 @@ or selecting the 1oom UI preset enables the following extra UI features:
 - Fleet deployment shows the amount of available ships
 - Alt+f shows friendly fleet routes
 - Alt+o (experimental) toggles text under stars
-- The current planet is allowed as a target on the fleet deployment screen
 - Buttons and slider are always visible when sending transport
 - Clicking a selected destination star again works as Accept for fleet send etc
 - The position of the build finished message is slightly improved.
