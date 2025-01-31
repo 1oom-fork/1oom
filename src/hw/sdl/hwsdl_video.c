@@ -30,11 +30,6 @@ uint8_t *hw_video_get_buf(void)
     return vgabuf_get_back();
 }
 
-uint8_t *hw_video_get_buf_front(void)
-{
-    return vgabuf_get_front();
-}
-
 uint8_t *hw_video_draw_buf(void)
 {
     vgabuf_select_back();
