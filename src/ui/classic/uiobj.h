@@ -11,12 +11,6 @@
 
 #define UIOBJI_SET_TBL_INVALID(name) do { for (int i = 0; i < (sizeof(name)/sizeof(name[0])); ++i) { name[i] = UIOBJI_INVALID; } } while (0)
 
-/* HACK for lbxgfx_draw_frame_offs params */
-extern int uiobj_minx;
-extern int uiobj_miny;
-extern int uiobj_maxx;
-extern int uiobj_maxy;
-
 extern void uiobj_table_clear(void);
 extern void uiobj_table_set_last(int16_t oi);
 extern void uiobj_table_num_store(void);
