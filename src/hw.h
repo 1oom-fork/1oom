@@ -25,8 +25,6 @@ extern int hw_video_init(int w, int h);
 extern void hw_video_refresh_palette(void);
 /* Return back buffer. */
 extern uint8_t *hw_video_get_buf(void);
-/* Return front buffer. */
-extern uint8_t *hw_video_get_buf_front(void);
 /* Draw the current back buffer and return new back buffer. */
 extern uint8_t *hw_video_draw_buf(void);
 /* Redraw the front buffer. */

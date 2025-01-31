@@ -7,6 +7,7 @@
 #include "lbxpal.h"
 #include "types.h"
 #include "uidefs.h"
+#include "vgabuf.h"
 
 /* -------------------------------------------------------------------------- */
 
@@ -182,7 +183,7 @@ void ui_cursor_store_bg0(int mx, int my)
         }
         cursor_i0_bg_stored = true;
     }
-    ui_cursor_store_bg(mx, my, hw_video_get_buf_front(), &cursor_bg0);
+    ui_cursor_store_bg(mx, my, vgabuf_get_front(), &cursor_bg0);
 }
 
 void ui_cursor_draw1(int mx, int my)
@@ -195,14 +196,14 @@ void ui_cursor_draw1(int mx, int my)
 void ui_cursor_draw0(int mx, int my)
 {
     if (ui_cursor_gfx_i != 0) {
-        ui_cursor_draw(mx, my, hw_video_get_buf_front());
+        ui_cursor_draw(mx, my, vgabuf_get_front());
     }
 }
 
 void ui_cursor_erase0(void)
 {
     if (ui_cursor_gfx_i_old != 0) {
-        ui_cursor_erase(hw_video_get_buf_front(), &cursor_bg0);
+        ui_cursor_erase(vgabuf_get_front(), &cursor_bg0);
     }
 }
 

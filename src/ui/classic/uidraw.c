@@ -13,6 +13,7 @@
 #include "uidefs.h"
 #include "uiobj.h"
 #include "uipal.h"
+#include "vgabuf.h"
 
 /* -------------------------------------------------------------------------- */
 
@@ -394,7 +395,7 @@ void ui_draw_copy_line(int x0, int y0, int x1, int y1, bool flag_hmm)
 
     {
         uint8_t *q = hw_video_get_buf() + y0 * UI_SCREEN_W + x0;
-        uint8_t *p = hw_video_get_buf_front() + y0 * UI_SCREEN_W + x0;
+        uint8_t *p = vgabuf_get_front() + y0 * UI_SCREEN_W + x0;
         int xerr, yerr;
 
         xerr = 0x100 / 2;

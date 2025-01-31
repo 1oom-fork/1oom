@@ -22,6 +22,7 @@
 #include "uiobj.h"
 #include "uipal.h"
 #include "uisound.h"
+#include "vgabuf.h"
 
 /* -------------------------------------------------------------------------- */
 
@@ -174,7 +175,7 @@ static void ui_news_fade(void)
     int pixelcount = UI_NEWS_FADE_PIXELS_PER_FRAME;
     uint8_t *pb, *pf;
     pb = hw_video_get_buf();
-    pf = hw_video_get_buf_front();
+    pf = vgabuf_get_front();
     for (int loops = 4; loops > 0; --loops) {
         int we0;
         we0 = (loops - 1) << 6;
