@@ -30,6 +30,7 @@
 #include "uipal.h"
 #include "uisound.h"
 #include "util.h"
+#include "vgabuf.h"
 
 /* -------------------------------------------------------------------------- */
 
@@ -1259,7 +1260,7 @@ static void ui_design_sel_special(struct design_data_s *d, int sslot)
 
 static void design_draw_sub_cb(void *vptr)
 {
-    hw_video_copy_back_from_page2();
+    vgabuf_copy_back_from_page2();
 }
 
 static void ui_design_sub(struct design_data_s *d, design_slot_t selmode)
