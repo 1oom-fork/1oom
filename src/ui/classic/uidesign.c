@@ -13,7 +13,6 @@
 #include "game_shiptech.h"
 #include "game_str.h"
 #include "game_tech.h"
-#include "hw.h"
 #include "kbd.h"
 #include "lbx.h"
 #include "lbxfont.h"
@@ -569,7 +568,7 @@ static struct xy_s ui_design_draw_selbox(int xpos, int xoff1, int xoff2, int xof
     lbxfont_select(0, 0xe, 0xe, 0xe);
     lbxfont_print_str_center(159, y0 + 5, str, UI_SCREEN_W);
 
-    hw_video_copy_back_to_page2();
+    vgabuf_copy_back_to_page2();
 
     lbxfont_select(2, 0, 4, 0xe);
     uiobj_set_hmm8_0();
