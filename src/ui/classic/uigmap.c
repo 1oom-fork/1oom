@@ -7,7 +7,6 @@
 #include "game.h"
 #include "game_misc.h"
 #include "game_str.h"
-#include "hw.h"
 #include "kbd.h"
 #include "lbx.h"
 #include "lbxfont.h"
@@ -409,7 +408,7 @@ void *ui_gmap_basic_init(struct game_s *g, bool show_player_switch)
     if (!show_player_switch) {
         ui_draw_copy_buf();
         ui_starmap_draw_button_text(0/*unused*/, false);
-        hw_video_copy_back_to_page2();
+        vgabuf_copy_back_to_page2();
     }
     return &ctx;
 }
@@ -426,7 +425,7 @@ void ui_gmap_basic_start_player(void *ctx, int pi)
         pil = pi;
         ui_switch(d->g, &pil, 1, false);
         ui_draw_copy_buf();
-        hw_video_copy_back_to_page2();
+        vgabuf_copy_back_to_page2();
     }
 }
 
