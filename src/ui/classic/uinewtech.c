@@ -503,7 +503,7 @@ void ui_newtech(struct game_s *g, int pi)
         if (!flag_copybuf) {
             flag_copybuf = true;
             hw_video_copy_back_from_page2();
-            hw_video_copy_back_to_page3();
+            vgabuf_copy_back_to_page3();
         }
         d.flag_is_current = false;
         d.flag_choose_next = false;
@@ -572,7 +572,7 @@ void ui_newtech(struct game_s *g, int pi)
             if (!flag_copybuf) {
                 flag_copybuf = true;
                 hw_video_copy_back_from_page2();
-                hw_video_copy_back_to_page3();
+                vgabuf_copy_back_to_page3();
             }
             if (d.cur_source == -1) {
                 /*soundsys_hmm3?*/
