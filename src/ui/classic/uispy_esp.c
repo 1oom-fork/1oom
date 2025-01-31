@@ -116,7 +116,7 @@ static void stolen_draw_cb(void *vptr)
     const struct game_s *g = d->g;
     const empiretechorbit_t *e = &(g->eto[d->spy]);
     char buf[0x80];
-    hw_video_copy_back_from_page2();
+    vgabuf_copy_back_from_page2();
     ui_gmap_basic_draw_frame(d->gmap, d->api);
     ui_draw_filled_rect(31, 62, 202, 103, 0x36);
     lbxgfx_draw_frame(31, 62, d->gfx, UI_SCREEN_W);
@@ -144,9 +144,9 @@ int ui_spy_steal(struct game_s *g, int spy, int target, uint8_t flags_field)
     /* HACK
        MOO1 does ui_draw_copy_buf() here but it seems to cause gfx glitch
        when two tech steals happen on same turn.
-       hw_video_copy_back_from_page2() is used instead.
+       vgabuf_copy_back_from_page2() is used instead.
     */
-    hw_video_copy_back_from_page2();
+    vgabuf_copy_back_from_page2();
     vgabuf_copy_back_to_page3();
 
     d.g = g;

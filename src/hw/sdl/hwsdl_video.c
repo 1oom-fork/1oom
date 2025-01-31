@@ -42,8 +42,3 @@ void hw_video_copy_back_to_page2(void)
 {
     vgabuf_copy_back_to_page2();
 }
-
-void hw_video_copy_back_from_page2(void)
-{
-    vgabuf_copy_back_from_page2();
-}

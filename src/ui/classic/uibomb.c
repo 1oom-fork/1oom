@@ -23,6 +23,7 @@
 #include "uiobj.h"
 #include "uisound.h"
 #include "uistarmap_common.h"
+#include "vgabuf.h"
 
 /* -------------------------------------------------------------------------- */
 
@@ -92,7 +93,7 @@ static void bomb_ask_draw_cb(void *vptr)
     const planet_t *p = &(g->planet[d->planet]);
     const empiretechorbit_t *e = &(g->eto[p->owner]);
     char buf[0x80];
-    hw_video_copy_back_from_page2();
+    vgabuf_copy_back_from_page2();
     ui_draw_filled_rect(222, 4, 314, 179, 0);
     lbxgfx_draw_frame(222, 4, d->gfx_bombback, UI_SCREEN_W);
     ui_starmap_draw_planetinfo_2(g, d->api, d->api, d->planet);
@@ -126,7 +127,7 @@ static void bomb_show_draw_cb(void *vptr)
     const planet_t *p = &(g->planet[d->planet]);
     const empiretechorbit_t *e = &(g->eto[d->owner]);
     char buf[0x80];
-    hw_video_copy_back_from_page2();
+    vgabuf_copy_back_from_page2();
     ui_draw_filled_rect(222, 4, 314, 179, 0);
     lbxgfx_draw_frame(222, 4, d->gfx_explobac, UI_SCREEN_W);
     ui_starmap_draw_planetinfo_2(g, d->api, d->api, d->planet);
