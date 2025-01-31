@@ -82,7 +82,7 @@ void ui_landing_prepare(struct landing_data_s *d)
         lbxgfx_apply_palette(gfx);
         lbxfile_item_release(LBXFILE_LANDING, gfx);
     }
-    hw_video_copy_back_to_page3();
+    vgabuf_copy_back_to_page3();
     d->gfx_transprt = lbxfile_item_get(LBXFILE_LANDING, 0x0, 0);
     d->gfx_walk = lbxfile_item_get(LBXFILE_LANDING, 0x15 + g->eto[d->api].banner, 0);
     lbxgfx_set_frame_0(d->gfx_walk);
