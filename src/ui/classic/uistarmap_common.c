@@ -590,7 +590,7 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
                 lbxfont_select(2, tbl_banner_fontparam[g->eto[p->owner].banner], 0, 0);
                 tx = (p->x - x) * 2 + 14;
                 ty = (p->y - y) * 2 + 22;
-                lbxfont_print_str_center_limit(tx, ty, p->name, STARMAP_LIMITS, UI_SCREEN_W);
+                lbxfont_print_str_center_limit(tx, ty, p->name, UI_SCREEN_W);
             } else if (BOOLVEC_IS1(g->eto[d->api].within_frange, p->owner) || (p->within_frange[d->api] == 1)) {
                 do_print = true;
                 lbxfont_select(2, 0, 0, 0);
@@ -599,7 +599,7 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
             if (do_print) {
                 tx = (p->x - x) * 2 + 14;
                 ty = (p->y - y) * 2 + 22;
-                lbxfont_print_str_center_limit(tx, ty, p->name, STARMAP_LIMITS, UI_SCREEN_W);
+                lbxfont_print_str_center_limit(tx, ty, p->name, UI_SCREEN_W);
             }
         }
     }
@@ -662,14 +662,14 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
         ty = (g->evn.crystal.y - y) * 2 + 8;
         lbxgfx_draw_frame_offs(tx, ty, ui_data.gfx.planets.smonster, STARMAP_LIMITS, UI_SCREEN_W);
         lbxfont_select(2, 8, 0, 0);
-        lbxfont_print_str_center_limit(tx + 2, ty + 5, game_str_sm_crystal, STARMAP_LIMITS, UI_SCREEN_W);
+        lbxfont_print_str_center_limit(tx + 2, ty + 5, game_str_sm_crystal, UI_SCREEN_W);
     }
     if ((g->evn.amoeba.exists != 0) && (g->evn.amoeba.killer == PLAYER_NONE)) {
         tx = (g->evn.amoeba.x - x) * 2 + 8;
         ty = (g->evn.amoeba.y - y) * 2 + 8;
         lbxgfx_draw_frame_offs(tx, ty, ui_data.gfx.planets.smonster, STARMAP_LIMITS, UI_SCREEN_W);
         lbxfont_select(2, 8, 0, 0);
-        lbxfont_print_str_center_limit(tx + 2, ty + 5, game_str_sm_amoeba, STARMAP_LIMITS, UI_SCREEN_W);
+        lbxfont_print_str_center_limit(tx + 2, ty + 5, game_str_sm_amoeba, UI_SCREEN_W);
     }
     for (int pi = 0; pi < g->galaxy_stars; ++pi) {
         const planet_t *p = &g->planet[pi];
