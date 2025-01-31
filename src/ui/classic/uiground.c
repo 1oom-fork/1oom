@@ -48,7 +48,7 @@ static void ground_prepare(struct ground_data_s *d)
     lbxgfx_set_new_frame(d->l.gfx_transprt, 39);
     gfx_aux_draw_frame_to(d->l.gfx_transprt, &ui_data.aux.screen);
     gfx_aux_draw_frame_from_limit(0, 100, &ui_data.aux.screen, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
-    hw_video_copy_back_to_page3();
+    vgabuf_copy_back_to_page3();
     ui_delay_1();
     ui_sound_stop_music();
     for (int i = 0; i < 2; ++i) {
