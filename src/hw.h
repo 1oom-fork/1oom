@@ -29,8 +29,6 @@ extern uint8_t *hw_video_draw_buf(void);
 extern void hw_video_redraw_front(void);
 /* Copy front buffer to back buffer. */
 extern void hw_video_copy_buf(void);
-/* Copy back buffer to pointed buffer. */
-extern void hw_video_copy_buf_out(uint8_t *buf);
 extern void hw_video_copy_back_to_page2(void);
 extern void hw_video_copy_back_from_page2(void);
 extern void hw_video_copy_back_to_page3(void);
