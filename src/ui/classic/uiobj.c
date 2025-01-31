@@ -5,6 +5,7 @@
 #include "uiobj.h"
 #include "comp.h"
 #include "game.h"   /* only for UIOBJ_MAX */
+#include "gfxlimits.h"
 #include "hw.h"
 #include "kbd.h"
 #include "lbxfont.h"
@@ -151,13 +152,6 @@ static void (*uiobj_callback)(void *) = NULL;
 static void *uiobj_cbdata = NULL;
 
 static uiobj_t uiobj_tbl[UIOBJ_MAX];
-
-/* -------------------------------------------------------------------------- */
-
-int uiobj_minx = 0;
-int uiobj_miny = 0;
-int uiobj_maxx = UI_SCREEN_W - 1;
-int uiobj_maxy = UI_SCREEN_H - 1;
 
 /* -------------------------------------------------------------------------- */
 
@@ -1616,18 +1610,12 @@ void uiobj_set_limits(int minx, int miny, int maxx, int maxy)
     SETMIN(maxy, UI_SCREEN_H - 1);
     if (minx > maxx) { int t = minx; minx = maxx; maxx = t; }
     if (miny > maxy) { int t = miny; miny = maxy; maxy = t; }
-    uiobj_minx = minx;
-    uiobj_miny = miny;
-    uiobj_maxx = maxx;
-    uiobj_maxy = maxy;
+    gfxlim_set(minx, miny, maxx, maxy);
 }
 
 void uiobj_set_limits_all(void)
 {
-    uiobj_minx = 0;
-    uiobj_miny = 0;
-    uiobj_maxx = UI_SCREEN_W - 1;
-    uiobj_maxy = UI_SCREEN_H - 1;
+    gfxlim_set(0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1);
 }
 
 void uiobj_set_help_id(int16_t v)
@@ -1821,13 +1809,13 @@ int16_t uiobj_add_mousearea(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, 
 
 int16_t uiobj_add_mousearea_limited(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, mookey_t key, int16_t helpid)
 {
-    if ((x1 < uiobj_minx) || (x0 > uiobj_maxx) || (y1 < uiobj_miny) || (y0 > uiobj_maxy)) {
+    if ((x1 < gfxlim_minx) || (x0 > gfxlim_maxx) || (y1 < gfxlim_miny) || (y0 > gfxlim_maxy)) {
         return UIOBJI_OUTSIDE;
     }
-    x0 = MAX(x0, uiobj_minx);
-    x1 = MIN(x1, uiobj_maxx);
-    y0 = MAX(y0, uiobj_miny);
-    y1 = MIN(y1, uiobj_maxy);
+    x0 = MAX(x0, gfxlim_minx);
+    x1 = MIN(x1, gfxlim_maxx);
+    y0 = MAX(y0, gfxlim_miny);
+    y1 = MIN(y1, gfxlim_maxy);
     return uiobj_add_mousearea(x0, y0, x1, y1, key, helpid);
 }
 
