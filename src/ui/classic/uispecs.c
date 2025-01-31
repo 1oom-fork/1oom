@@ -10,7 +10,6 @@
 #include "game_misc.h"
 #include "game_parsed.h"
 #include "game_str.h"
-#include "hw.h"
 #include "kbd.h"
 #include "lbx.h"
 #include "lbxfont.h"
@@ -206,7 +205,7 @@ void ui_specs_mustscrap(struct game_s *g, player_id_t active_player, int scrapi)
 
     ui_draw_copy_buf();
     lbxgfx_apply_colortable(0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, 0, UI_SCREEN_W);
-    hw_video_copy_back_to_page2();
+    vgabuf_copy_back_to_page2();
 
     while (!flag_done) {
         int16_t oi;
