@@ -8,7 +8,6 @@
 #include "game.h"
 #include "game_str.h"
 #include "game_tech.h"
-#include "hw.h"
 #include "kbd.h"
 #include "lbx.h"
 #include "lbxfont.h"
@@ -193,7 +192,7 @@ int ui_spy_steal(struct game_s *g, int spy, int target, uint8_t flags_field)
     uiobj_table_clear();
     steal_free_data(&d);
     vgabuf_copy_back_from_page3();
-    hw_video_copy_back_to_page2();
+    vgabuf_copy_back_to_page2();
     return selected;
 }
 
