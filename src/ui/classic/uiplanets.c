@@ -23,6 +23,7 @@
 #include "uiobj.h"
 #include "uipal.h"
 #include "uisound.h"
+#include "vgabuf.h"
 
 /* -------------------------------------------------------------------------- */
 
@@ -229,7 +230,7 @@ static void planets_transfer_draw_cb(void *vptr)
     const int x = 100, y = 50;
     char buf[64];
 
-    hw_video_copy_back_from_page2();
+    vgabuf_copy_back_from_page2();
     lbxgfx_draw_frame(x, y, d->gfx_transfer, UI_SCREEN_W);
     ui_draw_filled_rect(x + 14, y + 35, x + 64, y + 38, 0x2f);
     if (d->amount_trans > 0) {
