@@ -4,7 +4,6 @@
 
 #include "uihelp.h"
 #include "bits.h"
-#include "hw.h"
 #include "lbx.h"
 #include "lbxfont.h"
 #include "lbxpal.h"
@@ -143,7 +142,7 @@ void ui_help(int help_index)
     c8 = lbxpal_find_closest(0x2d, 0x2d, 0x33);
     uiobj_table_num_store();
     vgabuf_copy_buf();
-    hw_video_copy_back_to_page3();
+    vgabuf_copy_back_to_page3();
     helplbx = lbxfile_item_get(LBXFILE_HELP, 0, 0);
     do {
         const uint8_t *p;
