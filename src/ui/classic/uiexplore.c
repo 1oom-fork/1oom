@@ -7,7 +7,6 @@
 #include "comp.h"
 #include "game.h"
 #include "game_str.h"
-#include "hw.h"
 #include "kbd.h"
 #include "lbx.h"
 #include "lbxfont.h"
@@ -23,6 +22,7 @@
 #include "uiobj.h"
 #include "uisound.h"
 #include "uistarmap_common.h"
+#include "vgabuf.h"
 
 /* -------------------------------------------------------------------------- */
 
@@ -110,7 +110,7 @@ static void explore_draw_cb(void *vptr)
 {
     struct explore_data_s *d = vptr;
     const struct game_s *g = d->g;
-    hw_video_copy_back_from_page2();
+    vgabuf_copy_back_from_page2();
     ui_draw_filled_rect(222, 4, 314, 179, 0);
     lbxgfx_draw_frame(222, 4, d->gfx_explobac, UI_SCREEN_W);
     ui_starmap_draw_planetinfo_2(g, d->api, PLAYER_NUM, d->planet);
