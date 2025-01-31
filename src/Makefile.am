@@ -48,6 +48,8 @@ gui_sources = \
     font8x8_draw.h \
     gfxaux.c \
     gfxaux.h \
+    gfxlimits.c \
+    gfxlimits.h \
     kbd.c \
     kbd.h \
     lbxfont.c \
