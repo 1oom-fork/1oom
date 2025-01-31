@@ -172,7 +172,7 @@ void ui_cursor_store_bg1(int mx, int my)
         }
         cursor_i0_bg_stored = true;
     }
-    ui_cursor_store_bg(mx, my, hw_video_get_buf(), &cursor_bg1);
+    ui_cursor_store_bg(mx, my, vgabuf_get_back(), &cursor_bg1);
 }
 
 void ui_cursor_store_bg0(int mx, int my)
@@ -189,7 +189,7 @@ void ui_cursor_store_bg0(int mx, int my)
 void ui_cursor_draw1(int mx, int my)
 {
     if (ui_cursor_gfx_i != 0) {
-        ui_cursor_draw(mx, my, hw_video_get_buf());
+        ui_cursor_draw(mx, my, vgabuf_get_back());
     }
 }
 
@@ -210,7 +210,7 @@ void ui_cursor_erase0(void)
 void ui_cursor_erase1(void)
 {
     if (ui_cursor_gfx_i != 0) {
-        ui_cursor_erase(hw_video_get_buf(), &cursor_bg1);
+        ui_cursor_erase(vgabuf_get_back(), &cursor_bg1);
     }
 }
 

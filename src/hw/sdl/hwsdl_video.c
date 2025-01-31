@@ -25,11 +25,6 @@ void hw_video_refresh_palette(void)
     video.setpal(vgapal, 0, 256);
 }
 
-uint8_t *hw_video_get_buf(void)
-{
-    return vgabuf_get_back();
-}
-
 uint8_t *hw_video_draw_buf(void)
 {
     vgabuf_select_back();

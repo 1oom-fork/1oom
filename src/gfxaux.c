@@ -4,7 +4,6 @@
 
 #include "gfxaux.h"
 #include "comp.h"
-#include "hw.h"
 #include "lbxgfx.h"
 #include "lbxpal.h"
 #include "lib.h"
@@ -12,6 +11,7 @@
 #include "rnd.h"
 #include "types.h"
 #include "util_math.h"
+#include "vgabuf.h"
 
 /* -------------------------------------------------------------------------- */
 
@@ -184,7 +184,7 @@ static void gfx_aux_draw_frame_from_limit_do(int x, int y, int w, int h, int xsk
 {
     uint8_t *p, *q;
     uint16_t pitch_aux = aux->w;
-    p = hw_video_get_buf() + y * pitch_hw + x;
+    p = vgabuf_get_back() + y * pitch_hw + x;
     q = aux->data + yskip * pitch_aux + xskip;
 
     for (int y = 0; y < h; ++y) {
@@ -241,7 +241,7 @@ static void gfx_aux_draw_rotate_sub1(struct rotate_param_s *r, const uint8_t *gf
     int destxskip = r->destxskip, edest = 0x80, ex1 = 0x80, ex2 = 0x80, hx100 = r->h * 0x100, w = r->w, di, si;
     int sw = r->srcw, sh = r->srch;
     uint8_t *dest;
-    dest = hw_video_get_buf();
+    dest = vgabuf_get_back();
     di = r->desty * pitch_hw + r->destx;
     si = r->srcstart;
 LOG_DEBUG((DEBUGLEVEL_ROTATE, "r: hf:%i S:%i d:%i,%i,0x%x  s:%i y:%i,%i,0x%x,%i,0x%x  x:%i,%i,0x%x,%i,0x%x\n", r->hfrac, r->destxskip, r->destxstep, r->destxadd, r->destxfrac, r->srcstart, r->srcystep, r->srcyadd1, r->srcyfrac1, r->srcyadd2, r->srcyfrac2, r->srcxstep, r->srcxadd1, r->srcxfrac1, r->srcxadd2, r->srcxfrac2));
@@ -899,7 +899,7 @@ void gfx_aux_draw_frame_to(uint8_t *data, struct gfx_aux_s *aux)
 void gfx_aux_draw_frame_from(int x, int y, struct gfx_aux_s *aux, uint16_t pitch)
 {
     uint8_t *p, *q;
-    p = hw_video_get_buf() + y * pitch + x;
+    p = vgabuf_get_back() + y * pitch + x;
     q = aux->data;
     for (int y = 0; y < aux->h; ++y) {
         for (int x = 0; x < aux->w; ++x) {
