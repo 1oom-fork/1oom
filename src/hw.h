@@ -29,7 +29,6 @@ extern uint8_t *hw_video_draw_buf(void);
 extern void hw_video_redraw_front(void);
 extern void hw_video_copy_back_to_page2(void);
 extern void hw_video_copy_back_from_page2(void);
-extern void hw_video_copy_back_to_page3(void);
 
 extern int hw_audio_music_init(int mus_index, const uint8_t *data, uint32_t len);
 extern void hw_audio_music_release(int mus_index);
