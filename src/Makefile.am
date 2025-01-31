@@ -50,6 +50,8 @@ util_sources = \
 gui_sources = \
     gfxaux.c \
     gfxaux.h \
+    gfxlimits.c \
+    gfxlimits.h \
     kbd.c \
     kbd.h \
     lbxfont.c \
