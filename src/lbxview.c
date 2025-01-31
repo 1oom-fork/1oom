@@ -22,6 +22,7 @@
 #include "os.h"
 #include "util.h"
 #include "util_math.h"
+#include "vgabuf.h"
 
 /* -------------------------------------------------------------------------- */
 
@@ -107,7 +108,7 @@ static void drawscreen_outlbx(void)
     }
     for (int k = 0; k < 16; ++k) {
         uint8_t *p, *q;
-        p = hw_video_get_buf() + 350 * 320 + k * 18;
+        p = vgabuf_get_back() + 350 * 320 + k * 18;
         q = &lbxpal_cursors[16 * 16 * k];
         for (int y = 0; y < 16; ++y) {
             for (int x = 0; x < 16; ++x) {
@@ -270,7 +271,7 @@ static void drawscreen_inlbx(void)
 
 static void drawscreen(void)
 {
-    memset(hw_video_get_buf(), 0, 320 * 400);
+    memset(vgabuf_get_back(), 0, 320 * 400);
     if (!in_lbx) {
         drawscreen_outlbx();
     } else {
