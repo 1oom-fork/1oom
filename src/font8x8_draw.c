@@ -1,11 +1,11 @@
 #include "types.h"
 
 #include "font8x8.h"
-#include "hw.h"
+#include "vgabuf.h"
 
 void font8x8_drawchar(int dx, int dy, uint16_t pitch, uint8_t c, uint8_t fg, uint8_t bg)
 {
-    uint8_t *p = hw_video_get_buf() + dx + dy * pitch;
+    uint8_t *p = vgabuf_get_back() + dx + dy * pitch;
     for (int y = 0; y < 8; ++y) {
         uint8_t b;
         b = font8x8_basic[c][y];

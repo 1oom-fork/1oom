@@ -161,7 +161,7 @@ static void ui_draw_line_limit_do(int x0, int y0, int x1, int y1, uint8_t color,
 
 void ui_draw_erase_buf(void)
 {
-    memset(hw_video_get_buf(), 0, UI_SCREEN_W * UI_SCREEN_H);
+    memset(vgabuf_get_back(), 0, UI_SCREEN_W * UI_SCREEN_H);
 }
 
 void ui_draw_copy_buf(void)
@@ -182,18 +182,18 @@ void ui_draw_copy_buf(void)
 
 void ui_draw_color_buf(uint8_t color)
 {
-    memset(hw_video_get_buf(), color, UI_SCREEN_W * UI_SCREEN_H);
+    memset(vgabuf_get_back(), color, UI_SCREEN_W * UI_SCREEN_H);
 }
 
 void ui_draw_pixel(int x, int y, uint8_t color)
 {
-    uint8_t *p = hw_video_get_buf();
+    uint8_t *p = vgabuf_get_back();
     p[y * UI_SCREEN_W + x] = color;
 }
 
 void ui_draw_filled_rect(int x0, int y0, int x1, int y1, uint8_t color)
 {
-    uint8_t *s = hw_video_get_buf();
+    uint8_t *s = vgabuf_get_back();
     if (x1 < x0) {
         return;
     }
@@ -237,7 +237,7 @@ void ui_draw_line1(int x0, int y0, int x1, int y1, uint8_t color)
     }
 
     {
-        uint8_t *p = hw_video_get_buf() + y0 * UI_SCREEN_W + x0;
+        uint8_t *p = vgabuf_get_back() + y0 * UI_SCREEN_W + x0;
         int xerr, yerr;
 
         xerr = 0x100 / 2;
@@ -294,7 +294,7 @@ void ui_draw_line_ctbl(int x0, int y0, int x1, int y1, const uint8_t *colortbl, 
     }
 
     {
-        uint8_t *p = hw_video_get_buf() + y0 * UI_SCREEN_W + x0;
+        uint8_t *p = vgabuf_get_back() + y0 * UI_SCREEN_W + x0;
         int xerr, yerr;
 
         xerr = 0x100 / 2;
@@ -394,7 +394,7 @@ void ui_draw_copy_line(int x0, int y0, int x1, int y1, bool flag_hmm)
     }
 
     {
-        uint8_t *q = hw_video_get_buf() + y0 * UI_SCREEN_W + x0;
+        uint8_t *q = vgabuf_get_back() + y0 * UI_SCREEN_W + x0;
         uint8_t *p = vgabuf_get_front() + y0 * UI_SCREEN_W + x0;
         int xerr, yerr;
 
@@ -421,7 +421,7 @@ void ui_draw_copy_line(int x0, int y0, int x1, int y1, bool flag_hmm)
 
 void ui_draw_box_fill(int x0, int y0, int x1, int y1, const uint8_t *colorptr, uint8_t color0, uint16_t colorhalf, uint16_t ac, uint8_t colorpos)
 {
-    uint8_t *s = hw_video_get_buf() + y0 * UI_SCREEN_W + x0;
+    uint8_t *s = vgabuf_get_back() + y0 * UI_SCREEN_W + x0;
     uint16_t xstep, ystep, vx, vy, h, w, colornum;
     colornum = colorhalf << 1;
     /*v12 = colorpos & 0xff;*/
@@ -468,7 +468,7 @@ void ui_draw_text_overlay(int x, int y, const char *str)
 
 void ui_draw_box_grain(int x0, int y0, int x1, int y1, uint8_t color0, uint8_t color1, uint8_t ae)
 {
-    uint8_t *s = hw_video_get_buf() + y0 * UI_SCREEN_W;
+    uint8_t *s = vgabuf_get_back() + y0 * UI_SCREEN_W;
     uint8_t *p;
     uint16_t h;
 
