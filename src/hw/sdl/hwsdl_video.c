@@ -43,11 +43,6 @@ void hw_video_copy_buf(void)
     vgabuf_copy_buf();
 }
 
-void hw_video_copy_buf_out(uint8_t *buf)
-{
-    vgabuf_copy_buf_out(buf);
-}
-
 void hw_video_copy_back_to_page2(void)
 {
     vgabuf_copy_back_to_page2();
