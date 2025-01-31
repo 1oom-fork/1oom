@@ -94,7 +94,7 @@ static void newtech_draw_cb1(void *vptr)
     struct game_s *g = d->g;
     empiretechorbit_t *e = &(g->eto[d->api]);
     char buf[RESEARCH_DESCR_LEN];
-    hw_video_copy_back_from_page2();
+    vgabuf_copy_back_from_page2();
     {
         int frame = lbxgfx_get_frame(d->gfx_spies);
         lbxgfx_set_frame_0(d->gfx_spies);
@@ -506,7 +506,7 @@ void ui_newtech(struct game_s *g, int pi)
         d.nt = g->evn.newtech[pi].d[i];
         if (!flag_copybuf) {
             flag_copybuf = true;
-            hw_video_copy_back_from_page2();
+            vgabuf_copy_back_from_page2();
             vgabuf_copy_back_to_page3();
         }
         d.flag_is_current = false;
@@ -573,7 +573,7 @@ void ui_newtech(struct game_s *g, int pi)
         ) {
             if (!flag_copybuf) {
                 flag_copybuf = true;
-                hw_video_copy_back_from_page2();
+                vgabuf_copy_back_from_page2();
                 vgabuf_copy_back_to_page3();
             }
             if (d.cur_source == -1) {
