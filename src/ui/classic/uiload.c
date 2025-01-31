@@ -2,7 +2,6 @@
 
 #include "ui.h"
 #include "game_save.h"
-#include "hw.h"
 #include "kbd.h"
 #include "lbx.h"
 #include "lbxfont.h"
@@ -103,7 +102,7 @@ int ui_load_game(void)
     d.selected = 0;
 
     ui_draw_erase_buf();
-    hw_video_copy_back_to_page2();
+    vgabuf_copy_back_to_page2();
     uiobj_set_callback_and_delay(load_game_draw_cb, &d, 2);
 
     while (!flag_done) {
