@@ -22,6 +22,7 @@
 #include "uiobj.h"
 #include "uipal.h"
 #include "uisound.h"
+#include "vgabuf.h"
 
 /* -------------------------------------------------------------------------- */
 
@@ -271,7 +272,7 @@ void ui_election_end(struct election_s *el)
     hw_audio_music_fadeout();
     ui_palette_fadeout_a_f_1();
     ui_draw_finish_mode = 2;
-    hw_video_copy_back_from_page3();
+    vgabuf_copy_back_from_page3();
     hw_video_copy_back_to_page2();
     lbxpal_select(0, -1, 0);
     lbxpal_set_update_range(0, 255);
