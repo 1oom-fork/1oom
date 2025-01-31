@@ -192,7 +192,7 @@ void ui_help(int help_index)
         uiobj_finish_frame();
         ui_draw_copy_buf();
         uiobj_input_wait();
-        hw_video_copy_back_from_page3();
+        vgabuf_copy_back_from_page3();
         help_index = GET_LE_16(&p[HELP_OFFS_NEXT]);
     } while (help_index != 0);
     uiobj_table_num_restore();
