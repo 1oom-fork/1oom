@@ -26,6 +26,7 @@
 #include "uiobj.h"
 #include "uipal.h"
 #include "uisound.h"
+#include "vgabuf.h"
 
 /* -------------------------------------------------------------------------- */
 
@@ -139,7 +140,7 @@ static void specs_mustscrap_draw_cb(void *vptr)
     struct game_s *g = d->g;
     shipresearch_t *srd = &(g->srd[d->api]);
     uint8_t *gfx = ui_data.gfx.ships[srd->design[d->scrapi].look];
-    hw_video_copy_back_from_page2();
+    vgabuf_copy_back_from_page2();
     lbxgfx_draw_frame(107, 50, ui_data.gfx.starmap.scrap, UI_SCREEN_W);
     lbxfont_select(2, 6, 0, 0);
     lbxfont_print_str_split(117, 58, 90, game_str_sp_only6, 2, UI_SCREEN_W, UI_SCREEN_H);

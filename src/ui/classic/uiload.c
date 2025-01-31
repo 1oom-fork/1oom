@@ -19,6 +19,7 @@
 #include "uiobj.h"
 #include "uipal.h"
 #include "uisound.h"
+#include "vgabuf.h"
 
 /* -------------------------------------------------------------------------- */
 
@@ -50,7 +51,7 @@ static void load_game_draw_cb(void *vptr)
     struct load_game_data_s *d = vptr;
     const int xoff = 0x76;
     const int yoff = 0xa;
-    hw_video_copy_back_from_page2();
+    vgabuf_copy_back_from_page2();
     lbxgfx_draw_frame(0, 0, d->gfx_loadgame, UI_SCREEN_W);
     for (int i = 0; i < d->savenum; ++i) {
         int si;
