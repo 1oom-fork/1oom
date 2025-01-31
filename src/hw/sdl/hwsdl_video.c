@@ -38,11 +38,6 @@ void hw_video_redraw_front(void)
     hw_video_refresh(1);
 }
 
-void hw_video_copy_buf(void)
-{
-    vgabuf_copy_buf();
-}
-
 void hw_video_copy_back_to_page2(void)
 {
     vgabuf_copy_back_to_page2();
