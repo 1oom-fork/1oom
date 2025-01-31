@@ -22,6 +22,7 @@
 #include "uiobj.h"
 #include "uisound.h"
 #include "uistarmap_common.h"
+#include "vgabuf.h"
 
 /* -------------------------------------------------------------------------- */
 
@@ -86,7 +87,7 @@ static void sabotage_draw_cb(void *vptr)
     const empiretechorbit_t *e = &(g->eto[d->target]);
     const planet_t *p = &(g->planet[d->planet]);
     int pop, bases, fact;
-    hw_video_copy_back_from_page2();
+    vgabuf_copy_back_from_page2();
     ui_draw_filled_rect(222, 4, 314, 179, 0);
     lbxgfx_draw_frame(222, 4, d->gfx_sabobac2, UI_SCREEN_W);
     ui_starmap_draw_planetinfo_2(g, d->api, d->target, d->planet);
@@ -157,7 +158,7 @@ static void sabotage_done_draw_cb(void *vptr)
     const planet_t *p = &(g->planet[d->planet]);
     int pos;
     char buf[0x80];
-    hw_video_copy_back_from_page2();
+    vgabuf_copy_back_from_page2();
     ui_draw_filled_rect(222, 4, 314, 179, 0);
     lbxgfx_draw_frame(222, 4, d->gfx_saboback, UI_SCREEN_W);
     lbxgfx_draw_frame(222, 159, d->gfx_contback, UI_SCREEN_W);

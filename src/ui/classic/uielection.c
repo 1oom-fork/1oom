@@ -77,7 +77,7 @@ static void ui_election_draw_cb(void *vptr)
     struct election_data_s *d = vptr;
     struct election_s *el = d->el;
     struct game_s *g = el->g;
-    hw_video_copy_back_from_page2();
+    vgabuf_copy_back_from_page2();
     if ((el->cur_i != PLAYER_NONE) && (d->count == 0)) {
         uint8_t *gfx = d->gfx_race[el->cur_i];
         int fn = lbxgfx_get_frame(gfx);
@@ -135,7 +135,7 @@ void ui_election_start(struct election_s *el)
     static struct election_data_s d;    /* HACK */
     d.el = el;
     el->uictx = &d;
-    hw_video_copy_back_from_page2();
+    vgabuf_copy_back_from_page2();
     vgabuf_copy_back_to_page3();
     if (ui_draw_finish_mode == 0) {
         ui_palette_fadeout_a_f_1();

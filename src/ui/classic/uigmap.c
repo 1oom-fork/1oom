@@ -27,6 +27,7 @@
 #include "uisound.h"
 #include "uistarmap_common.h"
 #include "uiswitch.h"
+#include "vgabuf.h"
 
 /* -------------------------------------------------------------------------- */
 
@@ -439,7 +440,7 @@ void ui_gmap_basic_start_frame(void *ctx, int pi)
 {
     /*struct gmap_basic_data_s *d = ctx;*/
     ui_delay_prepare();
-    hw_video_copy_back_from_page2();
+    vgabuf_copy_back_from_page2();
 }
 
 void ui_gmap_basic_draw_frame(void *ctx, int pi/*player_i*/)
