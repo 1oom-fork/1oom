@@ -5,11 +5,11 @@
 
 #include "lbxfont.h"
 #include "bits.h"
-#include "hw.h"
 #include "lib.h"
 #include "lbx.h"
 #include "lbxpal.h"
 #include "types.h"
+#include "vgabuf.h"
 
 /* -------------------------------------------------------------------------- */
 
@@ -48,7 +48,7 @@ static uint16_t lbxfont_tbl_split_hmm4[4] = { 0, 0, 0, 0 };
 
 static int lbxfont_print_char_ret_x(int x, int y, char c, uint16_t pitch)
 {
-    uint8_t *p = hw_video_get_buf() + y * pitch + x;
+    uint8_t *p = vgabuf_get_back() + y * pitch + x;
     return x + lbxfont_plotchar(c, p, pitch);
 }
 
@@ -56,7 +56,7 @@ static void lbxfont_plotchar_limit(int x, int y, char c, int xskip, int char_w, 
 {
     uint16_t si = GET_LE_16(&lbxfontdata[0xaa + c * 2]);
     uint8_t *o, *q, *p = &lbxfontdata[si];
-    uint8_t *buf = hw_video_get_buf() + y * pitch + x;
+    uint8_t *buf = vgabuf_get_back() + y * pitch + x;
 
     while (xskip) {
         if (*p++ == 0x80) {
