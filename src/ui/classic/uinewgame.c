@@ -7,7 +7,6 @@
 #include "game_new.h"
 #include "game_str.h"
 #include "gfxaux.h"
-#include "hw.h"
 #include "kbd.h"
 #include "lbx.h"
 #include "lbxfont.h"
@@ -194,7 +193,7 @@ static bool ui_new_game_racebannernames(struct game_new_options_s *newopts, stru
     ui_draw_erase_buf();
     lbxgfx_draw_frame(0, 0, d->gfx_custom, UI_SCREEN_W);
     ui_draw_box1(0x5a, 0xa, 0x83, 0x2d, 0x9b, 0x9b);
-    hw_video_copy_back_to_page2();
+    vgabuf_copy_back_to_page2();
     d->selected = 0;
 
     /* race */
