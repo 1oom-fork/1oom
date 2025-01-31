@@ -147,7 +147,7 @@ int ui_spy_steal(struct game_s *g, int spy, int target, uint8_t flags_field)
        hw_video_copy_back_from_page2() is used instead.
     */
     hw_video_copy_back_from_page2();
-    hw_video_copy_back_to_page3();
+    vgabuf_copy_back_to_page3();
 
     d.g = g;
     d.spy = spy;
