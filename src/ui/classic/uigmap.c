@@ -190,7 +190,7 @@ static void gmap_draw_cb(void *vptr)
                     pt = (PLANET_TYPE_TERRAN - p->type);
                     SETMAX(pt, 0);
                     buf[0] = game_str_gm_tchar[pt];
-                    lbxfont_print_str_normal_limit(x + 7, y, buf, GMAP_LIMITS, UI_SCREEN_W);
+                    lbxfont_print_str_normal_limit(x + 7, y, buf, UI_SCREEN_W);
                 }
                 break;
             case 2:
@@ -203,7 +203,7 @@ static void gmap_draw_cb(void *vptr)
                     if (p->special == PLANET_SPECIAL_4XTECH) {
                         lbxfont_select(2, 0xe, 0, 0);
                     }
-                    lbxfont_print_str_center_limit(x + 2, y + 7, game_str_tbl_gm_spec[p->special], GMAP_LIMITS, UI_SCREEN_W);
+                    lbxfont_print_str_center_limit(x + 2, y + 7, game_str_tbl_gm_spec[p->special], UI_SCREEN_W);
                 }
                 break;
             default:
