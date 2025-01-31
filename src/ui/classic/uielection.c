@@ -48,7 +48,7 @@ static void election_load_data(struct election_data_s *d)
         lbxgfx_draw_frame(0, 0, gfx, UI_SCREEN_W);
         lbxfile_item_release(LBXFILE_COUNCIL, gfx);
     }
-    hw_video_copy_back_to_page2();
+    vgabuf_copy_back_to_page2();
     d->gfx_cylinder = lbxfile_item_get(LBXFILE_COUNCIL, 1, 0);
     {
         int num;
@@ -273,7 +273,7 @@ void ui_election_end(struct election_s *el)
     ui_palette_fadeout_a_f_1();
     ui_draw_finish_mode = 2;
     vgabuf_copy_back_from_page3();
-    hw_video_copy_back_to_page2();
+    vgabuf_copy_back_to_page2();
     lbxpal_select(0, -1, 0);
     lbxpal_set_update_range(0, 255);
     lbxpal_build_colortables();

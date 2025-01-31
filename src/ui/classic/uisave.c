@@ -2,7 +2,6 @@
 
 #include "uisave.h"
 #include "game_save.h"
-#include "hw.h"
 #include "kbd.h"
 #include "lbx.h"
 #include "lbxfont.h"
@@ -74,7 +73,7 @@ int ui_save_game(struct game_s *g)
     }
 
     ui_draw_erase_buf();
-    hw_video_copy_back_to_page2();
+    vgabuf_copy_back_to_page2();
     uiobj_set_callback_and_delay(save_game_draw_cb, &d, 2);
     uiobj_table_clear();
 
