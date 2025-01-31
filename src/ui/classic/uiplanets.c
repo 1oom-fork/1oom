@@ -7,7 +7,6 @@
 #include "game.h"
 #include "game_misc.h"
 #include "game_str.h"
-#include "hw.h"
 #include "kbd.h"
 #include "lbx.h"
 #include "lbxfont.h"
@@ -269,7 +268,7 @@ static void ui_planets_transfer(struct planets_data_s *d)
     lbxgfx_draw_frame(292, 176, ui_data.gfx.starmap.reprtbut_down, UI_SCREEN_W);
     lbxgfx_draw_frame(256, 181, d->gfx_but_ok, UI_SCREEN_W);
     lbxgfx_draw_frame(209, 181, d->gfx_but_trans, UI_SCREEN_W);
-    hw_video_copy_back_to_page2();
+    vgabuf_copy_back_to_page2();
 
     prod = p->prod_after_maint - p->reserve;
     SETMAX(prod, 0);
