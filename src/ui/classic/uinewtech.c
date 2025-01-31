@@ -29,6 +29,7 @@
 #include "uiobj.h"
 #include "uipal.h"
 #include "uisound.h"
+#include "vgabuf.h"
 
 /* -------------------------------------------------------------------------- */
 
@@ -591,7 +592,7 @@ void ui_newtech(struct game_s *g, int pi)
         hw_audio_music_fadeout();
     }
     if (flag_copybuf) {
-        hw_video_copy_back_from_page3();
+        vgabuf_copy_back_from_page3();
         hw_video_copy_back_to_page2();
         ui_palette_fadeout_a_f_1();
         ui_draw_finish_mode = 2;
