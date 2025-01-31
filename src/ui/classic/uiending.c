@@ -20,6 +20,7 @@
 #include "uiobj.h"
 #include "uipal.h"
 #include "uisound.h"
+#include "vgabuf.h"
 
 /* -------------------------------------------------------------------------- */
 
@@ -124,7 +125,7 @@ static void ui_play_winlose_cb2(void *vptr)
         lbxgfx_draw_frame_pal(0, 0, p->gfx_winning2, UI_SCREEN_W);
         lbxpal_set_update_range(0, 255);
     } else {
-        hw_video_copy_buf();
+        vgabuf_copy_buf();
         lbxgfx_draw_frame_pal(0, 0, p->gfx_winning2, UI_SCREEN_W);
     }
     p->frame = ++f;
@@ -141,7 +142,7 @@ static void ui_play_winlose_cb3(void *vptr)
     if ((fa == 0) || (fa == 8)) {
         ui_draw_erase_buf();
     } else {
-        hw_video_copy_buf();
+        vgabuf_copy_buf();
     }
     lbxgfx_draw_frame_pal(0, 0, p->gfx_winlast, UI_SCREEN_W);
     lbxgfx_set_frame_0(p->gfx_winface);
