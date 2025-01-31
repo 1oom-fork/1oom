@@ -24,6 +24,7 @@
 #include "uipal.h"
 #include "uisound.h"
 #include "util.h"
+#include "vgabuf.h"
 
 /* -------------------------------------------------------------------------- */
 
@@ -34,7 +35,7 @@ static void landing_draw_cb1(void *vptr)
     int y = 100;
     bool do_walk = false;
     char buf[0x80];
-    hw_video_copy_back_from_page3();
+    vgabuf_copy_back_from_page3();
     if (d->frame < 0x32) {
         y = d->frame * 4 - 100;
     } else {
