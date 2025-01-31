@@ -32,6 +32,7 @@
 #include "uistarmap_common.h"
 #include "uiswitch.h"
 #include "util_math.h"
+#include "vgabuf.h"
 
 /* -------------------------------------------------------------------------- */
 
@@ -400,7 +401,7 @@ static void ui_battle_draw_cb(void *vptr)
 static void ui_battle_transition_to(int px, int py, int steps)
 {
     uiobj_table_clear();
-    hw_video_copy_buf_out(ui_data.aux.screen.data);
+    vgabuf_copy_buf_out(ui_data.aux.screen.data);
     ui_draw_copy_buf();
     memcpy(ui_data.gfx.vgafileh, ui_data.aux.screen.data, UI_SCREEN_W * UI_SCREEN_H);
     for (int i = 1; i <= steps; ++i) {
