@@ -50,16 +50,19 @@ static void ui_starmap_trans_draw_cb(void *vptr)
             ui_starmap_draw_hmm5();
         }
     } else {
-        lbxgfx_draw_frame_offs(222, 80, ui_data.gfx.starmap.relocate, 0, 83, 310, 199, UI_SCREEN_W);
+        uiobj_set_limits(0, 83, 310, 199);
+        lbxgfx_draw_frame_offs(222, 80, ui_data.gfx.starmap.relocate, UI_SCREEN_W);
         if (BOOLVEC_IS0(pt->explored, d->api)) {
             ui_draw_filled_rect(227, 57, 310, 159, 0);
-            lbxgfx_draw_frame_offs(224, 5, ui_data.gfx.starmap.unexplor, 227, 57, 310, 159, UI_SCREEN_W);
+            uiobj_set_limits(227, 57, 310, 159);
+            lbxgfx_draw_frame_offs(224, 5, ui_data.gfx.starmap.unexplor, UI_SCREEN_W);
         } else {
             ui_draw_filled_rect(227, 73, 310, 159, 7);
             ui_draw_box1(227, 73, 310, 159, 4, 4);
         }
     }
-    lbxgfx_draw_frame_offs(x0, y0, ui_data.gfx.starmap.planbord, STARMAP_LIMITS, UI_SCREEN_W);
+    uiobj_set_limits(STARMAP_LIMITS);
+    lbxgfx_draw_frame_offs(x0, y0, ui_data.gfx.starmap.planbord, UI_SCREEN_W);
     lbxgfx_set_new_frame(ui_data.gfx.starmap.reloc_bu_accept, 1);
     lbxgfx_draw_frame(271, 163, ui_data.gfx.starmap.reloc_bu_accept, UI_SCREEN_W);
     if (d->from != g->planet_focus_i[d->api]) {
@@ -311,6 +314,7 @@ void ui_starmap_trans(struct game_s *g, player_id_t active_player)
             ui_starmap_trans_draw_cb(&d);
             uiobj_table_clear();
             UIOBJ_CLEAR_LOCAL();
+            /* uiobj_set_limits(STARMAP_LIMITS); */
             ui_starmap_fill_oi_tbl_stars(&d);
             oi_cancel = uiobj_add_t0(227, 163, "", ui_data.gfx.starmap.reloc_bu_cancel, MOO_KEY_ESCAPE, -1);
             if ((d.tr.other) && (pt->owner != PLAYER_NONE)
