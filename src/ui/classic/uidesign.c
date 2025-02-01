@@ -555,15 +555,15 @@ static struct xy_s ui_design_draw_selbox(int xpos, int xoff1, int xoff2, int xof
 
     ui_cursor_erase1(); /* HACK should not be needed */
     ui_draw_box_grain(x0 + 4, y0 + 4, x0 + xpos + xoff2, y1 + 20, 1, 2, 0x37);
-    /*uiobj_set_limits(x0, y0, x1, y1);*/
-    lbxgfx_draw_frame_offs(x0, y0, ui_data.gfx.design.pop1_ul, x0, y0, x1, y1, UI_SCREEN_W);
-    /*uiobj_set_limits(x1, y0, UI_SCREEN_W - 1, y1);*/
-    lbxgfx_draw_frame_offs(x0 + xpos + xoff3, y0, ui_data.gfx.design.pop1_ur, x1, y0, UI_SCREEN_W - 1, y1, UI_SCREEN_W);
-    /*uiobj_set_limits(x0, y1, x1, UI_SCREEN_H - 1);*/
-    lbxgfx_draw_frame_offs(x0, y1, ui_data.gfx.design.pop1_dl, x0, y1, x1, UI_SCREEN_H - 1, UI_SCREEN_W);
-    /*uiobj_set_limits(x1, y1, UI_SCREEN_W - 1, UI_SCREEN_H - 1);*/
-    lbxgfx_draw_frame_offs(x0 + xpos + xoff3, y1, ui_data.gfx.design.pop1_dr, x1, y1, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
-    /*uiobj_set_limits_all();*/
+    uiobj_set_limits(x0, y0, x1, y1);
+    lbxgfx_draw_frame_offs(x0, y0, ui_data.gfx.design.pop1_ul, UI_SCREEN_W);
+    uiobj_set_limits(x1, y0, UI_SCREEN_W - 1, y1);
+    lbxgfx_draw_frame_offs(x0 + xpos + xoff3, y0, ui_data.gfx.design.pop1_ur, UI_SCREEN_W);
+    uiobj_set_limits(x0, y1, x1, UI_SCREEN_H - 1);
+    lbxgfx_draw_frame_offs(x0, y1, ui_data.gfx.design.pop1_dl, UI_SCREEN_W);
+    uiobj_set_limits(x1, y1, UI_SCREEN_W - 1, UI_SCREEN_H - 1);
+    lbxgfx_draw_frame_offs(x0 + xpos + xoff3, y1, ui_data.gfx.design.pop1_dr, UI_SCREEN_W);
+    uiobj_set_limits_all();
     lbxgfx_draw_frame(118, y0 + 3, ui_data.gfx.design.titlebox, UI_SCREEN_W);
     lbxfont_select(0, 0xe, 0xe, 0xe);
     lbxfont_print_str_center(159, y0 + 5, str, UI_SCREEN_W);
