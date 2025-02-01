@@ -134,7 +134,7 @@ static void drawscreen_inlbx_rotate(void)
             y0 = midy + yo - y / 2;
             x1 = midx + xo + x / 2;
             y1 = midy + yo + y / 2;
-            gfx_aux_draw_frame_from_rotate_limit(x0, y0, x1, y1, &gfxaux, 0, 0, UI_SCREEN_W - 1, 200 - 1, UI_SCREEN_W);
+            gfx_aux_draw_frame_from_rotate_limit(x0, y0, x1, y1, &gfxaux, UI_SCREEN_W);
             angle = (angle + 45) % 360;
         }
     } else {
@@ -148,7 +148,7 @@ static void drawscreen_inlbx_rotate(void)
         y0 = midy - y / 2;
         x1 = midx + x / 2;
         y1 = midy + y / 2;
-        gfx_aux_draw_frame_from_rotate_limit(x0, y0, x1, y1, &gfxaux, 0, 0, UI_SCREEN_W - 1, 200 - 1, UI_SCREEN_W);
+        gfx_aux_draw_frame_from_rotate_limit(x0, y0, x1, y1, &gfxaux, UI_SCREEN_W);
     }
 }
 
@@ -217,7 +217,7 @@ static void drawscreen_inlbx(void)
         if (test_rotate) {
             drawscreen_inlbx_rotate();
         } else {
-            gfx_aux_draw_frame_from_limit(cur_xoff, cur_yoff, &gfxaux, 0, 0, UI_SCREEN_W - 1, 200 - 1, UI_SCREEN_W);
+            gfx_aux_draw_frame_from_limit(cur_xoff, cur_yoff, &gfxaux, UI_SCREEN_W);
         }
         if (advance_frame) {
             advance_frame = false;
