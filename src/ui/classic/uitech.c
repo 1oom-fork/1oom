@@ -222,9 +222,11 @@ static void tech_draw_cb(void *vptr)
                 lbxgfx_draw_frame(287, y, ui_data.gfx.screens.litebulb_off, UI_SCREEN_W);
                 y0 = y + (8 - (complpercent * 4) / 50);
                 y1 = y + 7;
+                uiobj_set_limits(0, y0, UI_SCREEN_W - 1, y1);
                 if (((complpercent * 4) / 50) > 0) {
-                    lbxgfx_draw_frame_offs(287, y, ui_data.gfx.screens.litebulb_on, 0, y0, UI_SCREEN_W - 1, y1, UI_SCREEN_W);
+                    lbxgfx_draw_frame_offs(287, y, ui_data.gfx.screens.litebulb_on, UI_SCREEN_W);
                 }
+                uiobj_set_limits_all();
             }
         } else {
             lbxfont_select_set_12_1(2, 0xd, 0, 0);

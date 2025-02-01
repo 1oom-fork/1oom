@@ -31,7 +31,7 @@
 
 extern void lbxgfx_draw_frame(int x, int y, uint8_t *data, uint16_t pitch);
 extern void lbxgfx_draw_frame_pal(int x, int y, uint8_t *data, uint16_t pitch);
-extern void lbxgfx_draw_frame_offs(int x, int y, uint8_t *data, int lx0, int ly0, int lx1, int ly1, uint16_t pitch);
+extern void lbxgfx_draw_frame_offs(int x, int y, uint8_t *data, uint16_t pitch);
 extern void lbxgfx_draw_frame_do(uint8_t *p, uint8_t *data, uint16_t pitch);
 
 extern void lbxgfx_set_new_frame(uint8_t *data, uint16_t newframe);
