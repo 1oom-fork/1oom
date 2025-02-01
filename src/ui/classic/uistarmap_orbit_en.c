@@ -38,7 +38,7 @@ static void ui_starmap_orbit_en_draw_cb(void *vptr)
         int x, y;
         x = (p->x - ui_data.starmap.x) * 2 + 23;
         y = (p->y - ui_data.starmap.y) * 2 + 5 + d->oe.yoff;
-        lbxgfx_draw_frame_offs(x, y, ui_data.gfx.starmap.shipbord, STARMAP_LIMITS, UI_SCREEN_W);
+        lbxgfx_draw_frame_offs(x, y, ui_data.gfx.starmap.shipbord, UI_SCREEN_W);
     }
     ui_draw_filled_rect(225, 8, 314, 180, 7);
     lbxgfx_draw_frame(224, 4, ui_data.gfx.starmap.movextr2, UI_SCREEN_W);
@@ -223,6 +223,7 @@ void ui_starmap_orbit_en(struct game_s *g, player_id_t active_player)
             ui_starmap_orbit_en_draw_cb(&d);
             uiobj_table_clear();
             UIOBJ_CLEAR_LOCAL();
+            /* uiobj_set_limits(STARMAP_LIMITS); */
             ui_starmap_fill_oi_tbls(&d);
             ui_starmap_fill_oi_tbl_stars(&d);
             oi_scroll = uiobj_add_tb(6, 6, 2, 2, 108, 86, &scrollx, &scrolly, -1);

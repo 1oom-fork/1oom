@@ -91,8 +91,8 @@ static void sabotage_draw_cb(void *vptr)
     ui_draw_filled_rect(222, 4, 314, 179, 0);
     lbxgfx_draw_frame(222, 4, d->gfx_sabobac2, UI_SCREEN_W);
     ui_starmap_draw_planetinfo_2(g, d->api, d->target, d->planet);
-    /*set_limits(228, 110, 309, 143);*/
-    lbxgfx_draw_frame_offs(228, 70, d->gfx_colony, 228, 110, 309, 143, UI_SCREEN_W);
+    uiobj_set_limits(228, 110, 309, 143);
+    lbxgfx_draw_frame_offs(228, 70, d->gfx_colony, UI_SCREEN_W);
     ui_draw_filled_rect(228, 58, 309, 68, tbl_banner_color2[e->banner]);
     lbxfont_select(5, 6, 0, 0);
     lbxfont_print_str_center(269, 60, game_str_tbl_races[e->race], UI_SCREEN_W);
@@ -162,8 +162,8 @@ static void sabotage_done_draw_cb(void *vptr)
     ui_draw_filled_rect(222, 4, 314, 179, 0);
     lbxgfx_draw_frame(222, 4, d->gfx_saboback, UI_SCREEN_W);
     lbxgfx_draw_frame(222, 159, d->gfx_contback, UI_SCREEN_W);
-    /*set_limits(228, 110, 309, 158);*/
-    lbxgfx_draw_frame_offs(228, 70, d->gfx_colony, 228, 110, 309, 158, UI_SCREEN_W);
+    uiobj_set_limits(228, 110, 309, 158);
+    lbxgfx_draw_frame_offs(228, 70, d->gfx_colony, UI_SCREEN_W);
     switch (d->act) {
         case UI_SABOTAGE_FACT: /*0*/
             sabotage_draw_anim(d->gfx_ind_expl, (d->snum > 0), 11);
