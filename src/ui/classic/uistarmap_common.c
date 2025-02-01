@@ -576,7 +576,7 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
             tx = (p->x - x) * 2 + 11;
             ty = (p->y - y) * 2 + 11;
         }
-        gfx_aux_draw_frame_from_limit(tx, ty, &ui_data.starmap.star_aux, STARMAP_LIMITS, UI_SCREEN_W);
+        gfx_aux_draw_frame_from_limit(tx, ty, &ui_data.starmap.star_aux, UI_SCREEN_W);
         if (p->frame == 4) {
             p->frame = rnd_0_nm1(50, &g->seed);
         } else {
