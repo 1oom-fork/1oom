@@ -182,8 +182,8 @@ static void newtech_choose_next_draw_cb(void *vptr)
     yo = ((d->num_next > 10) ? 8 : 9) * d->num_next + 8;
     SETMAX(yo, 30);
     ui_draw_filled_rect(x, y, x + 165, y + yo + 12, 0xf9);
-    /*limits(0, y, 319, y + yo - 1)*/
-    lbxgfx_draw_frame_offs(x, y, d->gfx_pulldown_u, 0, y, UI_SCREEN_W - 1, y + yo - 1, UI_SCREEN_W);
+    uiobj_set_limits(0, y, 319, y + yo - 1);
+    lbxgfx_draw_frame_offs(x, y, d->gfx_pulldown_u, UI_SCREEN_W);
     lbxgfx_draw_frame(x, y + yo, d->gfx_pulldown_d, UI_SCREEN_W);
     sprintf(buf, "%s %s", game_str_tbl_te_field[d->nt.field], game_str_te_techno);
     lbxfont_select(5, 0xe, 0, 0);
