@@ -4,6 +4,7 @@
 
 #include "lbxgfx.h"
 #include "comp.h"
+#include "gfxlimits.h"
 #include "lbxpal.h"
 #include "lib.h"
 #include "log.h"
@@ -355,9 +356,10 @@ void lbxgfx_draw_frame_pal(int x, int y, uint8_t *data, uint16_t pitch)
     lbxgfx_draw_frame_do(p, data, pitch);
 }
 
-void lbxgfx_draw_frame_offs(int x, int y, uint8_t *data, int lx0, int ly0, int lx1, int ly1, uint16_t pitch)
+void lbxgfx_draw_frame_offs(int x, int y, uint8_t *data, uint16_t pitch)
 {
     int xskip, yskip, x0, y0, x1, y1, w, h;
+    int lx0 = gfxlim_minx, ly0 = gfxlim_miny, lx1 = gfxlim_maxx, ly1 = gfxlim_maxy;
 
     if ((x > lx1) || (y > ly1)) {
         return;

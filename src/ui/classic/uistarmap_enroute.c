@@ -46,7 +46,7 @@ static void ui_starmap_enroute_draw_cb(void *vptr)
         int x, y;
         x = (r->x - ui_data.starmap.x) * 2 + 5;
         y = (r->y - ui_data.starmap.y) * 2 + 5;
-        lbxgfx_draw_frame_offs(x, y, ui_data.gfx.starmap.shipbord, STARMAP_LIMITS, UI_SCREEN_W);
+        lbxgfx_draw_frame_offs(x, y, ui_data.gfx.starmap.shipbord, UI_SCREEN_W);
     }
     ui_draw_filled_rect(225, 8, 314, 180, 7);
     lbxgfx_draw_frame(224, 4, ui_data.gfx.starmap.movextr2, UI_SCREEN_W);
@@ -67,7 +67,7 @@ static void ui_starmap_enroute_draw_cb(void *vptr)
         int x0, y0, x1, y1, dist;
         x1 = (pt->x - ui_data.starmap.x) * 2 + 8;
         y1 = (pt->y - ui_data.starmap.y) * 2 + 8;
-        lbxgfx_draw_frame_offs(x1, y1, ui_data.gfx.starmap.planbord, STARMAP_LIMITS, UI_SCREEN_W);
+        lbxgfx_draw_frame_offs(x1, y1, ui_data.gfx.starmap.planbord, UI_SCREEN_W);
         x0 = (r->x - ui_data.starmap.x) * 2 + 8;
         y0 = (r->y - ui_data.starmap.y) * 2 + 8;
         ui_draw_line_limit_ctbl(x0 + 4, y0 + 1, x1 + 6, y1 + 6, colortbl_line_green, 5, ui_data.starmap.line_anim_phase);
@@ -77,7 +77,7 @@ static void ui_starmap_enroute_draw_cb(void *vptr)
         } else {
             lbxgfx_set_frame_0(gfx);
         }
-        lbxgfx_draw_frame_offs(x0, y0, gfx, STARMAP_LIMITS, UI_SCREEN_W);
+        lbxgfx_draw_frame_offs(x0, y0, gfx, UI_SCREEN_W);
         dist = game_get_min_dist(g, r->owner, g->planet_focus_i[d->api]);
         if ((r->owner == d->api) && (d->en.can_move != NO_MOVE) && !ui_starmap_enroute_in_frange(d)) {
             /* FIXME use proper positioning for varying str length */
@@ -292,6 +292,7 @@ void ui_starmap_enroute(struct game_s *g, player_id_t active_player)
             ui_starmap_enroute_draw_cb(&d);
             uiobj_table_clear();
             UIOBJ_CLEAR_LOCAL();
+            /* uiobj_set_limits(STARMAP_LIMITS); */
             ui_starmap_fill_oi_tbls(&d);
             ui_starmap_fill_oi_tbl_stars(&d);
             if ((r->owner == active_player) && (d.en.can_move != NO_MOVE)) {
