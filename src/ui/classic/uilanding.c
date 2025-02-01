@@ -45,7 +45,8 @@ static void landing_draw_cb1(void *vptr)
         }
     }
     gfx_aux_draw_frame_to(d->gfx_transprt, &ui_data.aux.screen);
-    gfx_aux_draw_frame_from_limit(0, y, &ui_data.aux.screen, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
+    uiobj_set_limits_all();
+    gfx_aux_draw_frame_from_limit(0, y, &ui_data.aux.screen, UI_SCREEN_W);
     if (do_walk) {
         lbxgfx_draw_frame(0, 0, d->gfx_walk, UI_SCREEN_W);
         ui_draw_filled_rect(115, 81, 204, 109, 0xa);
