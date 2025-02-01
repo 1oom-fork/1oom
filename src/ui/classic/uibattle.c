@@ -768,7 +768,7 @@ static void ui_battle_draw_stasis_sub1(const struct battle_s *bt, int target_i, 
     gfx_aux_draw_frame_to(ui_data.gfx.space.circle, &ui_data.aux.ship_p1);
     gfx_aux_overlay_clear_unused(1, 1, &ui_data.aux.btemp, &ui_data.aux.ship_p1);
     gfx_aux_overlay(0, 0, &ui_data.aux.ship_overlay, &ui_data.aux.btemp);
-    gfx_aux_draw_frame_from_limit(x, y, &ui_data.aux.ship_overlay, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
+    gfx_aux_draw_frame_from_limit(x, y, &ui_data.aux.ship_overlay, UI_SCREEN_W);
     if (b->num > 0) {
         lbxfont_set_temp_color(0);
         lbxfont_select_set_12_4(2, 0xd, 0, 0);
@@ -808,6 +808,7 @@ void ui_battle_init(struct battle_s *bt)
     ui_sound_play_music(8);
     ui_battle_pre(bt->g, party_human, party_opp, bt->planet_i, bt->flag_human_att, ctx.show_switch);
 
+    uiobj_set_limits(0, 0, 319, 191);
     /* ui_battle_do_sub1: */
     uiobj_set_callback_and_delay(ui_battle_draw_cb, bt, 2);
     ctx.cursor[0].cursor_i = 1;
@@ -854,6 +855,7 @@ void ui_battle_shutdown(struct battle_s *bt, bool colony_destroyed)
     hw_audio_music_fadeout();
     ui_palette_fadeout_a_f_1();
     ui_draw_finish_mode = 2;
+    uiobj_set_limits_all();
 }
 
 void ui_battle_draw_planetinfo(const struct battle_s *bt, bool side_r)
@@ -1016,7 +1018,7 @@ void ui_battle_draw_item(const struct battle_s *bt, int itemi, int x, int y)
             xa += xoff;
             ya += yoff;
         }
-        gfx_aux_draw_frame_from_limit(xa, ya, &ui_data.aux.btemp, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
+        gfx_aux_draw_frame_from_limit(xa, ya, &ui_data.aux.btemp, UI_SCREEN_W);
     }
     if (b->num > 0) {
         lbxfont_set_temp_color(0);
@@ -1142,7 +1144,7 @@ void ui_battle_draw_misshield(const struct battle_s *bt, int target_i, int targe
                 gfx_aux_overlay(2, 2, &ui_data.aux.btemp, &ui_data.aux.ship_p1);
             }
             gfx_aux_overlay(3, 3, &ui_data.aux.btemp, &ui_data.aux.ship_overlay);
-            gfx_aux_draw_frame_from_limit(target_x - 3, target_y - 3, &ui_data.aux.btemp, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
+            gfx_aux_draw_frame_from_limit(target_x - 3, target_y - 3, &ui_data.aux.btemp, UI_SCREEN_W);
             uiobj_finish_frame();
             ui_delay_ticks_or_click(5);
         }
@@ -1187,7 +1189,7 @@ void ui_battle_draw_damage(const struct battle_s *bt, int target_i, int target_x
         f = flag_quick ? (i * 2 + 4) : i;
         gfx_aux_draw_frame_to(ui_data.gfx.space.explos[f], &ui_data.aux.btemp);
         gfx_aux_scale(&ui_data.aux.btemp, scale, scale);
-        gfx_aux_draw_frame_from_limit(ax, ay, &ui_data.aux.btemp, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
+        gfx_aux_draw_frame_from_limit(ax, ay, &ui_data.aux.btemp, UI_SCREEN_W);
         lbxfont_select(2, 0xd, 0, 0);
         lbxfont_print_num_center(target_x_hit, target_y_hit - 2, damage, UI_SCREEN_W);
         uiobj_finish_frame();
@@ -1325,7 +1327,7 @@ void ui_battle_draw_missile(const struct battle_s *bt, int missilei, int x, int 
         yoff = util_math_angle_dist_cos(angle, tbl_missile_off[nummissiles - 1][i * 2 + 1])
              + util_math_angle_dist_sin(angle, tbl_missile_off[nummissiles - 1][i * 2 + 0])
              + ayoff - 3;
-        gfx_aux_draw_frame_from_limit(x + xoff, y + yoff, &ui_data.aux.btemp, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
+        gfx_aux_draw_frame_from_limit(x + xoff, y + yoff, &ui_data.aux.btemp, UI_SCREEN_W);
     }
 }
 
@@ -1363,7 +1365,7 @@ void ui_battle_draw_bomb_attack(const struct battle_s *bt, int attacker_i, int t
         ui_battle_draw_arena(bt, attacker_i, 1);
         ui_battle_draw_bottom(bt);
         gfx_aux_draw_frame_to(gfx, &ui_data.aux.btemp);
-        gfx_aux_draw_frame_from_rotate_limit(x0, y0, x1, y1, &ui_data.aux.btemp, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
+        gfx_aux_draw_frame_from_rotate_limit(x0, y0, x1, y1, &ui_data.aux.btemp, UI_SCREEN_W);
         ui_battle_draw_item(bt, attacker_i, x, y);
         uiobj_finish_frame();
         ui_delay_ticks_or_click(2);
@@ -1439,7 +1441,7 @@ void ui_battle_draw_stasis(const struct battle_s *bt, int attacker_i, int target
         ui_battle_draw_arena(bt, target_i, 1);
         ui_battle_draw_bottom(bt);
         gfx_aux_draw_frame_to(gfx, &ui_data.aux.btemp);
-        gfx_aux_draw_frame_from_rotate_limit(x0, y0, x1, y1, &ui_data.aux.btemp, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
+        gfx_aux_draw_frame_from_rotate_limit(x0, y0, x1, y1, &ui_data.aux.btemp, UI_SCREEN_W);
         if (f > 4) {
             ui_battle_draw_stasis_sub1(bt, target_i, f);
         } else {
@@ -1473,7 +1475,7 @@ void ui_battle_draw_pulsar(const struct battle_s *bt, int attacker_i, int ptype,
                 gfx_aux_recolor_ctbl(&ui_data.aux.btemp, ctbl, 5);
             }
             gfx_aux_scale(&ui_data.aux.btemp, f * 10 + 50, f * 10 + 50);
-            gfx_aux_draw_frame_from_limit(x - (f + 1) * 5, y - (f + 1) * 4, &ui_data.aux.btemp, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
+            gfx_aux_draw_frame_from_limit(x - (f + 1) * 5, y - (f + 1) * 4, &ui_data.aux.btemp, UI_SCREEN_W);
         }
         /*4cd27*/
         if (f > 2) {
@@ -1489,7 +1491,7 @@ void ui_battle_draw_pulsar(const struct battle_s *bt, int attacker_i, int ptype,
                         x1 = b->sx * 32 + fr[b->look].target_x;
                     }
                     y1 = b->sy * 24 + fr[b->look].target_y;
-                    gfx_aux_draw_frame_from_limit(x1 - 13, y1 - 12, &ui_data.aux.btemp, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
+                    gfx_aux_draw_frame_from_limit(x1 - 13, y1 - 12, &ui_data.aux.btemp, UI_SCREEN_W);
                     lbxfont_select(2, 0xd, 0, 0);
                     lbxfont_print_num_center(x1, y1 - 2, dmgtbl[i], UI_SCREEN_W);
                 }
@@ -1524,7 +1526,7 @@ void ui_battle_draw_stream1(const struct battle_s *bt, int attacker_i, int targe
         ui_battle_draw_bottom(bt);
         gfx_aux_draw_frame_to(gfx, &ui_data.aux.btemp);
         gfx_aux_recolor_ctbl(&ui_data.aux.btemp, ctbl, 5);
-        gfx_aux_draw_frame_from_rotate_limit(x0, y0, x1, y1, &ui_data.aux.btemp, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
+        gfx_aux_draw_frame_from_rotate_limit(x0, y0, x1, y1, &ui_data.aux.btemp, UI_SCREEN_W);
         ui_battle_draw_item(bt, attacker_i, x, y);
         uiobj_finish_frame();
         ui_delay_ticks_or_click(2);
@@ -1554,7 +1556,7 @@ void ui_battle_draw_stream2(const struct battle_s *bt, int attacker_i, int targe
             ui_battle_draw_arena(bt, attacker_i, 1);
             ui_battle_draw_bottom(bt);
             gfx_aux_draw_frame_to(gfx, &ui_data.aux.btemp);
-            gfx_aux_draw_frame_from_rotate_limit(x0, y0, x1, y1, &ui_data.aux.btemp, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
+            gfx_aux_draw_frame_from_rotate_limit(x0, y0, x1, y1, &ui_data.aux.btemp, UI_SCREEN_W);
             ui_battle_draw_item(bt, attacker_i, x, y);
         }
         /*4c06a*/
@@ -1576,7 +1578,7 @@ void ui_battle_draw_stream2(const struct battle_s *bt, int attacker_i, int targe
                 y2 = b->sy * 24 + (f - 12) * 3;
             }
             gfx_aux_scale(&ui_data.aux.btemp, s, s);
-            gfx_aux_draw_frame_from_limit(x2, y2, &ui_data.aux.btemp, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
+            gfx_aux_draw_frame_from_limit(x2, y2, &ui_data.aux.btemp, UI_SCREEN_W);
         }
         /*4c19d*/
         uiobj_finish_frame();
@@ -1620,7 +1622,7 @@ void ui_battle_draw_retreat(const struct battle_s *bt)
         if (b->side == SIDE_L) {
             gfx_aux_flipx(&ui_data.aux.btemp);
         }
-        gfx_aux_draw_frame_from_limit(x, y, &ui_data.aux.btemp, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
+        gfx_aux_draw_frame_from_limit(x, y, &ui_data.aux.btemp, UI_SCREEN_W);
         uiobj_finish_frame();
         ui_delay_ticks_or_click(1);
     }
@@ -1647,7 +1649,7 @@ void ui_battle_draw_retreat(const struct battle_s *bt)
             x1 = x + (xf * 2 * f * 10) / 100;
         }
         y1 = y + (f * yf * 10) / 100;
-        gfx_aux_draw_frame_from_limit(x1, y1, &ui_data.aux.btemp, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
+        gfx_aux_draw_frame_from_limit(x1, y1, &ui_data.aux.btemp, UI_SCREEN_W);
         uiobj_finish_frame();
         ui_delay_ticks_or_click(2);
     }
@@ -1725,7 +1727,7 @@ void ui_battle_draw_technull(const struct battle_s *bt, int attacker_i, int targ
         }
         gfx_aux_draw_frame_to(gfx, &ui_data.aux.btemp);
         util_math_go_line_dist(&x0, &y0, x1, y1, 4);
-        gfx_aux_draw_frame_from_limit(x0 - 16, y0 - 12, &ui_data.aux.btemp, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
+        gfx_aux_draw_frame_from_limit(x0 - 16, y0 - 12, &ui_data.aux.btemp, UI_SCREEN_W);
         uiobj_finish_frame();
         ui_delay_ticks_or_click(1);
     }
@@ -1735,7 +1737,7 @@ void ui_battle_draw_technull(const struct battle_s *bt, int attacker_i, int targ
         ui_battle_draw_arena(bt, target_i, 0);
         ui_battle_draw_bottom(bt);
         gfx_aux_draw_frame_to(gfx, &ui_data.aux.btemp);
-        gfx_aux_draw_frame_from_limit(x2, y2, &ui_data.aux.btemp, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
+        gfx_aux_draw_frame_from_limit(x2, y2, &ui_data.aux.btemp, UI_SCREEN_W);
         uiobj_finish_frame();
         ui_delay_ticks_or_click(2);
     }
@@ -1836,7 +1838,7 @@ void ui_battle_draw_cloaking(const struct battle_s *bt, int from, int to, int sx
             gfx_aux_flipx(&ui_data.aux.btemp);
         }
         gfx_aux_draw_cloak(&ui_data.aux.btemp, i, rnd_1_n(1000, &bt->g->seed));
-        gfx_aux_draw_frame_from_limit(b->sx * 32 + 1, b->sy * 24 + 1, &ui_data.aux.btemp, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
+        gfx_aux_draw_frame_from_limit(b->sx * 32 + 1, b->sy * 24 + 1, &ui_data.aux.btemp, UI_SCREEN_W);
         if (sx >= 0) {
             lbxgfx_set_frame_0(b->gfx);
             gfx_aux_draw_frame_to(b->gfx, &ui_data.aux.btemp);
@@ -1844,7 +1846,7 @@ void ui_battle_draw_cloaking(const struct battle_s *bt, int from, int to, int sx
                 gfx_aux_flipx(&ui_data.aux.btemp);
             }
             gfx_aux_draw_cloak(&ui_data.aux.btemp, from - i, rnd_1_n(1000, &bt->g->seed));
-            gfx_aux_draw_frame_from_limit(sx * 32 + 1, sy * 24 + 1, &ui_data.aux.btemp, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
+            gfx_aux_draw_frame_from_limit(sx * 32 + 1, sy * 24 + 1, &ui_data.aux.btemp, UI_SCREEN_W);
         }
         uiobj_finish_frame();
         ui_delay_ticks_or_click(2);
