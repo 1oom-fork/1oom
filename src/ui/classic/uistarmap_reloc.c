@@ -38,7 +38,7 @@ static void ui_starmap_reloc_draw_cb(void *vptr)
         y1 = (pt->y - ui_data.starmap.y) * 2 + 14;
         ui_draw_line_limit_ctbl(x0 + 6, y0 + 6, x1, y1, colortbl_line_green, 5, ui_data.starmap.line_anim_phase);
     }
-    lbxgfx_draw_frame_offs(x0, y0, ui_data.gfx.starmap.planbord, STARMAP_LIMITS, UI_SCREEN_W);
+    lbxgfx_draw_frame_offs(x0, y0, ui_data.gfx.starmap.planbord, UI_SCREEN_W);
     lbxgfx_draw_frame(222, 80, ui_data.gfx.starmap.relocate, UI_SCREEN_W);
     lbxfont_select_set_12_1(5, 5, 0, 0);
     lbxfont_print_str_center(269, 90, game_str_sm_sreloc, UI_SCREEN_W);
@@ -182,6 +182,7 @@ void ui_starmap_reloc(struct game_s *g, player_id_t active_player)
             ui_starmap_reloc_draw_cb(&d);
             uiobj_table_clear();
             UIOBJ_CLEAR_LOCAL();
+            /* uiobj_set_limits(STARMAP_LIMITS); */
             ui_starmap_fill_oi_tbl_stars_own(&d, active_player);
             oi_cancel = uiobj_add_t0(227, 163, "", ui_data.gfx.starmap.reloc_bu_cancel, MOO_KEY_ESCAPE, -1);
             if (g->planet[d.from].buildship != BUILDSHIP_STARGATE) {
