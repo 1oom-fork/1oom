@@ -25,11 +25,10 @@ static struct sdl_video_s {
 #ifdef HAVE_SDL1GL
     SDL_Surface *hwrenderbuf;
 #endif
-    void (*render)(int bufi);
+    void (*render)(const uint8_t *buf);
     void (*update)(void);
     void (*setpal)(const uint8_t *pal, int first, int num);
 
-    uint8_t *buf;
     int bufw;
     int bufh;
 
@@ -45,15 +44,18 @@ static struct sdl_video_s {
 
 /* -------------------------------------------------------------------------- */
 
-static void video_render_8bpp(int bufi)
+static void video_render_8bpp(const uint8_t *buf)
 {
-    int pitch = video.screen->pitch;
-    Uint8 *p = (Uint8 *)video.screen->pixels;
-    uint8_t *q = video.buf;
-    for (int y = 0; y < video.bufh; ++y) {
-        memcpy(p, q, video.bufw);
+    SDL_Surface *target = video.screen;
+    int pitch = target->pitch;
+    Uint8 *p = (Uint8 *)target->pixels;
+    const uint8_t *q = buf;
+    int w = target->w;
+    int h = target->h;
+    for (int y = 0; y < h; ++y) {
+        memcpy(p, q, w);
         p += pitch;
-        q += video.bufw;
+        q += w;
     }
 }
 
@@ -76,14 +78,17 @@ static void video_setpal_8bpp(const uint8_t *pal, int first, int num)
 
 #ifdef HAVE_SDL1GL
 
-static void video_render_gl_32bpp(int bufi)
+static void video_render_gl_32bpp(const uint8_t *buf)
 {
-    int pitch_skip = ((video.bufw * sizeof(Uint32)) - video.hwrenderbuf->pitch) / sizeof(Uint32);
+    SDL_Surface *target = video.hwrenderbuf;
+    int pitch_skip = ((target->w * sizeof(Uint32)) - target->pitch) / sizeof(Uint32);
 
-    Uint32 *p = (Uint32 *)video.hwrenderbuf->pixels;
-    uint8_t *q = video.buf;
-    for (int y = 0; y < video.bufh; ++y) {
-        for (int x = 0; x < video.bufw; ++x) {
+    Uint32 *p = (Uint32 *)target->pixels;
+    const uint8_t *q = buf;
+    int w = target->w;
+    int h = target->h;
+    for (int y = 0; y < h; ++y) {
+        for (int x = 0; x < w; ++x) {
             *p++ = video.pal32[*q++];
         }
         p += pitch_skip;
@@ -143,7 +148,7 @@ static void video_setpal_gl_32bpp(const uint8_t *pal, int f, int num)
                            ;
 #endif
     }
-    hw_video_refresh(1);
+    hw_video_refresh();
 }
 #endif /* HAVE_SDL1GL */
 
@@ -270,7 +275,6 @@ int hw_video_toggle_fullscreen(void)
 int hw_video_init(int w, int h)
 {
     hw_mouse_set_limits(w, h);
-    video.buf = vgabuf_get_front();
     video.bufw = w;
     video.bufh = h;
     {
@@ -341,7 +345,6 @@ void hw_video_shutdown(void)
         video.hwrenderbuf = NULL;
     }
 #endif
-    video.buf = NULL;
 }
 
 void hw_video_input_grab(bool grab)
