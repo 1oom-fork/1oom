@@ -1,4 +1,4 @@
-void hw_video_refresh(int front)
+void hw_video_refresh(void)
 {
     if (SDL_MUSTLOCK(video.screen)) {
         if (SDL_LockSurface(video.screen) < 0) {
@@ -6,7 +6,7 @@ void hw_video_refresh(int front)
         }
     }
 
-    video.render(-1);
+    video.render(vgabuf_get_front());
 
     if (SDL_MUSTLOCK(video.screen)) {
         SDL_UnlockSurface(video.screen);
@@ -28,12 +28,11 @@ void hw_video_refresh_palette(void)
 uint8_t *hw_video_draw_buf(void)
 {
     vgabuf_select_back();
-    video.buf = vgabuf_get_front();
-    hw_video_refresh(1);
+    hw_video_refresh();
     return vgabuf_get_back();
 }
 
 void hw_video_redraw_front(void)
 {
-    hw_video_refresh(1);
+    hw_video_refresh();
 }
