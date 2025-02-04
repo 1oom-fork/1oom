@@ -25,7 +25,7 @@ static struct sdl_video_s {
 #ifdef HAVE_SDL1GL
     SDL_Surface *hwrenderbuf;
 #endif
-    void (*render)(int bufi);
+    void (*render)(void);
     void (*update)(void);
     void (*setpal)(uint8_t *pal, int first, int num);
 
@@ -45,7 +45,7 @@ static struct sdl_video_s {
 
 /* -------------------------------------------------------------------------- */
 
-static void video_render_8bpp(int bufi)
+static void video_render_8bpp(void)
 {
     int pitch = video.screen->pitch;
     Uint8 *p = (Uint8 *)video.screen->pixels;
@@ -76,7 +76,7 @@ static void video_setpal_8bpp(uint8_t *pal, int first, int num)
 
 #ifdef HAVE_SDL1GL
 
-static void video_render_gl_32bpp(int bufi)
+static void video_render_gl_32bpp(void)
 {
     int pitch_skip = ((video.bufw * sizeof(Uint32)) - video.hwrenderbuf->pitch) / sizeof(Uint32);
 
@@ -143,7 +143,7 @@ static void video_setpal_gl_32bpp(uint8_t *pal, int f, int num)
                            ;
 #endif
     }
-    hw_video_refresh(1);
+    hw_video_refresh();
 }
 #endif /* HAVE_SDL1GL */
 
