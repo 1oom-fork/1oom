@@ -210,7 +210,7 @@ int hw_audio_music_init(int mus_index, const uint8_t *data_in, uint32_t len_in)
         return -1;
     }
 
-    m->music = Mix_LoadMUSType_RW(SDL_RWFromMem(data, len), m->sdlmtype, 0);
+    m->music = Mix_LoadMUSType_RW(SDL_RWFromConstMem(data, len), m->sdlmtype, 1);
     lib_free(buf);
     if (!m->music) {
         log_error("SDLA: Mix_LoadMUSType_RW failed on music %i (type %i): %s\n", mus_index, m->type, Mix_GetError());
@@ -308,7 +308,7 @@ int hw_audio_sfx_init(int sfx_index, const uint8_t *data_in, uint32_t len_in)
     }
 
     if (fmt_sfx_convert(data_in, len_in, &data, &len, NULL, audio_rate, true)) {
-        sfxtbl[sfx_index].chunk = Mix_LoadWAV_RW(SDL_RWFromMem(data, len), 0);
+        sfxtbl[sfx_index].chunk = Mix_LoadWAV_RW(SDL_RWFromMem(data, len), 1);
         lib_free(data);
     } else {
         log_error("SDLA: failed to init sound %i\n", sfx_index);
