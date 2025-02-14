@@ -110,6 +110,8 @@ Thanks to [shikadi.net](http://www.shikadi.net) for documenting the
 Thanks to CivFanatics forum user sargon0 for
 [partial save game format info](http://forums.civfanatics.com/threads/moo-save-file-layout.275055/).
 
+Special thanks to Zachary Kline (BlindGuyNW) for improving the text version of the game.
+
 Thanks to those who contributed code, ideas or bug reports.
 
 Some code has been pilfered from Chocolate Doom and VICE.
