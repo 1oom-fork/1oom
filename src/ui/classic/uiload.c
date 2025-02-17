@@ -58,7 +58,9 @@ static void load_game_draw_cb(void *vptr)
         lbxgfx_draw_frame(134, y, (d->selected == i) ? d->gfx_lg_green : d->gfx_lg_gray, UI_SCREEN_W, ui_scale);
         lbxfont_select(0, (d->selected == i) ? 2 : 1, 0, 0);
         if (d->flag_moo13) {
-            lbxfont_print_num_normal(149, y + 2, si + 1, UI_SCREEN_W, ui_scale);
+            char fname[12] = "SAVEX.GAM";
+            fname[4] = si + '0' + 1;
+            lbxfont_print_str_normal(149, y + 2, fname, UI_SCREEN_W, ui_scale);
         } else {
             lbxfont_print_str_normal(149, y + 2, game_save_tbl_name[si], UI_SCREEN_W, ui_scale);
         }
