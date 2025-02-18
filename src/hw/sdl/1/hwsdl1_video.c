@@ -68,9 +68,9 @@ static void video_setpal_8bpp(const uint8_t *pal, int first, int num)
 {
     SDL_Color color[256];
     for (int i = first; i < (first + num); ++i) {
-        color[i].r = *pal++ << 2;
-        color[i].g = *pal++ << 2;
-        color[i].b = *pal++ << 2;
+        color[i].r = vgapal_6bit_to_8bit(*pal++);
+        color[i].g = vgapal_6bit_to_8bit(*pal++);
+        color[i].b = vgapal_6bit_to_8bit(*pal++);
     }
     SDL_SetColors(video.screen, &color[first], first, num);
     video_update_8bpp();
@@ -137,14 +137,14 @@ static void video_setpal_gl_32bpp(const uint8_t *pal, int f, int num)
 {
     for (int i = 0; i < num; ++i) {
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
-        video.pal32[f + i] = ((pal[i * 3 + 0] << 2) << 24)
-                           | ((pal[i * 3 + 1] << 2) << 16)
-                           | ((pal[i * 3 + 2] << 2) << 8)
+        video.pal32[f + i] = (vgapal_6bit_to_8bit(pal[i * 3 + 0]) << 24)
+                           | (vgapal_6bit_to_8bit(pal[i * 3 + 1]) << 16)
+                           | (vgapal_6bit_to_8bit(pal[i * 3 + 2]) << 8)
                            ;
 #else
-        video.pal32[f + i] = ((pal[i * 3 + 0] << 2) << 0)
-                           | ((pal[i * 3 + 1] << 2) << 8)
-                           | ((pal[i * 3 + 2] << 2) << 16)
+        video.pal32[f + i] = (vgapal_6bit_to_8bit(pal[i * 3 + 0]) << 0)
+                           | (vgapal_6bit_to_8bit(pal[i * 3 + 1]) << 8)
+                           | (vgapal_6bit_to_8bit(pal[i * 3 + 2]) << 16)
                            ;
 #endif
     }
