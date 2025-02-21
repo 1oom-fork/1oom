@@ -19,7 +19,9 @@ Save payload (? bytes)
 offset  sz      description
 40      1       number of players: @PLAYERS (2..6)
 41      1       player is AI (bitmask)
-42      5       (0, unused)
+42      3       (0, unused)
+45      1       nebula type (0,1)
+46      1       nebula type (2,3)
 47      1       active player when save was made
 48      1       difficulty (0..4)
 49      1       galaxy size (0..3)
