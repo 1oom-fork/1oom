@@ -15,7 +15,7 @@ void game_planet_destroy(struct game_s *g, planet_id_t planet_i, player_id_t att
 {
     planet_t *p = &(g->planet[planet_i]);
     player_id_t owner = p->owner;
-    if (IS_HUMAN(g, owner)) {
+    if (IS_PLAYER(g, owner)) {
         g->seen[owner][planet_i].owner = PLAYER_NONE;
         g->seen[owner][planet_i].pop = 0;
         g->seen[owner][planet_i].bases = 0;
