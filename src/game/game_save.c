@@ -579,7 +579,9 @@ static int game_save_encode(uint8_t *buf, int buflen, const struct game_s *g)
     }
     SG_1OOM_EN_U8(g->players);
     SG_1OOM_EN_BV(g->is_ai, PLAYER_NUM);
-    SG_1OOM_EN_DUMMY(5);
+    SG_1OOM_EN_DUMMY(3);
+    SG_1OOM_EN_U8((g->nebula_type[0] & 0xf) | ((g->nebula_type[1] & 0xf) << 4));
+    SG_1OOM_EN_U8((g->nebula_type[2] & 0xf) | ((g->nebula_type[3] & 0xf) << 4));
     SG_1OOM_EN_U8(g->active_player);
     SG_1OOM_EN_U8(g->difficulty);
     SG_1OOM_EN_U8(g->galaxy_size);
@@ -656,7 +658,16 @@ static int game_save_decode(const uint8_t *buf, int buflen, struct game_s *g)
         return -1;
     }
     SG_1OOM_DE_BV(g->is_ai, PLAYER_NUM);
-    SG_1OOM_DE_DUMMY(5);
+    SG_1OOM_DE_DUMMY(3);
+    {
+        uint8_t tmp;
+        SG_1OOM_DE_U8(tmp);
+        g->nebula_type[0] = tmp & 0xf;
+        g->nebula_type[1] = (tmp >> 4) & 0xf;
+        SG_1OOM_DE_U8(tmp);
+        g->nebula_type[2] = tmp & 0xf;
+        g->nebula_type[3] = (tmp >> 4) & 0xf;
+    }
     SG_1OOM_DE_U8(g->active_player);
     SG_1OOM_DE_U8(g->difficulty);
     if ((g->difficulty < 0) || (g->difficulty >= DIFFICULTY_NUM)) {
