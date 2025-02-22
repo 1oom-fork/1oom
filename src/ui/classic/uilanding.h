@@ -20,6 +20,4 @@ struct landing_data_s {
 extern void ui_landing_prepare(struct landing_data_s *d);
 extern void ui_landing_free_data(struct landing_data_s *d);
 
-extern void ui_landing(struct game_s *g, player_id_t pi, uint8_t planet_i);
-
 #endif
