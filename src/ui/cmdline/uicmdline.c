@@ -111,6 +111,10 @@ bool ui_explore(struct game_s *g, int pi, uint8_t planet_i, bool by_scanner, boo
     return flag_colony_ship;
 }
 
+void ui_landing(struct game_s *g, int pi, uint8_t planet_i)
+{
+}
+
 bool ui_bomb_ask(struct game_s *g, int pi, uint8_t planet_i, int pop_inbound)
 {
     return true;
