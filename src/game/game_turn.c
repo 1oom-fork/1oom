@@ -1342,12 +1342,18 @@ static void game_turn_transport(struct game_s *g)
                 }
             } else {
                 /*e3fe*/
-#if 0
-                if ((p->owner == PLAYER_NONE) || (p->pop == 0)) { /* never true (tested above) */
-                    /* ignored */
-                } else
-#endif
-                if (p->owner == owner) {
+                if ((p->owner == PLAYER_NONE) || (p->pop == 0)) {
+                    if (IS_HUMAN(g, owner)) {
+                        ui_landing(g, owner, dest);
+                    }
+                    p->pop = pop3;
+                    p->bc_to_refit = 0;
+                    p->pop_oper_fact = 1;
+                    if (dest == g->evn.planet_orion_i) {
+                        g->evn.have_orion_conquer = owner + 1;
+                    }
+                    p->owner = owner;
+                } else if (p->owner == owner) {
                     if (p->unrest == PLANET_UNREST_REBELLION) {
                         ADDSATT(p->inbound[owner], pop3, game_num_max_inbound);
                         p->total_inbound[owner] += pop3;
