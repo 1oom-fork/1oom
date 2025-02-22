@@ -978,7 +978,7 @@ bool game_event_run(struct game_s *g, struct game_end_s *ge)
         ui_news(g, &ns);
         any_news = true;
     }
-    if (g->evn.have_orion_conquer && BOOLVEC_IS0(g->evn.done, 17)) { /* BUG MOO1 nevers sets have_orion_conquer */
+    if (g->evn.have_orion_conquer && BOOLVEC_IS0(g->evn.done, 17)) {
         player_id_t player = g->evn.have_orion_conquer - 1;
         empiretechorbit_t *e = &(g->eto[player]);
         BOOLVEC_SET1(g->evn.done, 17);
