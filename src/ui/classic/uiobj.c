@@ -955,7 +955,6 @@ static int16_t uiobj_kbd_dir_key(int dirx, int diry)
     } else {
         int mx, my;
         int16_t oi, oi2;
-        uiobj_t *p;
         if (1/*mouse_initialized*/) {
             mx = mouse_x;
             my = mouse_y;
@@ -966,7 +965,7 @@ static int16_t uiobj_kbd_dir_key(int dirx, int diry)
         oi2 = 0;
         oi = uiobj_table_num - 1;
         while (oi > 0) {
-            p = &uiobj_tbl[oi];
+            uiobj_t *p = &uiobj_tbl[oi];
             if (p->type < UIOBJ_TYPE_SCROLLAREA) {
                 if (uiobj_is_at_xy(p, mx, my)) {
                     if (p->type == UIOBJ_TYPE_TEXTLINE) {
