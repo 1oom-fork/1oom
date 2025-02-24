@@ -540,12 +540,12 @@ void ui_newtech(struct game_s *g, int pi)
             et = &(g->eto[d.nt.v08]);
             d.other1 = PLAYER_NONE;
             d.other2 = PLAYER_NONE;
-            for (int i = 0; (i < g->players) && (d.other2 == PLAYER_NONE); ++i) {
-                if ((i != pi) && BOOLVEC_IS1(et->within_frange, i)) {
+            for (int j = 0; (j < g->players) && (d.other2 == PLAYER_NONE); ++j) {
+                if ((j != pi) && BOOLVEC_IS1(et->within_frange, j)) {
                     if (d.other1 == PLAYER_NONE) {
-                        d.other1 = i;
+                        d.other1 = j;
                     } else {
-                        d.other2 = i;
+                        d.other2 = j;
                     }
                 }
             }
