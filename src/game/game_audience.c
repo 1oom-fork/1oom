@@ -934,7 +934,8 @@ static void audience_menu_tech(struct audience_s *au)
     if (eh->treaty[pa] == TREATY_ALLIANCE) {
         di += 25;
     }
-    v = eh->trust[pa] + eh->relation1[pa] / 2 + ((eh->race == RACE_HUMAN) ? 50 : 0) + game_diplo_tbl_reldiff[ea->trait1] + rnd_1_n(100, &g->seed) - 125;
+    v = eh->trust[pa] + eh->relation1[pa] / 2 + ((eh->race == RACE_HUMAN) ? 50 : 0);
+    v += game_diplo_tbl_reldiff[ea->trait1] * 2 + di - 125 + rnd_1_n(100, &g->seed);
     if (v < 0) {
         v = abs(v) + 100;
     } else {

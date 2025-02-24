@@ -439,23 +439,15 @@ void game_spy_turn(struct game_s *g, struct spy_turn_s *st)
         for (player_id_t j = PLAYER_0; j < g->players; ++j) {
             g->evn.spies_caught[j][i] = 0;
             g->evn.spies_caught[i][j] = 0;
-            g->evn.stolen_field[j][i] = 0;
+            g->evn.spied_num[i][j] = 0; /* Note: The index order here may  */
+            g->evn.spied_spy[i][j] = 0; /* be wrong, but it doesn't matter */
             g->evn.stolen_field[i][j] = 0;
-            g->evn.stolen_tech[j][i] = 0;
             g->evn.stolen_tech[i][j] = 0;
-            g->evn.stolen_spy[j][i] = 0;
             g->evn.stolen_spy[i][j] = 0;
-            g->evn.spied_num[j][i] = 0;
-            g->evn.spied_num[i][j] = 0;
-            g->evn.spied_spy[j][i] = 0;
-            g->evn.spied_spy[i][j] = 0;
-            g->evn.sabotage_is_bases[j][i] = 0;
             g->evn.sabotage_is_bases[i][j] = 0;
-            g->evn.sabotage_num[j][i] = 0;
+            g->evn.sabotage_planet[i][j] = 0;
             g->evn.sabotage_num[i][j] = 0;
-            g->evn.sabotage_spy[j][i] = 0;
             g->evn.sabotage_spy[i][j] = 0;
-            g->evn.sabotage_hmm1[j][i] = 0;
             g->evn.sabotage_hmm1[i][j] = 0;
         }
     }
