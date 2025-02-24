@@ -770,6 +770,7 @@ static void audience_menu_threat(struct audience_s *au)
                         s->spy = ph;
                         s->target = pa;
                         if (game_spy_esp_sub1(g, s, 0, 1) > 0) {
+                            dtype = 72;
                             au->tribute_field = s->tbl_field[0];
                             au->tribute_tech = s->tbl_tech2[0];
                             game_tech_get_new(g, ph, au->tribute_field, au->tribute_tech, TECHSOURCE_TRADE, pa, 0, false);   /* WASBUG? pa was 0 */
@@ -935,7 +936,8 @@ static void audience_menu_tech(struct audience_s *au)
     if (eh->treaty[pa] == TREATY_ALLIANCE) {
         di += 25;
     }
-    v = eh->trust[pa] + eh->relation1[pa] / 2 + ((eh->race == RACE_HUMAN) ? 50 : 0) + game_diplo_tbl_reldiff[ea->trait1] + rnd_1_n(100, &g->seed) - 125;
+    v = eh->trust[pa] + eh->relation1[pa] / 2 + ((eh->race == RACE_HUMAN) ? 50 : 0);
+    v += game_diplo_tbl_reldiff[ea->trait1] * 2 + di - 125 + rnd_1_n(100, &g->seed);
     if (v < 0) {
         v = abs(v) + 100;
     } else {
