@@ -120,7 +120,7 @@ static void game_battle_place_items(struct battle_s *bt)
             {
                 const struct battle_item_s *b;
                 b = &(bt->item[0]);
-                if ((b->side != SIDE_NONE) && (b->sx == x) && (b->sy == y)) {
+                if ((b->side != SIDE_NONE) && (abs(b->sx - x) <= 1) && (abs(b->sy - y) <= 1)) {
                     flag_ok = false;
                 }
             }
@@ -167,6 +167,7 @@ static void game_battle_missile_remove_unused(struct battle_s *bt)
         struct battle_missile_s *m = &(bt->missile[i]);
         if (m->target == MISSILE_TARGET_NONE) {
             util_table_remove_item_any_order(i, bt->missile, sizeof(struct battle_missile_s), bt->num_missile);
+            --i;
             --bt->num_missile;
         }
     }
@@ -756,8 +757,8 @@ static void game_battle_item_move_find_route(struct battle_s *bt, uint8_t *route
         game_battle_set_route_from_tbl(route, tblx, tbly, len);
     } else {
         int minrlen = 999, minlen = 999;
-        for (int sy2 = 0; sy2 < BATTLE_AREA_H; ++sy2) {
-            for (int sx2 = 0; sx2 < BATTLE_AREA_W; ++sx2) {
+        for (int sx2 = 0; sx2 < BATTLE_AREA_W; ++sx2) {
+            for (int sy2 = 0; sy2 < BATTLE_AREA_H; ++sy2) {
                 len = util_math_line_plot(b->sx, b->sy, sx2, sy2, tblx, tbly);
                 if ((game_battle_area_check_line_ok(bt, tblx, tbly, len) == 1) && (b->man >= len)) {
                     int tblx2[BATTLE_ROUTE_LEN], tbly2[BATTLE_ROUTE_LEN], rlen1;
@@ -777,9 +778,12 @@ static void game_battle_item_move_find_route(struct battle_s *bt, uint8_t *route
                                 game_battle_extend_route_from_tbl(route, tblx, tbly, len2);
                             }
                         } else {
-                            for (int sy3 = 0; sy3 < BATTLE_AREA_H; ++sy3) {
-                                for (int sx3 = 0; sx3 < BATTLE_AREA_W; ++sx3) {
-                                    if ((sx3 != sx2) || (sy3 != sy2)) {
+                            for (int sx3 = 0; sx3 < BATTLE_AREA_W; ++sx3) {
+                                for (int sy3 = 0; sy3 < BATTLE_AREA_H; ++sy3) {
+                                    if ((sx3 == sx2) && (sy3 == sy2)) {
+                                        break;  /* BUG? not continue */
+                                    }
+                                    {
                                         int len2;
                                         len2 = util_math_line_plot(sx2, sy2, sx3, sy3, tblx, tbly);
                                         if ((game_battle_area_check_line_ok(bt, tblx, tbly, len2) == 1) && (b->man >= (len + len2))) {
