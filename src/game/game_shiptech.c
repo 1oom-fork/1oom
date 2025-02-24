@@ -734,6 +734,7 @@ struct shiptech_special_s tbl_shiptech_special[SHIP_SPECIAL_NUM] = {
         { 0, 0, 0, 0 },
         { 0, 0, 0, 0 },
         { 0, 0, 0, 0 },
+        0, 0, 0,
         0, 0, 0, 0, 0, 0,
         0
     },
