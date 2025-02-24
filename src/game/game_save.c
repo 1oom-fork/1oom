@@ -844,7 +844,7 @@ void *game_save_open_check_header(const char *filename, int i, bool update_table
         if (1
           && (fread(hdr, GAME_SAVE_HDR_SIZE, 1, fd) == 1)
           && (memcmp(hdr, (const uint8_t *)GAME_SAVE_MAGIC, 8) == 0)
-          && (GET_LE_32(&hdr[GAME_SAVE_OFFS_VERSION]) == GAME_SAVE_VERSION)
+          && (GET_LE_32(&hdr[GAME_SAVE_OFFS_VERSION]) <= GAME_SAVE_VERSION)
         ) {
             if (update_table) {
                 game_save_tbl_have_save[i] = true;
