@@ -125,7 +125,6 @@ static void game_generate_planets(struct game_s *g)
 {
     /* assumes the planet data is already 0'd by caller */
     uint16_t tblpx[PLANETS_MAX], tblpy[PLANETS_MAX];
-    uint16_t i;
 
     for (uint16_t h = 0; h < g->galaxy_h; ++h) {
         for (uint16_t w = 0; w < g->galaxy_w; ++w) {
@@ -133,7 +132,7 @@ static void game_generate_planets(struct game_s *g)
             again:
             x = rnd_1_n(0x2b, &g->seed) + w * 0x1c + 9;
             y = rnd_1_n(0x33, &g->seed) + h * 0x20 + 7;
-            for (i = 0; i < (h * g->galaxy_w + w); ++i) {
+            for (uint16_t i = 0; i < (h * g->galaxy_w + w); ++i) {
                 if ((tblpx[i] < x) || (tblpy[i] < y)) {
                     if (util_math_dist_fast(tblpx[i], tblpy[i], x, y) < 20) {
                         goto again;
@@ -147,7 +146,7 @@ static void game_generate_planets(struct game_s *g)
         }
     }
 
-    for (i = 0; i < g->galaxy_stars; ++i) {
+    for (int i = 0; i < g->galaxy_stars; ++i) {
         bool in_nebula;
         planet_t *p;
 
@@ -449,7 +448,7 @@ static void game_generate_planets(struct game_s *g)
 
     {
         uint16_t tx = 0, ty = 0;
-        for (i = 0; i < g->galaxy_stars; ++i) {
+        for (int i = 0; i < g->galaxy_stars; ++i) {
             planet_t *p;
             p = &g->planet[i];
             if (p->x > tx) {

@@ -512,7 +512,7 @@ static void game_turn_build_def(struct game_s *g)
                 int curcost;
                 curcost = MIN(e->planet_shield_cost, p->bc_to_shield);
                 newshield = 0;
-                for (int i = 1; (i < PSHIELD_NUM) && (curcost >= game_num_pshield_cost[i]); ++i) {
+                for (int j = 1; (j < PSHIELD_NUM) && (curcost >= game_num_pshield_cost[j]); ++j) {
                     newshield += 5;
                 }
                 if (newshield != p->shield) {
@@ -1302,9 +1302,9 @@ static void game_turn_transport(struct game_s *g)
             if (g->evn.have_guardian && (dest == g->evn.planet_orion_i)) {
                 pop3 = 0;
             }
-            for (monster_id_t i = MONSTER_CRYSTAL; i <= MONSTER_AMOEBA; ++i) {
+            for (monster_id_t j = MONSTER_CRYSTAL; j <= MONSTER_AMOEBA; ++j) {
                 monster_t *m;
-                m = (i == MONSTER_CRYSTAL) ? &(g->evn.crystal) : &(g->evn.amoeba);
+                m = (j == MONSTER_CRYSTAL) ? &(g->evn.crystal) : &(g->evn.amoeba);
                 if (m->exists && /*(m->killer == PLAYER_NONE) &&*/ (m->x == p->x) && (m->y == p->y)) { /* FIXME dead monster kills transports ? */
                     pop3 = 0;
                 }
