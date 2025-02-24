@@ -187,11 +187,11 @@ static void gfx_aux_draw_frame_from_limit_do(int x, int y, int w, int h, int xsk
     p = vgabuf_get() + VGABUF_OFFSET(x, y);
     q = aux->data + yskip * pitch_aux + xskip;
 
-    for (int y = 0; y < h; ++y) {
-        for (int x = 0; x < w; ++x) {
-            uint8_t b = q[x];
+    for (int dy = 0; dy < h; ++dy) {
+        for (int dx = 0; dx < w; ++dx) {
+            uint8_t b = q[dx];
             if (b) {
-                p[x] = b;
+                p[dx] = b;
             }
         }
         p += VGABUF_PITCH;
@@ -903,12 +903,12 @@ void gfx_aux_draw_frame_from(int x, int y, struct gfx_aux_s *aux)
     uint8_t *p, *q;
     p = vgabuf_get() + VGABUF_OFFSET(x, y);
     q = aux->data;
-    for (int y = 0; y < aux->h; ++y) {
-        for (int x = 0; x < aux->w; ++x) {
+    for (int dy = 0; dy < aux->h; ++dy) {
+        for (int dx = 0; dx < aux->w; ++dx) {
             uint8_t b;
             b = *q++;
             if (b) {
-                p[x] = b;
+                p[dx] = b;
             }
         }
         p += VGABUF_PITCH;
