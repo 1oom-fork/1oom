@@ -1912,24 +1912,24 @@ void game_battle_area_setup(struct battle_s *bt)
                 dist = util_math_dist_maxabs(b->sx, b->sy, b2->sx, b2->sy);
                 if (i == 0) {
                     v = -30;
-                    for (int i = 0; i < num_weap; ++i) {
+                    for (int j = 0; j < num_weap; ++j) {
                         bool is_missile;
                         const struct shiptech_weap_s *w;
-                        w = &(tbl_shiptech_weap[b->wpn[i].t]);
+                        w = &(tbl_shiptech_weap[b->wpn[j].t]);
                         if ((w->damagemax == w->damagemin) && (!w->is_bomb) && (w->misstype == 0)) {
                             is_missile = true;
                         } else {
                             is_missile = false;
                         }
-                        if ((b->actman > 0) || ((w->range >= dist) && (b->wpn[i].numfire > 0) && (b->wpn[i].numshots != 0))) {
+                        if ((b->actman > 0) || ((w->range >= dist) && (b->wpn[j].numfire > 0) && (b->wpn[j].numshots != 0))) {
                             bt->turn_done = false;
                         }
-                        if ((b->wpn[i].numshots == -1) && (w->misstype == 0)) {
+                        if ((b->wpn[j].numshots == -1) && (w->misstype == 0)) {
                             range = w->range + b->extrarange;
                         } else {
                             range = w->range;
                         }
-                        if ((range >= dist) && ((b->missile == 1) || (!is_missile)) && (b->wpn[i].numfire > 0) && (b->wpn[i].numshots != 0)) {
+                        if ((range >= dist) && ((b->missile == 1) || (!is_missile)) && (b->wpn[j].numfire > 0) && (b->wpn[j].numshots != 0)) {
                             v = 30;
                         }
                     }
