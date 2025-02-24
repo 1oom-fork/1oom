@@ -2327,9 +2327,9 @@ static int game_ai_battle_rival(struct battle_s *bt, int itemi, int a2)
             /*59221*/
             if ((i == 0/*planet*/) && (w == 1)) {
                 for (int j = 0; j < WEAPON_SLOT_NUM; ++j) {
-                    const struct shiptech_weap_s *w = &(tbl_shiptech_weap[b->wpn[j].t]);
-                    if ((w->is_bio) && (b->wpn[j].numshots != 0)) {
-                        dmggive = w->damagemax - bt->antidote;
+                    weapon_t wpnt = b->wpn[j].t;
+                    if ((tbl_shiptech_weap[wpnt].is_bio) && (b->wpn[j].numshots != 0)) {
+                        dmggive = tbl_shiptech_weap[wpnt].damagemax - bt->antidote;
                         if (dmggive > 0) {
                             w += dmggive * b->wpn[j].n * 100;
                         }
