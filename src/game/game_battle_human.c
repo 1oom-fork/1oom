@@ -120,7 +120,7 @@ static void game_battle_place_items(struct battle_s *bt)
             {
                 const struct battle_item_s *b;
                 b = &(bt->item[0]);
-                if ((b->side != SIDE_NONE) && (b->sx == x) && (b->sy == y)) {
+                if ((b->side != SIDE_NONE) && (abs(b->sx - x) <= 1) && (abs(b->sy - y) <= 1)) {
                     flag_ok = false;
                 }
             }
