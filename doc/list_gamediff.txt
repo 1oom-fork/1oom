@@ -16,7 +16,6 @@ Much of this file is based on the readme from the unofficial v1.40m patch.
 - espionage messages can show the framed or unknown race instead of always leaking the actual spy
 
 - ETA calculations take nebulas into account correctly
-- entering the general "threaten / break treaty" dialogue no more equals to a large temporary diplomatic penalty
 - the discovery percentages on tech screen are no more only 1/2 of the true probability of a tech hit
 - Psilon leader "Zygot  " name correction (extra whitespace trimmed from all names)
 - the AI now uses the right race and the right objective when it takes decision about where to allocate the research points
@@ -25,6 +24,7 @@ Much of this file is based on the readme from the unofficial v1.40m patch.
 
 - changes in Classic+ AI:
     - breaking a NAP / alliance no more positively contributes to your relations with the AIs
+    - entering the general "threaten / break treaty" dialogue no more equals to a large temporary diplomatic penalty
     - cash tributes work as described in OSG instead of not at all
     - AI checks the correct mood variable when asked for a peace treaty
     - AI-AI stop war check uses the same relation value as the make treaty/trade checks instead of the last diplo message subtype

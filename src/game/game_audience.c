@@ -722,8 +722,10 @@ static void audience_menu_threat(struct audience_s *au)
         default:
             break;
     }
-    if ((selected != -1) && (selected != 4)) {
+    if ((g->ai_id == GAME_AI_CLASSIC) || ((selected != -1) && (selected != 4))) {
         game_diplo_annoy(g, ph, pa, 10);    /* WASBUG MOO1 does this before the if, annoying by merely entering the menu */
+    }
+    if ((selected != -1) && (selected != 4)) {
         game_audience_set_dtype(au, dtype, 3);
     }
 }
