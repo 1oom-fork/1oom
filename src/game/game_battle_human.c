@@ -796,7 +796,10 @@ static void game_battle_item_move_find_route(struct battle_s *bt, uint8_t *route
                         } else {
                             for (int sx3 = 0; sx3 < BATTLE_AREA_W; ++sx3) {
                                 for (int sy3 = 0; sy3 < BATTLE_AREA_H; ++sy3) {
-                                    if ((sx3 != sx2) || (sy3 != sy2)) {
+                                    if ((sx3 == sx2) && (sy3 == sy2)) {
+                                        break;  /* BUG? not continue */
+                                    }
+                                    {
                                         int len2;
                                         len2 = util_math_line_plot(sx2, sy2, sx3, sy3, tblx2, tbly2);
                                         if ((game_battle_area_check_line_ok(bt, tblx2, tbly2, len2) == 1) && (b->man >= (len + len2))) {
