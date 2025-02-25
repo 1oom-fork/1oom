@@ -772,8 +772,8 @@ static void game_battle_item_move_find_route(struct battle_s *bt, uint8_t *route
         game_battle_set_route_from_tbl(route, tblx, tbly, len);
     } else {
         int minrlen = 999, minlen = 999;
-        for (int sy2 = 0; sy2 < BATTLE_AREA_H; ++sy2) {
-            for (int sx2 = 0; sx2 < BATTLE_AREA_W; ++sx2) {
+        for (int sx2 = 0; sx2 < BATTLE_AREA_W; ++sx2) {
+            for (int sy2 = 0; sy2 < BATTLE_AREA_H; ++sy2) {
                 if ((b->sx == sx2) && (b->sy == sy2)) {
                     continue;   /* WASBUG? MOO1 does not check, may use -1 as index below */
                 }
@@ -794,8 +794,8 @@ static void game_battle_item_move_find_route(struct battle_s *bt, uint8_t *route
                                 game_battle_extend_route_from_tbl(route, tblx2, tbly2, len2);
                             }
                         } else {
-                            for (int sy3 = 0; sy3 < BATTLE_AREA_H; ++sy3) {
-                                for (int sx3 = 0; sx3 < BATTLE_AREA_W; ++sx3) {
+                            for (int sx3 = 0; sx3 < BATTLE_AREA_W; ++sx3) {
+                                for (int sy3 = 0; sy3 < BATTLE_AREA_H; ++sy3) {
                                     if ((sx3 != sx2) || (sy3 != sy2)) {
                                         int len2;
                                         len2 = util_math_line_plot(sx2, sy2, sx3, sy3, tblx2, tbly2);
