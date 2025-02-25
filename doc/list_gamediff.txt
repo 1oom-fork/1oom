@@ -21,10 +21,10 @@ Much of this file is based on the readme from the unofficial v1.40m patch.
 - Psilon leader "Zygot  " name correction (extra whitespace trimmed from all names)
 - the AI now uses the right race and the right objective when it takes decision about where to allocate the research points
 - the spies you educate on the same turn against different races are no more overpriced
-- breaking a NAP / alliance no more positively contributes to your relations with the AIs
 - 8th stargate bug corrected (no ship maintenance overflow)
 
 - changes in Classic+ AI:
+    - breaking a NAP / alliance no more positively contributes to your relations with the AIs
     - cash tributes work as described in OSG instead of not at all
     - AI checks the correct mood variable when asked for a peace treaty
     - AI-AI stop war check uses the same relation value as the make treaty/trade checks instead of the last diplo message subtype
