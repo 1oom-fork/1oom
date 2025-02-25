@@ -151,10 +151,13 @@ void game_diplo_break_treaty(struct game_s *g, player_id_t breaker, player_id_t 
     }
     w = 0;
     if (eb->treaty[victim] == TREATY_NONAGGRESSION) {
-        w = 10;
+        w = -10;
     }
     if (eb->treaty[victim] == TREATY_ALLIANCE) {
-        w = 20;
+        w = -20;
+    }
+    if (g->ai_id != GAME_AI_CLASSIC) {
+        w = -w;
     }
     if (eb->trait1 == TRAIT1_HONORABLE) {
         w *= 2;
