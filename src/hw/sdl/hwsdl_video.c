@@ -171,7 +171,7 @@ int hw_video_resize(int w, int h)
 
     log_message("SDL: resize %ix%i (%s)\n", w, h, opt_fullscreen ? "full" : "window");
 
-    if (!opt_use_gl) {
+    if (opt_force_sw) {
         return 0;
     }
 
@@ -251,7 +251,7 @@ int hw_video_toggle_fullscreen(void)
         return -1;
     }
 #ifdef HAVE_SDL1GL
-    if (!opt_use_gl)
+    if (opt_force_sw)
 #endif /* HAVE_SDL1GL */
     {
         hw_video_refresh_palette();
@@ -273,7 +273,7 @@ int hw_video_init(int w, int h)
     }
 
 #ifdef HAVE_SDL1GL
-    if (!opt_use_gl)
+    if (opt_force_sw)
 #endif
     {
         i_hw_video.setmode = video_setmode_8bpp;
