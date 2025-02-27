@@ -5,7 +5,7 @@
 
 extern bool opt_fullscreen;
 extern bool opt_aspect_ratio_correct;
-extern bool opt_use_gl;
+extern bool opt_force_sw;
 extern int opt_screen_winw;
 extern int opt_screen_winh;
 extern int opt_screen_fsw;
