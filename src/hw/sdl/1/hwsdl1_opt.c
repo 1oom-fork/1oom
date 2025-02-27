@@ -14,7 +14,6 @@
 #define HW_DEFAULT_ASPECT   833333
 
 #ifdef HAVE_SDL1GL
-bool hw_opt_use_gl = true;
 int hw_opt_aspect = HW_DEFAULT_ASPECT;
 int hw_opt_gl_filter = 1;
 #endif /* HAVE_SDL1GL */
@@ -29,12 +28,6 @@ int hw_opt_gl_filter = 1;
 
 const struct cmdline_options_s hw_cmdline_options_extra[] = {
 #ifdef HAVE_SDL1GL
-    { "-gl", 0,
-      options_enable_bool_var, (void *)&hw_opt_use_gl,
-      NULL, "Enable OpenGL" },
-    { "-nogl", 0,
-      options_disable_bool_var, (void *)&hw_opt_use_gl,
-      NULL, "Disable OpenGL" },
     { "-aspect", 1,
       options_set_int_var, (void *)&hw_opt_aspect,
       "ASPECT", "Set aspect ratio (*1000000, 0 = off)" },
