@@ -17,7 +17,7 @@
 
 bool opt_fullscreen = false;
 bool opt_aspect_ratio_correct = true;
-bool opt_use_gl = true;
+bool opt_force_sw = false;
 int opt_screen_winw = 0;
 int opt_screen_winh = 0;
 int opt_screen_fsw = 0;
@@ -129,12 +129,12 @@ static const struct cmdline_options_s cmdline_options_audio[] = {
     { "-noaspect", 0,
       options_disable_bool_var, (void *)&opt_aspect_ratio_correct,
       NULL, "Disable aspect ratio correction" },
-    { "-gl", 0,
-      options_enable_bool_var, (void *)&opt_use_gl,
-      NULL, "Enable OpenGL" },
-    { "-nogl", 0,
-      options_disable_bool_var, (void *)&opt_use_gl,
-      NULL, "Disable OpenGL" },
+    { "-forcesw", 0,
+      options_enable_bool_var, (void *)&opt_force_sw,
+      NULL, "Force software rendering" },
+    { "-noforcesw", 0,
+      options_disable_bool_var, (void *)&opt_force_sw,
+      NULL, "Do not force software rendering" },
     { "-winw", 1,
       options_set_int_var, (void *)&opt_screen_winw,
       "WIDTH", "Set window width" },
