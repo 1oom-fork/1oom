@@ -15,6 +15,7 @@
 #define HW_DEFAULT_ASPECT   1000000
 
 int hw_opt_fullscreen = HW_DEFAULT_FULLSCREEN;
+int hw_opt_force_sw = 0;
 int hw_opt_screen_winw = 0;
 int hw_opt_screen_winh = 0;
 int hw_opt_screen_fsw = 0;
@@ -43,6 +44,12 @@ const struct cmdline_options_s hw_cmdline_options[] = {
     { "-window", 0,
       options_disable_var, (void *)&hw_opt_fullscreen,
       NULL, "Use windowed mode" },
+    { "-forcesw", 0,
+      options_enable_var, (void *)&hw_opt_force_sw,
+      NULL, "Force software rendering" },
+    { "-noforcesw", 0,
+      options_disable_var, (void *)&hw_opt_force_sw,
+      NULL, "Do not force software rendering" },
     { "-winw", 1,
       options_set_int_var, (void *)&hw_opt_screen_winw,
       "WIDTH", "Set window width" },
