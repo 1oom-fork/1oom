@@ -203,7 +203,7 @@ int hw_video_resize(int w, int h)
 
     log_message("SDL: resize %ix%i (%s)\n", w, h, hw_opt_fullscreen ? "full" : "window");
 
-    if (!hw_opt_use_gl) {
+    if (hw_opt_force_sw) {
         return 0;
     }
 
@@ -254,7 +254,7 @@ int hw_video_toggle_fullscreen(void)
 {
     int (*func)(int, int) = video_sw_set;
 #ifdef HAVE_SDL1GL
-    if (hw_opt_use_gl) {
+    if (!hw_opt_force_sw) {
         func = hw_video_resize;
     }
 #endif /* HAVE_SDL1GL */
@@ -264,7 +264,7 @@ int hw_video_toggle_fullscreen(void)
         return -1;
     }
 #ifdef HAVE_SDL1GL
-    if (!hw_opt_use_gl)
+    if (hw_opt_force_sw)
 #endif /* HAVE_SDL1GL */
     {
         hw_video_refresh_palette();
@@ -286,7 +286,7 @@ int hw_video_init(int w, int h)
     }
 
 #ifdef HAVE_SDL1GL
-    if (!hw_opt_use_gl)
+    if (hw_opt_force_sw)
 #endif
     {
         video.render = video_render_8bpp;
