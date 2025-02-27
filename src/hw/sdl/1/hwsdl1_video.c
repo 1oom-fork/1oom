@@ -182,7 +182,7 @@ int hw_video_resize(int w, int h)
 
     log_message("SDL: resize %ix%i (%s)\n", w, h, hw_opt_fullscreen ? "full" : "window");
 
-    if (!hw_opt_use_gl) {
+    if (hw_opt_force_sw) {
         return 0;
     }
 
@@ -247,7 +247,7 @@ int hw_video_init(int w, int h)
     }
 
 #ifdef HAVE_SDL1GL
-    if (!hw_opt_use_gl)
+    if (hw_opt_force_sw)
 #endif
     {
         log_message("SDL_SetVideoMode(%i, %i, ...)\n", w, h);
