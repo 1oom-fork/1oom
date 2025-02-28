@@ -363,6 +363,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
           || ((oi1 == oi_wheelshippic) && (scrollmisc < 0))
         ) {
             int n;
+            ui_sound_play_sfx_24();
             n = p->buildship + 1;
             if (n >= g->eto[active_player].shipdesigns_num) {
                 if (n >= (NUM_SHIPDESIGNS + 1)) {
