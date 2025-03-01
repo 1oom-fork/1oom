@@ -1,3 +1,15 @@
+1oom-v1.11.2
+------------
+
+This release corrects several fundamental differences from the original:
+- The behavior of ships with bio-weapons has been restored
+- The code responsible for landing troops on a planet with zero population
+  has been restored
+- Restored original bugs in the pathfinding code on the battlefield
+- Fixed the location of rocks near the planet
+- Restored the sound effect of the Ships button on the star map
+- Several AI diplomacy fixes moved to Classic+
+
 1oom-v1.11.1
 ------------
 
