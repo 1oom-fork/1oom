@@ -3,6 +3,9 @@
 
 #include "types.h"
 
+extern int hw_mouse_game_w;
+extern int hw_mouse_game_h;
+
 extern bool hw_mouse_enabled;
 
 extern void hw_mouse_grab(void);

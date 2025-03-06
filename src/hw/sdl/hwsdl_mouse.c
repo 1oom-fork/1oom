@@ -11,8 +11,6 @@
 
 /* -------------------------------------------------------------------------- */
 
-static int hw_mouse_game_w;
-static int hw_mouse_game_h;
 static int hw_mouse_dx_acc = 0;
 static int hw_mouse_dy_acc = 0;
 static int hw_mouse_sx = 1;
@@ -20,12 +18,17 @@ static int hw_mouse_sy = 1;
 
 /* -------------------------------------------------------------------------- */
 
+int hw_mouse_game_w;
+int hw_mouse_game_h;
 bool hw_mouse_enabled = false;
 
 /* -------------------------------------------------------------------------- */
 
 void hw_mouse_grab(void)
 {
+    if (hw_mouse_grab_disabled) {
+        return;
+    }
     if (!hw_mouse_enabled) {
         hw_mouse_enabled = true;
         SDL_ShowCursor(SDL_DISABLE);
@@ -35,6 +38,9 @@ void hw_mouse_grab(void)
 
 void hw_mouse_ungrab(void)
 {
+    if (hw_mouse_grab_disabled) {
+        return;
+    }
     if (hw_mouse_enabled) {
         hw_mouse_enabled = false;
         SDL_ShowCursor(SDL_ENABLE);
@@ -44,6 +50,9 @@ void hw_mouse_ungrab(void)
 
 void hw_mouse_toggle_grab(void)
 {
+    if (hw_mouse_grab_disabled) {
+        return;
+    }
     if (hw_mouse_enabled) {
         hw_mouse_ungrab();
     } else {
@@ -95,7 +104,7 @@ void hw_mouse_move(int dx, int dy)
 
 void hw_mouse_button(int i, int pressed)
 {
-    if (hw_mouse_enabled) {
+    if (hw_mouse_enabled || hw_mouse_grab_disabled) {
         int b = mouse_buttons;
         if (i == (int)SDL_BUTTON_LEFT) {
             if (pressed) {
@@ -113,7 +122,7 @@ void hw_mouse_button(int i, int pressed)
         mouse_set_buttons_from_hw(b);
     }
 
-    if (pressed) {
+    if (pressed && !hw_mouse_grab_disabled) {
         if (hw_mouse_enabled) {
             if (i == (int)SDL_BUTTON_MIDDLE) {
                 hw_mouse_ungrab();

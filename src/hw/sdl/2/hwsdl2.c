@@ -254,6 +254,9 @@ int hw_init(void)
         return 12;
     }
     build_key_xlat();
+    if (hw_mouse_grab_disabled) {
+        hw_opt_relmouse = false;
+    }
     if (hw_opt_relmouse) {
         SDL_EventState(SDL_MOUSEMOTION, SDL_IGNORE);
     }
@@ -351,8 +354,16 @@ int hw_event_handle(void)
                 }
                 break;
             case SDL_MOUSEMOTION:
-                if (!hw_opt_relmouse && hw_mouse_enabled) {
+                if (!hw_opt_relmouse && (hw_mouse_enabled || hw_mouse_grab_disabled)) {
                     mouse_set_xy_from_hw(e.motion.x, e.motion.y);
+                    if (hw_mouse_grab_disabled) {
+                        bool show_cursor = false;
+                        if (e.motion.x < 0) show_cursor = true;
+                        if (e.motion.y < 0) show_cursor = true;
+                        if (e.motion.x >= hw_mouse_game_w) show_cursor = true;
+                        if (e.motion.y >= hw_mouse_game_h) show_cursor = true;
+                        SDL_ShowCursor(show_cursor ? SDL_ENABLE : SDL_DISABLE);
+                    }
                 }
                 break;
             case SDL_MOUSEBUTTONDOWN:

@@ -21,6 +21,7 @@ int hw_opt_screen_winh = 0;
 int hw_opt_screen_fsw = 0;
 int hw_opt_screen_fsh = 0;
 int hw_opt_mousespd = 100;
+bool hw_mouse_grab_disabled = true;
 #ifdef HAVE_SDLX_ASPECT
 int hw_opt_aspect = HW_DEFAULT_ASPECT;
 #endif

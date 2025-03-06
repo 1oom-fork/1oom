@@ -10,6 +10,7 @@ extern int hw_opt_screen_fsh;
 extern char *hw_opt_sdlmixer_sf;
 extern int hw_opt_aspect;
 extern int hw_opt_mousespd;
+extern bool hw_mouse_grab_disabled;
 
 /* for SDL1 */
 extern bool hw_opt_use_gl;
