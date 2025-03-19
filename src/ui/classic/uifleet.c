@@ -61,7 +61,7 @@ static void fleet_draw_cb(void *vptr)
     const shipdesign_t *sd = &(g->srd[d->api].design[0]);
     int num;
 
-    ui_draw_filled_rect(0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, 0x3a);
+    ui_draw_filled_rect(UI_SCREEN_LIMITS, 0x3a);
     ui_draw_filled_rect(5, 15, 40, 190, 0);
     lbxgfx_draw_frame(0, 0, d->gfx_fleetbrb, UI_SCREEN_W);
     lbxgfx_set_new_frame(ui_data.gfx.starmap.fleetbut_scrap, 1);
