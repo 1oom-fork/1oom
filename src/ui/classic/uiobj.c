@@ -1622,7 +1622,7 @@ void uiobj_set_limits(int minx, int miny, int maxx, int maxy)
 
 void uiobj_set_limits_all(void)
 {
-    gfxlim_set(0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1);
+    gfxlim_set(UI_SCREEN_LIMITS);
 }
 
 void uiobj_set_help_id(int16_t v)

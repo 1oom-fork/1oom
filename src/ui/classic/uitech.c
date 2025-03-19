@@ -94,7 +94,7 @@ static void tech_draw_cb(void *vptr)
         }
     }
 
-    ui_draw_filled_rect(0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, 0x3a);
+    ui_draw_filled_rect(UI_SCREEN_LIMITS, 0x3a);
     ui_draw_filled_rect(3, 150, 275, 196, 0x5b);
     ui_draw_filled_rect(5, 4, 53, 15, (d->field == 0) ? 0x89 : 0xc0);
     ui_draw_filled_rect(55, 4, 108, 15, (d->field == 1) ? 0x89 : 0xc0);
