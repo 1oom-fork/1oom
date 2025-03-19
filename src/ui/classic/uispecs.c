@@ -56,7 +56,7 @@ static void specs_draw_cb1(void *vptr)
     empiretechorbit_t *e = &(g->eto[d->api]);
     shipresearch_t *srd = &(g->srd[d->api]);
 
-    ui_draw_filled_rect(0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, 0x3a);
+    ui_draw_filled_rect(UI_SCREEN_LIMITS, 0x3a);
     lbxgfx_draw_frame(0, 0, ui_data.gfx.starmap.viewship, UI_SCREEN_W);
 
     for (int si = 0; si < e->shipdesigns_num; ++si) {
@@ -126,7 +126,7 @@ static void specs_before_draw_cb(void *vptr)
 {
     struct specs_data_s *d = vptr;
     specs_draw_cb1(d);
-    lbxgfx_apply_colortable(0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, 0, UI_SCREEN_W);
+    lbxgfx_apply_colortable(UI_SCREEN_LIMITS, 0, UI_SCREEN_W);
     lbxgfx_draw_frame(67, 73, ui_data.gfx.starmap.dismiss, UI_SCREEN_W);
     lbxfont_select_set_12_1(3, 0, 0, 0);
     lbxfont_print_str_split(74, 83, 174, game_str_sp_before, 2, UI_SCREEN_W, UI_SCREEN_H);
@@ -179,7 +179,7 @@ void ui_specs_before(struct game_s *g, player_id_t active_player)
         }
         specs_before_draw_cb(&d);
         uiobj_table_clear();
-        oi_ma = uiobj_add_mousearea(0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, MOO_KEY_UNKNOWN, -1);
+        oi_ma = uiobj_add_mousearea(UI_SCREEN_LIMITS, MOO_KEY_UNKNOWN, -1);
         ui_draw_finish();
         ui_delay_ticks_or_click(3);
     }
@@ -203,7 +203,7 @@ void ui_specs_mustscrap(struct game_s *g, player_id_t active_player, int scrapi)
     uiobj_table_clear();
 
     ui_draw_copy_buf();
-    lbxgfx_apply_colortable(0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, 0, UI_SCREEN_W);
+    lbxgfx_apply_colortable(UI_SCREEN_LIMITS, 0, UI_SCREEN_W);
     vgabuf_copy_back_to_page2();
 
     while (!flag_done) {
@@ -293,7 +293,7 @@ int ui_specs(struct game_s *g, player_id_t active_player)
                     oi_tbl_scrap[i] = uiobj_add_t0(106, (i << 5) + 6, "", ui_data.gfx.starmap.viewshbt, MOO_KEY_UNKNOWN, -1);
                 }
             }
-            oi_ma = uiobj_add_mousearea(0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, MOO_KEY_o, -1);
+            oi_ma = uiobj_add_mousearea(UI_SCREEN_LIMITS, MOO_KEY_o, -1);
             ui_draw_finish();
             ui_delay_ticks_or_click(3);
         }
