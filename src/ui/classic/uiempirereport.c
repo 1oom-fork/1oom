@@ -178,7 +178,7 @@ void ui_empirereport(struct game_s *g, player_id_t active_player, player_id_t pi
         if (!flag_done) {
             empirereport_draw_cb(&d);
             uiobj_table_clear();
-            uiobj_add_mousearea(0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, MOO_KEY_UNKNOWN, -1);
+            uiobj_add_mousearea(UI_SCREEN_LIMITS, MOO_KEY_UNKNOWN, -1);
             ui_draw_finish();
             ui_delay_ticks_or_click(1);
         }
