@@ -10,6 +10,8 @@
 #define UI_SCREEN_W 320
 #define UI_SCREEN_H 200
 
+#define UI_SCREEN_LIMITS    0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1
+
 #define NUM_SOUNDS  0x29
 #define NUM_MUSICS  0x28
 
