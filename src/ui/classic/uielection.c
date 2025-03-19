@@ -159,7 +159,7 @@ void ui_election_show(struct election_s *el)
     bool flag_done = false;
     d->count = 0;
     uiobj_table_clear();
-    uiobj_add_mousearea(0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, MOO_KEY_UNKNOWN, -1);
+    uiobj_add_mousearea(UI_SCREEN_LIMITS, MOO_KEY_UNKNOWN, -1);
     uiobj_set_downcount(1);
     while (!flag_done) {
         int16_t oi;

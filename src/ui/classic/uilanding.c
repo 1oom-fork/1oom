@@ -116,7 +116,7 @@ void ui_landing(struct game_s *g, int pi, uint8_t planet_i)
     ui_draw_finish_mode = 2;
     uiobj_set_callback_and_delay(landing_draw_cb1, &d, 2);
     uiobj_table_clear();
-    uiobj_add_mousearea(0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, MOO_KEY_UNKNOWN, -1);
+    uiobj_add_mousearea(UI_SCREEN_LIMITS, MOO_KEY_UNKNOWN, -1);
     uiobj_set_downcount(3);
     while (d.frame < 0x41) {
         int16_t oi;
