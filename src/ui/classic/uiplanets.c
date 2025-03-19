@@ -67,7 +67,7 @@ static void planets_draw_cb(void *vptr)
     char buf[64];
     int v;
 
-    ui_draw_filled_rect(0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, 0x5d);
+    ui_draw_filled_rect(UI_SCREEN_LIMITS, 0x5d);
     for (int i = 0; i < PLANETS_ON_SCREEN; ++i) {
         int pi;
         pi = d->pos + i;
