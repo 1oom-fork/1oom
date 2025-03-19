@@ -30,8 +30,8 @@ static bool cursor_i0_bg_stored = false;
 
 /* -------------------------------------------------------------------------- */
 
-ui_cursor_area_t ui_cursor_area_all_i0 = { 0, 0, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1 };
-ui_cursor_area_t ui_cursor_area_all_i1 = { 1, 0, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1 };
+ui_cursor_area_t ui_cursor_area_all_i0 = { 0, 0, UI_SCREEN_LIMITS };
+ui_cursor_area_t ui_cursor_area_all_i1 = { 1, 0, UI_SCREEN_LIMITS };
 
 ui_cursor_area_t ui_cursor_area_tbl[] = {
     /*0*/ { 1, 0, 0, 0, 319, 199 },

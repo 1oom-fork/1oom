@@ -284,7 +284,7 @@ void ui_audience_show1(struct audience_s *au)
         uiobj_table_clear();
         oi_ma = UIOBJI_INVALID;
         if ((au->mode >= 0) && (au->mode <= 2)) {
-            oi_ma = uiobj_add_mousearea(0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, MOO_KEY_UNKNOWN, -1);
+            oi_ma = uiobj_add_mousearea(UI_SCREEN_LIMITS, MOO_KEY_UNKNOWN, -1);
         }
         if (!flag_done) {
             ui_audience_draw_cb1(d);
@@ -302,7 +302,7 @@ void ui_audience_show2(struct audience_s *au)
     uiobj_set_callback_and_delay(ui_audience_draw_cb2, au->uictx, 1);
     uiobj_set_downcount(1);
     uiobj_table_clear();
-    uiobj_add_mousearea(0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, MOO_KEY_UNKNOWN, -1);
+    uiobj_add_mousearea(UI_SCREEN_LIMITS, MOO_KEY_UNKNOWN, -1);
     while (oi == 0) {
         ui_delay_prepare();
         oi = uiobj_handle_input_cond();
@@ -318,7 +318,7 @@ void ui_audience_show3(struct audience_s *au)
     uiobj_set_callback_and_delay(ui_audience_draw_cb3, d, 1);
     uiobj_set_downcount(1);
     uiobj_table_clear();
-    uiobj_add_mousearea(0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, MOO_KEY_UNKNOWN, -1);
+    uiobj_add_mousearea(UI_SCREEN_LIMITS, MOO_KEY_UNKNOWN, -1);
     while (!flag_done) {
         int16_t oi;
         ui_delay_prepare();
