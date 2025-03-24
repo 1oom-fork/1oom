@@ -92,7 +92,7 @@ static void ui_starmap_enroute_draw_cb(void *vptr)
             lbxfont_print_str_center(268, 32, buf, UI_SCREEN_W);
         }
     } else {
-        /*d->en.in_frange = false;*/
+        /*d->in_frange = false;*/
     }
     for (int i = 0; i < d->en.sn0.num; ++i) {
         const shipdesign_t *sd = &(g->srd[r->owner].design[0]);
@@ -155,7 +155,7 @@ void ui_starmap_enroute(struct game_s *g, player_id_t active_player)
     ui_data.starmap.scanner_delay = 0;
     ui_data.starmap.frame_ship = 0;
     g->planet_focus_i[active_player] = r->dest;
-    d.en.in_frange = false;
+    d.in_frange = false;
     ui_starmap_sn0_setup(&d.en.sn0, g->eto[r->owner].shipdesigns_num, r->ships);
     ui_starmap_update_reserve_fuel(g, &d.en.sn0, r->ships, active_player);
 
