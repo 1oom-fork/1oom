@@ -47,6 +47,7 @@ struct starmap_data_s {
     int16_t oi_tbl_transport[TRANSPORT_MAX];
     int16_t oi_tbl_pl_stars[PLAYER_NUM][PLANETS_MAX];
     uint8_t from;
+    bool in_frange;
     union {
         struct {
             int16_t oi_ship;
@@ -63,13 +64,9 @@ struct starmap_data_s {
             bool blink;
         } tr;   /* trans */
         struct {
-            bool in_frange;
-        } ts;   /* transport */
-        struct {
             shipcount_t ships[NUM_SHIPDESIGNS];
             uint8_t shiptypenon0numsel; /* number of ship types selected with nonzero amount */
             struct shipnon0_s sn0;
-            bool in_frange;
         } oo;   /* orbit_own */
         struct {
             shipcount_t ships[NUM_SHIPDESIGNS];
@@ -79,7 +76,6 @@ struct starmap_data_s {
         } oe;   /* orbit_en */
         struct {
             struct shipnon0_s sn0;
-            bool in_frange;
             can_move_t can_move;
         } en;   /* enroute */
     };
