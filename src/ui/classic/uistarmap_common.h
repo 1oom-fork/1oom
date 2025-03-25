@@ -53,29 +53,27 @@ struct starmap_data_s {
     can_move_t can_move;
     shipcount_t ships[NUM_SHIPDESIGNS];
     struct shipnon0_s sn0;
-    union {
-        struct {
-            int16_t oi_ship;
-            int16_t oi_reloc;
-            int16_t oi_trans;
-            int16_t oi_tbl_slider[PLANET_SLIDER_NUM];
-            int16_t oi_tbl_slider_lock[PLANET_SLIDER_NUM];
-            int16_t oi_tbl_slider_minus[PLANET_SLIDER_NUM];
-            int16_t oi_tbl_slider_plus[PLANET_SLIDER_NUM];
-        } sm;   /* starmap_do */
-        struct {
-            int16_t num;
-            bool other;
-            bool blink;
-        } tr;   /* trans */
-        struct {
-            uint8_t shiptypenon0numsel; /* number of ship types selected with nonzero amount */
-        } oo;   /* orbit_own */
-        struct {
-            player_id_t player;
-            int yoff;
-        } oe;   /* orbit_en */
-    };
+    struct {
+        int16_t oi_ship;
+        int16_t oi_reloc;
+        int16_t oi_trans;
+        int16_t oi_tbl_slider[PLANET_SLIDER_NUM];
+        int16_t oi_tbl_slider_lock[PLANET_SLIDER_NUM];
+        int16_t oi_tbl_slider_minus[PLANET_SLIDER_NUM];
+        int16_t oi_tbl_slider_plus[PLANET_SLIDER_NUM];
+    } sm;   /* starmap_do */
+    struct {
+        int16_t num;
+        bool other;
+        bool blink;
+    } tr;   /* trans */
+    struct {
+        uint8_t shiptypenon0numsel; /* number of ship types selected with nonzero amount */
+    } oo;   /* orbit_own */
+    struct {
+        player_id_t player;
+        int yoff;
+    } oe;   /* orbit_en */
 };
 
 #define STARMAP_UIOBJ_CLEAR_COMMON() \
