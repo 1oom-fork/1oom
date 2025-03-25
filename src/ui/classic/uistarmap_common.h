@@ -51,6 +51,7 @@ struct starmap_data_s {
     uint8_t from;
     bool in_frange;
     can_move_t can_move;
+    struct shipnon0_s sn0;
     union {
         struct {
             int16_t oi_ship;
@@ -69,17 +70,12 @@ struct starmap_data_s {
         struct {
             shipcount_t ships[NUM_SHIPDESIGNS];
             uint8_t shiptypenon0numsel; /* number of ship types selected with nonzero amount */
-            struct shipnon0_s sn0;
         } oo;   /* orbit_own */
         struct {
             shipcount_t ships[NUM_SHIPDESIGNS];
-            struct shipnon0_s sn0;
             player_id_t player;
             int yoff;
         } oe;   /* orbit_en */
-        struct {
-            struct shipnon0_s sn0;
-        } en;   /* enroute */
     };
 };
 
