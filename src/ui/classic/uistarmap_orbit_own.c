@@ -133,7 +133,7 @@ static void ui_starmap_orbit_own_draw_cb(void *vptr)
         lbxgfx_set_frame_0(gfx);
         lbxgfx_draw_frame(227, 22 + i * 26, gfx, UI_SCREEN_W);
         lbxfont_select(0, 0xd, 0, 0);
-        lbxfont_print_num_right(258, 40 + i * 26, d->oo.ships[st], UI_SCREEN_W);
+        lbxfont_print_num_right(258, 40 + i * 26, d->ships[st], UI_SCREEN_W);
         lbxfont_select_set_12_1(2, 0, 0, 0);
         lbxfont_print_str_center(287, 25 + i * 26, sd[st].name, UI_SCREEN_W);
     }
@@ -163,10 +163,10 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
     d.from = g->planet_focus_i[active_player];
     os = &(g->eto[active_player].orbit[d.from].ships[0]);
     for (int i = 0; i < NUM_SHIPDESIGNS; ++i) {
-        d.oo.ships[i] = os[i];
+        d.ships[i] = os[i];
     }
     d.in_frange = false;
-    ui_starmap_sn0_setup(&d.sn0, NUM_SHIPDESIGNS, d.oo.ships);
+    ui_starmap_sn0_setup(&d.sn0, NUM_SHIPDESIGNS, d.ships);
 
     uiobj_table_clear();
 
@@ -186,7 +186,7 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
 
     while (!flag_done) {
         int16_t oi1, oi2;
-        ui_starmap_update_reserve_fuel(g, &d.sn0, d.oo.ships, active_player);
+        ui_starmap_update_reserve_fuel(g, &d.sn0, d.ships, active_player);
         oi1 = uiobj_handle_input_cond();
         oi2 = uiobj_at_cursor();
         ui_delay_prepare();
@@ -414,7 +414,7 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
             ui_sound_play_sfx_24();
             flag_done = true;
             if (ui_starmap_orbit_own_in_frange(&d)) {
-                game_send_fleet_from_orbit(g, active_player, d.from, g->planet_focus_i[active_player], d.oo.ships, shiptypes, 6);
+                game_send_fleet_from_orbit(g, active_player, d.from, g->planet_focus_i[active_player], d.ships, shiptypes, 6);
                 game_update_visibility(g);
             }
             ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
@@ -443,31 +443,31 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
             SETMAX(per10num, 1);
             if (oi1 == oi_tbl_p[i]) {
                 shipcount_t t;
-                t = d.oo.ships[si] + per10num;
+                t = d.ships[si] + per10num;
                 SETMIN(t, os[si]);
-                d.oo.ships[si] = t;
+                d.ships[si] = t;
                 ui_sound_play_sfx_24();
                 break;
             } else if (oi1 == oi_tbl_m[i]) {
                 shipcount_t t;
-                t = d.oo.ships[si];
+                t = d.ships[si];
                 t = (t < per10num) ? 0 : (t - per10num);
-                d.oo.ships[si] = t;
+                d.ships[si] = t;
                 ui_sound_play_sfx_24();
                 break;
             } else if (oi1 == oi_tbl_a[i]) {
-                d.oo.ships[si] = os[si];
+                d.ships[si] = os[si];
                 ui_sound_play_sfx_24();
                 break;
             } else if (oi1 == oi_tbl_n[i]) {
-                d.oo.ships[si] = 0;
+                d.ships[si] = 0;
                 ui_sound_play_sfx_24();
                 break;
             }
         }
         d.oo.shiptypenon0numsel = 0;
         for (int i = 0; i < NUM_SHIPDESIGNS; ++i) {
-            if (d.oo.ships[i] != 0) {
+            if (d.ships[i] != 0) {
                 ++d.oo.shiptypenon0numsel;
             }
         }
