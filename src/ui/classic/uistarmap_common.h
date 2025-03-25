@@ -50,6 +50,7 @@ struct starmap_data_s {
     int16_t oi_tbl_pl_stars[PLAYER_NUM][PLANETS_MAX];
     uint8_t from;
     bool in_frange;
+    can_move_t can_move;
     union {
         struct {
             int16_t oi_ship;
@@ -78,7 +79,6 @@ struct starmap_data_s {
         } oe;   /* orbit_en */
         struct {
             struct shipnon0_s sn0;
-            can_move_t can_move;
         } en;   /* enroute */
     };
 };
