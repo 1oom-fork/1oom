@@ -2,41 +2,12 @@
 #define INC_1OOM_GAME_H
 
 #include "boolvec.h"
+#include "game_fleet.h"
 #include "game_planet.h"
 #include "game_shipdesign.h"
 #include "game_shiptech.h"
 #include "game_types.h"
 #include "types.h"
-
-typedef struct fleet_enroute_s {
-    player_id_t owner;
-    uint16_t x;
-    uint16_t y;
-    uint8_t dest;   /* planet index */
-    uint8_t speed;
-    BOOLVEC_DECLARE(visible, PLAYER_NUM);
-    shipcount_t ships[NUM_SHIPDESIGNS];
-} fleet_enroute_t;
-
-#define FLEET_ENROUTE_AI_MAX    208
-#define FLEET_ENROUTE_MAX   260
-
-typedef struct transport_s {
-    player_id_t owner;
-    uint16_t x;
-    uint16_t y;
-    uint8_t dest;   /* planet index */
-    uint8_t speed;
-    BOOLVEC_DECLARE(visible, PLAYER_NUM);
-    uint16_t pop;
-} transport_t;
-
-#define TRANSPORT_MAX   100
-
-typedef struct fleet_orbit_s {
-    BOOLVEC_DECLARE(visible, PLAYER_NUM);
-    shipcount_t ships[NUM_SHIPDESIGNS];
-} fleet_orbit_t;
 
 typedef struct techdata_s {
     uint8_t percent[TECH_FIELD_NUM];   /* tech level % */
