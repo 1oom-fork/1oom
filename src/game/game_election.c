@@ -268,7 +268,7 @@ void game_election(struct game_s *g)
         }
         if (winner < 2) {
             g->winner = el->candidate[winner];
-            lib_sprintf(el->buf, UI_STRBUF_SIZE, "%s %i %s %s %s %s %s",
+            lib_sprintf(el->buf, UI_STRBUF_SIZE, "%s %i%s %s %s %s %s",
                     game_str_el_chose1, g->year + YEAR_BASE, game_str_el_chose2,
                     g->emperor_names[g->winner], game_str_el_ofthe, game_str_tbl_races[g->eto[g->winner].race],
                     game_str_el_chose3 /* WASBUG MOO1 has the last period missing if second candidate won */
