@@ -19,7 +19,6 @@ extern void game_update_empire_contact(struct game_s *g);
 extern void game_update_visibility(struct game_s *g);
 extern void game_adjust_slider_group(int16_t *slidertbl, int slideri, int16_t value, int num, const uint16_t *locktbl);
 extern int game_get_min_dist(const struct game_s *g, int player_i, int planet_i);
-extern int game_adjust_prod_by_special(int prod, planet_special_t special);
 extern int game_get_pop_growth_max(const struct game_s *g, int planet_i, int max_pop3);
 extern int game_get_pop_growth_for_eco(const struct game_s *g, int planet_i, int eco);
 extern int game_get_tech_prod(int prod, int slider, race_t race, planet_special_t special);
