@@ -151,6 +151,7 @@ extern void game_planet_destroy(struct game_s *g, uint8_t planet_i, player_id_t 
 extern uint8_t game_planet_get_random(struct game_s *g, player_id_t owner);
 extern void game_planet_adjust_percent(struct game_s *g, player_id_t owner, int a0, uint8_t percent, int growth);
 extern int game_planet_get_w1(const struct game_s *g, uint8_t planet_i);
+extern int game_adjust_prod_by_special(int prod, planet_special_t special);
 extern void game_planet_update_home(struct game_s *g);
 
 #endif
