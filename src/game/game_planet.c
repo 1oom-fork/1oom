@@ -139,6 +139,27 @@ int game_planet_get_w1(const struct game_s *g, uint8_t planet_i)
     return w;
 }
 
+int game_adjust_prod_by_special(int prod, planet_special_t special)
+{
+    switch (special) {
+        case PLANET_SPECIAL_ULTRA_POOR:
+            prod /= 3;
+            break;
+        case PLANET_SPECIAL_POOR:
+            prod /= 2;
+            break;
+        case PLANET_SPECIAL_RICH:
+            prod *= 2;
+            break;
+        case PLANET_SPECIAL_ULTRA_RICH:
+            prod *= 3;
+            break;
+        default:
+            break;
+    }
+    return prod;
+}
+
 void game_planet_update_home(struct game_s *g)
 {
     for (int i = 0; i < g->galaxy_stars; ++i) {
