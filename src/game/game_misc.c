@@ -621,25 +621,6 @@ int game_get_pop_growth_for_eco(const struct game_s *g, int planet_i, int eco)
     return MIN(v, vmax);
 }
 
-int game_get_tech_prod(int prod, int slider, race_t race, planet_special_t special)
-{
-    int v = (prod * slider) / 100;
-    if (race == RACE_PSILON) {
-        v += v / 2;
-    }
-    switch (special) {
-        case PLANET_SPECIAL_ARTIFACTS:
-            v *= 2;
-            break;
-        case PLANET_SPECIAL_4XTECH:
-            v *= 4;
-            break;
-        default:
-            break;
-    }
-    return MIN(v, 0x7fff);
-}
-
 void game_print_prod_of_total(const struct game_s *g, player_id_t pi, int prod, char *buf)
 {
     int v = g->eto[pi].total_production_bc;

@@ -160,6 +160,25 @@ int game_adjust_prod_by_special(int prod, planet_special_t special)
     return prod;
 }
 
+int game_get_tech_prod(int prod, int slider, race_t race, planet_special_t special)
+{
+    int v = (prod * slider) / 100;
+    if (race == RACE_PSILON) {
+        v += v / 2;
+    }
+    switch (special) {
+        case PLANET_SPECIAL_ARTIFACTS:
+            v *= 2;
+            break;
+        case PLANET_SPECIAL_4XTECH:
+            v *= 4;
+            break;
+        default:
+            break;
+    }
+    return MIN(v, 0x7fff);
+}
+
 void game_planet_update_home(struct game_s *g)
 {
     for (int i = 0; i < g->galaxy_stars; ++i) {
