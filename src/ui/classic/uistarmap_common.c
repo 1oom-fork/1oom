@@ -162,17 +162,17 @@ static void ui_starmap_draw_sliders_and_prod(struct starmap_data_s *d)
     lbxfont_select(2, 6, 0, 0);
     {
         const shipdesign_t *sd;
-        int vthis, vtotal, cost;
-        vthis = game_adjust_prod_by_special((p->prod_after_maint * p->slider[PLANET_SLIDER_SHIP]) / 100, p->special);
-        vtotal = vthis + p->bc_to_ship;
+        struct planet_prod_s prod;
+        int cost;
+        game_planet_get_ship_prod(p, &prod, false);
         if (p->buildship == BUILDSHIP_STARGATE) {
             cost = game_num_stargate_cost;
         } else {
             sd = &g->srd[d->api].design[p->buildship];
             cost = sd->cost;
         }
-        if ((vtotal < cost) || (p->buildship == BUILDSHIP_STARGATE)) {
-            if (vthis < 1) {
+        if ((prod.vtotal < cost) || (p->buildship == BUILDSHIP_STARGATE)) {
+            if (prod.vthis < 1) {
                 lbxfont_print_str_right(x, 83, game_str_sm_prodnone, UI_SCREEN_W);
                 lbxfont_select(0, 0xd, 0, 0);
                 lbxfont_print_str_right(271, 160, "0", UI_SCREEN_W);
@@ -180,7 +180,7 @@ static void ui_starmap_draw_sliders_and_prod(struct starmap_data_s *d)
                 int num = 0, over;
                 over = cost - p->bc_to_ship;
                 while (over > 0) {
-                    over -= vthis;
+                    over -= prod.vthis;
                     ++num;
                 }
                 SETMAX(num, 1);
@@ -195,7 +195,7 @@ static void ui_starmap_draw_sliders_and_prod(struct starmap_data_s *d)
             int num;
             /* TODO this adjusted sd->cost directly! */
             SETMAX(cost, 1);
-            num = vtotal / cost;
+            num = prod.vtotal / cost;
             sprintf(buf, "1 %s", game_str_sm_prod_y);
             lbxfont_print_str_right(x, 83, buf, UI_SCREEN_W);
             lbxfont_select(0, 0xd, 0, 0);
