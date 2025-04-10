@@ -156,4 +156,20 @@ extern int game_adjust_prod_by_special(int prod, planet_special_t special);
 extern int game_get_tech_prod(int prod, int slider, race_t race, planet_special_t special);
 extern void game_planet_update_home(struct game_s *g);
 
+struct planet_prod_s {
+    int vthis;
+    int vtotal;
+};
+
+static inline void game_planet_get_ship_prod(const planet_t *p, struct planet_prod_s *r_prod, bool actual)
+{
+    r_prod->vthis = game_adjust_prod_by_special((p->prod_after_maint * p->slider[PLANET_SLIDER_SHIP]) / 100, p->special);
+    r_prod->vtotal = r_prod->vthis + p->bc_to_ship;
+    /* BUG: A 1 BC bonus for having the slider > 0.
+       This bonus is not taken into account by UI */
+    if (actual && (p->slider[PLANET_SLIDER_SHIP] > 0)) {
+        ++r_prod->vtotal;
+    }
+}
+
 #endif
