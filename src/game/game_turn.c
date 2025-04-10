@@ -552,24 +552,18 @@ static void game_turn_build_ship(struct game_s *g)
         if (owner != PLAYER_NONE) {
             empiretechorbit_t *e = &(g->eto[owner]);
             shipresearch_t *srd = &(g->srd[owner]);
-            int prod;
+            struct planet_prod_s prod;
             uint8_t si;
-            prod = game_adjust_prod_by_special((p->slider[PLANET_SLIDER_SHIP] * p->prod_after_maint) / 100, p->special);
-            prod += p->bc_to_ship;
-            /* BUG: A 1 BC bonus for having the slider > 0.
-               This bonus is not taken into account by UI */
-            if (p->slider[PLANET_SLIDER_SHIP] > 0) {
-                ++prod;
-            }
+            game_planet_get_ship_prod(p, &prod, true);
             si = p->buildship;
             if (si == BUILDSHIP_STARGATE) {
-                if (prod >= game_num_stargate_cost) {
+                if (prod.vtotal >= game_num_stargate_cost) {
                     p->have_stargate = true;
                     p->buildship = 0;
-                    p->bc_to_ship = prod - game_num_stargate_cost;
+                    p->bc_to_ship = prod.vtotal - game_num_stargate_cost;
                     game_add_planet_to_stargate_finished(g, i, owner);
                 } else {
-                    p->bc_to_ship = prod;
+                    p->bc_to_ship = prod.vtotal;
                 }
             } else {
                 shipdesign_t *sd = &(srd->design[si]);
@@ -577,9 +571,9 @@ static void game_turn_build_ship(struct game_s *g)
                 uint8_t dest;
                 cost = sd->cost;
                 shipnum = 0;
-                while (prod >= cost) {
+                while (prod.vtotal >= cost) {
                     ++shipnum;
-                    prod -= cost;
+                    prod.vtotal -= cost;
                 }
                 if ((shipnum + srd->shipcount[si]) > game_num_limit_ships_all) {
                     shipnum = game_num_limit_ships_all - srd->shipcount[si];
@@ -598,7 +592,7 @@ static void game_turn_build_ship(struct game_s *g)
                     }
                 }
                 g->evn.new_ships[owner][si] += shipnum;
-                p->bc_to_ship = prod;
+                p->bc_to_ship = prod.vtotal;
             }
         }
     }
