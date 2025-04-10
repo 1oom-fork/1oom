@@ -561,27 +561,6 @@ int game_get_min_dist(const struct game_s *g, int player_i, int planet_i)
     return mindist;
 }
 
-int game_adjust_prod_by_special(int prod, planet_special_t special)
-{
-    switch (special) {
-        case PLANET_SPECIAL_ULTRA_POOR:
-            prod /= 3;
-            break;
-        case PLANET_SPECIAL_POOR:
-            prod /= 2;
-            break;
-        case PLANET_SPECIAL_RICH:
-            prod *= 2;
-            break;
-        case PLANET_SPECIAL_ULTRA_RICH:
-            prod *= 3;
-            break;
-        default:
-            break;
-    }
-    return prod;
-}
-
 int game_get_pop_growth_max(const struct game_s *g, int planet_i, int max_pop3)
 {
     const planet_t *p = &(g->planet[planet_i]);
