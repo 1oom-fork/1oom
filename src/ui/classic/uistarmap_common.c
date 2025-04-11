@@ -245,12 +245,13 @@ static void ui_starmap_draw_sliders_and_prod(struct starmap_data_s *d)
     }
     {
         const char *str = game_str_sm_prodnone;
-        int vthis, cost;
+        struct planet_prod_s prod;
+        int cost;
         cost = g->eto[d->api].factory_adj_cost;
-        vthis = game_adjust_prod_by_special((p->prod_after_maint * p->slider[PLANET_SLIDER_IND]) / 100, p->special);
-        if (vthis != 0) {
+        game_planet_get_ind_prod(p, &prod);
+        if (prod.vthis != 0) {
             int v20;
-            v20 = (vthis * 10) / cost;
+            v20 = (prod.vthis * 10) / cost;
             if ((v20 / 10 + p->factories) > ((p->pop - p->trans_num) * p->pop_oper_fact)) {
                 if (p->pop_oper_fact < g->eto[d->api].colonist_oper_factories) {
                     if (g->eto[d->api].race != RACE_MEKLAR) {
