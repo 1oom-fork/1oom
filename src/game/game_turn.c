@@ -476,17 +476,17 @@ static void game_turn_build_def(struct game_s *g)
         owner = p->owner;
         if (owner != PLAYER_NONE) {
             empiretechorbit_t *e = &(g->eto[owner]);
-            int prod, toup;
-            prod = game_adjust_prod_by_special((p->slider[PLANET_SLIDER_DEF] * p->prod_after_maint) / 100, p->special);
-            prod += p->bc_to_base;
+            struct planet_prod_s prod;
+            int toup;
+            game_planet_get_def_prod(p, &prod);
             toup = cost_diff[owner] * p->missile_bases + p->bc_upgrade_base;
-            if (toup >= prod) {
-                toup -= prod;
+            if (toup >= prod.vtotal) {
+                toup -= prod.vtotal;
                 p->bc_upgrade_base = toup;
                 p->bc_to_base = 0;
             } else {
                 int tosh;
-                prod -= toup;
+                prod.vtotal -= toup;
                 p->bc_upgrade_base = 0;
                 tosh = e->planet_shield_cost - p->bc_to_shield;
                 SETMAX(tosh, 0);
@@ -494,18 +494,18 @@ static void game_turn_build_def(struct game_s *g)
                     tosh = 0;
                     p->bc_to_shield = 0;
                 }
-                if (prod <= tosh) { /* FIXME just "<" ? */
-                    p->bc_to_shield += prod;
-                    prod = 0;
+                if (prod.vtotal <= tosh) { /* FIXME just "<" ? */
+                    p->bc_to_shield += prod.vtotal;
+                    prod.vtotal = 0;
                 } else {
-                    prod -= tosh;
+                    prod.vtotal -= tosh;
                     p->bc_to_shield = e->planet_shield_cost;
-                    while (prod >= cost_new[owner]) {
-                        prod -= cost_new[owner];
+                    while (prod.vtotal >= cost_new[owner]) {
+                        prod.vtotal -= cost_new[owner];
                         ++p->missile_bases;
                     }
                 }
-                p->bc_to_base = prod;
+                p->bc_to_base = prod.vtotal;
             }
             {
                 uint8_t newshield;

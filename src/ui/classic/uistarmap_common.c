@@ -203,39 +203,39 @@ static void ui_starmap_draw_sliders_and_prod(struct starmap_data_s *d)
     }
     lbxfont_select(2, 6, 0, 0);
     {
-        int vthis, vtotal, cost, v8, va;
+        struct planet_prod_s prod;
+        int cost, v8, va;
         cost = game_get_base_cost(g, d->api);
-        vthis = game_adjust_prod_by_special((p->prod_after_maint * p->slider[PLANET_SLIDER_DEF]) / 100, p->special);
-        vtotal = vthis + p->bc_to_base;
+        game_planet_get_def_prod(p, &prod);
         v8 = p->bc_upgrade_base;
-        if (vthis == 0) {
+        if (prod.vthis == 0) {
             lbxfont_print_str_right(x, 94, game_str_sm_prodnone, UI_SCREEN_W);
-        } else if (vtotal <= v8) {
+        } else if (prod.vtotal <= v8) {
             lbxfont_print_str_right(x, 94, game_str_sm_defupg, UI_SCREEN_W);
         } else {
-            vtotal -= v8;
-            SETMAX(vtotal, 0);
+            prod.vtotal -= v8;
+            SETMAX(prod.vtotal, 0);
             va = g->eto[d->api].planet_shield_cost - p->bc_to_shield;
             if (p->battlebg == 0) {
                 va = 0;
             }
             SETMAX(va, 0);
-            if (vtotal <= va) {
+            if (prod.vtotal <= va) {
                 lbxfont_print_str_right(x, 94, game_str_sm_defshld, UI_SCREEN_W);
             } else {
                 int num, over;
-                vtotal -= va;
-                SETMAX(vtotal, 0);
-                if ((cost * 2) > vtotal) {
+                prod.vtotal -= va;
+                SETMAX(prod.vtotal, 0);
+                if ((cost * 2) > prod.vtotal) {
                     num = 1;
-                    over = cost - vtotal;
+                    over = cost - prod.vtotal;
                     while (over > 0) {
-                        over -= vthis;
+                        over -= prod.vthis;
                         ++num;
                     }
                     sprintf(buf, "%i %s", num, game_str_sm_prod_y);
                 } else {
-                    num = vtotal / cost;
+                    num = prod.vtotal / cost;
                     sprintf(buf, "%i/%s", num, game_str_sm_prod_y);
                 }
                 lbxfont_print_str_right(x, 94, buf, UI_SCREEN_W);
