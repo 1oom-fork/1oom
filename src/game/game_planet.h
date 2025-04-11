@@ -172,4 +172,10 @@ static inline void game_planet_get_ship_prod(const planet_t *p, struct planet_pr
     }
 }
 
+static inline void game_planet_get_def_prod(const planet_t *p, struct planet_prod_s *r_prod)
+{
+    r_prod->vthis = game_adjust_prod_by_special((p->prod_after_maint * p->slider[PLANET_SLIDER_DEF]) / 100, p->special);
+    r_prod->vtotal = r_prod->vthis + p->bc_to_base;
+}
+
 #endif
