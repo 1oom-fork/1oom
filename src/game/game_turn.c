@@ -640,12 +640,12 @@ static void game_turn_build_ind(struct game_s *g)
             empiretechorbit_t *e;
             uint16_t fact, factold, num;
             uint8_t cost, bonus;
-            int prod, v;
+            struct planet_prod_s prod;
+            int v;
             e = &(g->eto[owner]);
             factold = fact = p->factories;
             cost = e->factory_adj_cost;
-            prod = game_adjust_prod_by_special((p->slider[PLANET_SLIDER_IND] * p->prod_after_maint) / 100, p->special);
-            prod += p->bc_to_factory;
+            game_planet_get_ind_prod(p, &prod);
             bonus = (e->race == RACE_MEKLAR) ? 2 : 0;
             v = e->colonist_oper_factories - p->pop_oper_fact - bonus;
             if (v > 0) {
@@ -653,18 +653,18 @@ static void game_turn_build_ind(struct game_s *g)
             } else {
                 v = 0;
             }
-            if ((prod / cost + fact) > (p->pop * p->pop_oper_fact)) {
-                p->bc_to_refit += prod;
+            if ((prod.vtotal / cost + fact) > (p->pop * p->pop_oper_fact)) {
+                p->bc_to_refit += prod.vtotal;
                 if (p->bc_to_refit >= v) {
                     p->pop_oper_fact = e->colonist_oper_factories;
-                    prod = p->bc_to_refit - v;
+                    prod.vtotal = p->bc_to_refit - v;
                     p->bc_to_refit = 0;
                 } else {
-                    prod = 0;
+                    prod.vtotal = 0;
                 }
             }
-            num = prod / cost;
-            p->bc_to_factory = prod % cost;
+            num = prod.vtotal / cost;
+            p->bc_to_factory = prod.vtotal % cost;
             v = p->max_pop3 * e->colonist_oper_factories;
             if (v < (fact + num)) {
                 v = (fact + num) - v;
