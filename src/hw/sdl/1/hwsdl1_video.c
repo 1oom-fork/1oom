@@ -14,6 +14,7 @@
 #include "hwsdl_opt.h"
 #include "lib.h"
 #include "log.h"
+#include "mouse.h"
 #include "types.h"
 #include "vgabuf.h"
 #include "vgapal.h"
@@ -234,7 +235,7 @@ int hw_video_resize(int w, int h)
 
 int hw_video_init(int w, int h)
 {
-    hw_mouse_set_limits(w, h);
+    mouse_set_limits(w, h);
     video.buf = vgabuf_get_front();
     video.bufw = w;
     video.bufh = h;
