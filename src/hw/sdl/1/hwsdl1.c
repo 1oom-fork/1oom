@@ -18,6 +18,7 @@
 #include "kbd.h"
 #include "log.h"
 #include "main.h"
+#include "mouse.h"
 #include "options.h"
 #include "types.h"
 
@@ -96,7 +97,7 @@ int hw_event_handle(void)
                 break;
             case SDL_MOUSEMOTION:
                 if (hw_mouse_enabled) {
-                    hw_mouse_move((int)(e.motion.xrel), (int)(e.motion.yrel));
+                    mouse_set_xy_from_hw(mouse_x + (int)(e.motion.xrel), mouse_y + (int)(e.motion.yrel));
                 }
                 break;
             case SDL_MOUSEBUTTONDOWN:

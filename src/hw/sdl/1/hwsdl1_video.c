@@ -263,7 +263,6 @@ int hw_video_resize(int w, int h)
 
 int hw_video_init(int w, int h)
 {
-    hw_mouse_set_limits(w, h);
     video.bufw = w;
     video.bufh = h;
     {

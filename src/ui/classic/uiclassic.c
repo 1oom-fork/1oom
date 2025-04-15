@@ -13,6 +13,7 @@
 #include "lbxpal.h"
 #include "lib.h"
 #include "log.h"
+#include "mouse.h"
 #include "options.h"
 #include "os.h"
 #include "types.h"
@@ -275,6 +276,7 @@ int ui_init(void)
 
 int ui_late_init(void)
 {
+    mouse_set_limits(UI_SCREEN_W, UI_SCREEN_H);
     if (0
      || lbxfont_init()
      || hw_video_init(UI_SCREEN_W, UI_SCREEN_H)
