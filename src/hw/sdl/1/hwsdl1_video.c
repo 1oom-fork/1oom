@@ -240,7 +240,6 @@ int hw_video_toggle_fullscreen(void)
 
 int hw_video_init(int w, int h)
 {
-    hw_mouse_set_limits(w, h);
     video.buf = vgabuf_get_front();
     video.bufw = w;
     video.bufh = h;
