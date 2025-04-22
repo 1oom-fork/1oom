@@ -69,3 +69,9 @@ bool game_cheat_traits(struct game_s *g, player_id_t pi)
     }
     return true;
 }
+
+bool game_cheat_news(struct game_s *g, player_id_t pi)
+{
+    g->gaux->flag_cheat_news = !g->gaux->flag_cheat_news;
+    return true;
+}
