@@ -435,7 +435,7 @@ bool game_event_run(struct game_s *g, struct game_end_s *ge)
                     ns.subtype = IS_HUMAN(g, player) ? 0 : 4;
                     break;
                 case 2:
-                    ns.subtype = (IS_HUMAN(g, player) && (!rnd_0_nm1(10, &g->seed))) ? 1 : -1;
+                    ns.subtype = (IS_HUMAN(g, player) && (!rnd_0_nm1(10, &g->seed) || g->gaux->flag_cheat_news)) ? 1 : -1;
                     break;
                 case 3:
                     ns.subtype = IS_HUMAN(g, player) ? 2 : 5;
@@ -528,7 +528,7 @@ bool game_event_run(struct game_s *g, struct game_end_s *ge)
                 ns.subtype = IS_HUMAN(g, player) ? 0 : 4;
                 break;
             case 2:
-                ns.subtype = (IS_HUMAN(g, player) && ((!rnd_0_nm1(10, &g->seed)) || (g->evn.nova_years < 3))) ? 1 : -1;
+                ns.subtype = (IS_HUMAN(g, player) && ((!rnd_0_nm1(10, &g->seed)) || (g->evn.nova_years < 3) || g->gaux->flag_cheat_news)) ? 1 : -1;
                 break;
             case 3:
                 ns.subtype = IS_HUMAN(g, player) ? 2 : 5;
@@ -655,7 +655,7 @@ bool game_event_run(struct game_s *g, struct game_end_s *ge)
                 ns.subtype = IS_HUMAN(g, player) ? 0 : 4;
                 break;
             case 2:
-                ns.subtype = (IS_HUMAN(g, player) && ((!rnd_0_nm1(10, &g->seed)) || (g->evn.comet_years < 3))) ? 1 : -1;
+                ns.subtype = (IS_HUMAN(g, player) && ((!rnd_0_nm1(10, &g->seed)) || (g->evn.comet_years < 3) || g->gaux->flag_cheat_news)) ? 1 : -1;
                 break;
             case 3:
                 ns.subtype = IS_HUMAN(g, player) ? 2 : 5;
