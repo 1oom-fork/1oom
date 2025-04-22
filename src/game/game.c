@@ -88,6 +88,7 @@ static void game_stop(struct game_s *g)
     g->gaux->flag_cheat_spy_hint = false;
     g->gaux->flag_cheat_stars = false;
     g->gaux->flag_cheat_tech_hint = false;
+    g->gaux->flag_cheat_news = false;
 }
 
 static void game_set_opts_from_value(struct game_new_options_s *go, int v)
