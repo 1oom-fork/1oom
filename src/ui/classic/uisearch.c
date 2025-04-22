@@ -125,6 +125,8 @@ int ui_search(struct game_s *g, player_id_t pi)
                 game_cheat_tech_hint(g, pi);
             } else if (strcasecmp(buf, "/p") == 0) {
                 game_cheat_traits(g, pi);
+            } else if (strcasecmp(buf, "/news") == 0) {
+                game_cheat_news(g, pi);
             } else if (strcasecmp(buf, "/moola") == 0) {
                 game_cheat_moola(g, pi);
             } else if (strcasecmp(buf, "/oracle0") == 0) {

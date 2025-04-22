@@ -14,5 +14,6 @@ extern bool game_cheat_stars(struct game_s *g, player_id_t pi);
 extern bool game_cheat_tech_hint(struct game_s *g, player_id_t pi);
 extern bool game_cheat_moola(struct game_s *g, player_id_t pi);
 extern bool game_cheat_traits(struct game_s *g, player_id_t pi);
+extern bool game_cheat_news(struct game_s *g, player_id_t pi);
 
 #endif
