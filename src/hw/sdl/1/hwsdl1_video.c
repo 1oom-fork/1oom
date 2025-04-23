@@ -397,3 +397,8 @@ void hw_mouse_ungrab(void)
         SDL_WM_GrabInput(SDL_GRAB_OFF);
     }
 }
+
+void hw_video_position_cursor(int mx, int my)
+{
+    /* Not implemented */
+}
