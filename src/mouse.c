@@ -1,6 +1,7 @@
 #include "config.h"
 
 #include "comp.h"
+#include "hw.h"
 #include "mouse.h"
 
 /* ------------------------------------------------------------------------- */
@@ -54,6 +55,7 @@ void mouse_set_xy(int mx, int my)
 {
     mouse_x = mx;
     mouse_y = my;
+    hw_video_position_cursor(mx, my);
 }
 
 void mouse_set_click_xy(int mx, int my)
