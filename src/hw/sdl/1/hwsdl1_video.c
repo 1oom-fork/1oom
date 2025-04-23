@@ -347,4 +347,9 @@ void hw_video_input_grab(bool grab)
     SDL_WM_GrabInput(grab ? SDL_GRAB_ON : SDL_GRAB_OFF);
 }
 
+void hw_video_position_cursor(int mx, int my)
+{
+    /* Not implemented */
+}
+
 #include "hwsdl_video.c"
