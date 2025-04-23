@@ -20,6 +20,7 @@ extern void hw_log_warning(const char *msg);
 extern void hw_log_error(const char *msg);
 
 extern int hw_event_handle(void);
+extern void hw_video_position_cursor(int mx, int my);
 
 extern int hw_video_init(int w, int h);
 extern void hw_video_refresh_palette(void);
