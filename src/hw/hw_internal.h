@@ -11,6 +11,7 @@ extern struct i_hw_video_s {
     void (*render)(void);
     void (*update)(void);
     void (*setpal)(const uint8_t *pal, int first, int num);
+    void (*position_cursor)(int mx, int my);
 } i_hw_video;
 
 extern int hw_audio_init(void);

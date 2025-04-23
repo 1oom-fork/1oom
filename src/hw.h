@@ -12,9 +12,12 @@ extern int hw_early_init(void);
 extern int hw_init(void);
 extern void hw_shutdown(void);
 
+extern bool hw_use_mouse;
+
 extern const struct cmdline_options_s hw_cmdline_options[];
 
 extern int hw_event_handle(void);
+extern void hw_video_position_cursor(int mx, int my);
 
 extern int hw_video_init(int w, int h);
 extern int hw_icon_set(const uint8_t *data, const uint8_t *pal, int w, int h);
