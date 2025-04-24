@@ -154,7 +154,11 @@ static void video_render(void)
 static void video_adjust_window_size(int *wptr, int *hptr)
 {
     int w = *wptr, h = *hptr;
-    if ((w * video.actualh) <= (h * video.actualw)) {
+    if (hw_opt_int_scaling) {
+        int scale = MIN(w / video.actualw, h / video.actualh);
+        w = video.actualw * scale;
+        h = video.actualh * scale;
+    } else if ((w * video.actualh) <= (h * video.actualw)) {
         /* We round up window_height if the ratio is not exact; this leaves the result stable. */
         h = (w * video.actualh + video.actualw - 1) / video.actualw;
     } else {
