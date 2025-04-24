@@ -167,6 +167,7 @@ static void game_battle_missile_remove_unused(struct battle_s *bt)
         struct battle_missile_s *m = &(bt->missile[i]);
         if (m->target == MISSILE_TARGET_NONE) {
             util_table_remove_item_any_order(i, bt->missile, sizeof(struct battle_missile_s), bt->num_missile);
+            --i;
             --bt->num_missile;
         }
     }
