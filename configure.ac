@@ -7,7 +7,7 @@ AC_ARG_WITH(samplerate, AS_HELP_STRING([--without-samplerate], [do not try to us
 AC_ARG_ENABLE(tools, AS_HELP_STRING([--disable-tools], [disables extra tools]))
 AC_ARG_ENABLE(uiclassic, AS_HELP_STRING([--disable-uiclassic], [disables classic UI]))
 AC_ARG_ENABLE(uicmdline, AS_HELP_STRING([--disable-uicmdline], [disables cmdline UI]))
-AC_ARG_ENABLE(hwsdl1, AS_HELP_STRING([--disable-hwsdl1], [disables SDL1 HW]))
+AC_ARG_ENABLE(hwsdl1, AS_HELP_STRING([--enable-hwsdl1], [enables SDL1 HW]))
 AC_ARG_ENABLE(hwsdl2, AS_HELP_STRING([--disable-hwsdl2], [disables SDL2 HW]))
 
 AC_CONFIG_SRCDIR([src/main.c])
@@ -144,7 +144,7 @@ AM_CONDITIONAL(COMPILE_HW_SDL, false)
 AM_CONDITIONAL(COMPILE_HW_SDL1, false)
 HW_SDL1_CFLAGS=
 HW_SDL1_LIBS=
-if test x"$enable_hwsdl1" != "xno"; then
+if test x"$enable_hwsdl1" == "xyes"; then
     dnl check for sdl-config
     AC_CHECK_TOOLS(sdl_config, sdl-config, no)
 
