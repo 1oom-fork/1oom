@@ -542,7 +542,7 @@ static int game_battle_get_priority(const struct battle_item_s *b, race_t race)
     if (b->sbmask & (1 << SHIP_SPECIAL_BOOL_SCANNER)) {
         prio += 3;
     }
-    if (b->subspace != 0) {
+    if (b->subspace > 0) {
         prio += b->subspace * 1000;
     }
     if (race == RACE_ALKARI) {
