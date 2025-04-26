@@ -302,6 +302,7 @@ static void video_update(void)
                 if (hw_opt_autotrim || video.shrink || video.enlarge) {
                     video_adjust_window_size(&w, &h);
                 }
+                log_message("SDL_SetWindowSize: %d, %d\n", w, h);
                 SDL_SetWindowSize(video.window, w, h);
                 hw_opt_screen_winw = w;
                 hw_opt_screen_winh = h;
