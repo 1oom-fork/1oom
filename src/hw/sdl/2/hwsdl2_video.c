@@ -448,6 +448,7 @@ static void video_window_destroy(void)
 {
     video_destroy_renderer();
     if (video.window) {
+        hw_mouse_ungrab();
         SDL_DestroyWindow(video.window);
         video.window = NULL;
     }
