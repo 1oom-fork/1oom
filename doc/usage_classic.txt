@@ -53,7 +53,6 @@ The following new UI features are always enabled/available:
 - F4/F5 can iterate over fleets of the same owner
 - In Tech screen +/- adjusts the current field slider
 - In Tech screen the L key locks the current slider
-- Clicking the portraits in Races screen brings Report page
 - In Races screen the keys 1-5 correspond to clicking the portraits
 - In Specs screen the keys 1-6 correspond to clicking the scrap button
 - In Tech screen the keys 1-6 correspond to clicking the tech fields
@@ -71,6 +70,7 @@ The following new UI features are always enabled/available:
 
 The config file item "ui.uiextra" (set via the -uiextra command-line option)
 or selecting the 1oom UI preset enables the following extra UI features:
+- Clicking the portraits in Races screen brings Report page
 - Report screen shows name of AI leaders, Map screen shows current year
 - Pressing + or - will show the slider when sending transport
 - Fleet deployment shows the amount of available ships
