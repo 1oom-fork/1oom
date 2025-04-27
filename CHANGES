@@ -1,7 +1,15 @@
+1oom-v1.11.3
+------------
+
+- SDL1 is no longer supported and disabled by default
+- Minor SDL2 fixes
+- Fixed several significant bugs in the game engine to match the original
+
 1oom-v1.11.2
 ------------
 
 This release corrects several fundamental differences from the original:
+
 - The behavior of ships with bio-weapons has been restored
 - The code responsible for landing troops on a planet with zero population
   has been restored
