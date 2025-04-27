@@ -125,18 +125,16 @@ For some graphical UIs:
                            default = 833333, or (1000000 * 5)/6
 
 For SDL HWs:
+    -forcesw             Force software rendering
+    -noforcesw           Do not force software rendering
     -mousespd SPEED      Set mouse speed (default = 100)
     -sdlmixersf FILE.SF2 Set SDL_mixer soundfont
 
 For SDL1 HW:
-    -gl                  Enable OpenGL
-    -nogl                Disable OpenGL
     -bpp BPP             Set bits/pixel (0 = autodetect)
     -filt FILTER         Set OpenGL filter (0 = nearest, 1 = linear)
 
 For SDL2 HW:
-    -forcesw             Force software rendering
-    -noforcesw           Do not force software rendering
     -intscaling          Force integer scaling
     -nointscaling        Do not force integer scaling
     -relmouse            Use relative mouse mode

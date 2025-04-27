@@ -20,7 +20,6 @@
 #define HW_DEFAULT_FULLSCREEN   false
 #define HAVE_SDLX_ASPECT
 
-bool hw_opt_force_sw = false;
 bool hw_opt_int_scaling = false;
 #if SDL_VERSION_ATLEAST(2, 0, 18)
     bool hw_opt_relmouse = false;
@@ -48,7 +47,6 @@ static const char *hw_uiopts_scaling_quality_get(void)
 /* -------------------------------------------------------------------------- */
 
 const struct cfg_items_s hw_cfg_items_extra[] = {
-    CFG_ITEM_BOOL("force_sw", &hw_opt_force_sw),
     CFG_ITEM_BOOL("int_scaling", &hw_opt_int_scaling),
     CFG_ITEM_BOOL("relmouse", &hw_opt_relmouse),
     CFG_ITEM_BOOL("autotrim", &hw_opt_autotrim),
@@ -61,12 +59,6 @@ const struct cfg_items_s hw_cfg_items_extra[] = {
 #include "hwsdl_opt.c"
 
 const struct cmdline_options_s hw_cmdline_options_extra[] = {
-    { "-forcesw", 0,
-      options_enable_bool_var, (void *)&hw_opt_force_sw,
-      NULL, "Force software rendering" },
-    { "-noforcesw", 0,
-      options_disable_bool_var, (void *)&hw_opt_force_sw,
-      NULL, "Do not force software rendering" },
     { "-intscaling", 0,
       options_enable_bool_var, (void *)&hw_opt_int_scaling,
       NULL, "Force integer scaling" },
