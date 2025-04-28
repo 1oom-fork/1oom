@@ -105,7 +105,7 @@ static void game_battle_item_add(struct battle_s *bt, const shipparsed_t *sp, ba
     }
 }
 
-static void game_battle_post(struct game_s *g, int loser, int winner, uint8_t from)
+static void game_battle_post(struct game_s *g, player_id_t loser, int winner, uint8_t from)
 {
     if (loser >= PLAYER_NUM) {
         monster_id_t mi;
