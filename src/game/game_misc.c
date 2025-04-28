@@ -225,7 +225,7 @@ void game_update_total_research(struct game_s *g)
     }
 }
 
-void game_update_eco_on_waste(struct game_s *g, int player_i, bool force_adjust)
+void game_update_eco_on_waste(struct game_s *g, player_id_t player_i, bool force_adjust)
 {
     empiretechorbit_t *e = &(g->eto[player_i]);
     if (e->race == RACE_SILICOID) {
@@ -549,7 +549,7 @@ void game_adjust_slider_group(int16_t *slidertbl, int slideri, int16_t value, in
     }
 }
 
-int game_get_min_dist(const struct game_s *g, int player_i, int planet_i)
+int game_get_min_dist(const struct game_s *g, player_id_t player_i, int planet_i)
 {
     int dist, mindist = 255;
     for (int i = 0; i < g->galaxy_stars; ++i) {
