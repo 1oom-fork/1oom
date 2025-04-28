@@ -538,7 +538,7 @@ static void audience_menu_treaty(struct audience_s *au)
     uint8_t war_num, all_num, dtype;
     player_id_t war_tbl[PLAYER_NUM], all_tbl[PLAYER_NUM];
     int si;
-    for (int i = 0; i < TBLLEN(condtbl); ++i) {
+    for (size_t i = 0; i < TBLLEN(condtbl); ++i) {
         condtbl[i] = true;
     }
     strcpy(au->buf, game_str_au_youprte);
@@ -707,7 +707,7 @@ static void audience_menu_threat(struct audience_s *au)
     int16_t selected = 0;
     bool condtbl[5];
     uint8_t dtype = 0;
-    for (int i = 0; i < TBLLEN(condtbl); ++i) {
+    for (size_t i = 0; i < TBLLEN(condtbl); ++i) {
         condtbl[i] = true;
     }
     strcpy(au->buf, game_str_au_youract);
@@ -1048,7 +1048,7 @@ static void audience_menu_main(struct audience_s *au)
     bool condtbl[6];
     while (!flag_done) {
         int16_t selected;
-        for (int i = 0; i < TBLLEN(condtbl); ++i) {
+        for (size_t i = 0; i < TBLLEN(condtbl); ++i) {
             condtbl[i] = true;
         }
         if (eh->treaty[pa] >= TREATY_WAR) {
