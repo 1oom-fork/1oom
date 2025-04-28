@@ -462,7 +462,7 @@ static void game_generate_planets(struct game_s *g)
         g->galaxy_maxy = ty + 25;
     }
 
-    for (int i = PLAYER_0; i < PLAYER_NUM; ++i) {
+    for (player_id_t i = PLAYER_0; i < PLAYER_NUM; ++i) {
         g->evn.voted[i] = PLAYER_NONE;
     }
 
@@ -675,7 +675,7 @@ start_of_func:
                     pi = rnd_1_n(g->galaxy_w - 2, &g->seed) + rnd_1_n(g->galaxy_h - 2, &g->seed) * g->galaxy_w;
                 }
                 flag_again2 = false;
-                for (int j = 0; j < i; ++j) {
+                for (player_id_t j = PLAYER_0; j < i; ++j) {
                     if (tblhome[j] == pi) {
                         flag_again2 = true;
                     }
@@ -690,7 +690,7 @@ start_of_func:
             uint16_t dist, mindist;
             mindist = 10000;
             for (player_id_t i = PLAYER_0; (i < g->players) && (i < 2); ++i) {
-                for (int j = 0; j < g->players; ++j) {
+                for (player_id_t j = PLAYER_0; j < g->players; ++j) {
                     if (i == j) { continue; }
                     dist = util_math_dist_fast(g->planet[tblhome[i]].x, g->planet[tblhome[i]].y, g->planet[tblhome[j]].x, g->planet[tblhome[j]].y);
                     SETMIN(mindist, dist);
@@ -742,7 +742,7 @@ start_of_func:
     }
 #if 0
     /* FIXME in MOO1 this is actually after the if (!flag_all_ok) test, making it ineffective */
-    for (int i = 0; (i < g->players) && (i <= g->difficulty); ++i) {
+    for (player_id_t i = PLAYER_0; (i < g->players) && (i <= g->difficulty); ++i) {
         uint16_t dist, mindist;
         mindist = 10000;
         for (int j = 0; j < g->galaxy_stars; ++j) {
@@ -1142,11 +1142,11 @@ int game_new(struct game_s *g, struct game_aux_s *gaux, struct game_new_options_
     {
         uint32_t vo, vr = 0, vb = 0, m = 1, va = 0;
         vo = g->difficulty + g->galaxy_size * 10 + g->players * 100;
-        for (int i = 0; i < g->players; ++i, m *= 0x10) {
+        for (player_id_t i = PLAYER_0; i < g->players; ++i, m *= 0x10) {
             vr += ((g->eto[i].race + 1) % (RACE_NUM + 1)) * m;
         }
         m = 1;
-        for (int i = 0; i < g->players; ++i, m *= 10) {
+        for (player_id_t i = PLAYER_0; i < g->players; ++i, m *= 10) {
             vb += ((g->eto[i].banner + 1) % (BANNER_NUM + 1)) * m;
             if (IS_HUMAN(g, i)) {
                 va += m;
@@ -1233,7 +1233,7 @@ void game_new_generate_other_emperor_name(struct game_s *g, player_id_t player)
         strcpy(buf, str);
         util_trim_whitespace(buf); /* fix "Zygot  " */
         flag_in_use = true;
-        for (int i = 0; i < g->players; ++i) {
+        for (player_id_t i = PLAYER_0; i < g->players; ++i) {
             if (strcasecmp(g->emperor_names[i], buf) == 0) {
                 flag_in_use = false;
                 break;

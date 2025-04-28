@@ -415,7 +415,7 @@ void ui_gmap_basic_shutdown(void *ctx)
 {
 }
 
-void ui_gmap_basic_start_player(void *ctx, int pi)
+void ui_gmap_basic_start_player(void *ctx, player_id_t pi)
 {
     struct gmap_basic_data_s *d = ctx;
     if (d->show_switch) {
@@ -427,21 +427,21 @@ void ui_gmap_basic_start_player(void *ctx, int pi)
     }
 }
 
-void ui_gmap_basic_start_frame(void *ctx, int pi)
+void ui_gmap_basic_start_frame(void *ctx, player_id_t pi)
 {
     /*struct gmap_basic_data_s *d = ctx;*/
     ui_delay_prepare();
     vgabuf_copy_back_from_page2();
 }
 
-void ui_gmap_basic_draw_frame(void *ctx, int pi/*player_i*/)
+void ui_gmap_basic_draw_frame(void *ctx, player_id_t pi)
 {
     struct gmap_basic_data_s *d = ctx;
     struct game_s *g = d->g;
     ui_draw_filled_rect(6, 6, 221, 177, 0);
     uiobj_set_limits(6, 6, 221, 177);
     ui_gmap_basic_draw_galaxy(d);
-    if (pi >= 0) {
+    if (pi != PLAYER_NONE) {
         for (int i = 0; i < g->enroute_num; ++i) {
             const fleet_enroute_t *r = &(g->enroute[i]);
             if (BOOLVEC_IS1(r->visible, pi)) {
@@ -562,7 +562,7 @@ void ui_gmap_basic_draw_only(void *ctx, int pi/*planet_i*/)
     }
 }
 
-void ui_gmap_basic_finish_frame(void *ctx, int pi)
+void ui_gmap_basic_finish_frame(void *ctx, player_id_t pi)
 {
     /*struct gmap_basic_data_s *d = ctx;*/
     ui_draw_finish();

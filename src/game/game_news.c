@@ -96,10 +96,10 @@ void game_news_get_msg(const struct game_s *g, struct news_s *ns, char *buf)
         int num = 0;
         int tbl_player[PLAYER_NUM];
         int tbl_stat[PLAYER_NUM];
-        for (int i = 0; i < PLAYER_NUM; ++i) {
+        for (player_id_t i = PLAYER_0; i < PLAYER_NUM; ++i) {
             ns->stats[i] = 0;
         }
-        for (int i = 0; i < g->players; ++i) {
+        for (player_id_t i = PLAYER_0; i < g->players; ++i) {
             if (IS_ALIVE(g, i)) {
                 int v;
                 tbl_player[num] = i;

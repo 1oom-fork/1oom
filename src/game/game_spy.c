@@ -689,7 +689,7 @@ void game_spy_sab_human(struct game_s *g)
                     } else if ((snum != 0) && (act > UI_SABOTAGE_FACT)) {
                         const empiretechorbit_t *et;
                         et = &(g->eto[target]);
-                        for (int i = 0; (i < g->players) && (other2 == PLAYER_NONE); ++i) {
+                        for (player_id_t i = PLAYER_0; (i < g->players) && (other2 == PLAYER_NONE); ++i) {
                             if ((i != player) && BOOLVEC_IS1(et->within_frange, i)) {
                                 if (other1 == PLAYER_NONE) {
                                     other1 = i;
@@ -704,7 +704,7 @@ void game_spy_sab_human(struct game_s *g)
                     }
                 }
                 if (act != UI_SABOTAGE_NONE) {
-                    int other;
+                    player_id_t other;
                     BOOLVEC_SET1(p->explored, player);
                     g->seen[player][planet].owner = p->owner;
                     g->seen[player][planet].pop = p->pop;

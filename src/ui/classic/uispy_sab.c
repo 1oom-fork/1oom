@@ -252,7 +252,7 @@ static void sabotage_done_draw_cb(void *vptr)
 
 /* -------------------------------------------------------------------------- */
 
-ui_sabotage_t ui_spy_sabotage_ask(struct game_s *g, int spy, int target, uint8_t *planetptr)
+ui_sabotage_t ui_spy_sabotage_ask(struct game_s *g, player_id_t spy, player_id_t target, uint8_t *planetptr)
 {
     struct sabotage_data_s d;
     int16_t oi_bases, oi_ind, oi_revolt, oi_planet[PLANETS_MAX];
@@ -344,12 +344,12 @@ ui_sabotage_t ui_spy_sabotage_ask(struct game_s *g, int spy, int target, uint8_t
     return action;
 }
 
-int ui_spy_sabotage_done(struct game_s *g, int pi, int spy, int target, ui_sabotage_t act, int other1, int other2, uint8_t planet, int snum)
+player_id_t ui_spy_sabotage_done(struct game_s *g, player_id_t pi, player_id_t spy, player_id_t target, ui_sabotage_t act, player_id_t other1, player_id_t other2, uint8_t planet, int snum)
 {
     struct sabotage_data_s d;
     int16_t oi_cont, oi_other1, oi_other2;
     bool flag_done = false;
-    int other = PLAYER_NONE;
+    player_id_t other = PLAYER_NONE;
     d.g = g;
     d.api = pi;
     d.spy = spy;
