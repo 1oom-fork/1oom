@@ -175,7 +175,7 @@ void ui_copyprotection_lose(struct game_s *g, struct game_end_s *ge)
         }
     }
     for (int si = 0; si < g->galaxy_stars; ++si) {
-        if (g->planet[si].owner == -1) {
+        if (g->planet[si].owner == PLAYER_NONE) {
             continue;
         }
         if (IS_HUMAN(g, g->planet[si].owner)) {
@@ -184,7 +184,7 @@ void ui_copyprotection_lose(struct game_s *g, struct game_end_s *ge)
         /*  ++planet_num[si];  WASBUG: wrong index   */
         ++planet_num[g->planet[si].owner];
     }
-    for (int si = 0; si < g->players; ++si) {
+    for (player_id_t si = PLAYER_0; si < g->players; ++si) {
         if (si == api) {
             continue;
         }
