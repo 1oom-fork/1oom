@@ -280,13 +280,13 @@ static bool savetype_is_moo13(struct game_s *g, const char *fname)
     } while (0)
 #define M13_GET_TBL_16(item_, addr_) \
     do { \
-        for (int i_ = 0; i_ < TBLLEN(item_); ++i_) { \
+        for (size_t i_ = 0; i_ < TBLLEN(item_); ++i_) { \
             item_[i_] = GET_LE_16(&save2buf[(addr_) + i_ * 2]); \
         } \
     } while (0)
 #define M13_GET_TBL_16_OWNER(item_, addr_) \
     do { \
-        for (int i_ = 0; i_ < TBLLEN(item_); ++i_) { \
+        for (size_t i_ = 0; i_ < TBLLEN(item_); ++i_) { \
             uint16_t t_; \
             t_ = GET_LE_16(&save2buf[(addr_) + i_ * 2]); \
             if (t_ == 0xffff) { t_ = PLAYER_NONE; }; \
@@ -295,7 +295,7 @@ static bool savetype_is_moo13(struct game_s *g, const char *fname)
     } while (0)
 #define M13_GET_TBL_16_HATED(item_, addr_) \
     do { \
-        for (int i_ = 0; i_ < TBLLEN(item_); ++i_) { \
+        for (size_t i_ = 0; i_ < TBLLEN(item_); ++i_) { \
             uint16_t t_; \
             t_ = GET_LE_16(&save2buf[(addr_) + i_ * 2]); \
             if (t_ == 0) { t_ = PLAYER_NONE; } \
@@ -332,7 +332,7 @@ static bool savetype_is_moo13(struct game_s *g, const char *fname)
     } while (0)
 #define M13_GET_TBL_32(item_, addr_) \
     do { \
-        for (int i_ = 0; i_ < TBLLEN(item_); ++i_) { \
+        for (size_t i_ = 0; i_ < TBLLEN(item_); ++i_) { \
             item_[i_] = GET_LE_32(&save2buf[(addr_) + i_ * 4]); \
         } \
     } while (0)
@@ -746,7 +746,7 @@ static int savetype_de_moo13(struct game_s *g, const char *fname)
     } while (0)
 #define M13_SET_TBL_16(item_, addr_) \
     do { \
-        for (int i_ = 0; i_ < TBLLEN(item_); ++i_) { \
+        for (size_t i_ = 0; i_ < TBLLEN(item_); ++i_) { \
             uint16_t t_; \
             t_ = item_[i_]; \
             SET_LE_16(&save2buf[(addr_) + i_ * 2], t_); \
@@ -754,7 +754,7 @@ static int savetype_de_moo13(struct game_s *g, const char *fname)
     } while (0)
 #define M13_SET_TBL_16_OWNER(item_, addr_) \
     do { \
-        for (int i_ = 0; i_ < TBLLEN(item_); ++i_) { \
+        for (size_t i_ = 0; i_ < TBLLEN(item_); ++i_) { \
             uint16_t t_; \
             t_ = item_[i_]; \
             if (t_ == PLAYER_NONE) { t_ = 0xffff; }; \
@@ -763,7 +763,7 @@ static int savetype_de_moo13(struct game_s *g, const char *fname)
     } while (0)
 #define M13_SET_TBL_16_HATED(item_, addr_) \
     do { \
-        for (int i_ = 0; i_ < TBLLEN(item_); ++i_) { \
+        for (size_t i_ = 0; i_ < TBLLEN(item_); ++i_) { \
             uint16_t t_; \
             t_ = item_[i_]; \
             if (t_ == PLAYER_NONE) { t_ = 0; } \
@@ -796,7 +796,7 @@ static int savetype_de_moo13(struct game_s *g, const char *fname)
     } while (0)
 #define M13_SET_TBL_32(item_, addr_) \
     do { \
-        for (int i_ = 0; i_ < TBLLEN(item_); ++i_) { \
+        for (size_t i_ = 0; i_ < TBLLEN(item_); ++i_) { \
             uint32_t t_; \
             t_ = item_[i_]; \
             SET_LE_32(&save2buf[(addr_) + i_ * 4], t_); \
