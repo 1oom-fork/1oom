@@ -2630,7 +2630,8 @@ static void game_battle_ai_target1_sub4(struct battle_s *bt)
 {
     int itemi = bt->cur_item;
     struct battle_item_s *b = &(bt->item[itemi]);
-    int dist = 0, mindist, n = 0, oppdist;
+    int dist = 0, mindist, oppdist;
+    size_t n = 0;
     uint8_t tblxy[10];
     if (b->unman == b->man) {
         return;
@@ -2790,7 +2791,8 @@ static int game_battle_ai_target1(struct battle_s *bt, int target_i)
     bestrange = game_battle_ai_best_range(bt, target_i);
     if ((b->actman > 0) || (b->subspace == 1)) {
         if ((target_i != -1) && (game_battle_ai_missile_evade(bt) == 0)) {
-            int vmax = -999, n = 1, i;
+            int vmax = -999, i;
+            size_t n = 1;
             uint8_t tblxy[20];
             for (int sy = 0; sy < BATTLE_AREA_H; ++sy) {
                 for (int sx = 0; sx < BATTLE_AREA_W; ++sx) {
