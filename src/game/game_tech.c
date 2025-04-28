@@ -47,7 +47,7 @@ static uint8_t find_byte_in_tbl(uint8_t b, const uint8_t *tbl, uint32_t len)
     return 0;
 }
 
-static uint16_t get_base_cost_mod_armor(const struct game_s *g, int player_i, int percent)
+static uint16_t get_base_cost_mod_armor(const struct game_s *g, player_id_t player_i, int percent)
 {
     uint16_t tech_i = 0;
     uint8_t mult;
@@ -100,7 +100,7 @@ static uint16_t get_base_cost_mod_comp(const struct game_s *g, int tech_i, int p
     return (tbl_shiptech_comp[tech_i].cost[SHIP_HULL_LARGE] * mult) / 1000 + tbl_shiptech_comp[tech_i].power[SHIP_HULL_LARGE] / 10;
 }
 
-static uint16_t get_base_cost_mod_jammer(const struct game_s *g, int player_i, int percent)
+static uint16_t get_base_cost_mod_jammer(const struct game_s *g, player_id_t player_i, int percent)
 {
     uint16_t tech_i = 0;
     uint8_t mult;
@@ -156,14 +156,14 @@ static void game_tech_ai_tech_next(struct game_s *g, player_id_t player, tech_fi
 
 /* -------------------------------------------------------------------------- */
 
-uint8_t game_tech_player_has_tech(const struct game_s *g, int field_i, int tech_i, int player_i)
+uint8_t game_tech_player_has_tech(const struct game_s *g, int field_i, int tech_i, player_id_t player_i)
 {
     const uint8_t *p = g->srd[player_i].researchcompleted[field_i];
     uint32_t len = g->eto[player_i].tech.completed[field_i];
     return find_byte_in_tbl(tech_i, p, len);
 }
 
-uint8_t game_tech_player_best_tech(const struct game_s *g, int field_i, int tech_i_base, int tech_i_step, int tech_i_max, int player_i)
+uint8_t game_tech_player_best_tech(const struct game_s *g, int field_i, int tech_i_base, int tech_i_step, int tech_i_max, player_id_t player_i)
 {
     uint8_t tech_best = 0;
     for (int tech_i = (tech_i_base >= 2) ? tech_i_base : tech_i_step; tech_i < tech_i_max; tech_i += tech_i_step) {
@@ -174,12 +174,12 @@ uint8_t game_tech_player_best_tech(const struct game_s *g, int field_i, int tech
     return tech_best;
 }
 
-uint8_t game_tech_player_best_engine(const struct game_s *g, int player_i)
+uint8_t game_tech_player_best_engine(const struct game_s *g, player_id_t player_i)
 {
     return game_tech_player_best_tech(g, TECH_FIELD_PROPULSION, 0, 6, 50, player_i) + 3;
 }
 
-uint16_t game_get_base_cost(const struct game_s *g, int player_i)
+uint16_t game_get_base_cost(const struct game_s *g, player_id_t player_i)
 {
     const uint8_t *p = g->eto[player_i].tech.percent;
     const empiretechorbit_t *e = &(g->eto[player_i]);

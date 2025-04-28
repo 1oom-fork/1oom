@@ -131,7 +131,7 @@ static void stolen_draw_cb(void *vptr)
 
 /* -------------------------------------------------------------------------- */
 
-int ui_spy_steal(struct game_s *g, int spy, int target, uint8_t flags_field)
+int ui_spy_steal(struct game_s *g, player_id_t spy, player_id_t target, uint8_t flags_field)
 {
     struct steal_data_s d;
     bool flag_done = false;
@@ -201,7 +201,7 @@ int ui_spy_steal(struct game_s *g, int spy, int target, uint8_t flags_field)
     return selected;
 }
 
-void ui_spy_stolen(struct game_s *g, int pi, int spy, int field, uint8_t tech)
+void ui_spy_stolen(struct game_s *g, player_id_t pi, player_id_t spy, int field, uint8_t tech)
 {
     struct stolen_data_s d;
     bool flag_done = false;

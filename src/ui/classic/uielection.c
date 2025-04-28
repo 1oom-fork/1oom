@@ -189,7 +189,7 @@ void ui_election_delay(struct election_s *el, int delay)
     }
 }
 
-int ui_election_vote(struct election_s *el, int player_i)
+int ui_election_vote(struct election_s *el, player_id_t player_i)
 {
     struct election_data_s *d = el->uictx;
     struct game_s *g = el->g;
@@ -231,7 +231,7 @@ int ui_election_vote(struct election_s *el, int player_i)
     return 0;
 }
 
-bool ui_election_accept(struct election_s *el, int player_i)
+bool ui_election_accept(struct election_s *el, player_id_t player_i)
 {
     struct election_data_s *d = el->uictx;
     char buf[2][0x20];

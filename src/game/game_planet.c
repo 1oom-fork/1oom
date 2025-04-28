@@ -35,7 +35,7 @@ void game_planet_destroy(struct game_s *g, uint8_t planet_i, player_id_t attacke
     p->pop_prev = 0;
     p->prod_after_maint = 0;
     p->bc_to_ship = 0;
-    for (int i = 0; i < PLAYER_NUM; ++i) {
+    for (player_id_t i = PLAYER_0; i < PLAYER_NUM; ++i) {
         p->inbound[i] = 0;
     }
     p->buildship = 0;

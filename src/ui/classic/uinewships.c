@@ -83,7 +83,7 @@ static void newships_draw_cb(void *vptr)
 
 /* -------------------------------------------------------------------------- */
 
-void ui_newships(struct game_s *g, int pi)
+void ui_newships(struct game_s *g, player_id_t pi)
 {
     struct newships_data_s d;
     bool flag_done = false;

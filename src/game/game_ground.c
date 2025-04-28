@@ -180,10 +180,10 @@ void game_turn_ground(struct game_s *g)
         player_id_t powner;
         uint16_t inbound[PLAYER_NUM];
         powner = p->owner;
-        for (player_id_t i = 0; i < g->players; ++i) {
+        for (player_id_t i = PLAYER_0; i < g->players; ++i) {
             inbound[i] = p->inbound[i];
         }
-        for (player_id_t i = 0; i < g->players; ++i) {
+        for (player_id_t i = PLAYER_0; i < g->players; ++i) {
             if ((i != powner) || (p->unrest == PLANET_UNREST_REBELLION)) {
                 powner = p->owner;  /* FIXME redundant */
                 p->inbound[i] = inbound[i]; /* FIXME why ? */
