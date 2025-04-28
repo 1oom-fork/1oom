@@ -49,7 +49,7 @@ void ui_turn_pre(const struct game_s *g)
     vgabuf_copy_back_to_page2();
 }
 
-void ui_turn_msg(struct game_s *g, int pi, const char *str)
+void ui_turn_msg(struct game_s *g, player_id_t pi, const char *str)
 {
     struct turnmsg_data_s d;
     bool flag_done = false;

@@ -53,7 +53,7 @@ static void caught_draw_cb(void *vptr)
     lbxfont_select(2, 6, 0, 0);
 
     y += 20;
-    for (int i = 0; i < g->players; ++i) {
+    for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         if ((i != d->api) && BOOLVEC_IS1(e->within_frange, i)) {
             int v;
             sprintf(buf, "%s:", game_str_tbl_race[g->eto[i].race]);

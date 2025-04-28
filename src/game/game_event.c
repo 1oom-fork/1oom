@@ -1043,7 +1043,7 @@ bool game_event_run(struct game_s *g, struct game_end_s *ge)
         int num_humans = 0;
         ns.type = GAME_NEWS_COUP;
         ns.race = e->race;
-        for (int i = PLAYER_0; i < g->players; ++i) {
+        for (player_id_t i = PLAYER_0; i < g->players; ++i) {
             if (IS_HUMAN(g, i) && IS_ALIVE(g, i)) {
                 ++num_humans;
             }
@@ -1067,7 +1067,7 @@ bool game_event_run(struct game_s *g, struct game_end_s *ge)
             ns.num1 = e->trait1;
             ns.num2 = e->trait2;
             any_in_range = IS_HUMAN(g, player);
-            for (int i = PLAYER_0; (i < g->players) && (!any_in_range); ++i) {
+            for (player_id_t i = PLAYER_0; (i < g->players) && (!any_in_range); ++i) {
                 empiretechorbit_t *e2 = &(g->eto[i]);
                 if (IS_HUMAN(g, i) && BOOLVEC_IS1(e2->within_frange, player) && IS_ALIVE(g, i)) {
                     any_in_range = true;
@@ -1091,7 +1091,7 @@ bool game_event_run(struct game_s *g, struct game_end_s *ge)
                 ++num_planets[p->owner];
             }
         }
-        for (int i = PLAYER_0; i < g->players; ++i) {
+        for (player_id_t i = PLAYER_0; i < g->players; ++i) {
             if (num_planets[i] > max_pl) {
                 max_pl = num_planets[i];
                 top_player = i;
