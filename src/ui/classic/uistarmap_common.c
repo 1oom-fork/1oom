@@ -795,7 +795,7 @@ void ui_starmap_fill_oi_tbls(struct starmap_data_s *d)
     UIOBJI_SET_TBL_INVALID(d->oi_tbl_enroute);
     UIOBJI_SET_TBL_INVALID(d->oi_tbl_transport);
     for (int i = 0; i < g->galaxy_stars; ++i) {
-        for (int j = 0; j < g->players; ++j) {
+        for (player_id_t j = PLAYER_0; j < g->players; ++j) {
             d->oi_tbl_pl_stars[j][i] = UIOBJI_INVALID;
         }
     }
@@ -805,7 +805,7 @@ void ui_starmap_fill_oi_tbls(struct starmap_data_s *d)
             int numorbits, x0, y0;
             player_id_t tblpl[PLAYER_NUM];
             numorbits = 0;
-            for (int j = 0; j < g->players; ++j) {
+            for (player_id_t j = PLAYER_0; j < g->players; ++j) {
                 const fleet_orbit_t *r = &(g->eto[j].orbit[i]);
                 for (int k = 0; k < g->eto[j].shipdesigns_num; ++k) {
                     if (r->ships[k]) {

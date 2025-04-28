@@ -99,7 +99,7 @@ struct starmap_data_s {
         UIOBJI_SET_TBL_INVALID(d.oi_tbl_enroute); \
         UIOBJI_SET_TBL_INVALID(d.oi_tbl_transport); \
         for (int i = 0; i < g->galaxy_stars; ++i) { \
-            for (int j = 0; j < g->players; ++j) { \
+            for (player_id_t j = PLAYER_0; j < g->players; ++j) { \
                 d.oi_tbl_pl_stars[j][i] = UIOBJI_INVALID; \
             } \
         } \
