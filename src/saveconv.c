@@ -396,7 +396,7 @@ static int savetype_de_moo13(struct game_s *g, const char *fname)
             M13_GET_16(g->nebula_y1[i][j], 0xe2b2 + (i * 4 + j) * 2);
         }
     }
-    for (int i = 0; i < g->players; ++i) {
+    for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         memcpy(g->emperor_names[i], &save2buf[0xe1ba + i * 15], EMPEROR_NAME_LEN - 1);
     }
     M13_GET_16(g->planet_focus_i[0], 0xe236);
@@ -457,7 +457,7 @@ static int savetype_de_moo13(struct game_s *g, const char *fname)
         M13_GET_16(s->bases, 0xe492 + i * 2);
         M13_GET_16(s->factories, 0xe56a + i * 2);
     }
-    for (int j = PLAYER_1; j < g->players; ++j) {
+    for (player_id_t j = PLAYER_1; j < g->players; ++j) {
         for (int i = 0; i < g->galaxy_stars; ++i) {
             seen_t *s = &(g->seen[j][i]);
             s->owner = PLAYER_NONE;
@@ -485,7 +485,7 @@ static int savetype_de_moo13(struct game_s *g, const char *fname)
         M13_GET_8(r->speed, rb + 0x10);
         M13_GET_16(r->pop, rb + 0x08);
     }
-    for (int i = 0; i < g->players; ++i) {
+    for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         empiretechorbit_t *e = &(g->eto[i]);
         int eb;
         eb = 0x7118 + i * 0xdd4;
@@ -553,7 +553,7 @@ static int savetype_de_moo13(struct game_s *g, const char *fname)
         M13_GET_16(e->shipi_colony, eb + 0xdd0);
         M13_GET_16(e->shipi_bomber, eb + 0xdd2);
     }
-    for (int i = 0; i < g->players; ++i) {
+    for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         shipresearch_t *srd = &(g->srd[i]);
         int srdb, pos;
         srdb = 0xc410 + i * 0x468;
@@ -629,7 +629,7 @@ static int savetype_de_moo13(struct game_s *g, const char *fname)
         M13_GET_TBL_16(ev->home, evb + 0x0a0);
         M13_GET_8(ev->report_stars, evb + 0x0ac);
         M13_GET_TBL_16(ev->new_ships[PLAYER_0], evb + 0x1a4);
-        for (int i = 1; i < g->players; ++i) {
+        for (player_id_t i = PLAYER_1; i < g->players; ++i) {
             M13_GET_16(ev->spies_caught[i][PLAYER_0], evb + 0x1f2 + i * 2);
         }
         M13_GET_TBL_16(ev->spies_caught[PLAYER_0], evb + 0x1fe);
@@ -848,7 +848,7 @@ static int savetype_en_moo13(struct game_s *g, const char *fname)
             M13_SET_16(g->nebula_y1[i][j], 0xe2b2 + (i * 4 + j) * 2);
         }
     }
-    for (int i = 0; i < g->players; ++i) {
+    for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         memcpy(&save2buf[0xe1ba + i * 15], g->emperor_names[i], EMPEROR_NAME_LEN - 1);
     }
     M13_SET_16(g->planet_focus_i[0], 0xe236);
@@ -931,7 +931,7 @@ static int savetype_en_moo13(struct game_s *g, const char *fname)
         M13_SET_8(r->speed, rb + 0x10);
         M13_SET_16(r->pop, rb + 0x08);
     }
-    for (int i = 0; i < g->players; ++i) {
+    for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         const empiretechorbit_t *e = &(g->eto[i]);
         int eb;
         eb = 0x7118 + i * 0xdd4;
@@ -999,7 +999,7 @@ static int savetype_en_moo13(struct game_s *g, const char *fname)
         M13_SET_16(e->shipi_colony, eb + 0xdd0);
         M13_SET_16(e->shipi_bomber, eb + 0xdd2);
     }
-    for (int i = 0; i < g->players; ++i) {
+    for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         const shipresearch_t *srd = &(g->srd[i]);
         int srdb, pos;
         srdb = 0xc410 + i * 0x468;
@@ -1076,7 +1076,7 @@ static int savetype_en_moo13(struct game_s *g, const char *fname)
         M13_SET_TBL_16(ev->home, evb + 0x0a0);
         M13_SET_8(ev->report_stars, evb + 0x0ac);
         M13_SET_TBL_16(ev->new_ships[PLAYER_0], evb + 0x1a4);
-        for (int i = 1; i < g->players; ++i) {
+        for (player_id_t i = PLAYER_1; i < g->players; ++i) {
             M13_SET_16(ev->spies_caught[i][PLAYER_0], evb + 0x1f2 + i * 2);
         }
         M13_SET_TBL_16(ev->spies_caught[PLAYER_0], evb + 0x1fe);
@@ -1108,7 +1108,7 @@ static int savetype_en_moo13(struct game_s *g, const char *fname)
         }
     }
     M13_SET_16(1000, 0xe68a);
-    for (int i = 0; i < g->players; ++i) {
+    for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         const empiretechorbit_t *e = &(g->eto[i]);
         int srdb;
         srdb = 0xc410 + 0x468 * i;
@@ -2041,10 +2041,10 @@ static int savetype_en_text(struct game_s *g, const char *fname)
             text_dump_prefix_del(tp);
         }
     }
-    for (int i = 0; i < g->players; ++i) {
+    for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         OUTLINE "emperor_names[%i] = \"%s\"\n", i, g->emperor_names[i]);
     }
-    for (int i = 0; i < g->players; ++i) {
+    for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         OUTLINE "planet_focus_i[%i] = %i\n", i, g->planet_focus_i[i]);
     }
     OUTFLUSH();
@@ -2100,7 +2100,7 @@ static int savetype_en_text(struct game_s *g, const char *fname)
         text_dump_prefix_del(tp);
         OUTFLUSH();
     }
-    for (int j = 0; j < g->players; ++j) {
+    for (player_id_t j = PLAYER_0; j < g->players; ++j) {
         for (int i = 0; i < g->galaxy_stars; ++i) {
             const seen_t *s = &(g->seen[j][i]);
             OUTLINE "seen[%i][%i] = { .owner = %i, .pop = %i, .bases = %i, .factories = %i }\n", j, i, s->owner, s->pop, s->bases, s->factories);
@@ -2119,7 +2119,7 @@ static int savetype_en_text(struct game_s *g, const char *fname)
         OUTADD ", .pop = %i }\n", r->pop);
     }
     OUTFLUSH();
-    for (int pl = 0; pl < g->players; ++pl) {
+    for (player_id_t pl = PLAYER_0; pl < g->players; ++pl) {
         const empiretechorbit_t *e = &(g->eto[pl]);
         text_dump_prefix_add_tbl(tp, "eto", ".", pl);
         OUTLINEI("race", e->race);
@@ -2182,7 +2182,7 @@ static int savetype_en_text(struct game_s *g, const char *fname)
             text_dump_prefix_del(tp);
         }
         OUTFLUSH();
-        for (int i = 0; i < g->players; ++i) {
+        for (player_id_t i = PLAYER_0; i < g->players; ++i) {
             if (i != pl) {
                 text_dump_prefix_add_tbl(tp, "spyreportfield", "", i);
                 OUTLINETBL("", TECH_FIELD_NUM, e->spyreportfield[i]);
@@ -2195,7 +2195,7 @@ static int savetype_en_text(struct game_s *g, const char *fname)
         text_dump_prefix_del(tp);
         OUTFLUSH();
     }
-    for (int pl = 0; pl < g->players; ++pl) {
+    for (player_id_t pl = PLAYER_0; pl < g->players; ++pl) {
         const shipresearch_t *srd = &(g->srd[pl]);
         const empiretechorbit_t *e = &(g->eto[pl]);
         text_dump_prefix_add_tbl(tp, "srd", ".", pl);
@@ -2226,7 +2226,7 @@ static int savetype_en_text(struct game_s *g, const char *fname)
         text_dump_prefix_del(tp);
     }
     OUTFLUSH();
-    for (int pl = 0; pl < g->players; ++pl) {
+    for (player_id_t pl = PLAYER_0; pl < g->players; ++pl) {
         if (IS_HUMAN(g, pl)) {
             text_dump_prefix_add_tbl(tp, "current_design", ".", pl);
             savetype_en_text_sd(&(g->current_design[pl]), tp);
@@ -2270,22 +2270,22 @@ static int savetype_en_text(struct game_s *g, const char *fname)
         OUTLINETBL("home", g->players, ev->home);
         OUTLINEI("report_stars", ev->report_stars);
         OUTFLUSH();
-        for (int pl = 0; pl < g->players; ++pl) {
+        for (player_id_t pl = PLAYER_0; pl < g->players; ++pl) {
             text_dump_prefix_add_tbl(tp, "new_ships", "", pl);
             OUTLINETBL("", NUM_SHIPDESIGNS, ev->new_ships[pl]);
             text_dump_prefix_del(tp);
         }
-        for (int pl = 0; pl < g->players; ++pl) {
+        for (player_id_t pl = PLAYER_0; pl < g->players; ++pl) {
             text_dump_prefix_add_tbl(tp, "spies_caught", "", pl);
             OUTLINETBL("", g->players, ev->spies_caught[pl]);
             text_dump_prefix_del(tp);
         }
-        for (int pl = 0; pl < g->players; ++pl) {
+        for (player_id_t pl = PLAYER_0; pl < g->players; ++pl) {
             text_dump_prefix_add_tbl(tp, "ceasefire", "", pl);
             OUTLINETBL("", g->players, ev->ceasefire[pl]);
             text_dump_prefix_del(tp);
         }
-        for (int pl = 0; pl < g->players; ++pl) {
+        for (player_id_t pl = PLAYER_0; pl < g->players; ++pl) {
             if (IS_HUMAN(g, pl)) {
                 OUTLINE "help_shown[%i] = %s\n", pl, savetype_en_bv(ev->help_shown[pl], HELP_SHOWN_NUM));
             }

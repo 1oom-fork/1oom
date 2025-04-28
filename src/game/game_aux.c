@@ -169,7 +169,7 @@ void game_aux_start(struct game_aux_s *gaux, struct game_s *g)
     int n = 0;
     g->gaux = gaux;
     init_star_dist(gaux, g);
-    for (int i = 0; i < g->players; ++i) {
+    for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         if (BOOLVEC_IS0(g->is_ai, i)) {
             ++n;
         }
