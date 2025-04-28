@@ -548,7 +548,7 @@ void ui_newtech(struct game_s *g, int pi)
             et = &(g->eto[d.nt.stolen_from]);
             d.other1 = PLAYER_NONE;
             d.other2 = PLAYER_NONE;
-            for (int j = 0; (j < g->players) && (d.other2 == PLAYER_NONE); ++j) {
+            for (player_id_t j = PLAYER_0; (j < g->players) && (d.other2 == PLAYER_NONE); ++j) {
                 if ((j != pi) && BOOLVEC_IS1(et->within_frange, j)) {
                     if (d.other1 == PLAYER_NONE) {
                         d.other1 = j;
