@@ -99,7 +99,7 @@ void game_news_get_msg(const struct game_s *g, struct news_s *ns, char *buf)
         for (int i = 0; i < PLAYER_NUM; ++i) {
             ns->stats[i] = 0;
         }
-        for (int i = 0; i < g->players; ++i) {
+        for (player_id_t i = PLAYER_0; i < g->players; ++i) {
             if (g->evn.home[i] != PLANET_NONE) {
                 int v;
                 tbl_player[num] = i;

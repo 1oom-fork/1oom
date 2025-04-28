@@ -232,7 +232,8 @@ static uint8_t game_ai_classic_turn_p1_front_find_planet(struct game_s *g, struc
 static void game_ai_classic_turn_p1_front(struct game_s *g, struct ai_turn_p1_s *ait, player_id_t pi)
 {
     empiretechorbit_t *e = &(g->eto[pi]);
-    int bestspeed, num_oppon;
+    int bestspeed;
+    uint16_t num_oppon;
     int tbl_x[PLAYER_NUM], tbl_y[PLAYER_NUM];
     bestspeed = game_tech_player_best_engine(g, pi) * 10 + 10;
     ait->num_fronts = 0;
