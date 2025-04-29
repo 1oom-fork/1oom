@@ -40,11 +40,13 @@ bool ui_delay_us_or_click(uint32_t delay)
         return false;
     }
     while (1) {
-        int32_t diff;
-        uint32_t now;
+        uint32_t now, diff;
         now = os_get_time_us();
+        if (now < delay_start) {
+            return false;
+        }
         diff = now - delay_start;
-        if ((diff < 0) || (diff >= delay)) {
+        if (diff >= delay) {
             return false;
         }
         if (diff < DELAY_EVENT_HANDLE_LIMIT) {
