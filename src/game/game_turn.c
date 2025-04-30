@@ -567,7 +567,8 @@ static void game_turn_build_ship(struct game_s *g)
                 }
             } else {
                 shipdesign_t *sd = &(srd->design[si]);
-                int cost, shipnum;
+                shipcount_t shipnum;
+                int cost;
                 uint8_t dest;
                 cost = sd->cost;
                 shipnum = 0;
@@ -576,9 +577,12 @@ static void game_turn_build_ship(struct game_s *g)
                     prod.vtotal -= cost;
                 }
                 if ((shipnum + srd->shipcount[si]) > game_num_limit_ships_all) {
-                    shipnum = game_num_limit_ships_all - srd->shipcount[si];
+                    if (srd->shipcount[si] <= game_num_limit_ships_all) {
+                        shipnum = game_num_limit_ships_all - srd->shipcount[si];
+                    } else {
+                        shipnum = 0;
+                    }
                 }
-                SETMAX(shipnum, 0);
                 srd->shipcount[si] += shipnum;
                 dest = p->reloc;
                 if (dest == i) {

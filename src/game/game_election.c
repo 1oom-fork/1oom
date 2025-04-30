@@ -56,7 +56,7 @@ static void game_election_prepare(struct election_s *el)
         el->tbl_votes[i] = tbl_votes[i];
     }
     for (int loops = 0; loops < g->players; ++loops) {
-        for (player_id_t i = PLAYER_0; i < (g->players - 1); ++i) {
+        for (player_id_t i = PLAYER_0; (i + 1) < g->players; ++i) {
             uint16_t v0, v1;
             v0 = tbl_votes[i];
             v1 = tbl_votes[i + 1];
