@@ -157,8 +157,8 @@ static const struct numtbl_s {
     DEFNUMITEML(bt_turn_max, NUMTYPE_S, 1, 0xffff),
     DEFNUMITEML(stargate_cost, NUMTYPE_S, 1, 0xffff),
     DEFNUMITEML(weapon_list_max, NUMTYPE_S, 0, WEAPON_NUM),
-    DEFNUMITEML(limit_ships, NUMTYPE_S, 1, 0xffff),
-    DEFNUMITEML(limit_ships_all, NUMTYPE_S, 1, 0xffff),
+    DEFNUMITEML(limit_ships, NUMTYPE_U, 1, 0xffff),
+    DEFNUMITEML(limit_ships_all, NUMTYPE_U, 1, 0xffff),
     DEFNUMITEML(max_pop, NUMTYPE_S, 1, 0x7fff),
     DEFNUMITEML(max_factories, NUMTYPE_S, 1, 0x7fff),
     DEFNUMITEML(max_inbound, NUMTYPE_S, 1, 0x7fff),
@@ -332,8 +332,8 @@ static const struct numtbl_s {
 int game_num_bt_turn_max = 50;
 int game_num_stargate_cost = 3000;
 int game_num_weapon_list_max = 30;
-int game_num_limit_ships = 32000;
-int game_num_limit_ships_all = 32000;
+unsigned int game_num_limit_ships = 32000;
+unsigned int game_num_limit_ships_all = 32000;
 int game_num_max_pop = 300;
 int game_num_max_factories = 2500;
 int game_num_max_inbound = 300;
