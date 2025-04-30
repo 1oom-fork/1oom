@@ -171,7 +171,7 @@ static void ui_audience_draw_cb1(void *vptr)
     }
     lbxgfx_draw_frame(0, -2, d->gfx_emperor, UI_SCREEN_W);
     lbxgfx_draw_frame(0, 0, d->gfx_border, UI_SCREEN_W);
-    if ((au->mode >= 0) && (au->mode <= 2)) {
+    if ((au->mode == 0) || (au->mode == 1) || (au->mode == 2)) {
         lbxfont_select(3, 2, 0, 0);
         lbxfont_set_gap_h(1);
         lbxfont_print_str_split(38, 140, 245, au->buf, 0, UI_SCREEN_W, UI_SCREEN_H);
@@ -283,7 +283,7 @@ void ui_audience_show1(struct audience_s *au)
         }
         uiobj_table_clear();
         oi_ma = UIOBJI_INVALID;
-        if ((au->mode >= 0) && (au->mode <= 2)) {
+        if ((au->mode == 0) || (au->mode == 1) || (au->mode == 2)) {
             oi_ma = uiobj_add_mousearea(UI_SCREEN_LIMITS, MOO_KEY_UNKNOWN, -1);
         }
         if (!flag_done) {

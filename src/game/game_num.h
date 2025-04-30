@@ -7,8 +7,8 @@
 extern int game_num_bt_turn_max;
 extern int game_num_stargate_cost;
 extern int game_num_weapon_list_max;
-extern int game_num_limit_ships;
-extern int game_num_limit_ships_all;
+extern unsigned int game_num_limit_ships;
+extern unsigned int game_num_limit_ships_all;
 extern int game_num_max_pop;
 extern int game_num_max_factories;
 extern int game_num_max_factories_1_3a;

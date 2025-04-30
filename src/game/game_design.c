@@ -543,7 +543,7 @@ int game_design_build_tbl_fit_man(struct game_s *g, struct game_design_s *gd, in
 {
     shipdesign_t *sd = &(gd->sd);
     ship_engine_t actman = sd->man;
-    for (int i = 0; i <= sd->engine; ++i) {
+    for (uint8_t i = 0; i <= sd->engine; ++i) {
         sd->man = i;
         game_design_update_engines(sd);
         buf[i] = (game_design_calc_space(gd) >= 0) ? 1/*HAVE*/ : 0/*NOPE*/;
