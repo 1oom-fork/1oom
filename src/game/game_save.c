@@ -687,7 +687,7 @@ static int libsave_1oom_decode_evn(const uint8_t *buf, int pos, gameevents_t *ev
     return pos;
 }
 
-static int libsave_1oom_encode(uint8_t *buf, int buflen, const struct game_s *g)
+static int libsave_1oom_encode(uint8_t *buf, size_t buflen, const struct game_s *g)
 {
     int pos = 0;
     if (buflen < sizeof(*g)) {
@@ -767,7 +767,7 @@ static int libsave_1oom_encode(uint8_t *buf, int buflen, const struct game_s *g)
     return pos;
 }
 
-static int libsave_1oom_decode(const uint8_t *buf, int buflen, struct game_s *g, uint32_t version)
+static int libsave_1oom_decode(const uint8_t *buf, size_t buflen, struct game_s *g, uint32_t version)
 {
     int pos = 0;
     if (buflen < 512) {
@@ -910,7 +910,8 @@ int libsave_1oom_save_do(const char *filename, const char *savename, const struc
     FILE *fd;
     uint8_t hdr[LIBSAVE_1OOM_HDR_SIZE];
     uint8_t *savebuf = NULL;
-    int res = -1, len;
+    size_t len;
+    int res = -1;
     savebuf = lib_malloc(LIBSAVE_1OOM_DATA_SIZE);
     if ((len = libsave_1oom_encode(savebuf, LIBSAVE_1OOM_DATA_SIZE, g)) <= 0) {
         lib_free(savebuf);
@@ -947,7 +948,8 @@ int libsave_1oom_load_do(const char *filename, struct game_s *g, char *savename)
 {
     FILE *fd = NULL;
     uint8_t *savebuf = NULL;
-    int res = -1, len = 0;
+    size_t len = 0;
+    int res = -1;
     uint32_t version;
 
     savebuf = lib_malloc(LIBSAVE_1OOM_DATA_SIZE);
@@ -1000,7 +1002,7 @@ void *libsave_1oom_open_check_header(const char *filename, char *savename, uint3
     return fd;
 }
 
-static int game_save_get_slot_fname(char *buf, int buflen, int i)
+static int game_save_get_slot_fname(char *buf, size_t buflen, int i)
 {
     const char *path = os_get_path_user();
     char namebuf[16];

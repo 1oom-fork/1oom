@@ -18,7 +18,7 @@ extern int lbxpal_init(void);
 extern void lbxpal_shutdown(void);
 
 extern void lbxpal_select(int pal_index, int first/*or -1*/, int last);
-extern void lbxpal_set_palette(uint8_t *pal, int first, int num);
+extern void lbxpal_set_palette(uint8_t *pal, uint16_t first, uint16_t num);
 extern void lbxpal_set_update_range(int from, int to);
 extern void lbxpal_update(void);
 extern void lbxpal_build_colortables(void);
