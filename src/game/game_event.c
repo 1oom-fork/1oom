@@ -58,7 +58,7 @@ static player_id_t game_event_new_get_victim(struct game_s *g)
         }
     }
     r = rnd_0_nm1(sum, &g->seed);
-    for (player = PLAYER_0; (r >= 0) && (player < (g->players - 1));) {
+    for (player = PLAYER_0; (r >= 0) && ((player + 1) < g->players);) {
         r -= tbl_planets[player];
         if (r >= 0) {
              ++player;

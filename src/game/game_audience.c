@@ -1135,7 +1135,7 @@ static void game_audience_do(struct audience_s *au)
     empiretechorbit_t *eh = &(g->eto[ph]);
     empiretechorbit_t *ea = &(g->eto[pa]);
     int16_t selected;
-    if ((au->mode >= 0) && (au->mode <= 2)) {
+    if ((au->mode == 0) || (au->mode == 1) || (au->mode == 2)) {
         g->gaux->diplo_d0_rval = -1;
         game_audience_get_str1(au);
         ui_audience_show1(au);

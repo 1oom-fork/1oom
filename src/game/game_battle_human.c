@@ -1258,7 +1258,7 @@ static void game_battle_with_human_do_sub3(struct battle_s *bt)
             bt->has_attacked = false;
             game_battle_reset_specials(bt);
             game_battle_area_setup(bt);
-            if (/*(b->num > 0) &&*/ (b->side != -1)) {
+            if (/*(b->num > 0) &&*/ (b->side != SIDE_NONE)) {
                 ui_battle_draw_basic(bt);
             }
             /*4ebbf*/

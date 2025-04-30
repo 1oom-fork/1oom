@@ -241,7 +241,8 @@ static void drawscreen_inlbx(void)
             drawstr(0, 200 + 8 * 2, linebuf, textcolor, 0);
         }
     } else if (lbxfile_type(cur_lbx) == LBX_TYPE_DATA) {
-        uint16_t num, size, view;
+        int16_t view;
+        uint16_t num, size;
         uint8_t *p = cur_ptr;
         num = GET_LE_16(p);
         size = GET_LE_16(p + 2);
