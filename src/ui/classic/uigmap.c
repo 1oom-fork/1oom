@@ -224,7 +224,7 @@ static void gmap_draw_cb(void *vptr)
             for (int i = 0; i < 7; ++i) {
                 char buf[2] = { 0, 0 };
                 buf[0] = game_str_gm_tchar[i];
-                lbxfont_select(2, ((PLANET_TYPE_TERRAN - i) < g->eto[d->api].have_colony_for) ? 5 : 0xe, 0, 0);
+                lbxfont_select(2, ((planet_type_t)(PLANET_TYPE_TERRAN - i) < g->eto[d->api].have_colony_for) ? 5 : 0xe, 0, 0);
                 lbxfont_print_str_normal(241, 105 + 7 * i, buf, UI_SCREEN_W);
                 lbxfont_select(2, 6, 0, 0);
                 lbxfont_print_str_normal(247, 105 + 7 * i, game_str_tbl_sm_pltype[13 - i], UI_SCREEN_W);
@@ -233,7 +233,7 @@ static void gmap_draw_cb(void *vptr)
                 char buf[2] = { 0, 0 };
                 const char *str;
                 buf[0] = game_str_gm_tchar[i];
-                lbxfont_select(2, ((PLANET_TYPE_TERRAN - i) < g->eto[d->api].have_colony_for) ? 5 : 0xe, 0, 0);
+                lbxfont_select(2, ((planet_type_t)(PLANET_TYPE_TERRAN - i) < g->eto[d->api].have_colony_for) ? 5 : 0xe, 0, 0);
                 lbxfont_print_str_normal(276, 105 + 7 * (i - 7), buf, UI_SCREEN_W);
                 lbxfont_select(2, 6, 0, 0);
                 if (i == 13) {

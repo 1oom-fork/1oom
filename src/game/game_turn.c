@@ -569,7 +569,8 @@ static void game_turn_build_ship(struct game_s *g)
                 }
             } else {
                 shipdesign_t *sd = &(srd->design[si]);
-                int cost, shipnum;
+                shipcount_t shipnum;
+                int cost;
                 uint8_t dest;
                 cost = sd->cost;
                 shipnum = 0;
@@ -578,9 +579,12 @@ static void game_turn_build_ship(struct game_s *g)
                     prod.vtotal -= cost;
                 }
                 if ((shipnum + srd->shipcount[si]) > game_num_limit_ships_all) {
-                    shipnum = game_num_limit_ships_all - srd->shipcount[si];
+                    if (srd->shipcount[si] <= game_num_limit_ships_all) {
+                        shipnum = game_num_limit_ships_all - srd->shipcount[si];
+                    } else {
+                        shipnum = 0;
+                    }
                 }
-                SETMAX(shipnum, 0);
                 srd->shipcount[si] += shipnum;
                 dest = p->reloc;
                 if (dest == i) {
@@ -625,7 +629,7 @@ static void game_turn_reserve(struct game_s *g)
     }
 }
 
-static inline void game_add_planet_to_build_finished(struct game_s *g, uint8_t pli, player_id_t owner, uint8_t type)
+static inline void game_add_planet_to_build_finished(struct game_s *g, uint8_t pli, player_id_t owner, planet_finished_t type)
 {
     planet_t *p = &(g->planet[pli]);
     BOOLVEC_SET1(p->finished, type);
@@ -949,7 +953,8 @@ static void game_turn_bomb_damage(struct game_s *g, uint8_t pli, player_id_t att
     const empiretechorbit_t *ed = &(g->eto[p->owner]);
     uint32_t tbl[WEAPON_NUM];
     uint8_t pshield = p->shield, antidote = ed->antidote;
-    int totaldmg = 0, totalbio = 0, maxcomp = 0, complevel;
+    int totaldmg = 0, totalbio = 0, complevel;
+    ship_comp_t maxcomp = SHIP_COMP_NONE;
     memset(tbl, 0, sizeof(tbl));
     for (int i = 0; i < ea->shipdesigns_num; ++i) {
         const shipdesign_t *sd = &(g->srd[attacker].design[i]);
