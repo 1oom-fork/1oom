@@ -24,6 +24,16 @@
 
 /* -------------------------------------------------------------------------- */
 
+static void ui_starmap_draw_hmm5(void)
+{
+    ui_draw_filled_rect(227, 73, 310, 83, 4, ui_scale);
+    ui_draw_filled_rect(228, 74, 309, 83, 7, ui_scale);
+    ui_draw_line1(226, 79, 226, 83, 0xfd, ui_scale);
+    ui_draw_line1(225, 79, 225, 83, 0xfc, ui_scale);
+    ui_draw_line1(312, 77, 312, 82, 0xfc, ui_scale);
+    ui_draw_line1(311, 79, 311, 84, 0xfd, ui_scale);
+}
+
 static void ui_starmap_trans_draw_cb(void *vptr)
 {
     struct starmap_data_s *d = vptr;
@@ -39,7 +49,9 @@ static void ui_starmap_trans_draw_cb(void *vptr)
     y0 = (pf->y - ui_data.starmap.y) * 2 + 8;
     if (pt->owner == d->api) {
         lbxgfx_draw_frame(222, 80, ui_data.gfx.starmap.relocate, UI_SCREEN_W, ui_scale);
-        /* if (pt->unrest == PLANET_UNREST_REBELLION) {} never true, trans button disabled in uistarmap.c */
+        if (pt->unrest == PLANET_UNREST_REBELLION) {
+            ui_starmap_draw_hmm5();
+        }
     } else {
         lbxgfx_draw_frame_offs(222, 80, ui_data.gfx.starmap.relocate, 0, 83, 310, 199, UI_SCREEN_W, ui_scale);
         if (BOOLVEC_IS0(pt->explored, d->api)) {
