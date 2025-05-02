@@ -1,3 +1,14 @@
+1oom-v1.11.4
+------------
+
+This release inherits the simplified aspect ratio correction implementation
+from Chocolate Doom (SDL2):
+
+- Now only 2 modes are available, with and without correction
+- In absolute mouse mode, adjusted mouse resolution to match aspect ratio
+- Added correction of integer arithmetic of mouse jumps
+- Aspect ratio correction is now enabled by default
+
 1oom-v1.11.3
 ------------
 
