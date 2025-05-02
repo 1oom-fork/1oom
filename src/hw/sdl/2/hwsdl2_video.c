@@ -783,9 +783,19 @@ void hw_video_input_grab(bool grab)
 void hw_video_mouse_warp(int mx, int my)
 {
 #if SDL_VERSION_ATLEAST(2, 0, 18)
-    int x, y;
-    SDL_RenderLogicalToWindow(video.renderer, mx, my, &x, &y);
-    SDL_WarpMouseInWindow(video.window, x, y);
+    if (!hw_opt_relmouse) {
+        int x, y;
+        float xcheck, ycheck;
+        SDL_RenderLogicalToWindow(video.renderer, mx, my, &x, &y);
+        SDL_RenderWindowToLogical(video.renderer, x, y, &xcheck, &ycheck);
+        if (mx > xcheck) {
+            ++x;
+        }
+        if (my > ycheck) {
+            ++y;
+        }
+        SDL_WarpMouseInWindow(video.window, x, y);
+    }
 #else
     mouse_set_xy_from_hw(mx, my);
 #endif
