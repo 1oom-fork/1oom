@@ -783,6 +783,9 @@ void hw_video_mouse_warp(int mx, int my)
     if (!hw_opt_relmouse) {
         int x, y;
         float xcheck, ycheck;
+        if (hw_opt_aspect_ratio_correct) {
+            my = my * 6 / 5;
+        }
         SDL_RenderLogicalToWindow(video.renderer, mx, my, &x, &y);
         SDL_RenderWindowToLogical(video.renderer, x, y, &xcheck, &ycheck);
         if (mx > xcheck) {
