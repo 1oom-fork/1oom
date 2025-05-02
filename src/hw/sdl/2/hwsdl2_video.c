@@ -242,7 +242,7 @@ static void video_render(int bufi)
 */
 static void video_adjust_window_size(int *wptr, int *hptr)
 {
-    if (hw_opt_aspect != 0) {
+    {
         int w = *wptr, h = *hptr;
         if ((w * video.actualh) <= (h * video.bufw)) {
             /* We round up window_height if the ratio is not exact; this leaves the result stable. */
@@ -539,16 +539,11 @@ static int video_sw_set(int w, int h)
                     (info.flags & SDL_RENDERER_ACCELERATED) ? ", accelerated" : "",
                     (info.flags & SDL_RENDERER_PRESENTVSYNC) ? ", vsync" : "");
     }
-    if (hw_opt_aspect != 0) {
-        /* Important: Set the "logical size" of the rendering context. At the same
-           time this also defines the aspect ratio that is preserved while scaling
-           and stretching the texture into the window.
-        */
-        SDL_RenderSetLogicalSize(video.renderer, video.bufw, video.actualh);
-    } else {
-        /* Use full window. */
-        SDL_RenderSetViewport(video.renderer, NULL);
-    }
+    /* Important: Set the "logical size" of the rendering context. At the same
+       time this also defines the aspect ratio that is preserved while scaling
+       and stretching the texture into the window.
+    */
+    SDL_RenderSetLogicalSize(video.renderer, video.bufw, video.actualh);
 
     /* Force integer scales for resolution-independent rendering. */
 #if SDL_VERSION_ATLEAST(2, 0, 5)
@@ -606,10 +601,10 @@ static int video_sw_set(int w, int h)
 
 static void hw_video_update_actual_h(void)
 {
-    if (!hw_opt_aspect) {
-        video.actualh = video.bufh;
+    if (hw_opt_aspect_ratio_correct) {
+        video.actualh = video.bufh * 6 / 5;
     } else {
-        video.actualh = (uint32_t)(video.bufh * 1000000) / hw_opt_aspect;
+        video.actualh = video.bufh;
     }
 }
 
@@ -663,11 +658,13 @@ bool hw_video_toggle_fullscreen(void)
     return true;
 }
 
-bool hw_video_update_aspect(void)
+bool hw_video_toggle_aspect(void)
 {
+    hw_opt_aspect_ratio_correct = !hw_opt_aspect_ratio_correct;
     hw_video_update_actual_h();
     video_window_destroy();
     if (video_sw_set(hw_opt_screen_winw, hw_opt_screen_winh) != 0) {
+        hw_opt_aspect_ratio_correct = !hw_opt_aspect_ratio_correct;
         return false;
     }
     return true;

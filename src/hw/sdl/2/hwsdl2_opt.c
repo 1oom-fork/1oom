@@ -18,8 +18,8 @@
 /* -------------------------------------------------------------------------- */
 
 #define HW_DEFAULT_FULLSCREEN   false
-#define HAVE_SDLX_ASPECT
 
+bool hw_opt_aspect_ratio_correct = true;
 bool hw_opt_int_scaling = false;
 #if SDL_VERSION_ATLEAST(2, 0, 18)
     bool hw_opt_relmouse = false;
@@ -47,6 +47,7 @@ static const char *hw_uiopts_scaling_quality_get(void)
 /* -------------------------------------------------------------------------- */
 
 const struct cfg_items_s hw_cfg_items_extra[] = {
+    CFG_ITEM_BOOL("aspect_ratio_correct", &hw_opt_aspect_ratio_correct),
     CFG_ITEM_BOOL("int_scaling", &hw_opt_int_scaling),
     CFG_ITEM_BOOL("relmouse", &hw_opt_relmouse),
     CFG_ITEM_BOOL("autotrim", &hw_opt_autotrim),
@@ -59,6 +60,12 @@ const struct cfg_items_s hw_cfg_items_extra[] = {
 #include "hwsdl_opt.c"
 
 const struct cmdline_options_s hw_cmdline_options_extra[] = {
+    { "-aspect", 0,
+      options_enable_bool_var, (void *)&hw_opt_aspect_ratio_correct,
+      NULL, "Enable aspect ratio correction" },
+    { "-noaspect", 0,
+      options_disable_bool_var, (void *)&hw_opt_aspect_ratio_correct,
+      NULL, "Disable aspect ratio correction" },
     { "-intscaling", 0,
       options_enable_bool_var, (void *)&hw_opt_int_scaling,
       NULL, "Force integer scaling" },
@@ -93,7 +100,7 @@ void hw_opt_menu_make_page_video(void)
 {
     menu_make_bool_func(menu_allocate_item(), "Borderless", &hw_opt_borderless, hw_video_toggle_borderless, MOO_KEY_o);
     menu_make_bool_func(menu_allocate_item(), "Fullscreen", &hw_opt_fullscreen, hw_video_toggle_fullscreen, MOO_KEY_f);
-    menu_make_str_func(menu_allocate_item(), "Aspect ratio", hw_uiopt_cb_aspect_get, hw_uiopt_cb_aspect_next, MOO_KEY_a);
+    menu_make_bool_func(menu_allocate_item(), "Aspect ratio correction", &hw_opt_aspect_ratio_correct, hw_video_toggle_aspect, MOO_KEY_a);
     #if SDL_VERSION_ATLEAST(2, 0, 18)
         menu_make_bool_func(menu_allocate_item(), "V-sync", &hw_opt_vsync, hw_video_toggle_vsync, MOO_KEY_v);
     #endif
