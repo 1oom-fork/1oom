@@ -198,6 +198,11 @@ static void hw_event_handle_window(SDL_WindowEvent *e)
         case SDL_WINDOWEVENT_FOCUS_LOST:
             hw_mouse_ungrab();
             break;
+        case SDL_WINDOWEVENT_FOCUS_GAINED:
+            if (!hw_opt_relmouse && hw_opt_nograbmouse) {
+                hw_mouse_grab();
+            }
+            break;
         default:
             break;
     }
