@@ -570,7 +570,7 @@ void hw_mouse_grab(void)
     if (!hw_mouse_enabled) {
         hw_mouse_enabled = true;
         SDL_ShowCursor(SDL_DISABLE);
-        SDL_SetWindowGrab(video.window, true);
+        SDL_SetWindowGrab(video.window, hw_opt_relmouse || !hw_opt_nograbmouse);
         SDL_SetRelativeMouseMode(hw_opt_relmouse);
     }
 }
