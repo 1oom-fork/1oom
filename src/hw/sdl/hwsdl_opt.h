@@ -19,6 +19,7 @@ extern int hw_opt_bpp;
 /* for SDL2 */
 extern bool hw_opt_aspect_ratio_correct;
 extern bool hw_opt_int_scaling;
+extern bool hw_opt_nograbmouse;
 extern bool hw_opt_relmouse;
 extern bool hw_opt_autotrim;
 extern bool hw_opt_vsync;

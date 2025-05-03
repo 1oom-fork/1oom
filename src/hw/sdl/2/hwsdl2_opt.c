@@ -22,8 +22,10 @@
 bool hw_opt_aspect_ratio_correct = true;
 bool hw_opt_int_scaling = false;
 #if SDL_VERSION_ATLEAST(2, 0, 18)
+    bool hw_opt_nograbmouse = true;
     bool hw_opt_relmouse = false;
 #else
+    bool hw_opt_nograbmouse = false;
     bool hw_opt_relmouse = true;
 #endif
 bool hw_opt_autotrim = true;
@@ -50,6 +52,7 @@ const struct cfg_items_s hw_cfg_items_extra[] = {
     CFG_ITEM_BOOL("aspect_ratio_correct", &hw_opt_aspect_ratio_correct),
     CFG_ITEM_BOOL("int_scaling", &hw_opt_int_scaling),
     CFG_ITEM_BOOL("relmouse", &hw_opt_relmouse),
+    CFG_ITEM_BOOL("nograbmouse", &hw_opt_nograbmouse),
     CFG_ITEM_BOOL("autotrim", &hw_opt_autotrim),
     CFG_ITEM_BOOL("vsync", &hw_opt_vsync),
     CFG_ITEM_BOOL("allow_upscaling", &hw_opt_allow_upscaling),
@@ -72,6 +75,12 @@ const struct cmdline_options_s hw_cmdline_options_extra[] = {
     { "-nointscaling", 0,
       options_disable_bool_var, (void *)&hw_opt_int_scaling,
       NULL, "Do not force integer scaling" },
+    { "-grabmouse", 0,
+      options_disable_bool_var, (void *)&hw_opt_nograbmouse,
+      NULL, "Allow grab mouse" },
+    { "-nograbmouse", 0,
+      options_enable_bool_var, (void *)&hw_opt_nograbmouse,
+      NULL, "Do not allow grab mouse" },
     { "-relmouse", 0,
       options_enable_bool_var, (void *)&hw_opt_relmouse,
       NULL, "Use relative mouse mode (default)" },
