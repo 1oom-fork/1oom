@@ -19,6 +19,7 @@ extern int hw_opt_gl_filter;
 extern bool hw_opt_aspect_ratio_correct;
 extern bool hw_opt_borderless;
 extern bool hw_opt_int_scaling;
+extern bool hw_opt_nograbmouse;
 extern bool hw_opt_relmouse;
 extern bool hw_opt_smooth_pixel_scaling;
 extern bool hw_opt_vsync;

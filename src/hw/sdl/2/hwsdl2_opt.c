@@ -18,6 +18,11 @@
 bool hw_opt_aspect_ratio_correct = true;
 bool hw_opt_borderless = false;
 bool hw_opt_int_scaling = false;
+#ifdef IS_WINDOWS
+    bool hw_opt_nograbmouse = true;
+#else
+    bool hw_opt_nograbmouse = false;
+#endif
 #if SDL_VERSION_ATLEAST(2, 0, 18)
     bool hw_opt_relmouse = false;
 #else
@@ -53,6 +58,12 @@ const struct cmdline_options_s hw_cmdline_options_extra[] = {
     { "-nointscaling", 0,
       options_disable_bool_var, (void *)&hw_opt_int_scaling,
       NULL, "Do not force integer scaling" },
+    { "-grabmouse", 0,
+      options_disable_bool_var, (void *)&hw_opt_nograbmouse,
+      NULL, "Allow grab mouse" },
+    { "-nograbmouse", 0,
+      options_enable_bool_var, (void *)&hw_opt_nograbmouse,
+      NULL, "Do not allow grab mouse" },
     { "-relmouse", 0,
       options_enable_bool_var, (void *)&hw_opt_relmouse,
       NULL, "Use relative mouse mode" },
