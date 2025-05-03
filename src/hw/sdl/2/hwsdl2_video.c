@@ -773,9 +773,6 @@ void hw_video_input_grab(bool grab)
     }
     if (hw_opt_relmouse) {
         SDL_SetRelativeMouseMode(grab);
-    } else {
-        hw_mouse_set_xy(moouse_x, moouse_y);
-        SDL_ShowCursor(grab ? SDL_DISABLE : SDL_ENABLE);
     }
 }
 
