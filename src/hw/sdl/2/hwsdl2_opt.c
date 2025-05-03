@@ -21,11 +21,14 @@
 
 bool hw_opt_aspect_ratio_correct = true;
 bool hw_opt_int_scaling = false;
-#if SDL_VERSION_ATLEAST(2, 0, 18)
+#ifdef IS_WINDOWS
     bool hw_opt_nograbmouse = true;
-    bool hw_opt_relmouse = false;
 #else
     bool hw_opt_nograbmouse = false;
+#endif
+#if SDL_VERSION_ATLEAST(2, 0, 18)
+    bool hw_opt_relmouse = false;
+#else
     bool hw_opt_relmouse = true;
 #endif
 bool hw_opt_autotrim = true;
