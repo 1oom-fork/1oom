@@ -9,6 +9,7 @@
 #include "game_misc.h"
 #include "game_num.h"
 #include "game_str.h"
+#include "game_util.h"
 #include "kbd.h"
 #include "lbxgfx.h"
 #include "lbxfont.h"
@@ -21,7 +22,6 @@
 #include "uiobj.h"
 #include "uisound.h"
 #include "uistarmap_common.h"
-#include "util.h"
 
 /* -------------------------------------------------------------------------- */
 
