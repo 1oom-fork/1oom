@@ -13,11 +13,11 @@
 #include "game_misc.h"
 #include "game_num.h"
 #include "game_str.h"
+#include "game_util.h"
 #include "log.h"
 #include "rnd.h"
 #include "types.h"
 #include "ui.h"
-#include "util.h"
 #include "util_math.h"
 
 /* -------------------------------------------------------------------------- */
