@@ -28,11 +28,11 @@
 #include "game_stat.h"
 #include "game_str.h"
 #include "game_tech.h"
+#include "game_util.h"
 #include "log.h"
 #include "rnd.h"
 #include "types.h"
 #include "ui.h"
-#include "util.h"
 #include "util_math.h"
 
 /* -------------------------------------------------------------------------- */
