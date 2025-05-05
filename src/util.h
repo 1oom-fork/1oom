@@ -18,9 +18,6 @@ extern void util_trim_whitespace(char *str);
 extern void util_str_tolower(char *str);
 extern bool util_parse_number(const char *str, uint32_t *val_ptr);
 extern bool util_parse_signed_number(const char *str, int *val_ptr);
-extern void util_table_remove_item_keep_order(int itemi, void *tbl, int itemsz, int itemnum);
-extern void util_table_remove_item_keep_order_zero(int itemi, void *tbl, int itemsz, int itemnum);
-extern void util_table_remove_item_any_order(int itemi, void *tbl, int itemsz, int itemnum);
 
 #if !defined HAVE_STRCASECMP
 extern int strcasecmp(const char *s1, const char *s2);

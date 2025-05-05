@@ -7,6 +7,7 @@
 #include "comp.h"
 #include "game.h"
 #include "game_str.h"
+#include "game_util.h"
 #include "log.h"
 #include "types.h"
 #include "ui.h"
