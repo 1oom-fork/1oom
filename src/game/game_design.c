@@ -12,10 +12,10 @@
 #include "game_shiptech.h"
 #include "game_str.h"
 #include "game_tech.h"
+#include "game_util.h"
 #include "log.h"
 #include "rnd.h"
 #include "types.h"
-#include "util.h"
 
 /* -------------------------------------------------------------------------- */
 
