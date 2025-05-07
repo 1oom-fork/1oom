@@ -7,9 +7,6 @@
 #include "game_types.h"
 #include "types.h"
 
-extern void game_str_shutdown(void);
-extern void game_str_dump(void);
-
 extern const char *game_str_mm_continue;
 extern const char *game_str_mm_load;
 extern const char *game_str_mm_new;
