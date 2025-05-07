@@ -18,13 +18,6 @@
 
 #define LBX_HEADER_LEN  0x200
 
-struct lbxpatch_s {
-    struct lbxpatch_s *next;
-    uint8_t *data;
-    uint32_t len;
-    uint16_t i;
-};
-
 struct lbx_s {
     enum {
         LBX_MODE_NONE = 0,
@@ -38,7 +31,6 @@ struct lbx_s {
     uint8_t *header;
     uint8_t *data;
     int num_in_use;
-    struct lbxpatch_s *patches;
 };
 
 static const struct {
@@ -254,43 +246,6 @@ static uint8_t *lbx_extract(struct lbx_s *p, uint16_t i, uint32_t *len_ptr)
     }
 }
 
-static uint8_t *lbxfile_get_patch(struct lbx_s *lbx, uint16_t i, uint32_t *len_ptr)
-{
-    struct lbxpatch_s *p;
-    if (!lbx) {
-        return NULL;
-    }
-    p = lbx->patches;
-    while (p) {
-        if (p->i == i) {
-            if (len_ptr) {
-                *len_ptr = p->len;
-            }
-            return p->data;
-        }
-        p = p->next;
-    }
-    return NULL;
-}
-
-static void lbxfile_shutdown_patches(struct lbx_s *lbx)
-{
-    struct lbxpatch_s *p, *pn;
-    if (!lbx) {
-        return;
-    }
-    p = lbx->patches;
-    lbx->patches = NULL;
-    while (p) {
-        pn = p->next;
-        p->next = NULL;
-        lib_free(p->data);
-        p->data = NULL;
-        lib_free(p);
-        p = pn;
-    }
-}
-
 /* -------------------------------------------------------------------------- */
 
 int lbxfile_init(void)
@@ -303,7 +258,6 @@ void lbxfile_shutdown(void)
 {
     for (lbxfile_e i = LBXFILE_BACKGRND; i < LBXFILE_NUM; ++i) {
         lbxfile_close(i);
-        lbxfile_shutdown_patches(&lbxtbl[i]);
     }
 }
 
@@ -334,10 +288,7 @@ int lbxfile_find_dir(void)
 uint8_t *lbxfile_item_get(lbxfile_e file_id, uint16_t entry_id, uint32_t *len_ptr)
 {
     uint8_t *p = NULL;
-
-    p = lbxfile_get_patch(&lbxtbl[file_id], entry_id, len_ptr);
-
-    if (p == NULL) {
+    {
         if (lbxtbl[file_id].mode == LBX_MODE_NONE) {
             if (lbxfile_load(file_id)) {
                 goto fail;
@@ -472,40 +423,5 @@ int lbxfile_item_offs(lbxfile_e file_id, uint16_t entry_id)
         p = &lbxtbl[file_id];
         offs0 = GET_LE_32(&p->header[8 + entry_id * 4]);
         return offs0;
-    }
-}
-
-void lbxfile_add_patch(lbxfile_e file_id, uint16_t i, uint8_t *data, uint32_t len, const char *patchfilename)
-{
-    struct lbxpatch_s *p, *pnew, *q = NULL;
-    struct lbx_s *lbx = &lbxtbl[file_id];
-    pnew = lib_malloc(sizeof(struct lbxpatch_s));
-    pnew->next = NULL;
-    pnew->data = data;
-    pnew->len = len;
-    pnew->i = i;
-    p = lbx->patches;
-    while (p && (i > p->i)) {
-        q = p;
-        p = p->next;
-    }
-    if (p && (i == p->i)) {
-        log_warning("replacing patch on %s item %i with one from '%s'\n", lbxinfo[file_id].filename, i, patchfilename);
-        if (!q) {
-            lbx->patches = pnew;
-            pnew->next = p->next;
-        } else {
-            q->next = pnew;
-            pnew->next = p->next;
-        }
-        lib_free(p);
-    } else {
-        if (!q) {
-            lbx->patches = pnew;
-            pnew->next = p;
-        } else {
-            q->next = pnew;
-            pnew->next = p;
-        }
     }
 }

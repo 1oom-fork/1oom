@@ -191,39 +191,6 @@ bool util_parse_number(const char *str, uint32_t *val_ptr)
     return (*strend == '\0');
 }
 
-int32_t *util_parse_numbers(const char *str, char sep, int *numptr)
-{
-    char *strend = NULL;
-    int32_t *nums = NULL;
-    int numnum = 0;
-    char c;
-    do {
-        int32_t v;
-        v = strtol(str, &strend, 0);
-        do {
-            c = *strend++;
-        } while ((c == ' ') || (c == '\t'));
-        if ((c == sep) || (c == '\n') || (c == '\r') || (c == '\0')) {
-            nums = lib_realloc(nums, (numnum + 1) * sizeof(int32_t));
-            nums[numnum++] = v;
-            if (c == sep) {
-                str = strend;
-            } else {
-                c = '\0';
-            }
-        } else {
-            lib_free(nums);
-            nums = NULL;
-            numnum = 0;
-            c = '\0';
-        }
-    } while (c != '\0');
-    if (numptr) {
-        *numptr = numnum;
-    }
-    return nums;
-}
-
 void util_table_remove_item_keep_order(int itemi, void *tbl, int itemsz, int itemnum)
 {
     if ((itemi < 0) || (itemi >= (itemnum - 1))) {
