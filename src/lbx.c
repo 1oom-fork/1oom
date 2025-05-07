@@ -474,38 +474,3 @@ int lbxfile_item_offs(lbxfile_e file_id, uint16_t entry_id)
         return offs0;
     }
 }
-
-void lbxfile_add_patch(lbxfile_e file_id, uint16_t i, uint8_t *data, uint32_t len, const char *patchfilename)
-{
-    struct lbxpatch_s *p, *pnew, *q = NULL;
-    struct lbx_s *lbx = &lbxtbl[file_id];
-    pnew = lib_malloc(sizeof(struct lbxpatch_s));
-    pnew->next = NULL;
-    pnew->data = data;
-    pnew->len = len;
-    pnew->i = i;
-    p = lbx->patches;
-    while (p && (i > p->i)) {
-        q = p;
-        p = p->next;
-    }
-    if (p && (i == p->i)) {
-        log_warning("replacing patch on %s item %i with one from '%s'\n", lbxinfo[file_id].filename, i, patchfilename);
-        if (!q) {
-            lbx->patches = pnew;
-            pnew->next = p->next;
-        } else {
-            q->next = pnew;
-            pnew->next = p->next;
-        }
-        lib_free(p);
-    } else {
-        if (!q) {
-            lbx->patches = pnew;
-            pnew->next = p;
-        } else {
-            q->next = pnew;
-            pnew->next = p;
-        }
-    }
-}
