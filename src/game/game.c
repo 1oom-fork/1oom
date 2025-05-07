@@ -271,18 +271,6 @@ static int game_opt_do_continue(char **argv, void *var)
     return 0;
 }
 
-static int dump_strings(char **argv, void *var)
-{
-    game_str_dump();
-    return -1;
-}
-
-static int dump_numbers(char **argv, void *var)
-{
-    game_num_dump();
-    return -1;
-}
-
 /* -------------------------------------------------------------------------- */
 
 const char *idstr_main = "game";
@@ -292,12 +280,6 @@ bool main_use_lbx = true;
 void (*main_usage)(void) = 0;
 
 const struct cmdline_options_s main_cmdline_options_early[] = {
-    { "-dumpstr", 0,
-      dump_strings, NULL,
-      NULL, "Dump strings in PBXIN format" },
-    { "-dumpnum", 0,
-      dump_numbers, NULL,
-      NULL, "Dump numbers in PBXIN format" },
     { 0, 0, 0, 0, 0, 0 }
 };
 
@@ -564,5 +546,4 @@ void main_do_shutdown(void)
 {
     /* TODO save game if in progress */
     game_aux_shutdown(&game_aux);
-    game_str_shutdown();
 }
