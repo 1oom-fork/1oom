@@ -4,8 +4,6 @@
 #include "game_types.h"
 #include "types.h"
 
-extern void game_num_dump(void);
-
 extern int game_num_bt_turn_max;
 extern int game_num_stargate_cost;
 extern int game_num_weapon_list_max;

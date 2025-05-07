@@ -11,7 +11,6 @@ extern int util_file_save(const char *name, uint8_t *src, int size);
 extern void util_trim_whitespace(char *str);
 extern void util_str_tolower(char *str);
 extern bool util_parse_number(const char *str, uint32_t *val_ptr);
-extern int32_t *util_parse_numbers(const char *str, char sep, int *numptr);
 extern void util_table_remove_item_keep_order(int itemi, void *tbl, int itemsz, int itemnum);
 extern void util_table_remove_item_keep_order_zero(int itemi, void *tbl, int itemsz, int itemnum);
 extern void util_table_remove_item_any_order(int itemi, void *tbl, int itemsz, int itemnum);
