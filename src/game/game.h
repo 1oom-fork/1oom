@@ -308,6 +308,15 @@ static inline bool IS_ALIVE(const struct game_s *g, player_id_t i)
     return (g->evn.home[i] != PLANET_NONE);
 }
 
+static inline bool IN_CONTACT(const struct game_s *g, player_id_t p1, player_id_t p2)
+{
+    /*
+        In MOO1, in many cases PLAYER_0 is checked for contact with AI players (1-5),
+        so the inequality (p1 != p2) is implicitly guaranteed there.
+    */
+    return (p1 != p2) && BOOLVEC_IS1(g->eto[p1].within_frange, p2);
+}
+
 #define IS_AI(_g_, _i_) BOOLVEC_IS1((_g_)->is_ai, (_i_))
 
 #endif

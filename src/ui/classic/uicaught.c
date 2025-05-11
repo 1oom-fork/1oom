@@ -41,7 +41,6 @@ static void caught_draw_cb(void *vptr)
 {
     struct caught_data_s *d = vptr;
     struct game_s *g = d->g;
-    empiretechorbit_t *e = &(g->eto[d->api]);
     char buf[0x40];
     int x = 56, y = 50, n = 0;
 
@@ -54,7 +53,7 @@ static void caught_draw_cb(void *vptr)
 
     y += 20;
     for (player_id_t i = PLAYER_0; i < g->players; ++i) {
-        if ((i != d->api) && BOOLVEC_IS1(e->within_frange, i)) {
+        if (IN_CONTACT(g, d->api, i)) {
             int v;
             sprintf(buf, "%s:", game_str_tbl_race[g->eto[i].race]);
             lbxfont_print_str_normal(x + 11, y, buf, UI_SCREEN_W);
