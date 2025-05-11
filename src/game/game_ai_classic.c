@@ -250,8 +250,7 @@ static void game_ai_classic_turn_p1_front(struct game_s *g, struct ai_turn_p1_s 
     num_oppon = (g->end == GAME_END_NONE) ? g->players : 1;   /* FIXME multiplayer */
     for (player_id_t pi2 = PLAYER_0; pi2 < num_oppon; ++pi2) {
         if (1
-          && (pi != pi2)
-          && BOOLVEC_IS1(e->within_frange, pi2)
+          && IN_CONTACT(g, pi, pi2)
           && (IS_HUMAN(g, pi)/*never?*/ || (g->end == GAME_END_NONE))
         ) {
             int v8, vc;
@@ -1040,7 +1039,8 @@ static void game_ai_classic_turn_p1(struct game_s *g)
         }
         if ((num_planets / 2) < num_developing_planets) {
             for (player_id_t pi2 = PLAYER_0; pi2 < g->players; ++pi2) {
-                if (IS_HUMAN(g, pi2) && BOOLVEC_IS1(g->eto[pi2].within_frange, pi)) {
+                /* MOO1 implicitly assumes (PLAYER_0 != pi) */
+                if (IS_HUMAN(g, pi2) && IN_CONTACT(g, pi2, pi)) {
                     ait->do_not_send_colony = true;
                     break;
                 }
@@ -1666,7 +1666,7 @@ static void game_ai_classic_turn_p3_sub1(struct game_s *g, player_id_t pi)
         e->spymode_next[pi2] = SPYMODE_HIDE;
         if (IS_HUMAN(g, pi2) && (g->evn.ceasefire[pi2][pi2] > 0)) { /* FIXME BUG should be [pi2][pi] */
             e->spymode_next[pi2] = SPYMODE_HIDE; /* FIXME redundant */
-        } else if ((pi != pi2) && BOOLVEC_IS1(e->within_frange, pi2)) {
+        } else if (IN_CONTACT(g, pi, pi2)) {
             if (e->treaty[pi2] >= TREATY_WAR) {
                 e->spymode_next[pi2] = SPYMODE_SABOTAGE;
             } else if (e->spymode_next[pi2] == SPYMODE_HIDE) { /* FIXME BUG always true */
@@ -1865,7 +1865,7 @@ static void game_ai_classic_turn_p3(struct game_s *g)
             int16_t sec;
             totalspies = 0;
             for (player_id_t pi2 = PLAYER_0; pi2 < g->players; ++pi2) {
-                if (BOOLVEC_IS1(e->within_frange, pi2)) {
+                if (IN_CONTACT(g, pi, pi2)) {
                     totalspies += g->eto[pi2].spies[pi];
                 }
             }
@@ -1882,7 +1882,7 @@ static void game_ai_classic_turn_p3(struct game_s *g)
                 e->spying[pi2] = 0;
                 e->spymode[pi2] = SPYMODE_HIDE;
                 if (1
-                  && (pi != pi2) && BOOLVEC_IS1(e->within_frange, pi2) && (e->spymode_next[pi2] != SPYMODE_HIDE)
+                  && IN_CONTACT(g, pi, pi2) && (e->spymode_next[pi2] != SPYMODE_HIDE)
                   && (BOOLVEC_IS0(g->is_ai, pi2) || !rnd_0_nm1(3, &g->seed))
                 ) {
                     e->spymode[pi2] = e->spymode_next[pi2];
@@ -3219,10 +3219,10 @@ static void game_ai_classic_turn_diplo_p1(struct game_s *g)
         }
         for (player_id_t p2 = PLAYER_0; p2 < g->players; ++p2) {
             empiretechorbit_t *e2 = &(g->eto[p2]);
-            if ((p1 == p2) || IS_HUMAN(g, p2)) {
+            if (IS_HUMAN(g, p2)) {
                 continue;
             }
-            if (!rnd_0_nm1(15 - g->difficulty * 2, &g->seed) && BOOLVEC_IS1(e1->within_frange, p2)) {
+            if (!rnd_0_nm1(15 - g->difficulty * 2, &g->seed) && IN_CONTACT(g, p1, p2)) {
                 int v;
                 v = e1->trust[p2] + e1->relation1[p2] + game_diplo_tbl_reldiff[e2->trait1] + rnd_1_n(100, &g->seed);
                 if (e1->treaty[p2] == TREATY_NONAGGRESSION) {
@@ -3307,7 +3307,7 @@ static void game_ai_classic_turn_diplo_p2_sub1(struct game_s *g, player_id_t p1,
     empiretechorbit_t *e1 = &(g->eto[p1]);
     empiretechorbit_t *e2 = &(g->eto[p2]);
     int v, v4;
-    if (BOOLVEC_IS0(e1->within_frange, p2) || (e1->treaty[p2] >= TREATY_WAR)) { /* WASBUG? MOO1 also tests for "|| (e1->diplo_val == 0)" ; note the missing [p2] */
+    if (!IN_CONTACT(g, p1, p2) || (e1->treaty[p2] >= TREATY_WAR)) { /* WASBUG? MOO1 also tests for "|| (e1->diplo_val == 0)" ; note the missing [p2] */
         e1->diplo_type[p2] = 0;
         return;
     }
@@ -3360,7 +3360,7 @@ static void game_ai_classic_turn_diplo_p2_sub1(struct game_s *g, player_id_t p1,
     if (v4 == 0) {
         player_id_t pa = PLAYER_NONE;
         for (player_id_t p3 = PLAYER_0; p3 < g->players; ++p3) {
-            if ((p3 != p1) && (p3 != p2) && (e2->treaty[p3] >= TREATY_WAR) && BOOLVEC_IS1(e1->within_frange, p3)) {
+            if ((p3 != p2) && (e2->treaty[p3] >= TREATY_WAR) && IN_CONTACT(g, p1, p3)) {
                 pa = p3;
             }
         }
@@ -3489,8 +3489,8 @@ static void game_ai_classic_turn_diplo_p2_sub2(struct game_s *g, player_id_t p1,
         for (player_id_t p3 = PLAYER_0; p3 < g->players; ++p3) {
             empiretechorbit_t *e3 = &(g->eto[p3]);
             if (1
-              && (p3 != p1) && (p3 != p2) && (e3->treaty[p2] == TREATY_WAR)
-              && BOOLVEC_IS1(e1->within_frange, p3)
+              && (p3 != p2) && (e3->treaty[p2] == TREATY_WAR)
+              && IN_CONTACT(g, p1, p3)
               && (e1->treaty[p3] != TREATY_WAR)
             ) {
                 pa = p3;
@@ -3508,7 +3508,8 @@ static void game_ai_classic_turn_diplo_p2_sub3(struct game_s *g, player_id_t p1,
     empiretechorbit_t *e1 = &(g->eto[p1]);
     empiretechorbit_t *e2 = &(g->eto[p2]);
     int v;
-    if (BOOLVEC_IS0(e1->within_frange, p2)) { /* WASBUG? MOO1 also tests for "|| (e1->diplo_val == 0)" ; note the missing [p2] */
+    /* MOO1 implicitly assumes (p1 != p2) */
+    if (!IN_CONTACT(g, p1, p2)) { /* WASBUG? MOO1 also tests for "|| (e1->diplo_val == 0)" ; note the missing [p2] */
         e1->diplo_type[p2] = 0;
         return;
     }

@@ -597,7 +597,8 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
                 tx = (p->x - x) * 2 + 14;
                 ty = (p->y - y) * 2 + 22;
                 lbxfont_print_str_center_limit(tx, ty, p->name, UI_SCREEN_W);
-            } else if (BOOLVEC_IS1(g->eto[d->api].within_frange, p->owner) || (p->within_frange[d->api] == 1)) {
+            } else if (IN_CONTACT(g, d->api, p->owner) || (p->within_frange[d->api] == 1)) {
+                /* MOO1 does not check (d->api != p->owner) due to within_frange check */
                 do_print = true;
                 lbxfont_select(2, 0, 0, 0);
                 lbxfont_set_color0(tbl_banner_color[g->eto[p->owner].banner]);
