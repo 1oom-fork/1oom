@@ -266,7 +266,7 @@ int ui_races(struct game_s *g, player_id_t api)
 
     d.num = 0;
     for (player_id_t pi = PLAYER_0; pi < g->players; ++pi) {
-        if ((pi != api) && BOOLVEC_IS1(e->within_frange, pi) && IS_ALIVE(g, pi)) {
+        if (IN_CONTACT(g, api, pi) && IS_ALIVE(g, pi)) {
             d.tbl_ei[d.num++] = pi;
         } else {
             e->spying[pi] = 0;

@@ -566,7 +566,7 @@ static void audience_menu_treaty(struct audience_s *au)
     }
     all_num = 0;
     for (player_id_t i = PLAYER_0; i < g->players; ++i) {
-        if ((i != ph) && (i != pa) && (ea->treaty[i] == TREATY_ALLIANCE)) {
+        if ((i != ph) && IN_CONTACT(g, pa, i) && (ea->treaty[i] == TREATY_ALLIANCE)) {
             all_tbl[all_num++] = i;
         }
     }
