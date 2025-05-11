@@ -99,7 +99,7 @@ void game_update_production(struct game_s *g)
     for (player_id_t pi = PLAYER_0; pi < g->players; ++pi) {
         empiretechorbit_t *e = &(g->eto[pi]);
         for (player_id_t pi2 = PLAYER_0; pi2 < g->players; ++pi2) {
-            if ((pi == pi2) || BOOLVEC_IS0(e->within_frange, pi2)) {
+            if (!IN_CONTACT(g, pi, pi2)) {
                 e->spying[pi2] = 0;
             }
         }

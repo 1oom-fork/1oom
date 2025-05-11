@@ -135,7 +135,7 @@ void ui_empirestatus(struct game_s *g, player_id_t active_player)
     d.num = 1;
     d.tbl_ei[0] = active_player;
     for (player_id_t pi = PLAYER_0; pi < g->players; ++pi) {
-        if ((pi != active_player) && BOOLVEC_IS1(g->eto[active_player].within_frange, pi)) {
+        if (IN_CONTACT(g, active_player, pi)) {
             d.tbl_ei[d.num++] = pi;
         }
     }
