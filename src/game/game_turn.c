@@ -314,8 +314,8 @@ static void game_turn_update_trade(struct game_s *g)
             empiretechorbit_t *e2 = &(g->eto[j]);
             uint16_t bc;
             bc = e->trade_bc[j];
-            if (bc != 0) {
-                if (BOOLVEC_IS0(e->within_frange, j)) {
+            if (bc != 0) {  /* MOO1 implicitly assumes (i != j) */
+                if (!IN_CONTACT(g, i, j)) {
                     e->trade_bc[j] = 0;
                     e->trade_percent[j] = 0;
                     e->trade_established_bc[j] = 0;
@@ -404,7 +404,8 @@ static void game_turn_diplo_adjust(struct game_s *g)
                     if (IS_HUMAN(g, j)) {
                         continue;
                     }
-                    if (BOOLVEC_IS1(e->within_frange, j) && (e->treaty[j] == TREATY_ALLIANCE)) {
+                    if (IN_CONTACT(g, i, j) && (e->treaty[j] == TREATY_ALLIANCE)) {
+                        /* MOO1 does not check (i != j) here, but game_diplo_act does */
                         game_diplo_act(g, v, i, j, 12, 0, 0);
                     }
                 }
@@ -1496,7 +1497,7 @@ static void game_turn_update_have_met(struct game_s *g)
             continue;
         }
         for (player_id_t j = PLAYER_0; j < g->players; ++j) {
-            if ((i != j) && (!e->have_met[j]) && BOOLVEC_IS1(e->within_frange, j)) {
+            if (!e->have_met[j] && IN_CONTACT(g, i, j)) {
                 e->have_met[j] = 1;
                 e->treaty[j] = TREATY_NONE;
                 g->eto[j].treaty[i] = TREATY_NONE;

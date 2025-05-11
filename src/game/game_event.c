@@ -72,7 +72,7 @@ static player_id_t game_event_new_get_trader(const struct game_s *g, player_id_t
     const empiretechorbit_t *e = &(g->eto[player]);
     player_id_t trader = PLAYER_NONE;
     for (player_id_t i = PLAYER_0; i < g->players; ++i) {
-        if ((i != player) && BOOLVEC_IS1(e->within_frange, i) && (e->trade_bc[i] != 0)) {
+        if (IN_CONTACT(g, player, i) && (e->trade_bc[i] != 0)) {
             trader = i;
         }
     }

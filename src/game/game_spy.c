@@ -192,11 +192,10 @@ static void game_spy_esp_sub5(struct spy_esp_s *s, int r)
 
 static player_id_t game_spy_frame_random(struct game_s *g, player_id_t spy, player_id_t target)
 {
-    const empiretechorbit_t *et = &(g->eto[target]);
     player_id_t tbl_scapegoat[PLAYER_NUM];
     int n = 0;
     for (player_id_t i = 0; i < PLAYER_NUM; ++i) {
-        if ((i != spy) && (i != target) && BOOLVEC_IS1(et->within_frange, i)) {
+        if ((i != spy) && IN_CONTACT(g, i, target)) {
             tbl_scapegoat[n++] = i;
         }
     }
