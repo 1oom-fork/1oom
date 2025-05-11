@@ -190,11 +190,10 @@ static void game_spy_esp_sub5(struct spy_esp_s *s, int r)
 
 static player_id_t game_spy_frame_random(struct game_s *g, player_id_t spy, player_id_t target)
 {
-    const empiretechorbit_t *et = &(g->eto[target]);
     player_id_t tbl_scapegoat[PLAYER_NUM];
     int n = 0;
     for (player_id_t i = 0; i < PLAYER_NUM; ++i) {
-        if ((i != spy) && (i != target) && BOOLVEC_IS1(et->within_frange, i)) {
+        if ((i != spy) && IN_CONTACT(g, i, target)) {
             tbl_scapegoat[n++] = i;
         }
     }
@@ -253,8 +252,8 @@ static void game_spy_espionage(struct game_s *g, player_id_t spy, player_id_t ta
                     player_id_t pi;
                     int n = 0;
                     for (pi = PLAYER_0; pi < g->players; ++pi) {
-                        const empiretechorbit_t *eg = &(g->eto[pi]);
-                        if ((pi != target) && IS_HUMAN(g, pi) && IS_ALIVE(g, pi) && BOOLVEC_IS1(eg->within_frange, target)) {
+                        /* MOO1 implicitly assumes (PLAYER_0 != target) */
+                        if (IS_HUMAN(g, pi) && IS_ALIVE(g, pi) && IN_CONTACT(g, pi, target)) {
                             scapegoat[n++] = pi;
                         }
                     }
@@ -686,7 +685,8 @@ void game_spy_sab_human(struct game_s *g)
                         const empiretechorbit_t *et;
                         et = &(g->eto[target]);
                         for (int i = 0; (i < g->players) && (other2 == PLAYER_NONE); ++i) {
-                            if ((i != player) && BOOLVEC_IS1(et->within_frange, i)) {
+                            /* MOO1 does not check (target != i) because in that case IN_CONTACT is 0 */
+                            if ((i != player) && IN_CONTACT(g, target, i)) {
                                 if (other1 == PLAYER_NONE) {
                                     other1 = i;
                                 } else {
