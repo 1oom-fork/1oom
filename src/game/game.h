@@ -317,6 +317,14 @@ static inline bool IN_CONTACT(const struct game_s *g, player_id_t p1, player_id_
     return (p1 != p2) && BOOLVEC_IS1(g->eto[p1].within_frange, p2);
 }
 
+static inline bool NOT_IN_CONTACT(const struct game_s *g, player_id_t p1, player_id_t p2)
+{
+    /*
+        Not the same as !IN_CONTACT, since the case (p1 == p2) is undefined.
+    */
+    return (p1 != p2) && BOOLVEC_IS0(g->eto[p1].within_frange, p2);
+}
+
 #define IS_AI(_g_, _i_) BOOLVEC_IS1((_g_)->is_ai, (_i_))
 
 #endif
