@@ -6,5 +6,7 @@ AM_CPPFLAGS = \
 noinst_LIBRARIES = libsave.a
 
 libsave_a_SOURCES = \
+    saveconv.c \
+    saveconv.h \
     save.c \
     save.h

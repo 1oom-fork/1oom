@@ -122,8 +122,8 @@ hwsdl2_lib = $(top_builddir)/src/hw/sdl/2/libhwsdl2.a
 1oom_lbxview_sdl2_LDADD = $(1oom_lbxview_sdl2_libs) @HW_SDL2_LIBS@ @EXTRA_SDL2_LIBS@ @SAMPLERATE_LIBS@
 1oom_lbxview_sdl2_DEPENDENCIES = $(1oom_lbxview_sdl2_libs)
 
-1oom_saveconv_libs = $(gamesaveconv_lib) $(save_lib) $(hwnop_lib) $(uinop_lib) $(common_libs)
-1oom_saveconv_SOURCES = saveconv_main.c saveconv_main.h saveconv.c saveconv.h lib.c log.c options.c util.c
+1oom_saveconv_libs = $(save_lib) $(gamesaveconv_lib) $(hwnop_lib) $(uinop_lib) $(common_libs)
+1oom_saveconv_SOURCES = saveconv_main.c saveconv_main.h lib.c log.c options.c util.c
 1oom_saveconv_LDADD = $(1oom_saveconv_libs)
 1oom_saveconv_DEPENDENCIES = $(1oom_saveconv_libs)
 
