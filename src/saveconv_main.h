@@ -1,7 +1,10 @@
 #ifndef INC_1OOM_SAVECONV_MAIN_H
 #define INC_1OOM_SAVECONV_MAIN_H
 
-extern int saveconv_main_init(void);
-extern void saveconv_main_shutdown(void);
+#include "game/game_save.h"
+
+extern char savename[SAVE_NAME_LEN];
+
+extern bool opt_use_configmoo;
 
 #endif
