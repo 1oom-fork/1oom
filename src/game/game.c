@@ -17,6 +17,7 @@
 #include "log.h"
 #include "options.h"
 #include "rnd.h"
+#include "saveconv.h"
 #include "ui.h"
 #include "util.h"
 
@@ -420,9 +421,15 @@ int main_do(void)
             game_new_opts = game_opt_new;
             goto main_menu_new_game;
         } else if (game_opt_load_fname) {
-            if (game_save_do_load_fname(game_opt_load_fname, 0, &game)) {
+            saveconv_init();
+            if (saveconv_is_moo13(&game, game_opt_load_fname) && !saveconv_de_moo13(&game, game_opt_load_fname)) {
+                log_message("Loading save (MOO1.3): %s\n", game_opt_load_fname);
+            } else if (saveconv_is_text(&game, game_opt_load_fname) && !saveconv_de_text(&game, game_opt_load_fname)) {
+                log_message("Loading save (text): %s\n", game_opt_load_fname);
+            } else if (game_save_do_load_fname(game_opt_load_fname, 0, &game)) {
                 log_fatal_and_die("Game: could not load save '%s'\n", game_opt_load_fname);
             }
+            saveconv_shutdown();
             game_opt_load_fname = 0;
             goto main_menu_start_game;
         } else if (game_opt_load_game) {
@@ -545,5 +552,6 @@ done:
 void main_do_shutdown(void)
 {
     /* TODO save game if in progress */
+    saveconv_shutdown();
     game_aux_shutdown(&game_aux);
 }

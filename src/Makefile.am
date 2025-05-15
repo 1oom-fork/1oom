@@ -93,14 +93,14 @@ gamesaveconv_lib = $(top_builddir)/src/game/libgamesaveconv.a
 uicmdline_lib = $(top_builddir)/src/ui/cmdline/libuicmdline.a
 hwnop_lib = $(top_builddir)/src/hw/nop/libhwnop.a
 1oom_cmdline_libs = $(gamemain_lib) $(game_lib) $(uicmdline_lib) $(game_lib) $(hwnop_lib) $(common_libs)
-1oom_cmdline_SOURCES = $(util_sources)
+1oom_cmdline_SOURCES = $(util_sources) saveconv.c saveconv.h
 1oom_cmdline_LDADD = $(1oom_cmdline_libs) @READLINE_LIBS@
 1oom_cmdline_DEPENDENCIES = $(1oom_cmdline_libs)
 
 uiclassic_lib = $(top_builddir)/src/ui/classic/libuiclassic.a
 hwsdl1_lib = $(top_builddir)/src/hw/sdl/1/libhwsdl1.a
 1oom_classic_sdl1_libs = $(gamemain_lib) $(game_lib) $(uiclassic_lib) $(game_lib) $(hwsdl1_lib) $(common_libs)
-1oom_classic_sdl1_SOURCES = $(audio_sources) $(gui_sources) $(util_sources)
+1oom_classic_sdl1_SOURCES = $(audio_sources) $(gui_sources) $(util_sources) saveconv.c saveconv.h
 1oom_classic_sdl1_LDADD = $(1oom_classic_sdl1_libs) @HW_SDL1_LIBS@ @EXTRA_SDL1_LIBS@ @SAMPLERATE_LIBS@
 1oom_classic_sdl1_DEPENDENCIES = $(1oom_classic_sdl1_libs)
 
@@ -112,7 +112,7 @@ uinop_lib = $(top_builddir)/src/ui/nop/libuinop.a
 
 hwsdl2_lib = $(top_builddir)/src/hw/sdl/2/libhwsdl2.a
 1oom_classic_sdl2_libs = $(gamemain_lib) $(game_lib) $(uiclassic_lib) $(game_lib) $(hwsdl2_lib) $(common_libs)
-1oom_classic_sdl2_SOURCES = $(audio_sources) $(gui_sources) $(util_sources)
+1oom_classic_sdl2_SOURCES = $(audio_sources) $(gui_sources) $(util_sources) saveconv.c saveconv.h
 1oom_classic_sdl2_LDADD = $(1oom_classic_sdl2_libs) @HW_SDL2_LIBS@ @EXTRA_SDL2_LIBS@ @SAMPLERATE_LIBS@
 1oom_classic_sdl2_DEPENDENCIES = $(1oom_classic_sdl2_libs)
 
