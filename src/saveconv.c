@@ -15,6 +15,7 @@
 #include "lib.h"
 #include "log.h"
 #include "os.h"
+#include "saveconv.h"
 #include "ui.h"
 #include "util.h"
 
@@ -29,7 +30,7 @@ bool ui_use_audio = false;
 
 static struct game_s *gameptr = 0;
 
-static uint8_t *save2buf = 0;
+static uint8_t *save2buf = NULL;
 static int save2len = 0;
 static FILE *save2fd = 0;
 static const char *save2fname = 0;
@@ -48,14 +49,6 @@ typedef enum {
 #define SAVETYPE_F_OPTOUT   (1 << 1)
 
 static int savetype_de_smart(struct game_s *g, const char *fname);
-static bool savetype_is_moo13(struct game_s *g, const char *fname);
-static int savetype_de_moo13(struct game_s *g, const char *fname);
-static int savetype_en_moo13(struct game_s *g, const char *fname);
-static int savetype_de_1oom0(struct game_s *g, const char *fname);
-static int savetype_en_1oom0(struct game_s *g, const char *fname);
-static bool savetype_is_text(struct game_s *g, const char *fname);
-static int savetype_de_text(struct game_s *g, const char *fname);
-static int savetype_en_text(struct game_s *g, const char *fname);
 
 static const struct {
     const char *name;
@@ -74,23 +67,23 @@ static const struct {
     },
     { /* SAVETYPE_MOO13 */
         "MOO v1.3",
-        savetype_is_moo13,
-        savetype_de_moo13,
-        savetype_en_moo13,
+        saveconv_is_moo13,
+        saveconv_de_moo13,
+        saveconv_en_moo13,
         0, SAVETYPE_NATIVE
     },
     { /* SAVETYPE_1OOM0 */
         "1oom save version 0",
         0,
-        savetype_de_1oom0,
-        savetype_en_1oom0,
+        saveconv_de_1oom0,
+        saveconv_en_1oom0,
         0, SAVETYPE_MOO13
     },
     { /* SAVETYPE_TEXT  */
         "text",
-        savetype_is_text,
-        savetype_de_text,
-        savetype_en_text,
+        saveconv_is_text,
+        saveconv_de_text,
+        saveconv_en_text,
         SAVETYPE_F_OPTOUT, SAVETYPE_NATIVE
     },
     { /* SAVETYPE_DUMMY */
@@ -184,12 +177,12 @@ static int savetype_de_smart(struct game_s *g, const char *fname)
         fd = NULL;
         savetypei = SAVETYPE_NATIVE;
         res = savetype[SAVETYPE_NATIVE].decode(g, fname);
-    } else if (savetype_is_moo13(g, fname)) {
+    } else if (saveconv_is_moo13(g, fname)) {
         savetypei = SAVETYPE_MOO13;
-        res = savetype_de_moo13(g, fname);
-    } else if (savetype_is_text(g, fname)) {
+        res = saveconv_de_moo13(g, fname);
+    } else if (saveconv_is_text(g, fname)) {
         savetypei = SAVETYPE_TEXT;
-        res = savetype_de_text(g, fname);
+        res = saveconv_de_text(g, fname);
     } else {
         log_error("file '%s' type autodetection failed\n", fname);
         return -1;
@@ -232,7 +225,7 @@ static int try_load_len(const char *fname, uint8_t *buf, int wantlen)
 #define SAVE_MOO13_LEN  59036
 #define SAVE_CMOO_LEN   154
 
-static bool savetype_is_moo13(struct game_s *g, const char *fname)
+bool saveconv_is_moo13(struct game_s *g, const char *fname)
 {
     uint16_t w;
     int len;
@@ -358,7 +351,7 @@ static int savetype_de_moo13_sd(shipdesign_t *sd, int sb)
     return 0;
 }
 
-static int savetype_de_moo13(struct game_s *g, const char *fname)
+int saveconv_de_moo13(struct game_s *g, const char *fname)
 {
     LOG_DEBUG((2, "%s: '%s'\n", __func__, fname));
     {
@@ -824,7 +817,7 @@ static int savetype_en_moo13_sd(const shipdesign_t *sd, int sb)
     return 0;
 }
 
-static int savetype_en_moo13(struct game_s *g, const char *fname)
+int saveconv_en_moo13(struct game_s *g, const char *fname)
 {
     LOG_DEBUG((2, "%s: '%s'\n", __func__, fname ? fname : "(null)"));
     memset(save2buf, 0, SAVE_MOO13_LEN);
@@ -1813,7 +1806,7 @@ static int savetype_de_text_parse_line(struct game_s *g, const char *fname, char
     return 0;
 }
 
-static bool savetype_is_text(struct game_s *g, const char *fname)
+bool saveconv_is_text(struct game_s *g, const char *fname)
 {
     FILE *fd = NULL;
     int len;
@@ -1841,7 +1834,7 @@ static bool savetype_is_text(struct game_s *g, const char *fname)
     return is_text;
 }
 
-static int savetype_de_text(struct game_s *g, const char *fname)
+int saveconv_de_text(struct game_s *g, const char *fname)
 {
     FILE *fd = NULL;
     int len, lnum = 0;
@@ -1997,7 +1990,7 @@ static void savetype_en_text_monster(const monster_t *m, struct text_dump_prefix
     OUTLINEI("nuked", m->nuked);
 }
 
-static int savetype_en_text(struct game_s *g, const char *fname)
+int saveconv_en_text(struct game_s *g, const char *fname)
 {
     struct text_dump_prefix_s tp[1];
     LOG_DEBUG((2, "%s: '%s'\n", __func__, fname));
@@ -2318,17 +2311,35 @@ static int savetype_en_text(struct game_s *g, const char *fname)
 
 /* -------------------------------------------------------------------------- */
 
-static int savetype_de_1oom0(struct game_s *g, const char *fname)
+int saveconv_de_1oom0(struct game_s *g, const char *fname)
 {
     char *sname = (*savename == '\0') ? savename : NULL;
     LOG_DEBUG((2, "%s: '%s'\n", __func__, fname));
     return game_save_do_load_fname(fname, sname, g);
 }
 
-static int savetype_en_1oom0(struct game_s *g, const char *fname)
+int saveconv_en_1oom0(struct game_s *g, const char *fname)
 {
     LOG_DEBUG((2, "%s: '%s'\n", __func__, fname ? fname : "(null)"));
     return game_save_do_save_fname(fname, savename, g);
+}
+
+/* -------------------------------------------------------------------------- */
+
+int saveconv_init(void)
+{
+    if (save2buf == NULL) {
+        save2buf = lib_malloc(0x10000);
+    }
+    return 0;
+}
+
+void saveconv_shutdown(void)
+{
+    if (save2buf != NULL) {
+        lib_free(save2buf);
+        save2buf = NULL;
+    }
 }
 
 /* -------------------------------------------------------------------------- */
@@ -2449,7 +2460,7 @@ static int main_early_init(void)
     gaux->savenamebuf = lib_malloc(gaux->savenamebuflen);
     gaux->savebuflen = sizeof(struct game_s) + 64;
     gaux->savebuf = lib_malloc(gaux->savebuflen);
-    save2buf = lib_malloc(0x10000);
+    saveconv_init();
     return 0;
 }
 
@@ -2467,7 +2478,7 @@ static void main_shutdown(void)
     lib_free(gameptr->gaux->savebuf);
     lib_free(gameptr->gaux);
     lib_free(gameptr);
-    lib_free(save2buf);
+    saveconv_shutdown();
     os_shutdown();
 }
 
