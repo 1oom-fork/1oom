@@ -7,7 +7,6 @@
 #include "main.h"
 #include "bits.h"
 #include "comp.h"
-#include "hw.h"
 #include "game/game.h"
 #include "game/game_aux.h"
 #include "game/game_str.h"
@@ -16,15 +15,7 @@
 #include "os.h"
 #include "save/save.h"
 #include "saveconv.h"
-#include "ui.h"
 #include "util.h"
-
-/* -------------------------------------------------------------------------- */
-
-const char *idstr_main = "saveconv";
-
-bool main_use_lbx = false;
-bool ui_use_audio = false;
 
 /* -------------------------------------------------------------------------- */
 
@@ -2447,7 +2438,7 @@ const struct cmdline_options_s main_cmdline_options[] = {
 
 /* -------------------------------------------------------------------------- */
 
-static int main_early_init(void)
+int saveconv_main_init(void)
 {
     struct game_s *g;
     if (os_early_init()) {
@@ -2459,15 +2450,7 @@ static int main_early_init(void)
     return 0;
 }
 
-static int main_init(void)
-{
-    if (os_init()) {
-        return 1;
-    }
-    return 0;
-}
-
-static void main_shutdown(void)
+void saveconv_main_shutdown(void)
 {
     libsave_shutdown();
     lib_free(gameptr);
@@ -2521,24 +2504,4 @@ int main_do(void)
         return 1;
     }
     return 0;
-}
-
-/* -------------------------------------------------------------------------- */
-
-int main_1oom(int argc, char **argv)
-{
-    if (main_early_init()) {
-        return 1;
-    }
-    if (options_parse_early(argc, argv)) {
-        return 1;
-    }
-    atexit(main_shutdown);
-    if (main_init()) {
-        return 2;
-    }
-    if (options_parse(argc, argv)) {
-        return 3;
-    }
-    return main_do();
 }
