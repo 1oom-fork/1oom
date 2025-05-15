@@ -252,6 +252,10 @@ int saveconv_de_moo13(struct game_s *g, const char *fname)
     M13_GET_16_CHECK(g->transport_num, 0xe1b8, 0, 99);
     M13_GET_16(g->end, 0xe686);
     M13_GET_16_OWNER(g->winner, 0xe688);
+    M13_GET_16(g->guardian_killer, 0xe68a);
+    if (g->guardian_killer == 1000) {
+        g->guardian_killer = PLAYER_NONE;
+    }
     M13_GET_16(g->election_held, 0xe68c);
     for (int i = 0; i < g->nebula_num; ++i) {
         M13_GET_16(g->nebula_type[i], 0xe23a + i * 2);
@@ -975,7 +979,7 @@ int saveconv_en_moo13(struct game_s *g, const char *fname)
             ++a;
         }
     }
-    M13_SET_16(1000, 0xe68a);
+    M13_SET_16((g->guardian_killer == PLAYER_NONE) ? 1000 : g->guardian_killer, 0xe68a);
     for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         const empiretechorbit_t *e = &(g->eto[i]);
         int srdb;
@@ -1369,6 +1373,7 @@ static const struct game_intros_s game_intros_root[] = {
     GAME_INTROS_VAL(game_s, transport_num),
     GAME_INTROS_VAL(game_s, end),
     GAME_INTROS_VAL(game_s, winner),
+    GAME_INTROS_VAL(game_s, guardian_killer),
     GAME_INTROS_VAL(game_s, election_held),
     GAME_INTROS_VAL(game_s, nebula_num),
     GAME_INTROS_TBL(game_s, nebula_type),
@@ -1887,6 +1892,7 @@ int saveconv_en_text(struct game_s *g, const char *fname)
     OUTLINEI("transport_num", g->transport_num);
     OUTLINEI("end", g->end);
     OUTLINEI("winner", g->winner);
+    OUTLINEI("guardian_killer", g->guardian_killer);
     OUTLINEI("election_held", g->election_held);
     OUTFLUSH();
     OUTLINEI("nebula_num", g->nebula_num);
