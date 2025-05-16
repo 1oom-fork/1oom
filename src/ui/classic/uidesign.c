@@ -594,7 +594,8 @@ static void ui_design_sel_comp(struct design_data_s *d)
     lbxfont_select(2, 0, 4, 0xe);
 
     {
-        int havelast, space, cost, bufpos = 0;
+        ship_comp_t havelast;
+        int space, cost, bufpos = 0;
         char s1[3] = "\x1dX";
         char s2[3] = "\x1dX";
         char s3[3] = "\x1dX";
@@ -619,7 +620,7 @@ static void ui_design_sel_comp(struct design_data_s *d)
         cost = game_design_calc_cost(d->gd);
         havelast = game_design_build_tbl_fit_comp(d->g, d->gd, havebuf);
 
-        for (int i = 0; i <= havelast; ++i) {
+        for (ship_comp_t i = 0; i <= havelast; ++i) {
             if (havebuf[i] >= 0) {
                 int space2, power, cost2, sizei, len;
                 flag_tbl_enable[n] = (havebuf[i] > 0);
@@ -672,7 +673,8 @@ static void ui_design_sel_shield(struct design_data_s *d)
     lbxfont_select(2, 0, 4, 0xe);
 
     {
-        int havelast, space, cost, bufpos = 0;
+        ship_shield_t havelast;
+        int space, cost, bufpos = 0;
         char s1[3] = "\x1dX";
         char s2[3] = "\x1dX";
         char s3[3] = "\x1dX";
@@ -697,7 +699,7 @@ static void ui_design_sel_shield(struct design_data_s *d)
         cost = game_design_calc_cost(d->gd);
         havelast = game_design_build_tbl_fit_shield(d->g, d->gd, havebuf);
 
-        for (int i = 0; i <= havelast; ++i) {
+        for (ship_shield_t i = 0; i <= havelast; ++i) {
             if (havebuf[i] >= 0) {
                 int space2, power, cost2, sizei, len;
                 flag_tbl_enable[n] = (havebuf[i] > 0);
@@ -750,7 +752,8 @@ static void ui_design_sel_jammer(struct design_data_s *d)
     lbxfont_select(2, 0, 4, 0xe);
 
     {
-        int havelast, space, cost, bufpos = 0;
+        ship_jammer_t havelast;
+        int space, cost, bufpos = 0;
         char s1[3] = "\x1dX";
         char s2[3] = "\x1dX";
         char s3[3] = "\x1dX";
@@ -775,7 +778,7 @@ static void ui_design_sel_jammer(struct design_data_s *d)
         cost = game_design_calc_cost(d->gd);
         havelast = game_design_build_tbl_fit_jammer(d->g, d->gd, havebuf);
 
-        for (int i = 0; i <= havelast; ++i) {
+        for (ship_jammer_t i = 0; i <= havelast; ++i) {
             if (havebuf[i] >= 0) {
                 int space2, power, cost2, sizei, len;
                 flag_tbl_enable[n] = (havebuf[i] > 0);
@@ -828,7 +831,8 @@ static void ui_design_sel_armor(struct design_data_s *d)
     lbxfont_select(2, 0, 4, 0xe);
 
     {
-        int havelast, bufpos = 0;
+        ship_armor_t havelast;
+        int bufpos = 0;
         char s1[3] = "\x1dX";
         char s2[3] = "\x1dX";
 
@@ -843,7 +847,7 @@ static void ui_design_sel_armor(struct design_data_s *d)
         s2[1] = (char)(xpos + 50);
 
         havelast = game_design_build_tbl_fit_armor(d->g, d->gd, havebuf);
-        for (int i = 0; i <= havelast; ++i) {
+        for (ship_armor_t i = 0; i <= havelast; ++i) {
             if (havebuf[i] >= 0) {
                 int cost2, sizei, len;
                 flag_tbl_enable[n] = (havebuf[i] > 0);
@@ -894,7 +898,8 @@ static void ui_design_sel_engine(struct design_data_s *d)
     lbxfont_select(2, 0, 4, 0xe);
 
     {
-        int havelast, bufpos = 0;
+        ship_engine_t havelast;
+        int bufpos = 0;
         char s1[3] = "\x1dX";
         char s2[3] = "\x1dX";
         char s3[3] = "\x1dX";
@@ -916,7 +921,7 @@ static void ui_design_sel_engine(struct design_data_s *d)
         game_design_update_engines(sd);
         havelast = game_design_build_tbl_fit_engine(d->g, d->gd, havebuf);
 
-        for (int i = 0; i <= havelast; ++i) {
+        for (ship_engine_t i = 0; i <= havelast; ++i) {
             if (havebuf[i] >= 0) {
                 int cost2, sizei, sizet, ne, len;
                 flag_tbl_enable[n] = (havebuf[i] > 0);
@@ -1049,7 +1054,8 @@ static void ui_design_sel_weapon(struct design_data_s *d, int wslot)
     lbxfont_select(2, 0, 4, 0xe);
 
     {
-        int havelast, bufpos = 0, space, cost;
+        weapon_t havelast;
+        int bufpos = 0, space, cost;
         char s1[3] = "\x1dX";
         char s2[3] = "\x1dX";
         char s3[3] = "\x1dX";
@@ -1084,7 +1090,7 @@ static void ui_design_sel_weapon(struct design_data_s *d, int wslot)
         havelast = game_design_build_tbl_fit_weapon(d->g, d->gd, havebuf, wslot);
 
         {
-            int i = havelast + 1, firsti;
+            weapon_t i = havelast + 1, firsti;
             if ((game_num_weapon_list_max > 0) && (game_num_weapon_list_max < WEAPON_NUM)) {
                 int j;
                 for (j = 0; (j < game_num_weapon_list_max) && (i > 0); ) {
@@ -1183,7 +1189,8 @@ static void ui_design_sel_special(struct design_data_s *d, int sslot)
     lbxfont_select(2, 0, 4, 0xe);
 
     {
-        int havelast, bufpos = 0, space, cost;
+        ship_special_t havelast;
+        int bufpos = 0, space, cost;
         char s1[3] = "\x1dX";
         char s2[3] = "\x1dX";
         char s3[3] = "\x1dX";
@@ -1212,7 +1219,7 @@ static void ui_design_sel_special(struct design_data_s *d, int sslot)
         cost = game_design_calc_cost(d->gd);
         havelast = game_design_build_tbl_fit_special(d->g, d->gd, havebuf, sslot);
 
-        for (int i = 0; i <= havelast; ++i) {
+        for (ship_special_t i = 0; i <= havelast; ++i) {
             if (havebuf[i] >= 0) {
                 int space2, cost2, power, sizei, len;
                 ++numlines;
