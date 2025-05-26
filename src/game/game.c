@@ -43,6 +43,8 @@ static int game_opt_new_value = 200;
 static struct game_s game;
 static struct game_aux_s game_aux;
 
+static bool save_on_exit = false;
+
 /* -------------------------------------------------------------------------- */
 
 static void game_start(struct game_s *g)
@@ -569,6 +571,7 @@ int main_do(void)
         }
         main_menu_start_game:
         game_aux_start(&game_aux, &game);
+        save_on_exit = true;
         game_start(&game);
         ui_game_start(&game);
         game_end.type = GAME_END_NONE;
@@ -610,6 +613,7 @@ int main_do(void)
             game.active_player = PLAYER_0;
         }
         ui_game_end(&game);
+        save_on_exit = false;
         do_ending:
         switch (game_end.type) {
             case GAME_END_QUIT:
@@ -641,7 +645,10 @@ done:
 
 void main_do_shutdown(void)
 {
-    /* TODO save game if in progress */
+    /* HACK save_on_exit is needed to track the transition from starmap_exe to orion_exe */
+    if (save_on_exit && game_save_do_save_i(GAME_SAVE_I_CONTINUE, "Continue", &game)) {
+        log_error("Game: failed to create continue save\n");
+    }
     libsave_shutdown();
     saveconv_shutdown();
     game_aux_shutdown(&game_aux);
