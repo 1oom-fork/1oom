@@ -9,6 +9,7 @@
 #endif
 
 #include "hw.h"
+#include "hw_video.h"
 #include "hwsdl_video.h"
 #include "hwsdl_mouse.h"
 #include "hwsdl_opt.h"
@@ -364,4 +365,4 @@ void hw_video_position_cursor(int mx, int my)
     /* Not implemented */
 }
 
-#include "hwsdl_video.c"
+#include "hw_video.c"

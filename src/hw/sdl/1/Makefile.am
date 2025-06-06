@@ -2,6 +2,7 @@ AM_CFLAGS=@HW_SDL1_CFLAGS@
 
 AM_CPPFLAGS = \
     -I$(top_srcdir)/src \
+    -I$(top_srcdir)/src/hw \
     -I$(top_srcdir)/src/hw/sdl
 
 noinst_LIBRARIES = libhwsdl1.a
