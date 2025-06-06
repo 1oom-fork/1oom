@@ -47,6 +47,9 @@ static struct sdl_video_s {
 static void video_render_8bpp(const uint8_t *buf)
 {
     SDL_Surface *target = video.screen;
+    if (SDL_LockSurface(target) < 0) {
+        return;
+    }
     int pitch = target->pitch;
     Uint8 *p = (Uint8 *)target->pixels;
     const uint8_t *q = buf;
@@ -57,6 +60,7 @@ static void video_render_8bpp(const uint8_t *buf)
         p += pitch;
         q += w;
     }
+    SDL_UnlockSurface(target);
 }
 
 static void video_update_8bpp(void)
@@ -81,6 +85,9 @@ static void video_setpal_8bpp(const uint8_t *pal, int first, int num)
 static void video_render_gl_32bpp(const uint8_t *buf)
 {
     SDL_Surface *target = video.hwrenderbuf;
+    if (SDL_LockSurface(target) < 0) {
+        return;
+    }
     int pitch_skip = ((target->w * sizeof(Uint32)) - target->pitch) / sizeof(Uint32);
 
     Uint32 *p = (Uint32 *)target->pixels;
@@ -93,6 +100,7 @@ static void video_render_gl_32bpp(const uint8_t *buf)
         }
         p += pitch_skip;
     }
+    SDL_UnlockSurface(target);
 }
 
 static void video_update_gl_32bpp(void)
