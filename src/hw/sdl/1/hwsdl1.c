@@ -11,6 +11,7 @@
 #include "SDL_keysym.h"
 
 #include "hw.h"
+#include "hw_video.h"
 #include "hwsdl_audio.h"
 #include "hwsdl_mouse.h"
 #include "hwsdl_opt.h"

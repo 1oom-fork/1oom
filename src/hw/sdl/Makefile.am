@@ -15,5 +15,4 @@ EXTRA_DIST = \
     hwsdl.c \
     hwsdl_audio.c \
     hwsdl_mouse.c \
-    hwsdl_opt.c \
-    hwsdl_video.c
+    hwsdl_opt.c
