@@ -1,17 +1,6 @@
 void hw_video_refresh(void)
 {
-    if (SDL_MUSTLOCK(video.screen)) {
-        if (SDL_LockSurface(video.screen) < 0) {
-            return;
-        }
-    }
-
     video.render(vgabuf_get_front());
-
-    if (SDL_MUSTLOCK(video.screen)) {
-        SDL_UnlockSurface(video.screen);
-    }
-
     video.update();
 }
 
