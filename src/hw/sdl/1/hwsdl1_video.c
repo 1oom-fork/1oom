@@ -9,14 +9,13 @@
 #endif
 
 #include "hw.h"
+#include "hw_internal.h"
 #include "hwsdl_video.h"
 #include "hwsdl_mouse.h"
 #include "hwsdl_opt.h"
 #include "lib.h"
 #include "log.h"
 #include "types.h"
-#include "vgabuf.h"
-#include "vgapal.h"
 
 /* -------------------------------------------------------------------------- */
 
@@ -24,15 +23,6 @@ static struct sdl_video_s {
     SDL_Surface *screen;
 #ifdef HAVE_OPENGL
     SDL_Surface *hwrenderbuf;
-#endif
-    void (*render)(void);
-    void (*update)(void);
-    void (*setpal)(uint8_t *pal, int first, int num);
-
-    int bufw;
-    int bufh;
-
-#ifdef HAVE_OPENGL
     /* precalculated 32bit palette */
     uint32_t pal32[256];
 #endif
@@ -46,14 +36,18 @@ static struct sdl_video_s {
 
 static void video_render_8bpp(void)
 {
+    if (SDL_LockSurface(video.screen) < 0) {
+        return;
+    }
     int pitch = video.screen->pitch;
     Uint8 *p = (Uint8 *)video.screen->pixels;
     uint8_t *q = vgabuf_get_front();
-    for (int y = 0; y < video.bufh; ++y) {
-        memcpy(p, q, video.bufw);
+    for (int y = 0; y < video.screen->h; ++y) {
+        memcpy(p, q, video.screen->w);
         p += pitch;
-        q += video.bufw;
+        q += video.screen->w;
     }
+    SDL_UnlockSurface(video.screen);
 }
 
 static void video_update_8bpp(void)
@@ -61,7 +55,7 @@ static void video_update_8bpp(void)
     SDL_UpdateRect(video.screen, 0, 0, video.screen->w, video.screen->h);
 }
 
-static void video_setpal_8bpp(uint8_t *pal, int first, int num)
+static void video_setpal_8bpp(const uint8_t *pal, int first, int num)
 {
     SDL_Color color[256];
     for (int i = first; i < (first + num); ++i) {
@@ -82,16 +76,20 @@ static uint8_t colorpaldebug = 0;
 
 static void video_render_gl_32bpp(void)
 {
-    int pitch_skip = ((video.bufw * sizeof(Uint32)) - video.hwrenderbuf->pitch) / sizeof(Uint32);
+    if (SDL_LockSurface(video.hwrenderbuf) < 0) {
+        return;
+    }
+    int pitch_skip = ((video.hwrenderbuf->w * sizeof(Uint32)) - video.hwrenderbuf->pitch) / sizeof(Uint32);
 
     Uint32 *p = (Uint32 *)video.hwrenderbuf->pixels;
     uint8_t *q = vgabuf_get_front();
-    for (int y = 0; y < video.bufh; ++y) {
-        for (int x = 0; x < video.bufw; ++x) {
+    for (int y = 0; y < video.hwrenderbuf->h; ++y) {
+        for (int x = 0; x < video.hwrenderbuf->w; ++x) {
             *p++ = video.pal32[*q++];
         }
         p += pitch_skip;
     }
+    SDL_UnlockSurface(video.hwrenderbuf);
 #ifdef FEATURE_MODEBUG
     if (hw_opt_overlay_pal) {
         p = (Uint32 *)video.hwrenderbuf->pixels;
@@ -132,7 +130,7 @@ static void video_update_gl_32bpp(void)
         glTexParameteri(GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_MAG_FILTER, filter);
         glTexParameteri(GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_MIN_FILTER, filter);
     }
-    glTexImage2D(GL_TEXTURE_RECTANGLE_ARB, 0, GL_RGBA, video.bufw, video.bufh, 0, GL_RGBA, GL_UNSIGNED_BYTE, video.hwrenderbuf->pixels);
+    glTexImage2D(GL_TEXTURE_RECTANGLE_ARB, 0, GL_RGBA, video.hwrenderbuf->w, video.hwrenderbuf->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, video.hwrenderbuf->pixels);
 
     glBegin(GL_QUADS);
 
@@ -141,15 +139,15 @@ static void video_update_gl_32bpp(void)
     glVertex2f(-1.0f, 1.0f);
 
     /* Upper Right Of Texture */
-    glTexCoord2f(0.0f, (float)(video.bufh));
+    glTexCoord2f(0.0f, (float)(video.hwrenderbuf->h));
     glVertex2f(-1.0f, -1.0f);
 
     /* Upper Left Of Texture */
-    glTexCoord2f((float)(video.bufw), (float)(video.bufh));
+    glTexCoord2f((float)(video.hwrenderbuf->w), (float)(video.hwrenderbuf->h));
     glVertex2f(1.0f, -1.0f);
 
     /* Lower Left Of Texture */
-    glTexCoord2f((float)(video.bufw), 0.0f);
+    glTexCoord2f((float)(video.hwrenderbuf->w), 0.0f);
     glVertex2f(1.0f, 1.0f);
 
     glEnd();
@@ -157,7 +155,7 @@ static void video_update_gl_32bpp(void)
     SDL_GL_SwapBuffers();
 }
 
-static void video_setpal_gl_32bpp(uint8_t *pal, int f, int num)
+static void video_setpal_gl_32bpp(const uint8_t *pal, int f, int num)
 {
     for (int i = 0; i < num; ++i) {
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
@@ -172,7 +170,8 @@ static void video_setpal_gl_32bpp(uint8_t *pal, int f, int num)
                            ;
 #endif
     }
-    hw_video_refresh();
+    i_hw_video.render();
+    i_hw_video.update();
 }
 #endif /* HAVE_OPENGL */
 
@@ -202,6 +201,21 @@ static void set_viewport(unsigned int src_w, unsigned int src_h, unsigned int de
 
 /* -------------------------------------------------------------------------- */
 
+static int video_sw_set(int w, int h)
+{
+    int flags;
+    flags = SDL_SWSURFACE | SDL_DOUBLEBUF;
+    log_message("SDL_SetVideoMode(%i, %i, %i, 0x%x)\n", w, h, 8, flags);
+    video.screen = SDL_SetVideoMode(w, h, 8, flags);
+    if (!video.screen) {
+        log_error("SDL_SetVideoMode failed: %s\n", SDL_GetError());
+        return -1;
+    }
+    return 0;
+}
+
+/* -------------------------------------------------------------------------- */
+
 int hw_video_resize(int w, int h)
 {
 #ifdef HAVE_OPENGL
@@ -216,8 +230,8 @@ int hw_video_resize(int w, int h)
     }
 
     if ((w < 0) || (h < 0)) {
-        w = video.bufw;
-        h = video.bufh;
+        w = video.hwrenderbuf->w;
+        h = video.hwrenderbuf->h;
     }
 
     new_w = w;
@@ -249,7 +263,7 @@ int hw_video_resize(int w, int h)
         log_error("SDL_SetVideoMode failed!");
         goto fail;
     }
-    set_viewport(video.bufw, video.bufh, actual_w, actual_h);
+    set_viewport(video.hwrenderbuf->w, video.hwrenderbuf->h, actual_w, actual_h);
     if (hw_opt_fullscreen) {
         hw_mouse_grab();
     }
@@ -263,8 +277,6 @@ int hw_video_resize(int w, int h)
 
 int hw_video_init(int w, int h)
 {
-    video.bufw = w;
-    video.bufh = h;
     {
         const SDL_VideoInfo *p = SDL_GetVideoInfo();
         video.bestmode.w = p->current_w;
@@ -277,15 +289,10 @@ int hw_video_init(int w, int h)
     if (!hw_opt_use_gl)
 #endif
     {
-        log_message("SDL_SetVideoMode(%i, %i, ...)\n", w, h);
-        video.screen = SDL_SetVideoMode(w, h, 8, SDL_SWSURFACE | SDL_DOUBLEBUF);
-        if (!video.screen) {
-            log_error("SDL_SetVideoMode failed: %s\n", SDL_GetError());
-            return -1;
-        }
-        video.render = video_render_8bpp;
-        video.update = video_update_8bpp;
-        video.setpal = video_setpal_8bpp;
+        i_hw_video.setmode = video_sw_set;
+        i_hw_video.render = video_render_8bpp;
+        i_hw_video.update = video_update_8bpp;
+        i_hw_video.setpal = video_setpal_8bpp;
     }
 #ifdef HAVE_OPENGL
     else {
@@ -304,19 +311,20 @@ int hw_video_init(int w, int h)
         if ((video.hwrenderbuf->pitch % sizeof(Uint32)) != 0) {
             log_warning("SDL renderbuf pitch mod %i == %i", sizeof(Uint32), video.hwrenderbuf->pitch);
         }
-        video.render = video_render_gl_32bpp;
-        video.update = video_update_gl_32bpp;
-        video.setpal = video_setpal_gl_32bpp;
+        i_hw_video.setmode = hw_video_resize;
+        i_hw_video.render = video_render_gl_32bpp;
+        i_hw_video.update = video_update_gl_32bpp;
+        i_hw_video.setpal = video_setpal_gl_32bpp;
         if ((hw_opt_screen_winw != 0) && (hw_opt_screen_winh != 0)) {
             w = hw_opt_screen_winw;
             h = hw_opt_screen_winh;
         }
-        if (hw_video_resize(w, h)) {
-            return -1;
-        }
     }
 #endif
 
+    if (i_hw_video.setmode(w, h)) {
+        return -1;
+    }
     return 0;
 }
 
@@ -333,5 +341,3 @@ void hw_video_shutdown(void)
     }
 #endif
 }
-
-#include "hwsdl_video.c"
