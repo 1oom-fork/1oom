@@ -16,22 +16,29 @@
 #define MAX_MSG_LEN (1024 * 2)
 
 static char msgbuf[MAX_MSG_LEN] = "";
+bool log_direct_enabled = true;
 
 /* ------------------------------------------------------------------------- */
 
 void log_message_direct(const char *msg)
 {
-    hw_log_message(msg);
+    if (log_direct_enabled) {
+        fputs(msg, stdout);
+    }
 }
 
 void log_warning_direct(const char *msg)
 {
-    hw_log_warning(msg);
+    if (log_direct_enabled) {
+        fputs(msg, stderr);
+    }
 }
 
 void log_error_direct(const char *msg)
 {
-    hw_log_error(msg);
+    if (log_direct_enabled) {
+        fputs(msg, stderr);
+    }
 }
 
 void log_message(const char* format, ...)
