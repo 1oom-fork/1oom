@@ -33,20 +33,3 @@ static bool hw_kbd_check_hotkey(SDLKey key, SDLMod smod, char c)
     }
     return false;
 }
-
-/* -------------------------------------------------------------------------- */
-
-void hw_log_message(const char *msg)
-{
-    fputs(msg, stdout);
-}
-
-void hw_log_warning(const char *msg)
-{
-    fputs(msg, stderr);
-}
-
-void hw_log_error(const char *msg)
-{
-    fputs(msg, stderr);
-}
