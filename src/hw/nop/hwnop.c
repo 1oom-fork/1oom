@@ -39,18 +39,3 @@ int hw_init(void)
 void hw_shutdown(void)
 {
 }
-
-void hw_log_message(const char *msg)
-{
-    fputs(msg, stdout);
-}
-
-void hw_log_warning(const char *msg)
-{
-    fputs(msg, stderr);
-}
-
-void hw_log_error(const char *msg)
-{
-    fputs(msg, stderr);
-}
