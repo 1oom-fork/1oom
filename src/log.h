@@ -1,6 +1,10 @@
 #ifndef IDACME_LOG_H
 #define IDACME_LOG_H
 
+#include "types.h"
+
+extern bool log_direct_enabled;
+
 extern void log_message_direct(const char *msg);
 extern void log_warning_direct(const char *msg);
 extern void log_error_direct(const char *msg);
