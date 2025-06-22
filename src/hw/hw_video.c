@@ -1,17 +1,19 @@
+struct i_hw_video_s i_hw_video = { 0 };
+
 void hw_video_refresh(void)
 {
-    video.render(vgabuf_get_front());
-    video.update();
+    i_hw_video.render(vgabuf_get_front());
+    i_hw_video.update();
 }
 
 void hw_video_update(void)
 {
-    video.update();
+    i_hw_video.update();
 }
 
 void hw_video_refresh_palette(void)
 {
-    video.setpal(vgapal, 0, 256);
+    i_hw_video.setpal(vgapal, 0, 256);
 }
 
 uint8_t *hw_video_draw_buf(void)
