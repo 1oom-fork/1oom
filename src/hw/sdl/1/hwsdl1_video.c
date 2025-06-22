@@ -25,12 +25,6 @@ static struct sdl_video_s {
     SDL_Surface *screen;
 #ifdef HAVE_SDL1GL
     SDL_Surface *hwrenderbuf;
-#endif
-    void (*render)(const uint8_t *buf);
-    void (*update)(void);
-    void (*setpal)(const uint8_t *pal, int first, int num);
-
-#ifdef HAVE_SDL1GL
     /* precalculated 32bit palette */
     uint32_t pal32[256];
 #endif
@@ -292,9 +286,9 @@ int hw_video_init(int w, int h)
     if (hw_opt_force_sw)
 #endif
     {
-        video.render = video_render_8bpp;
-        video.update = video_update_8bpp;
-        video.setpal = video_setpal_8bpp;
+        i_hw_video.render = video_render_8bpp;
+        i_hw_video.update = video_update_8bpp;
+        i_hw_video.setpal = video_setpal_8bpp;
         if (video_sw_set(w, h)) {
             return -1;
         }
@@ -316,9 +310,9 @@ int hw_video_init(int w, int h)
         if ((video.hwrenderbuf->pitch % sizeof(Uint32)) != 0) {
             log_warning("SDL renderbuf pitch mod %i == %i", sizeof(Uint32), video.hwrenderbuf->pitch);
         }
-        video.render = video_render_gl_32bpp;
-        video.update = video_update_gl_32bpp;
-        video.setpal = video_setpal_gl_32bpp;
+        i_hw_video.render = video_render_gl_32bpp;
+        i_hw_video.update = video_update_gl_32bpp;
+        i_hw_video.setpal = video_setpal_gl_32bpp;
         if ((hw_opt_screen_winw != 0) && (hw_opt_screen_winh != 0)) {
             if ((hw_opt_screen_winw < w) || (hw_opt_screen_winh < h)) {
                 log_warning("ignoring too small configured resolution %ix%i < %ix%i\n", hw_opt_screen_winw, hw_opt_screen_winh, w, h);
