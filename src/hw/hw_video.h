@@ -4,6 +4,7 @@
 #include "types.h"
 
 extern struct i_hw_video_s {
+    int (*setmode)(int w, int h);
     void (*render)(const uint8_t *buf);
     void (*update)(void);
     void (*setpal)(const uint8_t *pal, int first, int num);
