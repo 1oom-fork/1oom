@@ -252,14 +252,8 @@ int hw_video_resize(int w, int h)
 
 int hw_video_toggle_fullscreen(void)
 {
-    int (*func)(int, int) = video_sw_set;
-#ifdef HAVE_SDL1GL
-    if (!hw_opt_force_sw) {
-        func = hw_video_resize;
-    }
-#endif /* HAVE_SDL1GL */
     hw_opt_fullscreen = !hw_opt_fullscreen;
-    if (func(hw_opt_screen_winw, hw_opt_screen_winh)) {
+    if (i_hw_video.setmode(hw_opt_screen_winw, hw_opt_screen_winh)) {
         hw_opt_fullscreen = !hw_opt_fullscreen; /* restore the setting for the config file */
         return -1;
     }
@@ -286,12 +280,10 @@ int hw_video_init(int w, int h)
     if (hw_opt_force_sw)
 #endif
     {
+        i_hw_video.setmode = video_sw_set;
         i_hw_video.render = video_render_8bpp;
         i_hw_video.update = video_update_8bpp;
         i_hw_video.setpal = video_setpal_8bpp;
-        if (video_sw_set(w, h)) {
-            return -1;
-        }
     }
 #ifdef HAVE_SDL1GL
     else {
@@ -310,6 +302,7 @@ int hw_video_init(int w, int h)
         if ((video.hwrenderbuf->pitch % sizeof(Uint32)) != 0) {
             log_warning("SDL renderbuf pitch mod %i == %i", sizeof(Uint32), video.hwrenderbuf->pitch);
         }
+        i_hw_video.setmode = hw_video_resize;
         i_hw_video.render = video_render_gl_32bpp;
         i_hw_video.update = video_update_gl_32bpp;
         i_hw_video.setpal = video_setpal_gl_32bpp;
@@ -321,12 +314,12 @@ int hw_video_init(int w, int h)
                 h = hw_opt_screen_winh;
             }
         }
-        if (hw_video_resize(w, h)) {
-            return -1;
-        }
     }
 #endif
 
+    if (i_hw_video.setmode(w, h)) {
+        return -1;
+    }
     return 0;
 }
 
