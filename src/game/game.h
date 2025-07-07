@@ -325,6 +325,11 @@ static inline bool NOT_IN_CONTACT(const struct game_s *g, player_id_t p1, player
     return (p1 != p2) && BOOLVEC_IS0(g->eto[p1].within_frange, p2);
 }
 
+static inline bool OWNER_IS_NOT_KNOWN(const struct game_s *g, const planet_t *p, player_id_t player)
+{
+    return BOOLVEC_IS0(p->within_srange, player) && ((p->owner == PLAYER_NONE) || BOOLVEC_IS0(g->eto[player].within_frange, p->owner));
+}
+
 #define IS_AI(_g_, _i_) BOOLVEC_IS1((_g_)->is_ai, (_i_))
 
 #endif
