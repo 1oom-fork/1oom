@@ -425,7 +425,7 @@ void ui_starmap_draw_basic(struct starmap_data_s *d)
     } else {
         player_id_t owner = p->owner;
         int pi = g->planet_focus_i[d->api];
-        if (BOOLVEC_IS0(p->within_srange, d->api) && ((owner == PLAYER_NONE) || BOOLVEC_IS0(g->eto[d->api].within_frange, owner))) {
+        if (OWNER_IS_NOT_KNOWN(g, p, d->api)) {
             owner = g->seen[d->api][pi].owner;
         }
         if (owner == PLAYER_NONE) {
