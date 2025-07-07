@@ -1562,7 +1562,7 @@ static void game_turn_update_seen(struct game_s *g)
                 g->seen[pi][i].pop = p->pop;
                 g->seen[pi][i].bases = p->missile_bases;
                 g->seen[pi][i].factories = p->factories;
-            } else if ((p->owner != PLAYER_NONE) && BOOLVEC_IS1(g->eto[pi].within_frange, p->owner)) {
+            } else if (!OWNER_IS_NOT_KNOWN(g, p, pi)) {
                 g->seen[pi][i].owner = p->owner;
             }
         }
