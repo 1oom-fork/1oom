@@ -9,6 +9,7 @@ doc_DATA = \
     lbxmd5.txt \
     list_pbxnum.txt \
     pbxin_example.txt \
+    pbxin_fixbugs.txt \
     usage_classic.txt \
     usage_cmdline.txt \
     usage_common.txt \
