@@ -7,6 +7,7 @@ doc_DATA = \
     format_pbx.txt \
     format_save.txt \
     lbxmd5.txt \
+    list_gamediff.txt \
     list_pbxnum.txt \
     pbxin_example.txt \
     pbxin_fixbugs.txt \
