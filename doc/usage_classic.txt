@@ -43,6 +43,7 @@ The following new UI features are always enabled/available:
 - Mouse wheel on planet name in the galaxy movement screen changes planet
 - Space bar works as a generic dismiss message key (Continue, ...)
 - Ctrl and Alt works as a step modifier for the counters and sliders:
+  - in the main menu
   - on the Design screen
   - on the fleet sending screen
   - on the galaxy movement screen
