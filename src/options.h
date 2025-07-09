@@ -23,6 +23,7 @@ extern bool opt_use_libsamplerate;
 extern int opt_libsamplerate_scale;
 extern int opt_libsamplerate_mode;
 #endif
+extern bool opt_cfg_reset;
 
 struct cmdline_options_s {
     const char *str;
