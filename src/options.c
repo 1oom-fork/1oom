@@ -45,6 +45,7 @@ bool opt_use_libsamplerate = true;
 int opt_libsamplerate_scale = 65;
 int opt_libsamplerate_mode = 1;
 #endif
+bool opt_cfg_reset = false;
 
 /* -------------------------------------------------------------------------- */
 

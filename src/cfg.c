@@ -213,8 +213,29 @@ int cfg_load(const char *filename)
 #undef BUFSIZE
 }
 
+static int cfg_clear(const char *filename)
+{
+    FILE *fd;
+    if (os_make_path_for(filename)) {
+        log_error("Cfg: failed to create path for '%s'\n", filename);
+        return -1;
+    }
+    fd = fopen(filename, "w");
+    if (!fd) {
+        log_error("Cfg: failed to create file '%s'\n", filename);
+        return -1;
+    }
+    if (fd) {
+        fclose(fd);
+    }
+    return 0;
+}
+
 int cfg_save(const char *filename)
 {
+    if (opt_cfg_reset) {
+        return cfg_clear(filename);
+    }
     FILE *fd;
     log_message("Cfg: saving configuration to '%s'\n", filename);
     if (os_make_path_for(filename)) {
