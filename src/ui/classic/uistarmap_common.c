@@ -374,7 +374,7 @@ static void ui_starmap_draw_textbox_finished(const struct game_s *g, player_id_t
 {
     const planet_t *p = &g->planet[pi];
     char *buf = ui_data.strbuf;
-    int num;
+    int num, y0;
     planet_finished_t i;
     for (i = 0; i < FINISHED_NUM; ++i) {
         if (BOOLVEC_IS1(p->finished, i)) {
@@ -402,7 +402,8 @@ static void ui_starmap_draw_textbox_finished(const struct game_s *g, player_id_t
         default:
             break;
     }
-    ui_draw_textbox_2str("", buf, 54);
+    y0 = ui_qol_starmap_msg_pos ? 45 : 54;
+    ui_draw_textbox_2str("", buf, y0);
     ui_draw_textbox_2str("", game_str_sm_planratio, 110);
 }
 
