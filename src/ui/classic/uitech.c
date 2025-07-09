@@ -108,7 +108,10 @@ static int ui_tech_current_research_percent2(const struct game_s *g, player_id_t
     if (invest <= cost) {
         return 0;
     } else {
-        int percent = (((invest - cost) * 50) / cost) / 2;
+        int percent = (((invest - cost) * 50) / cost);
+        if (!ui_fix_tech_complete_probability) {
+            percent /= 2;
+        }
         SETRANGE(percent, 0, 99);
         return percent;
     }
