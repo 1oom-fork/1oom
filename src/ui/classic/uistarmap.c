@@ -23,6 +23,7 @@
 #include "uidraw.h"
 #include "uidefs.h"
 #include "uidelay.h"
+#include "uifix.h"
 #include "uihelp.h"
 #include "uiobj.h"
 #include "uisound.h"
@@ -623,6 +624,8 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             if (p->owner == active_player) {
                 oi_starview2 = uiobj_add_mousearea(227, 24, 310, 53, MOO_KEY_UNKNOWN, -1);
                 oi_shippic = uiobj_add_mousearea(228, 139, 275, 175, MOO_KEY_UNKNOWN, -1);
+            } else if (ui_qol_starmap_planet_pic && BOOLVEC_IS1(p->explored, active_player)) {
+                oi_starview2 = uiobj_add_mousearea(227, 24, 310, 53, MOO_KEY_UNKNOWN, -1);
             }
             ui_starmap_fill_oi_tbls(&d);
             {
@@ -657,6 +660,9 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
                 } else {
                     ui_cursor_setup_area(2, &ui_cursor_area_tbl[3]);
                 }
+            }
+            if (ui_qol_starmap_no_qmark_cursor) {
+                ui_cursor_setup_area(2, &ui_cursor_area_tbl[3]);
             }
             if (g->evn.build_finished_num[active_player]) {
                 ui_cursor_setup_area(2, &ui_cursor_area_tbl[0]);

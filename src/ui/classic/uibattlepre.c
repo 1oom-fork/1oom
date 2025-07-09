@@ -18,6 +18,7 @@
 #include "uidefs.h"
 #include "uidelay.h"
 #include "uidraw.h"
+#include "uifix.h"
 #include "uigmap.h"
 #include "uiobj.h"
 #include "uisound.h"
@@ -131,7 +132,9 @@ void ui_battle_pre(struct game_s *g, int party_u, int party_d, planet_id_t plane
     }
     uiobj_table_clear();
     oi_cont = uiobj_add_t0(227, 163, "", d->gfx_contbutt, MOO_KEY_c, -1);
-    uiobj_set_focus(oi_cont);
+    if (!ui_qol_prebattle_no_setfocus) {
+        uiobj_set_focus(oi_cont);
+    }
     uiobj_set_callback_and_delay(ui_battle_pre_draw_cb, &d, 4);
     while (!flag_done) {
         uiobj_id_t oi;
