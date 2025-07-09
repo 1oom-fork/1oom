@@ -20,6 +20,7 @@
 #include "uidelay.h"
 #include "uidefs.h"
 #include "uidraw.h"
+#include "uifix.h"
 #include "uiobj.h"
 #include "uipal.h"
 #include "uisound.h"
@@ -301,7 +302,11 @@ static void gmap_draw_cb(void *vptr)
         int x, y;
         x = (ui_data.starmap.x * 224) / g->galaxy_maxx + 7;
         y = (ui_data.starmap.y * 185) / g->galaxy_maxy + 7;
-        lbxgfx_draw_frame(x, y, ui_data.gfx.starmap.bmap, UI_SCREEN_W);
+        if (ui_qol_starmap_ext_scroll) {
+            lbxgfx_draw_frame_offs(x, y, ui_data.gfx.starmap.bmap, UI_SCREEN_W);
+        } else {
+            lbxgfx_draw_frame(x, y, ui_data.gfx.starmap.bmap, UI_SCREEN_W);
+        }
     }
 }
 

@@ -19,6 +19,7 @@
 #include "uidelay.h"
 #include "uidefs.h"
 #include "uidraw.h"
+#include "uifix.h"
 #include "uiobj.h"
 
 /* -------------------------------------------------------------------------- */
@@ -125,12 +126,13 @@ static void empirereport_draw_cb(void *vptr)
             first = 0;
         }
         for (int i = 0; i < num; ++i) {
-            uint8_t rc;
+            uint8_t rc, rc2;
             tech_group_t group;
             rc = rct[first + i];
+            rc2 = ui_fix_empirereport_enviro ? rc : (srd->researchcompleted[0][first + i] + 1);
             game_tech_get_name(g->gaux, f, rc, buf);
             lbxfont_select(2, game_tech_player_has_tech(g, f, rc, d->api) ? 0xa : 0, 0, 0);
-            group = game_tech_get_group(g->gaux, f, rc);
+            group = game_tech_get_group(g->gaux, f, rc2);
             if (group == TECH_GROUP_CONTROLLED_ENVIRONMENT) {
                 int j, pos_space;
                 j = 0;
