@@ -792,6 +792,10 @@ static uiobj_id_t uiobj_kbd_dir_key_dxdy(int dirx, int diry, uiobj_id_t oi2, int
     int dist;
     uiobj_id_t oi = oi2;
     uiobj_t *p;
+    if (ui_fix_cursor_nav_offset) {
+        mx += ui_cursor_mouseoff;
+        my += ui_cursor_mouseoff;
+    }
     {
         bool flag_found = false;
         for (uiobj_id_t i = UIOBJI_1; i < uiobj_table_num; ++i) {
