@@ -8,6 +8,8 @@
    Hence the ratio 10000000 / 182 == */
 #define MOO_TICKS_TO_US(_t_) (((_t_) * 5000000) / 91)
 
+extern bool ui_delay_enabled;
+
 extern void ui_delay_prepare(void);
 /* returns true if exit by click */
 extern bool ui_delay_ticks_or_click(int ticks);
