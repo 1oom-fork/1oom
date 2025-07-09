@@ -19,6 +19,7 @@
 #include "uidelay.h"
 #include "uidefs.h"
 #include "uidraw.h"
+#include "uifix.h"
 #include "uiobj.h"
 
 /* -------------------------------------------------------------------------- */
@@ -130,6 +131,9 @@ static void empirereport_draw_cb(void *vptr)
             rc = rct[first + i];
             game_tech_get_name(g->gaux, f, rc, buf);
             lbxfont_select(2, game_tech_player_has_tech(g, f, rc, d->api) ? 0xa : 0, 0, 0);
+            if (!ui_fix_empirereport_environ) {
+                rc = (srd->researchcompleted[0][first + i] + 1);
+            }
             group = game_tech_get_group(g->gaux, f, rc);
             if (group == TECH_GROUP_CONTROLLED_ENVIRONMENT) {
                 int j, pos_space;
@@ -141,7 +145,11 @@ static void empirereport_draw_cb(void *vptr)
                     }
                     ++j;
                 }
-                sprintf(&buf[pos_space], " %s", game_str_re_environ);
+                if (!ui_fix_empirereport_environ) {
+                    sprintf(&buf[pos_space], " %s", game_str_re_environ);
+                } else if (f == TECH_FIELD_PLANETOLOGY) {
+                    buf[pos_space + 8] = '\0';
+                }
             }
             lbxfont_print_str_normal(85 + (f & 1) * 120, 16 + (f / 2) * 65 + i * 6, buf, UI_SCREEN_W);
         }

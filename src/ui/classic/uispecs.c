@@ -291,7 +291,11 @@ shipdesign_id_t ui_specs(struct game_s *g, player_id_t active_player)
                     oi_tbl_scrap[i] = uiobj_add_t0(106, (i << 5) + 6, "", ui_data.gfx.starmap.viewshbt, MOO_KEY_UNKNOWN, -1);
                 }
             }
-            oi_ma = uiobj_add_mousearea(UI_SCREEN_LIMITS, MOO_KEY_o, -1);
+            if (ui_qol_no_cancel_via_lmb) {
+                oi_ma = uiobj_add_inputkey(MOO_KEY_ESCAPE);
+            } else {
+                oi_ma = uiobj_add_mousearea(UI_SCREEN_LIMITS, MOO_KEY_o, -1);
+            }
             ui_draw_finish();
             ui_delay_ticks_or_click(3);
         }
