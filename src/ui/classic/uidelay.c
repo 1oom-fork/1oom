@@ -16,7 +16,7 @@
 
 static uint32_t delay_start;
 
-static uint16_t delay_hmm1 = 1;
+static bool ui_delay_enabled = true;
 
 /* -------------------------------------------------------------------------- */
 
@@ -36,7 +36,7 @@ bool ui_delay_us_or_click(uint32_t delay)
     int mx = mouse_x, my = mouse_y;
     uint32_t mouse_time = os_get_time_us();
     hw_event_handle();
-    if (delay_hmm1 == 0) {
+    if (!ui_delay_enabled) {
         return false;
     }
     while (1) {
