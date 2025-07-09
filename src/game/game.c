@@ -636,7 +636,6 @@ const struct cfg_items_s game_cfg_items[] = {
     CFG_ITEM_BOOL("rules_slider_eco_done_fix", &game_num_slider_eco_done_fix),
     CFG_ITEM_BOOL("rules_cond_switch_to_ind_fix", &game_num_cond_switch_to_ind_fix),
     CFG_ITEM_BOOL("rules_waste_adjust_fix", &game_num_waste_adjust_fix),
-    CFG_ITEM_BOOL("rules_slider_respects_locks", &game_num_slider_respects_locks),
     CFG_ITEM_BOOL("rules_orbital_bio_fix", &game_num_orbital_bio_fix),
     CFG_ITEM_BOOL("rules_orbital_weap_any", &game_num_orbital_weap_any),
     CFG_ITEM_BOOL("rules_orbital_weap_4", &game_num_orbital_weap_4),

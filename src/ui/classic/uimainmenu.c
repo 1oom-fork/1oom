@@ -579,7 +579,6 @@ static void main_menu_make_options_rules_slider_behavior_page(struct main_menu_d
     menu_make_bool(menu_allocate_item(), "Eco Done Fix", &game_num_slider_eco_done_fix, MOO_KEY_UNKNOWN);
     menu_make_bool(menu_allocate_item(), "Newtech Adjust Fix", &game_num_newtech_adjust_fix, MOO_KEY_UNKNOWN);
     menu_make_bool(menu_allocate_item(), "Waste Adjust Fix", &game_num_waste_adjust_fix, MOO_KEY_UNKNOWN);
-    menu_make_bool(menu_allocate_item(), "Slider Respects Locks", &game_num_slider_respects_locks, MOO_KEY_UNKNOWN);
     menu_make_back(menu_allocate_item());
 }
 
