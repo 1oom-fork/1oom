@@ -29,7 +29,7 @@ static inline bool ui_starmap_enroute_in_frange(struct starmap_data_s *d)
 {
     uint8_t pi = d->g->planet_focus_i[d->api];
     const planet_t *p = &d->g->planet[pi];
-    return ((p->within_frange[d->api] == 1) || ((p->within_frange[d->api] == 2) && d->en.sn0.have_reserve_fuel));
+    return ((p->within_frange[d->api] == 1) || ((p->within_frange[d->api] == 2) && d->ss.sn0.have_reserve_fuel));
 }
 
 static void ui_starmap_enroute_draw_cb(void *vptr)
@@ -95,7 +95,7 @@ static void ui_starmap_enroute_draw_cb(void *vptr)
     } else {
         /*d->in_frange = false;*/
     }
-    for (int i = 0; i < d->en.sn0.num; ++i) {
+    for (int i = 0; i < d->ss.sn0.num; ++i) {
         uint8_t *gfx;
         int st, x, y;
         x = (i & 1) * 43 + 228;
@@ -103,14 +103,14 @@ static void ui_starmap_enroute_draw_cb(void *vptr)
         vgabuf_fill_rect(x, y, x + 38, y + 24, 0);
         vgabuf_fill_rect(x, y + 28, x + 38, y + 34, 0x1c);
         ui_draw_stars(x, y, 0, 38);
-        st = d->en.sn0.type[i];
+        st = d->ss.sn0.type[i];
         gfx = ui_data.gfx.ships[srd->design[st].look];
         lbxgfx_set_frame_0(gfx);
         for (int f = 0; f <= ui_data.starmap.frame_ship; ++f) {
             lbxgfx_draw_frame(x, y, gfx);
         }
         lbxfont_select(0, 0xd, 0, 0);
-        lbxfont_print_num_right(x + 35, y + 19, d->en.sn0.ships[st]);
+        lbxfont_print_num_right(x + 35, y + 19, d->ss.sn0.ships[st]);
         lbxfont_select(2, 0xa, 0, 0);
         lbxfont_print_str_center(x + 19, y + 29, srd->design[st].name);
     }
@@ -156,8 +156,8 @@ void ui_starmap_enroute(struct game_s *g, player_id_t active_player)
     ui_data.starmap.frame_ship = 0;
     g->planet_focus_i[active_player] = r->dest;
     d.in_frange = false;
-    ui_starmap_sn0_setup(&d.en.sn0, g->eto[r->owner].shipdesigns_num, r->ships);
-    ui_starmap_update_reserve_fuel(g, &d.en.sn0, r->ships, active_player);
+    ui_starmap_sn0_setup(&d.ss.sn0, g->eto[r->owner].shipdesigns_num, r->ships);
+    ui_starmap_update_reserve_fuel(g, &d.ss.sn0, r->ships, active_player);
 
     uiobj_table_clear();
 
