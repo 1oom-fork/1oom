@@ -599,6 +599,7 @@ static void main_menu_make_preset_page(struct main_menu_data_s *d)
     d->set_item_dimensions = main_menu_set_item_dimensions;
     menu_make_func(menu_allocate_item(), "Classic", mm_enable_preset_classic, MOO_KEY_c);
     menu_make_func(menu_allocate_item(), "1oom", mm_enable_preset_1oom, MOO_KEY_1);
+    menu_make_bool(menu_item_force_restart(menu_allocate_item()), "Reset To Default Settings", &opt_cfg_reset, MOO_KEY_UNKNOWN);
     menu_make_back(menu_allocate_item());
 }
 
