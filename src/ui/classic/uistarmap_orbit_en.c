@@ -52,7 +52,7 @@ static void ui_starmap_orbit_en_draw_cb(void *vptr)
     lbxfont_print_str_center(267, 10, buf, UI_SCREEN_W);
     lbxfont_select_set_12_4(0, 0, 0, 0);
     lbxfont_print_str_center(268, 33, game_str_sm_inorbit, UI_SCREEN_W);
-    for (int i = 0; i < d->oe.sn0.num; ++i) {
+    for (int i = 0; i < d->ss.sn0.num; ++i) {
         const shipdesign_t *sd = &(g->srd[d->oe.player].design[0]);
         uint8_t *gfx;
         int st, x, y;
@@ -63,12 +63,12 @@ static void ui_starmap_orbit_en_draw_cb(void *vptr)
         ui_data.starmap.stars_xoff1 = 0;
         ui_data.starmap.stars_xoff2 = 0;
         ui_draw_stars(x, y, 0, 38);
-        st = d->oe.sn0.type[i];
+        st = d->ss.sn0.type[i];
         gfx = ui_data.gfx.ships[sd[st].look];
         lbxgfx_set_frame_0(gfx);
         lbxgfx_draw_frame(x, y, gfx, UI_SCREEN_W);
         lbxfont_select(0, 0xd, 0, 0);
-        lbxfont_print_num_right(x + 35, y + 19, d->oe.ships[st], UI_SCREEN_W);
+        lbxfont_print_num_right(x + 35, y + 19, d->ss.ships[st], UI_SCREEN_W);
         lbxfont_select(2, 0xa, 0, 0);
         lbxfont_print_str_center(x + 19, y + 29, sd[st].name, UI_SCREEN_W);
     }
@@ -98,9 +98,9 @@ void ui_starmap_orbit_en(struct game_s *g, player_id_t active_player)
     d.oe.player = ui_data.starmap.orbit_player;
     os = &(g->eto[d.oe.player].orbit[d.from].ships[0]);
     for (int i = 0; i < NUM_SHIPDESIGNS; ++i) {
-        d.oe.ships[i] = os[i];
+        d.ss.ships[i] = os[i];
     }
-    ui_starmap_sn0_setup(&d.oe.sn0, NUM_SHIPDESIGNS, d.oe.ships);
+    ui_starmap_sn0_setup(&d.ss.sn0, NUM_SHIPDESIGNS, d.ss.ships);
     {
         int n = 0;
         for (player_id_t i = PLAYER_0; i < d.oe.player; ++i) {

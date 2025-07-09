@@ -18,6 +18,12 @@ struct shipnon0_s {
     bool have_reserve_fuel;
 };
 
+struct shipsel_s {
+    shipcount_t ships[NUM_SHIPDESIGNS];
+    uint8_t shiptypenon0numsel; /* number of ship types selected with nonzero amount */
+    struct shipnon0_s sn0;
+};
+
 typedef enum { NO_MOVE, GOT_HYPERCOMM, ON_PLANET } can_move_t;
 
 struct starmap_data_s {
@@ -50,6 +56,7 @@ struct starmap_data_s {
     int16_t oi_tbl_pl_stars[PLAYER_NUM][PLANETS_MAX];
     uint8_t from;
     bool in_frange;
+    struct shipsel_s ss;
     union {
         struct {
             int16_t oi_ship;
@@ -66,18 +73,10 @@ struct starmap_data_s {
             bool blink;
         } tr;   /* trans */
         struct {
-            shipcount_t ships[NUM_SHIPDESIGNS];
-            uint8_t shiptypenon0numsel; /* number of ship types selected with nonzero amount */
-            struct shipnon0_s sn0;
-        } oo;   /* orbit_own */
-        struct {
-            shipcount_t ships[NUM_SHIPDESIGNS];
-            struct shipnon0_s sn0;
             player_id_t player;
             int yoff;
         } oe;   /* orbit_en */
         struct {
-            struct shipnon0_s sn0;
             can_move_t can_move;
         } en;   /* enroute */
     };
