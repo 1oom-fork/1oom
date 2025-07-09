@@ -382,7 +382,7 @@ static void ui_starmap_draw_textbox_finished(const struct game_s *g, player_id_t
 {
     const planet_t *p = &g->planet[pi];
     char *buf = ui_data.strbuf;
-    int num;
+    int num, y0;
     planet_finished_t i;
     for (i = 0; i < FINISHED_NUM; ++i) {
         if (BOOLVEC_IS1(p->finished, i)) {
@@ -411,7 +411,8 @@ static void ui_starmap_draw_textbox_finished(const struct game_s *g, player_id_t
             buf[0] = '\0';
             break;
     }
-    ui_draw_textbox_2str("", buf, 54);
+    y0 = ui_qol_starmap_msg_pos ? 45 : 54;
+    ui_draw_textbox_2str("", buf, y0);
     ui_draw_textbox_2str("", game_str_sm_planratio, 110);
 }
 
@@ -774,8 +775,15 @@ void ui_starmap_draw_button_text(struct starmap_data_s *d, bool highlight)
 
 void ui_starmap_set_scroll_pos(const struct game_s *g, int x, int y)    /* inline */
 {
-    SETRANGE(x, 0, g->galaxy_maxx - 0x6c);
-    SETRANGE(y, 0, g->galaxy_maxy - 0x56);
+    int minx = 0, miny = 0, maxx = g->galaxy_maxx - 0x6c, maxy = g->galaxy_maxy - 0x56;
+    if (ui_qol_starmap_ext_scroll) {
+        minx -= 0x36;
+        miny -= 0x2b;
+        maxx += 0x36;
+        maxy += 0x2b;
+    }
+    SETRANGE(x, minx, maxx);
+    SETRANGE(y, miny, maxy);
     ui_data.starmap.x2 = x;
     ui_data.starmap.y2 = y;
 }
