@@ -57,29 +57,27 @@ struct starmap_data_s {
     uint8_t from;
     bool in_frange;
     struct shipsel_s ss;
-    union {
-        struct {
-            int16_t oi_ship;
-            int16_t oi_reloc;
-            int16_t oi_trans;
-            int16_t oi_tbl_slider[PLANET_SLIDER_NUM];
-            int16_t oi_tbl_slider_lock[PLANET_SLIDER_NUM];
-            int16_t oi_tbl_slider_minus[PLANET_SLIDER_NUM];
-            int16_t oi_tbl_slider_plus[PLANET_SLIDER_NUM];
-        } sm;   /* starmap_do */
-        struct {
-            int16_t num;
-            bool other;
-            bool blink;
-        } tr;   /* trans */
-        struct {
-            player_id_t player;
-            int yoff;
-        } oe;   /* orbit_en */
-        struct {
-            can_move_t can_move;
-        } en;   /* enroute */
-    };
+    struct {
+        int16_t oi_ship;
+        int16_t oi_reloc;
+        int16_t oi_trans;
+        int16_t oi_tbl_slider[PLANET_SLIDER_NUM];
+        int16_t oi_tbl_slider_lock[PLANET_SLIDER_NUM];
+        int16_t oi_tbl_slider_minus[PLANET_SLIDER_NUM];
+        int16_t oi_tbl_slider_plus[PLANET_SLIDER_NUM];
+    } sm;   /* starmap_do */
+    struct {
+        int16_t num;
+        bool other;
+        bool blink;
+    } tr;   /* trans */
+    struct {
+        player_id_t player;
+        int yoff;
+    } oe;   /* orbit_en */
+    struct {
+        can_move_t can_move;
+    } en;   /* enroute */
 };
 
 #define STARMAP_UIOBJ_CLEAR_COMMON() \
