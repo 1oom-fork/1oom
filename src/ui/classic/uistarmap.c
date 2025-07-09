@@ -23,6 +23,7 @@
 #include "uidraw.h"
 #include "uidefs.h"
 #include "uidelay.h"
+#include "uifix.h"
 #include "uihelp.h"
 #include "uiobj.h"
 #include "uisound.h"
@@ -623,15 +624,20 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             if (p->owner == active_player) {
                 oi_starview2 = uiobj_add_mousearea(227, 24, 310, 53, MOO_KEY_UNKNOWN, -1);
                 oi_shippic = uiobj_add_mousearea(228, 139, 275, 175, MOO_KEY_UNKNOWN, -1);
+            } else if (ui_qol_starmap_planet_pic && BOOLVEC_IS1(p->explored, active_player)) {
+                oi_starview2 = uiobj_add_mousearea(227, 24, 310, 53, MOO_KEY_UNKNOWN, -1);
             }
             ui_starmap_fill_oi_tbls(&d);
-            {
+            if (!ui_qol_starmap_no_qmark_cursor) {
                 int x0, y0;
                 x0 = (p->x - ui_data.starmap.x) * 2 + 6;
                 y0 = (p->y - ui_data.starmap.y) * 2 + 6;
                 oi_starview1 = uiobj_add_mousearea_limited(x0, y0, x0 + 16, y0 + 16, MOO_KEY_UNKNOWN, -1);
             }
             ui_starmap_fill_oi_tbl_stars(&d);
+            if (ui_qol_starmap_no_qmark_cursor && BOOLVEC_IS1(p->explored, active_player)) {
+                oi_starview1 = d.oi_tbl_stars[g->planet_focus_i[active_player]];
+            }
             ui_starmap_fill_oi_slider(&d);
             oi_scroll = uiobj_add_scrollarea(6, 6, 2, 2, 108, 86, &scrollx, &scrolly, -1);
             ui_starmap_fill_oi_ctrl(&d);
@@ -657,6 +663,9 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
                 } else {
                     ui_cursor_setup_area(2, &ui_cursor_area_tbl[3]);
                 }
+            }
+            if (ui_qol_starmap_no_qmark_cursor) {
+                ui_cursor_setup_area(2, &ui_cursor_area_tbl[3]);
             }
             if (g->evn.build_finished_num[active_player]) {
                 ui_cursor_setup_area(2, &ui_cursor_area_tbl[0]);
