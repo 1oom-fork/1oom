@@ -494,7 +494,9 @@ if test x"$enable_hwalleg4" != "xno"; then
                     #error "not version 4"
                     #endif
                     ],
-                [return 0;],
+                [return 0;}
+                END_OF_MAIN()
+                int dummy(void){],
                 [AC_MSG_RESULT(yes);
                  have_alleg4=yes],
                 [AC_MSG_RESULT(no);
