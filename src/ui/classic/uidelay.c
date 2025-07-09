@@ -15,6 +15,8 @@
 
 static int64_t delay_start;
 
+bool ui_delay_enabled = true;
+
 /* -------------------------------------------------------------------------- */
 
 void ui_delay_prepare(void)
@@ -33,6 +35,9 @@ bool ui_delay_us_or_click(uint32_t delay)
     int mx = moouse_x, my = moouse_y;
     int64_t mouse_time = hw_get_time_us();
     hw_event_handle();
+    if (!ui_delay_enabled) {
+        return false;
+    }
     while (1) {
         int64_t diff;
         int64_t now;

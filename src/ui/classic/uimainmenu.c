@@ -465,6 +465,7 @@ static void main_menu_make_options_misc_page(struct main_menu_data_s *d)
     menu_make_bool(menu_allocate_item(), "Skip Random News", &game_opt_skip_random_news, MOO_KEY_n);
     menu_make_bool(menu_allocate_item(), "Skip Copy Protection", &ui_copyprotection_disabled, MOO_KEY_p);
     menu_make_bool(menu_allocate_item(), "News Orion Colonized", &game_num_news_orion, MOO_KEY_o);
+    menu_make_bool(menu_allocate_item(), "UI Delay Enabled", &ui_delay_enabled, MOO_KEY_d);
     menu_make_back(menu_allocate_item());
 }
 
