@@ -1,3 +1,15 @@
+1oom-v1.11.7
+------------
+
+Game:
+- Fixed minor bug related to audience
+- Disabled game_num_slider_respects_locks (deprecated)
+Allegro4:
+- Fixed version check
+Main menu:
+- Added option to disable UI delay (experimental)
+- Added option to reset to default settings
+
 1oom-v1.11.6
 ------------
 
