@@ -272,6 +272,5 @@ int hw_event_handle(void)
         }
     }
 
-    SDL_Delay(10);
     return 0;
 }
