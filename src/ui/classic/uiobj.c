@@ -1172,19 +1172,18 @@ static void uiobj_click_obj(int16_t oi, int mx, int my)
     }
 }
 
-static void uiobj_finish_callback_delay_p(int delay)
+static inline void uiobj_finish_callback_delay_p(int delay)
 {
     if (uiobj_flag_have_cb) {
         ui_delay_prepare();
+        /* vgabuf_select_back() */
         uiobj_do_callback();
         ui_palette_set_n();
         uiobj_finish_frame();
         ui_delay_ticks_or_click(delay);
     } else {
-        ui_delay_prepare();
         ui_palette_set_n();
         uiobj_finish_frame();
-        ui_delay_ticks_or_click(delay); /* MOO1 does not do this, but we need it to update mouse_* etc */
     }
 }
 
