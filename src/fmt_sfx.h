@@ -11,6 +11,6 @@ typedef enum {
 } sfx_type_t;
 
 extern sfx_type_t fmt_sfx_detect(const uint8_t *data, uint32_t len);
-extern bool fmt_sfx_convert(const uint8_t *data_in, uint32_t len_in, uint8_t **data_out_ptr, uint32_t *len_out_ptr, sfx_type_t *type_out, int audiorate, bool add_wav_header);
+extern bool fmt_sfx_convert(const uint8_t *data_in, uint32_t len_in, uint8_t **data_out_ptr, uint32_t *len_out_ptr, sfx_type_t *type_out, uint32_t audiorate, bool add_wav_header);
 
 #endif
