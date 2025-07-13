@@ -665,3 +665,26 @@ void ui_draw_textbox_2str(const char *str1, const char *str2, int y0)
     }
     lbxfont_print_str_split(x0 + 4, y0 + 4, w - 8, str2, 2, UI_SCREEN_W, UI_SCREEN_H);
 }
+
+void ui_draw_scale_area_x2(int xs, int ys, int xt, int yt, int w, int h)
+{
+    uint8_t *p = vgabuf_get_back();
+    for (int y = h - 1; y >= 0; --y) {
+        uint8_t *to = &p[(y * 2 + yt) * UI_SCREEN_W + (w * 2 - 1) + xt];
+        uint8_t *from = &p[(y + ys) * UI_SCREEN_W + w - 1 + xs];
+        for (int x = 0; x < w; ++x) {
+            uint8_t color = *from;
+            *to = color;
+            --to;
+            *to = color;
+            to += UI_SCREEN_W;
+            *to = color;
+            ++to;
+            *to = color;
+            to -= UI_SCREEN_W;
+            --to;
+            --to;
+            --from;
+        }
+    }
+}

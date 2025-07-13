@@ -28,5 +28,6 @@ extern void ui_draw_finish(void);
 extern void ui_draw_stars(int x, int y, int xoff1, int xoff2);
 extern void ui_draw_set_stars_xoffs(bool flag_right);
 extern void ui_draw_textbox_2str(const char *str1, const char *str2, int y0);
+extern void ui_draw_scale_area_x2(int xs, int ys, int xt, int yt, int x1, int y1);
 
 #endif
