@@ -1,6 +1,7 @@
 AC_INIT([1oom], [0.1])
 
 AC_ARG_ENABLE(static, AS_HELP_STRING([--enable-static], [enable static builds]))
+AC_ARG_ENABLE(fault-finding, AS_HELP_STRING([--enable-fault-finding], [add more warnings]))
 AC_ARG_WITH(samplerate, AS_HELP_STRING([--without-samplerate], [do not try to use libsamplerate]))
 AC_ARG_ENABLE(tools, AS_HELP_STRING([--disable-tools], [disables extra tools]))
 AC_ARG_ENABLE(uiclassic, AS_HELP_STRING([--disable-uiclassic], [disables classic UI]))
@@ -28,12 +29,22 @@ if test -z "$user_cflags" ; then
 
     dnl Check for the type of compiler first.
     if test x"$GCC" = "xyes" ; then
-        warnings_c="-Wall -Wextra -std=c99 -pedantic -Wno-inline -Wstrict-prototypes -Wno-unused-parameter -Wsign-conversion -Wcast-align=strict"
+        warnings_c="-Wall -Wextra -std=c99 -pedantic -Wstrict-prototypes -Wsign-conversion -Wcast-align=strict"
+        extra_warnings_c="-Wconversion -Wshadow=local -fno-omit-frame-pointer -fsanitize=address -fsanitize=undefined -static-libasan"
+        if test x"$enable_fault_finding" = "xyes" ; then
+            warnings_c="$warnings_c $extra_warnings_c"
+        else
+            warnings_c="$warnings_c -Wno-unused-parameter"
+        fi
 
         dnl Set appropriate optimization options (better than the default -g -O)
         dnl if using GCC.
         dnl If the user has specified her own `CFLAGS', we do not override them.
-        optimization_c="-O3"
+	if test x"$enable_fault_finding" = "xyes" ; then
+            optimization_c="-O1"
+	else
+            optimization_c="-O3"
+	fi
 
         dnl Use -g if available.
         if test x"$ac_cv_prog_cc_g" = "xyes" ; then
