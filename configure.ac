@@ -1,6 +1,7 @@
 AC_INIT([1oom], [0.1])
 
 AC_ARG_ENABLE(modebug, AS_HELP_STRING([--enable-modebug], [add debugging options]))
+AC_ARG_ENABLE(fault-finding, AS_HELP_STRING([--enable-fault-finding], [add more warnings]))
 AC_ARG_WITH(readline, AS_HELP_STRING([--without-readline], [do not try to use the readline library]))
 AC_ARG_WITH(samplerate, AS_HELP_STRING([--without-samplerate], [do not try to use libsamplerate]))
 AC_ARG_ENABLE(tools, AS_HELP_STRING([--disable-tools], [disables extra tools]))
@@ -28,7 +29,13 @@ if test -z "$user_cflags" ; then
 
     dnl Check for the type of compiler first.
     if test x"$GCC" = "xyes" ; then
-        warnings_c="-Wall -Wextra -std=c99 -pedantic -Wno-inline -Wstrict-prototypes -Wno-unused-parameter"
+        warnings_c="-Wall -Wextra -std=c99 -pedantic -Wstrict-prototypes"
+        extra_warnings_c="-Wconversion -Wsign-conversion -Wshadow=local"
+        if test x"$enable_fault_finding" = "xyes" ; then
+            warnings_c="$warnings_c $extra_warnings_c"
+        else
+            warnings_c="$warnings_c -Wno-unused-parameter"
+        fi
 
         dnl Set appropriate optimization options (better than the default -g -O)
         dnl if using GCC.
