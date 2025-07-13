@@ -277,7 +277,7 @@ static int xmid_convert_evnt(const uint8_t *data_in, uint32_t len_in, const uint
                 noteoff_t *n = &(s.tbl[s.top]);
                 uint32_t delay_noff = n->t - t_now;
                 len_delta_time = xmid_encode_delta_time(buf_delta_time, delay_noff);
-                for (int i = 0; i < len_delta_time; ++i) {
+                for (uint32_t i = 0; i < len_delta_time; ++i) {
                     *p++ = buf_delta_time[i];
                 }
                 len_out += len_delta_time;
@@ -295,7 +295,7 @@ static int xmid_convert_evnt(const uint8_t *data_in, uint32_t len_in, const uint
             len_delta_time = xmid_encode_delta_time(buf_delta_time, delta_time);
             delta_time = 0;
 
-            for (int i = 0; i < len_delta_time; ++i) {
+            for (uint32_t i = 0; i < len_delta_time; ++i) {
                 *p++ = buf_delta_time[i];
             }
 
@@ -315,11 +315,11 @@ static int xmid_convert_evnt(const uint8_t *data_in, uint32_t len_in, const uint
                 s.num = 0;
             }
 
-            for (int i = 0; i < add_extra_bytes; ++i) {
+            for (uint32_t i = 0; i < add_extra_bytes; ++i) {
                 *p++ = buf_extra[i];
             }
 
-            for (int i = 0; i < len_event; ++i) {
+            for (uint32_t i = 0; i < len_event; ++i) {
                 uint8_t c;
                 c = *data_in++;
                 --len_in;
