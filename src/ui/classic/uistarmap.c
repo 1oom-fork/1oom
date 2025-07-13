@@ -670,9 +670,9 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             ui_starmap_fill_oi_tbls(&d);
             if (!ui_sm_no_question_mark_cursor && BOOLVEC_IS1(p->explored, active_player)) {
                 int x0, y0;
-                x0 = (p->x - ui_data.starmap.x) * 2 + 6;
-                y0 = (p->y - ui_data.starmap.y) * 2 + 6;
-                oi_starview1 = uiobj_add_mousearea_limited(x0, y0, x0 + 16, y0 + 16, MOO_KEY_UNKNOWN);
+                x0 = (p->x - ui_data.starmap.x) * 2;
+                y0 = (p->y - ui_data.starmap.y) * 2;
+                oi_starview1 = ui_starmap_add_mousearea(x0, y0, x0 + 16, y0 + 16, MOO_KEY_UNKNOWN);
             }
             ui_starmap_fill_oi_tbl_stars(&d);
             if (ui_sm_no_question_mark_cursor && BOOLVEC_IS1(p->explored, active_player)) {

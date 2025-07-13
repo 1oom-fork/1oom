@@ -175,4 +175,9 @@ extern int ui_starmap_enemy_incoming(const struct game_s *g, player_id_t pi, int
 extern void ui_starmap_common_init(struct game_s *g, struct starmap_data_s *d, player_id_t active_player);
 extern void ui_starmap_common_update_mouse_hover(struct starmap_data_s *d, int16_t oi);
 
+static inline int16_t ui_starmap_add_mousearea(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, mookey_t key)
+{
+    return uiobj_add_mousearea_limited(x0 + 6, y0 + 6, x1 + 6, y1 + 6, key);
+}
+
 #endif

@@ -238,17 +238,17 @@ static void ui_starmap_add_oi_enroute(struct starmap_data_s *d, bool want_prio)
     for (int i = 0; i < g->enroute_num; ++i) {
         const fleet_enroute_t *r = &(g->enroute[i]);
         if (BOOLVEC_IS1(r->visible, d->api) && (BOOLVEC_IS1(ui_data.starmap.select_prio_fleet, i) == want_prio)) {
-            int x0 = (r->x - x) * 2 + 8;
-            int y0 = (r->y - y) * 2 + 8;
-            d->oi_tbl_enroute[i] = uiobj_add_mousearea_limited(x0, y0, x0 + 8, y0 + 4, MOO_KEY_UNKNOWN);
+            int x0 = (r->x - x) * 2 + 2;
+            int y0 = (r->y - y) * 2 + 2;
+            d->oi_tbl_enroute[i] = ui_starmap_add_mousearea(x0, y0, x0 + 8, y0 + 4, MOO_KEY_UNKNOWN);
         }
     }
     for (int i = 0; i < g->transport_num; ++i) {
         const transport_t *r = &(g->transport[i]);
         if (BOOLVEC_IS1(r->visible, d->api) && (BOOLVEC_IS1(ui_data.starmap.select_prio_trans, i) == want_prio)) {
-            int x0 = (r->x - x) * 2 + 8;
-            int y0 = (r->y - y) * 2 + 8;
-            d->oi_tbl_transport[i] = uiobj_add_mousearea_limited(x0, y0, x0 + 8, y0 + 4, MOO_KEY_UNKNOWN);
+            int x0 = (r->x - x) * 2 + 2;
+            int y0 = (r->y - y) * 2 + 2;
+            d->oi_tbl_transport[i] = ui_starmap_add_mousearea(x0, y0, x0 + 8, y0 + 4, MOO_KEY_UNKNOWN);
         }
     }
 }
@@ -909,10 +909,10 @@ void ui_starmap_fill_oi_tbls(struct starmap_data_s *d)
                     }
                 }
             }
-            x0 = (p->x - x) * 2 + 26;
-            y0 = (p->y - y) * 2 + 8;
+            x0 = (p->x - x) * 2 + 20;
+            y0 = (p->y - y) * 2 + 2;
             for (int j = 0; j < numorbits; ++j, y0 += 6) {
-                d->oi_tbl_pl_stars[tblpl[j]][i] = uiobj_add_mousearea_limited(x0, y0, x0 + 8, y0 + 4, MOO_KEY_UNKNOWN);
+                d->oi_tbl_pl_stars[tblpl[j]][i] = ui_starmap_add_mousearea(x0, y0, x0 + 8, y0 + 4, MOO_KEY_UNKNOWN);
             }
         }
     }
@@ -928,9 +928,9 @@ void ui_starmap_fill_oi_tbl_stars(struct starmap_data_s *d)
     for (int i = 0; i < g->galaxy_stars; ++i) {
         const planet_t *p = &(g->planet[i]);
         int x0, y0;
-        x0 = (p->x - x) * 2 + 8;
-        y0 = (p->y - y) * 2 + 8;
-        d->oi_tbl_stars[i] = uiobj_add_mousearea_limited(x0, y0, x0 + 13, y0 + 13, MOO_KEY_UNKNOWN);
+        x0 = (p->x - x) * 2 + 2;
+        y0 = (p->y - y) * 2 + 2;
+        d->oi_tbl_stars[i] = ui_starmap_add_mousearea(x0, y0, x0 + 13, y0 + 13, MOO_KEY_UNKNOWN);
     }
 }
 
@@ -944,9 +944,9 @@ void ui_starmap_fill_oi_tbl_stars_own(struct starmap_data_s *d, player_id_t owne
         const planet_t *p = &(g->planet[i]);
         if (p->owner == owner) {
             int x0, y0;
-            x0 = (p->x - x) * 2 + 8;
-            y0 = (p->y - y) * 2 + 8;
-            d->oi_tbl_stars[i] = uiobj_add_mousearea_limited(x0, y0, x0 + 13, y0 + 13, MOO_KEY_UNKNOWN);
+            x0 = (p->x - x) * 2 + 2;
+            y0 = (p->y - y) * 2 + 2;
+            d->oi_tbl_stars[i] = ui_starmap_add_mousearea(x0, y0, x0 + 13, y0 + 13, MOO_KEY_UNKNOWN);
         }
     }
 }
