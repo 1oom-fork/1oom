@@ -29,6 +29,8 @@
 
 /* -------------------------------------------------------------------------- */
 
+int starmap_zoom = 1;
+
 const uint8_t colortbl_textbox[5] = { 0x18, 0x17, 0x16, 0x15, 0x14 };
 const uint8_t colortbl_line_red[5] = { 0x44, 0x43, 0x42, 0x41, 0x40 };
 const uint8_t colortbl_line_reloc[5] = { 0x14, 0x15, 0x16, 0x17, 0x18 };
@@ -465,7 +467,7 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
             }
             ui_data.star_frame[pi] = anim_frame;
         }
-        if (p->owner != PLAYER_NONE) {
+        if ((p->owner != PLAYER_NONE) && (starmap_zoom == 1)) {
             bool do_print;
             do_print = BOOLVEC_IS1(p->within_srange, d->api);
             if (do_print || (pi == g->evn.planet_orion_i)) {
@@ -596,6 +598,60 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
                 lbxgfx_set_frame_0(gfx);
                 ty = (p->y - y) * 2 + i * 6 + 8;
                 lbxgfx_draw_frame_offs(tx, ty, gfx, UI_SCREEN_W);
+            }
+        }
+    }
+    if (starmap_zoom == 2) {
+        ui_draw_scale_area_x2(6, 6, 6, 6, 216 / 2, 172 / 2);
+    }
+
+    for (int pi = 0; pi < g->galaxy_stars; ++pi) {
+        const planet_t *p = &g->planet[pi];
+        if ((p->owner != PLAYER_NONE) && (starmap_zoom == 2)) {
+            bool do_print;
+            char str[32];
+            char buf[16];
+            do_print = BOOLVEC_IS1(p->within_srange, d->api);
+            if (do_print || (pi == g->evn.planet_orion_i)) {
+                do_print = true;
+                lbxfont_select(2, tbl_banner_fontparam[g->eto[p->owner].banner], 0, 0);
+                tx = (p->x - x) * 2 + 8;
+                ty = (p->y - y) * 2 + 16;
+                lib_sprintf(str, sizeof(str), "%s %i/%i", p->name, p->pop, p->max_pop3);
+                lbxfont_print_str_center_limit(tx * 2 + 6, ty * 2 + 6, str, UI_SCREEN_W);
+                if (p->owner == d->api) {
+                    lib_sprintf(buf, sizeof(buf), ", %d bases", p->missile_bases);
+                } else {
+                    lib_sprintf(buf, sizeof(buf), ", %d parsecs", game_get_min_dist(g, d->api, pi));
+                }
+                if (p->special == PLANET_SPECIAL_NORMAL) {
+                    lib_sprintf(str, sizeof(str), "%s%s", "Normal", buf);
+                } else {
+                    lib_sprintf(str, sizeof(str), "%s%s", game_str_tbl_sm_pspecial[p->special], buf);
+                }
+                lbxfont_print_str_center_limit(tx * 2 + 6, ty * 2 + 14, str, UI_SCREEN_W);
+            } else if (IN_CONTACT(g, d->api, p->owner) || (p->within_frange[d->api] == 1)) {
+                /* MOO1 does not check (d->api != p->owner) due to within_frange check */
+                do_print = true;
+                lbxfont_select(2, 0, 0, 0);
+                lbxfont_set_color0(tbl_banner_color[g->eto[p->owner].banner]);
+            }
+            if (do_print) {
+                tx = (p->x - x) * 2 + 8;
+                ty = (p->y - y) * 2 + 16;
+                lib_sprintf(str, sizeof(str), "%s %i/%i", p->name, p->pop, p->max_pop3);
+                lbxfont_print_str_center_limit(tx * 2 + 6, ty * 2 + 6, str, UI_SCREEN_W);
+                if (p->owner == d->api) {
+                    lib_sprintf(buf, sizeof(buf), ", %d bases", p->missile_bases);
+                } else {
+                    lib_sprintf(buf, sizeof(buf), ", %d parsecs", game_get_min_dist(g, d->api, pi));
+                }
+                if (p->special == PLANET_SPECIAL_NORMAL) {
+                    lib_sprintf(str, sizeof(str), "%s%s", "Normal", buf);
+                } else {
+                    lib_sprintf(str, sizeof(str), "%s%s", game_str_tbl_sm_pspecial[p->special], buf);
+                }
+                lbxfont_print_str_center_limit(tx * 2 + 6, ty * 2 + 14, str, UI_SCREEN_W);
             }
         }
     }

@@ -217,7 +217,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             oi_f2, oi_f3, oi_f4, oi_f5, oi_f6, oi_f7, oi_f8, oi_f9, oi_f10,
             oi_alt_galaxy, oi_alt_p, oi_alt_events,
             oi_wheelshippic, oi_search, oi_rename,
-            oi_adj[PLANET_SLIDER_NUM];
+            oi_adj[PLANET_SLIDER_NUM], oi_z;
     int16_t scrollmisc = 0;
     struct starmap_data_s d;
 
@@ -236,6 +236,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
         STARMAP_UIOBJ_CLEAR_COMMON(); \
         STARMAP_UIOBJ_CLEAR_FX(); \
         oi_b = UIOBJI_INVALID; \
+        oi_z = UIOBJI_INVALID; \
         oi_c = UIOBJI_INVALID; \
         oi_starview1 = UIOBJI_INVALID; \
         oi_starview2 = UIOBJI_INVALID; \
@@ -295,6 +296,21 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
         } else if (oi1 == oi_b) {
             ui_data.ui_main_loop_action = UI_MAIN_LOOP_SCRAP_BASES;
             flag_done = true;
+            ui_sound_play_sfx_24();
+        } else if (oi1 == oi_z) {
+            if (starmap_zoom == 1) {
+                starmap_zoom = 2;
+                ui_data.starmap.x += 27;
+                ui_data.starmap.y += 21;
+                ui_data.starmap.x2 += 27;
+                ui_data.starmap.y2 += 21;
+            } else {
+                starmap_zoom = 1;
+                ui_data.starmap.x -= 27;
+                ui_data.starmap.y -= 21;
+                ui_data.starmap.x2 -= 27;
+                ui_data.starmap.y2 -= 21;
+            }
             ui_sound_play_sfx_24();
         } else if (oi1 == oi_c) {
             ui_data.ui_main_loop_action = UI_MAIN_LOOP_SPIES_CAUGHT;
@@ -647,6 +663,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
                 oi_b = uiobj_add_mousearea(272, 59, 312, 67, MOO_KEY_b);
             }
             oi_c = uiobj_add_inputkey(MOO_KEY_c);
+            oi_z = uiobj_add_inputkey(MOO_KEY_z);
             ui_starmap_add_oi_bottom_buttons(&d);
             ui_starmap_add_oi_misc(&d);
             if (g->evn.build_finished_num[active_player]) {
@@ -725,4 +742,9 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
     uiobj_unset_callback();
     uiobj_set_help_id(-1);
     ui_delay_1();
+    starmap_zoom = 1;
+    ui_data.starmap.x -= 27;
+    ui_data.starmap.y -= 21;
+    ui_data.starmap.x2 -= 27;
+    ui_data.starmap.y2 -= 21;
 }

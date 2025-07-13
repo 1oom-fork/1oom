@@ -145,6 +145,8 @@ struct starmap_data_s {
         oi_f10 = UIOBJI_INVALID; \
     } while (0)
 
+extern int starmap_zoom;
+
 extern const uint8_t colortbl_textbox[5];
 extern const uint8_t colortbl_line_red[5];
 extern const uint8_t colortbl_line_reloc[5];
@@ -177,7 +179,7 @@ extern void ui_starmap_common_update_mouse_hover(struct starmap_data_s *d, int16
 
 static inline int16_t ui_starmap_add_mousearea(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, mookey_t key)
 {
-    return uiobj_add_mousearea_limited(x0 + 6, y0 + 6, x1 + 6, y1 + 6, key);
+    return uiobj_add_mousearea_limited(x0 * starmap_zoom + 6, y0 * starmap_zoom + 6, x1 * starmap_zoom + 6, y1 * starmap_zoom + 6, key);
 }
 
 #endif
