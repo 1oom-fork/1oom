@@ -98,7 +98,7 @@ static struct sfx_conv_s fmt_sfx_resample_libsamplerate(struct sfx_conv_s *s_in,
 }
 #endif /* HAVE_SAMPLERATE */
 
-static struct sfx_conv_s fmt_sfx_resample_simple(struct sfx_conv_s *s_in, int audiorate)
+static struct sfx_conv_s fmt_sfx_resample_simple(struct sfx_conv_s *s_in, uint32_t audiorate)
 {
     struct sfx_conv_s s_out = { NULL, 0, audiorate };
 
@@ -106,7 +106,7 @@ static struct sfx_conv_s fmt_sfx_resample_simple(struct sfx_conv_s *s_in, int au
 
     uint32_t expanded_length;
     int expand_ratio;
-    int i;
+    uint32_t i;
 
     /* Calculate the length of the expanded version of the sample. */
     expanded_length = (uint32_t) ((((uint64_t) s_in->num) * audiorate) / s_in->samplerate);
@@ -353,14 +353,14 @@ static struct sfx_conv_s fmt_sfx_convert_wav(const uint8_t *data_in, uint32_t le
     if (bps_in == 8) {
         if (ch_in == 1) {
             res.num = len;
-            for (int i = 0; i < len; ++i) {
+            for (uint32_t i = 0; i < len; ++i) {
                 s = *p++ << 8;
                 *q++ = s;
                 *q++ = s;
             }
         } else {
             res.num = len / 2;
-            for (int i = 0; i < (len / 2); ++i) {
+            for (uint32_t i = 0; i < (len / 2); ++i) {
                 s = *p++ << 8;
                 *q++ = s;
                 s = *p++ << 8;
@@ -371,7 +371,7 @@ static struct sfx_conv_s fmt_sfx_convert_wav(const uint8_t *data_in, uint32_t le
         const int16_t *d = (const int16_t *)p;
         if (ch_in == 1) {
             res.num = len / 2;
-            for (int i = 0; i < (len / 2); ++i) {
+            for (uint32_t i = 0; i < (len / 2); ++i) {
                 s = GET_LE_16(d);
                 ++d;
                 *q++ = s;
@@ -379,7 +379,7 @@ static struct sfx_conv_s fmt_sfx_convert_wav(const uint8_t *data_in, uint32_t le
             }
         } else {
             res.num = len / 4;
-            for (int i = 0; i < (len / 4); ++i) {
+            for (uint32_t i = 0; i < (len / 4); ++i) {
                 s = GET_LE_16(d);
                 ++d;
                 *q++ = s;
