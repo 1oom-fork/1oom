@@ -680,18 +680,18 @@ void ui_starmap_draw_button_text(struct starmap_data_s *d, bool highlight)
 static void ui_starmap_clamp_xy(const struct game_s *g, int *x, int *y)
 {
     if (!ui_sm_expanded_scroll) {
-        SETRANGE(*x, 0, g->galaxy_maxx - 108);
-        SETRANGE(*y, 0, g->galaxy_maxy - 86);
+        SETRANGE(*x, 0, g->galaxy_maxx - 108 / starmap_zoom);
+        SETRANGE(*y, 0, g->galaxy_maxy - 86 / starmap_zoom);
     } else {
-        SETRANGE(*x, -54, g->galaxy_maxx - 54);
-        SETRANGE(*y, -43, g->galaxy_maxy - 43);
+        SETRANGE(*x, -54 / starmap_zoom, g->galaxy_maxx - 54 / starmap_zoom);
+        SETRANGE(*y, -43 / starmap_zoom, g->galaxy_maxy - 43 / starmap_zoom);
     }
 }
 
 void ui_starmap_set_pos(const struct game_s *g, int x, int y)
 {
-    x -= 54;
-    y -= 43;
+    x -= 54 / starmap_zoom;
+    y -= 43 / starmap_zoom;
     ui_starmap_clamp_xy(g, &x, &y);
     ui_data.starmap.x = x;
     ui_data.starmap.x2 = x;
