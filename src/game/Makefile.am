@@ -1,6 +1,7 @@
 AM_CPPFLAGS = \
     @OS_INCLUDES@ \
-    -I$(top_srcdir)/src
+    -I$(top_srcdir)/src \
+    -I$(top_srcdir)/src/save
 
 noinst_LIBRARIES = libgame.a libgamemain.a
 
@@ -48,8 +49,6 @@ libgame_a_SOURCES = \
     game_parsed.h \
     game_planet.c \
     game_planet.h \
-    game_save.c \
-    game_save.h \
     game_shipdesign.c \
     game_shipdesign.h \
     game_shiptech.c \
