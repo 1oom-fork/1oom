@@ -8,7 +8,7 @@
 #include <string.h>
 #include <unistd.h>
 
-#include "game_save.h"
+#include "save.h"
 #include "bits.h"
 #include "game.h"
 #include "game_aux.h"
