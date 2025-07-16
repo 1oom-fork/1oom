@@ -2,7 +2,6 @@
 
 #include "ui.h"
 #include "game.h"
-#include "game_save.h"
 #include "game_str.h"
 #include "hw.h"
 #include "kbd.h"
@@ -12,6 +11,7 @@
 #include "lbxpal.h"
 #include "lib.h"
 #include "log.h"
+#include "save.h"
 #include "types.h"
 #include "uicursor.h"
 #include "uidelay.h"
