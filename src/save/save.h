@@ -1,5 +1,5 @@
-#ifndef INC_1OOM_GAME_SAVE_H
-#define INC_1OOM_GAME_SAVE_H
+#ifndef INC_1OOM_SAVE_H
+#define INC_1OOM_SAVE_H
 
 #include "types.h"
 

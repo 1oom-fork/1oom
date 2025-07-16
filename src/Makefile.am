@@ -16,8 +16,8 @@ bin_PROGRAMS += 1oom_lbxview_sdl1
 endif
 endif
 
-SUBDIRS = hw os ui game
-DIST_SUBDIRS = hw os ui game
+SUBDIRS = hw os ui save game
+DIST_SUBDIRS = hw os ui save game
 
 util_sources = \
     bits.h \
@@ -80,19 +80,20 @@ AM_CPPFLAGS = \
     -I$(top_srcdir)/src
 
 common_libs = @OS_LIBS@
+save_lib = $(top_builddir)/src/save/libsave.a
 game_lib = $(top_builddir)/src/game/libgame.a
 gamemain_lib = $(top_builddir)/src/game/libgamemain.a
 
 uicmdline_lib = $(top_builddir)/src/ui/cmdline/libuicmdline.a
 hwnop_lib = $(top_builddir)/src/hw/nop/libhwnop.a
-1oom_cmdline_libs = $(gamemain_lib) $(game_lib) $(uicmdline_lib) $(game_lib) $(hwnop_lib) $(common_libs)
+1oom_cmdline_libs = $(gamemain_lib) $(game_lib) $(save_lib) $(uicmdline_lib) $(game_lib) $(hwnop_lib) $(common_libs)
 1oom_cmdline_SOURCES = $(util_sources)
 1oom_cmdline_LDADD = $(1oom_cmdline_libs) @READLINE_LIBS@
 1oom_cmdline_DEPENDENCIES = $(1oom_cmdline_libs)
 
 uiclassic_lib = $(top_builddir)/src/ui/classic/libuiclassic.a
 hwsdl1_lib = $(top_builddir)/src/hw/sdl/1/libhwsdl1.a
-1oom_classic_sdl1_libs = $(gamemain_lib) $(game_lib) $(uiclassic_lib) $(game_lib) $(hwsdl1_lib) $(common_libs)
+1oom_classic_sdl1_libs = $(gamemain_lib) $(game_lib) $(save_lib) $(uiclassic_lib) $(game_lib) $(hwsdl1_lib) $(common_libs)
 1oom_classic_sdl1_SOURCES = $(audio_sources) $(gui_sources) $(util_sources)
 1oom_classic_sdl1_LDADD = $(1oom_classic_sdl1_libs) @HW_SDL1_LIBS@ @EXTRA_SDL1_LIBS@ @SAMPLERATE_LIBS@
 1oom_classic_sdl1_DEPENDENCIES = $(1oom_classic_sdl1_libs)
@@ -103,12 +104,12 @@ uinop_lib = $(top_builddir)/src/ui/nop/libuinop.a
 1oom_lbxview_sdl1_LDADD = $(1oom_lbxview_sdl1_libs) @HW_SDL1_LIBS@ @EXTRA_SDL1_LIBS@ @SAMPLERATE_LIBS@
 1oom_lbxview_sdl1_DEPENDENCIES = $(1oom_lbxview_sdl1_libs)
 
-1oom_saveconv_libs = $(game_lib) $(hwnop_lib) $(uinop_lib) $(common_libs)
+1oom_saveconv_libs = $(game_lib) $(save_lib) $(hwnop_lib) $(uinop_lib) $(common_libs)
 1oom_saveconv_SOURCES = saveconv.c lib.c log.c options.c util.c
 1oom_saveconv_LDADD = $(1oom_saveconv_libs)
 1oom_saveconv_DEPENDENCIES = $(1oom_saveconv_libs)
 
-.PHONY: libui libhw libos libgame libgamemain
+.PHONY: libui libhw libos libsave libgame libgamemain
 
 libos:
 	(cd os && $(MAKE))
@@ -116,6 +117,8 @@ libhw:
 	(cd hw && $(MAKE))
 libui:
 	(cd ui && $(MAKE))
+libsave:
+	(cd save && $(MAKE) libsave.a)
 libgame:
 	(cd game && $(MAKE) libgame.a)
 libgamemain:

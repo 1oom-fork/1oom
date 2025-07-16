@@ -10,11 +10,11 @@
 #include "hw.h"
 #include "game/game.h"
 #include "game/game_aux.h"
-#include "game/game_save.h"
 #include "game/game_str.h"
 #include "lib.h"
 #include "log.h"
 #include "os.h"
+#include "save/save.h"
 #include "ui.h"
 #include "util.h"
 

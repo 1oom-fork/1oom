@@ -3,7 +3,7 @@
 #include <stdio.h>
 
 #include "ui.h"
-#include "game_save.h"
+#include "save.h"
 #include "types.h"
 #include "uiinput.h"
 

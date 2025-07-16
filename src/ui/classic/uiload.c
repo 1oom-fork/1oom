@@ -1,7 +1,7 @@
 #include "config.h"
 
 #include "ui.h"
-#include "game_save.h"
+#include "save.h"
 #include "kbd.h"
 #include "lbx.h"
 #include "lbxfont.h"
