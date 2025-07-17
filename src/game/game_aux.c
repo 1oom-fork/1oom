@@ -93,10 +93,6 @@ int game_aux_init(struct game_aux_s *gaux, struct game_s *g)
     gaux->eventmsg = (const char *)(t + 4);
 
     gaux->move_temp = 0;
-    gaux->savenamebuflen = FSDEV_PATH_MAX;
-    gaux->savenamebuf = lib_malloc(gaux->savenamebuflen);
-    gaux->savebuflen = sizeof(struct game_s) + 64;
-    gaux->savebuf = lib_malloc(gaux->savebuflen);
     gaux->flag_cheat_galaxy = false;
     gaux->flag_cheat_events = false;
     gaux->initialized = true;
@@ -113,10 +109,6 @@ void game_aux_shutdown(struct game_aux_s *gaux)
             lib_free(gaux->move_temp);
             gaux->move_temp = 0;
         }
-        lib_free(gaux->savenamebuf);
-        gaux->savenamebuf = 0;
-        lib_free(gaux->savebuf);
-        gaux->savebuf = 0;
     }
 }
 
