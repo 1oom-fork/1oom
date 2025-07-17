@@ -5,13 +5,13 @@
 
 /* -------------------------------------------------------------------------- */
 
-#define GAME_SAVE_HDR_SIZE  64
-#define GAME_SAVE_MAGIC "1oomSAVE"
-#define GAME_SAVE_END   0x646e450a/*dnE\n*/
-#define GAME_SAVE_OFFS_VERSION  8
-#define GAME_SAVE_OFFS_NAME 16
+#define SAVE_1OOM_HDR_SIZE  64
+#define SAVE_1OOM_MAGIC "1oomSAVE"
+#define SAVE_1OOM_END   0x646e450a/*dnE\n*/
+#define SAVE_1OOM_OFFS_VERSION  8
+#define SAVE_1OOM_OFFS_NAME 16
 
-#define GAME_SAVE_VERSION   0
+#define SAVE_1OOM_VERSION   0
 
 /* -------------------------------------------------------------------------- */
 
@@ -39,8 +39,8 @@
 #define SG_1OOM_DE_TBL_TBL_U32(_v_, _no_, _ni_)  do { for (int o_ = 0; o_ < (_no_); ++o_) { for (int i_ = 0; i_ < (_ni_); ++i_) { (_v_)[o_][i_] = GET_LE_32(&buf[pos]); pos += 4; } } } while (0)
 
 struct game_s;
-extern void game_save_make_header(uint8_t *buf, const char *savename);
-extern int game_save_decode(const uint8_t *buf, int buflen, struct game_s *g);
-extern int game_save_encode(uint8_t *buf, int buflen, const struct game_s *g);
+extern void libsave_1oom_make_header(uint8_t *buf, const char *savename);
+extern int libsave_1oom_decode(const uint8_t *buf, int buflen, struct game_s *g);
+extern int libsave_1oom_encode(uint8_t *buf, int buflen, const struct game_s *g);
 
 #endif

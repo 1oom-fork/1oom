@@ -48,15 +48,15 @@ void libsave_shutdown(void)
 static int game_save_do_save_do(const char *filename, const char *savename, const struct game_s *g, int savei)
 {
     FILE *fd;
-    uint8_t hdr[GAME_SAVE_HDR_SIZE];
+    uint8_t hdr[SAVE_1OOM_HDR_SIZE];
     int res = -1, len;
-    if ((len = game_save_encode(savebuf, savebuflen, g)) <= 0) {
+    if ((len = libsave_1oom_encode(savebuf, savebuflen, g)) <= 0) {
         return -1;
     }
     if (os_make_path_for(filename)) {
         log_error("Save: failed to create path for '%s'\n", filename);
     }
-    game_save_make_header(hdr, savename);
+    libsave_1oom_make_header(hdr, savename);
     fd = game_save_open_check_header(filename, -1, false, 0);
     if (fd) {
         /* file exists */
@@ -70,7 +70,7 @@ static int game_save_do_save_do(const char *filename, const char *savename, cons
     fd = fopen(filename, "wb+");
     if (0
       || (!fd)
-      || (fwrite(hdr, GAME_SAVE_HDR_SIZE, 1, fd) != 1)
+      || (fwrite(hdr, SAVE_1OOM_HDR_SIZE, 1, fd) != 1)
       || (fwrite(savebuf, len, 1, fd) != 1)
     ) {
         log_error("Save: failed to save '%s'\n", filename);
@@ -79,7 +79,7 @@ static int game_save_do_save_do(const char *filename, const char *savename, cons
     }
     if ((savei >= 0) && (savei < (NUM_SAVES + 1))) {
         game_save_tbl_have_save[savei] = true;
-        memcpy(game_save_tbl_name[savei], &hdr[GAME_SAVE_OFFS_NAME], SAVE_NAME_LEN);
+        memcpy(game_save_tbl_name[savei], &hdr[SAVE_1OOM_OFFS_NAME], SAVE_NAME_LEN);
     }
     log_message("Save: save '%s' '%s'\n", filename, savename);
     res = 0;
@@ -99,7 +99,7 @@ static int game_save_do_load_do(const char *filename, struct game_s *g, int save
     fd = game_save_open_check_header(filename, savei, true, savename);
     if ((!fd) || ((len = fread(savebuf, 1, savebuflen, fd)) == 0) || (!feof(fd))) {
         log_error("Save: failed to load '%s'\n", filename);
-    } else if (game_save_decode(savebuf, len, g) != 0) {
+    } else if (libsave_1oom_decode(savebuf, len, g) != 0) {
         log_error("Save: invalid data on load '%s'\n", filename);
     } else {
         log_message("Save: load '%s'\n", filename);
@@ -116,7 +116,7 @@ static int game_save_do_load_do(const char *filename, struct game_s *g, int save
 
 void *game_save_open_check_header(const char *filename, int i, bool update_table, char *savename)
 {
-    uint8_t hdr[GAME_SAVE_HDR_SIZE];
+    uint8_t hdr[SAVE_1OOM_HDR_SIZE];
     FILE *fd;
     if ((i < 0) || (i >= NUM_ALL_SAVES)) {
         update_table = false;
@@ -131,17 +131,17 @@ void *game_save_open_check_header(const char *filename, int i, bool update_table
     fd = fopen(filename, "rb");
     if (fd) {
         if (1
-          && (fread(hdr, GAME_SAVE_HDR_SIZE, 1, fd) == 1)
-          && (memcmp(hdr, (const uint8_t *)GAME_SAVE_MAGIC, 8) == 0)
-          && (GET_LE_32(&hdr[GAME_SAVE_OFFS_VERSION]) == GAME_SAVE_VERSION)
+          && (fread(hdr, SAVE_1OOM_HDR_SIZE, 1, fd) == 1)
+          && (memcmp(hdr, (const uint8_t *)SAVE_1OOM_MAGIC, 8) == 0)
+          && (GET_LE_32(&hdr[SAVE_1OOM_OFFS_VERSION]) == SAVE_1OOM_VERSION)
         ) {
             if (update_table) {
                 game_save_tbl_have_save[i] = true;
-                memcpy(game_save_tbl_name[i], &hdr[GAME_SAVE_OFFS_NAME], SAVE_NAME_LEN);
+                memcpy(game_save_tbl_name[i], &hdr[SAVE_1OOM_OFFS_NAME], SAVE_NAME_LEN);
                 game_save_tbl_name[i][SAVE_NAME_LEN - 1] = '\0';
             }
             if (savename) {
-                memcpy(savename, &hdr[GAME_SAVE_OFFS_NAME], SAVE_NAME_LEN);
+                memcpy(savename, &hdr[SAVE_1OOM_OFFS_NAME], SAVE_NAME_LEN);
                 savename[SAVE_NAME_LEN - 1] = '\0';
             }
         } else {
