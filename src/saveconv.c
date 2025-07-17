@@ -2439,16 +2439,11 @@ const struct cmdline_options_s main_cmdline_options[] = {
 static int main_early_init(void)
 {
     struct game_s *g;
-    struct game_aux_s *gaux;
     if (os_early_init()) {
         return 1;
     }
     gameptr = g = lib_malloc(sizeof(struct game_s));
-    g->gaux = gaux = lib_malloc(sizeof(struct game_aux_s));
-    gaux->savenamebuflen = FSDEV_PATH_MAX;
-    gaux->savenamebuf = lib_malloc(gaux->savenamebuflen);
-    gaux->savebuflen = sizeof(struct game_s) + 64;
-    gaux->savebuf = lib_malloc(gaux->savebuflen);
+    libsave_init();
     save2buf = lib_malloc(0x10000);
     return 0;
 }
@@ -2463,9 +2458,7 @@ static int main_init(void)
 
 static void main_shutdown(void)
 {
-    lib_free(gameptr->gaux->savenamebuf);
-    lib_free(gameptr->gaux->savebuf);
-    lib_free(gameptr->gaux);
+    libsave_shutdown();
     lib_free(gameptr);
     lib_free(save2buf);
     os_shutdown();
@@ -2482,8 +2475,7 @@ int main_do(void)
     }
     fname = fnames[0];
     if ((util_parse_number(fname, &v)) && (v >= 1) && (v <= NUM_ALL_SAVES)) {
-        game_save_get_slot_fname(gameptr->gaux->savenamebuf, gameptr->gaux->savenamebuflen, v - 1);
-        fname = gameptr->gaux->savenamebuf;
+        fname = libsave_select_slot_fname(v - 1);
     }
     res = savetype[savetypei].decode(gameptr, fname);
     if (res < 0) {
@@ -2506,8 +2498,7 @@ int main_do(void)
             return 1;
         }
     } else if ((util_parse_number(fname, &v)) && (v >= 1) && (v <= NUM_ALL_SAVES)) {
-        game_save_get_slot_fname(gameptr->gaux->savenamebuf, gameptr->gaux->savenamebuflen, v - 1);
-        fname = gameptr->gaux->savenamebuf;
+        fname = libsave_select_slot_fname(v - 1);
     }
     log_message("saveconv: encode type '%s' file '%s'\n", savetype[savetypeo].name, fname ? fname : "(null)");
     if (savename[0] == '\0') {

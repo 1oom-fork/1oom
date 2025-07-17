@@ -33,6 +33,27 @@
 bool game_save_tbl_have_save[NUM_ALL_SAVES];
 char game_save_tbl_name[NUM_ALL_SAVES][SAVE_NAME_LEN];
 
+static int savenamebuflen = 0;
+static int savebuflen = 0;
+static char *savenamebuf = NULL;
+static uint8_t *savebuf = NULL;
+
+void libsave_init(void)
+{
+    savenamebuflen = FSDEV_PATH_MAX;
+    savenamebuf = lib_malloc(savenamebuflen);
+    savebuflen = sizeof(struct game_s) + 64;
+    savebuf = lib_malloc(savebuflen);
+}
+
+void libsave_shutdown(void)
+{
+    lib_free(savenamebuf);
+    savenamebuf = NULL;
+    lib_free(savebuf);
+    savebuf = NULL;
+}
+
 /* -------------------------------------------------------------------------- */
 
 #define SG_1OOM_EN_DUMMY(_n_)  memset(&buf[pos], 0, (_n_)), pos += (_n_)
@@ -778,7 +799,7 @@ static int game_save_do_save_do(const char *filename, const char *savename, cons
     FILE *fd;
     uint8_t hdr[GAME_SAVE_HDR_SIZE];
     int res = -1, len;
-    if ((len = game_save_encode(g->gaux->savebuf, g->gaux->savebuflen, g)) <= 0) {
+    if ((len = game_save_encode(savebuf, savebuflen, g)) <= 0) {
         return -1;
     }
     if (os_make_path_for(filename)) {
@@ -799,7 +820,7 @@ static int game_save_do_save_do(const char *filename, const char *savename, cons
     if (0
       || (!fd)
       || (fwrite(hdr, GAME_SAVE_HDR_SIZE, 1, fd) != 1)
-      || (fwrite(g->gaux->savebuf, len, 1, fd) != 1)
+      || (fwrite(savebuf, len, 1, fd) != 1)
     ) {
         log_error("Save: failed to save '%s'\n", filename);
         unlink(filename);
@@ -825,9 +846,9 @@ static int game_save_do_load_do(const char *filename, struct game_s *g, int save
     int res = -1, len = 0;
 
     fd = game_save_open_check_header(filename, savei, true, savename);
-    if ((!fd) || ((len = fread(g->gaux->savebuf, 1, g->gaux->savebuflen, fd)) == 0) || (!feof(fd))) {
+    if ((!fd) || ((len = fread(savebuf, 1, savebuflen, fd)) == 0) || (!feof(fd))) {
         log_error("Save: failed to load '%s'\n", filename);
-    } else if (game_save_decode(g->gaux->savebuf, len, g) != 0) {
+    } else if (game_save_decode(savebuf, len, g) != 0) {
         log_error("Save: invalid data on load '%s'\n", filename);
     } else {
         log_message("Save: load '%s'\n", filename);
@@ -880,7 +901,7 @@ void *game_save_open_check_header(const char *filename, int i, bool update_table
     return fd;
 }
 
-int game_save_get_slot_fname(char *buf, int buflen, int i)
+const char *libsave_select_slot_fname(int i)
 {
     const char *path = os_get_path_user();
     char namebuf[16];
@@ -888,21 +909,21 @@ int game_save_get_slot_fname(char *buf, int buflen, int i)
     if (!os_get_fname_save(namebuf, i + 1)) {
         sprintf(namebuf, "1oom_save%i.bin", i + 1);
     }
-    res = util_concat_buf(buf, buflen, path, FSDEV_DIR_SEP_STR, namebuf, NULL);
+    res = util_concat_buf(savenamebuf, savenamebuflen, path, FSDEV_DIR_SEP_STR, namebuf, NULL);
     if (res < 0) {
         log_error("Save: BUG: save name buffer too small by %i bytes\n", -res);
-        return -1;
+        return NULL;
     }
-    return 0;
+    return savenamebuf;
 }
 
-int game_save_check_saves(char *fnamebuf, int buflen)
+int libsave_check_saves(void)
 {
     FILE *fd;
 
     for (int i = 0; i < NUM_ALL_SAVES; ++i) {
-        game_save_get_slot_fname(fnamebuf, buflen, i);
-        fd = game_save_open_check_header(fnamebuf, i, true, 0);
+        const char *fname = libsave_select_slot_fname(i);
+        fd = game_save_open_check_header(fname, i, true, 0);
         if (fd) {
             fclose(fd);
         }
@@ -923,8 +944,7 @@ int game_save_do_save_fname(const char *filename, const char *savename, const st
 int game_save_do_load_i(int savei, struct game_s *g)
 {
     int res;
-    char *filename = g->gaux->savenamebuf;
-    game_save_get_slot_fname(filename, g->gaux->savenamebuflen, savei);
+    const char *filename = libsave_select_slot_fname(savei);
     res = game_save_do_load_do(filename, g, savei, 0);
     return res;
 }
@@ -932,11 +952,11 @@ int game_save_do_load_i(int savei, struct game_s *g)
 int game_save_do_save_i(int savei, const char *savename, const struct game_s *g)
 {
     int res;
-    char *filename = g->gaux->savenamebuf;
+    const char *filename;
     if (os_make_path_user()) {
         log_error("Save: failed to create user path '%s'\n", os_get_path_user());
     }
-    game_save_get_slot_fname(filename, g->gaux->savenamebuflen, savei);
+    filename = libsave_select_slot_fname(savei);
     res = game_save_do_save_do(filename, savename, g, savei);
     return res;
 }

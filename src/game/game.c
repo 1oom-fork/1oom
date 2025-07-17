@@ -403,7 +403,8 @@ int main_do(void)
         return 1;
     }
     game_aux_init(&game_aux, &game);
-    game_save_check_saves(game_aux.savenamebuf, game_aux.savenamebuflen);
+    libsave_init();
+    libsave_check_saves();
     if ((game_opt_end.type != GAME_END_NONE) && (game_opt_end.varnum == 2)) {
         goto do_ending;
     }
@@ -545,5 +546,6 @@ done:
 void main_do_shutdown(void)
 {
     /* TODO save game if in progress */
+    libsave_shutdown();
     game_aux_shutdown(&game_aux);
 }
