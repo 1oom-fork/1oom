@@ -1,6 +1,8 @@
 #ifndef INC_1OOM_SAVE_H
 #define INC_1OOM_SAVE_H
 
+#include "save_1oom.h"
+
 #include "types.h"
 
 #define NUM_SAVES   6
@@ -16,7 +18,6 @@ extern char game_save_tbl_name[NUM_ALL_SAVES][SAVE_NAME_LEN];
 extern void libsave_init(void);
 extern void libsave_shutdown(void);
 
-extern bool game_save_check_header(const char *filename, int i);
 extern const char *game_save_get_slot_fname(int i);
 extern int game_save_check_saves(void);
 

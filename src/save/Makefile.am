@@ -6,5 +6,7 @@ AM_CPPFLAGS = \
 noinst_LIBRARIES = libsave.a
 
 libsave_a_SOURCES = \
+    save_1oom.c \
+    save_1oom.h \
     save.c \
     save.h
