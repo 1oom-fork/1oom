@@ -55,26 +55,26 @@ int game_save_check_saves(void)
 {
     for (int i = 0; i < NUM_ALL_SAVES; ++i) {
         const char *fname = game_save_get_slot_fname(i);
-        game_save_check_header(fname, i);
+        libsave_1oom_check_header(fname, i);
     }
     return 0;
 }
 
 int game_save_do_load_fname(const char *filename, char *savename, struct game_s *g)
 {
-    return game_save_do_load_do(filename, g, -1);
+    return libsave_1oom_do_load(filename, g, -1);
 }
 
 int game_save_do_save_fname(const char *filename, const char *savename, const struct game_s *g)
 {
-    return game_save_do_save_do(filename, savename, g, -1);
+    return libsave_1oom_do_save(filename, savename, g, -1);
 }
 
 int game_save_do_load_i(int savei, struct game_s *g)
 {
     int res;
     const char *filename = game_save_get_slot_fname(savei);
-    res = game_save_do_load_do(filename, g, savei);
+    res = libsave_1oom_do_load(filename, g, savei);
     return res;
 }
 
@@ -86,6 +86,6 @@ int game_save_do_save_i(int savei, const char *savename, const struct game_s *g)
         log_error("Save: failed to create user path '%s'\n", os_get_path_user());
     }
     filename = game_save_get_slot_fname(savei);
-    res = game_save_do_save_do(filename, savename, g, savei);
+    res = libsave_1oom_do_save(filename, savename, g, savei);
     return res;
 }
