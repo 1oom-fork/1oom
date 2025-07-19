@@ -404,7 +404,7 @@ int main_do(void)
     }
     game_aux_init(&game_aux, &game);
     libsave_init();
-    game_save_check_saves();
+    libsave_check_saves();
     if ((game_opt_end.type != GAME_END_NONE) && (game_opt_end.varnum == 2)) {
         goto do_ending;
     }
