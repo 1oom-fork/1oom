@@ -1,3 +1,4 @@
+bool hw_use_mouse = true;
 struct i_hw_video_s i_hw_video = { 0 };
 
 void hw_video_refresh(void)

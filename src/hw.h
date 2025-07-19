@@ -12,6 +12,8 @@ extern int hw_early_init(void);
 extern int hw_init(void);
 extern void hw_shutdown(void);
 
+extern bool hw_use_mouse;
+
 extern const struct cmdline_options_s hw_cmdline_options[];
 extern const struct cmdline_options_s hw_cmdline_options_extra[];
 
