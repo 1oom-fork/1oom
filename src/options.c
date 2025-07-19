@@ -18,6 +18,7 @@
 #ifdef FEATURE_MODEBUG
 int opt_modebug = 0;
 #endif
+bool opt_mouse_warp_enabled = false;
 bool opt_audio_enabled = true;
 bool opt_music_enabled = true;
 bool opt_sfx_enabled = true;
@@ -100,6 +101,16 @@ static const struct cmdline_options_s cmdline_options_early[] = {
       options_set_int_var, (void *)&opt_modebug,
       "LEVEL", "Set debug level" },
 #endif
+    { NULL, 0, NULL, NULL, NULL, NULL }
+};
+
+static const struct cmdline_options_s cmdline_options_input[] = {
+    { "-mousewarp", 0,
+      options_enable_bool_var, (void *)&opt_mouse_warp_enabled,
+      NULL, "Enable hardware mouse warp" },
+    { "-nomousewarp", 0,
+      options_disable_bool_var, (void *)&opt_mouse_warp_enabled,
+      NULL, "Disable hardware mouse warp" },
     { NULL, 0, NULL, NULL, NULL, NULL }
 };
 
@@ -242,6 +253,7 @@ static const struct cmdline_options_s *find_option(const char *name, bool early,
         return o;
     }
     if (0
+      || (hw_use_mouse && (o = find_option_do(name, cmdline_options_input)))
       || (main_use_lbx && (o = find_option_do(name, cmdline_options_lbx)))
       || (ui_use_audio && (o = find_option_do(name, cmdline_options_audio)))
       || (o = find_option_do(name, os_cmdline_options))
@@ -330,6 +342,9 @@ void options_show_usage(void)
     log_message_direct("Options:\n");
 
     lmax = get_options_w(cmdline_options_early, lmax);
+    if (hw_use_mouse) {
+        lmax = get_options_w(cmdline_options_input, lmax);
+    }
     if (main_use_lbx) {
         lmax = get_options_w(cmdline_options_lbx, lmax);
     }
@@ -345,6 +360,9 @@ void options_show_usage(void)
     lmax = get_options_w(main_cmdline_options, lmax);
 
     show_options(cmdline_options_early, lmax);
+    if (hw_use_mouse) {
+        show_options(cmdline_options_input, lmax);
+    }
     if (main_use_lbx) {
         show_options(cmdline_options_lbx, lmax);
     }

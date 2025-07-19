@@ -9,6 +9,8 @@
 
 /* -------------------------------------------------------------------------- */
 
+bool hw_use_mouse = false;
+
 const struct cmdline_options_s hw_cmdline_options[] = {
     { NULL, 0, NULL, NULL, NULL, NULL }
 };
