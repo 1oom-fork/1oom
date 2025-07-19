@@ -3,6 +3,7 @@
 #include "comp.h"
 #include "hw.h"
 #include "mouse.h"
+#include "options.h"
 
 /* ------------------------------------------------------------------------- */
 
@@ -55,7 +56,9 @@ void mouse_set_xy(int mx, int my)
 {
     mouse_x = mx;
     mouse_y = my;
-    hw_video_position_cursor(mx, my);
+    if (opt_mouse_warp_enabled) {
+        hw_video_position_cursor(mx, my);
+    }
 }
 
 void mouse_set_click_xy(int mx, int my)
