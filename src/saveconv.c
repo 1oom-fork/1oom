@@ -2475,7 +2475,7 @@ int main_do(void)
     }
     fname = fnames[0];
     if ((util_parse_number(fname, &v)) && (v >= 1) && (v <= NUM_ALL_SAVES)) {
-        fname = game_save_get_slot_fname(v - 1);
+        fname = libsave_select_slot_fname(v - 1);
     }
     res = savetype[savetypei].decode(gameptr, fname);
     if (res < 0) {
@@ -2498,7 +2498,7 @@ int main_do(void)
             return 1;
         }
     } else if ((util_parse_number(fname, &v)) && (v >= 1) && (v <= NUM_ALL_SAVES)) {
-        fname = game_save_get_slot_fname(v - 1);
+        fname = libsave_select_slot_fname(v - 1);
     }
     log_message("saveconv: encode type '%s' file '%s'\n", savetype[savetypeo].name, fname ? fname : "(null)");
     if (savename[0] == '\0') {

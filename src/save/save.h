@@ -17,8 +17,8 @@ extern void libsave_init(void);
 extern void libsave_shutdown(void);
 
 extern void *game_save_open_check_header(const char *filename, int i, bool update_table, char *savename);
-extern const char *game_save_get_slot_fname(int i);
-extern int game_save_check_saves(void);
+extern const char *libsave_select_slot_fname(int i);
+extern int libsave_check_saves(void);
 
 struct game_s;
 extern int game_save_do_load_fname(const char *filename, char *savename, struct game_s *g);
