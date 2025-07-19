@@ -3,6 +3,7 @@
 
 #include "types.h"
 
+extern bool opt_mouse_warp_enabled;
 extern bool opt_audio_enabled;
 extern bool opt_music_enabled;
 extern bool opt_sfx_enabled;

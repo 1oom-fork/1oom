@@ -3,6 +3,7 @@
 #include "comp.h"
 #include "hw.h"
 #include "mouse.h"
+#include "options.h"
 #include "vgabuf.h"
 
 #define MOUSE_SCREEN_W  VGABUF_W
@@ -69,7 +70,9 @@ void mouse_set_xy(int mx, int my)
 {
     moo_mouse_x = mx;
     moo_mouse_y = my;
-    hw_video_position_cursor(mx, my);
+    if (opt_mouse_warp_enabled) {
+        hw_video_position_cursor(mx, my);
+    }
 }
 
 void mouse_set_click_xy(int mx, int my)
