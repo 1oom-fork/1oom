@@ -378,6 +378,7 @@ int hw_icon_set(const uint8_t *data, const uint8_t *pal, int w, int h)
 /* -------------------------------------------------------------------------- */
 
 bool hw_mouse_enabled = false;
+bool hw_use_mouse = true;
 
 /* -------------------------------------------------------------------------- */
 
