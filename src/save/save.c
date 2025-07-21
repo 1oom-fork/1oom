@@ -20,6 +20,7 @@
 /* -------------------------------------------------------------------------- */
 
 #define GAME_SAVE_HDR_SIZE  64
+#define GAME_SAVE_DATA_SIZE (sizeof(struct game_s) + 64)
 #define GAME_SAVE_MAGIC "1oomSAVE"
 #define GAME_SAVE_END   0x646e450a/*dnE\n*/
 #define GAME_SAVE_OFFS_VERSION  8
@@ -33,16 +34,12 @@ bool game_save_tbl_have_save[NUM_ALL_SAVES];
 char game_save_tbl_name[NUM_ALL_SAVES][SAVE_NAME_LEN];
 
 static int savenamebuflen = 0;
-static int savebuflen = 0;
 static char *savenamebuf = NULL;
-static uint8_t *savebuf = NULL;
 
 void libsave_init(void)
 {
     savenamebuflen = FSDEV_PATH_MAX;
     savenamebuf = lib_malloc(savenamebuflen);
-    savebuflen = sizeof(struct game_s) + 64;
-    savebuf = lib_malloc(savebuflen);
 }
 
 void libsave_shutdown(void)
@@ -50,9 +47,6 @@ void libsave_shutdown(void)
     lib_free(savenamebuf);
     savenamebuf = NULL;
     savenamebuflen = 0;
-    lib_free(savebuf);
-    savebuf = NULL;
-    savebuflen = 0;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -799,8 +793,12 @@ static int game_save_do_save_do(const char *filename, const char *savename, cons
 {
     FILE *fd;
     uint8_t hdr[GAME_SAVE_HDR_SIZE];
+    uint8_t *savebuf;
     int res = -1, len;
-    if ((len = game_save_encode(savebuf, savebuflen, g)) <= 0) {
+    savebuf = lib_malloc(GAME_SAVE_DATA_SIZE);
+    if ((len = game_save_encode(savebuf, GAME_SAVE_DATA_SIZE, g)) <= 0) {
+        lib_free(savebuf);
+        savebuf = NULL;
         return -1;
     }
     if (os_make_path_for(filename)) {
@@ -832,12 +830,15 @@ done:
         fclose(fd);
         fd = NULL;
     }
+    lib_free(savebuf);
+    savebuf = NULL;
     return res;
 }
 
 static int game_save_do_load_do(const char *filename, struct game_s *g, int savei)
 {
     FILE *fd = NULL;
+    uint8_t *savebuf;
     int res = -1, len = 0;
 
     if (!game_save_check_header(filename, savei)
@@ -846,7 +847,8 @@ static int game_save_do_load_do(const char *filename, struct game_s *g, int save
         log_error("Save: failed to load '%s'\n", filename);
         return -1;
     }
-    if (((len = fread(savebuf, 1, savebuflen, fd)) == 0) || (!feof(fd))) {
+    savebuf = lib_malloc(GAME_SAVE_DATA_SIZE);
+    if (((len = fread(savebuf, 1, GAME_SAVE_DATA_SIZE, fd)) == 0) || (!feof(fd))) {
         log_error("Save: failed to load '%s'\n", filename);
     } else if (game_save_decode(savebuf, len, g) != 0) {
         log_error("Save: invalid data on load '%s'\n", filename);
@@ -854,6 +856,8 @@ static int game_save_do_load_do(const char *filename, struct game_s *g, int save
         log_message("Save: load '%s'\n", filename);
         res = 0;
     }
+    lib_free(savebuf);
+    savebuf = NULL;
     if (fd) {
         fclose(fd);
         fd = NULL;
