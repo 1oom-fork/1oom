@@ -108,6 +108,7 @@ Readme. Thanks for the patch!
 
 Thanks to [shikadi.net](http://www.shikadi.net) for documenting the
 [music format](http://www.shikadi.net/wiki/modding/index.php?title=XMI_Format&oldid=6874).
+https://moddingwiki.shikadi.net/wiki/XMI_Format
 
 Thanks to CivFanatics forum user sargon0 for
 [partial save game format info](http://forums.civfanatics.com/threads/moo-save-file-layout.275055/).
