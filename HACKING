@@ -7,7 +7,6 @@ The code is divided into the following directories:
  *   game/      - game logic
  *   ui/        - UI implementations
  *    classic/  - the 1993 UI
- *    cmdline/  - experimental command line UI
  *    nop/      - dummy UI for tools
  *   hw/        - hardware abstraction
  *     sdl/     - libSDL
