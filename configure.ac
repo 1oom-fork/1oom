@@ -3,9 +3,11 @@ AC_INIT([1oom], [0.1])
 AC_ARG_ENABLE(static, AS_HELP_STRING([--enable-static], [enable static builds]))
 AC_ARG_ENABLE(modebug, AS_HELP_STRING([--enable-modebug], [add debugging options]))
 AC_ARG_ENABLE(fault-finding, AS_HELP_STRING([--enable-fault-finding], [add more warnings]))
+AC_ARG_WITH(readline, AS_HELP_STRING([--without-readline], [do not try to use the readline library]))
 AC_ARG_WITH(samplerate, AS_HELP_STRING([--without-samplerate], [do not try to use libsamplerate]))
 AC_ARG_ENABLE(tools, AS_HELP_STRING([--disable-tools], [disables extra tools]))
 AC_ARG_ENABLE(uiclassic, AS_HELP_STRING([--disable-uiclassic], [disables classic UI]))
+AC_ARG_ENABLE(uicmdline, AS_HELP_STRING([--disable-uicmdline], [disables cmdline UI]))
 AC_ARG_ENABLE(hwsdl1, AS_HELP_STRING([--enable-hwsdl1], [enables SDL1 HW]))
 AC_ARG_ENABLE(hwsdl2, AS_HELP_STRING([--disable-hwsdl2], [disables SDL2 HW]))
 AC_ARG_ENABLE(hwalleg4, AS_HELP_STRING([--disable-hwalleg4], [disables Allegro 4 HW]))
@@ -102,6 +104,44 @@ fi
 dnl - check for pkg-config
 dnl The failing result is "false" for $pkg_config --exists foo to fail.
 AC_CHECK_TOOLS(pkg_config, pkg-config, false)
+
+dnl - readline
+dnl Check whether we have GNU readline.
+dnl The user can force us to not use it with `--without-readline'.
+READLINE=""
+READLINE_LIBS=
+if test x"$with_readline" != "xno"; then
+    unset ac_cv_lib_readline_readline
+    old_LIBS="$LIBS"
+    AC_CHECK_LIB(readline, readline,
+               [ READLINE="" READLINE_LIBS="-lreadline"],
+               [],,)
+
+    if test "$ac_cv_lib_readline_readline" = "no"; then
+        unset ac_cv_lib_readline_readline
+        AC_CHECK_LIB(readline, readline,
+                   [ READLINE="" READLINE_LIBS="-lreadline -ltermcap"],
+                   [], [-ltermcap],)
+    fi
+
+    if test "$ac_cv_lib_readline_readline" = "no"; then
+        unset ac_cv_lib_readline_readline
+        AC_CHECK_LIB(readline, readline,
+                   [ READLINE="" READLINE_LIBS="-lreadline -lncurses"],
+                   [], [-lncurses],)
+    fi
+
+    if test "$ac_cv_lib_readline_readline" = "yes"; then
+        AC_CHECK_HEADERS(readline/readline.h, [AC_DEFINE(HAVE_READLINE,, [readline available])])
+        AC_CHECK_LIB(readline, rl_readline_name,
+                 [ AC_DEFINE(HAVE_RLNAME,,
+                 [Does the `readline' library support `rl_readline_name'?]) ],,)
+    fi
+    LIBS="${old_LIBS}"
+fi
+AC_SUBST(READLINE)
+AC_SUBST(READLINE_LIBS)
+
 
 dnl - libsamplerate
 
@@ -482,6 +522,12 @@ OS_INCLUDES="-I$OS_SRC_DIR"
 
 dnl - build exe opions
 
+if test x"$enable_uicmdline" != "xno"; then
+    AM_CONDITIONAL(COMPILE_UICMDLINE, true)
+else
+    AM_CONDITIONAL(COMPILE_UICMDLINE, false)
+fi
+
 if test x"$enable_uiclassic" != "xno"; then
     AM_CONDITIONAL(COMPILE_UICLASSIC, true)
     if test x"$have_sdl1" = "xyes"; then
@@ -558,6 +604,7 @@ AC_CONFIG_FILES([Makefile
                  src/os/win32/Makefile
                  src/os/msdos/Makefile
                  src/ui/Makefile
+                 src/ui/cmdline/Makefile
                  src/ui/classic/Makefile
                  src/ui/nop/Makefile
                  src/hw/Makefile
