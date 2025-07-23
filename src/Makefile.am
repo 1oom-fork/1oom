@@ -1,7 +1,4 @@
 bin_PROGRAMS =
-if COMPILE_UICMDLINE
-bin_PROGRAMS += 1oom_cmdline
-endif
 
 if COMPILE_UICLASSIC
 if COMPILE_UICLASSIC_SDL1
@@ -69,13 +66,7 @@ AM_CPPFLAGS = \
 common_libs = @OS_LIBS@
 game_lib = $(top_builddir)/src/game/libgame.a
 gamemain_lib = $(top_builddir)/src/game/libgamemain.a
-
-uicmdline_lib = $(top_builddir)/src/ui/cmdline/libuicmdline.a
 hwnop_lib = $(top_builddir)/src/hw/nop/libhwnop.a
-1oom_cmdline_libs = $(gamemain_lib) $(game_lib) $(uicmdline_lib) $(game_lib) $(hwnop_lib) $(common_libs)
-1oom_cmdline_SOURCES = $(util_sources)
-1oom_cmdline_LDADD = $(1oom_cmdline_libs) @READLINE_LIBS@
-1oom_cmdline_DEPENDENCIES = $(1oom_cmdline_libs)
 
 uiclassic_lib = $(top_builddir)/src/ui/classic/libuiclassic.a
 hwsdl1_lib = $(top_builddir)/src/hw/sdl/1/libhwsdl1.a
