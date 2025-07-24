@@ -186,6 +186,23 @@ int util_file_save(const char *name, const uint8_t *src, int size)
     return (r < 1) ? -1 : 0;
 }
 
+int try_load_len(const char *fname, uint8_t *buf, int wantlen)
+{
+    FILE *fd = 0;
+    int len = -1;
+    if (0
+      || ((fd = fopen(fname, "rb")) == 0)
+      || ((len = fread(buf, 1, wantlen + 1, fd)) != wantlen)
+    ) {
+        len = -1;
+    }
+    if (fd) {
+        fclose(fd);
+        fd = NULL;
+    }
+    return len;
+}
+
 void util_trim_whitespace(char *buf)
 {
     int i, j;

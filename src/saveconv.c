@@ -201,26 +201,6 @@ static int savetype_de_smart(struct game_s *g, const char *fname)
 
 /* -------------------------------------------------------------------------- */
 
-static int try_load_len(const char *fname, uint8_t *buf, int wantlen)
-{
-    FILE *fd = 0;
-    int len = -1;
-    if (0
-      || ((fd = fopen(fname, "rb")) == 0)
-      || ((len = fread(buf, 1, wantlen + 1, fd)) != wantlen)
-    ) {
-        LOG_DEBUG((1, "%s: loading '%s' (got %i != %i bytes)\n", __func__, fname, len, wantlen));
-        len = -1;
-    }
-    if (fd) {
-        fclose(fd);
-        fd = NULL;
-    }
-    return len;
-}
-
-/* -------------------------------------------------------------------------- */
-
 #define SAVE_MOO13_LEN  59036
 #define SAVE_CMOO_LEN   154
 
