@@ -207,8 +207,7 @@ static int savetype_de_smart(struct game_s *g, const char *fname)
 static bool savetype_is_moo13(struct game_s *g, const char *fname)
 {
     uint16_t w;
-    int len;
-    if ((len = try_load_len(fname, save2buf, SAVE_MOO13_LEN)) <= 0) {
+    if (util_file_load_len(fname, save2buf, 0, SAVE_MOO13_LEN) != SAVE_MOO13_LEN) {
         return false;
     }
     if (0
@@ -334,8 +333,8 @@ static int savetype_de_moo13(struct game_s *g, const char *fname)
 {
     LOG_DEBUG((2, "%s: '%s'\n", __func__, fname));
     {
-        int len;
-        if ((len = try_load_len(fname, save2buf, SAVE_MOO13_LEN)) <= 0) {
+        size_t len;
+        if ((len = util_file_load_len(fname, save2buf, 0, SAVE_MOO13_LEN)) != SAVE_MOO13_LEN) {
             log_error("loading MOO1 v1.3 save '%s' (got %i != %i bytes)\n", fname, len, SAVE_MOO13_LEN);
             return -1;
         }
@@ -656,13 +655,13 @@ static int savetype_de_moo13(struct game_s *g, const char *fname)
             if (dir) {
                 tryname = fullname = util_concat(dir, FSDEV_DIR_SEP_STR, tryname, NULL);
             }
-            if (try_load_len(tryname, cmoobuf, SAVE_CMOO_LEN) <= 0) {
+            if (util_file_load_len(tryname, cmoobuf, 0, SAVE_CMOO_LEN) != SAVE_CMOO_LEN) {
                 tryname = "CONFIG.MOO";
                 if (dir) {
                     lib_free(fullname);
                     tryname = fullname = util_concat(dir, FSDEV_DIR_SEP_STR, tryname, NULL);
                 }
-                if (try_load_len(tryname, cmoobuf, SAVE_CMOO_LEN) <= 0) {
+                if (util_file_load_len(tryname, cmoobuf, 0, SAVE_CMOO_LEN) != SAVE_CMOO_LEN) {
                     found = false;
                 }
             }
@@ -1120,13 +1119,13 @@ static int savetype_en_moo13(struct game_s *g, const char *fname)
             if (dir) {
                 tryname = fullname = util_concat(dir, FSDEV_DIR_SEP_STR, tryname, NULL);
             }
-            if (try_load_len(tryname, cmoobuf, SAVE_CMOO_LEN) <= 0) {
+            if (util_file_load_len(tryname, cmoobuf, 0, SAVE_CMOO_LEN) != SAVE_CMOO_LEN) {
                 tryname = "CONFIG.MOO";
                 if (dir) {
                     lib_free(fullname);
                     tryname = fullname = util_concat(dir, FSDEV_DIR_SEP_STR, tryname, NULL);
                 }
-                if (try_load_len(tryname, cmoobuf, SAVE_CMOO_LEN) <= 0) {
+                if (util_file_load_len(tryname, cmoobuf, 0, SAVE_CMOO_LEN) != SAVE_CMOO_LEN) {
                     found = false;
                 }
             }

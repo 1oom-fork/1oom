@@ -186,17 +186,20 @@ int util_file_save(const char *name, const uint8_t *src, int size)
     return (r < 1) ? -1 : 0;
 }
 
-int try_load_len(const char *fname, uint8_t *buf, int wantlen)
+size_t util_file_load_len(const char *fname, uint8_t *buf, size_t start, size_t wantlen)
 {
-    FILE *fd = 0;
-    int len = -1;
-    if (0
-      || ((fd = fopen(fname, "rb")) == 0)
-      || ((len = fread(buf, 1, wantlen + 1, fd)) != wantlen)
-    ) {
-        len = -1;
-    }
-    if (fd) {
+    FILE *fd = NULL;
+    size_t len = 0;
+    if ((fd = fopen(fname, "rb")) != NULL) {
+        if (!fseek(fd, 0, SEEK_END) && (ftell(fd) > start) && !fseek(fd, start, SEEK_SET)) {
+            len = fread(buf, 1, wantlen, fd);
+            if (!feof(fd)) {
+                fgetc(fd);
+                if (!feof(fd)) {
+                    len = 0;
+                }
+            }
+        }
         fclose(fd);
         fd = NULL;
     }
