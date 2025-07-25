@@ -15,6 +15,7 @@
 #include "log.h"
 #include "os.h"
 #include "types.h"
+#include "util.h"
 
 /* -------------------------------------------------------------------------- */
 
@@ -815,20 +816,13 @@ done:
 
 int libsave_1oom_do_load(const char *filename, struct game_s *g, int savei)
 {
-    FILE *fd = NULL;
     uint8_t *savebuf;
-    int res = -1, len = 0;
-
-    if (!libsave_1oom_check_header(filename, savei)
-    || !(fd = fopen(filename, "rb"))
-    || fseek(fd, SAVE_1OOM_HDR_SIZE, SEEK_SET)) {
-        log_error("Save: failed to load '%s'\n", filename);
-        return -1;
-    }
+    int res = -1;
     savebuf = lib_malloc(SAVE_1OOM_DATA_SIZE);
-    if (((len = fread(savebuf, 1, SAVE_1OOM_DATA_SIZE, fd)) == 0) || (!feof(fd))) {
+    if (!libsave_1oom_check_header(filename, savei)
+    || !util_file_load_len(filename, savebuf, SAVE_1OOM_HDR_SIZE, SAVE_1OOM_DATA_SIZE)) {
         log_error("Save: failed to load '%s'\n", filename);
-    } else if (libsave_1oom_decode(savebuf, len, g) != 0) {
+    } else if (libsave_1oom_decode(savebuf, SAVE_1OOM_DATA_SIZE, g) != 0) {
         log_error("Save: invalid data on load '%s'\n", filename);
     } else {
         log_message("Save: load '%s'\n", filename);
@@ -836,10 +830,6 @@ int libsave_1oom_do_load(const char *filename, struct game_s *g, int savei)
     }
     lib_free(savebuf);
     savebuf = NULL;
-    if (fd) {
-        fclose(fd);
-        fd = NULL;
-    }
     return res;
 }
 
