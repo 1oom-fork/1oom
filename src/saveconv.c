@@ -178,10 +178,10 @@ static int savetype_de_smart(struct game_s *g, const char *fname)
         res = savetype[SAVETYPE_NATIVE].decode(g, fname);
     } else if (savetype_is_moo13(g, fname)) {
         savetypei = SAVETYPE_MOO13;
-        res = savetype_de_moo13(g, fname);
+        res = savetype[SAVETYPE_MOO13].decode(g, fname);
     } else if (savetype_is_text(g, fname)) {
         savetypei = SAVETYPE_TEXT;
-        res = savetype_de_text(g, fname);
+        res = savetype[SAVETYPE_TEXT].decode(g, fname);
     } else {
         log_error("file '%s' type autodetection failed\n", fname);
         return -1;
@@ -2299,13 +2299,13 @@ static int savetype_de_1oom0(struct game_s *g, const char *fname)
 {
     char *sname = (*savename == '\0') ? savename : NULL;
     LOG_DEBUG((2, "%s: '%s'\n", __func__, fname));
-    return game_save_do_load_fname(fname, sname, g);
+    return libsave_1oom_do_load(fname, g, -1);
 }
 
 static int savetype_en_1oom0(struct game_s *g, const char *fname)
 {
     LOG_DEBUG((2, "%s: '%s'\n", __func__, fname ? fname : "(null)"));
-    return game_save_do_save_fname(fname, savename, g);
+    return libsave_1oom_do_save(fname, savename, g, -1);
 }
 
 /* -------------------------------------------------------------------------- */
