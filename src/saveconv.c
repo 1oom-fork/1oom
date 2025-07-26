@@ -175,7 +175,7 @@ static int savetype_de_smart(struct game_s *g, const char *fname)
     if (libsave_1oom_check_header(fname, -1)) {
         savetypei = SAVETYPE_NATIVE;
         res = savetype[SAVETYPE_NATIVE].decode(g, fname);
-    } else if (savetype_is_moo13(g, fname)) {
+    } else if (libsave_moo13_check(g, fname)) {
         savetypei = SAVETYPE_MOO13;
         res = savetype[SAVETYPE_MOO13].decode(g, fname);
     } else if (savetype_is_text(g, fname)) {
@@ -1831,7 +1831,7 @@ static int savetype_de_moo13(struct game_s *g, const char *fname)
 {
     char *sname = (*savename == '\0') ? savename : NULL;
     LOG_DEBUG((2, "%s: '%s'\n", __func__, fname));
-    return savetype_moo13_do_load(fname, g, -1);
+    return libsave_moo13_do_load(fname, g, -1);
 }
 
 /* -------------------------------------------------------------------------- */

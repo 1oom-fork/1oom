@@ -5,7 +5,7 @@
 
 struct game_s;
 
-extern bool savetype_is_moo13(struct game_s *g, const char *fname);
-extern int savetype_moo13_do_load(const char *filename, struct game_s *g, int savei);
+extern bool libsave_moo13_check(struct game_s *g, const char *fname);
+extern int libsave_moo13_do_load(const char *filename, struct game_s *g, int savei);
 
 #endif

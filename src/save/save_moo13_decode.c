@@ -26,7 +26,7 @@ static bool opt_use_configmoo = false;
 #define SAVE_CMOO_LEN   154
 #define SAVE_MOO13_BUF_LEN  (SAVE_MOO13_LEN + SAVE_CMOO_LEN)
 
-bool savetype_is_moo13(struct game_s *g, const char *fname)
+bool libsave_moo13_check(struct game_s *g, const char *fname)
 {
     uint8_t buf[8];
     FILE *fd = NULL;
@@ -139,7 +139,7 @@ bool savetype_is_moo13(struct game_s *g, const char *fname)
         } \
     } while (0)
 
-static int savetype_de_moo13_sd(uint8_t *buf, shipdesign_t *sd, int sb)
+static int libsave_moo13_decode_do_sd(uint8_t *buf, shipdesign_t *sd, int sb)
 {
     memcpy(sd->name, &buf[sb + 0x00], 11);
     M13_GET_16(sd->cost, sb + 0x14);
@@ -160,7 +160,7 @@ static int savetype_de_moo13_sd(uint8_t *buf, shipdesign_t *sd, int sb)
     return 0;
 }
 
-static int savetype_de_moo13_do(uint8_t *buf, struct game_s *g, const char *fname)
+static int libsave_moo13_decode_do(uint8_t *buf, struct game_s *g, const char *fname)
 {
     LOG_DEBUG((2, "%s: '%s'\n", __func__, fname));
     {
@@ -369,7 +369,7 @@ static int savetype_de_moo13_do(uint8_t *buf, struct game_s *g, const char *fnam
         int srdb, pos;
         srdb = 0xc410 + i * 0x468;
         for (int j = 0; j < g->eto[i].shipdesigns_num; ++j) {
-            if (savetype_de_moo13_sd(buf, &(srd->design[j]), srdb + j * 0x44) != 0) {
+            if (libsave_moo13_decode_do_sd(buf, &(srd->design[j]), srdb + j * 0x44) != 0) {
                 return -1;
             }
         }
@@ -393,7 +393,7 @@ static int savetype_de_moo13_do(uint8_t *buf, struct game_s *g, const char *fnam
         M13_GET_TBL_16(srd->year, srdb + 0x450);
         /* M13_GET_TBL_16(srd->shipcount, srdb + 0x45c); */
     }
-    if (savetype_de_moo13_sd(buf, &(g->current_design[PLAYER_0]), 0xe642) != 0) {
+    if (libsave_moo13_decode_do_sd(buf, &(g->current_design[PLAYER_0]), 0xe642) != 0) {
         return -1;
     }
     {
@@ -515,14 +515,14 @@ static int savetype_de_moo13_do(uint8_t *buf, struct game_s *g, const char *fnam
     return 0;
 }
 
-int savetype_moo13_do_load(const char *filename, struct game_s *g, int savei)
+int libsave_moo13_do_load(const char *filename, struct game_s *g, int savei)
 {
     uint8_t *savebuf;
     int res = -1;
     savebuf = lib_malloc(SAVE_MOO13_BUF_LEN);
-    if (!savetype_is_moo13(g, filename)) {
+    if (!libsave_moo13_check(g, filename)) {
         log_error("Save: failed to load '%s'\n", filename);
-    } else if (savetype_de_moo13_do(savebuf, g, filename) != 0) {
+    } else if (libsave_moo13_decode_do(savebuf, g, filename) != 0) {
         log_error("Save: invalid data on load '%s'\n", filename);
     } else {
         log_message("Save: load '%s'\n", filename);
