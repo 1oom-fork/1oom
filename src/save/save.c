@@ -62,6 +62,9 @@ int game_save_check_saves(void)
 
 int game_save_do_load_fname(const char *filename, char *savename, struct game_s *g)
 {
+    if (!libsave_moo13_do_load(filename, g, -1)) {
+        return 0;
+    }
     return libsave_1oom_do_load(filename, g, -1);
 }
 
