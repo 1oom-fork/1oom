@@ -8,5 +8,7 @@ noinst_LIBRARIES = libsave.a
 libsave_a_SOURCES = \
     save_1oom.c \
     save_1oom.h \
+    save_moo13_decode.c \
+    save_moo13.h \
     save.c \
     save.h
