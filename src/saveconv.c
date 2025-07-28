@@ -9,7 +9,6 @@
 #include "comp.h"
 #include "hw.h"
 #include "game/game.h"
-#include "game/game_aux.h"
 #include "game/game_str.h"
 #include "lib.h"
 #include "log.h"
@@ -2438,17 +2437,10 @@ const struct cmdline_options_s main_cmdline_options[] = {
 
 static int main_early_init(void)
 {
-    struct game_s *g;
-    struct game_aux_s *gaux;
     if (os_early_init()) {
         return 1;
     }
-    gameptr = g = lib_malloc(sizeof(struct game_s));
-    g->gaux = gaux = lib_malloc(sizeof(struct game_aux_s));
-    gaux->savenamebuflen = FSDEV_PATH_MAX;
-    gaux->savenamebuf = lib_malloc(gaux->savenamebuflen);
-    gaux->savebuflen = sizeof(struct game_s) + 64;
-    gaux->savebuf = lib_malloc(gaux->savebuflen);
+    gameptr = lib_malloc(sizeof(struct game_s));
     save2buf = lib_malloc(0x10000);
     return 0;
 }
@@ -2463,9 +2455,6 @@ static int main_init(void)
 
 static void main_shutdown(void)
 {
-    lib_free(gameptr->gaux->savenamebuf);
-    lib_free(gameptr->gaux->savebuf);
-    lib_free(gameptr->gaux);
     lib_free(gameptr);
     lib_free(save2buf);
     os_shutdown();
