@@ -8,7 +8,6 @@
 #include "bits.h"
 #include "hw.h"
 #include "game/game.h"
-#include "game/game_aux.h"
 #include "game/game_save.h"
 #include "game/game_str.h"
 #include "lib.h"
@@ -2436,9 +2435,6 @@ static int main_init(void)
 
 static void main_shutdown(void)
 {
-    lib_free(gameptr->gaux->savenamebuf);
-    lib_free(gameptr->gaux->savebuf);
-    lib_free(gameptr->gaux);
     lib_free(gameptr);
     lib_free(save2buf);
     os_shutdown();
@@ -2490,14 +2486,7 @@ int main_do(void)
 
 int main_1oom(int argc, char **argv)
 {
-    struct game_s *g;
-    struct game_aux_s *gaux;
-    gameptr = g = lib_malloc(sizeof(struct game_s));
-    g->gaux = gaux = lib_malloc(sizeof(struct game_aux_s));
-    gaux->savenamebuflen = FSDEV_PATH_MAX;
-    gaux->savenamebuf = lib_malloc(gaux->savenamebuflen);
-    gaux->savebuflen = sizeof(struct game_s) + 64;
-    gaux->savebuf = lib_malloc(gaux->savebuflen);
+    gameptr = lib_malloc(sizeof(struct game_s));
     save2buf = lib_malloc(0x10000);
     if (options_parse_early(argc, argv)) {
         return 1;
