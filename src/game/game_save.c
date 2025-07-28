@@ -11,7 +11,6 @@
 #include "game_save.h"
 #include "bits.h"
 #include "game.h"
-#include "game_aux.h"
 #include "lib.h"
 #include "log.h"
 #include "os.h"
@@ -21,6 +20,7 @@
 /* -------------------------------------------------------------------------- */
 
 #define GAME_SAVE_HDR_SIZE  64
+#define GAME_SAVE_DATA_SIZE (sizeof(struct game_s) + 64)
 #define GAME_SAVE_MAGIC "1oomSAVE"
 #define GAME_SAVE_END   0x646e450a/*dnE\n*/
 #define GAME_SAVE_OFFS_VERSION  8
@@ -777,8 +777,12 @@ static int game_save_do_save_do(const char *filename, const char *savename, cons
 {
     FILE *fd;
     uint8_t hdr[GAME_SAVE_HDR_SIZE];
+    uint8_t *savebuf = NULL;
     int res = -1, len;
-    if ((len = game_save_encode(g->gaux->savebuf, g->gaux->savebuflen, g)) <= 0) {
+    savebuf = lib_malloc(GAME_SAVE_DATA_SIZE);
+    if ((len = game_save_encode(savebuf, GAME_SAVE_DATA_SIZE, g)) <= 0) {
+        lib_free(savebuf);
+        savebuf = NULL;
         return -1;
     }
     if (os_make_path_for(filename)) {
@@ -799,7 +803,7 @@ static int game_save_do_save_do(const char *filename, const char *savename, cons
     if (0
       || (!fd)
       || (fwrite(hdr, GAME_SAVE_HDR_SIZE, 1, fd) != 1)
-      || (fwrite(g->gaux->savebuf, len, 1, fd) != 1)
+      || (fwrite(savebuf, len, 1, fd) != 1)
     ) {
         log_error("Save: failed to save '%s'\n", filename);
         unlink(filename);
@@ -816,18 +820,22 @@ done:
         fclose(fd);
         fd = NULL;
     }
+    lib_free(savebuf);
+    savebuf = NULL;
     return res;
 }
 
 static int game_save_do_load_do(const char *filename, struct game_s *g, int savei, char *savename)
 {
     FILE *fd = NULL;
+    uint8_t *savebuf = NULL;
     int res = -1, len = 0;
 
+    savebuf = lib_malloc(GAME_SAVE_DATA_SIZE);
     fd = game_save_open_check_header(filename, savei, true, savename);
-    if ((!fd) || ((len = fread(g->gaux->savebuf, 1, g->gaux->savebuflen, fd)) == 0) || (!feof(fd))) {
+    if ((!fd) || ((len = fread(savebuf, 1, GAME_SAVE_DATA_SIZE, fd)) == 0) || (!feof(fd))) {
         log_error("Save: failed to load '%s'\n", filename);
-    } else if (game_save_decode(g->gaux->savebuf, len, g) != 0) {
+    } else if (game_save_decode(savebuf, len, g) != 0) {
         log_error("Save: invalid data on load '%s'\n", filename);
     } else {
         log_message("Save: load '%s'\n", filename);
@@ -837,6 +845,8 @@ static int game_save_do_load_do(const char *filename, struct game_s *g, int save
         fclose(fd);
         fd = NULL;
     }
+    lib_free(savebuf);
+    savebuf = NULL;
     return res;
 }
 
@@ -896,17 +906,21 @@ static int game_save_get_slot_fname(char *buf, int buflen, int i)
     return 0;
 }
 
-int game_save_check_saves(char *fnamebuf, int buflen)
+int game_save_check_saves(void)
 {
     FILE *fd;
+    char *fnamebuf = NULL;
 
+    fnamebuf = lib_malloc(FSDEV_PATH_MAX);
     for (int i = 0; i < NUM_ALL_SAVES; ++i) {
-        game_save_get_slot_fname(fnamebuf, buflen, i);
+        game_save_get_slot_fname(fnamebuf, FSDEV_PATH_MAX, i);
         fd = game_save_open_check_header(fnamebuf, i, true, 0);
         if (fd) {
             fclose(fd);
         }
     }
+    lib_free(fnamebuf);
+    fnamebuf = NULL;
     return 0;
 }
 
@@ -923,27 +937,33 @@ int game_save_do_save_fname(const char *filename, const char *savename, const st
 int game_save_do_load_i(int savei, struct game_s *g)
 {
     int res;
-    char *filename = g->gaux->savenamebuf;
-    game_save_get_slot_fname(filename, g->gaux->savenamebuflen, savei);
+    char *filename = lib_malloc(FSDEV_PATH_MAX);
+    game_save_get_slot_fname(filename, FSDEV_PATH_MAX, savei);
     res = game_save_do_load_do(filename, g, savei, 0);
+    lib_free(filename);
+    filename = NULL;
     return res;
 }
 
 int game_save_do_save_i(int savei, const char *savename, const struct game_s *g)
 {
     int res;
-    char *filename = g->gaux->savenamebuf;
+    char *filename = lib_malloc(FSDEV_PATH_MAX);
     if (os_make_path_user()) {
         log_error("Save: failed to create user path '%s'\n", os_get_path_user());
     }
-    game_save_get_slot_fname(filename, g->gaux->savenamebuflen, savei);
+    game_save_get_slot_fname(filename, FSDEV_PATH_MAX, savei);
     res = game_save_do_save_do(filename, savename, g, savei);
+    lib_free(filename);
+    filename = NULL;
     return res;
 }
 
 void game_save_do_delete_i(int savei, const struct game_s *g)
 {
-    char *filename = g->gaux->savenamebuf;
-    game_save_get_slot_fname(filename, g->gaux->savenamebuflen, savei);
+    char *filename = lib_malloc(FSDEV_PATH_MAX);
+    game_save_get_slot_fname(filename, FSDEV_PATH_MAX, savei);
     unlink(filename);
+    lib_free(filename);
+    filename = NULL;
 }

@@ -410,7 +410,7 @@ int main_do(void)
         return 1;
     }
     game_aux_init(&game_aux, &game);
-    game_save_check_saves(game_aux.savenamebuf, game_aux.savenamebuflen);
+    game_save_check_saves();
     if ((game_opt_end.type != GAME_END_NONE) && (game_opt_end.varnum == 2)) {
         goto do_ending;
     }
