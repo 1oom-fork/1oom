@@ -208,10 +208,16 @@ static int try_load_len(const char *fname, uint8_t *buf, int wantlen)
     int len = -1;
     if (0
       || ((fd = fopen(fname, "rb")) == 0)
-      || ((len = fread(buf, 1, wantlen + 1, fd)) != wantlen)
+      || ((len = fread(buf, 1, wantlen, fd)) != wantlen)
     ) {
         LOG_DEBUG((1, "%s: loading '%s' (got %i != %i bytes)\n", __func__, fname, len, wantlen));
         len = -1;
+    } else {
+        fgetc(fd);
+        if (!feof(fd) || ferror(fd)) {
+            LOG_DEBUG((1, "%s: loading '%s' (got > %i bytes)\n", __func__, fname, wantlen));
+            len = -1;
+        }
     }
     if (fd) {
         fclose(fd);
