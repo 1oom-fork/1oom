@@ -43,7 +43,7 @@ int game_save_check_saves(void)
     fnamebuf = lib_malloc(FSDEV_PATH_MAX);
     for (int i = 0; i < NUM_ALL_SAVES; ++i) {
         game_save_get_slot_fname(fnamebuf, FSDEV_PATH_MAX, i);
-        fd = game_save_open_check_header(fnamebuf, i, true, 0);
+        fd = libsave_1oom_open_check_header(fnamebuf, i, true, 0);
         if (fd) {
             fclose(fd);
         }
@@ -55,12 +55,12 @@ int game_save_check_saves(void)
 
 int game_save_do_load_fname(const char *filename, char *savename, struct game_s *g)
 {
-    return game_save_do_load_do(filename, g, -1, savename);
+    return libsave_1oom_load_do(filename, g, -1, savename);
 }
 
 int game_save_do_save_fname(const char *filename, const char *savename, const struct game_s *g)
 {
-    return game_save_do_save_do(filename, savename, g, -1);
+    return libsave_1oom_save_do(filename, savename, g, -1);
 }
 
 int game_save_do_load_i(int savei, struct game_s *g)
@@ -68,7 +68,7 @@ int game_save_do_load_i(int savei, struct game_s *g)
     int res;
     char *filename = lib_malloc(FSDEV_PATH_MAX);
     game_save_get_slot_fname(filename, FSDEV_PATH_MAX, savei);
-    res = game_save_do_load_do(filename, g, savei, 0);
+    res = libsave_1oom_load_do(filename, g, savei, 0);
     lib_free(filename);
     filename = NULL;
     return res;
@@ -82,7 +82,7 @@ int game_save_do_save_i(int savei, const char *savename, const struct game_s *g)
         log_error("Save: failed to create user path '%s'\n", os_get_path_user());
     }
     game_save_get_slot_fname(filename, FSDEV_PATH_MAX, savei);
-    res = game_save_do_save_do(filename, savename, g, savei);
+    res = libsave_1oom_save_do(filename, savename, g, savei);
     lib_free(filename);
     filename = NULL;
     return res;

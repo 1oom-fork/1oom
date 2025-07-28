@@ -18,14 +18,14 @@
 
 /* -------------------------------------------------------------------------- */
 
-#define GAME_SAVE_HDR_SIZE  64
-#define GAME_SAVE_DATA_SIZE (sizeof(struct game_s) + 64)
-#define GAME_SAVE_MAGIC "1oomSAVE"
-#define GAME_SAVE_END   0x646e450a/*dnE\n*/
-#define GAME_SAVE_OFFS_VERSION  8
-#define GAME_SAVE_OFFS_NAME 16
+#define LIBSAVE_1OOM_HDR_SIZE  64
+#define LIBSAVE_1OOM_DATA_SIZE (sizeof(struct game_s) + 64)
+#define LIBSAVE_1OOM_MAGIC "1oomSAVE"
+#define LIBSAVE_1OOM_END   0x646e450a/*dnE\n*/
+#define LIBSAVE_1OOM_OFFS_VERSION  8
+#define LIBSAVE_1OOM_OFFS_NAME 16
 
-#define GAME_SAVE_VERSION   0
+#define LIBSAVE_1OOM_VERSION   0
 
 /* -------------------------------------------------------------------------- */
 
@@ -52,7 +52,7 @@
 #define SG_1OOM_EN_TBL_TBL_U32(_v_, _no_, _ni_)  do { for (int o_ = 0; o_ < (_no_); ++o_) { for (int i_ = 0; i_ < (_ni_); ++i_) { SET_LE_32(&buf[pos], (_v_)[o_][i_]); pos += 4; } } } while (0)
 #define SG_1OOM_DE_TBL_TBL_U32(_v_, _no_, _ni_)  do { for (int o_ = 0; o_ < (_no_); ++o_) { for (int i_ = 0; i_ < (_ni_); ++i_) { (_v_)[o_][i_] = GET_LE_32(&buf[pos]); pos += 4; } } } while (0)
 
-static int game_save_encode_planet(uint8_t *buf, int pos, const planet_t *p, uint8_t pnum)
+static int libsave_1oom_encode_planet(uint8_t *buf, int pos, const planet_t *p, uint8_t pnum)
 {
     SG_1OOM_EN_TBL_U8(p->name, PLANET_NAME_LEN);
     SG_1OOM_EN_U16(p->x);
@@ -105,7 +105,7 @@ static int game_save_encode_planet(uint8_t *buf, int pos, const planet_t *p, uin
     return pos;
 }
 
-static int game_save_decode_planet(const uint8_t *buf, int pos, planet_t *p, uint8_t pnum)
+static int libsave_1oom_decode_planet(const uint8_t *buf, int pos, planet_t *p, uint8_t pnum)
 {
     SG_1OOM_DE_TBL_U8(p->name, PLANET_NAME_LEN);
     SG_1OOM_DE_U16(p->x);
@@ -158,7 +158,7 @@ static int game_save_decode_planet(const uint8_t *buf, int pos, planet_t *p, uin
     return pos;
 }
 
-static int game_save_encode_enroute(uint8_t *buf, int pos, const fleet_enroute_t *r)
+static int libsave_1oom_encode_enroute(uint8_t *buf, int pos, const fleet_enroute_t *r)
 {
     SG_1OOM_EN_U8(r->owner);
     SG_1OOM_EN_U16(r->x);
@@ -169,7 +169,7 @@ static int game_save_encode_enroute(uint8_t *buf, int pos, const fleet_enroute_t
     return pos;
 }
 
-static int game_save_decode_enroute(const uint8_t *buf, int pos, fleet_enroute_t *r)
+static int libsave_1oom_decode_enroute(const uint8_t *buf, int pos, fleet_enroute_t *r)
 {
     SG_1OOM_DE_U8(r->owner);
     SG_1OOM_DE_U16(r->x);
@@ -180,7 +180,7 @@ static int game_save_decode_enroute(const uint8_t *buf, int pos, fleet_enroute_t
     return pos;
 }
 
-static int game_save_encode_transport(uint8_t *buf, int pos, const transport_t *r)
+static int libsave_1oom_encode_transport(uint8_t *buf, int pos, const transport_t *r)
 {
     SG_1OOM_EN_U8(r->owner);
     SG_1OOM_EN_U16(r->x);
@@ -191,7 +191,7 @@ static int game_save_encode_transport(uint8_t *buf, int pos, const transport_t *
     return pos;
 }
 
-static int game_save_decode_transport(const uint8_t *buf, int pos, transport_t *r)
+static int libsave_1oom_decode_transport(const uint8_t *buf, int pos, transport_t *r)
 {
     SG_1OOM_DE_U8(r->owner);
     SG_1OOM_DE_U16(r->x);
@@ -202,7 +202,7 @@ static int game_save_decode_transport(const uint8_t *buf, int pos, transport_t *
     return pos;
 }
 
-static int game_save_encode_orbits(uint8_t *buf, int pos, const fleet_orbit_t *o, int planets)
+static int libsave_1oom_encode_orbits(uint8_t *buf, int pos, const fleet_orbit_t *o, int planets)
 {
     for (uint8_t i = 0; i < planets; ++i) {
         bool any_ships;
@@ -222,7 +222,7 @@ static int game_save_encode_orbits(uint8_t *buf, int pos, const fleet_orbit_t *o
     return pos;
 }
 
-static int game_save_decode_orbits(const uint8_t *buf, int pos, fleet_orbit_t *o, int planets)
+static int libsave_1oom_decode_orbits(const uint8_t *buf, int pos, fleet_orbit_t *o, int planets)
 {
     for (int loops = 0; loops <= planets; ++loops) {
         uint8_t i;
@@ -239,7 +239,7 @@ static int game_save_decode_orbits(const uint8_t *buf, int pos, fleet_orbit_t *o
     return -1;
 }
 
-static int game_save_encode_eto(uint8_t *buf, int pos, const empiretechorbit_t *e, uint8_t pnum, int planets)
+static int libsave_1oom_encode_eto(uint8_t *buf, int pos, const empiretechorbit_t *e, uint8_t pnum, int planets)
 {
     SG_1OOM_EN_U8(e->race);
     SG_1OOM_EN_U8(e->banner);
@@ -295,7 +295,7 @@ static int game_save_encode_eto(uint8_t *buf, int pos, const empiretechorbit_t *
     SG_1OOM_EN_TBL_U32(e->tech.cost, TECH_FIELD_NUM);
     SG_1OOM_EN_TBL_U16(e->tech.completed, TECH_FIELD_NUM);
     SG_1OOM_EN_U8(e->shipdesigns_num);
-    pos = game_save_encode_orbits(buf, pos, e->orbit, planets);
+    pos = libsave_1oom_encode_orbits(buf, pos, e->orbit, planets);
     SG_1OOM_EN_TBL_TBL_U8(e->spyreportfield, pnum, TECH_FIELD_NUM);
     SG_1OOM_EN_TBL_U16(e->spyreportyear, pnum);
     SG_1OOM_EN_U8(e->shipi_colony);
@@ -303,7 +303,7 @@ static int game_save_encode_eto(uint8_t *buf, int pos, const empiretechorbit_t *
     return pos;
 }
 
-static int game_save_decode_eto(const uint8_t *buf, int pos, empiretechorbit_t *e, uint8_t pnum, int planets)
+static int libsave_1oom_decode_eto(const uint8_t *buf, int pos, empiretechorbit_t *e, uint8_t pnum, int planets)
 {
     SG_1OOM_DE_U8(e->race);
     SG_1OOM_DE_U8(e->banner);
@@ -363,7 +363,7 @@ static int game_save_decode_eto(const uint8_t *buf, int pos, empiretechorbit_t *
         log_error("Save: decode invalid number of ship designs %i\n", e->shipdesigns_num);
         return -1;
     }
-    pos = game_save_decode_orbits(buf, pos, e->orbit, planets);
+    pos = libsave_1oom_decode_orbits(buf, pos, e->orbit, planets);
     if (pos < 0) {
         return -1;
     }
@@ -374,7 +374,7 @@ static int game_save_decode_eto(const uint8_t *buf, int pos, empiretechorbit_t *
     return pos;
 }
 
-static int game_save_encode_sd(uint8_t *buf, int pos, const shipdesign_t *sd)
+static int libsave_1oom_encode_sd(uint8_t *buf, int pos, const shipdesign_t *sd)
 {
     SG_1OOM_EN_TBL_U8(sd->name, SHIP_NAME_LEN);
     SG_1OOM_EN_U16(sd->cost);
@@ -395,7 +395,7 @@ static int game_save_encode_sd(uint8_t *buf, int pos, const shipdesign_t *sd)
     return pos;
 }
 
-static int game_save_decode_sd(const uint8_t *buf, int pos, shipdesign_t *sd)
+static int libsave_1oom_decode_sd(const uint8_t *buf, int pos, shipdesign_t *sd)
 {
     SG_1OOM_DE_TBL_U8(sd->name, SHIP_NAME_LEN);
     SG_1OOM_DE_U16(sd->cost);
@@ -416,10 +416,10 @@ static int game_save_decode_sd(const uint8_t *buf, int pos, shipdesign_t *sd)
     return pos;
 }
 
-static int game_save_encode_srd(uint8_t *buf, int pos, const shipresearch_t *srd, int sdnum)
+static int libsave_1oom_encode_srd(uint8_t *buf, int pos, const shipresearch_t *srd, int sdnum)
 {
     for (int i = 0; i < sdnum; ++i) {
-        pos = game_save_encode_sd(buf, pos, &(srd->design[i]));
+        pos = libsave_1oom_encode_sd(buf, pos, &(srd->design[i]));
     }
     for (int f = 0; f < TECH_FIELD_NUM; ++f) {
         SG_1OOM_EN_TBL_TBL_U8(srd->researchlist[f], TECH_TIER_NUM, 3);
@@ -431,10 +431,10 @@ static int game_save_encode_srd(uint8_t *buf, int pos, const shipresearch_t *srd
     return pos;
 }
 
-static int game_save_decode_srd(const uint8_t *buf, int pos, shipresearch_t *srd, int sdnum)
+static int libsave_1oom_decode_srd(const uint8_t *buf, int pos, shipresearch_t *srd, int sdnum)
 {
     for (int i = 0; i < sdnum; ++i) {
-        pos = game_save_decode_sd(buf, pos, &(srd->design[i]));
+        pos = libsave_1oom_decode_sd(buf, pos, &(srd->design[i]));
     }
     for (int f = 0; f < TECH_FIELD_NUM; ++f) {
         SG_1OOM_DE_TBL_TBL_U8(srd->researchlist[f], TECH_TIER_NUM, 3);
@@ -446,7 +446,7 @@ static int game_save_decode_srd(const uint8_t *buf, int pos, shipresearch_t *srd
     return pos;
 }
 
-static int game_save_encode_monster(uint8_t *buf, int pos, const monster_t *m)
+static int libsave_1oom_encode_monster(uint8_t *buf, int pos, const monster_t *m)
 {
     SG_1OOM_EN_U8(m->exists);
     SG_1OOM_EN_U16(m->x);
@@ -458,7 +458,7 @@ static int game_save_encode_monster(uint8_t *buf, int pos, const monster_t *m)
     return pos;
 }
 
-static int game_save_decode_monster(const uint8_t *buf, int pos, monster_t *m)
+static int libsave_1oom_decode_monster(const uint8_t *buf, int pos, monster_t *m)
 {
     SG_1OOM_DE_U8(m->exists);
     SG_1OOM_DE_U16(m->x);
@@ -470,7 +470,7 @@ static int game_save_decode_monster(const uint8_t *buf, int pos, monster_t *m)
     return pos;
 }
 
-static int game_save_encode_evn(uint8_t *buf, int pos, const gameevents_t *ev, uint8_t pnum)
+static int libsave_1oom_encode_evn(uint8_t *buf, int pos, const gameevents_t *ev, uint8_t pnum)
 {
     SG_1OOM_EN_U16(ev->year);
     SG_1OOM_EN_BV(ev->done, GAME_EVENT_TBL_NUM);
@@ -495,8 +495,8 @@ static int game_save_encode_evn(uint8_t *buf, int pos, const gameevents_t *ev, u
     SG_1OOM_EN_U8(ev->have_pirates);
     SG_1OOM_EN_U8(ev->pirates_planet_i);
     SG_1OOM_EN_U16(ev->pirates_hp);
-    pos = game_save_encode_monster(buf, pos, &(ev->crystal));
-    pos = game_save_encode_monster(buf, pos, &(ev->amoeba));
+    pos = libsave_1oom_encode_monster(buf, pos, &(ev->crystal));
+    pos = libsave_1oom_encode_monster(buf, pos, &(ev->amoeba));
     SG_1OOM_EN_U8(ev->planet_orion_i);
     SG_1OOM_EN_U8(ev->have_guardian);
     SG_1OOM_EN_TBL_U8(ev->home, pnum);
@@ -517,7 +517,7 @@ static int game_save_encode_evn(uint8_t *buf, int pos, const gameevents_t *ev, u
     return pos;
 }
 
-static int game_save_decode_evn(const uint8_t *buf, int pos, gameevents_t *ev, uint8_t pnum)
+static int libsave_1oom_decode_evn(const uint8_t *buf, int pos, gameevents_t *ev, uint8_t pnum)
 {
     SG_1OOM_DE_U16(ev->year);
     SG_1OOM_DE_BV(ev->done, GAME_EVENT_TBL_NUM);
@@ -542,8 +542,8 @@ static int game_save_decode_evn(const uint8_t *buf, int pos, gameevents_t *ev, u
     SG_1OOM_DE_U8(ev->have_pirates);
     SG_1OOM_DE_U8(ev->pirates_planet_i);
     SG_1OOM_DE_U16(ev->pirates_hp);
-    pos = game_save_decode_monster(buf, pos, &(ev->crystal));
-    pos = game_save_decode_monster(buf, pos, &(ev->amoeba));
+    pos = libsave_1oom_decode_monster(buf, pos, &(ev->crystal));
+    pos = libsave_1oom_decode_monster(buf, pos, &(ev->amoeba));
     SG_1OOM_DE_U8(ev->planet_orion_i);
     SG_1OOM_DE_U8(ev->have_guardian);
     SG_1OOM_DE_TBL_U8(ev->home, pnum);
@@ -564,7 +564,7 @@ static int game_save_decode_evn(const uint8_t *buf, int pos, gameevents_t *ev, u
     return pos;
 }
 
-static int game_save_encode(uint8_t *buf, int buflen, const struct game_s *g)
+static int libsave_1oom_encode(uint8_t *buf, int buflen, const struct game_s *g)
 {
     int pos = 0;
     if (buflen < sizeof(*g)) {
@@ -602,7 +602,7 @@ static int game_save_encode(uint8_t *buf, int buflen, const struct game_s *g)
     SG_1OOM_EN_TBL_TBL_U8(g->emperor_names, g->players, EMPEROR_NAME_LEN);
     SG_1OOM_EN_TBL_U8(g->planet_focus_i, g->players);
     for (int i = 0; i < g->galaxy_stars; ++i) {
-        pos = game_save_encode_planet(buf, pos, &(g->planet[i]), g->players);
+        pos = libsave_1oom_encode_planet(buf, pos, &(g->planet[i]), g->players);
     }
     for (player_id_t j = PLAYER_0; j < g->players; ++j) {
         for (int i = 0; i < g->galaxy_stars; ++i) {
@@ -614,26 +614,26 @@ static int game_save_encode(uint8_t *buf, int buflen, const struct game_s *g)
         }
     }
     for (int i = 0; i < g->enroute_num; ++i) {
-        pos = game_save_encode_enroute(buf, pos, &(g->enroute[i]));
+        pos = libsave_1oom_encode_enroute(buf, pos, &(g->enroute[i]));
     }
     for (int i = 0; i < g->transport_num; ++i) {
-        pos = game_save_encode_transport(buf, pos, &(g->transport[i]));
+        pos = libsave_1oom_encode_transport(buf, pos, &(g->transport[i]));
     }
     for (player_id_t i = PLAYER_0; i < g->players; ++i) {
-        pos = game_save_encode_eto(buf, pos, &(g->eto[i]), g->players, g->galaxy_stars);
+        pos = libsave_1oom_encode_eto(buf, pos, &(g->eto[i]), g->players, g->galaxy_stars);
     }
     for (player_id_t i = PLAYER_0; i < g->players; ++i) {
-        pos = game_save_encode_srd(buf, pos, &(g->srd[i]), g->eto[i].shipdesigns_num);
+        pos = libsave_1oom_encode_srd(buf, pos, &(g->srd[i]), g->eto[i].shipdesigns_num);
     }
     for (player_id_t i = PLAYER_0; i < g->players; ++i) {
-        pos = game_save_encode_sd(buf, pos, &(g->current_design[i]));
+        pos = libsave_1oom_encode_sd(buf, pos, &(g->current_design[i]));
     }
-    pos = game_save_encode_evn(buf, pos, &(g->evn), g->players);
-    SG_1OOM_EN_U32(GAME_SAVE_END);
+    pos = libsave_1oom_encode_evn(buf, pos, &(g->evn), g->players);
+    SG_1OOM_EN_U32(LIBSAVE_1OOM_END);
     return pos;
 }
 
-static int game_save_decode(const uint8_t *buf, int buflen, struct game_s *g)
+static int libsave_1oom_decode(const uint8_t *buf, int buflen, struct game_s *g)
 {
     int pos = 0;
     if (buflen < 512) {
@@ -708,7 +708,7 @@ static int game_save_decode(const uint8_t *buf, int buflen, struct game_s *g)
     SG_1OOM_DE_TBL_TBL_U8(g->emperor_names, g->players, EMPEROR_NAME_LEN);
     SG_1OOM_DE_TBL_U8(g->planet_focus_i, g->players);
     for (int i = 0; i < g->galaxy_stars; ++i) {
-        pos = game_save_decode_planet(buf, pos, &(g->planet[i]), g->players);
+        pos = libsave_1oom_decode_planet(buf, pos, &(g->planet[i]), g->players);
     }
     for (player_id_t j = PLAYER_0; j < g->players; ++j) {
         for (int i = 0; i < g->galaxy_stars; ++i) {
@@ -720,24 +720,24 @@ static int game_save_decode(const uint8_t *buf, int buflen, struct game_s *g)
         }
     }
     for (int i = 0; i < g->enroute_num; ++i) {
-        pos = game_save_decode_enroute(buf, pos, &(g->enroute[i]));
+        pos = libsave_1oom_decode_enroute(buf, pos, &(g->enroute[i]));
     }
     for (int i = 0; i < g->transport_num; ++i) {
-        pos = game_save_decode_transport(buf, pos, &(g->transport[i]));
+        pos = libsave_1oom_decode_transport(buf, pos, &(g->transport[i]));
     }
     for (player_id_t i = PLAYER_0; i < g->players; ++i) {
-        pos = game_save_decode_eto(buf, pos, &(g->eto[i]), g->players, g->galaxy_stars);
+        pos = libsave_1oom_decode_eto(buf, pos, &(g->eto[i]), g->players, g->galaxy_stars);
         if (pos < 0) {
             return -1;
         }
     }
     for (player_id_t i = PLAYER_0; i < g->players; ++i) {
-        pos = game_save_decode_srd(buf, pos, &(g->srd[i]), g->eto[i].shipdesigns_num);
+        pos = libsave_1oom_decode_srd(buf, pos, &(g->srd[i]), g->eto[i].shipdesigns_num);
     }
     for (player_id_t i = PLAYER_0; i < g->players; ++i) {
-        pos = game_save_decode_sd(buf, pos, &(g->current_design[i]));
+        pos = libsave_1oom_decode_sd(buf, pos, &(g->current_design[i]));
     }
-    pos = game_save_decode_evn(buf, pos, &(g->evn), g->players);
+    pos = libsave_1oom_decode_evn(buf, pos, &(g->evn), g->players);
     {
         uint32_t v;
         SG_1OOM_DE_U32(v);
@@ -745,8 +745,8 @@ static int game_save_decode(const uint8_t *buf, int buflen, struct game_s *g)
             log_error("Save: decode read len %i > got %i\n", pos, buflen);
             return -1;
         }
-        if (v != GAME_SAVE_END) {
-            log_error("Save: invalid end mark 0x%08x != 0x%08x at %i!\n", v, GAME_SAVE_END, pos);
+        if (v != LIBSAVE_1OOM_END) {
+            log_error("Save: invalid end mark 0x%08x != 0x%08x at %i!\n", v, LIBSAVE_1OOM_END, pos);
             return -1;
         }
     }
@@ -759,22 +759,22 @@ static int game_save_decode(const uint8_t *buf, int buflen, struct game_s *g)
 
 /* -------------------------------------------------------------------------- */
 
-static void game_save_make_header(uint8_t *buf, const char *savename)
+static void libsave_1oom_make_header(uint8_t *buf, const char *savename)
 {
-    memset(buf, 0, GAME_SAVE_HDR_SIZE);
-    memcpy(buf, (const uint8_t *)GAME_SAVE_MAGIC, 8);
-    SET_LE_32(&buf[GAME_SAVE_OFFS_VERSION], GAME_SAVE_VERSION);
-    strncpy((char *)&buf[GAME_SAVE_OFFS_NAME], savename, SAVE_NAME_LEN);
+    memset(buf, 0, LIBSAVE_1OOM_HDR_SIZE);
+    memcpy(buf, (const uint8_t *)LIBSAVE_1OOM_MAGIC, 8);
+    SET_LE_32(&buf[LIBSAVE_1OOM_OFFS_VERSION], LIBSAVE_1OOM_VERSION);
+    strncpy((char *)&buf[LIBSAVE_1OOM_OFFS_NAME], savename, SAVE_NAME_LEN);
 }
 
-int game_save_do_save_do(const char *filename, const char *savename, const struct game_s *g, int savei)
+int libsave_1oom_save_do(const char *filename, const char *savename, const struct game_s *g, int savei)
 {
     FILE *fd;
-    uint8_t hdr[GAME_SAVE_HDR_SIZE];
+    uint8_t hdr[LIBSAVE_1OOM_HDR_SIZE];
     uint8_t *savebuf = NULL;
     int res = -1, len;
-    savebuf = lib_malloc(GAME_SAVE_DATA_SIZE);
-    if ((len = game_save_encode(savebuf, GAME_SAVE_DATA_SIZE, g)) <= 0) {
+    savebuf = lib_malloc(LIBSAVE_1OOM_DATA_SIZE);
+    if ((len = libsave_1oom_encode(savebuf, LIBSAVE_1OOM_DATA_SIZE, g)) <= 0) {
         lib_free(savebuf);
         savebuf = NULL;
         return -1;
@@ -782,8 +782,8 @@ int game_save_do_save_do(const char *filename, const char *savename, const struc
     if (os_make_path_for(filename)) {
         log_error("Save: failed to create path for '%s'\n", filename);
     }
-    game_save_make_header(hdr, savename);
-    fd = game_save_open_check_header(filename, -1, false, 0);
+    libsave_1oom_make_header(hdr, savename);
+    fd = libsave_1oom_open_check_header(filename, -1, false, 0);
     if (fd) {
         /* file exists */
         fclose(fd);
@@ -796,7 +796,7 @@ int game_save_do_save_do(const char *filename, const char *savename, const struc
     fd = fopen(filename, "wb+");
     if (0
       || (!fd)
-      || (fwrite(hdr, GAME_SAVE_HDR_SIZE, 1, fd) != 1)
+      || (fwrite(hdr, LIBSAVE_1OOM_HDR_SIZE, 1, fd) != 1)
       || (fwrite(savebuf, len, 1, fd) != 1)
     ) {
         log_error("Save: failed to save '%s'\n", filename);
@@ -805,7 +805,7 @@ int game_save_do_save_do(const char *filename, const char *savename, const struc
     }
     if ((savei >= 0) && (savei < (NUM_SAVES + 1))) {
         game_save_tbl_have_save[savei] = true;
-        memcpy(game_save_tbl_name[savei], &hdr[GAME_SAVE_OFFS_NAME], SAVE_NAME_LEN);
+        memcpy(game_save_tbl_name[savei], &hdr[LIBSAVE_1OOM_OFFS_NAME], SAVE_NAME_LEN);
     }
     log_message("Save: save '%s' '%s'\n", filename, savename);
     res = 0;
@@ -819,17 +819,17 @@ done:
     return res;
 }
 
-int game_save_do_load_do(const char *filename, struct game_s *g, int savei, char *savename)
+int libsave_1oom_load_do(const char *filename, struct game_s *g, int savei, char *savename)
 {
     FILE *fd = NULL;
     uint8_t *savebuf = NULL;
     int res = -1, len = 0;
 
-    savebuf = lib_malloc(GAME_SAVE_DATA_SIZE);
-    fd = game_save_open_check_header(filename, savei, true, savename);
-    if ((!fd) || ((len = fread(savebuf, 1, GAME_SAVE_DATA_SIZE, fd)) == 0) || (!feof(fd))) {
+    savebuf = lib_malloc(LIBSAVE_1OOM_DATA_SIZE);
+    fd = libsave_1oom_open_check_header(filename, savei, true, savename);
+    if ((!fd) || ((len = fread(savebuf, 1, LIBSAVE_1OOM_DATA_SIZE, fd)) == 0) || (!feof(fd))) {
         log_error("Save: failed to load '%s'\n", filename);
-    } else if (game_save_decode(savebuf, len, g) != 0) {
+    } else if (libsave_1oom_decode(savebuf, len, g) != 0) {
         log_error("Save: invalid data on load '%s'\n", filename);
     } else {
         log_message("Save: load '%s'\n", filename);
@@ -846,9 +846,9 @@ int game_save_do_load_do(const char *filename, struct game_s *g, int savei, char
 
 /* -------------------------------------------------------------------------- */
 
-void *game_save_open_check_header(const char *filename, int i, bool update_table, char *savename)
+void *libsave_1oom_open_check_header(const char *filename, int i, bool update_table, char *savename)
 {
-    uint8_t hdr[GAME_SAVE_HDR_SIZE];
+    uint8_t hdr[LIBSAVE_1OOM_HDR_SIZE];
     FILE *fd;
     if ((i < 0) || (i >= NUM_ALL_SAVES)) {
         update_table = false;
@@ -863,17 +863,17 @@ void *game_save_open_check_header(const char *filename, int i, bool update_table
     fd = fopen(filename, "rb");
     if (fd) {
         if (1
-          && (fread(hdr, GAME_SAVE_HDR_SIZE, 1, fd) == 1)
-          && (memcmp(hdr, (const uint8_t *)GAME_SAVE_MAGIC, 8) == 0)
-          && (GET_LE_32(&hdr[GAME_SAVE_OFFS_VERSION]) == GAME_SAVE_VERSION)
+          && (fread(hdr, LIBSAVE_1OOM_HDR_SIZE, 1, fd) == 1)
+          && (memcmp(hdr, (const uint8_t *)LIBSAVE_1OOM_MAGIC, 8) == 0)
+          && (GET_LE_32(&hdr[LIBSAVE_1OOM_OFFS_VERSION]) == LIBSAVE_1OOM_VERSION)
         ) {
             if (update_table) {
                 game_save_tbl_have_save[i] = true;
-                memcpy(game_save_tbl_name[i], &hdr[GAME_SAVE_OFFS_NAME], SAVE_NAME_LEN);
+                memcpy(game_save_tbl_name[i], &hdr[LIBSAVE_1OOM_OFFS_NAME], SAVE_NAME_LEN);
                 game_save_tbl_name[i][SAVE_NAME_LEN - 1] = '\0';
             }
             if (savename) {
-                memcpy(savename, &hdr[GAME_SAVE_OFFS_NAME], SAVE_NAME_LEN);
+                memcpy(savename, &hdr[LIBSAVE_1OOM_OFFS_NAME], SAVE_NAME_LEN);
                 savename[SAVE_NAME_LEN - 1] = '\0';
             }
         } else {
