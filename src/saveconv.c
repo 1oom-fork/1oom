@@ -2321,7 +2321,7 @@ static int savetype_de_1oom0(struct game_s *g, const char *fname)
 {
     char *sname = (*savename == '\0') ? savename : NULL;
     LOG_DEBUG((2, "%s: '%s'\n", __func__, fname));
-    return game_save_do_load_fname(fname, sname, g);
+    return libsave_1oom_load_do(fname, g, -1, sname);
 }
 
 static int savetype_en_1oom0(struct game_s *g, const char *fname)
