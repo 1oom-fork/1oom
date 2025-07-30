@@ -47,19 +47,19 @@ typedef enum {
 #define SAVETYPE_F_OPTOUT   (1 << 1)
 
 static int savetype_de_smart(struct game_s *g, const char *fname);
-static bool savetype_is_moo13(struct game_s *g, const char *fname);
+static bool savetype_is_moo13(const struct game_s *g, const char *fname);
 static int savetype_de_moo13(struct game_s *g, const char *fname);
-static int savetype_en_moo13(struct game_s *g, const char *fname);
+static int savetype_en_moo13(const struct game_s *g, const char *fname);
 static int savetype_de_1oom0(struct game_s *g, const char *fname);
-static int savetype_en_1oom0(struct game_s *g, const char *fname);
-static bool savetype_is_text(struct game_s *g, const char *fname);
+static int savetype_en_1oom0(const struct game_s *g, const char *fname);
+static bool savetype_is_text(const struct game_s *g, const char *fname);
 static int savetype_de_text(struct game_s *g, const char *fname);
-static int savetype_en_text(struct game_s *g, const char *fname);
+static int savetype_en_text(const struct game_s *g, const char *fname);
 
 static const struct {
     const char *name;
     int (*decode)(struct game_s *g, const char *fname); /* to native */
-    int (*encode)(struct game_s *g, const char *fname);
+    int (*encode)(const struct game_s *g, const char *fname);
     uint8_t flags;
     savetype_t othertype;
 } savetype[SAVETYPE_NUM] = {
@@ -231,7 +231,7 @@ static int try_load_len(const char *fname, uint8_t *buf, int wantlen)
 #define SAVE_MOO13_LEN  59036
 #define SAVE_CMOO_LEN   154
 
-static bool savetype_is_moo13(struct game_s *g, const char *fname)
+static bool savetype_is_moo13(const struct game_s *g, const char *fname)
 {
     uint16_t w;
     int len;
@@ -827,7 +827,7 @@ static int savetype_en_moo13_sd(const shipdesign_t *sd, int sb)
     return 0;
 }
 
-static int savetype_en_moo13(struct game_s *g, const char *fname)
+static int savetype_en_moo13(const struct game_s *g, const char *fname)
 {
     LOG_DEBUG((2, "%s: '%s'\n", __func__, fname ? fname : "(null)"));
     memset(save2buf, 0, SAVE_MOO13_LEN);
@@ -1042,7 +1042,7 @@ static int savetype_en_moo13(struct game_s *g, const char *fname)
         return -1;
     }
     {
-        gameevents_t *ev = &(g->evn);
+        const gameevents_t *ev = &(g->evn);
         const int evb = 0xde80;
         M13_SET_16(ev->year, evb + 0x000);
         M13_SET_TBL_BVN_16(ev->done, evb + 0x004, 20);
@@ -1817,7 +1817,7 @@ static int savetype_de_text_parse_line(struct game_s *g, const char *fname, char
     return 0;
 }
 
-static bool savetype_is_text(struct game_s *g, const char *fname)
+static bool savetype_is_text(const struct game_s *g, const char *fname)
 {
     FILE *fd = NULL;
     int len;
@@ -2001,7 +2001,7 @@ static void savetype_en_text_monster(const monster_t *m, struct text_dump_prefix
     OUTLINEI("nuked", m->nuked);
 }
 
-static int savetype_en_text(struct game_s *g, const char *fname)
+static int savetype_en_text(const struct game_s *g, const char *fname)
 {
     struct text_dump_prefix_s tp[1];
     LOG_DEBUG((2, "%s: '%s'\n", __func__, fname));
@@ -2332,7 +2332,7 @@ static int savetype_de_1oom0(struct game_s *g, const char *fname)
     return game_save_do_load_fname(fname, sname, g);
 }
 
-static int savetype_en_1oom0(struct game_s *g, const char *fname)
+static int savetype_en_1oom0(const struct game_s *g, const char *fname)
 {
     LOG_DEBUG((2, "%s: '%s'\n", __func__, fname ? fname : "(null)"));
     return game_save_do_save_fname(fname, savename, g);
