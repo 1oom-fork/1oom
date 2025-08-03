@@ -953,6 +953,7 @@ static void game_ai_classic_turn_p1_tax(struct game_s *g, player_id_t pi)
 static void game_ai_classic_turn_p1(struct game_s *g)
 {
     struct ai_turn_p1_s ait[1];
+    int num_enroute;
     for (player_id_t pi = PLAYER_0; pi < PLAYER_NUM; ++pi) {
         const empiretechorbit_t *e = &(g->eto[pi]);
         const shipdesign_t *sd = &(g->srd[pi].design[0]);
@@ -997,15 +998,13 @@ static void game_ai_classic_turn_p1(struct game_s *g)
     for (player_id_t pi = PLAYER_0; pi < g->players; ++pi) {
         if (IS_ALIVE(g, pi)) {
             int xsum, ysum, num_planets;
-            /* BUG moved below to next loop as only the last player affected num_enroute
-            int num_enroute;
+            /* BUG? only the last player affected num_enroute */
             num_enroute = 0;
             for (int i = 0; i < g->enroute_num; ++i) {
                 if (g->enroute[i].owner == pi) {
                     ++num_enroute;
                 }
             }
-            */
             xsum = 0;
             ysum = 0;
             num_planets = 0;
@@ -1066,15 +1065,8 @@ static void game_ai_classic_turn_p1(struct game_s *g)
             game_ai_classic_turn_p1_send_attack(g, ait, pi);
         }
         game_ai_classic_turn_p1_send_defend(g, ait, pi);
-        /* WASBUG moved above to next loop as only the last player affected num_enroute */
+        /* BUG? only the last player affected num_enroute */
         {
-            int num_enroute;
-            num_enroute = 0;
-            for (int i = 0; i < g->enroute_num; ++i) {
-                if (g->enroute[i].owner == pi) {
-                    ++num_enroute;
-                }
-            }
             if (num_enroute < 8) {
                 game_ai_classic_turn_p1_send_idle(g, ait, pi);
             }
