@@ -14,6 +14,7 @@
 #include "uidelay.h"
 #include "uidefs.h"
 #include "uidraw.h"
+#include "uifix.h"
 #include "uiload.h"
 #include "uiobj.h"
 #include "uipal.h"
@@ -95,8 +96,10 @@ int ui_load_game(void)
 
     for (int i = 0; i < d.savenum; ++i) {
         int y0;
+        mookey_t key;
         y0 = 0x15 + yoff + d.tbl_savei[i] * 0x12;
-        oi_save[i] = uiobj_add_mousearea(0xc + xoff, y0, 0x92 + xoff, y0 + 0xe, MOO_KEY_UNKNOWN, -1);
+        key = ui_qol_numeric_key_bindings ? (MOO_KEY_1 + i) : MOO_KEY_UNKNOWN;
+        oi_save[i] = uiobj_add_mousearea(0xc + xoff, y0, 0x92 + xoff, y0 + 0xe, key, -1);
     }
 
     d.selected = 0;
