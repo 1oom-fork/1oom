@@ -22,6 +22,7 @@
 #include "uidelay.h"
 #include "uidefs.h"
 #include "uidraw.h"
+#include "uifix.h"
 #include "uiobj.h"
 #include "uipal.h"
 #include "uisound.h"
@@ -290,7 +291,8 @@ int ui_specs(struct game_s *g, player_id_t active_player)
             uiobj_table_clear();
             if (sd_num > 1) {
                 for (int i = 0; i < sd_num; ++i) {
-                    oi_tbl_scrap[i] = uiobj_add_t0(106, (i << 5) + 6, "", ui_data.gfx.starmap.viewshbt, MOO_KEY_UNKNOWN, -1);
+                    mookey_t key = ui_qol_numeric_key_bindings ? (MOO_KEY_1 + i) : MOO_KEY_UNKNOWN;
+                    oi_tbl_scrap[i] = uiobj_add_t0(106, (i << 5) + 6, "", ui_data.gfx.starmap.viewshbt, key, -1);
                 }
             }
             oi_ma = uiobj_add_mousearea(UI_SCREEN_LIMITS, MOO_KEY_o, -1);

@@ -12,6 +12,9 @@ extern bool ui_fix_starmap_background;
 /* Allow navigation through objects with assigned hotkeys using the cursor keys. */
 extern bool ui_qol_cursor_nav_all_obj;
 
+/* Allow use of numeric key bindings when expected */
+extern bool ui_qol_numeric_key_bindings;
+
 /* Allow scrolling beyond map boundaries */
 extern bool ui_qol_starmap_ext_scroll;
 
