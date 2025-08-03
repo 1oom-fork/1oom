@@ -375,7 +375,7 @@ int ui_races(struct game_s *g, player_id_t api)
             d.tbl_spymode[i] = (int16_t)e->spymode[pi];
         }
         if (!flag_done) {
-            /* FIXME one of these copyings is redundant? */
+            /* In 1.3a, this redundant loop is used as a buffer for a subroutine */
             for (int i = 0; i < d.num; ++i) {
                 player_id_t pi;
                 pi = d.tbl_ei[i];
@@ -400,9 +400,11 @@ int ui_races(struct game_s *g, player_id_t api)
                 } else {
                     for (int i = 0; i < d.num; ++i) {
                         int x, y;
+                        mookey_t key;
                         x = (i / 3) * 157;
                         y = (i % 3) * 64;
-                        oi_tbl_oppon[i] = uiobj_add_mousearea(x + 4, y + 5, x + 157, y + 66, MOO_KEY_UNKNOWN, -1);
+                        key = ui_qol_extra_key_bindings ? (MOO_KEY_1 + i) : MOO_KEY_UNKNOWN;
+                        oi_tbl_oppon[i] = uiobj_add_mousearea(x + 4, y + 5, x + 157, y + 66, key, -1);
                     }
                 }
             }
