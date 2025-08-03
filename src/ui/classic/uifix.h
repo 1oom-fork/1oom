@@ -27,4 +27,7 @@ extern bool ui_qol_starmap_no_qmark_cursor;
 /* Enable planet image button for all explored planets */
 extern bool ui_qol_starmap_planet_pic;
 
+extern void ui_enable_fix_bugs(void);
+extern void ui_enable_fix_qol(void);
+
 #endif
