@@ -246,5 +246,7 @@ struct ui_data_s {
 };
 
 extern struct ui_data_s ui_data;
+extern bool ui_fix_bugs;
+extern bool ui_fix_qol;
 
 #endif
