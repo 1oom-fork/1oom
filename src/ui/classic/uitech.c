@@ -21,6 +21,7 @@
 #include "uidelay.h"
 #include "uidefs.h"
 #include "uidraw.h"
+#include "uifix.h"
 #include "uiobj.h"
 #include "uipal.h"
 #include "uisound.h"
@@ -406,12 +407,12 @@ void ui_tech(struct game_s *g, player_id_t active_player)
                 }
             }
             oi_ok = uiobj_add_t0(277, 181, "", ui_data.gfx.screens.tech_but_ok, MOO_KEY_SPACE, -1);
-            oi_tbl_field[0] = uiobj_add_mousearea(5, 4, 53, 15, MOO_KEY_UNKNOWN, -1);
-            oi_tbl_field[1] = uiobj_add_mousearea(55, 4, 108, 15, MOO_KEY_UNKNOWN, -1);
-            oi_tbl_field[2] = uiobj_add_mousearea(109, 4, 161, 16, MOO_KEY_UNKNOWN, -1);
-            oi_tbl_field[3] = uiobj_add_mousearea(5, 19, 54, 31, MOO_KEY_UNKNOWN, -1);
-            oi_tbl_field[4] = uiobj_add_mousearea(55, 19, 108, 31, MOO_KEY_UNKNOWN, -1);
-            oi_tbl_field[5] = uiobj_add_mousearea(109, 19, 161, 31, MOO_KEY_UNKNOWN, -1);
+            oi_tbl_field[0] = uiobj_add_mousearea(5, 4, 53, 15, (ui_qol_extra_key_bindings ? MOO_KEY_1 : MOO_KEY_UNKNOWN), -1);
+            oi_tbl_field[1] = uiobj_add_mousearea(55, 4, 108, 15, (ui_qol_extra_key_bindings ? MOO_KEY_2 : MOO_KEY_UNKNOWN), -1);
+            oi_tbl_field[2] = uiobj_add_mousearea(109, 4, 161, 16, (ui_qol_extra_key_bindings ? MOO_KEY_3 : MOO_KEY_UNKNOWN), -1);
+            oi_tbl_field[3] = uiobj_add_mousearea(5, 19, 54, 31, (ui_qol_extra_key_bindings ? MOO_KEY_4 : MOO_KEY_UNKNOWN), -1);
+            oi_tbl_field[4] = uiobj_add_mousearea(55, 19, 108, 31, (ui_qol_extra_key_bindings ? MOO_KEY_5 : MOO_KEY_UNKNOWN), -1);
+            oi_tbl_field[5] = uiobj_add_mousearea(109, 19, 161, 31, (ui_qol_extra_key_bindings ? MOO_KEY_6 : MOO_KEY_UNKNOWN), -1);
             oi_equals = uiobj_add_inputkey(MOO_KEY_EQUALS);
             for (tech_field_t i = TECH_FIELD_COMPUTER; i < TECH_FIELD_NUM; ++i) {
                 int y;

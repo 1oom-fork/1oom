@@ -27,6 +27,9 @@ extern bool ui_qol_cursor_nav_all_obj;
 /* Disable LMB in some inappropriate cases */
 extern bool ui_qol_no_cancel_via_lmb;
 
+/* Allow use of additional key bindings when expected */
+extern bool ui_qol_extra_key_bindings;
+
 /* Allow scrolling beyond map boundaries */
 extern bool ui_qol_starmap_ext_scroll;
 

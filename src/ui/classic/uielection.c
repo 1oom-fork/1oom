@@ -19,6 +19,7 @@
 #include "uidefs.h"
 #include "uidelay.h"
 #include "uidraw.h"
+#include "uifix.h"
 #include "uiobj.h"
 #include "uipal.h"
 #include "uisound.h"
@@ -205,9 +206,9 @@ int ui_election_vote(struct election_s *el, player_id_t player_i)
     sprintf(cnamebuf[2], "%s %s", game_str_el_bull, game_str_el_abs);
     uiobj_table_clear();
     lbxfont_select(3, 1, 0, 0);
-    oi_c1 = uiobj_add_mousearea(150, 169, 190, 177, MOO_KEY_UNKNOWN, -1);
-    oi_c2 = uiobj_add_mousearea(150, 179, 190, 187, MOO_KEY_UNKNOWN, -1);
-    /*oi_ca =*/ uiobj_add_mousearea(150, 189, 190, 197, MOO_KEY_UNKNOWN, -1);
+    oi_c1 = uiobj_add_mousearea(150, 169, 190, 177, ui_qol_extra_key_bindings ? MOO_KEY_1 : MOO_KEY_UNKNOWN, -1);
+    oi_c2 = uiobj_add_mousearea(150, 179, 190, 187, ui_qol_extra_key_bindings ? MOO_KEY_2 : MOO_KEY_UNKNOWN, -1);
+    /*oi_ca =*/ uiobj_add_mousearea(150, 189, 190, 197, ui_qol_extra_key_bindings ? MOO_KEY_0 : MOO_KEY_UNKNOWN, -1);
     uiobj_add_ta(150, 169, 40, cnamebuf[0], false, &choice, 1, 0, 0, 0, 0, 0, 0, MOO_KEY_UNKNOWN, -1);
     uiobj_add_ta(150, 179, 40, cnamebuf[1], false, &choice, 2, 0, 0, 0, 0, 0, 0, MOO_KEY_UNKNOWN, -1);
     uiobj_add_ta(150, 189, 40, cnamebuf[2], false, &choice, 0, 0, 0, 0, 0, 0, 0, MOO_KEY_UNKNOWN, -1);
