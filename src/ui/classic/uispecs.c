@@ -22,6 +22,7 @@
 #include "uidelay.h"
 #include "uidefs.h"
 #include "uidraw.h"
+#include "uifix.h"
 #include "uiobj.h"
 #include "uipal.h"
 #include "uisound.h"
@@ -288,7 +289,8 @@ shipdesign_id_t ui_specs(struct game_s *g, player_id_t active_player)
             uiobj_table_clear();
             if (g->eto[active_player].shipdesigns_num > 1) {
                 for (shipdesign_id_t i = SHIPDESIGN_0; i < g->eto[active_player].shipdesigns_num; ++i) {
-                    oi_tbl_scrap[i] = uiobj_add_t0(106, (i << 5) + 6, "", ui_data.gfx.starmap.viewshbt, MOO_KEY_UNKNOWN, -1);
+                    mookey_t key = ui_qol_extra_key_bindings ? (MOO_KEY_1 + i) : MOO_KEY_UNKNOWN;
+                    oi_tbl_scrap[i] = uiobj_add_t0(106, (i << 5) + 6, "", ui_data.gfx.starmap.viewshbt, key, -1);
                 }
             }
             if (ui_qol_no_cancel_via_lmb) {
