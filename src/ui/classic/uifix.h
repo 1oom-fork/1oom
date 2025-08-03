@@ -30,6 +30,9 @@ extern bool ui_fix_tech_complete_probability;
 /* Allow navigation through objects with assigned hotkeys using the cursor keys. */
 extern bool ui_qol_cursor_nav_all_obj;
 
+/* Allow use of additional key bindings when expected */
+extern bool ui_qol_extra_key_bindings;
+
 /* Map screen shows current year. */
 extern bool ui_qol_gmap_year;
 
