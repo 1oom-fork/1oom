@@ -30,4 +30,7 @@ extern bool ui_qol_starmap_planet_pic;
 /* Enable interactive area for map screen */
 extern bool ui_qol_gmap_scroll;
 
+extern void ui_enable_fix_bugs(void);
+extern void ui_enable_fix_qol(void);
+
 #endif
