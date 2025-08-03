@@ -18,12 +18,19 @@
 #include "os.h"
 #include "types.h"
 #include "uidefs.h"
+#include "uifix.h"
 #include "uipal.h"
 #include "uiobj.h"
 
 /* -------------------------------------------------------------------------- */
 
 const struct cmdline_options_s ui_cmdline_options[] = {
+    { "-uifixbugs", 0,
+      options_enable_bool_var, (void *)&ui_fix_bugs,
+      NULL, "Fix UI bugs" },
+    { "-uifixqol", 0,
+      options_enable_bool_var, (void *)&ui_fix_qol,
+      NULL, "Fix QOL (UI)" },
     { NULL, 0, NULL, NULL, NULL, NULL }
 };
 
@@ -32,6 +39,9 @@ const struct cmdline_options_s ui_cmdline_options[] = {
 const char *idstr_ui = "classic";
 
 struct ui_data_s ui_data = { 0 };
+
+bool ui_fix_bugs = false;
+bool ui_fix_qol = false;
 
 bool ui_use_audio = true;
 
@@ -276,6 +286,13 @@ int ui_init(void)
 
 int ui_late_init(void)
 {
+    if (ui_fix_bugs) {
+        ui_enable_fix_bugs();
+    }
+    if (ui_fix_qol) {
+        ui_enable_fix_bugs();
+        ui_enable_fix_qol();
+    }
     mouse_set_limits(UI_SCREEN_W, UI_SCREEN_H);
     if (0
      || lbxfont_init()
