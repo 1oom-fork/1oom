@@ -20,3 +20,16 @@ bool ui_qol_starmap_no_qmark_cursor = false;
 bool ui_qol_starmap_planet_neb = false;
 bool ui_qol_starmap_planet_pic = false;
 bool ui_qol_gmap_scroll = false;
+
+void ui_enable_fix_bugs(void)
+{
+    ui_fix_cursor_nav_offset = true;
+}
+
+void ui_enable_fix_qol(void)
+{
+    ui_qol_cursor_nav_all_obj = true;
+    ui_qol_starmap_ext_scroll = true;
+    ui_qol_starmap_planet_pic = true;
+    ui_qol_gmap_scroll = true;
+}
