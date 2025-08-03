@@ -14,6 +14,7 @@ bool ui_fix_starmap_oor_msg = false;
 bool ui_fix_tech_complete_probability = false;
 
 bool ui_qol_cursor_nav_all_obj = false;
+bool ui_qol_extra_key_bindings = false;
 bool ui_qol_gmap_year = false;
 bool ui_qol_no_cancel_via_lmb = false;
 bool ui_qol_prebattle_no_setfocus = false;
