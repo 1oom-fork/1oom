@@ -154,11 +154,6 @@ static int save_out_close(void)
     return 0;
 }
 
-static int save_out_write(const char *fname)
-{
-    return save_out_open(fname) || save_out_flush() || save_out_close();
-}
-
 /* -------------------------------------------------------------------------- */
 
 static int savetype_de_smart(struct game_s *g, const char *fname)
@@ -366,7 +361,6 @@ static int savetype_de_moo13(struct game_s *g, const char *fname)
             log_error("loading MOO1 v1.3 save '%s' (got %i != %i bytes)\n", fname, len, SAVE_MOO13_LEN);
             return -1;
         }
-        save2len = len;
     }
     {
         void *t = g->gaux;
@@ -1037,7 +1031,6 @@ static int savetype_en_moo13(const struct game_s *g, const char *fname)
         M13_SET_TBL_16(srd->year, srdb + 0x450);
         /* M13_SET_TBL_16(srd->shipcount, srdb + 0x45c); */
     }
-    save2len = SAVE_MOO13_LEN;
     if (savetype_en_moo13_sd(&(g->current_design[PLAYER_0]), 0xe642) != 0) {
         return -1;
     }
@@ -1125,7 +1118,8 @@ static int savetype_en_moo13(const struct game_s *g, const char *fname)
             strncpy((char *)&(save2buf[srdb + 0x198 + j * 12]), game_str_tbl_ship_names[e->race * SHIP_NAME_NUM + j], 11);
         }
     }
-    if (save_out_write(fname) != 0) {
+    if (util_file_save(fname, save2buf, SAVE_MOO13_LEN) != 0) {
+        log_error("Save: failed to save '%s'\n", fname);
         return -1;
     }
     if (opt_use_configmoo) {
