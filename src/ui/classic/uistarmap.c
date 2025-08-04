@@ -365,7 +365,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             ui_sound_play_sfx_24();
             g->gaux->flag_cheat_events = !g->gaux->flag_cheat_events;
         } else if (oi1 == oi_f10) {
-            game_save_do_save_i(GAME_SAVE_I_CONTINUE, "Continue", g);
+            libsave_do_save_i(GAME_SAVE_I_CONTINUE, "Continue", g);
         } else if (oi1 == oi_alt_p) {
             for (player_id_t i = PLAYER_0; i < g->players; ++i) {
                 g->eto[i].trait2 = rnd_0_nm1(6, &g->seed);

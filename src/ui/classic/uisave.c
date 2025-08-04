@@ -103,7 +103,7 @@ int ui_save_game(struct game_s *g)
         }
         if ((oi == oi_ok) && (d.selected != -1)) {
             ui_sound_play_sfx_24();
-            game_save_do_save_i(d.selected, d.tbl_savename[d.selected], g);
+            libsave_do_save_i(d.selected, d.tbl_savename[d.selected], g);
             flag_done = true;
         }
         uiobj_table_clear();

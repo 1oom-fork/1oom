@@ -403,7 +403,7 @@ int main_do(void)
         return 1;
     }
     game_aux_init(&game_aux, &game);
-    game_save_check_saves();
+    libsave_check_saves();
     if ((game_opt_end.type != GAME_END_NONE) && (game_opt_end.varnum == 2)) {
         goto do_ending;
     }
@@ -420,7 +420,7 @@ int main_do(void)
             game_new_opts = game_opt_new;
             goto main_menu_new_game;
         } else if (game_opt_load_fname) {
-            if (game_save_do_load_fname(game_opt_load_fname, &game)) {
+            if (libsave_do_load_fname(game_opt_load_fname, &game)) {
                 log_fatal_and_die("Game: could not load save '%s'\n", game_opt_load_fname);
             }
             game_opt_load_fname = 0;
@@ -457,13 +457,13 @@ int main_do(void)
                 break;
             case MAIN_MENU_ACT_LOAD_GAME:
                 main_menu_load_game:
-                if (game_save_do_load_i(load_game_i, &game)) {
+                if (libsave_do_load_i(load_game_i, &game)) {
                     log_fatal_and_die("Game: could not load save %i\n", load_game_i);
                 }
                 break;
             case MAIN_MENU_ACT_CONTINUE_GAME:
                 main_menu_continue_game:
-                if (game_save_do_load_i(GAME_SAVE_I_CONTINUE, &game)) {
+                if (libsave_do_load_i(GAME_SAVE_I_CONTINUE, &game)) {
                     log_fatal_and_die("Game: could not start or continue from save 7\n");
                 }
                 break;
@@ -496,13 +496,13 @@ int main_do(void)
                         goto main_menu_load_game;
                     case UI_TURN_ACT_QUIT_GAME:
                         turn_act_quit:
-                        if (game_save_do_save_i(GAME_SAVE_I_CONTINUE, "Continue", &game)) {
+                        if (libsave_do_save_i(GAME_SAVE_I_CONTINUE, "Continue", &game)) {
                             log_error("Game: failed to create continue save\n");
                         }
                         game_end.type = GAME_END_QUIT;
                         break;
                     case UI_TURN_ACT_NEXT_TURN:
-                        if (game_opt_undo_enabled && game_save_do_save_i(GAME_SAVE_I_UNDO, "Undo", &game)) {
+                        if (game_opt_undo_enabled && libsave_do_save_i(GAME_SAVE_I_UNDO, "Undo", &game)) {
                             log_error("Game: failed to create undo save\n");
                         }
                         break;

@@ -311,7 +311,7 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
                 ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
             }
         } else if (oi1 == oi_f10) {
-            game_save_do_save_i(GAME_SAVE_I_CONTINUE, "Continue", g);
+            libsave_do_save_i(GAME_SAVE_I_CONTINUE, "Continue", g);
         } else if (oi1 == oi_f4) {
             bool found;
             int i, pi;

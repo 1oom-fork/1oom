@@ -18,11 +18,11 @@ extern void *libsave_1oom_open_check_header(const char *filename, int i, bool up
 extern int libsave_1oom_save_do(const char *filename, const char *savename, const struct game_s *g, int savei);
 extern int libsave_1oom_load_do(const char *filename, struct game_s *g, int savei, char *savename);
 
-extern int game_save_get_slot_fname(char *buf, int buflen, int i);
-extern int game_save_check_saves(void);
-extern int game_save_do_load_fname(const char *filename, struct game_s *g);
-extern int game_save_do_load_i(int savei/*0..NUM_ALL_SAVES-1*/, struct game_s *g);
-extern int game_save_do_save_i(int savei/*0..NUM_ALL_SAVES-1*/, const char *savename, const struct game_s *g);
-extern void game_save_do_delete_i(int savei, const struct game_s *g);
+extern int libsave_get_slot_fname(char *buf, int buflen, int i);
+extern int libsave_check_saves(void);
+extern int libsave_do_load_fname(const char *filename, struct game_s *g);
+extern int libsave_do_load_i(int savei/*0..NUM_ALL_SAVES-1*/, struct game_s *g);
+extern int libsave_do_save_i(int savei/*0..NUM_ALL_SAVES-1*/, const char *savename, const struct game_s *g);
+extern void libsave_do_delete_i(int savei, const struct game_s *g);
 
 #endif

@@ -192,7 +192,7 @@ void ui_copyprotection_lose(struct game_s *g, struct game_end_s *ge)
         best_ai = si;
     }
     for (int i = GAME_SAVE_I_CONTINUE; i < NUM_ALL_SAVES; ++i) {
-        game_save_do_delete_i(i, g);
+        libsave_do_delete_i(i, g);
     }
     ns.type = GAME_NEWS_GENOCIDE;
     ns.subtype = 3;
