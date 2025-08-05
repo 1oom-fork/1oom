@@ -11,7 +11,6 @@
 #define GAME_SAVE_I_UNDO        (8 - 1)
 
 #define SAVE_MOO13_LEN  59036
-#define SAVE_CMOO_LEN   154
 
 extern bool game_save_tbl_have_save[NUM_ALL_SAVES];
 extern char game_save_tbl_name[NUM_ALL_SAVES][SAVE_NAME_LEN];

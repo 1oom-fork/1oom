@@ -14,6 +14,7 @@
 #include "log.h"
 #include "os.h"
 #include "save/save.h"
+#include "save/save_moo13_cfg.h"
 #include "ui.h"
 #include "util.h"
 
