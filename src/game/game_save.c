@@ -851,7 +851,7 @@ void *game_save_open_check_header(const char *filename, int i, bool update_table
     return fd;
 }
 
-int game_save_get_slot_fname(char *buf, int buflen, int i)
+static int game_save_get_slot_fname(char *buf, int buflen, int i)
 {
     const char *path = os_get_path_user();
     char namebuf[16];
