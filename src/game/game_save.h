@@ -14,7 +14,6 @@ extern bool game_save_tbl_have_save[NUM_ALL_SAVES];
 extern char game_save_tbl_name[NUM_ALL_SAVES][SAVE_NAME_LEN];
 
 extern void *game_save_open_check_header(const char *filename, int i, bool update_table, char *savename);
-extern int game_save_get_slot_fname(char *fnamebuf, int buflen, int i);
 extern int game_save_check_saves(char *fnamebuf, int buflen);
 
 struct game_s;
