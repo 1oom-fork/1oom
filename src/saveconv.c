@@ -352,16 +352,8 @@ static int savetype_de_moo13_sd(shipdesign_t *sd, int sb)
     return 0;
 }
 
-static int savetype_de_moo13(struct game_s *g, const char *fname)
+static int savetype_de_moo13_do(struct game_s *g, const char *fname)
 {
-    LOG_DEBUG((2, "%s: '%s'\n", __func__, fname));
-    {
-        int len;
-        if ((len = try_load_len(fname, save2buf, SAVE_MOO13_LEN)) <= 0) {
-            log_error("loading MOO1 v1.3 save '%s' (got %i != %i bytes)\n", fname, len, SAVE_MOO13_LEN);
-            return -1;
-        }
-    }
     {
         void *t = g->gaux;
         memset(g, 0, sizeof(*g));
@@ -658,6 +650,27 @@ static int savetype_de_moo13(struct game_s *g, const char *fname)
             }
         }
     }
+    return 0;
+}
+
+static int savetype_moo13_load_do(const char *filename, struct game_s *g)
+{
+    int res = 0;
+    int len;
+    if ((len = try_load_len(filename, save2buf, SAVE_MOO13_LEN)) <= 0) {
+        log_error("loading MOO1 v1.3 save '%s' (got %i != %i bytes)\n", filename, len, SAVE_MOO13_LEN);
+        res = -1;
+    } else if (savetype_de_moo13_do(g, filename) != 0) {
+        res = -1;
+    }
+    return res;
+}
+
+static int savetype_de_moo13(struct game_s *g, const char *fname)
+{
+    if (savetype_moo13_load_do(fname, g) != 0) {
+        return -1;
+    }
     if (savename[0] == 0) {
         char *dir;
         char *fnam;
@@ -821,9 +834,8 @@ static int savetype_en_moo13_sd(const shipdesign_t *sd, int sb)
     return 0;
 }
 
-static int savetype_en_moo13(const struct game_s *g, const char *fname)
+static int savetype_en_moo13_do(const struct game_s *g, const char *fname)
 {
-    LOG_DEBUG((2, "%s: '%s'\n", __func__, fname ? fname : "(null)"));
     memset(save2buf, 0, SAVE_MOO13_LEN);
     M13_SET_16(g->players, 0xe2d2);
     M13_SET_16(g->difficulty, 0xe2d4);
@@ -1118,8 +1130,24 @@ static int savetype_en_moo13(const struct game_s *g, const char *fname)
             strncpy((char *)&(save2buf[srdb + 0x198 + j * 12]), game_str_tbl_ship_names[e->race * SHIP_NAME_NUM + j], 11);
         }
     }
-    if (util_file_save(fname, save2buf, SAVE_MOO13_LEN) != 0) {
-        log_error("Save: failed to save '%s'\n", fname);
+    return 0;
+}
+
+static int savetype_moo13_save_do(const char *filename, const struct game_s *g)
+{
+    int res = 0;
+    if (savetype_en_moo13_do(g, filename) != 0) {
+        res = -1;
+    } else if (util_file_save(filename, save2buf, SAVE_MOO13_LEN) != 0) {
+        log_error("Save: failed to save '%s'\n", filename);
+        res = -1;
+    }
+    return res;
+}
+
+static int savetype_en_moo13(const struct game_s *g, const char *fname)
+{
+    if (savetype_moo13_save_do(fname, g) != 0) {
         return -1;
     }
     if (opt_use_configmoo) {
