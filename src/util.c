@@ -8,6 +8,7 @@
 
 #include "util.h"
 #include "lib.h"
+#include "log.h"
 #include "os.h"
 #include "types.h"
 
@@ -168,6 +169,30 @@ void util_fname_split(const char *path, char **dir_out, char **name_out)
     if (name_out != NULL) {
         *name_out = lib_stralloc(p + 1);
     }
+}
+
+int util_file_try_load_len(const char *name, uint8_t *buf, int wantlen)
+{
+    FILE *fd = 0;
+    int len = -1;
+    if (0
+      || ((fd = fopen(name, "rb")) == 0)
+      || ((len = fread(buf, 1, wantlen, fd)) != wantlen)
+    ) {
+        LOG_DEBUG((1, "%s: loading '%s' (got %i != %i bytes)\n", __func__, fname, len, wantlen));
+        len = -1;
+    } else {
+        fgetc(fd);
+        if (!feof(fd) || ferror(fd)) {
+            LOG_DEBUG((1, "%s: loading '%s' (got > %i bytes)\n", __func__, fname, wantlen));
+            len = -1;
+        }
+    }
+    if (fd) {
+        fclose(fd);
+        fd = NULL;
+    }
+    return len;
 }
 
 /* Write the first `size' bytes of `src' into a newly created file `name'.
