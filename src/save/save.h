@@ -17,9 +17,9 @@ extern bool game_save_tbl_have_save[NUM_ALL_SAVES];
 extern char game_save_tbl_name[NUM_ALL_SAVES][SAVE_NAME_LEN];
 
 struct game_s;
-extern bool savetype_is_moo13(const char *fname);
-extern int savetype_moo13_save_do(const char *filename, const struct game_s *g);
-extern int savetype_moo13_load_do(const char *filename, struct game_s *g);
+extern bool libsave_is_moo13(const char *fname);
+extern int libsave_moo13_save_do(const char *filename, const struct game_s *g);
+extern int libsave_moo13_load_do(const char *filename, struct game_s *g);
 
 extern void *libsave_1oom_open_check_header(const char *filename, int i, bool update_table, char *savename);
 extern int libsave_1oom_save_do(const char *filename, const char *savename, const struct game_s *g, int savei);
