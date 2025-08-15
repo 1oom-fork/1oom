@@ -157,6 +157,7 @@ extern const uint8_t colortbl_line_red[5];
 extern const uint8_t colortbl_line_reloc[5];
 extern const uint8_t colortbl_line_green[5];
 
+extern void ui_starmap_set_scroll_pos(const struct game_s *g, int x, int y);
 extern void ui_starmap_fill_oi_ctrl(struct starmap_data_s *d);
 extern void ui_starmap_clear_oi_ctrl(struct starmap_data_s *d);
 extern void ui_starmap_fill_oi_tbls(struct starmap_data_s *d);
