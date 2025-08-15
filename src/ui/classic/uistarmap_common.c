@@ -729,6 +729,14 @@ void ui_starmap_draw_button_text(struct starmap_data_s *d, bool highlight)
     lbxfont_print_str_normal(263, 184, game_str_sm_next_turn, UI_SCREEN_W);
 }
 
+void ui_starmap_set_scroll_pos(const struct game_s *g, int x, int y)    /* inline */
+{
+    SETRANGE(x, 0, g->galaxy_maxx - 0x6c);
+    SETRANGE(y, 0, g->galaxy_maxy - 0x56);
+    ui_data.starmap.x2 = x;
+    ui_data.starmap.y2 = y;
+}
+
 void ui_starmap_handle_oi_ctrl(struct starmap_data_s *d, int16_t oi)
 {
 #define XSTEP   0x1b
@@ -771,10 +779,7 @@ void ui_starmap_handle_oi_ctrl(struct starmap_data_s *d, int16_t oi)
         changed = true;
     }
     if (changed) {
-        SETRANGE(x, 0, g->galaxy_maxx - 0x6c);
-        SETRANGE(y, 0, g->galaxy_maxy - 0x56);
-        ui_data.starmap.x2 = x;
-        ui_data.starmap.y2 = y;
+        ui_starmap_set_scroll_pos(g, x, y);
     }
 #undef XSTEP
 #undef YSTEP

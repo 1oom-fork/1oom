@@ -208,23 +208,17 @@ void ui_starmap_set_pos_focus(const struct game_s *g, player_id_t active_player)
 void ui_starmap_set_pos(const struct game_s *g, int x, int y)
 {
     x -= 0x36;
-    if (x < 0) {
-        x = 0;
-    }
-    if (x > (g->galaxy_maxx - 0x6c)) {
-        x = (g->galaxy_maxx - 0x6c);
-    }
-    ui_data.starmap.x = x;
-    ui_data.starmap.x2 = x;
     y -= 0x2b;
-    if (y < 0) {
-        y = 0;
-    }
-    if (y > (g->galaxy_maxy - 0x56)) {
-        y = (g->galaxy_maxy - 0x56);
-    }
-    ui_data.starmap.y = y;
-    ui_data.starmap.y2 = y;
+    ui_starmap_set_scroll_pos(g, x, y);
+    ui_data.starmap.x = ui_data.starmap.x2;
+    ui_data.starmap.y = ui_data.starmap.y2;
+}
+
+void ui_starmap_scroll(const struct game_s *g, int x, int y)    /* inline */
+{
+    x -= 0x36;
+    y -= 0x2b;
+    ui_starmap_set_scroll_pos(g, ui_data.starmap.x + x, ui_data.starmap.y + y);
 }
 
 void ui_starmap_do(struct game_s *g, player_id_t active_player)
@@ -445,13 +439,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             }
         }
         if ((oi1 == oi_scroll) && !g->evn.build_finished_num[active_player]) {
-            int x, y;
-            x = ui_data.starmap.x + scrollx - 0x36;
-            y = ui_data.starmap.y + scrolly - 0x2b;
-            SETRANGE(x, 0, g->galaxy_maxx - 0x6c);
-            SETRANGE(y, 0, g->galaxy_maxy - 0x56);
-            ui_data.starmap.x2 = x;
-            ui_data.starmap.y2 = y;
+            ui_starmap_scroll(g, scrollx, scrolly);
         }
         ui_starmap_handle_oi_ctrl(&d, oi1);
         if (oi1 == oi_f3) {
