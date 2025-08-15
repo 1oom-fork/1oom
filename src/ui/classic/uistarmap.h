@@ -6,6 +6,7 @@
 struct game_s;
 
 extern void ui_starmap_set_pos_focus(const struct game_s *g, player_id_t pi);
+extern void ui_starmap_scroll(const struct game_s *g, int x, int y);
 extern void ui_starmap_set_pos(const struct game_s *g, int x, int y);
 
 extern void ui_starmap_do(struct game_s *g, player_id_t pi);
