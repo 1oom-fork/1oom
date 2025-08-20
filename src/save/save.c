@@ -5,6 +5,7 @@
 #include <unistd.h>
 
 #include "save.h"
+#include "save_moo13_cfg.h"
 #include "game.h"
 #include "lib.h"
 #include "log.h"
@@ -51,6 +52,9 @@ int libsave_check_saves(void)
         game_save_tbl_name[i][0] = '\0';
     }
     fnamebuf = lib_malloc(FSDEV_PATH_MAX);
+    if (use_moo13 && (libsave_cmoo_get_fname(fnamebuf, FSDEV_PATH_MAX) == 0)) {
+        libsave_cmoo_load_do(fnamebuf);
+    }
     for (int i = 0; i < NUM_ALL_SAVES; ++i) {
         libsave_get_slot_fname(fnamebuf, FSDEV_PATH_MAX, i);
         if (use_moo13) {
@@ -102,6 +106,14 @@ int libsave_do_save_i(int savei, const char *savename, const struct game_s *g)
     libsave_get_slot_fname(filename, FSDEV_PATH_MAX, savei);
     if (use_moo13) {
         res = libsave_moo13_save_do(filename, g);
+        if ((savei >= 0) && (savei < 6)) {
+            strncpy((char *)&(game_save_tbl_name[savei]), savename, SAVE_NAME_LEN);
+            game_save_tbl_name[savei][SAVE_NAME_LEN - 1] = '\0';
+            game_save_tbl_have_save[savei] = 1;
+            if (libsave_cmoo_get_fname(filename, FSDEV_PATH_MAX) == 0) {
+                libsave_cmoo_save_do(filename, savename, savei);
+            }
+        }
     } else {
         res = libsave_1oom_save_do(filename, savename, g, savei);
     }

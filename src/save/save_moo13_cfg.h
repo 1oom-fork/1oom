@@ -50,3 +50,8 @@ static inline save_cmoo_offs_t save_cmoo_savename_offs(int i)
 }
 
 #endif
+
+struct game_s;
+extern int libsave_cmoo_get_fname(char *buf, int buflen);
+extern int libsave_cmoo_load_do(const char *filename);
+extern int libsave_cmoo_save_do(const char *filename, const char *savename, int savei);
