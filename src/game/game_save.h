@@ -14,6 +14,8 @@
 extern bool game_save_tbl_have_save[NUM_ALL_SAVES];
 extern char game_save_tbl_name[NUM_ALL_SAVES][SAVE_NAME_LEN];
 
+extern bool game_opt_use_moo13;
+
 extern int game_save_check_saves(void);
 
 struct game_s;
