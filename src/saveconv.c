@@ -166,7 +166,7 @@ static int savetype_de_smart(struct game_s *g, const char *fname)
     }
     fclose(fd);
     fd = NULL;
-    if ((fd = game_save_open_check_header(fname, -1, false, 0)) != 0) {
+    if ((fd = libsave_1oom_open_check_header(fname, -1, false, 0)) != 0) {
         fclose(fd);
         fd = NULL;
         savetypei = SAVETYPE_NATIVE;
@@ -2333,13 +2333,13 @@ static int savetype_de_1oom0(struct game_s *g, const char *fname)
 {
     char *sname = (*savename == '\0') ? savename : NULL;
     LOG_DEBUG((2, "%s: '%s'\n", __func__, fname));
-    return game_save_do_load_do(fname, g, -1, sname);
+    return libsave_1oom_load_do(fname, g, -1, sname);
 }
 
 static int savetype_en_1oom0(const struct game_s *g, const char *fname)
 {
     LOG_DEBUG((2, "%s: '%s'\n", __func__, fname ? fname : "(null)"));
-    return game_save_do_save_do(fname, savename, g, -1);
+    return libsave_1oom_save_do(fname, savename, g, -1);
 }
 
 /* -------------------------------------------------------------------------- */
