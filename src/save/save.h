@@ -11,9 +11,9 @@ extern bool libsave_is_1oom(const char *filename);
 extern int libsave_1oom_save_do(const char *filename, const char *savename, const struct game_s *g);
 extern int libsave_1oom_load_do(const char *filename, struct game_s *g);
 
-extern bool savetype_is_moo13(const char *fname);
-extern int savetype_moo13_save_do(const char *filename, const struct game_s *g);
-extern int savetype_moo13_load_do(const char *filename, struct game_s *g);
+extern bool libsave_is_moo13(const char *fname);
+extern int libsave_moo13_save_do(const char *filename, const struct game_s *g);
+extern int libsave_moo13_load_do(const char *filename, struct game_s *g);
 
 
 #endif

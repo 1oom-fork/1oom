@@ -170,7 +170,7 @@ static int savetype_de_smart(struct game_s *g, const char *fname)
     if (libsave_is_1oom(fname)) {
         savetypei = SAVETYPE_NATIVE;
         res = savetype[SAVETYPE_NATIVE].decode(g, fname);
-    } else if (savetype_is_moo13(fname)) {
+    } else if (libsave_is_moo13(fname)) {
         savetypei = SAVETYPE_MOO13;
         res = savetype_de_moo13(g, fname);
     } else if (savetype_is_text(g, fname)) {
@@ -199,7 +199,7 @@ static int savetype_de_smart(struct game_s *g, const char *fname)
 
 static int savetype_de_moo13(struct game_s *g, const char *fname)
 {
-    if (savetype_moo13_load_do(fname, g) != 0) {
+    if (libsave_moo13_load_do(fname, g) != 0) {
         return -1;
     }
     if (savename[0] == 0) {
@@ -253,7 +253,7 @@ static int savetype_de_moo13(struct game_s *g, const char *fname)
 
 static int savetype_en_moo13(const struct game_s *g, const char *fname)
 {
-    if (savetype_moo13_save_do(fname, g) != 0) {
+    if (libsave_moo13_save_do(fname, g) != 0) {
         return -1;
     }
     if (opt_use_configmoo) {
