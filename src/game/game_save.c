@@ -34,6 +34,8 @@
 bool game_save_tbl_have_save[NUM_ALL_SAVES];
 char game_save_tbl_name[NUM_ALL_SAVES][SAVE_NAME_LEN];
 
+bool game_opt_use_moo13 = true;
+
 /* -------------------------------------------------------------------------- */
 
 #define SG_1OOM_EN_DUMMY(_n_)  memset(&buf[pos], 0, (_n_)), pos += (_n_)
@@ -1006,8 +1008,12 @@ static int game_save_get_slot_fname(char *buf, int buflen, int i)
     const char *path = os_get_path_user();
     char namebuf[16];
     int res;
-    if (!os_get_fname_save(namebuf, i + 1)) {
-        sprintf(namebuf, "1oom_save%i.bin", i + 1);
+    if (game_opt_use_moo13) {
+        sprintf(namebuf, "SAVE%i.GAM", i + 1);
+    } else {
+        if (!os_get_fname_save(namebuf, i + 1)) {
+            sprintf(namebuf, "1oom_save%i.bin", i + 1);
+        }
     }
     res = util_concat_buf(buf, buflen, path, FSDEV_DIR_SEP_STR, namebuf, NULL);
     if (res < 0) {
@@ -1044,10 +1050,16 @@ int game_save_check_saves(void)
     for (int i = 0; i < NUM_ALL_SAVES; ++i) {
         game_save_get_slot_fname(fnamebuf, FSDEV_PATH_MAX, i);
         game_save_tbl_slot_init(i);
-        fd = libsave_1oom_open_check_header(fnamebuf, savename, NULL);
-        if (fd) {
-            fclose(fd);
-            game_save_tbl_slot_set(i, savename);
+        if (game_opt_use_moo13) {
+            if (libsave_is_moo13(fnamebuf)) {
+                game_save_tbl_have_save[i] = true;
+            }
+        } else {
+            fd = libsave_1oom_open_check_header(fnamebuf, savename, NULL);
+            if (fd) {
+                fclose(fd);
+                game_save_tbl_slot_set(i, savename);
+            }
         }
     }
     lib_free(fnamebuf);
@@ -1057,6 +1069,9 @@ int game_save_check_saves(void)
 
 int game_save_do_load_fname(const char *filename, struct game_s *g)
 {
+    if (libsave_is_moo13(filename) && !libsave_moo13_load_do(filename, g)) {
+        return 0;
+    }
     return libsave_1oom_load_do(filename, g, NULL);
 }
 
@@ -1067,9 +1082,16 @@ int game_save_do_load_i(int savei, struct game_s *g)
     char savename[SAVE_NAME_LEN];
     game_save_get_slot_fname(filename, FSDEV_PATH_MAX, savei);
     game_save_tbl_slot_init(savei);
-    res = libsave_1oom_load_do(filename, g, savename);
-    if (res == 0) {
-        game_save_tbl_slot_set(savei, savename);
+    if (game_opt_use_moo13) {
+        res = libsave_moo13_load_do(filename, g);
+        if (res == 0) {
+            game_save_tbl_have_save[savei] = true;
+        }
+    } else {
+        res = libsave_1oom_load_do(filename, g, savename);
+        if (res == 0) {
+            game_save_tbl_slot_set(savei, savename);
+        }
     }
     lib_free(filename);
     filename = NULL;
@@ -1085,7 +1107,11 @@ int game_save_do_save_i(int savei, const char *savename, const struct game_s *g)
     }
     game_save_get_slot_fname(filename, FSDEV_PATH_MAX, savei);
     game_save_tbl_slot_init(savei);
-    res = libsave_1oom_save_do(filename, savename, g);
+    if (game_opt_use_moo13) {
+        res = libsave_moo13_save_do(filename, g);
+    } else {
+        res = libsave_1oom_save_do(filename, savename, g);
+    }
     if (res == 0) {
         game_save_tbl_slot_set(savei, savename);
     }
