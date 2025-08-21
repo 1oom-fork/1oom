@@ -46,7 +46,9 @@ typedef enum {
 #define SAVETYPE_F_OPTOUT   (1 << 1)
 
 static int savetype_de_smart(struct game_s *g, const char *fname);
-static bool savetype_is_moo13(const char *fname);
+extern bool savetype_is_moo13(const char *fname);
+extern int savetype_moo13_load_do(const char *filename, struct game_s *g);
+extern int savetype_moo13_save_do(const char *filename, const struct game_s *g);
 static int savetype_de_moo13(struct game_s *g, const char *fname);
 static int savetype_en_moo13(const struct game_s *g, const char *fname);
 static int savetype_de_1oom0(struct game_s *g, const char *fname);
@@ -199,7 +201,7 @@ static int savetype_de_smart(struct game_s *g, const char *fname)
 #define SAVE_MOO13_LEN  59036
 #define SAVE_CMOO_LEN   154
 
-static bool savetype_is_moo13(const char *fname)
+bool savetype_is_moo13(const char *fname)
 {
     bool res = true;
     uint16_t w;
@@ -634,7 +636,7 @@ static int savetype_de_moo13_do(struct game_s *g)
     return 0;
 }
 
-static int savetype_moo13_load_do(const char *filename, struct game_s *g)
+int savetype_moo13_load_do(const char *filename, struct game_s *g)
 {
     int res = 0;
     int len;
@@ -1113,7 +1115,7 @@ static int savetype_en_moo13_do(const struct game_s *g)
     return 0;
 }
 
-static int savetype_moo13_save_do(const char *filename, const struct game_s *g)
+int savetype_moo13_save_do(const char *filename, const struct game_s *g)
 {
     int res = 0;
     if (savetype_en_moo13_do(g) != 0) {
