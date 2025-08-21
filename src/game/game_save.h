@@ -16,14 +16,11 @@ extern char game_save_tbl_name[NUM_ALL_SAVES][SAVE_NAME_LEN];
 
 extern bool game_opt_use_moo13;
 
-extern void *libsave_1oom_open_check_header(const char *filename, char *savename, uint32_t *version);
 extern void game_save_tbl_slot_init(int i);
 extern void game_save_tbl_slot_set(int i, const char *savename);
 extern int game_save_check_saves(void);
 
 struct game_s;
-extern int libsave_1oom_load_do(const char *filename, struct game_s *g, char *savename);
-extern int libsave_1oom_save_do(const char *filename, const char *savename, const struct game_s *g);
 extern int game_save_do_load_fname(const char *filename, struct game_s *g);
 extern int game_save_do_load_i(int savei/*0..NUM_ALL_SAVES-1*/, struct game_s *g);
 extern int game_save_do_save_i(int savei/*0..NUM_ALL_SAVES-1*/, const char *savename, const struct game_s *g);
