@@ -14,6 +14,8 @@
 extern bool game_save_tbl_have_save[NUM_ALL_SAVES];
 extern char game_save_tbl_name[NUM_ALL_SAVES][SAVE_NAME_LEN];
 
+extern bool game_opt_use_moo13;
+
 extern void *libsave_1oom_open_check_header(const char *filename, char *savename, uint32_t *version);
 extern void game_save_tbl_slot_init(int i);
 extern void game_save_tbl_slot_set(int i, const char *savename);
