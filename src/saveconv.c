@@ -46,9 +46,9 @@ typedef enum {
 #define SAVETYPE_F_OPTOUT   (1 << 1)
 
 static int savetype_de_smart(struct game_s *g, const char *fname);
-extern bool savetype_is_moo13(const char *fname);
-extern int savetype_moo13_load_do(const char *filename, struct game_s *g);
-extern int savetype_moo13_save_do(const char *filename, const struct game_s *g);
+extern bool libsave_is_moo13(const char *fname);
+extern int libsave_moo13_load_do(const char *filename, struct game_s *g);
+extern int libsave_moo13_save_do(const char *filename, const struct game_s *g);
 static int savetype_de_moo13(struct game_s *g, const char *fname);
 static int savetype_en_moo13(const struct game_s *g, const char *fname);
 static int savetype_de_1oom0(struct game_s *g, const char *fname);
@@ -173,7 +173,7 @@ static int savetype_de_smart(struct game_s *g, const char *fname)
         fd = NULL;
         savetypei = SAVETYPE_NATIVE;
         res = savetype[SAVETYPE_NATIVE].decode(g, fname);
-    } else if (savetype_is_moo13(fname)) {
+    } else if (libsave_is_moo13(fname)) {
         savetypei = SAVETYPE_MOO13;
         res = savetype_de_moo13(g, fname);
     } else if (savetype_is_text(g, fname)) {
@@ -201,7 +201,7 @@ static int savetype_de_smart(struct game_s *g, const char *fname)
 #define SAVE_MOO13_LEN  59036
 #define SAVE_CMOO_LEN   154
 
-bool savetype_is_moo13(const char *fname)
+bool libsave_is_moo13(const char *fname)
 {
     bool res = true;
     uint16_t w;
@@ -281,7 +281,7 @@ bool savetype_is_moo13(const char *fname)
         } \
     } while (0)
 
-static int savetype_de_moo13_sd(shipdesign_t *sd, int sb)
+static int libsave_moo13_decode_sd(shipdesign_t *sd, int sb)
 {
     memcpy(sd->name, &save2buf[sb + 0x00], 11);
     M13_GET_16(sd->cost, sb + 0x14);
@@ -306,7 +306,7 @@ static int savetype_de_moo13_sd(shipdesign_t *sd, int sb)
     return 0;
 }
 
-static int savetype_de_moo13_do(struct game_s *g)
+static int libsave_moo13_decode(struct game_s *g)
 {
     {
         void *t = g->gaux;
@@ -524,7 +524,7 @@ static int savetype_de_moo13_do(struct game_s *g)
         int srdb, pos;
         srdb = 0xc410 + i * 0x468;
         for (int j = 0; j < g->eto[i].shipdesigns_num; ++j) {
-            if (savetype_de_moo13_sd(&(srd->design[j]), srdb + j * 0x44) != 0) {
+            if (libsave_moo13_decode_sd(&(srd->design[j]), srdb + j * 0x44) != 0) {
                 return -1;
             }
         }
@@ -552,7 +552,7 @@ static int savetype_de_moo13_do(struct game_s *g)
             M13_GET_16(srd->shipcount[j], srdb2 + 0x45c);
         }
     }
-    if (savetype_de_moo13_sd(&(g->current_design[PLAYER_0]), 0xe642) != 0) {
+    if (libsave_moo13_decode_sd(&(g->current_design[PLAYER_0]), 0xe642) != 0) {
         return -1;
     }
     {
@@ -636,14 +636,14 @@ static int savetype_de_moo13_do(struct game_s *g)
     return 0;
 }
 
-int savetype_moo13_load_do(const char *filename, struct game_s *g)
+int libsave_moo13_load_do(const char *filename, struct game_s *g)
 {
     int res = 0;
     int len;
     if ((len = util_file_try_load_len(filename, save2buf, SAVE_MOO13_LEN)) == 0) {
         log_error("loading MOO1 v1.3 save '%s' (got %i != %i bytes)\n", filename, len, SAVE_MOO13_LEN);
         res = -1;
-    } else if (savetype_de_moo13_do(g) != 0) {
+    } else if (libsave_moo13_decode(g) != 0) {
         res = -1;
     }
     return res;
@@ -651,7 +651,7 @@ int savetype_moo13_load_do(const char *filename, struct game_s *g)
 
 static int savetype_de_moo13(struct game_s *g, const char *fname)
 {
-    if (savetype_moo13_load_do(fname, g) != 0) {
+    if (libsave_moo13_load_do(fname, g) != 0) {
         return -1;
     }
     if (savename[0] == 0) {
@@ -762,7 +762,7 @@ static int savetype_de_moo13(struct game_s *g, const char *fname)
         } \
     } while (0)
 
-static int savetype_en_moo13_sd(const shipdesign_t *sd, int sb)
+static int libsave_moo13_encode_sd(const shipdesign_t *sd, int sb)
 {
     memcpy(&save2buf[sb + 0x00], sd->name, 11);
     M13_SET_16(sd->cost, sb + 0x14);
@@ -787,7 +787,7 @@ static int savetype_en_moo13_sd(const shipdesign_t *sd, int sb)
     return 0;
 }
 
-static int savetype_en_moo13_do(const struct game_s *g)
+static int libsave_moo13_encode(const struct game_s *g)
 {
     memset(save2buf, 0, SAVE_MOO13_LEN);
     M13_SET_16(g->players, 0xe2d2);
@@ -989,7 +989,7 @@ static int savetype_en_moo13_do(const struct game_s *g)
         int srdb, pos;
         srdb = 0xc410 + i * 0x468;
         for (int j = 0; j < g->eto[i].shipdesigns_num; ++j) {
-            if (savetype_en_moo13_sd(&(srd->design[j]), srdb + j * 0x44) != 0) {
+            if (libsave_moo13_encode_sd(&(srd->design[j]), srdb + j * 0x44) != 0) {
                 return -1;
             }
         }
@@ -1017,7 +1017,7 @@ static int savetype_en_moo13_do(const struct game_s *g)
             M13_SET_16(srd->shipcount[j], srdb2 + 0x45c);
         }
     }
-    if (savetype_en_moo13_sd(&(g->current_design[PLAYER_0]), 0xe642) != 0) {
+    if (libsave_moo13_encode_sd(&(g->current_design[PLAYER_0]), 0xe642) != 0) {
         return -1;
     }
     {
@@ -1115,10 +1115,10 @@ static int savetype_en_moo13_do(const struct game_s *g)
     return 0;
 }
 
-int savetype_moo13_save_do(const char *filename, const struct game_s *g)
+int libsave_moo13_save_do(const char *filename, const struct game_s *g)
 {
     int res = 0;
-    if (savetype_en_moo13_do(g) != 0) {
+    if (libsave_moo13_encode(g) != 0) {
         res = -1;
     } else if (util_file_save(filename, save2buf, SAVE_MOO13_LEN) != 0) {
         log_error("Save: failed to save '%s'\n", filename);
@@ -1129,7 +1129,7 @@ int savetype_moo13_save_do(const char *filename, const struct game_s *g)
 
 static int savetype_en_moo13(const struct game_s *g, const char *fname)
 {
-    if (savetype_moo13_save_do(fname, g) != 0) {
+    if (libsave_moo13_save_do(fname, g) != 0) {
         return -1;
     }
     if (opt_use_configmoo) {
