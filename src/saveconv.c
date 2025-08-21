@@ -14,6 +14,7 @@
 #include "lib.h"
 #include "log.h"
 #include "os.h"
+#include "save/save.h"
 #include "ui.h"
 #include "util.h"
 
