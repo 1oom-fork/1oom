@@ -325,6 +325,12 @@ const struct cmdline_options_s main_cmdline_options[] = {
     { "-savequit", 0,
       options_enable_bool_var, (void *)&game_opt_save_quit,
       NULL, "Save and quit" },
+    { "-usemoo13", 0,
+      options_enable_bool_var, (void *)&game_opt_use_moo13,
+      NULL, "Use MOO v1.3 format" },
+    { "-use1oom", 0,
+      options_disable_bool_var, (void *)&game_opt_use_moo13,
+      NULL, "Use 1oom format" },
     { 0, 0, 0, 0, 0, 0 }
 };
 

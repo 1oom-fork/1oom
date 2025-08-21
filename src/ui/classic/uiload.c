@@ -69,6 +69,7 @@ int ui_load_game(void)
     const int xoff = 0x76;
     const int yoff = 0xa;
     uiobj_id_t oi_esc, oi_cancel, oi_ok, oi_save[NUM_SAVES];
+    uiobj_id_t oi_alt_x;
 
     d.savenum = 0;
     for (int i = 0; i < NUM_SAVES; ++i) {
@@ -90,6 +91,7 @@ int ui_load_game(void)
     oi_esc = uiobj_add_inputkey(MOO_KEY_ESCAPE);
     oi_cancel = uiobj_add_mousearea(0x14 + xoff, 0x87 + yoff, 0x4a + xoff, 0x98 + yoff, MOO_KEY_LEFT, -1);
     oi_ok =     uiobj_add_mousearea(0x54 + xoff, 0x87 + yoff, 0x8a + xoff, 0x98 + yoff, MOO_KEY_SPACE, -1);
+    oi_alt_x = uiobj_add_alt_str("x");
     uiobj_set_focus(oi_ok);
 
     for (int i = 0; i < d.savenum; ++i) {
@@ -122,6 +124,12 @@ int ui_load_game(void)
         if (oi == oi_ok) {
             ui_sound_play_sfx_24();
             flag_done = true;
+        }
+        if (oi == oi_alt_x) {
+            ui_sound_play_sfx_24();
+            d.selected = 0;
+            game_opt_use_moo13 = !game_opt_use_moo13;
+            game_save_check_saves();
         }
         load_game_draw_cb(&d);
         uiobj_finish_frame();
