@@ -1,0 +1,472 @@
+/* NOTE!
+   If the save format changes, increase LIBSAVE_1OOM_VERSION and implement a converter in 1oom_saveconv.
+   The format is not to be changed without a very good reason.
+*/
+#include "config.h"
+
+#include <stdio.h>
+#include <string.h>
+#include <unistd.h>
+
+#include "game_save.h"
+#include "game.h"
+#include "lib.h"
+#include "log.h"
+#include "os.h"
+#include "save.h"
+#include "save_1oom_decode.h"
+#include "types.h"
+
+/* -------------------------------------------------------------------------- */
+
+static int libsave_1oom_decode_planet(const uint8_t *buf, int pos, planet_t *p, player_id_t pnum, uint32_t version)
+{
+    SG_1OOM_DE_TBL_U8(p->name, PLANET_NAME_LEN);
+    SG_1OOM_DE_U16(p->x);
+    SG_1OOM_DE_U16(p->y);
+    SG_1OOM_DE_U8(p->star_type);
+    SG_1OOM_DE_U8(p->look);
+    SG_1OOM_DE_U8(p->frame);
+    SG_1OOM_DE_U8(p->rocks);
+    SG_1OOM_DE_U16(p->max_pop1);
+    SG_1OOM_DE_U16(p->max_pop2);
+    SG_1OOM_DE_U16(p->max_pop3);
+    SG_1OOM_DE_U8(p->type);
+    SG_1OOM_DE_U8(p->battlebg);
+    SG_1OOM_DE_U8(p->infogfx);
+    SG_1OOM_DE_U8(p->growth);
+    SG_1OOM_DE_U8(p->special);
+    SG_1OOM_DE_U16(p->bc_to_ecoproj);
+    SG_1OOM_DE_U16(p->bc_to_ship);
+    SG_1OOM_DE_U16(p->bc_to_factory);
+    SG_1OOM_DE_U32(p->reserve);
+    SG_1OOM_DE_U16(p->waste);
+    SG_1OOM_DE_PLAYER_ID(p->owner);
+    SG_1OOM_DE_PLAYER_ID(p->prev_owner);
+    SG_1OOM_DE_PLAYER_ID(p->claim);
+    SG_1OOM_DE_U16(p->pop);
+    SG_1OOM_DE_U16(p->pop_prev);
+    SG_1OOM_DE_U16(p->factories);
+    SG_1OOM_DE_TBL_U16(p->slider, PLANET_SLIDER_NUM);
+    SG_1OOM_DE_TBL_U8(p->slider_lock, PLANET_SLIDER_NUM);
+    SG_1OOM_DE_U8(p->buildship);
+    SG_1OOM_DE_PLANET_ID(p->reloc);
+    SG_1OOM_DE_U16(p->missile_bases);
+    SG_1OOM_DE_U16(p->bc_to_base);
+    SG_1OOM_DE_U16(p->bc_upgrade_base);
+    SG_1OOM_DE_U8(p->have_stargate);
+    SG_1OOM_DE_U8(p->shield);
+    SG_1OOM_DE_U16(p->bc_to_shield);
+    SG_1OOM_DE_U16(p->trans_num);
+    SG_1OOM_DE_PLANET_ID(p->trans_dest);
+    SG_1OOM_DE_U8(p->pop_tenths);
+    SG_1OOM_DE_BV(p->explored, PLAYER_NUM);
+    SG_1OOM_DE_DUMMY_V0(5);
+    SG_1OOM_DE_U8(p->pop_oper_fact);
+    SG_1OOM_DE_U16(p->bc_to_refit);
+    SG_1OOM_DE_U16(p->rebels);
+    SG_1OOM_DE_U8(p->unrest);
+    SG_1OOM_DE_U8(p->unrest_reported);
+    SG_1OOM_DE_BV(p->finished, FINISHED_NUM);
+    SG_1OOM_DE_DUMMY_V0(5);
+    return pos;
+}
+
+static int libsave_1oom_decode_enroute(const uint8_t *buf, int pos, fleet_enroute_t *r, uint32_t version)
+{
+    SG_1OOM_DE_PLAYER_ID(r->owner);
+    SG_1OOM_DE_U16(r->x);
+    SG_1OOM_DE_U16(r->y);
+    SG_1OOM_DE_PLANET_ID(r->dest);
+    SG_1OOM_DE_U8(r->speed);
+    SG_1OOM_DE_TBL_U16(r->ships, NUM_SHIPDESIGNS);
+    return pos;
+}
+
+static int libsave_1oom_decode_transport(const uint8_t *buf, int pos, transport_t *r, uint32_t version)
+{
+    SG_1OOM_DE_PLAYER_ID(r->owner);
+    SG_1OOM_DE_U16(r->x);
+    SG_1OOM_DE_U16(r->y);
+    SG_1OOM_DE_PLANET_ID(r->dest);
+    SG_1OOM_DE_U8(r->speed);
+    SG_1OOM_DE_U16(r->pop);
+    return pos;
+}
+
+static int libsave_1oom_decode_orbits(const uint8_t *buf, int pos, fleet_orbit_t *o, planet_id_t planets, uint32_t version)
+{
+    for (planet_id_t loops = PLANET_0; loops <= planets; ++loops) {
+        planet_id_t i;
+        SG_1OOM_DE_PLANET_ID(i);
+        if (i == PLANET_NONE) {
+            return pos;
+        } else if (i >= planets) {
+            log_error("Save: decode orbit planet %i >= %i max\n", i, planets);
+            return -1;
+        }
+        SG_1OOM_DE_TBL_U16(o[i].ships, NUM_SHIPDESIGNS);
+    }
+    log_error("Save: decode orbit terminator missing\n");
+    return -1;
+}
+
+static int libsave_1oom_decode_eto(const uint8_t *buf, int pos, empiretechorbit_t *e, player_id_t pnum, planet_id_t planets, uint32_t version)
+{
+    SG_1OOM_DE_U8(e->race);
+    SG_1OOM_DE_U8(e->banner);
+    SG_1OOM_DE_U8(e->trait1);
+    SG_1OOM_DE_U8(e->trait2);
+    SG_1OOM_DE_U8(e->ai_p3_countdown);
+    SG_1OOM_DE_U8(e->ai_p2_countdown);
+    SG_1OOM_DE_BV(e->contact, PLAYER_NUM);
+    SG_1OOM_DE_DUMMY_V0(5);
+    SG_1OOM_DE_TBL_U16(e->relation1, pnum);
+    SG_1OOM_DE_TBL_U16(e->relation2, pnum);
+    SG_1OOM_DE_TBL_U8(e->diplo_type, pnum);
+    SG_1OOM_DE_TBL_U16(e->diplo_val, pnum);
+    SG_1OOM_DE_TBL_U16(e->diplo_p1, pnum);
+    SG_1OOM_DE_TBL_U16(e->diplo_p2, pnum);
+    SG_1OOM_DE_TBL_U16(e->trust, pnum);
+    SG_1OOM_DE_TBL_U8(e->broken_treaty, pnum);
+    SG_1OOM_DE_TBL_U16(e->blunder, pnum);
+    SG_1OOM_DE_TBL_U8(e->tribute_field, pnum);
+    SG_1OOM_DE_TBL_U8(e->tribute_tech, pnum);
+    SG_1OOM_DE_TBL_U16(e->mood_treaty, pnum);
+    SG_1OOM_DE_TBL_U16(e->mood_trade, pnum);
+    SG_1OOM_DE_TBL_U16(e->mood_tech, pnum);
+    SG_1OOM_DE_TBL_U16(e->mood_peace, pnum);
+    SG_1OOM_DE_TBL_U8(e->treaty, pnum);
+    SG_1OOM_DE_TBL_U16(e->trade_bc, pnum);
+    SG_1OOM_DE_TBL_U16(e->trade_percent, pnum);
+    SG_1OOM_DE_TBL_U8(e->spymode_next, pnum);
+    SG_1OOM_DE_TBL_U8(e->offer_field, pnum);
+    SG_1OOM_DE_TBL_U8(e->offer_tech, pnum);
+    SG_1OOM_DE_TBL_U16(e->offer_bc, pnum);
+    for (player_id_t i = PLAYER_0; i < pnum; ++i) {
+        SG_1OOM_DE_HATED_ID(e->hated[i]);
+    }
+    for (player_id_t i = PLAYER_0; i < pnum; ++i) {
+        SG_1OOM_DE_HATED_ID(e->mutual_enemy[i]);
+    }
+    SG_1OOM_DE_TBL_U16(e->hatred, pnum);
+    SG_1OOM_DE_TBL_U16(e->have_met, pnum);
+    SG_1OOM_DE_TBL_U16(e->trade_established_bc, pnum);
+    SG_1OOM_DE_TBL_U16(e->spying, pnum);
+    SG_1OOM_DE_TBL_U16(e->spyfund, pnum);
+    SG_1OOM_DE_TBL_U8(e->spymode, pnum);
+    SG_1OOM_DE_U16(e->security);
+    SG_1OOM_DE_TBL_U16(e->spies, pnum);
+    SG_1OOM_DE_U32(e->reserve_bc);
+    SG_1OOM_DE_U16(e->tax);
+    SG_1OOM_DE_U8(e->base_shield);
+    SG_1OOM_DE_U8(e->base_comp);
+    SG_1OOM_DE_U8(e->base_weapon);
+    SG_1OOM_DE_U8(e->colonist_oper_factories);
+    SG_1OOM_DE_TBL_U8(e->tech.percent, TECH_FIELD_NUM);
+    SG_1OOM_DE_TBL_U16(e->tech.slider, TECH_FIELD_NUM);
+    SG_1OOM_DE_TBL_U8(e->tech.slider_lock, TECH_FIELD_NUM);
+    SG_1OOM_DE_TBL_U32(e->tech.investment, TECH_FIELD_NUM);
+    SG_1OOM_DE_TBL_U8(e->tech.project, TECH_FIELD_NUM);
+    SG_1OOM_DE_TBL_U32(e->tech.cost, TECH_FIELD_NUM);
+    SG_1OOM_DE_TBL_U16(e->tech.completed, TECH_FIELD_NUM);
+    SG_1OOM_DE_U8(e->shipdesigns_num);
+    if ((e->shipdesigns_num > NUM_SHIPDESIGNS)) {
+        log_error("Save: decode invalid number of ship designs %i\n", e->shipdesigns_num);
+        return -1;
+    }
+    pos = libsave_1oom_decode_orbits(buf, pos, e->orbit, planets, version);
+    if (pos < 0) {
+        return -1;
+    }
+    SG_1OOM_DE_TBL_TBL_U8(e->spyreportfield, pnum, TECH_FIELD_NUM);
+    SG_1OOM_DE_TBL_U16(e->spyreportyear, pnum);
+    SG_1OOM_DE_U8(e->shipi_colony);
+    SG_1OOM_DE_U8(e->shipi_bomber);
+    return pos;
+}
+
+static int libsave_1oom_decode_sd(const uint8_t *buf, int pos, shipdesign_t *sd)
+{
+    SG_1OOM_DE_TBL_U8(sd->name, SHIP_NAME_LEN);
+    SG_1OOM_DE_U16(sd->cost);
+    SG_1OOM_DE_U16(sd->space);
+    SG_1OOM_DE_U8(sd->hull);
+    SG_1OOM_DE_U8(sd->look);
+    SG_1OOM_DE_TBL_U8(sd->wpnt, WEAPON_SLOT_NUM);
+    SG_1OOM_DE_TBL_U8(sd->wpnn, WEAPON_SLOT_NUM);
+    SG_1OOM_DE_U8(sd->engine);
+    SG_1OOM_DE_U32(sd->engines);
+    SG_1OOM_DE_TBL_U8(sd->special, SPECIAL_SLOT_NUM);
+    SG_1OOM_DE_U8(sd->shield);
+    SG_1OOM_DE_U8(sd->jammer);
+    SG_1OOM_DE_U8(sd->comp);
+    SG_1OOM_DE_U8(sd->armor);
+    SG_1OOM_DE_U8(sd->man);
+    SG_1OOM_DE_U16(sd->hp);
+    return pos;
+}
+
+static int libsave_1oom_decode_srd(const uint8_t *buf, int pos, shipresearch_t *srd, shipdesign_id_t sdnum)
+{
+    for (shipdesign_id_t i = SHIPDESIGN_0; i < sdnum; ++i) {
+        pos = libsave_1oom_decode_sd(buf, pos, &(srd->design[i]));
+    }
+    for (tech_field_t f = TECH_FIELD_COMPUTER; f < TECH_FIELD_NUM; ++f) {
+        SG_1OOM_DE_TBL_TBL_U8(srd->researchlist[f], TECH_TIER_NUM, 3);
+    }
+    SG_1OOM_DE_TBL_TBL_U8(srd->researchcompleted, TECH_FIELD_NUM, TECH_PER_FIELD);
+    SG_1OOM_DE_TBL_U8(srd->have_reserve_fuel, NUM_SHIPDESIGNS);
+    SG_1OOM_DE_TBL_U16(srd->year, NUM_SHIPDESIGNS);
+    SG_1OOM_DE_TBL_U32(srd->shipcount, NUM_SHIPDESIGNS);
+    return pos;
+}
+
+static int libsave_1oom_decode_monster(const uint8_t *buf, int pos, monster_t *m, uint16_t version)
+{
+    SG_1OOM_DE_U8(m->exists);
+    SG_1OOM_DE_U16(m->x);
+    SG_1OOM_DE_U16(m->y);
+    SG_1OOM_DE_PLAYER_ID(m->killer);
+    SG_1OOM_DE_PLANET_ID(m->dest);
+    SG_1OOM_DE_U8(m->counter);
+    SG_1OOM_DE_U8(m->nuked);
+    return pos;
+}
+
+static int libsave_1oom_decode_evn(const uint8_t *buf, int pos, gameevents_t *ev, player_id_t pnum, uint32_t version)
+{
+    SG_1OOM_DE_U16(ev->year);
+    SG_1OOM_DE_BV(ev->done, GAME_EVENT_TBL_NUM);
+    SG_1OOM_DE_DUMMY_V0(17);
+    SG_1OOM_DE_U8(ev->have_plague);
+    SG_1OOM_DE_PLAYER_ID(ev->plague_player);
+    SG_1OOM_DE_PLANET_ID(ev->plague_planet_i);
+    SG_1OOM_DE_U32(ev->plague_val);
+    SG_1OOM_DE_U8(ev->have_nova);
+    SG_1OOM_DE_PLAYER_ID(ev->nova_player);
+    SG_1OOM_DE_PLANET_ID(ev->nova_planet_i);
+    SG_1OOM_DE_U8(ev->nova_years);
+    SG_1OOM_DE_U32(ev->nova_val);
+    SG_1OOM_DE_U8(ev->have_accident);
+    SG_1OOM_DE_PLANET_ID(ev->accident_planet_i);
+    SG_1OOM_DE_U8(ev->have_comet);
+    SG_1OOM_DE_PLAYER_ID(ev->comet_player);
+    SG_1OOM_DE_PLANET_ID(ev->comet_planet_i);
+    SG_1OOM_DE_U8(ev->comet_years);
+    SG_1OOM_DE_U16(ev->comet_hp);
+    SG_1OOM_DE_U16(ev->comet_dmg);
+    SG_1OOM_DE_U8(ev->have_pirates);
+    SG_1OOM_DE_PLANET_ID(ev->pirates_planet_i);
+    SG_1OOM_DE_U16(ev->pirates_hp);
+    pos = libsave_1oom_decode_monster(buf, pos, &(ev->crystal), version);
+    pos = libsave_1oom_decode_monster(buf, pos, &(ev->amoeba), version);
+    SG_1OOM_DE_PLANET_ID(ev->planet_orion_i);
+    SG_1OOM_DE_U8(ev->have_guardian);
+    for (player_id_t i = PLAYER_0; i < pnum; ++i) {
+        SG_1OOM_DE_PLANET_ID(ev->home[i]);
+    }
+    SG_1OOM_DE_U8(ev->report_stars);
+    SG_1OOM_DE_TBL_TBL_U32(ev->new_ships, pnum, NUM_SHIPDESIGNS);
+    SG_1OOM_DE_TBL_TBL_U16(ev->spies_caught, pnum, pnum);
+    SG_1OOM_DE_TBL_TBL_U16(ev->ceasefire, pnum, pnum);
+    for (player_id_t i = PLAYER_0; i < pnum; ++i) {
+        SG_1OOM_DE_BV(ev->help_shown[i], HELP_SHOWN_NUM);
+        SG_1OOM_DE_DUMMY_V0(14);
+    }
+    SG_1OOM_DE_TBL_U16(ev->build_finished_num, pnum);
+    for (player_id_t i = PLAYER_0; i < pnum; ++i) {
+        SG_1OOM_DE_PLAYER_ID(ev->voted[i]);
+    }
+    SG_1OOM_DE_TBL_U8(ev->best_ecorestore, pnum);
+    SG_1OOM_DE_TBL_U8(ev->best_wastereduce, pnum);
+    SG_1OOM_DE_TBL_U8(ev->best_roboctrl, pnum);
+    SG_1OOM_DE_TBL_U8(ev->best_terraform, pnum);
+    return pos;
+}
+
+static int libsave_1oom_decode(const uint8_t *buf, size_t buflen, struct game_s *g, uint32_t version)
+{
+    int pos = 0;
+    if (buflen < 512) {
+        log_error("Save: decode expected len > %i, got %i\n", 512, buflen);
+        return -1;
+    }
+    {
+        struct game_aux_s *ga;
+        ga = g->gaux;
+        memset(g, 0, sizeof(*g));
+        g->gaux = ga;
+    }
+    if (version == 0) {
+        SG_1OOM_DE_U8(g->players);
+    } else {
+        SG_1OOM_DE_U16(g->players);
+    }
+    if ((g->players < 2) || (g->players > 6)) {
+        log_error("Save: decode invalid number of players %i\n", g->players);
+        return -1;
+    }
+    SG_1OOM_DE_BV(g->is_ai, PLAYER_NUM);
+    SG_1OOM_DE_DUMMY_V0(5);
+    SG_1OOM_DE_PLAYER_ID(g->active_player);
+    SG_1OOM_DE_U8(g->difficulty);
+    if ((g->difficulty < 0) || (g->difficulty >= DIFFICULTY_NUM)) {
+        log_error("Save: decode invalid difficulty value %i\n", g->difficulty);
+        return -1;
+    }
+    SG_1OOM_DE_U8(g->galaxy_size);
+    SG_1OOM_DE_U8(g->galaxy_w);
+    SG_1OOM_DE_U8(g->galaxy_h);
+    if (version == 0) {
+        SG_1OOM_DE_U8(g->galaxy_stars);
+    } else {
+        SG_1OOM_DE_U16(g->galaxy_stars);
+    }
+    if ((g->galaxy_stars > PLANETS_MAX)) {
+        log_error("Save: decode invalid number of stars %i\n", g->galaxy_stars);
+        return -1;
+    }
+    SG_1OOM_DE_U16(g->galaxy_maxx);
+    SG_1OOM_DE_U16(g->galaxy_maxy);
+    SG_1OOM_DE_U32(g->galaxy_seed);
+    SG_1OOM_DE_DUMMY_V0(4);
+    SG_1OOM_DE_U16(g->year);
+    SG_1OOM_DE_U16(g->enroute_num);
+    if ((g->enroute_num > FLEET_ENROUTE_MAX)) {
+        log_error("Save: decode invalid number of fleets %i\n", g->enroute_num);
+        return -1;
+    }
+    SG_1OOM_DE_U16(g->transport_num);
+    if ((g->transport_num > TRANSPORT_MAX)) {
+        log_error("Save: decode invalid number of transports %i\n", g->transport_num);
+        return -1;
+    }
+    SG_1OOM_DE_U8(g->end);
+    SG_1OOM_DE_PLAYER_ID(g->winner);
+    SG_1OOM_DE_U8(g->election_held);
+    SG_1OOM_DE_U8(g->nebula_num);
+    if ((g->nebula_num > NEBULA_MAX)) {
+        log_error("Save: decode invalid number of nebula %i\n", g->nebula_num);
+        return -1;
+    }
+    if (version != 0) {
+        SG_1OOM_DE_TBL_U16(g->nebula_type, g->nebula_num);
+    }
+    SG_1OOM_DE_TBL_U16(g->nebula_x, g->nebula_num);
+    SG_1OOM_DE_TBL_U16(g->nebula_y, g->nebula_num);
+    SG_1OOM_DE_TBL_TBL_U16(g->nebula_x0, g->nebula_num, 4);
+    SG_1OOM_DE_TBL_TBL_U16(g->nebula_x1, g->nebula_num, 4);
+    SG_1OOM_DE_TBL_TBL_U16(g->nebula_y0, g->nebula_num, 4);
+    SG_1OOM_DE_TBL_TBL_U16(g->nebula_y1, g->nebula_num, 4);
+    SG_1OOM_DE_TBL_TBL_U8(g->emperor_names, g->players, EMPEROR_NAME_LEN);
+    for (player_id_t i = PLAYER_0; i < g->players; ++i) {
+        SG_1OOM_DE_PLANET_ID(g->planet_focus_i[i]);
+    }
+    for (planet_id_t i = PLANET_0; i < g->galaxy_stars; ++i) {
+        pos = libsave_1oom_decode_planet(buf, pos, &(g->planet[i]), g->players, version);
+    }
+    for (player_id_t j = PLAYER_0; j < g->players; ++j) {
+        for (planet_id_t i = PLANET_0; i < g->galaxy_stars; ++i) {
+            seen_t *s = &(g->seen[j][i]);
+            SG_1OOM_DE_PLAYER_ID(s->owner);
+            SG_1OOM_DE_U16(s->pop);
+            SG_1OOM_DE_U16(s->bases);
+            SG_1OOM_DE_U16(s->factories);
+        }
+    }
+    for (fleet_enroute_id_t i = FLEET_ENROUTE_0; i < g->enroute_num; ++i) {
+        pos = libsave_1oom_decode_enroute(buf, pos, &(g->enroute[i]), version);
+    }
+    for (transport_id_t i = TRANSPORT_0; i < g->transport_num; ++i) {
+        pos = libsave_1oom_decode_transport(buf, pos, &(g->transport[i]), version);
+    }
+    for (player_id_t i = PLAYER_0; i < g->players; ++i) {
+        pos = libsave_1oom_decode_eto(buf, pos, &(g->eto[i]), g->players, g->galaxy_stars, version);
+        if (pos < 0) {
+            return -1;
+        }
+    }
+    for (player_id_t i = PLAYER_0; i < g->players; ++i) {
+        pos = libsave_1oom_decode_srd(buf, pos, &(g->srd[i]), g->eto[i].shipdesigns_num);
+    }
+    for (player_id_t i = PLAYER_0; i < g->players; ++i) {
+        pos = libsave_1oom_decode_sd(buf, pos, &(g->current_design[i]));
+    }
+    pos = libsave_1oom_decode_evn(buf, pos, &(g->evn), g->players, version);
+    {
+        uint32_t v;
+        SG_1OOM_DE_U32(v);
+        if (pos > buflen) {
+            log_error("Save: decode read len %i > got %i\n", pos, buflen);
+            return -1;
+        }
+        if (v != LIBSAVE_1OOM_END) {
+            log_error("Save: invalid end mark 0x%08x != 0x%08x at %i!\n", v, LIBSAVE_1OOM_END, pos);
+            return -1;
+        }
+    }
+    if (pos < buflen) {
+        log_warning("Save: decode read len %i < got %i (left %i)\n", pos, buflen, buflen - pos);
+    }
+    g->guardian_killer = PLAYER_NONE;
+    return 0;
+}
+
+/* -------------------------------------------------------------------------- */
+
+int libsave_1oom_load_do(const char *filename, struct game_s *g, char *savename)
+{
+    FILE *fd = NULL;
+    uint8_t *savebuf = NULL;
+    size_t len = 0;
+    int res = -1;
+    uint32_t version;
+
+    savebuf = lib_malloc(LIBSAVE_1OOM_DATA_SIZE);
+    fd = libsave_1oom_open_check_header(filename, savename, &version);
+    if ((!fd) || ((len = fread(savebuf, 1, LIBSAVE_1OOM_DATA_SIZE, fd)) == 0) || (!feof(fd))) {
+        log_error("Save: failed to load '%s'\n", filename);
+    } else if (libsave_1oom_decode(savebuf, len, g, version) != 0) {
+        log_error("Save: invalid data on load '%s'\n", filename);
+    } else {
+        log_message("Save: load '%s'\n", filename);
+        res = 0;
+    }
+    if (fd) {
+        fclose(fd);
+        fd = NULL;
+    }
+    lib_free(savebuf);
+    savebuf = NULL;
+    return res;
+}
+
+void *libsave_1oom_open_check_header(const char *filename, char *savename, uint32_t *version)
+{
+    uint8_t hdr[LIBSAVE_1OOM_HDR_SIZE];
+    FILE *fd;
+    if (savename) {
+        savename[0] = '\0';
+    }
+    fd = fopen(filename, "rb");
+    if (fd) {
+        if (1
+          && (fread(hdr, LIBSAVE_1OOM_HDR_SIZE, 1, fd) == 1)
+          && (memcmp(hdr, (const uint8_t *)LIBSAVE_1OOM_MAGIC, 8) == 0)
+          && (GET_LE_32(&hdr[LIBSAVE_1OOM_OFFS_VERSION]) <= LIBSAVE_1OOM_VERSION)
+        ) {
+            if (savename) {
+                memcpy(savename, &hdr[LIBSAVE_1OOM_OFFS_NAME], SAVE_NAME_LEN);
+                savename[SAVE_NAME_LEN - 1] = '\0';
+            }
+            if (version) {
+                *version = GET_LE_32(&hdr[LIBSAVE_1OOM_OFFS_VERSION]);
+            }
+        } else {
+            fclose(fd);
+            fd = NULL;
+        }
+    }
+    return fd;
+}
