@@ -789,12 +789,6 @@ static int game_save_do_save_do(const char *filename, const char *savename, cons
         log_error("Save: failed to create path for '%s'\n", filename);
     }
     game_save_make_header(hdr, savename);
-    fd = game_save_open_check_header(filename, -1, false, 0);
-    if (fd) {
-        /* file exists */
-        fclose(fd);
-        fd = NULL;
-    }
     if ((savei >= 0) && (savei < (NUM_SAVES + 1))) {
         game_save_tbl_have_save[savei] = false;
         game_save_tbl_name[savei][0] = '\0';
@@ -890,6 +884,18 @@ void *game_save_open_check_header(const char *filename, int i, bool update_table
     return fd;
 }
 
+bool game_save_is_1oom(const char *filename)
+{
+    FILE *fd = NULL;
+    fd = game_save_open_check_header(filename, -1, false, NULL);
+    if (fd) {
+        fclose(fd);
+        fd = NULL;
+        return true;
+    }
+    return false;
+}
+
 static int game_save_get_slot_fname(char *buf, int buflen, int i)
 {
     const char *path = os_get_path_user();
@@ -906,18 +912,41 @@ static int game_save_get_slot_fname(char *buf, int buflen, int i)
     return 0;
 }
 
+static void game_save_check_save(const char *fname, int savei)
+{
+    FILE *fd = NULL;
+    char savename[SAVE_NAME_LEN];
+    bool update_table = false;
+    if ((savei >= 0) && (savei < NUM_ALL_SAVES)) {
+        update_table = true;
+    }
+    if (update_table) {
+        game_save_tbl_have_save[savei] = false;
+        game_save_tbl_name[savei][0] = '\0';
+    }
+    fd = game_save_open_check_header(fname, -1, false, savename);
+    if (!fd) {
+        update_table = false;
+    }
+    if (update_table) {
+        game_save_tbl_have_save[savei] = true;
+        memcpy(game_save_tbl_name[savei], &(savename[0]), SAVE_NAME_LEN);
+        game_save_tbl_name[savei][SAVE_NAME_LEN - 1] = '\0';
+    }
+    if (fd) {
+        fclose(fd);
+        fd = NULL;
+    }
+}
+
 int game_save_check_saves(void)
 {
-    FILE *fd;
     char *fnamebuf = NULL;
 
     fnamebuf = lib_malloc(FSDEV_PATH_MAX);
     for (int i = 0; i < NUM_ALL_SAVES; ++i) {
         game_save_get_slot_fname(fnamebuf, FSDEV_PATH_MAX, i);
-        fd = game_save_open_check_header(fnamebuf, i, true, 0);
-        if (fd) {
-            fclose(fd);
-        }
+        game_save_check_save(fnamebuf, i);
     }
     lib_free(fnamebuf);
     fnamebuf = NULL;
