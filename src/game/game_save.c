@@ -90,11 +90,6 @@ int game_save_do_load_fname(const char *filename, char *savename, struct game_s 
     return libsave_1oom_load_do(filename, g);
 }
 
-int game_save_do_save_fname(const char *filename, const char *savename, const struct game_s *g)
-{
-    return libsave_1oom_save_do(filename, savename, g);
-}
-
 int game_save_do_load_i(int savei, struct game_s *g)
 {
     int res;
