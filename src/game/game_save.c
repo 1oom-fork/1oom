@@ -1,5 +1,5 @@
 /* NOTE!
-   If the save format changes, increase GAME_SAVE_VERSION and implement a converter in 1oom_saveconv.
+   If the save format changes, increase LIBSAVE_1OOM_VERSION and implement a converter in 1oom_saveconv.
    The format is not to be changed without a very good reason.
 */
 #include "config.h"
@@ -19,14 +19,14 @@
 
 /* -------------------------------------------------------------------------- */
 
-#define GAME_SAVE_HDR_SIZE  64
-#define GAME_SAVE_DATA_SIZE (sizeof(struct game_s) + 64)
-#define GAME_SAVE_MAGIC "1oomSAVE"
-#define GAME_SAVE_END   0x646e450a/*dnE\n*/
-#define GAME_SAVE_OFFS_VERSION  8
-#define GAME_SAVE_OFFS_NAME 16
+#define LIBSAVE_1OOM_HDR_SIZE  64
+#define LIBSAVE_1OOM_DATA_SIZE (sizeof(struct game_s) + 64)
+#define LIBSAVE_1OOM_MAGIC "1oomSAVE"
+#define LIBSAVE_1OOM_END   0x646e450a/*dnE\n*/
+#define LIBSAVE_1OOM_OFFS_VERSION  8
+#define LIBSAVE_1OOM_OFFS_NAME 16
 
-#define GAME_SAVE_VERSION   0
+#define LIBSAVE_1OOM_VERSION   0
 
 /* -------------------------------------------------------------------------- */
 
@@ -633,7 +633,7 @@ static int game_save_encode(uint8_t *buf, int buflen, const struct game_s *g)
         pos = game_save_encode_sd(buf, pos, &(g->current_design[i]));
     }
     pos = game_save_encode_evn(buf, pos, &(g->evn), g->players);
-    SG_1OOM_EN_U32(GAME_SAVE_END);
+    SG_1OOM_EN_U32(LIBSAVE_1OOM_END);
     return pos;
 }
 
@@ -740,8 +740,8 @@ static int game_save_decode(const uint8_t *buf, int buflen, struct game_s *g)
             log_error("Save: decode read len %i > got %i\n", pos, buflen);
             return -1;
         }
-        if (v != GAME_SAVE_END) {
-            log_error("Save: invalid end mark 0x%08x != 0x%08x at %i!\n", v, GAME_SAVE_END, pos);
+        if (v != LIBSAVE_1OOM_END) {
+            log_error("Save: invalid end mark 0x%08x != 0x%08x at %i!\n", v, LIBSAVE_1OOM_END, pos);
             return -1;
         }
     }
@@ -756,20 +756,20 @@ static int game_save_decode(const uint8_t *buf, int buflen, struct game_s *g)
 
 static void game_save_make_header(uint8_t *buf, const char *savename)
 {
-    memset(buf, 0, GAME_SAVE_HDR_SIZE);
-    memcpy(buf, (const uint8_t *)GAME_SAVE_MAGIC, 8);
-    SET_LE_32(&buf[GAME_SAVE_OFFS_VERSION], GAME_SAVE_VERSION);
-    strncpy((char *)&buf[GAME_SAVE_OFFS_NAME], savename, SAVE_NAME_LEN);
+    memset(buf, 0, LIBSAVE_1OOM_HDR_SIZE);
+    memcpy(buf, (const uint8_t *)LIBSAVE_1OOM_MAGIC, 8);
+    SET_LE_32(&buf[LIBSAVE_1OOM_OFFS_VERSION], LIBSAVE_1OOM_VERSION);
+    strncpy((char *)&buf[LIBSAVE_1OOM_OFFS_NAME], savename, SAVE_NAME_LEN);
 }
 
 static int game_save_do_save_do(const char *filename, const char *savename, const struct game_s *g, int savei)
 {
     FILE *fd;
-    uint8_t hdr[GAME_SAVE_HDR_SIZE];
+    uint8_t hdr[LIBSAVE_1OOM_HDR_SIZE];
     uint8_t *savebuf = NULL;
     int res = -1, len;
-    savebuf = lib_malloc(GAME_SAVE_DATA_SIZE);
-    if ((len = game_save_encode(savebuf, GAME_SAVE_DATA_SIZE, g)) <= 0) {
+    savebuf = lib_malloc(LIBSAVE_1OOM_DATA_SIZE);
+    if ((len = game_save_encode(savebuf, LIBSAVE_1OOM_DATA_SIZE, g)) <= 0) {
         lib_free(savebuf);
         savebuf = NULL;
         return -1;
@@ -785,7 +785,7 @@ static int game_save_do_save_do(const char *filename, const char *savename, cons
     fd = fopen(filename, "wb+");
     if (0
       || (!fd)
-      || (fwrite(hdr, GAME_SAVE_HDR_SIZE, 1, fd) != 1)
+      || (fwrite(hdr, LIBSAVE_1OOM_HDR_SIZE, 1, fd) != 1)
       || (fwrite(savebuf, len, 1, fd) != 1)
     ) {
         log_error("Save: failed to save '%s'\n", filename);
@@ -794,7 +794,7 @@ static int game_save_do_save_do(const char *filename, const char *savename, cons
     }
     if ((savei >= 0) && (savei < (NUM_SAVES + 1))) {
         game_save_tbl_have_save[savei] = true;
-        memcpy(game_save_tbl_name[savei], &hdr[GAME_SAVE_OFFS_NAME], SAVE_NAME_LEN);
+        memcpy(game_save_tbl_name[savei], &hdr[LIBSAVE_1OOM_OFFS_NAME], SAVE_NAME_LEN);
     }
     log_message("Save: save '%s' '%s'\n", filename, savename);
     res = 0;
@@ -814,9 +814,9 @@ static int game_save_do_load_do(const char *filename, struct game_s *g, int save
     uint8_t *savebuf = NULL;
     int res = -1, len = 0;
 
-    savebuf = lib_malloc(GAME_SAVE_DATA_SIZE);
+    savebuf = lib_malloc(LIBSAVE_1OOM_DATA_SIZE);
     fd = game_save_open_check_header(filename, savei, true, savename);
-    if ((!fd) || ((len = fread(savebuf, 1, GAME_SAVE_DATA_SIZE, fd)) == 0) || (!feof(fd))) {
+    if ((!fd) || ((len = fread(savebuf, 1, LIBSAVE_1OOM_DATA_SIZE, fd)) == 0) || (!feof(fd))) {
         log_error("Save: failed to load '%s'\n", filename);
     } else if (game_save_decode(savebuf, len, g) != 0) {
         log_error("Save: invalid data on load '%s'\n", filename);
@@ -837,7 +837,7 @@ static int game_save_do_load_do(const char *filename, struct game_s *g, int save
 
 void *game_save_open_check_header(const char *filename, int i, bool update_table, char *savename)
 {
-    uint8_t hdr[GAME_SAVE_HDR_SIZE];
+    uint8_t hdr[LIBSAVE_1OOM_HDR_SIZE];
     FILE *fd;
     if ((i < 0) || (i >= NUM_ALL_SAVES)) {
         update_table = false;
@@ -852,17 +852,17 @@ void *game_save_open_check_header(const char *filename, int i, bool update_table
     fd = fopen(filename, "rb");
     if (fd) {
         if (1
-          && (fread(hdr, GAME_SAVE_HDR_SIZE, 1, fd) == 1)
-          && (memcmp(hdr, (const uint8_t *)GAME_SAVE_MAGIC, 8) == 0)
-          && (GET_LE_32(&hdr[GAME_SAVE_OFFS_VERSION]) <= GAME_SAVE_VERSION)
+          && (fread(hdr, LIBSAVE_1OOM_HDR_SIZE, 1, fd) == 1)
+          && (memcmp(hdr, (const uint8_t *)LIBSAVE_1OOM_MAGIC, 8) == 0)
+          && (GET_LE_32(&hdr[LIBSAVE_1OOM_OFFS_VERSION]) <= LIBSAVE_1OOM_VERSION)
         ) {
             if (update_table) {
                 game_save_tbl_have_save[i] = true;
-                memcpy(game_save_tbl_name[i], &hdr[GAME_SAVE_OFFS_NAME], SAVE_NAME_LEN);
+                memcpy(game_save_tbl_name[i], &hdr[LIBSAVE_1OOM_OFFS_NAME], SAVE_NAME_LEN);
                 game_save_tbl_name[i][SAVE_NAME_LEN - 1] = '\0';
             }
             if (savename) {
-                memcpy(savename, &hdr[GAME_SAVE_OFFS_NAME], SAVE_NAME_LEN);
+                memcpy(savename, &hdr[LIBSAVE_1OOM_OFFS_NAME], SAVE_NAME_LEN);
                 savename[SAVE_NAME_LEN - 1] = '\0';
             }
         } else {
