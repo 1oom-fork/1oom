@@ -2318,13 +2318,13 @@ static int savetype_de_1oom0(struct game_s *g, const char *fname)
 {
     char *sname = (*savename == '\0') ? savename : NULL;
     LOG_DEBUG((2, "%s: '%s'\n", __func__, fname));
-    return game_save_do_load_fname(fname, sname, g);
+    return game_save_do_load_do(fname, g, -1, sname);
 }
 
 static int savetype_en_1oom0(const struct game_s *g, const char *fname)
 {
     LOG_DEBUG((2, "%s: '%s'\n", __func__, fname ? fname : "(null)"));
-    return game_save_do_save_fname(fname, savename, g);
+    return game_save_do_save_do(fname, savename, g, -1);
 }
 
 /* -------------------------------------------------------------------------- */
