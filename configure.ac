@@ -340,6 +340,7 @@ AC_CONFIG_FILES([Makefile
                  doc/Makefile
                  src/Makefile
                  src/game/Makefile
+                 src/save/Makefile
                  src/os/Makefile
                  src/os/unix/Makefile
                  src/os/win32/Makefile
