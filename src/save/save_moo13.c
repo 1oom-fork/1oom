@@ -16,6 +16,21 @@
 
 /* -------------------------------------------------------------------------- */
 
+static const char *game_str_tbl_ship_names_1oom0[RACE_NUM * SHIP_NAME_NUM] = {
+    "FIGHTER", "GUNBOAT", "COURIER", "FRIGATE", "DESTROYER", "CORVETTE", "CRUISER", "ESCORT", "WARSHIP", "DREADNOUGHT", "BATTLESHIP", "DREADSTAR",
+    "WOLVERINE", "GRIFFIN", "FERRET", "LYNX", "CHEETAH", "BOBCAT", "PANTHER", "LEOPARD", "WARCAT", "SABRETOOTH", "PUMA", "TIGER",
+    "PIRANHA", "STINGRAY", "MINNOW", "MANTA", "BARRACUDA", "MOREY", "SHARK", "MAKO", "WHALE", "KRAKEN", "MONITOR", "POLARIS",
+    "GOBLIN", "CYCLOPS", "DAEMON", "BANSHEE", "SPECTRE", "SPIRIT", "JUGGERNAUT", "VALKYRIE", "HYDRA", "TITAN", "COLOSSUS", "DRAGON",
+    "STARFIGHTER", "COMET", "SEEKER", "STAR WING", "STAR BLAZER", "STAR STREAK", "STAR BLADE", "DARK STAR", "CORAONA", "SUN FIRE", "STAR FURY", "NOVA",
+    "FOXBAT", "SPARROWHAWK", "PELICAN", "FALCON", "SKY HAWK", "SPACE GULL", "WARBIRD", "WARHAWK", "WAREAGLE", "CONDOR", "DREADWING", "SKY MASTER",
+    "SABRE", "CUTLASS", "DAGGER", "LANCER", "PEGASUS", "HORSEMAN", "RANGER", "KNIGHT", "AVENGER", "DRAGOON", "PALADIN", "EXCALIBER",
+    "PAW", "PANDA", "PATROL", "HUNTER", "GLADIATOR", "SENTINEL", "CLAW", "TOOTH", "WARBEAR", "GRIZZLY", "PUNISHER", "RHINO",
+    "MARAUDER", "HYPERION", "DRACHMA", "INTRUDER", "PENETRATOR", "TORMENTER", "AJAX", "TORNADO", "NEXUS", "NEMESIS", "DEVASTATOR", "ANNIHILATOR",
+    "SPIDER", "BUMBLEBEE", "NEEDLE", "HORNET", "SCORPION", "VENOM", "TARANTULA", "VIPER", "COBRA", "KING COBRA", "BLACK WIDOW", "DEATH WYN"
+};
+
+/* -------------------------------------------------------------------------- */
+
 bool savetype_is_moo13(const char *fname)
 {
     uint8_t *buf = NULL;
@@ -869,7 +884,7 @@ static int savetype_en_moo13_do(uint8_t *buf, const struct game_s *g)
         int srdb;
         srdb = 0xc410 + 0x468 * i;
         for (int j = 0; j < SHIP_NAME_NUM; ++j) {
-            strncpy((char *)&(buf[srdb + 0x198 + j * 12]), game_str_tbl_ship_names[e->race * SHIP_NAME_NUM + j], 11);
+            strncpy((char *)&(buf[srdb + 0x198 + j * 12]), game_str_tbl_ship_names_1oom0[e->race * SHIP_NAME_NUM + j], 11);
         }
     }
     return 0;
