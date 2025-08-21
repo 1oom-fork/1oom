@@ -77,16 +77,8 @@ int game_save_check_saves(void)
     return 0;
 }
 
-int game_save_do_load_fname(const char *filename, char *savename, struct game_s *g)
+int game_save_do_load_fname(const char *filename, struct game_s *g)
 {
-    FILE *fd = NULL;
-    if (savename) {
-        fd = libsave_1oom_open_check_header(filename, savename);
-        if (fd) {
-            fclose(fd);
-            fd = NULL;
-        }
-    }
     return libsave_1oom_load_do(filename, g);
 }
 
