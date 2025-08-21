@@ -1455,9 +1455,17 @@ static int savetype_en_text(const struct game_s *g, const char *fname)
 
 static int savetype_de_1oom0(struct game_s *g, const char *fname)
 {
+    FILE *fd = NULL;
     char *sname = (*savename == '\0') ? savename : NULL;
     LOG_DEBUG((2, "%s: '%s'\n", __func__, fname));
-    return game_save_do_load_fname(fname, sname, g);
+    if (sname) {
+        fd = libsave_1oom_open_check_header(fname, sname);
+        if (fd) {
+            fclose(fd);
+            fd = NULL;
+        }
+    }
+    return libsave_1oom_load_do(fname, g);
 }
 
 static int savetype_en_1oom0(const struct game_s *g, const char *fname)
