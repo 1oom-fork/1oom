@@ -168,7 +168,7 @@ static int savetype_de_smart(struct game_s *g, const char *fname)
     }
     fclose(fd);
     fd = NULL;
-    if (game_save_is_1oom(fname)) {
+    if (libsave_is_1oom(fname)) {
         savetypei = SAVETYPE_NATIVE;
         res = savetype[SAVETYPE_NATIVE].decode(g, fname);
     } else if (savetype_is_moo13(g, fname)) {
