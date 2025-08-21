@@ -762,7 +762,7 @@ static void game_save_make_header(uint8_t *buf, const char *savename)
     strncpy((char *)&buf[LIBSAVE_1OOM_OFFS_NAME], savename, SAVE_NAME_LEN);
 }
 
-static int game_save_do_save_do(const char *filename, const char *savename, const struct game_s *g, int savei)
+int game_save_do_save_do(const char *filename, const char *savename, const struct game_s *g, int savei)
 {
     FILE *fd;
     uint8_t hdr[LIBSAVE_1OOM_HDR_SIZE];
@@ -808,7 +808,7 @@ done:
     return res;
 }
 
-static int game_save_do_load_do(const char *filename, struct game_s *g, int savei, char *savename)
+int game_save_do_load_do(const char *filename, struct game_s *g, int savei, char *savename)
 {
     FILE *fd = NULL;
     uint8_t *savebuf = NULL;
@@ -910,11 +910,6 @@ int game_save_check_saves(void)
 int game_save_do_load_fname(const char *filename, char *savename, struct game_s *g)
 {
     return game_save_do_load_do(filename, g, -1, savename);
-}
-
-int game_save_do_save_fname(const char *filename, const char *savename, const struct game_s *g)
-{
-    return game_save_do_save_do(filename, savename, g, -1);
 }
 
 int game_save_do_load_i(int savei, struct game_s *g)
