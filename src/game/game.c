@@ -4,8 +4,10 @@
 #include <string.h>
 
 #include "main.h"
+#include "bits.h"
 #include "game.h"
 #include "game_aux.h"
+#include "game_cfg.h"
 #include "game_misc.h"
 #include "game_new.h"
 #include "game_num.h"
@@ -412,6 +414,9 @@ int main_handle_option(const char *argv)
 int main_do(void)
 {
     struct game_end_s game_end = game_opt_end;
+    if (game_cfg_init()) {
+        /* TODO */
+    }
     if (ui_late_init()) {
         return 1;
     }
@@ -427,6 +432,14 @@ int main_do(void)
         struct game_new_options_s game_new_opts = GAME_NEW_OPTS_DEFAULT;
         main_menu_action_t main_menu_action;
         int load_game_i = 0;
+        if (cmoo_buf) {
+            int gameopts = GET_LE_16(&cmoo_buf[CMOO_OFFS_GAME_OPTIONS]);
+            game_new_opts.difficulty = gameopts % 10;
+            gameopts /= 10;
+            game_new_opts.galaxy_size = gameopts % 10;
+            gameopts /= 10;
+            game_new_opts.players = gameopts % 10 + 2;
+        }
 
         if (game_opt_new_game) {
             game_opt_new_game = false;
@@ -562,4 +575,5 @@ void main_do_shutdown(void)
 {
     /* TODO save game if in progress */
     game_aux_shutdown(&game_aux);
+    game_cfg_shutdown();
 }
