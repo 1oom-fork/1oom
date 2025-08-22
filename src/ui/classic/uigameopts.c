@@ -1,6 +1,7 @@
 #include "config.h"
 
 #include "uigameopts.h"
+#include "game_cfg.h"
 #include "hw.h"
 #include "kbd.h"
 #include "lbx.h"
@@ -69,6 +70,7 @@ gameopts_act_t ui_gameopts(struct game_s *g, int *load_game_i_ptr)
 {
     struct gameopts_data_s d;
     bool flag_done = false;
+    bool flag_save_cfg = false;
     gameopts_act_t ret = GAMEOPTS_DONE;
     int16_t oi_quit, oi_done, oi_load, oi_save, oi_silent, oi_fx, oi_music;
     int16_t fxmusic = opt_music_enabled ? 2 : (opt_sfx_enabled ? 1 : 0);
@@ -100,6 +102,10 @@ gameopts_act_t ui_gameopts(struct game_s *g, int *load_game_i_ptr)
         } else if ((oi == oi_silent) || (oi == oi_fx) || (oi == oi_music)) {
             opt_music_enabled = (fxmusic == 2);
             opt_sfx_enabled = (fxmusic >= 1);
+            if (cmoo_buf) {
+                cmoo_buf[CMOO_OFFS_SOUND_MODE] = fxmusic;
+                flag_save_cfg = true;
+            }
             ui_sound_play_sfx_24();
         } else if (oi == oi_load) {
             int loadi;
@@ -129,6 +135,9 @@ gameopts_act_t ui_gameopts(struct game_s *g, int *load_game_i_ptr)
     ui_palette_fadeout_a_f_1();
     lbxpal_select(0, -1, 0);
     ui_draw_finish_mode = 2;
+    if (flag_save_cfg) {
+        game_cfg_write();
+    }
 
     uiobj_unset_callback();
     free_go_data(&d);

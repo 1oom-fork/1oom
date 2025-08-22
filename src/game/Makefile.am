@@ -22,6 +22,8 @@ libgame_a_SOURCES = \
     game_battle.h \
     game_battle_human.c \
     game_battle_human.h \
+    game_cfg.c \
+    game_cfg.h \
     game_design.c \
     game_design.h \
     game_diplo.c \
