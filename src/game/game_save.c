@@ -11,6 +11,7 @@
 #include "game_save.h"
 #include "bits.h"
 #include "game.h"
+#include "game_cfg.h"
 #include "lib.h"
 #include "log.h"
 #include "os.h"
@@ -1054,7 +1055,11 @@ int game_save_check_saves(void)
         game_save_tbl_slot_init(i);
         if (game_opt_use_moo13) {
             if (libsave_is_moo13(fnamebuf)) {
-                game_save_tbl_have_save[i] = true;
+                if ((i < 6) && cmoo_buf && cmoo_buf[cmoo_havesave_offs(i)]) {
+                    game_save_tbl_slot_set(i, &cmoo_buf[cmoo_savename_offs(i)]);
+                } else {
+                    game_save_tbl_have_save[i] = true;
+                }
             }
         } else {
             fd = libsave_1oom_open_check_header(fnamebuf, savename, NULL);
@@ -1087,7 +1092,11 @@ int game_save_do_load_i(int savei, struct game_s *g)
     if (game_opt_use_moo13) {
         res = libsave_moo13_load_do(filename, g);
         if (res == 0) {
-            game_save_tbl_have_save[savei] = true;
+            if ((savei < 6) && cmoo_buf && cmoo_buf[cmoo_havesave_offs(savei)]) {
+                game_save_tbl_slot_set(savei, &cmoo_buf[cmoo_savename_offs(savei)]);
+            } else {
+                game_save_tbl_have_save[savei] = true;
+            }
         }
     } else {
         res = libsave_1oom_load_do(filename, g, savename);
@@ -1111,6 +1120,12 @@ int game_save_do_save_i(int savei, const char *savename, const struct game_s *g)
     game_save_tbl_slot_init(savei);
     if (game_opt_use_moo13) {
         res = libsave_moo13_save_do(filename, g);
+        if ((res == 0) && cmoo_buf && (savei < 6)) {
+            cmoo_buf[cmoo_havesave_offs(savei)] = 1;
+            strncpy((char *)&cmoo_buf[cmoo_savename_offs(savei)], savename, SAVE_NAME_LEN);
+            cmoo_buf[cmoo_savename_offs(savei) + SAVE_NAME_LEN - 1] = '\0';
+            game_cfg_write();
+        }
     } else {
         res = libsave_1oom_save_do(filename, savename, g);
     }
