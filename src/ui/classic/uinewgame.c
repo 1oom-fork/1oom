@@ -3,7 +3,9 @@
 #include <string.h>
 
 #include "ui.h"
+#include "bits.h"
 #include "game.h"
+#include "game_cfg.h"
 #include "game_new.h"
 #include "game_str.h"
 #include "gfxaux.h"
@@ -313,6 +315,12 @@ bool ui_new_game(struct game_new_options_s *newopts)
     }
 
 #undef MAKE_UIOBJS
+
+    if (cmoo_buf) {
+        int gameopts = diffic + gsize * 10 + oppon * 100;
+        SET_LE_16(&cmoo_buf[CMOO_OFFS_GAME_OPTIONS], gameopts);
+        game_cfg_write();
+    }
 
     newopts->galaxy_size = gsize;
     newopts->difficulty = diffic;
