@@ -307,7 +307,6 @@ void ui_starmap_transport(struct game_s *g, player_id_t active_player)
         }
     }
     uiobj_unset_callback();
-    uiobj_table_clear();
     uiobj_set_help_id(-1);
     g->planet_focus_i[active_player] = d.ts.from;
 }
