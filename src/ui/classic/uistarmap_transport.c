@@ -44,7 +44,7 @@ static void ui_starmap_transport_draw_cb(void *vptr)
     }
     vgabuf_fill_rect(225, 8, 314, 180, 7);
     lbxgfx_draw_frame(224, 4, ui_data.gfx.starmap.tranbord);
-    if ((r->owner == d->api) && (d->ts.can_move != NO_MOVE)) {
+    if ((r->owner == d->api) && g->eto[d->api].have_hyperspace_comm) {
         lbxgfx_draw_frame(224, 159, ui_data.gfx.starmap.tranxtra);
     }
     vgabuf_fill_rect(227, 8, 310, 39, 0);
@@ -77,7 +77,7 @@ static void ui_starmap_transport_draw_cb(void *vptr)
         }
         ui_starmap_draw_frame(x0, y0, gfx);
         dist = game_get_min_dist(g, r->owner, g->planet_focus_i[d->api]);
-        if ((r->owner == d->api) && (d->ts.can_move != NO_MOVE) && (pt->within_frange[d->api] == 0)) {
+        if ((r->owner == d->api) && g->eto[d->api].have_hyperspace_comm && (pt->within_frange[d->api] == 0)) {
             /* FIXME use proper positioning for varying str length */
             d->ts.in_frange = false;
             sprintf(buf, "  %s   %i %s.", game_str_sm_outsr, dist - e->fuel_range, game_str_sm_parsecs2);
@@ -120,7 +120,7 @@ static void ui_starmap_transport_draw_cb(void *vptr)
         d->ts.scanner_delay = 0;
     }
     d->ts.frame_ship = (d->ts.frame_ship + 1) % 5;
-    if ((r->owner == d->api) && (d->ts.can_move != NO_MOVE) && (!d->ts.in_frange)) {
+    if ((r->owner == d->api) && g->eto[d->api].have_hyperspace_comm && (!d->ts.in_frange)) {
         lbxgfx_set_new_frame(ui_data.gfx.starmap.reloc_bu_accept, 1);
 
         lbxgfx_draw_frame(271, 163, ui_data.gfx.starmap.reloc_bu_accept);
@@ -147,7 +147,6 @@ void ui_starmap_transport(struct game_s *g, player_id_t active_player)
     d.ts.scanner_delay = 0;
     d.ts.from = g->planet_focus_i[active_player];
     g->planet_focus_i[active_player] = r->dest;
-    d.ts.can_move = (1 || g->eto[active_player].have_hyperspace_comm) ? GOT_HYPERCOMM : NO_MOVE;
     d.ts.ds.xoff1 = 0;
     d.ts.ds.xoff2 = 0;
 
@@ -216,7 +215,7 @@ void ui_starmap_transport(struct game_s *g, player_id_t active_player)
             }
             ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
         }
-        if ((r->owner != active_player) || (d.ts.can_move == NO_MOVE)) {
+        if ((r->owner != active_player) || !g->eto[active_player].have_hyperspace_comm) {
             for (int i = 0; i < g->enroute_num; ++i) {
                 if (oi1 == d.oi_tbl_enroute[i]) {
                     ui_data.starmap.fleet_selected = i;
@@ -262,7 +261,7 @@ void ui_starmap_transport(struct game_s *g, player_id_t active_player)
         for (int i = 0; i < g->galaxy_stars; ++i) {
             if (oi1 == d.oi_tbl_stars[i]) {
                 g->planet_focus_i[active_player] = i;
-                if ((r->owner != active_player) || (d.ts.can_move == NO_MOVE)) {
+                if ((r->owner != active_player) || !g->eto[active_player].have_hyperspace_comm) {
                     d.ts.from = i;
                     flag_done = true;
                     ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
@@ -294,7 +293,7 @@ void ui_starmap_transport(struct game_s *g, player_id_t active_player)
             UIOBJ_CLEAR_LOCAL();
             ui_starmap_fill_oi_tbls(&d);
             ui_starmap_fill_oi_tbl_stars(&d);
-            if ((r->owner == active_player) && (d.ts.can_move != NO_MOVE)) {
+            if ((r->owner == active_player) && g->eto[active_player].have_hyperspace_comm) {
                 oi_cancel = uiobj_add_t0(227, 163, "", ui_data.gfx.starmap.reloc_bu_cancel, MOO_KEY_ESCAPE, -1);
                 if (p->within_frange[active_player] != 0) {
                     oi_accept = uiobj_add_t0(271, 163, "", ui_data.gfx.starmap.reloc_bu_accept, MOO_KEY_SPACE, -1);
@@ -308,7 +307,6 @@ void ui_starmap_transport(struct game_s *g, player_id_t active_player)
         }
     }
     uiobj_unset_callback();
-    uiobj_table_clear();
     uiobj_set_help_id(-1);
     g->planet_focus_i[active_player] = d.ts.from;
 }

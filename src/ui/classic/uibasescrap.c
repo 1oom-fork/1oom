@@ -116,7 +116,6 @@ void ui_basescrap(struct game_s *g, player_id_t active_player)
         }
     }
 
-    uiobj_unset_callback();
-    uiobj_table_clear();
+    uiobj_unset_callback();     /* HACK */
     basescrap_free_data(&d);
 }

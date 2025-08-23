@@ -293,7 +293,10 @@ int ui_races(struct game_s *g, player_id_t api)
         oi_status = UIOBJI_INVALID; \
         oi_sec_minus = UIOBJI_INVALID; \
         oi_sec_plus = UIOBJI_INVALID; \
-        UIOBJI_SET_TBL4_INVALID(oi_tbl_spying, oi_tbl_oppon, oi_tbl_spy_minus, oi_tbl_spy_plus); \
+        UIOBJI_SET_TBL_INVALID(oi_tbl_spying); \
+        UIOBJI_SET_TBL_INVALID(oi_tbl_oppon); \
+        UIOBJI_SET_TBL_INVALID(oi_tbl_spy_minus); \
+        UIOBJI_SET_TBL_INVALID(oi_tbl_spy_plus); \
     } while (0)
 
     UIOBJ_CLEAR_LOCAL();
@@ -443,7 +446,6 @@ int ui_races(struct game_s *g, player_id_t api)
         e->spymode[pi] = (spymode_t)d.tbl_spymode[i];
     }
     uiobj_unset_callback();
-    uiobj_table_clear();
     uiobj_set_help_id(-1);
     lbxpal_select(0, 104, 113);
     races_data_free(&d);
