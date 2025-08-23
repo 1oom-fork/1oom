@@ -10,10 +10,6 @@
 #define UIOBJI_OUTSIDE  0xd8f0
 
 #define UIOBJI_SET_TBL_INVALID(name) do { for (int i = 0; i < (sizeof(name)/sizeof(name[0])); ++i) { name[i] = UIOBJI_INVALID; } } while (0)
-#define UIOBJI_SET_TBL2_INVALID(n0_, n1_) do { for (int i_ = 0; i_ < (sizeof(n0_)/sizeof(n0_[0])); ++i_) { n0_[i_] = UIOBJI_INVALID; n1_[i_] = UIOBJI_INVALID; } } while (0)
-#define UIOBJI_SET_TBL3_INVALID(n0_, n1_, n2_) do { for (int i_ = 0; i_ < (sizeof(n0_)/sizeof(n0_[0])); ++i_) { n0_[i_] = UIOBJI_INVALID; n1_[i_] = UIOBJI_INVALID; n2_[i_] = UIOBJI_INVALID; } } while (0)
-#define UIOBJI_SET_TBL4_INVALID(n0_, n1_, n2_, n3_) do { for (int i_ = 0; i_ < (sizeof(n0_)/sizeof(n0_[0])); ++i_) { n0_[i_] = UIOBJI_INVALID; n1_[i_] = UIOBJI_INVALID; n2_[i_] = UIOBJI_INVALID; n3_[i_] = UIOBJI_INVALID; } } while (0)
-#define UIOBJI_SET_TBL6_INVALID(n0_, n1_, n2_, n3_, n4_, n5_) do { for (int i_ = 0; i_ < (sizeof(n0_)/sizeof(n0_[0])); ++i_) { n0_[i_] = UIOBJI_INVALID; n1_[i_] = UIOBJI_INVALID; n2_[i_] = UIOBJI_INVALID; n3_[i_] = UIOBJI_INVALID; n4_[i_] = UIOBJI_INVALID; n5_[i_] = UIOBJI_INVALID; } } while (0)
 
 extern void uiobj_table_clear(void);
 extern void uiobj_table_set_last(int16_t oi);

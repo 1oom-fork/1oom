@@ -1747,11 +1747,20 @@ int16_t uiobj_add_mousearea(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, 
 
 int16_t uiobj_add_mousearea_limited(int16_t x0, int16_t y0, int16_t x1, int16_t y1, mookey_t key, int16_t aa)
 {
+    uiobj_t *p = &uiobj_tbl[uiobj_table_num];
     if (vgabuf_limits_outside(x0, y0, x1, y1)) {
         return UIOBJI_OUTSIDE;
     }
     vgabuf_limits_clamp_rect(&x0, &y0, &x1, &y1);
-    return uiobj_add_mousearea(x0, y0, x1, y1, key, aa);
+    p->x0 = x0;
+    p->y0 = y0;
+    p->x1 = x1;
+    p->y1 = y1;
+    p->type = 7;
+    p->z0a = aa;
+    p->vptr = 0;
+    p->key = key;
+    return UIOBJI_ALLOC();
 }
 
 int16_t uiobj_add_mousearea_all(mookey_t key, int16_t aa)

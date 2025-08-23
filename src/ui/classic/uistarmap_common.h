@@ -77,7 +77,6 @@ struct starmap_data_s {
         struct {
             bool in_frange;
             uint8_t from;
-            can_move_t can_move;
             struct draw_stars_s ds;
             int frame_ship;
             int frame_scanner;
