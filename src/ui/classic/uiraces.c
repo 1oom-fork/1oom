@@ -443,7 +443,6 @@ int ui_races(struct game_s *g, player_id_t api)
         e->spymode[pi] = (spymode_t)d.tbl_spymode[i];
     }
     uiobj_unset_callback();
-    uiobj_table_clear();
     uiobj_set_help_id(-1);
     lbxpal_select(0, 104, 113);
     races_data_free(&d);

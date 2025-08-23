@@ -704,7 +704,6 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             ui_delay_ticks_or_click(STARMAP_DELAY);
         }
     }
-    uiobj_table_clear();
     uiobj_unset_callback();
     uiobj_set_help_id(-1);
     ui_delay_1();
