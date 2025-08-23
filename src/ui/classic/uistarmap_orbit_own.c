@@ -170,7 +170,10 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
         STARMAP_UIOBJ_CLEAR_FX(); \
         oi_accept = UIOBJI_INVALID; \
         oi_cancel = UIOBJI_INVALID; \
-        UIOBJI_SET_TBL4_INVALID(oi_tbl_p, oi_tbl_m, oi_tbl_a, oi_tbl_n); \
+        UIOBJI_SET_TBL_INVALID(oi_tbl_p); \
+        UIOBJI_SET_TBL_INVALID(oi_tbl_m); \
+        UIOBJI_SET_TBL_INVALID(oi_tbl_a); \
+        UIOBJI_SET_TBL_INVALID(oi_tbl_n); \
     } while (0)
 
     UIOBJ_CLEAR_LOCAL();
@@ -523,7 +526,6 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
         }
     }
     uiobj_unset_callback();
-    uiobj_table_clear();
     uiobj_set_help_id(-1);
     g->planet_focus_i[active_player] = d.oo.from;
 }

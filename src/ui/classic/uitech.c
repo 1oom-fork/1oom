@@ -257,7 +257,12 @@ void ui_tech(struct game_s *g, player_id_t active_player)
         oi_up = UIOBJI_INVALID; \
         oi_down = UIOBJI_INVALID; \
         oi_equals = UIOBJI_INVALID; \
-        UIOBJI_SET_TBL6_INVALID(oi_tbl_lock, oi_tbl_plus, oi_tbl_minus, oi_tbl_field, oi_tbl_hmm15, d.oi_tbl_slider); \
+        UIOBJI_SET_TBL_INVALID(oi_tbl_lock); \
+        UIOBJI_SET_TBL_INVALID(oi_tbl_plus); \
+        UIOBJI_SET_TBL_INVALID(oi_tbl_minus); \
+        UIOBJI_SET_TBL_INVALID(oi_tbl_field); \
+        UIOBJI_SET_TBL_INVALID(oi_tbl_hmm15); \
+        UIOBJI_SET_TBL_INVALID(d.oi_tbl_slider); \
         UIOBJI_SET_TBL_INVALID(oi_tbl_techname); \
     } while (0)
 
@@ -386,7 +391,6 @@ void ui_tech(struct game_s *g, player_id_t active_player)
     }
 
     uiobj_unset_callback();
-    uiobj_table_clear();
     uiobj_set_help_id(-1);
     tech_free_data(&d);
 }
