@@ -21,10 +21,8 @@ static uint8_t game_spy_esp_sub3_sub1(struct game_s *g, uint8_t a0, tech_field_t
 {
     int v = 0;
     for (int i = 0; i < slen; ++i) {
-        uint8_t techi;
         const uint8_t *p;
-        techi = src[i];
-        p = RESEARCH_D0_PTR(g->gaux, field, techi);
+        p = RESEARCH_D0_PTR(g->gaux, field, src[i]);
         if (a0 == p[0]) {
             v = RESEARCH_D0_B1(p);
         }

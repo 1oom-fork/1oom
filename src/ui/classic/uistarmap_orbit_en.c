@@ -253,5 +253,4 @@ void ui_starmap_orbit_en(struct game_s *g, player_id_t active_player)
         }
     }
     uiobj_unset_callback();
-    uiobj_table_clear();
 }

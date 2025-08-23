@@ -205,16 +205,14 @@ void game_fleet_unrefuel(struct game_s *g)
         empiretechorbit_t *e = &(g->eto[pi]);
         for (uint8_t pli = 0; pli < g->galaxy_stars; ++pli) {
             const planet_t *p = &(g->planet[pli]);
-            uint8_t wr;
-            wr = p->within_frange[pi];
-            if (wr != 1) {
+            if (p->within_frange[pi] != 1) {    /* MOO1 does not check this */
                 fleet_orbit_t *r = &(e->orbit[pli]);
                 bool unfueled;
                 unfueled = false;
                 for (int si = 0; si < e->shipdesigns_num; ++si) {
                     if (1
                       && (r->ships[si] != 0)
-                      && ((wr == 0) || ((wr == 2) && (!srd->have_reserve_fuel[si])))
+                      && ((p->within_frange[pi] == 0) || ((p->within_frange[pi] == 2) && (!srd->have_reserve_fuel[si])))
                     ) {
                         unfueled = true;
                         r->ships[si] = 0;
