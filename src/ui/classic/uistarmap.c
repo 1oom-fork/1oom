@@ -67,7 +67,10 @@ static void ui_starmap_fill_oi_slider(struct starmap_data_s *d)
     d->sm.oi_ship = UIOBJI_INVALID;
     d->sm.oi_reloc = UIOBJI_INVALID;
     d->sm.oi_trans = UIOBJI_INVALID;
-    UIOBJI_SET_TBL4_INVALID(d->sm.oi_tbl_slider, d->sm.oi_tbl_slider_lock, d->sm.oi_tbl_slider_minus, d->sm.oi_tbl_slider_plus);
+    UIOBJI_SET_TBL_INVALID(d->sm.oi_tbl_slider);
+    UIOBJI_SET_TBL_INVALID(d->sm.oi_tbl_slider_lock);
+    UIOBJI_SET_TBL_INVALID(d->sm.oi_tbl_slider_minus);
+    UIOBJI_SET_TBL_INVALID(d->sm.oi_tbl_slider_plus);
     if ((p->owner == d->api) && (p->unrest != PLANET_UNREST_REBELLION)) {
         for (planet_slider_i_t i = PLANET_SLIDER_SHIP; i < PLANET_SLIDER_NUM; ++i) {
             int y0;
@@ -253,7 +256,10 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
         d.sm.oi_ship = UIOBJI_INVALID; \
         d.sm.oi_reloc = UIOBJI_INVALID; \
         d.sm.oi_trans = UIOBJI_INVALID; \
-        UIOBJI_SET_TBL4_INVALID(d.sm.oi_tbl_slider, d.sm.oi_tbl_slider_lock, d.sm.oi_tbl_slider_minus, d.sm.oi_tbl_slider_plus); \
+        UIOBJI_SET_TBL_INVALID(d.sm.oi_tbl_slider); \
+        UIOBJI_SET_TBL_INVALID(d.sm.oi_tbl_slider_lock); \
+        UIOBJI_SET_TBL_INVALID(d.sm.oi_tbl_slider_minus); \
+        UIOBJI_SET_TBL_INVALID(d.sm.oi_tbl_slider_plus); \
     } while (0)
 
     UIOBJ_CLEAR_LOCAL();
@@ -704,7 +710,6 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             ui_delay_ticks_or_click(STARMAP_DELAY);
         }
     }
-    uiobj_table_clear();
     uiobj_unset_callback();
     uiobj_set_help_id(-1);
     ui_delay_1();

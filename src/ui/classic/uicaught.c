@@ -105,6 +105,6 @@ void ui_caught(struct game_s *g, player_id_t active_player)
         }
     }
 
-    uiobj_unset_callback();
+    uiobj_unset_callback();     /* HACK */
     caught_data_free(&d);
 }
