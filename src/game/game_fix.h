@@ -25,4 +25,6 @@ extern bool game_fix_orbital_comp;
 In MOO1 space scanners on ships are disabled. */
 extern bool game_fix_space_scanners;
 
+extern void game_enable_fix_bugs(void);
+
 #endif

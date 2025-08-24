@@ -8,6 +8,7 @@
 #include "game.h"
 #include "game_aux.h"
 #include "game_cfg.h"
+#include "game_fix.h"
 #include "game_misc.h"
 #include "game_new.h"
 #include "game_num.h"
@@ -33,6 +34,7 @@ static bool game_opt_undo_enabled = true;
 static bool game_opt_init_saves_enabled = true;
 static bool game_opt_next_turn = false;
 static bool game_opt_save_quit = false;
+static bool game_opt_fix_bugs = false;
 
 static struct game_end_s game_opt_end = { GAME_END_NONE, 0, 0, 0, 0 };
 static struct game_new_options_s game_opt_new = GAME_NEW_OPTS_DEFAULT;
@@ -333,6 +335,9 @@ const struct cmdline_options_s main_cmdline_options[] = {
     { "-use1oom", 0,
       options_disable_bool_var, (void *)&game_opt_use_moo13,
       NULL, "Use 1oom format" },
+    { "-gamefixbugs", 0,
+      options_enable_bool_var, (void *)&game_opt_fix_bugs,
+      NULL, "Fix game bugs" },
     { 0, 0, 0, 0, 0, 0 }
 };
 
@@ -416,6 +421,9 @@ int main_do(void)
     struct game_end_s game_end = game_opt_end;
     if (game_cfg_init()) {
         /* TODO */
+    }
+    if (game_opt_fix_bugs) {
+        game_enable_fix_bugs();
     }
     if (ui_late_init()) {
         return 1;
