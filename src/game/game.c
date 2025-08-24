@@ -553,16 +553,16 @@ int main_do(void)
                 break;
             case GAME_END_WON_GOOD:
                 ui_play_ending_good(game_end.race, game_end.name);
-                break;
+                goto done;
             case GAME_END_WON_TYRANT:
                 ui_play_ending_tyrant(game_end.race, game_end.name);
-                break;
+                goto done;
             case GAME_END_LOST_FUNERAL:
                 ui_play_ending_funeral(game_end.race, game_end.banner_dead);
-                break;
+                goto done;
             case GAME_END_LOST_EXILE:
                 ui_play_ending_exile(game_end.name);
-                break;
+                goto done;
         }
         game_end.type = GAME_END_NONE;
     }
