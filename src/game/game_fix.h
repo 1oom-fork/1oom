@@ -55,4 +55,7 @@ extern bool game_ai_fix_spy_hiding;
 In MOO1, AI can transport population beyond its fuel range. */
 extern bool game_ai_fix_transport_range;
 
+extern void game_enable_fix_bugs(void);
+extern void game_enable_fair_ai(void);
+
 #endif
