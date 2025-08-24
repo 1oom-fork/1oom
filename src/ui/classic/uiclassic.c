@@ -25,6 +25,9 @@
 /* -------------------------------------------------------------------------- */
 
 const struct cmdline_options_s ui_cmdline_options[] = {
+    { "-uinodelay", 0,
+      options_disable_bool_var, (void *)&ui_delay_enabled,
+      NULL, "Disable UI delay" },
     { "-uifixbugs", 0,
       options_enable_bool_var, (void *)&ui_fix_bugs,
       NULL, "Fix UI bugs" },
