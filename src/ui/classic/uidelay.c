@@ -15,7 +15,7 @@
 
 static uint32_t delay_start;
 
-static bool ui_delay_enabled = true;
+bool ui_delay_enabled = true;
 
 /* -------------------------------------------------------------------------- */
 
