@@ -43,7 +43,6 @@ struct ground_data_s {
 
 static void ground_prepare(struct ground_data_s *d)
 {
-    const struct game_s *g = d->gr->g;
     vgabuf_copy_back_from_page3();
     lbxgfx_set_new_frame(d->l.gfx_transprt, 39);
     gfx_aux_draw_frame_to(d->l.gfx_transprt, &ui_data.aux.screen);
@@ -51,6 +50,11 @@ static void ground_prepare(struct ground_data_s *d)
     vgabuf_copy_back_to_page3();
     ui_delay_1();
     ui_sound_stop_music();
+}
+
+static void ground_gfx_prepare(struct ground_data_s *d)
+{
+    const struct game_s *g = d->gr->g;
     for (int i = 0; i < 2; ++i) {
         d->gfx_s[i] = lbxfile_item_get(LBXFILE_LANDING, 0x1b + g->eto[d->gr->s[i].player].race, 0);
     }
@@ -226,6 +230,7 @@ void ui_ground(struct ground_s *gr)
     }
     lbxpal_select(6, -1, 0);
     ui_landing_prepare(&d.l);
+    ground_gfx_prepare(&d); /* WASBUG taken from ground_prepare to avoid *NULL in cb */
     ui_sound_play_music(d.l.music_i);
     lbxpal_build_colortables();
     ui_draw_finish_mode = 2;
