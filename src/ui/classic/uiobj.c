@@ -1850,7 +1850,7 @@ int16_t uiobj_add_alt_str(const char *str)
     {
         char b = *str;
         if ((b >= 'a') && (b <= 'z')) {
-            b -= 'a' - 'A';
+            /* b -= 'a' - 'A'; HACK 1oom uses lowercase letters */
         }
         p->key = b;
     }
