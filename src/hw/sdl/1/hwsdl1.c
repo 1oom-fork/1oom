@@ -234,7 +234,9 @@ int hw_event_handle(void)
                         if (smod & KMOD_ALT) { mod |= MOO_MOD_ALT; }
                         if (smod & KMOD_CTRL) { mod |= MOO_MOD_CTRL; }
                         if (smod & KMOD_META) { mod |= MOO_MOD_META; }
-                        kbd_add_keypress(key_xlat[e.key.keysym.sym], mod, c);
+                        if (key_xlat[e.key.keysym.sym] < MOO_KEY_NUMLOCK) {
+                            kbd_add_keypress(key_xlat[e.key.keysym.sym], mod, c);
+                        }
                     }
                 }
                 break;
