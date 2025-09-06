@@ -304,7 +304,7 @@ void ui_starmap_trans(struct game_s *g, player_id_t active_player)
                 oi_minus = uiobj_add_mousearea(252, 124, 256, 131, MOO_KEY_MINUS, -1);
                 oi_plus = uiobj_add_mousearea(301, 124, 305, 131, MOO_KEY_PLUS, -1);
             }
-            oi_scroll = uiobj_add_tb(6, 6, 2, 2, 108, 86, &scrollx, &scrolly, -1);
+            oi_scroll = uiobj_add_scrollarea(6, 6, 2, 2, 108, 86, &scrollx, &scrolly, -1);
             ui_starmap_fill_oi_ctrl(&d);
             ui_starmap_add_oi_bottom_buttons(&d);
             ui_draw_finish();
