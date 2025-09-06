@@ -52,7 +52,7 @@ extern int16_t uiobj_add_mousearea_limited(uint16_t x0, uint16_t y0, uint16_t x1
 extern int16_t uiobj_add_inputkey(uint32_t key);
 extern int16_t uiobj_add_alt_str(const char *str);
 extern int16_t uiobj_add_ta(uint16_t x, uint16_t y, uint16_t w, const char *str, bool z12, int16_t *vptr, int16_t z18, uint16_t subtype, uint8_t *sp0p, uint16_t sp0v, uint16_t sp1, uint16_t sp2, uint16_t sp3, mookey_t key, int16_t helpid);
-extern int16_t uiobj_add_tb(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t xscale, uint16_t yscale, int16_t *xptr, int16_t *yptr, int16_t helpid);
+extern int16_t uiobj_add_scrollarea(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t xscale, uint16_t yscale, int16_t *xptr, int16_t *yptr, int16_t helpid);
 
 extern void uiobj_dec_y1(int16_t oi);
 extern void uiobj_ta_set_val_0(int16_t oi);

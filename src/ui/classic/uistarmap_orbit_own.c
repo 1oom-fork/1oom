@@ -478,7 +478,7 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
             if (d.in_frange && d.ss.shiptypenon0numsel) {
                 oi_accept = uiobj_add_t0(271, 180, "", ui_data.gfx.starmap.reloc_bu_accept, MOO_KEY_SPACE, -1);
             }
-            oi_scroll = uiobj_add_tb(6, 6, 2, 2, 108, 86, &scrollx, &scrolly, -1);
+            oi_scroll = uiobj_add_scrollarea(6, 6, 2, 2, 108, 86, &scrollx, &scrolly, -1);
             ui_starmap_fill_oi_ctrl(&d);
             for (int i = 0; i < d.ss.sn0.num; ++i) {
                 oi_tbl_p[i] = uiobj_add_t0(288, 35 + i * 26, "", ui_data.gfx.starmap.move_but_p, MOO_KEY_UNKNOWN, -1);
