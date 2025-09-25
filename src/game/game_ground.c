@@ -173,6 +173,7 @@ void game_turn_ground(struct game_s *g)
     struct spy_esp_s steal;
     gr->g = g;
     gr->steal = &steal;
+    gr->death = 0;  /* FIXME HACK: variables from gr are global in MOO1 */
     for (planet_id_t pli = PLANET_0; pli < g->galaxy_stars; ++pli) {
         planet_t *p = &(g->planet[pli]);
         player_id_t powner;
