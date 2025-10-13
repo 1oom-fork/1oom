@@ -24,6 +24,7 @@
 #include "uiobj.h"
 #include "uipal.h"
 #include "uisound.h"
+#include "uistarmap.h"
 #include "uistarmap_common.h"
 #include "uiswitch.h"
 #include "vgabuf.h"
@@ -342,7 +343,8 @@ bool ui_gmap(struct game_s *g, player_id_t active_player)
 {
     struct gmap_data_s d;
     bool flag_done = false, flag_do_focus = false;
-    uiobj_id_t /*oi_col, oi_env, oi_min,*/ oi_ok, oi_tbl_planet[PLANETS_MAX];
+    uiobj_id_t oi_scroll, /*oi_col, oi_env, oi_min,*/ oi_ok, oi_tbl_planet[PLANETS_MAX];
+    int16_t scrollx = 0, scrolly = 0;
 
     gmap_load_data(&d);
     d.g = g;
@@ -364,6 +366,11 @@ bool ui_gmap(struct game_s *g, player_id_t active_player)
         y = (p->y * 185) / g->galaxy_maxy + 7;
         /* FIXME limits not set! ... but no need to limit anyway */
         oi_tbl_planet[i] = uiobj_add_mousearea/*_limited*/(x, y, x + 4, y + 4, MOO_KEY_UNKNOWN, -1);
+    }
+    if (ui_qol_gmap_scroll) {
+        oi_scroll = uiobj_add_scrollarea(7, 7, 1, 1, 224, 185, &scrollx, &scrolly, -1);
+    } else {
+        oi_scroll = UIOBJI_INVALID;
     }
 
     uiobj_set_help_id(9);
@@ -387,6 +394,13 @@ bool ui_gmap(struct game_s *g, player_id_t active_player)
                 flag_done = true;
                 break;
             }
+        }
+        if (ui_qol_gmap_scroll && (oi == oi_scroll)) {
+            int x, y;
+            x = (scrollx * g->galaxy_maxx) / 224;
+            y = (scrolly * g->galaxy_maxy) / 185;
+            ui_starmap_set_pos(g, x, y);
+            flag_done = true;
         }
         if (!flag_done) {
             gmap_draw_cb(&d);

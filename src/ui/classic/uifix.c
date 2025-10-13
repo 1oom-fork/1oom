@@ -19,3 +19,4 @@ bool ui_qol_starmap_msg_pos = false;
 bool ui_qol_starmap_no_qmark_cursor = false;
 bool ui_qol_starmap_planet_neb = false;
 bool ui_qol_starmap_planet_pic = false;
+bool ui_qol_gmap_scroll = false;

@@ -45,4 +45,7 @@ extern bool ui_qol_starmap_planet_neb;
 /* Enable planet image button for all explored planets */
 extern bool ui_qol_starmap_planet_pic;
 
+/* Enable interactive area for map screen */
+extern bool ui_qol_gmap_scroll;
+
 #endif
