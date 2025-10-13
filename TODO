@@ -1,0 +1,35 @@
+- Add ability to rename planets/ships
+- Add weapon filters (ui_design)
+- Add simplified message filters
+- Add macro tools for planet sliders
+- Add technology cost multipliers
+- Migrate q3 console
+  - Add cheats/debug
+  - Add planet search
+- Separate galaxy generator
+  - Add custom game options
+  - Map editor
+- Fix Shift key behavior related to +/=
+- Clarify the need for safe string operations
+- Improve -data, -user behavior (see chocolate_doom)
+- Fix unicode input
+- Add better Load/Save UI
+- Add map zoom in/out
+  - Add more planet info
+- Analyze WASBUG and other comments
+- Fix cursor
+  - Fix original behavior
+  - Restore buffer juggling
+  - Add HW cursor option
+- Improve/fix multiplayer
+- Restore the original way of storing build_finished messages
+- Add graphical report about missing LBX
+- Add uiplanets/uifleet sorting
+- Add config generator
+- Add ability to cycle fleets and toggle cursor mode
+- Add Ctrl/Alt/Shift modifiers
+- Add Ships menu from 1.11.7
+- Add slider_respects_locks rules for planet/tech sliders
+- Add update_target_on_hover feature
+- Improve game_update_eco_on waste/add to MOO1.3 patch
+- Add max population column (uiplanets)
