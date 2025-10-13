@@ -1,0 +1,58 @@
+- Add ability to rename planets/ships
+- Add weapon filters (ui_design)
+- Add simplified message filters
+- Add macro tools for planet sliders
+- Add technology cost multipliers
+- Migrate q3 console
+  - Add cheats/debug
+  - Add planet search
+- Separate galaxy generator
+  - Add custom game options
+  - Map editor
+- Fix Shift key behavior related to +/=
+- Clarify the need for safe string operations
+- Improve -data, -user behavior (see chocolate_doom)
+- Check IS_HUMAN/IS_AI
+- Fix unicode input
+- Add better Load/Save UI
+- Add map zoom in/out
+  - Add more planet info
+- Analyze WASBUG and other comments
+- Fix cursor
+  - Fix original behavior
+  - Restore buffer juggling
+  - Add HW cursor option
+- Improve/fix multiplayer
+- Restore the original way of storing build_finished messages
+- Add graphical report about missing LBX
+- Add uiplanets/uifleet sorting
+- Add config generator
+- Add ability to cycle fleets and toggle cursor mode
+- Add Ctrl/Alt/Shift modifiers
+- Add Ships menu from 1.11.7
+- Add slider_respects_locks rules for planet/tech sliders
+- Add update_target_on_hover feature
+- Improve game_update_eco_on waste/add to MOO1.3 patch
+- Add max population column (uiplanets)
+- Add yearly saves
+- Add tech bonus indicator
+- Add ability to disable mouse warp on hotkey or focus
+- Add battlefield grid
+- Add factory cost fix/colonized factories fix
+- Add eco slider can show MAX
+- Add F4/F5 can iterate over fleets of the same owner
+- Add toggle for planet info (uistarview)
+- Add Alt+f, Ctrl+r (1.11)
+- Add mouse scroll
+- Add smoother starmap scrolling (?)
+- Add planets list sorting
+- Do not readjust eco or update seen on load/ update everything after audience
+- Add mouse wheel support
+- Show 1oom version in main menu
+- Do not deselect on partial fleet send
+- Add 'production' button for reserve transfer (and new interface)
+- Add 'bases' button
+
+-CFG:
+>>skipintro opt
+>>scroll speed opt
