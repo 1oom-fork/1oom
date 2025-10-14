@@ -8,6 +8,7 @@
 #include "comp.h"
 #include "game.h"
 #include "game_aux.h"
+#include "game_fix.h"
 #include "game_num.h"
 #include "game_shiptech.h"
 #include "game_str.h"
@@ -346,18 +347,22 @@ void game_update_within_range(struct game_s *g)
                     p->within_frange[pi] = 0;
                 }
                 BOOLVEC_SET(p->within_srange, pi, (mindist2 <= srange));
-                if (BOOLVEC_IS0(p->within_srange, pi) && (srange2 > 0)) {
+                if (BOOLVEC_IS0(p->within_srange, pi) && ((srange2 > 0) || game_fix_space_scanners)) {
                     mindist1 = 10000;
                     for (int j = 0; (j < g->enroute_num) && (mindist1 > srange2); ++j) {
                         if (g->enroute[j].owner == pi) {
                             dist = util_math_dist_fast(g->enroute[j].x, g->enroute[j].y, p->x, p->y);
                             /* dist = (dist + 9) / 10; BUG erroneous conversion */
                             if (dist < mindist1) {
-                                dist = mindist1;    /* BUG supposed to be mindist1 = dist instead */
+                                if (game_fix_space_scanners) {
+                                    mindist1 = dist;
+                                } else {
+                                    /* dist = mindist1; BUG scanners disabled */
+                                }
                             }
                         }
                     }
-                    if (mindist1 <= srange2) { /* never true */
+                    if (mindist1 <= srange2) {
                         BOOLVEC_SET1(p->within_srange, pi);
                     }
                 }

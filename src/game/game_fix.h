@@ -21,4 +21,8 @@ In MOO1 the bonus is given for the best battle computer in any ship design
 regardless of if any such ships are present in the fleet in orbit. */
 extern bool game_fix_orbital_comp;
 
+/* Enable space scanners for ships.
+In MOO1 space scanners on ships are disabled. */
+extern bool game_fix_space_scanners;
+
 #endif
