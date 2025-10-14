@@ -969,6 +969,12 @@ static void game_generate_research(struct game_s *g, const uint8_t *rflag)
                                     case TECH_PLAN_COMPLETE_ECO_RESTORATION:
                                         flag_skip = true;
                                         break;
+                                    case TECH_PLAN_ADVANCED_SOIL_ENRICHMENT:
+                                    case TECH_PLAN_ADVANCED_ECO_RESTORATION:
+                                        if (game_fix_silicoid_tech) {
+                                            flag_skip = true;
+                                        }
+                                        break;
                                     default:
                                         break;
                                     }
@@ -1053,7 +1059,7 @@ static void game_generate_research(struct game_s *g, const uint8_t *rflag)
                         flag_got_essentials = false;
                     }
                 }
-                if (field == TECH_FIELD_PLANETOLOGY) {
+                if (field == (game_fix_shield_tech ? TECH_FIELD_FORCE_FIELD : TECH_FIELD_PLANETOLOGY)) {
                     bool flag_ok = false;
                     for (int tier = 0; tier < TECH_TIER_NUM; ++tier) {
                         for (int l = 0; l < 3; ++l) {

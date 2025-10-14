@@ -10,6 +10,7 @@
 #include "game_ai.h"
 #include "game_aux.h"
 #include "game_battle.h"
+#include "game_fix.h"
 #include "game_misc.h"
 #include "game_num.h"
 #include "game_str.h"
@@ -307,7 +308,14 @@ static void game_battle_missile_hit(struct battle_s *bt, int missile_i, int targ
         }
         SETMIN(misschance, 95);
         for (int i = 0; i < m->nummissiles; ++i) {
-            if ((misschance - w->extraacc * 10) <= rnd_1_n(100, &g->seed)) {
+            bool hit;
+            int v = misschance - w->extraacc * 10;
+            if (game_fix_bt_min_missile_hit) {
+                hit = (v < rnd_1_n(100, &g->seed));
+            } else {
+                hit = (v <= rnd_1_n(100, &g->seed));
+            }
+            if (hit) {
                 if ((b->misshield - w->tech_i) < rnd_1_n(100, &g->seed)) {
                     int v;
                     v = MIN(damage, b->hp1);
@@ -1690,7 +1698,7 @@ bool game_battle_attack(struct battle_s *bt, battle_item_id_t attacker_i, battle
                                 dmg = (dmg + 1) / 2;
                                 dmg += w->damagemin;
                                 dmg /= damagediv;
-                                dmg -= bd->absorb / (w->halveshield ? 2 : 1);
+                                dmg -= bd->absorb / (game_fix_oracle_interface ? game_battle_get_absorbdiv(b, b->wpn[i].t) : (w->halveshield ? 2 : 1));
                                 dmg *= w->damagemul;
                                 dmg *= damagemul2;
                                 if (bd->displacement && (rnd_1_n(100, &bt->g->seed) < 35)) {
