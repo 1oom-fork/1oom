@@ -9,4 +9,6 @@ struct game_end_s;
 extern void game_event_new(struct game_s *g);
 extern bool game_event_run(struct game_s *g, struct game_end_s *ge);
 
+extern bool game_skip_random_news;
+
 #endif
