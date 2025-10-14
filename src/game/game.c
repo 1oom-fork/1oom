@@ -8,6 +8,7 @@
 #include "game.h"
 #include "game_aux.h"
 #include "game_cfg.h"
+#include "game_event.h"
 #include "game_fix.h"
 #include "game_misc.h"
 #include "game_new.h"
@@ -342,6 +343,9 @@ const struct cmdline_options_s main_cmdline_options[] = {
     { "-gamefairai", 0,
      options_enable_bool_var, (void *)&game_opt_fair_ai,
      NULL, "Fix unfair AI bugs" },
+    { "-gameskiprandomnews", 0,
+     options_enable_bool_var, (void *)&game_skip_random_news,
+     NULL, "Disable random news" },
     { 0, 0, 0, 0, 0, 0 }
 };
 
