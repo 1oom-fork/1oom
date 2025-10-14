@@ -10,6 +10,7 @@
 #include "game_aux.h"
 #include "game_battle_human.h"
 #include "game_diplo.h"
+#include "game_fix.h"
 #include "game_fleet.h"
 #include "game_num.h"
 #include "game_parsed.h"
@@ -271,7 +272,7 @@ void game_battle_prepare(struct battle_s *bt, int party_r, int party_l, planet_i
         strncpy(sp->name, game_str_tbl_monsh_names[mi], SHIP_NAME_LEN);
         sp->name[SHIP_NAME_LEN - 1] = 0;
         if (mi == MONSTER_GUARDIAN) {
-            if (g->difficulty == DIFFICULTY_HARD) {
+            if (g->difficulty == (game_fix_guardian_repair ? DIFFICULTY_IMPOSSIBLE : DIFFICULTY_HARD)) {
                 sp->special[1] = SHIP_SPECIAL_ADV_DAMAGE_CONTROL;
             } else if (g->difficulty == DIFFICULTY_HARD) {
                 sp->special[1] = SHIP_SPECIAL_AUTOMATED_REPAIR;
@@ -279,7 +280,7 @@ void game_battle_prepare(struct battle_s *bt, int party_r, int party_l, planet_i
             sp->sbmask |= (1 << SHIP_SPECIAL_BOOL_ORACLE);
             if (g->difficulty == DIFFICULTY_HARD) {
                 sp->repair = 15;
-            } else if (g->difficulty == DIFFICULTY_HARD) {
+            } else if (g->difficulty == (game_fix_guardian_repair ? DIFFICULTY_IMPOSSIBLE : DIFFICULTY_HARD)) {
                 sp->repair = 30;
             }
         }
