@@ -23,6 +23,10 @@ extern bool game_fix_orbital_comp;
 /* Fix sliders not adjusting correctly after building a Stargate. */
 extern bool game_fix_sg_finished;
 
+/* Enable space scanners for ships.
+In MOO1 space scanners on ships are disabled. */
+extern bool game_fix_space_scanners;
+
 /* Fix spy cost progression.
 MOO1 does not reset spycost between target players and spies become
 disproportionately more expensive for each subsequent opponent. */
