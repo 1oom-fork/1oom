@@ -8,6 +8,7 @@
 #include "comp.h"
 #include "game.h"
 #include "game_aux.h"
+#include "game_fix.h"
 #include "game_num.h"
 #include "game_shiptech.h"
 #include "game_str.h"
@@ -72,12 +73,17 @@ void game_update_maint_costs(struct game_s *g)
             totalcost += tbl_ships[si] * sd->cost;
         }
         totalcost = totalcost / 50;
-        SETMIN(totalcost, game_num_max_ship_maint);
+        if (!game_fix_sg_maint_overflow) {
+            SETMIN(totalcost, game_num_max_ship_maint);
+        }
         for (planet_id_t i = PLANET_0; i < g->galaxy_stars; ++i) {
             const planet_t *p = &(g->planet[i]);
             if (p->have_stargate && (p->owner == pi)) {
                 totalcost += 100;
             }
+        }
+        if (game_fix_sg_maint_overflow) {
+            SETMIN(totalcost, game_num_max_ship_maint);
         }
         bases = 0;
         for (planet_id_t i = PLANET_0; i < g->galaxy_stars; ++i) {
@@ -345,18 +351,22 @@ void game_update_within_range(struct game_s *g)
                     p->within_frange[pi] = 0;
                 }
                 BOOLVEC_SET(p->within_srange, pi, (mindist2 <= srange));
-                if (BOOLVEC_IS0(p->within_srange, pi) && (srange2 > 0)) {
+                if (BOOLVEC_IS0(p->within_srange, pi) && ((srange2 > 0) || game_fix_space_scanners)) {
                     mindist1 = 10000;
                     for (fleet_enroute_id_t j = FLEET_ENROUTE_0; (j < g->enroute_num) && (mindist1 > srange2); ++j) {
                         if (g->enroute[j].owner == pi) {
                             dist = util_math_dist_fast(g->enroute[j].x, g->enroute[j].y, p->x, p->y);
                             /* dist = (dist + 9) / 10; BUG erroneous conversion */
                             if (dist < mindist1) {
-                                dist = mindist1;    /* BUG supposed to be mindist1 = dist instead */
+                                if (game_fix_space_scanners) {
+                                    mindist1 = dist;
+                                } else {
+                                    /* dist = mindist1; BUG scanners disabled */
+                                }
                             }
                         }
                     }
-                    if (mindist1 <= srange2) { /* never true */
+                    if (mindist1 <= srange2) {
                         BOOLVEC_SET1(p->within_srange, pi);
                     }
                 }

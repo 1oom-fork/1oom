@@ -5,11 +5,18 @@
 /* -------------------------------------------------------------------------- */
 
 bool game_fix_broken_garbage = false;
+bool game_fix_bt_min_missile_hit = false;
+bool game_fix_dead_ai_designs_ships = false;
+bool game_fix_guardian_repair = false;
 bool game_fix_max_factories = false;
+bool game_fix_oracle_interface = false;
 bool game_fix_orbital_weap_any = false;
 bool game_fix_orbital_torpedo = false;
 bool game_fix_orbital_comp = false;
 bool game_fix_sg_finished = false;
+bool game_fix_sg_maint_overflow = false;
+bool game_fix_silicoid_tech = false;
+bool game_fix_space_scanners = false;
 bool game_fix_spy_cost = false;
 bool game_ai_fix_4th_colony_curse = false;
 bool game_ai_fix_cancelled_threat = false;

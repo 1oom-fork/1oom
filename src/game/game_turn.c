@@ -148,6 +148,9 @@ static void game_turn_ai_design_ships(struct game_s *g)
         if (--g->eto[pi].ai_p2_countdown > 0) {
             continue;
         }
+        if (game_fix_dead_ai_designs_ships && !IS_ALIVE(g, pi)) {
+            continue;
+        }
         game_ai->turn_p2(g, pi);
     }
 }

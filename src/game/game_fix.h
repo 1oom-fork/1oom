@@ -6,8 +6,22 @@
 /* Remove broken redundant code. */
 extern bool game_fix_broken_garbage;
 
+/* At least 5% of missile will always hit (was 6%) */
+extern bool game_fix_bt_min_missile_hit;
+
+/* Yes, dead AI design ships in MOO1.
+Fixing that is enough to avoid some hangs against Repulsor Beam. */
+extern bool game_fix_dead_ai_designs_ships;
+
+/* Give Guardian Advanced Damage Control on impossible.
+MOO1 has Automated Repair (but shows ADC) on hard and nothing on impossible. */
+extern bool game_fix_guardian_repair;
+
 /* The 2500 factories limit is too low for Meklars. */
 extern bool game_fix_max_factories;
+
+/* Fix (enable) Oracle Interface. */
+extern bool game_fix_oracle_interface;
 
 /* Allow orbital bombardment with any weapon type.
 In MOO1 neither Death Ray, Crystal Ray nor Amoeba Stream can be used for
@@ -25,6 +39,18 @@ extern bool game_fix_orbital_comp;
 
 /* Fix sliders not adjusting correctly after building a Stargate. */
 extern bool game_fix_sg_finished;
+
+/* 8th stargate bug corrected (no ship maintenance overflow). */
+extern bool game_fix_sg_maint_overflow;
+
+/* Silicoids have most of the tech useless to them not appear in their
+research tree. However, Advanced Eco Restoration and
+Advanced Soil Enrichment can still appear. This must be an oversight. */
+extern bool game_fix_silicoid_tech;
+
+/* Enable space scanners for ships.
+In MOO1 space scanners on ships are disabled. */
+extern bool game_fix_space_scanners;
 
 /* Fix spy cost progression.
 MOO1 does not reset spycost between target players and spies become

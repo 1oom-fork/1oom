@@ -969,6 +969,12 @@ static void game_generate_research(struct game_s *g, const uint8_t *rflag)
                                     case TECH_PLAN_COMPLETE_ECO_RESTORATION:
                                         flag_skip = true;
                                         break;
+                                    case TECH_PLAN_ADVANCED_SOIL_ENRICHMENT:
+                                    case TECH_PLAN_ADVANCED_ECO_RESTORATION:
+                                        if (game_fix_silicoid_tech) {
+                                            flag_skip = true;
+                                        }
+                                        break;
                                     default:
                                         break;
                                     }
