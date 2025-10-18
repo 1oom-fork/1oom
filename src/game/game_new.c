@@ -647,7 +647,7 @@ static void game_generate_race_banner(struct game_s *g)
     for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         race_t r;
         r = g->eto[i].race;
-        g->eto[i].trait1 = game_num_tbl_trait1[r][rnd_0_nm1(TRAIT1_TBL_NUM, &g->seed)];
+        g->eto[i].trait1 = game_num_tbl_trait1_vanilla[r][rnd_0_nm1(TRAIT1_TBL_NUM, &g->seed)];
     }
 }
 
