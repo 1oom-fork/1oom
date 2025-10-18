@@ -38,6 +38,8 @@ extern uint16_t game_num_base_hp[BASE_HP_TBL_NUM];
 #define TRAIT1_TBL_NUM 10
 #define TRAIT2_TBL_NUM 12
 extern uint8_t game_num_tbl_trait1[RACE_NUM][TRAIT1_TBL_NUM];
+/* BUG?: TRAIT2_TBL_NUM */
+extern uint8_t game_num_tbl_trait1_vanilla[RACE_NUM][TRAIT2_TBL_NUM];
 extern uint8_t game_num_tbl_trait2[RACE_NUM][TRAIT2_TBL_NUM];
 #define PSHIELD_NUM 5
 extern uint16_t game_num_pshield_cost[PSHIELD_NUM];
