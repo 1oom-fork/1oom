@@ -1,3 +1,5 @@
+This version of the game is no longer in development. Check out the vanilla branch to get an idea of ​​the latest engine version.
+
 1oom
 ====
 
