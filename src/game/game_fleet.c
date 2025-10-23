@@ -203,7 +203,7 @@ void game_fleet_unrefuel(struct game_s *g)
     for (player_id_t pi = PLAYER_0; pi < g->players; ++pi) {
         const shipresearch_t *srd = &(g->srd[pi]);
         empiretechorbit_t *e = &(g->eto[pi]);
-        for (uint8_t pli = 0; pli < g->galaxy_stars; ++pli) {
+        for (planet_id_t pli = PLANET_0; pli < g->galaxy_stars; ++pli) {
             const planet_t *p = &(g->planet[pli]);
             uint8_t wr;
             wr = p->within_frange[pi];

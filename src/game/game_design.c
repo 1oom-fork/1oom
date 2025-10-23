@@ -665,7 +665,7 @@ void game_design_scrap(struct game_s *g, player_id_t player, int shipi, bool fla
     if ((e->shipdesigns_num <= 1) || (shipi >= e->shipdesigns_num)) {
         return;
     }
-    for (int i = 0; i < g->galaxy_stars; ++i) {
+    for (planet_id_t i = PLANET_0; i < g->galaxy_stars; ++i) {
         fleet_orbit_t *r = &(e->orbit[i]);
         for (int j = shipi; j < (NUM_SHIPDESIGNS - 1); ++j) {
             r->ships[j] = r->ships[j + 1];
@@ -682,7 +682,7 @@ void game_design_scrap(struct game_s *g, player_id_t player, int shipi, bool fla
         }
     }
     e->reserve_bc += (srd->shipcount[shipi] * srd->design[shipi].cost) / 4;
-    for (int i = 0; i < g->galaxy_stars; ++i) {
+    for (planet_id_t i = PLANET_0; i < g->galaxy_stars; ++i) {
         planet_t *p = &(g->planet[i]);
         int bs;
         bs = p->buildship;

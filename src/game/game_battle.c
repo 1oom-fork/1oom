@@ -141,7 +141,7 @@ static void game_battle_post(struct game_s *g, player_id_t loser, int winner, ui
             shiptypes[i] = i;
             ships[i] = o->ships[i];
         }
-        for (int i = 0; i < g->galaxy_stars; ++i) {
+        for (planet_id_t i = PLANET_0; i < g->galaxy_stars; ++i) {
             const planet_t *pt = &g->planet[i];
             if ((i != from) && (pt->owner == loser)) {
                 int dist;
@@ -288,7 +288,7 @@ void game_battle_handle_all(struct game_s *g)
         monster_planet[MONSTER_GUARDIAN] = g->evn.planet_orion_i;
     }
     /* FIXME refactor this so that human/AI conflicts can be resolved in parallel in (non-local) multiplayer */
-    for (int pli = 0; pli < g->galaxy_stars; ++pli) {
+    for (planet_id_t pli = PLANET_0; pli < g->galaxy_stars; ++pli) {
         planet_t *p = &(g->planet[pli]);
         player_id_t owner;
         int sum_forces;

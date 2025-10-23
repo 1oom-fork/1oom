@@ -558,7 +558,7 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
             ui_draw_line_limit(tx, y0, tx, y1, 4);
         }
     }
-    for (int pi = 0; pi < g->galaxy_stars; ++pi) {
+    for (planet_id_t pi = PLANET_0; pi < g->galaxy_stars; ++pi) {
         const planet_t *p = &g->planet[pi];
         if ((p->owner == d->api) && (p->reloc != pi)) {
             const planet_t *p2 = &g->planet[p->reloc];
@@ -570,7 +570,7 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
             ui_draw_line_limit_ctbl(x0, y0, x1, y1, colortbl_line_reloc, 5, ui_data.starmap.line_anim_phase);
         }
     }
-    for (int pi = 0; pi < g->galaxy_stars; ++pi) {
+    for (planet_id_t pi = PLANET_0; pi < g->galaxy_stars; ++pi) {
         planet_t *p = &g->planet[pi];
         uint8_t *gfx = ui_data.gfx.starmap.stars[p->star_type + p->look];
         lbxgfx_set_new_frame(gfx, (p->frame < 4) ? p->frame : 0);
@@ -678,7 +678,7 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
         lbxfont_select(2, 8, 0, 0);
         lbxfont_print_str_center_limit(tx + 2, ty + 5, game_str_sm_amoeba, UI_SCREEN_W);
     }
-    for (int pi = 0; pi < g->galaxy_stars; ++pi) {
+    for (planet_id_t pi = PLANET_0; pi < g->galaxy_stars; ++pi) {
         const planet_t *p = &g->planet[pi];
         if (BOOLVEC_IS1(p->within_srange, d->api)) {
             player_id_t tblorbit[PLAYER_NUM];
@@ -805,12 +805,12 @@ void ui_starmap_fill_oi_tbls(struct starmap_data_s *d)
     uiobj_set_limits(STARMAP_LIMITS);
     UIOBJI_SET_TBL_INVALID(d->oi_tbl_enroute);
     UIOBJI_SET_TBL_INVALID(d->oi_tbl_transport);
-    for (int i = 0; i < g->galaxy_stars; ++i) {
+    for (planet_id_t i = PLANET_0; i < g->galaxy_stars; ++i) {
         for (player_id_t j = PLAYER_0; j < g->players; ++j) {
             d->oi_tbl_pl_stars[j][i] = UIOBJI_INVALID;
         }
     }
-    for (int i = 0; i < g->galaxy_stars; ++i) {
+    for (planet_id_t i = PLANET_0; i < g->galaxy_stars; ++i) {
         const planet_t *p = &(g->planet[i]);
         if (BOOLVEC_IS1(p->within_srange, d->api)) {
             int numorbits, x0, y0;
@@ -856,7 +856,7 @@ void ui_starmap_fill_oi_tbl_stars(struct starmap_data_s *d)
     int x = ui_data.starmap.x;
     int y = ui_data.starmap.y;
     uiobj_set_limits(STARMAP_LIMITS);
-    for (int i = 0; i < g->galaxy_stars; ++i) {
+    for (planet_id_t i = PLANET_0; i < g->galaxy_stars; ++i) {
         const planet_t *p = &(g->planet[i]);
         int x0, y0;
         x0 = (p->x - x) * 2 + 8;
@@ -871,7 +871,7 @@ void ui_starmap_fill_oi_tbl_stars_own(struct starmap_data_s *d, player_id_t owne
     int x = ui_data.starmap.x;
     int y = ui_data.starmap.y;
     uiobj_set_limits(STARMAP_LIMITS);
-    for (int i = 0; i < g->galaxy_stars; ++i) {
+    for (planet_id_t i = PLANET_0; i < g->galaxy_stars; ++i) {
         const planet_t *p = &(g->planet[i]);
         if (p->owner == owner) {
             int x0, y0;

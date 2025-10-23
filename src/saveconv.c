@@ -1184,7 +1184,7 @@ static int savetype_en_text(const struct game_s *g, const char *fname)
     }
     OUTLINETBL("planet_focus_i", g->players, g->planet_focus_i);
     OUTFLUSH();
-    for (int i = 0; i < g->galaxy_stars; ++i) {
+    for (planet_id_t i = PLANET_0; i < g->galaxy_stars; ++i) {
         const planet_t *p = &(g->planet[i]);
         text_dump_prefix_add_tbl(tp, "planet", ".", i);
         OUTLINES("name", p->name);
@@ -1237,7 +1237,7 @@ static int savetype_en_text(const struct game_s *g, const char *fname)
         OUTFLUSH();
     }
     for (player_id_t j = PLAYER_0; j < g->players; ++j) {
-        for (int i = 0; i < g->galaxy_stars; ++i) {
+        for (planet_id_t i = PLANET_0; i < g->galaxy_stars; ++i) {
             const seen_t *s = &(g->seen[j][i]);
             OUTLINE "seen[%i][%i] = { .owner = %i, .pop = %i, .bases = %i, .factories = %i }\n", j, i, s->owner, s->pop, s->bases, s->factories);
         }
@@ -1314,7 +1314,7 @@ static int savetype_en_text(const struct game_s *g, const char *fname)
         OUTLINETBL("tech.completed", TECH_FIELD_NUM, e->tech.completed);
         OUTLINEI("shipdesigns_num", e->shipdesigns_num);
         OUTFLUSH();
-        for (int i = 0; i < g->galaxy_stars; ++i) {
+        for (planet_id_t i = PLANET_0; i < g->galaxy_stars; ++i) {
             text_dump_prefix_add_tbl(tp, "orbit", ".", i);
             OUTLINETBLNON0("ships", e->shipdesigns_num, e->orbit[i].ships);
             text_dump_prefix_del(tp);

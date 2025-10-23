@@ -119,7 +119,7 @@ static void gmap_draw_cb(void *vptr)
         }
     }
 
-    for (int i = 0; i < g->galaxy_stars; ++i) {
+    for (planet_id_t i = PLANET_0; i < g->galaxy_stars; ++i) {
         const planet_t *p = &(g->planet[i]);
         if (BOOLVEC_IS1(p->within_srange, d->api)) {
             player_id_t tbl_have_orbit_owner[PLAYER_NUM];
@@ -148,7 +148,7 @@ static void gmap_draw_cb(void *vptr)
         }
     }
 
-    for (int i = 0; i < g->galaxy_stars; ++i) {
+    for (planet_id_t i = PLANET_0; i < g->galaxy_stars; ++i) {
         const planet_t *p = &(g->planet[i]);
         uint8_t *gfx;
         int x, y;
@@ -169,7 +169,7 @@ static void gmap_draw_cb(void *vptr)
         }
     }
 
-    for (int i = 0; i < g->galaxy_stars; ++i) {
+    for (planet_id_t i = PLANET_0; i < g->galaxy_stars; ++i) {
         const planet_t *p = &(g->planet[i]);
         uint8_t *gfx;
         player_id_t owner;
@@ -315,7 +315,7 @@ static void ui_gmap_basic_draw_galaxy(struct gmap_basic_data_s *d)
         y = (g->nebula_y[i] * 171) / g->galaxy_maxy + 6;
         lbxgfx_draw_frame_offs(x, y, ui_data.gfx.starmap.smnebula[i], UI_SCREEN_W);
     }
-    for (int i = 0; i < g->galaxy_stars; ++i) {
+    for (planet_id_t i = PLANET_0; i < g->galaxy_stars; ++i) {
         const planet_t *p = &(g->planet[i]);
         uint8_t *gfx;
         int x, y;
@@ -352,7 +352,7 @@ bool ui_gmap(struct game_s *g, player_id_t active_player)
     /*oi_col =*/ uiobj_add_t3(246, 27, "", d.gfx_but_col, &(d.mode), 0, MOO_KEY_c, -1);
     /*oi_env =*/ uiobj_add_t3(246, 47, "", d.gfx_but_env, &(d.mode), 1, MOO_KEY_e, -1);
     /*oi_min =*/ uiobj_add_t3(246, 67, "", d.gfx_but_min, &(d.mode), 2, MOO_KEY_m, -1);
-    for (int i = 0; i < g->galaxy_stars; ++i) {
+    for (planet_id_t i = PLANET_0; i < g->galaxy_stars; ++i) {
         const planet_t *p = &(g->planet[i]);
         int x, y;
         x = (p->x * 224) / g->galaxy_maxx + 7;
@@ -375,7 +375,7 @@ bool ui_gmap(struct game_s *g, player_id_t active_player)
         if (oi != 0) {
             ui_sound_play_sfx_24();
         }
-        for (int i = 0; i < g->galaxy_stars; ++i) {
+        for (planet_id_t i = PLANET_0; i < g->galaxy_stars; ++i) {
             if (oi == oi_tbl_planet[i]) {
                 g->planet_focus_i[active_player] = i;
                 flag_do_focus = true;
@@ -464,7 +464,7 @@ void ui_gmap_basic_draw_frame(void *ctx, player_id_t pi)
                 lbxgfx_draw_frame_offs(x, y, gfx, UI_SCREEN_W);
             }
         }
-        for (int i = 0; i < g->galaxy_stars; ++i) {
+        for (planet_id_t i = PLANET_0; i < g->galaxy_stars; ++i) {
             const planet_t *p = &(g->planet[i]);
             if (BOOLVEC_IS1(p->within_srange, pi)) {
                 player_id_t tbl_have_orbit_owner[PLAYER_NUM];

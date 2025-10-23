@@ -460,7 +460,7 @@ void game_spy_turn(struct game_s *g, struct spy_turn_s *st)
     for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         empiretechorbit_t *e = &(g->eto[i]);
         have_planet[i] = false;
-        for (int j = 0; j < g->galaxy_stars; ++j) {
+        for (planet_id_t j = PLANET_0; j < g->galaxy_stars; ++j) {
             if (g->planet[j].owner == i) {
                 have_planet[i] = true;
                 break;

@@ -155,7 +155,7 @@ static void ui_fleet_sub(struct fleet_data_s *d)
     const struct game_s *g = d->g;
     const empiretechorbit_t *e = &(g->eto[d->api]);
     int num = 0, sd_num = e->shipdesigns_num;
-    for (int i = 0; i < g->galaxy_stars; ++i) {
+    for (planet_id_t i = PLANET_0; i < g->galaxy_stars; ++i) {
         const fleet_orbit_t *r = &(e->orbit[i]);
         for (int j = 0; j < sd_num; ++j) {
             if (r->ships[j] != 0) {

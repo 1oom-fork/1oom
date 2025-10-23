@@ -143,9 +143,6 @@ typedef struct planet_s {
     uint16_t total_inbound[PLAYER_NUM];
 } planet_t;
 
-#define PLANETS_MAX 108
-#define PLANET_NONE 255
-
 struct game_s;
 
 extern void game_planet_destroy(struct game_s *g, uint8_t planet_i, player_id_t attacker);
