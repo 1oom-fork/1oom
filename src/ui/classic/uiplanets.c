@@ -346,7 +346,7 @@ again:
     d.pos = 0;
     d.num = 0;
 
-    for (int i = 0; i < g->galaxy_stars; ++i) {
+    for (planet_id_t i = PLANET_0; i < g->galaxy_stars; ++i) {
         if (g->planet[i].owner == active_player) {
             if (i == g->planet_focus_i[active_player]) {
                 d.pos = (ui_fix_planet_list_pos ? d.num : i) - 5;

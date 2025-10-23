@@ -37,7 +37,7 @@ static void game_election_prepare(struct election_s *el)
     el->tbl_ei[num] = el->first_human;
     el->num = num;
     memset(tbl_votes, 0, sizeof(tbl_votes));
-    for (int i = 0; i < g->galaxy_stars; ++i) {
+    for (planet_id_t i = PLANET_0; i < g->galaxy_stars; ++i) {
         const planet_t *p = &(g->planet[i]);
         if ((p->owner != PLAYER_NONE) && (p->unrest != PLANET_UNREST_REBELLION)) {
             tbl_votes[p->owner] += p->pop;

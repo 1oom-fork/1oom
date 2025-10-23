@@ -175,7 +175,7 @@ void game_turn_ground(struct game_s *g)
     struct spy_esp_s steal;
     gr->g = g;
     gr->steal = &steal;
-    for (int pli = 0; pli < g->galaxy_stars; ++pli) {
+    for (planet_id_t pli = PLANET_0; pli < g->galaxy_stars; ++pli) {
         planet_t *p = &(g->planet[pli]);
         player_id_t powner;
         uint16_t inbound[PLAYER_NUM];

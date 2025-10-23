@@ -33,7 +33,7 @@ static player_id_t game_event_new_get_victim(struct game_s *g)
     int tbl_planets[PLAYER_NUM], min_planets = 10000, r, sum = 0;
     player_id_t player;
     memset(tbl_planets, 0, sizeof(tbl_planets));
-    for (int pli = 0; pli < g->galaxy_stars; ++pli) {
+    for (planet_id_t pli = PLANET_0; pli < g->galaxy_stars; ++pli) {
         const planet_t *p = &(g->planet[pli]);
         if (p->owner != PLAYER_NONE) {
             ++tbl_planets[p->owner];
@@ -756,7 +756,7 @@ bool game_event_run(struct game_s *g, struct game_end_s *ge)
         g->evn.have_derelict = false;
     }
     /*10364,10470*/
-    for (int pli = 0; pli < g->galaxy_stars; ++pli) {
+    for (planet_id_t pli = PLANET_0; pli < g->galaxy_stars; ++pli) {
         planet_t *p = &(g->planet[pli]);
         if ((p->owner == PLAYER_NONE) || (p->unrest_reported)) {
             continue;
@@ -844,7 +844,7 @@ bool game_event_run(struct game_s *g, struct game_end_s *ge)
                 m->exists = 3;
                 if (owner != PLAYER_NONE) {
                     flag_last_planet = true;
-                    for (int pli = 0; (pli < g->galaxy_stars) && flag_last_planet; ++pli) {
+                    for (planet_id_t pli = PLANET_0; (pli < g->galaxy_stars) && flag_last_planet; ++pli) {
                         planet_t *p2 = &(g->planet[pli]);
                         if ((pli != ns.planet_i) && (p2->owner == owner)) {
                             flag_last_planet = false;
@@ -991,7 +991,7 @@ bool game_event_run(struct game_s *g, struct game_end_s *ge)
     {
         uint8_t num_planets[PLAYER_NUM];
         memset(num_planets, 0, sizeof(num_planets));
-        for (int pli = 0; pli < g->galaxy_stars; ++pli) {
+        for (planet_id_t pli = PLANET_0; pli < g->galaxy_stars; ++pli) {
             const planet_t *p = &(g->planet[pli]);
             if (p->owner != PLAYER_NONE) {
                 ++num_planets[p->owner];
@@ -1003,7 +1003,7 @@ bool game_event_run(struct game_s *g, struct game_end_s *ge)
                 killer = PLAYER_NONE;
                 for (player_id_t j = PLAYER_0; (j < g->players) && (killer == PLAYER_NONE); ++j) {
                     empiretechorbit_t *e = &(g->eto[j]);
-                    for (int pli = 0; pli < g->galaxy_stars; ++pli) {
+                    for (planet_id_t pli = PLANET_0; pli < g->galaxy_stars; ++pli) {
                         const planet_t *p = &(g->planet[pli]);
                         if (p->claim == i) {
                             bool any_ships;
@@ -1085,7 +1085,7 @@ bool game_event_run(struct game_s *g, struct game_end_s *ge)
         uint8_t half = g->galaxy_stars / 2, max_pl = 0;
         uint8_t num_planets[PLAYER_NUM];
         memset(num_planets, 0, sizeof(num_planets));
-        for (int pli = 0; pli < g->galaxy_stars; ++pli) {
+        for (planet_id_t pli = PLANET_0; pli < g->galaxy_stars; ++pli) {
             const planet_t *p = &(g->planet[pli]);
             if (p->owner != PLAYER_NONE) {
                 ++num_planets[p->owner];

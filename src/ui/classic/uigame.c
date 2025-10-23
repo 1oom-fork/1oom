@@ -62,8 +62,8 @@ ui_turn_action_t ui_game_turn(struct game_s *g, int *load_game_i_ptr, player_id_
     while (1) {
         ui_cursor_setup_area(1, &ui_cursor_area_tbl[0]);
         if (g->evn.build_finished_num[pi] > 0) {
-            uint8_t pli;
-            for (pli = 0; pli < g->galaxy_stars; ++pli) {
+            planet_id_t pli;
+            for (pli = PLANET_0; pli < g->galaxy_stars; ++pli) {
                 if (g->planet[pli].finished[0] & (~(1 << FINISHED_SHIP))) {
                     break;
                 }
