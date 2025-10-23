@@ -127,7 +127,7 @@ static void sabotage_draw_cb(void *vptr)
         lbxfont_print_num_right(305, 136, bases, UI_SCREEN_W);
     }
     ui_gmap_draw_planet_border(g, d->planet);
-    for (int i = 0; i < g->galaxy_stars; ++i) {
+    for (planet_id_t i = PLANET_0; i < g->galaxy_stars; ++i) {
         const planet_t *p2 = &(g->planet[i]);
         if (p2->owner == d->target) {
             int x, y;
@@ -264,7 +264,7 @@ ui_sabotage_t ui_spy_sabotage_ask(struct game_s *g, player_id_t spy, player_id_t
     d.target = target;
     d.planet = PLANET_NONE;
     d.gmap = ui_gmap_basic_init(g, true);
-    for (int i = 0; i < g->galaxy_stars; ++i) {
+    for (planet_id_t i = PLANET_0; i < g->galaxy_stars; ++i) {
         if (g->planet[i].owner == target) {
             d.planet = i;
             break;
@@ -305,7 +305,7 @@ ui_sabotage_t ui_spy_sabotage_ask(struct game_s *g, player_id_t spy, player_id_t
             flag_done = true;
             action = UI_SABOTAGE_REVOLT;
         }
-        for (int i = 0; i < g->galaxy_stars; ++i) {
+        for (planet_id_t i = PLANET_0; i < g->galaxy_stars; ++i) {
             if (oi == oi_planet[i]) {
                 d.planet = i;
                 lbxfile_item_release(LBXFILE_COLONIES, d.gfx_colony);
@@ -321,7 +321,7 @@ ui_sabotage_t ui_spy_sabotage_ask(struct game_s *g, player_id_t spy, player_id_t
         } else {
             oi_revolt = UIOBJI_INVALID;
         }
-        for (int i = 0; i < g->galaxy_stars; ++i) {
+        for (planet_id_t i = PLANET_0; i < g->galaxy_stars; ++i) {
             const planet_t *p = &(g->planet[i]);
             if (p->owner == target) {
                 int x, y;

@@ -148,7 +148,7 @@ static void game_generate_planets(struct game_s *g)
         }
     }
 
-    for (int i = 0; i < g->galaxy_stars; ++i) {
+    for (planet_id_t i = PLANET_0; i < g->galaxy_stars; ++i) {
         bool in_nebula;
         planet_t *p;
 
@@ -448,7 +448,7 @@ static void game_generate_planets(struct game_s *g)
 
     {
         uint16_t tx = 0, ty = 0;
-        for (int i = 0; i < g->galaxy_stars; ++i) {
+        for (planet_id_t i = PLANET_0; i < g->galaxy_stars; ++i) {
             planet_t *p;
             p = &g->planet[i];
             if (p->x > tx) {
@@ -574,7 +574,7 @@ static void game_generate_planet_names(struct game_s *g)
 {
     BOOLVEC_DECLARE(in_use, PLANETS_MAX);
     BOOLVEC_CLEAR(in_use, PLANETS_MAX);
-    for (int i = 0; i < g->galaxy_stars; ++i) {
+    for (planet_id_t i = PLANET_0; i < g->galaxy_stars; ++i) {
         uint16_t j;
         do {
             j = rnd_0_nm1(PLANETS_MAX, &g->seed);
@@ -702,7 +702,7 @@ start_of_func:
             }
             for (player_id_t i = PLAYER_0; (i < g->players) && (i < 2); ++i) {
                 mindist = 10000;
-                for (int j = 0; j < g->galaxy_stars; ++j) {
+                for (planet_id_t j = PLANET_0; j < g->galaxy_stars; ++j) {
                     planet_t *p;
                     p = &g->planet[j];
                     if (1
@@ -721,7 +721,7 @@ start_of_func:
             }
             for (player_id_t i = PLAYER_0; (i < g->players) && (i < 2); ++i) {
                 mindist = 10000;
-                for (int j = 0; j < g->galaxy_stars; ++j) {
+                for (planet_id_t j = PLANET_0; j < g->galaxy_stars; ++j) {
                     planet_t *p;
                     p = &g->planet[j];
                     if (1
@@ -745,7 +745,7 @@ start_of_func:
     for (player_id_t i = PLAYER_0; (i < g->players) && (i <= g->difficulty); ++i) {
         uint16_t dist, mindist;
         mindist = 10000;
-        for (int j = 0; j < g->galaxy_stars; ++j) {
+        for (planet_id_t j = PLANET_0; j < g->galaxy_stars; ++j) {
             planet_t *p;
             p = &g->planet[j];
             if (1
@@ -808,7 +808,7 @@ start_of_func:
         p->pop_prev = p->pop;
         game_new_generate_home_name(g->eto[i].race, p->name);
     }
-    for (int j = 0; j < g->galaxy_stars; ++j) {
+    for (planet_id_t j = PLANET_0; j < g->galaxy_stars; ++j) {
         player_id_t owner;
         owner = g->planet[j].owner;
         for (player_id_t i = PLAYER_0; i < g->players; ++i) {
@@ -852,7 +852,7 @@ start_of_func:
 #endif
             q = &g->planet[homei];
             n = 0;
-            for (int j = 0; j < g->galaxy_stars; ++j) {
+            for (planet_id_t j = PLANET_0; j < g->galaxy_stars; ++j) {
                 p = &g->planet[j];
                 if (1
                   && (p->type > PLANET_TYPE_MINIMAL - 1)

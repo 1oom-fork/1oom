@@ -136,7 +136,7 @@ static void ui_starmap_do_help(struct game_s *g, player_id_t api)
     }
     if (BOOLVEC_TBL_IS0(g->evn.help_shown, api, 6) && (g->year < 70)) {
         bool have_explored = false, can_colonize = true;
-        for (int i = 0; i < g->galaxy_stars; ++i) {
+        for (planet_id_t i = PLANET_0; i < g->galaxy_stars; ++i) {
             const planet_t *p2 = &(g->planet[i]);
             if ((p2 != p) && BOOLVEC_IS1(p2->explored, api)) {
                 have_explored = true;
@@ -331,7 +331,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             flag_done = true;
             ui_sound_play_sfx_24();
         } else if ((oi1 == oi_alt_r) && (p->owner == active_player)) {
-            for (int i = 0; i < g->galaxy_stars; ++i) {
+            for (planet_id_t i = PLANET_0; i < g->galaxy_stars; ++i) {
                 planet_t *p2 = &(g->planet[i]);
                 if ((p2->owner == active_player) && (p2->reloc != i)) {
                     p2->reloc = g->planet_focus_i[active_player];
@@ -352,7 +352,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             game_update_tech_util(g);
             game_update_within_range(g);
             game_update_visibility(g);
-            for (int i = 0; i < g->galaxy_stars; ++i) {
+            for (planet_id_t i = PLANET_0; i < g->galaxy_stars; ++i) {
                 BOOLVEC_SET1(g->planet[i].explored, active_player);
             }
         } else if (oi1 == oi_alt_events) {
@@ -384,7 +384,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
                 break;
             }
         }
-        for (int i = 0; i < g->galaxy_stars; ++i) {
+        for (planet_id_t i = PLANET_0; i < g->galaxy_stars; ++i) {
             for (player_id_t j = PLAYER_0; j < g->players; ++j) {
                 if (oi1 == d.oi_tbl_pl_stars[j][i]) {
                     g->planet_focus_i[active_player] = i;
@@ -595,7 +595,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
                 flag_done = true;
             }
         }
-        for (int i = 0; i < g->galaxy_stars; ++i) {
+        for (planet_id_t i = PLANET_0; i < g->galaxy_stars; ++i) {
             if ((oi1 == d.oi_tbl_stars[i]) && !g->evn.build_finished_num[active_player]) {
                 g->planet_focus_i[active_player] = i;
                 ui_sound_play_sfx_24();

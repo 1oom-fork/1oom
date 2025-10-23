@@ -277,7 +277,7 @@ void ui_starmap_trans(struct game_s *g, player_id_t active_player)
             ui_starmap_scroll(g, scrollx, scrolly);
         }
         ui_starmap_handle_oi_ctrl(&d, oi1);
-        for (int i = 0; i < g->galaxy_stars; ++i) {
+        for (planet_id_t i = PLANET_0; i < g->galaxy_stars; ++i) {
             if (oi1 == d.oi_tbl_stars[i]) {
                 d.tr.other = true;
                 g->planet_focus_i[active_player] = i;
