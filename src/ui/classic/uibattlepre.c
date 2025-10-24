@@ -31,7 +31,7 @@ struct ui_battle_pre_data_s {
     struct game_s *g;
     int party_u;
     int party_d;
-    uint8_t planet_i;
+    planet_id_t planet_i;
     bool flag_human_att;
     bool hide_other;
     uint8_t *gfx_contbutt;
@@ -111,7 +111,7 @@ static void ui_battle_pre_draw_cb(void *vptr)
     lbxfont_print_str_center(267, 130, buf, UI_SCREEN_W);
 }
 
-void ui_battle_pre(struct game_s *g, int party_u, int party_d, uint8_t planet_i, bool flag_human_att, bool hide_other)
+void ui_battle_pre(struct game_s *g, int party_u, int party_d, planet_id_t planet_i, bool flag_human_att, bool hide_other)
 {
     struct ui_battle_pre_data_s d[1];
     int16_t oi_cont = UIOBJI_INVALID;

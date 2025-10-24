@@ -292,7 +292,7 @@ void game_update_seen_by_orbit(struct game_s *g, player_id_t pi)
 void game_update_within_range(struct game_s *g)
 {
     for (player_id_t pi = PLAYER_0; pi < g->players; ++pi) {
-        uint8_t tblplanet[PLANETS_MAX];
+        planet_id_t tblplanet[PLANETS_MAX];
         uint8_t tblplanet_num;
         empiretechorbit_t *e = &(g->eto[pi]);
         bool tbl_alliance[PLAYER_NUM];
@@ -328,7 +328,7 @@ void game_update_within_range(struct game_s *g)
                 mindist1 = 0x2710;
                 mindist2 = 0x2710;
                 for (int j = 0; (j < tblplanet_num) && ((mindist1 > frange) || (mindist2 > srange)); ++j) {
-                    uint8_t planet_i2;
+                    planet_id_t planet_i2;
                     planet_i2 = tblplanet[j];
                     dist = g->gaux->star_dist[i][planet_i2];
                     SETMIN(mindist1, dist);
@@ -385,7 +385,7 @@ void game_update_within_range(struct game_s *g)
 void game_update_empire_contact(struct game_s *g)
 {
     uint8_t tbl_pnum[PLAYER_NUM];
-    uint8_t tbl_planet[PLAYER_NUM][PLANETS_MAX];
+    planet_id_t tbl_planet[PLAYER_NUM][PLANETS_MAX];
     for (player_id_t pi = PLAYER_0; pi < g->players; ++pi) {
         tbl_pnum[pi] = 0;
     }
@@ -543,7 +543,7 @@ void game_adjust_slider_group(int16_t *slidertbl, int slideri, int16_t value, in
     }
 }
 
-int game_get_min_dist(const struct game_s *g, player_id_t player_i, int planet_i)
+int game_get_min_dist(const struct game_s *g, player_id_t player_i, planet_id_t planet_i)
 {
     int dist, mindist = 255;
     for (planet_id_t i = PLANET_0; i < g->galaxy_stars; ++i) {
@@ -555,7 +555,7 @@ int game_get_min_dist(const struct game_s *g, player_id_t player_i, int planet_i
     return mindist;
 }
 
-int game_get_pop_growth_max(const struct game_s *g, int planet_i, int max_pop3)
+int game_get_pop_growth_max(const struct game_s *g, planet_id_t planet_i, int max_pop3)
 {
     const planet_t *p = &(g->planet[planet_i]);
     const empiretechorbit_t *e = &(g->eto[p->owner]);
@@ -604,7 +604,7 @@ int game_get_pop_growth_max(const struct game_s *g, int planet_i, int max_pop3)
     return retval;
 }
 
-int game_get_pop_growth_for_eco(const struct game_s *g, int planet_i, int eco)
+int game_get_pop_growth_for_eco(const struct game_s *g, planet_id_t planet_i, int eco)
 {
     const planet_t *p = &(g->planet[planet_i]);
     const empiretechorbit_t *e = &(g->eto[p->owner]);

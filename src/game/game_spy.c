@@ -273,7 +273,8 @@ static void game_spy_espionage(struct game_s *g, player_id_t spy, player_id_t ta
 
 static void game_spy_sabotage(struct game_s *g, player_id_t spy, player_id_t target, bool flag_frame, int spies, bool flag_any_caught)
 {
-    int rcaught, v8 = 0, pl;
+    planet_id_t pl;
+    int rcaught, v8 = 0;
     bool flag_bases;
     rcaught = flag_any_caught ? (rnd_1_n(20, &g->seed) + 20) : 0;
     {
@@ -597,7 +598,7 @@ void game_spy_esp_human(struct game_s *g, struct spy_turn_s *st)
                     field = ui_spy_steal(g, spy, target, flags_field);
                     if ((field >= 0) && (field < TECH_FIELD_NUM)) {
                         bool framed;
-                        uint8_t planet;
+                        planet_id_t planet;
                         planet = game_planet_get_random(g, target);
                         framed = (g->evn.spied_spy[target][spy] == -1);
                         game_tech_get_new(g, spy, field, tbl_tech[field], TECHSOURCE_SPY, planet, target, framed);
@@ -637,7 +638,7 @@ void game_spy_sab_human(struct game_s *g)
             snum = g->evn.sabotage_num[target][player];
             if ((player != target) && (snum > 0)) {
                 ui_sabotage_t act;
-                uint8_t planet;
+                planet_id_t planet;
                 planet_t *p;
                 player_id_t other1, other2;
                 act = ui_spy_sabotage_ask(g, player, target, &planet);
@@ -728,7 +729,7 @@ void game_spy_sab_human(struct game_s *g)
             snum = g->evn.sabotage_num[player][spy];
             if ((player != spy) && (snum > 0)) {
                 ui_sabotage_t act;
-                uint8_t planet;
+                planet_id_t planet;
                 int spy2;
                 planet = g->evn.sabotage_planet[player][spy];
                 spy2 = g->evn.sabotage_spy[player][spy];

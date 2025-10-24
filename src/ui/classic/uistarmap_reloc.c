@@ -67,11 +67,11 @@ void ui_starmap_reloc(struct game_s *g, player_id_t active_player)
     int16_t oi_scroll, oi_cancel, oi_accept;
     int16_t scrollx = 0, scrolly = 0;
     struct starmap_data_s d;
-    uint8_t oldreloc;
+    planet_id_t oldreloc;
     d.g = g;
     d.api = active_player;
     {
-        uint8_t pi = g->planet_focus_i[active_player];
+        planet_id_t pi = g->planet_focus_i[active_player];
         d.from = pi;
         oldreloc = g->planet[pi].reloc;
         g->planet_focus_i[active_player] = oldreloc;

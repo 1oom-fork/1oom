@@ -39,7 +39,7 @@ struct news_s {
     int num2;
     race_t race;
     const char *stats[PLAYER_NUM];
-    uint8_t planet_i;
+    planet_id_t planet_i;
 };
 
 struct game_s;

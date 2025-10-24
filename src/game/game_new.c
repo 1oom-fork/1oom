@@ -467,7 +467,7 @@ static void game_generate_planets(struct game_s *g)
     }
 
     {
-        uint16_t i;
+        planet_id_t i;
         planet_t *p;
         i = rnd_0_nm1(g->galaxy_stars, &g->seed);
         g->evn.planet_orion_i = i;
@@ -653,8 +653,8 @@ static void game_generate_race_banner(struct game_s *g)
 
 static void game_generate_home_etc(struct game_s *g)
 {
-    uint16_t tblhome[PLAYER_NUM];
-    uint16_t homei, loops;
+    planet_id_t tblhome[PLAYER_NUM], homei;
+    uint16_t loops;
     bool flag_all_ok;
 start_of_func:
     flag_all_ok = false;
@@ -663,7 +663,7 @@ start_of_func:
     while ((!flag_all_ok) && (loops < 200)) {
         flag_all_ok = true;
         for (player_id_t i = PLAYER_0; i < g->players; ++i) {
-            uint16_t pi;
+            planet_id_t pi;
             bool flag_again2;
             flag_again2 = true;
             while (flag_again2) {
