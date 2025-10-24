@@ -43,7 +43,7 @@ typedef struct empiretechorbit_s {
     int16_t relation2[PLAYER_NUM];
     uint8_t diplo_type[PLAYER_NUM];
     int16_t diplo_val[PLAYER_NUM];
-    uint16_t diplo_p1[PLAYER_NUM];
+    planet_id_t diplo_p1[PLAYER_NUM];
     int16_t diplo_p2[PLAYER_NUM];
     int16_t trust[PLAYER_NUM];
     treaty_t broken_treaty[PLAYER_NUM];
@@ -135,7 +135,7 @@ typedef struct monster_s {
     int16_t x;
     int16_t y;
     player_id_t killer; /* MOO1: 0 or id+1 */
-    uint8_t dest;
+    planet_id_t dest;
     int8_t counter;
     int8_t nuked;   /* planets destroyed */
 } monster_t;
@@ -164,19 +164,19 @@ typedef struct gameevents_s {
     BOOLVEC_DECLARE(done, GAME_EVENT_TBL_NUM);
     uint8_t have_plague;    /* 0..3 */
     player_id_t plague_player;
-    uint8_t plague_planet_i;
+    planet_id_t plague_planet_i;
     int plague_val;
     bool have_quake;
     player_id_t quake_player;
-    uint8_t quake_planet_i;
+    planet_id_t quake_planet_i;
     uint8_t have_nova;  /* 0..3 */
     player_id_t nova_player;
-    uint8_t nova_planet_i;
+    planet_id_t nova_planet_i;
     int8_t nova_years;
     int nova_val;
     uint8_t have_accident;  /* 0..2 */
     player_id_t accident_player;
-    uint8_t accident_planet_i;
+    planet_id_t accident_planet_i;
     bool have_assassin;
     player_id_t assassin_player;
     player_id_t assassin_player2;
@@ -185,29 +185,29 @@ typedef struct gameevents_s {
     tech_field_t virus_field;
     uint8_t have_comet; /* 0..3 */
     player_id_t comet_player;
-    uint8_t comet_planet_i;
+    planet_id_t comet_planet_i;
     uint8_t comet_years;
     uint16_t comet_hp;
     uint16_t comet_dmg;
     uint8_t have_pirates;   /* 0..3 */
-    uint8_t pirates_planet_i;
+    planet_id_t pirates_planet_i;
     uint16_t pirates_hp;
     bool have_derelict;
     player_id_t derelict_player;
     monster_t crystal;
     monster_t amoeba;
     bool have_enviro;
-    uint8_t enviro_planet_i;
+    planet_id_t enviro_planet_i;
     bool have_rich;
-    uint8_t rich_planet_i;
+    planet_id_t rich_planet_i;
     bool have_support;
     player_id_t support_player;
     bool have_poor;
-    uint8_t poor_planet_i;
+    planet_id_t poor_planet_i;
     uint8_t have_orion_conquer; /* 0, pi+1 */
-    uint8_t planet_orion_i;
+    planet_id_t planet_orion_i;
     bool have_guardian;
-    uint8_t home[PLAYER_NUM];   /* home planet index or PLANET_NONE if dead */
+    planet_id_t home[PLAYER_NUM];   /* home planet index or PLANET_NONE if dead */
     uint8_t report_stars;
     player_id_t coup;
     newtechs_t newtech[PLAYER_NUM];
@@ -219,7 +219,7 @@ typedef struct gameevents_s {
     uint8_t stolen_tech[PLAYER_NUM][PLAYER_NUM]; /* [victim][spy] */
     player_id_t stolen_spy[PLAYER_NUM][PLAYER_NUM]; /* [victim][spy] */
     bool sabotage_is_bases[PLAYER_NUM][PLAYER_NUM]; /* [victim][spy] */
-    uint8_t sabotage_planet[PLAYER_NUM][PLAYER_NUM]; /* [victim][spy] */
+    planet_id_t sabotage_planet[PLAYER_NUM][PLAYER_NUM]; /* [victim][spy] */
     uint16_t sabotage_num[PLAYER_NUM][PLAYER_NUM]; /* [victim][spy] */
     player_id_t sabotage_spy[PLAYER_NUM][PLAYER_NUM]; /* [victim][spy] */
     uint16_t sabotage_hmm1[PLAYER_NUM][PLAYER_NUM]; /* [victim][spy] */
@@ -276,7 +276,7 @@ struct game_s {
     uint8_t galaxy_stars;  /* w*h */
     uint16_t galaxy_maxx;
     uint16_t galaxy_maxy;
-    uint8_t planet_focus_i[PLAYER_NUM];
+    planet_id_t planet_focus_i[PLAYER_NUM];
     seen_t seen[PLAYER_NUM][PLANETS_MAX];
     shipdesign_t current_design[PLAYER_NUM];
     game_end_type_t end;

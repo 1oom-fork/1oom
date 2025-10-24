@@ -81,8 +81,9 @@ static player_id_t game_event_new_get_trader(const struct game_s *g, player_id_t
 
 static void game_monster_set_start(struct game_s *g, monster_t *m)
 {
-    int x, y, v;
-    uint8_t dest;
+    int x, y;
+    uint16_t v;
+    planet_id_t dest;
     switch (rnd_0_nm1(4, &g->seed)) {
         case 0:
             v = rnd_0_nm1(g->galaxy_h, &g->seed);
@@ -116,8 +117,8 @@ static void game_monster_set_start(struct game_s *g, monster_t *m)
 
 static void game_monster_set_next_dest(struct game_s *g, monster_t *m)
 {
-    uint8_t olddest = m->dest;
-    int dest = olddest, w = g->galaxy_w, h = g->galaxy_h;
+    planet_id_t olddest = m->dest, dest = m->dest;
+    uint8_t w = g->galaxy_w, h = g->galaxy_h;
     while (dest == olddest) {
         int x;
         x = olddest % w;
@@ -154,7 +155,7 @@ void game_event_new(struct game_s *g)
     int chance;
     player_id_t player;
     const empiretechorbit_t *e;
-    uint8_t planet;
+    planet_id_t planet;
     planet_t *p;
     if (g->gaux->flag_cheat_events || (game_num_event_roll == 0)) {
         g->evn.have_plague = 0;
@@ -393,7 +394,7 @@ bool game_event_run(struct game_s *g, struct game_end_s *ge)
     bool any_news = false;
     ui_news_start();
     if (g->evn.have_plague) {
-        uint8_t pli = g->evn.plague_planet_i;
+        planet_id_t pli = g->evn.plague_planet_i;
         planet_t *p = &(g->planet[pli]);
         player_id_t player = g->evn.plague_player;
         if (p->owner == player) {
@@ -450,7 +451,7 @@ bool game_event_run(struct game_s *g, struct game_end_s *ge)
     }
     /*f4ec*/
     if (g->evn.have_quake) {
-        uint8_t pli = g->evn.quake_planet_i;
+        planet_id_t pli = g->evn.quake_planet_i;
         planet_t *p = &(g->planet[pli]);
         player_id_t player = g->evn.quake_player;
         int vp, vf;
@@ -473,7 +474,7 @@ bool game_event_run(struct game_s *g, struct game_end_s *ge)
     }
     /*f662*/
     if (g->evn.have_nova) {
-        uint8_t pli = g->evn.nova_planet_i;
+        planet_id_t pli = g->evn.nova_planet_i;
         planet_t *p = &(g->planet[pli]);
         player_id_t player = p->owner;
         if ((g->evn.have_nova != 1) && (player != PLAYER_NONE)) {
@@ -542,7 +543,7 @@ bool game_event_run(struct game_s *g, struct game_end_s *ge)
     }
     /*f986*/
     if (g->evn.have_accident) {
-        uint8_t pli = g->evn.accident_planet_i;
+        planet_id_t pli = g->evn.accident_planet_i;
         planet_t *p = &(g->planet[pli]);
         player_id_t player = g->evn.accident_player;
         ns.planet_i = pli;
@@ -601,7 +602,7 @@ bool game_event_run(struct game_s *g, struct game_end_s *ge)
     }
     /*fc6e*/
     if (g->evn.have_comet) {
-        uint8_t pli = g->evn.comet_planet_i;
+        planet_id_t pli = g->evn.comet_planet_i;
         planet_t *p = &(g->planet[pli]);
         player_id_t player = p->owner;
         int dmg = 0;
@@ -669,7 +670,7 @@ bool game_event_run(struct game_s *g, struct game_end_s *ge)
     }
     /*ff19*/
     if (g->evn.have_pirates) {
-        uint8_t pli = g->evn.pirates_planet_i;
+        planet_id_t pli = g->evn.pirates_planet_i;
         planet_t *p = &(g->planet[pli]);
         int dmg = 0, setback;
         for (monster_id_t i = MONSTER_CRYSTAL; i <= MONSTER_AMOEBA; ++i) {
@@ -895,7 +896,7 @@ bool game_event_run(struct game_s *g, struct game_end_s *ge)
     }
     /*10c37*/
     if (g->evn.have_enviro) {
-        uint8_t pli = g->evn.enviro_planet_i;
+        planet_id_t pli = g->evn.enviro_planet_i;
         planet_t *p = &(g->planet[pli]);
         player_id_t player = p->owner;
         empiretechorbit_t *e = 0;
@@ -924,7 +925,7 @@ bool game_event_run(struct game_s *g, struct game_end_s *ge)
     }
     /*10dfb*/
     if (g->evn.have_rich) {
-        uint8_t pli = g->evn.rich_planet_i;
+        planet_id_t pli = g->evn.rich_planet_i;
         planet_t *p = &(g->planet[pli]);
         player_id_t player = p->owner;
         empiretechorbit_t *e = 0;
@@ -958,7 +959,7 @@ bool game_event_run(struct game_s *g, struct game_end_s *ge)
     }
     /*10f1e*/
     if (g->evn.have_poor) {
-        uint8_t pli = g->evn.poor_planet_i;
+        planet_id_t pli = g->evn.poor_planet_i;
         planet_t *p = &(g->planet[pli]);
         player_id_t player = p->owner;
         empiretechorbit_t *e = 0;

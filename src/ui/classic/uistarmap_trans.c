@@ -170,14 +170,14 @@ void ui_starmap_trans(struct game_s *g, player_id_t active_player)
     int16_t oi_scroll, oi_cancel, oi_accept, oi_plus, oi_minus;
     int16_t scrollx = 0, scrolly = 0;
     struct starmap_data_s d;
-    uint8_t olddest;
+    planet_id_t olddest;
     planet_t *p;
     int16_t trans_max;
     d.g = g;
     d.api = active_player;
     d.tr.blink = false;
     {
-        uint8_t pi = g->planet_focus_i[active_player];
+        planet_id_t pi = g->planet_focus_i[active_player];
         d.from = pi;
         p = &(g->planet[pi]);
         olddest = p->trans_dest;
