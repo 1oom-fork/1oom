@@ -132,16 +132,16 @@ typedef enum {
     UI_SABOTAGE_NONE /*-1*/
 } ui_sabotage_t;
 
-extern ui_sabotage_t ui_spy_sabotage_ask(struct game_s *g, player_id_t spy, player_id_t target, uint8_t *planetptr);
-extern player_id_t ui_spy_sabotage_done(struct game_s *g, player_id_t pi, player_id_t spy, player_id_t target, ui_sabotage_t act, player_id_t other1, player_id_t other2, uint8_t planet, int snum);
+extern ui_sabotage_t ui_spy_sabotage_ask(struct game_s *g, player_id_t spy, player_id_t target, planet_id_t *planetptr);
+extern player_id_t ui_spy_sabotage_done(struct game_s *g, player_id_t pi, player_id_t spy, player_id_t target, ui_sabotage_t act, player_id_t other1, player_id_t other2, planet_id_t planet, int snum);
 
 extern void ui_newtech(struct game_s *g, player_id_t pi);
 
-extern bool ui_explore(struct game_s *g, player_id_t pi, uint8_t planet_i, bool by_scanner, bool flag_colony_ship);
-extern void ui_landing(struct game_s *g, player_id_t pi, uint8_t planet_i);
+extern bool ui_explore(struct game_s *g, player_id_t pi, planet_id_t planet_i, bool by_scanner, bool flag_colony_ship);
+extern void ui_landing(struct game_s *g, player_id_t pi, planet_id_t planet_i);
 
-extern bool ui_bomb_ask(struct game_s *g, player_id_t pi, uint8_t planet_i, int pop_inbound);
-extern void ui_bomb_show(struct game_s *g, player_id_t attacker_i, player_id_t owner_i, uint8_t planet_i, int popdmg, int factdmg, bool play_music);
+extern bool ui_bomb_ask(struct game_s *g, player_id_t pi, planet_id_t planet_i, int pop_inbound);
+extern void ui_bomb_show(struct game_s *g, player_id_t attacker_i, player_id_t owner_i, planet_id_t planet_i, int popdmg, int factdmg, bool play_music);
 
 extern void ui_turn_pre(const struct game_s *g);
 extern void ui_turn_msg(struct game_s *g, player_id_t pi, const char *str);

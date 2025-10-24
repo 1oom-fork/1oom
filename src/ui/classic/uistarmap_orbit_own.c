@@ -27,7 +27,7 @@
 
 static inline bool ui_starmap_orbit_own_in_frange(struct starmap_data_s *d)
 {
-    uint8_t pi = d->g->planet_focus_i[d->api];
+    planet_id_t pi = d->g->planet_focus_i[d->api];
     const planet_t *p = &d->g->planet[pi];
     return (p->within_frange[d->api] == 1) || ((p->within_frange[d->api] == 2) && d->ss.sn0.have_reserve_fuel);
 }

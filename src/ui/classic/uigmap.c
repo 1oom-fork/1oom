@@ -35,7 +35,7 @@ struct gmap_data_s {
     struct game_s *g;
     player_id_t api;
     int16_t mode;
-    uint8_t planet_i;
+    planet_id_t planet_i;
     int countdown;
     uint8_t *gfx_mapview;
     uint8_t *gfx_but_col;
@@ -46,7 +46,7 @@ struct gmap_data_s {
 
 struct gmap_basic_data_s {
     struct game_s *g;
-    uint8_t planet_i;
+    planet_id_t planet_i;
     int countdown;
     bool show_switch;
 };
@@ -344,7 +344,7 @@ bool ui_gmap(struct game_s *g, player_id_t active_player)
     d.api = active_player;
     d.mode = 0;
     d.countdown = -1;
-    d.planet_i = 0;
+    d.planet_i = PLANET_0;
 
     uiobj_table_clear();
 
@@ -401,7 +401,7 @@ void *ui_gmap_basic_init(struct game_s *g, bool show_player_switch)
     static struct gmap_basic_data_s ctx; /* HACK */
     ctx.g = g;
     ctx.countdown = -1;
-    ctx.planet_i = 0;
+    ctx.planet_i = PLANET_0;
     ctx.show_switch = show_player_switch;
     if (!show_player_switch) {
         ui_draw_copy_buf();
@@ -511,7 +511,7 @@ void ui_gmap_basic_draw_frame(void *ctx, player_id_t pi)
     }
 }
 
-void ui_gmap_basic_draw_only(void *ctx, int pi/*planet_i*/)
+void ui_gmap_basic_draw_only(void *ctx, planet_id_t pi)
 {
     struct gmap_basic_data_s *d = ctx;
     struct game_s *g = d->g;
@@ -569,7 +569,7 @@ void ui_gmap_basic_finish_frame(void *ctx, player_id_t pi)
     ui_delay_ticks_or_click(2);
 }
 
-void ui_gmap_draw_planet_border(const struct game_s *g, uint8_t planet_i)
+void ui_gmap_draw_planet_border(const struct game_s *g, planet_id_t planet_i)
 {
     const planet_t *p = &(g->planet[planet_i]);
     int x, y;

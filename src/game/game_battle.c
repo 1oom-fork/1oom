@@ -105,7 +105,7 @@ static void game_battle_item_add(struct battle_s *bt, const shipparsed_t *sp, ba
     }
 }
 
-static void game_battle_post(struct game_s *g, player_id_t loser, int winner, uint8_t from)
+static void game_battle_post(struct game_s *g, player_id_t loser, int winner, planet_id_t from)
 {
     if (loser >= PLAYER_NUM) {
         monster_id_t mi;
@@ -132,7 +132,7 @@ static void game_battle_post(struct game_s *g, player_id_t loser, int winner, ui
         empiretechorbit_t *e = &(g->eto[loser]);
         fleet_orbit_t *o = &(e->orbit[from]);
         const planet_t *pf = &g->planet[from];
-        uint8_t dest = PLANET_NONE;
+        planet_id_t dest = PLANET_NONE;
         int mindist = 10000;
         shipcount_t ships[NUM_SHIPDESIGNS];
         uint8_t shiptypes[NUM_SHIPDESIGNS];
@@ -161,7 +161,7 @@ static void game_battle_post(struct game_s *g, player_id_t loser, int winner, ui
     }
 }
 
-static void game_battle_prepare_p1(struct battle_s *bt, battle_side_i_t side, uint8_t planet_i)
+static void game_battle_prepare_p1(struct battle_s *bt, battle_side_i_t side, planet_id_t planet_i)
 {
     const struct game_s *g = bt->g;
     const empiretechorbit_t *e = &(g->eto[bt->s[side].party]);
@@ -173,7 +173,7 @@ static void game_battle_prepare_p1(struct battle_s *bt, battle_side_i_t side, ui
     bt->s[side].race = e->race;
 }
 
-static void game_battle_prepare_add_ships(struct battle_s *bt, battle_side_i_t side, uint8_t planet_i)
+static void game_battle_prepare_add_ships(struct battle_s *bt, battle_side_i_t side, planet_id_t planet_i)
 {
     const struct game_s *g = bt->g;
     const empiretechorbit_t *e = &(g->eto[bt->s[side].party]);
@@ -211,7 +211,7 @@ static void game_battle_prepare_add_ships(struct battle_s *bt, battle_side_i_t s
 
 /* -------------------------------------------------------------------------- */
 
-void game_battle_prepare(struct battle_s *bt, int party_r, int party_l, uint8_t planet_i)
+void game_battle_prepare(struct battle_s *bt, int party_r, int party_l, planet_id_t planet_i)
 {
     struct game_s *g = bt->g;
     const planet_t *p = &(g->planet[planet_i]);
@@ -268,7 +268,7 @@ void game_battle_prepare(struct battle_s *bt, int party_r, int party_l, uint8_t 
 void game_battle_handle_all(struct game_s *g)
 {
     struct battle_s bt[1];
-    uint8_t monster_planet[MONSTER_NUM];
+    planet_id_t monster_planet[MONSTER_NUM];
     bt->g = g;
     for (monster_id_t i = 0; i < MONSTER_NUM; ++i) {
         monster_planet[i] = PLANET_NONE;

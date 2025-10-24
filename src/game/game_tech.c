@@ -781,7 +781,7 @@ void game_tech_get_orion_loot(struct game_s *g, player_id_t player)
     }
 }
 
-void game_tech_get_artifact_loot(struct game_s *g, uint8_t planet, player_id_t player)
+void game_tech_get_artifact_loot(struct game_s *g, planet_id_t planet, player_id_t player)
 {
     empiretechorbit_t *e = &(g->eto[player]);
     techdata_t *td = &(e->tech);

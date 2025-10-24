@@ -34,7 +34,7 @@ const uint8_t colortbl_line_green[5] = { 0xb0, 0xb1, 0xb2, 0xb3, 0xb4 };
 
 /* -------------------------------------------------------------------------- */
 
-static void ui_starmap_draw_planetinfo_do(const struct game_s *g, player_id_t api, uint8_t planet_i, bool explored, bool show_plus)
+static void ui_starmap_draw_planetinfo_do(const struct game_s *g, player_id_t api, planet_id_t planet_i, bool explored, bool show_plus)
 {
     const planet_t *p = &g->planet[planet_i];
     if (explored) {
@@ -370,7 +370,7 @@ static void ui_starmap_draw_sliders_and_prod(struct starmap_data_s *d)
     }
 }
 
-static void ui_starmap_draw_textbox_finished(const struct game_s *g, player_id_t api, int pi)
+static void ui_starmap_draw_textbox_finished(const struct game_s *g, player_id_t api, planet_id_t pi)
 {
     const planet_t *p = &g->planet[pi];
     char *buf = ui_data.strbuf;
@@ -424,7 +424,7 @@ void ui_starmap_draw_basic(struct starmap_data_s *d)
         ui_starmap_draw_range_parsec(d, 165);
     } else {
         player_id_t owner = p->owner;
-        int pi = g->planet_focus_i[d->api];
+        planet_id_t pi = g->planet_focus_i[d->api];
         if (OWNER_IS_NOT_KNOWN(g, p, d->api)) {
             owner = g->seen[d->api][pi].owner;
         }
@@ -949,13 +949,13 @@ void ui_starmap_update_reserve_fuel(struct game_s *g, struct shipnon0_s *sn0, co
     sn0->have_reserve_fuel = true;
 }
 
-void ui_starmap_draw_planetinfo(const struct game_s *g, player_id_t api, int planet_i)
+void ui_starmap_draw_planetinfo(const struct game_s *g, player_id_t api, planet_id_t planet_i)
 {
     const planet_t *p = &(g->planet[planet_i]);
     ui_starmap_draw_planetinfo_do(g, api, planet_i, BOOLVEC_IS1(p->explored, api), true);
 }
 
-void ui_starmap_draw_planetinfo_2(const struct game_s *g, int p1, int p2, int planet_i)
+void ui_starmap_draw_planetinfo_2(const struct game_s *g, int p1, int p2, planet_id_t planet_i)
 {
     const planet_t *p = &(g->planet[planet_i]);
     player_id_t api = (p1 < PLAYER_NUM) ? p1 : p2;

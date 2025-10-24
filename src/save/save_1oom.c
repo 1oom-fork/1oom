@@ -226,7 +226,7 @@ static int libsave_1oom_encode_orbits(uint8_t *buf, int pos, const fleet_orbit_t
 static int libsave_1oom_decode_orbits(const uint8_t *buf, int pos, fleet_orbit_t *o, int planets)
 {
     for (planet_id_t loops = PLANET_0; loops <= planets; ++loops) {
-        uint8_t i;
+        planet_id_t i;
         SG_1OOM_DE_U8(i);
         if (i == PLANET_NONE) {
             return pos;

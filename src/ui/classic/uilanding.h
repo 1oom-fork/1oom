@@ -9,7 +9,7 @@ struct game_s;
 struct landing_data_s {
     struct game_s *g;
     player_id_t api;
-    uint8_t planet;
+    planet_id_t planet;
     int frame;
     int music_i;
     bool colonize;

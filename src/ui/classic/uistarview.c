@@ -30,7 +30,7 @@
 struct starview_data_s {
     struct game_s *g;
     player_id_t api;
-    uint8_t planet_i;
+    planet_id_t planet_i;
     int frame;
     bool flag_pal;
     uint8_t *gfx_planet;

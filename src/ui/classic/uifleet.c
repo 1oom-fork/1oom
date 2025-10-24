@@ -37,7 +37,7 @@ struct fleet_data_s {
     int pos;
     int num;
     int lines;
-    uint8_t planet[FLEET_ENROUTE_MAX];
+    planet_id_t planet[FLEET_ENROUTE_MAX];
     uint16_t enroute[FLEET_ENROUTE_MAX];
     BOOLVEC_DECLARE(is_enroute, FLEET_ENROUTE_MAX);
     uint8_t *gfx_fleetbrb;
@@ -85,7 +85,8 @@ static void fleet_draw_cb(void *vptr)
     for (int i = 0; i < num; ++i) {
         const planet_t *p;
         const uint16_t *s;
-        int x0 = 5, y0, pi, fi;
+        planet_id_t pi;
+        int x0 = 5, y0, fi;
         y0 = 33 * i + 17;
         fi = i + d->pos;
         pi = d->planet[fi];
