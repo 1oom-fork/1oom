@@ -365,7 +365,7 @@ static int libsave_moo13_de_do(uint8_t *buf, struct game_s *g)
             }
         }
         pos = srdb + 0x228;
-        for (int f = 0; f < TECH_FIELD_NUM; ++f) {
+        for (tech_field_t f = TECH_FIELD_COMPUTER; f < TECH_FIELD_NUM; ++f) {
             for (int t = 0; t < TECH_TIER_NUM; ++t) {
                 for (int j = 0; j < 3; ++j) {
                     M13_GET_8(srd->researchlist[f][t][j], pos);
@@ -374,7 +374,7 @@ static int libsave_moo13_de_do(uint8_t *buf, struct game_s *g)
             }
         }
         pos = srdb + 0x2dc;
-        for (int f = 0; f < TECH_FIELD_NUM; ++f) {
+        for (tech_field_t f = TECH_FIELD_COMPUTER; f < TECH_FIELD_NUM; ++f) {
             for (int j = 0; j < TECH_PER_FIELD; ++j) {
                 M13_GET_8(srd->researchcompleted[f][j], pos);
                 ++pos;
@@ -781,7 +781,7 @@ static int libsave_moo13_en_do(uint8_t *buf, const struct game_s *g)
             }
         }
         pos = srdb + 0x228;
-        for (int f = 0; f < TECH_FIELD_NUM; ++f) {
+        for (tech_field_t f = TECH_FIELD_COMPUTER; f < TECH_FIELD_NUM; ++f) {
             for (int t = 0; t < TECH_TIER_NUM; ++t) {
                 for (int j = 0; j < 3; ++j) {
                     M13_SET_8(srd->researchlist[f][t][j], pos);
@@ -790,7 +790,7 @@ static int libsave_moo13_en_do(uint8_t *buf, const struct game_s *g)
             }
         }
         pos = srdb + 0x2dc;
-        for (int f = 0; f < TECH_FIELD_NUM; ++f) {
+        for (tech_field_t f = TECH_FIELD_COMPUTER; f < TECH_FIELD_NUM; ++f) {
             for (int j = 0; j < TECH_PER_FIELD; ++j) {
                 M13_SET_8(srd->researchcompleted[f][j], pos);
                 ++pos;

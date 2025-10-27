@@ -122,8 +122,8 @@ extern ui_battle_action_t ui_battle_turn(const struct battle_s *bt);
 extern void ui_battle_ai_pre(const struct battle_s *bt);
 extern bool ui_battle_ai_post(const struct battle_s *bt);
 
-extern int ui_spy_steal(struct game_s *g, player_id_t spy, player_id_t target, uint8_t flags_field);
-extern void ui_spy_stolen(struct game_s *g, player_id_t pi, player_id_t spy, int field, uint8_t tech);
+extern tech_field_t ui_spy_steal(struct game_s *g, player_id_t spy, player_id_t target, uint8_t flags_field);
+extern void ui_spy_stolen(struct game_s *g, player_id_t pi, player_id_t spy, tech_field_t field, uint8_t tech);
 
 typedef enum {
     UI_SABOTAGE_FACT, /*0*/

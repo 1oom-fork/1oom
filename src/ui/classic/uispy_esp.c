@@ -75,7 +75,7 @@ static void steal_draw_cb(void *vptr)
     lbxfont_print_str_normal(23, 83, game_str_es_youresp3, UI_SCREEN_W);
     lbxgfx_draw_frame(102, 43, ui_data.gfx.planets.race[e->race], UI_SCREEN_W);
 
-    for (int i = 0; i < TECH_FIELD_NUM; ++i) {
+    for (tech_field_t i = TECH_FIELD_COMPUTER; i < TECH_FIELD_NUM; ++i) {
         if (d->flags_field & (1 << i)) {
             int x, y;
             x = (i / 3) * 102 + 20;
@@ -131,12 +131,12 @@ static void stolen_draw_cb(void *vptr)
 
 /* -------------------------------------------------------------------------- */
 
-int ui_spy_steal(struct game_s *g, player_id_t spy, player_id_t target, uint8_t flags_field)
+tech_field_t ui_spy_steal(struct game_s *g, player_id_t spy, player_id_t target, uint8_t flags_field)
 {
     struct steal_data_s d;
     bool flag_done = false;
     int16_t oi_tbl_field[TECH_FIELD_NUM];
-    int selected = -1;
+    tech_field_t selected = TECH_FIELD_NONE;
 
     ui_sound_play_music(0xf);
 
@@ -157,7 +157,7 @@ int ui_spy_steal(struct game_s *g, player_id_t spy, player_id_t target, uint8_t 
 
     uiobj_table_clear();
 
-    for (int i = 0; i < TECH_FIELD_NUM; ++i) {
+    for (tech_field_t i = TECH_FIELD_COMPUTER; i < TECH_FIELD_NUM; ++i) {
         if (flags_field & (1 << i)) {
             int x, y;
             x = (i / 3) * 102 + 20;
@@ -176,10 +176,10 @@ int ui_spy_steal(struct game_s *g, player_id_t spy, player_id_t target, uint8_t 
         oi = uiobj_handle_input_cond();
         if (oi == UIOBJI_ESC) {
             ui_sound_play_sfx_24();
-            selected = -1;
+            selected = TECH_FIELD_NONE;
             flag_done = true;
         }
-        for (int i = 0; i < TECH_FIELD_NUM; ++i) {
+        for (tech_field_t i = TECH_FIELD_COMPUTER; i < TECH_FIELD_NUM; ++i) {
             if (oi == oi_tbl_field[i]) {
                 ui_sound_play_sfx_24();
                 selected = i;
@@ -201,7 +201,7 @@ int ui_spy_steal(struct game_s *g, player_id_t spy, player_id_t target, uint8_t 
     return selected;
 }
 
-void ui_spy_stolen(struct game_s *g, player_id_t pi, player_id_t spy, int field, uint8_t tech)
+void ui_spy_stolen(struct game_s *g, player_id_t pi, player_id_t spy, tech_field_t field, uint8_t tech)
 {
     struct stolen_data_s d;
     bool flag_done = false;

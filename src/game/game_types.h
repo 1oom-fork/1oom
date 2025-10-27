@@ -59,7 +59,8 @@ typedef enum tech_field_e {
     TECH_FIELD_PLANETOLOGY, /*3*/
     TECH_FIELD_PROPULSION, /*4*/
     TECH_FIELD_WEAPON, /*5*/
-    TECH_FIELD_NUM
+    TECH_FIELD_NUM,
+    TECH_FIELD_NONE = -1
 } tech_field_t;
 
 typedef enum race_e {
