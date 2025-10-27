@@ -140,7 +140,7 @@ bool game_send_transport(struct game_s *g, struct planet_s *pf)
 
 void game_remove_empty_fleets(struct game_s *g)
 {
-    for (int i = 0; i < g->enroute_num; ++i) {
+    for (fleet_enroute_id_t i = FLEET_ENROUTE_0; i < g->enroute_num; ++i) {
         fleet_enroute_t *r = &(g->enroute[i]);
         bool is_empty;
         is_empty = true;
@@ -168,7 +168,7 @@ void game_remove_empty_fleets(struct game_s *g)
 
 void game_remove_player_fleets(struct game_s *g, player_id_t owner)
 {
-    for (int i = 0; i < g->enroute_num; ++i) {
+    for (fleet_enroute_id_t i = FLEET_ENROUTE_0; i < g->enroute_num; ++i) {
         fleet_enroute_t *r = &(g->enroute[i]);
         if (r->owner == owner) {
             util_table_remove_item_any_order(i, g->enroute, sizeof(fleet_enroute_t), g->enroute_num);
@@ -189,7 +189,7 @@ void game_remove_player_fleets(struct game_s *g, player_id_t owner)
 
 bool game_fleet_any_dest_player(const struct game_s *g, player_id_t owner, player_id_t target)
 {
-    for (int i = 0; i < g->enroute_num; ++i) {
+    for (fleet_enroute_id_t i = FLEET_ENROUTE_0; i < g->enroute_num; ++i) {
         const fleet_enroute_t *r = &(g->enroute[i]);
         if ((r->owner == owner) && (g->planet[r->dest].owner == target)) {
             return true;

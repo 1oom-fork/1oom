@@ -672,7 +672,7 @@ void game_design_scrap(struct game_s *g, player_id_t player, int shipi, bool fla
         }
         r->ships[NUM_SHIPDESIGNS - 1] = 0;
     }
-    for (int i = 0; i < g->enroute_num; ++i) {
+    for (fleet_enroute_id_t i = FLEET_ENROUTE_0; i < g->enroute_num; ++i) {
         fleet_enroute_t *r = &(g->enroute[i]);
         if (r->owner == player) {
             for (int j = shipi; j < (NUM_SHIPDESIGNS - 1); ++j) {

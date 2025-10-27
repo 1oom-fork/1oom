@@ -626,7 +626,7 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
     if (--ui_data.starmap.line_anim_phase < 0) {
         ui_data.starmap.line_anim_phase = 4;
     }
-    for (int i = 0; i < g->enroute_num; ++i) {
+    for (fleet_enroute_id_t i = FLEET_ENROUTE_0; i < g->enroute_num; ++i) {
         const fleet_enroute_t *r = &g->enroute[i];
         if (BOOLVEC_IS1(r->visible, d->api)) {
             uint8_t *gfx = ui_data.gfx.starmap.smalship[g->eto[r->owner].banner];
@@ -832,7 +832,7 @@ void ui_starmap_fill_oi_tbls(struct starmap_data_s *d)
             }
         }
     }
-    for (int i = 0; i < g->enroute_num; ++i) {
+    for (fleet_enroute_id_t i = FLEET_ENROUTE_0; i < g->enroute_num; ++i) {
         const fleet_enroute_t *r = &(g->enroute[i]);
         if (BOOLVEC_IS1(r->visible, d->api)) {
             int x0 = (r->x - x) * 2 + 8;

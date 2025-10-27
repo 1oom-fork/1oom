@@ -257,7 +257,7 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
             do {
                 i = (i + 1) % g->galaxy_stars;
                 if (g->planet[i].owner == active_player) {
-                    for (int j = 0; !found && (j < g->enroute_num); ++j) {
+                    for (fleet_enroute_id_t j = FLEET_ENROUTE_0; !found && (j < g->enroute_num); ++j) {
                         fleet_enroute_t *r = &(g->enroute[j]);
                         if (BOOLVEC_IS1(r->visible, active_player) && (r->owner != active_player) && (r->dest == i)) {
                             found = true;
@@ -288,7 +288,7 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
             do {
                 if (--i < 0) { i = g->galaxy_stars - 1; }
                 if (g->planet[i].owner == active_player) {
-                    for (int j = 0; !found && (j < g->enroute_num); ++j) {
+                    for (fleet_enroute_id_t j = FLEET_ENROUTE_0; !found && (j < g->enroute_num); ++j) {
                         fleet_enroute_t *r = &(g->enroute[j]);
                         if (BOOLVEC_IS1(r->visible, active_player) && (r->owner != active_player) && (r->dest == i)) {
                             found = true;
@@ -375,7 +375,7 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
             ui_data.starmap.orbit_player = active_player;
             flag_done = true;
         }
-        for (int i = 0; i < g->enroute_num; ++i) {
+        for (fleet_enroute_id_t i = FLEET_ENROUTE_0; i < g->enroute_num; ++i) {
             if (oi1 == d.oi_tbl_enroute[i]) {
                 ui_data.starmap.fleet_selected = i;
                 ui_data.ui_main_loop_action = UI_MAIN_LOOP_ENROUTE_SEL;

@@ -97,7 +97,7 @@ static void game_ai_classic_turn_p1_send_scout(struct game_s *g, struct ai_turn_
             BOOLVEC_SET1(tbl_planet_ignore, i);
         }
     }
-    for (int j = 0; j < g->enroute_num; ++j) {
+    for (fleet_enroute_id_t j = FLEET_ENROUTE_0; j < g->enroute_num; ++j) {
         const fleet_enroute_t *r = &(g->enroute[j]);
         if (r->owner == pi) {
             BOOLVEC_SET1(tbl_planet_ignore, r->dest);
@@ -447,7 +447,7 @@ static void game_ai_classic_turn_p1_send_colony_ships(struct game_s *g, struct a
         const planet_t *p = &(g->planet[i]);
         BOOLVEC_SET(tbl_planet_ignore, i, (p->owner != PLAYER_NONE) || (p->within_frange[pi] == 0));
     }
-    for (int i = 0; i < g->enroute_num; ++i) {
+    for (fleet_enroute_id_t i = FLEET_ENROUTE_0; i < g->enroute_num; ++i) {
         const fleet_enroute_t *r = &(g->enroute[i]);
         if ((r->owner == pi) && (r->ships[si] > 0)) {
             BOOLVEC_SET1(tbl_planet_ignore, r->dest);
@@ -695,7 +695,7 @@ static void game_ai_classic_turn_p1_send_defend(struct game_s *g, struct ai_turn
     for (planet_id_t i = PLANET_0; i < g->galaxy_stars; ++i) {
         tbl_planet_threat[i] = 0;
     }
-    for (int i = 0; i < g->enroute_num; ++i) {
+    for (fleet_enroute_id_t i = FLEET_ENROUTE_0; i < g->enroute_num; ++i) {
         const fleet_enroute_t *r = &(g->enroute[i]);
         if ((r->owner != pi) && (g->planet[r->dest].owner == pi)) {
             const empiretechorbit_t *e2 = &(g->eto[r->owner]);
@@ -909,7 +909,7 @@ static void game_ai_classic_turn_p1_build_defending_ships(struct game_s *g, play
     empiretechorbit_t *e = &(g->eto[pi]);
     BOOLVEC_DECLARE(tbl_incoming, PLANETS_MAX);
     BOOLVEC_CLEAR(tbl_incoming, PLANETS_MAX);
-    for (int i = 0; i < g->enroute_num; ++i) {
+    for (fleet_enroute_id_t i = FLEET_ENROUTE_0; i < g->enroute_num; ++i) {
         const fleet_enroute_t *r = &(g->enroute[i]);
         if ((r->owner != pi) && (g->planet[r->dest].owner == pi)) {
             BOOLVEC_SET1(tbl_incoming, r->dest);
@@ -1000,7 +1000,7 @@ static void game_ai_classic_turn_p1(struct game_s *g)
             int xsum, ysum, num_planets;
             /* BUG? only the last player affected num_enroute */
             num_enroute = 0;
-            for (int i = 0; i < g->enroute_num; ++i) {
+            for (fleet_enroute_id_t i = FLEET_ENROUTE_0; i < g->enroute_num; ++i) {
                 if (g->enroute[i].owner == pi) {
                     ++num_enroute;
                 }

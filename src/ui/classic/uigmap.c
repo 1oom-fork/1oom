@@ -95,7 +95,7 @@ static void gmap_draw_cb(void *vptr)
         lbxgfx_draw_frame_offs(x, y, ui_data.gfx.starmap.smnebula[i], UI_SCREEN_W);
     }
 
-    for (int i = 0; i < g->enroute_num; ++i) {
+    for (fleet_enroute_id_t i = FLEET_ENROUTE_0; i < g->enroute_num; ++i) {
         const fleet_enroute_t *r = &(g->enroute[i]);
         if (BOOLVEC_IS1(r->visible, d->api)) {
             uint8_t *gfx;
@@ -442,7 +442,7 @@ void ui_gmap_basic_draw_frame(void *ctx, player_id_t pi)
     uiobj_set_limits(6, 6, 221, 177);
     ui_gmap_basic_draw_galaxy(d);
     if (pi != PLAYER_NONE) {
-        for (int i = 0; i < g->enroute_num; ++i) {
+        for (fleet_enroute_id_t i = FLEET_ENROUTE_0; i < g->enroute_num; ++i) {
             const fleet_enroute_t *r = &(g->enroute[i]);
             if (BOOLVEC_IS1(r->visible, pi)) {
                 uint8_t *gfx;
