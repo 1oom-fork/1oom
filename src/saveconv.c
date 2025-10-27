@@ -1250,7 +1250,7 @@ static int savetype_en_text(const struct game_s *g, const char *fname)
         OUTADD ".ships[] = { %i, %i, %i, %i, %i, %i } }\n", r->ships[0], r->ships[1], r->ships[2], r->ships[3], r->ships[4], r->ships[5]);
     }
     OUTFLUSH();
-    for (int i = 0; i < g->transport_num; ++i) {
+    for (transport_id_t i = TRANSPORT_0; i < g->transport_num; ++i) {
         const transport_t *r = &(g->transport[i]);
         OUTLINE "transport");
         OUTADD "[%i] = { .owner = %i, .x = %i, .y = %i, .dest = %i, .speed = %i, ", i, r->owner, r->x, r->y, r->dest, r->speed);

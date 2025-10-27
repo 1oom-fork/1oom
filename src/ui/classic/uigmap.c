@@ -107,7 +107,7 @@ static void gmap_draw_cb(void *vptr)
         }
     }
 
-    for (int i = 0; i < g->transport_num; ++i) {
+    for (transport_id_t i = TRANSPORT_0; i < g->transport_num; ++i) {
         const transport_t *r = &(g->transport[i]);
         if (BOOLVEC_IS1(r->visible, d->api)) {
             uint8_t *gfx;
@@ -453,7 +453,7 @@ void ui_gmap_basic_draw_frame(void *ctx, player_id_t pi)
                 lbxgfx_draw_frame_offs(x, y, gfx, UI_SCREEN_W);
             }
         }
-        for (int i = 0; i < g->transport_num; ++i) {
+        for (transport_id_t i = TRANSPORT_0; i < g->transport_num; ++i) {
             const transport_t *r = &(g->transport[i]);
             if (BOOLVEC_IS1(r->visible, pi)) {
                 uint8_t *gfx;

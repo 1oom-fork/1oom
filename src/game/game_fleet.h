@@ -28,8 +28,6 @@ typedef struct transport_s {
     uint16_t pop;
 } transport_t;
 
-#define TRANSPORT_MAX   100
-
 typedef struct fleet_orbit_s {
     BOOLVEC_DECLARE(visible, PLAYER_NUM);
     shipcount_t ships[NUM_SHIPDESIGNS];

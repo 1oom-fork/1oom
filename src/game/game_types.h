@@ -27,6 +27,11 @@ typedef enum {
     FLEET_ENROUTE_MAX = 260,
 } fleet_enroute_id_t;
 
+typedef enum {
+    TRANSPORT_0 = 0,
+    TRANSPORT_MAX = 100,
+} transport_id_t;
+
 typedef enum tech_group_e {
     TECH_GROUP_SINGULAR = 0,
     TECH_GROUP_ECM_JAMMER = 1,

@@ -276,7 +276,7 @@ static int libsave_moo13_de_do(uint8_t *buf, struct game_s *g)
         M13_GET_8(r->speed, rb + 0x08);
         M13_GET_TBL_16(r->ships, rb + 0x0a);
     }
-    for (int i = 0; i < g->transport_num; ++i) {
+    for (transport_id_t i = TRANSPORT_0; i < g->transport_num; ++i) {
         transport_t *r = &(g->transport[i]);
         int rb;
         rb = 0x6a10 + i * 0x12;
@@ -692,7 +692,7 @@ static int libsave_moo13_en_do(uint8_t *buf, const struct game_s *g)
         M13_SET_8(r->speed, rb + 0x08);
         M13_SET_TBL_16(r->ships, rb + 0x0a);
     }
-    for (int i = 0; i < g->transport_num; ++i) {
+    for (transport_id_t i = TRANSPORT_0; i < g->transport_num; ++i) {
         const transport_t *r = &(g->transport[i]);
         int rb;
         rb = 0x6a10 + i * 0x12;

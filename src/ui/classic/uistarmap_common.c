@@ -645,7 +645,7 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
             lbxgfx_draw_frame_offs(tx, ty, gfx, UI_SCREEN_W);
         }
     }
-    for (int i = 0; i < g->transport_num; ++i) {
+    for (transport_id_t i = TRANSPORT_0; i < g->transport_num; ++i) {
         const transport_t *r = &g->transport[i];
         if (BOOLVEC_IS1(r->visible, d->api)) {
             uint8_t *gfx = ui_data.gfx.starmap.smaltran[g->eto[r->owner].banner];
@@ -840,7 +840,7 @@ void ui_starmap_fill_oi_tbls(struct starmap_data_s *d)
             d->oi_tbl_enroute[i] = uiobj_add_mousearea_limited(x0, y0, x0 + 8, y0 + 4, MOO_KEY_UNKNOWN, -1);
         }
     }
-    for (int i = 0; i < g->transport_num; ++i) {
+    for (transport_id_t i = TRANSPORT_0; i < g->transport_num; ++i) {
         const transport_t *r = &(g->transport[i]);
         if (BOOLVEC_IS1(r->visible, d->api)) {
             int x0 = (r->x - x) * 2 + 8;

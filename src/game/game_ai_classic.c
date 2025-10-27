@@ -241,7 +241,7 @@ static void game_ai_classic_turn_p1_front(struct game_s *g, struct ai_turn_p1_s 
     /* unused
     BOOLVEC_DECLARE(tbl_own_transport_dest, PLANETS_MAX);
     BOOLVEC_CLEAR(tbl_own_transport_dest, PLANETS_MAX);
-    for (int i = 0; i < g->transport_num; ++i) {
+    for (transport_id_t i = TRANSPORT_0; i < g->transport_num; ++i) {
         const transport_t *r = &(g->transport[j]);
         if (r->owner == pi) {
             BOOLVEC_SET1(tbl_own_transport_dest, r->dest);
@@ -708,7 +708,7 @@ static void game_ai_classic_turn_p1_send_defend(struct game_s *g, struct ai_turn
             }
         }
     }
-    for (int i = 0; i < g->transport_num; ++i) {
+    for (transport_id_t i = TRANSPORT_0; i < g->transport_num; ++i) {
         const transport_t *r = &(g->transport[i]);
         if ((r->owner != pi) && (g->planet[r->dest].owner == pi)) {
             tbl_planet_threat[r->dest] += r->pop * game_num_tbl_hull_w[SHIP_HULL_MEDIUM];
@@ -824,7 +824,7 @@ static void game_ai_classic_turn_p1_trans_en(struct game_s *g, struct ai_turn_p1
         BOOLVEC_SET(tbl_trans_to, i, have_orbit);
         BOOLVEC_SET(tbl_trans_from, i, (p->owner == pi) && (p->pop >= (p->max_pop3 / 2)) && (p->pop > 20));
     }
-    for (int i = 0; i < g->transport_num; ++i) {
+    for (transport_id_t i = TRANSPORT_0; i < g->transport_num; ++i) {
         const transport_t *r = &(g->transport[i]);
         if (r->owner == pi) {
             BOOLVEC_SET0(tbl_trans_to, r->dest);
@@ -876,7 +876,7 @@ static void game_ai_classic_turn_p1_trans_own(struct game_s *g, struct ai_turn_p
             }
         }
     }
-    for (int i = 0; i < g->transport_num; ++i) {
+    for (transport_id_t i = TRANSPORT_0; i < g->transport_num; ++i) {
         const transport_t *r = &(g->transport[i]);
         if (r->owner == pi) {
             BOOLVEC_SET0(tbl_trans_to, r->dest);
