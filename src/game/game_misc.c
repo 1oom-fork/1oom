@@ -464,7 +464,7 @@ void game_update_visibility(struct game_s *g)
             }
         }
     }
-    for (int i = 0; i < g->transport_num; ++i) {
+    for (transport_id_t i = TRANSPORT_0; i < g->transport_num; ++i) {
         transport_t *t = &(g->transport[i]);
         for (player_id_t pi = PLAYER_0; pi < g->players; ++pi) {
             if (t->owner != pi) {

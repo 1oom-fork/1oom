@@ -375,7 +375,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
                 break;
             }
         }
-        for (int i = 0; i < g->transport_num; ++i) {
+        for (transport_id_t i = TRANSPORT_0; i < g->transport_num; ++i) {
             if (oi1 == d.oi_tbl_transport[i]) {
                 ui_data.starmap.fleet_selected = i;
                 ui_data.ui_main_loop_action = UI_MAIN_LOOP_TRANSPORT_SEL;
@@ -510,7 +510,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
                             found = true;
                         }
                     }
-                    for (int j = 0; !found && (j < g->transport_num); ++j) {
+                    for (transport_id_t j = TRANSPORT_0; !found && (j < g->transport_num); ++j) {
                         transport_t *r = &(g->transport[j]);
                         if (BOOLVEC_IS1(r->visible, active_player) && (r->owner != active_player) && (r->dest == i)) {
                             found = true;
@@ -538,7 +538,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
                             found = true;
                         }
                     }
-                    for (int j = 0; !found && (j < g->transport_num); ++j) {
+                    for (transport_id_t j = TRANSPORT_0; !found && (j < g->transport_num); ++j) {
                         transport_t *r = &(g->transport[j]);
                         if (BOOLVEC_IS1(r->visible, active_player) && (r->owner != active_player) && (r->dest == i)) {
                             found = true;

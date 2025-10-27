@@ -221,7 +221,7 @@ void ui_starmap_transport(struct game_s *g, player_id_t active_player)
                     break;
                 }
             }
-            for (int i = 0; i < g->transport_num; ++i) {
+            for (transport_id_t i = TRANSPORT_0; i < g->transport_num; ++i) {
                 if (oi1 == d.oi_tbl_transport[i]) {
                     ui_data.starmap.fleet_selected = i;
                     ui_data.ui_main_loop_action = UI_MAIN_LOOP_TRANSPORT_SEL;
