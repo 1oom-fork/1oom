@@ -565,7 +565,7 @@ void ui_newtech(struct game_s *g, player_id_t pi)
         lbxfile_item_release(LBXFILE_TECHNO, d.gfx_lab);
         lbxfile_item_release(LBXFILE_TECHNO, d.gfx_tech);
     }
-    for (tech_field_t field = 0; field < TECH_FIELD_NUM; ++field) {
+    for (tech_field_t field = TECH_FIELD_COMPUTER; field < TECH_FIELD_NUM; ++field) {
         if (1
           && (e->tech.investment[field] != 0)
           && (e->tech.project[field] == 0)

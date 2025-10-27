@@ -156,14 +156,14 @@ static void game_tech_ai_tech_next(struct game_s *g, player_id_t player, tech_fi
 
 /* -------------------------------------------------------------------------- */
 
-uint8_t game_tech_player_has_tech(const struct game_s *g, int field_i, int tech_i, player_id_t player_i)
+uint8_t game_tech_player_has_tech(const struct game_s *g, tech_field_t field_i, int tech_i, player_id_t player_i)
 {
     const uint8_t *p = g->srd[player_i].researchcompleted[field_i];
     uint32_t len = g->eto[player_i].tech.completed[field_i];
     return find_byte_in_tbl(tech_i, p, len);
 }
 
-uint8_t game_tech_player_best_tech(const struct game_s *g, int field_i, int tech_i_base, int tech_i_step, int tech_i_max, player_id_t player_i)
+uint8_t game_tech_player_best_tech(const struct game_s *g, tech_field_t field_i, int tech_i_base, int tech_i_step, int tech_i_max, player_id_t player_i)
 {
     uint8_t tech_best = 0;
     for (int tech_i = (tech_i_base >= 2) ? tech_i_base : tech_i_step; tech_i < tech_i_max; tech_i += tech_i_step) {
@@ -716,7 +716,7 @@ void game_tech_research(struct game_s *g)
         techdata_t *td = &(e->tech);
         uint32_t total_research;
         total_research = e->total_research_bc;
-        for (tech_field_t field = 0; field < TECH_FIELD_NUM; ++field) {
+        for (tech_field_t field = TECH_FIELD_COMPUTER; field < TECH_FIELD_NUM; ++field) {
             int slider, t1, t3;
             uint32_t invest, cost;
             invest = td->investment[field];
@@ -751,7 +751,7 @@ void game_tech_get_orion_loot(struct game_s *g, player_id_t player)
     techdata_t *td = &(e->tech);
     uint8_t percent[TECH_FIELD_NUM];
     game_tech_get_new(g, player, TECH_FIELD_WEAPON, TECH_WEAP_DEATH_RAY, TECHSOURCE_FOUND, -PLANETS_MAX, 0, false);    /* HACK */
-    for (tech_field_t f = 0; f < TECH_FIELD_NUM; ++f) {
+    for (tech_field_t f = TECH_FIELD_COMPUTER; f < TECH_FIELD_NUM; ++f) {
         percent[f] = MIN(td->percent[f] + 25, 50);
     }
     for (int n = 0; n < 3; ++n) {
@@ -790,7 +790,7 @@ void game_tech_get_artifact_loot(struct game_s *g, planet_id_t planet, player_id
     if (IS_AI(g, player)) {
         return;
     }
-    for (tech_field_t f = 0; f < TECH_FIELD_NUM; ++f) {
+    for (tech_field_t f = TECH_FIELD_COMPUTER; f < TECH_FIELD_NUM; ++f) {
         percent[f] = MIN(td->percent[f] + 10, 50);
     }
     for (int n = 0; n < 1; ++n) {
