@@ -41,7 +41,7 @@ int copyprot_status = 0;
 
 static void game_turn_limit_ships(struct game_s *g)
 {
-    for (int ei = 0; ei < g->enroute_num; ++ei) {
+    for (fleet_enroute_id_t ei = FLEET_ENROUTE_0; ei < g->enroute_num; ++ei) {
         fleet_enroute_t *r = &(g->enroute[ei]);
         for (int si = 0; si < NUM_SHIPDESIGNS; ++si) {
             SETMIN(r->ships[si], game_num_limit_ships);
@@ -727,7 +727,7 @@ static void game_turn_move_ships(struct game_s *g)
             odd_frame = frame & 1;
             ui_gmap_basic_start_frame(ctx, g->active_player);
             flag_more = false;
-            for (int i = 0; i < g->enroute_num; ++i) {
+            for (fleet_enroute_id_t i = FLEET_ENROUTE_0; i < g->enroute_num; ++i) {
                 fleet_enroute_t *r = &(g->enroute[i]);
                 if ((r->speed * 2) > frame) {
                     int x, y;
@@ -799,7 +799,7 @@ static void game_turn_move_ships(struct game_s *g)
         move_back = local_multiplayer;
     }
     ui_gmap_basic_shutdown(ctx);
-    for (int i = 0; i < g->enroute_num; ++i) {
+    for (fleet_enroute_id_t i = FLEET_ENROUTE_0; i < g->enroute_num; ++i) {
         fleet_enroute_t *r = &(g->enroute[i]);
         const planet_t *p;
         p = &(g->planet[r->dest]);

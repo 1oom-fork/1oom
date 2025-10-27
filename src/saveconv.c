@@ -1243,7 +1243,7 @@ static int savetype_en_text(const struct game_s *g, const char *fname)
         }
         OUTFLUSH();
     }
-    for (int i = 0; i < g->enroute_num; ++i) {
+    for (fleet_enroute_id_t i = FLEET_ENROUTE_0; i < g->enroute_num; ++i) {
         const fleet_enroute_t *r = &(g->enroute[i]);
         OUTLINE "enroute");
         OUTADD "[%i] = { .owner = %i, .x = %i, .y = %i, .dest = %i, .speed = %i, ", i, r->owner, r->x, r->y, r->dest, r->speed);

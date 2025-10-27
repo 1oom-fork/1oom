@@ -265,7 +265,7 @@ static int libsave_moo13_de_do(uint8_t *buf, struct game_s *g)
             s->owner = PLAYER_NONE;
         }
     }
-    for (int i = 0; i < g->enroute_num; ++i) {
+    for (fleet_enroute_id_t i = FLEET_ENROUTE_0; i < g->enroute_num; ++i) {
         fleet_enroute_t *r = &(g->enroute[i]);
         int rb;
         rb = 0x4da0 + i * 0x1c;
@@ -681,7 +681,7 @@ static int libsave_moo13_en_do(uint8_t *buf, const struct game_s *g)
         M13_SET_16(s->bases, 0xe492 + i * 2);
         M13_SET_16(s->factories, 0xe56a + i * 2);
     }
-    for (int i = 0; i < g->enroute_num; ++i) {
+    for (fleet_enroute_id_t i = FLEET_ENROUTE_0; i < g->enroute_num; ++i) {
         const fleet_enroute_t *r = &(g->enroute[i]);
         int rb;
         rb = 0x4da0 + i * 0x1c;

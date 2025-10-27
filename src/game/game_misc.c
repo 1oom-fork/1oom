@@ -60,7 +60,7 @@ void game_update_maint_costs(struct game_s *g)
                 tbl_ships[si] += e->orbit[i].ships[si];
             }
         }
-        for (int j = 0; j < g->enroute_num; ++j) {
+        for (fleet_enroute_id_t j = FLEET_ENROUTE_0; j < g->enroute_num; ++j) {
             if (g->enroute[j].owner == pi) {
                 for (int si = 0; si < numsd; ++si) {
                     tbl_ships[si] += g->enroute[j].ships[si];
@@ -346,7 +346,7 @@ void game_update_within_range(struct game_s *g)
                 BOOLVEC_SET(p->within_srange, pi, (mindist2 <= srange));
                 if (BOOLVEC_IS0(p->within_srange, pi) && (srange2 > 0)) {
                     mindist1 = 10000;
-                    for (int j = 0; (j < g->enroute_num) && (mindist1 > srange2); ++j) {
+                    for (fleet_enroute_id_t j = FLEET_ENROUTE_0; (j < g->enroute_num) && (mindist1 > srange2); ++j) {
                         if (g->enroute[j].owner == pi) {
                             dist = util_math_dist_fast(g->enroute[j].x, g->enroute[j].y, p->x, p->y);
                             /* dist = (dist + 9) / 10; BUG erroneous conversion */
@@ -443,7 +443,7 @@ bool game_check_coord_is_visible(const struct game_s *g, player_id_t pi, int ran
             return true;
         }
     }
-    for (int ei = 0; ei < g->enroute_num; ++ei) {
+    for (fleet_enroute_id_t ei = FLEET_ENROUTE_0; ei < g->enroute_num; ++ei) {
         const fleet_enroute_t *r = &(g->enroute[ei]);
         if ((r->owner == pi) && (util_math_dist_fast(x, y, r->x, r->y) <= range)) {
             return true;
@@ -454,7 +454,7 @@ bool game_check_coord_is_visible(const struct game_s *g, player_id_t pi, int ran
 
 void game_update_visibility(struct game_s *g)
 {
-    for (int ei = 0; ei < g->enroute_num; ++ei) {
+    for (fleet_enroute_id_t ei = FLEET_ENROUTE_0; ei < g->enroute_num; ++ei) {
         fleet_enroute_t *r = &(g->enroute[ei]);
         for (player_id_t pi = PLAYER_0; pi < g->players; ++pi) {
             if (r->owner != pi) {
