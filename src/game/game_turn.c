@@ -751,7 +751,7 @@ static void game_turn_move_ships(struct game_s *g)
                     }
                 }
             }
-            for (int i = 0; i < g->transport_num; ++i) {
+            for (transport_id_t i = TRANSPORT_0; i < g->transport_num; ++i) {
                 transport_t *r = &(g->transport[i]);
                 if ((r->speed * 2) > frame) {
                     int x, y;
@@ -1099,7 +1099,7 @@ static void game_turn_bomb(struct game_s *g)
                 int pop_inbound, popdmg, factdmg, biodmg;
                 bool flag_do_bomb, flag_play_music;
                 pop_inbound = 0;
-                for (int j = 0; j < g->transport_num; ++j) {
+                for (transport_id_t j = TRANSPORT_0; j < g->transport_num; ++j) {
                     transport_t *r = &(g->transport[j]);
                     if ((r->owner == i) && (r->dest == pli)) {
                         pop_inbound += r->pop;
@@ -1259,7 +1259,7 @@ static void game_turn_transport(struct game_s *g)
             p->total_inbound[i] = 0;
         }
     }
-    for (int i = 0; i < g->transport_num; ++i) {
+    for (transport_id_t i = TRANSPORT_0; i < g->transport_num; ++i) {
         transport_t *r = &(g->transport[i]);
         planet_t *p;
         planet_id_t dest;

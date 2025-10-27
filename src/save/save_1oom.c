@@ -617,7 +617,7 @@ static int libsave_1oom_encode(uint8_t *buf, int buflen, const struct game_s *g)
     for (fleet_enroute_id_t i = FLEET_ENROUTE_0; i < g->enroute_num; ++i) {
         pos = libsave_1oom_encode_enroute(buf, pos, &(g->enroute[i]));
     }
-    for (int i = 0; i < g->transport_num; ++i) {
+    for (transport_id_t i = TRANSPORT_0; i < g->transport_num; ++i) {
         pos = libsave_1oom_encode_transport(buf, pos, &(g->transport[i]));
     }
     for (player_id_t i = PLAYER_0; i < g->players; ++i) {
@@ -723,7 +723,7 @@ static int libsave_1oom_decode(const uint8_t *buf, int buflen, struct game_s *g)
     for (fleet_enroute_id_t i = FLEET_ENROUTE_0; i < g->enroute_num; ++i) {
         pos = libsave_1oom_decode_enroute(buf, pos, &(g->enroute[i]));
     }
-    for (int i = 0; i < g->transport_num; ++i) {
+    for (transport_id_t i = TRANSPORT_0; i < g->transport_num; ++i) {
         pos = libsave_1oom_decode_transport(buf, pos, &(g->transport[i]));
     }
     for (player_id_t i = PLAYER_0; i < g->players; ++i) {
