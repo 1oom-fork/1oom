@@ -918,7 +918,7 @@ static void game_generate_relation_etc(struct game_s *g)
             v = tbl_orion_race_relation[e->race][g->eto[j].race] * 12;
             e->relation1[j] = v;
             e->relation2[j] = v;
-            for (int k = 0; k < TECH_FIELD_NUM; ++k) {
+            for (tech_field_t k = TECH_FIELD_COMPUTER; k < TECH_FIELD_NUM; ++k) {
                 e->spyreportfield[j][k] = 1;
             }
         }

@@ -88,7 +88,7 @@ static void tech_draw_cb(void *vptr)
 
     game_update_total_research(g);
     oi = uiobj_get_clicked_oi();
-    for (int i = 0; i < TECH_FIELD_NUM; ++i) {
+    for (tech_field_t i = TECH_FIELD_COMPUTER; i < TECH_FIELD_NUM; ++i) {
         if ((oi == d->oi_tbl_slider[i]) && (!t->slider_lock[i])) {
             game_adjust_slider_group(t->slider, i, t->slider[i], TECH_FIELD_NUM, t->slider_lock);
         }
@@ -103,7 +103,7 @@ static void tech_draw_cb(void *vptr)
     ui_draw_filled_rect(55, 19, 108, 31, (d->field == 4) ? 0x89 : 0xc0);
     ui_draw_filled_rect(109, 19, 161, 31, (d->field == 5) ? 0x89 : 0xc0);
 
-    for (int i = 0; i < TECH_FIELD_NUM; ++i) {
+    for (tech_field_t i = TECH_FIELD_COMPUTER; i < TECH_FIELD_NUM; ++i) {
         int y;
         y = 21 * i + 22;
         ui_draw_filled_rect(168, y, 218, y + 8, t->slider_lock[i] ? 0x24 : 0xbc);
@@ -142,7 +142,7 @@ static void tech_draw_cb(void *vptr)
     lbxgfx_draw_frame(157, 35, ui_data.gfx.screens.tech_but_up, UI_SCREEN_W);
     lbxgfx_draw_frame(157, 141, ui_data.gfx.screens.tech_but_down, UI_SCREEN_W);
 
-    for (int i = 0; i < TECH_FIELD_NUM; ++i) {
+    for (tech_field_t i = TECH_FIELD_COMPUTER; i < TECH_FIELD_NUM; ++i) {
         int y;
         y = 21 * i + 24;
         ui_draw_filled_rect(227, y, 277, y + 3, 0x2f);
@@ -210,7 +210,7 @@ static void tech_draw_cb(void *vptr)
         lbxfont_print_str_normal(168, 138, buf, UI_SCREEN_W);
     }
 
-    for (int i = 0; i < TECH_FIELD_NUM; ++i) {
+    for (tech_field_t i = TECH_FIELD_COMPUTER; i < TECH_FIELD_NUM; ++i) {
         int y, complpercent;
         y = 21 * i + 21;
         complpercent = game_tech_current_research_percent2(g, d->api, i);
@@ -297,7 +297,7 @@ void ui_tech(struct game_s *g, player_id_t active_player)
             ui_sound_play_sfx_24();
             d.pos += TECH_SCROLL_NUM;
         }
-        for (int i = 0; i < TECH_FIELD_NUM; ++i) {
+        for (tech_field_t i = TECH_FIELD_COMPUTER; i < TECH_FIELD_NUM; ++i) {
             if (oi == oi_tbl_field[i]) {
                 ui_sound_play_sfx_24();
                 d.field = i;
@@ -373,7 +373,7 @@ void ui_tech(struct game_s *g, player_id_t active_player)
             oi_tbl_field[4] = uiobj_add_mousearea(55, 19, 108, 31, MOO_KEY_UNKNOWN, -1);
             oi_tbl_field[5] = uiobj_add_mousearea(109, 19, 161, 31, MOO_KEY_UNKNOWN, -1);
             oi_equals = uiobj_add_inputkey(MOO_KEY_EQUALS);
-            for (int i = 0; i < TECH_FIELD_NUM; ++i) {
+            for (tech_field_t i = TECH_FIELD_COMPUTER; i < TECH_FIELD_NUM; ++i) {
                 int y;
                 y = i * 21 + 22;
                 oi_tbl_hmm15[i] = uiobj_add_mousearea(287, y - 1, 295, y + 7, MOO_KEY_UNKNOWN, -1);

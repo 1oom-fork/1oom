@@ -422,7 +422,7 @@ static int libsave_1oom_encode_srd(uint8_t *buf, int pos, const shipresearch_t *
     for (int i = 0; i < sdnum; ++i) {
         pos = libsave_1oom_encode_sd(buf, pos, &(srd->design[i]));
     }
-    for (int f = 0; f < TECH_FIELD_NUM; ++f) {
+    for (tech_field_t f = TECH_FIELD_COMPUTER; f < TECH_FIELD_NUM; ++f) {
         SG_1OOM_EN_TBL_TBL_U8(srd->researchlist[f], TECH_TIER_NUM, 3);
     }
     SG_1OOM_EN_TBL_TBL_U8(srd->researchcompleted, TECH_FIELD_NUM, TECH_PER_FIELD);
@@ -437,7 +437,7 @@ static int libsave_1oom_decode_srd(const uint8_t *buf, int pos, shipresearch_t *
     for (int i = 0; i < sdnum; ++i) {
         pos = libsave_1oom_decode_sd(buf, pos, &(srd->design[i]));
     }
-    for (int f = 0; f < TECH_FIELD_NUM; ++f) {
+    for (tech_field_t f = TECH_FIELD_COMPUTER; f < TECH_FIELD_NUM; ++f) {
         SG_1OOM_DE_TBL_TBL_U8(srd->researchlist[f], TECH_TIER_NUM, 3);
     }
     SG_1OOM_DE_TBL_TBL_U8(srd->researchcompleted, TECH_FIELD_NUM, TECH_PER_FIELD);

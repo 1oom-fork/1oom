@@ -1343,7 +1343,7 @@ static int savetype_en_text(const struct game_s *g, const char *fname)
             text_dump_prefix_del(tp);
         }
         OUTFLUSH();
-        for (int f = 0; f < TECH_FIELD_NUM; ++f) {
+        for (tech_field_t f = TECH_FIELD_COMPUTER; f < TECH_FIELD_NUM; ++f) {
             text_dump_prefix_add_tbl(tp, "researchlist", "", f);
             for (int t = 0; t < TECH_TIER_NUM; ++t) {
                 text_dump_prefix_add_tbl(tp, "", "", t);
@@ -1353,7 +1353,7 @@ static int savetype_en_text(const struct game_s *g, const char *fname)
             text_dump_prefix_del(tp);
             OUTFLUSH();
         }
-        for (int f = 0; f < TECH_FIELD_NUM; ++f) {
+        for (tech_field_t f = TECH_FIELD_COMPUTER; f < TECH_FIELD_NUM; ++f) {
             text_dump_prefix_add_tbl(tp, "researchcompleted", "", f);
             OUTLINETBL("", e->tech.completed[f], srd->researchcompleted[f]);
             text_dump_prefix_del(tp);
