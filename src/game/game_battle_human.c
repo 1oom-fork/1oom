@@ -503,7 +503,7 @@ static void game_battle_with_human_init(struct battle_s *bt)
             /* already zeroed */
             break;
     }
-    for (int i = 0; i < NUM_SHIPDESIGNS; ++i) {
+    for (shipdesign_id_t i = SHIPDESIGN_0; i < NUM_SHIPDESIGNS; ++i) {
         bt->s[SIDE_L].tbl_ships[i] = 0;
         bt->s[SIDE_R].tbl_ships[i] = 0;
     }
