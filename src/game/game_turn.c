@@ -556,13 +556,13 @@ static void game_turn_build_ship(struct game_s *g)
             empiretechorbit_t *e = &(g->eto[owner]);
             shipresearch_t *srd = &(g->srd[owner]);
             struct planet_prod_s prod;
-            uint8_t si;
+            shipdesign_id_t si;
             game_planet_get_ship_prod(p, &prod, true);
             si = p->buildship;
             if (si == BUILDSHIP_STARGATE) {
                 if (prod.vtotal >= game_num_stargate_cost) {
                     p->have_stargate = true;
-                    p->buildship = 0;
+                    p->buildship = SHIPDESIGN_0;
                     p->bc_to_ship = prod.vtotal - game_num_stargate_cost;
                     game_add_planet_to_stargate_finished(g, i, owner);
                 } else {

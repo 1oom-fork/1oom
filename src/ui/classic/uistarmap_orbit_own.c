@@ -88,7 +88,7 @@ static void ui_starmap_orbit_own_draw_cb(void *vptr)
                 /* dont care */
             }
         } else {
-            const shipdesign_t *sd = &(g->srd[d->api].design[0]);
+            const shipdesign_t *sd = &(g->srd[d->api].design[SHIPDESIGN_0]);
             int speed = 20;
             for (int i = 0; i < d->ss.sn0.num; ++i) {
                 int st, en;
@@ -120,7 +120,7 @@ static void ui_starmap_orbit_own_draw_cb(void *vptr)
         }
     }
     for (int i = 0; i < d->ss.sn0.num; ++i) {
-        const shipdesign_t *sd = &(g->srd[d->api].design[0]);
+        const shipdesign_t *sd = &(g->srd[d->api].design[SHIPDESIGN_0]);
         uint8_t *gfx;
         int st;
         ui_draw_filled_rect(227, 22 + i * 26, 259, 46 + i * 26, 0);

@@ -53,7 +53,7 @@ static void ui_starmap_orbit_en_draw_cb(void *vptr)
     lbxfont_select_set_12_4(0, 0, 0, 0);
     lbxfont_print_str_center(268, 33, game_str_sm_inorbit, UI_SCREEN_W);
     for (int i = 0; i < d->ss.sn0.num; ++i) {
-        const shipdesign_t *sd = &(g->srd[d->oe.player].design[0]);
+        const shipdesign_t *sd = &(g->srd[d->oe.player].design[SHIPDESIGN_0]);
         uint8_t *gfx;
         int st, x, y;
         x = 228 + (i % 2) * 43;

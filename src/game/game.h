@@ -124,8 +124,8 @@ typedef struct empiretechorbit_s {
     fleet_orbit_t orbit[PLANETS_MAX];
     uint8_t spyreportfield[PLAYER_NUM][TECH_FIELD_NUM];
     uint16_t spyreportyear[PLAYER_NUM];
-    int8_t shipi_colony;
-    int8_t shipi_bomber;
+    shipdesign_id_t shipi_colony;
+    shipdesign_id_t shipi_bomber;
 } empiretechorbit_t;
 
 #define NEWTECH_MAX 15

@@ -114,7 +114,7 @@ static void starview_draw_cb(void *vptr)
     }
     if (sowner != PLAYER_NONE) {
         const empiretechorbit_t *e = &(g->eto[sowner]);
-        const shipdesign_t *sd = &(g->srd[sowner].design[0]);
+        const shipdesign_t *sd = &(g->srd[sowner].design[SHIPDESIGN_0]);
         int n = 0;
         lbxfont_select(0, 0x8, 0, 0);
         for (shipdesign_id_t i = SHIPDESIGN_0; i < e->shipdesigns_num; ++i) {

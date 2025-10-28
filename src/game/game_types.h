@@ -36,6 +36,7 @@ typedef enum {
     SHIPDESIGN_0 = 0,
     NUM_SHIPDESIGNS = 6,
     BUILDSHIP_STARGATE = NUM_SHIPDESIGNS,
+    SHIPDESIGN_NONE = -1,
 } shipdesign_id_t;
 
 typedef enum tech_group_e {
