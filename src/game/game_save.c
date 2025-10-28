@@ -314,7 +314,7 @@ static int libsave_1oom_encode_orbits(uint8_t *buf, int pos, const fleet_orbit_t
     for (planet_id_t i = PLANET_0; i < planets; ++i) {
         bool any_ships;
         any_ships = false;
-        for (int j = 0; j < NUM_SHIPDESIGNS; ++j) {
+        for (shipdesign_id_t j = SHIPDESIGN_0; j < NUM_SHIPDESIGNS; ++j) {
             if (o[i].ships[j] != 0) {
                 any_ships = true;
                 break;
@@ -531,9 +531,9 @@ static int libsave_1oom_decode_sd(const uint8_t *buf, int pos, shipdesign_t *sd)
     return pos;
 }
 
-static int libsave_1oom_encode_srd(uint8_t *buf, int pos, const shipresearch_t *srd, int sdnum)
+static int libsave_1oom_encode_srd(uint8_t *buf, int pos, const shipresearch_t *srd, shipdesign_id_t sdnum)
 {
-    for (int i = 0; i < sdnum; ++i) {
+    for (shipdesign_id_t i = SHIPDESIGN_0; i < sdnum; ++i) {
         pos = libsave_1oom_encode_sd(buf, pos, &(srd->design[i]));
     }
     for (tech_field_t f = TECH_FIELD_COMPUTER; f < TECH_FIELD_NUM; ++f) {
@@ -546,9 +546,9 @@ static int libsave_1oom_encode_srd(uint8_t *buf, int pos, const shipresearch_t *
     return pos;
 }
 
-static int libsave_1oom_decode_srd(const uint8_t *buf, int pos, shipresearch_t *srd, int sdnum)
+static int libsave_1oom_decode_srd(const uint8_t *buf, int pos, shipresearch_t *srd, shipdesign_id_t sdnum)
 {
-    for (int i = 0; i < sdnum; ++i) {
+    for (shipdesign_id_t i = SHIPDESIGN_0; i < sdnum; ++i) {
         pos = libsave_1oom_decode_sd(buf, pos, &(srd->design[i]));
     }
     for (tech_field_t f = TECH_FIELD_COMPUTER; f < TECH_FIELD_NUM; ++f) {
