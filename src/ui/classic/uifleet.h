@@ -6,6 +6,6 @@
 
 struct game_s;
 
-extern int ui_fleet(struct game_s *g, player_id_t pi);
+extern shipdesign_id_t ui_fleet(struct game_s *g, player_id_t pi);
 
 #endif

@@ -95,7 +95,7 @@ static void ui_starmap_enroute_draw_cb(void *vptr)
         /*d->in_frange = false;*/
     }
     for (int i = 0; i < d->ss.sn0.num; ++i) {
-        const shipdesign_t *sd = &(g->srd[r->owner].design[0]);
+        const shipdesign_t *sd = &(g->srd[r->owner].design[SHIPDESIGN_0]);
         uint8_t *gfx;
         int st, x, y;
         x = (i & 1) * 43 + 228;

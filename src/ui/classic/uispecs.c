@@ -32,7 +32,7 @@
 struct specs_data_s {
     struct game_s *g;
     player_id_t api;
-    int scrapi;
+    shipdesign_id_t scrapi;
 };
 
 static void specs_print_weap(weapon_t wi, uint8_t wn, char *buf1, char *buf2)
@@ -188,7 +188,7 @@ void ui_specs_before(struct game_s *g, player_id_t active_player)
     uiobj_table_clear();
 }
 
-void ui_specs_mustscrap(struct game_s *g, player_id_t active_player, int scrapi)
+void ui_specs_mustscrap(struct game_s *g, player_id_t active_player, shipdesign_id_t scrapi)
 {
     struct specs_data_s d;
     bool flag_done = false;
@@ -234,12 +234,12 @@ void ui_specs_mustscrap(struct game_s *g, player_id_t active_player, int scrapi)
     uiobj_table_clear();
 }
 
-int ui_specs(struct game_s *g, player_id_t active_player)
+shipdesign_id_t ui_specs(struct game_s *g, player_id_t active_player)
 {
     struct specs_data_s d;
     bool flag_done = false;
     int16_t oi_ma, oi_tbl_scrap[NUM_SHIPDESIGNS];
-    int scrapi = -1;
+    shipdesign_id_t scrapi = SHIPDESIGN_NONE;
     game_update_maint_costs(g);
 
     d.g = g;

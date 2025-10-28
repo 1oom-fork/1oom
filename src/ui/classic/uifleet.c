@@ -186,12 +186,12 @@ static void ui_fleet_sub(struct fleet_data_s *d)
 
 /* -------------------------------------------------------------------------- */
 
-int ui_fleet(struct game_s *g, player_id_t active_player)
+shipdesign_id_t ui_fleet(struct game_s *g, player_id_t active_player)
 {
     struct fleet_data_s d;
     bool flag_done = false, flag_scrap = false;
     int16_t oi_up, oi_down, oi_ok, oi_scrap, oi_view, oi_tbl_ship[NUM_SHIPDESIGNS], oi_tbl_line[FLEET_LINES];
-    int ret = -1;
+    shipdesign_id_t ret = SHIPDESIGN_NONE;
 
     load_fl_data(&d);
 

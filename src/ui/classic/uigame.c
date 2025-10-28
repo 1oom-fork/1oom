@@ -41,7 +41,7 @@
 
 ui_turn_action_t ui_game_turn(struct game_s *g, int *load_game_i_ptr, player_id_t pi)
 {
-    int scrapi = -1;
+    shipdesign_id_t scrapi = SHIPDESIGN_NONE;
     int opponi = -1;
     if (g->gaux->local_players > 1) {
         player_id_t pil;
@@ -118,7 +118,7 @@ ui_turn_action_t ui_game_turn(struct game_s *g, int *load_game_i_ptr, player_id_
                 {
                     struct game_design_s gd;
                     bool ok;
-                    int sd_num;
+                    shipdesign_id_t sd_num;
                     sd_num = g->eto[pi].shipdesigns_num;
                     game_design_prepare(g, &gd, pi, &g->current_design[pi]);
                     ok = ui_design(g, &gd, pi);
@@ -144,7 +144,7 @@ ui_turn_action_t ui_game_turn(struct game_s *g, int *load_game_i_ptr, player_id_
                 scrapi = ui_specs(g, pi);
                 break;
             case UI_MAIN_LOOP_MUSTSCRAP:
-                if (scrapi >= 0) {
+                if (scrapi != SHIPDESIGN_NONE) {
                     ui_specs_mustscrap(g, pi, scrapi);
                 } else {
                     LOG_DEBUG((3, "%s: invalid scrapi %i on MUSTSCRAP\n", __func__, scrapi));
