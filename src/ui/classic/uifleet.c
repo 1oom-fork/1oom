@@ -74,7 +74,7 @@ static void fleet_draw_cb(void *vptr)
     num = d->num - d->pos;
     SETMIN(num, 5);
 
-    for (int i = 0; i < e->shipdesigns_num; ++i) {
+    for (shipdesign_id_t i = SHIPDESIGN_0; i < e->shipdesigns_num; ++i) {
         const shipdesign_t *sd = &(g->srd[d->api].design[i]);
         int x0;
         x0 = 44 * i + 48;
@@ -109,7 +109,7 @@ static void fleet_draw_cb(void *vptr)
             lbxfont_print_str_center(x0 + 19, y0 + 14, game_str_fl_system);
         }
         s = (BOOLVEC_IS1(d->is_enroute, fi)) ? g->enroute[d->enroute[fi]].ships : e->orbit[pi].ships;
-        for (int j = 0; j < e->shipdesigns_num; ++j) {
+        for (shipdesign_id_t j = SHIPDESIGN_0; j < e->shipdesigns_num; ++j) {
             const shipdesign_t *sd = &(g->srd[d->api].design[j]);
             int ships;
             ships = s[j];
@@ -155,10 +155,10 @@ static void ui_fleet_sub(struct fleet_data_s *d)
 {
     const struct game_s *g = d->g;
     const empiretechorbit_t *e = &(g->eto[d->api]);
-    int num = 0, sd_num = e->shipdesigns_num;
+    int num = 0;
     for (planet_id_t i = PLANET_0; i < g->galaxy_stars; ++i) {
         const fleet_orbit_t *r = &(e->orbit[i]);
-        for (int j = 0; j < sd_num; ++j) {
+        for (shipdesign_id_t j = SHIPDESIGN_0; j < e->shipdesigns_num; ++j) {
             if (r->ships[j] != 0) {
                 d->planet[num] = i;
                 BOOLVEC_SET0(d->is_enroute, num);
@@ -170,7 +170,7 @@ static void ui_fleet_sub(struct fleet_data_s *d)
     for (fleet_enroute_id_t i = FLEET_ENROUTE_0; i < g->enroute_num; ++i) {
         const fleet_enroute_t *r = &(g->enroute[i]);
         if (r->owner == d->api) {
-            for (int j = 0; j < sd_num; ++j) {
+            for (shipdesign_id_t j = SHIPDESIGN_0; j < e->shipdesigns_num; ++j) {
                 if (r->ships[j] != 0) {
                     d->enroute[num] = i;
                     d->planet[num] = r->dest;
@@ -186,12 +186,12 @@ static void ui_fleet_sub(struct fleet_data_s *d)
 
 /* -------------------------------------------------------------------------- */
 
-int ui_fleet(struct game_s *g, player_id_t active_player)
+shipdesign_id_t ui_fleet(struct game_s *g, player_id_t active_player)
 {
     struct fleet_data_s d;
     bool flag_done = false, flag_scrap = false;
     uiobj_id_t oi_up, oi_down, oi_ok, oi_scrap, oi_view, oi_tbl_ship[NUM_SHIPDESIGNS], oi_tbl_line[FLEET_LINES];
-    int ret = -1;
+    shipdesign_id_t ret = SHIPDESIGN_NONE;
 
     load_fl_data(&d);
 
@@ -216,7 +216,7 @@ int ui_fleet(struct game_s *g, player_id_t active_player)
         for (int i = 0; i < FLEET_LINES; ++i) { \
             oi_tbl_line[i] = UIOBJI_INVALID; \
         } \
-        for (int i = 0; i < NUM_SHIPDESIGNS; ++i) { \
+        for (shipdesign_id_t i = SHIPDESIGN_0; i < NUM_SHIPDESIGNS; ++i) { \
             oi_tbl_ship[i] = UIOBJI_INVALID; \
         } \
     } while (0)
@@ -243,7 +243,7 @@ int ui_fleet(struct game_s *g, player_id_t active_player)
             ui_sound_play_sfx_24();
             flag_scrap = true;
         }
-        for (int i = 0; i < g->eto[active_player].shipdesigns_num; ++i) {
+        for (shipdesign_id_t i = SHIPDESIGN_0; i < g->eto[active_player].shipdesigns_num; ++i) {
             if (oi == oi_tbl_ship[i]) {
                 ui_sound_play_sfx_24();
                 ret = i;
@@ -307,7 +307,7 @@ int ui_fleet(struct game_s *g, player_id_t active_player)
                 lbxgfx_draw_frame(224, 181, ui_data.gfx.starmap.fleetbut_scrap);
             }
             if (flag_scrap) {
-                for (int i = 0; i < g->eto[active_player].shipdesigns_num; ++i) {
+                for (shipdesign_id_t i = SHIPDESIGN_0; i < g->eto[active_player].shipdesigns_num; ++i) {
                     int x0;
                     x0 = 44 * i + 48;
                     oi_tbl_ship[i] = uiobj_add_mousearea(x0, 0, x0 + 38, 180, MOO_KEY_UNKNOWN, -1);
