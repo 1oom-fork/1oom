@@ -729,7 +729,7 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
             num = 0;
             for (player_id_t i = PLAYER_0; i < g->players; ++i) {
                 const empiretechorbit_t *e = &g->eto[i];
-                for (int j = 0; j < e->shipdesigns_num; ++j) {
+                for (shipdesign_id_t j = SHIPDESIGN_0; j < e->shipdesigns_num; ++j) {
                     if (e->orbit[pi].ships[j]) {
                         tblorbit[num++] = i;
                         break;
@@ -861,7 +861,7 @@ void ui_starmap_fill_oi_tbls(struct starmap_data_s *d)
             numorbits = 0;
             for (player_id_t j = PLAYER_0; j < g->players; ++j) {
                 const fleet_orbit_t *r = &(g->eto[j].orbit[i]);
-                for (int k = 0; k < g->eto[j].shipdesigns_num; ++k) {
+                for (shipdesign_id_t k = SHIPDESIGN_0; k < g->eto[j].shipdesigns_num; ++k) {
                     if (r->ships[k]) {
                         tblpl[numorbits++] = j;
                         break;
@@ -965,10 +965,10 @@ void ui_starmap_fill_oi_ctrl(struct starmap_data_s *d)
     d->oi_ctrl_dr = uiobj_add_inputkey(MOO_KEY_KP3 | MOO_MOD_CTRL);
 }
 
-void ui_starmap_sn0_setup(struct shipnon0_s *sn0, int sd_num, const shipcount_t *ships)
+void ui_starmap_sn0_setup(struct shipnon0_s *sn0, shipdesign_id_t sd_num, const shipcount_t *ships)
 {
     sn0->num = 0;
-    for (int i = 0; i < sd_num; ++i) {
+    for (shipdesign_id_t i = SHIPDESIGN_0; i < sd_num; ++i) {
         shipcount_t n;
         n = ships[i];
         sn0->ships[i] = n;
