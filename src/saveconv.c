@@ -518,7 +518,7 @@ static int libsave_moo13_decode(uint8_t *buf, struct game_s *g)
         shipresearch_t *srd = &(g->srd[i]);
         int srdb, pos;
         srdb = 0xc410 + i * 0x468;
-        for (int j = 0; j < g->eto[i].shipdesigns_num; ++j) {
+        for (shipdesign_id_t j = SHIPDESIGN_0; j < g->eto[i].shipdesigns_num; ++j) {
             if (libsave_moo13_decode_sd(buf, &(srd->design[j]), srdb + j * 0x44) != 0) {
                 return -1;
             }
@@ -961,7 +961,7 @@ static int libsave_moo13_encode(uint8_t *buf, const struct game_s *g)
         const shipresearch_t *srd = &(g->srd[i]);
         int srdb, pos;
         srdb = 0xc410 + i * 0x468;
-        for (int j = 0; j < g->eto[i].shipdesigns_num; ++j) {
+        for (shipdesign_id_t j = SHIPDESIGN_0; j < g->eto[i].shipdesigns_num; ++j) {
             if (libsave_moo13_encode_sd(buf, &(srd->design[j]), srdb + j * 0x44) != 0) {
                 return -1;
             }
@@ -2181,7 +2181,7 @@ static int savetype_en_text(const struct game_s *g, const char *fname)
         const shipresearch_t *srd = &(g->srd[pl]);
         const empiretechorbit_t *e = &(g->eto[pl]);
         text_dump_prefix_add_tbl(tp, "srd", ".", pl);
-        for (int i = 0; i < g->eto[pl].shipdesigns_num; ++i) {
+        for (shipdesign_id_t i = SHIPDESIGN_0; i < g->eto[pl].shipdesigns_num; ++i) {
             text_dump_prefix_add_tbl(tp, "design", ".", i);
             savetype_en_text_sd(&(srd->design[i]), tp);
             text_dump_prefix_del(tp);
