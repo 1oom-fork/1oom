@@ -6,7 +6,7 @@
 
 /* -------------------------------------------------------------------------- */
 
-int16_t startship_num = 5;
+shipdesign_id_t startship_num = 5;
 
 shipdesign_t tbl_startship[NUM_SHIPDESIGNS] = {
     { /* SCOUT */

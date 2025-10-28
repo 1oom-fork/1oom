@@ -38,7 +38,7 @@ void game_planet_destroy(struct game_s *g, planet_id_t planet_i, player_id_t att
     for (player_id_t i = PLAYER_0; i < PLAYER_NUM; ++i) {
         p->inbound[i] = 0;
     }
-    p->buildship = 0;
+    p->buildship = SHIPDESIGN_0;
     for (int i = 0; i < PLANET_SLIDER_NUM; ++i) {
         p->slider[i] = 0;
         p->slider_lock[i] = 0;

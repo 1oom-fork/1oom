@@ -16,7 +16,7 @@ int game_stat_fleet(const struct game_s *g, player_id_t pi)
     const shipresearch_t *srd = &(g->srd[pi]);
     int v2, v4, va, ve = 0, sum;
     sum = 0;
-    for (int i = 0; i < e->shipdesigns_num; ++i) {
+    for (shipdesign_id_t i = SHIPDESIGN_0; i < e->shipdesigns_num; ++i) {
         sum += srd->shipcount[i] * game_num_tbl_hull_w[srd->design[i].hull];
     }
     SETMIN(sum, 0x319750);
