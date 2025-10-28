@@ -137,7 +137,7 @@ static void game_battle_post(struct game_s *g, player_id_t loser, int winner, pl
         int mindist = 10000;
         shipcount_t ships[NUM_SHIPDESIGNS];
         uint8_t shiptypes[NUM_SHIPDESIGNS];
-        uint8_t numtypes = e->shipdesigns_num;
+        shipdesign_id_t numtypes = e->shipdesigns_num;
         for (shipdesign_id_t i = SHIPDESIGN_0; i < numtypes; ++i) {
             shiptypes[i] = i;
             ships[i] = o->ships[i];
@@ -166,7 +166,7 @@ static void game_battle_prepare_p1(struct battle_s *bt, battle_side_i_t side, pl
 {
     const struct game_s *g = bt->g;
     const empiretechorbit_t *e = &(g->eto[bt->s[side].party]);
-    const shipdesign_t *sd = &(g->srd[bt->s[side].party].design[0]);
+    const shipdesign_t *sd = &(g->srd[bt->s[side].party].design[SHIPDESIGN_0]);
     bt->s[side].apparent_force = 0;
     for (shipdesign_id_t i = SHIPDESIGN_0; i < e->shipdesigns_num; ++i) {
         bt->s[side].apparent_force += (sd[i].hull + 1) * e->orbit[planet_i].ships[i];
@@ -178,7 +178,7 @@ static void game_battle_prepare_add_ships(struct battle_s *bt, battle_side_i_t s
 {
     const struct game_s *g = bt->g;
     const empiretechorbit_t *e = &(g->eto[bt->s[side].party]);
-    const shipdesign_t *sd = &(g->srd[bt->s[side].party].design[0]);
+    const shipdesign_t *sd = &(g->srd[bt->s[side].party].design[SHIPDESIGN_0]);
     bool flag_shield_disable = (g->planet[planet_i].battlebg == 0);
     shipparsed_t sp[1];
     int num_types = 0;
@@ -425,7 +425,7 @@ void game_battle_finish(struct battle_s *bt)
     for (battle_side_i_t side = SIDE_L; side <= SIDE_R; ++side) {
         if (bt->s[side].party < PLAYER_NUM) {
             empiretechorbit_t *e = &(g->eto[bt->s[side].party]);
-            const shipdesign_t *sd = &(g->srd[bt->s[side].party].design[0]);
+            const shipdesign_t *sd = &(g->srd[bt->s[side].party].design[SHIPDESIGN_0]);
             shipcount_t *os = &(e->orbit[bt->planet_i].ships[0]);
             for (int i = 0; i < bt->s[side].num_types; ++i) {
                 uint8_t st;

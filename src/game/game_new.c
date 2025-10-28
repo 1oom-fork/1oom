@@ -893,7 +893,7 @@ start_of_func:
                 strcpy(sd->name, game_str_tbl_stship_names[j]);
                 sd->look += e->banner * SHIP_LOOK_PER_BANNER;
             }
-            memcpy(&g->current_design[i], &srd->design[0], sizeof(shipdesign_t));
+            memcpy(&g->current_design[i], &srd->design[SHIPDESIGN_0], sizeof(shipdesign_t));
             for (shipdesign_id_t j = SHIPDESIGN_0; j < NUM_SHIPDESIGNS; ++j) {
                 shipcount_t n;
                 n = startfleet_ships[j];
