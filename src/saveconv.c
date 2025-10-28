@@ -413,7 +413,7 @@ static int libsave_moo13_decode(uint8_t *buf, struct game_s *g)
         M13_GET_16(r->y, rb + 0x04);
         M13_GET_S16(r->dest, rb + 0x06);
         M13_GET_8(r->speed, rb + 0x08);
-        for (int j = 0; j < NUM_SHIPDESIGNS; ++j) {
+        for (shipdesign_id_t j = SHIPDESIGN_0; j < NUM_SHIPDESIGNS; ++j) {
             M13_GET_16(r->ships[j], rb + 0x0a + j * 2);
         }
     }
@@ -504,7 +504,7 @@ static int libsave_moo13_decode(uint8_t *buf, struct game_s *g)
             fleet_orbit_t *r = &(e->orbit[j]);
             int ob;
             ob = eb + 0x3a2 + j * 0x18;
-            for (int k = 0; k < NUM_SHIPDESIGNS; ++k) {
+            for (shipdesign_id_t k = SHIPDESIGN_0; k < NUM_SHIPDESIGNS; ++k) {
                 M13_GET_16(r->ships[k], ob + 0x0c + k * 2);
             }
         }
@@ -519,7 +519,7 @@ static int libsave_moo13_decode(uint8_t *buf, struct game_s *g)
         shipresearch_t *srd = &(g->srd[i]);
         int srdb, pos;
         srdb = 0xc410 + i * 0x468;
-        for (int j = 0; j < g->eto[i].shipdesigns_num; ++j) {
+        for (shipdesign_id_t j = SHIPDESIGN_0; j < g->eto[i].shipdesigns_num; ++j) {
             if (libsave_moo13_decode_sd(buf, &(srd->design[j]), srdb + j * 0x44) != 0) {
                 return -1;
             }
@@ -540,7 +540,7 @@ static int libsave_moo13_decode(uint8_t *buf, struct game_s *g)
                 ++pos;
             }
         }
-        for (int j = 0; j < NUM_SHIPDESIGNS; ++j) {
+        for (shipdesign_id_t j = SHIPDESIGN_0; j < NUM_SHIPDESIGNS; ++j) {
             int srdb2;
             srdb2 = srdb + j * 2;
             M13_GET_16(srd->have_reserve_fuel[j], srdb2 + 0x444);
@@ -598,7 +598,7 @@ static int libsave_moo13_decode(uint8_t *buf, struct game_s *g)
             M13_GET_S16(ev->home[i], evb + 0x0a0 + i * 2);
         }
         M13_GET_8(ev->report_stars, evb + 0x0ac);
-        for (int i = 0; i < NUM_SHIPDESIGNS; ++i) {
+        for (shipdesign_id_t i = SHIPDESIGN_0; i < NUM_SHIPDESIGNS; ++i) {
             M13_GET_16(ev->new_ships[PLAYER_0][i], evb + 0x1a4 + i * 2);
         }
         for (player_id_t i = PLAYER_1; i < g->players; ++i) {
@@ -866,7 +866,7 @@ static int libsave_moo13_encode(uint8_t *buf, const struct game_s *g)
         M13_SET_16(r->y, rb + 0x04);
         M13_SET_S16(r->dest, rb + 0x06);
         M13_SET_8(r->speed, rb + 0x08);
-        for (int j = 0; j < NUM_SHIPDESIGNS; ++j) {
+        for (shipdesign_id_t j = SHIPDESIGN_0; j < NUM_SHIPDESIGNS; ++j) {
             M13_SET_16(r->ships[j], rb + 0x0a + j * 2);
         }
     }
@@ -962,7 +962,7 @@ static int libsave_moo13_encode(uint8_t *buf, const struct game_s *g)
             const fleet_orbit_t *r = &(e->orbit[j]);
             int ob;
             ob = eb + 0x3a2 + j * 0x18;
-            for (int k = 0; k < NUM_SHIPDESIGNS; ++k) {
+            for (shipdesign_id_t k = SHIPDESIGN_0; k < NUM_SHIPDESIGNS; ++k) {
                 M13_SET_16(r->ships[k], ob + 0x0c + k * 2);
             }
         }
@@ -977,7 +977,7 @@ static int libsave_moo13_encode(uint8_t *buf, const struct game_s *g)
         const shipresearch_t *srd = &(g->srd[i]);
         int srdb, pos;
         srdb = 0xc410 + i * 0x468;
-        for (int j = 0; j < g->eto[i].shipdesigns_num; ++j) {
+        for (shipdesign_id_t j = SHIPDESIGN_0; j < g->eto[i].shipdesigns_num; ++j) {
             if (libsave_moo13_encode_sd(buf, &(srd->design[j]), srdb + j * 0x44) != 0) {
                 return -1;
             }
@@ -998,7 +998,7 @@ static int libsave_moo13_encode(uint8_t *buf, const struct game_s *g)
                 ++pos;
             }
         }
-        for (int j = 0; j < NUM_SHIPDESIGNS; ++j) {
+        for (shipdesign_id_t j = SHIPDESIGN_0; j < NUM_SHIPDESIGNS; ++j) {
             int srdb2;
             srdb2 = srdb + j * 2;
             M13_SET_16(srd->have_reserve_fuel[j], srdb2 + 0x444);
@@ -1054,7 +1054,7 @@ static int libsave_moo13_encode(uint8_t *buf, const struct game_s *g)
             M13_SET_S16(ev->home[i], evb + 0x0a0 + i * 2);
         }
         M13_SET_8(ev->report_stars, evb + 0x0ac);
-        for (int i = 0; i < NUM_SHIPDESIGNS; ++i) {
+        for (shipdesign_id_t i = SHIPDESIGN_0; i < NUM_SHIPDESIGNS; ++i) {
             M13_SET_16(ev->new_ships[PLAYER_0][i], evb + 0x1a4 + i * 2);
         }
         for (player_id_t i = PLAYER_1; i < g->players; ++i) {
@@ -2209,7 +2209,7 @@ static int savetype_en_text(const struct game_s *g, const char *fname)
         const shipresearch_t *srd = &(g->srd[pl]);
         const empiretechorbit_t *e = &(g->eto[pl]);
         text_dump_prefix_add_tbl(tp, "srd", ".", pl);
-        for (int i = 0; i < g->eto[pl].shipdesigns_num; ++i) {
+        for (shipdesign_id_t i = SHIPDESIGN_0; i < g->eto[pl].shipdesigns_num; ++i) {
             text_dump_prefix_add_tbl(tp, "design", ".", i);
             savetype_en_text_sd(&(srd->design[i]), tp);
             text_dump_prefix_del(tp);
