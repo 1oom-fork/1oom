@@ -26,11 +26,10 @@ void game_update_have_reserve_fuel(struct game_s *g)
 {
     for (player_id_t pi = PLAYER_0; pi < g->players; ++pi) {
         shipresearch_t *srd = &(g->srd[pi]);
-        int num = g->eto[pi].shipdesigns_num;
-        for (int si = 0; si < NUM_SHIPDESIGNS; ++si) {
+        for (shipdesign_id_t si = SHIPDESIGN_0; si < NUM_SHIPDESIGNS; ++si) {
             srd->have_reserve_fuel[si] = false;
         }
-        for (int si = 0; si < num; ++si) {
+        for (shipdesign_id_t si = SHIPDESIGN_0; si < g->eto[pi].shipdesigns_num; ++si) {
             shipdesign_t *sd = &(srd->design[si]);
             if (0
               || (sd->special[0] == SHIP_SPECIAL_RESERVE_FUEL_TANKS)
@@ -51,24 +50,23 @@ void game_update_maint_costs(struct game_s *g)
         uint16_t bases;
         shipresearch_t *srd = &(g->srd[pi]);
         empiretechorbit_t *e = &(g->eto[pi]);
-        int numsd = e->shipdesigns_num;
-        for (int si = 0; si < NUM_SHIPDESIGNS; ++si) {
+        for (shipdesign_id_t si = SHIPDESIGN_0; si < NUM_SHIPDESIGNS; ++si) {
             tbl_ships[si] = 0;
         }
-        for (int si = 0; si < numsd; ++si) {
+        for (shipdesign_id_t si = SHIPDESIGN_0; si < e->shipdesigns_num; ++si) {
             for (planet_id_t i = PLANET_0; i < g->galaxy_stars; ++i) {
                 tbl_ships[si] += e->orbit[i].ships[si];
             }
         }
         for (fleet_enroute_id_t j = FLEET_ENROUTE_0; j < g->enroute_num; ++j) {
             if (g->enroute[j].owner == pi) {
-                for (int si = 0; si < numsd; ++si) {
+                for (shipdesign_id_t si = SHIPDESIGN_0; si < e->shipdesigns_num; ++si) {
                     tbl_ships[si] += g->enroute[j].ships[si];
                 }
             }
         }
         totalcost = 0;
-        for (int si = 0; si < NUM_SHIPDESIGNS; ++si) {
+        for (shipdesign_id_t si = SHIPDESIGN_0; si < NUM_SHIPDESIGNS; ++si) {
             const shipdesign_t *sd = &(srd->design[si]);
             srd->shipcount[si] = tbl_ships[si];
             totalcost += tbl_ships[si] * sd->cost;
@@ -274,7 +272,7 @@ void game_update_seen_by_orbit(struct game_s *g, player_id_t pi)
         planet_t *p = &(g->planet[i]);
         bool in_orbit;
         in_orbit = false;
-        for (int j = 0; j < e->shipdesigns_num; ++j) {
+        for (shipdesign_id_t j = SHIPDESIGN_0; j < e->shipdesigns_num; ++j) {
             if (e->orbit[i].ships[j] != 0) {
                 in_orbit = true;
                 break;
@@ -368,7 +366,7 @@ void game_update_within_range(struct game_s *g)
             empiretechorbit_t *e = &(g->eto[pi]);
             uint16_t snum;
             snum = 0;
-            for (int j = 0; (j < e->shipdesigns_num) && !snum; ++j) {
+            for (shipdesign_id_t j = SHIPDESIGN_0; (j < e->shipdesigns_num) && !snum; ++j) {
                 snum += e->orbit[i].ships[j];
             }
             if (!snum) {
@@ -436,7 +434,7 @@ bool game_check_coord_is_visible(const struct game_s *g, player_id_t pi, int ran
         const planet_t *p = &(g->planet[i]);
         uint32_t snum;
         snum = 0;
-        for (int j = 0; (j < e->shipdesigns_num) && !snum; ++j) {
+        for (shipdesign_id_t j = SHIPDESIGN_0; (j < e->shipdesigns_num) && !snum; ++j) {
             snum += e->orbit[i].ships[j];
         }
         if (snum && (util_math_dist_fast(x, y, p->x, p->y) <= range)) {
@@ -489,7 +487,7 @@ void game_update_visibility(struct game_s *g)
             fleet_orbit_t *o = &(g->eto[pi].orbit[i]);
             bool any_ships;
             any_ships = false;
-            for (int j = 0; j < NUM_SHIPDESIGNS; ++j) {
+            for (shipdesign_id_t j = SHIPDESIGN_0; j < NUM_SHIPDESIGNS; ++j) {
                 if (o->ships[j] != 0) {
                     any_ships = true;
                     break;
