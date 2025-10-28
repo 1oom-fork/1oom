@@ -42,7 +42,7 @@ static bool game_send_fleet_do(struct game_s *g, player_id_t owner, planet_id_t 
     r->x = pf->x;
     r->y = pf->y;
     r->dest = dest;
-    for (int i = 0; i < NUM_SHIPDESIGNS; ++i) {
+    for (shipdesign_id_t i = SHIPDESIGN_0; i < NUM_SHIPDESIGNS; ++i) {
         r->ships[i] = 0;
     }
     {
@@ -81,7 +81,7 @@ bool game_send_fleet_from_orbit(struct game_s *g, player_id_t owner, planet_id_t
         for (int i = 0; i < numtypes; ++i) {
             o->ships[shiptypes[i]] -= ships[i];
         }
-        for (int i = 0; i < NUM_SHIPDESIGNS; ++i) {
+        for (shipdesign_id_t i = SHIPDESIGN_0; i < NUM_SHIPDESIGNS; ++i) {
             if (o->ships[i] > 0) {
                 found = true;
                 break;
@@ -144,7 +144,7 @@ void game_remove_empty_fleets(struct game_s *g)
         fleet_enroute_t *r = &(g->enroute[i]);
         bool is_empty;
         is_empty = true;
-        for (int j = 0; j < NUM_SHIPDESIGNS; ++j) {
+        for (shipdesign_id_t j = SHIPDESIGN_0; j < NUM_SHIPDESIGNS; ++j) {
             if (r->ships[j] != 0) {
                 is_empty = false;
                 break;
@@ -211,7 +211,7 @@ void game_fleet_unrefuel(struct game_s *g)
                 fleet_orbit_t *r = &(e->orbit[pli]);
                 bool unfueled;
                 unfueled = false;
-                for (int si = 0; si < e->shipdesigns_num; ++si) {
+                for (shipdesign_id_t si = SHIPDESIGN_0; si < e->shipdesigns_num; ++si) {
                     if (1
                       && (r->ships[si] != 0)
                       && ((wr == 0) || ((wr == 2) && (!srd->have_reserve_fuel[si])))

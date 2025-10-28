@@ -56,7 +56,7 @@ static void newships_draw_cb(void *vptr)
     lbxfont_set_color_c_n(0x49, 5);
     sprintf(buf, "%s%i", game_str_year, g->year + YEAR_BASE);
     lbxfont_print_str_center(x + 76, y + 9, buf, UI_SCREEN_W);
-    for (int i = 0; i < NUM_SHIPDESIGNS; ++i) {
+    for (shipdesign_id_t i = SHIPDESIGN_0; i < NUM_SHIPDESIGNS; ++i) {
         shipsum_t n;
         n = g->evn.new_ships[d->api][i];
         if (n != 0) {

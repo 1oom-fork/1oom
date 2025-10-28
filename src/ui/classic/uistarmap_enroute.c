@@ -223,7 +223,7 @@ void ui_starmap_enroute(struct game_s *g, player_id_t active_player)
                 if ((d.en.can_move == ON_PLANET) && (r->x == p->x) && (r->y == p->y)) {
                     shipcount_t *os;
                     os = &(g->eto[r->owner].orbit[r->dest].ships[0]);
-                    for (int i = 0; i < NUM_SHIPDESIGNS; ++i) {
+                    for (shipdesign_id_t i = SHIPDESIGN_0; i < NUM_SHIPDESIGNS; ++i) {
                         os[i] += r->ships[i];
                     }
                     util_table_remove_item_any_order(ui_data.starmap.fleet_selected, g->enroute, sizeof(fleet_enroute_t), g->enroute_num);

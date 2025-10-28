@@ -29,7 +29,7 @@ static void game_get_random_shipnames(struct game_s *g, player_id_t player, char
     char const * const *names = &game_str_tbl_ship_names[e->race * SHIP_NAME_NUM];
     for (int n = 0; n < SHIP_NAME_NUM; ++n) {
         BOOLVEC_SET1(name_unused, n);
-        for (int sdi = 0; sdi < e->shipdesigns_num; ++sdi) {
+        for (shipdesign_id_t sdi = SHIPDESIGN_0; sdi < e->shipdesigns_num; ++sdi) {
             if (strcmp(srd->design[sdi].name, names[n]) == 0) {
                 BOOLVEC_SET0(name_unused, n);
                 break;
@@ -87,7 +87,7 @@ static void game_design_look_add(struct game_design_s *gd, int ld)
     } else if (look >= (lookbase + SHIP_LOOK_PER_HULL)) {
         look = lookbase;
     }
-    for (int i = 0; i < gd->sd_num; ++i) {
+    for (shipdesign_id_t i = SHIPDESIGN_0; i < gd->sd_num; ++i) {
         if (look == gd->tbl_shiplook[i]) {
             look += ld;
             if (look < lookbase) {
@@ -178,7 +178,7 @@ void game_design_prepare(struct game_s *g, struct game_design_s *gd, player_id_t
 {
     const empiretechorbit_t *e = &(g->eto[player]);
     game_design_prepare_do(g, gd, player, sd);
-    for (int i = 0; i < gd->sd_num; ++i) {
+    for (shipdesign_id_t i = SHIPDESIGN_0; i < gd->sd_num; ++i) {
         gd->tbl_shiplook[i] = g->srd[gd->player_i].design[i].look;
     }
     gd->lookbase = e->banner * SHIP_LOOK_PER_BANNER;
@@ -187,7 +187,7 @@ void game_design_prepare(struct game_s *g, struct game_design_s *gd, player_id_t
         for (ship_hull_t hull = SHIP_HULL_SMALL; hull < SHIP_HULL_NUM; ++hull) {
             uint8_t look, lookbase;
             look = lookbase = SHIP_LOOK_PER_HULL * hull + gd->lookbase;
-            for (int i = 0; i < gd->sd_num; ++i) {
+            for (shipdesign_id_t i = SHIPDESIGN_0; i < gd->sd_num; ++i) {
                 if (look == gd->tbl_shiplook[i]) {
                     ++look;
                     if (look >= (lookbase + SHIP_LOOK_PER_HULL)) {
@@ -667,7 +667,7 @@ void game_design_scrap(struct game_s *g, player_id_t player, int shipi, bool fla
     }
     for (planet_id_t i = PLANET_0; i < g->galaxy_stars; ++i) {
         fleet_orbit_t *r = &(e->orbit[i]);
-        for (int j = shipi; j < (NUM_SHIPDESIGNS - 1); ++j) {
+        for (shipdesign_id_t j = shipi; j < (NUM_SHIPDESIGNS - 1); ++j) {
             r->ships[j] = r->ships[j + 1];
         }
         r->ships[NUM_SHIPDESIGNS - 1] = 0;
@@ -675,7 +675,7 @@ void game_design_scrap(struct game_s *g, player_id_t player, int shipi, bool fla
     for (fleet_enroute_id_t i = FLEET_ENROUTE_0; i < g->enroute_num; ++i) {
         fleet_enroute_t *r = &(g->enroute[i]);
         if (r->owner == player) {
-            for (int j = shipi; j < (NUM_SHIPDESIGNS - 1); ++j) {
+            for (shipdesign_id_t j = shipi; j < (NUM_SHIPDESIGNS - 1); ++j) {
                 r->ships[j] = r->ships[j + 1];
             }
             r->ships[NUM_SHIPDESIGNS - 1] = 0;

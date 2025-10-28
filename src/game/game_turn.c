@@ -43,14 +43,14 @@ static void game_turn_limit_ships(struct game_s *g)
 {
     for (fleet_enroute_id_t ei = FLEET_ENROUTE_0; ei < g->enroute_num; ++ei) {
         fleet_enroute_t *r = &(g->enroute[ei]);
-        for (int si = 0; si < NUM_SHIPDESIGNS; ++si) {
+        for (shipdesign_id_t si = SHIPDESIGN_0; si < NUM_SHIPDESIGNS; ++si) {
             SETMIN(r->ships[si], game_num_limit_ships);
         }
     }
     for (planet_id_t i = PLANET_0; i < g->galaxy_stars; ++i) {
         for (player_id_t j = PLAYER_0; j < g->players; ++j) {
             fleet_orbit_t *r = &(g->eto[j].orbit[i]);
-            for (int si = 0; si < NUM_SHIPDESIGNS; ++si) {
+            for (shipdesign_id_t si = SHIPDESIGN_0; si < NUM_SHIPDESIGNS; ++si) {
                 SETMIN(r->ships[si], game_num_limit_ships);
             }
         }
@@ -542,7 +542,7 @@ static void game_turn_build_ship(struct game_s *g)
         gd.sd_num = e->shipdesigns_num;
         gd.player_i = i;
         memcpy(gd.percent, e->tech.percent, sizeof(gd.percent));
-        for (int j = 0; j < gd.sd_num; ++j) {
+        for (shipdesign_id_t j = SHIPDESIGN_0; j < gd.sd_num; ++j) {
             shipdesign_t *sd = &(srd->design[j]);
             gd.sd = *sd;
             sd->cost = game_design_calc_cost(&gd);
@@ -806,7 +806,7 @@ static void game_turn_move_ships(struct game_s *g)
         if ((r->x == p->x) && (r->y == p->y)) {
             fleet_orbit_t *o;
             o = &(g->eto[r->owner].orbit[r->dest]);
-            for (int j = 0; j < NUM_SHIPDESIGNS; ++j) {
+            for (shipdesign_id_t j = SHIPDESIGN_0; j < NUM_SHIPDESIGNS; ++j) {
                 o->ships[j] += r->ships[j];    /* BUG?: possible overflow */
             }
             util_table_remove_item_any_order(i, g->enroute, sizeof(fleet_enroute_t), g->enroute_num);
@@ -855,7 +855,7 @@ static void game_turn_explore(struct game_s *g, planet_id_t *planetptr, player_i
                 empiretechorbit_t *e = &(g->eto[i]);
                 bool flag_visible, by_scanner;
                 flag_visible = false;
-                for (int j = 0; j < e->shipdesigns_num; ++j) {
+                for (shipdesign_id_t j = SHIPDESIGN_0; j < e->shipdesigns_num; ++j) {
                     if (e->orbit[pli].ships[j] > 0) {
                         flag_visible = true;
                         break;
@@ -885,7 +885,7 @@ static void game_turn_explore(struct game_s *g, planet_id_t *planetptr, player_i
                     }
                     flag_colony_ship = false;
                     best_colonize = 200;
-                    for (int j = 0; j < e->shipdesigns_num; ++j) {
+                    for (shipdesign_id_t j = SHIPDESIGN_0; j < e->shipdesigns_num; ++j) {
                         const shipdesign_t *sd = &(g->srd[i].design[j]);
                         int can_colonize;
                         can_colonize = 200;
@@ -954,7 +954,7 @@ static void game_turn_bomb_damage(struct game_s *g, planet_id_t pli, player_id_t
     int totaldmg = 0, totalbio = 0, complevel;
     ship_comp_t maxcomp = SHIP_COMP_NONE;
     memset(tbl, 0, sizeof(tbl));
-    for (int i = 0; i < ea->shipdesigns_num; ++i) {
+    for (shipdesign_id_t i = SHIPDESIGN_0; i < ea->shipdesigns_num; ++i) {
         const shipdesign_t *sd = &(g->srd[attacker].design[i]);
         if (!game_fix_orbital_comp || (ea->orbit[pli].ships[i] != 0)) {
             SETMAX(maxcomp, sd->comp);
@@ -1086,7 +1086,7 @@ static void game_turn_bomb(struct game_s *g)
                 continue;
             }
             v4 = 0;
-            for (int j = 0; j < ea->shipdesigns_num; ++j) {
+            for (shipdesign_id_t j = SHIPDESIGN_0; j < ea->shipdesigns_num; ++j) {
                 if (ea->orbit[pli].ships[j] > 0) {
                     v4 += 2;
                 }
@@ -1156,7 +1156,7 @@ static int game_turn_transport_shoot(struct game_s *g, planet_id_t planet_i, pla
     uint32_t tbl[WEAPON_NUM];
     memset(tbl, 0, sizeof(tbl));
     tbl[basewpnt] = bases * 24;
-    for (int i = 0; i < ea->shipdesigns_num; ++i) {
+    for (shipdesign_id_t i = SHIPDESIGN_0; i < ea->shipdesigns_num; ++i) {
         const shipdesign_t *sd = &(g->srd[attacker].design[i]);
         uint8_t comp;
         comp = sd->comp;
@@ -1285,7 +1285,7 @@ static void game_turn_transport(struct game_s *g)
                         /*e102*/
                         bool any_ships;
                         any_ships = false;
-                        for (int k = 0; k < e->shipdesigns_num; ++k) {
+                        for (shipdesign_id_t k = SHIPDESIGN_0; k < e->shipdesigns_num; ++k) {
                             if (e->orbit[dest].ships[k] > 0) {
                                 any_ships = true;
                                 break;
@@ -1579,7 +1579,7 @@ static void game_turn_show_newships(struct game_s *g)
         if (IS_HUMAN(g, pi)) {
             bool any_new;
             any_new = false;
-            for (int si = 0; si < NUM_SHIPDESIGNS; ++si) {
+            for (shipdesign_id_t si = SHIPDESIGN_0; si < NUM_SHIPDESIGNS; ++si) {
                 if (g->evn.new_ships[pi][si] != 0) {
                     any_new = true;
                     break;
@@ -1686,7 +1686,7 @@ static void game_turn_claim(struct game_s *g)
         if (pi == PLAYER_NONE) {
             for (pi = PLAYER_0; pi < g->players; ++pi) {
                 empiretechorbit_t *e = &(g->eto[pi]);
-                for (int i = 0; i < e->shipdesigns_num; ++i) {
+                for (shipdesign_id_t i = SHIPDESIGN_0; i < e->shipdesigns_num; ++i) {
                     if (e->orbit[pli].ships[i] != 0) {
                         p->claim = pi;
                         break;
