@@ -97,7 +97,7 @@ void ui_starmap_orbit_en(struct game_s *g, player_id_t active_player)
     d.from = g->planet_focus_i[active_player];
     d.oe.player = ui_data.starmap.orbit_player;
     os = &(g->eto[d.oe.player].orbit[d.from].ships[0]);
-    for (int i = 0; i < NUM_SHIPDESIGNS; ++i) {
+    for (shipdesign_id_t i = SHIPDESIGN_0; i < NUM_SHIPDESIGNS; ++i) {
         d.ss.ships[i] = os[i];
     }
     ui_starmap_sn0_setup(&d.ss.sn0, NUM_SHIPDESIGNS, d.ss.ships);
@@ -105,7 +105,7 @@ void ui_starmap_orbit_en(struct game_s *g, player_id_t active_player)
         int n = 0;
         for (player_id_t i = PLAYER_0; i < d.oe.player; ++i) {
             os = &(g->eto[i].orbit[d.from].ships[0]);
-            for (int j = 0; j < g->eto[i].shipdesigns_num; ++j) {
+            for (shipdesign_id_t j = SHIPDESIGN_0; j < g->eto[i].shipdesigns_num; ++j) {
                 if (os[j] != 0) {
                     ++n;
                     break;

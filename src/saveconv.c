@@ -1337,7 +1337,7 @@ static int savetype_en_text(const struct game_s *g, const char *fname)
         const shipresearch_t *srd = &(g->srd[pl]);
         const empiretechorbit_t *e = &(g->eto[pl]);
         text_dump_prefix_add_tbl(tp, "srd", ".", pl);
-        for (int i = 0; i < g->eto[pl].shipdesigns_num; ++i) {
+        for (shipdesign_id_t i = SHIPDESIGN_0; i < g->eto[pl].shipdesigns_num; ++i) {
             text_dump_prefix_add_tbl(tp, "design", ".", i);
             savetype_en_text_sd(&(srd->design[i]), tp);
             text_dump_prefix_del(tp);

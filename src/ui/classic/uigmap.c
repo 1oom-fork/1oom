@@ -128,7 +128,7 @@ static void gmap_draw_cb(void *vptr)
             have_orbit_num = 0;
             for (player_id_t j = PLAYER_0; j < g->players; ++j) {
                 const fleet_orbit_t *r = &(g->eto[j].orbit[i]);
-                for (int k = 0; k < g->eto[j].shipdesigns_num; ++k) {
+                for (shipdesign_id_t k = SHIPDESIGN_0; k < g->eto[j].shipdesigns_num; ++k) {
                     if (r->ships[k] != 0) {
                         tbl_have_orbit_owner[have_orbit_num++] = j;
                         break;
@@ -472,7 +472,7 @@ void ui_gmap_basic_draw_frame(void *ctx, player_id_t pi)
                 have_orbit_num = 0;
                 for (player_id_t j = PLAYER_0; j < g->players; ++j) {
                     const fleet_orbit_t *r = &(g->eto[j].orbit[i]);
-                    for (int k = 0; k < g->eto[j].shipdesigns_num; ++k) {
+                    for (shipdesign_id_t k = SHIPDESIGN_0; k < g->eto[j].shipdesigns_num; ++k) {
                         if (r->ships[k] != 0) {
                             tbl_have_orbit_owner[have_orbit_num++] = j;
                             break;
@@ -525,7 +525,7 @@ void ui_gmap_basic_draw_only(void *ctx, planet_id_t pi)
         have_orbit_num = 0;
         for (player_id_t j = PLAYER_0; j < g->players; ++j) {
             const fleet_orbit_t *r = &(g->eto[j].orbit[pi]);
-            for (int k = 0; k < g->eto[j].shipdesigns_num; ++k) {
+            for (shipdesign_id_t k = SHIPDESIGN_0; k < g->eto[j].shipdesigns_num; ++k) {
                 if (r->ships[k] != 0) {
                     tbl_have_orbit_owner[have_orbit_num++] = j;
                     break;

@@ -82,8 +82,7 @@ static void game_ai_classic_turn_p1_send_scout(struct game_s *g, struct ai_turn_
         for (player_id_t pi2 = PLAYER_0; pi2 < g->players; ++pi2) {
             if ((pi != pi2) && (e->treaty[pi2] != TREATY_ALLIANCE)) {
                 const shipcount_t *t = &(g->eto[pi2].orbit[i].ships[0]);
-                int sd_num = g->eto[pi2].shipdesigns_num;
-                for (int j = 0; j < sd_num; ++j) {
+                for (shipdesign_id_t j = SHIPDESIGN_0; j < g->eto[pi2].shipdesigns_num; ++j) {
                     ships += t[j];
                 }
             }
@@ -127,7 +126,7 @@ static void game_ai_classic_turn_p1_send_scout(struct game_s *g, struct ai_turn_
         const shipcount_t *t = &(e->orbit[i].ships[0]);
         uint32_t ships; /* MOO1 uses uint16_t */
         ships = 0;
-        for (int j = 0; j < e->shipdesigns_num; ++j) {
+        for (shipdesign_id_t j = SHIPDESIGN_0; j < e->shipdesigns_num; ++j) {
             ships += t[j];
         }
         tbl_ownorbit[i] = ships;
@@ -159,7 +158,7 @@ static void game_ai_classic_turn_p1_send_scout(struct game_s *g, struct ai_turn_
                 const bool *hrf = &(g->srd[pi].have_reserve_fuel[0]);
                 int shipi;
                 shipi = -1;
-                for (int j = 0; j < e->shipdesigns_num; ++j) {
+                for (shipdesign_id_t j = SHIPDESIGN_0; j < e->shipdesigns_num; ++j) {
                     if ((t[j] != 0) && ((shipi == -1) || (!hrf[shipi]))) {
                         shipi = j;
                     }
@@ -178,7 +177,7 @@ static void game_ai_classic_turn_p1_send_scout(struct game_s *g, struct ai_turn_
                     r->x = p2->x;
                     r->y = p2->y;
                     r->speed = g->srd[pi].design[shipi].engine + 1;
-                    for (int k = 0; k < NUM_SHIPDESIGNS; ++k) {
+                    for (shipdesign_id_t k = SHIPDESIGN_0; k < NUM_SHIPDESIGNS; ++k) {
                         r->ships[k] = 0;
                     }
                     r->ships[shipi] = num_send;
@@ -214,7 +213,7 @@ static planet_id_t game_ai_classic_turn_p1_front_find_planet(struct game_s *g, s
         if (p->owner == pi) {
             uint32_t defense;
             defense = p->missile_bases ? 1 : 0;
-            for (int j = 0; (j < e->shipdesigns_num) && (defense == 0); ++j) {
+            for (shipdesign_id_t j = SHIPDESIGN_0; (j < e->shipdesigns_num) && (defense == 0); ++j) {
                 defense += e->orbit[i].ships[j];
             }
             if (defense == 1) {
@@ -313,7 +312,7 @@ static void game_ai_classic_turn_p1_front(struct game_s *g, struct ai_turn_p1_s 
             const planet_t *p = &(g->planet[i]);
             ait->tbl_force_own[i] = 0;
             if ((p->owner == pi) || (p->owner == PLAYER_NONE)) {
-                for (int j = 0; j < e->shipdesigns_num; ++j) {
+                for (shipdesign_id_t j = SHIPDESIGN_0; j < e->shipdesigns_num; ++j) {
                     shipcount_t n;
                     n = e->orbit[i].ships[j];
                     if (n) {
@@ -393,12 +392,12 @@ static void game_turn_fleet_send(struct game_s *g, struct ai_turn_p1_s *ait, pla
     pt = &(g->planet[dest]);
     r = &(g->enroute[g->enroute_num]);
     o = &(e->orbit[from]);
-    for (int i = 0; i < NUM_SHIPDESIGNS; ++i) {
+    for (shipdesign_id_t i = SHIPDESIGN_0; i < NUM_SHIPDESIGNS; ++i) {
         r->ships[i] = 0;
     }
     speed = 50;
     num_shiptypes = 0;
-    for (int i = 0; i < e->shipdesigns_num; ++i) {
+    for (shipdesign_id_t i = SHIPDESIGN_0; i < e->shipdesigns_num; ++i) {
         int n;
         n = o->ships[i];
         if ((pt->within_frange[pi] == 0) || ((pt->within_frange[pi] == 2) && !g->srd[pi].have_reserve_fuel[i])) {
@@ -425,7 +424,7 @@ static void game_turn_fleet_send(struct game_s *g, struct ai_turn_p1_s *ait, pla
         r->y = pf->y;
         ++g->enroute_num;
     }
-    for (int i = 0; i < NUM_SHIPDESIGNS; ++i) {
+    for (shipdesign_id_t i = SHIPDESIGN_0; i < NUM_SHIPDESIGNS; ++i) {
         o->ships[i] = 0;    /* BUG ships removed even if they were not sent due to range == 2 && !reserve_fuel */
     }
     BOOLVEC_CLEAR(o->visible, NUM_SHIPDESIGNS); /* FIXME if above fixed */
@@ -534,7 +533,7 @@ static void game_ai_classic_turn_p1_planet_w(struct game_s *g, struct ai_turn_p1
             for (player_id_t pi2 = PLAYER_0; (pi2 < PLAYER_NUM) && !va; ++pi2) {
                 const empiretechorbit_t *e2 = &(g->eto[pi2]);
                 if (pi2 != pi) {
-                    for (int j = 0; (j < e2->shipdesigns_num) && !va; ++j) {
+                    for (shipdesign_id_t j = SHIPDESIGN_0; (j < e2->shipdesigns_num) && !va; ++j) {
                         if ((va = e2->orbit[i].ships[j]) != 0) {
                             owner = pi2;
                         }
@@ -597,7 +596,7 @@ static void game_ai_classic_turn_p1_send_attack(struct game_s *g, struct ai_turn
                 for (player_id_t pi2 = PLAYER_0; pi2 < g->players; ++pi2) {
                     if (pi2 != pi) {
                         e2 = &(g->eto[pi2]);
-                        for (int l = 0; l < e->shipdesigns_num; ++l) { /* BUG? should be e2->shipdesigns_num? */
+                        for (shipdesign_id_t l = SHIPDESIGN_0; l < e->shipdesigns_num; ++l) { /* BUG? should be e2->shipdesigns_num? */
                             shipcount_t n;
                             if ((n = e2->orbit[pto].ships[l]) != 0) {
                                 weight += n * ait->tbl_shipthreat[pi2][l];
@@ -661,7 +660,7 @@ static void game_ai_classic_turn_p1_send_attack(struct game_s *g, struct ai_turn
                                 const shipdesign_t *sd;
                                 e2 = &(g->eto[pi2]);
                                 sd = &(g->srd[pi2].design[0]);
-                                for (int k = 0; k < e2->shipdesigns_num; ++k) {
+                                for (shipdesign_id_t k = SHIPDESIGN_0; k < e2->shipdesigns_num; ++k) {
                                     weight += e2->orbit[pto].ships[k] * game_num_tbl_hull_w[sd[k].hull];
                                 }
                             }
@@ -688,7 +687,7 @@ static void game_ai_classic_turn_p1_send_defend(struct game_s *g, struct ai_turn
     for (player_id_t pi2 = PLAYER_0; pi2 < g->players; ++pi2) {
         const empiretechorbit_t *e2 = &(g->eto[pi2]);
         const shipdesign_t *sd = &(g->srd[pi2].design[0]);
-        for (int i = 0; i < e2->shipdesigns_num; ++i) {
+        for (shipdesign_id_t i = SHIPDESIGN_0; i < e2->shipdesigns_num; ++i) {
             tbl_shipw[pi2][i] = game_num_tbl_hull_w[sd[i].hull];
         }
     }
@@ -699,7 +698,7 @@ static void game_ai_classic_turn_p1_send_defend(struct game_s *g, struct ai_turn
         const fleet_enroute_t *r = &(g->enroute[i]);
         if ((r->owner != pi) && (g->planet[r->dest].owner == pi)) {
             const empiretechorbit_t *e2 = &(g->eto[r->owner]);
-            for (int j = 0; j < e2->shipdesigns_num; ++j) {
+            for (shipdesign_id_t j = SHIPDESIGN_0; j < e2->shipdesigns_num; ++j) {
                 shipcount_t n;
                 n = r->ships[j];
                 if (n != 0) {
@@ -815,7 +814,7 @@ static void game_ai_classic_turn_p1_trans_en(struct game_s *g, struct ai_turn_p1
         ) {
             const shipcount_t *s;
             s = &(e->orbit[i].ships[0]);
-            for (int j = 0; (j < e->shipdesigns_num) && !have_orbit; ++j) {
+            for (shipdesign_id_t j = SHIPDESIGN_0; (j < e->shipdesigns_num) && !have_orbit; ++j) {
                 if (s[j]) {
                     have_orbit = true;
                 }
@@ -957,7 +956,7 @@ static void game_ai_classic_turn_p1(struct game_s *g)
     for (player_id_t pi = PLAYER_0; pi < PLAYER_NUM; ++pi) {
         const empiretechorbit_t *e = &(g->eto[pi]);
         const shipdesign_t *sd = &(g->srd[pi].design[0]);
-        for (int i = 0; i < e->shipdesigns_num; ++i) {
+        for (shipdesign_id_t i = SHIPDESIGN_0; i < e->shipdesigns_num; ++i) {
             int v;
             v = 0;
             for (int j = 0; j < WEAPON_SLOT_NUM; ++j) {
@@ -987,11 +986,11 @@ static void game_ai_classic_turn_p1(struct game_s *g)
             }
             ait->tbl_shipthreat[pi][i] = v;
         }
-        for (int i = e->shipdesigns_num; i < NUM_SHIPDESIGNS; ++i) {
+        for (shipdesign_id_t i = e->shipdesigns_num; i < NUM_SHIPDESIGNS; ++i) {
             ait->tbl_shipthreat[pi][i] = 0;
         }
     }
-    for (int i = 0; i < NUM_SHIPDESIGNS; ++i) {
+    for (shipdesign_id_t i = SHIPDESIGN_0; i < NUM_SHIPDESIGNS; ++i) {
         ait->tbl_shipthreat[PLAYER_NUM][i] = 1800;
     }
     game_update_maint_costs(g);
@@ -1086,7 +1085,7 @@ static void game_ai_classic_design_scrap(struct game_s *g, player_id_t pi, int s
     empiretechorbit_t *e = &(g->eto[pi]);
     shipresearch_t *srd = &(g->srd[pi]);
     int si;
-    for (int i = shipi; i < (NUM_SHIPDESIGNS - 1); ++i) {
+    for (shipdesign_id_t i = shipi; i < (NUM_SHIPDESIGNS - 1); ++i) {
         srd->year[i] = srd->year[i + 1];
     }
     game_design_scrap(g, pi, shipi, false);
@@ -1114,7 +1113,7 @@ static uint8_t game_ai_classic_design_ship_get_look(struct game_s *g, player_id_
     BOOLVEC_CLEAR(tbl_in_use, SHIP_LOOK_PER_HULL);
     uint8_t look, lookmax, lookbase = SHIP_LOOK_PER_HULL * hull + e->banner * SHIP_LOOK_PER_BANNER;
     lookmax = lookbase + (SHIP_LOOK_PER_HULL - 1);
-    for (int i = 0; i < e->shipdesigns_num; ++i) {
+    for (shipdesign_id_t i = SHIPDESIGN_0; i < e->shipdesigns_num; ++i) {
         look = srd->design[i].look;
         if ((look >= lookbase) && (look <= lookmax)) {
             BOOLVEC_SET1(tbl_in_use, look - lookbase);
@@ -1503,7 +1502,7 @@ static void game_ai_classic_turn_p2_do(struct game_s *g, player_id_t pi)
     int num_non0 = 0;
     ait->have_pulsar = false;
     ait->have_repulwarp = false;
-    for (int i = 0; i < e->shipdesigns_num; ++i) {
+    for (shipdesign_id_t i = SHIPDESIGN_0; i < e->shipdesigns_num; ++i) {
         const ship_special_t *ss = &(sd[i].special[0]);
         for (int j = 0; j < SPECIAL_SLOT_NUM; ++j) {
             ship_special_t s;
@@ -1520,7 +1519,7 @@ static void game_ai_classic_turn_p2_do(struct game_s *g, player_id_t pi)
     game_update_maint_costs(g);
     e->shipi_colony = -1;
     e->shipi_bomber = -1;
-    for (int i = 0; i < e->shipdesigns_num; ++i) {
+    for (shipdesign_id_t i = SHIPDESIGN_0; i < e->shipdesigns_num; ++i) {
         ship_special_t *ss = &(sd[i].special[0]);
         if (srd->shipcount[i] != 0) {
             ++num_non0;
@@ -1536,7 +1535,7 @@ static void game_ai_classic_turn_p2_do(struct game_s *g, player_id_t pi)
             e->shipi_bomber = i;
         }
     }
-    for (int i = 0; (i < e->shipdesigns_num) && (num_non0 > 1); ++i) {
+    for (shipdesign_id_t i = SHIPDESIGN_0; (i < e->shipdesigns_num) && (num_non0 > 1); ++i) {
         if (0
           || ((g->year < 100) && ((g->year - srd->year[i]) > 50))
           || ((g->year >= 100) && ((g->year - srd->year[i]) > 100))
@@ -1546,7 +1545,7 @@ static void game_ai_classic_turn_p2_do(struct game_s *g, player_id_t pi)
         }
     }
     num_non0 = 0;
-    for (int i = 0; i < e->shipdesigns_num; ++i) {
+    for (shipdesign_id_t i = SHIPDESIGN_0; i < e->shipdesigns_num; ++i) {
         if (srd->shipcount[i] != 0) {
             ++num_non0;
         }
@@ -1555,7 +1554,7 @@ static void game_ai_classic_turn_p2_do(struct game_s *g, player_id_t pi)
         int shipi_remove = -1;
         if (num_non0 > 4) {
             int year_oldest = 0xffff;
-            for (int i = 0; i < e->shipdesigns_num; ++i) {
+            for (shipdesign_id_t i = SHIPDESIGN_0; i < e->shipdesigns_num; ++i) {
                 int sy;
                 sy = srd->year[i];
                 if (sy < year_oldest) {
@@ -1564,7 +1563,7 @@ static void game_ai_classic_turn_p2_do(struct game_s *g, player_id_t pi)
                 }
             }
         } else if (e->shipdesigns_num > 1) {
-            for (int i = 0; i < e->shipdesigns_num; ++i) {
+            for (shipdesign_id_t i = SHIPDESIGN_0; i < e->shipdesigns_num; ++i) {
                 if (srd->shipcount[i] == 0) {
                     shipi_remove = i;
                     break;
@@ -1590,7 +1589,7 @@ static void game_ai_classic_turn_p2_do(struct game_s *g, player_id_t pi)
         }
         game_ai_classic_design_ship(g, ait, pi);
     }
-    for (int i = 0; i < e->shipdesigns_num; ++i) {
+    for (shipdesign_id_t i = SHIPDESIGN_0; i < e->shipdesigns_num; ++i) {
         ship_special_t *ss = &(sd[i].special[0]);
         for (int j = 0; j < SPECIAL_SLOT_NUM; ++j) {
             ship_special_t s;
@@ -1604,17 +1603,17 @@ static void game_ai_classic_turn_p2_do(struct game_s *g, player_id_t pi)
         }
     }
     {
-        uint8_t tbl_i[NUM_SHIPDESIGNS];
+        shipdesign_id_t tbl_i[NUM_SHIPDESIGNS];
         uint16_t tbl_year[NUM_SHIPDESIGNS];
-        for (int i = 0; i < NUM_SHIPDESIGNS; ++i) {
+        for (shipdesign_id_t i = SHIPDESIGN_0; i < NUM_SHIPDESIGNS; ++i) {
             tbl_i[i] = i;
             tbl_year[i] = srd->year[i];
             if (i == e->shipi_colony) {
                 tbl_year[i] = 0;
             }
         }
-        for (int j = 0; j < NUM_SHIPDESIGNS - 1; ++j) {
-            for (int i = 0; i < NUM_SHIPDESIGNS - 1; ++i) {
+        for (shipdesign_id_t j = SHIPDESIGN_0; j < NUM_SHIPDESIGNS - 1; ++j) {
+            for (shipdesign_id_t i = SHIPDESIGN_0; i < NUM_SHIPDESIGNS - 1; ++i) {
                 uint16_t y1, y;
                 y1 = tbl_year[i + 1];
                 y = tbl_year[i];
@@ -1904,7 +1903,7 @@ static void game_ai_classic_turn_p3(struct game_s *g)
 static void game_ai_classic_battle_ai_ai_get_weights(const struct game_s *g, player_id_t pi, int *tbl)
 {
     const empiretechorbit_t *e = &(g->eto[pi]);
-    for (int i = 0; i < e->shipdesigns_num; ++i) {
+    for (shipdesign_id_t i = SHIPDESIGN_0; i < e->shipdesigns_num; ++i) {
         const shipdesign_t *sd = &(g->srd[pi].design[i]);
         tbl[i] += sd->shield * 5;
         tbl[i] += sd->comp * 5;
@@ -1929,7 +1928,7 @@ static bool game_ai_classic_battle_ai_ai_resolve_do(struct battle_s *bt)
     int tbl_weight_l[NUM_SHIPDESIGNS], tbl_weight_r[NUM_SHIPDESIGNS];
     int base_l = 0, base_r = 0, wl = 0, wr = 0, wl2, wr2;
     bt->biodamage = 0;
-    for (int i = 0; i < NUM_SHIPDESIGNS; ++i) {
+    for (shipdesign_id_t i = SHIPDESIGN_0; i < NUM_SHIPDESIGNS; ++i) {
         tbl_weight_l[i] = 0;
         tbl_weight_r[i] = 0;
     }
@@ -1985,22 +1984,22 @@ static bool game_ai_classic_battle_ai_ai_resolve_do(struct battle_s *bt)
     r_won = wr2 > 0;
     if (bt->s[SIDE_L].party < PLAYER_NUM) {
         if (wl == 0) {
-            for (int i = 0; i < NUM_SHIPDESIGNS; ++i) {
+            for (shipdesign_id_t i = SHIPDESIGN_0; i < NUM_SHIPDESIGNS; ++i) {
                 bt->s[SIDE_L].tbl_ships[i] = 0;
             }
         } else {
-            for (int i = 0; i < NUM_SHIPDESIGNS; ++i) {
+            for (shipdesign_id_t i = SHIPDESIGN_0; i < NUM_SHIPDESIGNS; ++i) {
                 bt->s[SIDE_L].tbl_ships[i] = (bt->s[SIDE_L].tbl_ships[i] * wl2) / wl;
             }
         }
     }
     if (bt->s[SIDE_R].party < PLAYER_NUM) {
         if (wr == 0) {
-            for (int i = 0; i < NUM_SHIPDESIGNS; ++i) {
+            for (shipdesign_id_t i = SHIPDESIGN_0; i < NUM_SHIPDESIGNS; ++i) {
                 bt->s[SIDE_R].tbl_ships[i] = 0;
             }
         } else {
-            for (int i = 0; i < NUM_SHIPDESIGNS; ++i) {
+            for (shipdesign_id_t i = SHIPDESIGN_0; i < NUM_SHIPDESIGNS; ++i) {
                 bt->s[SIDE_R].tbl_ships[i] = (bt->s[SIDE_R].tbl_ships[i] * wr2) / wr;
             }
         }

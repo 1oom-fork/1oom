@@ -30,7 +30,7 @@ static int game_diplo_wage_war_fleet_w(struct game_s *g, player_id_t p1, player_
         e = &(g->eto[player]);
         srd = &(g->srd[player]);
         fleetw[i] = 0;
-        for (int j = 0; j < e->shipdesigns_num; ++j) {
+        for (shipdesign_id_t j = SHIPDESIGN_0; j < e->shipdesigns_num; ++j) {
             fleetw[i] += srd->shipcount[j] * game_num_tbl_hull_w[srd->design[j].hull];
         }
         SETRANGE(fleetw[i], 1, 3250000);

@@ -359,7 +359,7 @@ static int libsave_moo13_de_do(uint8_t *buf, struct game_s *g)
         shipresearch_t *srd = &(g->srd[i]);
         int srdb, pos;
         srdb = 0xc410 + i * 0x468;
-        for (int j = 0; j < g->eto[i].shipdesigns_num; ++j) {
+        for (shipdesign_id_t j = SHIPDESIGN_0; j < g->eto[i].shipdesigns_num; ++j) {
             if (libsave_moo13_de_sd(buf, &(srd->design[j]), srdb + j * 0x44) != 0) {
                 return -1;
             }
@@ -775,7 +775,7 @@ static int libsave_moo13_en_do(uint8_t *buf, const struct game_s *g)
         const shipresearch_t *srd = &(g->srd[i]);
         int srdb, pos;
         srdb = 0xc410 + i * 0x468;
-        for (int j = 0; j < g->eto[i].shipdesigns_num; ++j) {
+        for (shipdesign_id_t j = SHIPDESIGN_0; j < g->eto[i].shipdesigns_num; ++j) {
             if (libsave_moo13_en_sd(buf, &(srd->design[j]), srdb + j * 0x44) != 0) {
                 return -1;
             }

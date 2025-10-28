@@ -137,7 +137,7 @@ static void game_battle_post(struct game_s *g, player_id_t loser, int winner, pl
         shipcount_t ships[NUM_SHIPDESIGNS];
         uint8_t shiptypes[NUM_SHIPDESIGNS];
         uint8_t numtypes = e->shipdesigns_num;
-        for (int i = 0; i < numtypes; ++i) {
+        for (shipdesign_id_t i = SHIPDESIGN_0; i < numtypes; ++i) {
             shiptypes[i] = i;
             ships[i] = o->ships[i];
         }
@@ -155,7 +155,7 @@ static void game_battle_post(struct game_s *g, player_id_t loser, int winner, pl
         if ((dest != PLANET_NONE) /*&& (numtypes > 0)*/) {
             game_send_fleet_from_orbit(g, loser, from, dest, ships, shiptypes, numtypes);
         }
-        for (int i = 0; i < NUM_SHIPDESIGNS; ++i) {
+        for (shipdesign_id_t i = SHIPDESIGN_0; i < NUM_SHIPDESIGNS; ++i) {
             o->ships[i] = 0;
         }
     }
@@ -167,7 +167,7 @@ static void game_battle_prepare_p1(struct battle_s *bt, battle_side_i_t side, pl
     const empiretechorbit_t *e = &(g->eto[bt->s[side].party]);
     const shipdesign_t *sd = &(g->srd[bt->s[side].party].design[0]);
     bt->s[side].apparent_force = 0;
-    for (int i = 0; i < e->shipdesigns_num; ++i) {
+    for (shipdesign_id_t i = SHIPDESIGN_0; i < e->shipdesigns_num; ++i) {
         bt->s[side].apparent_force += (sd[i].hull + 1) * e->orbit[planet_i].ships[i];
     }
     bt->s[side].race = e->race;
@@ -181,7 +181,7 @@ static void game_battle_prepare_add_ships(struct battle_s *bt, battle_side_i_t s
     bool flag_shield_disable = (g->planet[planet_i].battlebg == 0);
     shipparsed_t sp[1];
     int num_types = 0;
-    for (int i = 0; i < e->shipdesigns_num; ++i) {
+    for (shipdesign_id_t i = SHIPDESIGN_0; i < e->shipdesigns_num; ++i) {
         shipcount_t s;
         s = e->orbit[planet_i].ships[i];
         if (s > 0) {
@@ -300,7 +300,7 @@ void game_battle_handle_all(struct game_s *g)
             if ((owner == i) && (p->missile_bases > 0)) {
                 BOOLVEC_SET1(tbl_have_force, i);
             } else {
-                for (int j = 0; j < e->shipdesigns_num; ++j) {
+                for (shipdesign_id_t j = SHIPDESIGN_0; j < e->shipdesigns_num; ++j) {
                     if (e->orbit[pli].ships[j] > 0) {
                         BOOLVEC_SET1(tbl_have_force, i);
                         break;

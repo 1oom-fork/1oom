@@ -59,7 +59,7 @@ static void specs_draw_cb1(void *vptr)
     ui_draw_filled_rect(UI_SCREEN_LIMITS, 0x3a);
     lbxgfx_draw_frame(0, 0, ui_data.gfx.starmap.viewship, UI_SCREEN_W);
 
-    for (int si = 0; si < e->shipdesigns_num; ++si) {
+    for (shipdesign_id_t si = SHIPDESIGN_0; si < e->shipdesigns_num; ++si) {
         shipparsed_t sp;
         const shipdesign_t *sd;
         int y;
@@ -249,7 +249,7 @@ int ui_specs(struct game_s *g, player_id_t active_player)
     ui_data.starmap.stars_xoff2 = 0;
 
     oi_ma = UIOBJI_INVALID;
-    for (int i = 0; i < NUM_SHIPDESIGNS; ++i) {
+    for (shipdesign_id_t i = SHIPDESIGN_0; i < NUM_SHIPDESIGNS; ++i) {
         oi_tbl_scrap[i] = UIOBJI_INVALID;
     }
 
@@ -266,7 +266,7 @@ int ui_specs(struct game_s *g, player_id_t active_player)
             ui_data.flag_scrap_for_new_design = false;
             flag_done = true;
         }
-        for (int i = 0; i < NUM_SHIPDESIGNS; ++i) {
+        for (shipdesign_id_t i = SHIPDESIGN_0; i < NUM_SHIPDESIGNS; ++i) {
             if (oi == oi_tbl_scrap[i]) {
                 ui_sound_play_sfx_24();
                 scrapi = i;
@@ -281,15 +281,13 @@ int ui_specs(struct game_s *g, player_id_t active_player)
             }
         }
         if (!flag_done) {
-            int sd_num;
-            sd_num = g->eto[active_player].shipdesigns_num;
             specs_draw_cb1(&d);
-            for (int i = 0; i < NUM_SHIPDESIGNS; ++i) {
+            for (shipdesign_id_t i = SHIPDESIGN_0; i < NUM_SHIPDESIGNS; ++i) {
                 oi_tbl_scrap[i] = UIOBJI_INVALID;
             }
             uiobj_table_clear();
-            if (sd_num > 1) {
-                for (int i = 0; i < sd_num; ++i) {
+            if (g->eto[active_player].shipdesigns_num > 1) {
+                for (shipdesign_id_t i = SHIPDESIGN_0; i < g->eto[active_player].shipdesigns_num; ++i) {
                     oi_tbl_scrap[i] = uiobj_add_t0(106, (i << 5) + 6, "", ui_data.gfx.starmap.viewshbt, MOO_KEY_UNKNOWN, -1);
                 }
             }

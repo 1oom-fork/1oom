@@ -32,6 +32,12 @@ typedef enum {
     TRANSPORT_MAX = 100,
 } transport_id_t;
 
+typedef enum {
+    SHIPDESIGN_0 = 0,
+    NUM_SHIPDESIGNS = 6,
+    BUILDSHIP_STARGATE = NUM_SHIPDESIGNS,
+} shipdesign_id_t;
+
 typedef enum tech_group_e {
     TECH_GROUP_SINGULAR = 0,
     TECH_GROUP_ECM_JAMMER = 1,
@@ -206,8 +212,6 @@ typedef uint16_t shipcount_t;
 typedef uint16_t shipsum_t;
 
 #define SHIP_NAME_NUM   12
-#define NUM_SHIPDESIGNS 6
-#define BUILDSHIP_STARGATE NUM_SHIPDESIGNS
 
 #define TECH_SPY_MAX    6
 

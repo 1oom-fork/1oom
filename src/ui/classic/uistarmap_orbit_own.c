@@ -162,7 +162,7 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
     d.api = active_player;
     d.from = g->planet_focus_i[active_player];
     os = &(g->eto[active_player].orbit[d.from].ships[0]);
-    for (int i = 0; i < NUM_SHIPDESIGNS; ++i) {
+    for (shipdesign_id_t i = SHIPDESIGN_0; i < NUM_SHIPDESIGNS; ++i) {
         d.ss.ships[i] = os[i];
     }
     d.in_frange = false;
@@ -319,7 +319,7 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
             found = false;
             do {
                 i = (i + 1) % g->galaxy_stars;
-                for (int j = 0; j < g->eto[active_player].shipdesigns_num; ++j) {
+                for (shipdesign_id_t j = SHIPDESIGN_0; j < g->eto[active_player].shipdesigns_num; ++j) {
                     if (g->eto[active_player].orbit[i].ships[j]) {
                         found = true;
                         break;
@@ -341,7 +341,7 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
             found = false;
             do {
                 if (--i < 0) { i = g->galaxy_stars - 1; }
-                for (int j = 0; j < g->eto[active_player].shipdesigns_num; ++j) {
+                for (shipdesign_id_t j = SHIPDESIGN_0; j < g->eto[active_player].shipdesigns_num; ++j) {
                     if (g->eto[active_player].orbit[i].ships[j]) {
                         found = true;
                         break;
@@ -460,7 +460,7 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
             }
         }
         d.ss.shiptypenon0numsel = 0;
-        for (int i = 0; i < NUM_SHIPDESIGNS; ++i) {
+        for (shipdesign_id_t i = SHIPDESIGN_0; i < NUM_SHIPDESIGNS; ++i) {
             if (d.ss.ships[i] != 0) {
                 ++d.ss.shiptypenon0numsel;
             }
