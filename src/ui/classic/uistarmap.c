@@ -411,7 +411,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             }
         }
         if ((oi1 == d.sm.oi_ship) || (oi1 == oi_shippic)) {
-            int n;
+            shipdesign_id_t n;
             ui_sound_play_sfx_24();
             n = p->buildship + 1;
             if (n >= g->eto[active_player].shipdesigns_num) {
@@ -571,7 +571,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             found = false;
             do {
                 i = (i + 1) % g->galaxy_stars;
-                for (int j = 0; j < g->eto[active_player].shipdesigns_num; ++j) {
+                for (shipdesign_id_t j = SHIPDESIGN_0; j < g->eto[active_player].shipdesigns_num; ++j) {
                     if (g->eto[active_player].orbit[i].ships[j]) {
                         found = true;
                         break;
@@ -593,7 +593,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             found = false;
             do {
                 if (--i < 0) { i = g->galaxy_stars - 1; }
-                for (int j = 0; j < g->eto[active_player].shipdesigns_num; ++j) {
+                for (shipdesign_id_t j = SHIPDESIGN_0; j < g->eto[active_player].shipdesigns_num; ++j) {
                     if (g->eto[active_player].orbit[i].ships[j]) {
                         found = true;
                         break;
