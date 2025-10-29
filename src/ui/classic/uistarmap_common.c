@@ -922,7 +922,7 @@ void ui_starmap_fill_oi_ctrl(struct starmap_data_s *d)
     d->oi_ctrl_dr = uiobj_add_inputkey(MOO_KEY_KP3 | MOO_MOD_CTRL);
 }
 
-void ui_starmap_sn0_setup(struct shipnon0_s *sn0, int sd_num, const shipcount_t *ships)
+void ui_starmap_sn0_setup(struct shipnon0_s *sn0, shipdesign_id_t sd_num, const shipcount_t *ships)
 {
     sn0->num = 0;
     for (shipdesign_id_t i = SHIPDESIGN_0; i < sd_num; ++i) {

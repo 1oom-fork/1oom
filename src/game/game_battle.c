@@ -136,7 +136,7 @@ static void game_battle_post(struct game_s *g, player_id_t loser, int winner, pl
         int mindist = 10000;
         shipcount_t ships[NUM_SHIPDESIGNS];
         uint8_t shiptypes[NUM_SHIPDESIGNS];
-        uint8_t numtypes = e->shipdesigns_num;
+        shipdesign_id_t numtypes = e->shipdesigns_num;
         for (shipdesign_id_t i = SHIPDESIGN_0; i < numtypes; ++i) {
             shiptypes[i] = i;
             ships[i] = o->ships[i];

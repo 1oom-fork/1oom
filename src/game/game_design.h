@@ -12,7 +12,7 @@ struct game_design_s {
     uint8_t percent[TECH_FIELD_NUM];
     player_id_t player_i;
     int lookbase;
-    int sd_num;
+    shipdesign_id_t sd_num;
     uint8_t tbl_shiplook[NUM_SHIPDESIGNS];
     uint8_t tbl_shiplook_hull[SHIP_HULL_NUM];
 };
