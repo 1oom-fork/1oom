@@ -30,7 +30,7 @@ typedef struct shipdesign_s {
     uint16_t hp;     /* hit points */
 } shipdesign_t;
 
-extern int16_t startship_num;
+extern shipdesign_id_t startship_num;
 extern shipdesign_t tbl_startship[NUM_SHIPDESIGNS];
 extern shipcount_t startfleet_ships[NUM_SHIPDESIGNS];
 
