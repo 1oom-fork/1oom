@@ -426,7 +426,7 @@ static int libsave_moo13_de_do(uint8_t *buf, struct game_s *g)
         M13_GET_16(ev->amoeba.dest, evb + 0x086);
         M13_GET_16(ev->amoeba.counter, evb + 0x082);
         M13_GET_16(ev->amoeba.nuked, evb + 0x088);
-        M13_GET_8(ev->planet_orion_i, evb + 0x09c);
+        M13_GET_16(ev->planet_orion_i, evb + 0x09c);
         M13_GET_8(ev->have_guardian, evb + 0x09e);
         M13_GET_TBL_16(ev->home, evb + 0x0a0);
         M13_GET_8(ev->report_stars, evb + 0x0ac);
@@ -842,7 +842,7 @@ static int libsave_moo13_en_do(uint8_t *buf, const struct game_s *g)
         M13_SET_16(ev->amoeba.dest, evb + 0x086);
         M13_SET_16(ev->amoeba.counter, evb + 0x082);
         M13_SET_16(ev->amoeba.nuked, evb + 0x088);
-        M13_SET_8(ev->planet_orion_i, evb + 0x09c);
+        M13_SET_16(ev->planet_orion_i, evb + 0x09c);
         M13_SET_8(ev->have_guardian, evb + 0x09e);
         M13_SET_TBL_16(ev->home, evb + 0x0a0);
         M13_SET_8(ev->report_stars, evb + 0x0ac);
