@@ -120,7 +120,7 @@ typedef struct empiretechorbit_s {
     bool have_combat_transporter;
     techdata_t tech;
     uint8_t have_engine;    /* 1.. */
-    uint8_t shipdesigns_num;
+    shipdesign_id_t shipdesigns_num;
     fleet_orbit_t orbit[PLANETS_MAX];
     uint8_t spyreportfield[PLAYER_NUM][TECH_FIELD_NUM];
     uint16_t spyreportyear[PLAYER_NUM];
@@ -255,8 +255,8 @@ struct game_s {
     shipresearch_t srd[PLAYER_NUM];
     gameevents_t evn;
     char emperor_names[PLAYER_NUM][EMPEROR_NAME_LEN];
-    uint16_t enroute_num;
-    uint16_t transport_num;
+    fleet_enroute_id_t enroute_num;
+    transport_id_t transport_num;
     uint16_t year;  /* init to 1 */
     uint8_t nebula_num;        /* 0..4 */
     uint8_t nebula_type[NEBULA_MAX];    /* 0..9 */
@@ -266,14 +266,14 @@ struct game_s {
     uint16_t nebula_x1[NEBULA_MAX][4];
     uint16_t nebula_y0[NEBULA_MAX][4];
     uint16_t nebula_y1[NEBULA_MAX][4];
-    uint8_t players;
+    player_id_t players;
     BOOLVEC_DECLARE(is_ai, PLAYER_NUM);
     player_id_t active_player;
     difficulty_t difficulty;
     galaxy_size_t galaxy_size;
     uint8_t galaxy_w;  /* 6 8 a c */
     uint8_t galaxy_h;  /* 4 6 7 9 */
-    uint8_t galaxy_stars;  /* w*h */
+    planet_id_t galaxy_stars;  /* w*h */
     uint16_t galaxy_maxx;
     uint16_t galaxy_maxy;
     planet_id_t planet_focus_i[PLAYER_NUM];
