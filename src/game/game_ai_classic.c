@@ -2385,7 +2385,7 @@ static int game_battle_stasis_target(struct battle_s *bt)
 {
     int itemi = bt->cur_item;
     struct battle_item_s *b = &(bt->item[itemi]);
-    int target_i = -1;
+    int target_i = BATTLE_ITEM_NONE;
     bool flag_have_unstasis = false;
     {
         int n = 0, itembase = (b->side == SIDE_R) ? 1 : (bt->s[SIDE_L].items + 1), itemnum = bt->s[b->side ^ 1].items;
@@ -2797,7 +2797,7 @@ static int game_battle_ai_target1(struct battle_s *bt, int target_i)
     int bestrange;
     bestrange = game_battle_ai_best_range(bt, target_i);
     if ((b->actman > 0) || (b->subspace == 1)) {
-        if ((target_i != -1) && (game_battle_ai_missile_evade(bt) == 0)) {
+        if ((target_i != BATTLE_ITEM_NONE) && (game_battle_ai_missile_evade(bt) == 0)) {
             int vmax = -999, i;
             size_t n = 1;
             uint8_t tblxy[20];
@@ -2822,7 +2822,7 @@ static int game_battle_ai_target1(struct battle_s *bt, int target_i)
             if (itemi != 0/*planet*/) {
                 game_battle_item_move(bt, itemi, BATTLE_XY_GET_X(tblxy[i]), BATTLE_XY_GET_Y(tblxy[i]));
             }
-        } else if (target_i == -1) {
+        } else if (target_i == BATTLE_ITEM_NONE) {
             /*5a494*/
             game_battle_ai_target1_sub4(bt);
         } else {
@@ -2843,7 +2843,7 @@ static void game_ai_classic_battle_ai_turn(struct battle_s *bt)
     game_battle_area_setup(bt);    /* FIXME already done by caller */
     if (1
        && (b->side == SIDE_R)
-       && (game_ai_battle_rival(bt, itemi, 1) == -1)
+       && (game_ai_battle_rival(bt, itemi, 1) == BATTLE_ITEM_NONE)
        && game_battle_missile_none_fired_by(bt, itemi)
     ) {
         ++b->retreat;
@@ -2855,7 +2855,7 @@ static void game_ai_classic_battle_ai_turn(struct battle_s *bt)
     /*5a604*/
     if (b->stasis > 0) {
         target_i = game_battle_stasis_target(bt);
-        if (target_i != -1) {
+        if (target_i != BATTLE_ITEM_NONE) {
             game_battle_ai_target1(bt, target_i);
             game_battle_area_setup(bt);
             if (!bt->flag_cur_item_destroyed) {
@@ -2871,8 +2871,8 @@ static void game_ai_classic_battle_ai_turn(struct battle_s *bt)
     game_battle_area_setup(bt);
     if (1
       && (game_ai_battle_incoming_missiles_dmg(bt, itemi) > 0)
-      && (target_i != -1) /* BUG used uninitialized if b->stasis == 0 */
-      && ((target_i = game_ai_battle_rival(bt, itemi, 0)) > -1)
+      && (target_i != BATTLE_ITEM_NONE) /* BUG used uninitialized if b->stasis == 0 */
+      && ((target_i = game_ai_battle_rival(bt, itemi, 0)) > BATTLE_ITEM_NONE)
     ) {
         if ((b->pulsar == 1) || (b->pulsar == 2)) {
             if (eval_pos_for_pulsar_use(bt, b->sx, b->sy) < 0) {
@@ -2889,7 +2889,7 @@ static void game_ai_classic_battle_ai_turn(struct battle_s *bt)
     }
     game_battle_area_setup(bt);
     if (b->retreat > 0) {
-        target_i = -1;
+        target_i = BATTLE_ITEM_NONE;
     } else {
         target_i = game_ai_battle_rival(bt, itemi, 2);
     }
@@ -2904,7 +2904,7 @@ static void game_ai_classic_battle_ai_turn(struct battle_s *bt)
             }
         }
         target_i = game_ai_battle_rival(bt, itemi, 0);
-        if ((target_i == -1) && (itemi == 0/*planet*/) && (b->num > 0)) {
+        if ((target_i == BATTLE_ITEM_NONE) && (itemi == 0/*planet*/) && (b->num > 0)) {
             int ii = (b->side == SIDE_R) ? 1 : (bt->s[SIDE_L].items + 1);
             if (bt->item[ii].side != b->side) {
                 game_battle_attack(bt, itemi, ii, false);
@@ -2912,21 +2912,21 @@ static void game_ai_classic_battle_ai_turn(struct battle_s *bt)
         }
         /*5a866*/
         loops = 0;
-        while (target_i != -1) {
+        while (target_i != BATTLE_ITEM_NONE) {
             target_i = game_ai_battle_rival(bt, itemi, 0);
             ++loops;
-            if ((b->cloak == 1) && (target_i != -1)) { /* WASBUG no test for -1 */
+            if ((b->cloak == 1) && (target_i != BATTLE_ITEM_NONE)) { /* WASBUG no test for -1 */
                 const struct battle_item_s *bd;
                 bd = &(bt->item[target_i]);
                 if (util_math_dist_maxabs(b->sx, b->sy, bd->sx, bd->sy) != v4) {    /* WASBUG bd at index -1 */
-                    target_i = -1;
+                    target_i = BATTLE_ITEM_NONE;
                 }
             }
             if (b->retreat > 0) {
-                target_i = -1;
+                target_i = BATTLE_ITEM_NONE;
             }
             /*5a8e1*/
-            if (target_i > -1) {
+            if (target_i > BATTLE_ITEM_NONE) {
                 get_possible_distance_increase(bt, target_i);
                 game_battle_attack(bt, itemi, target_i, false);
             }
@@ -2957,7 +2957,7 @@ static bool game_ai_classic_battle_ai_retreat(struct battle_s *bt)
     }
     for (int i = 0; i < bt->num_missile; ++i) {
         const struct battle_missile_s *m = &(bt->missile[i]);
-        if (m->target != MISSILE_TARGET_NONE) {
+        if (m->target != BATTLE_ITEM_NONE) {
             int s;
             s = bt->item[m->target].side;
             missile[m->source] += 2;
