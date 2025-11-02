@@ -2283,7 +2283,7 @@ static int game_ai_battle_rival(struct battle_s *bt, int itemi, int a2)
 {
     /*di*/struct battle_item_s *b = &(bt->item[itemi]);
     int rival = -1, maxw = 0;
-    for (int i = 0; i <= bt->items_num; ++i) {
+    for (battle_item_id_t i = BATTLE_ITEM_PLANET; i <= bt->items_num; ++i) {
         struct battle_item_s *b2 = &(bt->item[i]);
         if (((b->side + b2->side) == 1) && (b->num > 0)) {
             int dmgmissile, dmgmax, w, dmgmany, dmggive, repair;
@@ -2401,7 +2401,7 @@ static int game_battle_stasis_target(struct battle_s *bt)
     if (flag_have_unstasis) {
         int vmax = 0;
         b->stasis = 1;
-        for (int i = 1; i <= bt->items_num; ++i) {
+        for (battle_item_id_t i = BATTLE_ITEM_1; i <= bt->items_num; ++i) {
             struct battle_item_s *bd = &(bt->item[i]);
             if ((b->side != bd->side) && (bd->stasisby == 0) && (bd->cloak != 1)) {
                 int v;
@@ -2591,7 +2591,7 @@ static int eval_pos_for_pulsar_use(struct battle_s *bt, int sx, int sy)
         rbase = 10;
     }
     dmg = rbase + b->num / ndiv;
-    for (int i = 0; i <= bt->items_num; ++i) {
+    for (battle_item_id_t i = BATTLE_ITEM_PLANET; i <= bt->items_num; ++i) {
         struct battle_item_s *bd = &(bt->item[i]);
         if (util_math_dist_maxabs(b->sx, b->sy, bd->sx, bd->sy) == 1) {
             if (b->side == bd->side) {
@@ -2648,7 +2648,7 @@ static void game_battle_ai_target1_sub4(struct battle_s *bt)
         for (int sy = 0; sy < BATTLE_AREA_H; ++sy) {
             for (int sx = 0; sx < BATTLE_AREA_W; ++sx) {
                 if (bt->area[sy][sx] == 1) {
-                    for (int i = 0; i <= bt->items_num; ++i) {
+                    for (battle_item_id_t i = BATTLE_ITEM_PLANET; i <= bt->items_num; ++i) {
                         const struct battle_item_s *bd = &(bt->item[i]);
                         mindist = 10;   /* FIXME BUG this results in always setting to last enemy dist */
                         if ((b->side + bd->side) == 1) {
@@ -2672,7 +2672,7 @@ static void game_battle_ai_target1_sub4(struct battle_s *bt)
     } else {
         /*59d85*/
         oppdist = 10;
-        for (int i = 0; i <= bt->items_num; ++i) {
+        for (battle_item_id_t i = BATTLE_ITEM_PLANET; i <= bt->items_num; ++i) {
             const struct battle_item_s *bd = &(bt->item[i]);
             if ((b->side + bd->side) == 1) {
                 dist = util_math_dist_maxabs(b->sx, b->sy, bd->sx, bd->sy);
@@ -2691,7 +2691,7 @@ static void game_battle_ai_target1_sub4(struct battle_s *bt)
                     }
                     if (bt->area[sy][sx] == 1) {
                         mindist = 10;
-                        for (int i = 0; i <= bt->items_num; ++i) {
+                        for (battle_item_id_t i = BATTLE_ITEM_PLANET; i <= bt->items_num; ++i) {
                             const struct battle_item_s *bd = &(bt->item[i]);
                             if ((b->side + bd->side) == 1) {
                                 dist = util_math_dist_maxabs(sx, sy, bd->sx, bd->sy);
@@ -2950,7 +2950,7 @@ static bool game_ai_classic_battle_ai_retreat(struct battle_s *bt)
     int repair[BATTLE_ITEM_MAX];
     int dmg[2] = { 0, 0 };
     int hp[2] = { 0, 0 };
-    for (int i = 0; i < BATTLE_ITEM_MAX; ++i) {
+    for (battle_item_id_t i = BATTLE_ITEM_PLANET; i < BATTLE_ITEM_MAX; ++i) {
         const struct battle_item_s *b = &(bt->item[i]);
         missile[i] = 0;
         repair[i] = (b->hp1 * b->repair) / 5;
@@ -2966,7 +2966,7 @@ static bool game_ai_classic_battle_ai_retreat(struct battle_s *bt)
             repair[m->target] = 0;
         }
     }
-    for (int i = 1; i <= bt->items_num; ++i) {
+    for (battle_item_id_t i = BATTLE_ITEM_1; i <= bt->items_num; ++i) {
         int j, s;
         s = (i <= bt->s[SIDE_L].items) ? SIDE_R : SIDE_L;
         j = game_ai_battle_rival(bt, i, 1);

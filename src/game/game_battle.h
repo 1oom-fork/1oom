@@ -103,8 +103,6 @@ struct battle_side_s {
     int16_t flag_auto; /* HACK type is for uiobj */
 };
 
-#define BATTLE_ITEM_MAX (NUM_SHIPDESIGNS * 2 + 1/*planet*/)
-
 struct battle_s {
     struct game_s *g;
     void *uictx;
