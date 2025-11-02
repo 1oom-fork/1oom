@@ -38,6 +38,13 @@ typedef enum {
     SHIPDESIGN_NONE = -1,
 } shipdesign_id_t;
 
+typedef enum {
+    BATTLE_ITEM_PLANET = 0,
+    BATTLE_ITEM_1 = 1,
+    BATTLE_ITEM_MAX = (NUM_SHIPDESIGNS * 2 + 1/*planet*/),
+    BATTLE_ITEM_NONE = -1,
+} battle_item_id_t;
+
 typedef enum tech_group_e {
     TECH_GROUP_SINGULAR = 0,
     TECH_GROUP_ECM_JAMMER = 1,
