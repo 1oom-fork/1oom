@@ -30,7 +30,7 @@ static void game_battle_with_human_init_sub1(struct battle_s *bt)
 {
     /* from ui_battle_do_sub1 */
     bt->items_num = bt->s[SIDE_L].items + bt->s[SIDE_R].items;
-    for (int i = 0; i <= bt->items_num; ++i) {
+    for (battle_item_id_t i = BATTLE_ITEM_PLANET; i <= bt->items_num; ++i) {
         bool flag_no_missiles;
         flag_no_missiles = true;
         for (int j = 0; j < WEAPON_SLOT_NUM; ++j) {
@@ -46,34 +46,34 @@ static void game_battle_with_human_init_sub1(struct battle_s *bt)
     bt->item[0].pulsar = 0;
     if (bt->item[0].subspace > 0) {
         bool flag_att_have_teleporter = false;
-        int att_from, att_to, def_from, def_to;
+        battle_item_id_t att_from, att_to, def_from, def_to;
         bt->have_subspace_int = true;
         if (bt->item[0].side == SIDE_L) {
             att_from = bt->s[SIDE_L].items + 1;
             att_to = bt->items_num;
-            def_from = 1;
+            def_from = BATTLE_ITEM_1;
             def_to = bt->s[SIDE_L].items;
         } else {
-            att_from = 1;
+            att_from = BATTLE_ITEM_1;
             att_to = bt->s[SIDE_L].items;
             def_from = bt->s[SIDE_L].items + 1;
             def_to = bt->items_num;
         }
-        for (int i = att_from; i <= att_to; ++i) {
+        for (battle_item_id_t i = att_from; i <= att_to; ++i) {
             if (bt->item[i].subspace > 0) {
                 bt->item[i].subspace = -1;
                 flag_att_have_teleporter = true;
             }
         }
         if (flag_att_have_teleporter) {
-            for (int i = def_from; i <= def_to; ++i) {
+            for (battle_item_id_t i = def_from; i <= def_to; ++i) {
                 if (bt->item[i].subspace > 0) {
                     bt->item[i].subspace = -1;
                 }
             }
         }
     }
-    for (int i = 0; i <= bt->items_num; ++i) {
+    for (battle_item_id_t i = BATTLE_ITEM_PLANET; i <= bt->items_num; ++i) {
         bt->item[i].hp1 = bt->item[i].hp2;
     }
     for (int i = 0; i < BATTLE_ROCK_MAX; ++i) { /* BUG? this is done only up to 6 */
@@ -101,11 +101,11 @@ static void game_battle_place_items(struct battle_s *bt)
         bt->item[0].sx = x;
         bt->item[0].sy = y;
     }
-    for (int i = 1; i <= bt->s[SIDE_L].items; ++i) {
+    for (battle_item_id_t i = BATTLE_ITEM_1; i <= bt->s[SIDE_L].items; ++i) {
         bt->item[i].sx = 0;
         bt->item[i].sy = tbl_starty[i - 1];
     }
-    for (int i = 1; i <= bt->s[SIDE_R].items; ++i) {
+    for (battle_item_id_t i = BATTLE_ITEM_1; i <= bt->s[SIDE_R].items; ++i) {
         bt->item[i + bt->s[SIDE_L].items].sx = 9;
         bt->item[i + bt->s[SIDE_L].items].sy = tbl_starty[i - 1];
     }
@@ -184,7 +184,7 @@ static void game_battle_item_destroy(struct battle_s *bt, int item_i)
         if (bt->cur_item > item_i) {
             --bt->cur_item;
         }
-        for (int i = 0; i <= bt->items_num2; ++i) {
+        for (battle_item_id_t i = BATTLE_ITEM_PLANET; i <= bt->items_num2; ++i) {
             struct battle_item_s *b2 = &(bt->item[i]);
             if (bt->priority[i] == item_i) {
                 bt->priority[i] = 50;
@@ -224,7 +224,7 @@ static void game_battle_item_destroy(struct battle_s *bt, int item_i)
         }
         if (bt->have_subspace_int) {
             bt->have_subspace_int = false;
-            for (int i = 0; i <= bt->items_num2; ++i) {
+            for (battle_item_id_t i = BATTLE_ITEM_PLANET; i <= bt->items_num2; ++i) {
                 struct battle_item_s *b2 = &(bt->item[i]);
                 if (b2->subspace == -1) {
                     b2->subspace = 1;
@@ -513,7 +513,7 @@ static void game_battle_with_human_init(struct battle_s *bt)
     bt->item[0].side = bt->planet_side;
     game_battle_with_human_init_sub1(bt);
     game_battle_place_items(bt);
-    for (int i = 1; i <= bt->items_num; ++i) {
+    for (battle_item_id_t i = BATTLE_ITEM_1; i <= bt->items_num; ++i) {
         struct battle_item_s *b = &(bt->item[i]);
         for (int j = 0; j < WEAPON_SLOT_NUM; ++j) {
             if (b->wpn[j].n > 0) {
@@ -594,7 +594,7 @@ static void game_battle_reset_specials(struct battle_s *bt)
 {
     struct battle_item_s *b;
     int itemi = bt->cur_item;
-    for (int i = 0; i <= bt->items_num; ++i) {
+    for (battle_item_id_t i = BATTLE_ITEM_PLANET; i <= bt->items_num; ++i) {
         b = &(bt->item[i]);
         if (b->repulsor > 0) {
             b->repulsor = 1;
@@ -641,7 +641,7 @@ static void game_battle_reset_specials(struct battle_s *bt)
             b->hploss = v;
         }
     }
-    for (int i = 0; i <= bt->items_num; ++i) {
+    for (battle_item_id_t i = BATTLE_ITEM_PLANET; i <= bt->items_num; ++i) {
         b = &(bt->item[i]);
         if (b->stasisby == itemi) {
             b->stasisby = 0;
@@ -859,7 +859,7 @@ static void game_battle_pulsar(struct battle_s *bt, int attacker_i, int ptype)
         ndiv = 1;
         rbase = 10;
     }
-    for (int i = 0; i <= bt->items_num; ++i) {
+    for (battle_item_id_t i = BATTLE_ITEM_PLANET; i <= bt->items_num; ++i) {
         struct battle_item_s *bd = &(bt->item[i]);
         if (1
           && (bd->stasisby == 0)
@@ -888,7 +888,7 @@ static bool game_battle_special(struct battle_s *bt, int attacker_i, int target_
     if (!bt->s[b->side].flag_human) {
         int n = 0, num = bt->s[SIDE_L].items; /* AI is always on SIDE_R */
         flag_use_stasis = false;
-        for (int i = 1; i <= num; ++i) {
+        for (battle_item_id_t i = BATTLE_ITEM_1; i <= num; ++i) {
             if (bt->item[i].stasisby > 0) {
                 ++n;
             }
@@ -1008,7 +1008,7 @@ static bool game_battle_special(struct battle_s *bt, int attacker_i, int target_
         int t;
         if ((bd->unman >= bd->man) || (dist > 3) || (target_i == 0/*planet*/)) {
             t = -1;
-            for (int i = 1; i <= bt->items_num; ++i) {
+            for (battle_item_id_t i = BATTLE_ITEM_1; i <= bt->items_num; ++i) {
                 bi = &(bt->item[i]);
                 if (1
                   && ((b->side + bi->side) == 1)
@@ -1152,13 +1152,13 @@ static void game_battle_move_retaliate(struct battle_s *bt, int itemi)
     struct battle_item_s *b = &(bt->item[itemi]);
     uint8_t num_repulsed = 0;
     bool destroyed = false;
-    for (int i = 1; i <= bt->items_num; ++i) {
+    for (battle_item_id_t i = BATTLE_ITEM_1; i <= bt->items_num; ++i) {
         struct battle_item_s *b2 = &(bt->item[i]);
         if (b2->repulsor > 1) {
             b2->repulsor = 1;
         }
     }
-    for (int i = 1; i <= bt->items_num; ++i) {
+    for (battle_item_id_t i = BATTLE_ITEM_1; i <= bt->items_num; ++i) {
         struct battle_item_s *b2 = &(bt->item[i]);
         if ((b->side + b2->side) == 1) {
             if ((b2->stasisby == 0) && (b2->cloak != 1)) {
@@ -1222,7 +1222,7 @@ static void game_battle_with_human_do_sub3(struct battle_s *bt)
 {
     int vc = 0;
     bool flag_round_done;
-    for (int i = 0; i <= bt->items_num; ++i) {
+    for (battle_item_id_t i = BATTLE_ITEM_PLANET; i <= bt->items_num; ++i) {
         struct battle_item_s *b = &(bt->item[i]);
         b->actman = b->man - b->unman;
         b->can_retaliate = false;
@@ -1487,7 +1487,7 @@ static battle_side_i_t game_battle_with_human_do(struct battle_s *bt)
     while (winner == SIDE_NONE) {
         switch (game_battle_with_human_do_sub2(bt)) {
             case BATTLE_TURN_RETREAT:
-                for (int i = bt->s[SIDE_L].items + 1; i <= bt->items_num; ++i) {
+                for (battle_item_id_t i = bt->s[SIDE_L].items + 1; i <= bt->items_num; ++i) {
                     struct battle_item_s *b = &(bt->item[i]);
                     ++b->retreat;
                 }
@@ -1513,7 +1513,7 @@ static battle_side_i_t game_battle_with_human_do(struct battle_s *bt)
         }
     }
     /*SETMAX(bt->item[0].num, 0);*/
-    for (int i = 1; i <= bt->items_num; ++i) {
+    for (battle_item_id_t i = BATTLE_ITEM_1; i <= bt->items_num; ++i) {
         struct battle_item_s *b = &(bt->item[i]);
         bt->s[b->side].tbl_ships[b->shiptbli] = b->num;
     }
@@ -1904,7 +1904,7 @@ void game_battle_area_setup(struct battle_s *bt)
         struct battle_rock_s *r = &(bt->rock[i]);
         bt->area[r->sy][r->sx] = -100;
     }
-    for (int i = 0; i <= bt->items_num; ++i) {
+    for (battle_item_id_t i = BATTLE_ITEM_PLANET; i <= bt->items_num; ++i) {
         struct battle_item_s *b2 = &(bt->item[i]);
         if (b2->side != SIDE_NONE) {
             int8_t v;
