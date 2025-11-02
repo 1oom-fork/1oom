@@ -167,7 +167,7 @@ static void game_battle_missile_remove_unused(struct battle_s *bt)
 {
     for (int i = 0; i < bt->num_missile; ++i) {
         struct battle_missile_s *m = &(bt->missile[i]);
-        if (m->target == MISSILE_TARGET_NONE) {
+        if (m->target == BATTLE_ITEM_NONE) {
             util_table_remove_item_any_order(i, bt->missile, sizeof(struct battle_missile_s), bt->num_missile);
             --i;
             --bt->num_missile;
@@ -202,7 +202,7 @@ static void game_battle_item_destroy(struct battle_s *bt, int item_i)
         for (int i = 0; i < bt->num_missile; ++i) {
             struct battle_missile_s *m = &(bt->missile[i]);
             if ((m->source == item_i) || (m->target == item_i)) {
-                m->target = MISSILE_TARGET_NONE;
+                m->target = BATTLE_ITEM_NONE;
             }
             if (m->source > item_i) {
                 --m->source;
@@ -219,7 +219,7 @@ static void game_battle_item_destroy(struct battle_s *bt, int item_i)
         for (int i = 0; i < bt->num_missile; ++i) {
             struct battle_missile_s *m = &(bt->missile[i]);
             if (m->source == item_i) {
-                m->target = MISSILE_TARGET_NONE;
+                m->target = BATTLE_ITEM_NONE;
             }
         }
         if (bt->have_subspace_int) {
@@ -240,7 +240,7 @@ static void game_battle_missile_spawn(struct battle_s *bt, int attacker_i, int t
     struct battle_missile_s *m;
     struct shiptech_weap_s *w = &(tbl_shiptech_weap[wpnt]);
     if (bt->num_missile == BATTLE_MISSILE_MAX) {
-        bt->missile[0].target = MISSILE_TARGET_NONE;
+        bt->missile[0].target = BATTLE_ITEM_NONE;
         game_battle_missile_remove_unused(bt);
     }
     m = &(bt->missile[bt->num_missile]);
@@ -270,7 +270,7 @@ static void game_battle_missile_hit(struct battle_s *bt, int missile_i, int targ
     int target_i = m->target, damage;
     struct battle_item_s *b = &(bt->item[target_i]);
     struct shiptech_weap_s *w = &(tbl_shiptech_weap[m->wpnt]);
-    if (target_i == MISSILE_TARGET_NONE) {
+    if (target_i == BATTLE_ITEM_NONE) {
         return;
     }
     {
@@ -294,7 +294,7 @@ static void game_battle_missile_hit(struct battle_s *bt, int missile_i, int targ
         }
     }
     if (damage < 0) {
-        m->target = MISSILE_TARGET_NONE;
+        m->target = BATTLE_ITEM_NONE;
     } else {
         struct battle_item_s *bs = &(bt->item[m->source]);
         int v1c = m->damagemul2, misschance, hploss = b->hploss, totaldamage = 0, num_destroyed = 0;
@@ -330,7 +330,7 @@ static void game_battle_missile_hit(struct battle_s *bt, int missile_i, int targ
         if (flag_hit_misshield) {
             ui_battle_draw_misshield(bt, target_i, target_x, target_y, missile_i);
         }
-        m->target = MISSILE_TARGET_NONE;
+        m->target = BATTLE_ITEM_NONE;
         if (target_i == 0) {
             game_battle_damage_planet(bt, totaldamage);
         }
@@ -426,7 +426,7 @@ static void game_battle_missile_move(struct battle_s *bt, int missile_i, int tar
             SETMAX(n, 0);
             m->nummissiles = n;
             if (n == 0) {
-                m->target = -1;
+                m->target = BATTLE_ITEM_NONE;
             }
             ui_battle_draw_explos_small(bt, mx - 4, my - 4);
         }
@@ -439,7 +439,7 @@ static void game_battle_missile_move(struct battle_s *bt, int missile_i, int tar
                 int v;
                 v = w->damagemax - (((w->v24 - m->fuel) * w->dtbl[0] + (w->dtbl[0] - m->speed))) / 2; /* FIXME check this calc */
                 if (v < 0) {
-                    m->target = MISSILE_TARGET_NONE;
+                    m->target = BATTLE_ITEM_NONE;
                 }
             }
         }
@@ -571,7 +571,7 @@ static void game_battle_item_done(struct battle_s *bt)
     struct battle_item_s *b = &(bt->item[bt->cur_item]);
     b->selected = 0;
     do {
-        bt->priority[bt->prio_i] = -1;
+        bt->priority[bt->prio_i] = BATTLE_ITEM_NONE;
         bt->prio_i = (bt->prio_i + 1) % (bt->items_num2 + 1);
     } while (bt->priority[bt->prio_i] == 50);
 }
@@ -583,7 +583,7 @@ static void game_battle_missile_turn_done(struct battle_s *bt)
         if (m->speed <= 0) {
             m->speed = tbl_shiptech_weap[m->wpnt].dtbl[0];
             if (--m->fuel == 0) {
-                m->target = MISSILE_TARGET_NONE;
+                m->target = BATTLE_ITEM_NONE;
             }
         }
     }
@@ -908,7 +908,7 @@ static bool game_battle_special(struct battle_s *bt, int attacker_i, int target_
             for (int i = 0; i < bt->num_missile; ++i) {
                 struct battle_missile_s *m = &(bt->missile[i]);
                 if (m->target == target_i) {
-                    m->target = MISSILE_TARGET_NONE;
+                    m->target = BATTLE_ITEM_NONE;
                 }
             }
             bd->stasisby = attacker_i;
@@ -985,7 +985,7 @@ static bool game_battle_special(struct battle_s *bt, int attacker_i, int target_
         }
         n = bt->items_num;
         belowtarget = 0;
-        while (n > -1) {    /* FIXME nothing is done on n == 0 loop */
+        while (n > BATTLE_ITEM_NONE) {    /* FIXME nothing is done on n == 0 loop */
             if ((bt->item[n].num <= 0) && (n != 0/*planet*/)) {
                 game_battle_item_destroy(bt, n);
                 if (target_i > n) {
@@ -1007,7 +1007,7 @@ static bool game_battle_special(struct battle_s *bt, int attacker_i, int target_
         struct battle_item_s *bi;
         int t;
         if ((bd->unman >= bd->man) || (dist > 3) || (target_i == 0/*planet*/)) {
-            t = -1;
+            t = BATTLE_ITEM_NONE;
             for (battle_item_id_t i = BATTLE_ITEM_1; i <= bt->items_num; ++i) {
                 bi = &(bt->item[i]);
                 if (1
@@ -1314,11 +1314,11 @@ static void game_battle_with_human_do_sub3(struct battle_s *bt)
                         b->can_retaliate = true;
                         bt->priority[vc] = itemi;
                         if (vc != bt->prio_i) {
-                            bt->priority[bt->prio_i] = -1;
+                            bt->priority[bt->prio_i] = BATTLE_ITEM_NONE;
                         }
                         vc = (vc + 1) % (bt->items_num2 + 1);
                         while (bt->prio_i = (bt->prio_i + 1) % (bt->items_num2 + 1), bt->priority[bt->prio_i] == 50) {
-                            bt->priority[bt->prio_i] = -1;
+                            bt->priority[bt->prio_i] = BATTLE_ITEM_NONE;
                         }
                     }
                     /*4ee70*/
