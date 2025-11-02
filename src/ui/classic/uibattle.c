@@ -1040,7 +1040,7 @@ void ui_battle_draw_arena(const struct battle_s *bt, int itemi, int dmode)
     lbxgfx_draw_frame(0, 0, d->gfx_bg, UI_SCREEN_W);
     lbxfont_set_temp_color(0);
     lbxfont_select_set_12_4(2, 0xd, 0, 0);
-    for (int i = 0; i <= bt->items_num; ++i) {
+    for (battle_item_id_t i = BATTLE_ITEM_PLANET; i <= bt->items_num; ++i) {
         if ((i != itemi) || (dmode == 0/*normal*/)) {
             const struct battle_item_s *b;
             b = &(bt->item[i]);
@@ -1481,7 +1481,7 @@ void ui_battle_draw_pulsar(const struct battle_s *bt, int attacker_i, int ptype,
         if (f > 2) {
             gfx_aux_draw_frame_to(ui_data.gfx.space.explos[f - 3], &ui_data.aux.btemp);
             gfx_aux_scale(&ui_data.aux.btemp, 80, 80);
-            for (int i = 0; i <= bt->items_num; ++i) {
+            for (battle_item_id_t i = BATTLE_ITEM_PLANET; i <= bt->items_num; ++i) {
                 if (dmgtbl[i] > 0) {
                     const struct battle_item_s *b = &(bt->item[i]);
                     int x1, y1;
