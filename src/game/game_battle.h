@@ -75,13 +75,12 @@ struct battle_rock_s {
 };
 
 #define BATTLE_MISSILE_MAX 30
-#define MISSILE_TARGET_NONE -1
 
 struct battle_missile_s {
     uint16_t nummissiles;
     uint16_t damagemul2;
     int8_t source;  /* item index */
-    int8_t target;  /* item index or MISSILE_TARGET_NONE */
+    int8_t target;  /* item index or BATTLE_ITEM_NONE */
     int16_t x;
     int16_t y;
     uint16_t fuel;

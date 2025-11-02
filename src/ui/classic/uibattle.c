@@ -1058,7 +1058,7 @@ void ui_battle_draw_arena(const struct battle_s *bt, int itemi, int dmode)
         const struct battle_missile_s *m = &(bt->missile[i]);
         int8_t target;
         target = m->target;
-        if ((target != MISSILE_TARGET_NONE) && ((target != itemi) || (dmode != 2/*hide target missile*/))) {
+        if ((target != BATTLE_ITEM_NONE) && ((target != itemi) || (dmode != 2/*hide target missile*/))) {
             const struct battle_item_s *b;
             b = &(bt->item[target]);
             ui_battle_draw_missile(bt, i, m->x, m->y, b->sx * 32 + 16, b->sy * 24 + 12);
