@@ -71,7 +71,8 @@ static void game_battle_item_add(struct battle_s *bt, const shipparsed_t *sp, ba
     switch (side) {
         default:
         case SIDE_NONE/*planet*/:
-            itemi = shiptbli = 0;
+            itemi = BATTLE_ITEM_PLANET;
+            shiptbli = 0;
             b = &(bt->item[itemi]);
             game_battle_item_from_parsed(b, sp);
             b->absorb += b->pshield;
