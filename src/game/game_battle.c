@@ -67,7 +67,8 @@ static void game_battle_item_from_parsed(struct battle_item_s *b, const shippars
 static void game_battle_item_add(struct battle_s *bt, const shipparsed_t *sp, battle_side_i_t side)
 {
     struct battle_item_s *b;
-    int itemi, shiptbli;
+    battle_item_id_t itemi;
+    int shiptbli;
     switch (side) {
         default:
         case SIDE_NONE/*planet*/:

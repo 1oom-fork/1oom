@@ -2077,7 +2077,7 @@ static int game_ai_battle_missile_dmg(const struct battle_s *bt, int missile_i)
     return damagepotential;
 }
 
-static int game_ai_battle_incoming_missiles_dmg(const struct battle_s *bt, int itemi)
+static int game_ai_battle_incoming_missiles_dmg(const struct battle_s *bt, battle_item_id_t itemi)
 {
     int v = 0, hp;
     if (itemi == BATTLE_ITEM_PLANET) {
@@ -2093,7 +2093,7 @@ static int game_ai_battle_incoming_missiles_dmg(const struct battle_s *bt, int i
     return v;
 }
 
-static int game_ai_battle_dmgmax(struct battle_s *bt, int itemi)
+static int game_ai_battle_dmgmax(struct battle_s *bt, battle_item_id_t itemi)
 {
     const struct battle_item_s *b = &(bt->item[itemi]);
     int v = 0, num_weap = (itemi == BATTLE_ITEM_PLANET) ? 1 : 4;
@@ -2157,7 +2157,7 @@ static int game_ai_battle_dmgmax(struct battle_s *bt, int itemi)
     return v;
 }
 
-static int game_ai_battle_dmggive(struct battle_s *bt, int itemi1, int itemi2, int a2)
+static int game_ai_battle_dmggive(struct battle_s *bt, battle_item_id_t itemi1, battle_item_id_t itemi2, int a2)
 {
     struct battle_item_s *b = &(bt->item[itemi1]);
     /*si*/struct battle_item_s *bd = &(bt->item[itemi2]);
@@ -2279,10 +2279,11 @@ static int game_ai_battle_dmggive(struct battle_s *bt, int itemi1, int itemi2, i
     return v;
 }
 
-static int game_ai_battle_rival(struct battle_s *bt, int itemi, int a2)
+static battle_item_id_t game_ai_battle_rival(struct battle_s *bt, battle_item_id_t itemi, int a2)
 {
     /*di*/struct battle_item_s *b = &(bt->item[itemi]);
-    int rival = -1, maxw = 0;
+    battle_item_id_t rival = BATTLE_ITEM_NONE;
+    int maxw = 0;
     for (battle_item_id_t i = BATTLE_ITEM_PLANET; i <= bt->items_num; ++i) {
         struct battle_item_s *b2 = &(bt->item[i]);
         if (((b->side + b2->side) == 1) && (b->num > 0)) {
@@ -2381,11 +2382,11 @@ static bool game_battle_missile_none_fired_by(const struct battle_s *bt, int ite
     return true;
 }
 
-static int game_battle_stasis_target(struct battle_s *bt)
+static battle_item_id_t game_battle_stasis_target(struct battle_s *bt)
 {
-    int itemi = bt->cur_item;
+    battle_item_id_t itemi = bt->cur_item;
     struct battle_item_s *b = &(bt->item[itemi]);
-    int target_i = BATTLE_ITEM_NONE;
+    battle_item_id_t target_i = BATTLE_ITEM_NONE;
     bool flag_have_unstasis = false;
     {
         int n = 0, itembase = (b->side == SIDE_R) ? 1 : (bt->s[SIDE_L].items + 1), itemnum = bt->s[b->side ^ 1].items;
@@ -2420,7 +2421,7 @@ static int game_battle_stasis_target(struct battle_s *bt)
 
 static int game_battle_ai_missile_evade(const struct battle_s *bt)
 {
-    int itemi = bt->cur_item;
+    battle_item_id_t itemi = bt->cur_item;
     const struct battle_item_s *b = &(bt->item[itemi]);
     int evade = 0;
     if (b->unman == b->man) {
@@ -2463,7 +2464,7 @@ static int game_battle_ai_missile_evade(const struct battle_s *bt)
 /*
  * Tries to approximate by how much enemy ship can increase distance in 2 turns.
  */
-static void get_possible_distance_increase(struct battle_s *bt, int target_i)
+static void get_possible_distance_increase(struct battle_s *bt, battle_item_id_t target_i)
 {
     struct battle_item_s *b = &(bt->item[bt->cur_item]);
     const struct battle_item_s *bd = &(bt->item[target_i]);
@@ -2477,9 +2478,9 @@ static void get_possible_distance_increase(struct battle_s *bt, int target_i)
     b->maxrange = -(MIN(si, t));
 }
 
-static int game_battle_ai_best_range(struct battle_s *bt, int target_i)
+static int game_battle_ai_best_range(struct battle_s *bt, battle_item_id_t target_i)
 {
-    int itemi = bt->cur_item;
+    battle_item_id_t itemi = bt->cur_item;
     const struct battle_item_s *b = &(bt->item[itemi]);
     const struct battle_item_s *bd = &(bt->item[target_i]);
     int bestrange = 1, damagediv = 1, weight1 = 0;
@@ -2608,9 +2609,9 @@ static int eval_pos_for_pulsar_use(struct battle_s *bt, int sx, int sy)
     return weight;
 }
 
-static int game_battle_ai_target1_sub3(struct battle_s *bt, int sx, int sy, int target_i, int bestrange)
+static int game_battle_ai_target1_sub3(struct battle_s *bt, int sx, int sy, battle_item_id_t target_i, int bestrange)
 {
-    int itemi = bt->cur_item;
+    battle_item_id_t itemi = bt->cur_item;
     const struct battle_item_s *b = &(bt->item[itemi]);
     const struct battle_item_s *bd = &(bt->item[target_i]);
     int si = 0, dist, len, tblx[20], tbly[20];
@@ -2635,7 +2636,7 @@ static int game_battle_ai_target1_sub3(struct battle_s *bt, int sx, int sy, int 
 
 static void game_battle_ai_target1_sub4(struct battle_s *bt)
 {
-    int itemi = bt->cur_item;
+    battle_item_id_t itemi = bt->cur_item;
     struct battle_item_s *b = &(bt->item[itemi]);
     int dist = 0, mindist, oppdist;
     size_t n = 0;
@@ -2717,7 +2718,7 @@ static void game_battle_ai_target1_sub4(struct battle_s *bt)
 
 static void game_battle_ai_target1_sub5(struct battle_s *bt)
 {
-    int itemi = bt->cur_item;
+    battle_item_id_t itemi = bt->cur_item;
     struct battle_item_s *b = &(bt->item[itemi]);
     int dist = 0, mindist = 10, n = 0, missdist = 0;
     uint8_t xy;
@@ -2790,9 +2791,9 @@ static void game_battle_ai_target1_sub5(struct battle_s *bt)
     }
 }
 
-static int game_battle_ai_target1(struct battle_s *bt, int target_i)
+static int game_battle_ai_target1(struct battle_s *bt, battle_item_id_t target_i)
 {
-    int itemi = bt->cur_item;
+    battle_item_id_t itemi = bt->cur_item;
     struct battle_item_s *b = &(bt->item[itemi]);
     int bestrange;
     bestrange = game_battle_ai_best_range(bt, target_i);
@@ -2835,10 +2836,10 @@ static int game_battle_ai_target1(struct battle_s *bt, int target_i)
 
 static void game_ai_classic_battle_ai_turn(struct battle_s *bt)
 {
-    int itemi = bt->cur_item;
+    battle_item_id_t itemi = bt->cur_item;
     struct battle_item_s *b = &(bt->item[itemi]);
     /*5a581*/
-    int /*si*/target_i = 0;  /* FIXME WASBUG used uninitialized later ; proper value ? */
+    battle_item_id_t /*si*/target_i = 0;  /* FIXME WASBUG used uninitialized later ; proper value ? */
     int v4;
     game_battle_area_setup(bt);    /* FIXME already done by caller */
     if (1
@@ -2905,7 +2906,7 @@ static void game_ai_classic_battle_ai_turn(struct battle_s *bt)
         }
         target_i = game_ai_battle_rival(bt, itemi, 0);
         if ((target_i == BATTLE_ITEM_NONE) && (itemi == BATTLE_ITEM_PLANET) && (b->num > 0)) {
-            int ii = (b->side == SIDE_R) ? 1 : (bt->s[SIDE_L].items + 1);
+            battle_item_id_t ii = (b->side == SIDE_R) ? 1 : (bt->s[SIDE_L].items + 1);
             if (bt->item[ii].side != b->side) {
                 game_battle_attack(bt, itemi, ii, false);
             }
@@ -2967,7 +2968,8 @@ static bool game_ai_classic_battle_ai_retreat(struct battle_s *bt)
         }
     }
     for (battle_item_id_t i = BATTLE_ITEM_1; i <= bt->items_num; ++i) {
-        int j, s;
+        battle_item_id_t j;
+        int s;
         s = (i <= bt->s[SIDE_L].items) ? SIDE_R : SIDE_L;
         j = game_ai_battle_rival(bt, i, 1);
         if (j >= BATTLE_ITEM_PLANET) {
@@ -2983,7 +2985,8 @@ static bool game_ai_classic_battle_ai_retreat(struct battle_s *bt)
     }
     if (bt->item[BATTLE_ITEM_PLANET].num > 0) {
         const struct battle_item_s *b = &(bt->item[BATTLE_ITEM_PLANET]);
-        int j, s = (b->side == SIDE_L) ? SIDE_R : SIDE_L;
+        battle_item_id_t j;
+        int s = (b->side == SIDE_L) ? SIDE_R : SIDE_L;
         hp[s ^ 1] += (b->hp1 * b->num * 7) / 10;
         j = game_ai_battle_rival(bt, BATTLE_ITEM_PLANET, 1);
         if (j > BATTLE_ITEM_PLANET) {
