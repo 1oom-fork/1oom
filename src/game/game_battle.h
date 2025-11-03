@@ -81,8 +81,8 @@ struct battle_rock_s {
 struct battle_missile_s {
     uint16_t nummissiles;
     uint16_t damagemul2;
-    int8_t source;  /* item index */
-    int8_t target;  /* item index or BATTLE_ITEM_NONE */
+    battle_item_id_t source;  /* item index */
+    battle_item_id_t target;  /* item index or BATTLE_ITEM_NONE */
     int16_t x;
     int16_t y;
     uint16_t fuel;
@@ -96,7 +96,7 @@ struct battle_side_s {
     shipcount_t tbl_ships[NUM_SHIPDESIGNS];
     uint8_t tbl_shiptype[NUM_SHIPDESIGNS];
     uint8_t num_types;
-    uint8_t items; /* not counting planet */
+    battle_item_id_t items; /* not counting planet */
     uint32_t apparent_force;
     bool flag_have_scan;
     bool flag_base_missile;
@@ -120,9 +120,9 @@ struct battle_s {
     uint8_t num_repulsed;
     bool flag_human_att;
     bool flag_cur_item_destroyed;
-    uint8_t items_num; /* in item table, not counting planet at 0 */
-    uint8_t items_num2; /* in item table, not counting planet at 0 */
-    uint8_t cur_item; /* in item table */
+    battle_item_id_t items_num; /* in item table, not counting planet at 0 */
+    battle_item_id_t items_num2; /* in item table, not counting planet at 0 */
+    battle_item_id_t cur_item; /* in item table */
     int8_t special_button;
     uint32_t popdamage;
     uint32_t factdamage;
@@ -131,7 +131,7 @@ struct battle_s {
     uint8_t antidote;
     struct battle_item_s item[BATTLE_ITEM_MAX];
     uint8_t prio_i;
-    int16_t priority[BATTLE_ITEM_MAX];
+    battle_item_id_t priority[BATTLE_ITEM_MAX];
     uint8_t num_rocks;
     struct battle_rock_s rock[BATTLE_ROCK_MAX];
     uint8_t num_missile;
