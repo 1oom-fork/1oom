@@ -175,7 +175,7 @@ static void game_battle_missile_remove_unused(struct battle_s *bt)
     }
 }
 
-static void game_battle_item_destroy(struct battle_s *bt, int item_i)
+static void game_battle_item_destroy(struct battle_s *bt, battle_item_id_t item_i)
 {
     struct battle_item_s *b = &(bt->item[item_i]);
     battle_side_i_t side = b->side;
@@ -235,7 +235,7 @@ static void game_battle_item_destroy(struct battle_s *bt, int item_i)
     game_battle_missile_remove_unused(bt);
 }
 
-static void game_battle_missile_spawn(struct battle_s *bt, int attacker_i, int target_i, int nummissiles, weapon_t wpnt, int damagemul2)
+static void game_battle_missile_spawn(struct battle_s *bt, battle_item_id_t attacker_i, battle_item_id_t target_i, int nummissiles, weapon_t wpnt, int damagemul2)
 {
     struct battle_missile_s *m;
     struct shiptech_weap_s *w = &(tbl_shiptech_weap[wpnt]);
@@ -267,7 +267,8 @@ static void game_battle_missile_hit(struct battle_s *bt, int missile_i, int targ
 {
     struct game_s *g = bt->g;
     struct battle_missile_s *m = &(bt->missile[missile_i]);
-    int target_i = m->target, damage;
+    battle_item_id_t target_i = m->target;
+    int damage;
     struct battle_item_s *b = &(bt->item[target_i]);
     struct shiptech_weap_s *w = &(tbl_shiptech_weap[m->wpnt]);
     if (target_i == BATTLE_ITEM_NONE) {
@@ -373,8 +374,8 @@ static int game_battle_missile_rock_collide(struct battle_s *bt, struct battle_m
 static void game_battle_missile_move(struct battle_s *bt, int missile_i, int target_x, int target_y, int step)
 {
     struct battle_missile_s *m = &(bt->missile[missile_i]);
-    int mx = m->x, my = m->y, target_i = m->target, target_x_hit, target_y_hit;
-    struct battle_item_s *b = &(bt->item[target_i]);
+    int mx = m->x, my = m->y, target_x_hit, target_y_hit;
+    struct battle_item_s *b = &(bt->item[m->target]);
     {
         struct firing_s *fr = &(bt->g->gaux->firing[b->look]);
         if (b->side == SIDE_R) {
@@ -464,7 +465,7 @@ static void game_battle_missile_move(struct battle_s *bt, int missile_i, int tar
 static void game_battle_item_finish(struct battle_s *bt, bool flag_quick)
 {
     bool flag_done = false;
-    uint8_t itemi = bt->cur_item;
+    battle_item_id_t itemi = bt->cur_item;
     struct battle_item_s *b = &(bt->item[itemi]);
     int delay = flag_quick ? 5 : 10;
     if (b->side == SIDE_NONE) {
@@ -525,7 +526,7 @@ static void game_battle_with_human_init(struct battle_s *bt)
     }
 }
 
-static int game_battle_get_priority(const struct battle_s *bt, int itemi)
+static int game_battle_get_priority(const struct battle_s *bt, battle_item_id_t itemi)
 {
     const struct battle_item_s *b = &(bt->item[itemi]);
     int prio = b->complevel + b->man - b->unman;
@@ -550,7 +551,8 @@ static void game_battle_build_priority(struct battle_s *bt)
         bt->priority[i] = bt->items_num - i;
     }
     for (int i = 1; i <= bt->items_num; ++i) {
-        int j, prio_j, prio_i, itemi;
+        battle_item_id_t itemi;
+        int j, prio_j, prio_i;
         j = i - 1;
         itemi = bt->priority[i];
         prio_i = game_battle_get_priority(bt, itemi);
@@ -593,7 +595,7 @@ static void game_battle_missile_turn_done(struct battle_s *bt)
 static void game_battle_reset_specials(struct battle_s *bt)
 {
     struct battle_item_s *b;
-    int itemi = bt->cur_item;
+    battle_item_id_t itemi = bt->cur_item;
     for (battle_item_id_t i = BATTLE_ITEM_PLANET; i <= bt->items_num; ++i) {
         b = &(bt->item[i]);
         if (b->repulsor > 0) {
@@ -747,7 +749,7 @@ static void game_battle_extend_route_from_tbl(uint8_t *route, int *tblx, int *tb
     }
 }
 
-static void game_battle_item_move_find_route(struct battle_s *bt, uint8_t *route, int itemi, int sx, int sy)
+static void game_battle_item_move_find_route(struct battle_s *bt, uint8_t *route, battle_item_id_t itemi, int sx, int sy)
 {
     struct battle_item_s *b = &(bt->item[itemi]);
     int len, tblx[BATTLE_ROUTE_LEN], tbly[BATTLE_ROUTE_LEN];
@@ -822,7 +824,7 @@ static void game_battle_item_move_find_route(struct battle_s *bt, uint8_t *route
     }
 }
 
-static uint32_t game_battle_pulsar_get_dmg(struct battle_s *bt, int target_i, int v)
+static uint32_t game_battle_pulsar_get_dmg(struct battle_s *bt, battle_item_id_t target_i, int v)
 {
     struct battle_item_s *b = &(bt->item[target_i]);
     uint32_t dmg = 0, totalhp = b->num * b->hp1;
@@ -849,11 +851,11 @@ static uint32_t game_battle_pulsar_get_dmg(struct battle_s *bt, int target_i, in
     return dmg;
 }
 
-static void game_battle_pulsar(struct battle_s *bt, int attacker_i, int ptype)
+static void game_battle_pulsar(struct battle_s *bt, battle_item_id_t attacker_i, int ptype)
 {
     struct battle_item_s *b = &(bt->item[attacker_i]);
     int ndiv, rbase;
-    uint32_t dmgtbl[NUM_SHIPDESIGNS * 2 + 1/*planet*/];
+    uint32_t dmgtbl[BATTLE_ITEM_MAX];
     memset(dmgtbl, 0, sizeof(dmgtbl));
     if (ptype == 0) {
         ndiv = 2;
@@ -876,7 +878,7 @@ static void game_battle_pulsar(struct battle_s *bt, int attacker_i, int ptype)
     ui_battle_draw_pulsar(bt, attacker_i, ptype, dmgtbl);
 }
 
-static bool game_battle_special(struct battle_s *bt, int attacker_i, int target_i, int dist, int *killedbelowtargetptr)
+static bool game_battle_special(struct battle_s *bt, battle_item_id_t attacker_i, battle_item_id_t target_i, int dist, int *killedbelowtargetptr)
 {
     /*di*/struct battle_item_s *b = &(bt->item[attacker_i]);
     /*si*/struct battle_item_s *bd = &(bt->item[target_i]);
@@ -974,7 +976,8 @@ static bool game_battle_special(struct battle_s *bt, int attacker_i, int target_
     }
     /*55fce*/
     if ((b->pulsar >= 1) && (dist <= 1) && (bt->special_button != 0)) {
-        int n, belowtarget;
+        battle_item_id_t n;
+        int belowtarget;
         bt->special_button = 0;
         switch (b->pulsar) {
             case 1:
@@ -1008,7 +1011,7 @@ static bool game_battle_special(struct battle_s *bt, int attacker_i, int target_
     /*560d4*/
     if (b->warpdis == 1) {
         struct battle_item_s *bi;
-        int t;
+        battle_item_id_t t;
         if ((bd->unman >= bd->man) || (dist > 3) || (target_i == BATTLE_ITEM_PLANET)) {
             t = BATTLE_ITEM_NONE;
             for (battle_item_id_t i = BATTLE_ITEM_1; i <= bt->items_num; ++i) {
@@ -1100,7 +1103,7 @@ static bool game_battle_special(struct battle_s *bt, int attacker_i, int target_
     return false;
 }
 
-static void game_battle_repulse_do(struct battle_s *bt, int target_i, int sx, int sy, int attacker_i)
+static void game_battle_repulse_do(struct battle_s *bt, battle_item_id_t target_i, int sx, int sy, battle_item_id_t attacker_i)
 {
     struct battle_item_s *b = &(bt->item[attacker_i]);
     struct battle_item_s *bd = &(bt->item[target_i]);
@@ -1111,7 +1114,7 @@ static void game_battle_repulse_do(struct battle_s *bt, int target_i, int sx, in
     ++bt->num_repulsed;
 }
 
-static void game_battle_repulse(struct battle_s *bt, int attacker_i, int target_i)
+static void game_battle_repulse(struct battle_s *bt, battle_item_id_t attacker_i, battle_item_id_t target_i)
 {
     struct battle_item_s *b = &(bt->item[attacker_i]);
     struct battle_item_s *bd = &(bt->item[target_i]);
@@ -1150,7 +1153,7 @@ static void game_battle_repulse(struct battle_s *bt, int attacker_i, int target_
     }
 }
 
-static void game_battle_move_retaliate(struct battle_s *bt, int itemi)
+static void game_battle_move_retaliate(struct battle_s *bt, battle_item_id_t itemi)
 {
     struct battle_item_s *b = &(bt->item[itemi]);
     uint8_t num_repulsed = 0;
@@ -1184,7 +1187,7 @@ static void game_battle_move_retaliate(struct battle_s *bt, int itemi)
 
 static void game_battle_with_human_do_turn_ai(struct battle_s *bt)
 {
-    int itemi = bt->cur_item;
+    battle_item_id_t itemi = bt->cur_item;
     struct battle_item_s *b = &(bt->item[itemi]);
     ui_battle_ai_pre(bt);
     b->maxrange = game_battle_get_weap_maxrange(bt);
@@ -1244,7 +1247,7 @@ static void game_battle_with_human_do_sub3(struct battle_s *bt)
     flag_round_done = false;
     for (bt->prio_i = 0; (bt->priority[bt->prio_i] >= 0) && (!flag_round_done);) {
         struct battle_item_s *b;
-        int itemi;
+        battle_item_id_t itemi;
         bt->cur_item = itemi = bt->priority[bt->prio_i];
         b = &(bt->item[itemi]);
         if (itemi == BATTLE_ITEM_PLANET) {
@@ -1541,7 +1544,7 @@ int game_battle_area_check_line_ok(struct battle_s *bt, int *tblx, int *tbly, in
     return r;
 }
 
-bool game_battle_attack(struct battle_s *bt, int attacker_i, int target_i, bool retaliate)
+bool game_battle_attack(struct battle_s *bt, battle_item_id_t attacker_i, battle_item_id_t target_i, bool retaliate)
 {
     /*di*/struct battle_item_s *b = &(bt->item[attacker_i]);
     /*si*/struct battle_item_s *bd = &(bt->item[target_i]);
@@ -1786,7 +1789,7 @@ bool game_battle_attack(struct battle_s *bt, int attacker_i, int target_i, bool 
     return destroyed;
 }
 
-void game_battle_item_move(struct battle_s *bt, int itemi, int sx, int sy)
+void game_battle_item_move(struct battle_s *bt, battle_item_id_t itemi, int sx, int sy)
 {
     struct battle_item_s *b = &(bt->item[itemi]);
     bt->num_repulsed = false;
@@ -1860,7 +1863,7 @@ void game_battle_item_move(struct battle_s *bt, int itemi, int sx, int sy)
     }
 }
 
-int game_battle_get_xy_notsame(const struct battle_s *bt, int item1, int item2, int *x_notsame)
+int game_battle_get_xy_notsame(const struct battle_s *bt, battle_item_id_t item1, battle_item_id_t item2, int *x_notsame)
 {
     const struct battle_item_s *b1 = &(bt->item[item1]);
     const struct battle_item_s *b2 = &(bt->item[item2]);
