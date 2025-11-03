@@ -226,7 +226,7 @@ static void ui_battle_draw_bottom_no_ois(const struct battle_s *bt)
     } else {
         ui_battle_draw_focusinfo(bt);
     }
-    if (bt->item[0].side != SIDE_NONE) {
+    if (bt->item[BATTLE_ITEM_PLANET].side != SIDE_NONE) {
         gfx = ui_data.gfx.space.planet;
         lbxgfx_set_frame_0(gfx);
     } else {
@@ -234,8 +234,8 @@ static void ui_battle_draw_bottom_no_ois(const struct battle_s *bt)
     }
     lbxgfx_draw_frame(123, 193, gfx);
     if (1
-      && ((bt->cur_item != 0) || (b->num > 0) || (!flag_auto))
-      && (((b->man - b->unman) != 0) || (bt->cur_item == 0) || (!bt->s[b->side].flag_human))
+      && ((bt->cur_item != BATTLE_ITEM_PLANET) || (b->num > 0) || (!flag_auto))
+      && (((b->man - b->unman) != 0) || (bt->cur_item == BATTLE_ITEM_PLANET) || (!bt->s[b->side].flag_human))
     ) {
         gfx = ui_data.gfx.space.retreat;
         lbxgfx_set_frame_0(gfx);
@@ -248,7 +248,7 @@ static void ui_battle_draw_bottom_no_ois(const struct battle_s *bt)
     }
     if ((b->missile == -1) || flag_auto) {
         gfx = ui_data.gfx.space.misl_off;
-    } else if (bt->cur_item == 0) {
+    } else if (bt->cur_item == BATTLE_ITEM_PLANET) {
         gfx = ui_data.gfx.space.base_btn;
         if (tbl_shiptech_weap[b->wpn[0].t].nummiss == 1) {
             lbxgfx_set_frame_0(gfx);
@@ -323,7 +323,7 @@ static void ui_battle_draw_bottom_add_ois(const struct battle_s *bt)
     vgabuf_draw_line(120, 192, 120, 199, 0xeb);
     vgabuf_draw_line(96, 192, 96, 199, 0xeb);
     vgabuf_draw_line(0, 192, VGABUF_W - 1, 192, 0xeb);
-    if (bt->item[0].side != SIDE_NONE) {
+    if (bt->item[BATTLE_ITEM_PLANET].side != SIDE_NONE) {
         d->oi_planet = uiobj_add_t0(123, 193, "", ui_data.gfx.space.planet, MOO_KEY_p, -1);
     } else {
         lbxgfx_draw_frame(123, 193, ui_data.gfx.space.planet_off);
@@ -332,8 +332,8 @@ static void ui_battle_draw_bottom_add_ois(const struct battle_s *bt)
     b = &(bt->item[bt->cur_item]);
     if (0
       || ((b->side != SIDE_NONE) && (bt->s[b->side].items <= 0))
-      || ((bt->cur_item != 0) && (b->num <= 0))
-      || (((b->man - b->unman) != 0) && (bt->cur_item == 0))
+      || ((bt->cur_item != BATTLE_ITEM_PLANET) && (b->num <= 0))
+      || (((b->man - b->unman) != 0) && (bt->cur_item == BATTLE_ITEM_PLANET))
     ) {
         lbxgfx_draw_frame(241, 193, ui_data.gfx.space.retr_off);
         d->oi_retreat = UIOBJI_INVALID;
@@ -349,7 +349,7 @@ static void ui_battle_draw_bottom_add_ois(const struct battle_s *bt)
     d->oi_auto = uiobj_add_t1(99, 193, "", ui_data.gfx.space.autob, &(((struct battle_s *)bt)->s[b->side].flag_auto), MOO_KEY_a, -1);
 #endif
     if ((b->missile == 0) || (b->missile == 1)) {
-        if (bt->cur_item == 0) {
+        if (bt->cur_item == BATTLE_ITEM_PLANET) {
             if (b->wpn[0].t != b->wpn[1].t) {
                 d->oi_missile = uiobj_add_mousearea(175, 193, 208, 199, MOO_KEY_m, -1);
                 gfx = ui_data.gfx.space.base_btn;
@@ -382,7 +382,7 @@ static void ui_battle_draw_bottom_add_ois(const struct battle_s *bt)
         lbxgfx_draw_frame(153, 193, ui_data.gfx.space.scan_off);
         d->oi_scan = UIOBJI_INVALID;
     }
-    if ((bt->special_button == 0) || ((bt->special_button == 1) && (bt->cur_item != 0))) {
+    if ((bt->special_button == 0) || ((bt->special_button == 1) && (bt->cur_item != BATTLE_ITEM_PLANET))) {
         gfx = ui_data.gfx.space.special;
         if ((b->pulsar == 3) || (b->stasis == 3) || (b->pulsar == 4)) {
             lbxgfx_set_frame_0(gfx);
@@ -845,7 +845,7 @@ void ui_battle_shutdown(struct battle_s *bt, bool colony_destroyed)
 
 void ui_battle_draw_planetinfo(const struct battle_s *bt, bool side_r)
 {
-    const struct battle_item_s *b = &(bt->item[0/*planet*/]);
+    const struct battle_item_s *b = &(bt->item[BATTLE_ITEM_PLANET]);
     int x = 100, y = 50;
     uiobj_unset_callback();
     uiobj_table_clear();
@@ -1902,7 +1902,7 @@ ui_battle_action_t ui_battle_turn(const struct battle_s *bt)
     /*4ece2*/
     uiobj_id_t oi;
     oi = uiobj_handle_input_cond();
-    if ((b->stasisby > 0) || ((itemi == 0) && (b->num <= 0))) {
+    if ((b->stasisby > 0) || ((itemi == BATTLE_ITEM_PLANET) && (b->num <= 0))) {
         oi = d->oi_done;
     }
     if (0
