@@ -480,7 +480,7 @@ static void ui_battle_draw_beam_line(int fx, int fy, int tx, int ty, int d0, int
     }
 }
 
-static void ui_battle_draw_beam_attack_do1(const struct battle_s *bt, int *fx, int *fy, int tx, int ty, weapon_t wpnt, int attacker_i, int v16, uint8_t btype)
+static void ui_battle_draw_beam_attack_do1(const struct battle_s *bt, int *fx, int *fy, int tx, int ty, weapon_t wpnt, battle_item_id_t attacker_i, int v16, uint8_t btype)
 {
     const struct battle_item_s *b = &(bt->item[attacker_i]);
     const struct shiptech_weap_s *w = &(tbl_shiptech_weap[wpnt]);
@@ -561,7 +561,7 @@ static void ui_battle_draw_beam_attack_do1(const struct battle_s *bt, int *fx, i
     }
 }
 
-static void ui_battle_draw_beam_attack_do2(const struct battle_s *bt, int *fx, int *fy, int tx, int ty, weapon_t wpnt, int attacker_i, int target_i, int v16)
+static void ui_battle_draw_beam_attack_do2(const struct battle_s *bt, int *fx, int *fy, int tx, int ty, weapon_t wpnt, battle_item_id_t attacker_i, battle_item_id_t target_i, int v16)
 {
     /*btype = 5*/
     const struct battle_item_s *b = &(bt->item[attacker_i]);
@@ -730,7 +730,7 @@ static void ui_battle_draw_beam_attack_do2(const struct battle_s *bt, int *fx, i
     }
 }
 
-static void ui_battle_draw_stasis_sub1(const struct battle_s *bt, int target_i, int frame)
+static void ui_battle_draw_stasis_sub1(const struct battle_s *bt, battle_item_id_t target_i, int frame)
 {
     const struct battle_item_s *b = &(bt->item[target_i]);
     int x, y;
@@ -939,7 +939,7 @@ void ui_battle_draw_scan(const struct battle_s *bt, bool side_r)
     d->flag_scanning = false;
 }
 
-void ui_battle_draw_item(const struct battle_s *bt, int itemi, int x, int y)
+void ui_battle_draw_item(const struct battle_s *bt, battle_item_id_t itemi, int x, int y)
 {
     const struct ui_battle_data_s *d = bt->uictx;
     struct game_s *g = bt->g;
@@ -1031,7 +1031,7 @@ void ui_battle_draw_item(const struct battle_s *bt, int itemi, int x, int y)
     }
 }
 
-void ui_battle_draw_arena(const struct battle_s *bt, int itemi, int dmode)
+void ui_battle_draw_arena(const struct battle_s *bt, battle_item_id_t itemi, int dmode)
 {
     struct ui_battle_data_s *d = bt->uictx;
     d->frame_ship = (d->frame_ship + 1) % 5;
@@ -1056,7 +1056,7 @@ void ui_battle_draw_arena(const struct battle_s *bt, int itemi, int dmode)
     }
     for (int i = 0; i < bt->num_missile; ++i) {
         const struct battle_missile_s *m = &(bt->missile[i]);
-        int8_t target;
+        battle_item_id_t target;
         target = m->target;
         if ((target != BATTLE_ITEM_NONE) && ((target != itemi) || (dmode != 2/*hide target missile*/))) {
             const struct battle_item_s *b;
@@ -1066,7 +1066,7 @@ void ui_battle_draw_arena(const struct battle_s *bt, int itemi, int dmode)
     }
 }
 
-void ui_battle_draw_misshield(const struct battle_s *bt, int target_i, int target_x, int target_y, int missile_i)
+void ui_battle_draw_misshield(const struct battle_s *bt, battle_item_id_t target_i, int target_x, int target_y, int missile_i)
 {
     const struct battle_missile_s *m = &(bt->missile[missile_i]);
     int mx = m->x, my = m->y, target_x_hit, target_y_hit;
@@ -1152,7 +1152,7 @@ void ui_battle_draw_misshield(const struct battle_s *bt, int target_i, int targe
     ui_sound_stop_sfx();
 }
 
-void ui_battle_draw_damage(const struct battle_s *bt, int target_i, int target_x, int target_y, uint32_t damage)
+void ui_battle_draw_damage(const struct battle_s *bt, battle_item_id_t target_i, int target_x, int target_y, uint32_t damage)
 {
     const struct battle_item_s *b = &(bt->item[target_i]);
     int target_x_hit, target_y_hit, si, v4, ax, ay, scale;
@@ -1331,7 +1331,7 @@ void ui_battle_draw_missile(const struct battle_s *bt, int missilei, int x, int 
     }
 }
 
-void ui_battle_draw_bomb_attack(const struct battle_s *bt, int attacker_i, int target_i, ui_battle_bomb_t bombtype)
+void ui_battle_draw_bomb_attack(const struct battle_s *bt, battle_item_id_t attacker_i, battle_item_id_t target_i, ui_battle_bomb_t bombtype)
 {
     uint8_t *gfx;
     int x, y, x0, y0, x1, y1;
@@ -1372,7 +1372,7 @@ void ui_battle_draw_bomb_attack(const struct battle_s *bt, int attacker_i, int t
     }
 }
 
-void ui_battle_draw_beam_attack(const struct battle_s *bt, int attacker_i, int target_i, int wpni)
+void ui_battle_draw_beam_attack(const struct battle_s *bt, battle_item_id_t attacker_i, battle_item_id_t target_i, int wpni)
 {
     const struct battle_item_s *b = &(bt->item[attacker_i]);
     const struct battle_item_s *b2 = &(bt->item[target_i]);
@@ -1419,7 +1419,7 @@ void ui_battle_draw_beam_attack(const struct battle_s *bt, int attacker_i, int t
     }
 }
 
-void ui_battle_draw_stasis(const struct battle_s *bt, int attacker_i, int target_i)
+void ui_battle_draw_stasis(const struct battle_s *bt, battle_item_id_t attacker_i, battle_item_id_t target_i)
 {
     uint8_t *gfx = ui_data.gfx.space.stasis2;
     int x, y, x0, y0, x1, y1;
@@ -1452,7 +1452,7 @@ void ui_battle_draw_stasis(const struct battle_s *bt, int attacker_i, int target
     }
 }
 
-void ui_battle_draw_pulsar(const struct battle_s *bt, int attacker_i, int ptype, const uint32_t *dmgtbl)
+void ui_battle_draw_pulsar(const struct battle_s *bt, battle_item_id_t attacker_i, int ptype, const uint32_t *dmgtbl)
 {
     const uint8_t ctbl[5] = { 0x25, 0x40, 0x42, 0x44, 0x46 };
     uint8_t *gfx = ui_data.gfx.space.sphere2;
@@ -1502,7 +1502,7 @@ void ui_battle_draw_pulsar(const struct battle_s *bt, int attacker_i, int ptype,
     }
 }
 
-void ui_battle_draw_stream1(const struct battle_s *bt, int attacker_i, int target_i)
+void ui_battle_draw_stream1(const struct battle_s *bt, battle_item_id_t attacker_i, battle_item_id_t target_i)
 {
     const uint8_t ctbl[5] = { 0x25, 0x40, 0x42, 0x44, 0x46 };
     uint8_t *gfx = ui_data.gfx.space.dis_bem2;
@@ -1533,7 +1533,7 @@ void ui_battle_draw_stream1(const struct battle_s *bt, int attacker_i, int targe
     }
 }
 
-void ui_battle_draw_stream2(const struct battle_s *bt, int attacker_i, int target_i)
+void ui_battle_draw_stream2(const struct battle_s *bt, battle_item_id_t attacker_i, battle_item_id_t target_i)
 {
     const struct battle_item_s *b;
     uint8_t *gfx = ui_data.gfx.space.enviro;
@@ -1588,7 +1588,7 @@ void ui_battle_draw_stream2(const struct battle_s *bt, int attacker_i, int targe
 
 void ui_battle_draw_retreat(const struct battle_s *bt)
 {
-    int itemi = bt->cur_item;
+    battle_item_id_t itemi = bt->cur_item;
     const struct battle_item_s *b = &(bt->item[itemi]);
     uint8_t *gfx = ui_data.gfx.space.warpout;
     int x = b->sx * 32, y = b->sy * 24, /*di*/xf, yf;
@@ -1655,7 +1655,7 @@ void ui_battle_draw_retreat(const struct battle_s *bt)
     }
 }
 
-void ui_battle_draw_blackhole(const struct battle_s *bt, int attacker_i, int target_i)
+void ui_battle_draw_blackhole(const struct battle_s *bt, battle_item_id_t attacker_i, battle_item_id_t target_i)
 {
     const uint8_t ctbl[5] = { 0xd8, 0xd4, 0xd3, 0xd2, 0xd1 };
     const struct battle_item_s *b = &(bt->item[attacker_i]);
@@ -1699,7 +1699,7 @@ void ui_battle_draw_blackhole(const struct battle_s *bt, int attacker_i, int tar
     }
 }
 
-void ui_battle_draw_technull(const struct battle_s *bt, int attacker_i, int target_i)
+void ui_battle_draw_technull(const struct battle_s *bt, battle_item_id_t attacker_i, battle_item_id_t target_i)
 {
     const struct battle_item_s *b = &(bt->item[attacker_i]);
     const struct battle_item_s *bd = &(bt->item[target_i]);
@@ -1743,7 +1743,7 @@ void ui_battle_draw_technull(const struct battle_s *bt, int attacker_i, int targ
     }
 }
 
-void ui_battle_draw_repulse(const struct battle_s *bt, int attacker_i, int target_i, int sx, int sy)
+void ui_battle_draw_repulse(const struct battle_s *bt, battle_item_id_t attacker_i, battle_item_id_t target_i, int sx, int sy)
 {
     const uint8_t ctbl[5] = { 0x71, 0x70, 0x6f, 0x6e, 0x6d };
     const struct battle_item_s *b = &(bt->item[attacker_i]);
@@ -1911,7 +1911,7 @@ void ui_battle_turn_post(const struct battle_s *bt)
 ui_battle_action_t ui_battle_turn(const struct battle_s *bt)
 {
     const struct ui_battle_data_s *d = bt->uictx;
-    int itemi = bt->cur_item;
+    battle_item_id_t itemi = bt->cur_item;
     const struct battle_item_s *b = &(bt->item[itemi]);
     /*4ece2*/
     int16_t oi;
