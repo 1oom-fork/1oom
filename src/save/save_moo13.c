@@ -59,15 +59,15 @@ bool libsave_is_moo13(const char *fname)
     do { \
         uint16_t t_; \
         t_ = GET_LE_16(&buf[addr_]); \
-        if (t_ == 0xffff) { t_ = PLAYER_NONE; }; \
-        item_ = t_; \
+        if (t_ == 0xffff) { item_ = PLAYER_NONE; } \
+        else { item_ = t_; } \
     } while (0)
 #define M13_GET_16_KILLER(item_, addr_) \
     do { \
         uint16_t t_; \
         t_ = GET_LE_16(&buf[addr_]); \
-        if (t_ == 0) { t_ = PLAYER_NONE; } else { --t_; } \
-        item_ = t_; \
+        if (t_ == 0) { item_ = PLAYER_NONE; } \
+        else { --t_; item_ = t_; } \
     } while (0)
 #define M13_GET_16_CHECK(item_, addr_, l_, h_) \
     do { \
@@ -90,8 +90,8 @@ bool libsave_is_moo13(const char *fname)
         for (size_t i_ = 0; i_ < TBLLEN(item_); ++i_) { \
             uint16_t t_; \
             t_ = GET_LE_16(&buf[(addr_) + i_ * 2]); \
-            if (t_ == 0xffff) { t_ = PLAYER_NONE; }; \
-            item_[i_] = t_; \
+            if (t_ == 0xffff) { item_[i_] = PLAYER_NONE; } \
+            else { item_[i_] = t_; } \
         } \
     } while (0)
 #define M13_GET_TBL_16_HATED(item_, addr_) \
@@ -99,8 +99,8 @@ bool libsave_is_moo13(const char *fname)
         for (size_t i_ = 0; i_ < TBLLEN(item_); ++i_) { \
             uint16_t t_; \
             t_ = GET_LE_16(&buf[(addr_) + i_ * 2]); \
-            if (t_ == 0) { t_ = PLAYER_NONE; } \
-            item_[i_] = t_; \
+            if (t_ == 0) { item_[i_] = PLAYER_NONE; } \
+            else { item_[i_] = t_; } \
         } \
     } while (0)
 #define M13_GET_TBL_BVN_8(item_, addr_, n_) \
@@ -484,21 +484,14 @@ int libsave_moo13_load_do(const char *filename, struct game_s *g)
     do { \
         uint16_t t_; \
         t_ = item_; \
-        if (t_ == PLAYER_NONE) { t_ = 0xffff; }; \
-        SET_LE_16(&buf[addr_], t_); \
-    } while (0)
-#define M13_SET_16_HATED(item_, addr_) \
-    do { \
-        uint16_t t_; \
-        t_ = item_; \
-        if (t_ == PLAYER_NONE) { t_ = 0; } \
+        if (item_ == PLAYER_NONE) { t_ = 0xffff; }; \
         SET_LE_16(&buf[addr_], t_); \
     } while (0)
 #define M13_SET_16_KILLER(item_, addr_) \
     do { \
         uint16_t t_; \
         t_ = item_; \
-        if (t_ == PLAYER_NONE) { t_ = 0; } else { ++t_; } \
+        if (item_ == PLAYER_NONE) { t_ = 0; } else { ++t_; } \
         SET_LE_16(&buf[addr_], t_); \
     } while (0)
 #define M13_SET_16_CHECK(item_, addr_, l_, h_) \
@@ -524,7 +517,7 @@ int libsave_moo13_load_do(const char *filename, struct game_s *g)
         for (size_t i_ = 0; i_ < TBLLEN(item_); ++i_) { \
             uint16_t t_; \
             t_ = item_[i_]; \
-            if (t_ == PLAYER_NONE) { t_ = 0xffff; }; \
+            if (item_[i_] == PLAYER_NONE) { t_ = 0xffff; }; \
             SET_LE_16(&buf[(addr_) + i_ * 2], t_); \
         } \
     } while (0)
@@ -533,7 +526,7 @@ int libsave_moo13_load_do(const char *filename, struct game_s *g)
         for (size_t i_ = 0; i_ < TBLLEN(item_); ++i_) { \
             uint16_t t_; \
             t_ = item_[i_]; \
-            if (t_ == PLAYER_NONE) { t_ = 0; } \
+            if (item_[i_] == PLAYER_NONE) { t_ = 0; } \
             SET_LE_16(&buf[(addr_) + i_ * 2], t_); \
         } \
     } while (0)
