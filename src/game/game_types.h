@@ -10,10 +10,9 @@ typedef enum {
     PLAYER_3,
     PLAYER_4,
     PLAYER_5,
-    PLAYER_NUM
+    PLAYER_NUM,
+    PLAYER_NONE = -1,
 } player_id_t;
-
-#define PLAYER_NONE PLAYER_NUM
 
 typedef enum {
     PLANET_0 = 0,
