@@ -42,6 +42,7 @@ typedef enum {
     BATTLE_ITEM_PLANET = 0,
     BATTLE_ITEM_1 = 1,
     BATTLE_ITEM_MAX = (NUM_SHIPDESIGNS * 2 + 1/*planet*/),
+    BATTLE_ITEM_DESTROYED = 50,
     BATTLE_ITEM_NONE = -1,
 } battle_item_id_t;
 
