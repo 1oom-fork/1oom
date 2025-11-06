@@ -187,9 +187,9 @@ static void game_battle_item_destroy(struct battle_s *bt, battle_item_id_t item_
         for (battle_item_id_t i = BATTLE_ITEM_PLANET; i <= bt->items_num2; ++i) {
             struct battle_item_s *b2 = &(bt->item[i]);
             if (bt->priority[i] == item_i) {
-                bt->priority[i] = 50;
+                bt->priority[i] = BATTLE_ITEM_DESTROYED;
             }
-            if ((bt->priority[i] > item_i) && (bt->priority[i] < 50)) {
+            if ((bt->priority[i] > item_i) && (bt->priority[i] < BATTLE_ITEM_DESTROYED)) {
                 --bt->priority[i];
             }
             if (b2->stasisby == item_i) {
@@ -575,7 +575,7 @@ static void game_battle_item_done(struct battle_s *bt)
     do {
         bt->priority[bt->prio_i] = BATTLE_ITEM_NONE;
         bt->prio_i = (bt->prio_i + 1) % (bt->items_num2 + 1);
-    } while (bt->priority[bt->prio_i] == 50);
+    } while (bt->priority[bt->prio_i] == BATTLE_ITEM_DESTROYED);
 }
 
 static void game_battle_missile_turn_done(struct battle_s *bt)
@@ -1320,7 +1320,7 @@ static void game_battle_with_human_do_sub3(struct battle_s *bt)
                             bt->priority[bt->prio_i] = BATTLE_ITEM_NONE;
                         }
                         vc = (vc + 1) % (bt->items_num2 + 1);
-                        while (bt->prio_i = (bt->prio_i + 1) % (bt->items_num2 + 1), bt->priority[bt->prio_i] == 50) {
+                        while (bt->prio_i = (bt->prio_i + 1) % (bt->items_num2 + 1), bt->priority[bt->prio_i] == BATTLE_ITEM_DESTROYED) {
                             bt->priority[bt->prio_i] = BATTLE_ITEM_NONE;
                         }
                     }
