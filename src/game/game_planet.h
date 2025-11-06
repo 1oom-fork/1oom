@@ -20,7 +20,8 @@ typedef enum planet_type_e {
     PLANET_TYPE_OCEAN, /*b*/
     PLANET_TYPE_JUNGLE, /*c*/
     PLANET_TYPE_TERRAN, /*d*/
-    PLANET_TYPE_NUM
+    PLANET_TYPE_NUM,
+    PLANET_TYPE_NONE = 200
 } planet_type_t;
 
 typedef enum planet_growth_e {

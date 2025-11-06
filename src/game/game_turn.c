@@ -875,7 +875,8 @@ static void game_turn_explore(struct game_s *g, planet_id_t *planetptr, player_i
                 /*c4ca*/
                 if (flag_visible) {
                     bool first, flag_colony_ship, was_explored;
-                    int best_colonize, best_colonyship = 0;
+                    int best_colonyship = 0;
+                    planet_type_t best_colonize;
                     /* FIXME artifacts disappearing due to scanning a planet is weird */
                     first = BOOLVEC_IS_CLEAR(p->explored, PLAYER_NUM);
                     if ((p->special == PLANET_SPECIAL_ARTIFACTS) && (!by_scanner) && first) {
@@ -884,11 +885,11 @@ static void game_turn_explore(struct game_s *g, planet_id_t *planetptr, player_i
                         *playerptr = i;
                     }
                     flag_colony_ship = false;
-                    best_colonize = 200;
+                    best_colonize = PLANET_TYPE_NONE;
                     for (shipdesign_id_t j = SHIPDESIGN_0; j < e->shipdesigns_num; ++j) {
                         const shipdesign_t *sd = &(g->srd[i].design[j]);
-                        int can_colonize;
-                        can_colonize = 200;
+                        planet_type_t can_colonize;
+                        can_colonize = PLANET_TYPE_NONE;
                         for (int k = 0; k < SPECIAL_SLOT_NUM; ++k) {
                             ship_special_t s;
                             s = sd->special[k];
@@ -896,7 +897,7 @@ static void game_turn_explore(struct game_s *g, planet_id_t *planetptr, player_i
                                 can_colonize = PLANET_TYPE_MINIMAL - (s - SHIP_SPECIAL_STANDARD_COLONY_BASE);
                             }
                         }
-                        if ((can_colonize < 200) && (e->orbit[pli].ships[j] > 0)) {
+                        if ((can_colonize < PLANET_TYPE_NONE) && (e->orbit[pli].ships[j] > 0)) {
                             flag_colony_ship = true;
                             if (can_colonize < best_colonize) {
                                 best_colonize = can_colonize;
@@ -908,7 +909,7 @@ static void game_turn_explore(struct game_s *g, planet_id_t *planetptr, player_i
                         }
                     }
                     if (0
-                      || (best_colonize == 200)
+                      || (best_colonize == PLANET_TYPE_NONE)
                       || (p->owner != PLAYER_NONE)
                       || (p->type == PLANET_TYPE_NOT_HABITABLE)
                       || (p->type < best_colonize)
