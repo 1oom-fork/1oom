@@ -804,6 +804,7 @@ static void game_ai_classic_turn_p1_trans_en(struct game_s *g, struct ai_turn_p1
           && (IS_AI(g, p->owner) || (g->evn.ceasefire[p->owner][pi] <= 0))
           && (e->treaty[p->owner] != TREATY_ALLIANCE)
           && (e->have_colony_for <= p->type)
+          && ((!game_ai_fix_transport_range) || (p->within_frange[pi] == 1))
         ) {
             for (shipdesign_id_t j = SHIPDESIGN_0; (j < e->shipdesigns_num) && !have_orbit; ++j) {
                 if (e->orbit[i].ships[j]) {
