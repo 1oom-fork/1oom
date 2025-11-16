@@ -14,3 +14,4 @@ bool game_ai_fix_4th_colony_curse = false;
 bool game_ai_fix_first_tech_cost = false;
 bool game_ai_fix_ship_slider = false;
 bool game_ai_fix_spy_hiding = false;
+bool game_ai_fix_transport_range = false;

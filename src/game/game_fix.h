@@ -47,4 +47,8 @@ In MOO1, when a threat is successful,
 it is the player's spies that hide, not the AI. */
 extern bool game_ai_fix_spy_hiding;
 
+/* Fix transport range.
+In MOO1, AI can transport population beyond its fuel range. */
+extern bool game_ai_fix_transport_range;
+
 #endif
