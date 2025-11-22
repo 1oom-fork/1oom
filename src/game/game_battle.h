@@ -94,7 +94,7 @@ struct battle_side_s {
     shipcount_t tbl_ships[NUM_SHIPDESIGNS];
     uint8_t tbl_shiptype[NUM_SHIPDESIGNS];
     uint8_t num_types;
-    uint8_t items; /* not counting planet */
+    battle_item_id_t items; /* not counting planet */
     uint32_t apparent_force;
     bool flag_have_scan;
     bool flag_base_missile;
@@ -118,8 +118,8 @@ struct battle_s {
     uint8_t num_repulsed;
     bool flag_human_att;
     bool flag_cur_item_destroyed;
-    uint8_t items_num; /* in item table, not counting planet at 0 */
-    uint8_t items_num2; /* in item table, not counting planet at 0 */
+    battle_item_id_t items_num; /* in item table, not counting planet at 0 */
+    battle_item_id_t items_num2; /* in item table, not counting planet at 0 */
     battle_item_id_t cur_item; /* in item table */
     int8_t special_button;
     uint32_t popdamage;
