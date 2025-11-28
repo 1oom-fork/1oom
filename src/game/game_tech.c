@@ -524,11 +524,11 @@ const char *game_tech_get_descr(const struct game_aux_s *gaux, tech_field_t fiel
 int game_tech_get_prod(const struct game_s *g, player_id_t player_i, tech_field_t field)
 {   /* inline */
     const empiretechorbit_t *e = &(g->eto[player_i]);
-    int t1, t3;
-    t1 = (e->tech.investment[field] * 3) / 20;
+    int bonus, t3;
+    bonus = (e->tech.investment[field] * 3) / 20;
     t3 = (e->tech.slider[field] * e->total_research_bc) / 100;
-    SETMIN(t1, t3 * 2);
-    return t1 + t3;
+    SETMIN(bonus, t3 * 2);
+    return bonus + t3;
 }
 
 int game_tech_current_research_percent1(const struct game_s *g, player_id_t player_i, tech_field_t field)
