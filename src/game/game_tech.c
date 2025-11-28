@@ -521,21 +521,28 @@ const char *game_tech_get_descr(const struct game_aux_s *gaux, tech_field_t fiel
     return buf;
 }
 
+int game_tech_get_prod(const struct game_s *g, player_id_t player_i, tech_field_t field)
+{   /* inline */
+    const empiretechorbit_t *e = &(g->eto[player_i]);
+    int t1, t3;
+    t1 = (e->tech.investment[field] * 3) / 20;
+    t3 = (e->tech.slider[field] * e->total_research_bc) / 100;
+    SETMIN(t1, t3 * 2);
+    return t1 + t3;
+}
+
 int game_tech_current_research_percent1(const struct game_s *g, player_id_t player_i, tech_field_t field)
 {
     const empiretechorbit_t *e = &(g->eto[player_i]);
     uint32_t invest, cost;
-    int slider, t1, t3, percent;
+    int slider, percent;
     cost = e->tech.cost[field];
     slider = e->tech.slider[field];
     if ((cost == 0) || (slider == 0)) {
         return 0;
     }
     invest = e->tech.investment[field];
-    t1 = (invest * 3) / 20;
-    t3 = (slider * e->total_research_bc) / 100;
-    SETMIN(t1, t3 * 2);
-    invest += t3 + t1;
+    invest += game_tech_get_prod(g, player_i, field);
     percent = (invest * 100) / cost;
     return percent;
 }
@@ -544,17 +551,14 @@ int game_tech_current_research_percent2(const struct game_s *g, player_id_t play
 {
     const empiretechorbit_t *e = &(g->eto[player_i]);
     uint32_t invest, cost;
-    int slider, t1, t3;
+    int slider;
     cost = e->tech.cost[field];
     slider = e->tech.slider[field];
     if ((cost == 0) || (slider == 0)) {
         return 0;
     }
     invest = e->tech.investment[field];
-    t1 = (invest * 3) / 20;
-    t3 = (slider * e->total_research_bc) / 100;
-    SETMIN(t1, t3 * 2);
-    invest += t3 + t1;
+    invest += game_tech_get_prod(g, player_i, field);;
     if (invest <= cost) {
         return 0;
     } else {
@@ -717,14 +721,11 @@ void game_tech_research(struct game_s *g)
         uint32_t total_research;
         total_research = e->total_research_bc;
         for (tech_field_t field = TECH_FIELD_COMPUTER; field < TECH_FIELD_NUM; ++field) {
-            int slider, t1, t3;
+            int slider;
             uint32_t invest, cost;
             invest = td->investment[field];
             slider = td->slider[field];
-            t1 = (invest * 3) / 20;
-            t3 = (slider * total_research) / 100;
-            SETMIN(t1, t3 * 2);
-            invest += t3 + t1;
+            invest += game_tech_get_prod(g, player, field);
             td->investment[field] = invest;
             td->percent[field] = game_tech_get_field_percent(g, player, field);
             cost = td->cost[field];
