@@ -77,6 +77,43 @@ static void ui_tech_build_completed(struct tech_data_s *d)
     d->num = num;
 }
 
+static int ui_tech_current_research_percent1(const struct game_s *g, player_id_t player_i, tech_field_t field)
+{
+    const empiretechorbit_t *e = &(g->eto[player_i]);
+    uint32_t invest, cost;
+    int slider, percent;
+    cost = e->tech.cost[field];
+    slider = e->tech.slider[field];
+    if ((cost == 0) || (slider == 0)) {
+        return 0;
+    }
+    invest = e->tech.investment[field];
+    invest += game_tech_get_prod(g, player_i, field);
+    percent = (invest * 100) / cost;
+    return percent;
+}
+
+static int ui_tech_current_research_percent2(const struct game_s *g, player_id_t player_i, tech_field_t field)
+{
+    const empiretechorbit_t *e = &(g->eto[player_i]);
+    uint32_t invest, cost;
+    int slider;
+    cost = e->tech.cost[field];
+    slider = e->tech.slider[field];
+    if ((cost == 0) || (slider == 0)) {
+        return 0;
+    }
+    invest = e->tech.investment[field];
+    invest += game_tech_get_prod(g, player_i, field);;
+    if (invest <= cost) {
+        return 0;
+    } else {
+        int percent = (((invest - cost) * 50) / cost) / 2;
+        SETRANGE(percent, 0, 99);
+        return percent;
+    }
+}
+
 static void tech_draw_cb(void *vptr)
 {
     struct tech_data_s *d = vptr;
@@ -213,7 +250,7 @@ static void tech_draw_cb(void *vptr)
     for (tech_field_t i = TECH_FIELD_COMPUTER; i < TECH_FIELD_NUM; ++i) {
         int y, complpercent;
         y = 21 * i + 21;
-        complpercent = game_tech_current_research_percent2(g, d->api, i);
+        complpercent = ui_tech_current_research_percent2(g, d->api, i);
         if (complpercent < 99) {
             if (complpercent > 0) {
                 sprintf(buf, "%i%%", complpercent);
@@ -221,7 +258,7 @@ static void tech_draw_cb(void *vptr)
                 lbxfont_print_str_right(295, y + 3, buf, UI_SCREEN_W);
             } else {
                 int y0, y1;
-                complpercent = game_tech_current_research_percent1(g, d->api, i);
+                complpercent = ui_tech_current_research_percent1(g, d->api, i);
                 lbxgfx_draw_frame(287, y, ui_data.gfx.screens.litebulb_off, UI_SCREEN_W);
                 y0 = y + (8 - (complpercent * 4) / 50);
                 y1 = y + 7;
