@@ -531,43 +531,6 @@ int game_tech_get_prod(const struct game_s *g, player_id_t player_i, tech_field_
     return bonus + prod;
 }
 
-int game_tech_current_research_percent1(const struct game_s *g, player_id_t player_i, tech_field_t field)
-{
-    const empiretechorbit_t *e = &(g->eto[player_i]);
-    uint32_t invest, cost;
-    int slider, percent;
-    cost = e->tech.cost[field];
-    slider = e->tech.slider[field];
-    if ((cost == 0) || (slider == 0)) {
-        return 0;
-    }
-    invest = e->tech.investment[field];
-    invest += game_tech_get_prod(g, player_i, field);
-    percent = (invest * 100) / cost;
-    return percent;
-}
-
-int game_tech_current_research_percent2(const struct game_s *g, player_id_t player_i, tech_field_t field)
-{
-    const empiretechorbit_t *e = &(g->eto[player_i]);
-    uint32_t invest, cost;
-    int slider;
-    cost = e->tech.cost[field];
-    slider = e->tech.slider[field];
-    if ((cost == 0) || (slider == 0)) {
-        return 0;
-    }
-    invest = e->tech.investment[field];
-    invest += game_tech_get_prod(g, player_i, field);;
-    if (invest <= cost) {
-        return 0;
-    } else {
-        int percent = (((invest - cost) * 50) / cost) / 2;
-        SETRANGE(percent, 0, 99);
-        return percent;
-    }
-}
-
 void game_tech_get_new(struct game_s *g, player_id_t player, tech_field_t field, uint8_t tech, techsource_t source, int a8, player_id_t stolen_from, bool flag_frame)
 {
     empiretechorbit_t *e = &(g->eto[player]);
