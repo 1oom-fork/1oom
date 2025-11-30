@@ -426,6 +426,7 @@ int main_do(void)
     if (game_cfg_init()) {
         /* TODO */
     }
+    game_enable_unofficial_1_3a();
     if (game_opt_fix_bugs) {
         game_enable_fix_bugs();
     }
