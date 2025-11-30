@@ -17,6 +17,16 @@ bool game_ai_fix_ship_slider = false;
 bool game_ai_fix_spy_hiding = false;
 bool game_ai_fix_transport_range = false;
 
+void game_enable_unofficial_1_3a(void)
+{
+    game_fix_max_factories = true;
+    game_fix_orbital_torpedo = true;
+    game_fix_orbital_weap_any = true;
+    game_fix_sg_finished = true;
+    game_fix_space_scanners = true;
+    game_ai_fix_spy_hiding = true;
+}
+
 void game_enable_fix_bugs(void)
 {
     game_fix_orbital_comp = true;

@@ -286,6 +286,7 @@ int ui_init(void)
 
 int ui_late_init(void)
 {
+    ui_enable_unofficial_1_3a();
     if (ui_fix_bugs) {
         ui_enable_fix_bugs();
     }
