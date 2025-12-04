@@ -133,7 +133,7 @@ static void ui_starmap_enroute_draw_cb(void *vptr)
 void ui_starmap_enroute(struct game_s *g, player_id_t active_player)
 {
     bool flag_done = false;
-    int16_t oi_scroll, oi_cancel, oi_accept;
+    uiobj_id_t oi_scroll, oi_cancel, oi_accept;
     int16_t scrollx = 0, scrolly = 0;
     struct starmap_data_s d;
     fleet_enroute_t *r = &(g->enroute[ui_data.starmap.fleet_selected]);
@@ -175,7 +175,7 @@ void ui_starmap_enroute(struct game_s *g, player_id_t active_player)
 
     while (!flag_done) {
         planet_t *p;
-        int16_t oi1, oi2;
+        uiobj_id_t oi1, oi2;
         p = &g->planet[g->planet_focus_i[active_player]];
         oi1 = uiobj_handle_input_cond();
         oi2 = uiobj_at_cursor();

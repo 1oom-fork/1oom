@@ -64,7 +64,7 @@ int ui_save_game(struct game_s *g)
     bool flag_done = false;
     const int xoff = 118;
     const int yoff = 10;
-    int16_t oi_esc, oi_cancel, oi_ok, oi_save[NUM_SAVES];
+    uiobj_id_t oi_esc, oi_cancel, oi_ok, oi_save[NUM_SAVES];
     const uint8_t ctbl[] = { 5, 6, 7, 8, 9, 10, 0, 0, 0, 0 };
     load_sg_data(&d);
 
@@ -87,7 +87,7 @@ int ui_save_game(struct game_s *g)
     oi_esc = UIOBJI_INVALID;
 
     while (!flag_done) {
-        int16_t oi;
+        uiobj_id_t oi;
         oi = uiobj_handle_input_cond();
         ui_delay_prepare();
         for (int i = 0; i < NUM_SAVES; ++i) {

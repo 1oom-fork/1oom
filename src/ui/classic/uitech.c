@@ -35,7 +35,7 @@ struct tech_data_s {
     player_id_t api;
     uint8_t *gfx;
     int8_t completed[TECH_PER_FIELD + 3];
-    int16_t oi_tbl_slider[TECH_FIELD_NUM];
+    uiobj_id_t oi_tbl_slider[TECH_FIELD_NUM];
     tech_field_t field;
     int num;
     int pos;
@@ -120,7 +120,7 @@ static void tech_draw_cb(void *vptr)
     struct game_s *g = d->g;
     empiretechorbit_t *e = &(g->eto[d->api]);
     techdata_t *t = &(e->tech);
-    int16_t oi;
+    uiobj_id_t oi;
     char buf[0xe0];
 
     game_update_total_research(g);
@@ -281,7 +281,7 @@ void ui_tech(struct game_s *g, player_id_t active_player)
 {
     struct tech_data_s d;
     bool flag_done = false;
-    int16_t oi_ok, oi_up, oi_down, oi_equals,
+    uiobj_id_t oi_ok, oi_up, oi_down, oi_equals,
             oi_tbl_lock[TECH_FIELD_NUM],
             oi_tbl_plus[TECH_FIELD_NUM],
             oi_tbl_minus[TECH_FIELD_NUM],
@@ -321,7 +321,7 @@ void ui_tech(struct game_s *g, player_id_t active_player)
     uiobj_table_clear();
 
     while (!flag_done) {
-        int16_t oi;
+        uiobj_id_t oi;
         oi = uiobj_handle_input_cond();
         ui_delay_prepare();
         if ((oi == oi_ok) || (oi == UIOBJI_ESC)) {

@@ -253,7 +253,7 @@ static void ui_planets_transfer(struct planets_data_s *d)
 {
     struct game_s *g = d->g;
     planet_t *p = &(g->planet[d->planet_i]);
-    int16_t oi_cancel, oi_accept, oi_minus, oi_plus, oi_equals /*, oi_slider*/;
+    uiobj_id_t oi_cancel, oi_accept, oi_minus, oi_plus, oi_equals /*, oi_slider*/;
     int prod, allreserve, v;
     const int x = 100, y = 50;
     bool flag_done = false;
@@ -290,7 +290,7 @@ static void ui_planets_transfer(struct planets_data_s *d)
     uiobj_set_callback_and_delay(planets_transfer_draw_cb, d, 1);
 
     while (!flag_done) {
-        int16_t oi;
+        uiobj_id_t oi;
         oi = uiobj_handle_input_cond();
         ui_delay_prepare();
         if ((oi == oi_cancel) || (oi == UIOBJI_ESC)) {
@@ -331,7 +331,7 @@ void ui_planets(struct game_s *g, player_id_t active_player)
 {
     struct planets_data_s d;
     bool flag_done = false, flag_trans;
-    int16_t oi_alt_moola, oi_up, oi_down, oi_ok, oi_trans, oi_minus, oi_plus, oi_tbl_planets[PLANETS_ON_SCREEN] /*, oi_slider*/;
+    uiobj_id_t oi_alt_moola, oi_up, oi_down, oi_ok, oi_trans, oi_minus, oi_plus, oi_tbl_planets[PLANETS_ON_SCREEN] /*, oi_slider*/;
     planet_id_t tbl_onscreen_planets[PLANETS_ON_SCREEN];
 
     load_pl_data(&d);
@@ -374,7 +374,7 @@ again:
     oi_alt_moola = uiobj_add_alt_str("moola");
 
     while (!flag_done) {
-        int16_t oi;
+        uiobj_id_t oi;
         oi = uiobj_handle_input_cond();
         ui_delay_prepare();
         if ((oi == oi_ok) || (oi == UIOBJI_ESC)) {

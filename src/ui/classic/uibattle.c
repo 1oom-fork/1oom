@@ -46,16 +46,16 @@ struct ui_battle_data_s {
     uint8_t frame_missile;
     bool flag_scanning;
     battle_side_i_t scan_side;
-    int16_t oi_ai;
-    int16_t oi_missile;
-    int16_t oi_special;
-    int16_t oi_wait;
-    int16_t oi_retreat;
-    int16_t oi_planet;
-    int16_t oi_scan;
-    int16_t oi_auto;
-    int16_t oi_done;
-    int16_t oi_area[BATTLE_AREA_H][BATTLE_AREA_W];
+    uiobj_id_t oi_ai;
+    uiobj_id_t oi_missile;
+    uiobj_id_t oi_special;
+    uiobj_id_t oi_wait;
+    uiobj_id_t oi_retreat;
+    uiobj_id_t oi_planet;
+    uiobj_id_t oi_scan;
+    uiobj_id_t oi_auto;
+    uiobj_id_t oi_done;
+    uiobj_id_t oi_area[BATTLE_AREA_H][BATTLE_AREA_W];
     ui_cursor_area_t cursor[1 + BATTLE_AREA_W * BATTLE_AREA_H];
 };
 
@@ -1914,7 +1914,7 @@ ui_battle_action_t ui_battle_turn(const struct battle_s *bt)
     battle_item_id_t itemi = bt->cur_item;
     const struct battle_item_s *b = &(bt->item[itemi]);
     /*4ece2*/
-    int16_t oi;
+    uiobj_id_t oi;
     oi = uiobj_handle_input_cond();
     if ((b->stasisby > 0) || ((itemi == BATTLE_ITEM_PLANET) && (b->num <= 0))) {
         oi = d->oi_done;
@@ -1989,7 +1989,7 @@ bool ui_battle_ai_post(const struct battle_s *bt)
 {
     struct ui_battle_data_s *d = bt->uictx;
     bool got_input;
-    int16_t oi;
+    uiobj_id_t oi;
     oi = uiobj_handle_input_cond();
     got_input = ((oi == d->oi_ai) || (oi == UIOBJI_ESC));
     uiobj_table_clear();

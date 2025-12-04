@@ -156,7 +156,7 @@ void ui_specs_before(struct game_s *g, player_id_t active_player)
 {
     struct specs_data_s d;
     bool flag_done = false;
-    int16_t oi_ma;
+    uiobj_id_t oi_ma;
 
     game_update_maint_costs(g);
 
@@ -171,7 +171,7 @@ void ui_specs_before(struct game_s *g, player_id_t active_player)
     uiobj_table_clear();
 
     while (!flag_done) {
-        int16_t oi;
+        uiobj_id_t oi;
         oi = uiobj_handle_input_cond();
         ui_delay_prepare();
         if ((oi == oi_ma) || (oi == UIOBJI_ESC)) {
@@ -192,7 +192,7 @@ void ui_specs_mustscrap(struct game_s *g, player_id_t active_player, shipdesign_
 {
     struct specs_data_s d;
     bool flag_done = false;
-    int16_t oi_no = UIOBJI_INVALID, oi_yes = UIOBJI_INVALID;
+    uiobj_id_t oi_no = UIOBJI_INVALID, oi_yes = UIOBJI_INVALID;
 
     d.g = g;
     d.api = active_player;
@@ -207,7 +207,7 @@ void ui_specs_mustscrap(struct game_s *g, player_id_t active_player, shipdesign_
     vgabuf_copy_back_to_page2();
 
     while (!flag_done) {
-        int16_t oi;
+        uiobj_id_t oi;
         oi = uiobj_handle_input_cond();
         ui_delay_prepare();
         if ((oi == oi_no) || (oi == UIOBJI_ESC)) {
@@ -238,7 +238,7 @@ shipdesign_id_t ui_specs(struct game_s *g, player_id_t active_player)
 {
     struct specs_data_s d;
     bool flag_done = false;
-    int16_t oi_ma, oi_tbl_scrap[NUM_SHIPDESIGNS];
+    uiobj_id_t oi_ma, oi_tbl_scrap[NUM_SHIPDESIGNS];
     shipdesign_id_t scrapi = SHIPDESIGN_NONE;
     game_update_maint_costs(g);
 
@@ -258,7 +258,7 @@ shipdesign_id_t ui_specs(struct game_s *g, player_id_t active_player)
     uiobj_table_clear();
 
     while (!flag_done) {
-        int16_t oi;
+        uiobj_id_t oi;
         oi = uiobj_handle_input_cond();
         ui_delay_prepare();
         if ((oi == oi_ma) || (oi == UIOBJI_ESC)) {

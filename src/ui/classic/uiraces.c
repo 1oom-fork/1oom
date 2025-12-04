@@ -243,7 +243,7 @@ int ui_races(struct game_s *g, player_id_t api)
 {
     struct races_data_s d;
     bool flag_done = false;
-    int16_t oi_ok, oi_audience, oi_report, oi_status, oi_sec_minus, oi_sec_plus,
+    uiobj_id_t oi_ok, oi_audience, oi_report, oi_status, oi_sec_minus, oi_sec_plus,
             /*
             oi_tbl_hiding[PLAYER_NUM - 1],
             oi_tbl_espionage[PLAYER_NUM - 1],
@@ -298,7 +298,7 @@ int ui_races(struct game_s *g, player_id_t api)
     uiobj_table_clear();
 
     while (!flag_done) {
-        int16_t oi;
+        uiobj_id_t oi;
         ui_cursor_setup_area(1, &ui_cursor_area_tbl[d.cursor_mode ? 8 : 0]);
         oi = uiobj_handle_input_cond();
         ui_delay_prepare();

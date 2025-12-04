@@ -240,8 +240,8 @@ bool ui_new_game(struct game_new_options_s *newopts)
     struct new_game_data_s d;
     bool flag_done = false, flag_fadein = false, flag_ok = false;
     uint16_t oppon = 0, gsize = 0, diffic = 0;
-    int16_t oi_gsize, oi_diffic, oi_oppon, oi_cancel, oi_ok;
-    int16_t oi_esc, oi_d, oi_g, oi_o, oi_space;
+    uiobj_id_t oi_gsize, oi_diffic, oi_oppon, oi_cancel, oi_ok;
+    uiobj_id_t oi_esc, oi_d, oi_g, oi_o, oi_space;
 
     gsize = newopts->galaxy_size;
     diffic = newopts->difficulty;
@@ -275,7 +275,7 @@ bool ui_new_game(struct game_new_options_s *newopts)
     uiobj_set_xyoff(1, 1);
 
     while (!flag_done) {
-        int16_t oi;
+        uiobj_id_t oi;
         oi = uiobj_handle_input_cond();
         ui_delay_prepare();
         if ((oi != UIOBJI_ESC) && (oi != UIOBJI_NONE)) {

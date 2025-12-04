@@ -30,41 +30,41 @@ struct starmap_data_s {
     struct game_s *g;
     player_id_t api;
     int bottom_highlight;
-    int16_t oi_gameopts;
-    int16_t oi_design;
-    int16_t oi_fleet;
-    int16_t oi_map;
-    int16_t oi_races;
-    int16_t oi_planets;
-    int16_t oi_tech;
-    int16_t oi_next_turn;
-    int16_t oi_tbl_stars[PLANETS_MAX];
-    int16_t oi_ctrl_left;
-    int16_t oi_ctrl_l2;
-    int16_t oi_ctrl_right;
-    int16_t oi_ctrl_r2;
-    int16_t oi_ctrl_ul;
-    int16_t oi_ctrl_ur;
-    int16_t oi_ctrl_up;
-    int16_t oi_ctrl_u2;
-    int16_t oi_ctrl_dl;
-    int16_t oi_ctrl_down;
-    int16_t oi_ctrl_d2;
-    int16_t oi_ctrl_dr;
-    int16_t oi_tbl_enroute[FLEET_ENROUTE_MAX];
-    int16_t oi_tbl_transport[TRANSPORT_MAX];
-    int16_t oi_tbl_pl_stars[PLAYER_NUM][PLANETS_MAX];
+    uiobj_id_t oi_gameopts;
+    uiobj_id_t oi_design;
+    uiobj_id_t oi_fleet;
+    uiobj_id_t oi_map;
+    uiobj_id_t oi_races;
+    uiobj_id_t oi_planets;
+    uiobj_id_t oi_tech;
+    uiobj_id_t oi_next_turn;
+    uiobj_id_t oi_tbl_stars[PLANETS_MAX];
+    uiobj_id_t oi_ctrl_left;
+    uiobj_id_t oi_ctrl_l2;
+    uiobj_id_t oi_ctrl_right;
+    uiobj_id_t oi_ctrl_r2;
+    uiobj_id_t oi_ctrl_ul;
+    uiobj_id_t oi_ctrl_ur;
+    uiobj_id_t oi_ctrl_up;
+    uiobj_id_t oi_ctrl_u2;
+    uiobj_id_t oi_ctrl_dl;
+    uiobj_id_t oi_ctrl_down;
+    uiobj_id_t oi_ctrl_d2;
+    uiobj_id_t oi_ctrl_dr;
+    uiobj_id_t oi_tbl_enroute[FLEET_ENROUTE_MAX];
+    uiobj_id_t oi_tbl_transport[TRANSPORT_MAX];
+    uiobj_id_t oi_tbl_pl_stars[PLAYER_NUM][PLANETS_MAX];
     planet_id_t from;
     bool in_frange;
     struct shipsel_s ss;
     struct {
-        int16_t oi_ship;
-        int16_t oi_reloc;
-        int16_t oi_trans;
-        int16_t oi_tbl_slider[PLANET_SLIDER_NUM];
-        int16_t oi_tbl_slider_lock[PLANET_SLIDER_NUM];
-        int16_t oi_tbl_slider_minus[PLANET_SLIDER_NUM];
-        int16_t oi_tbl_slider_plus[PLANET_SLIDER_NUM];
+        uiobj_id_t oi_ship;
+        uiobj_id_t oi_reloc;
+        uiobj_id_t oi_trans;
+        uiobj_id_t oi_tbl_slider[PLANET_SLIDER_NUM];
+        uiobj_id_t oi_tbl_slider_lock[PLANET_SLIDER_NUM];
+        uiobj_id_t oi_tbl_slider_minus[PLANET_SLIDER_NUM];
+        uiobj_id_t oi_tbl_slider_plus[PLANET_SLIDER_NUM];
     } sm;   /* starmap_do */
     struct {
         int16_t num;
@@ -80,7 +80,7 @@ struct starmap_data_s {
     } en;   /* enroute */
 };
 
-static inline void ui_starmap_update_mouse_hover(struct starmap_data_s *d, int16_t oi)
+static inline void ui_starmap_update_mouse_hover(struct starmap_data_s *d, uiobj_id_t oi)
 {
     d->bottom_highlight = -1;
     if (oi == d->oi_gameopts) {
@@ -164,7 +164,7 @@ extern void ui_starmap_fill_oi_tbls(struct starmap_data_s *d);
 extern void ui_starmap_fill_oi_tbl_stars(struct starmap_data_s *d);
 extern void ui_starmap_fill_oi_tbl_stars_own(struct starmap_data_s *d, player_id_t owner);
 extern void ui_starmap_add_oi_bottom_buttons(struct starmap_data_s *d);
-extern void ui_starmap_handle_oi_ctrl(struct starmap_data_s *d, int16_t oi);
+extern void ui_starmap_handle_oi_ctrl(struct starmap_data_s *d, uiobj_id_t oi);
 extern void ui_starmap_draw_basic(struct starmap_data_s *d);
 extern void ui_starmap_draw_starmap(struct starmap_data_s *d);
 extern void ui_starmap_draw_button_text(struct starmap_data_s *d, bool highlight);

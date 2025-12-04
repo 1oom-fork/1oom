@@ -162,10 +162,10 @@ void ui_election_show(struct election_s *el)
     uiobj_add_mousearea(UI_SCREEN_LIMITS, MOO_KEY_UNKNOWN, -1);
     uiobj_set_downcount(1);
     while (!flag_done) {
-        int16_t oi;
+        uiobj_id_t oi;
         ui_delay_prepare();
         oi = uiobj_handle_input_cond();
-        if (oi != 0) {
+        if (oi != UIOBJI_NONE) {
             flag_done = true;
             break;
         }
@@ -194,7 +194,8 @@ int ui_election_vote(struct election_s *el, player_id_t player_i)
     struct election_data_s *d = el->uictx;
     struct game_s *g = el->g;
     char cnamebuf[3][0x20];
-    int16_t oi, oi_c1, oi_c2, choice = -1;
+    uiobj_id_t oi, oi_c1, oi_c2;
+    int16_t choice = -1;
     bool flag_done = false;
     for (int i = 0; i < 2; ++i) {
         player_id_t pi;
@@ -213,7 +214,7 @@ int ui_election_vote(struct election_s *el, player_id_t player_i)
     while (!flag_done) {
         ui_delay_prepare();
         oi = uiobj_handle_input_cond();
-        if (oi != 0) {
+        if (oi != UIOBJI_NONE) {
             flag_done = true;
             break;
         }
@@ -235,7 +236,8 @@ bool ui_election_accept(struct election_s *el, player_id_t player_i)
 {
     struct election_data_s *d = el->uictx;
     char buf[2][0x20];
-    int16_t oi_y, oi_n, choice = -1;
+    uiobj_id_t oi_y, oi_n;
+    int16_t choice = -1;
     bool flag_done = false, flag_accept = false;
     sprintf(buf[0], "%s %s", game_str_el_bull, game_str_el_yes);
     sprintf(buf[1], "%s %s", game_str_el_bull, game_str_el_no2);
@@ -246,7 +248,7 @@ bool ui_election_accept(struct election_s *el, player_id_t player_i)
     uiobj_add_ta(160, 169, 40, buf[0], false, &choice, 1, 0, 0, 0, 0, 0, 0, MOO_KEY_UNKNOWN, -1);
     uiobj_add_ta(160, 179, 40, buf[1], false, &choice, 0, 0, 0, 0, 0, 0, 0, MOO_KEY_UNKNOWN, -1);
     while (!flag_done) {
-        int16_t oi;
+        uiobj_id_t oi;
         ui_delay_prepare();
         oi = uiobj_handle_input_cond();
         if ((oi == oi_y) || (oi == UIOBJI_ESC)) {
@@ -255,7 +257,7 @@ bool ui_election_accept(struct election_s *el, player_id_t player_i)
         if (oi == oi_n) {
             flag_accept = false;
         }
-        if (oi != 0) {
+        if (oi != UIOBJI_NONE) {
             ui_sound_play_sfx_24();
             flag_done = true;
         }
