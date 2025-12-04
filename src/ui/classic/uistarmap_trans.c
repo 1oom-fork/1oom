@@ -167,7 +167,7 @@ static void ui_starmap_trans_draw_cb(void *vptr)
 void ui_starmap_trans(struct game_s *g, player_id_t active_player)
 {
     bool flag_done = false;
-    int16_t oi_scroll, oi_cancel, oi_accept, oi_plus, oi_minus;
+    uiobj_id_t oi_scroll, oi_cancel, oi_accept, oi_plus, oi_minus;
     int16_t scrollx = 0, scrolly = 0;
     struct starmap_data_s d;
     planet_id_t olddest;
@@ -208,7 +208,7 @@ void ui_starmap_trans(struct game_s *g, player_id_t active_player)
     uiobj_set_callback_and_delay(ui_starmap_trans_draw_cb, &d, STARMAP_DELAY);
 
     while (!flag_done) {
-        int16_t oi1, oi2;
+        uiobj_id_t oi1, oi2;
         const planet_t *pt;
         oi1 = uiobj_handle_input_cond();
         oi2 = uiobj_at_cursor();

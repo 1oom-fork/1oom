@@ -337,7 +337,7 @@ bool ui_gmap(struct game_s *g, player_id_t active_player)
 {
     struct gmap_data_s d;
     bool flag_done = false, flag_do_focus = false;
-    int16_t /*oi_col, oi_env, oi_min,*/ oi_ok, oi_tbl_planet[PLANETS_MAX];
+    uiobj_id_t /*oi_col, oi_env, oi_min,*/ oi_ok, oi_tbl_planet[PLANETS_MAX];
 
     gmap_load_data(&d);
     d.g = g;
@@ -366,13 +366,13 @@ bool ui_gmap(struct game_s *g, player_id_t active_player)
     uiobj_set_downcount(1);
 
     while (!flag_done) {
-        int16_t oi;
+        uiobj_id_t oi;
         oi = uiobj_handle_input_cond();
         ui_delay_prepare();
         if ((oi == oi_ok) || (oi == UIOBJI_ESC)) {
             flag_done = true;
         }
-        if (oi != 0) {
+        if (oi != UIOBJI_NONE) {
             ui_sound_play_sfx_24();
         }
         for (planet_id_t i = PLANET_0; i < g->galaxy_stars; ++i) {

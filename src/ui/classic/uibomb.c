@@ -182,7 +182,7 @@ static void bomb_show_draw_cb(void *vptr)
 bool ui_bomb_ask(struct game_s *g, player_id_t pi, planet_id_t planet_i, int pop_inbound)
 {
     struct bomb_data_s d;
-    int16_t oi_y, oi_n;
+    uiobj_id_t oi_y, oi_n;
     bool flag_done = false, flag_do_bomb = false;
     d.g = g;
     d.api = pi;
@@ -196,7 +196,7 @@ bool ui_bomb_ask(struct game_s *g, player_id_t pi, planet_id_t planet_i, int pop
     oi_y = uiobj_add_t0(271, 164, "", d.gfx_bombbutt, MOO_KEY_b, -1);
     ui_sound_play_music(0xd);
     while (!flag_done) {
-        int16_t oi;
+        uiobj_id_t oi;
         ui_delay_prepare();
         oi = uiobj_handle_input_cond();
         if ((oi == UIOBJI_ESC) || (oi == oi_n)) {
@@ -240,10 +240,10 @@ void ui_bomb_show(struct game_s *g, player_id_t attacker_i, player_id_t owner_i,
         ui_sound_play_music(0xd);
     }
     while (!flag_done) {
-        int16_t oi;
+        uiobj_id_t oi;
         ui_delay_prepare();
         oi = uiobj_handle_input_cond();
-        if (oi != 0) {
+        if (oi != UIOBJI_NONE) {
             flag_done = true;
         }
         bomb_show_draw_cb(&d);

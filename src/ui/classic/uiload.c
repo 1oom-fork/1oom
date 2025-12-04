@@ -69,7 +69,7 @@ int ui_load_game(void)
     bool flag_done = false, flag_fadein = false;
     const int xoff = 0x76;
     const int yoff = 0xa;
-    int16_t oi_esc, oi_cancel, oi_ok, oi_save[NUM_SAVES];
+    uiobj_id_t oi_esc, oi_cancel, oi_ok, oi_save[NUM_SAVES];
 
     d.savenum = 0;
     for (int i = 0; i < NUM_SAVES; ++i) {
@@ -106,7 +106,7 @@ int ui_load_game(void)
     uiobj_set_callback_and_delay(load_game_draw_cb, &d, 2);
 
     while (!flag_done) {
-        int16_t oi;
+        uiobj_id_t oi;
         oi = uiobj_handle_input_cond();
         ui_delay_prepare();
         for (int i = 0; i < d.savenum; ++i) {

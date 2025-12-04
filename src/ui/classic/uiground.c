@@ -239,10 +239,10 @@ void ui_ground(struct ground_s *gr)
     uiobj_add_mousearea(UI_SCREEN_LIMITS, MOO_KEY_UNKNOWN, -1);
     uiobj_set_downcount(3);
     while ((!flag_done) && (d.l.frame < 50)) {
-        int16_t oi;
+        uiobj_id_t oi;
         ui_delay_prepare();
         oi = uiobj_handle_input_cond();
-        if (oi != 0) {
+        if (oi != UIOBJI_NONE) {
             d.l.frame = 50;
             flag_done = true;
         }
@@ -259,7 +259,7 @@ void ui_ground(struct ground_s *gr)
     ui_sound_play_music(0x26);
     flag_done = false;
     while ((!flag_done) && (gr->s[0].pop1 != 0) && (gr->s[1].pop1 != 0)) {
-        int16_t oi;
+        uiobj_id_t oi;
         if (d.l.frame < 60) {
             gr->death = -1;
         } else {
@@ -267,7 +267,7 @@ void ui_ground(struct ground_s *gr)
         }
         ui_delay_prepare();
         oi = uiobj_handle_input_cond();
-        if (oi != 0) {
+        if (oi != UIOBJI_NONE) {
             d.l.frame = 50;
             flag_done = true;
         }
@@ -303,10 +303,10 @@ void ui_ground(struct ground_s *gr)
     }
     flag_done = false;
     while (!flag_done) {
-        int16_t oi;
+        uiobj_id_t oi;
         ui_delay_prepare();
         oi = uiobj_handle_input_cond();
-        if (oi != 0) {
+        if (oi != UIOBJI_NONE) {
             flag_done = true;
         }
         if (!flag_done) {

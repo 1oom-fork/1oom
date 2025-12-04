@@ -190,7 +190,7 @@ shipdesign_id_t ui_fleet(struct game_s *g, player_id_t active_player)
 {
     struct fleet_data_s d;
     bool flag_done = false, flag_scrap = false;
-    int16_t oi_up, oi_down, oi_ok, oi_scrap, oi_view, oi_tbl_ship[NUM_SHIPDESIGNS], oi_tbl_line[FLEET_LINES];
+    uiobj_id_t oi_up, oi_down, oi_ok, oi_scrap, oi_view, oi_tbl_ship[NUM_SHIPDESIGNS], oi_tbl_line[FLEET_LINES];
     shipdesign_id_t ret = SHIPDESIGN_NONE;
 
     load_fl_data(&d);
@@ -227,7 +227,7 @@ shipdesign_id_t ui_fleet(struct game_s *g, player_id_t active_player)
     uiobj_set_callback_and_delay(fleet_draw_cb, &d, 3);
 
     while (!flag_done) {
-        int16_t oi;
+        uiobj_id_t oi;
         ui_cursor_setup_area(1, &ui_cursor_area_tbl[flag_scrap ? 0xa : 0]);
         oi = uiobj_handle_input_cond();
         ui_delay_prepare();

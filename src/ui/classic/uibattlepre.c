@@ -114,7 +114,7 @@ static void ui_battle_pre_draw_cb(void *vptr)
 void ui_battle_pre(struct game_s *g, int party_u, int party_d, planet_id_t planet_i, bool flag_human_att, bool hide_other)
 {
     struct ui_battle_pre_data_s d[1];
-    int16_t oi_cont = UIOBJI_INVALID;
+    uiobj_id_t oi_cont = UIOBJI_INVALID;
     bool flag_done = false;
     d->g = g;
     d->party_u = party_u;
@@ -134,7 +134,7 @@ void ui_battle_pre(struct game_s *g, int party_u, int party_d, planet_id_t plane
     uiobj_set_focus(oi_cont);
     uiobj_set_callback_and_delay(ui_battle_pre_draw_cb, &d, 4);
     while (!flag_done) {
-        int16_t oi;
+        uiobj_id_t oi;
         ui_delay_prepare();
         oi = uiobj_handle_input_cond();
         if (oi == oi_cont) {

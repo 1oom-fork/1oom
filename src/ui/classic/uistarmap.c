@@ -36,7 +36,7 @@ static void ui_starmap_draw_cb1(void *vptr)
     struct game_s *g = d->g;
     planet_t *p = &g->planet[g->planet_focus_i[d->api]];
 
-    int16_t oi2 = uiobj_get_clicked_oi();
+    uiobj_id_t oi2 = uiobj_get_clicked_oi();
     for (planet_slider_i_t i = PLANET_SLIDER_SHIP; i < PLANET_SLIDER_NUM; ++i) {
         if ((oi2 == d->sm.oi_tbl_slider[i]) && (p->slider_lock[i] == 0)) {
             game_adjust_slider_group(p->slider, i, p->slider[i], PLANET_SLIDER_NUM, p->slider_lock);
@@ -224,7 +224,7 @@ void ui_starmap_scroll(const struct game_s *g, int x, int y)    /* inline */
 void ui_starmap_do(struct game_s *g, player_id_t active_player)
 {
     bool flag_done = false;
-    int16_t oi_b, oi_c, oi_scroll, oi_starview1, oi_starview2, oi_shippic, oi_finished, oi_equals,
+    uiobj_id_t oi_b, oi_c, oi_scroll, oi_starview1, oi_starview2, oi_shippic, oi_finished, oi_equals,
             oi_f2, oi_f3, oi_f4, oi_f5, oi_f6, oi_f7, oi_f8, oi_f9, oi_f10,
             oi_alt_galaxy, oi_alt_m, oi_alt_c, oi_alt_p, oi_alt_r, oi_alt_events
             ;
@@ -272,7 +272,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
 
     while (!flag_done) {
         planet_t *p;
-        int16_t oi1, oi2;
+        uiobj_id_t oi1, oi2;
         p = &g->planet[g->planet_focus_i[active_player]];
         uiobj_set_help_id((p->owner == active_player) ? 0 : 3);
         oi1 = uiobj_handle_input_cond();

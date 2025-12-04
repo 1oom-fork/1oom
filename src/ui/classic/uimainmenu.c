@@ -74,9 +74,9 @@ static void main_menu_draw_cb(void *vptr)
 
 static main_menu_action_t main_menu_do(struct main_menu_data_s *d)
 {
-    int16_t oi_n, oi_l, oi_c, oi_q;
-    int16_t oi_newgame, oi_continue, oi_loadgame, oi_quit;
-    int16_t oi_tutor, cursor_at;
+    uiobj_id_t oi_n, oi_l, oi_c, oi_q;
+    uiobj_id_t oi_newgame, oi_continue, oi_loadgame, oi_quit;
+    uiobj_id_t oi_tutor, cursor_at;
     bool flag_done = false, flag_fadein = false;
 
     d->frame = 0;
@@ -136,7 +136,7 @@ static main_menu_action_t main_menu_do(struct main_menu_data_s *d)
     }
     uiobj_set_callback_and_delay(main_menu_draw_cb, d, 2);
     while (!flag_done) {
-        int16_t oi1, oi2;
+        uiobj_id_t oi1, oi2;
         ui_delay_prepare();
         oi1 = uiobj_handle_input_cond();
         oi2 = uiobj_at_cursor();

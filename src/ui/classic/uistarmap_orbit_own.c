@@ -146,7 +146,7 @@ static void ui_starmap_orbit_own_draw_cb(void *vptr)
 void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
 {
     bool flag_done = false;
-    int16_t oi_scroll, oi_cancel, oi_accept,
+    uiobj_id_t oi_scroll, oi_cancel, oi_accept,
             oi_f2, oi_f3, oi_f4, oi_f5, oi_f6, oi_f7, oi_f8, oi_f9, oi_f10,
             oi_tbl_p[NUM_SHIPDESIGNS],
             oi_tbl_m[NUM_SHIPDESIGNS],
@@ -185,7 +185,7 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
     uiobj_set_callback_and_delay(ui_starmap_orbit_own_draw_cb, &d, STARMAP_DELAY);
 
     while (!flag_done) {
-        int16_t oi1, oi2;
+        uiobj_id_t oi1, oi2;
         ui_starmap_update_reserve_fuel(g, &d.ss.sn0, d.ss.ships, active_player);
         oi1 = uiobj_handle_input_cond();
         oi2 = uiobj_at_cursor();

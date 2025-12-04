@@ -737,7 +737,7 @@ void ui_starmap_set_scroll_pos(const struct game_s *g, int x, int y)    /* inlin
     ui_data.starmap.y2 = y;
 }
 
-void ui_starmap_handle_oi_ctrl(struct starmap_data_s *d, int16_t oi)
+void ui_starmap_handle_oi_ctrl(struct starmap_data_s *d, uiobj_id_t oi)
 {
 #define XSTEP   0x1b
 #define YSTEP   0x15
