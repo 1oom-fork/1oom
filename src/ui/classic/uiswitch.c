@@ -74,7 +74,7 @@ bool ui_switch(struct game_s *g, player_id_t *tbl_pi, int num_pi, bool allow_opt
 {
     struct switch_data_s d;
     bool flag_done = false, flag_opts = false;
-    int16_t oi_ma = UIOBJI_INVALID, oi_gameopts = UIOBJI_INVALID;
+    uiobj_id_t oi_ma = UIOBJI_INVALID, oi_gameopts = UIOBJI_INVALID;
 
     d.g = g;
     d.num_pi = num_pi;
@@ -93,7 +93,7 @@ bool ui_switch(struct game_s *g, player_id_t *tbl_pi, int num_pi, bool allow_opt
     uiobj_set_callback_and_delay(switch_draw_cb, &d, 1);
 
     while (!flag_done) {
-        int16_t oi1, oi2;
+        uiobj_id_t oi1, oi2;
         oi1 = uiobj_handle_input_cond();
         oi2 = uiobj_at_cursor();
         ui_delay_prepare();
