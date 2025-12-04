@@ -269,13 +269,13 @@ void ui_audience_show1(struct audience_s *au)
 {
     struct audience_data_s *d = au->uictx;
     bool flag_done = false;
-    int16_t oi_ma = UIOBJI_INVALID;
+    uiobj_id_t oi_ma = UIOBJI_INVALID;
     ui_audience_play_music(au->uictx, au->musi); /* side effect of game_audience_get_str1() */
     uiobj_set_callback_and_delay(ui_audience_draw_cb1, d, 1);
     uiobj_set_downcount(1);
     uiobj_table_clear();
     while (!flag_done) {
-        int16_t oi;
+        uiobj_id_t oi;
         ui_delay_prepare();
         oi = uiobj_handle_input_cond();
         if ((oi == oi_ma) || (oi == UIOBJI_ESC)) {
@@ -297,13 +297,13 @@ void ui_audience_show1(struct audience_s *au)
 
 void ui_audience_show2(struct audience_s *au)
 {
-    int16_t oi = 0;
+    uiobj_id_t oi = UIOBJI_NONE;
     ui_audience_play_music(au->uictx, au->musi); /* side effect of game_audience_get_str1() */
     uiobj_set_callback_and_delay(ui_audience_draw_cb2, au->uictx, 1);
     uiobj_set_downcount(1);
     uiobj_table_clear();
     uiobj_add_mousearea(UI_SCREEN_LIMITS, MOO_KEY_UNKNOWN, -1);
-    while (oi == 0) {
+    while (oi == UIOBJI_NONE) {
         ui_delay_prepare();
         oi = uiobj_handle_input_cond();
         ui_delay_ticks_or_click(1);
@@ -320,10 +320,10 @@ void ui_audience_show3(struct audience_s *au)
     uiobj_table_clear();
     uiobj_add_mousearea(UI_SCREEN_LIMITS, MOO_KEY_UNKNOWN, -1);
     while (!flag_done) {
-        int16_t oi;
+        uiobj_id_t oi;
         ui_delay_prepare();
         oi = uiobj_handle_input_cond();
-        if (oi != 0) {
+        if (oi != UIOBJI_NONE) {
             flag_done = true;
         }
         if (!flag_done) {

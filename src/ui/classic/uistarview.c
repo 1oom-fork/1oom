@@ -301,10 +301,10 @@ void ui_starview(struct game_s *g, player_id_t pi)
     uiobj_set_help_id(34);
     uiobj_set_downcount(1);
     while (!flag_done) {
-        int16_t oi;
+        uiobj_id_t oi;
         ui_delay_prepare();
         oi = uiobj_handle_input_cond();
-        if (oi != 0) {
+        if (oi != UIOBJI_NONE) {
             flag_done = true;
         }
         if (!flag_done) {

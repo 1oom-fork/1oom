@@ -279,10 +279,10 @@ void ui_news_won(bool flag_good)
     flag_fade = true;
     d.frame = 0;
     for (int i = 0; (i < 0x46) && !flag_skip; ++i) {
-        int16_t oi;
+        uiobj_id_t oi;
         ui_delay_prepare();
         oi = uiobj_handle_input_cond();
-        if (oi != 0) {
+        if (oi != UIOBJI_NONE) {
             flag_skip = true;
             break;
         }
@@ -316,10 +316,10 @@ void ui_news(struct game_s *g, struct news_s *ns)
     } else {
         d.str = game_str_gnn_also;
         for (int i = 0; (i < 5) && !flag_skip; ++i) {
-            int16_t oi;
+            uiobj_id_t oi;
             ui_delay_prepare();
             oi = uiobj_handle_input_cond();
-            if (oi != 0) {
+            if (oi != UIOBJI_NONE) {
                 flag_skip = true;
             }
             if (!flag_skip) {
@@ -341,10 +341,10 @@ void ui_news(struct game_s *g, struct news_s *ns)
 
     flag_skip = false;
     while (!flag_skip) {
-        int16_t oi;
+        uiobj_id_t oi;
         ui_delay_prepare();
         oi = uiobj_handle_input_cond();
-        if (oi != 0) {
+        if (oi != UIOBJI_NONE) {
             flag_skip = true;
             break;
         }

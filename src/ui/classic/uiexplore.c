@@ -146,7 +146,7 @@ static void explore_draw_cb(void *vptr)
 bool ui_explore(struct game_s *g, player_id_t pi, planet_id_t planet_i, bool by_scanner, bool flag_colony_ship)
 {
     struct explore_data_s d;
-    int16_t oi_cont, oi_y, oi_n;
+    uiobj_id_t oi_cont, oi_y, oi_n;
     bool flag_done = false;
     d.g = g;
     d.api = pi;
@@ -167,7 +167,7 @@ bool ui_explore(struct game_s *g, player_id_t pi, planet_id_t planet_i, bool by_
         oi_y = uiobj_add_t0(271, 163, "", ui_data.gfx.starmap.scrapbut_yes, MOO_KEY_y, -1);
     }
     while (!flag_done) {
-        int16_t oi;
+        uiobj_id_t oi;
         ui_delay_prepare();
         oi = uiobj_handle_input_cond();
         if ((oi == UIOBJI_ESC) || (oi == oi_cont) || (oi == oi_n)) {

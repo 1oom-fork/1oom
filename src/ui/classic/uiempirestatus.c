@@ -145,7 +145,7 @@ void ui_empirestatus(struct game_s *g, player_id_t active_player)
     uiobj_set_callback_and_delay(empirestatus_draw_cb, &d, 1);
 
     while (!flag_done) {
-        int16_t oi;
+        uiobj_id_t oi;
         oi = uiobj_handle_input_cond();
         ui_delay_prepare();
         if (oi != UIOBJI_NONE) {

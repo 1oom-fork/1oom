@@ -72,7 +72,7 @@ gameopts_act_t ui_gameopts(struct game_s *g, int *load_game_i_ptr)
     bool flag_done = false;
     bool flag_save_cfg = false;
     gameopts_act_t ret = GAMEOPTS_DONE;
-    int16_t oi_quit, oi_done, oi_load, oi_save, oi_silent, oi_fx, oi_music;
+    uiobj_id_t oi_quit, oi_done, oi_load, oi_save, oi_silent, oi_fx, oi_music;
     int16_t fxmusic = opt_music_enabled ? 2 : (opt_sfx_enabled ? 1 : 0);
 
     load_go_data(&d);
@@ -93,7 +93,7 @@ gameopts_act_t ui_gameopts(struct game_s *g, int *load_game_i_ptr)
     uiobj_set_callback_and_delay(gameopts_draw_cb, &d, 2);
 
     while (!flag_done) {
-        int16_t oi;
+        uiobj_id_t oi;
         oi = uiobj_handle_input_cond();
         ui_delay_prepare();
         if ((oi == UIOBJI_ESC) || (oi == oi_done)) {

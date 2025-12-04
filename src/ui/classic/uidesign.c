@@ -37,27 +37,27 @@ struct design_data_s {
     struct game_s *g;
     struct game_design_s *gd;
     player_id_t api;
-    int16_t oi_tbl_weap[WEAPON_SLOT_NUM];
-    int16_t oi_tbl_weap_up[WEAPON_SLOT_NUM];    /* + 1 */
-    int16_t oi_tbl_weap_dn[WEAPON_SLOT_NUM];    /* + 2 */
+    uiobj_id_t oi_tbl_weap[WEAPON_SLOT_NUM];
+    uiobj_id_t oi_tbl_weap_up[WEAPON_SLOT_NUM];    /* + 1 */
+    uiobj_id_t oi_tbl_weap_dn[WEAPON_SLOT_NUM];    /* + 2 */
     int16_t flag_tbl_weap_up[WEAPON_SLOT_NUM];  /* + 3 */
     int16_t flag_tbl_weap_dn[WEAPON_SLOT_NUM];  /* + 4 */
-    int16_t oi_hmm04;
-    int16_t oi_cancel;
-    int16_t oi_build;
-    int16_t oi_clear;
-    int16_t oi_name;
-    int16_t oi_idn;
-    int16_t oi_iup;
-    int16_t oi_man;
-    int16_t oi_comp;
-    int16_t oi_jammer;
-    int16_t oi_shield;
-    int16_t oi_armor;
-    int16_t oi_engine;
-    int16_t oi_tbl_spec[SPECIAL_SLOT_NUM];
-    int16_t oi_tbl_hull[SHIP_HULL_NUM];
-    int16_t oi_icon;
+    uiobj_id_t oi_hmm04;
+    uiobj_id_t oi_cancel;
+    uiobj_id_t oi_build;
+    uiobj_id_t oi_clear;
+    uiobj_id_t oi_name;
+    uiobj_id_t oi_idn;
+    uiobj_id_t oi_iup;
+    uiobj_id_t oi_man;
+    uiobj_id_t oi_comp;
+    uiobj_id_t oi_jammer;
+    uiobj_id_t oi_shield;
+    uiobj_id_t oi_armor;
+    uiobj_id_t oi_engine;
+    uiobj_id_t oi_tbl_spec[SPECIAL_SLOT_NUM];
+    uiobj_id_t oi_tbl_hull[SHIP_HULL_NUM];
+    uiobj_id_t oi_icon;
     weapon_t last_avail_tech_weap;
     ship_special_t last_avail_tech_special;
     bool flag_disable_cspeed;
@@ -93,7 +93,7 @@ static void design_draw_cb(void *vptr)
 {
     struct design_data_s *d = vptr;
     shipdesign_t *sd = &(d->gd->sd);
-    int16_t oi;
+    uiobj_id_t oi;
     char buf[64];
     uint8_t extraman;
 
@@ -1343,7 +1343,7 @@ bool ui_design(struct game_s *g, struct game_design_s *gd, player_id_t active_pl
     uiobj_set_callback_and_delay(design_draw_cb, &d, 1);
 
     while (!flag_done) {
-        int16_t oi;
+        uiobj_id_t oi;
         ui_delay_prepare();
         oi = uiobj_handle_input_cond();
         if (oi == d.oi_name) {

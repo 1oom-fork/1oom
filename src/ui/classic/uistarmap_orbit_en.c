@@ -85,7 +85,7 @@ static void ui_starmap_orbit_en_draw_cb(void *vptr)
 void ui_starmap_orbit_en(struct game_s *g, player_id_t active_player)
 {
     bool flag_done = false;
-    int16_t oi_scroll;
+    uiobj_id_t oi_scroll;
     int16_t scrollx = 0, scrolly = 0;
     struct starmap_data_s d;
     shipcount_t *os;
@@ -127,7 +127,7 @@ void ui_starmap_orbit_en(struct game_s *g, player_id_t active_player)
     uiobj_set_callback_and_delay(ui_starmap_orbit_en_draw_cb, &d, STARMAP_DELAY);
 
     while (!flag_done) {
-        int16_t oi1, oi2;
+        uiobj_id_t oi1, oi2;
         oi1 = uiobj_handle_input_cond();
         oi2 = uiobj_at_cursor();
         ui_delay_prepare();
