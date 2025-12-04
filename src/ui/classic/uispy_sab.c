@@ -254,7 +254,7 @@ static void sabotage_done_draw_cb(void *vptr)
 ui_sabotage_t ui_spy_sabotage_ask(struct game_s *g, int spy, int target, uint8_t *planetptr)
 {
     struct sabotage_data_s d;
-    int16_t oi_bases, oi_ind, oi_revolt, oi_planet[PLANETS_MAX];
+    uiobj_id_t oi_bases, oi_ind, oi_revolt, oi_planet[PLANETS_MAX];
     bool flag_done = false;
     ui_sabotage_t action = UI_SABOTAGE_NONE;
     d.g = g;
@@ -282,10 +282,10 @@ ui_sabotage_t ui_spy_sabotage_ask(struct game_s *g, int spy, int target, uint8_t
     UIOBJI_SET_TBL_INVALID(oi_planet);
     uiobj_set_callback_and_delay(sabotage_draw_cb, &d, 4);
     while (!flag_done) {
-        int16_t oi;
+        uiobj_id_t oi;
         ui_delay_prepare();
         oi = uiobj_handle_input_cond();
-        if (oi != 0) {
+        if (oi != UIOBJI_NONE) {
             ui_sound_play_sfx_24();
         }
         if (oi == UIOBJI_ESC) {
@@ -346,7 +346,7 @@ ui_sabotage_t ui_spy_sabotage_ask(struct game_s *g, int spy, int target, uint8_t
 int ui_spy_sabotage_done(struct game_s *g, int pi, int spy, int target, ui_sabotage_t act, int other1, int other2, uint8_t planet, int snum)
 {
     struct sabotage_data_s d;
-    int16_t oi_cont, oi_other1, oi_other2;
+    uiobj_id_t oi_cont, oi_other1, oi_other2;
     bool flag_done = false;
     int other = PLAYER_NONE;
     d.g = g;
@@ -377,7 +377,7 @@ int ui_spy_sabotage_done(struct game_s *g, int pi, int spy, int target, ui_sabot
     }
     uiobj_set_callback_and_delay(sabotage_done_draw_cb, &d, 4);
     while (!flag_done) {
-        int16_t oi;
+        uiobj_id_t oi;
         ui_delay_prepare();
         oi = uiobj_handle_input_cond();
         if ((oi == UIOBJI_ESC) || (oi == oi_cont)) {

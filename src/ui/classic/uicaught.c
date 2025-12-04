@@ -73,7 +73,7 @@ void ui_caught(struct game_s *g, player_id_t active_player)
 {
     struct caught_data_s d;
     bool flag_done = false;
-    int16_t oi_ma;
+    uiobj_id_t oi_ma;
 
     caught_data_load(&d);
     d.g = g;
@@ -87,7 +87,7 @@ void ui_caught(struct game_s *g, player_id_t active_player)
     uiobj_set_callback_and_delay(caught_draw_cb, &d, 1);
 
     while (!flag_done) {
-        int16_t oi;
+        uiobj_id_t oi;
         oi = uiobj_handle_input_cond();
         ui_delay_prepare();
         if ((oi == oi_ma) || (oi == UIOBJI_ESC)) {
