@@ -303,7 +303,7 @@ static void newtech_adjust_draw_cb(void *vptr)
 
 static void ui_newtech_adjust(struct newtech_data_s *d)
 {
-    int16_t oi_tbl[3], oi_y, oi_n;
+    uiobj_id_t oi_tbl[3], oi_y, oi_n;
     int x = 150, y = 30;
     bool flag_done = false;
     uiobj_set_callback_and_delay(newtech_adjust_draw_cb, d, 1);
@@ -323,7 +323,7 @@ static void ui_newtech_adjust(struct newtech_data_s *d)
 
     }
     while (!flag_done) {
-        int16_t oi;
+        uiobj_id_t oi;
         ui_delay_prepare();
         oi = uiobj_handle_input_cond();
         if ((oi == UIOBJI_ESC) || (oi == oi_n)) {
@@ -436,7 +436,7 @@ again:
         ui_newtech_choose_next(d);
     } else {
         bool flag_done;
-        int16_t oi_ok, oi_o1, oi_o2;
+        uiobj_id_t oi_ok, oi_o1, oi_o2;
         oi_ok = UIOBJI_INVALID;
         oi_o1 = UIOBJI_INVALID;
         oi_o2 = UIOBJI_INVALID;
@@ -450,7 +450,7 @@ again:
             oi_o2 = uiobj_add_mousearea(122, 106, 183, 120, MOO_KEY_UNKNOWN, -1);
         }
         while (!flag_done) {
-            int16_t oi;
+            uiobj_id_t oi;
             ui_delay_prepare();
             oi = uiobj_handle_input_cond();
             if ((oi == UIOBJI_ESC) || (oi == oi_ok)) {

@@ -61,8 +61,8 @@ void ui_copyprotection_check(struct game_s *g)
 {
     struct copyprotection_data_s d;
     bool flag_done = false;
-    int16_t oi_ship_name[8];
-    int16_t oi;
+    uiobj_id_t oi_ship_name[8];
+    uiobj_id_t oi;
     d.g = g;
     uiobj_set_xyoff(1, 1);
     if (copyprot_status == 0) {
@@ -121,7 +121,7 @@ void ui_copyprotection_check(struct game_s *g)
         flag_done = false;
         while (!flag_done) {
             oi = uiobj_handle_input_cond();
-            if (oi != 0) {
+            if (oi != UIOBJI_NONE) {
                 flag_done = true;
             }
             ui_copyprotection_draw_cb(&d);

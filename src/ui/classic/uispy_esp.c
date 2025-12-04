@@ -135,7 +135,7 @@ int ui_spy_steal(struct game_s *g, int spy, int target, uint8_t flags_field)
 {
     struct steal_data_s d;
     bool flag_done = false;
-    int16_t oi_tbl_field[TECH_FIELD_NUM];
+    uiobj_id_t oi_tbl_field[TECH_FIELD_NUM];
     int selected = -1;
 
     ui_sound_play_music(0xf);
@@ -171,7 +171,7 @@ int ui_spy_steal(struct game_s *g, int spy, int target, uint8_t flags_field)
     uiobj_set_callback_and_delay(steal_draw_cb, &d, 4);
 
     while (!flag_done) {
-        int16_t oi;
+        uiobj_id_t oi;
         ui_delay_prepare();
         oi = uiobj_handle_input_cond();
         if (oi == UIOBJI_ESC) {
@@ -215,10 +215,10 @@ void ui_spy_stolen(struct game_s *g, int pi, int spy, int field, uint8_t tech)
     uiobj_table_clear();
     uiobj_add_mousearea(UI_SCREEN_LIMITS, MOO_KEY_UNKNOWN, -1);
     while (!flag_done) {
-        int16_t oi;
+        uiobj_id_t oi;
         ui_delay_prepare();
         oi = uiobj_handle_input_cond();
-        if (oi != 0) {
+        if (oi != UIOBJI_NONE) {
             flag_done = true;
         }
         stolen_draw_cb(&d);
