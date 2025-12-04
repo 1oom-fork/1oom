@@ -180,7 +180,7 @@ static void ui_play_winlose_cb3(void *vptr)
 
 static void ui_play_ending_good_or_tyrant(int race, const char *name, bool flag_good)
 {
-    int16_t oi_skip;
+    uiobj_id_t oi_skip;
     bool flag_skip = false;
     struct anim_winlose_1_s wld1;
     struct anim_winlose_2_s wld2;
@@ -221,7 +221,7 @@ static void ui_play_ending_good_or_tyrant(int race, const char *name, bool flag_
     wld1.frame = 0;
 
     while ((wld1.frame < 0x96) && (!flag_skip)) {
-        int16_t oi;
+        uiobj_id_t oi;
         ui_delay_prepare();
         oi = uiobj_handle_input_cond();
         if ((oi == oi_skip) || (oi == UIOBJI_ESC)) {
@@ -252,7 +252,7 @@ static void ui_play_ending_good_or_tyrant(int race, const char *name, bool flag_
     uiobj_set_callback_and_delay(ui_play_winlose_cb2, &wld2, 3);
 
     while ((wld2.frame < 0x14) && (!flag_skip)) {
-        int16_t oi;
+        uiobj_id_t oi;
         ui_delay_prepare();
         oi = uiobj_handle_input_cond();
         if ((oi == oi_skip) || (oi == UIOBJI_ESC)) {
@@ -283,7 +283,7 @@ static void ui_play_ending_good_or_tyrant(int race, const char *name, bool flag_
     lbxpal_set_update_range(0, 255);
 
     while ((wld3.frame < 0x50) && (!flag_skip)) {
-        int16_t oi;
+        uiobj_id_t oi;
         ui_delay_prepare();
         oi = uiobj_handle_input_cond();
         if ((oi == oi_skip) || (oi == UIOBJI_ESC)) {
@@ -411,7 +411,7 @@ void ui_play_ending_tyrant(int race, const char *name)
 
 void ui_play_ending_funeral(int banner_live, int banner_dead)
 {
-    int16_t oi_skip;
+    uiobj_id_t oi_skip;
     struct anim_winlose_funeral_s wld;
 
     ui_draw_finish_mode = 2;
@@ -435,7 +435,7 @@ void ui_play_ending_funeral(int banner_live, int banner_dead)
 
     wld.frame = 0;
     while (wld.frame < 0xba) {
-        int16_t oi;
+        uiobj_id_t oi;
         ui_delay_prepare();
         oi = uiobj_handle_input_cond();
         ui_play_winlose_funeral_cb(&wld);
@@ -465,7 +465,7 @@ void ui_play_ending_funeral(int banner_live, int banner_dead)
 
 void ui_play_ending_exile(const char *name)
 {
-    int16_t oi_skip;
+    uiobj_id_t oi_skip;
     bool flag_skip = false;
     struct anim_winlose_exile_s wld;
 
@@ -488,7 +488,7 @@ void ui_play_ending_exile(const char *name)
     wld.frame = 0;
 
     while ((wld.frame < 0x17c) && (!flag_skip)) {
-        int16_t oi;
+        uiobj_id_t oi;
         ui_delay_prepare();
         oi = uiobj_handle_input_cond();
         if ((oi == oi_skip) || (oi == UIOBJI_ESC)) {
