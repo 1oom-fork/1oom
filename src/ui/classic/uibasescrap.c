@@ -67,7 +67,7 @@ void ui_basescrap(struct game_s *g, player_id_t active_player)
 {
     struct basescrap_data_s d;
     bool flag_done = false;
-    int16_t oi_cancel, oi_accept, oi_plus, oi_minus/*, oi_slider*/;
+    uiobj_id_t oi_cancel, oi_accept, oi_plus, oi_minus/*, oi_slider*/;
     const int x = 56, y = 50;
     planet_t *p = &(g->planet[g->planet_focus_i[active_player]]);
 
@@ -89,7 +89,7 @@ void ui_basescrap(struct game_s *g, player_id_t active_player)
     uiobj_set_callback_and_delay(basescrap_draw_cb1, &d, 1);
 
     while (!flag_done) {
-        int16_t oi;
+        uiobj_id_t oi;
         oi = uiobj_handle_input_cond();
         ui_delay_prepare();
         if ((oi == oi_cancel) || (oi == UIOBJI_ESC)) {

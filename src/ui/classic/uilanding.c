@@ -118,10 +118,10 @@ void ui_landing(struct game_s *g, int pi, uint8_t planet_i)
     uiobj_add_mousearea_all(MOO_KEY_UNKNOWN, -1);
     uiobj_set_downcount(3);
     while (d.frame < 0x41) {
-        int16_t oi;
+        uiobj_id_t oi;
         ui_delay_prepare();
         oi = uiobj_handle_input_cond();
-        if (oi != 0) {
+        if (oi != UIOBJI_NONE) {
             d.frame = 0x41;
             flag_done = true;
         }
