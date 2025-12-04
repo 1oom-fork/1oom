@@ -28,7 +28,7 @@
 
 void ui_play_intro(void)
 {
-    int16_t oi_skip;
+    uiobj_id_t oi_skip;
     uint16_t frame;
     bool flag_skip, flag_fadein = false;
     uint8_t *intro_sfx1;
@@ -81,7 +81,7 @@ void ui_play_intro(void)
     }
 
     while ((frame < 0x73) && (!flag_skip)) {
-        int16_t oi;
+        uiobj_id_t oi;
         ui_delay_prepare();
         oi = uiobj_handle_input_cond();
         if ((oi == oi_skip) || (oi == UIOBJI_ESC)) {
@@ -118,7 +118,7 @@ void ui_play_intro(void)
     }
 
     while ((frame < 0x1e) && (!flag_skip)) {
-        int16_t oi;
+        uiobj_id_t oi;
         ui_delay_prepare();
         oi = uiobj_handle_input_cond();
         if ((oi == oi_skip) || (oi == UIOBJI_ESC)) {
@@ -167,7 +167,7 @@ void ui_play_intro(void)
     }
 
     while ((frame < 0x46) && (!flag_skip)) {
-        int16_t oi;
+        uiobj_id_t oi;
         ui_delay_prepare();
         oi = uiobj_handle_input_cond();
         if ((oi == oi_skip) || (oi == UIOBJI_ESC)) {
@@ -219,7 +219,7 @@ void ui_play_intro(void)
     }
 
     while ((frame < 0x45) && (!flag_skip)) {
-        int16_t oi;
+        uiobj_id_t oi;
         ui_delay_prepare();
         oi = uiobj_handle_input_cond();
         if ((oi == oi_skip) || (oi == UIOBJI_ESC)) {
@@ -268,7 +268,7 @@ void ui_play_intro(void)
     }
 
     while ((frame < 0x28) && (!flag_skip)) {
-        int16_t oi;
+        uiobj_id_t oi;
         ui_delay_prepare();
         oi = uiobj_handle_input_cond();
         if ((oi == oi_skip) || (oi == UIOBJI_ESC)) {
@@ -313,7 +313,7 @@ void ui_play_intro(void)
     }
 
     while ((frame < 0x1e) && (!flag_skip)) {
-        int16_t oi;
+        uiobj_id_t oi;
         ui_delay_prepare();
         oi = uiobj_handle_input_cond();
         if ((oi == oi_skip) || (oi == UIOBJI_ESC)) {
@@ -353,7 +353,7 @@ void ui_play_intro(void)
     }
 
     while ((frame < 0xb4) && (!flag_skip)) {
-        int16_t oi;
+        uiobj_id_t oi;
         ui_delay_prepare();
         oi = uiobj_handle_input_cond();
         if ((oi == oi_skip) || (oi == UIOBJI_ESC)) {
