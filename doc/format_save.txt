@@ -21,7 +21,9 @@ offset  sz      description
 41      1       player is AI (bitmask)
 42      1       player refused council ruling (bitmask)
 43      1       AI type ID
-44      3       (0, unused)
+44      1       election cheat flag
+45      1       event cheat flag
+46      1       spy hint cheat flag
 47      1       active player when save was made
 48      1       difficulty (0..4)
 49      1       galaxy size (0..3)
