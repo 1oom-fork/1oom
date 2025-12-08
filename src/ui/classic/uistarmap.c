@@ -40,10 +40,13 @@ static void ui_starmap_draw_cb1(void *vptr)
     struct starmap_data_s *d = vptr;
     ui_starmap_draw_basic(d);
     if (d->g->gaux->flag_cheat_events) {
-        ui_draw_text_overlay(0, 0, game_str_no_events);
+        ui_draw_text_overlay(45, 0, game_str_no_events);
     }
     if (d->g->gaux->flag_cheat_elections) {
-        ui_draw_text_overlay(0, 10, game_str_no_elections);
+        ui_draw_text_overlay(0, 0, game_str_no_elections);
+    }
+    if (d->g->gaux->flag_cheat_spy_hint) {
+        ui_draw_text_overlay(25, 0, "Hint");
     }
 }
 
