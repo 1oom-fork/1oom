@@ -5,9 +5,6 @@
 #include <stdarg.h>
 
 #include "log.h"
-#ifdef FEATURE_MODEBUG
-#include "options.h"
-#endif
 #include "hw.h"
 
 /* ------------------------------------------------------------------------- */
@@ -93,24 +90,3 @@ void log_fatal_and_die(const char *format, ...)
     log_error_direct(msgbuf);
     exit(EXIT_FAILURE);
 }
-
-#ifdef FEATURE_MODEBUG
-static char dbgmsgbuf[MAX_MSG_LEN] = "";
-
-void log_debug(int level, const char *format, ...)
-{
-    va_list ap;
-
-    if (opt_modebug < level) {
-        return;
-    }
-
-    va_start(ap, format);
-    vsprintf(dbgmsgbuf, format, ap);
-    va_end(ap);
-
-    fflush(stdout);
-    fputs(dbgmsgbuf, stderr);
-    fflush(stderr);
-}
-#endif
