@@ -14,13 +14,7 @@ extern void log_warning(const char *format, ...);
 extern void log_error(const char *format, ...);
 extern void log_fatal_and_die(const char *format, ...);
 
-#ifdef FEATURE_MODEBUG
-extern void log_debug(int level, const char *format, ...);
-#define LOG_DEBUG(x) log_debug x
-#define IF_DEBUG(x) x
-#else
 #define LOG_DEBUG(x)
 #define IF_DEBUG(x)
-#endif
 
 #endif
