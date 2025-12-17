@@ -1,6 +1,5 @@
 AC_INIT([1oom], [0.1])
 
-AC_ARG_ENABLE(modebug, AS_HELP_STRING([--enable-modebug], [add debugging options]))
 AC_ARG_WITH(samplerate, AS_HELP_STRING([--without-samplerate], [do not try to use libsamplerate]))
 AC_ARG_ENABLE(tools, AS_HELP_STRING([--disable-tools], [disables extra tools]))
 AC_ARG_ENABLE(uiclassic, AS_HELP_STRING([--disable-uiclassic], [disables classic UI]))
@@ -76,10 +75,6 @@ fi
 
 
 dnl - optional features
-
-if test x"$enable_modebug" = "xyes"; then
-    AC_DEFINE(FEATURE_MODEBUG,,[Add debugging options.])
-fi
 
 
 dnl - libsamplerate
