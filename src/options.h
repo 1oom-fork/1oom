@@ -1,9 +1,6 @@
 #ifndef INC_1OOM_OPTIONS_H
 #define INC_1OOM_OPTIONS_H
 
-#ifdef FEATURE_MODEBUG
-extern int opt_modebug;
-#endif
 extern int opt_audio_enabled;
 extern int opt_music_enabled;
 extern int opt_sfx_enabled;

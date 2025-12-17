@@ -8,9 +8,6 @@ extern int hw_opt_screen_fsw;
 extern int hw_opt_screen_fsh;
 extern const char *hw_opt_sdlmixer_sf;
 
-/* debug */
-extern int hw_opt_overlay_pal;
-
 /* for SDL1 */
 extern int hw_opt_use_gl;
 extern int hw_opt_aspect;

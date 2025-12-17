@@ -15,9 +15,6 @@
 /* -------------------------------------------------------------------------- */
 /* global options */
 
-#ifdef FEATURE_MODEBUG
-int opt_modebug = 0;
-#endif
 int opt_audio_enabled = 1;
 int opt_music_enabled = 1;
 int opt_sfx_enabled = 1;
@@ -85,11 +82,6 @@ static const struct cmdline_options_s cmdline_options_early[] = {
     { "-?", 0,
       show_usage, NULL,
       NULL, "Show command line options" },
-#ifdef FEATURE_MODEBUG
-    { "-modebug", 1,
-      options_set_int_var, (void *)&opt_modebug,
-      "LEVEL", "Set debug level" },
-#endif
     { NULL, 0, NULL, NULL, NULL, NULL }
 };
 

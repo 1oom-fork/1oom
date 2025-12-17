@@ -106,11 +106,6 @@ static int calc_angle_do(unsigned int dx, unsigned int dy)
             angle += 45;
         }
     }
-#ifdef FEATURE_MODEBUG
-    if ((angle < 0) || (angle >= 180)) {
-        LOG_DEBUG((3, "%s: dx:%i dy:%i -> slope:%i angle:%i\n", dx, dy, slope, angle));
-    }
-#endif
     return angle;
 }
 
