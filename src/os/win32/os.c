@@ -22,11 +22,6 @@ static char *all_data_paths[] = { NULL, NULL, NULL };
 
 const char *idstr_os = "win32";
 
-int os_early_init(void)
-{
-    return 0;
-}
-
 int os_init(void)
 {
     return 0;

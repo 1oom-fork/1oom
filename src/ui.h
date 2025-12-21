@@ -8,7 +8,6 @@
 
 extern const char *idstr_ui;
 
-extern int ui_early_init(void);
 extern int ui_init(void);
 extern int ui_late_init(void);
 extern void ui_shutdown(void);
