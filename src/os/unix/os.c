@@ -41,11 +41,6 @@ static int os_make_path(const char *path)
 
 const char *idstr_os = "unix";
 
-int os_early_init(void)
-{
-    return 0;
-}
-
 int os_init(void)
 {
     return 0;

@@ -12,19 +12,6 @@
 
 /* -------------------------------------------------------------------------- */
 
-static int main_early_init(void)
-{
-    if (0
-      || os_early_init()
-      || hw_early_init()
-      || ui_early_init()
-      || lbxfile_init()
-    ) {
-        return 1;
-    }
-    return 0;
-}
-
 static int main_init(void)
 {
     if (0
@@ -50,7 +37,10 @@ static void main_shutdown(void)
 
 int main_1oom(int argc, char **argv)
 {
-    if (main_early_init()) {
+    if (hw_early_init()) {
+        return 1;
+    }
+    if (lbxfile_init()) {
         return 1;
     }
     log_message("1oom: main:%s ui:%s hw:%s os:%s\n", idstr_main, idstr_ui, idstr_hw, idstr_os);
