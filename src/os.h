@@ -11,7 +11,6 @@
 
 extern const char *idstr_os;
 
-extern int os_early_init(void);
 extern int os_init(void);
 extern void os_shutdown(void);
 
