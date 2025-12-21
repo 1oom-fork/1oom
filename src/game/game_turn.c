@@ -215,21 +215,20 @@ static void game_turn_build_eco(struct game_s *g)
             SETMAX(p->waste, 0);
             if (e->race != RACE_SILICOID) {
                 if ((ecoprod > 0) && e->have_atmos_terra && (p->growth == PLANET_GROWTH_HOSTILE)) {
+                    int v;
+                    if (p->type < PLANET_TYPE_DEAD) {
+                        v = 20;
+                    } else if (p->type < PLANET_TYPE_BARREN) {
+                        v = 10;
+                    } else {
+                        v = 0;
+                    }
+                    p->type = PLANET_TYPE_MINIMAL;
+                    p->max_pop2 += v;
+                    p->max_pop1 += v;
+                    p->max_pop3 += v;
                     p->bc_to_ecoproj += ecoprod;
                     if (p->bc_to_ecoproj >= game_num_atmos_cost) {
-                        int v;
-                        if (p->type < PLANET_TYPE_DEAD) {
-                            v = 20;
-                        } else if (p->type < PLANET_TYPE_BARREN) {
-                            v = 10;
-                        } else {
-                            v = 0;
-                        }
-                        /* WASBUG max_pop += moved from outside if (bc >= cost) */
-                        p->type = PLANET_TYPE_MINIMAL;
-                        p->max_pop2 += v;
-                        p->max_pop1 += v;
-                        p->max_pop3 += v;
                         p->growth = PLANET_GROWTH_NORMAL;
                         ecoprod = p->bc_to_ecoproj - game_num_atmos_cost;
                         p->bc_to_ecoproj -= game_num_atmos_cost;
