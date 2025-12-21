@@ -20,11 +20,6 @@ const char *idstr_ui = "nop";
 
 /* -------------------------------------------------------------------------- */
 
-int ui_early_init(void)
-{
-    return 0;
-}
-
 int ui_init(void)
 {
     return 0;
