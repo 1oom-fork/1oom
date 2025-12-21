@@ -262,11 +262,6 @@ static void init_gfx(void)
 
 /* -------------------------------------------------------------------------- */
 
-int ui_early_init(void)
-{
-    return 0;
-}
-
 int ui_init(void)
 {
     memset(&ui_data, 0, sizeof(ui_data));
