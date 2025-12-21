@@ -217,21 +217,21 @@ static void game_turn_build_eco(struct game_s *g)
             SETMAX(p->waste, 0);
             if (e->race != RACE_SILICOID) {
                 if ((ecoprod > 0) && e->have_atmos_terra && (p->growth == PLANET_GROWTH_HOSTILE)) {
+                    /* NOTE: PLANET_TYPE_MINIMAL and extra max_pop are applied instantly */
+                    int v;
+                    if (p->type < PLANET_TYPE_DEAD) {
+                        v = 20;
+                    } else if (p->type < PLANET_TYPE_BARREN) {
+                        v = 10;
+                    } else {
+                        v = 0;
+                    }
+                    p->type = PLANET_TYPE_MINIMAL;
+                    p->max_pop2 += v;
+                    p->max_pop1 += v;
+                    p->max_pop3 += v;
                     p->bc_to_ecoproj += ecoprod;
                     if (p->bc_to_ecoproj >= game_num_atmos_cost) {
-                        int v;
-                        if (p->type < PLANET_TYPE_DEAD) {
-                            v = 20;
-                        } else if (p->type < PLANET_TYPE_BARREN) {
-                            v = 10;
-                        } else {
-                            v = 0;
-                        }
-                        /* WASBUG max_pop += moved from outside if (bc >= cost) */
-                        p->type = PLANET_TYPE_MINIMAL;
-                        p->max_pop2 += v;
-                        p->max_pop1 += v;
-                        p->max_pop3 += v;
                         p->growth = PLANET_GROWTH_NORMAL;
                         ecoprod = p->bc_to_ecoproj - game_num_atmos_cost;
                         p->bc_to_ecoproj -= game_num_atmos_cost;
@@ -954,7 +954,7 @@ static void game_turn_explore(struct game_s *g, uint8_t *planetptr, player_id_t 
 
 static void game_turn_bomb_damage(struct game_s *g, uint8_t pli, player_id_t attacker, int *popdmgptr, int *factdmgptr, int *biodmgptr)
 {
-    const planet_t *p = &(g->planet[pli]);
+    planet_t *p = &(g->planet[pli]);
     const empiretechorbit_t *ea = &(g->eto[attacker]);
     const empiretechorbit_t *ed = &(g->eto[p->owner]);
     uint32_t tbl[WEAPON_NUM];
@@ -1066,12 +1066,10 @@ static void game_turn_bomb_damage(struct game_s *g, uint8_t pli, player_id_t att
         *popdmgptr = v;
     }
     {
-#if 0
         int v;
         v = p->max_pop3 - totalbio;
         SETMAX(v, 10);
-        p->max_pop3 = v;    /* WASBUG reduced before y/n */
-#endif
+        p->max_pop3 = v;    /* BUG reduced before y/n */
         *biodmgptr = totalbio;
     }
 }
@@ -1127,12 +1125,6 @@ static void game_turn_bomb(struct game_s *g)
                 if (flag_do_bomb && ((popdmg > 0) || (factdmg > 0))) { /* FIXME biodmg? */
                     p->pop -= popdmg;
                     p->factories -= factdmg;
-                    if (biodmg) {
-                        int v;
-                        v = p->max_pop3 - biodmg;
-                        SETMAX(v, 10);
-                        p->max_pop3 = v;
-                    }
                     SUBSAT0(p->rebels, popdmg / 2 + 1);
                     if (p->pop == 0) {
                         game_planet_destroy(g, pli, i);
