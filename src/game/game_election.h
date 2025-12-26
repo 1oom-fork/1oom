@@ -12,7 +12,7 @@ struct election_s {
     const char *str;
     int num;
     player_id_t tbl_ei[PLAYER_NUM];
-    uint8_t tbl_votes[PLAYER_NUM];
+    uint16_t tbl_votes[PLAYER_NUM];
     player_id_t candidate[2];
     uint16_t total_votes;
     uint16_t got_votes[2];

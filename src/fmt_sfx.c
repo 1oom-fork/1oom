@@ -226,7 +226,7 @@ static struct sfx_conv_s fmt_sfx_convert_voc(const uint8_t *data_in, uint32_t le
                 res.num += block_size;
                 while (block_size--) {
                     int16_t s;
-                    s = (((int16_t)*p++) - 128) << 8;
+                    s = (((int16_t)*p++) - 128) * 256;
                     *q++ = s;
                     *q++ = s;
                 }

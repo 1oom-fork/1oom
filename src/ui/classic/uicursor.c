@@ -223,6 +223,7 @@ void ui_cursor_refresh(int mx, int my)
     if (ui_cursor_gfx_i == 0) {
         return;
     }
+    ui_cursor_update_gfx_i(mx, my);
     ui_cursor_store_bg0(mx, my);
     ui_cursor_draw0(mx, my);
     hw_video_redraw_front();
