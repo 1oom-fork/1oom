@@ -442,7 +442,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             ui_data.starmap.y2 = y;
         }
         ui_starmap_handle_oi_ctrl(&d, oi1);
-        if (oi1 == oi_f2) {
+        if (oi1 == oi_f3) {
             int i;
             i = g->planet_focus_i[active_player];
             do {
@@ -452,7 +452,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             p = &(g->planet[i]);
             ui_starmap_set_pos_focus(g, active_player);
             ui_sound_play_sfx_24();
-        } else if (oi1 == oi_f3) {
+        } else if (oi1 == oi_f2) {
             int i;
             i = g->planet_focus_i[active_player];
             do {
