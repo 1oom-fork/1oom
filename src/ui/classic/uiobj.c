@@ -1046,9 +1046,9 @@ static uint32_t uiobj_handle_kbd(uiobj_id_t *oiptr)
         uiobj_kbd_alt_oi = UIOBJI_NONE;
     }
     oi = uiobj_kbd_alt_oi + 1;
+    /*key = ucase(key)*/
     oi = uiobj_handle_kbd_find_alt(oi, key);
     p = &uiobj_tbl[oi];
-    /*key = ucase(key)*/
     if (oi == uiobj_table_num) {
         oi = uiobj_handle_kbd_find_alt(1, key);
         p = &uiobj_tbl[oi];

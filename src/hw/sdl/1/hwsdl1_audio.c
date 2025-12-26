@@ -312,7 +312,7 @@ int hw_audio_sfx_init(int sfx_index, const uint8_t *data_in, uint32_t len_in)
     }
 
     if (fmt_sfx_convert(data_in, len_in, &data, &len, NULL, audio_rate, true)) {
-        sfxtbl[sfx_index].chunk = Mix_LoadWAV_RW(SDL_RWFromMem(data, len), 0);
+        sfxtbl[sfx_index].chunk = Mix_LoadWAV_RW(SDL_RWFromMem(data, len), 1);
         lib_free(data);
     } else {
         log_error("SDLA: failed to init sound %i\n", sfx_index);
