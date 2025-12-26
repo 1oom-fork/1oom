@@ -458,12 +458,14 @@ int main_do(void)
             case MAIN_MENU_ACT_NEW_GAME:
                 main_menu_new_game:
                 game_new(&game, &game_aux, &game_new_opts);
+                game_save_do_save_i(GAME_SAVE_I_CONTINUE, "Continue", &game);
                 if (game_opt_init_saves_enabled) {
                     game_save_do_save_i(GAME_SAVE_I_INIT, "Init", &game);
                 }
                 break;
             case MAIN_MENU_ACT_TUTOR:
                 game_new_tutor(&game, &game_aux);
+                game_save_do_save_i(GAME_SAVE_I_CONTINUE, "Continue", &game);
                 break;
             case MAIN_MENU_ACT_LOAD_GAME:
                 main_menu_load_game:
@@ -507,13 +509,13 @@ int main_do(void)
                     case UI_TURN_ACT_QUIT_GAME:
                         turn_act_quit:
                         if (game_save_do_save_i(GAME_SAVE_I_CONTINUE, "Continue", &game)) {
-                            log_error("Game: could create continue save\n");
+                            log_error("Game: failed to create continue save\n");
                         }
                         game_end.type = GAME_END_QUIT;
                         break;
                     case UI_TURN_ACT_NEXT_TURN:
                         if (game_opt_undo_enabled && game_save_do_save_i(GAME_SAVE_I_UNDO, "Undo", &game)) {
-                            log_error("Game: could create undo save\n");
+                            log_error("Game: failed to create undo save\n");
                         }
                         break;
                 }

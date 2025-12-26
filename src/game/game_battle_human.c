@@ -49,22 +49,24 @@ static void game_battle_with_human_init_sub1(struct battle_s *bt)
         int att_from, att_to, def_from, def_to;
         bt->have_subspace_int = true;
         if (bt->item[0].side == SIDE_L) {
-            def_to = att_from = bt->s[SIDE_L].items + 1;
+            att_from = bt->s[SIDE_L].items + 1;
             att_to = bt->items_num;
             def_from = 1;
+            def_to = bt->s[SIDE_L].items;
         } else {
             att_from = 1;
-            def_from = att_to = bt->s[SIDE_L].items + 1;
+            att_to = bt->s[SIDE_L].items;
+            def_from = bt->s[SIDE_L].items + 1;
             def_to = bt->items_num;
         }
-        for (int i = att_from; i < att_to; ++i) {
+        for (int i = att_from; i <= att_to; ++i) {
             if (bt->item[i].subspace > 0) {
                 bt->item[i].subspace = -1;
                 flag_att_have_teleporter = true;
             }
         }
         if (flag_att_have_teleporter) {
-            for (int i = def_from; i < def_to; ++i) {
+            for (int i = def_from; i <= def_to; ++i) {
                 if (bt->item[i].subspace > 0) {
                     bt->item[i].subspace = -1;
                 }
