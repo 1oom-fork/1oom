@@ -132,7 +132,7 @@ static const char *game_audience_get_str1(struct audience_s *au)
                             s = game_str_au_allian;
                         } else if (eh->treaty[pa] == TREATY_NONAGGRESSION) {
                             s = game_str_au_nonagg;
-                        } else if (eh->trade_bc != 0) {
+                        } else if (eh->trade_bc[pa] != 0) {
                             s = game_str_au_tradea;
                         } else {
                             s = game_str_au_treaty;

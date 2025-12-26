@@ -166,6 +166,7 @@ static void game_battle_missile_remove_unused(struct battle_s *bt)
         struct battle_missile_s *m = &(bt->missile[i]);
         if (m->target == MISSILE_TARGET_NONE) {
             util_table_remove_item_any_order(i, bt->missile, sizeof(struct battle_missile_s), bt->num_missile);
+            --i;
             --bt->num_missile;
         }
     }
@@ -527,7 +528,7 @@ static int game_battle_get_priority(const struct battle_item_s *b, race_t race)
     if (b->sbmask & (1 << SHIP_SPECIAL_BOOL_SCANNER)) {
         prio += 3;
     }
-    if (b->subspace != 0) {
+    if (b->subspace > 0) {
         prio += b->subspace * 1000;
     }
     if (race == RACE_ALKARI) {
@@ -1265,7 +1266,7 @@ static void game_battle_with_human_do_sub3(struct battle_s *bt)
             bt->hmm21 = false;
             game_battle_reset_specials(bt);
             game_battle_area_setup(bt);
-            if (/*(b->num > 0) &&*/ (b->side != -1)) {
+            if (/*(b->num > 0) &&*/ (b->side != SIDE_NONE)) {
                 ui_battle_draw_basic(bt);
             }
             /*4ebbf*/

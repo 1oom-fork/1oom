@@ -193,6 +193,7 @@ void game_design_prepare(struct game_s *g, struct game_design_s *gd, player_id_t
                     if (look >= (lookbase + SHIP_LOOK_PER_HULL)) {
                         look = lookbase;
                     }
+                    i = 0;  /* NOTE It is actually set to 1 in the next iteration. */
                 }
             }
             gd->tbl_shiplook_hull[hull] = look;

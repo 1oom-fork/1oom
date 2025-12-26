@@ -19,7 +19,7 @@ void game_planet_destroy(struct game_s *g, uint8_t planet_i, player_id_t attacke
         g->seen[owner][planet_i].owner = PLAYER_NONE;
         g->seen[owner][planet_i].pop = 0;
         g->seen[owner][planet_i].bases = 0;
-        g->seen[owner][planet_i].factories = 0;
+        g->seen[owner][planet_i].factories = p->factories;
     }
     if (IS_HUMAN(g, owner)) {
         /* WASBUG there was an unreliable mess here */
