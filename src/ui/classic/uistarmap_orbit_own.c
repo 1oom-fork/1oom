@@ -222,7 +222,7 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
             ui_data.ui_main_loop_action = UI_MAIN_LOOP_NEXT_TURN;
             flag_done = true;
             ui_sound_play_sfx_24();
-        } else if (oi1 == oi_f2) {
+        } else if (oi1 == oi_f3) {
             int i;
             i = d.from;
             do {
@@ -235,7 +235,7 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
             /* flag_have_colony_lbx = false */
             flag_done = true;
             ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
-        } else if (oi1 == oi_f3) {
+        } else if (oi1 == oi_f2) {
             int i;
             i = d.from;
             do {
