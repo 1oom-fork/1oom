@@ -363,9 +363,7 @@ static void game_generate_planets(struct game_s *g)
 
         p->max_pop3 = p->max_pop2;
         p->max_pop1 = p->max_pop2;
-        if (!in_nebula) {
-            p->battlebg = rnd_1_n(4, &g->seed);
-        }
+        p->battlebg = in_nebula ? 0 : rnd_1_n(4, &g->seed);
         p->special = PLANET_SPECIAL_NORMAL;
         {
             star_type_t star_type;
