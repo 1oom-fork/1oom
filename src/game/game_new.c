@@ -360,9 +360,7 @@ static void game_generate_planets(struct game_s *g)
 
         p->max_pop3 = p->max_pop2;
         p->max_pop1 = p->max_pop2;
-        if (!in_nebula) {
-            p->battlebg = rnd_1_n(4, &g->seed);
-        }
+        p->battlebg = in_nebula ? 0 : rnd_1_n(4, &g->seed);
         p->special = PLANET_SPECIAL_NORMAL;
         {
             star_type_t star_type;
@@ -901,8 +899,8 @@ start_of_func:
         }
         e->fuel_range = 3;
         /* BUG? these shipi values are wrong, but fixed by first next turn */
-        e->shipi_colony = 4;
-        e->shipi_bomber = 1;
+        e->shipi_colony = 1;
+        e->shipi_bomber = 4;
     }
 }
 
