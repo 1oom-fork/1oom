@@ -200,7 +200,7 @@ void lbxpal_build_colortables(void)
 
 int lbxpal_init(void)
 {
-    memset(lbxpal_palette, 0, sizeof(lbxpal_update_flag));
+    memset(lbxpal_palette, 0, sizeof(lbxpal_palette));
     lbxpal_update();
     return 0;
 }

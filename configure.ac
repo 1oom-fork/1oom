@@ -168,7 +168,7 @@ if test x"$enable_sdl1hw" != "xno"; then
     AC_CHECK_HEADERS(SDL.h,[AC_CHECK_LIB(SDL, SDL_SetVideoMode,
                      [],
                      [CFLAGS=$old_cflags; break],$EXTRA_SDL1_LIBS)],
-                     [CFLAGS=$old_cflags; break],$EXTRA_SDL1_LIBS)
+                     [CFLAGS=$old_cflags; break])
     LIBS="$old_LIBS"
 
     if test x"$ac_cv_lib_SDL_SDL_SetVideoMode" != "xyes"; then
