@@ -105,9 +105,7 @@ int hw_audio_init(void)
         char *base = SDL_GetBasePath();
         if (base) {
             char path[2048];
-            snprintf(path, sizeof(path),
-                    "%s../Resources/music.sf2", base);
-
+            snprintf(path, sizeof(path), "%smusic.sf2", base);
             Mix_SetSoundFonts(path);
             SDL_free(base);
         }
