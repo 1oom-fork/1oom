@@ -91,6 +91,9 @@ const char **os_get_paths_data(void)
             p = getenv("HOME");
             if (p) {
                 all_data_paths[i++] = util_concat(p, "/.local/share/1oom", NULL);
+#ifdef __APPLE__
+                all_data_paths[i++] = util_concat(p, "/Library/Application Support/1oom", NULL);
+#endif
             }
         }
         all_data_paths[i++] = lib_stralloc("/usr/share/1oom");
