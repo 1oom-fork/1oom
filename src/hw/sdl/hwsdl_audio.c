@@ -101,6 +101,17 @@ int hw_audio_init(void)
         sfx_playing = -1;
         mus_playing = -1;
         log_message("SDLA: init %i Hz slice %i\n", audio_rate, slice);
+#ifdef __APPLE__
+        char *base = SDL_GetBasePath();
+        if (base) {
+            char path[2048];
+            snprintf(path, sizeof(path),
+                    "%s../Resources/music.sf2", base);
+
+            Mix_SetSoundFonts(path);
+            SDL_free(base);
+        }
+#endif
         log_message("SDLA: soundfonts '%s'\n", Mix_GetSoundFonts());
         audio_initialized = true;
         {
