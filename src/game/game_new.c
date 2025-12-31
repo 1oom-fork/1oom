@@ -925,20 +925,6 @@ static void game_generate_relation_etc(struct game_s *g)
     }
 }
 
-static bool game_generate_research_check_field(uint8_t (*rl)[TECH_TIER_NUM][3], tech_field_t field, const char *items)
-{
-    for (int tier = 0; tier < TECH_TIER_NUM; ++tier) {
-        for (int l = 0; l < 3; ++l) {
-            uint8_t v;
-            v = rl[field][tier][l];
-            if (v && strchr(items, v)) {
-                return true;
-            }
-        }
-    }
-    return false;
-}
-
 static void game_generate_research(struct game_s *g, const uint8_t *rflag)
 {
     bool flag_got_essentials = false;
@@ -967,14 +953,38 @@ static void game_generate_research(struct game_s *g, const uint8_t *rflag)
                             flag_skip = false;
                             if (g->eto[pli].race == RACE_SILICOID) {
                                 ++ti;
-                                if ((field == TECH_FIELD_PLANETOLOGY)
-                                  && strchr("\x10\x16\x03\x06\x09\x0c\x0f\x12\x05\x0d\x22", ti)
-                                ) {
-                                    flag_skip = true;
-                                } else if ((field == TECH_FIELD_CONSTRUCTION)
-                                  && strchr("\x05\x0f\x19\x23\x2d", ti)
-                                ) {
-                                    flag_skip = true;
+                                if (field == TECH_FIELD_PLANETOLOGY) {
+                                    tech_plan_t tech_id = ti;
+                                    switch (tech_id) {
+                                    case TECH_PLAN_SOIL_ENRICHMENT:
+                                    case TECH_PLAN_ATMOSPHERIC_TERRAFORMING:
+                                    case TECH_PLAN_CONTROLLED_BARREN_ENVIRONMENT:
+                                    case TECH_PLAN_CONTROLLED_TUNDRA_ENVIRONMENT:
+                                    case TECH_PLAN_CONTROLLED_DEAD_ENVIRONMENT:
+                                    case TECH_PLAN_CONTROLLED_INFERNO_ENVIRONMENT:
+                                    case TECH_PLAN_CONTROLLED_TOXIC_ENVIRONMENT:
+                                    case TECH_PLAN_CONTROLLED_RADIATED_ENVIRONMENT:
+                                    case TECH_PLAN_IMPROVED_ECO_RESTORATION:
+                                    case TECH_PLAN_ENHANCED_ECO_RESTORATION:
+                                    case TECH_PLAN_COMPLETE_ECO_RESTORATION:
+                                        flag_skip = true;
+                                        break;
+                                    default:
+                                        break;
+                                    }
+                                } else if (field == TECH_FIELD_CONSTRUCTION) {
+                                    tech_cons_t tech_id = ti;
+                                    switch(tech_id) {
+                                    case TECH_CONS_REDUCED_INDUSTRIAL_WASTE_80:
+                                    case TECH_CONS_REDUCED_INDUSTRIAL_WASTE_60:
+                                    case TECH_CONS_REDUCED_INDUSTRIAL_WASTE_40:
+                                    case TECH_CONS_REDUCED_INDUSTRIAL_WASTE_20:
+                                    case TECH_CONS_INDUSTRIAL_WASTE_ELIMINATION:
+                                        flag_skip = true;
+                                        break;
+                                    default:
+                                        break;
+                                    }
                                 }
                                 --ti;
                             }
@@ -1001,22 +1011,93 @@ static void game_generate_research(struct game_s *g, const uint8_t *rflag)
                     }
                 }
                 if (field == TECH_FIELD_COMPUTER) {
-                    if (!game_generate_research_check_field(rl, field, "\x08\x12\x1c\x26\x30")) {
+                    bool flag_ok = false;
+                    for (int tier = 0; tier < TECH_TIER_NUM; ++tier) {
+                        for (int l = 0; l < 3; ++l) {
+                            tech_comp_t v;
+                            v = rl[field][tier][l];
+                            switch(v) {
+                            case TECH_COMP_IMPROVED_ROBOTIC_CONTROLS_III:
+                            case TECH_COMP_IMPROVED_ROBOTIC_CONTROLS_IV:
+                            case TECH_COMP_IMPROVED_ROBOTIC_CONTROLS_V:
+                            case TECH_COMP_IMPROVED_ROBOTIC_CONTROLS_VI:
+                            case TECH_COMP_IMPROVED_ROBOTIC_CONTROLS_VII:
+                                flag_ok = true;
+                                break;
+                            default:
+                                break;
+                            }
+                        }
+                    }
+                    if (!flag_ok) {
                         flag_got_essentials = false;
                     }
                 }
                 if (field == TECH_FIELD_PROPULSION) {
-                    if (!game_generate_research_check_field(rl, field, "\x03\x05")) {
+                    bool flag_ok = false;
+                    for (int tier = 0; tier < TECH_TIER_NUM; ++tier) {
+                        for (int l = 0; l < 3; ++l) {
+                            tech_prop_t v;
+                            v = rl[field][tier][l];
+                            switch(v) {
+                            case TECH_PROP_HYDROGEN_FUEL_CELLS:
+                            case TECH_PROP_DEUTERIUM_FUEL_CELLS:
+                                flag_ok = true;
+                                break;
+                            default:
+                                break;
+                            }
+                        }
+                    }
+                    if (!flag_ok) {
                         flag_got_essentials = false;
                     }
                 }
                 if (field == TECH_FIELD_PLANETOLOGY) {
-                    if (!game_generate_research_check_field(rl, field, "\x0c\x16\x20\x2a")) {
+                    bool flag_ok = false;
+                    for (int tier = 0; tier < TECH_TIER_NUM; ++tier) {
+                        for (int l = 0; l < 3; ++l) {
+                            tech_plan_t v;
+                            v = rl[field][tier][l];
+                            switch(v) {
+                            case TECH_PLAN_CONTROLLED_INFERNO_ENVIRONMENT:
+                            case TECH_PLAN_ATMOSPHERIC_TERRAFORMING:
+                            case TECH_PLAN_IMPROVED_TERRAFORMING__60:
+                            case TECH_PLAN_ADVANCED_CLONING:
+                                flag_ok = true;
+                                break;
+                            default:
+                                break;
+                            }
+                        }
+                    }
+                    if (!flag_ok) {
                         flag_got_essentials = false;
                     }
                 }
                 if (field == TECH_FIELD_WEAPON) {
-                    if (!game_generate_research_check_field(rl, field, "\x04\x08\x0b\x12\x1b\x22\x29\x2c")) {
+                    bool flag_ok = false;
+                    for (int tier = 0; tier < TECH_TIER_NUM; ++tier) {
+                        for (int l = 0; l < 3; ++l) {
+                            tech_weap_t v;
+                            v = rl[field][tier][l];
+                            switch(v) {
+                            case TECH_WEAP_HYPER_V_ROCKETS:
+                            case TECH_WEAP_HYPER_X_ROCKETS:
+                            case TECH_WEAP_SCATTER_PACK_V_ROCKETS:
+                            case TECH_WEAP_STINGER_MISSILES:
+                            case TECH_WEAP_SCATTER_PACK_VII_MISSILES:
+                            case TECH_WEAP_HERCULAR_MISSILES:
+                            case TECH_WEAP_ZEON_MISSILES:
+                            case TECH_WEAP_SCATTER_PACK_X_MISSILES:
+                                flag_ok = true;
+                                break;
+                            default:
+                                break;
+                            }
+                        }
+                    }
+                    if (!flag_ok) {
                         flag_got_essentials = false;
                     }
                 }

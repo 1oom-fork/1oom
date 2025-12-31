@@ -73,13 +73,16 @@ void game_update_maint_costs(struct game_s *g)
         }
         totalcost = totalcost / 50;
         SETMIN(totalcost, game_num_max_ship_maint);
+        for (planet_id_t i = PLANET_0; i < g->galaxy_stars; ++i) {
+            const planet_t *p = &(g->planet[i]);
+            if (p->have_stargate && (p->owner == pi)) {
+                totalcost += 100;
+            }
+        }
         bases = 0;
         for (planet_id_t i = PLANET_0; i < g->galaxy_stars; ++i) {
             const planet_t *p = &(g->planet[i]);
             if (p->owner == pi) {
-                if (p->have_stargate != 0) {
-                    totalcost += 100;
-                }
                 bases += p->missile_bases;
             }
         }
