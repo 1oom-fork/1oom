@@ -317,12 +317,12 @@ void game_update_tech_util(struct game_s *g)
         if (e->race == RACE_SILICOID) {
             e->have_colony_for = PLANET_TYPE_RADIATED;
         }
-        e->have_adv_soil_enrich = BOOLVEC_TBL_IS1(tbl_techcompl, TECH_FIELD_PLANETOLOGY, 30);
-        e->have_atmos_terra = BOOLVEC_TBL_IS1(tbl_techcompl, TECH_FIELD_PLANETOLOGY, 22);
-        e->have_soil_enrich = BOOLVEC_TBL_IS1(tbl_techcompl, TECH_FIELD_PLANETOLOGY, 16);
-        if (BOOLVEC_TBL_IS1(tbl_techcompl, TECH_FIELD_PLANETOLOGY, 42)) {
+        e->have_adv_soil_enrich = BOOLVEC_TBL_IS1(tbl_techcompl, TECH_FIELD_PLANETOLOGY, TECH_PLAN_ADVANCED_SOIL_ENRICHMENT);
+        e->have_atmos_terra = BOOLVEC_TBL_IS1(tbl_techcompl, TECH_FIELD_PLANETOLOGY, TECH_PLAN_ATMOSPHERIC_TERRAFORMING);
+        e->have_soil_enrich = BOOLVEC_TBL_IS1(tbl_techcompl, TECH_FIELD_PLANETOLOGY, TECH_PLAN_SOIL_ENRICHMENT);
+        if (BOOLVEC_TBL_IS1(tbl_techcompl, TECH_FIELD_PLANETOLOGY, TECH_PLAN_ADVANCED_CLONING)) {
             e->inc_pop_cost = 5;
-        } else if (BOOLVEC_TBL_IS1(tbl_techcompl, TECH_FIELD_PLANETOLOGY, 21)) {
+        } else if (BOOLVEC_TBL_IS1(tbl_techcompl, TECH_FIELD_PLANETOLOGY, TECH_PLAN_CLONING)) {
             e->inc_pop_cost = 10;
         } else {
             e->inc_pop_cost = 20;
@@ -345,56 +345,56 @@ void game_update_tech_util(struct game_s *g)
             b = 2;
         }
         e->terraform_cost_per_inc = b;
-        e->have_combat_transporter = BOOLVEC_TBL_IS1(tbl_techcompl, TECH_FIELD_PROPULSION, 45);
+        e->have_combat_transporter = BOOLVEC_TBL_IS1(tbl_techcompl, TECH_FIELD_PROPULSION, TECH_PROP_COMBAT_TRANSPORTERS);
         b = 2;
-        if (BOOLVEC_TBL_IS1(tbl_techcompl, TECH_FIELD_PLANETOLOGY, 5)) {
+        if (BOOLVEC_TBL_IS1(tbl_techcompl, TECH_FIELD_PLANETOLOGY, TECH_PLAN_IMPROVED_ECO_RESTORATION)) {
             b = 3;
         }
-        if (BOOLVEC_TBL_IS1(tbl_techcompl, TECH_FIELD_PLANETOLOGY, 13)) {
+        if (BOOLVEC_TBL_IS1(tbl_techcompl, TECH_FIELD_PLANETOLOGY, TECH_PLAN_ENHANCED_ECO_RESTORATION)) {
             b = 5;
         }
-        if (BOOLVEC_TBL_IS1(tbl_techcompl, TECH_FIELD_PLANETOLOGY, 24)) {
+        if (BOOLVEC_TBL_IS1(tbl_techcompl, TECH_FIELD_PLANETOLOGY, TECH_PLAN_ADVANCED_ECO_RESTORATION)) {
             b = 10;
         }
-        if (BOOLVEC_TBL_IS1(tbl_techcompl, TECH_FIELD_PLANETOLOGY, 34)) {
+        if (BOOLVEC_TBL_IS1(tbl_techcompl, TECH_FIELD_PLANETOLOGY, TECH_PLAN_COMPLETE_ECO_RESTORATION)) {
             b = 20;
         }
         e->have_eco_restoration_n = b;
-        if (BOOLVEC_TBL_IS1(tbl_techcompl, TECH_FIELD_COMPUTER, 23)) {
+        if (BOOLVEC_TBL_IS1(tbl_techcompl, TECH_FIELD_COMPUTER, TECH_COMP_ADVANCED_SPACE_SCANNER)) {
             b = 9;
-        } else if (BOOLVEC_TBL_IS1(tbl_techcompl, TECH_FIELD_COMPUTER, 13)) {
+        } else if (BOOLVEC_TBL_IS1(tbl_techcompl, TECH_FIELD_COMPUTER, TECH_COMP_IMPROVED_SPACE_SCANNER)) {
             b = 7;
-        } else if (BOOLVEC_TBL_IS1(tbl_techcompl, TECH_FIELD_COMPUTER, 4)) {
+        } else if (BOOLVEC_TBL_IS1(tbl_techcompl, TECH_FIELD_COMPUTER, TECH_COMP_DEEP_SPACE_SCANNER)) {
             b = 5;
         } else {
             b = 3;
         }
         e->scanner_range = b;
-        e->have_stargates = BOOLVEC_TBL_IS1(tbl_techcompl, TECH_FIELD_PROPULSION, 27);
-        e->have_hyperspace_comm = BOOLVEC_TBL_IS1(tbl_techcompl, TECH_FIELD_COMPUTER, 34);
-        e->have_ia_scanner = BOOLVEC_TBL_IS1(tbl_techcompl, TECH_FIELD_COMPUTER, 13) || BOOLVEC_TBL_IS1(tbl_techcompl, TECH_FIELD_COMPUTER, 23);
-        e->have_adv_scanner = BOOLVEC_TBL_IS1(tbl_techcompl, TECH_FIELD_COMPUTER, 23);
+        e->have_stargates = BOOLVEC_TBL_IS1(tbl_techcompl, TECH_FIELD_PROPULSION, TECH_PROP_INTERGALACTIC_STAR_GATES);
+        e->have_hyperspace_comm = BOOLVEC_TBL_IS1(tbl_techcompl, TECH_FIELD_COMPUTER, TECH_COMP_HYPERSPACE_COMMUNICATIONS);
+        e->have_ia_scanner = BOOLVEC_TBL_IS1(tbl_techcompl, TECH_FIELD_COMPUTER, TECH_COMP_IMPROVED_SPACE_SCANNER) || BOOLVEC_TBL_IS1(tbl_techcompl, TECH_FIELD_COMPUTER, TECH_COMP_ADVANCED_SPACE_SCANNER);
+        e->have_adv_scanner = BOOLVEC_TBL_IS1(tbl_techcompl, TECH_FIELD_COMPUTER, TECH_COMP_ADVANCED_SPACE_SCANNER);
         tech_i = find_best_tech_type(BOOLVEC_TBL_PTRPARAMM(tbl_techcompl, TECH_FIELD_COMPUTER), 8, 10, 50);
         b = (tech_i > 0) ? ((tech_i + 12) / 10 + 1) : 2;
         if (e->race == RACE_MEKLAR) {
             b += 2;
         }
         e->colonist_oper_factories = b;
-        if (BOOLVEC_TBL_IS1(tbl_techcompl, TECH_FIELD_CONSTRUCTION, 38)) {
+        if (BOOLVEC_TBL_IS1(tbl_techcompl, TECH_FIELD_CONSTRUCTION, TECH_CONS_IMPROVED_INDUSTRIAL_TECH_2)) {
             b = 2;
-        } else if (BOOLVEC_TBL_IS1(tbl_techcompl, TECH_FIELD_CONSTRUCTION, 33)) {
+        } else if (BOOLVEC_TBL_IS1(tbl_techcompl, TECH_FIELD_CONSTRUCTION, TECH_CONS_IMPROVED_INDUSTRIAL_TECH_3)) {
             b = 3;
-        } else if (BOOLVEC_TBL_IS1(tbl_techcompl, TECH_FIELD_CONSTRUCTION, 28)) {
+        } else if (BOOLVEC_TBL_IS1(tbl_techcompl, TECH_FIELD_CONSTRUCTION, TECH_CONS_IMPROVED_INDUSTRIAL_TECH_4)) {
             b = 4;
-        } else if (BOOLVEC_TBL_IS1(tbl_techcompl, TECH_FIELD_CONSTRUCTION, 23)) {
+        } else if (BOOLVEC_TBL_IS1(tbl_techcompl, TECH_FIELD_CONSTRUCTION, TECH_CONS_IMPROVED_INDUSTRIAL_TECH_5)) {
             b = 5;
-        } else if (BOOLVEC_TBL_IS1(tbl_techcompl, TECH_FIELD_CONSTRUCTION, 18)) {
+        } else if (BOOLVEC_TBL_IS1(tbl_techcompl, TECH_FIELD_CONSTRUCTION, TECH_CONS_IMPROVED_INDUSTRIAL_TECH_6)) {
             b = 6;
-        } else if (BOOLVEC_TBL_IS1(tbl_techcompl, TECH_FIELD_CONSTRUCTION, 13)) {
+        } else if (BOOLVEC_TBL_IS1(tbl_techcompl, TECH_FIELD_CONSTRUCTION, TECH_CONS_IMPROVED_INDUSTRIAL_TECH_7)) {
             b = 7;
-        } else if (BOOLVEC_TBL_IS1(tbl_techcompl, TECH_FIELD_CONSTRUCTION, 8)) {
+        } else if (BOOLVEC_TBL_IS1(tbl_techcompl, TECH_FIELD_CONSTRUCTION, TECH_CONS_IMPROVED_INDUSTRIAL_TECH_8)) {
             b = 8;
-        } else if (BOOLVEC_TBL_IS1(tbl_techcompl, TECH_FIELD_CONSTRUCTION, 3)) {
+        } else if (BOOLVEC_TBL_IS1(tbl_techcompl, TECH_FIELD_CONSTRUCTION, TECH_CONS_IMPROVED_INDUSTRIAL_TECH_9)) {
             b = 9;
         } else {
             b = 10;
@@ -404,35 +404,35 @@ void game_update_tech_util(struct game_s *g)
             b = (b * e->colonist_oper_factories) / 2;
         }
         e->factory_adj_cost = b;
-        if (BOOLVEC_TBL_IS1(tbl_techcompl, TECH_FIELD_CONSTRUCTION, 45)) {
+        if (BOOLVEC_TBL_IS1(tbl_techcompl, TECH_FIELD_CONSTRUCTION, TECH_CONS_INDUSTRIAL_WASTE_ELIMINATION)) {
             b = 0;
-        } else if (BOOLVEC_TBL_IS1(tbl_techcompl, TECH_FIELD_CONSTRUCTION, 35)) {
+        } else if (BOOLVEC_TBL_IS1(tbl_techcompl, TECH_FIELD_CONSTRUCTION, TECH_CONS_REDUCED_INDUSTRIAL_WASTE_20)) {
             b = 2;
-        } else if (BOOLVEC_TBL_IS1(tbl_techcompl, TECH_FIELD_CONSTRUCTION, 25)) {
+        } else if (BOOLVEC_TBL_IS1(tbl_techcompl, TECH_FIELD_CONSTRUCTION, TECH_CONS_REDUCED_INDUSTRIAL_WASTE_40)) {
             b = 4;
-        } else if (BOOLVEC_TBL_IS1(tbl_techcompl, TECH_FIELD_CONSTRUCTION, 15)) {
+        } else if (BOOLVEC_TBL_IS1(tbl_techcompl, TECH_FIELD_CONSTRUCTION, TECH_CONS_REDUCED_INDUSTRIAL_WASTE_60)) {
             b = 6;
-        } else if (BOOLVEC_TBL_IS1(tbl_techcompl, TECH_FIELD_CONSTRUCTION, 5)) {
+        } else if (BOOLVEC_TBL_IS1(tbl_techcompl, TECH_FIELD_CONSTRUCTION, TECH_CONS_REDUCED_INDUSTRIAL_WASTE_80)) {
             b = 8;
         } else {
             b = 10;
         }
         e->ind_waste_scale = b;
-        if (BOOLVEC_TBL_IS1(tbl_techcompl, TECH_FIELD_PROPULSION, 41)) {
+        if (BOOLVEC_TBL_IS1(tbl_techcompl, TECH_FIELD_PROPULSION, TECH_PROP_THORIUM_CELLS)) {
             b = 30;
-        } else if (BOOLVEC_TBL_IS1(tbl_techcompl, TECH_FIELD_PROPULSION, 29)) {
+        } else if (BOOLVEC_TBL_IS1(tbl_techcompl, TECH_FIELD_PROPULSION, TECH_PROP_TRILITHIUM_CRYSTALS)) {
             b = 10;
-        } else if (BOOLVEC_TBL_IS1(tbl_techcompl, TECH_FIELD_PROPULSION, 23)) {
+        } else if (BOOLVEC_TBL_IS1(tbl_techcompl, TECH_FIELD_PROPULSION, TECH_PROP_REAJAX_II_FUEL_CELLS)) {
             b = 9;
-        } else if (BOOLVEC_TBL_IS1(tbl_techcompl, TECH_FIELD_PROPULSION, 19)) {
+        } else if (BOOLVEC_TBL_IS1(tbl_techcompl, TECH_FIELD_PROPULSION, TECH_PROP_URIDIUM_FUEL_CELLS)) {
             b = 8;
-        } else if (BOOLVEC_TBL_IS1(tbl_techcompl, TECH_FIELD_PROPULSION, 14)) {
+        } else if (BOOLVEC_TBL_IS1(tbl_techcompl, TECH_FIELD_PROPULSION, TECH_PROP_DOTOMITE_CRYSTALS)) {
             b = 7;
-        } else if (BOOLVEC_TBL_IS1(tbl_techcompl, TECH_FIELD_PROPULSION, 9)) {
+        } else if (BOOLVEC_TBL_IS1(tbl_techcompl, TECH_FIELD_PROPULSION, TECH_PROP_IRRIDIUM_FUEL_CELLS)) {
             b = 6;
-        } else if (BOOLVEC_TBL_IS1(tbl_techcompl, TECH_FIELD_PROPULSION, 5)) {
+        } else if (BOOLVEC_TBL_IS1(tbl_techcompl, TECH_FIELD_PROPULSION, TECH_PROP_DEUTERIUM_FUEL_CELLS)) {
             b = 5;
-        } else if (BOOLVEC_TBL_IS1(tbl_techcompl, TECH_FIELD_PROPULSION, 3)) {
+        } else if (BOOLVEC_TBL_IS1(tbl_techcompl, TECH_FIELD_PROPULSION, TECH_PROP_HYDROGEN_FUEL_CELLS)) {
             b = 4;
         } else {
             b = 3;
@@ -452,10 +452,10 @@ void game_update_tech_util(struct game_s *g)
             }
         }
         e->have_engine = b;
-        e->have_sub_space_int = BOOLVEC_TBL_IS1(tbl_techcompl, TECH_FIELD_PROPULSION, 43);
-        if (BOOLVEC_TBL_IS1(tbl_techcompl, TECH_FIELD_PLANETOLOGY, 36)) {
+        e->have_sub_space_int = BOOLVEC_TBL_IS1(tbl_techcompl, TECH_FIELD_PROPULSION, TECH_PROP_SUB_SPACE_INTERDICTOR);
+        if (BOOLVEC_TBL_IS1(tbl_techcompl, TECH_FIELD_PLANETOLOGY, TECH_PLAN_UNIVERSAL_ANTIDOTE)) {
             b = 2;
-        } else if (BOOLVEC_TBL_IS1(tbl_techcompl, TECH_FIELD_PLANETOLOGY, 17)) {
+        } else if (BOOLVEC_TBL_IS1(tbl_techcompl, TECH_FIELD_PLANETOLOGY, TECH_PLAN_BIO_TOXIN_ANTIDOTE)) {
             b = 1;
         } else {
             b = 0;
