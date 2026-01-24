@@ -11,7 +11,7 @@ struct election_s;
 struct game_ai_s {
     char const * const name;
     void (*turn_p1)(struct game_s *g);
-    void (*turn_p2)(struct game_s *g);
+    void (*turn_p2)(struct game_s *g, player_id_t pi);
     void (*turn_p3)(struct game_s *g);
     bool (*battle_ai_ai_resolve)(struct battle_s *bt); /* true if right side won */
     void (*battle_ai_turn)(struct battle_s *bt);
