@@ -139,7 +139,7 @@ static void game_turn_update_mood_blunder(struct game_s *g)
     }
 }
 
-static void game_ai_classic_turn_p2(struct game_s *g)
+static void game_turn_ai_design_ships(struct game_s *g)
 {
     for (player_id_t pi = PLAYER_0; pi < g->players; ++pi) {
         if (IS_HUMAN(g, pi)) {
@@ -1761,7 +1761,7 @@ struct game_end_s game_turn_process(struct game_s *g)
     game_turn_update_mood_blunder(g);
     game_update_have_reserve_fuel(g);
     game_ai->turn_p1(g);
-    game_ai_classic_turn_p2(g);
+    game_turn_ai_design_ships(g);
     game_update_have_reserve_fuel(g);
     game_ai->turn_p3(g);
     game_turn_init_z_finished(g);
