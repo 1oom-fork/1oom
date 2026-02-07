@@ -290,7 +290,7 @@ static void game_battle_missile_hit(struct battle_s *bt, int missile_i, int targ
         damage /= damagediv;
         damage -= b->absorb / (w->halveshield ? 2 : 1);
         damage *= w->damagemul;
-        if ((b->sbmask & (1 << SHIP_SPECIAL_BOOL_DISP)) && (rnd_1_n(100, &g->seed) < 35)) {
+        if (b->displacement && (rnd_1_n(100, &g->seed) < 35)) {
             damage = 0;
         }
     }
@@ -529,7 +529,7 @@ static void game_battle_with_human_init(struct battle_s *bt)
 static int game_battle_get_priority(const struct battle_item_s *b, race_t race)
 {
     int prio = b->complevel + b->man - b->unman;
-    if (b->sbmask & (1 << SHIP_SPECIAL_BOOL_SCANNER)) {
+    if (b->scanner) {
         prio += 3;
     }
     if (b->subspace > 0) {
@@ -1693,7 +1693,7 @@ bool game_battle_attack(struct battle_s *bt, battle_item_id_t attacker_i, battle
                                 dmg -= bd->absorb / (w->halveshield ? 2 : 1);
                                 dmg *= w->damagemul;
                                 dmg *= damagemul2;
-                                if ((bd->sbmask & (1 << SHIP_SPECIAL_BOOL_DISP)) && (rnd_1_n(100, &bt->g->seed) < 35)) {
+                                if (bd->displacement && (rnd_1_n(100, &bt->g->seed) < 35)) {
                                     dmg = 0;
                                 }
                             }
