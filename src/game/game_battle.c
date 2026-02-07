@@ -23,7 +23,7 @@
 
 #define PARTY_NUM   ((int)PLAYER_NUM + (int)MONSTER_NUM)
 #define COPY_PROP(bi_, sp_, xyz_) bi_->xyz_ = sp->xyz_
-#define COPY_BOOL_TO_INT(b_, i_, f_) b_->i_ = (b_->sbmask & (1 << SHIP_SPECIAL_BOOL_##f_)) ? 1 : 0
+#define COPY_BOOL_TO_INT(b_, sp_, i_, f_) b_->i_ = (sp_->sbmask & (1 << SHIP_SPECIAL_BOOL_##f_)) ? 1 : 0
 
 /* -------------------------------------------------------------------------- */
 
@@ -36,12 +36,21 @@ static void game_battle_item_from_parsed(struct battle_item_s *b, const shippars
         b->special[i] = sp->special[i];
     }
     COPY_PROP(b, sp, repair);
+    COPY_BOOL_TO_INT(b, sp, stasis, STASIS);
     COPY_PROP(b, sp, misshield);
+    COPY_BOOL_TO_INT(b, sp, cloak, CLOAK);
+    COPY_BOOL_TO_INT(b, sp, subspace, SUBSPACE);
     COPY_PROP(b, sp, pulsar);
     COPY_PROP(b, sp, stream);
+    COPY_BOOL_TO_INT(b, sp, technull, TECHNULL);
+    COPY_BOOL_TO_INT(b, sp, blackhole, BLACKHOLE);
     COPY_PROP(b, sp, pshield);
-    COPY_PROP(b, sp, sbmask);
+    COPY_BOOL_TO_INT(b, sp, repulsor, REPULSOR);
+    COPY_BOOL_TO_INT(b, sp, scanner, SCANNER);
     COPY_PROP(b, sp, extrarange);
+    COPY_BOOL_TO_INT(b, sp, warpdis, WARPDIS);
+    COPY_BOOL_TO_INT(b, sp, oracle, ORACLE);
+    COPY_BOOL_TO_INT(b, sp, displacement, DISP);
     COPY_PROP(b, sp, num);
     COPY_PROP(b, sp, complevel);
     COPY_PROP(b, sp, defense);
@@ -54,13 +63,6 @@ static void game_battle_item_from_parsed(struct battle_item_s *b, const shippars
         b->wpn[i].t = sp->wpnt[i];
         b->wpn[i].n = sp->wpnn[i];
     }
-    COPY_BOOL_TO_INT(b, stasis, STASIS);
-    COPY_BOOL_TO_INT(b, subspace, SUBSPACE);
-    COPY_BOOL_TO_INT(b, blackhole, BLACKHOLE);
-    COPY_BOOL_TO_INT(b, warpdis, WARPDIS);
-    COPY_BOOL_TO_INT(b, technull, TECHNULL);
-    COPY_BOOL_TO_INT(b, repulsor, REPULSOR);
-    COPY_BOOL_TO_INT(b, cloak, CLOAK);
 }
 
 static void game_battle_item_add(struct battle_s *bt, const shipparsed_t *sp, battle_side_i_t side)
@@ -97,7 +99,7 @@ static void game_battle_item_add(struct battle_s *bt, const shipparsed_t *sp, ba
     }
     if (side != SIDE_NONE/*planet*/) {
         game_battle_item_from_parsed(b, sp);
-        if (b->sbmask & (1 << SHIP_SPECIAL_BOOL_SCANNER)) {
+        if (b->scanner) {
             bt->s[side].flag_have_scan = true;
         }
         b->side = side;
@@ -216,7 +218,7 @@ int game_battle_get_absorbdiv(const struct battle_item_s *b, weapon_t wpnt)
 {
     const struct shiptech_weap_s *w = &(tbl_shiptech_weap[wpnt]);
     int v;
-    v = (b->sbmask & (1 << SHIP_SPECIAL_BOOL_ORACLE)) ? 2 : 1;
+    v = b->oracle ? 2 : 1;
     v += w->halveshield ? 1 : 0;
     if (v == 3) {
         v = 4;
