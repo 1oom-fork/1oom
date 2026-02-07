@@ -986,7 +986,7 @@ void ui_battle_draw_item(const struct battle_s *bt, int itemi, int x, int y)
     gfx_aux_overlay(1, 1, &ui_data.aux.btemp, &ui_data.aux.ship_p1);
     {
         int xa = x, ya = y;
-        if (b->sbmask & (1 << SHIP_SPECIAL_BOOL_DISP)) {
+        if (b->displacement) {
             xa += xoff;
             ya += yoff;
         }
