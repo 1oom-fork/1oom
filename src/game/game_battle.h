@@ -45,7 +45,9 @@ struct battle_item_s {
     int8_t blackhole;
     int8_t technull;
     int8_t repulsor;
-    uint16_t sbmask;
+    int8_t scanner;
+    int8_t oracle;
+    int8_t displacement;
     uint8_t retreat;
     int8_t sx;  /* -1, 0..BATTLE_AREA_W - 1 */
     int8_t sy;  /* -1, 0..BATTLE_AREA_H - 1 */
