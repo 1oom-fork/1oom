@@ -151,6 +151,7 @@ void game_apply_rules(void)
     if (game_opt_fix_starting_ships) {
         game_num_fix_starting_ships();
     }
+    game_num_fix_bugs_1_3a();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -621,7 +622,6 @@ const struct cfg_items_s game_cfg_items[] = {
     CFG_ITEM_BOOL("rules_ai_first_tech_cost_fix", &game_num_ai_first_tech_cost_fix),
     CFG_ITEM_BOOL("rules_doom_stack_fix", &game_num_doom_stack_fix),
     CFG_ITEM_BOOL("rules_bt_no_tohit_acc", &game_num_bt_no_tohit_acc),
-    CFG_ITEM_BOOL("rules_bt_oracle_fix", &game_num_bt_oracle_fix),
     CFG_ITEM_BOOL("rules_bt_precap_tohit", &game_num_bt_precap_tohit),
     CFG_ITEM_BOOL("rules_bt_wait_no_reload", &game_num_bt_wait_no_reload),
     CFG_ITEM_BOOL("rules_deterministic_rng", &game_num_deterministic),
@@ -637,13 +637,9 @@ const struct cfg_items_s game_cfg_items[] = {
     CFG_ITEM_BOOL("rules_cond_switch_to_ind_fix", &game_num_cond_switch_to_ind_fix),
     CFG_ITEM_BOOL("rules_waste_adjust_fix", &game_num_waste_adjust_fix),
     CFG_ITEM_BOOL("rules_orbital_bio_fix", &game_num_orbital_bio_fix),
-    CFG_ITEM_BOOL("rules_orbital_weap_any", &game_num_orbital_weap_any),
     CFG_ITEM_BOOL("rules_orbital_weap_4", &game_num_orbital_weap_4),
-    CFG_ITEM_BOOL("rules_orbital_torpedo", &game_num_orbital_torpedo),
     CFG_ITEM_BOOL("rules_orbital_comp_fix", &game_num_orbital_comp_fix),
-    CFG_ITEM_BOOL("rules_extended_reloc_range", &game_num_extended_reloc_range),
     CFG_ITEM_BOOL("rules_retreat_redir_fix", &game_num_retreat_redir_fix),
-    CFG_ITEM_BOOL("rules_ship_scanner_fix", &game_num_ship_scanner_fix),
     CFG_ITEM_BOOL("rules_ship_stargate_redir_fix", &game_num_stargate_redir_fix),
     CFG_ITEM_BOOL("rules_ship_trans_redir_fix", &game_num_trans_redir_fix),
     CFG_ITEM_BOOL("rules_soil_rounding_fix", &game_num_soil_rounding_fix),

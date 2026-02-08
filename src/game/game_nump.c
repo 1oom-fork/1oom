@@ -466,7 +466,6 @@ void game_num_fix_bugs(void)
 {
     game_num_ng_tech[RACE_SILICOID][TECH_FIELD_PLANETOLOGY][24] = 1;
     game_num_ng_tech[RACE_SILICOID][TECH_FIELD_PLANETOLOGY][30] = 1;
-    game_num_max_factories = 2700;
     game_num_accident_chk_factories = true;
     game_num_weapon_list_max = 64;
     game_num_aud_bounty_give = true;
@@ -475,6 +474,15 @@ void game_num_fix_bugs(void)
     game_num_combat_trans_fix = true;
     game_num_eco_slider_slack = 0;
     game_num_reset_tform_to_max = false;
+}
+
+void game_num_fix_bugs_1_3a(void)
+{
+    game_num_max_factories = 2700;
+    game_num_bt_oracle_fix = true;
+    game_num_orbital_weap_any = true;
+    game_num_orbital_torpedo = true;
+    game_num_ship_scanner_fix = true;
 }
 
 void game_num_fix_guardian_repair(void)

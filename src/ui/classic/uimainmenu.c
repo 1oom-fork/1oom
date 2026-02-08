@@ -439,7 +439,6 @@ static void main_menu_make_options_addons_page(struct main_menu_data_s *d)
 {
     d->set_item_dimensions = mm_options_set_item_dimensions;
     menu_make_bool(menu_allocate_item(), "UI Extra", &ui_extra_enabled, MOO_KEY_e);
-    menu_make_bool(menu_allocate_item(), "UI Fixbugs", &ui_fixbugs_enabled, MOO_KEY_f);
     menu_make_bool(menu_allocate_item(), "Combat Autoresolve", &ui_space_combat_autoresolve, MOO_KEY_v);
     menu_make_bool(menu_allocate_item(), "UI SM Ships", &ui_sm_ships_enabled, MOO_KEY_s);
     menu_make_bool(menu_allocate_item(), "Load Options Extra", &ui_load_opts_extra, MOO_KEY_o);
@@ -473,7 +472,6 @@ static void main_menu_make_options_starmap_page(struct main_menu_data_s *d)
 {
     d->set_item_dimensions = mm_options_set_item_dimensions;
     menu_make_bool(menu_allocate_item(), "Explicit Cursor Context", &ui_sm_explicit_cursor_context, MOO_KEY_c);
-    menu_make_bool(menu_allocate_item(), "No '?' Cursor", &ui_sm_no_question_mark_cursor, MOO_KEY_q);
     menu_make_bool(menu_allocate_item(), "Expanded Scroll", &ui_sm_expanded_scroll, MOO_KEY_e);
     menu_make_bool(menu_allocate_item(), "Mouseover Focus", &ui_sm_mouseover_focus, MOO_KEY_m);
     menu_make_bool(menu_allocate_item(), "Scroll by mouse", &ui_sm_mouse_scroll, MOO_KEY_s);
@@ -512,7 +510,6 @@ static void main_menu_make_options_rules_battle_page(struct main_menu_data_s *d)
 {
     d->set_item_dimensions = mm_options_set_item_dimensions;
     menu_make_bool(menu_allocate_item(), "No Tohit Accumulation", &game_num_bt_no_tohit_acc, MOO_KEY_UNKNOWN);
-    menu_make_bool(menu_allocate_item(), "Oracle Fix", &game_num_bt_oracle_fix, MOO_KEY_UNKNOWN);
     menu_make_bool(menu_allocate_item(), "Precap Tohit", &game_num_bt_precap_tohit, MOO_KEY_UNKNOWN);
     menu_make_bool(menu_allocate_item(), "Wait No Reload", &game_num_bt_wait_no_reload, MOO_KEY_UNKNOWN);
     menu_make_back(menu_allocate_item());
@@ -531,8 +528,6 @@ static void main_menu_make_options_rules_difficulty_page(struct main_menu_data_s
 static void main_menu_make_options_rules_fleet_behavior_page(struct main_menu_data_s *d)
 {
     d->set_item_dimensions = mm_options_set_item_dimensions;
-    menu_make_bool(menu_allocate_item(), "Extended Reloc Range", &game_num_extended_reloc_range, MOO_KEY_UNKNOWN);
-    menu_make_bool(menu_allocate_item(), "Ship Scanner Fix", &game_num_ship_scanner_fix, MOO_KEY_UNKNOWN);
     menu_make_bool(menu_allocate_item(), "Retreat Redirection Fix", &game_num_retreat_redir_fix, MOO_KEY_UNKNOWN);
     menu_make_bool(menu_allocate_item(), "Stargate Redirection Fix", &game_num_stargate_redir_fix, MOO_KEY_UNKNOWN);
     menu_make_bool(menu_allocate_item(), "Transport Redirection Fix", &game_num_trans_redir_fix, MOO_KEY_UNKNOWN);
@@ -551,9 +546,7 @@ static void main_menu_make_options_rules_orbital_bombardment_page(struct main_me
 {
     d->set_item_dimensions = mm_options_set_item_dimensions;
     menu_make_bool(menu_allocate_item(), "Bio Damage Fix", &game_num_orbital_bio_fix, MOO_KEY_UNKNOWN);
-    menu_make_bool(menu_allocate_item(), "Allow Any Weapon", &game_num_orbital_weap_any, MOO_KEY_UNKNOWN);
     menu_make_bool(menu_allocate_item(), "Allow Weapon 4", &game_num_orbital_weap_4, MOO_KEY_UNKNOWN);
-    menu_make_bool(menu_allocate_item(), "Torpedo Damage Fix", &game_num_orbital_torpedo, MOO_KEY_UNKNOWN);
     menu_make_bool(menu_allocate_item(), "Computer Bonus Fix", &game_num_orbital_comp_fix, MOO_KEY_UNKNOWN);
     menu_make_back(menu_allocate_item());
 }
