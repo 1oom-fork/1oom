@@ -12,7 +12,7 @@ struct game_aux_s;
 #define BATTLE_AREA_W 10
 #define BATTLE_AREA_H 8
 
-typedef enum { SIDE_L, SIDE_R, SIDE_NONE } battle_side_i_t;
+typedef enum { SIDE_L, SIDE_R, SIDE_NONE } battle_side_i_t; /* FIXME SIDE_NONE is -1 in MOO1 */
 
 struct battle_item_s {
     uint8_t *gfx;
