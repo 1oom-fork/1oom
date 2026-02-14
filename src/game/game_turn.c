@@ -310,6 +310,8 @@ static void game_turn_build_eco(struct game_s *g)
             {
                 int v;
                 v = game_get_pop_growth_max(g, i, p->max_pop3) + game_get_pop_growth_for_eco(g, i, ecoprod) + p->pop_tenths;
+                /* BUG? adds population tenths twice. The same thing happens in UI.
+                   This results in higher and nonlinear changes of growth value. */
                 p->pop += v / 10;
                 p->pop_tenths = v % 10;
             }
