@@ -270,6 +270,19 @@ void game_battle_prepare(struct battle_s *bt, int party_r, int party_l, planet_i
         memcpy(sp, &tbl_monster[mi][g->difficulty], sizeof(*sp));
         strncpy(sp->name, game_str_tbl_monsh_names[mi], SHIP_NAME_LEN);
         sp->name[SHIP_NAME_LEN - 1] = 0;
+        if (mi == MONSTER_GUARDIAN) {
+            if (g->difficulty == DIFFICULTY_HARD) {
+                sp->special[1] = SHIP_SPECIAL_ADV_DAMAGE_CONTROL;
+            } else if (g->difficulty == DIFFICULTY_HARD) {
+                sp->special[1] = SHIP_SPECIAL_AUTOMATED_REPAIR;
+            }
+            sp->sbmask |= (1 << SHIP_SPECIAL_BOOL_ORACLE);
+            if (g->difficulty == DIFFICULTY_HARD) {
+                sp->repair = 15;
+            } else if (g->difficulty == DIFFICULTY_HARD) {
+                sp->repair = 30;
+            }
+        }
         game_battle_item_add(bt, sp, SIDE_R);
         bt->s[SIDE_R].num_types = 1;
         /* BUG? these were uninitialized */
