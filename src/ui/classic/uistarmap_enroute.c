@@ -218,6 +218,7 @@ void ui_starmap_enroute(struct game_s *g, player_id_t active_player)
             ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
         } else if (oi1 == oi_accept) {
             ui_sound_play_sfx_24();
+            /* BUG Always true, but otherwise leads to undefined behavior. */
             if (p->within_frange[active_player] != 0) {
                 r->dest = g->planet_focus_i[active_player];
                 if ((d.en.can_move == ON_PLANET) && (r->x == p->x) && (r->y == p->y)) {
