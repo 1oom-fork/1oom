@@ -478,6 +478,7 @@ void game_num_fix_bugs(void)
 
 void game_num_fix_bugs_1_3a(void)
 {
+    game_num_ai_4_colony_curse_fix = true;
     game_num_max_factories = 2700;
     game_num_bt_oracle_fix = true;
     game_num_orbital_weap_any = true;

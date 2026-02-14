@@ -500,7 +500,6 @@ static void main_menu_make_options_rules_ai_page(struct main_menu_data_s *d)
 {
     d->set_item_dimensions = mm_options_set_item_dimensions;
     menu_make_bool(menu_allocate_item(), "Transport Range Fix", &game_num_ai_trans_range_fix, MOO_KEY_UNKNOWN);
-    menu_make_bool(menu_allocate_item(), "4th Colony Curse Fix", &game_num_ai_4_colony_curse_fix, MOO_KEY_UNKNOWN);
     menu_make_bool(menu_allocate_item(), "Doom Stack Fix", &game_num_doom_stack_fix, MOO_KEY_UNKNOWN);
     menu_make_bool(menu_allocate_item(), "First Tech Cost Fix", &game_num_ai_first_tech_cost_fix, MOO_KEY_UNKNOWN);
     menu_make_back(menu_allocate_item());
@@ -555,10 +554,8 @@ static void main_menu_make_options_rules_planetary_development_page(struct main_
 {
     d->set_item_dimensions = mm_options_set_item_dimensions;
     menu_make_bool(menu_allocate_item(), "Factory Cost Fix", &game_num_factory_cost_fix, MOO_KEY_UNKNOWN);
-    menu_make_bool(menu_allocate_item(), "First Tech Rp Fix", &game_num_first_tech_rp_fix, MOO_KEY_UNKNOWN);
     menu_make_bool(menu_allocate_item(), "Hidden Child Labor Fix", &game_num_hidden_child_labor_fix, MOO_KEY_UNKNOWN);
     menu_make_bool(menu_allocate_item(), "Leaving Transport Fix", &game_num_leaving_trans_fix, MOO_KEY_UNKNOWN);
-    menu_make_bool(menu_allocate_item(), "Population Tenths Fix", &game_num_pop_tenths_fix, MOO_KEY_UNKNOWN);
     menu_make_bool(menu_allocate_item(), "Soil Rounding Fix", &game_num_soil_rounding_fix, MOO_KEY_UNKNOWN);
     menu_make_bool(menu_allocate_item(), "Waste Calc Fix", &game_num_waste_calc_fix, MOO_KEY_UNKNOWN);
     menu_make_bool(menu_allocate_item(), "Colonized Factories Fix", &game_num_colonized_factories_fix, MOO_KEY_UNKNOWN);
