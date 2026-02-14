@@ -117,7 +117,7 @@ typedef struct planet_s {
     int16_t factories;
     uint16_t prod_after_maint;
     uint16_t total_prod;
-    int16_t slider[PLANET_SLIDER_NUM];
+    int16_t slider[PLANET_SLIDER_NUM]; /* FIXME uint16_t? */
     uint16_t slider_lock[PLANET_SLIDER_NUM];
     uint8_t buildship; /* 0..NUM_SHIPDESIGNS-1 or BUILDSHIP_STARGATE */
     uint8_t reloc; /* planet i to relocate produced ships (== planet's own index if no relocation) */
