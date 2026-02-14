@@ -83,7 +83,7 @@ static void ui_starmap_trans_draw_cb(void *vptr)
         }
         ui_draw_line_limit_ctbl(x0 + 6, y0 + 6, x1, y1, ctbl, 5, ui_data.starmap.line_anim_phase);
     }
-    if (d->from != g->planet_focus_i[d->api]) {
+    if (d->from != g->planet_focus_i[d->api]) { /* BUG: When selecting the departure planet, the slider are invisible */
         if (pt->within_frange[d->api] != 1) {
             int mindist = game_get_min_dist(g, d->api, g->planet_focus_i[d->api]);
             lbxfont_select_set_12_1(0, 0xe, 5, 0);
