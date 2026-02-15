@@ -145,9 +145,6 @@ void game_apply_rules(void)
     if (game_opt_fix_bugs) {
         game_num_fix_bugs();
     }
-    if (game_opt_fix_guardian_repair) {
-        game_num_fix_guardian_repair();
-    }
     if (game_opt_fix_starting_ships) {
         game_num_fix_starting_ships();
     }
@@ -643,7 +640,6 @@ const struct cfg_items_s game_cfg_items[] = {
     CFG_ITEM_BOOL("rules_waste_calc_fix", &game_num_waste_calc_fix),
     CFG_ITEM_BOOL("rules_ai_fleet_cheating_fix", &game_num_ai_fleet_cheating_fix),
     CFG_ITEM_BOOL("rules_fix_bugs", &game_opt_fix_bugs),
-    CFG_ITEM_BOOL("rules_fix_guardian_repair", &game_opt_fix_guardian_repair),
     CFG_ITEM_BOOL("rules_fix_starting_ships", &game_opt_fix_starting_ships),
     CFG_ITEM_END
 };

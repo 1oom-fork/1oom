@@ -149,7 +149,6 @@ typedef enum {
     MAIN_MENU_PAGE_OPTIONS_RULES_BATTLE,
     MAIN_MENU_PAGE_OPTIONS_RULES_DIFFICULTY,
     MAIN_MENU_PAGE_OPTIONS_RULES_FLEET_BEHAVIOR,
-    MAIN_MENU_PAGE_OPTIONS_RULES_MONSTER,
     MAIN_MENU_PAGE_OPTIONS_RULES_ORBITAL_BOMBARDMENT,
     MAIN_MENU_PAGE_OPTIONS_RULES_PLANETARY_DEVELOPMENT,
     MAIN_MENU_PAGE_OPTIONS_RULES_SLIDER_BEHAVIOR,
@@ -487,7 +486,6 @@ static void main_menu_make_options_rules_page(struct main_menu_data_s *d)
     menu_make_page(menu_allocate_item(), "AI Behavior", MAIN_MENU_PAGE_OPTIONS_RULES_AI, MOO_KEY_a);
     menu_make_page(menu_allocate_item(), "Difficulty Modifiers", MAIN_MENU_PAGE_OPTIONS_RULES_DIFFICULTY, MOO_KEY_d);
     menu_make_page(menu_allocate_item(), "Fleet Behavior", MAIN_MENU_PAGE_OPTIONS_RULES_FLEET_BEHAVIOR, MOO_KEY_f);
-    menu_make_page(menu_allocate_item(), "Monster", MAIN_MENU_PAGE_OPTIONS_RULES_MONSTER, MOO_KEY_m);
     menu_make_page(menu_allocate_item(), "Orbital Bombardment", MAIN_MENU_PAGE_OPTIONS_RULES_ORBITAL_BOMBARDMENT, MOO_KEY_o);
     menu_make_page(menu_allocate_item(), "Planetary Development", MAIN_MENU_PAGE_OPTIONS_RULES_PLANETARY_DEVELOPMENT, MOO_KEY_p);
     menu_make_page(menu_allocate_item(), "Slider Behavior", MAIN_MENU_PAGE_OPTIONS_RULES_SLIDER_BEHAVIOR, MOO_KEY_l);
@@ -527,17 +525,10 @@ static void main_menu_make_options_rules_difficulty_page(struct main_menu_data_s
 static void main_menu_make_options_rules_fleet_behavior_page(struct main_menu_data_s *d)
 {
     d->set_item_dimensions = mm_options_set_item_dimensions;
+    menu_make_bool(menu_allocate_item(), "Monster Rest Attack", &game_num_monster_rest_att, MOO_KEY_UNKNOWN);
     menu_make_bool(menu_allocate_item(), "Retreat Redirection Fix", &game_num_retreat_redir_fix, MOO_KEY_UNKNOWN);
     menu_make_bool(menu_allocate_item(), "Stargate Redirection Fix", &game_num_stargate_redir_fix, MOO_KEY_UNKNOWN);
     menu_make_bool(menu_allocate_item(), "Transport Redirection Fix", &game_num_trans_redir_fix, MOO_KEY_UNKNOWN);
-    menu_make_back(menu_allocate_item());
-}
-
-static void main_menu_make_options_rules_monster_page(struct main_menu_data_s *d)
-{
-    d->set_item_dimensions = mm_options_set_item_dimensions;
-    menu_make_bool(menu_allocate_item(), "Monster Rest Attack", &game_num_monster_rest_att, MOO_KEY_UNKNOWN);
-    menu_make_bool(menu_item_force_restart(menu_allocate_item()), "Guardian Repair Fix", &game_opt_fix_guardian_repair, MOO_KEY_UNKNOWN);
     menu_make_back(menu_allocate_item());
 }
 
@@ -650,9 +641,6 @@ static struct main_menu_page_s mm_pages[MAIN_MENU_PAGE_NUM] = {
     },
     {
         main_menu_make_options_rules_fleet_behavior_page,
-    },
-    {
-        main_menu_make_options_rules_monster_page,
     },
     {
         main_menu_make_options_rules_orbital_bombardment_page,

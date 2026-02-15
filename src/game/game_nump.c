@@ -459,7 +459,6 @@ static const struct numtbl_s *find_match(const char *numid, int i, int num)
 /* -------------------------------------------------------------------------- */
 
 bool game_opt_fix_bugs = false;
-bool game_opt_fix_guardian_repair = false;
 bool game_opt_fix_starting_ships = false;
 
 void game_num_fix_bugs(void)
@@ -484,10 +483,7 @@ void game_num_fix_bugs_1_3a(void)
     game_num_orbital_weap_any = true;
     game_num_orbital_torpedo = true;
     game_num_ship_scanner_fix = true;
-}
 
-void game_num_fix_guardian_repair(void)
-{
     tbl_monster[MONSTER_GUARDIAN][3].special[1] = 16;
     tbl_monster[MONSTER_GUARDIAN][4].special[1] = 26;
     tbl_monster[MONSTER_GUARDIAN][4].repair = 30;
