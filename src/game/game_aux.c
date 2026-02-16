@@ -66,9 +66,9 @@ int game_aux_init(struct game_aux_s *gaux, struct game_s *g)
     gaux->diplomat.msg = (const char *)(t + 4);
 
     data = t = lbxfile_item_get(LBXFILE_DIPLOMAT, 0, 0);
-    check_lbx_t5(data, "diplomat", DIPLOMAT_D0_NUM, 2);
+    check_lbx_t5(data, "diplomat", GAME_DIPLO_NUM, 2);
     t += 4;
-    for (int i = 0; i < DIPLOMAT_D0_NUM; ++i, t += 2) {
+    for (int i = 0; i < GAME_DIPLO_NUM; ++i, t += 2) {
         gaux->diplomat.d0[i] = GET_LE_16(t); /* all values < 0x10 */
     }
     lbxfile_item_release(LBXFILE_DIPLOMAT, data);
