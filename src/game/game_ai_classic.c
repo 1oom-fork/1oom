@@ -3288,14 +3288,14 @@ static void game_ai_classic_turn_diplo_p2_sub1(struct game_s *g, player_id_t p1,
     empiretechorbit_t *e2 = &(g->eto[p2]);
     int v, v4;
     if (!IN_CONTACT(g, p1, p2) || (e1->treaty[p2] >= TREATY_WAR)) { /* WASBUG? MOO1 also tests for "|| (e1->diplo_val == 0)" ; note the missing [p2] */
-        e1->diplo_type[p2] = 0;
+        e1->diplo_type[p2] = GAME_DIPLO_NONE;
         return;
     }
     if (game_fleet_any_dest_player(g, p2, p1)) {
-        e1->diplo_type[p2] = 0;
+        e1->diplo_type[p2] = GAME_DIPLO_NONE;
         return;
     }
-    if ((e1->diplo_type[p2] != 0) && (!rnd_0_nm1(2, &g->seed))) {
+    if ((e1->diplo_type[p2] != GAME_DIPLO_NONE) && (!rnd_0_nm1(2, &g->seed))) {
         return;
     }
     v4 = 0;
@@ -3477,9 +3477,9 @@ static void game_ai_classic_turn_diplo_p2_sub2(struct game_s *g, player_id_t p1,
             }
         }
         e1->au_ally_attacker[p2] = pa;
-        e1->diplo_type[p2] = (pa == PLAYER_NONE) ? 0 : 76;
+        e1->diplo_type[p2] = (pa == PLAYER_NONE) ? GAME_DIPLO_NONE : 76;
     } else {
-        e1->diplo_type[p2] = 0;
+        e1->diplo_type[p2] = GAME_DIPLO_NONE;
     }
 }
 
@@ -3490,7 +3490,7 @@ static void game_ai_classic_turn_diplo_p2_sub3(struct game_s *g, player_id_t p1,
     int v;
     /* MOO1 implicitly assumes (p1 != p2) */
     if (!IN_CONTACT(g, p1, p2)) { /* WASBUG? MOO1 also tests for "|| (e1->diplo_val == 0)" ; note the missing [p2] */
-        e1->diplo_type[p2] = 0;
+        e1->diplo_type[p2] = GAME_DIPLO_NONE;
         return;
     }
     v = e1->trust[p2] + e1->relation1[p2] + ((e1->race == RACE_HUMAN) ? 50 : 0) + game_diplo_tbl_reldiff[e2->trait1];
@@ -3554,12 +3554,12 @@ static void game_ai_classic_turn_diplo_p2(struct game_s *g)
                 continue;
             }
             if (!IS_ALIVE(g, p2)) {
-                e1->diplo_type[p2] = 0;
+                e1->diplo_type[p2] = GAME_DIPLO_NONE;
                 continue;
             }
             if ((e1->treaty[p2] == TREATY_FINAL_WAR) || (e1->diplo_type[p2] == 59)) {
                 if (e1->diplo_type[p2] != 59) {
-                    e1->diplo_type[p2] = 0;
+                    e1->diplo_type[p2] = GAME_DIPLO_NONE;
                 }
             } else if (e1->have_met[p2] == 1) {
                 e1->have_met[p2] = 2;
@@ -3575,12 +3575,12 @@ static void game_ai_classic_turn_diplo_p2(struct game_s *g)
                 v2 = v + e1->trust[p2] + game_diplo_tbl_reldiff[e2->trait1];
                 dv2 = e1->diplo_val[p2] * 2;
                 if ((v2 <= -100) || (v <= -100)) {
-                    e1->diplo_type[p2] = 0;
+                    e1->diplo_type[p2] = GAME_DIPLO_NONE;
                 } else if (e1->diplo_val[p2] < 0) {
                     if ((e1->hatred[p2] > 0) || (rnd_1_n(100, &g->seed) < abs(dv2))) {
                         game_ai_classic_turn_diplo_p2_sub3(g, p1, p2);
                     } else {
-                        e1->diplo_type[p2] = 0;
+                        e1->diplo_type[p2] = GAME_DIPLO_NONE;
                     }
                 } else if ((e1->treaty[p2] == TREATY_WAR) && ((rnd_1_n(100, &g->seed) + 30) < e1->mood_peace[p2])) {
                     game_ai_classic_turn_diplo_p2_sub3(g, p1, p2);
@@ -3596,11 +3596,11 @@ static void game_ai_classic_turn_diplo_p2(struct game_s *g)
                 }
             }
             /*16576*/
-            if (e1->diplo_type[p2] == 0) {
+            if (e1->diplo_type[p2] == GAME_DIPLO_NONE) {
                 game_diplo_wage_war(g, p1, p2);
             }
             if ((e1->diplo_type[p2] == 2) && rnd_0_nm1(10, &g->seed)) {
-                e1->diplo_type[p2] = 0;
+                e1->diplo_type[p2] = GAME_DIPLO_NONE;
             }
         }
     }

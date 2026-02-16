@@ -91,7 +91,7 @@ static int game_diplo_wage_war_prod_w(struct game_s *g, player_id_t p1, player_i
 
 /* -------------------------------------------------------------------------- */
 
-void game_diplo_act(struct game_s *g, int dv, player_id_t pi, player_id_t pi2, int dtype, planet_id_t pli1, int16_t dp2)
+void game_diplo_act(struct game_s *g, int dv, player_id_t pi, player_id_t pi2, diplo_type_t dtype, planet_id_t pli1, int16_t dp2)
 {
     empiretechorbit_t *e = &(g->eto[pi]);
     empiretechorbit_t *e2 = &(g->eto[pi2]);
@@ -114,7 +114,7 @@ void game_diplo_act(struct game_s *g, int dv, player_id_t pi, player_id_t pi2, i
         return;
     }
     if (dv == -10000) {
-        if (IS_HUMAN(g, pi) && (dtype != 0)) {
+        if (IS_HUMAN(g, pi) && (dtype != GAME_DIPLO_NONE)) {
             e->diplo_val[pi2] = 10000;
             e->diplo_type[pi2] = dtype;
             e->diplo_p2[pi2] = dp2;
@@ -191,7 +191,7 @@ void game_diplo_act(struct game_s *g, int dv, player_id_t pi, player_id_t pi2, i
         } else {
             e2->mood_peace[pi] += v1;
         }
-        if (IS_HUMAN(g, pi) && (dtype != 0) && (abs(dv) > abs(e->diplo_val[pi2]))) {
+        if (IS_HUMAN(g, pi) && (dtype != GAME_DIPLO_NONE) && (abs(dv) > abs(e->diplo_val[pi2]))) {
             e->diplo_val[pi2] = dv;
             e->diplo_type[pi2] = dtype;
             e->diplo_p2[pi2] = dp2;

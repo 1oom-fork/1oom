@@ -33,7 +33,7 @@ static void game_audience_prepare(struct audience_s *au, player_id_t ph, player_
     }
     au->gfxi = 0;
     au->musi = 0;
-    au->dtype_next = 0;
+    au->dtype_next = GAME_DIPLO_NONE;
 }
 
 static void game_audience_start_human(struct audience_s *au)
@@ -85,7 +85,7 @@ static void game_audience_str_append_offer(const struct game_s *g, char *buf, te
 static const char *game_audience_get_str1(struct audience_s *au)
 {
     struct game_s *g = au->g;
-    uint8_t dtype = au->dtype;
+    diplo_type_t dtype = au->dtype;
     player_id_t ph = au->ph, pa = au->pa;
     empiretechorbit_t *eh = &(g->eto[ph]);
     empiretechorbit_t *ea = &(g->eto[pa]);
@@ -350,7 +350,7 @@ static bool game_audience_sub2(struct audience_s *au)
     }
 }
 
-static void game_audience_set_dtype(struct audience_s *au, uint8_t dtype, int a2)
+static void game_audience_set_dtype(struct audience_s *au, diplo_type_t dtype, int a2)
 {
     struct game_s *g = au->g;
     player_id_t ph = au->ph, pa = au->pa;
@@ -534,7 +534,8 @@ static void audience_menu_treaty(struct audience_s *au)
     empiretechorbit_t *ea = &(g->eto[pa]);
     int16_t selected = 0;
     bool condtbl[6];
-    uint8_t war_num, all_num, dtype;
+    diplo_type_t dtype;
+    uint8_t war_num, all_num;
     player_id_t war_tbl[PLAYER_NUM], all_tbl[PLAYER_NUM];
     int si;
     for (size_t i = 0; i < TBLLEN(condtbl); ++i) {
@@ -658,7 +659,7 @@ static void audience_menu_treaty(struct audience_s *au)
         case 5:
         default:
             selected = -1;
-            dtype = 0;
+            dtype = GAME_DIPLO_NONE;
             si = 0;
             break;
     }
@@ -705,7 +706,7 @@ static void audience_menu_threat(struct audience_s *au)
     empiretechorbit_t *ea = &(g->eto[pa]);
     int16_t selected = 0;
     bool condtbl[5];
-    uint8_t dtype = 0;
+    diplo_type_t dtype = GAME_DIPLO_NONE;
     for (size_t i = 0; i < TBLLEN(condtbl); ++i) {
         condtbl[i] = true;
     }
@@ -1230,7 +1231,7 @@ void game_audience(struct game_s *g, player_id_t ph, player_id_t pa)
         ui_audience_end(au);
         return;
     }
-    if (au->dtype == 0) {
+    if (au->dtype == GAME_DIPLO_NONE) {
         game_audience_start_human(au);
     }
     g->gaux->diplo_d0_rval = -1;
