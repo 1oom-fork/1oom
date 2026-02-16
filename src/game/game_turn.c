@@ -77,11 +77,11 @@ static void game_turn_update_mood_blunder(struct game_s *g)
             if (i != j) {
                 int16_t v;
                 v = e->diplo_type[j];
-                if ((v >= 4) && (v <= 11)) {
+                if ((v >= GAME_DIPLO_WARNING_SPYING) && (v <= GAME_DIPLO_WARNING_BIOWEAPONS)) {
                     e->blunder[j] = v;
-                } else if ((v >= 42) && (v <= 49)) {
+                } else if ((v >= GAME_DIPLO_THREAT_SPYING) && (v <= GAME_DIPLO_THREAT_BIOWEAPONS)) {
                     e->blunder[j] = v - 30;
-                } else if ((v >= 50) && (v <= 57)) {
+                } else if ((v >= GAME_DIPLO_BREAK_SPYING) && (v <= GAME_DIPLO_BREAK_BIOWEAPONS)) {
                     e->blunder[j] = v - 46;
                 }
                 if (e->treaty[j] != TREATY_FINAL_WAR) {
