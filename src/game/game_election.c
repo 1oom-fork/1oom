@@ -137,8 +137,8 @@ void game_election(struct game_s *g)
                     game_election_print_votes(n, vbuf), game_str_el_dots
                    );
             g->evn.voted[player] = PLAYER_NONE;
-            game_diplo_act(g, -6, player, el->candidate[1], 0, 0, 0);
-            game_diplo_act(g, -6, player, el->candidate[0], 0, 0, 0);
+            game_diplo_act(g, -6, player, el->candidate[1], GAME_DIPLO_NONE, 0, 0);
+            game_diplo_act(g, -6, player, el->candidate[0], GAME_DIPLO_NONE, 0, 0);
         } else {
             player_id_t pfor;
             pfor = el->candidate[votefor - 1];
@@ -149,8 +149,8 @@ void game_election(struct game_s *g)
                    );
             el->got_votes[votefor - 1] += n;
             g->evn.voted[player] = pfor;
-            game_diplo_act(g, 24, player, pfor, 0, 0, 0);
-            game_diplo_act(g, -12, player, el->candidate[(votefor - 1) ^ 1], 0, 0, 0);
+            game_diplo_act(g, 24, player, pfor, GAME_DIPLO_NONE, 0, 0);
+            game_diplo_act(g, -12, player, el->candidate[(votefor - 1) ^ 1], GAME_DIPLO_NONE, 0, 0);
         }
         el->str = el->buf;
         el->ui_delay = 3;
@@ -178,8 +178,8 @@ void game_election(struct game_s *g)
         }
         if (votefor == 0) {
             g->evn.voted[player] = PLAYER_NONE;
-            game_diplo_act(g, -6, player, el->candidate[1], 0, 0, 0);
-            game_diplo_act(g, -6, player, el->candidate[0], 0, 0, 0);
+            game_diplo_act(g, -6, player, el->candidate[1], GAME_DIPLO_NONE, 0, 0);
+            game_diplo_act(g, -6, player, el->candidate[0], GAME_DIPLO_NONE, 0, 0);
         } else {
             player_id_t pfor, pnot;
             pfor = el->candidate[votefor - 1];
@@ -187,11 +187,11 @@ void game_election(struct game_s *g)
             el->got_votes[votefor - 1] += n;
             g->evn.voted[player] = pfor;
             if (el->candidate[0] == player) {
-                game_diplo_act(g, 24, player, pfor, 0, 0, 0);
-                game_diplo_act(g, -12, player, pnot, 0, 0, 0);
+                game_diplo_act(g, 24, player, pfor, GAME_DIPLO_NONE, 0, 0);
+                game_diplo_act(g, -12, player, pnot, GAME_DIPLO_NONE, 0, 0);
             } else {
-                game_diplo_act(g, 24, player, pfor, 80, 0, pfor);
-                game_diplo_act(g, -12, player, pnot, 79, 0, pfor);
+                game_diplo_act(g, 24, player, pfor, GAME_DIPLO_PRAISE_COUNCIL_VOTE, 0, pfor);
+                game_diplo_act(g, -12, player, pnot, GAME_DIPLO_WARNING_COUNCIL_VOTE, 0, pfor);
             }
         }
     }
