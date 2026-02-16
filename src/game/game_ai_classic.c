@@ -3305,7 +3305,7 @@ static void game_ai_classic_turn_diplo_p2_sub1(struct game_s *g, player_id_t p1,
         v8 = v + rnd_1_n(100, &g->seed) + e1->mood_treaty[p2];
         if (v8 > 50) {
             v4 = 1;
-            e1->diplo_type[p2] = 24;
+            e1->diplo_type[p2] = GAME_DIPLO_PROPOSE_NAP;
         }
     }
     /*41684*/
@@ -3314,7 +3314,7 @@ static void game_ai_classic_turn_diplo_p2_sub1(struct game_s *g, player_id_t p1,
         v8 = v + rnd_1_n(100, &g->seed) + e1->mood_treaty[p2];
         if (v8 > 100) {
             v4 = 2;
-            e1->diplo_type[p2] = 25;
+            e1->diplo_type[p2] = GAME_DIPLO_PROPOSE_ALLIANCE;
         }
     }
     /*416e8*/
@@ -3331,7 +3331,7 @@ static void game_ai_classic_turn_diplo_p2_sub1(struct game_s *g, player_id_t p1,
             }
             if (e1->trade_bc[p2] < want_trade) {
                 v4 = 3;
-                e1->diplo_type[p2] = 26;
+                e1->diplo_type[p2] = GAME_DIPLO_PROPOSE_TRADE;
                 e1->au_want_trade[p2] = want_trade;
             }
         }
@@ -3358,7 +3358,7 @@ static void game_ai_classic_turn_diplo_p2_sub1(struct game_s *g, player_id_t p1,
             }
             if ((bc != 0) || (num != 0)) {
                 v4 = 4;
-                e1->diplo_type[p2] = 28;
+                e1->diplo_type[p2] = GAME_DIPLO_OFFER_BOUNTY;
                 e1->hated[p2] = pa;
                 e1->au_attack_gift_field[p2] = s->tbl_field[0];
                 e1->au_attack_gift_tech[p2] = s->tbl_tech2[0];
@@ -3414,7 +3414,7 @@ static void game_ai_classic_turn_diplo_p2_sub1(struct game_s *g, player_id_t p1,
                 if (found) {
                     int n = 0;
                     v4 = 5;
-                    e1->diplo_type[p2] = 29;
+                    e1->diplo_type[p2] = GAME_DIPLO_OFFER_TECH_TRADE;
                     e1->au_want_field[p2] = zfield;
                     e1->au_want_tech[p2] = ztech;
                     for (int i = 0; i < num; ++i) {
@@ -3435,7 +3435,7 @@ static void game_ai_classic_turn_diplo_p2_sub1(struct game_s *g, player_id_t p1,
     if (v4 == 0) {
         if ((e1->relation1[p2] < 0) && (e1->total_production_bc > e2->total_production_bc) && (e1->treaty[p2] == TREATY_NONE)) {
             v4 = 1;
-            e1->diplo_type[p2] = 24;
+            e1->diplo_type[p2] = GAME_DIPLO_PROPOSE_NAP;
         }
     }
     /*41ae2*/
@@ -3477,7 +3477,7 @@ static void game_ai_classic_turn_diplo_p2_sub2(struct game_s *g, player_id_t p1,
             }
         }
         e1->au_ally_attacker[p2] = pa;
-        e1->diplo_type[p2] = (pa == PLAYER_NONE) ? GAME_DIPLO_NONE : 76;
+        e1->diplo_type[p2] = (pa == PLAYER_NONE) ? GAME_DIPLO_NONE : GAME_DIPLO_REQUEST_TO_HONOR_ALLIANCE;
     } else {
         e1->diplo_type[p2] = GAME_DIPLO_NONE;
     }
@@ -3497,14 +3497,14 @@ static void game_ai_classic_turn_diplo_p2_sub3(struct game_s *g, player_id_t p1,
     if (e1->treaty[p2] < TREATY_WAR) {
         if (e1->relation1[p2] <= -95) {
             game_diplo_start_war(g, p2, p1);
-            e1->diplo_type[p2] = 13;
+            e1->diplo_type[p2] = GAME_DIPLO_WAR_WARNING_IGNORED;
         } else if ((v - rnd_1_n(100, &g->seed) + e1->mood_treaty[p2]) <= -100) {
             if (e1->hatred[p2] > 0) {
                 ++e1->hatred[p2];
                 if ((e1->hatred[p2] > 2) || (e1->treaty[p2] == TREATY_NONE)) {
                     if (rnd_1_n(100, &g->seed) < -(game_diplo_tbl_reldiff[e2->trait1] / 2 + e1->diplo_val[p2])) {
                         game_diplo_start_war(g, p2, p1);
-                        e1->diplo_type[p2] = 13;
+                        e1->diplo_type[p2] = GAME_DIPLO_WAR_WARNING_IGNORED;
                         e1->hatred[p2] = 1;
                     }
                 } else {
@@ -3519,7 +3519,7 @@ static void game_ai_classic_turn_diplo_p2_sub3(struct game_s *g, player_id_t p1,
             }
         }
     } else if (((v + rnd_1_n(100, &g->seed) + e1->mood_peace[p2]) >= 50) && (!rnd_0_nm1(8, &g->seed))) {
-        e1->diplo_type[p2] = 30;
+        e1->diplo_type[p2] = GAME_DIPLO_OFFER_PEACE;
         if (rnd_1_n(100, &g->seed) <= ((e2->total_production_bc * 30) / e1->total_production_bc)) {
             if (rnd_0_nm1(4, &g->seed)) {
                 e1->offer_bc[p2] = ((e2->total_production_bc / (rnd_1_n(3, &g->seed) + 1) + g->year) / 25) * 25;
@@ -3557,16 +3557,21 @@ static void game_ai_classic_turn_diplo_p2(struct game_s *g)
                 e1->diplo_type[p2] = GAME_DIPLO_NONE;
                 continue;
             }
-            if ((e1->treaty[p2] == TREATY_FINAL_WAR) || (e1->diplo_type[p2] == 59)) {
-                if (e1->diplo_type[p2] != 59) {
+            if ((e1->treaty[p2] == TREATY_FINAL_WAR) || (e1->diplo_type[p2] == GAME_DIPLO_WAR_FINAL_WAR)) {
+                if (e1->diplo_type[p2] != GAME_DIPLO_WAR_FINAL_WAR) {
                     e1->diplo_type[p2] = GAME_DIPLO_NONE;
                 }
             } else if (e1->have_met[p2] == 1) {
                 e1->have_met[p2] = 2;
-                e1->diplo_type[p2] = e2->trait1 + 14;
+                e1->diplo_type[p2] = e2->trait1 + GAME_DIPLO_FIRST_CONTACT_XENOPHOBIC;
             } else if (e1->mutual_enemy[p2] != PLAYER_NONE) {
-                e1->diplo_type[p2] = 58;
-            } else if ((e1->diplo_type[p2] == 13) || (e1->diplo_type[p2] == 32) || (e1->diplo_type[p2] == 61) || (e1->diplo_type[p2] == 60)) {
+                e1->diplo_type[p2] = GAME_DIPLO_GIVE_BOUNTY;
+            } else if (0
+                    || (e1->diplo_type[p2] == GAME_DIPLO_WAR_WARNING_IGNORED)
+                    || (e1->diplo_type[p2] == GAME_DIPLO_BREAK_TREATY_WAR_OF_EXPANSION)
+                    || (e1->diplo_type[p2] == GAME_DIPLO_WAR_ERRATIC)
+                    || (e1->diplo_type[p2] == GAME_DIPLO_WAR_OTHER))
+            {
                 /*v8 = 0; unused */
             } else {
                 /*16441*/
@@ -3599,7 +3604,7 @@ static void game_ai_classic_turn_diplo_p2(struct game_s *g)
             if (e1->diplo_type[p2] == GAME_DIPLO_NONE) {
                 game_diplo_wage_war(g, p1, p2);
             }
-            if ((e1->diplo_type[p2] == 2) && rnd_0_nm1(10, &g->seed)) {
+            if ((e1->diplo_type[p2] == GAME_DIPLO_PRAISE_TRADE) && rnd_0_nm1(10, &g->seed)) {
                 e1->diplo_type[p2] = GAME_DIPLO_NONE;
             }
         }

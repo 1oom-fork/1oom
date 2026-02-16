@@ -577,7 +577,7 @@ bool game_event_run(struct game_s *g, struct game_end_s *ge)
         ns.num1 = player2;
         game_diplo_start_war(g, player2, player);
         if (IS_HUMAN(g, player)) {
-            e->diplo_type[player2] = 13;
+            e->diplo_type[player2] = GAME_DIPLO_WAR_WARNING_IGNORED;
             e->diplo_val[player2] = 100;
         }
         g->evn.have_assassin = false;

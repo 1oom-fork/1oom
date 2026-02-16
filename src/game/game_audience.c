@@ -45,11 +45,11 @@ static void game_audience_start_human(struct audience_s *au)
     int v;
     v = eh->trust[pa] + game_diplo_get_mood(g, ph, pa) + game_diplo_tbl_reldiff[ea->trait1];
     if (v < -100) {
-        au->dtype = (eh->treaty[pa] >= TREATY_WAR) ? 20 : 21;
+        au->dtype = (eh->treaty[pa] >= TREATY_WAR) ? GAME_DIPLO_AMBASSADOR_UNAVAILABLE_WAR : GAME_DIPLO_AMBASSADOR_UNAVAILABLE_PEACE;
         au->mode = 1;
     } else {
         v += eh->relation1[pa];
-        au->dtype = (v > -50) ? 22 : 23;
+        au->dtype = (v > -50) ? GAME_DIPLO_FRIENDLY_GREETING : GAME_DIPLO_UNFRIENDLY_GREETING;
         au->mode = 0;
     }
 }
@@ -90,7 +90,16 @@ static const char *game_audience_get_str1(struct audience_s *au)
     empiretechorbit_t *eh = &(g->eto[ph]);
     empiretechorbit_t *ea = &(g->eto[pa]);
     bool flag_framed = false;
-    if ((dtype == 5) || (dtype == 7) || (dtype == 35) || (dtype == 37) || (dtype == 43) || (dtype == 45) || (dtype == 51) || (dtype == 53)) {
+    if (0
+     || (dtype == GAME_DIPLO_WARNING_SPYING_FRAMED)
+     || (dtype == GAME_DIPLO_WARNING_SABOTAGE_FRAMED)
+     || (dtype == GAME_DIPLO_REJECT_DEAL_SPYING_FRAMED)
+     || (dtype == GAME_DIPLO_REJECT_DEAL_SABOTAGE_FRAMED)
+     || (dtype == GAME_DIPLO_THREAT_SPYING_FRAMED)
+     || (dtype == GAME_DIPLO_SABOTAGING_FRAMED)
+     || (dtype == GAME_DIPLO_BREAK_SPYING_FRAMED)
+     || (dtype == GAME_DIPLO_BREAK_SABOTAGE_FRAMED))
+    {
         flag_framed = true;
         --dtype;
     }
@@ -247,11 +256,11 @@ static int16_t game_audience_sub3(struct audience_s *au)
         au->strtbl[i] = 0;
     }
     switch (au->dtype) {
-        case 24:
-        case 25:
-        case 26:
-        case 30:
-        case 76:
+        case GAME_DIPLO_PROPOSE_NAP:
+        case GAME_DIPLO_PROPOSE_ALLIANCE:
+        case GAME_DIPLO_PROPOSE_TRADE:
+        case GAME_DIPLO_OFFER_PEACE:
+        case GAME_DIPLO_REQUEST_TO_HONOR_ALLIANCE:
             au->strtbl[0] = cbuf;
             len = sprintf(cbuf, "%s %s", game_str_au_bull, game_str_au_accept);
             cbuf += len + 1;
@@ -259,7 +268,7 @@ static int16_t game_audience_sub3(struct audience_s *au)
             len = sprintf(cbuf, "%s %s", game_str_au_bull, game_str_au_reject);
             selected = 1;
             break;
-        case 27:
+        case GAME_DIPLO_BREAK_ALLIANCE_WITH_OTHER:
             au->strtbl[0] = cbuf;
             len = sprintf(cbuf, "%s %s", game_str_au_bull, game_str_au_agree);
             cbuf += len + 1;
@@ -267,7 +276,7 @@ static int16_t game_audience_sub3(struct audience_s *au)
             len = sprintf(cbuf, "%s %s", game_str_au_bull, game_str_au_forget);
             selected = 1;
             break;
-        case 29:
+        case GAME_DIPLO_OFFER_TECH_TRADE:
             {
                 int i;
                 for (i = 0; (i < 4) && (i < eh->au_tech_trade_num[pa]); ++i) {
@@ -288,10 +297,14 @@ static int16_t game_audience_sub3(struct audience_s *au)
             break;
     }
     seldef = selected;
-    if ((au->dtype == 28) || (au->dtype == 58) || (au->dtype == 29)) {
+    if (0
+     || (au->dtype == GAME_DIPLO_OFFER_BOUNTY)
+     || (au->dtype == GAME_DIPLO_GIVE_BOUNTY)
+     || (au->dtype == GAME_DIPLO_OFFER_TECH_TRADE))
+    {
         ui_audience_show2(au);
         selected = 1;
-        if (au->dtype == 29) {
+        if (au->dtype == GAME_DIPLO_OFFER_TECH_TRADE) {
             strcpy(au->buf, game_str_au_inxchng);
             au->condtbl = 0;
             selected = ui_audience_ask2a(au);
@@ -336,7 +349,7 @@ static bool game_audience_sub2(struct audience_s *au)
     if (pf == PLAYER_NONE) {
         return true;
     }
-    au->dtype = 27;
+    au->dtype = GAME_DIPLO_BREAK_ALLIANCE_WITH_OTHER;
     eh->au_ask_break_treaty[pa] = pf;
     g->gaux->diplo_d0_rval = -1;
     if (game_audience_sub3(au) != 0) {
@@ -356,7 +369,11 @@ static void game_audience_set_dtype(struct audience_s *au, diplo_type_t dtype, i
     player_id_t ph = au->ph, pa = au->pa;
     empiretechorbit_t *eh = &(g->eto[ph]);
     au->dtype = dtype;
-    if ((dtype == 31) || ((dtype >= 33) && (dtype <= 41)) || ((dtype >= 62) && (dtype <= 68))) {
+    if (0
+     || (dtype == GAME_DIPLO_REJECT_DEAL)
+     || ((dtype >= GAME_DIPLO_REJECT_DEAL_PAST_TREATIES_BROKEN) && (dtype <= GAME_DIPLO_REJECT_DEAL_BIOWEAPONS))
+     || ((dtype >= GAME_DIPLO_ACCEPT_NAP) && (dtype <= GAME_DIPLO_ACCEPT_BREAK_ALLIANCE_WITH_OTHER)))
+    {
         switch (a2) {
             case 0:
             case 1:
@@ -365,10 +382,10 @@ static void game_audience_set_dtype(struct audience_s *au, diplo_type_t dtype, i
                     au->dtype = eh->blunder[pa] + 30;
                     eh->blunder[pa] = 0;
                 } else if ((eh->broken_treaty[pa] != TREATY_NONE) && (!rnd_0_nm1(4, &g->seed))) {
-                    au->dtype = 33;
+                    au->dtype = GAME_DIPLO_REJECT_DEAL_PAST_TREATIES_BROKEN;
                     eh->broken_treaty[pa] = TREATY_NONE;
                 } else {
-                    au->dtype = 31;
+                    au->dtype = GAME_DIPLO_REJECT_DEAL;
                 }
                 break;
             case 3:
@@ -376,7 +393,7 @@ static void game_audience_set_dtype(struct audience_s *au, diplo_type_t dtype, i
                     au->tribute_field = eh->tribute_field[pa];
                     au->tribute_tech = eh->tribute_tech[pa];
                     eh->tribute_tech[pa] = 0;
-                    au->dtype = 66;
+                    au->dtype = GAME_DIPLO_ACCEPT_BECAUSE_OF_TRIBUTE;
                 }
                 break;
             default:
@@ -591,7 +608,7 @@ static void audience_menu_treaty(struct audience_s *au)
             if (si == 3) {
                 game_diplo_set_treaty(g, ph, pa, TREATY_NONAGGRESSION);
             }
-            dtype = 62;
+            dtype = GAME_DIPLO_ACCEPT_NAP;
             break;
         case 1:
             if (eh->relation1[pa] > 50) {
@@ -605,7 +622,7 @@ static void audience_menu_treaty(struct audience_s *au)
             if (si == 3) {
                 game_diplo_set_treaty(g, ph, pa, TREATY_ALLIANCE);
             }
-            dtype = 63;
+            dtype = GAME_DIPLO_ACCEPT_ALLIANCE;
             break;
         case 2:
             si = game_audience_check_mood(au, 60, 0); /* FIXME BUG? should be 2 for mood_peace? */
@@ -616,10 +633,10 @@ static void audience_menu_treaty(struct audience_s *au)
                 game_diplo_stop_war(g, ph, pa);
             }
             game_diplo_annoy(g, ph, pa, 2);
-            dtype = 65;
+            dtype = GAME_DIPLO_ACCEPT_PEACE;
             break;
         case 3:
-            dtype = 67;
+            dtype = GAME_DIPLO_ACCEPT_DECLARE_WAR_ON_OTHER;
             au->pstartwar = audience_menu_race(au, war_tbl, war_num, game_str_au_whowar);
             if (au->pstartwar != PLAYER_NONE) {
                 if ((eh->treaty[pa] == TREATY_ALLIANCE) && (eh->treaty[au->pstartwar] == TREATY_WAR)) {
@@ -638,7 +655,7 @@ static void audience_menu_treaty(struct audience_s *au)
             }
             break;
         case 4:
-            dtype = 68;
+            dtype = GAME_DIPLO_ACCEPT_BREAK_ALLIANCE_WITH_OTHER;
             au->pwar = audience_menu_race(au, all_tbl, all_num, game_str_au_whobrk);
             if (au->pwar != PLAYER_NONE) {
                 if (eh->relation1[pa] > 24) {
@@ -1148,23 +1165,28 @@ static void game_audience_do(struct audience_s *au)
                 au->dtype = au->dtype_next;
                 g->gaux->diplo_d0_rval = -1;
                 if ((selected = game_audience_sub3(au)) == 0) {
-                    if (au->dtype == 24) {
+                    if (au->dtype == GAME_DIPLO_PROPOSE_NAP) {
                         game_diplo_set_treaty(g, ph, pa, TREATY_NONAGGRESSION);
-                    } else if (au->dtype == 25) {
+                    } else if (au->dtype == GAME_DIPLO_PROPOSE_ALLIANCE) {
                         game_diplo_set_treaty(g, ph, pa, TREATY_ALLIANCE);
-                    } else if (au->dtype == 26) {
+                    } else if (au->dtype == GAME_DIPLO_PROPOSE_TRADE) {
                         game_diplo_set_trade(g, ph, pa, eh->au_want_trade[pa]);
-                    } else if (au->dtype == 30) {
+                    } else if (au->dtype == GAME_DIPLO_OFFER_PEACE) {
                         game_diplo_stop_war(g, ph, pa);
                         if (eh->relation1[pa] < 80) {
                             eh->relation1[pa] += 20;
                             ea->relation1[ph] = eh->relation1[pa];
                         }
                         game_diplo_annoy(g, ph, pa, 2);
-                    } else if (au->dtype == 76) {
+                    } else if (au->dtype == GAME_DIPLO_REQUEST_TO_HONOR_ALLIANCE) {
                         game_diplo_start_war(g, ph, au->pwar);
                     }
-                    if ((au->dtype == 24) || (au->dtype == 25) || (au->dtype == 26) || (au->dtype == 30)) { /* FIXME 76? */
+                    if (0
+                     || (au->dtype == GAME_DIPLO_PROPOSE_NAP)
+                     || (au->dtype == GAME_DIPLO_PROPOSE_ALLIANCE)
+                     || (au->dtype == GAME_DIPLO_PROPOSE_TRADE)
+                     || (au->dtype == GAME_DIPLO_OFFER_PEACE))
+                    { /* FIXME GAME_DIPLO_REQUEST_TO_HONOR_ALLIANCE? */
                         eh->reserve_bc += eh->offer_bc[pa];
                         if (eh->offer_tech[pa] != 0) {
                             game_tech_get_new(g, ph, eh->offer_field[pa], eh->offer_tech[pa], TECHSOURCE_TRADE, pa, 0, false);
@@ -1172,31 +1194,31 @@ static void game_audience_do(struct audience_s *au)
                     }
                 } else {
                     /*6074c*/
-                    if (au->dtype == 76) {
+                    if (au->dtype == GAME_DIPLO_REQUEST_TO_HONOR_ALLIANCE) {
                         game_diplo_break_treaty(g, pa, ph);
                     }
                 }
                 /*60761*/
-                if (au->dtype == 29) {
+                if (au->dtype == GAME_DIPLO_OFFER_TECH_TRADE) {
                     game_tech_get_new(g, ph, eh->au_tech_trade_field[pa][selected], eh->au_tech_trade_tech[pa][selected], TECHSOURCE_TRADE, pa, 0, false);
                 }
             }
             /*607a9*/
             game_diplo_annoy(g, ph, pa, 1);
-            if ((au->dtype == 24) || (au->dtype == 25)) {
+            if ((au->dtype == GAME_DIPLO_PROPOSE_NAP) || (au->dtype == GAME_DIPLO_PROPOSE_ALLIANCE)) {
                 eh->mood_treaty[pa] -= rnd_1_n(30, &g->seed) + 20;
             }
-            if (au->dtype == 26) {
+            if (au->dtype == GAME_DIPLO_PROPOSE_TRADE) {
                 eh->mood_trade[pa] -= rnd_1_n(30, &g->seed) + 20;
             }
-            if (au->dtype == 30) {
+            if (au->dtype == GAME_DIPLO_OFFER_PEACE) {
                 eh->mood_peace[pa] -= rnd_1_n(50, &g->seed) + 50;
             }
-            if (au->dtype == 29) {
+            if (au->dtype == GAME_DIPLO_OFFER_TECH_TRADE) {
                 eh->mood_tech[pa] -= rnd_1_n(30, &g->seed) + 20;
             }
-            if (au->dtype == 76) {
-                au->dtype = (selected != 0) ? 77 : 78;
+            if (au->dtype == GAME_DIPLO_REQUEST_TO_HONOR_ALLIANCE) {
+                au->dtype = (selected != 0) ? GAME_DIPLO_PLAYER_REFUSED_REQUEST_TO_HONOR_ALLIANCE : GAME_DIPLO_PLAYER_ACCEPTED_REQUEST_TO_HONOR_ALLIANCE;
                 au->mode = 6;
                 game_audience_set_dtype(au, au->dtype, 3);
             }
@@ -1226,7 +1248,7 @@ void game_audience(struct game_s *g, player_id_t ph, player_id_t pa)
     ui_audience_start(au);
     au->mode = 6;
     au->dtype = eh->diplo_type[pa];
-    if ((au->dtype == 66) || (au->dtype == 1)) {
+    if ((au->dtype == GAME_DIPLO_ACCEPT_BECAUSE_OF_TRIBUTE) || (au->dtype == GAME_DIPLO_ACCEPT_TRIBUTE)) {
         /* FIXME BUG? no ui_audience_end call after _start */
         ui_audience_end(au);
         return;
@@ -1235,15 +1257,19 @@ void game_audience(struct game_s *g, player_id_t ph, player_id_t pa)
         game_audience_start_human(au);
     }
     g->gaux->diplo_d0_rval = -1;
-    if (((au->dtype >= 24) && (au->dtype <= 30)) || (au->dtype == 58) || (au->dtype == 76)) {
+    if (0
+     || ((au->dtype >= GAME_DIPLO_PROPOSE_NAP) && (au->dtype <= GAME_DIPLO_OFFER_PEACE))
+     || (au->dtype == GAME_DIPLO_GIVE_BOUNTY)
+     || (au->dtype == GAME_DIPLO_REQUEST_TO_HONOR_ALLIANCE))
+    {
         au->dtype_next = au->dtype;
-        au->dtype = 22;
+        au->dtype = GAME_DIPLO_FRIENDLY_GREETING;
         au->mode = 2;
         au->pwar = eh->au_ally_attacker[pa];
     }
     game_audience_do(au);
     ui_audience_end(au);
-    if (au->dtype == 32) {
+    if (au->dtype == GAME_DIPLO_BREAK_TREATY_WAR_OF_EXPANSION) {
         game_diplo_break_treaty(g, pa, ph);
     }
 }
