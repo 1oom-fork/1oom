@@ -614,7 +614,7 @@ static void game_ai_classic_turn_p1_send_attack(struct game_s *g, struct ai_turn
                         game_turn_fleet_send(g, ait, pi, pfrom, pto2);
                     } else if (e2->treaty[pi] == TREATY_ALLIANCE) {
                         if ((rnd_1_n(4, &g->seed) == 1) || ((rnd_1_n(2, &g->seed) == 1) && (e->trait2 == TRAIT2_EXPANSIONIST))) {
-                            game_diplo_act(g, -10000, pt->owner, pi, 32, pto2, pto2); /* BUG? 2 * pto2?? */
+                            game_diplo_act(g, -10000, pt->owner, pi, GAME_DIPLO_BREAK_TREATY_WAR_OF_EXPANSION, pto2, pto2); /* BUG? 2 * pto2?? */
                             game_diplo_break_treaty(g, pi, pt->owner);
                             if (e->relation1[pt->owner] > 30) {
                                 e->relation1[pt->owner] = 30;
@@ -623,7 +623,7 @@ static void game_ai_classic_turn_p1_send_attack(struct game_s *g, struct ai_turn
                         }
                     } else if (e2->treaty[pi] == TREATY_NONAGGRESSION) {
                         if ((rnd_1_n(2, &g->seed) == 1) || (e->trait2 == TRAIT2_EXPANSIONIST)) {
-                            game_diplo_act(g, -10000, pt->owner, pi, 32, pto2, pto2); /* BUG? 2 * pto2?? */
+                            game_diplo_act(g, -10000, pt->owner, pi, GAME_DIPLO_BREAK_TREATY_WAR_OF_EXPANSION, pto2, pto2); /* BUG? 2 * pto2?? */
                             game_diplo_break_treaty(g, pi, pt->owner);
                             if (e->relation1[pt->owner] > 30) { /* BUG? should be 20? */
                                 e->relation1[pt->owner] = 20;
@@ -3248,7 +3248,7 @@ static void game_ai_classic_turn_diplo_p1(struct game_s *g)
                     }
                 }
                 if (!(rnd_0_nm1(20, &g->seed))) {
-                    game_diplo_act(g, rnd_1_n(5, &g->seed), p1, p2, 1, 0, 0);
+                    game_diplo_act(g, rnd_1_n(5, &g->seed), p1, p2, GAME_DIPLO_ACCEPT_TRIBUTE, 0, 0);
                 }
                 if ((e1->treaty[p2] == TREATY_WAR) && ((g->gaux->diplo_d0_rval + e1->mood_peace[p2]) > 100)) { /* BUG? use of a global, unsaved and possible unset diplo val seems wrong */
                     game_diplo_stop_war(g, p1, p2);

@@ -360,13 +360,13 @@ static void game_turn_diplo_adjust(struct game_s *g)
         for (player_id_t j = i + 1; j < g->players; ++j) {
             if (!rnd_0_nm1(2, &g->seed)) {
                 if (e->treaty[j] == TREATY_NONAGGRESSION) {
-                    game_diplo_act(g, rnd_1_n(3, &g->seed), i, j, 0, 0, 0);
+                    game_diplo_act(g, rnd_1_n(3, &g->seed), i, j, GAME_DIPLO_NONE, 0, 0);
                 }
                 if (e->treaty[j] == TREATY_ALLIANCE) {
-                    game_diplo_act(g, rnd_1_n(6, &g->seed), i, j, 0, 0, 0);
+                    game_diplo_act(g, rnd_1_n(6, &g->seed), i, j, GAME_DIPLO_NONE, 0, 0);
                 }
                 if (e->trade_bc[j] != 0) {
-                    game_diplo_act(g, rnd_1_n(3, &g->seed), i, j, 2, 0, 0);
+                    game_diplo_act(g, rnd_1_n(3, &g->seed), i, j, GAME_DIPLO_PRAISE_TRADE, 0, 0);
                 }
             }
         }
@@ -388,7 +388,7 @@ static void game_turn_diplo_adjust(struct game_s *g)
               && (rnd_1_n(100, &g->seed) >= ((s_h * 50) / s_ai))
               && (!rnd_0_nm1(20, &g->seed))
             ) {
-                game_diplo_act(g, -10, j, i, 8, 0, 0);
+                game_diplo_act(g, -10, j, i, GAME_DIPLO_WARNING_MILITARY_BUILDUP, 0, 0);
             }
         }
     }
@@ -420,7 +420,7 @@ static void game_turn_diplo_adjust(struct game_s *g)
                     }
                     if (IN_CONTACT(g, i, j) && (e->treaty[j] == TREATY_ALLIANCE)) {
                         /* MOO1 does not check (i != j) here, but game_diplo_act does */
-                        game_diplo_act(g, v, i, j, 12, 0, 0);
+                        game_diplo_act(g, v, i, j, GAME_DIPLO_WARNING_STOP_EXPANDING, 0, 0);
                     }
                 }
             }
@@ -1143,14 +1143,14 @@ static void game_turn_bomb(struct game_s *g)
                         ui_bomb_show(g, i, owner, pli, popdmg, factdmg, flag_play_music);
                     }
                     if ((p->pop == 0) && IS_HUMAN(g, i)) {
-                        int dv;
+                        diplo_type_t dtype;
                         if (ea->treaty[owner] < TREATY_WAR) {
                             game_diplo_start_war(g, owner, i);
-                            dv = 13;
+                            dtype = GAME_DIPLO_WAR_WARNING_IGNORED;
                         } else {
-                            dv = 10;
+                            dtype = GAME_DIPLO_WARNING_ATTACKED_COLONY;
                         }
-                        game_diplo_act(g, -50 - rnd_1_n(50, &g->seed), i, owner, dv, pli, 0);
+                        game_diplo_act(g, -50 - rnd_1_n(50, &g->seed), i, owner, dtype, pli, 0);
                     } else {
                         /*d118*/
                         game_diplo_battle_finish(g, owner, i, popdmg, 0, biodmg, 0, pli);

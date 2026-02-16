@@ -260,7 +260,7 @@ static void game_spy_espionage(struct game_s *g, player_id_t spy, player_id_t ta
                     }
                     if (n > 0) {
                         pi = scapegoat[(n > 1) ? rnd_0_nm1(n, &g->seed) : 0];
-                        game_diplo_act(g, -(rnd_1_n(20, &g->seed) + 20), pi, target, 5, 0, s->tbl_field[0]);
+                        game_diplo_act(g, -(rnd_1_n(20, &g->seed) + 20), pi, target, GAME_DIPLO_WARNING_SPYING_FRAMED, 0, s->tbl_field[0]);
                     }
                 }
             }
@@ -338,12 +338,12 @@ static void game_spy_sabotage(struct game_s *g, player_id_t spy, player_id_t tar
                 SUBSAT0(p->missile_bases, v8);
             }
             if (!flag_frame) {
-                game_diplo_act(g, -rcaught, spy, target, 6, pl, flag_bases);
+                game_diplo_act(g, -rcaught, spy, target, GAME_DIPLO_WARNING_SABOTAGE, pl, flag_bases);
             } else {
                 player_id_t p2 = game_spy_frame_random(g, spy, target);
                 if (p2 != PLAYER_NONE) {
                     int r = -(rnd_1_n(16, &g->seed) + rnd_1_n(16, &g->seed));
-                    game_diplo_act(g, -r, p2, target, 7, pl, flag_bases);
+                    game_diplo_act(g, -r, p2, target, GAME_DIPLO_WARNING_SABOTAGE_FRAMED, pl, flag_bases);
                 }
             }
         }
@@ -601,7 +601,7 @@ void game_spy_esp_human(struct game_s *g, struct spy_turn_s *st)
                         framed = (g->evn.spied_spy[target][spy] == -1);
                         game_tech_get_new(g, spy, field, tbl_tech[field], TECHSOURCE_SPY, planet, target, framed);
                         if (!framed) {
-                            game_diplo_act(g, -g->evn.spied_spy[target][spy], spy, target, 4, 0, field);
+                            game_diplo_act(g, -g->evn.spied_spy[target][spy], spy, target, GAME_DIPLO_WARNING_SPYING, 0, field);
                         }
                         ui_newtech(g, spy);
                         g->evn.newtech[spy].num = 0;
@@ -683,7 +683,7 @@ void game_spy_sab_human(struct game_s *g)
                 other2 = PLAYER_NONE;
                 if ((act != UI_SABOTAGE_NONE) && (act != UI_SABOTAGE_REVOLT)) {
                     if (g->evn.spied_spy[target][player] != -1) {
-                        game_diplo_act(g, -g->evn.spied_spy[target][player], player, target, 6, planet, act);
+                        game_diplo_act(g, -g->evn.spied_spy[target][player], player, target, GAME_DIPLO_WARNING_SABOTAGE, planet, act);
                     } else if ((snum != 0) && (act > UI_SABOTAGE_FACT)) {
                         const empiretechorbit_t *et;
                         et = &(g->eto[target]);
@@ -712,7 +712,7 @@ void game_spy_sab_human(struct game_s *g)
                     if ((other2 != PLAYER_NONE) && (other != PLAYER_NONE)) {
                         int v;
                         v = -(rnd_1_n(12, &g->seed) + rnd_1_n(12, &g->seed));
-                        game_diplo_act(g, v, other, target, 7, planet, act);
+                        game_diplo_act(g, v, other, target, GAME_DIPLO_WARNING_SABOTAGE_FRAMED, planet, act);
                     }
                 }
             }

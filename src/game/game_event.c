@@ -1028,7 +1028,7 @@ bool game_event_run(struct game_s *g, struct game_end_s *ge)
                     any_news = true;
                     for (player_id_t j = PLAYER_0; j < g->players; ++j) {
                         if ((j != i) && (j != killer)) {
-                            game_diplo_act(g, -36, killer, j, 0, 0, 0);
+                            game_diplo_act(g, -36, killer, j, GAME_DIPLO_NONE, 0, 0);
                         }
                     }
                 }

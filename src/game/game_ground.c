@@ -220,15 +220,15 @@ void game_turn_ground(struct game_s *g)
                             SETMAX(pop_planet, 1);
                             if ((p->owner != powner) && IS_HUMAN(g, gr->s[0].player)) {
                                 if (g->eto[gr->s[0].player].treaty[gr->s[1].player] < TREATY_WAR) {
-                                    game_diplo_act(g, -50 - rnd_1_n(50, &g->seed), gr->s[0].player, gr->s[1].player, 0xd, pli, 0);
+                                    game_diplo_act(g, -50 - rnd_1_n(50, &g->seed), gr->s[0].player, gr->s[1].player, GAME_DIPLO_WAR_WARNING_IGNORED, pli, 0);
                                     game_diplo_start_war(g, gr->s[1].player, gr->s[0].player);
                                 } else {
                                     /*e93f*/
-                                    game_diplo_act(g, -50 - rnd_1_n(50, &g->seed), gr->s[0].player, gr->s[1].player, 0xa, pli, 0);
+                                    game_diplo_act(g, -50 - rnd_1_n(50, &g->seed), gr->s[0].player, gr->s[1].player, GAME_DIPLO_WARNING_ATTACKED_COLONY, pli, 0);
                                 }
                             } else {
                                 /*e969*/
-                                game_diplo_act(g, -((rnd_1_n(5, &g->seed) + 5) * pop_planet), gr->s[0].player, gr->s[1].player, 0xa, pli, 0);
+                                game_diplo_act(g, -((rnd_1_n(5, &g->seed) + 5) * pop_planet), gr->s[0].player, gr->s[1].player, GAME_DIPLO_WARNING_ATTACKED_COLONY, pli, 0);
                             }
                         } else {
                             /*e996*/
@@ -239,7 +239,7 @@ void game_turn_ground(struct game_s *g)
                             }
                             game_ground_finish(gr);
                             /*e9c4*/
-                            game_diplo_act(g, -((rnd_1_n(4, &g->seed) + 4) * pop_planet), gr->s[0].player, gr->s[1].player, 0xa, pli, 0);
+                            game_diplo_act(g, -((rnd_1_n(4, &g->seed) + 4) * pop_planet), gr->s[0].player, gr->s[1].player, GAME_DIPLO_WARNING_ATTACKED_COLONY, pli, 0);
 #if 0
                             if (gr->s[0].human) {   /* FIXME no test on MOO1, never true */
                                 ui_newtech(g, gr->s[0].player); /* FIXME why is this here? only AI present */
