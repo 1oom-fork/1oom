@@ -19,8 +19,8 @@ struct audience_s {
     player_id_t pwar;
     player_id_t pstartwar;
     uint8_t mode;   /*0,1,2,6*/
-    uint8_t dtype;
-    uint8_t dtype_next;
+    diplo_type_t dtype;
+    diplo_type_t dtype_next;
     uint8_t gfxi;   /*0..2*/
     uint8_t musi;   /*0..2*/
     uint8_t num_bc;   /*0..5*/
