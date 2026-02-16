@@ -7,8 +7,7 @@
 
 #define NUM_SHIPLOOKS   0x93
 
-#define DIPLOMAT_D0_NUM 0x51
-#define DIPLOMAT_MSG_NUM    1215
+#define DIPLOMAT_MSG_NUM    (GAME_DIPLO_NUM * 15)
 #define DIPLOMAT_MSG_LEN    0xc8
 
 #define DIPLOMAT_MSG_PTR(ga_, r_, t_)   (&((ga_)->diplomat.msg[((t_) * 15 + (r_)) * DIPLOMAT_MSG_LEN]))
@@ -46,7 +45,7 @@ struct game_aux_s {
         const char *descr; /*[TECH_FIELD_NUM * 50 * RESEARCH_DESCR_LEN] tech descriptions */
     } research;
     struct {
-        uint8_t d0[DIPLOMAT_D0_NUM];    /* uint16_t in lbx */
+        uint8_t d0[GAME_DIPLO_NUM];    /* uint16_t in lbx */
         const char *msg;
     } diplomat;
     struct firing_s firing[NUM_SHIPLOOKS];
