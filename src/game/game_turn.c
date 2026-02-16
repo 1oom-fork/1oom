@@ -126,7 +126,7 @@ static void game_turn_update_mood_blunder(struct game_s *g)
         empiretechorbit_t *e = &(g->eto[i]);
         for (player_id_t j = PLAYER_0; j < g->players; ++j) {
             e->diplo_val[j] = 0;
-            e->diplo_type[j] = 0;
+            e->diplo_type[j] = GAME_DIPLO_NONE;
             if (e->mutual_enemy[j] != PLAYER_NONE) {
                 e->hated[j] = PLAYER_NONE;
                 e->mutual_enemy[j] = PLAYER_NONE;
@@ -1533,9 +1533,9 @@ static void game_turn_audiences(struct game_s *g)
         }
         g->evn.newtech[ph].num = 0;
         for (player_id_t pa = PLAYER_0; pa < PLAYER_NUM; ++pa) {
-            if (IS_AI(g, pa) && (e->diplo_type[pa] != 0)) {
+            if (IS_AI(g, pa) && (e->diplo_type[pa] != GAME_DIPLO_NONE)) {
                 game_audience(g, ph, pa);
-                e->diplo_type[pa] = 0;
+                e->diplo_type[pa] = GAME_DIPLO_NONE;
             }
         }
         ui_newtech(g, ph);
