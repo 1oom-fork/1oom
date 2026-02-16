@@ -100,7 +100,7 @@ void game_diplo_act(struct game_s *g, int dv, player_id_t pi, player_id_t pi2, d
         if (IS_AI(g, pi) && (dv < 0) && IS_HUMAN(g, pi2) && (rnd_1_n(100, &g->seed) <= (dv / -10))) {
             player_id_t i = g->winner;
             e2->diplo_val[i] = 100;
-            e2->diplo_type[i] = 59;
+            e2->diplo_type[i] = GAME_DIPLO_WAR_FINAL_WAR;
             e2->diplo_p2[i] = dp2;
             e2->diplo_p1[i] = pli1;
         }
@@ -159,7 +159,7 @@ void game_diplo_act(struct game_s *g, int dv, player_id_t pi, player_id_t pi2, d
     if ((e->race == RACE_HUMAN) && (dv > 0)) {
         dv *= 2;
     }
-    if ((e2->treaty[pi] == TREATY_WAR) && (dtype >= 4) && (dtype <= 12) && (dv < 0)) {
+    if ((e2->treaty[pi] == TREATY_WAR) && (dtype >= GAME_DIPLO_WARNING_SPYING) && (dtype <= GAME_DIPLO_WARNING_STOP_EXPANDING) && (dv < 0)) {
         if (IS_HUMAN(g, pi)) {
             e2->mood_peace[pi] += dv / 4;
             e->mood_peace[pi2] -= dv / 4;
@@ -361,7 +361,7 @@ void game_diplo_wage_war(struct game_s *g, player_id_t p1, player_id_t p2)
           && (rnd_1_n(300, &g->seed) <= g->difficulty)
           && (IS_AI(g, p1) || (g->evn.ceasefire[p1][p2] < 1))
         ) {
-            e1->diplo_type[p2] = 61;
+            e1->diplo_type[p2] = GAME_DIPLO_WAR_ERRATIC;
             e1->diplo_val[p2] = 2000;
             game_diplo_start_war(g, p2, p1);
         } else {
