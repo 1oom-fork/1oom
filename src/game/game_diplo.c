@@ -58,7 +58,7 @@ static void game_diplo_wage_war_do(struct game_s *g, player_id_t p1, player_id_t
           || ((e1->treaty[p2] == TREATY_ALLIANCE) && ((!rnd_0_nm1(4, &g->seed)) || ((!rnd_0_nm1(2, &g->seed)) && (e2->trait2 == TRAIT2_EXPANSIONIST))))
           || ((e1->treaty[p2] == TREATY_NONAGGRESSION) && ((!rnd_0_nm1(2, &g->seed)) || (e2->trait2 == TRAIT2_EXPANSIONIST)))
         ) {
-            game_diplo_act(g, -10000, p1, p2, 32, 0, 0);
+            game_diplo_act(g, -10000, p1, p2, GAME_DIPLO_BREAK_TREATY_WAR_OF_EXPANSION, 0, 0);
             game_diplo_break_treaty(g, p2, p1);
             if (e1->relation1[p2] > 30) {
                 e1->relation1[p2] = 30;
@@ -66,7 +66,7 @@ static void game_diplo_wage_war_do(struct game_s *g, player_id_t p1, player_id_t
             }
         }
     } else if (g->evn.ceasefire[p1][p2] <= 0) {
-        game_diplo_act(g, -10000, p1, p2, (e1->relation1[p2] < 0) ? 13 : 60, 0, 0);
+        game_diplo_act(g, -10000, p1, p2, (e1->relation1[p2] < 0) ? GAME_DIPLO_WAR_WARNING_IGNORED : GAME_DIPLO_WAR_OTHER, 0, 0);
         game_diplo_start_war(g, p2, p1);
     }
 }
@@ -439,7 +439,8 @@ void game_diplo_battle_finish(struct game_s *g, int def, int att, int popdiff, u
     player_id_t claim, side_z, side_ai;
     uint32_t app_ai;
     planet_t *p;
-    int offense, extra;
+    diplo_type_t dtype;
+    int offense;
     if ((att >= PLAYER_NUM) || (def >= PLAYER_NUM)) {
         return;
     }
@@ -469,7 +470,7 @@ void game_diplo_battle_finish(struct game_s *g, int def, int att, int popdiff, u
     if (biodamage) {
         for (player_id_t i = PLAYER_0; i < g->players; ++i) {
             if ((i != side_z) && IS_AI(g, i)) {
-                game_diplo_act(g, -10, side_z, i, 11, planet_i, 0);
+                game_diplo_act(g, -10, side_z, i, GAME_DIPLO_WARNING_BIOWEAPONS, planet_i, 0);
             }
         }
     }
@@ -479,13 +480,13 @@ void game_diplo_battle_finish(struct game_s *g, int def, int att, int popdiff, u
     offense = MAX(popdiff, app_ai);
     SETMAX(offense, biodamage);
     if (biodamage > 0) {
-        extra = 11;
+        dtype = GAME_DIPLO_WARNING_BIOWEAPONS;
     } else if (popdiff > 0) {
-        extra = 10;
+        dtype = GAME_DIPLO_WARNING_ATTACKED_COLONY;
     } else {
-        extra = 9;
+        dtype = GAME_DIPLO_WARNING_DESTROYED_SHIPS;
     }
-    game_diplo_act(g, -offense, side_z, side_ai, extra, planet_i, 0);
+    game_diplo_act(g, -offense, side_z, side_ai, dtype, planet_i, 0);
     if ((offense >= 30) && IS_HUMAN(g, side_z)) {
         empiretechorbit_t *ea = &(g->eto[side_ai]);
         empiretechorbit_t *ez = &(g->eto[side_z]);
@@ -494,7 +495,7 @@ void game_diplo_battle_finish(struct game_s *g, int def, int att, int popdiff, u
                 if (ez->hated[i] == side_ai) {
                     ez->mutual_enemy[i] = i;
                 } else if (game_planet_get_random(g, side_ai) == PLANET_NONE) {
-                    game_diplo_act(g, offense, side_z, i, 3, planet_i, 0);
+                    game_diplo_act(g, offense, side_z, i, GAME_DIPLO_PRAISE_ENEMY_OF_MY_ENEMY, planet_i, 0);
                 }
             }
         }
