@@ -1,3 +1,24 @@
+1oom-v1.11.8
+------------
+
+This release simplifies the ruleset and disables some rules
+that change balance without compelling justification:
+- Extended Reloc Range and Population Tenths Fix removed
+
+Some rules from patch 1.3a are now always active:
+- Oracle Fix
+- Ship Scanner Fix
+- 4th Colony Curse Fix
+- Guardian Repair Fix
+- No '?' cursor
+- All types of weapons can be used to bombard planets
+- Fixed damage type from missiles/torpedoes during bombing
+- Minor game/UI fixes
+
+Disclaimer:
+This version uses the 1.11.7 engine, which is currently
+far behind the vanilla version in terms of authenticity.
+
 1oom-v1.11.7
 ------------
 
