@@ -3224,14 +3224,10 @@ static void game_ai_classic_turn_diplo_p1(struct game_s *g)
                         tech_field_t field[2];
                         int num[2];
                         uint8_t tech[2];
-                        s.target = p1;
-                        s.spy = p2;
-                        num[0] = game_spy_sift_useful_techs(g, &s, rnd_1_n(3, &g->seed));
+                        num[0] = game_spy_sift_useful_techs(g, &s, p1, p2, rnd_1_n(3, &g->seed));
                         field[0] = s.tbl_field[0];
                         tech[0] = s.tbl_tech2[0];
-                        s.target = p2;
-                        s.spy = p1;
-                        num[1] = game_spy_sift_useful_techs(g, &s, rnd_1_n(3, &g->seed));
+                        num[1] = game_spy_sift_useful_techs(g, &s, p2, p1, rnd_1_n(3, &g->seed));
                         field[1] = s.tbl_field[0];
                         tech[1] = s.tbl_tech2[0];
                         if ((num[0] > 0) && (num[1] > 0)) {
@@ -3347,9 +3343,7 @@ static void game_ai_classic_turn_diplo_p2_sub1(struct game_s *g, player_id_t p1,
         if ((pa != PLAYER_NONE) && (!rnd_0_nm1(10, &g->seed)) && (e1->hated[p2] == PLAYER_NONE)) {
             struct spy_esp_s s[1];
             int num, bc;
-            s->spy = p1;
-            s->target = p2;
-            num = game_spy_select_useful_techs(g, s, 0, 2);
+            num = game_spy_select_useful_techs(g, s, p2, p1, 0, 2);
             /*game_spy_esp_get_random(g, s, &field, &tech); unused */
             bc = 0;
             if (num == 0) {
@@ -3390,9 +3384,7 @@ static void game_ai_classic_turn_diplo_p2_sub1(struct game_s *g, player_id_t p1,
                 v14 = 20000 / (v8 + 200);
             }
             SETMIN(v14, 50);
-            s->spy = p2;
-            s->target = p1;
-            num = game_spy_select_useful_techs(g, s, 0, 0);
+            num = game_spy_select_useful_techs(g, s, p1, p2, 0, 0);
             if (num > 0) {
                 bool found;
                 tech_field_t zfield;
@@ -3401,9 +3393,7 @@ static void game_ai_classic_turn_diplo_p2_sub1(struct game_s *g, player_id_t p1,
                 zfield = s->tbl_field[0];
                 ztech = s->tbl_tech2[0];
                 zvalue = (s->tbl_value[0] * 100) / v14;
-                s->spy = p1;
-                s->target = p2;
-                num = game_spy_select_useful_techs(g, s, zvalue, 1);
+                num = game_spy_select_useful_techs(g, s, p2, p1, zvalue, 1);
                 found = false;
                 for (int i = 0; i < num; ++i) {
                     if (s->tbl_value[i] <= zvalue) {
@@ -3451,9 +3441,7 @@ static void game_ai_classic_turn_diplo_p2_sub1(struct game_s *g, player_id_t p1,
             e1->offer_bc[p2] = ((e2->total_production_bc / (rnd_1_n(3, &g->seed) + 1) + g->year) / 25) * 25;
         } else {
             struct spy_esp_s s[1];
-            s->spy = p1;
-            s->target = p2;
-            if (game_spy_select_useful_techs(g, s, 0, 2) > 0) {
+            if (game_spy_select_useful_techs(g, s, p2, p1, 0, 2) > 0) {
                 e1->offer_field[p2] = s->tbl_field[0];
                 e1->offer_tech[p2] = s->tbl_tech2[0];
             }
@@ -3525,9 +3513,7 @@ static void game_ai_classic_turn_diplo_p2_sub3(struct game_s *g, player_id_t p1,
                 e1->offer_bc[p2] = ((e2->total_production_bc / (rnd_1_n(3, &g->seed) + 1) + g->year) / 25) * 25;
             } else {
                 struct spy_esp_s s[1];
-                s->spy = p1;
-                s->target = p2;
-                if (game_spy_select_useful_techs(g, s, 0, 2) > 0) {
+                if (game_spy_select_useful_techs(g, s, p2, p1, 0, 2) > 0) {
                     e1->offer_field[p2] = s->tbl_field[0];
                     e1->offer_tech[p2] = s->tbl_tech2[0];
                 }

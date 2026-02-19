@@ -31,7 +31,7 @@ static uint8_t game_spy_esp_sub3_sub1(struct game_s *g, tech_group_t group, tech
     return best_tier;
 }
 
-static void game_spy_esp_sub3(struct game_s *g, struct spy_esp_s *s, tech_field_t field, int tlen, const uint8_t *trc, int slen, const uint8_t *src)
+static void game_spy_esp_sub3(struct game_s *g, struct spy_esp_s *s, tech_field_t field, int tlen, const uint8_t *trc, int slen, const uint8_t *src, player_id_t spy)
 {
     for (int i = 0; i < tlen; ++i) {
         uint8_t techi, tier;
@@ -66,7 +66,7 @@ static void game_spy_esp_sub3(struct game_s *g, struct spy_esp_s *s, tech_field_
             }
         }
         /*632ff*/
-        if (g->eto[s->spy].race == RACE_SILICOID) {
+        if (g->eto[spy].race == RACE_SILICOID) {
             if (0
               || (group == TECH_GROUP_REDUCED_INDUSTRIAL_WASTE)
               || (group == TECH_GROUP_CONTROLLED_ENVIRONMENT)
@@ -81,10 +81,10 @@ static void game_spy_esp_sub3(struct game_s *g, struct spy_esp_s *s, tech_field_
     }
 }
 
-static int game_spy_esp_get_value(struct game_s *g, struct spy_esp_s *s, tech_field_t field, uint8_t techi)
+static int game_spy_esp_get_value(struct game_s *g, tech_field_t field, uint8_t techi, player_id_t spy)
 {
-    empiretechorbit_t *es = &(g->eto[s->spy]);
-    const shipresearch_t *srds = &(g->srd[s->spy]);
+    const empiretechorbit_t *es = &(g->eto[spy]);
+    const shipresearch_t *srds = &(g->srd[spy]);
     uint8_t maxtier = 0, maxti = 0;
     tech_group_t group = game_tech_get_group(g->gaux, field, techi);
     int v;
@@ -216,9 +216,7 @@ static void game_spy_espionage(struct game_s *g, player_id_t spy, player_id_t ta
     }
     rmax = (rmax * tmax) / 100;
     if (spies > 0) {
-        s->target = target;
-        s->spy = spy;
-        game_spy_select_useful_techs(g, s, 0, 0);
+        game_spy_select_useful_techs(g, s, target, spy, 0, 0);
         /*81f0a*/
         game_spy_esp_sub5(s, rmax);
         SETMIN(spied, s->tnum);
@@ -352,10 +350,10 @@ static void game_spy_sabotage(struct game_s *g, player_id_t spy, player_id_t tar
 
 /* -------------------------------------------------------------------------- */
 
-int game_spy_select_useful_techs(struct game_s *g, struct spy_esp_s *s, int minval, int a6)
+int game_spy_select_useful_techs(struct game_s *g, struct spy_esp_s *s, player_id_t target, player_id_t spy, int minval, int a6)
 {
     s->tnum = 0;
-    game_spy_sift_useful_techs(g, s, a6);
+    game_spy_sift_useful_techs(g, s, target, spy, a6);
     for (int loops = 0; (loops < 500) && (s->tnum < TECH_SPY_MAX); ++loops) {
         tech_field_t field;
         field = rnd_0_nm1(TECH_FIELD_NUM, &g->seed);
@@ -371,7 +369,7 @@ int game_spy_select_useful_techs(struct game_s *g, struct spy_esp_s *s, int minv
                     have_tech = true;
                 }
             }
-            value = game_spy_esp_get_value(g, s, field, techi);
+            value = game_spy_esp_get_value(g, field, techi, spy);
             if ((value == 0) || (value < minval)) {
                 have_tech = true;
             }
@@ -388,18 +386,16 @@ int game_spy_select_useful_techs(struct game_s *g, struct spy_esp_s *s, int minv
     return s->tnum;
 }
 
-int game_spy_sift_useful_techs(struct game_s *g, struct spy_esp_s *s, int a4)
+int game_spy_sift_useful_techs(struct game_s *g, struct spy_esp_s *s, player_id_t target, player_id_t spy, int a4)
 {
-    const empiretechorbit_t *es = &(g->eto[s->spy]);
-    const empiretechorbit_t *et = &(g->eto[s->target]);
-    const shipresearch_t *srds = &(g->srd[s->spy]);
-    const shipresearch_t *srdt = &(g->srd[s->target]);
     int sum = 0;
     for (tech_field_t f = TECH_FIELD_COMPUTER; f < TECH_FIELD_NUM; ++f) {
         s->tbl_num[f] = 0;
     }
     for (tech_field_t f = TECH_FIELD_COMPUTER; f < TECH_FIELD_NUM; ++f) {
-        game_spy_esp_sub3(g, s, f, et->tech.completed[f] - a4, srdt->researchcompleted[f], es->tech.completed[f], srds->researchcompleted[f]);
+        game_spy_esp_sub3(g, s, f,
+                          g->eto[target].tech.completed[f] - a4, g->srd[target].researchcompleted[f],
+                          g->eto[spy].tech.completed[f], g->srd[spy].researchcompleted[f], spy);
     }
     for (tech_field_t f = TECH_FIELD_COMPUTER; f < TECH_FIELD_NUM; ++f) {
         sum += s->tbl_num[f];
@@ -568,19 +564,17 @@ void game_spy_esp_human(struct game_s *g, struct spy_turn_s *st)
         if (IS_AI(g, spy)) {
             continue;
         }
-        s->spy = spy;
         for (player_id_t target = PLAYER_0; target < g->players; ++target) {
             if ((spy != target) && (g->evn.spied_num[target][spy] > 0)) {
                 uint8_t tbl_tech[TECH_FIELD_NUM];
                 uint8_t flags_field;
-                s->target = target;
                 flags_field = 0;
                 for (tech_field_t i = TECH_FIELD_COMPUTER; i < TECH_FIELD_NUM; ++i) {
                     tbl_tech[i] = 0;
                 }
                 for (int loops = 0; loops < 5; ++loops) {
                     int num;
-                    num = game_spy_select_useful_techs(g, s, 0, 0);
+                    num = game_spy_select_useful_techs(g, s, target, spy, 0, 0);
                     game_spy_esp_sub5(s, st->tbl_rmax[target][spy]);
                     for (int i = 0; i < num; ++i) {
                         int field;
