@@ -8,8 +8,6 @@ struct spy_turn_s {
 };
 
 struct spy_esp_s {
-    player_id_t target;
-    player_id_t spy;
     int tnum;
     int tbl_num[TECH_FIELD_NUM];
     uint8_t tbl_techi[TECH_FIELD_NUM][50];
@@ -20,8 +18,8 @@ struct spy_esp_s {
 
 struct game_s;
 
-extern int game_spy_select_useful_techs(struct game_s *g, struct spy_esp_s *s, int minval, int a6);
-extern int game_spy_sift_useful_techs(struct game_s *g, struct spy_esp_s *s, int a4);
+extern int game_spy_select_useful_techs(struct game_s *g, struct spy_esp_s *s, player_id_t target, player_id_t spy, int minval, int a6);
+extern int game_spy_sift_useful_techs(struct game_s *g, struct spy_esp_s *s, player_id_t target, player_id_t spy, int a4);
 extern void game_spy_build(struct game_s *g);
 extern void game_spy_report(struct game_s *g);
 extern void game_spy_turn(struct game_s *g, struct spy_turn_s *st);
