@@ -12,7 +12,7 @@
 #define ALLOW_UNALIGNED_ACCESS
 #endif
 #if defined(__powerpc__) || defined(__ppc__)
-#define ALLOW_UNALIGNED_ACCESS
+//#define ALLOW_UNALIGNED_ACCESS
 #endif
 
 #define BSWAP_16(_v_)   ((uint16_t)((((_v_) >> 8) & 0xff) | ((_v_) << 8)))

@@ -58,6 +58,11 @@ void os_shutdown(void)
 const char **os_get_paths_data(void)
 {
     if (num_data_paths == 0) {
+#ifdef __MORPHOS__
+		int i = 0;
+		all_data_paths[i++] = lib_stralloc("PROGDIR:data");
+        all_data_paths[i] = NULL;
+#else
         const char *p;
         int i = 0;
         bool got_xdg = false;
@@ -109,6 +114,7 @@ const char **os_get_paths_data(void)
         all_data_paths[i++] = lib_stralloc(".");
         all_data_paths[i++] = lib_stralloc("./data");
         all_data_paths[i] = NULL;
+#endif
         num_data_paths = i;
     }
     return (const char **)all_data_paths;
@@ -132,6 +138,9 @@ void os_set_path_data(const char *path)
 const char *os_get_path_user(void)
 {
     if (user_path == NULL) {
+#ifdef __MORPHOS__
+		user_path = lib_stralloc("PROGDIR:data");
+#else
         char *xdg_config_home = getenv("XDG_CONFIG_HOME");
         if (xdg_config_home != NULL) {
             user_path = util_concat(xdg_config_home, "/1oom", NULL);
@@ -143,6 +152,7 @@ const char *os_get_path_user(void)
                 user_path = lib_stralloc(".");
             }
         }
+#endif
     }
     return user_path;
 }

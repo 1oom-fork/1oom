@@ -1,0 +1,46 @@
+#
+# Makefile C
+# 
+
+CC = ppc-morphos-gcc-11
+STRIP = ppc-morphos-strip
+
+AMIGADATE = $(shell date +"%-d.%-m.%Y")
+DEFINE = 	-D__MORPHOS_SHAREDLIBS  -DNDEBUG -D__AMIGADATE__=\"$(AMIGADATE)\" 
+INCLUDE =  	-I/gg/usr/local/include -I/gg/usr/local/include/SDL2 -Isrc -Isrc/os/unix -Isrc/hw/sdl -Isrc/game
+
+CFLAGS = -noixemul -O3 -DUSE_SFX_INIT_THREAD -Wall -std=c99 -pedantic -Wno-inline -Wshadow=local -Wstrict-prototypes $(INCLUDE) $(DEFINE) 
+LIBS =  -noixemul -L/gg/usr/local/lib  -lSDL2_mixerX_light_shared  -lSDL2 -lGL -lfluidsynth_2.5.0_light -lFLAC -lopusfile -lopus -logg -lpthread -lstdc++ -lc -lm
+
+# nom de l'exe
+TARGET = 1oom
+
+#
+SRCS_C = 		src/game/*.c \
+				src/hw/sdl/2/*.c \
+				src/os/unix/*.c \
+				src/ui/classic/*.c 
+				
+
+OBJS_C = $(shell echo $(SRCS_C) | sed -e 's,\.c,\.o,g')
+
+OBJS_C += src/fmt_pic.o src/palette.o src/mouse.o src/kbd.o src/font8x8.o src/font8x8_draw.o \
+			src/fmt_mus.o src/fmt_sfx.o src/log.o src/lib.o src/lbx.o src/lbxfont.o src/lbxpal.o \
+			src/rnd.o src/gfxaux.o src/util.o src/util_math.o src/lbxgfx.o src/menu.o  \
+			src/options.o src/pbx.o src/cfg.o src/main.o src/util_cstr.o
+
+all: $(TARGET)
+
+$(TARGET): $(OBJS_C) 
+	$(CC) $(LDFLAGS) $(OBJS_C) $(LIBS) -o $@ 
+	$(STRIP) --strip-all $(TARGET)
+
+%.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@ 
+
+
+clean:
+	rm  $(OBJS_C) $(TARGET)
+
+dump:
+	objdump --disassemble-all --reloc $(TARGET) >$(TARGET).s

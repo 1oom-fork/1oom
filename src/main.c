@@ -14,6 +14,11 @@
 #include "ui.h"
 #include "version.h"
 
+#ifdef __MORPHOS__
+unsigned long __stack = 1024000;
+static const char *version __attribute__((used)) = "$VER: " PACKAGE_NAME " " PACKAGE_VERSION " (" __AMIGADATE__ ")";
+#endif
+
 /* -------------------------------------------------------------------------- */
 
 static bool main_startup_ok = false;

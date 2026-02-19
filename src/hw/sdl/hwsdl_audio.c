@@ -68,6 +68,7 @@ static int mus_playing;
 
 static int get_slice_size(void)
 {
+#ifndef __MORPHOS__
     int limit;
     int n;
     limit = (opt_audiorate * opt_audioslice_ms) / 1000;
@@ -78,6 +79,7 @@ static int get_slice_size(void)
             return (1 << n);
         }
     }
+#endif
     /* Should never happen? */
     return 1024;
 }

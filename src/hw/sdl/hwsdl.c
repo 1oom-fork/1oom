@@ -43,17 +43,23 @@ static bool hw_kbd_check_hotkey(SDL1or2Key key, SDL1or2Mod smod, char c)
 
 void hw_log_message(const char *msg)
 {
+#ifndef NDEBUG
     fputs(msg, stdout);
+#endif
 }
 
 void hw_log_warning(const char *msg)
 {
+	#ifndef NDEBUG
     fputs(msg, stderr);
+	#endif
 }
 
 void hw_log_error(const char *msg)
 {
+	#ifndef NDEBUG
     fputs(msg, stderr);
+	#endif
 }
 
 /* -------------------------------------------------------------------------- */
