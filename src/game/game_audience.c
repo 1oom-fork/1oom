@@ -711,7 +711,7 @@ static void audience_menu_trade(struct audience_s *au)
         } else {
             game_diplo_set_trade(g, ph, pa, au->bctbl[selected]);
         }
-        game_audience_set_dtype(au, 64, si);
+        game_audience_set_dtype(au, GAME_DIPLO_ACCEPT_TRADE, si);
     }
 }
 
@@ -890,7 +890,7 @@ static void audience_menu_tribute(struct audience_s *au)
             SETMIN(ea->relation1[ph], 65);
         }
         /* FIXME BUG? eh->relation1[pa] = ea->relation1[ph]; is missing */
-        game_audience_set_dtype(au, 1, 3);
+        game_audience_set_dtype(au, GAME_DIPLO_ACCEPT_TRIBUTE, 3);
     } else {
         struct spy_esp_s s[1];
         int hmm1 = 0; /* FIXME BUG = diplo_p2_sub1_zhmm4[bcnum]; uninitialized, wrong index */
@@ -937,10 +937,10 @@ static void audience_menu_tribute(struct audience_s *au)
                     SETMIN(ea->relation1[ph], 70);
                 }
                 /* FIXME BUG? eh->relation1[pa] = ea->relation1[ph]; is missing */
-                game_audience_set_dtype(au, 1, 3);
+                game_audience_set_dtype(au, GAME_DIPLO_ACCEPT_TRIBUTE, 3);
             }
         } else {
-            game_audience_set_dtype(au, 75, 3);
+            game_audience_set_dtype(au, GAME_DIPLO_NO_TECH_WANTED, 3);
         }
     }
 }
@@ -1053,10 +1053,10 @@ static void audience_menu_tech(struct audience_s *au)
                     }
                 }
             } else {
-                game_audience_set_dtype(au, 75, 3);
+                game_audience_set_dtype(au, GAME_DIPLO_NO_TECH_WANTED, 3);
             }
         } else {
-            game_audience_set_dtype(au, 75, 3);
+            game_audience_set_dtype(au, GAME_DIPLO_NO_TECH_WANTED, 3);
         }
     }
     game_diplo_annoy(g, ph, pa, 3);
@@ -1111,7 +1111,7 @@ static void audience_menu_main(struct audience_s *au)
             }
         }
         if (game_diplo_get_mood(g, ph, pa) < -100) {
-            game_audience_set_dtype(au, 74, 3);
+            game_audience_set_dtype(au, GAME_DIPLO_AMBASSADOR_RECALLED, 3);
             break;
         }
         strcpy(au->buf, game_str_au_howmay);
