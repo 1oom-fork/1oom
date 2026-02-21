@@ -1,24 +1,32 @@
-This version of the game is no longer in development. Check out the vanilla branch to get an idea of ​​the latest engine version.
-
 1oom
 ====
 
 1oom aims to accurately reproduce the original DOS version of Master of Orion (1993) in a form that can be run on modern computers.
 1oom is Free Software (GPLv2), see [COPYING](COPYING).
 
+Versions [1.0 and earlier](https://gitlab.com/KilgoreTroutMaskReplicant/1oom) contain hundreds of obvious inconsistencies with the original logic and even fatal errors in the code.
+WARNING: 1.0 is not the vanilla version. The vanilla version has moved to gitverse.ru
+
+Versions 2019-2021 (Tapani's fork) breaks numerous vanilla mechanics, including the interface. It's one of the most unreliable versions of the game.
+
+Versions 1.7.5, 1.8.1-1.11.8 ([MyName's fork](https://github.com/1oom-fork/1oom)) cleans up Tapani's fork, fixes most of the most notable bugs, but not all, and also changes some interface elements.
+
+The vanilla version (2026 and later) is published on [Gitverse mirror](https://gitverse.ru/1oom-fork/1oom) and aims to accurately reproduce the original artwork created in 1993.
+
+An analysis of unofficial patches for the original game shows the need for a more responsible approach.
+I'm working on creating a separate patch 1.3a for the original MOO1 game based on 1oom vanilla.
+This patch is inextricably linked to 1oom vanilla and will be published together with it on gitverse.
 
 1 Installation
 ===============
 
 1oom requires a copy of the Master of Orion (v1.3) LBX files.
 Please note that older saved games may not work in newer versions of 1oom.
-Read the [changelog](CHANGES) to learn more about the breaking changes.
 
 1.1 Windows, MSDOS
 ------------------
 
-Simply extract the desired [release](https://github.com/1oom-fork/1oom/releases) to your MOO1 directory.
-Alternatively copy your MOO1 LBX files (and saved games if needed) to your 1oom directory.
+Simply extract the desired release to your MOO1 directory.
 See [usage_common](doc/usage_common.txt) if you prefer to use a separate directory.
 
 1.2 Unix (Linux)
