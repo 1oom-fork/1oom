@@ -1,4 +1,6 @@
 This version of the game is no longer in development. Check out the vanilla branch to get an idea of ​​the latest engine version.
+Old unofficial patches for the original game were analyzed and found to be flawed in several areas.
+I'm working to create a separate patch for the original game, one in which all changes are carefully thought out and work flawlessly.
 
 1oom
 ====
