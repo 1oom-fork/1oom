@@ -16,6 +16,9 @@
 
 /* -------------------------------------------------------------------------- */
 
+static int temp_spy_tbl_num[TECH_FIELD_NUM];
+static uint8_t temp_spy_tbl_techi[TECH_FIELD_NUM][50];
+
 /* -------------------------------------------------------------------------- */
 
 static uint8_t game_spy_esp_sub3_sub1(struct game_s *g, tech_group_t group, tech_field_t field, uint16_t slen, const uint8_t *src)
@@ -76,7 +79,7 @@ static void game_spy_esp_sub3(struct game_s *g, struct spy_esp_s *s, tech_field_
             }
         }
         if (!have_tech) {
-            s->tbl_techi[field][s->tbl_num[field]++] = techi;
+            temp_spy_tbl_techi[field][temp_spy_tbl_num[field]++] = techi;
         }
     }
 }
@@ -357,11 +360,11 @@ int game_spy_select_useful_techs(struct game_s *g, struct spy_esp_s *s, player_i
     for (int loops = 0; (loops < 500) && (s->tnum < TECH_SPY_MAX); ++loops) {
         tech_field_t field;
         field = rnd_0_nm1(TECH_FIELD_NUM, &g->seed);
-        if (s->tbl_num[field] > 0) {
+        if (temp_spy_tbl_num[field] > 0) {
             int value;
             bool have_tech;
             uint8_t techi;
-            techi = s->tbl_techi[field][rnd_0_nm1(s->tbl_num[field], &g->seed)];
+            techi = temp_spy_tbl_techi[field][rnd_0_nm1(temp_spy_tbl_num[field], &g->seed)];
             have_tech = false;
             for (int i = 0; i < s->tnum; ++i) {
                 /*63495*/
@@ -390,7 +393,7 @@ int game_spy_sift_useful_techs(struct game_s *g, struct spy_esp_s *s, player_id_
 {
     int sum = 0;
     for (tech_field_t f = TECH_FIELD_COMPUTER; f < TECH_FIELD_NUM; ++f) {
-        s->tbl_num[f] = 0;
+        temp_spy_tbl_num[f] = 0;
     }
     for (tech_field_t f = TECH_FIELD_COMPUTER; f < TECH_FIELD_NUM; ++f) {
         game_spy_esp_sub3(g, s, f,
@@ -398,7 +401,7 @@ int game_spy_sift_useful_techs(struct game_s *g, struct spy_esp_s *s, player_id_
                           g->eto[spy].tech.completed[f], g->srd[spy].researchcompleted[f], spy);
     }
     for (tech_field_t f = TECH_FIELD_COMPUTER; f < TECH_FIELD_NUM; ++f) {
-        sum += s->tbl_num[f];
+        sum += temp_spy_tbl_num[f];
     }
     return sum;
 }
