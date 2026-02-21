@@ -3226,10 +3226,10 @@ static void game_ai_classic_turn_diplo_p1(struct game_s *g)
                         tech_field_t field[2];
                         int num[2];
                         uint8_t tech[2];
-                        num[0] = game_spy_sift_useful_techs(g, &s, p1, p2, rnd_1_n(3, &g->seed));
+                        num[0] = game_spy_sift_useful_techs(g, p1, p2, rnd_1_n(3, &g->seed));
                         field[0] = s.tbl_field[0];
                         tech[0] = s.tbl_tech2[0];
-                        num[1] = game_spy_sift_useful_techs(g, &s, p2, p1, rnd_1_n(3, &g->seed));
+                        num[1] = game_spy_sift_useful_techs(g, p2, p1, rnd_1_n(3, &g->seed));
                         field[1] = s.tbl_field[0];
                         tech[1] = s.tbl_tech2[0];
                         if ((num[0] > 0) && (num[1] > 0)) {
