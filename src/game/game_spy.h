@@ -9,8 +9,6 @@ struct spy_turn_s {
 
 struct spy_esp_s {
     int tnum;
-    int tbl_num[TECH_FIELD_NUM];
-    uint8_t tbl_techi[TECH_FIELD_NUM][50];
     tech_field_t tbl_field[TECH_SPY_MAX];
     uint8_t tbl_tech2[TECH_SPY_MAX];
     int tbl_value[TECH_SPY_MAX];
