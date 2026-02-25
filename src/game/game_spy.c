@@ -17,31 +17,30 @@
 
 /* -------------------------------------------------------------------------- */
 
-static uint8_t game_spy_esp_sub3_sub1(struct game_s *g, uint8_t a0, tech_field_t field, uint16_t slen, const uint8_t *src)
+static uint8_t game_spy_esp_sub3_sub1(struct game_s *g, tech_group_t group, tech_field_t field, uint16_t slen, const uint8_t *src)
 {
-    int v = 0;
+    uint8_t best_tier = 0;
     for (int i = 0; i < slen; ++i) {
         uint8_t techi;
-        const uint8_t *p;
+        tech_group_t group2;
         techi = src[i];
-        p = RESEARCH_D0_PTR(g->gaux, field, techi);
-        if (a0 == p[0]) {
-            v = RESEARCH_D0_B1(p);
+        group2 = game_tech_get_group(g->gaux, field, techi);
+        if (group == group2) {
+            best_tier = game_tech_get_tier(g->gaux, field, techi);
         }
     }
-    return v;
+    return best_tier;
 }
 
 static void game_spy_esp_sub3(struct game_s *g, struct spy_esp_s *s, tech_field_t field, int tlen, const uint8_t *trc, int slen, const uint8_t *src)
 {
     for (int i = 0; i < tlen; ++i) {
-        const uint8_t *p;
-        uint8_t techi, b0, b1;
+        uint8_t techi, tier;
+        tech_group_t group;
         bool have_tech;
         techi = trc[i];
-        p = RESEARCH_D0_PTR(g->gaux, field, techi);
-        b0 = p[0];
-        b1 = RESEARCH_D0_B1(p);
+        group = game_tech_get_group(g->gaux, field, techi);
+        tier = game_tech_get_tier(g->gaux, field, techi);
         have_tech = false;
         for (int j = 0; j < slen; ++j) {
             if (src[j] == techi) {
@@ -50,17 +49,32 @@ static void game_spy_esp_sub3(struct game_s *g, struct spy_esp_s *s, tech_field_
             }
         }
         if (0
-          || ((b0 >= 3) && (b0 <= 6))
-          || (b0 == 10) || (b0 == 18) || (b0 == 21)
-          || ((b0 >= 12) && (b0 <= 16))
+          || (group == TECH_GROUP_IMPROVED_ROBOTIC_CONTROLS)
+          || (group == TECH_GROUP_SPACE_SCANNER)
+          || (group == TECH_GROUP_REDUCED_INDUSTRIAL_WASTE)
+          || (group == TECH_GROUP_IMPROVED_INDUSTRIAL_TECH)
+          || (group == TECH_GROUP_PLANETARY_SHIELD)
+          || (group == TECH_GROUP_IMPROVED_TERRAFORMING)
+          || (group == TECH_GROUP_CONTROLLED_ENVIRONMENT)
+          || (group == TECH_GROUP_ECO_RESTORATION)
+          || (group == TECH_GROUP_PERSONAL_ARMOR)
+          || (group == TECH_GROUP_PERSONAL_SHIELD)
+          || (group == TECH_GROUP_FUEL_CELLS)
+          || (group == TECH_GROUP_PERSONAL_WEAPONS)
         ) {
-            if (game_spy_esp_sub3_sub1(g, b0, field, slen, src) >= b1) {
+            if (game_spy_esp_sub3_sub1(g, group, field, slen, src) >= tier) {
                 have_tech = true;
             }
         }
         /*632ff*/
-        if ((g->eto[s->spy].race == RACE_SILICOID) && ((b0 == 5) || (b0 == 13) || (b0 == 14))) {
-            have_tech = true;
+        if (g->eto[s->spy].race == RACE_SILICOID) {
+            if (0
+              || (group == TECH_GROUP_REDUCED_INDUSTRIAL_WASTE)
+              || (group == TECH_GROUP_CONTROLLED_ENVIRONMENT)
+              || (group == TECH_GROUP_ECO_RESTORATION)
+            ) {
+                have_tech = true;
+            }
         }
         if (!have_tech) {
             s->tbl_techi[field][s->tbl_num[field]++] = techi;
@@ -68,22 +82,24 @@ static void game_spy_esp_sub3(struct game_s *g, struct spy_esp_s *s, tech_field_
     }
 }
 
-static int game_spy_esp_sub4(struct game_s *g, struct spy_esp_s *s, tech_field_t field, uint8_t techi)
+static int game_spy_esp_get_value(struct game_s *g, tech_field_t field, uint8_t techi, player_id_t player_i)
 {
-    empiretechorbit_t *es = &(g->eto[s->spy]);
-    const shipresearch_t *srds = &(g->srd[s->spy]);
-    uint8_t b0 = RESEARCH_D0_PTR(g->gaux, field, techi)[0], maxb1 = 0, maxti = 0;
+    const empiretechorbit_t *es = &(g->eto[player_i]);
+    const shipresearch_t *srds = &(g->srd[player_i]);
+    uint8_t maxtier = 0, maxti = 0;
+    tech_group_t group = game_tech_get_group(g->gaux, field, techi);
     int v;
-    if (b0 & 0x80) {
+    if (group & 0x80) {
         return 0;
     }
     for (int i = 0; i < es->tech.completed[field]; ++i) {
-        const uint8_t *p;
-        uint8_t ti;
+        uint8_t tier2, ti;
+        tech_group_t group2;
         ti = srds->researchcompleted[field][i];
-        p = RESEARCH_D0_PTR(g->gaux, field, ti);
-        if ((p[0] == b0) && (p[1] > maxb1)) {
-             maxb1 = p[1];
+        group2 = game_tech_get_group(g->gaux, field, ti);
+        tier2 = game_tech_get_tier(g->gaux, field, ti);
+        if ((group2 == group) && (tier2 > maxtier)) {
+             maxtier = tier2;
              maxti = ti;
         }
     }
@@ -127,16 +143,16 @@ static int game_spy_esp_sub4(struct game_s *g, struct spy_esp_s *s, tech_field_t
 #endif
     /*62f24*/
     v = techi * techi;
-    if (b0 == 0) {
+    if (group == TECH_GROUP_SINGULAR) {
         v *= 10;
     }
-    if (b0 == 3) {
+    if (group == TECH_GROUP_IMPROVED_ROBOTIC_CONTROLS) {
         v *= 6;
     }
-    if (b0 == 5) {
+    if (group == TECH_GROUP_REDUCED_INDUSTRIAL_WASTE) {
         v *= 3;
     }
-    if (b0 == 14) {
+    if (group == TECH_GROUP_ECO_RESTORATION) {
         v *= 3;
     }
     if (maxti > techi) {
@@ -145,8 +161,14 @@ static int game_spy_esp_sub4(struct game_s *g, struct spy_esp_s *s, tech_field_t
     if (maxti == techi) {
         v = 0;
     }
-    if ((es->race == RACE_SILICOID) && ((b0 == 5) || (b0 == 13) || (b0 == 14))) {
-        v = 0;
+    if (es->race == RACE_SILICOID) {
+        if (0
+          || (group == TECH_GROUP_REDUCED_INDUSTRIAL_WASTE)
+          || (group == TECH_GROUP_CONTROLLED_ENVIRONMENT)
+          || (group == TECH_GROUP_ECO_RESTORATION)
+        ) {
+            v = 0;
+        }
     }
     if ((field == TECH_FIELD_WEAPON) && (techi == TECH_WEAP_DEATH_RAY)) {
         v = 30000;
@@ -170,11 +192,10 @@ static void game_spy_esp_sub5(struct spy_esp_s *s, int r)
 
 static player_id_t game_spy_frame_random(struct game_s *g, player_id_t spy, player_id_t target)
 {
-    const empiretechorbit_t *et = &(g->eto[target]);
     player_id_t tbl_scapegoat[PLAYER_NUM];
     int n = 0;
     for (player_id_t i = 0; i < PLAYER_NUM; ++i) {
-        if ((i != spy) && (i != target) && (et->within_frange[i] != 0)) {
+        if ((i != spy) && IN_CONTACT(g, i, target)) {
             tbl_scapegoat[n++] = i;
         }
     }
@@ -212,7 +233,7 @@ static void game_spy_espionage(struct game_s *g, player_id_t spy, player_id_t ta
                     g->evn.stolen_spy[target][spy] = game_spy_frame_random(g, spy, target);
                 }
                 /*81fa7*/
-                game_tech_get_new(g, spy, s->tbl_field[0], s->tbl_tech2[0], 3, 0, 0, false);
+                game_tech_get_new(g, spy, s->tbl_field[0], s->tbl_tech2[0], TECHSOURCE_AI_SPY, 0, 0, false);
             } else if (IS_HUMAN(g, spy)) { /* FIXME multiplayer */
                 /*81fd3*/
                 int v = 0;
@@ -227,8 +248,9 @@ static void game_spy_espionage(struct game_s *g, player_id_t spy, player_id_t ta
                 }
             } else {
                 /*8207f*/
-                game_tech_get_new(g, spy, s->tbl_field[0], s->tbl_tech2[0], 3, 0, 0, false);
-                if (flag_frame && (et->within_frange != 0) && (rnd_0_nm1(2, &g->seed) == 0)) {
+                const empiretechorbit_t *e = &(g->eto[PLAYER_0]);
+                game_tech_get_new(g, spy, s->tbl_field[0], s->tbl_tech2[0], TECHSOURCE_AI_SPY, 0, 0, false);
+                if (flag_frame && BOOLVEC_IS1(e->within_frange, target) && (rnd_0_nm1(2, &g->seed) == 0)) {
                     game_diplo_act(g, -(rnd_1_n(20, &g->seed) + 20), PLAYER_0, target, 5, 0, s->tbl_field[0]); /* FIXME multiplayer */
                 }
             }
@@ -293,7 +315,7 @@ static void game_spy_sabotage(struct game_s *g, player_id_t spy, player_id_t tar
             }
         } else if (IS_HUMAN(g, spy)) { /* FIXME multiplayer */
             /*82431*/
-            g->evn.sabotage_num2[target][spy] = v8;
+            g->evn.sabotage_num[target][spy] = v8;
             g->evn.sabotage_spy[target][spy] = flag_frame ? -1 : rcaught;
         } else {
             /*8247a*/
@@ -327,7 +349,7 @@ int game_spy_esp_sub1(struct game_s *g, struct spy_esp_s *s, int a4, int a6)
         tech_field_t field;
         field = rnd_0_nm1(TECH_FIELD_NUM, &g->seed);
         if (s->tbl_num[field] > 0) {
-            int v8;
+            int value;
             bool have_tech;
             uint8_t techi;
             techi = s->tbl_techi[field][rnd_0_nm1(s->tbl_num[field], &g->seed)];
@@ -338,8 +360,8 @@ int game_spy_esp_sub1(struct game_s *g, struct spy_esp_s *s, int a4, int a6)
                     have_tech = true;
                 }
             }
-            v8 = game_spy_esp_sub4(g, s, field, techi);
-            if ((v8 == 0) || (v8 < a4)) {
+            value = game_spy_esp_get_value(g, field, techi, s->spy);
+            if ((value == 0) || (value < a4)) {
                 have_tech = true;
             }
             if (!have_tech) {
@@ -347,7 +369,7 @@ int game_spy_esp_sub1(struct game_s *g, struct spy_esp_s *s, int a4, int a6)
                 i = s->tnum;
                 s->tbl_field[i] = field;
                 s->tbl_tech2[i] = techi;
-                s->tbl_hmm4[i] = v8;
+                s->tbl_value[i] = value;
                 s->tnum = i + 1;
             }
         }
@@ -390,6 +412,7 @@ void game_spy_build(struct game_s *g)
                 while (spyfund >= spycost) {
                     ++e->spies[j];
                     spyfund -= spycost;
+                    spycost *= 2;
                 }
                 e->spyfund[j] = spyfund;
             }
@@ -437,23 +460,15 @@ void game_spy_turn(struct game_s *g, struct spy_turn_s *st)
         for (player_id_t j = PLAYER_0; j < g->players; ++j) {
             g->evn.spies_caught[j][i] = 0;
             g->evn.spies_caught[i][j] = 0;
-            g->evn.stolen_field[j][i] = 0;
+            g->evn.spied_num[i][j] = 0; /* Note: The index order here may  */
+            g->evn.spied_spy[i][j] = 0; /* be wrong, but it doesn't matter */
             g->evn.stolen_field[i][j] = 0;
-            g->evn.stolen_spy[j][i] = 0;
+            g->evn.stolen_tech[i][j] = 0;
             g->evn.stolen_spy[i][j] = 0;
-            g->evn.spied_num[j][i] = 0;
-            g->evn.spied_num[i][j] = 0;
-            g->evn.spied_spy[j][i] = 0;
-            g->evn.spied_spy[i][j] = 0;
-            g->evn.sabotage_is_bases[j][i] = 0;
             g->evn.sabotage_is_bases[i][j] = 0;
-            g->evn.sabotage_num[j][i] = 0;
+            g->evn.sabotage_planet[i][j] = 0;
             g->evn.sabotage_num[i][j] = 0;
-            g->evn.sabotage_num2[j][i] = 0;
-            g->evn.sabotage_num2[i][j] = 0;
-            g->evn.sabotage_spy[j][i] = 0;
             g->evn.sabotage_spy[i][j] = 0;
-            g->evn.sabotage_hmm1[j][i] = 0;
             g->evn.sabotage_hmm1[i][j] = 0;
         }
     }
@@ -570,9 +585,9 @@ void game_spy_esp_human(struct game_s *g, struct spy_turn_s *st)
                         uint8_t planet;
                         planet = game_planet_get_random(g, target);
                         framed = (g->evn.spied_spy[target][spy] == -1);
-                        game_tech_get_new(g, spy, target, tbl_tech[field], 1, planet, target, framed);
+                        game_tech_get_new(g, spy, field, tbl_tech[field], TECHSOURCE_SPY, planet, target, framed);
                         if (!framed) {
-                            game_diplo_act(g, -g->evn.spied_spy[target][spy], spy, target, 4, 0, target);
+                            game_diplo_act(g, -g->evn.spied_spy[target][spy], spy, target, 4, 0, field);
                         }
                         ui_newtech(g, spy);
                         g->evn.newtech[spy].num = 0;
@@ -589,7 +604,7 @@ void game_spy_esp_human(struct game_s *g, struct spy_turn_s *st)
             uint8_t tech;
             tech = g->evn.stolen_tech[player][spy];
             if ((spy != player) && (tech != 0)) {
-                ui_spy_stolen(g, spy, player, g->evn.stolen_field[player][spy], tech);
+                ui_spy_stolen(g, player, spy, g->evn.stolen_field[player][spy], tech);
             }
         }
     }
@@ -658,8 +673,8 @@ void game_spy_sab_human(struct game_s *g)
                     } else if ((snum != 0) && (act > UI_SABOTAGE_FACT)) {
                         const empiretechorbit_t *et;
                         et = &(g->eto[target]);
-                        for (int i = 0; (i < g->players) && (other2 == PLAYER_NONE); ++i) {
-                            if ((i != player) && et->within_frange[i]) {
+                        for (player_id_t i = PLAYER_0; (i < g->players) && (other2 == PLAYER_NONE); ++i) {
+                            if ((i != player) && BOOLVEC_IS1(et->within_frange, i)) {
                                 if (other1 == PLAYER_NONE) {
                                     other1 = i;
                                 } else {

@@ -7,7 +7,6 @@
 #include "game_new.h"
 #include "game_str.h"
 #include "gfxaux.h"
-#include "hw.h"
 #include "kbd.h"
 #include "lbx.h"
 #include "lbxfont.h"
@@ -25,6 +24,7 @@
 #include "uipal.h"
 #include "uisound.h"
 #include "util.h"
+#include "vgabuf.h"
 
 /* -------------------------------------------------------------------------- */
 
@@ -45,7 +45,6 @@ struct new_game_data_s {
     uint8_t *gfx_custom;
     uint8_t *gfx_flag[BANNER_NUM];
     uint8_t *gfx_portrait[RACE_NUM];
-    struct gfx_aux_s aux_banner;
     char *str_tbl_2space_race[RACE_NUM + 2];
     char *str_tbl_2space_banner[BANNER_NUM + 2];
 };
@@ -66,7 +65,6 @@ static void new_game_load_data(struct new_game_data_s *d)
     for (int i = 0; i < RACE_NUM; ++i) {
         d->gfx_portrait[i] = lbxfile_item_get(LBXFILE_VORTEX, 0x10 + i, 0);
     }
-    d->aux_banner.data = 0;
     for (int i = 0; i < RACE_NUM + 1; ++i) {
         d->str_tbl_2space_race[i] = util_concat("  ", game_str_tbl_race[i], NULL);
     }
@@ -94,7 +92,6 @@ static void new_game_free_data(struct new_game_data_s *d)
         lib_free(d->str_tbl_2space_race[i]);
     }
     lib_free(d->str_tbl_2space_race[RACE_NUM + 1]);
-    gfx_aux_free(&d->aux_banner);
 }
 
 static void new_game_draw_cb1(void *vptr)
@@ -107,7 +104,7 @@ static void new_game_draw_cb1(void *vptr)
 static void new_game_draw_race_cb(void *vptr)
 {
     struct new_game_data_s *d = vptr;
-    hw_video_copy_back_from_page2();
+    vgabuf_copy_back_from_page2();
     if (d->selected < RACE_NUM) {
         lbxgfx_draw_frame(91, 11, d->gfx_portrait[d->selected], UI_SCREEN_W);
         lbxfont_select(0, 4, 0, 0);
@@ -122,7 +119,7 @@ static void new_game_draw_race_cb(void *vptr)
 static void new_game_draw_banner_cb(void *vptr)
 {
     struct new_game_data_s *d = vptr;
-    hw_video_copy_back_from_page2();
+    vgabuf_copy_back_from_page2();
     if (d->str_title) {
         lbxfont_select(5, 0, 0, 0);
         lbxfont_print_str_normal(0xa, 0xa, d->str_title, UI_SCREEN_W);
@@ -135,8 +132,8 @@ static void new_game_draw_banner_cb(void *vptr)
     ui_draw_box1(0x5a, 0x35, 0x83, 0x5a, 0x9b, 0x9b);
     if (d->selected < BANNER_NUM) {
         lbxgfx_set_new_frame(d->gfx_flag[d->selected], d->frame);
-        gfx_aux_draw_frame_to(d->gfx_flag[d->selected], &d->aux_banner);
-        gfx_aux_draw_frame_from(0x5b, 0x38, &d->aux_banner, UI_SCREEN_W);
+        gfx_aux_draw_frame_to(d->gfx_flag[d->selected], &ui_data.aux.screen);
+        gfx_aux_draw_frame_from(0x5b, 0x38, &ui_data.aux.screen, UI_SCREEN_W);
     }
     if (++d->frame == 0xa) {
         d->frame = 0;
@@ -155,7 +152,7 @@ static bool ui_new_game_names(struct game_new_options_s *newopts, struct new_gam
     while (!flag_ok) {
         lbxfont_select(5, 0xf, 0xf, 0xf);
         game_new_generate_emperor_name(d->race, buf);
-        if (!uiobj_read_str(0xf, 0x16, 0x41, buf, 0xb/*len*/, 0, 0, 0, tbl_cursor_color, -1)) {
+        if (!uiobj_read_str(0xf, 0x16, 0x41, buf, 0xb/*len*/, 0, 0, 0, tbl_cursor_color)) {
             return false;
         }
         util_trim_whitespace(buf);
@@ -170,7 +167,7 @@ static bool ui_new_game_names(struct game_new_options_s *newopts, struct new_gam
     while (!flag_ok) {
         lbxfont_select(5, 0xf, 0xf, 0xf);
         game_new_generate_home_name(d->race, buf);
-        if (!uiobj_read_str(0xf, 0x16, 0x32, buf, PLANET_NAME_LEN, 0, 0, 0, tbl_cursor_color, -1)) {
+        if (!uiobj_read_str(0xf, 0x16, 0x32, buf, PLANET_NAME_LEN, 0, 0, 0, tbl_cursor_color)) {
             return false;
         }
         util_trim_whitespace(buf);
@@ -196,7 +193,7 @@ static bool ui_new_game_racebannernames(struct game_new_options_s *newopts, stru
     ui_draw_erase_buf();
     lbxgfx_draw_frame(0, 0, d->gfx_custom, UI_SCREEN_W);
     ui_draw_box1(0x5a, 0xa, 0x83, 0x2d, 0x9b, 0x9b);
-    hw_video_copy_back_to_page2();
+    vgabuf_copy_back_to_page2();
     d->selected = 0;
 
     /* race */
@@ -206,7 +203,7 @@ static bool ui_new_game_racebannernames(struct game_new_options_s *newopts, stru
     uiobj_set_callback_and_delay(new_game_draw_race_cb, d, 2);
     uiobj_table_clear();
     lbxfont_select(5, 0xf, 0, 0);
-    race = uiobj_select_from_list1(0xa, 0xa, 0x32, game_str_ng_choose_race, (char const * const *)d->str_tbl_2space_race, &d->selected, tbllistallow, 0xf, 0, 2, 0, 0, 0, -1);
+    race = uiobj_select_from_list1(0xa, 0xa, 0x32, game_str_ng_choose_race, (char const * const *)d->str_tbl_2space_race, &d->selected, tbllistallow, 0xf, 0, 2, 0, 0, 0);
     if (race == -1) {
         ui_sound_play_sfx_06();
         return false;
@@ -221,7 +218,7 @@ static bool ui_new_game_racebannernames(struct game_new_options_s *newopts, stru
     uiobj_table_clear();
     uiobj_set_callback_and_delay(new_game_draw_banner_cb, d, 2);
     lbxfont_select(5, 0xf, 0, 0);
-    banner = uiobj_select_from_list1(0xa, 0xa, 0x32, game_str_ng_choose_banner, (char const * const *)d->str_tbl_2space_banner, &d->selected, tbllistallow, 0xf, 0, 2, 0, 0, 0, -1);
+    banner = uiobj_select_from_list1(0xa, 0xa, 0x32, game_str_ng_choose_banner, (char const * const *)d->str_tbl_2space_banner, &d->selected, tbllistallow, 0xf, 0, 2, 0, 0, 0);
     if (banner == -1) {
         ui_sound_play_sfx_06();
         return false;
@@ -244,7 +241,9 @@ bool ui_new_game(struct game_new_options_s *newopts)
     int16_t oi_gsize, oi_diffic, oi_oppon, oi_cancel, oi_ok;
     int16_t oi_esc, oi_d, oi_g, oi_o, oi_space;
 
-    /* TODO get default options from config (file) */
+    gsize = newopts->galaxy_size;
+    diffic = newopts->difficulty;
+    oppon = newopts->players - 1/*0-based*/ - 1/*player*/;
 
     ui_palette_fadeout_19_19_1();
     lbxpal_select(3, -1, 0);
@@ -257,11 +256,11 @@ bool ui_new_game(struct game_new_options_s *newopts)
         lbxfont_select(0, 0, 0, 0); \
         uiobj_table_clear(); \
         oi_esc = uiobj_add_inputkey(MOO_KEY_ESCAPE); \
-        oi_gsize = uiobj_add_t0(0xaf, 0x1d, game_str_tbl_gsize[gsize], d.gfx_optb_ng, MOO_KEY_UNKNOWN, -1); \
-        oi_diffic = uiobj_add_t0(0xaf, 0x44, game_str_tbl_diffic[diffic], d.gfx_optb_ng, MOO_KEY_UNKNOWN, -1); \
-        oi_oppon = uiobj_add_t0(0xaf, 0x6b, game_str_tbl_oppon[oppon], d.gfx_optb_ng, MOO_KEY_UNKNOWN, -1); \
-        oi_cancel = uiobj_add_t0(0x5a, 0x93, "", d.gfx_optb_cancel, MOO_KEY_UNKNOWN, -1); \
-        oi_ok = uiobj_add_t0(0xa1, 0x93, "", d.gfx_optb_ok, MOO_KEY_UNKNOWN, -1); \
+        oi_gsize = uiobj_add_t0(0xaf, 0x1d, game_str_tbl_gsize[gsize], d.gfx_optb_ng, MOO_KEY_UNKNOWN); \
+        oi_diffic = uiobj_add_t0(0xaf, 0x44, game_str_tbl_diffic[diffic], d.gfx_optb_ng, MOO_KEY_UNKNOWN); \
+        oi_oppon = uiobj_add_t0(0xaf, 0x6b, game_str_tbl_oppon[oppon], d.gfx_optb_ng, MOO_KEY_UNKNOWN); \
+        oi_cancel = uiobj_add_t0(0x5a, 0x93, "", d.gfx_optb_cancel, MOO_KEY_UNKNOWN); \
+        oi_ok = uiobj_add_t0(0xa1, 0x93, "", d.gfx_optb_ok, MOO_KEY_UNKNOWN); \
         oi_d = uiobj_add_inputkey(MOO_KEY_d); \
         oi_g = uiobj_add_inputkey(MOO_KEY_g); \
         oi_o = uiobj_add_inputkey(MOO_KEY_o); \
@@ -271,7 +270,7 @@ bool ui_new_game(struct game_new_options_s *newopts)
     MAKE_UIOBJS();
 
     uiobj_set_callback_and_delay(new_game_draw_cb1, &d, 2);
-    uiobj_set_hmm3_xyoff(1, 1);
+    uiobj_set_xyoff(1, 1);
 
     while (!flag_done) {
         int16_t oi;
@@ -327,12 +326,6 @@ bool ui_new_game(struct game_new_options_s *newopts)
 
     uiobj_unset_callback();
     new_game_free_data(&d);
-
-    ui_palette_fadeout_19_19_1();
-    ui_draw_erase_buf();
-    hw_video_draw_buf();
-    ui_draw_erase_buf();
-    hw_video_draw_buf();
 
     return flag_ok;
 }

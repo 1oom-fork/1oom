@@ -98,7 +98,7 @@ static struct sfx_conv_s fmt_sfx_resample_libsamplerate(struct sfx_conv_s *s_in,
 }
 #endif /* HAVE_SAMPLERATE */
 
-static struct sfx_conv_s fmt_sfx_resample_simple(struct sfx_conv_s *s_in, int audiorate)
+static struct sfx_conv_s fmt_sfx_resample_simple(struct sfx_conv_s *s_in, uint32_t audiorate)
 {
     struct sfx_conv_s s_out = { NULL, 0, audiorate };
 
@@ -106,7 +106,7 @@ static struct sfx_conv_s fmt_sfx_resample_simple(struct sfx_conv_s *s_in, int au
 
     uint32_t expanded_length;
     int expand_ratio;
-    int i;
+    uint32_t i;
 
     /* Calculate the length of the expanded version of the sample. */
     expanded_length = (uint32_t) ((((uint64_t) s_in->num) * audiorate) / s_in->samplerate);
@@ -167,7 +167,7 @@ static struct sfx_conv_s fmt_sfx_convert_voc(const uint8_t *data_in, uint32_t le
     cursize = len_in * 2/*16b*/ * 2/*stereo*/;
     q = data = lib_malloc(cursize);
     while (len_in) {
-        uint8_t b, block_type, ctype = 0, stereo = 0, sr;
+        uint8_t block_type, ctype = 0, stereo = 0, sr;
         uint32_t block_size, newrate;
         block_type = *p++;
         --len_in;
@@ -218,7 +218,11 @@ static struct sfx_conv_s fmt_sfx_convert_voc(const uint8_t *data_in, uint32_t le
                     cursize = newsize;
                     q = &data[res.num * 2/*stereo*/];
                 }
-                /* TODO check/handle ctype!=0 and stereo */
+                /* TODO handle ctype!=0 and stereo */
+                if ((ctype != 0/*8-bit*/)) {
+                    log_error("VOC: non-8-bit compression type %u unimpl\n", ctype);
+                    goto fail;
+                }
                 res.num += block_size;
                 while (block_size--) {
                     int16_t s;
@@ -254,8 +258,7 @@ static struct sfx_conv_s fmt_sfx_convert_voc(const uint8_t *data_in, uint32_t le
                 break;
             case 0x04:  /* Marker */
                 {
-                    uint16_t marker;
-                    marker = GET_LE_16(p);
+                    IF_DEBUG(uint16_t marker; marker = GET_LE_16(p);)
                     p += 2;
                     len_in -= 2;
                     LOG_DEBUG((DEBUGLEVEL_FMTSFX, " marker %i at %i\n", marker, p - data_in));
@@ -268,8 +271,7 @@ static struct sfx_conv_s fmt_sfx_convert_voc(const uint8_t *data_in, uint32_t le
                 break;
             case 0x06:  /* Repeat */
                 {
-                    uint16_t repeatnum;
-                    repeatnum = GET_LE_16(p);
+                    IF_DEBUG(uint16_t repeatnum; repeatnum = GET_LE_16(p);)
                     p += 2;
                     len_in -= 2;
                     LOG_DEBUG((DEBUGLEVEL_FMTSFX, " repeat %i\n", repeatnum));
@@ -283,10 +285,12 @@ static struct sfx_conv_s fmt_sfx_convert_voc(const uint8_t *data_in, uint32_t le
             case 0x08:  /* Extended */
                 {
                     uint16_t tc;
+                    IF_DEBUG(uint8_t pack;)
                     tc = GET_LE_16(p);
                     p += 2;
                     len_in -= 2;
-                    b = *p++;
+                    IF_DEBUG(pack = *p;)
+                    ++p;
                     --len_in;
                     stereo = *p++;
                     --len_in;
@@ -296,7 +300,7 @@ static struct sfx_conv_s fmt_sfx_convert_voc(const uint8_t *data_in, uint32_t le
                         goto fail;
                     }
                     res.samplerate = newrate;
-                    LOG_DEBUG((DEBUGLEVEL_FMTSFX, "tc %i->%iHz pack:%02x st:%02x\n", tc, newrate, b, stereo));
+                    LOG_DEBUG((DEBUGLEVEL_FMTSFX, "tc %i->%iHz pack:%02x st:%02x\n", tc, newrate, pack, stereo));
                 }
                 break;
             default:
@@ -349,14 +353,14 @@ static struct sfx_conv_s fmt_sfx_convert_wav(const uint8_t *data_in, uint32_t le
     if (bps_in == 8) {
         if (ch_in == 1) {
             res.num = len;
-            for (int i = 0; i < len; ++i) {
+            for (uint32_t i = 0; i < len; ++i) {
                 s = *p++ << 8;
                 *q++ = s;
                 *q++ = s;
             }
         } else {
             res.num = len / 2;
-            for (int i = 0; i < (len / 2); ++i) {
+            for (uint32_t i = 0; i < (len / 2); ++i) {
                 s = *p++ << 8;
                 *q++ = s;
                 s = *p++ << 8;
@@ -367,7 +371,7 @@ static struct sfx_conv_s fmt_sfx_convert_wav(const uint8_t *data_in, uint32_t le
         const int16_t *d = (const int16_t *)p;
         if (ch_in == 1) {
             res.num = len / 2;
-            for (int i = 0; i < (len / 2); ++i) {
+            for (uint32_t i = 0; i < (len / 2); ++i) {
                 s = GET_LE_16(d);
                 ++d;
                 *q++ = s;
@@ -375,7 +379,7 @@ static struct sfx_conv_s fmt_sfx_convert_wav(const uint8_t *data_in, uint32_t le
             }
         } else {
             res.num = len / 4;
-            for (int i = 0; i < (len / 4); ++i) {
+            for (uint32_t i = 0; i < (len / 4); ++i) {
                 s = GET_LE_16(d);
                 ++d;
                 *q++ = s;

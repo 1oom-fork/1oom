@@ -42,8 +42,7 @@ static void empirestatus_data_free(struct empirestatus_data_s *d)
 static void empirestatus_draw_cb(void *vptr)
 {
     struct empirestatus_data_s *d = vptr;
-    struct game_s *g = d->g;
-    char buf[0x40];
+    const struct game_s *g = d->g;
     uint8_t tbl_stat[6][PLAYER_NUM];
     int tbl_sum[PLAYER_NUM];
 
@@ -51,10 +50,10 @@ static void empirestatus_draw_cb(void *vptr)
     lbxgfx_draw_frame(0, 0, d->gfx, UI_SCREEN_W);
 
     lbxfont_select_set_12_4(4, 0xf, 0, 0);
-    lbxfont_print_str_normal(160, 9, game_str_ra_stats, UI_SCREEN_W);
+    lbxfont_print_str_center(160, 9, game_str_ra_stats, UI_SCREEN_W);
     lbxfont_select_set_12_4(5, 5, 0, 0);
-    sprintf(buf, "%s: %i", game_str_year, g->year + YEAR_BASE);
-    lbxfont_print_str_normal(15, 11, buf, UI_SCREEN_W);
+    lbxfont_print_str_normal(15, 11, game_str_year, UI_SCREEN_W);
+    lbxfont_print_num_normal(42, 11, g->year + YEAR_BASE, UI_SCREEN_W);
 
     for (int i = 0; i < d->num; ++i) {
         tbl_sum[i] = 0;
@@ -92,18 +91,18 @@ static void empirestatus_draw_cb(void *vptr)
             SETMAX(maxstats, tbl_sum[i]);
         }
         for (int i = 0; i < d->num; ++i) {
-            tbl_stat[6][i] = maxstats ? ((tbl_sum[i] * 100) / maxstats) : 100;
+            tbl_stat[5][i] = maxstats ? ((tbl_sum[i] * 100) / maxstats) : 100;
         }
     }
     lbxfont_select(2, 6, 0, 0);
     for (int s = 0; s < 6; ++s) {
         for (int i = 0; i < d->num; ++i) {
             player_id_t pi;
-            empiretechorbit_t *e;
+            const empiretechorbit_t *e;
             int x, y;
             uint8_t v;
             x = (s / 3) * 156 + 11;
-            y = (s % 3) * 57 + i * 8 + 38;
+            y = (s % 3) * 57 + i * 7 + 38;
             pi = d->tbl_ei[i];
             e = (&g->eto[pi]);
             lbxfont_print_str_normal(x, y, game_str_tbl_race[e->race], UI_SCREEN_W);
@@ -130,13 +129,13 @@ void ui_empirestatus(struct game_s *g, player_id_t active_player)
     d.api = active_player;
 
     game_update_production(g);
-    game_update_empire_within_range(g);
+    game_update_empire_contact(g);
     game_update_maint_costs(g);
 
     d.num = 1;
     d.tbl_ei[0] = active_player;
     for (player_id_t pi = PLAYER_0; pi < g->players; ++pi) {
-        if ((pi != active_player) && BOOLVEC_IS1(g->eto[active_player].within_frange, pi)) {
+        if (IN_CONTACT(g, active_player, pi)) {
             d.tbl_ei[d.num++] = pi;
         }
     }
@@ -155,7 +154,7 @@ void ui_empirestatus(struct game_s *g, player_id_t active_player)
         if (!flag_done) {
             empirestatus_draw_cb(&d);
             uiobj_table_clear();
-            uiobj_add_mousearea(0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, MOO_KEY_UNKNOWN, -1);
+            uiobj_add_mousearea(UI_SCREEN_LIMITS, MOO_KEY_UNKNOWN);
             ui_draw_finish();
             ui_delay_ticks_or_click(1);
         }

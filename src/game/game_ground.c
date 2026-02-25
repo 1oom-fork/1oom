@@ -40,17 +40,19 @@ static void game_ground_init(struct ground_s *gr)
         bestsuit = 0;
         rc = &(srd->researchcompleted[TECH_FIELD_CONSTRUCTION][0]);
         for (int j = 0; j < e->tech.completed[TECH_FIELD_CONSTRUCTION]; ++j) {
-            const uint8_t *r;
-            r = RESEARCH_D0_PTR(g->gaux, TECH_FIELD_CONSTRUCTION, rc[i]);
-            if (r[0] == 7) {
-                bestarmor = r[1];
-            } else if (r[0] == 0xf) {
-                bestsuit = r[1];
-                besti = rc[i];
+            uint8_t tier;
+            tech_group_t group;
+            group = game_tech_get_group(g->gaux, TECH_FIELD_CONSTRUCTION, rc[j]);
+            tier = game_tech_get_tier(g->gaux, TECH_FIELD_CONSTRUCTION, rc[j]);
+            if (group == TECH_GROUP_ARMOR) {
+                bestarmor = tier;
+            } else if (group == TECH_GROUP_PERSONAL_ARMOR) {
+                bestsuit = tier;
+                besti = rc[j];
             }
         }
         gr->s[i].force += bestarmor * 5 + bestsuit * 10;
-        strcpy(buf, *tbl_shiptech_armor[bestarmor].nameptr);
+        strcpy(buf, *tbl_shiptech_armor[bestarmor * 2].nameptr);
         util_str_tolower(&buf[1]);
         sprintf(gr->s[i].str[0], "%s ", buf);
         if (bestsuit == 0) {
@@ -62,11 +64,13 @@ static void game_ground_init(struct ground_s *gr)
         bestshield = 0;
         rc = &(srd->researchcompleted[TECH_FIELD_FORCE_FIELD][0]);
         for (int j = 0; j < e->tech.completed[TECH_FIELD_FORCE_FIELD]; ++j) {
-            const uint8_t *r;
-            r = RESEARCH_D0_PTR(g->gaux, TECH_FIELD_FORCE_FIELD, rc[i]);
-            if (r[0] == 0x10) {
-                bestshield = r[1];
-                besti = rc[i] + 1; /* FIXME why is this + 1 needed? */
+            uint8_t tier;
+            tech_group_t group;
+            group = game_tech_get_group(g->gaux, TECH_FIELD_FORCE_FIELD, rc[j]);
+            tier = game_tech_get_tier(g->gaux, TECH_FIELD_FORCE_FIELD, rc[j]);
+            if (group == TECH_GROUP_PERSONAL_SHIELD) {
+                bestshield = tier;
+                besti = rc[j];
             }
         }
         if (bestshield != 0) {
@@ -74,15 +78,16 @@ static void game_ground_init(struct ground_s *gr)
             game_tech_get_name(g->gaux, TECH_FIELD_FORCE_FIELD, besti, gr->s[i].str[1]);
             gr->s[i].strnum = 2;
         }
-        /*7ab37*/
         bestweap = 0;
         rc = &(srd->researchcompleted[TECH_FIELD_WEAPON][0]);
         for (int j = 0; j < e->tech.completed[TECH_FIELD_WEAPON]; ++j) {
-            const uint8_t *r;
-            r = RESEARCH_D0_PTR(g->gaux, TECH_FIELD_WEAPON, rc[i]);
-            if (r[0] == 0x15) {
-                bestweap = r[1];
-                besti = rc[i] + 1; /* FIXME why is this + 1 needed? */
+            uint8_t tier;
+            tech_group_t group;
+            group = game_tech_get_group(g->gaux, TECH_FIELD_WEAPON, rc[j]);
+            tier = game_tech_get_tier(g->gaux, TECH_FIELD_WEAPON, rc[j]);
+            if (group == TECH_GROUP_PERSONAL_WEAPONS) {
+                bestweap = tier;
+                besti = rc[j];
             }
         }
         if (bestweap != 0) {
@@ -93,7 +98,7 @@ static void game_ground_init(struct ground_s *gr)
             game_tech_get_name(g->gaux, TECH_FIELD_WEAPON, besti, gr->s[i].str[gr->s[i].strnum++]);
         }
         if (e->race == RACE_BULRATHI) {
-            gr->s[i].force += 25;
+            gr->s[i].force += game_num_race_bonus_bulrathi;
         }
     }
     gr->s[gr->flag_swap ? 0 : 1].force += 5;
@@ -124,10 +129,9 @@ void game_ground_finish(struct ground_s *gr)
     if (gr->s[0].pop1 > 0) {
         if (gr->flag_rebel) {
             p->unrest = PLANET_UNREST_RESOLVED;
-            p->pop -= p->rebels;
+            p->pop = p->pop - p->rebels + gr->s[0].pop1;
             p->rebels = 0;
         } else {
-            /*7b68b*/
             int fact, chance, num;
             gr->fact = fact = p->factories;
             chance = 0;
@@ -143,7 +147,7 @@ void game_ground_finish(struct ground_s *gr)
             SETMIN(num, chance);
             s->tnum = num;
             for (int i = 0; i < num; ++i) {
-                game_tech_get_new(g, gr->s[0].player, s->tbl_field[i], s->tbl_tech2[i], 2, gr->planet_i, gr->s[1].player, false);
+                game_tech_get_new(g, gr->s[0].player, s->tbl_field[i], s->tbl_tech2[i], TECHSOURCE_FOUND, gr->planet_i, gr->s[1].player, false);
             }
             gr->techchance = num;
             game_planet_destroy(g, gr->planet_i, gr->s[0].player);
@@ -153,18 +157,15 @@ void game_ground_finish(struct ground_s *gr)
             p->pop_oper_fact = 1;
         }
     } else {
-        /*7b794*/
         if (gr->flag_rebel) {
             p->rebels = gr->s[1].pop1;
             if (p->rebels == 0) {
                 p->unrest = PLANET_UNREST_RESOLVED;
             }
         } else {
-            /*7b7de*/
             p->pop = gr->s[1].pop1;
         }
     }
-    /*7b841*/
     SETMIN(p->pop, p->max_pop3);
 }
 
@@ -179,15 +180,14 @@ void game_turn_ground(struct game_s *g)
         player_id_t powner;
         uint16_t inbound[PLAYER_NUM];
         powner = p->owner;
-        for (player_id_t i = 0; i < g->players; ++i) {
+        for (player_id_t i = PLAYER_0; i < g->players; ++i) {
             inbound[i] = p->inbound[i];
         }
-        for (player_id_t i = 0; i < g->players; ++i) {
+        for (player_id_t i = PLAYER_0; i < g->players; ++i) {
             if ((i != powner) || (p->unrest == PLANET_UNREST_REBELLION)) {
                 powner = p->owner;  /* FIXME redundant */
                 p->inbound[i] = inbound[i]; /* FIXME why ? */
                 if ((powner != PLAYER_NONE) && (p->inbound[i] > 0)) {
-                    /*e74e*/
                     int pop_planet;
                     gr->flag_rebel = (p->unrest == PLANET_UNREST_REBELLION) && IS_HUMAN(g, i) && (p->owner == i);
                     gr->inbound = p->inbound[i];
@@ -197,6 +197,7 @@ void game_turn_ground(struct game_s *g)
                     gr->s[0].player = i;
                     gr->s[1].player = powner;
                     gr->planet_i = pli;
+                    gr->flag_swap = false;
                     if (IS_HUMAN(g, i) || IS_HUMAN(g, powner)) {
                         int t;
                         gr->flag_swap = true;
@@ -204,7 +205,6 @@ void game_turn_ground(struct game_s *g)
                         t = gr->s[0].pop1; gr->s[0].pop1 = gr->s[1].pop1; gr->s[1].pop1 = t;
                         t = gr->s[0].player; gr->s[0].player = gr->s[1].player; gr->s[1].player = t;
                     }
-                    /*e877*/
                     game_ground_init(gr);
                     if ((gr->s[0].pop1 != 0) && (gr->s[1].pop1 != 0)) {
                         if (gr->s[0].human || gr->s[1].human) {
@@ -249,7 +249,6 @@ void game_turn_ground(struct game_s *g)
                         }
                     }
                 }
-                /*e9fc*/
                 powner = p->owner;
             }
         }

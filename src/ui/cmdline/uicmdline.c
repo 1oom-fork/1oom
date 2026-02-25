@@ -3,12 +3,19 @@
 #include <stdio.h>
 
 #include "ui.h"
+#include "cfg.h"
 #include "game.h"
+#include "game_end.h"
+#include "game_turn.h"
 #include "log.h"
 #include "options.h"
 #include "types.h"
 
 /* -------------------------------------------------------------------------- */
+
+const struct cfg_items_s ui_cfg_items[] = {
+    CFG_ITEM_END
+};
 
 const struct cmdline_options_s ui_cmdline_options[] = {
     { NULL, 0, NULL, NULL, NULL, NULL }
@@ -109,12 +116,20 @@ bool ui_explore(struct game_s *g, int pi, uint8_t planet_i, bool by_scanner, boo
     return flag_colony_ship;
 }
 
+void ui_landing(struct game_s *g, int pi, uint8_t planet_i)
+{
+}
+
 bool ui_bomb_ask(struct game_s *g, int pi, uint8_t planet_i, int pop_inbound)
 {
     return true;
 }
 
 void ui_bomb_show(struct game_s *g, int attacker_i, int owner_i, uint8_t planet_i, int popdmg, int factdmg, bool play_music)
+{
+}
+
+void ui_turn_pre(const struct game_s *g)
 {
 }
 
@@ -208,6 +223,13 @@ void ui_audience_newtech(struct audience_s *au)
 
 void ui_audience_end(struct audience_s *au)
 {
+}
+
+void ui_copyprotection_check(struct game_s *g) {
+    copyprot_status = -99;
+}
+
+void ui_copyprotection_lose(struct game_s *g, struct game_end_s *ge) {
 }
 
 void ui_newships(struct game_s *g, int pi)

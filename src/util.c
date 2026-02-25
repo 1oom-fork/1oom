@@ -54,7 +54,7 @@ char *util_concat(const char *s, ...)
 int util_concat_buf(char *buf, int buflen, ...)
 {
     const char *arg;
-    char *newp, *ptr;
+    char *ptr;
     int num_args;
     size_t arg_len[UTIL_CONCAT_MAX_ARGS], tot_len = 0, len = 0;
     int i;
@@ -89,6 +89,43 @@ int util_concat_buf(char *buf, int buflen, ...)
     return (len == tot_len) ? len : (len - tot_len);
 }
 
+/* Input one line from the file descriptor `f'.  FIXME: we need something
+   better, like GNU `getline()'.  */
+int util_get_line(char *buf, int bufsize, FILE *f)
+{
+    char *r;
+    size_t len;
+
+    r = fgets(buf, bufsize, f);
+
+    if (r == NULL) {
+        return -1;
+    }
+
+    len = strlen(buf);
+
+    if (len > 0) {
+        char *p;
+
+        /* Remove trailing newline characters.  */
+        /* Remove both 0x0a and 0x0d characters, this solution makes it */
+        /* work on all target platforms: Unixes, Win32, DOS, and even for MAC */
+        while ((len > 0) && ((*(buf + len - 1) == 0x0d) || (*(buf + len - 1) == 0x0a))) {
+            len--;
+        }
+
+        /* Remove useless spaces.  */
+        while ((len > 0) && (*(buf + len - 1) == ' ')) {
+            len--;
+        }
+        for (p = buf; *p == ' '; p++, len--);
+        memmove(buf, p, len + 1);
+        *(buf + len) = '\0';
+    }
+
+    return (int)len;
+}
+
 /* Split `path' into a file name and a directory component.  Unlike
    the MS-DOS `fnsplit', the directory does not have a trailing '/'.  */
 void util_fname_split(const char *path, char **dir_out, char **name_out)
@@ -102,12 +139,10 @@ void util_fname_split(const char *path, char **dir_out, char **name_out)
 
     p = strrchr(path, FSDEV_DIR_SEP_CHR);
 
-#ifdef IS_WINDOWS
-    /* Both `/' and `\' are valid.  */
+#ifdef FSDEV_DIR_SEP_ALT
     {
         const char *p1;
-
-        p1 = strrchr(path, '\\');
+        p1 = strrchr(path, FSDEV_DIR_SEP_ALT);
         if ((p == NULL) || (p < p1)) {
             p = p1;
         }
@@ -138,11 +173,11 @@ void util_fname_split(const char *path, char **dir_out, char **name_out)
 /* Write the first `size' bytes of `src' into a newly created file `name'.
    If `name' already exists, it is replaced by the new one.  Returns 0 on
    success, -1 on failure.  */
-int util_file_save(const char *name, uint8_t *src, int size)
+int util_file_save(const char *name, const uint8_t *src, int size)
 {
     FILE *fd;
     size_t r;
-    fd = fopen(name, "w");
+    fd = fopen(name, "wb");
     if (fd == NULL) {
         return -1;
     }
@@ -191,6 +226,14 @@ bool util_parse_number(const char *str, uint32_t *val_ptr)
     return (*strend == '\0');
 }
 
+bool util_parse_signed_number(const char *str, int *val_ptr)
+{
+    char *strend = NULL;
+    int v = strtol(str, &strend, 10);
+    *val_ptr = v;
+    return (*strend == '\0');
+}
+
 int32_t *util_parse_numbers(const char *str, char sep, int *numptr)
 {
     char *strend = NULL;
@@ -222,33 +265,6 @@ int32_t *util_parse_numbers(const char *str, char sep, int *numptr)
         *numptr = numnum;
     }
     return nums;
-}
-
-void util_table_remove_item_keep_order(int itemi, void *tbl, int itemsz, int itemnum)
-{
-    if ((itemi < 0) || (itemi >= (itemnum - 1))) {
-        return;
-    }
-    memmove(tbl + itemi * itemsz, tbl + (itemi + 1) * itemsz, (itemnum - 1 - itemi) * itemsz);
-}
-
-void util_table_remove_item_keep_order_zero(int itemi, void *tbl, int itemsz, int itemnum)
-{
-    if ((itemi < 0) || (itemi >= itemnum)) {
-        return;
-    }
-    if (itemi < (itemnum - 1)) {
-        memmove(tbl + itemi * itemsz, tbl + (itemi + 1) * itemsz, (itemnum - 1 - itemi) * itemsz);
-    }
-    memset(tbl + (itemnum - 1) * itemsz, 0, itemsz);
-}
-
-void util_table_remove_item_any_order(int itemi, void *tbl, int itemsz, int itemnum)
-{
-    if ((itemi < 0) || (itemi >= (itemnum - 1))) {
-        return;
-    }
-    memcpy(tbl + itemi * itemsz, tbl + (itemnum - 1) * itemsz, itemsz);
 }
 
 /* -------------------------------------------------------------------------- */

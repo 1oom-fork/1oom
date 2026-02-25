@@ -14,7 +14,6 @@
 #include "game_tech.h"
 #include "log.h"
 #include "types.h"
-#include "util.h"
 #include "util_math.h"
 
 /* -------------------------------------------------------------------------- */
@@ -70,7 +69,7 @@ void game_update_maint_costs(struct game_s *g)
         }
         totalcost = 0;
         for (int si = 0; si < NUM_SHIPDESIGNS; ++si) {
-            shipdesign_t *sd = &(srd->design[si]);
+            const shipdesign_t *sd = &(srd->design[si]);
             srd->shipcount[si] = tbl_ships[si];
             totalcost += tbl_ships[si] * sd->cost;
         }
@@ -80,7 +79,7 @@ void game_update_maint_costs(struct game_s *g)
         }
         bases = 0;
         for (int i = 0; i < g->galaxy_stars; ++i) {
-            planet_t *p = &(g->planet[i]);
+            const planet_t *p = &(g->planet[i]);
             if (p->owner == pi) {
                 if (p->have_stargate != 0) {
                     totalcost += 100;
@@ -102,7 +101,7 @@ void game_update_production(struct game_s *g)
     for (player_id_t pi = PLAYER_0; pi < g->players; ++pi) {
         empiretechorbit_t *e = &(g->eto[pi]);
         for (player_id_t pi2 = PLAYER_0; pi2 < g->players; ++pi2) {
-            if ((pi == pi2) || BOOLVEC_IS0(e->within_frange, pi2)) {
+            if (!IN_CONTACT(g, pi, pi2)) {
                 e->spying[pi2] = 0;
             }
         }
@@ -148,9 +147,7 @@ void game_update_production(struct game_s *g)
             }
             {
                 uint32_t reserve = p->reserve;
-                if (v < reserve) {
-                    p->reserve = v;
-                }
+                SETMIN(reserve, v);
                 v += reserve;
             }
             if (p->unrest == PLANET_UNREST_REBELLION) {
@@ -201,6 +198,8 @@ void game_update_production(struct game_s *g)
             if (p->owner == pi) {
                 int v;
                 v = (p->prod_after_maint * e->percent_prod_total_to_actual) / 100 - p->trans_num;
+                /* BUG: deducting transport cost takes no effect for actual production,
+                 * which happens after departure, but leads to wrong display for player. */
                 p->prod_after_maint = (v > 0) ? v : 0;
             }
         }
@@ -226,7 +225,7 @@ void game_update_total_research(struct game_s *g)
     }
 }
 
-void game_update_eco_on_waste(struct game_s *g, int player_i, bool a4)
+void game_update_eco_on_waste(struct game_s *g, player_id_t player_i, bool force_adjust)
 {
     empiretechorbit_t *e = &(g->eto[player_i]);
     if (e->race == RACE_SILICOID) {
@@ -236,7 +235,7 @@ void game_update_eco_on_waste(struct game_s *g, int player_i, bool a4)
         planet_t *p = &(g->planet[i]);
         if (p->owner == player_i) {
             uint16_t v, fact, waste, prod;
-            int8_t left;
+            int16_t left;
             fact = p->factories;
             v = e->colonist_oper_factories * p->pop;
             SETMIN(fact, v);
@@ -248,7 +247,7 @@ void game_update_eco_on_waste(struct game_s *g, int player_i, bool a4)
             }
             v = (waste * 100 + prod - 1) / prod;
             SETRANGE(v, 0, 100);
-            if ((p->slider[PLANET_SLIDER_ECO] < v) || a4) { /* TODO ??? */
+            if ((p->slider[PLANET_SLIDER_ECO] < v) || force_adjust) {
                 left = 100 - (v - p->slider[PLANET_SLIDER_ECO]);
                 p->slider[PLANET_SLIDER_ECO] = v;
                 p->slider[PLANET_SLIDER_SHIP] = (p->slider[PLANET_SLIDER_SHIP] * left) / 100;
@@ -332,7 +331,7 @@ void game_update_within_range(struct game_s *g)
                 uint16_t dist, mindist1, mindist2;
                 mindist1 = 0x2710;
                 mindist2 = 0x2710;
-                for (int j = 0; (j < tblplanet_num) && (mindist1 > frange) && (mindist2 > srange); ++j) {
+                for (int j = 0; (j < tblplanet_num) && ((mindist1 > frange) || (mindist2 > srange)); ++j) {
                     uint8_t planet_i2;
                     planet_i2 = tblplanet[j];
                     dist = g->gaux->star_dist[i][planet_i2];
@@ -349,20 +348,20 @@ void game_update_within_range(struct game_s *g)
                     p->within_frange[pi] = 0;
                 }
                 BOOLVEC_SET(p->within_srange, pi, (mindist2 <= srange));
-#if 0   /* buggy and pointless code */
-                if (BOOLVER_IS1(p->within_srange, pi) && (srange2 > 0)) {
-                    mindist1 = 0x2710;
-                    for (j = 0; (j < g->enroute_num) && (mindist1 > srange2); ++j) {
+#if 0   /* buggy code that does nothing */
+                if (BOOLVEC_IS0(p->within_srange, pi) && (srange2 > 0)) {
+                    mindist1 = 10000;
+                    for (int j = 0; (j < g->enroute_num) && (mindist1 > srange2); ++j) {
                         if (g->enroute[j].owner == pi) {
                             dist = util_math_dist_fast(g->enroute[j].x, g->enroute[j].y, p->x, p->y);
                             dist = (dist + 9) / 10;
                             if (dist < mindist1) {
-                                dist = mindist1;    /* BUG? supposed to be mindist1 = dist instead? */
+                                dist = mindist1;    /* BUG supposed to be mindist1 = dist instead */
                             }
                         }
                     }
-                    if (mindist1 <= srange2) {
-                        BOOLVEC_SET1(p->within_srange, pi); /* BUG? this is already checked to be true */
+                    if (mindist1 <= srange2) { /* never true */
+                        BOOLVEC_SET1(p->within_srange, pi);
                     }
                 }
 #endif
@@ -389,7 +388,7 @@ void game_update_within_range(struct game_s *g)
     }
 }
 
-void game_update_empire_within_range(struct game_s *g)
+void game_update_empire_contact(struct game_s *g)
 {
     uint8_t tbl_pnum[PLAYER_NUM];
     uint8_t tbl_planet[PLAYER_NUM][PLANETS_MAX];
@@ -428,19 +427,19 @@ void game_update_empire_within_range(struct game_s *g)
     }
 }
 
-bool game_check_coord_is_visible(struct game_s *g, player_id_t pi, int range, int x, int y)
+bool game_check_coord_is_visible(const struct game_s *g, player_id_t pi, int range, int x, int y)
 {
-    empiretechorbit_t *e = &(g->eto[pi]);
+    const empiretechorbit_t *e = &(g->eto[pi]);
     range *= 10;    /* 30, 50, 70, 90 */
     for (int i = 0; i < g->galaxy_stars; ++i) {
-        planet_t *p = &(g->planet[i]);
+        const planet_t *p = &(g->planet[i]);
         if ((p->owner == pi) && (util_math_dist_fast(x, y, p->x, p->y) <= range)) {
             return true;
         }
     }
-    range = (range - 30) / 20;  /* 0..3 */
+    range = (range - 30) / 2;  /* 0, 10, 20, 30 */
     for (int i = 0; i < g->galaxy_stars; ++i) {
-        planet_t *p = &(g->planet[i]);
+        const planet_t *p = &(g->planet[i]);
         uint32_t snum;
         snum = 0;
         for (int j = 0; (j < e->shipdesigns_num) && !snum; ++j) {
@@ -451,7 +450,7 @@ bool game_check_coord_is_visible(struct game_s *g, player_id_t pi, int range, in
         }
     }
     for (int ei = 0; ei < g->enroute_num; ++ei) {
-        fleet_enroute_t *r = &(g->enroute[ei]);
+        const fleet_enroute_t *r = &(g->enroute[ei]);
         if ((r->owner == pi) && (util_math_dist_fast(x, y, r->x, r->y) <= range)) {
             return true;
         }
@@ -550,11 +549,11 @@ void game_adjust_slider_group(int16_t *slidertbl, int slideri, int16_t value, in
     }
 }
 
-int game_get_min_dist(struct game_s *g, int player_i, int planet_i)
+int game_get_min_dist(const struct game_s *g, player_id_t player_i, int planet_i)
 {
     int dist, mindist = 255;
     for (int i = 0; i < g->galaxy_stars; ++i) {
-        if (g->planet[i].owner == player_i) {
+        if ((i != planet_i) && (g->planet[i].owner == player_i)) {
             dist = g->gaux->star_dist[planet_i][i];
             SETMIN(mindist, dist);
         }
@@ -562,31 +561,10 @@ int game_get_min_dist(struct game_s *g, int player_i, int planet_i)
     return mindist;
 }
 
-int game_adjust_prod_by_special(int prod, planet_special_t special)
+int game_get_pop_growth_max(const struct game_s *g, int planet_i, int max_pop3)
 {
-    switch (special) {
-        case PLANET_SPECIAL_ULTRA_POOR:
-            prod /= 3;
-            break;
-        case PLANET_SPECIAL_POOR:
-            prod /= 2;
-            break;
-        case PLANET_SPECIAL_RICH:
-            prod *= 2;
-            break;
-        case PLANET_SPECIAL_ULTRA_RICH:
-            prod *= 3;
-            break;
-        default:
-            break;
-    }
-    return prod;
-}
-
-int game_get_pop_growth_max(struct game_s *g, int planet_i, int max_pop3)
-{
-    planet_t *p = &(g->planet[planet_i]);
-    empiretechorbit_t *e = &(g->eto[p->owner]);
+    const planet_t *p = &(g->planet[planet_i]);
+    const empiretechorbit_t *e = &(g->eto[p->owner]);
     int v, retval;
     if (e->race == RACE_SILICOID) {
         v = (100 - (p->pop * 100) / max_pop3) / 2;
@@ -632,10 +610,10 @@ int game_get_pop_growth_max(struct game_s *g, int planet_i, int max_pop3)
     return retval;
 }
 
-int game_get_pop_growth_for_eco(struct game_s *g, int planet_i, int eco)
+int game_get_pop_growth_for_eco(const struct game_s *g, int planet_i, int eco)
 {
-    planet_t *p = &(g->planet[planet_i]);
-    empiretechorbit_t *e = &(g->eto[p->owner]);
+    const planet_t *p = &(g->planet[planet_i]);
+    const empiretechorbit_t *e = &(g->eto[p->owner]);
     int v, vmax;
     v = (eco * 10) / e->inc_pop_cost;
     if (e->race == RACE_SAKKRA) {
@@ -647,28 +625,9 @@ int game_get_pop_growth_for_eco(struct game_s *g, int planet_i, int eco)
     return MIN(v, vmax);
 }
 
-int game_get_tech_prod(int prod, int slider, race_t race, planet_special_t special)
+void game_print_prod_of_total(const struct game_s *g, player_id_t pi, int prod, char *buf)
 {
-    int v = (prod * slider) / 100;
-    if (race == RACE_PSILON) {
-        v += v / 2;
-    }
-    switch (special) {
-        case PLANET_SPECIAL_ARTIFACTS:
-            v *= 2;
-            break;
-        case PLANET_SPECIAL_4XTECH:
-            v *= 4;
-            break;
-        default:
-            break;
-    }
-    return MIN(v, 0x7fff);
-}
-
-void game_print_prod_of_total(struct game_s *g, int prod, char *buf)
-{
-    int v = g->eto[PLAYER_0].total_production_bc;
+    int v = g->eto[pi].total_production_bc;
     if (v == 0) {
         strcpy(buf, "0%%");
     } else {

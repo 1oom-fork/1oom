@@ -7,9 +7,6 @@
 #include "game_types.h"
 #include "types.h"
 
-extern void game_str_shutdown(void);
-extern void game_str_dump(void);
-
 extern const char *game_str_mm_continue;
 extern const char *game_str_mm_load;
 extern const char *game_str_mm_new;
@@ -34,6 +31,7 @@ extern const char *game_str_rndempname;
 extern const char *game_str_planet_name_orion;
 extern const char *game_str_tbl_ship_names[RACE_NUM * SHIP_NAME_NUM];
 extern const char *game_str_tbl_stship_names[NUM_SHIPDESIGNS];
+extern const char *game_str_tbl_copyprotection_ship_names[40];
 extern const char *game_str_tbl_monsh_names[MONSTER_NUM];
 extern const char *game_str_tbl_mon_names[MONSTER_NUM];
 extern const char *game_str_ai_colonyship;
@@ -84,7 +82,7 @@ extern const char *game_str_sm_ecopop;
 extern const char *game_str_sm_unexplored;
 extern const char *game_str_sm_nohabit;
 extern const char *game_str_sm__planets;
-extern const char *game_str_tbl_sm_pltype[PLANET_TYPE_NUM];
+extern const char *game_str_tbl_sm_pltype[PLANET_TYPE_NUM + 1];
 extern const char *game_str_tbl_sm_stinfo[STAR_TYPE_NUM];
 extern const char *game_str_sm_plague;
 extern const char *game_str_sm_nova;
@@ -166,6 +164,8 @@ extern const char *game_str_no_events;
 extern const char *game_str_bc;
 extern const char *game_str_y;
 extern const char *game_str_year;
+extern const char *game_str_year0;
+extern const char *game_str_year1;
 extern const char *game_str_player;
 extern const char *game_str_pl_reserve;
 extern const char *game_str_pl_plague;
@@ -256,6 +256,7 @@ extern const char *game_str_gm_gmap;
 extern const char *game_str_gm_mapkey;
 extern const char *game_str_bs_line1;
 extern const char *game_str_bs_line2;
+extern const char *game_str_bs_bases;
 extern const char *game_str_tbl_te_field[TECH_FIELD_NUM];
 extern const char *game_str_te_adv;
 extern const char *game_str_te_tech;

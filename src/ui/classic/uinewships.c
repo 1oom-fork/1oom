@@ -54,14 +54,13 @@ static void newships_draw_cb(void *vptr)
     lbxgfx_draw_frame(x, y, d->gfx_newship, UI_SCREEN_W);
     lbxfont_select(5, 6, 0, 0);
     lbxfont_set_color_c_n(0x49, 5);
-    sprintf(buf, "%s %i", game_str_year, g->year + YEAR_BASE);
+    sprintf(buf, "%s%i", game_str_year, g->year + YEAR_BASE);
     lbxfont_print_str_center(x + 76, y + 9, buf, UI_SCREEN_W);
     for (int i = 0; i < NUM_SHIPDESIGNS; ++i) {
         shipsum_t n;
         n = g->evn.new_ships[d->api][i];
         if (n != 0) {
             const shipdesign_t *sd = &(g->srd[d->api].design[i]);
-            struct draw_stars_s ds;
             uint8_t *gfx;
             int x0, y0;
             x0 = x + 8 + (i % 3) * 48;
@@ -71,16 +70,15 @@ static void newships_draw_cb(void *vptr)
             ui_draw_line1(x0, y0 + 30, x0 + 39, y0 + 30, 0x5c);
             lbxfont_select(2, 0, 0, 0);
             lbxfont_print_str_center(x0 + 20, y0 + 33, sd->name, UI_SCREEN_W);
-            ds.xoff1 = 0;
-            ds.xoff2 = 0;
-            ui_draw_stars(x0, y0 + 2, i * 10, 30, &ds);
+            ui_draw_stars(x0, y0 + 2, i * 10, 40);
             gfx = ui_data.gfx.ships[sd->look];
             lbxgfx_set_frame_0(gfx);
             lbxgfx_draw_frame(x0 + 4, y0 + 3, gfx, UI_SCREEN_W);
-            lbxfont_select(0, 0, 0, 0);
+            lbxfont_select(0, 0xd, 0, 0);
             lbxfont_print_num_right(x0 + 36, y0 + 23, n, UI_SCREEN_W);
         }
     }
+    ui_draw_set_stars_xoffs(false);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -93,12 +91,11 @@ void ui_newships(struct game_s *g, int pi)
     d.api = pi;
     d.sm.g = g;
     d.sm.api = pi;
-    d.sm.anim_delay = 0;
     d.sm.bottom_highlight = -1;
     newships_load_data(&d);
     uiobj_set_callback_and_delay(newships_draw_cb, &d, 4);
     uiobj_table_clear();
-    uiobj_add_mousearea(0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, MOO_KEY_UNKNOWN, -1);
+    uiobj_add_mousearea(UI_SCREEN_LIMITS, MOO_KEY_UNKNOWN);
     while (!flag_done) {
         int16_t oi;
         ui_delay_prepare();

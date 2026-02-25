@@ -73,7 +73,7 @@ ui_turn_action_t ui_game_turn(struct game_s *g, int *load_game_i_ptr, int pi)
             ui_starmap_set_pos_focus(g, pi);
         }
         game_update_have_reserve_fuel(g); /* TODO move to game_* ? */
-        ui_data.flag_main_hmm1 = false;
+        ui_data.flag_scrap_for_new_design = false;
         switch (ui_data.ui_main_loop_action) {
             case UI_MAIN_LOOP_STARMAP:
                 ui_cursor_setup_area(2, &ui_cursor_area_tbl[3]);
@@ -127,7 +127,7 @@ ui_turn_action_t ui_game_turn(struct game_s *g, int *load_game_i_ptr, int pi)
                         ui_data.ui_main_loop_action = UI_MAIN_LOOP_SPECS;
                         ui_data.ui_main_loop_action_next = UI_MAIN_LOOP_SPECS;
                         ui_data.ui_main_loop_action_prev = UI_MAIN_LOOP_DESIGN;
-                        ui_data.flag_main_hmm1 = true;
+                        ui_data.flag_scrap_for_new_design = true;
                         scrapi = ui_specs(g, pi);
                         sd_num = g->eto[pi].shipdesigns_num;
                         ok = (sd_num < NUM_SHIPDESIGNS);
@@ -180,7 +180,7 @@ ui_turn_action_t ui_game_turn(struct game_s *g, int *load_game_i_ptr, int pi)
                 ui_data.ui_main_loop_action = UI_MAIN_LOOP_RACES;
                 break;
             case UI_MAIN_LOOP_EMPIREREPORT:
-                if ((opponi > 0) && (opponi < g->players)) {
+                if (IS_PLAYER(g, opponi)) {
                     ui_empirereport(g, pi, opponi);
                 } else {
                     LOG_DEBUG((3, "%s: invalid opponi %i on EMPIREREPORT\n", __func__, opponi));
@@ -188,7 +188,7 @@ ui_turn_action_t ui_game_turn(struct game_s *g, int *load_game_i_ptr, int pi)
                 ui_data.ui_main_loop_action = UI_MAIN_LOOP_RACES;
                 break;
             case UI_MAIN_LOOP_AUDIENCE:
-                if ((opponi > 0) && (opponi < g->players)) {
+                if (IS_PLAYER(g, opponi)) {
                     game_audience(g, pi, opponi);
                 } else {
                     LOG_DEBUG((3, "%s: invalid opponi %i on AUDIENCE\n", __func__, opponi));
@@ -216,7 +216,7 @@ ui_turn_action_t ui_game_turn(struct game_s *g, int *load_game_i_ptr, int pi)
                 ui_data.news.flag_also = false;
                 return UI_TURN_ACT_NEXT_TURN;
             default:
-                LOG_DEBUG((3, "%s: unimpl 0x%x\n", __func__, ui_data.ui_main_loop_action));
+                LOG_DEBUG((3, "%s: invalid action 0x%x\n", __func__, ui_data.ui_main_loop_action));
                 ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
                 break;
         }
@@ -238,12 +238,16 @@ void ui_game_start(struct game_s *g)
 
     lbxpal_select(0, -1, 0);
     lbxpal_build_colortables();
-    /* HACK fix wrong palette after new game */
+    /* HACK Fix wrong palette after new game via main menu.
+       MOO1 goes from orion.exe to starmap.exe in between and the palette is initialized before coming here.
+       We only need to set the update flags of this range.
+    */
     lbxpal_set_update_range(248, 255);
     ui_palette_set_n();
+    ui_draw_finish_mode = 1;
     ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
-    for (int i = 0; i < g->players; ++i) {
-        if (BOOLVEC_IS0(g->is_ai, i)) {
+    for (player_id_t i = PLAYER_0; i < g->players; ++i) {
+        if (IS_HUMAN(g, i)) {
             ui_starmap_set_pos_focus(g, i);
             break;
         }
@@ -254,11 +258,13 @@ void ui_game_end(struct game_s *g)
 {
     for (int i = 0; i < NEBULA_MAX; ++i) {
         if (ui_data.gfx.starmap.nebula[i]) {
-             lbxfile_item_release(LBXFILE_STARMAP, ui_data.gfx.starmap.nebula[i]);
-             ui_data.gfx.starmap.nebula[i] = NULL;
-             ui_data.gfx.starmap.smnebula[i] = NULL;
+            lbxfile_item_release(LBXFILE_STARMAP, ui_data.gfx.starmap.nebula[i]);
+            ui_data.gfx.starmap.nebula[i] = NULL;
+            ui_data.gfx.starmap.smnebula[i] = NULL;
         }
     }
     lbxfile_item_release(LBXFILE_V11, ui_data.gfx.starmap.bmap);
     ui_data.gfx.starmap.bmap = NULL;
+    /* Return to orion.exe */
+    uiobj_set_limits_all();
 }

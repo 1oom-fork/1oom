@@ -7,7 +7,6 @@
 #include "comp.h"
 #include "game.h"
 #include "game_str.h"
-#include "hw.h"
 #include "kbd.h"
 #include "lbx.h"
 #include "lbxfont.h"
@@ -23,6 +22,7 @@
 #include "uiobj.h"
 #include "uisound.h"
 #include "uistarmap_common.h"
+#include "vgabuf.h"
 
 /* -------------------------------------------------------------------------- */
 
@@ -41,10 +41,11 @@ struct explore_data_s {
 
 static void explore_load_data(struct explore_data_s *d)
 {
+    const planet_t *p = &(d->g->planet[d->planet]);
     d->gfx_explobac = lbxfile_item_get(LBXFILE_BACKGRND, 0xf, 0);
     d->gfx_contbutt = lbxfile_item_get(LBXFILE_BACKGRND, 0xc, 0);
     d->gfx_yn_back = lbxfile_item_get(LBXFILE_BACKGRND, 0x18, 0);
-    d->gfx_colony = lbxfile_item_get(LBXFILE_COLONIES, d->g->planet[d->planet].type * 2, 0);
+    d->gfx_colony = lbxfile_item_get(LBXFILE_COLONIES, p->type * 2 + ((p->owner != PLAYER_NONE) ? 1 : 0), 0);
 }
 
 static void explore_free_data(struct explore_data_s *d)
@@ -77,12 +78,13 @@ static void explore_draw_planetinfo(const struct game_s *g, uint8_t planet)
             const char *s1, *s2, *s3;
             int i = p->special;
             if (i > PLANET_SPECIAL_NORMAL) {
+                if (i == PLANET_SPECIAL_4XTECH) {
+                    i = PLANET_SPECIAL_ARTIFACTS;
+                }
                 --i;
             }
             lbxfont_select_set_12_4(3, 0, 0, 0);
-            if (p->special != PLANET_SPECIAL_4XTECH) {
-                lbxfont_print_str_center(267, 96 + y, game_str_ex_ps1[i], UI_SCREEN_W);
-            }
+            lbxfont_print_str_center(267, 96 + y, game_str_ex_ps1[i], UI_SCREEN_W);
             lbxfont_select_set_12_4(2, 0xa, 0, 0);
             if ((p->special != PLANET_SPECIAL_ARTIFACTS) && (p->special != PLANET_SPECIAL_4XTECH)) {
                 i = p->special;
@@ -108,7 +110,7 @@ static void explore_draw_cb(void *vptr)
 {
     struct explore_data_s *d = vptr;
     const struct game_s *g = d->g;
-    hw_video_copy_back_from_page2();
+    vgabuf_copy_back_from_page2();
     ui_draw_filled_rect(222, 4, 314, 179, 0);
     lbxgfx_draw_frame(222, 4, d->gfx_explobac, UI_SCREEN_W);
     ui_starmap_draw_planetinfo_2(g, d->api, PLAYER_NUM, d->planet);
@@ -156,13 +158,13 @@ bool ui_explore(struct game_s *g, int pi, uint8_t planet_i, bool by_scanner, boo
     uiobj_set_callback_and_delay(explore_draw_cb, &d, 4);
     uiobj_table_clear();
     if (!flag_colony_ship) {
-        oi_cont = uiobj_add_t0(227, 164, "", d.gfx_contbutt, MOO_KEY_c, -1);
+        oi_cont = uiobj_add_t0(227, 164, "", d.gfx_contbutt, MOO_KEY_c);
         oi_y = UIOBJI_INVALID;
         oi_n = UIOBJI_INVALID;
     } else {
         oi_cont = UIOBJI_INVALID;
-        oi_n = uiobj_add_t0(227, 163, "", ui_data.gfx.starmap.scrapbut_no, MOO_KEY_n, -1);
-        oi_y = uiobj_add_t0(271, 163, "", ui_data.gfx.starmap.scrapbut_yes, MOO_KEY_y, -1);
+        oi_n = uiobj_add_t0(227, 163, "", ui_data.gfx.starmap.scrapbut_no, MOO_KEY_n);
+        oi_y = uiobj_add_t0(271, 163, "", ui_data.gfx.starmap.scrapbut_yes, MOO_KEY_y);
     }
     while (!flag_done) {
         int16_t oi;

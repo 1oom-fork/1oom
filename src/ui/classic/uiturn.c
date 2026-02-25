@@ -8,7 +8,6 @@
 #include "game.h"
 #include "game_aux.h"
 #include "game_str.h"
-#include "hw.h"
 #include "kbd.h"
 #include "lbx.h"
 #include "lbxfont.h"
@@ -23,6 +22,7 @@
 #include "uiobj.h"
 #include "uisound.h"
 #include "uistarmap_common.h"
+#include "vgabuf.h"
 
 /* -------------------------------------------------------------------------- */
 
@@ -42,6 +42,13 @@ static void ui_turn_msg_draw_cb(void *vptr)
 
 /* -------------------------------------------------------------------------- */
 
+void ui_turn_pre(const struct game_s *g)
+{
+    struct starmap_data_s d;
+    ui_starmap_draw_button_text(&d, false);
+    vgabuf_copy_back_to_page2();
+}
+
 void ui_turn_msg(struct game_s *g, int pi, const char *str)
 {
     struct turnmsg_data_s d;
@@ -55,10 +62,9 @@ void ui_turn_msg(struct game_s *g, int pi, const char *str)
     d.sm.g = g;
     d.sm.api = pi;
     d.sm.bottom_highlight = -1;
-    d.sm.anim_delay = 0;
     uiobj_set_callback_and_delay(ui_turn_msg_draw_cb, &d, 3);
     uiobj_table_clear();
-    uiobj_add_mousearea(0, 0, UI_SCREEN_W - 1, UI_SCREEN_H -1, MOO_KEY_UNKNOWN, -1);
+    uiobj_add_mousearea(UI_SCREEN_LIMITS, MOO_KEY_UNKNOWN);
     while (!flag_done) {
         int16_t oi;
         ui_delay_prepare();

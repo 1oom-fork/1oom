@@ -41,7 +41,6 @@ static void caught_draw_cb(void *vptr)
 {
     struct caught_data_s *d = vptr;
     struct game_s *g = d->g;
-    empiretechorbit_t *e = &(g->eto[d->api]);
     char buf[0x40];
     int x = 56, y = 50, n = 0;
 
@@ -53,15 +52,12 @@ static void caught_draw_cb(void *vptr)
     lbxfont_select(2, 6, 0, 0);
 
     y += 20;
-    for (int i = 0; i < g->players; ++i) {
-        if ((i != d->api) && BOOLVEC_IS1(e->within_frange, i)) {
+    for (player_id_t i = PLAYER_0; i < g->players; ++i) {
+        if (IN_CONTACT(g, d->api, i)) {
             int v;
-            sprintf(buf, "%s:", game_str_tbl_race[g->eto[i].race]);;
+            sprintf(buf, "%s:", game_str_tbl_race[g->eto[i].race]);
             lbxfont_print_str_normal(x + 11, y, buf, UI_SCREEN_W);
-            v = 0;
-            for (int j = 0; j < g->players; ++j) {
-                v += g->evn.spies_caught[j][d->api];
-            }
+            v = g->evn.spies_caught[i][d->api];
             lbxfont_print_num_normal(x + 68, y, v, UI_SCREEN_W);
             v = g->evn.spies_caught[d->api][i];
             lbxfont_print_num_normal(x + 96, y, v, UI_SCREEN_W);
@@ -87,7 +83,7 @@ void ui_caught(struct game_s *g, player_id_t active_player)
     uiobj_finish_frame();
     ui_cursor_setup_area(1, &ui_cursor_area_tbl[0]);
     uiobj_table_clear();
-    oi_ma = uiobj_add_mousearea(0, 0, UI_SCREEN_W - 1, UI_SCREEN_H -1, MOO_KEY_UNKNOWN, -1);
+    oi_ma = uiobj_add_mousearea(UI_SCREEN_LIMITS, MOO_KEY_UNKNOWN);
     uiobj_set_callback_and_delay(caught_draw_cb, &d, 1);
 
     while (!flag_done) {

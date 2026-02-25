@@ -1,4 +1,5 @@
 AM_CPPFLAGS = \
+    -I$(top_srcdir)/src/save \
     -I$(top_srcdir)/src/game \
     -I$(top_srcdir)/src
 

@@ -24,6 +24,7 @@
 #include "uipal.h"
 #include "uisound.h"
 #include "util.h"
+#include "vgabuf.h"
 
 /* -------------------------------------------------------------------------- */
 
@@ -34,7 +35,7 @@ static void landing_draw_cb1(void *vptr)
     int y = 100;
     bool do_walk = false;
     char buf[0x80];
-    hw_video_copy_back_from_page3();
+    vgabuf_copy_back_from_page3();
     if (d->frame < 0x32) {
         y = d->frame * 4 - 100;
     } else {
@@ -44,7 +45,8 @@ static void landing_draw_cb1(void *vptr)
         }
     }
     gfx_aux_draw_frame_to(d->gfx_transprt, &ui_data.aux.screen);
-    gfx_aux_draw_frame_from_limit(0, y, &ui_data.aux.screen, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
+    uiobj_set_limits_all();
+    gfx_aux_draw_frame_from_limit(0, y, &ui_data.aux.screen, UI_SCREEN_W);
     if (do_walk) {
         lbxgfx_draw_frame(0, 0, d->gfx_walk, UI_SCREEN_W);
         ui_draw_filled_rect(115, 81, 204, 109, 0xa);
@@ -81,7 +83,7 @@ void ui_landing_prepare(struct landing_data_s *d)
         lbxgfx_apply_palette(gfx);
         lbxfile_item_release(LBXFILE_LANDING, gfx);
     }
-    hw_video_copy_back_to_page3();
+    vgabuf_copy_back_to_page3();
     d->gfx_transprt = lbxfile_item_get(LBXFILE_LANDING, 0x0, 0);
     d->gfx_walk = lbxfile_item_get(LBXFILE_LANDING, 0x15 + g->eto[d->api].banner, 0);
     lbxgfx_set_frame_0(d->gfx_walk);
@@ -94,7 +96,7 @@ void ui_landing_free_data(struct landing_data_s *d)
     lbxfile_item_release(LBXFILE_LANDING, d->gfx_walk);
 }
 
-void ui_landing(struct game_s *g, player_id_t pi, uint8_t planet_i)
+void ui_landing(struct game_s *g, int pi, uint8_t planet_i)
 {
     struct landing_data_s d;
     bool flag_done = false;
@@ -114,7 +116,7 @@ void ui_landing(struct game_s *g, player_id_t pi, uint8_t planet_i)
     ui_draw_finish_mode = 2;
     uiobj_set_callback_and_delay(landing_draw_cb1, &d, 2);
     uiobj_table_clear();
-    uiobj_add_mousearea(0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, MOO_KEY_UNKNOWN, -1);
+    uiobj_add_mousearea(UI_SCREEN_LIMITS, MOO_KEY_UNKNOWN);
     uiobj_set_downcount(3);
     while (d.frame < 0x41) {
         int16_t oi;
@@ -135,7 +137,7 @@ void ui_landing(struct game_s *g, player_id_t pi, uint8_t planet_i)
         char buf[PLANET_NAME_LEN];
         strcpy(buf, g->planet[planet_i].name);
         lbxfont_select(5, 0xf, 0xf, 0);
-        if (uiobj_read_str(125, 97, 65, buf, PLANET_NAME_LEN - 1, 0, false, 0, ctbl, -1)) {
+        if (uiobj_read_str(125, 97, 65, buf, PLANET_NAME_LEN - 1, 0, false, 0, ctbl)) {
             util_trim_whitespace(buf);
             if (buf[0] != 0) {
                 strcpy(g->planet[planet_i].name, buf);

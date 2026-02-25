@@ -59,7 +59,7 @@ void game_news_get_msg(const struct game_s *g, struct news_s *ns, char *buf)
                     buf += len;
                     break;
                 case 5:
-                    len = sprintf(buf, "%s", game_str_tbl_race[ns->num2]);
+                    len = sprintf(buf, "%s", game_str_tbl_race[g->eto[ns->num2].race]);
                     buf += len;
                     break;
                 case 6:
@@ -99,7 +99,7 @@ void game_news_get_msg(const struct game_s *g, struct news_s *ns, char *buf)
         for (int i = 0; i < PLAYER_NUM; ++i) {
             ns->stats[i] = 0;
         }
-        for (int i = 0; i < g->players; ++i) {
+        for (player_id_t i = PLAYER_0; i < g->players; ++i) {
             if (g->evn.home[i] != PLANET_NONE) {
                 int v;
                 tbl_player[num] = i;
@@ -132,7 +132,7 @@ void game_news_get_msg(const struct game_s *g, struct news_s *ns, char *buf)
         }
         ns->statsnum = num;
         for (int loops = 0; loops < num; ++loops) {
-            for (int i = 0; i < num; ++i) {
+            for (int i = 0; i < (num - 1); ++i) {
                 int v0, v1;
                 v0 = tbl_stat[i];
                 v1 = tbl_stat[i + 1];

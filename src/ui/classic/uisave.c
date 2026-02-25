@@ -1,8 +1,6 @@
 #include "config.h"
 
 #include "uisave.h"
-#include "game_save.h"
-#include "hw.h"
 #include "kbd.h"
 #include "lbx.h"
 #include "lbxfont.h"
@@ -10,6 +8,7 @@
 #include "lbxpal.h"
 #include "lib.h"
 #include "log.h"
+#include "save.h"
 #include "types.h"
 #include "uicursor.h"
 #include "uidelay.h"
@@ -18,6 +17,7 @@
 #include "uiobj.h"
 #include "uipal.h"
 #include "uisound.h"
+#include "vgabuf.h"
 
 /* -------------------------------------------------------------------------- */
 
@@ -49,7 +49,7 @@ static void save_game_draw_cb(void *vptr)
     struct save_game_data_s *d = vptr;
     const int xoff = 0x76;
     const int yoff = 0xa;
-    hw_video_copy_back_from_page2();
+    vgabuf_copy_back_from_page2();
     lbxgfx_draw_frame(0, 0, d->gfx_savegame, UI_SCREEN_W);
     for (int i = 0; i < NUM_SAVES; ++i) {
         lbxgfx_draw_frame(16 + xoff, 23 + yoff + 18 * i, (d->selected == i) ? d->gfx_lg_green : d->gfx_lg_gray, UI_SCREEN_W);
@@ -65,7 +65,7 @@ int ui_save_game(struct game_s *g)
     const int xoff = 118;
     const int yoff = 10;
     int16_t oi_esc, oi_cancel, oi_ok, oi_save[NUM_SAVES];
-    const uint8_t tbl_save_hmm[] = { 5, 6, 7, 8, 9, 10, 0, 0, 0, 0 };
+    const uint8_t ctbl[] = { 5, 6, 7, 8, 9, 10, 0, 0, 0, 0 };
     load_sg_data(&d);
 
     for (int i = 0; i < NUM_SAVES; ++i) {
@@ -73,7 +73,7 @@ int ui_save_game(struct game_s *g)
     }
 
     ui_draw_erase_buf();
-    hw_video_copy_back_to_page2();
+    vgabuf_copy_back_to_page2();
     uiobj_set_callback_and_delay(save_game_draw_cb, &d, 2);
     uiobj_table_clear();
 
@@ -109,12 +109,12 @@ int ui_save_game(struct game_s *g)
         uiobj_table_clear();
         for (int i = 0; i < NUM_SAVES; ++i) {
             lbxfont_select(0, (i == d.selected) ? 2 : 1, 0, 0);
-            oi_save[i] = uiobj_add_t4(149, 35 + i * 18, 106, &(d.tbl_savename[i][0]), SAVE_NAME_LEN - 1, 1, false, 0, tbl_save_hmm, MOO_KEY_UNKNOWN, -1);
+            oi_save[i] = uiobj_add_textinput(149, 35 + i * 18, 106, &(d.tbl_savename[i][0]), SAVE_NAME_LEN - 1, 1, false, 0, ctbl, MOO_KEY_UNKNOWN);
             uiobj_dec_y1(oi_save[i]);
         }
         oi_esc = uiobj_add_inputkey(MOO_KEY_ESCAPE);
-        oi_cancel = uiobj_add_mousearea(20 + xoff, 135 + yoff, 74 + xoff, 152 + yoff, MOO_KEY_ESCAPE, -1);
-        oi_ok = uiobj_add_mousearea(84 + xoff, 135 + yoff, 138 + xoff, 152 + yoff, MOO_KEY_SPACE, -1);
+        oi_cancel = uiobj_add_mousearea(20 + xoff, 135 + yoff, 74 + xoff, 152 + yoff, MOO_KEY_ESCAPE);
+        oi_ok = uiobj_add_mousearea(84 + xoff, 135 + yoff, 138 + xoff, 152 + yoff, MOO_KEY_SPACE);
         if (!flag_done) {
             save_game_draw_cb(&d);
             ui_draw_finish();

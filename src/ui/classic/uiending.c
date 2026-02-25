@@ -20,6 +20,7 @@
 #include "uiobj.h"
 #include "uipal.h"
 #include "uisound.h"
+#include "vgabuf.h"
 
 /* -------------------------------------------------------------------------- */
 
@@ -70,11 +71,11 @@ static void ui_play_winlose_cb1(void *vptr)
     struct anim_winlose_1_s *p = vptr;
     int f = p->frame;
     ui_draw_erase_buf();
-    lbxgfx_draw_frame_offs(0x000 - f, 0, p->gfx_stars, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
-    lbxgfx_draw_frame_offs(0x140 - f, 0, p->gfx_stars, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
+    lbxgfx_draw_frame_offs(0x000 - f, 0, p->gfx_stars, UI_SCREEN_W);
+    lbxgfx_draw_frame_offs(0x140 - f, 0, p->gfx_stars, UI_SCREEN_W);
     if (f > 0x32) {
         lbxgfx_draw_frame(0, 0, p->gfx_ships, UI_SCREEN_W);
-        lbxgfx_draw_frame_offs(0x13f - ((f - 0x32) * 3) / 2, 0, p->gfx_planets, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
+        lbxgfx_draw_frame_offs(0x13f - ((f - 0x32) * 3) / 2, 0, p->gfx_planets, UI_SCREEN_W);
     }
     lbxfont_select(4, 0, 0, 0);
     if ((f > 0xa) && (f < 0x14)) {
@@ -124,7 +125,7 @@ static void ui_play_winlose_cb2(void *vptr)
         lbxgfx_draw_frame_pal(0, 0, p->gfx_winning2, UI_SCREEN_W);
         lbxpal_set_update_range(0, 255);
     } else {
-        hw_video_copy_buf();
+        vgabuf_copy_buf();
         lbxgfx_draw_frame_pal(0, 0, p->gfx_winning2, UI_SCREEN_W);
     }
     p->frame = ++f;
@@ -141,7 +142,7 @@ static void ui_play_winlose_cb3(void *vptr)
     if ((fa == 0) || (fa == 8)) {
         ui_draw_erase_buf();
     } else {
-        hw_video_copy_buf();
+        vgabuf_copy_buf();
     }
     lbxgfx_draw_frame_pal(0, 0, p->gfx_winlast, UI_SCREEN_W);
     lbxgfx_set_frame_0(p->gfx_winface);
@@ -180,7 +181,7 @@ static void ui_play_winlose_cb3(void *vptr)
 
 static void ui_play_ending_good_or_tyrant(int race, const char *name, bool flag_good)
 {
-    int16_t uiobji_now, uiobji_ma;
+    int16_t oi_skip;
     bool flag_skip = false;
     struct anim_winlose_1_s wld1;
     struct anim_winlose_2_s wld2;
@@ -214,18 +215,17 @@ static void ui_play_ending_good_or_tyrant(int race, const char *name, bool flag_
     ui_sound_play_music(2);
 
     uiobj_table_clear();
-    uiobji_ma = uiobj_add_mousearea(0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, MOO_KEY_UNKNOWN, -1);
+    oi_skip = uiobj_add_mousearea(UI_SCREEN_LIMITS, MOO_KEY_UNKNOWN);
     uiobj_set_downcount(3);
     uiobj_set_callback_and_delay(ui_play_winlose_cb1, &wld1, 3);
-
-    uiobji_now = 0;
 
     wld1.frame = 0;
 
     while ((wld1.frame < 0x96) && (!flag_skip)) {
+        int16_t oi;
         ui_delay_prepare();
-        uiobji_now = uiobj_handle_input_cond();
-        if ((uiobji_now == uiobji_ma) || (uiobji_now == UIOBJI_ESC)) {
+        oi = uiobj_handle_input_cond();
+        if ((oi == oi_skip) || (oi == UIOBJI_ESC)) {
             flag_skip = true;
             break;
         } else {
@@ -253,10 +253,12 @@ static void ui_play_ending_good_or_tyrant(int race, const char *name, bool flag_
     uiobj_set_callback_and_delay(ui_play_winlose_cb2, &wld2, 3);
 
     while ((wld2.frame < 0x14) && (!flag_skip)) {
+        int16_t oi;
         ui_delay_prepare();
-        uiobji_now = uiobj_handle_input_cond();
-        if ((uiobji_now == uiobji_ma) || (uiobji_now == UIOBJI_ESC)) {
+        oi = uiobj_handle_input_cond();
+        if ((oi == oi_skip) || (oi == UIOBJI_ESC)) {
             flag_skip = true;
+            ui_palette_fadeout_5_5_1();
             break;
         } else {
             ui_play_winlose_cb2(&wld2);
@@ -268,7 +270,11 @@ static void ui_play_ending_good_or_tyrant(int race, const char *name, bool flag_
         }
     }
 
-    ui_palette_fadeout_5_5_1();
+    if (!flag_skip) {
+        ui_palette_fadeout_5_5_1();
+    }
+
+    lbxfile_item_release(LBXFILE_WINLOSE, wld2.gfx_winning2);
 
     wld3.gfx_winlast = lbxfile_item_get(LBXFILE_WINLOSE, 0x21, 0);
     wld3.frame = 0;
@@ -278,10 +284,12 @@ static void ui_play_ending_good_or_tyrant(int race, const char *name, bool flag_
     lbxpal_set_update_range(0, 255);
 
     while ((wld3.frame < 0x50) && (!flag_skip)) {
+        int16_t oi;
         ui_delay_prepare();
-        uiobji_now = uiobj_handle_input_cond();
-        if ((uiobji_now == uiobji_ma) || (uiobji_now == UIOBJI_ESC)) {
+        oi = uiobj_handle_input_cond();
+        if ((oi == oi_skip) || (oi == UIOBJI_ESC)) {
             flag_skip = true;
+            ui_palette_fadeout_5_5_1();
             break;
         } else {
             ui_play_winlose_cb3(&wld3);
@@ -293,10 +301,12 @@ static void ui_play_ending_good_or_tyrant(int race, const char *name, bool flag_
         }
     }
 
+    if (!flag_skip) {
+        ui_palette_fadeout_5_5_1();
+    }
+
     lbxfile_item_release(LBXFILE_WINLOSE, wld3.gfx_winface);
     lbxfile_item_release(LBXFILE_WINLOSE, wld3.gfx_winlast);
-
-    ui_palette_fadeout_5_5_1();
 
     ui_sound_stop_music();
 
@@ -317,10 +327,10 @@ static void ui_play_winlose_exile_cb(void *vptr)
     struct anim_winlose_exile_s *p = vptr;
     int f = p->frame;
     ui_draw_erase_buf();
-    lbxgfx_draw_frame_offs(0x000 - f, 0, p->gfx_stars, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
-    lbxgfx_draw_frame_offs(0x140 - f, 0, p->gfx_stars, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
-    lbxgfx_draw_frame_offs(0x280 - f, 0, p->gfx_stars, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
-    lbxgfx_draw_frame_offs(f * 3 - 0xf0, 0, p->gfx_ships, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
+    lbxgfx_draw_frame_offs(0x000 - f, 0, p->gfx_stars, UI_SCREEN_W);
+    lbxgfx_draw_frame_offs(0x140 - f, 0, p->gfx_stars, UI_SCREEN_W);
+    lbxgfx_draw_frame_offs(0x280 - f, 0, p->gfx_stars, UI_SCREEN_W);
+    lbxgfx_draw_frame_offs(f * 3 - 0xf0, 0, p->gfx_ships, UI_SCREEN_W);
 
     lbxfont_select(4, 0, 0, 0);
 
@@ -381,8 +391,8 @@ static void ui_play_winlose_funeral_cb(void *vptr)
         int x, y;
         x = 0xf9 - ((f - 0x14) * 0x17b) / 0x92;
         y = ((f - 0x14) * 0xe3) / 0x92 - 0x4a;
-        lbxgfx_draw_frame_offs(x, y, p->gfx_coffin, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
-        lbxgfx_draw_frame_offs(x, y, p->gfx_march, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
+        lbxgfx_draw_frame_offs(x, y, p->gfx_coffin, UI_SCREEN_W);
+        lbxgfx_draw_frame_offs(x, y, p->gfx_march, UI_SCREEN_W);
     }
     lbxgfx_draw_frame(0, 0, p->gfx_flag, UI_SCREEN_W);
     p->frame = ++f;
@@ -402,7 +412,7 @@ void ui_play_ending_tyrant(int race, const char *name)
 
 void ui_play_ending_funeral(int banner_live, int banner_dead)
 {
-    int16_t uiobji_now, uiobji_ma;
+    int16_t oi_skip;
     struct anim_winlose_funeral_s wld;
 
     ui_draw_finish_mode = 2;
@@ -420,17 +430,17 @@ void ui_play_ending_funeral(int banner_live, int banner_dead)
     ui_cursor_setup_area(1, &ui_cursor_area_all_i0);
 
     uiobj_table_clear();
-    uiobji_ma = uiobj_add_mousearea(0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, MOO_KEY_UNKNOWN, -1);
+    oi_skip = uiobj_add_mousearea(UI_SCREEN_LIMITS, MOO_KEY_UNKNOWN);
     uiobj_set_downcount(3);
     uiobj_set_callback_and_delay(ui_play_winlose_funeral_cb, &wld, 4);
 
-    uiobji_now = 0;
     wld.frame = 0;
     while (wld.frame < 0xba) {
+        int16_t oi;
         ui_delay_prepare();
-        uiobji_now = uiobj_handle_input_cond();
+        oi = uiobj_handle_input_cond();
         ui_play_winlose_funeral_cb(&wld);
-        if (uiobji_now == uiobji_ma) {
+        if (oi == oi_skip) {
             wld.frame = 0x2710;
         }
         ++wld.frame;
@@ -456,7 +466,7 @@ void ui_play_ending_funeral(int banner_live, int banner_dead)
 
 void ui_play_ending_exile(const char *name)
 {
-    int16_t uiobji_now, uiobji_ma;
+    int16_t oi_skip;
     bool flag_skip = false;
     struct anim_winlose_exile_s wld;
 
@@ -472,17 +482,17 @@ void ui_play_ending_exile(const char *name)
     ui_sound_play_music(3);
 
     uiobj_table_clear();
-    uiobji_ma = uiobj_add_mousearea(0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, MOO_KEY_UNKNOWN, -1);
+    oi_skip = uiobj_add_mousearea(UI_SCREEN_LIMITS, MOO_KEY_UNKNOWN);
     uiobj_set_downcount(3);
     uiobj_set_callback_and_delay(ui_play_winlose_exile_cb, &wld, 3);
 
-    uiobji_now = 0;
     wld.frame = 0;
 
     while ((wld.frame < 0x17c) && (!flag_skip)) {
+        int16_t oi;
         ui_delay_prepare();
-        uiobji_now = uiobj_handle_input_cond();
-        if ((uiobji_now == uiobji_ma) || (uiobji_now == UIOBJI_ESC)) {
+        oi = uiobj_handle_input_cond();
+        if ((oi == oi_skip) || (oi == UIOBJI_ESC)) {
             flag_skip = true;
             break;
         } else {

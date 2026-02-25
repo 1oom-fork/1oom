@@ -23,6 +23,7 @@
 #include "uiobj.h"
 #include "uisound.h"
 #include "uistarmap_common.h"
+#include "vgabuf.h"
 
 /* -------------------------------------------------------------------------- */
 
@@ -92,7 +93,7 @@ static void bomb_ask_draw_cb(void *vptr)
     const planet_t *p = &(g->planet[d->planet]);
     const empiretechorbit_t *e = &(g->eto[p->owner]);
     char buf[0x80];
-    hw_video_copy_back_from_page2();
+    vgabuf_copy_back_from_page2();
     ui_draw_filled_rect(222, 4, 314, 179, 0);
     lbxgfx_draw_frame(222, 4, d->gfx_bombback, UI_SCREEN_W);
     ui_starmap_draw_planetinfo_2(g, d->api, d->api, d->planet);
@@ -126,7 +127,7 @@ static void bomb_show_draw_cb(void *vptr)
     const planet_t *p = &(g->planet[d->planet]);
     const empiretechorbit_t *e = &(g->eto[d->owner]);
     char buf[0x80];
-    hw_video_copy_back_from_page2();
+    vgabuf_copy_back_from_page2();
     ui_draw_filled_rect(222, 4, 314, 179, 0);
     lbxgfx_draw_frame(222, 4, d->gfx_explobac, UI_SCREEN_W);
     ui_starmap_draw_planetinfo_2(g, d->api, d->api, d->planet);
@@ -191,8 +192,8 @@ bool ui_bomb_ask(struct game_s *g, int pi, uint8_t planet_i, int pop_inbound)
     bomb_load_data(&d);
     uiobj_set_callback_and_delay(bomb_ask_draw_cb, &d, 4);
     uiobj_table_clear();
-    oi_n = uiobj_add_t0(227, 164, "", d.gfx_bombbutc, MOO_KEY_ESCAPE, -1);
-    oi_y = uiobj_add_t0(271, 163, "", d.gfx_bombbutt, MOO_KEY_b, -1);
+    oi_n = uiobj_add_t0(227, 164, "", d.gfx_bombbutc, MOO_KEY_ESCAPE);
+    oi_y = uiobj_add_t0(271, 164, "", d.gfx_bombbutt, MOO_KEY_b);
     ui_sound_play_music(0xd);
     while (!flag_done) {
         int16_t oi;
@@ -232,7 +233,7 @@ void ui_bomb_show(struct game_s *g, int attacker_i, int owner_i, uint8_t planet_
     bomb_load_data(&d);
     uiobj_set_callback_and_delay(bomb_show_draw_cb, &d, 4);
     uiobj_table_clear();
-    uiobj_add_t0(227, 164, "", d.gfx_contbutt, MOO_KEY_c, -1);
+    uiobj_add_t0(227, 164, "", d.gfx_contbutt, MOO_KEY_c);
     if (g->planet[planet_i].owner == PLAYER_NONE) {
         ui_sound_play_music(0xe);
     } else if (play_music) {

@@ -1,5 +1,6 @@
 AM_CPPFLAGS = \
     @OS_INCLUDES@ \
+    -I$(top_srcdir)/src/save \
     -I$(top_srcdir)/src/game \
     -I$(top_srcdir)/src
 
@@ -16,6 +17,7 @@ libuiclassic_a_SOURCES = \
     uicaught.c \
     uicaught.h \
     uiclassic.c \
+    uicopyprotection.c \
     uicursor.c \
     uicursor.h \
     uidefs.h \

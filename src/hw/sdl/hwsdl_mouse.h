@@ -9,8 +9,6 @@ extern void hw_mouse_grab(void);
 extern void hw_mouse_ungrab(void);
 extern void hw_mouse_toggle_grab(void);
 
-extern void hw_mouse_set_limits(int w, int h);
-
 extern void hw_mouse_move(int dx, int dy);
 extern void hw_mouse_button(int i, int pressed);
 

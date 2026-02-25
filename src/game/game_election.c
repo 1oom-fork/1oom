@@ -28,7 +28,7 @@ static void game_election_prepare(struct election_s *el)
                 el->first_human = i;
                 continue;
             }
-            if (g->evn.home[i] != PLANET_NONE) {
+            if (IS_ALIVE(g, i)) {
                 el->tbl_ei[num] = i;
                 ++num;
             }
@@ -56,7 +56,7 @@ static void game_election_prepare(struct election_s *el)
         el->tbl_votes[i] = tbl_votes[i];
     }
     for (int loops = 0; loops < g->players; ++loops) {
-        for (player_id_t i = PLAYER_0; i < (g->players - 1); ++i) {
+        for (player_id_t i = PLAYER_0; (i + 1) < g->players; ++i) {
             uint16_t v0, v1;
             v0 = tbl_votes[i];
             v1 = tbl_votes[i + 1];
@@ -120,7 +120,7 @@ void game_election(struct game_s *g)
         el->str = 0;
         el->ui_delay = 2;
         ui_election_delay(el, 5);
-        n = el->tbl_votes[i];
+        n = el->tbl_votes[player];
         if (IS_AI(g, player)) {
             votefor = game_ai->vote(el, player);
         } else {
@@ -163,7 +163,7 @@ void game_election(struct game_s *g)
         el->str = 0;
         el->ui_delay = 2;
         ui_election_delay(el, 5);
-        n = el->tbl_votes[player] /* HACK */ + 10;
+        n = el->tbl_votes[player];
         if (g->gaux->local_players > 1) {
             el->cur_i = el->num;
             sprintf(el->buf, "%s (%s%s", g->emperor_names[player], game_election_print_votes(n, vbuf), game_str_el_dots);
@@ -198,14 +198,14 @@ void game_election(struct game_s *g)
     {
         int winner;
         for (winner = 0; winner < 2; ++winner) {
-            if ((((el->total_votes + 1) * 2) / 3) < el->got_votes[winner]) {
+            if ((((el->total_votes + 1) * 2) / 3) <= el->got_votes[winner]) {
                 break;
             }
         }
         if (winner < 2) {
             g->winner = el->candidate[winner];
-            sprintf(el->buf, "%s %i %s %s %s %s %s",
-                    game_str_el_chose1, g->year + YEAR_BASE, game_str_el_chose1,
+            sprintf(el->buf, "%s %i%s %s %s %s %s",
+                    game_str_el_chose1, g->year + YEAR_BASE, game_str_el_chose2,
                     g->emperor_names[g->winner], game_str_el_ofthe, game_str_tbl_races[g->eto[g->winner].race],
                     game_str_el_chose3 /* WASBUG MOO1 has the last period missing if second candidate won */
                    );
@@ -255,7 +255,7 @@ void game_election(struct game_s *g)
                     sprintf(&el->buf[pos], " %s %s %s", game_str_el_emperor, g->emperor_names[g->winner], game_str_el_isnow);
                 }
             }
-            game_tech_ai_share(g);
+            game_tech_final_war_share(g);
             el->str = el->buf;
             el->ui_delay = 3;
             ui_election_show(el);

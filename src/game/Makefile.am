@@ -1,8 +1,9 @@
 AM_CPPFLAGS = \
     @OS_INCLUDES@ \
-    -I$(top_srcdir)/src
+    -I$(top_srcdir)/src \
+    -I$(top_srcdir)/src/save
 
-noinst_LIBRARIES = libgame.a libgamemain.a
+noinst_LIBRARIES = libgame.a libgamemain.a libgamesaveconv.a
 
 libgamemain_a_SOURCES = \
     game.c
@@ -30,6 +31,8 @@ libgame_a_SOURCES = \
     game_end.h \
     game_event.c \
     game_event.h \
+    game_fix.c \
+    game_fix.h \
     game_fleet.c \
     game_fleet.h \
     game_ground.c \
@@ -46,8 +49,6 @@ libgame_a_SOURCES = \
     game_parsed.h \
     game_planet.c \
     game_planet.h \
-    game_save.c \
-    game_save.h \
     game_shipdesign.c \
     game_shipdesign.h \
     game_shiptech.c \
@@ -57,10 +58,17 @@ libgame_a_SOURCES = \
     game_stat.c \
     game_stat.h \
     game_str.c \
+    game_str_shipnames.c \
     game_str.h \
     game_tech.c \
     game_tech.h \
     game_techtypes.h \
     game_turn.c \
     game_turn.h \
-    game_types.h
+    game_types.h \
+    game_util.c \
+    game_util.h
+
+libgamesaveconv_a_SOURCES = \
+    game_str_shipnames.c \
+    game_str.h

@@ -1,6 +1,7 @@
 #include "config.h"
 
 #include <string.h>
+#include <stdlib.h>
 
 #include "lbxpal.h"
 #include "hw.h"
@@ -8,6 +9,7 @@
 #include "lbxfont.h"
 #include "log.h"
 #include "types.h"
+#include "vgapal.h"
 
 /* -------------------------------------------------------------------------- */
 
@@ -164,7 +166,10 @@ void lbxpal_select(int pal_index, int first/*or -1*/, int last)
             --num;
         }
         /* not done in MOO */
-        /*hw_video_set_palette(lbxpal_palette, 0, 256);*/
+        /*
+         * vgapal_set(lbxpal_palette, 0, 256);
+         * hw_video_refresh_palette();
+        */
     }
     lbxfont_select(0, 0, 0, 0);
 }
@@ -185,7 +190,8 @@ void lbxpal_set_update_range(int from, int to)
 void lbxpal_update(void)
 {
     memset(lbxpal_update_flag, 0, sizeof(lbxpal_update_flag));
-    hw_video_set_palette(lbxpal_palette, 0, 256);
+    vgapal_set(lbxpal_palette, 0, 256);
+    hw_video_refresh_palette();
 }
 
 void lbxpal_build_colortables(void)
@@ -198,9 +204,30 @@ void lbxpal_build_colortables(void)
     }
 }
 
+uint8_t lbxpal_find_closest(uint8_t r, uint8_t g, uint8_t b)
+{
+    uint8_t min_c = 0;
+    int min_dist = 10000;
+    uint8_t *p = lbxpal_palette;
+    for (int i = 0; i < 256; ++i) {
+        int dist;
+        dist = abs(r - *p++);
+        dist += abs(g - *p++);
+        dist += abs(b - *p++);
+        if (dist < min_dist) {
+            min_dist = dist;
+            min_c = i;
+            if (dist == 0) {
+                break;
+            }
+        }
+    }
+    return min_c;
+}
+
 int lbxpal_init(void)
 {
-    memset(lbxpal_palette, 0, sizeof(lbxpal_update_flag));
+    memset(lbxpal_palette, 0, sizeof(lbxpal_palette));
     lbxpal_update();
     return 0;
 }

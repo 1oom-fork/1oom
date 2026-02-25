@@ -5,6 +5,7 @@
 
 #include "ui.h"
 #include "bits.h"
+#include "cfg.h"
 #include "gfxaux.h"
 #include "hw.h"
 #include "lbx.h"
@@ -13,14 +14,18 @@
 #include "lbxpal.h"
 #include "lib.h"
 #include "log.h"
+#include "mouse.h"
 #include "options.h"
-#include "os.h"
 #include "types.h"
 #include "uidefs.h"
 #include "uipal.h"
 #include "uiobj.h"
 
 /* -------------------------------------------------------------------------- */
+
+const struct cfg_items_s ui_cfg_items[] = {
+    CFG_ITEM_END
+};
 
 const struct cmdline_options_s ui_cmdline_options[] = {
     { NULL, 0, NULL, NULL, NULL, NULL }
@@ -85,7 +90,7 @@ static void init_lbx_space(void)
     ui_data.gfx.space.misl_off = lbxfile_item_get(LBXFILE_SPACE, 4, 0);
     ui_data.gfx.space.warpout = lbxfile_item_get(LBXFILE_SPACE, 0x21, 0);
     ui_data.gfx.space.envterm = lbxfile_item_get(LBXFILE_SPACE, 0x22, 0);
-    ui_data.gfx.space.environ = lbxfile_item_get(LBXFILE_SPACE, 0x13, 0);
+    ui_data.gfx.space.enviro = lbxfile_item_get(LBXFILE_SPACE, 0x13, 0);
     ui_data.gfx.space.base_btn = lbxfile_item_get(LBXFILE_SPACE, 0x23, 0);
     ui_data.gfx.space.dis_bem2 = lbxfile_item_get(LBXFILE_SPACE, 0x24, 0);
     ui_data.gfx.space.stasis2 = lbxfile_item_get(LBXFILE_SPACE, 0x25, 0);
@@ -208,22 +213,6 @@ static void init_gfx(void)
     ui_data.gfx.planets.smonster = lbxfile_item_get(LBXFILE_PLANETS, 0x2d, 0);
     ui_data.gfx.planets.tmonster = lbxfile_item_get(LBXFILE_PLANETS, 0x2e, 0);
 
-    for (int i = 0; i < 0x48; ++i) {
-        uint8_t *t;
-        if (i < 0x46) {
-            t = lbxfile_item_get(LBXFILE_SHIPS2, i, 0);
-        } else if (i == 0x46) {
-            t = lbxfile_item_get(LBXFILE_PLANETS, i - 0x17, 0);
-        } else /*(i == 0x47)*/ {
-            t = lbxfile_item_get(LBXFILE_SCREENS, 7, 0);
-        }
-        ui_data.gfx.ships[i] = t;
-        ui_data.gfx.ships[0x48 + i] = lbxfile_item_get(LBXFILE_SHIPS, i, 0);
-    }
-    for (int i = 0; i < 3; ++i) {
-        ui_data.gfx.ships[0x48 * 2 + i] = lbxfile_item_get(LBXFILE_SHIPS2, 0x48 + i, 0);
-    }
-
     ui_data.gfx.screens.tech_but_up = lbxfile_item_get(LBXFILE_SCREENS, 1, 0);
     ui_data.gfx.screens.tech_but_down = lbxfile_item_get(LBXFILE_SCREENS, 2, 0);
     ui_data.gfx.screens.tech_but_ok = lbxfile_item_get(LBXFILE_SCREENS, 3, 0);
@@ -252,12 +241,45 @@ static void init_gfx(void)
     ui_data.gfx.vgafileh = lib_malloc(UI_SCREEN_W * UI_SCREEN_H);
 
     gfx_aux_setup_wh(&ui_data.aux.screen, UI_SCREEN_W, UI_SCREEN_H);
-    gfx_aux_setup_wh(&ui_data.aux.ship_p1, 34, 26);
     gfx_aux_setup_wh(&ui_data.aux.ship_overlay, 34, 26);
     gfx_aux_setup_wh(&ui_data.aux.btemp, 38, 30);
 
     /* load musics 5..8, TODO? */
     ui_data.gfx.initialized = true;
+}
+
+static int init_lbx_ships(void)
+{
+    for (int i = 0; i < 0x48; ++i) {
+        uint8_t *t;
+        if (i < 0x46) {
+            t = lbxfile_item_get(LBXFILE_SHIPS2, i, 0);
+        } else if (i == 0x46) {
+            t = lbxfile_item_get(LBXFILE_PLANETS, i - 0x17, 0);
+        } else /*(i == 0x47)*/ {
+            t = lbxfile_item_get(LBXFILE_SCREENS, 7, 0);
+        }
+        ui_data.gfx.ships[i] = t;
+        ui_data.gfx.ships[0x48 + i] = lbxfile_item_get(LBXFILE_SHIPS, i, 0);
+    }
+    for (int i = 0; i < 3; ++i) {
+        ui_data.gfx.ships[0x48 * 2 + i] = lbxfile_item_get(LBXFILE_SHIPS2, 0x48 + i, 0);
+    }
+    gfx_aux_setup_wh(&ui_data.aux.ship_p1, 34, 26);
+    return 0;
+}
+
+static int set_ui_icon(void)
+{
+    struct gfx_aux_s *aux = &ui_data.aux.ship_p1;
+    uint8_t *gfx, *pal;
+    gfx = ui_data.gfx.ships[0x48 * 2 + 2];
+    pal = lbxfile_item_get(LBXFILE_FONTS, 2, 0);
+    memcpy(lbxpal_palette, pal, 256 * 3);
+    gfx_aux_draw_frame_to(gfx, aux);
+    hw_icon_set(aux->data, pal, aux->w, aux->h);    /* do not care if the icon got set */
+    lbxfile_item_release(LBXFILE_FONTS, pal);
+    return 0;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -275,23 +297,26 @@ int ui_init(void)
 
 int ui_late_init(void)
 {
+    mouse_set_limits(UI_SCREEN_W, UI_SCREEN_H);
     if (0
-     || lbxfont_init()
-     || hw_video_init(UI_SCREEN_W, UI_SCREEN_H)
-     || lbxpal_init()
+      || lbxfont_init()
+      || init_lbx_ships()
+      || set_ui_icon()
+      || hw_video_init(UI_SCREEN_W, UI_SCREEN_H)
+      || lbxpal_init()
     ) {
         return 1;
     }
     if (opt_audio_enabled) {
         uint32_t t0, t1;
-        t0 = os_get_time_us();
+        t0 = hw_get_time_us();
         log_message("Preparing sounds, this may take a while...\n");
         for (int i = NUM_SOUNDS - 1; i >= 0; --i) {
             uint32_t len;
             ui_data.sfx[i] = lbxfile_item_get(LBXFILE_SOUNDFX, i, &len);
             hw_audio_sfx_init(i, ui_data.sfx[i], len);
         }
-        t1 = os_get_time_us();
+        t1 = hw_get_time_us();
         log_message("Preparing sounds took %i ms\n", (t1 - t0) / 1000);
     }
     ui_data.music_i = -1;

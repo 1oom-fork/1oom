@@ -15,11 +15,11 @@ void game_planet_destroy(struct game_s *g, uint8_t planet_i, player_id_t attacke
 {
     planet_t *p = &(g->planet[planet_i]);
     player_id_t owner = p->owner;
-    if (1/*IS_HUMAN(g, owner)*/) {
+    if (IS_HUMAN(g, owner)) {
         g->seen[owner][planet_i].owner = PLAYER_NONE;
         g->seen[owner][planet_i].pop = 0;
         g->seen[owner][planet_i].bases = 0;
-        g->seen[owner][planet_i].factories = 0;
+        g->seen[owner][planet_i].factories = p->factories;
     }
     if (IS_HUMAN(g, owner)) {
         /* WASBUG there was an unreliable mess here */
@@ -78,15 +78,15 @@ uint8_t game_planet_get_random(struct game_s *g, player_id_t owner)
     }
 }
 
-void game_planet_adjust_percent(struct game_s *g, player_id_t owner, int a0, uint8_t percent, int a2)
+void game_planet_adjust_percent(struct game_s *g, player_id_t owner, int a0, uint8_t percent, int growth)
 {
     for (int i = 0; i < g->galaxy_stars; ++i) {
         planet_t *p = &(g->planet[i]);
         if (p->owner == owner) {
             if (0
-              || (a2 == 0)
-              || ((a2 == 1) && (p->growth > PLANET_GROWTH_HOSTILE))
-              || ((a2 == 2) && (p->growth == PLANET_GROWTH_HOSTILE))
+              || (growth == 0)
+              || ((growth == 1) && (p->growth > PLANET_GROWTH_HOSTILE))
+              || ((growth == 2) && (p->growth == PLANET_GROWTH_HOSTILE))
             ) {
                 int sum, v;
                 sum = p->slider[PLANET_SLIDER_SHIP] + p->slider[PLANET_SLIDER_TECH];
@@ -99,12 +99,12 @@ void game_planet_adjust_percent(struct game_s *g, player_id_t owner, int a0, uin
                 v = (sum * percent) / 100;
                 p->slider[PLANET_SLIDER_SHIP] = (p->slider[PLANET_SLIDER_SHIP] * (100 - percent)) / 100;
                 if (a0 == 2) {
-                    p->slider[PLANET_SLIDER_DEF] = v;
+                    p->slider[PLANET_SLIDER_DEF] += v;
                 } else {
                     p->slider[PLANET_SLIDER_DEF] = (p->slider[PLANET_SLIDER_DEF] * (100 - percent)) / 100;
                 }
                 if (a0 == 0) {
-                    p->slider[PLANET_SLIDER_IND] = v;
+                    p->slider[PLANET_SLIDER_IND] += v;
                 } else {
                     p->slider[PLANET_SLIDER_IND] = (p->slider[PLANET_SLIDER_IND] * (100 - percent)) / 100;
                 }
@@ -139,10 +139,50 @@ int game_planet_get_w1(const struct game_s *g, uint8_t planet_i)
     return w;
 }
 
+int game_adjust_prod_by_special(int prod, planet_special_t special)
+{
+    switch (special) {
+        case PLANET_SPECIAL_ULTRA_POOR:
+            prod /= 3;
+            break;
+        case PLANET_SPECIAL_POOR:
+            prod /= 2;
+            break;
+        case PLANET_SPECIAL_RICH:
+            prod *= 2;
+            break;
+        case PLANET_SPECIAL_ULTRA_RICH:
+            prod *= 3;
+            break;
+        default:
+            break;
+    }
+    return prod;
+}
+
+int game_get_tech_prod(int prod, int slider, race_t race, planet_special_t special)
+{
+    int v = (prod * slider) / 100;
+    if (race == RACE_PSILON) {
+        v += v / 2;
+    }
+    switch (special) {
+        case PLANET_SPECIAL_ARTIFACTS:
+            v *= 2;
+            break;
+        case PLANET_SPECIAL_4XTECH:
+            v *= 4;
+            break;
+        default:
+            break;
+    }
+    return MIN(v, 0x7fff);
+}
+
 void game_planet_update_home(struct game_s *g)
 {
     for (int i = 0; i < g->galaxy_stars; ++i) {
-        planet_t *p = &(g->planet[i]);
+        const planet_t *p = &(g->planet[i]);
         player_id_t pi;
         pi = p->owner;
         if ((pi != PLAYER_NONE) && IS_AI(g, pi) && (g->evn.home[pi] == PLANET_NONE)) { /* FIXME multiplayer */

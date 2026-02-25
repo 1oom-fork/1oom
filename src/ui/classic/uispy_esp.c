@@ -8,7 +8,6 @@
 #include "game.h"
 #include "game_str.h"
 #include "game_tech.h"
-#include "hw.h"
 #include "kbd.h"
 #include "lbx.h"
 #include "lbxfont.h"
@@ -21,6 +20,7 @@
 #include "uidraw.h"
 #include "uiobj.h"
 #include "uisound.h"
+#include "vgabuf.h"
 
 /* -------------------------------------------------------------------------- */
 
@@ -50,7 +50,7 @@ static void steal_draw_cb(void *vptr)
     empiretechorbit_t *e = &(g->eto[d->target]);
     char buf[0xe0];
 
-    hw_video_copy_back_from_page3();
+    vgabuf_copy_back_from_page3();
     ui_gmap_basic_draw_frame(d->gmap, d->spy);
     lbxgfx_draw_frame(6, 24, d->gfx_espionag, UI_SCREEN_W);
     {
@@ -115,7 +115,7 @@ static void stolen_draw_cb(void *vptr)
     const struct game_s *g = d->g;
     const empiretechorbit_t *e = &(g->eto[d->spy]);
     char buf[0x80];
-    hw_video_copy_back_from_page2();
+    vgabuf_copy_back_from_page2();
     ui_gmap_basic_draw_frame(d->gmap, d->api);
     ui_draw_filled_rect(31, 62, 202, 103, 0x36);
     lbxgfx_draw_frame(31, 62, d->gfx, UI_SCREEN_W);
@@ -140,8 +140,13 @@ int ui_spy_steal(struct game_s *g, int spy, int target, uint8_t flags_field)
 
     ui_sound_play_music(0xf);
 
-    ui_draw_copy_buf();
-    hw_video_copy_back_to_page3();
+    /* HACK
+       MOO1 does ui_draw_copy_buf() here but it seems to cause gfx glitch
+       when two tech steals happen on same turn.
+       vgabuf_copy_back_from_page2() is used instead.
+    */
+    vgabuf_copy_back_from_page2();
+    vgabuf_copy_back_to_page3();
 
     d.g = g;
     d.spy = spy;
@@ -157,7 +162,7 @@ int ui_spy_steal(struct game_s *g, int spy, int target, uint8_t flags_field)
             int x, y;
             x = (i / 3) * 102 + 20;
             y = (i % 3) * 22 + 97;
-            oi_tbl_field[i] = uiobj_add_mousearea(x - 2, y - 2, x + 88, y + 13, MOO_KEY_UNKNOWN, -1);
+            oi_tbl_field[i] = uiobj_add_mousearea(x - 2, y - 2, x + 88, y + 13, MOO_KEY_UNKNOWN);
         } else {
             oi_tbl_field[i] = UIOBJI_INVALID;
         }
@@ -177,7 +182,7 @@ int ui_spy_steal(struct game_s *g, int spy, int target, uint8_t flags_field)
         for (int i = 0; i < TECH_FIELD_NUM; ++i) {
             if (oi == oi_tbl_field[i]) {
                 ui_sound_play_sfx_24();
-                selected = 1;
+                selected = i;
                 flag_done = true;
             }
         }
@@ -191,8 +196,8 @@ int ui_spy_steal(struct game_s *g, int spy, int target, uint8_t flags_field)
     uiobj_unset_callback();
     uiobj_table_clear();
     steal_free_data(&d);
-    hw_video_copy_back_from_page3();
-    hw_video_copy_back_to_page2();
+    vgabuf_copy_back_from_page3();
+    vgabuf_copy_back_to_page2();
     return selected;
 }
 
@@ -208,7 +213,7 @@ void ui_spy_stolen(struct game_s *g, int pi, int spy, int field, uint8_t tech)
     d.gmap = ui_gmap_basic_init(g, true);
     stolen_load_data(&d);
     uiobj_table_clear();
-    uiobj_add_mousearea(0, 0, UI_SCREEN_W - 1, UI_SCREEN_H -1, MOO_KEY_UNKNOWN, -1);
+    uiobj_add_mousearea(UI_SCREEN_LIMITS, MOO_KEY_UNKNOWN);
     while (!flag_done) {
         int16_t oi;
         ui_delay_prepare();

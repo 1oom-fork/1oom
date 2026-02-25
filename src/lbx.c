@@ -98,9 +98,7 @@ static FILE *lbxfile_try_fopen(const char *path, const char *filename)
         lib_free(fname);
         fname = NULL;
     }
-    if (fd) {
-        return fd;
-    } else {
+    if (!fd) {
         char buf[32];
         const char *p = filename;
         char *q = buf;
@@ -117,8 +115,7 @@ static FILE *lbxfile_try_fopen(const char *path, const char *filename)
             fname = NULL;
         }
     }
-
-    return NULL;
+    return fd;
 }
 
 static int lbxfile_open(struct lbx_s *p, const char *filename)
@@ -219,13 +216,13 @@ static int lbxfile_load(lbxfile_e i)
     return 1;
 }
 
-static uint8_t *lbx_extract(struct lbx_s *p, uint16_t i, uint32_t *len_ptr)
+static uint8_t *lbx_extract(struct lbx_s *p, uint16_t i, uint32_t *len_ptr, const char *filename)
 {
     if (!p) {
         return NULL;
     }
     if (i >= p->entries) {
-        log_error("invalid id %i >= %i\n", i, p->entries);
+        log_error("LBX: %s invalid id %i >= %i\n", filename, i, p->entries);
         return NULL;
     }
     uint32_t offs0, offs1, len;
@@ -237,19 +234,19 @@ static uint8_t *lbx_extract(struct lbx_s *p, uint16_t i, uint32_t *len_ptr)
     }
     if (p->mode == LBX_MODE_FILE_OPEN) {
         if (fseek(p->fd, offs0, SEEK_SET)) {
-            log_error("problem seeking to %i\n", offs0);
+            log_error("LBX: problem seeking %s to %i\n", filename, offs0);
             return NULL;
         }
         uint8_t *d = lib_malloc(len);
         if (fread(d, len, 1, p->fd) < 1) {
-            log_error("problem reading file\n");
+            log_error("LBX: problem reading file %s\n", filename);
             return NULL;
         }
         return d;
     } else if (p->mode == LBX_MODE_MEMORY) {
         return &p->data[offs0];
     } else {
-        log_error("extract without open\n");
+        log_error("LBX: extract without open\n");
         return NULL;
     }
 }
@@ -344,7 +341,7 @@ uint8_t *lbxfile_item_get(lbxfile_e file_id, uint16_t entry_id, uint32_t *len_pt
             }
         }
 
-        p = lbx_extract(&lbxtbl[file_id], entry_id, len_ptr);
+        p = lbx_extract(&lbxtbl[file_id], entry_id, len_ptr, lbxinfo[file_id].filename);
 
         if (p == NULL) {
             goto fail;

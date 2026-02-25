@@ -11,6 +11,7 @@
 #include "game_battle_human.h"
 #include "game_diplo.h"
 #include "game_fleet.h"
+#include "game_num.h"
 #include "game_parsed.h"
 #include "game_str.h"
 #include "log.h"
@@ -39,6 +40,7 @@ static void game_battle_item_from_parsed(struct battle_item_s *b, const shippars
     COPY_PROP(b, sp, look);
     COPY_PROP(b, sp, pulsar);
     COPY_PROP(b, sp, stream);
+    COPY_PROP(b, sp, pshield);
     COPY_PROP(b, sp, sbmask);
     COPY_PROP(b, sp, extrarange);
     COPY_PROP(b, sp, num);
@@ -59,6 +61,7 @@ static void game_battle_item_from_parsed(struct battle_item_s *b, const shippars
     COPY_BOOL_TO_INT(b, warpdis, WARPDIS);
     COPY_BOOL_TO_INT(b, technull, TECHNULL);
     COPY_BOOL_TO_INT(b, repulsor, REPULSOR);
+    COPY_BOOL_TO_INT(b, cloak, CLOAK);
 }
 
 static void game_battle_item_add(struct battle_s *bt, const shipparsed_t *sp, battle_side_i_t side)
@@ -102,7 +105,7 @@ static void game_battle_item_add(struct battle_s *bt, const shipparsed_t *sp, ba
     }
 }
 
-static void game_battle_post(struct game_s *g, int loser, int winner, uint8_t from)
+static void game_battle_post(struct game_s *g, player_id_t loser, int winner, uint8_t from)
 {
     if (loser >= PLAYER_NUM) {
         monster_id_t mi;
@@ -184,11 +187,11 @@ static void game_battle_prepare_add_ships(struct battle_s *bt, battle_side_i_t s
             bt->s[side].tbl_shiptype[num_types] = i;
             game_parsed_from_design(sp, &sd[i], s);
             if (bt->s[side].race == RACE_MRRSHAN) {
-                sp->complevel += 4;
+                sp->complevel += game_num_race_bonus_mrrshan;
             }
             if (bt->s[side].race == RACE_ALKARI) {
-                sp->defense += 3;
-                sp->misdefense += 3;
+                sp->defense += game_num_race_bonus_alkari;
+                sp->misdefense += game_num_race_bonus_alkari;
             }
             if (flag_shield_disable) {
                 sp->pshield = 0;
@@ -211,7 +214,11 @@ void game_battle_prepare(struct battle_s *bt, int party_r, int party_l, uint8_t 
     struct game_s *g = bt->g;
     const planet_t *p = &(g->planet[planet_i]);
     shipparsed_t sp[1];
-    memset(bt, 0, sizeof(*bt));
+    {
+        bool t = bt->flag_human_att;
+        memset(bt, 0, sizeof(*bt));
+        bt->flag_human_att = t;
+    }
     bt->g = g;
     bt->s[SIDE_R].party = party_r;
     bt->s[SIDE_L].party = party_l;
@@ -265,7 +272,7 @@ void game_battle_handle_all(struct game_s *g)
         monster_planet[i] = PLANET_NONE;
     }
     for (monster_id_t i = MONSTER_CRYSTAL; i <= MONSTER_AMOEBA; ++i) {
-        monster_t *m;
+        const monster_t *m;
         m = (i == MONSTER_CRYSTAL) ? &(g->evn.crystal) : &(g->evn.amoeba);
         if (m->exists) {
             const planet_t *p;
@@ -338,8 +345,7 @@ void game_battle_handle_all(struct game_s *g)
                    afterwards on the same turn could be fixed */
                 BOOLVEC_SET0(tbl_have_force, party_att);
             } else {
-                if (!(((party_def < PARTY_NUM) && IS_HUMAN(g, party_def)) || ((party_att < PARTY_NUM) && IS_HUMAN(g, party_att)))) {
-                    /* AI vs. AI (or monster) */
+                if (!IS_HUMAN(g, party_def) && !IS_HUMAN(g, party_att)) {
                     game_battle_prepare(bt, party_att, party_def, pli);
                     if (game_ai->battle_ai_ai_resolve(bt)) {
                         /* HACK _att won, swap variables */
@@ -349,10 +355,9 @@ void game_battle_handle_all(struct game_s *g)
                     BOOLVEC_SET0(tbl_have_force, party_att);
                     game_battle_post(g, party_att, party_def, pli);
                 } else {
-                    /* human player involved */
                     /*11926*/
                     /* BUG? first check not in MOO1, reads past table if monster */
-                    if ((party_att < PLAYER_NUM) && IS_AI(g, party_att) && (g->evn.hmm28e[party_def][party_att] > 0)) {
+                    if ((party_att < PLAYER_NUM) && IS_AI(g, party_att) && (g->evn.ceasefire[party_def][party_att] > 0)) {
                         BOOLVEC_SET0(tbl_have_force, party_att);
                         game_battle_post(g, party_att, party_def, pli);
                     } else {

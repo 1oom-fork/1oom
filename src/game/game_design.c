@@ -12,10 +12,10 @@
 #include "game_shiptech.h"
 #include "game_str.h"
 #include "game_tech.h"
+#include "game_util.h"
 #include "log.h"
 #include "rnd.h"
 #include "types.h"
-#include "util.h"
 
 /* -------------------------------------------------------------------------- */
 
@@ -24,8 +24,8 @@
 static void game_get_random_shipnames(struct game_s *g, player_id_t player, char shipnames[SHIP_HULL_NUM][SHIP_NAME_LEN + 1])
 {
     BOOLVEC_DECLARE(name_unused, SHIP_NAME_NUM);
-    empiretechorbit_t *e = &(g->eto[player]);
-    shipresearch_t *srd = &(g->srd[player]);
+    const empiretechorbit_t *e = &(g->eto[player]);
+    const shipresearch_t *srd = &(g->srd[player]);
     char const * const *names = &game_str_tbl_ship_names[e->race * SHIP_NAME_NUM];
     for (int n = 0; n < SHIP_NAME_NUM; ++n) {
         BOOLVEC_SET1(name_unused, n);
@@ -114,32 +114,32 @@ static int game_design_calc_cost_item_do(struct game_design_s *gd, design_slot_t
             tm = tbl_shiptech_weap[i].is_bio ? gd->percent[TECH_FIELD_PLANETOLOGY] : gd->percent[TECH_FIELD_WEAPON];
             tm -= tbl_shiptech_weap[i].tech_i;
             SETRANGE(tm, 0, 50);
-            cost = (tbl_shiptech_weap[i].cost * tbl_tech_mul_hmm1[tm + 1]) / 100;
+            cost = (tbl_shiptech_weap[i].cost * tech_reduce_50percent_per_10pts[tm + 1]) / 100;
             break;
         case DESIGN_SLOT_ENGINE:
             tm = gd->percent[TECH_FIELD_PROPULSION] - tbl_shiptech_engine[i].tech_i;
             SETRANGE(tm, 0, 50);
-            cost = (tbl_shiptech_engine[i].cost * tbl_tech_mul_hmm1[tm + 1]) / 100;
+            cost = (tbl_shiptech_engine[i].cost * tech_reduce_50percent_per_10pts[tm + 1]) / 100;
             break;
         case DESIGN_SLOT_COMP:
             tm = gd->percent[TECH_FIELD_COMPUTER] - tbl_shiptech_comp[i].tech_i;
             SETRANGE(tm, 0, 50);
-            cost = (tbl_shiptech_comp[i].cost[sd->hull] * tbl_tech_mul_hmm1[tm + 1]) / 100;
+            cost = (tbl_shiptech_comp[i].cost[sd->hull] * tech_reduce_50percent_per_10pts[tm + 1]) / 100;
             break;
         case DESIGN_SLOT_JAMMER:
             tm = gd->percent[TECH_FIELD_COMPUTER] - tbl_shiptech_jammer[i].tech_i;
             SETRANGE(tm, 0, 50);
-            cost = (tbl_shiptech_jammer[i].cost[sd->hull] * tbl_tech_mul_hmm1[tm + 1]) / 100;
+            cost = (tbl_shiptech_jammer[i].cost[sd->hull] * tech_reduce_50percent_per_10pts[tm + 1]) / 100;
             break;
         case DESIGN_SLOT_SHIELD:
             tm = gd->percent[TECH_FIELD_FORCE_FIELD] - tbl_shiptech_shield[i].tech_i;
             SETRANGE(tm, 0, 50);
-            cost = (tbl_shiptech_shield[i].cost[sd->hull] * tbl_tech_mul_hmm1[tm + 1]) / 100;
+            cost = (tbl_shiptech_shield[i].cost[sd->hull] * tech_reduce_50percent_per_10pts[tm + 1]) / 100;
             break;
         case DESIGN_SLOT_ARMOR:
             tm = gd->percent[TECH_FIELD_CONSTRUCTION] - tbl_shiptech_armor[i].tech_i;
             SETRANGE(tm, 0, 50);
-            cost = (tbl_shiptech_armor[i].cost[sd->hull] * tbl_tech_mul_hmm1[tm + 1]) / 100;
+            cost = (tbl_shiptech_armor[i].cost[sd->hull] * tech_reduce_50percent_per_10pts[tm + 1]) / 100;
             break;
         case DESIGN_SLOT_SPECIAL1:
         case DESIGN_SLOT_SPECIAL2:
@@ -149,7 +149,7 @@ static int game_design_calc_cost_item_do(struct game_design_s *gd, design_slot_t
                 fi = tbl_shiptech_special[i].field;
                 tm = gd->percent[fi] - tbl_shiptech_special[i].tech_i;
                 SETRANGE(tm, 0, 50);
-                cost = (tbl_shiptech_special[i].cost[sd->hull] * tbl_tech_mul_hmm1[tm + 1]) / 100;
+                cost = (tbl_shiptech_special[i].cost[sd->hull] * tech_reduce_50percent_per_10pts[tm + 1]) / 100;
             }
             break;
         default:
@@ -160,7 +160,7 @@ static int game_design_calc_cost_item_do(struct game_design_s *gd, design_slot_t
 
 static void game_design_prepare_do(struct game_s *g, struct game_design_s *gd, player_id_t player, shipdesign_t *sd)
 {
-    empiretechorbit_t *e = &(g->eto[player]);
+    const empiretechorbit_t *e = &(g->eto[player]);
     gd->player_i = player;
     gd->sd_num = e->shipdesigns_num;
     game_get_random_shipnames(g, gd->player_i, gd->names);
@@ -176,7 +176,7 @@ static void game_design_prepare_do(struct game_s *g, struct game_design_s *gd, p
 
 void game_design_prepare(struct game_s *g, struct game_design_s *gd, player_id_t player, shipdesign_t *sd)
 {
-    empiretechorbit_t *e = &(g->eto[player]);
+    const empiretechorbit_t *e = &(g->eto[player]);
     game_design_prepare_do(g, gd, player, sd);
     for (int i = 0; i < gd->sd_num; ++i) {
         gd->tbl_shiplook[i] = g->srd[gd->player_i].design[i].look;
@@ -232,7 +232,7 @@ void game_design_update_engines(shipdesign_t *sd)
     sd->engines = engines;
 }
 
-int game_design_get_hull_space(struct game_design_s *gd)
+int game_design_get_hull_space(const struct game_design_s *gd)
 {
     /* MOO1 also has some additional variable here, but it is always 0 */
     int space = tbl_shiptech_hull[gd->sd.hull].space;
@@ -251,32 +251,32 @@ int game_design_calc_space_item(struct game_design_s *gd, design_slot_t slot, in
             tm = tbl_shiptech_weap[i].is_bio ? gd->percent[TECH_FIELD_PLANETOLOGY] : gd->percent[TECH_FIELD_WEAPON];
             tm -= tbl_shiptech_weap[i].tech_i;
             SETRANGE(tm, 0, 50);
-            space = (tbl_shiptech_weap[i].space * tbl_tech_mul_hmm1[tm + 1]) / 100;    /* BUG? others use tbl_..._hmm2 */
+            space = (tbl_shiptech_weap[i].space * tech_reduce_50percent_per_10pts[tm + 1]) / 100;    /* BUG? others use tbl_..._hmm2 */
             break;
         case DESIGN_SLOT_ENGINE:
             tm = gd->percent[TECH_FIELD_PROPULSION] - tbl_shiptech_engine[i].tech_i;
             SETRANGE(tm, 0, 50);
-            space = (tbl_shiptech_engine[i].space * tbl_tech_mul_hmm2[tm]) / 100;
+            space = (tbl_shiptech_engine[i].space * tech_reduce_25percent_per_10pts[tm]) / 100;
             break;
         case DESIGN_SLOT_COMP:
             tm = gd->percent[TECH_FIELD_COMPUTER] - tbl_shiptech_comp[i].tech_i;
             SETRANGE(tm, 0, 50);
-            space = (tbl_shiptech_comp[i].space[sd->hull] * tbl_tech_mul_hmm2[tm]) / 100;
+            space = (tbl_shiptech_comp[i].space[sd->hull] * tech_reduce_25percent_per_10pts[tm]) / 100;
             break;
         case DESIGN_SLOT_JAMMER:
             tm = gd->percent[TECH_FIELD_COMPUTER] - tbl_shiptech_jammer[i].tech_i;
             SETRANGE(tm, 0, 50);
-            space = (tbl_shiptech_jammer[i].space[sd->hull] * tbl_tech_mul_hmm2[tm]) / 100;
+            space = (tbl_shiptech_jammer[i].space[sd->hull] * tech_reduce_25percent_per_10pts[tm]) / 100;
             break;
         case DESIGN_SLOT_SHIELD:
             tm = gd->percent[TECH_FIELD_FORCE_FIELD] - tbl_shiptech_shield[i].tech_i;
             SETRANGE(tm, 0, 50);
-            space = (tbl_shiptech_shield[i].space[sd->hull] * tbl_tech_mul_hmm2[tm]) / 100;
+            space = (tbl_shiptech_shield[i].space[sd->hull] * tech_reduce_25percent_per_10pts[tm]) / 100;
             break;
         case DESIGN_SLOT_ARMOR:
             tm = gd->percent[TECH_FIELD_CONSTRUCTION] - tbl_shiptech_armor[i].tech_i;
             SETRANGE(tm, 0, 50);
-            space = (tbl_shiptech_armor[i].space[sd->hull] * tbl_tech_mul_hmm2[tm]) / 100;
+            space = (tbl_shiptech_armor[i].space[sd->hull] * tech_reduce_25percent_per_10pts[tm]) / 100;
             break;
         case DESIGN_SLOT_SPECIAL1:
         case DESIGN_SLOT_SPECIAL2:
@@ -286,7 +286,7 @@ int game_design_calc_space_item(struct game_design_s *gd, design_slot_t slot, in
                 fi = tbl_shiptech_special[i].field;
                 tm = gd->percent[fi] - tbl_shiptech_special[i].tech_i;
                 SETRANGE(tm, 0, 50);
-                space = (tbl_shiptech_special[i].space[sd->hull] * tbl_tech_mul_hmm2[tm]) / 100;
+                space = (tbl_shiptech_special[i].space[sd->hull] * tech_reduce_25percent_per_10pts[tm]) / 100;
             }
             break;
         default:
@@ -346,9 +346,13 @@ int game_design_calc_space(struct game_design_s *gd)
 int game_design_calc_cost_item(struct game_design_s *gd, design_slot_t slot, int i)
 {
     int cost = game_design_calc_cost_item_do(gd, slot, i);
-    SETMAX(cost, 5);
+    if ((cost < 5) && (i != 0)) {
+        cost = 5;
+    }
     cost = (cost + 5) / 10;
-    SETMAX(cost, 1);
+    if ((cost < 1) && (i != 0)) {
+        cost = 1;
+    }
     return cost;
 }
 
@@ -520,8 +524,8 @@ int game_design_build_tbl_fit_engine(struct game_s *g, struct game_design_s *gd,
     ship_engine_t actengine = sd->engine;
     int last = 0;
     buf[0] = 1/*HAVE*/;
-    for (int i = 1; i < SHIP_ENGINE_NUM; ++i) {
-        if (game_tech_player_has_tech(g, TECH_FIELD_CONSTRUCTION, tbl_shiptech_engine[i].tech_i, gd->player_i)) {
+    for (int i = 0; i < SHIP_ENGINE_NUM; ++i) {
+        if (game_tech_player_has_tech(g, TECH_FIELD_PROPULSION, tbl_shiptech_engine[i].tech_i, gd->player_i)) {
             sd->engine = i;
             game_design_update_engines(sd);
             buf[i] = (game_design_calc_space(gd) >= 0) ? 1/*HAVE*/ : 0/*NOPE*/;
@@ -539,7 +543,7 @@ int game_design_build_tbl_fit_man(struct game_s *g, struct game_design_s *gd, in
 {
     shipdesign_t *sd = &(gd->sd);
     ship_engine_t actman = sd->man;
-    for (int i = 0; i <= sd->engine; ++i) {
+    for (uint8_t i = 0; i <= sd->engine; ++i) {
         sd->man = i;
         game_design_update_engines(sd);
         buf[i] = (game_design_calc_space(gd) >= 0) ? 1/*HAVE*/ : 0/*NOPE*/;
@@ -627,11 +631,11 @@ int game_design_build_tbl_fit_special(struct game_s *g, struct game_design_s *gd
 
 void game_design_compact_slots(shipdesign_t *sd)
 {
-    for (int i = 0; i < SPECIAL_SLOT_NUM - 1; ++i) {
-        if (sd->special[i] == 0) {
-            for (int j = i; j < SPECIAL_SLOT_NUM - 1; ++j) {
-                sd->special[j] = sd->special[j + 1];
-                sd->special[j + 1] = 0;
+    for (int loops = 0; loops < SPECIAL_SLOT_NUM; ++loops) {
+        for (int i = 0; i < SPECIAL_SLOT_NUM - 1; ++i) {
+            if (sd->special[i] == 0) {
+                sd->special[i] = sd->special[i + 1];
+                sd->special[i + 1] = 0;
             }
         }
     }
@@ -641,19 +645,19 @@ void game_design_compact_slots(shipdesign_t *sd)
             sd->wpnn[i] = 0;
         }
     }
-    for (int i = 0; i < WEAPON_SLOT_NUM - 1; ++i) {
-        if (sd->wpnt[i] == 0) {
-            for (int j = i; j < WEAPON_SLOT_NUM - 1; ++j) {
-                sd->wpnt[j] = sd->wpnt[j + 1];
-                sd->wpnn[j] = sd->wpnn[j + 1];
-                sd->wpnt[j + 1] = 0;
-                sd->wpnn[j + 1] = 0;
+    for (int loops = 0; loops < WEAPON_SLOT_NUM; ++loops) {
+        for (int i = 0; i < WEAPON_SLOT_NUM - 1; ++i) {
+            if (sd->wpnt[i] == 0) {
+                sd->wpnt[i] = sd->wpnt[i + 1];
+                sd->wpnn[i] = sd->wpnn[i + 1];
+                sd->wpnt[i + 1] = 0;
+                sd->wpnn[i + 1] = 0;
             }
         }
     }
 }
 
-void game_design_scrap(struct game_s *g, player_id_t player, int shipi, bool flag_hmm)
+void game_design_scrap(struct game_s *g, player_id_t player, int shipi, bool flag_for_new)
 {
     empiretechorbit_t *e = &(g->eto[player]);
     shipresearch_t *srd = &(g->srd[player]);
@@ -684,7 +688,7 @@ void game_design_scrap(struct game_s *g, player_id_t player, int shipi, bool fla
         bs = p->buildship;
         if ((p->owner == player) && (bs != BUILDSHIP_STARGATE)) {
             if (bs == shipi) {
-                if ((player != PLAYER_0) || (!flag_hmm)) {
+                if (!IS_HUMAN(g, player) || (!flag_for_new)) {
                     p->buildship = 0;
                 } else {
                     p->buildship = e->shipdesigns_num - 1;

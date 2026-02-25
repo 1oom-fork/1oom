@@ -5,7 +5,6 @@
 #include "uibasescrap.h"
 #include "comp.h"
 #include "game.h"
-//#include "game_misc.h"
 #include "game_str.h"
 #include "game_tech.h"
 #include "kbd.h"
@@ -48,16 +47,17 @@ static void basescrap_draw_cb1(void *vptr)
     struct basescrap_data_s *d = vptr;
     struct game_s *g = d->g;
     const int x = 56, y = 50;
-    planet_t *p = &(g->planet[g->planet_focus_i[d->api]]);
+    const planet_t *p = &(g->planet[g->planet_focus_i[d->api]]);
     lbxgfx_draw_frame(x, y, d->gfx, UI_SCREEN_W);
     ui_draw_filled_rect(x + 14, y + 35, x + 64, y + 38, 0x2f);
     if (d->slider_var > 0) {
-        ui_draw_line_3h(x + 14, y + 36, x + 13 + d->slider_var / 2, 0x74);
+        ui_draw_slider(x + 14, y + 36, x + 13 + d->slider_var / 2, 0x74);
     }
     lbxfont_select(0, 0xd, 0, 0);
     lbxfont_print_str_center(x + 57, y + 11, game_str_bs_line1, UI_SCREEN_W);
     lbxfont_print_str_center(x + 57, y + 20, game_str_bs_line2, UI_SCREEN_W);
     lbxfont_select(2, 6, 0, 0);
+    lbxfont_print_str_right(x + 104, y + 35, game_str_bs_bases, UI_SCREEN_W);
     lbxfont_print_num_right(x + 83, y + 35, (p->missile_bases * d->slider_var) / 100, UI_SCREEN_W);
 }
 
@@ -80,11 +80,11 @@ void ui_basescrap(struct game_s *g, player_id_t active_player)
     ui_cursor_setup_area(1, &ui_cursor_area_tbl[0]);
 
     uiobj_table_clear();
-    oi_cancel = uiobj_add_t0(x + 10, y + 47, "", ui_data.gfx.starmap.reloc_bu_cancel, MOO_KEY_ESCAPE, -1);
-    oi_accept = uiobj_add_t0(x + 66, y + 47, "", ui_data.gfx.starmap.reloc_bu_accept, MOO_KEY_SPACE, -1);
-    /*oi_slider =*/ uiobj_add_slider(x + 14, y + 35, 0, 100, 0, 100, 50, 9, &d.slider_var, MOO_KEY_UNKNOWN, -1);
-    oi_minus = uiobj_add_mousearea(x + 10, y + 33, x + 12, y + 41, MOO_KEY_UNKNOWN, -1);
-    oi_plus = uiobj_add_mousearea(x + 66, y + 33, x + 70, y + 41, MOO_KEY_UNKNOWN, -1);
+    oi_cancel = uiobj_add_t0(x + 10, y + 47, "", ui_data.gfx.starmap.reloc_bu_cancel, MOO_KEY_ESCAPE);
+    oi_accept = uiobj_add_t0(x + 66, y + 47, "", ui_data.gfx.starmap.reloc_bu_accept, MOO_KEY_SPACE);
+    /*oi_slider =*/ uiobj_add_slider(x + 14, y + 35, 0, 100, 0, 100, 50, 9, &d.slider_var, MOO_KEY_UNKNOWN);
+    oi_minus = uiobj_add_mousearea(x + 10, y + 33, x + 12, y + 41, MOO_KEY_UNKNOWN);
+    oi_plus = uiobj_add_mousearea(x + 66, y + 33, x + 70, y + 41, MOO_KEY_UNKNOWN);
 
     uiobj_set_callback_and_delay(basescrap_draw_cb1, &d, 1);
 

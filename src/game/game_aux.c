@@ -62,16 +62,6 @@ int game_aux_init(struct game_aux_s *gaux, struct game_s *g)
     gaux->research.descr = (char *)t + 4;
     /* TODO check num/size*/
 
-#ifdef FEATURE_MODEBUG
-    for (int f = 0; f < 6; ++f) {
-        for (int t = 0; t < 50; ++t) {
-            const uint8_t *p;
-            p = RESEARCH_D0_PTR(gaux, f, t);
-            LOG_DEBUG((5, "%i %2i: %02x %02x %02x '%s'\n", f, t, p[0], p[1], p[2], (p[0] != 0xff) ? &gaux->research.names[GET_LE_16(&p[4])] : ""));
-        }
-    }
-#endif
-
     t = lbxfile_item_get(LBXFILE_DIPLOMAT, 1, 0);
     check_lbx_t5(t, "diplomat", DIPLOMAT_MSG_NUM, DIPLOMAT_MSG_LEN);
     gaux->diplomat.msg = (const char *)(t + 4);
@@ -83,26 +73,6 @@ int game_aux_init(struct game_aux_s *gaux, struct game_s *g)
         gaux->diplomat.d0[i] = GET_LE_16(t); /* all values < 0x10 */
     }
     lbxfile_item_release(LBXFILE_DIPLOMAT, data);
-
-#ifdef FEATURE_MODEBUG
-    for (int dtype = 0; dtype < DIPLOMAT_D0_NUM; ++dtype) {
-        for (int v = 0; v < gaux->diplomat.d0[dtype]; ++v) {
-            const char *msg;
-            msg = DIPLOMAT_MSG_PTR(g->gaux, v, dtype);
-#if 1
-            if (dtype == 68) {
-                LOG_DEBUG((5, "diplo msg v %i dt %i '%s'\n", v, dtype, msg));
-            }
-#else
-            for (int i = 0; (i < DIPLOMAT_MSG_LEN) && (msg[i] != 0); ++i) {
-                if (msg[i] == (char)0x92) {
-                    LOG_DEBUG((5, "diplo msg v %i dt %i '%s'\n", v, dtype, msg));
-                }
-            }
-#endif
-        }
-    }
-#endif
 
     data = t = lbxfile_item_get(LBXFILE_FIRING, 0, 0);
     check_lbx_t5(data, "firing", NUM_SHIPLOOKS, 0x1c);
@@ -123,10 +93,6 @@ int game_aux_init(struct game_aux_s *gaux, struct game_s *g)
     gaux->eventmsg = (const char *)(t + 4);
 
     gaux->move_temp = 0;
-    gaux->savenamebuflen = FSDEV_PATH_MAX;
-    gaux->savenamebuf = lib_malloc(gaux->savenamebuflen);
-    gaux->savebuflen = sizeof(struct game_s) + 64;
-    gaux->savebuf = lib_malloc(gaux->savebuflen);
     gaux->flag_cheat_galaxy = false;
     gaux->flag_cheat_events = false;
     gaux->initialized = true;
@@ -143,10 +109,6 @@ void game_aux_shutdown(struct game_aux_s *gaux)
             lib_free(gaux->move_temp);
             gaux->move_temp = 0;
         }
-        lib_free(gaux->savenamebuf);
-        gaux->savenamebuf = 0;
-        lib_free(gaux->savebuf);
-        gaux->savebuf = 0;
     }
 }
 
@@ -156,7 +118,7 @@ uint8_t game_aux_get_firing_param_x(const struct game_aux_s *gaux, uint8_t look,
     if (!dir) {
         if (a2 == 1) {
             return f[2];
-        } else if (a2 == 1) {
+        } else if (a2 == 2) {
             return f[4];
         } else /*if (a2 == 3)*/ {
             return f[0];
@@ -164,7 +126,7 @@ uint8_t game_aux_get_firing_param_x(const struct game_aux_s *gaux, uint8_t look,
     } else {
         if (a2 == 1) {
             return f[8];
-        } else if (a2 == 1) {
+        } else if (a2 == 2) {
             return f[10];
         } else /*if (a2 == 3)*/ {
             return f[6];
@@ -178,7 +140,7 @@ uint8_t game_aux_get_firing_param_y(const struct game_aux_s *gaux, uint8_t look,
     if (!dir) {
         if (a2 == 1) {
             return f[3];
-        } else if (a2 == 1) {
+        } else if (a2 == 2) {
             return f[5];
         } else /*if (a2 == 3)*/ {
             return f[1];
@@ -186,7 +148,7 @@ uint8_t game_aux_get_firing_param_y(const struct game_aux_s *gaux, uint8_t look,
     } else {
         if (a2 == 1) {
             return f[9];
-        } else if (a2 == 1) {
+        } else if (a2 == 2) {
             return f[11];
         } else /*if (a2 == 3)*/ {
             return f[7];
@@ -199,7 +161,7 @@ void game_aux_start(struct game_aux_s *gaux, struct game_s *g)
     int n = 0;
     g->gaux = gaux;
     init_star_dist(gaux, g);
-    for (int i = 0; i < g->players; ++i) {
+    for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         if (BOOLVEC_IS0(g->is_ai, i)) {
             ++n;
         }
