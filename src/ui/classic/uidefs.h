@@ -10,6 +10,8 @@
 #define UI_SCREEN_W 320
 #define UI_SCREEN_H 200
 
+#define UI_SCREEN_LIMITS    0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1
+
 #define NUM_SOUNDS  0x29
 #define NUM_MUSICS  0x28
 
@@ -176,7 +178,7 @@ struct ui_data_s {
             uint8_t *misl_off;
             uint8_t *warpout;
             uint8_t *envterm;
-            uint8_t *environ;
+            uint8_t *enviro;
             uint8_t *base_btn;
             uint8_t *dis_bem2;
             uint8_t *stasis2;
@@ -222,6 +224,11 @@ struct ui_data_s {
         int y2;
         bool flag_show_grid;
         int line_anim_phase;
+        int frame_ship;
+        int frame_scanner;
+        int scanner_delay;
+        int stars_xoff1;
+        int stars_xoff2;
         struct gfx_aux_s star_aux;
         int fleet_selected;
         int orbit_player;
@@ -238,10 +245,12 @@ struct ui_data_s {
     ui_main_loop_action_t ui_main_loop_action;
     ui_main_loop_action_t ui_main_loop_action_prev;
     ui_main_loop_action_t ui_main_loop_action_next;
-    bool flag_main_hmm1;
+    bool flag_scrap_for_new_design;
     char strbuf[1024];
 };
 
 extern struct ui_data_s ui_data;
+extern bool ui_fix_bugs;
+extern bool ui_fix_qol;
 
 #endif

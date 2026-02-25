@@ -21,6 +21,7 @@
 #include "uidelay.h"
 #include "uidefs.h"
 #include "uidraw.h"
+#include "uifix.h"
 #include "uiobj.h"
 #include "uipal.h"
 #include "uisound.h"
@@ -70,6 +71,10 @@ static void ui_tech_build_completed(struct tech_data_s *d)
     if (field == TECH_FIELD_WEAPON) {
         num += 2;
     }
+    if (t->project[field]) {
+        *p++ = t->project[field];
+        num++;
+    }
     d->num = num;
 }
 
@@ -83,14 +88,14 @@ static void tech_draw_cb(void *vptr)
     char buf[0xe0];
 
     game_update_total_research(g);
-    oi = uiobj_get_hmm2_oi();
+    oi = uiobj_get_clicked_oi();
     for (int i = 0; i < TECH_FIELD_NUM; ++i) {
         if ((oi == d->oi_tbl_slider[i]) && (!t->slider_lock[i])) {
             game_adjust_slider_group(t->slider, i, t->slider[i], TECH_FIELD_NUM, t->slider_lock);
         }
     }
 
-    ui_draw_filled_rect(0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, 0x3a);
+    ui_draw_filled_rect(UI_SCREEN_LIMITS, 0x3a);
     ui_draw_filled_rect(3, 150, 275, 196, 0x5b);
     ui_draw_filled_rect(5, 4, 53, 15, (d->field == 0) ? 0x89 : 0xc0);
     ui_draw_filled_rect(55, 4, 108, 15, (d->field == 1) ? 0x89 : 0xc0);
@@ -130,7 +135,7 @@ static void tech_draw_cb(void *vptr)
     }
     game_tech_get_descr(g->gaux, d->field, d->completed[d->selected + d->pos], buf);
     lbxfont_select(5, 6, 0, 0);
-    lbxfont_set_44_10_plus(1);
+    lbxfont_set_gap_h(1);
     lbxfont_print_str_split(10, 155, 260, buf, 0, UI_SCREEN_W, UI_SCREEN_H);
 
     lbxgfx_set_new_frame(ui_data.gfx.screens.tech_but_up, 1);
@@ -142,8 +147,8 @@ static void tech_draw_cb(void *vptr)
         int y;
         y = 21 * i + 24;
         ui_draw_filled_rect(227, y, 277, y + 3, 0x2f);
-        if (t->slider) {
-            ui_draw_line_3h(227, y + 1, 226 + t->slider[i] / 2, t->slider_lock[i] ? 0x22 : 0x73);
+        if (t->slider[i]) {
+            ui_draw_slider(227, y + 1, 226 + t->slider[i] / 2, t->slider_lock[i] ? 0x22 : 0x73);
         }
         lbxfont_select(0, 6, 0, 0);
         lbxfont_set_color_c_n(0x26, 5);
@@ -156,14 +161,15 @@ static void tech_draw_cb(void *vptr)
     {
         uint8_t groundcmbonus = 0, groundcmbonus2 = 0;
         for (int i = 0; i < t->completed[TECH_FIELD_CONSTRUCTION]; ++i) {
-            uint8_t c;
-            const uint8_t *p;
+            uint8_t c, tier;
+            tech_group_t group;
             c = g->srd[d->api].researchcompleted[TECH_FIELD_CONSTRUCTION][i];
-            p = RESEARCH_D0_PTR(g->gaux, TECH_FIELD_CONSTRUCTION, c);
-            if (p[0] == 7) {
-                groundcmbonus = p[1] * 5;
-            } else if (p[0] == 15) {
-                groundcmbonus2 = p[1] * 10;
+            group = game_tech_get_group(g->gaux, TECH_FIELD_CONSTRUCTION, c);
+            tier = game_tech_get_tier(g->gaux, TECH_FIELD_CONSTRUCTION, c);
+            if (group == TECH_GROUP_ARMOR) {
+                groundcmbonus = tier * 5;
+            } else if (group == TECH_GROUP_PERSONAL_ARMOR) {
+                groundcmbonus2 = tier * 10;
             }
         }
         groundcmbonus += groundcmbonus2;
@@ -173,12 +179,13 @@ static void tech_draw_cb(void *vptr)
     {
         uint8_t groundcmbonus = 0;
         for (int i = 0; i < t->completed[TECH_FIELD_FORCE_FIELD]; ++i) {
-            uint8_t c;
-            const uint8_t *p;
+            uint8_t c, tier;
+            tech_group_t group;
             c = g->srd[d->api].researchcompleted[TECH_FIELD_FORCE_FIELD][i];
-            p = RESEARCH_D0_PTR(g->gaux, TECH_FIELD_FORCE_FIELD, c);
-            if (p[0] == 16) {
-                groundcmbonus = p[1] * 10;
+            group = game_tech_get_group(g->gaux, TECH_FIELD_FORCE_FIELD, c);
+            tier = game_tech_get_tier(g->gaux, TECH_FIELD_FORCE_FIELD, c);
+            if (group == TECH_GROUP_PERSONAL_SHIELD) {
+                groundcmbonus = tier * 10;
             }
         }
         sprintf(buf, "%s +%i%%", game_str_te_gcombat, groundcmbonus);
@@ -191,12 +198,13 @@ static void tech_draw_cb(void *vptr)
     {
         uint8_t groundcmbonus = 0;
         for (int i = 0; i < t->completed[TECH_FIELD_WEAPON]; ++i) {
-            uint8_t c;
-            const uint8_t *p;
+            uint8_t c, tier;
+            tech_group_t group;
             c = g->srd[d->api].researchcompleted[TECH_FIELD_WEAPON][i];
-            p = RESEARCH_D0_PTR(g->gaux, TECH_FIELD_WEAPON, c);
-            if (p[0] == 21) {
-                groundcmbonus = p[1] * 5;
+            group = game_tech_get_group(g->gaux, TECH_FIELD_WEAPON, c);
+            tier = game_tech_get_tier(g->gaux, TECH_FIELD_WEAPON, c);
+            if (group == TECH_GROUP_PERSONAL_WEAPONS) {
+                groundcmbonus = tier * 5;
             }
         }
         sprintf(buf, "%s +%i%%", game_str_te_gcombat, groundcmbonus);
@@ -206,7 +214,7 @@ static void tech_draw_cb(void *vptr)
     for (int i = 0; i < TECH_FIELD_NUM; ++i) {
         int y, complpercent;
         y = 21 * i + 21;
-        complpercent = game_tech_current_research_percent2(e, i);
+        complpercent = game_tech_current_research_percent2(g, d->api, i);
         if (complpercent < 99) {
             if (complpercent > 0) {
                 sprintf(buf, "%i%%", complpercent);
@@ -214,11 +222,15 @@ static void tech_draw_cb(void *vptr)
                 lbxfont_print_str_right(295, y + 3, buf, UI_SCREEN_W);
             } else {
                 int y0, y1;
-                complpercent = game_tech_current_research_percent1(e, i);
+                complpercent = game_tech_current_research_percent1(g, d->api, i);
                 lbxgfx_draw_frame(287, y, ui_data.gfx.screens.litebulb_off, UI_SCREEN_W);
                 y0 = y + (8 - (complpercent * 4) / 50);
                 y1 = y + 7;
-                lbxgfx_draw_frame_offs(287, y, ui_data.gfx.screens.litebulb_on, 0, y0, UI_SCREEN_W - 1, y1, UI_SCREEN_W);
+                uiobj_set_limits(0, y0, UI_SCREEN_W - 1, y1);
+                if (((complpercent * 4) / 50) > 0) {
+                    lbxgfx_draw_frame_offs(287, y, ui_data.gfx.screens.litebulb_on, UI_SCREEN_W);
+                }
+                uiobj_set_limits_all();
             }
         } else {
             lbxfont_select_set_12_1(2, 0xd, 0, 0);
@@ -348,34 +360,34 @@ void ui_tech(struct game_s *g, player_id_t active_player)
             UIOBJ_CLEAR_LOCAL();
             if (d.num >= TECH_ON_SCREEN) {
                 if (d.pos > 0) {
-                    oi_up = uiobj_add_t0(157, 35, "", ui_data.gfx.screens.tech_but_up, MOO_KEY_COMMA, -1);
+                    oi_up = uiobj_add_t0(157, 35, "", ui_data.gfx.screens.tech_but_up, MOO_KEY_COMMA);
                 }
                 if ((d.pos + TECH_ON_SCREEN) < d.num) {
-                    oi_down = uiobj_add_t0(157, 141, "", ui_data.gfx.screens.tech_but_down, MOO_KEY_PERIOD, -1);
+                    oi_down = uiobj_add_t0(157, 141, "", ui_data.gfx.screens.tech_but_down, MOO_KEY_PERIOD);
                 }
             }
-            oi_ok = uiobj_add_t0(277, 181, "", ui_data.gfx.screens.tech_but_ok, MOO_KEY_SPACE, -1);
-            oi_tbl_field[0] = uiobj_add_mousearea(5, 4, 53, 15, MOO_KEY_UNKNOWN, -1);
-            oi_tbl_field[1] = uiobj_add_mousearea(55, 4, 108, 15, MOO_KEY_UNKNOWN, -1);
-            oi_tbl_field[2] = uiobj_add_mousearea(109, 4, 161, 16, MOO_KEY_UNKNOWN, -1);
-            oi_tbl_field[3] = uiobj_add_mousearea(5, 19, 54, 31, MOO_KEY_UNKNOWN, -1);
-            oi_tbl_field[4] = uiobj_add_mousearea(55, 19, 108, 31, MOO_KEY_UNKNOWN, -1);
-            oi_tbl_field[5] = uiobj_add_mousearea(109, 19, 161, 31, MOO_KEY_UNKNOWN, -1);
+            oi_ok = uiobj_add_t0(277, 181, "", ui_data.gfx.screens.tech_but_ok, MOO_KEY_SPACE);
+            oi_tbl_field[0] = uiobj_add_mousearea(5, 4, 53, 15, (ui_qol_numeric_key_bindings ? MOO_KEY_1 : MOO_KEY_UNKNOWN));
+            oi_tbl_field[1] = uiobj_add_mousearea(55, 4, 108, 15, (ui_qol_numeric_key_bindings ? MOO_KEY_2 : MOO_KEY_UNKNOWN));
+            oi_tbl_field[2] = uiobj_add_mousearea(109, 4, 161, 16, (ui_qol_numeric_key_bindings ? MOO_KEY_3 : MOO_KEY_UNKNOWN));
+            oi_tbl_field[3] = uiobj_add_mousearea(5, 19, 54, 31, (ui_qol_numeric_key_bindings ? MOO_KEY_4 : MOO_KEY_UNKNOWN));
+            oi_tbl_field[4] = uiobj_add_mousearea(55, 19, 108, 31, (ui_qol_numeric_key_bindings ? MOO_KEY_5 : MOO_KEY_UNKNOWN));
+            oi_tbl_field[5] = uiobj_add_mousearea(109, 19, 161, 31, (ui_qol_numeric_key_bindings ? MOO_KEY_6 : MOO_KEY_UNKNOWN));
             oi_equals = uiobj_add_inputkey(MOO_KEY_EQUALS);
             for (int i = 0; i < TECH_FIELD_NUM; ++i) {
                 int y;
                 y = i * 21 + 22;
-                oi_tbl_hmm15[i] = uiobj_add_mousearea(287, y - 1, 295, y + 7, MOO_KEY_UNKNOWN, -1);
-                oi_tbl_lock[i] = uiobj_add_mousearea(168, y, 218, y + 8, MOO_KEY_UNKNOWN, -1);
+                oi_tbl_hmm15[i] = uiobj_add_mousearea(287, y - 1, 295, y + 7, MOO_KEY_UNKNOWN);
+                oi_tbl_lock[i] = uiobj_add_mousearea(168, y, 218, y + 8, MOO_KEY_UNKNOWN);
                 if (!t->slider_lock[i]) {
-                    oi_tbl_minus[i] = uiobj_add_mousearea(223, y, 226, y + 8, MOO_KEY_UNKNOWN, -1);
-                    oi_tbl_plus[i] = uiobj_add_mousearea(279, y, 283, y + 8, MOO_KEY_UNKNOWN, -1);
-                    d.oi_tbl_slider[i] = uiobj_add_slider(227, y, 0, 100, 0, 100, 50, 9, &t->slider[i], MOO_KEY_UNKNOWN, -1);
+                    oi_tbl_minus[i] = uiobj_add_mousearea(223, y, 226, y + 8, MOO_KEY_UNKNOWN);
+                    oi_tbl_plus[i] = uiobj_add_mousearea(279, y, 283, y + 8, MOO_KEY_UNKNOWN);
+                    d.oi_tbl_slider[i] = uiobj_add_slider(227, y, 0, 100, 0, 100, 50, 9, &t->slider[i], MOO_KEY_UNKNOWN);
                 }
             }
             for (int i = 0; i < TECH_ON_SCREEN; ++i) {
                 if ((i + d.pos) < d.num) {
-                    oi_tbl_techname[i] = uiobj_add_mousearea(9, i * 7 + 37, 160, i * 7 + 43, MOO_KEY_UNKNOWN, -1);
+                    oi_tbl_techname[i] = uiobj_add_mousearea(9, i * 7 + 37, 160, i * 7 + 43, MOO_KEY_UNKNOWN);
                 }
             }
             ui_draw_finish();

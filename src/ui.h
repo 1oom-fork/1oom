@@ -3,6 +3,7 @@
 
 /* API to ui/ */
 
+#include "cfg.h"
 #include "options.h"
 #include "types.h"
 
@@ -16,6 +17,7 @@ extern void ui_shutdown(void);
 extern bool ui_use_audio;
 
 extern const struct cmdline_options_s ui_cmdline_options[];
+extern const struct cfg_items_s ui_cfg_items[];
 
 extern char *ui_get_strbuf(void);
 
@@ -38,6 +40,7 @@ struct game_new_options_s;
 extern main_menu_action_t ui_main_menu(struct game_new_options_s *newopts, int *load_game_i_ptr);
 
 struct game_s;
+struct game_end_s;
 
 extern void ui_game_start(struct game_s *g);
 extern void ui_game_end(struct game_s *g);
@@ -136,9 +139,12 @@ extern int ui_spy_sabotage_done(struct game_s *g, int pi, int spy, int target, u
 extern void ui_newtech(struct game_s *g, int pi);
 
 extern bool ui_explore(struct game_s *g, int pi, uint8_t planet_i, bool by_scanner, bool flag_colony_ship);
+extern void ui_landing(struct game_s *g, int pi, uint8_t planet_i);
+
 extern bool ui_bomb_ask(struct game_s *g, int pi, uint8_t planet_i, int pop_inbound);
 extern void ui_bomb_show(struct game_s *g, int attacker_i, int owner_i, uint8_t planet_i, int popdmg, int factdmg, bool play_music);
 
+extern void ui_turn_pre(const struct game_s *g);
 extern void ui_turn_msg(struct game_s *g, int pi, const char *str);
 
 struct ground_s;
@@ -170,5 +176,8 @@ extern void ui_audience_newtech(struct audience_s *au);
 extern void ui_audience_end(struct audience_s *au);
 
 extern void ui_newships(struct game_s *g, int pi);
+
+extern void ui_copyprotection_check(struct game_s *g);
+extern void ui_copyprotection_lose(struct game_s *g, struct game_end_s *ge);
 
 #endif

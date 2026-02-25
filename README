@@ -2,15 +2,9 @@
 # 1oom #
 ########
 
-1oom is a clone of the classic DOS game "Master of Orion" (MicroProse, 1993).
+1oom aims to accurately reproduce the original DOS version of
+Master of Orion (1993) in a form that can be run on modern computers.
 1oom is Free Software (GPLv2), see COPYING.
-
-This project is in a very early state and is missing the following:
-
-- help dialog
-- testing
-- documentation
-- polish
 
 
 1. Installation
@@ -18,28 +12,24 @@ This project is in a very early state and is missing the following:
 
 1oom requires a copy of the Master of Orion (v1.3) LBX files.
 
-The LBX file can be in a different directory as the executable.
-You can also specify your own path by passing the command-line
-argument "-data <path>" when running 1oom.
+1.1. Windows, MSDOS
+--------------------
 
-1.1. Windows
--------------
-
-1oom will only check the directory of the executable.
 Simply copy the EXE and DLLs (if any) to your MOO1 directory.
 
-1.2 Linux
-----------
+1.2 Unix (Linux)
+-----------------
 
 1oom requires the following libraries:
 
-- SDL (libsdl1.2):
+- SDL (libsdl1.2 or libsdl2):
 http://www.libsdl.org
-- SDL_mixer (libsdl-mixer1.2):
+- SDL_mixer (libsdl-mixer1.2 or libsdl2-mixer):
 http://www.libsdl.org/projects/SDL_mixer/
 
 Also recommended:
-- libsamplerate
+
+- libsamplerate:
 http://www.mega-nerd.com/libsamplerate/
 
 Check your distribution's package manager or the library
@@ -83,7 +73,7 @@ options in one of the following paths:
 3. Development
 ===============
 
-See INSTALL for more information.
+See INSTALL and HACKING for more information.
 
 
 4. Executables
@@ -91,11 +81,14 @@ See INSTALL for more information.
 
 1oom consists of a few executables:
 
-- 1oom_classic_sdl1 (the 1993 UI)
-- 1oom_cmdline      (proof of concept textual UI)
-- 1oom_lbxview_sdl1 (for viewing LBX files)
-- 1oom_pbxmake      (for creating PBX files)
+- 1oom_classic_*    (the 1993 UI)
+- 1oom_lbxview_*    (for viewing LBX files)
 - 1oom_saveconv     (for converting save game files)
+- 1oom_*_sdl1       (using SDL 1.2.x)
+- 1oom_*_sdl2       (using SDL 2.x)
+- 1oom_*_alleg4     (using Allegro 4.x)
+
+Some ports have shorter filenames due to filesystem limitations.
 
 See doc/ for more documentation.
 
@@ -104,12 +97,21 @@ See doc/ for more documentation.
 
 Middle click or Ctrl-F10 to grab/ungrab input.
 Ctrl-Esc to quit (without saving).
-Ctrl-Plus/Minus to adjust sfx volume.
-Ctrl-Shift-Plus/Minus to adjust music volume.
+Ctrl-[] to adjust sfx volume.
+Ctrl-Shift-[] to adjust music volume.
 Otherwise it controls like the original.
 
 
-5. Acknowledgements
+5. Abbreviations
+=================
+
+The following abbreviations appear in the documentation and code:
+
+- MOO1: Master of Orion 1 as represented by the v1.3 DOS binaries
+- OSG: The Official Strategy Guide (ISBN 1-55958-507-2)
+
+
+6. Acknowledgements
 ====================
 
 Original game by Simtex Software, published 1993 by MicroProse.
@@ -120,13 +122,21 @@ major inspiration in starting this project. Unfortunately the goon writes
 parenthesis without the leading space(such as here) like a retard, making the
 Le'ts Play [sic] a painful read.
 
+Ideas and text snippets have been taken from kyrub's unofficial patch 1.40m
+Readme. Thanks for the patch.
+
 Thanks to
 http://www.shikadi.net/wiki/modding/index.php?title=XMI_Format&oldid=6874
 for the music format info.
+
+Thanks to CivFanatics forum user sargon0 for partial save game format info in
+http://forums.civfanatics.com/threads/moo-save-file-layout.275055/
+
+Thanks to those who contributed code, ideas or bug reports.
 
 This README is based on the OpenXcom one, except s/folder/directory/g like a
 civilized person.
 
 Some code has been pilfered from Chocolate Doom and VICE.
 
-HACKING, PHILOSOPHY and CODE_OF_CONDUCT are based on Chocolate Doom.
+HACKING and PHILOSOPHY are based on Chocolate Doom.

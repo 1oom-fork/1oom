@@ -21,9 +21,6 @@
 
 /* -------------------------------------------------------------------------- */
 
-/*#define TEST_BATTLE*/
-/*#define TEST_GROUND*/
-
 #define EMPEROR_NAMES_PER_RACE  6
 #define EMPEROR_NAME_LBX_LEN    20
 
@@ -91,7 +88,8 @@ static const uint8_t tbl_nebula_data[NEBULA_TYPE_NUM][4][4] = {
 };
 
 /* index to planets.lbx + 1 */
-static const uint8_t tbl_planet_type_infogfx[PLANET_TYPE_NUM - 1][6] = {
+/* index to starview.lbx - 6 */
+static const uint8_t tbl_planet_type_infogfx[PLANET_TYPE_NUM][6] = {
     { 0x01, 0x01, 0x01, 0x01, 0x01, 0x01 },
     { 0x05, 0x05, 0x14, 0x14, 0x22, 0x22 },
     { 0x04, 0x04, 0x06, 0x06, 0x17, 0x17 },
@@ -127,7 +125,6 @@ static void game_generate_planets(struct game_s *g)
 {
     /* assumes the planet data is already 0'd by caller */
     uint16_t tblpx[PLANETS_MAX], tblpy[PLANETS_MAX];
-    uint16_t i;
 
     for (uint16_t h = 0; h < g->galaxy_h; ++h) {
         for (uint16_t w = 0; w < g->galaxy_w; ++w) {
@@ -135,8 +132,7 @@ static void game_generate_planets(struct game_s *g)
             again:
             x = rnd_1_n(0x2b, &g->seed) + w * 0x1c + 9;
             y = rnd_1_n(0x33, &g->seed) + h * 0x20 + 7;
-            i = 0;
-            for (i = 0; i < (h * g->galaxy_w + w); ++i) {
+            for (uint16_t i = 0; i < (h * g->galaxy_w + w); ++i) {
                 if ((tblpx[i] < x) || (tblpy[i] < y)) {
                     if (util_math_dist_fast(tblpx[i], tblpy[i], x, y) < 20) {
                         goto again;
@@ -150,7 +146,7 @@ static void game_generate_planets(struct game_s *g)
         }
     }
 
-    for (i = 0; i < g->galaxy_stars; ++i) {
+    for (int i = 0; i < g->galaxy_stars; ++i) {
         bool in_nebula;
         planet_t *p;
 
@@ -198,6 +194,8 @@ static void game_generate_planets(struct game_s *g)
 
         p->look = rnd_0_nm1(2, &g->seed) * 6;
         p->frame = rnd_0_nm1(50, &g->seed);
+        /* Needed for the original sequence of random numbers */
+        /*p->field_16 =*/ rnd_0_nm1(4, &g->seed);
 
         in_nebula = false;
         for (int k = 0; k < g->nebula_num; ++k) {
@@ -247,7 +245,7 @@ static void game_generate_planets(struct game_s *g)
                     if ((r > 0xc) && (r < 0x10)) { t = PLANET_TYPE_ARID; }
                     if ((r > 0xf) && (r < 0x12)) { t = PLANET_TYPE_OCEAN; }
                     if ((r > 0x11) && (r < 0x14)) { t = PLANET_TYPE_JUNGLE; }
-                    if (r > 0x14) { t = PLANET_TYPE_TERRAN; }
+                    if (r == 0x14) { t = PLANET_TYPE_TERRAN; }
                     break;
                 case STAR_TYPE_GREEN:
                     /*if (r < 2) { t = PLANET_TYPE_NOT_HABITABLE; }*/
@@ -363,22 +361,22 @@ static void game_generate_planets(struct game_s *g)
 
         p->max_pop3 = p->max_pop2;
         p->max_pop1 = p->max_pop2;
-        if (!in_nebula) {
-            p->battlebg = rnd_1_n(4, &g->seed);
-        }
+        p->battlebg = in_nebula ? 0 : rnd_1_n(4, &g->seed);
         p->special = PLANET_SPECIAL_NORMAL;
         {
             star_type_t star_type;
             int16_t di;
             star_type = p->star_type;
-            if (p->type <= PLANET_TYPE_DESERT) {
+            if (p->type >= PLANET_TYPE_STEPPE) {
                 di = rnd_1_n(0x14, &g->seed);
                 if (star_type == STAR_TYPE_RED) { di -= 4; } else if (star_type == STAR_TYPE_GREEN) { di -= 2; }
                 if (di <= 2) {
                     p->special = PLANET_SPECIAL_POOR;
-                    di = rnd_1_n(0x14, &g->seed);
-                    if (star_type == STAR_TYPE_RED) { di -= 4; } else if (star_type == STAR_TYPE_GREEN) { di -= 2; }
-                    if (di <= 5) {
+                }
+                di = rnd_1_n(0x14, &g->seed);
+                if (star_type == STAR_TYPE_RED) { di -= 4; } else if (star_type == STAR_TYPE_GREEN) { di -= 2; }
+                if (di <= 5) {
+                    if (p->special == PLANET_SPECIAL_POOR) {
                         p->special = PLANET_SPECIAL_ULTRA_POOR;
                     }
                 }
@@ -387,9 +385,11 @@ static void game_generate_planets(struct game_s *g)
             if (star_type == STAR_TYPE_BLUE) { di -= 2; } else if (star_type == STAR_TYPE_NEUTRON) { di -= 5; }
             if ((((int)PLANET_TYPE_STEPPE) - ((int)p->type)) > di) {
                 p->special = PLANET_SPECIAL_RICH;
-                di = rnd_1_n(0x14, &g->seed) - (in_nebula ? 8 : 0);
-                if (star_type == STAR_TYPE_BLUE) { di -= 2; } else if (star_type == STAR_TYPE_NEUTRON) { di -= 5; }
-                if (di < 6) {
+            }
+            di = rnd_1_n(0x14, &g->seed) - (in_nebula ? 8 : 0);
+            if (star_type == STAR_TYPE_BLUE) { di -= 2; } else if (star_type == STAR_TYPE_NEUTRON) { di -= 5; }
+            if (di < 6) {
+                if (p->special == PLANET_SPECIAL_RICH) {
                     p->special = PLANET_SPECIAL_ULTRA_RICH;
                 }
             }
@@ -446,7 +446,7 @@ static void game_generate_planets(struct game_s *g)
 
     {
         uint16_t tx = 0, ty = 0;
-        for (i = 0; i < g->galaxy_stars; ++i) {
+        for (int i = 0; i < g->galaxy_stars; ++i) {
             planet_t *p;
             p = &g->planet[i];
             if (p->x > tx) {
@@ -570,14 +570,13 @@ static void game_generate_galaxy(struct game_s *g)
 
 static void game_generate_planet_names(struct game_s *g)
 {
-    BOOLVEC_DECLARE(in_use, PLANET_NAMES_MAX);
-    BOOLVEC_CLEAR(in_use, PLANET_NAMES_MAX);
+    BOOLVEC_DECLARE(in_use, PLANETS_MAX);
+    BOOLVEC_CLEAR(in_use, PLANETS_MAX);
     for (int i = 0; i < g->galaxy_stars; ++i) {
         uint16_t j;
-        j = rnd_0_nm1(PLANET_NAMES_MAX, &g->seed);
-        while (BOOLVEC_IS1(in_use, j)) {
-            if (++j == PLANET_NAMES_MAX) { j = 0; }
-        }
+        do {
+            j = rnd_0_nm1(PLANETS_MAX, &g->seed);
+        } while (BOOLVEC_IS1(in_use, j));
         BOOLVEC_SET1(in_use, j);
         strcpy(g->planet[i].name, game_str_tbl_planet_names[j]);
     }
@@ -586,37 +585,31 @@ static void game_generate_planet_names(struct game_s *g)
 
 static void game_generate_race_banner(struct game_s *g)
 {
-    BOOLVEC_DECLARE(in_use, MAX((int)RACE_NUM, (int)BANNER_NUM));
+    const uint16_t race_tbl[] = {7, 1, 5, 0, 3, 9, 4, 6, 2, 8};
+    BOOLVEC_DECLARE(in_use, (int)BANNER_NUM);
     uint16_t loops;
     loops = 0;
-    BOOLVEC_CLEAR(in_use, MAX((int)RACE_NUM, (int)BANNER_NUM));
     for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         race_t race;
+        bool in_use = false;
         race = g->eto[i].race;
         if (race != RACE_RANDOM) {
-            BOOLVEC_SET1(in_use, race);
             continue;
         }
-        race = rnd_0_nm1(RACE_NUM, &g->seed);
-        if (BOOLVEC_IS0(in_use, race)) {
-            BOOLVEC_SET1(in_use, race);
-            g->eto[i].race = race;
-        } else {
-            --i; /* try again */
-            if (++loops == 100) {
-                for (race = 0; race < RACE_NUM; ++race) {
-                    if (BOOLVEC_IS0(in_use, race)) {
-                        BOOLVEC_SET1(in_use, race);
-                        g->eto[i].race = race;
-                        break;
-                    }
-                }
-                loops = 0;
+        race = race_tbl[rnd_0_nm1(RACE_NUM, &g->seed)];
+        for (player_id_t j = PLAYER_0; j < i; ++j) {
+            if (g->eto[j].race == race) {
+                in_use = true;
+                --i;
+                break;
             }
+        }
+        if (!in_use) {
+            g->eto[i].race = race;
         }
     }
     loops = 0;
-    BOOLVEC_CLEAR(in_use, MAX((int)RACE_NUM, (int)BANNER_NUM));
+    BOOLVEC_CLEAR(in_use, (int)BANNER_NUM);
     for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         banner_t banner;
         banner = g->eto[i].banner;
@@ -646,9 +639,13 @@ static void game_generate_race_banner(struct game_s *g)
         if (IS_AI(g, i)) {
             race_t r;
             r = g->eto[i].race;
-            g->eto[i].trait1 = game_num_tbl_trait1[r][rnd_0_nm1(TRAIT1_TBL_NUM, &g->seed)];
             g->eto[i].trait2 = game_num_tbl_trait2[r][rnd_0_nm1(TRAIT2_TBL_NUM, &g->seed)];
         }
+    }
+    for (player_id_t i = PLAYER_0; i < g->players; ++i) {
+        race_t r;
+        r = g->eto[i].race;
+        g->eto[i].trait1 = game_num_tbl_trait1[r][rnd_0_nm1(TRAIT1_TBL_NUM, &g->seed)];
     }
 }
 
@@ -660,6 +657,7 @@ static void game_generate_home_etc(struct game_s *g)
 start_of_func:
     flag_all_ok = false;
     loops = 0;
+    game_generate_race_banner(g);
     while ((!flag_all_ok) && (loops < 200)) {
         flag_all_ok = true;
         for (player_id_t i = PLAYER_0; i < g->players; ++i) {
@@ -675,7 +673,7 @@ start_of_func:
                     pi = rnd_1_n(g->galaxy_w - 2, &g->seed) + rnd_1_n(g->galaxy_h - 2, &g->seed) * g->galaxy_w;
                 }
                 flag_again2 = false;
-                for (int j = 0; j < i; ++j) {
+                for (player_id_t j = PLAYER_0; j < i; ++j) {
                     if (tblhome[j] == pi) {
                         flag_again2 = true;
                     }
@@ -690,7 +688,7 @@ start_of_func:
             uint16_t dist, mindist;
             mindist = 10000;
             for (player_id_t i = PLAYER_0; (i < g->players) && (i < 2); ++i) {
-                for (int j = 0; j < g->players; ++j) {
+                for (player_id_t j = PLAYER_0; j < g->players; ++j) {
                     if (i == j) { continue; }
                     dist = util_math_dist_fast(g->planet[tblhome[i]].x, g->planet[tblhome[i]].y, g->planet[tblhome[j]].x, g->planet[tblhome[j]].y);
                     SETMIN(mindist, dist);
@@ -742,7 +740,7 @@ start_of_func:
     }
 #if 0
     /* FIXME in MOO1 this is actually after the if (!flag_all_ok) test, making it ineffective */
-    for (int i = 0; (i < g->players) && (i <= g->difficulty); ++i) {
+    for (player_id_t i = PLAYER_0; (i < g->players) && (i <= g->difficulty); ++i) {
         uint16_t dist, mindist;
         mindist = 10000;
         for (int j = 0; j < g->galaxy_stars; ++j) {
@@ -768,7 +766,6 @@ start_of_func:
         game_generate_planet_names(g);
         goto start_of_func;
     }
-    game_generate_race_banner(g);   /* must be run once and before the home planet name copy below */
     for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         planet_t *p;
         homei = tblhome[i];
@@ -856,7 +853,7 @@ start_of_func:
             for (int j = 0; j < g->galaxy_stars; ++j) {
                 p = &g->planet[j];
                 if (1
-                  && (p->type > PLANET_TYPE_MINIMAL)
+                  && (p->type > PLANET_TYPE_MINIMAL - 1)
                   && (util_math_dist_fast(p->x, p->y, q->x, q->y) <= 0x1e)
                 ) {
                     ++n;
@@ -893,78 +890,20 @@ start_of_func:
                 *sd = tbl_startship[j];
                 strcpy(sd->name, game_str_tbl_stship_names[j]);
                 sd->look += e->banner * SHIP_LOOK_PER_BANNER;
-#ifdef TEST_BATTLE
-                for (int k = 0; k < 4; ++k) {
-                    if (sd->wpnt[k] != 0) {
-                        sd->wpnn[k] += 15;
-                    }
-                }
-                if (j == 3) {
-                    sd->special[0] = SHIP_SPECIAL_BLACK_HOLE_GENERATOR;
-                    //sd->special[1] = SHIP_SPECIAL_SUB_SPACE_TELEPORTER;
-                }
-#endif
             }
             memcpy(&g->current_design[i], &srd->design[0], sizeof(shipdesign_t));
             for (int j = 0; j < NUM_SHIPDESIGNS; ++j) {
                 shipcount_t n;
                 n = startfleet_ships[j];
-#ifdef TEST_BATTLE
-                if ((i == 0) && (j > 0) && (j < 4)) {
-                    n += 3;
-                }
-#endif
                 e->orbit[tblhome[i]].ships[j] = n;
                 srd->shipcount[j] = n;
             }
         }
         e->fuel_range = 3;
         /* BUG? these shipi values are wrong, but fixed by first next turn */
-        e->shipi_colony = 4;
-        e->shipi_bomber = 1;
+        e->shipi_colony = 1;
+        e->shipi_bomber = 4;
     }
-#ifdef TEST_BATTLE
-    {
-        fleet_enroute_t *r;
-        uint8_t homei = tblhome[0];
-        const planet_t *p = &g->planet[homei];
-        r = &(g->enroute[g->enroute_num]);
-        r->ships[0] = 1;
-        r->ships[1] = 4;
-        r->ships[2] = 4;
-        r->ships[3] = 4;
-        r->ships[4] = 0;
-        r->ships[5] = 0;
-        r->dest = homei;
-        r->x = p->x - 2;
-        r->y = p->y;
-        r->speed = 3;
-        r->owner = PLAYER_1;
-        BOOLVEC_CLEAR(r->visible, PLAYER_NUM);
-        BOOLVEC_SET1(r->visible, PLAYER_0);
-        BOOLVEC_SET1(r->visible, PLAYER_1);
-        ++g->enroute_num;
-    }
-    g->planet[tblhome[0]].missile_bases = 2;
-#endif
-#ifdef TEST_GROUND
-    {
-        transport_t *r;
-        uint8_t homei = tblhome[0];
-        const planet_t *p = &g->planet[homei];
-        r = &(g->transport[g->transport_num]);
-        r->pop = 40;
-        r->dest = homei;
-        r->x = p->x - 2;
-        r->y = p->y;
-        r->speed = 3;
-        r->owner = PLAYER_1;
-        BOOLVEC_CLEAR(r->visible, PLAYER_NUM);
-        BOOLVEC_SET1(r->visible, PLAYER_0);
-        BOOLVEC_SET1(r->visible, PLAYER_1);
-        ++g->transport_num;
-    }
-#endif
 }
 
 static void game_generate_relation_etc(struct game_s *g)
@@ -1021,7 +960,7 @@ static void game_generate_research(struct game_s *g, const uint8_t *rflag)
                         rl[field][tier][l] = 0;
                     }
                     while (num_taken == 0) {
-                        for (int16_t ti = tier * 5 + 4; ti > (tier * 5); --ti) {
+                        for (int16_t ti = tier * 5 + 4; ti >= (tier * 5); --ti) {
                             bool flag_skip;
                             flag_skip = false;
                             if (g->eto[pli].race == RACE_SILICOID) {
@@ -1116,7 +1055,7 @@ static void game_generate_research(struct game_s *g, const uint8_t *rflag)
     }
 }
 
-static void game_generate_hmm5(struct game_s *g)
+static void game_generate_misc(struct game_s *g)
 {
     g->year = 1;
     g->evn.year = 40;
@@ -1190,30 +1129,31 @@ int game_new(struct game_s *g, struct game_aux_s *gaux, struct game_new_options_
             for (int t = 0; t < 50; ++t) {
                 researchflag[f * 50 + t] = (rawdata[(f * 50 + t) * 6] != 0xff) ? 1 : 0;
             }
+            researchflag[f * 50] = 0;
         }
     }
     researchflag[TECH_FIELD_WEAPON * 50 + (TECH_WEAP_DEATH_RAY - 1)] = 0;
     {
         uint32_t vo, vr = 0, vb = 0, m = 1, va = 0;
         vo = g->difficulty + g->galaxy_size * 10 + g->players * 100;
-        for (int i = 0; i < g->players; ++i, m *= 0x10) {
+        for (player_id_t i = PLAYER_0; i < g->players; ++i, m *= 0x10) {
             vr += ((g->eto[i].race + 1) % (RACE_NUM + 1)) * m;
         }
         m = 1;
-        for (int i = 0; i < g->players; ++i, m *= 10) {
+        for (player_id_t i = PLAYER_0; i < g->players; ++i, m *= 10) {
             vb += ((g->eto[i].banner + 1) % (BANNER_NUM + 1)) * m;
             if (IS_HUMAN(g, i)) {
                 va += m;
             }
         }
-        log_message("Game: new game %u:0x%x:%u:0x%x:%u\n", vo, vr, vb, g->galaxy_seed, va);
+        log_message("Game: new game -new %u:0x%x:%u:0x%x:%u\n", vo, vr, vb, g->galaxy_seed, va);
     }
     game_generate_galaxy(g);
     game_generate_planet_names(g);
     game_generate_home_etc(g);
     game_generate_relation_etc(g);
     game_generate_research(g, researchflag);
-    game_generate_hmm5(g);
+    game_generate_misc(g);
     for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         char *b;
         const char *str;
@@ -1249,7 +1189,7 @@ int game_new_tutor(struct game_s *g, struct game_aux_s *gaux)
     opt.pdata[PLAYER_0].banner = BANNER_WHITE;
     strcpy(opt.pdata[PLAYER_0].playername, "Mr Tutor");
     strcpy(opt.pdata[PLAYER_0].homename, "SOL");
-    opt.galaxy_seed = 0xdeadbeef; /* FIXME find value that gives an easy game */
+    opt.galaxy_seed = 0xfda3f;
     return game_new(g, gaux, &opt);
 }
 
@@ -1287,7 +1227,7 @@ void game_new_generate_other_emperor_name(struct game_s *g, player_id_t player)
         strcpy(buf, str);
         util_trim_whitespace(buf); /* fix "Zygot  " */
         flag_in_use = true;
-        for (int i = 0; i < g->players; ++i) {
+        for (player_id_t i = PLAYER_0; i < g->players; ++i) {
             if (strcasecmp(g->emperor_names[i], buf) == 0) {
                 flag_in_use = false;
                 break;

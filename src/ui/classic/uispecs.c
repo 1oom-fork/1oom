@@ -10,7 +10,6 @@
 #include "game_misc.h"
 #include "game_parsed.h"
 #include "game_str.h"
-#include "hw.h"
 #include "kbd.h"
 #include "lbx.h"
 #include "lbxfont.h"
@@ -23,18 +22,18 @@
 #include "uidelay.h"
 #include "uidefs.h"
 #include "uidraw.h"
+#include "uifix.h"
 #include "uiobj.h"
 #include "uipal.h"
 #include "uisound.h"
+#include "vgabuf.h"
 
 /* -------------------------------------------------------------------------- */
 
 struct specs_data_s {
     struct game_s *g;
     player_id_t api;
-    int frame;
     int scrapi;
-    struct draw_stars_s s;
 };
 
 static void specs_print_weap(weapon_t wi, uint8_t wn, char *buf1, char *buf2)
@@ -58,7 +57,7 @@ static void specs_draw_cb1(void *vptr)
     empiretechorbit_t *e = &(g->eto[d->api]);
     shipresearch_t *srd = &(g->srd[d->api]);
 
-    ui_draw_filled_rect(0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, 0x3a);
+    ui_draw_filled_rect(UI_SCREEN_LIMITS, 0x3a);
     lbxgfx_draw_frame(0, 0, ui_data.gfx.starmap.viewship, UI_SCREEN_W);
 
     for (int si = 0; si < e->shipdesigns_num; ++si) {
@@ -70,9 +69,9 @@ static void specs_draw_cb1(void *vptr)
         y = (si << 5) + 5;
         lbxgfx_draw_frame(44, y - 1, ui_data.gfx.starmap.viewshp2, UI_SCREEN_W);
         ui_draw_filled_rect(6, y, 37, y + 29, 0);
-        ui_draw_stars(6, y + 1, si * 5, 32, &d->s);
+        ui_draw_stars(6, y + 1, si * 5, 32);
         lbxgfx_set_frame_0(ui_data.gfx.ships[sp.look]);
-        for (int f = 0; f <= d->frame; ++f) {
+        for (int f = 0; f <= ui_data.starmap.frame_ship; ++f) {
             lbxgfx_draw_frame(6, y + 3, ui_data.gfx.ships[sp.look], UI_SCREEN_W);
         }
         lbxgfx_set_new_frame(ui_data.gfx.starmap.viewshbt, 1);
@@ -120,15 +119,15 @@ static void specs_draw_cb1(void *vptr)
         lbxfont_print_num_right(295, y + 23, sd->cost, UI_SCREEN_W);
     }
 
-    ui_draw_set_stars_xoffs(&d->s, false);
-    d->frame = (d->frame + 1) % 5;
+    ui_draw_set_stars_xoffs(false);
+    ui_data.starmap.frame_ship = (ui_data.starmap.frame_ship + 1) % 5;
 }
 
 static void specs_before_draw_cb(void *vptr)
 {
     struct specs_data_s *d = vptr;
     specs_draw_cb1(d);
-    lbxgfx_apply_colortable(0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, 0, UI_SCREEN_W);
+    lbxgfx_apply_colortable(UI_SCREEN_LIMITS, 0, UI_SCREEN_W);
     lbxgfx_draw_frame(67, 73, ui_data.gfx.starmap.dismiss, UI_SCREEN_W);
     lbxfont_select_set_12_1(3, 0, 0, 0);
     lbxfont_print_str_split(74, 83, 174, game_str_sp_before, 2, UI_SCREEN_W, UI_SCREEN_H);
@@ -140,7 +139,7 @@ static void specs_mustscrap_draw_cb(void *vptr)
     struct game_s *g = d->g;
     shipresearch_t *srd = &(g->srd[d->api]);
     uint8_t *gfx = ui_data.gfx.ships[srd->design[d->scrapi].look];
-    hw_video_copy_back_from_page2();
+    vgabuf_copy_back_from_page2();
     lbxgfx_draw_frame(107, 50, ui_data.gfx.starmap.scrap, UI_SCREEN_W);
     lbxfont_select(2, 6, 0, 0);
     lbxfont_print_str_split(117, 58, 90, game_str_sp_only6, 2, UI_SCREEN_W, UI_SCREEN_H);
@@ -164,9 +163,9 @@ void ui_specs_before(struct game_s *g, player_id_t active_player)
 
     d.g = g;
     d.api = active_player;
-    d.frame = 0;
-    d.s.xoff1 = 0;
-    d.s.xoff2 = 0;
+    ui_data.starmap.frame_ship = 0;
+    ui_data.starmap.stars_xoff1 = 0;
+    ui_data.starmap.stars_xoff2 = 0;
 
     oi_ma = UIOBJI_INVALID;
     uiobj_set_callback_and_delay(specs_before_draw_cb, &d, 2);
@@ -181,7 +180,7 @@ void ui_specs_before(struct game_s *g, player_id_t active_player)
         }
         specs_before_draw_cb(&d);
         uiobj_table_clear();
-        oi_ma = uiobj_add_mousearea(0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, MOO_KEY_UNKNOWN, -1);
+        oi_ma = uiobj_add_mousearea(UI_SCREEN_LIMITS, MOO_KEY_UNKNOWN);
         ui_draw_finish();
         ui_delay_ticks_or_click(3);
     }
@@ -197,15 +196,16 @@ void ui_specs_mustscrap(struct game_s *g, player_id_t active_player, int scrapi)
     int16_t oi_no = UIOBJI_INVALID, oi_yes = UIOBJI_INVALID;
 
     d.g = g;
-    d.frame = 0;
+    d.api = active_player;
+    ui_data.starmap.frame_ship = 0;
     d.scrapi = scrapi;
 
     uiobj_set_callback_and_delay(specs_mustscrap_draw_cb, &d, 2);
     uiobj_table_clear();
 
     ui_draw_copy_buf();
-    lbxgfx_apply_colortable(0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, 0, UI_SCREEN_W);
-    hw_video_copy_back_to_page2();
+    lbxgfx_apply_colortable(UI_SCREEN_LIMITS, 0, UI_SCREEN_W);
+    vgabuf_copy_back_to_page2();
 
     while (!flag_done) {
         int16_t oi;
@@ -217,15 +217,15 @@ void ui_specs_mustscrap(struct game_s *g, player_id_t active_player, int scrapi)
             flag_done = true;
         } else if (oi == oi_yes) {
             ui_sound_play_sfx_24();
-            game_design_scrap(g, active_player, scrapi, ui_data.flag_main_hmm1);
+            game_design_scrap(g, active_player, scrapi, ui_data.flag_scrap_for_new_design);
             ui_data.ui_main_loop_action = ui_data.ui_main_loop_action_prev;
             flag_done = true;
         }
         if (!flag_done) {
             specs_mustscrap_draw_cb(&d);
             uiobj_table_clear();
-            oi_no = uiobj_add_t0(116, 132, "", ui_data.gfx.starmap.scrapbut_no, MOO_KEY_n, -1);
-            oi_yes = uiobj_add_t0(165, 132, "", ui_data.gfx.starmap.scrapbut_yes, MOO_KEY_y, -1);
+            oi_no = uiobj_add_t0(116, 132, "", ui_data.gfx.starmap.scrapbut_no, MOO_KEY_n);
+            oi_yes = uiobj_add_t0(165, 132, "", ui_data.gfx.starmap.scrapbut_yes, MOO_KEY_y);
             ui_draw_finish();
             ui_delay_ticks_or_click(2);
         }
@@ -245,9 +245,9 @@ int ui_specs(struct game_s *g, player_id_t active_player)
 
     d.g = g;
     d.api = active_player;
-    d.frame = 0;
-    d.s.xoff1 = 0;
-    d.s.xoff2 = 0;
+    ui_data.starmap.frame_ship = 0;
+    ui_data.starmap.stars_xoff1 = 0;
+    ui_data.starmap.stars_xoff2 = 0;
 
     oi_ma = UIOBJI_INVALID;
     for (int i = 0; i < NUM_SHIPDESIGNS; ++i) {
@@ -264,7 +264,7 @@ int ui_specs(struct game_s *g, player_id_t active_player)
         ui_delay_prepare();
         if ((oi == oi_ma) || (oi == UIOBJI_ESC)) {
             ui_data.ui_main_loop_action = UI_MAIN_LOOP_FLEET;
-            ui_data.flag_main_hmm1 = false;
+            ui_data.flag_scrap_for_new_design = false;
             flag_done = true;
         }
         for (int i = 0; i < NUM_SHIPDESIGNS; ++i) {
@@ -272,7 +272,7 @@ int ui_specs(struct game_s *g, player_id_t active_player)
                 ui_sound_play_sfx_24();
                 scrapi = i;
                 ui_data.ui_main_loop_action = UI_MAIN_LOOP_MUSTSCRAP;
-                if (!ui_data.flag_main_hmm1) {
+                if (!ui_data.flag_scrap_for_new_design) {
                     ui_data.ui_main_loop_action_prev = UI_MAIN_LOOP_SPECS;
                     ui_data.ui_main_loop_action_next = UI_MAIN_LOOP_SPECS;
                 } else {
@@ -291,10 +291,11 @@ int ui_specs(struct game_s *g, player_id_t active_player)
             uiobj_table_clear();
             if (sd_num > 1) {
                 for (int i = 0; i < sd_num; ++i) {
-                    oi_tbl_scrap[i] = uiobj_add_t0(106, (i << 5) + 6, "", ui_data.gfx.starmap.viewshbt, MOO_KEY_UNKNOWN, -1);
+                    mookey_t key = ui_qol_numeric_key_bindings ? (MOO_KEY_1 + i) : MOO_KEY_UNKNOWN;
+                    oi_tbl_scrap[i] = uiobj_add_t0(106, (i << 5) + 6, "", ui_data.gfx.starmap.viewshbt, key);
                 }
             }
-            oi_ma = uiobj_add_mousearea(0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, MOO_KEY_o, -1);
+            oi_ma = uiobj_add_mousearea(UI_SCREEN_LIMITS, MOO_KEY_o);
             ui_draw_finish();
             ui_delay_ticks_or_click(3);
         }

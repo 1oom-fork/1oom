@@ -7,7 +7,6 @@
 #include "game_aux.h"
 #include "game_battle.h"
 #include "game_str.h"
-#include "hw.h"
 #include "lbx.h"
 #include "lbxfont.h"
 #include "lbxgfx.h"
@@ -24,6 +23,7 @@
 #include "uisound.h"
 #include "uistarmap_common.h"
 #include "uiswitch.h"
+#include "vgabuf.h"
 
 /* -------------------------------------------------------------------------- */
 
@@ -56,7 +56,7 @@ static void battle_pre_load_data(struct ui_battle_pre_data_s *d)
     }
     d->gfx_dfleet = lbxfile_item_get(LBXFILE_BACKGRND, 0x28 + id, 0);
     d->gfx_ufleet = lbxfile_item_get(LBXFILE_BACKGRND, 0x21 + iu, 0);
-    d->gmapctx = ui_gmap_basic_init(g, false);
+    d->gmapctx = ui_gmap_basic_init(g, true);
 }
 
 static void battle_pre_free_data(struct ui_battle_pre_data_s *d)
@@ -74,7 +74,7 @@ static void ui_battle_pre_draw_cb(void *vptr)
     struct game_s *g = d->g;
     const planet_t *p = &(g->planet[d->planet_i]);
     char buf[32];
-    hw_video_copy_back_from_page2();
+    vgabuf_copy_back_from_page2();
     ui_draw_filled_rect(222, 4, 314, 179, 0);
     lbxgfx_draw_frame(227, 57, d->gfx_ufleet, UI_SCREEN_W);
     lbxgfx_draw_frame(227, 102, d->gfx_dfleet, UI_SCREEN_W);
@@ -123,16 +123,14 @@ void ui_battle_pre(struct game_s *g, int party_u, int party_d, uint8_t planet_i,
     d->flag_human_att = flag_human_att;
     d->hide_other = hide_other;
     battle_pre_load_data(d);
-#if 1
-    if ((party_u < PLAYER_NUM) && IS_HUMAN(g, party_u)) {
+    if (IS_HUMAN(g, party_u)) {
         g->planet_focus_i[party_u] = planet_i;
     }
-    if ((party_d < PLAYER_NUM) && IS_HUMAN(g, party_d)) {
+    if (IS_HUMAN(g, party_d)) {
         g->planet_focus_i[party_d] = planet_i;
     }
-#endif
     uiobj_table_clear();
-    oi_cont = uiobj_add_t0(227, 163, "", d->gfx_contbutt, MOO_KEY_c, -1);
+    oi_cont = uiobj_add_t0(227, 163, "", d->gfx_contbutt, MOO_KEY_c);
     uiobj_set_focus(oi_cont);
     uiobj_set_callback_and_delay(ui_battle_pre_draw_cb, &d, 4);
     while (!flag_done) {

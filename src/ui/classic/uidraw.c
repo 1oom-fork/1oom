@@ -4,14 +4,17 @@
 
 #include "uidraw.h"
 #include "comp.h"
+#include "gfxlimits.h"
 #include "hw.h"
 #include "lbxfont.h"
 #include "mouse.h"
 #include "rnd.h"
 #include "uicursor.h"
+#include "uidelay.h"
 #include "uidefs.h"
 #include "uiobj.h"
 #include "uipal.h"
+#include "vgabuf.h"
 
 /* -------------------------------------------------------------------------- */
 
@@ -25,7 +28,7 @@ const uint8_t tbl_banner_fontparam[BANNER_NUM] = { 1, 0xe, 0xc, 5, 0, 0xd };
 
 static const uint8_t colortbl_textbox[5] = { 0x18, 0x17, 0x16, 0x15, 0x14 };
 
-static const uint8_t tbl_color_hmm3[0x100] = {
+static const uint8_t tbl_color_grain[0x100] = {
     0x29,0x24,0x3f,0x05,0x62,0x6d,0x57,0x2f,0x53,0x11,0x4a,0x72,0x72,0x3c,0x6a,0x6c,
     0x33,0x27,0x5c,0x3d,0x08,0x0d,0x3f,0x1a,0x25,0x5f,0x0e,0x1d,0x07,0x38,0x48,0x5f,
     0x33,0x13,0x4e,0x49,0x44,0x3c,0x0c,0x27,0x20,0x04,0x5b,0x7e,0x0a,0x39,0x26,0x20,
@@ -75,18 +78,18 @@ static void ui_draw_box_fill_sub1(uint16_t num, const uint8_t *colorptr, uint8_t
 static void ui_draw_line_limit_do(int x0, int y0, int x1, int y1, uint8_t color, const uint8_t *colortbl, int colornum, int colorpos)
 {
     if (x0 == x1) {
-        if ((x0 < uiobj_minx) || (x0 > uiobj_maxx)) {
+        if ((x0 < gfxlim_minx) || (x0 > gfxlim_maxx)) {
             return;
         }
         if (y1 < y0) {
             int t = y0; y0 = y1; y1 = t;
             colorpos = colornum - 1 - colorpos;
         }
-        if ((y1 < uiobj_miny) || (y0 > uiobj_maxy)) {
+        if ((y1 < gfxlim_miny) || (y0 > gfxlim_maxy)) {
             return;
         }
-        SETMAX(y0, uiobj_miny);
-        SETMIN(y1, uiobj_maxy);
+        SETMAX(y0, gfxlim_miny);
+        SETMIN(y1, gfxlim_maxy);
     } else {
         int dx, dy;
         if (x1 < x0) {
@@ -97,33 +100,33 @@ static void ui_draw_line_limit_do(int x0, int y0, int x1, int y1, uint8_t color,
         }
         dy = y1 - y0;
         dx = x1 - x0;
-        if (x0 < uiobj_minx) {
-            y0 += (dy * (uiobj_minx - x0)) / dx;
-            x0 = uiobj_minx;
+        if (x0 < gfxlim_minx) {
+            y0 += (dy * (gfxlim_minx - x0)) / dx;
+            x0 = gfxlim_minx;
         }
         if (x0 > x1) {
             return;
         }
-        if (x1 > uiobj_maxx) {
-            y1 = y0 + (dy * (uiobj_maxx - x0)) / dx;
-            x1 = uiobj_maxx;
+        if (x1 > gfxlim_maxx) {
+            y1 = y0 + (dy * (gfxlim_maxx - x0)) / dx;
+            x1 = gfxlim_maxx;
         }
         if (x1 < x0) {
             return;
         }
     }
     if (y0 == y1) {
-        if ((y0 < uiobj_miny) || (y0 > uiobj_maxy)) {
+        if ((y0 < gfxlim_miny) || (y0 > gfxlim_maxy)) {
             return;
         }
         if (x1 < x0) {
             int t = x0; x0 = x1; x1 = t;
         }
-        if ((x1 < uiobj_minx) || (x0 > uiobj_maxx)) {
+        if ((x1 < gfxlim_minx) || (x0 > gfxlim_maxx)) {
             return;
         }
-        SETMAX(x0, uiobj_minx);
-        SETMIN(x1, uiobj_maxx);
+        SETMAX(x0, gfxlim_minx);
+        SETMIN(x1, gfxlim_maxx);
     } else {
         int dx, dy;
         if (y1 < y0) {
@@ -133,16 +136,16 @@ static void ui_draw_line_limit_do(int x0, int y0, int x1, int y1, uint8_t color,
         }
         dx = x1 - x0;
         dy = y1 - y0;
-        if (y0 < uiobj_miny) {
-            x0 += (dx * (uiobj_miny - y0)) / dy;
-            y0 = uiobj_miny;
+        if (y0 < gfxlim_miny) {
+            x0 += (dx * (gfxlim_miny - y0)) / dy;
+            y0 = gfxlim_miny;
         }
         if (y0 > y1) {
             return;
         }
-        if (y1 > uiobj_maxy) {
-            x1 = x0 + (dx * (uiobj_maxy - y0)) / dy;
-            y1 = uiobj_maxy;
+        if (y1 > gfxlim_maxy) {
+            x1 = x0 + (dx * (gfxlim_maxy - y0)) / dy;
+            y1 = gfxlim_maxy;
         }
         if (y1 < y0) {
             return;
@@ -159,15 +162,15 @@ static void ui_draw_line_limit_do(int x0, int y0, int x1, int y1, uint8_t color,
 
 void ui_draw_erase_buf(void)
 {
-    memset(hw_video_get_buf(), 0, UI_SCREEN_W * UI_SCREEN_H);
+    memset(vgabuf_get_back(), 0, UI_SCREEN_W * UI_SCREEN_H);
 }
 
 void ui_draw_copy_buf(void)
 {
-    hw_video_copy_buf();
+    vgabuf_copy_buf();
 /*
     if (ui_cursor_gfx_i != 0) {
-        int mx = mouse_x, my = mouse_y;
+        int mx = moo_mouse_x, my = moo_mouse_y;
         ui_cursor_update_gfx_i(mx, my);
         ui_cursor_erase0();
         ui_cursor_store_bg0(mx, my);
@@ -180,18 +183,18 @@ void ui_draw_copy_buf(void)
 
 void ui_draw_color_buf(uint8_t color)
 {
-    memset(hw_video_get_buf(), color, UI_SCREEN_W * UI_SCREEN_H);
+    memset(vgabuf_get_back(), color, UI_SCREEN_W * UI_SCREEN_H);
 }
 
 void ui_draw_pixel(int x, int y, uint8_t color)
 {
-    uint8_t *p = hw_video_get_buf();
+    uint8_t *p = vgabuf_get_back();
     p[y * UI_SCREEN_W + x] = color;
 }
 
 void ui_draw_filled_rect(int x0, int y0, int x1, int y1, uint8_t color)
 {
-    uint8_t *s = hw_video_get_buf();
+    uint8_t *s = vgabuf_get_back();
     if (x1 < x0) {
         return;
     }
@@ -235,7 +238,7 @@ void ui_draw_line1(int x0, int y0, int x1, int y1, uint8_t color)
     }
 
     {
-        uint8_t *p = hw_video_get_buf() + y0 * UI_SCREEN_W + x0;
+        uint8_t *p = vgabuf_get_back() + y0 * UI_SCREEN_W + x0;
         int xerr, yerr;
 
         xerr = 0x100 / 2;
@@ -292,7 +295,7 @@ void ui_draw_line_ctbl(int x0, int y0, int x1, int y1, const uint8_t *colortbl, 
     }
 
     {
-        uint8_t *p = hw_video_get_buf() + y0 * UI_SCREEN_W + x0;
+        uint8_t *p = vgabuf_get_back() + y0 * UI_SCREEN_W + x0;
         int xerr, yerr;
 
         xerr = 0x100 / 2;
@@ -329,7 +332,7 @@ void ui_draw_line_limit_ctbl(int x0, int y0, int x1, int y1, const uint8_t *colo
     ui_draw_line_limit_do(x0, y0, x1, y1, 0, colortbl, colornum, pos);
 }
 
-void ui_draw_line_3h(int x0, int y0, int x1, uint8_t color)
+void ui_draw_slider(int x0, int y0, int x1, uint8_t color)
 {
     for (int i = 0; i < 3; ++i, ++y0) {
         ui_draw_line1(x0, y0, x1, y0, color);
@@ -392,8 +395,8 @@ void ui_draw_copy_line(int x0, int y0, int x1, int y1, bool flag_hmm)
     }
 
     {
-        uint8_t *q = hw_video_get_buf() + y0 * UI_SCREEN_W + x0;
-        uint8_t *p = hw_video_get_buf_front() + y0 * UI_SCREEN_W + x0;
+        uint8_t *q = vgabuf_get_back() + y0 * UI_SCREEN_W + x0;
+        uint8_t *p = vgabuf_get_front() + y0 * UI_SCREEN_W + x0;
         int xerr, yerr;
 
         xerr = 0x100 / 2;
@@ -417,12 +420,12 @@ void ui_draw_copy_line(int x0, int y0, int x1, int y1, bool flag_hmm)
     }
 }
 
-void ui_draw_box_fill(int x0, int y0, int x1, int y1, const uint8_t *colorptr, uint8_t color0, uint16_t colorhalf, uint16_t ac, uint8_t ae)
+void ui_draw_box_fill(int x0, int y0, int x1, int y1, const uint8_t *colorptr, uint8_t color0, uint16_t colorhalf, uint16_t ac, uint8_t colorpos)
 {
-    uint8_t *s = hw_video_get_buf() + y0 * UI_SCREEN_W + x0;
+    uint8_t *s = vgabuf_get_back() + y0 * UI_SCREEN_W + x0;
     uint16_t xstep, ystep, vx, vy, h, w, colornum;
     colornum = colorhalf << 1;
-    /*v12 = ae & 0xff;*/
+    /*v12 = colorpos & 0xff;*/
     ui_draw_box_fill_sub1(colorhalf, colorptr, color0);
     w = x1 - x0 + 1;
     xstep = (colorhalf * 0x80 * ac) / w;
@@ -436,7 +439,7 @@ void ui_draw_box_fill(int x0, int y0, int x1, int y1, const uint8_t *colorptr, u
         for (int y = 0; y < h; ++y) {
             uint8_t c;
             vy += ystep;
-            c = (((((uint16_t)tbl_color_hmm3[ae++]) << 1) + vy) >> 8) & 0x3f;
+            c = (((((uint16_t)tbl_color_grain[colorpos++]) << 1) + vy) >> 8) & 0x3f;
             while (c >= colornum) {
                 c -= colornum;
             }
@@ -448,12 +451,25 @@ void ui_draw_box_fill(int x0, int y0, int x1, int y1, const uint8_t *colorptr, u
 
 void ui_draw_text_overlay(int x, int y, const char *str)
 {
-    /* TODO */
+    int x0, x1, y0, y1, w, h;
+    lbxfont_select(0, 0, 0, 0);
+    h = lbxfont_get_height();
+    w = lbxfont_calc_str_width(str);
+    x0 = x - 3;
+    SETMAX(x0, 0);
+    y0 = y - 3;
+    SETMAX(y0, 0);
+    x1 = x + w + 4;
+    SETMIN(x1, UI_SCREEN_W - 1);
+    y1 = y + h + 5;
+    SETMIN(y1, UI_SCREEN_H - 1);
+    ui_draw_filled_rect(x0, y0, x1, y1, 0);
+    lbxfont_print_str_normal(x + 1, y + 1, str, UI_SCREEN_W);
 }
 
-void ui_draw_hmm3(int x0, int y0, int x1, int y1, uint8_t color0, uint8_t color1, uint8_t ae)
+void ui_draw_box_grain(int x0, int y0, int x1, int y1, uint8_t color0, uint8_t color1, uint8_t ae)
 {
-    uint8_t *s = hw_video_get_buf() + y0 * UI_SCREEN_W;
+    uint8_t *s = vgabuf_get_back() + y0 * UI_SCREEN_W;
     uint8_t *p;
     uint16_t h;
 
@@ -487,7 +503,7 @@ void ui_draw_hmm3(int x0, int y0, int x1, int y1, uint8_t color0, uint8_t color1
                     p[xa] = color0;
                 }
             }
-            m = tbl_color_hmm3[bl] & ah;
+            m = tbl_color_grain[bl] & ah;
             for (int xa = 0; xa < 4; ++xa, m >>= 1) {
                 if (m & 0x1) {
                     p[xa] = color1;
@@ -510,7 +526,7 @@ void ui_draw_hmm3(int x0, int y0, int x1, int y1, uint8_t color0, uint8_t color1
                     p[xa] = color0;
                 }
             }
-            m = tbl_color_hmm3[bl] & ah;
+            m = tbl_color_grain[bl] & ah;
             for (int xa = 0; xa < 4; ++xa, m >>= 1) {
                 if (m & 0x1) {
                     p[xa] = color1;
@@ -539,7 +555,7 @@ void ui_draw_hmm3(int x0, int y0, int x1, int y1, uint8_t color0, uint8_t color1
                 p[2] = color0;
                 p[3] = color0;
 
-                m = tbl_color_hmm3[bl] & 0xf;
+                m = tbl_color_grain[bl] & 0xf;
                 for (int xa = 0; xa < 4; ++xa, m >>= 1) {
                     if (m & 0x1) {
                         p[xa] = color1;
@@ -554,11 +570,11 @@ void ui_draw_hmm3(int x0, int y0, int x1, int y1, uint8_t color0, uint8_t color1
     }
 }
 
-static void ui_draw_finish_hmm3(int x, int y, int f)
+static void ui_draw_finish_wipe_anim_do(int x, int y, int f)
 {
     int vx, vy;
-    vx = x + 0x13;
-    vy = y + 0x13;
+    vx = x + 19;
+    vy = y + 19;
     x += f;
     y += f;
     vx -= f;
@@ -568,16 +584,20 @@ static void ui_draw_finish_hmm3(int x, int y, int f)
     ui_draw_copy_line(vx, y, vx, vy, 0);
 }
 
-static void ui_draw_finish_hmm2(void)
+static void ui_draw_finish_wipe_anim(void)
 {
-    for (int f = 0; f < 0xa; ++f) {
-        for (int x = 0; x < UI_SCREEN_W; x += 0x14) {
-            for (int y = 0; y < UI_SCREEN_W; y += 0x14) {
-                ui_draw_finish_hmm3(x, y, f);
+    for (int f = 0; f < 10; ++f) {
+        ui_delay_prepare();
+        for (int x = 0; x < UI_SCREEN_W; x += 20) {
+            for (int y = 0; y < UI_SCREEN_H; y += 20) {
+                ui_draw_finish_wipe_anim_do(x, y, f);
             }
         }
+        hw_video_redraw_front();
+        ui_delay_us_or_click(MOO_TICKS_TO_US(1) / 2);
     }
-    ui_cursor_store_bg0(mouse_x, mouse_y);
+    ui_cursor_store_bg0(moo_mouse_x, moo_mouse_y);
+    hw_video_draw_buf();
 }
 
 void ui_draw_finish(void)
@@ -586,7 +606,7 @@ void ui_draw_finish(void)
         ui_palette_set_n();
         uiobj_finish_frame();
     } else if (ui_draw_finish_mode == 1) {
-        ui_draw_finish_hmm2();
+        ui_draw_finish_wipe_anim();
     } else if (ui_draw_finish_mode == 2) {
         uiobj_finish_frame();
         ui_palette_fadein_4b_19_1();
@@ -594,66 +614,66 @@ void ui_draw_finish(void)
     ui_draw_finish_mode = 0;
 }
 
-void ui_draw_stars(int x, int y, int xoff1, int xoff2, struct draw_stars_s *s)
+void ui_draw_stars(int x, int y, int xoff1, int xoff2)
 {
-    const int tbl_hmm1_x[16] = { 2, 6, 30, 34, 48, 74, 88, 96, 99, 103, 119, 123, 136, 137, 152, 159 };
-    const int tbl_hmm1_y[16] = { 15, 2, 16, 24, 19, 4, 11, 23, 22, 10, 21, 11, 4, 12, 22, 10 };
-    const int tbl_hmm2_x[23] = { 0, 6, 11, 33, 36, 46, 52, 67, 84, 86, 91, 95, 98, 103, 107, 112, 123, 125, 139, 142, 148, 151, 159 };
-    const int tbl_hmm2_y[23] = { 22, 8, 18, 19, 3, 18, 7, 24, 14, 17, 11, 1, 13, 15, 5, 6, 19, 1, 13, 10, 6, 23, 13 };
+    const int sx1[16] = { 2, 6, 30, 34, 48, 74, 88, 96, 99, 103, 119, 123, 136, 137, 152, 159 };
+    const int sy1[16] = { 15, 2, 16, 24, 19, 4, 11, 23, 22, 10, 21, 11, 4, 12, 22, 10 };
+    const int sx2[23] = { 0, 6, 11, 33, 36, 46, 52, 67, 84, 86, 91, 95, 98, 103, 107, 112, 123, 125, 139, 142, 148, 151, 159 };
+    const int sy2[23] = { 22, 8, 18, 19, 3, 18, 7, 24, 14, 17, 11, 1, 13, 15, 5, 6, 19, 1, 13, 10, 6, 23, 13 };
     int xo1, xo2;
-    xo1 = (s->xoff1 + xoff1) % (UI_SCREEN_W / 2);
-    xo2 = (s->xoff2 + xoff1 * 2) % (UI_SCREEN_W / 2);
+    xo1 = (ui_data.starmap.stars_xoff1 + xoff1) % (UI_SCREEN_W / 2);
+    xo2 = (ui_data.starmap.stars_xoff2 + xoff1 * 2) % (UI_SCREEN_W / 2);
     if (((UI_SCREEN_W / 2) - xoff2) > xo1) {
         int tx = xo1 + xoff2;
         for (int i = 0; i < 16; ++i) {
-            int sx = tbl_hmm1_x[i];
+            int sx = sx1[i];
             if ((sx >= xo1) && (sx < tx)) {
-                ui_draw_pixel(sx - xo1 + x, tbl_hmm1_y[i] + y, 4);
+                ui_draw_pixel(sx - xo1 + x, sy1[i] + y, 4);
             }
         }
     } else {
         int tx;
         for (int i = 0; i < 16; ++i) {
-            int sx = tbl_hmm1_x[i];
+            int sx = sx1[i];
             if (sx >= xo1) {
-                ui_draw_pixel(sx - xo1 + x, tbl_hmm1_y[i] + y, 4);
+                ui_draw_pixel(sx - xo1 + x, sy1[i] + y, 4);
             }
         }
         tx = (xo1 + xoff2) % (UI_SCREEN_W / 2);
         for (int i = 0; i < 16; ++i) {
-            int sx = tbl_hmm1_x[i];
+            int sx = sx1[i];
             if (sx < tx) {
-                ui_draw_pixel(sx - xo1 + x + 160, tbl_hmm1_y[i] + y, 4);
+                ui_draw_pixel(sx - xo1 + x + 160, sy1[i] + y, 4);
             }
         }
     }
     if (((UI_SCREEN_W / 2) - xoff2) > xo2) {
         int tx = xo2 + xoff2;
         for (int i = 0; i < 23; ++i) {
-            int sx = tbl_hmm2_x[i];
+            int sx = sx2[i];
             if ((sx >= xo2) && (sx < tx)) {
-                ui_draw_pixel(sx - xo2 + x, tbl_hmm2_y[i] + y, 6);
+                ui_draw_pixel(sx - xo2 + x, sy2[i] + y, 6);
             }
         }
     } else {
         int tx;
         for (int i = 0; i < 23; ++i) {
-            int sx = tbl_hmm2_x[i];
+            int sx = sx2[i];
             if (sx >= xo2) {
-                ui_draw_pixel(sx - xo2 + x, tbl_hmm2_y[i] + y, 6);
+                ui_draw_pixel(sx - xo2 + x, sy2[i] + y, 6);
             }
         }
         tx = (xo2 + xoff2) % (UI_SCREEN_W / 2);
         for (int i = 0; i < 23; ++i) {
-            int sx = tbl_hmm2_x[i];
+            int sx = sx2[i];
             if (sx < tx) {
-                ui_draw_pixel(sx - xo2 + x + 160, tbl_hmm2_y[i] + y, 6);
+                ui_draw_pixel(sx - xo2 + x + 160, sy2[i] + y, 6);
             }
         }
     }
 }
 
-void ui_draw_set_stars_xoffs(struct draw_stars_s *s, bool flag_right)
+void ui_draw_set_stars_xoffs(bool flag_right)
 {
     int x1, x2;
     if (flag_right) {
@@ -663,15 +683,15 @@ void ui_draw_set_stars_xoffs(struct draw_stars_s *s, bool flag_right)
         x1 = 1;
         x2 = 2;
     }
-    s->xoff1 = (s->xoff1 + x1) % (UI_SCREEN_W / 2);
-    s->xoff2 = (s->xoff2 + x2) % (UI_SCREEN_W / 2);
+    ui_data.starmap.stars_xoff1 = (ui_data.starmap.stars_xoff1 + x1) % (UI_SCREEN_W / 2);
+    ui_data.starmap.stars_xoff2 = (ui_data.starmap.stars_xoff2 + x2) % (UI_SCREEN_W / 2);
 }
 
 void ui_draw_textbox_2str(const char *str1, const char *str2, int y0)
 {
     int x0 = 48, w = 132, x1 = x0 + w - 1, y1;
     lbxfont_select_set_12_1(0, 0, 0, 0);
-    lbxfont_set_44_10_plus(3);
+    lbxfont_set_gap_h(3);
     lbxfont_set_14_24(0xb, 0xe);
     y1 = lbxfont_calc_split_str_h(w - 8, str2) + y0 + 7;
     if (*str1 != '\0') {

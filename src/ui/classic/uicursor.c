@@ -7,6 +7,7 @@
 #include "lbxpal.h"
 #include "types.h"
 #include "uidefs.h"
+#include "vgabuf.h"
 
 /* -------------------------------------------------------------------------- */
 
@@ -25,12 +26,12 @@ struct cursor_bg_s {
 static struct cursor_bg_s cursor_bg0;
 static struct cursor_bg_s cursor_bg1;
 
-static uint16_t cursor_hmm3 = 0;
+static bool cursor_i0_bg_stored = false;
 
 /* -------------------------------------------------------------------------- */
 
-ui_cursor_area_t ui_cursor_area_all_i0 = { 0, 0, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1 };
-ui_cursor_area_t ui_cursor_area_all_i1 = { 1, 0, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1 };
+ui_cursor_area_t ui_cursor_area_all_i0 = { 0, 0, UI_SCREEN_LIMITS };
+ui_cursor_area_t ui_cursor_area_all_i1 = { 1, 0, UI_SCREEN_LIMITS };
 
 ui_cursor_area_t ui_cursor_area_tbl[] = {
     /*0*/ { 1, 0, 0, 0, 319, 199 },
@@ -166,50 +167,50 @@ void ui_cursor_update_gfx_i(int mx, int my)
 void ui_cursor_store_bg1(int mx, int my)
 {
     if ((ui_cursor_gfx_i == 0) && (ui_cursor_gfx_i_old == 0)) {
-        if (cursor_hmm3 != 0) {
+        if (cursor_i0_bg_stored) {
             return;
         }
-        cursor_hmm3 = 1;
+        cursor_i0_bg_stored = true;
     }
-    ui_cursor_store_bg(mx, my, hw_video_get_buf(), &cursor_bg1);
+    ui_cursor_store_bg(mx, my, vgabuf_get_back(), &cursor_bg1);
 }
 
 void ui_cursor_store_bg0(int mx, int my)
 {
     if (ui_cursor_gfx_i == 0) {
-        if (cursor_hmm3 != 0) {
+        if (cursor_i0_bg_stored) {
             return;
         }
-        cursor_hmm3 = 1;
+        cursor_i0_bg_stored = true;
     }
-    ui_cursor_store_bg(mx, my, hw_video_get_buf_front(), &cursor_bg0);
+    ui_cursor_store_bg(mx, my, vgabuf_get_front(), &cursor_bg0);
 }
 
 void ui_cursor_draw1(int mx, int my)
 {
     if (ui_cursor_gfx_i != 0) {
-        ui_cursor_draw(mx, my, hw_video_get_buf());
+        ui_cursor_draw(mx, my, vgabuf_get_back());
     }
 }
 
 void ui_cursor_draw0(int mx, int my)
 {
     if (ui_cursor_gfx_i != 0) {
-        ui_cursor_draw(mx, my, hw_video_get_buf_front());
+        ui_cursor_draw(mx, my, vgabuf_get_front());
     }
 }
 
 void ui_cursor_erase0(void)
 {
     if (ui_cursor_gfx_i_old != 0) {
-        ui_cursor_erase(hw_video_get_buf_front(), &cursor_bg0);
+        ui_cursor_erase(vgabuf_get_front(), &cursor_bg0);
     }
 }
 
 void ui_cursor_erase1(void)
 {
     if (ui_cursor_gfx_i != 0) {
-        ui_cursor_erase(hw_video_get_buf(), &cursor_bg1);
+        ui_cursor_erase(vgabuf_get_back(), &cursor_bg1);
     }
 }
 

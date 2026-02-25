@@ -60,7 +60,7 @@ static void empirereport_draw_cb(void *vptr)
     lbxfont_print_str_center(40, 81, game_str_tbl_trait2[e->trait2], UI_SCREEN_W);
     lbxfont_print_str_center(40, 101, game_str_re_reportis, UI_SCREEN_W);
     {
-        int reportage = g->year - e->spyreportyear[d->api];
+        int reportage = g->year - g->eto[d->api].spyreportyear[d->pi] - 1;
         if (reportage < 2) {
             sprintf(buf, "%s", game_str_re_current);
         } else {
@@ -75,8 +75,8 @@ static void empirereport_draw_cb(void *vptr)
     lbxfont_select(0, 6, 0, 0);
     {
         int n = 0;
-        for (int i = 0; (i < g->players) && (n < 3); ++i) {
-            if ((i != d->pi) && (e->treaty[i] == TREATY_ALLIANCE) && (g->evn.home[i] != PLANET_NONE)) {
+        for (player_id_t i = PLAYER_0; (i < g->players) && (n < 3); ++i) {
+            if ((i != d->pi) && (e->treaty[i] == TREATY_ALLIANCE) && IS_ALIVE(g, i)) {
                 ui_draw_pixel(9, 140 + 6 * n, 0);
                 ui_draw_pixel(9, 141 + 6 * n, 0);
                 ui_draw_pixel(10, 140 + 6 * n, 0);
@@ -93,8 +93,8 @@ static void empirereport_draw_cb(void *vptr)
     lbxfont_select(0, 6, 0, 0);
     {
         int n = 0;
-        for (int i = 0; (i < g->players) && (n < 3); ++i) {
-            if ((i != d->pi) && (e->treaty[i] >= TREATY_WAR) && (g->evn.home[i] != PLANET_NONE)) {
+        for (player_id_t i = PLAYER_0; (i < g->players) && (n < 3); ++i) {
+            if ((i != d->pi) && (e->treaty[i] >= TREATY_WAR) && IS_ALIVE(g, i)) {
                 ui_draw_pixel(9, 177 + 6 * n, 0);
                 ui_draw_pixel(9, 178 + 6 * n, 0);
                 ui_draw_pixel(10, 177 + 6 * n, 0);
@@ -109,7 +109,7 @@ static void empirereport_draw_cb(void *vptr)
         uint16_t tc;
         uint8_t first, num, rf;
         tc = e->tech.completed[f];
-        rf = e->spyreportfield[d->api][f];
+        rf = g->eto[d->api].spyreportfield[d->pi][f];
         num = 0;
         for (int i = 0; i < tc; ++i) {
             uint8_t rc;
@@ -126,10 +126,12 @@ static void empirereport_draw_cb(void *vptr)
         }
         for (int i = 0; i < num; ++i) {
             uint8_t rc;
+            tech_group_t group;
             rc = rct[first + i];
             game_tech_get_name(g->gaux, f, rc, buf);
             lbxfont_select(2, game_tech_player_has_tech(g, f, rc, d->api) ? 0xa : 0, 0, 0);
-            if (RESEARCH_D0_PTR(g->gaux, f, rc)[0] == 13) {
+            group = game_tech_get_group(g->gaux, f, rc);
+            if (group == TECH_GROUP_CONTROLLED_ENVIRONMENT) {
                 int j, pos_space;
                 j = 0;
                 pos_space = 0;
@@ -159,7 +161,7 @@ void ui_empirereport(struct game_s *g, player_id_t active_player, player_id_t pi
     d.pi = pi;
 
     game_update_production(g);
-    game_update_empire_within_range(g);
+    game_update_empire_contact(g);
     game_update_maint_costs(g);
 
     uiobj_table_clear();
@@ -176,7 +178,7 @@ void ui_empirereport(struct game_s *g, player_id_t active_player, player_id_t pi
         if (!flag_done) {
             empirereport_draw_cb(&d);
             uiobj_table_clear();
-            uiobj_add_mousearea(0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, MOO_KEY_UNKNOWN, -1);
+            uiobj_add_mousearea(UI_SCREEN_LIMITS, MOO_KEY_UNKNOWN);
             ui_draw_finish();
             ui_delay_ticks_or_click(1);
         }

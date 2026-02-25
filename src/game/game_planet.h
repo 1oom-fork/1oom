@@ -20,7 +20,6 @@ typedef enum planet_type_e {
     PLANET_TYPE_OCEAN, /*b*/
     PLANET_TYPE_JUNGLE, /*c*/
     PLANET_TYPE_TERRAN, /*d*/
-    PLANET_TYPE_GAIA, /*e*/
     PLANET_TYPE_NUM
 } planet_type_t;
 
@@ -78,8 +77,8 @@ typedef enum {
 
 typedef enum {
     FINISHED_FACT, /*0*/
-    FINISHED_ECO1, /*1*/
-    FINISHED_ECO2, /*2*/
+    FINISHED_POPMAX, /*1*/
+    FINISHED_SOILATMOS, /*2*/
     FINISHED_STARGATE, /*3*/
     FINISHED_SHIELD, /*4*/
     FINISHED_SHIP, /*5*/
@@ -96,9 +95,9 @@ typedef struct planet_s {
     uint8_t look;   /* 0, 6 */
     uint8_t frame;  /* 0..49 */
     planet_rocks_t rocks;
-    int16_t max_pop1;
-    int16_t max_pop2;
-    int16_t max_pop3;
+    int16_t max_pop1;  /* Base size */
+    int16_t max_pop2;  /* Size adjusted by soil enrichment tech */
+    int16_t max_pop3;  /* Maximum population */
     planet_type_t type;
     uint8_t battlebg;   /* 0..4 ; 0 implies planet is in nebula */
     uint8_t infogfx;    /* index to planets.lbx */
@@ -129,7 +128,7 @@ typedef struct planet_s {
     uint16_t bc_to_shield;
     uint16_t trans_num;
     uint8_t trans_dest;
-    uint8_t pop_tenths;
+    int8_t pop_tenths;
     BOOLVEC_DECLARE(explored, PLAYER_NUM);
     BOOLVEC_DECLARE(within_srange, PLAYER_NUM); /* scanner range covers planet */
     uint8_t within_frange[PLAYER_NUM]; /* fuel range reaches planet: 0=no, 1=yes, 2=with reserve fuel */
@@ -139,6 +138,7 @@ typedef struct planet_s {
     planet_unrest_t unrest;
     bool unrest_reported;
     BOOLVEC_DECLARE(finished, FINISHED_NUM);
+    /* remaining variables used only during game_turn_process */
     uint16_t inbound[PLAYER_NUM];
     uint16_t total_inbound[PLAYER_NUM];
 } planet_t;
@@ -150,8 +150,38 @@ struct game_s;
 
 extern void game_planet_destroy(struct game_s *g, uint8_t planet_i, player_id_t attacker);
 extern uint8_t game_planet_get_random(struct game_s *g, player_id_t owner);
-extern void game_planet_adjust_percent(struct game_s *g, player_id_t owner, int a0, uint8_t percent, int a2);
+extern void game_planet_adjust_percent(struct game_s *g, player_id_t owner, int a0, uint8_t percent, int growth);
 extern int game_planet_get_w1(const struct game_s *g, uint8_t planet_i);
+extern int game_adjust_prod_by_special(int prod, planet_special_t special);
+extern int game_get_tech_prod(int prod, int slider, race_t race, planet_special_t special);
 extern void game_planet_update_home(struct game_s *g);
+
+struct planet_prod_s {
+    int vthis;
+    int vtotal;
+};
+
+static inline void game_planet_get_ship_prod(const planet_t *p, struct planet_prod_s *r_prod, bool actual)
+{
+    r_prod->vthis = game_adjust_prod_by_special((p->prod_after_maint * p->slider[PLANET_SLIDER_SHIP]) / 100, p->special);
+    r_prod->vtotal = r_prod->vthis + p->bc_to_ship;
+    /* BUG: A 1 BC bonus for having the slider > 0.
+       This bonus is not taken into account by UI */
+    if (actual && (p->slider[PLANET_SLIDER_SHIP] > 0)) {
+        ++r_prod->vtotal;
+    }
+}
+
+static inline void game_planet_get_def_prod(const planet_t *p, struct planet_prod_s *r_prod)
+{
+    r_prod->vthis = game_adjust_prod_by_special((p->prod_after_maint * p->slider[PLANET_SLIDER_DEF]) / 100, p->special);
+    r_prod->vtotal = r_prod->vthis + p->bc_to_base;
+}
+
+static inline void game_planet_get_ind_prod(const planet_t *p, struct planet_prod_s *r_prod)
+{
+    r_prod->vthis = game_adjust_prod_by_special((p->prod_after_maint * p->slider[PLANET_SLIDER_IND]) / 100, p->special);
+    r_prod->vtotal = r_prod->vthis + p->bc_to_factory;
+}
 
 #endif

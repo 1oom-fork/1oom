@@ -102,6 +102,12 @@ int hw_audio_init(void)
         mus_playing = -1;
         log_message("SDLA: init %i Hz slice %i\n", audio_rate, slice);
         log_message("SDLA: soundfonts '%s'\n", Mix_GetSoundFonts());
+        if (hw_opt_sdlmixer_sf) {
+            if (hw_audio_set_sdlmixer_sf(hw_opt_sdlmixer_sf) < 0) {
+                Mix_CloseAudio();
+                return -1;
+            }
+        }
         audio_initialized = true;
         {
             int volume;
@@ -129,6 +135,8 @@ void hw_audio_shutdown(void)
         sfxtbl = NULL;
         audio_initialized = false;
     }
+    lib_free(hw_opt_sdlmixer_sf);
+    hw_opt_sdlmixer_sf = NULL;
 }
 
 int hw_audio_set_sdlmixer_sf(const char *path)
@@ -166,7 +174,7 @@ int hw_audio_music_init(int mus_index, const uint8_t *data_in, uint32_t len_in)
     m = &mustbl[mus_index];
 
     if (m->type != MUS_TYPE_UNKNOWN) {
-        hw_audio_sfx_release(mus_index);
+        hw_audio_music_release(mus_index);
     }
 
     m->type = fmt_mus_detect(data_in, len_in);
@@ -203,8 +211,11 @@ int hw_audio_music_init(int mus_index, const uint8_t *data_in, uint32_t len_in)
         log_error("SDLA: failed to init music %i\n", mus_index);
         return -1;
     }
-
-    m->music = Mix_LoadMUSType_RW(SDL_RWFromMem(data, len), m->sdlmtype, 0);
+    {
+        SDL_RWops *rw = SDL_RWFromConstMem(data, len);
+        m->music = Mix_LoadMUSType_RW(rw, m->sdlmtype, 0);
+        SDL_RWclose(rw);
+    }
     lib_free(buf);
     if (!m->music) {
         log_error("SDLA: Mix_LoadMUSType_RW failed on music %i (type %i)\n", mus_index, m->type);
@@ -362,7 +373,7 @@ void hw_audio_sfx_volume(int volume)
 int hw_audio_init(void)
 {
     if (opt_audio_enabled) {
-        log_warning("SDLA: no audio due to missing SDL_mixer");
+        log_warning("SDLA: no audio due to missing SDL_mixer!\n");
     }
     return 0;
 }
@@ -405,4 +416,4 @@ void hw_audio_sfx_stop(void)
 void hw_audio_sfx_volume(int volume/*0..128*/)
 {
 }
-#endif /* HAVE_SDLMIXER1 */
+#endif /* HAVE_SDLMIXER */

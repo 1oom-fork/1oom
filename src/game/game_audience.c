@@ -44,7 +44,7 @@ static void game_audience_start_human(struct audience_s *au)
     empiretechorbit_t *eh = &(g->eto[ph]);
     empiretechorbit_t *ea = &(g->eto[pa]);
     int v;
-    v = eh->hmm06c[pa] + game_diplo_get_relation_hmm1(g, ph, pa) + game_diplo_tbl_reldiff[ea->trait1];
+    v = eh->trust[pa] + game_diplo_get_mood(g, ph, pa) + game_diplo_tbl_reldiff[ea->trait1];
     if (v < -100) {
         au->dtype = (eh->treaty[pa] >= TREATY_WAR) ? 20 : 21;
         au->mode = 1;
@@ -62,7 +62,7 @@ static int game_audience_print_tech(struct game_s *g, tech_field_t field, uint8_
     len = strlen(buf);
     buf[len++] = ' ';
     if (add_str) {
-        len += sprintf(buf, "%s.", game_str_au_tech);
+        len += sprintf(&buf[len], "%s.", game_str_au_tech);
     } else {
         buf[len] = '\0';
     }
@@ -132,7 +132,7 @@ static const char *game_audience_get_str1(struct audience_s *au)
                             s = game_str_au_allian;
                         } else if (eh->treaty[pa] == TREATY_NONAGGRESSION) {
                             s = game_str_au_nonagg;
-                        } else if (eh->trade_bc != 0) {
+                        } else if (eh->trade_bc[pa] != 0) {
                             s = game_str_au_tradea;
                         } else {
                             s = game_str_au_treaty;
@@ -175,7 +175,7 @@ static const char *game_audience_get_str1(struct audience_s *au)
                         len = sprintf(buf, "%i", g->year + YEAR_BASE);
                         break;
                     case 0x13:
-                        len = sprintf(buf, "%i", au->hmm4_bc);
+                        len = sprintf(buf, "%i", au->tribute_bc);
                         break;
                     case 7:
                         len = sprintf(buf, "%u", eh->au_want_trade[pa]);
@@ -187,7 +187,7 @@ static const char *game_audience_get_str1(struct audience_s *au)
                         len = sprintf(buf, "\x02 %s\x01", game_str_au_amreca);
                         break;
                     case 0x11:
-                        s = game_str_tbl_race[g->eto[au->hmm5].race];
+                        s = game_str_tbl_race[g->eto[au->pstartwar].race];
                         break;
                     case 0x12:
                         s = game_str_tbl_race[g->eto[au->pwar].race];
@@ -203,10 +203,10 @@ static const char *game_audience_get_str1(struct audience_s *au)
                         len = game_audience_print_tech(g, eh->au_want_field[pa], eh->au_want_tech[pa], buf, true);
                         break;
                     case 0x10:
-                        len = game_audience_print_tech(g, au->hmm6_field, au->hmm6_tech, buf, false);
+                        len = game_audience_print_tech(g, au->tribute_field, au->tribute_tech, buf, false);
                         break;
                     case 0x14:
-                        len = game_audience_print_tech(g, au->hmm6_field, au->hmm6_tech, buf, true);
+                        len = game_audience_print_tech(g, au->tribute_field, au->tribute_tech, buf, true);
                         break;
                     default:
                         *buf = c;
@@ -292,10 +292,11 @@ static int16_t game_audience_sub3(struct audience_s *au)
     if ((au->dtype == 28) || (au->dtype == 58) || (au->dtype == 29)) {
         ui_audience_show2(au);
         selected = 1;
-        au->dtype = 29;
-        strcpy(au->buf, game_str_au_inxchng);
-        au->condtbl = 0;
-        selected = ui_audience_ask2a(au);
+        if (au->dtype == 29) {
+            strcpy(au->buf, game_str_au_inxchng);
+            au->condtbl = 0;
+            selected = ui_audience_ask2a(au);
+        }
     } else {
         /*62346*/
         au->condtbl = 0;
@@ -350,7 +351,7 @@ static bool game_audience_sub2(struct audience_s *au)
     }
 }
 
-static void game_audience_sub4(struct audience_s *au, uint8_t dtype, int a2)
+static void game_audience_set_dtype(struct audience_s *au, uint8_t dtype, int a2)
 {
     struct game_s *g = au->g;
     player_id_t ph = au->ph, pa = au->pa;
@@ -361,9 +362,9 @@ static void game_audience_sub4(struct audience_s *au, uint8_t dtype, int a2)
             case 0:
             case 1:
             case 2:
-                if ((eh->hmm084[pa] != 0) && (!rnd_0_nm1(2, &g->seed))) {
-                    au->dtype = eh->hmm084[pa] + 30;
-                    eh->hmm084[pa] = 0;
+                if ((eh->blunder[pa] != 0) && (!rnd_0_nm1(2, &g->seed))) {
+                    au->dtype = eh->blunder[pa] + 30;
+                    eh->blunder[pa] = 0;
                 } else if ((eh->broken_treaty[pa] != TREATY_NONE) && (!rnd_0_nm1(4, &g->seed))) {
                     au->dtype = 33;
                     eh->broken_treaty[pa] = TREATY_NONE;
@@ -373,8 +374,8 @@ static void game_audience_sub4(struct audience_s *au, uint8_t dtype, int a2)
                 break;
             case 3:
                 if ((!rnd_0_nm1(4, &g->seed)) && (eh->tribute_tech[pa] != 0)) {
-                    au->hmm6_field = eh->tribute_field[pa];
-                    au->hmm6_tech = eh->tribute_tech[pa];
+                    au->tribute_field = eh->tribute_field[pa];
+                    au->tribute_tech = eh->tribute_tech[pa];
                     eh->tribute_tech[pa] = 0;
                     au->dtype = 66;
                 }
@@ -388,7 +389,7 @@ static void game_audience_sub4(struct audience_s *au, uint8_t dtype, int a2)
     ui_audience_show3(au);
 }
 
-static int game_audience_sub6(struct audience_s *au, int a0, int a2)
+static int game_audience_check_mood(struct audience_s *au, int a0, int a2)
 {
     struct game_s *g = au->g;
     player_id_t ph = au->ph, pa = au->pa;
@@ -398,38 +399,38 @@ static int game_audience_sub6(struct audience_s *au, int a0, int a2)
     switch (a2) {
         default:
         case 0:
-            v = eh->hmm0a8[pa];
+            v = eh->mood_treaty[pa];
             break;
         case 1:
-            v = eh->hmm0b4[pa];
+            v = eh->mood_trade[pa];
             break;
         case 2:
-            v = eh->hmm0cc[pa];
+            v = eh->mood_peace[pa];
             break;
         case 3:
-            v = eh->hmm0c0[pa];
+            v = eh->mood_tech[pa];
             break;
     }
-    v += eh->hmm06c[pa] + eh->relation1[pa] + ((eh->race == RACE_HUMAN) ? 50 : 0) + game_diplo_tbl_reldiff[ea->trait1];
+    v += eh->trust[pa] + eh->relation1[pa] + ((eh->race == RACE_HUMAN) ? 50 : 0) + game_diplo_tbl_reldiff[ea->trait1];
     v += rnd_1_n(100, &g->seed);
     v -= a0;
     if (eh->treaty[pa] == TREATY_ALLIANCE) {
         v += 40;
     }
-    game_diplo_hmm5(g, ph, pa);
+    game_diplo_annoy(g, ph, pa, 1);
     switch (a2) {
         default:
         case 0:
-            eh->hmm0a8[pa] -= rnd_1_n(30, &g->seed) + 20;
+            eh->mood_treaty[pa] -= rnd_1_n(30, &g->seed) + 20;
             break;
         case 1:
-            eh->hmm0b4[pa] -= rnd_1_n(30, &g->seed) + 20;
+            eh->mood_trade[pa] -= rnd_1_n(30, &g->seed) + 20;
             break;
         case 2:
-            eh->hmm0cc[pa] -= rnd_1_n(50, &g->seed) + 50;
+            eh->mood_peace[pa] -= rnd_1_n(50, &g->seed) + 50;
             break;
         case 3:
-            eh->hmm0c0[pa] -= rnd_1_n(50, &g->seed) + 20;
+            eh->mood_tech[pa] -= rnd_1_n(50, &g->seed) + 20;
             break;
     }
     if (v < -75) {
@@ -443,7 +444,7 @@ static int game_audience_sub6(struct audience_s *au, int a0, int a2)
     }
 }
 
-static int game_audience_sub7(struct audience_s *au, int a0)
+static int game_audience_sweeten(struct audience_s *au, int a0)
 {
     struct game_s *g = au->g;
     player_id_t ph = au->ph, pa = au->pa;
@@ -495,7 +496,7 @@ static int game_audience_sub7(struct audience_s *au, int a0)
         return 1;
     }
     if (!flag_bc) {
-        game_tech_get_new(g, pa, field, tech, 4, ph, 0, false);
+        game_tech_get_new(g, pa, field, tech, TECHSOURCE_TRADE, ph, 0, false);
     } else {
         eh->reserve_bc -= bc;
         ea->reserve_bc += bc;
@@ -537,7 +538,7 @@ static void audience_menu_treaty(struct audience_s *au)
     uint8_t war_num, all_num, dtype;
     player_id_t war_tbl[PLAYER_NUM], all_tbl[PLAYER_NUM];
     int si;
-    for (int i = 0; i < TBLLEN(condtbl); ++i) {
+    for (size_t i = 0; i < TBLLEN(condtbl); ++i) {
         condtbl[i] = true;
     }
     strcpy(au->buf, game_str_au_youprte);
@@ -554,7 +555,7 @@ static void audience_menu_treaty(struct audience_s *au)
         condtbl[3] = false;
     }
     war_num = 0;
-    for (player_id_t i = PLAYER_NUM; i < g->players; ++i) {
+    for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         if ((i != ph) && (i != pa) && (ea->treaty[i] < TREATY_WAR)) {
             war_tbl[war_num++] = i;
         }
@@ -563,8 +564,8 @@ static void audience_menu_treaty(struct audience_s *au)
         condtbl[3] = false;
     }
     all_num = 0;
-    for (player_id_t i = PLAYER_NUM; i < g->players; ++i) {
-        if ((i != ph) && (i != pa) && (ea->treaty[i] == TREATY_ALLIANCE)) {
+    for (player_id_t i = PLAYER_0; i < g->players; ++i) {
+        if ((i != ph) && IN_CONTACT(g, pa, i) && (ea->treaty[i] == TREATY_ALLIANCE)) {
             all_tbl[all_num++] = i;
         }
     }
@@ -580,12 +581,12 @@ static void audience_menu_treaty(struct audience_s *au)
     switch (selected) {
         case 0:
             if (eh->relation1[pa] > 10) {
-                si = game_audience_sub6(au, 50, 0);
+                si = game_audience_check_mood(au, 50, 0);
             } else {
                 si = 0;
             }
             if ((si == 1) || (si == 2)) {
-                si = game_audience_sub7(au, si);
+                si = game_audience_sweeten(au, si);
             }
             if (si == 3) {
                 game_diplo_set_treaty(g, ph, pa, TREATY_NONAGGRESSION);
@@ -594,12 +595,12 @@ static void audience_menu_treaty(struct audience_s *au)
             break;
         case 1:
             if (eh->relation1[pa] > 50) {
-                si = game_audience_sub6(au, 125, 0);
+                si = game_audience_check_mood(au, 125, 0);
             } else {
                 si = 0;
             }
             if ((si == 1) || (si == 2)) {
-                si = game_audience_sub7(au, si);
+                si = game_audience_sweeten(au, si);
             }
             if (si == 3) {
                 game_diplo_set_treaty(g, ph, pa, TREATY_ALLIANCE);
@@ -607,31 +608,30 @@ static void audience_menu_treaty(struct audience_s *au)
             dtype = 63;
             break;
         case 2:
-            si = game_audience_sub6(au, 60, 0);
+            si = game_audience_check_mood(au, 60, 0); /* FIXME BUG? should be 2 for mood_peace? */
             if ((si == 1) || (si == 2)) {
-                si = game_audience_sub7(au, si);
+                si = game_audience_sweeten(au, si);
             }
             if (si == 3) {
                 game_diplo_stop_war(g, ph, pa);
             }
-            game_diplo_hmm5(g, ph, pa);
-            game_diplo_hmm5(g, ph, pa);
+            game_diplo_annoy(g, ph, pa, 2);
             dtype = 65;
             break;
         case 3:
             dtype = 67;
-            au->hmm5 = audience_menu_race(au, war_tbl, war_num, game_str_au_whowar);
-            if (au->hmm5 != PLAYER_NONE) {
-                if ((eh->treaty[pa] == TREATY_ALLIANCE) && (eh->treaty[au->hmm5] == TREATY_WAR)) {
+            au->pstartwar = audience_menu_race(au, war_tbl, war_num, game_str_au_whowar);
+            if (au->pstartwar != PLAYER_NONE) {
+                if ((eh->treaty[pa] == TREATY_ALLIANCE) && (eh->treaty[au->pstartwar] == TREATY_WAR)) {
                     si = (!rnd_0_nm1(8, &g->seed)) ? 2 : 3;
                 } else {
-                    si = game_audience_sub6(au, ea->relation1[au->hmm5] + 150, 0);
+                    si = game_audience_check_mood(au, ea->relation1[au->pstartwar] + 150, 0);
                 }
                 if ((si == 1) || (si == 2)) {
-                    si = game_audience_sub7(au, si);
+                    si = game_audience_sweeten(au, si);
                 }
                 if (si == 3) {
-                    game_diplo_start_war(g, pa, au->hmm5);
+                    game_diplo_start_war(g, pa, au->pstartwar);
                 }
             } else {
                 selected = -1;
@@ -642,9 +642,9 @@ static void audience_menu_treaty(struct audience_s *au)
             au->pwar = audience_menu_race(au, all_tbl, all_num, game_str_au_whobrk);
             if (au->pwar != PLAYER_NONE) {
                 if (eh->relation1[pa] > 24) {
-                    si = game_audience_sub6(au, ea->relation1[au->pwar] + 175, 0);
+                    si = game_audience_check_mood(au, ea->relation1[au->pwar] + 175, 0);
                     if ((si == 1) || (si == 2)) {
-                        si = game_audience_sub7(au, si);
+                        si = game_audience_sweeten(au, si);
                     }
                     if (si == 3) {
                         game_diplo_break_treaty(g, pa, au->pwar);
@@ -664,7 +664,7 @@ static void audience_menu_treaty(struct audience_s *au)
             break;
     }
     if ((selected != -1) && (si != 1)) {
-        game_audience_sub4(au, dtype, si);
+        game_audience_set_dtype(au, dtype, si);
     }
 }
 
@@ -685,16 +685,16 @@ static void audience_menu_trade(struct audience_s *au)
     au->strtbl[au->num_bc + 1] = 0;
     au->condtbl = 0;
     selected = ui_audience_ask4(au);
-    game_diplo_hmm5(g, ph, pa);
-    eh->hmm0b4[pa] -= rnd_1_n(30, &g->seed);
+    game_diplo_annoy(g, ph, pa, 1);
+    eh->mood_trade[pa] -= rnd_1_n(30, &g->seed);
     if ((selected != -1) && (selected != au->num_bc)) {
-        int si = game_audience_sub6(au, 50, 1);
+        int si = game_audience_check_mood(au, 50, 1);
         if (si < 3) {
             si = 0;
         } else {
             game_diplo_set_trade(g, ph, pa, au->bctbl[selected]);
         }
-        game_audience_sub4(au, 64, si);
+        game_audience_set_dtype(au, 64, si);
     }
 }
 
@@ -707,7 +707,7 @@ static void audience_menu_threat(struct audience_s *au)
     int16_t selected = 0;
     bool condtbl[5];
     uint8_t dtype = 0;
-    for (int i = 0; i < TBLLEN(condtbl); ++i) {
+    for (size_t i = 0; i < TBLLEN(condtbl); ++i) {
         condtbl[i] = true;
     }
     strcpy(au->buf, game_str_au_youract);
@@ -742,7 +742,7 @@ static void audience_menu_threat(struct audience_s *au)
             {
                 int v;
                 selected = 0;
-                v = rnd_1_n(200, &g->seed) + eh->hmm0a8[pa] / 2;
+                v = rnd_1_n(200, &g->seed) + eh->mood_treaty[pa] / 2;
                 v += game_diplo_tbl_reldiff[ea->trait1] * 2;
                 if (ea->total_production_bc > 0) {
                     v += (eh->total_production_bc * 100) / ea->total_production_bc;
@@ -752,7 +752,7 @@ static void audience_menu_threat(struct audience_s *au)
                 /*6541d*/
                 SUBSATT(eh->relation1[pa], rnd_1_n(15, &g->seed), -100);
                 ea->relation1[ph] = eh->relation1[pa];
-                eh->hmm0a8[pa] = -120;
+                eh->mood_treaty[pa] = -120;
                 if (v < 170) {
                     if ((rnd_1_n(15, &g->seed) - game_diplo_tbl_reldiff[ea->trait1]) > rnd_1_n(100, &g->seed)) {
                         game_diplo_start_war(g, ph, pa);
@@ -761,26 +761,26 @@ static void audience_menu_threat(struct audience_s *au)
                         dtype = 69;
                     }
                 } else {
-                    /*651f2*/
                     eh->spymode_next[pa] = SPYMODE_HIDE;    /* FIXME BUG? should be ea->..[ph] */
                     eh->spymode[pa] = SPYMODE_HIDE;         /* FIXME BUG? should be ea->..[ph] */
-                    g->evn.hmm28e[ph][pa] = rnd_1_n(15, &g->seed) + 5;  /* FIXME check index order */
+                    g->evn.ceasefire[ph][pa] = rnd_1_n(15, &g->seed) + 5;
                     dtype = 70;
                     if (v >= 275) {
                         struct spy_esp_s s[1];
                         s->spy = ph;
                         s->target = pa;
                         if (game_spy_esp_sub1(g, s, 0, 1) > 0) {
-                            au->hmm6_field = s->tbl_field[0];
-                            au->hmm6_tech = s->tbl_tech2[0];
-                            game_tech_get_new(g, ph, au->hmm6_field, au->hmm6_tech, 4, pa, 0, false);   /* WASBUG? pa was 0 */
+                            dtype = 72;
+                            au->tribute_field = s->tbl_field[0];
+                            au->tribute_tech = s->tbl_tech2[0];
+                            game_tech_get_new(g, ph, au->tribute_field, au->tribute_tech, TECHSOURCE_TRADE, pa, 0, false);   /* WASBUG? pa was 0 */
                         }
                     } else if (v >= 200) {
                         int bc;
                         bc = (((rnd_1_n(8, &g->seed) + 2) * g->year) / 25) * 25;
                         if (bc != 0) {
                             eh->reserve_bc += bc;
-                            au->hmm4_bc = bc;
+                            au->tribute_bc = bc;
                             dtype = 71;
                         }
                     }
@@ -790,11 +790,9 @@ static void audience_menu_threat(struct audience_s *au)
         default:
             break;
     }
-    for (int i = 0; i < 10; ++i) {  /* FIXME BUG? MOO1 does this before the if */
-        game_diplo_hmm5(g, ph, pa);
-    }
+    game_diplo_annoy(g, ph, pa, 10);    /* FIXME BUG? MOO1 does this before the if, annoying by only entering the menu */
     if ((selected != -1) && (selected != 4)) {
-        game_audience_sub4(au, dtype, 3);
+        game_audience_set_dtype(au, dtype, 3);
     }
 }
 
@@ -868,9 +866,8 @@ static void audience_menu_tribute(struct audience_s *au)
             SETMIN(ea->relation1[ph], 65);
         }
         /* FIXME BUG? eh->relation1[pa] = ea->relation1[ph]; is missing */
-        game_audience_sub4(au, 1, 3);
+        game_audience_set_dtype(au, 1, 3);
     } else {
-        /*65da2*/
         struct spy_esp_s s[1];
         int hmm1 = 0; /* FIXME BUG = diplo_p2_sub1_zhmm4[bcnum]; uninitialized, wrong index */
         s->spy = pa;
@@ -893,7 +890,7 @@ static void audience_menu_tribute(struct audience_s *au)
             selected = ui_audience_ask4(au);
             if ((selected != -1) && (selected < s->tnum) && (selected < 4)) {
                 int v;
-                game_tech_get_new(g, pa, s->tbl_field[i], s->tbl_tech2[i], 4, ph, 0, false);
+                game_tech_get_new(g, pa, s->tbl_field[selected], s->tbl_tech2[selected], TECHSOURCE_TRADE, ph, 0, false);
                 if (eh->relation1[pa] < 0) {
                     v = 20;
                 } else {
@@ -905,8 +902,8 @@ static void audience_menu_tribute(struct audience_s *au)
                 }
                 ADDSATT(eh->relation1[pa], v, 100);
                 ea->relation1[ph] = eh->relation1[pa];
-                ADDSATT(eh->hmm0cc[pa], v, 200);
-                ADDSATT(eh->hmm06c[pa], rnd_1_n(8, &g->seed) + 2, 30);
+                ADDSATT(eh->mood_peace[pa], v, 200);
+                ADDSATT(eh->trust[pa], rnd_1_n(8, &g->seed) + 2, 30);
                 eh->tribute_field[pa] = s->tbl_field[selected];
                 eh->tribute_tech[pa] = s->tbl_tech2[selected];
                 if (eh->treaty[pa] >= TREATY_WAR) {
@@ -916,10 +913,10 @@ static void audience_menu_tribute(struct audience_s *au)
                     SETMIN(ea->relation1[ph], 70);
                 }
                 /* FIXME BUG? eh->relation1[pa] = ea->relation1[ph]; is missing */
-                game_audience_sub4(au, 1, 3);
+                game_audience_set_dtype(au, 1, 3);
             }
         } else {
-            game_audience_sub4(au, 75, 3);
+            game_audience_set_dtype(au, 75, 3);
         }
     }
 }
@@ -931,7 +928,7 @@ static void audience_menu_tech(struct audience_s *au)
     empiretechorbit_t *eh = &(g->eto[ph]);
     empiretechorbit_t *ea = &(g->eto[pa]);
     int v, di;
-    di = eh->hmm0c0[pa];
+    di = eh->mood_tech[pa];
     if (di > 0) {
         di /= 5;
     }
@@ -939,7 +936,8 @@ static void audience_menu_tech(struct audience_s *au)
     if (eh->treaty[pa] == TREATY_ALLIANCE) {
         di += 25;
     }
-    v = eh->hmm06c[pa] + eh->relation1[pa] / 2 + ((eh->race == RACE_HUMAN) ? 50 : 0) + game_diplo_tbl_reldiff[ea->trait1] + rnd_1_n(100, &g->seed) - 125;
+    v = eh->trust[pa] + eh->relation1[pa] / 2 + ((eh->race == RACE_HUMAN) ? 50 : 0);
+    v += game_diplo_tbl_reldiff[ea->trait1] * 2 + di - 125 + rnd_1_n(100, &g->seed);
     if (v < 0) {
         v = abs(v) + 100;
     } else {
@@ -951,7 +949,7 @@ static void audience_menu_tech(struct audience_s *au)
         struct spy_esp_s s[1];
         tech_field_t taf[TECH_SPY_MAX]; /* diplo_p2_sub1_field */
         uint8_t tat[TECH_SPY_MAX];
-        int ta4[TECH_SPY_MAX];
+        int tav[TECH_SPY_MAX];
         tech_field_t thf[TECH_SPY_MAX][TECH_SPY_MAX];
         uint8_t tht[TECH_SPY_MAX][TECH_SPY_MAX];
         tech_field_t thaf[TECH_SPY_MAX * TECH_SPY_MAX];
@@ -964,19 +962,19 @@ static void audience_menu_tech(struct audience_s *au)
             for (int i = 0; i < tanum; ++i) {
                 taf[i] = s->tbl_field[i];
                 tat[i] = s->tbl_tech2[i];
-                ta4[i] = (s->tbl_hmm4[i] * v) / 100;
+                tav[i] = (s->tbl_value[i] * v) / 100;
             }
             s->spy = pa;
             s->target = ph;
             total_thnum = 0;
             for (int i = 0; i < tanum; ++i) {
-                if (game_spy_esp_sub1(g, s, ta4[i], 0) > 0) {
+                if (game_spy_esp_sub1(g, s, tav[i], 0) > 0) {
                     int n;
                     n = s->tnum;
                     thnum[total_thnum] = n;
                     for (int j = 0; j < n; ++j) {
-                        thf[i][j] = s->tbl_field[j];
-                        tht[i][j] = s->tbl_tech2[j];
+                        thf[total_thnum][j] = s->tbl_field[j];
+                        tht[total_thnum][j] = s->tbl_tech2[j];
                     }
                     thaf[total_thnum] = taf[i];
                     that[total_thnum] = tat[i];
@@ -988,8 +986,8 @@ static void audience_menu_tech(struct audience_s *au)
                 int16_t selected = 0;
                 int i;
                 char *cbuf = &(au->buf[AUDIENCE_CBUF_POS]);
-                game_diplo_hmm5(g, ph, pa);
-                eh->hmm0c0[pa] -= rnd_1_n(50, &g->seed) + 20;
+                game_diplo_annoy(g, ph, pa, 1);
+                eh->mood_tech[pa] -= rnd_1_n(50, &g->seed) + 20;
                 for (i = 0; (i < 5) && (i < total_thnum); ++i) {
                     int len;
                     au->strtbl[i] = cbuf;
@@ -1021,27 +1019,24 @@ static void audience_menu_tech(struct audience_s *au)
                     strcpy(au->buf, game_str_au_whatrad);
                     au->condtbl = 0;
                     selected = ui_audience_ask4(au);
-                    if ((selected != 1) && (selected < i)) {
+                    if ((selected != -1) && (selected < i)) {
                         g->evn.newtech[ph].num = 0;
-                        game_tech_get_new(g, ph, gotf, gott, 4, pa, 0, false);
-                        game_tech_get_new(g, pa, thf[selected2][selected], tht[selected2][selected], 4, pa, 0, false); /* FIXME BUG? last pa should be ph? */
+                        game_tech_get_new(g, ph, gotf, gott, TECHSOURCE_TRADE, pa, 0, false);
+                        game_tech_get_new(g, pa, thf[selected2][selected], tht[selected2][selected], TECHSOURCE_TRADE, pa, 0, false); /* FIXME BUG? last pa should be ph? */
                         if (g->evn.newtech[ph].num != 0) {
                             ui_audience_newtech(au);
                         }
                     }
                 }
             } else {
-                game_audience_sub4(au, 75, 3);
+                game_audience_set_dtype(au, 75, 3);
             }
         } else {
-            game_audience_sub4(au, 75, 3);
+            game_audience_set_dtype(au, 75, 3);
         }
     }
-    /*65a21*/
-    game_diplo_hmm5(g, ph, pa);
-    game_diplo_hmm5(g, ph, pa);
-    game_diplo_hmm5(g, ph, pa);
-    SETMIN(eh->hmm0c0[pa], 50);
+    game_diplo_annoy(g, ph, pa, 3);
+    SETMIN(eh->mood_tech[pa], 50);
 }
 
 static void audience_menu_main(struct audience_s *au)
@@ -1053,7 +1048,7 @@ static void audience_menu_main(struct audience_s *au)
     bool condtbl[6];
     while (!flag_done) {
         int16_t selected;
-        for (int i = 0; i < TBLLEN(condtbl); ++i) {
+        for (size_t i = 0; i < TBLLEN(condtbl); ++i) {
             condtbl[i] = true;
         }
         if (eh->treaty[pa] >= TREATY_WAR) {
@@ -1083,7 +1078,6 @@ static void audience_menu_main(struct audience_s *au)
                 au->bctbl[2] = cur_trade + 75;
                 au->bctbl[3] = cur_trade + 100;
             } else {
-                /*641b0*/
                 au->num_bc = AUDIENCE_BC_MAX;
                 au->bctbl[0] = want_trade / 5 + cur_trade;
                 au->bctbl[1] = (((want_trade * 2) / 5) / 25) * 25 + cur_trade;
@@ -1092,12 +1086,10 @@ static void audience_menu_main(struct audience_s *au)
                 au->bctbl[4] = want_trade + cur_trade;
             }
         }
-        /*64256*/
-        if (game_diplo_get_relation_hmm1(g, ph, pa) < -100) {
-            game_audience_sub4(au, 74, 3);
+        if (game_diplo_get_mood(g, ph, pa) < -100) {
+            game_audience_set_dtype(au, 74, 3);
             break;
         }
-        /*64277*/
         strcpy(au->buf, game_str_au_howmay);
         for (int i = 0; i < 6; ++i) {
             au->strtbl[i] = game_str_au_opts1[i];
@@ -1137,7 +1129,7 @@ static void game_audience_do(struct audience_s *au)
     empiretechorbit_t *eh = &(g->eto[ph]);
     empiretechorbit_t *ea = &(g->eto[pa]);
     int16_t selected;
-    if ((au->mode >= 0) && (au->mode <= 2)) {
+    if ((au->mode == 0) || (au->mode == 1) || (au->mode == 2)) {
         g->gaux->diplo_d0_rval = -1;
         game_audience_get_str1(au);
         ui_audience_show1(au);
@@ -1161,15 +1153,14 @@ static void game_audience_do(struct audience_s *au)
                             eh->relation1[pa] += 20;
                             ea->relation1[ph] = eh->relation1[pa];
                         }
-                        game_diplo_hmm5(g, ph, pa);
-                        game_diplo_hmm5(g, ph, pa);
+                        game_diplo_annoy(g, ph, pa, 2);
                     } else if (au->dtype == 76) {
                         game_diplo_start_war(g, ph, au->pwar);
                     }
                     if ((au->dtype == 24) || (au->dtype == 25) || (au->dtype == 26) || (au->dtype == 30)) { /* FIXME 76? */
                         eh->reserve_bc += eh->offer_bc[pa];
                         if (eh->offer_tech[pa] != 0) {
-                            game_tech_get_new(g, ph, eh->offer_field[pa], eh->offer_tech[pa], 4, pa, 0, false);
+                            game_tech_get_new(g, ph, eh->offer_field[pa], eh->offer_tech[pa], TECHSOURCE_TRADE, pa, 0, false);
                         }
                     }
                 } else {
@@ -1180,31 +1171,31 @@ static void game_audience_do(struct audience_s *au)
                 }
                 /*60761*/
                 if (au->dtype == 29) {
-                    game_tech_get_new(g, ph, eh->au_tech_trade_field[pa][selected], eh->au_tech_trade_tech[pa][selected], 4, pa, 0, false);
+                    game_tech_get_new(g, ph, eh->au_tech_trade_field[pa][selected], eh->au_tech_trade_tech[pa][selected], TECHSOURCE_TRADE, pa, 0, false);
                 }
             }
             /*607a9*/
-            game_diplo_hmm5(g, ph, pa);
+            game_diplo_annoy(g, ph, pa, 1);
             if ((au->dtype == 24) || (au->dtype == 25)) {
-                eh->hmm0a8[pa] -= rnd_1_n(30, &g->seed) + 20;
+                eh->mood_treaty[pa] -= rnd_1_n(30, &g->seed) + 20;
             }
             if (au->dtype == 26) {
-                eh->hmm0b4[pa] -= rnd_1_n(30, &g->seed) + 20;
+                eh->mood_trade[pa] -= rnd_1_n(30, &g->seed) + 20;
             }
             if (au->dtype == 30) {
-                eh->hmm0cc[pa] -= rnd_1_n(50, &g->seed) + 50;
+                eh->mood_peace[pa] -= rnd_1_n(50, &g->seed) + 50;
             }
             if (au->dtype == 29) {
-                eh->hmm0c0[pa] -= rnd_1_n(30, &g->seed) + 20;
+                eh->mood_tech[pa] -= rnd_1_n(30, &g->seed) + 20;
             }
             if (au->dtype == 76) {
                 au->dtype = (selected != 0) ? 77 : 78;
                 au->mode = 6;
-                game_audience_sub4(au, au->dtype, 3);
+                game_audience_set_dtype(au, au->dtype, 3);
             }
             break;
         case 6:
-            game_audience_sub4(au, au->dtype, 3);
+            game_audience_set_dtype(au, au->dtype, 3);
             break;
         case 0:
             audience_menu_main(au);
@@ -1223,7 +1214,7 @@ void game_audience(struct game_s *g, player_id_t ph, player_id_t pa)
     struct audience_s au[1];
     empiretechorbit_t *eh = &(g->eto[ph]);
     au->g = g;
-    game_diplo_limit_0a8(g);
+    game_diplo_limit_mood_treaty(g);
     game_audience_prepare(au, ph, pa);
     ui_audience_start(au);
     au->mode = 6;

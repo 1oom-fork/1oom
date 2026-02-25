@@ -7,7 +7,6 @@
 #include "game.h"
 #include "game_misc.h"
 #include "game_str.h"
-#include "hw.h"
 #include "kbd.h"
 #include "lbx.h"
 #include "lbxfont.h"
@@ -23,6 +22,7 @@
 #include "uiobj.h"
 #include "uipal.h"
 #include "uisound.h"
+#include "vgabuf.h"
 
 /* -------------------------------------------------------------------------- */
 
@@ -62,12 +62,12 @@ static void free_pl_data(struct planets_data_s *d)
 static void planets_draw_cb(void *vptr)
 {
     struct planets_data_s *d = vptr;
-    struct game_s *g = d->g;
-    empiretechorbit_t *e = &(g->eto[d->api]);
+    const struct game_s *g = d->g;
+    const empiretechorbit_t *e = &(g->eto[d->api]);
     char buf[64];
     int v;
 
-    ui_draw_filled_rect(0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, 0x5d);
+    ui_draw_filled_rect(UI_SCREEN_LIMITS, 0x5d);
     for (int i = 0; i < PLANETS_ON_SCREEN; ++i) {
         int pi;
         pi = d->pos + i;
@@ -85,7 +85,7 @@ static void planets_draw_cb(void *vptr)
 
     v = g->eto[d->api].tax;
     if (v > 0) {
-        ui_draw_line_3h(213, 160, 212 + (v * 4) / 25, 0x73);
+        ui_draw_slider(213, 160, 212 + (v * 4) / 25, 0x73);
     }
 
     lbxfont_select(2, 8, 0, 0);
@@ -103,12 +103,14 @@ static void planets_draw_cb(void *vptr)
         pi = d->pos + i;
         if (pi < d->num) {
             int y0;
-            planet_t *p;
+            const planet_t *p;
             const char *str;
-            y0 = 21 + i * 11;
-            p = &(g->planet[d->planets[pi]]);
+            uint8_t pli;
+            pli = d->planets[pi];
+            y0 = 21 + i * 11 + 1;   /* di + 1 */
+            p = &(g->planet[pli]);
             lbxfont_select(2, 0xb, 0, 0);
-            lbxfont_print_num_right(17, y0, pi, UI_SCREEN_W);
+            lbxfont_print_num_right(17, y0, pi + 1, UI_SCREEN_W);
             lbxfont_select(2, 0xd, 0, 0);
             lbxfont_print_str_normal(25, y0, p->name, UI_SCREEN_W);
             lbxfont_select(2, 6, 0, 0);
@@ -126,7 +128,7 @@ static void planets_draw_cb(void *vptr)
                     c = '-';
                     gfx = ui_data.gfx.starmap.gr_arrow_d;
                 }
-                lbxgfx_draw_frame(92, y0, gfx, UI_SCREEN_W);
+                lbxgfx_draw_frame(92, y0 - 1, gfx, UI_SCREEN_W);
                 sprintf(buf, "%c%i", c, v);
                 lbxfont_print_str_right(111, y0, buf, UI_SCREEN_W);
             }
@@ -145,19 +147,20 @@ static void planets_draw_cb(void *vptr)
             }
             lbxfont_print_num_right(214, y0, v, UI_SCREEN_W);
             str = NULL;
-            if (g->evn.have_plague && (g->evn.plague_planet_i == pi)) {
+            lbxfont_select(2, 0xb, 0, 0);
+            if (g->evn.have_plague && (g->evn.plague_planet_i == pli)) {
                 str = game_str_pl_plague;
-            } else if (g->evn.have_nova && (g->evn.nova_planet_i == pi)) {
+            } else if (g->evn.have_nova && (g->evn.nova_planet_i == pli)) {
                 str = game_str_pl_nova;
-            } else if (g->evn.have_comet && (g->evn.comet_planet_i == pi)) {
+            } else if (g->evn.have_comet && (g->evn.comet_planet_i == pli)) {
                 str = game_str_pl_comet;
-            } else if (g->evn.have_pirates && (g->evn.pirates_planet_i == pi)) {
+            } else if (g->evn.have_pirates && (g->evn.pirates_planet_i == pli)) {
                 str = game_str_pl_pirates;
             } else if (p->unrest == PLANET_UNREST_REBELLION) {
                 str = game_str_pl_rebellion;
             } else if (p->unrest == PLANET_UNREST_UNREST) {
                 str = game_str_pl_unrest;
-            } else if (g->evn.have_accident && (g->evn.accident_planet_i == pi)) {
+            } else if (g->evn.have_accident && (g->evn.accident_planet_i == pli)) {
                 str = game_str_pl_accident;
             } else {
                 lbxfont_select(2, 1, 0, 0);
@@ -191,9 +194,9 @@ static void planets_draw_cb(void *vptr)
     }
 
     lbxfont_select(2, 6, 0, 0);
-    game_print_prod_of_total(g, e->ship_maint_bc, buf);
+    game_print_prod_of_total(g, d->api, e->ship_maint_bc, buf);
     lbxfont_print_str_right(59, 174, buf, UI_SCREEN_W);
-    game_print_prod_of_total(g, e->bases_maint_bc, buf);
+    game_print_prod_of_total(g, d->api, e->bases_maint_bc, buf);
     lbxfont_print_str_right(59, 185, buf, UI_SCREEN_W);
 
     v = 0;
@@ -209,7 +212,7 @@ static void planets_draw_cb(void *vptr)
     lbxfont_print_str_right(116, 185, buf, UI_SCREEN_W);
     sprintf(buf, "%i %s", e->total_trade_bc, game_str_bc);
     lbxfont_print_str_right(195, 174, buf, UI_SCREEN_W);
-    sprintf(buf, "%i %s", e->total_production_bc / 10, game_str_bc);
+    sprintf(buf, "%i %s", e->total_production_bc, game_str_bc);
     lbxfont_print_str_right(195, 185, buf, UI_SCREEN_W);
 
     lbxfont_select_set_12_1(5, 8, 0, 0);
@@ -226,11 +229,11 @@ static void planets_transfer_draw_cb(void *vptr)
     const int x = 100, y = 50;
     char buf[64];
 
-    hw_video_copy_back_from_page2();
+    vgabuf_copy_back_from_page2();
     lbxgfx_draw_frame(x, y, d->gfx_transfer, UI_SCREEN_W);
     ui_draw_filled_rect(x + 14, y + 35, x + 64, y + 38, 0x2f);
     if (d->amount_trans > 0) {
-        ui_draw_line_3h(x + 14, y + 35, x + 13 + d->amount_trans / 2, 0x74);
+        ui_draw_slider(x + 14, y + 35, x + 13 + d->amount_trans / 2, 0x74);
     }
     sprintf(buf, "%s %s", game_str_pl_resto, p->name);
     lbxfont_select(0, 0xd, 0, 0);
@@ -265,7 +268,7 @@ static void ui_planets_transfer(struct planets_data_s *d)
     lbxgfx_draw_frame(292, 176, ui_data.gfx.starmap.reprtbut_down, UI_SCREEN_W);
     lbxgfx_draw_frame(256, 181, d->gfx_but_ok, UI_SCREEN_W);
     lbxgfx_draw_frame(209, 181, d->gfx_but_trans, UI_SCREEN_W);
-    hw_video_copy_back_to_page2();
+    vgabuf_copy_back_to_page2();
 
     prod = p->prod_after_maint - p->reserve;
     SETMAX(prod, 0);
@@ -276,11 +279,11 @@ static void ui_planets_transfer(struct planets_data_s *d)
     }
 
     uiobj_table_clear();
-    oi_cancel = uiobj_add_t0(x + 10, y + 47, "", ui_data.gfx.starmap.reloc_bu_cancel, MOO_KEY_LEFT, -1); /* FIXME key == "\x01xb" ?? */
-    oi_accept = uiobj_add_t0(x + 66, y + 47, "", ui_data.gfx.starmap.reloc_bu_accept, MOO_KEY_SPACE, -1);
-    /*oi_slider =*/ uiobj_add_slider(x + 14, y + 35, 0, 100, 0, 100, 50, 9, &d->amount_trans, MOO_KEY_UNKNOWN, -1);
-    oi_minus = uiobj_add_mousearea(x + 10, y + 33, x + 12, y + 41, MOO_KEY_UNKNOWN, -1);
-    oi_plus = uiobj_add_mousearea(x + 66, y + 33, x + 70, y + 41, MOO_KEY_UNKNOWN, -1);
+    oi_cancel = uiobj_add_t0(x + 10, y + 47, "", ui_data.gfx.starmap.reloc_bu_cancel, MOO_KEY_LEFT); /* FIXME key == "\x01xb" ?? */
+    oi_accept = uiobj_add_t0(x + 66, y + 47, "", ui_data.gfx.starmap.reloc_bu_accept, MOO_KEY_SPACE);
+    /*oi_slider =*/ uiobj_add_slider(x + 14, y + 35, 0, 100, 0, 100, 50, 9, &d->amount_trans, MOO_KEY_UNKNOWN);
+    oi_minus = uiobj_add_mousearea(x + 10, y + 33, x + 12, y + 41, MOO_KEY_UNKNOWN);
+    oi_plus = uiobj_add_mousearea(x + 66, y + 33, x + 70, y + 41, MOO_KEY_UNKNOWN);
     oi_equals = uiobj_add_inputkey(MOO_KEY_EQUALS);
 
     uiobj_set_callback_and_delay(planets_transfer_draw_cb, d, 1);
@@ -334,7 +337,7 @@ void ui_planets(struct game_s *g, player_id_t active_player)
     uiobj_set_help_id(37);
 again:
     flag_trans = false;
-    game_update_production(g); /* XXX this probably needed for alt-moola */
+    game_update_production(g); /* this is needed for transfers and alt-moola */
 
     d.g = g;
     d.api = active_player;
@@ -420,9 +423,9 @@ again:
         ui_cursor_setup_area(1, &ui_cursor_area_tbl[flag_trans ? 9 : 0]);
         if (!flag_done) {
             uiobj_table_set_last(oi_alt_moola);
-            oi_up = uiobj_add_t0(292, 159, "", ui_data.gfx.starmap.reprtbut_up, MOO_KEY_COMMA, -1);
-            oi_down = uiobj_add_t0(292, 176, "", ui_data.gfx.starmap.reprtbut_down, MOO_KEY_PERIOD, -1);
-            oi_ok = uiobj_add_t0(256, 181, "", d.gfx_but_ok, MOO_KEY_o, -1);
+            oi_up = uiobj_add_t0(292, 159, "", ui_data.gfx.starmap.reprtbut_up, MOO_KEY_COMMA);
+            oi_down = uiobj_add_t0(292, 176, "", ui_data.gfx.starmap.reprtbut_down, MOO_KEY_PERIOD);
+            oi_ok = uiobj_add_t0(256, 181, "", d.gfx_but_ok, MOO_KEY_o);
             for (int i = 0; i < PLANETS_ON_SCREEN; ++i) {
                 int pi, y0, y1;
                 pi = i + d.pos;
@@ -430,17 +433,17 @@ again:
                     tbl_onscreen_planets[i] = d.planets[pi];
                     y0 = 21 + i * 11;
                     y1 = y0 + 8;
-                    oi_tbl_planets[i] = uiobj_add_mousearea(7, y0, 248, y1, MOO_KEY_UNKNOWN, -1);
+                    oi_tbl_planets[i] = uiobj_add_mousearea(7, y0, 248, y1, MOO_KEY_UNKNOWN);
                 }
             }
             oi_trans = UIOBJI_INVALID;
             if (!flag_trans) {
                 if (g->eto[active_player].reserve_bc != 0) {
-                    oi_trans = uiobj_add_t0(209, 181, "", d.gfx_but_trans, MOO_KEY_t, -1);
+                    oi_trans = uiobj_add_t0(209, 181, "", d.gfx_but_trans, MOO_KEY_t);
                 }
-                /*oi_slider =*/ uiobj_add_slider(213, 160, 0, 200, 0, 200, 32, 9, &g->eto[active_player].tax, MOO_KEY_UNKNOWN, -1);
-                oi_minus = uiobj_add_mousearea(208, 157, 211, 165, MOO_KEY_UNKNOWN, -1);
-                oi_plus = uiobj_add_mousearea(247, 157, 251, 165, MOO_KEY_UNKNOWN, -1);
+                /*oi_slider =*/ uiobj_add_slider(213, 160, 0, 200, 0, 200, 32, 9, &g->eto[active_player].tax, MOO_KEY_UNKNOWN);
+                oi_minus = uiobj_add_mousearea(208, 157, 211, 165, MOO_KEY_UNKNOWN);
+                oi_plus = uiobj_add_mousearea(247, 157, 251, 165, MOO_KEY_UNKNOWN);
             } else {
                 oi_minus = UIOBJI_INVALID;
                 oi_plus = UIOBJI_INVALID;

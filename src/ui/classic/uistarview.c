@@ -150,6 +150,7 @@ static void starview_draw_cb(void *vptr)
         lbxfont_print_str_right(284, 169, game_str_sv_waste, UI_SCREEN_W);
         lbxfont_print_str_right(284, 179, game_str_sv_pop, UI_SCREEN_W);
         lbxfont_print_str_right(284, 189, game_str_sv_growth, UI_SCREEN_W);
+        lbxfont_select(0, 0xd, 0, 0);
         lbxfont_print_num_right(308, 149, p->max_pop3, UI_SCREEN_W);
         lbxfont_print_num_right(308, 159, s->factories, UI_SCREEN_W);
         lbxfont_print_num_right(308, 169, p->waste, UI_SCREEN_W);
@@ -202,7 +203,7 @@ static void starview_draw_cb(void *vptr)
                     break;
             }
             sprintf(buf, "%s:", str0);
-            lbxfont_select(5, 0xd, 0, 0);
+            lbxfont_select_set_12_4(5, 0xd, 0, 0);
             lbxfont_print_str_normal(8, y0, buf, UI_SCREEN_W);
             sprintf(buf, "%s %s", str1, str2);
             lbxfont_select_set_12_4(5, 0xa, 0, 0);
@@ -217,7 +218,7 @@ static void starview_draw_cb(void *vptr)
             sprintf(buf, "%s:", game_str_sv_pg1[i]);
             lbxfont_select_set_12_4(5, 0xd, 0, 0);
             lbxfont_print_str_normal(8, y0, buf, UI_SCREEN_W);
-            sprintf(buf, "%s %s", game_str_sv_popgr, game_str_sv_pg1[i]);
+            sprintf(buf, "%s %s", game_str_sv_popgr, game_str_sv_pg2[i]);
             lbxfont_select_set_12_4(5, 0xa, 0, 0);
             lbxfont_print_str_split(80, y0, 110, buf, 0, UI_SCREEN_W, UI_SCREEN_H);
         }
@@ -296,7 +297,7 @@ void ui_starview(struct game_s *g, player_id_t pi)
     starview_load_data(&d);
     uiobj_set_callback_and_delay(starview_draw_cb, &d, 4);
     uiobj_table_clear();
-    uiobj_add_mousearea(0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, MOO_KEY_UNKNOWN, -1);
+    uiobj_add_mousearea(UI_SCREEN_LIMITS, MOO_KEY_UNKNOWN);
     uiobj_set_help_id(34);
     uiobj_set_downcount(1);
     while (!flag_done) {

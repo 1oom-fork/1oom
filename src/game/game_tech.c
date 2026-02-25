@@ -16,17 +16,18 @@
 #include "log.h"
 #include "rnd.h"
 #include "types.h"
-#include "util.h"
 
 /* -------------------------------------------------------------------------- */
 
-const uint8_t tbl_tech_mul_hmm1[] = {
+#define RESEARCH_D0_PTR(ga_, f_, t_)   ((const uint8_t *)&((ga_)->research.d0[((f_) * 50 + (t_) - 1) * 6]))
+
+const uint8_t tech_reduce_50percent_per_10pts[] = {
     0, 100, 93, 87, 81, 76, 71, 66, 62, 58, 54, 50, 47, 44, 41, 38,
     35, 33, 31, 29, 27, 25, 23, 22, 20, 19, 18, 16, 15, 14, 13, 13,
-    12, 11, 10, 9, 9, 8, 8, 7, 7, 6, 6, 5, 5, 5, 4, 4, 4, 4
+    12, 11, 10, 9, 9, 8, 8, 7, 7, 6, 6, 5, 5, 5, 4, 4, 4, 4, 3, 3
 };
 
-const uint8_t tbl_tech_mul_hmm2[] = {
+const uint8_t tech_reduce_25percent_per_10pts[] = {
     100, 97, 94, 92, 89, 87, 84, 82, 79, 77, 75, 73, 71, 69, 67, 65,
     63, 61, 60, 58, 56, 55, 53, 52, 50, 49, 47, 46, 45, 43, 42, 41,
     40, 39, 38, 37, 36, 35, 34, 33, 32, 31, 30, 29, 28, 27, 27, 26,
@@ -46,7 +47,7 @@ static uint8_t find_byte_in_tbl(uint8_t b, const uint8_t *tbl, uint32_t len)
     return 0;
 }
 
-static uint16_t get_base_cost_mod_armor(struct game_s *g, int player_i, int percent)
+static uint16_t get_base_cost_mod_armor(const struct game_s *g, int player_i, int percent)
 {
     uint16_t tech_i = 0;
     uint8_t mult;
@@ -59,47 +60,47 @@ static uint16_t get_base_cost_mod_armor(struct game_s *g, int player_i, int perc
         --tech_i;
     }
     if (percent < 50) {
-        mult = tbl_tech_mul_hmm1[percent];
+        mult = tech_reduce_50percent_per_10pts[percent];
     } else {
         mult = 3;
     }
     return ((tbl_shiptech_armor[tech_i].cost[SHIP_HULL_LARGE] + tbl_shiptech_hull[SHIP_HULL_LARGE].cost) * mult) / 1500;
 }
 
-static uint16_t get_base_cost_mod_weap(struct game_s *g, int tech_i, int percent)
+static uint16_t get_base_cost_mod_weap(const struct game_s *g, int tech_i, int percent)
 {
     uint16_t mult;
     if (percent < 50) {
-        mult = tbl_tech_mul_hmm1[percent] * 9;
+        mult = tech_reduce_50percent_per_10pts[percent] * 9;
     } else {
         mult = 3 * 9;
     }
     return (tbl_shiptech_weap[tech_i].cost * mult) / 1000;
 }
 
-static uint16_t get_base_cost_mod_shield(struct game_s *g, int tech_i, int percent)
+static uint16_t get_base_cost_mod_shield(const struct game_s *g, int tech_i, int percent)
 {
     uint16_t mult;
     if (percent < 50) {
-        mult = tbl_tech_mul_hmm1[percent];
+        mult = tech_reduce_50percent_per_10pts[percent];
     } else {
         mult = 3;
     }
     return (tbl_shiptech_shield[tech_i].cost[SHIP_HULL_LARGE] * mult) / 1000 + tbl_shiptech_shield[tech_i].power[SHIP_HULL_LARGE] / 10;
 }
 
-static uint16_t get_base_cost_mod_comp(struct game_s *g, int tech_i, int percent)
+static uint16_t get_base_cost_mod_comp(const struct game_s *g, int tech_i, int percent)
 {
     uint16_t mult;
     if (percent < 50) {
-        mult = tbl_tech_mul_hmm1[percent];
+        mult = tech_reduce_50percent_per_10pts[percent];
     } else {
         mult = 3;
     }
     return (tbl_shiptech_comp[tech_i].cost[SHIP_HULL_LARGE] * mult) / 1000 + tbl_shiptech_comp[tech_i].power[SHIP_HULL_LARGE] / 10;
 }
 
-static uint16_t get_base_cost_mod_jammer(struct game_s *g, int player_i, int percent)
+static uint16_t get_base_cost_mod_jammer(const struct game_s *g, int player_i, int percent)
 {
     uint16_t tech_i = 0;
     uint8_t mult;
@@ -109,17 +110,17 @@ static uint16_t get_base_cost_mod_jammer(struct game_s *g, int player_i, int per
         }
     }
     if (percent < 50) {
-        mult = tbl_tech_mul_hmm1[percent];
+        mult = tech_reduce_50percent_per_10pts[percent];
     } else {
         mult = 3;
     }
     return (tbl_shiptech_jammer[tech_i].cost[SHIP_HULL_LARGE] * mult) / 1000 + tbl_shiptech_jammer[tech_i].power[SHIP_HULL_LARGE] / 10;
 }
 
-static uint8_t find_best_tech_type(BOOLVEC_PTRPARAMI(tbl), int base, int step, int num)
+static uint8_t find_best_tech_type(BOOLVEC_PTRPARAMI(tbl), int base, int step, int last)
 {
     int best = 0;
-    for (int i = base; i < num; i += step) {
+    for (int i = base; i <= last; i += step) {
         if (BOOLVEC_IS1(tbl, i)) {
             best = i;
         }
@@ -127,7 +128,7 @@ static uint8_t find_best_tech_type(BOOLVEC_PTRPARAMI(tbl), int base, int step, i
     return (uint8_t)best;
 }
 
-static void game_tech_add_newtech(struct game_s *g, player_id_t player, tech_field_t field, uint8_t tech, uint8_t source, int a8, int aa, bool frame)
+static void game_tech_add_newtech(struct game_s *g, player_id_t player, tech_field_t field, uint8_t tech, techsource_t source, int a8, player_id_t stolen_from, bool frame)
 {
     newtechs_t *nts = &(g->evn.newtech[player]);
     int num = nts->num;
@@ -137,7 +138,7 @@ static void game_tech_add_newtech(struct game_s *g, player_id_t player, tech_fie
         nt->tech = tech;
         nt->source = source;
         nt->v06 = a8;
-        nt->v08 = aa;
+        nt->stolen_from = stolen_from;
         nt->frame = frame;
         nts->num = num + 1;
     }
@@ -162,7 +163,7 @@ uint8_t game_tech_player_has_tech(const struct game_s *g, int field_i, int tech_
     return find_byte_in_tbl(tech_i, p, len);
 }
 
-uint8_t game_tech_player_best_tech(struct game_s *g, int field_i, int tech_i_base, int tech_i_step, int tech_i_max, int player_i)
+uint8_t game_tech_player_best_tech(const struct game_s *g, int field_i, int tech_i_base, int tech_i_step, int tech_i_max, int player_i)
 {
     uint8_t tech_best = 0;
     for (int tech_i = (tech_i_base >= 2) ? tech_i_base : tech_i_step; tech_i < tech_i_max; tech_i += tech_i_step) {
@@ -173,12 +174,12 @@ uint8_t game_tech_player_best_tech(struct game_s *g, int field_i, int tech_i_bas
     return tech_best;
 }
 
-uint8_t game_tech_player_best_engine(struct game_s *g, int player_i)
+uint8_t game_tech_player_best_engine(const struct game_s *g, int player_i)
 {
     return game_tech_player_best_tech(g, TECH_FIELD_PROPULSION, 0, 6, 50, player_i) + 3;
 }
 
-uint16_t game_get_base_cost(struct game_s *g, int player_i)
+uint16_t game_get_base_cost(const struct game_s *g, int player_i)
 {
     const uint8_t *p = g->eto[player_i].tech.percent;
     const empiretechorbit_t *e = &(g->eto[player_i]);
@@ -294,11 +295,11 @@ uint8_t game_get_best_jammer(const struct game_s *g, player_id_t player_i, int t
 
 void game_update_tech_util(struct game_s *g)
 {
-    BOOLVEC_TBL_DECLARE(tbl_techcompl, TECH_FIELD_NUM, 50);
+    BOOLVEC_TBL_DECLARE(tbl_techcompl, TECH_FIELD_NUM, 0x96);
     for (player_id_t pi = PLAYER_0; pi < g->players; ++pi) {
         empiretechorbit_t *e = &(g->eto[pi]);
         uint8_t b, tech_i;
-        BOOLVEC_TBL_CLEAR(tbl_techcompl, TECH_FIELD_NUM, 50);
+        BOOLVEC_TBL_CLEAR(tbl_techcompl, TECH_FIELD_NUM, 0x96); /* NOTE: MOO1 clears 41h */
         for (tech_field_t field_i = TECH_FIELD_COMPUTER; field_i < TECH_FIELD_NUM; ++field_i) {
             uint8_t *p = g->srd[pi].researchcompleted[field_i];
             uint32_t len = e->tech.completed[field_i];
@@ -466,7 +467,23 @@ void game_update_tech_util(struct game_s *g)
     }
 }
 
-void game_tech_get_name(const struct game_aux_s *gaux, tech_field_t field, int tech, char *buf)
+tech_group_t game_tech_get_group(const struct game_aux_s *gaux, tech_field_t field, int tech)
+{
+    return RESEARCH_D0_PTR(gaux, field, tech)[0];
+}
+
+uint8_t game_tech_get_tier(const struct game_aux_s *gaux, tech_field_t field, int tech)
+{
+    const uint8_t *p = RESEARCH_D0_PTR(gaux, field, tech);
+    return (p[0] == TECH_GROUP_UNUSED) ? 0 : p[1];
+}
+
+uint8_t game_tech_get_gfx_i(const struct game_aux_s *gaux, tech_field_t field, int tech)
+{
+    return RESEARCH_D0_PTR(gaux, field, tech)[2];
+}
+
+const char *game_tech_get_name(const struct game_aux_s *gaux, tech_field_t field, int tech, char *buf)
 {
     if (tech == 0) {
         sprintf(buf, "%s %s", game_str_tbl_te_field[field], game_str_te_techno);
@@ -475,19 +492,20 @@ void game_tech_get_name(const struct game_aux_s *gaux, tech_field_t field, int t
     } else if (tech == -1) {
         strcpy(buf, game_str_tbl_st_weap[WEAPON_NUCLEAR_BOMB - 1]);
     } else if (tech > 50) {
-        sprintf(buf, "%s %s %s %s", game_str_te_adv, game_str_tbl_te_field[field], game_str_te_tech, game_str_tbl_roman[tech / 5]);
+        sprintf(buf, "%s %s %s %s", game_str_te_adv, game_str_tbl_te_field[field], game_str_te_tech, game_str_tbl_roman[(tech - 50) / 5]);
     } else {
-        const uint8_t *p = &(gaux->research.d0[(field * 50 + tech - 1) * 6]);
-        if (p[0] != 0xff) {
+        const uint8_t *p = RESEARCH_D0_PTR(gaux, field, tech);
+        if (p[0] != TECH_GROUP_UNUSED) {
             int offs = GET_LE_16(&p[4]);
             strcpy(buf, &(gaux->research.names[offs]));
         } else {
             buf[0] = '\0';
         }
     }
+    return buf;
 }
 
-void game_tech_get_descr(const struct game_aux_s *gaux, tech_field_t field, int tech, char *buf)
+const char *game_tech_get_descr(const struct game_aux_s *gaux, tech_field_t field, int tech, char *buf)
 {
     if (tech == 0) {
         buf[0] = '\0';
@@ -500,10 +518,12 @@ void game_tech_get_descr(const struct game_aux_s *gaux, tech_field_t field, int 
     } else {
         strcpy(buf, &(gaux->research.descr[(field * 50 + tech - 1) * RESEARCH_DESCR_LEN]));
     }
+    return buf;
 }
 
-int game_tech_current_research_percent1(struct empiretechorbit_s *e, tech_field_t field)
+int game_tech_current_research_percent1(const struct game_s *g, player_id_t player_i, tech_field_t field)
 {
+    const empiretechorbit_t *e = &(g->eto[player_i]);
     uint32_t cost;
     int slider, invest, t1, t2, t3, percent;
     cost = e->tech.cost[field];
@@ -520,8 +540,9 @@ int game_tech_current_research_percent1(struct empiretechorbit_s *e, tech_field_
     return percent;
 }
 
-int game_tech_current_research_percent2(struct empiretechorbit_s *e, tech_field_t field)
+int game_tech_current_research_percent2(const struct game_s *g, player_id_t player_i, tech_field_t field)
 {
+    const empiretechorbit_t *e = &(g->eto[player_i]);
     uint32_t cost;
     int slider, invest, t1, t2, t3;
     cost = e->tech.cost[field];
@@ -543,7 +564,7 @@ int game_tech_current_research_percent2(struct empiretechorbit_s *e, tech_field_
     }
 }
 
-void game_tech_get_new(struct game_s *g, player_id_t player, tech_field_t field, uint8_t tech, uint8_t source, int a8, int aa, bool flag_frame)
+void game_tech_get_new(struct game_s *g, player_id_t player, tech_field_t field, uint8_t tech, techsource_t source, int a8, player_id_t stolen_from, bool flag_frame)
 {
     empiretechorbit_t *e = &(g->eto[player]);
     shipresearch_t *srd = &(g->srd[player]);
@@ -562,7 +583,7 @@ void game_tech_get_new(struct game_s *g, player_id_t player, tech_field_t field,
             if (IS_HUMAN(g, player)) {
                 e->tech.project[field] = 0;
                 if (source == 4) {
-                    game_tech_add_newtech(g, player, field, tech, source, a8, aa, flag_frame);
+                    game_tech_add_newtech(g, player, field, tech, source, a8, stolen_from, flag_frame);
                 }
             } else {
                 /*6374b*/
@@ -585,7 +606,7 @@ void game_tech_get_new(struct game_s *g, player_id_t player, tech_field_t field,
             }
         }
         if (IS_HUMAN(g, player)) {
-            game_tech_add_newtech(g, player, field, tech, source, a8, aa, flag_frame);
+            game_tech_add_newtech(g, player, field, tech, source, a8, stolen_from, flag_frame);
         }
         /*63899*/
         if (e->tech.project[field] == tech) {
@@ -613,7 +634,7 @@ int game_tech_get_next_techs(const struct game_s *g, player_id_t player, tech_fi
     if (len == 1) {
         maxtier = 1;
     } else {
-        maxtier = tmax / 5 + 2;
+        maxtier = (tmax - 1) / 5 + 2;
         SETMIN(maxtier, 10);
     }
     num = 0;
@@ -708,16 +729,14 @@ void game_tech_research(struct game_s *g)
             td->percent[field] = game_tech_get_field_percent(g, player, field);
             cost = td->cost[field];
             if ((cost != 0) && (slider != 0) && (total_research != 0)) {
-                /*7dd2*/
                 if (cost < invest) {
                     int v;
                     v = ((invest - cost) * 250) / cost;
                     if (rnd_1_n(500, &g->seed) <= v) {
-                        game_tech_get_new(g, player, field, td->project[field], 0, game_planet_get_random(g, player), 0, false);
+                        game_tech_get_new(g, player, field, td->project[field], TECHSOURCE_RESEARCH, game_planet_get_random(g, player), 0, false);
                     }
                 }
             } else {
-                /*7eb2*/
                 td->investment[field] = (invest * 9) / 10;
             }
         }
@@ -730,7 +749,7 @@ void game_tech_get_orion_loot(struct game_s *g, player_id_t player)
     empiretechorbit_t *e = &(g->eto[player]);
     techdata_t *td = &(e->tech);
     uint8_t percent[TECH_FIELD_NUM];
-    game_tech_get_new(g, player, TECH_FIELD_WEAPON, TECH_WEAP_DEATH_RAY, 2, -PLANETS_MAX, 0, false);    /* HACK */
+    game_tech_get_new(g, player, TECH_FIELD_WEAPON, TECH_WEAP_DEATH_RAY, TECHSOURCE_FOUND, -PLANETS_MAX, 0, false);    /* HACK */
     for (tech_field_t f = 0; f < TECH_FIELD_NUM; ++f) {
         percent[f] = MIN(td->percent[f] + 25, 50);
     }
@@ -738,11 +757,11 @@ void game_tech_get_orion_loot(struct game_s *g, player_id_t player)
         for (int loops = 0; loops < 200; ++loops) {
             tech_field_t field;
             uint8_t tech;
-            const uint8_t *p;
+            tech_group_t group;
             field = rnd_0_nm1(TECH_FIELD_NUM, &g->seed);
             tech = rnd_1_n(31, &g->seed) + 19;
-            p = RESEARCH_D0_PTR(g->gaux, field, tech); /* FIXME or tech - 1 ? */
-            if ((percent[field] >= tech) && (p[0] != 0xff)) {
+            group = game_tech_get_group(g->gaux, field, tech);
+            if ((percent[field] >= tech) && (group != TECH_GROUP_UNUSED)) {
                 const uint8_t *rc;
                 bool have_tech;
                 rc = &(g->srd[player].researchcompleted[field][0]);
@@ -754,7 +773,7 @@ void game_tech_get_orion_loot(struct game_s *g, player_id_t player)
                     }
                 }
                 if (!have_tech) {
-                    game_tech_get_new(g, player, field, tech, 2, NEWTECH_V06_ORION, 0, false);
+                    game_tech_get_new(g, player, field, tech, TECHSOURCE_FOUND, NEWTECH_V06_ORION, 0, false);
                     break;
                 }
             }
@@ -777,11 +796,11 @@ void game_tech_get_artifact_loot(struct game_s *g, uint8_t planet, player_id_t p
         for (int loops = 0; loops < 200; ++loops) {
             tech_field_t field;
             uint8_t tech;
-            const uint8_t *p;
+            tech_group_t group;
             field = rnd_0_nm1(TECH_FIELD_NUM, &g->seed);
             tech = rnd_1_n(30, &g->seed);
-            p = RESEARCH_D0_PTR(g->gaux, field, tech); /* FIXME or tech - 1 ? */
-            if ((percent[field] >= tech) && (p[0] != 0xff)) {
+            group = game_tech_get_group(g->gaux, field, tech);
+            if ((percent[field] >= tech) && (group != TECH_GROUP_UNUSED)) {
                 const uint8_t *rc;
                 bool have_tech;
                 rc = &(g->srd[player].researchcompleted[field][0]);
@@ -793,7 +812,7 @@ void game_tech_get_artifact_loot(struct game_s *g, uint8_t planet, player_id_t p
                     }
                 }
                 if (!have_tech) {
-                    game_tech_get_new(g, player, field, tech, 2, -(planet + 1), 0, false);  /* HACK */
+                    game_tech_get_new(g, player, field, tech, TECHSOURCE_FOUND, -(planet + 1), 0, false);  /* HACK */
                     break;
                 }
             }
@@ -801,11 +820,11 @@ void game_tech_get_artifact_loot(struct game_s *g, uint8_t planet, player_id_t p
     }
 }
 
-void game_tech_ai_share(struct game_s *g)
+void game_tech_final_war_share(struct game_s *g)
 {
     for (tech_field_t field_i = TECH_FIELD_COMPUTER; field_i < TECH_FIELD_NUM; ++field_i) {
-        BOOLVEC_DECLARE(tbl_techcompl, 60);
-        BOOLVEC_CLEAR(tbl_techcompl, 60);
+        BOOLVEC_DECLARE(tbl_techcompl, 0x96);
+        BOOLVEC_CLEAR(tbl_techcompl, 0x96); /* NOTE: MOO1 clears 60 */
         for (player_id_t pi = PLAYER_0; pi < g->players; ++pi) {
             if (IS_AI(g, pi)) {
                 uint8_t *p = g->srd[pi].researchcompleted[field_i];

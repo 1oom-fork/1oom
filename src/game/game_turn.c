@@ -17,6 +17,7 @@
 #include "game_election.h"
 #include "game_end.h"
 #include "game_event.h"
+#include "game_fix.h"
 #include "game_fleet.h"
 #include "game_ground.h"
 #include "game_misc.h"
@@ -27,19 +28,16 @@
 #include "game_stat.h"
 #include "game_str.h"
 #include "game_tech.h"
+#include "game_util.h"
 #include "log.h"
 #include "rnd.h"
 #include "types.h"
 #include "ui.h"
-#include "util.h"
 #include "util_math.h"
 
 /* -------------------------------------------------------------------------- */
 
-/* FIXME make these a stack allocated struct */
-static int temp_turn_hmm3;
-
-/* -------------------------------------------------------------------------- */
+int copyprot_status = 0;
 
 static void game_turn_limit_ships(struct game_s *g)
 {
@@ -60,20 +58,18 @@ static void game_turn_limit_ships(struct game_s *g)
     game_remove_empty_fleets(g);
 }
 
-static void game_turn_countdown_hmm28e(struct game_s *g)
+static void game_turn_countdown_ceasefire(struct game_s *g)
 {
     for (player_id_t j = PLAYER_0; j < g->players; ++j) {
         for (player_id_t i = PLAYER_0; i < g->players; ++i) {
-            int16_t v;
-            v = g->evn.hmm28e[j][i] - 1;
-            if (v >= 0) {
-                g->evn.hmm28e[j][i] = v;
+            if (g->evn.ceasefire[j][i] > 0) {
+                --g->evn.ceasefire[j][i];
             }
         }
     }
 }
 
-static void game_turn_update_pp_hmm1(struct game_s *g)
+static void game_turn_update_mood_blunder(struct game_s *g)
 {
     for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         empiretechorbit_t *e = &(g->eto[i]);
@@ -82,38 +78,38 @@ static void game_turn_update_pp_hmm1(struct game_s *g)
                 int16_t v;
                 v = e->diplo_type[j];
                 if ((v >= 4) && (v <= 11)) {
-                    e->hmm084[j] = v;
+                    e->blunder[j] = v;
                 } else if ((v >= 42) && (v <= 49)) {
-                    e->hmm084[j] = v - 30;
+                    e->blunder[j] = v - 30;
                 } else if ((v >= 50) && (v <= 57)) {
-                    e->hmm084[j] = v - 46;
+                    e->blunder[j] = v - 46;
                 }
                 if (e->treaty[j] != TREATY_FINAL_WAR) {
-                    v = e->hmm0a8[j];
+                    v = e->mood_treaty[j];
                     if (v < 0) {
                         v += rnd_1_n(5, &g->seed);
                     }
                     if (v < 50) {
                         v += rnd_1_n(5, &g->seed);
                     }
-                    e->hmm0a8[j] = v;
-                    v = e->hmm0b4[j];
+                    e->mood_treaty[j] = v;
+                    v = e->mood_trade[j];
                     if (v < 0) {
                         v += rnd_1_n(5, &g->seed);
                     }
                     if (v < 50) {
                         v += rnd_1_n(5, &g->seed);
                     }
-                    e->hmm0b4[j] = v;
-                    v = e->hmm0c0[j];
+                    e->mood_trade[j] = v;
+                    v = e->mood_tech[j];
                     if (v < 0) {
                         v += rnd_1_n(5, &g->seed);
                     }
                     if (v < 50) {
                         v += rnd_1_n(5, &g->seed);
                     }
-                    e->hmm0c0[j] = v;
-                    v = e->hmm0cc[j];
+                    e->mood_tech[j] = v;
+                    v = e->mood_peace[j];
                     if (v < 0) {
                         v += rnd_1_n(5, &g->seed);
                     }
@@ -121,7 +117,7 @@ static void game_turn_update_pp_hmm1(struct game_s *g)
                         v += rnd_1_n(5, &g->seed);
                     }
                     SETRANGE(v, -200, 200);
-                    e->hmm0cc[j] = v;
+                    e->mood_peace[j] = v;
                 }
             }
         }
@@ -175,7 +171,7 @@ static int game_turn_build_eco_sub1(int fact, int colonist_oper_fact, int pop1, 
 
 static inline void game_add_planet_to_eco_finished(struct game_s *g, uint8_t pli, player_id_t owner)
 {
-    BOOLVEC_SET1(g->planet[pli].finished, FINISHED_ECO2);
+    BOOLVEC_SET1(g->planet[pli].finished, FINISHED_SOILATMOS);
 }
 
 static void game_turn_build_eco(struct game_s *g)
@@ -186,7 +182,7 @@ static void game_turn_build_eco(struct game_s *g)
         owner = p->owner;
         p->pop_prev = (owner != PLAYER_NONE) ? p->pop : 0;
         if ((owner != PLAYER_NONE) && (p->type != PLANET_TYPE_NOT_HABITABLE) && (p->pop != 0)) {
-            empiretechorbit_t *e;
+            const empiretechorbit_t *e;
             int ecorestore, ecoprod;
             e = &(g->eto[owner]);
             {
@@ -195,17 +191,17 @@ static void game_turn_build_eco(struct game_s *g)
                 v = p->pop * e->colonist_oper_factories;
                 SETMIN(fact, v);
                 waste = (fact * e->ind_waste_scale) / 10;
-                p->waste += ((100 - ((waste * 100) / p->max_pop2)) * waste) / 100;
+                p->waste += ((100 - ((p->waste * 100) / p->max_pop2)) * waste) / 100;
             }
             if (p->unrest == PLANET_UNREST_REBELLION) {
                 p->waste = 0;
             }
+            ecorestore = (e->race != RACE_SILICOID) ? (p->waste / e->have_eco_restoration_n) : 0;
             p->waste += game_turn_build_eco_sub1(p->factories, e->colonist_oper_factories, p->pop, p->waste, p->max_pop2);
-            ecorestore = (e->race != RACE_SILICOID) ? e->have_eco_restoration_n : 0;
             ecoprod = (p->slider[PLANET_SLIDER_ECO] * p->prod_after_maint) / 100;
             if (e->race != RACE_SILICOID) {
                 if (ecorestore > ecoprod) {
-                    p->waste -= ecorestore * ecoprod;
+                    p->waste -= e->have_eco_restoration_n * ecoprod;
                     ecoprod = 0;
                 } else {
                     ecoprod -= ecorestore;
@@ -251,9 +247,8 @@ static void game_turn_build_eco(struct game_s *g)
                         if ((p->max_pop1 / 20) % 5) {
                             v += 5;
                         }
-                        SETMIN(v, 5);
-                        p->max_pop1 += v;
-                        p->max_pop2 += v;
+                        SETMAX(v, 5);
+                        p->max_pop2 = p->max_pop1 + v;
                         p->max_pop3 += v;
                         SETMIN(p->max_pop3, (e->have_terraform_n + p->max_pop2));
                         SETMIN(p->max_pop3, game_num_max_pop);
@@ -273,9 +268,8 @@ static void game_turn_build_eco(struct game_s *g)
                         if ((p->max_pop1 / 10) % 5) {
                             v += 5;
                         }
-                        SETMIN(v, 5);
-                        p->max_pop1 += v;
-                        p->max_pop2 += v;
+                        SETMAX(v, 5);
+                        p->max_pop2 = p->max_pop1 + v;
                         p->max_pop3 += v;
                         SETMIN(p->max_pop3, (e->have_terraform_n + p->max_pop2));
                         SETMIN(p->max_pop3, game_num_max_pop);
@@ -320,22 +314,22 @@ static void game_turn_update_trade(struct game_s *g)
             empiretechorbit_t *e2 = &(g->eto[j]);
             uint16_t bc;
             bc = e->trade_bc[j];
-            if (bc != 0) {
-                if (BOOLVEC_IS0(e->within_frange, j)) {
+            if (bc != 0) {  /* MOO1 implicitly assumes (i != j) */
+                if (!IN_CONTACT(g, i, j)) {
                     e->trade_bc[j] = 0;
                     e->trade_percent[j] = 0;
-                    e->hmm288[j] = 0;
+                    e->trade_established_bc[j] = 0;
                 } else {
-                    uint16_t hmm;
+                    uint16_t estbc;
                     int16_t v;
-                    hmm = e->hmm288[j];
-                    if (hmm < bc) {
-                        hmm += bc / 10;
-                        SETMIN(hmm, bc);
-                        e->hmm288[j] = hmm;
-                        e2->hmm288[i] = hmm;
+                    estbc = e->trade_established_bc[j];
+                    if (estbc < bc) {   /* FIXME BUG? never true ; both are set to bc */
+                        estbc += bc / 10;
+                        SETMIN(estbc, bc);
+                        e->trade_established_bc[j] = estbc;
+                        e2->trade_established_bc[i] = estbc;
                     }
-                    v = (e->relation1[j] + 25) / 60;
+                    v = (rnd_1_n(200, &g->seed) + e->relation1[j] + 25) / 60;
                     SETMAX(v, 0);
                     ADDSATT(e->trade_percent[j], v, 100);
                     ADDSATT(e2->trade_percent[i], v, 100);
@@ -345,7 +339,7 @@ static void game_turn_update_trade(struct game_s *g)
     }
 }
 
-static void game_turn_diplo_hmm1(struct game_s *g)
+static void game_turn_diplo_adjust(struct game_s *g)
 {
     for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         empiretechorbit_t *e = &(g->eto[i]);
@@ -407,10 +401,11 @@ static void game_turn_diplo_hmm1(struct game_s *g)
                     v /= 2;
                 }
                 for (player_id_t j = PLAYER_0; j < g->players; ++j) {
-                    if (BOOLVEC_IS0(g->is_ai, j)) {
+                    if (IS_HUMAN(g, j)) {
                         continue;
                     }
-                    if (BOOLVEC_IS1(e->within_frange, j) && (e->treaty[j] == TREATY_ALLIANCE)) {
+                    if (IN_CONTACT(g, i, j) && (e->treaty[j] == TREATY_ALLIANCE)) {
+                        /* MOO1 does not check (i != j) here, but game_diplo_act does */
                         game_diplo_act(g, v, i, j, 12, 0, 0);
                     }
                 }
@@ -482,17 +477,17 @@ static void game_turn_build_def(struct game_s *g)
         owner = p->owner;
         if (owner != PLAYER_NONE) {
             empiretechorbit_t *e = &(g->eto[owner]);
-            int prod, toup;
-            prod = game_adjust_prod_by_special((p->slider[PLANET_SLIDER_DEF] * p->prod_after_maint) / 100, p->special);
-            prod += p->bc_to_base;
+            struct planet_prod_s prod;
+            int toup;
+            game_planet_get_def_prod(p, &prod);
             toup = cost_diff[owner] * p->missile_bases + p->bc_upgrade_base;
-            if (toup >= prod) {
-                toup -= prod;
+            if (toup >= prod.vtotal) {
+                toup -= prod.vtotal;
                 p->bc_upgrade_base = toup;
                 p->bc_to_base = 0;
             } else {
                 int tosh;
-                prod -= toup;
+                prod.vtotal -= toup;
                 p->bc_upgrade_base = 0;
                 tosh = e->planet_shield_cost - p->bc_to_shield;
                 SETMAX(tosh, 0);
@@ -500,30 +495,32 @@ static void game_turn_build_def(struct game_s *g)
                     tosh = 0;
                     p->bc_to_shield = 0;
                 }
-                if (prod <= tosh) { /* FIXME just "<" ? */
-                    p->bc_to_shield += prod;
-                    prod = 0;
+                if (prod.vtotal <= tosh) { /* FIXME just "<" ? */
+                    p->bc_to_shield += prod.vtotal;
+                    prod.vtotal = 0;
                 } else {
-                    prod -= tosh;
+                    prod.vtotal -= tosh;
                     p->bc_to_shield = e->planet_shield_cost;
-                    while (prod >= cost_new[owner]) {
-                        prod -= cost_new[owner];
+                    while (prod.vtotal >= cost_new[owner]) {
+                        prod.vtotal -= cost_new[owner];
                         ++p->missile_bases;
                     }
                 }
-                p->bc_to_base = prod;
+                p->bc_to_base = prod.vtotal;
             }
             {
                 uint8_t newshield;
                 int curcost;
                 curcost = MIN(e->planet_shield_cost, p->bc_to_shield);
                 newshield = 0;
-                for (int i = 1; (i < PSHIELD_NUM) && (curcost >= game_num_pshield_cost[i]); ++i) {
+                for (int j = 1; (j < PSHIELD_NUM) && (curcost >= game_num_pshield_cost[j]); ++j) {
                     newshield += 5;
                 }
                 if (newshield != p->shield) {
                     p->shield = newshield;
-                    game_add_planet_to_shield_finished(g, i, owner);
+                    if (newshield == g->eto[owner].have_planet_shield) {
+                        game_add_planet_to_shield_finished(g, i, owner);
+                    }
                 }
             }
         }
@@ -558,47 +555,51 @@ static void game_turn_build_ship(struct game_s *g)
         if (owner != PLAYER_NONE) {
             empiretechorbit_t *e = &(g->eto[owner]);
             shipresearch_t *srd = &(g->srd[owner]);
-            int prod;
+            struct planet_prod_s prod;
             uint8_t si;
-            prod = game_adjust_prod_by_special((p->slider[PLANET_SLIDER_SHIP] * p->prod_after_maint) / 100, p->special);
-            prod += p->bc_to_ship;
-            if (p->slider[PLANET_SLIDER_SHIP] > 0) {
-                ++prod;
-            }
+            game_planet_get_ship_prod(p, &prod, true);
             si = p->buildship;
             if (si == BUILDSHIP_STARGATE) {
-                if (prod >= game_num_stargate_cost) {
+                if (prod.vtotal >= game_num_stargate_cost) {
                     p->have_stargate = true;
                     p->buildship = 0;
-                    p->bc_to_ship = prod - game_num_stargate_cost;
+                    p->bc_to_ship = prod.vtotal - game_num_stargate_cost;
                     game_add_planet_to_stargate_finished(g, i, owner);
                 } else {
-                    p->bc_to_ship = prod;
+                    p->bc_to_ship = prod.vtotal;
                 }
             } else {
                 shipdesign_t *sd = &(srd->design[si]);
-                int cost, shipnum;
+                shipcount_t shipnum;
+                int cost;
                 uint8_t dest;
                 cost = sd->cost;
                 shipnum = 0;
-                while (prod >= cost) {
+                while (prod.vtotal >= cost) {
                     ++shipnum;
-                    prod -= cost;
+                    prod.vtotal -= cost;
                 }
                 if ((shipnum + srd->shipcount[si]) > game_num_limit_ships_all) {
-                    shipnum = game_num_limit_ships_all - srd->shipcount[si];
+                    if (srd->shipcount[si] <= game_num_limit_ships_all) {
+                        shipnum = game_num_limit_ships_all - srd->shipcount[si];
+                    } else {
+                        shipnum = 0;
+                    }
                 }
-                SETMAX(shipnum, 0);
                 srd->shipcount[si] += shipnum;
                 dest = p->reloc;
                 if (dest == i) {
                     e->orbit[i].ships[si] += shipnum;
-                    BOOLVEC_SET1(p->finished, FINISHED_SHIP);
+                    if (shipnum > 0) {
+                        BOOLVEC_SET1(p->finished, FINISHED_SHIP);
+                    }
                 } else {
-                    game_send_fleet_reloc(g, owner, i, dest, si, shipnum);
+                    if (shipnum > 0) {
+                        game_send_fleet_reloc(g, owner, i, dest, si, shipnum);
+                    }
                 }
                 g->evn.new_ships[owner][si] += shipnum;
-                p->bc_to_ship = prod;
+                p->bc_to_ship = prod.vtotal;
             }
         }
     }
@@ -646,12 +647,12 @@ static void game_turn_build_ind(struct game_s *g)
             empiretechorbit_t *e;
             uint16_t fact, factold, num;
             uint8_t cost, bonus;
-            int prod, v;
+            struct planet_prod_s prod;
+            int v;
             e = &(g->eto[owner]);
             factold = fact = p->factories;
             cost = e->factory_adj_cost;
-            prod = game_adjust_prod_by_special((p->slider[PLANET_SLIDER_IND] * p->prod_after_maint) / 100, p->special);
-            prod += p->bc_to_factory;
+            game_planet_get_ind_prod(p, &prod);
             bonus = (e->race == RACE_MEKLAR) ? 2 : 0;
             v = e->colonist_oper_factories - p->pop_oper_fact - bonus;
             if (v > 0) {
@@ -659,18 +660,18 @@ static void game_turn_build_ind(struct game_s *g)
             } else {
                 v = 0;
             }
-            if ((prod / cost + fact) > (p->pop * p->pop_oper_fact)) {
-                p->bc_to_refit += prod;
+            if ((prod.vtotal / cost + fact) > (p->pop * p->pop_oper_fact)) {
+                p->bc_to_refit += prod.vtotal;
                 if (p->bc_to_refit >= v) {
                     p->pop_oper_fact = e->colonist_oper_factories;
-                    prod = p->bc_to_refit - v;
+                    prod.vtotal = p->bc_to_refit - v;
                     p->bc_to_refit = 0;
                 } else {
-                    prod = 0;
+                    prod.vtotal = 0;
                 }
             }
-            num = prod / cost;
-            p->bc_to_factory = prod % cost;
+            num = prod.vtotal / cost;
+            p->bc_to_factory = prod.vtotal % cost;
             v = p->max_pop3 * e->colonist_oper_factories;
             if (v < (fact + num)) {
                 v = (fact + num) - v;
@@ -701,8 +702,8 @@ static void game_turn_move_ships(struct game_s *g)
     bool local_multiplayer = g->gaux->local_players > 1, move_back = false;
     ctx = ui_gmap_basic_init(g, local_multiplayer);
     if (local_multiplayer) {
-        memcpy(g->gaux->move_temp->enroute, g->enroute, g->enroute_num);
-        memcpy(g->gaux->move_temp->transport, g->transport, g->transport_num);
+        memcpy(g->gaux->move_temp->enroute, g->enroute, g->enroute_num * sizeof(fleet_enroute_t));
+        memcpy(g->gaux->move_temp->transport, g->transport, g->transport_num * sizeof(transport_t));
         g->gaux->move_temp->crystal = g->evn.crystal;
         g->gaux->move_temp->amoeba = g->evn.amoeba;
     }
@@ -712,8 +713,8 @@ static void game_turn_move_ships(struct game_s *g)
             continue;
         }
         if (move_back) {
-            memcpy(g->enroute, g->gaux->move_temp->enroute, g->enroute_num);
-            memcpy(g->transport, g->gaux->move_temp->transport, g->transport_num);
+            memcpy(g->enroute, g->gaux->move_temp->enroute, g->enroute_num * sizeof(fleet_enroute_t));
+            memcpy(g->transport, g->gaux->move_temp->transport, g->transport_num * sizeof(transport_t));
             g->evn.crystal = g->gaux->move_temp->crystal;
             g->evn.amoeba = g->gaux->move_temp->amoeba;
         }
@@ -722,6 +723,7 @@ static void game_turn_move_ships(struct game_s *g)
         ui_gmap_basic_start_player(ctx, g->active_player);
         for (int frame = 0; (frame < 20) && flag_more; ++frame) {
             bool odd_frame;
+            game_update_visibility(g);
             odd_frame = frame & 1;
             ui_gmap_basic_start_frame(ctx, g->active_player);
             flag_more = false;
@@ -737,7 +739,7 @@ static void game_turn_move_ships(struct game_s *g)
                         p = &(g->planet[r->dest]);
                         x1 = p->x;
                         y1 = p->y;
-                        if (r->speed == 35) {
+                        if (r->speed == FLEET_SPEED_STARGATE) {
                             x = x1;
                             y = y1;
                         } else {
@@ -761,7 +763,7 @@ static void game_turn_move_ships(struct game_s *g)
                         p = &(g->planet[r->dest]);
                         x1 = p->x;
                         y1 = p->y;
-                        if (r->speed == 35) {
+                        if (r->speed == FLEET_SPEED_STARGATE) {
                             x = x1;
                             y = y1;
                         } else {
@@ -805,10 +807,7 @@ static void game_turn_move_ships(struct game_s *g)
             fleet_orbit_t *o;
             o = &(g->eto[r->owner].orbit[r->dest]);
             for (int j = 0; j < NUM_SHIPDESIGNS; ++j) {
-                uint32_t s;
-                s = o->ships[j] + r->ships[j];
-                SETMIN(s, game_num_limit_ships);
-                o->ships[j] = s;
+                o->ships[j] += r->ships[j];    /* BUG?: possible overflow */
             }
             util_table_remove_item_any_order(i, g->enroute, sizeof(fleet_enroute_t), g->enroute_num);
             --g->enroute_num;
@@ -821,7 +820,7 @@ static void game_turn_move_ships(struct game_s *g)
 #if 0
 static void game_turn_unrest_hmm1(struct game_s *g)
 {
-    /* TODO remove ; this does nothing except churn the rng! */
+    /* this does nothing except churn the rng! */
     int tbl1[PLAYER_NUM], tbl2[PLAYER_NUM];
     for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         tbl1[i] = 0;
@@ -866,7 +865,7 @@ static void game_turn_explore(struct game_s *g, uint8_t *planetptr, player_id_t 
                 if ((!flag_visible) && e->have_adv_scanner) {
                     for (int pli2 = 0; pli2 < g->galaxy_stars; ++pli2) {
                         const planet_t *p2 = &(g->planet[pli2]);
-                        if ((p->owner == i) && (util_math_dist_fast(p->x, p->y, p2->x, p2->y) <= game_num_adv_scan_range)) {
+                        if ((p2->owner == i) && (util_math_dist_fast(p->x, p->y, p2->x, p2->y) <= game_num_adv_scan_range)) {
                             flag_visible = true;
                             break;
                         }
@@ -907,16 +906,12 @@ static void game_turn_explore(struct game_s *g, uint8_t *planetptr, player_id_t 
                             }
                         }
                     }
-                    if (best_colonize == 200) {
-                        best_colonize = 0;
-                    }
-                    if (p->owner != PLAYER_NONE) {
-                        best_colonize = 0;
-                    }
-                    if (p->type == PLANET_TYPE_NOT_HABITABLE) {
-                        best_colonize = 0;
-                    }
-                    if (p->type < best_colonize) {
+                    if (0
+                      || (best_colonize == 200)
+                      || (p->owner != PLAYER_NONE)
+                      || (p->type == PLANET_TYPE_NOT_HABITABLE)
+                      || (p->type < best_colonize)
+                    ) {
                         best_colonize = 0;
                     }
                     was_explored = BOOLVEC_IS1(p->explored, i);
@@ -936,7 +931,6 @@ static void game_turn_explore(struct game_s *g, uint8_t *planetptr, player_id_t 
                             }
                         }
                     } else {
-                        /*c763*/
                         if (best_colonize != 0) {
                             p->owner = i;
                             p->pop = 2;
@@ -951,7 +945,7 @@ static void game_turn_explore(struct game_s *g, uint8_t *planetptr, player_id_t 
 
 static void game_turn_bomb_damage(struct game_s *g, uint8_t pli, player_id_t attacker, int *popdmgptr, int *factdmgptr, int *biodmgptr)
 {
-    const planet_t *p = &(g->planet[pli]);
+    planet_t *p = &(g->planet[pli]);
     const empiretechorbit_t *ea = &(g->eto[attacker]);
     const empiretechorbit_t *ed = &(g->eto[p->owner]);
     uint32_t tbl[WEAPON_NUM];
@@ -960,8 +954,10 @@ static void game_turn_bomb_damage(struct game_s *g, uint8_t pli, player_id_t att
     memset(tbl, 0, sizeof(tbl));
     for (int i = 0; i < ea->shipdesigns_num; ++i) {
         const shipdesign_t *sd = &(g->srd[attacker].design[i]);
-        SETMAX(maxcomp, sd->comp);
-        for (int j = 0; j < (WEAPON_SLOT_NUM - 1); ++j) { /* FIXME BUG -1 */
+        if (!game_fix_orbital_comp || (ea->orbit[pli].ships[i] != 0)) {
+            SETMAX(maxcomp, sd->comp);
+        }
+        for (int j = 0; j < (game_fix_orbital_weap_4 ? WEAPON_SLOT_NUM : (WEAPON_SLOT_NUM - 1)); ++j) {
             weapon_t wpnt = sd->wpnt[j];
             uint32_t v;
             v = ea->orbit[pli].ships[i] * sd->wpnn[j];
@@ -978,7 +974,7 @@ static void game_turn_bomb_damage(struct game_s *g, uint8_t pli, player_id_t att
     }
     complevel = (maxcomp - 1) * 2 + 6;
     SETRANGE(complevel, 1, 20);
-    for (int i = 0; i < WEAPON_CRYSTAL_RAY; ++i) {  /* FIXME BUG? excludes death ray and amoeba stream too */
+    for (int i = 0; i < (game_fix_orbital_weap_any ? WEAPON_NUM : WEAPON_CRYSTAL_RAY); ++i) {
         uint32_t vcur = tbl[i];
         if (vcur != 0) {
             const struct shiptech_weap_s *w = &(tbl_shiptech_weap[i]);
@@ -1005,8 +1001,7 @@ static void game_turn_bomb_damage(struct game_s *g, uint8_t pli, player_id_t att
                         }
                     }
                 } else {
-                    /*dcbb*/
-                    if (w->misstype == 0) {
+                    if (!game_fix_orbital_torpedo == (w->misstype == 0)) {
                         dmgmax /= 2;
                     }
                     dmgmax *= w->nummiss;
@@ -1063,12 +1058,10 @@ static void game_turn_bomb_damage(struct game_s *g, uint8_t pli, player_id_t att
         *popdmgptr = v;
     }
     {
-#if 0
         int v;
         v = p->max_pop3 - totalbio;
         SETMAX(v, 10);
-        p->max_pop3 = v;    /* WASBUG reduced before y/n */
-#endif
+        p->max_pop3 = v;    /* BUG reduced before y/n */
         *biodmgptr = totalbio;
     }
 }
@@ -1124,12 +1117,6 @@ static void game_turn_bomb(struct game_s *g)
                 if (flag_do_bomb && ((popdmg > 0) || (factdmg > 0))) { /* FIXME biodmg? */
                     p->pop -= popdmg;
                     p->factories -= factdmg;
-                    if (biodmg) {
-                        int v;
-                        v = p->max_pop3 - biodmg;
-                        SETMAX(v, 10);
-                        p->max_pop3 = v;
-                    }
                     SUBSAT0(p->rebels, popdmg / 2 + 1);
                     if (p->pop == 0) {
                         game_planet_destroy(g, pli, i);
@@ -1205,7 +1192,7 @@ static int game_turn_transport_shoot(struct game_s *g, uint8_t planet_i, player_
     }
     complevel = (bestcomp - speed) * 2 + 12;
     SETRANGE(complevel, 1, 20);
-    for (int i = 0; i < WEAPON_CRYSTAL_RAY; ++i) {  /* FIXME BUG? excludes death ray and amoeba stream too */
+    for (int i = 0; i < (game_fix_orbital_weap_any ? WEAPON_NUM : WEAPON_CRYSTAL_RAY); ++i) {
         uint32_t vcur = tbl[i];
         if (vcur != 0) {
             const struct shiptech_weap_s *w = &(tbl_shiptech_weap[i]);
@@ -1238,10 +1225,12 @@ static int game_turn_transport_shoot(struct game_s *g, uint8_t planet_i, player_
     {
         const uint8_t *rc = &(g->srd[rowner].researchcompleted[TECH_FIELD_CONSTRUCTION][0]);
         for (int i = 0; i < ed->tech.completed[TECH_FIELD_CONSTRUCTION]; ++i) {
-            const uint8_t *r;
-            r = RESEARCH_D0_PTR(g->gaux, TECH_FIELD_CONSTRUCTION, rc[i]);
-            if (r[0] == 7) {
-                bestarmor = r[1];
+            uint8_t tier;
+            tech_group_t group;
+            group = game_tech_get_group(g->gaux, TECH_FIELD_CONSTRUCTION, rc[i]);
+            tier = game_tech_get_tier(g->gaux, TECH_FIELD_CONSTRUCTION, rc[i]);
+            if (group == TECH_GROUP_ARMOR) {
+                bestarmor = tier;
             }
         }
     }
@@ -1278,7 +1267,7 @@ static void game_turn_transport(struct game_s *g)
             player_id_t owner;
             owner = r->owner;
             pop2 = pop3 = r->pop;
-            for (int j = 0; j < g->players; ++j) {
+            for (player_id_t j = PLAYER_0; j < g->players; ++j) {
                 treaty_t t;
                 if (j == owner) {
                     continue;
@@ -1308,9 +1297,9 @@ static void game_turn_transport(struct game_s *g)
             if (g->evn.have_guardian && (dest == g->evn.planet_orion_i)) {
                 pop3 = 0;
             }
-            for (monster_id_t i = MONSTER_CRYSTAL; i <= MONSTER_AMOEBA; ++i) {
+            for (monster_id_t j = MONSTER_CRYSTAL; j <= MONSTER_AMOEBA; ++j) {
                 monster_t *m;
-                m = (i == MONSTER_CRYSTAL) ? &(g->evn.crystal) : &(g->evn.amoeba);
+                m = (j == MONSTER_CRYSTAL) ? &(g->evn.crystal) : &(g->evn.amoeba);
                 if (m->exists && /*(m->killer == PLAYER_NONE) &&*/ (m->x == p->x) && (m->y == p->y)) { /* FIXME dead monster kills transports ? */
                     pop3 = 0;
                 }
@@ -1347,12 +1336,18 @@ static void game_turn_transport(struct game_s *g)
                 }
             } else {
                 /*e3fe*/
-#if 0
-                if ((p->owner == PLAYER_NONE) || (p->pop == 0)) { /* never true (tested above) */
-                    /* ignored */
-                } else
-#endif
-                if (p->owner == owner) {
+                if ((p->owner == PLAYER_NONE) || (p->pop == 0)) {
+                    if (IS_HUMAN(g, owner)) {
+                        ui_landing(g, owner, dest);
+                    }
+                    p->pop = pop3;
+                    p->bc_to_refit = 0;
+                    p->pop_oper_fact = 1;
+                    if (dest == g->evn.planet_orion_i) {
+                        g->evn.have_orion_conquer = owner + 1;
+                    }
+                    p->owner = owner;
+                } else if (p->owner == owner) {
                     if (p->unrest == PLANET_UNREST_REBELLION) {
                         ADDSATT(p->inbound[owner], pop3, game_num_max_inbound);
                         p->total_inbound[owner] += pop3;
@@ -1363,7 +1358,7 @@ static void game_turn_transport(struct game_s *g)
                     /*e5a6*/
                     if (g->eto[owner].treaty[p->owner] != TREATY_ALLIANCE) {
                         ADDSATT(p->inbound[owner], pop3, game_num_max_inbound);
-                        p->total_inbound[owner] += pop3;
+                        p->total_inbound[owner] += pop2;
                     }
                 }
             }
@@ -1392,7 +1387,7 @@ static void game_turn_coup(struct game_s *g)
         }
     }
     for (player_id_t i = PLAYER_0; i < g->players; ++i) {
-        if ((tbl_rebelplanets[i] > ((tbl_planets[i] + 1) / 2)) && (g->evn.home[i] != PLANET_NONE)) {
+        if ((tbl_rebelplanets[i] >= ((tbl_planets[i] + 1) / 2)) && IS_ALIVE(g, i)) {
             empiretechorbit_t *e = &(g->eto[i]);
             e->trait2 = rnd_0_nm1(TRAIT2_NUM, &g->seed);
             e->trait1 = rnd_0_nm1(TRAIT1_NUM, &g->seed);
@@ -1478,7 +1473,7 @@ static bool game_turn_check_end(struct game_s *g, struct game_end_s *ge)
             if (killer >= g->players) {
                 killer = (pi1 != PLAYER_NONE) ? pi1 : 1;
             }
-            ns.type = GAME_NEWS_21;
+            ns.type = GAME_NEWS_GENOCIDE;
             ns.race = g->eto[PLAYER_0].race;    /* FIXME multiplayer */
             ns.subtype = 3;
             ns.num1 = 0;
@@ -1493,14 +1488,17 @@ static bool game_turn_check_end(struct game_s *g, struct game_end_s *ge)
     return false;
 }
 
-static void game_turn_update_hmm27c(struct game_s *g)
+static void game_turn_update_have_met(struct game_s *g)
 {
-    game_update_empire_within_range(g);
-    for (player_id_t i = PLAYER_0; i < PLAYER_1; ++i) { /* FIXME multiplayer */
+    game_update_empire_contact(g);
+    for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         empiretechorbit_t *e = &(g->eto[i]);
+        if (!IS_HUMAN(g, i)) {
+            continue;
+        }
         for (player_id_t j = PLAYER_0; j < g->players; ++j) {
-            if ((i != j) && (!e->hmm27c[j]) && BOOLVEC_IS1(e->within_frange, j)) {
-                e->hmm27c[j] = 1;
+            if (!e->have_met[j] && IN_CONTACT(g, i, j)) {
+                e->have_met[j] = 1;
                 e->treaty[j] = TREATY_NONE;
                 g->eto[j].treaty[i] = TREATY_NONE;
             }
@@ -1529,14 +1527,17 @@ static void game_turn_audiences(struct game_s *g)
 static void game_turn_contact_broken(struct game_s *g, player_id_t pi, const BOOLVEC_PTRPARAMI(bv))
 {
     empiretechorbit_t *e = &(g->eto[pi]);
+    if (!IS_ALIVE(g, pi)) {
+        return;
+    }
     for (player_id_t i = PLAYER_0; i < g->players; ++i) {
-        if ((i != pi) && (g->evn.home[i] != PLANET_NONE) && BOOLVEC_IS0(e->within_frange, i) && BOOLVEC_IS1(bv, i)) {
+        if (IS_ALIVE(g, i) && NOT_IN_CONTACT(g, pi, i) && BOOLVEC_IS1(bv, i)) {
             empiretechorbit_t *e2 = &(g->eto[i]);
-            e->hmm0b4[i] = 0;
+            e->mood_trade[i] = 0;
             e->trade_bc[i] = 0;
             e->trade_percent[i] = 0;
             e->spymode[i] = SPYMODE_HIDE;
-            e2->hmm0b4[pi] = 0;
+            e2->mood_trade[pi] = 0;
             e2->trade_bc[pi] = 0;
             e2->trade_percent[pi] = 0;
             e2->spymode[pi] = SPYMODE_HIDE;
@@ -1561,7 +1562,7 @@ static void game_turn_update_seen(struct game_s *g)
                 g->seen[pi][i].pop = p->pop;
                 g->seen[pi][i].bases = p->missile_bases;
                 g->seen[pi][i].factories = p->factories;
-            } else if ((p->owner != PLAYER_NONE) && BOOLVEC_IS1(g->eto[pi].within_frange, p->owner)) {
+            } else if (!OWNER_IS_NOT_KNOWN(g, p, pi)) {
                 g->seen[pi][i].owner = p->owner;
             }
         }
@@ -1600,7 +1601,7 @@ static void game_turn_finished_slider(struct game_s *g)
             continue;
         }
         e = &(g->eto[pi]);
-        if (BOOLVEC_IS1(p->finished, FINISHED_ECO2)) {
+        if (BOOLVEC_IS1(p->finished, FINISHED_SOILATMOS)) {
             int v;
             v = game_planet_get_w1(g, pli);
             if (p->factories >= (p->pop * e->colonist_oper_factories)) {
@@ -1609,17 +1610,17 @@ static void game_turn_finished_slider(struct game_s *g)
                 p->slider[PLANET_SLIDER_IND] += p->slider[PLANET_SLIDER_ECO] - v;
             }
             p->slider[PLANET_SLIDER_ECO] = v;
-            game_add_planet_to_build_finished(g, pli, pi, FINISHED_ECO2);
+            game_add_planet_to_build_finished(g, pli, pi, FINISHED_SOILATMOS);
         }
         if (1
           && (p->owner == pi)
           && (p->pop >= p->max_pop3)
           && (p->unrest == PLANET_UNREST_NORMAL)
         ) {
-            bool flag_hmm1;
+            bool flag_pending_ecoproj;
             int v;
             v = (p->prod_after_maint * p->slider[PLANET_SLIDER_ECO]) / 100;
-            flag_hmm1 = false;
+            flag_pending_ecoproj = false;
             if (v > 0) {
                 if (0
                   || (e->have_atmos_terra && (p->growth == PLANET_GROWTH_HOSTILE))
@@ -1627,10 +1628,10 @@ static void game_turn_finished_slider(struct game_s *g)
                   || (e->have_adv_soil_enrich && ((p->growth == PLANET_GROWTH_NORMAL) || (p->growth == PLANET_GROWTH_FERTILE)))
                   || ((p->max_pop3 - p->max_pop2) < e->have_terraform_n)
                 ) {
-                    flag_hmm1 = true;
+                    flag_pending_ecoproj = true;
                 }
             }
-            if (flag_hmm1) {
+            if (!flag_pending_ecoproj) {
                 int w, fact, waste, prod;
                 fact = p->factories;
                 SETMIN(fact, p->pop * e->colonist_oper_factories);
@@ -1646,14 +1647,14 @@ static void game_turn_finished_slider(struct game_s *g)
                   || ((game_get_pop_growth_for_eco(g, pli, v) / 10) > 0)
                   || ((p->slider[PLANET_SLIDER_ECO] != 0) && (e->race == RACE_SILICOID))
                 ) {
-                    if ((p->pop > p->pop_prev) || (p->slider[PLANET_SLIDER_ECO] > (w + 7))) {
+                    if ((p->pop > p->pop_prev) || (p->slider[PLANET_SLIDER_ECO] > (w + game_num_eco_slider_slack))) {
                         if (p->factories >= (p->pop * e->colonist_oper_factories)) {
                             p->slider[PLANET_SLIDER_TECH] += p->slider[PLANET_SLIDER_ECO] - w;
                         } else {
                             p->slider[PLANET_SLIDER_IND] += p->slider[PLANET_SLIDER_ECO] - w;
                         }
                         p->slider[PLANET_SLIDER_ECO] = w;
-                        game_add_planet_to_build_finished(g, pli, pi, FINISHED_ECO1);
+                        game_add_planet_to_build_finished(g, pli, pi, FINISHED_POPMAX);
                     }
                 }
             }
@@ -1699,7 +1700,7 @@ static void game_turn_update_final_war(struct game_s *g)
         return;
     }
     /* FIXME multiplayer */
-    game_tech_ai_share(g);
+    game_tech_final_war_share(g);
     for (player_id_t pi1 = PLAYER_0; pi1 < g->players; ++pi1) {
         empiretechorbit_t *e1 = &(g->eto[pi1]);
         for (player_id_t pi2 = pi1 + 1; pi2 < g->players; ++pi2) {
@@ -1724,29 +1725,29 @@ static void game_turn_update_final_war(struct game_s *g)
 struct game_end_s game_turn_process(struct game_s *g)
 {
     struct game_end_s game_end;
-    BOOLVEC_TBL_DECLARE(old_within_frange, PLAYER_NUM, PLAYER_NUM);
+    BOOLVEC_TBL_DECLARE(old_contact, PLAYER_NUM, PLAYER_NUM);
     uint8_t old_focus[PLAYER_NUM];
     int num_alive = 0, num_colony = 0;
     uint8_t artifact_planet = PLANET_NONE;
     player_id_t artifact_player = PLAYER_NONE;
     game_end.type = GAME_END_NONE;
     game_turn_limit_ships(g);
-    for (int i = 0; i < g->players; ++i) {
-        BOOLVEC_TBL_COPY1(old_within_frange, g->eto[i].within_frange, i, PLAYER_NUM);
+    for (player_id_t i = PLAYER_0; i < g->players; ++i) {
+        BOOLVEC_TBL_COPY1(old_contact, g->eto[i].within_frange, i, PLAYER_NUM);
         old_focus[i] = g->planet_focus_i[i];
     }
-#if 0
     if ((g->year > 40) && (!rnd_0_nm1(30, &g->seed)) && (copyprot_status == 0)) {
         copyprot_status = 1;
     }
-#endif
-    game_turn_countdown_hmm28e(g);
-    temp_turn_hmm3 = 0;
-    game_turn_update_pp_hmm1(g);
+    ui_turn_pre(g);
+    game_turn_countdown_ceasefire(g);
+    /* temp_turn_hmm3 = 0; */
+    game_turn_update_mood_blunder(g);
     game_update_have_reserve_fuel(g);
     game_ai->turn_p1(g);
     game_ai->turn_p2(g);
     game_update_have_reserve_fuel(g);
+    game_ai->turn_p3(g);
     game_turn_init_z_finished(g);
     game_turn_send_transport(g);
     game_update_production(g);
@@ -1756,7 +1757,7 @@ struct game_end_s game_turn_process(struct game_s *g)
     game_turn_update_trade(g);
     game_spy_build(g);
     game_update_production(g);
-    game_turn_diplo_hmm1(g);
+    game_turn_diplo_adjust(g);
     game_turn_build_def(g);
     game_turn_build_ship(g);
     game_turn_reserve(g);
@@ -1767,7 +1768,7 @@ struct game_end_s game_turn_process(struct game_s *g)
     game_spy_report(g);
     game_battle_handle_all(g);
     /*game_turn_unrest_hmm1(g);*/
-    for (int i = 0; i < g->players; ++i) {
+    for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         g->evn.newtech[i].num = 0;
     }
     {
@@ -1777,12 +1778,12 @@ struct game_end_s game_turn_process(struct game_s *g)
         game_spy_sab_human(g);
     }
     /*ui_newtech(); FIXME redundant;*/
-    for (int i = 0; i < g->players; ++i) {
+    for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         g->evn.newtech[i].num = 0;
     }
     /*935f*/
     game_tech_research(g);
-    for (int i = 0; i < g->players; ++i) {
+    for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         if (IS_HUMAN(g, i)) {
             ui_newtech(g, i);
         }
@@ -1790,7 +1791,7 @@ struct game_end_s game_turn_process(struct game_s *g)
     /* FIXME useless? game_battle should have taken care of this */
     if (g->evn.have_guardian) {
         uint8_t o = g->evn.planet_orion_i;
-        for (int i = 0; i < g->players; ++i) {
+        for (player_id_t i = PLAYER_0; i < g->players; ++i) {
             shipcount_t *s = &(g->eto[i].orbit[o].ships[0]);
             memset(s, 0, sizeof(*s));
         }
@@ -1810,26 +1811,27 @@ struct game_end_s game_turn_process(struct game_s *g)
     if (artifact_planet != PLANET_NONE) {
         game_tech_get_artifact_loot(g, artifact_planet, artifact_player);
     }
-    for (int i = 0; i < g->players; ++i) {
+    for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         if (IS_HUMAN(g, i)) {
             ui_newtech(g, i);
         }
         g->evn.newtech[i].num = 0;
     }
-    game_turn_update_hmm27c(g);
+    game_turn_update_have_met(g);
     game_ai->turn_diplo_p1(g);
     for (int i = 0; i < g->galaxy_stars; ++i) {
         if (g->planet[i].owner != PLAYER_NONE) {
             ++num_colony;
         }
     }
-    for (int i = 0; i < g->players; ++i) {
-        if (g->evn.home[i] != PLANET_NONE) {
+    for (player_id_t i = PLAYER_0; i < g->players; ++i) {
+        if (IS_ALIVE(g, i)) {
             ++num_alive;
         }
     }
     if (1
-      && ((g->year % 25) || (!g->election_held))
+      && (game_num_council_years != 0)
+      && (((g->year % game_num_council_years) == 0) || (!g->election_held))
       && (num_alive > 2)
       && (((g->galaxy_stars * 2) / 3) <= num_colony)
       && (g->end == GAME_END_NONE)
@@ -1837,7 +1839,6 @@ struct game_end_s game_turn_process(struct game_s *g)
         game_election(g);
         g->election_held = true;
     }
-    /*94a3*/
     if (game_turn_check_end(g, &game_end)) {
         return game_end;
     }
@@ -1848,30 +1849,26 @@ struct game_end_s game_turn_process(struct game_s *g)
     }
     for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         /* TODO set flag in g->eto[i] to delay to player turn? */
-        game_turn_contact_broken(g, i, BOOLVEC_TBL_PTRPARAMM(old_within_frange, i));
+        game_turn_contact_broken(g, i, BOOLVEC_TBL_PTRPARAMM(old_contact, i));
     }
     game_fleet_unrefuel(g);
     game_update_production(g);
-#if 0
     if (copyprot_status == 1) {
-        copyprotection_check();
+        ui_copyprotection_check(g);
     }
-#endif
     for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         game_update_eco_on_waste(g, i, false);
     }
     game_turn_update_seen(g);
-    game_diplo_hmm8(g);
-    for (int i = 0; i < g->players; ++i) {
+    game_diplo_mood_relax(g);
+    for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         g->planet_focus_i[i] = old_focus[i];
     }
     ++g->year;
-#if 0
     if (copyprot_status == 1) {
-        copyprotection_lose(&game_end);
+        ui_copyprotection_lose(g, &game_end);
         return game_end;
     }
-#endif
     game_turn_show_newships(g);
     /* TODO autosave */
     game_update_tech_util(g);

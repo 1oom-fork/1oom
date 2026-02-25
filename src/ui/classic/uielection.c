@@ -22,6 +22,7 @@
 #include "uiobj.h"
 #include "uipal.h"
 #include "uisound.h"
+#include "vgabuf.h"
 
 /* -------------------------------------------------------------------------- */
 
@@ -47,7 +48,7 @@ static void election_load_data(struct election_data_s *d)
         lbxgfx_draw_frame(0, 0, gfx, UI_SCREEN_W);
         lbxfile_item_release(LBXFILE_COUNCIL, gfx);
     }
-    hw_video_copy_back_to_page2();
+    vgabuf_copy_back_to_page2();
     d->gfx_cylinder = lbxfile_item_get(LBXFILE_COUNCIL, 1, 0);
     {
         int num;
@@ -76,7 +77,7 @@ static void ui_election_draw_cb(void *vptr)
     struct election_data_s *d = vptr;
     struct election_s *el = d->el;
     struct game_s *g = el->g;
-    hw_video_copy_back_from_page2();
+    vgabuf_copy_back_from_page2();
     if ((el->cur_i != PLAYER_NONE) && (d->count == 0)) {
         uint8_t *gfx = d->gfx_race[el->cur_i];
         int fn = lbxgfx_get_frame(gfx);
@@ -89,11 +90,12 @@ static void ui_election_draw_cb(void *vptr)
     for (int i = 0; i < MIN(el->num, 4); ++i) {
         const int lx0[4] = { 50, 200, 0, 275 };
         const int lx1[4] = { 125, 275, 50, UI_SCREEN_W - 1 };
-        lbxgfx_draw_frame_offs(0, 0, d->gfx_racem[i], lx0[i], 0, lx1[i], UI_SCREEN_H - 1, UI_SCREEN_W);
+        uiobj_set_limits(lx0[i], 0, lx1[i], UI_SCREEN_H - 1);
+        lbxgfx_draw_frame_offs(0, 0, d->gfx_racem[i], UI_SCREEN_W);
     }
     if (el->str) {
         lbxfont_select_set_12_1(3, 0, 0, 0);
-        lbxfont_set_44_10_plus(1);
+        lbxfont_set_gap_h(1);
         lbxfont_print_str_split(10, 169, 305, el->str, 0, UI_SCREEN_W, UI_SCREEN_H);
     }
     if (d->flag_countdown) {
@@ -134,8 +136,8 @@ void ui_election_start(struct election_s *el)
     static struct election_data_s d;    /* HACK */
     d.el = el;
     el->uictx = &d;
-    hw_video_copy_back_from_page2();
-    hw_video_copy_back_to_page3();
+    vgabuf_copy_back_from_page2();
+    vgabuf_copy_back_to_page3();
     if (ui_draw_finish_mode == 0) {
         ui_palette_fadeout_a_f_1();
     }
@@ -157,7 +159,7 @@ void ui_election_show(struct election_s *el)
     bool flag_done = false;
     d->count = 0;
     uiobj_table_clear();
-    uiobj_add_mousearea(0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, MOO_KEY_UNKNOWN, -1);
+    uiobj_add_mousearea(UI_SCREEN_LIMITS, MOO_KEY_UNKNOWN);
     uiobj_set_downcount(1);
     while (!flag_done) {
         int16_t oi;
@@ -202,12 +204,12 @@ int ui_election_vote(struct election_s *el, int player_i)
     sprintf(cnamebuf[2], "%s %s", game_str_el_bull, game_str_el_abs);
     uiobj_table_clear();
     lbxfont_select(3, 1, 0, 0);
-    oi_c1 = uiobj_add_mousearea(150, 169, 190, 177, MOO_KEY_UNKNOWN, -1);
-    oi_c2 = uiobj_add_mousearea(150, 179, 190, 187, MOO_KEY_UNKNOWN, -1);
-    /*oi_ca =*/ uiobj_add_mousearea(150, 189, 190, 197, MOO_KEY_UNKNOWN, -1);
-    uiobj_add_ta(150, 169, 40, cnamebuf[0], false, &choice, 1, 0, 0, 0, 0, 0, 0, MOO_KEY_UNKNOWN, -1);
-    uiobj_add_ta(150, 179, 40, cnamebuf[1], false, &choice, 2, 0, 0, 0, 0, 0, 0, MOO_KEY_UNKNOWN, -1);
-    uiobj_add_ta(150, 189, 40, cnamebuf[2], false, &choice, 0, 0, 0, 0, 0, 0, 0, MOO_KEY_UNKNOWN, -1);
+    oi_c1 = uiobj_add_mousearea(150, 169, 190, 177, MOO_KEY_UNKNOWN);
+    oi_c2 = uiobj_add_mousearea(150, 179, 190, 187, MOO_KEY_UNKNOWN);
+    /*oi_ca =*/ uiobj_add_mousearea(150, 189, 190, 197, MOO_KEY_UNKNOWN);
+    uiobj_add_ta(150, 169, 40, cnamebuf[0], false, &choice, 1, 0, 0, 0, 0, 0, 0, MOO_KEY_UNKNOWN);
+    uiobj_add_ta(150, 179, 40, cnamebuf[1], false, &choice, 2, 0, 0, 0, 0, 0, 0, MOO_KEY_UNKNOWN);
+    uiobj_add_ta(150, 189, 40, cnamebuf[2], false, &choice, 0, 0, 0, 0, 0, 0, 0, MOO_KEY_UNKNOWN);
     while (!flag_done) {
         ui_delay_prepare();
         oi = uiobj_handle_input_cond();
@@ -239,10 +241,10 @@ bool ui_election_accept(struct election_s *el, int player_i)
     sprintf(buf[1], "%s %s", game_str_el_bull, game_str_el_no2);
     uiobj_table_clear();
     lbxfont_select(3, 1, 0, 0);
-    oi_y = uiobj_add_mousearea(160, 169, 200, 177, MOO_KEY_y, -1);
-    oi_n = uiobj_add_mousearea(160, 179, 200, 187, MOO_KEY_n, -1);
-    uiobj_add_ta(160, 169, 40, buf[0], false, &choice, 1, 0, 0, 0, 0, 0, 0, MOO_KEY_UNKNOWN, -1);
-    uiobj_add_ta(160, 179, 40, buf[1], false, &choice, 0, 0, 0, 0, 0, 0, 0, MOO_KEY_UNKNOWN, -1);
+    oi_y = uiobj_add_mousearea(160, 169, 200, 177, MOO_KEY_y);
+    oi_n = uiobj_add_mousearea(160, 179, 200, 187, MOO_KEY_n);
+    uiobj_add_ta(160, 169, 40, buf[0], false, &choice, 1, 0, 0, 0, 0, 0, 0, MOO_KEY_UNKNOWN);
+    uiobj_add_ta(160, 179, 40, buf[1], false, &choice, 0, 0, 0, 0, 0, 0, 0, MOO_KEY_UNKNOWN);
     while (!flag_done) {
         int16_t oi;
         ui_delay_prepare();
@@ -271,8 +273,8 @@ void ui_election_end(struct election_s *el)
     hw_audio_music_fadeout();
     ui_palette_fadeout_a_f_1();
     ui_draw_finish_mode = 2;
-    hw_video_copy_back_from_page3();
-    hw_video_copy_back_to_page2();
+    vgabuf_copy_back_from_page3();
+    vgabuf_copy_back_to_page2();
     lbxpal_select(0, -1, 0);
     lbxpal_set_update_range(0, 255);
     lbxpal_build_colortables();

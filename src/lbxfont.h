@@ -12,8 +12,8 @@ extern void lbxfont_select_set_12_4(uint8_t a0, uint8_t a1, uint8_t a2, uint8_t 
 extern void lbxfont_select_set_12_5(uint8_t a0, uint8_t a1, uint8_t a2, uint8_t a3);
 
 extern uint16_t lbxfont_get_height(void);
-extern int lbxfont_get_diff_44_10(void);
-extern void lbxfont_set_44_10_plus(uint16_t value);
+extern int lbxfont_get_gap_h(void);
+extern void lbxfont_set_gap_h(uint16_t value);
 
 extern void lbxfont_select_subcolors(uint16_t a0);
 extern void lbxfont_select_subcolors_0(void);
@@ -39,9 +39,9 @@ extern int lbxfont_print_str_normal(int x, int y, const char *str, uint16_t pitc
 extern int lbxfont_print_str_center(int x, int y, const char *str, uint16_t pitch);
 extern int lbxfont_print_str_right(int x, int y, const char *str, uint16_t pitch);
 extern void lbxfont_print_str_split(int x, int y, int maxw, const char *str, int type, uint16_t pitch, uint16_t maxy);
-extern int lbxfont_print_str_normal_limit(int x, int y, const char *str, int lx0, int ly0, int lx1, int ly1, uint16_t pitch);
-extern int lbxfont_print_str_center_limit(int x, int y, const char *str, int lx0, int ly0, int lx1, int ly1, uint16_t pitch);
-extern int lbxfont_print_str_center_limit_unconst(int x, int y, const char *str, int lx0, int ly0, int lx1, int ly1, uint16_t pitch);
+extern int lbxfont_print_str_normal_limit(int x, int y, const char *str, uint16_t pitch);
+extern int lbxfont_print_str_center_limit(int x, int y, const char *str, uint16_t pitch);
+extern int lbxfont_print_str_center_limit_unconst(int x, int y, const char *str, uint16_t pitch);
 extern int lbxfont_print_num_normal(int x, int y, int num, uint16_t pitch);
 extern int lbxfont_print_num_center(int x, int y, int num, uint16_t pitch);
 extern int lbxfont_print_num_right(int x, int y, int num, uint16_t pitch);

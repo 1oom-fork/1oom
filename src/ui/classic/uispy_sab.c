@@ -22,6 +22,7 @@
 #include "uiobj.h"
 #include "uisound.h"
 #include "uistarmap_common.h"
+#include "vgabuf.h"
 
 /* -------------------------------------------------------------------------- */
 
@@ -86,12 +87,12 @@ static void sabotage_draw_cb(void *vptr)
     const empiretechorbit_t *e = &(g->eto[d->target]);
     const planet_t *p = &(g->planet[d->planet]);
     int pop, bases, fact;
-    hw_video_copy_back_from_page2();
+    vgabuf_copy_back_from_page2();
     ui_draw_filled_rect(222, 4, 314, 179, 0);
-    lbxgfx_draw_frame(222, 4, d->gfx_saboback, UI_SCREEN_W);
+    lbxgfx_draw_frame(222, 4, d->gfx_sabobac2, UI_SCREEN_W);
     ui_starmap_draw_planetinfo_2(g, d->api, d->target, d->planet);
-    /*set_limits(228, 110, 309, 143);*/
-    lbxgfx_draw_frame_offs(228, 70, d->gfx_colony, 228, 110, 309, 143, UI_SCREEN_W);
+    uiobj_set_limits(228, 110, 309, 143);
+    lbxgfx_draw_frame_offs(228, 70, d->gfx_colony, UI_SCREEN_W);
     ui_draw_filled_rect(228, 58, 309, 68, tbl_banner_color2[e->banner]);
     lbxfont_select(5, 6, 0, 0);
     lbxfont_print_str_center(269, 60, game_str_tbl_races[e->race], UI_SCREEN_W);
@@ -127,11 +128,11 @@ static void sabotage_draw_cb(void *vptr)
     }
     ui_gmap_draw_planet_border(g, d->planet);
     for (int i = 0; i < g->galaxy_stars; ++i) {
-        const planet_t *p = &(g->planet[i]);
-        if (p->owner == d->target) {
+        const planet_t *p2 = &(g->planet[i]);
+        if (p2->owner == d->target) {
             int x, y;
-            x = (p->x * 215) / g->galaxy_maxx + 5;
-            y = (p->y * 171) / g->galaxy_maxy + 5;
+            x = (p2->x * 215) / g->galaxy_maxx + 5 + 3;
+            y = (p2->y * 171) / g->galaxy_maxy + 5 - 2;
             lbxgfx_draw_frame(x, y, ui_data.gfx.starmap.smalflag[e->banner], UI_SCREEN_W);
         }
     }
@@ -157,12 +158,12 @@ static void sabotage_done_draw_cb(void *vptr)
     const planet_t *p = &(g->planet[d->planet]);
     int pos;
     char buf[0x80];
-    hw_video_copy_back_from_page2();
+    vgabuf_copy_back_from_page2();
     ui_draw_filled_rect(222, 4, 314, 179, 0);
     lbxgfx_draw_frame(222, 4, d->gfx_saboback, UI_SCREEN_W);
     lbxgfx_draw_frame(222, 159, d->gfx_contback, UI_SCREEN_W);
-    /*set_limits(228, 110, 309, 143);*/
-    lbxgfx_draw_frame_offs(228, 70, d->gfx_colony, 228, 110, 309, 143, UI_SCREEN_W);
+    uiobj_set_limits(228, 110, 309, 158);
+    lbxgfx_draw_frame_offs(228, 70, d->gfx_colony, UI_SCREEN_W);
     switch (d->act) {
         case UI_SABOTAGE_FACT: /*0*/
             sabotage_draw_anim(d->gfx_ind_expl, (d->snum > 0), 11);
@@ -183,7 +184,7 @@ static void sabotage_done_draw_cb(void *vptr)
     if (d->spy == PLAYER_NONE) {
         pos = sprintf(buf, "%s ", game_str_sb_unkn);
     } else {
-        pos = sprintf(buf, "%s %s ", (d->spy == d->api) ? game_str_sb_your : game_str_tbl_race[e->race], game_str_sb_spies);
+        pos = sprintf(buf, "%s %s ", (d->spy == d->api) ? game_str_sb_your : game_str_tbl_race[g->eto[d->spy].race], game_str_sb_spies);
     }
     if (d->snum > 0) {
         switch (d->act) {
@@ -242,7 +243,7 @@ static void sabotage_done_draw_cb(void *vptr)
         lbxfont_print_str_center(80, 110, game_str_tbl_races[g->eto[d->other1].race], UI_SCREEN_W);
         lbxfont_print_str_center(152, 110, game_str_tbl_races[g->eto[d->other2].race], UI_SCREEN_W);
         lbxfont_select(5, 6, 0, 0);
-        lbxfont_set_44_10_plus(2);
+        lbxfont_set_gap_h(2);
         lbxfont_print_str_split(40, 70, 154, game_str_sb_frame, 3, UI_SCREEN_W, UI_SCREEN_H);
         lbxfont_select(0, 0, 0, 0);
         lbxfont_print_str_center(115, 96, game_str_nt_victim, UI_SCREEN_W);
@@ -259,6 +260,7 @@ ui_sabotage_t ui_spy_sabotage_ask(struct game_s *g, int spy, int target, uint8_t
     ui_sabotage_t action = UI_SABOTAGE_NONE;
     d.g = g;
     d.api = spy;
+    d.spy = spy;
     d.target = target;
     d.planet = PLANET_NONE;
     d.gmap = ui_gmap_basic_init(g, true);
@@ -312,10 +314,10 @@ ui_sabotage_t ui_spy_sabotage_ask(struct game_s *g, int spy, int target, uint8_t
             }
         }
         uiobj_table_clear();
-        oi_bases = uiobj_add_t0(227, 147, "", d.gfx_butt_bases, MOO_KEY_b, -1);
-        oi_ind = uiobj_add_t0(267, 147, "", d.gfx_butt_ind, MOO_KEY_f, -1);
+        oi_bases = uiobj_add_t0(227, 147, "", d.gfx_butt_bases, MOO_KEY_b);
+        oi_ind = uiobj_add_t0(267, 147, "", d.gfx_butt_ind, MOO_KEY_f);
         if (g->planet[d.planet].unrest == PLANET_UNREST_NORMAL) {
-            oi_revolt = uiobj_add_t0(227, 163, "", d.gfx_butt_revolt, MOO_KEY_i, -1);
+            oi_revolt = uiobj_add_t0(227, 163, "", d.gfx_butt_revolt, MOO_KEY_i);
         } else {
             oi_revolt = UIOBJI_INVALID;
         }
@@ -325,7 +327,7 @@ ui_sabotage_t ui_spy_sabotage_ask(struct game_s *g, int spy, int target, uint8_t
                 int x, y;
                 x = (p->x * 215) / g->galaxy_maxx + 5;
                 y = (p->y * 171) / g->galaxy_maxy + 5;
-                oi_planet[i] = uiobj_add_mousearea(x - 1, y - 1, x + 7, y + 7, MOO_KEY_UNKNOWN, -1);
+                oi_planet[i] = uiobj_add_mousearea(x - 1, y - 1, x + 7, y + 7, MOO_KEY_UNKNOWN);
             } else {
                 oi_planet[i] = UIOBJI_INVALID;
             }
@@ -349,7 +351,8 @@ int ui_spy_sabotage_done(struct game_s *g, int pi, int spy, int target, ui_sabot
     bool flag_done = false;
     int other = PLAYER_NONE;
     d.g = g;
-    d.api = spy;
+    d.api = pi;
+    d.spy = spy;
     d.target = target;
     d.other1 = other1;
     d.other2 = other2;
@@ -368,10 +371,10 @@ int ui_spy_sabotage_done(struct game_s *g, int pi, int spy, int target, ui_sabot
     oi_other1 = UIOBJI_INVALID;
     oi_other2 = UIOBJI_INVALID;
     if (other2 == PLAYER_NONE) {
-        oi_cont = uiobj_add_t0(227, 163, "", d.gfx_contbutt, MOO_KEY_c, -1);
+        oi_cont = uiobj_add_t0(227, 163, "", d.gfx_contbutt, MOO_KEY_c);
     } else {
-        oi_other1 = uiobj_add_mousearea(50, 106, 110, 120, MOO_KEY_UNKNOWN, -1);
-        oi_other2 = uiobj_add_mousearea(122, 106, 183, 120, MOO_KEY_UNKNOWN, -1);
+        oi_other1 = uiobj_add_mousearea(50, 106, 110, 120, MOO_KEY_UNKNOWN);
+        oi_other2 = uiobj_add_mousearea(122, 106, 183, 120, MOO_KEY_UNKNOWN);
     }
     uiobj_set_callback_and_delay(sabotage_done_draw_cb, &d, 4);
     while (!flag_done) {

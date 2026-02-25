@@ -1,8 +1,7 @@
 #include "config.h"
 
 #include "ui.h"
-#include "game_save.h"
-#include "hw.h"
+#include "save.h"
 #include "kbd.h"
 #include "lbx.h"
 #include "lbxfont.h"
@@ -15,10 +14,12 @@
 #include "uidelay.h"
 #include "uidefs.h"
 #include "uidraw.h"
+#include "uifix.h"
 #include "uiload.h"
 #include "uiobj.h"
 #include "uipal.h"
 #include "uisound.h"
+#include "vgabuf.h"
 
 /* -------------------------------------------------------------------------- */
 
@@ -50,7 +51,7 @@ static void load_game_draw_cb(void *vptr)
     struct load_game_data_s *d = vptr;
     const int xoff = 0x76;
     const int yoff = 0xa;
-    hw_video_copy_back_from_page2();
+    vgabuf_copy_back_from_page2();
     lbxgfx_draw_frame(0, 0, d->gfx_loadgame, UI_SCREEN_W);
     for (int i = 0; i < d->savenum; ++i) {
         int si;
@@ -89,20 +90,22 @@ int ui_load_game(void)
 
     uiobj_table_clear();
     oi_esc = uiobj_add_inputkey(MOO_KEY_ESCAPE);
-    oi_cancel = uiobj_add_mousearea(0x14 + xoff, 0x87 + yoff, 0x4a + xoff, 0x98 + yoff, MOO_KEY_LEFT, -1);
-    oi_ok =     uiobj_add_mousearea(0x54 + xoff, 0x87 + yoff, 0x8a + xoff, 0x98 + yoff, MOO_KEY_SPACE, -1);
+    oi_cancel = uiobj_add_mousearea(0x14 + xoff, 0x87 + yoff, 0x4a + xoff, 0x98 + yoff, MOO_KEY_LEFT);
+    oi_ok =     uiobj_add_mousearea(0x54 + xoff, 0x87 + yoff, 0x8a + xoff, 0x98 + yoff, MOO_KEY_SPACE);
     uiobj_set_focus(oi_ok);
 
     for (int i = 0; i < d.savenum; ++i) {
         int y0;
+        mookey_t key;
         y0 = 0x15 + yoff + d.tbl_savei[i] * 0x12;
-        oi_save[i] = uiobj_add_mousearea(0xc + xoff, y0, 0x92 + xoff, y0 + 0xe, MOO_KEY_UNKNOWN, -1);
+        key = ui_qol_numeric_key_bindings ? (MOO_KEY_1 + i) : MOO_KEY_UNKNOWN;
+        oi_save[i] = uiobj_add_mousearea(0xc + xoff, y0, 0x92 + xoff, y0 + 0xe, key);
     }
 
     d.selected = 0;
 
     ui_draw_erase_buf();
-    hw_video_copy_back_to_page2();
+    vgabuf_copy_back_to_page2();
     uiobj_set_callback_and_delay(load_game_draw_cb, &d, 2);
 
     while (!flag_done) {

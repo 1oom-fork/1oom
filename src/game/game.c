@@ -4,19 +4,21 @@
 #include <string.h>
 
 #include "main.h"
+#include "cfg.h"
 #include "game.h"
+#include "gameapi.h"
 #include "game_aux.h"
 #include "game_misc.h"
 #include "game_new.h"
 #include "game_num.h"
 #include "game_end.h"
-#include "game_save.h"
 #include "game_str.h"
 #include "game_turn.h"
 #include "game_tech.h"
 #include "log.h"
 #include "options.h"
 #include "rnd.h"
+#include "save.h"
 #include "ui.h"
 #include "util.h"
 
@@ -27,10 +29,14 @@ static bool game_opt_new_game = false;
 static bool game_opt_continue = false;
 static int game_opt_load_game = 0;
 static const char *game_opt_load_fname = 0;
-static int game_opt_undo_enabled = 1;
+static bool game_opt_undo_enabled = true;
+static bool game_opt_next_turn = false;
+static bool game_opt_save_quit = false;
 
 static struct game_end_s game_opt_end = { GAME_END_NONE, 0, 0, 0, 0 };
 static struct game_new_options_s game_opt_new = GAME_NEW_OPTS_DEFAULT;
+
+static int game_opt_new_value = 200;
 
 static struct game_s game;
 static struct game_aux_s game_aux;
@@ -45,12 +51,29 @@ static void game_start(struct game_s *g)
     }
     game_update_production(g);
     game_update_tech_util(g);
-    for (int i = 0; i < g->players; ++i) {
+    for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         game_update_eco_on_waste(g, i, false);
         game_update_seen_by_orbit(g, i);
     }
     game_update_within_range(g);
     game_update_visibility(g);
+}
+
+static void game_set_opts_from_value(struct game_new_options_s *go, int v)
+{
+    int v2;
+    v2 = v % 10;
+    v = v / 10;
+    go->difficulty = v2;
+    v2 = v % 10;
+    v = v / 10;
+    go->galaxy_size = v2;
+    go->players = v;
+}
+
+static int game_get_opts_value(const struct game_s *g)
+{
+    return g->difficulty + g->galaxy_size * 10 + g->players * 100;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -98,7 +121,7 @@ static int game_opt_do_new_seed(char **argv, void *var)
                 return -1;
             }
         } else {
-            v = 200;
+            v = game_opt_new_value;
         }
         vo = v;
         v2 = v % 10;
@@ -269,33 +292,16 @@ static int game_opt_do_continue(char **argv, void *var)
     return 0;
 }
 
-static int dump_strings(char **argv, void *var)
-{
-    game_str_dump();
-    return -1;
-}
-
-static int dump_numbers(char **argv, void *var)
-{
-    game_num_dump();
-    return -1;
-}
-
 /* -------------------------------------------------------------------------- */
 
 const char *idstr_main = "game";
 
 bool main_use_lbx = true;
+bool main_use_cfg = true;
 
 void (*main_usage)(void) = 0;
 
 const struct cmdline_options_s main_cmdline_options_early[] = {
-    { "-dumpstr", 0,
-      dump_strings, NULL,
-      NULL, "Dump strings in PBXIN format" },
-    { "-dumpnum", 0,
-      dump_numbers, NULL,
-      NULL, "Dump numbers in PBXIN format" },
     { 0, 0, 0, 0, 0, 0 }
 };
 
@@ -323,12 +329,52 @@ const struct cmdline_options_s main_cmdline_options[] = {
       game_opt_do_continue, 0,
       NULL, "Continue game" },
     { "-undo", 0,
-      options_enable_var, (void *)&game_opt_undo_enabled,
+      options_enable_bool_var, (void *)&game_opt_undo_enabled,
       NULL, "Enable undo saves" },
     { "-noundo", 0,
-      options_disable_var, (void *)&game_opt_undo_enabled,
+      options_disable_bool_var, (void *)&game_opt_undo_enabled,
       NULL, "Disable undo saves" },
+    { "-nextturn", 0,
+      options_enable_bool_var, (void *)&game_opt_next_turn,
+      NULL, "Go directly to next turn" },
+    { "-savequit", 0,
+      options_enable_bool_var, (void *)&game_opt_save_quit,
+      NULL, "Save and quit" },
     { 0, 0, 0, 0, 0, 0 }
+};
+
+/* -------------------------------------------------------------------------- */
+
+static bool game_cfg_check_new_game_opts(void *val)
+{
+    int v2, v = (int)(intptr_t)val;
+    v2 = v % 10;
+    v = v / 10;
+    if (v2 >= DIFFICULTY_NUM) {
+        log_error("invalid difficulty num %i\n", v2);
+        return false;
+    }
+    v2 = v % 10;
+    v = v / 10;
+    if (v2 > GALAXY_SIZE_HUGE) {
+        log_error("invalid galaxy size num %i\n", v2);
+        return false;
+    }
+    v2 = v % 10;
+    if ((v2 < 2) || (v2 > PLAYER_NUM)) {
+        log_error("invalid players num %i\n", v2);
+        return false;
+    }
+    return true;
+}
+
+const struct cfg_items_s game_cfg_items[] = {
+    CFG_ITEM_BOOL("undo", &game_opt_undo_enabled),
+    CFG_ITEM_BOOL("initsaves", &game_opt_init_saves_enabled),
+    CFG_ITEM_COMMENT("PLAYERS*100+GALAXYSIZE*10+DIFFICULTY"),
+    CFG_ITEM_COMMENT(" 2..6, 0..3 = small..huge, 0..4 = simple..impossible"),
+    CFG_ITEM_INT("new_game_opts", &game_opt_new_value, game_cfg_check_new_game_opts),
+    CFG_ITEM_END
 };
 
 /* -------------------------------------------------------------------------- */
@@ -409,9 +455,11 @@ int main_handle_option(const char *argv)
 int main_do(void)
 {
     struct game_end_s game_end = game_opt_end;
-    ui_late_init();
+    if (ui_late_init()) {
+        return 1;
+    }
     game_aux_init(&game_aux, &game);
-    game_save_check_saves(game_aux.savenamebuf, game_aux.savenamebuflen);
+    libsave_check_saves();
     if ((game_opt_end.type != GAME_END_NONE) && (game_opt_end.varnum == 2)) {
         goto do_ending;
     }
@@ -428,7 +476,7 @@ int main_do(void)
             game_new_opts = game_opt_new;
             goto main_menu_new_game;
         } else if (game_opt_load_fname) {
-            if (game_save_do_load_fname(game_opt_load_fname, 0, &game)) {
+            if (libsave_do_load_fname(game_opt_load_fname, &game)) {
                 log_fatal_and_die("Game: could not load save '%s'\n", game_opt_load_fname);
             }
             game_opt_load_fname = 0;
@@ -453,25 +501,27 @@ int main_do(void)
                 continue;
             }
         } else {
+            game_set_opts_from_value(&game_new_opts, game_opt_new_value);
             main_menu_action = ui_main_menu(&game_new_opts, &load_game_i);
         }
         switch (main_menu_action) {
             case MAIN_MENU_ACT_NEW_GAME:
                 main_menu_new_game:
                 game_new(&game, &game_aux, &game_new_opts);
+                game_opt_new_value = game_get_opts_value(&game);
                 break;
             case MAIN_MENU_ACT_TUTOR:
                 game_new_tutor(&game, &game_aux);
                 break;
             case MAIN_MENU_ACT_LOAD_GAME:
                 main_menu_load_game:
-                if (game_save_do_load_i(load_game_i, &game)) {
+                if (libsave_do_load_i(load_game_i, &game)) {
                     log_fatal_and_die("Game: could not load save %i\n", load_game_i);
                 }
                 break;
             case MAIN_MENU_ACT_CONTINUE_GAME:
                 main_menu_continue_game:
-                if (game_save_do_load_i(GAME_SAVE_I_CONTINUE, &game)) {
+                if (libsave_do_load_i(GAME_SAVE_I_CONTINUE, &game)) {
                     log_fatal_and_die("Game: could not start or continue from save 7\n");
                 }
                 break;
@@ -486,8 +536,16 @@ int main_do(void)
         game_end.type = GAME_END_NONE;
         while ((game_end.type == GAME_END_NONE) || (game_end.type == GAME_END_FINAL_WAR)) {
             for (; ((game_end.type == GAME_END_NONE) || (game_end.type == GAME_END_FINAL_WAR)) && (game.active_player < game.players); ++game.active_player) {
-                if (BOOLVEC_IS1(game.is_ai, game.active_player)) {
+                if (!IS_HUMAN(&game, game.active_player) || (!IS_ALIVE(&game, game.active_player))) {
                     continue;
+                }
+                if (game_opt_next_turn) {
+                    game_opt_next_turn = false;
+                    break;
+                }
+                if (game_opt_save_quit) {
+                    game_opt_save_quit = false;
+                    goto turn_act_quit;
                 }
                 switch (ui_game_turn(&game, &load_game_i, game.active_player)) {
                     case UI_TURN_ACT_LOAD_GAME:
@@ -495,14 +553,15 @@ int main_do(void)
                         ui_game_end(&game);
                         goto main_menu_load_game;
                     case UI_TURN_ACT_QUIT_GAME:
-                        if (game_save_do_save_i(GAME_SAVE_I_CONTINUE, "Continue", &game)) {
-                            log_error("Game: could create continue save\n");
+                        turn_act_quit:
+                        if (libsave_do_save_i(GAME_SAVE_I_CONTINUE, "Continue", &game)) {
+                            log_error("Game: failed to create continue save\n");
                         }
                         game_end.type = GAME_END_QUIT;
                         break;
                     case UI_TURN_ACT_NEXT_TURN:
-                        if (game_opt_undo_enabled && game_save_do_save_i(GAME_SAVE_I_UNDO, "Undo", &game)) {
-                            log_error("Game: could create undo save\n");
+                        if (game_opt_undo_enabled && libsave_do_save_i(GAME_SAVE_I_UNDO, "Undo", &game)) {
+                            log_error("Game: failed to create undo save\n");
                         }
                         break;
                 }
@@ -545,5 +604,4 @@ void main_do_shutdown(void)
 {
     /* TODO save game if in progress */
     game_aux_shutdown(&game_aux);
-    game_str_shutdown();
 }

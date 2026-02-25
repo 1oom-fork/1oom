@@ -4,11 +4,12 @@
 
 #include "lbxgfx.h"
 #include "comp.h"
-#include "hw.h"
+#include "gfxlimits.h"
 #include "lbxpal.h"
 #include "lib.h"
 #include "log.h"
 #include "types.h"
+#include "vgabuf.h"
 
 /* -------------------------------------------------------------------------- */
 
@@ -64,7 +65,7 @@ static void lbxgfx_draw_pixels_fmt0(uint8_t *pixbuf, uint16_t w, uint8_t *data, 
 static void lbxgfx_draw_pixels_offs_fmt0(int x0, int y0, int w, int h, int xskip, int yskip, uint8_t *data, uint16_t pitch)
 {
     /* FIXME this an unreadable goto mess */
-    uint8_t *p = hw_video_get_buf() + y0 * pitch + x0;
+    uint8_t *p = vgabuf_get_back() + y0 * pitch + x0;
     uint8_t *q;
     uint8_t b, mode, len_total, len_run;
     int ylen;
@@ -320,6 +321,10 @@ static void lbxgfx_draw_pixels_fmt1(uint8_t *pixbuf, uint16_t w, uint8_t *data, 
 void lbxgfx_draw_frame_do(uint8_t *p, uint8_t *data, uint16_t pitch)
 {
     uint16_t frame, next_frame;
+    if (lbxgfx_get_epage(data) == 0) {
+        lbxgfx_set_epage(data, 1);
+        lbxgfx_apply_palette(data);
+    }
     frame = lbxgfx_get_frame(data);
     if (lbxgfx_get_format(data) == 0) {
         lbxgfx_draw_pixels_fmt0(p, lbxgfx_get_w(data), lbxgfx_get_frameptr(data, frame) + 1, pitch);
@@ -336,7 +341,7 @@ void lbxgfx_draw_frame_do(uint8_t *p, uint8_t *data, uint16_t pitch)
 
 void lbxgfx_draw_frame(int x, int y, uint8_t *data, uint16_t pitch)
 {
-    uint8_t *p = hw_video_get_buf() + y * pitch + x;
+    uint8_t *p = vgabuf_get_back() + y * pitch + x;
     lbxgfx_draw_frame_do(p, data, pitch);
 }
 
@@ -347,13 +352,14 @@ void lbxgfx_draw_frame_pal(int x, int y, uint8_t *data, uint16_t pitch)
     if (frame == 0) {
         lbxgfx_apply_palette(data);
     }
-    uint8_t *p = hw_video_get_buf() + y * pitch + x;
+    uint8_t *p = vgabuf_get_back() + y * pitch + x;
     lbxgfx_draw_frame_do(p, data, pitch);
 }
 
-void lbxgfx_draw_frame_offs(int x, int y, uint8_t *data, int lx0, int ly0, int lx1, int ly1, uint16_t pitch)
+void lbxgfx_draw_frame_offs(int x, int y, uint8_t *data, uint16_t pitch)
 {
     int xskip, yskip, x0, y0, x1, y1, w, h;
+    int lx0 = gfxlim_minx, ly0 = gfxlim_miny, lx1 = gfxlim_maxx, ly1 = gfxlim_maxy;
 
     if ((x > lx1) || (y > ly1)) {
         return;
@@ -416,7 +422,7 @@ void lbxgfx_set_new_frame(uint8_t *data, uint16_t newframe)
 
 void lbxgfx_apply_colortable(int x0, int y0, int x1, int y1, uint8_t ctbli, uint16_t pitch)
 {
-    uint8_t *pixbuf = hw_video_get_buf();
+    uint8_t *pixbuf = vgabuf_get_back();
     const uint8_t *tbl = lbxpal_colortable[ctbli];
     for (int y = y0; y <= y1; ++y) {
         for (int x = x0; x <= x1; ++x) {

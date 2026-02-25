@@ -61,7 +61,7 @@ static void audience_load_data(struct audience_data_s *d)
         lbxfile_item_release(LBXFILE_EMBASSY, gfx);
     }
     d->gfx_race = lbxfile_item_get(LBXFILE_EMBASSY, 0x2 + ra, 0);
-    d->gfx_emperor = lbxfile_item_get(LBXFILE_EMBASSY, 0xc + g->eto[d->au->ph].race, 0);
+    d->gfx_emperor = lbxfile_item_get(LBXFILE_EMBASSY, 0xc + g->eto[d->au->ph].banner, 0);
     d->music_0 = tbl_audience_music[ra];
     d->music_1 = tbl_audience_music[ra] + 1;
 }
@@ -171,9 +171,9 @@ static void ui_audience_draw_cb1(void *vptr)
     }
     lbxgfx_draw_frame(0, -2, d->gfx_emperor, UI_SCREEN_W);
     lbxgfx_draw_frame(0, 0, d->gfx_border, UI_SCREEN_W);
-    if ((au->mode >= 0) && (au->mode <= 2)) {
+    if ((au->mode == 0) || (au->mode == 1) || (au->mode == 2)) {
         lbxfont_select(3, 2, 0, 0);
-        lbxfont_set_44_10_plus(1);
+        lbxfont_set_gap_h(1);
         lbxfont_print_str_split(38, 140, 245, au->buf, 0, UI_SCREEN_W, UI_SCREEN_H);
     }
     /*d->delay2 = (d->delay2 + 1) % 6;*/
@@ -188,10 +188,10 @@ static void ui_audience_draw_cb2(void *vptr)
     lbxgfx_draw_frame(0, -2, d->gfx_emperor, UI_SCREEN_W);
     lbxgfx_draw_frame(0, 0, d->gfx_border, UI_SCREEN_W);
     lbxfont_select(3, 1, 0, 0);
-    lbxfont_set_44_10_plus(1);
+    lbxfont_set_gap_h(1);
     strh = lbxfont_calc_split_str_h(245, au->buf);
     if (strh > 39) {
-        lbxfont_set_44_10_plus(0);
+        lbxfont_set_gap_h(0);
     }
     lbxfont_print_str_split(38, 140, 245, au->buf, 0, UI_SCREEN_W, UI_SCREEN_H);
     /*d->delay2 = (d->delay2 + 1) % 6;*/
@@ -205,7 +205,7 @@ static void ui_audience_draw_cb3(void *vptr)
     lbxgfx_draw_frame(0, -2, d->gfx_emperor, UI_SCREEN_W);
     lbxgfx_draw_frame(0, 0, d->gfx_border, UI_SCREEN_W);
     lbxfont_select(3, 2, 1, 0);
-    lbxfont_set_44_10_plus(1);
+    lbxfont_set_gap_h(1);
     lbxfont_print_str_split(38, 140, 245, au->buf, 0, UI_SCREEN_W, UI_SCREEN_H);
     /*d->delay2 = (d->delay2 + 1) % 6;*/
 }
@@ -219,10 +219,10 @@ static void ui_audience_draw_cb4(void *vptr)    /* FIXME combine with cb3 and/or
     lbxgfx_draw_frame(0, -2, d->gfx_emperor, UI_SCREEN_W);
     lbxgfx_draw_frame(0, 0, d->gfx_border, UI_SCREEN_W);
     lbxfont_select(3, 1, 0, 0);
-    lbxfont_set_44_10_plus(1);
+    lbxfont_set_gap_h(1);
     strh = lbxfont_calc_split_str_h(245, au->buf);
     if (strh > 39) {
-        lbxfont_set_44_10_plus(0);
+        lbxfont_set_gap_h(0);
     }
     lbxfont_print_str_split(38, 136, 245, au->buf, 0, UI_SCREEN_W, UI_SCREEN_H);
     /*d->delay2 = (d->delay2 + 1) % 6;*/
@@ -235,7 +235,7 @@ static int16_t ui_audience_ask_do(struct audience_s *au, int y, void (*draw_cb)(
     uiobj_set_callback_and_delay(draw_cb, au->uictx, 1);
     uiobj_set_downcount(1);
     lbxfont_select(0, 2, 3, 0);
-    selected = uiobj_select_from_list1(38, y, 245, "", au->strtbl, &selected, au->condtbl, 0xf, 0, 0xb, 0, 0, 0, -1);
+    selected = uiobj_select_from_list1(38, y, 245, "", au->strtbl, &selected, au->condtbl, 0xf, 0, 0xb, 0, 0, 0);
     return selected;
 }
 
@@ -283,8 +283,8 @@ void ui_audience_show1(struct audience_s *au)
         }
         uiobj_table_clear();
         oi_ma = UIOBJI_INVALID;
-        if ((au->mode >= 0) && (au->mode <= 2)) {
-            oi_ma = uiobj_add_mousearea(0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, MOO_KEY_UNKNOWN, -1);
+        if ((au->mode == 0) || (au->mode == 1) || (au->mode == 2)) {
+            oi_ma = uiobj_add_mousearea(UI_SCREEN_LIMITS, MOO_KEY_UNKNOWN);
         }
         if (!flag_done) {
             ui_audience_draw_cb1(d);
@@ -302,7 +302,7 @@ void ui_audience_show2(struct audience_s *au)
     uiobj_set_callback_and_delay(ui_audience_draw_cb2, au->uictx, 1);
     uiobj_set_downcount(1);
     uiobj_table_clear();
-    uiobj_add_mousearea(0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, MOO_KEY_UNKNOWN, -1);
+    uiobj_add_mousearea(UI_SCREEN_LIMITS, MOO_KEY_UNKNOWN);
     while (oi == 0) {
         ui_delay_prepare();
         oi = uiobj_handle_input_cond();
@@ -318,7 +318,7 @@ void ui_audience_show3(struct audience_s *au)
     uiobj_set_callback_and_delay(ui_audience_draw_cb3, d, 1);
     uiobj_set_downcount(1);
     uiobj_table_clear();
-    uiobj_add_mousearea(0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, MOO_KEY_UNKNOWN, -1);
+    uiobj_add_mousearea(UI_SCREEN_LIMITS, MOO_KEY_UNKNOWN);
     while (!flag_done) {
         int16_t oi;
         ui_delay_prepare();
@@ -344,10 +344,10 @@ int16_t ui_audience_ask2b(struct audience_s *au)
 {
     int strh;
     lbxfont_select(3, 1, 0, 0);
-    lbxfont_set_44_10_plus(1);
+    lbxfont_set_gap_h(1);
     strh = lbxfont_calc_split_str_h(245, au->buf);
     if (strh > 39) {
-        lbxfont_set_44_10_plus(0);
+        lbxfont_set_gap_h(0);
         strh = lbxfont_calc_split_str_h(245, au->buf);
     }
     return ui_audience_ask_do(au, 133 + strh, ui_audience_draw_cb2);
@@ -357,7 +357,7 @@ int16_t ui_audience_ask3(struct audience_s *au)
 {
     int strh;
     lbxfont_select(3, 2, 1, 0);
-    lbxfont_set_44_10_plus(1);
+    lbxfont_set_gap_h(1);
     strh = lbxfont_calc_split_str_h(245, au->buf);
     return ui_audience_ask_do(au, 139 + strh, ui_audience_draw_cb3);
 }

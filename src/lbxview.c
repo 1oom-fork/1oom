@@ -5,9 +5,12 @@
 #include <string.h>
 
 #include "main.h"
+#include "cfg.h"
 #include "comp.h"
 #include "fmt_mus.h"
+#include "fmt_pic.h"
 #include "fmt_sfx.h"
+#include "font8x8_draw.h"
 #include "gfxaux.h"
 #include "hw.h"
 #include "kbd.h"
@@ -21,12 +24,14 @@
 #include "os.h"
 #include "util.h"
 #include "util_math.h"
+#include "vgabuf.h"
 
 /* -------------------------------------------------------------------------- */
 
 const char *idstr_main = "lbxview";
 
 bool main_use_lbx = true;
+bool main_use_cfg = true;
 bool ui_use_audio = true;
 
 void (*main_usage)(void) = 0;
@@ -39,17 +44,9 @@ const struct cmdline_options_s main_cmdline_options[] = {
     { NULL, 0, NULL, NULL, NULL, NULL }
 };
 
-bool game_str_patch(const char *strid, const char *patchstr, int i)
-{
-    /* ignore */
-    return true;
-}
-
-bool game_num_patch(const char *numid, int32_t *patchnums, int first, int num)
-{
-    /* ignore */
-    return true;
-}
+const struct cfg_items_s game_cfg_items[] = {
+    CFG_ITEM_END
+};
 
 /* -------------------------------------------------------------------------- */
 
@@ -68,54 +65,29 @@ static bool advance_frame = false;
 static bool have_sfx = false;
 static bool have_mus = false;
 static bool flipx = false;
+static bool clearbeforedraw = false;
 static int test_rotate = 0;
 static uint8_t textcolor = 8;
 static uint32_t cur_key = 0;
 static int cur_xoff = 0;
 static int cur_yoff = 0;
 static struct gfx_aux_s gfxaux;
-static uint8_t romfont_08[256 * 8];
 
 /* -------------------------------------------------------------------------- */
 
 static void drawchar(int dx, int dy, uint8_t c, uint8_t fg, uint8_t bg)
 {
-    uint8_t *p = hw_video_get_buf() + dx + dy * 320;
-    for (int y = 0; y < 8; ++y) {
-        uint8_t b;
-        b = romfont_08[c * 8 + y];
-        for (int x = 0; x < 8; ++x) {
-            p[x] = (b & (1 << (7 - x))) ? fg : bg;
-        }
-        p += 320;
-    }
+    font8x8_drawchar(dx, dy, 320, c, fg, bg);
 }
 
 static void drawstr(int x, int y, const char *str, uint8_t fg, uint8_t bg)
 {
-    char c;
-    while ((c = *str++)) {
-        drawchar(x, y, c, fg, bg);
-        x += 8;
-        if (x >= 320) {
-            x = 0;
-            y += 8;
-        }
-    }
+    font8x8_drawstr(x, y, 320, str, fg, bg);
 }
 
 static void drawstrlen(int x, int y, const char *str, int len, uint8_t fg, uint8_t bg)
 {
-    char c;
-    while (len--) {
-        c = *str++;
-        drawchar(x, y, c, fg, bg);
-        x += 8;
-        if (x >= 320) {
-            x = 0;
-            y += 8;
-        }
-    }
+    font8x8_drawstrlen(x, y, 320, str, len, fg, bg);
 }
 
 static void drawscreen_outlbx(void)
@@ -132,7 +104,7 @@ static void drawscreen_outlbx(void)
     }
     for (int k = 0; k < 16; ++k) {
         uint8_t *p, *q;
-        p = hw_video_get_buf() + 350 * 320 + k * 18;
+        p = vgabuf_get_back() + 350 * 320 + k * 18;
         q = &lbxpal_cursors[16 * 16 * k];
         for (int y = 0; y < 16; ++y) {
             for (int x = 0; x < 16; ++x) {
@@ -170,7 +142,7 @@ static void drawscreen_inlbx_rotate(void)
             y0 = midy + yo - y / 2;
             x1 = midx + xo + x / 2;
             y1 = midy + yo + y / 2;
-            gfx_aux_draw_frame_from_rotate_limit(x0, y0, x1, y1, &gfxaux, 0, 0, UI_SCREEN_W - 1, 200 - 1, UI_SCREEN_W);
+            gfx_aux_draw_frame_from_rotate_limit(x0, y0, x1, y1, &gfxaux, UI_SCREEN_W);
             angle = (angle + 45) % 360;
         }
     } else {
@@ -184,7 +156,7 @@ static void drawscreen_inlbx_rotate(void)
         y0 = midy - y / 2;
         x1 = midx + x / 2;
         y1 = midy + y / 2;
-        gfx_aux_draw_frame_from_rotate_limit(x0, y0, x1, y1, &gfxaux, 0, 0, UI_SCREEN_W - 1, 200 - 1, UI_SCREEN_W);
+        gfx_aux_draw_frame_from_rotate_limit(x0, y0, x1, y1, &gfxaux, UI_SCREEN_W);
     }
 }
 
@@ -208,7 +180,7 @@ static void drawscreen_inlbx_data(const uint8_t *p, int len)
 
 static void drawscreen_inlbx(void)
 {
-    char linebuf[40 + 1];
+    char linebuf[256];
     if (cursor_i >= 19) {
         cursor_offs = cursor_i - 19;
     }
@@ -246,14 +218,20 @@ static void drawscreen_inlbx(void)
             lbxgfx_set_frame_0(p);
             frame = 0;
         }
-        gfx_aux_draw_frame_to(p, &gfxaux);
+        if (clearbeforedraw) {
+            memset(vgabuf_get_back(), 0, 320 * 200);
+            gfx_aux_setup(&gfxaux, p, 0);
+            lbxgfx_draw_frame_do(gfxaux.data, p, gfxaux.w);
+        } else {
+            gfx_aux_draw_frame_to(p, &gfxaux);
+        }
         if (flipx) {
             gfx_aux_flipx(&gfxaux);
         }
         if (test_rotate) {
             drawscreen_inlbx_rotate();
         } else {
-            gfx_aux_draw_frame_from_limit(cur_xoff, cur_yoff, &gfxaux, 0, 0, UI_SCREEN_W - 1, 200 - 1, UI_SCREEN_W);
+            gfx_aux_draw_frame_from_limit(cur_xoff, cur_yoff, &gfxaux, UI_SCREEN_W);
         }
         if (advance_frame) {
             advance_frame = false;
@@ -277,7 +255,8 @@ static void drawscreen_inlbx(void)
             drawstr(0, 200 + 8 * 2, linebuf, textcolor, 0);
         }
     } else if (lbxfile_type(cur_lbx) == LBX_TYPE_DATA) {
-        uint16_t num, size, view;
+        int16_t view;
+        uint16_t num, size;
         uint8_t *p = cur_ptr;
         num = GET_LE_16(p);
         size = GET_LE_16(p + 2);
@@ -295,7 +274,7 @@ static void drawscreen_inlbx(void)
 
 static void drawscreen(void)
 {
-    memset(hw_video_get_buf(), 0, 320 * 400);
+    memset(vgabuf_get_back(), 0, 320 * 400);
     if (!in_lbx) {
         drawscreen_outlbx();
     } else {
@@ -345,26 +324,41 @@ static void do_lbx_sound(uint32_t k)
     }
 }
 
-static int loadfont(void)
+static void do_lbx_gfx(uint32_t k)
 {
-    FILE *fd;
-    char *fname;
-    int res = -1;
-    fname = util_concat(os_get_path_data(), FSDEV_DIR_SEP_STR, "romfont.bin", NULL);
-    log_message("Load font '%s'\n", fname);
-    fd = fopen(fname, "rb");
-    if (fd && (fread(romfont_08, 256 * 8, 1, fd) == 1)) {
-        res = 0;
-    } else {
-        log_error("loading font '%s'. Put a 8x8 1bpp font (2048 bytes) there to use this program.\n", fname);
+    int w, h;
+    w = lbxgfx_get_w(cur_ptr);
+    h = lbxgfx_get_h(cur_ptr);
+    if ((w > 0) && (w <= 320) && (h > 0) && (h <= 200)) {
+        struct pic_s pic;
+        pic.type = PIC_TYPE_PCX;
+        pic.w = w;
+        pic.h = h;
+        pic.pitch = UI_SCREEN_W;
+        pic.pal = lbxpal_palette;
+        if (KBD_MOD_ONLY_SHIFT(k)) {
+            pic.pix = vgabuf_get_front();
+            fmt_pic_save("z0.pcx", &pic);
+        } else if (KBD_MOD_ONLY_CTRL(k)) {
+            char bufname[16];
+            int frames = lbxgfx_get_frames(cur_ptr);
+            strcpy(bufname, lbxfile_name(cur_lbx));
+            {
+                char *p;
+                p = strchr(bufname, '.');
+                if (p) { *p = 0; }
+            }
+            lbxgfx_set_frame_0(cur_ptr);
+            memset(vgabuf_get_back(), 0, 320 * 200);
+            pic.pix = vgabuf_get_back();
+            for (int f = 0; f < frames; ++f) {
+                char fname[32];
+                lbxgfx_draw_frame(0, 0, cur_ptr, UI_SCREEN_W);
+                sprintf(fname, "z_%s_%02x_%03i.pcx", bufname, cursor_i, f);
+                fmt_pic_save(fname, &pic);
+            }
+        }
     }
-    if (fd) {
-        fclose(fd);
-        fd = NULL;
-    }
-    lib_free(fname);
-    fname = NULL;
-    return res;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -409,15 +403,17 @@ void main_do_shutdown(void)
 
 int main_do(void)
 {
-    if (loadfont()) {
-        return 1;
-    }
     if (hw_video_init(320, 400)) {
         return 1;
     }
     lbxfont_init();
+    lbxpal_init();
     lbxpal_select(0, -1, 0);
+    if (cur_ptr && (lbxfile_type(cur_lbx) == LBX_TYPE_GFX)) {
+        lbxgfx_apply_palette(cur_ptr);
+    }
     lbxpal_update();
+    textcolor = lbxpal_find_closest(0x1f, 0x1f, 0x1f);
     drawscreen();
     hw_video_draw_buf();
     while (1) {
@@ -477,6 +473,9 @@ int main_do(void)
                         if (lbxfile_type(cur_lbx) == LBX_TYPE_SOUND) {
                             do_lbx_sound(k);
                         }
+                        if (lbxfile_type(cur_lbx) == LBX_TYPE_GFX) {
+                            do_lbx_gfx(k);
+                        }
                     }
                     break;
                 case MOO_KEY_w:
@@ -497,6 +496,9 @@ int main_do(void)
                 case MOO_KEY_q:
                     test_rotate = (test_rotate + 1) % 3;
                     break;
+                case MOO_KEY_c:
+                    clearbeforedraw = !clearbeforedraw;
+                    break;
                 case MOO_KEY_0:
                 case MOO_KEY_1:
                 case MOO_KEY_2:
@@ -509,12 +511,7 @@ int main_do(void)
                 case MOO_KEY_9:
                     lbxpal_select((k & 0xff) - MOO_KEY_0, -1, 0);
                     lbxpal_update();
-                    break;
-                case MOO_KEY_t:
-                    ++textcolor;
-                    break;
-                case MOO_KEY_y:
-                    --textcolor;
+                    textcolor = lbxpal_find_closest(0x1f, 0x1f, 0x1f);
                     break;
                 case MOO_KEY_e:
                     if (in_lbx) {
@@ -553,6 +550,7 @@ int main_do(void)
                     have_mus = false;
                     /* hw_audio_music_release(0); */
                 }
+                textcolor = lbxpal_find_closest(0x1f, 0x1f, 0x1f);
             }
             drawscreen();
             hw_video_draw_buf();

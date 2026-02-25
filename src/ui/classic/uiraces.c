@@ -21,6 +21,7 @@
 #include "uidelay.h"
 #include "uidefs.h"
 #include "uidraw.h"
+#include "uifix.h"
 #include "uiobj.h"
 #include "uipal.h"
 #include "uisound.h"
@@ -33,7 +34,7 @@ struct races_data_s {
     int num;
     player_id_t api;
     uint8_t tbl_ei[PLAYER_NUM - 1];
-    uint8_t tbl_hmm7[PLAYER_NUM - 1]; /* 0, 1, 2 */
+    uint8_t tbl_gone[PLAYER_NUM - 1]; /* 0, 1, 2 */
     uint8_t cursor_mode; /* 0, 4, 5 */
     int16_t tbl_spymode[PLAYER_NUM - 1];
 };
@@ -73,14 +74,14 @@ static void races_draw_cb(void *vptr)
         ui_draw_filled_rect(x + 56, y + 25, x + 158, y + 37, 0x5b);
         ui_draw_filled_rect(x + 58, y + 41, x + 156, y + 51, 0x5b);
         ui_draw_filled_rect(x + 56, y + 55, x + 158, y + 65, 0x5b);
-        lbxfont_print_str_center(x + 109, y + 27, (i < g->players) ? game_str_ra_nocont : game_str_ra_notpres, UI_SCREEN_W);
+        lbxfont_print_str_center(x + 109, y + 27, (i < g->players - 1) ? game_str_ra_nocont : game_str_ra_notpres, UI_SCREEN_W);
     }
 
     if (d->num) {
         int v;
         ui_draw_filled_rect(238, 141, 283, 144, 0);
         if (e->security) {
-            ui_draw_line_3h(238, 142, 237 + (e->security * 9) / 40, 0x73);
+            ui_draw_slider(238, 142, 237 + (e->security * 9) / 40, 0x73);
         }
         v = (e->security / 5);
         if (e->race == RACE_DARLOK) {
@@ -125,7 +126,7 @@ static void races_draw_cb(void *vptr)
         x = (i / 3) * 157;
         y = (i % 3) * 64;
         lbxgfx_draw_frame(x + 9, y + 10, ui_data.gfx.planets.race[g->eto[pi].race], UI_SCREEN_W);
-        if (d->tbl_hmm7[i] != 0) {
+        if (d->tbl_gone[i] != 0) {
             lbxfont_select_set_12_4(0, 0, 0, 0);
             lbxfont_print_str_center(x + 29, y + 23, game_str_ra_diplo, UI_SCREEN_W);
             lbxfont_print_str_center(x + 29, y + 31, game_str_ra_gone, UI_SCREEN_W);
@@ -134,45 +135,47 @@ static void races_draw_cb(void *vptr)
         lbxfont_select(5, 6, 0, 0);
         lbxfont_print_str_center(x + 29, y + 51, game_str_tbl_races[g->eto[pi].race], UI_SCREEN_W);
         {
-            int spying, v1, v2, spies, v3;
+            int spying, spyprod, spyspend, spies, spycost;
             spying = e->spying[pi];
             ui_draw_filled_rect(x + 103, y + 44, x + 128, y + 47, 0);
             lbxfont_select(2, 0, 0, 0);
             lbxfont_set_color_c_n(0x26, 5);
-            v1 = (e->total_production_bc * spying) / 1000;
-            v2 = v1 + e->spyfund[pi];
+            spyprod = (e->total_production_bc * spying) / 1000;
+            spyspend = spyprod + e->spyfund[pi];
             spies = e->spies[pi];
-            v3 = spies * e->tech.percent[TECH_FIELD_COMPUTER] + 25;
+            spycost = spies * e->tech.percent[TECH_FIELD_COMPUTER] * 2 + 25;
             if (e->race == RACE_DARLOK) {
-               v3 /= 2;
+               spycost /= 2;
             }
             if (spying != 0) {
-                ui_draw_line_3h(x + 103, y + 45, x + 102 + spying / 4, 0x73);
+                ui_draw_slider(x + 103, y + 45, x + 102 + spying / 4, 0x73);
             }
             if (spies == 0) {
                 strcpy(buf, game_str_ra_nospies);
             } else {
                 sprintf(buf, "%i %s", spies, (spies == 1) ? game_str_ra_spy : game_str_ra_spies);
             }
+            lbxfont_select(2, 6, 0, 0);
             lbxfont_print_str_right(x + 91, y + 44, buf, UI_SCREEN_W);
-            if (v3 <= v2) {
+            if (spycost <= spyspend) {
                 spies = 0;
-                while (v3 <= v2) {
+                while (spycost <= spyspend) {
                     ++spies;
-                    v2 -= v3;
+                    spyspend -= spycost;
+                    spycost *= 2;
                 }
                 sprintf(buf, "%i%c%s", spies, (spies == 1) ? ' ' : '/', game_str_y);
             } else {
-                if (v1 == 0) {
+                if (spyprod == 0) {
                     strcpy(buf, game_str_st_none);
                 } else {
-                    int v4, v5;
-                    v4 = v3 - v2;
-                    v5 = v4 / v1;
-                    if (v4 % v1) {
-                        ++v5;
+                    int left, years;
+                    left = spycost - spyspend;
+                    years = left / spyprod;
+                    if (left % spyprod) {
+                        ++years;
                     }
-                    sprintf(buf, "%i %s", v5, game_str_y);
+                    sprintf(buf, "%i %s", years, game_str_y);
                 }
             }
             lbxfont_print_str_right(x + 153, y + 44, buf, UI_SCREEN_W);
@@ -188,7 +191,7 @@ static void races_draw_cb(void *vptr)
             lbxfont_print_str_normal(x + 60, y + 9, str, UI_SCREEN_W);
         }
         if (e->trade_bc[pi] != 0) {
-            sprintf(buf, "%s: %i %s/%s", game_str_ra_trade, e->trade_bc[pi], game_str_bc, game_str_year);
+            sprintf(buf, "%s: %i %s%s", game_str_ra_trade, e->trade_bc[pi], game_str_bc, game_str_year0);
         } else {
             strcpy(buf, game_str_ra_notrade);
         }
@@ -199,7 +202,7 @@ static void races_draw_cb(void *vptr)
         lbxfont_print_str_normal(x + 60, y + 16, buf, UI_SCREEN_W);
         {
             int rel;
-            rel = e->relation1[pi];
+            rel = e->relation1[pi] / 2;
             SETRANGE(rel, -50, 50);
             lbxfont_select_set_12_4(0, 6, 0, 0);
             lbxfont_select(2, 0xd, 0, 0);
@@ -255,11 +258,11 @@ int ui_races(struct game_s *g, player_id_t api)
     races_data_load(&d);
 
     game_update_production(g);
-    game_update_empire_within_range(g);
+    game_update_empire_contact(g);
 
     d.num = 0;
     for (player_id_t pi = PLAYER_0; pi < g->players; ++pi) {
-        if ((pi != api) && BOOLVEC_IS1(e->within_frange, pi) && (g->evn.home[pi] != PLANET_NONE)) {
+        if (IN_CONTACT(g, api, pi) && IS_ALIVE(g, pi)) {
             d.tbl_ei[d.num++] = pi;
         } else {
             e->spying[pi] = 0;
@@ -267,20 +270,7 @@ int ui_races(struct game_s *g, player_id_t api)
     }
 
     for (int i = 0; i < d.num; ++i) {
-        int16_t v, vr;
-        player_id_t pi;
-        pi = d.tbl_ei[i];
-        vr = game_diplo_get_relation_hmm1(g, api, pi);
-        v = e->hmm06c[pi] /*+ e->relation1[pi]*/ + vr + game_diplo_tbl_reldiff[g->eto[pi].trait1];
-        if (((v /*- e->relation1[pi]*/) <= -100) || (vr <= -100)) {
-            if (e->treaty[pi] >= TREATY_WAR) {
-                d.tbl_hmm7[i] = 2;
-            } else {
-                d.tbl_hmm7[i] = 1;
-            }
-        } else {
-            d.tbl_hmm7[i] = 0;
-        }
+        d.tbl_gone[i] = game_diplo_is_gone(g, api, d.tbl_ei[i]);
     }
 
     d.cursor_mode = 0;
@@ -363,7 +353,7 @@ int ui_races(struct game_s *g, player_id_t api)
                     ret = d.tbl_ei[i];
                     d.cursor_mode = 0;
                 } else if (d.cursor_mode == 5) {
-                    if (d.tbl_hmm7[i] == 0) {
+                    if (d.tbl_gone[i] == 0) {
                         flag_done = true;
                         ui_data.ui_main_loop_action = UI_MAIN_LOOP_AUDIENCE;
                         ret = d.tbl_ei[i];
@@ -391,34 +381,36 @@ int ui_races(struct game_s *g, player_id_t api)
             uiobj_table_clear();
             if (d.num > 0) {
                 if (d.cursor_mode == 0) {
-                    oi_report = uiobj_add_t0(205, 180, "", ui_data.gfx.screens.races_bu.report, MOO_KEY_r, -1);
+                    oi_report = uiobj_add_t0(205, 180, "", ui_data.gfx.screens.races_bu.report, MOO_KEY_r);
                     if (g->end == GAME_END_NONE) {
-                        oi_audience = uiobj_add_t0(245, 180, "", ui_data.gfx.screens.races_bu.audience, MOO_KEY_a, -1);
+                        oi_audience = uiobj_add_t0(245, 180, "", ui_data.gfx.screens.races_bu.audience, MOO_KEY_a);
                     }
                     for (int i = 0; i < d.num; ++i) {
                         int x, y;
                         x = (i / 3) * 157;
                         y = (i % 3) * 64;
-                        /*oi_tbl_hiding[i] =*/ uiobj_add_t3(x + 59, y + 55, "", ui_data.gfx.screens.races_bu.hiding, &(d.tbl_spymode[i]), SPYMODE_HIDE, MOO_KEY_UNKNOWN, -1);
-                        /*oi_tbl_sabotage[i] =*/ uiobj_add_t3(x + 77, y + 55, "", ui_data.gfx.screens.races_bu.sabotage, &(d.tbl_spymode[i]), SPYMODE_SABOTAGE, MOO_KEY_UNKNOWN, -1);
-                        /*oi_tbl_espionage[i] =*/ uiobj_add_t3(x + 114, y + 55, "", ui_data.gfx.screens.races_bu.espionage, &(d.tbl_spymode[i]), SPYMODE_ESPIONAGE, MOO_KEY_UNKNOWN, -1);
+                        /*oi_tbl_hiding[i] =*/ uiobj_add_t3(x + 59, y + 55, "", ui_data.gfx.screens.races_bu.hiding, &(d.tbl_spymode[i]), SPYMODE_HIDE, MOO_KEY_UNKNOWN);
+                        /*oi_tbl_sabotage[i] =*/ uiobj_add_t3(x + 77, y + 55, "", ui_data.gfx.screens.races_bu.sabotage, &(d.tbl_spymode[i]), SPYMODE_SABOTAGE, MOO_KEY_UNKNOWN);
+                        /*oi_tbl_espionage[i] =*/ uiobj_add_t3(x + 114, y + 55, "", ui_data.gfx.screens.races_bu.espionage, &(d.tbl_spymode[i]), SPYMODE_ESPIONAGE, MOO_KEY_UNKNOWN);
                     }
                 } else {
                     for (int i = 0; i < d.num; ++i) {
                         int x, y;
+                        mookey_t key;
                         x = (i / 3) * 157;
                         y = (i % 3) * 64;
-                        oi_tbl_oppon[i] = uiobj_add_mousearea(x + 4, y + 5, x + 157, y + 66, MOO_KEY_UNKNOWN, -1);
+                        key = ui_qol_numeric_key_bindings ? (MOO_KEY_1 + i) : MOO_KEY_UNKNOWN;
+                        oi_tbl_oppon[i] = uiobj_add_mousearea(x + 4, y + 5, x + 157, y + 66, key);
                     }
                 }
             }
             if (d.cursor_mode == 0) {
-                oi_status = uiobj_add_t0(165, 180, "", ui_data.gfx.screens.races_bu.status, MOO_KEY_s, -1);
-                oi_ok = uiobj_add_t0(290, 180, "", ui_data.gfx.screens.races_bu.ok, MOO_KEY_o, -1);
+                oi_status = uiobj_add_t0(165, 180, "", ui_data.gfx.screens.races_bu.status, MOO_KEY_s);
+                oi_ok = uiobj_add_t0(290, 180, "", ui_data.gfx.screens.races_bu.ok, MOO_KEY_o);
                 if (d.num > 0) {
-                    uiobj_add_slider(238, 141, 0, 200, 0, 200, 45, 9, &e->security, MOO_KEY_UNKNOWN, -1);
-                    oi_sec_minus = uiobj_add_mousearea(233, 139, 236, 147, MOO_KEY_UNKNOWN, -1);
-                    oi_sec_plus = uiobj_add_mousearea(285, 139, 289, 147, MOO_KEY_UNKNOWN, -1);
+                    uiobj_add_slider(238, 141, 0, 200, 0, 200, 45, 9, &e->security, MOO_KEY_UNKNOWN);
+                    oi_sec_minus = uiobj_add_mousearea(233, 139, 236, 147, MOO_KEY_UNKNOWN);
+                    oi_sec_plus = uiobj_add_mousearea(285, 139, 289, 147, MOO_KEY_UNKNOWN);
                 } else {
                     e->security = 0;
                 }
@@ -428,9 +420,9 @@ int ui_races(struct game_s *g, player_id_t api)
                     x = (i / 3) * 157;
                     y = (i % 3) * 64;
                     pi = d.tbl_ei[i];
-                    oi_tbl_spying[i] = uiobj_add_slider(x + 103, y + 44, 0, 100, 0, 100, 25, 9, &e->spying[pi], MOO_KEY_UNKNOWN, -1);
-                    oi_tbl_spy_minus[i] = uiobj_add_mousearea(x + 97, y + 42, x + 100, y + 50, MOO_KEY_UNKNOWN, -1);
-                    oi_tbl_spy_plus[i] = uiobj_add_mousearea(x + 130, y + 42, x + 134, y + 50, MOO_KEY_UNKNOWN, -1);
+                    oi_tbl_spying[i] = uiobj_add_slider(x + 103, y + 44, 0, 100, 0, 100, 25, 9, &e->spying[pi], MOO_KEY_UNKNOWN);
+                    oi_tbl_spy_minus[i] = uiobj_add_mousearea(x + 97, y + 42, x + 100, y + 50, MOO_KEY_UNKNOWN);
+                    oi_tbl_spy_plus[i] = uiobj_add_mousearea(x + 130, y + 42, x + 134, y + 50, MOO_KEY_UNKNOWN);
                 }
             }
             ui_draw_finish();

@@ -2,41 +2,12 @@
 #define INC_1OOM_GAME_H
 
 #include "boolvec.h"
+#include "game_fleet.h"
 #include "game_planet.h"
 #include "game_shipdesign.h"
 #include "game_shiptech.h"
 #include "game_types.h"
 #include "types.h"
-
-typedef struct fleet_enroute_s {
-    player_id_t owner;
-    uint16_t x;
-    uint16_t y;
-    uint8_t dest;   /* planet index */
-    uint8_t speed;
-    BOOLVEC_DECLARE(visible, PLAYER_NUM);
-    shipcount_t ships[NUM_SHIPDESIGNS];
-} fleet_enroute_t;
-
-#define FLEET_ENROUTE_AI_MAX    208
-#define FLEET_ENROUTE_MAX   260
-
-typedef struct transport_s {
-    player_id_t owner;
-    uint16_t x;
-    uint16_t y;
-    uint8_t dest;   /* planet index */
-    uint8_t speed;
-    BOOLVEC_DECLARE(visible, PLAYER_NUM);
-    uint16_t pop;
-} transport_t;
-
-#define TRANSPORT_MAX   100
-
-typedef struct fleet_orbit_s {
-    BOOLVEC_DECLARE(visible, PLAYER_NUM);
-    shipcount_t ships[NUM_SHIPDESIGNS];
-} fleet_orbit_t;
 
 typedef struct techdata_s {
     uint8_t percent[TECH_FIELD_NUM];   /* tech level % */
@@ -74,15 +45,15 @@ typedef struct empiretechorbit_s {
     int16_t diplo_val[PLAYER_NUM];
     uint16_t diplo_p1[PLAYER_NUM];
     int16_t diplo_p2[PLAYER_NUM];
-    uint16_t hmm06c[PLAYER_NUM];
+    int16_t trust[PLAYER_NUM];
     treaty_t broken_treaty[PLAYER_NUM];
-    int16_t hmm084[PLAYER_NUM];
+    int16_t blunder[PLAYER_NUM];
     tech_field_t tribute_field[PLAYER_NUM];
     uint8_t tribute_tech[PLAYER_NUM];
-    int16_t hmm0a8[PLAYER_NUM];
-    int16_t hmm0b4[PLAYER_NUM];
-    int16_t hmm0c0[PLAYER_NUM];
-    int16_t hmm0cc[PLAYER_NUM];
+    int16_t mood_treaty[PLAYER_NUM];
+    int16_t mood_trade[PLAYER_NUM];
+    int16_t mood_tech[PLAYER_NUM];
+    int16_t mood_peace[PLAYER_NUM];
     treaty_t treaty[PLAYER_NUM];
     uint16_t trade_bc[PLAYER_NUM];
     int16_t trade_percent[PLAYER_NUM];
@@ -103,9 +74,9 @@ typedef struct empiretechorbit_s {
     tech_field_t au_attack_gift_field[PLAYER_NUM];
     uint8_t au_attack_gift_tech[PLAYER_NUM];
     int16_t au_attack_gift_bc[PLAYER_NUM];
-    int16_t hmm270[PLAYER_NUM];
-    uint16_t hmm27c[PLAYER_NUM];    /* bool? */
-    uint16_t hmm288[PLAYER_NUM];    /* trade ? */
+    int16_t hatred[PLAYER_NUM];
+    uint16_t have_met[PLAYER_NUM]; /* 0, 1, 2 */
+    uint16_t trade_established_bc[PLAYER_NUM];
     uint8_t have_planet_shield; /* 0, 5, 10, 15, 20 */
     uint16_t planet_shield_cost;
     int16_t spying[PLAYER_NUM]; /* tenths */
@@ -159,7 +130,7 @@ typedef struct empiretechorbit_s {
 
 #define NEWTECH_MAX 15
 
-typedef struct {
+typedef struct monster_s {
     uint8_t exists; /* 0..3 */
     int16_t x;
     int16_t y;
@@ -172,9 +143,9 @@ typedef struct {
 typedef struct newtech_s {
     tech_field_t field;
     uint8_t tech;
-    uint8_t source; /* 0..4(..5?) */
+    techsource_t source;
     int8_t v06;    /* 4: race_t giver  2: NEWTECH_V06_ORION or planet_i ruins or -(planet_i+1) artifact */
-    uint8_t v08;   /* race_t stolen_from? */
+    player_id_t stolen_from;
     bool frame;
 } newtech_t;
 
@@ -195,9 +166,9 @@ typedef struct gameevents_s {
     player_id_t plague_player;
     uint8_t plague_planet_i;
     int plague_val;
-    bool have_e02;
-    player_id_t e02_player;
-    uint8_t e02_planet_i;
+    bool have_quake;
+    player_id_t quake_player;
+    uint8_t quake_planet_i;
     uint8_t have_nova;  /* 0..3 */
     player_id_t nova_player;
     uint8_t nova_planet_i;
@@ -206,12 +177,12 @@ typedef struct gameevents_s {
     uint8_t have_accident;  /* 0..2 */
     player_id_t accident_player;
     uint8_t accident_planet_i;
-    bool have_e05;
-    player_id_t e05_player;
-    player_id_t e05_player2;
-    bool have_e06;
-    player_id_t e06_player;
-    tech_field_t e06_field;
+    bool have_assassin;
+    player_id_t assassin_player;
+    player_id_t assassin_player2;
+    bool have_virus;
+    player_id_t virus_player;
+    tech_field_t virus_field;
     uint8_t have_comet; /* 0..3 */
     player_id_t comet_player;
     uint8_t comet_planet_i;
@@ -221,19 +192,19 @@ typedef struct gameevents_s {
     uint8_t have_pirates;   /* 0..3 */
     uint8_t pirates_planet_i;
     uint16_t pirates_hp;
-    bool have_e09;
-    player_id_t e09_player;
+    bool have_derelict;
+    player_id_t derelict_player;
     monster_t crystal;
     monster_t amoeba;
-    bool have_e13;
-    uint8_t e13_planet_i;
-    bool have_e14;
-    uint8_t e14_planet_i;
-    bool have_e15;
-    player_id_t e15_player;
-    bool have_e16;
-    uint8_t e16_planet_i;
-    uint8_t have_e17; /* 0, pi+1 */
+    bool have_enviro;
+    uint8_t enviro_planet_i;
+    bool have_rich;
+    uint8_t rich_planet_i;
+    bool have_support;
+    player_id_t support_player;
+    bool have_poor;
+    uint8_t poor_planet_i;
+    uint8_t have_orion_conquer; /* 0, pi+1 */
     uint8_t planet_orion_i;
     bool have_guardian;
     uint8_t home[PLAYER_NUM];   /* home planet index or PLANET_NONE if dead */
@@ -250,10 +221,9 @@ typedef struct gameevents_s {
     bool sabotage_is_bases[PLAYER_NUM][PLAYER_NUM]; /* [victim][spy] */
     uint8_t sabotage_planet[PLAYER_NUM][PLAYER_NUM]; /* [victim][spy] */
     uint16_t sabotage_num[PLAYER_NUM][PLAYER_NUM]; /* [victim][spy] */
-    uint16_t sabotage_num2[PLAYER_NUM][PLAYER_NUM]; /* [victim][spy] TODO merge with _num */
     player_id_t sabotage_spy[PLAYER_NUM][PLAYER_NUM]; /* [victim][spy] */
     uint16_t sabotage_hmm1[PLAYER_NUM][PLAYER_NUM]; /* [victim][spy] */
-    int16_t hmm28e[PLAYER_NUM][PLAYER_NUM];
+    int16_t ceasefire[PLAYER_NUM][PLAYER_NUM]; /* [human][ai] */
     BOOLVEC_TBL_DECLARE(help_shown, PLAYER_NUM, HELP_SHOWN_NUM);
     uint16_t build_finished_num[PLAYER_NUM];
     player_id_t voted[PLAYER_NUM];
@@ -263,7 +233,7 @@ typedef struct gameevents_s {
     uint8_t best_terraform[PLAYER_NUM];
 } gameevents_t;
 
-typedef struct {
+typedef struct seen_s {
     player_id_t owner;
     uint16_t pop;
     uint16_t bases;
@@ -318,7 +288,48 @@ struct game_s {
     struct game_aux_s *gaux;
 };
 
+static inline bool IS_PLAYER(const struct game_s *g, player_id_t i)
+{
+    return (i >= PLAYER_0) && (i < g->players);
+}
+
+static inline bool IS_HUMAN(const struct game_s *g, player_id_t i)
+{
+    /*
+        In MOO1, instead of IS_HUMAN, the index is checked for equality to zero,
+        which in turn implicitly guarantees that the index is less than g->players.
+        The IS_PLAYER check eliminates the potential for memory corruption.
+    */
+    return IS_PLAYER(g, i) && BOOLVEC_IS0(g->is_ai, i);
+}
+
+static inline bool IS_ALIVE(const struct game_s *g, player_id_t i)
+{
+    return (g->evn.home[i] != PLANET_NONE);
+}
+
+static inline bool IN_CONTACT(const struct game_s *g, player_id_t p1, player_id_t p2)
+{
+    /*
+        In MOO1, in many cases PLAYER_0 is checked for contact with AI players (1-5),
+        so the inequality (p1 != p2) is implicitly guaranteed there.
+    */
+    return (p1 != p2) && BOOLVEC_IS1(g->eto[p1].within_frange, p2);
+}
+
+static inline bool NOT_IN_CONTACT(const struct game_s *g, player_id_t p1, player_id_t p2)
+{
+    /*
+        Not the same as !IN_CONTACT, since the case (p1 == p2) is undefined.
+    */
+    return (p1 != p2) && BOOLVEC_IS0(g->eto[p1].within_frange, p2);
+}
+
+static inline bool OWNER_IS_NOT_KNOWN(const struct game_s *g, const planet_t *p, player_id_t player)
+{
+    return BOOLVEC_IS0(p->within_srange, player) && ((p->owner == PLAYER_NONE) || BOOLVEC_IS0(g->eto[player].within_frange, p->owner));
+}
+
 #define IS_AI(_g_, _i_) BOOLVEC_IS1((_g_)->is_ai, (_i_))
-#define IS_HUMAN(_g_, _i_) BOOLVEC_IS0((_g_)->is_ai, (_i_))
 
 #endif

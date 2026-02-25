@@ -29,6 +29,7 @@
 #include "uipal.h"
 #include "uisound.h"
 #include "util.h"
+#include "vgabuf.h"
 
 /* -------------------------------------------------------------------------- */
 
@@ -43,11 +44,11 @@ struct ground_data_s {
 static void ground_prepare(struct ground_data_s *d)
 {
     const struct game_s *g = d->gr->g;
-    hw_video_copy_back_from_page3();
+    vgabuf_copy_back_from_page3();
     lbxgfx_set_new_frame(d->l.gfx_transprt, 39);
     gfx_aux_draw_frame_to(d->l.gfx_transprt, &ui_data.aux.screen);
-    gfx_aux_draw_frame_from_limit(0, 100, &ui_data.aux.screen, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
-    hw_video_copy_back_to_page3();
+    gfx_aux_draw_frame_from_limit(0, 100, &ui_data.aux.screen, UI_SCREEN_W);
+    vgabuf_copy_back_to_page3();
     ui_delay_1();
     ui_sound_stop_music();
     for (int i = 0; i < 2; ++i) {
@@ -85,19 +86,20 @@ static void ground_draw_item(int popi, int popnum, uint8_t *gfx, bool is_right, 
 static void ground_draw_cb1(void *vptr)
 {
     struct ground_data_s *d = vptr;
-    struct ground_s *gr = d->gr;
+    const struct ground_s *gr = d->gr;
     const struct game_s *g = d->gr->g;
     const char *strrace[2];
     char buf[0x80];
     for (int i = 0; i < 2; ++i) {
         strrace[i] = game_str_tbl_race[g->eto[gr->s[i].player].race];
     }
-    hw_video_copy_back_from_page3();
+    vgabuf_copy_back_from_page3();
     if (d->l.frame < 50) {
         int y;
         y = d->l.frame * 4 - 100;
+        uiobj_set_limits_all();
         gfx_aux_draw_frame_to(d->l.gfx_transprt, &ui_data.aux.screen);
-        gfx_aux_draw_frame_from_limit(0, y, &ui_data.aux.screen, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
+        gfx_aux_draw_frame_from_limit(0, y, &ui_data.aux.screen, UI_SCREEN_W);
         if (!gr->flag_rebel) {
             sprintf(buf, "%i %s %i %s %s", gr->inbound, game_str_gr_outof, gr->total_inbound, strrace[gr->flag_swap ? 1 : 0], game_str_gr_transs);
         } else {
@@ -229,7 +231,7 @@ void ui_ground(struct ground_s *gr)
     ui_draw_finish_mode = 2;
     uiobj_set_callback_and_delay(ground_draw_cb1, &d, 2);
     uiobj_table_clear();
-    uiobj_add_mousearea(0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, MOO_KEY_UNKNOWN, -1);
+    uiobj_add_mousearea(UI_SCREEN_LIMITS, MOO_KEY_UNKNOWN);
     uiobj_set_downcount(3);
     while ((!flag_done) && (d.l.frame < 50)) {
         int16_t oi;
@@ -248,7 +250,7 @@ void ui_ground(struct ground_s *gr)
     ground_prepare(&d);
     /*7b442*/
     uiobj_table_clear();
-    uiobj_add_mousearea(0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, MOO_KEY_UNKNOWN, -1);
+    uiobj_add_mousearea(UI_SCREEN_LIMITS, MOO_KEY_UNKNOWN);
     ui_sound_play_music(0x26);
     flag_done = false;
     while ((!flag_done) && (gr->s[0].pop1 != 0) && (gr->s[1].pop1 != 0)) {

@@ -9,7 +9,6 @@
 #include "game_fleet.h"
 #include "game_misc.h"
 #include "game_num.h"
-#include "game_save.h"
 #include "game_str.h"
 #include "game_tech.h"
 #include "game_techtypes.h"
@@ -18,11 +17,13 @@
 #include "lbxfont.h"
 #include "log.h"
 #include "rnd.h"
+#include "save.h"
 #include "types.h"
 #include "uicursor.h"
 #include "uidraw.h"
 #include "uidefs.h"
 #include "uidelay.h"
+#include "uifix.h"
 #include "uihelp.h"
 #include "uiobj.h"
 #include "uisound.h"
@@ -36,7 +37,7 @@ static void ui_starmap_draw_cb1(void *vptr)
     struct game_s *g = d->g;
     planet_t *p = &g->planet[g->planet_focus_i[d->api]];
 
-    int16_t oi2 = uiobj_get_hmm2_oi();
+    int16_t oi2 = uiobj_get_clicked_oi();
     for (planet_slider_i_t i = PLANET_SLIDER_SHIP; i < PLANET_SLIDER_NUM; ++i) {
         if ((oi2 == d->sm.oi_tbl_slider[i]) && (p->slider_lock[i] == 0)) {
             game_adjust_slider_group(p->slider, i, p->slider[i], PLANET_SLIDER_NUM, p->slider_lock);
@@ -44,6 +45,9 @@ static void ui_starmap_draw_cb1(void *vptr)
     }
 
     ui_starmap_draw_basic(d);
+    if (g->gaux->flag_cheat_events) {
+        ui_draw_text_overlay(0, 0, game_str_no_events);
+    }
 }
 
 static void ui_starmap_remove_build_finished(struct game_s *g, player_id_t api, planet_t *p)
@@ -73,29 +77,27 @@ static void ui_starmap_fill_oi_slider(struct starmap_data_s *d)
             int y0;
             y0 = 81 + i * 11;
             if (!p->slider_lock[i]) {
-                d->sm.oi_tbl_slider[i] = uiobj_add_slider(253, y0 + 3, 0, 100, 0, 100, 25, 9, &p->slider[i], MOO_KEY_UNKNOWN, -1);
-                d->sm.oi_tbl_slider_minus[i] = uiobj_add_mousearea(247, y0 + 1, 251, y0 + 8, MOO_KEY_UNKNOWN, -1);
-                d->sm.oi_tbl_slider_plus[i] = uiobj_add_mousearea(280, y0 + 1, 283, y0 + 8, MOO_KEY_UNKNOWN, -1);
+                d->sm.oi_tbl_slider[i] = uiobj_add_slider(253, y0 + 3, 0, 100, 0, 100, 25, 9, &p->slider[i], MOO_KEY_UNKNOWN);
+                d->sm.oi_tbl_slider_minus[i] = uiobj_add_mousearea(247, y0 + 1, 251, y0 + 8, MOO_KEY_UNKNOWN);
+                d->sm.oi_tbl_slider_plus[i] = uiobj_add_mousearea(280, y0 + 1, 283, y0 + 8, MOO_KEY_UNKNOWN);
             }
-            d->sm.oi_tbl_slider_lock[i] = uiobj_add_mousearea(226, y0, 245, y0 + 9, MOO_KEY_UNKNOWN, -1);
+            d->sm.oi_tbl_slider_lock[i] = uiobj_add_mousearea(226, y0, 245, y0 + 9, MOO_KEY_UNKNOWN);
         }
-        d->sm.oi_ship = uiobj_add_t0(282, 140, "", ui_data.gfx.starmap.col_butt_ship, MOO_KEY_s, -1);
+        d->sm.oi_ship = uiobj_add_t0(282, 140, "", ui_data.gfx.starmap.col_butt_ship, MOO_KEY_s);
         if (p->buildship != BUILDSHIP_STARGATE) {
-            d->sm.oi_reloc = uiobj_add_t0(282, 152, "", ui_data.gfx.starmap.col_butt_reloc, MOO_KEY_l, -1);
+            d->sm.oi_reloc = uiobj_add_t0(282, 152, "", ui_data.gfx.starmap.col_butt_reloc, MOO_KEY_l);
         }
         if (g->evn.have_plague && (g->evn.plague_planet_i == g->planet_focus_i[d->api])) {
             lbxgfx_set_frame(ui_data.gfx.starmap.col_butt_trans, 1);
             lbxgfx_draw_frame(282, 164, ui_data.gfx.starmap.col_butt_trans, UI_SCREEN_W);
         } else {
-            d->sm.oi_trans = uiobj_add_t0(282, 164, "", ui_data.gfx.starmap.col_butt_trans, MOO_KEY_x, -1);
+            d->sm.oi_trans = uiobj_add_t0(282, 164, "", ui_data.gfx.starmap.col_butt_trans, MOO_KEY_x);
         }
     }
 }
 
-static void ui_starmap_do_help(struct starmap_data_s *d)
+static void ui_starmap_do_help(struct game_s *g, player_id_t api)
 {
-    struct game_s *g = d->g;
-    player_id_t api = d->api;
     const empiretechorbit_t *e = &(g->eto[api]);
     const shipresearch_t *srd = &(g->srd[api]);
     const planet_t *p = &(g->planet[g->evn.home[api]]);
@@ -125,8 +127,8 @@ static void ui_starmap_do_help(struct starmap_data_s *d)
         return;
     }
     if (BOOLVEC_TBL_IS0(g->evn.help_shown, api, 5)) {
-        for (int i = 0; i < e->tech.completed[TECH_FIELD_WEAPON]; ++i) {
-            if (srd->researchcompleted[TECH_FIELD_WEAPON][i] == 2) {
+        for (int i = 1; i < e->tech.completed[TECH_FIELD_WEAPON]; ++i) {
+            if (srd->researchcompleted[TECH_FIELD_WEAPON][i] != 2) {
                 BOOLVEC_TBL_SET1(g->evn.help_shown, api, 5);
                 ui_help(0x17);
                 return;
@@ -155,6 +157,15 @@ static void ui_starmap_do_help(struct starmap_data_s *d)
         BOOLVEC_TBL_SET1(g->evn.help_shown, api, 8);
         ui_help(0x1a);
         return;
+    }
+    if (BOOLVEC_TBL_IS0(g->evn.help_shown, api, 9)) {
+        for (int i = 0; i < 8; ++i) {
+            if (game_tech_player_has_tech(g, TECH_FIELD_PROPULSION, TECH_PROP_NUCLEAR_ENGINES + i * 6, api)) {
+                BOOLVEC_TBL_SET1(g->evn.help_shown, api, 9);
+                ui_help(0x18);
+                return;
+            }
+        }
     }
     if (BOOLVEC_TBL_IS0(g->evn.help_shown, api, 10)) {
         for (int i = 0; i < 4; ++i) {
@@ -189,47 +200,40 @@ static void ui_starmap_do_help(struct starmap_data_s *d)
 
 /* -------------------------------------------------------------------------- */
 
-void ui_starmap_set_pos_focus(struct game_s *g, player_id_t active_player)
+void ui_starmap_set_pos_focus(const struct game_s *g, player_id_t active_player)
 {
-    planet_t *p = &g->planet[g->planet_focus_i[active_player]];
+    const planet_t *p = &g->planet[g->planet_focus_i[active_player]];
     ui_starmap_set_pos(g, p->x, p->y);
 }
 
-void ui_starmap_set_pos(struct game_s *g, int x, int y)
+void ui_starmap_set_pos(const struct game_s *g, int x, int y)
 {
     x -= 0x36;
-    if (x < 0) {
-        x = 0;
-    }
-    if (x > (g->galaxy_maxx - 0x6c)) {
-        x = (g->galaxy_maxx - 0x6c);
-    }
-    ui_data.starmap.x = x;
-    ui_data.starmap.x2 = x;
     y -= 0x2b;
-    if (y < 0) {
-        y = 0;
-    }
-    if (y > (g->galaxy_maxy - 0x56)) {
-        y = (g->galaxy_maxy - 0x56);
-    }
+    ui_starmap_set_scroll_pos(g, x, y);
+    ui_data.starmap.x = x;
     ui_data.starmap.y = y;
-    ui_data.starmap.y2 = y;
+}
+
+void ui_starmap_scroll(const struct game_s *g, int x, int y)    /* inline */
+{
+    x -= 0x36;
+    y -= 0x2b;
+    ui_starmap_set_scroll_pos(g, ui_data.starmap.x + x, ui_data.starmap.y + y);
 }
 
 void ui_starmap_do(struct game_s *g, player_id_t active_player)
 {
     bool flag_done = false;
-    int16_t oi_b, oi_c, oi_scroll, oi_starview1, oi_starview2, oi_shippic, oi_hmm25, oi_equals,
+    int16_t oi_b, oi_c, oi_scroll, oi_starview1, oi_starview2, oi_shippic, oi_finished, oi_equals,
             oi_f2, oi_f3, oi_f4, oi_f5, oi_f6, oi_f7, oi_f8, oi_f9, oi_f10,
             oi_alt_galaxy, oi_alt_m, oi_alt_c, oi_alt_p, oi_alt_r, oi_alt_events
             ;
-    uint16_t scrollx = 0, scrolly = 0;
+    int16_t scrollx = 0, scrolly = 0;
     struct starmap_data_s d;
 
     d.g = g;
     d.api = active_player;
-    d.anim_delay = 0;
 
     ui_delay_1();
     ui_sound_stop_music();  /* or fade? */
@@ -248,7 +252,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
         oi_starview1 = UIOBJI_INVALID; \
         oi_starview2 = UIOBJI_INVALID; \
         oi_shippic = UIOBJI_INVALID; \
-        oi_hmm25 = UIOBJI_INVALID; \
+        oi_finished = UIOBJI_INVALID; \
         oi_equals = UIOBJI_INVALID; \
         d.sm.oi_ship = UIOBJI_INVALID; \
         d.sm.oi_reloc = UIOBJI_INVALID; \
@@ -338,7 +342,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
         } else if (oi1 == oi_alt_m) {
             ui_data.starmap.flag_show_grid = !ui_data.starmap.flag_show_grid;
             ui_sound_play_sfx_24();
-        } else if ((oi1 == oi_hmm25) || ((oi1 != 0) && (oi_hmm25 != UIOBJI_INVALID))) {
+        } else if ((oi1 == oi_finished) || ((oi1 == UIOBJI_ESC) && (oi_finished != UIOBJI_INVALID))) {
             ui_starmap_remove_build_finished(g, active_player, p);
             ui_sound_play_sfx_24();
             flag_done = true;
@@ -356,9 +360,9 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             ui_sound_play_sfx_24();
             g->gaux->flag_cheat_events = !g->gaux->flag_cheat_events;
         } else if (oi1 == oi_f10) {
-            game_save_do_save_i(GAME_SAVE_I_CONTINUE, "Continue", g);
+            libsave_do_save_i(GAME_SAVE_I_CONTINUE, "Continue", g);
         } else if (oi1 == oi_alt_p) {
-            for (int i = 0; i < g->players; ++i) {
+            for (player_id_t i = PLAYER_0; i < g->players; ++i) {
                 g->eto[i].trait2 = rnd_0_nm1(6, &g->seed);
                 g->eto[i].trait1 = rnd_0_nm1(6, &g->seed);
             }
@@ -395,6 +399,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
         }
         if ((oi1 == d.sm.oi_ship) || (oi1 == oi_shippic)) {
             int n;
+            ui_sound_play_sfx_24();
             n = p->buildship + 1;
             if (n >= g->eto[active_player].shipdesigns_num) {
                 if (n >= (NUM_SHIPDESIGNS + 1)) {
@@ -417,11 +422,13 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
                 if (oi1 == d.sm.oi_tbl_slider[i]) {
                     do_adj = true;
                 } else if (oi1 == d.sm.oi_tbl_slider_minus[i]) {
+                    ui_sound_play_sfx_24();
                     int v = p->slider[i] - 4;
                     SETMAX(v, 0);
                     p->slider[i] = v;
                     do_adj = true;
                 } else if (oi1 == d.sm.oi_tbl_slider_plus[i]) {
+                    ui_sound_play_sfx_24();
                     int v = p->slider[i] + 4;
                     SETMIN(v, 100);
                     p->slider[i] = v;
@@ -433,13 +440,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             }
         }
         if ((oi1 == oi_scroll) && !g->evn.build_finished_num[active_player]) {
-            int x, y;
-            x = ui_data.starmap.x + scrollx - 0x36;
-            y = ui_data.starmap.y + scrolly - 0x2b;
-            SETRANGE(x, 0, g->galaxy_maxx - 0x6c);
-            SETRANGE(y, 0, g->galaxy_maxy - 0x56);
-            ui_data.starmap.x2 = x;
-            ui_data.starmap.y2 = y;
+            ui_starmap_scroll(g, scrollx, scrolly);
         }
         ui_starmap_handle_oi_ctrl(&d, oi1);
         if (oi1 == oi_f2) {
@@ -449,7 +450,6 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
                 if (--i < 0) { i = g->galaxy_stars - 1; }
             } while (g->planet[i].owner != active_player);
             g->planet_focus_i[active_player] = i;
-            p = &(g->planet[i]);
             ui_starmap_set_pos_focus(g, active_player);
             ui_sound_play_sfx_24();
         } else if (oi1 == oi_f3) {
@@ -459,14 +459,13 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
                 i = (i + 1) % g->galaxy_stars;
             } while (g->planet[i].owner != active_player);
             g->planet_focus_i[active_player] = i;
-            p = &(g->planet[i]);
             ui_starmap_set_pos_focus(g, active_player);
             ui_sound_play_sfx_24();
         } else if (oi1 == oi_alt_c) {
             ui_starmap_set_pos_focus(g, active_player);
             ui_sound_play_sfx_24();
         } else if (oi1 == oi_equals) {
-            if (p->prod_after_maint < p->reserve) {
+            if ((p->prod_after_maint <= p->reserve) || (g->eto[active_player].reserve_bc == 0)) {
                 ui_sound_play_sfx_06();
             } else {
                 int v = p->prod_after_maint;
@@ -483,7 +482,6 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             int i;
             i = ui_starmap_newship_next(g, active_player, g->planet_focus_i[active_player]);
             g->planet_focus_i[active_player] = i;
-            p = &(g->planet[i]);
             ui_starmap_set_pos_focus(g, active_player);
             ui_sound_play_sfx_24();
             ui_data.starmap.orbit_player = active_player;
@@ -493,7 +491,6 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             int i;
             i = ui_starmap_newship_prev(g, active_player, g->planet_focus_i[active_player]);
             g->planet_focus_i[active_player] = i;
-            p = &(g->planet[i]);
             ui_starmap_set_pos_focus(g, active_player);
             ui_sound_play_sfx_24();
             ui_data.starmap.orbit_player = active_player;
@@ -509,14 +506,14 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
                 i = (i + 1) % g->galaxy_stars;
                 if (g->planet[i].owner == active_player) {
                     for (int j = 0; !found && (j < g->enroute_num); ++j) {
-                        fleet_enroute_t *r = &(g->enroute[i]);
-                        if (BOOLVEC_IS1(r->visible, active_player) && (r->owner != active_player) && (r->dest == pi)) {
+                        fleet_enroute_t *r = &(g->enroute[j]);
+                        if (BOOLVEC_IS1(r->visible, active_player) && (r->owner != active_player) && (r->dest == i)) {
                             found = true;
                         }
                     }
                     for (int j = 0; !found && (j < g->transport_num); ++j) {
-                        transport_t *r = &(g->transport[i]);
-                        if (BOOLVEC_IS1(r->visible, active_player) && (r->owner != active_player) && (r->dest == pi)) {
+                        transport_t *r = &(g->transport[j]);
+                        if (BOOLVEC_IS1(r->visible, active_player) && (r->owner != active_player) && (r->dest == i)) {
                             found = true;
                         }
                     }
@@ -537,14 +534,14 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
                 if (--i < 0) { i = g->galaxy_stars - 1; }
                 if (g->planet[i].owner == active_player) {
                     for (int j = 0; !found && (j < g->enroute_num); ++j) {
-                        fleet_enroute_t *r = &(g->enroute[i]);
-                        if (BOOLVEC_IS1(r->visible, active_player) && (r->owner != active_player) && (r->dest == pi)) {
+                        fleet_enroute_t *r = &(g->enroute[j]);
+                        if (BOOLVEC_IS1(r->visible, active_player) && (r->owner != active_player) && (r->dest == i)) {
                             found = true;
                         }
                     }
                     for (int j = 0; !found && (j < g->transport_num); ++j) {
-                        transport_t *r = &(g->transport[i]);
-                        if (BOOLVEC_IS1(r->visible, active_player) && (r->owner != active_player) && (r->dest == pi)) {
+                        transport_t *r = &(g->transport[j]);
+                        if (BOOLVEC_IS1(r->visible, active_player) && (r->owner != active_player) && (r->dest == i)) {
                             found = true;
                         }
                     }
@@ -552,7 +549,6 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             } while (!found && (i != pi));
             if (found) {
                 g->planet_focus_i[active_player] = i;
-                p = &(g->planet[i]);
                 ui_starmap_set_pos_focus(g, active_player);
             }
         } else if (oi1 == oi_f4) {
@@ -571,7 +567,6 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             } while ((!found) && (i != pi));
             if (found) {
                 g->planet_focus_i[active_player] = i;
-                p = &(g->planet[i]);
                 ui_starmap_set_pos_focus(g, active_player);
                 ui_sound_play_sfx_24();
                 ui_data.starmap.orbit_player = active_player;
@@ -594,7 +589,6 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             } while ((!found) && (i != pi));
             if (found) {
                 g->planet_focus_i[active_player] = i;
-                p = &(g->planet[i]);
                 ui_starmap_set_pos_focus(g, active_player);
                 ui_sound_play_sfx_24();
                 ui_data.starmap.orbit_player = active_player;
@@ -605,12 +599,11 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
         for (int i = 0; i < g->galaxy_stars; ++i) {
             if ((oi1 == d.oi_tbl_stars[i]) && !g->evn.build_finished_num[active_player]) {
                 g->planet_focus_i[active_player] = i;
-                p = &(g->planet[i]);
-                ui_starmap_set_pos_focus(g, active_player);
                 ui_sound_play_sfx_24();
                 break;
             }
         }
+        p = &(g->planet[g->planet_focus_i[active_player]]);
         d.bottom_highlight = -1;
         if (oi2 == d.oi_gameopts) {
             d.bottom_highlight = 0;
@@ -636,37 +629,34 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             if (p->owner == active_player) {
                 oi_equals = uiobj_add_inputkey(MOO_KEY_EQUALS);
             }
-            oi_f2 = uiobj_add_inputkey(MOO_KEY_F2);
-            oi_f3 = uiobj_add_inputkey(MOO_KEY_F3);
-            oi_f4 = uiobj_add_inputkey(MOO_KEY_F4);
-            oi_f5 = uiobj_add_inputkey(MOO_KEY_F5);
-            oi_f6 = uiobj_add_inputkey(MOO_KEY_F6);
-            oi_f7 = uiobj_add_inputkey(MOO_KEY_F7);
-            oi_f8 = uiobj_add_inputkey(MOO_KEY_F8);
-            oi_f9 = uiobj_add_inputkey(MOO_KEY_F9);
-            oi_f10 = uiobj_add_inputkey(MOO_KEY_F10);
+            STARMAP_UIOBJ_FILL_FX();
             if ((p->owner == active_player) && p->missile_bases) {
                 oi_b = uiobj_add_inputkey(MOO_KEY_b);
             }
             oi_c = uiobj_add_inputkey(MOO_KEY_c);
             ui_starmap_add_oi_bottom_buttons(&d);
             if (g->evn.build_finished_num[active_player]) {
-                oi_hmm25 = uiobj_add_mousearea(6, 6, 225, 180, MOO_KEY_UNKNOWN, -1);
+                oi_finished = uiobj_add_mousearea(6, 6, 225, 180, MOO_KEY_UNKNOWN);
             }
             if (p->owner == active_player) {
-                oi_starview2 = uiobj_add_mousearea(227, 24, 310, 53, MOO_KEY_UNKNOWN, -1);
-                oi_shippic = uiobj_add_mousearea(228, 139, 275, 175, MOO_KEY_UNKNOWN, -1);
+                oi_starview2 = uiobj_add_mousearea(227, 24, 310, 53, MOO_KEY_UNKNOWN);
+                oi_shippic = uiobj_add_mousearea(228, 139, 275, 175, MOO_KEY_UNKNOWN);
+            } else if (ui_qol_starmap_planet_pic && BOOLVEC_IS1(p->explored, active_player)) {
+                oi_starview2 = uiobj_add_mousearea(227, 24, 310, 53, MOO_KEY_UNKNOWN);
             }
             ui_starmap_fill_oi_tbls(&d);
-            {
+            if (!ui_qol_starmap_no_qmark_cursor) {
                 int x0, y0;
                 x0 = (p->x - ui_data.starmap.x) * 2 + 6;
                 y0 = (p->y - ui_data.starmap.y) * 2 + 6;
-                oi_starview1 = uiobj_add_mousearea_limited(x0, y0, x0 + 16, y0 + 16, MOO_KEY_UNKNOWN, -1);
+                oi_starview1 = uiobj_add_mousearea_limited(x0, y0, x0 + 16, y0 + 16, MOO_KEY_UNKNOWN);
             }
             ui_starmap_fill_oi_tbl_stars(&d);
+            if (ui_qol_starmap_no_qmark_cursor && BOOLVEC_IS1(p->explored, active_player)) {
+                oi_starview1 = d.oi_tbl_stars[g->planet_focus_i[active_player]];
+            }
             ui_starmap_fill_oi_slider(&d);
-            oi_scroll = uiobj_add_tb(6, 6, 2, 2, 108, 86, &scrollx, &scrolly, -1);
+            oi_scroll = uiobj_add_tb(6, 6, 2, 2, 108, 86, &scrollx, &scrolly);
             ui_starmap_fill_oi_ctrl(&d);
             if (1) {
                 int x0, y0, x1, y1;
@@ -691,15 +681,15 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
                     ui_cursor_setup_area(2, &ui_cursor_area_tbl[3]);
                 }
             }
+            if (ui_qol_starmap_no_qmark_cursor) {
+                ui_cursor_setup_area(2, &ui_cursor_area_tbl[3]);
+            }
             if (g->evn.build_finished_num[active_player]) {
                 ui_cursor_setup_area(2, &ui_cursor_area_tbl[0]);
             }
-            if (g->gaux->flag_cheat_events) {
-                ui_draw_text_overlay(0, 0, game_str_no_events);
-            }
             ui_draw_finish();
             if (g->difficulty < DIFFICULTY_AVERAGE) {
-                ui_starmap_do_help(&d);
+                ui_starmap_do_help(g, active_player);
             }
             ui_delay_ticks_or_click(STARMAP_DELAY);
         }
