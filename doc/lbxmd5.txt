@@ -31,3 +31,7 @@ ee9ab3ed71a6d70d614fa3a8cb857da6  techno.lbx
 d2bb2f627bde3ca9b7260f9961d98c6e  v11.lbx
 581424657fc5427ad654405c6a1d03e7  vortex.lbx
 c0399f0c67473874d944aebf1a5dfc88  winlose.lbx
+
+b3d04fca9a7714bd92178b98c0119bc0  orion.exe
+9f430289b1419398473139e56923c850  starmap.exe
+6ff2ded4b2f068eed8f3646bba306934  tutor map
