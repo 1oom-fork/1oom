@@ -427,7 +427,7 @@ int main_do(void)
             game_new_opts = game_opt_new;
             goto main_menu_new_game;
         } else if (game_opt_load_fname) {
-            if (game_save_do_load_fname(game_opt_load_fname, 0, &game)) {
+            if (game_save_do_load_fname(game_opt_load_fname, &game)) {
                 log_fatal_and_die("Game: could not load save '%s'\n", game_opt_load_fname);
             }
             game_opt_load_fname = 0;
