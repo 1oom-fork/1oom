@@ -22,7 +22,7 @@ extern int game_save_check_saves(void);
 struct game_s;
 extern int libsave_1oom_load_do(const char *filename, struct game_s *g, char *savename);
 extern int libsave_1oom_save_do(const char *filename, const char *savename, const struct game_s *g);
-extern int game_save_do_load_fname(const char *filename, char *savename, struct game_s *g);
+extern int game_save_do_load_fname(const char *filename, struct game_s *g);
 extern int game_save_do_load_i(int savei/*0..NUM_ALL_SAVES-1*/, struct game_s *g);
 extern int game_save_do_save_i(int savei/*0..NUM_ALL_SAVES-1*/, const char *savename, const struct game_s *g);
 extern void game_save_do_delete_i(int savei, const struct game_s *g);
