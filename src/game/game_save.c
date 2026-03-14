@@ -778,10 +778,6 @@ int libsave_1oom_save_do(const char *filename, const char *savename, const struc
         log_error("Save: failed to create path for '%s'\n", filename);
     }
     libsave_1oom_make_header(hdr, savename);
-    if ((savei >= 0) && (savei < (NUM_SAVES + 1))) {
-        game_save_tbl_have_save[savei] = false;
-        game_save_tbl_name[savei][0] = '\0';
-    }
     fd = fopen(filename, "wb+");
     if (0
       || (!fd)
@@ -842,10 +838,6 @@ void *libsave_1oom_open_check_header(const char *filename, int i, bool update_ta
     if ((i < 0) || (i >= NUM_ALL_SAVES)) {
         update_table = false;
     }
-    if (update_table) {
-        game_save_tbl_have_save[i] = false;
-        game_save_tbl_name[i][0] = '\0';
-    }
     if (savename) {
         savename[0] = '\0';
     }
@@ -889,6 +881,14 @@ static int game_save_get_slot_fname(char *buf, int buflen, int i)
     return 0;
 }
 
+void game_save_tbl_slot_init(int i)
+{
+    if ((i >= 0) || (i < NUM_ALL_SAVES)) {
+        game_save_tbl_have_save[i] = false;
+        game_save_tbl_name[i][0] = '\0';
+    }
+}
+
 int game_save_check_saves(void)
 {
     FILE *fd;
@@ -897,6 +897,7 @@ int game_save_check_saves(void)
     fnamebuf = lib_malloc(FSDEV_PATH_MAX);
     for (int i = 0; i < NUM_ALL_SAVES; ++i) {
         game_save_get_slot_fname(fnamebuf, FSDEV_PATH_MAX, i);
+        game_save_tbl_slot_init(i);
         fd = libsave_1oom_open_check_header(fnamebuf, i, true, 0);
         if (fd) {
             fclose(fd);
@@ -917,6 +918,7 @@ int game_save_do_load_i(int savei, struct game_s *g)
     int res;
     char *filename = lib_malloc(FSDEV_PATH_MAX);
     game_save_get_slot_fname(filename, FSDEV_PATH_MAX, savei);
+    game_save_tbl_slot_init(savei);
     res = libsave_1oom_load_do(filename, g, savei, 0);
     lib_free(filename);
     filename = NULL;
@@ -931,6 +933,7 @@ int game_save_do_save_i(int savei, const char *savename, const struct game_s *g)
         log_error("Save: failed to create user path '%s'\n", os_get_path_user());
     }
     game_save_get_slot_fname(filename, FSDEV_PATH_MAX, savei);
+    game_save_tbl_slot_init(savei);
     res = libsave_1oom_save_do(filename, savename, g, savei);
     lib_free(filename);
     filename = NULL;
@@ -941,6 +944,7 @@ void game_save_do_delete_i(int savei, const struct game_s *g)
 {
     char *filename = lib_malloc(FSDEV_PATH_MAX);
     game_save_get_slot_fname(filename, FSDEV_PATH_MAX, savei);
+    game_save_tbl_slot_init(savei);
     unlink(filename);
     lib_free(filename);
     filename = NULL;
