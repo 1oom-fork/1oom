@@ -805,9 +805,10 @@ int libsave_1oom_load_do(const char *filename, struct game_s *g, char *savename)
     FILE *fd = NULL;
     uint8_t *savebuf = NULL;
     int res = -1, len = 0;
+    uint32_t version;
 
     savebuf = lib_malloc(LIBSAVE_1OOM_DATA_SIZE);
-    fd = libsave_1oom_open_check_header(filename, savename);
+    fd = libsave_1oom_open_check_header(filename, savename, &version);
     if ((!fd) || ((len = fread(savebuf, 1, LIBSAVE_1OOM_DATA_SIZE, fd)) == 0) || (!feof(fd))) {
         log_error("Save: failed to load '%s'\n", filename);
     } else if (libsave_1oom_decode(savebuf, len, g) != 0) {
@@ -827,7 +828,7 @@ int libsave_1oom_load_do(const char *filename, struct game_s *g, char *savename)
 
 /* -------------------------------------------------------------------------- */
 
-void *libsave_1oom_open_check_header(const char *filename, char *savename)
+void *libsave_1oom_open_check_header(const char *filename, char *savename, uint32_t *version)
 {
     uint8_t hdr[LIBSAVE_1OOM_HDR_SIZE];
     FILE *fd;
@@ -844,6 +845,9 @@ void *libsave_1oom_open_check_header(const char *filename, char *savename)
             if (savename) {
                 memcpy(savename, &hdr[LIBSAVE_1OOM_OFFS_NAME], SAVE_NAME_LEN);
                 savename[SAVE_NAME_LEN - 1] = '\0';
+            }
+            if (version) {
+                *version = GET_LE_32(&hdr[LIBSAVE_1OOM_OFFS_VERSION]);
             }
         } else {
             fclose(fd);
@@ -896,7 +900,7 @@ int game_save_check_saves(void)
     for (int i = 0; i < NUM_ALL_SAVES; ++i) {
         game_save_get_slot_fname(fnamebuf, FSDEV_PATH_MAX, i);
         game_save_tbl_slot_init(i);
-        fd = libsave_1oom_open_check_header(fnamebuf, savename);
+        fd = libsave_1oom_open_check_header(fnamebuf, savename, NULL);
         if (fd) {
             fclose(fd);
             game_save_tbl_slot_set(i, savename);
