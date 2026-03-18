@@ -1215,13 +1215,14 @@ static void game_ai_classic_design_ship_base(struct game_s *g, struct ai_turn_p2
     }
     space = game_ai_classic_design_update_engines_space(&ait->gd) / 3;
     if (ait->shiptype == 0/*colony*/) {
+        ship_special_t special;
         int v;
-        v = game_design_build_tbl_fit_special(g, &ait->gd, tbl_have, 0);
+        special = game_design_build_tbl_fit_special(g, &ait->gd, tbl_have, 0);
         tbl_have[SHIP_SPECIAL_RESERVE_FUEL_TANKS] = 0;
-        for (int i = SHIP_SPECIAL_BATTLE_SCANNER; i <= v; ++i) {
+        for (ship_special_t i = SHIP_SPECIAL_BATTLE_SCANNER; i <= v; ++i) {
             tbl_have[i] = 0;
         }
-        v = count_havebuf_items(tbl_have, v);
+        v = count_havebuf_items(tbl_have, special);
         if (v >= 2) {
             v = find_havebuf_item(tbl_have, v);
             SETMAX(v, 0);
@@ -1276,14 +1277,14 @@ static void game_ai_classic_design_ship_base(struct game_s *g, struct ai_turn_p2
         return;
     }
     for (int si = 0; si <= 1; ++si) {
-        int v;
+        ship_special_t special;
         ship_special_t st;
         st = SHIP_SPECIAL_NONE;
-        v = game_design_build_tbl_fit_special(g, &ait->gd, tbl_have, si);
-        for (int i = SHIP_SPECIAL_RESERVE_FUEL_TANKS; i < SHIP_SPECIAL_BATTLE_SCANNER; ++i) {
+        special = game_design_build_tbl_fit_special(g, &ait->gd, tbl_have, si);
+        for (ship_special_t i = SHIP_SPECIAL_RESERVE_FUEL_TANKS; i < SHIP_SPECIAL_BATTLE_SCANNER; ++i) {
             tbl_have[i] = 0;
         }
-        for (int i = 0; i <= v; ++i) {
+        for (ship_special_t i = SHIP_SPECIAL_NONE; i <= special; ++i) {
             if ((rnd_1_n(100, &g->seed) <= tbl_chance_special[i][hull]) && (tbl_have[i] > 0)) {
                 st = i;
             }
@@ -1318,14 +1319,14 @@ static void game_ai_classic_design_ship_base(struct game_s *g, struct ai_turn_p2
     }
     /* BUG? no update_engines */
     {
-        int v;
+        ship_special_t special;
         ship_special_t st;
         st = SHIP_SPECIAL_NONE;
-        v = game_design_build_tbl_fit_special(g, &ait->gd, tbl_have, 2);
-        for (int i = SHIP_SPECIAL_RESERVE_FUEL_TANKS; i < SHIP_SPECIAL_BATTLE_SCANNER; ++i) {
+        special = game_design_build_tbl_fit_special(g, &ait->gd, tbl_have, 2);
+        for (ship_special_t i = SHIP_SPECIAL_RESERVE_FUEL_TANKS; i < SHIP_SPECIAL_BATTLE_SCANNER; ++i) {
             tbl_have[i] = 0;
         }
-        for (int i = 0; i <= v; ++i) {
+        for (ship_special_t i = SHIP_SPECIAL_NONE; i <= special; ++i) {
             if ((rnd_1_n(100, &g->seed) <= tbl_chance_special[i][hull]) && (tbl_have[i] > 0)) {
                 st = i;
             }
