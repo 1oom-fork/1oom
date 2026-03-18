@@ -1549,7 +1549,7 @@ bool game_battle_attack(struct battle_s *bt, int attacker_i, int target_i, bool 
     uint32_t planetdamage = 0, totalhp;
     bool destroyed = false;
     if (attacker_i == 0) {
-        if ((!bt->s[b->side].flag_auto) && (b->wpn[1].t > 0)) {
+        if ((!bt->s[b->side].flag_auto) && (b->wpn[1].t > WEAPON_NONE)) {
             if (bt->flag_base_missile && (tbl_shiptech_weap[b->wpn[0].t].nummiss > 1)) {
                 weapon_t t;
                 t = b->wpn[1].t;
