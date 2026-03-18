@@ -79,7 +79,7 @@ static void game_battle_item_add(struct battle_s *bt, const shipparsed_t *sp, ba
             b->wpn[0].numshots = -1;
             b->wpn[1].numshots = -1;
             if (bt->bases == 0) {
-                b->wpn[0].t = 0;
+                b->wpn[0].t = WEAPON_NONE;
                 b->wpn[0].n = 0;
             }
             b->gfx = ui_gfx_get_planet(b->look);
