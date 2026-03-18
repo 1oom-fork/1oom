@@ -519,13 +519,13 @@ ship_armor_t game_design_build_tbl_fit_armor(struct game_s *g, struct game_desig
     return last;
 }
 
-int game_design_build_tbl_fit_engine(struct game_s *g, struct game_design_s *gd, int8_t *buf)
+ship_engine_t game_design_build_tbl_fit_engine(struct game_s *g, struct game_design_s *gd, int8_t *buf)
 {
     shipdesign_t *sd = &(gd->sd);
     ship_engine_t actengine = sd->engine;
-    int last = 0;
+    ship_engine_t last = SHIP_ENGINE_RETROS;
     buf[0] = 1/*HAVE*/;
-    for (int i = 0; i < SHIP_ENGINE_NUM; ++i) {
+    for (ship_engine_t i = SHIP_ENGINE_RETROS; i < SHIP_ENGINE_NUM; ++i) {
         if (game_tech_player_has_tech(g, TECH_FIELD_PROPULSION, tbl_shiptech_engine[i].tech_i, gd->player_i)) {
             sd->engine = i;
             game_design_update_engines(sd);
