@@ -831,12 +831,13 @@ static void ui_design_sel_armor(struct design_data_s *d)
     lbxfont_select(2, 0, 4, 0xe);
 
     {
-        int havelast, bufpos = 0;
+        ship_armor_t havelast;
+        int bufpos = 0;
         char s1[3] = "\x1dX";
         char s2[3] = "\x1dX";
 
         xpos = 0;
-        for (int i = 0; i < SHIP_ARMOR_NUM; ++i) {
+        for (ship_armor_t i = SHIP_ARMOR_TITANIUM; i < SHIP_ARMOR_NUM; ++i) {
             int w;
             w = lbxfont_calc_str_width(*tbl_shiptech_armor[i].nameptr);
             SETMAX(xpos, w);
@@ -846,7 +847,7 @@ static void ui_design_sel_armor(struct design_data_s *d)
         s2[1] = (char)(xpos + 50);
 
         havelast = game_design_build_tbl_fit_armor(d->g, d->gd, havebuf);
-        for (int i = 0; i <= havelast; ++i) {
+        for (ship_armor_t i = SHIP_ARMOR_TITANIUM; i <= havelast; ++i) {
             if (havebuf[i] >= 0) {
                 int cost2, sizei, len;
                 flag_tbl_enable[n] = (havebuf[i] > 0);

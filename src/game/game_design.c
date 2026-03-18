@@ -497,13 +497,13 @@ ship_jammer_t game_design_build_tbl_fit_jammer(struct game_s *g, struct game_des
     return last;
 }
 
-int game_design_build_tbl_fit_armor(struct game_s *g, struct game_design_s *gd, int8_t *buf)
+ship_armor_t game_design_build_tbl_fit_armor(struct game_s *g, struct game_design_s *gd, int8_t *buf)
 {
     shipdesign_t *sd = &(gd->sd);
     ship_armor_t actarmor = sd->armor;
-    int last = 0;
+    ship_armor_t last = SHIP_ARMOR_TITANIUM;
     buf[0] = 1/*HAVE*/;
-    for (int i = 1; i < SHIP_ARMOR_NUM; ++i) {
+    for (ship_armor_t i = SHIP_ARMOR_TITANIUM_II; i < SHIP_ARMOR_NUM; ++i) {
         if (game_tech_player_has_tech(g, TECH_FIELD_CONSTRUCTION, tbl_shiptech_armor[i].tech_i, gd->player_i)) {
             sd->armor = i;
             game_design_update_engines(sd);
