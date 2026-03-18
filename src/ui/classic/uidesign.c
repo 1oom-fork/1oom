@@ -897,14 +897,15 @@ static void ui_design_sel_engine(struct design_data_s *d)
     lbxfont_select(2, 0, 4, 0xe);
 
     {
-        int havelast, bufpos = 0;
+        ship_engine_t havelast;
+        int bufpos = 0;
         char s1[3] = "\x1dX";
         char s2[3] = "\x1dX";
         char s3[3] = "\x1dX";
         char s4[3] = "\x1dX";
 
         xpos = 0;
-        for (int i = 0; i < SHIP_ENGINE_NUM; ++i) {
+        for (ship_engine_t i = SHIP_ENGINE_RETROS; i < SHIP_ENGINE_NUM; ++i) {
             int w;
             w = lbxfont_calc_str_width(*tbl_shiptech_engine[i].nameptr);
             SETMAX(xpos, w);
@@ -919,7 +920,7 @@ static void ui_design_sel_engine(struct design_data_s *d)
         game_design_update_engines(sd);
         havelast = game_design_build_tbl_fit_engine(d->g, d->gd, havebuf);
 
-        for (int i = 0; i <= havelast; ++i) {
+        for (ship_engine_t i = SHIP_ENGINE_RETROS; i <= havelast; ++i) {
             if (havebuf[i] >= 0) {
                 int cost2, sizei, sizet, ne, len;
                 flag_tbl_enable[n] = (havebuf[i] > 0);
