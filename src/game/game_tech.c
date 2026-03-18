@@ -102,11 +102,11 @@ static uint16_t get_base_cost_mod_comp(const struct game_s *g, ship_comp_t comp,
 
 static uint16_t get_base_cost_mod_jammer(const struct game_s *g, int player_i, int percent)
 {
-    uint16_t tech_i = 0;
+    ship_jammer_t jammer = SHIP_JAMMER_NONE;
     uint8_t mult;
-    for (int i = 0; i < SHIP_JAMMER_NUM; ++i) {
+    for (ship_jammer_t i = SHIP_JAMMER_NONE; i < SHIP_JAMMER_NUM; ++i) {
         if (game_tech_player_has_tech(g, TECH_FIELD_COMPUTER, tbl_shiptech_jammer[i].tech_i, player_i)) {
-            tech_i = i;
+            jammer = i;
         }
     }
     if (percent < 50) {
@@ -114,7 +114,7 @@ static uint16_t get_base_cost_mod_jammer(const struct game_s *g, int player_i, i
     } else {
         mult = 3;
     }
-    return (tbl_shiptech_jammer[tech_i].cost[SHIP_HULL_LARGE] * mult) / 1000 + tbl_shiptech_jammer[tech_i].power[SHIP_HULL_LARGE] / 10;
+    return (tbl_shiptech_jammer[jammer].cost[SHIP_HULL_LARGE] * mult) / 1000 + tbl_shiptech_jammer[jammer].power[SHIP_HULL_LARGE] / 10;
 }
 
 static uint8_t find_best_tech_type(BOOLVEC_PTRPARAMI(tbl), int base, int step, int last)
@@ -278,10 +278,10 @@ ship_comp_t game_get_best_comp(struct game_s *g, player_id_t player_i, int tech_
     return r;
 }
 
-uint8_t game_get_best_jammer(const struct game_s *g, player_id_t player_i, int tech_i)
+ship_jammer_t game_get_best_jammer(const struct game_s *g, player_id_t player_i, int tech_i)
 {
-    uint8_t r = 0;
-    for (int i = 0; i < SHIP_JAMMER_NUM; ++i) {
+    ship_jammer_t r = SHIP_JAMMER_NONE;
+    for (ship_jammer_t i = SHIP_JAMMER_NONE; i < SHIP_JAMMER_NUM; ++i) {
         const struct shiptech_jammer_s *w = &(tbl_shiptech_jammer[i]);
         if (1
           && (w->tech_i <= tech_i)
