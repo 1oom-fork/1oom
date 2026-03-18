@@ -2,6 +2,7 @@
 #define INC_1OOM_GAME_TECH_H
 
 #include "game_types.h"
+#include "game_shiptech_types.h"
 #include "types.h"
 
 #define TECH_NEXT_MAX   12
