@@ -554,14 +554,14 @@ int game_design_build_tbl_fit_man(struct game_s *g, struct game_design_s *gd, in
     return sd->engine;
 }
 
-int game_design_build_tbl_fit_weapon(struct game_s *g, struct game_design_s *gd, int8_t *buf, int wslot)
+weapon_t game_design_build_tbl_fit_weapon(struct game_s *g, struct game_design_s *gd, int8_t *buf, int wslot)
 {
     shipdesign_t *sd = &(gd->sd);
     weapon_t actwpnt = sd->wpnt[wslot];
     uint8_t actwpnn = sd->wpnn[wslot];
-    int last = 0;
+    weapon_t last = WEAPON_NONE;
     buf[0] = 1/*HAVE*/;
-    for (int i = 1; i < WEAPON_NUM; ++i) {
+    for (weapon_t i = WEAPON_NUCLEAR_BOMB; i < WEAPON_NUM; ++i) {
         tech_field_t fi;
         fi = tbl_shiptech_weap[i].is_bio ? TECH_FIELD_PLANETOLOGY : TECH_FIELD_WEAPON;
         if (game_tech_player_has_tech(g, fi, tbl_shiptech_weap[i].tech_i, gd->player_i)) {
@@ -641,17 +641,17 @@ void game_design_compact_slots(shipdesign_t *sd)
         }
     }
     for (int i = 0; i < WEAPON_SLOT_NUM; ++i) {
-        if ((sd->wpnt[i] == 0) || (sd->wpnn[i] == 0)) {
-            sd->wpnt[i] = 0;
+        if ((sd->wpnt[i] == WEAPON_NONE) || (sd->wpnn[i] == 0)) {
+            sd->wpnt[i] = WEAPON_NONE;
             sd->wpnn[i] = 0;
         }
     }
     for (int loops = 0; loops < WEAPON_SLOT_NUM; ++loops) {
         for (int i = 0; i < WEAPON_SLOT_NUM - 1; ++i) {
-            if (sd->wpnt[i] == 0) {
+            if (sd->wpnt[i] == WEAPON_NONE) {
                 sd->wpnt[i] = sd->wpnt[i + 1];
                 sd->wpnn[i] = sd->wpnn[i + 1];
-                sd->wpnt[i + 1] = 0;
+                sd->wpnt[i + 1] = WEAPON_NONE;
                 sd->wpnn[i + 1] = 0;
             }
         }
