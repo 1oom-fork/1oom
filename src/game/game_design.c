@@ -477,13 +477,13 @@ ship_shield_t game_design_build_tbl_fit_shield(struct game_s *g, struct game_des
     return last;
 }
 
-int game_design_build_tbl_fit_jammer(struct game_s *g, struct game_design_s *gd, int8_t *buf)
+ship_jammer_t game_design_build_tbl_fit_jammer(struct game_s *g, struct game_design_s *gd, int8_t *buf)
 {
     shipdesign_t *sd = &(gd->sd);
     ship_jammer_t actjammer = sd->jammer;
-    int last = 0;
+    ship_jammer_t last = SHIP_JAMMER_NONE;
     buf[0] = 1/*HAVE*/;
-    for (int i = 1; i < SHIP_JAMMER_NUM; ++i) {
+    for (ship_jammer_t i = SHIP_JAMMER_JAMMER_I; i < SHIP_JAMMER_NUM; ++i) {
         if (game_tech_player_has_tech(g, TECH_FIELD_COMPUTER, tbl_shiptech_jammer[i].tech_i, gd->player_i)) {
             sd->jammer = i;
             game_design_update_engines(sd);
