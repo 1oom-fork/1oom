@@ -948,7 +948,8 @@ static void game_turn_bomb_damage(struct game_s *g, uint8_t pli, player_id_t att
     const empiretechorbit_t *ed = &(g->eto[p->owner]);
     uint32_t tbl[WEAPON_NUM];
     uint8_t pshield = p->shield, antidote = ed->antidote;
-    int totaldmg = 0, totalbio = 0, maxcomp = 0, complevel;
+    ship_comp_t maxcomp = SHIP_COMP_NONE;
+    int totaldmg = 0, totalbio = 0, complevel;
     memset(tbl, 0, sizeof(tbl));
     for (int i = 0; i < ea->shipdesigns_num; ++i) {
         const shipdesign_t *sd = &(g->srd[attacker].design[i]);
@@ -1148,7 +1149,8 @@ static int game_turn_transport_shoot(struct game_s *g, uint8_t planet_i, player_
     const empiretechorbit_t *ea = &(g->eto[attacker]);
     const empiretechorbit_t *ed = &(g->eto[rowner]);
     int totaldmg = 0, complevel, killed;
-    uint8_t bestcomp = 0, bestarmor = 0;
+    ship_comp_t bestcomp = SHIP_COMP_NONE;
+    uint8_t bestarmor = 0;
     uint32_t tbl[WEAPON_NUM];
     memset(tbl, 0, sizeof(tbl));
     tbl[basewpnt] = bases * 24;
