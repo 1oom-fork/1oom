@@ -21,7 +21,7 @@ extern weapon_t game_get_base_weapon(const struct game_s *g, player_id_t player_
 extern weapon_t game_get_base_weapon_2(const struct game_s *g, player_id_t player_i, int tech_i, weapon_t weap1);
 extern ship_shield_t game_get_best_shield(struct game_s *g, player_id_t player_i, int tech_i);
 extern ship_comp_t game_get_best_comp(struct game_s *g, player_id_t player_i, int tech_i);
-extern uint8_t game_get_best_jammer(const struct game_s *g, player_id_t player_i, int tech_i);
+extern ship_jammer_t game_get_best_jammer(const struct game_s *g, player_id_t player_i, int tech_i);
 extern void game_update_tech_util(struct game_s *g);
 extern tech_group_t game_tech_get_group(const struct game_aux_s *gaux, tech_field_t field, int tech);
 extern uint8_t game_tech_get_tier(const struct game_aux_s *gaux, tech_field_t field, int tech);
