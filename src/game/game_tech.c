@@ -67,7 +67,7 @@ static uint16_t get_base_cost_mod_armor(const struct game_s *g, int player_i, in
     return ((tbl_shiptech_armor[tech_i].cost[SHIP_HULL_LARGE] + tbl_shiptech_hull[SHIP_HULL_LARGE].cost) * mult) / 1500;
 }
 
-static uint16_t get_base_cost_mod_weap(const struct game_s *g, int tech_i, int percent)
+static uint16_t get_base_cost_mod_weap(const struct game_s *g, weapon_t wi, int percent)
 {
     uint16_t mult;
     if (percent < 50) {
@@ -75,7 +75,7 @@ static uint16_t get_base_cost_mod_weap(const struct game_s *g, int tech_i, int p
     } else {
         mult = 3 * 9;
     }
-    return (tbl_shiptech_weap[tech_i].cost * mult) / 1000;
+    return (tbl_shiptech_weap[wi].cost * mult) / 1000;
 }
 
 static uint16_t get_base_cost_mod_shield(const struct game_s *g, int tech_i, int percent)
@@ -214,10 +214,10 @@ uint16_t game_get_base_cost(const struct game_s *g, int player_i)
     return cost;
 }
 
-uint8_t game_get_base_weapon(const struct game_s *g, player_id_t player_i, int tech_i)
+weapon_t game_get_base_weapon(const struct game_s *g, player_id_t player_i, int tech_i)
 {
-    uint8_t r = WEAPON_LASER;   /* BUG? */
-    for (int i = 0; i < WEAPON_NUM; ++i) {
+    weapon_t r = WEAPON_LASER;   /* BUG? */
+    for (weapon_t i = WEAPON_NONE; i < WEAPON_NUM; ++i) {
         const struct shiptech_weap_s *w = &(tbl_shiptech_weap[i]);
         if (1
           && (w->tech_i <= tech_i)
@@ -234,9 +234,9 @@ uint8_t game_get_base_weapon(const struct game_s *g, player_id_t player_i, int t
     return r;
 }
 
-uint8_t game_get_base_weapon_2(const struct game_s *g, player_id_t player_i, int tech_i, uint8_t r)
+weapon_t game_get_base_weapon_2(const struct game_s *g, player_id_t player_i, int tech_i, weapon_t r)
 {
-    for (int i = 0; i < WEAPON_PLASMA_TORPEDO; ++i) {
+    for (weapon_t i = WEAPON_NONE; i < WEAPON_PLASMA_TORPEDO; ++i) {
         const struct shiptech_weap_s *w = &(tbl_shiptech_weap[i]);
         if (1
           && (w->nummiss > 1)
