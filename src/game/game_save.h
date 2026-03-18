@@ -6,6 +6,7 @@
 #define NUM_SAVES   6
 #define NUM_ALL_SAVES   (NUM_SAVES + 1/*continue game*/ + 1/*undo*/ + 1/*init*/)
 #define SAVE_NAME_LEN   20
+#define SAVE_MOO13_LEN  59036
 
 #define GAME_SAVE_I_CONTINUE    (7 - 1)
 #define GAME_SAVE_I_UNDO        (8 - 1)
@@ -14,12 +15,16 @@
 extern bool game_save_tbl_have_save[NUM_ALL_SAVES];
 extern char game_save_tbl_name[NUM_ALL_SAVES][SAVE_NAME_LEN];
 
+extern bool libsave_is_moo13(const char *fname);
 extern void *libsave_1oom_open_check_header(const char *filename, char *savename, uint32_t *version);
 extern void game_save_tbl_slot_init(int i);
 extern void game_save_tbl_slot_set(int i, const char *savename);
 extern int game_save_check_saves(void);
 
 struct game_s;
+extern bool libsave_moo13_check(const struct game_s *g);
+extern int libsave_moo13_save_do(const char *filename, const struct game_s *g);
+extern int libsave_moo13_load_do(const char *filename, struct game_s *g);
 extern int libsave_1oom_load_do(const char *filename, struct game_s *g, char *savename);
 extern int libsave_1oom_save_do(const char *filename, const char *savename, const struct game_s *g);
 extern int game_save_do_load_fname(const char *filename, struct game_s *g);
