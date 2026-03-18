@@ -455,13 +455,13 @@ ship_comp_t game_design_build_tbl_fit_comp(struct game_s *g, struct game_design_
     return last;
 }
 
-int game_design_build_tbl_fit_shield(struct game_s *g, struct game_design_s *gd, int8_t *buf)
+ship_shield_t game_design_build_tbl_fit_shield(struct game_s *g, struct game_design_s *gd, int8_t *buf)
 {
     shipdesign_t *sd = &(gd->sd);
     ship_shield_t actshield = sd->shield;
-    int last = 0;
+    ship_shield_t last = SHIP_SHIELD_NONE;
     buf[0] = 1/*HAVE*/;
-    for (int i = 1; i < SHIP_SHIELD_NUM; ++i) {
+    for (ship_shield_t i = SHIP_SHIELD_CLASS_I; i < SHIP_SHIELD_NUM; ++i) {
         if (game_tech_player_has_tech(g, TECH_FIELD_FORCE_FIELD, tbl_shiptech_shield[i].tech_i, gd->player_i)) {
             sd->shield = i;
             game_design_update_engines(sd);
