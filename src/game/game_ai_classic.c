@@ -1206,9 +1206,10 @@ static void game_ai_classic_design_ship_base(struct game_s *g, struct ai_turn_p2
     };
 
     {
+        ship_engine_t engine;
         int v;
-        v = game_design_build_tbl_fit_engine(g, &ait->gd, tbl_have);
-        v = count_havebuf_items(tbl_have, v);
+        engine = game_design_build_tbl_fit_engine(g, &ait->gd, tbl_have);
+        v = count_havebuf_items(tbl_have, engine);
         v = game_ai_classic_design_ship_get_item(g, v, 60);
         sd->engine = find_havebuf_item(tbl_have, v);
     }
