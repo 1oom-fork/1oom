@@ -1229,9 +1229,10 @@ static void game_ai_classic_design_ship_base(struct game_s *g, struct ai_turn_p2
     }
     {
         const int tbl_chance[SHIP_HULL_NUM] = { 10, 20, 35, 50 };
+        ship_comp_t comp;
         int v;
-        v = game_design_build_tbl_fit_comp(g, &ait->gd, tbl_have);
-        v = count_havebuf_items(tbl_have, v);
+        comp = game_design_build_tbl_fit_comp(g, &ait->gd, tbl_have);
+        v = count_havebuf_items(tbl_have, comp);
         v = game_ai_classic_design_ship_get_item(g, v, tbl_chance[hull]);
         sd->comp = find_havebuf_item(tbl_have, v);
     }

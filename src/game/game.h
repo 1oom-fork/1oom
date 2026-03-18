@@ -95,7 +95,7 @@ typedef struct empiretechorbit_s {
     uint32_t reserve_bc;
     int16_t tax;
     uint8_t base_shield;
-    uint8_t base_comp;
+    ship_comp_t base_comp;
     weapon_t base_weapon;
     bool have_sub_space_int;
     uint8_t antidote;
