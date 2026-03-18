@@ -434,13 +434,13 @@ void game_design_look_prev(struct game_design_s *gd)
     game_design_look_add(gd, -1);
 }
 
-int game_design_build_tbl_fit_comp(struct game_s *g, struct game_design_s *gd, int8_t *buf)
+ship_comp_t game_design_build_tbl_fit_comp(struct game_s *g, struct game_design_s *gd, int8_t *buf)
 {
     shipdesign_t *sd = &(gd->sd);
     ship_comp_t actcomp = sd->comp;
-    int last = 0;
+    ship_comp_t last = SHIP_COMP_NONE;
     buf[0] = 1/*HAVE*/;
-    for (int i = 1; i < SHIP_COMP_NUM; ++i) {
+    for (ship_comp_t i = SHIP_COMP_MARK_I; i < SHIP_COMP_NUM; ++i) {
         if (game_tech_player_has_tech(g, TECH_FIELD_COMPUTER, tbl_shiptech_comp[i].tech_i, gd->player_i)) {
             sd->comp = i;
             game_design_update_engines(sd);
