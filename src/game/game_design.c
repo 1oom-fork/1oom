@@ -587,11 +587,11 @@ weapon_t game_design_build_tbl_fit_weapon(struct game_s *g, struct game_design_s
     return last;
 }
 
-int game_design_build_tbl_fit_special(struct game_s *g, struct game_design_s *gd, int8_t *buf, int sslot)
+ship_special_t game_design_build_tbl_fit_special(struct game_s *g, struct game_design_s *gd, int8_t *buf, int sslot)
 {
     shipdesign_t *sd = &(gd->sd);
     ship_special_t actspec = sd->special[sslot];
-    int last = 0;
+    ship_special_t last = SHIP_SPECIAL_NONE;
     uint8_t othertype[SPECIAL_SLOT_NUM - 1];
     {
         int j, n;
@@ -602,7 +602,7 @@ int game_design_build_tbl_fit_special(struct game_s *g, struct game_design_s *gd
         }
     }
     buf[0] = 1/*HAVE*/;
-    for (int i = 1; i < SHIP_SPECIAL_NUM; ++i) {
+    for (ship_special_t i = SHIP_SPECIAL_RESERVE_FUEL_TANKS; i < SHIP_SPECIAL_NUM; ++i) {
         if (game_tech_player_has_tech(g, tbl_shiptech_special[i].field, tbl_shiptech_special[i].tech_i, gd->player_i)) {
             bool flag_check;
             uint8_t thistype;

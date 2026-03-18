@@ -177,7 +177,7 @@ static void design_draw_cb(void *vptr)
     {
         uint8_t v;
         extraman = 0;
-        for (int i = 0; i < SPECIAL_SLOT_NUM; ++i) {
+        for (ship_special_t i = SHIP_SPECIAL_NONE; i < SPECIAL_SLOT_NUM; ++i) {
             v = tbl_shiptech_special[sd->special[i]].extraman;
             SETMAX(extraman, v);
         }
@@ -249,7 +249,7 @@ static void design_draw_cb(void *vptr)
     lbxfont_print_str_normal(101, 22, game_str_sd_att);
     {
         uint16_t v = 0;
-        for (int i = 0; i < SPECIAL_SLOT_NUM; ++i) {
+        for (ship_special_t i = SHIP_SPECIAL_NONE; i < SPECIAL_SLOT_NUM; ++i) {
             v |= tbl_shiptech_special[sd->special[i]].boolmask;
         }
         v = tbl_shiptech_comp[sd->comp].level + ((v & (1 << SHIP_SPECIAL_BOOL_SCANNER)) ? 1 : 0);
@@ -1188,7 +1188,8 @@ static void ui_design_sel_special(struct design_data_s *d, int sslot)
     lbxfont_select(2, 0, 4, 0xe);
 
     {
-        int havelast, bufpos = 0, space, cost;
+        ship_special_t havelast;
+        int bufpos = 0, space, cost;
         char s1[3] = "\x1dX";
         char s2[3] = "\x1dX";
         char s3[3] = "\x1dX";
@@ -1196,7 +1197,7 @@ static void ui_design_sel_special(struct design_data_s *d, int sslot)
         char s5[3] = "\x1dX";
 
         xpos = xpos2 = 0;
-        for (int i = 0; i < SHIP_SPECIAL_NUM; ++i) {
+        for (ship_special_t i = SHIP_SPECIAL_NONE; i < SHIP_SPECIAL_NUM; ++i) {
             int w;
             w = lbxfont_calc_str_width(*tbl_shiptech_special[i].nameptr);
             SETMAX(xpos, w);
@@ -1217,7 +1218,7 @@ static void ui_design_sel_special(struct design_data_s *d, int sslot)
         cost = game_design_calc_cost(d->gd);
         havelast = game_design_build_tbl_fit_special(d->g, d->gd, havebuf, sslot);
 
-        for (int i = 0; i <= havelast; ++i) {
+        for (ship_special_t i = SHIP_SPECIAL_NONE; i <= havelast; ++i) {
             if (havebuf[i] >= 0) {
                 int space2, cost2, power, sizei, len;
                 ++numlines;
