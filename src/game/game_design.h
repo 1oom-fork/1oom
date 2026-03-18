@@ -54,7 +54,7 @@ extern ship_armor_t game_design_build_tbl_fit_armor(struct game_s *g, struct gam
 extern ship_engine_t game_design_build_tbl_fit_engine(struct game_s *g, struct game_design_s *gd, int8_t *buf);
 extern int game_design_build_tbl_fit_man(struct game_s *g, struct game_design_s *gd, int8_t *buf);
 extern weapon_t game_design_build_tbl_fit_weapon(struct game_s *g, struct game_design_s *gd, int8_t *buf, int wslot);
-extern int game_design_build_tbl_fit_special(struct game_s *g, struct game_design_s *gd, int8_t *buf, int sslot);
+extern ship_special_t game_design_build_tbl_fit_special(struct game_s *g, struct game_design_s *gd, int8_t *buf, int sslot);
 extern void game_design_compact_slots(shipdesign_t *sd);
 extern void game_design_scrap(struct game_s *g, player_id_t player, int shipi, bool flag_for_new);
 extern void game_design_set_hp(shipdesign_t *sd);
