@@ -1049,7 +1049,8 @@ static void ui_design_sel_weapon(struct design_data_s *d, int wslot)
     lbxfont_select(2, 0, 4, 0xe);
 
     {
-        int havelast, bufpos = 0, space, cost;
+        weapon_t havelast;
+        int bufpos = 0, space, cost;
         char s1[3] = "\x1dX";
         char s2[3] = "\x1dX";
         char s3[3] = "\x1dX";
@@ -1059,7 +1060,7 @@ static void ui_design_sel_weapon(struct design_data_s *d, int wslot)
         char s7[3] = "\x1dX";
 
         xpos = xpos2 = 0;
-        for (int i = 0; i < WEAPON_NUM; ++i) {
+        for (weapon_t i = WEAPON_NONE; i < WEAPON_NUM; ++i) {
             int w;
             w = lbxfont_calc_str_width(*tbl_shiptech_weap[i].nameptr);
             SETMAX(xpos, w);
@@ -1076,7 +1077,7 @@ static void ui_design_sel_weapon(struct design_data_s *d, int wslot)
         s6[1] = (char)(xpos + 86);
         s7[1] = (char)(xpos + 95);
 
-        sd->wpnt[wslot] = 0;
+        sd->wpnt[wslot] = WEAPON_NONE;
         sd->wpnn[wslot] = 0;
         game_design_update_engines(sd);
         space = game_design_calc_space(d->gd);
@@ -1084,7 +1085,7 @@ static void ui_design_sel_weapon(struct design_data_s *d, int wslot)
         havelast = game_design_build_tbl_fit_weapon(d->g, d->gd, havebuf, wslot);
 
         {
-            int i = havelast + 1, firsti;
+            weapon_t i = havelast + 1, firsti;
             if ((game_num_weapon_list_max > 0) && (game_num_weapon_list_max < WEAPON_NUM)) {
                 int j;
                 for (j = 0; (j < game_num_weapon_list_max) && (i > 0); ) {
