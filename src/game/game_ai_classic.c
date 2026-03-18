@@ -1350,13 +1350,14 @@ static void game_ai_classic_design_ship_weapon(struct game_s *g, struct ai_turn_
 {
     int8_t tbl_have[WEAPON_NUM];
     shipdesign_t *sd = &(ait->gd.sd);
+    weapon_t w, w2;
     int v;
-    v = game_design_build_tbl_fit_weapon(g, &ait->gd, tbl_have, sloti);
-    if ((sloti == 0) && tbl_shiptech_weap[v].is_bomb && (ait->shiptype != 2/*bomber*/)) {
-        --v;
+    w = game_design_build_tbl_fit_weapon(g, &ait->gd, tbl_have, sloti);
+    if ((sloti == 0) && tbl_shiptech_weap[w].is_bomb && (ait->shiptype != 2/*bomber*/)) {
+        --w;
     }
-    SETMAX(v, 1);
-    for (int i = 0; i < v; ++i) { /* FIXME <= v ? */
+    SETMAX(w, WEAPON_NUCLEAR_BOMB);
+    for (weapon_t i = WEAPON_NONE; i < w; ++i) { /* FIXME <= v ? */
         if (tbl_have[i] > 0) {
             if (0
               || (tbl_shiptech_weap[i].numshots == numshots_ignore)
@@ -1369,13 +1370,13 @@ static void game_ai_classic_design_ship_weapon(struct game_s *g, struct ai_turn_
     for (int i = 0; i < sloti; ++i) {
         tbl_have[sd->wpnt[i]] = 0;
     }
-    v = count_havebuf_items(tbl_have, v);
+    v = count_havebuf_items(tbl_have, w);
     if (v > 1) {
         int r;
-        v = find_havebuf_item(tbl_have, v);
-        sd->wpnt[sloti] = v;
-        r = ((tbl_shiptech_weap[v].numfire > 0) || (tbl_shiptech_weap[v].nummiss > 0)) ? 41 : 11;
-        sd->wpnn[sloti] = (tbl_have[v] * (rnd_1_n(c2 - c1 + r, &g->seed) + c1)) / 100;
+        w2 = find_havebuf_item(tbl_have, v);
+        sd->wpnt[sloti] = w2;
+        r = ((tbl_shiptech_weap[w2].numfire > 0) || (tbl_shiptech_weap[w2].nummiss > 0)) ? 41 : 11;
+        sd->wpnn[sloti] = (tbl_have[w2] * (rnd_1_n(c2 - c1 + r, &g->seed) + c1)) / 100;
     }
 }
 
