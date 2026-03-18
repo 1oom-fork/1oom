@@ -49,22 +49,22 @@ static uint8_t find_byte_in_tbl(uint8_t b, const uint8_t *tbl, uint32_t len)
 
 static uint16_t get_base_cost_mod_armor(const struct game_s *g, int player_i, int percent)
 {
-    uint16_t tech_i = 0;
+    ship_armor_t armor = SHIP_ARMOR_TITANIUM;
     uint8_t mult;
-    for (int i = 0; i < SHIP_ARMOR_NUM; ++i) {
+    for (ship_armor_t i = SHIP_ARMOR_TITANIUM; i < SHIP_ARMOR_NUM; ++i) {
         if (game_tech_player_has_tech(g, TECH_FIELD_CONSTRUCTION, tbl_shiptech_armor[i].tech_i, player_i)) {
-            tech_i = i;
+            armor = i;
         }
     }
-    if (tech_i) {
-        --tech_i;
+    if (armor) {
+        --armor;
     }
     if (percent < 50) {
         mult = tech_reduce_50percent_per_10pts[percent];
     } else {
         mult = 3;
     }
-    return ((tbl_shiptech_armor[tech_i].cost[SHIP_HULL_LARGE] + tbl_shiptech_hull[SHIP_HULL_LARGE].cost) * mult) / 1500;
+    return ((tbl_shiptech_armor[armor].cost[SHIP_HULL_LARGE] + tbl_shiptech_hull[SHIP_HULL_LARGE].cost) * mult) / 1500;
 }
 
 static uint16_t get_base_cost_mod_weap(const struct game_s *g, weapon_t wi, int percent)
