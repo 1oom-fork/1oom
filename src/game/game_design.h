@@ -47,7 +47,7 @@ extern int game_design_calc_cost_item(struct game_design_s *gd, design_slot_t sl
 extern void game_design_clear(struct game_design_s *gd);
 extern void game_design_look_next(struct game_design_s *gd);
 extern void game_design_look_prev(struct game_design_s *gd);
-extern int game_design_build_tbl_fit_comp(struct game_s *g, struct game_design_s *gd, int8_t *buf);
+extern ship_comp_t game_design_build_tbl_fit_comp(struct game_s *g, struct game_design_s *gd, int8_t *buf);
 extern int game_design_build_tbl_fit_shield(struct game_s *g, struct game_design_s *gd, int8_t *buf);
 extern int game_design_build_tbl_fit_jammer(struct game_s *g, struct game_design_s *gd, int8_t *buf);
 extern int game_design_build_tbl_fit_armor(struct game_s *g, struct game_design_s *gd, int8_t *buf);

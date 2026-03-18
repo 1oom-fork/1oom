@@ -89,7 +89,7 @@ static uint16_t get_base_cost_mod_shield(const struct game_s *g, int tech_i, int
     return (tbl_shiptech_shield[tech_i].cost[SHIP_HULL_LARGE] * mult) / 1000 + tbl_shiptech_shield[tech_i].power[SHIP_HULL_LARGE] / 10;
 }
 
-static uint16_t get_base_cost_mod_comp(const struct game_s *g, int tech_i, int percent)
+static uint16_t get_base_cost_mod_comp(const struct game_s *g, ship_comp_t comp, int percent)
 {
     uint16_t mult;
     if (percent < 50) {
@@ -97,7 +97,7 @@ static uint16_t get_base_cost_mod_comp(const struct game_s *g, int tech_i, int p
     } else {
         mult = 3;
     }
-    return (tbl_shiptech_comp[tech_i].cost[SHIP_HULL_LARGE] * mult) / 1000 + tbl_shiptech_comp[tech_i].power[SHIP_HULL_LARGE] / 10;
+    return (tbl_shiptech_comp[comp].cost[SHIP_HULL_LARGE] * mult) / 1000 + tbl_shiptech_comp[comp].power[SHIP_HULL_LARGE] / 10;
 }
 
 static uint16_t get_base_cost_mod_jammer(const struct game_s *g, int player_i, int percent)
@@ -263,10 +263,10 @@ uint8_t game_get_best_shield(struct game_s *g, player_id_t player_i, int tech_i)
     return r;
 }
 
-uint8_t game_get_best_comp(struct game_s *g, player_id_t player_i, int tech_i)
+ship_comp_t game_get_best_comp(struct game_s *g, player_id_t player_i, int tech_i)
 {
-    uint8_t r = 0;
-    for (int i = 0; i < SHIP_COMP_NUM; ++i) {
+    ship_comp_t r = SHIP_COMP_NONE;
+    for (ship_comp_t i = SHIP_COMP_NONE; i < SHIP_COMP_NUM; ++i) {
         const struct shiptech_comp_s *w = &(tbl_shiptech_comp[i]);
         if (1
           && (w->tech_i <= tech_i)
