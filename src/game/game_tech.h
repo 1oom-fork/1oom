@@ -19,7 +19,7 @@ extern uint8_t game_tech_player_best_engine(const struct game_s *g, int player_i
 extern uint16_t game_get_base_cost(const struct game_s *g, int player_i);
 extern weapon_t game_get_base_weapon(const struct game_s *g, player_id_t player_i, int tech_i);
 extern weapon_t game_get_base_weapon_2(const struct game_s *g, player_id_t player_i, int tech_i, weapon_t weap1);
-extern uint8_t game_get_best_shield(struct game_s *g, player_id_t player_i, int tech_i);
+extern ship_shield_t game_get_best_shield(struct game_s *g, player_id_t player_i, int tech_i);
 extern ship_comp_t game_get_best_comp(struct game_s *g, player_id_t player_i, int tech_i);
 extern uint8_t game_get_best_jammer(const struct game_s *g, player_id_t player_i, int tech_i);
 extern void game_update_tech_util(struct game_s *g);

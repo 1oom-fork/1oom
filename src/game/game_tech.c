@@ -78,7 +78,7 @@ static uint16_t get_base_cost_mod_weap(const struct game_s *g, weapon_t wi, int 
     return (tbl_shiptech_weap[wi].cost * mult) / 1000;
 }
 
-static uint16_t get_base_cost_mod_shield(const struct game_s *g, int tech_i, int percent)
+static uint16_t get_base_cost_mod_shield(const struct game_s *g, ship_shield_t shield, int percent)
 {
     uint16_t mult;
     if (percent < 50) {
@@ -86,7 +86,7 @@ static uint16_t get_base_cost_mod_shield(const struct game_s *g, int tech_i, int
     } else {
         mult = 3;
     }
-    return (tbl_shiptech_shield[tech_i].cost[SHIP_HULL_LARGE] * mult) / 1000 + tbl_shiptech_shield[tech_i].power[SHIP_HULL_LARGE] / 10;
+    return (tbl_shiptech_shield[shield].cost[SHIP_HULL_LARGE] * mult) / 1000 + tbl_shiptech_shield[shield].power[SHIP_HULL_LARGE] / 10;
 }
 
 static uint16_t get_base_cost_mod_comp(const struct game_s *g, ship_comp_t comp, int percent)
@@ -248,10 +248,10 @@ weapon_t game_get_base_weapon_2(const struct game_s *g, player_id_t player_i, in
     return r;
 }
 
-uint8_t game_get_best_shield(struct game_s *g, player_id_t player_i, int tech_i)
+ship_shield_t game_get_best_shield(struct game_s *g, player_id_t player_i, int tech_i)
 {
-    uint8_t r = 0;
-    for (int i = 0; i < SHIP_SHIELD_NUM; ++i) {
+    ship_shield_t r = SHIP_SHIELD_NONE;
+    for (ship_shield_t i = SHIP_SHIELD_NONE; i < SHIP_SHIELD_NUM; ++i) {
         const struct shiptech_shield_s *w = &(tbl_shiptech_shield[i]);
         if (1
           && (w->tech_i <= tech_i)

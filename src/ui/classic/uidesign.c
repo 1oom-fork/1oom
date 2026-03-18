@@ -672,14 +672,15 @@ static void ui_design_sel_shield(struct design_data_s *d)
     lbxfont_select(2, 0, 4, 0xe);
 
     {
-        int havelast, space, cost, bufpos = 0;
+        ship_shield_t havelast;
+        int space, cost, bufpos = 0;
         char s1[3] = "\x1dX";
         char s2[3] = "\x1dX";
         char s3[3] = "\x1dX";
         char s4[3] = "\x1dX";
 
         xpos = 0;
-        for (int i = 0; i < SHIP_SHIELD_NUM; ++i) {
+        for (ship_shield_t i = SHIP_SHIELD_NONE; i < SHIP_SHIELD_NUM; ++i) {
             int w;
             w = lbxfont_calc_str_width(*tbl_shiptech_shield[i].nameptr);
             SETMAX(xpos, w);
@@ -697,7 +698,7 @@ static void ui_design_sel_shield(struct design_data_s *d)
         cost = game_design_calc_cost(d->gd);
         havelast = game_design_build_tbl_fit_shield(d->g, d->gd, havebuf);
 
-        for (int i = 0; i <= havelast; ++i) {
+        for (ship_shield_t i = SHIP_SHIELD_NONE; i <= havelast; ++i) {
             if (havebuf[i] >= 0) {
                 int space2, power, cost2, sizei, len;
                 flag_tbl_enable[n] = (havebuf[i] > 0);
