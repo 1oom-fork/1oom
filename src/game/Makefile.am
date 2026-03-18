@@ -53,6 +53,7 @@ libgame_a_SOURCES = \
     game_shipdesign.h \
     game_shiptech.c \
     game_shiptech.h \
+    game_shiptech_types.h \
     game_spy.c \
     game_spy.h \
     game_stat.c \
