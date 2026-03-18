@@ -1308,9 +1308,10 @@ static void game_ai_classic_design_ship_base(struct game_s *g, struct ai_turn_p2
     }
     {
         const int tbl_chance[SHIP_HULL_NUM] = { 2, 8, 20, 30 };
+        ship_jammer_t jammer;
         int v;
-        v = game_design_build_tbl_fit_jammer(g, &ait->gd, tbl_have);
-        v = count_havebuf_items(tbl_have, v);
+        jammer = game_design_build_tbl_fit_jammer(g, &ait->gd, tbl_have);
+        v = count_havebuf_items(tbl_have, jammer);
         v = game_ai_classic_design_ship_get_item(g, v, tbl_chance[hull]);
         sd->jammer = find_havebuf_item(tbl_have, v);
     }
