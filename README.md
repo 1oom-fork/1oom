@@ -107,6 +107,9 @@ Most of the credit for this software belongs to the progammer who authored
 under the pseudonym Kilgore Trout Mask Replicant. Thank you for
 creating this and publishing it free and open source!
 
+Thanks to MyName aka Duzh87_54MSU for restoring 1oom from its broken state
+and for creating [1oom vanilla](https://gitverse.ru/1oom-fork/1oom).
+
 The original game Master of Orion was developed  by Simtex Software and
 published 1993 by MicroProse. Thanks for the great game!
 
