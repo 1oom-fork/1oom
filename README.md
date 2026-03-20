@@ -1,3 +1,8 @@
+This page is no longer maintained as of April 2026. The project has moved to [sourcecraft](https://sourcecraft.dev/fork1oom/1oom).
+
+The owner of this account (MyName aka 1oom-fork aka Duzh87_54MSU) uses the following pages
+for further publications: [Mirrors](MIRRORS.md).
+
 1oom
 ====
 
