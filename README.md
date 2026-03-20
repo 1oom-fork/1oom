@@ -1,3 +1,14 @@
+This page is at risk of being frozen. The status information below was published in March 2026.
+
+The owner of this account (MyName aka 1oom-fork aka Duzh87_54MSU) uses the following pages
+for further publications: [Mirrors](MIRRORS.md).
+
+[Link to future releases](https://gitverse.ru/1oom-fork/1oom/releases)
+
+[Link to the primary mirror](https://gitverse.ru/1oom-fork/1oom)
+
+[Link to channel](https://rutube.ru/channel/73175357/)
+
 1oom
 ====
 
