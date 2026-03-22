@@ -3,7 +3,7 @@
 
 1oom aims to accurately reproduce the original DOS version of Master of Orion Classic (1993)
 in a form that can be run on modern computers. Direct use of AI-generated code is prohibited in 1oom.
-1oom is Free Software (GPLv2), see [COPYING](COPYING).
+1oom is Free Software (GPLv2), see [LICENSE](LICENSE).
 
 
 Tools
