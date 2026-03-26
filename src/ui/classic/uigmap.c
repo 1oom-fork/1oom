@@ -214,7 +214,7 @@ static void gmap_draw_cb(void *vptr)
                 if (PLANET_IS_EXPLORED(g, i, d->api)) {
                     char buf[2] = { 0, 0 };
                     int pt;
-                    lbxfont_select_set_12_1(2, (p->type < g->eto[PLAYER_0].have_colony_for) ? 5 : 0xe, 0, 0);
+                    lbxfont_select_set_12_1(2, (p->type < g->eto[d->api].have_colony_for) ? 5 : 0xe, 0, 0);
                     pt = (PLANET_TYPE_TERRAN - p->type);
                     SETMAX(pt, 0);
                     buf[0] = game_str_gm_tchar[pt];
