@@ -35,7 +35,7 @@ static struct sdl_video_s {
 
 static int video_setmode_8bpp(int w, int h)
 {
-    int flags;
+    Uint32 flags;
     flags = SDL_SWSURFACE | SDL_DOUBLEBUF;
     if (hw_opt_fullscreen) {
         flags |= SDL_FULLSCREEN;
@@ -58,7 +58,7 @@ static void video_render_8bpp(void)
 
 static void video_update_8bpp(void)
 {
-    SDL_UpdateRect(video.screen, 0, 0, video.screen->w, video.screen->h);
+    SDL_UpdateRect(video.screen, 0, 0, (Uint32)video.screen->w, (Uint32)video.screen->h);
 }
 
 static void video_setpal_8bpp(const uint8_t *pal, int first, int num)
@@ -136,7 +136,7 @@ static void video_setpal_gl_32bpp(const uint8_t *pal, int f, int num)
 /* -------------------------------------------------------------------------- */
 
 #ifdef HAVE_SDL1GL
-static void set_viewport(unsigned int src_w, unsigned int src_h, unsigned int dest_w, unsigned int dest_h)
+static void set_viewport(int src_w, int src_h, int dest_w, int dest_h)
 {
     int dest_x = 0, dest_y = 0;
 
@@ -161,8 +161,9 @@ static void set_viewport(unsigned int src_w, unsigned int src_h, unsigned int de
 int hw_video_resize(int w, int h)
 {
 #ifdef HAVE_SDL1GL
-    unsigned int actual_w, actual_h;
-    int flags, bpp, rsize, gsize, bsize;
+    int actual_w, actual_h;
+    Uint32 flags;
+    int bpp, rsize, gsize, bsize;
 
     log_message("SDL: resize %ix%i (%s)\n", w, h, hw_opt_fullscreen ? "full" : "window");
 
