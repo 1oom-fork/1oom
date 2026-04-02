@@ -174,7 +174,7 @@ void lbxpal_select(int pal_index, int first/*or -1*/, int last)
     lbxfont_select(0, 0, 0, 0);
 }
 
-void lbxpal_set_palette(uint8_t *pal, int first, int num)
+void lbxpal_set_palette(uint8_t *pal, uint16_t first, uint16_t num)
 {
     memcpy(&lbxpal_palette[first * 3], pal, num * 3);
     lbxpal_set_update_range(first, first + num - 1);

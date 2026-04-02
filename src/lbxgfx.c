@@ -435,8 +435,8 @@ void lbxgfx_apply_palette(uint8_t *data)
 {
     if (lbxgfx_has_palette(data)) {
         uint8_t *p = lbxgfx_get_palptr(data);
-        int first = lbxgfx_get_palfirst(data);
-        int num = lbxgfx_get_palnum(data);
+        uint16_t first = lbxgfx_get_palfirst(data);
+        uint16_t num = lbxgfx_get_palnum(data);
         lbxpal_set_palette(p, first, num);
     }
 }

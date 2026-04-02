@@ -21,8 +21,8 @@ extern void lbxfont_select_subcolors_13not1(void);
 extern void lbxfont_select_subcolors_13not2(void);
 
 extern void lbxfont_set_colors(const uint8_t *colorptr);
-extern void lbxfont_set_colors_n(const uint8_t *colorptr, int num);
-extern void lbxfont_set_color_c_n(uint8_t color, int num);
+extern void lbxfont_set_colors_n(const uint8_t *colorptr, uint16_t num);
+extern void lbxfont_set_color_c_n(uint8_t color, uint16_t num);
 extern void lbxfont_set_color0(uint8_t color);
 extern void lbxfont_set_temp_color(uint8_t color);
 extern void lbxfont_set_14_24(uint8_t color1, uint8_t color2);
