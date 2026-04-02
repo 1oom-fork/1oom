@@ -6,7 +6,6 @@
 
 #include "main.h"
 #include "bits.h"
-#include "comp.h"
 #include "hw.h"
 #include "game/game.h"
 #include "game/game_save.h"
@@ -201,6 +200,7 @@ static int savetype_de_smart(struct game_s *g, const char *fname)
 
 #define SAVE_MOO13_LEN  59036
 #define SAVE_CMOO_LEN   154
+#define TBLLEN(_t_) ((int32_t)(sizeof((_t_)) / sizeof((_t_)[0])))   /* FIXME */
 
 bool libsave_is_moo13(const char *fname)
 {

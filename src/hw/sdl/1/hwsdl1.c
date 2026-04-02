@@ -258,7 +258,7 @@ int hw_early_init(void)
 
 int hw_init(void)
 {
-    int flags = SDL_INIT_VIDEO | (opt_audio_enabled ? SDL_INIT_AUDIO : 0);
+    Uint32 flags = SDL_INIT_VIDEO | (opt_audio_enabled ? SDL_INIT_AUDIO : 0);
     log_message("SDL_Init\n");
     if (SDL_Init(flags) < 0) {
         log_error("SDL_Init(0x%x) failed: %s\n", flags, SDL_GetError());
@@ -324,7 +324,7 @@ int hw_event_handle(void)
                 exit(EXIT_SUCCESS);
                 break;
             case SDL_VIDEORESIZE:
-                hw_video_resize((unsigned int)e.resize.w, (unsigned int)e.resize.h);
+                hw_video_resize(e.resize.w, e.resize.h);
                 break;
             case SDL_VIDEOEXPOSE:
                 i_hw_video.update();

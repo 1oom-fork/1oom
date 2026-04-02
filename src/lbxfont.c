@@ -531,12 +531,12 @@ void lbxfont_set_colors(const uint8_t *colorptr)
     memcpy(&(lbxfontdata[0x00]), colorptr, 0x10);
 }
 
-void lbxfont_set_colors_n(const uint8_t *colorptr, int num)
+void lbxfont_set_colors_n(const uint8_t *colorptr, uint16_t num)
 {
     memcpy(&(lbxfontdata[0x00]), colorptr, num);
 }
 
-void lbxfont_set_color_c_n(uint8_t color, int num)
+void lbxfont_set_color_c_n(uint8_t color, uint16_t num)
 {
     memset(&(lbxfontdata[0x00]), color, num);
 }
