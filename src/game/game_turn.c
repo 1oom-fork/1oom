@@ -627,7 +627,7 @@ static void game_turn_reserve(struct game_s *g)
     }
 }
 
-static inline void game_add_planet_to_build_finished(struct game_s *g, uint8_t pli, player_id_t owner, uint8_t type)
+static inline void game_add_planet_to_build_finished(struct game_s *g, uint8_t pli, player_id_t owner, planet_finished_t type)
 {
     planet_t *p = &(g->planet[pli]);
     BOOLVEC_SET1(p->finished, type);

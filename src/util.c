@@ -161,7 +161,7 @@ void util_fname_split(const char *path, char **dir_out, char **name_out)
 
     if (dir_out != NULL) {
         *dir_out = lib_malloc((size_t)(p - path + 1));
-        memcpy(*dir_out, path, p - path);
+        memcpy(*dir_out, path, (size_t)(p - path));
         (*dir_out)[p - path] = '\0';
     }
 
@@ -170,7 +170,7 @@ void util_fname_split(const char *path, char **dir_out, char **name_out)
     }
 }
 
-int util_file_try_load_len(const char *name, uint8_t *buf, int wantlen)
+size_t util_file_try_load_len(const char *name, uint8_t *buf, size_t wantlen)
 {
     FILE *fd = 0;
     size_t len = 0;
@@ -197,7 +197,7 @@ int util_file_try_load_len(const char *name, uint8_t *buf, int wantlen)
 /* Write the first `size' bytes of `src' into a newly created file `name'.
    If `name' already exists, it is replaced by the new one.  Returns 0 on
    success, -1 on failure.  */
-int util_file_save(const char *name, const uint8_t *src, int size)
+int util_file_save(const char *name, const uint8_t *src, size_t size)
 {
     FILE *fd;
     size_t r;
