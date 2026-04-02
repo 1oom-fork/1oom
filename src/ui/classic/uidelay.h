@@ -10,7 +10,7 @@
 
 extern void ui_delay_prepare(void);
 /* returns true if exit by click */
-extern bool ui_delay_ticks_or_click(int ticks);
+extern bool ui_delay_ticks_or_click(uint16_t ticks);
 extern bool ui_delay_us_or_click(uint32_t us);
 
 extern void ui_delay_1(void);
