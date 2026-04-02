@@ -13,7 +13,7 @@ typedef enum {
     UIOBJI_OUTSIDE = -10000,
 } uiobj_id_t;
 
-#define UIOBJI_SET_TBL_INVALID(name) do { for (int i = 0; i < (sizeof(name)/sizeof(name[0])); ++i) { name[i] = UIOBJI_INVALID; } } while (0)
+#define UIOBJI_SET_TBL_INVALID(name) do { for (size_t i = 0; i < (sizeof(name)/sizeof(name[0])); ++i) { name[i] = UIOBJI_INVALID; } } while (0)
 
 extern void uiobj_table_clear(void);
 extern void uiobj_table_set_last(uiobj_id_t oi);
