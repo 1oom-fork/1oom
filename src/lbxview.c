@@ -227,8 +227,8 @@ static void drawscreen_inlbx(void)
         uint8_t *p = cur_ptr;
         num = GET_LE_16(p);
         size = GET_LE_16(p + 2);
-        view = cur_xoff;
-        SETRANGE(view, 0, num - 1);
+        view = (cur_xoff < 0) ? 0 : cur_xoff;
+        SETMIN(view, num - 1);
         sprintf(linebuf, "num:%i sz:%x v:%i", num, size, view);
         font8x8_drawstr(0, 200 + 8 * 1, linebuf, textcolor, 0);
         p = cur_ptr + 4 + view * size;
