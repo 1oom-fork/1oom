@@ -135,6 +135,30 @@ void util_fname_split(const char *path, char **dir_out, char **name_out)
     }
 }
 
+int util_file_try_load_len(const char *name, uint8_t *buf, int wantlen)
+{
+    FILE *fd = 0;
+    size_t len = 0;
+    fd = fopen(name, "rb");
+    if (fd == 0) {
+        return 0;
+    }
+    len = fread(buf, 1, wantlen, fd);
+    if (len != wantlen) {
+        len = 0;
+    } else {
+        fgetc(fd);
+        if (!feof(fd) || ferror(fd)) {
+            len = 0;
+        }
+    }
+    if (fd) {
+        fclose(fd);
+        fd = NULL;
+    }
+    return len;
+}
+
 /* Write the first `size' bytes of `src' into a newly created file `name'.
    If `name' already exists, it is replaced by the new one.  Returns 0 on
    success, -1 on failure.  */
