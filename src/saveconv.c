@@ -196,26 +196,6 @@ static int savetype_de_smart(struct game_s *g, const char *fname)
 
 /* -------------------------------------------------------------------------- */
 
-static int try_load_len(const char *fname, uint8_t *buf, int wantlen)
-{
-    FILE *fd = 0;
-    int len = -1;
-    if (0
-      || ((fd = fopen(fname, "rb")) == 0)
-      || ((len = fread(buf, 1, wantlen + 1, fd)) != wantlen)
-    ) {
-        LOG_DEBUG((1, "%s: loading '%s' (got %i != %i bytes)\n", __func__, fname, len, wantlen));
-        len = -1;
-    }
-    if (fd) {
-        fclose(fd);
-        fd = NULL;
-    }
-    return len;
-}
-
-/* -------------------------------------------------------------------------- */
-
 #define SAVE_MOO13_LEN  59036
 #define SAVE_CMOO_LEN   154
 
@@ -331,7 +311,7 @@ static int savetype_de_moo13(struct game_s *g, const char *fname)
     LOG_DEBUG((2, "%s: '%s'\n", __func__, fname));
     {
         int len;
-        if ((len = try_load_len(fname, save2buf, SAVE_MOO13_LEN)) <= 0) {
+        if ((len = util_file_try_load_len(fname, save2buf, SAVE_MOO13_LEN)) == 0) {
             log_error("loading MOO1 v1.3 save '%s' (got %i != %i bytes)\n", fname, len, SAVE_MOO13_LEN);
             return -1;
         }
@@ -648,13 +628,13 @@ static int savetype_de_moo13(struct game_s *g, const char *fname)
             if (dir) {
                 tryname = fullname = util_concat(dir, FSDEV_DIR_SEP_STR, tryname, NULL);
             }
-            if (try_load_len(tryname, cmoobuf, SAVE_CMOO_LEN) <= 0) {
+            if (util_file_try_load_len(tryname, cmoobuf, SAVE_CMOO_LEN) == 0) {
                 tryname = "CONFIG.MOO";
                 if (dir) {
                     lib_free(fullname);
                     tryname = fullname = util_concat(dir, FSDEV_DIR_SEP_STR, tryname, NULL);
                 }
-                if (try_load_len(tryname, cmoobuf, SAVE_CMOO_LEN) <= 0) {
+                if (util_file_try_load_len(tryname, cmoobuf, SAVE_CMOO_LEN) == 0) {
                     found = false;
                 }
             }
@@ -1112,13 +1092,13 @@ static int savetype_en_moo13(struct game_s *g, const char *fname)
             if (dir) {
                 tryname = fullname = util_concat(dir, FSDEV_DIR_SEP_STR, tryname, NULL);
             }
-            if (try_load_len(tryname, cmoobuf, SAVE_CMOO_LEN) <= 0) {
+            if (util_file_try_load_len(tryname, cmoobuf, SAVE_CMOO_LEN) == 0) {
                 tryname = "CONFIG.MOO";
                 if (dir) {
                     lib_free(fullname);
                     tryname = fullname = util_concat(dir, FSDEV_DIR_SEP_STR, tryname, NULL);
                 }
-                if (try_load_len(tryname, cmoobuf, SAVE_CMOO_LEN) <= 0) {
+                if (util_file_try_load_len(tryname, cmoobuf, SAVE_CMOO_LEN) == 0) {
                     found = false;
                 }
             }
