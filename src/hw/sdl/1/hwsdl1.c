@@ -4,11 +4,11 @@
 #include <stdlib.h>
 
 #ifdef HAVE_SDLMAIN
-#include "SDL_main.h"
+#include "SDL/SDL_main.h"
 #endif
 
-#include "SDL.h"
-#include "SDL_keysym.h"
+#include "SDL/SDL.h"
+#include "SDL/SDL_keysym.h"
 
 #include "hw.h"
 #include "hwsdl_audio.h"
