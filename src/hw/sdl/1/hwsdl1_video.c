@@ -151,15 +151,14 @@ static void set_viewport(int src_w, int src_h, int dest_w, int dest_h)
 {
     int dest_x = 0, dest_y = 0;
 
-    if (hw_opt_aspect != 0) {
-        double aspect = ((double)(hw_opt_aspect)) / 1000000.;
-        if (dest_w * src_h < src_w * aspect * dest_h) {
+    if (hw_opt_aspect_ratio_correct) {
+        if (dest_w * src_h * 6 < src_w * dest_h * 5) {
             dest_y = dest_h;
-            dest_h = (unsigned int)(dest_w * src_h / (src_w * aspect));
+            dest_h = (dest_w * src_h * 6 / 5 / src_w);
             dest_y = (dest_y - dest_h) / 2;
         } else {
             dest_x = dest_w;
-            dest_w = (unsigned int)(dest_h * src_w * aspect / src_h);
+            dest_w = (dest_h * src_w * 5 / 6 / src_h);
             dest_x = (dest_x - dest_w) / 2;
         }
     }
@@ -297,6 +296,9 @@ int hw_video_init(int w, int h)
         i_hw_video.render = video_render_gl_32bpp;
         i_hw_video.update = video_update_gl_32bpp;
         i_hw_video.setpal = video_setpal_gl_32bpp;
+        if (hw_opt_aspect_ratio_correct) {
+            h = h * 6 / 5;
+        }
         if ((hw_opt_screen_winw != 0) && (hw_opt_screen_winh != 0)) {
             if ((hw_opt_screen_winw < w) || (hw_opt_screen_winh < h)) {
                 log_warning("ignoring too small configured resolution %ix%i < %ix%i\n", hw_opt_screen_winw, hw_opt_screen_winh, w, h);
