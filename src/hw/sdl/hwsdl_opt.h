@@ -12,7 +12,7 @@ extern const char *hw_opt_sdlmixer_sf;
 
 /* for SDL1 */
 extern bool hw_opt_use_gl;
-extern int hw_opt_aspect;
+extern bool hw_opt_aspect_ratio_correct;
 extern int hw_opt_gl_filter;
 
 #endif
