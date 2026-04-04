@@ -111,8 +111,8 @@ if test x"$enable_sdl1hw" != "xno"; then
     CFLAGS="$HW_SDL1_CFLAGS"
     LIBS="$HW_SDL1_LIBS"
 
-    dnl check for the SDL.h header
-    AC_CHECK_HEADERS(SDL.h,[AC_CHECK_LIB(SDL, SDL_SetVideoMode,
+    dnl check for the SDL/SDL.h header
+    AC_CHECK_HEADERS(SDL/SDL.h,[AC_CHECK_LIB(SDL, SDL_SetVideoMode,
                      [],
                      [CFLAGS=$old_cflags; break],$EXTRA_SDL1_LIBS)],
                      [CFLAGS=$old_cflags; break],$EXTRA_SDL1_LIBS)
@@ -132,7 +132,7 @@ if test x"$enable_sdl1hw" != "xno"; then
         HW_SDL1_LIBS="$HW_SDL1_LIBS -lSDL_mixer"
         LIBS="$old_LIBS $HW_SDL1_LIBS"
 
-        AC_TRY_LINK([#include "SDL_mixer.h"],
+        AC_TRY_LINK([#include "SDL/SDL_mixer.h"],
                     [Mix_LoadMUS(0)],
                     [AC_MSG_RESULT(yes);
                      have_sdlmixer1=yes],
@@ -154,7 +154,7 @@ if test x"$enable_sdl1hw" != "xno"; then
         HW_SDL1_LIBS="$HW_SDL1_LIBS -lGL"
         LIBS="$old_LIBS $HW_SDL1_LIBS"
 
-        AC_TRY_LINK([#include <SDL_opengl.h>],
+        AC_TRY_LINK([#include <SDL/SDL_opengl.h>],
                     [glViewport(1,2,3,4)],
                     [AC_MSG_RESULT(yes);
                      have_opengl_lib=yes],
@@ -168,7 +168,7 @@ if test x"$enable_sdl1hw" != "xno"; then
             old_sdl_libs="$HW_SDL1_LIBS"
             HW_SDL1_LIBS="$HW_SDL1_LIBS -lopengl32"
             LIBS="$LIBS $HW_SDL1_LIBS"
-            AC_TRY_LINK([#include "SDL_opengl.h"],
+            AC_TRY_LINK([#include "SDL/SDL_opengl.h"],
                         [glViewport(1,2,3,4)],
                         [AC_MSG_RESULT(yes);
                          have_opengl_lib=yes],
@@ -187,7 +187,7 @@ if test x"$enable_sdl1hw" != "xno"; then
         old_sdl_libs="$HW_SDL1_LIBS"
         HW_SDL1_LIBS="$HW_SDL1_LIBS -lSDLmain -lSDL"
         LIBS="$LIBS $HW_SDL1_LIBS"
-        AC_TRY_LINK([#include "SDL_main.h"
+        AC_TRY_LINK([#include "SDL/SDL_main.h"
                      int main(int argc, char *argv[])
                      { return 0; }
                      #undef main
@@ -204,7 +204,7 @@ if test x"$enable_sdl1hw" != "xno"; then
             old_sdl_libs="$HW_SDL1_LIBS"
             HW_SDL1_LIBS="$HW_SDL1_LIBS -lmingw32 -lSDLmain -lSDL"
             LIBS="$LIBS $HW_SDL1_LIBS"
-            AC_TRY_LINK([#include "SDL_main.h"
+            AC_TRY_LINK([#include "SDL/SDL_main.h"
                          int main(int argc, char *argv[])
                          { return 0; }
                          #undef main
