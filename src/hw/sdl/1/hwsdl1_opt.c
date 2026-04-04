@@ -11,11 +11,10 @@
 /* -------------------------------------------------------------------------- */
 
 #define HW_DEFAULT_FULLSCREEN   false
-#define HW_DEFAULT_ASPECT   833333
 
 #ifdef HAVE_OPENGL
 bool hw_opt_use_gl = true;
-int hw_opt_aspect = HW_DEFAULT_ASPECT;
+bool hw_opt_aspect_ratio_correct = true;
 int hw_opt_gl_filter = 1;
 #endif
 
@@ -35,9 +34,12 @@ const struct cmdline_options_s hw_cmdline_options_extra[] = {
     { "-nogl", 0,
       options_disable_bool_var, (void *)&hw_opt_use_gl,
       NULL, "Disable OpenGL" },
-    { "-aspect", 1,
-      options_set_int_var, (void *)&hw_opt_aspect,
-      "ASPECT", "Set aspect ratio (*1000000, 0 = off)" },
+    { "-aspect", 0,
+      options_enable_bool_var, (void *)&hw_opt_aspect_ratio_correct,
+      NULL, "Enable aspect ratio correction" },
+    { "-noaspect", 0,
+      options_disable_bool_var, (void *)&hw_opt_aspect_ratio_correct,
+      NULL, "Disable aspect ratio correction" },
     { "-filt", 1,
       options_set_int_var, (void *)&hw_opt_gl_filter,
       "FILTER", "Set OpenGL filter (0 = nearest, 1 = linear)" },
