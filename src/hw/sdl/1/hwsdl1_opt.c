@@ -11,10 +11,8 @@
 /* -------------------------------------------------------------------------- */
 
 #define HW_DEFAULT_FULLSCREEN   false
-#define HW_DEFAULT_ASPECT   833333
 
 #ifdef HAVE_SDL1GL
-int hw_opt_aspect = HW_DEFAULT_ASPECT;
 int hw_opt_bpp = 0;
 int hw_opt_gl_filter = 1;
 #endif /* HAVE_SDL1GL */
@@ -29,9 +27,6 @@ int hw_opt_gl_filter = 1;
 
 const struct cmdline_options_s hw_cmdline_options_extra[] = {
 #ifdef HAVE_SDL1GL
-    { "-aspect", 1,
-      options_set_int_var, (void *)&hw_opt_aspect,
-      "ASPECT", "Set aspect ratio (*1000000, 0 = off)" },
     { "-bpp", 1,
       options_set_int_var, (void *)&hw_opt_bpp,
       "BPP", "Set bits/pixel (0 = autodetect)" },
