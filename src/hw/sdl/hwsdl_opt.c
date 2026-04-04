@@ -14,6 +14,7 @@
 
 bool hw_opt_fullscreen = HW_DEFAULT_FULLSCREEN;
 bool hw_opt_force_sw = false;
+bool hw_opt_aspect_ratio_correct = true;
 int hw_opt_screen_winw = 0;
 int hw_opt_screen_winh = 0;
 int hw_opt_screen_fsw = 0;
@@ -45,6 +46,12 @@ const struct cmdline_options_s hw_cmdline_options[] = {
     { "-noforcesw", 0,
       options_disable_bool_var, (void *)&hw_opt_force_sw,
       NULL, "Do not force software rendering" },
+    { "-aspect", 0,
+      options_enable_bool_var, (void *)&hw_opt_aspect_ratio_correct,
+      NULL, "Enable aspect ratio correction" },
+    { "-noaspect", 0,
+      options_disable_bool_var, (void *)&hw_opt_aspect_ratio_correct,
+      NULL, "Disable aspect ratio correction" },
     { "-winw", 1,
       options_set_int_var, (void *)&hw_opt_screen_winw,
       "WIDTH", "Set window width" },
