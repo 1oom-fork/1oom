@@ -3,9 +3,9 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "SDL.h"
+#include "SDL/SDL.h"
 #ifdef HAVE_OPENGL
-#include "SDL_opengl.h"
+#include "SDL/SDL_opengl.h"
 #endif
 
 #include "hw.h"
