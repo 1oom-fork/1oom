@@ -7,7 +7,7 @@ struct game_new_options_s {
     uint32_t galaxy_seed;
     galaxy_size_t galaxy_size;
     difficulty_t difficulty;
-    uint8_t players;
+    player_id_t players;
     struct {
         char playername[EMPEROR_NAME_LEN];
         char homename[PLANET_NAME_LEN];
