@@ -142,7 +142,7 @@ static void explore_draw_cb(void *vptr)
 
 /* -------------------------------------------------------------------------- */
 
-bool ui_explore(struct game_s *g, int pi, uint8_t planet_i, bool by_scanner, bool flag_colony_ship)
+bool ui_explore(struct game_s *g, player_id_t pi, uint8_t planet_i, bool by_scanner, bool flag_colony_ship)
 {
     struct explore_data_s d;
     uiobj_id_t oi_cont, oi_y, oi_n;

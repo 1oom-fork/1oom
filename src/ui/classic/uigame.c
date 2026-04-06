@@ -38,7 +38,7 @@
 
 /* -------------------------------------------------------------------------- */
 
-ui_turn_action_t ui_game_turn(struct game_s *g, int *load_game_i_ptr, int pi)
+ui_turn_action_t ui_game_turn(struct game_s *g, int *load_game_i_ptr, player_id_t pi)
 {
     int scrapi = -1;
     int opponi = -1;
@@ -246,7 +246,7 @@ void ui_game_start(struct game_s *g)
     ui_palette_set_n();
     ui_draw_finish_mode = 1;
     ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
-    for (int i = 0; i < g->players; ++i) {
+    for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         if (IS_HUMAN(g, i)) {
             ui_starmap_set_pos_focus(g, i);
             break;
