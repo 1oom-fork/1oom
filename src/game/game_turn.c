@@ -1270,7 +1270,7 @@ static void game_turn_transport(struct game_s *g)
             player_id_t owner;
             owner = r->owner;
             pop2 = pop3 = r->pop;
-            for (int j = 0; j < g->players; ++j) {
+            for (player_id_t j = PLAYER_0; j < g->players; ++j) {
                 treaty_t t;
                 if (j == owner) {
                     continue;
@@ -1472,7 +1472,7 @@ static bool game_turn_check_end(struct game_s *g, struct game_end_s *ge)
         }
         if (!human_alive) {
             struct news_s ns;
-            int killer = g->gaux->human_killer;
+            player_id_t killer = g->gaux->human_killer;
             if (killer >= g->players) {
                 killer = (pi1 != PLAYER_NONE) ? pi1 : 1;
             }
@@ -1735,7 +1735,7 @@ struct game_end_s game_turn_process(struct game_s *g)
     player_id_t artifact_player = PLAYER_NONE;
     game_end.type = GAME_END_NONE;
     game_turn_limit_ships(g);
-    for (int i = 0; i < g->players; ++i) {
+    for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         BOOLVEC_TBL_COPY1(old_contact, g->eto[i].contact, i, PLAYER_NUM);
         old_focus[i] = g->planet_focus_i[i];
     }
@@ -1773,7 +1773,7 @@ struct game_end_s game_turn_process(struct game_s *g)
     if (!game_fix_broken_garbage) {
         /*game_turn_unrest_hmm1(g);*/
     }
-    for (int i = 0; i < g->players; ++i) {
+    for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         g->evn.newtech[i].num = 0;
     }
     {
@@ -1783,12 +1783,12 @@ struct game_end_s game_turn_process(struct game_s *g)
         game_spy_sab_human(g);
     }
     /*ui_newtech(); FIXME redundant;*/
-    for (int i = 0; i < g->players; ++i) {
+    for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         g->evn.newtech[i].num = 0;
     }
     /*935f*/
     game_tech_research(g);
-    for (int i = 0; i < g->players; ++i) {
+    for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         if (IS_HUMAN(g, i)) {
             ui_newtech(g, i);
         }
@@ -1796,7 +1796,7 @@ struct game_end_s game_turn_process(struct game_s *g)
     /* FIXME useless? game_battle should have taken care of this */
     if (g->evn.have_guardian) {
         uint8_t o = g->evn.planet_orion_i;
-        for (int i = 0; i < g->players; ++i) {
+        for (player_id_t i = PLAYER_0; i < g->players; ++i) {
             for (int j = 0; j < NUM_SHIPDESIGNS; ++j) {
                 g->eto[i].orbit[o].ships[j] = 0;
             }
@@ -1817,7 +1817,7 @@ struct game_end_s game_turn_process(struct game_s *g)
     if (artifact_planet != PLANET_NONE) {
         game_tech_get_artifact_loot(g, artifact_planet, artifact_player);
     }
-    for (int i = 0; i < g->players; ++i) {
+    for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         if (IS_HUMAN(g, i)) {
             ui_newtech(g, i);
         }
@@ -1830,7 +1830,7 @@ struct game_end_s game_turn_process(struct game_s *g)
             ++num_colony;
         }
     }
-    for (int i = 0; i < g->players; ++i) {
+    for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         if (IS_ALIVE(g, i)) {
             ++num_alive;
         }
@@ -1867,7 +1867,7 @@ struct game_end_s game_turn_process(struct game_s *g)
     }
     game_turn_update_seen(g);
     game_diplo_mood_relax(g);
-    for (int i = 0; i < g->players; ++i) {
+    for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         g->planet_focus_i[i] = old_focus[i];
     }
     ++g->year;
