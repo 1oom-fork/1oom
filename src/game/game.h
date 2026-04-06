@@ -266,7 +266,7 @@ struct game_s {
     uint16_t nebula_x1[NEBULA_MAX][4];
     uint16_t nebula_y0[NEBULA_MAX][4];
     uint16_t nebula_y1[NEBULA_MAX][4];
-    uint8_t players;
+    player_id_t players;
     BOOLVEC_DECLARE(is_ai, PLAYER_NUM);
     player_id_t active_player;
     difficulty_t difficulty;

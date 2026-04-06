@@ -48,7 +48,7 @@ static void game_start(struct game_s *g)
     }
     game_update_production(g);
     game_update_tech_util(g);
-    for (int i = 0; i < g->players; ++i) {
+    for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         game_update_eco_on_waste(g, i, false);
         game_update_seen_by_orbit(g, i);
     }
@@ -136,7 +136,7 @@ static int game_opt_do_new_seed(char **argv, void *var)
             v = 0;
         }
         vr = v;
-        for (int i = 0; i < PLAYER_NUM; ++i) {
+        for (player_id_t i = PLAYER_0; i < PLAYER_NUM; ++i) {
             v2 = v & 0xf;
             v = v >> 4;
             if (v2 > RACE_NUM) {
@@ -158,7 +158,7 @@ static int game_opt_do_new_seed(char **argv, void *var)
             v = 0;
         }
         vb = v;
-        for (int i = 0; i < PLAYER_NUM; ++i) {
+        for (player_id_t i = PLAYER_0; i < PLAYER_NUM; ++i) {
             v2 = v % 10;
             v = v / 10;
             if (v2 > BANNER_NUM) {
@@ -193,7 +193,7 @@ static int game_opt_do_new_seed(char **argv, void *var)
             v = 1;
         }
         va = v;
-        for (int i = 0; i < PLAYER_NUM; ++i) {
+        for (player_id_t i = PLAYER_0; i < PLAYER_NUM; ++i) {
             v2 = v % 10;
             v = v / 10;
             game_opt_new.pdata[i].is_ai = !v2;
