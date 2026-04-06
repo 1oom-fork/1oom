@@ -163,7 +163,7 @@ void ui_copyprotection_lose(struct game_s *g, struct game_end_s *ge)
     struct news_s ns;
     int best_ai = 0;
     int best_planet_num = 0;
-    int planet_num[6] = {0, 0, 0, 0, 0, 0};
+    int planet_num[PLAYER_NUM] = {0, 0, 0, 0, 0, 0};
     player_id_t api = 0;
     for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         api = i;
