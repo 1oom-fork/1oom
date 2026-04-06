@@ -75,7 +75,7 @@ static void empirereport_draw_cb(void *vptr)
     lbxfont_select(0, 6, 0, 0);
     {
         int n = 0;
-        for (int i = 0; (i < g->players) && (n < 3); ++i) {
+        for (player_id_t i = PLAYER_0; (i < g->players) && (n < 3); ++i) {
             if ((i != d->pi) && (e->treaty[i] == TREATY_ALLIANCE) && IS_ALIVE(g, i)) {
                 ui_draw_pixel(9, 140 + 6 * n, 0);
                 ui_draw_pixel(9, 141 + 6 * n, 0);
@@ -93,7 +93,7 @@ static void empirereport_draw_cb(void *vptr)
     lbxfont_select(0, 6, 0, 0);
     {
         int n = 0;
-        for (int i = 0; (i < g->players) && (n < 3); ++i) {
+        for (player_id_t i = PLAYER_0; (i < g->players) && (n < 3); ++i) {
             if ((i != d->pi) && (e->treaty[i] >= TREATY_WAR) && IS_ALIVE(g, i)) {
                 ui_draw_pixel(9, 177 + 6 * n, 0);
                 ui_draw_pixel(9, 178 + 6 * n, 0);

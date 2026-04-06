@@ -41,7 +41,7 @@ static void switch_draw_cb(void *vptr)
     lbxgfx_draw_frame(0, 0, ui_data.gfx.starmap.mainview, UI_SCREEN_W);
 
     ctx = ui_gmap_basic_init(g, true);
-    ui_gmap_basic_draw_frame(ctx, -1);
+    ui_gmap_basic_draw_frame(ctx, PLAYER_NONE);
 
     lbxfont_select(3, 2, 0, 0);
     lbxfont_print_num_normal(230, 16, g->year + YEAR_BASE, UI_SCREEN_W);

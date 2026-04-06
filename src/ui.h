@@ -3,6 +3,7 @@
 
 /* API to ui/ */
 
+#include "game/game_types.h"
 #include "options.h"
 #include "types.h"
 
@@ -51,13 +52,13 @@ typedef enum {
     UI_TURN_ACT_QUIT_GAME
 } ui_turn_action_t;
 
-extern ui_turn_action_t ui_game_turn(struct game_s *g, int *load_game_i_ptr, int pi);
+extern ui_turn_action_t ui_game_turn(struct game_s *g, int *load_game_i_ptr, player_id_t pi);
 
 extern void *ui_gmap_basic_init(struct game_s *g, bool show_player_switch);
-extern void ui_gmap_basic_start_player(void *ctx, int pi);
-extern void ui_gmap_basic_start_frame(void *ctx, int pi);
-extern void ui_gmap_basic_draw_frame(void *ctx, int pi);
-extern void ui_gmap_basic_finish_frame(void *ctx, int pi);
+extern void ui_gmap_basic_start_player(void *ctx, player_id_t pi);
+extern void ui_gmap_basic_start_frame(void *ctx, player_id_t pi);
+extern void ui_gmap_basic_draw_frame(void *ctx, player_id_t pi);
+extern void ui_gmap_basic_finish_frame(void *ctx, player_id_t pi);
 extern void ui_gmap_basic_shutdown(void *ctx);
 
 extern uint8_t *ui_gfx_get_ship(int look);
@@ -121,8 +122,8 @@ extern ui_battle_action_t ui_battle_turn(const struct battle_s *bt);
 extern void ui_battle_ai_pre(const struct battle_s *bt);
 extern bool ui_battle_ai_post(const struct battle_s *bt);
 
-extern int ui_spy_steal(struct game_s *g, int spy, int target, uint8_t flags_field);
-extern void ui_spy_stolen(struct game_s *g, int pi, int spy, int field, uint8_t tech);
+extern int ui_spy_steal(struct game_s *g, player_id_t spy, player_id_t target, uint8_t flags_field);
+extern void ui_spy_stolen(struct game_s *g, player_id_t pi, player_id_t spy, int field, uint8_t tech);
 
 typedef enum {
     UI_SABOTAGE_FACT, /*0*/
@@ -131,19 +132,19 @@ typedef enum {
     UI_SABOTAGE_NONE /*-1*/
 } ui_sabotage_t;
 
-extern ui_sabotage_t ui_spy_sabotage_ask(struct game_s *g, int spy, int target, uint8_t *planetptr);
-extern int ui_spy_sabotage_done(struct game_s *g, int pi, int spy, int target, ui_sabotage_t act, int other1, int other2, uint8_t planet, int snum);
+extern ui_sabotage_t ui_spy_sabotage_ask(struct game_s *g, player_id_t spy, player_id_t target, uint8_t *planetptr);
+extern player_id_t ui_spy_sabotage_done(struct game_s *g, player_id_t pi, player_id_t spy, player_id_t target, ui_sabotage_t act, player_id_t other1, player_id_t other2, uint8_t planet, int snum);
 
-extern void ui_newtech(struct game_s *g, int pi);
+extern void ui_newtech(struct game_s *g, player_id_t pi);
 
-extern bool ui_explore(struct game_s *g, int pi, uint8_t planet_i, bool by_scanner, bool flag_colony_ship);
-extern void ui_landing(struct game_s *g, int pi, uint8_t planet_i);
+extern bool ui_explore(struct game_s *g, player_id_t pi, uint8_t planet_i, bool by_scanner, bool flag_colony_ship);
+extern void ui_landing(struct game_s *g, player_id_t pi, uint8_t planet_i);
 
-extern bool ui_bomb_ask(struct game_s *g, int pi, uint8_t planet_i, int pop_inbound);
-extern void ui_bomb_show(struct game_s *g, int attacker_i, int owner_i, uint8_t planet_i, int popdmg, int factdmg, bool play_music);
+extern bool ui_bomb_ask(struct game_s *g, player_id_t pi, uint8_t planet_i, int pop_inbound);
+extern void ui_bomb_show(struct game_s *g, player_id_t attacker_i, player_id_t owner_i, uint8_t planet_i, int popdmg, int factdmg, bool play_music);
 
 extern void ui_turn_pre(const struct game_s *g);
-extern void ui_turn_msg(struct game_s *g, int pi, const char *str);
+extern void ui_turn_msg(struct game_s *g, player_id_t pi, const char *str);
 
 struct ground_s;
 extern void ui_ground(struct ground_s *gr);
@@ -157,8 +158,8 @@ struct election_s;
 extern void ui_election_start(struct election_s *el);
 extern void ui_election_show(struct election_s *el);
 extern void ui_election_delay(struct election_s *el, int delay);
-extern int ui_election_vote(struct election_s *el, int player_i);
-extern bool ui_election_accept(struct election_s *el, int player_i);
+extern int ui_election_vote(struct election_s *el, player_id_t player_i);
+extern bool ui_election_accept(struct election_s *el, player_id_t player_i);
 extern void ui_election_end(struct election_s *el);
 
 struct audience_s;
@@ -173,7 +174,7 @@ extern int16_t ui_audience_ask4(struct audience_s *au);
 extern void ui_audience_newtech(struct audience_s *au);
 extern void ui_audience_end(struct audience_s *au);
 
-extern void ui_newships(struct game_s *g, int pi);
+extern void ui_newships(struct game_s *g, player_id_t pi);
 
 extern void ui_copyprotection_check(struct game_s *g);
 extern void ui_copyprotection_lose(struct game_s *g, struct game_end_s *ge);

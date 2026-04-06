@@ -483,7 +483,7 @@ again:
 
 /* -------------------------------------------------------------------------- */
 
-void ui_newtech(struct game_s *g, int pi)
+void ui_newtech(struct game_s *g, player_id_t pi)
 {
     struct newtech_data_s d;
     empiretechorbit_t *e = &(g->eto[pi]);
@@ -548,7 +548,7 @@ void ui_newtech(struct game_s *g, int pi)
             et = &(g->eto[d.nt.stolen_from]);
             d.other1 = PLAYER_NONE;
             d.other2 = PLAYER_NONE;
-            for (int j = 0; (j < g->players) && (d.other2 == PLAYER_NONE); ++j) {
+            for (player_id_t j = PLAYER_0; (j < g->players) && (d.other2 == PLAYER_NONE); ++j) {
                 /* MOO1 does not check (d.nt.stolen_from != j) because in that case IN_CONTACT is 0 */
                 if ((j != pi) && IN_CONTACT(g, d.nt.stolen_from, j)) {
                     if (d.other1 == PLAYER_NONE) {
