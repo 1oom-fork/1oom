@@ -110,7 +110,7 @@ static void ui_starmap_do_help(struct game_s *g, player_id_t api)
     }
     if (BOOLVEC_TBL_IS0(g->evn.help_shown, api, 2)) {
         int num = 0;
-        for (int i = 0; i < g->players; ++i) {
+        for (player_id_t i = PLAYER_0; i < g->players; ++i) {
             if (IN_CONTACT(g, api, i)) {
                 ++num;
             }
@@ -375,7 +375,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
         } else if (oi1 == oi_f10) {
             game_save_do_save_i(GAME_SAVE_I_CONTINUE, "Continue", g);
         } else if (oi1 == oi_alt_p) {
-            for (int i = 0; i < g->players; ++i) {
+            for (player_id_t i = PLAYER_0; i < g->players; ++i) {
                 g->eto[i].trait2 = rnd_0_nm1(6, &g->seed);
                 g->eto[i].trait1 = rnd_0_nm1(6, &g->seed);
             }
