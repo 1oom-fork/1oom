@@ -220,28 +220,8 @@ bool libsave_is_moo13(const char *fname)
 
 #define M13_GET_8(item_, addr_)     item_ = save2buf[addr_]
 #define M13_GET_16(item_, addr_)    item_ = GET_LE_16(&save2buf[addr_])
+#define M13_GET_S16(item_, addr_)   item_ = GET_LE_S16(&save2buf[addr_])
 #define M13_GET_32(item_, addr_)    item_ = GET_LE_32(&save2buf[addr_])
-#define M13_GET_16_OWNER(item_, addr_) \
-    do { \
-        uint16_t t_; \
-        t_ = GET_LE_16(&save2buf[addr_]); \
-        if (t_ == 0xffff) { t_ = PLAYER_NONE; }; \
-        item_ = t_; \
-    } while (0)
-#define M13_GET_16_HATED(item_, addr_) \
-    do { \
-        uint16_t t_; \
-        t_ = GET_LE_16(&save2buf[addr_]); \
-        if (t_ == 0) { t_ = PLAYER_NONE; }; \
-        item_ = t_; \
-    } while (0)
-#define M13_GET_16_KILLER(item_, addr_) \
-    do { \
-        uint16_t t_; \
-        t_ = GET_LE_16(&save2buf[addr_]); \
-        if (t_ == 0) { t_ = PLAYER_NONE; } else { --t_; } \
-        item_ = t_; \
-    } while (0)
 #define M13_GET_16_CHECK(item_, addr_, l_, h_) \
     do { \
         int t_; \
@@ -328,7 +308,7 @@ static int libsave_moo13_decode(struct game_s *g)
     M13_GET_16_CHECK(g->enroute_num, 0xe1b6, 0, 259);
     M13_GET_16_CHECK(g->transport_num, 0xe1b8, 0, 99);
     M13_GET_16(g->end, 0xe686);
-    M13_GET_16_OWNER(g->winner, 0xe688);
+    M13_GET_S16(g->winner, 0xe688);
     M13_GET_16(g->guardian_killer, 0xe68a);
     if (g->guardian_killer == 1000) {
         g->guardian_killer = PLAYER_NONE;
@@ -373,9 +353,9 @@ static int libsave_moo13_decode(struct game_s *g)
         M13_GET_16(p->bc_to_factory, pb + 0x2e);
         M13_GET_32(p->reserve, pb + 0x30);
         M13_GET_16(p->waste, pb + 0x34);
-        M13_GET_16_OWNER(p->owner, pb + 0x36);
-        M13_GET_16_OWNER(p->prev_owner, pb + 0x38);
-        M13_GET_16_OWNER(p->claim, pb + 0xa0);
+        M13_GET_S16(p->owner, pb + 0x36);
+        M13_GET_S16(p->prev_owner, pb + 0x38);
+        M13_GET_S16(p->claim, pb + 0xa0);
         M13_GET_16(p->pop, pb + 0x3a);
         M13_GET_16(p->pop_prev, pb + 0x3c);
         M13_GET_16(p->factories, pb + 0x3e);
@@ -403,7 +383,7 @@ static int libsave_moo13_decode(struct game_s *g)
     }
     for (int i = 0; i < g->galaxy_stars; ++i) {
         seen_t *s = &(g->seen[PLAYER_0][i]);
-        M13_GET_16_OWNER(s->owner, 0xe2e2 + i * 2);
+        M13_GET_S16(s->owner, 0xe2e2 + i * 2);
         M13_GET_16(s->pop, 0xe3ba + i * 2);
         M13_GET_16(s->bases, 0xe492 + i * 2);
         M13_GET_16(s->factories, 0xe56a + i * 2);
@@ -418,7 +398,7 @@ static int libsave_moo13_decode(struct game_s *g)
         fleet_enroute_t *r = &(g->enroute[i]);
         int rb;
         rb = 0x4da0 + i * 0x1c;
-        M13_GET_16_OWNER(r->owner, rb + 0x00);
+        M13_GET_S16(r->owner, rb + 0x00);
         M13_GET_16(r->x, rb + 0x02);
         M13_GET_16(r->y, rb + 0x04);
         M13_GET_16(r->dest, rb + 0x06);
@@ -431,7 +411,7 @@ static int libsave_moo13_decode(struct game_s *g)
         transport_t *r = &(g->transport[i]);
         int rb;
         rb = 0x6a10 + i * 0x12;
-        M13_GET_16_OWNER(r->owner, rb + 0x00);
+        M13_GET_S16(r->owner, rb + 0x00);
         M13_GET_16(r->x, rb + 0x02);
         M13_GET_16(r->y, rb + 0x04);
         M13_GET_16(r->dest, rb + 0x06);
@@ -474,8 +454,14 @@ static int libsave_moo13_decode(struct game_s *g)
             M13_GET_16(e->offer_field[j], eb2 + 0x1d4);
             M13_GET_16(e->offer_tech[j], eb2 + 0x1e0);
             M13_GET_16(e->offer_bc[j], eb2 + 0x1ec);
-            M13_GET_16_HATED(e->hated[j], eb2 + 0x21c);
-            M13_GET_16_HATED(e->mutual_enemy[j], eb2 + 0x228);
+            M13_GET_S16(e->hated[j], eb2 + 0x21c);
+            if (e->hated[j] == PLAYER_0) {
+                e->hated[j] = PLAYER_NONE;
+            }
+            M13_GET_S16(e->mutual_enemy[j], eb2 + 0x228);
+            if (e->mutual_enemy[j] == PLAYER_0) {
+                e->mutual_enemy[j] = PLAYER_NONE;
+            }
             M13_GET_16(e->hatred[j], eb2 + 0x270);
             M13_GET_16(e->have_met[j], eb2 + 0x27c);
             M13_GET_16(e->trade_established_bc[j], eb2 + 0x288);
@@ -561,18 +547,18 @@ static int libsave_moo13_decode(struct game_s *g)
         M13_GET_16(ev->year, evb + 0x000);
         M13_GET_TBL_BVN_16(ev->done, evb + 0x004, 20);
         M13_GET_16(ev->have_plague, evb + 0x02c);
-        M13_GET_16(ev->plague_player, evb + 0x02e);
+        M13_GET_S16(ev->plague_player, evb + 0x02e);
         M13_GET_16(ev->plague_planet_i, evb + 0x030);
         M13_GET_16(ev->plague_val, evb + 0x032);
         M13_GET_16(ev->have_nova, evb + 0x03a);
-        M13_GET_16(ev->nova_player, evb + 0x03c);
+        M13_GET_S16(ev->nova_player, evb + 0x03c);
         M13_GET_16(ev->nova_planet_i, evb + 0x03e);
         M13_GET_16(ev->nova_years, evb + 0x040);
         M13_GET_16(ev->nova_val, evb + 0x042);
         M13_GET_16(ev->have_accident, evb + 0x044);
         M13_GET_16(ev->accident_planet_i, evb + 0x048);
         M13_GET_16(ev->have_comet, evb + 0x056);
-        M13_GET_16(ev->comet_player, evb + 0x058);
+        M13_GET_S16(ev->comet_player, evb + 0x058);
         M13_GET_16(ev->comet_planet_i, evb + 0x05a);
         M13_GET_16(ev->comet_years, evb + 0x05c);
         M13_GET_16(ev->comet_hp, evb + 0x05e);
@@ -583,14 +569,16 @@ static int libsave_moo13_decode(struct game_s *g)
         M13_GET_16(ev->crystal.exists, evb + 0x06e);
         M13_GET_16(ev->crystal.x, evb + 0x070);
         M13_GET_16(ev->crystal.y, evb + 0x072);
-        M13_GET_16_KILLER(ev->crystal.killer, evb + 0x076);
+        M13_GET_S16(ev->crystal.killer, evb + 0x076);
+        --ev->crystal.killer;
         M13_GET_16(ev->crystal.dest, evb + 0x078);
         M13_GET_16(ev->crystal.counter, evb + 0x074);
         M13_GET_16(ev->crystal.nuked, evb + 0x07a);
         M13_GET_16(ev->amoeba.exists, evb + 0x07c);
         M13_GET_16(ev->amoeba.x, evb + 0x07e);
         M13_GET_16(ev->amoeba.y, evb + 0x080);
-        M13_GET_16_KILLER(ev->amoeba.killer, evb + 0x084);
+        M13_GET_S16(ev->amoeba.killer, evb + 0x084);
+        --ev->amoeba.killer;
         M13_GET_16(ev->amoeba.dest, evb + 0x086);
         M13_GET_16(ev->amoeba.counter, evb + 0x082);
         M13_GET_16(ev->amoeba.nuked, evb + 0x088);
@@ -613,7 +601,7 @@ static int libsave_moo13_decode(struct game_s *g)
         M13_GET_TBL_BVN_8(ev->help_shown[PLAYER_0], evb + 0x2e2, 16);
         /* TODO build_finished ; is it even possible to save before clicking them away? */
         for (player_id_t i = PLAYER_0; i < PLAYER_NUM; ++i) {
-            M13_GET_16_OWNER(ev->voted[i], evb + 0x320 + i * 2);
+            M13_GET_S16(ev->voted[i], evb + 0x320 + i * 2);
         }
         M13_GET_16(ev->best_ecorestore[PLAYER_0], evb + 0x32c);
         M13_GET_16(ev->best_wastereduce[PLAYER_0], evb + 0x32e);
@@ -705,28 +693,8 @@ static int savetype_de_moo13(struct game_s *g, const char *fname)
 
 #define M13_SET_8(item_, addr_)     save2buf[addr_] = item_
 #define M13_SET_16(item_, addr_)    SET_LE_16(&save2buf[addr_], item_)
+#define M13_SET_S16(item_, addr_)   SET_LE_S16(&save2buf[addr_], item_)
 #define M13_SET_32(item_, addr_)    SET_LE_32(&save2buf[addr_], item_)
-#define M13_SET_16_OWNER(item_, addr_) \
-    do { \
-        uint16_t t_; \
-        t_ = item_; \
-        if (t_ == PLAYER_NONE) { t_ = 0xffff; }; \
-        SET_LE_16(&save2buf[addr_], t_); \
-    } while (0)
-#define M13_SET_16_HATED(item_, addr_) \
-    do { \
-        uint16_t t_; \
-        t_ = item_; \
-        if (t_ == PLAYER_NONE) { t_ = 0; } \
-        SET_LE_16(&save2buf[addr_], t_); \
-    } while (0)
-#define M13_SET_16_KILLER(item_, addr_) \
-    do { \
-        uint16_t t_; \
-        t_ = item_; \
-        if (t_ == PLAYER_NONE) { t_ = 0; } else { ++t_; } \
-        SET_LE_16(&save2buf[addr_], t_); \
-    } while (0)
 #define M13_SET_16_CHECK(item_, addr_, l_, h_) \
     do { \
         uint16_t t_; \
@@ -803,7 +771,7 @@ static int libsave_moo13_encode(const struct game_s *g)
     M13_SET_16_CHECK(g->enroute_num, 0xe1b6, 0, 259);
     M13_SET_16_CHECK(g->transport_num, 0xe1b8, 0, 99);
     M13_SET_16(g->end, 0xe686);
-    M13_SET_16_OWNER(g->winner, 0xe688);
+    M13_SET_S16(g->winner, 0xe688);
     M13_SET_16(g->election_held, 0xe68c);
     for (int i = 0; i < g->nebula_num; ++i) {
         M13_SET_16(g->nebula_type[i], 0xe23a + i * 2);
@@ -844,9 +812,9 @@ static int libsave_moo13_encode(const struct game_s *g)
         M13_SET_16(p->bc_to_factory, pb + 0x2e);
         M13_SET_32(p->reserve, pb + 0x30);
         M13_SET_16(p->waste, pb + 0x34);
-        M13_SET_16_OWNER(p->owner, pb + 0x36);
-        M13_SET_16_OWNER(p->prev_owner, pb + 0x38);
-        M13_SET_16_OWNER(p->claim, pb + 0xa0);
+        M13_SET_S16(p->owner, pb + 0x36);
+        M13_SET_S16(p->prev_owner, pb + 0x38);
+        M13_SET_S16(p->claim, pb + 0xa0);
         M13_SET_16(p->pop, pb + 0x3a);
         M13_SET_16(p->pop_prev, pb + 0x3c);
         M13_SET_16(p->factories, pb + 0x3e);
@@ -874,7 +842,7 @@ static int libsave_moo13_encode(const struct game_s *g)
     }
     for (int i = 0; i < g->galaxy_stars; ++i) {
         const seen_t *s = &(g->seen[PLAYER_0][i]);
-        M13_SET_16_OWNER(s->owner, 0xe2e2 + i * 2);
+        M13_SET_S16(s->owner, 0xe2e2 + i * 2);
         M13_SET_16(s->pop, 0xe3ba + i * 2);
         M13_SET_16(s->bases, 0xe492 + i * 2);
         M13_SET_16(s->factories, 0xe56a + i * 2);
@@ -883,7 +851,7 @@ static int libsave_moo13_encode(const struct game_s *g)
         const fleet_enroute_t *r = &(g->enroute[i]);
         int rb;
         rb = 0x4da0 + i * 0x1c;
-        M13_SET_16_OWNER(r->owner, rb + 0x00);
+        M13_SET_S16(r->owner, rb + 0x00);
         M13_SET_16(r->x, rb + 0x02);
         M13_SET_16(r->y, rb + 0x04);
         M13_SET_16(r->dest, rb + 0x06);
@@ -896,7 +864,7 @@ static int libsave_moo13_encode(const struct game_s *g)
         const transport_t *r = &(g->transport[i]);
         int rb;
         rb = 0x6a10 + i * 0x12;
-        M13_SET_16_OWNER(r->owner, rb + 0x00);
+        M13_SET_S16(r->owner, rb + 0x00);
         M13_SET_16(r->x, rb + 0x02);
         M13_SET_16(r->y, rb + 0x04);
         M13_SET_16(r->dest, rb + 0x06);
@@ -939,8 +907,19 @@ static int libsave_moo13_encode(const struct game_s *g)
             M13_SET_16(e->offer_field[j], eb2 + 0x1d4);
             M13_SET_16(e->offer_tech[j], eb2 + 0x1e0);
             M13_SET_16(e->offer_bc[j], eb2 + 0x1ec);
-            M13_SET_16_HATED(e->hated[j], eb2 + 0x21c);
-            M13_SET_16_HATED(e->mutual_enemy[j], eb2 + 0x228);
+            {
+                player_id_t tmp;
+                tmp = e->hated[j];
+                if (tmp == PLAYER_NONE) {
+                    tmp = PLAYER_0;
+                }
+                M13_SET_S16(tmp, eb2 + 0x21c);
+                tmp = e->mutual_enemy[j];
+                if (tmp == PLAYER_NONE) {
+                    tmp = PLAYER_0;
+                }
+                M13_SET_S16(tmp, eb2 + 0x228);
+            }
             M13_SET_16(e->hatred[j], eb2 + 0x270);
             M13_SET_16(e->have_met[j], eb2 + 0x27c);
             M13_SET_16(e->trade_established_bc[j], eb2 + 0x288);
@@ -1026,18 +1005,18 @@ static int libsave_moo13_encode(const struct game_s *g)
         M13_SET_16(ev->year, evb + 0x000);
         M13_SET_TBL_BVN_16(ev->done, evb + 0x004, 20);
         M13_SET_16(ev->have_plague, evb + 0x02c);
-        M13_SET_16(ev->plague_player, evb + 0x02e);
+        M13_SET_S16(ev->plague_player, evb + 0x02e);
         M13_SET_16(ev->plague_planet_i, evb + 0x030);
         M13_SET_16(ev->plague_val, evb + 0x032);
         M13_SET_16(ev->have_nova, evb + 0x03a);
-        M13_SET_16(ev->nova_player, evb + 0x03c);
+        M13_SET_S16(ev->nova_player, evb + 0x03c);
         M13_SET_16(ev->nova_planet_i, evb + 0x03e);
         M13_SET_16(ev->nova_years, evb + 0x040);
         M13_SET_16(ev->nova_val, evb + 0x042);
         M13_SET_16(ev->have_accident, evb + 0x044);
         M13_SET_16(ev->accident_planet_i, evb + 0x048);
         M13_SET_16(ev->have_comet, evb + 0x056);
-        M13_SET_16(ev->comet_player, evb + 0x058);
+        M13_SET_S16(ev->comet_player, evb + 0x058);
         M13_SET_16(ev->comet_planet_i, evb + 0x05a);
         M13_SET_16(ev->comet_years, evb + 0x05c);
         M13_SET_16(ev->comet_hp, evb + 0x05e);
@@ -1048,14 +1027,14 @@ static int libsave_moo13_encode(const struct game_s *g)
         M13_SET_16(ev->crystal.exists, evb + 0x06e);
         M13_SET_16(ev->crystal.x, evb + 0x070);
         M13_SET_16(ev->crystal.y, evb + 0x072);
-        M13_SET_16_KILLER(ev->crystal.killer, evb + 0x076);
+        M13_SET_S16(ev->crystal.killer + 1, evb + 0x076);
         M13_SET_16(ev->crystal.dest, evb + 0x078);
         M13_SET_16(ev->crystal.counter, evb + 0x074);
         M13_SET_16(ev->crystal.nuked, evb + 0x07a);
         M13_SET_16(ev->amoeba.exists, evb + 0x07c);
         M13_SET_16(ev->amoeba.x, evb + 0x07e);
         M13_SET_16(ev->amoeba.y, evb + 0x080);
-        M13_SET_16_KILLER(ev->amoeba.killer, evb + 0x084);
+        M13_SET_S16(ev->amoeba.killer + 1, evb + 0x084);
         M13_SET_16(ev->amoeba.dest, evb + 0x086);
         M13_SET_16(ev->amoeba.counter, evb + 0x082);
         M13_SET_16(ev->amoeba.nuked, evb + 0x088);
@@ -1078,7 +1057,7 @@ static int libsave_moo13_encode(const struct game_s *g)
         M13_SET_TBL_BVN_8(ev->help_shown[PLAYER_0], evb + 0x2e2, 16);
         /* TODO build_finished ; is it even possible to save before clicking them away? */
         for (player_id_t i = PLAYER_0; i < PLAYER_NUM; ++i) {
-            M13_SET_16_OWNER(ev->voted[i], evb + 0x320 + i * 2);
+            M13_SET_S16(ev->voted[i], evb + 0x320 + i * 2);
         }
         M13_SET_16(ev->best_ecorestore[PLAYER_0], evb + 0x32c);
         M13_SET_16(ev->best_wastereduce[PLAYER_0], evb + 0x32e);
