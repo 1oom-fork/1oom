@@ -1,6 +1,7 @@
 1oom save file format version 0
 
 All offsets and sizes are hex.
+Offsets do not account for changes after version 0.
 All values are little endian unless otherwise noted.
 
 
@@ -19,7 +20,7 @@ Save payload (? bytes)
 offset  sz      description
 40      1       number of players: @PLAYERS (2..6)
 41      1       player is AI (bitmask)
-42      5       (0, unused)
+42      5       (0, unused, removed for version > 0)
 47      1       active player when save was made
 48      1       difficulty (0..4)
 49      1       galaxy size (0..3)
@@ -29,7 +30,7 @@ offset  sz      description
 4d      2       galaxy max x
 4f      2       galaxy max y
 51      4       galaxy seed
-55      4       (0, unused)
+55      4       (0, unused, removed for version > 0)
 59      2       year (add 2299 for shown year)
 5b      2       number of fleets enroute: @FLEETS
 5d      2       number of transports enroute: @TRANSPORTS
@@ -46,6 +47,7 @@ offset  sz      description
 Nebula data (N = @NEBULAS)
 
 sz      description
+N*2     nebula type (added for version > 0)
 N*2     nebula x
 N*2     nebula y
 N*4*2   nebula x0
@@ -109,14 +111,14 @@ c       name (ASCIIz)
 1       transport destination (planet index)
 1       population tenths
 1       explored by player (bitmask)
-5       (0, unused)
+5       (0, unused, removed for version > 0)
 1       a colonist operates N factories
 2       BC towards industy refit
 2       rebels (0..actual pop)
 1       unrest: 1=unrest, 3=rebellion
 1       unrest reported (0/1)
 1       build finished (bitmask; bits: 0=factories, 1=eco1, 2=eco2, 3=stargate, 4=shield, 5=ship)
-5       (0, unused)
+5       (0, unused, removed for version > 0)
 
 
 @PLAYERS * @STARS * Seen data
@@ -160,7 +162,7 @@ sz      description
 1       AI turn p3 countdown (0..6)
 1       AI turn p2 countdown (0..20)
 1       empire within fuel range (bitmask)
-5       (0, unused)
+5       (0, unused, removed for version > 0)
 N*2     relation1
 N*2     relation2
 N*1     diplo type: ...
@@ -256,7 +258,7 @@ Event data (N = @PLAYERS)
 sz      description
 2       year of last event
 3       event has happened (bitmask of 20 bits)
-17      (0, unused)
+17      (0, unused, removed for version > 0)
 1       have plague (0..3)
 1       plague player
 1       plague planet
@@ -294,7 +296,7 @@ N*1     home planet (0..107, 255 means player is dead)
 N*6*4   number of new ships
 N*N*2   number of caught spies
 N*N*2   ceasefire (years)
-N*10    help shown (bitmask of 16 bits) + 14 unused bytes
+N*10    help shown (bitmask of 16 bits) + 14 unused bytes (14 removed for version > 0)
 N*2     build finished num
 N*1     voted for (0..5, 6)
 N*1     best eco restore
