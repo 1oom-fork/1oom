@@ -61,6 +61,76 @@ char game_save_tbl_name[NUM_ALL_SAVES][SAVE_NAME_LEN];
 #define SG_1OOM_EN_DUMMY_V0(_n_)  if (LIBSAVE_1OOM_VERSION == 0) { SG_1OOM_EN_DUMMY(_n_); }
 #define SG_1OOM_DE_DUMMY_V0(_n_)  if (version == 0) { SG_1OOM_DE_DUMMY(_n_); }
 
+static int libsave_1oom_encode_player_id(uint8_t *buf, int pos, player_id_t player)
+{
+    if (LIBSAVE_1OOM_VERSION == 0) {
+        if (player == PLAYER_NONE) {
+            SG_1OOM_EN_U8(6);
+        } else {
+            SG_1OOM_EN_U8(player);
+        }
+    } else {
+        SG_1OOM_EN_U16(player);
+    }
+    return pos;
+}
+
+#define SG_1OOM_EN_PLAYER_ID(_v_)  do { pos = libsave_1oom_encode_player_id(buf, pos, (_v_)); } while (0)
+
+static int libsave_1oom_decode_player_id(const uint8_t *buf, int pos, player_id_t *player, uint32_t version)
+{
+    if (version == 0) {
+        uint8_t tmp;
+        SG_1OOM_DE_U8(tmp);
+        if (tmp == 6) {
+            *player = PLAYER_NONE;
+        } else {
+            *player = (player_id_t)tmp;
+        }
+    } else {
+        uint16_t tmp;
+        SG_1OOM_DE_U16(tmp);
+        *player = (int16_t)tmp;
+    }
+    return pos;
+}
+
+#define SG_1OOM_DE_PLAYER_ID(_v_)  do { pos = libsave_1oom_decode_player_id(buf, pos, &(_v_), version); } while (0)
+
+static int libsave_1oom_encode_hated_id(uint8_t *buf, int pos, player_id_t player)
+{
+    if (LIBSAVE_1OOM_VERSION == 0) {
+        if (player == PLAYER_NONE) {
+            SG_1OOM_EN_U16(6);
+        } else {
+            SG_1OOM_EN_U16(player);
+        }
+    } else {
+        SG_1OOM_EN_U16(player);
+    }
+    return pos;
+}
+
+#define SG_1OOM_EN_HATED_ID(_v_)  do { pos = libsave_1oom_encode_hated_id(buf, pos, (_v_)); } while (0)
+
+static int libsave_1oom_decode_hated_id(const uint8_t *buf, int pos, player_id_t *player, uint32_t version)
+{
+    uint16_t tmp;
+    SG_1OOM_DE_U16(tmp);
+    if (version == 0) {
+        if (tmp == 6) {
+            *player = PLAYER_NONE;
+        } else {
+            *player = (player_id_t)tmp;
+        }
+    } else {
+        *player = (int16_t)tmp;
+    }
+    return pos;
+}
+
+#define SG_1OOM_DE_HATED_ID(_v_)  do { pos = libsave_1oom_decode_hated_id(buf, pos, &(_v_), version); } while (0)
+
 static int libsave_1oom_encode_planet(uint8_t *buf, int pos, const planet_t *p, player_id_t pnum)
 {
     SG_1OOM_EN_TBL_U8(p->name, PLANET_NAME_LEN);
@@ -83,9 +153,9 @@ static int libsave_1oom_encode_planet(uint8_t *buf, int pos, const planet_t *p, 
     SG_1OOM_EN_U16(p->bc_to_factory);
     SG_1OOM_EN_U32(p->reserve);
     SG_1OOM_EN_U16(p->waste);
-    SG_1OOM_EN_U8(p->owner);
-    SG_1OOM_EN_U8(p->prev_owner);
-    SG_1OOM_EN_U8(p->claim);
+    SG_1OOM_EN_PLAYER_ID(p->owner);
+    SG_1OOM_EN_PLAYER_ID(p->prev_owner);
+    SG_1OOM_EN_PLAYER_ID(p->claim);
     SG_1OOM_EN_U16(p->pop);
     SG_1OOM_EN_U16(p->pop_prev);
     SG_1OOM_EN_U16(p->factories);
@@ -136,9 +206,9 @@ static int libsave_1oom_decode_planet(const uint8_t *buf, int pos, planet_t *p, 
     SG_1OOM_DE_U16(p->bc_to_factory);
     SG_1OOM_DE_U32(p->reserve);
     SG_1OOM_DE_U16(p->waste);
-    SG_1OOM_DE_U8(p->owner);
-    SG_1OOM_DE_U8(p->prev_owner);
-    SG_1OOM_DE_U8(p->claim);
+    SG_1OOM_DE_PLAYER_ID(p->owner);
+    SG_1OOM_DE_PLAYER_ID(p->prev_owner);
+    SG_1OOM_DE_PLAYER_ID(p->claim);
     SG_1OOM_DE_U16(p->pop);
     SG_1OOM_DE_U16(p->pop_prev);
     SG_1OOM_DE_U16(p->factories);
@@ -169,7 +239,7 @@ static int libsave_1oom_decode_planet(const uint8_t *buf, int pos, planet_t *p, 
 
 static int libsave_1oom_encode_enroute(uint8_t *buf, int pos, const fleet_enroute_t *r)
 {
-    SG_1OOM_EN_U8(r->owner);
+    SG_1OOM_EN_PLAYER_ID(r->owner);
     SG_1OOM_EN_U16(r->x);
     SG_1OOM_EN_U16(r->y);
     SG_1OOM_EN_U8(r->dest);
@@ -178,9 +248,9 @@ static int libsave_1oom_encode_enroute(uint8_t *buf, int pos, const fleet_enrout
     return pos;
 }
 
-static int libsave_1oom_decode_enroute(const uint8_t *buf, int pos, fleet_enroute_t *r)
+static int libsave_1oom_decode_enroute(const uint8_t *buf, int pos, fleet_enroute_t *r, uint32_t version)
 {
-    SG_1OOM_DE_U8(r->owner);
+    SG_1OOM_DE_PLAYER_ID(r->owner);
     SG_1OOM_DE_U16(r->x);
     SG_1OOM_DE_U16(r->y);
     SG_1OOM_DE_U8(r->dest);
@@ -191,7 +261,7 @@ static int libsave_1oom_decode_enroute(const uint8_t *buf, int pos, fleet_enrout
 
 static int libsave_1oom_encode_transport(uint8_t *buf, int pos, const transport_t *r)
 {
-    SG_1OOM_EN_U8(r->owner);
+    SG_1OOM_EN_PLAYER_ID(r->owner);
     SG_1OOM_EN_U16(r->x);
     SG_1OOM_EN_U16(r->y);
     SG_1OOM_EN_U8(r->dest);
@@ -200,9 +270,9 @@ static int libsave_1oom_encode_transport(uint8_t *buf, int pos, const transport_
     return pos;
 }
 
-static int libsave_1oom_decode_transport(const uint8_t *buf, int pos, transport_t *r)
+static int libsave_1oom_decode_transport(const uint8_t *buf, int pos, transport_t *r, uint32_t version)
 {
-    SG_1OOM_DE_U8(r->owner);
+    SG_1OOM_DE_PLAYER_ID(r->owner);
     SG_1OOM_DE_U16(r->x);
     SG_1OOM_DE_U16(r->y);
     SG_1OOM_DE_U8(r->dest);
@@ -280,8 +350,12 @@ static int libsave_1oom_encode_eto(uint8_t *buf, int pos, const empiretechorbit_
     SG_1OOM_EN_TBL_U8(e->offer_field, pnum);
     SG_1OOM_EN_TBL_U8(e->offer_tech, pnum);
     SG_1OOM_EN_TBL_U16(e->offer_bc, pnum);
-    SG_1OOM_EN_TBL_U16(e->hated, pnum);
-    SG_1OOM_EN_TBL_U16(e->mutual_enemy, pnum);
+    for (player_id_t i = PLAYER_0; i < pnum; ++i) {
+        SG_1OOM_EN_HATED_ID(e->hated[i]);
+    }
+    for (player_id_t i = PLAYER_0; i < pnum; ++i) {
+        SG_1OOM_EN_HATED_ID(e->mutual_enemy[i]);
+    }
     SG_1OOM_EN_TBL_U16(e->hatred, pnum);
     SG_1OOM_EN_TBL_U16(e->have_met, pnum);
     SG_1OOM_EN_TBL_U16(e->trade_established_bc, pnum);
@@ -344,8 +418,12 @@ static int libsave_1oom_decode_eto(const uint8_t *buf, int pos, empiretechorbit_
     SG_1OOM_DE_TBL_U8(e->offer_field, pnum);
     SG_1OOM_DE_TBL_U8(e->offer_tech, pnum);
     SG_1OOM_DE_TBL_U16(e->offer_bc, pnum);
-    SG_1OOM_DE_TBL_U16(e->hated, pnum);
-    SG_1OOM_DE_TBL_U16(e->mutual_enemy, pnum);
+    for (player_id_t i = PLAYER_0; i < pnum; ++i) {
+        SG_1OOM_DE_HATED_ID(e->hated[i]);
+    }
+    for (player_id_t i = PLAYER_0; i < pnum; ++i) {
+        SG_1OOM_DE_HATED_ID(e->mutual_enemy[i]);
+    }
     SG_1OOM_DE_TBL_U16(e->hatred, pnum);
     SG_1OOM_DE_TBL_U16(e->have_met, pnum);
     SG_1OOM_DE_TBL_U16(e->trade_established_bc, pnum);
@@ -460,19 +538,19 @@ static int libsave_1oom_encode_monster(uint8_t *buf, int pos, const monster_t *m
     SG_1OOM_EN_U8(m->exists);
     SG_1OOM_EN_U16(m->x);
     SG_1OOM_EN_U16(m->y);
-    SG_1OOM_EN_U8(m->killer);
+    SG_1OOM_EN_PLAYER_ID(m->killer);
     SG_1OOM_EN_U8(m->dest);
     SG_1OOM_EN_U8(m->counter);
     SG_1OOM_EN_U8(m->nuked);
     return pos;
 }
 
-static int libsave_1oom_decode_monster(const uint8_t *buf, int pos, monster_t *m)
+static int libsave_1oom_decode_monster(const uint8_t *buf, int pos, monster_t *m, uint16_t version)
 {
     SG_1OOM_DE_U8(m->exists);
     SG_1OOM_DE_U16(m->x);
     SG_1OOM_DE_U16(m->y);
-    SG_1OOM_DE_U8(m->killer);
+    SG_1OOM_DE_PLAYER_ID(m->killer);
     SG_1OOM_DE_U8(m->dest);
     SG_1OOM_DE_U8(m->counter);
     SG_1OOM_DE_U8(m->nuked);
@@ -485,18 +563,18 @@ static int libsave_1oom_encode_evn(uint8_t *buf, int pos, const gameevents_t *ev
     SG_1OOM_EN_BV(ev->done, GAME_EVENT_TBL_NUM);
     SG_1OOM_EN_DUMMY_V0(17);
     SG_1OOM_EN_U8(ev->have_plague);
-    SG_1OOM_EN_U8(ev->plague_player);
+    SG_1OOM_EN_PLAYER_ID(ev->plague_player);
     SG_1OOM_EN_U8(ev->plague_planet_i);
     SG_1OOM_EN_U32(ev->plague_val);
     SG_1OOM_EN_U8(ev->have_nova);
-    SG_1OOM_EN_U8(ev->nova_player);
+    SG_1OOM_EN_PLAYER_ID(ev->nova_player);
     SG_1OOM_EN_U8(ev->nova_planet_i);
     SG_1OOM_EN_U8(ev->nova_years);
     SG_1OOM_EN_U32(ev->nova_val);
     SG_1OOM_EN_U8(ev->have_accident);
     SG_1OOM_EN_U8(ev->accident_planet_i);
     SG_1OOM_EN_U8(ev->have_comet);
-    SG_1OOM_EN_U8(ev->comet_player);
+    SG_1OOM_EN_PLAYER_ID(ev->comet_player);
     SG_1OOM_EN_U8(ev->comet_planet_i);
     SG_1OOM_EN_U8(ev->comet_years);
     SG_1OOM_EN_U16(ev->comet_hp);
@@ -518,7 +596,9 @@ static int libsave_1oom_encode_evn(uint8_t *buf, int pos, const gameevents_t *ev
         SG_1OOM_EN_DUMMY_V0(14);
     }
     SG_1OOM_EN_TBL_U16(ev->build_finished_num, pnum);
-    SG_1OOM_EN_TBL_U8(ev->voted, pnum);
+    for (player_id_t i = PLAYER_0; i < pnum; ++i) {
+        SG_1OOM_EN_PLAYER_ID(ev->voted[i]);
+    }
     SG_1OOM_EN_TBL_U8(ev->best_ecorestore, pnum);
     SG_1OOM_EN_TBL_U8(ev->best_wastereduce, pnum);
     SG_1OOM_EN_TBL_U8(ev->best_roboctrl, pnum);
@@ -532,18 +612,18 @@ static int libsave_1oom_decode_evn(const uint8_t *buf, int pos, gameevents_t *ev
     SG_1OOM_DE_BV(ev->done, GAME_EVENT_TBL_NUM);
     SG_1OOM_DE_DUMMY_V0(17);
     SG_1OOM_DE_U8(ev->have_plague);
-    SG_1OOM_DE_U8(ev->plague_player);
+    SG_1OOM_DE_PLAYER_ID(ev->plague_player);
     SG_1OOM_DE_U8(ev->plague_planet_i);
     SG_1OOM_DE_U32(ev->plague_val);
     SG_1OOM_DE_U8(ev->have_nova);
-    SG_1OOM_DE_U8(ev->nova_player);
+    SG_1OOM_DE_PLAYER_ID(ev->nova_player);
     SG_1OOM_DE_U8(ev->nova_planet_i);
     SG_1OOM_DE_U8(ev->nova_years);
     SG_1OOM_DE_U32(ev->nova_val);
     SG_1OOM_DE_U8(ev->have_accident);
     SG_1OOM_DE_U8(ev->accident_planet_i);
     SG_1OOM_DE_U8(ev->have_comet);
-    SG_1OOM_DE_U8(ev->comet_player);
+    SG_1OOM_DE_PLAYER_ID(ev->comet_player);
     SG_1OOM_DE_U8(ev->comet_planet_i);
     SG_1OOM_DE_U8(ev->comet_years);
     SG_1OOM_DE_U16(ev->comet_hp);
@@ -551,8 +631,8 @@ static int libsave_1oom_decode_evn(const uint8_t *buf, int pos, gameevents_t *ev
     SG_1OOM_DE_U8(ev->have_pirates);
     SG_1OOM_DE_U8(ev->pirates_planet_i);
     SG_1OOM_DE_U16(ev->pirates_hp);
-    pos = libsave_1oom_decode_monster(buf, pos, &(ev->crystal));
-    pos = libsave_1oom_decode_monster(buf, pos, &(ev->amoeba));
+    pos = libsave_1oom_decode_monster(buf, pos, &(ev->crystal), version);
+    pos = libsave_1oom_decode_monster(buf, pos, &(ev->amoeba), version);
     SG_1OOM_DE_U8(ev->planet_orion_i);
     SG_1OOM_DE_U8(ev->have_guardian);
     SG_1OOM_DE_TBL_U8(ev->home, pnum);
@@ -565,7 +645,9 @@ static int libsave_1oom_decode_evn(const uint8_t *buf, int pos, gameevents_t *ev
         SG_1OOM_DE_DUMMY_V0(14);
     }
     SG_1OOM_DE_TBL_U16(ev->build_finished_num, pnum);
-    SG_1OOM_DE_TBL_U8(ev->voted, pnum);
+    for (player_id_t i = PLAYER_0; i < pnum; ++i) {
+        SG_1OOM_DE_PLAYER_ID(ev->voted[i]);
+    }
     SG_1OOM_DE_TBL_U8(ev->best_ecorestore, pnum);
     SG_1OOM_DE_TBL_U8(ev->best_wastereduce, pnum);
     SG_1OOM_DE_TBL_U8(ev->best_roboctrl, pnum);
@@ -580,10 +662,14 @@ static int libsave_1oom_encode(uint8_t *buf, int buflen, const struct game_s *g)
         log_error("Save: BUG: encode expected len > %i, got %i\n", sizeof(*g), buflen);
         return -1;
     }
-    SG_1OOM_EN_U8(g->players);
+    if (LIBSAVE_1OOM_VERSION == 0) {
+        SG_1OOM_EN_U8(g->players);
+    } else {
+        SG_1OOM_EN_U16(g->players);
+    }
     SG_1OOM_EN_BV(g->is_ai, PLAYER_NUM);
     SG_1OOM_EN_DUMMY_V0(5);
-    SG_1OOM_EN_U8(g->active_player);
+    SG_1OOM_EN_PLAYER_ID(g->active_player);
     SG_1OOM_EN_U8(g->difficulty);
     SG_1OOM_EN_U8(g->galaxy_size);
     SG_1OOM_EN_U8(g->galaxy_w);
@@ -597,7 +683,7 @@ static int libsave_1oom_encode(uint8_t *buf, int buflen, const struct game_s *g)
     SG_1OOM_EN_U16(g->enroute_num);
     SG_1OOM_EN_U16(g->transport_num);
     SG_1OOM_EN_U8(g->end);
-    SG_1OOM_EN_U8(g->winner);
+    SG_1OOM_EN_PLAYER_ID(g->winner);
     SG_1OOM_EN_U8(g->election_held);
     SG_1OOM_EN_U8(g->nebula_num);
     if (LIBSAVE_1OOM_VERSION != 0) {
@@ -617,7 +703,7 @@ static int libsave_1oom_encode(uint8_t *buf, int buflen, const struct game_s *g)
     for (player_id_t j = PLAYER_0; j < g->players; ++j) {
         for (int i = 0; i < g->galaxy_stars; ++i) {
             const seen_t *s = &(g->seen[j][i]);
-            SG_1OOM_EN_U8(s->owner);
+            SG_1OOM_EN_PLAYER_ID(s->owner);
             SG_1OOM_EN_U16(s->pop);
             SG_1OOM_EN_U16(s->bases);
             SG_1OOM_EN_U16(s->factories);
@@ -656,14 +742,18 @@ static int libsave_1oom_decode(const uint8_t *buf, int buflen, struct game_s *g,
         memset(g, 0, sizeof(*g));
         g->gaux = ga;
     }
-    SG_1OOM_DE_U8(g->players);
+    if (version == 0) {
+        SG_1OOM_DE_U8(g->players);
+    } else {
+        SG_1OOM_DE_U16(g->players);
+    }
     if ((g->players < 2) || (g->players > 6)) {
         log_error("Save: decode invalid number of players %i\n", g->players);
         return -1;
     }
     SG_1OOM_DE_BV(g->is_ai, PLAYER_NUM);
     SG_1OOM_DE_DUMMY_V0(5);
-    SG_1OOM_DE_U8(g->active_player);
+    SG_1OOM_DE_PLAYER_ID(g->active_player);
     SG_1OOM_DE_U8(g->difficulty);
     if ((g->difficulty < 0) || (g->difficulty >= DIFFICULTY_NUM)) {
         log_error("Save: decode invalid difficulty value %i\n", g->difficulty);
@@ -693,7 +783,7 @@ static int libsave_1oom_decode(const uint8_t *buf, int buflen, struct game_s *g,
         return -1;
     }
     SG_1OOM_DE_U8(g->end);
-    SG_1OOM_DE_U8(g->winner);
+    SG_1OOM_DE_PLAYER_ID(g->winner);
     SG_1OOM_DE_U8(g->election_held);
     SG_1OOM_DE_U8(g->nebula_num);
     if ((g->nebula_num > NEBULA_MAX)) {
@@ -717,17 +807,17 @@ static int libsave_1oom_decode(const uint8_t *buf, int buflen, struct game_s *g,
     for (player_id_t j = PLAYER_0; j < g->players; ++j) {
         for (int i = 0; i < g->galaxy_stars; ++i) {
             seen_t *s = &(g->seen[j][i]);
-            SG_1OOM_DE_U8(s->owner);
+            SG_1OOM_DE_PLAYER_ID(s->owner);
             SG_1OOM_DE_U16(s->pop);
             SG_1OOM_DE_U16(s->bases);
             SG_1OOM_DE_U16(s->factories);
         }
     }
     for (int i = 0; i < g->enroute_num; ++i) {
-        pos = libsave_1oom_decode_enroute(buf, pos, &(g->enroute[i]));
+        pos = libsave_1oom_decode_enroute(buf, pos, &(g->enroute[i]), version);
     }
     for (int i = 0; i < g->transport_num; ++i) {
-        pos = libsave_1oom_decode_transport(buf, pos, &(g->transport[i]));
+        pos = libsave_1oom_decode_transport(buf, pos, &(g->transport[i]), version);
     }
     for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         pos = libsave_1oom_decode_eto(buf, pos, &(g->eto[i]), g->players, g->galaxy_stars, version);
