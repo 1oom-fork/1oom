@@ -18,10 +18,10 @@ c       4       (0, unused)
 Save payload (? bytes)
 
 offset  sz      description
-40      1       number of players: @PLAYERS (2..6)
+40      1       number of players: @PLAYERS (2..6) (sz == 2 for version > 0)
 41      1       player is AI (bitmask)
 42      5       (0, unused, removed for version > 0)
-47      1       active player when save was made
+47      1       active player when save was made (sz == 2 for version > 0)
 48      1       difficulty (0..4)
 49      1       galaxy size (0..3)
 4a      1       galaxy width
@@ -35,7 +35,7 @@ offset  sz      description
 5b      2       number of fleets enroute: @FLEETS
 5d      2       number of transports enroute: @TRANSPORTS
 5f      1       end state: 0=none, 3=final war
-60      1       election winner (0..5, 6)
+60      1       election winner (0..5, 6)       (-1, 0..5, sz == 2 for version > 0)
 61      1       election held (0/1)
 62      1       nebula num: @NEBULAS (0..4)
 
@@ -91,9 +91,9 @@ c       name (ASCIIz)
 2       BC towards next factory
 4       reserve
 2       waste
-1       owner (0..5, 6)
-1       previous owner (0..5, 6)
-1       claimed by player (0..5, 6)
+1       owner (0..5, 6)             (-1, 0..5, sz == 2 for version > 0)
+1       previous owner (0..5, 6)    (-1, 0..5, sz == 2 for version > 0)
+1       claimed by player (0..5, 6) (-1, 0..5, sz == 2 for version > 0)
 2       population
 2       population on previous turn
 2       factories
@@ -124,7 +124,7 @@ c       name (ASCIIz)
 @PLAYERS * @STARS * Seen data
 
 sz      description
-1       owner (0..5, 6)
+1       owner (0..5, 6) (-1, 0..5, sz == 2 for version > 0)
 2       population
 2       missile bases
 2       factories
@@ -133,7 +133,7 @@ sz      description
 @FLEETS * Fleet enroute data
 
 sz      description
-1       owner (0..5, 6)
+1       owner (0..5, 6) (-1, 0..5, sz == 2 for version > 0)
 2       x
 2       y
 1       destination as planetary index number
@@ -144,7 +144,7 @@ sz      description
 @TRANSPORTS * Transport data
 
 sz      description
-1       owner (0..5, 6)
+1       owner (0..5, 6) (-1, 0..5, sz == 2 for version > 0)
 2       x
 2       y
 1       destination as planetary index number
@@ -185,8 +185,8 @@ N*1     AI next spy mode: 0=hide, 1=espionage, 2=sabotage
 N*1     incentive offer tech field
 N*1     incentive offer tech
 N*2     incentive offer BC
-N*2     hated player (0..5, 6)
-N*2     mutual enemy (0..5, 6)
+N*2     hated player (0..5, 6)  (-1, 0..5 for version > 0)
+N*2     mutual enemy (0..5, 6)  (-1, 0..5 for version > 0)
 N*2     hatred
 N*2     have met (0=no, 1=just, 2=introduced)
 N*2     established trade BC
@@ -260,18 +260,18 @@ sz      description
 3       event has happened (bitmask of 20 bits)
 17      (0, unused, removed for version > 0)
 1       have plague (0..3)
-1       plague player
+1       plague player   (sz == 2 for version > 0)
 1       plague planet
 4       plague value
 1       have nova (0..3)
-1       nova player
+1       nova player     (sz == 2 for version > 0)
 1       nova planet
 1       nova years
 4       nova value
 1       have accident
 1       accident planet
 1       have comet (0..3)
-1       comet player
+1       comet player    (sz == 2 for version > 0)
 1       comet planet
 1       comet years
 2       comet HP
@@ -284,7 +284,7 @@ sz      description
         1   exists (0..3)
         2   x
         2   y
-        1   killer (0..5, 6)
+        1   killer (0..5, 6)    (-1, 0..5, sz == 2 for version > 0)
         1   destination
         1   counter
         1   number of destroyed planets
@@ -298,7 +298,7 @@ N*N*2   number of caught spies
 N*N*2   ceasefire (years)
 N*10    help shown (bitmask of 16 bits) + 14 unused bytes (14 removed for version > 0)
 N*2     build finished num
-N*1     voted for (0..5, 6)
+N*1     voted for (0..5, 6)     (-1, 0..5, sz == 2 for version > 0)
 N*1     best eco restore
 N*1     best waste reduce
 N*1     best robotic control
