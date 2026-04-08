@@ -256,7 +256,7 @@ struct game_s {
     gameevents_t evn;
     char emperor_names[PLAYER_NUM][EMPEROR_NAME_LEN];
     fleet_enroute_id_t enroute_num;
-    uint16_t transport_num;
+    transport_id_t transport_num;
     uint16_t year;  /* init to 1 */
     uint8_t nebula_num;        /* 0..4 */
     uint8_t nebula_type[NEBULA_MAX];    /* 0..9 */
@@ -341,7 +341,7 @@ static inline bool ENROUTE_IS_VISIBLE(const struct game_s *g, fleet_enroute_id_t
     return BOOLVEC_IS1(g->enroute[i].visible, pi);
 }
 
-static inline bool TRANSPORT_IS_VISIBLE(const struct game_s *g, int i, player_id_t pi)
+static inline bool TRANSPORT_IS_VISIBLE(const struct game_s *g, transport_id_t i, player_id_t pi)
 {
     /*
         In MOO1, the “visible” variable is used only for PLAYER_0, and there is no BOOLVEC here.

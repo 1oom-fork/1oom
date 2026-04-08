@@ -130,7 +130,7 @@ static void gmap_draw_cb(void *vptr)
         }
     }
 
-    for (int i = 0; i < g->transport_num; ++i) {
+    for (transport_id_t i = TRANSPORT_0; i < g->transport_num; ++i) {
         if (TRANSPORT_IS_VISIBLE(g, i, d->api)) {
             const transport_t *r = &(g->transport[i]);
             uint8_t *gfx;
@@ -482,7 +482,7 @@ void ui_gmap_basic_draw_frame(void *ctx, player_id_t pi)
                 ui_starmap_draw_frame(x, y, gfx);
             }
         }
-        for (int i = 0; i < g->transport_num; ++i) {
+        for (transport_id_t i = TRANSPORT_0; i < g->transport_num; ++i) {
             if (TRANSPORT_IS_VISIBLE(g, i, pi)) {
                 const transport_t *r = &(g->transport[i]);
                 uint8_t *gfx;
