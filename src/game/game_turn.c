@@ -1878,7 +1878,7 @@ struct game_end_s game_turn_process(struct game_s *g)
     /* if (temp_turn_hmm3 != 0) { ui_palette_fadeout_a_f_1(); ui_draw_finish_mode = 2; }*/
     for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         empiretechorbit_t *e = &(g->eto[i]);
-        for (tech_field_t f = 0; f < TECH_FIELD_NUM; ++f) {
+        for (tech_field_t f = TECH_FIELD_COMPUTER; f < TECH_FIELD_NUM; ++f) {
             e->tech.percent[f] = game_tech_get_field_percent(g, i, f);
         }
     }

@@ -514,7 +514,7 @@ static int libsave_moo13_decode(struct game_s *g)
             }
         }
         pos = srdb + 0x228;
-        for (int f = 0; f < TECH_FIELD_NUM; ++f) {
+        for (tech_field_t f = TECH_FIELD_COMPUTER; f < TECH_FIELD_NUM; ++f) {
             for (int t = 0; t < TECH_TIER_NUM; ++t) {
                 for (int j = 0; j < 3; ++j) {
                     M13_GET_8(srd->researchlist[f][t][j], pos);
@@ -523,7 +523,7 @@ static int libsave_moo13_decode(struct game_s *g)
             }
         }
         pos = srdb + 0x2dc;
-        for (int f = 0; f < TECH_FIELD_NUM; ++f) {
+        for (tech_field_t f = TECH_FIELD_COMPUTER; f < TECH_FIELD_NUM; ++f) {
             for (int j = 0; j < TECH_PER_FIELD; ++j) {
                 M13_GET_8(srd->researchcompleted[f][j], pos);
                 ++pos;
@@ -957,7 +957,7 @@ static int libsave_moo13_encode(const struct game_s *g)
             }
         }
         pos = srdb + 0x228;
-        for (int f = 0; f < TECH_FIELD_NUM; ++f) {
+        for (tech_field_t f = TECH_FIELD_COMPUTER; f < TECH_FIELD_NUM; ++f) {
             for (int t = 0; t < TECH_TIER_NUM; ++t) {
                 for (int j = 0; j < 3; ++j) {
                     M13_SET_8(srd->researchlist[f][t][j], pos);
@@ -966,7 +966,7 @@ static int libsave_moo13_encode(const struct game_s *g)
             }
         }
         pos = srdb + 0x2dc;
-        for (int f = 0; f < TECH_FIELD_NUM; ++f) {
+        for (tech_field_t f = TECH_FIELD_COMPUTER; f < TECH_FIELD_NUM; ++f) {
             for (int j = 0; j < TECH_PER_FIELD; ++j) {
                 M13_SET_8(srd->researchcompleted[f][j], pos);
                 ++pos;
@@ -2172,7 +2172,7 @@ static int savetype_en_text(const struct game_s *g, const char *fname)
             text_dump_prefix_del(tp);
         }
         OUTFLUSH();
-        for (int f = 0; f < TECH_FIELD_NUM; ++f) {
+        for (tech_field_t f = TECH_FIELD_COMPUTER; f < TECH_FIELD_NUM; ++f) {
             text_dump_prefix_add_tbl(tp, "researchlist", "", f);
             for (int t = 0; t < TECH_TIER_NUM; ++t) {
                 text_dump_prefix_add_tbl(tp, "", "", t);
@@ -2182,7 +2182,7 @@ static int savetype_en_text(const struct game_s *g, const char *fname)
             text_dump_prefix_del(tp);
             OUTFLUSH();
         }
-        for (int f = 0; f < TECH_FIELD_NUM; ++f) {
+        for (tech_field_t f = TECH_FIELD_COMPUTER; f < TECH_FIELD_NUM; ++f) {
             text_dump_prefix_add_tbl(tp, "researchcompleted", "", f);
             OUTLINETBL("", e->tech.completed[f], srd->researchcompleted[f]);
             text_dump_prefix_del(tp);
