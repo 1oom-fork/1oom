@@ -256,7 +256,7 @@ struct game_s {
     gameevents_t evn;
     char emperor_names[PLAYER_NUM][EMPEROR_NAME_LEN];
     fleet_enroute_id_t enroute_num;
-    uint16_t transport_num;
+    transport_id_t transport_num;
     uint16_t year;  /* init to 1 */
     uint8_t nebula_num;        /* 0..4 */
     uint8_t nebula_type[NEBULA_MAX];    /* 0..9 */

@@ -156,7 +156,7 @@ void game_remove_empty_fleets(struct game_s *g)
             --i;
         }
     }
-    for (int i = 0; i < g->transport_num; ++i) {
+    for (transport_id_t i = TRANSPORT_0; i < g->transport_num; ++i) {
         transport_t *r = &(g->transport[i]);
         if (r->pop == 0) {
             util_table_remove_item_any_order(i, g->transport, sizeof(transport_t), g->transport_num);
@@ -176,7 +176,7 @@ void game_remove_player_fleets(struct game_s *g, player_id_t owner)
             --i;
         }
     }
-    for (int i = 0; i < g->transport_num; ++i) {
+    for (transport_id_t i = TRANSPORT_0; i < g->transport_num; ++i) {
         transport_t *r = &(g->transport[i]);
         if (r->owner == owner) {
             util_table_remove_item_any_order(i, g->transport, sizeof(transport_t), g->transport_num);
