@@ -255,7 +255,7 @@ struct game_s {
     shipresearch_t srd[PLAYER_NUM];
     gameevents_t evn;
     char emperor_names[PLAYER_NUM][EMPEROR_NAME_LEN];
-    uint16_t enroute_num;
+    fleet_enroute_id_t enroute_num;
     uint16_t transport_num;
     uint16_t year;  /* init to 1 */
     uint8_t nebula_num;        /* 0..4 */
