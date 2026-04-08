@@ -213,7 +213,7 @@ static void game_spy_espionage(struct game_s *g, player_id_t spy, player_id_t ta
         r = rnd_1_n(100, &g->seed);
         SETMAX(rmax, r);
     }
-    for (int i = 0; i < TECH_FIELD_NUM; ++i) {
+    for (tech_field_t i = TECH_FIELD_COMPUTER; i < TECH_FIELD_NUM; ++i) {
         SETMAX(tmax, et->tech.percent[i]);
     }
     rmax = (rmax * tmax) / 100;
@@ -390,15 +390,15 @@ int game_spy_select_useful_techs(struct game_s *g, struct spy_esp_s *s, player_i
 int game_spy_sift_useful_techs(struct game_s *g, player_id_t target, player_id_t spy, int a4)
 {
     int sum = 0;
-    for (tech_field_t f = 0; f < TECH_FIELD_NUM; ++f) {
+    for (tech_field_t f = TECH_FIELD_COMPUTER; f < TECH_FIELD_NUM; ++f) {
         temp_spy_tbl_num[f] = 0;
     }
-    for (tech_field_t f = 0; f < TECH_FIELD_NUM; ++f) {
+    for (tech_field_t f = TECH_FIELD_COMPUTER; f < TECH_FIELD_NUM; ++f) {
         game_spy_esp_sub3(g, f,
                           g->eto[target].tech.completed[f] - a4, g->srd[target].researchcompleted[f],
                           g->eto[spy].tech.completed[f], g->srd[spy].researchcompleted[f], spy);
     }
-    for (tech_field_t f = 0; f < TECH_FIELD_NUM; ++f) {
+    for (tech_field_t f = TECH_FIELD_COMPUTER; f < TECH_FIELD_NUM; ++f) {
         sum += temp_spy_tbl_num[f];
     }
     return sum;
@@ -439,7 +439,7 @@ void game_spy_report(struct game_s *g)
                 uint16_t *ntbl = &(g->eto[j].tech.completed[0]);
                 shipresearch_t *srd = &(g->srd[j]);
                 e->spyreportyear[j] = g->year;
-                for (tech_field_t f = 0; f < TECH_FIELD_NUM; ++f) {
+                for (tech_field_t f = TECH_FIELD_COMPUTER; f < TECH_FIELD_NUM; ++f) {
                     e->spyreportfield[j][f] = srd->researchcompleted[f][ntbl[f] - 1];
                 }
             }
@@ -569,7 +569,7 @@ void game_spy_esp_human(struct game_s *g, struct spy_turn_s *st)
                 uint8_t tbl_tech[TECH_FIELD_NUM];
                 uint8_t flags_field;
                 flags_field = 0;
-                for (int i = 0; i < TECH_FIELD_NUM; ++i) {
+                for (tech_field_t i = TECH_FIELD_COMPUTER; i < TECH_FIELD_NUM; ++i) {
                     tbl_tech[i] = 0;
                 }
                 for (int loops = 0; loops < 5; ++loops) {
@@ -586,9 +586,9 @@ void game_spy_esp_human(struct game_s *g, struct spy_turn_s *st)
                     }
                 }
                 if (flags_field != 0) {
-                    int field;
+                    tech_field_t field;
                     field = ui_spy_steal(g, spy, target, flags_field);
-                    if ((field >= 0) && (field < TECH_FIELD_NUM)) {
+                    if (field != TECH_FIELD_NONE) {
                         bool framed;
                         uint8_t planet;
                         planet = game_planet_get_random(g, target);
