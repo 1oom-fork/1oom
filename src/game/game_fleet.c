@@ -15,7 +15,7 @@
 
 /* -------------------------------------------------------------------------- */
 
-static bool game_send_fleet_do(struct game_s *g, player_id_t owner, uint8_t from, uint8_t dest, const shipcount_t ships[NUM_SHIPDESIGNS], const uint8_t shiptypes[NUM_SHIPDESIGNS], uint8_t numtypes)
+static bool game_send_fleet_do(struct game_s *g, player_id_t owner, planet_id_t from, planet_id_t dest, const shipcount_t ships[NUM_SHIPDESIGNS], const uint8_t shiptypes[NUM_SHIPDESIGNS], uint8_t numtypes)
 {
     fleet_enroute_t *r;
     const planet_t *pf, *pt;
@@ -70,7 +70,7 @@ static bool game_send_fleet_do(struct game_s *g, player_id_t owner, uint8_t from
 
 /* -------------------------------------------------------------------------- */
 
-bool game_send_fleet_from_orbit(struct game_s *g, player_id_t owner, uint8_t from, uint8_t dest, const shipcount_t ships[NUM_SHIPDESIGNS], const uint8_t shiptypes[NUM_SHIPDESIGNS], uint8_t numtypes)
+bool game_send_fleet_from_orbit(struct game_s *g, player_id_t owner, planet_id_t from, planet_id_t dest, const shipcount_t ships[NUM_SHIPDESIGNS], const uint8_t shiptypes[NUM_SHIPDESIGNS], uint8_t numtypes)
 {
     if (!game_send_fleet_do(g, owner, from, dest, ships, shiptypes, numtypes)) {
         return false;
@@ -94,7 +94,7 @@ bool game_send_fleet_from_orbit(struct game_s *g, player_id_t owner, uint8_t fro
     return true;
 }
 
-bool game_send_fleet_reloc(struct game_s *g, player_id_t owner, uint8_t from, uint8_t dest, uint8_t si, shipcount_t shipnum)
+bool game_send_fleet_reloc(struct game_s *g, player_id_t owner, planet_id_t from, planet_id_t dest, uint8_t si, shipcount_t shipnum)
 {
     shipcount_t ships[NUM_SHIPDESIGNS];
     uint8_t shiptypes[NUM_SHIPDESIGNS];
@@ -203,7 +203,7 @@ void game_fleet_unrefuel(struct game_s *g)
     for (player_id_t pi = PLAYER_0; pi < g->players; ++pi) {
         const shipresearch_t *srd = &(g->srd[pi]);
         empiretechorbit_t *e = &(g->eto[pi]);
-        for (uint8_t pli = 0; pli < g->galaxy_stars; ++pli) {
+        for (planet_id_t pli = PLANET_0; pli < g->galaxy_stars; ++pli) {
             const planet_t *p = &(g->planet[pli]);
             if (p->within_frange[pi] != 1) {    /* MOO1 does not check this */
                 fleet_orbit_t *r = &(e->orbit[pli]);

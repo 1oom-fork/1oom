@@ -351,7 +351,7 @@ static int libsave_moo13_decode(struct game_s *g)
         memcpy(g->emperor_names[i], &save2buf[0xe1ba + i * 15], EMPEROR_NAME_LEN - 1);
     }
     M13_GET_16(g->planet_focus_i[PLAYER_0], 0xe236);
-    for (int i = 0; i < g->galaxy_stars; ++i) {
+    for (planet_id_t i = PLANET_0; i < g->galaxy_stars; ++i) {
         planet_t *p = &(g->planet[i]);
         int pb;
         pb = i * 0xb8;
@@ -401,7 +401,7 @@ static int libsave_moo13_decode(struct game_s *g)
         M13_GET_16(p->unrest, pb + 0xb4);
         M13_GET_16(p->unrest_reported, pb + 0xb6);
     }
-    for (int i = 0; i < g->galaxy_stars; ++i) {
+    for (planet_id_t i = PLANET_0; i < g->galaxy_stars; ++i) {
         seen_t *s = &(g->seen[PLAYER_0][i]);
         M13_GET_S16(s->owner, 0xe2e2 + i * 2);
         M13_GET_16(s->pop, 0xe3ba + i * 2);
@@ -409,7 +409,7 @@ static int libsave_moo13_decode(struct game_s *g)
         M13_GET_16(s->factories, 0xe56a + i * 2);
     }
     for (player_id_t j = PLAYER_1; j < g->players; ++j) {
-        for (int i = 0; i < g->galaxy_stars; ++i) {
+        for (planet_id_t i = PLANET_0; i < g->galaxy_stars; ++i) {
             seen_t *s = &(g->seen[j][i]);
             s->owner = PLAYER_NONE;
         }
@@ -493,7 +493,7 @@ static int libsave_moo13_decode(struct game_s *g)
         M13_GET_TBL_32(e->tech.cost, eb + 0x332 + 0x3c);
         M13_GET_TBL_16(e->tech.completed, eb + 0x332 + 0x54);
         M13_GET_16_CHECK(e->shipdesigns_num, eb + 0x3a0, 0, 6);
-        for (int j = 0; j < g->galaxy_stars; ++j) {
+        for (planet_id_t j = PLANET_0; j < g->galaxy_stars; ++j) {
             fleet_orbit_t *r = &(e->orbit[j]);
             int ob;
             ob = eb + 0x3a2 + j * 0x18;
@@ -598,7 +598,7 @@ static int libsave_moo13_decode(struct game_s *g)
     {
         uint8_t v = 0;
         int a = 0xe68e;
-        for (int i = 0; i < g->galaxy_stars; ++i) {
+        for (planet_id_t i = PLANET_0; i < g->galaxy_stars; ++i) {
             if ((i & 7) == 0) {
                 M13_GET_8(v, a);
                 ++a;
@@ -800,7 +800,7 @@ static int libsave_moo13_encode(const struct game_s *g)
         memcpy(&save2buf[0xe1ba + i * 15], g->emperor_names[i], EMPEROR_NAME_LEN - 1);
     }
     M13_SET_16(g->planet_focus_i[PLAYER_0], 0xe236);
-    for (int i = 0; i < g->galaxy_stars; ++i) {
+    for (planet_id_t i = PLANET_0; i < g->galaxy_stars; ++i) {
         const planet_t *p = &(g->planet[i]);
         int pb;
         pb = i * 0xb8;
@@ -850,7 +850,7 @@ static int libsave_moo13_encode(const struct game_s *g)
         M13_SET_16(p->unrest, pb + 0xb4);
         M13_SET_16(p->unrest_reported, pb + 0xb6);
     }
-    for (int i = 0; i < g->galaxy_stars; ++i) {
+    for (planet_id_t i = PLANET_0; i < g->galaxy_stars; ++i) {
         const seen_t *s = &(g->seen[PLAYER_0][i]);
         M13_SET_S16(s->owner, 0xe2e2 + i * 2);
         M13_SET_16(s->pop, 0xe3ba + i * 2);
@@ -936,7 +936,7 @@ static int libsave_moo13_encode(const struct game_s *g)
         M13_SET_TBL_32(e->tech.cost, eb + 0x332 + 0x3c);
         M13_SET_TBL_16(e->tech.completed, eb + 0x332 + 0x54);
         M13_SET_16_CHECK(e->shipdesigns_num, eb + 0x3a0, 0, 6);
-        for (int j = 0; j < g->galaxy_stars; ++j) {
+        for (planet_id_t j = PLANET_0; j < g->galaxy_stars; ++j) {
             const fleet_orbit_t *r = &(e->orbit[j]);
             int ob;
             ob = eb + 0x3a2 + j * 0x18;
@@ -1038,8 +1038,9 @@ static int libsave_moo13_encode(const struct game_s *g)
     }
     {
         uint8_t v = 0;
-        int i, a = 0xe68e;
-        for (i = 0; i < g->galaxy_stars; ++i) {
+        int a = 0xe68e;
+        planet_id_t i;
+        for (i = PLANET_0; i < g->galaxy_stars; ++i) {
             if (BOOLVEC_IS1(g->planet[i].finished, FINISHED_SHIP)) {
                 v |= (1 << (i & 7));
             }
@@ -2013,7 +2014,7 @@ static int savetype_en_text(const struct game_s *g, const char *fname)
     }
     OUTLINETBL("planet_focus_i", g->players, g->planet_focus_i);
     OUTFLUSH();
-    for (int i = 0; i < g->galaxy_stars; ++i) {
+    for (planet_id_t i = PLANET_0; i < g->galaxy_stars; ++i) {
         const planet_t *p = &(g->planet[i]);
         text_dump_prefix_add_tbl(tp, "planet", ".", i);
         OUTLINES("name", p->name);
@@ -2066,7 +2067,7 @@ static int savetype_en_text(const struct game_s *g, const char *fname)
         OUTFLUSH();
     }
     for (player_id_t j = PLAYER_0; j < g->players; ++j) {
-        for (int i = 0; i < g->galaxy_stars; ++i) {
+        for (planet_id_t i = PLANET_0; i < g->galaxy_stars; ++i) {
             const seen_t *s = &(g->seen[j][i]);
             OUTLINE "seen[%i][%i] = { .owner = %i, .pop = %i, .bases = %i, .factories = %i }\n", j, i, s->owner, s->pop, s->bases, s->factories);
         }
@@ -2143,7 +2144,7 @@ static int savetype_en_text(const struct game_s *g, const char *fname)
         OUTLINETBL("tech.completed", TECH_FIELD_NUM, e->tech.completed);
         OUTLINEI("shipdesigns_num", e->shipdesigns_num);
         OUTFLUSH();
-        for (int i = 0; i < g->galaxy_stars; ++i) {
+        for (planet_id_t i = PLANET_0; i < g->galaxy_stars; ++i) {
             text_dump_prefix_add_tbl(tp, "orbit", ".", i);
             OUTLINETBLNON0("ships", e->shipdesigns_num, e->orbit[i].ships);
             text_dump_prefix_del(tp);

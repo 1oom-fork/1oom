@@ -14,10 +14,9 @@
 
 static void init_star_dist(struct game_aux_s *gaux, struct game_s *g)
 {
-    int stars = g->galaxy_stars;
-    for (int i = 0; i < stars; ++i) {
+    for (planet_id_t i = PLANET_0; i < g->galaxy_stars; ++i) {
         gaux->star_dist[i][i] = 0;
-        for (int j = i + 1; j < stars; ++j) {
+        for (planet_id_t j = i + 1; j < g->galaxy_stars; ++j) {
             uint8_t dist;
             dist = (uint8_t)util_math_dist_steps(g->planet[i].x, g->planet[i].y, g->planet[j].x, g->planet[j].y);
             gaux->star_dist[i][j] = dist;
