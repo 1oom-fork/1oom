@@ -36,7 +36,7 @@ struct planets_data_s {
     int16_t amount_trans;
     int planet_i;
     struct game_s *g;
-    uint8_t planets[PLANETS_MAX];
+    planet_id_t planets[PLANETS_MAX];
     uint8_t *gfx_report;
     uint8_t *gfx_but_trans;
     uint8_t *gfx_but_ok;
@@ -105,7 +105,7 @@ static void planets_draw_cb(void *vptr)
             int y0;
             const planet_t *p;
             const char *str;
-            uint8_t pli;
+            planet_id_t pli;
             pli = d->planets[pi];
             y0 = 21 + i * 11 + 1;   /* di + 1 */
             p = &(g->planet[pli]);
@@ -331,7 +331,7 @@ void ui_planets(struct game_s *g, player_id_t active_player)
     struct planets_data_s d;
     bool flag_done = false, flag_trans;
     uiobj_id_t oi_alt_moola, oi_up, oi_down, oi_ok, oi_trans, oi_minus, oi_plus, oi_tbl_planets[PLANETS_ON_SCREEN] /*, oi_slider*/;
-    uint8_t tbl_onscreen_planets[PLANETS_ON_SCREEN];
+    planet_id_t tbl_onscreen_planets[PLANETS_ON_SCREEN];
 
     load_pl_data(&d);
     uiobj_set_help_id(37);
@@ -345,7 +345,7 @@ again:
     d.pos = 0;
     d.num = 0;
 
-    for (int i = 0; i < g->galaxy_stars; ++i) {
+    for (planet_id_t i = PLANET_0; i < g->galaxy_stars; ++i) {
         if (g->planet[i].owner == active_player) {
             if (i == g->planet_focus_i[active_player]) {
                 d.pos = (ui_fix_planet_list_pos ? d.num : i) - 5;
@@ -363,7 +363,7 @@ again:
     oi_plus = UIOBJI_INVALID;
     /*oi_slider = UIOBJI_INVALID;*/
     for (int i = 0; i < PLANETS_ON_SCREEN; ++i) {
-        tbl_onscreen_planets[i] = 0;
+        tbl_onscreen_planets[i] = PLANET_0;
         oi_tbl_planets[i] = UIOBJI_INVALID;
     }
 
