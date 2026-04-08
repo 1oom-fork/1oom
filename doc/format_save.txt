@@ -26,7 +26,7 @@ offset  sz      description
 49      1       galaxy size (0..3)
 4a      1       galaxy width
 4b      1       galaxy height
-4c      1       galaxy stars; @STARS (width * height; 24, 48, 70, 108)
+4c      1       galaxy stars; @STARS (width * height; 24, 48, 70, 108) (sz == 2 for version > 0)
 4d      2       galaxy max x
 4f      2       galaxy max y
 51      4       galaxy seed
@@ -65,7 +65,7 @@ sz      description
 @PLAYERS * Planet focused on
 
 sz      description
-1       selected planet index
+1       selected planet index   (sz == 2 for version > 0)
 
 
 @STARS * Star data
@@ -100,7 +100,7 @@ c       name (ASCIIz)
 5*2     slider % (ship, def, ind, eco, tech)
 5*1     slider lock (0/1)
 1       build ship (0..5, 6=star gate)
-1       relocation: planet index number, normally index of planet itself
+1       relocation: planet index number, normally index of planet itself  (sz == 2 for version > 0)
 2       missile bases
 2       BC towards next missile base or shield
 2       BC to upgrade base
@@ -108,7 +108,7 @@ c       name (ASCIIz)
 1       shield (5, 10, 15, 20)
 2       BC towards shield
 2       transport number ; population to transport
-1       transport destination (planet index)
+1       transport destination (planet index)    (sz == 2 for version > 0)
 1       population tenths
 1       explored by player (bitmask)
 5       (0, unused, removed for version > 0)
@@ -136,7 +136,7 @@ sz      description
 1       owner (0..5, 6) (-1, 0..5, sz == 2 for version > 0)
 2       x
 2       y
-1       destination as planetary index number
+1       destination as planetary index number   (sz == 2 for version > 0)
 1       speed
 6*2     number of ships
 
@@ -147,7 +147,7 @@ sz      description
 1       owner (0..5, 6) (-1, 0..5, sz == 2 for version > 0)
 2       x
 2       y
-1       destination as planetary index number
+1       destination as planetary index number   (sz == 2 for version > 0)
 1       speed
 2       population
 
@@ -211,7 +211,7 @@ N*2     spies
 1       number of ship designs: @SHIPDNUM
 ?       Fleet orbit list: (S = @SHIPDNUM)
         sz  description
-        1   planet index I or ff=list end
+        1   planet index I or ff=list end       (-1=list end, sz == 2 for version > 0)
         S*2 number of ships at planet I orbit  (omitted for list end)
 N*6*1   spy report for each field
 N*2     spy report year
@@ -261,23 +261,23 @@ sz      description
 17      (0, unused, removed for version > 0)
 1       have plague (0..3)
 1       plague player   (sz == 2 for version > 0)
-1       plague planet
+1       plague planet   (sz == 2 for version > 0)
 4       plague value
 1       have nova (0..3)
 1       nova player     (sz == 2 for version > 0)
-1       nova planet
+1       nova planet     (sz == 2 for version > 0)
 1       nova years
 4       nova value
 1       have accident
-1       accident planet
+1       accident planet (sz == 2 for version > 0)
 1       have comet (0..3)
 1       comet player    (sz == 2 for version > 0)
-1       comet planet
+1       comet planet    (sz == 2 for version > 0)
 1       comet years
 2       comet HP
 2       comet damage
 1       have pirates (0..3)
-1       pirates planet
+1       pirates planet  (sz == 2 for version > 0)
 2       pirates HP
 9       Crytal: $MONSTER
         sz  description
@@ -285,13 +285,13 @@ sz      description
         2   x
         2   y
         1   killer (0..5, 6)    (-1, 0..5, sz == 2 for version > 0)
-        1   destination
+        1   destination         (sz == 2 for version > 0)
         1   counter
         1   number of destroyed planets
 9       Amoeba (see $MONSTER above)
-1       Orion planet index
+1       Orion planet index      (sz == 2 for version > 0)
 1       have guardian (0/1)
-N*1     home planet (0..107, 255 means player is dead)
+N*1     home planet (0..107, 255 means player is dead)  (-1 means is dead, sz == 2 for version > 0)
 1       reported stars
 N*6*4   number of new ships
 N*N*2   number of caught spies
