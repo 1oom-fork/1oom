@@ -328,7 +328,7 @@ static int libsave_moo13_decode(struct game_s *g)
     for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         memcpy(g->emperor_names[i], &save2buf[0xe1ba + i * 15], EMPEROR_NAME_LEN - 1);
     }
-    M13_GET_16(g->planet_focus_i[PLAYER_0], 0xe236);
+    M13_GET_S16(g->planet_focus_i[PLAYER_0], 0xe236);
     for (planet_id_t i = PLANET_0; i < g->galaxy_stars; ++i) {
         planet_t *p = &(g->planet[i]);
         int pb;
@@ -364,7 +364,7 @@ static int libsave_moo13_decode(struct game_s *g)
             M13_GET_16(p->slider_lock[j], pb + 0x72 + j * 2);
         }
         M13_GET_16(p->buildship, pb + 0x5a);
-        M13_GET_16(p->reloc, pb + 0x5c);
+        M13_GET_S16(p->reloc, pb + 0x5c);
         M13_GET_16(p->missile_bases, pb + 0x5e);
         M13_GET_16(p->bc_to_base, pb + 0x60);
         M13_GET_16(p->bc_upgrade_base, pb + 0x62);
@@ -372,7 +372,7 @@ static int libsave_moo13_decode(struct game_s *g)
         M13_GET_16(p->shield, pb + 0x68);
         M13_GET_16(p->bc_to_shield, pb + 0x6a);
         M13_GET_16(p->trans_num, pb + 0x6c);
-        M13_GET_16(p->trans_dest, pb + 0x6e);
+        M13_GET_S16(p->trans_dest, pb + 0x6e);
         M13_GET_8(p->pop_tenths, pb + 0x70);
         M13_GET_TBL_BV_16(p->explored, pb + 0x7c);
         M13_GET_16(p->pop_oper_fact, pb + 0xae);
@@ -401,7 +401,7 @@ static int libsave_moo13_decode(struct game_s *g)
         M13_GET_S16(r->owner, rb + 0x00);
         M13_GET_16(r->x, rb + 0x02);
         M13_GET_16(r->y, rb + 0x04);
-        M13_GET_16(r->dest, rb + 0x06);
+        M13_GET_S16(r->dest, rb + 0x06);
         M13_GET_8(r->speed, rb + 0x08);
         for (int j = 0; j < NUM_SHIPDESIGNS; ++j) {
             M13_GET_16(r->ships[j], rb + 0x0a + j * 2);
@@ -414,7 +414,7 @@ static int libsave_moo13_decode(struct game_s *g)
         M13_GET_S16(r->owner, rb + 0x00);
         M13_GET_16(r->x, rb + 0x02);
         M13_GET_16(r->y, rb + 0x04);
-        M13_GET_16(r->dest, rb + 0x06);
+        M13_GET_S16(r->dest, rb + 0x06);
         M13_GET_8(r->speed, rb + 0x10);
         M13_GET_16(r->pop, rb + 0x08);
     }
@@ -548,30 +548,30 @@ static int libsave_moo13_decode(struct game_s *g)
         M13_GET_TBL_BVN_16(ev->done, evb + 0x004, 20);
         M13_GET_16(ev->have_plague, evb + 0x02c);
         M13_GET_S16(ev->plague_player, evb + 0x02e);
-        M13_GET_16(ev->plague_planet_i, evb + 0x030);
+        M13_GET_S16(ev->plague_planet_i, evb + 0x030);
         M13_GET_16(ev->plague_val, evb + 0x032);
         M13_GET_16(ev->have_nova, evb + 0x03a);
         M13_GET_S16(ev->nova_player, evb + 0x03c);
-        M13_GET_16(ev->nova_planet_i, evb + 0x03e);
+        M13_GET_S16(ev->nova_planet_i, evb + 0x03e);
         M13_GET_16(ev->nova_years, evb + 0x040);
         M13_GET_16(ev->nova_val, evb + 0x042);
         M13_GET_16(ev->have_accident, evb + 0x044);
-        M13_GET_16(ev->accident_planet_i, evb + 0x048);
+        M13_GET_S16(ev->accident_planet_i, evb + 0x048);
         M13_GET_16(ev->have_comet, evb + 0x056);
         M13_GET_S16(ev->comet_player, evb + 0x058);
-        M13_GET_16(ev->comet_planet_i, evb + 0x05a);
+        M13_GET_S16(ev->comet_planet_i, evb + 0x05a);
         M13_GET_16(ev->comet_years, evb + 0x05c);
         M13_GET_16(ev->comet_hp, evb + 0x05e);
         M13_GET_16(ev->comet_dmg, evb + 0x060);
         M13_GET_16(ev->have_pirates, evb + 0x062);
-        M13_GET_16(ev->pirates_planet_i, evb + 0x066);
+        M13_GET_S16(ev->pirates_planet_i, evb + 0x066);
         M13_GET_16(ev->pirates_hp, evb + 0x068);
         M13_GET_16(ev->crystal.exists, evb + 0x06e);
         M13_GET_16(ev->crystal.x, evb + 0x070);
         M13_GET_16(ev->crystal.y, evb + 0x072);
         M13_GET_S16(ev->crystal.killer, evb + 0x076);
         --ev->crystal.killer;
-        M13_GET_16(ev->crystal.dest, evb + 0x078);
+        M13_GET_S16(ev->crystal.dest, evb + 0x078);
         M13_GET_16(ev->crystal.counter, evb + 0x074);
         M13_GET_16(ev->crystal.nuked, evb + 0x07a);
         M13_GET_16(ev->amoeba.exists, evb + 0x07c);
@@ -579,13 +579,13 @@ static int libsave_moo13_decode(struct game_s *g)
         M13_GET_16(ev->amoeba.y, evb + 0x080);
         M13_GET_S16(ev->amoeba.killer, evb + 0x084);
         --ev->amoeba.killer;
-        M13_GET_16(ev->amoeba.dest, evb + 0x086);
+        M13_GET_S16(ev->amoeba.dest, evb + 0x086);
         M13_GET_16(ev->amoeba.counter, evb + 0x082);
         M13_GET_16(ev->amoeba.nuked, evb + 0x088);
-        M13_GET_16(ev->planet_orion_i, evb + 0x09c);
+        M13_GET_S16(ev->planet_orion_i, evb + 0x09c);
         M13_GET_8(ev->have_guardian, evb + 0x09e);
         for (player_id_t i = PLAYER_0; i < PLAYER_NUM; ++i) {
-            M13_GET_16(ev->home[i], evb + 0x0a0 + i * 2);
+            M13_GET_S16(ev->home[i], evb + 0x0a0 + i * 2);
         }
         M13_GET_8(ev->report_stars, evb + 0x0ac);
         for (int i = 0; i < NUM_SHIPDESIGNS; ++i) {
@@ -787,7 +787,7 @@ static int libsave_moo13_encode(const struct game_s *g)
     for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         memcpy(&save2buf[0xe1ba + i * 15], g->emperor_names[i], EMPEROR_NAME_LEN - 1);
     }
-    M13_SET_16(g->planet_focus_i[PLAYER_0], 0xe236);
+    M13_SET_S16(g->planet_focus_i[PLAYER_0], 0xe236);
     for (planet_id_t i = PLANET_0; i < g->galaxy_stars; ++i) {
         const planet_t *p = &(g->planet[i]);
         int pb;
@@ -823,7 +823,7 @@ static int libsave_moo13_encode(const struct game_s *g)
             M13_SET_16(p->slider_lock[j], pb + 0x72 + j * 2);
         }
         M13_SET_16(p->buildship, pb + 0x5a);
-        M13_SET_16(p->reloc, pb + 0x5c);
+        M13_SET_S16(p->reloc, pb + 0x5c);
         M13_SET_16(p->missile_bases, pb + 0x5e);
         M13_SET_16(p->bc_to_base, pb + 0x60);
         M13_SET_16(p->bc_upgrade_base, pb + 0x62);
@@ -831,7 +831,7 @@ static int libsave_moo13_encode(const struct game_s *g)
         M13_SET_16(p->shield, pb + 0x68);
         M13_SET_16(p->bc_to_shield, pb + 0x6a);
         M13_SET_16(p->trans_num, pb + 0x6c);
-        M13_SET_16(p->trans_dest, pb + 0x6e);
+        M13_SET_S16(p->trans_dest, pb + 0x6e);
         M13_SET_8(p->pop_tenths, pb + 0x70);
         M13_SET_TBL_BV_16(p->explored, pb + 0x7c);
         M13_SET_16(p->pop_oper_fact, pb + 0xae);
@@ -854,7 +854,7 @@ static int libsave_moo13_encode(const struct game_s *g)
         M13_SET_S16(r->owner, rb + 0x00);
         M13_SET_16(r->x, rb + 0x02);
         M13_SET_16(r->y, rb + 0x04);
-        M13_SET_16(r->dest, rb + 0x06);
+        M13_SET_S16(r->dest, rb + 0x06);
         M13_SET_8(r->speed, rb + 0x08);
         for (int j = 0; j < NUM_SHIPDESIGNS; ++j) {
             M13_SET_16(r->ships[j], rb + 0x0a + j * 2);
@@ -867,7 +867,7 @@ static int libsave_moo13_encode(const struct game_s *g)
         M13_SET_S16(r->owner, rb + 0x00);
         M13_SET_16(r->x, rb + 0x02);
         M13_SET_16(r->y, rb + 0x04);
-        M13_SET_16(r->dest, rb + 0x06);
+        M13_SET_S16(r->dest, rb + 0x06);
         M13_SET_8(r->speed, rb + 0x10);
         M13_SET_16(r->pop, rb + 0x08);
     }
@@ -1006,42 +1006,42 @@ static int libsave_moo13_encode(const struct game_s *g)
         M13_SET_TBL_BVN_16(ev->done, evb + 0x004, 20);
         M13_SET_16(ev->have_plague, evb + 0x02c);
         M13_SET_S16(ev->plague_player, evb + 0x02e);
-        M13_SET_16(ev->plague_planet_i, evb + 0x030);
+        M13_SET_S16(ev->plague_planet_i, evb + 0x030);
         M13_SET_16(ev->plague_val, evb + 0x032);
         M13_SET_16(ev->have_nova, evb + 0x03a);
         M13_SET_S16(ev->nova_player, evb + 0x03c);
-        M13_SET_16(ev->nova_planet_i, evb + 0x03e);
+        M13_SET_S16(ev->nova_planet_i, evb + 0x03e);
         M13_SET_16(ev->nova_years, evb + 0x040);
         M13_SET_16(ev->nova_val, evb + 0x042);
         M13_SET_16(ev->have_accident, evb + 0x044);
-        M13_SET_16(ev->accident_planet_i, evb + 0x048);
+        M13_SET_S16(ev->accident_planet_i, evb + 0x048);
         M13_SET_16(ev->have_comet, evb + 0x056);
         M13_SET_S16(ev->comet_player, evb + 0x058);
-        M13_SET_16(ev->comet_planet_i, evb + 0x05a);
+        M13_SET_S16(ev->comet_planet_i, evb + 0x05a);
         M13_SET_16(ev->comet_years, evb + 0x05c);
         M13_SET_16(ev->comet_hp, evb + 0x05e);
         M13_SET_16(ev->comet_dmg, evb + 0x060);
         M13_SET_16(ev->have_pirates, evb + 0x062);
-        M13_SET_16(ev->pirates_planet_i, evb + 0x066);
+        M13_SET_S16(ev->pirates_planet_i, evb + 0x066);
         M13_SET_16(ev->pirates_hp, evb + 0x068);
         M13_SET_16(ev->crystal.exists, evb + 0x06e);
         M13_SET_16(ev->crystal.x, evb + 0x070);
         M13_SET_16(ev->crystal.y, evb + 0x072);
         M13_SET_S16(ev->crystal.killer + 1, evb + 0x076);
-        M13_SET_16(ev->crystal.dest, evb + 0x078);
+        M13_SET_S16(ev->crystal.dest, evb + 0x078);
         M13_SET_16(ev->crystal.counter, evb + 0x074);
         M13_SET_16(ev->crystal.nuked, evb + 0x07a);
         M13_SET_16(ev->amoeba.exists, evb + 0x07c);
         M13_SET_16(ev->amoeba.x, evb + 0x07e);
         M13_SET_16(ev->amoeba.y, evb + 0x080);
         M13_SET_S16(ev->amoeba.killer + 1, evb + 0x084);
-        M13_SET_16(ev->amoeba.dest, evb + 0x086);
+        M13_SET_S16(ev->amoeba.dest, evb + 0x086);
         M13_SET_16(ev->amoeba.counter, evb + 0x082);
         M13_SET_16(ev->amoeba.nuked, evb + 0x088);
-        M13_SET_16(ev->planet_orion_i, evb + 0x09c);
+        M13_SET_S16(ev->planet_orion_i, evb + 0x09c);
         M13_SET_8(ev->have_guardian, evb + 0x09e);
         for (player_id_t i = PLAYER_0; i < PLAYER_NUM; ++i) {
-            M13_SET_16(ev->home[i], evb + 0x0a0 + i * 2);
+            M13_SET_S16(ev->home[i], evb + 0x0a0 + i * 2);
         }
         M13_SET_8(ev->report_stars, evb + 0x0ac);
         for (int i = 0; i < NUM_SHIPDESIGNS; ++i) {
