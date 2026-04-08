@@ -11,7 +11,7 @@
 
 /* -------------------------------------------------------------------------- */
 
-void game_planet_destroy(struct game_s *g, uint8_t planet_i, player_id_t attacker)
+void game_planet_destroy(struct game_s *g, planet_id_t planet_i, player_id_t attacker)
 {
     planet_t *p = &(g->planet[planet_i]);
     player_id_t owner = p->owner;
@@ -54,7 +54,7 @@ void game_planet_destroy(struct game_s *g, uint8_t planet_i, player_id_t attacke
     p->have_stargate = false;
     p->shield = 0;
     p->bc_to_shield = 0;
-    for (int i = 0; i < g->galaxy_stars; ++i) {
+    for (planet_id_t i = PLANET_0; i < g->galaxy_stars; ++i) {
         p = &(g->planet[i]);
         if (p->reloc == planet_i) {
             p->reloc = i;
@@ -62,11 +62,11 @@ void game_planet_destroy(struct game_s *g, uint8_t planet_i, player_id_t attacke
     }
 }
 
-uint8_t game_planet_get_random(struct game_s *g, player_id_t owner)
+planet_id_t game_planet_get_random(struct game_s *g, player_id_t owner)
 {
-    uint8_t tbl[PLANETS_MAX];
+    planet_id_t tbl[PLANETS_MAX];
     int num = 0;
-    for (int i = 0; i < g->galaxy_stars; ++i) {
+    for (planet_id_t i = PLANET_0; i < g->galaxy_stars; ++i) {
         if (g->planet[i].owner == owner) {
             tbl[num++] = i;
         }
@@ -80,7 +80,7 @@ uint8_t game_planet_get_random(struct game_s *g, player_id_t owner)
 
 void game_planet_adjust_percent(struct game_s *g, player_id_t owner, int a0, uint8_t percent, int growth)
 {
-    for (int i = 0; i < g->galaxy_stars; ++i) {
+    for (planet_id_t i = PLANET_0; i < g->galaxy_stars; ++i) {
         planet_t *p = &(g->planet[i]);
         if (p->owner == owner) {
             if (0
@@ -118,7 +118,7 @@ void game_planet_adjust_percent(struct game_s *g, player_id_t owner, int a0, uin
     }
 }
 
-int game_planet_get_w1(const struct game_s *g, uint8_t planet_i)
+int game_planet_get_w1(const struct game_s *g, planet_id_t planet_i)
 {
     const planet_t *p = &(g->planet[planet_i]);
     const empiretechorbit_t *e;
@@ -181,12 +181,12 @@ int game_get_tech_prod(int prod, int slider, race_t race, planet_special_t speci
 
 void game_planet_update_home(struct game_s *g)
 {
-    for (int i = 0; i < g->galaxy_stars; ++i) {
+    for (planet_id_t i = PLANET_0; i < g->galaxy_stars; ++i) {
         const planet_t *p = &(g->planet[i]);
         player_id_t pi;
         pi = p->owner;
         if ((pi != PLAYER_NONE) && IS_AI(g, pi) && (g->evn.home[pi] == PLANET_NONE)) { /* FIXME multiplayer */
-            g->evn.home[pi] = 0;   /* FIXME why not "= i"? */
+            g->evn.home[pi] = PLANET_0;   /* FIXME why not "= i"? */
         }
     }
 }

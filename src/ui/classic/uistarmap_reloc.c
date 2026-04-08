@@ -67,11 +67,11 @@ void ui_starmap_reloc(struct game_s *g, player_id_t active_player)
     uiobj_id_t oi_scroll, oi_cancel, oi_accept;
     int16_t scrollx = 0, scrolly = 0;
     struct starmap_data_s d;
-    uint8_t oldreloc;
+    planet_id_t oldreloc;
     d.g = g;
     d.api = active_player;
     {
-        uint8_t pi = g->planet_focus_i[active_player];
+        planet_id_t pi = g->planet_focus_i[active_player];
         d.from = pi;
         oldreloc = g->planet[pi].reloc;
         g->planet_focus_i[active_player] = oldreloc;
@@ -147,7 +147,7 @@ void ui_starmap_reloc(struct game_s *g, player_id_t active_player)
             ui_starmap_scroll(g, scrollx, scrolly);
         }
         ui_starmap_handle_oi_ctrl(&d, oi1);
-        for (int i = 0; i < g->galaxy_stars; ++i) {
+        for (planet_id_t i = PLANET_0; i < g->galaxy_stars; ++i) {
             if (oi1 == d.oi_tbl_stars[i]) {
                 g->planet_focus_i[active_player] = i;
                 ui_sound_play_sfx_24();

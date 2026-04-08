@@ -14,6 +14,12 @@ typedef enum {
     PLAYER_NONE = -1
 } player_id_t;
 
+typedef enum {
+    PLANET_0 = 0,
+    PLANETS_MAX = 108,
+    PLANET_NONE = 0xff, /* FIXME 0xffff in MOO1 */
+} planet_id_t;
+
 typedef enum tech_group_e {
     TECH_GROUP_SINGULAR = 0,
     TECH_GROUP_ECM_JAMMER = 1,
