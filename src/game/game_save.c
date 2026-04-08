@@ -747,7 +747,7 @@ static int libsave_1oom_encode(uint8_t *buf, int buflen, const struct game_s *g)
             SG_1OOM_EN_U16(s->factories);
         }
     }
-    for (int i = 0; i < g->enroute_num; ++i) {
+    for (fleet_enroute_id_t i = FLEET_ENROUTE_0; i < g->enroute_num; ++i) {
         pos = libsave_1oom_encode_enroute(buf, pos, &(g->enroute[i]));
     }
     for (int i = 0; i < g->transport_num; ++i) {
@@ -857,7 +857,7 @@ static int libsave_1oom_decode(const uint8_t *buf, int buflen, struct game_s *g,
             SG_1OOM_DE_U16(s->factories);
         }
     }
-    for (int i = 0; i < g->enroute_num; ++i) {
+    for (fleet_enroute_id_t i = FLEET_ENROUTE_0; i < g->enroute_num; ++i) {
         pos = libsave_1oom_decode_enroute(buf, pos, &(g->enroute[i]), version);
     }
     for (int i = 0; i < g->transport_num; ++i) {

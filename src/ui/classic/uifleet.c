@@ -167,7 +167,7 @@ static void ui_fleet_sub(struct fleet_data_s *d)
             }
         }
     }
-    for (int i = 0; i < g->enroute_num; ++i) {
+    for (fleet_enroute_id_t i = FLEET_ENROUTE_0; i < g->enroute_num; ++i) {
         const fleet_enroute_t *r = &(g->enroute[i]);
         if (r->owner == d->api) {
             for (int j = 0; j < sd_num; ++j) {

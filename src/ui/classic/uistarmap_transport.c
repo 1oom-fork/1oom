@@ -212,7 +212,7 @@ void ui_starmap_transport(struct game_s *g, player_id_t active_player)
             ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
         }
         if ((r->owner != active_player) || !g->eto[active_player].have_hyperspace_comm) {
-            for (int i = 0; i < g->enroute_num; ++i) {
+            for (fleet_enroute_id_t i = FLEET_ENROUTE_0; i < g->enroute_num; ++i) {
                 if (oi1 == d.oi_tbl_enroute[i]) {
                     ui_data.starmap.fleet_selected = i;
                     ui_data.ui_main_loop_action = UI_MAIN_LOOP_ENROUTE_SEL;
