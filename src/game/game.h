@@ -255,7 +255,7 @@ struct game_s {
     shipresearch_t srd[PLAYER_NUM];
     gameevents_t evn;
     char emperor_names[PLAYER_NUM][EMPEROR_NAME_LEN];
-    uint16_t enroute_num;
+    fleet_enroute_id_t enroute_num;
     uint16_t transport_num;
     uint16_t year;  /* init to 1 */
     uint8_t nebula_num;        /* 0..4 */
@@ -333,7 +333,7 @@ static inline bool OWNER_IS_NOT_KNOWN(const struct game_s *g, const planet_t *p,
 
 #define IS_AI(_g_, _i_) BOOLVEC_IS1((_g_)->is_ai, (_i_))
 
-static inline bool ENROUTE_IS_VISIBLE(const struct game_s *g, int i, player_id_t pi)
+static inline bool ENROUTE_IS_VISIBLE(const struct game_s *g, fleet_enroute_id_t i, player_id_t pi)
 {
     /*
         In MOO1, the “visible” variable is used only for PLAYER_0, and there is no BOOLVEC here.
