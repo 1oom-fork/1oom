@@ -28,7 +28,7 @@
 
 static inline bool ui_starmap_orbit_own_in_frange(struct starmap_data_s *d)
 {
-    uint8_t pi = d->g->planet_focus_i[d->api];
+    planet_id_t pi = d->g->planet_focus_i[d->api];
     const planet_t *p = &d->g->planet[pi];
     return (p->within_frange[d->api] == 1) || ((p->within_frange[d->api] == 2) && d->ss.sn0.have_reserve_fuel);
 }
@@ -397,7 +397,7 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
                 break;
             }
         }
-        for (int i = 0; i < g->galaxy_stars; ++i) {
+        for (planet_id_t i = PLANET_0; i < g->galaxy_stars; ++i) {
             for (player_id_t j = PLAYER_0; j < g->players; ++j) {
                 if (oi1 == d.oi_tbl_pl_stars[j][i]) {
                     g->planet_focus_i[active_player] = i;  /* not done on MOO1! */
@@ -426,7 +426,7 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
             ui_starmap_scroll(g, scrollx, scrolly);
         }
         ui_starmap_handle_oi_ctrl(&d, oi1);
-        for (int i = 0; i < g->galaxy_stars; ++i) {
+        for (planet_id_t i = PLANET_0; i < g->galaxy_stars; ++i) {
             if (oi1 == d.oi_tbl_stars[i]) {
                 g->planet_focus_i[active_player] = i;
                 ui_sound_play_sfx_24();
