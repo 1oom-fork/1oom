@@ -18,9 +18,6 @@ typedef struct fleet_enroute_s {
     shipcount_t ships[NUM_SHIPDESIGNS];
 } fleet_enroute_t;
 
-#define FLEET_ENROUTE_AI_MAX    208
-#define FLEET_ENROUTE_MAX   260
-
 typedef struct transport_s {
     player_id_t owner;
     uint16_t x;
