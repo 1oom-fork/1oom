@@ -47,7 +47,7 @@ static void game_turn_limit_ships(struct game_s *g)
             SETMIN(r->ships[si], game_num_limit_ships);
         }
     }
-    for (int i = 0; i < g->galaxy_stars; ++i) {
+    for (planet_id_t i = PLANET_0; i < g->galaxy_stars; ++i) {
         for (player_id_t j = PLAYER_0; j < g->players; ++j) {
             fleet_orbit_t *r = &(g->eto[j].orbit[i]);
             for (int si = 0; si < NUM_SHIPDESIGNS; ++si) {
@@ -143,7 +143,7 @@ static void game_turn_init_z_finished(struct game_s *g)
 {
     memset(g->evn.spies_caught, 0, sizeof(g->evn.spies_caught));
     memset(g->evn.new_ships, 0, sizeof(g->evn.new_ships));
-    for (int i = 0; i < g->galaxy_stars; ++i) {
+    for (planet_id_t i = PLANET_0; i < g->galaxy_stars; ++i) {
         planet_t *p = &(g->planet[i]);
         BOOLVEC_CLEAR(p->finished, FINISHED_NUM);
     }
@@ -152,7 +152,7 @@ static void game_turn_init_z_finished(struct game_s *g)
 
 static void game_turn_send_transport(struct game_s *g)
 {
-    for (int i = 0; i < g->galaxy_stars; ++i) {
+    for (planet_id_t i = PLANET_0; i < g->galaxy_stars; ++i) {
         planet_t *p = &(g->planet[i]);
         if ((p->owner != PLAYER_NONE) && (p->trans_num > 0)) {
             game_send_transport(g, p);
@@ -169,14 +169,14 @@ static int game_turn_build_eco_sub1(int fact, int colonist_oper_fact, int pop1, 
     return ((100 - ((waste * 100) / max_pop2)) * v) / 100;
 }
 
-static inline void game_add_planet_to_eco_finished(struct game_s *g, uint8_t pli, player_id_t owner)
+static inline void game_add_planet_to_eco_finished(struct game_s *g, planet_id_t pli, player_id_t owner)
 {
     BOOLVEC_SET1(g->planet[pli].finished, FINISHED_SOILATMOS);
 }
 
 static void game_turn_build_eco(struct game_s *g)
 {
-    for (int i = 0; i < g->galaxy_stars; ++i) {
+    for (planet_id_t i = PLANET_0; i < g->galaxy_stars; ++i) {
         planet_t *p = &(g->planet[i]);
         player_id_t owner;
         owner = p->owner;
@@ -380,13 +380,13 @@ static void game_turn_diplo_adjust(struct game_s *g)
         }
     }
     if ((g->year & 1) == 0) {
-        uint8_t tbl_num_pp[PLAYER_NUM];
+        planet_id_t tbl_num_pp[PLAYER_NUM];
         int gscale = ((g->galaxy_size + 1) * 3);
         int gdiv = g->galaxy_size + 6 - g->difficulty;
         for (player_id_t i = PLAYER_0; i < g->players; ++i) {
             tbl_num_pp[i] = 0;
         }
-        for (int j = 0; j < g->galaxy_stars; ++j) {
+        for (planet_id_t j = PLANET_0; j < g->galaxy_stars; ++j) {
             planet_t *p = &(g->planet[j]);
             if (p->prod_after_maint >= 100) {
                 ++tbl_num_pp[p->owner];
@@ -453,7 +453,7 @@ static void game_turn_diplo_adjust(struct game_s *g)
     }
 }
 
-static void game_add_planet_to_shield_finished(struct game_s *g, uint8_t pli, player_id_t owner)
+static void game_add_planet_to_shield_finished(struct game_s *g, planet_id_t pli, player_id_t owner)
 {
     BOOLVEC_SET1(g->planet[pli].finished, FINISHED_SHIELD);
 }
@@ -472,7 +472,7 @@ static void game_turn_build_def(struct game_s *g)
         cost_diff[i] = cost_new[i] - cost_old;
         SETMAX(cost_diff[i], 0);
     }
-    for (int i = 0; i < g->galaxy_stars; ++i) {
+    for (planet_id_t i = PLANET_0; i < g->galaxy_stars; ++i) {
         planet_t *p = &(g->planet[i]);
         player_id_t owner;
         owner = p->owner;
@@ -528,7 +528,7 @@ static void game_turn_build_def(struct game_s *g)
     }
 }
 
-static inline void game_add_planet_to_stargate_finished(struct game_s *g, uint8_t pli, player_id_t owner)
+static inline void game_add_planet_to_stargate_finished(struct game_s *g, planet_id_t pli, player_id_t owner)
 {
     BOOLVEC_SET1(g->planet[pli].finished, FINISHED_STARGATE);
 }
@@ -549,7 +549,7 @@ static void game_turn_build_ship(struct game_s *g)
             sd->cost = game_design_calc_cost(&gd);
         }
     }
-    for (int i = 0; i < g->galaxy_stars; ++i) {
+    for (planet_id_t i = PLANET_0; i < g->galaxy_stars; ++i) {
         planet_t *p = &(g->planet[i]);
         player_id_t owner;
         owner = p->owner;
@@ -572,7 +572,7 @@ static void game_turn_build_ship(struct game_s *g)
             } else {
                 shipdesign_t *sd = &(srd->design[si]);
                 int cost, shipnum;
-                uint8_t dest;
+                planet_id_t dest;
                 cost = sd->cost;
                 shipnum = 0;
                 while (prod.vtotal >= cost) {
@@ -605,7 +605,7 @@ static void game_turn_build_ship(struct game_s *g)
 
 static void game_turn_reserve(struct game_s *g)
 {
-    for (int i = 0; i < g->galaxy_stars; ++i) {
+    for (planet_id_t i = PLANET_0; i < g->galaxy_stars; ++i) {
         planet_t *p = &(g->planet[i]);
         player_id_t owner;
         owner = p->owner;
@@ -627,7 +627,7 @@ static void game_turn_reserve(struct game_s *g)
     }
 }
 
-static inline void game_add_planet_to_build_finished(struct game_s *g, uint8_t pli, player_id_t owner, planet_finished_t type)
+static inline void game_add_planet_to_build_finished(struct game_s *g, planet_id_t pli, player_id_t owner, planet_finished_t type)
 {
     planet_t *p = &(g->planet[pli]);
     BOOLVEC_SET1(p->finished, type);
@@ -636,7 +636,7 @@ static inline void game_add_planet_to_build_finished(struct game_s *g, uint8_t p
 
 static void game_turn_build_ind(struct game_s *g)
 {
-    for (int i = 0; i < g->galaxy_stars; ++i) {
+    for (planet_id_t i = PLANET_0; i < g->galaxy_stars; ++i) {
         planet_t *p = &(g->planet[i]);
         player_id_t owner;
         owner = p->owner;
@@ -843,9 +843,9 @@ static void game_turn_unrest_hmm1(struct game_s *g)
 }
 #endif
 
-static void game_turn_explore(struct game_s *g, uint8_t *planetptr, player_id_t *playerptr)
+static void game_turn_explore(struct game_s *g, planet_id_t *planetptr, player_id_t *playerptr)
 {
-    for (int pli = 0; pli < g->galaxy_stars; ++pli) {
+    for (planet_id_t pli = PLANET_0; pli < g->galaxy_stars; ++pli) {
         planet_t *p = &(g->planet[pli]);
         for (player_id_t i = PLAYER_0; i < g->players; ++i) {
             if (BOOLVEC_IS0(p->explored, i) || (p->owner == PLAYER_NONE)) {
@@ -860,7 +860,7 @@ static void game_turn_explore(struct game_s *g, uint8_t *planetptr, player_id_t 
                 }
                 by_scanner = false;
                 if ((!flag_visible) && e->have_adv_scanner) {
-                    for (int pli2 = 0; pli2 < g->galaxy_stars; ++pli2) {
+                    for (planet_id_t pli2 = PLANET_0; pli2 < g->galaxy_stars; ++pli2) {
                         const planet_t *p2 = &(g->planet[pli2]);
                         if ((p2->owner == i) && (util_math_dist_fast(p->x, p->y, p2->x, p2->y) <= game_num_adv_scan_range)) {
                             flag_visible = true;
@@ -941,7 +941,7 @@ static void game_turn_explore(struct game_s *g, uint8_t *planetptr, player_id_t 
     }
 }
 
-static void game_turn_bomb_damage(struct game_s *g, uint8_t pli, player_id_t attacker, int *popdmgptr, int *factdmgptr, int *biodmgptr)
+static void game_turn_bomb_damage(struct game_s *g, planet_id_t pli, player_id_t attacker, int *popdmgptr, int *factdmgptr, int *biodmgptr)
 {
     planet_t *p = &(g->planet[pli]);
     const empiretechorbit_t *ea = &(g->eto[attacker]);
@@ -1068,7 +1068,7 @@ static void game_turn_bomb_damage(struct game_s *g, uint8_t pli, player_id_t att
 
 static void game_turn_bomb(struct game_s *g)
 {
-    for (int pli = 0; pli < g->galaxy_stars; ++pli) {
+    for (planet_id_t pli = PLANET_0; pli < g->galaxy_stars; ++pli) {
         planet_t *p = &(g->planet[pli]);
         player_id_t owner;
         owner = p->owner;
@@ -1143,7 +1143,7 @@ static void game_turn_bomb(struct game_s *g)
     }
 }
 
-static int game_turn_transport_shoot(struct game_s *g, uint8_t planet_i, player_id_t rowner, uint8_t speed, player_id_t attacker, int bases, weapon_t basewpnt)
+static int game_turn_transport_shoot(struct game_s *g, planet_id_t planet_i, player_id_t rowner, uint8_t speed, player_id_t attacker, int bases, weapon_t basewpnt)
 {
     const planet_t *p = &(g->planet[planet_i]);
     const empiretechorbit_t *ea = &(g->eto[attacker]);
@@ -1250,7 +1250,7 @@ static int game_turn_transport_shoot(struct game_s *g, uint8_t planet_i, player_
 static void game_turn_transport(struct game_s *g)
 {
     char buf[0x80];
-    for (int pli = 0; pli < g->galaxy_stars; ++pli) {
+    for (planet_id_t pli = PLANET_0; pli < g->galaxy_stars; ++pli) {
         planet_t *p = &(g->planet[pli]);
         for (player_id_t i = PLAYER_0; i < g->players; ++i) {
             p->inbound[i] = 0;
@@ -1260,7 +1260,7 @@ static void game_turn_transport(struct game_s *g)
     for (int i = 0; i < g->transport_num; ++i) {
         transport_t *r = &(g->transport[i]);
         planet_t *p;
-        uint8_t dest;
+        planet_id_t dest;
         dest = r->dest;
         p = &(g->planet[dest]);
         if ((r->x == p->x) && (r->y == p->y)) {
@@ -1373,12 +1373,12 @@ static void game_turn_transport(struct game_s *g)
 
 static void game_turn_coup(struct game_s *g)
 {
-    uint8_t tbl_planets[PLAYER_NUM];
-    uint8_t tbl_rebelplanets[PLAYER_NUM];
+    planet_id_t tbl_planets[PLAYER_NUM];
+    planet_id_t tbl_rebelplanets[PLAYER_NUM];
     memset(tbl_planets, 0, sizeof(tbl_planets));
     memset(tbl_rebelplanets, 0, sizeof(tbl_rebelplanets));
     g->evn.coup = PLAYER_NONE;
-    for (int pli = 0; pli < g->galaxy_stars; ++pli) {
+    for (planet_id_t pli = PLANET_0; pli < g->galaxy_stars; ++pli) {
         planet_t *p = &(g->planet[pli]);
         if (p->owner != PLAYER_NONE) {
             ++tbl_planets[p->owner];
@@ -1407,7 +1407,7 @@ static void game_turn_coup(struct game_s *g)
             if (g->evn.coup == PLAYER_NONE) {
                 g->evn.coup = i;
             }
-            for (int pli = 0; pli < g->galaxy_stars; ++pli) {
+            for (planet_id_t pli = PLANET_0; pli < g->galaxy_stars; ++pli) {
                 planet_t *p = &(g->planet[pli]);
                 if (p->owner == i) {
                     p->unrest = PLANET_UNREST_NORMAL;
@@ -1434,11 +1434,11 @@ static bool game_turn_check_end(struct game_s *g, struct game_end_s *ge)
     {
         player_id_t pi1 = PLAYER_NONE, pi2 = PLAYER_NONE, pih = PLAYER_NONE;
         bool human_alive = false;
-        uint8_t num_planets[PLAYER_NUM];
-        uint8_t good_planets[PLAYER_NUM];
+        planet_id_t num_planets[PLAYER_NUM];
+        planet_id_t good_planets[PLAYER_NUM];
         memset(num_planets, 0, sizeof(num_planets));
         memset(good_planets, 0, sizeof(num_planets));
-        for (int pli = 0; pli < g->galaxy_stars; ++pli) {
+        for (planet_id_t pli = PLANET_0; pli < g->galaxy_stars; ++pli) {
             const planet_t *p = &(g->planet[pli]);
             if (p->owner != PLAYER_NONE) {
                 ++num_planets[p->owner];
@@ -1555,7 +1555,7 @@ static void game_turn_contact_broken(struct game_s *g, player_id_t pi, const BOO
 static void game_turn_update_seen(struct game_s *g)
 {
     game_update_visibility(g);
-    for (uint8_t i = 0; i < g->galaxy_stars; ++i) {
+    for (planet_id_t i = PLANET_0; i < g->galaxy_stars; ++i) {
         const planet_t *p = &(g->planet[i]);
         for (player_id_t pi = PLAYER_0; pi < g->players; ++pi) {
             if (BOOLVEC_IS1(p->within_srange, pi)) {
@@ -1592,7 +1592,7 @@ static void game_turn_show_newships(struct game_s *g)
 
 static void game_turn_finished_slider(struct game_s *g)
 {
-    for (uint8_t pli = 0; pli < g->galaxy_stars; ++pli) {
+    for (planet_id_t pli = PLANET_0; pli < g->galaxy_stars; ++pli) {
         planet_t *p = &(g->planet[pli]);
         player_id_t pi;
         empiretechorbit_t *e;
@@ -1676,7 +1676,7 @@ static void game_turn_finished_slider(struct game_s *g)
 
 static void game_turn_claim(struct game_s *g)
 {
-    for (uint8_t pli = 0; pli < g->galaxy_stars; ++pli) {
+    for (planet_id_t pli = PLANET_0; pli < g->galaxy_stars; ++pli) {
         planet_t *p = &(g->planet[pli]);
         player_id_t pi;
         pi = p->owner;
@@ -1727,9 +1727,9 @@ struct game_end_s game_turn_process(struct game_s *g)
 {
     struct game_end_s game_end;
     BOOLVEC_TBL_DECLARE(old_contact, PLAYER_NUM, PLAYER_NUM);
-    uint8_t old_focus[PLAYER_NUM];
+    planet_id_t old_focus[PLAYER_NUM];
     int num_alive = 0, num_colony = 0;
-    uint8_t artifact_planet = PLANET_NONE;
+    planet_id_t artifact_planet = PLANET_NONE;
     player_id_t artifact_player = PLAYER_NONE;
     game_end.type = GAME_END_NONE;
     game_turn_limit_ships(g);
@@ -1793,7 +1793,7 @@ struct game_end_s game_turn_process(struct game_s *g)
     }
     /* FIXME useless? game_battle should have taken care of this */
     if (g->evn.have_guardian) {
-        uint8_t o = g->evn.planet_orion_i;
+        planet_id_t o = g->evn.planet_orion_i;
         for (player_id_t i = PLAYER_0; i < g->players; ++i) {
             for (int j = 0; j < NUM_SHIPDESIGNS; ++j) {
                 g->eto[i].orbit[o].ships[j] = 0;
@@ -1823,7 +1823,7 @@ struct game_end_s game_turn_process(struct game_s *g)
     }
     game_turn_update_have_met(g);
     game_ai->turn_diplo_p1(g);
-    for (int i = 0; i < g->galaxy_stars; ++i) {
+    for (planet_id_t i = PLANET_0; i < g->galaxy_stars; ++i) {
         if (g->planet[i].owner != PLAYER_NONE) {
             ++num_colony;
         }
