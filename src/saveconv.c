@@ -407,7 +407,7 @@ static int libsave_moo13_decode(struct game_s *g)
             M13_GET_16(r->ships[j], rb + 0x0a + j * 2);
         }
     }
-    for (int i = 0; i < g->transport_num; ++i) {
+    for (transport_id_t i = TRANSPORT_0; i < g->transport_num; ++i) {
         transport_t *r = &(g->transport[i]);
         int rb;
         rb = 0x6a10 + i * 0x12;
@@ -860,7 +860,7 @@ static int libsave_moo13_encode(const struct game_s *g)
             M13_SET_16(r->ships[j], rb + 0x0a + j * 2);
         }
     }
-    for (int i = 0; i < g->transport_num; ++i) {
+    for (transport_id_t i = TRANSPORT_0; i < g->transport_num; ++i) {
         const transport_t *r = &(g->transport[i]);
         int rb;
         rb = 0x6a10 + i * 0x12;
@@ -2108,7 +2108,7 @@ static int savetype_en_text(const struct game_s *g, const char *fname)
         OUTADD ".ships[] = { %i, %i, %i, %i, %i, %i } }\n", r->ships[0], r->ships[1], r->ships[2], r->ships[3], r->ships[4], r->ships[5]);
     }
     OUTFLUSH();
-    for (int i = 0; i < g->transport_num; ++i) {
+    for (transport_id_t i = TRANSPORT_0; i < g->transport_num; ++i) {
         const transport_t *r = &(g->transport[i]);
         OUTLINE "transport");
         OUTADD "[%i] = { .owner = %i, .x = %i, .y = %i, .dest = %i, .speed = %i, ", i, r->owner, r->x, r->y, r->dest, r->speed);
