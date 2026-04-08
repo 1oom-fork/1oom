@@ -120,7 +120,7 @@ typedef struct planet_s {
     int16_t slider[PLANET_SLIDER_NUM]; /* FIXME uint16_t? */
     uint16_t slider_lock[PLANET_SLIDER_NUM];
     uint8_t buildship; /* 0..NUM_SHIPDESIGNS-1 or BUILDSHIP_STARGATE */
-    uint8_t reloc; /* planet i to relocate produced ships (== planet's own index if no relocation) */
+    planet_id_t reloc; /* planet i to relocate produced ships (== planet's own index if no relocation) */
     uint16_t missile_bases;
     uint16_t bc_to_base;
     uint16_t bc_upgrade_base;
@@ -128,7 +128,7 @@ typedef struct planet_s {
     uint8_t shield; /* 0, 10, 15, 20 */
     uint16_t bc_to_shield;
     uint16_t trans_num;
-    uint8_t trans_dest;
+    planet_id_t trans_dest;
     int8_t pop_tenths;
     BOOLVEC_DECLARE(explored, PLAYER_NUM);
     BOOLVEC_DECLARE(within_srange, PLAYER_NUM); /* scanner range covers planet */
@@ -144,15 +144,12 @@ typedef struct planet_s {
     uint16_t total_inbound[PLAYER_NUM];
 } planet_t;
 
-#define PLANETS_MAX 108
-#define PLANET_NONE 255
-
 struct game_s;
 
-extern void game_planet_destroy(struct game_s *g, uint8_t planet_i, player_id_t attacker);
-extern uint8_t game_planet_get_random(struct game_s *g, player_id_t owner);
+extern void game_planet_destroy(struct game_s *g, planet_id_t planet_i, player_id_t attacker);
+extern planet_id_t game_planet_get_random(struct game_s *g, player_id_t owner);
 extern void game_planet_adjust_percent(struct game_s *g, player_id_t owner, int a0, uint8_t percent, int growth);
-extern int game_planet_get_w1(const struct game_s *g, uint8_t planet_i);
+extern int game_planet_get_w1(const struct game_s *g, planet_id_t planet_i);
 extern int game_adjust_prod_by_special(int prod, planet_special_t special);
 extern int game_get_tech_prod(int prod, int slider, race_t race, planet_special_t special);
 extern void game_planet_update_home(struct game_s *g);
