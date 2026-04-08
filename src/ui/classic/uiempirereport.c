@@ -104,7 +104,7 @@ static void empirereport_draw_cb(void *vptr)
             }
         }
     }
-    for (int f = 0; f < TECH_FIELD_NUM; ++f) {
+    for (tech_field_t f = TECH_FIELD_COMPUTER; f < TECH_FIELD_NUM; ++f) {
         const uint8_t *rct = &(srd->researchcompleted[f][0]);
         uint16_t tc;
         uint8_t first, num, rf;
