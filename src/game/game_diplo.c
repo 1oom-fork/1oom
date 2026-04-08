@@ -91,7 +91,7 @@ static int game_diplo_wage_war_prod_w(struct game_s *g, player_id_t p1, player_i
 
 /* -------------------------------------------------------------------------- */
 
-void game_diplo_act(struct game_s *g, int dv, player_id_t pi, player_id_t pi2, int dtype, uint8_t pli1, int16_t dp2)
+void game_diplo_act(struct game_s *g, int dv, player_id_t pi, player_id_t pi2, int dtype, planet_id_t pli1, int16_t dp2)
 {
     empiretechorbit_t *e = &(g->eto[pi]);
     empiretechorbit_t *e2 = &(g->eto[pi2]);
@@ -433,7 +433,7 @@ void game_diplo_wage_war(struct game_s *g, player_id_t p1, player_id_t p2)
     }
 }
 
-void game_diplo_battle_finish(struct game_s *g, int def, int att, int popdiff, uint32_t app_def, uint16_t biodamage, uint32_t app_att, uint8_t planet_i)
+void game_diplo_battle_finish(struct game_s *g, int def, int att, int popdiff, uint32_t app_def, uint16_t biodamage, uint32_t app_att, planet_id_t planet_i)
 {
     /* FIXME multiplayer */
     player_id_t claim, side_z, side_ai;

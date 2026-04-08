@@ -1,10 +1,11 @@
 #ifndef INC_1OOM_UIBATTLEPRE_H
 #define INC_1OOM_UIBATTLEPRE_H
 
+#include "game_types.h"
 #include "types.h"
 
 struct game_s;
 
-extern void ui_battle_pre(struct game_s *g, int party_u, int party_d, uint8_t planet_i, bool flag_human_att, bool hide_other);
+extern void ui_battle_pre(struct game_s *g, int party_u, int party_d, planet_id_t planet_i, bool flag_human_att, bool hide_other);
 
 #endif

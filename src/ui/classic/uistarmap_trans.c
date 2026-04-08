@@ -170,14 +170,14 @@ void ui_starmap_trans(struct game_s *g, player_id_t active_player)
     uiobj_id_t oi_scroll, oi_cancel, oi_accept, oi_plus, oi_minus;
     int16_t scrollx = 0, scrolly = 0;
     struct starmap_data_s d;
-    uint8_t olddest;
+    planet_id_t olddest;
     planet_t *p;
     int16_t trans_max;
     d.g = g;
     d.api = active_player;
     d.tr.blink = false;
     {
-        uint8_t pi = g->planet_focus_i[active_player];
+        planet_id_t pi = g->planet_focus_i[active_player];
         d.from = pi;
         p = &(g->planet[pi]);
         olddest = p->trans_dest;
@@ -277,7 +277,7 @@ void ui_starmap_trans(struct game_s *g, player_id_t active_player)
             ui_starmap_scroll(g, scrollx, scrolly);
         }
         ui_starmap_handle_oi_ctrl(&d, oi1);
-        for (int i = 0; i < g->galaxy_stars; ++i) {
+        for (planet_id_t i = PLANET_0; i < g->galaxy_stars; ++i) {
             if (oi1 == d.oi_tbl_stars[i]) {
                 d.tr.other = true;
                 g->planet_focus_i[active_player] = i;

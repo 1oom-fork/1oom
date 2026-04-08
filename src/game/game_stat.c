@@ -59,24 +59,24 @@ int game_stat_prod(const struct game_s *g, player_id_t pi)
 
 int game_stat_pop(const struct game_s *g, player_id_t pi)
 {
-    int sum = 0, num = g->galaxy_stars;
-    for (int i = 0; i < num; ++i) {
+    int sum = 0;
+    for (planet_id_t i = PLANET_0; i < g->galaxy_stars; ++i) {
         const planet_t *p = &(g->planet[i]);
         if (p->owner == pi) {
             sum += p->pop;
         }
     }
-    return sum / ((num * 3) / 2 + 1);
+    return sum / ((g->galaxy_stars * 3) / 2 + 1);
 }
 
 int game_stat_planets(const struct game_s *g, player_id_t pi)
 {
-    int sum = 0, num = g->galaxy_stars;
-    for (int i = 0; i < num; ++i) {
+    int sum = 0;
+    for (planet_id_t i = PLANET_0; i < g->galaxy_stars; ++i) {
         const planet_t *p = &(g->planet[i]);
         if (p->owner == pi) {
             ++sum;
         }
     }
-    return (sum * 100) / (num + 1);
+    return (sum * 100) / (g->galaxy_stars + 1);
 }

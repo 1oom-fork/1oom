@@ -52,7 +52,7 @@ struct starmap_data_s {
     uiobj_id_t oi_tbl_enroute[FLEET_ENROUTE_MAX];
     uiobj_id_t oi_tbl_transport[TRANSPORT_MAX];
     uiobj_id_t oi_tbl_pl_stars[PLAYER_NUM][PLANETS_MAX];
-    uint8_t from;
+    planet_id_t from;
     bool in_frange;
     struct shipsel_s ss;
     struct {
@@ -110,12 +110,12 @@ static inline void ui_starmap_update_mouse_hover(struct starmap_data_s *d, uiobj
         d.oi_planets = UIOBJI_INVALID; \
         d.oi_tech = UIOBJI_INVALID; \
         d.oi_next_turn = UIOBJI_INVALID; \
-        for (int i = 0; i < g->galaxy_stars; ++i) { \
+        for (planet_id_t i = PLANET_0; i < g->galaxy_stars; ++i) { \
             d.oi_tbl_stars[i] = UIOBJI_INVALID; \
         } \
         UIOBJI_SET_TBL_INVALID(d.oi_tbl_enroute); \
         UIOBJI_SET_TBL_INVALID(d.oi_tbl_transport); \
-        for (int i = 0; i < g->galaxy_stars; ++i) { \
+        for (planet_id_t i = PLANET_0; i < g->galaxy_stars; ++i) { \
             for (player_id_t j = PLAYER_0; j < g->players; ++j) { \
                 d.oi_tbl_pl_stars[j][i] = UIOBJI_INVALID; \
             } \
@@ -177,8 +177,8 @@ extern void ui_starmap_draw_starmap(struct starmap_data_s *d);
 extern void ui_starmap_draw_button_text(struct starmap_data_s *d, bool highlight);
 extern void ui_starmap_sn0_setup(struct shipnon0_s *sn0, int sd_num, const shipcount_t *ships);
 extern void ui_starmap_update_reserve_fuel(struct game_s *g, struct shipnon0_s *sn0, const shipcount_t *ships, player_id_t pi);
-extern void ui_starmap_draw_planetinfo(const struct game_s *g, player_id_t api, int planet_i);
-extern void ui_starmap_draw_planetinfo_2(const struct game_s *g, int p1, int p2, int planet_i);
+extern void ui_starmap_draw_planetinfo(const struct game_s *g, player_id_t api, planet_id_t planet_i);
+extern void ui_starmap_draw_planetinfo_2(const struct game_s *g, int p1, int p2, planet_id_t planet_i);
 extern int ui_starmap_newship_next(const struct game_s *g, player_id_t pi, int i);
 extern int ui_starmap_newship_prev(const struct game_s *g, player_id_t pi, int i);
 
