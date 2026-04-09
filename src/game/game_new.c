@@ -510,6 +510,16 @@ static void game_generate_galaxy(struct game_s *g)
                 w = 12;
                 h = 9;
                 break;
+            case GALAXY_SIZE_HUGE_X2:
+                a = rnd_1_n(5, &g->seed) + 1;
+                w = 24;
+                h = 18;
+                break;
+            case GALAXY_SIZE_HUGE_X4:
+                a = rnd_1_n(9, &g->seed) + 1;
+                w = 48;
+                h = 36;
+                break;
         }
 
         g->nebula_num = a;
@@ -579,8 +589,10 @@ static void game_generate_planet_names(struct game_s *g)
         do {
             j = rnd_0_nm1(PLANETS_MAX, &g->seed);
         } while (BOOLVEC_IS1(in_use, j));
-        BOOLVEC_SET1(in_use, j);
-        strcpy(g->planet[i].name, game_str_tbl_planet_names[j]);
+        if (g->galaxy_size <= GALAXY_SIZE_HUGE) {
+            BOOLVEC_SET1(in_use, j);
+        }
+        strcpy(g->planet[i].name, game_str_tbl_planet_names[j % PLANET_NAMES_MAX]); /* % is HACK */
     }
     strcpy(g->planet[g->evn.planet_orion_i].name, game_str_planet_name_orion);
 }

@@ -16,19 +16,19 @@ typedef enum {
 
 typedef enum {
     PLANET_0 = 0,
-    PLANETS_MAX = 108,
+    PLANETS_MAX = 108 * 16,
     PLANET_NONE = -1,
 } planet_id_t;
 
 typedef enum {
     FLEET_ENROUTE_0 = 0,
-    FLEET_ENROUTE_AI_MAX = 208,
-    FLEET_ENROUTE_MAX = 260,
+    FLEET_ENROUTE_AI_MAX = 208 * 16,
+    FLEET_ENROUTE_MAX = 260 * 16,
 } fleet_enroute_id_t;
 
 typedef enum {
     TRANSPORT_0 = 0,
-    TRANSPORT_MAX = 100,
+    TRANSPORT_MAX = 100 * 16,
 } transport_id_t;
 
 typedef enum {
@@ -121,6 +121,8 @@ typedef enum {
     GALAXY_SIZE_MEDIUM, /*1*/
     GALAXY_SIZE_LARGE, /*2*/
     GALAXY_SIZE_HUGE, /*3*/
+    GALAXY_SIZE_HUGE_X2, /*4*/
+    GALAXY_SIZE_HUGE_X4, /*5*/
     GALAXY_SIZE_NUM
 } galaxy_size_t;
 
