@@ -1579,7 +1579,7 @@ static int main_early_init(void)
         return 1;
     }
     gameptr = lib_malloc(sizeof(struct game_s));
-    save2buf = lib_malloc(0x10000);
+    save2buf = lib_malloc(0x100000);
     return 0;
 }
 

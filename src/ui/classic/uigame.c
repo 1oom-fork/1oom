@@ -234,11 +234,15 @@ ui_turn_action_t ui_game_turn(struct game_s *g, int *load_game_i_ptr, player_id_
 
 void ui_game_start(struct game_s *g)
 {
+    int gsize_id = g->galaxy_size;
+    if (gsize_id > GALAXY_SIZE_HUGE) {
+        gsize_id = GALAXY_SIZE_HUGE;
+    }
     for (int i = 0; i < g->nebula_num; ++i) {
         ui_data.gfx.starmap.nebula[i] = lbxfile_item_get(LBXFILE_STARMAP, 0xf + g->nebula_type[i], 0);
-        ui_data.gfx.starmap.smnebula[i] = ui_data.gfx.starmap.smneb[g->nebula_type[i] + g->galaxy_size * 10];
+        ui_data.gfx.starmap.smnebula[i] = ui_data.gfx.starmap.smneb[g->nebula_type[i] + gsize_id * 10];
     }
-    ui_data.gfx.starmap.bmap = lbxfile_item_get(LBXFILE_V11, 1 + g->galaxy_size, 0);
+    ui_data.gfx.starmap.bmap = lbxfile_item_get(LBXFILE_V11, 1 + gsize_id, 0);
 
     /* HACK remove visual glitch on load game */
     ui_draw_erase_buf();
