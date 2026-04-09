@@ -26,7 +26,7 @@
 #define LIBSAVE_1OOM_OFFS_VERSION  8
 #define LIBSAVE_1OOM_OFFS_NAME 16
 
-#define LIBSAVE_1OOM_VERSION   0
+#define LIBSAVE_1OOM_VERSION   1
 
 /* -------------------------------------------------------------------------- */
 
