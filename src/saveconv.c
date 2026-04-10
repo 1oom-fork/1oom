@@ -47,6 +47,7 @@ typedef enum {
 
 static int savetype_de_smart(struct game_s *g, const char *fname);
 extern bool libsave_is_moo13(const char *fname);
+extern bool libsave_moo13_check(const struct game_s *g);
 extern int libsave_moo13_load_do(const char *filename, struct game_s *g);
 extern int libsave_moo13_save_do(const char *filename, const struct game_s *g);
 static int savetype_de_moo13(struct game_s *g, const char *fname);
@@ -223,20 +224,25 @@ bool libsave_is_moo13(const char *fname)
     return res;
 }
 
+bool libsave_moo13_check(const struct game_s *g)
+{
+    if ((g->players < 2) || (g->players > 6)) return false;
+    if ((((int16_t)g->difficulty) < 0) || (g->difficulty > 4)) return false;
+    if ((((int16_t)g->galaxy_size) < 0) || (g->galaxy_size > 3)) return false;
+    if ((((int16_t)g->nebula_num) < 0) || (g->nebula_num > 4)) return false;
+    if ((g->galaxy_stars < 24) || (g->galaxy_stars > 108)) return false;
+    if ((((int16_t)g->enroute_num) < 0) || (g->enroute_num > 259)) return false;
+    if ((((int16_t)g->transport_num) < 0) || (g->transport_num > 99)) return false;
+    for (player_id_t i = PLAYER_0; i < g->players; ++i) {
+        if ((((int16_t)(g->eto[i].shipdesigns_num)) < 0) || (g->eto[i].shipdesigns_num > 6)) return false;
+    }
+    return true;
+}
+
 #define M13_GET_8(item_, addr_)     item_ = buf[addr_]
 #define M13_GET_16(item_, addr_)    item_ = GET_LE_16(&buf[addr_])
 #define M13_GET_S16(item_, addr_)   item_ = GET_LE_S16(&buf[addr_])
 #define M13_GET_32(item_, addr_)    item_ = GET_LE_32(&buf[addr_])
-#define M13_GET_16_CHECK(item_, addr_, l_, h_) \
-    do { \
-        int t_; \
-        t_ = GET_LE_16(&buf[addr_]); \
-        if ((t_ < l_) || (t_ > h_)) { \
-            log_error( #item_ " at 0x%04x is %i and not in range %i..%i\n", addr_, t_, l_, h_); \
-            return -1; \
-        } \
-        item_ = t_; \
-    } while (0)
 #define M13_GET_TBL_16(item_, addr_) \
     do { \
         for (int i_ = 0; i_ < TBLLEN(item_); ++i_) { \
@@ -319,20 +325,20 @@ static int libsave_moo13_decode(uint8_t *buf, struct game_s *g)
         memset(g, 0, sizeof(*g));
         g->gaux = t;
     }
-    M13_GET_16_CHECK(g->players, 0xe2d2, 2, 6);
+    M13_GET_16(g->players, 0xe2d2);
     g->is_ai[0] = ((1 << g->players) - 1) & ~1;
     g->active_player = PLAYER_0;
-    M13_GET_16_CHECK(g->difficulty, 0xe2d4, 0, 4);
-    M13_GET_16_CHECK(g->galaxy_size, 0xe2d8, 0, 3);
-    M13_GET_16_CHECK(g->nebula_num, 0xe238, 0, 4);
-    M13_GET_16_CHECK(g->galaxy_stars, 0xe2d6, 24, 108);
+    M13_GET_16(g->difficulty, 0xe2d4);
+    M13_GET_16(g->galaxy_size, 0xe2d8);
+    M13_GET_16(g->nebula_num, 0xe238);
+    M13_GET_16(g->galaxy_stars, 0xe2d6);
     M13_GET_16(g->galaxy_w, 0xe2da);
     M13_GET_16(g->galaxy_h, 0xe2dc);
     M13_GET_16(g->galaxy_maxx, 0xe2de);
     M13_GET_16(g->galaxy_maxy, 0xe2e0);
     M13_GET_16(g->year, 0xe232);
-    M13_GET_16_CHECK(g->enroute_num, 0xe1b6, 0, 259);
-    M13_GET_16_CHECK(g->transport_num, 0xe1b8, 0, 99);
+    M13_GET_16(g->enroute_num, 0xe1b6);
+    M13_GET_16(g->transport_num, 0xe1b8);
     M13_GET_16(g->end, 0xe686);
     M13_GET_S16(g->winner, 0xe688);
     M13_GET_16(g->guardian_killer, 0xe68a);
@@ -496,7 +502,7 @@ static int libsave_moo13_decode(uint8_t *buf, struct game_s *g)
         M13_GET_TBL_16(e->tech.project, eb + 0x332 + 0x30);
         M13_GET_TBL_32(e->tech.cost, eb + 0x332 + 0x3c);
         M13_GET_TBL_16(e->tech.completed, eb + 0x332 + 0x54);
-        M13_GET_16_CHECK(e->shipdesigns_num, eb + 0x3a0, 0, 6);
+        M13_GET_16(e->shipdesigns_num, eb + 0x3a0);
         for (planet_id_t j = PLANET_0; j < g->galaxy_stars; ++j) {
             fleet_orbit_t *r = &(e->orbit[j]);
             int ob;
@@ -612,6 +618,9 @@ static int libsave_moo13_decode(uint8_t *buf, struct game_s *g)
             }
         }
     }
+    if (!libsave_moo13_check(g)) {
+        return -1;
+    }
     return 0;
 }
 
@@ -690,16 +699,6 @@ static int savetype_de_moo13(struct game_s *g, const char *fname)
 #define M13_SET_16(item_, addr_)    SET_LE_16(&buf[addr_], item_)
 #define M13_SET_S16(item_, addr_)   SET_LE_S16(&buf[addr_], item_)
 #define M13_SET_32(item_, addr_)    SET_LE_32(&buf[addr_], item_)
-#define M13_SET_16_CHECK(item_, addr_, l_, h_) \
-    do { \
-        uint16_t t_; \
-        t_ = item_; \
-        if ((t_ < l_) || (t_ > h_)) { \
-            log_error( #item_ " is %i and not in range %i..%i\n", addr_, t_, l_, h_); \
-            return -1; \
-        } \
-        SET_LE_16(&buf[addr_], t_); \
-    } while (0)
 #define M13_SET_TBL_16(item_, addr_) \
     do { \
         for (int i_ = 0; i_ < TBLLEN(item_); ++i_) { \
@@ -777,6 +776,9 @@ static int libsave_moo13_encode_sd(uint8_t *buf, const shipdesign_t *sd, int sb)
 
 static int libsave_moo13_encode(uint8_t *buf, const struct game_s *g)
 {
+    if (!libsave_moo13_check(g)) {
+        return -1;
+    }
     memset(buf, 0, SAVE_MOO13_LEN);
     M13_SET_16(g->players, 0xe2d2);
     M13_SET_16(g->difficulty, 0xe2d4);
@@ -788,8 +790,8 @@ static int libsave_moo13_encode(uint8_t *buf, const struct game_s *g)
     M13_SET_16(g->galaxy_maxx, 0xe2de);
     M13_SET_16(g->galaxy_maxy, 0xe2e0);
     M13_SET_16(g->year, 0xe232);
-    M13_SET_16_CHECK(g->enroute_num, 0xe1b6, 0, 259);
-    M13_SET_16_CHECK(g->transport_num, 0xe1b8, 0, 99);
+    M13_SET_16(g->enroute_num, 0xe1b6);
+    M13_SET_16(g->transport_num, 0xe1b8);
     M13_SET_16(g->end, 0xe686);
     M13_SET_S16(g->winner, 0xe688);
     M13_SET_16(g->election_held, 0xe68c);
@@ -943,7 +945,7 @@ static int libsave_moo13_encode(uint8_t *buf, const struct game_s *g)
         M13_SET_TBL_16(e->tech.project, eb + 0x332 + 0x30);
         M13_SET_TBL_32(e->tech.cost, eb + 0x332 + 0x3c);
         M13_SET_TBL_16(e->tech.completed, eb + 0x332 + 0x54);
-        M13_SET_16_CHECK(e->shipdesigns_num, eb + 0x3a0, 0, 6);
+        M13_SET_16(e->shipdesigns_num, eb + 0x3a0);
         for (planet_id_t j = PLANET_0; j < g->galaxy_stars; ++j) {
             const fleet_orbit_t *r = &(e->orbit[j]);
             int ob;
