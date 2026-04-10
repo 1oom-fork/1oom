@@ -204,29 +204,33 @@ static int savetype_de_smart(struct game_s *g, const char *fname)
 
 bool libsave_is_moo13(const char *fname)
 {
+    uint8_t *buf = NULL;
     bool res = true;
     uint16_t w;
+    buf = lib_malloc(SAVE_MOO13_LEN);
     if (0
-      || (util_file_try_load_len(fname, save2buf, SAVE_MOO13_LEN) == 0)
-      || ((w = GET_LE_16(&save2buf[0xe2d2])) < 2) || (w > 6)
-      || (GET_LE_16(&save2buf[0xe2d4]) > 4)
-      || ((w = GET_LE_16(&save2buf[0xe2d6])) < 24) || (w > 108)
-      || (GET_LE_16(&save2buf[0xe2d8]) > 3)
-      || (GET_LE_16(&save2buf[0xe238]) > 4)
+      || (util_file_try_load_len(fname, buf, SAVE_MOO13_LEN) == 0)
+      || ((w = GET_LE_16(&buf[0xe2d2])) < 2) || (w > 6)
+      || (GET_LE_16(&buf[0xe2d4]) > 4)
+      || ((w = GET_LE_16(&buf[0xe2d6])) < 24) || (w > 108)
+      || (GET_LE_16(&buf[0xe2d8]) > 3)
+      || (GET_LE_16(&buf[0xe238]) > 4)
     ) {
         res = false;
     }
+    lib_free(buf);
+    buf = NULL;
     return res;
 }
 
-#define M13_GET_8(item_, addr_)     item_ = save2buf[addr_]
-#define M13_GET_16(item_, addr_)    item_ = GET_LE_16(&save2buf[addr_])
-#define M13_GET_S16(item_, addr_)   item_ = GET_LE_S16(&save2buf[addr_])
-#define M13_GET_32(item_, addr_)    item_ = GET_LE_32(&save2buf[addr_])
+#define M13_GET_8(item_, addr_)     item_ = buf[addr_]
+#define M13_GET_16(item_, addr_)    item_ = GET_LE_16(&buf[addr_])
+#define M13_GET_S16(item_, addr_)   item_ = GET_LE_S16(&buf[addr_])
+#define M13_GET_32(item_, addr_)    item_ = GET_LE_32(&buf[addr_])
 #define M13_GET_16_CHECK(item_, addr_, l_, h_) \
     do { \
         int t_; \
-        t_ = GET_LE_16(&save2buf[addr_]); \
+        t_ = GET_LE_16(&buf[addr_]); \
         if ((t_ < l_) || (t_ > h_)) { \
             log_error( #item_ " at 0x%04x is %i and not in range %i..%i\n", addr_, t_, l_, h_); \
             return -1; \
@@ -236,26 +240,26 @@ bool libsave_is_moo13(const char *fname)
 #define M13_GET_TBL_16(item_, addr_) \
     do { \
         for (int i_ = 0; i_ < TBLLEN(item_); ++i_) { \
-            item_[i_] = GET_LE_16(&save2buf[(addr_) + i_ * 2]); \
+            item_[i_] = GET_LE_16(&buf[(addr_) + i_ * 2]); \
         } \
     } while (0)
 #define M13_GET_TBL_S16(item_, addr_) \
     do { \
         for (int i_ = 0; i_ < TBLLEN(item_); ++i_) { \
-            item_[i_] = GET_LE_S16(&save2buf[(addr_) + i_ * 2]); \
+            item_[i_] = GET_LE_S16(&buf[(addr_) + i_ * 2]); \
         } \
     } while (0)
 #define M13_GET_TBL_16_HATED(item_, addr_) \
     do { \
         for (int i_ = 0; i_ < TBLLEN(item_); ++i_) { \
-            item_[i_] = GET_LE_S16(&save2buf[(addr_) + i_ * 2]); \
+            item_[i_] = GET_LE_S16(&buf[(addr_) + i_ * 2]); \
             if (item_[i_] == PLAYER_0) { item_[i_] = PLAYER_NONE; } \
         } \
     } while (0)
 #define M13_GET_TBL_BVN_8(item_, addr_, n_) \
     do { \
         for (int i_ = 0; i_ < n_; ++i_) { \
-            if (save2buf[(addr_) + i_]) { \
+            if (buf[(addr_) + i_]) { \
                 BOOLVEC_SET1(item_, i_); \
             } \
         } \
@@ -264,7 +268,7 @@ bool libsave_is_moo13(const char *fname)
     do { \
         for (player_id_t i_ = PLAYER_0; i_ < PLAYER_NUM; ++i_) { \
             uint16_t t_; \
-            t_ = GET_LE_16(&save2buf[(addr_) + i_ * 2]); \
+            t_ = GET_LE_16(&buf[(addr_) + i_ * 2]); \
             if (t_) { \
                 BOOLVEC_SET1(item_, i_); \
             } \
@@ -274,7 +278,7 @@ bool libsave_is_moo13(const char *fname)
     do { \
         for (int i_ = 0; i_ < n_; ++i_) { \
             uint16_t t_; \
-            t_ = GET_LE_16(&save2buf[(addr_) + i_ * 2]); \
+            t_ = GET_LE_16(&buf[(addr_) + i_ * 2]); \
             if (t_) { \
                 BOOLVEC_SET1(item_, i_); \
             } \
@@ -283,13 +287,13 @@ bool libsave_is_moo13(const char *fname)
 #define M13_GET_TBL_32(item_, addr_) \
     do { \
         for (int i_ = 0; i_ < TBLLEN(item_); ++i_) { \
-            item_[i_] = GET_LE_32(&save2buf[(addr_) + i_ * 4]); \
+            item_[i_] = GET_LE_32(&buf[(addr_) + i_ * 4]); \
         } \
     } while (0)
 
-static int libsave_moo13_decode_sd(shipdesign_t *sd, int sb)
+static int libsave_moo13_decode_sd(uint8_t *buf, shipdesign_t *sd, int sb)
 {
-    memcpy(sd->name, &save2buf[sb + 0x00], 11);
+    memcpy(sd->name, &buf[sb + 0x00], 11);
     M13_GET_16(sd->cost, sb + 0x14);
     M13_GET_16(sd->space, sb + 0x16);
     M13_GET_16(sd->hull, sb + 0x18);
@@ -308,7 +312,7 @@ static int libsave_moo13_decode_sd(shipdesign_t *sd, int sb)
     return 0;
 }
 
-static int libsave_moo13_decode(struct game_s *g)
+static int libsave_moo13_decode(uint8_t *buf, struct game_s *g)
 {
     {
         void *t = g->gaux;
@@ -348,14 +352,14 @@ static int libsave_moo13_decode(struct game_s *g)
         }
     }
     for (player_id_t i = PLAYER_0; i < g->players; ++i) {
-        memcpy(g->emperor_names[i], &save2buf[0xe1ba + i * 15], EMPEROR_NAME_LEN - 1);
+        memcpy(g->emperor_names[i], &buf[0xe1ba + i * 15], EMPEROR_NAME_LEN - 1);
     }
     M13_GET_S16(g->planet_focus_i[PLAYER_0], 0xe236);
     for (planet_id_t i = PLANET_0; i < g->galaxy_stars; ++i) {
         planet_t *p = &(g->planet[i]);
         int pb;
         pb = i * 0xb8;
-        memcpy(p->name, &save2buf[pb], PLANET_NAME_LEN - 1);
+        memcpy(p->name, &buf[pb], PLANET_NAME_LEN - 1);
         M13_GET_16(p->x, pb + 0xc);
         M13_GET_16(p->y, pb + 0xe);
         M13_GET_16(p->star_type, pb + 0x10);
@@ -509,7 +513,7 @@ static int libsave_moo13_decode(struct game_s *g)
         int srdb, pos;
         srdb = 0xc410 + i * 0x468;
         for (int j = 0; j < g->eto[i].shipdesigns_num; ++j) {
-            if (libsave_moo13_decode_sd(&(srd->design[j]), srdb + j * 0x44) != 0) {
+            if (libsave_moo13_decode_sd(buf, &(srd->design[j]), srdb + j * 0x44) != 0) {
                 return -1;
             }
         }
@@ -533,7 +537,7 @@ static int libsave_moo13_decode(struct game_s *g)
         M13_GET_TBL_16(srd->year, srdb + 0x450);
         M13_GET_TBL_16(srd->shipcount, srdb + 0x45c);
     }
-    if (libsave_moo13_decode_sd(&(g->current_design[PLAYER_0]), 0xe642) != 0) {
+    if (libsave_moo13_decode_sd(buf, &(g->current_design[PLAYER_0]), 0xe642) != 0) {
         return -1;
     }
     {
@@ -613,14 +617,18 @@ static int libsave_moo13_decode(struct game_s *g)
 
 int libsave_moo13_load_do(const char *filename, struct game_s *g)
 {
+    uint8_t *buf = NULL;
     int res = 0;
     int len;
-    if ((len = util_file_try_load_len(filename, save2buf, SAVE_MOO13_LEN)) == 0) {
+    buf = lib_malloc(SAVE_MOO13_LEN);
+    if ((len = util_file_try_load_len(filename, buf, SAVE_MOO13_LEN)) == 0) {
         log_error("loading MOO1 v1.3 save '%s' (got %i != %i bytes)\n", filename, len, SAVE_MOO13_LEN);
         res = -1;
-    } else if (libsave_moo13_decode(g) != 0) {
+    } else if (libsave_moo13_decode(buf, g) != 0) {
         res = -1;
     }
+    lib_free(buf);
+    buf = NULL;
     return res;
 }
 
@@ -678,10 +686,10 @@ static int savetype_de_moo13(struct game_s *g, const char *fname)
     return 0;
 }
 
-#define M13_SET_8(item_, addr_)     save2buf[addr_] = item_
-#define M13_SET_16(item_, addr_)    SET_LE_16(&save2buf[addr_], item_)
-#define M13_SET_S16(item_, addr_)   SET_LE_S16(&save2buf[addr_], item_)
-#define M13_SET_32(item_, addr_)    SET_LE_32(&save2buf[addr_], item_)
+#define M13_SET_8(item_, addr_)     buf[addr_] = item_
+#define M13_SET_16(item_, addr_)    SET_LE_16(&buf[addr_], item_)
+#define M13_SET_S16(item_, addr_)   SET_LE_S16(&buf[addr_], item_)
+#define M13_SET_32(item_, addr_)    SET_LE_32(&buf[addr_], item_)
 #define M13_SET_16_CHECK(item_, addr_, l_, h_) \
     do { \
         uint16_t t_; \
@@ -690,18 +698,18 @@ static int savetype_de_moo13(struct game_s *g, const char *fname)
             log_error( #item_ " is %i and not in range %i..%i\n", addr_, t_, l_, h_); \
             return -1; \
         } \
-        SET_LE_16(&save2buf[addr_], t_); \
+        SET_LE_16(&buf[addr_], t_); \
     } while (0)
 #define M13_SET_TBL_16(item_, addr_) \
     do { \
         for (int i_ = 0; i_ < TBLLEN(item_); ++i_) { \
-            SET_LE_16(&save2buf[(addr_) + i_ * 2], item_[i_]); \
+            SET_LE_16(&buf[(addr_) + i_ * 2], item_[i_]); \
         } \
     } while (0)
 #define M13_SET_TBL_S16(item_, addr_) \
     do { \
         for (int i_ = 0; i_ < TBLLEN(item_); ++i_) { \
-            SET_LE_S16(&save2buf[(addr_) + i_ * 2], item_[i_]); \
+            SET_LE_S16(&buf[(addr_) + i_ * 2], item_[i_]); \
         } \
     } while (0)
 #define M13_SET_TBL_16_HATED(item_, addr_) \
@@ -710,7 +718,7 @@ static int savetype_de_moo13(struct game_s *g, const char *fname)
             player_id_t t_; \
             t_ = item_[i_]; \
             if (t_ == PLAYER_NONE) { t_ = PLAYER_0; } \
-            SET_LE_S16(&save2buf[(addr_) + i_ * 2], t_); \
+            SET_LE_S16(&buf[(addr_) + i_ * 2], t_); \
         } \
     } while (0)
 #define M13_SET_TBL_BVN_8(item_, addr_, n_) \
@@ -718,7 +726,7 @@ static int savetype_de_moo13(struct game_s *g, const char *fname)
         for (int i_ = 0; i_ < n_; ++i_) { \
             uint8_t t_; \
             t_ = BOOLVEC_IS1(item_, i_); \
-            save2buf[(addr_) + i_] = t_; \
+            buf[(addr_) + i_] = t_; \
         } \
     } while (0)
 #define M13_SET_TBL_BV_16(item_, addr_) \
@@ -726,7 +734,7 @@ static int savetype_de_moo13(struct game_s *g, const char *fname)
         for (player_id_t i_ = PLAYER_0; i_ < PLAYER_NUM; ++i_) { \
             uint16_t t_; \
             t_ = BOOLVEC_IS1(item_, i_); \
-            SET_LE_16(&save2buf[(addr_) + i_ * 2], t_); \
+            SET_LE_16(&buf[(addr_) + i_ * 2], t_); \
         } \
     } while (0)
 #define M13_SET_TBL_BVN_16(item_, addr_, n_) \
@@ -734,7 +742,7 @@ static int savetype_de_moo13(struct game_s *g, const char *fname)
         for (int i_ = 0; i_ < n_; ++i_) { \
             uint16_t t_; \
             t_ = BOOLVEC_IS1(item_, i_); \
-            SET_LE_16(&save2buf[(addr_) + i_ * 2], t_); \
+            SET_LE_16(&buf[(addr_) + i_ * 2], t_); \
         } \
     } while (0)
 #define M13_SET_TBL_32(item_, addr_) \
@@ -742,13 +750,13 @@ static int savetype_de_moo13(struct game_s *g, const char *fname)
         for (int i_ = 0; i_ < TBLLEN(item_); ++i_) { \
             uint32_t t_; \
             t_ = item_[i_]; \
-            SET_LE_32(&save2buf[(addr_) + i_ * 4], t_); \
+            SET_LE_32(&buf[(addr_) + i_ * 4], t_); \
         } \
     } while (0)
 
-static int libsave_moo13_encode_sd(const shipdesign_t *sd, int sb)
+static int libsave_moo13_encode_sd(uint8_t *buf, const shipdesign_t *sd, int sb)
 {
-    memcpy(&save2buf[sb + 0x00], sd->name, 11);
+    memcpy(&buf[sb + 0x00], sd->name, 11);
     M13_SET_16(sd->cost, sb + 0x14);
     M13_SET_16(sd->space, sb + 0x16);
     M13_SET_16(sd->hull, sb + 0x18);
@@ -767,9 +775,9 @@ static int libsave_moo13_encode_sd(const shipdesign_t *sd, int sb)
     return 0;
 }
 
-static int libsave_moo13_encode(const struct game_s *g)
+static int libsave_moo13_encode(uint8_t *buf, const struct game_s *g)
 {
-    memset(save2buf, 0, SAVE_MOO13_LEN);
+    memset(buf, 0, SAVE_MOO13_LEN);
     M13_SET_16(g->players, 0xe2d2);
     M13_SET_16(g->difficulty, 0xe2d4);
     M13_SET_16(g->galaxy_size, 0xe2d8);
@@ -797,14 +805,14 @@ static int libsave_moo13_encode(const struct game_s *g)
         }
     }
     for (player_id_t i = PLAYER_0; i < g->players; ++i) {
-        memcpy(&save2buf[0xe1ba + i * 15], g->emperor_names[i], EMPEROR_NAME_LEN - 1);
+        memcpy(&buf[0xe1ba + i * 15], g->emperor_names[i], EMPEROR_NAME_LEN - 1);
     }
     M13_SET_S16(g->planet_focus_i[PLAYER_0], 0xe236);
     for (planet_id_t i = PLANET_0; i < g->galaxy_stars; ++i) {
         const planet_t *p = &(g->planet[i]);
         int pb;
         pb = i * 0xb8;
-        memcpy(&save2buf[pb], p->name, PLANET_NAME_LEN - 1);
+        memcpy(&buf[pb], p->name, PLANET_NAME_LEN - 1);
         M13_SET_16(p->x, pb + 0xc);
         M13_SET_16(p->y, pb + 0xe);
         M13_SET_16(p->star_type, pb + 0x10);
@@ -952,7 +960,7 @@ static int libsave_moo13_encode(const struct game_s *g)
         int srdb, pos;
         srdb = 0xc410 + i * 0x468;
         for (int j = 0; j < g->eto[i].shipdesigns_num; ++j) {
-            if (libsave_moo13_encode_sd(&(srd->design[j]), srdb + j * 0x44) != 0) {
+            if (libsave_moo13_encode_sd(buf, &(srd->design[j]), srdb + j * 0x44) != 0) {
                 return -1;
             }
         }
@@ -976,7 +984,7 @@ static int libsave_moo13_encode(const struct game_s *g)
         M13_SET_TBL_16(srd->year, srdb + 0x450);
         M13_SET_TBL_16(srd->shipcount, srdb + 0x45c);
     }
-    if (libsave_moo13_encode_sd(&(g->current_design[PLAYER_0]), 0xe642) != 0) {
+    if (libsave_moo13_encode_sd(buf, &(g->current_design[PLAYER_0]), 0xe642) != 0) {
         return -1;
     }
     {
@@ -1061,7 +1069,7 @@ static int libsave_moo13_encode(const struct game_s *g)
         int srdb;
         srdb = 0xc410 + 0x468 * i;
         for (int j = 0; j < SHIP_NAME_NUM; ++j) {
-            strncpy((char *)&(save2buf[srdb + 0x198 + j * 12]), game_str_tbl_ship_names[e->race * SHIP_NAME_NUM + j], 11);
+            strncpy((char *)&(buf[srdb + 0x198 + j * 12]), game_str_tbl_ship_names[e->race * SHIP_NAME_NUM + j], 11);
         }
     }
     return 0;
@@ -1069,13 +1077,17 @@ static int libsave_moo13_encode(const struct game_s *g)
 
 int libsave_moo13_save_do(const char *filename, const struct game_s *g)
 {
+    uint8_t *buf = NULL;
     int res = 0;
-    if (libsave_moo13_encode(g) != 0) {
+    buf = lib_malloc(SAVE_MOO13_LEN);
+    if (libsave_moo13_encode(buf, g) != 0) {
         res = -1;
-    } else if (util_file_save(filename, save2buf, SAVE_MOO13_LEN) != 0) {
+    } else if (util_file_save(filename, buf, SAVE_MOO13_LEN) != 0) {
         log_error("Save: failed to save '%s'\n", filename);
         res = -1;
     }
+    lib_free(buf);
+    buf = NULL;
     return res;
 }
 
