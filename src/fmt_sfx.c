@@ -364,12 +364,12 @@ static struct sfx_conv_s fmt_sfx_convert_wav(const uint8_t *data_in, uint32_t le
             }
         }
     } else /*(bps_in == 16)*/{
-        const int16_t *d = (const int16_t *)p;
+        const uint8_t *d = p;
         if (ch_in == 1) {
             res.num = len / 2;
             for (int i = 0; i < (len / 2); ++i) {
                 s = GET_LE_16(d);
-                ++d;
+                d += 2;
                 *q++ = s;
                 *q++ = s;
             }
@@ -377,10 +377,10 @@ static struct sfx_conv_s fmt_sfx_convert_wav(const uint8_t *data_in, uint32_t le
             res.num = len / 4;
             for (int i = 0; i < (len / 4); ++i) {
                 s = GET_LE_16(d);
-                ++d;
+                d += 2;
                 *q++ = s;
                 s = GET_LE_16(d);
-                ++d;
+                d += 2;
                 *q++ = s;
             }
         }
@@ -475,12 +475,11 @@ bool fmt_sfx_convert(const uint8_t *data_in, uint32_t len_in, uint8_t **data_out
         /* WAV file is little endian so swap bytes while relocating */
         /* TODO maybe use the big endian variant RIFX? */
         {
-            uint16_t *q = (uint16_t *)&data[len - 2];
-            uint16_t *p = (uint16_t *)&data[len + HDR_WAV_LEN - 2];
-            int n = len / 2;
-            while (n--) {
-                uint16_t v = *q--;
-                *p-- = BSWAP_16(v);
+            uint32_t i = len;
+            while (i > 0) {
+                data[HDR_WAV_LEN + i - 2] = data[i - 1];
+                data[HDR_WAV_LEN + i - 1] = data[i - 2];
+                i -= 2;
             }
         }
 #else
