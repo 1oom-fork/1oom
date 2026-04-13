@@ -364,12 +364,12 @@ static struct sfx_conv_s fmt_sfx_convert_wav(const uint8_t *data_in, uint32_t le
             }
         }
     } else /*(bps_in == 16)*/{
-        const int16_t *d = (const int16_t *)p;
+        const uint8_t *d = p;
         if (ch_in == 1) {
             res.num = len / 2;
             for (int i = 0; i < (len / 2); ++i) {
                 s = GET_LE_16(d);
-                ++d;
+                d += 2;
                 *q++ = s;
                 *q++ = s;
             }
@@ -377,10 +377,10 @@ static struct sfx_conv_s fmt_sfx_convert_wav(const uint8_t *data_in, uint32_t le
             res.num = len / 4;
             for (int i = 0; i < (len / 4); ++i) {
                 s = GET_LE_16(d);
-                ++d;
+                d += 2;
                 *q++ = s;
                 s = GET_LE_16(d);
-                ++d;
+                d += 2;
                 *q++ = s;
             }
         }
