@@ -8,6 +8,7 @@ AC_ARG_ENABLE(tools, AS_HELP_STRING([--disable-tools], [disables extra tools]))
 AC_ARG_ENABLE(uiclassic, AS_HELP_STRING([--disable-uiclassic], [disables classic UI]))
 AC_ARG_ENABLE(hwsdl1, AS_HELP_STRING([--enable-hwsdl1], [enables SDL1 HW]))
 AC_ARG_ENABLE(hwsdl2, AS_HELP_STRING([--disable-hwsdl2], [disables SDL2 HW]))
+AC_ARG_ENABLE(hwsdl3, AS_HELP_STRING([--disable-hwsdl3], [disables SDL3 HW]))
 AC_ARG_ENABLE(hwalleg4, AS_HELP_STRING([--disable-hwalleg4], [disables Allegro 4 HW]))
 
 AC_CONFIG_SRCDIR([src/main.c])
@@ -410,6 +411,94 @@ AC_SUBST(HW_SDL2_CFLAGS)
 AC_SUBST(HW_SDL2_LIBS)
 
 
+dnl - SDL3
+dnl Check and setup SDL 3 compilation.
+
+AM_CONDITIONAL(COMPILE_HW_SDL3, false)
+HW_SDL3_CFLAGS=
+HW_SDL3_LIBS=
+if test x"$enable_hwsdl3" != "xno"; then
+    old_cflags=$CFLAGS
+    old_LIBS="$LIBS"
+    old_sdl_libs=$HW_SDL3_LIBS
+
+    dnl First check for user supplied libs/cflags.
+    dnl In none are given, try sdl3-config.
+    dnl If no sdl3-config was found, try pkg-config.
+    dnl If this fails, we assume that there are no extra CFLAGS
+    dnl and that libSDL3 can be found in the default lib search path.
+    if test x"$SDL3_LIBS" != "x" -o x"$SDL3_CFLAGS" != "x"; then
+        HW_SDL3_CFLAGS="$CFLAGS $SDL3_CFLAGS"
+        HW_SDL3_LIBS="$SDL3_LIBS"
+    elif $pkg_config --exists sdl3; then
+        HW_SDL3_CFLAGS="$CFLAGS `$pkg_config --cflags sdl3`"
+        if test x"$enable_static" = "xyes"; then
+            HW_SDL3_LIBS="`$pkg_config --static --libs sdl3`"
+        else
+            HW_SDL3_LIBS="`$pkg_config --libs sdl3`"
+        fi
+    else
+        HW_SDL3_LIBS="-lSDL3"
+    fi
+
+    CFLAGS="$HW_SDL3_CFLAGS"
+    LIBS="$HW_SDL3_LIBS"
+
+    dnl check for the SDL3/SDL.h header
+    AS_UNSET(ac_cv_header_SDL_h)
+    AC_CHECK_HEADERS(SDL3/SDL.h,[AC_CHECK_LIB(SDL3, SDL_CreateTexture,
+                     [],
+                     [CFLAGS=$old_cflags; break],$EXTRA_SDL3_LIBS)],
+                     [CFLAGS=$old_cflags; break],$EXTRA_SDL3_LIBS)
+    LIBS="$old_LIBS"
+
+    if test x"$ac_cv_lib_SDL3_SDL_CreateTexture" != "xyes"; then
+        AC_MSG_WARN([SDL3 headers and/or libraries missing!])
+    else
+        AC_DEFINE(USE_HWSDL3,,[Enable SDL3 HW support.])
+        AM_CONDITIONAL(COMPILE_HW_SDL3, true)
+        AM_CONDITIONAL(COMPILE_HW_SDL, true)
+        have_sdl3=yes
+
+        dnl check for SDL3_mixer
+        AC_MSG_CHECKING(for the SDL3_mixer library)
+
+        old_sdl_libs="$HW_SDL3_LIBS"
+        if test x"$SDL3MIXER_LIBS" != "x"; then
+            HW_SDL3_LIBS="$HW_SDL3_LIBS $SDL3MIXER_LIBS"
+        elif $pkg_config --exists SDL3_mixer; then
+            if test x"$enable_static" = "xyes"; then
+                HW_SDL3_LIBS="`$pkg_config --static --libs SDL3_mixer`"
+            else
+                HW_SDL3_LIBS="`$pkg_config --libs SDL3_mixer`"
+            fi
+        else
+            HW_SDL3_LIBS="$HW_SDL3_LIBS -lSDL3_mixer"
+        fi
+        LIBS="$old_LIBS $HW_SDL3_LIBS"
+
+        AC_TRY_LINK([#include "SDL3_mixer/SDL_mixer.h"],
+                    [MIX_Init()],
+                    [AC_MSG_RESULT(yes);
+                     have_sdl3mixer=yes],
+                    [AC_MSG_RESULT(no);
+                     HW_SDL3_LIBS="$old_sdl_libs"])
+
+        LIBS="$old_LIBS"
+
+        if test x"$have_sdl3mixer" = "xyes"; then
+            AC_DEFINE(HAVE_SDL3MIXER,,[Enable SDL3_mixer])
+        else
+            AC_MSG_WARN([SDL3_mixer not found, audio disabled!])
+        fi
+    fi
+    CFLAGS="$old_cflags"
+    LIBS="$old_LIBS"
+fi
+AC_SUBST(HW_SDL3_CFLAGS)
+AC_SUBST(HW_SDL3_LIBS)
+
+
 dnl - Allegro 4
 dnl Check and setup Allegro 4 compilation.
 
@@ -496,6 +585,12 @@ if test x"$enable_uiclassic" != "xno"; then
     else
         AM_CONDITIONAL(COMPILE_UICLASSIC_SDL2, false)
     fi
+    if test x"$have_sdl3" = "xyes"; then
+        AM_CONDITIONAL(COMPILE_UICLASSIC_SDL3, true)
+        have_classic_hw=yes
+    else
+        AM_CONDITIONAL(COMPILE_UICLASSIC_SDL3, false)
+    fi
     if test x"$have_alleg4" = "xyes"; then
         AM_CONDITIONAL(COMPILE_UICLASSIC_ALLEG4, true)
         have_classic_hw=yes
@@ -521,6 +616,11 @@ if test x"$enable_tools" != "xno"; then
     else
         AM_CONDITIONAL(COMPILE_TOOLS_SDL2, false)
     fi
+    if test x"$have_sdl3" = "xyes"; then
+        AM_CONDITIONAL(COMPILE_TOOLS_SDL3, true)
+    else
+        AM_CONDITIONAL(COMPILE_TOOLS_SDL3, false)
+    fi
     if test x"$have_alleg4" = "xyes"; then
         AM_CONDITIONAL(COMPILE_TOOLS_ALLEG4, true)
     else
@@ -530,6 +630,7 @@ else
     AM_CONDITIONAL(COMPILE_TOOLS, false)
     AM_CONDITIONAL(COMPILE_TOOLS_SDL1, false)
     AM_CONDITIONAL(COMPILE_TOOLS_SDL2, false)
+    AM_CONDITIONAL(COMPILE_TOOLS_SDL3, false)
     AM_CONDITIONAL(COMPILE_TOOLS_ALLEG4, false)
 fi
 
@@ -542,6 +643,7 @@ dnl - finish up
 AC_SUBST(HAVE_READLINE)
 AC_SUBST(EXTRA_SDL1_LIBS)
 AC_SUBST(EXTRA_SDL2_LIBS)
+AC_SUBST(EXTRA_SDL3_LIBS)
 AC_SUBST(EXTRA_ALLEG4_LIBS)
 AC_SUBST(OS_INCLUDES)
 AC_SUBST(OS_LIBS)
@@ -565,6 +667,7 @@ AC_CONFIG_FILES([Makefile
                  src/hw/sdl/Makefile
                  src/hw/sdl/1/Makefile
                  src/hw/sdl/2/Makefile
+                 src/hw/sdl/3/Makefile
                  src/hw/alleg/Makefile
                  src/hw/alleg/4/Makefile
                 ])

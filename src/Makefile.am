@@ -7,6 +7,9 @@ endif
 if COMPILE_UICLASSIC_SDL2
 bin_PROGRAMS += 1oom_classic_sdl2
 endif
+if COMPILE_UICLASSIC_SDL3
+bin_PROGRAMS += 1oom_classic_sdl3
+endif
 if COMPILE_UICLASSIC_ALLEG4
 bin_PROGRAMS += 1oom_classic_alleg4
 endif
@@ -19,6 +22,9 @@ bin_PROGRAMS += 1oom_lbxview_sdl1
 endif
 if COMPILE_TOOLS_SDL2
 bin_PROGRAMS += 1oom_lbxview_sdl2
+endif
+if COMPILE_TOOLS_SDL3
+bin_PROGRAMS += 1oom_lbxview_sdl3
 endif
 if COMPILE_TOOLS_ALLEG4
 bin_PROGRAMS += 1oom_lbxview_alleg4
@@ -118,6 +124,17 @@ hwsdl2_lib = $(top_builddir)/src/hw/sdl/2/libhwsdl2.a
 1oom_lbxview_sdl2_SOURCES = lbxview.c $(audio_sources) $(gui_sources) $(util_sources)
 1oom_lbxview_sdl2_LDADD = $(1oom_lbxview_sdl2_libs) @HW_SDL2_LIBS@ @EXTRA_SDL2_LIBS@ @SAMPLERATE_LIBS@
 1oom_lbxview_sdl2_DEPENDENCIES = $(1oom_lbxview_sdl2_libs)
+
+hwsdl3_lib = $(top_builddir)/src/hw/sdl/3/libhwsdl3.a
+1oom_classic_sdl3_libs = $(gamemain_lib) $(game_lib) $(save_lib) $(uiclassic_lib) $(game_lib) $(hwsdl3_lib) $(common_libs)
+1oom_classic_sdl3_SOURCES = $(audio_sources) $(gui_sources) $(util_sources)
+1oom_classic_sdl3_LDADD = $(1oom_classic_sdl3_libs) @HW_SDL3_LIBS@ @EXTRA_SDL3_LIBS@ @SAMPLERATE_LIBS@
+1oom_classic_sdl3_DEPENDENCIES = $(1oom_classic_sdl3_libs)
+
+1oom_lbxview_sdl3_libs = $(hwsdl3_lib) $(uinop_lib) $(common_libs)
+1oom_lbxview_sdl3_SOURCES = lbxview.c $(audio_sources) $(gui_sources) $(util_sources)
+1oom_lbxview_sdl3_LDADD = $(1oom_lbxview_sdl3_libs) @HW_SDL3_LIBS@ @EXTRA_SDL3_LIBS@ @SAMPLERATE_LIBS@
+1oom_lbxview_sdl3_DEPENDENCIES = $(1oom_lbxview_sdl3_libs)
 
 hwalleg4_lib = $(top_builddir)/src/hw/alleg/4/libhwalleg4.a
 1oom_classic_alleg4_libs = $(gamemain_lib) $(game_lib) $(save_lib) $(uiclassic_lib) $(game_lib) $(hwalleg4_lib) $(common_libs)

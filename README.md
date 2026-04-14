@@ -27,8 +27,8 @@ Unix (Linux)
 
 1oom requires the following libraries:
 
-- [SDL](https://www.libsdl.org) (libsdl1.2 or libsdl2)
-- [SDL_mixer](https://www.libsdl.org/projects/SDL_mixer/) (libsdl-mixer1.2 or libsdl2-mixer)
+- [SDL](https://www.libsdl.org) (libsdl1.2, libsdl2 or libsdl3)
+- [SDL_mixer](https://www.libsdl.org/projects/SDL_mixer/) (libsdl-mixer1.2, libsdl2-mixer or libsdl3-mixer)
 
 Also recommended:
 

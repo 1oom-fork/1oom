@@ -1,0 +1,565 @@
+#include "config.h"
+
+#include <stdio.h>
+#include <string.h>
+
+#include "SDL3/SDL.h"
+
+#include "hw.h"
+#include "hw_internal.h"
+#include "comp.h"
+#include "hwsdl_video.h"
+#include "hwsdl_opt.h"
+#include "lib.h"
+#include "log.h"
+#include "types.h"
+
+/* -------------------------------------------------------------------------- */
+
+/* Most of the code and comments adapted from Chocolate Doom 3.0 i_video.c.
+   Copyright(C) 2005-2014 Simon Howard
+*/
+
+/* -------------------------------------------------------------------------- */
+
+#define RESIZE_DELAY 500
+
+static struct sdl_video_s {
+    /* These are (1) the window (or the full screen) that our game is rendered to
+       and (2) the renderer that scales the texture (see below) into this window.
+    */
+    SDL_Window *window;
+    SDL_Renderer *renderer;
+    /* These are (1) the 320x200x8 paletted buffer that we copy the active buffer to,
+       (2) the 320x200x32 RGBA intermediate buffer that we blit the former buffer to,
+       (3) the intermediate 320x200 texture that we load the RGBA buffer to and that
+       we render into another texture (4) which is upscaled by an integer factor
+       UPSCALE using "nearest" scaling and which in turn is finally rendered to screen
+       using "linear" scaling.
+    */
+    SDL_Surface *screen;
+    SDL_Surface *interbuffer;
+    SDL_Texture *texture;
+    SDL_Texture *texture_upscaled;
+
+    SDL_Rect blit_rect;
+
+    int w_upscale, h_upscale;
+    int actualw, actualh;
+
+    bool screen_visible;
+    bool need_resize;
+    unsigned int last_resize_time;
+
+    /* palette as used by SDL */
+    SDL_Color color[256];
+    bool palette_to_set;
+} video = { 0 };
+
+/* -------------------------------------------------------------------------- */
+
+static void video_create_upscaled_texture(bool force)
+{
+    int w, h;
+    int h_upscale, w_upscale;
+
+    /* Get the size of the renderer output. The units this gives us will be
+       real world pixels, which are not necessarily equivalent to the screen's
+       window size (because of highdpi).
+    */
+    if (!SDL_GetRenderOutputSize(video.renderer, &w, &h)) {
+        log_fatal_and_die("SDL3: Failed to get render output size: %s\n", SDL_GetError());
+    }
+
+    if (!hw_opt_smooth_pixel_scaling || ((w % video.screen->w == 0) && (h % video.screen->h == 0))) {
+        if (video.texture_upscaled) {
+            SDL_DestroyTexture(video.texture_upscaled);
+            video.texture_upscaled = NULL;
+        }
+        return;
+    }
+
+    /* When the screen or window dimensions do not match the aspect ratio
+       of the texture, the rendered area is scaled down to fit. Calculate
+       the actual dimensions of the rendered area.
+    */
+    if (w * video.actualh < h * video.actualw) {
+        /* Tall window. */
+        h = (w * video.actualh) / video.actualw;
+    } else {
+        /* Wide window. */
+        w = (h * video.actualw) / video.actualh;
+    }
+
+    /* Pick texture size the next integer multiple of the screen dimensions.
+       If one screen dimension matches an integer multiple of the original
+       resolution, there is no need to overscale in this direction.
+    */
+    w_upscale = (w + video.screen->w - 1) / video.screen->w;
+    h_upscale = (h + video.screen->h - 1) / video.screen->h;
+
+    /* Minimum texture dimensions of 320x200. */
+    SETMAX(w_upscale, 1);
+    SETMAX(h_upscale, 1);
+
+    /* LimitTextureSize(&w_upscale, &h_upscale); TODO SDL3 */
+
+    /* Create a new texture only if the upscale factors have actually changed. */
+    if (h_upscale == video.h_upscale && w_upscale == video.w_upscale && !force) {
+        return;
+    }
+    video.h_upscale = h_upscale;
+    video.w_upscale = w_upscale;
+
+    if (video.texture_upscaled) {
+        SDL_DestroyTexture(video.texture_upscaled);
+    }
+
+    /* Set the scaling quality for rendering the upscaled texture to "linear",
+       which looks much softer and smoother than "nearest" but does a better
+       job at downscaling from the upscaled texture to screen.
+    */
+    log_message("SDL_CreateTexture: upscaled, %d, %d\n",
+                w_upscale * video.screen->w, h_upscale * video.screen->h);
+    video.texture_upscaled = SDL_CreateTexture(video.renderer,
+                                SDL_PIXELFORMAT_ARGB8888,
+                                SDL_TEXTUREACCESS_TARGET,
+                                w_upscale * video.screen->w,
+                                h_upscale * video.screen->h
+                             );
+    SDL_SetTextureScaleMode(video.texture_upscaled, SDL_SCALEMODE_LINEAR);
+}
+
+/* -------------------------------------------------------------------------- */
+
+static void video_render(void)
+{
+    if (video.screen->pixels != vgabuf_get_front()) {
+        video.screen->pixels = vgabuf_get_front();
+        video.palette_to_set = true;
+    }
+}
+
+/* Adjust window_width / window_height variables to be an an aspect
+   ratio consistent with the aspect_ratio_correct variable.
+*/
+static void video_adjust_window_size(int *wptr, int *hptr)
+{
+    int w = *wptr, h = *hptr;
+    if (hw_opt_int_scaling) {
+        int scale = MIN(w / video.actualw, h / video.actualh);
+        w = video.actualw * scale;
+        h = video.actualh * scale;
+    } else if ((w * video.actualh) <= (h * video.actualw)) {
+        /* We round up window_height if the ratio is not exact; this leaves the result stable. */
+        h = (w * video.actualh + video.actualw - 1) / video.actualw;
+    } else {
+        w = (h * video.actualw) / video.actualh;
+    }
+    *wptr = w;
+    *hptr = h;
+}
+
+static void video_update(void)
+{
+    if (!video.screen_visible) {
+        return;
+    }
+
+    if (video.need_resize) {
+        if (SDL_GetTicks() > (video.last_resize_time + RESIZE_DELAY)) {
+            Uint32 flags;
+            int w, h;
+            /* When the window is resized (we're not in fullscreen mode and not maximized),
+               save the new window size.
+            */
+            flags = SDL_GetWindowFlags(video.window);
+            if ((flags & (SDL_WINDOW_FULLSCREEN | SDL_WINDOW_MAXIMIZED)) == 0) {
+                SDL_GetWindowSize(video.window, &w, &h);
+                /* Adjust the window by resizing again so that the window is the right aspect ratio. */
+                video_adjust_window_size(&w, &h);
+                log_message("SDL_SetWindowSize: %d, %d\n", w, h);
+                SDL_SetWindowSize(video.window, w, h);
+                hw_opt_screen_winw = w;
+                hw_opt_screen_winh = h;
+            }
+            video_create_upscaled_texture(false);
+            video.need_resize = false;
+            video.palette_to_set = true;
+        } else {
+            return;
+        }
+    }
+
+    if (video.palette_to_set) {
+        SDL_SetPaletteColors(SDL_GetSurfacePalette(video.screen), video.color, 0, 256);
+        video.palette_to_set = false;
+    }
+
+    /* Blit from the paletted 8-bit screen buffer to the intermediate
+       32-bit RGBA buffer and update the intermediate texture with the
+       contents of the RGBA buffer.
+    */
+    SDL_LockTexture(video.texture, &video.blit_rect, &video.interbuffer->pixels, &video.interbuffer->pitch);
+    SDL_BlitSurfaceUnchecked(video.screen, &video.blit_rect, video.interbuffer, &video.blit_rect);
+    SDL_UnlockTexture(video.texture);
+
+    /* Make sure the pillarboxes are kept clear each frame. */
+    SDL_RenderClear(video.renderer);
+
+    if (hw_opt_smooth_pixel_scaling && (video.texture_upscaled != NULL)) {
+        /* Render this intermediate texture into the upscaled texture
+           using "nearest" integer scaling.
+        */
+        SDL_SetRenderTarget(video.renderer, video.texture_upscaled);
+        SDL_RenderTexture(video.renderer, video.texture, NULL, NULL);
+
+        /* Finally, render this upscaled texture to screen using linear scaling. */
+        SDL_SetRenderTarget(video.renderer, NULL);
+        SDL_RenderTexture(video.renderer, video.texture_upscaled, NULL, NULL);
+    } else {
+        /* Render this intermediate texture directly to screen using "nearest" scaling. */
+        SDL_SetRenderTarget(video.renderer, NULL);
+        SDL_RenderTexture(video.renderer, video.texture, NULL, NULL);
+    }
+
+    /* Draw! */
+    SDL_RenderPresent(video.renderer);
+}
+
+static void video_setpal(const uint8_t *pal, int first, int num)
+{
+    for (int i = first; i < (first + num); ++i) {
+        video.color[i].r = vgapal_6bit_to_8bit(*pal++);
+        video.color[i].g = vgapal_6bit_to_8bit(*pal++);
+        video.color[i].b = vgapal_6bit_to_8bit(*pal++);
+        video.color[i].a = 255;
+    }
+    video.palette_to_set = true;
+    video_update();
+}
+
+/* -------------------------------------------------------------------------- */
+
+void hw_video_set_visible(bool visible)
+{
+    video.screen_visible = visible;
+}
+
+/* -------------------------------------------------------------------------- */
+
+static int video_sw_set(int w, int h)
+{
+    Uint32 window_flags = 0;
+
+    /* In windowed mode, the window can be resized while the game is running. */
+    window_flags = SDL_WINDOW_RESIZABLE;
+    /* Set the highdpi flag - this makes a big difference on Macs with
+       retina displays, especially when using small window sizes. */
+    window_flags |= SDL_WINDOW_HIGH_PIXEL_DENSITY;
+    if (hw_opt_borderless) {
+        window_flags |= SDL_WINDOW_BORDERLESS;
+    }
+    if (hw_opt_fullscreen) {
+        if (hw_opt_screen_fsw && hw_opt_screen_fsh) {
+            w = hw_opt_screen_fsw;
+            h = hw_opt_screen_fsh;
+            window_flags |= SDL_WINDOW_FULLSCREEN;
+            /* unimpl (SDL_SetWindowFullscreenMode) */
+        } else {
+            window_flags |= SDL_WINDOW_FULLSCREEN;
+        }
+    }
+    /* Create window and renderer contexts. We leave the window position "undefined".
+       If "window_flags" contains the fullscreen flag (see above), then w and h are ignored.
+    */
+    if (!video.window) {
+        log_message("SDL_CreateWindow(0, %i, %i, 0x%x)\n", w, h, window_flags);
+        video.window = SDL_CreateWindow(0, w, h, window_flags);
+        if (!video.window) {
+            log_error("SDL_CreateWindow failed: %s\n", SDL_GetError());
+            return -1;
+        }
+        SDL_SetWindowMinimumSize(video.window, video.actualw, video.actualh);
+        SDL_SetWindowTitle(video.window, "1oom");
+    }
+    if (video.renderer) {
+        SDL_DestroyRenderer(video.renderer);
+        // all associated textures get destroyed
+        video.texture = NULL;
+        video.texture_upscaled = NULL;
+    }
+    if (hw_opt_force_sw) {
+        video.renderer = SDL_CreateRenderer(video.window, "software");
+    } else {
+        video.renderer = SDL_CreateRenderer(video.window, NULL);
+    }
+    if (video.renderer == NULL) {
+        log_error("SDL3: Error creating renderer for screen window: %s\n", SDL_GetError());
+        return -1;
+    }
+    if (!hw_opt_force_sw) {
+        SDL_SetRenderVSync(video.renderer, hw_opt_vsync);
+    }
+/*    if (!SDL_GetRendererInfo(video.renderer, &info)) {
+        log_message("SDL_GetRendererInfo: %s%s%s\n",
+                    info.name,
+                    (info.flags & SDL_RENDERER_ACCELERATED) ? ", accelerated" : "",
+                    (info.flags & SDL_RENDERER_PRESENTVSYNC) ? ", vsync" : "");
+    }
+    <<TODO SDL3>>
+*/
+    /* Important: Set the "logical size" of the rendering context. At the same
+       time this also defines the aspect ratio that is preserved while scaling
+       and stretching the texture into the window.
+       Force integer scales for resolution-independent rendering. */
+    SDL_SetRenderLogicalPresentation(video.renderer, video.actualw, video.actualh,
+                                     hw_opt_int_scaling ? SDL_LOGICAL_PRESENTATION_INTEGER_SCALE : SDL_LOGICAL_PRESENTATION_LETTERBOX);
+
+    /* Blank out the full screen area in case there is any junk in
+       the borders that won't otherwise be overwritten.
+    */
+    SDL_SetRenderDrawColor(video.renderer, 0, 0, 0, 255);
+    SDL_RenderClear(video.renderer);
+    SDL_RenderPresent(video.renderer);
+
+    /* Create the 32-bit RGBA screenbuffer surface. */
+    /* Format of interbuffer must match the screen pixel format because we
+       import the surface data into the texture.
+    */
+    if (video.interbuffer != NULL) {
+        SDL_DestroySurface(video.interbuffer);
+        video.interbuffer = NULL;
+    }
+    if (video.interbuffer == NULL) {
+        video.interbuffer = SDL_CreateSurfaceFrom(video.screen->w, video.screen->h, SDL_PIXELFORMAT_ARGB8888, 0, 0);
+        if (video.interbuffer == NULL) {
+            log_error("SDL_CreateSurfaceFrom(): %s\n", SDL_GetError());
+            return -1;
+        }
+    }
+    if (video.texture != NULL) {
+        SDL_DestroyTexture(video.texture);
+    }
+    /* Create the intermediate texture that the RGBA surface gets loaded into.
+       The SDL_TEXTUREACCESS_STREAMING flag means that this texture's content
+       is going to change frequently.
+    */
+    log_message("SDL_CreateTexture: source, %d, %d\n",
+                video.screen->w, video.screen->h);
+    video.texture = SDL_CreateTexture(video.renderer,
+                                SDL_PIXELFORMAT_ARGB8888,
+                                SDL_TEXTUREACCESS_STREAMING,
+                                video.screen->w, video.screen->h);
+    /* Set the scaling quality for rendering the intermediate texture into
+       the upscaled texture to "nearest", which is gritty and pixelated and
+       resembles software scaling pretty well.
+    */
+    SDL_SetTextureScaleMode(video.texture, SDL_SCALEMODE_NEAREST);
+
+    /* Initially create the upscaled texture for rendering to screen */
+    video_create_upscaled_texture(true);
+    return 0;
+}
+
+/* -------------------------------------------------------------------------- */
+
+unsigned int hw_video_get_window_id(void)
+{
+    return SDL_GetWindowID(video.window);
+}
+
+int hw_video_resize(int w, int h)
+{
+    video.need_resize = true;
+    video.last_resize_time = SDL_GetTicks();
+    return 0;
+}
+
+int hw_video_toggle_fullscreen(void)
+{
+    unsigned int flags = 0;
+
+    // TODO: Consider implementing fullscreen toggle for SDL_WINDOW_FULLSCREEN
+    // (mode-changing) setup. This is hard because we have to shut down and
+    // restart again.
+    if (hw_opt_screen_fsw && hw_opt_screen_fsh) {
+        return 0;
+    }
+    hw_opt_fullscreen = !hw_opt_fullscreen;
+    if (hw_opt_fullscreen) {
+        flags |= SDL_WINDOW_FULLSCREEN;
+    }
+    SDL_SetWindowFullscreen(video.window, flags);
+    if (!hw_opt_fullscreen) {
+        hw_video_resize(0, 0);
+    }
+    return 0;
+}
+
+int hw_video_init(int w, int h)
+{
+    video.window = NULL;
+    video.renderer = NULL;
+    video.screen = NULL;
+    video.interbuffer = NULL;
+    video.texture = NULL;
+    video.texture_upscaled = NULL;
+    video.w_upscale = 0;
+    video.h_upscale = 0;
+    video.screen_visible = true;
+    video.need_resize = false;
+    video.last_resize_time = 0;
+    i_hw_video.setmode = video_sw_set;
+    i_hw_video.render = video_render;
+    i_hw_video.update = video_update;
+    i_hw_video.setpal = video_setpal;
+
+    /* Create the 8-bit paletted surface. */
+    video.screen = SDL_CreateSurfaceFrom(w, h, SDL_PIXELFORMAT_INDEX8, vgabuf_get_front(), w);
+    SDL_CreateSurfacePalette(video.screen);
+    SDL_FillSurfaceRect(video.screen, NULL, 0);
+    video.blit_rect.x = 0;
+    video.blit_rect.y = 0;
+    video.blit_rect.w = w;
+    video.blit_rect.h = h;
+
+    video.actualw = w;
+    if (hw_opt_aspect_ratio_correct) {
+        video.actualh = h * 6 / 5;
+        h = video.actualh;
+    } else {
+        video.actualh = h;
+    }
+    if ((hw_opt_screen_winw != 0) && (hw_opt_screen_winh != 0)) {
+        w = hw_opt_screen_winw;
+        h = hw_opt_screen_winh;
+    }
+    if (i_hw_video.setmode(w, h)) {
+        return -1;
+    }
+    return 0;
+}
+
+void hw_video_shutdown(void)
+{
+    if (video.renderer) {
+        SDL_DestroyRenderer(video.renderer);
+        video.renderer = NULL;
+        video.texture = NULL;
+        video.texture_upscaled = NULL;
+    }
+    if (video.window) {
+        SDL_DestroyWindow(video.window);
+        video.window = NULL;
+    }
+    if (video.screen) {
+        SDL_DestroySurface(video.screen);
+        video.screen = NULL;
+    }
+    if (video.interbuffer) {
+        SDL_DestroySurface(video.interbuffer);
+        video.interbuffer = NULL;
+    }
+}
+
+int hw_icon_set(const uint8_t *data, const uint8_t *pal, int w, int h)
+{
+    SDL_Color color[256];
+    SDL_Surface *icon;
+    Uint8 *p;
+    icon = SDL_CreateSurface(w, h, SDL_PIXELFORMAT_INDEX8);
+    if (!icon) {
+        log_error("Icon: SDL_CreateRGBSurface failed!\n");
+        return -1;
+    }
+    p = (Uint8 *)icon->pixels;
+    for (int y = 0; y < h; ++y) {
+        memcpy(p, data, (size_t)w);
+        data += w;
+        p += icon->pitch;
+    }
+    for (int i = 0; i < 256; ++i) {
+        color[i].r = vgapal_6bit_to_8bit(*pal++);
+        color[i].g = vgapal_6bit_to_8bit(*pal++);
+        color[i].b = vgapal_6bit_to_8bit(*pal++);
+        color[i].a = 255;
+    }
+    color[0].a = 0;
+    {
+        SDL_Palette *sdlpal;
+        sdlpal = SDL_CreatePalette(256);
+        if (!sdlpal) {
+            log_error("Icon: SDL_AllocPalette failed!\n");
+            SDL_DestroySurface(icon);
+            return false;
+        }
+        if (!SDL_SetPaletteColors(sdlpal, color, 0, 256)) {
+            log_error("Icon: SetPaletteColors failed!\n");
+            SDL_DestroyPalette(sdlpal);
+            SDL_DestroySurface(icon);
+            return false;
+        }
+        if (!SDL_SetSurfacePalette(icon, sdlpal)) {
+            log_error("Icon: SetSurfacePalette failed! %s\n", SDL_GetError());
+            SDL_DestroyPalette(sdlpal);
+            SDL_DestroySurface(icon);
+            return false;
+        }
+        SDL_DestroyPalette(sdlpal);
+        sdlpal = NULL;
+    }
+    SDL_SetWindowIcon(video.window, icon);
+    SDL_DestroySurface(icon);
+    icon = NULL;
+    return 0;
+}
+
+/* -------------------------------------------------------------------------- */
+
+bool hw_mouse_enabled = false;
+bool hw_use_mouse = true;
+
+/* -------------------------------------------------------------------------- */
+
+void hw_mouse_grab(void)
+{
+    if (!hw_mouse_enabled) {
+        hw_mouse_enabled = true;
+        SDL_HideCursor();
+        SDL_SetWindowMouseGrab(video.window, hw_opt_relmouse || !hw_opt_nograbmouse);
+        SDL_SetWindowKeyboardGrab(video.window, hw_opt_relmouse || !hw_opt_nograbmouse);
+        SDL_SetWindowRelativeMouseMode(video.window, hw_opt_relmouse);
+    }
+}
+
+void hw_mouse_ungrab(void)
+{
+    if (hw_mouse_enabled) {
+        hw_mouse_enabled = false;
+        SDL_ShowCursor();
+        SDL_SetWindowMouseGrab(video.window, false);
+        SDL_SetWindowKeyboardGrab(video.window, false);
+        SDL_SetWindowRelativeMouseMode(video.window, false);
+    }
+}
+
+void hw_video_position_cursor(int mx, int my)
+{
+    if (!hw_opt_relmouse && hw_mouse_enabled) {
+        float x, y;
+        float xcheck, ycheck;
+        if (hw_opt_aspect_ratio_correct) {
+            my = my * 6 / 5;
+        }
+        SDL_RenderCoordinatesToWindow(video.renderer, mx, my, &x, &y);
+        SDL_RenderCoordinatesFromWindow(video.renderer, x, y, &xcheck, &ycheck);
+        if (mx > xcheck) {
+            ++x;
+        }
+        if (my > ycheck) {
+            ++y;
+        }
+        SDL_WarpMouseInWindow(video.window, x, y);
+    }
+}

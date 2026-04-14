@@ -12,6 +12,7 @@ The code is divided into the following directories:
  *     sdl/     - libSDL
  *       1/     - libSDL 1.2.x
  *       2/     - libSDL 2.x
+ *       3/     - libSDL 3.x
  *     alleg/   - Allegro
  *       4/     - Allegro 4.x
  *     nop/     - dummy HW for tools
