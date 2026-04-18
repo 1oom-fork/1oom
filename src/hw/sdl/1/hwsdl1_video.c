@@ -11,7 +11,6 @@
 #include "hw.h"
 #include "hw_internal.h"
 #include "hwsdl_video.h"
-#include "hwsdl_mouse.h"
 #include "hwsdl_opt.h"
 #include "lib.h"
 #include "log.h"
@@ -310,5 +309,29 @@ void hw_video_shutdown(void)
         video.source->format->palette = video.unused;
         SDL_FreeSurface(video.source);
         video.source = NULL;
+    }
+}
+
+/* -------------------------------------------------------------------------- */
+
+bool hw_mouse_enabled = false;
+
+/* -------------------------------------------------------------------------- */
+
+void hw_mouse_grab(void)
+{
+    if (!hw_mouse_enabled) {
+        hw_mouse_enabled = true;
+        SDL_ShowCursor(SDL_DISABLE);
+        SDL_WM_GrabInput(SDL_GRAB_ON);
+    }
+}
+
+void hw_mouse_ungrab(void)
+{
+    if (hw_mouse_enabled) {
+        hw_mouse_enabled = false;
+        SDL_ShowCursor(SDL_ENABLE);
+        SDL_WM_GrabInput(SDL_GRAB_OFF);
     }
 }
