@@ -23,11 +23,14 @@
 
 #ifdef HAVE_SDL3MIXER
 
+MIX_Mixer *mixer;
+SDL_PropertiesID props;
+
 static bool audio_initialized = false;
 static int audio_rate = 0;
 
 struct sfx_s {
-    Mix_Chunk *chunk;
+    MIX_Audio *chunk;
 };
 static int sfx_num = 0;
 static struct sfx_s *sfxtbl = NULL;
@@ -35,8 +38,7 @@ static int sfx_playing;
 
 struct mus_s {
     mus_type_t type;
-    Mix_Music *music;
-    Mix_MusicType sdlmtype;
+    MIX_Audio *music;
     uint8_t *buf;   /* WAV music files need the data to be kept */
     bool loops;
 };
@@ -46,68 +48,40 @@ static int mus_playing;
 
 /* -------------------------------------------------------------------------- */
 
-static int get_slice_size(void)
-{
-    int limit;
-    int n;
-    limit = (opt_audiorate * opt_audioslice_ms) / 1000;
-    /* Try all powers of two, not exceeding the limit. */
-    for (n = 0; ; ++n) {
-        /* 2^n <= limit < 2^n+1 ? */
-        if ((1 << (n + 1)) > limit) {
-            return (1 << n);
-        }
-    }
-    /* Should never happen? */
-    return 1024;
-}
-
-static Mix_MusicType mus_type_to_sdlm(mus_type_t type)
-{
-    switch (type) {
-    case MUS_TYPE_LBXXMID:
-    case MUS_TYPE_MIDI:
-        return MUS_MID;
-    case MUS_TYPE_WAV:
-        return MUS_WAV;
-    case MUS_TYPE_OGG:
-        return MUS_OGG;
-    case MUS_TYPE_FLAC:
-        return MUS_FLAC;
-    default:
-        return MUS_NONE;
-    }
-}
-
-/* -------------------------------------------------------------------------- */
-
 int hw_audio_init(void)
 {
     if (opt_audio_enabled) {
-        int mixer_channels;
-        uint16_t mixer_format;
-        int slice = get_slice_size();
-        if (Mix_OpenAudio(opt_audiorate, AUDIO_S16SYS, 2, slice) < 0) {
-            log_error("initialising SDL_mixer (%i Hz, slice %i): %s\n", opt_audiorate, slice, Mix_GetError());
+        SDL_AudioSpec spec;
+        spec.format = SDL_AUDIO_S16;
+        spec.channels = 2;
+        spec.freq = opt_audiorate;
+        if (!MIX_Init()) {
+            log_error("MIX_Init() failed: %s\n", SDL_GetError());
             return -1;
         }
-        if (Mix_QuerySpec(&audio_rate, &mixer_format, &mixer_channels) == 0) {
-            log_error("Failed to read SDL_mixer query spec");
-            Mix_CloseAudio();
+        mixer = MIX_CreateMixerDevice(SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, &spec);
+        if (!mixer) {
+            log_error("initialising SDL_mixer (%i Hz): %s\n", opt_audiorate, SDL_GetError());
             return -1;
         }
-        if (mixer_channels != 2) {
-            log_warning("SDL_mixer gave %i output channels instead of 2\n", mixer_channels);
+        props = MIX_GetMixerProperties(mixer);
+        if (!MIX_GetMixerFormat(mixer, &spec)) {
+            log_error("Failed to read MIX_Mixer properties\n");
+            MIX_DestroyMixer(mixer);
+            return -1;
+        }
+        audio_rate = spec.freq;
+        if (spec.channels != 2) {
+            log_warning("SDL_mixer gave %i output channels instead of 2\n", spec.channels);
         }
         if (audio_rate != opt_audiorate) {
-            log_warning("SDL_mixer gave %i Hz instead of %i Hz\n", audio_rate, opt_audiorate);
+            log_warning("SDL_mixer gave %i Hz instead of %i Hz\n", spec.freq, opt_audiorate);
         }
-        Mix_AllocateChannels(1);
-        SDL_PauseAudio(0);
+        SDL_ResumeAudioDevice(0);
         sfx_playing = -1;
         mus_playing = -1;
-        log_message("SDLA: init %i Hz slice %i\n", audio_rate, slice);
-        log_message("SDLA: soundfonts '%s'\n", Mix_GetSoundFonts());
+        log_message("SDLA: init %i Hz\n", audio_rate);
+        log_message("SDLA: soundfonts '%s'\n", SDL_GetStringProperty(props, "SDL_MIXER_SOUNDFONTS_STRING", NULL));
         audio_initialized = true;
         {
             int volume;
@@ -126,7 +100,8 @@ void hw_audio_shutdown(void)
 {
     if (audio_initialized) {
         log_message("SDLA: shutdown\n");
-        Mix_CloseAudio();
+        MIX_DestroyMixer(mixer);
+        MIX_Quit();
         SDL_QuitSubSystem(SDL_INIT_AUDIO);
         for (int i = 0; i < sfx_num; ++i) {
             hw_audio_sfx_release(i);
@@ -140,7 +115,7 @@ void hw_audio_shutdown(void)
 int hw_audio_set_sdlmixer_sf(const char *path)
 {
     log_message("SDLA: setting soundfont to '%s'\n", path);
-    if (Mix_SetSoundFonts(path) < 0) {
+    if (!SDL_SetStringProperty(props, "SDL_mixer.decoder.fluidsynth.soundfont_path", path)) {
         log_error("SDLA: failed to set soundfonts to '%s'\n", path);
         return -1;
     }
@@ -203,23 +178,20 @@ int hw_audio_music_init(int mus_index, const uint8_t *data_in, uint32_t len_in)
         break;
     }
 
-    m->sdlmtype = mus_type_to_sdlm(m->type);
-
     if (m->type == MUS_TYPE_UNKNOWN) {
         log_error("SDLA: failed to init music %i\n", mus_index);
         return -1;
     }
 
     {
-        SDL_RWops *rw = SDL_RWFromConstMem(data, len);
-        m->music = Mix_LoadMUSType_RW(rw, m->sdlmtype, 0);
-        SDL_RWclose(rw);
+        SDL_IOStream *rw = SDL_IOFromConstMem(data, len);
+        m->music = MIX_LoadAudio_IO(mixer, rw, 1, 0);
+        SDL_CloseIO(rw);
     }
     lib_free(buf);
     if (!m->music) {
-        log_error("SDLA: Mix_LoadMUSType_RW failed on music %i (type %i): %s\n", mus_index, m->type, Mix_GetError());
+        log_error("SDLA: MIX_LoadAudio_IO failed on music %i: %s\n", mus_index, SDL_GetError());
         m->type = MUS_TYPE_UNKNOWN;
-        m->sdlmtype = MUS_NONE;
         return -1;
     }
 
@@ -233,7 +205,7 @@ void hw_audio_music_release(int mus_index)
             hw_audio_music_stop();
         }
         if (mustbl[mus_index].music) {
-            Mix_FreeMusic(mustbl[mus_index].music);
+            MIX_DestroyAudio(mustbl[mus_index].music);
             mustbl[mus_index].music = NULL;
         }
         if (mustbl[mus_index].buf) {
@@ -241,40 +213,39 @@ void hw_audio_music_release(int mus_index)
             mustbl[mus_index].buf = NULL;
         }
         mustbl[mus_index].type = MUS_TYPE_UNKNOWN;
-        mustbl[mus_index].sdlmtype = MUS_NONE;
     }
 }
 
 void hw_audio_music_play(int mus_index)
 {
     if (audio_initialized && opt_music_enabled && (mus_index < mus_num)) {
-        if (Mix_PlayingMusic()) {
+        /*if (Mix_PlayingMusic()) {
             Mix_HaltMusic();
-        }
-        Mix_PlayMusic(mustbl[mus_index].music, mustbl[mus_index].loops ? -1 : 0);
-        Mix_VolumeMusic(opt_music_volume);
+        }TODO Tracks*/
+        MIX_PlayAudio(mixer, mustbl[mus_index].music/*, mustbl[mus_index].loops ? -1 : 0*/);
+        /*Mix_VolumeMusic(opt_music_volume);*/
         mus_playing = mus_index;
     }
 }
 
 void hw_audio_music_fadeout(void)
 {
-    if (audio_initialized && opt_music_enabled && Mix_PlayingMusic()) {
+    /*if (audio_initialized && opt_music_enabled && Mix_PlayingMusic()) {
         Mix_FadeOutMusic(1000);
-    }
+    }TODO tracks*/
 }
 
 void hw_audio_music_stop(void)
 {
-    if (audio_initialized && opt_music_enabled) {
+    /*if (audio_initialized && opt_music_enabled) {
         Mix_HaltMusic();
         mus_playing = -1;
-    }
+    }TODO tracks*/
 }
 
 void hw_audio_music_volume(int volume)
 {
-    if (volume < 0) {
+    /*if (volume < 0) {
         volume = 0;
     }
     if (volume > 128) {
@@ -286,7 +257,7 @@ void hw_audio_music_volume(int volume)
     if (opt_music_volume != volume) {
         log_message("SDLA: music volume %i\n", volume);
         opt_music_volume = volume;
-    }
+    }TODO tracks*/
 }
 
 int hw_audio_sfx_init(int sfx_index, const uint8_t *data_in, uint32_t len_in)
@@ -312,7 +283,7 @@ int hw_audio_sfx_init(int sfx_index, const uint8_t *data_in, uint32_t len_in)
     }
 
     if (fmt_sfx_convert(data_in, len_in, &data, &len, NULL, audio_rate, true)) {
-        sfxtbl[sfx_index].chunk = Mix_LoadWAV_RW(SDL_RWFromMem(data, len), 0);
+        sfxtbl[sfx_index].chunk = MIX_LoadAudio_IO(mixer, SDL_IOFromMem(data, len), 1, 1);
         lib_free(data);
     } else {
         log_error("SDLA: failed to init sound %i\n", sfx_index);
@@ -328,7 +299,7 @@ void hw_audio_sfx_release(int sfx_index)
             if (sfx_playing == sfx_index) {
                 hw_audio_sfx_stop();
             }
-            Mix_FreeChunk(sfxtbl[sfx_index].chunk);
+            MIX_DestroyAudio(sfxtbl[sfx_index].chunk);
             sfxtbl[sfx_index].chunk = NULL;
         }
     }
@@ -337,22 +308,22 @@ void hw_audio_sfx_release(int sfx_index)
 void hw_audio_sfx_play(int sfx_index)
 {
     if (audio_initialized && opt_sfx_enabled && (sfx_index < sfx_num)) {
-        Mix_PlayChannel(0, sfxtbl[sfx_index].chunk, 0);
+        MIX_PlayAudio(mixer, sfxtbl[sfx_index].chunk);
         sfx_playing = sfx_index;
     }
 }
 
 void hw_audio_sfx_stop(void)
 {
-    if (audio_initialized && Mix_Playing(0)) {
+    /*if (audio_initialized && Mix_Playing(0)) {
         Mix_HaltChannel(0);
         sfx_playing = -1;
-    }
+    }TODO tracks*/
 }
 
 void hw_audio_sfx_volume(int volume)
 {
-    if (volume < 0) {
+    /*if (volume < 0) {
         volume = 0;
     }
     if (volume > 128) {
@@ -364,7 +335,7 @@ void hw_audio_sfx_volume(int volume)
     if (opt_sfx_volume != volume) {
         log_message("SDLA: sfx volume %i\n", volume);
         opt_sfx_volume = volume;
-    }
+    }TODO tracks */
 }
 
 #else /* !HAVE_SDL3MIXER */
