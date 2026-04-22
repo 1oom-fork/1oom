@@ -141,6 +141,16 @@ static void video_create_upscaled_texture(bool force)
 
 /* -------------------------------------------------------------------------- */
 
+static int video_set_scale(int scale)
+{
+    /* Important: Set the "logical size" of the rendering context. At the same
+       time this also defines the aspect ratio that is preserved while scaling
+       and stretching the texture into the window.
+    */
+    SDL_RenderSetLogicalSize(video.renderer, video.actualw * scale, video.actualh * scale);
+    return scale;
+}
+
 static void video_render(void)
 {
     if (video.screen->pixels != vgabuf_get_front()) {
@@ -365,11 +375,7 @@ static int video_sw_set(int w, int h)
                     (info.flags & SDL_RENDERER_ACCELERATED) ? ", accelerated" : "",
                     (info.flags & SDL_RENDERER_PRESENTVSYNC) ? ", vsync" : "");
     }
-    /* Important: Set the "logical size" of the rendering context. At the same
-       time this also defines the aspect ratio that is preserved while scaling
-       and stretching the texture into the window.
-    */
-    SDL_RenderSetLogicalSize(video.renderer, video.actualw, video.actualh);
+    video_set_scale(1);
 
     /* Force integer scales for resolution-independent rendering. */
 #if SDL_VERSION_ATLEAST(2, 0, 5)
@@ -466,6 +472,7 @@ int hw_video_init(int w, int h)
     video.need_resize = false;
     video.last_resize_time = 0;
     i_hw_video.setmode = video_sw_set;
+    i_hw_video.setscale = video_set_scale;
     i_hw_video.render = video_render;
     i_hw_video.update = video_update;
     i_hw_video.setpal = video_setpal;
