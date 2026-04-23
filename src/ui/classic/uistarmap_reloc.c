@@ -31,12 +31,12 @@ static void ui_starmap_reloc_draw_cb(void *vptr)
     char buf[0x40];
     int x0, y0;
     ui_starmap_draw_basic(d);
-    x0 = (pf->x - ui_data.starmap.x) * 2 + 8;
-    y0 = (pf->y - ui_data.starmap.y) * 2 + 8;
+    x0 = ui_starmap_x_to_screen(pf->x) + 2;
+    y0 = ui_starmap_y_to_screen(pf->y) + 2;
     if (pf->reloc != d->from) {
         int x1, y1;
-        x1 = (pt->x - ui_data.starmap.x) * 2 + 14;
-        y1 = (pt->y - ui_data.starmap.y) * 2 + 14;
+        x1 = ui_starmap_x_to_screen(pt->x) + 8;
+        y1 = ui_starmap_y_to_screen(pt->y) + 8;
         ui_starmap_draw_line_ctbl(x0 + 6, y0 + 6, x1, y1, colortbl_line_green, 5, ui_data.starmap.line_anim_phase);
     }
     ui_starmap_draw_frame(x0, y0, ui_data.gfx.starmap.planbord);

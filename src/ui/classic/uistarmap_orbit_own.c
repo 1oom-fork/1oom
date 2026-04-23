@@ -45,8 +45,8 @@ static void ui_starmap_orbit_own_draw_cb(void *vptr)
     ui_starmap_draw_basic(d);
     {
         int x, y;
-        x = (pf->x - ui_data.starmap.x) * 2 + 23;
-        y = (pf->y - ui_data.starmap.y) * 2 + 5;
+        x = ui_starmap_x_to_screen(pf->x) + 17;
+        y = ui_starmap_y_to_screen(pf->y) - 1;
         ui_starmap_draw_frame(x, y, ui_data.gfx.starmap.shipbord);
     }
     vgabuf_fill_rect(225, 8, 314, 192, 7);
@@ -63,11 +63,11 @@ static void ui_starmap_orbit_own_draw_cb(void *vptr)
         int x0, y0, x1, y1;
         const uint8_t *ctbl;
         uint8_t *gfx;
-        x1 = (pt->x - ui_data.starmap.x) * 2 + 8;
-        y1 = (pt->y - ui_data.starmap.y) * 2 + 8;
+        x1 = ui_starmap_x_to_screen(pt->x) + 2;
+        y1 = ui_starmap_y_to_screen(pt->y) + 2;
         ui_starmap_draw_frame(x1, y1, ui_data.gfx.starmap.planbord);
-        x0 = (pf->x - ui_data.starmap.x) * 2 + 26;
-        y0 = (pf->y - ui_data.starmap.y) * 2 + 8;
+        x0 = ui_starmap_x_to_screen(pf->x) + 20;
+        y0 = ui_starmap_y_to_screen(pf->y) + 2;
         /* FIXME update outside draw */
         if (ui_starmap_orbit_own_in_frange(d)) {
             ctbl = colortbl_line_green;
