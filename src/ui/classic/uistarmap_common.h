@@ -3,6 +3,7 @@
 
 #include "game.h"
 #include "types.h"
+#include "uidefs.h"
 #include "uidraw.h"
 #include "uiobj.h"
 
@@ -156,6 +157,16 @@ extern const uint8_t colortbl_line_reloc[5];
 extern const uint8_t colortbl_line_green[5];
 
 struct gfx_aux_s;
+
+static inline int ui_starmap_x_to_screen(uint16_t x)
+{
+    return (x - ui_data.starmap.x) * 2 + 6;
+}
+
+static inline int ui_starmap_y_to_screen(uint16_t y)
+{
+    return (y - ui_data.starmap.y) * 2 + 6;
+}
 
 extern void ui_starmap_set_scroll_pos(const struct game_s *g, int x, int y);
 extern void ui_starmap_fill_oi_ctrl(struct starmap_data_s *d);

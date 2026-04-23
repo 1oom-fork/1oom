@@ -43,8 +43,8 @@ static void ui_starmap_trans_draw_cb(void *vptr)
     int x0, y0, trans_max = pf->pop / 2;
     uiobj_set_help_id(17);
     ui_starmap_draw_basic(d);
-    x0 = (pf->x - ui_data.starmap.x) * 2 + 8;
-    y0 = (pf->y - ui_data.starmap.y) * 2 + 8;
+    x0 = ui_starmap_x_to_screen(pf->x) + 2;
+    y0 = ui_starmap_y_to_screen(pf->y) + 2;
     if (pt->owner == d->api) {
         lbxgfx_draw_frame(222, 80, ui_data.gfx.starmap.relocate);
         if (pt->unrest == PLANET_UNREST_REBELLION) {
@@ -69,8 +69,8 @@ static void ui_starmap_trans_draw_cb(void *vptr)
     if (d->from != g->planet_focus_i[d->api]) {
         const uint8_t *ctbl;
         int x1, y1;
-        x1 = (pt->x - ui_data.starmap.x) * 2 + 14;
-        y1 = (pt->y - ui_data.starmap.y) * 2 + 14;
+        x1 = ui_starmap_x_to_screen(pt->x) + 8;
+        y1 = ui_starmap_y_to_screen(pt->y) + 8;
         if (0
           || (!d->tr.other)
           || (pt->within_frange[d->api] != 1)
