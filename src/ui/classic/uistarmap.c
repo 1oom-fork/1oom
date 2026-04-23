@@ -644,8 +644,8 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             ui_starmap_fill_oi_tbls(&d);
             {
                 int x0, y0;
-                x0 = (p->x - ui_data.starmap.x) * 2 + 6;
-                y0 = (p->y - ui_data.starmap.y) * 2 + 6;
+                x0 = ui_starmap_x_to_screen(p->x);
+                y0 = ui_starmap_y_to_screen(p->y);
                 oi_starview1 = uiobj_add_mousearea_limited(x0, y0, x0 + 16, y0 + 16, MOO_KEY_UNKNOWN, -1);
             }
             ui_starmap_fill_oi_tbl_stars(&d);
@@ -654,8 +654,8 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             ui_starmap_fill_oi_ctrl(&d);
             if (1) {
                 int x0, y0, x1, y1;
-                x0 = (p->x - ui_data.starmap.x) * 2 + 6;
-                y0 = (p->y - ui_data.starmap.y) * 2 + 6;
+                x0 = ui_starmap_x_to_screen(p->x);
+                y0 = ui_starmap_y_to_screen(p->y);
                 x1 = x0 + 16;
                 y1 = y0 + 16;
                 ui_cursor_area_tbl[7].x0 = x0;
