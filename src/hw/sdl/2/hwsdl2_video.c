@@ -24,12 +24,7 @@
 
 #define RESIZE_DELAY 500
 
-static struct sdl_video_s {
-    /* These are (1) the window (or the full screen) that our game is rendered to
-       and (2) the renderer that scales the texture (see below) into this window.
-    */
-    SDL_Window *window;
-    SDL_Renderer *renderer;
+struct sdl_video_overlay_s {
     /* These are (1) the 320x200x8 paletted buffer that we copy the active buffer to,
        (2) the 320x200x32 RGBA intermediate buffer that we blit the former buffer to,
        (3) the intermediate 320x200 texture that we load the RGBA buffer to and that
@@ -37,12 +32,22 @@ static struct sdl_video_s {
        UPSCALE using "nearest" scaling and which in turn is finally rendered to screen
        using "linear" scaling.
     */
-    SDL_Surface *screen;
+    SDL_Surface *buffer;
     SDL_Surface *interbuffer;
     SDL_Texture *texture;
     SDL_Texture *texture_upscaled;
-
     SDL_Rect blit_rect;
+    bool filter;
+    bool transparent;
+};
+
+static struct sdl_video_s {
+    /* These are (1) the window (or the full screen) that our game is rendered to
+       and (2) the renderer that scales the texture (see below) into this window.
+    */
+    SDL_Window *window;
+    SDL_Renderer *renderer;
+    struct sdl_video_overlay_s screen;
 
     /* SDL display number on which to run. */
     int display;
@@ -75,13 +80,13 @@ static void video_create_upscaled_texture(bool force)
         log_fatal_and_die("SDL2: Failed to get renderer output size: %s\n", SDL_GetError());
     }
 
-    src_w = video.screen->w;
-    src_h = video.screen->h;
+    src_w = video.screen.buffer->w;
+    src_h = video.screen.buffer->h;
 
     if (!hw_opt_smooth_pixel_scaling || ((w % src_w == 0) && (h % src_h == 0))) {
-        if (video.texture_upscaled) {
-            SDL_DestroyTexture(video.texture_upscaled);
-            video.texture_upscaled = NULL;
+        if (video.screen.texture_upscaled) {
+            SDL_DestroyTexture(video.screen.texture_upscaled);
+            video.screen.texture_upscaled = NULL;
         }
         return;
     }
@@ -118,8 +123,8 @@ static void video_create_upscaled_texture(bool force)
     video.h_upscale = h_upscale;
     video.w_upscale = w_upscale;
 
-    if (video.texture_upscaled) {
-        SDL_DestroyTexture(video.texture_upscaled);
+    if (video.screen.texture_upscaled) {
+        SDL_DestroyTexture(video.screen.texture_upscaled);
     }
 
     /* Set the scaling quality for rendering the upscaled texture to "linear",
@@ -130,13 +135,78 @@ static void video_create_upscaled_texture(bool force)
 
     log_message("SDL_CreateTexture: upscaled, %d, %d\n",
                 w_upscale * src_w, h_upscale * src_h);
-    video.texture_upscaled = SDL_CreateTexture(video.renderer,
+    video.screen.texture_upscaled = SDL_CreateTexture(video.renderer,
                                 SDL_PIXELFORMAT_ARGB8888,
                                 SDL_TEXTUREACCESS_TARGET,
                                 w_upscale * src_w,
                                 h_upscale * src_h
                              );
+}
 
+static void sdl_video_destroy_overlay(struct sdl_video_overlay_s *ovr)
+{
+    if (ovr->texture != NULL) {
+        SDL_DestroyTexture(ovr->texture);
+        ovr->texture = NULL;
+    }
+    if (ovr->buffer != NULL) {
+        SDL_FreeSurface(ovr->buffer);
+        ovr->buffer = NULL;
+    }
+    if (ovr->interbuffer != NULL) {
+        SDL_FreeSurface(ovr->interbuffer);
+        ovr->interbuffer = NULL;
+    }
+}
+
+static void sdl_video_create_overlay(struct sdl_video_overlay_s *ovr, void *buf, int w, int h, SDL_Palette *pal, bool filter, bool transparent)
+{
+    sdl_video_destroy_overlay(ovr);
+    /* Create the 8-bit paletted surface. */
+    ovr->buffer = SDL_CreateRGBSurfaceFrom(buf, w, h, 8, w, 0, 0, 0, 0);
+    if (pal) {
+        SDL_SetSurfacePalette(ovr->buffer, pal);
+    }
+    /* Create the 32-bit RGBA screenbuffer surface. */
+    /* Format of interbuffer must match the screen pixel format because we
+       import the surface data into the texture.
+    */
+    ovr->interbuffer = SDL_CreateRGBSurfaceWithFormatFrom(0, w, h, 0, 0, SDL_PIXELFORMAT_ARGB8888);
+    ovr->blit_rect.x = 0;
+    ovr->blit_rect.y = 0;
+    ovr->blit_rect.w = w;
+    ovr->blit_rect.h = h;
+    ovr->filter = filter;
+    ovr->transparent = transparent;
+}
+
+static void sdl_video_update_overlay(struct sdl_video_overlay_s *ovr)
+{
+    if ((ovr->buffer == NULL) || (ovr->interbuffer == NULL)) {
+        return;
+    }
+    if (ovr->texture == NULL) {
+        /* Set the scaling quality for rendering the intermediate texture into
+           the upscaled texture to "nearest", which is gritty and pixelated and
+           resembles software scaling pretty well.
+        */
+        SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, ovr->filter ? "linear" : "nearest");
+        /* Create the intermediate texture that the RGBA surface gets loaded into.
+           The SDL_TEXTUREACCESS_STREAMING flag means that this texture's content
+           is going to change frequently.
+        */
+        ovr->texture = SDL_CreateTexture(video.renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, ovr->buffer->w, ovr->buffer->h);
+        if (ovr->transparent) {
+            SDL_SetTextureBlendMode(ovr->texture, SDL_BLENDMODE_BLEND);
+        }
+    }
+    /* Blit from the paletted 8-bit screen buffer to the intermediate
+       32-bit RGBA buffer and update the intermediate texture with the
+       contents of the RGBA buffer.
+    */
+    SDL_LockTexture(ovr->texture, &ovr->blit_rect, &ovr->interbuffer->pixels, &ovr->interbuffer->pitch);
+    SDL_LowerBlit(ovr->buffer, &ovr->blit_rect, ovr->interbuffer, &ovr->blit_rect);
+    SDL_UnlockTexture(ovr->texture);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -153,8 +223,8 @@ static int video_set_scale(int scale)
 
 static void video_render(void)
 {
-    if (video.screen->pixels != vgabuf_get_front()) {
-        video.screen->pixels = vgabuf_get_front();
+    if (video.screen.buffer->pixels != vgabuf_get_front()) {
+        video.screen.buffer->pixels = vgabuf_get_front();
         video.palette_to_set = true;
     }
 }
@@ -211,35 +281,29 @@ static void video_update(void)
     }
 
     if (video.palette_to_set) {
-        SDL_SetPaletteColors(video.screen->format->palette, video.color, 0, 256);
+        SDL_SetPaletteColors(video.screen.buffer->format->palette, video.color, 0, 256);
         video.palette_to_set = false;
     }
 
-    /* Blit from the paletted 8-bit screen buffer to the intermediate
-       32-bit RGBA buffer and update the intermediate texture with the
-       contents of the RGBA buffer.
-    */
-    SDL_LockTexture(video.texture, &video.blit_rect, &video.interbuffer->pixels, &video.interbuffer->pitch);
-    SDL_LowerBlit(video.screen, &video.blit_rect, video.interbuffer, &video.blit_rect);
-    SDL_UnlockTexture(video.texture);
+    sdl_video_update_overlay(&video.screen);
 
     /* Make sure the pillarboxes are kept clear each frame. */
     SDL_RenderClear(video.renderer);
 
-    if (hw_opt_smooth_pixel_scaling && (video.texture_upscaled != NULL)) {
+    if (hw_opt_smooth_pixel_scaling && (video.screen.texture_upscaled != NULL)) {
         /* Render this intermediate texture into the upscaled texture
            using "nearest" integer scaling.
         */
-        SDL_SetRenderTarget(video.renderer, video.texture_upscaled);
-        SDL_RenderCopy(video.renderer, video.texture, NULL, NULL);
+        SDL_SetRenderTarget(video.renderer, video.screen.texture_upscaled);
+        SDL_RenderCopy(video.renderer, video.screen.texture, NULL, NULL);
 
         /* Finally, render this upscaled texture to screen using linear scaling. */
         SDL_SetRenderTarget(video.renderer, NULL);
-        SDL_RenderCopy(video.renderer, video.texture_upscaled, NULL, NULL);
+        SDL_RenderCopy(video.renderer, video.screen.texture_upscaled, NULL, NULL);
     } else {
         /* Render this intermediate texture directly to screen using "nearest" scaling. */
         SDL_SetRenderTarget(video.renderer, NULL);
-        SDL_RenderCopy(video.renderer, video.texture, NULL, NULL);
+        SDL_RenderCopy(video.renderer, video.screen.texture, NULL, NULL);
     }
 
     /* Draw! */
@@ -254,6 +318,7 @@ static void video_setpal(const uint8_t *pal, int first, int num)
         video.color[i].b = vgapal_6bit_to_8bit(*pal++);
         video.color[i].a = 255;
     }
+    video.color[0].a = 0;
     video.palette_to_set = true;
     video_update();
 }
@@ -361,8 +426,8 @@ static int video_sw_set(int w, int h)
     if (video.renderer) {
         SDL_DestroyRenderer(video.renderer);
         // all associated textures get destroyed
-        video.texture = NULL;
-        video.texture_upscaled = NULL;
+        video.screen.texture = NULL;
+        video.screen.texture_upscaled = NULL;
     }
     video.renderer = SDL_CreateRenderer(video.window, -1, renderer_flags);
     if (video.renderer == NULL) {
@@ -388,34 +453,6 @@ static int video_sw_set(int w, int h)
     SDL_SetRenderDrawColor(video.renderer, 0, 0, 0, 255);
     SDL_RenderClear(video.renderer);
     SDL_RenderPresent(video.renderer);
-
-    /* Create the 32-bit RGBA screenbuffer surface. */
-    /* Format of interbuffer must match the screen pixel format because we
-       import the surface data into the texture.
-    */
-    if (video.interbuffer != NULL) {
-        SDL_FreeSurface(video.interbuffer);
-        video.interbuffer = NULL;
-    }
-    if (video.interbuffer == NULL) {
-        video.interbuffer = SDL_CreateRGBSurfaceWithFormatFrom(0, video.screen->w, video.screen->h, 0, 0, SDL_PIXELFORMAT_ARGB8888);
-    }
-    if (video.texture != NULL) {
-        SDL_DestroyTexture(video.texture);
-    }
-    /* Set the scaling quality for rendering the intermediate texture into
-       the upscaled texture to "nearest", which is gritty and pixelated and
-       resembles software scaling pretty well.
-    */
-    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "nearest");
-    /* Create the intermediate texture that the RGBA surface gets loaded into.
-       The SDL_TEXTUREACCESS_STREAMING flag means that this texture's content
-       is going to change frequently.
-    */
-    video.texture = SDL_CreateTexture(video.renderer,
-                                SDL_PIXELFORMAT_ARGB8888,
-                                SDL_TEXTUREACCESS_STREAMING,
-                                video.screen->w, video.screen->h);
 
     /* Initially create the upscaled texture for rendering to screen */
     video_create_upscaled_texture(true);
@@ -461,10 +498,6 @@ int hw_video_init(int w, int h)
 {
     video.window = NULL;
     video.renderer = NULL;
-    video.screen = NULL;
-    video.interbuffer = NULL;
-    video.texture = NULL;
-    video.texture_upscaled = NULL;
     video.display = 0;
     video.w_upscale = 0;
     video.h_upscale = 0;
@@ -477,13 +510,7 @@ int hw_video_init(int w, int h)
     i_hw_video.update = video_update;
     i_hw_video.setpal = video_setpal;
 
-    /* Create the 8-bit paletted surface. */
-    video.screen = SDL_CreateRGBSurfaceFrom(vgabuf_get_front(), w, h, 8, w, 0, 0, 0, 0);
-    SDL_FillRect(video.screen, NULL, 0);
-    video.blit_rect.x = 0;
-    video.blit_rect.y = 0;
-    video.blit_rect.w = w;
-    video.blit_rect.h = h;
+    sdl_video_create_overlay(&video.screen, vgabuf_get_front(), w, h, NULL, false, false);
 
     video.actualw = w;
     if (hw_opt_aspect_ratio_correct) {
@@ -504,23 +531,15 @@ int hw_video_init(int w, int h)
 
 void hw_video_shutdown(void)
 {
+    sdl_video_destroy_overlay(&video.screen);
     if (video.renderer) {
         SDL_DestroyRenderer(video.renderer);
         video.renderer = NULL;
-        video.texture = NULL;
-        video.texture_upscaled = NULL;
+        video.screen.texture_upscaled = NULL;
     }
     if (video.window) {
         SDL_DestroyWindow(video.window);
         video.window = NULL;
-    }
-    if (video.screen) {
-        SDL_FreeSurface(video.screen);
-        video.screen = NULL;
-    }
-    if (video.interbuffer) {
-        SDL_FreeSurface(video.interbuffer);
-        video.interbuffer = NULL;
     }
 }
 
