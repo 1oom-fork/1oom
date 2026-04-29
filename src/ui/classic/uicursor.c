@@ -163,7 +163,7 @@ void ui_cursor_update_gfx_i(int mx, int my)
     ui_cursor_gfx_i = area->cursor_i;
 }
 
-void ui_cursor_store_bg1(int mx, int my)
+void ui_cursor_store_bg_back(int mx, int my)
 {
     if ((ui_cursor_gfx_i == 0) && (ui_cursor_gfx_i_old == 0)) {
         if (cursor_i0_bg_stored) {
@@ -185,7 +185,7 @@ void ui_cursor_store_bg_front(int mx, int my)
     ui_cursor_store_bg(mx, my, vgabuf_get_front(), &cursor_bg_front);
 }
 
-void ui_cursor_draw1(int mx, int my)
+void ui_cursor_draw_back(int mx, int my)
 {
     if (ui_cursor_gfx_i != 0) {
         ui_cursor_draw(mx, my, vgabuf_get_back());
@@ -206,7 +206,7 @@ void ui_cursor_erase_front(void)
     }
 }
 
-void ui_cursor_erase1(void)
+void ui_cursor_erase_back(void)
 {
     if (ui_cursor_gfx_i != 0) {
         ui_cursor_erase(vgabuf_get_back(), &cursor_bg_back);
