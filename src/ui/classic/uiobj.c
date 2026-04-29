@@ -1582,8 +1582,8 @@ void uiobj_finish_frame(void)
     my = mouse_get_y();
     uiobj_handle_objects();
     ui_cursor_update_gfx_i(mx, my);
-    ui_cursor_store_bg1(mx, my);
-    ui_cursor_draw1(mx, my);
+    ui_cursor_store_bg_back(mx, my);
+    ui_cursor_draw_back(mx, my);
     vgabuf_flip();
 #if 1
     /* FIXME HACK just erase it right after draw... */
