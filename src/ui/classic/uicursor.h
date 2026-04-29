@@ -28,7 +28,7 @@ extern void ui_cursor_draw1(int mx, int my);
 extern void ui_cursor_draw0(int mx, int my);
 extern void ui_cursor_erase0(void);
 extern void ui_cursor_erase1(void);
-extern void ui_cursor_copy_bg1_to_bg0(void);
+extern void ui_cursor_copy_bg_back_to_bg_front(void);
 extern void ui_cursor_refresh(int mx, int my);
 
 #endif
