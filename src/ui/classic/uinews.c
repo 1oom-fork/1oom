@@ -181,7 +181,7 @@ static void ui_news_fade_finish(void)
     ui_cursor_draw1(mx, my);
     vgabuf_flip();
     ui_cursor_erase0();
-    ui_cursor_copy_bg1_to_bg0();
+    ui_cursor_copy_bg_back_to_bg_front();
 }
 
 static void ui_news_fade(void)
