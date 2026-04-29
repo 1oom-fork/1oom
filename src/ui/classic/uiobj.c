@@ -1587,11 +1587,11 @@ void uiobj_finish_frame(void)
     vgabuf_flip();
 #if 1
     /* FIXME HACK just erase it right after draw... */
-    ui_cursor_copy_bg1_to_bg0();
+    ui_cursor_copy_bg_back_to_bg_front();
     ui_cursor_erase0();
 #else
     ui_cursor_erase0();
-    ui_cursor_copy_bg1_to_bg0();
+    ui_cursor_copy_bg_back_to_bg_front();
 #endif
 }
 

@@ -213,7 +213,7 @@ void ui_cursor_erase1(void)
     }
 }
 
-void ui_cursor_copy_bg1_to_bg0(void)
+void ui_cursor_copy_bg_back_to_bg_front(void)
 {
     memcpy(&cursor_bg_front, &cursor_bg_back, sizeof(cursor_bg_front));
 }
