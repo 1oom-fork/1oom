@@ -177,8 +177,8 @@ static void ui_news_fade_finish(void)
     mx = mouse_get_x();
     my = mouse_get_y();
     ui_cursor_update_gfx_i(mx, my);
-    ui_cursor_store_bg1(mx, my);
-    ui_cursor_draw1(mx, my);
+    ui_cursor_store_bg_back(mx, my);
+    ui_cursor_draw_back(mx, my);
     vgabuf_flip();
     ui_cursor_erase_front();
     ui_cursor_copy_bg_back_to_bg_front();
