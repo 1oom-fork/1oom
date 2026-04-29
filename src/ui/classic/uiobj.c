@@ -416,7 +416,7 @@ static void uiobj_handle_t4_sub1(uiobj_t *p)
         mouse_getclear_click_hw();
         mouse_getclear_click_sw();
     }
-    /* TODO ui_cursor_erase0(); */
+    /* TODO ui_cursor_erase_front(); */
     uiobj_focus_oi = UIOBJI_ESC;
 }
 
@@ -757,9 +757,9 @@ static uiobj_id_t uiobj_kbd_dir_key_dy_list(int diry)
             uiobj_mouseoff = ui_cursor_mouseoff;
             mouse_stored_x -= uiobj_mouseoff;
             mouse_stored_y -= uiobj_mouseoff;
-            ui_cursor_erase0();
-            ui_cursor_store_bg0(mouse_stored_x, mouse_stored_y);
-            ui_cursor_draw0(mouse_stored_x, mouse_stored_y);
+            ui_cursor_erase_front();
+            ui_cursor_store_bg_front(mouse_stored_x, mouse_stored_y);
+            ui_cursor_draw_front(mouse_stored_x, mouse_stored_y);
             /* TODO hw_redraw */
             mouse_set_xy(mouse_stored_x, mouse_stored_y);
             if (p->type == UIOBJ_TYPE_TEXTLINE) {
@@ -1014,9 +1014,9 @@ static uiobj_id_t uiobj_kbd_dir_key(int dirx, int diry)
                 mouse_stored_y -= uiobj_mouseoff;
                 mouse_set_xy(mouse_stored_x, mouse_stored_y);
 /*
-                ui_cursor_erase0();
-                ui_cursor_store_bg0(mouse_stored_x, mouse_stored_y);
-                ui_cursor_draw0(mouse_stored_x, mouse_stored_y);
+                ui_cursor_erase_front();
+                ui_cursor_store_bg_front(mouse_stored_x, mouse_stored_y);
+                ui_cursor_draw_front(mouse_stored_x, mouse_stored_y);
 */
                 /*hw_video_redraw_front();*/
             }
@@ -1068,9 +1068,9 @@ static uint32_t uiobj_handle_kbd(uiobj_id_t *oiptr)
                 mouse_stored_y -= uiobj_mouseoff;
                 mouse_set_xy(mouse_stored_x, mouse_stored_y);
 /*
-                ui_cursor_erase0();
-                ui_cursor_store_bg0(mouse_stored_x, mouse_stored_y);
-                ui_cursor_draw0(mouse_stored_x, mouse_stored_y);
+                ui_cursor_erase_front();
+                ui_cursor_store_bg_front(mouse_stored_x, mouse_stored_y);
+                ui_cursor_draw_front(mouse_stored_x, mouse_stored_y);
 */
                 /*hw_video_redraw_front();*/
             }
@@ -1151,7 +1151,7 @@ static void uiobj_click_obj(uiobj_id_t oi, int mx, int my)
     if (1/*mouse_flag_initialized*/) {
         uiobj_t *p = &uiobj_tbl[oi];
         if (uiobj_focus_oi != oi) {
-            ui_cursor_erase0();
+            ui_cursor_erase_front();
             if (uiobj_focus_oi != UIOBJI_ESC) {
                 uiobj_t *q = &uiobj_tbl[uiobj_focus_oi];
                 /*if (uiobj_focus_oi != oi) {  redundant, checked above */
@@ -1171,8 +1171,8 @@ static void uiobj_click_obj(uiobj_id_t oi, int mx, int my)
                 mx = mouse_get_x();
                 my = mouse_get_y();
             }
-            ui_cursor_store_bg0(mx, my);
-            ui_cursor_draw0(mx, my);
+            ui_cursor_store_bg_front(mx, my);
+            ui_cursor_draw_front(mx, my);
             mouse_set_xy(mx, my);
         }
     } else {
@@ -1428,10 +1428,10 @@ static uiobj_id_t uiobj_handle_input_sub0(void)
                         uiobj_do_callback();
                     }
                     if ((p->type != UIOBJ_TYPE_SETVAL) && (p->type != UIOBJ_TYPE_TEXTLINE)) {
-                        ui_cursor_erase0();
+                        ui_cursor_erase_front();
                         uiobj_handle_click(uiobj_focus_oi, false);
-                        ui_cursor_store_bg0(mx, my);
-                        ui_cursor_draw0(mx, my);
+                        ui_cursor_store_bg_front(mx, my);
+                        ui_cursor_draw_front(mx, my);
                         mouse_set_xy(mx, my);
                     }
                     uiobj_focus_oi = UIOBJI_ESC;
@@ -1588,9 +1588,9 @@ void uiobj_finish_frame(void)
 #if 1
     /* FIXME HACK just erase it right after draw... */
     ui_cursor_copy_bg_back_to_bg_front();
-    ui_cursor_erase0();
+    ui_cursor_erase_front();
 #else
-    ui_cursor_erase0();
+    ui_cursor_erase_front();
     ui_cursor_copy_bg_back_to_bg_front();
 #endif
 }
@@ -1664,9 +1664,9 @@ void uiobj_set_focus(uiobj_id_t uiobji)
     x -= uiobj_mouseoff;
     y -= uiobj_mouseoff;
     mouse_set_xy(x, y);
-    ui_cursor_erase0();
-    ui_cursor_store_bg0(x, y);
-    ui_cursor_draw0(x, y);
+    ui_cursor_erase_front();
+    ui_cursor_store_bg_front(x, y);
+    ui_cursor_draw_front(x, y);
     /* needed anywhere? */
     mouse_stored_x = x;
     mouse_stored_y = y;
@@ -2370,7 +2370,7 @@ bool uiobj_read_str(int x, int y, int w, char *buf, int max_chars, uint8_t rcolo
             hw_event_handle();
         }
     }
-    /* TODO ui_cursor_erase0(); */
+    /* TODO ui_cursor_erase_front(); */
     uiobj_focus_oi = UIOBJI_ESC;
     uiobj_table_clear();
     mouse_getclear_click_hw();
