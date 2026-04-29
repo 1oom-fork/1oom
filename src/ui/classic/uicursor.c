@@ -22,7 +22,7 @@ struct cursor_bg_s {
     uint8_t data[CURSOR_W * CURSOR_H];
 };
 
-static struct cursor_bg_s cursor_bg0;
+static struct cursor_bg_s cursor_bg_front;
 static struct cursor_bg_s cursor_bg_back;
 
 static bool cursor_i0_bg_stored = false;
@@ -182,7 +182,7 @@ void ui_cursor_store_bg0(int mx, int my)
         }
         cursor_i0_bg_stored = true;
     }
-    ui_cursor_store_bg(mx, my, vgabuf_get_front(), &cursor_bg0);
+    ui_cursor_store_bg(mx, my, vgabuf_get_front(), &cursor_bg_front);
 }
 
 void ui_cursor_draw1(int mx, int my)
@@ -202,7 +202,7 @@ void ui_cursor_draw0(int mx, int my)
 void ui_cursor_erase0(void)
 {
     if (ui_cursor_gfx_i_old != 0) {
-        ui_cursor_erase(vgabuf_get_front(), &cursor_bg0);
+        ui_cursor_erase(vgabuf_get_front(), &cursor_bg_front);
     }
 }
 
@@ -215,7 +215,7 @@ void ui_cursor_erase1(void)
 
 void ui_cursor_copy_bg1_to_bg0(void)
 {
-    memcpy(&cursor_bg0, &cursor_bg_back, sizeof(cursor_bg0));
+    memcpy(&cursor_bg_front, &cursor_bg_back, sizeof(cursor_bg_front));
 }
 
 void ui_cursor_refresh(int mx, int my)
