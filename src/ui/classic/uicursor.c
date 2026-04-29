@@ -174,7 +174,7 @@ void ui_cursor_store_bg1(int mx, int my)
     ui_cursor_store_bg(mx, my, vgabuf_get_back(), &cursor_bg_back);
 }
 
-void ui_cursor_store_bg0(int mx, int my)
+void ui_cursor_store_bg_front(int mx, int my)
 {
     if (ui_cursor_gfx_i == 0) {
         if (cursor_i0_bg_stored) {
@@ -192,14 +192,14 @@ void ui_cursor_draw1(int mx, int my)
     }
 }
 
-void ui_cursor_draw0(int mx, int my)
+void ui_cursor_draw_front(int mx, int my)
 {
     if (ui_cursor_gfx_i != 0) {
         ui_cursor_draw(mx, my, vgabuf_get_front());
     }
 }
 
-void ui_cursor_erase0(void)
+void ui_cursor_erase_front(void)
 {
     if (ui_cursor_gfx_i_old != 0) {
         ui_cursor_erase(vgabuf_get_front(), &cursor_bg_front);
@@ -224,8 +224,8 @@ void ui_cursor_refresh(int mx, int my)
         return;
     }
     ui_cursor_update_gfx_i(mx, my);
-    ui_cursor_store_bg0(mx, my);
-    ui_cursor_draw0(mx, my);
+    ui_cursor_store_bg_front(mx, my);
+    ui_cursor_draw_front(mx, my);
     hw_video_redraw_front();
-    ui_cursor_erase0();
+    ui_cursor_erase_front();
 }
