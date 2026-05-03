@@ -1055,8 +1055,8 @@ static uint32_t uiobj_handle_kbd(uiobj_id_t *oiptr)
         uiobj_t *p = &uiobj_tbl[oi];
         *oiptr = oi;
         if (mouse_onscreen_xy(p->x0, p->y0)) {
-            mouse_stored_x = p->x0 + (p->x1 - p->x0) / 2;
-            mouse_stored_y = p->y0 + (p->y1 - p->y0) / 2;
+            mouse_stored_x = smidx(p);
+            mouse_stored_y = smidy(p);
             if (mouse_onscreen_xy(mouse_stored_x, mouse_stored_y)) {
                 ui_cursor_update_gfx_i(mouse_stored_x, mouse_stored_y);
                 uiobj_mouseoff = ui_cursor_mouseoff;
@@ -1275,8 +1275,8 @@ static uiobj_id_t uiobj_handle_input_sub0(void)
                 return UIOBJI_NONE;
             }
             if (oi != UIOBJI_NONE) {
-                mx = p->x0 + (p->x1 - p->x0) / 2;
-                my = p->y0 + (p->y1 - p->y0) / 2;
+                mx = smidx(p);
+                my = smidy(p);
                 uiobj_click_obj(oi, mx, my);
                 if (p->type == UIOBJ_TYPE_TOGGLE) {
                     if (*p->vptr == 0) {
