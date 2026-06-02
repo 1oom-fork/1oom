@@ -2,6 +2,7 @@
 #define INC_1OOM_VGABUF_H
 
 #include "comp.h"
+#include "hw.h"
 #include "types.h"
 
 extern struct vgabuf_s {
@@ -21,6 +22,8 @@ extern struct vgabuf_s {
 #define VGABUF_SEG_RECT     vgabuf_seg.x, vgabuf_seg.y, vgabuf_seg.w - 1, vgabuf_seg.h - 1
 #define VGABUF_PITCH    vgabuf_seg.pitch
 #define VGABUF_OFFSET(x, y)   ((x) + (y) * (VGABUF_PITCH))
+
+extern int16_t vgabuf_scale;
 
 extern void vgabuf_select_back(void);
 extern void vgabuf_select_front(void);
@@ -66,5 +69,15 @@ extern bool vgabuf_limits_outside(int16_t x0, int16_t y0, int16_t x1, int16_t y1
 extern void vgabuf_limits_clamp_rect(int16_t *x0, int16_t *y0, int16_t *x1, int16_t *y1);
 extern void vgabuf_limits_set(int16_t x0, int16_t y0, int16_t x1, int16_t y1);
 extern void vgabuf_limits_set_all(void);
+
+static inline bool vgabuf_set_scale(int16_t scale)
+{
+    int16_t result = hw_video_set_scale(scale);
+    if (result == scale) {
+        vgabuf_scale = scale;
+        return true;
+    }
+    return false;
+}
 
 #endif
