@@ -153,7 +153,7 @@ void ui_cursor_update_gfx_i(int mx, int my)
 
     if (--num) {
         area += num;
-        while ((num >= 0) && ((mx < area->x0) || (mx > area->x1) || (my < area->y0) || (my > area->y1))) {
+        while ((num >= 0) && ((mx < area->x0 * vgabuf_scale) || (mx > area->x1 * vgabuf_scale) || (my < area->y0 * vgabuf_scale) || (my > area->y1 * vgabuf_scale))) {
             --num;
             --area;
         }

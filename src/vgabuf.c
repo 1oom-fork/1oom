@@ -115,6 +115,8 @@ static void vgabuf_draw_line_limit_do(int16_t x0, int16_t y0, int16_t x1, int16_
     }
 }
 
+int16_t vgabuf_scale = 1;
+
 /* -------------------------------------------------------------------------- */
 
 void vgabuf_select_back(void)
