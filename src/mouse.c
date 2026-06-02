@@ -6,8 +6,8 @@
 #include "options.h"
 #include "vgabuf.h"
 
-#define MOUSE_SCREEN_W  VGABUF_W
-#define MOUSE_SCREEN_H  VGABUF_H
+#define MOUSE_SCREEN_W  (VGABUF_W * vgabuf_scale)
+#define MOUSE_SCREEN_H  (VGABUF_H * vgabuf_scale)
 
 /* ------------------------------------------------------------------------- */
 
