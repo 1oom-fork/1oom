@@ -29,7 +29,7 @@
 */
 #define UIOBJ_MAX   (PLANETS_MAX * 7 + FLEET_ENROUTE_MAX + TRANSPORT_MAX + 32)
 
-#define UIOBJ_OFFSCREEN (((VGABUF_W > VGABUF_H) ? VGABUF_W : VGABUF_H) + 100)
+#define UIOBJ_OFFSCREEN (((VGABUF_W > VGABUF_H) ? VGABUF_W : VGABUF_H) * vgabuf_scale + 100)
 
 typedef enum {
     UIOBJ_TYPE_BUTTON = 0,
@@ -788,7 +788,7 @@ static uiobj_id_t uiobj_kbd_dir_key_dxdy(int dirx, int diry, uiobj_id_t oi2, int
 {
     int dx = UIOBJ_OFFSCREEN, dy = UIOBJ_OFFSCREEN;
     int slope = UIOBJ_OFFSCREEN;
-    int mind = UIOBJ_OFFSCREEN * 100;
+    int mind = UIOBJ_OFFSCREEN * UIOBJ_OFFSCREEN;
     int dist;
     uiobj_id_t oi = oi2;
     uiobj_t *p;

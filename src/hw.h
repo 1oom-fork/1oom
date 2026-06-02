@@ -22,6 +22,7 @@ extern void hw_video_position_cursor(int mx, int my);
 
 extern int hw_video_init(int w, int h);
 extern int hw_video_toggle_fullscreen(void);
+extern int hw_video_set_scale(int scale);
 extern int hw_icon_set(const uint8_t *data, const uint8_t *pal, int w, int h);
 extern void hw_video_refresh_palette(void);
 /* Redraw the front buffer. */
