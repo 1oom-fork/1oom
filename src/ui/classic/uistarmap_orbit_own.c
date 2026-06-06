@@ -152,8 +152,8 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
             oi_tbl_p[NUM_SHIPDESIGNS],
             oi_tbl_m[NUM_SHIPDESIGNS],
             oi_tbl_a[NUM_SHIPDESIGNS],
-            oi_tbl_n[NUM_SHIPDESIGNS]
-            ;
+            oi_tbl_n[NUM_SHIPDESIGNS],
+            oi_z;
     int16_t scrollx = 0, scrolly = 0;
     struct starmap_data_s d;
     const shipcount_t *os;
@@ -177,6 +177,7 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
         STARMAP_UIOBJ_CLEAR_FX(); \
         oi_accept = UIOBJI_INVALID; \
         oi_cancel = UIOBJI_INVALID; \
+        oi_z = UIOBJI_INVALID; \
         UIOBJI_SET_TBL_INVALID(oi_tbl_p); \
         UIOBJI_SET_TBL_INVALID(oi_tbl_m); \
         UIOBJI_SET_TBL_INVALID(oi_tbl_a); \
@@ -186,6 +187,7 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
     UIOBJ_CLEAR_LOCAL();
 
     uiobj_set_help_id(16);
+    ui_starmap_enable_layer(g, active_player);
     uiobj_set_callback_and_delay(ui_starmap_orbit_own_draw_cb, &d, STARMAP_DELAY);
 
     while (!flag_done) {
@@ -424,6 +426,8 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
             ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
         } else if (oi1 == oi_scroll) {
             ui_starmap_scroll(g, scrollx, scrolly);
+        } else if (oi1 == oi_z) {
+            ui_starmap_handle_oi_zoom(&d);
         }
         ui_starmap_handle_oi_ctrl(&d, oi1);
         for (planet_id_t i = PLANET_0; i < g->galaxy_stars; ++i) {
@@ -482,6 +486,7 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
                 oi_accept = uiobj_add_t0(271, 180, "", ui_data.gfx.starmap.reloc_bu_accept, MOO_KEY_SPACE, -1);
             }
             oi_scroll = uiobj_add_scrollarea(6, 6, 2, 2, 108, 86, &scrollx, &scrolly, -1);
+            oi_z = uiobj_add_inputkey(MOO_KEY_z);
             ui_starmap_fill_oi_ctrl(&d);
             for (int i = 0; i < d.ss.sn0.num; ++i) {
                 oi_tbl_p[i] = uiobj_add_t0(288, 35 + i * 26, "", ui_data.gfx.starmap.move_but_p, MOO_KEY_UNKNOWN, -1);
@@ -497,6 +502,7 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
         }
     }
     uiobj_unset_callback();
+    ui_starmap_disable_layer();
     uiobj_set_help_id(-1);
     g->planet_focus_i[active_player] = d.from;
 }
