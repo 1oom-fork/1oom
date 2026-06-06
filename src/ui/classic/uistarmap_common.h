@@ -8,7 +8,7 @@
 #include "uiobj.h"
 
 #define STARMAP_DELAY 3
-#define STARMAP_SCROLLSTEP 10
+#define STARMAP_SCROLLSTEP 10 * ui_starmap_scale
 
 struct shipnon0_s {
     shipcount_t ships[NUM_SHIPDESIGNS];
@@ -156,6 +156,8 @@ extern const uint8_t colortbl_line_red[5];
 extern const uint8_t colortbl_line_reloc[5];
 extern const uint8_t colortbl_line_green[5];
 
+extern int ui_starmap_scale;
+
 struct gfx_aux_s;
 
 static inline int ui_starmap_x_to_screen(uint16_t x)
@@ -192,5 +194,8 @@ extern void ui_starmap_draw_planetinfo(const struct game_s *g, player_id_t api, 
 extern void ui_starmap_draw_planetinfo_2(const struct game_s *g, int p1, int p2, planet_id_t planet_i);
 extern int ui_starmap_newship_next(const struct game_s *g, player_id_t pi, int i);
 extern int ui_starmap_newship_prev(const struct game_s *g, player_id_t pi, int i);
+extern void ui_starmap_enable_layer(struct game_s *g, player_id_t api);
+extern void ui_starmap_disable_layer(void);
+extern void ui_starmap_handle_oi_zoom(struct starmap_data_s *d);
 
 #endif
