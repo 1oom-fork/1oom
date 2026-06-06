@@ -3,6 +3,7 @@
 #include <stdio.h>
 
 #include "uistarmap_common.h"
+#include "uistarmap.h"
 #include "comp.h"
 #include "game.h"
 #include "game_aux.h"
@@ -14,6 +15,7 @@
 #include "kbd.h"
 #include "lbxgfx.h"
 #include "lbxfont.h"
+#include "mouse.h"
 #include "log.h"
 #include "rnd.h"
 #include "types.h"
@@ -31,6 +33,8 @@ const uint8_t colortbl_textbox[5] = { 0x18, 0x17, 0x16, 0x15, 0x14 };
 const uint8_t colortbl_line_red[5] = { 0x44, 0x43, 0x42, 0x41, 0x40 };
 const uint8_t colortbl_line_reloc[5] = { 0x14, 0x15, 0x16, 0x17, 0x18 };
 const uint8_t colortbl_line_green[5] = { 0xb0, 0xb1, 0xb2, 0xb3, 0xb4 };
+
+int ui_starmap_scale = 1;
 
 /* -------------------------------------------------------------------------- */
 
@@ -416,41 +420,70 @@ static void ui_starmap_draw_textbox_finished(const struct game_s *g, player_id_t
     ui_draw_textbox_2str("", game_str_sm_planratio, 110);
 }
 
+static inline void ui_starmap_draw_begin(void)
+{
+    if (vgabuf_get_starmap() != NULL) {
+        vgabuf_select_starmap();
+    }
+}
+
+static inline void ui_starmap_draw_end(void)
+{
+    if (vgabuf_get_starmap() != NULL) {
+        vgabuf_select_back();
+    }
+}
+
 /* -------------------------------------------------------------------------- */
 
 void ui_starmap_draw_clear(void)
 {
     vgabuf_fill_rect(6, 6, 221, 177, 0);
+    if (vgabuf_get_starmap() != NULL) {
+        ui_starmap_draw_begin();
+        vgabuf_erase();
+        ui_starmap_draw_end();
+    }
 }
 
 void ui_starmap_set_limits(void)
 {
-    vgabuf_limits_set(6, 6, 221, 177);
+    vgabuf_limits_set_ex(6 * vgabuf_scale, 6 * vgabuf_scale, 221 * vgabuf_scale, 177 * vgabuf_scale);
 }
 
 void ui_starmap_draw_frame(int x, int y, uint8_t *data)
 {
+    ui_starmap_draw_begin();
     lbxgfx_draw_frame_offs(x, y, data);
+    ui_starmap_draw_end();
 }
 
 void ui_starmap_draw_frame_from(int x, int y, struct gfx_aux_s *aux)
 {
+    ui_starmap_draw_begin();
     gfx_aux_draw_frame_from_limit(x, y, aux);
+    ui_starmap_draw_end();
 }
 
 void ui_starmap_print_str_center(int x, int y, const char *str)
 {
+    ui_starmap_draw_begin();
     lbxfont_print_str_center_limit(x, y, str);
+    ui_starmap_draw_end();
 }
 
 void ui_starmap_draw_line(int x0, int y0, int x1, int y1, uint8_t color)
 {
+    ui_starmap_draw_begin();
     vgabuf_draw_line_limit(x0, y0, x1, y1, color);
+    ui_starmap_draw_end();
 }
 
 void ui_starmap_draw_line_ctbl(int x0, int y0, int x1, int y1, const uint8_t *colortbl, int colornum, int pos)
 {
+    ui_starmap_draw_begin();
     vgabuf_draw_line_limit_ctbl(x0, y0, x1, y1, colortbl, colornum, pos);
+    ui_starmap_draw_end();
 }
 
 void ui_starmap_draw_basic(struct starmap_data_s *d)
@@ -775,12 +808,17 @@ void ui_starmap_draw_button_text(struct starmap_data_s *d, bool highlight)
 
 void ui_starmap_set_scroll_pos(const struct game_s *g, int x, int y)    /* inline */
 {
-    int minx = 0, miny = 0, maxx = g->galaxy_maxx - 0x6c, maxy = g->galaxy_maxy - 0x56;
+    int minx = 0, miny = 0, maxx = g->galaxy_maxx - 0x6c * ui_starmap_scale
+                          , maxy = g->galaxy_maxy - 0x56 * ui_starmap_scale;
+    SETMAX(maxx, 0);
+    SETMAX(maxy, 0);
     if (ui_qol_starmap_ext_scroll) {
-        minx -= 0x36;
-        miny -= 0x2b;
-        maxx += 0x36;
-        maxy += 0x2b;
+        minx -= 0x36 * ui_starmap_scale;
+        miny -= 0x2b * ui_starmap_scale;
+        maxx += 0x36 * ui_starmap_scale;
+        maxy += 0x2b * ui_starmap_scale;
+        SETMAX(maxx, -0x36 * ui_starmap_scale);
+        SETMAX(maxy, -0x2b * ui_starmap_scale);
     }
     SETRANGE(x, minx, maxx);
     SETRANGE(y, miny, maxy);
@@ -1034,5 +1072,50 @@ int ui_starmap_newship_prev(const struct game_s *g, player_id_t pi, int i)
         p = &(g->planet[i]);
     } while ((!((p->owner == pi) && BOOLVEC_IS1(p->finished, FINISHED_SHIP))) && (i != t));
     return i;
+}
+
+void ui_starmap_enable_layer(struct game_s *g, player_id_t api)
+{
+    if (ui_scale_enabled && !vgabuf_starmap_layer_enabled && !g->evn.build_finished_num[api]) {
+        vgabuf_starmap_layer_enabled = true;
+        vgabuf_alloc_starmap();
+        vgabuf_set_scale(ui_starmap_scale);
+    }
+}
+
+void ui_starmap_disable_layer(void)
+{
+    if (!ui_scale_enabled || !vgabuf_starmap_layer_enabled) {
+        return;
+    }
+    switch (ui_data.ui_main_loop_action) {
+        case UI_MAIN_LOOP_STARMAP:
+        case UI_MAIN_LOOP_RELOC:
+        case UI_MAIN_LOOP_TRANS:
+        case UI_MAIN_LOOP_ORBIT_OWN_SEL:
+        case UI_MAIN_LOOP_TRANSPORT_SEL:
+        case UI_MAIN_LOOP_ENROUTE_SEL:
+        case UI_MAIN_LOOP_ORBIT_EN_SEL:
+            break;
+        default:
+            vgabuf_set_scale(1);
+            vgabuf_free_starmap();
+            vgabuf_starmap_layer_enabled = false;
+            break;
+    }
+}
+
+void ui_starmap_handle_oi_zoom(struct starmap_data_s *d)
+{
+    int next_scale;
+    if (!ui_scale_enabled) {
+        return;
+    }
+    next_scale = ui_starmap_scale * 2;
+    if ((next_scale > 4) || !vgabuf_set_scale(next_scale)) {
+        vgabuf_set_scale(1);
+    }
+    ui_starmap_scale = vgabuf_scale;
+    ui_starmap_set_pos_focus(d->g, d->api);
 }
 

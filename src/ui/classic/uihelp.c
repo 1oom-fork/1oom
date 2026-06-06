@@ -123,9 +123,13 @@ void ui_help(int help_index)
 {
     uint8_t ctbl[5], c0, c1, c3, c4, c5, c8;
     uint8_t *helplbx;
+    bool flag_sm = vgabuf_starmap_layer_enabled;
     LOG_DEBUG((DEBUGLEVEL_HELPUI, "%s: %i\n", __func__, help_index));
     if (help_index < 0) {
         return;
+    }
+    if (flag_sm) {
+        vgabuf_starmap_layer_enabled = false;
     }
     for (int i = 0; i < 5; ++i) {
         ctbl[i] = lbxpal_find_closest(i * 3 + 7, i * 3 + 7, i * 4 + 15);
@@ -195,4 +199,7 @@ void ui_help(int help_index)
     } while (help_index != 0);
     uiobj_table_num_restore();
     lbxfile_item_release(LBXFILE_HELP, helplbx);
+    if (flag_sm) {
+        vgabuf_starmap_layer_enabled = true;
+    }
 }

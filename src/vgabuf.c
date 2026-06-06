@@ -2,6 +2,7 @@
 
 #include "comp.h"
 #include "hw.h"
+#include "lib.h"
 #include "vgabuf.h"
 #include "types.h"
 
@@ -20,6 +21,8 @@ static uint8_t vgabuf[NUM_VIDEOBUF * VGABUF_SIZE_INTERNAL] = {0};
 static int16_t vga_page = 0;
 
 static uint8_t vgabuf_hw_cursor[VGABUF_CURSOR_SIZE] = {0};
+
+static uint8_t *vgabuf_starmap = NULL;
 
 static inline uint8_t *vgabuf_get_i(int16_t i)
 {
@@ -120,8 +123,27 @@ static void vgabuf_draw_line_limit_do(int16_t x0, int16_t y0, int16_t x1, int16_
 int16_t vgabuf_scale = 1;
 
 bool vgabuf_hw_cursor_enabled = false;
+bool vgabuf_starmap_layer_enabled = false;
 
 /* -------------------------------------------------------------------------- */
+
+void vgabuf_alloc_starmap(void)
+{
+    vgabuf_starmap = lib_malloc(320*200*4*4);
+}
+
+void vgabuf_free_starmap(void)
+{
+    if (vgabuf_starmap != NULL) {
+        lib_free(vgabuf_starmap);
+        vgabuf_starmap = NULL;
+    }
+}
+
+uint8_t *vgabuf_get_starmap(void)
+{
+    return vgabuf_starmap;
+}
 
 void vgabuf_select_back(void)
 {
@@ -141,6 +163,16 @@ void vgabuf_select_front(void)
     vgabuf_seg.w = VGABUF_W;
     vgabuf_seg.h = VGABUF_H;
     vgabuf_seg.pitch = VGABUF_W;
+}
+
+void vgabuf_select_starmap(void)
+{
+    vgabuf_seg.buf = vgabuf_starmap;
+    vgabuf_seg.x = 0;
+    vgabuf_seg.y = 0;
+    vgabuf_seg.w = vgabuf_scale * VGABUF_W;
+    vgabuf_seg.h = vgabuf_scale * VGABUF_H;
+    vgabuf_seg.pitch = vgabuf_scale * 222;
 }
 
 void vgabuf_clear_hw_cursor(void)
@@ -467,6 +499,11 @@ void vgabuf_limits_set(int16_t x0, int16_t y0, int16_t x1, int16_t y1)
     vgabuf_limits_clamp_rect(&x0, &y0, &x1, &y1);
     if (x0 > x1) { int16_t t = x0; x0 = x1; x1 = t; }   /* BUG: may remain outside */
     if (y0 > y1) { int16_t t = y0; y0 = y1; y1 = t; }
+    vgabuf_limits_set_ex(x0, y0, x1, y1);
+}
+
+void vgabuf_limits_set_ex(int16_t x0, int16_t y0, int16_t x1, int16_t y1)
+{
     vgabuf_limits_minx = x0;
     vgabuf_limits_miny = y0;
     vgabuf_limits_maxx = x1;
