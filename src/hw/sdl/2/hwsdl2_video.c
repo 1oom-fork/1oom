@@ -50,6 +50,7 @@ static struct sdl_video_s {
     SDL_Renderer *renderer;
     struct sdl_video_overlay_s screen;
     struct sdl_video_overlay_s cursor;
+    struct sdl_video_overlay_s starmap;
 
     /* SDL display number on which to run. */
     int display;
@@ -220,6 +221,10 @@ static int video_set_scale(int scale)
        and stretching the texture into the window.
     */
     SDL_RenderSetLogicalSize(video.renderer, video.actualw * scale, video.actualh * scale);
+    sdl_video_destroy_overlay(&video.starmap);
+    if (vgabuf_starmap_layer_enabled) {
+        sdl_video_create_overlay(&video.starmap, vgabuf_get_starmap(), 222 * scale, 178 * scale, video.screen.buffer->format->palette, true, false);
+    }
     return scale;
 }
 
@@ -309,6 +314,16 @@ static void video_update(void)
         /* Render this intermediate texture directly to screen using "nearest" scaling. */
         SDL_SetRenderTarget(video.renderer, NULL);
         SDL_RenderCopy(video.renderer, video.screen.texture, NULL, NULL);
+    }
+
+    if (vgabuf_starmap_layer_enabled) {
+        sdl_video_update_overlay(&video.starmap);
+        SDL_Rect rect;
+        rect.x = 6 * vgabuf_scale;
+        rect.y = 6 * vgabuf_scale * 6 / 5;
+        rect.w = 216 * vgabuf_scale;
+        rect.h = 172 * vgabuf_scale * 6 / 5;
+        SDL_RenderCopy(video.renderer, video.starmap.texture, &rect, &rect);
     }
 
     if (vgabuf_hw_cursor_enabled) {
@@ -445,6 +460,7 @@ static int video_sw_set(int w, int h)
         // all associated textures get destroyed
         video.cursor.texture = NULL;
         video.cursor.texture_upscaled = NULL;
+        video.starmap.texture = NULL;
         video.screen.texture = NULL;
         video.screen.texture_upscaled = NULL;
     }
@@ -556,6 +572,7 @@ int hw_video_init(int w, int h)
 void hw_video_shutdown(void)
 {
     sdl_video_destroy_overlay(&video.cursor);
+    sdl_video_destroy_overlay(&video.starmap);
     sdl_video_destroy_overlay(&video.screen);
     if (video.renderer) {
         SDL_DestroyRenderer(video.renderer);
