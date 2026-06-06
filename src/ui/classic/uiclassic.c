@@ -26,6 +26,9 @@ const struct cmdline_options_s ui_cmdline_options[] = {
     { "-uinodelay", 0,
       options_disable_bool_var, (void *)&ui_delay_enabled,
       NULL, "Disable UI delay" },
+    { "-uiscale", 0,
+      options_enable_bool_var, (void *)&ui_scale_enabled,
+      NULL, "Enable UI scaling" },
     { "-uifixbugs", 0,
       options_enable_bool_var, (void *)&ui_fix_bugs,
       NULL, "Fix UI bugs" },
@@ -41,6 +44,7 @@ const char *idstr_ui = "classic";
 
 struct ui_data_s ui_data = { 0 };
 
+bool ui_scale_enabled = false;
 bool ui_fix_bugs = false;
 bool ui_fix_qol = false;
 
@@ -308,6 +312,9 @@ int ui_late_init(void)
      || lbxpal_init()
     ) {
         return 1;
+    }
+    if (!vgabuf_set_scale(1)) {
+        ui_scale_enabled = false;
     }
     if (opt_audio_enabled) {
         uint32_t t0, t1;

@@ -30,13 +30,20 @@ extern struct vgabuf_s {
 extern int16_t vgabuf_scale;
 
 extern bool vgabuf_hw_cursor_enabled;
+extern bool vgabuf_starmap_layer_enabled;
 
 extern void vgabuf_select_back(void);
 extern void vgabuf_select_front(void);
+extern void vgabuf_select_starmap(void);
+
 extern void vgabuf_flip(void);
 
 extern void vgabuf_clear_hw_cursor(void);
 extern uint8_t *vgabuf_get_hw_cursor(void);
+
+extern void vgabuf_alloc_starmap(void);
+extern void vgabuf_free_starmap(void);
+extern uint8_t *vgabuf_get_starmap(void);
 
 /* Return selected buffer. */
 extern uint8_t *vgabuf_get(void);
@@ -77,6 +84,7 @@ extern void vgabuf_limits_get(int16_t *x0, int16_t *y0, int16_t *x1, int16_t *y1
 extern bool vgabuf_limits_outside(int16_t x0, int16_t y0, int16_t x1, int16_t y1);
 extern void vgabuf_limits_clamp_rect(int16_t *x0, int16_t *y0, int16_t *x1, int16_t *y1);
 extern void vgabuf_limits_set(int16_t x0, int16_t y0, int16_t x1, int16_t y1);
+extern void vgabuf_limits_set_ex(int16_t x0, int16_t y0, int16_t x1, int16_t y1);
 extern void vgabuf_limits_set_all(void);
 
 static inline bool vgabuf_set_scale(int16_t scale)

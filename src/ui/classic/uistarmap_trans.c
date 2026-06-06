@@ -168,7 +168,7 @@ static void ui_starmap_trans_draw_cb(void *vptr)
 void ui_starmap_trans(struct game_s *g, player_id_t active_player)
 {
     bool flag_done = false;
-    uiobj_id_t oi_scroll, oi_cancel, oi_accept, oi_plus, oi_minus;
+    uiobj_id_t oi_scroll, oi_cancel, oi_accept, oi_plus, oi_minus, oi_z;
     int16_t scrollx = 0, scrolly = 0;
     struct starmap_data_s d;
     planet_id_t olddest;
@@ -202,10 +202,12 @@ void ui_starmap_trans(struct game_s *g, player_id_t active_player)
         oi_cancel = UIOBJI_INVALID; \
         oi_plus = UIOBJI_INVALID; \
         oi_minus = UIOBJI_INVALID; \
+        oi_z = UIOBJI_INVALID; \
     } while (0)
 
     UIOBJ_CLEAR_LOCAL();
 
+    ui_starmap_enable_layer(g, active_player);
     uiobj_set_callback_and_delay(ui_starmap_trans_draw_cb, &d, STARMAP_DELAY);
 
     while (!flag_done) {
@@ -276,6 +278,8 @@ void ui_starmap_trans(struct game_s *g, player_id_t active_player)
             SETMIN(d.tr.num, trans_max);
         } else if (oi1 == oi_scroll) {
             ui_starmap_scroll(g, scrollx, scrolly);
+        } else if (oi1 == oi_z) {
+            ui_starmap_handle_oi_zoom(&d);
         }
         ui_starmap_handle_oi_ctrl(&d, oi1);
         for (planet_id_t i = PLANET_0; i < g->galaxy_stars; ++i) {
@@ -305,6 +309,7 @@ void ui_starmap_trans(struct game_s *g, player_id_t active_player)
                 oi_plus = uiobj_add_mousearea(301, 124, 305, 131, MOO_KEY_PLUS, -1);
             }
             oi_scroll = uiobj_add_scrollarea(6, 6, 2, 2, 108, 86, &scrollx, &scrolly, -1);
+            oi_z = uiobj_add_inputkey(MOO_KEY_z);
             ui_starmap_fill_oi_ctrl(&d);
             ui_starmap_add_oi_bottom_buttons(&d);
             ui_draw_finish();
@@ -312,6 +317,7 @@ void ui_starmap_trans(struct game_s *g, player_id_t active_player)
         }
     }
     uiobj_unset_callback();
+    ui_starmap_disable_layer();
     uiobj_set_help_id(-1);
     g->planet_focus_i[active_player] = d.from;
 }
