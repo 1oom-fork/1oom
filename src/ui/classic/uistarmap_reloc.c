@@ -65,7 +65,7 @@ static void ui_starmap_reloc_draw_cb(void *vptr)
 void ui_starmap_reloc(struct game_s *g, player_id_t active_player)
 {
     bool flag_done = false;
-    uiobj_id_t oi_scroll, oi_cancel, oi_accept;
+    uiobj_id_t oi_scroll, oi_cancel, oi_accept, oi_z;
     int16_t scrollx = 0, scrolly = 0;
     struct starmap_data_s d;
     planet_id_t oldreloc;
@@ -88,11 +88,13 @@ void ui_starmap_reloc(struct game_s *g, player_id_t active_player)
         STARMAP_UIOBJ_CLEAR_COMMON(); \
         oi_accept = UIOBJI_INVALID; \
         oi_cancel = UIOBJI_INVALID; \
+        oi_z = UIOBJI_INVALID; \
     } while (0)
 
     UIOBJ_CLEAR_LOCAL();
 
     uiobj_set_help_id(2);
+    ui_starmap_enable_layer(g, active_player);
     uiobj_set_callback_and_delay(ui_starmap_reloc_draw_cb, &d, STARMAP_DELAY);
 
     while (!flag_done) {
@@ -146,6 +148,8 @@ void ui_starmap_reloc(struct game_s *g, player_id_t active_player)
             ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARMAP;
         } else if (oi1 == oi_scroll) {
             ui_starmap_scroll(g, scrollx, scrolly);
+        } else if (oi1 == oi_z) {
+            ui_starmap_handle_oi_zoom(&d);
         }
         ui_starmap_handle_oi_ctrl(&d, oi1);
         for (planet_id_t i = PLANET_0; i < g->galaxy_stars; ++i) {
@@ -166,6 +170,7 @@ void ui_starmap_reloc(struct game_s *g, player_id_t active_player)
                 oi_accept = uiobj_add_t0(271, 163, "", ui_data.gfx.starmap.reloc_bu_accept, ui_qol_extra_key_bindings ? MOO_KEY_SPACE : MOO_KEY_UNKNOWN, -1);
             }
             oi_scroll = uiobj_add_scrollarea(6, 6, 2, 2, 108, 86, &scrollx, &scrolly, -1);
+            oi_z = uiobj_add_inputkey(MOO_KEY_z);
             ui_starmap_fill_oi_ctrl(&d);
             ui_starmap_add_oi_bottom_buttons(&d);
             ui_draw_finish();
@@ -173,6 +178,7 @@ void ui_starmap_reloc(struct game_s *g, player_id_t active_player)
         }
     }
     uiobj_unset_callback();
+    ui_starmap_disable_layer();
     uiobj_set_help_id(-1);
     g->planet_focus_i[active_player] = d.from;
 }
