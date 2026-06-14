@@ -12,6 +12,7 @@
 #include "hwsdl_opt.h"
 #include "lib.h"
 #include "log.h"
+#include "mouse.h"
 #include "types.h"
 
 /* -------------------------------------------------------------------------- */
@@ -48,6 +49,7 @@ static struct sdl_video_s {
     SDL_Window *window;
     SDL_Renderer *renderer;
     struct sdl_video_overlay_s screen;
+    struct sdl_video_overlay_s cursor;
 
     /* SDL display number on which to run. */
     int display;
@@ -286,6 +288,9 @@ static void video_update(void)
     }
 
     sdl_video_update_overlay(&video.screen);
+    if (vgabuf_hw_cursor_enabled) {
+        sdl_video_update_overlay(&video.cursor);    /* TODO: always needed? */
+    }
 
     /* Make sure the pillarboxes are kept clear each frame. */
     SDL_RenderClear(video.renderer);
@@ -304,6 +309,18 @@ static void video_update(void)
         /* Render this intermediate texture directly to screen using "nearest" scaling. */
         SDL_SetRenderTarget(video.renderer, NULL);
         SDL_RenderCopy(video.renderer, video.screen.texture, NULL, NULL);
+    }
+
+    if (vgabuf_hw_cursor_enabled) {
+        SDL_Rect dstrect;
+        dstrect = video.cursor.blit_rect;
+        dstrect.x = mouse_get_x();
+        dstrect.y = mouse_get_y();
+        if (hw_opt_aspect_ratio_correct) {
+            dstrect.y = (dstrect.y * 6) / 5;
+        }
+        SDL_SetRenderTarget(video.renderer, NULL);
+        SDL_RenderCopy(video.renderer, video.cursor.texture, NULL, &dstrect);
     }
 
     /* Draw! */
@@ -426,6 +443,8 @@ static int video_sw_set(int w, int h)
     if (video.renderer) {
         SDL_DestroyRenderer(video.renderer);
         // all associated textures get destroyed
+        video.cursor.texture = NULL;
+        video.cursor.texture_upscaled = NULL;
         video.screen.texture = NULL;
         video.screen.texture_upscaled = NULL;
     }
@@ -510,7 +529,12 @@ int hw_video_init(int w, int h)
     i_hw_video.update = video_update;
     i_hw_video.setpal = video_setpal;
 
+    vgabuf_hw_cursor_enabled = true;    /* FIXME */
+
     sdl_video_create_overlay(&video.screen, vgabuf_get_front(), w, h, NULL, false, false);
+    if (vgabuf_hw_cursor_enabled) {
+        sdl_video_create_overlay(&video.cursor, vgabuf_get_hw_cursor(), VGABUF_CURSOR_W, VGABUF_CURSOR_H, video.screen.buffer->format->palette, false, true);
+    }
 
     video.actualw = w;
     if (hw_opt_aspect_ratio_correct) {
@@ -531,6 +555,7 @@ int hw_video_init(int w, int h)
 
 void hw_video_shutdown(void)
 {
+    sdl_video_destroy_overlay(&video.cursor);
     sdl_video_destroy_overlay(&video.screen);
     if (video.renderer) {
         SDL_DestroyRenderer(video.renderer);
