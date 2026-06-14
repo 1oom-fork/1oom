@@ -409,5 +409,7 @@ int hw_event_handle(void)
         }
     }
 
+    i_hw_video.update();    /* FIXME: better way? */
+
     return 0;
 }
