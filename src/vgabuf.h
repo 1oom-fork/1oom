@@ -23,11 +23,20 @@ extern struct vgabuf_s {
 #define VGABUF_PITCH    vgabuf_seg.pitch
 #define VGABUF_OFFSET(x, y)   ((x) + (y) * (VGABUF_PITCH))
 
+#define VGABUF_CURSOR_W    16
+#define VGABUF_CURSOR_H    16
+#define VGABUF_CURSOR_SIZE  VGABUF_CURSOR_W * VGABUF_CURSOR_H
+
 extern int16_t vgabuf_scale;
+
+extern bool vgabuf_hw_cursor_enabled;
 
 extern void vgabuf_select_back(void);
 extern void vgabuf_select_front(void);
 extern void vgabuf_flip(void);
+
+extern void vgabuf_clear_hw_cursor(void);
+extern uint8_t *vgabuf_get_hw_cursor(void);
 
 /* Return selected buffer. */
 extern uint8_t *vgabuf_get(void);

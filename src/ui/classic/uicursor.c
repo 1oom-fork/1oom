@@ -10,16 +10,13 @@
 
 /* -------------------------------------------------------------------------- */
 
-#define CURSOR_W    16
-#define CURSOR_H    16
-
 static ui_cursor_area_t *ui_cursor_area_def_ptr = 0;
 static int ui_cursor_area_def_num = 1;
 static uint16_t ui_cursor_gfx_i_old = 0;
 
 struct cursor_bg_s {
     int x, y;
-    uint8_t data[CURSOR_W * CURSOR_H];
+    uint8_t data[VGABUF_CURSOR_SIZE];
 };
 
 static struct cursor_bg_s cursor_bg_front;
@@ -58,18 +55,18 @@ static void ui_cursor_store_bg(int mx, int my, uint8_t *p, struct cursor_bg_s *b
     bg->x = mx;
     bg->y = my;
     p += VGABUF_OFFSET(mx, my);
-    w = CURSOR_W;
+    w = VGABUF_CURSOR_W;
     if ((mx + w) > VGABUF_W) {
         w = VGABUF_W - mx;
     }
-    h = CURSOR_H;
+    h = VGABUF_CURSOR_H;
     if ((my + h) > VGABUF_H) {
         h = VGABUF_H - my;
     }
     for (int y = 0; y < h; ++y) {
         memcpy(q, p, w);
         p += VGABUF_PITCH;
-        q += CURSOR_W;
+        q += VGABUF_CURSOR_W;
     }
 }
 
@@ -79,19 +76,19 @@ static void ui_cursor_draw(int mx, int my, uint8_t *p)
         return;
     }
     int w, h;
-    uint8_t *q = lbxpal_cursors + ((ui_cursor_gfx_i - 1) * CURSOR_W * CURSOR_H);
+    uint8_t *q = lbxpal_cursors + ((ui_cursor_gfx_i - 1) * VGABUF_CURSOR_SIZE);
     p += VGABUF_OFFSET(mx, my);
-    w = CURSOR_W;
+    w = VGABUF_CURSOR_W;
     if ((mx + w) > VGABUF_W) {
         w = VGABUF_W - mx;
     }
-    h = CURSOR_H;
+    h = VGABUF_CURSOR_H;
     if ((my + h) > VGABUF_H) {
         h = VGABUF_H - my;
     }
     for (int y = 0; y < h; ++y) {
         for (int x = 0; x < w; ++x) {
-            uint8_t b = q[x * CURSOR_W];
+            uint8_t b = q[x * VGABUF_CURSOR_W];
             if (b) {
                 p[x] = b;
             }
@@ -108,18 +105,37 @@ static void ui_cursor_erase(uint8_t *p, struct cursor_bg_s *bg)
     int my = bg->y;
     uint8_t *q = bg->data;
     p += VGABUF_OFFSET(mx, my);
-    w = CURSOR_W;
+    w = VGABUF_CURSOR_W;
     if ((mx + w) > VGABUF_W) {
         w = VGABUF_W - mx;
     }
-    h = CURSOR_H;
+    h = VGABUF_CURSOR_H;
     if ((my + h) > VGABUF_H) {
         h = VGABUF_H - my;
     }
     for (int y = 0; y < h; ++y) {
         memcpy(p, q, w);
         p += VGABUF_PITCH;
-        q += CURSOR_W;
+        q += VGABUF_CURSOR_W;
+    }
+}
+
+static void ui_cursor_draw_hw(void)
+{
+    if (ui_cursor_gfx_i == 0) {
+        vgabuf_clear_hw_cursor();
+        return;
+    }
+    int w, h;
+    uint8_t *q = lbxpal_cursors + ((ui_cursor_gfx_i - 1) * VGABUF_CURSOR_SIZE);
+    uint8_t *p = vgabuf_get_hw_cursor();
+    for (int y = 0; y < VGABUF_CURSOR_H; ++y) {
+        for (int x = 0; x < VGABUF_CURSOR_W; ++x) {
+            uint8_t b = q[x * VGABUF_CURSOR_W];
+            p[x] = b;
+        }
+        p += VGABUF_CURSOR_W;   /* TODO: FIXME */
+        ++q;
     }
 }
 
@@ -161,10 +177,16 @@ void ui_cursor_update_gfx_i(int mx, int my)
 
     ui_cursor_mouseoff = area->mouseoff;
     ui_cursor_gfx_i = area->cursor_i;
+    if (vgabuf_hw_cursor_enabled) {
+        ui_cursor_draw_hw();
+    }
 }
 
 void ui_cursor_store_bg_back(int mx, int my)
 {
+    if (vgabuf_hw_cursor_enabled) {
+        return;
+    }
     if ((ui_cursor_gfx_i == 0) && (ui_cursor_gfx_i_old == 0)) {
         if (cursor_i0_bg_stored) {
             return;
@@ -176,6 +198,9 @@ void ui_cursor_store_bg_back(int mx, int my)
 
 void ui_cursor_store_bg_front(int mx, int my)
 {
+    if (vgabuf_hw_cursor_enabled) {
+        return;
+    }
     if (ui_cursor_gfx_i == 0) {
         if (cursor_i0_bg_stored) {
             return;
@@ -187,6 +212,9 @@ void ui_cursor_store_bg_front(int mx, int my)
 
 void ui_cursor_draw_back(int mx, int my)
 {
+    if (vgabuf_hw_cursor_enabled) {
+        return;
+    }
     if (ui_cursor_gfx_i != 0) {
         ui_cursor_draw(mx, my, vgabuf_get_back());
     }
@@ -194,6 +222,9 @@ void ui_cursor_draw_back(int mx, int my)
 
 void ui_cursor_draw_front(int mx, int my)
 {
+    if (vgabuf_hw_cursor_enabled) {
+        return;
+    }
     if (ui_cursor_gfx_i != 0) {
         ui_cursor_draw(mx, my, vgabuf_get_front());
     }
@@ -201,6 +232,9 @@ void ui_cursor_draw_front(int mx, int my)
 
 void ui_cursor_erase_front(void)
 {
+    if (vgabuf_hw_cursor_enabled) {
+        return;
+    }
     if (ui_cursor_gfx_i_old != 0) {
         ui_cursor_erase(vgabuf_get_front(), &cursor_bg_front);
     }
@@ -208,6 +242,9 @@ void ui_cursor_erase_front(void)
 
 void ui_cursor_erase_back(void)
 {
+    if (vgabuf_hw_cursor_enabled) {
+        return;
+    }
     if (ui_cursor_gfx_i != 0) {
         ui_cursor_erase(vgabuf_get_back(), &cursor_bg_back);
     }
@@ -215,6 +252,9 @@ void ui_cursor_erase_back(void)
 
 void ui_cursor_copy_bg_back_to_bg_front(void)
 {
+    if (vgabuf_hw_cursor_enabled) {
+        return;
+    }
     memcpy(&cursor_bg_front, &cursor_bg_back, sizeof(cursor_bg_front));
 }
 
@@ -224,6 +264,9 @@ void ui_cursor_refresh(int mx, int my)
         return;
     }
     ui_cursor_update_gfx_i(mx, my);
+    if (vgabuf_hw_cursor_enabled) {
+        return;
+    }
     ui_cursor_store_bg_front(mx, my);
     ui_cursor_draw_front(mx, my);
     hw_video_redraw_front();
