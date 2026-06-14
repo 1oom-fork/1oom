@@ -19,6 +19,8 @@
 static uint8_t vgabuf[NUM_VIDEOBUF * VGABUF_SIZE_INTERNAL] = {0};
 static int16_t vga_page = 0;
 
+static uint8_t vgabuf_hw_cursor[VGABUF_CURSOR_SIZE] = {0};
+
 static inline uint8_t *vgabuf_get_i(int16_t i)
 {
     return &vgabuf[i * VGABUF_SIZE_INTERNAL];
@@ -117,6 +119,8 @@ static void vgabuf_draw_line_limit_do(int16_t x0, int16_t y0, int16_t x1, int16_
 
 int16_t vgabuf_scale = 1;
 
+bool vgabuf_hw_cursor_enabled = false;
+
 /* -------------------------------------------------------------------------- */
 
 void vgabuf_select_back(void)
@@ -137,6 +141,16 @@ void vgabuf_select_front(void)
     vgabuf_seg.w = VGABUF_W;
     vgabuf_seg.h = VGABUF_H;
     vgabuf_seg.pitch = VGABUF_W;
+}
+
+void vgabuf_clear_hw_cursor(void)
+{
+    memset(vgabuf_hw_cursor, 0, VGABUF_CURSOR_SIZE);
+}
+
+uint8_t *vgabuf_get_hw_cursor(void)
+{
+    return vgabuf_hw_cursor;
 }
 
 void vgabuf_flip(void)
