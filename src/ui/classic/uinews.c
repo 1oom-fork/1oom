@@ -13,6 +13,7 @@
 #include "lbxpal.h"
 #include "lib.h"
 #include "log.h"
+#include "mouse.h"
 #include "types.h"
 #include "uicursor.h"
 #include "uidefs.h"
@@ -169,6 +170,20 @@ static uint8_t ui_news_fade_tbl_col[] = {
 
 #define UI_NEWS_FADE_PIXELS_PER_FRAME  12000
 
+static void ui_news_fade_finish(void)
+{
+    int mx, my;
+    hw_event_handle();
+    mx = mouse_get_x();
+    my = mouse_get_y();
+    ui_cursor_update_gfx_i(mx, my);
+    ui_cursor_store_bg1(mx, my);
+    ui_cursor_draw1(mx, my);
+    vgabuf_flip();
+    ui_cursor_erase0();
+    ui_cursor_copy_bg1_to_bg0();
+}
+
 static void ui_news_fade(void)
 {
     int pixelcount = UI_NEWS_FADE_PIXELS_PER_FRAME;
@@ -245,8 +260,7 @@ static void ui_news_fade(void)
             }
         }
     }
-    memcpy(pf, pb, VGABUF_SIZE);
-    hw_video_redraw_front();
+    ui_news_fade_finish();
     ui_delay_1();
 }
 
