@@ -756,12 +756,6 @@ static int game_save_do_save_do(const char *filename, const char *savename, cons
         log_error("Save: failed to create path for '%s'\n", filename);
     }
     game_save_make_header(hdr, savename);
-    fd = game_save_open_check_header(filename, -1, false, 0);
-    if (fd) {
-        /* file exists */
-        fclose(fd);
-        fd = NULL;
-    }
     if ((savei >= 0) && (savei < (NUM_SAVES + 1))) {
         game_save_tbl_have_save[savei] = false;
         game_save_tbl_name[savei][0] = '\0';

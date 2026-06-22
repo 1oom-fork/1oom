@@ -14,7 +14,6 @@
 #include "game_tech.h"
 #include "log.h"
 #include "types.h"
-#include "util.h"
 #include "util_math.h"
 
 /* -------------------------------------------------------------------------- */
