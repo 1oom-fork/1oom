@@ -9,16 +9,9 @@
 #include <unistd.h>
 
 #include "os.h"
-#include "options.h"
 #include "lib.h"
 #include "util.h"
 #include "types.h"
-
-/* -------------------------------------------------------------------------- */
-
-const struct cmdline_options_s os_cmdline_options[] = {
-    { NULL, 0, NULL, NULL, NULL, NULL }
-};
 
 /* -------------------------------------------------------------------------- */
 
@@ -40,16 +33,6 @@ static int os_make_path(const char *path)
 /* -------------------------------------------------------------------------- */
 
 const char *idstr_os = "unix";
-
-int os_early_init(void)
-{
-    return 0;
-}
-
-int os_init(void)
-{
-    return 0;
-}
 
 void os_shutdown(void)
 {

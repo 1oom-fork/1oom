@@ -4,14 +4,7 @@
 #include <windows.h>
 
 #include "os.h"
-#include "options.h"
 #include "lib.h"
-
-/* -------------------------------------------------------------------------- */
-
-const struct cmdline_options_s os_cmdline_options[] = {
-    { NULL, 0, NULL, NULL, NULL, NULL }
-};
 
 /* -------------------------------------------------------------------------- */
 
@@ -21,16 +14,6 @@ static char *all_data_paths[] = { NULL, NULL, NULL };
 /* -------------------------------------------------------------------------- */
 
 const char *idstr_os = "win32";
-
-int os_early_init(void)
-{
-    return 0;
-}
-
-int os_init(void)
-{
-    return 0;
-}
 
 void os_shutdown(void)
 {

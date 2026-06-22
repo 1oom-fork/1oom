@@ -1685,9 +1685,6 @@ static int main_early_init(void)
 {
     struct game_s *g;
     struct game_aux_s *gaux;
-    if (os_early_init()) {
-        return 1;
-    }
     gameptr = g = lib_malloc(sizeof(struct game_s));
     g->gaux = gaux = lib_malloc(sizeof(struct game_aux_s));
     gaux->savenamebuflen = FSDEV_PATH_MAX;
@@ -1700,9 +1697,6 @@ static int main_early_init(void)
 
 static int main_init(void)
 {
-    if (os_init()) {
-        return 1;
-    }
     return 0;
 }
 

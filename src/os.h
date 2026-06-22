@@ -11,11 +11,7 @@
 
 extern const char *idstr_os;
 
-extern int os_early_init(void);
-extern int os_init(void);
 extern void os_shutdown(void);
-
-extern const struct cmdline_options_s os_cmdline_options[];
 
 extern const char **os_get_paths_data(void);
 extern const char *os_get_path_data(void);
