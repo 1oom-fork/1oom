@@ -1923,6 +1923,7 @@ ui_battle_action_t ui_battle_turn(const struct battle_s *bt)
     const struct ui_battle_data_s *d = bt->uictx;
     int itemi = bt->cur_item;
     const struct battle_item_s *b = &(bt->item[itemi]);
+    bool flag_done = false;
     /*4ece2*/
     int16_t oi;
     oi = uiobj_handle_input_cond();
@@ -1936,7 +1937,7 @@ ui_battle_action_t ui_battle_turn(const struct battle_s *bt)
         if (oi == d->oi_done) {
             ui_sound_play_sfx_24();
         }
-        return UI_BATTLE_ACT_DONE;
+        flag_done = true;
     }
     if (oi == d->oi_grid) {
         ui_data.battle.show_grid = !ui_data.battle.show_grid;
@@ -1989,7 +1990,7 @@ ui_battle_action_t ui_battle_turn(const struct battle_s *bt)
         }
     }
     game_rng_step(bt->g);
-    return UI_BATTLE_ACT_NONE;
+    return flag_done ? UI_BATTLE_ACT_DONE : UI_BATTLE_ACT_NONE;
 }
 
 void ui_battle_ai_pre(const struct battle_s *bt)
