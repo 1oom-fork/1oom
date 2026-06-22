@@ -15,7 +15,6 @@
 static int main_early_init(void)
 {
     if (0
-      || os_early_init()
       || hw_early_init()
       || ui_early_init()
       || lbxfile_init()
@@ -28,7 +27,6 @@ static int main_early_init(void)
 static int main_init(void)
 {
     if (0
-      || os_init()
       || hw_init()
       || ui_init()
     ) {

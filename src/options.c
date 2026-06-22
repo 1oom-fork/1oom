@@ -258,7 +258,6 @@ static const struct cmdline_options_s *find_option(const char *name, bool early,
       || (o = find_option_do(name, cmdline_options_common))
       || (main_use_lbx && (o = find_option_do(name, cmdline_options_pbxfile)))
       || (ui_use_audio && (o = find_option_do(name, cmdline_options_audio)))
-      || (o = find_option_do(name, os_cmdline_options))
       || (o = find_option_do(name, hw_cmdline_options))
       || (o = find_option_do(name, hw_cmdline_options_extra))
       || (o = find_option_do(name, ui_cmdline_options))
@@ -351,7 +350,6 @@ void options_show_usage(void)
         lmax = get_options_w(cmdline_options_audio_early, lmax);
         lmax = get_options_w(cmdline_options_audio, lmax);
     }
-    lmax = get_options_w(os_cmdline_options, lmax);
     lmax = get_options_w(hw_cmdline_options, lmax);
     lmax = get_options_w(hw_cmdline_options_extra, lmax);
     lmax = get_options_w(ui_cmdline_options, lmax);
@@ -367,7 +365,6 @@ void options_show_usage(void)
         show_options(cmdline_options_audio_early, lmax);
         show_options(cmdline_options_audio, lmax);
     }
-    show_options(os_cmdline_options, lmax);
     show_options(hw_cmdline_options, lmax);
     show_options(hw_cmdline_options_extra, lmax);
     show_options(ui_cmdline_options, lmax);

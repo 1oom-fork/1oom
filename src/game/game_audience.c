@@ -22,8 +22,6 @@
 
 /* -------------------------------------------------------------------------- */
 
-#define DEBUGLEVEL_AUDIENCE 3
-
 static void game_audience_prepare(struct audience_s *au, player_id_t ph, player_id_t pa)
 {
     au->buf = ui_get_strbuf();
