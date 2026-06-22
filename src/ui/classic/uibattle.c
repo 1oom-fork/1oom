@@ -425,33 +425,6 @@ static void ui_battle_transition_to(int px, int py, int steps)
         uiobj_finish_frame();
         ui_delay_us_or_click(MOO_TICKS_TO_US(1) / 3);
     }
-#if 0
-    /* test for scale up */
-    ui_data.aux.screen.w = UI_SCREEN_W;
-    ui_data.aux.screen.h = UI_SCREEN_H;
-    memcpy(ui_data.aux.screen.data, ui_data.gfx.vgafileh, UI_SCREEN_W * UI_SCREEN_H);
-    struct gfx_auxbuf_s aux2;
-    memset(&aux2, 0, sizeof(aux2));
-    for (int i = 1; i <= steps; ++i) {
-        int x, y, percent;
-        ui_delay_prepare();
-        lbxgfx_setup_auxbuf_wh(&aux2, 320, 200);
-        aux2.w = 32;
-        aux2.h = 24;
-        gfx_aux_draw_frame_to(ui_data.gfx.ships[0x92], &aux2);
-        percent = (i * 700) / steps;
-        x = 320/2 - (percent * (200/2)) / 700;
-        y = 200/2 - (percent * (200/2)) / 700;
-        gfx_aux_scale(&aux2, percent, percent);
-        memcpy(ui_data.aux.screen.data, ui_data.gfx.vgafileh, UI_SCREEN_W * UI_SCREEN_H);
-        gfx_aux_color_replace(&ui_data.aux.screen, 0, 1);
-        gfx_aux_overlay(x, y, &ui_data.aux.screen, &aux2);
-        gfx_aux_draw_frame_from(0, 0, &ui_data.aux.screen, UI_SCREEN_W);
-        uiobj_finish_frame();
-        ui_delay_us_or_click(MOO_TICKS_TO_US(1) / 3);
-    }
-    ui_delay_us_or_click(1000000);
-#endif
 }
 
 static void ui_battle_draw_beam_line(int fx, int fy, int tx, int ty, int a8, int aa, uint8_t v24, const uint8_t *ctbl)
