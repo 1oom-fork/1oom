@@ -10,16 +10,9 @@
 #endif
 
 #include "os.h"
-#include "options.h"
 #include "lib.h"
 #include "util.h"
 #include "types.h"
-
-/* -------------------------------------------------------------------------- */
-
-const struct cmdline_options_s os_cmdline_options[] = {
-    { NULL, 0, NULL, NULL, NULL, NULL }
-};
 
 /* -------------------------------------------------------------------------- */
 
@@ -56,16 +49,6 @@ const char *idstr_os = "win32";
 #else
 const char *idstr_os = "unix";
 #endif
-
-int os_early_init(void)
-{
-    return 0;
-}
-
-int os_init(void)
-{
-    return 0;
-}
 
 void os_shutdown(void)
 {
