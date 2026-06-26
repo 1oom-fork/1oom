@@ -1,9 +1,8 @@
 #include "config.h"
 
-#include "hw.h"
+#include "hw_internal.h"
+
 #include "hwsdl_mouse.h"
-#include "mouse.h"
-#include "types.h"
 
 /* -------------------------------------------------------------------------- */
 
