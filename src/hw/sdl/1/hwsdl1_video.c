@@ -9,6 +9,7 @@
 #endif
 
 #include "hw.h"
+#include "hw_internal.h"
 #include "hwsdl_video.h"
 #include "hwsdl_mouse.h"
 #include "hwsdl_opt.h"
@@ -26,11 +27,6 @@ static struct sdl_video_s {
 #ifdef HAVE_OPENGL
     SDL_Surface *hwrenderbuf;
 #endif
-    int (*setmode)(int w, int h);
-    void (*render)(int bufi);
-    void (*update)(void);
-    void (*setpal)(uint8_t *pal, int first, int num);
-
     /* buffers used by UI */
     uint8_t *buf[NUM_VIDEOBUF];
     int bufw;
@@ -81,7 +77,7 @@ static void video_update_8bpp(void)
     SDL_UpdateRect(video.screen, 0, 0, video.screen->w, video.screen->h);
 }
 
-static void video_setpal_8bpp(uint8_t *pal, int first, int num)
+static void video_setpal_8bpp(const uint8_t *pal, int first, int num)
 {
     SDL_Color color[256];
     memcpy(&video.pal[first * 3], pal, num * 3);
@@ -148,7 +144,7 @@ static void video_update_gl_32bpp(void)
     SDL_GL_SwapBuffers();
 }
 
-static void video_setpal_gl_32bpp(uint8_t *pal, int f, int num)
+static void video_setpal_gl_32bpp(const uint8_t *pal, int f, int num)
 {
     memcpy(&video.pal[f * 3], pal, num * 3);
     for (int i = 0; i < num; ++i) {
@@ -270,10 +266,10 @@ int hw_video_init(int w, int h)
     if (!hw_opt_use_gl)
 #endif
     {
-        video.setmode = video_setmode_8bpp;
-        video.render = video_render_8bpp;
-        video.update = video_update_8bpp;
-        video.setpal = video_setpal_8bpp;
+        i_hw_video.setmode = video_setmode_8bpp;
+        i_hw_video.render = video_render_8bpp;
+        i_hw_video.update = video_update_8bpp;
+        i_hw_video.setpal = video_setpal_8bpp;
     }
 #ifdef HAVE_OPENGL
     else {
@@ -292,10 +288,10 @@ int hw_video_init(int w, int h)
         if ((video.hwrenderbuf->pitch % sizeof(Uint32)) != 0) {
             log_warning("SDL renderbuf pitch mod %i == %i\n", sizeof(Uint32), video.hwrenderbuf->pitch);
         }
-        video.setmode = hw_video_resize;
-        video.render = video_render_gl_32bpp;
-        video.update = video_update_gl_32bpp;
-        video.setpal = video_setpal_gl_32bpp;
+        i_hw_video.setmode = hw_video_resize;
+        i_hw_video.render = video_render_gl_32bpp;
+        i_hw_video.update = video_update_gl_32bpp;
+        i_hw_video.setpal = video_setpal_gl_32bpp;
         if ((hw_opt_screen_winw != 0) && (hw_opt_screen_winh != 0)) {
             w = hw_opt_screen_winw;
             h = hw_opt_screen_winh;
@@ -303,7 +299,7 @@ int hw_video_init(int w, int h)
     }
 #endif
 
-    if (video.setmode(w, h)) {
+    if (i_hw_video.setmode(w, h)) {
         return -1;
     }
 
