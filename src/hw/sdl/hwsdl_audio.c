@@ -3,7 +3,6 @@
 #include <stdio.h>
 
 #include "hw.h"
-#include "hwsdl_audio.h"
 #include "hwsdl_opt.h"
 #include "log.h"
 #include "options.h"

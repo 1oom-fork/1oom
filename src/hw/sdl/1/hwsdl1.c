@@ -10,8 +10,8 @@
 #include "SDL/SDL.h"
 #include "SDL/SDL_keysym.h"
 
-#include "hw.h"
-#include "hwsdl_audio.h"
+#include "hw_internal.h"
+
 #include "hwsdl_mouse.h"
 #include "hwsdl_opt.h"
 #include "hwsdl_video.h"
@@ -19,7 +19,6 @@
 #include "log.h"
 #include "main.h"
 #include "options.h"
-#include "types.h"
 
 /* -------------------------------------------------------------------------- */
 
@@ -110,7 +109,7 @@ int hw_event_handle(void)
                 hw_video_resize((unsigned int)e.resize.w, (unsigned int)e.resize.h);
                 break;
             case SDL_VIDEOEXPOSE:
-                hw_video_update();
+                i_hw_video.update();
                 break;
             default:
                 break;
