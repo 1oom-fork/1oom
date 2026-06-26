@@ -4,7 +4,6 @@
 
 #include "hw.h"
 #include "hwsdl_opt.h"
-#include "hwsdl_audio.h"
 #include "options.h"
 #include "types.h"
 
