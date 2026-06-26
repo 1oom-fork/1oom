@@ -2,12 +2,10 @@
 
 #include <stdio.h>
 
-#include "hw.h"
-#include "hwsdl_audio.h"
+#include "hw_internal.h"
+
 #include "hwsdl_opt.h"
-#include "log.h"
 #include "options.h"
-#include "types.h"
 
 #ifdef HAVE_SDLMIXER
 #include "fmt_mus.h"

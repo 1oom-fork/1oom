@@ -6,23 +6,18 @@ void hw_video_refresh(int front)
         }
     }
 
-    video.render(video.bufi ^ front);
+    i_hw_video.render(video.bufi ^ front);
 
     if (SDL_MUSTLOCK(video.screen)) {
         SDL_UnlockSurface(video.screen);
     }
 
-    video.update();
-}
-
-void hw_video_update(void)
-{
-    video.update();
+    i_hw_video.update();
 }
 
 void hw_video_set_palette(uint8_t *pal, int first, int num)
 {
-    video.setpal(pal, first, num);
+    i_hw_video.setpal(pal, first, num);
 }
 
 uint8_t hw_video_get_palette_byte(int i)
