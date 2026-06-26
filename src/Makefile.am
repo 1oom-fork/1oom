@@ -22,6 +22,7 @@ util_sources = \
     comp.h \
     gfxaux.c \
     gfxaux.h \
+    hw.c \
     hw.h \
     kbd.c \
     kbd.h \
