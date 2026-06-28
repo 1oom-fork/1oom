@@ -64,8 +64,8 @@ static void ui_starmap_trans_draw_cb(void *vptr)
         }
     }
     /*72fe5*/
-    vgabuf_limits_set(6, 6, 221, 177);
-    lbxgfx_draw_frame_offs(x0, y0, ui_data.gfx.starmap.planbord, 6, 6, 221, 177, UI_SCREEN_W);
+    ui_starmap_set_limits();
+    ui_starmap_draw_frame(x0, y0, ui_data.gfx.starmap.planbord);
     lbxgfx_set_new_frame(ui_data.gfx.starmap.reloc_bu_accept, 1);
     lbxgfx_draw_frame(271, 163, ui_data.gfx.starmap.reloc_bu_accept, UI_SCREEN_W);
     if (d->tr.from != g->planet_focus_i[d->api]) {
@@ -84,7 +84,7 @@ static void ui_starmap_trans_draw_cb(void *vptr)
         } else {
             ctbl = colortbl_line_hmm1;
         }
-        ui_draw_line_limit_ctbl(x0 + 6, y0 + 6, x1, y1, ctbl, 5, ui_data.starmap.line_anim_phase);
+        ui_starmap_draw_line_ctbl(x0 + 6, y0 + 6, x1, y1, ctbl, 5, ui_data.starmap.line_anim_phase);
     }
     /*7317e*/
     if (d->tr.from != g->planet_focus_i[d->api]) {

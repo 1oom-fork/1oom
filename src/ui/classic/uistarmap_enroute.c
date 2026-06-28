@@ -41,7 +41,7 @@ static void ui_starmap_enroute_draw_cb(void *vptr)
         int x, y;
         x = (r->x - ui_data.starmap.x) * 2 + 5;
         y = (r->y - ui_data.starmap.y) * 2 + 5;
-        lbxgfx_draw_frame_offs(x, y, ui_data.gfx.starmap.shipbord, 6, 6, 221, 177, UI_SCREEN_W);
+        ui_starmap_draw_frame(x, y, ui_data.gfx.starmap.shipbord);
     }
     vgabuf_fill_rect(225, 8, 314, 180, 7);
     lbxgfx_draw_frame(224, 4, ui_data.gfx.starmap.movextr2, UI_SCREEN_W);
@@ -62,17 +62,17 @@ static void ui_starmap_enroute_draw_cb(void *vptr)
         int x0, y0, x1, y1, dist;
         x1 = (pt->x - ui_data.starmap.x) * 2 + 8;
         y1 = (pt->y - ui_data.starmap.y) * 2 + 8;
-        lbxgfx_draw_frame_offs(x1, y1, ui_data.gfx.starmap.planbord, 6, 6, 221, 177, UI_SCREEN_W);
+        ui_starmap_draw_frame(x1, y1, ui_data.gfx.starmap.planbord);
         x0 = (r->x - ui_data.starmap.x) * 2 + 8;
         y0 = (r->y - ui_data.starmap.y) * 2 + 8;
-        ui_draw_line_limit_ctbl(x0 + 4, y0 + 1, x1 + 6, y1 + 6, colortbl_line_hmm1, 5, ui_data.starmap.line_anim_phase);
+        ui_starmap_draw_line_ctbl(x0 + 4, y0 + 1, x1 + 6, y1 + 6, colortbl_line_hmm1, 5, ui_data.starmap.line_anim_phase);
         gfx = ui_data.gfx.starmap.smalship[e->banner];
         if (pd->x < r->x) {
             lbxgfx_set_new_frame(gfx, 1);
         } else {
             lbxgfx_set_frame_0(gfx);
         }
-        lbxgfx_draw_frame_offs(x0, y0, gfx, 6, 6, 221, 177, UI_SCREEN_W);
+        ui_starmap_draw_frame(x0, y0, gfx);
         dist = game_get_min_dist(g, r->owner, g->planet_focus_i[d->api]);
         if ((r->owner == d->api) && (d->en.can_move != NO_MOVE) && (!d->en.in_frange)) {
             /* FIXME use proper positioning for varying str length */
