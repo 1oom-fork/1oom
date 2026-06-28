@@ -154,6 +154,8 @@ extern const uint8_t colortbl_line_enroute[5];
 extern const uint8_t colortbl_line_reloc[5];
 extern const uint8_t colortbl_line_hmm1[5];
 
+struct gfx_aux_s;
+
 extern void ui_starmap_fill_oi_ctrl(struct starmap_data_s *d);
 extern void ui_starmap_clear_oi_ctrl(struct starmap_data_s *d);
 extern void ui_starmap_fill_oi_tbls(struct starmap_data_s *d);
@@ -161,6 +163,13 @@ extern void ui_starmap_fill_oi_tbl_stars(struct starmap_data_s *d);
 extern void ui_starmap_fill_oi_tbl_stars_own(struct starmap_data_s *d, player_id_t owner);
 extern void ui_starmap_add_oi_bottom_buttons(struct starmap_data_s *d);
 extern void ui_starmap_handle_oi_ctrl(struct starmap_data_s *d, int16_t oi);
+extern void ui_starmap_draw_clear(void);
+extern void ui_starmap_set_limits(void);
+extern void ui_starmap_draw_frame(int x, int y, uint8_t *data);
+extern void ui_starmap_draw_frame_from(int x, int y, struct gfx_aux_s *aux);
+extern void ui_starmap_print_str_center(int x, int y, const char *str);
+extern void ui_starmap_draw_line(int x0, int y0, int x1, int y1, uint8_t color);
+extern void ui_starmap_draw_line_ctbl(int x0, int y0, int x1, int y1, const uint8_t *colortbl, int colornum, int pos);
 extern void ui_starmap_draw_basic(struct starmap_data_s *d);
 extern void ui_starmap_draw_starmap(struct starmap_data_s *d);
 extern void ui_starmap_draw_button_text(struct starmap_data_s *d, bool highlight);
