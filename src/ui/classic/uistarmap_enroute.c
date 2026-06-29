@@ -43,12 +43,12 @@ static void ui_starmap_enroute_draw_cb(void *vptr)
         y = (r->y - ui_data.starmap.y) * 2 + 5;
         lbxgfx_draw_frame_offs(x, y, ui_data.gfx.starmap.shipbord, 6, 6, 221, 177, UI_SCREEN_W);
     }
-    ui_draw_filled_rect(225, 8, 314, 180, 7);
+    vgabuf_fill_rect(225, 8, 314, 180, 7);
     lbxgfx_draw_frame(224, 4, ui_data.gfx.starmap.movextr2, UI_SCREEN_W);
     if ((r->owner == d->api) && (d->en.can_move != NO_MOVE)) {
         lbxgfx_draw_frame(224, 160, ui_data.gfx.starmap.movextr3, UI_SCREEN_W);
     }
-    ui_draw_filled_rect(227, 8, 310, 39, 0);
+    vgabuf_fill_rect(227, 8, 310, 39, 0);
     lbxgfx_set_frame_0(ui_data.gfx.starmap.scanner);
     for (int f = 0; f <= d->en.frame_scanner; ++f) {
         lbxgfx_draw_frame(227, 8, ui_data.gfx.starmap.scanner, UI_SCREEN_W);
@@ -94,8 +94,8 @@ static void ui_starmap_enroute_draw_cb(void *vptr)
         int st, x, y;
         x = (i & 1) * 43 + 228;
         y = (i / 2) * 40 + 44;
-        ui_draw_filled_rect(x, y, x + 38, y + 24, 0);
-        ui_draw_filled_rect(x, y + 28, x + 38, y + 34, 0);
+        vgabuf_fill_rect(x, y, x + 38, y + 24, 0);
+        vgabuf_fill_rect(x, y + 28, x + 38, y + 34, 0);
         ui_draw_stars(x, y, 0, 32, &(d->en.ds));
         st = d->en.sn0.type[i];
         gfx = ui_data.gfx.ships[srd->design[st].look];

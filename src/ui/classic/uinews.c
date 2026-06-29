@@ -59,10 +59,10 @@ static void news_load_data(news_type_t type)
 static void ui_news_cb1(void *vptr)
 {
     struct news_data_s *d = vptr;
-    ui_draw_filled_rect(32, 142, 287, 182, 0);
-    ui_draw_filled_rect(34, 184, 285, 191, 0);
-    ui_draw_line1(33, 182, 286, 182, 0);
-    ui_draw_line1(32, 183, 287, 183, 0);
+    vgabuf_fill_rect(32, 142, 287, 182, 0);
+    vgabuf_fill_rect(34, 184, 285, 191, 0);
+    vgabuf_draw_line(33, 182, 286, 182, 0);
+    vgabuf_draw_line(32, 183, 287, 183, 0);
     {
         uint8_t *gfx = ui_data.gfx.news.nc;
         int fn = lbxgfx_get_frame(gfx);
@@ -83,7 +83,7 @@ static void ui_news_cb1(void *vptr)
         }
     }
     lbxfont_select(3, 1, 0, 0);
-    ui_draw_filled_rect(38, 145, 284, 190, 0);
+    vgabuf_fill_rect(38, 145, 284, 190, 0);
     lbxfont_set_space_w(2);
     lbxfont_print_str_split(38, 145, 245, d->str, 3, UI_SCREEN_W, UI_SCREEN_H);
     if (d->ns->type == GAME_NEWS_STATS) {
@@ -107,10 +107,10 @@ static void ui_news_draw_start_anim(void)
     ui_delay_1();
     ui_sound_stop_music();
     uiobj_table_clear();
-    ui_draw_erase_buf();
+    vgabuf_erase();
     lbxgfx_draw_frame(0, 0, ui_data.gfx.news.tv, UI_SCREEN_W);
     uiobj_finish_frame();
-    ui_draw_erase_buf();
+    vgabuf_erase();
     lbxgfx_draw_frame(0, 0, ui_data.gfx.news.tv, UI_SCREEN_W);
     ui_sound_play_music(9);
     frame = 0;
@@ -123,10 +123,10 @@ static void ui_news_draw_start_anim(void)
             lbxgfx_draw_frame(14, 14, ui_data.gfx.news.gnn, UI_SCREEN_W);
         }
         lbxgfx_draw_frame(14, 14, ui_data.gfx.news.gnn, UI_SCREEN_W);
-        ui_draw_filled_rect(32, 142, 287, 182, 0xc1);
-        ui_draw_filled_rect(34, 184, 285, 191, 0xc1);
-        ui_draw_line1(33, 182, 286, 182, 0xc1);
-        ui_draw_line1(32, 183, 287, 183, 0xc1);
+        vgabuf_fill_rect(32, 142, 287, 182, 0xc1);
+        vgabuf_fill_rect(34, 184, 285, 191, 0xc1);
+        vgabuf_draw_line(33, 182, 286, 182, 0xc1);
+        vgabuf_draw_line(32, 183, 287, 183, 0xc1);
         ui_draw_finish();
         ui_delay_ticks_or_click(1);
         ++frame;

@@ -67,7 +67,7 @@ static void planets_draw_cb(void *vptr)
     char buf[64];
     int v;
 
-    ui_draw_filled_rect(0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, 0x5d);
+    vgabuf_fill(0x5d);
     for (int i = 0; i < PLANETS_ON_SCREEN; ++i) {
         int pi;
         pi = d->pos + i;
@@ -75,17 +75,17 @@ static void planets_draw_cb(void *vptr)
             int y0, y1;
             y0 = 21 + i * 11;
             y1 = y0 + 6;
-            ui_draw_filled_rect(8, y0, 309, y1, 0xeb);
+            vgabuf_fill_rect(8, y0, 309, y1, 0xeb);
         }
     }
     lbxgfx_draw_frame(0, 0, d->gfx_report, UI_SCREEN_W);
     lbxgfx_set_new_frame(d->gfx_but_trans, 1);
     lbxgfx_draw_frame(209, 181, d->gfx_but_trans, UI_SCREEN_W);
-    ui_draw_filled_rect(213, 159, 245, 162, 0x2f);
+    vgabuf_fill_rect(213, 159, 245, 162, 0x2f);
 
     v = g->eto[d->api].tax;
     if (v > 0) {
-        ui_draw_line_3h(213, 160, 212 + (v * 4) / 25, 0x73);
+        vgabuf_draw_line_3h(213, 160, 212 + (v * 4) / 25, 0x73);
     }
 
     lbxfont_select(2, 8, 0, 0);
@@ -230,9 +230,9 @@ static void planets_transfer_draw_cb(void *vptr)
 
     vgabuf_copy_back_from_page2();
     lbxgfx_draw_frame(x, y, d->gfx_transfer, UI_SCREEN_W);
-    ui_draw_filled_rect(x + 14, y + 35, x + 64, y + 38, 0x2f);
+    vgabuf_fill_rect(x + 14, y + 35, x + 64, y + 38, 0x2f);
     if (d->amount_trans > 0) {
-        ui_draw_line_3h(x + 14, y + 35, x + 13 + d->amount_trans / 2, 0x74);
+        vgabuf_draw_line_3h(x + 14, y + 35, x + 13 + d->amount_trans / 2, 0x74);
     }
     sprintf(buf, "%s %s", game_str_pl_resto, p->name);
     lbxfont_select(0, 0xd, 0, 0);

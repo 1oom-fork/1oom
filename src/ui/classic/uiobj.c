@@ -209,7 +209,7 @@ static void uiobj_handle_t4_sub2(uiobj_t *p, uint16_t len, uint16_t a4, const ch
     lbxfont_select(p->t4.fontnum, p->t4.fonta2, p->t4.fonta4, 0);
     va = lbxfont_get_height() - 1;
     if (p->t4.rectcolor != 0) {
-        ui_draw_filled_rect(p->x0, p->y0, p->x1, p->y1, p->t4.rectcolor);
+        vgabuf_fill_rect(p->x0, p->y0, p->x1, p->y1, p->t4.rectcolor);
     }
     if (p->t4.z1e == 0) {
         uint16_t l, w, x, vc;
@@ -223,7 +223,7 @@ static void uiobj_handle_t4_sub2(uiobj_t *p, uint16_t len, uint16_t a4, const ch
             vc = p->y0 + va;
             l = 0;
             while (si > 0) {
-                ui_draw_line1(x, vc - si + 1, x + w + 1, vc - si + 1, p->t4.colortbl[l]);
+                vgabuf_draw_line(x, vc - si + 1, x + w + 1, vc - si + 1, p->t4.colortbl[l]);
                 ++l;
                 --si;
             }
@@ -231,7 +231,7 @@ static void uiobj_handle_t4_sub2(uiobj_t *p, uint16_t len, uint16_t a4, const ch
             si = va - (si - va);
             l = 0;
             while (si > 0) {
-                ui_draw_line1(x, p->y0 + si - 1, x + w + 1, p->y0 + si - 1, p->t4.colortbl[va - l - 1]);
+                vgabuf_draw_line(x, p->y0 + si - 1, x + w + 1, p->y0 + si - 1, p->t4.colortbl[va - l - 1]);
                 ++l;
                 --si;
             }
@@ -464,7 +464,7 @@ static void uiobj_handle_ta_sub1(int x0, int y0, int x1, int y1, uint16_t subtyp
 {
     switch (subtype) {
         case 1:
-            ui_draw_filled_rect(x0, y0, x1, y1, p0v);
+            vgabuf_fill_rect(x0, y0, x1, y1, p0v);
             break;
         case 3:
             p0v = 0;
@@ -526,7 +526,7 @@ static inline void uiobj_handle_hmm1_sub1(int i)
         case 4:
             if (uiobj_hmm1_oi != i) {
                 lbxfont_select(p->t4.fontnum, p->t4.fonta2, p->t4.fonta4, 0);
-                ui_draw_filled_rect(p->x0, p->y0, p->x1, p->y1, p->t4.rectcolor);
+                vgabuf_fill_rect(p->x0, p->y0, p->x1, p->y1, p->t4.rectcolor);
                 if (!p->t4.align_right) {
                     lbxfont_print_str_normal(p->x0, p->y0, p->t4.buf, UI_SCREEN_W);
                 } else {

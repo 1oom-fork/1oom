@@ -37,7 +37,7 @@ static void switch_draw_cb(void *vptr)
     void *ctx;
     char buf[32];
 
-    ui_draw_erase_buf();
+    vgabuf_erase();
     lbxgfx_draw_frame(0, 0, ui_data.gfx.starmap.mainview, UI_SCREEN_W);
 
     ctx = ui_gmap_basic_init(g, true);
