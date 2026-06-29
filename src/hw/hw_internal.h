@@ -3,6 +3,7 @@
 
 #include "hw.h"
 #include "types.h"
+#include "vgabuf.h"
 #include "vgapal.h"
 
 extern struct i_hw_video_s {

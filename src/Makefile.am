@@ -53,6 +53,7 @@ util_sources = \
     util.h \
     util_math.c \
     util_math.h \
+    vgabuf.h \
     vgapal.c \
     vgapal.h
 
