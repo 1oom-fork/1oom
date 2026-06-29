@@ -47,7 +47,7 @@ static void empirestatus_draw_cb(void *vptr)
     uint8_t tbl_stat[6][PLAYER_NUM];
     int tbl_sum[PLAYER_NUM];
 
-    ui_draw_color_buf(0x3a);
+    vgabuf_fill(0x3a);
     lbxgfx_draw_frame(0, 0, d->gfx, UI_SCREEN_W);
 
     lbxfont_select_set_12_4(4, 0xf, 0, 0);
@@ -109,9 +109,9 @@ static void empirestatus_draw_cb(void *vptr)
             lbxfont_print_str_normal(x, y, game_str_tbl_race[e->race], UI_SCREEN_W);
             v = tbl_stat[s][i];
             if (v) {
-                ui_draw_filled_rect(x + 35, y + 1, x + 34 + v, y + 2, tbl_banner_color2[e->banner]);
+                vgabuf_fill_rect(x + 35, y + 1, x + 34 + v, y + 2, tbl_banner_color2[e->banner]);
                 if (v > 1) {
-                    ui_draw_line1(x + 35, y + 3, x + 33 + v, y + 3, 0);
+                    vgabuf_draw_line(x + 35, y + 3, x + 33 + v, y + 3, 0);
                 }
             }
         }

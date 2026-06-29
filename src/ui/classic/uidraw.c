@@ -149,9 +149,9 @@ static void ui_draw_line_limit_do(int x0, int y0, int x1, int y1, uint8_t color,
         }
     }
     if (colortbl) {
-        ui_draw_line_ctbl(x0, y0, x1, y1, colortbl, colornum, colorpos);
+        vgabuf_draw_line_ctbl(x0, y0, x1, y1, colortbl, colornum, colorpos);
     } else {
-        ui_draw_line1(x0, y0, x1, y1, color);
+        vgabuf_draw_line(x0, y0, x1, y1, color);
     }
 }
 
@@ -332,23 +332,23 @@ void ui_draw_line_limit_ctbl(int x0, int y0, int x1, int y1, const uint8_t *colo
 void ui_draw_line_3h(int x0, int y0, int x1, uint8_t color)
 {
     for (int i = 0; i < 3; ++i, ++y0) {
-        ui_draw_line1(x0, y0, x1, y0, color);
+        vgabuf_draw_line(x0, y0, x1, y0, color);
     }
 }
 
 void ui_draw_box1(int x0, int y0, int x1, int y1, uint8_t color1, uint8_t color2)
 {
-    ui_draw_line1(x0, y0, x1, y0, color1);
-    ui_draw_line1(x0, y0, x0, y1, color1);
-    ui_draw_line1(x0 + 1, y1, x1, y1, color2);
-    ui_draw_line1(x1, y0 + 1, x1, y1, color2);
+    vgabuf_draw_line(x0, y0, x1, y0, color1);
+    vgabuf_draw_line(x0, y0, x0, y1, color1);
+    vgabuf_draw_line(x0 + 1, y1, x1, y1, color2);
+    vgabuf_draw_line(x1, y0 + 1, x1, y1, color2);
 }
 
 void ui_draw_box2(int x0, int y0, int x1, int y1, uint8_t color1, uint8_t color2, uint8_t color3, uint8_t color4)
 {
-    ui_draw_box1(x0, y0, x1, y1, color1, color3);
+    vgabuf_draw_box1(x0, y0, x1, y1, color1, color3);
     ++x0; ++y0; --x1; --y1;
-    ui_draw_box1(x0, y0, x1, y1, color2, color4);
+    vgabuf_draw_box1(x0, y0, x1, y1, color2, color4);
 }
 
 void ui_draw_copy_line(int x0, int y0, int x1, int y1, bool flag_hmm)
@@ -563,9 +563,9 @@ static void ui_draw_finish_hmm3(int x, int y, int f)
     y += f;
     vx -= f;
     vy -= f;
-    ui_draw_copy_line(x, y, vx, y, 0);
-    ui_draw_copy_line(x, y, x, vy, 0);
-    ui_draw_copy_line(vx, y, vx, vy, 0);
+    vgabuf_draw_copy_line(x, y, vx, y, 0);
+    vgabuf_draw_copy_line(x, y, x, vy, 0);
+    vgabuf_draw_copy_line(vx, y, vx, vy, 0);
 }
 
 static void ui_draw_finish_hmm2(void)
@@ -608,7 +608,7 @@ void ui_draw_stars(int x, int y, int xoff1, int xoff2, struct draw_stars_s *s)
         for (int i = 0; i < 16; ++i) {
             int sx = tbl_hmm1_x[i];
             if ((sx >= xo1) && (sx < tx)) {
-                ui_draw_pixel(sx - xo1 + x, tbl_hmm1_y[i] + y, 4);
+                vgabuf_put_pixel(sx - xo1 + x, tbl_hmm1_y[i] + y, 4);
             }
         }
     } else {
@@ -616,14 +616,14 @@ void ui_draw_stars(int x, int y, int xoff1, int xoff2, struct draw_stars_s *s)
         for (int i = 0; i < 16; ++i) {
             int sx = tbl_hmm1_x[i];
             if (sx >= xo1) {
-                ui_draw_pixel(sx - xo1 + x, tbl_hmm1_y[i] + y, 4);
+                vgabuf_put_pixel(sx - xo1 + x, tbl_hmm1_y[i] + y, 4);
             }
         }
         tx = (xo1 + xoff2) % (UI_SCREEN_W / 2);
         for (int i = 0; i < 16; ++i) {
             int sx = tbl_hmm1_x[i];
             if (sx < tx) {
-                ui_draw_pixel(sx - xo1 + x + 160, tbl_hmm1_y[i] + y, 4);
+                vgabuf_put_pixel(sx - xo1 + x + 160, tbl_hmm1_y[i] + y, 4);
             }
         }
     }
@@ -632,7 +632,7 @@ void ui_draw_stars(int x, int y, int xoff1, int xoff2, struct draw_stars_s *s)
         for (int i = 0; i < 23; ++i) {
             int sx = tbl_hmm2_x[i];
             if ((sx >= xo2) && (sx < tx)) {
-                ui_draw_pixel(sx - xo2 + x, tbl_hmm2_y[i] + y, 6);
+                vgabuf_put_pixel(sx - xo2 + x, tbl_hmm2_y[i] + y, 6);
             }
         }
     } else {
@@ -640,14 +640,14 @@ void ui_draw_stars(int x, int y, int xoff1, int xoff2, struct draw_stars_s *s)
         for (int i = 0; i < 23; ++i) {
             int sx = tbl_hmm2_x[i];
             if (sx >= xo2) {
-                ui_draw_pixel(sx - xo2 + x, tbl_hmm2_y[i] + y, 6);
+                vgabuf_put_pixel(sx - xo2 + x, tbl_hmm2_y[i] + y, 6);
             }
         }
         tx = (xo2 + xoff2) % (UI_SCREEN_W / 2);
         for (int i = 0; i < 23; ++i) {
             int sx = tbl_hmm2_x[i];
             if (sx < tx) {
-                ui_draw_pixel(sx - xo2 + x + 160, tbl_hmm2_y[i] + y, 6);
+                vgabuf_put_pixel(sx - xo2 + x + 160, tbl_hmm2_y[i] + y, 6);
             }
         }
     }
@@ -678,14 +678,14 @@ void ui_draw_textbox_2str(const char *str1, const char *str2, int y0)
         y1 += lbxfont_get_height() + 4;
     }
     ui_draw_box_fill(x0 + 2, y0 + 2, x1 - 2, y1 - 2, colortbl_textbox, 0, 5, 1, (0x2737 & 0xffu));
-    ui_draw_box2(x0, y0, x1, y1, 0x7, 0x10, 0x13, 0x12);
-    ui_draw_pixel(x0, y0, 0x10);
-    ui_draw_pixel(x0 + 1, y0 + 1, 0xf);
-    ui_draw_pixel(x0 + 2, y0 + 1, 0xf);
-    ui_draw_pixel(x0 + 1, y0 + 2, 0xf);
-    ui_draw_pixel(x0 + 1, y0 + 3, 0xf);
-    ui_draw_line1(x0 + 1, y1 + 1, x1 + 1, y1 + 1, 0);
-    ui_draw_line1(x1 + 1, y0 + 1, x1 + 1, y1, 0);
+    vgabuf_draw_box2(x0, y0, x1, y1, 0x7, 0x10, 0x13, 0x12);
+    vgabuf_put_pixel(x0, y0, 0x10);
+    vgabuf_put_pixel(x0 + 1, y0 + 1, 0xf);
+    vgabuf_put_pixel(x0 + 2, y0 + 1, 0xf);
+    vgabuf_put_pixel(x0 + 1, y0 + 2, 0xf);
+    vgabuf_put_pixel(x0 + 1, y0 + 3, 0xf);
+    vgabuf_draw_line(x0 + 1, y1 + 1, x1 + 1, y1 + 1, 0);
+    vgabuf_draw_line(x1 + 1, y0 + 1, x1 + 1, y1, 0);
     if (*str1 != '\0') {
         lbxfont_select_subcolors_13not1();
         lbxfont_print_str_center(x0 + w / 2, y0 + 4, str1, UI_SCREEN_W);

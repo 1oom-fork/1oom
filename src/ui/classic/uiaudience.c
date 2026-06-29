@@ -52,11 +52,11 @@ static void audience_load_data(struct audience_data_s *d)
     {
         uint8_t *gfx;
         gfx = lbxfile_item_get(LBXFILE_EMBASSY, 1, 0);
-        ui_draw_erase_buf();
+        vgabuf_erase();
         lbxgfx_draw_frame(0, 0, gfx, UI_SCREEN_W);
         uiobj_table_clear();
         uiobj_finish_frame();
-        ui_draw_erase_buf();
+        vgabuf_erase();
         lbxgfx_draw_frame(0, 0, gfx, UI_SCREEN_W);
         lbxfile_item_release(LBXFILE_EMBASSY, gfx);
     }
@@ -380,9 +380,9 @@ void ui_audience_newtech(struct audience_s *au)
     if (ui_draw_finish_mode == 0) {
         ui_palette_fadeout_a_f_1();
     }
-    ui_draw_erase_buf();
+    vgabuf_erase();
     uiobj_finish_frame();
-    ui_draw_erase_buf();
+    vgabuf_erase();
     audience_free_data(au->uictx);
     audience_load_data(au->uictx);
     ui_draw_finish_mode = 0;

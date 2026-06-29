@@ -38,7 +38,7 @@ void ui_play_intro(void)
 
     ui_palette_fadeout_14_14_2();
     lbxpal_select(0, -1, 0);
-    ui_draw_erase_buf();
+    vgabuf_erase();
     lbxfont_select(5, 1, 0, 0);
     lbxfont_print_str_normal(0, 0, game_str_in_loading, UI_SCREEN_W);
     ui_cursor_setup_area(1, &ui_cursor_area_all_i0);
@@ -60,9 +60,9 @@ void ui_play_intro(void)
     ui_palette_fadeout_4_3_1();
 
     ui_sound_play_music(0);
-    ui_draw_erase_buf();
+    vgabuf_erase();
     uiobj_finish_frame();
-    ui_draw_erase_buf();
+    vgabuf_erase();
 
     lbxpal_select(1, -1, 0);
     uiobj_table_clear();
@@ -88,7 +88,7 @@ void ui_play_intro(void)
             break;
         } else {
             if (frame == 0) {
-                ui_draw_erase_buf();
+                vgabuf_erase();
             } else {
                 lbxgfx_set_frame(intro_gfx, frame - 1);
                 lbxgfx_draw_frame_pal(0, 0, intro_gfx, UI_SCREEN_W);
@@ -123,10 +123,10 @@ void ui_play_intro(void)
             break;
         } else {
             if (frame == 0) {
-                ui_draw_erase_buf();
+                vgabuf_erase();
             } else {
                 if (frame == 1) {
-                    ui_draw_erase_buf();
+                    vgabuf_erase();
                 }
                 if (1/*sound_enabled && sfx_enabled*/) {
                     if (frame == 9) {
@@ -170,10 +170,10 @@ void ui_play_intro(void)
             break;
         } else {
             if (frame == 0) {
-                ui_draw_erase_buf();
+                vgabuf_erase();
             } else {
                 if (frame == 1) {
-                    ui_draw_erase_buf();
+                    vgabuf_erase();
                 }
                 if (1/*sound_enabled && sfx_enabled*/) {
                     switch (frame) {
@@ -220,10 +220,10 @@ void ui_play_intro(void)
             break;
         } else {
             if (frame == 0) {
-                ui_draw_erase_buf();
+                vgabuf_erase();
             } else {
                 if (frame == 1) {
-                    ui_draw_erase_buf();
+                    vgabuf_erase();
                 }
                 if (1/*sound_enabled && sfx_enabled*/) {
                     if ((frame == 0x14) || (frame == 0x28)) {
@@ -267,10 +267,10 @@ void ui_play_intro(void)
             break;
         } else {
             if (frame == 0) {
-                ui_draw_erase_buf();
+                vgabuf_erase();
             } else {
                 if (frame == 1) {
-                    ui_draw_erase_buf();
+                    vgabuf_erase();
                 }
                 if (1/*sound_enabled && sfx_enabled*/) {
                     if (frame == 0x14) {
@@ -310,10 +310,10 @@ void ui_play_intro(void)
             break;
         } else {
             if (frame == 0) {
-                ui_draw_erase_buf();
+                vgabuf_erase();
             } else {
                 if (frame == 1) {
-                    ui_draw_erase_buf();
+                    vgabuf_erase();
                 }
                 lbxgfx_set_frame(intro_gfx, frame - 1);
                 lbxgfx_draw_frame_pal(0, 0, intro_gfx, UI_SCREEN_W);
@@ -348,10 +348,10 @@ void ui_play_intro(void)
             break;
         } else {
             if (frame == 0) {
-                ui_draw_erase_buf();
+                vgabuf_erase();
             } else {
                 if (frame == 1) {
-                    ui_draw_erase_buf();
+                    vgabuf_erase();
                 }
                 if (frame == 0xb2) {
                     hw_audio_music_fadeout();
@@ -379,9 +379,9 @@ void ui_play_intro(void)
     }
 
     ui_palette_fadeout_14_14_2();
-    ui_draw_erase_buf();
+    vgabuf_erase();
     uiobj_finish_frame();
-    ui_draw_erase_buf();
+    vgabuf_erase();
     ui_palette_fadeout_14_14_2();
 
     uiobj_set_skip_delay(false);
