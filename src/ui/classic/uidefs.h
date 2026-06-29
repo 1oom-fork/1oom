@@ -6,6 +6,7 @@
 #include "game_types.h"
 #include "gfxaux.h"
 #include "types.h"
+#include "vgabuf.h"
 
 #define UI_SCREEN_W 320
 #define UI_SCREEN_H 200
