@@ -107,7 +107,7 @@ static void new_game_draw_cb1(void *vptr)
 static void new_game_draw_race_cb(void *vptr)
 {
     struct new_game_data_s *d = vptr;
-    hw_video_copy_back_from_page2();
+    vgabuf_copy_back_from_page2();
     if (d->selected < RACE_NUM) {
         lbxgfx_draw_frame(91, 11, d->gfx_portrait[d->selected], UI_SCREEN_W);
         lbxfont_select(0, 4, 0, 0);
@@ -122,7 +122,7 @@ static void new_game_draw_race_cb(void *vptr)
 static void new_game_draw_banner_cb(void *vptr)
 {
     struct new_game_data_s *d = vptr;
-    hw_video_copy_back_from_page2();
+    vgabuf_copy_back_from_page2();
     if (d->str_title) {
         lbxfont_select(5, 0, 0, 0);
         lbxfont_print_str_normal(0xa, 0xa, d->str_title, UI_SCREEN_W);
@@ -196,7 +196,7 @@ static bool ui_new_game_racebannernames(struct game_new_options_s *newopts, stru
     ui_draw_erase_buf();
     lbxgfx_draw_frame(0, 0, d->gfx_custom, UI_SCREEN_W);
     ui_draw_box1(0x5a, 0xa, 0x83, 0x2d, 0x9b, 0x9b);
-    hw_video_copy_back_to_page2();
+    vgabuf_copy_back_to_page2();
     d->selected = 0;
 
     /* race */
