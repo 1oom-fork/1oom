@@ -59,7 +59,7 @@ static void free_go_data(struct gameopts_data_s *d)
 static void gameopts_draw_cb(void *vptr)
 {
     struct gameopts_data_s *d = vptr;
-    ui_draw_erase_buf();
+    vgabuf_erase();
     lbxgfx_draw_frame(0, 0, d->gfx_game, UI_SCREEN_W);
 }
 
