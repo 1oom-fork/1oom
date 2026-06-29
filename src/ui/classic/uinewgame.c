@@ -100,7 +100,7 @@ static void new_game_free_data(struct new_game_data_s *d)
 static void new_game_draw_cb1(void *vptr)
 {
     struct new_game_data_s *d = vptr;
-    ui_draw_erase_buf();
+    vgabuf_erase();
     lbxgfx_draw_frame(0, 0, d->gfx_newgame, UI_SCREEN_W);
 }
 
@@ -131,8 +131,8 @@ static void new_game_draw_banner_cb(void *vptr)
     if (d->race < RACE_NUM) {
         lbxgfx_draw_frame(91, 11, d->gfx_portrait[d->race], UI_SCREEN_W);
     }
-    ui_draw_filled_rect(0x5a, 0x35, 0x83, 0x5a, 0);
-    ui_draw_box1(0x5a, 0x35, 0x83, 0x5a, 0x9b, 0x9b);
+    vgabuf_fill_rect(0x5a, 0x35, 0x83, 0x5a, 0);
+    vgabuf_draw_box1(0x5a, 0x35, 0x83, 0x5a, 0x9b, 0x9b);
     if (d->selected < BANNER_NUM) {
         lbxgfx_set_new_frame(d->gfx_flag[d->selected], d->frame);
         gfx_aux_draw_frame_to(d->gfx_flag[d->selected], &d->aux_banner);
@@ -193,9 +193,9 @@ static bool ui_new_game_racebannernames(struct game_new_options_s *newopts, stru
     ui_palette_fadeout_19_19_1();
     lbxpal_select(4, -1, 0);
     lbxpal_build_colortables();
-    ui_draw_erase_buf();
+    vgabuf_erase();
     lbxgfx_draw_frame(0, 0, d->gfx_custom, UI_SCREEN_W);
-    ui_draw_box1(0x5a, 0xa, 0x83, 0x2d, 0x9b, 0x9b);
+    vgabuf_draw_box1(0x5a, 0xa, 0x83, 0x2d, 0x9b, 0x9b);
     vgabuf_copy_back_to_page2();
     d->selected = 0;
 
@@ -329,9 +329,9 @@ bool ui_new_game(struct game_new_options_s *newopts)
     new_game_free_data(&d);
 
     ui_palette_fadeout_19_19_1();
-    ui_draw_erase_buf();
+    vgabuf_erase();
     vgabuf_flip();
-    ui_draw_erase_buf();
+    vgabuf_erase();
     vgabuf_flip();
 
     return flag_ok;

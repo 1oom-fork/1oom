@@ -24,12 +24,12 @@
 
 static void ui_starmap_draw_hmm5(void)
 {
-    ui_draw_filled_rect(227, 73, 310, 83, 4);
-    ui_draw_filled_rect(228, 74, 309, 83, 7);
-    ui_draw_line1(226, 79, 226, 83, 0xfd);
-    ui_draw_line1(225, 79, 225, 83, 0xfc);
-    ui_draw_line1(312, 77, 312, 82, 0xfc);
-    ui_draw_line1(311, 79, 311, 84, 0xfd);
+    vgabuf_fill_rect(227, 73, 310, 83, 4);
+    vgabuf_fill_rect(228, 74, 309, 83, 7);
+    vgabuf_draw_line(226, 79, 226, 83, 0xfd);
+    vgabuf_draw_line(225, 79, 225, 83, 0xfc);
+    vgabuf_draw_line(312, 77, 312, 82, 0xfc);
+    vgabuf_draw_line(311, 79, 311, 84, 0xfd);
 }
 
 static void ui_starmap_trans_draw_cb(void *vptr)
@@ -53,12 +53,12 @@ static void ui_starmap_trans_draw_cb(void *vptr)
         /*72f20*/
         lbxgfx_draw_frame_offs(222, 80, ui_data.gfx.starmap.relocate, 0, 83, 310, 199, UI_SCREEN_W);
         if (!PLANET_FOCUS_IS_EXPLORED(g, d->api)) {
-            ui_draw_filled_rect(227, 57, 310, 159, 0);
+            vgabuf_fill_rect(227, 57, 310, 159, 0);
             lbxgfx_draw_frame_offs(224, 5, ui_data.gfx.starmap.unexplor, 227, 57, 310, 159, UI_SCREEN_W);
         } else {
             /*72fa9*/
-            ui_draw_filled_rect(227, 73, 310, 159, 7);
-            ui_draw_box1(227, 73, 310, 159, 4, 4);
+            vgabuf_fill_rect(227, 73, 310, 159, 7);
+            vgabuf_draw_box1(227, 73, 310, 159, 4, 4);
         }
     }
     /*72fe5*/
@@ -152,9 +152,9 @@ static void ui_starmap_trans_draw_cb(void *vptr)
             /*73699*/
             lbxfont_select_set_12_1(0, 1, 0, 0);
             lbxfont_print_num_right(273, 137, d->tr.num, UI_SCREEN_W);
-            ui_draw_filled_rect(258, 127, 299, 129, 0x2f);
+            vgabuf_fill_rect(258, 127, 299, 129, 0x2f);
             if (d->tr.num > 0) {
-                ui_draw_line_3h(258, 127, 258 + (d->tr.num * 40) / trans_max, 0x73);
+                vgabuf_draw_line_3h(258, 127, 258 + (d->tr.num * 40) / trans_max, 0x73);
             }
         }
     } else {
