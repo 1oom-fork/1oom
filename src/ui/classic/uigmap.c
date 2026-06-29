@@ -67,6 +67,31 @@ static void gmap_free_data(struct gmap_data_s *d)
     lbxfile_item_release(LBXFILE_STARMAP, d->gfx_but_ok);
 }
 
+static void ui_gmap_draw_clear(void)
+{
+    vgabuf_erase();
+}
+
+static void ui_gmap_set_limits(void)
+{
+    vgabuf_limits_set(7, 7, 230, 191);
+}
+
+static void ui_gmap_draw_frame(int x, int y, uint8_t *data)
+{
+    lbxgfx_draw_frame_offs(x, y, data, 7, 7, 230, 191, UI_SCREEN_W);
+}
+
+static void ui_gmap_print_str_normal(int x, int y, const char *str)
+{
+    lbxfont_print_str_normal_limit(x, y, str, 7, 7, 230, 191, UI_SCREEN_W);
+}
+
+static void ui_gmap_print_str_center(int x, int y, const char *str)
+{
+    lbxfont_print_str_center_limit(x, y, str, 7, 7, 230, 191, UI_SCREEN_W);
+}
+
 static void gmap_draw_cb(void *vptr)
 {
     struct gmap_data_s *d = vptr;
@@ -81,8 +106,8 @@ static void gmap_draw_cb(void *vptr)
         }
     }
 
-    vgabuf_limits_set(7, 7, 230, 191);
-    vgabuf_erase();
+    ui_gmap_set_limits();
+    ui_gmap_draw_clear();
     lbxgfx_draw_frame(0, 0, ui_data.gfx.starmap.sky, UI_SCREEN_W);
     lbxgfx_draw_frame(0, 0, d->gfx_mapview, UI_SCREEN_W);
 
@@ -90,7 +115,7 @@ static void gmap_draw_cb(void *vptr)
         int x, y;
         x = (g->nebula_x[i] * 224) / g->galaxy_maxx + 7;
         y = (g->nebula_y[i] * 185) / g->galaxy_maxy + 7;
-        lbxgfx_draw_frame_offs(x, y, ui_data.gfx.starmap.smnebula[i], 7, 7, 230, 191, UI_SCREEN_W);
+        ui_gmap_draw_frame(x, y, ui_data.gfx.starmap.smnebula[i]);
     }
 
     for (int i = 0; i < g->enroute_num; ++i) {
@@ -101,7 +126,7 @@ static void gmap_draw_cb(void *vptr)
             x = (r->x * 224) / g->galaxy_maxx + 7;
             y = (r->y * 185) / g->galaxy_maxy + 7;
             gfx = ui_data.gfx.starmap.tinyship[g->eto[r->owner].banner];
-            lbxgfx_draw_frame_offs(x, y, gfx, 7, 7, 230, 191, UI_SCREEN_W);
+            ui_gmap_draw_frame(x, y, gfx);
         }
     }
 
@@ -113,7 +138,7 @@ static void gmap_draw_cb(void *vptr)
             x = (r->x * 224) / g->galaxy_maxx + 7;
             y = (r->y * 185) / g->galaxy_maxy + 7;
             gfx = ui_data.gfx.starmap.tinytran[g->eto[r->owner].banner];
-            lbxgfx_draw_frame_offs(x, y, gfx, 7, 7, 230, 191, UI_SCREEN_W);
+            ui_gmap_draw_frame(x, y, gfx);
         }
     }
 
@@ -141,7 +166,7 @@ static void gmap_draw_cb(void *vptr)
                 x = (p->x * 224) / g->galaxy_maxx + 14;
                 y = (p->y * 185) / g->galaxy_maxy + 8;
                 gfx = ui_data.gfx.starmap.tinyship[g->eto[tbl_have_orbit_owner[j]].banner];
-                lbxgfx_draw_frame_offs(x, y, gfx, 7, 7, 230, 191, UI_SCREEN_W);
+                ui_gmap_draw_frame(x, y, gfx);
             }
         }
     }
@@ -188,7 +213,7 @@ static void gmap_draw_cb(void *vptr)
                     pt = (PLANET_TYPE_TERRAN - p->type);
                     SETMAX(pt, 0);
                     buf[0] = game_str_gm_tchar[pt];
-                    lbxfont_print_str_normal_limit(x + 7, y, buf, 7, 7, 230, 191, UI_SCREEN_W);
+                    ui_gmap_print_str_normal(x + 7, y, buf);
                 }
                 break;
             case 2:
@@ -201,7 +226,7 @@ static void gmap_draw_cb(void *vptr)
                     if (p->special == PLANET_SPECIAL_4XTECH) {
                         lbxfont_select(2, 0xe, 0, 0);
                     }
-                    lbxfont_print_str_center_limit(x + 2, y + 7, game_str_tbl_gm_spec[p->special], 7, 7, 230, 191, UI_SCREEN_W);
+                    ui_gmap_print_str_center(x + 2, y + 7, game_str_tbl_gm_spec[p->special]);
                 }
                 break;
             default:
