@@ -110,13 +110,13 @@ static void explore_draw_cb(void *vptr)
     struct explore_data_s *d = vptr;
     const struct game_s *g = d->g;
     vgabuf_copy_back_from_page2();
-    ui_draw_filled_rect(222, 4, 314, 179, 0);
+    vgabuf_fill_rect(222, 4, 314, 179, 0);
     lbxgfx_draw_frame(222, 4, d->gfx_explobac, UI_SCREEN_W);
     ui_starmap_draw_planetinfo_2(g, d->api, PLAYER_NUM, d->planet);
     lbxgfx_draw_frame(227, 58, d->gfx_colony, UI_SCREEN_W);
-    ui_draw_line1(227, 57, 227, 160, 0);
-    ui_draw_line1(227, 57, 310, 57, 0);
-    ui_draw_line1(310, 57, 310, 160, 0);
+    vgabuf_draw_line(227, 57, 227, 160, 0);
+    vgabuf_draw_line(227, 57, 310, 57, 0);
+    vgabuf_draw_line(310, 57, 310, 160, 0);
     /*game_update_visibility();*/
     ui_gmap_basic_draw_frame(d->gmap, d->api);
     ui_gmap_draw_planet_border(g, d->planet);

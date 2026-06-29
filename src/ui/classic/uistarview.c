@@ -82,7 +82,7 @@ static void starview_draw_cb(void *vptr)
     const seen_t *s = &(g->seen[d->api][d->planet_i]);
     player_id_t sowner = s->owner;
     char buf[0x80];
-    ui_draw_erase_buf();
+    vgabuf_erase();
     if (p->type != PLANET_TYPE_NOT_HABITABLE) {
         lbxgfx_draw_frame(0, 0, d->gfx_planet, UI_SCREEN_W);
         if (!d->flag_pal) {
@@ -142,8 +142,8 @@ static void starview_draw_cb(void *vptr)
             lbxfont_select(0, 0xd, 0, 0);
             lbxfont_print_str_normal(8, 10, buf, UI_SCREEN_W);
         }
-        ui_draw_filled_rect(225, 144, 319, 199, 0xf0);
-        ui_draw_box2(225, 144, 319, 199, 0xb3, 0xb3, 0xb3, 0xb3);
+        vgabuf_fill_rect(225, 144, 319, 199, 0xf0);
+        vgabuf_draw_box2(225, 144, 319, 199, 0xb3, 0xb3, 0xb3, 0xb3);
         lbxfont_select(0, 0xe, 0, 0);
         lbxfont_print_str_right(284, 149, game_str_sv_psize, UI_SCREEN_W);
         lbxfont_print_str_right(284, 159, game_str_sv_fact, UI_SCREEN_W);

@@ -42,11 +42,11 @@ static void ui_starmap_orbit_own_draw_cb(void *vptr)
         y = (pf->y - ui_data.starmap.y) * 2 + 5;
         lbxgfx_draw_frame_offs(x, y, ui_data.gfx.starmap.shipbord, 6, 6, 221, 177, UI_SCREEN_W);
     }
-    ui_draw_filled_rect(225, 8, 314, 192, 7);
+    vgabuf_fill_rect(225, 8, 314, 192, 7);
     lbxgfx_draw_frame(224, 5, ui_data.gfx.starmap.move_shi, UI_SCREEN_W);
     if (d->oo.sn0.num < NUM_SHIPDESIGNS) {
         lbxgfx_draw_frame(224, 151, ui_data.gfx.starmap.movextra, UI_SCREEN_W);
-        ui_draw_filled_rect(228, 155, 309, 175, 7);
+        vgabuf_fill_rect(228, 155, 309, 175, 7);
     }
     lbxfont_select_set_12_4(0, 5, 0, 0);
     lbxfont_print_str_center(268, 11, game_str_sm_fleetdep, UI_SCREEN_W);
@@ -101,7 +101,7 @@ static void ui_starmap_orbit_own_draw_cb(void *vptr)
             }
             lbxfont_select_set_12_4(0, 0, 0, 0);
             if (d->oo.sn0.num >= 6) {
-                ui_draw_filled_rect(228, 9, 309, 17, 7);
+                vgabuf_fill_rect(228, 9, 309, 17, 7);
                 lbxfont_print_str_center(268, 11, buf, UI_SCREEN_W);
             } else {
                 lbxfont_print_str_center(268, 163, buf, UI_SCREEN_W);
@@ -116,8 +116,8 @@ static void ui_starmap_orbit_own_draw_cb(void *vptr)
         struct draw_stars_s ds;
         uint8_t *gfx;
         int st;
-        ui_draw_filled_rect(227, 22 + i * 26, 259, 46 + i * 26, 0);
-        ui_draw_filled_rect(264, 34 + i * 26, 310, 46 + i * 26, 0);
+        vgabuf_fill_rect(227, 22 + i * 26, 259, 46 + i * 26, 0);
+        vgabuf_fill_rect(264, 34 + i * 26, 310, 46 + i * 26, 0);
         ds.xoff1 = 0;
         ds.xoff2 = 0;
         ui_draw_stars(227, 22 + i * 26, 0, 32, &ds);

@@ -90,22 +90,22 @@ static void tech_draw_cb(void *vptr)
         }
     }
 
-    ui_draw_filled_rect(0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, 0x3a);
-    ui_draw_filled_rect(3, 150, 275, 196, 0x5b);
-    ui_draw_filled_rect(5, 4, 53, 15, (d->field == 0) ? 0x89 : 0xc0);
-    ui_draw_filled_rect(55, 4, 108, 15, (d->field == 1) ? 0x89 : 0xc0);
-    ui_draw_filled_rect(109, 4, 161, 16, (d->field == 2) ? 0x89 : 0xc0);
-    ui_draw_filled_rect(5, 19, 54, 31, (d->field == 3) ? 0x89 : 0xc0);
-    ui_draw_filled_rect(55, 19, 108, 31, (d->field == 4) ? 0x89 : 0xc0);
-    ui_draw_filled_rect(109, 19, 161, 31, (d->field == 5) ? 0x89 : 0xc0);
+    vgabuf_fill(0x3a);
+    vgabuf_fill_rect(3, 150, 275, 196, 0x5b);
+    vgabuf_fill_rect(5, 4, 53, 15, (d->field == 0) ? 0x89 : 0xc0);
+    vgabuf_fill_rect(55, 4, 108, 15, (d->field == 1) ? 0x89 : 0xc0);
+    vgabuf_fill_rect(109, 4, 161, 16, (d->field == 2) ? 0x89 : 0xc0);
+    vgabuf_fill_rect(5, 19, 54, 31, (d->field == 3) ? 0x89 : 0xc0);
+    vgabuf_fill_rect(55, 19, 108, 31, (d->field == 4) ? 0x89 : 0xc0);
+    vgabuf_fill_rect(109, 19, 161, 31, (d->field == 5) ? 0x89 : 0xc0);
 
     for (int i = 0; i < TECH_FIELD_NUM; ++i) {
         int y;
         y = 21 * i + 22;
-        ui_draw_filled_rect(168, y, 218, y + 8, t->slider_lock[i] ? 0x24 : 0xbc);
+        vgabuf_fill_rect(168, y, 218, y + 8, t->slider_lock[i] ? 0x24 : 0xbc);
     }
 
-    ui_draw_filled_rect(7, 36, 154, 147, 0);
+    vgabuf_fill_rect(7, 36, 154, 147, 0);
     lbxgfx_draw_frame(7, 36, ui_data.gfx.screens.techback, UI_SCREEN_W);
     lbxgfx_draw_frame(0, 0, d->gfx, UI_SCREEN_W);
 
@@ -141,9 +141,9 @@ static void tech_draw_cb(void *vptr)
     for (int i = 0; i < TECH_FIELD_NUM; ++i) {
         int y;
         y = 21 * i + 24;
-        ui_draw_filled_rect(227, y, 277, y + 3, 0x2f);
+        vgabuf_fill_rect(227, y, 277, y + 3, 0x2f);
         if (t->slider) {
-            ui_draw_line_3h(227, y + 1, 226 + t->slider[i] / 2, t->slider_lock[i] ? 0x22 : 0x73);
+            vgabuf_draw_line_3h(227, y + 1, 226 + t->slider[i] / 2, t->slider_lock[i] ? 0x22 : 0x73);
         }
         lbxfont_select(0, 6, 0, 0);
         lbxfont_set_color_c_n(0x26, 5);

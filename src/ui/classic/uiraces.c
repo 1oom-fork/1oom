@@ -61,7 +61,7 @@ static void races_draw_cb(void *vptr)
         e->spymode[pi] = (spymode_t)d->tbl_spymode[i];
     }
 
-    ui_draw_color_buf(0x5b);
+    vgabuf_fill(0x5b);
     lbxgfx_draw_frame(0, 0, d->gfx, UI_SCREEN_W);
 
     lbxfont_select_set_12_1(5, 0xa, 0, 0);
@@ -69,18 +69,18 @@ static void races_draw_cb(void *vptr)
         int x, y;
         x = (i / 3) * 157;
         y = (i % 3) * 64;
-        ui_draw_filled_rect(x + 58, y + 9, x + 156, y + 21, 0x5b);
-        ui_draw_filled_rect(x + 56, y + 25, x + 158, y + 37, 0x5b);
-        ui_draw_filled_rect(x + 58, y + 41, x + 156, y + 51, 0x5b);
-        ui_draw_filled_rect(x + 56, y + 55, x + 158, y + 65, 0x5b);
+        vgabuf_fill_rect(x + 58, y + 9, x + 156, y + 21, 0x5b);
+        vgabuf_fill_rect(x + 56, y + 25, x + 158, y + 37, 0x5b);
+        vgabuf_fill_rect(x + 58, y + 41, x + 156, y + 51, 0x5b);
+        vgabuf_fill_rect(x + 56, y + 55, x + 158, y + 65, 0x5b);
         lbxfont_print_str_center(x + 109, y + 27, (i < g->players) ? game_str_ra_nocont : game_str_ra_notpres, UI_SCREEN_W);
     }
 
     if (d->num) {
         int v;
-        ui_draw_filled_rect(238, 141, 283, 144, 0);
+        vgabuf_fill_rect(238, 141, 283, 144, 0);
         if (e->security) {
-            ui_draw_line_3h(238, 142, 237 + (e->security * 9) / 40, 0x73);
+            vgabuf_draw_line_3h(238, 142, 237 + (e->security * 9) / 40, 0x73);
         }
         v = (e->security / 5);
         if (e->race == RACE_DARLOK) {
@@ -91,7 +91,7 @@ static void races_draw_cb(void *vptr)
         lbxfont_set_color_c_n(0x26, 5);
         lbxfont_print_str_right(309, 141, buf, UI_SCREEN_W);
     } else {
-        ui_draw_filled_rect(238, 141, 283, 144, 0x5a);
+        vgabuf_fill_rect(238, 141, 283, 144, 0x5a);
     }
     lbxfont_select(2, 6, 0, 0);
     lbxfont_print_str_normal(167, 150, game_str_ra_secline1, UI_SCREEN_W);
@@ -130,13 +130,13 @@ static void races_draw_cb(void *vptr)
             lbxfont_print_str_center(x + 29, y + 23, game_str_ra_diplo, UI_SCREEN_W);
             lbxfont_print_str_center(x + 29, y + 31, game_str_ra_gone, UI_SCREEN_W);
         }
-        ui_draw_filled_rect(x + 9, y + 48, x + 48, y + 61, colortbl_races_banner[g->eto[pi].banner]);
+        vgabuf_fill_rect(x + 9, y + 48, x + 48, y + 61, colortbl_races_banner[g->eto[pi].banner]);
         lbxfont_select(5, 6, 0, 0);
         lbxfont_print_str_center(x + 29, y + 51, game_str_tbl_races[g->eto[pi].race], UI_SCREEN_W);
         {
             int spying, v1, v2, spies, v3;
             spying = e->spying[pi];
-            ui_draw_filled_rect(x + 103, y + 44, x + 128, y + 47, 0);
+            vgabuf_fill_rect(x + 103, y + 44, x + 128, y + 47, 0);
             lbxfont_select(2, 0, 0, 0);
             lbxfont_set_color_c_n(0x26, 5);
             v1 = (e->total_production_bc * spying) / 1000;
@@ -147,7 +147,7 @@ static void races_draw_cb(void *vptr)
                v3 /= 2;
             }
             if (spying != 0) {
-                ui_draw_line_3h(x + 103, y + 45, x + 102 + spying / 4, 0x73);
+                vgabuf_draw_line_3h(x + 103, y + 45, x + 102 + spying / 4, 0x73);
             }
             if (spies == 0) {
                 strcpy(buf, game_str_ra_nospies);
@@ -180,7 +180,7 @@ static void races_draw_cb(void *vptr)
         {
             const char *str;
             str = game_str_tbl_ra_treaty[e->treaty[pi]];
-            ui_draw_filled_rect(x + 57, y + 8, x + 157, y + 22, 0x5b);
+            vgabuf_fill_rect(x + 57, y + 8, x + 157, y + 22, 0x5b);
             lbxfont_select(0, 6, 0, 0);
             lbxfont_print_str_normal(x + 61, y + 10, str, UI_SCREEN_W);
             lbxfont_select(0, 0, 0, 0);
