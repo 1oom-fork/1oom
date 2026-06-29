@@ -97,7 +97,7 @@ static void design_draw_cb(void *vptr)
     char buf[64];
     uint8_t extraman;
 
-    ui_draw_filled_rect(5, 5, 315, 195, 1);
+    vgabuf_fill_rect(5, 5, 315, 195, 1);
     lbxgfx_draw_frame(0, 0, ui_data.gfx.design.bg, UI_SCREEN_W);
     oi_hmm2 = uiobj_get_hmm2_oi();
     lbxfont_select(0, 6, 0, 3);

@@ -82,7 +82,7 @@ static void gmap_draw_cb(void *vptr)
     }
 
     uiobj_set_limits(7, 7, 230, 191);
-    ui_draw_erase_buf();
+    vgabuf_erase();
     lbxgfx_draw_frame(0, 0, ui_data.gfx.starmap.sky, UI_SCREEN_W);
     lbxgfx_draw_frame(0, 0, d->gfx_mapview, UI_SCREEN_W);
 
@@ -242,15 +242,15 @@ static void gmap_draw_cb(void *vptr)
                 lbxfont_print_str_normal(282, 105 + 7 * (i - 7), str, UI_SCREEN_W);
             }
             lbxfont_print_str_normal(247, 160, game_str_gm_unable, UI_SCREEN_W);
-            ui_draw_pixel(241, 161, 0x44);
-            ui_draw_pixel(241, 162, 0x44);
-            ui_draw_pixel(241, 163, 0x44);
-            ui_draw_pixel(242, 161, 0x44);
-            ui_draw_pixel(242, 162, 0x44);
-            ui_draw_pixel(242, 163, 0x44);
-            ui_draw_pixel(243, 161, 0x44);
-            ui_draw_pixel(243, 162, 0x44);
-            ui_draw_pixel(243, 163, 0x44);
+            vgabuf_put_pixel(241, 161, 0x44);
+            vgabuf_put_pixel(241, 162, 0x44);
+            vgabuf_put_pixel(241, 163, 0x44);
+            vgabuf_put_pixel(242, 161, 0x44);
+            vgabuf_put_pixel(242, 162, 0x44);
+            vgabuf_put_pixel(242, 163, 0x44);
+            vgabuf_put_pixel(243, 161, 0x44);
+            vgabuf_put_pixel(243, 162, 0x44);
+            vgabuf_put_pixel(243, 163, 0x44);
             break;
         case 2:
             lbxfont_select_set_12_1(2, 5, 0, 0);
@@ -306,7 +306,7 @@ static void gmap_draw_cb(void *vptr)
 static void ui_gmap_basic_draw_galaxy(struct gmap_basic_data_s *d)
 {
     struct game_s *g = d->g;
-    ui_draw_filled_rect(6, 6, 221, 177, 0);
+    vgabuf_fill_rect(6, 6, 221, 177, 0);
     /*uiobj_set_limits(6, 6, 221, 177);*/
     lbxgfx_draw_frame_offs(0, 0, ui_data.gfx.starmap.sky, 6, 6, 221, 177, UI_SCREEN_W);
     for (int i = 0; i < g->nebula_num; ++i) {

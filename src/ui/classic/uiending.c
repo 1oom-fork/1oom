@@ -69,7 +69,7 @@ static void ui_play_winlose_cb1(void *vptr)
 {
     struct anim_winlose_1_s *p = vptr;
     int f = p->frame;
-    ui_draw_erase_buf();
+    vgabuf_erase();
     lbxgfx_draw_frame_offs(0x000 - f, 0, p->gfx_stars, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
     lbxgfx_draw_frame_offs(0x140 - f, 0, p->gfx_stars, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
     if (f > 0x32) {
@@ -120,7 +120,7 @@ static void ui_play_winlose_cb2(void *vptr)
     struct anim_winlose_2_s *p = vptr;
     int f = p->frame;
     if (f == 0) {
-        ui_draw_erase_buf();
+        vgabuf_erase();
         lbxgfx_draw_frame_pal(0, 0, p->gfx_winning2, UI_SCREEN_W);
         lbxpal_set_update_range(0, 255);
     } else {
@@ -139,7 +139,7 @@ static void ui_play_winlose_cb3(void *vptr)
     int ff = (fc >= 0xa) ? fb : 0;
     int f;
     if ((fa == 0) || (fa == 8)) {
-        ui_draw_erase_buf();
+        vgabuf_erase();
     } else {
         vgabuf_copy_front_to_back();
     }
@@ -230,7 +230,7 @@ static void ui_play_ending_good_or_tyrant(int race, const char *name, bool flag_
             break;
         } else {
             if (wld1.frame == 0) {
-                ui_draw_erase_buf();
+                vgabuf_erase();
             }
             ui_play_winlose_cb1(&wld1);
             uiobj_finish_frame();
@@ -307,16 +307,16 @@ static void ui_play_ending_good_or_tyrant(int race, const char *name, bool flag_
     hw_audio_music_fadeout();
     ui_delay_1e();
     ui_sound_stop_music();
-    ui_draw_erase_buf();
+    vgabuf_erase();
     uiobj_finish_frame();
-    ui_draw_erase_buf();
+    vgabuf_erase();
 }
 
 static void ui_play_winlose_exile_cb(void *vptr)
 {
     struct anim_winlose_exile_s *p = vptr;
     int f = p->frame;
-    ui_draw_erase_buf();
+    vgabuf_erase();
     lbxgfx_draw_frame_offs(0x000 - f, 0, p->gfx_stars, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
     lbxgfx_draw_frame_offs(0x140 - f, 0, p->gfx_stars, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
     lbxgfx_draw_frame_offs(0x280 - f, 0, p->gfx_stars, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
@@ -371,7 +371,7 @@ static void ui_play_winlose_funeral_cb(void *vptr)
 {
     struct anim_winlose_funeral_s *p = vptr;
     int fa, f = p->frame;
-    ui_draw_erase_buf();
+    vgabuf_erase();
     fa = lbxgfx_get_frame(p->gfx_lose);
     lbxgfx_set_frame_0(p->gfx_lose);
     for (int i = 0; i <= fa; ++i) {
@@ -447,10 +447,10 @@ void ui_play_ending_funeral(int banner_live, int banner_dead)
     lbxfile_item_release(LBXFILE_WINLOSE, wld.gfx_coffin);
     lbxfile_item_release(LBXFILE_WINLOSE, wld.gfx_march);
 
-    ui_draw_erase_buf();
+    vgabuf_erase();
     ui_draw_finish_mode = 1;
     uiobj_finish_frame();
-    ui_draw_erase_buf();
+    vgabuf_erase();
     ui_sound_stop_music();
 }
 
@@ -501,9 +501,9 @@ void ui_play_ending_exile(const char *name)
     lbxfile_item_release(LBXFILE_WINLOSE, wld.gfx_ships);
     lbxfile_item_release(LBXFILE_WINLOSE, wld.gfx_stars);
 
-    ui_draw_erase_buf();
+    vgabuf_erase();
     ui_draw_finish_mode = 1;
     uiobj_finish_frame();
-    ui_draw_erase_buf();
+    vgabuf_erase();
     ui_sound_stop_music();
 }

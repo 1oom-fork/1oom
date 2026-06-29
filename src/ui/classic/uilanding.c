@@ -47,9 +47,9 @@ static void landing_draw_cb1(void *vptr)
     gfx_aux_draw_frame_from_limit(0, y, &ui_data.aux.screen, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
     if (do_walk) {
         lbxgfx_draw_frame(0, 0, d->gfx_walk, UI_SCREEN_W);
-        ui_draw_filled_rect(115, 81, 204, 109, 0xa);
-        ui_draw_box1(115, 81, 204, 109, 0x34, 0x34);
-        ui_draw_box1(121, 95, 195, 106, 0x34, 0x34);
+        vgabuf_fill_rect(115, 81, 204, 109, 0xa);
+        vgabuf_draw_box1(115, 81, 204, 109, 0x34, 0x34);
+        vgabuf_draw_box1(121, 95, 195, 106, 0x34, 0x34);
         lbxfont_select(5, 0xf, 0, 0);
         lbxfont_print_str_normal(124, 84, game_str_la_colony, UI_SCREEN_W);
         /*uiobj_handle_ta_sub1(120, 80, 180, 90, 0); does nothing */
@@ -69,7 +69,7 @@ void ui_landing_prepare(struct landing_data_s *d)
     const struct game_s *g = d->g;
     const planet_t *p = &(g->planet[d->planet]);
     ui_delay_prepare();
-    ui_draw_erase_buf();
+    vgabuf_erase();
     ui_delay_ticks_or_click(1);
     ui_sound_stop_music();
     {

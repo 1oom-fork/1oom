@@ -39,7 +39,7 @@ struct election_data_s {
 static void election_load_data(struct election_data_s *d)
 {
     struct game_s *g = d->el->g;
-    ui_draw_erase_buf();
+    vgabuf_erase();
     for (int i = 0; i < 3; ++i) {
         const int item[3] = { 0x17, 0, 0x16 };
         uint8_t *gfx;

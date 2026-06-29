@@ -49,9 +49,9 @@ static void basescrap_draw_cb1(void *vptr)
     const int x = 56, y = 50;
     planet_t *p = &(g->planet[g->planet_focus_i[d->api]]);
     lbxgfx_draw_frame(x, y, d->gfx, UI_SCREEN_W);
-    ui_draw_filled_rect(x + 14, y + 35, x + 64, y + 38, 0x2f);
+    vgabuf_fill_rect(x + 14, y + 35, x + 64, y + 38, 0x2f);
     if (d->slider_var > 0) {
-        ui_draw_line_3h(x + 14, y + 36, x + 13 + d->slider_var / 2, 0x74);
+        vgabuf_draw_line_3h(x + 14, y + 36, x + 13 + d->slider_var / 2, 0x74);
     }
     lbxfont_select(0, 0xd, 0, 0);
     lbxfont_print_str_center(x + 57, y + 11, game_str_bs_line1, UI_SCREEN_W);

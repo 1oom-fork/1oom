@@ -58,7 +58,7 @@ static void specs_draw_cb1(void *vptr)
     empiretechorbit_t *e = &(g->eto[d->api]);
     shipresearch_t *srd = &(g->srd[d->api]);
 
-    ui_draw_filled_rect(0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, 0x3a);
+    vgabuf_fill(0x3a);
     lbxgfx_draw_frame(0, 0, ui_data.gfx.starmap.viewship, UI_SCREEN_W);
 
     for (int si = 0; si < e->shipdesigns_num; ++si) {
@@ -69,7 +69,7 @@ static void specs_draw_cb1(void *vptr)
         game_parsed_from_design(&sp, sd, 1);
         y = (si << 5) + 5;
         lbxgfx_draw_frame(44, y - 1, ui_data.gfx.starmap.viewshp2, UI_SCREEN_W);
-        ui_draw_filled_rect(6, y, 37, y + 29, 0);
+        vgabuf_fill_rect(6, y, 37, y + 29, 0);
         ui_draw_stars(6, y + 1, si * 5, 32, &d->s);
         lbxgfx_set_frame_0(ui_data.gfx.ships[sp.look]);
         for (int f = 0; f <= d->frame; ++f) {

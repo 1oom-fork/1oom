@@ -80,7 +80,7 @@ static void steal_draw_cb(void *vptr)
             int x, y;
             x = (i / 3) * 102 + 20;
             y = (i % 3) * 22 + 97;
-            ui_draw_filled_rect(x, y, x + 86, y + 11, 4);
+            vgabuf_fill_rect(x, y, x + 86, y + 11, 4);
             lbxfont_select(5, 0xe, 0, 0);
             lbxfont_print_str_center(x + 43, y + 3, game_str_tbl_te_field[i], UI_SCREEN_W);
         }
@@ -117,7 +117,7 @@ static void stolen_draw_cb(void *vptr)
     char buf[0x80];
     vgabuf_copy_back_from_page2();
     ui_gmap_basic_draw_frame(d->gmap, d->api);
-    ui_draw_filled_rect(31, 62, 202, 103, 0x36);
+    vgabuf_fill_rect(31, 62, 202, 103, 0x36);
     lbxgfx_draw_frame(31, 62, d->gfx, UI_SCREEN_W);
     sprintf(buf, "%s %s", game_str_tbl_race[e->race], game_str_es_thesp1);
     lbxfont_select_set_12_1(5, tbl_banner_fontparam[e->banner], 0, 0);

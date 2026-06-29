@@ -135,15 +135,15 @@ static void ui_starmap_draw_sliders_and_prod(struct starmap_data_s *d)
     lbxfont_print_num_right(hmmx, 61, p->missile_bases, UI_SCREEN_W);
 
     for (planet_slider_i_t i = PLANET_SLIDER_SHIP; i < PLANET_SLIDER_NUM; ++i) {
-        ui_draw_filled_rect(253, 84 + 11 * i, 278, 84 + 11 * i + 3, 0x2f);
+        vgabuf_fill_rect(253, 84 + 11 * i, 278, 84 + 11 * i + 3, 0x2f);
         if (p->slider[i] != 0) {
-            ui_draw_line_3h(253, 84 + 11 * i + 1, 252 + p->slider[i] / 4, p->slider_lock[i] ? 0x22 : 0x73);
+            vgabuf_draw_line_3h(253, 84 + 11 * i + 1, 252 + p->slider[i] / 4, p->slider_lock[i] ? 0x22 : 0x73);
         }
     }
 
     lbxfont_select(2, 0xa, 0, 0);
     if (p->buildship == BUILDSHIP_STARGATE) {
-        ui_draw_filled_rect(229, 141, 274, 166, 0);
+        vgabuf_fill_rect(229, 141, 274, 166, 0);
         lbxgfx_draw_frame(229, 141, ui_data.gfx.starmap.stargate, UI_SCREEN_W);
         lbxfont_print_str_center(251, 169, game_str_sm_stargate, UI_SCREEN_W);
     } else {
@@ -356,7 +356,7 @@ static void ui_starmap_draw_sliders_and_prod(struct starmap_data_s *d)
         int v = game_get_tech_prod(p->prod_after_maint, p->slider[PLANET_SLIDER_TECH], g->eto[d->api].race, p->special);
         sprintf(buf, "%i", v);
         if (v > 9999) {
-            ui_draw_filled_rect(288, 127, 312, 132, 7);
+            vgabuf_fill_rect(288, 127, 312, 132, 7);
         } else {
             hmmx -= 9;
         }
@@ -410,7 +410,7 @@ void ui_starmap_draw_basic(struct starmap_data_s *d)
 
     ui_starmap_draw_starmap(d);
     ui_starmap_draw_button_text(d, true);
-    ui_draw_filled_rect(224, 5, 314, 178, 0);
+    vgabuf_fill_rect(224, 5, 314, 178, 0);
     if (!PLANET_FOCUS_IS_EXPLORED(g, d->api)) {
         lbxgfx_draw_frame(224, 5, ui_data.gfx.starmap.unexplor, UI_SCREEN_W);
         lbxfont_select_set_12_4(5, 1, 0, 0);
@@ -426,7 +426,7 @@ void ui_starmap_draw_basic(struct starmap_data_s *d)
             lbxgfx_draw_frame(224, 5, ui_data.gfx.starmap.no_colny, UI_SCREEN_W);
             ui_data.gfx.colonies.current = ui_data.gfx.colonies.d[p->type * 2];
             lbxgfx_draw_frame(227, 73, ui_data.gfx.colonies.current, UI_SCREEN_W);
-            ui_draw_box1(227, 73, 310, 174, 0, 0);
+            vgabuf_draw_box1(227, 73, 310, 174, 0, 0);
             ui_starmap_draw_range_parsec(d, 80);
         } else if ((owner != d->api) || (p->unrest == PLANET_UNREST_REBELLION)) {
             char buf[64];
@@ -434,7 +434,7 @@ void ui_starmap_draw_basic(struct starmap_data_s *d)
             lbxgfx_draw_frame(224, 5, ui_data.gfx.starmap.en_colny, UI_SCREEN_W);
             ui_data.gfx.colonies.current = ui_data.gfx.colonies.d[p->type * 2 + 1];
             lbxgfx_draw_frame(227, 73, ui_data.gfx.colonies.current, UI_SCREEN_W);
-            ui_draw_box1(227, 73, 310, 174, 0, 0);
+            vgabuf_draw_box1(227, 73, 310, 174, 0, 0);
             sprintf(buf, "%s %s", game_str_tbl_race[g->eto[owner].race], game_str_sm_colony);
             if (BOOLVEC_IS1(p->within_srange, d->api)) {
                 lbxfont_select_set_12_4(5, tbl_banner_fontparam[g->eto[owner].banner], 0, 0);
@@ -511,7 +511,7 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
     if (++d->anim_delay >= STARMAP_ANIM_DELAY) {
         d->anim_delay = 0;
     }
-    ui_draw_filled_rect(6, 6, 221, 177, 0);
+    vgabuf_fill_rect(6, 6, 221, 177, 0);
     lbxgfx_draw_frame(0, 0, ui_data.gfx.starmap.mainview, UI_SCREEN_W);
     uiobj_set_limits(6, 6, 221, 177);
     {
