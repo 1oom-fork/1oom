@@ -406,7 +406,7 @@ void *ui_gmap_basic_init(struct game_s *g, bool show_player_switch)
     if (!show_player_switch) {
         ui_draw_copy_buf();
         ui_starmap_draw_button_text(0/*unused*/, false);
-        hw_video_copy_back_to_page2();
+        vgabuf_copy_back_to_page2();
     }
     return &ctx;
 }
@@ -423,7 +423,7 @@ void ui_gmap_basic_start_player(void *ctx, int pi)
         pil = pi;
         ui_switch(d->g, &pil, 1, false);
         ui_draw_copy_buf();
-        hw_video_copy_back_to_page2();
+        vgabuf_copy_back_to_page2();
     }
 }
 
@@ -431,7 +431,7 @@ void ui_gmap_basic_start_frame(void *ctx, int pi)
 {
     /*struct gmap_basic_data_s *d = ctx;*/
     ui_delay_prepare();
-    hw_video_copy_back_from_page2();
+    vgabuf_copy_back_from_page2();
 }
 
 void ui_gmap_basic_draw_frame(void *ctx, int pi/*player_i*/)
