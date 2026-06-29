@@ -68,14 +68,14 @@ static void ui_battle_draw_scan_cb(void *vptr)
     int itembase, itemnum;
     itembase = (d->scan_side == SIDE_L) ? 1 : (bt->s[SIDE_L].items + 1);
     itemnum = bt->s[d->scan_side].items;
-    ui_draw_color_buf(0x3a);
+    vgabuf_fill(0x3a);
     lbxgfx_draw_frame(0, 0, ui_data.gfx.starmap.viewship, UI_SCREEN_W);
     for (int i = 0; i < itemnum; ++i) {
         const struct battle_item_s *b = &(bt->item[itembase + i]);
         int y;
         y = i * 32 + 5;
         lbxgfx_draw_frame(46, y - 1, ui_data.gfx.space.vs2, UI_SCREEN_W);
-        ui_draw_filled_rect(6, y, 38, y + 29, 0);
+        vgabuf_fill_rect(6, y, 38, y + 29, 0);
         ui_draw_stars(6, y + 1, 0, 32, &d->stars);
         ui_battle_draw_item(bt, itembase + i, 6, y + 1);
         lbxfont_select(2, 0xd, 0, 0);
@@ -111,8 +111,8 @@ static void ui_battle_draw_scan_cb(void *vptr)
                         c1 = 0x28;
                         c2 = 0x41;
                     }
-                    ui_draw_filled_rect(248, y + 3 + wi * 7, 253, y + 7 + wi * 7, c1);
-                    ui_draw_filled_rect(249, y + 4 + wi * 7, 252, y + 6 + wi * 7, c2);
+                    vgabuf_fill_rect(248, y + 3 + wi * 7, 253, y + 7 + wi * 7, c1);
+                    vgabuf_fill_rect(249, y + 4 + wi * 7, 252, y + 6 + wi * 7, c2);
                 }
             }
         }
@@ -163,7 +163,7 @@ static void ui_battle_draw_focusinfo(const struct battle_s *bt)
     if (v >= 30) {
         v -= 30;
     }
-    ui_draw_filled_rect(0, 193, 94, UI_SCREEN_H - 1, 0xe9);
+    vgabuf_fill_rect(0, 193, 94, VGABUF_H - 1, 0xe9);
     b = (v == 70) ? &(bt->item[bt->cur_item]) : &(bt->item[v]);
     lbxfont_select(2, 0xa, 5, 0);
     lbxfont_print_str_normal(2, 194, b->name, UI_SCREEN_W);
@@ -204,10 +204,10 @@ static void ui_battle_draw_bottom_no_ois(const struct battle_s *bt)
     struct ui_battle_data_s *d = bt->uictx;
     const struct battle_item_s *b;
     uint8_t *gfx;
-    ui_draw_filled_rect(0, 193, UI_SCREEN_W - 1, UI_SCREEN_H - 1, 0xe9);
-    ui_draw_line1(120, 192, 120, 199, 0xeb);
-    ui_draw_line1(96, 192, 96, 199, 0xeb);
-    ui_draw_line1(0, 192, UI_SCREEN_W - 1, 192, 0xeb);
+    vgabuf_fill_rect(0, 193, VGABUF_W - 1, VGABUF_H - 1, 0xe9);
+    vgabuf_draw_line(120, 192, 120, VGABUF_H - 1, 0xeb);
+    vgabuf_draw_line(96, 192, 96, VGABUF_H - 1, 0xeb);
+    vgabuf_draw_line(0, 192, VGABUF_W - 1, 192, 0xeb);
     lbxfont_select(2, 0xa, 5, 0);
     b = &(bt->item[bt->cur_item]);
     if (bt->s[b->side].flag_auto) {
@@ -308,10 +308,10 @@ static void ui_battle_draw_bottom_add_ois(const struct battle_s *bt)
             d->oi_area[sy][sx] = uiobj_add_mousearea(x0, y0, x1, y1, MOO_KEY_UNKNOWN, -1);
         }
     }
-    ui_draw_filled_rect(0, 193, UI_SCREEN_W - 1, UI_SCREEN_H - 1, 0xe9);
-    ui_draw_line1(120, 192, 120, 199, 0xeb);
-    ui_draw_line1(96, 192, 96, 199, 0xeb);
-    ui_draw_line1(0, 192, UI_SCREEN_W - 1, 192, 0xeb);
+    vgabuf_fill_rect(0, 193, VGABUF_W - 1, VGABUF_H - 1, 0xe9);
+    vgabuf_draw_line(120, 192, 120, 199, 0xeb);
+    vgabuf_draw_line(96, 192, 96, 199, 0xeb);
+    vgabuf_draw_line(0, 192, VGABUF_W - 1, 192, 0xeb);
     if (bt->item[0].side != SIDE_NONE) {
         d->oi_planet = uiobj_add_t0(123, 193, "", ui_data.gfx.space.planet, MOO_KEY_p, -1);
     } else {
@@ -438,7 +438,7 @@ static void ui_battle_draw_beam_line(int fx, int fy, int tx, int ty, int a8, int
     y1 = y0;
     util_math_go_line_dist(&x1, &y1, tx, ty, dist);
     if ((v24 == 1) || (v24 == 3) || (v24 == 5)) {
-        ui_draw_line1(x0, y0, x1, y1, ctbl[0]);
+        vgabuf_draw_line(x0, y0, x1, y1, ctbl[0]);
     } else {
         const uint8_t *c;
         uint8_t revctbl[7];
@@ -450,7 +450,7 @@ static void ui_battle_draw_beam_line(int fx, int fy, int tx, int ty, int a8, int
         } else {
             c = ctbl;
         }
-        ui_draw_line_ctbl(x0, y0, x1, y1, c, 7, 1/*ctblpos*/);
+        vgabuf_draw_line_ctbl(x0, y0, x1, y1, c, 7, 1/*ctblpos*/);
     }
 }
 
@@ -493,20 +493,20 @@ static void ui_battle_draw_beam_attack_do1(const struct battle_s *bt, int *fx, i
             }
             if (btype == 1) {
                 if (v16 > 1) {
-                    ui_draw_line1(fx[0], fy[0], tx + xo, ty + yo, w->dtbl[f]);
-                    ui_draw_line1(fx[1], fy[1], tx + xo, ty + yo, w->dtbl[f]);
+                    vgabuf_draw_line(fx[0], fy[0], tx + xo, ty + yo, w->dtbl[f]);
+                    vgabuf_draw_line(fx[1], fy[1], tx + xo, ty + yo, w->dtbl[f]);
                 }
                 if (v16 != 2) {
-                    ui_draw_line1(fx[2], fy[2], tx + xo, ty + yo, w->dtbl[f]);
+                    vgabuf_draw_line(fx[2], fy[2], tx + xo, ty + yo, w->dtbl[f]);
                 }
             }
             if (btype == 0) {
                 if (v16 > 1) {
-                    ui_draw_line_ctbl(fx[0], fy[0], tx + xo, ty + yo, w->dtbl, 7, 0);
-                    ui_draw_line_ctbl(fx[1], fy[1], tx + xo, ty + yo, w->dtbl, 7, 0);
+                    vgabuf_draw_line_ctbl(fx[0], fy[0], tx + xo, ty + yo, w->dtbl, 7, 0);
+                    vgabuf_draw_line_ctbl(fx[1], fy[1], tx + xo, ty + yo, w->dtbl, 7, 0);
                 }
                 if (v16 != 2) {
-                    ui_draw_line_ctbl(fx[2], fy[2], tx + xo, ty + yo, w->dtbl, 7, 0);
+                    vgabuf_draw_line_ctbl(fx[2], fy[2], tx + xo, ty + yo, w->dtbl, 7, 0);
                 }
             }
             ui_battle_draw_item(bt, attacker_i, b->sx * 32, b->sy * 24);
@@ -588,70 +588,70 @@ static void ui_battle_draw_beam_attack_do2(const struct battle_s *bt, int *fx, i
         ui_delay_prepare();
         if ((w->v24 == 2) || (w->v24 == 4)) {
             if (v16 > 1) {
-                ui_draw_line_ctbl(fx[0], fy[0], tx, ty, w->dtbl, 7, 6 - f);
-                ui_draw_line_ctbl(fx[0], fy[0], tx - y_ns, ty - x_ns, w->dtbl, 7, 6 - f);
-                ui_draw_line_ctbl(fx[0], fy[0], tx + y_ns, ty + x_ns, w->dtbl, 7, 6 - f);
-                ui_draw_line_ctbl(fx[1], fy[1], tx, ty, w->dtbl, 7, 6 - f);
-                ui_draw_line_ctbl(fx[1], fy[1], tx - y_ns, ty - x_ns, w->dtbl, 7, 6 - f);
-                ui_draw_line_ctbl(fx[1], fy[1], tx + y_ns, ty + x_ns, w->dtbl, 7, 6 - f);
+                vgabuf_draw_line_ctbl(fx[0], fy[0], tx, ty, w->dtbl, 7, 6 - f);
+                vgabuf_draw_line_ctbl(fx[0], fy[0], tx - y_ns, ty - x_ns, w->dtbl, 7, 6 - f);
+                vgabuf_draw_line_ctbl(fx[0], fy[0], tx + y_ns, ty + x_ns, w->dtbl, 7, 6 - f);
+                vgabuf_draw_line_ctbl(fx[1], fy[1], tx, ty, w->dtbl, 7, 6 - f);
+                vgabuf_draw_line_ctbl(fx[1], fy[1], tx - y_ns, ty - x_ns, w->dtbl, 7, 6 - f);
+                vgabuf_draw_line_ctbl(fx[1], fy[1], tx + y_ns, ty + x_ns, w->dtbl, 7, 6 - f);
                 /*if (btype == 5) always true*/
-                ui_draw_line_ctbl(fx[0], fy[0], tx - y_ns * 2, ty - x_ns * 2, w->dtbl, 7, 6 - f);
-                ui_draw_line_ctbl(fx[0], fy[0], tx + y_ns * 2, ty + x_ns * 2, w->dtbl, 7, 6 - f);
-                ui_draw_line_ctbl(fx[1], fy[1], tx - y_ns * 2, ty - x_ns * 2, w->dtbl, 7, 6 - f);
-                ui_draw_line_ctbl(fx[1], fy[1], tx + y_ns * 2, ty + x_ns * 2, w->dtbl, 7, 6 - f);
+                vgabuf_draw_line_ctbl(fx[0], fy[0], tx - y_ns * 2, ty - x_ns * 2, w->dtbl, 7, 6 - f);
+                vgabuf_draw_line_ctbl(fx[0], fy[0], tx + y_ns * 2, ty + x_ns * 2, w->dtbl, 7, 6 - f);
+                vgabuf_draw_line_ctbl(fx[1], fy[1], tx - y_ns * 2, ty - x_ns * 2, w->dtbl, 7, 6 - f);
+                vgabuf_draw_line_ctbl(fx[1], fy[1], tx + y_ns * 2, ty + x_ns * 2, w->dtbl, 7, 6 - f);
                 if ((y_ns == 1) && (x_ns == 1)) {
-                    ui_draw_line_ctbl(fx[0], fy[0], tx, ty - x_ns, w->dtbl, 7, 6 - f);
-                    ui_draw_line_ctbl(fx[0], fy[0], tx - x_ns, ty, w->dtbl, 7, 6 - f);
-                    ui_draw_line_ctbl(fx[1], fy[1], tx, ty - x_ns, w->dtbl, 7, 6 - f);
-                    ui_draw_line_ctbl(fx[1], fy[1], tx - x_ns, ty, w->dtbl, 7, 6 - f);
+                    vgabuf_draw_line_ctbl(fx[0], fy[0], tx, ty - x_ns, w->dtbl, 7, 6 - f);
+                    vgabuf_draw_line_ctbl(fx[0], fy[0], tx - x_ns, ty, w->dtbl, 7, 6 - f);
+                    vgabuf_draw_line_ctbl(fx[1], fy[1], tx, ty - x_ns, w->dtbl, 7, 6 - f);
+                    vgabuf_draw_line_ctbl(fx[1], fy[1], tx - x_ns, ty, w->dtbl, 7, 6 - f);
                 }
             }
             /*54879*/
             if (v16 != 2) {
-                ui_draw_line_ctbl(fx[2], fy[2], tx, ty, w->dtbl, 7, 6 - f);
-                ui_draw_line_ctbl(fx[2], fy[2], tx - y_ns, ty - x_ns, w->dtbl, 7, 6 - f);
-                ui_draw_line_ctbl(fx[2], fy[2], tx + y_ns, ty + x_ns, w->dtbl, 7, 6 - f);
+                vgabuf_draw_line_ctbl(fx[2], fy[2], tx, ty, w->dtbl, 7, 6 - f);
+                vgabuf_draw_line_ctbl(fx[2], fy[2], tx - y_ns, ty - x_ns, w->dtbl, 7, 6 - f);
+                vgabuf_draw_line_ctbl(fx[2], fy[2], tx + y_ns, ty + x_ns, w->dtbl, 7, 6 - f);
                 /*if (btype == 5) always true*/
-                ui_draw_line_ctbl(fx[2], fy[2], tx - y_ns * 2, ty - x_ns * 2, w->dtbl, 7, 6 - f);
-                ui_draw_line_ctbl(fx[2], fy[2], tx + y_ns * 2, ty + x_ns * 2, w->dtbl, 7, 6 - f);
+                vgabuf_draw_line_ctbl(fx[2], fy[2], tx - y_ns * 2, ty - x_ns * 2, w->dtbl, 7, 6 - f);
+                vgabuf_draw_line_ctbl(fx[2], fy[2], tx + y_ns * 2, ty + x_ns * 2, w->dtbl, 7, 6 - f);
                 if ((y_ns == 1) && (x_ns == 1)) {
-                    ui_draw_line_ctbl(fx[2], fy[2], tx, ty - x_ns, w->dtbl, 7, 6 - f);
-                    ui_draw_line_ctbl(fx[2], fy[2], tx - x_ns, ty, w->dtbl, 7, 6 - f);
+                    vgabuf_draw_line_ctbl(fx[2], fy[2], tx, ty - x_ns, w->dtbl, 7, 6 - f);
+                    vgabuf_draw_line_ctbl(fx[2], fy[2], tx - x_ns, ty, w->dtbl, 7, 6 - f);
                 }
             }
         } else {
             /*549fc*/
             uint8_t c = w->dtbl[0];
             if (v16 > 1) {
-                ui_draw_line1(fx[0], fy[0], tx, ty, c);
-                ui_draw_line1(fx[0], fy[0], tx - y_ns, ty - x_ns, c);
-                ui_draw_line1(fx[0], fy[0], tx + y_ns, ty + x_ns, c);
-                ui_draw_line1(fx[1], fy[1], tx, ty, c);
-                ui_draw_line1(fx[1], fy[1], tx - y_ns, ty - x_ns, c);
-                ui_draw_line1(fx[1], fy[1], tx + y_ns, ty + x_ns, c);
+                vgabuf_draw_line(fx[0], fy[0], tx, ty, c);
+                vgabuf_draw_line(fx[0], fy[0], tx - y_ns, ty - x_ns, c);
+                vgabuf_draw_line(fx[0], fy[0], tx + y_ns, ty + x_ns, c);
+                vgabuf_draw_line(fx[1], fy[1], tx, ty, c);
+                vgabuf_draw_line(fx[1], fy[1], tx - y_ns, ty - x_ns, c);
+                vgabuf_draw_line(fx[1], fy[1], tx + y_ns, ty + x_ns, c);
                 /*if (btype == 5) always true*/
-                ui_draw_line1(fx[0], fy[0], tx - y_ns * 2, ty - x_ns * 2, c);
-                ui_draw_line1(fx[0], fy[0], tx + y_ns * 2, ty + x_ns * 2, c);
-                ui_draw_line1(fx[1], fy[1], tx - y_ns * 2, ty - x_ns * 2, c);
-                ui_draw_line1(fx[1], fy[1], tx + y_ns * 2, ty + x_ns * 2, c);
+                vgabuf_draw_line(fx[0], fy[0], tx - y_ns * 2, ty - x_ns * 2, c);
+                vgabuf_draw_line(fx[0], fy[0], tx + y_ns * 2, ty + x_ns * 2, c);
+                vgabuf_draw_line(fx[1], fy[1], tx - y_ns * 2, ty - x_ns * 2, c);
+                vgabuf_draw_line(fx[1], fy[1], tx + y_ns * 2, ty + x_ns * 2, c);
                 if ((y_ns == 1) && (x_ns == 1)) {
-                    ui_draw_line1(fx[0], fy[0], tx, ty - x_ns, c);
-                    ui_draw_line1(fx[0], fy[0], tx - x_ns, ty, c);
-                    ui_draw_line1(fx[1], fy[1], tx, ty - x_ns, c);
-                    ui_draw_line1(fx[1], fy[1], tx - x_ns, ty, c);
+                    vgabuf_draw_line(fx[0], fy[0], tx, ty - x_ns, c);
+                    vgabuf_draw_line(fx[0], fy[0], tx - x_ns, ty, c);
+                    vgabuf_draw_line(fx[1], fy[1], tx, ty - x_ns, c);
+                    vgabuf_draw_line(fx[1], fy[1], tx - x_ns, ty, c);
                 }
             }
             /*54cb2*/
             if (v16 != 2) {
-                ui_draw_line1(fx[2], fy[2], tx, ty, c);
-                ui_draw_line1(fx[2], fy[2], tx - y_ns, ty - x_ns, c);
-                ui_draw_line1(fx[2], fy[2], tx + y_ns, ty + x_ns, c);
+                vgabuf_draw_line(fx[2], fy[2], tx, ty, c);
+                vgabuf_draw_line(fx[2], fy[2], tx - y_ns, ty - x_ns, c);
+                vgabuf_draw_line(fx[2], fy[2], tx + y_ns, ty + x_ns, c);
                 /*if (btype == 5) always true*/
-                ui_draw_line1(fx[2], fy[2], tx - y_ns * 2, ty - x_ns * 2, c);
-                ui_draw_line1(fx[2], fy[2], tx + y_ns * 2, ty + x_ns * 2, c);
+                vgabuf_draw_line(fx[2], fy[2], tx - y_ns * 2, ty - x_ns * 2, c);
+                vgabuf_draw_line(fx[2], fy[2], tx + y_ns * 2, ty + x_ns * 2, c);
                 if ((y_ns == 1) && (x_ns == 1)) {
-                    ui_draw_line1(fx[2], fy[2], tx, ty - x_ns, c);
-                    ui_draw_line1(fx[2], fy[2], tx - x_ns, ty, c);
+                    vgabuf_draw_line(fx[2], fy[2], tx, ty - x_ns, c);
+                    vgabuf_draw_line(fx[2], fy[2], tx - x_ns, ty, c);
                 }
             }
         }
@@ -838,8 +838,8 @@ void ui_battle_draw_planetinfo(const struct battle_s *bt, bool side_r)
     uiobj_table_clear();
     ui_battle_draw_arena(bt, 0, 0);
     ui_battle_draw_bottom_no_ois(bt);
-    ui_draw_filled_rect(x, y, x + 131, y + 37, 0x3a);
-    ui_draw_filled_rect(x + 85, y + 4, x + 131, y + 37, 0);
+    vgabuf_fill_rect(x, y, x + 131, y + 37, 0x3a);
+    vgabuf_fill_rect(x + 85, y + 4, x + 131, y + 37, 0);
     lbxgfx_draw_frame(x, y, ui_data.gfx.space.vp2_top, UI_SCREEN_W);
     lbxgfx_draw_frame(x + 90, y + 9, b->gfx, UI_SCREEN_W);
     lbxfont_select(1, 0xa, 0, 0);
@@ -853,11 +853,11 @@ void ui_battle_draw_planetinfo(const struct battle_s *bt, bool side_r)
     lbxfont_print_num_right(x + 80, y + 30, bt->fact, UI_SCREEN_W);
     if (bt->s[bt->item[bt->cur_item].side].flag_have_scan || (side_r == (b->side == SIDE_R))) {
         int y1;
-        ui_draw_filled_rect(x, y + 39, x + 131, y + 79, 0x3a);
+        vgabuf_fill_rect(x, y + 39, x + 131, y + 79, 0x3a);
         lbxgfx_draw_frame(x, y + 38, ui_data.gfx.space.vp2_data, UI_SCREEN_W);
         lbxfont_print_str_normal(x + 68, y + 42, game_str_bt_bases, UI_SCREEN_W);
         if (bt->have_subspace_int) {
-            ui_draw_filled_rect(x, y + 79, x + 131, y + 89, 0x3a);
+            vgabuf_fill_rect(x, y + 79, x + 131, y + 89, 0x3a);
             lbxgfx_draw_frame(x, y + 77, ui_data.gfx.space.vp2_line, UI_SCREEN_W);
             lbxfont_select(2, 6, 0, 0);
             lbxfont_print_str_normal(x + 10, y + 80, game_str_bt_subint, UI_SCREEN_W);
@@ -1008,7 +1008,7 @@ void ui_battle_draw_arena(const struct battle_s *bt, int itemi, int dmode)
     struct ui_battle_data_s *d = bt->uictx;
     d->frame_ship = (d->frame_ship + 1) % 5;
     d->frame_missile = (d->frame_missile + 1) % 4;
-    ui_draw_erase_buf();
+    vgabuf_erase();
     lbxgfx_draw_frame(0, 0, d->gfx_bg, UI_SCREEN_W);
     lbxfont_set_temp_color(0);
     lbxfont_select_set_12_4(2, 0xd, 0, 0);
@@ -1062,7 +1062,7 @@ void ui_battle_draw_misshield(const struct battle_s *bt, int target_i, int targe
             ui_battle_draw_arena(bt, target_i, 1);
             ui_battle_draw_bottom(bt);
             ui_battle_draw_item(bt, target_i, target_x, target_y);
-            ui_draw_line_ctbl(target_x_hit, target_y_hit, mx, my, colortbl, 8, 0);
+            vgabuf_draw_line_ctbl(target_x_hit, target_y_hit, mx, my, colortbl, 8, 0);
             if (f > 1) {
                 gfx_aux_draw_frame_to(ui_data.gfx.space.explos[f - 2], &ui_data.aux.btemp);
                 gfx_aux_scale(&ui_data.aux.btemp, 30, 30);
@@ -1658,9 +1658,9 @@ void ui_battle_draw_blackhole(const struct battle_s *bt, int attacker_i, int tar
         ui_battle_draw_arena(bt, attacker_i, 0);
         ui_battle_draw_bottom(bt);
         if (f < 5) {
-            ui_draw_line_ctbl(x0, y0, x1, y1, ctbl, 5, f);
-            ui_draw_line_ctbl(x0, y0, x1 - y_ns, y1 - x_ns, ctbl, 5, (f + 1) % 5);
-            ui_draw_line_ctbl(x0, y0, x1 + y_ns, y1 + x_ns, ctbl, 5, (f + 2) % 5);
+            vgabuf_draw_line_ctbl(x0, y0, x1, y1, ctbl, 5, f);
+            vgabuf_draw_line_ctbl(x0, y0, x1 - y_ns, y1 - x_ns, ctbl, 5, (f + 1) % 5);
+            vgabuf_draw_line_ctbl(x0, y0, x1 + y_ns, y1 + x_ns, ctbl, 5, (f + 2) % 5);
         }
         if (f > 3) {
             gfx_aux_draw_frame_to(gfx, &ui_data.aux.btemp);
@@ -1757,11 +1757,11 @@ void ui_battle_draw_repulse(const struct battle_s *bt, int attacker_i, int targe
         ui_delay_prepare();
         ui_battle_draw_arena(bt, attacker_i, 0);
         ui_battle_draw_bottom(bt);
-        ui_draw_line_ctbl(x0, y0, tx + fx, ty + fy, ctbl, 5, i % 5);
-        ui_draw_line_ctbl(x0, y0, tx + fx - yo, ty + fy - xo, ctbl, 5, (i + 1) % 5);
-        ui_draw_line_ctbl(x0, y0, tx + fx + yo, ty + fy + xo, ctbl, 5, (i + 2) % 5);
-        ui_draw_line_ctbl(x0, y0, tx + fx - yo * 2, ty + fy - xo * 2, ctbl, 5, (i + 3) % 5);
-        ui_draw_line_ctbl(x0, y0, tx + fx + yo * 2, ty + fy + xo * 2, ctbl, 5, (i + 4) % 5);
+        vgabuf_draw_line_ctbl(x0, y0, tx + fx, ty + fy, ctbl, 5, i % 5);
+        vgabuf_draw_line_ctbl(x0, y0, tx + fx - yo, ty + fy - xo, ctbl, 5, (i + 1) % 5);
+        vgabuf_draw_line_ctbl(x0, y0, tx + fx + yo, ty + fy + xo, ctbl, 5, (i + 2) % 5);
+        vgabuf_draw_line_ctbl(x0, y0, tx + fx - yo * 2, ty + fy - xo * 2, ctbl, 5, (i + 3) % 5);
+        vgabuf_draw_line_ctbl(x0, y0, tx + fx + yo * 2, ty + fy + xo * 2, ctbl, 5, (i + 4) % 5);
         uiobj_finish_frame();
         ui_delay_ticks_or_click(2);
     }
@@ -1772,11 +1772,11 @@ void ui_battle_draw_repulse(const struct battle_s *bt, int attacker_i, int targe
         ui_battle_draw_arena(bt, target_i, 1);
         ui_battle_draw_bottom(bt);
         ui_battle_draw_item(bt, target_i, tx, ty);
-        ui_draw_line_ctbl(x0, y0, tx + fx, ty + fy, ctbl, 5, i % 5);
-        ui_draw_line_ctbl(x0, y0, tx + fx - yo, ty + fy - xo, ctbl, 5, (i + 1) % 5);
-        ui_draw_line_ctbl(x0, y0, tx + fx + yo, ty + fy + xo, ctbl, 5, (i + 2) % 5);
-        ui_draw_line_ctbl(x0, y0, tx + fx - yo * 2, ty + fy - xo * 2, ctbl, 5, (i + 3) % 5);
-        ui_draw_line_ctbl(x0, y0, tx + fx + yo * 2, ty + fy + xo * 2, ctbl, 5, (i + 4) % 5);
+        vgabuf_draw_line_ctbl(x0, y0, tx + fx, ty + fy, ctbl, 5, i % 5);
+        vgabuf_draw_line_ctbl(x0, y0, tx + fx - yo, ty + fy - xo, ctbl, 5, (i + 1) % 5);
+        vgabuf_draw_line_ctbl(x0, y0, tx + fx + yo, ty + fy + xo, ctbl, 5, (i + 2) % 5);
+        vgabuf_draw_line_ctbl(x0, y0, tx + fx - yo * 2, ty + fy - xo * 2, ctbl, 5, (i + 3) % 5);
+        vgabuf_draw_line_ctbl(x0, y0, tx + fx + yo * 2, ty + fy + xo * 2, ctbl, 5, (i + 4) % 5);
         uiobj_finish_frame();
         ui_delay_ticks_or_click(2);
     }
@@ -1786,11 +1786,11 @@ void ui_battle_draw_repulse(const struct battle_s *bt, int attacker_i, int targe
         ui_battle_draw_arena(bt, target_i, 1);
         ui_battle_draw_bottom(bt);
         ui_battle_draw_item(bt, target_i, sx * 32, sy * 24);
-        ui_draw_line_ctbl(x0, y0, tx + fx, ty + fy, ctbl, 5, i % 5);
-        ui_draw_line_ctbl(x0, y0, tx + fx - yo, ty + fy - xo, ctbl, 5, (i + 1) % 5);
-        ui_draw_line_ctbl(x0, y0, tx + fx + yo, ty + fy + xo, ctbl, 5, (i + 2) % 5);
-        ui_draw_line_ctbl(x0, y0, tx + fx - yo * 2, ty + fy - xo * 2, ctbl, 5, (i + 3) % 5);
-        ui_draw_line_ctbl(x0, y0, tx + fx + yo * 2, ty + fy + xo * 2, ctbl, 5, (i + 4) % 5);
+        vgabuf_draw_line_ctbl(x0, y0, tx + fx, ty + fy, ctbl, 5, i % 5);
+        vgabuf_draw_line_ctbl(x0, y0, tx + fx - yo, ty + fy - xo, ctbl, 5, (i + 1) % 5);
+        vgabuf_draw_line_ctbl(x0, y0, tx + fx + yo, ty + fy + xo, ctbl, 5, (i + 2) % 5);
+        vgabuf_draw_line_ctbl(x0, y0, tx + fx - yo * 2, ty + fy - xo * 2, ctbl, 5, (i + 3) % 5);
+        vgabuf_draw_line_ctbl(x0, y0, tx + fx + yo * 2, ty + fy + xo * 2, ctbl, 5, (i + 4) % 5);
         uiobj_finish_frame();
         ui_delay_ticks_or_click(2);
     }

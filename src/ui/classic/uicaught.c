@@ -46,7 +46,7 @@ static void caught_draw_cb(void *vptr)
     int x = 56, y = 50, n = 0;
 
     lbxgfx_draw_frame(x, y, d->gfx, UI_SCREEN_W);
-    ui_draw_filled_rect(x + 5, y + 5, x + 110, y + 63, 0xfb);
+    vgabuf_fill_rect(x + 5, y + 5, x + 110, y + 63, 0xfb);
 
     lbxfont_select(2, 0, 0, 0);
     lbxfont_print_str_normal(x + 10, y + 8, game_str_sc_caught, UI_SCREEN_W); /* FIXME split str to 3 and place using x */

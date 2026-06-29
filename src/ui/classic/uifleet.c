@@ -62,8 +62,8 @@ static void fleet_draw_cb(void *vptr)
     empiretechorbit_t *e = &(g->eto[d->api]);
     int num;
 
-    ui_draw_filled_rect(0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, 0x3a);
-    ui_draw_filled_rect(5, 15, 40, 190, 0);
+    vgabuf_fill(0x3a);
+    vgabuf_fill_rect(5, 15, 40, 190, 0);
     lbxgfx_draw_frame(0, 0, d->gfx_fleetbrb, UI_SCREEN_W);
     lbxgfx_set_new_frame(ui_data.gfx.starmap.fleetbut_scrap, 1);
     lbxgfx_draw_frame(224, 181, ui_data.gfx.starmap.fleetbut_scrap, UI_SCREEN_W);
@@ -118,7 +118,7 @@ static void fleet_draw_cb(void *vptr)
             if (ships) {
                 uint8_t *gfx_ship;
                 x0 = 44 * j + 48;
-                ui_draw_filled_rect(x0, y0, x0 + 36, y0 + 25, 0);
+                vgabuf_fill_rect(x0, y0, x0 + 36, y0 + 25, 0);
                 if (BOOLVEC_IS0(d->is_enroute, fi)) {
                     struct draw_stars_s temps;
                     temps.xoff1 = 0;
@@ -142,7 +142,7 @@ static void fleet_draw_cb(void *vptr)
         }
     }
     for (int i = num; i < FLEET_LINES; ++i) {
-        ui_draw_filled_rect(7, i * 33 + 17, 40, i * 33 + 42, 0x3a);
+        vgabuf_fill_rect(7, i * 33 + 17, 40, i * 33 + 42, 0x3a);
     }
     d->frame = (d->frame + 1) % 5;
     ui_draw_set_stars_xoffs(&d->s, false);

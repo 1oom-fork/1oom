@@ -117,8 +117,8 @@ static void ground_draw_cb1(void *vptr)
         sprintf(buf, "%s %s", strrace[1], game_str_gr_troops);
         lbxfont_print_str_normal(30, 146, buf, UI_SCREEN_W);
         lbxfont_print_num_normal(10, 146, gr->s[1].pop1, UI_SCREEN_W);
-        ui_draw_filled_rect(164, 155, 281, 157, 0);
-        ui_draw_line1(165, 156, 280, 156, 4);
+        vgabuf_fill_rect(164, 155, 281, 157, 0);
+        vgabuf_draw_line(165, 156, 280, 156, 4);
         lbxfont_select_set_12_4(0, 0x1, 0, 0);
         for (int i = 0; i < gr->s[1].strnum; ++i) {
             lbxfont_print_str_normal(10, 160 + 10 * i, gr->s[1].str[i], UI_SCREEN_W);
@@ -130,8 +130,8 @@ static void ground_draw_cb1(void *vptr)
         sprintf(buf, "%s %s", gr->flag_rebel ? game_str_gr_rebel : strrace[0], game_str_gr_troops);
         lbxfont_print_str_normal(190, 146, buf, UI_SCREEN_W);
         lbxfont_print_num_normal(170, 146, gr->s[0].pop1, UI_SCREEN_W);
-        ui_draw_filled_rect(4, 155, 121, 157, 0);
-        ui_draw_line1(5, 156, 120, 156, 4);
+        vgabuf_fill_rect(4, 155, 121, 157, 0);
+        vgabuf_draw_line(5, 156, 120, 156, 4);
         lbxfont_select_set_12_4(0, 0x1, 0, 0);
         for (int i = 0; i < gr->s[0].strnum; ++i) {
             lbxfont_print_str_normal(170, 160 + 10 * i, gr->s[0].str[i], UI_SCREEN_W);
