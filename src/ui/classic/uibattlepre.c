@@ -74,7 +74,7 @@ static void ui_battle_pre_draw_cb(void *vptr)
     struct game_s *g = d->g;
     const planet_t *p = &(g->planet[d->planet_i]);
     char buf[32];
-    hw_video_copy_back_from_page2();
+    vgabuf_copy_back_from_page2();
     ui_draw_filled_rect(222, 4, 314, 179, 0);
     lbxgfx_draw_frame(227, 57, d->gfx_ufleet, UI_SCREEN_W);
     lbxgfx_draw_frame(227, 102, d->gfx_dfleet, UI_SCREEN_W);

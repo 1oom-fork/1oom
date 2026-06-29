@@ -1,0 +1,11 @@
+#ifndef INC_1OOM_VGABUF_H
+#define INC_1OOM_VGABUF_H
+
+#define vgabuf_copy_front_to_back hw_video_copy_buf
+#define vgabuf_copy_back_out hw_video_copy_buf_out
+#define vgabuf_copy_back_to_page2 hw_video_copy_back_to_page2
+#define vgabuf_copy_back_from_page2 hw_video_copy_back_from_page2
+#define vgabuf_copy_back_to_page3 hw_video_copy_back_to_page3
+#define vgabuf_copy_back_from_page3 hw_video_copy_back_from_page3
+
+#endif

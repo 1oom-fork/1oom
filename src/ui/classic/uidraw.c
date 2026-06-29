@@ -164,7 +164,7 @@ void ui_draw_erase_buf(void)
 
 void ui_draw_copy_buf(void)
 {
-    hw_video_copy_buf();
+    vgabuf_copy_front_to_back();
 /*
     if (ui_cursor_gfx_i != 0) {
         int mx = mouse_x, my = mouse_y;
