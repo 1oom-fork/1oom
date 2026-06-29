@@ -49,7 +49,7 @@ static void free_mainmenu_data(struct main_menu_data_s *d)
 static void main_menu_draw_cb(void *vptr)
 {
     struct main_menu_data_s *d = vptr;
-    ui_draw_erase_buf();
+    vgabuf_erase();
     ui_draw_copy_buf();
     lbxgfx_draw_frame(0, 0, d->gfx_vortex, UI_SCREEN_W);
     lbxgfx_draw_frame(0, 0, d->gfx_title, UI_SCREEN_W);
@@ -89,7 +89,7 @@ static main_menu_action_t main_menu_do(struct main_menu_data_s *d)
     uiobj_table_clear();
 
     /* HACK these fix the gfx mess after canceling a load */
-    ui_draw_erase_buf();
+    vgabuf_erase();
     uiobj_finish_frame();
 
     oi_tutor = uiobj_add_alt_str("tutor");

@@ -101,7 +101,7 @@ int ui_load_game(void)
 
     d.selected = 0;
 
-    ui_draw_erase_buf();
+    vgabuf_erase();
     vgabuf_copy_back_to_page2();
     uiobj_set_callback_and_delay(load_game_draw_cb, &d, 2);
 

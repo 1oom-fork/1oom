@@ -233,7 +233,7 @@ void ui_game_start(struct game_s *g)
     ui_data.gfx.starmap.bmap = lbxfile_item_get(LBXFILE_V11, 1 + g->galaxy_size, 0);
 
     /* HACK remove visual glitch on load game */
-    ui_draw_erase_buf();
+    vgabuf_erase();
     vgabuf_flip();
 
     lbxpal_select(0, -1, 0);
