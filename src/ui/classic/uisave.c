@@ -72,7 +72,7 @@ int ui_save_game(struct game_s *g)
         strcpy(d.tbl_savename[i], game_save_tbl_name[i]);
     }
 
-    ui_draw_erase_buf();
+    vgabuf_erase();
     vgabuf_copy_back_to_page2();
     uiobj_set_callback_and_delay(save_game_draw_cb, &d, 2);
     uiobj_table_clear();
