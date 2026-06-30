@@ -62,7 +62,7 @@ static void lbxgfx_draw_pixels_fmt0(uint8_t *pixbuf, uint16_t w, uint8_t *data, 
     }
 }
 
-static void lbxgfx_draw_pixels_offs_fmt0(int x0, int y0, int w, int h, int xskip, int yskip, uint8_t *data, uint16_t pitch)
+static void lbxgfx_draw_pixels_offs_fmt0(int x0, int y0, int w, int h, int xskip, int yskip, uint8_t *data)
 {
     /* FIXME this an unreadable goto mess */
     uint8_t *p = vgabuf_get() + VGABUF_OFFSET(x0, y0);
@@ -242,7 +242,7 @@ static void lbxgfx_draw_pixels_offs_fmt0(int x0, int y0, int w, int h, int xskip
     }
 }
 
-static void lbxgfx_draw_pixels_offs_fmt1(int x0, int y0, int w, int h, int xskip, int yskip, uint8_t *data, uint16_t pitch)
+static void lbxgfx_draw_pixels_offs_fmt1(int x0, int y0, int w, int h, int xskip, int yskip, uint8_t *data)
 {
     log_fatal_and_die("%s unimpl\n", __func__);
 }
@@ -335,13 +335,13 @@ void lbxgfx_draw_frame_do(uint8_t *p, uint8_t *data, uint16_t pitch)
     lbxgfx_set_frame(data, next_frame);
 }
 
-void lbxgfx_draw_frame(int x, int y, uint8_t *data, uint16_t pitch)
+void lbxgfx_draw_frame(int x, int y, uint8_t *data)
 {
     uint8_t *p = vgabuf_get() + VGABUF_OFFSET(x, y);
     lbxgfx_draw_frame_do(p, data, VGABUF_PITCH);
 }
 
-void lbxgfx_draw_frame_pal(int x, int y, uint8_t *data, uint16_t pitch)
+void lbxgfx_draw_frame_pal(int x, int y, uint8_t *data)
 {
     uint16_t frame;
     frame = lbxgfx_get_frame(data);
@@ -393,9 +393,9 @@ void lbxgfx_draw_frame_offs(int x, int y, uint8_t *data, int lx0, int ly0, int l
     frame = lbxgfx_get_frame(data);
 
     if (lbxgfx_get_format(data) == 0) {
-        lbxgfx_draw_pixels_offs_fmt0(x0, y0, w, h, xskip, yskip, lbxgfx_get_frameptr(data, frame) + 1, pitch);
+        lbxgfx_draw_pixels_offs_fmt0(x0, y0, w, h, xskip, yskip, lbxgfx_get_frameptr(data, frame) + 1);
     } else {
-        lbxgfx_draw_pixels_offs_fmt1(x0, y0, w, h, xskip, yskip, lbxgfx_get_frameptr(data, frame) + 1, pitch);
+        lbxgfx_draw_pixels_offs_fmt1(x0, y0, w, h, xskip, yskip, lbxgfx_get_frameptr(data, frame) + 1);
     }
 
     ++frame;
@@ -415,7 +415,7 @@ void lbxgfx_set_new_frame(uint8_t *data, uint16_t newframe)
     lbxgfx_set_frame(data, newframe);
 }
 
-void lbxgfx_apply_colortable(int x0, int y0, int x1, int y1, uint8_t ctbli, uint16_t pitch)
+void lbxgfx_apply_colortable(int x0, int y0, int x1, int y1, uint8_t ctbli)
 {
     uint8_t *pixbuf = vgabuf_get();
     const uint8_t *tbl = lbxpal_colortable[ctbli];

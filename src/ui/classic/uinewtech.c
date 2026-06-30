@@ -94,7 +94,7 @@ static void newtech_draw_cb1(void *vptr)
         int frame = lbxgfx_get_frame(d->gfx_spies);
         lbxgfx_set_frame_0(d->gfx_spies);
         for (int f = 0; f <= frame; ++f) {
-            lbxgfx_draw_frame(0, 0, d->gfx_spies, UI_SCREEN_W);
+            lbxgfx_draw_frame(0, 0, d->gfx_spies);
         }
         if ((d->anim = (d->anim + 1) % 3) != 0) {
             lbxgfx_set_new_frame(d->gfx_spies, frame);
@@ -151,7 +151,7 @@ static void newtech_draw_cb1(void *vptr)
         /*ui_newtech_draw_frame:*/
         vgabuf_fill_rect(31, 62, 202, 125, 0xfb);
         vgabuf_fill_rect(37, 68, 196, 91, 0x04);
-        lbxgfx_draw_frame(31, 62, d->gfx_framing, UI_SCREEN_W);
+        lbxgfx_draw_frame(31, 62, d->gfx_framing);
         vgabuf_fill_rect(50, 106, 110, 120, 0x00);
         vgabuf_fill_rect(51, 107, 109, 119, tbl_banner_color2[g->eto[d->other1].banner]);
         vgabuf_fill_rect(122, 106, 183, 120, 0x00);
@@ -180,7 +180,7 @@ static void newtech_choose_next_draw_cb(void *vptr)
     vgabuf_fill_rect(x, y, x + 165, y + yo + 12, 0xf9);
     vgabuf_limits_set(0, y, VGABUF_W - 1, y + yo - 1);
     lbxgfx_draw_frame_offs(x, y, d->gfx_pulldown_u, 0, y, UI_SCREEN_W - 1, y + yo - 1, UI_SCREEN_W);
-    lbxgfx_draw_frame(x, y + yo, d->gfx_pulldown_d, UI_SCREEN_W);
+    lbxgfx_draw_frame(x, y + yo, d->gfx_pulldown_d);
     sprintf(buf, "%s %s", game_str_tbl_te_field[d->nt.field], game_str_te_techno);
     lbxfont_select(5, 0xe, 0, 0);
     lbxfont_print_str_center(x + 85, y + 5, buf, UI_SCREEN_W);
@@ -247,7 +247,7 @@ static void newtech_adjust_draw_cb(void *vptr)
     int x = 150, y = 30;
     newtech_draw_cb1(d);
     vgabuf_fill_rect(x, y, x + 135, y + 80, 0xf9);
-    lbxgfx_draw_frame(x, y, (d->dialog_type == 0) ? d->gfx_eco_chng2 : d->gfx_eco_chng4, UI_SCREEN_W);
+    lbxgfx_draw_frame(x, y, (d->dialog_type == 0) ? d->gfx_eco_chng2 : d->gfx_eco_chng4);
     lbxfont_select_set_12_1(0, 0, 0, 0);
     strcpy(buf, game_str_nt_doyou);
     switch (d->dialog_type) {
@@ -256,8 +256,8 @@ static void newtech_adjust_draw_cb(void *vptr)
             lbxfont_print_str_split(x + 15, y + 11, 110, buf, 3, UI_SCREEN_W, UI_SCREEN_H);
             lbxgfx_set_frame_0(ui_data.gfx.starmap.scrapbut_yes);
             lbxgfx_set_frame_0(ui_data.gfx.starmap.scrapbut_no);
-            lbxgfx_draw_frame(x + 83, y + 60, ui_data.gfx.starmap.scrapbut_yes, UI_SCREEN_W);
-            lbxgfx_draw_frame(x + 18, y + 60, ui_data.gfx.starmap.scrapbut_no, UI_SCREEN_W);
+            lbxgfx_draw_frame(x + 83, y + 60, ui_data.gfx.starmap.scrapbut_yes);
+            lbxgfx_draw_frame(x + 18, y + 60, ui_data.gfx.starmap.scrapbut_no);
             break;
         case 1:
             newtech_adjust_draw_typestr(buf, game_str_nt_ind, 0, x, y, 0);
@@ -282,7 +282,7 @@ static void newtech_adjust_draw_cb(void *vptr)
         x += 10;
         for (int i = 0; i < 4; ++i, x += 32) {
             lbxgfx_set_frame_0(d->gfx_robo_but);
-            lbxgfx_draw_frame(x, y + 60, d->gfx_robo_but, UI_SCREEN_W);
+            lbxgfx_draw_frame(x, y + 60, d->gfx_robo_but);
             lbxfont_print_str_center(x + 12, y + 64, game_str_tbl_nt_adj[i], UI_SCREEN_W);
         }
     }
@@ -511,7 +511,7 @@ void ui_newtech(struct game_s *g, int pi)
         }
         vgabuf_erase();
         d.gfx_lab = lbxfile_item_get(LBXFILE_TECHNO, (d.nt.source != 4) ? d.nt.source : 0, 0);
-        lbxgfx_draw_frame(0, 0, d.gfx_lab, UI_SCREEN_W);
+        lbxgfx_draw_frame(0, 0, d.gfx_lab);
         {
             int v;
             if (d.nt.tech <= 50) {
@@ -524,7 +524,7 @@ void ui_newtech(struct game_s *g, int pi)
             }
             d.gfx_tech = lbxfile_item_get(LBXFILE_TECHNO, v, 0);
         }
-        lbxgfx_draw_frame(145, 54, d.gfx_tech, UI_SCREEN_W);
+        lbxgfx_draw_frame(145, 54, d.gfx_tech);
         vgabuf_copy_back_to_page2();
         {
             int v;
@@ -579,7 +579,7 @@ void ui_newtech(struct game_s *g, int pi)
                 /*soundsys_hmm3?*/
                 vgabuf_erase();
                 d.gfx_lab = lbxfile_item_get(LBXFILE_TECHNO, 0, 0);
-                lbxgfx_draw_frame(0, 0, d.gfx_lab, UI_SCREEN_W);
+                lbxgfx_draw_frame(0, 0, d.gfx_lab);
                 vgabuf_copy_back_to_page2();
                 lbxfile_item_release(LBXFILE_TECHNO, d.gfx_lab);
                 d.music_i = newtech_music_tbl[0];
