@@ -106,8 +106,8 @@ static void tech_draw_cb(void *vptr)
     }
 
     vgabuf_fill_rect(7, 36, 154, 147, 0);
-    lbxgfx_draw_frame(7, 36, ui_data.gfx.screens.techback, UI_SCREEN_W);
-    lbxgfx_draw_frame(0, 0, d->gfx, UI_SCREEN_W);
+    lbxgfx_draw_frame(7, 36, ui_data.gfx.screens.techback);
+    lbxgfx_draw_frame(0, 0, d->gfx);
 
     sprintf(buf, "%i %s", e->total_research_bc, game_str_bc);
     lbxfont_select(2, 6, 0, 0);
@@ -135,8 +135,8 @@ static void tech_draw_cb(void *vptr)
 
     lbxgfx_set_new_frame(ui_data.gfx.screens.tech_but_up, 1);
     lbxgfx_set_new_frame(ui_data.gfx.screens.tech_but_down, 1);
-    lbxgfx_draw_frame(157, 35, ui_data.gfx.screens.tech_but_up, UI_SCREEN_W);
-    lbxgfx_draw_frame(157, 141, ui_data.gfx.screens.tech_but_down, UI_SCREEN_W);
+    lbxgfx_draw_frame(157, 35, ui_data.gfx.screens.tech_but_up);
+    lbxgfx_draw_frame(157, 141, ui_data.gfx.screens.tech_but_down);
 
     for (int i = 0; i < TECH_FIELD_NUM; ++i) {
         int y;
@@ -215,7 +215,7 @@ static void tech_draw_cb(void *vptr)
             } else {
                 int y0, y1;
                 complpercent = game_tech_current_research_percent1(e, i);
-                lbxgfx_draw_frame(287, y, ui_data.gfx.screens.litebulb_off, UI_SCREEN_W);
+                lbxgfx_draw_frame(287, y, ui_data.gfx.screens.litebulb_off);
                 y0 = y + (8 - (complpercent * 4) / 50);
                 y1 = y + 7;
                 vgabuf_limits_set(0, y0, VGABUF_W - 1, y1);

@@ -76,9 +76,9 @@ static void ui_battle_pre_draw_cb(void *vptr)
     char buf[32];
     vgabuf_copy_back_from_page2();
     vgabuf_fill_rect(222, 4, 314, 179, 0);
-    lbxgfx_draw_frame(227, 57, d->gfx_ufleet, UI_SCREEN_W);
-    lbxgfx_draw_frame(227, 102, d->gfx_dfleet, UI_SCREEN_W);
-    lbxgfx_draw_frame(222, 4, d->gfx_fleet, UI_SCREEN_W);
+    lbxgfx_draw_frame(227, 57, d->gfx_ufleet);
+    lbxgfx_draw_frame(227, 102, d->gfx_dfleet);
+    lbxgfx_draw_frame(222, 4, d->gfx_fleet);
     if (d->hide_other) {
         ui_gmap_basic_draw_only(d->gmapctx, d->planet_i);
     } else {
@@ -92,7 +92,7 @@ static void ui_battle_pre_draw_cb(void *vptr)
         x = (p->x * 215) / g->galaxy_maxx + 5;
         y = (p->y * 171) / g->galaxy_maxy + 5;
         gfx = ui_data.gfx.starmap.smalflag[g->eto[p->owner].banner];
-        lbxgfx_draw_frame(x + 3, y - 2, gfx, UI_SCREEN_W);
+        lbxgfx_draw_frame(x + 3, y - 2, gfx);
     }
     lbxfont_select_set_12_4(3, 0, 0, 0);
     lbxfont_print_str_center(267, 64, game_str_bp_scombat, UI_SCREEN_W);

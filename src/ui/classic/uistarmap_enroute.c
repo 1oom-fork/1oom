@@ -44,14 +44,14 @@ static void ui_starmap_enroute_draw_cb(void *vptr)
         ui_starmap_draw_frame(x, y, ui_data.gfx.starmap.shipbord);
     }
     vgabuf_fill_rect(225, 8, 314, 180, 7);
-    lbxgfx_draw_frame(224, 4, ui_data.gfx.starmap.movextr2, UI_SCREEN_W);
+    lbxgfx_draw_frame(224, 4, ui_data.gfx.starmap.movextr2);
     if ((r->owner == d->api) && (d->en.can_move != NO_MOVE)) {
-        lbxgfx_draw_frame(224, 160, ui_data.gfx.starmap.movextr3, UI_SCREEN_W);
+        lbxgfx_draw_frame(224, 160, ui_data.gfx.starmap.movextr3);
     }
     vgabuf_fill_rect(227, 8, 310, 39, 0);
     lbxgfx_set_frame_0(ui_data.gfx.starmap.scanner);
     for (int f = 0; f <= d->en.frame_scanner; ++f) {
-        lbxgfx_draw_frame(227, 8, ui_data.gfx.starmap.scanner, UI_SCREEN_W);
+        lbxgfx_draw_frame(227, 8, ui_data.gfx.starmap.scanner);
     }
     sprintf(buf, "%s %s", game_str_tbl_race[e->race], game_str_sm_fleet);
     lbxfont_select_set_12_4(5, tbl_banner_fontparam[e->banner], 0, 0);
@@ -101,7 +101,7 @@ static void ui_starmap_enroute_draw_cb(void *vptr)
         gfx = ui_data.gfx.ships[srd->design[st].look];
         lbxgfx_set_frame_0(gfx);
         for (int f = 0; f <= d->en.frame_ship; ++f) {
-            lbxgfx_draw_frame(x, y, gfx, UI_SCREEN_W);
+            lbxgfx_draw_frame(x, y, gfx);
         }
         lbxfont_select(0, 0xd, 0, 0);
         lbxfont_print_num_right(x + 35, y + 19, d->en.sn0.ships[st], UI_SCREEN_W);
@@ -116,7 +116,7 @@ static void ui_starmap_enroute_draw_cb(void *vptr)
     }
     if ((r->owner == d->api) && (d->en.can_move != NO_MOVE) && (!d->en.in_frange)) {
         lbxgfx_set_new_frame(ui_data.gfx.starmap.reloc_bu_accept, 1);
-        lbxgfx_draw_frame(271, 163, ui_data.gfx.starmap.reloc_bu_accept, UI_SCREEN_W);
+        lbxgfx_draw_frame(271, 163, ui_data.gfx.starmap.reloc_bu_accept);
 
     }
     d->en.frame_ship = (d->en.frame_ship + 1) % 5;
