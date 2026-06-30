@@ -96,7 +96,7 @@ static void starview_draw_cb(void *vptr)
     }
     lbxgfx_draw_frame(212, 0, d->gfx_star);
     lbxfont_select(4, 0, 0, 0);
-    lbxfont_print_str_center(170, 2, p->name, UI_SCREEN_W);
+    lbxfont_print_str_center(170, 2, p->name);
     lbxfont_select(3, 0xb, 0, 0);
     strcpy(buf, game_str_tbl_sm_pltype[p->type]);
     util_str_tolower(buf);
@@ -107,10 +107,10 @@ static void starview_draw_cb(void *vptr)
         buf[l] = '\0';
         strcat(&buf[l], game_str_sv_envir);
     }
-    lbxfont_print_str_center(170, 17, buf, UI_SCREEN_W);
+    lbxfont_print_str_center(170, 17, buf);
     if (p->have_stargate) {
         lbxfont_select(5, 0xb, 0, 0);
-        lbxfont_print_str_center(269, 134, game_str_sv_stargt, UI_SCREEN_W);
+        lbxfont_print_str_center(269, 134, game_str_sv_stargt);
     }
     if (sowner != PLAYER_NONE) {
         const empiretechorbit_t *e = &(g->eto[sowner]);
@@ -131,7 +131,7 @@ static void starview_draw_cb(void *vptr)
                 lbxgfx_set_new_frame(gfx, (d->frame + i) % 5);
                 gfx_aux_draw_frame_to(gfx, &ui_data.aux.ship_p1);
                 gfx_aux_draw_frame_from(x + 8, y + 8, &ui_data.aux.ship_p1, UI_SCREEN_W);
-                lbxfont_print_num_right(x + 39, y + 25, ships, UI_SCREEN_W);
+                lbxfont_print_num_right(x + 39, y + 25, ships);
                 ++n;
             }
         }
@@ -140,23 +140,23 @@ static void starview_draw_cb(void *vptr)
         if (p->shield != 0) {
             sprintf(buf, "%s %s %s", game_str_sv_shild1, game_str_tbl_roman[p->shield], game_str_sv_shild2);
             lbxfont_select(0, 0xd, 0, 0);
-            lbxfont_print_str_normal(8, 10, buf, UI_SCREEN_W);
+            lbxfont_print_str_normal(8, 10, buf);
         }
         vgabuf_fill_rect(225, 144, 319, 199, 0xf0);
         vgabuf_draw_box2(225, 144, 319, 199, 0xb3, 0xb3, 0xb3, 0xb3);
         lbxfont_select(0, 0xe, 0, 0);
-        lbxfont_print_str_right(284, 149, game_str_sv_psize, UI_SCREEN_W);
-        lbxfont_print_str_right(284, 159, game_str_sv_fact, UI_SCREEN_W);
-        lbxfont_print_str_right(284, 169, game_str_sv_waste, UI_SCREEN_W);
-        lbxfont_print_str_right(284, 179, game_str_sv_pop, UI_SCREEN_W);
-        lbxfont_print_str_right(284, 189, game_str_sv_growth, UI_SCREEN_W);
-        lbxfont_print_num_right(308, 149, p->max_pop3, UI_SCREEN_W);
-        lbxfont_print_num_right(308, 159, s->factories, UI_SCREEN_W);
-        lbxfont_print_num_right(308, 169, p->waste, UI_SCREEN_W);
-        lbxfont_print_num_right(308, 179, s->pop, UI_SCREEN_W);
+        lbxfont_print_str_right(284, 149, game_str_sv_psize);
+        lbxfont_print_str_right(284, 159, game_str_sv_fact);
+        lbxfont_print_str_right(284, 169, game_str_sv_waste);
+        lbxfont_print_str_right(284, 179, game_str_sv_pop);
+        lbxfont_print_str_right(284, 189, game_str_sv_growth);
+        lbxfont_print_num_right(308, 149, p->max_pop3);
+        lbxfont_print_num_right(308, 159, s->factories);
+        lbxfont_print_num_right(308, 169, p->waste);
+        lbxfont_print_num_right(308, 179, s->pop);
         if ((sowner == d->api) && (p->pop != p->pop_prev)) {
             sprintf(buf, "%+i", p->pop - p->pop_prev);
-            lbxfont_print_str_right(308, 189, buf, UI_SCREEN_W);
+            lbxfont_print_str_right(308, 189, buf);
         }
     } else if ((p->type != PLANET_TYPE_NOT_HABITABLE)
        && ((p->special != PLANET_SPECIAL_NORMAL) || (p->growth != PLANET_GROWTH_NORMAL))
@@ -203,10 +203,10 @@ static void starview_draw_cb(void *vptr)
             }
             sprintf(buf, "%s:", str0);
             lbxfont_select(5, 0xd, 0, 0);
-            lbxfont_print_str_normal(8, y0, buf, UI_SCREEN_W);
+            lbxfont_print_str_normal(8, y0, buf);
             sprintf(buf, "%s %s", str1, str2);
             lbxfont_select_set_12_4(5, 0xa, 0, 0);
-            lbxfont_print_str_split(80, y0, 110, buf, 0, UI_SCREEN_W, UI_SCREEN_H);
+            lbxfont_print_str_split(80, y0, 110, buf, 0);
         }
         if (p->growth != PLANET_GROWTH_NORMAL) {
             int i = p->growth;
@@ -216,10 +216,10 @@ static void starview_draw_cb(void *vptr)
             y0 = 162;
             sprintf(buf, "%s:", game_str_sv_pg1[i]);
             lbxfont_select_set_12_4(5, 0xd, 0, 0);
-            lbxfont_print_str_normal(8, y0, buf, UI_SCREEN_W);
+            lbxfont_print_str_normal(8, y0, buf);
             sprintf(buf, "%s %s", game_str_sv_popgr, game_str_sv_pg2[i]);
             lbxfont_select_set_12_4(5, 0xa, 0, 0);
-            lbxfont_print_str_split(80, y0, 110, buf, 0, UI_SCREEN_W, UI_SCREEN_H);
+            lbxfont_print_str_split(80, y0, 110, buf, 0);
         }
     }
     if (sowner != PLAYER_NONE) {

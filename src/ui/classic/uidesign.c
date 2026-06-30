@@ -102,38 +102,38 @@ static void design_draw_cb(void *vptr)
     oi_hmm2 = uiobj_get_hmm2_oi();
     lbxfont_select(0, 6, 0, 3);
     lbxfont_set_colors(((d->oi_comp == oi_hmm2) || d->flag_disable_comp) ? colortbl_sd_ba : colortbl_sd_bf);
-    lbxfont_print_str_normal(17, 22, game_str_sd_comp, UI_SCREEN_W);
+    lbxfont_print_str_normal(17, 22, game_str_sd_comp);
     lbxfont_set_colors(((d->oi_shield == oi_hmm2) || d->flag_disable_shield) ? colortbl_sd_ba : colortbl_sd_bf);
-    lbxfont_print_str_normal(17, 34, game_str_sd_shield, UI_SCREEN_W);
+    lbxfont_print_str_normal(17, 34, game_str_sd_shield);
     lbxfont_set_colors(((d->oi_jammer == oi_hmm2) || d->flag_disable_jammer) ? colortbl_sd_ba : colortbl_sd_bf);
-    lbxfont_print_str_normal(17, 46, game_str_sd_ecm, UI_SCREEN_W);
+    lbxfont_print_str_normal(17, 46, game_str_sd_ecm);
     lbxfont_set_colors(((d->oi_armor == oi_hmm2) || d->flag_disable_armor) ? colortbl_sd_ba : colortbl_sd_bf);
-    lbxfont_print_str_normal(167, 22, game_str_sd_armor, UI_SCREEN_W);
+    lbxfont_print_str_normal(167, 22, game_str_sd_armor);
     lbxfont_set_colors(((d->oi_engine == oi_hmm2) || d->flag_disable_engine) ? colortbl_sd_ba : colortbl_sd_bf);
-    lbxfont_print_str_normal(167, 34, game_str_sd_engine, UI_SCREEN_W);
+    lbxfont_print_str_normal(167, 34, game_str_sd_engine);
     lbxfont_set_colors(((d->oi_man == oi_hmm2) || d->flag_disable_cspeed) ? colortbl_sd_ba : colortbl_sd_bf);
-    lbxfont_print_str_normal(167, 46, game_str_sd_man, UI_SCREEN_W);
+    lbxfont_print_str_normal(167, 46, game_str_sd_man);
     for (int i = 0; i < SPECIAL_SLOT_NUM; ++i) {
         lbxfont_set_colors(((d->oi_tbl_spec[i] == oi_hmm2) || d->flag_tbl_special[i]) ? colortbl_sd_ba : colortbl_sd_bf);
-        lbxfont_print_str_normal(17, 116 + i * 10, game_str_tbl_sd_spec[i], UI_SCREEN_W);
+        lbxfont_print_str_normal(17, 116 + i * 10, game_str_tbl_sd_spec[i]);
     }
     for (int i = 0; i < WEAPON_SLOT_NUM; ++i) {
         lbxfont_set_colors(((d->oi_tbl_weap[i] == oi_hmm2) || d->flag_tbl_weapon[i]) ? colortbl_sd_ba : colortbl_sd_bf);
-        lbxfont_print_str_normal(17, 71 + i * 10, game_str_tbl_sd_weap[i], UI_SCREEN_W);
+        lbxfont_print_str_normal(17, 71 + i * 10, game_str_tbl_sd_weap[i]);
     }
 
     lbxfont_select(0, 6, 0, 3);
     lbxfont_set_colors(colortbl_sd_bf);
-    lbxfont_print_str_normal(59, 61, game_str_sd_count, UI_SCREEN_W);
-    lbxfont_print_str_normal(88, 61, game_str_sd_sweap, UI_SCREEN_W);
-    lbxfont_print_str_normal(163, 61, game_str_sd_damage, UI_SCREEN_W);
-    lbxfont_print_str_normal(196, 61, game_str_sd_rng, UI_SCREEN_W);
-    lbxfont_print_str_normal(215, 61, game_str_sd_notes, UI_SCREEN_W);
+    lbxfont_print_str_normal(59, 61, game_str_sd_count);
+    lbxfont_print_str_normal(88, 61, game_str_sd_sweap);
+    lbxfont_print_str_normal(163, 61, game_str_sd_damage);
+    lbxfont_print_str_normal(196, 61, game_str_sd_rng);
+    lbxfont_print_str_normal(215, 61, game_str_sd_notes);
     lbxfont_select(0, 0, 0, 3);
-    lbxfont_print_str_normal(262, 163, game_str_bc, UI_SCREEN_W);
-    lbxfont_print_num_right(257, 163, sd->cost, UI_SCREEN_W);
-    lbxfont_print_num_right(270, 175, game_design_get_hull_space(d->gd), UI_SCREEN_W);
-    lbxfont_print_num_right(270, 187, sd->space, UI_SCREEN_W);
+    lbxfont_print_str_normal(262, 163, game_str_bc);
+    lbxfont_print_num_right(257, 163, sd->cost);
+    lbxfont_print_num_right(270, 175, game_design_get_hull_space(d->gd));
+    lbxfont_print_num_right(270, 187, sd->space);
 
     {
         ship_hull_t acthull;
@@ -149,7 +149,7 @@ static void design_draw_cb(void *vptr)
                 }
                 uiobj_ta_set_val_1(d->oi_tbl_hull[i]);
             }
-            lbxfont_print_str_center(38, 163 + i * 7, *tbl_shiptech_hull[i].nameptr, UI_SCREEN_W);
+            lbxfont_print_str_center(38, 163 + i * 7, *tbl_shiptech_hull[i].nameptr);
         }
     }
     {
@@ -170,11 +170,11 @@ static void design_draw_cb(void *vptr)
         weapon_t wi;
         wi = sd->wpnt[i];
         if (wi != WEAPON_NONE) {
-            lbxfont_print_str_normal(88, 73 + i * 10, *tbl_shiptech_weap[wi].nameptr, UI_SCREEN_W);
+            lbxfont_print_str_normal(88, 73 + i * 10, *tbl_shiptech_weap[wi].nameptr);
         }
     }
-    lbxfont_print_str_normal(200, 22, *tbl_shiptech_armor[sd->armor].nameptr, UI_SCREEN_W);
-    lbxfont_print_str_normal(200, 34, *tbl_shiptech_engine[sd->engine].nameptr, UI_SCREEN_W);
+    lbxfont_print_str_normal(200, 22, *tbl_shiptech_armor[sd->armor].nameptr);
+    lbxfont_print_str_normal(200, 34, *tbl_shiptech_engine[sd->engine].nameptr);
     {
         uint8_t v;
         extraman = 0;
@@ -183,22 +183,22 @@ static void design_draw_cb(void *vptr)
             SETMAX(extraman, v);
         }
         v = extraman + sd->man + 1;
-        lbxfont_print_num_right(220, 46, v, UI_SCREEN_W);
+        lbxfont_print_num_right(220, 46, v);
     }
     if (sd->comp) {
-        lbxfont_print_str_normal(60, 22, *tbl_shiptech_comp[sd->comp].nameptr, UI_SCREEN_W);
+        lbxfont_print_str_normal(60, 22, *tbl_shiptech_comp[sd->comp].nameptr);
     }
     if (sd->shield) {
-        lbxfont_print_str_normal(60, 34, *tbl_shiptech_shield[sd->shield].nameptr, UI_SCREEN_W);
+        lbxfont_print_str_normal(60, 34, *tbl_shiptech_shield[sd->shield].nameptr);
     }
     if (sd->jammer) {
-        lbxfont_print_str_normal(60, 46, *tbl_shiptech_jammer[sd->jammer].nameptr, UI_SCREEN_W);
+        lbxfont_print_str_normal(60, 46, *tbl_shiptech_jammer[sd->jammer].nameptr);
     }
     for (int i = 0; i < SPECIAL_SLOT_NUM; ++i) {
         ship_special_t si;
         si = sd->special[i];
         if (si != SHIP_SPECIAL_NONE) {
-            lbxfont_print_str_normal(61, 116 + i * 10, *tbl_shiptech_special[si].nameptr, UI_SCREEN_W);
+            lbxfont_print_str_normal(61, 116 + i * 10, *tbl_shiptech_special[si].nameptr);
         }
     }
 
@@ -210,58 +210,58 @@ static void design_draw_cb(void *vptr)
         if (wi != WEAPON_NONE) {
             int y, dmin, dmax;
             y = 73 + i * 10;
-            lbxfont_print_str_normal(215, y, *tbl_shiptech_weap[wi].extratextptr, UI_SCREEN_W);
-            lbxfont_print_num_right(77, y, sd->wpnn[i], UI_SCREEN_W);
-            lbxfont_print_num_right(207, y, tbl_shiptech_weap[wi].range, UI_SCREEN_W);
+            lbxfont_print_str_normal(215, y, *tbl_shiptech_weap[wi].extratextptr);
+            lbxfont_print_num_right(77, y, sd->wpnn[i]);
+            lbxfont_print_num_right(207, y, tbl_shiptech_weap[wi].range);
             dmin = tbl_shiptech_weap[wi].damagemin;
             dmax = tbl_shiptech_weap[wi].damagemax;
             if (dmin != dmax) {
-                lbxfont_print_range_right(188, y, dmin, dmax, UI_SCREEN_W);
+                lbxfont_print_range_right(188, y, dmin, dmax);
             } else {
-                lbxfont_print_num_right(188, y, dmin, UI_SCREEN_W);
+                lbxfont_print_num_right(188, y, dmin);
             }
         }
     }
-    lbxfont_print_str_normal(250, 22, game_str_sd_hp, UI_SCREEN_W);
-    lbxfont_print_num_right(302, 22, sd->hp, UI_SCREEN_W);
-    lbxfont_print_str_normal(250, 34, game_str_sd_warp, UI_SCREEN_W);
-    lbxfont_print_num_right(272, 34, tbl_shiptech_engine[sd->engine].warp, UI_SCREEN_W);
-    lbxfont_print_str_normal(280, 34, game_str_sd_def, UI_SCREEN_W);
-    lbxfont_print_str_normal(250, 46, game_str_sd_cspeed, UI_SCREEN_W);
+    lbxfont_print_str_normal(250, 22, game_str_sd_hp);
+    lbxfont_print_num_right(302, 22, sd->hp);
+    lbxfont_print_str_normal(250, 34, game_str_sd_warp);
+    lbxfont_print_num_right(272, 34, tbl_shiptech_engine[sd->engine].warp);
+    lbxfont_print_str_normal(280, 34, game_str_sd_def);
+    lbxfont_print_str_normal(250, 46, game_str_sd_cspeed);
     /* FIXME these calculations should be a function somewhere else */
     {
         uint8_t v;
         v = extraman + sd->man + tbl_shiptech_hull[sd->hull].defense + 1;
-        lbxfont_print_num_right(302, 34, v, UI_SCREEN_W);
+        lbxfont_print_num_right(302, 34, v);
         v = (extraman / 2) + (sd->man + 3) / 2;
-        lbxfont_print_num_right(302, 46, v, UI_SCREEN_W);
+        lbxfont_print_num_right(302, 46, v);
     }
     if (sd->shield) {
         uint8_t v = tbl_shiptech_shield[sd->shield].absorb;
         sprintf(buf, "%s %i %s", game_str_sd_absorbs, v, (v == 1) ? game_str_sd_hit : game_str_sd_hits);
-        lbxfont_print_str_normal(101, 34, buf, UI_SCREEN_W);
+        lbxfont_print_str_normal(101, 34, buf);
     }
-    lbxfont_print_str_normal(101, 46, game_str_sd_misdef, UI_SCREEN_W);
+    lbxfont_print_str_normal(101, 46, game_str_sd_misdef);
     {
         uint8_t v;
         v = extraman + sd->man + tbl_shiptech_jammer[sd->jammer].level + tbl_shiptech_hull[sd->hull].defense + 1;
-        lbxfont_print_num_right(155, 46, v, UI_SCREEN_W);
+        lbxfont_print_num_right(155, 46, v);
     }
-    lbxfont_print_str_normal(101, 22, game_str_sd_att, UI_SCREEN_W);
+    lbxfont_print_str_normal(101, 22, game_str_sd_att);
     {
         uint16_t v = 0;
         for (int i = 0; i < SPECIAL_SLOT_NUM; ++i) {
             v |= tbl_shiptech_special[sd->special[i]].boolmask;
         }
         v = tbl_shiptech_comp[sd->comp].level + (v & (1 << SHIP_SPECIAL_BOOL_SCANNER)) ? 1 : 0;
-        lbxfont_print_num_right(155, 22, v, UI_SCREEN_W);
+        lbxfont_print_num_right(155, 22, v);
     }
 
     for (int i = 0; i < SPECIAL_SLOT_NUM; ++i) {
         ship_special_t si;
         si = sd->special[i];
         if (si != SHIP_SPECIAL_NONE) {
-            lbxfont_print_str_normal(172, 116 + i * 10, *tbl_shiptech_special[si].extratextptr, UI_SCREEN_W);
+            lbxfont_print_str_normal(172, 116 + i * 10, *tbl_shiptech_special[si].extratextptr);
         }
     }
 }
@@ -566,7 +566,7 @@ static struct xy_s ui_design_draw_selbox(int xpos, int xoff1, int xoff2, int xof
     vgabuf_limits_set_all();
     lbxgfx_draw_frame(118, y0 + 3, ui_data.gfx.design.titlebox);
     lbxfont_select(0, 0xe, 0xe, 0xe);
-    lbxfont_print_str_center(159, y0 + 5, str, UI_SCREEN_W);
+    lbxfont_print_str_center(159, y0 + 5, str);
 
     vgabuf_copy_back_to_page2();
 
