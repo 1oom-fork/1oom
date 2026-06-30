@@ -10,6 +10,7 @@
 #include "lbx.h"
 #include "lbxpal.h"
 #include "types.h"
+#include "vgabuf.h"
 
 /* -------------------------------------------------------------------------- */
 
@@ -48,15 +49,15 @@ static uint16_t lbxfont_tbl_split_hmm4[4] = { 0, 0, 0, 0 };
 
 static int lbxfont_print_char_ret_x(int x, int y, char c, uint16_t pitch)
 {
-    uint8_t *p = hw_video_get_buf() + y * pitch + x;
-    return x + lbxfont_plotchar(c, p, pitch);
+    uint8_t *p = vgabuf_get() + VGABUF_OFFSET(x, y);
+    return x + lbxfont_plotchar(c, p, VGABUF_PITCH);
 }
 
 static void lbxfont_plotchar_limit(int x, int y, char c, int xskip, int char_w, int yskip, int char_h, uint16_t pitch)
 {
     uint16_t si = GET_LE_16(&lbxfontdata[0xaa + c * 2]);
     uint8_t *o, *q, *p = &lbxfontdata[si];
-    uint8_t *buf = hw_video_get_buf() + y * pitch + x;
+    uint8_t *buf = vgabuf_get() + VGABUF_OFFSET(x, y);
 
     while (xskip) {
         if (*p++ == 0x80) {
@@ -93,7 +94,7 @@ static void lbxfont_plotchar_limit(int x, int y, char c, int xskip, int char_w, 
             if (b != 0xff) {
                 *o = b;
             }
-            o += pitch;
+            o += VGABUF_PITCH;
         }
         --char_w;
     }
@@ -349,7 +350,7 @@ static void lbxfont_split_str(int x, int y, int maxw, const char *str, split_str
             }
         }
         if (v12 == 0) {
-            if ((ty + hmm10) >= maxy) {
+            if ((ty + hmm10) >= VGABUF_H) {
                 s->num = 0;
                 return;
             }
@@ -571,10 +572,10 @@ uint16_t lbxfont_plotchar(char c, uint8_t *buf, uint16_t pitch)
             col = lbxfontdata[b & 0xf];
             do {
                 *q = col;
-                q += pitch;
+                q += VGABUF_PITCH;
             } while (--h);
         } else if (b & 0x7f) {
-            q += (b & 0x7f) * pitch;
+            q += (b & 0x7f) * VGABUF_PITCH;
         } else {
             ++buf;
             q = buf;
