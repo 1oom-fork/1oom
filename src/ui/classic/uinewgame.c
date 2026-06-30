@@ -101,7 +101,7 @@ static void new_game_draw_cb1(void *vptr)
 {
     struct new_game_data_s *d = vptr;
     vgabuf_erase();
-    lbxgfx_draw_frame(0, 0, d->gfx_newgame, UI_SCREEN_W);
+    lbxgfx_draw_frame(0, 0, d->gfx_newgame);
 }
 
 static void new_game_draw_race_cb(void *vptr)
@@ -109,7 +109,7 @@ static void new_game_draw_race_cb(void *vptr)
     struct new_game_data_s *d = vptr;
     vgabuf_copy_back_from_page2();
     if (d->selected < RACE_NUM) {
-        lbxgfx_draw_frame(91, 11, d->gfx_portrait[d->selected], UI_SCREEN_W);
+        lbxgfx_draw_frame(91, 11, d->gfx_portrait[d->selected]);
         lbxfont_select(0, 4, 0, 0);
         for (int i = 0; i < 3; ++i) {
             if (*game_str_tbl_traits[d->selected * 3 + i]) {
@@ -126,10 +126,10 @@ static void new_game_draw_banner_cb(void *vptr)
     if (d->str_title) {
         lbxfont_select(5, 0, 0, 0);
         lbxfont_print_str_normal(0xa, 0xa, d->str_title, UI_SCREEN_W);
-        lbxgfx_apply_colortable(0xa, 0x14, 0x52, 0x1f, 2, UI_SCREEN_W);
+        lbxgfx_apply_colortable(0xa, 0x14, 0x52, 0x1f, 2);
     }
     if (d->race < RACE_NUM) {
-        lbxgfx_draw_frame(91, 11, d->gfx_portrait[d->race], UI_SCREEN_W);
+        lbxgfx_draw_frame(91, 11, d->gfx_portrait[d->race]);
     }
     vgabuf_fill_rect(0x5a, 0x35, 0x83, 0x5a, 0);
     vgabuf_draw_box1(0x5a, 0x35, 0x83, 0x5a, 0x9b, 0x9b);
@@ -194,7 +194,7 @@ static bool ui_new_game_racebannernames(struct game_new_options_s *newopts, stru
     lbxpal_select(4, -1, 0);
     lbxpal_build_colortables();
     vgabuf_erase();
-    lbxgfx_draw_frame(0, 0, d->gfx_custom, UI_SCREEN_W);
+    lbxgfx_draw_frame(0, 0, d->gfx_custom);
     vgabuf_draw_box1(0x5a, 0xa, 0x83, 0x2d, 0x9b, 0x9b);
     vgabuf_copy_back_to_page2();
     d->selected = 0;

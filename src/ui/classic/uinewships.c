@@ -51,7 +51,7 @@ static void newships_draw_cb(void *vptr)
     char buf[0x20];
     ui_starmap_draw_basic(&d->sm);
     vgabuf_fill_rect(x, y, x + 151, y + 128, 0x2b);
-    lbxgfx_draw_frame(x, y, d->gfx_newship, UI_SCREEN_W);
+    lbxgfx_draw_frame(x, y, d->gfx_newship);
     lbxfont_select(5, 6, 0, 0);
     lbxfont_set_color_c_n(0x49, 5);
     sprintf(buf, "%s %i", game_str_year, g->year + YEAR_BASE);
@@ -76,7 +76,7 @@ static void newships_draw_cb(void *vptr)
             ui_draw_stars(x0, y0 + 2, i * 10, 30, &ds);
             gfx = ui_data.gfx.ships[sd->look];
             lbxgfx_set_frame_0(gfx);
-            lbxgfx_draw_frame(x0 + 4, y0 + 3, gfx, UI_SCREEN_W);
+            lbxgfx_draw_frame(x0 + 4, y0 + 3, gfx);
             lbxfont_select(0, 0, 0, 0);
             lbxfont_print_num_right(x0 + 36, y0 + 23, n, UI_SCREEN_W);
         }

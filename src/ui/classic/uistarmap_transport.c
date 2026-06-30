@@ -43,14 +43,14 @@ static void ui_starmap_transport_draw_cb(void *vptr)
         ui_starmap_draw_frame(x, y, ui_data.gfx.starmap.shipbord);
     }
     vgabuf_fill_rect(225, 8, 314, 180, 7);
-    lbxgfx_draw_frame(224, 4, ui_data.gfx.starmap.tranbord, UI_SCREEN_W);
+    lbxgfx_draw_frame(224, 4, ui_data.gfx.starmap.tranbord);
     if ((r->owner == d->api) && (d->ts.can_move != NO_MOVE)) {
-        lbxgfx_draw_frame(224, 159, ui_data.gfx.starmap.tranxtra, UI_SCREEN_W);
+        lbxgfx_draw_frame(224, 159, ui_data.gfx.starmap.tranxtra);
     }
     vgabuf_fill_rect(227, 8, 310, 39, 0);
     lbxgfx_set_frame_0(ui_data.gfx.starmap.scanner);
     for (int f = 0; f <= d->ts.frame_scanner; ++f) {
-        lbxgfx_draw_frame(227, 8, ui_data.gfx.starmap.scanner, UI_SCREEN_W);
+        lbxgfx_draw_frame(227, 8, ui_data.gfx.starmap.scanner);
     }
     sprintf(buf, "%s %s", game_str_tbl_race[e->race], game_str_sm_fleet);
     lbxfont_select_set_12_4(5, tbl_banner_fontparam[e->banner], 0, 0);
@@ -101,7 +101,7 @@ static void ui_starmap_transport_draw_cb(void *vptr)
         ui_draw_stars(x, y, 0, 80, &(d->ts.ds));
         lbxgfx_set_frame_0(ui_data.gfx.starmap.tranship);
         for (int f = 0; f <= d->ts.frame_ship; ++f) {
-            lbxgfx_draw_frame(x + 7, y + 3, ui_data.gfx.starmap.tranship, UI_SCREEN_W);
+            lbxgfx_draw_frame(x + 7, y + 3, ui_data.gfx.starmap.tranship);
         }
     }
     lbxfont_select_set_12_4(0, 5, 0, 0);
@@ -122,7 +122,7 @@ static void ui_starmap_transport_draw_cb(void *vptr)
     d->ts.frame_ship = (d->ts.frame_ship + 1) % 5;
     if ((r->owner == d->api) && (d->ts.can_move != NO_MOVE) && (!d->ts.in_frange)) {
         lbxgfx_set_new_frame(ui_data.gfx.starmap.reloc_bu_accept, 1);
-        lbxgfx_draw_frame(271, 163, ui_data.gfx.starmap.reloc_bu_accept, UI_SCREEN_W);
+        lbxgfx_draw_frame(271, 163, ui_data.gfx.starmap.reloc_bu_accept);
 
     }
     ui_draw_set_stars_xoffs(&d->ts.ds, false);

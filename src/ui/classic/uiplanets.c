@@ -78,9 +78,9 @@ static void planets_draw_cb(void *vptr)
             vgabuf_fill_rect(8, y0, 309, y1, 0xeb);
         }
     }
-    lbxgfx_draw_frame(0, 0, d->gfx_report, UI_SCREEN_W);
+    lbxgfx_draw_frame(0, 0, d->gfx_report);
     lbxgfx_set_new_frame(d->gfx_but_trans, 1);
-    lbxgfx_draw_frame(209, 181, d->gfx_but_trans, UI_SCREEN_W);
+    lbxgfx_draw_frame(209, 181, d->gfx_but_trans);
     vgabuf_fill_rect(213, 159, 245, 162, 0x2f);
 
     v = g->eto[d->api].tax;
@@ -128,7 +128,7 @@ static void planets_draw_cb(void *vptr)
                     c = '-';
                     gfx = ui_data.gfx.starmap.gr_arrow_d;
                 }
-                lbxgfx_draw_frame(92, y0, gfx, UI_SCREEN_W);
+                lbxgfx_draw_frame(92, y0, gfx);
                 sprintf(buf, "%c%i", c, v);
                 lbxfont_print_str_right(111, y0, buf, UI_SCREEN_W);
             }
@@ -229,7 +229,7 @@ static void planets_transfer_draw_cb(void *vptr)
     char buf[64];
 
     vgabuf_copy_back_from_page2();
-    lbxgfx_draw_frame(x, y, d->gfx_transfer, UI_SCREEN_W);
+    lbxgfx_draw_frame(x, y, d->gfx_transfer);
     vgabuf_fill_rect(x + 14, y + 35, x + 64, y + 38, 0x2f);
     if (d->amount_trans > 0) {
         vgabuf_draw_line_3h(x + 14, y + 35, x + 13 + d->amount_trans / 2, 0x74);
@@ -263,10 +263,10 @@ static void ui_planets_transfer(struct planets_data_s *d)
     lbxgfx_set_new_frame(d->gfx_but_trans, 1);
     lbxgfx_set_new_frame(ui_data.gfx.starmap.reprtbut_up, 1);
     lbxgfx_set_new_frame(ui_data.gfx.starmap.reprtbut_down, 1);
-    lbxgfx_draw_frame(292, 159, ui_data.gfx.starmap.reprtbut_up, UI_SCREEN_W);
-    lbxgfx_draw_frame(292, 176, ui_data.gfx.starmap.reprtbut_down, UI_SCREEN_W);
-    lbxgfx_draw_frame(256, 181, d->gfx_but_ok, UI_SCREEN_W);
-    lbxgfx_draw_frame(209, 181, d->gfx_but_trans, UI_SCREEN_W);
+    lbxgfx_draw_frame(292, 159, ui_data.gfx.starmap.reprtbut_up);
+    lbxgfx_draw_frame(292, 176, ui_data.gfx.starmap.reprtbut_down);
+    lbxgfx_draw_frame(256, 181, d->gfx_but_ok);
+    lbxgfx_draw_frame(209, 181, d->gfx_but_trans);
     vgabuf_copy_back_to_page2();
 
     prod = p->prod_after_maint - p->reserve;
