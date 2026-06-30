@@ -9,6 +9,7 @@
 #include "lib.h"
 #include "log.h"
 #include "types.h"
+#include "vgabuf.h"
 
 /* -------------------------------------------------------------------------- */
 
@@ -64,7 +65,7 @@ static void lbxgfx_draw_pixels_fmt0(uint8_t *pixbuf, uint16_t w, uint8_t *data, 
 static void lbxgfx_draw_pixels_offs_fmt0(int x0, int y0, int w, int h, int xskip, int yskip, uint8_t *data, uint16_t pitch)
 {
     /* FIXME this an unreadable goto mess */
-    uint8_t *p = hw_video_get_buf() + y0 * pitch + x0;
+    uint8_t *p = vgabuf_get() + VGABUF_OFFSET(x0, y0);
     uint8_t *q;
     uint8_t b, mode, len_total, len_run;
     int ylen;
@@ -124,7 +125,7 @@ static void lbxgfx_draw_pixels_offs_fmt0(int x0, int y0, int w, int h, int xskip
                 len_run = data[1]; /*really skip pixels...*/
                 loc_10e25:
                 ylen -= len_run;
-                q += len_run * pitch;
+                q += len_run * VGABUF_PITCH;
                 len_run = *data++;
                 ++data;
                 len_total -= len_run + 2;
@@ -132,7 +133,7 @@ static void lbxgfx_draw_pixels_offs_fmt0(int x0, int y0, int w, int h, int xskip
                 do {
                     if (--ylen >= 0) {
                         *q = *data++;
-                        q += pitch;
+                        q += VGABUF_PITCH;
                     } else {
                         data += len_run;
                         break;
@@ -200,7 +201,7 @@ static void lbxgfx_draw_pixels_offs_fmt0(int x0, int y0, int w, int h, int xskip
                 len_run = data[1]; /*really skip pixels...*/
                 loc_10f0f:
                 ylen -= len_run;
-                q += len_run * pitch;
+                q += len_run * VGABUF_PITCH;
                 len_run = *data++;
                 ++data;
                 len_total -= len_run + 2;
@@ -211,7 +212,7 @@ static void lbxgfx_draw_pixels_offs_fmt0(int x0, int y0, int w, int h, int xskip
                         if (b <= 0xdf) {
                             loc_10f38:
                             *q = b;
-                            q += pitch;
+                            q += VGABUF_PITCH;
                         } else {
                             len_compr = b - 0xdf;
                             b = *data++;
@@ -221,7 +222,7 @@ static void lbxgfx_draw_pixels_offs_fmt0(int x0, int y0, int w, int h, int xskip
                             do {
                                 if (--ylen >= 0) {
                                     *q = b;
-                                    q += pitch;
+                                    q += VGABUF_PITCH;
                                 } else {
                                     --len_run;
                                     goto loc_10f7e;
@@ -336,8 +337,8 @@ void lbxgfx_draw_frame_do(uint8_t *p, uint8_t *data, uint16_t pitch)
 
 void lbxgfx_draw_frame(int x, int y, uint8_t *data, uint16_t pitch)
 {
-    uint8_t *p = hw_video_get_buf() + y * pitch + x;
-    lbxgfx_draw_frame_do(p, data, pitch);
+    uint8_t *p = vgabuf_get() + VGABUF_OFFSET(x, y);
+    lbxgfx_draw_frame_do(p, data, VGABUF_PITCH);
 }
 
 void lbxgfx_draw_frame_pal(int x, int y, uint8_t *data, uint16_t pitch)
@@ -347,8 +348,8 @@ void lbxgfx_draw_frame_pal(int x, int y, uint8_t *data, uint16_t pitch)
     if (frame == 0) {
         lbxgfx_apply_palette(data);
     }
-    uint8_t *p = hw_video_get_buf() + y * pitch + x;
-    lbxgfx_draw_frame_do(p, data, pitch);
+    uint8_t *p = vgabuf_get() + VGABUF_OFFSET(x, y);
+    lbxgfx_draw_frame_do(p, data, VGABUF_PITCH);
 }
 
 void lbxgfx_draw_frame_offs(int x, int y, uint8_t *data, int lx0, int ly0, int lx1, int ly1, uint16_t pitch)
@@ -416,11 +417,11 @@ void lbxgfx_set_new_frame(uint8_t *data, uint16_t newframe)
 
 void lbxgfx_apply_colortable(int x0, int y0, int x1, int y1, uint8_t ctbli, uint16_t pitch)
 {
-    uint8_t *pixbuf = hw_video_get_buf();
+    uint8_t *pixbuf = vgabuf_get();
     const uint8_t *tbl = lbxpal_colortable[ctbli];
     for (int y = y0; y <= y1; ++y) {
         for (int x = x0; x <= x1; ++x) {
-            pixbuf[y * pitch + x] = tbl[pixbuf[y * pitch + x]];
+            pixbuf[VGABUF_OFFSET(x, y)] = tbl[pixbuf[VGABUF_OFFSET(x, y)]];
         }
     }
 }

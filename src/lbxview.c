@@ -21,6 +21,7 @@
 #include "os.h"
 #include "util.h"
 #include "util_math.h"
+#include "vgabuf.h"
 
 /* -------------------------------------------------------------------------- */
 
@@ -68,14 +69,14 @@ static uint8_t romfont_08[256 * 8];
 
 static void drawchar(int dx, int dy, uint8_t c, uint8_t fg, uint8_t bg)
 {
-    uint8_t *p = hw_video_get_buf() + dx + dy * 320;
+    uint8_t *p = vgabuf_get() + VGABUF_OFFSET(dx, dy);
     for (int y = 0; y < 8; ++y) {
         uint8_t b;
         b = romfont_08[c * 8 + y];
         for (int x = 0; x < 8; ++x) {
             p[x] = (b & (1 << (7 - x))) ? fg : bg;
         }
-        p += 320;
+        p += VGABUF_PITCH;
     }
 }
 
@@ -120,13 +121,13 @@ static void drawscreen_outlbx(void)
     }
     for (int k = 0; k < 16; ++k) {
         uint8_t *p, *q;
-        p = hw_video_get_buf() + 350 * 320 + k * 18;
+        p = vgabuf_get() + VGABUF_OFFSET(k * 18, 350);
         q = &lbxpal_cursors[16 * 16 * k];
         for (int y = 0; y < 16; ++y) {
             for (int x = 0; x < 16; ++x) {
                 p[x] = q[x * 16 + y];
             }
-            p += 320;
+            p += VGABUF_PITCH;
         }
     }
     lbxfont_select(5, 1, 0, 0);
@@ -283,7 +284,7 @@ static void drawscreen_inlbx(void)
 
 static void drawscreen(void)
 {
-    memset(hw_video_get_buf(), 0, 320 * 400);
+    memset(vgabuf_get(), 0, 320 * 400);
     if (!in_lbx) {
         drawscreen_outlbx();
     } else {
@@ -407,7 +408,7 @@ int main_do(void)
     lbxpal_select(0, -1, 0);
     lbxpal_update();
     drawscreen();
-    hw_video_draw_buf();
+    vgabuf_flip();
     while (1) {
         bool change_cur_ptr;
         hw_event_handle();
@@ -543,7 +544,7 @@ int main_do(void)
                 }
             }
             drawscreen();
-            hw_video_draw_buf();
+            vgabuf_flip();
         }
     }
 done:
