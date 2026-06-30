@@ -68,18 +68,18 @@ static void ui_news_cb1(void *vptr)
         int fn = lbxgfx_get_frame(gfx);
         lbxgfx_set_frame_0(gfx);
         for (int f = 0; f <= fn; ++f) {
-            lbxgfx_draw_frame(14, 14, gfx, UI_SCREEN_W);
+            lbxgfx_draw_frame(14, 14, gfx);
         }
     }
     if (ui_data.gfx.news.icon != 0) {
-        lbxgfx_draw_frame(208, 38, ui_data.gfx.news.icon, UI_SCREEN_W);
+        lbxgfx_draw_frame(208, 38, ui_data.gfx.news.icon);
     }
     {
         uint8_t *gfx = ui_data.gfx.news.world;
         int fn = lbxgfx_get_frame(gfx);
         lbxgfx_set_frame_0(gfx);
         for (int f = 0; f <= fn; ++f) {
-            lbxgfx_draw_frame(76, 36, gfx, UI_SCREEN_W);
+            lbxgfx_draw_frame(76, 36, gfx);
         }
     }
     lbxfont_select(3, 1, 0, 0);
@@ -108,10 +108,10 @@ static void ui_news_draw_start_anim(void)
     ui_sound_stop_music();
     uiobj_table_clear();
     vgabuf_erase();
-    lbxgfx_draw_frame(0, 0, ui_data.gfx.news.tv, UI_SCREEN_W);
+    lbxgfx_draw_frame(0, 0, ui_data.gfx.news.tv);
     uiobj_finish_frame();
     vgabuf_erase();
-    lbxgfx_draw_frame(0, 0, ui_data.gfx.news.tv, UI_SCREEN_W);
+    lbxgfx_draw_frame(0, 0, ui_data.gfx.news.tv);
     ui_sound_play_music(9);
     frame = 0;
     while (frame < 25) {
@@ -120,9 +120,9 @@ static void ui_news_draw_start_anim(void)
             uint16_t f;
             f = lbxgfx_get_frame(ui_data.gfx.news.gnn) - 1;
             lbxgfx_set_new_frame(ui_data.gfx.news.gnn, f);
-            lbxgfx_draw_frame(14, 14, ui_data.gfx.news.gnn, UI_SCREEN_W);
+            lbxgfx_draw_frame(14, 14, ui_data.gfx.news.gnn);
         }
-        lbxgfx_draw_frame(14, 14, ui_data.gfx.news.gnn, UI_SCREEN_W);
+        lbxgfx_draw_frame(14, 14, ui_data.gfx.news.gnn);
         vgabuf_fill_rect(32, 142, 287, 182, 0xc1);
         vgabuf_fill_rect(34, 184, 285, 191, 0xc1);
         vgabuf_draw_line(33, 182, 286, 182, 0xc1);

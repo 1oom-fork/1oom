@@ -98,7 +98,7 @@ static void design_draw_cb(void *vptr)
     uint8_t extraman;
 
     vgabuf_fill_rect(5, 5, 315, 195, 1);
-    lbxgfx_draw_frame(0, 0, ui_data.gfx.design.bg, UI_SCREEN_W);
+    lbxgfx_draw_frame(0, 0, ui_data.gfx.design.bg);
     oi_hmm2 = uiobj_get_hmm2_oi();
     lbxfont_select(0, 6, 0, 3);
     lbxfont_set_colors(((d->oi_comp == oi_hmm2) || d->flag_disable_comp) ? colortbl_sd_ba : colortbl_sd_bf);
@@ -161,7 +161,7 @@ static void design_draw_cb(void *vptr)
             sd->look = look = d->gd->tbl_shiplook_hull[hull];
         }
         lbxgfx_set_frame_0(ui_data.gfx.ships[look]);
-        lbxgfx_draw_frame(93, 165, ui_data.gfx.ships[look], UI_SCREEN_W);
+        lbxgfx_draw_frame(93, 165, ui_data.gfx.ships[look]);
     }
 
     lbxfont_select(2, 8, 0, 8);
@@ -564,7 +564,7 @@ static struct xy_s ui_design_draw_selbox(int xpos, int xoff1, int xoff2, int xof
     vgabuf_limits_set(x1, y1, VGABUF_W - 1, VGABUF_H - 1);
     lbxgfx_draw_frame_offs(x0 + xpos + xoff3, y1, ui_data.gfx.design.pop1_dr, x1, y1, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
     vgabuf_limits_set_all();
-    lbxgfx_draw_frame(118, y0 + 3, ui_data.gfx.design.titlebox, UI_SCREEN_W);
+    lbxgfx_draw_frame(118, y0 + 3, ui_data.gfx.design.titlebox);
     lbxfont_select(0, 0xe, 0xe, 0xe);
     lbxfont_print_str_center(159, y0 + 5, str, UI_SCREEN_W);
 
