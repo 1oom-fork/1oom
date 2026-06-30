@@ -113,7 +113,7 @@ static void new_game_draw_race_cb(void *vptr)
         lbxfont_select(0, 4, 0, 0);
         for (int i = 0; i < 3; ++i) {
             if (*game_str_tbl_traits[d->selected * 3 + i]) {
-                lbxfont_print_str_center(0x6f, 0x35 + i * 8, game_str_tbl_traits[d->selected * 3 + i], UI_SCREEN_W);
+                lbxfont_print_str_center(0x6f, 0x35 + i * 8, game_str_tbl_traits[d->selected * 3 + i]);
             }
         }
     }
@@ -125,7 +125,7 @@ static void new_game_draw_banner_cb(void *vptr)
     vgabuf_copy_back_from_page2();
     if (d->str_title) {
         lbxfont_select(5, 0, 0, 0);
-        lbxfont_print_str_normal(0xa, 0xa, d->str_title, UI_SCREEN_W);
+        lbxfont_print_str_normal(0xa, 0xa, d->str_title);
         lbxgfx_apply_colortable(0xa, 0x14, 0x52, 0x1f, 2);
     }
     if (d->race < RACE_NUM) {

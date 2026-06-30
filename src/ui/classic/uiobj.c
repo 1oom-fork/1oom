@@ -183,7 +183,7 @@ static void uiobj_handle_t03_cond(uiobj_t *p, bool cond)
         lbxgfx_set_frame_0(p->t0.lbxdata);
         lbxgfx_draw_frame(p->x0, p->y0, p->t0.lbxdata);
         lbxfont_select(p->t0.fontnum, p->t0.fonta2, 0, 0);
-        lbxfont_print_str_center(smidx(p), smidyhmm2(p), p->t0.str, UI_SCREEN_W);
+        lbxfont_print_str_center(smidx(p), smidyhmm2(p), p->t0.str);
     } else {
         if (p->t0.indep == 0) {
             lbxgfx_set_frame_0(p->t0.lbxdata);
@@ -193,7 +193,7 @@ static void uiobj_handle_t03_cond(uiobj_t *p, bool cond)
         }
         lbxgfx_draw_frame(p->x0, p->y0, p->t0.lbxdata);
         lbxfont_select(p->t0.fontnum, p->t0.fonta2, 0, 0);
-        lbxfont_print_str_center(smidx(p) + uiobj_hmm3_xoff, smidyhmm2(p) + uiobj_hmm3_yoff, p->t0.str, UI_SCREEN_W);
+        lbxfont_print_str_center(smidx(p) + uiobj_hmm3_xoff, smidyhmm2(p) + uiobj_hmm3_yoff, p->t0.str);
     }
 }
 
@@ -238,7 +238,7 @@ static void uiobj_handle_t4_sub2(uiobj_t *p, uint16_t len, uint16_t a4, const ch
         }
     }
     lbxfont_select_subcolors_13not1();
-    lbxfont_print_str_normal(p->x0, p->y0, strbuf, UI_SCREEN_W);
+    lbxfont_print_str_normal(p->x0, p->y0, strbuf);
     ui_palette_set_n();
     uiobj_finish_frame();
     ui_delay_ticks_or_click(uiobj_hmm5_delay);
@@ -508,7 +508,7 @@ static inline void uiobj_handle_hmm1_sub1(int i)
                     lbxfont_select(p->ta.fontnum, p->ta.fonta2b, uiobj_hmm3_fonta4, 0);
                 }
                 /*19ca3*/
-                lbxfont_print_str_normal(p->x0, p->y0 + 1, p->ta.str, UI_SCREEN_W);
+                lbxfont_print_str_normal(p->x0, p->y0 + 1, p->ta.str);
             } else {
                 int16_t v2, di;
                 v2 = lbxfont_get_diff_44_10();
@@ -520,7 +520,7 @@ static inline void uiobj_handle_hmm1_sub1(int i)
                 di = lbxfont_get_height();
                 /*19ce2*/
                 uiobj_handle_ta_sub1(p->x0 - 1, p->y0 - v2 + 1, p->x1, p->y0 + di + 1, p->ta.subtype, p->ta.sp0p, p->ta.sp0v, p->ta.sp1, p->ta.sp2, p->ta.sp3);
-                lbxfont_print_str_normal(p->x0, p->y0 + 1, p->ta.str, UI_SCREEN_W);
+                lbxfont_print_str_normal(p->x0, p->y0 + 1, p->ta.str);
             }
             break;
         case 4:
@@ -528,9 +528,9 @@ static inline void uiobj_handle_hmm1_sub1(int i)
                 lbxfont_select(p->t4.fontnum, p->t4.fonta2, p->t4.fonta4, 0);
                 vgabuf_fill_rect(p->x0, p->y0, p->x1, p->y1, p->t4.rectcolor);
                 if (!p->t4.align_right) {
-                    lbxfont_print_str_normal(p->x0, p->y0, p->t4.buf, UI_SCREEN_W);
+                    lbxfont_print_str_normal(p->x0, p->y0, p->t4.buf);
                 } else {
-                    lbxfont_print_str_right(p->x1, p->y0, p->t4.buf, UI_SCREEN_W);
+                    lbxfont_print_str_right(p->x1, p->y0, p->t4.buf);
                 }
             }
             break;
@@ -581,10 +581,10 @@ static void uiobj_handle_hmm2(int i, uint16_t a2)
             lbxfont_select(p->ta.fontnum, p->ta.fonta2, uiobj_hmm3_fonta4, 0);
             if (*p->vptr != p->ta.z18) {
                 if (p->ta.z12) {
-                    lbxfont_print_str_normal(p->x0, p->y0, p->ta.str, UI_SCREEN_W);
+                    lbxfont_print_str_normal(p->x0, p->y0, p->ta.str);
                 } else {
                     lbxfont_select(p->ta.fontnum, p->ta.fonta2b, uiobj_hmm3_fonta4, 0);
-                    lbxfont_print_str_normal(p->x0, p->y0 + 1, p->ta.str, UI_SCREEN_W);
+                    lbxfont_print_str_normal(p->x0, p->y0 + 1, p->ta.str);
                     lbxfont_select_subcolors_0();
                 }
             } else {
@@ -597,7 +597,7 @@ static void uiobj_handle_hmm2(int i, uint16_t a2)
                 }
                 v2 = lbxfont_get_height();
                 uiobj_handle_ta_sub1(p->x0 - 1, p->y0 - v4 + 1, p->x1, p->y0 + v2 + 1, p->ta.subtype, p->ta.sp0p, p->ta.sp0v, p->ta.sp1, p->ta.sp2, p->ta.sp3);
-                lbxfont_print_str_normal(p->x0, p->y0 + 1, p->ta.str, UI_SCREEN_W);
+                lbxfont_print_str_normal(p->x0, p->y0 + 1, p->ta.str);
             }
             break;
         case 0xb:

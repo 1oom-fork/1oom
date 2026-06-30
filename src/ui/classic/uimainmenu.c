@@ -58,17 +58,17 @@ static void main_menu_draw_cb(void *vptr)
     } else {
         lbxfont_select(4, 7, 0, 0);
     }
-    lbxfont_print_str_center(0xa0, 0x7f, game_str_mm_continue, UI_SCREEN_W);
+    lbxfont_print_str_center(0xa0, 0x7f, game_str_mm_continue);
     if (d->have_loadgame) {
         lbxfont_select(4, (d->selected == MAIN_MENU_ACT_LOAD_GAME) ? 3 : 2, 0, 0);
     } else {
         lbxfont_select(4, 7, 0, 0);
     }
-    lbxfont_print_str_center(0xa0, 0x8f, game_str_mm_load, UI_SCREEN_W);
+    lbxfont_print_str_center(0xa0, 0x8f, game_str_mm_load);
     lbxfont_select(4, (d->selected == MAIN_MENU_ACT_NEW_GAME) ? 3 : 2, 0, 0);
-    lbxfont_print_str_center(0xa0, 0x9f, game_str_mm_new, UI_SCREEN_W);
+    lbxfont_print_str_center(0xa0, 0x9f, game_str_mm_new);
     lbxfont_select(4, (d->selected == MAIN_MENU_ACT_QUIT_GAME) ? 3 : 2, 0, 0);
-    lbxfont_print_str_center(0xa0, 0xaf, game_str_mm_quit, UI_SCREEN_W);
+    lbxfont_print_str_center(0xa0, 0xaf, game_str_mm_quit);
     d->frame = (d->frame + 1) % 0x30;
 }
 
