@@ -49,7 +49,7 @@ static void ui_starmap_orbit_own_draw_cb(void *vptr)
         vgabuf_fill_rect(228, 155, 309, 175, 7);
     }
     lbxfont_select_set_12_4(0, 5, 0, 0);
-    lbxfont_print_str_center(268, 11, game_str_sm_fleetdep, UI_SCREEN_W);
+    lbxfont_print_str_center(268, 11, game_str_sm_fleetdep);
 
     if (g->planet_focus_i[d->api] != d->oo.from) {
         int dist = game_get_min_dist(g, d->api, g->planet_focus_i[d->api]);
@@ -78,7 +78,7 @@ static void ui_starmap_orbit_own_draw_cb(void *vptr)
                 sprintf(buf, "%s %i %s", game_str_sm_destoor, dist, game_str_sm_parsfromcc);
                 lbxfont_select(2, 0, 0, 0);
                 lbxfont_set_44_10_plus(2);
-                lbxfont_print_str_split(228, 156, 81, buf, 2, UI_SCREEN_W, UI_SCREEN_H);
+                lbxfont_print_str_split(228, 156, 81, buf, 2);
             } else {
                 /* dont care */
             }
@@ -102,14 +102,14 @@ static void ui_starmap_orbit_own_draw_cb(void *vptr)
             lbxfont_select_set_12_4(0, 0, 0, 0);
             if (d->oo.sn0.num >= 6) {
                 vgabuf_fill_rect(228, 9, 309, 17, 7);
-                lbxfont_print_str_center(268, 11, buf, UI_SCREEN_W);
+                lbxfont_print_str_center(268, 11, buf);
             } else {
-                lbxfont_print_str_center(268, 163, buf, UI_SCREEN_W);
+                lbxfont_print_str_center(268, 163, buf);
             }
         }
     } else {
         if (d->oo.sn0.num < 6) {
-           lbxfont_print_str_split(230, 159, 80, game_str_sm_chdest, 2, UI_SCREEN_W, UI_SCREEN_H);
+           lbxfont_print_str_split(230, 159, 80, game_str_sm_chdest, 2);
         }
     }
     for (int i = 0; i < d->oo.sn0.num; ++i) {
@@ -126,9 +126,9 @@ static void ui_starmap_orbit_own_draw_cb(void *vptr)
         lbxgfx_set_frame_0(gfx);
         lbxgfx_draw_frame(227, 22 + i * 26, gfx);
         lbxfont_select(0, 0xd, 0, 0);
-        lbxfont_print_num_right(258, 40 + i * 26, d->oo.ships[st], UI_SCREEN_W);
+        lbxfont_print_num_right(258, 40 + i * 26, d->oo.ships[st]);
         lbxfont_select_set_12_1(2, 0, 0, 0);
-        lbxfont_print_str_center(287, 25 + i * 26, srd->design[st].name, UI_SCREEN_W);
+        lbxfont_print_str_center(287, 25 + i * 26, srd->design[st].name);
     }
     lbxgfx_set_new_frame(ui_data.gfx.starmap.reloc_bu_accept, 1);
     lbxgfx_draw_frame(271, 180, ui_data.gfx.starmap.reloc_bu_accept);

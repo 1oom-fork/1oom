@@ -126,7 +126,7 @@ static void newtech_draw_cb1(void *vptr)
             break;
     }
     lbxfont_select_set_12_4(5, 5, 0, 0);
-    lbxfont_print_str_center(161, 7, buf, UI_SCREEN_W);
+    lbxfont_print_str_center(161, 7, buf);
     if (d->nt.source != 3) {
         int strh, y;
         char *p, c;
@@ -139,12 +139,12 @@ static void newtech_draw_cb1(void *vptr)
             ++p;
         }
         lbxfont_select_set_12_4(5, 8, 0, 0);
-        lbxfont_print_str_center(160, 32, buf, UI_SCREEN_W);
+        lbxfont_print_str_center(160, 32, buf);
         game_tech_get_descr(d->g->gaux, d->nt.field, d->nt.tech, buf);
         lbxfont_select_set_12_5(4, 0xf, 0, 0);
         strh = lbxfont_calc_split_str_h(305, buf);
         y = (strh >= 36) ? 150 : 160;
-        lbxfont_print_str_split(9, y, 305, buf, 3, UI_SCREEN_W, UI_SCREEN_H);
+        lbxfont_print_str_split(9, y, 305, buf, 3);
     }
     /*152ea*/
     if (d->nt.frame) {
@@ -157,13 +157,13 @@ static void newtech_draw_cb1(void *vptr)
         vgabuf_fill_rect(122, 106, 183, 120, 0x00);
         vgabuf_fill_rect(123, 107, 182, 119, tbl_banner_color2[g->eto[d->other2].banner]);
         lbxfont_select(5, 6, 0, 0);
-        lbxfont_print_str_center(80, 110, game_str_tbl_races[g->eto[d->other1].race], UI_SCREEN_W);
-        lbxfont_print_str_center(152, 110, game_str_tbl_races[g->eto[d->other2].race], UI_SCREEN_W);
+        lbxfont_print_str_center(80, 110, game_str_tbl_races[g->eto[d->other1].race]);
+        lbxfont_print_str_center(152, 110, game_str_tbl_races[g->eto[d->other2].race]);
         lbxfont_select(5, 0, 0, 0);
         lbxfont_set_44_10_plus(2);
-        lbxfont_print_str_split(40, 70, 154, game_str_nt_frame, 3, UI_SCREEN_W, UI_SCREEN_H);
+        lbxfont_print_str_split(40, 70, 154, game_str_nt_frame, 3);
         lbxfont_select(0, 0, 0, 0);
-        lbxfont_print_str_center(115, 96, game_str_nt_victim, UI_SCREEN_W);
+        lbxfont_print_str_center(115, 96, game_str_nt_victim);
     }
 }
 
@@ -183,12 +183,12 @@ static void newtech_choose_next_draw_cb(void *vptr)
     lbxgfx_draw_frame(x, y + yo, d->gfx_pulldown_d);
     sprintf(buf, "%s %s", game_str_tbl_te_field[d->nt.field], game_str_te_techno);
     lbxfont_select(5, 0xe, 0, 0);
-    lbxfont_print_str_center(x + 85, y + 5, buf, UI_SCREEN_W);
+    lbxfont_print_str_center(x + 85, y + 5, buf);
     lbxfont_select_set_12_1(0, 0, 0xe, 0);
     game_tech_get_descr(d->g->gaux, d->nt.field, tech, buf);
     pos = strlen(buf);
     sprintf(&buf[pos], " \x02(%u %s)\x1", game_tech_get_next_rp(d->g, d->api, d->nt.field, tech), game_str_te_rp);
-    lbxfont_print_str_split(151, y + yo + 18, 156, buf, 0, UI_SCREEN_W, UI_SCREEN_H);
+    lbxfont_print_str_split(151, y + yo + 18, 156, buf, 0);
 }
 
 static void ui_newtech_choose_next(struct newtech_data_s *d)
@@ -216,7 +216,7 @@ static void ui_newtech_choose_next(struct newtech_data_s *d)
     lbxfont_set_44_10_plus(di - 6);
     vgabuf_fill_rect(155, 49, 304, 56, 0x60);
     for (int i = 0; i < d->num_next; ++i) {
-        lbxfont_print_str_normal(156, i * di + di + 41, tname[i], UI_SCREEN_W);
+        lbxfont_print_str_normal(156, i * di + di + 41, tname[i]);
     }
     lbxfont_select_set_12_1(0, 0, 0, 0);
     ui_draw_finish();
@@ -237,7 +237,7 @@ static void newtech_adjust_draw_typestr(char *buf, const char *str1, const char 
     if (str2) {
         strcat(buf, str2);
     }
-    lbxfont_print_str_split(x + 15, y + 16, 110 + we, buf, 3, UI_SCREEN_W, UI_SCREEN_H);
+    lbxfont_print_str_split(x + 15, y + 16, 110 + we, buf, 3);
 }
 
 static void newtech_adjust_draw_cb(void *vptr)
@@ -253,7 +253,7 @@ static void newtech_adjust_draw_cb(void *vptr)
     switch (d->dialog_type) {
         case 0:
             strcat(buf, game_str_nt_redueco);
-            lbxfont_print_str_split(x + 15, y + 11, 110, buf, 3, UI_SCREEN_W, UI_SCREEN_H);
+            lbxfont_print_str_split(x + 15, y + 11, 110, buf, 3);
             lbxgfx_set_frame_0(ui_data.gfx.starmap.scrapbut_yes);
             lbxgfx_set_frame_0(ui_data.gfx.starmap.scrapbut_no);
             lbxgfx_draw_frame(x + 83, y + 60, ui_data.gfx.starmap.scrapbut_yes);
@@ -283,7 +283,7 @@ static void newtech_adjust_draw_cb(void *vptr)
         for (int i = 0; i < 4; ++i, x += 32) {
             lbxgfx_set_frame_0(d->gfx_robo_but);
             lbxgfx_draw_frame(x, y + 60, d->gfx_robo_but);
-            lbxfont_print_str_center(x + 12, y + 64, game_str_tbl_nt_adj[i], UI_SCREEN_W);
+            lbxfont_print_str_center(x + 12, y + 64, game_str_tbl_nt_adj[i]);
         }
     }
 #endif

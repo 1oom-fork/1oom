@@ -240,7 +240,7 @@ static void gmap_draw_cb(void *vptr)
                 empiretechorbit_t *e;
                 e = &(g->eto[tbl_havehome[i]]);
                 lbxgfx_draw_frame(245, 105 + 10 * i, ui_data.gfx.starmap.smalflag[e->banner]);
-                lbxfont_print_str_normal(260, 105 + 10 * i, game_str_tbl_race[e->race], UI_SCREEN_W);
+                lbxfont_print_str_normal(260, 105 + 10 * i, game_str_tbl_race[e->race]);
             }
             break;
         case 1:
@@ -248,25 +248,25 @@ static void gmap_draw_cb(void *vptr)
                 char buf[2] = { 0, 0 };
                 buf[0] = game_str_gm_tchar[i];
                 lbxfont_select(2, ((PLANET_TYPE_TERRAN - i) < g->eto[d->api].have_colony_for) ? 5 : 0xe, 0, 0);
-                lbxfont_print_str_normal(241, 105 + 7 * i, buf, UI_SCREEN_W);
+                lbxfont_print_str_normal(241, 105 + 7 * i, buf);
                 lbxfont_select(2, 6, 0, 0);
-                lbxfont_print_str_normal(247, 105 + 7 * i, game_str_tbl_sm_pltype[13 - i], UI_SCREEN_W);
+                lbxfont_print_str_normal(247, 105 + 7 * i, game_str_tbl_sm_pltype[13 - i]);
             }
             for (int i = 7; i < 14; ++i) {
                 char buf[2] = { 0, 0 };
                 const char *str;
                 buf[0] = game_str_gm_tchar[i];
                 lbxfont_select(2, ((PLANET_TYPE_TERRAN - i) < g->eto[d->api].have_colony_for) ? 5 : 0xe, 0, 0);
-                lbxfont_print_str_normal(276, 105 + 7 * (i - 7), buf, UI_SCREEN_W);
+                lbxfont_print_str_normal(276, 105 + 7 * (i - 7), buf);
                 lbxfont_select(2, 6, 0, 0);
                 if (i == 13) {
                     str = game_str_st_none2;
                 } else {
                     str = game_str_tbl_sm_pltype[13 - i];
                 }
-                lbxfont_print_str_normal(282, 105 + 7 * (i - 7), str, UI_SCREEN_W);
+                lbxfont_print_str_normal(282, 105 + 7 * (i - 7), str);
             }
-            lbxfont_print_str_normal(247, 160, game_str_gm_unable, UI_SCREEN_W);
+            lbxfont_print_str_normal(247, 160, game_str_gm_unable);
             vgabuf_put_pixel(241, 161, 0x44);
             vgabuf_put_pixel(241, 162, 0x44);
             vgabuf_put_pixel(241, 163, 0x44);
@@ -279,30 +279,30 @@ static void gmap_draw_cb(void *vptr)
             break;
         case 2:
             lbxfont_select_set_12_1(2, 5, 0, 0);
-            lbxfont_print_str_normal(240, 103, game_str_tbl_sm_pspecial[0], UI_SCREEN_W);
-            lbxfont_print_str_normal(240, 111, game_str_tbl_sm_pspecial[1], UI_SCREEN_W);
+            lbxfont_print_str_normal(240, 103, game_str_tbl_sm_pspecial[0]);
+            lbxfont_print_str_normal(240, 111, game_str_tbl_sm_pspecial[1]);
             lbxfont_select_set_12_1(2, 1, 0, 0);
-            lbxfont_print_str_normal(240, 119, game_str_tbl_sm_pspecial[4], UI_SCREEN_W);
-            lbxfont_print_str_normal(240, 127, game_str_tbl_sm_pspecial[5], UI_SCREEN_W);
+            lbxfont_print_str_normal(240, 119, game_str_tbl_sm_pspecial[4]);
+            lbxfont_print_str_normal(240, 127, game_str_tbl_sm_pspecial[5]);
             lbxfont_select_set_12_1(2, 0xe, 0, 0);
-            lbxfont_print_str_normal(240, 135, game_str_tbl_sm_pspecial[3], UI_SCREEN_W);
-            lbxfont_print_str_normal(240, 143, game_str_tbl_gm_spec[6], UI_SCREEN_W);
+            lbxfont_print_str_normal(240, 135, game_str_tbl_sm_pspecial[3]);
+            lbxfont_print_str_normal(240, 143, game_str_tbl_gm_spec[6]);
             lbxfont_select(2, 6, 0, 0);
-            lbxfont_print_str_normal(295, 103, game_str_gm_prod, UI_SCREEN_W);
-            lbxfont_print_str_normal(295, 111, game_str_gm_prod, UI_SCREEN_W);
-            lbxfont_print_str_normal(295, 119, game_str_gm_prod, UI_SCREEN_W);
-            lbxfont_print_str_normal(295, 127, game_str_gm_prod, UI_SCREEN_W);
-            lbxfont_print_str_normal(295, 135, game_str_gm_tech, UI_SCREEN_W);
-            lbxfont_print_str_normal(295, 143, game_str_gm_tech, UI_SCREEN_W);
-            lbxfont_print_str_right(291, 103, game_str_gm_1_3, UI_SCREEN_W);
-            lbxfont_print_str_right(291, 111, game_str_gm_1_2, UI_SCREEN_W);
-            lbxfont_print_str_right(291, 119, game_str_gm_2x, UI_SCREEN_W);
-            lbxfont_print_str_right(291, 127, game_str_gm_3x, UI_SCREEN_W);
-            lbxfont_print_str_right(291, 135, game_str_gm_2x, UI_SCREEN_W);
-            lbxfont_print_str_right(291, 143, game_str_gm_4x, UI_SCREEN_W);
-            lbxfont_print_str_center(275, 152, game_str_gm_prodb1, UI_SCREEN_W);
-            lbxfont_print_str_center(275, 159, game_str_gm_prodb2, UI_SCREEN_W);
-            lbxfont_print_str_center(275, 166, game_str_gm_prodb3, UI_SCREEN_W);
+            lbxfont_print_str_normal(295, 103, game_str_gm_prod);
+            lbxfont_print_str_normal(295, 111, game_str_gm_prod);
+            lbxfont_print_str_normal(295, 119, game_str_gm_prod);
+            lbxfont_print_str_normal(295, 127, game_str_gm_prod);
+            lbxfont_print_str_normal(295, 135, game_str_gm_tech);
+            lbxfont_print_str_normal(295, 143, game_str_gm_tech);
+            lbxfont_print_str_right(291, 103, game_str_gm_1_3);
+            lbxfont_print_str_right(291, 111, game_str_gm_1_2);
+            lbxfont_print_str_right(291, 119, game_str_gm_2x);
+            lbxfont_print_str_right(291, 127, game_str_gm_3x);
+            lbxfont_print_str_right(291, 135, game_str_gm_2x);
+            lbxfont_print_str_right(291, 143, game_str_gm_4x);
+            lbxfont_print_str_center(275, 152, game_str_gm_prodb1);
+            lbxfont_print_str_center(275, 159, game_str_gm_prodb2);
+            lbxfont_print_str_center(275, 166, game_str_gm_prodb3);
             break;
         default:
             break;
@@ -310,8 +310,8 @@ static void gmap_draw_cb(void *vptr)
 
     lbxfont_set_temp_color(0x2b);
     lbxfont_select_set_12_4(4, 0xf, 0, 0);
-    lbxfont_print_str_normal(242, 8, game_str_gm_gmap, UI_SCREEN_W);
-    lbxfont_print_str_normal(250, 88, game_str_gm_mapkey, UI_SCREEN_W);
+    lbxfont_print_str_normal(242, 8, game_str_gm_gmap);
+    lbxfont_print_str_normal(250, 88, game_str_gm_mapkey);
     lbxfont_set_temp_color(0x00);
 
     if (d->countdown < 0) {
