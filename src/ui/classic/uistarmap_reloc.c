@@ -40,7 +40,7 @@ static void ui_starmap_reloc_draw_cb(void *vptr)
         ui_starmap_draw_line_ctbl(x0 + 6, y0 + 6, x1, y1, colortbl_line_hmm1, 5, ui_data.starmap.line_anim_phase);
     }
     ui_starmap_draw_frame(x0, y0, ui_data.gfx.starmap.planbord);
-    lbxgfx_draw_frame(222, 80, ui_data.gfx.starmap.relocate, UI_SCREEN_W);
+    lbxgfx_draw_frame(222, 80, ui_data.gfx.starmap.relocate);
     lbxfont_select_set_12_1(5, 5, 0, 0);
     lbxfont_print_str_center(269, 90, game_str_sm_sreloc, UI_SCREEN_W);
     lbxfont_select(0, 6, 0, 0);
@@ -57,7 +57,7 @@ static void ui_starmap_reloc_draw_cb(void *vptr)
         lbxfont_print_str_center(268, 149, buf, UI_SCREEN_W);
     }
     lbxgfx_set_new_frame(ui_data.gfx.starmap.reloc_bu_accept, 1);
-    lbxgfx_draw_frame(271, 163, ui_data.gfx.starmap.reloc_bu_accept, UI_SCREEN_W);
+    lbxgfx_draw_frame(271, 163, ui_data.gfx.starmap.reloc_bu_accept);
 }
 
 /* -------------------------------------------------------------------------- */

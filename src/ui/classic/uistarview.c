@@ -84,7 +84,7 @@ static void starview_draw_cb(void *vptr)
     char buf[0x80];
     vgabuf_erase();
     if (p->type != PLANET_TYPE_NOT_HABITABLE) {
-        lbxgfx_draw_frame(0, 0, d->gfx_planet, UI_SCREEN_W);
+        lbxgfx_draw_frame(0, 0, d->gfx_planet);
         if (!d->flag_pal) {
             d->flag_pal = true;
             lbxgfx_apply_palette(d->gfx_planet);
@@ -92,9 +92,9 @@ static void starview_draw_cb(void *vptr)
         }
     }
     if ((p->shield != 0) && (sowner != PLAYER_NONE)) {
-        lbxgfx_draw_frame(0, 0, d->gfx_shield, UI_SCREEN_W);
+        lbxgfx_draw_frame(0, 0, d->gfx_shield);
     }
-    lbxgfx_draw_frame(212, 0, d->gfx_star, UI_SCREEN_W);
+    lbxgfx_draw_frame(212, 0, d->gfx_star);
     lbxfont_select(4, 0, 0, 0);
     lbxfont_print_str_center(170, 2, p->name, UI_SCREEN_W);
     lbxfont_select(3, 0xb, 0, 0);
@@ -234,7 +234,7 @@ static void starview_draw_cb(void *vptr)
                 v14 = 10;
             }
             for (int j = 0; j < v14; ++j) {
-                lbxgfx_draw_frame(j * 18 + (i & 1) * 9 + 5, y0 - (v10 - 1 - i) * 5, d->gfx_pop, UI_SCREEN_W);
+                lbxgfx_draw_frame(j * 18 + (i & 1) * 9 + 5, y0 - (v10 - 1 - i) * 5, d->gfx_pop);
             }
         }
         y0 -= v10 * 5 + 10;
@@ -247,7 +247,7 @@ static void starview_draw_cb(void *vptr)
                 v14 = 10;
             }
             for (int j = 0; j < v14; ++j) {
-                lbxgfx_draw_frame(j * 18 + (i & 1) * 9 + 5, y0 - (v10 - 1 - i) * 5, d->gfx_fact, UI_SCREEN_W);
+                lbxgfx_draw_frame(j * 18 + (i & 1) * 9 + 5, y0 - (v10 - 1 - i) * 5, d->gfx_fact);
             }
         }
         y0 -= v10 * 5 + 10;
@@ -260,7 +260,7 @@ static void starview_draw_cb(void *vptr)
                 v14 = 10;
             }
             for (int j = 0; j < v14; ++j) {
-                lbxgfx_draw_frame(j * 14 + (i & 1) * 7 + 5, y0 - (v10 - 1 - i) * 5, d->gfx_base, UI_SCREEN_W);
+                lbxgfx_draw_frame(j * 14 + (i & 1) * 7 + 5, y0 - (v10 - 1 - i) * 5, d->gfx_base);
             }
         }
         y0 -= v10 * 5 + 10;
@@ -273,7 +273,7 @@ static void starview_draw_cb(void *vptr)
                 v14 = 10;
             }
             for (int j = 0; j < v14; ++j) {
-                lbxgfx_draw_frame(j * 18 + (i & 1) * 9 + 5, y0 - (v10 - 1 - i) * 5, d->gfx_waste, UI_SCREEN_W);
+                lbxgfx_draw_frame(j * 18 + (i & 1) * 9 + 5, y0 - (v10 - 1 - i) * 5, d->gfx_waste);
             }
         }
     }

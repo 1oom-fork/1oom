@@ -51,8 +51,8 @@ static void main_menu_draw_cb(void *vptr)
     struct main_menu_data_s *d = vptr;
     vgabuf_erase();
     ui_draw_copy_buf();
-    lbxgfx_draw_frame(0, 0, d->gfx_vortex, UI_SCREEN_W);
-    lbxgfx_draw_frame(0, 0, d->gfx_title, UI_SCREEN_W);
+    lbxgfx_draw_frame(0, 0, d->gfx_vortex);
+    lbxgfx_draw_frame(0, 0, d->gfx_title);
     if (d->have_continue) {
         lbxfont_select(4, (d->selected == MAIN_MENU_ACT_CONTINUE_GAME) ? 3 : 2, 0, 0);
     } else {

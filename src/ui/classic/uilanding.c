@@ -47,7 +47,7 @@ static void landing_draw_cb1(void *vptr)
     gfx_aux_draw_frame_to(d->gfx_transprt, &ui_data.aux.screen);
     gfx_aux_draw_frame_from_limit(0, y, &ui_data.aux.screen, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
     if (do_walk) {
-        lbxgfx_draw_frame(0, 0, d->gfx_walk, UI_SCREEN_W);
+        lbxgfx_draw_frame(0, 0, d->gfx_walk);
         vgabuf_fill_rect(115, 81, 204, 109, 0xa);
         vgabuf_draw_box1(115, 81, 204, 109, 0x34, 0x34);
         vgabuf_draw_box1(121, 95, 195, 106, 0x34, 0x34);
@@ -78,7 +78,7 @@ void ui_landing_prepare(struct landing_data_s *d)
         int i = p->type;
         i += d->colonize ? 6 : 0x24;
         gfx = lbxfile_item_get(LBXFILE_LANDING, i, 0);
-        lbxgfx_draw_frame(0, 0, gfx, UI_SCREEN_W);
+        lbxgfx_draw_frame(0, 0, gfx);
         lbxgfx_apply_palette(gfx);
         lbxfile_item_release(LBXFILE_LANDING, gfx);
     }

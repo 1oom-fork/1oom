@@ -111,9 +111,9 @@ static void explore_draw_cb(void *vptr)
     const struct game_s *g = d->g;
     vgabuf_copy_back_from_page2();
     vgabuf_fill_rect(222, 4, 314, 179, 0);
-    lbxgfx_draw_frame(222, 4, d->gfx_explobac, UI_SCREEN_W);
+    lbxgfx_draw_frame(222, 4, d->gfx_explobac);
     ui_starmap_draw_planetinfo_2(g, d->api, PLAYER_NUM, d->planet);
-    lbxgfx_draw_frame(227, 58, d->gfx_colony, UI_SCREEN_W);
+    lbxgfx_draw_frame(227, 58, d->gfx_colony);
     vgabuf_draw_line(227, 57, 227, 160, 0);
     vgabuf_draw_line(227, 57, 310, 57, 0);
     vgabuf_draw_line(310, 57, 310, 160, 0);
@@ -135,7 +135,7 @@ static void explore_draw_cb(void *vptr)
     } else {
         lbxfont_print_str_center(267, 60, game_str_ex_build, UI_SCREEN_W);
         lbxfont_print_str_center(267, 69, game_str_ex_colony, UI_SCREEN_W);
-        lbxgfx_draw_frame(224, 159, d->gfx_yn_back, UI_SCREEN_W);
+        lbxgfx_draw_frame(224, 159, d->gfx_yn_back);
     }
     explore_draw_planetinfo(g, d->planet);
 }

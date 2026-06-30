@@ -6,6 +6,7 @@
 #define VGABUF_W    320
 #define VGABUF_H    200
 #define VGABUF_SIZE     (VGABUF_W * VGABUF_H)
+#define VGABUF_RECT     0, 0, (VGABUF_W - 1), (VGABUF_H - 1)
 
 #define VGABUF_PITCH    320
 #define VGABUF_OFFSET(x, y)   ((x) + (y) * (VGABUF_PITCH))

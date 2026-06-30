@@ -43,9 +43,9 @@ static void ui_starmap_orbit_own_draw_cb(void *vptr)
         ui_starmap_draw_frame(x, y, ui_data.gfx.starmap.shipbord);
     }
     vgabuf_fill_rect(225, 8, 314, 192, 7);
-    lbxgfx_draw_frame(224, 5, ui_data.gfx.starmap.move_shi, UI_SCREEN_W);
+    lbxgfx_draw_frame(224, 5, ui_data.gfx.starmap.move_shi);
     if (d->oo.sn0.num < NUM_SHIPDESIGNS) {
-        lbxgfx_draw_frame(224, 151, ui_data.gfx.starmap.movextra, UI_SCREEN_W);
+        lbxgfx_draw_frame(224, 151, ui_data.gfx.starmap.movextra);
         vgabuf_fill_rect(228, 155, 309, 175, 7);
     }
     lbxfont_select_set_12_4(0, 5, 0, 0);
@@ -124,14 +124,14 @@ static void ui_starmap_orbit_own_draw_cb(void *vptr)
         st = d->oo.sn0.type[i];
         gfx = ui_data.gfx.ships[srd->design[st].look];
         lbxgfx_set_frame_0(gfx);
-        lbxgfx_draw_frame(227, 22 + i * 26, gfx, UI_SCREEN_W);
+        lbxgfx_draw_frame(227, 22 + i * 26, gfx);
         lbxfont_select(0, 0xd, 0, 0);
         lbxfont_print_num_right(258, 40 + i * 26, d->oo.ships[st], UI_SCREEN_W);
         lbxfont_select_set_12_1(2, 0, 0, 0);
         lbxfont_print_str_center(287, 25 + i * 26, srd->design[st].name, UI_SCREEN_W);
     }
     lbxgfx_set_new_frame(ui_data.gfx.starmap.reloc_bu_accept, 1);
-    lbxgfx_draw_frame(271, 180, ui_data.gfx.starmap.reloc_bu_accept, UI_SCREEN_W);
+    lbxgfx_draw_frame(271, 180, ui_data.gfx.starmap.reloc_bu_accept);
 }
 
 /* -------------------------------------------------------------------------- */

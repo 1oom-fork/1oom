@@ -48,7 +48,7 @@ static void basescrap_draw_cb1(void *vptr)
     struct game_s *g = d->g;
     const int x = 56, y = 50;
     planet_t *p = &(g->planet[g->planet_focus_i[d->api]]);
-    lbxgfx_draw_frame(x, y, d->gfx, UI_SCREEN_W);
+    lbxgfx_draw_frame(x, y, d->gfx);
     vgabuf_fill_rect(x + 14, y + 35, x + 64, y + 38, 0x2f);
     if (d->slider_var > 0) {
         vgabuf_draw_line_3h(x + 14, y + 36, x + 13 + d->slider_var / 2, 0x74);

@@ -73,7 +73,7 @@ static void ui_play_winlose_cb1(void *vptr)
     lbxgfx_draw_frame_offs(0x000 - f, 0, p->gfx_stars, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
     lbxgfx_draw_frame_offs(0x140 - f, 0, p->gfx_stars, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
     if (f > 0x32) {
-        lbxgfx_draw_frame(0, 0, p->gfx_ships, UI_SCREEN_W);
+        lbxgfx_draw_frame(0, 0, p->gfx_ships);
         lbxgfx_draw_frame_offs(0x13f - ((f - 0x32) * 3) / 2, 0, p->gfx_planets, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
     }
     lbxfont_select(4, 0, 0, 0);
@@ -121,11 +121,11 @@ static void ui_play_winlose_cb2(void *vptr)
     int f = p->frame;
     if (f == 0) {
         vgabuf_erase();
-        lbxgfx_draw_frame_pal(0, 0, p->gfx_winning2, UI_SCREEN_W);
+        lbxgfx_draw_frame_pal(0, 0, p->gfx_winning2);
         lbxpal_set_update_range(0, 255);
     } else {
         vgabuf_copy_front_to_back();
-        lbxgfx_draw_frame_pal(0, 0, p->gfx_winning2, UI_SCREEN_W);
+        lbxgfx_draw_frame_pal(0, 0, p->gfx_winning2);
     }
     p->frame = ++f;
 }
@@ -143,10 +143,10 @@ static void ui_play_winlose_cb3(void *vptr)
     } else {
         vgabuf_copy_front_to_back();
     }
-    lbxgfx_draw_frame_pal(0, 0, p->gfx_winlast, UI_SCREEN_W);
+    lbxgfx_draw_frame_pal(0, 0, p->gfx_winlast);
     lbxgfx_set_frame_0(p->gfx_winface);
     for (f = 0; f <= ff; ++f) {
-        lbxgfx_draw_frame(0x82, 0x32, p->gfx_winface, UI_SCREEN_W);
+        lbxgfx_draw_frame(0x82, 0x32, p->gfx_winface);
     }
     f = ++fc;
     lbxfont_select(4, 0, 0, 0);
@@ -375,7 +375,7 @@ static void ui_play_winlose_funeral_cb(void *vptr)
     fa = lbxgfx_get_frame(p->gfx_lose);
     lbxgfx_set_frame_0(p->gfx_lose);
     for (int i = 0; i <= fa; ++i) {
-        lbxgfx_draw_frame(0, 0, p->gfx_lose, UI_SCREEN_W);
+        lbxgfx_draw_frame(0, 0, p->gfx_lose);
     }
     if ((f > 0x14) && (f < 0xa6)) {
         int x, y;
@@ -384,7 +384,7 @@ static void ui_play_winlose_funeral_cb(void *vptr)
         lbxgfx_draw_frame_offs(x, y, p->gfx_coffin, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
         lbxgfx_draw_frame_offs(x, y, p->gfx_march, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
     }
-    lbxgfx_draw_frame(0, 0, p->gfx_flag, UI_SCREEN_W);
+    lbxgfx_draw_frame(0, 0, p->gfx_flag);
     p->frame = ++f;
 }
 

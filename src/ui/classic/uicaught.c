@@ -45,7 +45,7 @@ static void caught_draw_cb(void *vptr)
     char buf[0x40];
     int x = 56, y = 50, n = 0;
 
-    lbxgfx_draw_frame(x, y, d->gfx, UI_SCREEN_W);
+    lbxgfx_draw_frame(x, y, d->gfx);
     vgabuf_fill_rect(x + 5, y + 5, x + 110, y + 63, 0xfb);
 
     lbxfont_select(2, 0, 0, 0);
