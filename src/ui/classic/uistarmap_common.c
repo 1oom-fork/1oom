@@ -38,16 +38,16 @@ static void ui_starmap_draw_planetinfo_do(const struct game_s *g, player_id_t ap
     const planet_t *p = &g->planet[planet_i];
     if (explored) {
         lbxfont_select_set_12_4(4, 0xf, 0, 0);
-        lbxfont_print_str_center(269, 10, p->name, UI_SCREEN_W);
+        lbxfont_print_str_center(269, 10, p->name);
         if (p->type == PLANET_TYPE_NOT_HABITABLE) {
             lbxfont_select(0, 0xe, 0, 0);
-            lbxfont_print_str_center(269, 32, game_str_sm_nohabit, UI_SCREEN_W);
-            lbxfont_print_str_center(269, 41, game_str_sm__planets, UI_SCREEN_W);
+            lbxfont_print_str_center(269, 32, game_str_sm_nohabit);
+            lbxfont_print_str_center(269, 41, game_str_sm__planets);
         } else {
             const char *str = NULL;
             lbxgfx_draw_frame(229, 27, ui_data.gfx.planets.planet[p->infogfx]);
             lbxfont_select(0, 0xd, 0, 0);
-            lbxfont_print_str_right(305, 28, game_str_tbl_sm_pltype[p->type], UI_SCREEN_W);
+            lbxfont_print_str_right(305, 28, game_str_tbl_sm_pltype[p->type]);
             if (g->evn.have_plague && (g->evn.plague_planet_i == planet_i)) {
                 str = game_str_sm_plague;
             } else if (g->evn.have_nova && (g->evn.nova_planet_i == planet_i)) {
@@ -65,7 +65,7 @@ static void ui_starmap_draw_planetinfo_do(const struct game_s *g, player_id_t ap
             }
             if (str) {
                 lbxfont_select(5, 5, 0, 0);
-                lbxfont_print_str_right(305, 40, str, UI_SCREEN_W);
+                lbxfont_print_str_right(305, 40, str);
             } else {
                 int x, max_pop = p->max_pop3;
                 lbxfont_select(0, 1, 0, 0);
@@ -74,10 +74,10 @@ static void ui_starmap_draw_planetinfo_do(const struct game_s *g, player_id_t ap
                 } else {
                     str = game_str_tbl_sm_pspecial[p->special];
                 }
-                lbxfont_print_str_right(305, 36, str, UI_SCREEN_W);
+                lbxfont_print_str_right(305, 36, str);
                 lbxfont_select(2, 0xe, 0, 0);
                 if (show_plus && (p->owner == api) && ((p->max_pop2 + g->eto[api].have_terraform_n) > max_pop) && (max_pop < game_num_max_pop)) {
-                    lbxfont_print_str_normal(289, 44, "+", UI_SCREEN_W);
+                    lbxfont_print_str_normal(289, 44, "+");
                     str = game_str_sm_popmaxw;
                     x = 287;
                 } else {
@@ -85,17 +85,17 @@ static void ui_starmap_draw_planetinfo_do(const struct game_s *g, player_id_t ap
                     x = 291;
                 }
                 /* FIXME split the popmax strings and use x for positioning */
-                lbxfont_print_str_right(305, 45, str, UI_SCREEN_W);
+                lbxfont_print_str_right(305, 45, str);
                 if ((!show_plus) || (g->eto[api].race != RACE_SILICOID)) {
                     max_pop -= p->waste;
                 }
                 SETMAX(max_pop, 10);
-                lbxfont_print_num_right(x, 45, max_pop, UI_SCREEN_W);
+                lbxfont_print_num_right(x, 45, max_pop);
             }
         }
     } else {
         lbxfont_select(5, 0xe, 0, 0);
-        lbxfont_print_str_center(269, show_plus ? 27 : 35, game_str_sm_unexplored, UI_SCREEN_W);
+        lbxfont_print_str_center(269, show_plus ? 27 : 35, game_str_sm_unexplored);
     }
 }
 
@@ -106,7 +106,7 @@ static void ui_starmap_draw_range_parsec(struct starmap_data_s *d, int y)
     char buf[64];
     sprintf(buf, "%s %i %s", game_str_sm_range, dist, (dist == 1) ? game_str_sm_parsec : game_str_sm_parsecs);
     lbxfont_select_set_12_4(0, 4, 0, 0);
-    lbxfont_print_str_center(269, y, buf, UI_SCREEN_W);
+    lbxfont_print_str_center(269, y, buf);
 }
 
 static int tenths_2str(char *buf, int num)
@@ -129,10 +129,10 @@ static void ui_starmap_draw_sliders_and_prod(struct starmap_data_s *d)
     lbxgfx_draw_frame(224, 5, ui_data.gfx.starmap.yourplnt);
     lbxfont_select(2, 0xd, 0xe, 0);
     sprintf(buf, "%i \x02(%i)\x01", p->prod_after_maint, p->total_prod);
-    lbxfont_print_str_right(hmmx, 72, buf, UI_SCREEN_W);
+    lbxfont_print_str_right(hmmx, 72, buf);
     lbxfont_select(2, 0xd, 0, 0);
-    lbxfont_print_num_right(265, 61, p->pop, UI_SCREEN_W);
-    lbxfont_print_num_right(hmmx, 61, p->missile_bases, UI_SCREEN_W);
+    lbxfont_print_num_right(265, 61, p->pop);
+    lbxfont_print_num_right(hmmx, 61, p->missile_bases);
 
     for (planet_slider_i_t i = PLANET_SLIDER_SHIP; i < PLANET_SLIDER_NUM; ++i) {
         vgabuf_fill_rect(253, 84 + 11 * i, 278, 84 + 11 * i + 3, 0x2f);
@@ -145,13 +145,13 @@ static void ui_starmap_draw_sliders_and_prod(struct starmap_data_s *d)
     if (p->buildship == BUILDSHIP_STARGATE) {
         vgabuf_fill_rect(229, 141, 274, 166, 0);
         lbxgfx_draw_frame(229, 141, ui_data.gfx.starmap.stargate);
-        lbxfont_print_str_center(251, 169, game_str_sm_stargate, UI_SCREEN_W);
+        lbxfont_print_str_center(251, 169, game_str_sm_stargate);
     } else {
         shipdesign_t *sd = &g->srd[d->api].design[p->buildship];
         uint8_t *gfx = ui_data.gfx.ships[sd->look];
         lbxgfx_set_frame_0(gfx);
         lbxgfx_draw_frame(236, 142, gfx);
-        lbxfont_print_str_center(252, 169, sd->name, UI_SCREEN_W);
+        lbxfont_print_str_center(252, 169, sd->name);
     }
 
     lbxfont_select(2, 6, 0, 0);
@@ -168,9 +168,9 @@ static void ui_starmap_draw_sliders_and_prod(struct starmap_data_s *d)
         }
         if ((vtotal < cost) || (p->buildship == BUILDSHIP_STARGATE)) {
             if (vthis < 1) {
-                lbxfont_print_str_right(hmmx, 83, game_str_sm_prodnone, UI_SCREEN_W);
+                lbxfont_print_str_right(hmmx, 83, game_str_sm_prodnone);
                 lbxfont_select(0, 0xd, 0, 0);
-                lbxfont_print_str_right(271, 160, "0", UI_SCREEN_W);
+                lbxfont_print_str_right(271, 160, "0");
             } else {
                 int num = 0, over;
                 over = cost - p->bc_to_ship;
@@ -180,10 +180,10 @@ static void ui_starmap_draw_sliders_and_prod(struct starmap_data_s *d)
                 }
                 SETMAX(num, 1);
                 sprintf(buf, "%i %s", num, game_str_sm_prod_y);
-                lbxfont_print_str_right(hmmx, 83, buf, UI_SCREEN_W);
+                lbxfont_print_str_right(hmmx, 83, buf);
                 lbxfont_select(0, 0xd, 0, 0);
                 if (p->buildship != BUILDSHIP_STARGATE) {
-                    lbxfont_print_str_right(271, 160, "1", UI_SCREEN_W);
+                    lbxfont_print_str_right(271, 160, "1");
                 }
             }
         } else {
@@ -192,9 +192,9 @@ static void ui_starmap_draw_sliders_and_prod(struct starmap_data_s *d)
             SETMAX(cost, 1);
             num = vtotal / cost;
             sprintf(buf, "1 %s", game_str_sm_prod_y);
-            lbxfont_print_str_right(hmmx, 83, buf, UI_SCREEN_W);
+            lbxfont_print_str_right(hmmx, 83, buf);
             lbxfont_select(0, 0xd, 0, 0);
-            lbxfont_print_num_right(271, 160, num, UI_SCREEN_W);
+            lbxfont_print_num_right(271, 160, num);
         }
     }
     lbxfont_select(2, 6, 0, 0);
@@ -205,9 +205,9 @@ static void ui_starmap_draw_sliders_and_prod(struct starmap_data_s *d)
         vtotal = vthis + p->bc_to_base;
         v8 = p->bc_upgrade_base;
         if (vthis == 0) {
-            lbxfont_print_str_right(hmmx, 94, game_str_sm_prodnone, UI_SCREEN_W);
+            lbxfont_print_str_right(hmmx, 94, game_str_sm_prodnone);
         } else if (vtotal <= v8) {
-            lbxfont_print_str_right(hmmx, 94, game_str_sm_defupg, UI_SCREEN_W);
+            lbxfont_print_str_right(hmmx, 94, game_str_sm_defupg);
         } else {
             vtotal -= v8;
             SETMAX(vtotal, 0);
@@ -217,7 +217,7 @@ static void ui_starmap_draw_sliders_and_prod(struct starmap_data_s *d)
             }
             SETMAX(va, 0);
             if (vtotal <= va) {
-                lbxfont_print_str_right(hmmx, 94, game_str_sm_defshld, UI_SCREEN_W);
+                lbxfont_print_str_right(hmmx, 94, game_str_sm_defshld);
             } else {
                 int num, over;
                 vtotal -= va;
@@ -234,7 +234,7 @@ static void ui_starmap_draw_sliders_and_prod(struct starmap_data_s *d)
                     num = vtotal / cost;
                     sprintf(buf, "%i/%s", num, game_str_sm_prod_y);
                 }
-                lbxfont_print_str_right(hmmx, 94, buf, UI_SCREEN_W);
+                lbxfont_print_str_right(hmmx, 94, buf);
             }
         }
     }
@@ -267,7 +267,7 @@ static void ui_starmap_draw_sliders_and_prod(struct starmap_data_s *d)
                 str = buf;
             }
         }
-        lbxfont_print_str_right(hmmx, 105, str, UI_SCREEN_W);
+        lbxfont_print_str_right(hmmx, 105, str);
     }
     {
         const char *str = NULL;
@@ -338,7 +338,7 @@ static void ui_starmap_draw_sliders_and_prod(struct starmap_data_s *d)
                         str = flag_hmm ? game_str_sm_ecotform : game_str_sm_ecoclean;
                     } else {
                         sprintf(buf, "+%i", growth);
-                        lbxfont_print_str_right(297, 116, buf, UI_SCREEN_W);
+                        lbxfont_print_str_right(297, 116, buf);
                         str = game_str_sm_ecopop;
                     }
                 }
@@ -349,7 +349,7 @@ static void ui_starmap_draw_sliders_and_prod(struct starmap_data_s *d)
             }
         }
         if (str) {
-            lbxfont_print_str_right(hmmx, 116, str, UI_SCREEN_W);
+            lbxfont_print_str_right(hmmx, 116, str);
         }
     }
     {
@@ -360,7 +360,7 @@ static void ui_starmap_draw_sliders_and_prod(struct starmap_data_s *d)
         } else {
             hmmx -= 9;
         }
-        lbxfont_print_str_right(hmmx, 127, buf, UI_SCREEN_W);
+        lbxfont_print_str_right(hmmx, 127, buf);
     }
 }
 
@@ -449,7 +449,7 @@ void ui_starmap_draw_basic(struct starmap_data_s *d)
     if (BOOLVEC_IS0(p->explored, d->api)) {
         lbxgfx_draw_frame(224, 5, ui_data.gfx.starmap.unexplor);
         lbxfont_select_set_12_4(5, 1, 0, 0);
-        lbxfont_print_str_split(232, 74, 76, game_str_tbl_sm_stinfo[p->star_type], 2, UI_SCREEN_W, UI_SCREEN_H);
+        lbxfont_print_str_split(232, 74, 76, game_str_tbl_sm_stinfo[p->star_type], 2);
         ui_starmap_draw_range_parsec(d, 165);
     } else {
         player_id_t owner = p->owner;
@@ -473,21 +473,21 @@ void ui_starmap_draw_basic(struct starmap_data_s *d)
             sprintf(buf, "%s %s", game_str_tbl_race[g->eto[owner].race], game_str_sm_colony);
             if (BOOLVEC_IS1(p->within_srange, d->api)) {
                 lbxfont_select_set_12_4(5, tbl_banner_fontparam[g->eto[owner].banner], 0, 0);
-                lbxfont_print_str_center(270, 84, buf, UI_SCREEN_W);
+                lbxfont_print_str_center(270, 84, buf);
                 pop = p->pop;
                 bases = p->missile_bases;
                 range_y = 95;
             } else {
                 lbxfont_select_set_12_4(0, tbl_banner_fontparam[g->eto[owner].banner], 0, 0);
-                lbxfont_print_str_center(269, 75, game_str_sm_lastrep, UI_SCREEN_W);
-                lbxfont_print_str_center(268, 83, buf, UI_SCREEN_W);    /* TODO combine with above */
+                lbxfont_print_str_center(269, 75, game_str_sm_lastrep);
+                lbxfont_print_str_center(268, 83, buf);    /* TODO combine with above */
                 pop = g->seen[d->api][pi].pop;
                 bases = g->seen[d->api][pi].bases;
                 range_y = 92;
             }
             lbxfont_select(0, 0xd, 0, 0);
-            lbxfont_print_num_right(265, 61, pop, UI_SCREEN_W);
-            lbxfont_print_num_right(310, 61, bases, UI_SCREEN_W);
+            lbxfont_print_num_right(265, 61, pop);
+            lbxfont_print_num_right(310, 61, bases);
             ui_starmap_draw_range_parsec(d, range_y);
         } else {
             ui_starmap_draw_sliders_and_prod(d);
@@ -744,21 +744,21 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
 void ui_starmap_draw_button_text(struct starmap_data_s *d, bool highlight)
 {
     lbxfont_select_set_12_4(5, (highlight && (d->bottom_highlight == 0)) ? 0 : 2, 0, 0);
-    lbxfont_print_str_normal(10, 184, game_str_sm_game, UI_SCREEN_W);
+    lbxfont_print_str_normal(10, 184, game_str_sm_game);
     lbxfont_select_set_12_4(5, (highlight && (d->bottom_highlight == 1)) ? 0 : 2, 0, 0);
-    lbxfont_print_str_normal(44, 184, game_str_sm_design, UI_SCREEN_W);
+    lbxfont_print_str_normal(44, 184, game_str_sm_design);
     lbxfont_select_set_12_4(5, (highlight && (d->bottom_highlight == 2)) ? 0 : 2, 0, 0);
-    lbxfont_print_str_normal(83, 184, game_str_sm_fleet, UI_SCREEN_W);
+    lbxfont_print_str_normal(83, 184, game_str_sm_fleet);
     lbxfont_select_set_12_4(5, (highlight && (d->bottom_highlight == 3)) ? 0 : 2, 0, 0);
-    lbxfont_print_str_normal(119, 184, game_str_sm_map, UI_SCREEN_W);
+    lbxfont_print_str_normal(119, 184, game_str_sm_map);
     lbxfont_select_set_12_4(5, (highlight && (d->bottom_highlight == 4)) ? 0 : 2, 0, 0);
-    lbxfont_print_str_normal(147, 184, game_str_sm_races, UI_SCREEN_W);
+    lbxfont_print_str_normal(147, 184, game_str_sm_races);
     lbxfont_select_set_12_4(5, (highlight && (d->bottom_highlight == 5)) ? 0 : 2, 0, 0);
-    lbxfont_print_str_normal(184, 184, game_str_sm_planets, UI_SCREEN_W);
+    lbxfont_print_str_normal(184, 184, game_str_sm_planets);
     lbxfont_select_set_12_4(5, (highlight && (d->bottom_highlight == 6)) ? 0 : 2, 0, 0);
-    lbxfont_print_str_normal(230, 184, game_str_sm_tech, UI_SCREEN_W);
+    lbxfont_print_str_normal(230, 184, game_str_sm_tech);
     lbxfont_select_set_12_4(5, (highlight && (d->bottom_highlight == 7)) ? 0 : 2, 0, 0);
-    lbxfont_print_str_normal(263, 184, game_str_sm_next_turn, UI_SCREEN_W);
+    lbxfont_print_str_normal(263, 184, game_str_sm_next_turn);
 }
 
 void ui_starmap_handle_oi_ctrl(struct starmap_data_s *d, int16_t oi)

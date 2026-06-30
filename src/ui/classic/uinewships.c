@@ -55,7 +55,7 @@ static void newships_draw_cb(void *vptr)
     lbxfont_select(5, 6, 0, 0);
     lbxfont_set_color_c_n(0x49, 5);
     sprintf(buf, "%s %i", game_str_year, g->year + YEAR_BASE);
-    lbxfont_print_str_center(x + 76, y + 9, buf, UI_SCREEN_W);
+    lbxfont_print_str_center(x + 76, y + 9, buf);
     for (int i = 0; i < NUM_SHIPDESIGNS; ++i) {
         shipsum_t n;
         n = g->evn.new_ships[d->api][i];
@@ -70,7 +70,7 @@ static void newships_draw_cb(void *vptr)
             vgabuf_fill_rect(x0, y0 + 31, x0 + 39, y0 + 39, 0xe9);
             vgabuf_draw_line(x0, y0 + 30, x0 + 39, y0 + 30, 0x5c);
             lbxfont_select(2, 0, 0, 0);
-            lbxfont_print_str_center(x0 + 20, y0 + 33, sd->name, UI_SCREEN_W);
+            lbxfont_print_str_center(x0 + 20, y0 + 33, sd->name);
             ds.xoff1 = 0;
             ds.xoff2 = 0;
             ui_draw_stars(x0, y0 + 2, i * 10, 30, &ds);
@@ -78,7 +78,7 @@ static void newships_draw_cb(void *vptr)
             lbxgfx_set_frame_0(gfx);
             lbxgfx_draw_frame(x0 + 4, y0 + 3, gfx);
             lbxfont_select(0, 0, 0, 0);
-            lbxfont_print_num_right(x0 + 36, y0 + 23, n, UI_SCREEN_W);
+            lbxfont_print_num_right(x0 + 36, y0 + 23, n);
         }
     }
 }

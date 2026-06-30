@@ -92,12 +92,12 @@ static void ui_starmap_trans_draw_cb(void *vptr)
             int mindist = game_get_min_dist(g, d->api, g->planet_focus_i[d->api]);
             lbxfont_select_set_12_1(0, 0xe, 5, 0);
             lbxfont_set_44_10_plus(1);
-            lbxfont_print_str_split(228, 94, 82, game_str_sm_notrange, 2, UI_SCREEN_W, UI_SCREEN_H);
+            lbxfont_print_str_split(228, 94, 82, game_str_sm_notrange, 2);
             sprintf(buf, "%s %i %s %i %s", game_str_sm_notrange1, mindist, game_str_sm_notrange2, g->eto[d->api].fuel_range, game_str_sm_notrange3);
-            lbxfont_print_str_split(229, 125, 80, game_str_sm_seltr, 2, UI_SCREEN_W, UI_SCREEN_H);
+            lbxfont_print_str_split(229, 125, 80, game_str_sm_seltr, 2);
         } else if (BOOLVEC_IS0(pt->explored, d->api)) {
             lbxfont_select(0, 0xe, 0, 0);
-            lbxfont_print_str_split(229, 105, 80, game_str_sm_trfirste, 2, UI_SCREEN_W, UI_SCREEN_H);
+            lbxfont_print_str_split(229, 105, 80, game_str_sm_trfirste, 2);
         } else if (pt->type < g->eto[d->api].have_colony_for) {
             int pos;
             lbxfont_select(0, 6, 0, 0);
@@ -106,10 +106,10 @@ static void ui_starmap_trans_draw_cb(void *vptr)
             sprintf(&buf[pos], "%s ", game_str_tbl_sm_pltype[pt->type]);
             util_str_tolower(&buf[pos]);
             strcat(&buf[pos], game_str_sm_trcontr2);
-            lbxfont_print_str_split(228, 111, 82, buf, 2, UI_SCREEN_W, UI_SCREEN_H);
+            lbxfont_print_str_split(228, 111, 82, buf, 2);
         } else if (pt->owner == PLAYER_NONE) {
             lbxfont_select(0, 0xe, 0, 0);
-            lbxfont_print_str_split(230, 105, 80, game_str_sm_trfirstc, 2, UI_SCREEN_W, UI_SCREEN_H);
+            lbxfont_print_str_split(230, 105, 80, game_str_sm_trfirstc, 2);
         } else {
             treaty_t treaty = TREATY_NONE;
             uiobj_set_help_id(1);
@@ -122,14 +122,14 @@ static void ui_starmap_trans_draw_cb(void *vptr)
             }
             /*734e1*/
             lbxfont_select(0, 0, 0, 0);
-            lbxfont_print_str_center(268, 149, buf, UI_SCREEN_W);
+            lbxfont_print_str_center(268, 149, buf);
             lbxgfx_draw_frame(230, 123, ui_data.gfx.starmap.tran_bar);
             lbxfont_select(0, 6, 0, 0);
             if (pt->owner != PLAYER_NONE) {/* FIXME BUG MOO1 tests for == PLAYER_NONE, reading from eto offs 0xcc */
                 treaty = g->eto[d->api].treaty[pt->owner];
             }
             if ((treaty == TREATY_NONAGGRESSION) || (treaty == TREATY_ALLIANCE)) {
-                lbxfont_print_str_split(228, 105, 84, game_str_sm_trwarna, 2, UI_SCREEN_W, UI_SCREEN_H);
+                lbxfont_print_str_split(228, 105, 84, game_str_sm_trwarna, 2);
             } else {
                 /*73571*/
                 int v = 0;
@@ -144,17 +144,17 @@ static void ui_starmap_trans_draw_cb(void *vptr)
                     if (d->tr.blink) {
                         lbxfont_select(0, 5, 0, 0);
                         sprintf(buf, "%s %i %s", game_str_sm_trwarnm1, pt->max_pop3, game_str_sm_trwarnm2);
-                        lbxfont_print_str_split(228, 101, 80, buf, 2, UI_SCREEN_W, UI_SCREEN_H);
+                        lbxfont_print_str_split(228, 101, 80, buf, 2);
                     }
                 } else {
                     /*7366f*/
                     const char *s = (pt->owner == pf->owner) ? game_str_sm_trchnum1 : game_str_sm_trchnum2;
-                    lbxfont_print_str_split(228, 105, 84, s, 2, UI_SCREEN_W, UI_SCREEN_H);
+                    lbxfont_print_str_split(228, 105, 84, s, 2);
                 }
             }
             /*73699*/
             lbxfont_select_set_12_1(0, 1, 0, 0);
-            lbxfont_print_num_right(273, 137, d->tr.num, UI_SCREEN_W);
+            lbxfont_print_num_right(273, 137, d->tr.num);
             vgabuf_fill_rect(258, 127, 299, 129, 0x2f);
             if (d->tr.num > 0) {
                 vgabuf_draw_line_3h(258, 127, 258 + (d->tr.num * 40) / trans_max, 0x73);
@@ -163,14 +163,14 @@ static void ui_starmap_trans_draw_cb(void *vptr)
     } else {
         /*73704*/
         lbxfont_select(0, 6, 0, 0);
-        lbxfont_print_str_split(229, 110, 80, game_str_sm_seltr, 2, UI_SCREEN_W, UI_SCREEN_H);
+        lbxfont_print_str_split(229, 110, 80, game_str_sm_seltr, 2);
     }
     /*7372e*/
     lbxfont_select_set_12_1(5, 5, 0, 0);
     {
         int y;
         y = (d->tr.other && (pt->within_frange[d->api] != 1)) ? 77 : 90;
-        lbxfont_print_str_center(269, y, game_str_sm_transs, UI_SCREEN_W);
+        lbxfont_print_str_center(269, y, game_str_sm_transs);
     }
 }
 

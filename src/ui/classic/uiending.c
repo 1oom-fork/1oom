@@ -93,8 +93,8 @@ static void ui_play_winlose_cb1(void *vptr)
         char buf[100];
         strcpy(buf, game_str_wl_won_1);
         strcat(buf, p->name);
-        lbxfont_print_str_normal(5, 10, buf, UI_SCREEN_W);
-        lbxfont_print_str_normal(5, 0x19, game_str_wl_won_2, UI_SCREEN_W);
+        lbxfont_print_str_normal(5, 10, buf);
+        lbxfont_print_str_normal(5, 0x19, game_str_wl_won_2);
     }
     if ((f > 0x50) && (f < 0x5a)) {
         lbxpal_set_update_range(2, 0x20);
@@ -109,7 +109,7 @@ static void ui_play_winlose_cb1(void *vptr)
         ui_palette_fade_n((f - 0x82) * 0xa);
     }
     if ((f > 0x50) && (f < 0x8c)) {
-        lbxfont_print_str_normal(10, 10, game_str_wl_won_3, UI_SCREEN_W);
+        lbxfont_print_str_normal(10, 10, game_str_wl_won_3);
     }
 
     p->frame = ++f;
@@ -163,16 +163,16 @@ static void ui_play_winlose_cb3(void *vptr)
         ui_palette_fade_n(0);
     }
     if ((f > 0x0a) && (f < 0x46)) {
-        lbxfont_print_str_normal(10, 10, p->str1, UI_SCREEN_W);
+        lbxfont_print_str_normal(10, 10, p->str1);
         if (p->flag_good) {
-            lbxfont_print_str_normal(10, 0x19, p->str2, UI_SCREEN_W);
+            lbxfont_print_str_normal(10, 0x19, p->str2);
         } else {
             char buf[0x48];
             strcpy(buf, p->str2);
             strcat(buf, p->name);
             strcat(buf, p->str3);
-            lbxfont_print_str_normal(10, 0x19, buf, UI_SCREEN_W);
-            lbxfont_print_str_normal(10, 0x28, p->str4, UI_SCREEN_W);
+            lbxfont_print_str_normal(10, 0x19, buf);
+            lbxfont_print_str_normal(10, 0x28, p->str4);
         }
     }
     p->frame = f;
@@ -340,8 +340,8 @@ static void ui_play_winlose_exile_cb(void *vptr)
         char buf[100];
         strcpy(buf, game_str_wl_exile_1);
         strcat(buf, p->name);
-        lbxfont_print_str_normal(0, 0xa, buf, UI_SCREEN_W);
-        lbxfont_print_str_normal(0, 0x19, game_str_wl_exile_2, UI_SCREEN_W);
+        lbxfont_print_str_normal(0, 0xa, buf);
+        lbxfont_print_str_normal(0, 0x19, game_str_wl_exile_2);
     }
 
     lbxfont_select(4, 0, 0, 0);
@@ -360,8 +360,8 @@ static void ui_play_winlose_exile_cb(void *vptr)
     }
 
     if ((f > 0xa0) && (f < 0x118)) {
-        lbxfont_print_str_normal(0xa, 0xa, game_str_wl_exile_3, UI_SCREEN_W);
-        lbxfont_print_str_normal(0xa, 0x19, game_str_wl_exile_4, UI_SCREEN_W);
+        lbxfont_print_str_normal(0xa, 0xa, game_str_wl_exile_3);
+        lbxfont_print_str_normal(0xa, 0x19, game_str_wl_exile_4);
     }
 
     p->frame = ++f;

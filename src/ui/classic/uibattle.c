@@ -79,28 +79,28 @@ static void ui_battle_draw_scan_cb(void *vptr)
         ui_draw_stars(6, y + 1, 0, 32, &d->stars);
         ui_battle_draw_item(bt, itembase + i, 6, y + 1);
         lbxfont_select(2, 0xd, 0, 0);
-        lbxfont_print_str_normal(52, y + 3, b->name, UI_SCREEN_W);
+        lbxfont_print_str_normal(52, y + 3, b->name);
         lbxfont_select(2, 0xb, 0, 0);
-        lbxfont_print_num_right(84, y + 13, b->defense, UI_SCREEN_W);
-        lbxfont_print_num_right(84, y + 23, b->misdefense, UI_SCREEN_W);
-        lbxfont_print_num_right(124, y + 13, b->complevel, UI_SCREEN_W);
+        lbxfont_print_num_right(84, y + 13, b->defense);
+        lbxfont_print_num_right(84, y + 23, b->misdefense);
+        lbxfont_print_num_right(124, y + 13, b->complevel);
         if (b->hp1 < b->hp2) {
             lbxfont_select(2, 5, 0, 0);
         }
-        lbxfont_print_num_right(124, y + 23, b->hp1, UI_SCREEN_W);
+        lbxfont_print_num_right(124, y + 23, b->hp1);
         lbxfont_select(2, 0xb, 0, 0);
-        lbxfont_print_num_right(161, y + 3, b->absorb, UI_SCREEN_W);
-        lbxfont_print_num_right(161, y + 13, b->hploss, UI_SCREEN_W);
-        lbxfont_print_num_right(161, y + 23, b->man - b->unman, UI_SCREEN_W);
+        lbxfont_print_num_right(161, y + 3, b->absorb);
+        lbxfont_print_num_right(161, y + 13, b->hploss);
+        lbxfont_print_num_right(161, y + 23, b->man - b->unman);
         lbxfont_select(2, 0xa, 0, 0);
         for (int wi = 0; wi < WEAPON_SLOT_NUM; ++wi) {
             if (b->wpn[wi].n != 0) {
                 const struct shiptech_weap_s *w = &(tbl_shiptech_weap[b->wpn[wi].t]);
-                lbxfont_print_num_right(176, y + 3 + wi * 7, b->wpn[wi].n, UI_SCREEN_W);
-                lbxfont_print_str_normal(181, y + 3 + wi * 7, *w->nameptr, UI_SCREEN_W);
+                lbxfont_print_num_right(176, y + 3 + wi * 7, b->wpn[wi].n);
+                lbxfont_print_str_normal(181, y + 3 + wi * 7, *w->nameptr);
                 if (b->wpn[wi].numshots >= 0) {
-                    lbxfont_print_num_right(250, y + 3 + wi * 7, b->wpn[wi].numshots, UI_SCREEN_W);
-                    lbxfont_print_str_normal(252, y + 3 + wi * 7, "&", UI_SCREEN_W);
+                    lbxfont_print_num_right(250, y + 3 + wi * 7, b->wpn[wi].numshots);
+                    lbxfont_print_str_normal(252, y + 3 + wi * 7, "&");
                 }
                 if (w->misstype == 1) {
                     uint8_t c1, c2;
@@ -121,12 +121,12 @@ static void ui_battle_draw_scan_cb(void *vptr)
         } else {
             lbxfont_set_color_c_n(0xb5, 5);
         }
-        lbxfont_print_str_center(286, y + 2, game_str_tbl_st_specsh[b->special[0]], UI_SCREEN_W);
+        lbxfont_print_str_center(286, y + 2, game_str_tbl_st_specsh[b->special[0]]);
         if (b->special[1] != 0) {
-            lbxfont_print_str_center(286, y + 11, game_str_tbl_st_specsh[b->special[1]], UI_SCREEN_W);
+            lbxfont_print_str_center(286, y + 11, game_str_tbl_st_specsh[b->special[1]]);
         }
         if (b->special[2] != 0) {
-            lbxfont_print_str_center(286, y + 20, game_str_tbl_st_specsh[b->special[2]], UI_SCREEN_W);
+            lbxfont_print_str_center(286, y + 20, game_str_tbl_st_specsh[b->special[2]]);
         }
     }
     uiobj_finish_frame();
@@ -166,7 +166,7 @@ static void ui_battle_draw_focusinfo(const struct battle_s *bt)
     vgabuf_fill_rect(0, 193, 94, VGABUF_H - 1, 0xe9);
     b = (v == 70) ? &(bt->item[bt->cur_item]) : &(bt->item[v]);
     lbxfont_select(2, 0xa, 5, 0);
-    lbxfont_print_str_normal(2, 194, b->name, UI_SCREEN_W);
+    lbxfont_print_str_normal(2, 194, b->name);
     if (v != 70) {
         if (b->num > 0) {
             char buf[32];
@@ -177,7 +177,7 @@ static void ui_battle_draw_focusinfo(const struct battle_s *bt)
                 buf[pos++] = 0;
             }
             sprintf(&buf[pos], "%i", h2);
-            lbxfont_print_str_right(92, 194, buf, UI_SCREEN_W);
+            lbxfont_print_str_right(92, 194, buf);
         }
     }
 }
@@ -211,7 +211,7 @@ static void ui_battle_draw_bottom_no_ois(const struct battle_s *bt)
     lbxfont_select(2, 0xa, 5, 0);
     b = &(bt->item[bt->cur_item]);
     if (bt->s[b->side].flag_auto) {
-        lbxfont_print_str_normal(2, 194, game_str_bt_auto_move, UI_SCREEN_W);
+        lbxfont_print_str_normal(2, 194, game_str_bt_auto_move);
     } else {
         ui_battle_draw_focusinfo(bt);
     }
@@ -747,9 +747,9 @@ static void ui_battle_draw_stasis_sub1(const struct battle_s *bt, int target_i, 
         lbxfont_set_temp_color(0);
         lbxfont_select_set_12_4(2, 0xd, 0, 0);
         if (b->side == SIDE_L) {
-            lbxfont_print_num_right(x + 29, y + 18, b->num, UI_SCREEN_W);
+            lbxfont_print_num_right(x + 29, y + 18, b->num);
         } else {
-            lbxfont_print_num_normal(x + 3, y + 18, b->num, UI_SCREEN_W);
+            lbxfont_print_num_normal(x + 3, y + 18, b->num);
         }
     }
 }
@@ -845,24 +845,24 @@ void ui_battle_draw_planetinfo(const struct battle_s *bt, bool side_r)
     lbxgfx_draw_frame(x, y, ui_data.gfx.space.vp2_top);
     lbxgfx_draw_frame(x + 90, y + 9, b->gfx);
     lbxfont_select(1, 0xa, 0, 0);
-    lbxfont_print_str_center(x + 44, y + 7, b->name, UI_SCREEN_W);
+    lbxfont_print_str_center(x + 44, y + 7, b->name);
     lbxfont_select(0, 0xa, 0, 0);
-    lbxfont_print_str_normal(x + 7, y + 21, game_str_bt_pop, UI_SCREEN_W);
-    lbxfont_print_str_normal(x + 7, y + 30, game_str_bt_ind, UI_SCREEN_W);
-    lbxfont_print_str_normal(x + 60, y + 21, ":", UI_SCREEN_W);
-    lbxfont_print_num_right(x + 80, y + 21, bt->pop, UI_SCREEN_W);
-    lbxfont_print_str_normal(x + 60, y + 30, ":", UI_SCREEN_W);
-    lbxfont_print_num_right(x + 80, y + 30, bt->fact, UI_SCREEN_W);
+    lbxfont_print_str_normal(x + 7, y + 21, game_str_bt_pop);
+    lbxfont_print_str_normal(x + 7, y + 30, game_str_bt_ind);
+    lbxfont_print_str_normal(x + 60, y + 21, ":");
+    lbxfont_print_num_right(x + 80, y + 21, bt->pop);
+    lbxfont_print_str_normal(x + 60, y + 30, ":");
+    lbxfont_print_num_right(x + 80, y + 30, bt->fact);
     if (bt->s[bt->item[bt->cur_item].side].flag_have_scan || (side_r == (b->side == SIDE_R))) {
         int y1;
         vgabuf_fill_rect(x, y + 39, x + 131, y + 79, 0x3a);
         lbxgfx_draw_frame(x, y + 38, ui_data.gfx.space.vp2_data);
-        lbxfont_print_str_normal(x + 68, y + 42, game_str_bt_bases, UI_SCREEN_W);
+        lbxfont_print_str_normal(x + 68, y + 42, game_str_bt_bases);
         if (bt->have_subspace_int) {
             vgabuf_fill_rect(x, y + 79, x + 131, y + 89, 0x3a);
             lbxgfx_draw_frame(x, y + 77, ui_data.gfx.space.vp2_line);
             lbxfont_select(2, 6, 0, 0);
-            lbxfont_print_str_normal(x + 10, y + 80, game_str_bt_subint, UI_SCREEN_W);
+            lbxfont_print_str_normal(x + 10, y + 80, game_str_bt_subint);
             y1 = y + 86;
         } else {
             y1 = y + 77;
@@ -876,15 +876,15 @@ void ui_battle_draw_planetinfo(const struct battle_s *bt, bool side_r)
                 w = &(tbl_shiptech_weap[b->wpn[1].t]);
             }
             sprintf(buf, "3 %s %s", *w->nameptr, game_str_bt_launch);
-            lbxfont_print_str_normal(x + 10, y + 71, buf, UI_SCREEN_W);
+            lbxfont_print_str_normal(x + 10, y + 71, buf);
         }
         lbxfont_select(2, 0xb, 0, 0);
-        lbxfont_print_num_right(x + 46, y + 51, b->defense, UI_SCREEN_W);
-        lbxfont_print_num_right(x + 46, y + 61, b->misdefense, UI_SCREEN_W);
-        lbxfont_print_num_right(x + 86, y + 51, b->complevel, UI_SCREEN_W);
-        lbxfont_print_num_right(x + 86, y + 61, b->hp1, UI_SCREEN_W);
-        lbxfont_print_num_right(x + 123, y + 51, b->hploss, UI_SCREEN_W);
-        lbxfont_print_num_right(x + 124, y + 61, b->absorb, UI_SCREEN_W);
+        lbxfont_print_num_right(x + 46, y + 51, b->defense);
+        lbxfont_print_num_right(x + 46, y + 61, b->misdefense);
+        lbxfont_print_num_right(x + 86, y + 51, b->complevel);
+        lbxfont_print_num_right(x + 86, y + 61, b->hp1);
+        lbxfont_print_num_right(x + 123, y + 51, b->hploss);
+        lbxfont_print_num_right(x + 124, y + 61, b->absorb);
     } else {
         /*5b512*/
         lbxgfx_draw_frame(x, y + 37, ui_data.gfx.space.vp2_bottom);
@@ -998,9 +998,9 @@ void ui_battle_draw_item(const struct battle_s *bt, int itemi, int x, int y)
         lbxfont_set_temp_color(0);
         lbxfont_select_set_12_4(2, 0xd, 0, 0);
         if (b->side == SIDE_L) {
-            lbxfont_print_num_right(x + 29, y + 18, b->num, UI_SCREEN_W);
+            lbxfont_print_num_right(x + 29, y + 18, b->num);
         } else {
-            lbxfont_print_num_normal(x + 3, y + 18, b->num, UI_SCREEN_W);
+            lbxfont_print_num_normal(x + 3, y + 18, b->num);
         }
     }
 }
@@ -1165,7 +1165,7 @@ void ui_battle_draw_damage(const struct battle_s *bt, int target_i, int target_x
         gfx_aux_scale(&ui_data.aux.btemp, scale, scale);
         gfx_aux_draw_frame_from_limit(ax, ay, &ui_data.aux.btemp, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
         lbxfont_select(2, 0xd, 0, 0);
-        lbxfont_print_num_center(target_x_hit, target_y_hit - 2, damage, UI_SCREEN_W);
+        lbxfont_print_num_center(target_x_hit, target_y_hit - 2, damage);
         uiobj_finish_frame();
         ui_delay_ticks_or_click(1);
     }
@@ -1467,7 +1467,7 @@ void ui_battle_draw_pulsar(const struct battle_s *bt, int attacker_i, int ptype,
                     y1 = b->sy * 24 + fr[b->look].target_y;
                     gfx_aux_draw_frame_from_limit(x1 - 13, y1 - 12, &ui_data.aux.btemp, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
                     lbxfont_select(2, 0xd, 0, 0);
-                    lbxfont_print_num_center(x1, y1 - 2, dmgtbl[i], UI_SCREEN_W);
+                    lbxfont_print_num_center(x1, y1 - 2, dmgtbl[i]);
                 }
             }
         }
