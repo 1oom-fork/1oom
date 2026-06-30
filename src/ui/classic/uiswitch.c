@@ -44,7 +44,7 @@ static void switch_draw_cb(void *vptr)
     ui_gmap_basic_draw_frame(ctx, -1);
 
     lbxfont_select(3, 2, 0, 0);
-    lbxfont_print_num_normal(230, 16, g->year + YEAR_BASE, UI_SCREEN_W);
+    lbxfont_print_num_normal(230, 16, g->year + YEAR_BASE);
 
     for (int i = 0; i < d->num_pi; ++i) {
         empiretechorbit_t *e;
@@ -55,14 +55,14 @@ static void switch_draw_cb(void *vptr)
         color = tbl_banner_fontparam[e->banner];
         lbxfont_select(3, color, 0, 0);
         sprintf(buf, "%s %i", game_str_player, pi + 1);
-        lbxfont_print_str_normal(230, i * 24 + 32, buf, UI_SCREEN_W);
+        lbxfont_print_str_normal(230, i * 24 + 32, buf);
         lbxfont_select(0, color, 0, 0);
-        lbxfont_print_str_normal(230, i * 24 + 32 + 10, g->emperor_names[pi], UI_SCREEN_W);
+        lbxfont_print_str_normal(230, i * 24 + 32 + 10, g->emperor_names[pi]);
     }
 
     if (d->allow_opts) {
         lbxfont_select_set_12_4(5, (d->bottom_highlight == 0) ? 0 : 2, 0, 0);
-        lbxfont_print_str_normal(10, 184, game_str_sm_game, UI_SCREEN_W);
+        lbxfont_print_str_normal(10, 184, game_str_sm_game);
     }
 
     ui_gmap_basic_shutdown(ctx);

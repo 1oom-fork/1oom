@@ -57,7 +57,7 @@ static void load_game_draw_cb(void *vptr)
         si = d->tbl_savei[i];
         lbxgfx_draw_frame(0x10 + xoff, 0x17 + yoff + 0x12 * si, (d->selected == i) ? d->gfx_lg_green : d->gfx_lg_gray);
         lbxfont_select(0, 1, 0, 0);
-        lbxfont_print_str_normal(0x1f + xoff, 0x19 + yoff + 0x12 * si, game_save_tbl_name[si], UI_SCREEN_W);
+        lbxfont_print_str_normal(0x1f + xoff, 0x19 + yoff + 0x12 * si, game_save_tbl_name[si]);
     }
 }
 

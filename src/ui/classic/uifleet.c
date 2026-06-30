@@ -73,7 +73,7 @@ static void fleet_draw_cb(void *vptr)
     lbxgfx_draw_frame(307, 156, ui_data.gfx.starmap.fleetbut_down);
 
     lbxfont_select_set_12_4(0, 0, 0, 0);
-    lbxfont_print_str_normal(7, 6, game_str_fl_station, UI_SCREEN_W);
+    lbxfont_print_str_normal(7, 6, game_str_fl_station);
     num = d->num - d->pos;
     SETMIN(num, 5);
 
@@ -82,7 +82,7 @@ static void fleet_draw_cb(void *vptr)
         int x0;
         x0 = 44 * i + 48;
         lbxfont_select(2, 0xd, 0, 0);
-        lbxfont_print_str_center(x0 + 19, 6, sd->name, UI_SCREEN_W);
+        lbxfont_print_str_center(x0 + 19, 6, sd->name);
     }
     for (int i = 0; i < num; ++i) {
         planet_t *p;
@@ -103,12 +103,12 @@ static void fleet_draw_cb(void *vptr)
                 a2 = 4;
             }
             lbxfont_select(2, a2, 0, 0);
-            lbxfont_print_str_center(x0 + 19, y0 + 12, BOOLVEC_IS1(d->is_enroute, fi) ? game_str_fl_moving : game_str_fl_inorbit, UI_SCREEN_W);
-            lbxfont_print_str_center(x0 + 19, y0 + 19, p->name, UI_SCREEN_W);
+            lbxfont_print_str_center(x0 + 19, y0 + 12, BOOLVEC_IS1(d->is_enroute, fi) ? game_str_fl_moving : game_str_fl_inorbit);
+            lbxfont_print_str_center(x0 + 19, y0 + 19, p->name);
         } else {
             lbxfont_select_set_12_4(2, 0xe, 0, 0);
-            lbxfont_print_str_center(x0 + 19, y0 + 7, game_str_fl_unknown, UI_SCREEN_W);
-            lbxfont_print_str_center(x0 + 19, y0 + 14, game_str_fl_system, UI_SCREEN_W);
+            lbxfont_print_str_center(x0 + 19, y0 + 7, game_str_fl_unknown);
+            lbxfont_print_str_center(x0 + 19, y0 + 14, game_str_fl_system);
         }
         s = (BOOLVEC_IS1(d->is_enroute, fi)) ? g->enroute[d->enroute[fi]].ships : e->orbit[pi].ships;
         for (int j = 0; j < e->shipdesigns_num; ++j) {
@@ -137,7 +137,7 @@ static void fleet_draw_cb(void *vptr)
                     }
                 }
                 lbxfont_select(0, 0xd, 0, 0);
-                lbxfont_print_num_right(x0 + 31, y0 + 19, ships, UI_SCREEN_W);
+                lbxfont_print_num_right(x0 + 31, y0 + 19, ships);
             }
         }
     }
@@ -147,7 +147,7 @@ static void fleet_draw_cb(void *vptr)
     d->frame = (d->frame + 1) % 5;
     ui_draw_set_stars_xoffs(&d->s, false);
     lbxfont_select(2, 6, 0, 0);
-    lbxfont_print_num_right(137, 185, e->ship_maint_bc, UI_SCREEN_W);
+    lbxfont_print_num_right(137, 185, e->ship_maint_bc);
 }
 
 static void ui_fleet_sub(struct fleet_data_s *d)

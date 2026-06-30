@@ -51,9 +51,9 @@ static void ui_starmap_orbit_en_draw_cb(void *vptr)
     }
     sprintf(buf, "%s %s", game_str_tbl_race[e->race], game_str_sm_fleet);
     lbxfont_select_set_12_4(5, tbl_banner_fontparam[e->banner], 0, 0);
-    lbxfont_print_str_center(267, 10, buf, UI_SCREEN_W);
+    lbxfont_print_str_center(267, 10, buf);
     lbxfont_select_set_12_4(0, 0, 0, 0);
-    lbxfont_print_str_center(268, 33, game_str_sm_inorbit, UI_SCREEN_W);
+    lbxfont_print_str_center(268, 33, game_str_sm_inorbit);
     for (int i = 0; i < d->oe.sn0.num; ++i) {
         struct draw_stars_s ds;
         uint8_t *gfx;
@@ -70,9 +70,9 @@ static void ui_starmap_orbit_en_draw_cb(void *vptr)
         lbxgfx_set_frame_0(gfx);
         lbxgfx_draw_frame(x, y, gfx);
         lbxfont_select(0, 0xd, 0, 0);
-        lbxfont_print_num_right(x + 35, y + 19, d->oe.ships[st], UI_SCREEN_W);
+        lbxfont_print_num_right(x + 35, y + 19, d->oe.ships[st]);
         lbxfont_select(2, 0xa, 0, 0);
-        lbxfont_print_str_center(x + 19, y + 29, srd->design[st].name, UI_SCREEN_W);
+        lbxfont_print_str_center(x + 19, y + 29, srd->design[st].name);
     }
     if (d->oe.scanner_delay == 0) {
         d->oe.frame_scanner = (d->oe.frame_scanner + 1) % 20;

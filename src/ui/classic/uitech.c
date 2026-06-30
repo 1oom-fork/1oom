@@ -111,7 +111,7 @@ static void tech_draw_cb(void *vptr)
 
     sprintf(buf, "%i %s", e->total_research_bc, game_str_bc);
     lbxfont_select(2, 6, 0, 0);
-    lbxfont_print_str_right(309, 169, buf, UI_SCREEN_W);
+    lbxfont_print_str_right(309, 169, buf);
 
     for (int i = 0; i < TECH_ON_SCREEN; ++i) {
         if ((i + d->pos) < d->num) {
@@ -125,13 +125,13 @@ static void tech_draw_cb(void *vptr)
             }
             lbxfont_select(2, a2, 0, 0);
             game_tech_get_name(g->gaux, d->field, d->completed[i + d->pos], buf);
-            lbxfont_print_str_normal(9, 37 + i * 7, buf, UI_SCREEN_W);
+            lbxfont_print_str_normal(9, 37 + i * 7, buf);
         }
     }
     game_tech_get_descr(g->gaux, d->field, d->completed[d->selected + d->pos], buf);
     lbxfont_select(5, 6, 0, 0);
     lbxfont_set_44_10_plus(1);
-    lbxfont_print_str_split(10, 155, 260, buf, 0, UI_SCREEN_W, UI_SCREEN_H);
+    lbxfont_print_str_split(10, 155, 260, buf, 0);
 
     lbxgfx_set_new_frame(ui_data.gfx.screens.tech_but_up, 1);
     lbxgfx_set_new_frame(ui_data.gfx.screens.tech_but_down, 1);
@@ -147,12 +147,12 @@ static void tech_draw_cb(void *vptr)
         }
         lbxfont_select(0, 6, 0, 0);
         lbxfont_set_color_c_n(0x26, 5);
-        lbxfont_print_num_right(307, y, t->percent[i], UI_SCREEN_W);
+        lbxfont_print_num_right(307, y, t->percent[i]);
     }
 
     lbxfont_select(2, 6, 0, 0);
     sprintf(buf, "%s %i, %s %i/%s", game_str_te_scrange, e->scanner_range, game_str_te_rctrl, e->colonist_oper_factories, game_str_te_col);
-    lbxfont_print_str_normal(168, 33, buf, UI_SCREEN_W);
+    lbxfont_print_str_normal(168, 33, buf);
     {
         uint8_t groundcmbonus = 0, groundcmbonus2 = 0;
         for (int i = 0; i < t->completed[TECH_FIELD_CONSTRUCTION]; ++i) {
@@ -168,7 +168,7 @@ static void tech_draw_cb(void *vptr)
         }
         groundcmbonus += groundcmbonus2;
         sprintf(buf, "%s %i, %s +%i%%", game_str_te_fwaste, e->ind_waste_scale, game_str_te_gcombat, groundcmbonus);
-        lbxfont_print_str_normal(168, 54, buf, UI_SCREEN_W);
+        lbxfont_print_str_normal(168, 54, buf);
     }
     {
         uint8_t groundcmbonus = 0;
@@ -182,12 +182,12 @@ static void tech_draw_cb(void *vptr)
             }
         }
         sprintf(buf, "%s +%i%%", game_str_te_gcombat, groundcmbonus);
-        lbxfont_print_str_normal(168, 75, buf, UI_SCREEN_W);
+        lbxfont_print_str_normal(168, 75, buf);
     }
     sprintf(buf, "%s +%i, %s %i/%s", game_str_te_tform, e->have_terraform_n, game_str_te_wasteel, e->have_eco_restoration_n, game_str_bc);
-    lbxfont_print_str_normal(168, 96, buf, UI_SCREEN_W);
+    lbxfont_print_str_normal(168, 96, buf);
     sprintf(buf, "%s %i %s", game_str_te_shrange, e->fuel_range, game_str_sm_parsecs2);
-    lbxfont_print_str_normal(168, 117, buf, UI_SCREEN_W);
+    lbxfont_print_str_normal(168, 117, buf);
     {
         uint8_t groundcmbonus = 0;
         for (int i = 0; i < t->completed[TECH_FIELD_WEAPON]; ++i) {
@@ -200,7 +200,7 @@ static void tech_draw_cb(void *vptr)
             }
         }
         sprintf(buf, "%s +%i%%", game_str_te_gcombat, groundcmbonus);
-        lbxfont_print_str_normal(168, 138, buf, UI_SCREEN_W);
+        lbxfont_print_str_normal(168, 138, buf);
     }
 
     for (int i = 0; i < TECH_FIELD_NUM; ++i) {
@@ -211,7 +211,7 @@ static void tech_draw_cb(void *vptr)
             if (complpercent > 0) {
                 sprintf(buf, "%i%%", complpercent);
                 lbxfont_select_set_12_1(2, 0xd, 0, 0);
-                lbxfont_print_str_right(295, y + 3, buf, UI_SCREEN_W);
+                lbxfont_print_str_right(295, y + 3, buf);
             } else {
                 int y0, y1;
                 complpercent = game_tech_current_research_percent1(e, i);
@@ -224,7 +224,7 @@ static void tech_draw_cb(void *vptr)
             }
         } else {
             lbxfont_select_set_12_1(2, 0xd, 0, 0);
-            lbxfont_print_str_right(295, y + 3, game_str_te_max, UI_SCREEN_W);
+            lbxfont_print_str_right(295, y + 3, game_str_te_max);
         }
     }
 }

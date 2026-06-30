@@ -107,35 +107,35 @@ static void ground_draw_cb1(void *vptr)
         }
         /*7b9bf*/
         lbxfont_select_set_12_4(4, 0x5, 0, 0);
-        lbxfont_print_str_center(160, 5, buf, UI_SCREEN_W);
+        lbxfont_print_str_center(160, 5, buf);
         if (!gr->flag_rebel) {
             sprintf(buf, "%s %s %s", game_str_gr_penetr, strrace[gr->flag_swap ? 0 : 1], game_str_gr_defenss);
-            lbxfont_print_str_center(160, 17, buf, UI_SCREEN_W);
+            lbxfont_print_str_center(160, 17, buf);
         }
     } else {
         /*7ba55*/
         lbxfont_select_set_12_4(4, 0x5, 0, 0);
         sprintf(buf, "%s %s", strrace[1], game_str_gr_troops);
-        lbxfont_print_str_normal(30, 146, buf, UI_SCREEN_W);
-        lbxfont_print_num_normal(10, 146, gr->s[1].pop1, UI_SCREEN_W);
+        lbxfont_print_str_normal(30, 146, buf);
+        lbxfont_print_num_normal(10, 146, gr->s[1].pop1);
         vgabuf_fill_rect(164, 155, 281, 157, 0);
         vgabuf_draw_line(165, 156, 280, 156, 4);
         lbxfont_select_set_12_4(0, 0x1, 0, 0);
         for (int i = 0; i < gr->s[1].strnum; ++i) {
-            lbxfont_print_str_normal(10, 160 + 10 * i, gr->s[1].str[i], UI_SCREEN_W);
+            lbxfont_print_str_normal(10, 160 + 10 * i, gr->s[1].str[i]);
         }
         for (int i = 0; i < gr->s[1].pop1; ++i) {
             ground_draw_item(i, gr->s[1].pop2, d->gfx_s[1], false, 0);
         }
         lbxfont_select_set_12_4(4, 0x5, 0, 0);
         sprintf(buf, "%s %s", gr->flag_rebel ? game_str_gr_rebel : strrace[0], game_str_gr_troops);
-        lbxfont_print_str_normal(190, 146, buf, UI_SCREEN_W);
-        lbxfont_print_num_normal(170, 146, gr->s[0].pop1, UI_SCREEN_W);
+        lbxfont_print_str_normal(190, 146, buf);
+        lbxfont_print_num_normal(170, 146, gr->s[0].pop1);
         vgabuf_fill_rect(4, 155, 121, 157, 0);
         vgabuf_draw_line(5, 156, 120, 156, 4);
         lbxfont_select_set_12_4(0, 0x1, 0, 0);
         for (int i = 0; i < gr->s[0].strnum; ++i) {
-            lbxfont_print_str_normal(170, 160 + 10 * i, gr->s[0].str[i], UI_SCREEN_W);
+            lbxfont_print_str_normal(170, 160 + 10 * i, gr->s[0].str[i]);
         }
         for (int i = 0; i < gr->s[0].pop1; ++i) {
             ground_draw_item(i, gr->s[0].pop2, d->gfx_s[0], true, 0);
@@ -143,7 +143,7 @@ static void ground_draw_cb1(void *vptr)
         lbxfont_select_set_12_4(4, 0x5, 0, 0);
         if ((gr->s[0].pop1 != 0) && (gr->s[1].pop1 != 0)) {
             sprintf(buf, "%s %s", game_str_gr_gcon, g->planet[gr->planet_i].name);
-            lbxfont_print_str_center(160, 5, buf, UI_SCREEN_W);
+            lbxfont_print_str_center(160, 5, buf);
         } else if (d->flag_over) {
             /*7bccd*/
             int pos, pop = gr->s[gr->flag_swap ? 1 : 0].pop1;
@@ -174,23 +174,23 @@ static void ground_draw_cb1(void *vptr)
             }
             /*7bdc0*/
             sprintf(&buf[pos], "%s", g->planet[gr->planet_i].name);
-            lbxfont_print_str_center(160, 5, buf, UI_SCREEN_W);
+            lbxfont_print_str_center(160, 5, buf);
             if ((pop > 0) && (!gr->flag_rebel)) {
                 /*7be16*/
                 if (gr->fact > 0) {
                     sprintf(buf, "%i %s", gr->fact, game_str_gr_fcapt);
-                    lbxfont_print_str_center(160, 25, buf, UI_SCREEN_W);
+                    lbxfont_print_str_center(160, 25, buf);
                 }
                 /*7be54*/
                 if (gr->techchance > 0) {
                     if (gr->flag_swap == gr->s[0].human) {
-                        lbxfont_print_str_center(160, 40, game_str_gr_tsteal, UI_SCREEN_W);
+                        lbxfont_print_str_center(160, 40, game_str_gr_tsteal);
                         for (int i = 0; i < gr->techchance; ++i) {
                             game_tech_get_name(g->gaux, gr->steal->tbl_field[i], gr->steal->tbl_tech2[i], buf);
-                            lbxfont_print_str_center(160, 60 + 15 * i, buf, UI_SCREEN_W);
+                            lbxfont_print_str_center(160, 60 + 15 * i, buf);
                         }
                     } else {
-                        lbxfont_print_str_center(160, 38, game_str_gr_tnew, UI_SCREEN_W);
+                        lbxfont_print_str_center(160, 38, game_str_gr_tnew);
                     }
                 }
             }

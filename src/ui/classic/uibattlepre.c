@@ -95,20 +95,20 @@ static void ui_battle_pre_draw_cb(void *vptr)
         lbxgfx_draw_frame(x + 3, y - 2, gfx);
     }
     lbxfont_select_set_12_4(3, 0, 0, 0);
-    lbxfont_print_str_center(267, 64, game_str_bp_scombat, UI_SCREEN_W);
+    lbxfont_print_str_center(267, 64, game_str_bp_scombat);
     if (d->party_d >= PLAYER_NUM) {
         strcpy(buf, game_str_tbl_mon_names[d->party_d - PLAYER_NUM]);
     } else {
         race_t race = g->eto[d->flag_human_att ? d->party_u : d->party_d].race;
         strcpy(buf, game_str_tbl_races[race]);
     }
-    lbxfont_print_str_center(267, 100, buf, UI_SCREEN_W);
-    lbxfont_print_str_center(267, 115, (d->party_d >= PLAYER_NUM) ? game_str_bp_attack : game_str_bp_attacks, UI_SCREEN_W);
+    lbxfont_print_str_center(267, 100, buf);
+    lbxfont_print_str_center(267, 115, (d->party_d >= PLAYER_NUM) ? game_str_bp_attack : game_str_bp_attacks);
     {
         race_t race = g->eto[d->flag_human_att ? d->party_d : d->party_u].race;
         strcpy(buf, game_str_tbl_races[race]);
     }
-    lbxfont_print_str_center(267, 130, buf, UI_SCREEN_W);
+    lbxfont_print_str_center(267, 130, buf);
 }
 
 void ui_battle_pre(struct game_s *g, int party_u, int party_d, uint8_t planet_i, bool flag_human_att, bool hide_other)

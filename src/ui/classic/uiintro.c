@@ -40,7 +40,7 @@ void ui_play_intro(void)
     lbxpal_select(0, -1, 0);
     vgabuf_erase();
     lbxfont_select(5, 1, 0, 0);
-    lbxfont_print_str_normal(0, 0, game_str_in_loading, UI_SCREEN_W);
+    lbxfont_print_str_normal(0, 0, game_str_in_loading);
     ui_cursor_setup_area(1, &ui_cursor_area_all_i0);
     uiobj_table_clear();
     uiobj_finish_frame();
