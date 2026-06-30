@@ -1630,7 +1630,7 @@ void uiobj_finish_frame(void)
     ui_cursor_update_gfx_i(mx, my);
     ui_cursor_store_bg1(mx, my);
     ui_cursor_draw1(mx, my);
-    hw_video_draw_buf();
+    vgabuf_flip();
 #if 1
     /* FIXME HACK just erase it right after draw... */
     ui_cursor_copy_bg1_to_bg0();
