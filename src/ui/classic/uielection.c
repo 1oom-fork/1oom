@@ -95,7 +95,7 @@ static void ui_election_draw_cb(void *vptr)
     if (el->str) {
         lbxfont_select_set_12_1(3, 0, 0, 0);
         lbxfont_set_44_10_plus(1);
-        lbxfont_print_str_split(10, 169, 305, el->str, 0, UI_SCREEN_W, UI_SCREEN_H);
+        lbxfont_print_str_split(10, 169, 305, el->str, 0);
     }
     if (d->flag_countdown) {
         if (--d->count <= 0) {
@@ -118,13 +118,13 @@ static void ui_election_draw_cb(void *vptr)
         lbxfont_select(3, 1, 0, 0);
         n = el->got_votes[0];
         sprintf(buf, "%s %s", game_election_print_votes(n, vbuf), g->emperor_names[el->candidate[0]]);
-        lbxfont_print_str_normal(10, 10, buf, UI_SCREEN_W);
+        lbxfont_print_str_normal(10, 10, buf);
         n = el->got_votes[1];
         sprintf(buf, "%s %s", game_election_print_votes(n, vbuf), g->emperor_names[el->candidate[1]]);
-        lbxfont_print_str_right(310, 10, buf, UI_SCREEN_W);
+        lbxfont_print_str_right(310, 10, buf);
         n = el->total_votes;
         sprintf(buf, "%s %s", game_election_print_votes(n, vbuf), game_str_el_total);
-        lbxfont_print_str_center(160, 10, buf, UI_SCREEN_W);
+        lbxfont_print_str_center(160, 10, buf);
     }
 }
 

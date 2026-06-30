@@ -54,7 +54,7 @@ static void ui_starmap_transport_draw_cb(void *vptr)
     }
     sprintf(buf, "%s %s", game_str_tbl_race[e->race], game_str_sm_fleet);
     lbxfont_select_set_12_4(5, tbl_banner_fontparam[e->banner], 0, 0);
-    lbxfont_print_str_center(267, 10, buf, UI_SCREEN_W);
+    lbxfont_print_str_center(267, 10, buf);
     if ((r->owner == d->api) || (g->eto[d->api].have_ia_scanner)) {
         const planet_t *pd = &(g->planet[r->dest]);
         uint8_t *gfx;
@@ -83,13 +83,13 @@ static void ui_starmap_transport_draw_cb(void *vptr)
             sprintf(buf, "  %s   %i %s.", game_str_sm_outsr, dist - e->fuel_range, game_str_sm_parsecs2);
             lbxfont_select_set_12_4(2, 0, 0, 0);
             lbxfont_set_44_10_plus(2);
-            lbxfont_print_str_split(230, 26, 80, buf, 2, UI_SCREEN_W, UI_SCREEN_H);
+            lbxfont_print_str_split(230, 26, 80, buf, 2);
         } else {
             int eta = game_calc_eta(g, r->speed, pt->x, pt->y, r->x, r->y);
             d->ts.in_frange = true;
             sprintf(buf, "%s %i %s", game_str_sm_eta, eta, (eta == 1) ? game_str_sm_turn : game_str_sm_turns);
             lbxfont_select_set_12_4(0, 0, 0, 0);
-            lbxfont_print_str_center(268, 32, buf, UI_SCREEN_W);
+            lbxfont_print_str_center(268, 32, buf);
         }
     } else {
         /*6a51c*/
@@ -106,12 +106,12 @@ static void ui_starmap_transport_draw_cb(void *vptr)
     }
     lbxfont_select_set_12_4(0, 5, 0, 0);
     sprintf(buf, "%i %s", r->pop, game_str_sm_colony);
-    lbxfont_print_str_center(267, 48, buf, UI_SCREEN_W);
-    lbxfont_print_str_center(267, 57, (r->pop == 1) ? game_str_sm_trans1 : game_str_sm_transs, UI_SCREEN_W);
+    lbxfont_print_str_center(267, 48, buf);
+    lbxfont_print_str_center(267, 57, (r->pop == 1) ? game_str_sm_trans1 : game_str_sm_transs);
     if ((r->owner == d->api) || (g->eto[d->api].have_ia_scanner)) {
         const planet_t *pd = &(g->planet[r->dest]);
-        lbxfont_print_str_center(267, 110, game_str_sm_tdest, UI_SCREEN_W);
-        lbxfont_print_str_center(267, 120, pd->name, UI_SCREEN_W);
+        lbxfont_print_str_center(267, 110, game_str_sm_tdest);
+        lbxfont_print_str_center(267, 120, pd->name);
     }
     if (d->ts.scanner_delay == 0) {
         d->ts.frame_scanner = (d->ts.frame_scanner + 1) % 20;

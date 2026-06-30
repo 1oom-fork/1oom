@@ -54,11 +54,11 @@ static void empirereport_draw_cb(void *vptr)
     lbxgfx_draw_frame(21, 15, ui_data.gfx.planets.race[e->race]);
     vgabuf_fill_rect(17, 58, 64, 68, tbl_banner_color2[e->banner]);
     lbxfont_select(5, 6, 0, 0);
-    lbxfont_print_str_center(40, 60, game_str_tbl_races[e->race], UI_SCREEN_W);
+    lbxfont_print_str_center(40, 60, game_str_tbl_races[e->race]);
     lbxfont_select(0, 6, 0, 0);
-    lbxfont_print_str_center(40, 74, game_str_tbl_trait1[e->trait1], UI_SCREEN_W);
-    lbxfont_print_str_center(40, 81, game_str_tbl_trait2[e->trait2], UI_SCREEN_W);
-    lbxfont_print_str_center(40, 101, game_str_re_reportis, UI_SCREEN_W);
+    lbxfont_print_str_center(40, 74, game_str_tbl_trait1[e->trait1]);
+    lbxfont_print_str_center(40, 81, game_str_tbl_trait2[e->trait2]);
+    lbxfont_print_str_center(40, 101, game_str_re_reportis);
     {
         int reportage = g->year - g->eto[d->api].spyreportyear[d->pi] - 1;
         if (reportage < 2) {
@@ -66,11 +66,11 @@ static void empirereport_draw_cb(void *vptr)
         } else {
             sprintf(buf, "%i %s", reportage, game_str_re_yearsold);
         }
-        lbxfont_print_str_center(40, 108, buf, UI_SCREEN_W);
+        lbxfont_print_str_center(40, 108, buf);
     }
     lbxfont_select(3, 0, 0, 0);
     lbxfont_set_color_c_n(0x26, 6);
-    lbxfont_print_str_center(41, 128, game_str_re_alliance, UI_SCREEN_W);
+    lbxfont_print_str_center(41, 128, game_str_re_alliance);
     vgabuf_draw_line(9, 136, 72, 136, 0x26);
     lbxfont_select(0, 6, 0, 0);
     {
@@ -81,14 +81,14 @@ static void empirereport_draw_cb(void *vptr)
                 vgabuf_put_pixel(9, 141 + 6 * n, 0);
                 vgabuf_put_pixel(10, 140 + 6 * n, 0);
                 vgabuf_put_pixel(10, 141 + 6 * n, 0);
-                lbxfont_print_str_normal(13, 139 + 6 * n, game_str_tbl_races[g->eto[i].race], UI_SCREEN_W);
+                lbxfont_print_str_normal(13, 139 + 6 * n, game_str_tbl_races[g->eto[i].race]);
                 ++n;
             }
         }
     }
     lbxfont_select(3, 0, 0, 0);
     lbxfont_set_color_c_n(0x26, 6);
-    lbxfont_print_str_center(41, 165, game_str_re_wars, UI_SCREEN_W);
+    lbxfont_print_str_center(41, 165, game_str_re_wars);
     vgabuf_draw_line(9, 173, 72, 173, 0x26);
     lbxfont_select(0, 6, 0, 0);
     {
@@ -99,7 +99,7 @@ static void empirereport_draw_cb(void *vptr)
                 vgabuf_put_pixel(9, 178 + 6 * n, 0);
                 vgabuf_put_pixel(10, 177 + 6 * n, 0);
                 vgabuf_put_pixel(10, 178 + 6 * n, 0);
-                lbxfont_print_str_normal(13, 176 + 6 * n, game_str_tbl_races[g->eto[i].race], UI_SCREEN_W);
+                lbxfont_print_str_normal(13, 176 + 6 * n, game_str_tbl_races[g->eto[i].race]);
                 ++n;
             }
         }
@@ -141,7 +141,7 @@ static void empirereport_draw_cb(void *vptr)
                 }
                 sprintf(&buf[pos_space], " %s", game_str_re_environ);
             }
-            lbxfont_print_str_normal(85 + (f & 1) * 120, 16 + (f / 2) * 65 + i * 6, buf, UI_SCREEN_W);
+            lbxfont_print_str_normal(85 + (f & 1) * 120, 16 + (f / 2) * 65 + i * 6, buf);
         }
     }
 }
