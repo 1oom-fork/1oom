@@ -45,7 +45,7 @@ static void ui_starmap_draw_planetinfo_do(const struct game_s *g, player_id_t ap
             lbxfont_print_str_center(269, 41, game_str_sm__planets, UI_SCREEN_W);
         } else {
             const char *str = NULL;
-            lbxgfx_draw_frame(229, 27, ui_data.gfx.planets.planet[p->infogfx], UI_SCREEN_W);
+            lbxgfx_draw_frame(229, 27, ui_data.gfx.planets.planet[p->infogfx]);
             lbxfont_select(0, 0xd, 0, 0);
             lbxfont_print_str_right(305, 28, game_str_tbl_sm_pltype[p->type], UI_SCREEN_W);
             if (g->evn.have_plague && (g->evn.plague_planet_i == planet_i)) {
@@ -126,7 +126,7 @@ static void ui_starmap_draw_sliders_and_prod(struct starmap_data_s *d)
     int hmmx = 311;
     char buf[64];
 
-    lbxgfx_draw_frame(224, 5, ui_data.gfx.starmap.yourplnt, UI_SCREEN_W);
+    lbxgfx_draw_frame(224, 5, ui_data.gfx.starmap.yourplnt);
     lbxfont_select(2, 0xd, 0xe, 0);
     sprintf(buf, "%i \x02(%i)\x01", p->prod_after_maint, p->total_prod);
     lbxfont_print_str_right(hmmx, 72, buf, UI_SCREEN_W);
@@ -144,13 +144,13 @@ static void ui_starmap_draw_sliders_and_prod(struct starmap_data_s *d)
     lbxfont_select(2, 0xa, 0, 0);
     if (p->buildship == BUILDSHIP_STARGATE) {
         vgabuf_fill_rect(229, 141, 274, 166, 0);
-        lbxgfx_draw_frame(229, 141, ui_data.gfx.starmap.stargate, UI_SCREEN_W);
+        lbxgfx_draw_frame(229, 141, ui_data.gfx.starmap.stargate);
         lbxfont_print_str_center(251, 169, game_str_sm_stargate, UI_SCREEN_W);
     } else {
         shipdesign_t *sd = &g->srd[d->api].design[p->buildship];
         uint8_t *gfx = ui_data.gfx.ships[sd->look];
         lbxgfx_set_frame_0(gfx);
-        lbxgfx_draw_frame(236, 142, gfx, UI_SCREEN_W);
+        lbxgfx_draw_frame(236, 142, gfx);
         lbxfont_print_str_center(252, 169, sd->name, UI_SCREEN_W);
     }
 
@@ -447,7 +447,7 @@ void ui_starmap_draw_basic(struct starmap_data_s *d)
     ui_starmap_draw_button_text(d, true);
     vgabuf_fill_rect(224, 5, 314, 178, 0);
     if (!PLANET_FOCUS_IS_EXPLORED(g, d->api)) {
-        lbxgfx_draw_frame(224, 5, ui_data.gfx.starmap.unexplor, UI_SCREEN_W);
+        lbxgfx_draw_frame(224, 5, ui_data.gfx.starmap.unexplor);
         lbxfont_select_set_12_4(5, 1, 0, 0);
         lbxfont_print_str_split(232, 74, 76, game_str_tbl_sm_stinfo[p->star_type], 2, UI_SCREEN_W, UI_SCREEN_H);
         ui_starmap_draw_range_parsec(d, 165);
@@ -458,17 +458,17 @@ void ui_starmap_draw_basic(struct starmap_data_s *d)
             owner = g->seen[d->api][pi].owner;
         }
         if (owner == PLAYER_NONE) {
-            lbxgfx_draw_frame(224, 5, ui_data.gfx.starmap.no_colny, UI_SCREEN_W);
+            lbxgfx_draw_frame(224, 5, ui_data.gfx.starmap.no_colny);
             ui_data.gfx.colonies.current = ui_data.gfx.colonies.d[p->type * 2];
-            lbxgfx_draw_frame(227, 73, ui_data.gfx.colonies.current, UI_SCREEN_W);
+            lbxgfx_draw_frame(227, 73, ui_data.gfx.colonies.current);
             vgabuf_draw_box1(227, 73, 310, 174, 0, 0);
             ui_starmap_draw_range_parsec(d, 80);
         } else if ((owner != d->api) || (p->unrest == PLANET_UNREST_REBELLION)) {
             char buf[64];
             int pop, bases, range_y;
-            lbxgfx_draw_frame(224, 5, ui_data.gfx.starmap.en_colny, UI_SCREEN_W);
+            lbxgfx_draw_frame(224, 5, ui_data.gfx.starmap.en_colny);
             ui_data.gfx.colonies.current = ui_data.gfx.colonies.d[p->type * 2 + 1];
-            lbxgfx_draw_frame(227, 73, ui_data.gfx.colonies.current, UI_SCREEN_W);
+            lbxgfx_draw_frame(227, 73, ui_data.gfx.colonies.current);
             vgabuf_draw_box1(227, 73, 310, 174, 0, 0);
             sprintf(buf, "%s %s", game_str_tbl_race[g->eto[owner].race], game_str_sm_colony);
             if (BOOLVEC_IS1(p->within_srange, d->api)) {
@@ -501,9 +501,9 @@ void ui_starmap_draw_basic(struct starmap_data_s *d)
             } else {
                 lbxgfx_set_frame(ui_data.gfx.starmap.col_butt_trans, 1);
             }
-            lbxgfx_draw_frame(282, 140, ui_data.gfx.starmap.col_butt_ship, UI_SCREEN_W);
-            lbxgfx_draw_frame(282, 152, ui_data.gfx.starmap.col_butt_reloc, UI_SCREEN_W);
-            lbxgfx_draw_frame(282, 164, ui_data.gfx.starmap.col_butt_trans, UI_SCREEN_W);
+            lbxgfx_draw_frame(282, 140, ui_data.gfx.starmap.col_butt_ship);
+            lbxgfx_draw_frame(282, 152, ui_data.gfx.starmap.col_butt_reloc);
+            lbxgfx_draw_frame(282, 164, ui_data.gfx.starmap.col_butt_trans);
         }
     }
     ui_starmap_draw_planetinfo(g, d->api, g->planet_focus_i[d->api]);
@@ -547,7 +547,7 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
         d->anim_delay = 0;
     }
     ui_starmap_draw_clear();
-    lbxgfx_draw_frame(0, 0, ui_data.gfx.starmap.mainview, UI_SCREEN_W);
+    lbxgfx_draw_frame(0, 0, ui_data.gfx.starmap.mainview);
     ui_starmap_set_limits();
     {
         int x0, y0, x1, y1;

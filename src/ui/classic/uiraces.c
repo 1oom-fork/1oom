@@ -62,7 +62,7 @@ static void races_draw_cb(void *vptr)
     }
 
     vgabuf_fill(0x5b);
-    lbxgfx_draw_frame(0, 0, d->gfx, UI_SCREEN_W);
+    lbxgfx_draw_frame(0, 0, d->gfx);
 
     lbxfont_select_set_12_1(5, 0xa, 0, 0);
     for (int i = d->num; i < (PLAYER_NUM - 1); ++i) {
@@ -124,7 +124,7 @@ static void races_draw_cb(void *vptr)
         pi = d->tbl_ei[i];
         x = (i / 3) * 157;
         y = (i % 3) * 64;
-        lbxgfx_draw_frame(x + 9, y + 10, ui_data.gfx.planets.race[g->eto[pi].race], UI_SCREEN_W);
+        lbxgfx_draw_frame(x + 9, y + 10, ui_data.gfx.planets.race[g->eto[pi].race]);
         if (d->tbl_hmm7[i] != 0) {
             lbxfont_select_set_12_4(0, 0, 0, 0);
             lbxfont_print_str_center(x + 29, y + 23, game_str_ra_diplo, UI_SCREEN_W);
@@ -203,30 +203,30 @@ static void races_draw_cb(void *vptr)
             SETRANGE(rel, -50, 50);
             lbxfont_select_set_12_4(0, 6, 0, 0);
             lbxfont_select(2, 0xd, 0, 0);
-            lbxgfx_draw_frame(x + 107 + rel, y + 34, ui_data.gfx.screens.race_pnt, UI_SCREEN_W);
+            lbxgfx_draw_frame(x + 107 + rel, y + 34, ui_data.gfx.screens.race_pnt);
             rel = e->relation1[pi] / 12 + 8;
             SETRANGE(rel, 0, 16);
             lbxfont_print_str_center(x + 107, y + 27, game_str_tbl_ra_relat[rel], UI_SCREEN_W);
         }
     }
     lbxgfx_set_new_frame(ui_data.gfx.screens.races_bu.status, 1);
-    lbxgfx_draw_frame(165, 180, ui_data.gfx.screens.races_bu.status, UI_SCREEN_W);
+    lbxgfx_draw_frame(165, 180, ui_data.gfx.screens.races_bu.status);
     lbxgfx_set_new_frame(ui_data.gfx.screens.races_bu.report, 1);
-    lbxgfx_draw_frame(205, 180, ui_data.gfx.screens.races_bu.report, UI_SCREEN_W);
+    lbxgfx_draw_frame(205, 180, ui_data.gfx.screens.races_bu.report);
     lbxgfx_set_new_frame(ui_data.gfx.screens.races_bu.audience, 1);
-    lbxgfx_draw_frame(245, 180, ui_data.gfx.screens.races_bu.audience, UI_SCREEN_W);
+    lbxgfx_draw_frame(245, 180, ui_data.gfx.screens.races_bu.audience);
     lbxgfx_set_new_frame(ui_data.gfx.screens.races_bu.ok, 1);
-    lbxgfx_draw_frame(290, 180, ui_data.gfx.screens.races_bu.ok, UI_SCREEN_W);
+    lbxgfx_draw_frame(290, 180, ui_data.gfx.screens.races_bu.ok);
     for (int i = 0; i < d->num; ++i) {
         int x, y;
         x = (i / 3) * 157;
         y = (i % 3) * 64;
         lbxgfx_set_new_frame(ui_data.gfx.screens.races_bu.hiding, (d->tbl_spymode[i] == SPYMODE_HIDE) ? 1 : 0);
-        lbxgfx_draw_frame(x + 59, y + 55, ui_data.gfx.screens.races_bu.hiding, UI_SCREEN_W);
+        lbxgfx_draw_frame(x + 59, y + 55, ui_data.gfx.screens.races_bu.hiding);
         lbxgfx_set_new_frame(ui_data.gfx.screens.races_bu.sabotage, (d->tbl_spymode[i] == SPYMODE_SABOTAGE) ? 1 : 0);
-        lbxgfx_draw_frame(x + 77, y + 55, ui_data.gfx.screens.races_bu.sabotage, UI_SCREEN_W);
+        lbxgfx_draw_frame(x + 77, y + 55, ui_data.gfx.screens.races_bu.sabotage);
         lbxgfx_set_new_frame(ui_data.gfx.screens.races_bu.espionage, (d->tbl_spymode[i] == SPYMODE_ESPIONAGE) ? 1 : 0);
-        lbxgfx_draw_frame(x + 114, y + 55, ui_data.gfx.screens.races_bu.espionage, UI_SCREEN_W);
+        lbxgfx_draw_frame(x + 114, y + 55, ui_data.gfx.screens.races_bu.espionage);
     }
 }
 

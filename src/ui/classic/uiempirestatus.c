@@ -48,7 +48,7 @@ static void empirestatus_draw_cb(void *vptr)
     int tbl_sum[PLAYER_NUM];
 
     vgabuf_fill(0x3a);
-    lbxgfx_draw_frame(0, 0, d->gfx, UI_SCREEN_W);
+    lbxgfx_draw_frame(0, 0, d->gfx);
 
     lbxfont_select_set_12_4(4, 0xf, 0, 0);
     lbxfont_print_str_center(160, 9, game_str_ra_stats, UI_SCREEN_W);

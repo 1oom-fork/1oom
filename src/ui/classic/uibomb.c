@@ -68,7 +68,7 @@ static void bomb_draw_anim(uint8_t *gfx, bool anim)
     int frame = anim ? lbxgfx_get_frame(gfx) : 0;
     lbxgfx_set_frame_0(gfx);
     for (int f = 0; f <= frame; ++f) {
-        lbxgfx_draw_frame(227, 58, gfx, UI_SCREEN_W);
+        lbxgfx_draw_frame(227, 58, gfx);
     }
     switch (frame) {
         case 3:
@@ -94,7 +94,7 @@ static void bomb_ask_draw_cb(void *vptr)
     char buf[0x80];
     vgabuf_copy_back_from_page2();
     vgabuf_fill_rect(222, 4, 314, 179, 0);
-    lbxgfx_draw_frame(222, 4, d->gfx_bombback, UI_SCREEN_W);
+    lbxgfx_draw_frame(222, 4, d->gfx_bombback);
     ui_starmap_draw_planetinfo_2(g, d->api, d->api, d->planet);
     bomb_draw_anim(d->gfx_bombard, false);
     lbxfont_select_set_12_4(5, tbl_banner_fontparam[e->banner], 0, 0);
@@ -128,7 +128,7 @@ static void bomb_show_draw_cb(void *vptr)
     char buf[0x80];
     vgabuf_copy_back_from_page2();
     vgabuf_fill_rect(222, 4, 314, 179, 0);
-    lbxgfx_draw_frame(222, 4, d->gfx_explobac, UI_SCREEN_W);
+    lbxgfx_draw_frame(222, 4, d->gfx_explobac);
     ui_starmap_draw_planetinfo_2(g, d->api, d->api, d->planet);
     bomb_draw_anim(d->gfx_bombard, true);
     /*d615*/
