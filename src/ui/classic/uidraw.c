@@ -689,9 +689,9 @@ void ui_draw_textbox_2str(const char *str1, const char *str2, int y0)
     vgabuf_draw_line(x1 + 1, y0 + 1, x1 + 1, y1, 0);
     if (*str1 != '\0') {
         lbxfont_select_subcolors_13not1();
-        lbxfont_print_str_center(x0 + w / 2, y0 + 4, str1, UI_SCREEN_W);
+        lbxfont_print_str_center(x0 + w / 2, y0 + 4, str1);
         lbxfont_select_subcolors_0();
         y0 += lbxfont_get_height() + 5;
     }
-    lbxfont_print_str_split(x0 + 4, y0 + 4, w - 8, str2, 2, UI_SCREEN_W, UI_SCREEN_H);
+    lbxfont_print_str_split(x0 + 4, y0 + 4, w - 8, str2, 2);
 }

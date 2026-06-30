@@ -85,7 +85,7 @@ static void ui_news_cb1(void *vptr)
     lbxfont_select(3, 1, 0, 0);
     vgabuf_fill_rect(38, 145, 284, 190, 0);
     lbxfont_set_space_w(2);
-    lbxfont_print_str_split(38, 145, 245, d->str, 3, UI_SCREEN_W, UI_SCREEN_H);
+    lbxfont_print_str_split(38, 145, 245, d->str, 3);
     if (d->ns->type == GAME_NEWS_STATS) {
         lbxfont_select(3, 1, 0, 0);
         for (int i = 0; i < d->ns->statsnum; ++i) {
@@ -94,8 +94,8 @@ static void ui_news_cb1(void *vptr)
             x = 48 + (i / 3) * 122;
             y = 157 + (i % 3) * 10;
             sprintf(buf, "%i.", i + 1);
-            lbxfont_print_str_right(x, y, buf, UI_SCREEN_W);
-            lbxfont_print_str_normal(x + 7, y, d->ns->stats[i], UI_SCREEN_W);
+            lbxfont_print_str_right(x, y, buf);
+            lbxfont_print_str_normal(x + 7, y, d->ns->stats[i]);
         }
     }
     ++d->frame;
