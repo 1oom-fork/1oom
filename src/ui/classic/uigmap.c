@@ -108,8 +108,8 @@ static void gmap_draw_cb(void *vptr)
 
     ui_gmap_set_limits();
     ui_gmap_draw_clear();
-    lbxgfx_draw_frame(0, 0, ui_data.gfx.starmap.sky, UI_SCREEN_W);
-    lbxgfx_draw_frame(0, 0, d->gfx_mapview, UI_SCREEN_W);
+    lbxgfx_draw_frame(0, 0, ui_data.gfx.starmap.sky);
+    lbxgfx_draw_frame(0, 0, d->gfx_mapview);
 
     for (int i = 0; i < g->nebula_num; ++i) {
         int x, y;
@@ -184,11 +184,11 @@ static void gmap_draw_cb(void *vptr)
             } else {
                 lbxgfx_set_frame_0(gfx);
             }
-            lbxgfx_draw_frame(x, y, gfx, UI_SCREEN_W);
+            lbxgfx_draw_frame(x, y, gfx);
         } else {
             gfx = ui_data.gfx.starmap.smallstr;
             lbxgfx_set_frame_0(gfx);
-            lbxgfx_draw_frame(x + 1, y + 1, gfx, UI_SCREEN_W);
+            lbxgfx_draw_frame(x + 1, y + 1, gfx);
         }
     }
 
@@ -202,7 +202,7 @@ static void gmap_draw_cb(void *vptr)
         owner = (BOOLVEC_IS1(p->within_srange, d->api)) ? p->owner : g->seen[d->api][i].owner;
         if (owner != PLAYER_NONE) {
             gfx = ui_data.gfx.starmap.smalflag[g->eto[owner].banner];
-            lbxgfx_draw_frame(x + 2, y - 3, gfx, UI_SCREEN_W);
+            lbxgfx_draw_frame(x + 2, y - 3, gfx);
         }
         switch (d->mode) {
             case 1:
@@ -239,7 +239,7 @@ static void gmap_draw_cb(void *vptr)
             for (int i = 0; i < havehomenum; ++i) {
                 empiretechorbit_t *e;
                 e = &(g->eto[tbl_havehome[i]]);
-                lbxgfx_draw_frame(245, 105 + 10 * i, ui_data.gfx.starmap.smalflag[e->banner], UI_SCREEN_W);
+                lbxgfx_draw_frame(245, 105 + 10 * i, ui_data.gfx.starmap.smalflag[e->banner]);
                 lbxfont_print_str_normal(260, 105 + 10 * i, game_str_tbl_race[e->race], UI_SCREEN_W);
             }
             break;
@@ -324,7 +324,7 @@ static void gmap_draw_cb(void *vptr)
         int x, y;
         x = (ui_data.starmap.x * 224) / g->galaxy_maxx + 7;
         y = (ui_data.starmap.y * 185) / g->galaxy_maxy + 7;
-        lbxgfx_draw_frame(x, y, ui_data.gfx.starmap.bmap, UI_SCREEN_W);
+        lbxgfx_draw_frame(x, y, ui_data.gfx.starmap.bmap);
     }
 }
 
