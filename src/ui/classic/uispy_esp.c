@@ -52,7 +52,7 @@ static void steal_draw_cb(void *vptr)
 
     vgabuf_copy_back_from_page3();
     ui_gmap_basic_draw_frame(d->gmap, d->spy);
-    lbxgfx_draw_frame(6, 24, d->gfx_espionag, UI_SCREEN_W);
+    lbxgfx_draw_frame(6, 24, d->gfx_espionag);
     {
         char rbuf[0x20], *p, c;
         bool usean = false;
@@ -73,7 +73,7 @@ static void steal_draw_cb(void *vptr)
     lbxfont_select_set_12_1(0, 8, 0, 0);
     lbxfont_print_str_center(118, 30, buf, UI_SCREEN_W);
     lbxfont_print_str_normal(23, 83, game_str_es_youresp3, UI_SCREEN_W);
-    lbxgfx_draw_frame(102, 43, ui_data.gfx.planets.race[e->race], UI_SCREEN_W);
+    lbxgfx_draw_frame(102, 43, ui_data.gfx.planets.race[e->race]);
 
     for (int i = 0; i < TECH_FIELD_NUM; ++i) {
         if (d->flags_field & (1 << i)) {
@@ -118,7 +118,7 @@ static void stolen_draw_cb(void *vptr)
     vgabuf_copy_back_from_page2();
     ui_gmap_basic_draw_frame(d->gmap, d->api);
     vgabuf_fill_rect(31, 62, 202, 103, 0x36);
-    lbxgfx_draw_frame(31, 62, d->gfx, UI_SCREEN_W);
+    lbxgfx_draw_frame(31, 62, d->gfx);
     sprintf(buf, "%s %s", game_str_tbl_race[e->race], game_str_es_thesp1);
     lbxfont_select_set_12_1(5, tbl_banner_fontparam[e->banner], 0, 0);
     lbxfont_print_str_center(116, 70, buf, UI_SCREEN_W);

@@ -88,7 +88,7 @@ static void sabotage_draw_cb(void *vptr)
     int pop, bases, fact;
     vgabuf_copy_back_from_page2();
     vgabuf_fill_rect(222, 4, 314, 179, 0);
-    lbxgfx_draw_frame(222, 4, d->gfx_sabobac2, UI_SCREEN_W);
+    lbxgfx_draw_frame(222, 4, d->gfx_sabobac2);
     ui_starmap_draw_planetinfo_2(g, d->api, d->target, d->planet);
     vgabuf_limits_set(228, 110, 309, 143);
     lbxgfx_draw_frame_offs(228, 70, d->gfx_colony, 228, 110, 309, 143, UI_SCREEN_W);
@@ -132,7 +132,7 @@ static void sabotage_draw_cb(void *vptr)
             int x, y;
             x = (p->x * 215) / g->galaxy_maxx + 5 + 3;
             y = (p->y * 171) / g->galaxy_maxy + 5 - 2;
-            lbxgfx_draw_frame(x, y, ui_data.gfx.starmap.smalflag[e->banner], UI_SCREEN_W);
+            lbxgfx_draw_frame(x, y, ui_data.gfx.starmap.smalflag[e->banner]);
         }
     }
 }
@@ -142,7 +142,7 @@ static void sabotage_draw_anim(uint8_t *gfx, bool anim, int soundframe)
     int frame = anim ? lbxgfx_get_frame(gfx) : 0;
     lbxgfx_set_frame_0(gfx);
     for (int f = 0; f <= frame; ++f) {
-        lbxgfx_draw_frame(227, 73, gfx, UI_SCREEN_W);
+        lbxgfx_draw_frame(227, 73, gfx);
     }
     if (frame == soundframe) {
         ui_sound_play_sfx(0x11);
@@ -159,8 +159,8 @@ static void sabotage_done_draw_cb(void *vptr)
     char buf[0x80];
     vgabuf_copy_back_from_page2();
     vgabuf_fill_rect(222, 4, 314, 179, 0);
-    lbxgfx_draw_frame(222, 4, d->gfx_saboback, UI_SCREEN_W);
-    lbxgfx_draw_frame(222, 159, d->gfx_contback, UI_SCREEN_W);
+    lbxgfx_draw_frame(222, 4, d->gfx_saboback);
+    lbxgfx_draw_frame(222, 159, d->gfx_contback);
     vgabuf_limits_set(228, 110, 309, 158);
     lbxgfx_draw_frame_offs(228, 70, d->gfx_colony, 228, 110, 309, 158, UI_SCREEN_W);
     switch (d->act) {
@@ -229,11 +229,11 @@ static void sabotage_done_draw_cb(void *vptr)
     ui_gmap_basic_draw_frame(d->gmap, d->api);
     ui_gmap_draw_planet_border(g, d->planet);
     lbxgfx_set_new_frame(d->gfx_contbutt, 1);
-    lbxgfx_draw_frame(227, 163, d->gfx_contbutt, UI_SCREEN_W);
+    lbxgfx_draw_frame(227, 163, d->gfx_contbutt);
     if (d->other2 != PLAYER_NONE) {
         vgabuf_fill_rect(31, 62, 202, 125, 0xbb);
         vgabuf_fill_rect(37, 68, 196, 91, 0xba);
-        lbxgfx_draw_frame(31, 62, d->gfx_framing, UI_SCREEN_W);
+        lbxgfx_draw_frame(31, 62, d->gfx_framing);
         vgabuf_fill_rect(50, 106, 110, 120, 0x00);
         vgabuf_fill_rect(51, 107, 109, 119, tbl_banner_color2[g->eto[d->other1].banner]);
         vgabuf_fill_rect(122, 106, 183, 120, 0x00);

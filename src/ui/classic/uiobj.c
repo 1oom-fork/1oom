@@ -181,17 +181,17 @@ static void uiobj_handle_t03_cond(uiobj_t *p, bool cond)
 {
     if (cond) {
         lbxgfx_set_frame_0(p->t0.lbxdata);
-        lbxgfx_draw_frame(p->x0, p->y0, p->t0.lbxdata, UI_SCREEN_W);
+        lbxgfx_draw_frame(p->x0, p->y0, p->t0.lbxdata);
         lbxfont_select(p->t0.fontnum, p->t0.fonta2, 0, 0);
         lbxfont_print_str_center(smidx(p), smidyhmm2(p), p->t0.str, UI_SCREEN_W);
     } else {
         if (p->t0.indep == 0) {
             lbxgfx_set_frame_0(p->t0.lbxdata);
-            lbxgfx_draw_frame(p->x0, p->y0, p->t0.lbxdata, UI_SCREEN_W);
+            lbxgfx_draw_frame(p->x0, p->y0, p->t0.lbxdata);
         } else {
             lbxgfx_set_new_frame(p->t0.lbxdata, 1);
         }
-        lbxgfx_draw_frame(p->x0, p->y0, p->t0.lbxdata, UI_SCREEN_W);
+        lbxgfx_draw_frame(p->x0, p->y0, p->t0.lbxdata);
         lbxfont_select(p->t0.fontnum, p->t0.fonta2, 0, 0);
         lbxfont_print_str_center(smidx(p) + uiobj_hmm3_xoff, smidyhmm2(p) + uiobj_hmm3_yoff, p->t0.str, UI_SCREEN_W);
     }
@@ -470,7 +470,7 @@ static void uiobj_handle_ta_sub1(int x0, int y0, int x1, int y1, uint16_t subtyp
             p0v = 0;
             /* fall through */
         case 0xf:
-            lbxgfx_apply_colortable(x0, y0, x1, y1, p0v, UI_SCREEN_W);
+            lbxgfx_apply_colortable(x0, y0, x1, y1, p0v);
             break;
         case 7:
             ui_draw_box_fill(x0, y0, x1, y1, p0p, p0v, p1, p2, p3);
