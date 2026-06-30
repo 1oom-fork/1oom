@@ -330,9 +330,9 @@ bool ui_new_game(struct game_new_options_s *newopts)
 
     ui_palette_fadeout_19_19_1();
     ui_draw_erase_buf();
-    hw_video_draw_buf();
+    vgabuf_flip();
     ui_draw_erase_buf();
-    hw_video_draw_buf();
+    vgabuf_flip();
 
     return flag_ok;
 }

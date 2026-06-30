@@ -12,6 +12,7 @@
 #include "rnd.h"
 #include "types.h"
 #include "util_math.h"
+#include "vgabuf.h"
 
 /* -------------------------------------------------------------------------- */
 
@@ -184,7 +185,7 @@ static void gfx_aux_draw_frame_from_limit_do(int x, int y, int w, int h, int xsk
 {
     uint8_t *p, *q;
     uint16_t pitch_aux = aux->w;
-    p = hw_video_get_buf() + y * pitch_hw + x;
+    p = vgabuf_get() + VGABUF_OFFSET(x, y);
     q = aux->data + yskip * pitch_aux + xskip;
 
     for (int y = 0; y < h; ++y) {
@@ -194,7 +195,7 @@ static void gfx_aux_draw_frame_from_limit_do(int x, int y, int w, int h, int xsk
                 p[x] = b;
             }
         }
-        p += pitch_hw;
+        p += VGABUF_PITCH;
         q += pitch_aux;
     }
 }
@@ -241,8 +242,8 @@ static void gfx_aux_draw_rotate_sub1(struct rotate_param_s *r, const uint8_t *gf
     int destxskip = r->destxskip, edest = 0x80, ex1 = 0x80, ex2 = 0x80, hx100 = r->h * 0x100, w = r->w, di, si;
     int sw = r->srcw, sh = r->srch;
     uint8_t *dest;
-    dest = hw_video_get_buf();
-    di = r->desty * pitch_hw + r->destx;
+    dest = vgabuf_get();
+    di = VGABUF_OFFSET(r->destx, r->desty);
     si = r->srcstart;
 LOG_DEBUG((DEBUGLEVEL_ROTATE, "r: hf:%i S:%i d:%i,%i,0x%x  s:%i y:%i,%i,0x%x,%i,0x%x  x:%i,%i,0x%x,%i,0x%x\n", r->hfrac, r->destxskip, r->destxstep, r->destxadd, r->destxfrac, r->srcstart, r->srcystep, r->srcyadd1, r->srcyfrac1, r->srcyadd2, r->srcyfrac2, r->srcxstep, r->srcxadd1, r->srcxfrac1, r->srcxadd2, r->srcxfrac2));
     while (1) {
@@ -258,7 +259,7 @@ LOG_DEBUG((DEBUGLEVEL_ROTATE, "r: hf:%i S:%i d:%i,%i,0x%x  s:%i y:%i,%i,0x%x,%i,
                 if ((b != 0) && (i >= r->destmin) && (i < r->destmax)) {
                     dest[i] = b;
                 }
-                i += pitch_hw;
+                i += VGABUF_PITCH;
                 j += r->srcystep;
                 if ((esy1 += r->srcyfrac1) >= 0x100) {
                     esy1 &= 0xff;
@@ -323,8 +324,8 @@ static void gfx_aux_draw_frame_from_rotate_limit_do(int x0, int y0, int x1, int 
     memset(&r, 0, sizeof(r));
     r.srcw = aux->w;
     r.srch = aux->h;
-    r.destmin = lx0 * pitch_hw;
-    r.destmax = (lx1 + 1) * pitch_hw;
+    r.destmin = lx0 * VGABUF_PITCH;
+    r.destmax = (lx1 + 1) * VGABUF_PITCH;
     if (tx[0] == tx[1]) {
         if (ty[0] > ty[1]) {
             int t;
@@ -404,14 +405,14 @@ LOG_DEBUG((DEBUGLEVEL_ROTATE, "%s: case %i  y1:%i y2:%i -> %i\n", __func__, ti[0
         }
         r.h = 1;
         r.hfrac = ((v4a - r.h) << 8) / (r.w - 1);
-        r.destxadd = -pitch_hw;
+        r.destxadd = -VGABUF_PITCH;
         if (ty[1] < ty[2]) {
             r.destxfrac = ((ty[0] - ty[1]) << 8) / (tx[1] - tx[0]);
         } else {
             r.destxfrac = ((ty[0] - ty[2]) << 8) / (tx[2] - tx[0]);
         }
         if (r.destxfrac >= 0x100) {
-            r.destxstep = (r.destxfrac / 0x100) * -pitch_hw;
+            r.destxstep = (r.destxfrac / 0x100) * -VGABUF_PITCH;
             r.destxfrac = r.destxfrac % 0x100;
         } else {
             r.destxstep = 0;
@@ -512,10 +513,10 @@ LOG_DEBUG((DEBUGLEVEL_ROTATE, "%s: case %i  y1:%i y2:%i -> %i\n", __func__, ti[0
         r.hfrac = 0;
         if (ty[1] < ty[2]) {
             r.desty = ty[1];
-            r.destxadd = pitch_hw;
+            r.destxadd = VGABUF_PITCH;
             r.destxfrac = ((ty[3] - ty[1]) << 8) / (tx[3] - tx[1]);
             if (r.destxfrac >= 0x100) {
-                r.destxstep = (r.destxfrac / 0x100) * pitch_hw;
+                r.destxstep = (r.destxfrac / 0x100) * VGABUF_PITCH;
                 r.destxfrac = r.destxfrac % 0x100;
             } else {
                 r.destxstep = 0;
@@ -596,10 +597,10 @@ LOG_DEBUG((DEBUGLEVEL_ROTATE, "%s: case %i  y1:%i y2:%i -> %i\n", __func__, ti[0
             r.desty = ty[3] - ((ty[3] - ty[1]) * (tx[3] - tx[2])) / (tx[3] - tx[1]);
         } else {
             r.desty = ty[2];
-            r.destxadd = pitch_hw;
+            r.destxadd = VGABUF_PITCH;
             r.destxfrac = ((ty[3] - ty[2]) << 8) / (tx[3] - tx[2]);
             if (r.destxfrac >= 0x100) {
-                r.destxstep = (r.destxfrac / 0x100) * pitch_hw;
+                r.destxstep = (r.destxfrac / 0x100) * VGABUF_PITCH;
                 r.destxfrac = r.destxfrac % 0x100;
             } else {
                 r.destxstep = 0;
@@ -899,7 +900,7 @@ void gfx_aux_draw_frame_to(uint8_t *data, struct gfx_aux_s *aux)
 void gfx_aux_draw_frame_from(int x, int y, struct gfx_aux_s *aux, uint16_t pitch)
 {
     uint8_t *p, *q;
-    p = hw_video_get_buf() + y * pitch + x;
+    p = vgabuf_get() + VGABUF_OFFSET(x, y);
     q = aux->data;
     for (int y = 0; y < aux->h; ++y) {
         for (int x = 0; x < aux->w; ++x) {
@@ -909,7 +910,7 @@ void gfx_aux_draw_frame_from(int x, int y, struct gfx_aux_s *aux, uint16_t pitch
                 p[x] = b;
             }
         }
-        p += pitch;
+        p += VGABUF_PITCH;
     }
 }
 
