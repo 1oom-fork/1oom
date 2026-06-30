@@ -159,7 +159,7 @@ static void ui_draw_line_limit_do(int x0, int y0, int x1, int y1, uint8_t color,
 
 void ui_draw_erase_buf(void)
 {
-    memset(hw_video_get_buf(), 0, UI_SCREEN_W * UI_SCREEN_H);
+    memset(vgabuf_get(), 0, VGABUF_SIZE);
 }
 
 void ui_draw_copy_buf(void)
@@ -180,23 +180,23 @@ void ui_draw_copy_buf(void)
 
 void ui_draw_color_buf(uint8_t color)
 {
-    memset(hw_video_get_buf(), color, UI_SCREEN_W * UI_SCREEN_H);
+    memset(vgabuf_get(), color, VGABUF_SIZE);
 }
 
 void ui_draw_pixel(int x, int y, uint8_t color)
 {
-    uint8_t *p = hw_video_get_buf();
-    p[y * UI_SCREEN_W + x] = color;
+    uint8_t *p = vgabuf_get();
+    p[VGABUF_OFFSET(x, y)] = color;
 }
 
 void ui_draw_filled_rect(int x0, int y0, int x1, int y1, uint8_t color)
 {
-    uint8_t *s = hw_video_get_buf();
+    uint8_t *s = vgabuf_get();
     if (x1 < x0) {
         return;
     }
     for (; y0 <= y1; ++y0) {
-        memset(&s[y0 * UI_SCREEN_W + x0], color, x1 - x0 + 1);
+        memset(&s[VGABUF_OFFSET(x0, y0)], color, x1 - x0 + 1);
     }
 }
 
@@ -214,10 +214,10 @@ void ui_draw_line1(int x0, int y0, int x1, int y1, uint8_t color)
         int dx, dy;
         dx = x1 - x0;
         dy = y1 - y0;
-        yinc = UI_SCREEN_W;
+        yinc = VGABUF_PITCH;
         if (dy < 0) {
             dy = -dy;
-            yinc = -UI_SCREEN_W;
+            yinc = -VGABUF_PITCH;
         }
         if (dx < dy) {
             numpixels = dy + 1;
@@ -235,7 +235,7 @@ void ui_draw_line1(int x0, int y0, int x1, int y1, uint8_t color)
     }
 
     {
-        uint8_t *p = hw_video_get_buf() + y0 * UI_SCREEN_W + x0;
+        uint8_t *p = vgabuf_get() + VGABUF_OFFSET(x0, y0);
         int xerr, yerr;
 
         xerr = 0x100 / 2;
@@ -271,10 +271,10 @@ void ui_draw_line_ctbl(int x0, int y0, int x1, int y1, const uint8_t *colortbl, 
         int dx, dy;
         dx = x1 - x0;
         dy = y1 - y0;
-        yinc = UI_SCREEN_W;
+        yinc = VGABUF_PITCH;
         if (dy < 0) {
             dy = -dy;
-            yinc = -UI_SCREEN_W;
+            yinc = -VGABUF_PITCH;
         }
         if (dx < dy) {
             numpixels = dy + 1;
@@ -292,7 +292,7 @@ void ui_draw_line_ctbl(int x0, int y0, int x1, int y1, const uint8_t *colortbl, 
     }
 
     {
-        uint8_t *p = hw_video_get_buf() + y0 * UI_SCREEN_W + x0;
+        uint8_t *p = vgabuf_get() + VGABUF_OFFSET(x0, y0);
         int xerr, yerr;
 
         xerr = 0x100 / 2;
@@ -365,10 +365,10 @@ void ui_draw_copy_line(int x0, int y0, int x1, int y1, bool flag_hmm)
         int dx, dy;
         dx = x1 - x0;
         dy = y1 - y0;
-        yinc = UI_SCREEN_W;
+        yinc = VGABUF_PITCH;
         if (dy < 0) {
             dy = -dy;
-            yinc = -UI_SCREEN_W;
+            yinc = -VGABUF_PITCH;
         }
         if (dx < dy) {
             numpixels = dy + 1;
@@ -392,8 +392,8 @@ void ui_draw_copy_line(int x0, int y0, int x1, int y1, bool flag_hmm)
     }
 
     {
-        uint8_t *q = hw_video_get_buf() + y0 * UI_SCREEN_W + x0;
-        uint8_t *p = hw_video_get_buf_front() + y0 * UI_SCREEN_W + x0;
+        uint8_t *q = vgabuf_get_back() + VGABUF_OFFSET(x0, y0);
+        uint8_t *p = vgabuf_get_front() + VGABUF_OFFSET(x0, y0);
         int xerr, yerr;
 
         xerr = 0x100 / 2;
@@ -419,7 +419,7 @@ void ui_draw_copy_line(int x0, int y0, int x1, int y1, bool flag_hmm)
 
 void ui_draw_box_fill(int x0, int y0, int x1, int y1, const uint8_t *colorptr, uint8_t color0, uint16_t colorhalf, uint16_t ac, uint8_t ae)
 {
-    uint8_t *s = hw_video_get_buf() + y0 * UI_SCREEN_W + x0;
+    uint8_t *s = vgabuf_get() + VGABUF_OFFSET(x0, y0);
     uint16_t xstep, ystep, vx, vy, h, w, colornum;
     colornum = colorhalf << 1;
     /*v12 = ae & 0xff;*/
@@ -441,7 +441,7 @@ void ui_draw_box_fill(int x0, int y0, int x1, int y1, const uint8_t *colorptr, u
                 c -= colornum;
             }
             *p = ui_draw_box_fill_tbl[c];
-            p += UI_SCREEN_W;
+            p += VGABUF_PITCH;
         }
     } while (--w);
 }
@@ -453,7 +453,7 @@ void ui_draw_text_overlay(int x, int y, const char *str)
 
 void ui_draw_hmm3(int x0, int y0, int x1, int y1, uint8_t color0, uint8_t color1, uint8_t ae)
 {
-    uint8_t *s = hw_video_get_buf() + y0 * UI_SCREEN_W;
+    uint8_t *s = vgabuf_get() + VGABUF_OFFSET(0, y0);
     uint8_t *p;
     uint16_t h;
 
@@ -465,7 +465,7 @@ void ui_draw_hmm3(int x0, int y0, int x1, int y1, uint8_t color0, uint8_t color1
             for (int x = x0; x <= x1; ++x) {
                 p[x] = color0;
             }
-            p += UI_SCREEN_W;
+            p += VGABUF_PITCH;
         }
     } else {
         const uint8_t vga_tbl_mask_x0[4] = { 0xf, 0xe, 0xc, 0x8 };
@@ -494,7 +494,7 @@ void ui_draw_hmm3(int x0, int y0, int x1, int y1, uint8_t color0, uint8_t color1
                 }
             }
             ++bl;
-            p += UI_SCREEN_W;
+            p += VGABUF_PITCH;
         }
 
         v6 = rnd_bitfiddle(v6);
@@ -517,7 +517,7 @@ void ui_draw_hmm3(int x0, int y0, int x1, int y1, uint8_t color0, uint8_t color1
                 }
             }
             ++bl;
-            p += UI_SCREEN_W;
+            p += VGABUF_PITCH;
         }
 
         v6 = rnd_bitfiddle(v6);
@@ -548,7 +548,7 @@ void ui_draw_hmm3(int x0, int y0, int x1, int y1, uint8_t color0, uint8_t color1
                 ++bl;
                 p += 4;
             }
-            p += UI_SCREEN_W - wp4 * 4;
+            p += VGABUF_PITCH - wp4 * 4;
             v6 = rnd_bitfiddle(v6);
         }
     }
