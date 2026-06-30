@@ -44,7 +44,7 @@ static void election_load_data(struct election_data_s *d)
         const int item[3] = { 0x17, 0, 0x16 };
         uint8_t *gfx;
         gfx = lbxfile_item_get(LBXFILE_COUNCIL, item[i], 0);
-        lbxgfx_draw_frame(0, 0, gfx, UI_SCREEN_W);
+        lbxgfx_draw_frame(0, 0, gfx);
         lbxfile_item_release(LBXFILE_COUNCIL, gfx);
     }
     vgabuf_copy_back_to_page2();
@@ -82,10 +82,10 @@ static void ui_election_draw_cb(void *vptr)
         int fn = lbxgfx_get_frame(gfx);
         lbxgfx_set_frame_0(gfx);
         for (int f = 0; f <= fn; ++f) {
-            lbxgfx_draw_frame(125, 0, gfx, UI_SCREEN_W);
+            lbxgfx_draw_frame(125, 0, gfx);
         }
     }
-    lbxgfx_draw_frame(0, 0, d->gfx_cylinder, UI_SCREEN_W);
+    lbxgfx_draw_frame(0, 0, d->gfx_cylinder);
     for (int i = 0; i < MIN(el->num, 4); ++i) {
         const int lx0[4] = { 50, 200, 0, 275 };
         const int lx1[4] = { 125, 275, 50, VGABUF_W - 1 };

@@ -45,7 +45,7 @@ static void ui_starmap_trans_draw_cb(void *vptr)
     x0 = (pf->x - ui_data.starmap.x) * 2 + 8;
     y0 = (pf->y - ui_data.starmap.y) * 2 + 8;
     if (pt->owner == d->api) {
-        lbxgfx_draw_frame(222, 80, ui_data.gfx.starmap.relocate, UI_SCREEN_W);
+        lbxgfx_draw_frame(222, 80, ui_data.gfx.starmap.relocate);
         if (pt->unrest == PLANET_UNREST_REBELLION) {
             ui_starmap_draw_hmm5();
         }
@@ -67,7 +67,7 @@ static void ui_starmap_trans_draw_cb(void *vptr)
     ui_starmap_set_limits();
     ui_starmap_draw_frame(x0, y0, ui_data.gfx.starmap.planbord);
     lbxgfx_set_new_frame(ui_data.gfx.starmap.reloc_bu_accept, 1);
-    lbxgfx_draw_frame(271, 163, ui_data.gfx.starmap.reloc_bu_accept, UI_SCREEN_W);
+    lbxgfx_draw_frame(271, 163, ui_data.gfx.starmap.reloc_bu_accept);
     if (d->tr.from != g->planet_focus_i[d->api]) {
         const uint8_t *ctbl;
         int x1, y1;
@@ -123,7 +123,7 @@ static void ui_starmap_trans_draw_cb(void *vptr)
             /*734e1*/
             lbxfont_select(0, 0, 0, 0);
             lbxfont_print_str_center(268, 149, buf, UI_SCREEN_W);
-            lbxgfx_draw_frame(230, 123, ui_data.gfx.starmap.tran_bar, UI_SCREEN_W);
+            lbxgfx_draw_frame(230, 123, ui_data.gfx.starmap.tran_bar);
             lbxfont_select(0, 6, 0, 0);
             if (pt->owner != PLAYER_NONE) {/* FIXME BUG MOO1 tests for == PLAYER_NONE, reading from eto offs 0xcc */
                 treaty = g->eto[d->api].treaty[pt->owner];

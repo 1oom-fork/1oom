@@ -49,9 +49,9 @@ static void empirereport_draw_cb(void *vptr)
     char buf[0x40];
 
     vgabuf_fill(0x3e);
-    lbxgfx_draw_frame(0, 0, d->gfx, UI_SCREEN_W);
+    lbxgfx_draw_frame(0, 0, d->gfx);
     vgabuf_fill_rect(21, 15, 60, 48, 0);
-    lbxgfx_draw_frame(21, 15, ui_data.gfx.planets.race[e->race], UI_SCREEN_W);
+    lbxgfx_draw_frame(21, 15, ui_data.gfx.planets.race[e->race]);
     vgabuf_fill_rect(17, 58, 64, 68, tbl_banner_color2[e->banner]);
     lbxfont_select(5, 6, 0, 0);
     lbxfont_print_str_center(40, 60, game_str_tbl_races[e->race], UI_SCREEN_W);

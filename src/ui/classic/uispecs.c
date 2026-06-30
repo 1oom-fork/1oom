@@ -59,7 +59,7 @@ static void specs_draw_cb1(void *vptr)
     shipresearch_t *srd = &(g->srd[d->api]);
 
     vgabuf_fill(0x3a);
-    lbxgfx_draw_frame(0, 0, ui_data.gfx.starmap.viewship, UI_SCREEN_W);
+    lbxgfx_draw_frame(0, 0, ui_data.gfx.starmap.viewship);
 
     for (int si = 0; si < e->shipdesigns_num; ++si) {
         shipparsed_t sp;
@@ -68,15 +68,15 @@ static void specs_draw_cb1(void *vptr)
         sd = &(srd->design[si]);
         game_parsed_from_design(&sp, sd, 1);
         y = (si << 5) + 5;
-        lbxgfx_draw_frame(44, y - 1, ui_data.gfx.starmap.viewshp2, UI_SCREEN_W);
+        lbxgfx_draw_frame(44, y - 1, ui_data.gfx.starmap.viewshp2);
         vgabuf_fill_rect(6, y, 37, y + 29, 0);
         ui_draw_stars(6, y + 1, si * 5, 32, &d->s);
         lbxgfx_set_frame_0(ui_data.gfx.ships[sp.look]);
         for (int f = 0; f <= d->frame; ++f) {
-            lbxgfx_draw_frame(6, y + 3, ui_data.gfx.ships[sp.look], UI_SCREEN_W);
+            lbxgfx_draw_frame(6, y + 3, ui_data.gfx.ships[sp.look]);
         }
         lbxgfx_set_new_frame(ui_data.gfx.starmap.viewshbt, 1);
-        lbxgfx_draw_frame(106, y + 1, ui_data.gfx.starmap.viewshbt, UI_SCREEN_W);
+        lbxgfx_draw_frame(106, y + 1, ui_data.gfx.starmap.viewshbt);
         lbxfont_select(0, 0xd, 0, 0);
         lbxfont_print_num_right(35, y + 22, srd->shipcount[si], UI_SCREEN_W);
         lbxfont_print_str_normal(49, y + 2, sp.name, UI_SCREEN_W);
@@ -128,8 +128,8 @@ static void specs_before_draw_cb(void *vptr)
 {
     struct specs_data_s *d = vptr;
     specs_draw_cb1(d);
-    lbxgfx_apply_colortable(0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, 0, UI_SCREEN_W);
-    lbxgfx_draw_frame(67, 73, ui_data.gfx.starmap.dismiss, UI_SCREEN_W);
+    lbxgfx_apply_colortable(VGABUF_RECT, 0);
+    lbxgfx_draw_frame(67, 73, ui_data.gfx.starmap.dismiss);
     lbxfont_select_set_12_1(3, 0, 0, 0);
     lbxfont_print_str_split(74, 83, 174, game_str_sp_before, 2, UI_SCREEN_W, UI_SCREEN_H);
 }
@@ -141,11 +141,11 @@ static void specs_mustscrap_draw_cb(void *vptr)
     shipresearch_t *srd = &(g->srd[d->api]);
     uint8_t *gfx = ui_data.gfx.ships[srd->design[d->scrapi].look];
     vgabuf_copy_back_from_page2();
-    lbxgfx_draw_frame(107, 50, ui_data.gfx.starmap.scrap, UI_SCREEN_W);
+    lbxgfx_draw_frame(107, 50, ui_data.gfx.starmap.scrap);
     lbxfont_select(2, 6, 0, 0);
     lbxfont_print_str_split(117, 58, 90, game_str_sp_only6, 2, UI_SCREEN_W, UI_SCREEN_H);
     lbxgfx_set_frame_0(gfx);
-    lbxgfx_draw_frame(114, 102, gfx, UI_SCREEN_W);
+    lbxgfx_draw_frame(114, 102, gfx);
     lbxfont_select(0, 0xd, 0, 0);
     lbxfont_print_num_right(143, 119, srd->shipcount[d->scrapi], UI_SCREEN_W);
     lbxfont_select(0, 0, 0, 0);
@@ -204,7 +204,7 @@ void ui_specs_mustscrap(struct game_s *g, player_id_t active_player, int scrapi)
     uiobj_table_clear();
 
     ui_draw_copy_buf();
-    lbxgfx_apply_colortable(0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, 0, UI_SCREEN_W);
+    lbxgfx_apply_colortable(VGABUF_RECT, 0);
     vgabuf_copy_back_to_page2();
 
     while (!flag_done) {
