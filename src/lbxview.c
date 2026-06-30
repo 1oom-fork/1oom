@@ -131,7 +131,7 @@ static void drawscreen_outlbx(void)
         }
     }
     lbxfont_select(5, 1, 0, 0);
-    lbxfont_print_str_normal(0, 300, "Loading Master of Orion...", 320);
+    lbxfont_print_str_normal(0, 300, "Loading Master of Orion...");
     sprintf(linebuf, "key 0x%x %c", cur_key, cur_key & 0xff);
     drawstr(0, 320, linebuf, textcolor, 0);
 }

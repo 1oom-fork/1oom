@@ -174,7 +174,7 @@ static void ui_audience_draw_cb1(void *vptr)
     if ((au->mode >= 0) && (au->mode <= 2)) {
         lbxfont_select(3, 2, 0, 0);
         lbxfont_set_44_10_plus(1);
-        lbxfont_print_str_split(38, 140, 245, au->buf, 0, UI_SCREEN_W, UI_SCREEN_H);
+        lbxfont_print_str_split(38, 140, 245, au->buf, 0);
     }
     /*d->delay2 = (d->delay2 + 1) % 6;*/
 }
@@ -193,7 +193,7 @@ static void ui_audience_draw_cb2(void *vptr)
     if (strh > 39) {
         lbxfont_set_44_10_plus(0);
     }
-    lbxfont_print_str_split(38, 140, 245, au->buf, 0, UI_SCREEN_W, UI_SCREEN_H);
+    lbxfont_print_str_split(38, 140, 245, au->buf, 0);
     /*d->delay2 = (d->delay2 + 1) % 6;*/
 }
 
@@ -206,7 +206,7 @@ static void ui_audience_draw_cb3(void *vptr)
     lbxgfx_draw_frame(0, 0, d->gfx_border);
     lbxfont_select(3, 2, 1, 0);
     lbxfont_set_44_10_plus(1);
-    lbxfont_print_str_split(38, 140, 245, au->buf, 0, UI_SCREEN_W, UI_SCREEN_H);
+    lbxfont_print_str_split(38, 140, 245, au->buf, 0);
     /*d->delay2 = (d->delay2 + 1) % 6;*/
 }
 
@@ -224,7 +224,7 @@ static void ui_audience_draw_cb4(void *vptr)    /* FIXME combine with cb3 and/or
     if (strh > 39) {
         lbxfont_set_44_10_plus(0);
     }
-    lbxfont_print_str_split(38, 136, 245, au->buf, 0, UI_SCREEN_W, UI_SCREEN_H);
+    lbxfont_print_str_split(38, 136, 245, au->buf, 0);
     /*d->delay2 = (d->delay2 + 1) % 6;*/
 }
 
