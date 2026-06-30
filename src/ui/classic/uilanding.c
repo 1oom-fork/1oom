@@ -52,12 +52,12 @@ static void landing_draw_cb1(void *vptr)
         vgabuf_draw_box1(115, 81, 204, 109, 0x34, 0x34);
         vgabuf_draw_box1(121, 95, 195, 106, 0x34, 0x34);
         lbxfont_select(5, 0xf, 0, 0);
-        lbxfont_print_str_normal(124, 84, game_str_la_colony, UI_SCREEN_W);
+        lbxfont_print_str_normal(124, 84, game_str_la_colony);
         /*uiobj_handle_ta_sub1(120, 80, 180, 90, 0); does nothing */
     }
     sprintf(buf, "%s %i %s %s%s", game_str_la_inyear, g->year + YEAR_BASE, game_str_la_the, game_str_tbl_race[g->eto[d->api].race], game_str_la_formnew);
     lbxfont_select_set_12_4(4, 0x5, 0, 0);
-    lbxfont_print_str_center(160, 5, buf, UI_SCREEN_W);
+    lbxfont_print_str_center(160, 5, buf);
     if (++d->frame == (0x41 + 100)) {
         d->frame = 0x41;
     }

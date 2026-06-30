@@ -94,11 +94,11 @@ static void sabotage_draw_cb(void *vptr)
     lbxgfx_draw_frame_offs(228, 70, d->gfx_colony, 228, 110, 309, 143, UI_SCREEN_W);
     vgabuf_fill_rect(228, 58, 309, 68, tbl_banner_color2[e->banner]);
     lbxfont_select(5, 6, 0, 0);
-    lbxfont_print_str_center(269, 60, game_str_tbl_races[e->race], UI_SCREEN_W);
+    lbxfont_print_str_center(269, 60, game_str_tbl_races[e->race]);
     vgabuf_fill_rect(227, 73, 310, 105, 0);
     vgabuf_fill_rect(228, 74, 309, 104, 7);
     lbxfont_select_set_12_1(5, 0, 0, 0);
-    lbxfont_print_str_split(228, 79, 80, game_str_sb_choose, 2, UI_SCREEN_W, UI_SCREEN_H);
+    lbxfont_print_str_split(228, 79, 80, game_str_sb_choose, 2);
     /*game_update_visibility();*/
     ui_gmap_basic_draw_frame(d->gmap, d->api);
     lbxfont_select_set_12_4(0, 0xa, 0, 0);
@@ -110,20 +110,20 @@ static void sabotage_draw_cb(void *vptr)
         pop = g->seen[d->api][d->planet].pop;
         bases = g->seen[d->api][d->planet].bases;
         fact = g->seen[d->api][d->planet].factories;
-        lbxfont_print_str_normal(230, 111, game_str_sb_lastrep, UI_SCREEN_W);
+        lbxfont_print_str_normal(230, 111, game_str_sb_lastrep);
     }
     /*6d2b8*/
     if (pop > 0) {
-        lbxfont_print_str_normal(230, 120, game_str_sb_pop, UI_SCREEN_W);
-        lbxfont_print_num_right(305, 120, pop, UI_SCREEN_W);
+        lbxfont_print_str_normal(230, 120, game_str_sb_pop);
+        lbxfont_print_num_right(305, 120, pop);
     }
     if (fact > 0) {
-        lbxfont_print_str_normal(230, 128, game_str_sb_fact, UI_SCREEN_W);
-        lbxfont_print_num_right(305, 128, fact, UI_SCREEN_W);
+        lbxfont_print_str_normal(230, 128, game_str_sb_fact);
+        lbxfont_print_num_right(305, 128, fact);
     }
     if (bases > 0) {
-        lbxfont_print_str_normal(230, 136, game_str_sb_bases, UI_SCREEN_W);
-        lbxfont_print_num_right(305, 136, bases, UI_SCREEN_W);
+        lbxfont_print_str_normal(230, 136, game_str_sb_bases);
+        lbxfont_print_num_right(305, 136, bases);
     }
     ui_gmap_draw_planet_border(g, d->planet);
     for (int i = 0; i < g->galaxy_stars; ++i) {
@@ -179,7 +179,7 @@ static void sabotage_done_draw_cb(void *vptr)
     ui_starmap_draw_planetinfo_2(g, d->api, d->target, d->planet);
     vgabuf_fill_rect(228, 58, 309, 68, tbl_banner_color2[e->banner]);
     lbxfont_select(5, 6, 0, 0);
-    lbxfont_print_str_center(269, 60, game_str_tbl_races[e->race], UI_SCREEN_W);
+    lbxfont_print_str_center(269, 60, game_str_tbl_races[e->race]);
     if (d->spy == PLAYER_NONE) {
         pos = sprintf(buf, "%s ", game_str_sb_unkn);
     } else {
@@ -225,7 +225,7 @@ static void sabotage_done_draw_cb(void *vptr)
     }
     /*6db14*/
     lbxfont_select_set_12_4(5, 5, 0, 0);
-    lbxfont_print_str_split(228, 118, 84, buf, 2, UI_SCREEN_W, UI_SCREEN_H);
+    lbxfont_print_str_split(228, 118, 84, buf, 2);
     ui_gmap_basic_draw_frame(d->gmap, d->api);
     ui_gmap_draw_planet_border(g, d->planet);
     lbxgfx_set_new_frame(d->gfx_contbutt, 1);
@@ -239,13 +239,13 @@ static void sabotage_done_draw_cb(void *vptr)
         vgabuf_fill_rect(122, 106, 183, 120, 0x00);
         vgabuf_fill_rect(123, 107, 182, 119, tbl_banner_color2[g->eto[d->other2].banner]);
         lbxfont_select(5, 6, 0, 0);
-        lbxfont_print_str_center(80, 110, game_str_tbl_races[g->eto[d->other1].race], UI_SCREEN_W);
-        lbxfont_print_str_center(152, 110, game_str_tbl_races[g->eto[d->other2].race], UI_SCREEN_W);
+        lbxfont_print_str_center(80, 110, game_str_tbl_races[g->eto[d->other1].race]);
+        lbxfont_print_str_center(152, 110, game_str_tbl_races[g->eto[d->other2].race]);
         lbxfont_select(5, 6, 0, 0);
         lbxfont_set_44_10_plus(2);
-        lbxfont_print_str_split(40, 70, 154, game_str_sb_frame, 3, UI_SCREEN_W, UI_SCREEN_H);
+        lbxfont_print_str_split(40, 70, 154, game_str_sb_frame, 3);
         lbxfont_select(0, 0, 0, 0);
-        lbxfont_print_str_center(115, 96, game_str_nt_victim, UI_SCREEN_W);
+        lbxfont_print_str_center(115, 96, game_str_nt_victim);
     }
 }
 
