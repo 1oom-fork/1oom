@@ -421,7 +421,7 @@ static void ui_battle_transition_to(int px, int py, int steps)
         }
         gfx_aux_scale(&ui_data.aux.screen, percent, percent);
         gfx_aux_color_replace(&ui_data.aux.screen, 0, 1);
-        gfx_aux_draw_frame_from(x, y, &ui_data.aux.screen, UI_SCREEN_W);
+        gfx_aux_draw_frame_from(x, y, &ui_data.aux.screen);
         uiobj_finish_frame();
         ui_delay_us_or_click(MOO_TICKS_TO_US(1) / 3);
     }
@@ -1068,7 +1068,7 @@ void ui_battle_draw_misshield(const struct battle_s *bt, int target_i, int targe
             if (f > 1) {
                 gfx_aux_draw_frame_to(ui_data.gfx.space.explos[f - 2], &ui_data.aux.btemp);
                 gfx_aux_scale(&ui_data.aux.btemp, 30, 30);
-                gfx_aux_draw_frame_from(mx - 4, my - 4, &ui_data.aux.btemp, UI_SCREEN_W);
+                gfx_aux_draw_frame_from(mx - 4, my - 4, &ui_data.aux.btemp);
             }
             uiobj_finish_frame();
             ui_delay_ticks_or_click(2);
@@ -1175,7 +1175,7 @@ void ui_battle_draw_explos_small(const struct battle_s *bt, int x, int y)
 {
     gfx_aux_draw_frame_to(ui_data.gfx.space.explos[5], &ui_data.aux.btemp);
     gfx_aux_scale(&ui_data.aux.btemp, 30, 30);
-    gfx_aux_draw_frame_from(x, y, &ui_data.aux.btemp, UI_SCREEN_W);
+    gfx_aux_draw_frame_from(x, y, &ui_data.aux.btemp);
 }
 
 void ui_battle_draw_basic(const struct battle_s *bt)
@@ -1591,7 +1591,7 @@ void ui_battle_draw_retreat(const struct battle_s *bt)
             /*4da3c*/
             x1 = x + (4 - f) * 3;
         }
-        gfx_aux_draw_frame_from(x1, y + (4 - f) * 3, &ui_data.aux.btemp, UI_SCREEN_W);
+        gfx_aux_draw_frame_from(x1, y + (4 - f) * 3, &ui_data.aux.btemp);
         gfx_aux_draw_frame_to(b->gfx, &ui_data.aux.btemp);
         if (b->side == SIDE_L) {
             gfx_aux_flipx(&ui_data.aux.btemp);
@@ -1611,7 +1611,7 @@ void ui_battle_draw_retreat(const struct battle_s *bt)
         }
         s = 100 - (f * 5);
         gfx_aux_scale(&ui_data.aux.btemp, s, s);
-        gfx_aux_draw_frame_from(x + f / 2, y + (f * 3) / 5, &ui_data.aux.btemp, UI_SCREEN_W);
+        gfx_aux_draw_frame_from(x + f / 2, y + (f * 3) / 5, &ui_data.aux.btemp);
         lbxgfx_set_frame_0(b->gfx);
         gfx_aux_draw_frame_to(b->gfx, &ui_data.aux.btemp);
         s = 100 - (f * 10);
@@ -1666,7 +1666,7 @@ void ui_battle_draw_blackhole(const struct battle_s *bt, int attacker_i, int tar
         }
         if (f > 3) {
             gfx_aux_draw_frame_to(gfx, &ui_data.aux.btemp);
-            gfx_aux_draw_frame_from(x2 + 5, y2 + 3, &ui_data.aux.btemp, UI_SCREEN_W);
+            gfx_aux_draw_frame_from(x2 + 5, y2 + 3, &ui_data.aux.btemp);
         }
         uiobj_finish_frame();
         ui_delay_ticks_or_click(2);
