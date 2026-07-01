@@ -79,7 +79,7 @@ static void ground_draw_item(int popi, int popnum, uint8_t *gfx, bool is_right, 
         gfx_aux_flipx(&ui_data.aux.btemp);
         x = 295 - x - xoff;
     }
-    gfx_aux_draw_frame_from(x, y, &ui_data.aux.btemp, UI_SCREEN_W);
+    gfx_aux_draw_frame_from(x, y, &ui_data.aux.btemp);
 }
 
 static void ground_draw_cb1(void *vptr)

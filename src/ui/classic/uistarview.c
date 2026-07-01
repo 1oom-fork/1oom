@@ -130,7 +130,7 @@ static void starview_draw_cb(void *vptr)
                 gfx = ui_data.gfx.ships[sd->look];
                 lbxgfx_set_new_frame(gfx, (d->frame + i) % 5);
                 gfx_aux_draw_frame_to(gfx, &ui_data.aux.ship_p1);
-                gfx_aux_draw_frame_from(x + 8, y + 8, &ui_data.aux.ship_p1, UI_SCREEN_W);
+                gfx_aux_draw_frame_from(x + 8, y + 8, &ui_data.aux.ship_p1);
                 lbxfont_print_num_right(x + 39, y + 25, ships);
                 ++n;
             }

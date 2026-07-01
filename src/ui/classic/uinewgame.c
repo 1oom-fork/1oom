@@ -136,7 +136,7 @@ static void new_game_draw_banner_cb(void *vptr)
     if (d->selected < BANNER_NUM) {
         lbxgfx_set_new_frame(d->gfx_flag[d->selected], d->frame);
         gfx_aux_draw_frame_to(d->gfx_flag[d->selected], &d->aux_banner);
-        gfx_aux_draw_frame_from(0x5b, 0x38, &d->aux_banner, UI_SCREEN_W);
+        gfx_aux_draw_frame_from(0x5b, 0x38, &d->aux_banner);
     }
     if (++d->frame == 0xa) {
         d->frame = 0;
