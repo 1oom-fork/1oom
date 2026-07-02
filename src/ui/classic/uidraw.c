@@ -250,7 +250,7 @@ static void ui_draw_finish_hmm2(void)
             }
         }
     }
-    ui_cursor_store_bg0(mouse_x, mouse_y);
+    ui_cursor_store_bg0(mouse_get_x(), mouse_get_y());
 }
 
 void ui_draw_finish(void)
