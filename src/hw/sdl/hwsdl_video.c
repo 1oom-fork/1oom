@@ -264,7 +264,6 @@ int hw_video_toggle_fullscreen(void)
 
 int hw_video_init(int w, int h)
 {
-    hw_mouse_set_limits(w, h);
     video.source[0] = SDL_CreateRGBSurfaceFrom(vgabuf_get_front(), w, h, 8, w, 0, 0, 0, 0);
     video.source[1] = SDL_CreateRGBSurfaceFrom(vgabuf_get_back(), w, h, 8, w, 0, 0, 0, 0);
     {
