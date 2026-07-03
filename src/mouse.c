@@ -34,6 +34,16 @@ static inline void mouse_clamp_xy(int *x, int *y)
 
 /* ------------------------------------------------------------------------- */
 
+bool mouse_onscreen_xy(int mx, int my)
+{
+    return (mx >= 0) && (mx < MOUSE_SCREEN_W) && (my >= 0) && (my < MOUSE_SCREEN_H);
+}
+
+bool mouse_offscreen_xy(int mx, int my)
+{
+    return (mx < 0) || (mx >= MOUSE_SCREEN_W) || (my < 0) || (my >= MOUSE_SCREEN_H);
+}
+
 void mouse_set_xy_from_hw(int mx, int my)
 {
     mouse_clamp_xy(&mx, &my);
