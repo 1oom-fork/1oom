@@ -1,6 +1,11 @@
 #include "config.h"
 
+#include "comp.h"
 #include "mouse.h"
+#include "vgabuf.h"
+
+#define MOUSE_SCREEN_W  VGABUF_W
+#define MOUSE_SCREEN_H  VGABUF_H
 
 /* ------------------------------------------------------------------------- */
 
@@ -21,8 +26,17 @@ int mouse_click_buttons = 0;
 
 /* ------------------------------------------------------------------------- */
 
+static inline void mouse_clamp_xy(int *x, int *y)
+{
+    SETRANGE(*x, 0, MOUSE_SCREEN_W - 1);
+    SETRANGE(*y, 0, MOUSE_SCREEN_H - 1);
+}
+
+/* ------------------------------------------------------------------------- */
+
 void mouse_set_xy_from_hw(int mx, int my)
 {
+    mouse_clamp_xy(&mx, &my);
     moo_mouse_x = mx;
     moo_mouse_y = my;
 }
