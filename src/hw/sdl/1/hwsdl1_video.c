@@ -240,7 +240,6 @@ int hw_video_resize(int w, int h)
 
 int hw_video_init(int w, int h)
 {
-    hw_mouse_set_limits(w, h);
     video.source = SDL_CreateRGBSurfaceFrom(NULL, w, h, 8, w, 0, 0, 0, 0);
     video.unused = video.source->format->palette;
     {

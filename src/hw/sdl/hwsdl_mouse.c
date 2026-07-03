@@ -7,11 +7,6 @@
 
 /* -------------------------------------------------------------------------- */
 
-static int hw_mouse_w;
-static int hw_mouse_h;
-
-/* -------------------------------------------------------------------------- */
-
 bool hw_mouse_enabled = false;
 
 /* -------------------------------------------------------------------------- */
@@ -41,24 +36,6 @@ void hw_mouse_toggle_grab(void)
     } else {
         hw_mouse_grab();
     }
-}
-
-void hw_mouse_set_limits(int w, int h)
-{
-    hw_mouse_w = w;
-    hw_mouse_h = h;
-}
-
-void hw_mouse_move(int dx, int dy)
-{
-    int x, y;
-    x = mouse_x + dx;
-    if (x < 0) { x = 0; }
-    if (x >= hw_mouse_w) { x = hw_mouse_w - 1; }
-    y = mouse_y + dy;
-    if (y < 0) { y = 0; }
-    if (y >= hw_mouse_h) { y = hw_mouse_h - 1; }
-    mouse_set_xy_from_hw(x, y);
 }
 
 void hw_mouse_button(int i, int pressed)
