@@ -10,7 +10,6 @@
 
 #include "hw_internal.h"
 
-#include "hwsdl_video.h"
 #include "hwsdl_mouse.h"
 #include "hwsdl_opt.h"
 #include "lib.h"
@@ -53,6 +52,11 @@ static int video_setmode_8bpp(int w, int h)
 
 static void video_render_8bpp(void)
 {
+    if (SDL_MUSTLOCK(video.screen)) {
+        if (SDL_LockSurface(video.screen) < 0) {
+            return;
+        }
+    }
     int pitch = video.screen->pitch;
     Uint8 *p = (Uint8 *)video.screen->pixels;
     uint8_t *q = vgabuf_get_front();
@@ -60,6 +64,9 @@ static void video_render_8bpp(void)
         memcpy(p, q, video.bufw);
         p += pitch;
         q += video.bufw;
+    }
+    if (SDL_MUSTLOCK(video.screen)) {
+        SDL_UnlockSurface(video.screen);
     }
 }
 
@@ -84,6 +91,11 @@ static void video_setpal_8bpp(const uint8_t *pal, int first, int num)
 
 static void video_render_gl_32bpp(void)
 {
+    if (SDL_MUSTLOCK(video.hwrenderbuf)) {
+        if (SDL_LockSurface(video.hwrenderbuf) < 0) {
+            return;
+        }
+    }
     int pitch_skip = ((video.bufw * sizeof(Uint32)) - video.hwrenderbuf->pitch) / sizeof(Uint32);
 
     Uint32 *p = (Uint32 *)video.hwrenderbuf->pixels;
@@ -93,6 +105,9 @@ static void video_render_gl_32bpp(void)
             *p++ = video.pal32[*q++];
         }
         p += pitch_skip;
+    }
+    if (SDL_MUSTLOCK(video.hwrenderbuf)) {
+        SDL_UnlockSurface(video.hwrenderbuf);
     }
 }
 
@@ -149,7 +164,7 @@ static void video_setpal_gl_32bpp(const uint8_t *pal, int f, int num)
                            ;
 #endif
     }
-    hw_video_refresh(1);
+    hw_video_redraw_front();
 }
 #endif /* HAVE_OPENGL */
 
@@ -310,5 +325,3 @@ void hw_video_shutdown(void)
     }
 #endif
 }
-
-#include "hwsdl_video.c"
