@@ -14,7 +14,6 @@
 
 #include "hwsdl_mouse.h"
 #include "hwsdl_opt.h"
-#include "hwsdl_video.h"
 #include "main.h"
 #include "options.h"
 

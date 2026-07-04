@@ -1,6 +1,0 @@
-#ifndef INC_1OOM_HWSDL_VIDEO_H
-#define INC_1OOM_HWSDL_VIDEO_H
-
-extern void hw_video_refresh(int front);
-
-#endif
