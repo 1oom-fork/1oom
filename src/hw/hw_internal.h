@@ -7,7 +7,7 @@
 
 extern struct i_hw_video_s {
     int (*setmode)(int w, int h);
-    void (*render)(int bufi);
+    void (*render)(void);
     void (*update)(void);
     void (*setpal)(const uint8_t *pal, int first, int num);
 } i_hw_video;
