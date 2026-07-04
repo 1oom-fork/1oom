@@ -13,18 +13,8 @@
 
 #define vgabuf_get vgabuf_get_back
 
-#define vgabuf_erase ui_draw_erase_buf
-#define vgabuf_fill ui_draw_color_buf
-#define vgabuf_fill_rect ui_draw_filled_rect
-#define vgabuf_put_pixel ui_draw_pixel
-#define vgabuf_draw_line ui_draw_line1
-#define vgabuf_draw_line_ctbl ui_draw_line_ctbl
 #define vgabuf_draw_line_limit ui_draw_line_limit
 #define vgabuf_draw_line_limit_ctbl ui_draw_line_limit_ctbl
-#define vgabuf_draw_copy_line ui_draw_copy_line
-#define vgabuf_draw_line_3h ui_draw_line_3h
-#define vgabuf_draw_box1 ui_draw_box1
-#define vgabuf_draw_box2 ui_draw_box2
 
 extern void vgabuf_flip(void);
 
@@ -39,6 +29,25 @@ extern void vgabuf_copy_back_to_page2(void);
 extern void vgabuf_copy_back_from_page2(void);
 extern void vgabuf_copy_back_to_page3(void);
 extern void vgabuf_copy_back_from_page3(void);
+
+extern void vgabuf_fill_rect(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint8_t color);
+extern void vgabuf_put_pixel(int16_t x, int16_t y, uint8_t color);
+extern void vgabuf_draw_line(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint8_t color);
+extern void vgabuf_draw_line_ctbl(int16_t x0, int16_t y0, int16_t x1, int16_t y1, const uint8_t *colortbl, int colornum, int pos);
+extern void vgabuf_draw_copy_line(int16_t x0, int16_t y0, int16_t x1, int16_t y1, bool flag_hmm);
+extern void vgabuf_draw_line_3h(int16_t x0, int16_t y0, int16_t x1, uint8_t color);
+extern void vgabuf_draw_box1(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint8_t color1, uint8_t color2);
+extern void vgabuf_draw_box2(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint8_t color1, uint8_t color2, uint8_t color3, uint8_t color4);
+
+static inline void vgabuf_erase(void)
+{
+    vgabuf_fill_rect(VGABUF_RECT, 0);
+}
+
+static inline void vgabuf_fill(uint8_t color)
+{
+    vgabuf_fill_rect(VGABUF_RECT, color);
+}
 
 #define vgabuf_limits_set uiobj_set_limits
 #define vgabuf_limits_set_all uiobj_set_limits_all
