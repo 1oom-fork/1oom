@@ -15,3 +15,9 @@ void hw_video_refresh_palette(void)
 {
     i_hw_video.setpal(vgapal, 0, 256);
 }
+
+void hw_video_redraw_front(void)
+{
+    i_hw_video.render();
+    i_hw_video.update();
+}
