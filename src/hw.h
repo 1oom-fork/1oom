@@ -19,22 +19,8 @@ extern int hw_event_handle(void);
 
 extern int hw_video_init(int w, int h);
 extern void hw_video_refresh_palette(void);
-/* Return back buffer. */
-extern uint8_t *hw_video_get_buf(void);
-/* Return front buffer. */
-extern uint8_t *hw_video_get_buf_front(void);
-/* Draw the current back buffer and return new back buffer. */
-extern uint8_t *hw_video_draw_buf(void);
 /* Redraw the front buffer. */
 extern void hw_video_redraw_front(void);
-/* Copy front buffer to back buffer. */
-extern void hw_video_copy_buf(void);
-/* Copy back buffer to pointed buffer. */
-extern void hw_video_copy_buf_out(uint8_t *buf);
-extern void hw_video_copy_back_to_page2(void);
-extern void hw_video_copy_back_from_page2(void);
-extern void hw_video_copy_back_to_page3(void);
-extern void hw_video_copy_back_from_page3(void);
 
 extern int hw_audio_music_init(int mus_index, const uint8_t *data, uint32_t len);
 extern void hw_audio_music_release(int mus_index);
