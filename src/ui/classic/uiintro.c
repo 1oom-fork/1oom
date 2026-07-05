@@ -38,6 +38,7 @@ void ui_play_intro(void)
 
     ui_palette_fadeout_14_14_2();
     lbxpal_select(0, -1, 0);
+    vgabuf_select_back();
     vgabuf_erase();
     lbxfont_select(5, 1, 0, 0);
     lbxfont_print_str_normal(0, 0, game_str_in_loading);
