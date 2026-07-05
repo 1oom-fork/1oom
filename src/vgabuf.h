@@ -11,10 +11,12 @@
 #define VGABUF_PITCH    320
 #define VGABUF_OFFSET(x, y)   ((x) + (y) * (VGABUF_PITCH))
 
-#define vgabuf_get vgabuf_get_back
-
+extern void vgabuf_select_back(void);
+extern void vgabuf_select_front(void);
 extern void vgabuf_flip(void);
 
+/* Return selected buffer. */
+extern uint8_t *vgabuf_get(void);
 /* Return back buffer. */
 extern uint8_t *vgabuf_get_back(void);
 /* Return front buffer. */
