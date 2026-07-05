@@ -284,6 +284,7 @@ static void drawscreen_inlbx(void)
 
 static void drawscreen(void)
 {
+    vgabuf_select_back();   /* FIXME: incorrect buffer offset */
     vgabuf_fill_rect(0, 0, 319, 399, 0);
     if (!in_lbx) {
         drawscreen_outlbx();

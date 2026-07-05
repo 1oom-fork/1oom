@@ -18,6 +18,7 @@
 /* buffers used by UI */
 static uint8_t vgabuf[NUM_VIDEOBUF * VGABUF_SIZE_INTERNAL] = {0};
 static int16_t vga_page = 0;
+static uint8_t *vgabuf_seg = &(vgabuf[0]);
 
 static inline uint8_t *vgabuf_get_i(int16_t i)
 {
@@ -115,11 +116,26 @@ static void vgabuf_draw_line_limit_do(int16_t x0, int16_t y0, int16_t x1, int16_
 
 /* -------------------------------------------------------------------------- */
 
+void vgabuf_select_back(void)
+{
+    vgabuf_seg = vgabuf_get_back();
+}
+
+void vgabuf_select_front(void)
+{
+    vgabuf_seg = vgabuf_get_front();
+}
+
 void vgabuf_flip(void)
 {
     vga_page = 1 - vga_page;
     hw_video_redraw_front();
-    /* vgabuf_select_back(); */
+    vgabuf_select_back();
+}
+
+uint8_t *vgabuf_get(void)
+{
+    return vgabuf_seg;
 }
 
 uint8_t *vgabuf_get_back(void)
