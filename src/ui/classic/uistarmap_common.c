@@ -513,7 +513,7 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
     }
     vgabuf_fill_rect(6, 6, 221, 177, 0);
     lbxgfx_draw_frame(0, 0, ui_data.gfx.starmap.mainview, UI_SCREEN_W);
-    uiobj_set_limits(6, 6, 221, 177);
+    vgabuf_limits_set(6, 6, 221, 177);
     {
         int x0, y0, x1, y1;
         x0 = (-x / 4) + 6;
@@ -794,7 +794,7 @@ void ui_starmap_fill_oi_tbls(struct starmap_data_s *d)
     struct game_s *g = d->g;
     int x = ui_data.starmap.x;
     int y = ui_data.starmap.y;
-    uiobj_set_limits(6, 6, 221, 177);
+    vgabuf_limits_set(6, 6, 221, 177);
     UIOBJI_SET_TBL_INVALID(d->oi_tbl_enroute);
     UIOBJI_SET_TBL_INVALID(d->oi_tbl_transport);
     for (int i = 0; i < g->galaxy_stars; ++i) {
@@ -847,7 +847,7 @@ void ui_starmap_fill_oi_tbl_stars(struct starmap_data_s *d)
     struct game_s *g = d->g;
     int x = ui_data.starmap.x;
     int y = ui_data.starmap.y;
-    uiobj_set_limits(6, 6, 221, 177);
+    vgabuf_limits_set(6, 6, 221, 177);
     for (int i = 0; i < g->galaxy_stars; ++i) {
         planet_t *p = &(g->planet[i]);
         int x0, y0;
@@ -862,7 +862,7 @@ void ui_starmap_fill_oi_tbl_stars_own(struct starmap_data_s *d, player_id_t owne
     struct game_s *g = d->g;
     int x = ui_data.starmap.x;
     int y = ui_data.starmap.y;
-    uiobj_set_limits(6, 6, 221, 177);
+    vgabuf_limits_set(6, 6, 221, 177);
     for (int i = 0; i < g->galaxy_stars; ++i) {
         planet_t *p = &(g->planet[i]);
         if (p->owner == owner) {
