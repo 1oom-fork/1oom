@@ -4,7 +4,6 @@
 
 #include "lbxgfx.h"
 #include "comp.h"
-#include "hw.h"
 #include "lbxpal.h"
 #include "lib.h"
 #include "log.h"
