@@ -1,7 +1,6 @@
 #include "config.h"
 
 #include "uigameopts.h"
-#include "hw.h"
 #include "kbd.h"
 #include "lbx.h"
 #include "lbxfont.h"

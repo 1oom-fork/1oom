@@ -5,7 +5,6 @@
 
 #include "lbxfont.h"
 #include "bits.h"
-#include "hw.h"
 #include "lib.h"
 #include "lbx.h"
 #include "lbxpal.h"

@@ -6,7 +6,6 @@
 #include "game_design.h"
 #include "game_aux.h"
 #include "game_misc.h"
-#include "hw.h"
 #include "lbx.h"
 #include "lbxfont.h"
 #include "lbxgfx.h"
