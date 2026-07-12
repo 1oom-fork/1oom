@@ -262,4 +262,6 @@ void ui_game_end(struct game_s *g)
     }
     lbxfile_item_release(LBXFILE_V11, ui_data.gfx.starmap.bmap);
     ui_data.gfx.starmap.bmap = NULL;
+    /* Return to orion.exe */
+    vgabuf_limits_set_all();
 }

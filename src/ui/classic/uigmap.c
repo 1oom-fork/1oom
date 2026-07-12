@@ -81,7 +81,7 @@ static void gmap_draw_cb(void *vptr)
         }
     }
 
-    uiobj_set_limits(7, 7, 230, 191);
+    vgabuf_limits_set(7, 7, 230, 191);
     vgabuf_erase();
     lbxgfx_draw_frame(0, 0, ui_data.gfx.starmap.sky, UI_SCREEN_W);
     lbxgfx_draw_frame(0, 0, d->gfx_mapview, UI_SCREEN_W);
@@ -306,8 +306,6 @@ static void gmap_draw_cb(void *vptr)
 static void ui_gmap_basic_draw_galaxy(struct gmap_basic_data_s *d)
 {
     struct game_s *g = d->g;
-    vgabuf_fill_rect(6, 6, 221, 177, 0);
-    /*uiobj_set_limits(6, 6, 221, 177);*/
     lbxgfx_draw_frame_offs(0, 0, ui_data.gfx.starmap.sky, 6, 6, 221, 177, UI_SCREEN_W);
     for (int i = 0; i < g->nebula_num; ++i) {
         int x, y;
@@ -438,6 +436,8 @@ void ui_gmap_basic_draw_frame(void *ctx, int pi/*player_i*/)
 {
     struct gmap_basic_data_s *d = ctx;
     struct game_s *g = d->g;
+    vgabuf_fill_rect(6, 6, 221, 177, 0);
+    vgabuf_limits_set(6, 6, 221, 177);
     ui_gmap_basic_draw_galaxy(d);
     if (pi >= 0) {
         for (int i = 0; i < g->enroute_num; ++i) {
@@ -513,6 +513,8 @@ void ui_gmap_basic_draw_only(void *ctx, int pi/*planet_i*/)
 {
     struct gmap_basic_data_s *d = ctx;
     struct game_s *g = d->g;
+    vgabuf_fill_rect(6, 6, 221, 177, 0);
+    vgabuf_limits_set(6, 6, 221, 177);
     ui_gmap_basic_draw_galaxy(d);
     {
         const planet_t *p = &(g->planet[pi]);
