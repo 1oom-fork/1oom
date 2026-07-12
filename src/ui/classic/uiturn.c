@@ -8,7 +8,6 @@
 #include "game.h"
 #include "game_aux.h"
 #include "game_str.h"
-#include "hw.h"
 #include "kbd.h"
 #include "lbx.h"
 #include "lbxfont.h"
