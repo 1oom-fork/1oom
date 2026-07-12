@@ -51,9 +51,11 @@ static void ui_starmap_trans_draw_cb(void *vptr)
         }
     } else {
         /*72f20*/
+        vgabuf_limits_set(0, 83, 310, 199);
         lbxgfx_draw_frame_offs(222, 80, ui_data.gfx.starmap.relocate, 0, 83, 310, 199, UI_SCREEN_W);
         if (!PLANET_FOCUS_IS_EXPLORED(g, d->api)) {
             vgabuf_fill_rect(227, 57, 310, 159, 0);
+            vgabuf_limits_set(227, 57, 310, 159);
             lbxgfx_draw_frame_offs(224, 5, ui_data.gfx.starmap.unexplor, 227, 57, 310, 159, UI_SCREEN_W);
         } else {
             /*72fa9*/
@@ -62,6 +64,7 @@ static void ui_starmap_trans_draw_cb(void *vptr)
         }
     }
     /*72fe5*/
+    vgabuf_limits_set(6, 6, 221, 177);
     lbxgfx_draw_frame_offs(x0, y0, ui_data.gfx.starmap.planbord, 6, 6, 221, 177, UI_SCREEN_W);
     lbxgfx_set_new_frame(ui_data.gfx.starmap.reloc_bu_accept, 1);
     lbxgfx_draw_frame(271, 163, ui_data.gfx.starmap.reloc_bu_accept, UI_SCREEN_W);

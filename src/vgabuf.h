@@ -31,4 +31,7 @@
 #define vgabuf_copy_back_to_page3 hw_video_copy_back_to_page3
 #define vgabuf_copy_back_from_page3 hw_video_copy_back_from_page3
 
+#define vgabuf_limits_set uiobj_set_limits
+#define vgabuf_limits_set_all uiobj_set_limits_all
+
 #endif
