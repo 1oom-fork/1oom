@@ -43,6 +43,7 @@ static void landing_draw_cb1(void *vptr)
             do_walk = true;
         }
     }
+    vgabuf_limits_set_all();
     gfx_aux_draw_frame_to(d->gfx_transprt, &ui_data.aux.screen);
     gfx_aux_draw_frame_from_limit(0, y, &ui_data.aux.screen, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
     if (do_walk) {
