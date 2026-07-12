@@ -96,6 +96,7 @@ static void ground_draw_cb1(void *vptr)
     if (d->l.frame < 50) {
         int y;
         y = d->l.frame * 4 - 100;
+        vgabuf_limits_set_all();
         gfx_aux_draw_frame_to(d->l.gfx_transprt, &ui_data.aux.screen);
         gfx_aux_draw_frame_from_limit(0, y, &ui_data.aux.screen, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
         if (!gr->flag_rebel) {

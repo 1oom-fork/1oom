@@ -782,6 +782,7 @@ void ui_battle_init(struct battle_s *bt)
     ui_sound_play_music(8);
     ui_battle_pre(bt->g, party_human, party_opp, bt->planet_i, bt->flag_human_att, ctx.show_switch);
 
+    vgabuf_limits_set(0, 0, 319, 191);
     /* ui_battle_do_sub1: */
     uiobj_set_callback_and_delay(ui_battle_draw_cb, bt, 2);
     ctx.cursor[0].cursor_i = 1;
@@ -828,6 +829,7 @@ void ui_battle_shutdown(struct battle_s *bt, bool colony_destroyed)
     hw_audio_music_fadeout();
     ui_palette_fadeout_a_f_1();
     ui_draw_finish_mode = 2;
+    vgabuf_limits_set_all();
 }
 
 void ui_battle_draw_planetinfo(const struct battle_s *bt, bool side_r)

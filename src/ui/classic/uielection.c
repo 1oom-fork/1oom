@@ -88,7 +88,8 @@ static void ui_election_draw_cb(void *vptr)
     lbxgfx_draw_frame(0, 0, d->gfx_cylinder, UI_SCREEN_W);
     for (int i = 0; i < MIN(el->num, 4); ++i) {
         const int lx0[4] = { 50, 200, 0, 275 };
-        const int lx1[4] = { 125, 275, 50, UI_SCREEN_W - 1 };
+        const int lx1[4] = { 125, 275, 50, VGABUF_W - 1 };
+        vgabuf_limits_set(lx0[i], 0, lx1[i], VGABUF_H - 1);
         lbxgfx_draw_frame_offs(0, 0, d->gfx_racem[i], lx0[i], 0, lx1[i], UI_SCREEN_H - 1, UI_SCREEN_W);
     }
     if (el->str) {
