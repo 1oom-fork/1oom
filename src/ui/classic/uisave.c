@@ -2,7 +2,6 @@
 
 #include "uisave.h"
 #include "game_save.h"
-#include "hw.h"
 #include "kbd.h"
 #include "lbx.h"
 #include "lbxfont.h"
