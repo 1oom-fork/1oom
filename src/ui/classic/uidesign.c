@@ -13,7 +13,6 @@
 #include "game_shiptech.h"
 #include "game_str.h"
 #include "game_tech.h"
-#include "hw.h"
 #include "kbd.h"
 #include "lbx.h"
 #include "lbxfont.h"
