@@ -7,7 +7,6 @@
 #include "game_aux.h"
 #include "game_battle.h"
 #include "game_str.h"
-#include "hw.h"
 #include "lbx.h"
 #include "lbxfont.h"
 #include "lbxgfx.h"
