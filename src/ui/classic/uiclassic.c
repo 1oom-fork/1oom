@@ -249,9 +249,9 @@ static void init_gfx(void)
     ui_data.gfx.colonies.current = NULL;
     init_lbx_news();
 
-    ui_data.gfx.vgafileh = lib_malloc(UI_SCREEN_W * UI_SCREEN_H);
+    ui_data.gfx.vgafileh = lib_malloc(VGABUF_SIZE);
 
-    gfx_aux_setup_wh(&ui_data.aux.screen, UI_SCREEN_W, UI_SCREEN_H);
+    gfx_aux_setup_wh(&ui_data.aux.screen, VGABUF_W, VGABUF_H);
     gfx_aux_setup_wh(&ui_data.aux.ship_p1, 34, 26);
     gfx_aux_setup_wh(&ui_data.aux.ship_overlay, 34, 26);
     gfx_aux_setup_wh(&ui_data.aux.btemp, 38, 30);
@@ -272,7 +272,7 @@ int ui_late_init(void)
 {
     if (0
      || lbxfont_init()
-     || hw_video_init(UI_SCREEN_W, UI_SCREEN_H)
+     || hw_video_init(VGABUF_W, VGABUF_H)
      || lbxpal_init()
     ) {
         return 1;
