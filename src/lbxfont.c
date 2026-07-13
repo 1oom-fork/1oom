@@ -100,7 +100,7 @@ static void lbxfont_plotchar_limit(int x, int y, char c, int xskip, int char_w, 
     }
 }
 
-static int lbxfont_print_char_ret_x_limit(int x, int y, char c, int v0, int v1, int v2, int v3, uint16_t pitch)
+static int lbxfont_print_char_ret_x_limit(int x, int y, char c)
 {
     int16_t lx0, ly0, lx1, ly1;
     vgabuf_limits_get(&lx0, &ly0, &lx1, &ly1);
@@ -223,7 +223,7 @@ static int lbxfont_print_str_do(int x, int y, const char *str, bool change_color
     return lbxfont_temp_x;
 }
 
-static int lbxfont_print_str_limit_do(int x, int y, const char *str, bool change_color, int v0, int v1, int v2, int v3, uint16_t pitch)
+static int lbxfont_print_str_limit_do(int x, int y, const char *str, bool change_color)
 {
     int16_t lx0, ly0, lx1, ly1;
     vgabuf_limits_get(&lx0, &ly0, &lx1, &ly1);
@@ -263,7 +263,7 @@ static int lbxfont_print_str_limit_do(int x, int y, const char *str, bool change
             case 0xd:
                 return lbxfont_temp_x;
             default:
-                lbxfont_temp_x = lbxfont_print_char_ret_x_limit(lbxfont_temp_x, lbxfont_temp_y, c, lx0, ly0, lx1, ly1, pitch);
+                lbxfont_temp_x = lbxfont_print_char_ret_x_limit(lbxfont_temp_x, lbxfont_temp_y, c);
                 break;
         }
     }
@@ -661,7 +661,7 @@ int lbxfont_print_str_hmm5(int x, int y, const char *str, int w)
     return lbxfont_print_str_hmm2(x, y, str, w);
 }
 
-int lbxfont_print_str_normal_limit(int x, int y, const char *str, int lx0, int ly0, int lx1, int ly1, uint16_t pitch)
+int lbxfont_print_str_normal_limit(int x, int y, const char *str)
 {
     uint16_t v2;
     v2 = lbxfontdata[0x12];
@@ -670,44 +670,44 @@ int lbxfont_print_str_normal_limit(int x, int y, const char *str, int lx0, int l
             lbxfontdata[i] = lbxfont_temp_color;
         }
         if (v2 != 2) {
-            lbxfont_print_str_limit_do(x + 1, y + 1, str, false, lx0, ly0, lx1, ly1, pitch);
-            lbxfont_print_str_limit_do(x, y + 1, str, false, lx0, ly0, lx1, ly1, pitch);
-            lbxfont_print_str_limit_do(x + 1, y, str, false, lx0, ly0, lx1, ly1, pitch);
+            lbxfont_print_str_limit_do(x + 1, y + 1, str, false);
+            lbxfont_print_str_limit_do(x, y + 1, str, false);
+            lbxfont_print_str_limit_do(x + 1, y, str, false);
         }
         if ((v2 != 1) && (v2 != 3)) {
-            lbxfont_print_str_limit_do(x - 1, y, str, false, lx0, ly0, lx1, ly1, pitch);
-            lbxfont_print_str_limit_do(x - 1, y - 1, str, false, lx0, ly0, lx1, ly1, pitch);
-            lbxfont_print_str_limit_do(x, y - 1, str, false, lx0, ly0, lx1, ly1, pitch);
+            lbxfont_print_str_limit_do(x - 1, y, str, false);
+            lbxfont_print_str_limit_do(x - 1, y - 1, str, false);
+            lbxfont_print_str_limit_do(x, y - 1, str, false);
         }
         if ((v2 == 3) || (v2 == 5)) {
-            lbxfont_print_str_limit_do(x + 2, y + 2, str, false, lx0, ly0, lx1, ly1, pitch);
-            lbxfont_print_str_limit_do(x + 1, y + 2, str, false, lx0, ly0, lx1, ly1, pitch);
-            lbxfont_print_str_limit_do(x + 2, y + 1, str, false, lx0, ly0, lx1, ly1, pitch);
+            lbxfont_print_str_limit_do(x + 2, y + 2, str, false);
+            lbxfont_print_str_limit_do(x + 1, y + 2, str, false);
+            lbxfont_print_str_limit_do(x + 2, y + 1, str, false);
         }
         if (v2 > 3) {
-            lbxfont_print_str_limit_do(x + 1, y - 1, str, false, lx0, ly0, lx1, ly1, pitch);
-            lbxfont_print_str_limit_do(x - 1, y + 1, str, false, lx0, ly0, lx1, ly1, pitch);
+            lbxfont_print_str_limit_do(x + 1, y - 1, str, false);
+            lbxfont_print_str_limit_do(x - 1, y + 1, str, false);
         }
         if (v2 == 5) {
-            lbxfont_print_str_limit_do(x + 2, y, str, false, lx0, ly0, lx1, ly1, pitch);
-            lbxfont_print_str_limit_do(x, y + 2, str, false, lx0, ly0, lx1, ly1, pitch);
+            lbxfont_print_str_limit_do(x + 2, y, str, false);
+            lbxfont_print_str_limit_do(x, y + 2, str, false);
         }
         lbxfont_select_subcolors(lbxfontdata[0x13]);
     }
-    return lbxfont_print_str_limit_do(x, y, str, true, lx0, ly0, lx1, ly1, pitch);
+    return lbxfont_print_str_limit_do(x, y, str, true);
 }
 
-int lbxfont_print_str_center_limit(int x, int y, const char *str, int lx0, int ly0, int lx1, int ly1, uint16_t pitch)
+int lbxfont_print_str_center_limit(int x, int y, const char *str)
 {
     int w = lbxfont_calc_str_width(str);
-    return lbxfont_print_str_normal_limit(x - w / 2, y, str, lx0, ly0, lx1, ly1, pitch);
+    return lbxfont_print_str_normal_limit(x - w / 2, y, str);
 }
 
-int lbxfont_print_str_center_limit_unconst(int x, int y, const char *str, int lx0, int ly0, int lx1, int ly1, uint16_t pitch)
+int lbxfont_print_str_center_limit_unconst(int x, int y, const char *str)
 {
     char buf[1024];
     strcpy(buf, str);
-    return lbxfont_print_str_center_limit(x, y, buf, lx0, ly0, lx1, ly1, pitch);
+    return lbxfont_print_str_center_limit(x, y, buf);
 }
 
 void lbxfont_print_str_split(int x, int y, int maxw, const char *str, int type)

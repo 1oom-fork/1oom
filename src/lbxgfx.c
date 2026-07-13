@@ -352,7 +352,7 @@ void lbxgfx_draw_frame_pal(int x, int y, uint8_t *data)
     lbxgfx_draw_frame_do(p, data, VGABUF_PITCH);
 }
 
-void lbxgfx_draw_frame_offs(int x, int y, uint8_t *data, int v0, int v1, int v2, int v3, uint16_t pitch)
+void lbxgfx_draw_frame_offs(int x, int y, uint8_t *data)
 {
     int xskip, yskip, x0, y0, x1, y1, w, h;
     int16_t lx0, ly0, lx1, ly1;
