@@ -79,17 +79,17 @@ static void ui_gmap_set_limits(void)
 
 static void ui_gmap_draw_frame(int x, int y, uint8_t *data)
 {
-    lbxgfx_draw_frame_offs(x, y, data, 7, 7, 230, 191, UI_SCREEN_W);
+    lbxgfx_draw_frame_offs(x, y, data);
 }
 
 static void ui_gmap_print_str_normal(int x, int y, const char *str)
 {
-    lbxfont_print_str_normal_limit(x, y, str, 7, 7, 230, 191, UI_SCREEN_W);
+    lbxfont_print_str_normal_limit(x, y, str);
 }
 
 static void ui_gmap_print_str_center(int x, int y, const char *str)
 {
-    lbxfont_print_str_center_limit(x, y, str, 7, 7, 230, 191, UI_SCREEN_W);
+    lbxfont_print_str_center_limit(x, y, str);
 }
 
 static void gmap_draw_cb(void *vptr)

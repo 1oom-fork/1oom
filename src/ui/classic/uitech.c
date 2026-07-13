@@ -219,7 +219,7 @@ static void tech_draw_cb(void *vptr)
                 y0 = y + (8 - (complpercent * 4) / 50);
                 y1 = y + 7;
                 vgabuf_limits_set(0, y0, VGABUF_W - 1, y1);
-                lbxgfx_draw_frame_offs(287, y, ui_data.gfx.screens.litebulb_on, 0, y0, UI_SCREEN_W - 1, y1, UI_SCREEN_W);
+                lbxgfx_draw_frame_offs(287, y, ui_data.gfx.screens.litebulb_on);
                 vgabuf_limits_set_all();
             }
         } else {

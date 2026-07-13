@@ -90,7 +90,7 @@ static void ui_election_draw_cb(void *vptr)
         const int lx0[4] = { 50, 200, 0, 275 };
         const int lx1[4] = { 125, 275, 50, VGABUF_W - 1 };
         vgabuf_limits_set(lx0[i], 0, lx1[i], VGABUF_H - 1);
-        lbxgfx_draw_frame_offs(0, 0, d->gfx_racem[i], lx0[i], 0, lx1[i], UI_SCREEN_H - 1, UI_SCREEN_W);
+        lbxgfx_draw_frame_offs(0, 0, d->gfx_racem[i]);
     }
     if (el->str) {
         lbxfont_select_set_12_1(3, 0, 0, 0);

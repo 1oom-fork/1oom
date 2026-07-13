@@ -45,7 +45,7 @@ static void landing_draw_cb1(void *vptr)
     }
     vgabuf_limits_set_all();
     gfx_aux_draw_frame_to(d->gfx_transprt, &ui_data.aux.screen);
-    gfx_aux_draw_frame_from_limit(0, y, &ui_data.aux.screen, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
+    gfx_aux_draw_frame_from_limit(0, y, &ui_data.aux.screen);
     if (do_walk) {
         lbxgfx_draw_frame(0, 0, d->gfx_walk);
         vgabuf_fill_rect(115, 81, 204, 109, 0xa);
