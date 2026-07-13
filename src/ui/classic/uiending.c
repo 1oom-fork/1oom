@@ -70,11 +70,11 @@ static void ui_play_winlose_cb1(void *vptr)
     struct anim_winlose_1_s *p = vptr;
     int f = p->frame;
     vgabuf_erase();
-    lbxgfx_draw_frame_offs(0x000 - f, 0, p->gfx_stars, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
-    lbxgfx_draw_frame_offs(0x140 - f, 0, p->gfx_stars, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
+    lbxgfx_draw_frame_offs(0x000 - f, 0, p->gfx_stars);
+    lbxgfx_draw_frame_offs(0x140 - f, 0, p->gfx_stars);
     if (f > 0x32) {
         lbxgfx_draw_frame(0, 0, p->gfx_ships);
-        lbxgfx_draw_frame_offs(0x13f - ((f - 0x32) * 3) / 2, 0, p->gfx_planets, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
+        lbxgfx_draw_frame_offs(0x13f - ((f - 0x32) * 3) / 2, 0, p->gfx_planets);
     }
     lbxfont_select(4, 0, 0, 0);
     if ((f > 0xa) && (f < 0x14)) {
@@ -317,10 +317,10 @@ static void ui_play_winlose_exile_cb(void *vptr)
     struct anim_winlose_exile_s *p = vptr;
     int f = p->frame;
     vgabuf_erase();
-    lbxgfx_draw_frame_offs(0x000 - f, 0, p->gfx_stars, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
-    lbxgfx_draw_frame_offs(0x140 - f, 0, p->gfx_stars, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
-    lbxgfx_draw_frame_offs(0x280 - f, 0, p->gfx_stars, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
-    lbxgfx_draw_frame_offs(f * 3 - 0xf0, 0, p->gfx_ships, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
+    lbxgfx_draw_frame_offs(0x000 - f, 0, p->gfx_stars);
+    lbxgfx_draw_frame_offs(0x140 - f, 0, p->gfx_stars);
+    lbxgfx_draw_frame_offs(0x280 - f, 0, p->gfx_stars);
+    lbxgfx_draw_frame_offs(f * 3 - 0xf0, 0, p->gfx_ships);
 
     lbxfont_select(4, 0, 0, 0);
 
@@ -381,8 +381,8 @@ static void ui_play_winlose_funeral_cb(void *vptr)
         int x, y;
         x = 0xf9 - ((f - 0x14) * 0x17b) / 0x92;
         y = ((f - 0x14) * 0xe3) / 0x92 - 0x4a;
-        lbxgfx_draw_frame_offs(x, y, p->gfx_coffin, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
-        lbxgfx_draw_frame_offs(x, y, p->gfx_march, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, UI_SCREEN_W);
+        lbxgfx_draw_frame_offs(x, y, p->gfx_coffin);
+        lbxgfx_draw_frame_offs(x, y, p->gfx_march);
     }
     lbxgfx_draw_frame(0, 0, p->gfx_flag);
     p->frame = ++f;

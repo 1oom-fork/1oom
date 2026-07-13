@@ -415,17 +415,17 @@ void ui_starmap_set_limits(void)
 
 void ui_starmap_draw_frame(int x, int y, uint8_t *data)
 {
-    lbxgfx_draw_frame_offs(x, y, data, 6, 6, 221, 177, UI_SCREEN_W);
+    lbxgfx_draw_frame_offs(x, y, data);
 }
 
 void ui_starmap_draw_frame_from(int x, int y, struct gfx_aux_s *aux)
 {
-    gfx_aux_draw_frame_from_limit(x, y, aux, 6, 6, 221, 177, UI_SCREEN_W);
+    gfx_aux_draw_frame_from_limit(x, y, aux);
 }
 
 void ui_starmap_print_str_center(int x, int y, const char *str)
 {
-    lbxfont_print_str_center_limit(x, y, str, 6, 6, 221, 177, UI_SCREEN_W);
+    lbxfont_print_str_center_limit(x, y, str);
 }
 
 void ui_starmap_draw_line(int x0, int y0, int x1, int y1, uint8_t color)
