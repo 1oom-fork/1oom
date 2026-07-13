@@ -19,6 +19,8 @@
 #define vgabuf_put_pixel ui_draw_pixel
 #define vgabuf_draw_line ui_draw_line1
 #define vgabuf_draw_line_ctbl ui_draw_line_ctbl
+#define vgabuf_draw_line_limit ui_draw_line_limit
+#define vgabuf_draw_line_limit_ctbl ui_draw_line_limit_ctbl
 #define vgabuf_draw_copy_line ui_draw_copy_line
 #define vgabuf_draw_line_3h ui_draw_line_3h
 #define vgabuf_draw_box1 ui_draw_box1
