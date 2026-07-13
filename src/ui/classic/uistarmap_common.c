@@ -430,12 +430,12 @@ void ui_starmap_print_str_center(int x, int y, const char *str)
 
 void ui_starmap_draw_line(int x0, int y0, int x1, int y1, uint8_t color)
 {
-    ui_draw_line_limit(x0, y0, x1, y1, color);
+    vgabuf_draw_line_limit(x0, y0, x1, y1, color);
 }
 
 void ui_starmap_draw_line_ctbl(int x0, int y0, int x1, int y1, const uint8_t *colortbl, int colornum, int pos)
 {
-    ui_draw_line_limit_ctbl(x0, y0, x1, y1, colortbl, colornum, pos);
+    vgabuf_draw_line_limit_ctbl(x0, y0, x1, y1, colortbl, colornum, pos);
 }
 
 void ui_starmap_draw_basic(struct starmap_data_s *d)
