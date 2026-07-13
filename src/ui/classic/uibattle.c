@@ -403,21 +403,21 @@ static void ui_battle_transition_to(int px, int py, int steps)
     uiobj_table_clear();
     vgabuf_copy_back_out(ui_data.aux.screen.data);
     ui_draw_copy_buf();
-    memcpy(ui_data.gfx.vgafileh, ui_data.aux.screen.data, UI_SCREEN_W * UI_SCREEN_H);
+    memcpy(ui_data.gfx.vgafileh, ui_data.aux.screen.data, VGABUF_SIZE);
     for (int i = 1; i <= steps; ++i) {
         int x, y, percent;
         ui_delay_prepare();
-        ui_data.aux.screen.w = UI_SCREEN_W;
-        ui_data.aux.screen.h = UI_SCREEN_H;
-        memcpy(ui_data.aux.screen.data, ui_data.gfx.vgafileh, UI_SCREEN_W * UI_SCREEN_H);
+        ui_data.aux.screen.w = VGABUF_W;
+        ui_data.aux.screen.h = VGABUF_H;
+        memcpy(ui_data.aux.screen.data, ui_data.gfx.vgafileh, VGABUF_SIZE);
         x = px - ((i * px) / steps);
         y = py - ((i * py) / steps);
         percent = (i * 100) / steps;
-        if ((x + (percent * UI_SCREEN_W) / 100) > UI_SCREEN_W) {
-            x = UI_SCREEN_W - (percent * UI_SCREEN_W) / 100;
+        if ((x + (percent * VGABUF_W) / 100) > VGABUF_W) {
+            x = VGABUF_W - (percent * VGABUF_W) / 100;
         }
-        if ((y + (percent * UI_SCREEN_H) / 100) > UI_SCREEN_H) {
-            y = UI_SCREEN_H - (percent * UI_SCREEN_H) / 100;
+        if ((y + (percent * VGABUF_H) / 100) > VGABUF_H) {
+            y = VGABUF_H - (percent * VGABUF_H) / 100;
         }
         gfx_aux_scale(&ui_data.aux.screen, percent, percent);
         gfx_aux_color_replace(&ui_data.aux.screen, 0, 1);
@@ -786,8 +786,8 @@ void ui_battle_init(struct battle_s *bt)
     /* ui_battle_do_sub1: */
     uiobj_set_callback_and_delay(ui_battle_draw_cb, bt, 2);
     ctx.cursor[0].cursor_i = 1;
-    ctx.cursor[0].x1 = UI_SCREEN_W - 1;
-    ctx.cursor[0].y1 = UI_SCREEN_H - 1;
+    ctx.cursor[0].x1 = VGABUF_W - 1;
+    ctx.cursor[0].y1 = VGABUF_H - 1;
     ui_battle_clear_ois(&ctx);
     ctx.oi_ai = UIOBJI_INVALID;
 
