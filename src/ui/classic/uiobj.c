@@ -27,7 +27,7 @@
 */
 #define UIOBJ_MAX   (PLANETS_MAX * 7 + FLEET_ENROUTE_MAX + TRANSPORT_MAX + 32)
 
-#define UIOBJ_OFFSCREEN (((UI_SCREEN_W > UI_SCREEN_H) ? UI_SCREEN_W : UI_SCREEN_H) + 100)
+#define UIOBJ_OFFSCREEN (((VGABUF_W > VGABUF_H) ? VGABUF_W : VGABUF_H) + 100)
 
 typedef struct uiobj_s {
     /*00*/ uint16_t x0;
@@ -1847,7 +1847,7 @@ int16_t uiobj_add_mousearea_limited(int16_t x0, int16_t y0, int16_t x1, int16_t 
 
 int16_t uiobj_add_mousearea_all(mookey_t key, int16_t aa)
 {
-    return uiobj_add_mousearea(0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, key, aa);
+    return uiobj_add_mousearea(VGABUF_RECT, key, aa);
 }
 
 int16_t uiobj_add_inputkey(uint32_t key)
