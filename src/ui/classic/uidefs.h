@@ -8,9 +8,6 @@
 #include "types.h"
 #include "vgabuf.h"
 
-#define UI_SCREEN_W 320
-#define UI_SCREEN_H 200
-
 #define NUM_SOUNDS  0x29
 #define NUM_MUSICS  0x28
 
