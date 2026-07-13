@@ -42,9 +42,6 @@ const struct cmdline_options_s main_cmdline_options[] = {
 
 /* -------------------------------------------------------------------------- */
 
-#define UI_SCREEN_W 320
-#define UI_SCREEN_H 400
-
 static bool in_lbx = false;
 static lbxfile_e cur_lbx;
 static int cur_items = LBXFILE_NUM;
@@ -139,7 +136,7 @@ static void drawscreen_outlbx(void)
 static void drawscreen_inlbx_rotate(void)
 {
     int x, y, x0, y0, x1, y1, angle, w, h, midx, midy, maxwh;
-    midx = UI_SCREEN_W / 2;
+    midx = 320 / 2;
     midy = 200 / 2;
     w = lbxgfx_get_w(cur_ptr);
     h = lbxgfx_get_h(cur_ptr);

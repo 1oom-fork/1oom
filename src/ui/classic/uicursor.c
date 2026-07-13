@@ -29,8 +29,8 @@ static uint16_t cursor_hmm3 = 0;
 
 /* -------------------------------------------------------------------------- */
 
-ui_cursor_area_t ui_cursor_area_all_i0 = { 0, 0, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1 };
-ui_cursor_area_t ui_cursor_area_all_i1 = { 1, 0, 0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1 };
+ui_cursor_area_t ui_cursor_area_all_i0 = { 0, 0, VGABUF_RECT };
+ui_cursor_area_t ui_cursor_area_all_i1 = { 1, 0, VGABUF_RECT };
 
 ui_cursor_area_t ui_cursor_area_tbl[] = {
     /*0*/ { 1, 0, 0, 0, 319, 199 },
@@ -59,12 +59,12 @@ static void ui_cursor_store_bg(int mx, int my, uint8_t *p, struct cursor_bg_s *b
     bg->y = my;
     p += VGABUF_OFFSET(mx, my);
     w = CURSOR_W;
-    if ((mx + w) > UI_SCREEN_W) {
-        w = UI_SCREEN_W - mx;
+    if ((mx + w) > VGABUF_W) {
+        w = VGABUF_W - mx;
     }
     h = CURSOR_H;
-    if ((my + h) > UI_SCREEN_H) {
-        h = UI_SCREEN_H - my;
+    if ((my + h) > VGABUF_H) {
+        h = VGABUF_H - my;
     }
     for (int y = 0; y < h; ++y) {
         memcpy(q, p, w);
@@ -82,12 +82,12 @@ static void ui_cursor_draw(int mx, int my, uint8_t *p)
     uint8_t *q = lbxpal_cursors + ((ui_cursor_gfx_i - 1) * CURSOR_W * CURSOR_H);
     p += VGABUF_OFFSET(mx, my);
     w = CURSOR_W;
-    if ((mx + w) > UI_SCREEN_W) {
-        w = UI_SCREEN_W - mx;
+    if ((mx + w) > VGABUF_W) {
+        w = VGABUF_W - mx;
     }
     h = CURSOR_H;
-    if ((my + h) > UI_SCREEN_H) {
-        h = UI_SCREEN_H - my;
+    if ((my + h) > VGABUF_H) {
+        h = VGABUF_H - my;
     }
     for (int y = 0; y < h; ++y) {
         for (int x = 0; x < w; ++x) {
@@ -109,12 +109,12 @@ static void ui_cursor_erase(uint8_t *p, struct cursor_bg_s *bg)
     uint8_t *q = bg->data;
     p += VGABUF_OFFSET(mx, my);
     w = CURSOR_W;
-    if ((mx + w) > UI_SCREEN_W) {
-        w = UI_SCREEN_W - mx;
+    if ((mx + w) > VGABUF_W) {
+        w = VGABUF_W - mx;
     }
     h = CURSOR_H;
-    if ((my + h) > UI_SCREEN_H) {
-        h = UI_SCREEN_H - my;
+    if ((my + h) > VGABUF_H) {
+        h = VGABUF_H - my;
     }
     for (int y = 0; y < h; ++y) {
         memcpy(p, q, w);
