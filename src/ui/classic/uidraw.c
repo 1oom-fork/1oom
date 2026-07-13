@@ -72,90 +72,6 @@ static void ui_draw_box_fill_sub1(uint16_t num, const uint8_t *colorptr, uint8_t
     }
 }
 
-static void ui_draw_line_limit_do(int x0, int y0, int x1, int y1, uint8_t color, const uint8_t *colortbl, int colornum, int colorpos)
-{
-    int lx0 = uiobj_minx, ly0 = uiobj_miny, lx1 = uiobj_maxx, ly1 = uiobj_maxy;
-    if (x0 == x1) {
-        if ((x0 < lx0) || (x0 > lx1)) {
-            return;
-        }
-        if (y1 < y0) {
-            int t = y0; y0 = y1; y1 = t;
-            colorpos = colornum - 1 - colorpos;
-        }
-        if ((y1 < ly0) || (y0 > ly1)) {
-            return;
-        }
-        SETMAX(y0, ly0);
-        SETMIN(y1, ly1);
-    } else {
-        int dx, dy;
-        if (x1 < x0) {
-            int t;
-            t = x0; x0 = x1; x1 = t;
-            t = y0; y0 = y1; y1 = t;
-            colorpos = colornum - 1 - colorpos;
-        }
-        dy = y1 - y0;
-        dx = x1 - x0;
-        if (x0 < lx0) {
-            y0 += (dy * (lx0 - x0)) / dx;
-            x0 = lx0;
-        }
-        if (x0 > x1) {
-            return;
-        }
-        if (x1 > lx1) {
-            y1 = y0 + (dy * (lx1 - x0)) / dx;
-            x1 = lx1;
-        }
-        if (x1 < x0) {
-            return;
-        }
-    }
-    if (y0 == y1) {
-        if ((y0 < ly0) || (y0 > ly1)) {
-            return;
-        }
-        if (x1 < x0) {
-            int t = x0; x0 = x1; x1 = t;
-        }
-        if ((x1 < lx0) || (x0 > lx1)) {
-            return;
-        }
-        SETMAX(x0, lx0);
-        SETMIN(x1, lx1);
-    } else {
-        int dx, dy;
-        if (y1 < y0) {
-            int t;
-            t = x0; x0 = x1; x1 = t;
-            t = y0; y0 = y1; y1 = t;
-        }
-        dx = x1 - x0;
-        dy = y1 - y0;
-        if (y0 < ly0) {
-            x0 += (dx * (ly0 - y0)) / dy;
-            y0 = ly0;
-        }
-        if (y0 > y1) {
-            return;
-        }
-        if (y1 > ly1) {
-            x1 = x0 + (dx * (ly1 - y0)) / dy;
-            y1 = ly1;
-        }
-        if (y1 < y0) {
-            return;
-        }
-    }
-    if (colortbl) {
-        vgabuf_draw_line_ctbl(x0, y0, x1, y1, colortbl, colornum, colorpos);
-    } else {
-        vgabuf_draw_line(x0, y0, x1, y1, color);
-    }
-}
-
 /* -------------------------------------------------------------------------- */
 
 void ui_draw_copy_buf(void)
@@ -172,16 +88,6 @@ void ui_draw_copy_buf(void)
         mouse_set_xy(mx, my);
     }
 */
-}
-
-void ui_draw_line_limit(int x0, int y0, int x1, int y1, uint8_t color)
-{
-    ui_draw_line_limit_do(x0, y0, x1, y1, color, NULL, 0, 0);
-}
-
-void ui_draw_line_limit_ctbl(int x0, int y0, int x1, int y1, const uint8_t *colortbl, int colornum, int pos)
-{
-    ui_draw_line_limit_do(x0, y0, x1, y1, 0, colortbl, colornum, pos);
 }
 
 void ui_draw_box_fill(int x0, int y0, int x1, int y1, const uint8_t *colorptr, uint8_t color0, uint16_t colorhalf, uint16_t ac, uint8_t ae)

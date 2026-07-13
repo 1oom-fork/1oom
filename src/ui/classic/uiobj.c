@@ -136,13 +136,6 @@ static uiobj_t uiobj_tbl[UIOBJ_MAX];
 
 /* -------------------------------------------------------------------------- */
 
-int uiobj_minx = 0;
-int uiobj_miny = 0;
-int uiobj_maxx = UI_SCREEN_W - 1;
-int uiobj_maxy = UI_SCREEN_H - 1;
-
-/* -------------------------------------------------------------------------- */
-
 #define UIOBJI_ALLOC()  uiobj_table_num++
 
 static inline int16_t hmmdiv2(int16_t v)
@@ -1654,28 +1647,6 @@ void uiobj_set_hmm3_xyoff(int xoff, int yoff)
     uiobj_hmm3_yoff = yoff;
 }
 
-void uiobj_set_limits(int minx, int miny, int maxx, int maxy)
-{
-    SETMAX(minx, 0);
-    SETMAX(miny, 0);
-    SETMIN(maxx, UI_SCREEN_W - 1);
-    SETMIN(maxy, UI_SCREEN_H - 1);
-    if (minx > maxx) { int t = minx; minx = maxx; maxx = t; }
-    if (miny > maxy) { int t = miny; miny = maxy; maxy = t; }
-    uiobj_minx = minx;
-    uiobj_miny = miny;
-    uiobj_maxx = maxx;
-    uiobj_maxy = maxy;
-}
-
-void uiobj_set_limits_all(void)
-{
-    uiobj_minx = 0;
-    uiobj_miny = 0;
-    uiobj_maxx = UI_SCREEN_W - 1;
-    uiobj_maxy = UI_SCREEN_H - 1;
-}
-
 void uiobj_set_help_id(int16_t v)
 {
     uiobj_help_id = v;
@@ -1865,15 +1836,12 @@ int16_t uiobj_add_mousearea(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, 
     return UIOBJI_ALLOC();
 }
 
-int16_t uiobj_add_mousearea_limited(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, mookey_t key, int16_t aa)
+int16_t uiobj_add_mousearea_limited(int16_t x0, int16_t y0, int16_t x1, int16_t y1, mookey_t key, int16_t aa)
 {
-    if ((x1 < uiobj_minx) || (x0 > uiobj_maxx) || (y1 < uiobj_miny) || (y0 > uiobj_maxy)) {
+    if (vgabuf_limits_outside(x0, y0, x1, y1)) {
         return UIOBJI_OUTSIDE;
     }
-    x0 = MAX(x0, uiobj_minx);
-    x1 = MIN(x1, uiobj_maxx);
-    y0 = MAX(y0, uiobj_miny);
-    y1 = MIN(y1, uiobj_maxy);
+    vgabuf_limits_clamp_rect(&x0, &y0, &x1, &y1);
     return uiobj_add_mousearea(x0, y0, x1, y1, key, aa);
 }
 
