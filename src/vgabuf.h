@@ -48,6 +48,7 @@ static inline void vgabuf_fill(uint8_t color)
     vgabuf_fill_rect(VGABUF_RECT, color);
 }
 
+extern void vgabuf_limits_get(int16_t *x0, int16_t *y0, int16_t *x1, int16_t *y1);
 extern bool vgabuf_limits_outside(int16_t x0, int16_t y0, int16_t x1, int16_t y1);
 extern void vgabuf_limits_clamp_rect(int16_t *x0, int16_t *y0, int16_t *x1, int16_t *y1);
 extern void vgabuf_limits_set(int16_t x0, int16_t y0, int16_t x1, int16_t y1);
