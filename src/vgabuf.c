@@ -397,6 +397,14 @@ void vgabuf_draw_box2(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint8_t co
     vgabuf_draw_box1(x0, y0, x1, y1, color2, color4);
 }
 
+void vgabuf_limits_get(int16_t *x0, int16_t *y0, int16_t *x1, int16_t *y1)
+{
+    *x0 = vgabuf_limits_minx;
+    *y0 = vgabuf_limits_miny;
+    *x1 = vgabuf_limits_maxx;
+    *y1 = vgabuf_limits_maxy;
+}
+
 bool vgabuf_limits_outside(int16_t x0, int16_t y0, int16_t x1, int16_t y1)
 {
     return (x1 < vgabuf_limits_minx) || (x0 > vgabuf_limits_maxx) || (y1 < vgabuf_limits_miny) || (y0 > vgabuf_limits_maxy);
