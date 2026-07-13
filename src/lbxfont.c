@@ -100,8 +100,10 @@ static void lbxfont_plotchar_limit(int x, int y, char c, int xskip, int char_w, 
     }
 }
 
-static int lbxfont_print_char_ret_x_limit(int x, int y, char c, int lx0, int ly0, int lx1, int ly1, uint16_t pitch)
+static int lbxfont_print_char_ret_x_limit(int x, int y, char c, int v0, int v1, int v2, int v3, uint16_t pitch)
 {
+    int16_t lx0, ly0, lx1, ly1;
+    vgabuf_limits_get(&lx0, &ly0, &lx1, &ly1);
     c -= 0x20;
     if ((c < 0) || (c > 0x5e)) {
         return x;
@@ -221,8 +223,10 @@ static int lbxfont_print_str_do(int x, int y, const char *str, bool change_color
     return lbxfont_temp_x;
 }
 
-static int lbxfont_print_str_limit_do(int x, int y, const char *str, bool change_color, int lx0, int ly0, int lx1, int ly1, uint16_t pitch)
+static int lbxfont_print_str_limit_do(int x, int y, const char *str, bool change_color, int v0, int v1, int v2, int v3, uint16_t pitch)
 {
+    int16_t lx0, ly0, lx1, ly1;
+    vgabuf_limits_get(&lx0, &ly0, &lx1, &ly1);
     uint8_t hmm10 = lbxfontdata[0x10];
     int w;
     lbxfont_temp_x = x;
