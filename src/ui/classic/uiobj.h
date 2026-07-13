@@ -15,12 +15,6 @@
 #define UIOBJI_SET_TBL4_INVALID(n0_, n1_, n2_, n3_) do { for (int i_ = 0; i_ < (sizeof(n0_)/sizeof(n0_[0])); ++i_) { n0_[i_] = UIOBJI_INVALID; n1_[i_] = UIOBJI_INVALID; n2_[i_] = UIOBJI_INVALID; n3_[i_] = UIOBJI_INVALID; } } while (0)
 #define UIOBJI_SET_TBL6_INVALID(n0_, n1_, n2_, n3_, n4_, n5_) do { for (int i_ = 0; i_ < (sizeof(n0_)/sizeof(n0_[0])); ++i_) { n0_[i_] = UIOBJI_INVALID; n1_[i_] = UIOBJI_INVALID; n2_[i_] = UIOBJI_INVALID; n3_[i_] = UIOBJI_INVALID; n4_[i_] = UIOBJI_INVALID; n5_[i_] = UIOBJI_INVALID; } } while (0)
 
-/* HACK for lbxgfx_draw_frame_offs params */
-extern int uiobj_minx;
-extern int uiobj_miny;
-extern int uiobj_maxx;
-extern int uiobj_maxy;
-
 extern void uiobj_table_clear(void);
 extern void uiobj_table_set_last(int16_t oi);
 extern int16_t uiobj_handle_input_cond(void);
@@ -28,8 +22,6 @@ extern int16_t uiobj_handle_input_cond(void);
 extern void uiobj_finish_frame(void);
 extern void uiobj_set_downcount(int16_t v);
 extern void uiobj_set_hmm3_xyoff(int xoff, int yoff);
-extern void uiobj_set_limits(int minx, int miny, int maxx, int maxy);
-extern void uiobj_set_limits_all(void);
 extern void uiobj_set_focus(int16_t uiobji);
 extern void uiobj_set_help_id(int16_t v);
 extern void uiobj_set_hmm8_0(void);
@@ -50,7 +42,7 @@ extern int16_t uiobj_add_t3(uint16_t x, uint16_t y, const char *str, uint8_t *lb
 extern int16_t uiobj_add_t4(int x, int y, int w, char *buf, uint16_t buflen, uint8_t rcolor, bool alignr, uint16_t z1e, const uint8_t *colortbl, mookey_t key, int16_t z0a);
 extern int16_t uiobj_add_slider(uint16_t x0, uint16_t y0, uint16_t vmin, uint16_t vmax, uint16_t fmin, uint16_t fmax, uint16_t w, uint16_t h, int16_t *vptr, mookey_t key, int16_t aa);
 extern int16_t uiobj_add_mousearea(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, mookey_t key, int16_t aa);
-extern int16_t uiobj_add_mousearea_limited(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, mookey_t key, int16_t aa);
+extern int16_t uiobj_add_mousearea_limited(int16_t x0, int16_t y0, int16_t x1, int16_t y1, mookey_t key, int16_t aa);
 extern int16_t uiobj_add_mousearea_all(mookey_t key, int16_t aa);
 extern int16_t uiobj_add_inputkey(uint32_t key);
 extern int16_t uiobj_add_alt_str(const char *str);
