@@ -52,11 +52,11 @@ static void ui_starmap_trans_draw_cb(void *vptr)
     } else {
         /*72f20*/
         vgabuf_limits_set(0, 83, 310, 199);
-        lbxgfx_draw_frame_offs(222, 80, ui_data.gfx.starmap.relocate, 0, 83, 310, 199, UI_SCREEN_W);
+        lbxgfx_draw_frame_offs(222, 80, ui_data.gfx.starmap.relocate);
         if (BOOLVEC_IS0(pt->explored, d->api)) {
             vgabuf_fill_rect(227, 57, 310, 159, 0);
             vgabuf_limits_set(227, 57, 310, 159);
-            lbxgfx_draw_frame_offs(224, 5, ui_data.gfx.starmap.unexplor, 227, 57, 310, 159, UI_SCREEN_W);
+            lbxgfx_draw_frame_offs(224, 5, ui_data.gfx.starmap.unexplor);
         } else {
             /*72fa9*/
             vgabuf_fill_rect(227, 73, 310, 159, 7);
