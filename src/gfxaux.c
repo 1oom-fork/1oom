@@ -297,8 +297,10 @@ static void gfx_aux_draw_rotate_sub2(struct rotate_param_s *r, const uint8_t *gf
 {
 }
 
-static void gfx_aux_draw_frame_from_rotate_limit_do(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3, struct gfx_aux_s *aux, int lx0, int ly0, int lx1, int ly1, uint16_t pitch_hw)
+static void gfx_aux_draw_frame_from_rotate_limit_do(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3, struct gfx_aux_s *aux, int v0, int v1, int v2, int v3, uint16_t pitch_hw)
 {
+    int16_t lx0, ly0, lx1, ly1;
+    vgabuf_limits_get(&lx0, &ly0, &lx1, &ly1);
     struct rotate_param_s r;
     int tx[4] = { x0, x1, x2, x3 };
     int ty[4] = { y0, y1, y2, y3 };
@@ -914,9 +916,11 @@ void gfx_aux_draw_frame_from(int x, int y, struct gfx_aux_s *aux)
     }
 }
 
-void gfx_aux_draw_frame_from_limit(int x, int y, struct gfx_aux_s *aux, int lx0, int ly0, int lx1, int ly1, uint16_t pitch)
+void gfx_aux_draw_frame_from_limit(int x, int y, struct gfx_aux_s *aux, int v0, int v1, int v2, int v3, uint16_t pitch)
 {
     int xskip, yskip, x0, y0, x1, y1, w, h;
+    int16_t lx0, ly0, lx1, ly1;
+    vgabuf_limits_get(&lx0, &ly0, &lx1, &ly1);
 
     if ((x > lx1) || (y > ly1)) {
         return;
@@ -949,9 +953,11 @@ void gfx_aux_draw_frame_from_limit(int x, int y, struct gfx_aux_s *aux, int lx0,
     gfx_aux_draw_frame_from_limit_do(x0, y0, w, h, xskip, yskip, aux);
 }
 
-void gfx_aux_draw_frame_from_rotate_limit(int x0, int y0, int x1, int y1, struct gfx_aux_s *aux, int lx0, int ly0, int lx1, int ly1, uint16_t pitch)
+void gfx_aux_draw_frame_from_rotate_limit(int x0, int y0, int x1, int y1, struct gfx_aux_s *aux, int v0, int v1, int v2, int v3, uint16_t pitch)
 {
     int h = aux->h, angle, angle2, x2, y2, x3, y3, xo, yo, v;
+    int16_t lx0, ly0, lx1, ly1;
+    vgabuf_limits_get(&lx0, &ly0, &lx1, &ly1);
     angle = util_math_calc_angle(x1 - x0, y1 - y0);
     angle2 = 90 - angle;
     if (angle2 < 0) {
