@@ -244,8 +244,8 @@ static void ui_draw_finish_hmm3(int x, int y, int f)
 static void ui_draw_finish_hmm2(void)
 {
     for (int f = 0; f < 0xa; ++f) {
-        for (int x = 0; x < UI_SCREEN_W; x += 0x14) {
-            for (int y = 0; y < UI_SCREEN_H; y += 0x14) {
+        for (int x = 0; x < VGABUF_W; x += 0x14) {
+            for (int y = 0; y < VGABUF_H; y += 0x14) {
                 ui_draw_finish_hmm3(x, y, f);
             }
         }
@@ -274,9 +274,9 @@ void ui_draw_stars(int x, int y, int xoff1, int xoff2, struct draw_stars_s *s)
     const int tbl_hmm2_x[23] = { 0, 6, 11, 33, 36, 46, 52, 67, 84, 86, 91, 95, 98, 103, 107, 112, 123, 125, 139, 142, 148, 151, 159 };
     const int tbl_hmm2_y[23] = { 22, 8, 18, 19, 3, 18, 7, 24, 14, 17, 11, 1, 13, 15, 5, 6, 19, 1, 13, 10, 6, 23, 13 };
     int xo1, xo2;
-    xo1 = (s->xoff1 + xoff1) % (UI_SCREEN_W / 2);
-    xo2 = (s->xoff2 + xoff1 * 2) % (UI_SCREEN_W / 2);
-    if (((UI_SCREEN_W / 2) - xoff2) > xo1) {
+    xo1 = (s->xoff1 + xoff1) % (VGABUF_W / 2);
+    xo2 = (s->xoff2 + xoff1 * 2) % (VGABUF_W / 2);
+    if (((VGABUF_W / 2) - xoff2) > xo1) {
         int tx = xo1 + xoff2;
         for (int i = 0; i < 16; ++i) {
             int sx = tbl_hmm1_x[i];
@@ -292,7 +292,7 @@ void ui_draw_stars(int x, int y, int xoff1, int xoff2, struct draw_stars_s *s)
                 vgabuf_put_pixel(sx - xo1 + x, tbl_hmm1_y[i] + y, 4);
             }
         }
-        tx = (xo1 + xoff2) % (UI_SCREEN_W / 2);
+        tx = (xo1 + xoff2) % (VGABUF_W / 2);
         for (int i = 0; i < 16; ++i) {
             int sx = tbl_hmm1_x[i];
             if (sx < tx) {
@@ -300,7 +300,7 @@ void ui_draw_stars(int x, int y, int xoff1, int xoff2, struct draw_stars_s *s)
             }
         }
     }
-    if (((UI_SCREEN_W / 2) - xoff2) > xo2) {
+    if (((VGABUF_W / 2) - xoff2) > xo2) {
         int tx = xo2 + xoff2;
         for (int i = 0; i < 23; ++i) {
             int sx = tbl_hmm2_x[i];
@@ -316,7 +316,7 @@ void ui_draw_stars(int x, int y, int xoff1, int xoff2, struct draw_stars_s *s)
                 vgabuf_put_pixel(sx - xo2 + x, tbl_hmm2_y[i] + y, 6);
             }
         }
-        tx = (xo2 + xoff2) % (UI_SCREEN_W / 2);
+        tx = (xo2 + xoff2) % (VGABUF_W / 2);
         for (int i = 0; i < 23; ++i) {
             int sx = tbl_hmm2_x[i];
             if (sx < tx) {
@@ -336,8 +336,8 @@ void ui_draw_set_stars_xoffs(struct draw_stars_s *s, bool flag_right)
         x1 = 1;
         x2 = 2;
     }
-    s->xoff1 = (s->xoff1 + x1) % (UI_SCREEN_W / 2);
-    s->xoff2 = (s->xoff2 + x2) % (UI_SCREEN_W / 2);
+    s->xoff1 = (s->xoff1 + x1) % (VGABUF_W / 2);
+    s->xoff2 = (s->xoff2 + x2) % (VGABUF_W / 2);
 }
 
 void ui_draw_textbox_2str(const char *str1, const char *str2, int y0)

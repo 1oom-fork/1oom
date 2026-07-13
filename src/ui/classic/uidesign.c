@@ -544,9 +544,9 @@ static struct xy_s ui_design_draw_selbox(int xpos, int xoff1, int xoff2, int xof
     struct xy_s xy;
     int x0, y0, x1, y1;
 
-    x0 = (UI_SCREEN_W / 2 - 1) - (xpos + xoff1) / 2;
+    x0 = (VGABUF_W / 2 - 1) - (xpos + xoff1) / 2;
     x1 = x0 + xpos + 20;
-    y0 = (UI_SCREEN_H / 2 - 1) - (n * 8 + 20) / 2;
+    y0 = (VGABUF_H / 2 - 1) - (n * 8 + 20) / 2;
     y1 = y0 + n * 8;
     SETMAX(x0, 0);
     SETMIN(x1, 159);
