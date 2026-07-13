@@ -597,20 +597,24 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
     {
         uint8_t *gfx;
         int x0, y0, x1, y1;
-        x0 = (-x / 4) + 6;
-        y0 = (-y / 4) + 6;
-        x1 = ((-x + 1) / 2) + 6;
-        y1 = ((-y + 1) / 2) + 6;
-        gfx = ui_fix_starmap_background ? ui_data.gfx.starmap.starbak2 : ui_data.gfx.starmap.starback;
-        ui_starmap_draw_frame(x0, y0, gfx);
-        ui_starmap_draw_frame(x0 + 320, y0, gfx);
-        ui_starmap_draw_frame(x0, y0 + 200, gfx);
-        ui_starmap_draw_frame(x0 + 320, y0 + 200, gfx);
-        gfx = ui_fix_starmap_background ? ui_data.gfx.starmap.starback : ui_data.gfx.starmap.starbak2;
-        ui_starmap_draw_frame(x1, y1, gfx);
-        ui_starmap_draw_frame(x1 + 320, y1, gfx);
-        ui_starmap_draw_frame(x1, y1 + 200, gfx);
-        ui_starmap_draw_frame(x1 + 320, y1 + 200, gfx);
+        for (int dx = 0; dx < vgabuf_scale; ++dx) {
+            for (int dy = 0; dy < vgabuf_scale; ++dy) {
+                x0 = (-x / 4) + 6 + VGABUF_W * dx * 2;
+                y0 = (-y / 4) + 6 + VGABUF_H * dy * 2;
+                x1 = ((-x + 1) / 2) + 6 + VGABUF_W * dx * 2;
+                y1 = ((-y + 1) / 2) + 6 + VGABUF_H * dy * 2;
+                gfx = ui_fix_starmap_background ? ui_data.gfx.starmap.starbak2 : ui_data.gfx.starmap.starback;
+                ui_starmap_draw_frame(x0, y0, gfx);
+                ui_starmap_draw_frame(x0 + 320, y0, gfx);
+                ui_starmap_draw_frame(x0, y0 + 200, gfx);
+                ui_starmap_draw_frame(x0 + 320, y0 + 200, gfx);
+                gfx = ui_fix_starmap_background ? ui_data.gfx.starmap.starback : ui_data.gfx.starmap.starbak2;
+                ui_starmap_draw_frame(x1, y1, gfx);
+                ui_starmap_draw_frame(x1 + 320, y1, gfx);
+                ui_starmap_draw_frame(x1, y1 + 200, gfx);
+                ui_starmap_draw_frame(x1 + 320, y1 + 200, gfx);
+            }
+        }
     }
     for (int i = 0; i < g->nebula_num; ++i) {
         int tx, ty;
