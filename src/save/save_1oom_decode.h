@@ -76,4 +76,20 @@ static int libsave_1oom_decode_planet_id(const uint8_t *buf, int pos, planet_id_
 
 #define SG_1OOM_DE_PLANET_ID(_v_)  do { pos = libsave_1oom_decode_planet_id(buf, pos, &(_v_), version); } while (0)
 
+static int libsave_1oom_decode_shipdesign_id(const uint8_t *buf, int pos, shipdesign_id_t *sdi, uint32_t version)
+{
+    if (version < 2) {
+        uint8_t tmp;
+        SG_1OOM_DE_U8(tmp);
+        *sdi = (int8_t)(tmp);
+    } else {
+        uint16_t tmp;
+        SG_1OOM_DE_U16(tmp);
+        *sdi = (int16_t)(tmp);
+    }
+    return pos;
+}
+
+#define SG_1OOM_DE_SHIPDESIGN_ID(_v_)  do { pos = libsave_1oom_decode_shipdesign_id(buf, pos, &(_v_), version); } while (0)
+
 #endif

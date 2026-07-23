@@ -66,4 +66,16 @@ static int libsave_1oom_encode_planet_id(uint8_t *buf, int pos, planet_id_t pli)
 
 #define SG_1OOM_EN_PLANET_ID(_v_)  do { pos = libsave_1oom_encode_planet_id(buf, pos, (_v_)); } while (0)
 
+static int libsave_1oom_encode_shipdesign_id(uint8_t *buf, int pos, shipdesign_id_t sdi)
+{
+    if (LIBSAVE_1OOM_VERSION < 2) {
+        SG_1OOM_EN_U8(sdi);
+    } else {
+        SG_1OOM_EN_U16(sdi);
+    }
+    return pos;
+}
+
+#define SG_1OOM_EN_SHIPDESIGN_ID(_v_)  do { pos = libsave_1oom_encode_shipdesign_id(buf, pos, (_v_)); } while (0)
+
 #endif

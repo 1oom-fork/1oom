@@ -181,8 +181,8 @@ static int libsave_1oom_decode_eto(const uint8_t *buf, int pos, empiretechorbit_
     }
     SG_1OOM_DE_TBL_TBL_U8(e->spyreportfield, pnum, TECH_FIELD_NUM);
     SG_1OOM_DE_TBL_U16(e->spyreportyear, pnum);
-    SG_1OOM_DE_U8(e->shipi_colony);
-    SG_1OOM_DE_U8(e->shipi_bomber);
+    SG_1OOM_DE_SHIPDESIGN_ID(e->shipi_colony);
+    SG_1OOM_DE_SHIPDESIGN_ID(e->shipi_bomber);
     return pos;
 }
 

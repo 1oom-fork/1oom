@@ -177,8 +177,8 @@ static int libsave_1oom_encode_eto(uint8_t *buf, int pos, const empiretechorbit_
     pos = libsave_1oom_encode_orbits(buf, pos, e->orbit, planets);
     SG_1OOM_EN_TBL_TBL_U8(e->spyreportfield, pnum, TECH_FIELD_NUM);
     SG_1OOM_EN_TBL_U16(e->spyreportyear, pnum);
-    SG_1OOM_EN_U8(e->shipi_colony);
-    SG_1OOM_EN_U8(e->shipi_bomber);
+    SG_1OOM_EN_SHIPDESIGN_ID(e->shipi_colony);
+    SG_1OOM_EN_SHIPDESIGN_ID(e->shipi_bomber);
     return pos;
 }
 

@@ -304,8 +304,8 @@ static int libsave_moo13_encode(uint8_t *buf, const struct game_s *g)
         }
         M13_SET_TBL_16(g->eto[PLAYER_0].spyreportfield[i], eb + 0xdc2);
         M13_SET_16(g->eto[PLAYER_0].spyreportyear[i], eb + 0xdce);
-        M13_SET_16(e->shipi_colony, eb + 0xdd0);
-        M13_SET_16(e->shipi_bomber, eb + 0xdd2);
+        M13_SET_S16(e->shipi_colony, eb + 0xdd0);
+        M13_SET_S16(e->shipi_bomber, eb + 0xdd2);
     }
     for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         const shipresearch_t *srd = &(g->srd[i]);

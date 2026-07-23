@@ -307,8 +307,8 @@ static int libsave_moo13_decode(uint8_t *buf, struct game_s *g)
         }
         M13_GET_TBL_16(g->eto[PLAYER_0].spyreportfield[i], eb + 0xdc2);
         M13_GET_16(g->eto[PLAYER_0].spyreportyear[i], eb + 0xdce);
-        M13_GET_16(e->shipi_colony, eb + 0xdd0);
-        M13_GET_16(e->shipi_bomber, eb + 0xdd2);
+        M13_GET_S16(e->shipi_colony, eb + 0xdd0);
+        M13_GET_S16(e->shipi_bomber, eb + 0xdd2);
     }
     for (player_id_t i = PLAYER_0; i < g->players; ++i) {
         shipresearch_t *srd = &(g->srd[i]);
