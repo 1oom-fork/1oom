@@ -46,13 +46,14 @@ static bool game_send_fleet_do(struct game_s *g, player_id_t owner, uint8_t from
     }
     {
         uint8_t speed = 100;
-        shipdesign_t *sd = (&g->srd[owner].design[0]);
         for (int i = 0; i < numtypes; ++i) {
             if (ships[i] > 0) {
+                shipdesign_t *sd;
                 uint8_t s, st;
                 st = shiptypes[i];
+                sd = (&g->srd[owner].design[st]);
                 r->ships[st] = ships[i];
-                s = sd[st].engine + 1;
+                s = sd->engine + 1;
                 SETMIN(speed, s);
             }
         }

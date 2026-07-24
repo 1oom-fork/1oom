@@ -114,10 +114,10 @@ static void starview_draw_cb(void *vptr)
     }
     if (sowner != PLAYER_NONE) {
         const empiretechorbit_t *e = &(g->eto[sowner]);
-        const shipdesign_t *sd = &(g->srd[sowner].design[0]);
         int n = 0;
         lbxfont_select(0, 0x8, 0, 0);
         for (int i = 0; i < e->shipdesigns_num; ++i) {
+            const shipdesign_t *sd = &(g->srd[sowner].design[i]);
             int ships;
             ships = e->orbit[d->planet_i].ships[i];
             if (ships > 0) {
@@ -127,7 +127,7 @@ static void starview_draw_cb(void *vptr)
                 uint8_t *gfx;
                 x = sx[n];
                 y = sy[n];
-                gfx = ui_data.gfx.ships[sd[i].look];
+                gfx = ui_data.gfx.ships[sd->look];
                 lbxgfx_set_new_frame(gfx, (d->frame + i) % 5);
                 gfx_aux_draw_frame_to(gfx, &ui_data.aux.ship_p1);
                 gfx_aux_draw_frame_from(x + 8, y + 8, &ui_data.aux.ship_p1, UI_SCREEN_W);

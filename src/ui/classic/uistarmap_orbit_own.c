@@ -31,6 +31,7 @@ static void ui_starmap_orbit_own_draw_cb(void *vptr)
     struct game_s *g = d->g;
     planet_t *pf = &g->planet[d->oo.from];
     planet_t *pt = &g->planet[g->planet_focus_i[d->api]];
+    const shipresearch_t *srd = &(g->srd[d->api]);
     char buf[0x80];
 
     ui_starmap_draw_starmap(d);
@@ -82,12 +83,11 @@ static void ui_starmap_orbit_own_draw_cb(void *vptr)
                 /* dont care */
             }
         } else {
-            const shipdesign_t *sd = &(g->srd[d->api].design[0]);
             int speed = 20;
             for (int i = 0; i < d->oo.sn0.num; ++i) {
                 int st, en;
                 st = d->oo.sn0.type[i];
-                en = sd[st].engine;
+                en = srd->design[st].engine;
                 SETMIN(speed, en);
             }
             ++speed;
@@ -113,7 +113,6 @@ static void ui_starmap_orbit_own_draw_cb(void *vptr)
         }
     }
     for (int i = 0; i < d->oo.sn0.num; ++i) {
-        const shipdesign_t *sd = &(g->srd[d->api].design[0]);
         struct draw_stars_s ds;
         uint8_t *gfx;
         int st;
@@ -123,13 +122,13 @@ static void ui_starmap_orbit_own_draw_cb(void *vptr)
         ds.xoff2 = 0;
         ui_draw_stars(227, 22 + i * 26, 0, 32, &ds);
         st = d->oo.sn0.type[i];
-        gfx = ui_data.gfx.ships[sd[st].look];
+        gfx = ui_data.gfx.ships[srd->design[st].look];
         lbxgfx_set_frame_0(gfx);
         lbxgfx_draw_frame(227, 22 + i * 26, gfx, UI_SCREEN_W);
         lbxfont_select(0, 0xd, 0, 0);
         lbxfont_print_num_right(258, 40 + i * 26, d->oo.ships[st], UI_SCREEN_W);
         lbxfont_select_set_12_1(2, 0, 0, 0);
-        lbxfont_print_str_center(287, 25 + i * 26, sd[st].name, UI_SCREEN_W);
+        lbxfont_print_str_center(287, 25 + i * 26, srd->design[st].name, UI_SCREEN_W);
     }
     lbxgfx_set_new_frame(ui_data.gfx.starmap.reloc_bu_accept, 1);
     lbxgfx_draw_frame(271, 180, ui_data.gfx.starmap.reloc_bu_accept, UI_SCREEN_W);
