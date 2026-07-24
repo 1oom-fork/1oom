@@ -31,6 +31,7 @@ static void ui_starmap_enroute_draw_cb(void *vptr)
     struct game_s *g = d->g;
     const fleet_enroute_t *r = &(g->enroute[ui_data.starmap.fleet_selected]);
     const empiretechorbit_t *e = &(g->eto[r->owner]);
+    const shipresearch_t *srd = &(g->srd[r->owner]);
     const planet_t *pt = &g->planet[g->planet_focus_i[d->api]];
     char buf[0x80];
 
@@ -89,7 +90,6 @@ static void ui_starmap_enroute_draw_cb(void *vptr)
         /*d->en.in_frange = false;*/
     }
     for (int i = 0; i < d->en.sn0.num; ++i) {
-        const shipdesign_t *sd = &(g->srd[r->owner].design[0]);
         uint8_t *gfx;
         int st, x, y;
         x = (i & 1) * 43 + 228;
@@ -98,7 +98,7 @@ static void ui_starmap_enroute_draw_cb(void *vptr)
         ui_draw_filled_rect(x, y + 28, x + 38, y + 34, 0);
         ui_draw_stars(x, y, 0, 32, &(d->en.ds));
         st = d->en.sn0.type[i];
-        gfx = ui_data.gfx.ships[sd[st].look];
+        gfx = ui_data.gfx.ships[srd->design[st].look];
         lbxgfx_set_frame_0(gfx);
         for (int f = 0; f <= d->en.frame_ship; ++f) {
             lbxgfx_draw_frame(x, y, gfx, UI_SCREEN_W);
@@ -106,7 +106,7 @@ static void ui_starmap_enroute_draw_cb(void *vptr)
         lbxfont_select(0, 0xd, 0, 0);
         lbxfont_print_num_right(x + 35, y + 19, d->en.sn0.ships[st], UI_SCREEN_W);
         lbxfont_select(2, 0xa, 0, 0);
-        lbxfont_print_str_center(x + 19, y + 29, sd[st].name, UI_SCREEN_W);
+        lbxfont_print_str_center(x + 19, y + 29, srd->design[st].name, UI_SCREEN_W);
     }
     if (d->en.scanner_delay == 0) {
         d->en.frame_scanner = (d->en.frame_scanner + 1) % 20;

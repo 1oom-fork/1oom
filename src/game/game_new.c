@@ -881,13 +881,11 @@ start_of_func:
             }
         }
         {
-            shipresearch_t *srd;
-            shipdesign_t *sd;
-            srd = &g->srd[i];
-            sd = &srd->design[0];
+            shipresearch_t *srd = &g->srd[i];
             e->shipdesigns_num = startship_num;
-            for (int j = 0; j < startship_num; ++j, ++sd) {
-                *sd = tbl_startship[j];
+            for (int j = 0; j < startship_num; ++j) {
+                shipdesign_t *sd = &srd->design[j];
+                memcpy(sd, &(tbl_startship[j]), sizeof(shipdesign_t));
                 strcpy(sd->name, game_str_tbl_stship_names[j]);
                 sd->look += e->banner * SHIP_LOOK_PER_BANNER;
             }
