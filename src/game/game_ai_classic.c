@@ -80,10 +80,9 @@ static void game_ai_classic_turn_p1_send_scout(struct game_s *g, struct ai_turn_
         ships = 0;
         for (player_id_t pi2 = PLAYER_0; pi2 < g->players; ++pi2) {
             if ((pi != pi2) && (e->treaty[pi2] != TREATY_ALLIANCE)) {
-                const shipcount_t *t = &(g->eto[pi2].orbit[i].ships[0]);
                 int sd_num = g->eto[pi2].shipdesigns_num;
                 for (int j = 0; j < sd_num; ++j) {
-                    ships += t[j];
+                    ships += g->eto[pi2].orbit[i].ships[j];
                 }
             }
         }
@@ -123,11 +122,10 @@ static void game_ai_classic_turn_p1_send_scout(struct game_s *g, struct ai_turn_
         ait->hmm6 = false;
     }
     for (int i = 0; i < g->galaxy_stars; ++i) {
-        const shipcount_t *t = &(e->orbit[i].ships[0]);
         uint32_t ships; /* MOO1 uses uint16_t */
         ships = 0;
         for (int j = 0; j < e->shipdesigns_num; ++j) {
-            ships += t[j];
+            ships += e->orbit[i].ships[j];
         }
         tbl_ownorbit[i] = ships;
     }
@@ -154,12 +152,11 @@ static void game_ai_classic_turn_p1_send_scout(struct game_s *g, struct ai_turn_
             if (g->enroute_num >= FLEET_ENROUTE_AI_MAX) {
                 log_warning("fleet enroute table (size %i/%i) too large for AI fleet (%i)!\n", g->enroute_num, FLEET_ENROUTE_MAX, FLEET_ENROUTE_AI_MAX);
             } else {
-                shipcount_t *t = &(e->orbit[mini].ships[0]);
                 const bool *hrf = &(g->srd[pi].have_reserve_fuel[0]);
                 int shipi;
                 shipi = -1;
                 for (int j = 0; j < e->shipdesigns_num; ++j) {
-                    if ((t[j] != 0) && ((shipi == -1) || (!hrf[shipi]))) {
+                    if ((e->orbit[mini].ships[j] != 0) && ((shipi == -1) || (!hrf[shipi]))) {
                         shipi = j;
                     }
                 }
@@ -171,7 +168,7 @@ static void game_ai_classic_turn_p1_send_scout(struct game_s *g, struct ai_turn_
                     const planet_t *p2 = &(g->planet[mini]);
                     shipcount_t num_send;
                     r = &(g->enroute[g->enroute_num++]);
-                    num_send = t[shipi] / 4 + 1;
+                    num_send = e->orbit[mini].ships[shipi] / 4 + 1;
                     r->dest = pli;
                     r->owner = pi;
                     r->x = p2->x;
@@ -183,7 +180,7 @@ static void game_ai_classic_turn_p1_send_scout(struct game_s *g, struct ai_turn_
                     r->ships[shipi] = num_send;
                     BOOLVEC_CLEAR(r->visible, PLAYER_NUM);
                     BOOLVEC_SET1(r->visible, pi);
-                    t[shipi] -= num_send;
+                    e->orbit[mini].ships[shipi] -= num_send;
                     tbl_ownorbit[mini] -= num_send;
                 }
             }
@@ -634,11 +631,10 @@ static void game_ai_classic_turn_p1_sub6(struct game_s *g, struct ai_turn_p1_s *
                         for (player_id_t pi2 = PLAYER_0; pi2 < g->players; ++pi2) {
                             if (pi2 != pi) {
                                 const empiretechorbit_t *e2;
-                                const shipdesign_t *sd;
                                 e2 = &(g->eto[pi2]);
-                                sd = &(g->srd[pi2].design[0]);
                                 for (int k = 0; k < e2->shipdesigns_num; ++k) {
-                                    weight += e2->orbit[i].ships[k] * game_num_tbl_hull_w[sd[k].hull];
+                                    const shipdesign_t *sd = &(g->srd[pi2].design[k]);
+                                    weight += e2->orbit[i].ships[k] * game_num_tbl_hull_w[sd->hull];
                                 }
                             }
                         }
@@ -663,9 +659,9 @@ static void game_ai_classic_turn_p1_sub7(struct game_s *g, struct ai_turn_p1_s *
     int num_hmm2 = 0;
     for (player_id_t pi2 = PLAYER_0; pi2 < g->players; ++pi2) {
         const empiretechorbit_t *e2 = &(g->eto[pi2]);
-        const shipdesign_t *sd = &(g->srd[pi2].design[0]);
         for (int i = 0; i < e2->shipdesigns_num; ++i) {
-            tbl_shipw[pi2][i] = game_num_tbl_hull_w[sd[i].hull];
+            const shipdesign_t *sd = &(g->srd[pi2].design[i]);
+            tbl_shipw[pi2][i] = game_num_tbl_hull_w[sd->hull];
         }
     }
     for (int i = 0; i < g->galaxy_stars; ++i) {
@@ -789,10 +785,8 @@ static void game_ai_classic_turn_p1_sub9(struct game_s *g, struct ai_turn_p1_s *
           && (e->treaty[p->owner] != TREATY_ALLIANCE)
           && (e->have_colony_for <= p->type)
         ) {
-            const shipcount_t *s;
-            s = &(e->orbit[i].ships[0]);
             for (int j = 0; (j < e->shipdesigns_num) && !have_orbit; ++j) {
-                if (s[j]) {
+                if (e->orbit[i].ships[j]) {
                     have_orbit = true;
                 }
             }
@@ -931,23 +925,23 @@ static void game_ai_classic_turn_p1(struct game_s *g)
     struct ai_turn_p1_s ait[1];
     for (player_id_t pi = PLAYER_0; pi < PLAYER_NUM; ++pi) {
         empiretechorbit_t *e = &(g->eto[pi]);
-        shipdesign_t *sd = &(g->srd[pi].design[0]);
         for (int i = 0; i < e->shipdesigns_num; ++i) {
+            shipdesign_t *sd = &(g->srd[pi].design[i]);
             int v;
             v = 0;
             for (int j = 0; j < WEAPON_SLOT_NUM; ++j) {
                 weapon_t wt;
-                wt = sd[i].wpnt[j];
+                wt = sd->wpnt[j];
                 if (!tbl_shiptech_weap[wt].is_bomb) {
-                    v += tbl_shiptech_weap[wt].tech_i * sd[i].wpnn[j];
+                    v += tbl_shiptech_weap[wt].tech_i * sd->wpnn[j];
                 }
             }
             if (v != 0) {
-                v += ((sd[i].shield + 10) * sd[i].hp) / 50;
+                v += ((sd->shield + 10) * sd->hp) / 50;
             }
             for (int j = 0; j < SPECIAL_SLOT_NUM; ++j) {
                 ship_special_t st;
-                st = sd[i].special[j];
+                st = sd->special[j];
                 if (st >= SHIP_SPECIAL_BATTLE_SCANNER) {
                     v += tbl_shiptech_special[st].tech_i * 2;
                 }
@@ -1477,15 +1471,12 @@ static void game_ai_classic_turn_p2_do(struct game_s *g, player_id_t pi)
     struct ai_turn_p2_s ait[1];
     empiretechorbit_t *e = &(g->eto[pi]);
     shipresearch_t *srd = &(g->srd[pi]);
-    shipdesign_t *sd = &(srd->design[0]);
     int num_non0 = 0;
     ait->have_pulsar = false;
     ait->have_repulwarp = false;
     for (int i = 0; i < e->shipdesigns_num; ++i) {
-        ship_special_t *ss = &(sd[i].special[0]);
         for (int j = 0; j < SHIP_SPECIAL_NUM; ++j) {
-            ship_special_t s;
-            s = ss[j];
+            ship_special_t s = srd->design[i].special[j];
             if ((s == SHIP_SPECIAL_ENERGY_PULSAR) || (s == SHIP_SPECIAL_IONIC_PULSAR)) {
                 ait->have_pulsar = true;
             }
@@ -1499,18 +1490,17 @@ static void game_ai_classic_turn_p2_do(struct game_s *g, player_id_t pi)
     e->shipi_colony = -1;
     e->shipi_bomber = -1;
     for (int i = 0; i < e->shipdesigns_num; ++i) {
-        ship_special_t *ss = &(sd[i].special[0]);
+        shipdesign_t *sd = &(srd->design[i]);
         if (srd->shipcount[i] != 0) {
             ++num_non0;
         }
         for (int j = 0; j < SHIP_SPECIAL_NUM; ++j) {
-            ship_special_t s;
-            s = ss[j];
+            ship_special_t s = sd->special[j];
             if ((s >= SHIP_SPECIAL_STANDARD_COLONY_BASE) || (s <= SHIP_SPECIAL_RADIATED_COLONY_BASE)) {
                 e->shipi_colony = i;
             }
         }
-        if (tbl_shiptech_weap[sd[i].wpnt[0]].is_bomb) {
+        if (tbl_shiptech_weap[sd->wpnt[0]].is_bomb) {
             e->shipi_bomber = i;
         }
     }
@@ -1569,15 +1559,14 @@ static void game_ai_classic_turn_p2_do(struct game_s *g, player_id_t pi)
         game_ai_classic_design_ship(g, ait, pi);
     }
     for (int i = 0; i < e->shipdesigns_num; ++i) {
-        ship_special_t *ss = &(sd[i].special[0]);
+        shipdesign_t *sd = &(srd->design[i]);
         for (int j = 0; j < SHIP_SPECIAL_NUM; ++j) {
-            ship_special_t s;
-            s = ss[j];
+            ship_special_t s = sd->special[j];
             if ((s >= SHIP_SPECIAL_STANDARD_COLONY_BASE) || (s <= SHIP_SPECIAL_RADIATED_COLONY_BASE)) {
                 e->shipi_colony = i;
             }
         }
-        if (tbl_shiptech_weap[sd[i].wpnt[0]].is_bomb) {
+        if (tbl_shiptech_weap[sd->wpnt[0]].is_bomb) {
             e->shipi_bomber = i;
         }
     }
@@ -1872,9 +1861,9 @@ static void game_ai_classic_turn_p3(struct game_s *g)
 
 static void game_ai_classic_battle_ai_ai_get_weights(const struct game_s *g, player_id_t pi, int *tbl)
 {
-    const shipdesign_t *sd = &(g->srd[pi].design[0]);
     const empiretechorbit_t *e = &(g->eto[pi]);
     for (int i = 0; i < e->shipdesigns_num; ++i) {
+        const shipdesign_t *sd = &(g->srd[pi].design[i]);
         tbl[i] += sd->shield * 5;
         tbl[i] += sd->comp * 5;
         tbl[i] += sd->wpnt[0];

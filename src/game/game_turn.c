@@ -1792,8 +1792,9 @@ struct game_end_s game_turn_process(struct game_s *g)
     if (g->evn.have_guardian) {
         uint8_t o = g->evn.planet_orion_i;
         for (int i = 0; i < g->players; ++i) {
-            shipcount_t *s = &(g->eto[i].orbit[o].ships[0]);
-            memset(s, 0, sizeof(*s));
+            for (int j = 0; j < NUM_SHIPDESIGNS; ++j) {
+                g->eto[i].orbit[o].ships[j] = 0;
+            }
         }
     }
     game_turn_explore(g, &artifact_planet, &artifact_player);
