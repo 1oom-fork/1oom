@@ -60,7 +60,6 @@ static void fleet_draw_cb(void *vptr)
     struct fleet_data_s *d = vptr;
     struct game_s *g = d->g;
     empiretechorbit_t *e = &(g->eto[d->api]);
-    shipdesign_t *sd = &(g->srd[d->api].design[0]);
     int num;
 
     ui_draw_filled_rect(0, 0, UI_SCREEN_W - 1, UI_SCREEN_H - 1, 0x3a);
@@ -79,10 +78,11 @@ static void fleet_draw_cb(void *vptr)
     SETMIN(num, 5);
 
     for (int i = 0; i < e->shipdesigns_num; ++i) {
+        shipdesign_t *sd = &(g->srd[d->api].design[i]);
         int x0;
         x0 = 44 * i + 48;
         lbxfont_select(2, 0xd, 0, 0);
-        lbxfont_print_str_center(x0 + 19, 6, sd[i].name, UI_SCREEN_W);
+        lbxfont_print_str_center(x0 + 19, 6, sd->name, UI_SCREEN_W);
     }
     for (int i = 0; i < num; ++i) {
         planet_t *p;
@@ -112,6 +112,7 @@ static void fleet_draw_cb(void *vptr)
         }
         s = (BOOLVEC_IS1(d->is_enroute, fi)) ? g->enroute[d->enroute[fi]].ships : e->orbit[pi].ships;
         for (int j = 0; j < e->shipdesigns_num; ++j) {
+            shipdesign_t *sd = &(g->srd[d->api].design[j]);
             int ships;
             ships = s[j];
             if (ships) {
@@ -126,7 +127,7 @@ static void fleet_draw_cb(void *vptr)
                 } else {
                     ui_draw_stars(x0, y0 + 1, j * 5, 37, &d->s);
                 }
-                gfx_ship = ui_data.gfx.ships[sd[j].look];
+                gfx_ship = ui_data.gfx.ships[sd->look];
                 lbxgfx_set_frame_0(gfx_ship);
                 if (BOOLVEC_IS0(d->is_enroute, fi)) {
                     lbxgfx_draw_frame(x0, y0 + 1, gfx_ship, UI_SCREEN_W);

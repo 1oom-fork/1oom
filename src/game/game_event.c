@@ -607,8 +607,8 @@ bool game_event_run(struct game_s *g, struct game_end_s *ge)
         int dmg = 0;
         if (player != PLAYER_NONE) {    /* BUG? only colonized planets can fight off comets */
             const empiretechorbit_t *e = &(g->eto[player]);
-            const shipdesign_t *sd = &(g->srd[player].design[0]);
             for (int i = 0; i < e->shipdesigns_num; ++i) {
+                const shipdesign_t *sd = &(g->srd[player].design[i]);
                 dmg += rnd_1_n(game_num_tbl_hull_w[sd->hull], &g->seed) * e->orbit[pli].ships[i];
             }
             ns.race = e->race;
@@ -680,8 +680,8 @@ bool game_event_run(struct game_s *g, struct game_end_s *ge)
         }
         for (player_id_t player = PLAYER_0; player < g->players; ++player) {
             const empiretechorbit_t *e = &(g->eto[player]);
-            const shipdesign_t *sd = &(g->srd[player].design[0]);
             for (int i = 0; i < e->shipdesigns_num; ++i) {
+                const shipdesign_t *sd = &(g->srd[player].design[i]);
                 dmg += rnd_1_n(game_num_tbl_hull_w[sd->hull], &g->seed) * e->orbit[pli].ships[i];
             }
             SETMIN(dmg, 32000);
