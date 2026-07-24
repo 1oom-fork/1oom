@@ -163,10 +163,10 @@ static void game_battle_prepare_p1(struct battle_s *bt, battle_side_i_t side, ui
 {
     const struct game_s *g = bt->g;
     const empiretechorbit_t *e = &(g->eto[bt->s[side].party]);
-    const shipdesign_t *sd = &(g->srd[bt->s[side].party].design[0]);
     bt->s[side].apparent_force = 0;
     for (int i = 0; i < e->shipdesigns_num; ++i) {
-        bt->s[side].apparent_force += (sd[i].hull + 1) * e->orbit[planet_i].ships[i];
+        const shipdesign_t *sd = &(g->srd[bt->s[side].party].design[i]);
+        bt->s[side].apparent_force += (sd->hull + 1) * e->orbit[planet_i].ships[i];
     }
     bt->s[side].race = e->race;
 }
@@ -175,17 +175,17 @@ static void game_battle_prepare_add_ships(struct battle_s *bt, battle_side_i_t s
 {
     const struct game_s *g = bt->g;
     const empiretechorbit_t *e = &(g->eto[bt->s[side].party]);
-    const shipdesign_t *sd = &(g->srd[bt->s[side].party].design[0]);
     bool flag_shield_disable = (g->planet[planet_i].battlebg == 0);
     shipparsed_t sp[1];
     int num_types = 0;
     for (int i = 0; i < e->shipdesigns_num; ++i) {
+        const shipdesign_t *sd = &(g->srd[bt->s[side].party].design[i]);
         shipcount_t s;
         s = e->orbit[planet_i].ships[i];
         if (s > 0) {
             bt->s[side].tbl_ships[num_types] = s;
             bt->s[side].tbl_shiptype[num_types] = i;
-            game_parsed_from_design(sp, &sd[i], s);
+            game_parsed_from_design(sp, sd, s);
             if (bt->s[side].race == RACE_MRRSHAN) {
                 sp->complevel += 4;
             }
@@ -408,15 +408,15 @@ void game_battle_finish(struct battle_s *bt)
     for (battle_side_i_t side = SIDE_L; side <= SIDE_R; ++side) {
         if (bt->s[side].party < PLAYER_NUM) {
             empiretechorbit_t *e = &(g->eto[bt->s[side].party]);
-            const shipdesign_t *sd = &(g->srd[bt->s[side].party].design[0]);
-            shipcount_t *os = &(e->orbit[bt->planet_i].ships[0]);
             for (int i = 0; i < bt->s[side].num_types; ++i) {
+                shipdesign_t *sd;
                 uint8_t st;
                 shipcount_t n;
                 st = bt->s[side].tbl_shiptype[i];
+                sd = &(g->srd[bt->s[side].party].design[st]);
                 n = bt->s[side].tbl_ships[i];
-                os[st] = n;
-                bt->s[side].apparent_force -= (sd[st].hull + 1) * n;
+                e->orbit[bt->planet_i].ships[st] = n;
+                bt->s[side].apparent_force -= (sd->hull + 1) * n;
             }
         }
     }
