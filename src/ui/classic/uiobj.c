@@ -1107,7 +1107,6 @@ static int16_t uiobj_kbd_dir_key(int dirx, int diry)
 static uint32_t uiobj_handle_kbd(int16_t *oiptr)
 {
     uint32_t key = kbd_get_keypress();
-    uiobj_t *p;
     int16_t /*si*/oi, /*di*/oi2;
     uint16_t v4;
 #ifdef FEATURE_MODEBUG
@@ -1119,21 +1118,17 @@ static uint32_t uiobj_handle_kbd(int16_t *oiptr)
         uiobj_kbd_hmm1 = 0;
     }
     oi = uiobj_kbd_hmm1 + 1;
-    p = &uiobj_tbl[oi];
     /*key = ucase(key)*/
     goto loc_14417;
     loc_143cd:
-    if ((p->type == 8) && KBD_MOD_ONLY_ALT(key) && (KBD_GET_KEY(key) == p->key)) {
+    if ((uiobj_tbl[oi].type == 8) && KBD_MOD_ONLY_ALT(key) && (KBD_GET_KEY(key) == uiobj_tbl[oi].key)) {
         goto loc_14447;
     }
     /*loc_14416:*/
     ++oi;
-    p = &uiobj_tbl[oi];
     loc_14417:
-    if (KBD_GET_KEYMOD(key) == p->key) {
-        if (p->type != 8) {
-            goto loc_14447;
-        }
+    if ((KBD_GET_KEYMOD(key) == uiobj_tbl[oi].key) && (uiobj_tbl[oi].type != 8)) {
+        goto loc_14447;
     }
     /*loc_14441:*/
     if (oi != uiobj_table_num) {
@@ -1142,23 +1137,19 @@ static uint32_t uiobj_handle_kbd(int16_t *oiptr)
     loc_14447:
     if (oi == uiobj_table_num) {
         oi = 1;
-        p = &uiobj_tbl[oi];
         goto loc_1449f;
     } else {
         goto loc_144cf;
     }
     loc_14455:
-    if ((p->type == 8) && KBD_MOD_ONLY_ALT(key) && (KBD_GET_KEY(key) == p->key)) {
+    if ((uiobj_tbl[oi].type == 8) && KBD_MOD_ONLY_ALT(key) && (KBD_GET_KEY(key) == uiobj_tbl[oi].key)) {
         goto loc_144cf;
     }
     /*loc_1449e:*/
     ++oi;
-    p = &uiobj_tbl[oi];
     loc_1449f:
-    if (KBD_GET_KEYMOD(key) == p->key) {
-        if (p->type != 8) {
-            goto loc_144cf;
-        }
+    if ((KBD_GET_KEYMOD(key) == uiobj_tbl[oi].key) && (uiobj_tbl[oi].type != 8)) {
+        goto loc_144cf;
     }
     if (oi != uiobj_table_num) {
         goto loc_14455;
@@ -1167,8 +1158,8 @@ static uint32_t uiobj_handle_kbd(int16_t *oiptr)
     uiobj_kbd_hmm1 = oi;
     v4 = 1;
     if (oi < uiobj_table_num) {
+        uiobj_t *p = &uiobj_tbl[oi];
         *oiptr = oi;
-        p = &uiobj_tbl[oi];
         if ((p->x0 < UI_SCREEN_W) && (p->y0 < UI_SCREEN_H)) {
             mouse_stored_x = p->x0 + (p->x1 - p->x0) / 2;
             mouse_stored_y = p->y0 + (p->y1 - p->y0) / 2;
@@ -1252,7 +1243,7 @@ static uint32_t uiobj_handle_kbd(int16_t *oiptr)
     /*loc_14739:*/
     if (v4 != 0) {
         for (int16_t oi3 = 0; oi3 < uiobj_table_num; ++oi3) {
-            p = &uiobj_tbl[oi3];
+            uiobj_t *p = &uiobj_tbl[oi3];
             if (p->type == 8) {
                 p->t8.pos = 0;
                 p->key = p->t8.str[0];
@@ -1367,7 +1358,7 @@ static int16_t uiobj_handle_input_sub0(void)
 {
     /* FIXME this an unreadable goto mess */
     int16_t oi = 0;
-    uiobj_t *p, *q;
+    uiobj_t *p;
     int mx = mouse_x, my = mouse_y, mb;
     uiobj_hmm1_oi = -1;
     uiobj_hmm2_oi = 0;
@@ -1572,10 +1563,9 @@ static int16_t uiobj_handle_input_sub0(void)
                 break; /*goto loc_13d47;*/
             }
             /*loc_13cd7*/
-            q = &uiobj_tbl[uiobj_hmm1_oi];
             p = &uiobj_tbl[oi];
             if ((oi != uiobj_hmm1_oi) && (p->type != 4)) {
-                if (q->type == 6) {
+                if (uiobj_tbl[uiobj_hmm1_oi].type == 6) {
                     uiobj_do_callback();
                 }
                 uiobj_cursor_redraw_hmm2(oi, mx, my);
@@ -1592,8 +1582,7 @@ static int16_t uiobj_handle_input_sub0(void)
             /*loc_13d3b:*/
         }
         /*loc_13d47:*/
-        q = &uiobj_tbl[uiobj_hmm2_oi];
-        if (q->type == 6) {
+        if (uiobj_tbl[uiobj_hmm2_oi].type == 6) {
             uiobj_do_callback();
         }
         uiobj_hmm2_oi = 0;
