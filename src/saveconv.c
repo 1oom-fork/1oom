@@ -229,6 +229,13 @@ static int try_load_len(const char *fname, uint8_t *buf, int wantlen)
         if (t_ == 0xffff) { t_ = PLAYER_NONE; }; \
         item_ = t_; \
     } while (0)
+#define M13_GET_16_HATED(item_, addr_) \
+    do { \
+        uint16_t t_; \
+        t_ = GET_LE_16(&save2buf[addr_]); \
+        if (t_ == 0) { t_ = PLAYER_NONE; }; \
+        item_ = t_; \
+    } while (0)
 #define M13_GET_16_KILLER(item_, addr_) \
     do { \
         uint16_t t_; \
@@ -250,24 +257,6 @@ static int try_load_len(const char *fname, uint8_t *buf, int wantlen)
     do { \
         for (int i_ = 0; i_ < TBLLEN(item_); ++i_) { \
             item_[i_] = GET_LE_16(&save2buf[(addr_) + i_ * 2]); \
-        } \
-    } while (0)
-#define M13_GET_TBL_16_OWNER(item_, addr_) \
-    do { \
-        for (int i_ = 0; i_ < TBLLEN(item_); ++i_) { \
-            uint16_t t_; \
-            t_ = GET_LE_16(&save2buf[(addr_) + i_ * 2]); \
-            if (t_ == 0xffff) { t_ = PLAYER_NONE; }; \
-            item_[i_] = t_; \
-        } \
-    } while (0)
-#define M13_GET_TBL_16_HATED(item_, addr_) \
-    do { \
-        for (int i_ = 0; i_ < TBLLEN(item_); ++i_) { \
-            uint16_t t_; \
-            t_ = GET_LE_16(&save2buf[(addr_) + i_ * 2]); \
-            if (t_ == 0) { t_ = PLAYER_NONE; } \
-            item_[i_] = t_; \
         } \
     } while (0)
 #define M13_GET_TBL_BVN_8(item_, addr_, n_) \
@@ -296,12 +285,6 @@ static int try_load_len(const char *fname, uint8_t *buf, int wantlen)
             if (t_) { \
                 BOOLVEC_SET1(item_, i_); \
             } \
-        } \
-    } while (0)
-#define M13_GET_TBL_32(item_, addr_) \
-    do { \
-        for (int i_ = 0; i_ < TBLLEN(item_); ++i_) { \
-            item_[i_] = GET_LE_32(&save2buf[(addr_) + i_ * 4]); \
         } \
     } while (0)
 
@@ -470,51 +453,60 @@ static int savetype_de_moo13(struct game_s *g, const char *fname)
         M13_GET_16(e->ai_p3_countdown, eb + 0x008);
         M13_GET_16(e->ai_p2_countdown, eb + 0x00a);
         M13_GET_TBL_BV_16(e->within_frange, eb + 0x00c);
-        M13_GET_TBL_16(e->relation1, eb + 0x018);
-        M13_GET_TBL_16(e->relation2, eb + 0x024);
-        M13_GET_TBL_16(e->diplo_type, eb + 0x030);
-        M13_GET_TBL_16(e->diplo_val, eb + 0x03c);
-        M13_GET_TBL_16(e->diplo_p1, eb + 0x048);
-        M13_GET_TBL_16(e->diplo_p2, eb + 0x054);
-        M13_GET_TBL_16(e->hmm06c, eb + 0x06c);
-        M13_GET_TBL_16(e->broken_treaty, eb + 0x078);
-        M13_GET_TBL_16(e->hmm084, eb + 0x084);
-        M13_GET_TBL_16(e->tribute_field, eb + 0x090);
-        M13_GET_TBL_16(e->tribute_tech, eb + 0x09c);
-        M13_GET_TBL_16(e->hmm0a8, eb + 0x0a8);
-        M13_GET_TBL_16(e->hmm0b4, eb + 0x0b4);
-        M13_GET_TBL_16(e->hmm0c0, eb + 0x0c0);
-        M13_GET_TBL_16(e->hmm0cc, eb + 0x0cc);
-        M13_GET_TBL_16(e->treaty, eb + 0x0d8);
-        M13_GET_TBL_16(e->trade_bc, eb + 0x0e4);
-        M13_GET_TBL_16(e->trade_percent, eb + 0x0f0);
-        M13_GET_TBL_16(e->spymode_next, eb + 0x0fc);
-        M13_GET_TBL_16(e->offer_field, eb + 0x1d4);
-        M13_GET_TBL_16(e->offer_tech, eb + 0x1e0);
-        M13_GET_TBL_16(e->offer_bc, eb + 0x1ec);
-        M13_GET_TBL_16_HATED(e->hated, eb + 0x21c);
-        M13_GET_TBL_16_HATED(e->mutual_enemy, eb + 0x228);
-        M13_GET_TBL_16(e->hmm270, eb + 0x270);
-        M13_GET_TBL_16(e->hmm27c, eb + 0x27c);
-        M13_GET_TBL_16(e->hmm288, eb + 0x288);
-        M13_GET_TBL_16(e->spying, eb + 0x2a4);
-        M13_GET_TBL_16(e->spyfund, eb + 0x2b0);
-        M13_GET_TBL_16(e->spymode, eb + 0x2c8);
+        for (player_id_t j = PLAYER_0; j < PLAYER_NUM; ++j) {
+            int eb2;
+            eb2 = eb + j * 2;
+            M13_GET_16(e->relation1[j], eb2 + 0x018);
+            M13_GET_16(e->relation2[j], eb2 + 0x024);
+            M13_GET_16(e->diplo_type[j], eb2 + 0x030);
+            M13_GET_16(e->diplo_val[j], eb2 + 0x03c);
+            M13_GET_16(e->diplo_p1[j], eb2 + 0x048);
+            M13_GET_16(e->diplo_p2[j], eb2 + 0x054);
+            M13_GET_16(e->hmm06c[j], eb2 + 0x06c);
+            M13_GET_16(e->broken_treaty[j], eb2 + 0x078);
+            M13_GET_16(e->hmm084[j], eb2 + 0x084);
+            M13_GET_16(e->tribute_field[j], eb2 + 0x090);
+            M13_GET_16(e->tribute_tech[j], eb2 + 0x09c);
+            M13_GET_16(e->hmm0a8[j], eb2 + 0x0a8);
+            M13_GET_16(e->hmm0b4[j], eb2 + 0x0b4);
+            M13_GET_16(e->hmm0c0[j], eb2 + 0x0c0);
+            M13_GET_16(e->hmm0cc[j], eb2 + 0x0cc);
+            M13_GET_16(e->treaty[j], eb2 + 0x0d8);
+            M13_GET_16(e->trade_bc[j], eb2 + 0x0e4);
+            M13_GET_16(e->trade_percent[j], eb2 + 0x0f0);
+            M13_GET_16(e->spymode_next[j], eb2 + 0x0fc);
+            M13_GET_16(e->offer_field[j], eb2 + 0x1d4);
+            M13_GET_16(e->offer_tech[j], eb2 + 0x1e0);
+            M13_GET_16(e->offer_bc[j], eb2 + 0x1ec);
+            M13_GET_16_HATED(e->hated[j], eb2 + 0x21c);
+            M13_GET_16_HATED(e->mutual_enemy[j], eb2 + 0x228);
+            M13_GET_16(e->hmm270[j], eb2 + 0x270);
+            M13_GET_16(e->hmm27c[j], eb2 + 0x27c);
+            M13_GET_16(e->hmm288[j], eb2 + 0x288);
+            M13_GET_16(e->spying[j], eb2 + 0x2a4);
+            M13_GET_16(e->spyfund[j], eb2 + 0x2b0);
+            M13_GET_16(e->spymode[j], eb2 + 0x2c8);
+            M13_GET_16(e->spies[j], eb2 + 0x2d6);
+        }
         M13_GET_16(e->security, eb + 0x2d4);
-        M13_GET_TBL_16(e->spies, eb + 0x2d6);
         M13_GET_32(e->reserve_bc, eb + 0x2fc);
         M13_GET_16(e->tax, eb + 0x300);
         M13_GET_16(e->base_shield, eb + 0x302);
         M13_GET_16(e->base_comp, eb + 0x304);
         M13_GET_16(e->base_weapon, eb + 0x306);
         M13_GET_16(e->colonist_oper_factories, eb + 0x326);
-        M13_GET_TBL_16(e->tech.percent, eb + 0x332 + 0x00);
-        M13_GET_TBL_16(e->tech.slider, eb + 0x332 + 0x0c);
-        M13_GET_TBL_16(e->tech.slider_lock, eb + 0x332 + 0x60);
-        M13_GET_TBL_32(e->tech.investment, eb + 0x332 + 0x18);
-        M13_GET_TBL_16(e->tech.project, eb + 0x332 + 0x30);
-        M13_GET_TBL_32(e->tech.cost, eb + 0x332 + 0x3c);
-        M13_GET_TBL_16(e->tech.completed, eb + 0x332 + 0x54);
+        for (tech_field_t j = TECH_FIELD_COMPUTER; j < TECH_FIELD_NUM; ++j) {
+            int tb2, tb4;
+            tb2 = eb + 0x332 + j * 2;
+            tb4 = eb + 0x332 + j * 4;
+            M13_GET_16(e->tech.percent[j], tb2 + 0x00);
+            M13_GET_16(e->tech.slider[j], tb2 + 0x0c);
+            M13_GET_16(e->tech.slider_lock[j], tb2 + 0x60);
+            M13_GET_32(e->tech.investment[j], tb4 + 0x18);
+            M13_GET_16(e->tech.project[j], tb2 + 0x30);
+            M13_GET_32(e->tech.cost[j], tb4 + 0x3c);
+            M13_GET_16(e->tech.completed[j], tb2 + 0x54);
+        }
         M13_GET_16_CHECK(e->shipdesigns_num, eb + 0x3a0, 0, 6);
         for (int j = 0; j < g->galaxy_stars; ++j) {
             fleet_orbit_t *r = &(e->orbit[j]);
@@ -610,7 +602,9 @@ static int savetype_de_moo13(struct game_s *g, const char *fname)
         M13_GET_TBL_16(ev->hmm28e[PLAYER_0], evb + 0x28e); /* FIXME check index order */
         M13_GET_TBL_BVN_8(ev->help_shown[PLAYER_0], evb + 0x2e2, 16);
         /* TODO build_finished ; is it even possible to save before clicking them away? */
-        M13_GET_TBL_16_OWNER(ev->voted, evb + 0x320);
+        for (player_id_t i = PLAYER_0; i < PLAYER_NUM; ++i) {
+            M13_GET_16_OWNER(ev->voted[i], evb + 0x320 + i * 2);
+        }
         M13_GET_16(ev->best_ecorestore[PLAYER_0], evb + 0x32c);
         M13_GET_16(ev->best_wastereduce[PLAYER_0], evb + 0x32e);
         M13_GET_16(ev->best_roboctrl[PLAYER_0], evb + 0x332);
@@ -720,24 +714,6 @@ static int savetype_de_moo13(struct game_s *g, const char *fname)
             SET_LE_16(&save2buf[(addr_) + i_ * 2], t_); \
         } \
     } while (0)
-#define M13_SET_TBL_16_OWNER(item_, addr_) \
-    do { \
-        for (int i_ = 0; i_ < TBLLEN(item_); ++i_) { \
-            uint16_t t_; \
-            t_ = item_[i_]; \
-            if (t_ == PLAYER_NONE) { t_ = 0xffff; }; \
-            SET_LE_16(&save2buf[(addr_) + i_ * 2], t_); \
-        } \
-    } while (0)
-#define M13_SET_TBL_16_HATED(item_, addr_) \
-    do { \
-        for (int i_ = 0; i_ < TBLLEN(item_); ++i_) { \
-            uint16_t t_; \
-            t_ = item_[i_]; \
-            if (t_ == PLAYER_NONE) { t_ = 0; } \
-            SET_LE_16(&save2buf[(addr_) + i_ * 2], t_); \
-        } \
-    } while (0)
 #define M13_SET_TBL_BVN_8(item_, addr_, n_) \
     do { \
         for (int i_ = 0; i_ < n_; ++i_) { \
@@ -760,14 +736,6 @@ static int savetype_de_moo13(struct game_s *g, const char *fname)
             uint16_t t_; \
             t_ = BOOLVEC_IS1(item_, i_); \
             SET_LE_16(&save2buf[(addr_) + i_ * 2], t_); \
-        } \
-    } while (0)
-#define M13_SET_TBL_32(item_, addr_) \
-    do { \
-        for (int i_ = 0; i_ < TBLLEN(item_); ++i_) { \
-            uint32_t t_; \
-            t_ = item_[i_]; \
-            SET_LE_32(&save2buf[(addr_) + i_ * 4], t_); \
         } \
     } while (0)
 
@@ -916,51 +884,60 @@ static int savetype_en_moo13(struct game_s *g, const char *fname)
         M13_SET_16(e->ai_p3_countdown, eb + 0x008);
         M13_SET_16(e->ai_p2_countdown, eb + 0x00a);
         M13_SET_TBL_BV_16(e->within_frange, eb + 0x00c);
-        M13_SET_TBL_16(e->relation1, eb + 0x018);
-        M13_SET_TBL_16(e->relation2, eb + 0x024);
-        M13_SET_TBL_16(e->diplo_type, eb + 0x030);
-        M13_SET_TBL_16(e->diplo_val, eb + 0x03c);
-        M13_SET_TBL_16(e->diplo_p1, eb + 0x048);
-        M13_SET_TBL_16(e->diplo_p2, eb + 0x054);
-        M13_SET_TBL_16(e->hmm06c, eb + 0x06c);
-        M13_SET_TBL_16(e->broken_treaty, eb + 0x078);
-        M13_SET_TBL_16(e->hmm084, eb + 0x084);
-        M13_SET_TBL_16(e->tribute_field, eb + 0x090);
-        M13_SET_TBL_16(e->tribute_tech, eb + 0x09c);
-        M13_SET_TBL_16(e->hmm0a8, eb + 0x0a8);
-        M13_SET_TBL_16(e->hmm0b4, eb + 0x0b4);
-        M13_SET_TBL_16(e->hmm0c0, eb + 0x0c0);
-        M13_SET_TBL_16(e->hmm0cc, eb + 0x0cc);
-        M13_SET_TBL_16(e->treaty, eb + 0x0d8);
-        M13_SET_TBL_16(e->trade_bc, eb + 0x0e4);
-        M13_SET_TBL_16(e->trade_percent, eb + 0x0f0);
-        M13_SET_TBL_16(e->spymode_next, eb + 0x0fc);
-        M13_SET_TBL_16(e->offer_field, eb + 0x1d4);
-        M13_SET_TBL_16(e->offer_tech, eb + 0x1e0);
-        M13_SET_TBL_16(e->offer_bc, eb + 0x1ec);
-        M13_SET_TBL_16_HATED(e->hated, eb + 0x21c);
-        M13_SET_TBL_16_HATED(e->mutual_enemy, eb + 0x228);
-        M13_SET_TBL_16(e->hmm270, eb + 0x270);
-        M13_SET_TBL_16(e->hmm27c, eb + 0x27c);
-        M13_SET_TBL_16(e->hmm288, eb + 0x288);
-        M13_SET_TBL_16(e->spying, eb + 0x2a4);
-        M13_SET_TBL_16(e->spyfund, eb + 0x2b0);
-        M13_SET_TBL_16(e->spymode, eb + 0x2c8);
+        for (player_id_t j = PLAYER_0; j < PLAYER_NUM; ++j) {
+            int eb2;
+            eb2 = eb + j * 2;
+            M13_SET_16(e->relation1[j], eb2 + 0x018);
+            M13_SET_16(e->relation2[j], eb2 + 0x024);
+            M13_SET_16(e->diplo_type[j], eb2 + 0x030);
+            M13_SET_16(e->diplo_val[j], eb2 + 0x03c);
+            M13_SET_16(e->diplo_p1[j], eb2 + 0x048);
+            M13_SET_16(e->diplo_p2[j], eb2 + 0x054);
+            M13_SET_16(e->hmm06c[j], eb2 + 0x06c);
+            M13_SET_16(e->broken_treaty[j], eb2 + 0x078);
+            M13_SET_16(e->hmm084[j], eb2 + 0x084);
+            M13_SET_16(e->tribute_field[j], eb2 + 0x090);
+            M13_SET_16(e->tribute_tech[j], eb2 + 0x09c);
+            M13_SET_16(e->hmm0a8[j], eb2 + 0x0a8);
+            M13_SET_16(e->hmm0b4[j], eb2 + 0x0b4);
+            M13_SET_16(e->hmm0c0[j], eb2 + 0x0c0);
+            M13_SET_16(e->hmm0cc[j], eb2 + 0x0cc);
+            M13_SET_16(e->treaty[j], eb2 + 0x0d8);
+            M13_SET_16(e->trade_bc[j], eb2 + 0x0e4);
+            M13_SET_16(e->trade_percent[j], eb2 + 0x0f0);
+            M13_SET_16(e->spymode_next[j], eb2 + 0x0fc);
+            M13_SET_16(e->offer_field[j], eb2 + 0x1d4);
+            M13_SET_16(e->offer_tech[j], eb2 + 0x1e0);
+            M13_SET_16(e->offer_bc[j], eb2 + 0x1ec);
+            M13_SET_16_HATED(e->hated[j], eb2 + 0x21c);
+            M13_SET_16_HATED(e->mutual_enemy[j], eb2 + 0x228);
+            M13_SET_16(e->hmm270[j], eb2 + 0x270);
+            M13_SET_16(e->hmm27c[j], eb2 + 0x27c);
+            M13_SET_16(e->hmm288[j], eb2 + 0x288);
+            M13_SET_16(e->spying[j], eb2 + 0x2a4);
+            M13_SET_16(e->spyfund[j], eb2 + 0x2b0);
+            M13_SET_16(e->spymode[j], eb2 + 0x2c8);
+            M13_SET_16(e->spies[j], eb2 + 0x2d6);
+        }
         M13_SET_16(e->security, eb + 0x2d4);
-        M13_SET_TBL_16(e->spies, eb + 0x2d6);
         M13_SET_32(e->reserve_bc, eb + 0x2fc);
         M13_SET_16(e->tax, eb + 0x300);
         M13_SET_16(e->base_shield, eb + 0x302);
         M13_SET_16(e->base_comp, eb + 0x304);
         M13_SET_16(e->base_weapon, eb + 0x306);
         M13_SET_16(e->colonist_oper_factories, eb + 0x326);
-        M13_SET_TBL_16(e->tech.percent, eb + 0x332 + 0x00);
-        M13_SET_TBL_16(e->tech.slider, eb + 0x332 + 0x0c);
-        M13_SET_TBL_16(e->tech.slider_lock, eb + 0x332 + 0x60);
-        M13_SET_TBL_32(e->tech.investment, eb + 0x332 + 0x18);
-        M13_SET_TBL_16(e->tech.project, eb + 0x332 + 0x30);
-        M13_SET_TBL_32(e->tech.cost, eb + 0x332 + 0x3c);
-        M13_SET_TBL_16(e->tech.completed, eb + 0x332 + 0x54);
+        for (tech_field_t j = TECH_FIELD_COMPUTER; j < TECH_FIELD_NUM; ++j) {
+            int tb2, tb4;
+            tb2 = eb + 0x332 + j * 2;
+            tb4 = eb + 0x332 + j * 4;
+            M13_SET_16(e->tech.percent[j], tb2 + 0x00);
+            M13_SET_16(e->tech.slider[j], tb2 + 0x0c);
+            M13_SET_16(e->tech.slider_lock[j], tb2 + 0x60);
+            M13_SET_32(e->tech.investment[j], tb4 + 0x18);
+            M13_SET_16(e->tech.project[j], tb2 + 0x30);
+            M13_SET_32(e->tech.cost[j], tb4 + 0x3c);
+            M13_SET_16(e->tech.completed[j], tb2 + 0x54);
+        }
         M13_SET_16_CHECK(e->shipdesigns_num, eb + 0x3a0, 0, 6);
         for (int j = 0; j < g->galaxy_stars; ++j) {
             const fleet_orbit_t *r = &(e->orbit[j]);
@@ -1057,7 +1034,9 @@ static int savetype_en_moo13(struct game_s *g, const char *fname)
         M13_SET_TBL_16(ev->hmm28e[PLAYER_0], evb + 0x28e); /* FIXME check index order */
         M13_SET_TBL_BVN_8(ev->help_shown[PLAYER_0], evb + 0x2e2, 16);
         /* TODO build_finished ; is it even possible to save before clicking them away? */
-        M13_SET_TBL_16_OWNER(ev->voted, evb + 0x320);
+        for (player_id_t i = PLAYER_0; i < PLAYER_NUM; ++i) {
+            M13_SET_16_OWNER(ev->voted[i], evb + 0x320 + i * 2);
+        }
         M13_SET_16(ev->best_ecorestore[PLAYER_0], evb + 0x32c);
         M13_SET_16(ev->best_wastereduce[PLAYER_0], evb + 0x32e);
         M13_SET_16(ev->best_roboctrl[PLAYER_0], evb + 0x332);
