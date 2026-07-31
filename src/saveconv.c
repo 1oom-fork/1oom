@@ -6,7 +6,6 @@
 
 #include "main.h"
 #include "bits.h"
-#include "comp.h"
 #include "hw.h"
 #include "game/game.h"
 #include "game/game_aux.h"
@@ -253,12 +252,6 @@ static int try_load_len(const char *fname, uint8_t *buf, int wantlen)
         } \
         item_ = t_; \
     } while (0)
-#define M13_GET_TBL_16(item_, addr_) \
-    do { \
-        for (int i_ = 0; i_ < TBLLEN(item_); ++i_) { \
-            item_[i_] = GET_LE_16(&save2buf[(addr_) + i_ * 2]); \
-        } \
-    } while (0)
 #define M13_GET_TBL_BVN_8(item_, addr_, n_) \
     do { \
         for (int i_ = 0; i_ < n_; ++i_) { \
@@ -295,11 +288,15 @@ static int savetype_de_moo13_sd(shipdesign_t *sd, int sb)
     M13_GET_16(sd->space, sb + 0x16);
     M13_GET_16(sd->hull, sb + 0x18);
     M13_GET_16(sd->look, sb + 0x1a);
-    M13_GET_TBL_16(sd->wpnt, sb + 0x1c);
-    M13_GET_TBL_16(sd->wpnn, sb + 0x24);
+    for (int i = 0; i < WEAPON_SLOT_NUM; ++i) {
+        M13_GET_16(sd->wpnt[i], sb + 0x1c + i * 2);
+        M13_GET_16(sd->wpnn[i], sb + 0x24 + i * 2);
+    }
     M13_GET_16(sd->engine, sb + 0x2c);
     M13_GET_32(sd->engines, sb + 0x2e);
-    M13_GET_TBL_16(sd->special, sb + 0x32);
+    for (int i = 0; i < SPECIAL_SLOT_NUM; ++i) {
+        M13_GET_16(sd->special[i], sb + 0x32 + i * 2);
+    }
     M13_GET_16(sd->shield, sb + 0x38);
     M13_GET_16(sd->jammer, sb + 0x3a);
     M13_GET_16(sd->comp, sb + 0x3c);
@@ -387,8 +384,10 @@ static int savetype_de_moo13(struct game_s *g, const char *fname)
         M13_GET_16(p->pop, pb + 0x3a);
         M13_GET_16(p->pop_prev, pb + 0x3c);
         M13_GET_16(p->factories, pb + 0x3e);
-        M13_GET_TBL_16(p->slider, pb + 0x50);
-        M13_GET_TBL_16(p->slider_lock, pb + 0x72);
+        for (planet_slider_i_t j = PLANET_SLIDER_SHIP; j < PLANET_SLIDER_NUM; ++j) {
+            M13_GET_16(p->slider[j], pb + 0x50 + j * 2);
+            M13_GET_16(p->slider_lock[j], pb + 0x72 + j * 2);
+        }
         M13_GET_16(p->buildship, pb + 0x5a);
         M13_GET_16(p->reloc, pb + 0x5c);
         M13_GET_16(p->missile_bases, pb + 0x5e);
@@ -429,7 +428,9 @@ static int savetype_de_moo13(struct game_s *g, const char *fname)
         M13_GET_16(r->y, rb + 0x04);
         M13_GET_16(r->dest, rb + 0x06);
         M13_GET_8(r->speed, rb + 0x08);
-        M13_GET_TBL_16(r->ships, rb + 0x0a);
+        for (int j = 0; j < NUM_SHIPDESIGNS; ++j) {
+            M13_GET_16(r->ships[j], rb + 0x0a + j * 2);
+        }
     }
     for (int i = 0; i < g->transport_num; ++i) {
         transport_t *r = &(g->transport[i]);
@@ -512,9 +513,13 @@ static int savetype_de_moo13(struct game_s *g, const char *fname)
             fleet_orbit_t *r = &(e->orbit[j]);
             int ob;
             ob = eb + 0x3a2 + j * 0x18;
-            M13_GET_TBL_16(r->ships, ob + 0x0c);
+            for (int k = 0; k < NUM_SHIPDESIGNS; ++k) {
+                M13_GET_16(r->ships[k], ob + 0x0c + k * 2);
+            }
         }
-        M13_GET_TBL_16(e->spyreportfield[PLAYER_0], eb + 0xdc2);
+        for (tech_field_t j = TECH_FIELD_COMPUTER; j < TECH_FIELD_NUM; ++j) {
+            M13_GET_16(e->spyreportfield[PLAYER_0][j], eb + 0xdc2 + j * 2);
+        }
         M13_GET_16(e->spyreportyear[PLAYER_0], eb + 0xdce);
         M13_GET_16(e->shipi_colony, eb + 0xdd0);
         M13_GET_16(e->shipi_bomber, eb + 0xdd2);
@@ -544,9 +549,13 @@ static int savetype_de_moo13(struct game_s *g, const char *fname)
                 ++pos;
             }
         }
-        M13_GET_TBL_16(srd->have_reserve_fuel, srdb + 0x444);
-        M13_GET_TBL_16(srd->year, srdb + 0x450);
-        M13_GET_TBL_16(srd->shipcount, srdb + 0x45c);
+        for (int j = 0; j < NUM_SHIPDESIGNS; ++j) {
+            int srdb2;
+            srdb2 = srdb + j * 2;
+            M13_GET_16(srd->have_reserve_fuel[j], srdb2 + 0x444);
+            M13_GET_16(srd->year[j], srdb2 + 0x450);
+            M13_GET_16(srd->shipcount[j], srdb2 + 0x45c);
+        }
     }
     if (savetype_de_moo13_sd(&(g->current_design[PLAYER_0]), 0xe642) != 0) {
         return -1;
@@ -592,14 +601,20 @@ static int savetype_de_moo13(struct game_s *g, const char *fname)
         M13_GET_16(ev->amoeba.nuked, evb + 0x088);
         M13_GET_8(ev->planet_orion_i, evb + 0x09c);
         M13_GET_8(ev->have_guardian, evb + 0x09e);
-        M13_GET_TBL_16(ev->home, evb + 0x0a0);
+        for (player_id_t i = PLAYER_0; i < PLAYER_NUM; ++i) {
+            M13_GET_16(ev->home[i], evb + 0x0a0 + i * 2);
+        }
         M13_GET_8(ev->report_stars, evb + 0x0ac);
-        M13_GET_TBL_16(ev->new_ships[PLAYER_0], evb + 0x1a4);
+        for (int i = 0; i < NUM_SHIPDESIGNS; ++i) {
+            M13_GET_16(ev->new_ships[PLAYER_0][i], evb + 0x1a4 + i * 2);
+        }
         for (int i = 1; i < g->players; ++i) {
             M13_GET_16(ev->spies_caught[i][PLAYER_0], evb + 0x1f2 + i * 2);
         }
-        M13_GET_TBL_16(ev->spies_caught[PLAYER_0], evb + 0x1fe);
-        M13_GET_TBL_16(ev->hmm28e[PLAYER_0], evb + 0x28e); /* FIXME check index order */
+        for (player_id_t i = PLAYER_0; i < PLAYER_NUM; ++i) {
+            M13_GET_16(ev->spies_caught[PLAYER_0][i], evb + 0x1fe + i * 2);
+            M13_GET_16(ev->hmm28e[PLAYER_0][i], evb + 0x28e + i * 2); /* FIXME check index order */
+        }
         M13_GET_TBL_BVN_8(ev->help_shown[PLAYER_0], evb + 0x2e2, 16);
         /* TODO build_finished ; is it even possible to save before clicking them away? */
         for (player_id_t i = PLAYER_0; i < PLAYER_NUM; ++i) {
@@ -706,14 +721,6 @@ static int savetype_de_moo13(struct game_s *g, const char *fname)
         } \
         SET_LE_16(&save2buf[addr_], t_); \
     } while (0)
-#define M13_SET_TBL_16(item_, addr_) \
-    do { \
-        for (int i_ = 0; i_ < TBLLEN(item_); ++i_) { \
-            uint16_t t_; \
-            t_ = item_[i_]; \
-            SET_LE_16(&save2buf[(addr_) + i_ * 2], t_); \
-        } \
-    } while (0)
 #define M13_SET_TBL_BVN_8(item_, addr_, n_) \
     do { \
         for (int i_ = 0; i_ < n_; ++i_) { \
@@ -746,11 +753,15 @@ static int savetype_en_moo13_sd(const shipdesign_t *sd, int sb)
     M13_SET_16(sd->space, sb + 0x16);
     M13_SET_16(sd->hull, sb + 0x18);
     M13_SET_16(sd->look, sb + 0x1a);
-    M13_SET_TBL_16(sd->wpnt, sb + 0x1c);
-    M13_SET_TBL_16(sd->wpnn, sb + 0x24);
+    for (int i = 0; i < WEAPON_SLOT_NUM; ++i) {
+        M13_SET_16(sd->wpnt[i], sb + 0x1c + i * 2);
+        M13_SET_16(sd->wpnn[i], sb + 0x24 + i * 2);
+    }
     M13_SET_16(sd->engine, sb + 0x2c);
     M13_SET_32(sd->engines, sb + 0x2e);
-    M13_SET_TBL_16(sd->special, sb + 0x32);
+    for (int i = 0; i < SPECIAL_SLOT_NUM; ++i) {
+        M13_SET_16(sd->special[i], sb + 0x32 + i * 2);
+    }
     M13_SET_16(sd->shield, sb + 0x38);
     M13_SET_16(sd->jammer, sb + 0x3a);
     M13_SET_16(sd->comp, sb + 0x3c);
@@ -824,8 +835,10 @@ static int savetype_en_moo13(struct game_s *g, const char *fname)
         M13_SET_16(p->pop, pb + 0x3a);
         M13_SET_16(p->pop_prev, pb + 0x3c);
         M13_SET_16(p->factories, pb + 0x3e);
-        M13_SET_TBL_16(p->slider, pb + 0x50);
-        M13_SET_TBL_16(p->slider_lock, pb + 0x72);
+        for (planet_slider_i_t j = PLANET_SLIDER_SHIP; j < PLANET_SLIDER_NUM; ++j) {
+            M13_SET_16(p->slider[j], pb + 0x50 + j * 2);
+            M13_SET_16(p->slider_lock[j], pb + 0x72 + j * 2);
+        }
         M13_SET_16(p->buildship, pb + 0x5a);
         M13_SET_16(p->reloc, pb + 0x5c);
         M13_SET_16(p->missile_bases, pb + 0x5e);
@@ -860,7 +873,9 @@ static int savetype_en_moo13(struct game_s *g, const char *fname)
         M13_SET_16(r->y, rb + 0x04);
         M13_SET_16(r->dest, rb + 0x06);
         M13_SET_8(r->speed, rb + 0x08);
-        M13_SET_TBL_16(r->ships, rb + 0x0a);
+        for (int j = 0; j < NUM_SHIPDESIGNS; ++j) {
+            M13_SET_16(r->ships[j], rb + 0x0a + j * 2);
+        }
     }
     for (int i = 0; i < g->transport_num; ++i) {
         const transport_t *r = &(g->transport[i]);
@@ -943,9 +958,13 @@ static int savetype_en_moo13(struct game_s *g, const char *fname)
             const fleet_orbit_t *r = &(e->orbit[j]);
             int ob;
             ob = eb + 0x3a2 + j * 0x18;
-            M13_SET_TBL_16(r->ships, ob + 0x0c);
+            for (int k = 0; k < NUM_SHIPDESIGNS; ++k) {
+                M13_SET_16(r->ships[k], ob + 0x0c + k * 2);
+            }
         }
-        M13_SET_TBL_16(e->spyreportfield[PLAYER_0], eb + 0xdc2);
+        for (tech_field_t j = TECH_FIELD_COMPUTER; j < TECH_FIELD_NUM; ++j) {
+            M13_SET_16(e->spyreportfield[PLAYER_0][j], eb + 0xdc2 + j * 2);
+        }
         M13_SET_16(e->spyreportfield[PLAYER_0][i], eb + 0xdce);
         M13_SET_16(e->shipi_colony, eb + 0xdd0);
         M13_SET_16(e->shipi_bomber, eb + 0xdd2);
@@ -975,9 +994,13 @@ static int savetype_en_moo13(struct game_s *g, const char *fname)
                 ++pos;
             }
         }
-        M13_SET_TBL_16(srd->have_reserve_fuel, srdb + 0x444);
-        M13_SET_TBL_16(srd->year, srdb + 0x450);
-        M13_SET_TBL_16(srd->shipcount, srdb + 0x45c);
+        for (int j = 0; j < NUM_SHIPDESIGNS; ++j) {
+            int srdb2;
+            srdb2 = srdb + j * 2;
+            M13_SET_16(srd->have_reserve_fuel[j], srdb2 + 0x444);
+            M13_SET_16(srd->year[j], srdb2 + 0x450);
+            M13_SET_16(srd->shipcount[j], srdb2 + 0x45c);
+        }
     }
     save2len = SAVE_MOO13_LEN;
     if (savetype_en_moo13_sd(&(g->current_design[PLAYER_0]), 0xe642) != 0) {
@@ -1024,14 +1047,20 @@ static int savetype_en_moo13(struct game_s *g, const char *fname)
         M13_SET_16(ev->amoeba.nuked, evb + 0x088);
         M13_SET_8(ev->planet_orion_i, evb + 0x09c);
         M13_SET_8(ev->have_guardian, evb + 0x09e);
-        M13_SET_TBL_16(ev->home, evb + 0x0a0);
+        for (player_id_t i = PLAYER_0; i < PLAYER_NUM; ++i) {
+            M13_SET_16(ev->home[i], evb + 0x0a0 + i * 2);
+        }
         M13_SET_8(ev->report_stars, evb + 0x0ac);
-        M13_SET_TBL_16(ev->new_ships[PLAYER_0], evb + 0x1a4);
+        for (int i = 0; i < NUM_SHIPDESIGNS; ++i) {
+            M13_SET_16(ev->new_ships[PLAYER_0][i], evb + 0x1a4 + i * 2);
+        }
         for (int i = 1; i < g->players; ++i) {
             M13_SET_16(ev->spies_caught[i][PLAYER_0], evb + 0x1f2 + i * 2);
         }
-        M13_SET_TBL_16(ev->spies_caught[PLAYER_0], evb + 0x1fe);
-        M13_SET_TBL_16(ev->hmm28e[PLAYER_0], evb + 0x28e); /* FIXME check index order */
+        for (player_id_t i = PLAYER_0; i < PLAYER_NUM; ++i) {
+            M13_SET_16(ev->spies_caught[PLAYER_0][i], evb + 0x1fe + i * 2);
+            M13_SET_16(ev->hmm28e[PLAYER_0][i], evb + 0x28e + i * 2); /* FIXME check index order */
+        }
         M13_SET_TBL_BVN_8(ev->help_shown[PLAYER_0], evb + 0x2e2, 16);
         /* TODO build_finished ; is it even possible to save before clicking them away? */
         for (player_id_t i = PLAYER_0; i < PLAYER_NUM; ++i) {
