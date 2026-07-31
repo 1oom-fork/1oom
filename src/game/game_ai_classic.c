@@ -2621,7 +2621,7 @@ static void game_battle_ai_target1_sub4(struct battle_s *bt)
                         }
                         v4 = dist;
                         tblxy[n++] = BATTLE_XY_SET(sx, sy);
-                        SETMIN(n, TBLLEN(tblxy) - 1); /* WASBUG? not limited in MOO1 */
+                        SETMIN(n, 10 - 1); /* WASBUG? not limited in MOO1 */
                     }
                 }
             }
@@ -2769,7 +2769,7 @@ static int game_battle_ai_target1(struct battle_s *bt, int target_i)
                             n = 1;
                             tblxy[0] = BATTLE_XY_SET(sx, sy);
                             vmax = v;
-                        } else if ((v == vmax) && (n < TBLLEN(tblxy))) {
+                        } else if ((v == vmax) && (n < 20)) {
                             tblxy[n++] = BATTLE_XY_SET(sx, sy);
                         }
                     }
