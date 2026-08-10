@@ -525,8 +525,9 @@ static void game_battle_with_human_init(struct battle_s *bt)
     }
 }
 
-static int game_battle_get_priority(const struct battle_item_s *b, race_t race)
+static int game_battle_get_priority(const struct battle_s *bt, int itemi)
 {
+    const struct battle_item_s *b = &(bt->item[itemi]);
     int prio = b->complevel + b->man - b->unman;
     if (b->scanner) {
         prio += 3;
@@ -534,7 +535,10 @@ static int game_battle_get_priority(const struct battle_item_s *b, race_t race)
     if (b->subspace > 0) {
         prio += b->subspace * 1000;
     }
-    if (race == RACE_ALKARI) {
+    /* BUG? can be SIDE_NONE */
+    if ((b->side == SIDE_R) && (bt->s[SIDE_R].race == RACE_ALKARI)) {
+        prio += game_num_race_bonus_alkari;
+    } else if (bt->s[SIDE_L].race == RACE_ALKARI) {
         prio += game_num_race_bonus_alkari;
     }
     return prio;
@@ -546,20 +550,16 @@ static void game_battle_build_priority(struct battle_s *bt)
         bt->priority[i] = bt->items_num - i;
     }
     for (int i = 1; i <= bt->items_num; ++i) {
-        const struct battle_item_s *b;
         int j, prio_j, prio_i, itemi;
         j = i - 1;
         itemi = bt->priority[i];
-        b = &(bt->item[itemi]);
-        prio_i = game_battle_get_priority(b, bt->s[b->side].race);
-        b = &(bt->item[bt->priority[j]]);
-        prio_j = game_battle_get_priority(b, bt->s[b->side].race);
+        prio_i = game_battle_get_priority(bt, itemi);
+        prio_j = game_battle_get_priority(bt, bt->priority[j]);
         while ((j >= 0) && (prio_j < prio_i)) {
             bt->priority[j + 1] = bt->priority[j];
             --j;
             if (j >= 0) {
-                b = &(bt->item[bt->priority[j]]);
-                prio_j = game_battle_get_priority(b, bt->s[b->side].race);
+                prio_j = game_battle_get_priority(bt, bt->priority[j]);
             }
         }
         bt->priority[j + 1] = itemi;
