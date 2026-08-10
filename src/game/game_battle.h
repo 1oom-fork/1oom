@@ -98,7 +98,6 @@ struct battle_side_s {
     uint8_t items; /* not counting planet */
     uint32_t apparent_force;
     bool flag_have_scan;
-    bool flag_base_missile;
     bool flag_human;
     int16_t flag_auto; /* HACK type is for uiobj */
 };
@@ -116,6 +115,7 @@ struct battle_s {
     uint16_t bases;
     uint16_t biodamage;
     struct battle_side_s s[2];
+    bool flag_base_missile;
     bool hmm21;
     bool hmm24;
     bool hmm30;
