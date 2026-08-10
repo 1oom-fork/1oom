@@ -1253,7 +1253,7 @@ static void game_battle_with_human_do_sub3(struct battle_s *bt)
         b = &(bt->item[itemi]);
         if (itemi == 0) {
             b->retreat = 0;
-            bt->hmm24 = bt->s[b->side].flag_base_missile;
+            bt->hmm24 = bt->flag_base_missile;
         }
         if ((itemi == 0) && (b->num <= 0)) {
             bt->special_button = -1;
@@ -1341,7 +1341,7 @@ static void game_battle_with_human_do_sub3(struct battle_s *bt)
                         if (itemi == 0) {
                             weapon_t t;
                             bt->hmm24 = !bt->hmm24;
-                            bt->s[b->side].flag_base_missile = !bt->s[b->side].flag_base_missile;
+                            bt->flag_base_missile = !bt->flag_base_missile;
                             t = bt->item[0].wpn[0].t;
                             bt->item[0].wpn[0].t = bt->item[0].wpn[1].t;
                             bt->item[0].wpn[1].t = t;
@@ -1552,13 +1552,13 @@ bool game_battle_attack(struct battle_s *bt, int attacker_i, int target_i, int a
     bool destroyed = false;
     if (attacker_i == 0) {
         if ((!bt->s[b->side].flag_auto) && (b->wpn[1].t > 0)) {
-            if (bt->s[b->side].flag_base_missile && (tbl_shiptech_weap[b->wpn[0].t].nummiss > 1)) {
+            if (bt->flag_base_missile && (tbl_shiptech_weap[b->wpn[0].t].nummiss > 1)) {
                 weapon_t t;
                 t = b->wpn[1].t;
                 b->wpn[1].t = b->wpn[0].t;
                 b->wpn[0].t = t;
             }
-            if ((!bt->s[b->side].flag_base_missile) && (tbl_shiptech_weap[b->wpn[0].t].nummiss == 1)) {
+            if ((!bt->flag_base_missile) && (tbl_shiptech_weap[b->wpn[0].t].nummiss == 1)) {
                 weapon_t t;
                 t = b->wpn[1].t;
                 b->wpn[1].t = b->wpn[0].t;

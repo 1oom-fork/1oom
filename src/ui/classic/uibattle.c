@@ -342,7 +342,7 @@ static void ui_battle_draw_bottom_add_ois(const struct battle_s *bt)
             if (b->wpn[0].t != b->wpn[1].t) {
                 d->oi_missile = uiobj_add_mousearea(175, 193, 208, 199, MOO_KEY_m, -1);
                 gfx = ui_data.gfx.space.base_btn;
-                if (bt->s[b->side].flag_base_missile) {
+                if (bt->flag_base_missile) {
                     lbxgfx_set_frame_0(gfx);
                 } else {
                     lbxgfx_set_new_frame(gfx, 1);
@@ -870,7 +870,7 @@ void ui_battle_draw_planetinfo(const struct battle_s *bt, bool side_r)
         {
             char buf[80];
             const struct shiptech_weap_s *w = &(tbl_shiptech_weap[b->wpn[0].t]);
-            if ((!bt->s[b->side].flag_base_missile) && (w->nummiss == 1)) {
+            if ((!bt->flag_base_missile) && (w->nummiss == 1)) {
                 w = &(tbl_shiptech_weap[b->wpn[1].t]);
             }
             sprintf(buf, "3 %s %s", *w->nameptr, game_str_bt_launch);
