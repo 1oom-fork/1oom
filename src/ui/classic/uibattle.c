@@ -202,13 +202,26 @@ static void ui_battle_draw_bottom_no_ois(const struct battle_s *bt)
     struct ui_battle_data_s *d = bt->uictx;
     const struct battle_item_s *b;
     uint8_t *gfx;
+    bool flag_auto = false;
     vgabuf_fill_rect(0, 193, VGABUF_W - 1, VGABUF_H - 1, 0xe9);
     vgabuf_draw_line(120, 192, 120, VGABUF_H - 1, 0xeb);
     vgabuf_draw_line(96, 192, 96, VGABUF_H - 1, 0xeb);
     vgabuf_draw_line(0, 192, VGABUF_W - 1, 192, 0xeb);
     lbxfont_select(2, 0xa, 5, 0);
     b = &(bt->item[bt->cur_item]);
-    if (bt->s[b->side].flag_auto) {
+    switch (b->side) {
+        case SIDE_NONE:
+            break;
+        case SIDE_L:
+            flag_auto = bt->s[SIDE_L].flag_auto;
+            break;
+        case SIDE_R:
+            flag_auto = bt->s[SIDE_R].flag_auto;
+            break;
+        default:
+            break;
+    }
+    if (flag_auto) {
         lbxfont_print_str_normal(2, 194, game_str_bt_auto_move);
     } else {
         ui_battle_draw_focusinfo(bt);
@@ -221,7 +234,7 @@ static void ui_battle_draw_bottom_no_ois(const struct battle_s *bt)
     }
     lbxgfx_draw_frame(123, 193, gfx);
     if (1
-      && ((bt->cur_item != 0) || (b->num > 0) || (!bt->s[b->side].flag_auto))
+      && ((bt->cur_item != 0) || (b->num > 0) || (!flag_auto))
       && (((b->man - b->unman) != 0) || (bt->cur_item == 0) || (!bt->s[b->side].flag_human))
     ) {
         gfx = ui_data.gfx.space.retreat;
@@ -230,10 +243,10 @@ static void ui_battle_draw_bottom_no_ois(const struct battle_s *bt)
         gfx = ui_data.gfx.space.retr_off;
     }
     lbxgfx_draw_frame(241, 193, gfx);
-    if (bt->s[b->side].flag_auto) {
+    if (flag_auto) {
         ui_battle_clear_ois(d);
     }
-    if ((b->missile == -1) || bt->s[b->side].flag_auto) {
+    if ((b->missile == -1) || flag_auto) {
         gfx = ui_data.gfx.space.misl_off;
     } else if (bt->cur_item == 0) {
         gfx = ui_data.gfx.space.base_btn;
@@ -251,7 +264,7 @@ static void ui_battle_draw_bottom_no_ois(const struct battle_s *bt)
         }
     }
     lbxgfx_draw_frame(175, 193, gfx);
-    if ((bt->special_button == -1) || bt->s[b->side].flag_auto) {
+    if ((bt->special_button == -1) || flag_auto) {
         gfx = ui_data.gfx.space.spec_off;
     } else {
         gfx = ui_data.gfx.space.special;
@@ -262,7 +275,7 @@ static void ui_battle_draw_bottom_no_ois(const struct battle_s *bt)
         }
     }
     lbxgfx_draw_frame(210, 193, gfx);
-    if (bt->s[bt->s[b->side].flag_human ? b->side : SIDE_L].flag_have_scan) {
+    if ((b->side != SIDE_NONE) && bt->s[bt->s[b->side].flag_human ? b->side : SIDE_L].flag_have_scan) {
         gfx = ui_data.gfx.space.scan;
         lbxgfx_set_frame_0(gfx);
     } else {
@@ -276,7 +289,7 @@ static void ui_battle_draw_bottom_no_ois(const struct battle_s *bt)
     lbxgfx_set_frame_0(gfx);
     lbxgfx_draw_frame(274, 193, gfx);
     gfx = ui_data.gfx.space.autob;
-    if (bt->s[b->side].flag_auto) {
+    if (flag_auto) {
         lbxgfx_set_new_frame(gfx, 1);
     } else {
         lbxgfx_set_frame_0(gfx);
