@@ -10,6 +10,7 @@ This version of the game is no longer in development. Check out the vanilla bran
 1 Installation
 ===============
 
+To use this software, you must legally own an original copy of Master of Orion (v1.3).
 1oom requires a copy of the Master of Orion (v1.3) LBX files.
 Please note that older saved games may not work in newer versions of 1oom.
 Read the [changelog](CHANGES) to learn more about the breaking changes.
