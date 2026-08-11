@@ -16,6 +16,7 @@ Tools
 Installation
 ============
 
+To use this software, you must legally own an original copy of Master of Orion (v1.3).
 1oom requires a copy of the Master of Orion (v1.3) LBX files.
 
 Windows
