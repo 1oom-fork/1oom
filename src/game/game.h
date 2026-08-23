@@ -321,4 +321,30 @@ struct game_s {
 #define IS_AI(_g_, _i_) BOOLVEC_IS1((_g_)->is_ai, (_i_))
 #define IS_HUMAN(_g_, _i_) BOOLVEC_IS0((_g_)->is_ai, (_i_))
 
+static inline bool ENROUTE_IS_VISIBLE(const struct game_s *g, int i, player_id_t pi)
+{
+    /*
+        In MOO1, the “visible” variable is used only for PLAYER_0, and there is no BOOLVEC here.
+    */
+    return BOOLVEC_IS1(g->enroute[i].visible, pi);
+}
+
+static inline bool TRANSPORT_IS_VISIBLE(const struct game_s *g, int i, player_id_t pi)
+{
+    /*
+        In MOO1, the “visible” variable is used only for PLAYER_0, and there is no BOOLVEC here.
+    */
+    return BOOLVEC_IS1(g->transport[i].visible, pi);
+}
+
+static inline bool PLANET_IS_EXPLORED(const struct game_s *g, int i, player_id_t pi)
+{
+    return BOOLVEC_IS1(g->planet[i].explored, pi);
+}
+
+static inline bool PLANET_FOCUS_IS_EXPLORED(const struct game_s *g, player_id_t pi)
+{
+    return PLANET_IS_EXPLORED(g, g->planet_focus_i[pi], pi);
+}
+
 #endif

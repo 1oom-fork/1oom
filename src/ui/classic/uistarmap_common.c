@@ -411,7 +411,7 @@ void ui_starmap_draw_basic(struct starmap_data_s *d)
     ui_starmap_draw_starmap(d);
     ui_starmap_draw_button_text(d, true);
     ui_draw_filled_rect(224, 5, 314, 178, 0);
-    if (BOOLVEC_IS0(p->explored, d->api)) {
+    if (!PLANET_FOCUS_IS_EXPLORED(g, d->api)) {
         lbxgfx_draw_frame(224, 5, ui_data.gfx.starmap.unexplor, UI_SCREEN_W);
         lbxfont_select_set_12_4(5, 1, 0, 0);
         lbxfont_print_str_split(232, 74, 76, game_str_tbl_sm_stinfo[p->star_type], 2, UI_SCREEN_W, UI_SCREEN_H);
@@ -624,8 +624,8 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
         }
     }
     for (int i = 0; i < g->enroute_num; ++i) {
-        fleet_enroute_t *r = &g->enroute[i];
-        if (BOOLVEC_IS1(r->visible, d->api)) {
+        if (ENROUTE_IS_VISIBLE(g, i, d->api)) {
+            fleet_enroute_t *r = &g->enroute[i];
             uint8_t *gfx = ui_data.gfx.starmap.smalship[g->eto[r->owner].banner];
             planet_t *p = &g->planet[r->dest];
             tx = (r->x - x) * 2 + 8;
@@ -643,8 +643,8 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
         }
     }
     for (int i = 0; i < g->transport_num; ++i) {
-        transport_t *r = &g->transport[i];
-        if (BOOLVEC_IS1(r->visible, d->api)) {
+        if (TRANSPORT_IS_VISIBLE(g, i, d->api)) {
+            transport_t *r = &g->transport[i];
             uint8_t *gfx = ui_data.gfx.starmap.smaltran[g->eto[r->owner].banner];
             planet_t *p = &g->planet[r->dest];
             tx = (r->x - x) * 2 + 8;
@@ -825,16 +825,16 @@ void ui_starmap_fill_oi_tbls(struct starmap_data_s *d)
         }
     }
     for (int i = 0; i < g->enroute_num; ++i) {
-        fleet_enroute_t *r = &(g->enroute[i]);
-        if (BOOLVEC_IS1(r->visible, d->api)) {
+        if (ENROUTE_IS_VISIBLE(g, i, d->api)) {
+            fleet_enroute_t *r = &(g->enroute[i]);
             int x0 = (r->x - x) * 2 + 8;
             int y0 = (r->y - y) * 2 + 8;
             d->oi_tbl_enroute[i] = uiobj_add_mousearea_limited(x0, y0, x0 + 8, y0 + 4, MOO_KEY_UNKNOWN, -1);
         }
     }
     for (int i = 0; i < g->transport_num; ++i) {
-        transport_t *r = &(g->transport[i]);
-        if (BOOLVEC_IS1(r->visible, d->api)) {
+        if (TRANSPORT_IS_VISIBLE(g, i, d->api)) {
+            transport_t *r = &(g->transport[i]);
             int x0 = (r->x - x) * 2 + 8;
             int y0 = (r->y - y) * 2 + 8;
             d->oi_tbl_transport[i] = uiobj_add_mousearea_limited(x0, y0, x0 + 8, y0 + 4, MOO_KEY_UNKNOWN, -1);
@@ -944,7 +944,7 @@ void ui_starmap_update_reserve_fuel(struct game_s *g, struct shipnon0_s *sn0, co
 void ui_starmap_draw_planetinfo(const struct game_s *g, player_id_t api, int planet_i)
 {
     const planet_t *p = &(g->planet[planet_i]);
-    ui_starmap_draw_planetinfo_do(g, api, planet_i, BOOLVEC_IS1(p->explored, api), true);
+    ui_starmap_draw_planetinfo_do(g, api, planet_i, PLANET_IS_EXPLORED(g, planet_i, api), true);
 }
 
 void ui_starmap_draw_planetinfo_2(const struct game_s *g, int p1, int p2, int planet_i)
@@ -953,8 +953,8 @@ void ui_starmap_draw_planetinfo_2(const struct game_s *g, int p1, int p2, int pl
     player_id_t api = (p1 < PLAYER_NUM) ? p1 : p2;
     bool explored = true;
     if (0
-      || ((p1 < PLAYER_NUM) && IS_HUMAN(g, p1) && BOOLVEC_IS0(p->explored, p1))
-      || ((p2 < PLAYER_NUM) && IS_HUMAN(g, p2) && BOOLVEC_IS0(p->explored, p2))
+      || ((p1 < PLAYER_NUM) && IS_HUMAN(g, p1) && !PLANET_IS_EXPLORED(g, planet_i, p1))
+      || ((p2 < PLAYER_NUM) && IS_HUMAN(g, p2) && !PLANET_IS_EXPLORED(g, planet_i, p2))
     ) {
         explored = false;
     }

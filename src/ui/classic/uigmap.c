@@ -94,8 +94,8 @@ static void gmap_draw_cb(void *vptr)
     }
 
     for (int i = 0; i < g->enroute_num; ++i) {
-        const fleet_enroute_t *r = &(g->enroute[i]);
-        if (BOOLVEC_IS1(r->visible, d->api)) {
+        if (ENROUTE_IS_VISIBLE(g, i, d->api)) {
+            const fleet_enroute_t *r = &(g->enroute[i]);
             uint8_t *gfx;
             int x, y;
             x = (r->x * 224) / g->galaxy_maxx + 7;
@@ -106,8 +106,8 @@ static void gmap_draw_cb(void *vptr)
     }
 
     for (int i = 0; i < g->transport_num; ++i) {
-        const transport_t *r = &(g->transport[i]);
-        if (BOOLVEC_IS1(r->visible, d->api)) {
+        if (TRANSPORT_IS_VISIBLE(g, i, d->api)) {
+            const transport_t *r = &(g->transport[i]);
             uint8_t *gfx;
             int x, y;
             x = (r->x * 224) / g->galaxy_maxx + 7;
@@ -152,7 +152,7 @@ static void gmap_draw_cb(void *vptr)
         int x, y;
         x = (p->x * 224) / g->galaxy_maxx + 7;
         y = (p->y * 185) / g->galaxy_maxy + 7;
-        if (BOOLVEC_IS1(p->explored, d->api) || (d->mode == 0)) {
+        if (PLANET_IS_EXPLORED(g, i, d->api) || (d->mode == 0)) {
             gfx = ui_data.gfx.starmap.smstars[p->star_type];
             if ((d->planet_i == i) && (d->countdown > 0)) {
                 lbxgfx_set_new_frame(gfx, d->countdown);
@@ -181,7 +181,7 @@ static void gmap_draw_cb(void *vptr)
         }
         switch (d->mode) {
             case 1:
-                if (BOOLVEC_IS1(p->explored, d->api)) {
+                if (PLANET_IS_EXPLORED(g, i, d->api)) {
                     char buf[2] = { 0, 0 };
                     int pt;
                     lbxfont_select_set_12_1(2, (p->type < g->eto[PLAYER_0].have_colony_for) ? 5 : 0xe, 0, 0);
@@ -192,7 +192,7 @@ static void gmap_draw_cb(void *vptr)
                 }
                 break;
             case 2:
-                if (BOOLVEC_IS1(p->explored, d->api) && (p->special != PLANET_SPECIAL_NORMAL)) {
+                if (PLANET_IS_EXPLORED(g, i, d->api) && (p->special != PLANET_SPECIAL_NORMAL)) {
                     if (p->special > PLANET_SPECIAL_ARTIFACTS) {
                         lbxfont_select(2, 1, 0, 0);
                     } else {
@@ -441,8 +441,8 @@ void ui_gmap_basic_draw_frame(void *ctx, int pi/*player_i*/)
     ui_gmap_basic_draw_galaxy(d);
     if (pi >= 0) {
         for (int i = 0; i < g->enroute_num; ++i) {
-            const fleet_enroute_t *r = &(g->enroute[i]);
-            if (BOOLVEC_IS1(r->visible, pi)) {
+            if (ENROUTE_IS_VISIBLE(g, i, pi)) {
+                const fleet_enroute_t *r = &(g->enroute[i]);
                 uint8_t *gfx;
                 int x, y;
                 x = (r->x * 215) / g->galaxy_maxx + 6;
@@ -452,8 +452,8 @@ void ui_gmap_basic_draw_frame(void *ctx, int pi/*player_i*/)
             }
         }
         for (int i = 0; i < g->transport_num; ++i) {
-            const transport_t *r = &(g->transport[i]);
-            if (BOOLVEC_IS1(r->visible, pi)) {
+            if (TRANSPORT_IS_VISIBLE(g, i, pi)) {
+                const transport_t *r = &(g->transport[i]);
                 uint8_t *gfx;
                 int x, y;
                 x = (r->x * 215) / g->galaxy_maxx + 6;

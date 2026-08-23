@@ -52,7 +52,7 @@ static void ui_starmap_trans_draw_cb(void *vptr)
     } else {
         /*72f20*/
         lbxgfx_draw_frame_offs(222, 80, ui_data.gfx.starmap.relocate, 0, 83, 310, 199, UI_SCREEN_W);
-        if (BOOLVEC_IS0(pt->explored, d->api)) {
+        if (!PLANET_FOCUS_IS_EXPLORED(g, d->api)) {
             ui_draw_filled_rect(227, 57, 310, 159, 0);
             lbxgfx_draw_frame_offs(224, 5, ui_data.gfx.starmap.unexplor, 227, 57, 310, 159, UI_SCREEN_W);
         } else {
@@ -73,7 +73,7 @@ static void ui_starmap_trans_draw_cb(void *vptr)
         if (0
           || (!d->tr.other)
           || (pt->within_frange[d->api] != 1)
-          || BOOLVEC_IS0(pt->explored, d->api)
+          || (!PLANET_FOCUS_IS_EXPLORED(g, d->api))
           || (pt->owner == PLAYER_NONE)
           || (pt->type < g->eto[d->api].have_colony_for)
         ) {
@@ -92,7 +92,7 @@ static void ui_starmap_trans_draw_cb(void *vptr)
             lbxfont_print_str_split(228, 94, 82, game_str_sm_notrange, 2, UI_SCREEN_W, UI_SCREEN_H);
             sprintf(buf, "%s %i %s %i %s", game_str_sm_notrange1, mindist, game_str_sm_notrange2, g->eto[d->api].fuel_range, game_str_sm_notrange3);
             lbxfont_print_str_split(229, 125, 80, game_str_sm_seltr, 2, UI_SCREEN_W, UI_SCREEN_H);
-        } else if (BOOLVEC_IS0(pt->explored, d->api)) {
+        } else if (!PLANET_FOCUS_IS_EXPLORED(g, d->api)) {
             lbxfont_select(0, 0xe, 0, 0);
             lbxfont_print_str_split(229, 105, 80, game_str_sm_trfirste, 2, UI_SCREEN_W, UI_SCREEN_H);
         } else if (pt->type < g->eto[d->api].have_colony_for) {
@@ -266,7 +266,7 @@ void ui_starmap_trans(struct game_s *g, player_id_t active_player)
         } else if (oi1 == oi_accept) {
             ui_sound_play_sfx_24();
             flag_done = true;
-            if (BOOLVEC_IS1(pt->explored, active_player) && (pt->within_frange[active_player] == 1)) {
+            if (PLANET_FOCUS_IS_EXPLORED(g, active_player) && (pt->within_frange[active_player] == 1)) {
                 p->trans_dest = g->planet_focus_i[active_player];
                 p->trans_num = d.tr.num;
             } else {
@@ -326,7 +326,7 @@ void ui_starmap_trans(struct game_s *g, player_id_t active_player)
             oi_cancel = uiobj_add_t0(227, 163, "", ui_data.gfx.starmap.reloc_bu_cancel, MOO_KEY_ESCAPE, -1);
             if ((d.tr.other) && (pt->owner != PLAYER_NONE)
               && (pt->within_frange[active_player] == 1)
-              && BOOLVEC_IS1(pt->explored, active_player)
+              && PLANET_FOCUS_IS_EXPLORED(g, active_player)
               && (pt->type >= g->eto[active_player].have_colony_for)
             ) {
                 oi_accept = uiobj_add_t0(271, 163, "", ui_data.gfx.starmap.reloc_bu_accept, MOO_KEY_SPACE, -1);

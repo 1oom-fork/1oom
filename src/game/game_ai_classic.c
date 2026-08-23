@@ -87,7 +87,7 @@ static void game_ai_classic_turn_p1_send_scout(struct game_s *g, struct ai_turn_
             }
         }
         if (0
-          || BOOLVEC_IS1(p->explored, pi)
+          || PLANET_IS_EXPLORED(g, i, pi)
           || (!p->within_frange[pi])
           || ((g->year >= 150) && (g->evn.planet_orion_i == i))
           || (ships > 0)

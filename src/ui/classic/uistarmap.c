@@ -137,7 +137,7 @@ static void ui_starmap_do_help(struct starmap_data_s *d)
         bool have_explored = false, can_colonize = true;
         for (int i = 0; i < g->galaxy_stars; ++i) {
             const planet_t *p2 = &(g->planet[i]);
-            if ((p2 != p) && BOOLVEC_IS1(p2->explored, api)) {
+            if ((p2 != p) && PLANET_IS_EXPLORED(g, i, api)) {
                 have_explored = true;
                 if ((p2->type < e->have_colony_for) || (p2->owner == api)) {
                     can_colonize = false;
@@ -315,7 +315,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
             ui_data.ui_main_loop_action = UI_MAIN_LOOP_TRANS;
             flag_done = true;
             ui_sound_play_sfx_24();
-        } else if (((oi1 == oi_starview1) && BOOLVEC_IS1(p->explored, active_player)) || (oi1 == oi_starview2)) {
+        } else if (((oi1 == oi_starview1) && PLANET_FOCUS_IS_EXPLORED(g, active_player)) || (oi1 == oi_starview2)) {
             ui_data.ui_main_loop_action = UI_MAIN_LOOP_STARVIEW;
             flag_done = true;
             ui_sound_play_sfx_24();
@@ -510,13 +510,13 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
                 if (g->planet[i].owner == active_player) {
                     for (int j = 0; !found && (j < g->enroute_num); ++j) {
                         fleet_enroute_t *r = &(g->enroute[j]);
-                        if (BOOLVEC_IS1(r->visible, active_player) && (r->owner != active_player) && (r->dest == i)) {
+                        if (ENROUTE_IS_VISIBLE(g, j, active_player) && (r->owner != active_player) && (r->dest == i)) {
                             found = true;
                         }
                     }
                     for (int j = 0; !found && (j < g->transport_num); ++j) {
                         transport_t *r = &(g->transport[j]);
-                        if (BOOLVEC_IS1(r->visible, active_player) && (r->owner != active_player) && (r->dest == i)) {
+                        if (TRANSPORT_IS_VISIBLE(g, j, active_player) && (r->owner != active_player) && (r->dest == i)) {
                             found = true;
                         }
                     }
@@ -538,13 +538,13 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
                 if (g->planet[i].owner == active_player) {
                     for (int j = 0; !found && (j < g->enroute_num); ++j) {
                         fleet_enroute_t *r = &(g->enroute[j]);
-                        if (BOOLVEC_IS1(r->visible, active_player) && (r->owner != active_player) && (r->dest == i)) {
+                        if (ENROUTE_IS_VISIBLE(g, j, active_player) && (r->owner != active_player) && (r->dest == i)) {
                             found = true;
                         }
                     }
                     for (int j = 0; !found && (j < g->transport_num); ++j) {
                         transport_t *r = &(g->transport[j]);
-                        if (BOOLVEC_IS1(r->visible, active_player) && (r->owner != active_player) && (r->dest == i)) {
+                        if (TRANSPORT_IS_VISIBLE(g, j, active_player) && (r->owner != active_player) && (r->dest == i)) {
                             found = true;
                         }
                     }
@@ -677,7 +677,7 @@ void ui_starmap_do(struct game_s *g, player_id_t active_player)
                 ui_cursor_area_tbl[7].x1 = x1;
                 ui_cursor_area_tbl[7].y0 = y0;
                 ui_cursor_area_tbl[7].y1 = y1;
-                if ((x0 >= 7) && (x1 <= 221) && (y0 >= 7) && (y1 <= 177) && BOOLVEC_IS1(p->explored, active_player)) {
+                if ((x0 >= 7) && (x1 <= 221) && (y0 >= 7) && (y1 <= 177) && PLANET_FOCUS_IS_EXPLORED(g, active_player)) {
                     /* FIXME why were these here? these only seem to break stuff */
                     /*
                     SETMAX(ui_cursor_area_tbl[5].x0, 7);
