@@ -92,7 +92,7 @@ static void fleet_draw_cb(void *vptr)
         fi = i + d->pos;
         pi = d->planet[fi];
         p = &(g->planet[pi]);
-        if (BOOLVEC_IS1(p->explored, d->api)) {
+        if (PLANET_IS_EXPLORED(g, pi, d->api)) {
             player_id_t seenowner;
             uint8_t a2;
             lbxgfx_draw_frame(x0 + 1, y0, ui_data.gfx.planets.planet[p->infogfx], UI_SCREEN_W);
