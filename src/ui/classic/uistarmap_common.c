@@ -624,8 +624,8 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
         }
     }
     for (int i = 0; i < g->enroute_num; ++i) {
-        fleet_enroute_t *r = &g->enroute[i];
-        if (BOOLVEC_IS1(r->visible, d->api)) {
+        if (ENROUTE_IS_VISIBLE(g, i, d->api)) {
+            fleet_enroute_t *r = &g->enroute[i];
             uint8_t *gfx = ui_data.gfx.starmap.smalship[g->eto[r->owner].banner];
             planet_t *p = &g->planet[r->dest];
             tx = (r->x - x) * 2 + 8;
@@ -643,8 +643,8 @@ void ui_starmap_draw_starmap(struct starmap_data_s *d)
         }
     }
     for (int i = 0; i < g->transport_num; ++i) {
-        transport_t *r = &g->transport[i];
-        if (BOOLVEC_IS1(r->visible, d->api)) {
+        if (TRANSPORT_IS_VISIBLE(g, i, d->api)) {
+            transport_t *r = &g->transport[i];
             uint8_t *gfx = ui_data.gfx.starmap.smaltran[g->eto[r->owner].banner];
             planet_t *p = &g->planet[r->dest];
             tx = (r->x - x) * 2 + 8;
@@ -825,16 +825,16 @@ void ui_starmap_fill_oi_tbls(struct starmap_data_s *d)
         }
     }
     for (int i = 0; i < g->enroute_num; ++i) {
-        fleet_enroute_t *r = &(g->enroute[i]);
-        if (BOOLVEC_IS1(r->visible, d->api)) {
+        if (ENROUTE_IS_VISIBLE(g, i, d->api)) {
+            fleet_enroute_t *r = &(g->enroute[i]);
             int x0 = (r->x - x) * 2 + 8;
             int y0 = (r->y - y) * 2 + 8;
             d->oi_tbl_enroute[i] = uiobj_add_mousearea_limited(x0, y0, x0 + 8, y0 + 4, MOO_KEY_UNKNOWN, -1);
         }
     }
     for (int i = 0; i < g->transport_num; ++i) {
-        transport_t *r = &(g->transport[i]);
-        if (BOOLVEC_IS1(r->visible, d->api)) {
+        if (TRANSPORT_IS_VISIBLE(g, i, d->api)) {
+            transport_t *r = &(g->transport[i]);
             int x0 = (r->x - x) * 2 + 8;
             int y0 = (r->y - y) * 2 + 8;
             d->oi_tbl_transport[i] = uiobj_add_mousearea_limited(x0, y0, x0 + 8, y0 + 4, MOO_KEY_UNKNOWN, -1);

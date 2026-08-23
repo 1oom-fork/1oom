@@ -255,13 +255,13 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
                 if (g->planet[i].owner == active_player) {
                     for (int j = 0; !found && (j < g->enroute_num); ++j) {
                         fleet_enroute_t *r = &(g->enroute[j]);
-                        if (BOOLVEC_IS1(r->visible, active_player) && (r->owner != active_player) && (r->dest == i)) {
+                        if (ENROUTE_IS_VISIBLE(g, j, active_player) && (r->owner != active_player) && (r->dest == i)) {
                             found = true;
                         }
                     }
                     for (int j = 0; !found && (j < g->transport_num); ++j) {
                         transport_t *r = &(g->transport[j]);
-                        if (BOOLVEC_IS1(r->visible, active_player) && (r->owner != active_player) && (r->dest == i)) {
+                        if (TRANSPORT_IS_VISIBLE(g, j, active_player) && (r->owner != active_player) && (r->dest == i)) {
                             found = true;
                         }
                     }
@@ -286,13 +286,13 @@ void ui_starmap_orbit_own(struct game_s *g, player_id_t active_player)
                 if (g->planet[i].owner == active_player) {
                     for (int j = 0; !found && (j < g->enroute_num); ++j) {
                         fleet_enroute_t *r = &(g->enroute[j]);
-                        if (BOOLVEC_IS1(r->visible, active_player) && (r->owner != active_player) && (r->dest == i)) {
+                        if (ENROUTE_IS_VISIBLE(g, j, active_player) && (r->owner != active_player) && (r->dest == i)) {
                             found = true;
                         }
                     }
                     for (int j = 0; !found && (j < g->transport_num); ++j) {
                         transport_t *r = &(g->transport[j]);
-                        if (BOOLVEC_IS1(r->visible, active_player) && (r->owner != active_player) && (r->dest == i)) {
+                        if (TRANSPORT_IS_VISIBLE(g, j, active_player) && (r->owner != active_player) && (r->dest == i)) {
                             found = true;
                         }
                     }
