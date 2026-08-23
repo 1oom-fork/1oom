@@ -853,7 +853,7 @@ static void game_turn_explore(struct game_s *g, uint8_t *planetptr, player_id_t 
     for (int pli = 0; pli < g->galaxy_stars; ++pli) {
         planet_t *p = &(g->planet[pli]);
         for (player_id_t i = PLAYER_0; i < g->players; ++i) {
-            if (BOOLVEC_IS0(p->explored, i) || (p->owner == PLAYER_NONE)) {
+            if (!PLANET_IS_EXPLORED(g, pli, i) || (p->owner == PLAYER_NONE)) {
                 empiretechorbit_t *e = &(g->eto[i]);
                 bool flag_visible, by_scanner;
                 flag_visible = false;
@@ -920,7 +920,7 @@ static void game_turn_explore(struct game_s *g, uint8_t *planetptr, player_id_t 
                     if (p->type < best_colonize) {
                         best_colonize = 0;
                     }
-                    was_explored = BOOLVEC_IS1(p->explored, i);
+                    was_explored = PLANET_IS_EXPLORED(g, pli, i);
                     BOOLVEC_SET1(p->explored, i);
                     if (IS_HUMAN(g, i)) {
                         if ((best_colonize != 0) || (!was_explored)) {
