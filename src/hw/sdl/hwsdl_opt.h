@@ -3,15 +3,7 @@
 
 #include "types.h"
 
-extern bool hw_opt_fullscreen;
-extern int hw_opt_screen_winw;
-extern int hw_opt_screen_winh;
-extern int hw_opt_screen_fsw;
-extern int hw_opt_screen_fsh;
-
 /* for SDL1 */
-extern bool hw_opt_use_gl;
-extern bool hw_opt_aspect_ratio_correct;
 extern int hw_opt_gl_filter;
 
 #endif
