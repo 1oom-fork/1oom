@@ -3,6 +3,14 @@
 
 #include "types.h"
 
+extern bool opt_fullscreen;
+extern bool opt_aspect_ratio_correct;
+extern bool opt_use_gl;
+extern int opt_screen_winw;
+extern int opt_screen_winh;
+extern int opt_screen_fsw;
+extern int opt_screen_fsh;
+
 extern bool opt_audio_enabled;
 extern bool opt_music_enabled;
 extern bool opt_sfx_enabled;

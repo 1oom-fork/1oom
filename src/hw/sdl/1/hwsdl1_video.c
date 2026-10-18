@@ -175,7 +175,7 @@ static void set_viewport(unsigned int src_w, unsigned int src_h, unsigned int de
 {
     int dest_x = 0, dest_y = 0;
 
-    if (hw_opt_aspect_ratio_correct) {
+    if (opt_aspect_ratio_correct) {
         if (dest_w * src_h * 6 < src_w * dest_h * 5) {
             dest_y = dest_h;
             dest_h = (dest_w * src_h * 6 / 5 / src_w);
@@ -200,9 +200,9 @@ int hw_video_resize(int w, int h)
     unsigned int actual_w, actual_h;
     int flags;
 
-    log_message("SDL: resize %ix%i (%s)\n", w, h, hw_opt_fullscreen ? "full" : "window");
+    log_message("SDL: resize %ix%i (%s)\n", w, h, opt_fullscreen ? "full" : "window");
 
-    if (!hw_opt_use_gl) {
+    if (!opt_use_gl) {
         return 0;
     }
 
@@ -216,18 +216,18 @@ int hw_video_resize(int w, int h)
 
     flags = SDL_OPENGL | SDL_RESIZABLE;
 
-    if (hw_opt_fullscreen) {
+    if (opt_fullscreen) {
         flags |= SDL_FULLSCREEN;
-        if (hw_opt_screen_fsw && hw_opt_screen_fsh) {
-            actual_w = hw_opt_screen_fsw;
-            actual_h = hw_opt_screen_fsh;
+        if (opt_screen_fsw && opt_screen_fsh) {
+            actual_w = opt_screen_fsw;
+            actual_h = opt_screen_fsh;
         } else {
             actual_w = video.bestmode.w;
             actual_h = video.bestmode.h;
         }
     } else {
-        hw_opt_screen_winw = actual_w = new_w;
-        hw_opt_screen_winh = actual_h = new_h;
+        opt_screen_winw = actual_w = new_w;
+        opt_screen_winh = actual_h = new_h;
     }
 
     SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
@@ -241,7 +241,7 @@ int hw_video_resize(int w, int h)
         goto fail;
     }
     set_viewport(video.bufw, video.bufh, actual_w, actual_h);
-    if (hw_opt_fullscreen) {
+    if (opt_fullscreen) {
         hw_mouse_grab();
     }
     return 0;
@@ -266,7 +266,7 @@ int hw_video_init(int w, int h)
     }
 
 #ifdef HAVE_OPENGL
-    if (!hw_opt_use_gl)
+    if (!opt_use_gl)
 #endif
     {
         video.setmode = video_setmode_8bpp;
@@ -295,12 +295,12 @@ int hw_video_init(int w, int h)
         video.render = video_render_gl_32bpp;
         video.update = video_update_gl_32bpp;
         video.setpal = video_setpal_gl_32bpp;
-        if (hw_opt_aspect_ratio_correct) {
+        if (opt_aspect_ratio_correct) {
             h = h * 6 / 5;
         }
-        if ((hw_opt_screen_winw != 0) && (hw_opt_screen_winh != 0)) {
-            w = hw_opt_screen_winw;
-            h = hw_opt_screen_winh;
+        if ((opt_screen_winw != 0) && (opt_screen_winh != 0)) {
+            w = opt_screen_winw;
+            h = opt_screen_winh;
         }
     }
 #endif

@@ -15,6 +15,14 @@
 /* -------------------------------------------------------------------------- */
 /* global options */
 
+bool opt_fullscreen = false;
+bool opt_aspect_ratio_correct = true;
+bool opt_use_gl = true;
+int opt_screen_winw = 0;
+int opt_screen_winh = 0;
+int opt_screen_fsw = 0;
+int opt_screen_fsh = 0;
+
 bool opt_audio_enabled = true;
 bool opt_music_enabled = true;
 bool opt_sfx_enabled = true;
@@ -109,6 +117,36 @@ static const struct cmdline_options_s cmdline_options_audio_early[] = {
 };
 
 static const struct cmdline_options_s cmdline_options_audio[] = {
+    { "-fs", 0,
+      options_enable_bool_var, (void *)&opt_fullscreen,
+      NULL, "Enable fullscreen" },
+    { "-window", 0,
+      options_disable_bool_var, (void *)&opt_fullscreen,
+      NULL, "Use windowed mode" },
+    { "-aspect", 0,
+      options_enable_bool_var, (void *)&opt_aspect_ratio_correct,
+      NULL, "Enable aspect ratio correction" },
+    { "-noaspect", 0,
+      options_disable_bool_var, (void *)&opt_aspect_ratio_correct,
+      NULL, "Disable aspect ratio correction" },
+    { "-gl", 0,
+      options_enable_bool_var, (void *)&opt_use_gl,
+      NULL, "Enable OpenGL" },
+    { "-nogl", 0,
+      options_disable_bool_var, (void *)&opt_use_gl,
+      NULL, "Disable OpenGL" },
+    { "-winw", 1,
+      options_set_int_var, (void *)&opt_screen_winw,
+      "WIDTH", "Set window width" },
+    { "-winh", 1,
+      options_set_int_var, (void *)&opt_screen_winh,
+      "HEIGHT", "Set window height" },
+    { "-fsw", 1,
+      options_set_int_var, (void *)&opt_screen_fsw,
+      "WIDTH", "Set fullscreen width" },
+    { "-fsh", 1,
+      options_set_int_var, (void *)&opt_screen_fsh,
+      "HEIGHT", "Set fullscreen height" },
     { "-music", 0,
       options_enable_bool_var, (void *)&opt_music_enabled,
       NULL, "Enable music" },
@@ -237,7 +275,6 @@ static const struct cmdline_options_s *find_option(const char *name, bool early,
       || (ui_use_audio && (o = find_option_do(name, cmdline_options_audio)))
       || (o = find_option_do(name, os_cmdline_options))
       || (o = find_option_do(name, hw_cmdline_options))
-      || (o = find_option_do(name, hw_cmdline_options_extra))
       || (o = find_option_do(name, ui_cmdline_options))
       || (o = find_option_do(name, main_cmdline_options))
     ) {
@@ -329,7 +366,6 @@ void options_show_usage(void)
     }
     lmax = get_options_w(os_cmdline_options, lmax);
     lmax = get_options_w(hw_cmdline_options, lmax);
-    lmax = get_options_w(hw_cmdline_options_extra, lmax);
     lmax = get_options_w(ui_cmdline_options, lmax);
     lmax = get_options_w(main_cmdline_options_early, lmax);
     lmax = get_options_w(main_cmdline_options, lmax);
@@ -344,7 +380,6 @@ void options_show_usage(void)
     }
     show_options(os_cmdline_options, lmax);
     show_options(hw_cmdline_options, lmax);
-    show_options(hw_cmdline_options_extra, lmax);
     show_options(ui_cmdline_options, lmax);
     show_options(main_cmdline_options_early, lmax);
     show_options(main_cmdline_options, lmax);

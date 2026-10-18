@@ -13,10 +13,6 @@ const struct cmdline_options_s hw_cmdline_options[] = {
     { NULL, 0, NULL, NULL, NULL, NULL }
 };
 
-const struct cmdline_options_s hw_cmdline_options_extra[] = {
-    { NULL, 0, NULL, NULL, NULL, NULL }
-};
-
 /* -------------------------------------------------------------------------- */
 
 const char *idstr_hw = "nop";
