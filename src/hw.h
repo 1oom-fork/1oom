@@ -13,7 +13,6 @@ extern int hw_init(void);
 extern void hw_shutdown(void);
 
 extern const struct cmdline_options_s hw_cmdline_options[];
-extern const struct cmdline_options_s hw_cmdline_options_extra[];
 
 extern int hw_event_handle(void);
 
