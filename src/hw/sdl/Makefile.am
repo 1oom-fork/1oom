@@ -14,5 +14,4 @@ noinst_HEADERS = \
 EXTRA_DIST = \
     hwsdl_audio.c \
     hwsdl_mouse.c \
-    hwsdl_opt.c \
     hwsdl_video.c
