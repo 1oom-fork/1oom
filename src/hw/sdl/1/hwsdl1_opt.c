@@ -18,10 +18,6 @@ bool hw_opt_aspect_ratio_correct = true;
 int hw_opt_gl_filter = 1;
 #endif
 
-#ifdef HAVE_SDLMIXER1
-#define HAVE_SDLMIXER
-#endif /* HAVE_SDLMIXER1 */
-
 /* -------------------------------------------------------------------------- */
 
 #include "hwsdl_opt.c"
