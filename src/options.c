@@ -22,6 +22,7 @@ int opt_music_volume = 64;
 int opt_sfx_volume = 100;
 int opt_audiorate = 48000;
 int opt_audioslice_ms = 50;
+const char *opt_soundfont_path = NULL;
 #ifdef HAVE_SAMPLERATE
 bool opt_use_libsamplerate = true;
 int opt_libsamplerate_scale = 65;
@@ -81,6 +82,12 @@ static int options_set_datadir(char **argv, void *var)
     return 0;
 }
 
+static int options_set_soundfont_path(char **argv, void *var)
+{
+    opt_soundfont_path = argv[1];
+    return 0;
+}
+
 /* -------------------------------------------------------------------------- */
 
 static int show_usage(char **argv, void *var);
@@ -137,6 +144,9 @@ static const struct cmdline_options_s cmdline_options_audio[] = {
     { "-audioms", 1,
       options_set_int_var, (void *)&opt_audioslice_ms,
       "MS", "Set max audio slice size (ms)" },
+    { "-soundfont", 1,
+      options_set_soundfont_path, NULL,
+      "FILE.SF2", "Set soundfont path" },
 #ifdef HAVE_SAMPLERATE
     { "-libsr", 0,
       options_enable_bool_var, (void *)&opt_use_libsamplerate,
