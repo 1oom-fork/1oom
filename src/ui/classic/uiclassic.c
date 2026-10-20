@@ -279,6 +279,9 @@ int ui_late_init(void)
     }
     if (opt_audio_enabled) {
         uint32_t t0, t1;
+        if (opt_soundfont_path != NULL) {
+            hw_audio_set_soundfont(opt_soundfont_path);
+        }
         t0 = os_get_time_us();
         log_message("Preparing sounds, this may take a while...\n");
         for (int i = NUM_SOUNDS - 1; i >= 0; --i) {
