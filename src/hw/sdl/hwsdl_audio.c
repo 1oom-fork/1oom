@@ -131,7 +131,7 @@ void hw_audio_shutdown(void)
     }
 }
 
-int hw_audio_set_sdlmixer_sf(const char *path)
+int hw_audio_set_soundfont(const char *path)
 {
     log_message("SDLA: setting soundfont to '%s'\n", path);
     if (Mix_SetSoundFonts(path) < 0) {
@@ -404,5 +404,9 @@ void hw_audio_sfx_stop(void)
 }
 void hw_audio_sfx_volume(int volume/*0..128*/)
 {
+}
+int hw_audio_set_soundfont(const char *path)
+{
+    return 0;
 }
 #endif /* HAVE_SDLMIXER1 */
