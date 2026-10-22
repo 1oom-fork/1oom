@@ -75,7 +75,7 @@ gamemain_lib = $(top_builddir)/src/game/libgamemain.a
 hwnop_lib = $(top_builddir)/src/hw/nop/libhwnop.a
 
 uiclassic_lib = $(top_builddir)/src/ui/classic/libuiclassic.a
-hwsdl1_lib = $(top_builddir)/src/hw/sdl/1/libhwsdl1.a
+hwsdl1_lib = $(top_builddir)/src/hw/sdl/libhwsdl1.a
 1oom_classic_sdl1_libs = $(gamemain_lib) $(game_lib) $(uiclassic_lib) $(game_lib) $(hwsdl1_lib) $(common_libs)
 1oom_classic_sdl1_SOURCES = $(audio_sources) $(util_sources)
 1oom_classic_sdl1_LDADD = $(1oom_classic_sdl1_libs) @HW_SDL1_LIBS@ @EXTRA_SDL1_LIBS@ @SAMPLERATE_LIBS@
