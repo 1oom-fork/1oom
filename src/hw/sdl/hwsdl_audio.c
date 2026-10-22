@@ -8,15 +8,19 @@
 #include "options.h"
 #include "types.h"
 
-#ifdef HAVE_SDLMIXER
+/* -------------------------------------------------------------------------- */
+
+#ifdef HAVE_SDLMIXER1
+
+#include "SDL/SDL.h"
+#include "SDL/SDL_mixer.h"
+#include "SDL/SDL_rwops.h"
+
 #include "fmt_mus.h"
 #include "fmt_sfx.h"
 #include "lib.h"
-#endif /* HAVE_SDLMIXER */
 
 /* -------------------------------------------------------------------------- */
-
-#ifdef HAVE_SDLMIXER
 
 static bool audio_initialized = false;
 static int audio_rate = 0;
@@ -356,7 +360,7 @@ void hw_audio_sfx_volume(int volume)
     }
 }
 
-#else /* !HAVE_SDLMIXER */
+#else /* !HAVE_SDLMIXER1 */
 
 int hw_audio_init(void)
 {
