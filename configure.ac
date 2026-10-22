@@ -298,6 +298,5 @@ AC_CONFIG_FILES([Makefile
                  src/hw/Makefile
                  src/hw/nop/Makefile
                  src/hw/sdl/Makefile
-                 src/hw/sdl/1/Makefile
                 ])
 AC_OUTPUT
