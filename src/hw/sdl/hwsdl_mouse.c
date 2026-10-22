@@ -1,5 +1,7 @@
 #include "config.h"
 
+#include "SDL/SDL.h"
+
 #include "hw_internal.h"
 
 #include "hwsdl_mouse.h"
