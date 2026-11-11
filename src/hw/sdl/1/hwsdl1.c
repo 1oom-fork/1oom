@@ -170,8 +170,6 @@ static void build_key_xlat(void)
     key_xlat[SDLK_UNDO] = MOO_KEY_UNDO;
 }
 
-#include "hwsdl.c"
-
 /* -------------------------------------------------------------------------- */
 
 int main(int argc, char **argv)
@@ -225,13 +223,14 @@ int hw_event_handle(void)
                         c = 0;
                     }
                     SDLMod smod = e.key.keysym.mod;
-                    if (!(hw_kbd_check_hotkey(e.key.keysym.sym, smod, c))) {
-                        uint32_t mod = 0;
-                        if (smod & KMOD_SHIFT) { mod |= MOO_MOD_SHIFT; }
-                        if (smod & KMOD_ALT) { mod |= MOO_MOD_ALT; }
-                        if (smod & KMOD_CTRL) { mod |= MOO_MOD_CTRL; }
-                        if (smod & KMOD_META) { mod |= MOO_MOD_META; }
-                        kbd_add_keypress(key_xlat[e.key.keysym.sym], mod, c);
+                    mookey_t key = key_xlat[e.key.keysym.sym];
+                    uint32_t mod = 0;
+                    if (smod & KMOD_SHIFT) { mod |= MOO_MOD_SHIFT; }
+                    if (smod & KMOD_ALT) { mod |= MOO_MOD_ALT; }
+                    if (smod & KMOD_CTRL) { mod |= MOO_MOD_CTRL; }
+                    if (smod & KMOD_META) { mod |= MOO_MOD_META; }
+                    if (!kbd_handle_hotkey(key, mod)) {
+                        kbd_add_keypress(key, mod, c);
                     }
                 }
                 break;

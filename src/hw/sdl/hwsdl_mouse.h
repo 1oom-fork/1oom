@@ -7,7 +7,6 @@ extern bool hw_mouse_enabled;
 
 extern void hw_mouse_grab(void);
 extern void hw_mouse_ungrab(void);
-extern void hw_mouse_toggle_grab(void);
 
 extern void hw_mouse_set_limits(int w, int h);
 
