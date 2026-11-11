@@ -1,5 +1,8 @@
 #include "config.h"
 
+#include <stdlib.h>
+
+#include "hw.h"
 #include "kbd.h"
 #include "log.h"
 #include "types.h"
@@ -15,6 +18,35 @@ static struct {
 } kbd = { 0 };
 
 /* -------------------------------------------------------------------------- */
+
+bool kbd_handle_hotkey(mookey_t key, uint32_t mod)
+{
+    if (mod & MOO_MOD_CTRL) {
+        if (key == MOO_KEY_F10) {
+            hw_mouse_toggle_grab();
+            return true;
+        } else if (key == MOO_KEY_RIGHTBRACKET) {
+            if (mod & MOO_MOD_SHIFT) {
+                hw_audio_music_volume(opt_music_volume + 4);
+            } else {
+                hw_audio_sfx_volume(opt_sfx_volume + 4);
+            }
+            return true;
+        } else if (key == MOO_KEY_LEFTBRACKET) {
+            if (mod & MOO_MOD_SHIFT) {
+                hw_audio_music_volume(opt_music_volume - 4);
+            } else {
+                hw_audio_sfx_volume(opt_sfx_volume - 4);
+            }
+            return true;
+        } else if (key == MOO_KEY_ESCAPE) {
+            log_message("Got Ctrl-ESC, quitting now\n");
+            exit(EXIT_SUCCESS);
+        }
+    }
+
+    return false;
+}
 
 void kbd_add_keypress(mookey_t key, uint32_t mod, char c)
 {
