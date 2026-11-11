@@ -16,6 +16,7 @@ extern const struct cmdline_options_s hw_cmdline_options[];
 extern const struct cmdline_options_s hw_cmdline_options_extra[];
 
 extern int hw_event_handle(void);
+extern void hw_mouse_toggle_grab(void);
 
 extern int hw_video_init(int w, int h);
 extern void hw_video_set_palette(uint8_t *palette, int first, int num);
