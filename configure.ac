@@ -9,6 +9,7 @@ AC_ARG_ENABLE(hwsdl1, AS_HELP_STRING([--disable-hwsdl1], [disables SDL1 HW]))
 AC_ARG_ENABLE(hwsdl2, AS_HELP_STRING([--disable-hwsdl2], [disables SDL2 HW]))
 AC_ARG_ENABLE(hwalleg4, AS_HELP_STRING([--disable-hwalleg4], [disables Allegro 4 HW]))
 AC_ARG_ENABLE(hwx11, AS_HELP_STRING([--disable-hwx11], [disables Xorg HW]))
+AC_ARG_ENABLE(hwwin32, AS_HELP_STRING([--disable-hwwin32], [disables Win32 HW]))
 
 AC_CONFIG_SRCDIR([src/main.c])
 AC_CONFIG_AUX_DIR([build-aux])
@@ -460,6 +461,39 @@ fi
 AC_SUBST(HW_ALLEG4_LIBS)
 
 
+dnl - Win32 (WinAPI) backend, only for windows hosts
+
+AM_CONDITIONAL(COMPILE_HW_WIN32, false)
+HW_WIN32_CFLAGS=
+HW_WIN32_LIBS=
+if test x"$is_win32" = "xyes" -a x"$enable_hwwin32" != "xno"; then
+    old_LIBS="$LIBS"
+    LIBS="$LIBS -lgdi32 -luser32 -lwinmm"
+    AC_MSG_CHECKING(for win32 GDI/waveOut/MCI)
+    AC_TRY_LINK([#include <windows.h>
+                 #include <mmsystem.h>],
+                [CreateDIBSection(0, NULL, 0, NULL, NULL, 0);
+                 waveOutOpen(0, 0, NULL, 0, 0, 0);
+                 mciSendString(0, 0, 0, 0);],
+                [AC_MSG_RESULT(yes);
+                 have_hwwin32=yes],
+                [AC_MSG_RESULT(no);
+                 have_hwwin32=no])
+    LIBS="$old_LIBS"
+
+    if test x"$have_hwwin32" = "xyes"; then
+        AC_DEFINE(USE_HWWIN32,,[Enable Win32 (WinAPI) HW support.])
+        AM_CONDITIONAL(COMPILE_HW_WIN32, true)
+        HW_WIN32_LIBS="-lgdi32 -luser32 -lwinmm"
+        have_win32hw=yes
+    else
+        AC_MSG_WARN([Win32 GDI/waveOut/MCI not found, win32 backend disabled!])
+    fi
+fi
+AC_SUBST(HW_WIN32_CFLAGS)
+AC_SUBST(HW_WIN32_LIBS)
+
+
 dnl - X11
 dnl Check and setup X11 compilation.
 
@@ -518,12 +552,19 @@ if test x"$enable_uiclassic" != "xno"; then
     else
         AM_CONDITIONAL(COMPILE_UICLASSIC_X11, false)
     fi
+    if test x"$have_win32hw" = "xyes"; then
+        AM_CONDITIONAL(COMPILE_UICLASSIC_WIN32, true)
+        have_classic_hw=yes
+    else
+        AM_CONDITIONAL(COMPILE_UICLASSIC_WIN32, false)
+    fi
 else
     AM_CONDITIONAL(COMPILE_UICLASSIC, false)
     AM_CONDITIONAL(COMPILE_UICLASSIC_SDL1, false)
     AM_CONDITIONAL(COMPILE_UICLASSIC_SDL2, false)
     AM_CONDITIONAL(COMPILE_UICLASSIC_ALLEG4, false)
     AM_CONDITIONAL(COMPILE_UICLASSIC_X11, false)
+    AM_CONDITIONAL(COMPILE_UICLASSIC_WIN32, false)
 fi
 
 if test x"$enable_tools" != "xno"; then
@@ -548,12 +589,18 @@ if test x"$enable_tools" != "xno"; then
     else
         AM_CONDITIONAL(COMPILE_TOOLS_X11, false)
     fi
+    if test x"$have_win32hw" = "xyes"; then
+        AM_CONDITIONAL(COMPILE_TOOLS_WIN32, true)
+    else
+        AM_CONDITIONAL(COMPILE_TOOLS_WIN32, false)
+    fi
 else
     AM_CONDITIONAL(COMPILE_TOOLS, false)
     AM_CONDITIONAL(COMPILE_TOOLS_SDL1, false)
     AM_CONDITIONAL(COMPILE_TOOLS_SDL2, false)
     AM_CONDITIONAL(COMPILE_TOOLS_ALLEG4, false)
     AM_CONDITIONAL(COMPILE_TOOLS_X11, false)
+    AM_CONDITIONAL(COMPILE_TOOLS_WIN32, false)
 fi
 
 if test x"$enable_uiclassic" != "xno" -a x"$have_classic_hw" != "xyes"; then
@@ -581,5 +628,6 @@ AC_CONFIG_FILES([Makefile
                  src/hw/sdl2/Makefile
                  src/hw/alleg/Makefile
                  src/hw/x11/Makefile
+                 src/hw/win32/Makefile
                 ])
 AC_OUTPUT
