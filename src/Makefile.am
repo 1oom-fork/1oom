@@ -16,8 +16,8 @@ bin_PROGRAMS += 1oom_lbxview_sdl1
 endif
 endif
 
-SUBDIRS = hw os ui game
-DIST_SUBDIRS = hw os ui game
+SUBDIRS = hw ui game
+DIST_SUBDIRS = hw ui game
 
 util_sources = \
     bits.h \
@@ -46,6 +46,7 @@ util_sources = \
     mouse.h \
     options.c \
     options.h \
+    os.c \
     os.h \
     pbx.c \
     pbx.h \
@@ -66,29 +67,27 @@ audio_sources = \
     fmt_sfx.h
 
 AM_CPPFLAGS = \
-    @OS_INCLUDES@ \
     -I$(top_srcdir)/src
 
-common_libs = @OS_LIBS@
 game_lib = $(top_builddir)/src/game/libgame.a
 gamemain_lib = $(top_builddir)/src/game/libgamemain.a
 
 uicmdline_lib = $(top_builddir)/src/ui/cmdline/libuicmdline.a
 hwnop_lib = $(top_builddir)/src/hw/nop/libhwnop.a
-1oom_cmdline_libs = $(gamemain_lib) $(game_lib) $(uicmdline_lib) $(game_lib) $(hwnop_lib) $(common_libs)
+1oom_cmdline_libs = $(gamemain_lib) $(game_lib) $(uicmdline_lib) $(game_lib) $(hwnop_lib)
 1oom_cmdline_SOURCES = $(util_sources)
 1oom_cmdline_LDADD = $(1oom_cmdline_libs) @READLINE_LIBS@
 1oom_cmdline_DEPENDENCIES = $(1oom_cmdline_libs)
 
 uiclassic_lib = $(top_builddir)/src/ui/classic/libuiclassic.a
 hwsdl1_lib = $(top_builddir)/src/hw/sdl/1/libhwsdl1.a
-1oom_classic_sdl1_libs = $(gamemain_lib) $(game_lib) $(uiclassic_lib) $(game_lib) $(hwsdl1_lib) $(common_libs)
+1oom_classic_sdl1_libs = $(gamemain_lib) $(game_lib) $(uiclassic_lib) $(game_lib) $(hwsdl1_lib)
 1oom_classic_sdl1_SOURCES = $(audio_sources) $(util_sources)
 1oom_classic_sdl1_LDADD = $(1oom_classic_sdl1_libs) @HW_SDL1_LIBS@ @EXTRA_SDL1_LIBS@ @SAMPLERATE_LIBS@
 1oom_classic_sdl1_DEPENDENCIES = $(1oom_classic_sdl1_libs)
 
 uinop_lib = $(top_builddir)/src/ui/nop/libuinop.a
-1oom_lbxview_sdl1_libs = $(hwsdl1_lib) $(uinop_lib) $(common_libs)
+1oom_lbxview_sdl1_libs = $(hwsdl1_lib) $(uinop_lib)
 1oom_lbxview_sdl1_SOURCES = lbxview.c $(audio_sources) $(util_sources)
 1oom_lbxview_sdl1_LDADD = $(1oom_lbxview_sdl1_libs) @HW_SDL1_LIBS@ @EXTRA_SDL1_LIBS@ @SAMPLERATE_LIBS@
 1oom_lbxview_sdl1_DEPENDENCIES = $(1oom_lbxview_sdl1_libs)
@@ -98,15 +97,13 @@ uinop_lib = $(top_builddir)/src/ui/nop/libuinop.a
 1oom_pbxmake_LDADD = $(1oom_pbxmake_libs)
 1oom_pbxmake_DEPENDENCIES = $(1oom_pbxmake_libs)
 
-1oom_saveconv_libs = $(game_lib) $(hwnop_lib) $(uinop_lib) $(common_libs)
-1oom_saveconv_SOURCES = saveconv.c lib.c log.c options.c util.c
+1oom_saveconv_libs = $(game_lib) $(hwnop_lib) $(uinop_lib)
+1oom_saveconv_SOURCES = saveconv.c lib.c log.c options.c os.c util.c
 1oom_saveconv_LDADD = $(1oom_saveconv_libs)
 1oom_saveconv_DEPENDENCIES = $(1oom_saveconv_libs)
 
-.PHONY: libui libhw libos libgame libgamemain
+.PHONY: libui libhw libgame libgamemain
 
-libos:
-	(cd os && $(MAKE))
 libhw:
 	(cd hw && $(MAKE))
 libui:

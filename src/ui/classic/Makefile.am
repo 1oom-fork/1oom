@@ -1,5 +1,4 @@
 AM_CPPFLAGS = \
-    @OS_INCLUDES@ \
     -I$(top_srcdir)/src/game \
     -I$(top_srcdir)/src
 

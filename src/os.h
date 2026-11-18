@@ -3,11 +3,22 @@
 
 /* API to os/ */
 
+#include "config.h"
+
 #include <stdio.h>
 
-#include "osdefs.h"
 #include "options.h"
 #include "types.h"
+
+#ifdef IS_WINDOWS
+#define FSDEV_PATH_MAX  2048
+#define FSDEV_DIR_SEP_STR    "\\"
+#define FSDEV_DIR_SEP_CHR    '\\'
+#else
+#define FSDEV_PATH_MAX  2048
+#define FSDEV_DIR_SEP_STR    "/"
+#define FSDEV_DIR_SEP_CHR    '/'
+#endif
 
 extern const char *idstr_os;
 

@@ -52,8 +52,8 @@ AC_PROG_CC_C99
 
 dnl - check common stuff
 
-AC_CHECK_HEADERS(inttypes.h stdbool.h)
-AC_CHECK_FUNCS(atexit strcasecmp)
+AC_CHECK_HEADERS(inttypes.h stdbool.h sys/time.h)
+AC_CHECK_FUNCS(atexit gettimeofday stat strcasecmp)
 
 
 dnl - check for win32 headers
@@ -66,6 +66,15 @@ AC_CHECK_HEADERS([wtypes.h winnt.h], [is_win32=yes; AC_DEFINE(IS_WINDOWS,, [Comp
 #include <winnt.h>
 #endif
 ]])
+
+if test x"$is_win32" != "xyes"; then
+    if test x"$ac_cv_func_stat" != "xyes" -o x"$ac_cv_header_sys_stat_h" != "xyes"; then
+        AC_MSG_ERROR([Unsupported build system!])
+    fi
+    if test x"$ac_cv_func_gettimeofday" != "xyes" -o x"$ac_cv_header_sys_time_h" != "xyes"; then
+        AC_MSG_ERROR([Unsupported build system!])
+    fi
+fi
 
 
 dnl - optional features
@@ -272,25 +281,6 @@ AC_SUBST(HW_SDL1_CFLAGS)
 AC_SUBST(HW_SDL1_LIBS)
 
 
-dnl - setup the system-specific object files
-
-if test x"$is_win32" = "xyes"; then
-    OS_DIR="\$(top_builddir)/src/os/win32"
-    OS_SRC_DIR="\$(top_srcdir)/src/os/win32"
-    OS_LIBS="$OS_DIR/libos.a"
-    OS_INCLUDES="-I$OS_SRC_DIR"
-    AM_CONDITIONAL(COMPILE_UNIX, true)
-    AM_CONDITIONAL(COMPILE_WIN32, false)
-else
-    OS_DIR="\$(top_builddir)/src/os/unix"
-    OS_SRC_DIR="\$(top_srcdir)/src/os/unix"
-    OS_LIBS="$OS_DIR/libos.a"
-    OS_INCLUDES="-I$OS_SRC_DIR"
-    AM_CONDITIONAL(COMPILE_UNIX, true)
-    AM_CONDITIONAL(COMPILE_WIN32, false)
-fi
-
-
 dnl - build exe opions
 
 if test x"$enable_uicmdline" != "xno"; then
@@ -330,18 +320,11 @@ dnl - finish up
 
 AC_SUBST(HAVE_READLINE)
 AC_SUBST(EXTRA_SDL1_LIBS)
-AC_SUBST(OS_INCLUDES)
-AC_SUBST(OS_LIBS)
-AC_SUBST(OS_DIR)
-AC_SUBST(OS_SRC_DIR)
 AC_CONFIG_HEADERS([src/config.h])
 AC_CONFIG_FILES([Makefile
                  doc/Makefile
                  src/Makefile
                  src/game/Makefile
-                 src/os/Makefile
-                 src/os/unix/Makefile
-                 src/os/win32/Makefile
                  src/ui/Makefile
                  src/ui/cmdline/Makefile
                  src/ui/classic/Makefile

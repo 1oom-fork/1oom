@@ -13,13 +13,9 @@ The code is divided into the following directories:
  *     sdl/     - libSDL
  *       1/     - libSDL 1.2.x
  *     nop/     - dummy HW for tools
- *   os/        - Operating System; file paths, time
- *     unix/    - yay
- *     win32/   - boo
 
 Some facts:
  * main is in hw/ (due to SDL)
- * os/ known nothing about game/, ui/ or hw/
  * hw/ known nothing about game/ or ui/
  * game/ known nothing about hw/
  * ui/ is known via src/ui.h
@@ -80,9 +76,7 @@ Note that declaring the loop variable inside for is ok:
 
 Otherwise, try to keep close to C89.
 
-Avoid #ifdefs! No OS-specific #ifdefs are allowing in game/ or ui/, and
-only one in src/ (util_fname_split). Acceptable #ifdefs include the
-ones for HAVE_SAMPLERATE etc and FEATURE_MODEBUG.
+Avoid #ifdefs! No OS-specific #ifdefs are allowed in game/ or ui/.
 
 ## Portability
 
@@ -99,15 +93,11 @@ Do not use the `long` type (its size differs across platforms; use
 `int` or `int64_t` depending on which you want).
 
 Be careful with platform dependencies: do not use Windows API
-functions outside os/win32/, for example. Do not use SDL outside of
-hw/sdl/.
+functions outside os.c, for example. Do not use SDL outside of hw/sdl/.
 
 Tests for OS in configure.ac and use for example `IS_WINDOWS` instead of
 the preprocessor `_WIN32`. The #defines can be used to identify the OS
-if necessary. Try to avoid this if possible. Only consider them in hw/ or os/.
-
-Hey, you there, OS X porter! Do not turn os/unix/ into an #ifdef shithole,
-just copy it to os/osx/ and hack away.
+if necessary. Try to avoid this if possible. Only consider them in hw/ or os.c.
 
 Be careful of endianness!  The the macros in bits.h to do endianness
 conversion.  Never assume that integer types have a particular byte

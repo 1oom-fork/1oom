@@ -1,5 +1,4 @@
 AM_CPPFLAGS = \
-    @OS_INCLUDES@ \
     -I$(top_srcdir)/src
 
 noinst_LIBRARIES = libgame.a libgamemain.a
