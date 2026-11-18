@@ -1,12 +1,13 @@
 #include "config.h"
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#ifdef IS_WINDOWS
+#include <windows.h>
+#else
 #include <sys/stat.h>
 #include <sys/time.h>
 #include <sys/types.h>
 #include <unistd.h>
+#endif
 
 #include "os.h"
 #include "options.h"
@@ -34,15 +35,27 @@ static int os_make_path(const char *path)
     if ((path == NULL) || (path[0] == '\0') || ((path[0] == '.') && (path[1] == '\0'))) {
         return 0;
     }
+#ifdef IS_WINDOWS
+    DWORD attr = GetFileAttributesA(path);
+    if (attr != INVALID_FILE_ATTRIBUTES) {
+        return (attr & FILE_ATTRIBUTE_DIRECTORY) ? 0 : -1;
+    }
+    return CreateDirectoryA(path, NULL) ? 0 : -1;
+#else
     if (access(path, F_OK)) {
         return mkdir(path, 0700);
     }
+#endif
     return 0;
 }
 
 /* -------------------------------------------------------------------------- */
 
+#ifdef IS_WINDOWS
+const char *idstr_os = "win32";
+#else
 const char *idstr_os = "unix";
+#endif
 
 int os_early_init(void)
 {
@@ -77,6 +90,8 @@ const char **os_get_paths_data(void)
         if (data_path) {
             all_data_paths[i++] = lib_stralloc(data_path);
         }
+#ifdef IS_WINDOWS
+#else
         p = getenv("XDG_DATA_HOME");
         if (p) {
             all_data_paths[i++] = util_concat(p, "/1oom", NULL);
@@ -95,6 +110,7 @@ const char **os_get_paths_data(void)
         }
         all_data_paths[i++] = lib_stralloc("/usr/share/1oom");
         all_data_paths[i++] = lib_stralloc("/usr/local/share/1oom");
+#endif
         all_data_paths[i++] = lib_stralloc(".");
         all_data_paths[i] = NULL;
         num_data_paths = i;
@@ -128,6 +144,9 @@ void os_set_path_user(const char *path)
 const char *os_get_path_user(void)
 {
     if (user_path == NULL) {
+#ifdef IS_WINDOWS
+        user_path = lib_stralloc(".");
+#else
         char *xdg_config_home = getenv("XDG_CONFIG_HOME");
         if (xdg_config_home != NULL) {
             user_path = util_concat(xdg_config_home, "/1oom", NULL);
@@ -139,6 +158,7 @@ const char *os_get_path_user(void)
                 user_path = lib_stralloc(".");
             }
         }
+#endif
     }
     return user_path;
 }
@@ -167,7 +187,11 @@ const char *os_get_fname_save(char *buf, int savei/*1..9*/)
 
 uint32_t os_get_time_us(void)
 {
+#ifdef IS_WINDOWS
+    return GetTickCount() * 1000;
+#else
     struct timeval tv;
     gettimeofday(&tv, NULL);
     return (uint32_t)(tv.tv_usec + tv.tv_sec * 1000000);
+#endif
 }
