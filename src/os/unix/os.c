@@ -3,10 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/stat.h>
-#include <sys/time.h>
 #include <sys/types.h>
-#include <unistd.h>
 
 #include "os.h"
 #include "lib.h"
@@ -21,18 +18,6 @@ static char *all_data_paths[] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
 static int num_data_paths = 0;
 
 /* -------------------------------------------------------------------------- */
-
-static int os_make_path(const char *path)
-{
-    if (access(path, F_OK)) {
-        return mkdir(path, 0700);
-    }
-    return 0;
-}
-
-/* -------------------------------------------------------------------------- */
-
-const char *idstr_os = "unix";
 
 void os_shutdown(void)
 {
@@ -112,28 +97,4 @@ const char *os_get_path_user(void)
         }
     }
     return user_path;
-}
-
-int os_make_path_user(void)
-{
-    return os_make_path(os_get_path_user());
-}
-
-int os_make_path_for(const char *filename)
-{
-    int res = 0;
-    char *path;
-    util_fname_split(filename, &path, NULL);
-    if (path != NULL) {
-        res = os_make_path(path);
-        lib_free(path);
-    }
-    return res;
-}
-
-uint32_t os_get_time_us(void)
-{
-    struct timeval tv;
-    gettimeofday(&tv, NULL);
-    return (uint32_t)(tv.tv_usec + tv.tv_sec * 1000000);
 }

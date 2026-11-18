@@ -1,7 +1,6 @@
 #include "config.h"
 
 #include <stdlib.h>
-#include <windows.h>
 
 #include "os.h"
 #include "lib.h"
@@ -12,8 +11,6 @@ static char *data_path = NULL;
 static char *all_data_paths[] = { NULL, NULL, NULL };
 
 /* -------------------------------------------------------------------------- */
-
-const char *idstr_os = "win32";
 
 void os_shutdown(void)
 {
@@ -45,19 +42,4 @@ void os_set_path_data(const char *path)
 const char *os_get_path_user(void)
 {
     return ".";
-}
-
-int os_make_path_user(void)
-{
-    return 0;
-}
-
-int os_make_path_for(const char *filename)
-{
-    return -1; /* FIXME */
-}
-
-uint32_t os_get_time_us(void)
-{
-    return GetTickCount() * 1000;
 }
