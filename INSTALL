@@ -16,6 +16,8 @@ The configuration options:
                             (do not build 1oom_*_sdl1)
     --disable-hwsdl2        disables SDL2 HW
                             (do not build 1oom_*_sdl2)
+    --disable-hwsdl3        disables SDL3 HW
+                            (do not build 1oom_*_sdl3)
     --disable-hwalleg4      disables Allegro 4 HW
                             (do not build 1oom_*_alleg4)
     --disable-x11           disables X11 HW
@@ -29,13 +31,17 @@ Parameters for configure:
     SDL2_CFLAGS
     SDL2_LIBS
     SDL2MIXER_LIBS
+    SDL3_CFLAGS
+    SDL3_LIBS
+    SDL3MIXER_LIBS
 
 
 2. Quick guide
 ===============
 
-You'll need make, a C99 compiler and SDL2 development libraries.
+You'll need make, a C99 compiler and SDL2 or SDL3 development libraries.
     aptitude install libsdl2-dev libsdl2-mixer-dev
+    aptitude install libsdl3-dev libsdl3-mixer-dev
 
 For better audio quality, also get libsamplerate.
     aptitude install libsamplerate-dev
@@ -57,6 +63,7 @@ Then the usual:
 Actual install step is not needed:
     src/1oom_classic_sdl1 -data /path/to/moo
     src/1oom_classic_sdl2 -data /path/to/moo
+    src/1oom_classic_sdl3 -data /path/to/moo
 
 The install step can still be done:
     make install

@@ -1,0 +1,14 @@
+#ifndef INC_1OOM_HWSDL3_VIDEO_H
+#define INC_1OOM_HWSDL3_VIDEO_H
+
+#include "types.h"
+
+extern bool hw_mouse_enabled;
+
+extern void hw_mouse_grab(void);
+extern void hw_mouse_ungrab(void);
+
+extern uint32_t hw_video_get_window_id(void);
+extern void hw_video_set_visible(bool visible);
+
+#endif
