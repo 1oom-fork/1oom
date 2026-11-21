@@ -3,6 +3,7 @@ AC_INIT([1oom], [0.1])
 AC_ARG_ENABLE(static, AS_HELP_STRING([--enable-static], [enable static builds]))
 AC_ARG_ENABLE(fault-finding, AS_HELP_STRING([--enable-fault-finding], [add more warnings]))
 AC_ARG_WITH(samplerate, AS_HELP_STRING([--without-samplerate], [do not try to use libsamplerate]))
+AC_ARG_WITH(mt32emu, AS_HELP_STRING([--with-mt32emu@<:@=auto|yes|no|fetch@:>@], [use libmt32emu for MT-32 XMIDI rendering (default: auto, fetch/build static if not installed)]))
 AC_ARG_ENABLE(tools, AS_HELP_STRING([--disable-tools], [disables extra tools]))
 AC_ARG_ENABLE(uiclassic, AS_HELP_STRING([--disable-uiclassic], [disables classic UI]))
 AC_ARG_ENABLE(hwsdl1, AS_HELP_STRING([--disable-hwsdl1], [disables SDL1 HW]))
@@ -25,6 +26,7 @@ m4_ifdef([AM_PROG_AR], [AM_PROG_AR])
 AC_CHECK_TOOL(RANLIB, ranlib, :)
 AC_CHECK_TOOL(STRIP, strip, :)
 AC_PROG_INSTALL
+AC_PROG_MKDIR_P
 
 AC_C_BIGENDIAN
 
@@ -118,6 +120,85 @@ AC_SUBST(SAMPLERATE_LIBS)
 if test x"$have_samplerate" = "xyes"; then
     AC_DEFINE(HAVE_SAMPLERATE,,[Enable libsamplerate])
 fi
+
+
+dnl - libmt32emu
+
+MT32EMU_CFLAGS=${MT32EMU_CFLAGS-}
+MT32EMU_LIBS=${MT32EMU_LIBS-}
+have_mt32emu=no
+build_mt32emu=no
+mt32emu_want_fetch=no
+mt32emu_mode="$with_mt32emu"
+
+AS_CASE(["x$with_mt32emu"],
+    [x], [mt32emu_mode=auto],
+    [xauto], [mt32emu_mode=auto],
+    [xyes], [mt32emu_mode=yes],
+    [xno], [mt32emu_mode=no],
+    [xfetch], [mt32emu_mode=fetch],
+    [AC_MSG_FAILURE([invalid value for --with-mt32emu: $with_mt32emu (expected auto|yes|no|fetch)])]
+)
+
+AS_IF([test "x$mt32emu_mode" = "xfetch"], [
+    mt32emu_want_fetch=yes
+], [test "x$mt32emu_mode" != "xno"], [
+    if test x"$MT32EMU_CFLAGS" != x -o x"$MT32EMU_LIBS" != x; then
+        have_mt32emu=yes
+    elif $pkg_config --exists mt32emu 2>/dev/null; then
+        MT32EMU_CFLAGS=`$pkg_config --cflags mt32emu`
+        MT32EMU_LIBS=`$pkg_config --libs mt32emu`
+        have_mt32emu=yes
+    elif $pkg_config --exists munt 2>/dev/null; then
+        MT32EMU_CFLAGS=`$pkg_config --cflags munt`
+        MT32EMU_LIBS=`$pkg_config --libs munt`
+        have_mt32emu=yes
+    else
+        AC_CHECK_LIB(mt32emu, mt32emu_create_context, [have_mt32emu=yes; MT32EMU_LIBS="-lmt32emu"], [have_mt32emu=no])
+    fi
+    if test x"$have_mt32emu" = xyes; then
+        old_CPPFLAGS="$CPPFLAGS"
+        CPPFLAGS="$CPPFLAGS $MT32EMU_CFLAGS"
+        AC_CHECK_HEADERS([mt32emu/c_interface/c_interface.h], [AC_DEFINE(HAVE_MT32EMU_C_INTERFACE_C_INTERFACE_H,,[libmt32emu c_interface/c_interface.h])],
+            [AC_CHECK_HEADERS([mt32emu/c_interface.h], [AC_DEFINE(HAVE_MT32EMU_C_INTERFACE_H,,[libmt32emu c_interface.h])],
+                [AC_CHECK_HEADERS([c_interface.h], [], [have_mt32emu=no])])])
+        CPPFLAGS="$old_CPPFLAGS"
+    fi
+])
+
+AS_IF([test "x$have_mt32emu" != "xyes" -a "x$mt32emu_mode" = "xauto"], [
+    mt32emu_want_fetch=yes
+])
+
+AS_IF([test "x$mt32emu_want_fetch" = "xyes" -a "x$have_mt32emu" != "xyes"], [
+    AC_CHECK_PROGS([GIT], [git])
+    AC_CHECK_PROGS([CMAKE], [cmake])
+    AC_PROG_CXX
+    if test "x$GIT" != "x" && test "x$CMAKE" != "x"; then
+        have_mt32emu=yes
+        build_mt32emu=yes
+        MT32EMU_CFLAGS='-I$(top_builddir)/mt32emu-install/include -I$(top_builddir)/mt32emu-install/include/mt32emu'
+        MT32EMU_LIBS='$(top_builddir)/mt32emu-install/lib/libmt32emu.a -lstdc++ -lm'
+    elif test "x$mt32emu_mode" = "xfetch"; then
+        AC_MSG_FAILURE([--with-mt32emu=fetch requires git and cmake])
+    else
+        AC_MSG_WARN([libmt32emu not found and git/cmake unavailable; MT-32 XMIDI rendering disabled])
+    fi
+])
+
+AS_IF([test "x$mt32emu_mode" = "xyes" -a "x$have_mt32emu" != "xyes"], [AC_MSG_FAILURE(
+    [--with-mt32emu was given, but test for libmt32emu failed]
+)])
+
+if test x"$have_mt32emu" = xyes; then
+    AC_DEFINE(HAVE_MT32EMU,,[Enable libmt32emu MT-32 XMIDI rendering])
+fi
+if test x"$build_mt32emu" = xyes; then
+    AC_DEFINE(HAVE_MT32EMU_C_INTERFACE_C_INTERFACE_H,,[libmt32emu c_interface/c_interface.h])
+fi
+AM_CONDITIONAL([BUILD_MT32EMU], [test "x$build_mt32emu" = "xyes"])
+AC_SUBST(MT32EMU_CFLAGS)
+AC_SUBST(MT32EMU_LIBS)
 
 
 dnl - SDL1

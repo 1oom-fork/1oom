@@ -20,6 +20,9 @@ extern int opt_sfx_volume;
 extern int opt_audiorate;
 extern int opt_audioslice_ms;
 extern const char *opt_soundfont_path;
+extern bool opt_mt32_enabled;
+extern const char *opt_mt32_rom1;
+extern const char *opt_mt32_rom2;
 #ifdef HAVE_SAMPLERATE
 extern bool opt_use_libsamplerate;
 extern int opt_libsamplerate_scale;

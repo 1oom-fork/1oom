@@ -9,6 +9,8 @@ configure
 aclocal.m4
 autom4te.cache/
 build-*/
+!build-aux/
+!build-aux/fetch-mt32emu.sh
 src/config.h*
 stamp-h1
 

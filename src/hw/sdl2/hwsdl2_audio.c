@@ -8,6 +8,7 @@
 #include "fmt_mus.h"
 #include "fmt_sfx.h"
 #include "lib.h"
+#include "options.h"
 #endif /* HAVE_SDL2MIXER */
 
 #include <stdio.h>
@@ -176,7 +177,12 @@ int hw_audio_music_init(int mus_index, const uint8_t *data_in, uint32_t len_in)
     m->type = fmt_mus_detect(data_in, len_in);
     switch (m->type) {
     case MUS_TYPE_LBXXMID:
-        if (fmt_mus_convert_xmid(data_in, len_in, &buf, &len, &m->loops)) {
+        if (opt_mt32_enabled && fmt_mus_render_xmid_mt32(data_in, len_in, audio_rate, &buf, &len, &m->loops)) {
+            data = buf;
+            m->buf = buf;
+            buf = NULL;
+            m->type = MUS_TYPE_WAV;
+        } else if (fmt_mus_convert_xmid(data_in, len_in, &buf, &len, &m->loops)) {
             data = buf;
         } else {
             m->type = MUS_TYPE_UNKNOWN;
