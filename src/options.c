@@ -32,6 +32,9 @@ int opt_sfx_volume = 100;
 int opt_audiorate = 48000;
 int opt_audioslice_ms = 50;
 const char *opt_soundfont_path = NULL;
+bool opt_mt32_enabled = false;
+const char *opt_mt32_rom1 = NULL;
+const char *opt_mt32_rom2 = NULL;
 #ifdef HAVE_SAMPLERATE
 bool opt_use_libsamplerate = true;
 int opt_libsamplerate_scale = 65;
@@ -196,6 +199,18 @@ static const struct cmdline_options_s cmdline_options_audio[] = {
     { "-soundfont", 1,
       options_set_soundfont_path, NULL,
       "FILE.SF2", "Set soundfont path" },
+    { "-mt32", 0,
+      options_enable_bool_var, (void *)&opt_mt32_enabled,
+      NULL, "Enable MT-32 XMIDI rendering (needs libmt32emu and ROMs)" },
+    { "-nomt32", 0,
+      options_disable_bool_var, (void *)&opt_mt32_enabled,
+      NULL, "Disable MT-32 XMIDI rendering" },
+    { "-mt32rom1", 1,
+      options_set_str_var, (void *)&opt_mt32_rom1,
+      "FILE.ROM", "Set MT-32 control ROM path" },
+    { "-mt32rom2", 1,
+      options_set_str_var, (void *)&opt_mt32_rom2,
+      "FILE.ROM", "Set MT-32 PCM ROM path" },
 #ifdef HAVE_SAMPLERATE
     { "-libsr", 0,
       options_enable_bool_var, (void *)&opt_use_libsamplerate,

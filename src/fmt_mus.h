@@ -14,5 +14,6 @@ typedef enum {
 
 extern mus_type_t fmt_mus_detect(const uint8_t *data, uint32_t len);
 extern bool fmt_mus_convert_xmid(const uint8_t *data_in, uint32_t len_in, uint8_t **data_out_ptr, uint32_t *len_out_ptr, bool *tune_loops);
+extern bool fmt_mus_render_xmid_mt32(const uint8_t *data_in, uint32_t len_in, uint32_t sample_rate, uint8_t **wav_out, uint32_t *wav_len, bool *tune_loops);
 
 #endif

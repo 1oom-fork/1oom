@@ -90,10 +90,13 @@ audio_sources = \
     fmt_mus.c \
     fmt_mus.h \
     fmt_sfx.c \
-    fmt_sfx.h
+    fmt_sfx.h \
+    xmidi.c \
+    xmidi.h
 
 AM_CPPFLAGS = \
-    -I$(top_srcdir)/src
+    -I$(top_srcdir)/src \
+    @MT32EMU_CFLAGS@
 
 game_lib = $(top_builddir)/src/game/libgame.a
 gamemain_lib = $(top_builddir)/src/game/libgamemain.a
@@ -103,46 +106,46 @@ uiclassic_lib = $(top_builddir)/src/ui/classic/libuiclassic.a
 hwsdl1_lib = $(top_builddir)/src/hw/sdl/libhwsdl1.a
 1oom_classic_sdl1_libs = $(gamemain_lib) $(game_lib) $(uiclassic_lib) $(game_lib) $(hwsdl1_lib)
 1oom_classic_sdl1_SOURCES = $(audio_sources) $(gui_sources) $(util_sources)
-1oom_classic_sdl1_LDADD = $(1oom_classic_sdl1_libs) @HW_SDL1_LIBS@ @EXTRA_SDL1_LIBS@ @SAMPLERATE_LIBS@
+1oom_classic_sdl1_LDADD = $(1oom_classic_sdl1_libs) @HW_SDL1_LIBS@ @EXTRA_SDL1_LIBS@ @SAMPLERATE_LIBS@ @MT32EMU_LIBS@
 1oom_classic_sdl1_DEPENDENCIES = $(1oom_classic_sdl1_libs)
 
 uinop_lib = $(top_builddir)/src/ui/nop/libuinop.a
 1oom_lbxview_sdl1_libs = $(hwsdl1_lib) $(uinop_lib)
 1oom_lbxview_sdl1_SOURCES = lbxview.c $(audio_sources) $(gui_sources) $(util_sources)
-1oom_lbxview_sdl1_LDADD = $(1oom_lbxview_sdl1_libs) @HW_SDL1_LIBS@ @EXTRA_SDL1_LIBS@ @SAMPLERATE_LIBS@
+1oom_lbxview_sdl1_LDADD = $(1oom_lbxview_sdl1_libs) @HW_SDL1_LIBS@ @EXTRA_SDL1_LIBS@ @SAMPLERATE_LIBS@ @MT32EMU_LIBS@
 1oom_lbxview_sdl1_DEPENDENCIES = $(1oom_lbxview_sdl1_libs)
 
 hwsdl2_lib = $(top_builddir)/src/hw/sdl2/libhwsdl2.a
 1oom_classic_sdl2_libs = $(gamemain_lib) $(game_lib) $(uiclassic_lib) $(game_lib) $(hwsdl2_lib)
 1oom_classic_sdl2_SOURCES = $(audio_sources) $(gui_sources) $(util_sources)
-1oom_classic_sdl2_LDADD = $(1oom_classic_sdl2_libs) @HW_SDL2_LIBS@ @EXTRA_SDL2_LIBS@ @SAMPLERATE_LIBS@
+1oom_classic_sdl2_LDADD = $(1oom_classic_sdl2_libs) @HW_SDL2_LIBS@ @EXTRA_SDL2_LIBS@ @SAMPLERATE_LIBS@ @MT32EMU_LIBS@
 1oom_classic_sdl2_DEPENDENCIES = $(1oom_classic_sdl2_libs)
 
 1oom_lbxview_sdl2_libs = $(hwsdl2_lib) $(uinop_lib)
 1oom_lbxview_sdl2_SOURCES = lbxview.c $(audio_sources) $(gui_sources) $(util_sources)
-1oom_lbxview_sdl2_LDADD = $(1oom_lbxview_sdl2_libs) @HW_SDL2_LIBS@ @EXTRA_SDL2_LIBS@ @SAMPLERATE_LIBS@
+1oom_lbxview_sdl2_LDADD = $(1oom_lbxview_sdl2_libs) @HW_SDL2_LIBS@ @EXTRA_SDL2_LIBS@ @SAMPLERATE_LIBS@ @MT32EMU_LIBS@
 1oom_lbxview_sdl2_DEPENDENCIES = $(1oom_lbxview_sdl2_libs)
 
 hwalleg4_lib = $(top_builddir)/src/hw/alleg/libhwalleg4.a
 1oom_classic_alleg4_libs = $(gamemain_lib) $(game_lib) $(uiclassic_lib) $(game_lib) $(hwalleg4_lib)
 1oom_classic_alleg4_SOURCES = $(audio_sources) $(gui_sources) $(util_sources)
-1oom_classic_alleg4_LDADD = $(1oom_classic_alleg4_libs) @HW_ALLEG4_LIBS@ @EXTRA_ALLEG4_LIBS@ @SAMPLERATE_LIBS@
+1oom_classic_alleg4_LDADD = $(1oom_classic_alleg4_libs) @HW_ALLEG4_LIBS@ @EXTRA_ALLEG4_LIBS@ @SAMPLERATE_LIBS@ @MT32EMU_LIBS@
 1oom_classic_alleg4_DEPENDENCIES = $(1oom_classic_alleg4_libs)
 
 1oom_lbxview_alleg4_libs = $(hwalleg4_lib) $(uinop_lib)
 1oom_lbxview_alleg4_SOURCES = lbxview.c $(audio_sources) $(gui_sources) $(util_sources)
-1oom_lbxview_alleg4_LDADD = $(1oom_lbxview_alleg4_libs) @HW_ALLEG4_LIBS@ @EXTRA_ALLEG4_LIBS@ @SAMPLERATE_LIBS@
+1oom_lbxview_alleg4_LDADD = $(1oom_lbxview_alleg4_libs) @HW_ALLEG4_LIBS@ @EXTRA_ALLEG4_LIBS@ @SAMPLERATE_LIBS@ @MT32EMU_LIBS@
 1oom_lbxview_alleg4_DEPENDENCIES = $(1oom_lbxview_alleg4_libs)
 
 hwx11_lib = $(top_builddir)/src/hw/x11/libx11.a
 1oom_classic_x11_libs = $(gamemain_lib) $(game_lib) $(uiclassic_lib) $(game_lib) $(hwx11_lib)
 1oom_classic_x11_SOURCES = $(audio_sources) $(gui_sources) $(util_sources)
-1oom_classic_x11_LDADD = $(1oom_classic_x11_libs) @HW_X11_LIBS@ @EXTRA_X11_LIBS@ @SAMPLERATE_LIBS@
+1oom_classic_x11_LDADD = $(1oom_classic_x11_libs) @HW_X11_LIBS@ @EXTRA_X11_LIBS@ @SAMPLERATE_LIBS@ @MT32EMU_LIBS@
 1oom_classic_x11_DEPENDENCIES = $(1oom_classic_x11_libs)
 
 1oom_lbxview_x11_libs = $(hwx11_lib) $(uinop_lib)
 1oom_lbxview_x11_SOURCES = lbxview.c $(audio_sources) $(gui_sources) $(util_sources)
-1oom_lbxview_x11_LDADD = $(1oom_lbxview_x11_libs) @HW_X11_LIBS@ @EXTRA_X11_LIBS@ @SAMPLERATE_LIBS@
+1oom_lbxview_x11_LDADD = $(1oom_lbxview_x11_libs) @HW_X11_LIBS@ @EXTRA_X11_LIBS@ @SAMPLERATE_LIBS@ @MT32EMU_LIBS@
 1oom_lbxview_x11_DEPENDENCIES = $(1oom_lbxview_x11_libs)
 
 1oom_saveconv_libs = $(game_lib) $(hwnop_lib) $(uinop_lib)
@@ -160,3 +163,18 @@ libgame:
 	(cd game && $(MAKE) libgame.a)
 libgamemain:
 	(cd game && $(MAKE) libgamemain.a)
+
+if BUILD_MT32EMU
+BUILT_SOURCES = $(top_builddir)/mt32emu-install/.built
+
+$(top_builddir)/mt32emu-install/.built:
+	$(MKDIR_P) "$(top_builddir)/mt32emu-build" "$(top_builddir)/mt32emu-install"
+	$(SHELL) "$(top_srcdir)/build-aux/fetch-mt32emu.sh" "$(top_builddir)/mt32emu-build" "$(top_builddir)/mt32emu-install"
+	touch "$(top_builddir)/mt32emu-install/.built"
+
+$(top_builddir)/mt32emu-install/lib/libmt32emu.a: $(top_builddir)/mt32emu-install/.built
+	@:
+
+clean-local:
+	rm -rf "$(top_builddir)/mt32emu-build" "$(top_builddir)/mt32emu-install"
+endif
