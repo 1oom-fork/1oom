@@ -27,11 +27,14 @@
 #define XMIDI_FOR_NEST 4
 #define XMIDI_NOTE_SLOTS 64
 
+static const uint8_t xmidi_mt32_prg_default[] = { 68, 48, 95, 78, 41, 3, 110, 122 };
+
 typedef struct {
     uint8_t *data;
     uint32_t len;
     uint64_t tick;
     uint32_t seq;
+    bool sysex;
 } xmidi_mevent_t;
 
 typedef struct {
@@ -46,6 +49,22 @@ typedef struct {
     uint8_t note;
     bool used;
 } xmidi_noteoff_t;
+
+typedef struct {
+    uint8_t addr[3];
+    uint8_t data[32];
+    uint32_t len;
+} xmidi_sysex_queue_t;
+
+typedef struct {
+    bool mt32;
+    uint8_t bank[16];
+    uint8_t patch[16];
+    uint8_t patch_bank[128];
+    uint8_t chan_map[16];
+    bool chan_locked[16];
+    xmidi_sysex_queue_t sysex_q[3];
+} xmidi_seq_state_t;
 
 typedef struct {
     const uint8_t *evnt;
@@ -69,6 +88,7 @@ static bool mevents_push(xmidi_mevents_t *m, uint64_t tick, const uint8_t *data,
     e = &m->v[m->n++];
     e->tick = tick;
     e->seq = m->n - 1;
+    e->sysex = false;
     e->len = len;
     e->data = (uint8_t *)lib_malloc(len);
     if (!e->data) {
@@ -158,17 +178,191 @@ static bool xmidi_parse(const uint8_t *data, uint32_t len, xmidi_form_t *form)
     return true;
 }
 
-static void noteoff_emit(xmidi_mevents_t *out, xmidi_noteoff_t *n)
+static void xmidi_seq_state_init(xmidi_seq_state_t *s, bool mt32)
+{
+    int i;
+    memset(s, 0, sizeof(*s));
+    s->mt32 = mt32;
+    for (i = 0; i < 16; ++i) {
+        s->chan_map[i] = (uint8_t)i;
+        s->patch[i] = 0xff;
+    }
+    if (mt32) {
+        for (i = 1; i <= (int)sizeof(xmidi_mt32_prg_default); ++i) {
+            s->patch[i] = xmidi_mt32_prg_default[i - 1];
+        }
+    }
+}
+
+static void xmidi_sysex_addr_add(uint8_t addr[3], uint32_t addend)
+{
+    uint32_t v = (uint32_t)addr[2] + addend;
+    addr[2] = (uint8_t)(v & 0x7f);
+    v = (uint32_t)addr[1] + (v >> 7);
+    addr[1] = (uint8_t)(v & 0x7f);
+    addr[0] = (uint8_t)((addr[0] + (v >> 7)) & 0x7f);
+}
+
+static void xmidi_mt32_sysex_push(xmidi_mevents_t *out, uint64_t tick, const uint8_t addr[3], const uint8_t *data, uint32_t len)
+{
+    uint8_t msg[42];
+    uint32_t sum = (uint32_t)addr[0] + (uint32_t)addr[1] + (uint32_t)addr[2];
+    uint32_t i;
+    msg[0] = 0xf0;
+    msg[1] = 0x41;
+    msg[2] = 0x10;
+    msg[3] = 0x16;
+    msg[4] = 0x12;
+    msg[5] = addr[0];
+    msg[6] = addr[1];
+    msg[7] = addr[2];
+    for (i = 0; i < len; ++i) {
+        msg[8 + i] = data[i];
+        sum += data[i];
+    }
+    msg[8 + len] = (uint8_t)((0u - sum) & 0x7fu);
+    msg[9 + len] = 0xf7;
+    mevents_push(out, tick, msg, 10 + len);
+    if (out->n > 0) {
+        out->v[out->n - 1].sysex = true;
+    }
+}
+
+static void xmidi_mt32_init(xmidi_mevents_t *out)
+{
+    static const uint8_t part_chans[] = { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+    static const uint8_t part_rsv[] = { 3, 4, 3, 4, 3, 4, 3, 4, 4 };
+    static const uint8_t reverb[] = { 0, 3, 2 };
+    static const uint8_t addr_reset[] = { 0x7f, 0x00, 0x00 };
+    static const uint8_t addr_chans[] = { 0x10, 0x00, 0x0d };
+    static const uint8_t addr_rsv[] = { 0x10, 0x00, 0x04 };
+    static const uint8_t addr_reverb[] = { 0x10, 0x00, 0x01 };
+    static const uint8_t reset[] = { 1 };
+    int ch;
+
+    xmidi_mt32_sysex_push(out, 0, addr_reset, reset, (uint32_t)sizeof(reset));
+    xmidi_mt32_sysex_push(out, 0, addr_chans, part_chans, (uint32_t)sizeof(part_chans));
+    xmidi_mt32_sysex_push(out, 0, addr_rsv, part_rsv, (uint32_t)sizeof(part_rsv));
+    xmidi_mt32_sysex_push(out, 0, addr_reverb, reverb, (uint32_t)sizeof(reverb));
+
+    for (ch = 1; ch <= 9; ++ch) {
+        uint8_t msg[3];
+        msg[0] = (uint8_t)(0xb0 | ch);
+        msg[1] = 7; msg[2] = 127; mevents_push(out, 0, msg, 3);
+        msg[1] = 1; msg[2] = 0; mevents_push(out, 0, msg, 3);
+        msg[1] = 10; msg[2] = 64; mevents_push(out, 0, msg, 3);
+        msg[1] = 11; msg[2] = 127; mevents_push(out, 0, msg, 3);
+        msg[1] = 64; msg[2] = 0; mevents_push(out, 0, msg, 3);
+        msg[0] = (uint8_t)(0xe0 | ch);
+        msg[1] = 0; msg[2] = 64; mevents_push(out, 0, msg, 3);
+        if (ch <= (int)sizeof(xmidi_mt32_prg_default)) {
+            msg[0] = (uint8_t)(0xc0 | ch);
+            msg[1] = xmidi_mt32_prg_default[ch - 1]; mevents_push(out, 0, msg, 2);
+        }
+    }
+}
+
+static void xmidi_mt32_sysex_ctrl(xmidi_seq_state_t *s, xmidi_mevents_t *out, uint64_t tick, uint8_t cc, uint8_t val)
+{
+    uint32_t off = (uint32_t)(cc - 32);
+    xmidi_sysex_queue_t *q = &s->sysex_q[off / 5];
+    switch (off % 5) {
+        case 0:
+        case 1:
+        case 2:
+            q->addr[off % 5] = val;
+            return;
+        default:
+            break;
+    }
+    if (q->len < (uint32_t)sizeof(q->data)) {
+        q->data[q->len++] = val;
+    }
+    if ((off % 5) == 4 || q->len == (uint32_t)sizeof(q->data)) {
+        xmidi_mt32_sysex_push(out, tick, q->addr, q->data, q->len);
+        xmidi_sysex_addr_add(q->addr, q->len - 1);
+        q->len = 0;
+    }
+}
+
+static void xmidi_mt32_setup_patch(xmidi_seq_state_t *s, xmidi_mevents_t *out, uint64_t tick, uint8_t patch, uint8_t bank)
+{
+    uint8_t data[2];
+    uint8_t addr[3];
+    if (s->patch_bank[patch] == bank) {
+        return;
+    }
+    s->patch_bank[patch] = bank;
+    addr[0] = 0x05;
+    addr[1] = 0x00;
+    addr[2] = 0x00;
+    xmidi_sysex_addr_add(addr, (uint32_t)patch * 8);
+    data[0] = (uint8_t)((patch >= 64) ? 1 : 0);
+    data[1] = (uint8_t)(patch & 63);
+    xmidi_mt32_sysex_push(out, tick, addr, data, 2);
+}
+
+static uint8_t xmidi_channel_out(const xmidi_seq_state_t *s, uint8_t ch)
+{
+    if (!s->mt32 || ch >= 16) {
+        return ch;
+    }
+    return s->chan_map[ch];
+}
+
+static void xmidi_midi_push(xmidi_mevents_t *out, xmidi_seq_state_t *s, uint64_t tick, uint8_t status, uint8_t d1, uint8_t d2, uint32_t len)
+{
+    uint8_t ch = (uint8_t)(status & 0x0f);
+    uint8_t msg[3];
+    if (s->mt32 && (s->chan_locked[ch] || xmidi_channel_out(s, ch) >= 10)) {
+        return;
+    }
+    msg[0] = (uint8_t)((status & 0xf0) | xmidi_channel_out(s, ch));
+    msg[1] = d1;
+    msg[2] = d2;
+    mevents_push(out, tick, msg, len);
+}
+
+static void xmidi_mt32_lock_chan(xmidi_seq_state_t *s, xmidi_mevents_t *out, uint64_t tick, uint8_t ch, uint8_t val)
+{
+    if (val >= 64) {
+        int phys = -1;
+        int i;
+        for (i = 9; i >= 1; --i) {
+            if (!s->chan_locked[i]) {
+                phys = i;
+                break;
+            }
+        }
+        if (phys < 0) {
+            return;
+        }
+        s->chan_locked[phys] = true;
+        s->chan_map[ch] = (uint8_t)phys;
+        mevents_push(out, tick, (const uint8_t[]){ (uint8_t)(0xb0 | phys), 64, 0 }, 3);
+    } else {
+        uint8_t phys = s->chan_map[ch];
+        if (phys < 9) {
+            s->chan_locked[phys] = false;
+            mevents_push(out, tick, (const uint8_t[]){ (uint8_t)(0xb0 | phys), 123, 0 }, 3);
+        }
+        s->chan_map[ch] = ch;
+    }
+}
+
+static void noteoff_emit(xmidi_mevents_t *out, xmidi_seq_state_t *s, xmidi_noteoff_t *n)
 {
     uint8_t msg[3];
-    msg[0] = n->status;
+    msg[0] = (uint8_t)(0x80 | xmidi_channel_out(s, (uint8_t)(n->status & 0x0f)));
     msg[1] = n->note;
     msg[2] = 0;
-    mevents_push(out, n->tick, msg, 3);
+    if (!s->mt32 || xmidi_channel_out(s, (uint8_t)(n->status & 0x0f)) < 10) {
+        mevents_push(out, n->tick, msg, 3);
+    }
     n->used = false;
 }
 
-static void flush_due_noteoffs(xmidi_mevents_t *out, xmidi_noteoff_t *tbl, uint64_t now_tick)
+static void flush_due_noteoffs(xmidi_mevents_t *out, xmidi_seq_state_t *s, xmidi_noteoff_t *tbl, uint64_t now_tick)
 {
     int i;
     for (;;) {
@@ -183,11 +377,11 @@ static void flush_due_noteoffs(xmidi_mevents_t *out, xmidi_noteoff_t *tbl, uint6
         if (best < 0) {
             break;
         }
-        noteoff_emit(out, &tbl[best]);
+        noteoff_emit(out, s, &tbl[best]);
     }
 }
 
-static void flush_all_noteoffs(xmidi_mevents_t *out, xmidi_noteoff_t *tbl, uint64_t now_tick)
+static void flush_all_noteoffs(xmidi_mevents_t *out, xmidi_seq_state_t *s, xmidi_noteoff_t *tbl, uint64_t now_tick)
 {
     int i;
     for (;;) {
@@ -205,7 +399,7 @@ static void flush_all_noteoffs(xmidi_mevents_t *out, xmidi_noteoff_t *tbl, uint6
         if (tbl[best].tick > now_tick) {
             tbl[best].tick = now_tick;
         }
-        noteoff_emit(out, &tbl[best]);
+        noteoff_emit(out, s, &tbl[best]);
     }
 }
 
@@ -227,7 +421,7 @@ static void schedule_noteoff(xmidi_noteoff_t *tbl, uint8_t ch, uint8_t note, uin
     tbl[slot].tick = tick;
 }
 
-static bool xmidi_sequence(const uint8_t *data, uint32_t len, xmidi_mevents_t *out, bool *tune_loops)
+static bool xmidi_sequence(xmidi_seq_state_t *s, const uint8_t *data, uint32_t len, xmidi_mevents_t *out, bool *tune_loops)
 {
     xmidi_form_t form;
     xmidi_noteoff_t notes[XMIDI_NOTE_SLOTS];
@@ -240,6 +434,9 @@ static bool xmidi_sequence(const uint8_t *data, uint32_t len, xmidi_mevents_t *o
     bool end = false;
     bool infinite = false;
 
+    if (tune_loops) {
+        *tune_loops = false;
+    }
     memset(notes, 0, sizeof(notes));
     for (int i = 0; i < XMIDI_FOR_NEST; ++i) { loop_count[i] = 0; loop_pos[i] = 0; }
 
@@ -256,7 +453,7 @@ static bool xmidi_sequence(const uint8_t *data, uint32_t len, xmidi_mevents_t *o
         }
         tick += interval;
         interval = 0;
-        flush_due_noteoffs(out, notes, tick);
+        flush_due_noteoffs(out, s, notes, tick);
 
         if (st >= 0xf0) {
             if (st == 0xff) {
@@ -268,11 +465,10 @@ static bool xmidi_sequence(const uint8_t *data, uint32_t len, xmidi_mevents_t *o
                 if (pos + mlen > form.evnt_len) break;
                 if (type == 0x2f) {
                     uint8_t msg[3] = { 0xff, 0x2f, 0x00 };
-                    flush_all_noteoffs(out, notes, tick);
+                    flush_all_noteoffs(out, s, notes, tick);
                     mevents_push(out, tick, msg, 3);
                     end = true;
                 } else if (type == 0x51 && mlen == 3) {
-                    /* XMIDI timing uses fixed 120Hz quantums; tempo meta is ignored for playback speed. */
                 } else if (type == 0x58 && mlen >= 2) {
                     uint8_t msg[7] = { 0xff, 0x58, 0x04, form.evnt[pos], form.evnt[pos + 1], (mlen > 2 ? form.evnt[pos + 2] : 24), (mlen > 3 ? form.evnt[pos + 3] : 8) };
                     mevents_push(out, tick, msg, 7);
@@ -281,7 +477,18 @@ static bool xmidi_sequence(const uint8_t *data, uint32_t len, xmidi_mevents_t *o
             } else if (st == 0xf0 || st == 0xf7) {
                 uint32_t slen = xmidi_vlq_read(form.evnt, form.evnt_len, &pos);
                 if (pos + slen > form.evnt_len) break;
-                /* ignore sysex in converted stream for now */
+                if (s->mt32) {
+                    uint8_t *raw = (uint8_t *)lib_malloc((size_t)slen + 1);
+                    if (raw) {
+                        raw[0] = st;
+                        memcpy(raw + 1, form.evnt + pos, slen);
+                        mevents_push(out, tick, raw, slen + 1);
+                        if (out->n > 0) {
+                            out->v[out->n - 1].sysex = true;
+                        }
+                        lib_free(raw);
+                    }
+                }
                 pos += slen;
             } else {
                 uint8_t msg[1] = { st };
@@ -293,52 +500,47 @@ static bool xmidi_sequence(const uint8_t *data, uint32_t len, xmidi_mevents_t *o
         switch (st & 0xf0) {
         case 0x80:
         case 0x90: {
-            uint8_t ch = st & 0x0f;
+            uint8_t ch = (uint8_t)(st & 0x0f);
             uint8_t note, vel;
             uint32_t dur;
             if (pos + 1 >= form.evnt_len) { end = true; break; }
             note = form.evnt[pos++];
             vel = form.evnt[pos++];
             dur = xmidi_vlq_read(form.evnt, form.evnt_len, &pos);
-            {
-                uint8_t msg[3] = { (uint8_t)(0x90 | ch), note, vel };
-                mevents_push(out, tick, msg, 3);
-                schedule_noteoff(notes, ch, note, tick + (dur ? dur : 1));
-            }
+            xmidi_midi_push(out, s, tick, (uint8_t)(0x90 | ch), note, vel, 3);
+            schedule_noteoff(notes, ch, note, tick + (dur ? dur : 1));
             break;
         }
         case 0xa0:
         case 0xe0: {
-            uint8_t d1, d2, msg[3];
+            uint8_t d1, d2;
             if (pos + 1 >= form.evnt_len) { end = true; break; }
             d1 = form.evnt[pos++]; d2 = form.evnt[pos++];
-            msg[0] = st; msg[1] = d1; msg[2] = d2;
-            mevents_push(out, tick, msg, 3);
+            xmidi_midi_push(out, s, tick, st, d1, d2, 3);
             break;
         }
         case 0xb0: {
+            uint8_t ch = (uint8_t)(st & 0x0f);
             uint8_t cc, val;
             if (pos + 1 >= form.evnt_len) { end = true; break; }
             cc = form.evnt[pos++]; val = form.evnt[pos++];
-            if (cc == 116) { /* FOR_LOOP */
+            if (cc == 116) {
                 if (loop_sp + 1 < XMIDI_FOR_NEST) {
                     ++loop_sp;
                     loop_count[loop_sp] = val;
                     loop_pos[loop_sp] = pos;
                     if (val == 0) infinite = true;
                 }
-            } else if (cc == 117) { /* NEXT_LOOP */
+            } else if (cc == 117) {
                 if (loop_sp >= 0) {
                     if (val < 64) {
-                        /* BREAK */
                         --loop_sp;
                     } else if (loop_count[loop_sp] == 0) {
-                        /* infinite: terminate for offline output */
                         --loop_sp;
                         infinite = true;
                         {
                             uint8_t msg[3] = { 0xff, 0x2f, 0x00 };
-                            flush_all_noteoffs(out, notes, tick);
+                            flush_all_noteoffs(out, s, notes, tick);
                             mevents_push(out, tick, msg, 3);
                             end = true;
                         }
@@ -350,30 +552,51 @@ static bool xmidi_sequence(const uint8_t *data, uint32_t len, xmidi_mevents_t *o
                         }
                     }
                 }
-            } else if ((cc >= 32 && cc <= 46) || (cc >= 58 && cc <= 63) || (cc >= 110 && cc <= 120)) {
-                /* AIL-internal controllers are consumed by the driver, never sent to the device */
-            } else {
-                uint8_t msg[3] = { st, cc, val };
-                mevents_push(out, tick, msg, 3);
+            } else if (s->mt32) {
+                if (cc == 110) {
+                    xmidi_mt32_lock_chan(s, out, tick, ch, val);
+                } else if (cc == 114) {
+                    s->bank[ch] = val;
+                } else if (cc >= 32 && cc <= 46) {
+                    xmidi_mt32_sysex_ctrl(s, out, tick, cc, val);
+                } else if (cc == 58) {
+                } else if (cc == 59 || cc == 60) {
+                    if (s->patch[ch] != 0xff) {
+                        uint8_t addr[3] = { 0x05, 0x00, 0x00 };
+                        xmidi_sysex_addr_add(addr, (uint32_t)s->patch[ch] * 8 + (cc == 59 ? 6u : 4u));
+                        xmidi_mt32_sysex_push(out, tick, addr, &val, 1);
+                        xmidi_midi_push(out, s, tick, (uint8_t)(0xc0 | ch), s->patch[ch], 0, 2);
+                    }
+                } else if (cc >= 61 && cc <= 63) {
+                    uint8_t addr[3] = { 0x10, 0x00, (uint8_t)(cc - 60) };
+                    xmidi_mt32_sysex_push(out, tick, addr, &val, 1);
+                } else if (cc == 113 || cc == 115 || (cc >= 118 && cc <= 120)) {
+                } else if (cc == 7) {
+                    uint8_t v = (uint8_t)(((uint32_t)val * 90u) / 100u);
+                    xmidi_midi_push(out, s, tick, st, cc, v, 3);
+                } else {
+                    xmidi_midi_push(out, s, tick, st, cc, val, 3);
+                }
+            } else if (!((cc >= 32 && cc <= 46) || (cc >= 58 && cc <= 63) || (cc >= 110 && cc <= 120))) {
+                xmidi_midi_push(out, s, tick, st, cc, val, 3);
             }
             break;
         }
         case 0xc0: {
             uint8_t patch;
+            uint8_t ch = (uint8_t)(st & 0x0f);
             if (pos >= form.evnt_len) { end = true; break; }
             patch = form.evnt[pos++];
-            {
-                uint8_t msg[2] = { st, patch };
-                mevents_push(out, tick, msg, 2);
-            }
+            s->patch[ch] = patch;
+            xmidi_mt32_setup_patch(s, out, tick, patch, s->bank[ch]);
+            xmidi_midi_push(out, s, tick, st, patch, 0, 2);
             break;
         }
         case 0xd0: {
-            uint8_t d1, msg[2];
+            uint8_t d1;
             if (pos >= form.evnt_len) { end = true; break; }
             d1 = form.evnt[pos++];
-            msg[0] = st; msg[1] = d1;
-            mevents_push(out, tick, msg, 2);
+            xmidi_midi_push(out, s, tick, st, d1, 0, 2);
             break;
         }
         default:
@@ -384,7 +607,7 @@ static bool xmidi_sequence(const uint8_t *data, uint32_t len, xmidi_mevents_t *o
 
     if (!end) {
         uint8_t msg[3] = { 0xff, 0x2f, 0x00 };
-        flush_all_noteoffs(out, notes, tick);
+        flush_all_noteoffs(out, s, notes, tick);
         mevents_push(out, tick, msg, 3);
     }
 
@@ -428,6 +651,7 @@ static uint32_t vlq_write(uint8_t *buf, uint32_t value)
 bool xmidi_convert_to_smf(const uint8_t *data_in, uint32_t len_in, uint8_t **data_out, uint32_t *len_out, bool *tune_loops)
 {
     xmidi_mevents_t evs = { 0 };
+    xmidi_seq_state_t seq;
     uint8_t *smf = NULL;
     uint32_t cap, pos, i;
     uint64_t last = 0;
@@ -436,7 +660,8 @@ bool xmidi_convert_to_smf(const uint8_t *data_in, uint32_t len_in, uint8_t **dat
     if (len_out) *len_out = 0;
     if (tune_loops) *tune_loops = false;
 
-    if (!xmidi_sequence(data_in, len_in, &evs, tune_loops)) {
+    xmidi_seq_state_init(&seq, false);
+    if (!xmidi_sequence(&seq, data_in, len_in, &evs, tune_loops)) {
         mevents_free(&evs);
         return false;
     }
@@ -603,6 +828,7 @@ bool xmidi_render_mt32_wav(const uint8_t *data_in, uint32_t len_in, uint32_t sam
                            uint8_t **wav_out, uint32_t *wav_len, bool *tune_loops)
 {
     xmidi_mevents_t evs = { 0 };
+    xmidi_seq_state_t seq;
     mt32emu_context ctx = NULL;
     int16_t *pcm = NULL;
     uint8_t *wav = NULL;
@@ -619,7 +845,9 @@ bool xmidi_render_mt32_wav(const uint8_t *data_in, uint32_t len_in, uint32_t sam
     if (sample_rate == 0) {
         return false;
     }
-    if (!xmidi_sequence(data_in, len_in, &evs, tune_loops)) {
+    xmidi_seq_state_init(&seq, true);
+    xmidi_mt32_init(&evs);
+    if (!xmidi_sequence(&seq, data_in, len_in, &evs, tune_loops)) {
         mevents_free(&evs);
         return false;
     }
@@ -663,7 +891,9 @@ bool xmidi_render_mt32_wav(const uint8_t *data_in, uint32_t len_in, uint32_t sam
         while (i < evs.n && evs.v[i].tick == cur_tick) {
             const uint8_t *d = evs.v[i].data;
             uint32_t dl = evs.v[i].len;
-            if (dl >= 1 && dl <= 3 && (d[0] & 0x80) && d[0] < 0xf0) {
+            if (evs.v[i].sysex && dl > 0) {
+                mt32emu_play_sysex(ctx, (const mt32emu_bit8u *)d, (mt32emu_bit32u)dl);
+            } else if (dl >= 1 && dl <= 3 && (d[0] & 0x80) && d[0] < 0xf0) {
                 uint32_t msg = d[0] | ((uint32_t)(dl > 1 ? d[1] : 0) << 8) | ((uint32_t)(dl > 2 ? d[2] : 0) << 16);
                 mt32emu_play_msg(ctx, msg);
             }
