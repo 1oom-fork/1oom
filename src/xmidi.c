@@ -5,6 +5,7 @@
 
 #include "bits.h"
 #include "fmt_id.h"
+#include "lbx.h"
 #include "lib.h"
 #include "log.h"
 #include "os.h"
@@ -36,6 +37,138 @@ void xmidi_mt32_set_timbre_lookup(xmidi_mt32_timbre_lookup_t lookup, void *ctx)
 {
     xmidi_mt32_timbre_lookup = lookup;
     xmidi_mt32_timbre_lookup_ctx = ctx;
+}
+
+typedef struct {
+    uint8_t *data;
+    uint32_t len;
+    uint32_t header_off;
+    uint32_t entry_size;
+} xmidi_gtl_image_t;
+
+static xmidi_gtl_image_t *xmidi_gtl_images = NULL;
+static uint32_t xmidi_gtl_image_num = 0;
+
+static bool xmidi_gtl_valid_at(const uint8_t *data, uint32_t len, uint32_t header_off, uint32_t entry_size)
+{
+    uint32_t pos = header_off;
+    uint32_t count = 0;
+
+    while (pos + 6 <= len && count < 4096) {
+        int8_t patch = (int8_t)data[pos];
+        int8_t bank = (int8_t)data[pos + 1];
+        uint32_t rel = GET_LE_32(data + pos + 2);
+        uint32_t off;
+
+        if (bank < 0) {
+            return count > 0;
+        }
+        if (patch < 0 || bank > 126 || rel < 6 || rel > len - header_off - 2) {
+            return false;
+        }
+        off = header_off + rel;
+        if (off + 2 + 0xf6 > len || GET_LE_16(data + off) != 0xf6) {
+            return false;
+        }
+        pos += entry_size;
+        ++count;
+    }
+    return false;
+}
+
+static uint32_t xmidi_gtl_find_header(const uint8_t *data, uint32_t len, uint32_t *entry_size)
+{
+    static const uint32_t sizes[] = { 6, 8 };
+    uint32_t off, k;
+
+    for (k = 0; k < 2; ++k) {
+        for (off = 0; off + 6 <= len; ++off) {
+            if (xmidi_gtl_valid_at(data, len, off, sizes[k])) {
+                *entry_size = sizes[k];
+                return off;
+            }
+        }
+    }
+    return 0xffffffffu;
+}
+
+static bool xmidi_mt32_gtl_lookup(void *ctx, uint8_t bank, uint8_t patch,
+                                  const uint8_t **data, uint32_t *len)
+{
+    uint32_t i;
+    (void)ctx;
+
+    for (i = 0; i < xmidi_gtl_image_num; ++i) {
+        const xmidi_gtl_image_t *img = &xmidi_gtl_images[i];
+        uint32_t pos = img->header_off;
+        while (pos + 6 <= img->len) {
+            int8_t e_patch = (int8_t)img->data[pos];
+            int8_t e_bank = (int8_t)img->data[pos + 1];
+            uint32_t rel = GET_LE_32(img->data + pos + 2);
+
+            if (e_bank < 0) {
+                break;
+            }
+            if ((uint8_t)e_bank == bank && (uint8_t)e_patch == patch) {
+                uint32_t off = img->header_off + rel;
+                if (off + 2 + 0xf6 <= img->len && GET_LE_16(img->data + off) == 0xf6) {
+                    *data = img->data + off;
+                    *len = 2u + 0xf6u;
+                    return true;
+                }
+            }
+            pos += img->entry_size;
+        }
+    }
+    return false;
+}
+
+static void xmidi_mt32_init_gtl(void)
+{
+    static bool checked = false;
+    int n, i;
+
+    if (checked) {
+        return;
+    }
+    checked = true;
+    if (xmidi_mt32_timbre_lookup) {
+        return;
+    }
+    n = lbxfile_num_items(LBXFILE_SNDDRV);
+    if (n <= 0) {
+        return;
+    }
+    for (i = 0; i < n; ++i) {
+        uint32_t item_len = 0;
+        uint8_t *item = lbxfile_item_get(LBXFILE_SNDDRV, (uint16_t)i, &item_len);
+        if (item) {
+            uint32_t entry_size = 0;
+            uint32_t hdr = xmidi_gtl_find_header(item, item_len, &entry_size);
+            if (hdr != 0xffffffffu) {
+                xmidi_gtl_image_t *nv = (xmidi_gtl_image_t *)realloc(xmidi_gtl_images, (size_t)(xmidi_gtl_image_num + 1) * sizeof(*nv));
+                if (nv) {
+                    uint8_t *copy = (uint8_t *)lib_malloc(item_len);
+                    if (copy) {
+                        memcpy(copy, item, item_len);
+                        nv[xmidi_gtl_image_num].data = copy;
+                        nv[xmidi_gtl_image_num].len = item_len;
+                        nv[xmidi_gtl_image_num].header_off = hdr;
+                        nv[xmidi_gtl_image_num].entry_size = entry_size;
+                        xmidi_gtl_images = nv;
+                        ++xmidi_gtl_image_num;
+                    } else {
+                        free(nv);
+                    }
+                }
+            }
+            lbxfile_item_release(LBXFILE_SNDDRV, item);
+        }
+    }
+    if (xmidi_gtl_image_num > 0) {
+        log_message("XMID/MT32: loaded %u GTL image(s) from snddrv.lbx\n", xmidi_gtl_image_num);
+        xmidi_mt32_set_timbre_lookup(xmidi_mt32_gtl_lookup, NULL);
+    }
 }
 
 typedef struct {
@@ -983,6 +1116,7 @@ bool xmidi_render_mt32_wav(const uint8_t *data_in, uint32_t len_in, uint32_t sam
         return false;
     }
     xmidi_seq_state_init(&seq, true);
+    xmidi_mt32_init_gtl();
     xmidi_mt32_init(&evs);
     xmidi_mt32_load_timbres(&seq, &evs, data_in, len_in);
     if (!xmidi_sequence(&seq, data_in, len_in, &evs, tune_loops)) {
