@@ -31,6 +31,7 @@ typedef struct {
     uint8_t *data;
     uint32_t len;
     uint64_t tick;
+    uint32_t seq;
 } xmidi_mevent_t;
 
 typedef struct {
@@ -67,6 +68,7 @@ static bool mevents_push(xmidi_mevents_t *m, uint64_t tick, const uint8_t *data,
     }
     e = &m->v[m->n++];
     e->tick = tick;
+    e->seq = m->n - 1;
     e->len = len;
     e->data = (uint8_t *)lib_malloc(len);
     if (!e->data) {
@@ -156,18 +158,6 @@ static bool xmidi_parse(const uint8_t *data, uint32_t len, xmidi_form_t *form)
     return true;
 }
 
-static bool timbre_bank(const xmidi_form_t *form, uint8_t patch, uint8_t *bank)
-{
-    uint16_t i;
-    for (i = 0; i < form->timb_num; ++i) {
-        if (form->timb_tbl[i * 2] == patch) {
-            *bank = form->timb_tbl[i * 2 + 1];
-            return true;
-        }
-    }
-    return false;
-}
-
 static void noteoff_emit(xmidi_mevents_t *out, xmidi_noteoff_t *n)
 {
     uint8_t msg[3];
@@ -247,12 +237,10 @@ static bool xmidi_sequence(const uint8_t *data, uint32_t len, xmidi_mevents_t *o
     uint32_t loop_count[XMIDI_FOR_NEST];
     uint32_t loop_pos[XMIDI_FOR_NEST];
     int loop_sp = -1;
-    uint8_t chan_bank[16];
     bool end = false;
     bool infinite = false;
 
     memset(notes, 0, sizeof(notes));
-    memset(chan_bank, 0, sizeof(chan_bank));
     for (int i = 0; i < XMIDI_FOR_NEST; ++i) { loop_count[i] = 0; loop_pos[i] = 0; }
 
     if (!xmidi_parse(data, len, &form)) {
@@ -303,6 +291,7 @@ static bool xmidi_sequence(const uint8_t *data, uint32_t len, xmidi_mevents_t *o
         }
 
         switch (st & 0xf0) {
+        case 0x80:
         case 0x90: {
             uint8_t ch = st & 0x0f;
             uint8_t note, vel;
@@ -312,15 +301,12 @@ static bool xmidi_sequence(const uint8_t *data, uint32_t len, xmidi_mevents_t *o
             vel = form.evnt[pos++];
             dur = xmidi_vlq_read(form.evnt, form.evnt_len, &pos);
             {
-                uint8_t msg[3] = { st, note, vel };
+                uint8_t msg[3] = { (uint8_t)(0x90 | ch), note, vel };
                 mevents_push(out, tick, msg, 3);
-                if (vel != 0) {
-                    schedule_noteoff(notes, ch, note, tick + dur);
-                }
+                schedule_noteoff(notes, ch, note, tick + (dur ? dur : 1));
             }
             break;
         }
-        case 0x80:
         case 0xa0:
         case 0xe0: {
             uint8_t d1, d2, msg[3];
@@ -331,13 +317,10 @@ static bool xmidi_sequence(const uint8_t *data, uint32_t len, xmidi_mevents_t *o
             break;
         }
         case 0xb0: {
-            uint8_t ch = st & 0x0f;
             uint8_t cc, val;
             if (pos + 1 >= form.evnt_len) { end = true; break; }
             cc = form.evnt[pos++]; val = form.evnt[pos++];
-            if (cc == 114) { /* PATCH_BANK_SEL */
-                chan_bank[ch] = val;
-            } else if (cc == 116) { /* FOR_LOOP */
+            if (cc == 116) { /* FOR_LOOP */
                 if (loop_sp + 1 < XMIDI_FOR_NEST) {
                     ++loop_sp;
                     loop_count[loop_sp] = val;
@@ -367,8 +350,8 @@ static bool xmidi_sequence(const uint8_t *data, uint32_t len, xmidi_mevents_t *o
                         }
                     }
                 }
-            } else if (cc == 110 || cc == 111 || cc == 112 || cc == 113 || cc == 115 || cc == 118 || cc == 119 || cc == 120) {
-                /* internal AIL controllers: ignore in SMF */
+            } else if ((cc >= 32 && cc <= 46) || (cc >= 58 && cc <= 63) || (cc >= 110 && cc <= 120)) {
+                /* AIL-internal controllers are consumed by the driver, never sent to the device */
             } else {
                 uint8_t msg[3] = { st, cc, val };
                 mevents_push(out, tick, msg, 3);
@@ -376,19 +359,9 @@ static bool xmidi_sequence(const uint8_t *data, uint32_t len, xmidi_mevents_t *o
             break;
         }
         case 0xc0: {
-            uint8_t ch = st & 0x0f;
-            uint8_t patch, bank = 0;
+            uint8_t patch;
             if (pos >= form.evnt_len) { end = true; break; }
             patch = form.evnt[pos++];
-            if (chan_bank[ch] != 0) {
-                bank = chan_bank[ch];
-            } else {
-                timbre_bank(&form, patch, &bank);
-            }
-            if (bank != 0) {
-                uint8_t bsel[3] = { (uint8_t)(0xb0 | ch), 0x00, bank };
-                mevents_push(out, tick, bsel, 3);
-            }
             {
                 uint8_t msg[2] = { st, patch };
                 mevents_push(out, tick, msg, 2);
@@ -433,6 +406,8 @@ static int ev_cmp(const void *a, const void *b)
         int boff = (eb->len >= 1 && ((eb->data[0] & 0xf0) == 0x80 || (eb->data[0] == 0x90 && eb->len >= 3 && eb->data[2] == 0)));
         if (aoff != boff) return aoff ? -1 : 1;
     }
+    if (ea->seq < eb->seq) return -1;
+    if (ea->seq > eb->seq) return 1;
     return 0;
 }
 
