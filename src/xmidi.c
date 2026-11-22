@@ -29,6 +29,15 @@
 
 static const uint8_t xmidi_mt32_prg_default[] = { 68, 48, 95, 78, 41, 3, 110, 122 };
 
+static xmidi_mt32_timbre_lookup_t xmidi_mt32_timbre_lookup = NULL;
+static void *xmidi_mt32_timbre_lookup_ctx = NULL;
+
+void xmidi_mt32_set_timbre_lookup(xmidi_mt32_timbre_lookup_t lookup, void *ctx)
+{
+    xmidi_mt32_timbre_lookup = lookup;
+    xmidi_mt32_timbre_lookup_ctx = ctx;
+}
+
 typedef struct {
     uint8_t *data;
     uint32_t len;
@@ -63,6 +72,12 @@ typedef struct {
     uint8_t patch_bank[128];
     uint8_t chan_map[16];
     bool chan_locked[16];
+    uint8_t timb_attribs[64];
+    uint8_t timb_bank[64];
+    uint8_t timb_num[64];
+    uint8_t chan_timbs[16];
+    uint64_t timb_hist[64];
+    uint64_t note_seq;
     xmidi_sysex_queue_t sysex_q[3];
 } xmidi_seq_state_t;
 
@@ -186,6 +201,7 @@ static void xmidi_seq_state_init(xmidi_seq_state_t *s, bool mt32)
     for (i = 0; i < 16; ++i) {
         s->chan_map[i] = (uint8_t)i;
         s->patch[i] = 0xff;
+        s->chan_timbs[i] = 0xff;
     }
     if (mt32) {
         for (i = 1; i <= (int)sizeof(xmidi_mt32_prg_default); ++i) {
@@ -205,7 +221,7 @@ static void xmidi_sysex_addr_add(uint8_t addr[3], uint32_t addend)
 
 static void xmidi_mt32_sysex_push(xmidi_mevents_t *out, uint64_t tick, const uint8_t addr[3], const uint8_t *data, uint32_t len)
 {
-    uint8_t msg[42];
+    uint8_t msg[80];
     uint32_t sum = (uint32_t)addr[0] + (uint32_t)addr[1] + (uint32_t)addr[2];
     uint32_t i;
     msg[0] = 0xf0;
@@ -285,21 +301,128 @@ static void xmidi_mt32_sysex_ctrl(xmidi_seq_state_t *s, xmidi_mevents_t *out, ui
     }
 }
 
+static int xmidi_mt32_index_timbre(const xmidi_seq_state_t *s, uint8_t bank, uint8_t patch)
+{
+    int i;
+    for (i = 0; i < 64; ++i) {
+        if ((s->timb_attribs[i] & 0x80) != 0 && s->timb_bank[i] == bank && s->timb_num[i] == patch) {
+            return i;
+        }
+    }
+    return -1;
+}
+
 static void xmidi_mt32_setup_patch(xmidi_seq_state_t *s, xmidi_mevents_t *out, uint64_t tick, uint8_t patch, uint8_t bank)
 {
+    static const uint8_t builtin_groups[] = { 0, 1 };
     uint8_t data[2];
     uint8_t addr[3];
-    if (s->patch_bank[patch] == bank) {
-        return;
+    uint8_t group = builtin_groups[patch >= 64 ? 1 : 0];
+    uint8_t timbre = (uint8_t)(patch & 63);
+    int idx;
+
+    if (bank != 0) {
+        idx = xmidi_mt32_index_timbre(s, bank, patch);
+        if (idx >= 0) {
+            group = 2;
+            timbre = (uint8_t)idx;
+        }
     }
     s->patch_bank[patch] = bank;
     addr[0] = 0x05;
     addr[1] = 0x00;
     addr[2] = 0x00;
     xmidi_sysex_addr_add(addr, (uint32_t)patch * 8);
-    data[0] = (uint8_t)((patch >= 64) ? 1 : 0);
-    data[1] = (uint8_t)(patch & 63);
+    data[0] = group;
+    data[1] = timbre;
     xmidi_mt32_sysex_push(out, tick, addr, data, 2);
+}
+
+static bool xmidi_mt32_install_timbre(xmidi_seq_state_t *s, xmidi_mevents_t *out, uint64_t tick,
+                                      uint8_t bank, uint8_t patch, const uint8_t *data, uint32_t len)
+{
+    static const uint8_t addr_base[5][3] = {
+        { 8, 0, 0x00 }, { 8, 0, 0x0e }, { 8, 0, 0x48 }, { 8, 1, 0x02 }, { 8, 1, 0x3c }
+    };
+    static const uint8_t data_offs[5] = { 0x00, 0x0e, 0x48, 0x82, 0xbc };
+    static const uint8_t chunk_lens[5] = { 0x0e, 0x3a, 0x3a, 0x3a, 0x3a };
+    int slot = -1;
+    int i;
+
+    if (bank == 0) {
+        xmidi_mt32_setup_patch(s, out, tick, patch, bank);
+        return true;
+    }
+    if (bank == 127 || !data || len < 2u + 0xf6u) {
+        return false;
+    }
+    if (xmidi_mt32_index_timbre(s, bank, patch) >= 0) {
+        xmidi_mt32_setup_patch(s, out, tick, patch, bank);
+        return true;
+    }
+    for (i = 0; i < 64; ++i) {
+        if ((s->timb_attribs[i] & 0x80) == 0) {
+            slot = i;
+            break;
+        }
+    }
+    if (slot < 0) {
+        uint64_t best_hist = 0;
+        bool have_best = false;
+        for (i = 0; i < 64; ++i) {
+            if ((s->timb_attribs[i] & 0x40) == 0) {
+                if (!have_best || s->timb_hist[i] <= best_hist) {
+                    best_hist = s->timb_hist[i];
+                    slot = i;
+                    have_best = true;
+                }
+            }
+        }
+        if (slot < 0) {
+            return false;
+        }
+    }
+    s->timb_attribs[slot] = 0x80;
+    s->timb_bank[slot] = bank;
+    s->timb_num[slot] = patch;
+    s->timb_hist[slot] = s->note_seq++;
+    for (i = 0; i < 5; ++i) {
+        uint8_t addr[3];
+        addr[0] = addr_base[i][0];
+        addr[1] = (uint8_t)(slot * 2 + addr_base[i][1]);
+        addr[2] = addr_base[i][2];
+        xmidi_mt32_sysex_push(out, tick, addr, data + 2 + data_offs[i], chunk_lens[i]);
+    }
+    xmidi_mt32_setup_patch(s, out, tick, patch, bank);
+    return true;
+}
+
+static void xmidi_mt32_load_timbres(xmidi_seq_state_t *s, xmidi_mevents_t *out,
+                                    const uint8_t *data, uint32_t len)
+{
+    xmidi_form_t form;
+    uint32_t i;
+
+    if (!xmidi_mt32_timbre_lookup || !xmidi_parse(data, len, &form)) {
+        return;
+    }
+    for (i = 0; i < form.timb_num; ++i) {
+        uint8_t patch = form.timb_tbl[i * 2];
+        uint8_t bank = form.timb_tbl[i * 2 + 1];
+        const uint8_t *timb_data = NULL;
+        uint32_t timb_len = 0;
+
+        if (bank == 0 || bank == 127) {
+            continue;
+        }
+        if (xmidi_mt32_index_timbre(s, bank, patch) >= 0) {
+            continue;
+        }
+        if (!xmidi_mt32_timbre_lookup(xmidi_mt32_timbre_lookup_ctx, bank, patch, &timb_data, &timb_len)) {
+            continue;
+        }
+        xmidi_mt32_install_timbre(s, out, 0, bank, patch, timb_data, timb_len);
+    }
 }
 
 static uint8_t xmidi_channel_out(const xmidi_seq_state_t *s, uint8_t ch)
@@ -507,6 +630,12 @@ static bool xmidi_sequence(xmidi_seq_state_t *s, const uint8_t *data, uint32_t l
             note = form.evnt[pos++];
             vel = form.evnt[pos++];
             dur = xmidi_vlq_read(form.evnt, form.evnt_len, &pos);
+            if (s->mt32) {
+                ++s->note_seq;
+                if (s->chan_timbs[ch] != 0xff) {
+                    s->timb_hist[s->chan_timbs[ch]] = s->note_seq;
+                }
+            }
             xmidi_midi_push(out, s, tick, (uint8_t)(0x90 | ch), note, vel, 3);
             schedule_noteoff(notes, ch, note, tick + (dur ? dur : 1));
             break;
@@ -588,7 +717,15 @@ static bool xmidi_sequence(xmidi_seq_state_t *s, const uint8_t *data, uint32_t l
             if (pos >= form.evnt_len) { end = true; break; }
             patch = form.evnt[pos++];
             s->patch[ch] = patch;
-            xmidi_mt32_setup_patch(s, out, tick, patch, s->bank[ch]);
+            if (s->mt32) {
+                if (s->bank[ch] != s->patch_bank[patch]) {
+                    xmidi_mt32_setup_patch(s, out, tick, patch, s->bank[ch]);
+                }
+                {
+                    int idx = xmidi_mt32_index_timbre(s, s->bank[ch], patch);
+                    s->chan_timbs[ch] = (idx >= 0) ? (uint8_t)idx : 0xff;
+                }
+            }
             xmidi_midi_push(out, s, tick, st, patch, 0, 2);
             break;
         }
@@ -847,6 +984,7 @@ bool xmidi_render_mt32_wav(const uint8_t *data_in, uint32_t len_in, uint32_t sam
     }
     xmidi_seq_state_init(&seq, true);
     xmidi_mt32_init(&evs);
+    xmidi_mt32_load_timbres(&seq, &evs, data_in, len_in);
     if (!xmidi_sequence(&seq, data_in, len_in, &evs, tune_loops)) {
         mevents_free(&evs);
         return false;
