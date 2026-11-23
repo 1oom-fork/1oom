@@ -4,6 +4,10 @@
 #include "config.h"
 #include "types.h"
 
+#ifdef HAVE_STRINGS_H
+#include <strings.h>
+#endif
+
 extern char *util_concat(const char *s, ...);
 extern int util_concat_buf(char *buf, int buflen, ...);
 extern void util_fname_split(const char *path, char **directory_out, char **name_out);
