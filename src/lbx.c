@@ -64,7 +64,7 @@ static const struct {
     { "screens.lbx", 15923, true, "0756b968b1f10179571360aac2f6b302" },
     { "ships.lbx", 48014, true, "7af514d3126245a4dc8a15712eed7fa5" },
     { "ships2.lbx", 48483, true, "6eba05956be3ed6f5139bd6638920a26" },
-    { "snddrv.lbx", 183011, false, "f3533498a2a5052ec6431f74a987a649" },
+    { "snddrv.lbx", 183011, true, "f3533498a2a5052ec6431f74a987a649" },
     { "soundfx.lbx", 355385, true, "7bb71fb62fba0fef557d37ee054bbcc9" },
     { "space.lbx", 77134, true, "db4deda97ad23b8107762cb169f7eae0" },
     { "spies.lbx", 834214, true, "d2e2fa83b239ca1218f205bbe965ebea" },
