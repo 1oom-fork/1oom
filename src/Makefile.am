@@ -48,6 +48,8 @@ util_sources = \
     log.h \
     main.c \
     main.h \
+    md5.c \
+    md5.h \
     options.c \
     options.h \
     os.c \

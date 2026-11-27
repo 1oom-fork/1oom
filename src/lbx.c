@@ -10,6 +10,7 @@
 #include "lbxgfx.h"
 #include "lib.h"
 #include "log.h"
+#include "md5.h"
 #include "os.h"
 #include "types.h"
 #include "util.h"
@@ -80,6 +81,70 @@ static struct lbx_s lbxtbl[LBXFILE_NUM] = { 0 };
 static char entrynamebuf[32 + 1]; /* HACK */
 
 /* -------------------------------------------------------------------------- */
+
+static bool lbxfile_check_md5(const char *path)
+{
+    bool result = true;
+    uint8_t *buf;
+    const struct lbxinfo *info;
+    MD5_CTX ctx;
+    log_message("Checking md5: ");
+    buf = lib_malloc(lbxinfo[LBXFILE_INTRO].size);
+    for (int i = 0; i < LBXFILE_NUM; ++i) {
+        const char *fname;
+        fname = lbxinfo[i].filename;
+        if (path) {
+            fname = util_concat(path, FSDEV_DIR_SEP_STR, lbxinfo[i].filename, NULL);
+        }
+        if (util_file_try_load_len(fname, buf, lbxinfo[i].size) == 0) {
+            if (path) {
+                lib_free(fname);
+                fname = NULL;
+            }
+            char lbx_fname_ucase[16];
+            const char *p = lbxinfo[i].filename;
+            for (int i = 0; i < 16; ++i) {
+                lbx_fname_ucase[i] = toupper(*p);
+                if (!*p) {
+                    break;
+                }
+                ++p;
+            }
+            if (path) {
+                fname = util_concat(path, FSDEV_DIR_SEP_STR, lbx_fname_ucase, NULL);
+                if (util_file_try_load_len(fname, buf, lbxinfo[i].size) == 0) {
+                    if (path) {
+                        lib_free(fname);
+                        fname = NULL;
+                        break;
+                    }
+                }
+            }
+        }
+        if (path) {
+            lib_free(fname);
+            fname = NULL;
+        }
+        {
+            unsigned char md5_result[16];
+            char str[33];
+            log_message("%s ", lbxinfo[i].filename);
+            MD5_Init(&ctx);
+            MD5_Update(&ctx, buf, lbxinfo[i].size);
+            MD5_Final(md5_result, &ctx);
+            for (int i = 0; i < 16; ++i) {
+                sprintf(&str[i * 2], "%02x", md5_result[i]);
+            }
+            str[32] = '\0';
+            if (strcmp(str, lbxinfo[i].md5)) {
+                result = false;
+                break;
+            }
+        }
+    }
+    log_message("Done!\n");
+    return result;
+}
 
 static FILE *lbxfile_try_fopen(const char *path, const char *filename)
 {
@@ -280,6 +345,9 @@ int lbxfile_find_dir(void)
         return -1;
     } else {
         log_message("LBX: found data directory at '%s'\n", *pp);
+        if (!lbxfile_check_md5(*pp)) {
+            log_fatal_and_die("Incorrect LBX md5\n");
+        }
         os_set_path_data(*pp);
     }
     return 0;
