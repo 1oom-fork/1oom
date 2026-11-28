@@ -85,7 +85,7 @@ static bool xmidi_gtl_valid_at(const uint8_t *data, uint32_t len, uint32_t heade
             }
             return count > 0;
         }
-        if ((patch > 127u) || (bank > 126u) || !xmidi_gtl_timbre_at(data, len, rel)) {
+        if ((patch > 127u) || (bank > 127u) || !xmidi_gtl_timbre_at(data, len, rel)) {
             return false;
         }
         pos += XMIDI_GTL_ENTRY_LEN;
@@ -126,7 +126,7 @@ static bool xmidi_mt32_gtl_lookup(void *ctx, uint8_t bank, uint8_t patch,
             if (e_bank == 0xffu) {
                 break;
             }
-            if ((e_patch > 127u) || (e_bank > 126u)) {
+            if ((e_patch > 127u) || (e_bank > 127u)) {
                 break;
             }
             if ((e_bank == bank) && (e_patch == patch)
@@ -225,6 +225,8 @@ typedef struct {
     bool phys_locked[16];
     bool chan_protected[16];
     uint8_t chan_vol[16];
+    uint8_t chan_indirect[16];
+    uint8_t ctrl_table[256];
     uint8_t global_ctrl[XMIDI_MT32_CTRL_NUM][16];
     uint8_t global_program[16];
     uint8_t global_pitch_l[16];
@@ -293,6 +295,50 @@ static void mevents_free(xmidi_mevents_t *m)
     m->v = NULL;
     m->n = 0;
     m->cap = 0;
+}
+
+static bool xmidi_sysex_append(uint8_t **buf, uint32_t *len, uint32_t *cap, const uint8_t *data, uint32_t n)
+{
+    if (n == 0) {
+        return true;
+    }
+    if (*len + n > *cap) {
+        uint32_t ncap = *cap ? *cap : 64;
+        uint8_t *nv;
+        while (ncap < *len + n) {
+            ncap *= 2;
+        }
+        nv = (uint8_t *)lib_realloc(*buf, ncap);
+        if (!nv) {
+            return false;
+        }
+        *buf = nv;
+        *cap = ncap;
+    }
+    memcpy(*buf + *len, data, n);
+    *len += n;
+    return true;
+}
+
+static void xmidi_sysex_flush(xmidi_mevents_t *out, uint64_t tick, uint8_t **buf, uint32_t *len, uint32_t *cap, bool *active)
+{
+    if (!*active || *len == 0) {
+        goto reset;
+    }
+    if ((*buf)[*len - 1] != 0xf7u
+     && !xmidi_sysex_append(buf, len, cap, (const uint8_t[]){ 0xf7u }, 1)) {
+        goto reset;
+    }
+    mevents_push(out, tick, *buf, *len);
+    if (out->n > 0) {
+        out->v[out->n - 1].sysex = true;
+    }
+reset:
+    lib_free(*buf);
+    *buf = NULL;
+    *len = 0;
+    *cap = 0;
+    *active = false;
 }
 
 static uint32_t xmidi_vlq_read(const uint8_t *p, uint32_t len, uint32_t *pos)
@@ -373,14 +419,19 @@ static void xmidi_seq_state_init(xmidi_seq_state_t *s, bool mt32)
         s->phys_patch[i] = 0xff;
         s->phys_timbre[i] = 0xff;
         s->chan_vol[i] = (uint8_t)XMIDI_VOLUME_INVALID;
+        s->chan_indirect[i] = (uint8_t)XMIDI_VOLUME_INVALID;
         s->global_program[i] = (uint8_t)XMIDI_VOLUME_INVALID;
         s->global_pitch_l[i] = (uint8_t)XMIDI_VOLUME_INVALID;
-        s->global_pitch_h[i] = (uint8_t)XMIDI_VOLUME_INVALID;
-        for (j = 0; j < XMIDI_MT32_CTRL_NUM; ++j) {
-            s->global_ctrl[j][i] = (uint8_t)XMIDI_VOLUME_INVALID;
+            s->global_pitch_h[i] = (uint8_t)XMIDI_VOLUME_INVALID;
+            for (j = 0; j < XMIDI_MT32_CTRL_NUM; ++j) {
+                s->global_ctrl[j][i] = (uint8_t)XMIDI_VOLUME_INVALID;
+            }
         }
-    }
+        for (j = 0; j < XMIDI_MT32_CTRL_NUM; ++j) {
+            s->ctrl_table[xmidi_mt32_logged_ctrls[j]] = xmidi_mt32_ctrl_default[j];
+        }
     if (mt32) {
+
         for (i = 1; i <= 9; ++i) {
             for (j = 0; j < XMIDI_MT32_CTRL_NUM; ++j) {
                 s->global_ctrl[j][i] = xmidi_mt32_ctrl_default[j];
@@ -786,17 +837,20 @@ static bool xmidi_sequence(xmidi_seq_state_t *s, const uint8_t *data, uint32_t l
     uint32_t pos = 0;
     uint64_t tick = 0;
     uint32_t interval = 0;
-    uint32_t loop_count[XMIDI_FOR_NEST];
+    int32_t loop_count[XMIDI_FOR_NEST];
     uint32_t loop_pos[XMIDI_FOR_NEST];
-    int loop_sp = -1;
     bool end = false;
     bool infinite = false;
+    uint8_t *sysex = NULL;
+    uint32_t sysex_len = 0;
+    uint32_t sysex_cap = 0;
+    bool sysex_active = false;
 
     if (tune_loops) {
         *tune_loops = false;
     }
     memset(notes, 0, sizeof(notes));
-    for (int i = 0; i < XMIDI_FOR_NEST; ++i) { loop_count[i] = 0; loop_pos[i] = 0; }
+    for (int i = 0; i < XMIDI_FOR_NEST; ++i) { loop_count[i] = -1; loop_pos[i] = 0; }
 
     if (!xmidi_parse(data, len, &form)) {
         log_error("XMID: invalid/corrupt data\n");
@@ -805,6 +859,7 @@ static bool xmidi_sequence(xmidi_seq_state_t *s, const uint8_t *data, uint32_t l
 
     while (pos < form.evnt_len && !end) {
         uint8_t st = form.evnt[pos++];
+        uint32_t ev_pos = pos - 1;
         if (st < 0x80) {
             interval += st;
             continue;
@@ -812,6 +867,9 @@ static bool xmidi_sequence(xmidi_seq_state_t *s, const uint8_t *data, uint32_t l
         tick += interval;
         interval = 0;
         flush_due_noteoffs(out, s, notes, tick);
+        if (st != 0xf0u && st != 0xf7u) {
+            xmidi_sysex_flush(out, tick, &sysex, &sysex_len, &sysex_cap, &sysex_active);
+        }
 
         if (st >= 0xf0) {
             if (st == 0xff) {
@@ -836,19 +894,33 @@ static bool xmidi_sequence(xmidi_seq_state_t *s, const uint8_t *data, uint32_t l
                 uint32_t slen = xmidi_vlq_read(form.evnt, form.evnt_len, &pos);
                 if (pos + slen > form.evnt_len) break;
                 if (s->mt32) {
-                    uint32_t prefix = (st == 0xf0u) ? 1u : 0u;
-                    if (slen > 0 || prefix > 0) {
-                        uint8_t *raw = (uint8_t *)lib_malloc((size_t)slen + prefix);
-                        if (raw) {
-                            if (prefix > 0) {
-                                raw[0] = 0xf0;
-                            }
-                            memcpy(raw + prefix, form.evnt + pos, slen);
-                            mevents_push(out, tick, raw, slen + prefix);
-                            if (out->n > 0) {
-                                out->v[out->n - 1].sysex = true;
-                            }
-                            lib_free(raw);
+                    static const uint8_t f0 = 0xf0u;
+                    bool ok = true;
+                    bool complete = false;
+                    if (st == 0xf0u) {
+                        xmidi_sysex_flush(out, tick, &sysex, &sysex_len, &sysex_cap, &sysex_active);
+                        ok = xmidi_sysex_append(&sysex, &sysex_len, &sysex_cap, &f0, 1)
+                          && xmidi_sysex_append(&sysex, &sysex_len, &sysex_cap, form.evnt + pos, slen);
+                        sysex_active = ok;
+                    } else {
+                        if (!sysex_active) {
+                            ok = xmidi_sysex_append(&sysex, &sysex_len, &sysex_cap, &f0, 1);
+                            sysex_active = ok;
+                        }
+                        if (ok) {
+                            ok = xmidi_sysex_append(&sysex, &sysex_len, &sysex_cap, form.evnt + pos, slen);
+                        }
+                    }
+                    if (!ok) {
+                        lib_free(sysex);
+                        sysex = NULL;
+                        sysex_len = 0;
+                        sysex_cap = 0;
+                        sysex_active = false;
+                    } else {
+                        complete = (slen > 0) && (form.evnt[pos + slen - 1] == 0xf7u);
+                        if (complete) {
+                            xmidi_sysex_flush(out, tick, &sysex, &sysex_len, &sysex_cap, &sysex_active);
                         }
                     }
                 }
@@ -903,97 +975,97 @@ static bool xmidi_sequence(xmidi_seq_state_t *s, const uint8_t *data, uint32_t l
             uint8_t cc, val;
             if (pos + 1 >= form.evnt_len) { end = true; break; }
             cc = form.evnt[pos++]; val = form.evnt[pos++];
-            if (cc == 116) {
-                if (loop_sp + 1 < XMIDI_FOR_NEST) {
-                    ++loop_sp;
-                    loop_count[loop_sp] = val;
-                    loop_pos[loop_sp] = pos;
-                    if (val == 0) infinite = true;
+            if (s->chan_indirect[ch] != XMIDI_VOLUME_INVALID) {
+                uint8_t src = s->chan_indirect[ch];
+                s->chan_indirect[ch] = (uint8_t)XMIDI_VOLUME_INVALID;
+                val = s->ctrl_table[src];
+            }
+            s->ctrl_table[cc] = val;
+            if (cc == 115) {
+                s->chan_indirect[ch] = val;
+            } else if (cc == 116) {
+                int i, slot = -1;
+                for (i = 0; i < XMIDI_FOR_NEST; ++i) {
+                    if (loop_count[i] == -1) {
+                        slot = i;
+                        break;
+                    }
+                }
+                if (slot >= 0) {
+                    loop_count[slot] = val;
+                    loop_pos[slot] = ev_pos;
                 }
             } else if (cc == 117) {
-                if (loop_sp >= 0) {
-                    if (val < 64) {
-                        --loop_sp;
-                    } else if (loop_count[loop_sp] == 0) {
-                        --loop_sp;
+                int i, slot = -1;
+                for (i = XMIDI_FOR_NEST - 1; i >= 0; --i) {
+                    if (loop_count[i] != -1) {
+                        slot = i;
+                        break;
+                    }
+                }
+                if (slot >= 0 && val >= 64) {
+                    if (loop_count[slot] == 0) {
+                        uint8_t msg[3] = { 0xff, 0x2f, 0x00 };
+                        flush_all_noteoffs(out, s, notes, tick);
+                        mevents_push(out, tick, msg, 3);
                         infinite = true;
-                        {
-                            uint8_t msg[3] = { 0xff, 0x2f, 0x00 };
-                            flush_all_noteoffs(out, s, notes, tick);
-                            mevents_push(out, tick, msg, 3);
-                            end = true;
-                        }
+                        end = true;
+                    } else if (--loop_count[slot] > 0) {
+                        pos = loop_pos[slot];
                     } else {
-                        if (--loop_count[loop_sp] != 0) {
-                            pos = loop_pos[loop_sp];
-                        } else {
-                            --loop_sp;
-                        }
+                        loop_count[slot] = -1;
                     }
                 }
             } else if (s->mt32) {
                 uint8_t phys = xmidi_channel_out(s, ch);
                 int ci = xmidi_mt32_ctrl_index(cc);
-                if (s->phys_locked[ch] && cc != 110 && cc != 111) {
-                } else if (cc == 110) {
-                    if (ci >= 0) {
-                        s->global_ctrl[ci][ch] = val;
-                    }
+                if (ci >= 0) {
+                    s->global_ctrl[ci][ch] = (cc == 7) ? xmidi_mt32_scale_volume(s, val) : val;
+                }
+                if (cc == 7) {
+                    s->chan_vol[ch] = val;
+                }
+                if (cc == 110) {
                     xmidi_mt32_lock_chan(s, out, notes, tick, ch, val);
                 } else if (cc == 111) {
-                    if (ci >= 0) {
-                        s->global_ctrl[ci][ch] = val;
-                    }
                     s->chan_protected[ch] = (val >= 64);
-                } else if (cc == 112) {
-                    if (ci >= 0) {
-                        s->global_ctrl[ci][ch] = val;
+                } else if (cc == 112 || s->phys_locked[ch]) {
+                } else if (cc == 114) {
+                    s->phys_bank[phys] = val;
+                } else if (cc >= 32 && cc <= 46) {
+                    xmidi_mt32_sysex_ctrl(s, out, tick, cc, val);
+                } else if (cc == 58) {
+                    if (val >= 24 && s->phys_timbre[phys] != 0xff) {
+                        uint8_t addr[3] = { 0x03, 0x01, 0x10 };
+                        uint8_t data = s->phys_timbre[phys];
+                        xmidi_sysex_addr_add(addr, (uint32_t)(val - 24) * 4u);
+                        xmidi_mt32_sysex_push(out, tick, addr, &data, 1);
                     }
-                } else {
-                    if (ci >= 0) {
-                        s->global_ctrl[ci][ch] = val;
-                    }
-                    if (cc == 114) {
-                        s->phys_bank[phys] = val;
-                    } else if (cc >= 32 && cc <= 46) {
-                        xmidi_mt32_sysex_ctrl(s, out, tick, cc, val);
-                    } else if (cc == 58) {
-                        if (val >= 24 && s->phys_timbre[phys] != 0xff) {
-                            uint8_t addr[3] = { 0x03, 0x01, 0x10 };
-                            uint8_t data = s->phys_timbre[phys];
-                            xmidi_sysex_addr_add(addr, (uint32_t)(val - 24) * 4u);
-                            xmidi_mt32_sysex_push(out, tick, addr, &data, 1);
-                        }
-                    } else if (cc == 59 || cc == 60) {
-                        if (s->phys_patch[phys] != 0xff) {
-                            uint8_t addr[3] = { 0x05, 0x00, 0x00 };
-                            xmidi_sysex_addr_add(addr, (uint32_t)s->phys_patch[phys] * 8u + (cc == 59 ? 6u : 4u));
-                            xmidi_mt32_sysex_push(out, tick, addr, &val, 1);
-                            xmidi_midi_push(out, s, tick, (uint8_t)(0xc0 | ch), s->phys_patch[phys], 0, 2);
-                        }
-                    } else if (cc >= 61 && cc <= 63) {
-                        uint8_t addr[3] = { 0x10, 0x00, (uint8_t)(cc - 60) };
+                } else if (cc == 59 || cc == 60) {
+                    if (s->phys_patch[phys] != 0xff) {
+                        uint8_t addr[3] = { 0x05, 0x00, 0x00 };
+                        xmidi_sysex_addr_add(addr, (uint32_t)s->phys_patch[phys] * 8u + (cc == 59 ? 6u : 4u));
                         xmidi_mt32_sysex_push(out, tick, addr, &val, 1);
-                    } else if (cc == 113) {
-                        int idx = s->phys_timbre[phys];
-                        if (idx != 0xff) {
-                            if (val >= 64) {
-                                s->timb_attribs[idx] |= 0x40;
-                            } else {
-                                s->timb_attribs[idx] &= (uint8_t)~0x40;
-                            }
-                        }
-                    } else if (cc == 115 || (cc >= 118 && cc <= 120)) {
-                    } else if (cc == 7) {
-                        uint8_t v = xmidi_mt32_scale_volume(s, val);
-                        s->chan_vol[ch] = val;
-                        if (ci >= 0) {
-                            s->global_ctrl[ci][ch] = v;
-                        }
-                        xmidi_midi_push(out, s, tick, st, cc, v, 3);
-                    } else {
-                        xmidi_midi_push(out, s, tick, st, cc, val, 3);
+                        xmidi_midi_push(out, s, tick, (uint8_t)(0xc0 | ch), s->phys_patch[phys], 0, 2);
                     }
+                } else if (cc >= 61 && cc <= 63) {
+                    uint8_t addr[3] = { 0x10, 0x00, (uint8_t)(cc - 60) };
+                    xmidi_mt32_sysex_push(out, tick, addr, &val, 1);
+                } else if (cc == 113) {
+                    int idx = s->phys_timbre[phys];
+                    if (idx != 0xff) {
+                        if (val >= 64) {
+                            s->timb_attribs[idx] |= 0x40;
+                        } else {
+                            s->timb_attribs[idx] &= (uint8_t)~0x40;
+                        }
+                    }
+                } else if (cc >= 118 && cc <= 120) {
+                } else if (cc == 7) {
+                    uint8_t v = xmidi_mt32_scale_volume(s, val);
+                    xmidi_midi_push(out, s, tick, st, cc, v, 3);
+                } else {
+                    xmidi_midi_push(out, s, tick, st, cc, val, 3);
                 }
             } else if (!((cc >= 32 && cc <= 46) || (cc >= 58 && cc <= 63) || (cc >= 110 && cc <= 120))) {
                 xmidi_midi_push(out, s, tick, st, cc, val, 3);
@@ -1032,6 +1104,7 @@ static bool xmidi_sequence(xmidi_seq_state_t *s, const uint8_t *data, uint32_t l
         }
     }
 
+    xmidi_sysex_flush(out, tick, &sysex, &sysex_len, &sysex_cap, &sysex_active);
     if (!end) {
         uint8_t msg[3] = { 0xff, 0x2f, 0x00 };
         flush_all_noteoffs(out, s, notes, tick);
