@@ -31,8 +31,11 @@
 #define XMIDI_VOLUME_INVALID 0xffu
 #define XMIDI_GTL_ENTRY_LEN 6u
 #define XMIDI_GTL_TIMBRE_LEN 0xf6u
+#define XMIDI_MT32_CTRL_NUM 9
 
 static const uint8_t xmidi_mt32_prg_default[] = { 68, 48, 95, 78, 41, 3, 110, 122 };
+static const uint8_t xmidi_mt32_logged_ctrls[XMIDI_MT32_CTRL_NUM] = { 7, 1, 10, 11, 64, 114, 110, 111, 112 };
+static const uint8_t xmidi_mt32_ctrl_default[XMIDI_MT32_CTRL_NUM] = { 127, 0, 64, 127, 0, 0, 0, 0, 0 };
 
 static xmidi_mt32_timbre_lookup_t xmidi_mt32_timbre_lookup = NULL;
 static void *xmidi_mt32_timbre_lookup_ctx = NULL;
@@ -215,22 +218,37 @@ typedef struct {
 typedef struct {
     bool mt32;
     uint16_t vol_percent;
-    uint8_t bank[16];
-    uint8_t patch[16];
+    uint8_t phys_bank[16];
+    uint8_t phys_patch[16];
     uint8_t patch_bank[128];
     uint8_t chan_map[16];
     bool phys_locked[16];
+    bool chan_protected[16];
     uint8_t chan_vol[16];
-    uint8_t phys_vol[16];
+    uint8_t global_ctrl[XMIDI_MT32_CTRL_NUM][16];
+    uint8_t global_program[16];
+    uint8_t global_pitch_l[16];
+    uint8_t global_pitch_h[16];
     uint8_t active_notes[16];
     uint8_t timb_attribs[64];
     uint8_t timb_bank[64];
     uint8_t timb_num[64];
-    uint8_t chan_timbs[16];
+    uint8_t phys_timbre[16];
     uint64_t timb_hist[64];
     uint64_t note_seq;
     xmidi_sysex_queue_t sysex_q[3];
 } xmidi_seq_state_t;
+
+static int xmidi_mt32_ctrl_index(uint8_t cc)
+{
+    int i;
+    for (i = 0; i < XMIDI_MT32_CTRL_NUM; ++i) {
+        if (xmidi_mt32_logged_ctrls[i] == cc) {
+            return i;
+        }
+    }
+    return -1;
+}
 
 typedef struct {
     const uint8_t *evnt;
@@ -346,23 +364,33 @@ static bool xmidi_parse(const uint8_t *data, uint32_t len, xmidi_form_t *form)
 
 static void xmidi_seq_state_init(xmidi_seq_state_t *s, bool mt32)
 {
-    int i;
+    int i, j;
     memset(s, 0, sizeof(*s));
     s->mt32 = mt32;
     s->vol_percent = mt32 ? XMIDI_MT32_DEF_VOLUME : 100;
     for (i = 0; i < 16; ++i) {
         s->chan_map[i] = (uint8_t)i;
-        s->patch[i] = 0xff;
+        s->phys_patch[i] = 0xff;
+        s->phys_timbre[i] = 0xff;
         s->chan_vol[i] = (uint8_t)XMIDI_VOLUME_INVALID;
-        s->phys_vol[i] = (uint8_t)XMIDI_VOLUME_INVALID;
-        s->chan_timbs[i] = 0xff;
+        s->global_program[i] = (uint8_t)XMIDI_VOLUME_INVALID;
+        s->global_pitch_l[i] = (uint8_t)XMIDI_VOLUME_INVALID;
+        s->global_pitch_h[i] = (uint8_t)XMIDI_VOLUME_INVALID;
+        for (j = 0; j < XMIDI_MT32_CTRL_NUM; ++j) {
+            s->global_ctrl[j][i] = (uint8_t)XMIDI_VOLUME_INVALID;
+        }
     }
     if (mt32) {
         for (i = 1; i <= 9; ++i) {
-            s->phys_vol[i] = 127;
+            for (j = 0; j < XMIDI_MT32_CTRL_NUM; ++j) {
+                s->global_ctrl[j][i] = xmidi_mt32_ctrl_default[j];
+            }
+            s->global_pitch_l[i] = 0;
+            s->global_pitch_h[i] = 64;
         }
         for (i = 1; i <= (int)sizeof(xmidi_mt32_prg_default); ++i) {
-            s->patch[i] = xmidi_mt32_prg_default[i - 1];
+            s->phys_patch[i] = xmidi_mt32_prg_default[i - 1];
+            s->global_program[i] = xmidi_mt32_prg_default[i - 1];
         }
     }
 }
@@ -452,8 +480,9 @@ static void xmidi_mt32_sysex_ctrl(xmidi_seq_state_t *s, xmidi_mevents_t *out, ui
         q->data[q->len++] = val;
     }
     if ((off % 5) == 4 || q->len == (uint32_t)sizeof(q->data)) {
+        bool final = (off % 5) == 4;
         xmidi_mt32_sysex_push(out, tick, q->addr, q->data, q->len);
-        xmidi_sysex_addr_add(q->addr, q->len - 1);
+        xmidi_sysex_addr_add(q->addr, (!final && q->len == (uint32_t)sizeof(q->data)) ? q->len : q->len - 1u);
         q->len = 0;
     }
 }
@@ -642,10 +671,15 @@ static void xmidi_mt32_lock_chan(xmidi_seq_state_t *s, xmidi_mevents_t *out, xmi
 {
     if (val >= 64) {
         int phys = -1;
-        int i;
-        for (i = 9; i >= 1; --i) {
-            if (!s->phys_locked[i] && (phys < 0 || s->active_notes[i] < s->active_notes[phys])) {
-                phys = i;
+        int i, pass;
+        for (pass = 0; pass < 2 && phys < 0; ++pass) {
+            for (i = 9; i >= 2; --i) {
+                if (s->phys_locked[i] || (pass == 0 && s->chan_protected[i])) {
+                    continue;
+                }
+                if (phys < 0 || s->active_notes[i] < s->active_notes[phys]) {
+                    phys = i;
+                }
             }
         }
         if (phys < 0) {
@@ -658,11 +692,27 @@ static void xmidi_mt32_lock_chan(xmidi_seq_state_t *s, xmidi_mevents_t *out, xmi
     } else {
         uint8_t phys = s->chan_map[ch];
         if (phys >= 1 && phys <= 9) {
+            int i;
             xmidi_flush_physical_notes(out, s, notes, tick, phys);
             mevents_push(out, tick, (const uint8_t[]){ (uint8_t)(0xb0 | phys), 64, 0 }, 3);
             mevents_push(out, tick, (const uint8_t[]){ (uint8_t)(0xb0 | phys), 123, 0 }, 3);
-            if (s->phys_vol[phys] != XMIDI_VOLUME_INVALID) {
-                mevents_push(out, tick, (const uint8_t[]){ (uint8_t)(0xb0 | phys), 7, s->phys_vol[phys] }, 3);
+            for (i = 0; i < XMIDI_MT32_CTRL_NUM; ++i) {
+                uint8_t v = s->global_ctrl[i][phys];
+                uint8_t cc = xmidi_mt32_logged_ctrls[i];
+                if (v == XMIDI_VOLUME_INVALID) {
+                    continue;
+                }
+                if (cc == 114) {
+                    s->phys_bank[phys] = v;
+                } else if (cc < 110) {
+                    mevents_push(out, tick, (const uint8_t[]){ (uint8_t)(0xb0 | phys), cc, v }, 3);
+                }
+            }
+            if (s->global_program[phys] != XMIDI_VOLUME_INVALID) {
+                mevents_push(out, tick, (const uint8_t[]){ (uint8_t)(0xc0 | phys), s->global_program[phys] }, 2);
+            }
+            if (s->global_pitch_l[phys] != XMIDI_VOLUME_INVALID && s->global_pitch_h[phys] != XMIDI_VOLUME_INVALID) {
+                mevents_push(out, tick, (const uint8_t[]){ (uint8_t)(0xe0 | phys), s->global_pitch_l[phys], s->global_pitch_h[phys] }, 3);
             }
             s->phys_locked[phys] = false;
         }
@@ -786,15 +836,20 @@ static bool xmidi_sequence(xmidi_seq_state_t *s, const uint8_t *data, uint32_t l
                 uint32_t slen = xmidi_vlq_read(form.evnt, form.evnt_len, &pos);
                 if (pos + slen > form.evnt_len) break;
                 if (s->mt32) {
-                    uint8_t *raw = (uint8_t *)lib_malloc((size_t)slen + 1);
-                    if (raw) {
-                        raw[0] = st;
-                        memcpy(raw + 1, form.evnt + pos, slen);
-                        mevents_push(out, tick, raw, slen + 1);
-                        if (out->n > 0) {
-                            out->v[out->n - 1].sysex = true;
+                    uint32_t prefix = (st == 0xf0u) ? 1u : 0u;
+                    if (slen > 0 || prefix > 0) {
+                        uint8_t *raw = (uint8_t *)lib_malloc((size_t)slen + prefix);
+                        if (raw) {
+                            if (prefix > 0) {
+                                raw[0] = 0xf0;
+                            }
+                            memcpy(raw + prefix, form.evnt + pos, slen);
+                            mevents_push(out, tick, raw, slen + prefix);
+                            if (out->n > 0) {
+                                out->v[out->n - 1].sysex = true;
+                            }
+                            lib_free(raw);
                         }
-                        lib_free(raw);
                     }
                 }
                 pos += slen;
@@ -815,16 +870,16 @@ static bool xmidi_sequence(xmidi_seq_state_t *s, const uint8_t *data, uint32_t l
             note = form.evnt[pos++];
             vel = form.evnt[pos++];
             dur = xmidi_vlq_read(form.evnt, form.evnt_len, &pos);
-            if (s->mt32) {
-                ++s->note_seq;
-                if (s->chan_timbs[ch] != 0xff) {
-                    s->timb_hist[s->chan_timbs[ch]] = s->note_seq;
-                }
-            }
             if (xmidi_midi_push(out, s, tick, (uint8_t)(0x90 | ch), note, vel, 3)) {
                 uint8_t phys = xmidi_channel_out(s, ch);
-                if (s->mt32 && phys >= 1 && phys <= 9) {
-                    ++s->active_notes[phys];
+                if (s->mt32) {
+                    ++s->note_seq;
+                    if (s->phys_timbre[phys] != 0xff) {
+                        s->timb_hist[s->phys_timbre[phys]] = s->note_seq;
+                    }
+                    if (phys >= 1 && phys <= 9) {
+                        ++s->active_notes[phys];
+                    }
                 }
                 schedule_noteoff(notes, ch, note, tick + (dur ? dur : 1));
             }
@@ -832,9 +887,14 @@ static bool xmidi_sequence(xmidi_seq_state_t *s, const uint8_t *data, uint32_t l
         }
         case 0xa0:
         case 0xe0: {
+            uint8_t ch = (uint8_t)(st & 0x0f);
             uint8_t d1, d2;
             if (pos + 1 >= form.evnt_len) { end = true; break; }
             d1 = form.evnt[pos++]; d2 = form.evnt[pos++];
+            if (s->mt32 && (st & 0xf0) == 0xe0) {
+                s->global_pitch_l[ch] = d1;
+                s->global_pitch_h[ch] = d2;
+            }
             xmidi_midi_push(out, s, tick, st, d1, d2, 3);
             break;
         }
@@ -872,34 +932,68 @@ static bool xmidi_sequence(xmidi_seq_state_t *s, const uint8_t *data, uint32_t l
                     }
                 }
             } else if (s->mt32) {
-                if (cc == 110) {
+                uint8_t phys = xmidi_channel_out(s, ch);
+                int ci = xmidi_mt32_ctrl_index(cc);
+                if (s->phys_locked[ch] && cc != 110 && cc != 111) {
+                } else if (cc == 110) {
+                    if (ci >= 0) {
+                        s->global_ctrl[ci][ch] = val;
+                    }
                     xmidi_mt32_lock_chan(s, out, notes, tick, ch, val);
-                } else if (cc == 114) {
-                    s->bank[ch] = val;
-                } else if (cc >= 32 && cc <= 46) {
-                    xmidi_mt32_sysex_ctrl(s, out, tick, cc, val);
-                } else if (cc == 58) {
-                } else if (cc == 59 || cc == 60) {
-                    if (s->patch[ch] != 0xff) {
-                        uint8_t addr[3] = { 0x05, 0x00, 0x00 };
-                        xmidi_sysex_addr_add(addr, (uint32_t)s->patch[ch] * 8 + (cc == 59 ? 6u : 4u));
-                        xmidi_mt32_sysex_push(out, tick, addr, &val, 1);
-                        xmidi_midi_push(out, s, tick, (uint8_t)(0xc0 | ch), s->patch[ch], 0, 2);
+                } else if (cc == 111) {
+                    if (ci >= 0) {
+                        s->global_ctrl[ci][ch] = val;
                     }
-                } else if (cc >= 61 && cc <= 63) {
-                    uint8_t addr[3] = { 0x10, 0x00, (uint8_t)(cc - 60) };
-                    xmidi_mt32_sysex_push(out, tick, addr, &val, 1);
-                } else if (cc == 113 || cc == 115 || (cc >= 118 && cc <= 120)) {
-                } else if (cc == 7) {
-                    uint8_t phys = xmidi_channel_out(s, ch);
-                    uint8_t v = xmidi_mt32_scale_volume(s, val);
-                    s->chan_vol[ch] = val;
-                    if (phys >= 1 && phys <= 9) {
-                        s->phys_vol[phys] = v;
+                    s->chan_protected[ch] = (val >= 64);
+                } else if (cc == 112) {
+                    if (ci >= 0) {
+                        s->global_ctrl[ci][ch] = val;
                     }
-                    xmidi_midi_push(out, s, tick, st, cc, v, 3);
                 } else {
-                    xmidi_midi_push(out, s, tick, st, cc, val, 3);
+                    if (ci >= 0) {
+                        s->global_ctrl[ci][ch] = val;
+                    }
+                    if (cc == 114) {
+                        s->phys_bank[phys] = val;
+                    } else if (cc >= 32 && cc <= 46) {
+                        xmidi_mt32_sysex_ctrl(s, out, tick, cc, val);
+                    } else if (cc == 58) {
+                        if (val >= 24 && s->phys_timbre[phys] != 0xff) {
+                            uint8_t addr[3] = { 0x03, 0x01, 0x10 };
+                            uint8_t data = s->phys_timbre[phys];
+                            xmidi_sysex_addr_add(addr, (uint32_t)(val - 24) * 4u);
+                            xmidi_mt32_sysex_push(out, tick, addr, &data, 1);
+                        }
+                    } else if (cc == 59 || cc == 60) {
+                        if (s->phys_patch[phys] != 0xff) {
+                            uint8_t addr[3] = { 0x05, 0x00, 0x00 };
+                            xmidi_sysex_addr_add(addr, (uint32_t)s->phys_patch[phys] * 8u + (cc == 59 ? 6u : 4u));
+                            xmidi_mt32_sysex_push(out, tick, addr, &val, 1);
+                            xmidi_midi_push(out, s, tick, (uint8_t)(0xc0 | ch), s->phys_patch[phys], 0, 2);
+                        }
+                    } else if (cc >= 61 && cc <= 63) {
+                        uint8_t addr[3] = { 0x10, 0x00, (uint8_t)(cc - 60) };
+                        xmidi_mt32_sysex_push(out, tick, addr, &val, 1);
+                    } else if (cc == 113) {
+                        int idx = s->phys_timbre[phys];
+                        if (idx != 0xff) {
+                            if (val >= 64) {
+                                s->timb_attribs[idx] |= 0x40;
+                            } else {
+                                s->timb_attribs[idx] &= (uint8_t)~0x40;
+                            }
+                        }
+                    } else if (cc == 115 || (cc >= 118 && cc <= 120)) {
+                    } else if (cc == 7) {
+                        uint8_t v = xmidi_mt32_scale_volume(s, val);
+                        s->chan_vol[ch] = val;
+                        if (ci >= 0) {
+                            s->global_ctrl[ci][ch] = v;
+                        }
+                        xmidi_midi_push(out, s, tick, st, cc, v, 3);
+                    } else {
+                        xmidi_midi_push(out, s, tick, st, cc, val, 3);
+                    }
                 }
             } else if (!((cc >= 32 && cc <= 46) || (cc >= 58 && cc <= 63) || (cc >= 110 && cc <= 120))) {
                 xmidi_midi_push(out, s, tick, st, cc, val, 3);
@@ -911,15 +1005,16 @@ static bool xmidi_sequence(xmidi_seq_state_t *s, const uint8_t *data, uint32_t l
             uint8_t ch = (uint8_t)(st & 0x0f);
             if (pos >= form.evnt_len) { end = true; break; }
             patch = form.evnt[pos++];
-            s->patch[ch] = patch;
-            if (s->mt32) {
-                if (s->bank[ch] != s->patch_bank[patch]) {
-                    xmidi_mt32_setup_patch(s, out, tick, patch, s->bank[ch]);
+            if (s->mt32 && !s->phys_locked[ch]) {
+                uint8_t phys = xmidi_channel_out(s, ch);
+                int idx;
+                s->global_program[ch] = patch;
+                s->phys_patch[phys] = patch;
+                if (s->phys_bank[phys] != s->patch_bank[patch]) {
+                    xmidi_mt32_setup_patch(s, out, tick, patch, s->phys_bank[phys]);
                 }
-                {
-                    int idx = xmidi_mt32_index_timbre(s, s->bank[ch], patch);
-                    s->chan_timbs[ch] = (idx >= 0) ? (uint8_t)idx : 0xff;
-                }
+                idx = xmidi_mt32_index_timbre(s, s->phys_bank[phys], patch);
+                s->phys_timbre[phys] = (idx >= 0) ? (uint8_t)idx : 0xff;
             }
             xmidi_midi_push(out, s, tick, st, patch, 0, 2);
             break;
